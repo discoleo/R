@@ -1,1 +1,6 @@
 
+Linear Optimizations
+
+Currently NO Lectures.
+
+Only R code for the optimization problems.
