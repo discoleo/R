@@ -43,13 +43,12 @@ library(igraph)
 ###################
 
 ### set the Working Directory
-setwd("C:\\Users\\Leo Mada\\Desktop\\DB")
+setwd("...") # !!!
 
 
-### 200 MB xml
-# x = read_xml("Allergies_Pubmed.part-6.xml")
+### 20 - 200 MB xml
 # 22 MB xml
-# ArticleSet downloaded from Pubmed
+# ArticleSet downloaded from Pubmed:
 x = read_xml("term=(malaria[TIAB])+AND+2017[pdat].xml")
 
 ### XPATH Base-Paths
