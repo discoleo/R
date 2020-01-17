@@ -5,8 +5,11 @@
 ### Leonard Mada
 ### 2020-01-16
 
+# draft v0.2:
+# - added Infinite Series;
 
-### Penney's Game
+#####################
+### Penney's Game ###
 
 # A coin is given with:
 # p(H) = p, p(T) = 1 - p;
@@ -14,6 +17,7 @@
 # Calculate:
 # A.) E(HHT), E(HTH);
 # B.) p, so that E(HHT) = E(HTH);
+# C.) Infinite Series: sum( (i+3)/x^i );
 
 
 ### A.) Computing the Expectations
@@ -79,3 +83,37 @@ pHTH
 # p = 0 or p = 1;
 
 ### both are extreme probability values;
+
+####################
+
+### C.) Infinite Series
+
+# Series:
+# sum( (i+3)/x^i ), from i=1 to Infinite;
+# where x = 1/p;
+
+# Ex.) 4/3 + 5/3^2 + 6/3^3 + 7/3^4 + ...;
+
+### Estimated sum
+sum.series = function(p) {
+	i = 1: 25
+	sum((i+3) * p^i)
+}
+
+### Exact sum
+sum.poly = function(p) {
+	# ((3-2*p)/(1-p) + 1) * p/(1-p)
+	p * (4-3*p) / (1-p)^2
+}
+
+p = 1/2
+sum.series(p)
+# 4.9999999
+sum.poly(p)
+# 5
+
+p = 2/9
+sum.series(p)
+# 1.22449
+sum.poly(p)
+# 1.22449
