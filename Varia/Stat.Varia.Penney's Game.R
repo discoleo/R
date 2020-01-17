@@ -84,6 +84,7 @@ pHTH
 
 ### both are extreme probability values;
 
+
 ####################
 
 ### C.) Infinite Series
@@ -117,3 +118,5 @@ sum.series(p)
 # 1.22449
 sum.poly(p)
 # 1.22449
+
+
