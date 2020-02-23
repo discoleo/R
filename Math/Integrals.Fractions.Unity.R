@@ -8,14 +8,19 @@
 ###   Integral( 1/ (x^n - 1) )dx
 ###
 ### version pre-1.alfa [draft]
+### 2020-02-24
+### - all odd powers;
 ### 2020-02-23
+### - all prime powers;
+### [< 2020-02-20] the many calculations;
 
 
 ### helper functions ###
 
 # Fraction Decomposition: 1/(x^n - 1)
 decompose.fr = function(n) {
-	### NOTE: Works ONLY if n = prime !
+	### NOTE: Works ONLY if n = odd !
+	# [both odd primes and all other odd powers tested!]
 	# roots of unity
 	m = roots1.conj(n)
 	# coefficients
@@ -459,15 +464,19 @@ rez.f(top, a.sol, b.sol, b0, m.conj) - rez.f(low, a.sol, b.sol, b0, m.conj)
 #####################
 
 ### n = 9
-(b0 - b1 - b2 - b3 - b4) +
-(- a1 - a2 - a3 - a4 + b0 - b1*m - b1*m^8 - b2*m^2 - b2*m^7 - b3*m^3 - b3*m^6 - b4*m^4 - b4*m^5)*x^1 +
-(- a1*m - a1*m^8 - a2*m^2 - a2*m^7 - a3*m^3 - a3*m^6 - a4*m^4 - a4*m^5 + b0 - b1 - b1*m^2 - b1*m^7 - b2 - b2*m^4 - b2*m^5 - b3 - b3*m^3 - b3*m^6 - b4 - b4*m - b4*m^8)*x^2 +
-(- a1 - a1*m^2 - a1*m^7 - a2 - a2*m^4 - a2*m^5 - a3 - a3*m^3 - a3*m^6 - a4 - a4*m - a4*m^8 - b0*m^3 - b0*m^6 + b1 - b1*m - b1*m^8 + b2 - b2*m^2 - b2*m^7 - b3 + b4 - b4*m^4 - b4*m^5)*x^3 +
-(a1 - a1*m - a1*m^8 + a2 - a2*m^2 - a2*m^7 - a3 + a4 - a4*m^4 - a4*m^5 - b0*m^3 - b0*m^6 - b1 + b1*m + b1*m^8 - b2 + b2*m^2 + b2*m^7 + b3 - b4 + b4*m^4 + b4*m^5)*x^4 +
-(- a1 + a1*m + a1*m^8 - a2 + a2*m^2 + a2*m^7 + a3 - a4 + a4*m^4 + a4*m^5 - b0*m^3 - b0*m^6 + b1 + b1*m^2 + b1*m^7 + b2 + b2*m^4 + b2*m^5 + b3 + b3*m^3 + b3*m^6 + b4 + b4*m + b4*m^8)*x^5 +
-(a1 + a1*m^2 + a1*m^7 + a2 + a2*m^4 + a2*m^5 + a3 + a3*m^3 + a3*m^6 + a4 + a4*m + a4*m^8 + b0 + b1*m + b1*m^8 + b2*m^2 + b2*m^7 + b3*m^3 + b3*m^6 + b4*m^4 + b4*m^5)*x^6 +
-(a1*m + a1*m^8 + a2*m^2 + a2*m^7 + a3*m^3 + a3*m^6 + a4*m^4 + a4*m^5 + b0 + b1 + b2 + b3 + b4)*x^7 +
-(a1 + a2 + a3 + a4 + b0)*x^8
+# TODO:
+# m^3 + m^6 = -1
+(- b + b0 - 1) +
+(- a + b0 - bS1)*x^1 +
+(- aS1 - b + b0 - bS2)*x^2 +
+(- a - aS2 + b0 + b - 3*b3 - bS1)*x^3 +
+(a - 3*a3 - aS1 + b0 - b + 3*b3 + bS1)*x^4 +
+(- a + 3*a3 + aS1 + b + b0 + bS2)*x^5 +
+(a + aS2 + b0 + bS1)*x^6 +
+(aS1 + b + b0)*x^7 +
+(a + b0)*x^8 
+
+### TODO !!!
 
 ###
 b0 - b = 1
@@ -481,18 +490,9 @@ n = 9
 #
 m = complex(re=cos(2*pi/n), im=sin(2*pi/n))
 #
-b0 = 1/n
-# a = - b0
-# b = b0 - 1
-# aS1 = -b - b0
-# aS2 = -2*b0
-# bS1 = 2*b0
-# bS2 = 2*b0
+b0 = 1/n # TODO: ???
 ###
-a1 = -b0 / (m^3+m^4+1)
-a2 = -b0 / (m^1+m^6+1)
-a3 = -b0 / (m^2+m^5+1)
-a4 = -b0 / (m^2+m^5+1)
+a = ...
 b1 = (b0 - 1) * 2 / (n-1)
 b2 = (b0 - 1) * 2 / (n-1)
 b3 = (b0 - 1) * 2 / (n-1)
