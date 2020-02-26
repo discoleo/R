@@ -2,12 +2,21 @@
 ########################
 ###
 ### Leonard Mada
+### [the one and only]
 ###
 ### Exact Integration of Polynomial Fractions
 ### - Roots of unity:
-###   Integral( 1/ (x^n - 1) )dx
+###   Integral( 1 / (x^n - 1) )dx
+### - Roots of minus unity:
+###   Integral( 1 / (x^n + 1) )dx
+### - TODO: Polynomial fractions:
+###   Integral( P(x) / (x^n + 1) )dx
 ###
 ### version pre-1.alfa [draft]
+### 2020-02-26
+### - all powers: odd + even;
+### - both roots of unity & minus unity;
+### - TODO: fix "sporadic" bug for interval (-0.n, 0.n)
 ### 2020-02-24
 ### - all odd powers;
 ### 2020-02-23
@@ -18,32 +27,74 @@
 ### helper functions ###
 
 # Fraction Decomposition: 1/(x^n - 1)
-decompose.fr = function(n) {
-	### NOTE: Works ONLY if n = odd !
-	# [both odd primes and all other odd powers tested!]
-	# roots of unity
-	m = roots1.conj(n)
-	# coefficients
-	b0 = 1/n
-	a.sol = b0 * m$m.sum
-	b.sol = rep(-2*b0, (n-1)/2)
-	# generate functions:
+decompose.fr = function(n, type=c("U+", "U-")) {
+	### v 2.0
+	### works both with n = odd & n = even!
+	type = match.arg(type)
+	
+	### generate functions:
+	# simple eval
+	if(type == "U-") {
+		diff = -1;
+	} else {
+		diff = 1;
+	}
 	eval.fr = function(x) {
-		1 / (x^n - 1)
+		1 / (x^n - diff)
 	}
-	#
-	m.shift = m$m.sum/2
-	D = b.sol + a.sol*m.shift
-	m.sq = sqrt(1 - m.shift^2)
-	rez.f = function(x) {
-		b0*log(x - 1) +
-		sum(a.sol/2*log((x - m$m.conj[,1])*(x - m$m.conj[,2]))) +
-		sum(D / m.sq * atan((x - m.shift)/m.sq))
+	
+	if(n %% 2 == 1) {
+		# roots of unity
+		m = roots1.conj(n)
+		# coefficients
+		b0 = 1/n
+		a.sol = b0 * m$m.sum
+		b.sol = rep(-2*b0, (n-1)/2)
+		#
+		m.shift = m$m.sum/2
+		D = b.sol + a.sol*m.shift
+		m.sq = sqrt(1 - m.shift^2)
+		rez.f = function(x) {
+			b0*log(x - 1) +
+			sum(a.sol/2*log((x - m$m.conj[,1])*(x - m$m.conj[,2]))) +
+			sum(D / m.sq * atan((x - m.shift)/m.sq))
+		}
+		if(type == "U-") {
+			u.minus = -1; # complex(re=cos(pi/n), im=sin(pi/n))
+			u.mult = 1; # - u.minus;
+		} else {
+			u.minus = 1;
+			u.mult = 1;
+		}
+		# Exact integration
+		integrate.exact = function(low, upper) {
+			low = low / u.minus;
+			upper = upper / u.minus;
+			if(Re(low) < 1 | Re(upper) < 1) {
+				low = as.complex(low)
+				upper = as.complex(upper)
+			}
+			rez = rez.f(upper) - rez.f(low)
+			return(rez * u.mult)
+		}
+	} else {
+		if(type == "U-") {
+			# TODO: bug with root of unity
+			u.minus = complex(re=cos(pi/n), im=sin(pi/n))
+			u.mult = - u.minus;
+		} else {
+			u.minus = 1;
+			u.mult = 1;
+		}
+		f1 = decompose.fr(n/2)$integrate
+		f2 = decompose.fr(n/2, type="U-")$integrate
+		integrate.exact = function(low, upper) {
+			low = low / u.minus;
+			upper = upper / u.minus;
+			(f1(low, upper) - f2(low, upper))/2 * u.mult;
+		}
 	}
-	integrate.exact = function(low, upper) {
-		rez = rez.f(upper) - rez.f(low)
-		return(rez)
-	}
+	
 	integrate.numeric = function(low, upper, subdivisions=4*1024, rel.tol=1E-10) {
 		integrate(eval.fr, lower=low, upper=upper, subdivisions=subdivisions, rel.tol=rel.tol)
 	}
@@ -57,6 +108,7 @@ decompose.fr = function(n) {
 	}
 	#
 	return (list(
+		n=n,
 		eval=eval.fr,
 		integrate = integrate.exact,
 		integrate.num = integrate.numeric,
@@ -474,7 +526,19 @@ rez.f(top, a.sol, b.sol, b0, m.conj) - rez.f(low, a.sol, b.sol, b0, m.conj)
 (- a + 3*a3 + aS1 + b + b0 + bS2)*x^5 +
 (a + aS2 + b0 + bS1)*x^6 +
 (aS1 + b + b0)*x^7 +
-(a + b0)*x^8 
+(a + b0)*x^8
+
+
+(- b + b0 - 1) +
+(- a + b0 - bS1)*x^1 +
+(- aS1 - b + b0 - bS2)*x^2 +
+(- a - aS2 + b0 + b1 + b2 - 2*b3 + b4 - bS1)*x^3 +
+(a1 + a2 - 2*a3 + a4 - aS1 + b0 - b1 - b2 + 2*b3 - b4 + bS1)*x^4 +
+(- a1 - a2 + 2*a3 - a4 + aS1 + b + b0 + bS2)*x^5 +
+(a + aS2 + b0 + bS1)*x^6 +
+(aS1 + b + b0)*x^7 +
+(a + b0)*x^8
+
 
 ### TODO !!!
 
@@ -736,4 +800,25 @@ rez.f(top, a.sol, b.sol, b0, m.conj) - rez.f(low, a.sol, b.sol, b0, m.conj)
 # curve(fr.f, from=low, to=top)
 
 
+
+##################
+##################
+
+### Case n = 15
+
+(- b + b0 - 1) +
+(- a + b0 - bS1)*x^1 +
+(- aS1 - b + b0 - bS2)*x^2 +
+(- a - aS2 + b0 + b1 + b1*m^6 + b1*m^9 + b2 + b2*m^3 + b2*m^12 + b3 + b3*m^3 + b3*m^12 + b4 + b4*m^6 + b4*m^9 - b5 + b5*m^3 + b5*m^6 + b5*m^9 + b5*m^12 + b6 + b6*m^6 + b6*m^9 + b7 + b7*m^3 + b7*m^12 - bS1)*x^3 +
+(a1 + a1*m^6 + a1*m^9 + a2 + a2*m^3 + a2*m^12 + a3 + a3*m^3 + a3*m^12 + a4 + a4*m^6 + a4*m^9 - a5 + a5*m^3 + a5*m^6 + a5*m^9 + a5*m^12 + a6 + a6*m^6 + a6*m^9 + a7 + a7*m^3 + a7*m^12 - aS1 + b0 + b0*m + b0*m^2 + b0*m^4 + b0*m^5 + b0*m^7 + b0*m^8 + b0*m^10 + b0*m^11 + b0*m^13 + b0*m^14 - 2*b1 - b1*m^2 - b1*m^3 - b1*m^4 - b1*m^6 - b1*m^9 - b1*m^11 - b1*m^12 - b1*m^13 - 2*b2 - b2*m^3 - b2*m^4 - b2*m^6 - b2*m^7 - b2*m^8 - b2*m^9 - b2*m^11 - b2*m^12 - b3*m - b3*m^2 - b3*m^4 - b3*m^5 - b3*m^7 - b3*m^8 - b3*m^10 - b3*m^11 - b3*m^13 - b3*m^14 - 2*b4 - b4*m - b4*m^3 - b4*m^6 - b4*m^7 - b4*m^8 - b4*m^9 - b4*m^12 - b4*m^14 - 2*b5 - b5*m^3 - 2*b5*m^5 - b5*m^6 - b5*m^9 - 2*b5*m^10 - b5*m^12 - b6*m - b6*m^2 - b6*m^4 - b6*m^5 - b6*m^7 - b6*m^8 - b6*m^10 - b6*m^11 - b6*m^13 - b6*m^14 - 2*b7 - b7*m - b7*m^2 - b7*m^3 - b7*m^6 - b7*m^9 - b7*m^12 - b7*m^13 - b7*m^14)*x^4 +
+(- 2*a1 - a1*m^2 - a1*m^3 - a1*m^4 - a1*m^6 - a1*m^9 - a1*m^11 - a1*m^12 - a1*m^13 - 2*a2 - a2*m^3 - a2*m^4 - a2*m^6 - a2*m^7 - a2*m^8 - a2*m^9 - a2*m^11 - a2*m^12 - a3*m - a3*m^2 - a3*m^4 - a3*m^5 - a3*m^7 - a3*m^8 - a3*m^10 - a3*m^11 - a3*m^13 - a3*m^14 - 2*a4 - a4*m - a4*m^3 - a4*m^6 - a4*m^7 - a4*m^8 - a4*m^9 - a4*m^12 - a4*m^14 - 2*a5 - a5*m^3 - 2*a5*m^5 - a5*m^6 - a5*m^9 - 2*a5*m^10 - a5*m^12 - a6*m - a6*m^2 - a6*m^4 - a6*m^5 - a6*m^7 - a6*m^8 - a6*m^10 - a6*m^11 - a6*m^13 - a6*m^14 - 2*a7 - a7*m - a7*m^2 - a7*m^3 - a7*m^6 - a7*m^9 - a7*m^12 - a7*m^13 - a7*m^14 - b0 - b0*m^3 - b0*m^5 - b0*m^6 - b0*m^9 - b0*m^10 - b0*m^12 + 2*b1 + b1*m^2 + b1*m^4 + b1*m^5 + b1*m^6 + b1*m^7 + b1*m^8 + b1*m^9 + b1*m^10 + b1*m^11 + b1*m^13 + 2*b2 + b2*m + b2*m^3 + b2*m^4 + b2*m^5 + b2*m^7 + b2*m^8 + b2*m^10 + b2*m^11 + b2*m^12 + b2*m^14 + 2*b3 + 2*b3*m^3 + b3*m^5 + 2*b3*m^6 + 2*b3*m^9 + b3*m^10 + 2*b3*m^12 + 2*b4 + b4*m + b4*m^2 + b4*m^5 + b4*m^6 + b4*m^7 + b4*m^8 + b4*m^9 + b4*m^10 + b4*m^13 + b4*m^14 - b5 - b5*m^5 - b5*m^10 + 2*b6 + 2*b6*m^3 + b6*m^5 + 2*b6*m^6 + 2*b6*m^9 + b6*m^10 + 2*b6*m^12 + 2*b7 + b7*m + b7*m^2 + b7*m^3 + b7*m^4 + b7*m^5 + b7*m^10 + b7*m^11 + b7*m^12 + b7*m^13 + b7*m^14)*x^5 +
+(2*a1 + a1*m^2 + a1*m^4 + a1*m^5 + a1*m^6 + a1*m^7 + a1*m^8 + a1*m^9 + a1*m^10 + a1*m^11 + a1*m^13 + 2*a2 + a2*m + a2*m^3 + a2*m^4 + a2*m^5 + a2*m^7 + a2*m^8 + a2*m^10 + a2*m^11 + a2*m^12 + a2*m^14 + 2*a3 + 2*a3*m^3 + a3*m^5 + 2*a3*m^6 + 2*a3*m^9 + a3*m^10 + 2*a3*m^12 + 2*a4 + a4*m + a4*m^2 + a4*m^5 + a4*m^6 + a4*m^7 + a4*m^8 + a4*m^9 + a4*m^10 + a4*m^13 + a4*m^14 - a5 - a5*m^5 - a5*m^10 + 2*a6 + 2*a6*m^3 + a6*m^5 + 2*a6*m^6 + 2*a6*m^9 + a6*m^10 + 2*a6*m^12 + 2*a7 + a7*m + a7*m^2 + a7*m^3 + a7*m^4 + a7*m^5 + a7*m^10 + a7*m^11 + a7*m^12 + a7*m^13 + a7*m^14 + b0 + b0*m^3 - b0*m^5 + b0*m^6 + b0*m^9 - b0*m^10 + b0*m^12 - 2*b1 + b1*m - b1*m^2 - b1*m^3 - b1*m^6 - b1*m^9 - b1*m^12 - b1*m^13 + b1*m^14 - 2*b2 + b2*m^2 - b2*m^3 - b2*m^4 - b2*m^6 - b2*m^9 - b2*m^11 - b2*m^12 + b2*m^13 - b3*m - b3*m^4 - b3*m^5 - b3*m^10 - b3*m^11 - b3*m^14 - 2*b4 - b4*m^3 + b4*m^4 - b4*m^6 - b4*m^7 - b4*m^8 - b4*m^9 + b4*m^11 - b4*m^12 - 2*b5 - b5*m^3 - b5*m^6 - b5*m^9 - b5*m^12 - b6*m^2 - b6*m^5 - b6*m^7 - b6*m^8 - b6*m^10 - b6*m^13 - 2*b7 - b7*m - b7*m^3 - b7*m^6 + b7*m^7 + b7*m^8 - b7*m^9 - b7*m^12 - b7*m^14)*x^6 +
+(- 2*a1 + a1*m - a1*m^2 - a1*m^3 - a1*m^6 - a1*m^9 - a1*m^12 - a1*m^13 + a1*m^14 - 2*a2 + a2*m^2 - a2*m^3 - a2*m^4 - a2*m^6 - a2*m^9 - a2*m^11 - a2*m^12 + a2*m^13 - a3*m - a3*m^4 - a3*m^5 - a3*m^10 - a3*m^11 - a3*m^14 - 2*a4 - a4*m^3 + a4*m^4 - a4*m^6 - a4*m^7 - a4*m^8 - a4*m^9 + a4*m^11 - a4*m^12 - 2*a5 - a5*m^3 - a5*m^6 - a5*m^9 - a5*m^12 - a6*m^2 - a6*m^5 - a6*m^7 - a6*m^8 - a6*m^10 - a6*m^13 - 2*a7 - a7*m - a7*m^3 - a7*m^6 + a7*m^7 + a7*m^8 - a7*m^9 - a7*m^12 - a7*m^14 - b0*m - b0*m^2 - b0*m^4 - 2*b0*m^5 - b0*m^7 - b0*m^8 - 2*b0*m^10 - b0*m^11 - b0*m^13 - b0*m^14 + 2*b1 - b1*m + b1*m^2 + b1*m^3 + b1*m^6 + b1*m^9 + b1*m^12 + b1*m^13 - b1*m^14 + 2*b2 - b2*m^2 + b2*m^3 + b2*m^4 + b2*m^6 + b2*m^9 + b2*m^11 + b2*m^12 - b2*m^13 + b3*m + b3*m^4 + b3*m^5 + b3*m^10 + b3*m^11 + b3*m^14 + 2*b4 + b4*m^3 - b4*m^4 + b4*m^6 + b4*m^7 + b4*m^8 + b4*m^9 - b4*m^11 + b4*m^12 + 2*b5 + b5*m^3 + b5*m^6 + b5*m^9 + b5*m^12 + b6*m^2 + b6*m^5 + b6*m^7 + b6*m^8 + b6*m^10 + b6*m^13 + 2*b7 + b7*m + b7*m^3 + b7*m^6 - b7*m^7 - b7*m^8 + b7*m^9 + b7*m^12 + b7*m^14)*x^7 +
+(2*a1 - a1*m + a1*m^2 + a1*m^3 + a1*m^6 + a1*m^9 + a1*m^12 + a1*m^13 - a1*m^14 + 2*a2 - a2*m^2 + a2*m^3 + a2*m^4 + a2*m^6 + a2*m^9 + a2*m^11 + a2*m^12 - a2*m^13 + a3*m + a3*m^4 + a3*m^5 + a3*m^10 + a3*m^11 + a3*m^14 + 2*a4 + a4*m^3 - a4*m^4 + a4*m^6 + a4*m^7 + a4*m^8 + a4*m^9 - a4*m^11 + a4*m^12 + 2*a5 + a5*m^3 + a5*m^6 + a5*m^9 + a5*m^12 + a6*m^2 + a6*m^5 + a6*m^7 + a6*m^8 + a6*m^10 + a6*m^13 + 2*a7 + a7*m + a7*m^3 + a7*m^6 - a7*m^7 - a7*m^8 + a7*m^9 + a7*m^12 + a7*m^14 + b0 + b0*m^3 - b0*m^5 + b0*m^6 + b0*m^9 - b0*m^10 + b0*m^12 - 2*b1 - b1*m^2 - b1*m^4 - b1*m^5 - b1*m^6 - b1*m^7 - b1*m^8 - b1*m^9 - b1*m^10 - b1*m^11 - b1*m^13 - 2*b2 - b2*m - b2*m^3 - b2*m^4 - b2*m^5 - b2*m^7 - b2*m^8 - b2*m^10 - b2*m^11 - b2*m^12 - b2*m^14 - 2*b3 - 2*b3*m^3 - b3*m^5 - 2*b3*m^6 - 2*b3*m^9 - b3*m^10 - 2*b3*m^12 - 2*b4 - b4*m - b4*m^2 - b4*m^5 - b4*m^6 - b4*m^7 - b4*m^8 - b4*m^9 - b4*m^10 - b4*m^13 - b4*m^14 + b5 + b5*m^5 + b5*m^10 - 2*b6 - 2*b6*m^3 - b6*m^5 - 2*b6*m^6 - 2*b6*m^9 - b6*m^10 - 2*b6*m^12 - 2*b7 - b7*m - b7*m^2 - b7*m^3 - b7*m^4 - b7*m^5 - b7*m^10 - b7*m^11 - b7*m^12 - b7*m^13 - b7*m^14)*x^8 +
+(- 2*a1 - a1*m^2 - a1*m^4 - a1*m^5 - a1*m^6 - a1*m^7 - a1*m^8 - a1*m^9 - a1*m^10 - a1*m^11 - a1*m^13 - 2*a2 - a2*m - a2*m^3 - a2*m^4 - a2*m^5 - a2*m^7 - a2*m^8 - a2*m^10 - a2*m^11 - a2*m^12 - a2*m^14 - 2*a3 - 2*a3*m^3 - a3*m^5 - 2*a3*m^6 - 2*a3*m^9 - a3*m^10 - 2*a3*m^12 - 2*a4 - a4*m - a4*m^2 - a4*m^5 - a4*m^6 - a4*m^7 - a4*m^8 - a4*m^9 - a4*m^10 - a4*m^13 - a4*m^14 + a5 + a5*m^5 + a5*m^10 - 2*a6 - 2*a6*m^3 - a6*m^5 - 2*a6*m^6 - 2*a6*m^9 - a6*m^10 - 2*a6*m^12 - 2*a7 - a7*m - a7*m^2 - a7*m^3 - a7*m^4 - a7*m^5 - a7*m^10 - a7*m^11 - a7*m^12 - a7*m^13 - a7*m^14 - b0 - b0*m^3 - b0*m^5 - b0*m^6 - b0*m^9 - b0*m^10 - b0*m^12 + 2*b1 + b1*m^2 + b1*m^3 + b1*m^4 + b1*m^6 + b1*m^9 + b1*m^11 + b1*m^12 + b1*m^13 + 2*b2 + b2*m^3 + b2*m^4 + b2*m^6 + b2*m^7 + b2*m^8 + b2*m^9 + b2*m^11 + b2*m^12 + b3*m + b3*m^2 + b3*m^4 + b3*m^5 + b3*m^7 + b3*m^8 + b3*m^10 + b3*m^11 + b3*m^13 + b3*m^14 + 2*b4 + b4*m + b4*m^3 + b4*m^6 + b4*m^7 + b4*m^8 + b4*m^9 + b4*m^12 + b4*m^14 + 2*b5 + b5*m^3 + 2*b5*m^5 + b5*m^6 + b5*m^9 + 2*b5*m^10 + b5*m^12 + b6*m + b6*m^2 + b6*m^4 + b6*m^5 + b6*m^7 + b6*m^8 + b6*m^10 + b6*m^11 + b6*m^13 + b6*m^14 + 2*b7 + b7*m + b7*m^2 + b7*m^3 + b7*m^6 + b7*m^9 + b7*m^12 + b7*m^13 + b7*m^14)*x^9 +
+(2*a1 + a1*m^2 + a1*m^3 + a1*m^4 + a1*m^6 + a1*m^9 + a1*m^11 + a1*m^12 + a1*m^13 + 2*a2 + a2*m^3 + a2*m^4 + a2*m^6 + a2*m^7 + a2*m^8 + a2*m^9 + a2*m^11 + a2*m^12 + a3*m + a3*m^2 + a3*m^4 + a3*m^5 + a3*m^7 + a3*m^8 + a3*m^10 + a3*m^11 + a3*m^13 + a3*m^14 + 2*a4 + a4*m + a4*m^3 + a4*m^6 + a4*m^7 + a4*m^8 + a4*m^9 + a4*m^12 + a4*m^14 + 2*a5 + a5*m^3 + 2*a5*m^5 + a5*m^6 + a5*m^9 + 2*a5*m^10 + a5*m^12 + a6*m + a6*m^2 + a6*m^4 + a6*m^5 + a6*m^7 + a6*m^8 + a6*m^10 + a6*m^11 + a6*m^13 + a6*m^14 + 2*a7 + a7*m + a7*m^2 + a7*m^3 + a7*m^6 + a7*m^9 + a7*m^12 + a7*m^13 + a7*m^14 + b0 + b0*m + b0*m^2 + b0*m^4 + b0*m^5 + b0*m^7 + b0*m^8 + b0*m^10 + b0*m^11 + b0*m^13 + b0*m^14 - b1 + b1*m - b1*m^6 - b1*m^9 + b1*m^14 - b2 + b2*m^2 - b2*m^3 - b2*m^12 + b2*m^13 - b3 - b4 + b4*m^4 - b4*m^6 - b4*m^9 + b4*m^11 + b5 - b5*m^3 + b5*m^5 - b5*m^6 - b5*m^9 + b5*m^10 - b5*m^12 - b6 - b7 - b7*m^3 + b7*m^7 + b7*m^8 - b7*m^12)*x^10 +
+(- a1 + a1*m - a1*m^6 - a1*m^9 + a1*m^14 - a2 + a2*m^2 - a2*m^3 - a2*m^12 + a2*m^13 - a3 - a4 + a4*m^4 - a4*m^6 - a4*m^9 + a4*m^11 + a5 - a5*m^3 + a5*m^5 - a5*m^6 - a5*m^9 + a5*m^10 - a5*m^12 - a6 - a7 - a7*m^3 + a7*m^7 + a7*m^8 - a7*m^12 + b - b0*m^3 - b0*m^6 - b0*m^9 - b0*m^12 + bS2)*x^11 +
+(a + aS2 + b0 + bS1)*x^12 +
+(aS1 + b + b0)*x^13 +
+(a + b0)*x^14 
 
