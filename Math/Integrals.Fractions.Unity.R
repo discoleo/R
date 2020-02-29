@@ -10,19 +10,24 @@
 ### - Roots of minus unity:
 ###   Integral( 1 / (x^n + 1) )dx
 ### - Polynomial fractions:
-###   Integral( P(x) / (x^n + 1) )dx
+###   Integral( P(x) / (x^n - 1) )dx
 ###
 ### version pre-1.beta [draft]
+###
+### 2020-02-29
+### 2020-02-28
+### - Cases: n = 9, n = 15;
 ### 2020-02-27
-### - removed old derivations;
 ### - polynomial fractions: P(x) / (x^n - 1)
-###  -- n = all primes;
-###    (straightforward; TODO: generating function;)
-###  -- TODO: n = 9;
+###  -- n = all primes (straightforward);
+###     TODO: generating function for any n (prime);
+###  -- TODO: n = 9; [SOLVED]
+### - removed old derivations;
 ### 2020-02-26
 ### - all powers: odd + even;
 ### - both roots of unity & minus unity;
-### - TODO: fix "sporadic" bug for interval (-0.n, 0.n)
+### - TODO:
+###   fix "sporadic" bug for interval (-0.n, 0.n)
 ### 2020-02-24
 ### - all odd powers;
 ### 2020-02-23
@@ -355,9 +360,12 @@ I.gen = function(n) {
 	r = c(I0, In_1, In_2, Ihalf, Ihalf_inv)
 	return(r)
 }
-Iinv.gen = function(int.f, sign.inverse=FALSE) {
+Iinv.gen = function(int.f, sign.inverse=FALSE, limits.inverse=FALSE) {
 	mult = ifelse(sign.inverse, -1, 1);
 	f = function(low, upper) {
+		if(limits.inverse) {
+			low = -low; upper = -upper; # WHY is needed?
+		}
 		int.f(1/low, 1/upper) * mult
 	}
 	return(f)
@@ -368,7 +376,7 @@ Ihalf.gen = function(int.f, sign.inverse=FALSE) {
 			low = -low;
 			upper = -upper;
 		}
-		# valid only for odd powers
+		# valid only for odd base powers & even exponents
 		if(Re(low) < 0 | Re(upper) < 0) {
 			low = as.complex(low)
 			upper = as.complex(upper)
@@ -378,6 +386,17 @@ Ihalf.gen = function(int.f, sign.inverse=FALSE) {
 		r = int.f(low, upper) + int.f(-low, -upper)
 		return(r)
 	}
+}
+Idx.gen = function(n, dx.pow, div=dx.pow) {
+	I = decompose.fr(n);
+	I0 = I$integrate
+	Id = function(low, upper) {
+		low = low^dx.pow
+		upper = upper^dx.pow
+		r = I0(low, upper) / div
+		return(r)
+	}
+	return(Id)
 }
 
 ##############
@@ -462,7 +481,6 @@ I.num(low, upper, 0)
 #####################
 
 ### Case n = 9
-# TODO: !!!
 n = 9
 
 I.num = I.num.gen(n)
@@ -476,71 +494,15 @@ I4 = I[[4]]
 I3 = I[[5]]
 I6 = Ihalf.gen(I4)
 I1 = Iinv.gen(I6)
-# TODO:
+# Different cycle: x^2 / ((x^3)^3 - 1)
+I2 = Idx.gen(3, 3)
+I5 = Ihalf.gen(I2)
 # 6*x^8 - 3*(x^5 + x^2)
 # I52 = 2*I8 - Ideriv.gen(n, pow)
-I5 = Ihalf.gen(I0) # incorect !!!
-I2 = Iinv.gen(I5)
 
 ### Test
 low = 2
 upper = 4
-
-I8(low, upper)
-I.num(low, upper, 8)
-
-I7(low, upper)
-I.num(low, upper, 7)
-
-I6(low, upper)
-I.num(low, upper, 6)
-
-I5(low, upper)
-I.num(low, upper, 5)
-
-I4(low, upper)
-I.num(low, upper, 4)
-
-I3(low, upper)
-I.num(low, upper, 3)
-
-I2(low, upper)
-I.num(low, upper, 2)
-
-I1(low, upper)
-I.num(low, upper, 1)
-
-
-#####################
-
-### Case n = 11
-n = 11
-
-I.num = I.num.gen(n)
-# EXACT INTEGRALS
-I = I.gen(n)
-#
-I0  = I[[1]]
-I10 = I[[2]]
-I9  = I[[3]]
-I5  = I[[4]]
-I4  = I[[5]]
-I7 = Ihalf.gen(I4)
-I2 = Iinv.gen(I7)
-I6 = Ihalf.gen(I2)
-I3 = Iinv.gen(I6)
-I8 = Ihalf.gen(I6, sign.inverse=TRUE)
-I1 = Iinv.gen(I8, sign.inverse=TRUE)
-
-### Test
-low = 2
-upper = 4
-
-I10(low, upper)
-I.num(low, upper, 10)
-
-I9(low, upper)
-I.num(low, upper, 9)
 
 I8(low, upper)
 I.num(low, upper, 8)
@@ -568,4 +530,83 @@ I.num(low, upper, 1)
 
 I0(low, upper)
 I.num(low, upper, 0)
+
+
+#####################
+
+### Case n = 11
+n = 11
+
+I.num = I.num.gen(n)
+# EXACT INTEGRALS
+I = I.gen(n)
+#
+I0  = I[[1]]
+I10 = I[[2]]
+I9  = I[[3]]
+I5  = I[[4]]
+I4  = I[[5]]
+I7 = Ihalf.gen(I4)
+I2 = Iinv.gen(I7)
+I6 = Ihalf.gen(I2)
+I3 = Iinv.gen(I6)
+I8 = Ihalf.gen(I6, sign.inverse=TRUE)
+I1 = Iinv.gen(I8, sign.inverse=TRUE)
+I.all = c(I10, I9, I8, I7, I6, I5, I4, I3, I2, I1, I0)
+
+### Test
+low = 2
+upper = 4
+
+for(i in 1:n) {
+	cat("\nPow = "); cat(n - i); cat("\n")
+	cat(I.all[[i]](low, upper))
+	cat("\n")
+	print(I.num(low, upper, n - i))
+}
+
+# loss of accuracy for I8 and I1 !
+
+
+#####################
+
+### Case n = 15
+n = 15
+
+I.num = I.num.gen(n)
+# EXACT INTEGRALS
+I = I.gen(n)
+#
+I0  = I[[1]]
+I14 = I[[2]]
+I13 = I[[3]]
+I7  = I[[4]]
+I6  = I[[5]]
+I10 = Ihalf.gen(I6)
+I3  = Iinv.gen(I10)
+I12 = Ihalf.gen(I10)
+I1  = Iinv.gen(I12, sign.inverse=TRUE, limits.inverse=TRUE)
+# Different cycle: x^2/((x^3)^5 - 1)
+I2  = Idx.gen(5, 3)
+I11 = Iinv.gen(I2)
+I8  = Ihalf.gen(I2)
+I5  = Iinv.gen(I8)
+# Different cycle: x^4/((x^5)^3 - 1)
+I4  = Idx.gen(3, 5)
+I9  = Iinv.gen(I4)
+#
+I.all = c(I14, I13, I12, I11, I10, I9, I8, I7, I6, I5, I4, I3, I2, I1, I0)
+
+### Test
+low = 2
+upper = 4
+
+for(i in 1:n) {
+	cat("\nPow = "); cat(n - i); cat("\n")
+	cat(I.all[[i]](low, upper))
+	cat("\n")
+	print(I.num(low, upper, n - i))
+}
+
+# loss of accuracy for I1 !
 
