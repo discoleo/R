@@ -11,9 +11,14 @@
 ###   Integral( 1 / (x^n + 1) )dx
 ### - Polynomial fractions:
 ###   Integral( P(x) / (x^n - 1) )dx
+### - Polynomial fractions:
+###   Integral( P(x) / (x^n - 1)^2 )dx
 ###
-### version pre-1.beta [draft]
+### version 1 [RC1] [draft]
 ###
+### 2020-03-01
+### - polynomial fractions: P(x) / (x^n - 1)^2
+###   Cases: n=3, n=5, n=7;
 ### 2020-02-29
 ### 2020-02-28
 ### - Cases: n = 9, n = 15;
@@ -39,6 +44,8 @@
 ### Base fraction: 1 / (x^n - 1)
 ### Part B:
 ### Polynomial fraction: P(x) / (x^n - 1)
+### Part C:
+### Polynomial fraction: P(x) / (x^n - 1)^2
 
 
 ### Publishing:
@@ -370,7 +377,8 @@ Iinv.gen = function(int.f, sign.inverse=FALSE, limits.inverse=FALSE) {
 	}
 	return(f)
 }
-Ihalf.gen = function(int.f, sign.inverse=FALSE) {
+Ihalf.gen = function(int.f, sign.inverse=FALSE, asSum=TRUE, div=1) {
+	# div is used for: 4*x^n = 1/(x^n-1)^2 - 1/(x^n+1)^2
 	Ihalf = function(low, upper) {
 		if(sign.inverse) {
 			low = -low;
@@ -383,8 +391,12 @@ Ihalf.gen = function(int.f, sign.inverse=FALSE) {
 		}
 		low = sqrt(low)
 		upper = sqrt(upper)
-		r = int.f(low, upper) + int.f(-low, -upper)
-		return(r)
+		if(asSum) {
+			r = int.f(low, upper) + int.f(-low, -upper)
+		} else {
+			r = int.f(low, upper) - int.f(-low, -upper)
+		}
+		return(r / div)
 	}
 }
 Idx.gen = function(n, dx.pow, div=dx.pow) {
@@ -406,15 +418,16 @@ Idxfr.gen = function(n) {
 	#
 	# d (1 / (x^n - 1)) = -n*x^(n-1) / (x^n - 1)^2
 	# d (x / (x^n - 1)) = -((n-1)*x^n + 1) / (x^n - 1)^2
-	# d (x^j / (x^n - 1)) = -((n-j)*x^(n + j - 1) + 1) / (x^n - 1)^2
-	Ipow = function(x, pow) {
+	# d (x^j / (x^n - 1)) = -((n-j)*x^(n + j - 1) + j*x^(j - 1)) / (x^n - 1)^2
+	Ipow = function(x, pow, base.pow=1) {
 		if(pow == 0) {
-			r = 1 / (x^n - 1)
+			r = 1 / (x^n - 1)^base.pow
 		} else {
-			r = x^pow / (x^n - 1)
+			r = x^pow / (x^n - 1)^base.pow
 		}
 		return(r)
 	}
+	#
 	I0 = function(low, upper) {
 		r = -((n-1)*I0.base(low, upper) + Ipow(upper, 1) - Ipow(low, 1)) / n;
 		return(r)
@@ -427,7 +440,34 @@ Idxfr.gen = function(n) {
 		r = -(Ipow(upper, 0) - Ipow(low, 0)) / n
 		return(r)
 	}
-	return(c(I0, In, In_1))
+	#  d ((x^n - 1)^2) = 2*n * x^(n-1)*(x^n - 1)
+	I2n_1 = function(low, upper) {
+		r = log( (upper^n - 1) / (low^n - 1) ) / n +
+			In_1(low, upper)
+		return(r)
+	}
+	# d (x^j / (x^n - 1)) = -((n-j)*x^(n + j - 1) + j*x^(j - 1)) / (x^n - 1)^2
+	Ifrhigh.gen = function(pow, Ipow_1) {
+		# I.pow = pow - 1
+		Ijpow = function(low, upper) {
+			r = - Ipow(upper, pow) + Ipow(low, pow) - (n - pow) * Ipow_1(low, upper)
+			r = r / pow
+			return(r) # r.pow = j - 1
+		}
+		return(Ijpow)
+	}
+	Ifrlow.gen = function(pow, Ipow_1) {
+		# I.pow = pow - 1
+		Ijpow = function(low, upper) {
+			r = - Ipow(upper, pow) + Ipow(low, pow) - pow * Ipow_1(low, upper)
+			r = r / (n - pow)
+			return(r) # r.pow = n + j - 1
+		}
+		return(Ijpow)
+	}
+	r.f = c(I0, I2n_1, In, In_1, Ifrhigh.gen, Ifrlow.gen);
+	#
+	return(r.f)
 }
 
 ##############
@@ -668,8 +708,9 @@ I.num = I.num.gen(n, 2)
 I = Idxfr.gen(n)
 #
 I0 = I[[1]]
-I3 = I[[2]]
-I2 = I[[3]]
+I5 = I[[2]]
+I3 = I[[3]]
+I2 = I[[4]]
 #
 I1 = Iinv.gen(I3, sign.inverse=TRUE)
 I4 = Iinv.gen(I0, sign.inverse=TRUE)
@@ -678,6 +719,9 @@ I4 = Iinv.gen(I0, sign.inverse=TRUE)
 ### Test
 low = 2
 upper = 4
+
+I5(low, upper)
+I.num(low, upper, 5)
 
 I4(low, upper)
 I.num(low, upper, 4)
@@ -693,6 +737,84 @@ I.num(low, upper, 1)
 
 I0(low, upper)
 I.num(low, upper, 0)
+
+
+#####################
+
+### Case n = 5
+n = 5
+
+I.num = I.num.gen(n, 2)
+# EXACT INTEGRALS
+I = Idxfr.gen(n)
+#
+I0 = I[[1]]
+I9 = I[[2]]
+I5 = I[[3]]
+I4 = I[[4]]
+#
+I8 = Iinv.gen(I0, sign.inverse=TRUE)
+I3 = Iinv.gen(I5, sign.inverse=TRUE)
+I2 = Ihalf.gen(I0, div=2)
+I6 = Iinv.gen(I2, sign.inverse=TRUE)
+I7 = I[[6]](3, I2)
+I1 = Iinv.gen(I7, sign.inverse=TRUE)
+#
+I.all = c(I9, I8, I7, I6, I5, I4, I3, I2, I1, I0)
+
+
+### Test
+low = 2
+upper = 4
+
+pow = 2
+for(i in 1:(pow*n)) {
+	cat("\nPow = "); cat(pow*n - i); cat("\n")
+	cat(I.all[[i]](low, upper))
+	cat("\n")
+	print(I.num(low, upper, pow*n - i))
+}
+
+
+#####################
+
+### Case n = 7
+n = 7
+
+I.num = I.num.gen(n, 2)
+# EXACT INTEGRALS
+I = Idxfr.gen(n)
+#
+I0  = I[[1]]
+I13 = I[[2]]
+I7  = I[[3]]
+I6  = I[[4]]
+#
+I12 = Iinv.gen(I0, sign.inverse=TRUE)
+I5  = Iinv.gen(I7, sign.inverse=TRUE)
+I3  = Ihalf.gen(I0, div=2)
+I9  = Iinv.gen(I3, sign.inverse=TRUE)
+I10 = I[[6]](4, I3)
+I2  = Iinv.gen(I10, sign.inverse=TRUE)
+I4  = Ihalf.gen(I2, div=2)
+I8  = Iinv.gen(I4, sign.inverse=TRUE)
+I11 = I[[6]](5, I4)
+I1  = Iinv.gen(I11, sign.inverse=TRUE)
+#
+I.all = c(I13, I12, I11, I10, I9, I8, I7, I6, I5, I4, I3, I2, I1, I0)
+
+
+### Test
+low = 2
+upper = 4
+
+pow = 2
+for(i in 1:(pow*n)) {
+	cat("\nPow = "); cat(pow*n - i); cat("\n")
+	cat(I.all[[i]](low, upper))
+	cat("\n")
+	print(I.num(low, upper, pow*n - i))
+}
 
 
 
