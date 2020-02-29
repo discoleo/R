@@ -334,9 +334,9 @@ f$integrate.all(lower, upper)
 #########################
 
 # generic functions
-I.num.gen = function(n) {
+I.num.gen = function(n, base.pow=1) {
 	f = function(low, upper, pow) {
-		integrate(function(x) x^pow/(x^n - 1), low, upper)
+		integrate(function(x) x^pow/(x^n - 1)^base.pow, low, upper)
 	}
 	return(f)
 }
@@ -397,6 +397,37 @@ Idx.gen = function(n, dx.pow, div=dx.pow) {
 		return(r)
 	}
 	return(Id)
+}
+# Composite Fractions
+Idxfr.gen = function(n) {
+	I.base = I.gen(n);
+	I0.base = I.base[[1]]
+	# I0.base = (x^n - 1) / (x^n - 1)^2
+	#
+	# d (1 / (x^n - 1)) = -n*x^(n-1) / (x^n - 1)^2
+	# d (x / (x^n - 1)) = -((n-1)*x^n + 1) / (x^n - 1)^2
+	# d (x^j / (x^n - 1)) = -((n-j)*x^(n + j - 1) + 1) / (x^n - 1)^2
+	Ipow = function(x, pow) {
+		if(pow == 0) {
+			r = 1 / (x^n - 1)
+		} else {
+			r = x^pow / (x^n - 1)
+		}
+		return(r)
+	}
+	I0 = function(low, upper) {
+		r = -((n-1)*I0.base(low, upper) + Ipow(upper, 1) - Ipow(low, 1)) / n;
+		return(r)
+	}
+	In = function(low, upper) {
+		r = I0.base(low, upper) + I0(low, upper)
+		return(r)
+	}
+	In_1 = function(low, upper) {
+		r = -(Ipow(upper, 0) - Ipow(low, 0)) / n
+		return(r)
+	}
+	return(c(I0, In, In_1))
 }
 
 ##############
@@ -565,7 +596,7 @@ for(i in 1:n) {
 	print(I.num(low, upper, n - i))
 }
 
-# loss of accuracy for I8 and I1 !
+# TODO: loss of accuracy for I8 and I1 !
 
 
 #####################
@@ -608,5 +639,61 @@ for(i in 1:n) {
 	print(I.num(low, upper, n - i))
 }
 
-# loss of accuracy for I1 !
+# TODO: loss of accuracy for I1 !
+
+
+#########################
+#########################
+#########################
+
+### Part C
+
+#########################
+###
+### Polynomial Fractions
+###   Composit Fractions
+###
+#########################
+
+### P(x) / (x^n - 1)^2
+
+
+#####################
+
+### Case n = 3
+n = 3
+
+I.num = I.num.gen(n, 2)
+# EXACT INTEGRALS
+I = Idxfr.gen(n)
+#
+I0 = I[[1]]
+I3 = I[[2]]
+I2 = I[[3]]
+#
+I1 = Iinv.gen(I3, sign.inverse=TRUE)
+I4 = Iinv.gen(I0, sign.inverse=TRUE)
+
+
+### Test
+low = 2
+upper = 4
+
+I4(low, upper)
+I.num(low, upper, 4)
+
+I3(low, upper)
+I.num(low, upper, 3)
+
+I2(low, upper)
+I.num(low, upper, 2)
+
+I1(low, upper)
+I.num(low, upper, 1)
+
+I0(low, upper)
+I.num(low, upper, 0)
+
+
+
 
