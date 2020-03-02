@@ -110,6 +110,16 @@ decompose.fr = function(n, type=c("U+", "U-")) {
 			rez = rez.f(upper) - rez.f(low)
 			return(rez * u.mult)
 		}
+	} else if(n == 2) {
+		if(type == "U-") {
+			integrate.exact = function(lower, upper) {
+				atan(upper) - atan(lower)
+			}
+		} else {
+			integrate.exact = function(lower, upper) {
+				log((upper-1)*(lower+1)/(upper+1)/(lower-1)) / 2
+			}
+		}
 	} else {
 		if(type == "U-") {
 			# TODO: bug with root of unity
@@ -215,6 +225,38 @@ f$integrate.all(lower, upper)
 # 3.439807 with absolute error < 1.4e-11
 
 
+### Roots of minus Unity
+f = decompose.fr(5, type="U-")
+
+lower = 1.001
+upper = 1024
+f$integrate.all(lower, upper)
+# 0.1801464+0i
+# 0.1801464 with absolute error < 2e-14
+
+####################
+
+###############
+### Case n = 6:
+# 1 / (x^6 - 1)
+
+# uses a different type of decomposition!
+# 1/(x^3 - 1) - 1/(x^3 + 1)
+f = decompose.fr(6)
+
+lower = 1.001
+upper = 1024
+f$integrate.all(lower, upper)
+# 0.9053347+0i
+# 0.9053347 with absolute error < 1.6e-14
+
+
+lower = 1 + 1E-8
+upper = 1024
+f$integrate.all(lower, upper)
+# 2.823739+0i
+# 2.823739 with absolute error < 2.6e-12
+
 ####################
 
 ###############
@@ -263,7 +305,41 @@ f$integrate.all(lower, upper)
 ### Case n = 13:
 # 1 / (x^13 - 1)
 
-# TODO: add results
+f = decompose.fr(13)
+
+lower = 1.001
+upper = 1024
+f$integrate.all(lower, upper)
+# 0.3448444+0i
+# 0.3448444 with absolute error < 6.5e-15
+
+
+lower = 1 + 1E-8
+upper = 1024
+f$integrate.all(lower, upper)
+# 1.229993+0i
+# 1.229993 with absolute error < 4.5e-12
+
+
+################
+### Case n = 16:
+# 1 / (x^16 - 1)
+
+# uses a different type of decomposition
+f = decompose.fr(16)
+
+lower = 1.001
+upper = 1024
+f$integrate.all(lower, upper)
+# 0.2656526+0i
+# 0.2656526 with absolute error < 5.2e-15
+
+
+lower = 1 + 1E-8
+upper = 1024
+f$integrate.all(lower, upper)
+# 0.9847423+0i
+# 0.9847423 with absolute error < 2.8e-12
 
 
 ################
@@ -296,7 +372,9 @@ lower = 1.001
 upper = 1024
 f$integrate.all(lower, upper)
 # 0.167701+0i
-# ERROR
+# Numeric: ERROR
+# possible with lower upper limit;
+upper = 4
 
 
 lower = 1 + 1E-8
@@ -318,7 +396,7 @@ f$integrate.all(lower, upper)
 # 0.02335263+0i
 # ERROR: wide discrepancy:
 # 4.879488e-33 with absolute error < 9.7e-33
-
+upper = 4; # OK - same result: 0.02335263;
 
 lower = 1 + 1E-8
 upper = 1024
@@ -682,6 +760,64 @@ for(i in 1:n) {
 # TODO: loss of accuracy for I1 !
 
 
+##################################
+##################################
+
+### Sequence Generation:
+n = 101
+
+seq.df = data.frame(id=1:(n-2), prev=NA, type=NA)
+levels(seq.df$type) = c("half", "inv")
+
+seq.start = 0
+pow.seq = c(seq.start, rep(NA, n - 2))
+pos = 1
+
+while(pos <= length(pow.seq)) {
+	current = pow.seq[pos]
+	pos = pos + 1
+	# Inverse
+	inv = (n - current - 2)
+	cat(inv); cat(", ");
+	isAdded = FALSE;
+	if(inv > 0 && is.na(seq.df$prev[inv])) {
+		seq.df$prev[inv] = current;
+		seq.df$type[inv] = "inv";
+		# if(inv %% 2 == 0) {
+		if(inv > 0) {
+			pow.seq[pos] = inv
+			isAdded = TRUE;
+		}
+	}
+	# Half
+	if(current %% 2 == 1) { next; }
+	half = (n + current - 1) / 2
+	if(half > 0 && is.na(seq.df$prev[half])) {
+		seq.df$prev[half] = current;
+		seq.df$type[half] = "half";
+		if(half > 0) {
+			pow.seq[ifelse(isAdded, pos+1, pos)] = half
+		}
+	}
+}
+
+table(is.na(seq.df$prev))
+table(seq.df$type)
+length(unique(pow.seq))
+
+# [1]  0 99 50 49 75 24 62 37 81 18 59 40 70 29 85 14 57 42 71 28 64 35 82 17 91  8 54 45
+# [29] 77 22 61 38 69 30 65 34 67 32 66 33 83 16 58 41 79 20 60 39 80 19 90  9 95  4 52 47
+# [57] 76 23 88 11 94  5 97  2 51 48 74 25 87 12 56 43 78 21 89 10 55 44 72 27 86 13 93  6
+# [85] 53 46 73 26 63 36 68 31 84 15 92  7 96  3 98  1
+
+
+### Sequence Generation:
+n = 10403
+# outside of main cycle: 202 numbers ;-)
+# [smiling Diffie]
+
+
+
 #########################
 #########################
 #########################
@@ -775,7 +911,6 @@ for(i in 1:(pow*n)) {
 	print(I.num(low, upper, pow*n - i))
 }
 
-
 #####################
 
 ### Case n = 7
@@ -816,6 +951,59 @@ for(i in 1:(pow*n)) {
 	print(I.num(low, upper, pow*n - i))
 }
 
+
+#####################
+
+### Case n = 11
+n = 11
+
+I.num = I.num.gen(n, 2)
+# EXACT INTEGRALS
+I = Idxfr.gen(n)
+#
+I0  = I[[1]]
+I21 = I[[2]]
+I11 = I[[3]]
+I10 = I[[4]]
+#
+I20 = Iinv.gen(I0, sign.inverse=TRUE)
+I9  = Iinv.gen(I11, sign.inverse=TRUE)
+I5  = Ihalf.gen(I0, div=2)
+I15 = Iinv.gen(I5, sign.inverse=TRUE)
+I16 = I[[6]](6, I5) # n + pow - 1
+I4  = Iinv.gen(I16, sign.inverse=TRUE)
+I7  = Ihalf.gen(I4, div=2)
+I13 = Iinv.gen(I7, sign.inverse=TRUE)
+I18 = I[[6]](8, I7) # n + pow - 1
+I2  = Iinv.gen(I18, sign.inverse=TRUE)
+I6  = Ihalf.gen(I2, div=2)
+I14 = Iinv.gen(I6, sign.inverse=TRUE)
+I8  = Ihalf.gen(I6, sign.inverse=TRUE, div=-2)
+I12 = Iinv.gen(I8, sign.inverse=TRUE)
+I19 = I[[6]](9, I8) # n + pow - 1
+I1  = Iinv.gen(I19, sign.inverse=TRUE)
+I17 = I[[6]](7, I6) # n + pow - 1
+I3  = Iinv.gen(I17, sign.inverse=TRUE)
+#
+I.all = c(I21, I20, I19, I18, I17, I16, I15, I14, I13, I12, I11, I10,
+	I9, I8, I7, I6, I5, I4, I3, I2, I1, I0)
+
+
+### Test
+low = 2
+upper = 4
+
+pow = 2
+for(i in 1:(pow*n)) {
+	cat("\nPow = "); cat(pow*n - i); cat("\n")
+	cat(I.all[[i]](low, upper))
+	cat("\n")
+	print(I.num(low, upper, pow*n - i))
+}
+
+# TODO: ERRORS:
+# I8 => I19; needs sign.inverse;
+# I1 ???
 
 
 
