@@ -25,13 +25,14 @@ f15 = function(x) x^15 - 15*c*x^13 + 90*c^2*x^11 - 275*c^3*x^9 + 450*c^4*x^7 - 3
 
 # These polynomials have very interesting properties:
 # 1.) P(0) = -2*d;
-# 2.) for c = 1:
-# all values of P(x) are between:[-2*d - 2, -2*d + 2] for x in [-2, 2];
+# 2.) for c = 1, d = 0:
+# all values of P(x) are between:[-2, +2] for x in [-2, 2];
+# P(-1) = -2; P(1) = 2;
 
 ### Visualization:
 from = -2.005
 to = 2.005
-ylim = NULL # c(-15, 10)
+ylim = c(-3, 3) # NULL
 
 curve(f15(x), from=from, to=to, ylim=ylim)
 curve(f13(x), from=from, to=to, ylim=ylim, add=T, col="springgreen2")
@@ -54,3 +55,12 @@ f = function(x, n) (f5(x)/3 + f7(x)*(2/3 - 1/n) + f9(x)/n + 2 + 2*d)
 for(n in 2:15) curve(f(x, n), from=from, to=to, ylim=ylim, col="lightblue", add=T)
 
 
+#####################
+### Zero Baseline ###
+
+f = function(x, n) ((f3(x) - f5(x))/3 + (f7(x) - f3(x))*(2/3 - 1/n) + (f9(x) - f11(x))/n)/2
+curve(f(x, 2), from=from, to=to, ylim=ylim, col="springgreen2")
+for(n in 3:15) curve(f(x, n), from=from, to=to, ylim=ylim, col="lightblue", add=T)
+
+f = function(x, n) ((f3(x) - f7(x))/3 + (f5(x) - f7(x))*(2/3 - 1/n) + (f9(x) - f11(x))/n)/2
+for(n in 2:15) curve(f(x, n), from=from, to=to, ylim=ylim, col="red", add=T)
