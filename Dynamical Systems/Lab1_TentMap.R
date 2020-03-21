@@ -8,7 +8,7 @@
 ###
 ### Leonard Mada
 
-# [draft v0.2]
+# [draft v0.2.1]
 # TODO:
 # - Logistic Map;
 # - Bifurcation Diagrams;
@@ -47,19 +47,25 @@ t_col = function(colors, percent = 50, name = NULL) {
 
 #######################
 
-# Tent Map
-tent.f = function(x, mu=2, iter=0, len.round=NA) {
+### Tent Map
+# Compute
+tent.f = function(x, mu=2, iter=0, digits=NA) {
 	r = x
 	iter = iter + 1
 	for(i in 1:iter) {
 		r = ifelse(r <= 1/2, r*mu, mu*(1-r))
-		if( ! is.na(len.round)) {
-			r = round(r, len.round)
+		if( ! is.na(digits)) {
+			# for numeric stability, when possible;
+			r = round(r, digits)
 		}
 	}
 	return(r)
 }
-tent.plot = function(x1, x2, mu = 2) {
+all.tent = function(x0, mu, iter, digits=NA) {
+	sapply(0:iter, function(iter) tent.f(x0, mu=mu, iter, digits))
+}
+# Plot
+tent.plot = function(x1=0, x2=1, mu = 2) {
 	plot.init(x.lim, y.lim, c("x", "T(x)"))
 	x.mid = (x1 + x2) / 2
 	X1 = c(x1, x.mid)
@@ -69,6 +75,29 @@ tent.plot = function(x1, x2, mu = 2) {
 	lines(X2, mu*(1-X2))
 	lines(X, X, col="blue") # bisector x = y
 }
+# composed tent function
+ctent.plot = function(n=2, x1=0, x2=1, mu = 2, x.lim=c(x1, x2), y.lim=c(0, mu/2)) {
+	plot.init(x.lim, y.lim, c("x", "T(x)"))
+	#
+	div = 2*n
+	i = 0:div
+	x.mid = ((div-i)*x1 + i*x2) / div
+	X1 = x.mid
+	f.val = mu*X1
+	# TODO: proper & generalization
+	# c(1/(2*mu), 1/2, 1-1/(2*mu))
+	pow = c(1/(2*mu), 1/2, 1-1/(2*mu))
+	pow = c(0, pow, 1)
+	f.val = rep(mu/2, 2*n+1)
+	f.val[2*(0:n) + 1] = 0
+	#
+	lines(pow, f.val)
+	#
+	X = c(x1, x2)
+	lines(X, X, col="blue") # bisector x = y
+}
+
+ctent.plot(2, mu=3/2)
 
 
 ### actual trajectories
@@ -151,7 +180,7 @@ x.df = orbit(x, iter, mu=mu)
 lines(x.df, lwd=2, col=col.iter)
 
 legend(0.8, 0.5, legend = c(3/4, 1/2, 1/4, "", "2/3", "1/3"),
-	fill=c(t_col("purple", 60), t_col("green", 60), "red", "white", "darkgreen", "darkgreen"))
+	fill=c(t_col("purple", 60), t_col("green", 60), "red", "transparent", "darkgreen", "darkgreen"))
 
 
 #############
@@ -294,12 +323,66 @@ col.iter = c(rep(t_col("red"), len1), rep(t_col("orange"), len2), rep(t_col("blu
 # lines(x.df, lwd=2, col=col.iter)
 invisible(lapply(2:len, function(id) lines(x.df[c(id-1, id),], lwd=2, col=col.iter[id]) ))
 
+
 ##########################
 ### Example 2: [pdf p 359]
 
+mu = 2
 sapply(0:20, function(iter) tent.f(2/10, mu=mu, iter, 2))
 sapply(0:23, function(iter) tent.f(21/100, mu=mu, iter, 2))
 sapply(0:306, function(iter) tent.f(201/1000, mu=mu, iter, 3))
+
+iter = 24
+data.frame("x1"=all.tent(2/10, mu, iter, 2),
+	"x2"=all.tent(21/100, mu, iter, 2),
+	"x3"=all.tent(201/1000, mu, iter, 3),
+	"x4"=all.tent(2001/10000, mu, iter, 4))
+
+
+##########################
+### Example 3: [pdf p 361]
+
+# already covered in Example 1;
+
+
+##########################
+### Experiment
+### for Definition 1
+### [pdf p 364]
+
+orbit.plot = function(x, iter, mu, col.iter, digits=NA) {
+	x.df = orbit(x, iter, mu=mu, digits=digits)
+	lines(x.df, lwd=2, col=col.iter)
+	invisible(x.df)
+}
+
+mu = 3/2
+y.lim = c(0, mu/2)
+
+tent.plot(x1, x2, mu=mu)
+iter = 10
+col.iter = c(t_col("blue"), t_col(c("red", "green", "red", "pink"), 75))
+col.iter = rev(col.iter)
+digits = c(14, 14, 14, 14, 2)
+for(i in 5:1) {
+	iter.all = i + 3
+	x.df = orbit.plot(1/mu^i/2, iter.all, mu, col.iter[i])
+	x.dim = dim(x.df)
+	# (to avoid numerical stability problems)
+	# last.val = x.df[ x.dim[1], 1]
+	# orbit.plot(last.val, 1, mu, col.iter[i], 2)
+}
+# unfortunately, the point (1/2, mu/2) is repelling
+orbit.plot(1/2, iter, mu, col.iter[5], 2)
+
+###
+mu = 3/2
+y.lim = c(0, mu/2)
+
+tent.plot(x1, x2, mu=mu)
+iter = 60
+col.iter = t_col("red")
+orbit.plot(1/2, iter, mu, col.iter)
 
 
 ###########################
