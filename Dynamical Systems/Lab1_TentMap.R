@@ -8,7 +8,7 @@
 ###
 ### Leonard Mada
 
-# [draft v0.2.1]
+# [draft v0.2.5]
 # TODO:
 # - Logistic Map;
 # - Bifurcation Diagrams;
@@ -61,6 +61,20 @@ tent.f = function(x, mu=2, iter=0, digits=NA) {
 	}
 	return(r)
 }
+vtent.f = function(x, mu=2, iter=0, digits=NA) {
+	r = x
+	iter = iter + 1
+	for(i in 1:iter) {
+		isLess = (r <= 1/2);
+		r[isLess] = mu * r[isLess];
+		r[ ! isLess ] = mu * (1 - r[ ! isLess ])
+		if( ! is.na(digits)) {
+			# for numeric stability, when possible;
+			r = round(r, digits)
+		}
+	}
+	return(r)
+}
 all.tent = function(x0, mu, iter, digits=NA) {
 	sapply(0:iter, function(iter) tent.f(x0, mu=mu, iter, digits))
 }
@@ -76,28 +90,47 @@ tent.plot = function(x1=0, x2=1, mu = 2) {
 	lines(X, X, col="blue") # bisector x = y
 }
 # composed tent function
-ctent.plot = function(n=2, x1=0, x2=1, mu = 2, x.lim=c(x1, x2), y.lim=c(0, mu/2)) {
+ctent.plot = function(iter=1, mu = 2, x1=0, x2=1, x.lim=c(x1, x2), y.lim=c(0, mu/2)) {
 	plot.init(x.lim, y.lim, c("x", "T(x)"))
-	#
-	div = 2*n
-	i = 0:div
-	x.mid = ((div-i)*x1 + i*x2) / div
-	X1 = x.mid
-	f.val = mu*X1
 	# TODO: proper & generalization
-	# c(1/(2*mu), 1/2, 1-1/(2*mu))
-	pow = c(1/(2*mu), 1/2, 1-1/(2*mu))
-	pow = c(0, pow, 1)
-	f.val = rep(mu/2, 2*n+1)
-	f.val[2*(0:n) + 1] = 0
+	# n=2: c(1/(2*mu), 1/2, 1-1/(2*mu))
+	i = 1:iter
+	pow = 1/(2 * mu^i)
+	if(iter > 1) {
+		tmp = c()
+		for(ipos in 1:(iter-1)) {
+			tmp = c(tmp, 2*head(pow, -ipos) - tail(pow, -ipos))
+		}
+		# exclude non-applicable values
+		tmp = tmp[tmp <= 1/2]
+		#
+		tmp3 = c()
+		if(iter > 2) {
+			# TODO: full
+			tmp3 = 2*(pow[1] - pow[2]) + pow[3]
+		}
+		pow = c(tmp, tmp3, pow)
+	}
+	pow = c(0, pow, 1/2, 1-pow, 1)
+	pow = sort(pow)
+	f.val = vtent.f(pow, iter = iter, mu=mu)
 	#
 	lines(pow, f.val)
 	#
 	X = c(x1, x2)
 	lines(X, X, col="blue") # bisector x = y
+	return(pow)
 }
 
-ctent.plot(2, mu=3/2)
+mu = 3/2
+curve(vtent.f(x, 2, mu=mu), from=0, to=1)
+curve(vtent.f(x, 3, mu=mu), from=0, to=1)
+
+mu = 1.7
+iter = 3
+vlines = ctent.plot(iter, mu=mu)
+curve(vtent.f(x, iter, mu=mu), from=0, to=1)
+abline(v = vlines, col=c("red", "blue"))
 
 
 ### actual trajectories
