@@ -22,6 +22,10 @@
 #   http://rstudio-pubs-static.s3.amazonaws.com/6852_c59c5a2e8ea3456abbeb017185de603e.html
 # - model extended by LM;
 
+##########
+
+# install.packages("deSolve")
+
 library(deSolve)
 
 
@@ -37,14 +41,25 @@ solve.sir = function(sir.f, init, parameters, times) {
 }
 
 ### Plot SIR
-plot.sir = function(y, times) {
+plot.sir = function(y, times, legend.xy=c(max(times)*2/3, 0.7)) {
 	matplot(x = times, y = y, type = "l",
         xlab = "Time", ylab = "Susceptible and Recovered", main = "SIR Model",
         lwd = 1, lty = 1, bty = "l", col = 2:6)
 
 	## Add legend
-	legend(40, 0.7, c("Susceptible", "Infected", "Recovered", "Terminal", "Dead"),
+	legend(legend.xy[1], legend.xy[2], c("Susceptible", "Infected", "Recovered", "Terminal", "Dead"),
 		pch = 1, col = 2:6, bty = "n")
+}
+plot.leo = function(x=NA, y=0.25, end.time=NA, adj=0, addYear=TRUE) {
+	# critical function for anyone wanting to publish in Nature
+	str = "Created\nby Leo"
+	if(addYear) {
+		str = paste(str, " (", format(Sys.Date(), "%Y"), ")", sep="", collapse="")
+	}
+	if( is.na(x) && ! is.na(end.time) ) {
+		x = end.time*2/3 + 9
+	}
+	text(x, y, str, adj=adj)
 }
 
 ### Create an SIR function
@@ -71,14 +86,15 @@ init = c(S = 1-1e-6, I = 1e-6, R = 0.0, T = 0.0, D = 0.0)
 
 ## beta: infection parameter;
 ## gamma: recovery parameter;
-beta = 1.4247
+beta = 1.4247 / 4
 gamma = 0.14286
 #
 parameters = c(beta = beta, gamma = gamma, sv = 3*beta,
-	vi = 2, vc = 1,
+	vi = 2, vc = 10,
 	m = gamma * 10000/80000, mt = gamma)
 ## Time frame
-times = seq(0, 70, by = 1)
+end.time = 120 # 70
+times = seq(0, end.time, by = 1)
 
 
 ## Solve using ode
@@ -88,4 +104,11 @@ head(out, 10)
 
 #############
 
-plot.sir(out, times)
+# png(file="SIR.AdvancedModel.png", bg ="white", pointsize=15)
+
+plot.sir(out, times, legend.xy=c(end.time*2/3, 0.7))
+# essential function for any scientific publishing
+plot.leo(end.time=end.time)
+
+# dev.off()
+
