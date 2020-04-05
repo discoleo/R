@@ -159,7 +159,8 @@ curve(vtent.f(x, iter, mu=mu), from=0, to=1, n=256)
 abline(v = vlines, col=c("red", "blue"))
 
 
-# Cycles
+### Cycles
+# only Points
 plot.cycles = function(x, y=x, p.text="C", col="red", p.cex=1.5, pch=19, jitter=0.04) {
 	if(is.null(dim(jitter))) {
 		x.jitter = 0
@@ -187,14 +188,19 @@ plot.cycles = function(x, y=x, p.text="C", col="red", p.cex=1.5, pch=19, jitter=
 	}
 }
 # plot ALL Cycles
-plot.all.cycles = function(mu, iter=2,
+plot.all.cycles = function(mu, iter=2, x=NULL, p.text=NULL,
 		col=t_col(c("pink", "orange", "purple", "coral4")), p.col="green", p.cex=1.5, lwd=2) {
 	# Cycles
-	x = special.points(mu=mu, iter)
+	if(is.null(x)) {
+		x = special.points(mu=mu, iter)
+	}
 	iter.mod = iter + 1
-	p.text = paste("C", iter.mod, sep="", collapse="")
+	if(is.null(p.text)) {
+		p.text = paste("C", iter.mod, sep="", collapse="")
+	}
 	plot.cycles(x, p.text=p.text, p.cex=p.cex, col=p.col)
 	id = 0
+	# TODO: apply
 	for(x.p in x$p) {
 		x.df = orbit(x.p, iter, mu=c)
 		lines(x.df, lwd=lwd, col=col[(id %/% iter.mod) + 1])
@@ -216,7 +222,8 @@ plot.fixed = function(x, y=x, mu.v=NULL, iter=1, p.text="F", col="blue", p.cex=1
 	len = length(x)
 	isTextVector = (length(p.text) > 1)
 	for(id in 1:len) {
-		p.text.var = ifelse(isTextVector, p.text[id], p.text)
+		if(isTextVector && is.na(p.text[id])) {next;}
+		p.text.var = if(isTextVector) p.text[id] else p.text;
 		text(x[id], y[id] - jitter, p.text.var, col=col)
 	}
 	#
@@ -359,6 +366,14 @@ quad.orbit = function(x0, iter=20, c=1/4, digits=NA, ymin=0, print=FALSE) {
 }
 
 ###########
+
+clean = function(x, rm.x, digits=10) {
+	x.rounded = round(x, digits)
+	rem = round(rm.x, digits)
+	doRemove = x.rounded %in% rem
+	x = sort(x[ ! doRemove ])
+	return(x)
+}
 
 solve.p3 = function(b) {
 	# x^3 + b2*x^2 + b1*x + b0 = 0
