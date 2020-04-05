@@ -49,6 +49,17 @@ t_col = function(colors, percent = 50, name = NULL) {
 	return(t.col)
 }
 
+test.col = function(n = 10, offset=0) {
+	label = paste("0:", n, " + offset: ", offset, sep="", collapse="")
+	plot.init(c(0, n), c(0, n), c(label, label))
+	all.col = colors()
+	for(id in 0:(n*n - 1)) {
+		rect(id %% n, id %/% n,
+			 1 + id %% n, 1 + id %/% n, col = all.col[id + 1 + offset])
+	}
+}
+# test.col(offset=match("coral4", colors()))
+
 #######################
 
 ### Tent Map
@@ -94,7 +105,8 @@ tent.plot = function(x1=0, x2=1, mu = 2, x.lim=c(x1, x2), y.lim=c(0, mu/2)) {
 	lines(X, X, col="blue") # bisector x = y
 }
 # composed tent function
-ctent.plot = function(iter=1, mu = 2, x1=0, x2=1, x.lim=c(x1, x2), y.lim=c(0, mu/2)) {
+ctent.plot = function(iter=1, mu = 2, x1=0, x2=1,
+		x.lim=c(x1, x2), y.lim=c(0, mu/2), addLines=TRUE) {
 	plot.init(x.lim, y.lim, c("x", "T(x)"))
 	# TODO: proper & generalization
 	# n=2: c(1/(2*mu), 1/2, 1-1/(2*mu))
@@ -123,7 +135,17 @@ ctent.plot = function(iter=1, mu = 2, x1=0, x2=1, x.lim=c(x1, x2), y.lim=c(0, mu
 	#
 	X = c(x1, x2)
 	lines(X, X, col="blue") # bisector x = y
+	if(addLines) {
+		abline(v = pow, col=c("red", "blue"))
+	}
 	return(pow)
+}
+
+plot.empiric.tent = function(mu=2, iter=1, vlines=NULL, col=c("red", "blue"), n=256) {
+	curve(vtent.f(x, iter, mu=mu), from=0, to=1, n=n) # empiric
+	if( ! is.null(vlines)) {
+		abline(v = vlines, col=col)
+	}
 }
 
 mu = 3/2
@@ -150,7 +172,8 @@ plot.cycles = function(x, y=x, p.text="C", col="red", p.cex=1.5, pch=19, jitter=
 	if(is.null(dim(x))) {
 		id.all = 0
 	} else {
-		id.all = 1:(dim(x)[2])
+		id.all = unique(x$n)
+		# may break col[cyc.id]
 	}
 	for(cyc.id in id.all) {
 		cyc.x = if(cyc.id == 0) {x;} else {x$p[x$n == cyc.id];}
@@ -163,7 +186,30 @@ plot.cycles = function(x, y=x, p.text="C", col="red", p.cex=1.5, pch=19, jitter=
 		}
 	}
 }
-# Fixed Points
+# plot ALL Cycles
+plot.all.cycles = function(mu, iter=2,
+		col=t_col(c("pink", "orange", "purple", "coral4")), p.col="green", p.cex=1.5, lwd=2) {
+	# Cycles
+	x = special.points(mu=mu, iter)
+	iter.mod = iter + 1
+	p.text = paste("C", iter.mod, sep="", collapse="")
+	plot.cycles(x, p.text=p.text, p.cex=p.cex, col=p.col)
+	id = 0
+	for(x.p in x$p) {
+		x.df = orbit(x.p, iter, mu=c)
+		lines(x.df, lwd=lwd, col=col[(id %/% iter.mod) + 1])
+		id = id + 1
+	}
+	return(x)
+}
+# Fixed Points + evolution to F
+plot.e.fixed = function(x, mu, iter=2, p.text=c("eF", "F"), col="red", p.cex=1.5, lwd=2) {
+	plot.fixed(x, p.text=p.text, p.cex=p.cex, col=col)
+	for(x.p in x) {
+		x.df = orbit(x.p, iter, mu=mu)
+		lines(x.df, lwd=lwd, col=col)
+	}
+}
 plot.fixed = function(x, y=x, mu.v=NULL, iter=1, p.text="F", col="blue", p.cex=1.5, pch=19, jitter=0.04,
 		conn.col=t_col("darkgreen"), ...) {
 	points(x, y, pch=pch, cex=p.cex, col=col)
@@ -217,18 +263,18 @@ orbit = function(x0, iter=1, mu = 2, print=FALSE, digits=NA) {
 
 ################
 
-### Fixed Points
+### Cycle Points
 
 special.points = function(mu, iter=2) {
+	# Cn-1
+	id = 0:iter
+	x = mu / (1 + mu^(iter+1))
+	x1 = x * mu^id
+	# other C's
 	if(iter == 1) {
-		x = mu / (1 + mu^2)
-		x = c(x, x * mu)
-		x.df = data.frame(p=x, n=1)
+		x.df = data.frame(p=x1, n=1)
 	} else if(iter == 2) {
-		# C2-1
-		x = mu / (1 + mu^3)
-		x1 = c(x, x * mu, x * mu^2)
-		# C2-2
+		# C3-2
 		if(mu != 1) {
 			x = c(1 / (mu^3 - 1))
 			x2 = c(x * (mu^2 - mu), x * (mu^3-mu^2), x * (mu^3-mu))
@@ -238,7 +284,22 @@ special.points = function(mu, iter=2) {
 		} else {
 			x.df = data.frame(p=x1, n=1)
 		}
+	} else if(iter == 3) {
+		# C4-2
+		if(mu != 1) {
+			x = c(1 / (mu^4 - 1))
+			x2 = c(x * (mu^2 - mu), x * (mu^3 - mu^2), x * (mu^4-mu^3), x * (mu^4-mu))
+			# degenerate Cyc 2: x * (mu^4-mu^2)
+			x3 = c(x * (mu^3-mu), x * (mu^4-mu^2))
+			x = c(x1, x2, x3, x3)
+			# id = rep(c(1:iter), rep(iter + 1, iter))
+			id = rep(c(1:3), rep(iter + 1, 3))
+			x.df = data.frame(p=x, n=id)
+		} else {
+			x.df = data.frame(p=x1, n=1)
+		}
 	} else {
+		x.df = data.frame(p=x1, n=1)
 		print("Not yet implemented!")
 	}
 	return(x.df)
@@ -307,20 +368,36 @@ solve.p3 = function(b) {
 	if(b[2] != 0) {
 		# x = x0 - s
 		s = b[2]/3
-		c = c - s^2 + 2*b[2]*s/3
-		d = d + (s^3 - b[2]*s^2 + b[3]*s)/2
+		c = c + s^2 # = c - s^2 + 2*b[2]*s/3 = - b[3] / 3;
+		d = d - s^3 + b[3]*s/2 # d + (s^3 - b[2]*s^2 + b[3]*s)/2
 	} else {
 		s = 0
 	}
 	det = d^2 - c^3
-	det = ifelse(det < 0, complex(re=0,im=sqrt(-det)), sqrt(det))
+	det = ifelse(det < 0, complex(re=0, im=sqrt(-det)), sqrt(det))
 	#
 	if(Im(det) != 0) {
 		r = (d + det)^(1/3) + (d - det)^(1/3)
 	} else {
-		r = ifelse(d + det >= 0, (d + det)^(1/3), -(-d-det)^(1/3))
-			+ ifelse(d - det >= 0, (d - det)^(1/3), -(-d+det)^(1/3))
+		r = ifelse(d + det >= 0, (d + det)^(1/3), -(-d-det)^(1/3)) +
+			ifelse(d - det >= 0, (d - det)^(1/3), -(-d+det)^(1/3))
 	}
 	return(Re(r - s))
+}
+
+#####################
+#####################
+
+png.name = function(name) {
+	last = tail(name, 1)
+	len = nchar(last) + 1
+	if(len < 3 || substr(last, len - 3, len) != "png") {
+		name = c(name, ".png")
+	}
+	paste(name, sep="", collapse="")
+}
+
+to.png = function(name="test", file=png.name(name), bg="white", pointsize=15, ...) {
+	png(file=file, bg=bg, pointsize=pointsize, ...)
 }
 
