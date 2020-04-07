@@ -10,7 +10,10 @@
 ###
 ### Leonard Mada
 
-# [draft v0.2.5]
+# [draft v0.3.0]
+# TODO:
+# - generalization of formulas;
+# - generalization of code/functions;
 # TODO:
 # - Logistic Map;
 # - Bifurcation Diagrams;
@@ -59,6 +62,14 @@ test.col = function(n = 10, offset=0) {
 	}
 }
 # test.col(offset=match("coral4", colors()))
+
+palette.gen = function(n=3, isTransparent=FALSE) {
+	col = c("orange", "darkgreen", "purple", "coral4", "pink")
+	if(isTransparent) {
+		col = t_col(col)
+	}
+	return(col)
+}
 
 #######################
 
@@ -189,7 +200,7 @@ plot.cycles = function(x, y=x, p.text="C", col="red", p.cex=1.5, pch=19, jitter=
 }
 # plot ALL Cycles
 plot.all.cycles = function(mu, iter=2, x=NULL, p.text=NULL,
-		col=t_col(c("pink", "orange", "purple", "coral4")), p.col="green", p.cex=1.5, lwd=2) {
+		col=palette.gen(iter+1, transparent=TRUE), p.col="green", p.cex=1.5, lwd=2) {
 	# Cycles
 	if(is.null(x)) {
 		x = special.points(mu=mu, iter)
@@ -272,18 +283,30 @@ orbit = function(x0, iter=1, mu = 2, print=FALSE, digits=NA) {
 
 ### Cycle Points
 
+# TODO: generalization of formulas;
 special.points = function(mu, iter=2) {
 	# Cn-1
 	id = 0:iter
-	x = mu / (1 + mu^(iter+1))
+	iter_n = iter + 1
+	x = mu / (1 + mu^iter_n)
 	x1 = x * mu^id
-	# other C's
 	if(iter == 1) {
-		x.df = data.frame(p=x1, n=1)
-	} else if(iter == 2) {
+		return(data.frame(p=x1, n=1))
+	}
+	
+	# other C's
+	if(mu != 1) {
+		div = 1 / (mu^iter_n - 1)
+		iter_h = tail(id, -1) + 1
+		mu_p = mu^iter_h
+		x2 = div * (mu * mu_p - mu_p)
+		x2 = c(x2, div * mu_p[iter])
+	}
+	# TODO
+	if(iter == 2) {
 		# C3-2
 		if(mu != 1) {
-			x = c(1 / (mu^3 - 1))
+			x = 1 / (mu^3 - 1)
 			x2 = c(x * (mu^2 - mu), x * (mu^3-mu^2), x * (mu^3-mu))
 			x = c(x1, x2)
 			id = rep(c(1:iter), rep(iter + 1, iter))
@@ -292,18 +315,29 @@ special.points = function(mu, iter=2) {
 			x.df = data.frame(p=x1, n=1)
 		}
 	} else if(iter == 3) {
-		# C4-2
+		# C4: 2,3,4
 		if(mu != 1) {
-			x = c(1 / (mu^4 - 1))
-			x2 = c(x * (mu^2 - mu), x * (mu^3 - mu^2), x * (mu^4-mu^3), x * (mu^4-mu))
+			x = 1 / (mu^4 - 1)
+			m.coeff = c(mu^3 - mu^2, mu^4 - mu^3)
+			x2 = c(x * (mu^2 - mu), x * m.coeff, x* (mu^4 - mu))
 			# degenerate Cyc 2: x * (mu^4-mu^2)
 			x3 = c(x * (mu^3-mu), x * (mu^4-mu^2))
-			x = c(x1, x2, x3, x3)
-			# id = rep(c(1:iter), rep(iter + 1, iter))
-			id = rep(c(1:3), rep(iter + 1, 3))
+			# x = (c^3 - c^2 + c)/(c^4+1)
+			m.coeff = c(m.coeff, sum(m.coeff)) + mu
+			div = 1/(mu^4 + 1)
+			x4 = div * m.coeff
+			x4 = sort(c(x4, mu * x4[1]))
+			###
+			x = c(x1, x2, x3, x3, x4)
+			iter_n = iter + 1
+			id = rep(c(1:iter_n), rep(iter_n, iter_n))
+			# id = rep(c(1:3), rep(iter + 1, 3))
 			x.df = data.frame(p=x, n=id)
 		} else {
-			x.df = data.frame(p=x1, n=1)
+			# degenerate Cyc 2: x * (mu^4-mu^2)
+			x3 = c(x * (mu^3-mu), x * (mu^4-mu^2))
+			id = rep(1:2, rep(4,2))
+			x.df = data.frame(p=c(x1, x3, x3), n=1)
 		}
 	} else {
 		x.df = data.frame(p=x1, n=1)
