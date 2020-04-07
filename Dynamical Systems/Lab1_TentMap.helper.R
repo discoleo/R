@@ -18,6 +18,8 @@
 # - Logistic Map;
 # - Bifurcation Diagrams;
 
+# "He had such knowledge of the tent map!"
+
 
 ### Helper functions
 
@@ -297,10 +299,14 @@ special.points = function(mu, iter=2) {
 	# other C's
 	if(mu != 1) {
 		div = 1 / (mu^iter_n - 1)
-		iter_h = tail(id, -1) + 1
+		iter_h = head(id, -1) + 1
 		mu_p = mu^iter_h
 		x2 = div * (mu * mu_p - mu_p)
-		x2 = c(x2, div * mu_p[iter])
+		if(x2[iter] > 1/2) {
+			x2 = c(x2, div * (mu * mu_p[iter] - mu))
+		} else {
+			x2 = c()
+		}
 	}
 	# TODO
 	if(iter == 2) {
