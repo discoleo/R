@@ -1,8 +1,10 @@
 
 ### Leonard Mada
 ###
-### Gamma(1 / (2*n))
-### draft 0.1
+### Gamma(1/n)
+### Relations between the G(1/n) functions
+###
+### draft 0.2
 
 # including:
 # - Gamma(1/ (2*n)) = f(Gamma(1/n))
@@ -16,14 +18,19 @@
 
 #########################
 
-# Base formula: an example
+# Base formula:
+# an example
 k = 4 # parameter
 #
 n = 2*k + 1
 gamma(1/(2*n)) # ==
 gamma(1/n) * gamma(k/n) * 2^((n-1)/n) / sqrt(pi) * sin(k*pi/n)
+#
+gamma((2*n-1)/(2*n)) # ==
+1 / (gamma(1/n) * gamma(k/n)) / 2^((n-1)/n) * sqrt(pi)^3 / (sin(pi/(2*n)) * sin(k*pi/n))
 
-############
+
+####################
 
 ####################
 ###
@@ -160,6 +167,7 @@ gamma(1/3)^2 / 2^2 * 5^(1/6) * sin(pi/3) / (sin(pi/15) * sin(4*pi/15) * sin(7*pi
 ### Missing Derivations
 ###
 ### TODO
+### [more advanced mathematics is needed]
 
 n = 3
 n = 5
