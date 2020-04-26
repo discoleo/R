@@ -4,8 +4,13 @@
 ### P3 Polynomial Systems
 ### Solver: Exact solutions
 ###
-### draft 0.1
+### draft 0.2
 
+### P3 Systems
+# v.02: P3 system + linear (x+y+z) terms;
+# v.01: simple P3 system
+
+#####################
 
 ### P3 System:
 # x^3 + y^3 + z^3 = A
@@ -81,9 +86,26 @@ solveP3 <- function(c, d, n=3, all=FALSE) {
 	}
 	return(p + q)
 }
+shift.poly = function(b) {
+	# assumes b = c(b[n-1], ..., b0)
+	len = length(b)
+	shift = - b[1] / len
+	# TODO: len > 3
+	b.shifted = b
+	b = c(1, b)
+	for(i.base in 1:len) {
+		for(id in i.base:len) {
+			pow = id + 1 - i.base
+			b.shifted[id] = b.shifted[id] + b[i.base] * choose(len + 1 - i.base, pow) * shift^pow
+		}
+		# print(b.shifted)
+	}
+	b.shifted[1] = 0
+	return(list("b"=b.shifted, "shift"=shift))
+}
 # Cubic System
-solveP3S <- function(s, bi, pr, n=3) {
-	if( n== 1) {
+solveP3Outer = function(s, bi, pr, n=3) {
+	if(n == 1) {
 		d2 = s
 	} else if(n == 2) {
 		d2 = sqrt(s + 2*bi)
@@ -97,9 +119,22 @@ solveP3S <- function(s, bi, pr, n=3) {
 		print(paste("err Tri =", round0(err)))
 	} else {
 		print("Not yet implemented!")
-		return(0)
+		break
 	}
-	
+	return(d2)
+}
+solveP3OuterShifted = function(B, b.shifts, n=3) {
+	# X^3 + 3*b21*X^2 - (3*BB + 3*b11 - b31)*X + 3*P - A = 0
+	A  = B[1]
+	BB = B[2]
+	P  = B[3]
+	b = shift.poly(c(3*b.shifts[2], - 3*(BB + b.shifts[3] - b.shifts[1]/3), 3*P - A))
+	b.b = b$b
+	r = solveP3( - b.b[2]/3, - b.b[3]/2)
+	r = r + b$shift
+	return(r)
+}
+solveP3S.Base = function(s, bi, pr, d2, n=3, b.shifts=c(0,0,0)) {
 	### Solve P3 System:
 	# y^3 - 3*B*y^2 + pr*d2*y - pr^2
 	# y = shifted by B = bi/3
@@ -122,10 +157,20 @@ solveP3S <- function(s, bi, pr, n=3) {
 	# Test
 	m = 1
 	test = c(
-		apply(p, m, function(p) sum(p^n)),
-		apply(p, m, function(p) sum(p[1] * p[-1], p[2]*p[3])),
-		apply(p, m, function(p) prod(p)))
+		apply(p, m, function(p) sum(p^n) + b.shifts[1]*sum(p)),
+		apply(p, m, function(p) sum(p[1] * p[-1], p[2]*p[3]) + b.shifts[2]*sum(p)),
+		apply(p, m, function(p) prod(p) + b.shifts[3]*sum(p)))
 	return(list("x"=p, "test" = test))
+}
+solveP3S = function(s, bi, pr, n=3) {
+	d2 = solveP3Outer(s, bi, pr, n)
+	solveP3S.Base(s, bi, pr, d2, n)
+}
+solveP3SS = function(B, b, n=3) {
+	# X^3 + 3*b21*X^2 - (3*BB + b31 + b11)*X + 3*P - A = 0
+	r = solveP3OuterShifted(B, b, n)
+	B.shifted = B - r * b
+	solveP3S.Base(B.shifted[1], B.shifted[2], B.shifted[3], r, n, b.shifts=b)
 }
 
 ############################
@@ -136,5 +181,42 @@ solveP3S(1,2,3)
 
 solveP3S(1,2,-1)
 
-# seems to compute all 9 roots;
+# computes 3 roots by now;
+# TODO: add all roots
+
+
+#############################
+
+
+### P3 System:
+# x^3 + y^3 + z^3 + b31 * (x+y+z) = A
+# x*y + x*z + y*z + b21 * (x+y+z) = B
+# x*y*z + b11 * (x+y+z) = P
+
+### Steps:
+
+### Subsystem 1:
+#
+# X^3 + 3*b21*X^2 - (3*B + 3*b11 - b31)*X + 3*P - A = 0
+# solve for X;
+# then solve Subsystem 2;
+
+### Test
+
+B = c(1, 2, -1)
+b = c(1, 2, 3)
+#
+x.all = solveP3SS(B, b)
+x.all
+
+
+B = c(1, 2, -1)
+b = c(1, 2, 4)
+#
+x.all = solveP3SS(B, b)
+x.all
+
+###
+x = x.all$x[1,]
+# ...
 
