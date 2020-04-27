@@ -4,9 +4,10 @@
 ### P3 Polynomial Systems
 ### Solver: Exact solutions
 ###
-### draft 0.2b
+### draft 0.2c
 
 ### P3 Systems
+# v.02c: Test the Linear solution concept;
 # v.02: P3 system + linear (x+y+z) terms;
 # v.01: simple P3 system: the Base System;
 
@@ -225,6 +226,36 @@ x.all
 ###
 x = x.all$x[1,]
 # ...
+
+###################
+###
+### "Linear"-System
+###
+###################
+
+### Test
+E.m = matrix(
+c(1, 2, 3,
+  1, -1, 2,
+ -1, 1, 4), ncol=3, byrow=TRUE)
+
+B.m = matrix(
+c(-2, -3, -5), ncol=1, byrow=TRUE)
+V.m = matrix(
+c(1, 2, -1), ncol=1)
+
+# Solve "Linear"-System
+B.r = solve(E.m, cbind(V.m, B.m))
+
+x.all = solveP3SS(B.r[,1], B.r[,2])
+x.all
+
+# Test solution
+x = x.all$x[1,]
+X = sum(x)
+XE = c(sum(x^3), sum(x[1]*x[2], x[1]*x[3], x[2]*x[3]), prod(x))
+E.m %*% XE + B.m * X
+V.m
 
 
 ##########################
