@@ -4,13 +4,15 @@
 ### P3 Polynomial Systems
 ### Solver: Exact solutions
 ###
-### draft 0.2
+### draft 0.2b
 
 ### P3 Systems
 # v.02: P3 system + linear (x+y+z) terms;
-# v.01: simple P3 system
+# v.01: simple P3 system: the Base System;
 
 #####################
+
+### Base P3 system
 
 ### P3 System:
 # x^3 + y^3 + z^3 = A
@@ -128,7 +130,11 @@ solveP3OuterShifted = function(B, b.shifts, n=3) {
 	A  = B[1]
 	BB = B[2]
 	P  = B[3]
-	b = shift.poly(c(3*b.shifts[2], - 3*(BB + b.shifts[3] - b.shifts[1]/3), 3*P - A))
+	coeff = c(3*b.shifts[2], - 3*(BB + b.shifts[3] - b.shifts[1]/3), 3*P - A)
+	if(length(b.shifts) / n == 2) {
+		# TODO: X^2
+	}
+	b = shift.poly(coeff)
 	b.b = b$b
 	r = solveP3( - b.b[2]/3, - b.b[3]/2)
 	r = r + b$shift
@@ -219,4 +225,61 @@ x.all
 ###
 x = x.all$x[1,]
 # ...
+
+
+##########################
+
+### TODO:
+
+### A.) Solve the basic types of systems
+
+### Extension Path:
+# A.1.) add X^2 term, where X = sum(x[i]);
+
+# A.2.) solve "liniar" meta-system:
+# [X is grouped with the power terms,
+# NOT with the elementary polynomials,
+# because of the way of the solution]
+# X^2, X = "slack" variables;
+
+# p31 * sum(x^3) + e31 * E3 + e21 * E2 + b21 * X^2 + b11 * X = v1
+# p32 * sum(x^3) + e32 * E3 + e22 * E2 + b22 * X^2 + b12 * X = v2
+# p33 * sum(x^3) + e33 * E3 + e23 * E2 + b23 * X^2 + b13 * X = v3
+
+# [p, e] x [sum(x^3), E] = V - B x [X^2, X]
+
+# A.3.) add sum(x[i]^2) terms instead of the X^2
+# - after having the "linear" solution: it is easy to transform and solve;
+#   sum(x[i]^2) = X^2 - 2*E2;
+
+
+#######################
+###
+### Perturbation Theory
+
+### B.) Perturbations to break Symmetry
+
+# This will be a new branch in mathematics.
+# It may be useful to study systematically such perturbations and
+# understand the behaviour of the perturbed systems.
+
+
+# B.1.) Class 1 Perturbations
+# B.1.a.) x1 = x1' + s1;
+# B.1.b.) x1 = a1*x1' + s1;
+# [+ applied on multiple variables]
+
+# B.2.) Class 2 Perturbations
+# B.2.1.) Symmetrical:
+#         x1 = x1' + x2'; x2 = x2' + x3'; x3 = x3' + x1';
+# B.2.2.) x1 = a1*x1' + a2*x2;
+# [+ applied on multiple variables]
+
+# B.3.) Class 3 Perturbations: Powers
+# when it affects only 1 of the variables:
+# so the remaining have consistent exponents lower than the target variable;
+
+# B.3..a.) x1 = x1'^2;
+# B.3.b.) x1 = x1'^2 + a2*x2;
+# It is easier to solve an order 3 system, than an order 6 system.
 
