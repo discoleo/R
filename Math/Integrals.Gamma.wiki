@@ -1,18 +1,20 @@
 
 
-### Leonard Mada
-###
-### Wiki code: Gamma(1/n)
-### Relations between the G(1/n) functions
-###
-### draft 0.2
+== Relations between the G(1/n) functions ==
+== Leonard Mada ==
 
-#################
+Wiki code
+draft 0.2
 
-Wikipedia
-- unfortunately they keep deleting this code from the "Gamma function" page;
-- however: the file Integrals.Gamma.R on Github represents the original material:
-  any other derivative will need to reference this original;
+Original:
+https://github.com/discoleo/R/blob/master/Math/Integrals.Gamma.R
+
+
+--
+
+== Wikipedia ==
+* unfortunately they keep deleting this code from the "Gamma function" page;
+* however: the file Integrals.Gamma.R on Github represents the original material: any other derivative will need to reference this original;
 
 
 == Wikipedia Code ==
