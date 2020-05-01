@@ -5,44 +5,55 @@
 ###
 ### Leonard Mada
 ###
-### draft v 0.1
+### draft v 0.1b
 
-# v 0.1
+# Original on:
+# https://github.com/discoleo/R/blob/master/Clustering.Base.R
+
+
+# v 0.1b
 # - Factors: are handled as factors;
-# - Weights;
-# - Metric: power as parameter;
+# - Column Weights;
+# - Metric: power specified as parameter;
 
 
-##########################
-### k-Means on Factors ###
-##########################
+######################
+###  k-Means       ###
+###  with Factors  ###
+######################
 
 ### Distance functions
+
+# the inlined version seems slightly faster;
+# [possible because the functions have than less parameters]
+
 # Dist Numeric
+# non-inlined version:
 dist.num.gen = function(p) {
+	# optimized versions (but no metric)
 	if(p == 1) {
-		d.num = function(x, d.df, x.centroids, idCol, centroid.id, wt=1) {
+		d.num = function(x, d.df, x.centroids, idCol, centroid.id, col.wt=1) {
 			tmp = x.centroids[centroid.id, idCol]
-			tmp.d = d.df[ , centroid.id] + wt * (abs(x[,idCol] - tmp))
+			tmp.d = d.df[ , centroid.id] + col.wt * (abs(x[,idCol] - tmp))
 			return(tmp.d)
 		}
 	} else if(p == 2) {
-		d.num = function(x, d.df, x.centroids, idCol, centroid.id, wt=1) {
+		d.num = function(x, d.df, x.centroids, idCol, centroid.id, col.wt=1) {
 			tmp = x.centroids[centroid.id, idCol]
 			tmp.d = x[,idCol] - tmp;
-			tmp.d = d.df[ , centroid.id] + wt * tmp.d * tmp.d;
+			tmp.d = d.df[ , centroid.id] + col.wt * tmp.d * tmp.d;
 			return(tmp.d)
 		}
 	} else if(p - round(p) == 0 && p %% 2 == 0) {
-		d.num = function(x, d.df, x.centroids, idCol, centroid.id, wt=1) {
+		d.num = function(x, d.df, x.centroids, idCol, centroid.id, col.wt=1) {
 			tmp = x.centroids[centroid.id, idCol]
-			tmp.d = d.df[ , centroid.id] + wt * (x[,idCol] - tmp)^p
+			tmp.d = d.df[ , centroid.id] + col.wt * (x[,idCol] - tmp)^p
 			return(tmp.d)
 		}
 	} else {
-		d.num = function(x, d.df, x.centroids, idCol, centroid.id, wt=1) {
+		d.num = function(x, d.df, x.centroids, idCol, centroid.id, col.wt=1) {
 			tmp = x.centroids[centroid.id, idCol]
-			tmp.d = d.df[ , centroid.id] + wt * (abs(x[,idCol] - tmp))^p
+			tmp.d = d.df[ , centroid.id] + col.wt * (abs(x[,idCol] - tmp))^p
 			return(tmp.d)
 		}
 	}
@@ -51,19 +62,19 @@ dist.num.gen = function(p) {
 # Dist Factors
 dist.fact.gen = function(p) {
 	# p is currently NOT used;
-	d.fact = function(x, d.df, x.centroids, idCol, centroid.id, wt=1) {
+	d.fact = function(x, d.df, x.centroids, idCol, centroid.id, col.wt=1) {
 		# simple equality: dominant Factor
 		tmp = x.centroids[centroid.id, idCol]
-		tmp.d = d.df[ , centroid.id] + ifelse(x[,idCol] == tmp, 0, wt)
+		tmp.d = d.df[ , centroid.id] + ifelse(x[,idCol] == tmp, 0, col.wt)
 		return(tmp.d)
 	}
 	return(d.fact)
 }
 
 ### Cluster function
-cluster = function(x, k, x.centroids, x.wt, p=2) {
-	if(missing(x.wt)) {
-		x.wt = rep(1, ncol(x))
+cluster = function(x, k, x.centroids, col.wt, p=2) {
+	if(missing(col.wt)) {
+		col.wt = rep(1, ncol(x))
 	}
 	### Distance Matrix
 	# k + 1 = save also Cluster ID;
@@ -83,16 +94,25 @@ cluster = function(x, k, x.centroids, x.wt, p=2) {
 	for(i in 1:iter) {
 		# Numeric
 		for(idCol in num.Cols) {
-			wt = x.wt[idCol]
+			wt = col.wt[idCol]
 			for(id.k in 1:k) {
-				d.df[,id.k] = d.num(x, d.df, x.centroids, idCol, id.k, wt=wt)
+				d.df[,id.k] = d.num(x, d.df, x.centroids, idCol, id.k, col.wt=wt)
 			}
 		}
+		# seems: NO speed benefit
+		# lapply(num.Cols,
+			# function(idCol) {
+				# wt = col.wt[idCol]
+				# for(id.k in 1:k) {
+					# d.df[,id.k] = d.num(x, d.df, x.centroids, idCol, id.k, col.wt=wt)
+				# }
+			# }
+		# )
 		# Factor
 		for(idCol in fact.Cols) {
-			wt = x.wt[idCol]
+			wt = col.wt[idCol]
 			for(id.k in 1:k) {
-				d.df[,id.k] = d.fact(x, d.df, x.centroids, idCol, id.k, wt=wt)
+				d.df[,id.k] = d.fact(x, d.df, x.centroids, idCol, id.k, col.wt=wt)
 			}
 		}
 
@@ -107,14 +127,14 @@ cluster = function(x, k, x.centroids, x.wt, p=2) {
 		### new Centroids
 		for(idCol in num.Cols) {
 			for(id.k in 1:k) {
-				x.centroids[id.k, idCol] = mean(x[d.df[, k+1] == id.k, idCol])
+				x.centroids[id.k, idCol] = mean(x[ d.df[, k+1] == id.k, idCol])
 			}
 		}
 		for(idCol in fact.Cols) {
 			tmp.fact = levels(x.centroids[1, idCol])
 			for(id.k in 1:k) {
 				# TODO: with Factor Weights
-				tmp = table(x[d.df[, k+1] == id.k, idCol])
+				tmp = table(x[ d.df[, k+1] == id.k, idCol])
 				id.max = match(max(tmp), tmp)
 				x.centroids[id.k, idCol] = tmp.fact[id.max]
 			}
@@ -132,6 +152,6 @@ cluster = function(x, k, x.centroids, x.wt, p=2) {
 			}
 		}
 	}
-	return(d.df)
+	return(list("dist"=d.df, "centroids"=x.centroids))
 }
 
