@@ -15,9 +15,9 @@ https://en.wikipedia.org/wiki/Division_by_zero
 == History ==
 Building an entire theory around a division by zero should make everyone doubt the theory.
 
-'''Altrnative:''' The first true alternative emerged when I read an article in Nature regarding the creation of a Bose-Einstein condensate.
-E.A. Donley et al. Dynamics of collapsing and exploding Bose-Einstein condensates. Nature 412, 19-JUL-2001, p295-299.
+'''Alternative:''' The first true alternative emerged when I read an article in Nature regarding the creation of a Bose-Einstein condensate.
+: E.A. Donley et al. Dynamics of collapsing and exploding Bose-Einstein condensates. Nature 412, 19-JUL-2001, p295-299.
 
 Although I contacted multiple physicists with these ideas (including the late Stephen Hawkins), there was little interest in non-mainstream ideas. Such ideas were/are likely difficult to publish in the literature as well.
 
-'''Note to Wikipedia Editors:''' Nevertheless, it may be still warranted to search the literature, because of the huge impact on many important areas of physics. A Bose-Einstein condensate is a much better description than a mathematical division by zero. (The note was deleted from the Wikipedi Talk page, but is still available here.)
+'''Note to Wikipedia Editors:''' Nevertheless, it may be still warranted to search the literature, because of the huge impact on many important areas of physics. A Bose-Einstein condensate is a much better description than a mathematical division by zero. (The note was deleted from the Wikipedia Talk page, but is still available here.)
