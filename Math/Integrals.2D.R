@@ -2,15 +2,18 @@
 ### Leonard Mada
 ###
 ### Double Integrals
-### draft 0.2
+### draft 0.3
 
 # Numerical Integration in R
+# - with emphasis of double integrals;
+#   [and mostly focused on Gamma-derivatives]
 # including:
 # - Gamma(1/n);
 # - Int[0, Inf] (e^(-x^n));
 # - double integrals:
 #   generalization to various powers;
 # - I I ... d phi d theta = Gamma(1/3)^3
+#   and workout to a simple integral;
 
 ####################
 
@@ -151,4 +154,71 @@ gamma(1/3)
 
 #################
 
+sphericalTan.f = function(x, t) {
+	x / (x^3 * (sin(t)+cos(t)) * (1 - sin(2*t)/2) + 1)
+}
+
+InnerSp3.Integral = function(y, inner.f=sphericalTan.f, inner.limits=c(0, Inf), ...) {
+	Inner.Integral(y, inner.f=inner.f, inner.limits=c(0, Inf), subdivisions=4096, ...)
+}
+
+# evaluate
+x = int.f(InnerSp3.Integral, upper=pi/2, subdivisions=4096)
+
+# Test
+x^(1/3) * 3^(2/3)
+gamma(1/3)
+
+
+# Graph Test
+# (but df has to be included as well)
+t = pi/10
+curve(spherical.f(t, x)*cos(x)^2, from=0, to=pi/2)
+curve(sphericalTan.f(tan(x), t), from=0, to=pi/2, add=T, col="red", lty=3)
+
+
+###################
+
+sphericalTan2.f = function(x, t) {
+	x / (x^3 + 1) / ((sin(t)+cos(t)) * (1 - sin(2*t)/2))^(2/3)
+}
+
+InnerSp32.Integral = function(y, inner.f=sphericalTan2.f, inner.limits=c(0, Inf), ...) {
+	Inner.Integral(y, inner.f=inner.f, inner.limits=c(0, Inf), subdivisions=4096, ...)
+}
+
+# evaluate
+x = int.f(InnerSp32.Integral, upper=pi/2, subdivisions=4096)
+
+# Test
+x^(1/3) * 3^(2/3)
+gamma(1/3)
+
+
+####################
+####################
+
+sphericalTrig.f = function(t) {
+	1 / ((sin(t)+cos(t)) * (1 - sin(2*t)/2))^(2/3)
+}
+
+x = int.f(function(x) x /(x^3+1), lower=0, upper=Inf) * int.f(sphericalTrig.f, lower=0, upper=pi/2)
+# Test
+x^(1/3) * 3^(2/3)
+gamma(1/3)
+
+################
+
+x = 2*pi / 3^(3/2) * int.f(sphericalTrig.f, lower=0, upper=pi/2)
+# Test
+x^(1/3) * 3^(2/3)
+gamma(1/3)
+
+################
+
+x = int.f(sphericalTrig.f, lower=0, upper=pi/2)
+
+# Test
+x^(1/3) * 3^(1/6) * (2*pi)^(1/3)
+gamma(1/3)
 
