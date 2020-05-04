@@ -2,7 +2,7 @@
 ### Leonard Mada
 ###
 ### Double Integrals
-### draft 0.3
+### draft 0.3b
 
 # Numerical Integration in R
 # - with emphasis of double integrals;
@@ -199,7 +199,7 @@ gamma(1/3)
 ####################
 
 sphericalTrig.f = function(t) {
-	1 / ((sin(t)+cos(t)) * (1 - sin(2*t)/2))^(2/3)
+	1 / ((sin(t)+cos(t)) * (1 - sin(t)*cos(t)))^(2/3)
 }
 
 x = int.f(function(x) x /(x^3+1), lower=0, upper=Inf) * int.f(sphericalTrig.f, lower=0, upper=pi/2)
@@ -221,4 +221,50 @@ x = int.f(sphericalTrig.f, lower=0, upper=pi/2)
 # Test
 x^(1/3) * 3^(1/6) * (2*pi)^(1/3)
 gamma(1/3)
+
+################
+
+### x = sin(t) + cos(t)
+sphericalFr.f = function(x) {
+	1 / (x * (3 - x^2))^(2/3) / sqrt(2 - x^2)
+}
+
+x = int.f(sphericalFr.f, lower=1, upper=sqrt(2))
+
+# Test
+x^(1/3) * 3^(1/6) * 2^(8/9) * pi^(1/3)
+gamma(1/3)
+
+
+### alternative:
+### x = (sin(t) + cos(t))^(1/3)
+sphericalFr.f = function(x) {
+	1 / ((3 - x^6)^(2/3) * sqrt(2 - x^6))
+}
+
+x = int.f(sphericalFr.f, lower=1, upper=2^(1/6))
+# Test
+x
+gamma(1/3)^3 / 4 / 2^(2/3) / 3^(3/2) / pi
+
+# Test: Gamma(1/3)
+x^(1/3) * 2^(8/9) * 3^(1/2) * pi^(1/3)
+gamma(1/3)
+
+
+### Lower limit: 0 / different!
+x = int.f(sphericalFr.f, lower=0, upper=2^(1/6))
+
+# Test
+x
+gamma(1/3)^3 * 2^(1/3) / 3^(3/2) / pi * sin(pi/3)^2 * sin(pi/6)
+gamma(1/3)^3 / 4 / 2^(2/3) / 3^(1/2) / pi
+
+
+### Lower limit: 0, upper = 1 / different!
+x = int.f(sphericalFr.f, lower=0, upper=1)
+
+# Test
+x
+gamma(1/3)^3 / 4 / 2^(2/3) / 3^(1/2) / pi * 2/3
 
