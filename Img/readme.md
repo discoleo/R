@@ -1,4 +1,4 @@
 # Various Graphical Tools & Algorithms
 
-'''Tools'''
-- Synthetic images Generator;
+## Tools:
+- Generator for Synthetic images: Rectangles, Circles;
