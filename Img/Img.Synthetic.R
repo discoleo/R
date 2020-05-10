@@ -2,14 +2,17 @@
 ################
 ###
 ### Generator: Synthetic Images
-### e.g. for Sobel Filter
+### e.g. to test Sobel Filters
 ###
 ### Leonard Mada
 ###
-### draft v 0.1
+### draft v 0.2
 
 # Generate synthetic images
-# to test various graphical algorithms
+# to test various graphical algorithms:
+# - Rectangles;
+# - Diagonal polygons;
+# - Circles;
 
 
 # https://github.com/discoleo/R/tree/master/Img/Img.Synthetic.R
@@ -21,6 +24,7 @@
 library(plotrix)
 
 
+# Save images:
 setwd("...")
 
 
@@ -45,10 +49,10 @@ col.gen = function(lumi) {
 
 ### Rectangles
 
-synth.rect = function(total, sensitivity=50, width=10, save=FALSE, col) {
+synth.rect = function(total, sensitivity=50, width=10, col, save=FALSE) {
 	id = 1:total
 	if(missing(col)) {
-		cols = col.gen(sesitivity*(id - 1))
+		cols = col.gen(sensitivity*(id - 1))
 	} else {
 		cols=col
 	}
@@ -88,6 +92,76 @@ synth.rect = function(total, sensitivity=50, width=10, save=FALSE, col) {
 	}
 }
 
+# Diagonal Rectangles/Polygons
+synth.diag.rect = function(total, sensitivity=50, width=10, col, save=FALSE) {
+	id = 1:total
+	if(missing(col)) {
+		cols = col.gen(sensitivity*(id - 1))
+	} else {
+		cols=col
+	}
+	if(save) {
+		file = paste("Test.Sobel.Rect.D.Grey.", total, ".png", sep="", collapse="")
+		# TODO: dimensions of png
+		png(file=file, bg = "white")
+	}
+	par.old = par(mar=c(0.5,0.5,0,0))
+	plot.new()
+	lim.max = (total + 2) * width
+	# Init window
+	plot.window(xlim=c(0,lim.max), ylim=c(0,lim.max))
+	
+	# Rect
+	# x.L, y.B, x.R, y.T
+	draw.diag = function(shift.x, shift.y, pattern) {
+		for(p.id.base in id) {
+			p.id = p.id.base
+			polygon(shift.x + width * pattern[,1],
+				shift.y + width*(p.id - 1 + pattern[,2]), col=cols[p.id.base], border=NA)
+			p.id = p.id + 1
+			polygon(shift.x + width * pattern[,3],
+				shift.y + width*(p.id -1 + pattern[,4]), col=cols[p.id.base], border=NA)
+		}
+	}
+	
+	pattern = matrix(
+	c(0,1,1,0, # X
+	  1,1,0,1, # Y
+	  0,0,1,0, # X
+	  0,1,0,0) # Y
+	, nrow=4)
+	shift.x = 1
+	shift.y = 0
+	draw.diag(shift.x, shift.y, pattern)
+	shift.x = shift.x + width + 5
+	shift.y = 0
+	draw.diag(shift.x, shift.y, pattern[,c(3,1,1,3)])
+	
+	pattern = matrix(
+	c(0,1,1,0, # X
+	  2,0,1,2, # Y
+	  0,0,1,0, # X
+	  2,1,0,2) # Y
+	, nrow=4)
+	shift.x = shift.x + width + 5
+	shift.y = 0
+	draw.diag(shift.x, shift.y, pattern)
+	shift.x = shift.x + width + 5
+	shift.y = 0
+	pattern.inv = pattern[,c(3,4,1,2)]
+	pattern.inv[,c(2,4)] = 2 - pattern.inv[,c(2,4)]
+	# print(pattern.inv)
+	draw.diag(shift.x, shift.y, pattern.inv)
+	
+
+	par(par.old)
+	if(save) {
+		dev.off()
+	}
+}
+
+################
+
 ### Parameters
 total = 5
 id = 1:total
@@ -99,8 +173,23 @@ cols = col.gen(sesitivity*(id - 1))
 synth.rect(total, col=cols)
 # synth.rect(total, col=cols, save=TRUE)
 
+
+### Diagonals
 # TODO:
 # various diagonals;
+
+###
+total = 4
+
+synth.diag.rect(total)
+# synth.diag.rect(total, save=TRUE)
+
+###
+total = 5
+
+synth.diag.rect(total)
+# synth.diag.rect(total, save=TRUE)
+
 
 ############
 
