@@ -5,7 +5,7 @@
 ###
 ### Leonard Mada
 ###
-### draft v 0.2
+### draft v 0.2b
 
 # Original on:
 # https://github.com/discoleo/R/blob/master/Clustering.Base.R
@@ -14,6 +14,7 @@
 # v 0.2
 # - added cluster.apply function;
 # - some experimentation with optimization;
+# - more profiling and optimization (0.2b);
 # v 0.1b
 # - Factors: are handled as factors;
 # - Column Weights;
@@ -84,7 +85,7 @@ cluster = function(x, k, x.centroids, col.wt, p=2) {
 	### Distance Matrix
 	# 1 column for each cluster;
 	# k + 1 = save also Cluster ID for each data-row;
-	# TODO: evaluate Matrix vs DF;
+	# TODO: evaluate Matrix vs DF vs separate vector for ID;
 	d.df = matrix(0, nrow=nrow(x), ncol=k + 1)
 	
 	### Distance functions
@@ -96,10 +97,11 @@ cluster = function(x, k, x.centroids, col.wt, p=2) {
 	num.Cols  = (1:ncol(x))[sapply(x[1,], function(x) is.numeric(x))]
 	fact.Cols = (1:ncol(x))[sapply(x[1,], function(x) is.factor(x))]
 	
-	x.time = c(0, 0, 0, 0)
+	x.time = c(0, 0, 0, 0, 0)
 
 	### compute Distances
 	id.rows = 1:nrow(d.df)
+	#
 	for(i in 1:iter) {
 		# Numeric
 		x.time[1] = x.time[1] + system.time(
@@ -132,10 +134,29 @@ cluster = function(x, k, x.centroids, col.wt, p=2) {
 		# summary(d.df)
 
 		### assign Cluster
-		d.df[ , k+1] = 1E+6 # HUGE VALUE
-		d.df[ , k+1] = apply(d.df, M=1, min)
-		new.id = sapply(id.rows, function(id) match(d.df[id, k+1], d.df[id, -(k+1)]))
+		x.time[5] = x.time[5] + system.time({
+		# MUCH slower!
+		# d.df[ , k+1] = 1E+6 # HUGE VALUE
+		# d.df[ , k+1] = apply(d.df, M=1, min)
+		# new.id = sapply(id.rows, function(id) match(d.df[id, k+1], d.df[id, -(k+1)]))
+		#
+		dist.min = d.df[ , 1] # rep(1E+6, nrow(d.df))
+		rows.total = nrow(d.df)
+		new.id = rep(1, rows.total)
+		for(id.col in 2:k) { # k >= 2 !!!
+			for(id.row in id.rows) {
+			# id.row = 1 # while() was 1s slower
+			# while(id.row <= rows.total) {
+				if(dist.min[id.row] > d.df[id.row, id.col]) {
+					dist.min[id.row] = d.df[id.row, id.col]
+					new.id[id.row] = id.col
+				}
+				# id.row = id.row + 1
+			}
+		}
+		#
 		d.df[ , k+1] = new.id
+		})[1]
 	
 		### new Centroids
 		x.time[3] = x.time[3] + system.time(
@@ -232,19 +253,28 @@ cluster.apply = function(x, groups, k, x.centroids, col.wt, p=2) {
 
 		# summary(d.df)
 
-		### assign Cluster
-		d.df[, k+1] = 1E+6 # HUGE VALUE
-		d.df[, k+1] = apply(d.df, M=1, min)
-		new.id = sapply(id.rows, function(id) match(d.df[id, k+1], d.df[id, -(k+1)]))
+		### assign each Group to a Cluster
+		dist.min = d.df[ , 1] # rep(1E+6, nrow(d.df))
+		rows.total = nrow(d.df)
+		new.id = rep(1, rows.total)
+		for(id.col in 2:k) { # TODO: k >= 2 !!!
+			for(id.row in id.rows) {
+				if(dist.min[id.row] > d.df[id.row, id.col]) {
+					dist.min[id.row] = d.df[id.row, id.col]
+					new.id[id.row] = id.col
+				}
+			}
+		}
+		#
 		d.df[, k+1] = new.id
 	
 		### new Centroids
 		# print("Updating Centroids")
 		for(idCol in num.Cols) {
 			# total.count = tapply(x[,idCol], d.df[groups, k+1], count.f)
+			# TODO: Mean, Median, Mahalanobis, ...
 			x.centroids[, idCol] = tapply(x[,idCol], d.df[groups, k+1], mean, na.rm=TRUE)
 			# for(id.k in 1:k) {
-				# TODO: Mean, Median, ...
 				# x.centroids[id.k, idCol] = sum(x[ d.df[, k+1] == id.k, idCol])
 			# }
 		}
