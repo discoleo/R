@@ -3,7 +3,7 @@
 ###
 ### Fermat's Theorem & Catalan's Conjecture
 ###
-### draft 0.1
+### draft 0.1b
 
 ### Topics:
 ### A.) Decomposition of sums of Powers into Products
@@ -37,6 +37,20 @@
 
 # Notes:
 # - if a,b > 1 and n = prime => sum is divisible by n*a*b;
+# - for n odd: sum is divisible by n*a*b*(a+b);
+
+### Computation of the sum:
+
+# n = 3: sum = n*a*b;
+# n = 5: sum = n*a*b*(a+b)*(a - b*m3)*(a - b*m3^2)
+#   where m3^3 = 1;
+# n = 7: sum = n*a*b*(a+b)*((a - b*m3)*(a - b*m3^2))^2
+# n = 9: sum = 3*a*b*(a+b)*...; ! NOT prime !
+# n = 11: sum = n*a*b*(a+b)*(a - b*m3)*(a - b*m3^2)*...;
+
+# TODO:
+# 11*c*x * (x^2 - c)*(x^6 - 3*c*x^4 + 4*c^2*x^2 - c^3)
+# 11*c*x * (x^2 - c)*((a^2+b^2)^3 + 3*a*b*(a^2+b^2)^2 + 4*a^2*b^2*(a^2+b^2) + 3*a^3*b^3)
 
 ### TODO:
 # 1.) Prove Fermat's Theorem using this approach;
