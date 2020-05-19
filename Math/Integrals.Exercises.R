@@ -2,7 +2,7 @@
 ### Leonard Mada
 ###
 ### Integrals: exercises
-### draft 0.1b
+### draft 0.1c
 
 
 ### Various Exercises
@@ -23,6 +23,7 @@ integrate(function(x) 1/(a*cos(x)^4 + a*sin(x)^4 - 1), lower=0, upper=pi/4)
 1/(a-1) / sqrt(2 - 2/(a-1)) * pi/2
 
 
+#########
 ### 1.b.) partial generalization
 
 a = 7
@@ -32,7 +33,18 @@ integrate(function(x) sin(2*x)*cos(2*x)/(a*cos(x)^4 + a*sin(x)^4 - 1), lower=0, 
 -1/(2*a) * log((a - 2)/(2*a - 2))
 1/(2*a) * log((2*a - 2)/(a - 2))
 
-### 1.c.) TODO: variants using results from Ex. 2;
+
+#########
+### 1.c.) partial generalization
+
+a = 7
+
+integrate(function(x) sin(x)^2*cos(x)^2/(a*cos(x)^4 + a*sin(x)^4 - 1), lower=0, upper=pi/4)
+# Exact solution
+-pi/(8*a) + (1-1/a)/(a-1) / sqrt(2 - 2/(a-1)) * pi/4
+
+
+### 1.d.) TODO: variants using results from Ex. 2;
 
 
 ###############
