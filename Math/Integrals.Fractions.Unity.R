@@ -16,12 +16,15 @@
 ###
 ### version 1 [RC1] [draft]
 ###
+### 2020-05-20
+### - only minor edit; unfortunately no time for more work;
 ### 2020-03-01
 ### - polynomial fractions: P(x) / (x^n - 1)^2
 ###   Cases: n=3, n=5, n=7;
 ### 2020-02-29
 ### 2020-02-28
-### - Cases: n = 9, n = 15;
+### - polynomial fractions: P(x) / (x^n - 1)
+###  -- Cases: n = 9, n = 15;
 ### 2020-02-27
 ### - polynomial fractions: P(x) / (x^n - 1)
 ###  -- n = all primes (straightforward);
@@ -53,9 +56,33 @@
 ### - it is easy to involve me in specific projects,
 ###   including collaborations on articles/books/other projects;
 
+
+# Example:
+n = 7 # e.g. 7, 9, 11; only ODD in this example!
+x = 3 # e.g. 2, 3, pi, 4 # some arbitrary value for testing
+# Roots of unity
+m = complex(re=cos(2*pi/n), im=sin(2*pi/n))
+m = m^(1:(n-1)) # all roots of unity (without 1)
+len = (n-1)/2
+m.conj = m[1:len]
+m.conj = cbind(m.conj, 1/m.conj)
+# Coefficients
+b0 = 1/n
+b = -2*b0
+a = b0 * (m.conj[,1] + m.conj[,2])
+
+# Partial Fractions
+1/(x^n - 1) # ==
+b0/(x - 1) + sum( (a*x + b) / ((x - m.conj[,1]) * (x - m.conj[,2])) )
+
+
+
+########################
 ########################
 
-### Part A
+##############
+### Part A ###
+##############
 
 ### helper functions ###
 
@@ -463,7 +490,7 @@ Ihalf.gen = function(int.f, sign.inverse=FALSE, asSum=TRUE, div=1) {
 			upper = -upper;
 		}
 		# valid only for odd base powers & even exponents
-		if(Re(low) < 0 | Re(upper) < 0) {
+		if(Re(low) < 0 || Re(upper) < 0) {
 			low = as.complex(low)
 			upper = as.complex(upper)
 		}
@@ -476,6 +503,7 @@ Ihalf.gen = function(int.f, sign.inverse=FALSE, asSum=TRUE, div=1) {
 		}
 		return(r / div)
 	}
+	return(Ihalf)
 }
 Idx.gen = function(n, dx.pow, div=dx.pow) {
 	I = decompose.fr(n);
@@ -715,6 +743,46 @@ for(i in 1:n) {
 }
 
 # TODO: loss of accuracy for I8 and I1 !
+
+
+#####################
+
+### Case n = 13
+n = 13
+
+# 0 => 11  6 => 5  9 => 2 => 7 => 4 => 8 => 3 10 => 1
+
+I.num = I.num.gen(n)
+# EXACT INTEGRALS
+I = I.gen(n)
+#
+I0  = I[[1]]
+I12 = I[[2]]
+I11 = I[[3]]
+I6  = I[[4]]
+I5  = I[[5]]
+I9  = Ihalf.gen(I6)
+I2  = Iinv.gen(I9)
+I7  = Ihalf.gen(I2)
+I4  = Iinv.gen(I7)
+I8  = Ihalf.gen(I4, sign.inverse=TRUE)
+I3  = Iinv.gen(I8, sign.inverse=TRUE)
+I10 = Iinv.gen(I8, sign.inverse=TRUE)
+I1  = Iinv.gen(I10)
+I.all = c(I12, I11, I10, I9, I8, I7, I6, I5, I4, I3, I2, I1, I0)
+
+### Test
+low = 2
+upper = 4
+
+for(i in 1:n) {
+	cat("\nPow = "); cat(n - i); cat("\n")
+	cat(I.all[[i]](low, upper))
+	cat("\n")
+	print(I.num(low, upper, n - i))
+}
+
+# TODO: loss of accuracy for I1 !
 
 
 #####################
