@@ -1,11 +1,15 @@
 
 ### Leonard Mada
 ###
-### Integrals: exercises
-### draft 0.2a
+### Integrals: Exercises
+### draft 0.3
 
 
 ### Various Exercises
+
+# Students are invited to solve these exercises1 ;-)
+
+
 
 #####################
 
@@ -22,6 +26,31 @@ a = 7
 integrate(function(x) 1/(a*cos(x)^4 + a*sin(x)^4 - 1), lower=0, upper=pi/4)
 # Exact solution
 1/(a-1) / sqrt(2 - 2/(a-1)) * pi/2
+
+
+a = 1/3
+integrate(function(x) 1/(cos(x)^4 + sin(x)^4 - a), lower=0, upper=pi/4)
+# Exact solution
+1/(1-a) / sqrt(2 - 2/(1/a-1)) * pi/2
+1/(1-a) / sqrt(2 - 2*a/(1-a)) * pi/2
+
+
+a = 1/3
+n = 4 # = integer multiples of pi/4!
+integrate(function(x) 1/(cos(x)^4 + sin(x)^4 - a), lower=0, upper = n * pi/4)
+# Exact solution
+n/(1-a) / sqrt(2 - 2*a/(1-a)) * pi/2
+
+
+### TODO: full generalization
+a = 1/3
+upper = pi/5 # ONLY between 0 & up to pi/2 !!!
+integrate(function(x) 1/(cos(x)^4 + sin(x)^4 - a), lower=0, upper = upper)
+# Exact solution
+1/(1-a) / sqrt(2 - 2*a/(1-a)) * (pi/2 + atan( (tan(upper) - 1/tan(upper)) / sqrt(2 - 2*a/(1-a)) ))
+# TODO: as multiples of pi/2!
+# I[0, pi/2 + alfa] = Exact[0, pi/2] + Exact[0, alfa] # 0 is implicit;
+# Exact[0, alfa] == Exact[0, pi/2 + alfa];
 
 
 #########
@@ -66,8 +95,35 @@ integrate(function(x) sin(x)^2*cos(x)^2/(a*cos(x)^4 + a*sin(x)^4 - 1), lower=0, 
 
 ### 1.e.) TODO: variants using results from Ex. 2;
 
+a = 1/3
+upper = pi/4
+integrate(function(x) (sin(x) + cos(x))/(cos(x)^4 + sin(x)^4 - a), lower=0, upper=upper)
+# Exact solution:
+# -2/(t^4 - 2*t^2 + 2*a - 1)
+# 2/(sqrt(8 - 8*a)) * ( 1/(t^2 - r[1]) - 1/(t^2 - r[2]))
+exact = function(a, limit) {
+	a = complex(re=a, im=0)
+	r = 1 + c(-1, 1)*sqrt(2 - 2*a)
+	inv.sq = 1/sqrt(-r)
+	t = sin(limit) - cos(limit)
+	2/(sqrt(8 - 8*a)) * (inv.sq[1]*atan(t * inv.sq[1]) - inv.sq[2]*atan(t * inv.sq[2]))
+}
+exact(a, upper) - exact(a, 0)
 
-###############
+
+
+################
+### 1.B.) Powers
+
+a = 1/5
+
+integrate(function(x) 1/(cos(x)^6 + sin(x)^6 - a), lower=0, upper=pi/4)
+# Exact solution
+1/(1 - a) / sqrt((4*a-1)/(a - 1)) * pi/2
+
+
+#################
+#################
 
 
 #########
