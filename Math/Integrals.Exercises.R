@@ -2,7 +2,7 @@
 ### Leonard Mada
 ###
 ### Integrals: exercises
-### draft 0.2-pre-0.2
+### draft 0.2a
 
 
 ### Various Exercises
@@ -11,7 +11,7 @@
 
 #########
 ### Ex. 1
-###  Michael Penn: A trigonometric integral.
+### Michael Penn: A trigonometric integral.
 ### https://www.youtube.com/watch?v=V5fjlHh9pR8
 
 ### 1.a.) partial generalization
@@ -89,47 +89,50 @@ pi/2
 
 
 ### 2.b.1.) 1/(x^6 - x^3 + 1)
-upper = Inf
-integrate(function(x) 1/(x^6 - x^3 + 1), lower=0, upper=upper)
 # Exact solution:
 # TODO - not yet; *** very ugly Partial Fraction Decomposition ***
 exact = function(x) {
-	# b0 = 1/3
-	mr3 = m^(1/3) # root 3 of root of unity;
-	m.sum = m+m^2
-	m.shift = # TODO
-	D1 = 2*mr3 + m.sum*mr3/2 # TODO: /2 or NOT?
-	D2 = 2*mr3^2 + m.sum*mr3^2/2
-	m.sq = # TODO
+	mr = c(m^(1/3), (m^2)^(1/3)) # root 3 of root of unity;
+	m.sum = m + m^2 # -1
+	D = 2*mr - m.sum^2 * mr / 2
+	m.shift = mr / 2
+	m.sq = sqrt(3) * m.shift
+	log.term = function(x, mr) log(x + mr) + m.sum/2 * log((x + m*mr)*(x + m^2*mr))
+	atan.term = function(x, D, m.sq, shift) D/m.sq * atan((x - shift)/m.sq)
 	#
-	1/3 * 1/(m^2 - m) *
-	(m^2 * mr3 * ( log(x + mr3) + m.sum/2 * log((x + m*mr3)*(x + m^2*mr3)) + D1/m1.sq * atan((x-m1.shift)/m1.sq) ) -
-	m * mr3^2 * ( log(x + mr3^2) + m.sum/2 * log((x + m*mr3^2)*(x + m^2*mr3^2)) + D2/m2.sq * atan((x-m2.shift)/m2.sq)) )
+	1/3 * 1/(m^2 - m) * (
+	m^2 * mr[1] * ( log.term(x, mr[1]) + atan.term(x, D[1], m.sq[1], m.shift[1]) ) -
+	m * mr[2] * ( log.term(x, mr[2]) + atan.term(x, D[2], m.sq[2], m.shift[2]) )
+	)
 }
+# Test
+upper = 100
+integrate(function(x) 1/(x^6 - x^3 + 1), lower=0, upper=upper)
 exact(upper) - exact(0)
-# computed
-exact(Inf)
-# TODO
+# TODO: simplify/rewrite formula, so that Inf works as well;
+# some computed values
+# TODO: Inf, ...
+
 
 ### Fraction decomposition
 # Test:
 x = 2 # arbitrary value for testing;
 #
-mr3 = m^(1/3)
+mr = c(m^(1/3), (m^2)^(1/3))
 m.sum = m+m^2
 #
 1/(x^6 - x^3 + 1)
 #
 1/3 * 1/(m^2 - m) *
-	( m^2 * mr3 * (1/(x + mr3) + (m.sum*x + 2*mr3)/((x + m*mr3)*(x + m^2*mr3)) ) -
-	m * mr3^2 * (1/(x + mr3^2) + (m.sum*x + 2*mr3^2)/((x + m*mr3^2)*(x + m^2*mr3^2)) ) )
+	( m^2 * mr[1] * (1/(x + mr[1]) + (m.sum*x + 2*mr[1])/((x + m*mr[1])*(x + m^2*mr[1])) ) -
+	m * mr[2] * (1/(x + mr[2]) + (m.sum*x + 2*mr[2])/((x + m*mr[2])*(x + m^2*mr[2])) ) )
 
 
 ### 2.b.2.) 1/(x^6 + x^3 + 1)
 # Fraction decomposition
 x = 2
 #
-mr3 = m^(1/3)
+mr3 = m^(1/3) # TODO: rewrite as robust formula!
 m.sum = m+m^2
 #
 1/(x^6 + x^3 + 1)
