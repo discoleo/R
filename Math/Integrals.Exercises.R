@@ -2,7 +2,7 @@
 ### Leonard Mada
 ###
 ### Integrals: Exercises
-### draft 0.3b
+### draft 0.3c
 
 
 ### Various Exercises
@@ -220,6 +220,20 @@ exact = function(x) sqrt(2)/4 * log((1 - cos(x+pi/4))/(1 + cos(x+pi/4)))
 exact(upper) - exact(lower)
 
 
+### 1/(sin(x) + a * cos(x))
+exact = function(x, a) {
+	b = 1/sqrt(a^2 + 1)
+	alfa = acos(b)
+	b/2 * log((1 - cos(x + alfa))/(1 + cos(x + alfa)))
+}
+#
+a = 3
+lower = 0
+upper = pi/2
+integrate(function(x) 1/(sin(x) + a * cos(x)), lower=lower, upper=upper)
+exact(upper, a) - exact(lower, a)
+
+
 ### 1/(sin(x) + a)
 exact = function(x, a) {
 	a.sq = sqrt(complex(re = 1 - a^2, im=0))
@@ -255,3 +269,52 @@ exact(upper, a) - exact(lower, a)
 integrate(function(x) 1/(sin(x)^2 + a^2), lower=lower, upper=upper)
 integrate(function(t) 1/ (t^2*(1+a^2) + a^2), lower=tan(lower), upper=tan(upper))
 exact(upper, a * 1i) - exact(lower, a * 1i)
+
+
+###############
+
+### Basic Fractions
+# see https://github.com/discoleo/R/blob/master/Math/Integrals.Fractions.Unity.R
+# [the complete theory - still TODO]
+
+### cos(x) / (sin(x)^3 + cos(x)^3)
+exact = function(x) {
+	n = 3
+	m = complex(re=cos(2*pi/n), im=sin(2*pi/n))
+	b0 = 1/n
+	m.sum = (m + m^2)
+	a = b0 * m.sum
+	m.shift = m.sum/2
+	D = -2*b0 + a*m.shift
+	m.sq = sqrt(1 - m.shift^2)
+	#
+	b0 * log(-tan(x) - 1 + 0i) +
+	(a/2*log((tan(x) + m)*(tan(x) + m^2))) +
+	(D / m.sq * atan(-(tan(x) + m.shift)/m.sq))
+}
+#
+lower = pi/10
+upper = pi/2
+integrate(function(x) cos(x) / (sin(x)^3 + cos(x)^3), lower=lower, upper=upper)
+exact(upper) - exact(lower)
+
+
+integrate(function(x) sin(x) / (sin(x)^3 + cos(x)^3), lower=lower, upper=upper)
+- exact(pi/2 - upper) + exact(pi/2 - lower)
+
+### TODO: power 5 (trivial)
+integrate(function(x) cos(x)^3 / (sin(x)^5 + cos(x)^5), lower=lower, upper=upper)
+integrate(function(x) cos(x)^5 / (sin(x)^7 + cos(x)^7), lower=lower, upper=upper)
+
+
+
+###########################
+### Fractions with Radicals
+
+### cos(x) / ( sqrt(sin(x)^2 + 1) * (1 + sin(x)) )
+lower = pi/10
+upper = pi/2
+integrate(function(x) cos(x) / ( sqrt(sin(x)^2 + 1) * (1 + sin(x)) ), lower=lower, upper=upper)
+exact = function(x) sqrt(2)/4 * log((1 - cos(atan(sin(x))+pi/4))/(1 + cos(atan(sin(x))+pi/4)))
+exact(upper) - exact(lower)
+
