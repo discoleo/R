@@ -2,12 +2,12 @@
 ### Leonard Mada
 ###
 ### Integrals: Exercises
-### draft 0.3
+### draft 0.3b
 
 
 ### Various Exercises
 
-# Students are invited to solve these exercises1 ;-)
+# Students are invited to solve these exercises! ;-)
 
 
 
@@ -196,3 +196,62 @@ m.sum = m+m^2
 1/3 * 1/(m - m^2) *
 	( m^2 * (1/(x/mr3 - 1) + (m.sum*x/mr3 - 2)/((x/mr3 - m)*(x/mr3 - m^2)) ) -
 	m * (1/(x/mr3^2 - 1) + (m.sum*x/mr3^2 - 2)/((x/mr3^2 - m)*(x/mr3^2 - m^2)) ) )
+
+
+########################
+########################
+
+
+### Basic Exercises
+
+### 1/sin(x)
+lower = pi/5
+upper = pi/2
+integrate(function(x) 1/sin(x), lower=lower, upper=upper)
+exact = function(x) 1/2 * log((1 - cos(x))/(1 + cos(x)))
+exact(upper) - exact(lower)
+
+
+### 1/(sin(x) + cos(x))
+lower = 0
+upper = pi/2
+integrate(function(x) 1/(sin(x) + cos(x)), lower=lower, upper=upper)
+exact = function(x) sqrt(2)/4 * log((1 - cos(x+pi/4))/(1 + cos(x+pi/4)))
+exact(upper) - exact(lower)
+
+
+### 1/(sin(x) + a)
+exact = function(x, a) {
+	a.sq = sqrt(complex(re = 1 - a^2, im=0))
+	# with fractions; altenative: atan;
+	r1 = 1/2 * 1/a.sq * log((a.sq - cos(x))/(a.sq + cos(x)))
+	# use result from 1/(sin(x)^2 - a^2);
+	r2 = 1/2 * 1/a.sq * log((a.sq * tan(x) - a)/(a.sq * tan(x) + a))
+	r1 - r2
+}
+#
+lower = pi/5
+upper = pi/2
+a = 1/2
+integrate(function(x) 1/(sin(x) + a), lower=lower, upper=upper)
+# integrate(function(x) a/(sin(x)^2 - a^2), lower=lower, upper=upper)
+exact(upper, a) - exact(lower, a)
+
+
+### 1/(sin(x)^2 - a^2) & 1/(sin(x)^2 + a^2)
+a = 1/2
+lower = pi/5
+upper = pi/3
+exact = function(x, a) {
+	a.sq = sqrt(complex(re = 1 - a^2, im=0))
+	1/(2*a) * 1/a.sq * log((a.sq * tan(x) - a)/(a.sq * tan(x) + a))
+}
+# Test
+integrate(function(x) 1/(sin(x)^2 - a^2), lower=lower, upper=upper)
+integrate(function(t) 1/ (t^2*(1-a^2) - a^2), lower=tan(lower), upper=tan(upper))
+exact(upper, a) - exact(lower, a)
+
+
+integrate(function(x) 1/(sin(x)^2 + a^2), lower=lower, upper=upper)
+integrate(function(t) 1/ (t^2*(1+a^2) + a^2), lower=tan(lower), upper=tan(upper))
+exact(upper, a * 1i) - exact(lower, a * 1i)
