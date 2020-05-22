@@ -6,13 +6,14 @@
 ###
 ### Leonard Mada
 ###
-### draft v 0.2
+### draft v 0.3
 
 # Generate synthetic images
 # to test various graphical algorithms:
 # - Rectangles;
 # - Diagonal polygons;
 # - Circles;
+# - Cells;
 
 
 # https://github.com/discoleo/R/tree/master/Img/Img.Synthetic.R
@@ -195,10 +196,10 @@ synth.diag.rect(total)
 
 ### Circles
 
-synth.circle = function(total, r=5, seinsitivity=50, col, save=FALSE) {
+synth.circle = function(total, r=5, sensitivity=50, col, save=FALSE) {
 	id = 1:total
 	if(missing(col)) {
-		cols = col.gen(sesitivity*(id - 1))
+		cols = col.gen(sensitivity*(id - 1))
 	} else {
 		cols=col
 	}
@@ -232,4 +233,71 @@ total = 5
 # Circles
 synth.circle(total)
 # synth.circle(total, save=TRUE)
+
+
+
+#######################
+#######################
+
+#######################
+### Test Cells (Biology)
+
+
+### Generator Function
+synth.cells = function(grid, r, width, r.jitter = r,
+		col.opt = list(sens=100, var=c(0.6, 1.5)), cols, fill=NA, save=FALSE, margin=FALSE) {
+	#
+	n = grid$n * grid$n
+	if(missing(cols)) {
+		cols.palette = col.gen(col.opt$sens*runif(n, col.opt$var[1], col.opt$var[2]))
+		cols = sample(cols.palette, n, replace=TRUE)
+	}
+	# Centers
+	id.x = runif(n, -r.jitter, r.jitter)
+	id.y = runif(n, -r.jitter, r.jitter)
+	grid.all = rep(1:grid$n, grid$n)
+	c.x = (grid.all) * grid$d + id.x
+	c.y = (grid.all) * grid$d + id.y
+	c.y = c(t(matrix(c.y, nrow=grid$n)))
+
+	if(save) {
+		file = paste("Test.Cells.Grey.N_", n, ".R_", r, ".png", sep="", collapse="")
+		# TODO: proper dimensions of png
+		png(file=file, bg = "white") # width = ?
+	}
+	### Draw Circles
+	if(margin) {
+		par.old = par(mar=c(0.5,0.5,0,0))
+	} else {
+		par.old = par(mar=c(0,0,0,0))
+	}
+	plot.new()
+	
+	lim.max = grid$n * grid$d + r
+	plot.window(xlim=c(0, lim.max), ylim=c(0, lim.max))
+	for(id in 1:n) {
+		draw.circle(  c.x[id], c.y[id], r, col=NA, border=cols[id], lwd=width)
+	}
+
+	par(par.old)
+	if(save) {
+		dev.off()
+	}
+}
+
+# TODO: fill, image background
+
+grid.n = 12 # 10
+grid.d = 15 # 18
+#
+dim.grid = list(n = grid.n, d = grid.d)
+#
+r = 5 # 6
+width = 4
+# hole = r - width
+
+synth.cells(dim.grid, r, width=width)
+
+# synth.cells(dim.grid, r, width=width, save=T)
+
 
