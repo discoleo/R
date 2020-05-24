@@ -6,7 +6,7 @@
 ###
 ### Leonard Mada
 ###
-### draft v 0.3
+### draft v 0.3f
 
 # Generate synthetic images
 # to test various graphical algorithms:
@@ -15,10 +15,10 @@
 # - Circles;
 # - Cells;
 
-
 # https://github.com/discoleo/R/tree/master/Img/Img.Synthetic.R
 
-################
+
+##################
 
 # install.packages("plotrix")
 
@@ -26,7 +26,7 @@ library(plotrix)
 
 
 # Save images:
-setwd("...")
+setwd("\\img")
 
 
 ###############
@@ -44,6 +44,28 @@ col.gen = function(lumi) {
 	}
 	cols = sapply(lumi, col.base.gen)
 	return(cols)
+}
+# only on Gray-levels
+add.col = function(fill, base.col, n=length(base.col)) {
+	# cols = original colors;
+	if(is.list(fill)) {
+		if(length(fill$rel) != 0) {
+			# TODO: How should rel work?
+			fill = rgb(t(col2rgb(base.col)/255 * fill))
+		} else if(length(fill$add) != 0) {
+			fill = rgb(t(col2rgb(base.col)/255 + fill))
+		}
+	} else if(length(fill) == 1) {
+		if(fill == TRUE) {
+			fill = base.col
+		} else if(fill < 0) {
+			# fill = base.col + fill
+			fill = rgb(t(col2rgb(base.col)/255 + fill))
+		} else {
+			fill = rep(fill, n)
+		}
+	}
+	return(fill)
 }
 
 ################
@@ -242,15 +264,21 @@ synth.circle(total)
 #######################
 ### Test Cells (Biology)
 
-
 ### Generator Function
 synth.cells = function(grid, r, width, r.jitter = r,
-		col.opt = list(sens=100, var=c(0.6, 1.5)), cols, fill=NA, save=FALSE, margin=FALSE) {
+		col.opt = list(sens=100, var=c(0.5, 1.5)), cols, fill=NA, save=FALSE, img.id=NA,
+		margin=FALSE, alternating=FALSE) {
 	#
 	n = grid$n * grid$n
 	if(missing(cols)) {
 		cols.palette = col.gen(col.opt$sens*runif(n, col.opt$var[1], col.opt$var[2]))
 		cols = sample(cols.palette, n, replace=TRUE)
+	}
+	isFill = TRUE
+	if( ! missing(fill) ) {
+		fill = add.col(fill, cols)
+	} else {
+		isFill = FALSE
 	}
 	# Centers
 	id.x = runif(n, -r.jitter, r.jitter)
@@ -259,9 +287,14 @@ synth.cells = function(grid, r, width, r.jitter = r,
 	c.x = (grid.all) * grid$d + id.x
 	c.y = (grid.all) * grid$d + id.y
 	c.y = c(t(matrix(c.y, nrow=grid$n)))
+	if(alternating) {
+		id.between = (n %/% grid$n) %% 2 == 1
+		c.x[id.between] = c.x[id.between] - grid$d / 2
+	}
 
 	if(save) {
-		file = paste("Test.Cells.Grey.N_", n, ".R_", r, ".png", sep="", collapse="")
+		img.id = if(missing(img.id)) "" else paste(".ID", img.id, sep="")
+		file = paste("Test.Cells.Grey", img.id, ".N_", n, ".R_", r, ".png", sep="", collapse="")
 		# TODO: proper dimensions of png
 		png(file=file, bg = "white") # width = ?
 	}
@@ -276,7 +309,7 @@ synth.cells = function(grid, r, width, r.jitter = r,
 	lim.max = grid$n * grid$d + r
 	plot.window(xlim=c(0, lim.max), ylim=c(0, lim.max))
 	for(id in 1:n) {
-		draw.circle(  c.x[id], c.y[id], r, col=NA, border=cols[id], lwd=width)
+		draw.circle(  c.x[id], c.y[id], r, col=ifelse(isFill, fill[id], NA), border=cols[id], lwd=width)
 	}
 
 	par(par.old)
@@ -285,7 +318,49 @@ synth.cells = function(grid, r, width, r.jitter = r,
 	}
 }
 
-# TODO: fill, image background
+# TODO:
+# high lumi fill, alternating grid rows;
+# image background;
+# populations of cells: fill, R;
+
+test.cells.gen = function(samples, grid, r=6, width=4, save=FALSE) {
+	id.series = 1:samples
+	base.lumi = 100
+	SAVE = save
+	
+	# Baseline
+	series.id = id.series
+	for(id in id.series) {
+		synth.cells(grid, r, width, img.id=series.id[id], save=SAVE)
+	}
+	# Luminosity Drift
+	series.id = series.id + samples
+	diff = seq(0, by=0.8/samples, length.out=samples)
+	for(id in id.series) {
+		col.opt = list(sens=base.lumi, var=c(1 - diff[id], 1+ diff[id]))
+		synth.cells(grid, r, width, col.opt=col.opt, img.id=series.id[id], save=SAVE)
+	}
+	# Luminosity Base
+	series.id = series.id + samples
+	diff = (base.lumi - 20)/samples
+	lumi = id.series * diff
+	for(id in id.series) {
+		col.opt = list(sens=lumi[id], var=c(0.5, 1.5))
+		synth.cells(grid, r, width, col.opt=col.opt, img.id=series.id[id], save=SAVE)
+	}
+	# Radius
+	series.id = series.id + samples
+	diff = 2*r/samples
+	r.seq = seq(diff, by=diff, length.out=samples)
+	for(id in id.series) {
+		synth.cells(grid, r=r.seq[id], width, img.id=series.id[id], save=SAVE)
+	}
+}
+
+test.cells.gen(5, dim.grid, save=TRUE)
+
+
+######################
 
 grid.n = 12 # 10
 grid.d = 15 # 18
@@ -300,4 +375,8 @@ synth.cells(dim.grid, r, width=width)
 
 # synth.cells(dim.grid, r, width=width, save=T)
 
+synth.cells(dim.grid, r, width=width, fill=-0.1)
+
+
+synth.cells(dim.grid, r, width=width, alternating=TRUE)
 
