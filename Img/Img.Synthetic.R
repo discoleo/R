@@ -6,7 +6,7 @@
 ###
 ### Leonard Mada
 ###
-### draft v 0.3f
+### draft v 0.3g
 
 # Generate synthetic images
 # to test various graphical algorithms:
@@ -33,7 +33,13 @@ setwd("\\img")
 
 ### helper Functions
 
-# Colors
+### Colors
+# Options
+lumi.options = function(lumi=100, diff=0.5, var=c(1-diff, 1+diff)) {
+	col.opt = list(sens=lumi, var=var)
+	return(col.opt)
+}
+# Generate
 col.gen = function(lumi) {
 	col.base.gen = function(lumi) {
 		rgb(lumi, lumi, lumi)
@@ -323,41 +329,65 @@ synth.cells = function(grid, r, width, r.jitter = r,
 # image background;
 # populations of cells: fill, R;
 
-test.cells.gen = function(samples, grid, r=6, width=4, save=FALSE) {
+test.cells.gen = function(samples, grid, r=6, width=4, save=FALSE, start.id=1) {
 	id.series = 1:samples
 	base.lumi = 100
+	const.diff.lumi = 20
+	lumi.drift = 0.5
 	SAVE = save
 	
 	# Baseline
-	series.id = id.series
+	series.id = id.series + start.id - 1
 	for(id in id.series) {
 		synth.cells(grid, r, width, img.id=series.id[id], save=SAVE)
 	}
-	# Luminosity Drift
+	# Luminosity: const shift to lower
+	series.id = series.id + samples
+	col.opt = lumi.options(lumi=base.lumi - const.diff.lumi)
+	for(id in id.series) {
+		synth.cells(grid, r, width, col.opt=col.opt, img.id=series.id[id], save=SAVE)
+	}
+	# Luminosity: const shift to higher
+	series.id = series.id + samples
+	col.opt = lumi.options(lumi=base.lumi + const.diff.lumi)
+	for(id in id.series) {
+		synth.cells(grid, r, width, col.opt=col.opt, img.id=series.id[id], save=SAVE)
+	}
+	# Luminosity: Width Drift
 	series.id = series.id + samples
 	diff = seq(0, by=0.8/samples, length.out=samples)
 	for(id in id.series) {
-		col.opt = list(sens=base.lumi, var=c(1 - diff[id], 1+ diff[id]))
+		col.opt = lumi.options(lumi=base.lumi, diff=diff[id])
+		# col.opt = list(sens=base.lumi, var=c(1 - diff[id], 1 + diff[id]))
 		synth.cells(grid, r, width, col.opt=col.opt, img.id=series.id[id], save=SAVE)
 	}
-	# Luminosity Base
+	# Luminosity: Base shift
 	series.id = series.id + samples
-	diff = (base.lumi - 20)/samples
-	lumi = id.series * diff
+	diff = seq(from=-lumi.drift, by= 2 * lumi.drift / samples, length.out=samples)
+	lumi = base.lumi * (1 + diff)
 	for(id in id.series) {
-		col.opt = list(sens=lumi[id], var=c(0.5, 1.5))
+		col.opt = lumi.options(lumi=lumi[id])
+		# col.opt = list(sens=lumi[id], var=c(0.5, 1.5))
 		synth.cells(grid, r, width, col.opt=col.opt, img.id=series.id[id], save=SAVE)
+	}
+	# Radius: const lower
+	series.id = series.id + samples
+	for(id in id.series) {
+		synth.cells(grid, r= r - 1, width, img.id=series.id[id], save=SAVE)
+	}
+	# Radius: const higher
+	series.id = series.id + samples
+	for(id in id.series) {
+		synth.cells(grid, r= r + 1, width, img.id=series.id[id], save=SAVE)
 	}
 	# Radius
 	series.id = series.id + samples
-	diff = 2*r/samples
-	r.seq = seq(diff, by=diff, length.out=samples)
+	diff = r/2 / (samples %/% 2) # TODO: better algorithm
+	r.seq = seq(r/2, by=diff, length.out=samples)
 	for(id in id.series) {
 		synth.cells(grid, r=r.seq[id], width, img.id=series.id[id], save=SAVE)
 	}
 }
-
-test.cells.gen(5, dim.grid, save=TRUE)
 
 
 ######################
@@ -379,4 +409,78 @@ synth.cells(dim.grid, r, width=width, fill=-0.1)
 
 
 synth.cells(dim.grid, r, width=width, alternating=TRUE)
+
+###############
+### Test Series
+test.cells.gen(5, dim.grid, save=TRUE)
+
+
+#####################
+#####################
+
+### Fingerprints
+
+# TODO:
+
+digit.gen = function() {
+	
+}
+
+# some experiments
+	digit = function(x, scale=8, phi=0, tr=0) {
+		x.sc = x / 2
+		y = sin(x.sc) + sin(x.sc^2/10) / 4 + tr
+		r = scale/2
+		y = r*y
+		isFar = ((x - r)^2 + (y - r)^2) > r^2
+		y[isFar] = 0
+		return(y)
+	}
+	
+	lim.max = 8
+	
+	plot.new()
+	
+	plot.window(xlim=c(0, lim.max), ylim=c(-lim.max, lim.max))
+	curve(digit(x), from=0, to=lim.max)
+
+
+
+
+
+
+#######################
+
+### NMR
+
+nmr.gen = function() {
+	# simulate an NMR signal
+	nmr = function(x, scale=8, phi=0, tr=0) {
+		x.rev = scale - x
+		y = sin(2*x.rev) + sin(3*x.rev^2) + tr
+		r = scale/2
+		y = r*y
+		#
+		if(TRUE) {
+		y[x >= 6] = abs(y[x >= 6])
+		#
+		isFar = (x < 6) & ((x - r)^2 + (y - r)^2) > r^2
+		y[isFar] = 0
+		isFar = (x >= 6) & ((x - r)^2 + (y - r)^2) > 1.5 * r^2
+		y[isFar] = sqrt(y[isFar])
+		}
+		#
+		return(y)
+	}
+	
+	lim.max = 8
+	
+	plot.new()
+	
+	plot.window(xlim=c(lim.max, 0), ylim=c(-lim.max, lim.max))
+	curve(nmr(x), from=lim.max, to=0, xlim=c(lim.max, 0))
+}
+
+nmr.gen()
+
 
