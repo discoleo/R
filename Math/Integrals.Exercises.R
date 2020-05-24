@@ -2,7 +2,8 @@
 ### Leonard Mada
 ###
 ### Integrals: Exercises
-### draft 0.4a
+### draft 0.42 Special Edition
+### [somehow appropriate]
 
 
 ### Various Exercises
@@ -407,10 +408,6 @@ integrate(function(x) cos(x) / (sin(x)^5 + cos(x)^5), lower=lower, upper=upper)
 pseudo.exact(n, 2, lower, upper)$value + pseudo.exact(n, 0, lower, upper)$value
 
 
-### TODO:
-### A[2, 2] = (A[4,0] + A[0,4])
-
-
 ### A[5, 0] + A[0, 5] = x
 # sin(x)^5 + cos(x)^5 =
 # = (sin(x) + cos(x))*(1 - 2*A[2,2] - A[1,1] + A[2,2])
@@ -432,6 +429,24 @@ integrate(function(x) sin(x)^2*cos(x)^3 / (sin(x)^5 + cos(x)^5), lower=lower, up
 A23 = (A32 - log.exact(lower, upper, n) +
 	pseudo.exact(n, 2, lower, upper)$value - pseudo.exact(n, 1, lower, upper)$value)
 A23
+
+
+# A[0, 0]
+# TODO: relations of atanh?
+exact.A00 = function(x) {
+	root = sqrt(1 + sqrt(5)/2)
+	r = log((1+x)/(1-x)) + 2*root*atan(x*root*2) - 1/root * atanh(x/root)
+	# log(())
+	r/10 * 4/sqrt(2)
+}
+integrate(function(x) 1 / (sin(x)^5 + cos(x)^5), lower=lower, upper=upper)
+integrate(function(x) 4/sqrt(2) / (1-x^2)/(5 - 4*(1-x^2)^2), lower=sin(lower-pi/4), upper=sin(upper-pi/4))
+A00 = exact.A00(sin(upper-pi/4)) - exact.A00(sin(lower-pi/4))
+A00
+
+
+### TODO:
+### A[2, 2] = (A[0,0] - (A[4,0] + A[0,4]))/2
 
 
 
