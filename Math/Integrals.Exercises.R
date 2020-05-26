@@ -2,7 +2,7 @@
 ### Leonard Mada
 ###
 ### Integrals: Exercises
-### draft 0.42b Special Edition
+### draft 0.42c Special Edition
 ### [somehow appropriate]
 
 
@@ -457,7 +457,20 @@ A00
 
 
 ### TODO:
-# A[2, 0], A[0, 2]
+### A[2, 0], A[0, 2]
+# A[2, 0] - A[0, 2]
+# (sin(x) - cos(x)) / (1 - sin(x)*cos(x) - sin(x)^2 * cos(x)^2)
+# sqrt(2)*4 * sin(x - pi/4) / (4 - 2*cos(2*x-pi/2) - cos(2*x-pi/2)^2)
+# x - pi/4 = y =>
+# sqrt(2)*4 * sin(x) / (4 - 2*cos(2*x) - cos(2*x)^2)
+# cos(x) = t # t = cos(x - pi/4)
+# sqrt(2)*4 / (4 - 2*(2*t^2-1) - (2*t^2-1)^2)
+# sqrt(2)*4 / (5 - 4*t^4)
+# t * (4/5)^(1/4) = w
+# sqrt(2)*4 * (5/4)^(1/4) / 5 / (w^4 - 1)
+integrate(function(x) (sin(x)^2 - cos(x)^2) / (sin(x)^5 + cos(x)^5), lower=lower, upper=upper)
+integrate(function(x) sqrt(2)*4 * (5/4)^(1/4) / 5 / (x^4 - 1),
+	lower = (4/5)^(1/4) * cos(lower - pi/4), upper= (4/5)^(1/4) * cos(upper - pi/4))
 
 
 ### TODO:
@@ -466,12 +479,13 @@ integrate(function(x) sin(x)^2*cos(x)^2 / (sin(x)^5 + cos(x)^5), lower=lower, up
 integrate(function(x) 1/8 * sin(x)^2 / (sin(x/2)^5 + cos(x/2)^5), lower=2*lower, upper=2*upper)
 
 
-###
+### Use case?
 # (cos(x)^3 + sin(x)^3) / (cos(x)^5 + sin(x)^5)
 # => x = y + pi/4:
 # 2 * (cos(x)^2 + 3*sin(x)^2) / (cos(x)^4 + 10*cos(x)^2*sin(x)^2 + 5*sin(x)^4)
 # 2 * (1 + 2*sin(x)^2) / (1 + 8*sin(x)^2 - 4*sin(x)^4)
-# sin(x) = ctg(y) ???
+# 2 * (1 + 2*sin(x)^2) / (5 - 4 * (1 - sin(x)^2)^2)
+# sin(x) = ctg(y) ???;
 
 
 ###########################
