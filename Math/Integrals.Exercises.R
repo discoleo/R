@@ -2,7 +2,7 @@
 ### Leonard Mada
 ###
 ### Integrals: Exercises
-### draft 0.42 Special Edition
+### draft 0.42b Special Edition
 ### [somehow appropriate]
 
 
@@ -361,6 +361,7 @@ integrate(function(x) sin(x) / (sin(x)^3 + cos(x)^3), lower=lower, upper=upper)
 ### Powers 5, 7, ...
 ### (trivial)
 
+#########
 ### n = 5
 n = 5
 lower = pi/10
@@ -369,7 +370,7 @@ integrate(function(x) cos(x)^3 / (sin(x)^5 + cos(x)^5), lower=lower, upper=upper
 exact(upper, n) - exact(lower, n)
 
 
-
+#########
 ### n = 7
 n = 7
 lower = pi/10
@@ -378,6 +379,16 @@ integrate(function(x) cos(x)^5 / (sin(x)^7 + cos(x)^7), lower=lower, upper=upper
 exact(upper, n) - exact(lower, n)
 
 
+#########
+### n = 9
+n = 9
+lower = pi/10
+upper = pi/2
+integrate(function(x) cos(x)^7 / (sin(x)^9 + cos(x)^9), lower=lower, upper=upper)
+exact(upper, n) - exact(lower, n)
+
+
+########################
 ### Workout ALL subtypes
 ### A[i, j] = sin(x)^i * cos(x)^j / (sin(x)^n + cos(x)^n)
 
@@ -440,14 +451,27 @@ exact.A00 = function(x) {
 	r/10 * 4/sqrt(2)
 }
 integrate(function(x) 1 / (sin(x)^5 + cos(x)^5), lower=lower, upper=upper)
-integrate(function(x) 4/sqrt(2) / (1-x^2)/(5 - 4*(1-x^2)^2), lower=sin(lower-pi/4), upper=sin(upper-pi/4))
+integrate(function(x) 4/sqrt(2) / ((1-x^2)*(5 - 4*(1-x^2)^2)), lower=sin(lower-pi/4), upper=sin(upper-pi/4))
 A00 = exact.A00(sin(upper-pi/4)) - exact.A00(sin(lower-pi/4))
 A00
 
 
 ### TODO:
-### A[2, 2] = (A[0,0] - (A[4,0] + A[0,4]))/2
+# A[2, 0], A[0, 2]
 
+
+### TODO:
+### A[2, 2] = (A[0,0] - (A[4,0] + A[0,4]))/2
+integrate(function(x) sin(x)^2*cos(x)^2 / (sin(x)^5 + cos(x)^5), lower=lower, upper=upper)
+integrate(function(x) 1/8 * sin(x)^2 / (sin(x/2)^5 + cos(x/2)^5), lower=2*lower, upper=2*upper)
+
+
+###
+# (cos(x)^3 + sin(x)^3) / (cos(x)^5 + sin(x)^5)
+# => x = y + pi/4:
+# 2 * (cos(x)^2 + 3*sin(x)^2) / (cos(x)^4 + 10*cos(x)^2*sin(x)^2 + 5*sin(x)^4)
+# 2 * (1 + 2*sin(x)^2) / (1 + 8*sin(x)^2 - 4*sin(x)^4)
+# sin(x) = ctg(y) ???
 
 
 ###########################
