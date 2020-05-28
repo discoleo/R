@@ -2,7 +2,7 @@
 ### Leonard Mada
 ###
 ### Integrals: Exercises
-### draft 0.42c Special Edition
+### draft 0.42d still Special Edition
 ### [somehow appropriate]
 
 
@@ -234,6 +234,9 @@ upper = pi/2
 integrate(function(x) 1/(sin(x) + a * cos(x)), lower=lower, upper=upper)
 exact(upper, a) - exact(lower, a)
 
+# special case: a = i
+# 1/(sin(x) + i * cos(x)) = sin(x) - i * cos(x)
+
 
 ### 1/(sin(x) + a)
 exact = function(x, a) {
@@ -319,7 +322,7 @@ unity = function(n, sum=TRUE) {
 	return(m)
 }
 ### ONLY n = ODD!
-exact = function(x, n=3) {
+exact = function(x, n=3, coeff=1) {
 	m.all = unity(n)
 	m = m.all$m
 	m.sum = m.all$sum
@@ -329,9 +332,14 @@ exact = function(x, n=3) {
 	D = -2*b0 + a*m.shift
 	m.sq = sqrt(1 - m.shift^2)
 	#
-	b0 * log(-tan(x) - 1 + 0i) +
-	sum(a/2*log((tan(x) + m[,1])*(tan(x) + m[,2]))) +
-	sum(D / m.sq * atan(-(tan(x) + m.shift)/m.sq))
+	x.tan = tan(x) / coeff^(1/n)
+	r = b0 * log(-x.tan - 1 + 0i) +
+	sum(a/2*log((x.tan + m[,1])*(x.tan + m[,2]))) +
+	sum(D / m.sq * atan(-(x.tan + m.shift)/m.sq))
+	return(r * coeff^(1/n) / coeff)
+}
+exact.int = function(n, lower, upper, coeff=1) {
+	exact(upper, n, coeff) - exact(lower, n, coeff)
 }
 pseudo.exact = function(n, x.pow, lower, upper) {
 	# faking now: x^x.pow / (x^n + 1) dx
@@ -351,10 +359,19 @@ lower = pi/10
 upper = pi/2
 integrate(function(x) cos(x) / (sin(x)^3 + cos(x)^3), lower=lower, upper=upper)
 exact(upper, n) - exact(lower, n)
-
+exact.int(n, lower, upper)
 
 integrate(function(x) sin(x) / (sin(x)^3 + cos(x)^3), lower=lower, upper=upper)
 - exact(pi/2 - upper, n) + exact(pi/2 - lower, n)
+
+
+# with coefficient
+n = 3
+a = 3
+lower = pi/10
+upper = pi/2
+integrate(function(x) cos(x) / (sin(x)^3 + a * cos(x)^3), lower=lower, upper=upper)
+exact.int(n, lower, upper, coeff=a)
 
 
 ####################
@@ -386,6 +403,15 @@ lower = pi/10
 upper = pi/2
 integrate(function(x) cos(x)^7 / (sin(x)^9 + cos(x)^9), lower=lower, upper=upper)
 exact(upper, n) - exact(lower, n)
+
+
+# with coefficient
+n = 5 # 7, 9, 11, ... # only odd with this formula;
+a = 3
+lower = pi/10
+upper = pi/2
+integrate(function(x) cos(x)^(n-2) / (sin(x)^n + a * cos(x)^n), lower=lower, upper=upper)
+exact.int(n, lower, upper, coeff=a)
 
 
 ########################
@@ -468,9 +494,14 @@ A00
 # sqrt(2)*4 / (5 - 4*t^4)
 # t * (4/5)^(1/4) = w
 # sqrt(2)*4 * (5/4)^(1/4) / 5 / (w^4 - 1)
+A2Diff.exact = function(x) {
+	x.t = (4/5)^(1/4) * cos(x - pi/4)
+	sqrt(2)* 2 * (5/4)^(1/4) / 5 * (-1i * atan(-1i*x.t) - atan(x.t))
+}
 integrate(function(x) (sin(x)^2 - cos(x)^2) / (sin(x)^5 + cos(x)^5), lower=lower, upper=upper)
 integrate(function(x) sqrt(2)*4 * (5/4)^(1/4) / 5 / (x^4 - 1),
 	lower = (4/5)^(1/4) * cos(lower - pi/4), upper= (4/5)^(1/4) * cos(upper - pi/4))
+A2Diff.exact(upper) - A2Diff.exact(lower)
 
 
 ### TODO:
@@ -486,6 +517,27 @@ integrate(function(x) 1/8 * sin(x)^2 / (sin(x/2)^5 + cos(x/2)^5), lower=2*lower,
 # 2 * (1 + 2*sin(x)^2) / (1 + 8*sin(x)^2 - 4*sin(x)^4)
 # 2 * (1 + 2*sin(x)^2) / (5 - 4 * (1 - sin(x)^2)^2)
 # sin(x) = ctg(y) ???;
+
+###########
+### n = 7
+
+### (sin(x)^2 - cos(x)^2) / (sin(x)^7 + cos(x)^7)
+# 8 * sqrt(2) * sin(x - pi/4) / (8 + sin(2*x)^3 - 4 * sin(2*x)^2 - 4 * sin(2*x))
+# 8 * sqrt(2) * sin(x - pi/4) / (8 + cos(2*x-pi/2)^3 - 4 * cos(2*x-pi/2)^2 - 4 * cos(2*x-pi/2))
+
+
+
+##############
+
+### TODO: (trivial)
+### cos(x)^8 / (sin(x)^10 - cos(x)^10)
+### sin(x)^8 / (sin(x)^10 - cos(x)^10)
+### => Decomposition: ... * (1/(sin(x)^5 - cos(x)^5) - 1/(sin(x)^5 + cos(x)^5))
+# x^0 => A[8, 0] & A[0, 8] => 1 - 4*A[2,2] + 2*A[4,4]
+# x^1 => A[7, 1] & A[1, 7] => A[1,1] - 3*A[3,3]
+
+# from n=5, A[0,0] => n=10, A[5,0]
+
 
 
 ###########################
