@@ -3,14 +3,17 @@
 ###
 ### Leonard Mada
 ###
-### draft v 0.1
+### draft v 0.1b
 
 
 # - various variations of the classic regression;
 # - minimise the actual distance to the regression line;
+# - added effects of scaling;
 
 
 ############################
+
+# dir.create(tempdir())
 
 ### helper functions
 
@@ -71,6 +74,8 @@ rliniar.gen = function(n, b1=3, b1.var=10, method=1) {
 	return(data.frame(x=x, y=y))
 }
 
+
+
 ############
 
 x.df = rliniar.gen(100, b1.var=100, method=1)
@@ -100,6 +105,38 @@ a = r[1]
 b = r[2]
 r
 dist.line(x, y, a, b)
+
+curve(a * x + b, add=T, col="blue")
+
+
+##############
+
+### Effects of Scaling
+
+### Scale
+x.sc = scale(x)
+y.sc = scale(y)
+
+
+plot(x.sc, y.sc)
+
+### Ordinary liniar regression
+r = solve.reg(x.sc, y.sc)
+
+a = r[1]
+b = r[2]
+r
+dist.line(x.sc, y.sc, a, b)
+
+curve(a * x + b, add=T, col="red")
+
+### Liniar Distance to line
+r = solve.dist(x.sc, y.sc)
+
+a = r[1]
+b = r[2]
+r
+dist.line(x.sc, y.sc, a, b)
 
 curve(a * x + b, add=T, col="blue")
 
