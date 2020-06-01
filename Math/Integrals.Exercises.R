@@ -2,7 +2,7 @@
 ### Leonard Mada
 ###
 ### Integrals: Exercises
-### draft 0.42d still Special Edition
+### draft 0.42e still Special Edition
 ### [somehow appropriate]
 
 
@@ -508,6 +508,31 @@ A2Diff.exact(upper) - A2Diff.exact(lower)
 ### A[2, 2] = (A[0,0] - (A[4,0] + A[0,4]))/2
 integrate(function(x) sin(x)^2*cos(x)^2 / (sin(x)^5 + cos(x)^5), lower=lower, upper=upper)
 integrate(function(x) 1/8 * sin(x)^2 / (sin(x/2)^5 + cos(x/2)^5), lower=2*lower, upper=2*upper)
+
+#
+lower = pi/10
+upper = pi/5
+integrate(function(x) (sin(x)^4 + cos(x)^4) / (sin(x)^5 - cos(x)^5), lower=lower, upper=upper)
+integrate(function(x) (sin(x)^4 + cos(x)^4) / (sin(x)^5 + cos(x)^5), lower=-lower, upper=-upper)
+
+
+### Generalization A[k,k]
+# sin(x) - cos(x) = t
+# -1/2^(k-2) * (1-t^2)^k / ((2-t^2)*((1-t^2)^2 + 2*(1-t^2) - 4)) # for n = 5;
+# e.g. sin(x)^3 * cos(x)^3 / (sin(x)^5 + cos(x)^5)
+# - 1/2 * (1-t^2)^3 / ((2-t^2)*((1-t^2)^2 + 2*(1-t^2) - 4))
+# -1/2 + 1/2 * ((1-t^2)^2 - 2*(1+t^2)*(2-t^2)) / ((2-t^2)*((1-t^2)^2 + 2*(1-t^2) - 4))
+# TODO: find elegant way to solve the fraction;
+# Test calculations:
+x = pi/11
+t = sin(x) - cos(x)
+sin(x)^3 * cos(x)^3 / (sin(x)^5 + cos(x)^5)
+- 1/2 * (1-t^2)^3 / ((2-t^2)*((1-t^2)^2 + 2*(1-t^2) - 4)) * (sin(x) + cos(x))
+(-1/2 + 1/2 * ((1-t^2)^2 - 2*(1+t^2)*(2-t^2)) / ((2-t^2)*((1-t^2)^2 + 2*(1-t^2) - 4)) ) * (sin(x) + cos(x))
+
+
+# (sin(x) + cos(x)) * (sin(x)^5 + cos(x)^5)
+# A[0,0] - 3*A[2,2] + A[1,1] - 2*A[3,3]
 
 
 ### Use case?
