@@ -3,12 +3,13 @@
 ###
 ### Leonard Mada
 ###
-### draft v 0.1b
+### draft v 0.1c
 
 
 # - various variations of the classic regression;
-# - minimise the actual distance to the regression line;
-# - added effects of scaling;
+# - minimise the square of the actual distance to the regression line;
+# - added effects of scaling:
+#  -- different scales on the 2 axes can degrade the performance;
 
 
 ############################
@@ -53,7 +54,7 @@ dist.line2 = function(x, y, a, b) {
 	sum((x - x.l)^2 + (y - y.l)^2)
 }
 ### Random Generator
-rliniar.gen = function(n, b1=3, b1.var=10, method=1) {
+rliniar.gen = function(n, b1=3, b1.var=10, method=1, clip.neg=TRUE) {
 	x = 1:n
 	if(method == 1) {
 		# Method 1:
@@ -66,19 +67,76 @@ rliniar.gen = function(n, b1=3, b1.var=10, method=1) {
 		x.var = b1.var * log(x+0.5) # b1.var = ...
 	}
 	#
+	x.var = ifelse(x.var < 0, -x.var, x.var)
 	y = x * (b1 + runif(n, -x.var, x.var))
 	#
 	y = y + runif(n, 0, 5)
 	x = x + runif(n, 0, 2)
 	#
+	if(clip.neg) {
+		y[y < 0] = 0
+	}
 	return(data.frame(x=x, y=y))
 }
+### Test the regressions
+plot.test = function(n, b1.var=100, method=1, clip=TRUE, scale=TRUE) {
+	x.df = rliniar.gen(n, b1.var=b1.var, method=method, clip.neg=clip)
+	### Scale
+	if(scale) {
+		x = scale(x.df[,1])
+		y = scale(x.df[,2])
+	} else {
+		x = x.df[,1]
+		y = x.df[,2]
+	}
+	# Start plot
+	plot(x, y)
 
+	### Ordinary liniar regression
+	r = solve.reg(x, y)
+	print(r)
+	print(dist.line(x, y, r[1], r[2]))
+	curve(r[1] * x + r[2], add=T, col="red")
 
+	### Liniar Distance to line
+	r = solve.dist(x, y)
+	print(r)
+	print(dist.line(x, y, r[1], r[2]))
+	curve(r[1] * x + r[2], add=T, col="blue")
+	#
+	invisible(x.df)
+}
+plot.all.reg = function(x, y, scale=FALSE, col=c("red", "blue")) {
+	if(scale) {
+		### Scale
+		x = scale(x)
+		y = scale(y)
+	}
+	plot(x, y)
+	### Ordinary liniar regression
+	r = solve.reg(x, y)
+	print(r)
+	d = dist.line(x, y, r[1], r[2])
+	print(d)
 
-############
+	curve(r[1] * x + r[2], add=T, col=col[1])
 
-x.df = rliniar.gen(100, b1.var=100, method=1)
+	### Liniar Distance to line
+	# - fails with non-constant variance / different metrics on x/y;
+	# - may be useful with polynomial regression;
+	r = solve.dist(x, y)
+	print(r)
+	d = dist.line(x, y, r[1], r[2])
+	print(d)
+
+	curve(r[1] * x + r[2], add=T, col=col[2])
+}
+
+##################
+##################
+
+b1.var = 0.4 # 100
+x.df = rliniar.gen(100, b1.var=b1.var, method=1)
 x = x.df$x
 y = x.df$y
 
@@ -141,6 +199,10 @@ dist.line(x.sc, y.sc, a, b)
 curve(a * x + b, add=T, col="blue")
 
 
+#######
+
+plot.test(200, -0.3, method=3)
+
 ##############
 ### Comparison
 summary(lm(y ~ x))
@@ -149,9 +211,35 @@ summary(lm(y ~ x))
 
 ####################
 
+###
+n = 100
+x = 1:n
+x = sample(x, n, replace=TRUE)
+y = c(x + runif(n, 0, 2), x + runif(n, 0, 5), x - runif(n, 5, 30))
+x = c(x,x,x)
+x = x + runif(n, -2, 2)
+
+plot.all.reg(x, y)
+
+plot.all.reg(x, y, scale=T)
 
 
-##############
+###
+n = 100
+x = 1:n
+x = sample(x, n, replace=TRUE)
+x.b = (1 + runif(n, -1/x, 1/x)) * x
+y = c(x.b + runif(n, 10, 15), x.b + runif(n, -5, 5), x.b - runif(n, 10, 15))
+x = c(x,x,x)
+x = x + runif(n, -2, 2)
+
+plot.all.reg(x, y)
+
+plot.all.reg(x, y, scale=T)
+
+
+####################
+####################
 
 ### Derivation
 ### Test
