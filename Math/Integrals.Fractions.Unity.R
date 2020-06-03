@@ -16,8 +16,9 @@
 ###
 ### version 1 [RC1] [draft]
 ###
-### 2020-05-20
-### - only minor edit; unfortunately no time for more work;
+### 2020-05-20, 2020-06-03:
+### - shortcut for even powers (example);
+### - only minor edit (unfortunately no time for more work);
 ### 2020-03-01
 ### - polynomial fractions: P(x) / (x^n - 1)^2
 ###   Cases: n=3, n=5, n=7;
@@ -76,6 +77,25 @@ a = b0 * (m.conj[,1] + m.conj[,2])
 b0/(x - 1) + sum( (a*x + b) / ((x - m.conj[,1]) * (x - m.conj[,2])) )
 
 
+1/(x^n + 1) # ==
+b0/(x + 1) + sum( (a*x - b) / ((x + m.conj[,1]) * (x + m.conj[,2])) )
+
+
+### Even Powers
+# shortcut for even powers
+# [was computed previousy using the difference of the 2 lower powers]
+# TODO: improve also code; 
+n = 10
+n.2 = n/2
+m = complex(re=cos(2*pi/n), im=sin(2*pi/n))
+m = m^(c(0:n.2, (n-1):(n.2+1)))
+m = matrix(m, ncol=2)
+b = -2/n
+a = 1/n
+### Test
+x = 2 # any value; used to test the fraction decomposition;
+sum((a*x*(m[,1]+m[,2]) + b) / (x-m[,1])/(x-m[,2])) - 2*b/(x^2-1)
+1/(x^n - 1)
 
 ########################
 ########################
