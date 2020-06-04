@@ -16,7 +16,8 @@
 ###
 ### version 1 [RC1] [draft]
 ###
-### 2020-05-20, 2020-06-03:
+### 2020-05-20, 2020-06-03, 2020-06-04:
+### - a new type of fractions: TODO: move to separate file;
 ### - shortcut for even powers (example);
 ### - only minor edit (unfortunately no time for more work);
 ### 2020-03-01
@@ -1105,6 +1106,8 @@ integrate(function(x) 1/2 * x^3/(x^5 + 1), lower=lower^2, upper=upper^2)
 integrate(function(x) x^7/(x^10 + 1), lower=lower, upper=upper)
 integrate(function(x) sin(x)^7*cos(x)/(sin(x)^10 + cos(x)^10), lower=atan(lower), upper=atan(upper))
 integrate(function(x) 1/2 * x^3/(x^5 + (1-x)^5), lower=sin(atan(lower))^2, upper=sin(atan(upper))^2)
+integrate(function(x) 1/2 * x^3/(x^5 + (1-x)^5), lower=1-1/(lower^2+1), upper=1-1/(upper^2+1))
+integrate(function(x) (1+x)^3/((1+x)^5 + (1-x)^5), lower=1-2/(lower^2+1), upper=1-2/(upper^2+1))
 
 ###
 n = 12
@@ -1113,9 +1116,12 @@ lower = 2
 upper = 3
 #
 n.half = n/2
+integrate(function(x) 1/2 * x^(n.half-2)/(x^n.half + 1), lower=lower^2, upper=upper^2)
 integrate(function(x) x^(n-3)/(x^n + 1), lower=lower, upper=upper)
 integrate(function(x) sin(x)^(n-3)*cos(x)/(sin(x)^n + cos(x)^n), lower=atan(lower), upper=atan(upper))
 integrate(function(x) 1/2 * x^(n.half - 2)/(x^n.half + (1-x)^n.half), lower=sin(atan(lower))^2, upper=sin(atan(upper))^2)
+integrate(function(x) 1/2 * x^(n.half - 2)/(x^n.half + (1-x)^n.half), lower=1-1/(lower^2+1), upper=1-1/(upper^2+1))
+integrate(function(x) (1+x)^(n.half - 2)/((1+x)^n.half + (1-x)^n.half), lower=1-2/(lower^2+1), upper=1-2/(upper^2+1))
 
 #
 n = 11/2
@@ -1125,4 +1131,25 @@ integrate(function(x) x^(n-3)/(x^n + 1), lower=lower, upper=upper)
 integrate(function(x) sin(x)^(n-3)*cos(x)/(sin(x)^n + cos(x)^n), lower=atan(lower), upper=atan(upper))
 integrate(function(x) 1/2 * x^(n.half - 2)/(x^n.half + (1-x)^n.half), lower=sin(atan(lower))^2, upper=sin(atan(upper))^2)
 
+###########
+###########
+
+
+lower = 0.2 # 0.6
+upper = 0.8
+integrate(function(x) 1/2 * x^3/(x^5 + 1), lower=2/(1-lower)-1, upper=2/(1-upper)-1 )
+integrate(function(x) (1+x)^3/((1+x)^5 + (1-x)^5), lower=lower, upper=upper)
+
+### x^3 + x
+log( ((1+upper)^5 + (1-upper)^5) / ((1+lower)^5 + (1-lower)^5) ) * 1/40
+integrate(function(x) (x^3 + x)/((1+x)^5 + (1-x)^5), lower=lower, upper=upper)
+
+### only x
+(atan((upper^2+1)*sqrt(5)/2i) - atan((lower^2+1)*sqrt(5)/2i)) * sqrt(5)/2i / 20
+integrate(function(x) x/((1+x)^5 + (1-x)^5), lower=lower, upper=upper)
+# => x^3, 3*x^2 + 1
+
+### 5*x^4 + 10*x^2 + 1
+(upper - lower)/2
+integrate(function(x) (5*x^4 + 10*x^2 + 1)/((1+x)^5 + (1-x)^5), lower=lower, upper=upper)
 
