@@ -97,6 +97,7 @@ x = 2 # any value; used to test the fraction decomposition;
 sum((a*x*(m[,1]+m[,2]) + b) / (x-m[,1])/(x-m[,2])) - 2*b/(x^2-1)
 1/(x^n - 1)
 
+
 ########################
 ########################
 
@@ -1093,5 +1094,35 @@ for(i in 1:(pow*n)) {
 # I8 => I19; needs sign.inverse;
 # I1 ???
 
+
+
+##########################
+##########################
+
+lower = 2
+upper = 3
+integrate(function(x) 1/2 * x^3/(x^5 + 1), lower=lower^2, upper=upper^2)
+integrate(function(x) x^7/(x^10 + 1), lower=lower, upper=upper)
+integrate(function(x) sin(x)^7*cos(x)/(sin(x)^10 + cos(x)^10), lower=atan(lower), upper=atan(upper))
+integrate(function(x) 1/2 * x^3/(x^5 + (1-x)^5), lower=sin(atan(lower))^2, upper=sin(atan(upper))^2)
+
+###
+n = 12
+#
+lower = 2
+upper = 3
+#
+n.half = n/2
+integrate(function(x) x^(n-3)/(x^n + 1), lower=lower, upper=upper)
+integrate(function(x) sin(x)^(n-3)*cos(x)/(sin(x)^n + cos(x)^n), lower=atan(lower), upper=atan(upper))
+integrate(function(x) 1/2 * x^(n.half - 2)/(x^n.half + (1-x)^n.half), lower=sin(atan(lower))^2, upper=sin(atan(upper))^2)
+
+#
+n = 11/2
+#
+n.half = n/2
+integrate(function(x) x^(n-3)/(x^n + 1), lower=lower, upper=upper)
+integrate(function(x) sin(x)^(n-3)*cos(x)/(sin(x)^n + cos(x)^n), lower=atan(lower), upper=atan(upper))
+integrate(function(x) 1/2 * x^(n.half - 2)/(x^n.half + (1-x)^n.half), lower=sin(atan(lower))^2, upper=sin(atan(upper))^2)
 
 
