@@ -4,16 +4,17 @@
 ### P3 Polynomial Systems
 ### Solver: Exact solutions
 ###
-### draft 0.2c
+### draft 0.2d
 
 ### P3 Systems
-# v.02c: Test the Linear solution concept;
+# v.02d: more roots + classical "solution" to simple PS3 (the P[9] polynomial);
+# v.02c: Test the Linear decomposition concept;
 # v.02: P3 system + linear (x+y+z) terms;
 # v.01: simple P3 system: the Base System;
 
 #####################
 
-### Base P3 system
+### A.) Base P3 system
 
 ### P3 System:
 # x^3 + y^3 + z^3 = A
@@ -21,12 +22,13 @@
 # x*y*z = P
 
 
-### Steps:
+### Solution Steps:
 
 ### Subsystem 1:
 #
 # X^3 - 3*B*X + 3*P - A = 0
 # solve for X;
+# where X = x + y + z;
 
 ### Subsystem 2:
 #
@@ -34,7 +36,42 @@
 # x*y + x*z + y*z = B
 # x*y*z = P
 # solve for x, y, z;
+# - exact solution provided;
 
+
+### B.) Classical Solution to [A]
+# involves P[9]
+# x*y*z = C => y*z = C/x; # C = P (part [A])
+# x*y + x*z + y*z = B => x*(y+z) = B - C/x
+# => y+z = B/x - C/x^2;
+# =>
+# y^3 + z^3 = (y+z)*((y+z)^2 - 3*yz)
+# = (B/x - C/x^2) * ((B/x - C/x^2)^2 - 3*C/x)
+# =>
+# x^9 - A*x^6 - 3*B*C*x^4 + (B^3+3*C^2)*x^3 -3*B^2*C*x^2 + 3*B*C^2*x - C^3 # = 0
+
+# Test
+x = sqrt(c(2,3,5))
+A = sum(x^3)
+B = sum(x[1]*x[2], x[1]*x[3], x[2]*x[3])
+C = prod(x)
+x^9 - A*x^6 - 3*B*C*x^4 + (B^3+3*C^2)*x^3 -3*B^2*C*x^2 + 3*B*C^2*x - C^3
+
+
+### C.) Complex P3 System
+# b31*(x^3+y^3+z^3) + b21*(x^2+y^2+z^2) + b11*(x+y+z) + e21*(xy+xz+yz) + e31*x*y*z = A1
+# b32*(x^3+y^3+z^3) + b22*(x^2+y^2+z^2) + b12*(x+y+z) + e22*(xy+xz+yz) + e32*x*y*z = A2
+# b33*(x^3+y^3+z^3) + b23*(x^2+y^2+z^2) + b13*(x+y+z) + e23*(xy+xz+yz) + e33*x*y*z = A1
+
+# see below for complet *exact* solution!
+
+
+### D.) Perturbations to break Symmetry
+# [C] is still symetrical;
+# see below for the ideas;
+
+
+####################
 
 ### helper functions
 
@@ -64,9 +101,11 @@ nroot.c = function(x, n=3) {
 }
 ### complex/matrix round
 round0 = function(m, tol=1E-10) {
-	m[abs(Re(m)) < tol & abs(Im(m)) < tol] = 0
+	isZero = abs(Im(m)) < tol
+	m[isZero] = Re(m[isZero])
+	m[isZero & abs(Re(m)) < tol] = 0
 	
-	isZero = (Re(m) != 0) & (abs(Re(m)) < tol)
+	isZero = ( ! isZero ) & (abs(Re(m)) < tol)
 	if(sum(isZero) > 0) {
 		m[isZero] = complex(re=0, im=Im(m[isZero]))
 	}
@@ -75,11 +114,11 @@ round0 = function(m, tol=1E-10) {
 
 ### Solution
 # Cubic Polynomial
-solveP3 <- function(c, d, n=3, all=FALSE) {
+solveP3 <- function(c, d, n=3, all=TRUE) {
 	det = (d^2 - c^n)
 	det = sqrt.c(det)
 	
-	p = nroot.c(d + det, n)
+	p = nroot.c(d + det, n))
 	q = nroot.c(d - det, n)
 	if(all) {
 		m = complex(re=cos(2*pi/n), im=sin(2*pi/n))
@@ -119,7 +158,8 @@ solveP3Outer = function(s, bi, pr, n=3) {
 		# Test
 		y = d2
 		err = y^3 - 3*bi * y + 3*pr - s
-		print(paste("err Tri =", round0(err)))
+		cat("err Tri = ")
+		print(round0(err))
 	} else {
 		print("Not yet implemented!")
 		break
@@ -149,7 +189,8 @@ solveP3S.Base = function(s, bi, pr, d2, n=3, b.shifts=c(0,0,0)) {
 	B = bi / 3
 	d = B^3 - pr*(d2*B - pr)/2
 	y = solveP3(B^2 - pr*d2/3, d, all=TRUE)
-	print(paste("y =", round(y, 5)))
+	cat("\nx_shifted: ")
+	print(paste("x =", round(y, 5)))
 	y = y + B
 	# Test
 	err = y^3 - 3*B*y^2 + pr*d2*y - pr^2
@@ -169,15 +210,28 @@ solveP3S.Base = function(s, bi, pr, d2, n=3, b.shifts=c(0,0,0)) {
 		apply(p, m, function(p) prod(p) + b.shifts[3]*sum(p)))
 	return(list("x"=p, "test" = test))
 }
+t3.m = function(m, ncol=3) {
+	matrix(m, ncol=ncol, byrow=T)
+}
 solveP3S = function(s, bi, pr, n=3) {
 	d2 = solveP3Outer(s, bi, pr, n)
-	solveP3S.Base(s, bi, pr, d2, n)
+	l = lapply(d2, function(d2) solveP3S.Base(s, bi, pr, d2, n))
+	# print(l) ### DEBUG
+	l.x = sapply(l, function(l) t(l$x))
+	l.test = sapply(l, function(l) t(l$test))
+	return(list(x=t3.m(l.x), test=t3.m(l.test)))
 }
 solveP3SS = function(B, b, n=3) {
 	# X^3 + 3*b21*X^2 - (3*BB + b31 + b11)*X + 3*P - A = 0
 	r = solveP3OuterShifted(B, b, n)
-	B.shifted = B - r * b
-	solveP3S.Base(B.shifted[1], B.shifted[2], B.shifted[3], r, n, b.shifts=b)
+	solve.p3 = function(r) {
+		B.shifted = B - r * b
+		solveP3S.Base(B.shifted[1], B.shifted[2], B.shifted[3], r, n, b.shifts=b)
+	}
+	l = lapply(r, solve.p3)
+	l.x = sapply(l, function(l) l$x)
+	l.test = sapply(l, function(l) l$test)
+	return(list(x=t3.m(l.x), test=t3.m(l.test)))
 }
 
 ############################
@@ -186,10 +240,24 @@ solveP3SS = function(B, b, n=3) {
 
 solveP3S(1,2,3)
 
-solveP3S(1,2,-1)
+# Parameters
+A = 1
+B = 2
+C = -1
+#
+x.all = solveP3S(A, B, C)
+x.all
+# Test
+x = x.all$x
+err = x^9 - A*x^6 - 3*B*C*x^4 + (B^3+3*C^2)*x^3 -3*B^2*C*x^2 + 3*B*C^2*x - C^3
+round0(err)
 
-# computes 3 roots by now;
-# TODO: add all roots
+
+# TODO:
+# - CORRECTED: transposition of the solutions was needed;
+# - still check if all roots are computed correctly & add missing permutations;
+# - known: tests are triplicated;
+unique(round(x.all$x, 12))
 
 
 #############################
@@ -232,6 +300,14 @@ x = x.all$x[1,]
 ### "Linear"-System
 ###
 ###################
+
+### Terms:
+# E[i,j] = & (x^3+y^3+z^3) & E[i] on row j (i=2:3);
+# B[i, j] = currently only (x+y+z) on row j;
+# - TODO: add the (x^2+y^2+z^2) terms;
+
+### "ALL"-Solutions
+# TODO: verify if correct!
 
 ### Test
 E.m = matrix(
@@ -288,7 +364,7 @@ V.m
 ###
 ### Perturbation Theory
 
-### B.) Perturbations to break Symmetry
+### D.) Perturbations to break Symmetry
 
 # This will be a new branch in mathematics.
 # It may be useful to study systematically such perturbations and
