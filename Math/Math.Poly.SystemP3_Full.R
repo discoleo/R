@@ -61,7 +61,7 @@ x^9 - A*x^6 - 3*B*C*x^4 + (B^3+3*C^2)*x^3 -3*B^2*C*x^2 + 3*B*C^2*x - C^3
 ### C.) Complex P3 System
 # b31*(x^3+y^3+z^3) + b21*(x^2+y^2+z^2) + b11*(x+y+z) + e21*(xy+xz+yz) + e31*x*y*z = A1
 # b32*(x^3+y^3+z^3) + b22*(x^2+y^2+z^2) + b12*(x+y+z) + e22*(xy+xz+yz) + e32*x*y*z = A2
-# b33*(x^3+y^3+z^3) + b23*(x^2+y^2+z^2) + b13*(x+y+z) + e23*(xy+xz+yz) + e33*x*y*z = A1
+# b33*(x^3+y^3+z^3) + b23*(x^2+y^2+z^2) + b13*(x+y+z) + e23*(xy+xz+yz) + e33*x*y*z = A3
 
 # see below for complet *exact* solution!
 
@@ -229,8 +229,8 @@ solveP3SS = function(B, b, n=3) {
 		solveP3S.Base(B.shifted[1], B.shifted[2], B.shifted[3], r, n, b.shifts=b)
 	}
 	l = lapply(r, solve.p3)
-	l.x = sapply(l, function(l) l$x)
-	l.test = sapply(l, function(l) l$test)
+	l.x = sapply(l, function(l) t(l$x))
+	l.test = sapply(l, function(l) t(l$test))
 	return(list(x=t3.m(l.x), test=t3.m(l.test)))
 }
 
@@ -302,7 +302,7 @@ x = x.all$x[1,]
 ###################
 
 ### Terms:
-# E[i,j] = & (x^3+y^3+z^3) & E[i] on row j (i=2:3);
+# E[i,j] = (x^3+y^3+z^3) & E[i] on row j (i=2:3);
 # B[i, j] = currently only (x+y+z) on row j;
 # - TODO: add the (x^2+y^2+z^2) terms;
 
@@ -327,7 +327,7 @@ x.all = solveP3SS(B.r[,1], B.r[,2])
 x.all
 
 # Test solution
-x = x.all$x[1,]
+x = x.all$x[2,]
 X = sum(x)
 XE = c(sum(x^3), sum(x[1]*x[2], x[1]*x[3], x[2]*x[3]), prod(x))
 E.m %*% XE + B.m * X
