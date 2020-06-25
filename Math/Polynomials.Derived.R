@@ -45,6 +45,16 @@ poly.calc(x)
 err = -4 - 14*x - 21*x^2 - 11*x^3 + x^5
 round0(err)
 
+x = x0
+# p.calc() o (x^3 + x^2 + x) =
+- 4 - 14*x - 35*x^2 - 67*x^3 - 96*x^4 - 107*x^5 - 93*x^6 - 51*x^7 - 3*x^8 + 34*x^9 + 51*x^10 + 45*x^11 + 30*x^12 + 15*x^13 + 5*x^14 + x^15
+# ==
+(4 + 10*x + 25*x^2 + 42*x^3 + 54*x^4 + 57*x^5 + 46*x^6 + 30*x^7 + 15*x^8 + 5*x^9 + x^10) *
+(x^5 - x - 1)
+# == 0
+# x = x0^3 + x0^2 + x0 is indeed a root of the above polynomial!
+
+
 ###
 x = x0^4 - x0^2 + x0^3 - x0
 x
@@ -78,11 +88,27 @@ err = -1 - 5*x - 10*x^2 - 10*x^3 - 4*x^4 + x^5
 round0(err)
 
 ###
+x = x0^4 - x0^3 + x0^2 - x0
+x
+
+poly.calc(x)
+err = -1 + 5*x - 10*x^2 + 10*x^3 - 4*x^4 + x^5
+round0(err)
+
+###
 x = x0^4 + x0
 x
 
 poly.calc(x)
 err = -4 - 2*x + 7*x^2 + x^3 - 4*x^4 + x^5
+round0(err)
+
+###
+x = x0^4 - x0
+x
+
+poly.calc(x)
+err = -4 + 12*x - 15*x^2 + 11*x^3 - 4*x^4 + x^5
 round0(err)
 
 ###
