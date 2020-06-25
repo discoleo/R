@@ -12,17 +12,37 @@
 
 
 ### Theory:
-# - let P[n] be a polynomial of order n with integer/rational coefficients;
+# - let P[n] be a polynomial of order n with integer(/rational) coefficients;
 # - let r be the n roots of this polynomial;
 # - let f be a polynomial function with integer coefficients;
-# - then f(r) are the roots of a polynomial of order n with integer coefficients;
+# - then f(r) are the roots of a polynomial of order n with integer(/rational) coefficients;
 
 
 library(polynom)
 
 # needed to get the roots of the base polynomial;
+# the derived polynomial is currently derived "empirically";
+# [it is relatively easy to derive parametrically as well]
 
+######################
 
+### helper functions
+round0 = function(m, tol=1E-7) {
+	m[abs(Re(m)) < tol & abs(Im(m)) < tol] = 0
+	isZero = (Re(m) != 0) & (abs(Re(m)) < tol)
+	if(sum(isZero) > 0) {
+		m[isZero] = complex(re=0, im=Im(m[isZero]))
+	}
+	isZero = (Im(m) != 0) & (abs(Im(m)) < tol)
+	if(sum(isZero) > 0) {
+		m[isZero] = Re(m[isZero])
+	}
+	return(m)
+}
+
+##############
+
+#############
 ### Examples:
 
 ### Base polynomial:
@@ -45,15 +65,24 @@ poly.calc(x)
 err = -4 - 14*x - 21*x^2 - 11*x^3 + x^5
 round0(err)
 
+# Test
+# x0 = 2 # other values to Test composition & decomposition
+x = x0^3 + x0^2 + x0
+err = -4 - 14*x - 21*x^2 - 11*x^3 + x^5
+round0(err)
 x = x0
 # p.calc() o (x^3 + x^2 + x) =
-- 4 - 14*x - 35*x^2 - 67*x^3 - 96*x^4 - 107*x^5 - 93*x^6 - 51*x^7 - 3*x^8 + 34*x^9 + 51*x^10 + 45*x^11 + 30*x^12 + 15*x^13 + 5*x^14 + x^15
+err = - 4 - 14*x - 35*x^2 - 67*x^3 - 96*x^4 - 107*x^5 - 93*x^6 - 51*x^7 - 3*x^8 + 34*x^9 + 51*x^10 + 45*x^11 + 30*x^12 + 15*x^13 + 5*x^14 + x^15
+round0(err)
 # ==
-(4 + 10*x + 25*x^2 + 42*x^3 + 54*x^4 + 57*x^5 + 46*x^6 + 30*x^7 + 15*x^8 + 5*x^9 + x^10) *
+err = (4 + 10*x + 25*x^2 + 42*x^3 + 54*x^4 + 57*x^5 + 46*x^6 + 30*x^7 + 15*x^8 + 5*x^9 + x^10) *
 (x^5 - x - 1)
+round0(err)
 # == 0
 # x = x0^3 + x0^2 + x0 is indeed a root of the above polynomial!
 
+
+##############
 
 ###
 x = x0^4 - x0^2 + x0^3 - x0
