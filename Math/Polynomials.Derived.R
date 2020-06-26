@@ -5,11 +5,15 @@
 ### [the one and only]
 ###
 ### Derived Polynomials
+### v.0.2
 
 ### Note:
 # This is the 1st part towards introducing polynomials of Class 1,
 # including a different approach to polynomials.
 
+### History
+# v.0.2: new technique to construct interesting polynomials;
+# v.0.1: first drafts;
 
 ### Theory:
 # - let P[n] be a polynomial of order n with integer(/rational) coefficients;
@@ -38,6 +42,77 @@ round0 = function(m, tol=1E-7) {
 		m[isZero] = Re(m[isZero])
 	}
 	return(m)
+}
+# safe sqrt
+sqrt.c = function(x) {
+	x = as.complex(x)
+	x.sqrt = sqrt(x)
+	return(x.sqrt)
+}
+# safe n-th root
+nroot.c = function(x, n=3) {
+	if(Im(x) == 0) {
+		x = Re(x)
+		if(x >= 0) {
+			x = complex(re = x^(1/n), im=0)
+		} else if(n %% 2 == 0) {
+			x = complex(re = 0, im=(-x)^(1/n))
+		} else {
+			x = - (-x)^(1/n)
+		}
+	} else {
+		x = x^(1/n)
+	}
+	return(x)
+}
+### Solve P3
+solve.P3Base <- function(c, d, n=3, all=TRUE) {
+	det = (d^2 - c^n)
+	det = sqrt.c(det)
+	
+	p = nroot.c(d + det, n)
+	q = if(Re(d) >= Re(det)) { nroot.c(d - det, n); } else { - nroot.c(-d + det, n); }
+	if(all) {
+		m = complex(re=cos(2*pi/n), im=sin(2*pi/n))
+		id = 0:(n-1)
+		m = m^id
+		return(p*m + q/m)
+	}
+	return(p + q)
+}
+shift.poly = function(b) {
+	# assumes b = c(b[n-1], ..., b0)
+	len = length(b)
+	shift = - b[1] / len
+	# TODO: len > 3
+	b.shifted = b
+	b = c(1, b)
+	for(i.base in 1:len) {
+		for(id in i.base:len) {
+			pow = id + 1 - i.base
+			b.shifted[id] = b.shifted[id] + b[i.base] * choose(len + 1 - i.base, pow) * shift^pow
+		}
+		# print(b.shifted)
+	}
+	b.shifted[1] = 0
+	return(list("b"=b.shifted, "shift"=shift))
+}
+solve.P3 = function(b) {
+	# Coefficients in DESC powers
+	len = length(b)
+	if(len == 3 && b[1] != 0) {
+		b.shifted = shift.poly(b)
+		b = b
+	} else if(len == 4 && b[2] != 0) {
+		b.shifted = shift.poly(b[-1])
+	} else {
+		if(len < 3) { b = c(0, b); }
+		else if(len > 3) { b = b[(len-2):len]; }
+		b.shifted = list("b"=c(0, b[c(len-1, len)]), "shift"=0)
+	}
+	b = b.shifted$b
+	print(b.shifted$b)
+	return (solve.P3Base(-b[2]/3, -b[3]/2) + b.shifted$shift)
 }
 
 ##############
@@ -157,3 +232,33 @@ x
 poly.calc(x)
 err = 1 + 4*x + 4*x^2 + 5*x^3 + x^4 + x^5
 round0(err)
+
+
+################
+################
+
+# a nice technique to create "awsome" polynomials
+
+n = 5
+m = complex(re=cos(2*pi/n), im=sin(2*pi/n))
+m = m^(0:(n-1))
+
+K = 2 # currently fixed value!
+k = K^(1/5)
+k = k*m
+r = k^3 + k^2 + k # currently fixed as well!
+# the "derived" polynomial:
+x = r
+err = - 14 - 10*x - 20*x^2 - 10*x^3 + x^5
+round0(err)
+# a derivation of the derived polynomial
+# need to solve x^3 + x^2 + x - r = 0
+x = sapply(r, function(r) solve.P3(c(1,1, -r)) )
+x = t(x)
+x
+# only 10 of the 15 values are valid roots!
+# [but we have *all* roots!]
+err = 7 + 5*x + 15*x^2 + 30*x^3 + 45*x^4 + 53*x^5 + 45*x^6 + 30*x^7 + 15*x^8 + 5*x^9 + x^10
+round0(err)
+
+
