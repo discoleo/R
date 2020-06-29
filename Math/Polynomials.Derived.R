@@ -12,8 +12,9 @@
 # including a different approach to polynomials.
 
 ### History
+# v.0.3a: added a Class 3 Polynomial example (roots based on cos());
 # v.0.2b: a slight generalization;
-# v.0.2: new technique to construct interesting polynomials;
+# v.0.2a: new technique to construct interesting polynomials;
 # v.0.1: first drafts;
 
 ### Theory:
@@ -235,6 +236,41 @@ err = 1 + 4*x + 4*x^2 + 5*x^3 + x^4 + x^5
 round0(err)
 
 
+### unofrtunately only a shift of the polynom:
+x = x0^2 + x0
+x
+
+poly.calc(x)
+err = -1 - 5*x - 9*x^2 - 2*x^3 + x^5
+round0(err)
+#
+det = sqrt(1 + 4*(x0^2 + x0)) / 2
+x = c(-1/2 + det, -1/2 - det)
+err = 1 + 4*x + 10*x^2 + 10*x^3 + 5*x^4 + x^5
+round0(err)
+x = x + 1
+err = x^5 - x + 1
+round0(err)
+
+
+###
+x = (x0^2 + x0)^2 + (x0^2 + x0)
+x
+
+poly.calc(x)
+err = -4 - 32*x - 77*x^2 - 35*x^3 - 4*x^4 + x^5
+round0(err)
+#
+det = sqrt(1 + 4*(x0^2 + x0)^2 + 4*(x0^2 + x0)) / 2
+x = c(-1/2 + det, -1/2 - det)
+err = 4 + 12*x + 13*x^2 + 8*x^3 + 5*x^4 + x^5
+round0(err)
+x = x + 1
+x[c(3,4,6,7,10)]
+err = 1 - 5*x + 9*x^2 - 2*x^3 + x^5
+round0(err)
+
+
 ################
 ################
 
@@ -247,8 +283,8 @@ m = m^(0:(n-1))
 # K = 2 is currently fixed value for the first P5!
 K = 2 # the 2 derived polynomials work with other values as well;
 #
-k = K^(1/5)
-k = k*m # all 5 roots;
+k = K^(1/n)
+k = k*m # all 5 (n) roots;
 r = k^3 + k^2 + k # currently fixed as well!
 # the "derived" polynomial:
 x = r
@@ -264,8 +300,11 @@ x
 # only 10 of the 15 values are valid roots!
 # [but we have *all* roots!]
 err = K^2 + K + 1 + 5*x + 15*x^2 + 30*x^3 + 45*x^4 + (51+K)*x^5 + 45*x^6 + 30*x^7 + 15*x^8 + 5*x^9 + x^10
-err = (x^2 + x + 1)^5 + K*x^5 + K^2 + K
+err = (x^2 + x + 1)^n + K*x^n + K^2 + K
 round0(err)
+
+# for n = 4:
+# (x^2+x+1)^4 + K*(x+1)^4 - 2*K*x^2 + K^2
 
 # new roots: solutions of x^3 - x^2 + x - r = 0
 r = k^3 - k^2 + k
@@ -275,6 +314,30 @@ x
 # only 10 of the 15 values are valid roots!
 # [but we have *all* roots!]
 err = K^2 - K + 1 - 5*x + 15*x^2 - 30*x^3 + 45*x^4 - (51-K)*x^5 + 45*x^6 - 30*x^7 + 15*x^8 - 5*x^9 + x^10
-err = (x^2 - x + 1)^5 + K*x^5 + K^2 - K
+err = (x^2 - x + 1)^n + K*x^n + K^2 - K
+round0(err)
+
+# for n = 4:
+# (x^2-x+1)^4 + K*(x-1)^4 - 2*K*x^2 + K^2
+
+
+###############
+
+id = (0:4)*2 + 1
+m = 2*cos(id * 2 * pi/11)
+
+
+# Base Polynomial: a Class 3 Polynomial
+x = m^2 + m
+err = x^5 - 8*x^4 + 19*x^3 - 15*x^2 + x + 1
+round0(err)
+
+# the derived's polynomial Derived Polynomial:
+det = sqrt(1 + 4*m^2 + 4*m) / 2
+x = c(-1/2 + det, -1/2 - det)
+x
+x = x[c(3,4,6,7,10)]
+# 5 of the roots are the real roots
+err = 1 - 2*x - 5*x^2 + 2*x^3 + 4*x^4 + x^5
 round0(err)
 
