@@ -12,6 +12,7 @@
 # including a different approach to polynomials.
 
 ### History
+# v.0.2b: a slight generalization;
 # v.0.2: new technique to construct interesting polynomials;
 # v.0.1: first drafts;
 
@@ -243,22 +244,37 @@ n = 5
 m = complex(re=cos(2*pi/n), im=sin(2*pi/n))
 m = m^(0:(n-1))
 
-K = 2 # currently fixed value!
+# K = 2 is currently fixed value for the first P5!
+K = 2 # the 2 derived polynomials work with other values as well;
+#
 k = K^(1/5)
-k = k*m
+k = k*m # all 5 roots;
 r = k^3 + k^2 + k # currently fixed as well!
 # the "derived" polynomial:
 x = r
 err = - 14 - 10*x - 20*x^2 - 10*x^3 + x^5
-round0(err)
-# a derivation of the derived polynomial
-# need to solve x^3 + x^2 + x - r = 0
-x = sapply(r, function(r) solve.P3(c(1,1, -r)) )
+round0(err) # all 5 roots are valid;
+### Deriving another polynomial based on the previous P5
+# [a derivation of the derived polynomial]
+# new roots: solutions of x^3 + x^2 + x - r = 0
+r = k^3 + k^2 + k
+x = sapply(r, function(r) solve.P3(c(1, 1, -r)) )
 x = t(x)
 x
 # only 10 of the 15 values are valid roots!
 # [but we have *all* roots!]
-err = 7 + 5*x + 15*x^2 + 30*x^3 + 45*x^4 + 53*x^5 + 45*x^6 + 30*x^7 + 15*x^8 + 5*x^9 + x^10
+err = K^2 + K + 1 + 5*x + 15*x^2 + 30*x^3 + 45*x^4 + (51+K)*x^5 + 45*x^6 + 30*x^7 + 15*x^8 + 5*x^9 + x^10
+err = (x^2 + x + 1)^5 + K*x^5 + K^2 + K
 round0(err)
 
+# new roots: solutions of x^3 - x^2 + x - r = 0
+r = k^3 - k^2 + k
+x = sapply(r, function(r) solve.P3(c(-1, 1, -r)) )
+x = t(x)
+x
+# only 10 of the 15 values are valid roots!
+# [but we have *all* roots!]
+err = K^2 - K + 1 - 5*x + 15*x^2 - 30*x^3 + 45*x^4 - (51-K)*x^5 + 45*x^6 - 30*x^7 + 15*x^8 - 5*x^9 + x^10
+err = (x^2 - x + 1)^5 + K*x^5 + K^2 - K
+round0(err)
 
