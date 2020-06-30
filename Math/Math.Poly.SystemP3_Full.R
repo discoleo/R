@@ -4,9 +4,10 @@
 ### P3 Polynomial Systems
 ### Solver: Exact solutions
 ###
-### draft 0.3b
+### draft 0.3c
 
 ### P3 Systems
+# v.0.3.c: added minimally assymetric P[2];
 # v.0.3.b:
 #  - added also a greatly simplified version
 #    of the basic assymetric system;
@@ -411,14 +412,14 @@ V.m
 # It is easier to solve an order 3 system, than an order 6 system.
 
 
-##########################
+########################
 
-##########################
-### E.) Basic Assymetrical
-###     System
+########################
+### Assymetrical Systems
+### E.) Basic System
 
 # (b11, b12, b13) * (x, y, z) = R1
-# (b21, b22, b23) * E2 = R2
+# (b21, b22, b23) * (xy, xz, yz) = R2
 # x*y*z = R3
 
 # => y*z = R3 / x
@@ -507,4 +508,62 @@ sol
 sapply(1:nrow(sol), function(id) sum(b1[c(1,2,2)]*sol[id,]))
 sapply(1:nrow(sol), function(id) sum(b2[c(1,1,2)]*sol[id,c(2,1,3)]*sol[id,c(1,3,2)]))
 sapply(1:nrow(sol), function(id) prod(sol[id,]))
+
+
+##########################
+
+############################
+### Assymetrical Systems
+### F.) Higher Orders
+
+
+# x^2 + y^2 + z^2 = R1
+# b2*x*(y+z) + b23*y*z = R2
+# x*y*z = R3
+
+# => x = R3 / (y*z) = R3 / yz
+# R3^2/yz^2 + s^2 - 2*yz = R1
+# b2*R3 * s/yz + b23*yz = R2
+# =>
+# s/yz = (R2 - b23*yz) / (b2*R3)
+# s^2/yz^2 = b23^2/b2^2/R3^2*yz^2 - 2*b23/b2^2/R3^2*R2*yz + R2^2/b2^2/R3^2
+# s^2 = b23^2/b2^2/R3^2*yz^4 - 2*b23/b2^2/R3^2*R2*yz^3 + R2^2/b2^2/R3^2*yz^2
+# b23^2/b2^2/R3^2*yz^4 - 2*b23/b2^2/R3^2*R2*yz^3 + R2^2/b2^2/R3^2*yz^2 - 2*yz - R1 + R3^2/yz^2 = 0
+
+
+library(polynom)
+
+
+### free Parameters:
+b2 = c(1, 2)
+R = c(1, 1, 1)
+### Solution
+b.coeff = c(b2[2]^2/b2[1]^2/R[3]^2, - 2*b2[2]*R[2]/b2[1]^2/R[3]^2,
+	R[2]^2/b2[1]^2/R[3]^2, - 2, - R[1], 0, R[3]^2)
+b.coeff
+
+# Polynom
+p = polynomial(rev(b.coeff))
+p
+
+yz = solve(p)
+yz
+x = R[3] / yz
+s = (R[2] - b2[2]*yz)/b2[1] * yz/R[3]
+yz.diff = sqrt(s^2 - 4*yz)
+y = (s + yz.diff)/2
+z = (s - yz.diff)/2
+### Solution
+sol = rbind(cbind(x, y, z), cbind(x, z, y))
+sol
+
+### Test
+sapply(1:nrow(sol), function(id) sum(sol[id,]^2))
+sapply(1:nrow(sol), function(id) sum(b2[c(1,1,2)]*sol[id,c(2,1,3)]*sol[id,c(1,3,2)]))
+sapply(1:nrow(sol), function(id) prod(sol[id,]))
+
+### Debug
+# a = sqrt(c(2,3,5))
+# R = c(sum(a^2), b2[1]*a[1]*(a[2]+a[3])+b2[2]*a[2]*a[3], prod(a))
+# sum((a[2]*a[3])^(6:0) * b.coeff)
 
