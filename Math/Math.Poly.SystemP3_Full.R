@@ -4,14 +4,17 @@
 ### P3 Polynomial Systems
 ### Solver: Exact solutions
 ###
-### draft 0.3c
+### draft 0.3d
 
 ### P3 Systems
-# v.0.3.c: added minimally assymetric P[2];
-# v.0.3.b:
-#  - added also a greatly simplified version
-#    of the basic assymetric system;
-#    [but with exact solution]
+# v.0.3d:
+# - partial extension of assymetric system to 4 variables;
+# - TODO: need the v.0.3.a solver as function!
+# v.0.3c: added minimally assymetric P[2];
+# v.0.3b:
+# - added also a greatly simplified version
+#   of the basic assymetric system;
+#   [but with exact solution]
 # v.0.3a: basic Assymetric system;
 # v.0.2d: more roots + classical "solution" to simple PS3 (the P[9] polynomial);
 # v.0.2c: Test the Linear decomposition concept;
@@ -566,4 +569,51 @@ sapply(1:nrow(sol), function(id) prod(sol[id,]))
 # a = sqrt(c(2,3,5))
 # R = c(sum(a^2), b2[1]*a[1]*(a[2]+a[3])+b2[2]*a[2]*a[3], prod(a))
 # sum((a[2]*a[3])^(6:0) * b.coeff)
+
+
+##################
+
+###################
+### X.) 4 Variables
+### Partly Assymetric
+
+# b11 * x1 + b1*(x2, x3, x4) = R1
+# b1*x1*(x2, x3, x4) + b22*(x2*x3, x2*x4, x3*x4) = R2
+# b22*x1*(x2*x3, x2*x4, x3*x4) + b32*x2*x3*x4 = R3
+# x1*x2*x3*x4 = R4
+
+# => x2*x3*x4 = R4/x1
+# => b22*(x2*x3, x2*x4, x3*x4) = R3 / x1 - b32*R4 / x1^2
+# => b1*(x2, x3, x4) = R2 / x1 - R3 / x1^2 + b32*R4 / x1^3
+# =>
+# b11*x1 + R2 / x1 - R3 / x1^2 + b32*R4 / x1^3 = R1
+# b11*x^4 - R1*x^3 + R2*x^2 - R3*x + b32*R4 = 0
+
+
+library(polynom)
+
+
+### free Parameters
+b1 = c(1, 2,3,4)
+b2 = c(b1[-1], 3,3,1)
+b3 = c(b2[4:6], 2)
+R = c(1,1,1,1)
+#
+b.coeff = c(b1[1], - R[1], R[2], - R[3], b3[4]*R[4])
+p = polynomial(rev(b.coeff))
+
+x = solve(p)
+x
+
+### TODO:
+# - solve assymetric P3 system;
+# - implement solver (see previous sections) as function;
+
+### Debug
+a = c(2,3,1,3)
+R = c(sum(b1*a),
+	sum(b2*c(a[1]*a[-1], a[2]*a[-(1:2)], a[3]*a[4])),
+	sum(b3*c(a[1]*a[2]*a[3], a[1]*a[2]*a[4], a[1]*a[3]*a[4], a[2]*a[3]*a[4])),
+	prod(a))
+sum((a[2]*a[3])^(6:0) * b.coeff)
 
