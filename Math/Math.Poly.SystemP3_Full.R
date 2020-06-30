@@ -4,10 +4,14 @@
 ### P3 Polynomial Systems
 ### Solver: Exact solutions
 ###
-### draft 0.3a
+### draft 0.3b
 
 ### P3 Systems
-# v.0.3a: basic assymetric system;
+# v.0.3.b:
+#  - added also a greatly simplified version
+#    of the basic assymetric system;
+#    [but with exact solution]
+# v.0.3a: basic Assymetric system;
 # v.0.2d: more roots + classical "solution" to simple PS3 (the P[9] polynomial);
 # v.0.2c: Test the Linear decomposition concept;
 # v.0.2a: P3 system + linear (x+y+z) terms;
@@ -36,7 +40,7 @@
 # x + y + z = X
 # x*y + x*z + y*z = B
 # x*y*z = P
-# solve for x, y, z;
+# - solve for x, y, z;
 # - exact solution provided;
 
 
@@ -66,19 +70,25 @@ x^9 - A*x^6 - 3*B*C*x^4 + (B^3+3*C^2)*x^3 -3*B^2*C*x^2 + 3*B*C^2*x - C^3
 # b33*(x^3+y^3+z^3) + b23*(x^2+y^2+z^2) + b13*(x+y+z) + e23*(xy+xz+yz) + e33*x*y*z = A3
 
 # see below for complet *exact* solution!
+# 1.) the system is decomposed using a liniar decomposition;
+# 2.) then the "base"-terms are computed;
+# 3.) then the P3 system is solved based on [A];
 
 
 ### D.) Perturbations to break Symmetry
 # [C] is still symetrical;
-# see below for the ideas;
+# see below for some ideas;
 
 
 ### E.) Basic Assymetrical System:
 # b11 * x + b12 * y + b13 * z = R1
 # b21 * x*y + b22 * x*z + b23 * y*z = R2
 # x*y*z = R3
-# see in part [E] for solution;
-# [invovles numerical solution to a P[6] polynomial;]
+# see part [E] for solution;
+# [but invovles numerical solution to a P[6] polynomial;]
+
+### E.2.) a greatly simplified version of [E]
+# but with exact solution;
 
 
 ####################
@@ -452,3 +462,49 @@ round0(err)
 #
 err = sapply(1:ncol(sol), function(id) prod(sol[,id])) - R[3]
 round0(err)
+
+###########################
+### E.2.) P3 variant System
+###   Greatly Simplified
+###   (partly) Assymetric
+
+### Exact Solution
+# b11*x + b1*(y+z) = R1
+# b2*(x*y + x*z) + b23*y*z = R2
+# x*y*z = R3
+
+# => y*z = R3 / x
+# => y + z = R1/b1 - b11/b1 * x
+# b2*x*(R1/b1 - b11/b1 * x) + b23*R3/x = R2
+# - b2*b11/b1*x^3 + b2/b1*R1*x^2 - R2*x + b23*R3 = 0
+
+### free Parameters:
+b1 = c(1, 3) # b11, b12_b13
+b2 = c(2, 5) # b21_b22, b23
+R = c(1,1,1)
+### Solution
+b3 = - b2[1]*b1[1]/b1[2]
+b = c(b2[1]/b1[2] * R[1], - R[2], b2[2]*R[3])
+b = b / b3
+b
+b.shifted = shift.poly(b)
+b.shifted
+# x
+x = solveP3(b.shifted$b[2]/-3, b.shifted$b[3]/-2) + b.shifted$shift
+x
+# y, z
+yz = R[3] / x
+yz.s = R[1]/b1[2] - b1[1]/b1[2] * x
+yz.minus = sqrt(yz.s^2 - 4*yz)
+y = (yz.s + yz.minus)/2
+z = (yz.s - yz.minus)/2
+# complete solution:
+sol = cbind(x, y, z)
+sol = rbind(sol, cbind(x, z, y))
+sol
+
+### Test
+sapply(1:nrow(sol), function(id) sum(b1[c(1,2,2)]*sol[id,]))
+sapply(1:nrow(sol), function(id) sum(b2[c(1,1,2)]*sol[id,c(2,1,3)]*sol[id,c(1,3,2)]))
+sapply(1:nrow(sol), function(id) prod(sol[id,]))
+
