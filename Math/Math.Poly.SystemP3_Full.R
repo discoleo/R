@@ -4,13 +4,14 @@
 ### P3 Polynomial Systems
 ### Solver: Exact solutions
 ###
-### draft 0.2d
+### draft 0.3a
 
 ### P3 Systems
-# v.02d: more roots + classical "solution" to simple PS3 (the P[9] polynomial);
-# v.02c: Test the Linear decomposition concept;
-# v.02: P3 system + linear (x+y+z) terms;
-# v.01: simple P3 system: the Base System;
+# v.0.3a: basic assymetric system;
+# v.0.2d: more roots + classical "solution" to simple PS3 (the P[9] polynomial);
+# v.0.2c: Test the Linear decomposition concept;
+# v.0.2a: P3 system + linear (x+y+z) terms;
+# v.0.1: simple P3 system: the Base System;
 
 #####################
 
@@ -39,9 +40,10 @@
 # - exact solution provided;
 
 
-### B.) Classical Solution to [A]
-# involves P[9]
-# x*y*z = C => y*z = C/x; # C = P (part [A])
+### B.) Base System: Classical Solution
+# - the classical solution to the base-system [A];
+# - involves P[9]:
+# x*y*z = C => y*z = C/x; # C = P (in part [A])
 # x*y + x*z + y*z = B => x*(y+z) = B - C/x
 # => y+z = B/x - C/x^2;
 # =>
@@ -69,6 +71,14 @@ x^9 - A*x^6 - 3*B*C*x^4 + (B^3+3*C^2)*x^3 -3*B^2*C*x^2 + 3*B*C^2*x - C^3
 ### D.) Perturbations to break Symmetry
 # [C] is still symetrical;
 # see below for the ideas;
+
+
+### E.) Basic Assymetrical System:
+# b11 * x + b12 * y + b13 * z = R1
+# b21 * x*y + b22 * x*z + b23 * y*z = R2
+# x*y*z = R3
+# see in part [E] for solution;
+# [invovles numerical solution to a P[6] polynomial;]
 
 
 ####################
@@ -118,7 +128,7 @@ solveP3 <- function(c, d, n=3, all=TRUE) {
 	det = (d^2 - c^n)
 	det = sqrt.c(det)
 	
-	p = nroot.c(d + det, n))
+	p = nroot.c(d + det, n)
 	q = nroot.c(d - det, n)
 	if(all) {
 		m = complex(re=cos(2*pi/n), im=sin(2*pi/n))
@@ -390,3 +400,55 @@ V.m
 # B.3.b.) x1 = x1'^2 + a2*x2;
 # It is easier to solve an order 3 system, than an order 6 system.
 
+
+##########################
+
+##########################
+### E.) Basic Assymetrical
+###     System
+
+# (b11, b12, b13) * (x, y, z) = R1
+# (b21, b22, b23) * E2 = R2
+# x*y*z = R3
+
+# => y*z = R3 / x
+# (b12, b13) * (y, z) = - b11 * x + R1
+# (b21, b22) * (y, z) = R2/x - b23 * R3/x^2
+# => linear solution for y & z;
+
+
+library(polynom)
+
+
+### free Parameters
+R = c(1, 1, 1)
+b1 = c(1, 2, 3)
+b2 = c(1, 3, 4)
+# Solve linear sub-system
+b.yz = rbind(b1[-1], b2[-3])
+# R.r2 = (x, b0, 1/x, 1/x^2)
+R.r2 = rbind( c( -b1[1], R[1], 0, 0), c(0, 0, R[2], -R[3] * b2[3]) )
+yz = solve(b.yz, R.r2)
+# (b11, b12, b13) * (x, y, z) = R1
+# should be == 0;
+b.coeff = c(b1[1], -R[1], 0, 0) +  b1[2] * yz[1,] + b1[3] * yz[2,]
+b.coeff
+
+# Solve polynomial
+p = polynomial(rev(yz[1,])) * polynomial(rev(yz[2,])) - polynomial(c(0,0,0,R[3]))
+p
+x = solve(p)
+y = sapply(x, function(x) sum(yz[1,] * c(x, 1, 1/x, 1/x^2)) )
+z = sapply(x, function(x) sum(yz[2,] * c(x, 1, 1/x, 1/x^2)) )
+
+### Solution
+sol = rbind(x, y, z)
+sol
+### Test
+b1 %*% sol - R[1]
+#
+err = sapply(1:ncol(sol), function(id) sum(b2 * c(sol[1,id]*sol[2,id], sol[1,id]*sol[3,id], sol[2,id]*sol[3,id]))) - R[2]
+round0(err)
+#
+err = sapply(1:ncol(sol), function(id) prod(sol[,id])) - R[3]
+round0(err)
