@@ -4,12 +4,13 @@
 ### P3 Polynomial Systems
 ### Solver: Exact solutions
 ###
-### draft 0.3d
+### draft 0.3e
 
 ### P3 Systems
+# v.0.3e: a less simplified version (see v.0.3b);
 # v.0.3d:
 # - partial extension of assymetric system to 4 variables;
-# - TODO: need the v.0.3.a solver as function!
+# - TODO: need the v.0.3.a solver as proper function!
 # v.0.3c: added minimally assymetric P[2];
 # v.0.3b:
 # - added also a greatly simplified version
@@ -433,6 +434,41 @@ V.m
 
 library(polynom)
 
+solve.P3asym = function(b1, b2, R) {
+	# needs package "pracma"
+	# Note:
+	# - package polynom cannot handle polynomials with complex coefficients;
+	# - such polynomials do come up in section [F];
+	
+	# Solve linear sub-system
+	b.yz = rbind(b1[-1], b2[-3])
+	# R.r2 = (x, b0, 1/x, 1/x^2)
+	R.r2 = rbind( c( -b1[1], R[1], 0, 0), c(0, 0, R[2], -R[3] * b2[3]) )
+	yz = solve(b.yz, R.r2)
+	# (b11, b12, b13) * (x, y, z) = R1
+	# should be == 0;
+	# b.coeff = c(b1[1], -R[1], 0, 0) +  b1[2] * yz[1,] + b1[3] * yz[2,]
+	# print(b.coeff)
+
+	# Solve polynomial
+	# TODO: cleanup, improve;
+	# print(yz)
+	p1 = polynomial.c(rev(yz[1,]))
+	p2 = polynomial.c(rev(yz[2,]))
+	m = outer(p1, p2)
+    p = as.vector(tapply(m, row(m) + col(m), sum))
+	p = p - c(0,0,0,R[3],0,0,0)
+	# p = polynomial.c(p)
+	print(p)
+	# x = solve(p)
+	x = roots(rev(p))
+	y = sapply(x, function(x) sum(yz[1,] * c(x, 1, 1/x, 1/x^2)) )
+	z = sapply(x, function(x) sum(yz[2,] * c(x, 1, 1/x, 1/x^2)) )
+
+	### Solution
+	sol = rbind(x, y, z)
+	sol
+}
 
 ### free Parameters
 R = c(1, 1, 1)
@@ -513,9 +549,61 @@ sapply(1:nrow(sol), function(id) sum(b2[c(1,1,2)]*sol[id,c(2,1,3)]*sol[id,c(1,3,
 sapply(1:nrow(sol), function(id) prod(sol[id,]))
 
 
+### E.2.b) P3 variant System
+###   Partly Assymetric
+###   Less Simplified than E.2.a.
+
+### Exact Solution
+# b11*x + b12*y + b13*z = R1
+# b2c * x*(b12*y + b13*z) + b23*y*z = R2
+# x*y*z = R3
+
+# => y*z = R3 / x
+# => b12*y + b13*z = R1 - b11 * x
+# b2c*x*(R1 - b11 * x) + b23*R3/x = R2
+# - b2c*b11*x^3 + b2c*R1*x^2 - R2*x + b23*R3 = 0
+
+solve.yz = function(yz, yz.s, b1, sign=+1) {
+	yz.minus = sign * sqrt(yz.s^2 - 4*b1[2]*b1[3]*yz)
+	y = (yz.s + yz.minus)/2 / b1[2]
+	z = (yz.s - yz.minus)/2 / b1[3]
+	cbind(y, z)
+}
+
+### free Parameters:
+b1 = c(1, 2, 3)
+b2c = 2
+b2 = c(b1[-1], 5)
+R = c(1,1,1)
+### Solution
+b3 = - b2c*b1[1]
+b = c(b2c * R[1], - R[2], b2[3]*R[3])
+b = b / b3
+b
+b.shifted = shift.poly(b)
+b.shifted
+# x
+x = solveP3(b.shifted$b[2]/-3, b.shifted$b[3]/-2) + b.shifted$shift
+x
+# y, z
+yz = R[3] / x
+yz.s = R[1] - b1[1] * x # b12*y + b13*z
+sol  = solve.yz(yz, yz.s, b1)
+sol2 = solve.yz(yz, yz.s, b1, sign=-1)
+# complete solution:
+sol = cbind(x, sol)
+sol = rbind(sol, cbind(x, sol2))
+sol
+
+### Test
+sapply(1:nrow(sol), function(id) sum(b1*sol[id,]))
+sapply(1:nrow(sol), function(id) sum(c(b2c,b2c,1) * b2 * sol[id,c(2,1,3)]*sol[id,c(1,3,2)]))
+sapply(1:nrow(sol), function(id) prod(sol[id,]))
+
+
 ##########################
 
-############################
+##########################
 ### Assymetrical Systems
 ### F.) Higher Orders
 
@@ -591,7 +679,123 @@ sapply(1:nrow(sol), function(id) prod(sol[id,]))
 
 
 library(polynom)
+library(pracma)
 
+
+####################
+
+### helper functions
+polynomial.c = function(coef) {
+    a <- coef
+    while ((la <- length(a)) > 1 && a[la] == 0) a <- a[-la]
+    structure(a, class = "polynomial")
+}
+root1.f = function(n=5, keep=TRUE, positive=TRUE) {
+	# keep = include 1 (or -1 for odd roots of -1);
+	i.pos = ifelse(positive, 2, 1)
+	m = complex(re=cos(i.pos * pi/n), im=sin(i.pos * pi/n))
+	if(positive) {
+		m = m^(1:(n-1))
+		if(keep) {
+			m = c(1, m)
+		}
+	} else {
+		if(n %% 2 == 1) {
+			i.max = (n - 3) %/% 2
+		} else {
+			i.max = n %/% 2 - 1
+		}
+		m = m^(2* 0:i.max + 1)
+		m = c(m, 1/m)
+		if(keep && n %% 2 == 1) {
+			m = c(-1, m)
+		}
+	}
+	return(m)
+}
+# function to compute coefficients of polynomial
+elemPoly = function(x, start=0, adjustSign=TRUE, tol=1E-7) {
+	coeff = sapply(c(start, seq_along(x)), function(n) {
+		if(n > 10) {
+			print(paste("Iteration:", n))
+			flush.console() # to display in real time
+		}
+		sum(apply(combn(x, n), 2, prod))
+	})
+	if(adjustSign) {
+		if(start %% 2 ==0) {
+			adj = c(1,-1)
+		} else {
+			adj = c(-1,1)
+		}
+		len = length(coeff)
+		adj = rep(adj, len/2)
+		if(len %% 2 == 1) {
+			adj = c(adj, adj[1])
+		}
+		# coeff[abs(coeff) < 1E-10 ] = 0
+		coeff = round0(coeff, tol=tol)
+		coeff = coeff * adj
+	}
+	isComplex = (Im(coeff) != 0)
+	if(length(isComplex[isComplex]) == 0) {
+		coeff = as.numeric(coeff)
+	}
+	
+	n = len - 1
+	n_1 = n - 1
+	poly.coeff = round.complex(coeff)
+	#
+	poly.str = toPoly(poly.coeff)
+	
+	poly.list = list(
+		r = x,
+		poly.coeff = coeff,
+		poly = poly.str,
+		n = n
+	)
+	return(poly.list)
+}
+toPoly = function(poly.coeff, strVar="x") {
+	len = length(poly.coeff)
+	n   = len - 1
+	n_1 = n - 1
+	coeff.sign = rep("+", len)
+	coeff.sign[1] = ""
+	coeff.sign[ Re(poly.coeff) < 0] = "-"
+	poly.coeff.pos = poly.coeff
+	### TODO: Im() != 0
+	isComplex = (Re(poly.coeff) < 0) & (Im(poly.coeff) != 0)
+	isNegativ = (Re(poly.coeff) < 0) & (Im(poly.coeff) == 0)
+	poly.coeff.pos[isNegativ] = -1 * poly.coeff.pos[isNegativ]
+	if(length(isComplex[isComplex]) > 0) {
+		poly.coeff.pos[isComplex] = complex(
+			re = - Re(poly.coeff.pos[isComplex]),
+			im = Im(poly.coeff.pos[isComplex])  )
+	}
+	coeff.str = as.character( poly.coeff.pos)
+	isCoeff = (poly.coeff.pos[-len] != 1)
+	coeff.str[-len][isCoeff] = paste(coeff.str[-len][isCoeff], "*", strVar, sep="")
+	coeff.str[-len][ ! isCoeff ] = strVar
+	coeff.str = paste(coeff.sign, coeff.str, sep=" ")
+	
+	poly.str = paste(coeff.str[1:n_1], "^", n:2, sep="")
+	poly.str = c(poly.str, coeff.str[n:len])
+	poly.str = poly.str[poly.coeff != 0]
+	return(paste(poly.str, collapse=" "))
+}
+round.complex = function(m, digits=0) {
+	isComplex = (Im(m) != 0)
+	if(length(isComplex[isComplex]) > 0) {
+		m[isComplex] = complex(
+			re=round(Re(m[isComplex]), digits),
+			im=round(Im(m[isComplex]), digits))
+	}
+	m[ ! isComplex] = round(Re(m[ ! isComplex]), digits)
+	return(m)
+}
+
+####################
 
 ### free Parameters
 b1 = c(1, 2,3,4)
@@ -608,6 +812,25 @@ x
 ### TODO:
 # - solve assymetric P3 system;
 # - implement solver (see previous sections) as function;
+
+solve.P3subsys = function(x) {
+	R1.new = R[1] - b1[1]*x
+	R.new = c(R1.new, R[2] - b1[1]*x*R1.new, R[4]/x)
+	sol = solve.P3asym(b1[2:4], b2[4:6], R.new)
+	matrix(t(sol), ncol=3)
+}
+
+sol = sapply(x, solve.P3subsys)
+sol = solve.P3subsys(x[1])
+sol = cbind(x[1], sol)
+colnames(sol) = c(paste("x", 1:4, sep=""))
+sol
+
+### Test
+apply(sol, 1, function(x) sum(b1*x))
+apply(sol, 1, function(x) sum(b2*c(x[1]*x[-1], x[2]*x[-(1:2)], x[3]*x[4])))
+apply(sol, 1, function(x) sum(b3*c(x[1]*x[2]*x[3], x[1]*x[2]*x[4], x[1]*x[3]*x[4], x[2]*x[3]*x[4])))
+apply(sol, 1, function(x) prod(x))
 
 ### Debug
 a = c(2,3,1,3)
