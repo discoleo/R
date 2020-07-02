@@ -7,6 +7,8 @@
 ### draft 0.3e
 
 ### P3 Systems
+# v.0.4-pre-pre-alpha:
+# - basic ideas to solve Assymetric higher order systems;
 # v.0.3e: a less simplified version (see v.0.3b);
 # v.0.3d:
 # - partial extension of assymetric system to 4 variables;
@@ -433,6 +435,8 @@ V.m
 
 
 library(polynom)
+# needed for poynomials with complex coefficients
+library(pracma)
 
 solve.P3asym = function(b1, b2, R) {
 	# needs package "pracma"
@@ -517,6 +521,7 @@ round0(err)
 # => y + z = R1/b1 - b11/b1 * x
 # b2*x*(R1/b1 - b11/b1 * x) + b23*R3/x = R2
 # - b2*b11/b1*x^3 + b2/b1*R1*x^2 - R2*x + b23*R3 = 0
+# x^3 - R1/b11 * x^2 + b1*R2/(b2*b11) * x - b1*b23*R3/(b2*b11) = 0
 
 ### free Parameters:
 b1 = c(1, 3) # b11, b12_b13
@@ -549,9 +554,10 @@ sapply(1:nrow(sol), function(id) sum(b2[c(1,1,2)]*sol[id,c(2,1,3)]*sol[id,c(1,3,
 sapply(1:nrow(sol), function(id) prod(sol[id,]))
 
 
+############################
 ### E.2.b) P3 variant System
-###   Partly Assymetric
-###   Less Simplified than E.2.a.
+### Partly Assymetric
+### Less Simplified than E.2.a.
 
 ### Exact Solution
 # b11*x + b12*y + b13*z = R1
@@ -659,7 +665,60 @@ sapply(1:nrow(sol), function(id) prod(sol[id,]))
 # sum((a[2]*a[3])^(6:0) * b.coeff)
 
 
-##################
+###################
+
+# b11*x^2 + b21^2*y^2 + b22^2*z^2 = R1
+# x*(b21*y + b22*z) + b23*y*z = R2
+# x*y*z = R3
+
+# => y*z = R3/x
+# => b21*y + b22*z = R2/x - b23*R3/x^2
+# b11*x^2 + (b21*y + b22*z)^2 - 2*b21*b22*R3/x = R1
+# b11*x^6 + (R2*x - b23*R3)^2 - 2*b21*b22*R3*x^3 = R1*x^4
+# b11*x^6 - R1*x^4 - 2*b21*b22*R3*x^3 + R2^2*x^2 - 2*b23*R2*R3*x + b23^2*R3^2 = 0
+
+### TODO:
+
+
+###################
+
+### Completely Assymetric
+###
+### using Cardan-type Polynomials
+
+### P3 Order 2:
+# b11*x^2 + b12*y^2 + b13*z^2 = R1
+# b21*x*y + b22*x*z + b23*y*z = R2
+# x*y*z = R3
+
+# => y*z = R3/x
+# => b21*y + b22*z = R2/x - b23*R3/x^2
+# =>
+# b12*y^2   + b13*z^2   = R1 - b11*x^2
+# b21^2*y^2 + b22^2*z^2 = (R2/x - b23*R3/x^2)^2 - 2*b21*b22*R3/x
+# =>
+# solve linear system: => y^2, z^2;
+# => substitute y^2 & z^2:
+# x^2*y^2*z^2 = R3^2
+
+
+### P3 Order 3:
+# b11*x^3 + b12*y^3 + b13*z^3 = R1
+# b21*x*y + b22*x*z + b23*y*z = R2
+# x*y*z = R3
+
+# => y*z = R3/x
+# => b21*y + b22*z = R2/x - b23*R3/x^2
+# =>
+# b12*y^3   + b13*z^3   = R1 - b11*x^3
+# b21^3*y^3 + b22^3*z^3 = (R2/x - b23*R3/x^2)^3 - 3*b21*b22*R3/x * (R2/x - b23*R3/x^2)
+# =>
+# solve linear system: => y^3, z^3;
+# => substitute y^3 & z^3:
+# x^3*y^3*z^3 = R3^3
+
+
+###################
 
 ###################
 ### X.) 4 Variables
