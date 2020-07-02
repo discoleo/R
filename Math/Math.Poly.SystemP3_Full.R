@@ -8,18 +8,18 @@
 
 ### P3 Systems
 # v.0.4-pre-alpha:
-# - basic ideas to solve Assymetric higher order systems;
-# - basic example for fully assymetric order 2 P3;
+# - basic ideas to solve Asymmetric higher order systems;
+# - basic example for fully asymmetric order 2 P3;
 # v.0.3e: a less simplified version (see v.0.3b);
 # v.0.3d:
-# - partial extension of assymetric system to 4 variables;
+# - partial extension of asymmetric system to 4 variables;
 # - TODO: need the v.0.3.a solver as proper function!
-# v.0.3c: added minimally assymetric P[2];
+# v.0.3c: added minimally asymmetric P[2];
 # v.0.3b:
 # - added also a greatly simplified version
-#   of the basic assymetric system;
+#   of the basic asymmetric system;
 #   [but with exact solution]
-# v.0.3a: basic Assymetric system;
+# v.0.3a: basic Asymmetric system;
 # v.0.2d: more roots + classical "solution" to simple PS3 (the P[9] polynomial);
 # v.0.2c: Test the Linear decomposition concept;
 # v.0.2a: P3 system + linear (x+y+z) terms;
