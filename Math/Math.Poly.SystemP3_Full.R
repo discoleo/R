@@ -4,11 +4,12 @@
 ### P3 Polynomial Systems
 ### Solver: Exact solutions
 ###
-### draft 0.3e
+### draft 0.4-pre-alpha
 
 ### P3 Systems
-# v.0.4-pre-pre-alpha:
+# v.0.4-pre-alpha:
 # - basic ideas to solve Assymetric higher order systems;
+# - basic example for fully assymetric order 2 P3;
 # v.0.3e: a less simplified version (see v.0.3b);
 # v.0.3d:
 # - partial extension of assymetric system to 4 variables;
@@ -694,14 +695,58 @@ sapply(1:nrow(sol), function(id) prod(sol[id,]))
 # => y*z = R3/x
 # => b21*y + b22*z = R2/x - b23*R3/x^2
 # =>
-# b12*y^2   + b13*z^2   = R1 - b11*x^2
+# b12*y^2   + b13*z^2   = - b11*x^2 + R1
 # b21^2*y^2 + b22^2*z^2 = (R2/x - b23*R3/x^2)^2 - 2*b21*b22*R3/x
+# b21^2*y^2 + b22^2*z^2 = - 2*b21*b22*R3/x + R2^2/x^2 - 2*b23*R2*R3/x^3 + b23^2*R3^2/x^4
 # =>
 # solve linear system: => y^2, z^2;
 # => substitute y^2 & z^2:
 # x^2*y^2*z^2 = R3^2
+# x^8*y^2*z^2 - R3^2 * x^6 = 0
+
+library(polynom)
+
+### free Parameters
+b1 = c(1,2,3)
+b2 = c(1,1,2)
+R  = c(1,1,1)
+### linear solution for sub-system:
+yz.m = matrix(c(b1[-1], b2[-3]^2), ncol=2, byrow=TRUE)
+yz.R = matrix(
+	c(-b1[1], 0, R[1], 0, 0, 0, 0,
+	c(0, 0, 0, - 2*b2[1]*b2[2]*R[3], R[2]^2, - 2*b2[3]*R[2]*R[3], b2[3]^2*R[3]^2)), ncol=7, byrow=TRUE)
+
+yz.coeff = solve(yz.m, yz.R)
+yz.R
+yz.coeff
+
+p = polynomial(rev(yz.coeff[1,])) * polynomial(rev(yz.coeff[2,])) - polynomial(c(rep(0,6),R[3]^2))
+p
+x = solve(p)
+x
+
+# solve y, z:
+pow = 2 - (0:6)
+solve.yz = function(x, yz.coeff, id, pow = 2 - (0:6)) sqrt(sum(yz.coeff[id,] * x^pow))
+y = sapply(x, solve.yz, yz.coeff, 1)
+z = sapply(x, solve.yz, yz.coeff, 2)
+# all solutions
+sol = cbind(x, y, z)
+sol = rbind(sol, cbind(x, -y, z), 
+	cbind(x, y, -z), cbind(x, -y, -z))
+
+### Test
+err1 = apply(sol, 1, function(sol) sum(b1*sol^2))
+err2 = apply(sol, 1, function(sol) sum(b2*sol[c(1,1,2)]*sol[c(2,3,3)]))
+err3 = apply(sol, 1, function(sol) prod(sol))
+err = cbind(err1, err2, err3)
+err = round0(err)
+correct = (round0(err[,2] - R[2]) == 0) & (round0(err[3] - R[3]) == 0)
+err[correct,]
+sol[correct,]
 
 
+###############
 ### P3 Order 3:
 # b11*x^3 + b12*y^3 + b13*z^3 = R1
 # b21*x*y + b22*x*z + b23*y*z = R2
