@@ -4,17 +4,32 @@
 ###
 ### Leonard Mada
 ### 2018-2020
+###
+### draft v.0.1
 
 
 ### Rationalizing polynomial Fractions
 ### with Simple Radicals
 
-# e.g.
-k = 3^(1/5) # this is a fixed value!
+
+###############
+### Example ###
+
+# a simple example
+k = 3^(1/5) # this is here a fixed value!
 1 / (k^4 + k^3 + k^2 + 3*k + 1) # ==
 (3*k^4 + k^3 - 2*k^2 - 3*k - 1) / 14
 # == 0.09406944
-# other examples: see below;
+# for other examples: see below;
+
+
+###############
+### History ###
+
+# draft v.0.1.
+# - minor edits & bug-fixes;
+# draft pre-v.0.1.
+# - initial upload to Github;
 
 
 ##############
@@ -27,7 +42,9 @@ k = 3^(1/5) # this is a fixed value!
 # The fraction 1/x can be rationalised.
 # 1/x = sum(b[j] * k^j) / N,
 # with j = 0 to (n-1);
-# b[j] and N are integers, if K and s[j] are integers;
+# if K and s[j] are integers,
+# then b[j] and N are also integers;
+# (N is choosen so that coefficients b[j] are integers)
 
 # - various Examples are provided below;
 # - the function inverse() computes the rational decomposition of 1/x;
@@ -38,13 +55,13 @@ k = 3^(1/5) # this is a fixed value!
 ####################
 
 ### helper functions
-inverse = function(p.coeffs, K, n=length(p.coeffs)) {
+inverse = function(p.coeffs, K, n=length(p.coeffs), tol=1E-10) {
 	# p.coeffs = in ascending power order;
-	# Base-Roots
+	# Base-Root & All Roots
 	m = complex(re=cos(2*pi/n), im=sin(2*pi/n))
 	pow = 0:(n-1)
 	m = m^pow
-	k = m * K^(1/5)
+	k = m * K^(1/5) # used to construct all roots;
 	#
 	if(length(p.coeffs) < n + 1) {
 		p.coeffs = c(p.coeffs, rep(0, n - length(p.coeffs)))
@@ -61,11 +78,13 @@ inverse = function(p.coeffs, K, n=length(p.coeffs)) {
 	# print(id)
 	p.m = matrix(p.m[match(1:(n*n), id)], ncol=n, byrow=T)
 	sol = solve(p.m, c(N, rep(0,4)))
-	sol = round0(sol)
+	if( ! is.na(tol)) {
+		sol = round0(sol, tol=tol)
+	}
 	# TODO: gcd(N, sol)
 	# Test
 	test = sapply(1:n, function(id) sum(sol * k[id]^pow) / N * x[id]) # == 1
-	return(list(sol=sol, N=N, x=x, test=test))
+	return(list(sol=sol, N=N, r.coeffs=p.coeffs, x=x, test=test))
 }
 ### complex/matrix round
 round0 = function(m, tol=1E-10) {
@@ -99,8 +118,8 @@ k = m * K^(1/n)
 # - coefficients tend easy to explode;
 # - examples have been choosen with smaller coefficients;
 x = k^4 + k^3 + k^2 + 3*k + 1
-1/x
 ### Rationalize: 1/x
+1/x
 
 
 ### Solution:
@@ -108,15 +127,17 @@ sol = inverse(c(1, 3, 1, 1, 1), K, n)
 sol
 
 ### Test
-sapply(1:n, function(id) sum(sol * k[id]^(0:(n-1))) / N * x[id]) # == 1
+sapply(1:n, function(id) sum(sol$sol * k[id]^(0:(n-1))) / sol$N * x[id]) # == 1
 
 # 1/x = (3*k^4 + k^3 - 2*k^2 - 3*k - 1) / 14 # N = 14 * 8
+1/x # ==
 (3*k^4 + k^3 - 2*k^2 - 3*k - 1) / 14
 
-# Note / Proof:
+# Proof:
 # (k^4 + k^3 + k^2 + 3*k + 1) * (3*k^4 + k^3 - 2*k^2 - 3*k - 1) = 14
 # x * 1/x * 14 =
-3*k^8 + 4*k^7 + 2*k^6 + 5*k^5 − 9*k^3 − 12*k^2 − 6*k − 1
+3*k^8 + 4*k^7 + 2*k^6 + 5*k^5 − 9*k^3 − 12*k^2 − 6*k − 1 # = 14
+(k^5 - 3) * (5 + 2*k + 4*k^2 + 3*k^3) + 14
 # Substituting: k^5 = 3
 # = 15 - 1 = 14
 
@@ -126,7 +147,7 @@ sapply(1:n, function(id) sum(sol * k[id]^(0:(n-1))) / N * x[id]) # == 1
 1 / (k^4 + k^3 + k^2 + 3*k + 1)
 (k - 1) / ((k - 1) * (k^4 + k^3 + k^2 + 3*k + 1))
 (k - 1) / (k^5 + 2*k^2 − 2*k − 1)
-(k - 1) / (2*k^2 − 2*k − 1 + K)
+(k - 1) / (2*k^2 − 2*k − 1 + K) # K = 3
 (k - 1) / (2*k^2 − 2*k + 2)
 (k - 1) / (k^2 − k + 1) / 2 # simplifies the coefficients
 (k - 1)*(k^3 + k^2 - 1) / ((k^3 + k^2 - 1)*(k^2 − k + 1)) / 2
