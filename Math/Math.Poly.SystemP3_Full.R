@@ -4,9 +4,11 @@
 ### P3 Polynomial Systems
 ### Solver: Exact solutions
 ###
-### draft 0.4-pre-alpha
+### draft 0.4-pre-alpha2
 
 ### P3 Systems
+# v.0.4-pre-alpha2:
+# - partly asymmetric order 2 P3;
 # v.0.4-pre-alpha:
 # - basic ideas to solve Asymmetric higher order systems;
 # - basic example for fully asymmetric order 2 P3;
@@ -25,7 +27,33 @@
 # v.0.2a: P3 system + linear (x+y+z) terms;
 # v.0.1: simple P3 system: the Base System;
 
-#####################
+
+######################
+
+### Theory
+
+### Order n = O(n) Simple P3 System
+# B1 * (x^n, y^n, z^n) = R1
+# B2 * (x*y, x*z, y*z) = R2
+# x*y*z = R3
+
+# 1.) Symmetric O(n):
+# - B1 = B2 = (1, 1, 1);
+# - can be decomposed into 2 entangled systems:
+# - solve a P[n]-polynomial: with exact solution for n <= 3;
+# - solve a derived P3: exact solution;
+# 2.) Partly Asymmetric O(n)
+# - b12 = b21^n, b13 = b22^n;
+# - solve a P[3*n] polynomial: exact solution for n=1;
+# 3.) Fully Asymmetric O(n)
+# - solve a P[6*n] polynomial;
+# - a P[12] example is shown below;
+
+### Order n = O(n) Complex P3 System
+# see below for Theory of complex O(3) P3;
+
+
+#######################
 
 ### A.) Base P3 system
 
@@ -88,6 +116,9 @@ x^9 - A*x^6 - 3*B*C*x^4 + (B^3+3*C^2)*x^3 -3*B^2*C*x^2 + 3*B*C^2*x - C^3
 # see below for some ideas;
 
 
+
+### Asymmetrical Simple Systems
+
 ### E.) Basic Assymetrical System:
 # b11 * x + b12 * y + b13 * z = R1
 # b21 * x*y + b22 * x*z + b23 * y*z = R2
@@ -95,8 +126,10 @@ x^9 - A*x^6 - 3*B*C*x^4 + (B^3+3*C^2)*x^3 -3*B^2*C*x^2 + 3*B*C^2*x - C^3
 # see part [E] for solution;
 # [but invovles numerical solution to a P[6] polynomial;]
 
-### E.2.) a greatly simplified version of [E]
-# but with exact solution;
+### E.2.) Simplified versions of [E]
+# - but with exact solution;
+# - a greatly simplified;
+# - and the "classic" partly simplified version;
 
 
 ####################
@@ -460,8 +493,8 @@ solve.P3asym = function(b1, b2, R) {
 	# print(yz)
 	p1 = polynomial.c(rev(yz[1,]))
 	p2 = polynomial.c(rev(yz[2,]))
-	m = outer(p1, p2)
-    p = as.vector(tapply(m, row(m) + col(m), sum))
+	p.m = outer(p1, p2)
+    p = as.vector(tapply(p.m, row(p.m) + col(p.m), sum))
 	p = p - c(0,0,0,R[3],0,0,0)
 	# p = polynomial.c(p)
 	print(p)
@@ -608,65 +641,20 @@ sapply(1:nrow(sol), function(id) sum(c(b2c,b2c,1) * b2 * sol[id,c(2,1,3)]*sol[id
 sapply(1:nrow(sol), function(id) prod(sol[id,]))
 
 
-##########################
+############################
 
-##########################
-### Assymetrical Systems
-### F.) Higher Orders
+############################
+### Asymmetrical Systems ###
+############################
 
-
-# x^2 + y^2 + z^2 = R1
-# b2*x*(y+z) + b23*y*z = R2
-# x*y*z = R3
-
-# => x = R3 / (y*z) = R3 / yz
-# R3^2/yz^2 + s^2 - 2*yz = R1
-# b2*R3 * s/yz + b23*yz = R2
-# =>
-# s/yz = (R2 - b23*yz) / (b2*R3)
-# s^2/yz^2 = b23^2/b2^2/R3^2*yz^2 - 2*b23/b2^2/R3^2*R2*yz + R2^2/b2^2/R3^2
-# s^2 = b23^2/b2^2/R3^2*yz^4 - 2*b23/b2^2/R3^2*R2*yz^3 + R2^2/b2^2/R3^2*yz^2
-# b23^2/b2^2/R3^2*yz^4 - 2*b23/b2^2/R3^2*R2*yz^3 + R2^2/b2^2/R3^2*yz^2 - 2*yz - R1 + R3^2/yz^2 = 0
+#########################
+### F.) Higher Orders ###
+#########################
 
 
-library(polynom)
-
-
-### free Parameters:
-b2 = c(1, 2)
-R = c(1, 1, 1)
-### Solution
-b.coeff = c(b2[2]^2/b2[1]^2/R[3]^2, - 2*b2[2]*R[2]/b2[1]^2/R[3]^2,
-	R[2]^2/b2[1]^2/R[3]^2, - 2, - R[1], 0, R[3]^2)
-b.coeff
-
-# Polynom
-p = polynomial(rev(b.coeff))
-p
-
-yz = solve(p)
-yz
-x = R[3] / yz
-s = (R[2] - b2[2]*yz)/b2[1] * yz/R[3]
-yz.diff = sqrt(s^2 - 4*yz)
-y = (s + yz.diff)/2
-z = (s - yz.diff)/2
-### Solution
-sol = rbind(cbind(x, y, z), cbind(x, z, y))
-sol
-
-### Test
-sapply(1:nrow(sol), function(id) sum(sol[id,]^2))
-sapply(1:nrow(sol), function(id) sum(b2[c(1,1,2)]*sol[id,c(2,1,3)]*sol[id,c(1,3,2)]))
-sapply(1:nrow(sol), function(id) prod(sol[id,]))
-
-### Debug
-# a = sqrt(c(2,3,5))
-# R = c(sum(a^2), b2[1]*a[1]*(a[2]+a[3])+b2[2]*a[2]*a[3], prod(a))
-# sum((a[2]*a[3])^(6:0) * b.coeff)
-
-
-###################
+#########################
+### Partly Asymmetric ###
+#########################
 
 # b11*x^2 + b21^2*y^2 + b22^2*z^2 = R1
 # x*(b21*y + b22*z) + b23*y*z = R2
@@ -674,15 +662,96 @@ sapply(1:nrow(sol), function(id) prod(sol[id,]))
 
 # => y*z = R3/x
 # => b21*y + b22*z = R2/x - b23*R3/x^2
+#
 # b11*x^2 + (b21*y + b22*z)^2 - 2*b21*b22*R3/x = R1
 # b11*x^6 + (R2*x - b23*R3)^2 - 2*b21*b22*R3*x^3 = R1*x^4
 # b11*x^6 - R1*x^4 - 2*b21*b22*R3*x^3 + R2^2*x^2 - 2*b23*R2*R3*x + b23^2*R3^2 = 0
 
-### TODO:
+library(polynom)
+
+b11 = 2
+b2  = c(1, 2, 3)
+R   = c(1,1,1)
+### Solution:
+b = c(- R[1], - 2*b2[1]*b2[2]*R[3], R[2]^2, - 2*b2[3]*R[2]*R[3], b2[3]^2*R[3]^2) / b11
+b = rev(c(1, 0, b))
+
+p = polynomial(b)
+p
+x = solve(p)
+#
+yz = R[3] / x
+yz.p = (R[2] - b2[3]*yz)/x
+yz.m = sqrt(yz.p^2 - 4*b2[1]*b2[2]*yz)
+y = (yz.p + yz.m) / 2 / b2[1]
+z = (yz.p - yz.m) / 2 / b2[2]
+sol = cbind(x, y, z)
+sol
+
+# TODO: all solutions
+
+### Test
+sapply(1:nrow(sol), function(id) sum(sol[id,]^2 * c(b11, b2[-3]^2)))
+sapply(1:nrow(sol), function(id) sum(b2*sol[id,c(1,1,2)]*sol[id,c(2,3,3)]))
+sapply(1:nrow(sol), function(id) prod(sol[id,]))
 
 
-###################
+#########################
+### Partly Asyymetric
+### [very simple version]
 
+# x^2 + y^2 + z^2 = R1
+# b2*x*(y+z) + b23*y*z = R2
+# x*y*z = R3
+
+# Note:
+# - the very simple version does NOT simplify additionally the system;
+
+### Solution
+# => y*z = R3/x
+# => x*(y+z) = R2 - b23*R3/x
+# x^2*(y+z)^2 = R2^2 - 2*b23*R2*R3/x + b23^2*R3^2/x^2
+# x^2*(y^2 + z^2) = -2*R3*x + R2^2 - 2*b23*R2*R3/x + b23^2*R3^2/x^2
+# =>
+# x^4 - 2*R3*x + R2^2 - 2*b23*R2*R3/x + b23^2*R3^2/x^2 = R1*x^2
+# x^6 - R1*x^4 - 2*R3*x^3 + R2^2*x^2 - 2*b23*R2*R3*x + b23^2*R3^2 = 0
+
+
+library(polynom)
+
+### free Parameters:
+# [reusing code from TRUE Partly Asymmetric]
+b11 = 1
+b2  = c(1, 1, 3)
+R   = c(1, 1, 1)
+### Solution:
+b = c(- R[1], - 2*b2[1]*b2[2]*R[3], R[2]^2, - 2*b2[3]*R[2]*R[3], b2[3]^2*R[3]^2) / b11
+b = rev(c(1, 0, b))
+
+p = polynomial(b)
+p
+x = solve(p)
+#
+yz = R[3] / x
+yz.p = (R[2] - b2[3]*yz)/x
+yz.m = sqrt(yz.p^2 - 4*b2[1]*b2[2]*yz)
+y = (yz.p + yz.m) / 2 / b2[1]
+z = (yz.p - yz.m) / 2 / b2[2]
+sol = cbind(x, y, z)
+sol
+
+# TODO: all solutions
+
+### Test
+sapply(1:nrow(sol), function(id) sum(sol[id,]^2 * c(b11, b2[-3]^2)))
+sapply(1:nrow(sol), function(id) sum(b2*sol[id,c(1,1,2)]*sol[id,c(2,3,3)]))
+sapply(1:nrow(sol), function(id) prod(sol[id,]))
+
+
+#########################
+
+
+#########################
 ### Completely Assymetric
 ###
 ### using Cardan-type Polynomials
@@ -764,6 +833,45 @@ sol[correct,]
 
 
 ###################
+
+
+# b11*x^2 + b12*y^2 + b13*z^2 = R1
+# b21*x*y + b22*x*z + b23*y*z = R2
+# x^2*y*z = R3
+
+# => y*z = R3 / x^2
+# => b21*y + b22*z = R2/x - b23*R3/x^3
+# b21^2*y^2 + b22^2*z^2 = (R2^2 - 2*b21*b22*R3)/x^2 - b23*R2*R3/x^4 + b23^2*R3^2/x^6
+# b12*y^2 + b13*z^2 = - b11*x^2 + R1
+
+
+###
+# b11*x^4 + b12*y^4 + b13*z^4 = R1
+# b21*x*y + b22*x*z + b23*y*z = R2
+# x^4*y*z = R3  # TODO: x^2*y*z = R3
+
+# => y*z = R3 / x^4
+# => b21*y + b22*z = R2/x - b23*R3/x^5
+# b21^4*y^4 + b22^4*z^4 = (R2 - b23*R3/x^4)/x^4 - 4*b21*b22*R3/x^4*(...) - 6*b21^2*b22^2*R3^2/x^8
+# b12*y^4 + b13*z^4 = - b11*x^4 + R1
+
+
+
+####################
+### Partly Symmetric
+# b11*x^3 + (b12*y + b13*z)^3 = R1
+# b12*x*y + b13*x*z + b23*y*z = R2
+# x^3*y*z = R3
+
+# b11*x^6 + (R2 - b23*R/x^3)^3 = R1*x^3
+# b11*x^15 + (R2*x^3 - b23*R3)^3 = R1*x^12
+
+
+
+
+###################
+###################
+
 
 ###################
 ### X.) 4 Variables
