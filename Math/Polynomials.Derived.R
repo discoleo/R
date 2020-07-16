@@ -5,13 +5,18 @@
 ### [the one and only]
 ###
 ### Derived Polynomials
-### v.0.2
+### v.0.3b
 
 ### Note:
-# This is the 1st part towards introducing polynomials of Class 1,
-# including a different approach to polynomials.
+# This is the 1st part towards:
+# - introducing polynomials of Class 1,
+# - introducing interesting properties of polynomial roots,
+# - including a different approach to polynomials.
 
 ### History
+# v.0.3.b:
+# - a nice polynomial: 1 - x + x^2 + x^5 + x^6 + x^10
+#   [partial solution dependent on: x^5 - x - 1 = 0]
 # v.0.3a: added a Class 3 Polynomial example (roots based on cos());
 # v.0.2b: a slight generalization;
 # v.0.2a: new technique to construct interesting polynomials;
@@ -236,14 +241,38 @@ err = 1 + 4*x + 4*x^2 + 5*x^3 + x^4 + x^5
 round0(err)
 
 
-### unofrtunately only a shift of the polynom:
+### x^5 - 3*x^2 - x - 1
+x = 1/(x0^2 - x0 + 1 - 2/(x0^2+x0+1))
+# (x0^2 + x0 + 1)/(x0^4 + x0^2 - 1)
+# (x0^2 - x0 - 1)/(x0^4 - x0^2 - 1)
+# == x0^3
+x
+
+poly.calc(x)
+err = x^5 - 3*x^2 - x - 1
+round0(err)
+#
+x = x0
+x^15 - 3*x^6 - x^3 - 1
+# *nice* polynomial:
+m3 = complex(re=cos(2*pi/3), im=sin(2*pi/3))
+x = c(x0*m3, x0*m3^2)
+err = 1 - x + x^2 + x^5 + x^6 + x^10
+round0(err)
+
+
+###############
+### Decomposing
+### derived polynomial
+
+###
 x = x0^2 + x0
 x
 
 poly.calc(x)
 err = -1 - 5*x - 9*x^2 - 2*x^3 + x^5
 round0(err)
-#
+# unfortunately only a shift of the polynom:
 det = sqrt(1 + 4*(x0^2 + x0)) / 2
 x = c(-1/2 + det, -1/2 - det)
 err = 1 + 4*x + 10*x^2 + 10*x^3 + 5*x^4 + x^5
@@ -339,5 +368,24 @@ x
 x = x[c(3,4,6,7,10)]
 # 5 of the roots are the real roots
 err = 1 - 2*x - 5*x^2 + 2*x^3 + 4*x^4 + x^5
+round0(err)
+poly.calc(1/(m-1/m)) # same polynomial as the derived!
+err = 1 - 2*x - 5*x^2 + 2*x^3 + 4*x^4 + x^5
+round0(err)
+
+
+# Base Polynomial: a Class 3 Polynomial
+x = m^2 - m
+err = 1 + 3*x - 25*x^2 + 29*x^3 - 10*x^4 + x^5
+round0(err)
+
+# the derived's polynomial Derived Polynomial:
+det = sqrt(1 + 4*m^2 - 4*m + 0i) / 2
+x = c(1/2 + det, 1/2 - det)
+x
+x = x[c(2,3,4,6,10)]
+x
+# 5 of the roots are the real roots
+err = 1 - 6*x - x^2 + 10*x^3 - 6*x^4 + x^5
 round0(err)
 
