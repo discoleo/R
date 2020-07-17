@@ -5,7 +5,7 @@
 ### [the one and only]
 ###
 ### Derived Polynomials
-### v.0.3c
+### v.0.3d
 
 ### Note:
 # This is the 1st part towards:
@@ -15,12 +15,12 @@
 # - including a different approach to polynomials.
 
 ### History
-# v.0.3.c:
+# v.0.3.c & v.0.3.d:
 # - more awesome polynomials with complete solutions:
 #   1 - x + x^2 + x^3 + x^4 + x^6 = 0;
 #   1 + x + x^2 - x^3 - 2*x^4 + x^6 = 0;
 #   1 + 2*x + x^2 - x^3 - x^4 + x^6 = 0;
-#   1 + x + x^2 + x^3 - x^4 + x^6 = 0; # trivial, but added for completeness
+#   & more;
 # v.0.3.b:
 # - a nice polynomial: 1 - x + x^2 + x^5 + x^6 + x^10
 #   [solution dependent on roots of: x^5 - x - 1 = 0]
@@ -322,7 +322,7 @@ n = 3
 m = complex(re=cos(2*pi/n), im=sin(2*pi/n))
 # m = m^(0:(n-1))
 
-solve.p3 = function(b.coeff) {
+solve.p3 = function(b.coeff, n=3) {
 	# coeffs in DESCENDING order
 	m = complex(re=cos(2*pi/n), im=sin(2*pi/n))
 	m = m^(0:(n-1))
@@ -333,24 +333,50 @@ solve.p3 = function(b.coeff) {
 	return(x)
 }
 
-### Example 1:
+### Example 1: coeffs only +/-1, no b5
 x = c(solve.p3(c(-1, -m)) * m, solve.p3(c(-1, -m^2)) * m^2)
 1 - x + x^2 + x^3 + x^4 + x^6
 
+### Example 1x:
+x = c(solve.p3(c(1, -m)), solve.p3(c(1, -m^2))) # actually {-1, -1, ...}
+1 + x + x^2 + x^3 - x^4 + x^6 # trivial, for completion;
 
-### Example 2:
+
+### Example 2a: 2*x^4
 x = c(solve.p3(c(-1, m)), solve.p3(c(-1, m^2)))
 1 + x + x^2 - x^3 - 2*x^4 + x^6
 
+### Example 2b: (trivial: (x^2 + x + 1) * ... )
+x = c(solve.p3(c(m, m)) * m, solve.p3(c(m^2, m^2)) * m^2)
+1 - x + x^2 - x^3 + 2*x^4 + x^6
 
-### Example 3:
+
+### Example 3: 2*x^3
+x = c(solve.p3(c(-m, 1)) * m, solve.p3(c(-m^2, 1)) * m^2)
+1 + x + x^2 + 2*x^3 + x^4 + x^6
+
+
+### Example 4a:
+x = c(solve.p3(c(-m^2, m^2)) * m, solve.p3(c(-m, m)) * m^2)
+1 - 2*x + x^2 - x^3 + x^4 + x^6
+
+### Example 4b:
+x = c(solve.p3(c(-m, -m)) * m^2, solve.p3(c(-m^2, -m^2)) * m)
+1 + 2*x + x^2 + x^3 + x^4 + x^6 # trivial from above
+
+### Example 4c: (x^2 + x + 1) * ...
 x = c(solve.p3(c(1, m)), solve.p3(c(1, m^2)))
 1 + 2*x + x^2 - x^3 - x^4 + x^6
 
 
-### Example 4:
-x = c(solve.p3(c(1, -m)), solve.p3(c(1, -m^2)))
-1 + x + x^2 + x^3 - x^4 + x^6 # trivial, for completion;
+
+### Example 5: many 2
+x = c(solve.p3(c(m, 1)) * m^2, solve.p3(c(m^2, 1)) * m^2)
+1 + 2*x + x^2 + 2*x^3 + 2*x^4 + x^6
+
+x = c(solve.p3(c(-m^2, -1)), solve.p3(c(-m, -1)))
+1 + 2*x + x^2 - 2*x^3 - 2*x^4 + x^6
+
 
 
 ###################
