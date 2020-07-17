@@ -322,38 +322,60 @@ n = 3
 m = complex(re=cos(2*pi/n), im=sin(2*pi/n))
 # m = m^(0:(n-1))
 
+rootn = function(x, n=3) {
+	if(Im(x) != 0 || Re(x) >= 0) return(x^(1/n))
+	return( - (-x)^(1/n) )
+}
 solve.p3 = function(b.coeff, n=3) {
 	# coeffs in DESCENDING order
 	m = complex(re=cos(2*pi/n), im=sin(2*pi/n))
 	m = m^(0:(n-1))
-	c = - b.coeff[1]/3
+	c = - b.coeff[1]/n
 	d = - b.coeff[2]/2
-	det = sqrt(d^2 - c^3)
-	x = (d + det)^(1/3) * m + (d - det)^(1/3) / m
+	det = d^2 - c^n
+	det = if(Im(det) != 0 || Re(det) >= 0) sqrt(det) else complex(re=0, im=sqrt(-det))
+	x = rootn(d + det, n) * m + rootn(d - det, n) / m
 	return(x)
 }
 
 ### Example 1: coeffs only +/-1, no b5
 x = c(solve.p3(c(-1, -m)) * m, solve.p3(c(-1, -m^2)) * m^2)
 1 - x + x^2 + x^3 + x^4 + x^6
+1 + x + x^2 - x^3 + x^4 + x^6 # -x
 
-### Example 1x:
+### Example 1x: trivial, for completion;
 x = c(solve.p3(c(1, -m)), solve.p3(c(1, -m^2))) # actually {-1, -1, ...}
-1 + x + x^2 + x^3 - x^4 + x^6 # trivial, for completion;
+1 + x + x^2 + x^3 - x^4 + x^6
+x = - m^(1:2)
+1 - x + x^2 + x^3 + x^6 # (1 + x^3 + x^4)*(1 - x + x^2)
 
 
 ### Example 2a: 2*x^4
 x = c(solve.p3(c(-1, m)), solve.p3(c(-1, m^2)))
 1 + x + x^2 - x^3 - 2*x^4 + x^6
+1 - x + x^2 + x^3 - 2*x^4 + x^6 # -x
 
 ### Example 2b: (trivial: (x^2 + x + 1) * ... )
 x = c(solve.p3(c(m, m)) * m, solve.p3(c(m^2, m^2)) * m^2)
 1 - x + x^2 - x^3 + 2*x^4 + x^6
 
+# needs root shift or library(pracma)
+x = c(roots(c(1,m^2,-1,1)) * m^2, roots(c(1,m,-1,1)) * m)
+1 + x + 2*x^4 - x^5 + x^6
+1 - x + 2*x^4 + x^5 + x^6 # -x
+
 
 ### Example 3: 2*x^3
 x = c(solve.p3(c(-m, 1)) * m, solve.p3(c(-m^2, 1)) * m^2)
 1 + x + x^2 + 2*x^3 + x^4 + x^6
+1 - x + x^2 - 2*x^3 + x^4 + x^6 # -x
+
+x = c(solve.p3(c(1, 1)) * m, solve.p3(c(1, 1)) * m^2)
+1 - x + x^2 + 2*x^3 - x^4 + x^6
+
+# needs root shift or library(pracma)
+x = c(roots(c(1,m^2,0,-1)) * m^2, roots(c(1,m,0,-1)) * m)
+1 + x^2 - 2*x^3 + x^4 - x^5 + x^6
 
 
 ### Example 4a:
@@ -376,6 +398,30 @@ x = c(solve.p3(c(m, 1)) * m^2, solve.p3(c(m^2, 1)) * m^2)
 
 x = c(solve.p3(c(-m^2, -1)), solve.p3(c(-m, -1)))
 1 + 2*x + x^2 - 2*x^3 - 2*x^4 + x^6
+
+# library(pracma)
+x = c(roots(c(1,m^2,-m,-m)) , roots(c(1,m,-m^2,-m^2)) )
+1 + 2*x + 2*x^2 + 2*x^3 + 2*x^4 - x^5 + x^6
+
+x = c(roots(c(1,m^2,-m,-m)) * m^2, roots(c(1,m,-m^2,-m^2)) * m)
+1 - x - x^2 + 2*x^3 + 2*x^4 - x^5 + x^6
+x = 1/x
+1 - x + 2*x^2 + 2*x^3 - x^4 - x^5 + x^6
+
+x = c(roots(c(1,-m^2,1,m^2)) * m, roots(c(1,-m,1,m)) * m^2)
+1 + 2*x + 2*x^2 - 2*x^5 + x^6
+x = -1/x
+1 + 2*x + 2*x^4 - 2*x^5 + x^6
+
+x = c(roots(c(1,m,-1,m^2)) * m^2, roots(c(1,m^2,-1,m)) * m)
+1 + x + 2*x^4 + 2*x^5 + x^6
+x = 1/x
+1 + 2*x + 2*x^2 + x^5 + x^6 # 1/x
+
+x = c(roots(c(1,-m^2,m^2,-m^2)) * m, roots(c(1,-m,m,-m)) * m^2)
+1 + x + 2*x^3 - 2*x^5 + x^6
+x = c(roots(c(1,-m^2,m,-m^2)) * m^2, roots(c(1,-m,m^2,-m)) * m)
+1 - 2*x + 2*x^3 + x^5 + x^6 # also 1/x
 
 
 
