@@ -5,18 +5,25 @@
 ### [the one and only]
 ###
 ### Derived Polynomials
-### v.0.3b
+### v.0.3c
 
 ### Note:
 # This is the 1st part towards:
 # - introducing polynomials of Class 1,
+# - introducing derived polynomials (a different class),
 # - introducing interesting properties of polynomial roots,
 # - including a different approach to polynomials.
 
 ### History
+# v.0.3.c:
+# - more awesome polynomials with complete solutions:
+#   1 - x + x^2 + x^3 + x^4 + x^6 = 0;
+#   1 + x + x^2 - x^3 - 2*x^4 + x^6 = 0;
+#   1 + 2*x + x^2 - x^3 - x^4 + x^6 = 0;
+#   1 + x + x^2 + x^3 - x^4 + x^6 = 0; # trivial, but added for completeness
 # v.0.3.b:
 # - a nice polynomial: 1 - x + x^2 + x^5 + x^6 + x^10
-#   [partial solution dependent on: x^5 - x - 1 = 0]
+#   [solution dependent on roots of: x^5 - x - 1 = 0]
 # v.0.3a: added a Class 3 Polynomial example (roots based on cos());
 # v.0.2b: a slight generalization;
 # v.0.2a: new technique to construct interesting polynomials;
@@ -260,6 +267,11 @@ x = c(x0*m3, x0*m3^2)
 err = 1 - x + x^2 + x^5 + x^6 + x^10
 round0(err)
 
+x = c(1/x0 * m3, 1/x0*m3^2, x0*m3, x0*m3^2)
+poly.calc(x)
+1 - x + x^2 + x^4 + x^5 + x^6 + x^7 + x^8 - x^9 + 6*x^10 +
+- x^11 + x^12 + x^13 + x^14 + x^15 + x^16 + x^18 - x^19 + x^20
+
 
 ###############
 ### Decomposing
@@ -305,6 +317,43 @@ round0(err)
 
 # a nice technique to create "awsome" polynomials
 
+### n = 3
+n = 3
+m = complex(re=cos(2*pi/n), im=sin(2*pi/n))
+# m = m^(0:(n-1))
+
+solve.p3 = function(b.coeff) {
+	# coeffs in DESCENDING order
+	m = complex(re=cos(2*pi/n), im=sin(2*pi/n))
+	m = m^(0:(n-1))
+	c = - b.coeff[1]/3
+	d = - b.coeff[2]/2
+	det = sqrt(d^2 - c^3)
+	x = (d + det)^(1/3) * m + (d - det)^(1/3) / m
+	return(x)
+}
+
+### Example 1:
+x = c(solve.p3(c(-1, -m)) * m, solve.p3(c(-1, -m^2)) * m^2)
+1 - x + x^2 + x^3 + x^4 + x^6
+
+
+### Example 2:
+x = c(solve.p3(c(-1, m)), solve.p3(c(-1, m^2)))
+1 + x + x^2 - x^3 - 2*x^4 + x^6
+
+
+### Example 3:
+x = c(solve.p3(c(1, m)), solve.p3(c(1, m^2)))
+1 + 2*x + x^2 - x^3 - x^4 + x^6
+
+
+### Example 4:
+x = c(solve.p3(c(1, -m)), solve.p3(c(1, -m^2)))
+1 + x + x^2 + x^3 - x^4 + x^6 # trivial, for completion;
+
+
+###################
 n = 5
 m = complex(re=cos(2*pi/n), im=sin(2*pi/n))
 m = m^(0:(n-1))
