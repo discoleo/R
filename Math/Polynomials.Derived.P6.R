@@ -5,12 +5,18 @@
 ### [the one and only]
 ###
 ### Derived Polynomials: P6
-### P6 Polynomial
+### P6 Polynomials
 ###
-### draft v.0.1
+### draft v.0.1b
+
 
 
 ### History
+# draft v.0.1b:
+# - entanglements with:
+#   m3, cos(2*pi/5), cos(2*pi/7);
+# - new variants:
+#   -1 - x + 2*x^3 - 2*x^5 + x^6 = 0;
 # draft v.0.1
 # - moved P6 from Polynomials.Derived.R
 #   in a separate file;
@@ -25,12 +31,38 @@
 #   & many more;
 
 
+################
+
+##############
+### Theory ###
+
+# TODO:
+
+# P3 or P2 polynomials can be entangled
+# to generate very diverse P6 outputs;
+
+### Entanglements
+# a.) with Roots of Unity:
+# e.g. (x^3 - m*x^2 - x + 1)*(x^3 - m^2*x^2 - x + 1)
+# x^6 + x^5 - x^4 + x^3 + 2*x^2 - 2*x + 1
+#
+# b.) with 2*cos(2*pi/5):
+# (x^3 - 2*cos(2*pi/5)*x^2 + 1)*(x^3 - 2*cos(4*pi/5)*x^2 + 1)
+# 1 + x - x^2 + 2*x^3 + x^4 + x^6
+#
+# c.) with 2*cos(2*pi/7):
+# c3 = 2*cos(1:3 * 2*pi/7)
+# (c3[1]*x^2 - x + 1)*(c3[2]*x^2 + x + 1)*(c3[3]*x^2 - x + 1)
+# x^6 + 2*x^5 - 3*x^4 + x^3 + 2*x^2 - 3*x + 1
+
+
 ####################
 
 ### TODO:
 # - use exact P3 solver for P6, when applicable;
 library(pracma)
-m = unity(3, all=FALSE)
+
+m = unity(3, all=FALSE) # load first helper function unity()!
 
 ### helper functions
 unity = function(n=3, all=TRUE) {
@@ -110,6 +142,7 @@ solve.p3 = function(b.coeff, n=3) {
 
 ########
 ### Type = (x^3, m, m, 1)
+# Coeffs: x^3 + a*x^2 + b*x + c;
 coeff = c(1, 1, -1)
 solve.p6(coeff, type=110)
 
@@ -123,12 +156,12 @@ solve.p6(coeff, type=110)
 coeff = c(1, 1, -1)
 solve.p6(coeff, type=111)
 
-### type = (x^3, m, m, m)
+###
 coeff = c(1, 1, 1)
 solve.p6(coeff, type=111)
 
 
-### type = (x^3, m, m, m)
+###
 coeff = c(2, 1, 1)
 solve.p6(coeff, type=111)
 
@@ -163,9 +196,13 @@ solve.p6(coeff, type=1)
 n = 3
 m = complex(re=cos(2*pi/n), im=sin(2*pi/n))
 # m = m^(0:(n-1))
+### cos(2*pi/7) & cos(2*pi/5) entanglement
+c3 = 2*cos(2*pi/7 * (1:3))
+c2 = 2*cos(2*pi/5 * (1:2))
 
 
-### Example 1: coeffs only +/-1, no b5
+### Example 1:
+# coeffs only +/-1, no b5
 x = c(solve.p3(c(-1, -m)) * m, solve.p3(c(-1, -m^2)) * m^2)
 x
 round0( 1 - x + x^2 + x^3 + x^4 + x^6 )
@@ -213,6 +250,9 @@ x = 1/x
 x = c(roots(c(1,m^2,1i*sqrt(3),1)), roots(c(1,m,-1i*sqrt(3),1)))
 1 + 2*x^2 - x^3 + x^4 - x^5 + x^6 # (x^2 + x - 1)*...
 
+x = unlist(lapply(c2, function(x) roots(c(x,-1,x-1,x)) ))
+1 + x - 2*x^2 - x^3 - x^5 + x^6
+
 ### Example 2b: trivial: (x^2 + x + 1) * ...
 x = c(solve.p3(c(m, m)) * m, solve.p3(c(m^2, m^2)) * m^2)
 1 - x + x^2 - x^3 + 2*x^4 + x^6
@@ -222,6 +262,11 @@ x = c(roots(c(1,m^2,-1,1)) * m^2, roots(c(1,m,-1,1)) * m)
 1 + x + 2*x^4 - x^5 + x^6
 1 - x + 2*x^4 + x^5 + x^6 # -x
 
+x = unlist(lapply(c2, function(x) roots(c(1,x,0,x)) ))
+-1 - 2*x^2 - x^3 - x^4 - x^5 + x^6
+x = unlist(lapply(c2, function(x) roots(c(x,-1,x,x-1)) ))
+-1 + x - 2*x^2 + x^4 - x^5 + x^6
+
 
 ##############
 ### Example 3: 2*x^3
@@ -230,6 +275,15 @@ x = c(solve.p3(c(-m, 1)) * m, solve.p3(c(-m^2, 1)) * m^2)
 1 - x + x^2 - 2*x^3 + x^4 + x^6 # -x
 x = 1/x
 1 + x^2 + 2*x^3 + x^4 + x^5 + x^6
+x = unlist(lapply(c2, function(x) roots(c(1,x,0,1)) ))
+1 - x^2 + 2*x^3 - x^4 - x^5 + x^6
+
+x = unlist(lapply(c2, function(x) roots(c(1,0,x,1)) ))
+1 - x - x^2 + 2*x^3 - x^4 + x^6
+x = -1/x
+1 - x^2 - 2*x^3 - x^4 + x^5 + x^6
+x = unlist(lapply(c2, function(x) roots(c(x,0,1,-x)) ))
+1 - x - x^2 - 2*x^3 + x^4 + x^6
 
 x = c(solve.p3(c(1, 1)) * m, solve.p3(c(1, 1)) * m^2)
 1 - x + x^2 + 2*x^3 - x^4 + x^6
@@ -248,6 +302,9 @@ x = c(1i, -1i)
 
 
 ### Example 4a:
+x = unlist(lapply(c2, function(x) roots(c(1,x,1,1)) ))
+1 + 2*x + x^3 + x^4 - x^5 + x^6
+
 x = c(solve.p3(c(-m^2, m^2)) * m, solve.p3(c(-m, m)) * m^2)
 1 - 2*x + x^2 - x^3 + x^4 + x^6
 
@@ -259,6 +316,12 @@ x = c(solve.p3(c(-m, -m)) * m^2, solve.p3(c(-m^2, -m^2)) * m)
 x = c(solve.p3(c(1, m)), solve.p3(c(1, m^2)))
 1 + 2*x + x^2 - x^3 - x^4 + x^6
 
+x = unlist(lapply(c2, function(x) roots(c(1,0,-x,x)) ))
+-1 + 2*x - x^2 - x^3 + x^4 + x^6
+x = unlist(lapply(c2, function(x) roots(c(1,-1,0,1/x)) ))
+-1 - x^2 + x^3 + x^4 - 2*x^5 + x^6
+x = unlist(lapply(c2, function(x) roots(c(1,1,x-1/x,1/x)) ))
+-1 - x + 2*x^2 - x^3 - x^4 + 2*x^5 + x^6
 
 ##############
 ### Example 5: multiple coeffs of 2
@@ -267,6 +330,8 @@ x = c(solve.p3(c(m, 1)) * m^2, solve.p3(c(m^2, 1)) * m^2)
 
 x = c(solve.p3(c(-m^2, -1)), solve.p3(c(-m, -1)))
 1 + 2*x + x^2 - 2*x^3 - 2*x^4 + x^6
+x = -x
+1 - 2*x + x^2 + 2*x^3 - 2*x^4 + x^6
 
 # library(pracma)
 x = c(roots(c(1,m^2,-m,-m)) , roots(c(1,m,-m^2,-m^2)) )
@@ -297,6 +362,12 @@ x = 1/x
 
 x = c(roots(c(-m^2,-m^2,-m,1)) * 1, roots(c(-m,-m,-m^2,1)) * 1)
 1 + x + 2*x^2 + 2*x^5 + x^6
+
+x = unlist(lapply(c3, function(x) roots(c(1,1/x,-1/x+x)) ))
+-1 - x + 2*x^3 - 2*x^5 + x^6
+
+x = unlist(lapply(c2, function(x) roots(c(x,-1,-1,x)) ))
+1 - x - 2*x^2 - 2*x^4 - x^5 + x^6 # trivial
 
 x = c(roots(c(m,1+m^2,-m^2,1)) * m^2, roots(c(m^2,1+m,-m,1)) * m )
 1 - 2*x - x^2 + x^3 + 2*x^4 + x^5 + x^6
@@ -344,4 +415,35 @@ x = c(roots(c(1,-1i*m^2*sqrt(3),1i*m/sqrt(3),1)), roots(c(1,1i*m*sqrt(3),-1i*m^2
 x = c(roots(c(1,-1i*m^2*sqrt(3),1i/sqrt(3),1)), roots(c(1,1i*m*sqrt(3),-1i/sqrt(3),1)))
 1 - 8/3*x^2 + 3*x^3 + 3*x^4 - 3*x^5 + x^6
 
+### cos(2*pi/7) entanglement
+c3 = 2*cos(2*pi/7 * (1:3))
+x = c(roots(c(1,-1,1/c3[1])), roots(c(1,-1,1/c3[2])),roots(c(1,-1,1/c3[3])))
+1 + x - 3*x^2 + 3*x^3 + x^4 - 3*x^5 + x^6
+
+x = c(roots(c(1,-c3[1],c3[1])), roots(c(1,-c3[2],c3[2])),roots(c(1,-c3[3],c3[3])))
+1 - 3*x + x^2 + 3*x^3 - 3*x^4 + x^5 + x^6
+
+x = c(roots(c(1,-1,c3[1])), roots(c(1,-1,c3[2])),roots(c(1,-1,c3[3])))
+1 + 2*x - 3*x^2 + x^3 + 2*x^4 - 3*x^5 + x^6
+x = unlist(lapply(c3, function(x) roots(c(x,-1,x)) ))
+1 + 2*x + 2*x^2 + 3*x^3 + 2*x^4 + 2*x^5 + x^6
+
+x = unlist(lapply(c2, function(x) roots(c(x,0,x-1,1)) ))
+-1 + 3*x - x^2 + x^3 + x^4 + x^6
+
+x = c(roots(c(1,-1/c3[1],1/c3[1])), roots(c(1,-1/c3[2],1/c3[2])),roots(c(1,-1/c3[3],1/c3[3])))
+1 - 3*x + 2*x^2 + x^3 - 3*x^4 + 2*x^5 + x^6
+
+x = unlist(lapply(c3, function(x) roots(c(1,x,1/x+1)) ))
+-1 + 3*x + 2*x^2 - 2*x^3 - x^4 - x^5 + x^6
+
+x = unlist(lapply(c2, function(x) roots(c(1,-x,1,x)) ))
+-1 - x + 3*x^2 + x^4 + x^5 + x^6
+
+###
+x = unlist(lapply(c3, function(x) roots(c(1,1/x,1/x+1)) ))
+-1 - x - 5*x^3 - 2*x^5 + x^6
+
+x = unlist(lapply(c3, function(x) roots(c(1,-1/x+2*x,x^2)) ))
+1 + 7*x + 6*x^2 - 2*x^4 + x^6
 
