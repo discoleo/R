@@ -5,10 +5,13 @@
 ### [the one and only]
 ###
 ### Polynomial Systems: P2
-### v.0.2
+### v.0.2b
 
 
 ### History
+# draft v.0.2b:
+# - some examples of derived polynomials of order 8
+#   based on the order 2 system & cos(2*pi/5)-entanglement;
 # draft v.0.2:
 # - added solutions for order 2 & order 4;
 # draft v.0.1:
@@ -38,6 +41,7 @@ solve.ps = function(shift, R, n=3) {
 		print("NOT yet implemented!")
 	}
 	X = solve(polynomial(coeff))
+	# X = roots(rev(coeff)) # pracma
 	#
 	det = X^2 - 4*R[2]
 	x.m = sapply(det, function(det) if(Im(det) != 0 | Re(det) >= 0) sqrt(det) else complex(re=0, im=sqrt(-det)) )
@@ -106,6 +110,12 @@ err = x^2*(x + a)^2 - R[1]*x^2 + (R[2] + a*x)^2
 round0(err)
 
 
+###
+c3 = 2*cos(2*pi/7 * (1:3))
+R = c(1,1)
+x = vapply(c3, solve.ps, R=R, n=2)
+
+
 ###############
 
 ### n = 3
@@ -131,14 +141,16 @@ sol = solve.ps(a, R, n=3)
 sol$x * sol$y
 
 
+### Equivalent Polynomial:
 ### Special Cases
-### Polynomials
 b = 2*a^3 - R[1]
 x = sol$x
 err = x^6 + 3*a*x^5 + 3*a^2*x^4 + b*x^3 + 3*a^2*R[2]*x^2 + 3*a*R[2]^2*x + R[2]^3
 round0(err)
 
+
 # some special cases
+### NO x^3
 a = 1
 c = 1
 #
@@ -146,6 +158,7 @@ sol = solve.ps(a, c(2*a^3, c), n=3)
 x = sol$x
 err = x^6 + 3*a*x^5 + 3*a^2*x^4 + 3*a^2*c*x^2 + 3*a*c^2*x + c^3
 round0(err)
+sol
 
 # some special cases
 b = 3
@@ -224,6 +237,87 @@ sol = solve.ps(a, R, n=4)
 (sol$x + a)^4 + (sol$y + a)^4
 sol$x * sol$y
 sol
+
+
+
+#########################
+#########################
+
+### Derived Polynomials
+
+c2 = 2*cos(2*pi/5 * 1:2)
+
+###
+R1 = c(c2[1]-c2[2], 1)
+R2 = c(c2[2]-c2[1], 1)
+sol = rbind(
+	solve.ps(c2[1] - c2[2], R1, n=2),
+	solve.ps(c2[2] - c2[1], R2, n=2) )
+
+# poly.calc(sol$x)
+x = sol$x
+1 + 20*x^3 + 57*x^4 + 20*x^5 + x^8
+# Note: Set {x} == {1/x}
+
+
+###
+R1 = c(c2[2] - c2[1], 1)
+R2 = c(c2[1] - c2[2], 1)
+sol = rbind(
+	solve.ps(c2[1]^3-c2[2]^3, R1, n=2),
+	solve.ps(c2[2]^3-c2[1]^3, R2, n=2) )
+
+# poly.calc(sol$x)
+x = sol$x
+1 - 40*x^3 + 1437*x^4 - 40*x^5 + x^8
+
+
+###
+R1 = c(0, c2[1])
+R2 = c(0, c2[2])
+sol = rbind(
+	solve.ps(c2[1]-c2[2], R1, n=2),
+	solve.ps(c2[2]-c2[1], R2, n=2) )
+
+poly.calc(sol$x)
+x = sol$x
+1 + 10*x + 50*x^2 + 110*x^3 + 123*x^4 + 10*x^5 + x^8
+
+
+###
+R1 = c(c2[1]-c2[2], c2[1])
+R2 = c(c2[2]-c2[1], c2[2])
+sol = rbind(
+	solve.ps(c2[1]-c2[2], R1, n=2),
+	solve.ps(c2[2]-c2[1], R2, n=2) )
+
+poly.calc(sol$x)
+x = sol$x
+1 + 10*x + 45*x^2 + 100*x^3 + 118*x^4 + 30*x^5 + x^8
+
+
+###
+R1 = c(c2[2]-c2[1], c2[1]-c2[2])
+R2 = c(c2[1]-c2[2], c2[2]-c2[1])
+sol = rbind(
+	solve.ps(c2[1] - c2[2], R1, n=2),
+	solve.ps(c2[2] - c2[1], R2, n=2) )
+
+poly.calc(sol$x)
+x = sol$x
+25 + 100*x + 200*x^2 + 200*x^3 + 105*x^4 + x^8
+
+
+###
+R1 = c(0, c2[1]-c2[2])
+R2 = c(0, c2[2]-c2[1])
+sol = rbind(
+	solve.ps(c2[1] - c2[2], R1, n=2),
+	solve.ps(c2[2] - c2[1], R2, n=2) )
+
+poly.calc(sol$x)
+x = sol$x
+25 + 100*x + 200*x^2 + 200*x^3 + 110*x^4 + 20*x^5 + x^8
 
 
 
