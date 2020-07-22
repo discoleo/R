@@ -7,22 +7,23 @@
 ### Derived Polynomials: P6
 ### P6 Polynomials
 ###
-### draft v.0.1b
+### draft v.0.1c
 
 
 
 ### History
-# draft v.0.1b:
+# draft v.0.1b - v.0.1c:
 # - entanglements with:
 #   m3, cos(2*pi/5), cos(2*pi/7);
 # - new variants:
+#   3 - 3*x + x^6 = 0;
 #   -1 - x + 2*x^3 - 2*x^5 + x^6 = 0;
 # draft v.0.1
 # - moved P6 from Polynomials.Derived.R
 #   in a separate file;
 # - old version (up to draft v.0.3f):
 #   https://github.com/discoleo/R/blob/master/Math/Polynomials.Derived.R
-# v.0.3.c - v.0.3.f [initial file]:
+# v.0.3.c - v.0.3.f [in the initial file]:
 # - more awesome polynomials with complete solutions:
 #   1 + x - x^4 - x^5 + x^6 = 0;
 #   1 - x + x^2 + x^3 + x^4 + x^6 = 0;
@@ -49,9 +50,12 @@
 # b.) with 2*cos(2*pi/5):
 # (x^3 - 2*cos(2*pi/5)*x^2 + 1)*(x^3 - 2*cos(4*pi/5)*x^2 + 1)
 # 1 + x - x^2 + 2*x^3 + x^4 + x^6
+# Example 2:
+# (x^3 + 2*cos(2*pi/5)*x^2 - 1)*(x^3 + 2*cos(4*pi/5)*x^2 - 1)
+# 1 + x^2 - 2*x^3 - x^4 - x^5 + x^6
 #
 # c.) with 2*cos(2*pi/7):
-# c3 = 2*cos(1:3 * 2*pi/7)
+# c3 = 2*cos( 1:3 * 2*pi/7)
 # (c3[1]*x^2 - x + 1)*(c3[2]*x^2 + x + 1)*(c3[3]*x^2 - x + 1)
 # x^6 + 2*x^5 - 3*x^4 + x^3 + 2*x^2 - 3*x + 1
 
@@ -107,6 +111,17 @@ solve.p6 = function(coeff, type=110) {
 		x = c(roots(c(1,a,b,c*m)), roots(c(1,a,b,c*m^2)))
 		coeff = c(1, 2*a, (a^2+2*b), (2*a*b-c), (b^2-a*c), -b*c, c^2)
 		err = x^6 + 2*a*x^5 + (a^2+2*b)*x^4 + (2*a*b-c)*x^3 + (b^2-a*c)*x^2 - b*c*x + c^2
+	} else if(type == 222) {
+		a1 = coeff[1]; a2 = coeff[2]
+		b1 = coeff[3]; b2 = coeff[4]
+		c1 = coeff[5]; c2 = coeff[6]
+		x = c(
+			roots(c(1, coeff[1]*m+coeff[2]*m^2, coeff[3]*m+coeff[4]*m^2, coeff[5]*m+coeff[6]*m^2)),
+			roots(c(1, coeff[1]*m^2+coeff[2]*m, coeff[3]*m^2+coeff[4]*m, coeff[5]*m^2+coeff[6]*m)))
+		coeff = c(1, - (a1+a2), (a1^2+a2^2-a1*a2-b1-b2), (2*a1*b1+2*a2*b2-a1*b2-a2*b1-c1-c2),
+			(b1^2+b2^2-b1*b2+2*a1*c1+2*a2*c2-a1*c2-a2*c1),
+			(2*b1*c1+2*b2*c2-b1*c2-b2*c1), c1^2+c2^2-c1*c2)
+		err = sapply(x, function(x) sum(coeff*x^(6:0)) )
 	} else {
 		print("NOT yet implemented!")
 	}
@@ -250,6 +265,10 @@ x = 1/x
 x = c(roots(c(1,m^2,1i*sqrt(3),1)), roots(c(1,m,-1i*sqrt(3),1)))
 1 + 2*x^2 - x^3 + x^4 - x^5 + x^6 # (x^2 + x - 1)*...
 
+x = c(roots(c(1, c2[1], c2[2], -1)), roots(c(1, c2[2], c2[1], -1)))
+1 + x + x^3 - 2*x^4 - x^5 + x^6
+x = -1/x
+1 + x - 2*x^2- x^3 - x^5 + x^6
 x = unlist(lapply(c2, function(x) roots(c(x,-1,x-1,x)) ))
 1 + x - 2*x^2 - x^3 - x^5 + x^6
 
@@ -446,4 +465,44 @@ x = unlist(lapply(c3, function(x) roots(c(1,1/x,1/x+1)) ))
 
 x = unlist(lapply(c3, function(x) roots(c(1,-1/x+2*x,x^2)) ))
 1 + 7*x + 6*x^2 - 2*x^4 + x^6
+
+
+##########
+
+            | c1*m^2+c2*m      | b1*m^2+b2*m      | a1*m^2+a2*m      | 1
+c1*m+c2*m^2 | c1^2+c2^2-c1*c2  | b1*c1+b2*c2+     | a1*c1+a2*c2+     | c1*m+c2*m^2
+            |                  | b1*c2*m+b2*c1*m^2| a1*c2*m+a2*c1*m^2|
+b1*m+b2*m^2 | b1*c1+b2*c2+     | b1^2+b2^2-b1*b2  | a1*b1+a2*b2+     | b1*m+b2*m^2
+            | b1*c2*m^2+b2*c1*m|                  | a1*b2*m+a2*b1*m^2|
+a1*m+a2*m^2 | a1*c1+a2*c2+     | a1*b1+a2*b2+     | a1^2+a2^2-a1*a2  | a1*m+a2*m^2
+            | a1*c2*m^2+a2*c1*m| a1*b2*m^2+a2*b1*m|                  |
+1           | c1*m^2+c2*m      | b1*m^2+b2*m      | a1*m^2+a2*m      | 1
+
+
+x^6 - (a1+a2)*x^5 + (a1^2+a2^2-a1*a2-b1-b2)*x^4 + (2*a1*b1+2*a2*b2-a1*b2-a2*b1-c1-c2)*x^3 +
+(b1^2+b2^2-b1*b2+2*a1*c1+2*a2*c2-a1*c2-a2*c1)*x^2 + (2*b1*c1+2*b2*c2-b1*c2-b2*c1)*x + c1^2+c2^2-c1*c2
+
+coeff = c(1, - (a1+a2), (a1^2+a2^2-a1*a2-b1-b2), (2*a1*b1+2*a2*b2-a1*b2-a2*b1-c1-c2),
+(b1^2+b2^2-b1*b2+2*a1*c1+2*a2*c2-a1*c2-a2*c1), (2*b1*c1+2*b2*c2-b1*c2-b2*c1), c1^2+c2^2-c1*c2)
+
+
+###
+coeff = c(1,-1, 1,1, 1,1)
+sol = solve.p6(coeff, type=222)
+sol
+
+x = sol$x
+err = 1 + 2*x + x^2 - 2*x^3 + x^4 + x^6
+round0(err)
+
+
+###
+coeff = c(1,-1, 1,2, -2,-1)
+sol = solve.p6(coeff, type=222)
+sol
+
+x = sol$x
+err = 3 - 3*x + x^6
+round0(err)
+
 
