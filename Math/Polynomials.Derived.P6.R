@@ -7,16 +7,21 @@
 ### Derived Polynomials: P6
 ### P6 Polynomials
 ###
-### draft v.0.1c
+### draft v.0.1d
 
 
 
 ### History
-# draft v.0.1b - v.0.1c:
+# draft v.0.1b - v.0.1d:
 # - entanglements with:
-#   m3, cos(2*pi/5), cos(2*pi/7);
+#   m[3] (m^3 = 1), cos(2*pi/5), cos(2*pi/7);
 # - new variants:
 #   3 - 3*x + x^6 = 0;
+#     factored as 2 cubics:
+#     (x^3 + (m-m^2)*x^2 +(m+2*m^2)*x - 2*m-m^2)*
+#     (x^3 - (m-m^2)*x^2 +(m^2+2*m)*x - 2*m^2-m)
+#   7 + 14*x + 7*x^2 + x^6 = 0;
+#   many other, including:
 #   -1 - x + 2*x^3 - 2*x^5 + x^6 = 0;
 # draft v.0.1
 # - moved P6 from Polynomials.Derived.R
@@ -466,8 +471,36 @@ x = unlist(lapply(c3, function(x) roots(c(1,1/x,1/x+1)) ))
 x = unlist(lapply(c3, function(x) roots(c(1,-1/x+2*x,x^2)) ))
 1 + 7*x + 6*x^2 - 2*x^4 + x^6
 
+x = sapply(1:3, function(id) roots(c(1, 2+c3[id]-c3[id]^2, c3[id])))
+1 - 9*x^2 - 14*x^3 - 8*x^4 + x^6
 
-##########
+### Symmetric
+x = sapply(1:3, function(id) roots(c(1, 3 - c3[id] - 2*c3[id]^2, 1)))
+1 - 4*x^2 + 7*x^3 - 4*x^4 + x^6
+x = sapply(1:3, function(id) roots(c(1, 10+10*c3[id]-8*c3[id]^2-5*c3[id]^3, 1)))
+1 - 18*x^2 - 7*x^3 - 18*x^4 + x^6
+
+### Asymmetric
+x = sapply(1:3, function(id) roots(c(1, -10*c3[id]+2*c3[id]^2+5*c3[id]^3, 3-c3[id]-c3[id]^2)))
+1 - x^2 - 14*x^3 - 16*x^4 + x^6
+
+x = sapply(1:3, function(id) roots(c(1, 1 + 9*c3[id] - 2*c3[id]^2 - 4*c3[id]^3, 3-c3[id]-c3[id]^2)))
+1 + 7*x + 6*x^2 - 2*x^4 + x^6
+x = sapply(1:3, function(id) roots(c(1, 6 + 5*c3[id] - 5*c3[id]^2-3*c3[id]^3, 1-c3[id]-c3[id]^2)))
+1 + 7*x + 12*x^2 - 8*x^4 + x^6
+x = sapply(1:3, function(id) roots(c(1, 8 + 9*c3[id] - 7*c3[id]^2-5*c3[id]^3, 1-c3[id]^2)))
+1 + 7*x + 13*x^2 - 9*x^4 + x^6
+x = sapply(1:3, function(id) roots(c(1, 1 + 1*c3[id] - 2*c3[id]^2-2*c3[id]^3, 1-c3[id]^2)))
+1 + 7*x - 15*x^2 - 23*x^4 + x^6
+x = sapply(1:3, function(id) roots(c(1,-2 + 3*c3[id] + 1*c3[id]^2-1*c3[id]^3, -2-3*c3[id]-c3[id]^2)))
+1 + 14*x + 40*x^2 - 15*x^4 + x^6
+
+### Special
+x = sapply(1:3, function(id) roots(c(1, 2+c3[id]-c3[id]^2, 2-c3[id])))
+7 + 14*x + 7*x^2 + x^6
+
+
+############
 
             | c1*m^2+c2*m      | b1*m^2+b2*m      | a1*m^2+a2*m      | 1
 c1*m+c2*m^2 | c1^2+c2^2-c1*c2  | b1*c1+b2*c2+     | a1*c1+a2*c2+     | c1*m+c2*m^2
@@ -506,3 +539,39 @@ err = 3 - 3*x + x^6
 round0(err)
 
 
+################
+
+
+for(s1 in (-10):10) {
+for(s2 in (-10):10) {
+	for(s3 in (-10):10) {
+	for(s0 in (-2):10) {
+		x = sapply(1:3, function(id) roots(c(1, s0+s1*c3[id]+s2*c3[id]^2+s3*c3[id]^3, -2-3*c3[id]-1*c3[id]^2)))
+		p = round(poly.calc(x))
+		p1 = as.vector(p)
+		sum0 = sum(p1 == 0)
+		# cat(sum0); cat(", ")
+		if(sum0 > 1 && any(p1[c(2,4,6)] != 0) && max(abs(p1)) <= 200) {
+			print(p)
+			if(sum0 > 2) cat("==> !! ")
+			print(c(s0, s1, s2, s3))
+		}
+	}
+}
+}
+}
+
+
+# c(1,2,-2), c(1,3,1), c(3,-1,-1), c(4,6,-7), c(1,3,2), c(0,2,1), c(1,0,-1)
+# c(-2,-3,-1)
+for(s0 in (-10):10) {
+for(s1 in (-10):10) {
+	for(s2 in (-10):10) {
+		pr = round(prod(s0 + s1*c3 + s2*c3^2))
+		# cat(sum0); cat(", ")
+		if(pr == 1) {
+			print(c(s0, s1, s2))
+		}
+	}
+}
+}
