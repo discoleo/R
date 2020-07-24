@@ -7,12 +7,12 @@
 ### Derived Polynomials: P6
 ### P6 Polynomials
 ###
-### draft v.0.1d
+### draft v.0.1e
 
 
 
 ### History
-# draft v.0.1b - v.0.1d:
+# draft v.0.1b - v.0.1e:
 # - entanglements with:
 #   m[3] (m^3 = 1), cos(2*pi/5), cos(2*pi/7);
 # - new variants:
@@ -22,7 +22,11 @@
 #     (x^3 - (m-m^2)*x^2 +(m^2+2*m)*x - 2*m^2-m)
 #   7 + 14*x + 7*x^2 + x^6 = 0;
 #   many other, including:
+#   1 + 2*x^2 + 2*x^3 + x^6 = 0 # see parametric variants
+#   1 - 2*x^2 + 2*x^3 + x^6 = 0 # parameter b2 = -2 + 0i; b3 = 2;
 #   -1 - x + 2*x^3 - 2*x^5 + x^6 = 0;
+#   1 + 3*x^2 + x^3 + 3*x^4 + x^6 = 0;
+# - additional practice with polynomials;
 # draft v.0.1
 # - moved P6 from Polynomials.Derived.R
 #   in a separate file;
@@ -219,6 +223,8 @@ m = complex(re=cos(2*pi/n), im=sin(2*pi/n))
 ### cos(2*pi/7) & cos(2*pi/5) entanglement
 c3 = 2*cos(2*pi/7 * (1:3))
 c2 = 2*cos(2*pi/5 * (1:2))
+### other
+r = 1 + c(1i,-1i)*sqrt(2)
 
 
 ### Example 1:
@@ -468,22 +474,32 @@ x = unlist(lapply(c2, function(x) roots(c(1,-x,1,x)) ))
 x = unlist(lapply(c3, function(x) roots(c(1,1/x,1/x+1)) ))
 -1 - x - 5*x^3 - 2*x^5 + x^6
 
-x = unlist(lapply(c3, function(x) roots(c(1,-1/x+2*x,x^2)) ))
-1 + 7*x + 6*x^2 - 2*x^4 + x^6
-
-x = sapply(1:3, function(id) roots(c(1, 2+c3[id]-c3[id]^2, c3[id])))
-1 - 9*x^2 - 14*x^3 - 8*x^4 + x^6
 
 ### Symmetric
 x = sapply(1:3, function(id) roots(c(1, 3 - c3[id] - 2*c3[id]^2, 1)))
 1 - 4*x^2 + 7*x^3 - 4*x^4 + x^6
 x = sapply(1:3, function(id) roots(c(1, 10+10*c3[id]-8*c3[id]^2-5*c3[id]^3, 1)))
 1 - 18*x^2 - 7*x^3 - 18*x^4 + x^6
+# r[2]
+x = sapply(r, function(r) roots(c(1, -3+3*r, -3+3*r, -1)))
+1 + 18*x^2 + 34*x^3 + 18*x^4 + x^6
+x = sapply(r, function(r) roots(c(1, -3+3*r, -3+3*r, 1)))
+1 + 18*x^2 + 38*x^3 + 18*x^4 + x^6
+x = sapply(r, function(r) roots(c(1, -2+2*r, -2+2*r, 1)))
+1 + 8*x^2 + 18*x^3 + 8*x^4 + x^6
 
 ### Asymmetric
 x = sapply(1:3, function(id) roots(c(1, -10*c3[id]+2*c3[id]^2+5*c3[id]^3, 3-c3[id]-c3[id]^2)))
 1 - x^2 - 14*x^3 - 16*x^4 + x^6
+x = sapply(1:3, function(id) roots(c(1, 2+c3[id]-c3[id]^2, c3[id])))
+1 - 9*x^2 - 14*x^3 - 8*x^4 + x^6
+# r[2]
+x = sapply(r, function(r) roots(c(1, -1+r, -3+3*r, -1)))
+1 + 2*x^2 + 10*x^3 + 18*x^4 + x^6
 
+###
+x = unlist(lapply(c3, function(x) roots(c(1,-1/x+2*x,x^2)) ))
+1 + 7*x + 6*x^2 - 2*x^4 + x^6
 x = sapply(1:3, function(id) roots(c(1, 1 + 9*c3[id] - 2*c3[id]^2 - 4*c3[id]^3, 3-c3[id]-c3[id]^2)))
 1 + 7*x + 6*x^2 - 2*x^4 + x^6
 x = sapply(1:3, function(id) roots(c(1, 6 + 5*c3[id] - 5*c3[id]^2-3*c3[id]^3, 1-c3[id]-c3[id]^2)))
@@ -495,28 +511,152 @@ x = sapply(1:3, function(id) roots(c(1, 1 + 1*c3[id] - 2*c3[id]^2-2*c3[id]^3, 1-
 x = sapply(1:3, function(id) roots(c(1,-2 + 3*c3[id] + 1*c3[id]^2-1*c3[id]^3, -2-3*c3[id]-c3[id]^2)))
 1 + 14*x + 40*x^2 - 15*x^4 + x^6
 
+
 ### Special
+b = 4
+x = sapply(r, function(r) roots(c(1, -1+r, (-3+b)+(1+r), -(1+r))))
+6 - 4*b*x + (b^2-2*b-1)*x^2 + 2*b*x^4 + x^6
+#
+x = sapply(r, function(r) roots(c(1, -1+r, -2+(1+r), -(1+r))))
+6 - 4*x - 2*x^2 + 2*x^4 + x^6
+x = sapply(r, function(r) roots(c(1, -1+r, -4+(1+r), -(1+r))))
+6 + 4*x + 2*x^2 - 2*x^4 + x^6
+x = sapply(r, function(r) roots(c(1, -1+r,  0+(1+r), -(1+r))))
+6 - 12*x + 2*x^2 + 6*x^4 + x^6
+#
+x = sapply(r, function(r) roots(c(1, -1+r, -3+2*r, -2*(1+r))))
+24 - 8*x + x^2 + x^6
+#
+x = sapply(r, function(r) roots(c(1, 0, -2+2*r, -1+r)))
+2 + 8*x + 8*x^2 + x^6
+x = sapply(r, function(r) roots(c(1, 0, -2+2*r, 2*(-1+r))))
+8 + 16*x + 8*x^2 + x^6
+x = sapply(r, function(r) roots(c(1, 0, -2+2*r, 3*(-1+r))))
+18 + 24*x + 8*x^2 + x^6
+#
 x = sapply(1:3, function(id) roots(c(1, 2+c3[id]-c3[id]^2, 2-c3[id])))
 7 + 14*x + 7*x^2 + x^6
+#
+x = sapply(r, function(r) roots(c(1, 0, -3+3*r, -1+r)))
+2 + 12*x + 18*x^2 + x^6
+
+b = 3
+x = sapply(r, function(r) roots(c(1, -2+2*r, -5+r, -b)))
+b^2 + 8*b*x + 18*x^2 + (8-2*b)*x^3 + x^6
+x = sapply(r, function(r) roots(c(1, -2+2*r, -5+r, -1)))
+1 + 8*x + 18*x^2 + 6*x^3 + x^6
+x = sapply(r, function(r) roots(c(1, -2+2*r, -5+r, -4)))
+16 + 32*x + 18*x^2 + x^6
+x = sapply(r, function(r) roots(c(1, b*(-1+r), -b^2-1+r, -2*b)))
+poly.calc(x)
+4 + 4*x + 3*x^2 + x^6 # for b = 1
+#
+b = 2
+sq = 3
+x = sapply(sqrt(sq+0i)*c(1i,-1i), function(r) roots(c(1, b*r, -sq*b^2/2+r, -sq*b)))
+poly.calc(x)
+
+x = sapply(r, function(r) roots(c(1, 1-r, -2+r, -3+5*r)))
+54 + 16*x - 17*x^2 + x^6
+x = sapply(r, function(r) roots(c(1, 1-r, -3+2*r, -1+5*r)))
+66 + 32*x - 11*x^2 + x^6
+x = sapply(r, function(r) roots(c(1, 1-r, -4+3*r, 1+5*r)))
+86 + 48*x - x^2 + x^6
+#
+b = -1
+x = sapply(r, function(r) roots(c(1, 1-r, -1 + b*(-1+r), 2*b + 5*(-1+r))))
+poly.calc(x)
+# e.g. 54 - 16*x - 17*x^2 + x^6 for b = -1
 
 
-############
+b3 = 2
+b2 = -1-0i # alternative: b2 = 2
+#
+x = sapply(r, function(r) roots(c(1, 0, -sqrt(b2/2)+sqrt(b2/2)*r, b3/2)))
+(b3/2)^2 + b2*x^2 + b3*x^3 + x^6
+#
+x = sapply(r, function(r) roots(c(1, 0, -sqrt(1/2)+sqrt(1/2)*r, 1)))
+1 + x^2 + 2*x^3 + x^6
+x = sapply(r, function(r) roots(c(1, 0, -1+r, 1)))
+1 + 2*x^2 + 2*x^3 + x^6
+x = sapply(r, function(r) roots(c(1, 0, -sqrt(3/2)+sqrt(3/2)*r, 1)))
+1 + 3*x^2 + 2*x^3 + x^6
+x = sapply(r, function(r) roots(c(1, 0, -sqrt(2)+sqrt(2)*r, 1)))
+1 + 4*x^2 + 2*x^3 + x^6
+x = sapply(r, function(r) roots(c(1, 0, -sqrt(3)+sqrt(3)*r, 1)))
+1 + 6*x^2 + 2*x^3 + x^6
+x = sapply(r, function(r) roots(c(1, 0, -2+2*r, 1)))
+1 + 8*x^2 + 2*x^3 + x^6
+x = sapply(r, function(r) roots(c(1, 0, -sqrt(5)+sqrt(5)*r, 1)))
+1 + 10*x^2 + 2*x^3 + x^6
+x = sapply(r, function(r) roots(c(1, 0, -4+4*r, 1)))
+1 + 32*x^2 + 2*x^3 + x^6
+#
+x = sapply(r, function(r) roots(c(1, 0, -1+r, 2)))
+4 + 2*x^2 + 4*x^3 + x^6
+x = sapply(r, function(r) roots(c(1, 0, -2+2*r, 2)))
+4 + 8*x^2 + 4*x^3 + x^6
+x = sapply(r, function(r) roots(c(1, 0, -4+4*r, 2)))
+4 + 32*x^2 + 4*x^3 + x^6
+x = sapply(r, function(r) roots(c(1, 0, -1+r, 4)))
+16 + 2*x^2 + 8*x^3 + x^6
+x = sapply(r, function(r) roots(c(1, 0, -2+2*r, 4)))
+16 + 8*x^2 + 8*x^3 + x^6
+#
+x = sapply(r, function(r) roots(c(1, -2+2*r, -7+3*r, -1-2*r)))
+17 + 18*x^2 + 18*x^3 + x^6
+b = 1
+x = sapply(r, function(r) roots(c(1, b*(-1+r), -b^2+(b+1)*(-1+r), -3+b*(1-r))))
+poly.calc(x)
+# free term in root: (2+2/b) + b*(1-r), but int only for b = {...}
+x = sapply(r, function(r) roots(c(1, b*(-1+r), -b^2+(b+1)*(-1+r), -2-2/b+b*(1-r))))
+poly.calc(x)
 
-            | c1*m^2+c2*m      | b1*m^2+b2*m      | a1*m^2+a2*m      | 1
-c1*m+c2*m^2 | c1^2+c2^2-c1*c2  | b1*c1+b2*c2+     | a1*c1+a2*c2+     | c1*m+c2*m^2
-            |                  | b1*c2*m+b2*c1*m^2| a1*c2*m+a2*c1*m^2|
-b1*m+b2*m^2 | b1*c1+b2*c2+     | b1^2+b2^2-b1*b2  | a1*b1+a2*b2+     | b1*m+b2*m^2
-            | b1*c2*m^2+b2*c1*m|                  | a1*b2*m+a2*b1*m^2|
-a1*m+a2*m^2 | a1*c1+a2*c2+     | a1*b1+a2*b2+     | a1^2+a2^2-a1*a2  | a1*m+a2*m^2
-            | a1*c2*m^2+a2*c1*m| a1*b2*m^2+a2*b1*m|                  |
-1           | c1*m^2+c2*m      | b1*m^2+b2*m      | a1*m^2+a2*m      | 1
+b = -1
+x = sapply(r, function(r) roots(c(1, b*(-1+r), -b^2+(b+1)*(-1+r), 3+b*(-1+r))))
+11 - 6*x + 5*x^2 + 6*x^3 + x^6 # for b = -1
+17 - 16*x + 34*x^2 + 14*x^3 + x^6 # for b = -2
+
+b = -3
+x = sapply(r, function(r) roots(c(1, -2+2*r, -4+(2+b)*(-1+r), b+2*r)))
+(b^2+4*b+12) + 2*(20+4*b+b^2)*x^2 + 10*(b+2)*x^3 + x^6
+9 + 34*x^2 - 10*x^3 + x^6 # for b = -3
+8 + 32*x^2 + x^6 # trivial for b = -2
+9 + 34*x^2 + 10*x^3 + x^6 # for b = -1
+x = sapply(r, function(r) roots(c(1, -2+2*r, -6+2*r, 2*r)))
+12 + 40*x^2 + 20*x^3 + x^6
+x = sapply(r, function(r) roots(c(1, -2+2*r, -7+3*r, 1+2*r)))
+17 + 50*x^2 + 30*x^3 + x^6
+b1 = 3
+b = -3
+x = sapply(r, function(r) roots(c(1, b1*(-1+r), -2*b1+(b+b1)*(-1+r), b+b1*r)))
+poly.calc(x)
+# eliminates x & x^5 terms
+# TODO: more work
 
 
-x^6 - (a1+a2)*x^5 + (a1^2+a2^2-a1*a2-b1-b2)*x^4 + (2*a1*b1+2*a2*b2-a1*b2-a2*b1-c1-c2)*x^3 +
-(b1^2+b2^2-b1*b2+2*a1*c1+2*a2*c2-a1*c2-a2*c1)*x^2 + (2*b1*c1+2*b2*c2-b1*c2-b2*c1)*x + c1^2+c2^2-c1*c2
+### x^6 + b1*x + b0
+# see also below
+# ("Entanglement with Roots of unity")
+# e.g.: 3 - 3*x + x^6
 
-coeff = c(1, - (a1+a2), (a1^2+a2^2-a1*a2-b1-b2), (2*a1*b1+2*a2*b2-a1*b2-a2*b1-c1-c2),
-(b1^2+b2^2-b1*b2+2*a1*c1+2*a2*c2-a1*c2-a2*c1), (2*b1*c1+2*b2*c2-b1*c2-b2*c1), c1^2+c2^2-c1*c2)
+x = sapply(r, function(r) roots(c(1, 2-2*r, -6+2*r, 5+3*r)))
+82 - 40*x + x^6
+
+
+
+################################
+
+### Entanglement with Roots of unity
+
+### nice:
+coeff = c(1,-1, 1,2, -2,-1)
+sol = solve.p6(coeff, type=222)
+sol
+
+x = sol$x
+err = 3 - 3*x + x^6
+round0(err)
 
 
 ###
@@ -529,19 +669,57 @@ err = 1 + 2*x + x^2 - 2*x^3 + x^4 + x^6
 round0(err)
 
 
-###
-coeff = c(1,-1, 1,2, -2,-1)
-sol = solve.p6(coeff, type=222)
-sol
-
-x = sol$x
-err = 3 - 3*x + x^6
-round0(err)
-
-
-################
+### Derivation
+# Coeffs      | c1*m^2+c2*m      | b1*m^2+b2*m      | a1*m^2+a2*m      | 1
+# c1*m+c2*m^2 | c1^2+c2^2-c1*c2  | b1*c1+b2*c2+     | a1*c1+a2*c2+     | c1*m+c2*m^2
+#             |                  | b1*c2*m+b2*c1*m^2| a1*c2*m+a2*c1*m^2|
+# b1*m+b2*m^2 | b1*c1+b2*c2+     | b1^2+b2^2-b1*b2  | a1*b1+a2*b2+     | b1*m+b2*m^2
+#             | b1*c2*m^2+b2*c1*m|                  | a1*b2*m+a2*b1*m^2|
+# a1*m+a2*m^2 | a1*c1+a2*c2+     | a1*b1+a2*b2+     | a1^2+a2^2-a1*a2  | a1*m+a2*m^2
+#             | a1*c2*m^2+a2*c1*m| a1*b2*m^2+a2*b1*m|                  |
+# 1           | c1*m^2+c2*m      | b1*m^2+b2*m      | a1*m^2+a2*m      | 1
 
 
+x^6 - (a1+a2)*x^5 + (a1^2+a2^2-a1*a2-b1-b2)*x^4 + (2*a1*b1+2*a2*b2-a1*b2-a2*b1-c1-c2)*x^3 +
+(b1^2+b2^2-b1*b2+2*a1*c1+2*a2*c2-a1*c2-a2*c1)*x^2 + (2*b1*c1+2*b2*c2-b1*c2-b2*c1)*x + c1^2+c2^2-c1*c2
+
+coeff = c(1, - (a1+a2), (a1^2+a2^2-a1*a2-b1-b2), (2*a1*b1+2*a2*b2-a1*b2-a2*b1-c1-c2),
+(b1^2+b2^2-b1*b2+2*a1*c1+2*a2*c2-a1*c2-a2*c1), (2*b1*c1+2*b2*c2-b1*c2-b2*c1), c1^2+c2^2-c1*c2)
+
+
+
+########################
+
+### Brute-Force Approach
+
+n = 3
+m = complex(re=cos(2*pi/n), im=sin(2*pi/n))
+# m = m^(0:(n-1))
+### cos(2*pi/7) & cos(2*pi/5) entanglement
+c3 = 2*cos(2*pi/7 * (1:3))
+c2 = 2*cos(2*pi/5 * (1:2))
+
+# faster version (but still relatively slow)
+for(s1 in (-1):10) {
+for(s2 in (-10):10) {
+	for(s3 in (-10):10) {
+	for(s0 in (-2):12) {
+		x.p = lapply(1:3, function(id) c(1, s0+s1*c3[id]+s2*c3[id]^2+s3*c3[id]^3, -2-1*c3[id]+2*c3[id]^2))
+		p = round0(mult.p(x.p[[1]], x.p[[2]]))
+		p = round0(mult.p(p, x.p[[3]]))
+		sum0 = sum(p == 0)
+		# cat(sum0); cat(", ")
+		if(sum0 > 1 && any(p[c(2,4,6)] != 0) && max(abs(p)) <= 200) {
+			print(p)
+			if(sum0 > 2) cat("==> !! ")
+			print(c(s0, s1, s2, s3))
+		}
+	}
+}
+}
+}
+
+# very slow version
 for(s1 in (-10):10) {
 for(s2 in (-10):10) {
 	for(s3 in (-10):10) {
@@ -562,8 +740,9 @@ for(s2 in (-10):10) {
 }
 
 
-# c(1,2,-2), c(1,3,1), c(3,-1,-1), c(4,6,-7), c(1,3,2), c(0,2,1), c(1,0,-1)
-# c(-2,-3,-1)
+# c(1,2,-2), c(1,2,-1), c(1,2,-2),
+# c(1,3,1), c(3,-1,-1), c(4,6,-7), c(1,3,2), c(0,2,1), c(1,0,-1)
+# c(-2,-3,-1), c(-2,-1,2)
 for(s0 in (-10):10) {
 for(s1 in (-10):10) {
 	for(s2 in (-10):10) {
@@ -574,4 +753,38 @@ for(s1 in (-10):10) {
 		}
 	}
 }
+}
+
+#######3
+
+r = 1 + c(1i,-1i)*sqrt(2)
+conj.roots = function(r) {
+	r = rev(r)
+	c(1, s20+s21*r, s10 + s11*r, s00+s01*r)
+}
+
+for(s11 in (-6):6) {
+for(s10 in (-7):7) {
+for(s01 in (-7):7) {
+for(s00 in (-7):7) {
+	for(s21 in (-3):5) {
+	for(s20 in (-3):5) {
+		x.p = lapply(r, conj.roots)
+		p = round0(mult.p(x.p[[1]], x.p[[2]]))
+		if(p[7] == 0) next
+		sum0 = sum(p == 0)
+		# cat(sum0); cat(", ")
+		if(sum0 > 2 && any(p[c(2,4,6)] != 0) && max(abs(p)) <= 200) {
+			print(p)
+			if(sum0 > 2) cat("==> !! ")
+			print(c(s20, s21, s10, s11, s00, s01))
+		}
+		p.rm = p[-7]
+		if((p[7] == 1 && sum0 > 1) || all(p.rm == 1 | p.rm == -1 | p.rm == 0)) {
+			cat("\n\n !!! ==>\n")
+			print(p)
+			print(c(s20, s21, s10, s11, s00, s01))
+		}
+	}
+}}}}
 }
