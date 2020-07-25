@@ -7,18 +7,21 @@
 ### Derived Polynomials: P6
 ### P6 Polynomials
 ###
-### draft v.0.2
+### draft v.0.2b
 
 
 ### TODO:
 # - Entanglements:
 #   (1 +/- 1i*sqrt(3))/2;
-#   (n +/- sqrt(n^2 - 1));
+#   (n +/- sqrt(n^2 - 1)); [partly done]
 #   (n +/- sqrt(n^2 - 4))/2;
 # Note: the 1/2 is easily canceled, when b0 = 1/2 * ();
 
 
 ### History
+# draft v.0.2b:
+# - 1st formula for sqrt entanglement:
+#   b0 = (n +/- sqrt(n^2 - 1));
 # draft v.0.2:
 # - formulas for the cos(2*pi/5) entanglement;
 # draft v.0.1b - v.0.1f:
@@ -184,6 +187,19 @@ solve.p6 = function(coeff, type=110) {
 		coeff = c(1, 2*a1-a2, (a1^2-a2^2-a1*a2+2*b1-b2), (2*a1*b1 - 2*a2*b2 - a1*b2 - a2*b1 - 2),
 			(b1^2-b2^2-b1*b2-2*a1+a2), -(2*b1-b2), 1)
 		err = sapply(x, function(x) sum(coeff*x^(6:0)) )
+	} else if(type == 21229) {
+		# b0 = n +/- sqrt(n^2 - 1)
+		n = coeff[1] # passed as 1st coefficient
+		a1 = coeff[2]; a2 = coeff[3]
+		b1 = coeff[4]; b2 = coeff[5]
+		n2 = n^2 - 1; sq = sqrt(n2)
+		c1 = n + sq; c2 = n - sq;
+		x = c(
+			roots(c(1, a1+a2*sq, b1+b2*sq, c1)),
+			roots(c(1, a1-a2*sq, b1-b2*sq, c2)))
+		coeff = c(1, 2*a1, (2*b1 + a1^2 - a2^2*n2), (2*n + 2*a1*b1 - 2*a2*b2*n2),
+			(2*n*a1 - 2*a2*n2 + b1^2 - b2^2*n2), (2*n*b1 - 2*b2*n2), 1)
+		err = sapply(x, function(x) sum(coeff*x^(6:0)) )
 	} else {
 		print("NOT yet implemented!")
 	}
@@ -270,6 +286,8 @@ solve.p6(coeff, type=1)
 # - b1, b2: 4 coefficients of type b[j,0] + b[j,1]*cos();
 # - b0 = 1 - cos() => prod(b0) = 1;
 
+# the nice variants tend to be trivial;
+
 ###
 coeff = c(1, 2, 2, -1)
 sol = solve.p6(coeff, type=5229)
@@ -297,16 +315,17 @@ x = sol$x
 1 - 70*x^2 + 123*x^3 + x^6
 
 
-### Nice
+### Nice, but trivial
 coeff = c(0, 0, -1, -2)
 sol = solve.p6(coeff, type=5229)
 sol
 
 x = sol$x
 1 - 5*x - 5*x^2 + 3*x^3 + x^6
+-5*(x + 1/2)^2 + (x^3 + 3/2)^2
 
 
-### Nice
+### Nice, but trivial
 coeff = c(0, 0, 1, 2)
 sol = solve.p6(coeff, type=5229)
 sol
@@ -315,15 +334,17 @@ x = sol$x
 1 + 5*x - 5*x^2 + 3*x^3 + x^6
 x = -x
 1 - 5*x - 5*x^2 - 3*x^3 + x^6
+-5*(x + 1/2)^2 + (x^3 - 3/2)^2
 
 
-### Nice
+### Nice, but trivial
 coeff = c(0, 0, 1/5, 2/5)
 sol = solve.p6(coeff, type=5229)
 sol
 
 x = sol$x
 1 + x - 1/5*x^2 + 3*x^3 + x^6
+-5*(1/5*x - 1/2)^2 + (x^3 + 3/2)^2
 
 
 ### many more possible
@@ -418,6 +439,30 @@ x = sol$x
 1 - 5*b^2*x^2 + 2*x^3 + x^6
 
 
+#####################
+### sqrt(n^2 - 1) ###
+
+# Type 21229:
+# - b1, b2: 4 coefficients of type b[j,0] + b[j,1]*sqrt(n^2 - 1);
+# - b0 = n +/- sqrt(n^2 - 1) => prod(b0) = 1;
+# - {n} is first coefficient;
+
+### Test
+coeff = c(3, 0, 1, 1, 2)
+sol = solve.p6(coeff, type=21229)
+sol
+
+x = sol$x
+1 - 26*x - 47*x^2 - 26*x^3 - 6*x^4 + x^6
+
+
+### Test
+coeff = c(3, 1, 1, 3, 1)
+sol = solve.p6(coeff, type=21229)
+sol
+
+x = sol$x
+1 + 2*x - 9*x^2 - 4*x^3 - x^4 + 2*x^5 + x^6
 
 
 #######################
