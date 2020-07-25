@@ -7,7 +7,7 @@
 ### Derived Polynomials: P6
 ### P6 Polynomials
 ###
-### draft v.0.2c
+### draft v.0.2d
 
 
 ### TODO:
@@ -19,9 +19,10 @@
 
 
 ### History
-# draft v.0.2c:
+# draft v.0.2c-d:
 # - formula for sqrt entanglement:
 #   b0 = (n +/- sqrt(n^2 - 4)) / 2;
+# - performed tests/examples with the sqrt formulas;
 # draft v.0.2b:
 # - 1st formula for sqrt entanglement:
 #   b0 = (n +/- sqrt(n^2 - 1));
@@ -242,19 +243,27 @@ solve.p3 = function(b.coeff, n=3) {
 	return(x)
 }
 ### Other
-toPoly = function(coeff, desc=TRUE) {
+toPoly = function(coeff, desc=TRUE, digits=5) {
+	# TODO: test thoroughly!!!
 	if(desc) { coeff = rev(coeff); }
+	coeff = round(coeff, digits=digits)
 	b0 = coeff[1]
 	coeff = coeff[-1]
 	isNotZero = (coeff != 0)
+	countNotZero = sum(isNotZero)
+	countPow = countNotZero; if(coeff[1] != 0) countPow = countPow - 1;
 	isOne = (coeff[isNotZero] == 1 | coeff[isNotZero] == -1)
 	coeff.txt = as.character(coeff[isNotZero])
 	coeff.txt[isOne] = ""
 	op.txt = ifelse( isOne, "", "*")
-	x.txt = ifelse(isNotZero, "x", "")
-	oppow.txt = ifelse(isNotZero, "^", ""); oppow.txt = c("", oppow.txt[-1])
-	pow.txt = as.character(2:(length(coeff))); pow.txt = c("", pow.txt[isNotZero[-1]])
-	p.txt = paste(coeff.txt, op.txt, x.txt, oppow.txt, pow.txt, sep="", collapse=" + ")
+	oppow.txt = rep("^", countPow)
+	pow.txt = as.character(1:(length(coeff)));
+	# x^1
+	if(coeff[1] != 0) {
+		pow.txt = c("", pow.txt[isNotZero][-1])
+		oppow.txt = c("", oppow.txt)
+	} else pow.txt = pow.txt[isNotZero]
+	p.txt = paste(coeff.txt, op.txt, "x", oppow.txt, pow.txt, sep="", collapse=" + ")
 	p.txt = paste(b0, p.txt, sep=" + ", collapse="")
 	return(p.txt)
 }
@@ -524,6 +533,26 @@ sol
 
 x = sol$x
 1 - 11*x - 14*x^2 - 13*x^3 - 23*x^4 - 2*x^5 + x^6
+
+
+### Test
+coeff = c(23, -1, 1, 0, -1)
+sol = solve.p6(coeff, type=24229)
+sol
+
+x = sol$x
+1 + 525*x - 1073*x^2 + 1073*x^3 - 524*x^4 - 2*x^5 + x^6
+
+
+###
+n.coeff = 2:20
+sapply(n.coeff, function(x) toPoly(solve.p6(c(x, 0,0, 1,1), type=24229)$coeff))
+
+###
+n.coeff = 2:20
+sapply(n.coeff, function(x) toPoly(solve.p6(c(x, 0,-1, 0,0), type=24229)$coeff))
+
+sapply(n.coeff, function(x) toPoly(solve.p6(c(x, 0,-1, 1,0), type=24229)$coeff))
 
 
 
