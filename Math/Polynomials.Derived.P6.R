@@ -7,25 +7,40 @@
 ### Derived Polynomials: P6
 ### P6 Polynomials
 ###
-### draft v.0.1e
+### draft v.0.2
 
+
+### TODO:
+# - Entanglements:
+#   (1 +/- 1i*sqrt(3))/2;
+#   (n +/- sqrt(n^2 - 1));
+#   (n +/- sqrt(n^2 - 4))/2;
+# Note: the 1/2 is easily canceled, when b0 = 1/2 * ();
 
 
 ### History
-# draft v.0.1b - v.0.1e:
+# draft v.0.2:
+# - formulas for the cos(2*pi/5) entanglement;
+# draft v.0.1b - v.0.1f:
 # - entanglements with:
 #   m[3] (m^3 = 1), cos(2*pi/5), cos(2*pi/7);
+# - explicit formula for the cos(2*pi/5) entanglement (in v.0.1f);
 # - new variants:
 #   3 - 3*x + x^6 = 0;
 #     factored as 2 cubics:
 #     (x^3 + (m-m^2)*x^2 +(m+2*m^2)*x - 2*m-m^2)*
-#     (x^3 - (m-m^2)*x^2 +(m^2+2*m)*x - 2*m^2-m)
-#   7 + 14*x + 7*x^2 + x^6 = 0;
+#     (x^3 - (m-m^2)*x^2 +(m^2+2*m)*x - 2*m^2-m);
+#   
 #   many other, including:
-#   1 + 2*x^2 + 2*x^3 + x^6 = 0 # see parametric variants
-#   1 - 2*x^2 + 2*x^3 + x^6 = 0 # parameter b2 = -2 + 0i; b3 = 2;
+#   [the nice ones tend to be actually trivial]
+#   1 + 5*x - 5*x^2 + 3*x^3 + x^6 = 0; # both +/- 5*x: -5*(x+1/2)^2 + (x^3+3/2)^2
+#   1 - 5*x - 5*x^2 + 3*x^3 + x^6 = 0; # also as cos(2*pi/5) entanglements
+#   1 + 5*x + 5*x^2 - 3*x^3 + x^6 = 0;
+#   1 + 5*x + 5*x^2 + 7*x^3 + x^6 = 0;
+#   1 + 2*x^2 + 2*x^3 + x^6 = 0 # trivial, to complete the series;
+#   1 - 2*x^2 + 2*x^3 + x^6 = 0 # see parametric variants: b2 = -2 + 0i; b3 = 2;
 #   -1 - x + 2*x^3 - 2*x^5 + x^6 = 0;
-#   1 + 3*x^2 + x^3 + 3*x^4 + x^6 = 0;
+#   1 + 3*x^2 + b*x^3 + 3*x^4 + x^6 = 0; # trivial, just as completion;
 # - additional practice with polynomials;
 # draft v.0.1
 # - moved P6 from Polynomials.Derived.R
@@ -131,6 +146,44 @@ solve.p6 = function(coeff, type=110) {
 			(b1^2+b2^2-b1*b2+2*a1*c1+2*a2*c2-a1*c2-a2*c1),
 			(2*b1*c1+2*b2*c2-b1*c2-b2*c1), c1^2+c2^2-c1*c2)
 		err = sapply(x, function(x) sum(coeff*x^(6:0)) )
+	} else if(type == 5229) {
+		# TODO: rename to 5221
+		# cos(2*pi/5) & b0 = 1 - cos()
+		c = 2*cos(2*pi/5 * 1:2)
+		a1 = coeff[1]; a2 = coeff[2]
+		b1 = coeff[3]; b2 = coeff[4]
+		c1 = 1 - c[1]; c2 = 1 - c[2]
+		x = c(
+			roots(c(1, coeff[1]+coeff[2]*c[1], coeff[3]+coeff[4]*c[1], 1 - c[1])),
+			roots(c(1, coeff[1]+coeff[2]*c[2], coeff[3]+coeff[4]*c[2], 1 - c[2])))
+		coeff = c(1, 2*a1-a2, (a1^2-a2^2-a1*a2+2*b1-b2), (2*a1*b1 - 2*a2*b2 - a1*b2 - a2*b1 + 3),
+			(b1^2-b2^2-b1*b2+3*a1+a2), (3*b1+b2), 1)
+		err = sapply(x, function(x) sum(coeff*x^(6:0)) )
+	} else if(type == 5220) {
+		# cos(2*pi/5) & b0 = 1
+		c = 2*cos(2*pi/5 * 1:2)
+		a1 = coeff[1]; a2 = coeff[2]
+		b1 = coeff[3]; b2 = coeff[4]
+		c1 = 1; c2 = 1
+		x = c(
+			roots(c(1, coeff[1]+coeff[2]*c[1], coeff[3]+coeff[4]*c[1], 1)),
+			roots(c(1, coeff[1]+coeff[2]*c[2], coeff[3]+coeff[4]*c[2], 1)))
+		coeff = c(1, 2*a1-a2, (a1^2-a2^2-a1*a2+2*b1-b2), (2*a1*b1 - 2*a2*b2 - a1*b2 - a2*b1 + 2),
+			(b1^2-b2^2-b1*b2+2*a1-a2), (2*b1-b2), 1)
+		err = sapply(x, function(x) sum(coeff*x^(6:0)) )
+	} else if(type == -5220) {
+		# cos(2*pi/5) & b0 = -1
+		# equivalent to 5220 with x = -x and a = -a;
+		c = 2*cos(2*pi/5 * 1:2)
+		a1 = coeff[1]; a2 = coeff[2]
+		b1 = coeff[3]; b2 = coeff[4]
+		c1 = -1; c2 = -1
+		x = c(
+			roots(c(1, coeff[1]+coeff[2]*c[1], coeff[3]+coeff[4]*c[1], -1)),
+			roots(c(1, coeff[1]+coeff[2]*c[2], coeff[3]+coeff[4]*c[2], -1)))
+		coeff = c(1, 2*a1-a2, (a1^2-a2^2-a1*a2+2*b1-b2), (2*a1*b1 - 2*a2*b2 - a1*b2 - a2*b1 - 2),
+			(b1^2-b2^2-b1*b2-2*a1+a2), -(2*b1-b2), 1)
+		err = sapply(x, function(x) sum(coeff*x^(6:0)) )
 	} else {
 		print("NOT yet implemented!")
 	}
@@ -164,7 +217,9 @@ solve.p3 = function(b.coeff, n=3) {
 ####################
 
 
-########
+#########################
+### Roots of Unity M3 ###
+
 ### Type = (x^3, m, m, 1)
 # Coeffs: x^3 + a*x^2 + b*x + c;
 coeff = c(1, 1, -1)
@@ -206,6 +261,163 @@ solve.p6(coeff, type=1)
 ###
 coeff = c(1, -1, 2)
 solve.p6(coeff, type=1)
+
+
+###################
+### cos(2*pi/5) ###
+
+# Type 5229:
+# - b1, b2: 4 coefficients of type b[j,0] + b[j,1]*cos();
+# - b0 = 1 - cos() => prod(b0) = 1;
+
+###
+coeff = c(1, 2, 2, -1)
+sol = solve.p6(coeff, type=5229)
+sol
+
+x = sol$x
+1 + 5*x + 10*x^2 + 8*x^3 + x^6
+
+### 1 + ...*x^2 + ...*x^3 + x^6
+b = -1
+coeff = c(b, 2*b, b^2, -3*b^2)
+sol = solve.p6(coeff, type=5229)
+sol
+
+x = sol$x
+1 - 10*x^2 - 12*x^3 + x^6
+
+###
+b = 2
+coeff = c(b, 2*b, b^2, -3*b^2)
+sol = solve.p6(coeff, type=5229)
+sol
+
+x = sol$x
+1 - 70*x^2 + 123*x^3 + x^6
+
+
+### Nice
+coeff = c(0, 0, -1, -2)
+sol = solve.p6(coeff, type=5229)
+sol
+
+x = sol$x
+1 - 5*x - 5*x^2 + 3*x^3 + x^6
+
+
+### Nice
+coeff = c(0, 0, 1, 2)
+sol = solve.p6(coeff, type=5229)
+sol
+
+x = sol$x
+1 + 5*x - 5*x^2 + 3*x^3 + x^6
+x = -x
+1 - 5*x - 5*x^2 - 3*x^3 + x^6
+
+
+### Nice
+coeff = c(0, 0, 1/5, 2/5)
+sol = solve.p6(coeff, type=5229)
+sol
+
+x = sol$x
+1 + x - 1/5*x^2 + 3*x^3 + x^6
+
+
+### many more possible
+coeff = c(0, 0, -3, -6)
+sol = solve.p6(coeff, type=5229)
+sol
+
+x = sol$x
+1 - 15*x - 45*x^2 + 3*x^3 + x^6
+
+
+###
+coeff = c(0, 0, -3/2, -3)
+sol = solve.p6(coeff, type=5229)
+sol
+
+
+###
+coeff = c(5, 10, 46, -33)
+sol = solve.p6(coeff, type=5229)
+sol
+
+x = sol$x
+1 + 105*x + 2570*x^2 + 828*x^3 + x^6
+
+
+################
+# Type 5220:
+# - b1, b2: 4 coefficients of type b[j,0] + b[j,1]*cos();
+# - b0 = 1 => prod(b0) = 1;
+
+###
+coeff = c(1, 2, 2, -1)
+sol = solve.p6(coeff, type=5220)
+sol
+
+x = sol$x
+1 + 5*x + 5*x^2 + 7*x^3 + x^6
+
+### unfortunately b3 is complex
+coeff = c(1i, 2i, -2, 1)
+sol = solve.p6(coeff, type=5220)
+sol
+
+x = sol$x
+1 - 5*x + 5*x^2 + (2-5i)*x^3 + x^6
+
+### Nice: the -5*x^2 version is in the previous section;
+coeff = c(-1, -2, 2, -1)
+sol = solve.p6(coeff, type=5220)
+sol
+
+x = sol$x
+1 + 5*x + 5*x^2 - 3*x^3 + x^6
+
+
+###
+coeff = c(0, -1, -1, -3)
+sol = solve.p6(coeff, type=5220)
+sol
+
+x = sol$x
+1 + x - 10*x^2 - 5*x^3 + x^5 + x^6
+
+
+###
+coeff = c(1, 1, -1, -3)
+sol = solve.p6(coeff, type=5220)
+sol
+
+x = sol$x
+1 + x - 10*x^2 + 10*x^3 + x^5 + x^6
+
+
+
+# many trivial variants also generated
+### Trivial
+coeff = c(0, 0, -1, -2)
+sol = solve.p6(coeff, type=5220)
+sol
+
+x = sol$x
+1 - 5*x^2 + 2*x^3 + x^6
+
+### Trivial
+b = 3
+coeff = c(0, 0, b, 2*b)
+sol = solve.p6(coeff, type=5220)
+sol
+
+x = sol$x
+1 - 5*b^2*x^2 + 2*x^3 + x^6
+
+
 
 
 #######################
@@ -527,8 +739,12 @@ x = sapply(r, function(r) roots(c(1, -1+r,  0+(1+r), -(1+r))))
 x = sapply(r, function(r) roots(c(1, -1+r, -3+2*r, -2*(1+r))))
 24 - 8*x + x^2 + x^6
 #
+x = sapply(r, function(r) roots(c(1, 0, 1*(-1+r), -1+r)))
+2 + 4*x + 2*x^2 + x^6
 x = sapply(r, function(r) roots(c(1, 0, -2+2*r, -1+r)))
 2 + 8*x + 8*x^2 + x^6
+x = sapply(r, function(r) roots(c(1, 0, -3+3*r, -1+r)))
+2 + 12*x + 18*x^2 + x^6
 x = sapply(r, function(r) roots(c(1, 0, -2+2*r, 2*(-1+r))))
 8 + 16*x + 8*x^2 + x^6
 x = sapply(r, function(r) roots(c(1, 0, -2+2*r, 3*(-1+r))))
@@ -536,9 +752,7 @@ x = sapply(r, function(r) roots(c(1, 0, -2+2*r, 3*(-1+r))))
 #
 x = sapply(1:3, function(id) roots(c(1, 2+c3[id]-c3[id]^2, 2-c3[id])))
 7 + 14*x + 7*x^2 + x^6
-#
-x = sapply(r, function(r) roots(c(1, 0, -3+3*r, -1+r)))
-2 + 12*x + 18*x^2 + x^6
+
 
 b = 3
 x = sapply(r, function(r) roots(c(1, -2+2*r, -5+r, -b)))
@@ -633,6 +847,9 @@ x = sapply(r, function(r) roots(c(1, b1*(-1+r), -2*b1+(b+b1)*(-1+r), b+b1*r)))
 poly.calc(x)
 # eliminates x & x^5 terms
 # TODO: more work
+
+x = sapply(r, function(r) roots(c(1, -2+2*r, -4, 3-2*r)))
+9 - 8*x + 2*x^3 + x^6
 
 
 ### x^6 + b1*x + b0
