@@ -7,18 +7,21 @@
 ### Derived Polynomials: P6
 ### P6 Polynomials
 ###
-### draft v.0.2b
+### draft v.0.2c
 
 
 ### TODO:
 # - Entanglements:
 #   (1 +/- 1i*sqrt(3))/2;
-#   (n +/- sqrt(n^2 - 1)); [partly done]
-#   (n +/- sqrt(n^2 - 4))/2;
+#   (n +/- sqrt(n^2 - 1)); [done]
+#   (n +/- sqrt(n^2 - 4))/2; [done]
 # Note: the 1/2 is easily canceled, when b0 = 1/2 * ();
 
 
 ### History
+# draft v.0.2c:
+# - formula for sqrt entanglement:
+#   b0 = (n +/- sqrt(n^2 - 4)) / 2;
 # draft v.0.2b:
 # - 1st formula for sqrt entanglement:
 #   b0 = (n +/- sqrt(n^2 - 1));
@@ -200,6 +203,21 @@ solve.p6 = function(coeff, type=110) {
 		coeff = c(1, 2*a1, (2*b1 + a1^2 - a2^2*n2), (2*n + 2*a1*b1 - 2*a2*b2*n2),
 			(2*n*a1 - 2*a2*n2 + b1^2 - b2^2*n2), (2*n*b1 - 2*b2*n2), 1)
 		err = sapply(x, function(x) sum(coeff*x^(6:0)) )
+	} else if(type == 24229) {
+		# b0 = (n +/- sqrt(n^2 - 4)) / 2;
+		# the remaining coeffs are liniar combinations of the radical:
+		# b[j] => b[j, 0] + b[j, 1] * sqrt(n^2 - 4);
+		n = coeff[1] # passed as 1st coefficient
+		a1 = coeff[2]; a2 = coeff[3]
+		b1 = coeff[4]; b2 = coeff[5]
+		n2 = n^2 - 4; sq = sqrt(n2)
+		c1 = (n + sq)/2; c2 = (n - sq)/2;
+		x = c(
+			roots(c(1, a1+a2*sq, b1+b2*sq, c1)),
+			roots(c(1, a1-a2*sq, b1-b2*sq, c2)))
+		coeff = c(1, 2*a1, (2*b1 + a1^2 - a2^2*n2), (n + 2*a1*b1 - 2*a2*b2*n2),
+			(n*a1 - a2*n2 + b1^2 - b2^2*n2), (n*b1 - b2*n2), 1)
+		err = sapply(x, function(x) sum(coeff*x^(6:0)) )
 	} else {
 		print("NOT yet implemented!")
 	}
@@ -222,6 +240,23 @@ solve.p3 = function(b.coeff, n=3) {
 	det = if(Im(det) != 0 || Re(det) >= 0) sqrt(det) else complex(re=0, im=sqrt(-det))
 	x = rootn(d + det, n) * m + rootn(d - det, n) / m
 	return(x)
+}
+### Other
+toPoly = function(coeff, desc=TRUE) {
+	if(desc) { coeff = rev(coeff); }
+	b0 = coeff[1]
+	coeff = coeff[-1]
+	isNotZero = (coeff != 0)
+	isOne = (coeff[isNotZero] == 1 | coeff[isNotZero] == -1)
+	coeff.txt = as.character(coeff[isNotZero])
+	coeff.txt[isOne] = ""
+	op.txt = ifelse( isOne, "", "*")
+	x.txt = ifelse(isNotZero, "x", "")
+	oppow.txt = ifelse(isNotZero, "^", ""); oppow.txt = c("", oppow.txt[-1])
+	pow.txt = as.character(2:(length(coeff))); pow.txt = c("", pow.txt[isNotZero[-1]])
+	p.txt = paste(coeff.txt, op.txt, x.txt, oppow.txt, pow.txt, sep="", collapse=" + ")
+	p.txt = paste(b0, p.txt, sep=" + ", collapse="")
+	return(p.txt)
 }
 
 
@@ -445,7 +480,7 @@ x = sol$x
 # Type 21229:
 # - b1, b2: 4 coefficients of type b[j,0] + b[j,1]*sqrt(n^2 - 1);
 # - b0 = n +/- sqrt(n^2 - 1) => prod(b0) = 1;
-# - {n} is first coefficient;
+# - function parameters: {n} is first coefficient;
 
 ### Test
 coeff = c(3, 0, 1, 1, 2)
@@ -463,6 +498,33 @@ sol
 
 x = sol$x
 1 + 2*x - 9*x^2 - 4*x^3 - x^4 + 2*x^5 + x^6
+
+
+#####################
+### sqrt(n^2 - 1) ###
+
+# Type 24229:
+# - b1, b2: 4 coefficients of type b[j,0] + b[j,1]*sqrt(n^2 - 4);
+# - b0 = (n +/- sqrt(n^2 - 4)) / 2 => prod(b0) = 1;
+# - function parameters: {n} is first coefficient;
+
+### Test
+coeff = c(3, -1, 1, 1, -1)
+sol = solve.p6(coeff, type=24229)
+sol
+
+x = sol$x
+1 + 8*x - 12*x^2 + 11*x^3 - 2*x^4 - 2*x^5 + x^6
+
+
+### Test
+coeff = c(3, -1, 2, -2, 1)
+sol = solve.p6(coeff, type=24229)
+sol
+
+x = sol$x
+1 - 11*x - 14*x^2 - 13*x^3 - 23*x^4 - 2*x^5 + x^6
+
 
 
 #######################
