@@ -4,25 +4,59 @@
 ### Leonard Mada
 ### [the one and only]
 ###
-### Derived Polynomials: P6
 ### P6 Polynomials
+### Derived from Special Factorizations
 ###
-### draft v.0.2d
+### draft v.0.2e
 
 
-### TODO:
-# - Entanglements:
-#   (1 +/- 1i*sqrt(3))/2;
-#   (n +/- sqrt(n^2 - 1)); [done]
-#   (n +/- sqrt(n^2 - 4))/2; [done]
-# Note: the 1/2 is easily canceled, when b0 = 1/2 * ();
+### Factorization of the P6 Polynomials
+### into "conjugated" P2/P3 Polynomials
+### with NON-Rational Coefficients
 
+
+### Introduction
+
+# P6 polynomials can be factorized into:
+# 1.) P3 * P3[*]
+#  - where P3 & P3[*] are conjugate polynomials;
+#  Variants:
+#  - Coefficients are based on:
+#    (a +/- b*sqrt(n)), cos(2*pi/5),
+#    or (m, m^2) where m^3 = 1;
+# 2.) P2 * P2[*] * P2[**]
+#  - where P2, P2[*], P2[**] are conjugate polynomials;
+
+# - these are trivial or "almost"-trivial factorizations,
+#   but they comprise a large sub-family of P6 polynomials;
+
+# Formulas are also provided to generate
+# a large sub-family of such P6 polynomials
+# with b0 = 1 and remaining b[j] = integers;
+
+# Note:
+# Even the Class 1 polynomials of order 6
+# can be factorized into 2 conjugate P3's:
+# P3 * P3[*], where the coefficients are of the form:
+# b[j] = b[j,0] +/- b[j,1] * sqrt(K);
+# e.g. roots = k^3 - k^2 - k, with k=K^(1/6):
+# 62 + 84*x + 6*x^2 - 20*x^3 - 6*x^4 + x^6
+#  (8-sqrt(2) + (6-3*sqrt(2))*x - 3*sqrt(2)*x^2 + x^3)*
+#  (8+sqrt(2) + (6+3*sqrt(2))*x + 3*sqrt(2)*x^2 + x^3)
+
+
+#####################
 
 ### History
-# draft v.0.2c-d:
+# draft v.0.2c-e:
+# - polynomials having b0 = 1;
 # - formula for sqrt entanglement:
 #   b0 = (n +/- sqrt(n^2 - 4)) / 2;
-# - performed tests/examples with the sqrt formulas;
+# - special case for n = 1:
+#   b0 = (1 +/- 1i*sqrt(3))/2;
+# - formula for generic sqrt(n) entanglement:
+#   b0 = 1 => prod(b0) = 1;
+# - various tests/examples for the sqrt formulas;
 # draft v.0.2b:
 # - 1st formula for sqrt entanglement:
 #   b0 = (n +/- sqrt(n^2 - 1));
@@ -95,6 +129,7 @@
 
 ### TODO:
 # - use exact P3 solver for P6, when applicable;
+library(polynom)
 library(pracma)
 
 m = unity(3, all=FALSE) # load first helper function unity()!
@@ -125,12 +160,14 @@ round0 = function(m, tol=1E-7) {
 	return(m)
 }
 ### Generator: Convolved P3
+# with b0 = 1 (for the 5nnn and 2xnnn variants);
 solve.p6 = function(coeff, type=110) {
 	m = unity(3, all=FALSE)
 	a = coeff[1]; b = coeff[2]; c = coeff[3]
 	# TODO: all permutations
 	# TODO: automate permutations;
 	if(type == 110) {
+		# (x^3 + a*m*x^2 + b*m*x + c)*(x^3 + a*m^2*x^2 + b*m^2*x + c)
 		x = c(roots(c(1,a*m,b*m,c)), roots(c(1,a*m^2,b*m^2,c)))
 		coeff = c(1, - a, (a^2-b), 2*(a*b+c), (b^2-a*c), - b*c, c^2)
 		err = x^6 - a*x^5 + (a^2-b)*x^4 + 2*(a*b+c)*x^3 + (b^2-a*c)*x^2 - b*c*x + c^2
@@ -143,6 +180,7 @@ solve.p6 = function(coeff, type=110) {
 		coeff = c(1, 2*a, (a^2+2*b), (2*a*b-c), (b^2-a*c), -b*c, c^2)
 		err = x^6 + 2*a*x^5 + (a^2+2*b)*x^4 + (2*a*b-c)*x^3 + (b^2-a*c)*x^2 - b*c*x + c^2
 	} else if(type == 222) {
+		# the full version: (c_1 * m + c_2 * m^2); (c0 is not needed)
 		a1 = coeff[1]; a2 = coeff[2]
 		b1 = coeff[3]; b2 = coeff[4]
 		c1 = coeff[5]; c2 = coeff[6]
@@ -219,6 +257,21 @@ solve.p6 = function(coeff, type=110) {
 		coeff = c(1, 2*a1, (2*b1 + a1^2 - a2^2*n2), (n + 2*a1*b1 - 2*a2*b2*n2),
 			(n*a1 - a2*n2 + b1^2 - b2^2*n2), (n*b1 - b2*n2), 1)
 		err = sapply(x, function(x) sum(coeff*x^(6:0)) )
+	} else if(type == 20221) {
+		# b0 = +1; # or - 1;
+		# the remaining coeffs are liniar combinations of the radical:
+		# b[j] => b[j, 0] + b[j, 1] * sqrt(n);
+		n = coeff[1] # passed as 1st coefficient
+		a1 = coeff[2]; a2 = coeff[3]
+		b1 = coeff[4]; b2 = coeff[5]
+		sq = sqrt(n)
+		c1 = 1; c2 = 1;
+		x = c(
+			roots(c(1, a1+a2*sq, b1+b2*sq, c1)),
+			roots(c(1, a1-a2*sq, b1-b2*sq, c2)))
+		coeff = c(1, 2*a1, (a1^2 - n*a2^2 + 2*b1), 2*(a1*b1 - n*a2*b2+1),
+			(2*a1 + b1^2 - n*b2^2), (2*b1), 1)
+		err = sapply(x, function(x) sum(coeff*x^(6:0)) )
 	} else {
 		print("NOT yet implemented!")
 	}
@@ -254,7 +307,8 @@ toPoly = function(coeff, desc=TRUE, digits=5) {
 	countPow = countNotZero; if(coeff[1] != 0) countPow = countPow - 1;
 	isOne = (coeff[isNotZero] == 1 | coeff[isNotZero] == -1)
 	coeff.txt = as.character(coeff[isNotZero])
-	coeff.txt[isOne] = ""
+	coeff.txt[isOne] = "" # TODO: if coeff = -1
+	coeff.txt[isOne & coeff[isNotZero] < 0] = "- "
 	op.txt = ifelse( isOne, "", "*")
 	oppow.txt = rep("^", countPow)
 	pow.txt = as.character(1:(length(coeff)));
@@ -544,6 +598,49 @@ x = sol$x
 1 + 525*x - 1073*x^2 + 1073*x^3 - 524*x^4 - 2*x^5 + x^6
 
 
+###############
+### sqrt(n) ###
+
+# Type 20221:
+# - b1, b2: 4 coefficients of type b[j,0] + b[j,1]*sqrt(n);
+# - b0 = 1 => prod(b0) = 1;
+# - function parameters: {n} is first coefficient;
+
+# gsub("\\+ \\-","- ", toPoly(sol$coeff))
+
+###
+coeff = c(2, -1, 1, 1, -1)
+sol = solve.p6(coeff, type=20221)
+sol
+
+x = sol$x
+1 + 2*x - 3*x^2 + 4*x^3 + x^4 -2 *x^5 + x^6
+
+
+###
+coeff = c(2, -1, 1, 1, -2)
+sol = solve.p6(coeff, type=20221)
+sol
+
+x = sol$x
+1 + 2*x - 9*x^2 + 8*x^3 + x^4 - 2*x^5 + x^6
+
+
+###
+coeff = c(2, -1, 2, 1, -2)
+sol = solve.p6(coeff, type=20221)
+sol
+
+x = sol$x
+1 + 2*x - 9*x^2 + 16*x^3 - 5*x^4 - 2*x^5 + x^6
+
+#############
+
+#############
+### Tests ###
+
+### Large-Scale Tests
+
 ###
 n.coeff = 2:20
 sapply(n.coeff, function(x) toPoly(solve.p6(c(x, 0,0, 1,1), type=24229)$coeff))
@@ -554,10 +651,69 @@ sapply(n.coeff, function(x) toPoly(solve.p6(c(x, 0,-1, 0,0), type=24229)$coeff))
 
 sapply(n.coeff, function(x) toPoly(solve.p6(c(x, 0,-1, 1,0), type=24229)$coeff))
 
+sapply(n.coeff, function(x) toPoly(solve.p6(c(x, 0,-1, 0,1), type=24229)$coeff))
+
+### cos(2*pi/5) variants
+n.coeff = (-10):10
+sapply(n.coeff, function(x) toPoly(solve.p6(c(0,0, 1, x), type=5229)$coeff))
 
 
-#######################
-#######################
+#########################
+
+
+#########################
+### P2 Decompositions ###
+#########################
+
+########################
+### Radicals Order 3 ###
+########################
+
+m = unity(3, all=TRUE)
+
+polyConv3.gen = function(K, b2, b1) {
+	# b = descending order
+	m = unity(3, all=TRUE)
+	k = if(K < 0) - (-K)^(1/3) else K^(1/3)
+
+	coeff.gen = function(id, b, pow=coeff.len(b)) sum(b*(k*m[id])^pow)
+	coeff.len = function(b) {
+		len = length(b) - 1
+		return(len:0)
+	}
+	b2.x = sapply(1:3, coeff.gen, b=b2)
+	b1.x = sapply(1:3, coeff.gen, b=b1)
+
+	coeff = lapply(1:3, function(id) c(1, b1.x[id], b2.x[id]))
+	p = mult.p(mult.p(coeff[[1]], coeff[[2]]), coeff[[3]])
+	p = round0(p)
+
+	p.l = list(p=p, p.str = toPoly(Re(p)))
+	return(p.l)
+}
+
+K = 2
+polyConv3.gen(K, c(1, -1), c(1,-2,0))
+
+
+K = 9
+polyConv3.gen(K, c(1, -2), c(1,-2,0))
+
+
+K = 28
+polyConv3.gen(K, c(1, -3), c(1,-2,0))
+
+
+b = 2
+sapply(1:10, function(id) polyConv3.gen( (id^3+1)/b^3, c(b, -id), c(1,-2,0))$p.str)
+
+b = 3 # (8^3+1) / 27 == 19
+sapply(1:10, function(id) polyConv3.gen( (id^3+1)/b^3, c(b, -id), c(1,-2,0))$p.str)
+
+
+
+###########################
+###########################
 
 ### Variants
 
