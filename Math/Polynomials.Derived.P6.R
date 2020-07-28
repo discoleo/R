@@ -7,7 +7,7 @@
 ### P6 Polynomials
 ### Derived from Special Factorizations
 ###
-### draft v.0.2e
+### draft v.0.2f
 
 
 ### Factorization of the P6 Polynomials
@@ -48,6 +48,10 @@
 #####################
 
 ### History
+# draft v.0.2f:
+# - mechanism of the solution to:
+#   1 + x - x^2 - x^4 + x^5 + x^6 = 0;
+#   [at the end of this document]
 # draft v.0.2c-e:
 # - polynomials having b0 = 1;
 # - formula for sqrt entanglement:
@@ -669,10 +673,11 @@ sapply(n.coeff, function(x) toPoly(solve.p6(c(0,0, 1, x), type=5229)$coeff))
 ### Radicals Order 3 ###
 ########################
 
-m = unity(3, all=TRUE)
+# m = unity(3, all=TRUE)
+# gsub("\\+ \\-","- ", toPoly(sol$coeff))
 
 polyConv3.gen = function(K, b2, b1) {
-	# b = descending order
+	# b = descending order: s2*k^2 + s1*k + s0
 	m = unity(3, all=TRUE)
 	k = if(K < 0) - (-K)^(1/3) else K^(1/3)
 
@@ -684,6 +689,7 @@ polyConv3.gen = function(K, b2, b1) {
 	b2.x = sapply(1:3, coeff.gen, b=b2)
 	b1.x = sapply(1:3, coeff.gen, b=b1)
 
+	# TODO: (b0, b1, 1)
 	coeff = lapply(1:3, function(id) c(1, b1.x[id], b2.x[id]))
 	p = mult.p(mult.p(coeff[[1]], coeff[[2]]), coeff[[3]])
 	p = round0(p)
@@ -703,6 +709,11 @@ polyConv3.gen(K, c(1, -2), c(1,-2,0))
 K = 28
 polyConv3.gen(K, c(1, -3), c(1,-2,0))
 
+
+sapply(1:10, function(id) polyConv3.gen( 2^3+1, c(1, -2), c(1,-2,id))$p.str)
+
+
+sapply(1:10, function(id) polyConv3.gen( id^3+1, c(1, -id), c(1,-2,0))$p.str)
 
 b = 2
 sapply(1:10, function(id) polyConv3.gen( (id^3+1)/b^3, c(b, -id), c(1,-2,0))$p.str)
@@ -1264,7 +1275,7 @@ for(s1 in (-10):10) {
 }
 }
 
-#######3
+#######
 
 r = 1 + c(1i,-1i)*sqrt(2)
 conj.roots = function(r) {
@@ -1297,3 +1308,31 @@ for(s00 in (-7):7) {
 	}
 }}}}
 }
+
+
+###
+p.c = t(sapply(1:3, function(id) c(c3[id]^2-c3[id], c3[id]^3-1, 1)))
+mult.p(mult.p(p.c[1,], p.c[2,]), p.c[3,])
+x = roots(rev(p.c[1,]))
+1 - 2*x^2 + 6*x^4 - 7*x^5 + x^6
+
+#############
+
+x = solve(polynomial(c(1,1,-1,0,-1,1,1)))
+1 + x - x^2 - x^4 + x^5 + x^6
+
+p = poly.calc(x[c(3:6)])
+p
+# p has the coefficients as roots of the following polynomials:
+x.r = p[[2]]
+x.r^3 - 2*x.r^2 - 3*x.r + 2
+x.r = p[[3]]
+x.r^3 - 2*x.r^2 - 6*x.r + 8
+
+p = poly.calc(x[c(1:2)])
+# p has the coefficient as roots of the following polynomial:
+x = p[[2]]
+x
+x^4 - 5*x^2 - 2*x + 2
+
+
