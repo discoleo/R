@@ -7,7 +7,7 @@
 ### P6 Polynomials
 ### Derived from Special Factorizations
 ###
-### draft v.0.2f
+### draft v.0.2g
 
 
 ### Factorization of the P6 Polynomials
@@ -48,10 +48,12 @@
 #####################
 
 ### History
-# draft v.0.2f:
-# - mechanism of the solution to:
+# draft v.0.2f-g:
+# - Solution & mechanism for:
 #   1 + x - x^2 - x^4 + x^5 + x^6 = 0;
-#   [at the end of this document]
+#   1 - 3*x - 3*x^5 + x^6 = 0;
+#   1 - 3*x + 2*x^3 - 3*x^5 + x^6 = 0;
+#   [at the end of this document + more examples]
 # draft v.0.2c-e:
 # - polynomials having b0 = 1;
 # - formula for sqrt entanglement:
@@ -1316,11 +1318,21 @@ mult.p(mult.p(p.c[1,], p.c[2,]), p.c[3,])
 x = roots(rev(p.c[1,]))
 1 - 2*x^2 + 6*x^4 - 7*x^5 + x^6
 
-#############
+####################
 
+### 1 + x - x^2 - x^4 + x^5 + x^6
 x = solve(polynomial(c(1,1,-1,0,-1,1,1)))
 1 + x - x^2 - x^4 + x^5 + x^6
 
+poly.calc(x-1/x)
+x.r = x - 1/x
+-4 - 4*x.r^2 + 3*x.r^4 + x.r^6
+poly.calc((x-1/x)[c(1,3,5)]^2 + 1)
+2 - 7*x + x^3
+# Solution starts from: 2 - 7*x + x^3;
+
+
+# Analysis [old]
 p = poly.calc(x[c(3:6)])
 p
 # p has the coefficients as roots of the following polynomials:
@@ -1330,9 +1342,62 @@ x.r = p[[3]]
 x.r^3 - 2*x.r^2 - 6*x.r + 8
 
 p = poly.calc(x[c(1:2)])
+p
 # p has the coefficient as roots of the following polynomial:
-x = p[[2]]
-x
-x^4 - 5*x^2 - 2*x + 2
+x.r = p[[2]]
+x.r
+x.r^3 - x.r^2 - 4*x.r + 2
+2 - 4*x.r - x.r^2 + x.r^3
 
+
+##########
+
+### 1 - 3*x - 3*x^5 + x^6
+r = roots(c(1,3,-3,-4))
+x1 = c(sqrt(r+0i), -(sqrt(r+0i)))
+x = sapply(x1, function(r) roots(c(1,r,-1)))
+poly.calc(x)
+1 - 3*x^2 - 3*x^10 + x^12
+x = x[1,]^2
+1 - 3*x - 3*x^5 + x^6
+
+
+### 1 - 3*x + 2*x^3 - 3*x^5 + x^6
+r = roots(c(1,3,-3,-2))
+x1 = c(sqrt(r+0i), -(sqrt(r+0i)))
+x = sapply(x1, function(r) roots(c(1,r,-1)))
+poly.calc(x)
+1 - 3*x^2 + 2*x^6 - 3*x^10 + x^12
+x = x[1,]^2
+1 - 3*x + 2*x^3 - 3*x^5 + x^6
+
+
+### 1 - 6*x^2 + 8*x^3 - 6*x^4 + x^6
+r = roots(c(1,6,+3,-2))
+x1 = c(sqrt(r+0i), -(sqrt(r+0i)))
+x = sapply(x1, function(r) roots(c(1,r,-1)))
+poly.calc(x)
+1 - 6*x^4 + 8*x^6 - 6*x^8 + x^12
+x = x[1,]^2
+1 - 6*x^2 + 8*x^3 - 6*x^4 + x^6
+
+
+### 1 - 10*x^2 + 16*x^3 - 10*x^4 + x^6
+r = roots(c(1,6,-1,-2))
+x1 = c(sqrt(r+0i), -(sqrt(r+0i)))
+x = sapply(x1, function(r) roots(c(1,r,-1)))
+poly.calc(x)
+1 - 10*x^4 + 16*x^6 - 10*x^8 + x^12
+x = x[1,]^2
+1 - 10*x^2 + 16*x^3 - 10*x^4 + x^6
+
+
+### 1 - 3*x + 4*x^2 - 6*x^3 + 4*x^4 - 3*x^5 + x^6
+r = roots(c(1,3,1,-2))
+x1 = c(sqrt(r+0i), -(sqrt(r+0i)))
+x = sapply(x1, function(r) roots(c(1,r,-1)))
+poly.calc(x)
+1 - 3*x^2 + 4*x^4 - 6*x^6 + 4*x^8 - 3*x^10 + x^12
+x = x[1,]^2
+1 - 3*x + 4*x^2 - 6*x^3 + 4*x^4 - 3*x^5 + x^6
 
