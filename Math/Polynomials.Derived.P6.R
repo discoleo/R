@@ -7,7 +7,7 @@
 ### P6 Polynomials
 ### Derived from Special Factorizations
 ###
-### draft v.0.3a
+### draft v.0.3b
 
 
 ### Factorization of the P6 Polynomials
@@ -26,11 +26,12 @@
 #    or (m, m^2) where m^3 = 1;
 # 2.) P2 * P2[*] * P2[**]
 #  - where P2, P2[*], P2[**] are conjugate polynomials;
-# 2.b.) Cubic => Coeff of special Quadratic: x^2 + (2*b0 - r)*x + b0^2 = 0;
-#  - generates a large subfamily of special/symmetric P6 polynomials;
+# 2.b.) Cubic => Coeff of special Quadratic: x^2 + (2*b0 + r)*x + b0^2 = 0;
+#  - generates a large subfamily of special/symmetric P6 polynomials:
+#    1 + b1*x + b2*x^2 + b3*x^3 + b2*x^4 + b1*x^5 + x^6 = 0; (where b0 = -1)
 #  - based on transformation of the roots of the base cubic:
-#    new roots = -b0 + r/2 +/- sqrt(r^2/4 -  r*b0), where r = base roots;
-#    => (x^2 + (2*b0-r1)*x + b0^2)*(x^2 + (2*b0-r2)*x + b0^2)*(x^2 + (2*b0-r3)*x + b0^2)
+#    new roots = -b0 - r/2 +/- sqrt(r^2/4 +  r*b0), where r = base roots;
+#    => (x^2 + (2*b0+r1)*x + b0^2)*(x^2 + (2*b0+r2)*x + b0^2)*(x^2 + (2*b0+r3)*x + b0^2)
 
 # - many variants of [1] are trivial or "almost"-trivial factorizations,
 #   but they comprise a large sub-family of P6 polynomials;
@@ -53,7 +54,10 @@
 #####################
 
 ### History
-# draft v.0.3a: improved generator function;
+# draft v.0.3a-b:
+# - improved generator function for all symmetric P6 polynomials;
+#   1 + b1*x + b2*x^2 + b3*x^3 + b2*x^4 + b1*x^5 + x^6 = 0;
+# - added also solution to all symmetric P8 polynomials;
 # draft v.0.3-pre-alpha:
 # - initial workout of the cubic => quadratic technique;
 # - large sub-family of special P6 polynomials;
@@ -181,6 +185,12 @@ sapply(-6:6, function(b) print(p6sq.gen(c(1,5, 6, b))$p))
 1 - x + x^2 + 3*x^3 + x^4 - x^5 + x^6
 1 - x + x^2 + 4*x^3 + x^4 - x^5 + x^6
 
+### for P8:
+# p6sq.gen(c(1, 8 + b1, 20 + 6*b1 + b2, 16 + 9*b1 + 4*b2 + b3, 2 + 2*b1 + 2*b2 + 2*b3 + b4))
+b1 = 1; b2 = 0; b3 = 0; b4 = 1;
+# set the function parameter as the coefficient to list
+sapply(-6:6, function(b2) print(p6sq.gen(c(1, 8 + b1, 20 + 6*b1 + b2, 16 + 9*b1 + 4*b2 + b3, 2 + 2*b1 + 2*b2 + 2*b3 + b4))$p))
+
 
 ####################
 
@@ -189,7 +199,8 @@ sapply(-6:6, function(b) print(p6sq.gen(c(1,5, 6, b))$p))
 library(polynom)
 library(pracma)
 
-m = unity(3, all=FALSE) # load first helper function unity()!
+# load first helper function unity()!
+# m = unity(3, all=FALSE)
 
 ### helper functions
 unity = function(n=3, all=TRUE) {
@@ -1411,7 +1422,23 @@ p6sq3.gen = function(p3.coeff, mult=1, b0=-1, asSq=TRUE) {
 	}
 	return(list(x=x, p=p))
 }
+p6sq3.gen = function(p3.coeff, mult=1, b0=1, asSq=T) {
+	# m = unity(3, all=F)
+	r = c(roots(p3.coeff))
+	x = sapply(r, function(r) roots(c(1, 3*b0 + mult*r, 3*b0^2 + mult*r, b0^3)))
+	p = poly.calc(x)
+	for(i in 1:length(p)) p[[i]] = round0(p[[i]])
+	return(list(x=x, p=p))
+}
 
+p = p6sq3.gen(c(1,-1,1,-1), asSq=F)
+p
+
+p = p6sq3.gen(c(1,0,1,0,-1), asSq=F)
+polynomial(p$p) / polynomial(c(1,1))^4
+1 + 8*x + 29*x^2 + 60*x^3 + 75*x^4 + 60*x^5 + 29*x^6 + 8*x^7 + x^8
+
+### with old version
 p = p6sq3.gen(c(1,-15,30), asSq=F)
 x = p$x^3
 1 - 6*x + 25*x^3 + 9*x^5 + x^6
