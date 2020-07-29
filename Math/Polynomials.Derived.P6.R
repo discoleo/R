@@ -7,7 +7,7 @@
 ### P6 Polynomials
 ### Derived from Special Factorizations
 ###
-### draft v.0.3-pre-alpha
+### draft v.0.3a
 
 
 ### Factorization of the P6 Polynomials
@@ -26,11 +26,14 @@
 #    or (m, m^2) where m^3 = 1;
 # 2.) P2 * P2[*] * P2[**]
 #  - where P2, P2[*], P2[**] are conjugate polynomials;
-# - these are trivial or "almost"-trivial factorizations,
-#   but they comprise a large sub-family of P6 polynomials;
-# 3.) Cubic => sqrt(roots) => Coeff of Quadratic
+# 2.b.) Cubic => Coeff of special Quadratic: x^2 + (2*b0 - r)*x + b0^2 = 0;
 #  - generates a large subfamily of special/symmetric P6 polynomials;
-#  - based on transformation of the roots of a base cubic;
+#  - based on transformation of the roots of the base cubic:
+#    new roots = -b0 + r/2 +/- sqrt(r^2/4 -  r*b0), where r = base roots;
+#    => (x^2 + (2*b0-r1)*x + b0^2)*(x^2 + (2*b0-r2)*x + b0^2)*(x^2 + (2*b0-r3)*x + b0^2)
+
+# - many variants of [1] are trivial or "almost"-trivial factorizations,
+#   but they comprise a large sub-family of P6 polynomials;
 
 # Formulas are also provided to generate
 # a large sub-family of such P6 polynomials
@@ -50,12 +53,13 @@
 #####################
 
 ### History
+# draft v.0.3a: improved generator function;
 # draft v.0.3-pre-alpha:
-# - initial workout of the cubic => Sqrt technique;
+# - initial workout of the cubic => quadratic technique;
 # - large sub-family of special P6 polynomials;
 # - entire families like:
-#   1 - x - b*x^3 - x^5 + x^6 = 0;
-#   1 - x + b2*x^2 - b3*x^3 + b2*x^4 - x^5 + x^6 = 0;
+#   1 - x + b3*x^3 - x^5 + x^6 = 0;
+#   1 + b1*x + b2*x^2 + b3*x^3 + b2*x^4 + b1*x^5 + x^6 = 0;
 # draft v.0.2f-g:
 # - Solution & mechanism for:
 #   1 + x - x^2 - x^4 + x^5 + x^6 = 0;
@@ -138,10 +142,22 @@
 # (c3[1]*x^2 - x + 1)*(c3[2]*x^2 + x + 1)*(c3[3]*x^2 - x + 1)
 # x^6 + 2*x^5 - 3*x^4 + x^3 + 2*x^2 - 3*x + 1
 #
-# d.) Roots of Cubic with +/- sqrt(r):
-# Cubic => {sqrt(r), -sqrt(r)}
-# then: x^2 - r.sq * x + b0 = 0
+# d.) Roots of Cubic as coefficients of special quadratic:
+# Cubic => x^2 + (2*b0 - r) * x + b0^2 = 0
 # generates a large sub-family of P6 polynomials:
+# p6sq.gen(c(1, b1 + 6, 4*b1 + 9 + b2, 2*b1 + 2 + 2*b2 + b3)
+sapply(-5:5, function(b) print(p6sq.gen(c(1, b + 6, 4*b + 9, 2*b + 2))$p))
+1 - 5*x - 5*x^5 + x^6
+1 - 4*x - 4*x^5 + x^6
+1 - 3*x - 3*x^5 + x^6
+1 - 2*x - 2*x^5 + x^6
+1 - x - x^5 + x^6
+1 + x^6
+1 + x + x^5 + x^6 # basically -x;
+1 + 2*x + 2*x^5 + x^6
+1 + 3*x + 3*x^5 + x^6
+1 + 4*x + 4*x^5 + x^6
+1 + 5*x + 5*x^5 + x^6
 sapply(-6:6, function(b) print(p6sq.gen(c(1,5, 4, b))$p))
 1 - x - x^2 - 4*x^3 - x^4 - x^5 + x^6
 1 - x - x^2 - 3*x^3 - x^4 - x^5 + x^6
@@ -338,6 +354,7 @@ solve.p3 = function(b.coeff, n=3) {
 }
 # generate special polynomials
 # derived from cubic => sqrt => quadratic;
+# - initial implementation;
 p6sq.gen = function(p3.coeff, mult=1, b0=-1, asSq=TRUE) {
 	r = roots(p3.coeff)
 	x1 = c(sqrt(r+0i), -(sqrt(r+0i)))
@@ -346,8 +363,16 @@ p6sq.gen = function(p3.coeff, mult=1, b0=-1, asSq=TRUE) {
 	for(i in 1:length(p)) p[[i]] = round0(p[[i]])
 	if(asSq) {
 		x = x[1,]^2 # the squares => P6
-		p = polynomial(p[c(1,3,5,7,9,11,13)])
+		len = length(p3.coeff)*4 - 3
+		p = polynomial(p[seq(from=1, to=len, by=2)])
 	}
+	return(list(x=x, p=p))
+}
+p6sq.gen = function(p3.coeff, mult=1, b0=-1, asSq=TRUE) {
+	r = roots(p3.coeff)
+	x = sapply(r, function(r.r) roots(c(1, 2*b0 - mult^2*r.r, b0^2)))
+	p = poly.calc(x)
+	for(i in 1:length(p)) p[[i]] = round0(p[[i]])
 	return(list(x=x, p=p))
 }
 ### Other
@@ -1369,20 +1394,43 @@ x = roots(rev(p.c[1,]))
 
 ####################
 
-p6sq.gen = function(p3.coeff, mult=1, b0=-1, asSq=TRUE) {
-	r = roots(p3.coeff)
-	x1 = c(sqrt(r+0i), -(sqrt(r+0i)))
-	x = sapply(x1, function(r) roots(c(1, mult*r, b0)))
-	if(asSq) {
-		x = x[1,]^2
-	}
+# experimental: power 3
+p6sq3.gen = function(p3.coeff, mult=1, b0=-1, asSq=TRUE) {
+	m = unity(3, all=F)
+	r = c(roots(p3.coeff))
+	r = ifelse(Im(r) == 0 & Re(r) < 0, - (-Re(r))^(1/3), r^(1/3))
+	x1 = c(r, m*r, m^2*r)
+	# x1 = c(sqrt(r+0i), -(sqrt(r+0i)))
+	x = sapply(x1, function(r) roots(c(1, mult*r, 0, b0)))
 	p = poly.calc(x)
 	for(i in 1:length(p)) p[[i]] = round0(p[[i]])
+	if(asSq) {
+		x = x[1,]^2 # the squares => P6
+		len = length(p3.coeff)*4 - 3
+		p = polynomial(p[seq(from=1, to=len, by=2)])
+	}
 	return(list(x=x, p=p))
 }
 
+p = p6sq3.gen(c(1,-15,30), asSq=F)
+x = p$x^3
+1 - 6*x + 25*x^3 + 9*x^5 + x^6
+
+
 ### Examples
 
+sapply(-6:6, function(b) print(p6sq.gen(c(1,b + 5, 4*b + 5, 2*b))$p))
+1 - 5*x - 5*x^5 + x^6
+1 - 4*x - 4*x^5 + x^6
+1 - 3*x - 3*x^5 + x^6
+1 - 2*x - 2*x^5 + x^6
+1 - x - x^5 + x^6
+1 + x^6
+1 + x + x^5 + x^6 # basically -x;
+1 + 2*x + 2*x^5 + x^6
+1 + 3*x + 3*x^5 + x^6
+1 + 4*x + 4*x^5 + x^6
+1 + 5*x + 5*x^5 + x^6
 sapply(-6:6, function(b) print(p6sq.gen(c(1, 5, 5, b - 0))$p))
 # the values of the roots must be extracted explicitly from p6sq.gen();
 1 - x - 6*x^3 - x^5 + x^6 
