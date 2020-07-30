@@ -5,10 +5,15 @@
 ### [the one and only]
 ###
 ### Polynomial Systems: P2
-### v.0.2d
+### Decompositions of Symmetric Systems
+### v.0.2e
 
 
 ### History
+# draft v.0.2e:
+# - solved a symmetric "liniar" etension;
+#   x^3 + y^3 + b1*(x+y) = R1;
+#   x*y + b2*(x+y) = R2;
 # draft v.0.2d:
 # - solved: x^6 + b4*x^4 + b3*x^3 + b4*b2*x^2 + b2^3;
 #   e.g. x^6 - x^4 - x^3 + x^2 - 1 = 0;
@@ -463,6 +468,7 @@ x = sol$x
 
 library(pracma)
 
+###
 # x^3 + y^3 + b1*(x + y) = R1
 # x*y = R2
 
@@ -495,6 +501,105 @@ x^6 + b[1]*x^4 - R[1]*x^3 + b[1]*R[2]*x^2 + R[2]^3
 
 # for b1 = -1; R = c(1, -1):
 x^6 - x^4 - x^3 + x^2 - 1
+
+
+###################
+
+###
+# x^3 + y^3 + b1*(x + y) = R1
+# x*y + b2*(x + y) = R2
+
+### Solution
+### Step 1:
+# s = x + y; c = x*y = R2
+# => c = R2 - b2*s
+# s^3 - (3*c - b1)*s - R1 = 0
+# s^3 - (3*R2 - 3*b2*s - b1)*s - R1 = 0
+# s^3 + 3*b2*s^2 - (3*R2 - b1)*s - R1 = 0
+### Step 2:
+# x + y = s
+# x*y = R2 - b2*s
+
+solve.p2p3liniar = function(b, R) {
+	b = as.vector(unlist(b))
+	p.coeff = c(1, 3*b[2], - (3*R[2] - b[1]), -R[1])
+	# print(p.coeff)
+	s = roots(p.coeff)
+	xy = R[2] - b[2]*s
+	sm = sqrt(s^2 - 4*xy + 0i)
+	x = (s + sm)/2
+	y = (s - sm)/2
+	sol = cbind(x,y)
+	sol = rbind(sol, cbind(y,x))
+	# coeffs Classic
+	coeffs = c(1, 3*b[2], (b[1]+3*b[2]^2), (2*b[1]*b[2]-R[1]),
+		(b[1]*b[2]^2 + b[1]*R[2] + 3*b[2]^2*R[2] - 3*b[2]*R[1]),
+		(2*b[1]*b[2]*R[2] - 3*b[2]*R[2]^2 - 3*b[2]^2*R[1]),
+		R[2]^3 + b[1]*b[2]^2*R[2] - b[2]^3*R[1] )
+	### Test
+	eq1 = x^3 + y^3 + b[1]*(x + y)
+	eq2 = x*y + b[2]*(x + y)
+	#
+	return(list(sol=sol, coeffs=coeffs, test=rbind(round0(eq1)), round0(eq2)))
+}
+
+
+############
+### Examples
+
+### Ex. 1
+b = c(-3, 1)
+R = c(1, -1)
+### Solution
+sol = solve.p2p3liniar(b, R)
+sol
+
+### Test
+x = sol$sol[,1]; y = sol$sol[,2]
+x^3 + y^3 + b[1]*(x + y)
+x*y + b[2]*(x + y)
+
+
+### Classic
+x = sol$sol[,1]
+coeffs = c(1, 3*b[2], (b[1]+3*b[2]^2), (2*b[1]*b[2]-R[1]),
+  (b[1]*b[2]^2 + b[1]*R[2] + 3*b[2]^2*R[2] - 3*b[2]*R[1]),
+  (2*b[1]*b[2]*R[2] - 3*b[2]*R[2]^2 - 3*b[2]^2*R[1]),
+  R[2]^3 + b[1]*b[2]^2*R[2] - b[2]^3*R[1] )
+coeffs
+x^6 + 3*b[2]*x^5 + (b[1]+3*b[2]^2)*x^4 + (2*b[1]*b[2]-R[1])*x^3 + (b[1]*b[2]^2 + b[1]*R[2] + 3*b[2]^2*R[2] - 3*b[2]*R[1])*x^2 + (2*b[1]*b[2]*R[2] - 3*b[2]*R[2]^2 - 3*b[2]^2*R[1])*x + R[2]^3 + b[1]*b[2]^2*R[2] - b[2]^3*R[1]
+#
+x^6 + 3*x^5 - 7*x^3 - 6*x^2 - 3*x - 3
+
+### Derivation
+x^3*(x + b[2])^3 + b[1]*(x^2 + R[2])*(x + b[2])^2 - R[1]*(x + b[2])^3 + (R[2]-b[2]*x)^3 # == 0
+
+#########
+### Ex. 2
+b = c(-3, 1)
+R = c(1, -2)
+### Solution
+sol = solve.p2p3liniar(b, R)
+sol
+
+
+###
+bg = expand.grid(-3:3, -3:3)
+R = c(1, 1)
+#
+p.l = sapply(1:nrow(bg), function(id) print(solve.p2p3liniar(bg[id,], R)$coeffs))
+# contains various trivial examples
+# like x^6 + b1*x^5 + b2*x^4 + b2*x^2 - b1*x + 1; x = {1i, -1i, ...}
+# but also many non-trivial examples;
+
+
+### trivial example
+b = c(0,-1)
+R = c(0, 1)
+sol = solve.p2p3liniar(b, R)
+sol
+x = sol$sol[,1]
+x^6 - 3*x^5 + 3*x^4 + 3*x^2 + 3*x + 1
 
 
 ### TODO: all variants
