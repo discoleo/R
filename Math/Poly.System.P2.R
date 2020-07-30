@@ -5,11 +5,14 @@
 ### [the one and only]
 ###
 ### Polynomial Systems: P2
-### v.0.2b
+### v.0.2d
 
 
 ### History
-# draft v.0.2b:
+# draft v.0.2d:
+# - solved: x^6 + b4*x^4 + b3*x^3 + b4*b2*x^2 + b2^3;
+#   e.g. x^6 - x^4 - x^3 + x^2 - 1 = 0;
+# draft v.0.2b & v.0.2c:
 # - some examples of derived polynomials of order 8
 #   based on the order 2 system & cos(2*pi/5)-entanglement;
 # draft v.0.2:
@@ -18,6 +21,8 @@
 # - solution to the Symmetric order 3 system;
 # - used to solve also:
 #   x^6 + 3*x^5 + 3*x^4 + b*x^3 + 3*c*x^2 + 3*c^2*x + c^3 = 0;
+#   and
+#   x^6 + 3*a*x^5 + 3*a^2*x^4 + b*x^3 + 3*a^2*x^2 + 3*a*x + 1 = 0;
 
 
 ######################
@@ -28,6 +33,12 @@
 library(polynom)
 # library(pracma) # for polynomials with complex coefficients
 
+
+solve.shift.ps = function(s1, s2, R, n=3) {
+	# product is shifted as well
+	sol = solve.ps(s1 - s2, R, n=n)
+	return(sol - s2)
+}
 solve.ps = function(shift, R, n=3) {
 	if(n == 2) {
 		# this is only a quadratic
@@ -160,7 +171,7 @@ err = x^6 + 3*a*x^5 + 3*a^2*x^4 + 3*a^2*c*x^2 + 3*a*c^2*x + c^3
 round0(err)
 sol
 
-# some special cases
+### Case a = 1
 b = 3
 c = 1
 #
@@ -179,6 +190,40 @@ x = sol$x
 err = x^6 + 3*x^5 + 3*x^4 + b*x^3 + 3*c*x^2 + 3*c^2*x + c^3
 round0(err)
 sol
+
+### Case c = 1
+###
+a = 1
+b = 3
+#
+sol = solve.ps(a, c(2*a^3 - b, 1), n=3)
+x = sol$x
+err = x^6 + 3*a*x^5 + 3*a^2*x^4 + b*x^3 + 3*a^2*x^2 + 3*a*x + 1
+round0(err)
+sol
+
+###
+a = 1
+b = -3
+#
+sol = solve.ps(a, c(2*a^3 - b, 1), n=3)
+x = sol$x
+err = x^6 + 3*a*x^5 + 3*a^2*x^4 + b*x^3 + 3*a^2*x^2 + 3*a*x + 1
+round0(err)
+sol
+
+###
+a = 2
+b = 8
+#
+sol = solve.ps(a, c(2*a^3 - b, 1), n=3)
+x = sol$x
+err = x^6 + 3*a*x^5 + 3*a^2*x^4 + b*x^3 + 3*a^2*x^2 + 3*a*x + 1
+round0(err)
+sol
+# shift origin
+x = sol$x + 1
+6 - 18*x + 15*x^2 - 3*x^4 + x^6
 
 
 ##################
@@ -239,6 +284,11 @@ sol$x * sol$y
 sol
 
 
+### Equivalent Polynomial:
+x = sol$x
+x^4*(x + a)^4 + (x*a + R[2])^4 - R[1]*x^4 # = 0
+
+
 
 #########################
 #########################
@@ -246,6 +296,8 @@ sol
 ### Derived Polynomials
 
 c2 = 2*cos(2*pi/5 * 1:2)
+m = complex(re=cos(2*pi/3), im=sin(2*pi/3))
+r3 = (1 + c(1i, -1i)*sqrt(3))/2
 
 ###
 R1 = c(c2[1]-c2[2], 1)
@@ -320,4 +372,130 @@ x = sol$x
 25 + 100*x + 200*x^2 + 200*x^3 + 110*x^4 + 20*x^5 + x^8
 
 
+
+###
+R1 = c(c2[1]-c2[2], 1)
+R2 = c(c2[2]-c2[1], 1)
+sol = rbind(
+	solve.shift.ps(0, c2[2]-c2[1], R1, n=2),
+	solve.shift.ps(0, c2[1]-c2[2], R2, n=2) )
+
+poly.calc(sol$x)
+x = sol$x
+131 - 80*x + 50*x^2 + 20*x^3 - 33*x^4 + x^8
+
+
+###
+R1 = c(-1, 1)
+R2 = c(-1, 1)
+sol = rbind(
+	solve.shift.ps(c2[2], c2[1]+1, R1, n=2),
+	solve.shift.ps(c2[1], c2[2]+1, R2, n=2) )
+
+poly.calc(sol$x)
+x = sol$x
+16 + 32*x^2 + 50*x^3 + 39*x^4 + 30*x^5 + 8*x^6 + x^8
+
+
+### Experimental
+R1 = c(c2[1], 1-c2[1])
+R2 = c(c2[2], 1-c2[2])
+sol = rbind(
+	solve.shift.ps(1, -1+c2[1], R1, n=2),
+	solve.shift.ps(1, -1+c2[2], R2, n=2) )
+
+poly.calc(sol$x)
+x = sol$x
+
+
+################
+###
+R1 = c( 1+1i, 1)
+R2 = c( 1-1i, 1)
+sol = rbind(
+	solve.shift.ps(-1-1i, -1i, R1, n=2),
+	solve.shift.ps(-1+1i, +1i, R2, n=2) )
+
+poly.calc(sol$x)
+x = sol$x
+1 + 8*x + 10*x^2 - 20*x^3 + 31*x^4 - 20*x^5 + 10*x^6 - 4*x^7 + x^8
+
+
+###
+R1 = c( 0, 1)
+R2 = c( 0, 1)
+sol = rbind(
+	solve.shift.ps(-m, m^2, R1, n=2),
+	solve.shift.ps(-m^2, m, R2, n=2) )
+
+poly.calc(sol$x)
+x = sol$x
+1 - 2*x - 2*x^3 + 5*x^4 + 2*x^5 + 4*x^6 + x^8
+
+
+###
+R1 = c( 2*m-1, m^2)
+R2 = c( 2*m^2-1, m)
+sol = rbind(
+	solve.shift.ps(m, 0, R1, n=2),
+	solve.shift.ps(m^2, 0, R2, n=2) )
+
+poly.calc(sol$x)
+x = sol$x
+1 + x - 3*x^2 - x^3 + 2*x^4 - x^5 + 3*x^6 - 2*x^7 + x^8
+
+
+### (1 +/- i*sqrt(3))/2
+
+###
+R1 = c( 1, 2*r3[2])
+R2 = c( 1, 2*r3[1])
+sol = rbind(
+	solve.shift.ps(-2, 1, R1, n=2),
+	solve.shift.ps(-2, 1, R2, n=2) )
+
+poly.calc(sol$x)
+x = sol$x
+
+
+########################
+########################
+
+library(pracma)
+
+# x^3 + y^3 + b1*(x + y) = R1
+# x*y = R2
+
+### Solution
+### Step 1:
+# s = x + y; c = x*y = R2 =>
+# s^3 - (3*c - b1)*s - R1 = 0
+### Step 2:
+# x + y = s
+# x*y = R2
+
+b = c(-1)
+R = c(1, -1)
+### Solution
+s = roots(c(1, 0, - (3*R[2] - b[1]), -R[1]))
+sm = sqrt(s^2 - 4*R[2] + 0i)
+x = (s + sm)/2
+y = (s - sm)/2
+sol = cbind(x,y)
+sol = rbind(sol, cbind(y,x))
+sol
+
+### Test
+x^3 + y^3 + b[1]*(x + y)
+x*y
+
+### Classic
+x = sol[,1]
+x^6 + b[1]*x^4 - R[1]*x^3 + b[1]*R[2]*x^2 + R[2]^3
+
+# for b1 = -1; R = c(1, -1):
+x^6 - x^4 - x^3 + x^2 - 1
+
+
+### TODO: all variants
 
