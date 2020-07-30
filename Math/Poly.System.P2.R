@@ -6,10 +6,12 @@
 ###
 ### Polynomial Systems: P2
 ### Decompositions of Symmetric Systems
-### v.0.2e
+### v.0.2f
 
 
 ### History
+# draft v.0.2f:
+# - entanglement: x*y*(x+y) = R;
 # draft v.0.2e:
 # - solved a symmetric "liniar" etension;
 #   x^3 + y^3 + b1*(x+y) = R1;
@@ -78,6 +80,11 @@ round0 = function(m, tol=1E-7) {
 		m[isZero] = Re(m[isZero])
 	}
 	return(m)
+}
+round0.p = function(p, tol=1E-7) {
+	p = round0(as.vector(p), tol=tol)
+	class(p) = "polynomial"
+	return(p)
 }
 
 ####################
@@ -603,4 +610,105 @@ x^6 - 3*x^5 + 3*x^4 + 3*x^2 + 3*x + 1
 
 
 ### TODO: all variants
+
+
+
+#################
+
+# x^3 + y^3 + b1*(x+y) = R1
+# x*y*(x+y) = R2
+
+### Step 1:
+# s = x + y =>
+# s^3 + b1*s - R1 - 3*R2 = 0
+### Step 2:
+# x + y = s
+# x*y = R2/s
+
+solve.p2p3ent = function(b, R) {
+	s = roots(c(1, 0, b[1], - R[1] - 3*R[2]))
+	xy = R[2]/s
+	s.diff = sqrt(s^2 - 4*xy + 0i)
+	x = (s + s.diff)/2
+	y = (s - s.diff)/2
+	sol = cbind(x, y)
+	sol = rbind(sol, sol[,2:1])
+	# Test
+	t1 = x^3 + y^3 + b[1]*(x+y)
+	t2 = x*y*(x+y)
+	#
+	return(list(sol=sol, test=rbind(t1, t2)))
+}
+
+###
+b = c(-1)
+R = c(-2, 1)
+#
+sol = solve.p2p3ent(b, R)
+sol
+
+### Test
+x = sol$sol[,1]; y = sol$sol[,2]
+x^3 + y^3 + b[1]*(x+y)
+x*y*(x+y)
+
+### Classic
+poly.calc(x)
+1 - 2*x + x^2 + 2*x^3 - 2*x^4 + x^6
+
+
+###
+b = c(2)
+R = c(-2, 1)
+#
+sol = solve.p2p3ent(b, R)
+sol
+
+### Test
+x = sol$sol[,1]; y = sol$sol[,2]
+x^3 + y^3 + b[1]*(x+y)
+x*y*(x+y)
+
+### Classic
+poly.calc(x)
+1 + 4*x + 4*x^2 + 2*x^3 + 4*x^4 + x^6
+
+
+###
+b = c(2)
+R = c(-2, 1)
+p = sapply(-6:6, function(b) print(round0.p(poly.calc(solve.p2p3ent(b, R)$sol[,1]))))
+#
+1 - 12*x + 36*x^2 + 2*x^3 - 12*x^4 + x^6 
+1 - 10*x + 25*x^2 + 2*x^3 - 10*x^4 + x^6 
+1 - 8*x + 16*x^2 + 2*x^3 - 8*x^4 + x^6 
+1 - 6*x + 9*x^2 + 2*x^3 - 6*x^4 + x^6 
+1 - 4*x + 4*x^2 + 2*x^3 - 4*x^4 + x^6 
+1 - 2*x + x^2 + 2*x^3 - 2*x^4 + x^6 
+1 - 0 + 2*x^3 - 0 + x^6 
+1 + 2*x + x^2 + 2*x^3 + 2*x^4 + x^6 
+1 + 4*x + 4*x^2 + 2*x^3 + 4*x^4 + x^6 
+1 + 6*x + 9*x^2 + 2*x^3 + 6*x^4 + x^6 
+1 + 8*x + 16*x^2 + 2*x^3 + 8*x^4 + x^6 
+1 + 10*x + 25*x^2 + 2*x^3 + 10*x^4 + x^6 
+1 + 12*x + 36*x^2 + 2*x^3 + 12*x^4 + x^6
+
+###
+R = c(-4,1)
+p = sapply(-6:6, function(b) print(round0.p(poly.calc(solve.p2p3ent(b, R)$sol[,1]))))
+#
+-1 + 12*x - 36*x^2 + 4*x^3 + x^6 
+-1 + 10*x - 25*x^2 + 4*x^3 + x^6 
+-1 + 8*x - 16*x^2 + 4*x^3 + x^6 
+-1 + 6*x - 9*x^2 + 4*x^3 + x^6 
+-1 + 4*x - 4*x^2 + 4*x^3 + x^6 
+-1 + 2*x - x^2 + 4*x^3 + x^6 
+-1 + 0 + 4*x^3 + x^6 
+-1 - 2*x - x^2 + 4*x^3 + x^6 
+-1 - 4*x - 4*x^2 + 4*x^3 + x^6 
+-1 - 6*x - 9*x^2 + 4*x^3 + x^6 
+-1 - 8*x - 16*x^2 + 4*x^3 + x^6 
+-1 - 10*x - 25*x^2 + 4*x^3 + x^6 
+-1 - 12*x - 36*x^2 + 4*x^3 + x^6
+
 
