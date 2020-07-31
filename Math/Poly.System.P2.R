@@ -6,10 +6,15 @@
 ###
 ### Polynomial Systems: P2
 ### Decompositions of Symmetric Systems
-### v.0.2f
+### v.0.3a
 
 
 ### History
+# draft v.0.3a:
+# - systematic approach to entanglements:
+#  -- multiplicative: x*y*(x+y) = R;
+#  -- dividing: x*y/(x+y)^j = R;
+# - TODO: all variants;
 # draft v.0.2f:
 # - entanglement: x*y*(x+y) = R;
 # draft v.0.2e:
@@ -610,6 +615,8 @@ x^6 - 3*x^5 + 3*x^4 + 3*x^2 + 3*x + 1
 
 
 ### TODO: all variants
+# - liniar/polynomial shifts;
+# - root shifts;
 
 
 
@@ -625,9 +632,22 @@ x^6 - 3*x^5 + 3*x^4 + 3*x^2 + 3*x + 1
 # x + y = s
 # x*y = R2/s
 
-solve.p2p3ent = function(b, R) {
-	s = roots(c(1, 0, b[1], - R[1] - 3*R[2]))
-	xy = R[2]/s
+solve.p2p3ent = function(b, R, type="mult") {
+	# type "mult": x*y*(x+y) = R[2]
+	# type "div": x*y/(x+y) = R[2]
+	# type "div2": x*y/(x+y)^2 = R[2]
+	if(type == "mult") {
+		s = roots(c(1, 0, b[1], - R[1] - 3*R[2]))
+		xy = R[2]/s
+	} else if(type == "div") {
+		s = roots(c(1, -3*R[2], b[1], - R[1]))
+		xy = R[2] * s
+	} else if(type == "div2") {
+		s = roots(c(1 - 3*R[2], 0, b[1], - R[1]))
+		xy = R[2] * s^2
+	} else {
+		stop("Type NOT yet supported!")
+	}
 	s.diff = sqrt(s^2 - 4*xy + 0i)
 	x = (s + s.diff)/2
 	y = (s - s.diff)/2
@@ -635,7 +655,9 @@ solve.p2p3ent = function(b, R) {
 	sol = rbind(sol, sol[,2:1])
 	# Test
 	t1 = x^3 + y^3 + b[1]*(x+y)
-	t2 = x*y*(x+y)
+	t2 = if(type == "mult") x*y*(x+y)
+	else if(type == "div") x*y/(x+y)
+	else if(type == "div2") x*y/(x+y)^2
 	#
 	return(list(sol=sol, test=rbind(t1, t2)))
 }
@@ -695,7 +717,7 @@ p = sapply(-6:6, function(b) print(round0.p(poly.calc(solve.p2p3ent(b, R)$sol[,1
 
 ###
 R = c(-4,1)
-p = sapply(-6:6, function(b) print(round0.p(poly.calc(solve.p2p3ent(b, R)$sol[,1]))))
+p = sapply(-6:6, function(b) print(round0.p(poly.calc(solve.p2p3ent(b, R, type="mult")$sol[,1]))))
 #
 -1 + 12*x - 36*x^2 + 4*x^3 + x^6 
 -1 + 10*x - 25*x^2 + 4*x^3 + x^6 
@@ -710,5 +732,50 @@ p = sapply(-6:6, function(b) print(round0.p(poly.calc(solve.p2p3ent(b, R)$sol[,1
 -1 - 8*x - 16*x^2 + 4*x^3 + x^6 
 -1 - 10*x - 25*x^2 + 4*x^3 + x^6 
 -1 - 12*x - 36*x^2 + 4*x^3 + x^6
+
+###
+R = c(-2,1)
+p = sapply(-8:8, function(b) print(round0.p(poly.calc(solve.p2p3ent(b, R, type="div")$sol[,1]))))
+#
+-2 + 6*x - 14*x^2 + 18*x^3 - 5*x^4 - 3*x^5 + x^6 
+-2 + 6*x - 13*x^2 + 16*x^3 - 4*x^4 - 3*x^5 + x^6 
+-2 + 6*x - 12*x^2 + 14*x^3 - 3*x^4 - 3*x^5 + x^6 
+-2 + 6*x - 11*x^2 + 12*x^3 - 2*x^4 - 3*x^5 + x^6 
+-2 + 6*x - 10*x^2 + 10*x^3 - x^4 - 3*x^5 + x^6 
+-2 + 6*x - 9*x^2 + 8*x^3 - 0 - 3*x^5 + x^6 
+-2 + 6*x - 8*x^2 + 6*x^3 + x^4 - 3*x^5 + x^6 
+-2 + 6*x - 7*x^2 + 4*x^3 + 2*x^4 - 3*x^5 + x^6 
+-2 + 6*x - 6*x^2 + 2*x^3 + 3*x^4 - 3*x^5 + x^6 
+-2 + 6*x - 5*x^2 + 0 + 4*x^4 - 3*x^5 + x^6 
+-2 + 6*x - 4*x^2 - 2*x^3 + 5*x^4 - 3*x^5 + x^6 
+-2 + 6*x - 3*x^2 - 4*x^3 + 6*x^4 - 3*x^5 + x^6 
+-2 + 6*x - 2*x^2 - 6*x^3 + 7*x^4 - 3*x^5 + x^6 
+-2 + 6*x - x^2 - 8*x^3 + 8*x^4 - 3*x^5 + x^6 
+-2 + 6*x - 0 - 10*x^3 + 9*x^4 - 3*x^5 + x^6 
+-2 + 6*x + x^2 - 12*x^3 + 10*x^4 - 3*x^5 + x^6 
+-2 + 6*x + 2*x^2 - 14*x^3 + 11*x^4 - 3*x^5 + x^6
+
+
+###
+R = c(-2,1)
+p = sapply(-8:8, function(b) print(round0.p(poly.calc(solve.p2p3ent(b, R, type="div2")$sol[,1]))))
+#
+1 - 4*x + 16*x^2 + 2*x^3 - 4*x^4 + x^6 
+1 - 3.5*x + 12.25*x^2 + 2*x^3 - 3.5*x^4 + x^6 
+1 - 3*x + 9*x^2 + 2*x^3 - 3*x^4 + x^6 
+1 - 2.5*x + 6.25*x^2 + 2*x^3 - 2.5*x^4 + x^6 
+1 - 2*x + 4*x^2 + 2*x^3 - 2*x^4 + x^6 
+1 - 1.5*x + 2.25*x^2 + 2*x^3 - 1.5*x^4 + x^6 
+1 - x + x^2 + 2*x^3 - x^4 + x^6 
+1 - 0.5*x + 0.25*x^2 + 2*x^3 - 0.5*x^4 + x^6 
+1 - 0 + 0 + 2*x^3 - 0 + x^6
+1 + 0.5*x + 0.25*x^2 + 2*x^3 + 0.5*x^4 + x^6 
+1 + x + x^2 + 2*x^3 + x^4 + x^6 
+1 + 1.5*x + 2.25*x^2 + 2*x^3 + 1.5*x^4 + x^6 
+1 + 2*x + 4*x^2 + 2*x^3 + 2*x^4 + x^6 
+1 + 2.5*x + 6.25*x^2 + 2*x^3 + 2.5*x^4 + x^6 
+1 + 3*x + 9*x^2 + 2*x^3 + 3*x^4 + x^6 
+1 + 3.5*x + 12.25*x^2 + 2*x^3 + 3.5*x^4 + x^6 
+1 + 4*x + 16*x^2 + 2*x^3 + 4*x^4 + x^6
 
 
