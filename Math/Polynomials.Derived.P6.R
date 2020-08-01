@@ -7,7 +7,7 @@
 ### P6 Polynomials
 ### Derived from Special Factorizations
 ###
-### draft v.0.3b
+### draft v.0.3c
 
 
 ### Factorization of the P6 Polynomials
@@ -54,6 +54,8 @@
 #####################
 
 ### History
+# draft v.0.3c:
+# - solved: -1 + b1*x - b2*x^2 + b3*x^3 + b2*x^4 + b1*x^5 + x^6 = 0;
 # draft v.0.3a-b:
 # - improved generator function for all symmetric P6 polynomials;
 #   1 + b1*x + b2*x^2 + b3*x^3 + b2*x^4 + b1*x^5 + x^6 = 0;
@@ -149,7 +151,7 @@
 # d.) Roots of Cubic as coefficients of special quadratic:
 # Cubic => x^2 + (2*b0 - r) * x + b0^2 = 0
 # generates a large sub-family of P6 polynomials:
-# p6sq.gen(c(1, b1 + 6, 4*b1 + 9 + b2, 2*b1 + 2 + 2*b2 + b3)
+# p6sq.gen(c(1, b1 + 6, 4*b1 + 9 + b2, 2*b1 + 2 + 2*b2 + b3) )
 sapply(-5:5, function(b) print(p6sq.gen(c(1, b + 6, 4*b + 9, 2*b + 2))$p))
 1 - 5*x - 5*x^5 + x^6
 1 - 4*x - 4*x^5 + x^6
@@ -379,12 +381,27 @@ p6sq.gen = function(p3.coeff, mult=1, b0=-1, asSq=TRUE) {
 	}
 	return(list(x=x, p=p))
 }
-p6sq.gen = function(p3.coeff, mult=1, b0=-1, asSq=TRUE) {
+p6sq.gen = function(p3.coeff, mult=1, b0=-1, asSq=TRUE, doPoly=TRUE) {
+	# TODO: remove asSq [deprecated]
 	r = roots(p3.coeff)
 	x = sapply(r, function(r.r) roots(c(1, 2*b0 - mult^2*r.r, b0^2)))
-	p = poly.calc(x)
+	p = if(doPoly) poly.calc(x) else 0
 	for(i in 1:length(p)) p[[i]] = round0(p[[i]])
 	return(list(x=x, p=p))
+}
+solve.p6sq = function(b, type="symmetric") {
+	# descdending powers
+	if(type == "symmetric") {
+		coeff = c(1, b[1] + 6, 4*b[1] + 9 + b[2], 2*b[1] + 2 + 2*b[2] + b[3])
+		return(p6sq.gen(coeff, b0=-1))
+	} else if(type == "minus") {
+		b[1] = b[1] * 1i; b[3] = b[3]* -1i;
+		coeff = c(1, b[1] + 6, 4*b[1] + 9 + b[2], 2*b[1] + 2 + 2*b[2] + b[3])
+		p = p6sq.gen(coeff, b0=-1, doPoly=F)
+		x = p$x / 1i
+		p = poly.calc(x)
+		return(list(x = x, p=p))
+	}
 }
 ### Other
 toPoly = function(coeff, desc=TRUE, digits=5) {
@@ -466,6 +483,32 @@ solve.p6(coeff, type=1)
 ###
 coeff = c(1, -1, 2)
 solve.p6(coeff, type=1)
+
+
+###
+p = solve.p6(c(0,0,2,1,0,1), type=222)
+x = p$x
+1 + 3*x^2 - x^3 - 3*x^4 + x^6
+
+###
+p = solve.p6(c(2,1,0,1,-1,1), type=222)
+x = p$x
+3 + 3*x - 2*x^2 + 2*x^4 - 3*x^5 + x^6
+
+###
+p = solve.p6(c(2,1,2,1,0,1), type=222)
+x = p$x
+1 + 3*x^2 + 5*x^3 - 3*x^5 + x^6
+
+###
+cg = expand.grid(c(1,2,0,-1,2),c(1,2,0,-1,2))
+sapply(1:25, function(id) solve.p6(c(cg[id,1],cg[id,2],0,1,0,1), type=222)$coeff)
+sapply(1:25, function(id) solve.p6(c(cg[id,1],cg[id,2],-1,1,0,1), type=222)$coeff)
+
+###
+p = solve.p6(c(0,-1,1,0,0,1), type=222)
+x = p$x
+1 - x - x^2 + x^5 + x^6
 
 
 ###################
@@ -1403,10 +1446,14 @@ mult.p(mult.p(p.c[1,], p.c[2,]), p.c[3,])
 x = roots(rev(p.c[1,]))
 1 - 2*x^2 + 6*x^4 - 7*x^5 + x^6
 
-####################
+#######################
+#######################
+
+
+### Strictly Symmetric P6
 
 # experimental: power 3
-p6sq3.gen = function(p3.coeff, mult=1, b0=-1, asSq=TRUE) {
+p6sq3.old.gen = function(p3.coeff, mult=1, b0=-1, asSq=TRUE) {
 	m = unity(3, all=F)
 	r = c(roots(p3.coeff))
 	r = ifelse(Im(r) == 0 & Re(r) < 0, - (-Re(r))^(1/3), r^(1/3))
@@ -1422,15 +1469,19 @@ p6sq3.gen = function(p3.coeff, mult=1, b0=-1, asSq=TRUE) {
 	}
 	return(list(x=x, p=p))
 }
-p6sq3.gen = function(p3.coeff, mult=1, b0=1, asSq=T) {
+# new version
+p6sq3.gen = function(p3.coeff, mult=1, b0=-1, asSq=T) {
 	# m = unity(3, all=F)
 	r = c(roots(p3.coeff))
-	x = sapply(r, function(r) roots(c(1, 3*b0 + mult*r, 3*b0^2 + mult*r, b0^3)))
+	x = sapply(r, function(r) roots(c(1, -3*b0 + mult*r, 3*b0^2 + mult*r, -b0^3)))
 	p = poly.calc(x)
 	for(i in 1:length(p)) p[[i]] = round0(p[[i]])
 	return(list(x=x, p=p))
 }
 
+# p6sq.gen(c(1, b1 + 6, 4*b1 + 9 + b2, 2*b1 + 2 + 2*b2 + b3)
+
+### Test
 p = p6sq3.gen(c(1,-1,1,-1), asSq=F)
 p
 
@@ -1438,10 +1489,43 @@ p = p6sq3.gen(c(1,0,1,0,-1), asSq=F)
 polynomial(p$p) / polynomial(c(1,1))^4
 1 + 8*x + 29*x^2 + 60*x^3 + 75*x^4 + 60*x^5 + 29*x^6 + 8*x^7 + x^8
 
-### with old version
-p = p6sq3.gen(c(1,-15,30), asSq=F)
-x = p$x^3
-1 - 6*x + 25*x^3 + 9*x^5 + x^6
+###
+p = p6sq3.gen(c(1,-15,30))
+x = p$x
+1 + 21*x + 105*x^2 + 170*x^3 + 105*x^4 + 21*x^5 + x^6
+
+########################
+########################
+
+#######################
+### *Strictly* Symmetic
+# b0 == 1
+# 1 + b1*x + b2*x^2 + b3*x^3 + b2*x^4 + b1*x^5 + x^6
+# p6sq.gen(c(1, b1 + 6, 4*b1 + 9 + b2, 2*b1 + 2 + 2*b2 + b3)
+
+### Minus derivation of *Strictly* Symmetric
+# -1 + b1*x + b2*x^2 + b3*x^3 - b2*x^4 + b1*x^5 + x^6
+# p6sq.gen(c(1, b1 + 6, 4*b1 + 9 + b2, 2*b1 + 2 + 2*b2 + b3)
+
+###
+p = solve.p6sq(c(1,2,2), type="minus")
+x = p$x
+-1 + x + 2*x^2 + 2*x^3 - 2*x^4 + x^5 + x^6
+
+###
+p = solve.p6sq(c(1,-2,2), type="minus")
+x = p$x
+-1 + x - 2*x^2 + 2*x^3 + 2*x^4 + x^5 + x^6
+
+###
+p = solve.p6sq(c(1,3,3), type="minus")
+x = p$x
+-1 + x + 3*x^2 + 3*x^3 - 3*x^4 + x^5 + x^6
+
+###
+p = solve.p6sq(c(1,-3,3), type="minus")
+x = p$x
+-1 + x - 3*x^2 + 3*x^3 + 3*x^4 + x^5 + x^6
 
 
 ### Examples
@@ -1623,4 +1707,9 @@ x = p$x[1,]^2
 ###
 p6sq.gen(c(1,5,-1,-2))
 1 - x^2 - 6*x^4 + 10*x^6 - 6*x^8 - x^10 + x^12
+
+
+
+##################
+
 
