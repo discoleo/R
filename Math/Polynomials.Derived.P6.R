@@ -7,7 +7,7 @@
 ### P6 Polynomials
 ### Derived from Special Factorizations
 ###
-### draft v.0.3c
+### draft v.0.3d
 
 
 ### Factorization of the P6 Polynomials
@@ -54,8 +54,10 @@
 #####################
 
 ### History
-# draft v.0.3c:
+# draft v.0.3c-d:
 # - solved: -1 + b1*x - b2*x^2 + b3*x^3 + b2*x^4 + b1*x^5 + x^6 = 0;
+# - technique to generate symmetrical P12 polynomials
+#   with all roots known: starting from symmetrical P6;
 # draft v.0.3a-b:
 # - improved generator function for all symmetric P6 polynomials;
 #   1 + b1*x + b2*x^2 + b3*x^3 + b2*x^4 + b1*x^5 + x^6 = 0;
@@ -1505,6 +1507,7 @@ x = p$x
 
 ### Minus derivation of *Strictly* Symmetric
 # -1 + b1*x + b2*x^2 + b3*x^3 - b2*x^4 + b1*x^5 + x^6
+# b1 => b1*1i, b3 => b3*-1i; x = -1i * x;
 # p6sq.gen(c(1, b1 + 6, 4*b1 + 9 + b2, 2*b1 + 2 + 2*b2 + b3)
 
 ###
@@ -1526,6 +1529,12 @@ x = p$x
 p = solve.p6sq(c(1,-3,3), type="minus")
 x = p$x
 -1 + x - 3*x^2 + 3*x^3 + 3*x^4 + x^5 + x^6
+
+###
+p = solve.p6sq(c(-2,-3,5), type="minus")
+x = p$x
+-1 - 2*x - 3*x^2 + 5*x^3 + 3*x^4 - 2*x^5 + x^6
+
 
 
 ### Examples
@@ -1709,7 +1718,43 @@ p6sq.gen(c(1,5,-1,-2))
 1 - x^2 - 6*x^4 + 10*x^6 - 6*x^8 - x^10 + x^12
 
 
+####################
+### Symmetrical P12:
 
-##################
+m1 = complex(re=cos(pi/3), im=sin(pi/3)) # -1!
+m3 = complex(re=cos(2*pi/3), im=sin(2*pi/3))
+
+###
+r = roots(c(1,3, 0,0,0, 3,1))
+x = c(r * m1, r/m1)
+poly.calc(x)
+1 + 3*x + 9*x^2 + 3*x^5 - 7*x^6 + 3*x^7 + 9*x^10 + 3*x^11 + x^12
+
+###
+r1 = roots(c(1,3*m1, 0,0,0, 3*m1,1))
+r2 = roots(c(1,3/m1, 0,0,0, 3/m1,1))
+x = c(r1, r2)
+poly.calc(x)
+1 + 3*x + 9*x^2 + 3*x^5 + 20*x^6 + 3*x^7 + 9*x^10 + 3*x^11 + x^12
 
 
+### Mixing m1 with m-1
+r1 = roots(c(1,3*m1, 2*m3,0,2*m3, 3*m1,1))
+r2 = roots(c(1,3/m1, 2/m3,0,2/m3, 3/m1,1))
+x = c(r1, r2)
+poly.calc(x)
+1 + 3*x + 7*x^2 + 6*x^3 + 2*x^4 + 9*x^5 + 28*x^6 + 9*x^7 + 2*x^8 + 6*x^9 + 7*x^10 + 3*x^11 + x^12
+
+### Mixing m1 with m-1
+r1 = roots(c(1,3*m1, 2/m3,0,2/m3, 3*m1,1))
+r2 = roots(c(1,3/m1, 2*m3,0,2*m3, 3/m1,1))
+x = c(r1, r2)
+poly.calc(x)
+1 + 3*x + 7*x^2 - 12*x^3 + 2*x^4 - 9*x^5 + 28*x^6 - 9*x^7 + 2*x^8 - 12*x^9 + 7*x^10 + 3*x^11 + x^12
+
+### Only m-1
+r1 = roots(c(1,3*m1, 2/m1,0,2/m1, 3*m1,1))
+r2 = roots(c(1,3/m1, 2*m1,0,2*m1, 3/m1,1))
+x = c(r1, r2)
+poly.calc(x)
+1 + 3*x + 11*x^2 - 6*x^3 + 6*x^4 - 3*x^5 + 28*x^6 - 3*x^7 + 6*x^8 - 6*x^9 + 11*x^10 + 3*x^11 + x^12
