@@ -6,15 +6,15 @@
 ###
 ### Polynomial Systems: P2
 ### Decompositions of Symmetric Systems
-### v.0.3a
+### v.0.3b
 
 
 ### History
-# draft v.0.3a:
+# draft v.0.3a-b:
 # - systematic approach to entanglements:
 #  -- multiplicative: x*y*(x+y) = R;
 #  -- dividing: x*y/(x+y)^j = R;
-# - TODO: all variants;
+# - TODO: all variants (more variants in v.0.3b);
 # draft v.0.2f:
 # - entanglement: x*y*(x+y) = R;
 # draft v.0.2e:
@@ -632,19 +632,26 @@ x^6 - 3*x^5 + 3*x^4 + 3*x^2 + 3*x + 1
 # x + y = s
 # x*y = R2/s
 
-solve.p2p3ent = function(b, R, type="mult") {
-	# type "mult": x*y*(x+y) = R[2]
-	# type "div": x*y/(x+y) = R[2]
-	# type "div2": x*y/(x+y)^2 = R[2]
-	if(type == "mult") {
-		s = roots(c(1, 0, b[1], - R[1] - 3*R[2]))
-		xy = R[2]/s
+solve.p2p3ent = function(b, R, type="mult", n=3) {
+	# type "mult": x*y*(x+y) + b[2]*(x+y) = R[2]
+	# type "div": x*y/(x+y) + b[2]*(x+y) = R[2]
+	# type "div2": x*y/(x+y)^2 + b[2]*(x+y) = R[2]
+	# simple type: b[2] = 0
+	if(length(b) < 2) { b = c(b, 0) }
+	# Solve:
+	if(type == "mult" && n == 3) {
+		s = roots(c(1, 0, b[1] + 3*b[2], - R[1] - 3*R[2]))
+		xy = R[2]/s - b[2]
 	} else if(type == "div") {
-		s = roots(c(1, -3*R[2], b[1], - R[1]))
-		xy = R[2] * s
+		s = roots(c(1 + 3*b[2], -3*R[2], b[1], - R[1]))
+		xy = R[2] * s - b[2] * s^2
 	} else if(type == "div2") {
-		s = roots(c(1 - 3*R[2], 0, b[1], - R[1]))
-		xy = R[2] * s^2
+		s = if(b[2] == 0) roots(c(1 - 3*R[2], 0, b[1], - R[1]))
+			else roots(c(3*b[2], 1 - 3*R[2], 0, b[1], - R[1]))
+		xy = R[2] * s^2 - b[2] * s^3
+	} else if(type == "mult" && n == 2) {
+		s = roots(c(1, b[1], 2*b[2] - R[1], -2*R[2]))
+		xy = R[2]/s - b[2]
 	} else {
 		stop("Type NOT yet supported!")
 	}
@@ -654,15 +661,15 @@ solve.p2p3ent = function(b, R, type="mult") {
 	sol = cbind(x, y)
 	sol = rbind(sol, sol[,2:1])
 	# Test
-	t1 = x^3 + y^3 + b[1]*(x+y)
-	t2 = if(type == "mult") x*y*(x+y)
-	else if(type == "div") x*y/(x+y)
-	else if(type == "div2") x*y/(x+y)^2
+	t1 = x^n + y^n + b[1]*(x+y)
+	t2 = if(type == "mult") x*y*(x+y) + b[2]*(x+y)
+	else if(type == "div") x*y/(x+y) + b[2]*(x+y)
+	else if(type == "div2") x*y/(x+y)^2 + b[2]*(x+y)
 	#
 	return(list(sol=sol, test=rbind(t1, t2)))
 }
 
-###
+### Example 1
 b = c(-1)
 R = c(-2, 1)
 #
@@ -707,13 +714,31 @@ p = sapply(-6:6, function(b) print(round0.p(poly.calc(solve.p2p3ent(b, R)$sol[,1
 1 - 6*x + 9*x^2 + 2*x^3 - 6*x^4 + x^6 
 1 - 4*x + 4*x^2 + 2*x^3 - 4*x^4 + x^6 
 1 - 2*x + x^2 + 2*x^3 - 2*x^4 + x^6 
-1 - 0 + 2*x^3 - 0 + x^6 
+1 - 0 + 0 + 2*x^3 - 0 + x^6 
 1 + 2*x + x^2 + 2*x^3 + 2*x^4 + x^6 
 1 + 4*x + 4*x^2 + 2*x^3 + 4*x^4 + x^6 
 1 + 6*x + 9*x^2 + 2*x^3 + 6*x^4 + x^6 
 1 + 8*x + 16*x^2 + 2*x^3 + 8*x^4 + x^6 
 1 + 10*x + 25*x^2 + 2*x^3 + 10*x^4 + x^6 
 1 + 12*x + 36*x^2 + 2*x^3 + 12*x^4 + x^6
+
+###
+R = c(-2, 1)
+p = sapply(-6:6, function(b) print(round0.p(poly.calc(solve.p2p3ent(c(2*b, -b), R)$sol[,1]))))
+1 - 6*x + 36*x^2 + 2*x^3 - 6*x^4 + x^6 
+1 - 5*x + 25*x^2 + 2*x^3 - 5*x^4 + x^6 
+1 - 4*x + 16*x^2 + 2*x^3 - 4*x^4 + x^6 
+1 - 3*x + 9*x^2 + 2*x^3 - 3*x^4 + x^6 
+1 - 2*x + 4*x^2 + 2*x^3 - 2*x^4 + x^6 
+1 - x + x^2 + 2*x^3 - x^4 + x^6 
+1 - 0 + 0 + 2*x^3 - 0 + x^6 
+1 + x + x^2 + 2*x^3 + x^4 + x^6 
+1 + 2*x + 4*x^2 + 2*x^3 + 2*x^4 + x^6 
+1 + 3*x + 9*x^2 + 2*x^3 + 3*x^4 + x^6 
+1 + 4*x + 16*x^2 + 2*x^3 + 4*x^4 + x^6 
+1 + 5*x + 25*x^2 + 2*x^3 + 5*x^4 + x^6 
+1 + 6*x + 36*x^2 + 2*x^3 + 6*x^4 + x^6
+
 
 ###
 R = c(-4,1)
@@ -778,4 +803,71 @@ p = sapply(-8:8, function(b) print(round0.p(poly.calc(solve.p2p3ent(b, R, type="
 1 + 3.5*x + 12.25*x^2 + 2*x^3 + 3.5*x^4 + x^6 
 1 + 4*x + 16*x^2 + 2*x^3 + 4*x^4 + x^6
 
+
+###
+p = sapply(-6:6, function(b) print(round0.p(poly.calc(solve.p2p3ent(c(b, 2), c(2, 2), type="mult", n=2)$sol[,1]))))
+
+p = sapply(-6:6, function(b) print(round0.p(poly.calc(solve.p2p3ent(c(b, b), c(2, 2), type="mult", n=2)$sol[,1]))))
+
+p = sapply(-6:6, function(b) print(round0.p(poly.calc(solve.p2p3ent(c(b, b), c(4, 4), type="mult", n=2)$sol[,1]))))
+
+# b0 = b^2 / 2
+p = sapply( (-6:6)[-6], function(b) print(round0.p(poly.calc(solve.p2p3ent(c(-b, -b), c(b, b), type="mult", n=2)$sol[,1]))))
+
+sol = solve.p2p3ent(c(-2, -2), c(2, 2), type="mult", n=2)
+x = sol$sol[,1]
+2 - 3*x^4 - 2*x^5 + x^6
+
+sol = solve.p2p3ent(c(-4, -4), c(4, 4), type="mult", n=2)
+x = sol$sol[,1]
+8 - 4*x^3 - 6*x^4 - 4*x^5 + x^6
+
+
+#######
+
+###
+sol = solve.p2p3ent(c(0,-1/3), c(9,1/3), type="div2")
+x = sol$sol[,1]
+sol
+poly.calc(x)
+10 + 12*x + 30*x^2 - x^4 - 12*x^5 + x^8
+###
+sol = solve.p2p3ent(c(0, 1/3), c(9,1/3), type="div2")
+sol
+x = sol$sol[,1]
+poly.calc(x)
+-8 - 12*x + 30*x^2 + x^4 - 12*x^5 + x^8
+
+###
+sol = solve.p2p3ent(c(0, -1/3), c(9, -2/3), type="div2")
+x = sol$sol[,1]
+1 - 6*x + 21*x^2 - 27*x^3 + 29*x^4 - 12*x^5 + 3*x^6 - 3*x^7 + x^8
+###
+sol = solve.p2p3ent(c(0, 1/3), c(9, -2/3), type="div2")
+x = sol$sol[,1]
+-17 + 6*x + 21*x^2 - 27*x^3 - 29*x^4 - 12*x^5 + 3*x^6 + 3*x^7 + x^8
+
+
+
+#############
+
+
+### more complex example
+
+m = complex(re=cos(2*pi/3), im=sin(2*pi/3))
+m = m^(0:2)
+
+K = 2
+# works, but often with fractions
+k = K^(1/3)
+k = k*m
+
+b = cbind(4*(k^2 - k), 0)
+R = c(2, 2)
+sol = as.vector(sapply(1:3, function(id) solve.p2p3ent(b[id,], R, type="mult", n=3)$sol[,1]))
+poly.calc(sol)
+#
+x = sol
+1 + 48*x^2 + 26*x^3 + 576*x^4 + 1008*x^5 + 823*x^6 - 1152*x^7 + 438*x^8 +  
+724*x^9 + 576*x^10 + 132*x^11 + 145*x^12 + 102*x^14 - 6*x^15 + x^18
 
