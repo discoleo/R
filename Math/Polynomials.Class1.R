@@ -5,7 +5,24 @@
 ### Roots with Simple Radicals
 ###
 ### Leonard Mada
+###
+### draft v.0.1b
+
+### based on work during:
 ### 2018 - 2020
+
+
+###############
+### History ###
+###############
+
+# v.0.1b:
+# - added examples for entanglements
+#   with multiple radicals;
+#   [both nested & non-nested]
+# v.0.1a:
+# - initial draft posted on Github;
+# - based on work during 2018-2020;
 
 
 ##############
@@ -24,6 +41,43 @@
 # where k[j] = k * m^j, m^n = 1;
 # and index id goes from 0 to n-1;
 
+
+#################
+
+### helper functions
+
+unity = function(n=3, all=TRUE) {
+	m = complex(re=cos(2*pi/n), im=sin(2*pi/n))
+	if(all) {
+		m = m^(0:(n-1))
+	}
+	return(m)
+}
+mult.p = function(p1, p2) {
+	p.m = outer(p1, p2)
+    p = as.vector(tapply(p.m, row(p.m) + col(p.m), sum))
+	return(p)
+}
+# round to 0
+round0 = function(m, tol=1E-7) {
+	m[abs(Re(m)) < tol & abs(Im(m)) < tol] = 0
+	isZero = (Re(m) != 0) & (abs(Re(m)) < tol)
+	if(sum(isZero) > 0) {
+		m[isZero] = complex(re=0, im=Im(m[isZero]))
+	}
+	isZero = (Im(m) != 0) & (abs(Im(m)) < tol)
+	if(sum(isZero) > 0) {
+		m[isZero] = Re(m[isZero])
+	}
+	return(m)
+}
+round0.p = function(p, tol=1E-7) {
+	p = round0(as.vector(p), tol=tol)
+	class(p) = "polynomial"
+	return(p)
+}
+
+#####################
 
 #################
 ### Exercises ###
@@ -203,4 +257,88 @@ p.p
 predict(p.p, p$r)
 
 
+####################################
+
+### Entanglements: multiple Radicals
+
+#######################
+### A.) Simple Radicals
+
+m3 = unity(3, all=T)
+m5 = unity(5, all=T)
+m = expand.grid(m3, m5)
+colnames(m) = c("m3", "m5")
+# TODO: use grid
+
+### Entanglement with s0
+K1 = 2
+K2 = 3
+#
+k1 = K1^(1/3)*m3
+k2 = K2^(1/5)*m5
+#
+s0 = k1^2 - k1
+x = sapply(s0, function(s0) k2^3 - k2 + s0)
+#
+-1833890 + 2488620*x - 655200*x^2 - 283735*x^3 + 322905*x^4 - 85131*x^5 + 22195*x^6 + 3015*x^7 + 
++ 1075*x^9 - 582*x^10 + 495*x^11 - 55*x^12 + 30*x^13 + x^15
+
+
+### Entanglement with s1
+x = sapply(s0, function(s0) k2^3 - k2^2 + s0*k2)
+-5706018 - 260010*x + 2972700*x^2 + 3948615*x^3 + 3385800*x^4 + 1893861*x^5 + 650700*x^6 +  
++ 279990*x^7 + 67230*x^8 + 18225*x^9 + 4986*x^10 + 900*x^11 + 180*x^12 + 45*x^13 + x^15
+
+
+### Entanglement with multiple s[j]
+x = sapply(k1, function(k) k2^3 + (k^2 - k) * k2^2 + (k-1)*k2)
+-4067604 - 10811880*x - 11835720*x^2 - 8053695*x^3 - 4910625*x^4 - 2417553*x^5 - 619515*x^6 +  
+44145*x^7 + 109890*x^8 + 54675*x^9 + 12708*x^10 + 405*x^11 - 315*x^12 + x^15
+
+
+#######################
+### A.) Nested Radicals
+
+
+n1 = 5
+n2 = 3
+m5 = unity(n1, all=T)
+m3 = unity(n2, all=T)
+
+### 3x5: f2( ( f1(inner_root^1/5) )^1/3 )
+K = 2
+s1 = c(0, 1, -2, 2) # coeffs of nested root
+s2 = c(0, -1, 1) # coeffs of outer root
+#
+id1 = 0:(length(s1)-1)
+id2 = 0:(length(s2)-1)
+k = K^(1/n1) * m5 # all radical units
+r = sapply(k, function(k) sum(s1 * k^id1) )
+r = as.vector(r^(1/n2)) # all nested roots
+### all outer roots
+r = sapply(r, function(x) x * m3) # base units for outer roots
+r = as.vector(r)
+x = sapply(r, function(x) sum(s2 * x^id2)) # actual roots
+#
+-37410 + 160950*x + 182700*x^2 + 421930*x^3 + 247860*x^4 + 184140*x^5 + 74020*x^6 +
++ 30990*x^7 + 8100*x^8 + 3800*x^9 + 780*x^10 + 360*x^11 + 80*x^12 + x^15
+
+
+### 5x3: f2( ( f1(inner_root^1/3) )^1/5 )
+K = 2
+s1 = c(1, -2, 1) # coeffs of nested root
+s2 = c(0, -1, -1, 2) # coeffs of outer root
+#
+id1 = 0:(length(s1)-1)
+id2 = 0:(length(s2)-1)
+k = K^(1/n2) * m3
+r = sapply(k, function(k) sum(s1 * k^id1) )
+r = as.vector(r^(1/n1))
+# all roots
+r = sapply(r, function(x) x * m5)
+r = as.vector(r)
+x = sapply(r, function(x) sum(s2 * x^id2))
+#
+578700 - 279900*x - 807900*x^2 + 2096575*x^3 - 563775*x^4 + 3355995*x^5 - 412805*x^6 +  
++ 735885*x^7 + 101730*x^8 + 25075*x^9 + 1212*x^10 + 225*x^11 - 15*x^12 + 30*x^13 + x^15
 
