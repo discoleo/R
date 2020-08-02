@@ -7,7 +7,7 @@
 ### P6 Polynomials
 ### Derived from Special Factorizations
 ###
-### draft v.0.3d-bis
+### draft v.0.3e
 
 
 ### Factorization of the P6 Polynomials
@@ -54,6 +54,10 @@
 #####################
 
 ### History
+# draft v.0.3e:
+# - solved:
+#   K + 3*x - 5*x^3 + 3*x^5 + x^6 = 0;
+#   K + 3*x + 6*x^2 + 7*x^3 + 6*x^4 + 3*x^5 + x^6 = 0;
 # draft v.0.3c-d(bis):
 # - solved: -1 + b1*x - b2*x^2 + b3*x^3 + b2*x^4 + b1*x^5 + x^6 = 0;
 # - technique to generate symmetrical P12 polynomials
@@ -221,6 +225,11 @@ mult.p = function(p1, p2) {
     p = as.vector(tapply(p.m, row(p.m) + col(p.m), sum))
 	return(p)
 }
+round0.p = function(p, tol=1E-7) {
+	p = round0(as.vector(p), tol=tol)
+	class(p) = "polynomial"
+	return(p)
+}
 round0 = function(m, tol=1E-7) {
 	m[abs(Re(m)) < tol & abs(Im(m)) < tol] = 0
 	isZero = (Re(m) != 0) & (abs(Re(m)) < tol)
@@ -372,19 +381,19 @@ solve.p3 = function(b.coeff, n=3) {
 # generate special polynomials
 # derived from cubic => sqrt => quadratic;
 # - initial implementation;
-p6sq.gen = function(p3.coeff, mult=1, b0=-1, asSq=TRUE) {
-	r = roots(p3.coeff)
-	x1 = c(sqrt(r+0i), -(sqrt(r+0i)))
-	x = sapply(x1, function(r) roots(c(1, mult*r, b0)))
-	p = poly.calc(x)
-	for(i in 1:length(p)) p[[i]] = round0(p[[i]])
-	if(asSq) {
-		x = x[1,]^2 # the squares => P6
-		len = length(p3.coeff)*4 - 3
-		p = polynomial(p[seq(from=1, to=len, by=2)])
-	}
-	return(list(x=x, p=p))
-}
+# p6sq.gen = function(p3.coeff, mult=1, b0=-1, asSq=TRUE) {
+	# r = roots(p3.coeff)
+	# x1 = c(sqrt(r+0i), -(sqrt(r+0i)))
+	# x = sapply(x1, function(r) roots(c(1, mult*r, b0)))
+	# p = poly.calc(x)
+	# for(i in 1:length(p)) p[[i]] = round0(p[[i]])
+	# if(asSq) {
+		# x = x[1,]^2 # the squares => P6
+		# len = length(p3.coeff)*4 - 3
+		# p = polynomial(p[seq(from=1, to=len, by=2)])
+	# }
+	# return(list(x=x, p=p))
+# }
 p6sq.gen = function(p3.coeff, mult=1, b0=-1, asSq=TRUE, doPoly=TRUE) {
 	# TODO: remove asSq [deprecated]
 	r = roots(p3.coeff)
@@ -855,6 +864,43 @@ sapply(1:10, function(id) polyConv3.gen( (id^3+1)/b^3, c(b, -id), c(1,-2,0))$p.s
 b = 3 # (8^3+1) / 27 == 19
 sapply(1:10, function(id) polyConv3.gen( (id^3+1)/b^3, c(b, -id), c(1,-2,0))$p.str)
 
+###
+m3.all = c(1, m3, m3^2)
+
+###
+K = 5
+k = (K+1)^(1/3) * m3.all
+x = sapply(k, function(k) roots(c(1,1, k-1)))
+p = mult.p(c((k[1]-1), 1,1), c((k[2]-1), 1,1))
+p = round0(mult.p(p, c((k[3]-1), 1,1)))
+p
+5 + 3*x - 5*x^3 + 3*x^5 + x^6
+
+###
+K = 2
+k = (K+1)^(1/3) * m3.all
+x = sapply(k, function(k) roots(c(1,1, k-1)))
+p = mult.p(c((k[1]-1), 1,1), c((k[2]-1), 1,1))
+p = round0(mult.p(p, c((k[3]-1), 1,1)))
+p
+2 + 3*x - 5*x^3 + 3*x^5 + x^6
+
+### *** ALL K ***
+K = 3
+k = (K+1)^(1/3) * m3.all
+x = sapply(k, function(k) roots(c(1,1, k-1)))
+p = mult.p(c((k[1]-1), 1,1), c((k[2]-1), 1,1))
+p = round0(mult.p(p, c((k[3]-1), 1,1)))
+p
+K + 3*x - 5*x^3 + 3*x^5 + x^6
+
+### *** ALL K ***
+K = 3
+k = (K+1)^(1/3) * m3.all
+x = sapply(k, function(k) roots(c(1,1i, k-1))) / 1i
+p = mult.p(c((k[1]-1), 1i, 1), c((k[2]-1), 1i, 1))
+p = round0(mult.p(p, c((k[3]-1), 1i, 1)))
+-K + 3*x + 6*x^2 + 7*x^3 + 6*x^4 + 3*x^5 + x^6
 
 
 ###########################
@@ -1796,4 +1842,50 @@ x = c(r1, r2, r3)
 poly.calc(x)
 1 - x - 2*x^2 + x^3 - x^5 - x^6 + x^7 - 2*x^8 - 2*x^10 +  
 + x^11 - x^12 - x^13 + x^15 - 2*x^16 - x^17 + x^18
+
+
+### cos(2*pi/7)
+r1 = roots(c(1, c3[1]^2 - c3[1], 0,0,0, c3[1]^2 - c3[1],1))
+r2 = roots(c(1, c3[2]^2 - c3[2], 0,0,0, c3[2]^2 - c3[2],1))
+r3 = roots(c(1, c3[3]^2 - c3[3], 0,0,0, c3[3]^2 - c3[3],1))
+x = c(r1, r2, r3)
+poly.calc(x)
+1 + 6*x + 5*x^2 + x^3 + 6*x^5 + 13*x^6 + 15*x^7 + 5*x^8 + 5*x^10 +
++ 15*x^11 + 13*x^12 + 6*x^13 + x^15 + 5*x^16 + 6*x^17 + x^18
+
+
+### (...)^(1/3)
+k = 2^(1/3) * c(1, m3, m3^2)
+r1 = roots(c(1, k[1], 0,0,0, k[1],1))
+r2 = roots(c(1, k[2], 0,0,0, k[2],1))
+r3 = roots(c(1, k[3], 0,0,0, k[3],1))
+x = c(r1, r2, r3)
+poly.calc(x)
+1 + 2*x^3 + 3*x^6 + 6*x^7 + 6*x^11 + 3*x^12 + 2*x^15 + x^18
+#
+r1 = roots(c(1, k[1] * 1i, 0,0,0, k[1] * 1i,1)) / 1i
+r2 = roots(c(1, k[2] * 1i, 0,0,0, k[2] * 1i,1)) / 1i
+r3 = roots(c(1, k[3] * 1i, 0,0,0, k[3] * 1i,1)) / 1i
+x = c(r1, r2, r3)
+poly.calc(x)
+-1 + 2*x^3 + 3*x^6 + 6*x^7 + 6*x^11 - 3*x^12 + 2*x^15 + x^18
+
+
+### 2x entangled (...)^(1/3)
+m3.grid = expand.grid(c(1, m3, m3^2), c(1, m3, m3^2))
+k = 3^(1/3) * m3.grid[,1] - 2^(1/3) * m3.grid[,2]
+r = sapply(k, function(k) roots(c(k, 1, 0,0,0, 1, k)) )
+x = sort(r)
+poly.calc(x)
+1 + 165*x^3 + 12*x^6 + 495*x^7 + 991*x^9 + 18*x^10 + 495*x^11 + 45*x^12 + 2979*x^13 + 45*x^14 +
++ 2640*x^15 + 54*x^16 + 3006*x^17 + 153*x^18 + 7425*x^19 + 135*x^20 + 4374*x^21 + 99*x^22 + 7425*x^23 +
++ 309*x^24 + 10026*x^25 + 153*x^26 + 4950*x^27 + 153*x^28 + 10026*x^29 + 309*x^30 + 7425*x^31 +
++ 99*x^32 + 4374*x^33 + 135*x^34 + 7425*x^35 + 153*x^36 + 3006*x^37 + 54*x^38 + 2640*x^39 + 45*x^40 +
++ 2979*x^41 + 45*x^42 + 495*x^43 + 18*x^44 + 991*x^45 + 495*x^47 + 12*x^48 + 165*x^51 + x^54
+# predict(p, x[54]) # NOT better!
+#
+r = sapply(k, function(k) roots(c(1, 1/k, 0,0,0, 1/k, 1)) )
+x = sort(r)
+poly.calc(x)
+# the same polynomial
 
