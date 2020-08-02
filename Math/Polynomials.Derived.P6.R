@@ -7,7 +7,7 @@
 ### P6 Polynomials
 ### Derived from Special Factorizations
 ###
-### draft v.0.3d
+### draft v.0.3d-bis
 
 
 ### Factorization of the P6 Polynomials
@@ -54,10 +54,12 @@
 #####################
 
 ### History
-# draft v.0.3c-d:
+# draft v.0.3c-d(bis):
 # - solved: -1 + b1*x - b2*x^2 + b3*x^3 + b2*x^4 + b1*x^5 + x^6 = 0;
 # - technique to generate symmetrical P12 polynomials
 #   with all roots known: starting from symmetrical P6;
+# - included some P12 & P18 for fun:
+#   1 - x - x^2 - x^5 - x^7 - x^10 - x^11 + x^12 = 0;
 # draft v.0.3a-b:
 # - improved generator function for all symmetric P6 polynomials;
 #   1 + b1*x + b2*x^2 + b3*x^3 + b2*x^4 + b1*x^5 + x^6 = 0;
@@ -1723,6 +1725,8 @@ p6sq.gen(c(1,5,-1,-2))
 
 m1 = complex(re=cos(pi/3), im=sin(pi/3)) # -1!
 m3 = complex(re=cos(2*pi/3), im=sin(2*pi/3))
+c2 = 2*cos(2*pi/5 * 1:2)
+c3 = 2*cos(2*pi/7 * 1:3)
 
 ###
 r = roots(c(1,3, 0,0,0, 3,1))
@@ -1758,3 +1762,38 @@ r2 = roots(c(1,3/m1, 2*m1,0,2*m1, 3/m1,1))
 x = c(r1, r2)
 poly.calc(x)
 1 + 3*x + 11*x^2 - 6*x^3 + 6*x^4 - 3*x^5 + 28*x^6 - 3*x^7 + 6*x^8 - 6*x^9 + 11*x^10 + 3*x^11 + x^12
+
+
+### Sqrt()
+r1 = roots(c(1, 3*sqrt(2), 2-sqrt(2),0,2-sqrt(2), 3*sqrt(2),1))
+r2 = roots(c(1,-3*sqrt(2), 2+sqrt(2),0,2+sqrt(2),-3*sqrt(2),1))
+x = c(r1, r2)
+poly.calc(x)
+1 - 14*x^2 + 12*x^3 + 6*x^4 + 12*x^5 - 30*x^6 + 12*x^7 + 6*x^8 + 12*x^9 - 14*x^10 + x^12
+
+
+### Sqrt()
+r1 = roots(c(1, 1i,-1i, 0,-1i, 1i,1))
+r2 = roots(c(1,-1i, 1i, 0, 1i,-1i,1))
+x = c(r1, r2)
+poly.calc(x)
+1 + x^2 - 2*x^3 + x^4 - 2*x^5 + 6*x^6 - 2*x^7 + x^8 - 2*x^9 + x^10 + x^12
+
+
+### cos(2*pi/5)
+r1 = roots(c(1, c2[1], 0,0,0, c2[1],1))
+r2 = roots(c(1, c2[2], 0,0,0, c2[2],1))
+x = c(r1, r2)
+poly.calc(x)
+1 - x - x^2 - x^5 - x^7 - x^10 - x^11 + x^12
+
+
+### cos(2*pi/7)
+r1 = roots(c(1, c3[1], 0,0,0, c3[1],1))
+r2 = roots(c(1, c3[2], 0,0,0, c3[2],1))
+r3 = roots(c(1, c3[3], 0,0,0, c3[3],1))
+x = c(r1, r2, r3)
+poly.calc(x)
+1 - x - 2*x^2 + x^3 - x^5 - x^6 + x^7 - 2*x^8 - 2*x^10 +  
++ x^11 - x^12 - x^13 + x^15 - 2*x^16 - x^17 + x^18
+
