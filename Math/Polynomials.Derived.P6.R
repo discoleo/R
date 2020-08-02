@@ -7,7 +7,7 @@
 ### P6 Polynomials
 ### Derived from Special Factorizations
 ###
-### draft v.0.3e-tris
+### draft v.0.3e-x4
 
 
 ### Factorization of the P6 Polynomials
@@ -54,12 +54,13 @@
 #####################
 
 ### History
-# draft v.0.3e+tris:
+# draft v.0.3e+x4:
 # - solved:
 #   K + 3*x - 5*x^3 + 3*x^5 + x^6 = 0;
 #   K + 3*x + 6*x^2 + 7*x^3 + 6*x^4 + 3*x^5 + x^6 = 0;
 #   K + 3*n^2*x + 3*n*(n-1)*x^2 - (6*n-1)*x^3 - 3*(n-1)*x^4 + 3*x^5 + x^6 = 0;
-# - v.0.3e-tris: added another parameter to equation above (K, n, s1);
+# - v.0.3e-tris: added another parameter to equation above (K, n, s10);
+# - v.0.3e-x4: added a total of 4 parameters to equation above (K, n, s10, s11);
 # draft v.0.3c-d(bis):
 # - solved: -1 + b1*x - b2*x^2 + b3*x^3 + b2*x^4 + b1*x^5 + x^6 = 0;
 # - technique to generate symmetrical P12 polynomials
@@ -916,7 +917,7 @@ p
 K + 3*n^2*x + 3*n*(n-1)*x^2 - (6*n-1)*x^3 - 3*(n-1)*x^4 + 3*x^5 + x^6
 
 
-### *** ALL K & n ***
+### *** ALL K & n + s0 ***
 K = 3
 n = 2
 s = c(1)
@@ -926,6 +927,20 @@ p = mult.p(c((k[1]-n), s[1],1), c((k[2]-n), s[1],1))
 p = round0(mult.p(p, c((k[3]-n), s[1],1)))
 p
 K + 3*n^2*s[1]*x + 3*n*(n-s[1]^2)*x^2 - s[1]*(6*n-s[1]^2)*x^3 + 3*(s[1]^2-n)*x^4 + 3*s[1]*x^5 + x^6
+
+
+### *** ALL K & n + s0+s1 ***
+K = 3
+n = 2
+s = c(1, 1)
+k = (K+n^3)^(1/3) * m3.all
+x = sapply(k, function(k) roots(c(1, s[2]*k + s[1], k-n)))
+p = mult.p(c((k[1]-n), s[2]*k[1] + s[1],1), c((k[2]-n), s[2]*k[2] + s[1],1))
+p = round0(mult.p(p, c((k[3]-n), s[2]*k[3] + s[1],1)))
+p
+K + 3*(s[1]*n^2 + s[2]*(K+n^3))*x + 3*(n^2 - s[1]^2*n + s[2]^2*(K+n^3))*x^2 +
+- (6*n*s[1] - s[1]^3 - s[2]^3*(K+n^3))*x^3 + 3*(s[1]^2-n)*x^4 + 3*s[1]*x^5 + x^6
+
 
 
 ###########################
