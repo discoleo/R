@@ -7,7 +7,7 @@
 ### P6 Polynomials
 ### Derived from Special Factorizations
 ###
-### draft v.0.3e-x4
+### draft v.0.3e-pre-z
 
 
 ### Factorization of the P6 Polynomials
@@ -54,13 +54,14 @@
 #####################
 
 ### History
-# draft v.0.3e+x4:
+# draft v.0.3e+(pre)-z:
 # - solved:
 #   K + 3*x - 5*x^3 + 3*x^5 + x^6 = 0;
 #   K + 3*x + 6*x^2 + 7*x^3 + 6*x^4 + 3*x^5 + x^6 = 0;
 #   K + 3*n^2*x + 3*n*(n-1)*x^2 - (6*n-1)*x^3 - 3*(n-1)*x^4 + 3*x^5 + x^6 = 0;
 # - v.0.3e-tris: added another parameter to equation above (K, n, s10);
 # - v.0.3e-x4: added a total of 4 parameters to equation above (K, n, s10, s11);
+# - v.0.3e-pre-z: a 5 parameter version (TODO: the polynomial);
 # draft v.0.3c-d(bis):
 # - solved: -1 + b1*x - b2*x^2 + b3*x^3 + b2*x^4 + b1*x^5 + x^6 = 0;
 # - technique to generate symmetrical P12 polynomials
@@ -941,6 +942,19 @@ p
 K + 3*(s[1]*n^2 + s[2]*(K+n^3))*x + 3*(n^2 - s[1]^2*n + s[2]^2*(K+n^3))*x^2 +
 - (6*n*s[1] - s[1]^3 - s[2]^3*(K+n^3))*x^3 + 3*(s[1]^2-n)*x^4 + 3*s[1]*x^5 + x^6
 
+
+### *** ALL K & n + s0, s1, s2 ***
+d = 3
+c = 2
+s = c(1, 1, -1)
+#
+det = sqrt(d^2 - c^3 + 0i)
+p.v = (d + det)^(1/3) * m3.all; q.v = (d - det)^(1/3) / m3.all;
+x = sapply(1:3, function(id) roots(c(1, s[3]*p.v[id] + s[2]*q.v[id] + s[1], p.v[id]+q.v[id])))
+p = mult.p(c(p.v[1]+q.v[1], s[3]*p.v[1] + s[2]*q.v[1] + s[1],1), c(p.v[2]+q.v[2], s[3]*p.v[2] + s[2]*q.v[2] + s[1],1))
+p = round0(mult.p(p, c(p.v[3]+q.v[3], s[3]*p.v[3] + s[2]*q.v[3] + s[1],1)))
+p
+# TODO: polynomial
 
 
 ###########################
