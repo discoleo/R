@@ -7,7 +7,7 @@
 ### P6 Polynomials
 ### Derived from P4
 ###
-### draft v.0.1a
+### draft v.0.1b
 
 
 ### Generate P6
@@ -22,6 +22,9 @@
 ###############
 ### History ###
 
+# draft v.0.1b:
+# - added various special cases:
+#   these are however decomposable into P[2]*P[4] or P[3]*P[3];
 # draft v.0.1a:
 # - moved from Polynomials.Derived.P6.R [v.0.3e [pre-z]]
 #   to separate file;
@@ -102,20 +105,26 @@ round0.p(poly.calc(x))
 
 
 ###
-r4 = roots(c(1,2,0,0, 1))
+coeffs = c(1,0,0,1,-1)
+r4 = roots(coeffs)
 r.g = expand.grid(r4, r4)
-round0.p(poly.calc(r.g[,1] - r.g[,2]))
 x = round0((r.g[,1] - r.g[,2])^2)
 x = unique(x[ x != 0 ])
--176 + 288*x - 16*x^2 - 88*x^3 + 56*x^4 - 12*x^5 + x^6
+round0.p(poly.calc(x))
+-283 - 216*x - 112*x^2 + 26*x^3 - 8*x^4 + x^6
+# and a inverse-symmetric P12 for fun:
+x = sapply(x, function(r) roots(c(1, 1-r, -1))) # parameters: +/- r & +/- 1;
+1 - 6*x + x^2 + 16*x^3 - 80*x^4 + 370*x^5 - 436*x^6 - 370*x^7 - 80*x^8 - 16*x^9 +
++ x^10 + 6*x^11 + x^12
 
 
 ###
-r4 = roots(c(1,0,1,1, 2))
+coeffs = c(1,0,1,1, 2)
+r4 = roots(coeffs)
 r.g = expand.grid(r4, r4)
-round0.p(poly.calc(r.g[,1] - r.g[,2]))
 x = round0((r.g[,1] - r.g[,2])^2)
 x = unique(x[ x != 0 ])
+round0.p(poly.calc(x))
 1825 - 250*x - 335*x^2 + 86*x^3 + 38*x^4 + 8*x^5 + x^6
 
 
@@ -124,14 +133,18 @@ coeffs = c(1,2,0,0, 1)
 alpha = 2
 r4 = roots(coeffs)
 r.g = expand.grid(r4, r4)
-round0.p(poly.calc(alpha*r.g[,1] - r.g[,2])) / polynomial(rev(coeffs))
 x = round0((alpha*r.g[,1] - r.g[,2]) )
 x = unique(x[ x != 0 ])
+round0.p(poly.calc(x)) / polynomial(rev(coeffs))
 # a P12 when alpha != 1
 
 
-#################
-### Special Cases
+#####################
+### Special Cases ###
+
+# all specia cases are decomposable:
+# => P[2]*P[4] or
+# => P[3]*P[3];
 
 
 ### m5 => P[2]*P[4]
@@ -156,4 +169,51 @@ x = round0((r.gr[,1] - r.gr[,2])^2)
 x = x[ x != 0]
 -658409500 + 11069440*x - 4889024*x^2 - 349696*x^3 + 16112*x^4 - 224*x^5 + x^6
 
+
+m3 = unity(3, all=T)
+m3diff = cbind((1-m3[-1]), (1-1/m3[-1]))
+m3diff = rbind(m3diff, c(m3[2]-m3[3], m3[3]-m3[2]))
+p6fromP3.gen = function(s, c, d) {
+	det = sqrt(d^2 - c^3 + 0i)
+	p.r = (d + det)^(1/3); q.r = (d - det)^(1/3)
+	r = p.r * m3 + q.r / m3 - s
+	r = c(r, p.r*m3diff[,1] + q.r*m3diff[,2])
+	x = r^2
+	p = poly.calc(x)
+	return(list(x=x, p=p))
+}
+
+# TODO: parametric P6
+
+### P[1]*P[3] => P[3]*P[3]
+r4 = roots(c(1,2,0,0, 1))
+r.g = expand.grid(r4, r4)
+x = round0((r.g[,1] - r.g[,2])^2)
+x = unique(x[ x != 0 ])
+round0.p(poly.calc(x))
+-176 + 288*x - 16*x^2 - 88*x^3 + 56*x^4 - 12*x^5 + x^6
+
+
+### (x - s) * P3 => P[3]*P[3]
+d = 2
+c = 1
+s = 2 # shift / P[1]
+#
+p = p6fromP3.gen(s,c,d)
+p
+x = p$x
+-1296 + 33696*x + 2745*x^2 - 3028*x^3 + 510*x^4 - 36*x^5 + x^6
+
+
+
+### (x - s) * P3 => P[3]*P[3]
+d = 2
+c = 1
+s = -1 # shift / P[1]
+#
+p = p6fromP3.gen(s,c,d)
+p
+x = p$x
+-1296 - 4212*x - 3816*x^2 - 193*x^3 + 231*x^4 - 27*x^5 + x^6
+(-4 - 12*x - 9*x^2 + x^3) * (324 + 81*x - 18*x^2 + x^3)
 
