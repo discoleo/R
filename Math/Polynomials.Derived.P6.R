@@ -943,16 +943,31 @@ K + 3*(s[1]*n^2 + s[2]*(K+n^3))*x + 3*(n^2 - s[1]^2*n + s[2]^2*(K+n^3))*x^2 +
 - (6*n*s[1] - s[1]^3 - s[2]^3*(K+n^3))*x^3 + 3*(s[1]^2-n)*x^4 + 3*s[1]*x^5 + x^6
 
 
+### *** ALL K & n + s0, s1, s2 (classic) ***
+K = 3
+n = 2
+s = c(1, 1, -1)
+k = (K+n^3)^(1/3) * m3.all
+k.t1 = s[3]/k + s[2]*k + s[1]
+x = sapply(k, function(k) roots(c(1, s[3]/k + s[2]*k + s[1], k-n)))
+p = mult.p(c((k[1]-n), k.t1[1],1), c((k[2]-n), k.t1[2],1))
+p = round0(mult.p(p, c((k[3]-n), k.t1[3],1)))
+p
+
+
+### TODO: fix vs classic
 ### *** ALL K & n + s0, s1, s2 ***
-d = 3
+d = 5
 c = 2
 s = c(1, 1, -1)
 #
 det = sqrt(d^2 - c^3 + 0i)
-p.v = (d + det)^(1/3) * m3.all; q.v = (d - det)^(1/3) / m3.all;
-x = sapply(1:3, function(id) roots(c(1, s[3]*p.v[id] + s[2]*q.v[id] + s[1], p.v[id]+q.v[id])))
-p = mult.p(c(p.v[1]+q.v[1], s[3]*p.v[1] + s[2]*q.v[1] + s[1],1), c(p.v[2]+q.v[2], s[3]*p.v[2] + s[2]*q.v[2] + s[1],1))
-p = round0(mult.p(p, c(p.v[3]+q.v[3], s[3]*p.v[3] + s[2]*q.v[3] + s[1],1)))
+p.v = (d + det)^(1/3) * m3.all; q.v = (d - det)^(1/3) / m3.all
+b0 = p.v + q.v
+r = s[3] * b0^2 + s[2]* b0 + s[1] - 2*c*s[3]
+x = sapply(1:3, function(id) roots(c(1, r[id], b0[id])))
+p = mult.p(c(b0[1], r[1],1), c(b0[2], r[2],1))
+p = round0(mult.p(p, c(b0[3], r[3],1)))
 p
 # TODO: polynomial
 
@@ -1820,6 +1835,7 @@ p6sq.gen(c(1,5,-1,-2))
 1 - x^2 - 6*x^4 + 10*x^6 - 6*x^8 - x^10 + x^12
 
 
+
 ####################
 ### Symmetrical P12:
 
@@ -1942,4 +1958,70 @@ r = sapply(k, function(k) roots(c(1, 1/k, 0,0,0, 1/k, 1)) )
 x = sort(r)
 poly.calc(x)
 # the same polynomial
+
+
+###############
+
+m7 = unity(7, all=F)
+m7 = m7^(1:6) # without 1!
+
+###
+x = sapply( m7, function(m) roots(c(1, 1-m, m)) )
+round0.p(poly.calc(x))
+1 - 7*x + 20*x^2 - 28*x^3 + 15*x^4 + 7*x^5 - 8*x^6 - 7*x^7 + 15*x^8 + 28*x^9 + 20*x^10 + 7*x^11 + x^12
+
+### the same as with -m^1
+x = sapply( m7, function(m) roots(c(1, 1-m^2, -m^2)) )
+round0.p(poly.calc(x))
+1 + 7*x + 22*x^2 + 42*x^3 + 57*x^4 + 63*x^5 + 64*x^6 + 63*x^7 + 57*x^8 + 42*x^9 + 22*x^10 + 7*x^11 + x^12
+#
+x = sapply( m7, function(m) roots(c(1, 1-m^2, m^2)) )
+round0.p(poly.calc(x))
+1 - 7*x + 20*x^2 - 28*x^3 + 15*x^4 + 7*x^5 - 8*x^6 - 7*x^7 + 15*x^8 + 28*x^9 + 20*x^10 + 7*x^11 + x^12
+
+
+#################
+
+### P4 => P6
+
+###
+r4 = roots(c(1,0,0,1, 1))
+r.g = expand.grid(r4, r4)
+round0.p(poly.calc(r.g[,1] - r.g[,2]))
+x = round0((r.g[,1] - r.g[,2])^2)
+x = unique(x[ x != 0 ])
+229 + 216*x - 112*x^2 + 26*x^3 + 8*x^4 + x^6
+# x^6 + (-3*E1^2 + 8*E2)*x^5 + ()*x^4
+# (3*r^4 - 4*r[i]*r[j]^3 + 8*r[i]^2*r[j]^2 - 2*r[i]*r[j]*r[k]^2 + 12*E4)
+# 3*(E1^4 - )
+# r^4 = E1*(-E1^3 + 3*E1*E2 - 3*E3) - E2*(E1^2 - 2*E2) + E1*E3 - 4*E4
+# r^4 = -E1^4 + 2*E1^2*E2 - 2*E1*E3 + 2*E2^2 - 4*E4
+# r^3 = -E1^3 + 3*E1*E2 - 3*E3
+# r^2 = E1^2 - 2*E2
+#
+# (-r^6 + 2*r[i]*r[j]^5 - 7*r[i]^2*r[j]^4 + 8*r[i]^3*r[j]^3 + 2*r[i]*r[j]^2*r[k]^3 + 16*r[ijk]*r[m]^3 +
+#  -10*r[i]^2*r[j]^2*r[k]^2)*x^3 + ...
+
+###
+r4 = roots(c(1,2,0,0, 1))
+r.g = expand.grid(r4, r4)
+round0.p(poly.calc(r.g[,1] - r.g[,2]))
+x = round0((r.g[,1] - r.g[,2])^2)
+x = unique(x[ x != 0 ])
+-176 + 288*x - 16*x^2 - 88*x^3 + 56*x^4 - 12*x^5 + x^6
+
+
+### P12 !
+coeffs = c(1,2,0,0, 1)
+alpha = 2
+r4 = roots(coeffs)
+r.g = expand.grid(r4, r4)
+round0.p(poly.calc(alpha*r.g[,1] - r.g[,2])) / polynomial(rev(coeffs))
+x = round0((alpha*r.g[,1] - r.g[,2]) )
+x = unique(x[ x != 0 ])
+# a P12 when alpha != 1
+
+
+(x-(r1-r2)^2)*(x-(r1-r3)^2)*(x-(r1-r4)^2)*(x-(r2-r3)^2)*(x-(r2-r4)^2)*(x-(r3-r4)^2)
+(x-(a-b)^2)*(x-(a-c)^2)*(x-(a-d)^2)*(x-(b-c)^2)*(x-(b-d)^2)*(x-(c-d)^2)
 
