@@ -7,11 +7,11 @@
 ### P6 Polynomials:
 ### Symmetric Polynomials
 ###
-### draft v.0.1a
+### draft v.0.1b
 
 
-### Decomposition of Symmetric Polynomials of order 2n
-### into Polynomials of order n
+### Decomposition of Symmetric Polynomials of order [2n]
+### into Polynomials of order [n]
 
 # - every *strictly* symmetric polynomial of order 2*n
 #   can be "decomposed" into polynomials of order n;
@@ -26,13 +26,14 @@
 ################
 
 ### History
+# draft v.0.1b:
+# - added the decompositions for P8 & P10;
+# - the P[5] (for P10) is solvable numerically;
+# - TODO: the "minus" versions as well;
 # draft v.0.1a:
 # - new file, moved from Polynomials.Derived.P6.R
-#   (during the last subversion of v.0.3b);
+#   (during the last sub-version of v.0.3b);
 
-
-### TODO:
-# - rework/simplify the P8 as well;
 
 
 ################
@@ -74,7 +75,8 @@ round0 = function(m, tol=1E-7) {
 solve.p6sym = function(b, type="symmetric") {
 	# b = symmetric coefficients
 	# 1 + b1*x + b2*x^2 + b3*x^3 + b2*x^4 + b1*x^5 + x^6
-	if(length(b) == 3) {
+	len = length(b)
+	if(len == 3) {
 		if(type == "minus") {
 			r = roots(c(1, b[1], -b[2]+3, b[3] + 2*b[1]))
 			b0 = -1;
@@ -84,16 +86,39 @@ solve.p6sym = function(b, type="symmetric") {
 		}
 		x = sapply(r, function(r) roots(c(1,-r,b0)))
 		p = round0.p(poly.calc(x))
-		b = c(b0, b, rev(b[-3]), 1)
+		b = c(b0, b, rev(b[-len]), 1)
 		if(type == "minus") {
 			b[5] = -b[5]; # b4
 		}
-		id = 0:6
+		id = 0:(2*len)
 		err = sapply(x, function(x) round0(sum(b*x^id)))
 		return(list(x=x, p=p, err=err))
+	} else if(len == 4) {
+		if(type == "minus") {
+			# TODO
+		} else {
+			r = roots(c(1, b[1], b[2]-4, b[3]-3*b[1], b[4]-2*b[2]+2))
+			b0 = 1;
+		}
+	} else if(len == 5) {
+		if(type == "minus") {
+			# TODO
+		} else {
+			r = roots(c(1, b[1], b[2]-5, b[3] - 4*b[1], b[4] - 3*b[2] + 5, b[5] + 2*b[1] - 2*b[3]))
+			b0 = 1;
+		}
 	} else {
 		print("Not yet implemented!")
 	}
+	x = sapply(r, function(r) roots(c(1,-r,b0)))
+	p = round0.p(poly.calc(x))
+	b = c(b0, b, rev(b[-len]), 1)
+	if(type == "minus") {
+		b[5] = -b[5]; # b4??? # TODO
+	}
+	id = 0:(2*len)
+	err = sapply(x, function(x) round0(sum(b*x^id)))
+	return(list(x=x, p=p, err=err))
 }
 
 ################
@@ -228,15 +253,84 @@ x = p$x
 
 
 
-#################
+####################
+####################
 
-### for P8: [old code]
-# p6sq.gen(c(1, 8 + b1, 20 + 6*b1 + b2, 16 + 9*b1 + 4*b2 + b3, 2 + 2*b1 + 2*b2 + 2*b3 + b4))
-b1 = 1; b2 = 0; b3 = 0; b4 = 1;
-# set the function parameter as the coefficient to list
-sapply(-6:6, function(b2) print(p6sq.gen(c(1, 8 + b1, 20 + 6*b1 + b2, 16 + 9*b1 + 4*b2 + b3, 2 + 2*b1 + 2*b2 + 2*b3 + b4))$p))
+####################
+### Symmetric P8 ###
+
+###
+b = c(1, 0, 0, 1)
+# add the function parameter to the list: e.g. b[2] + bx;
+p = sapply(-5:5, function(bx) print(solve.p6sym(c(b[1], b[2] + bx, b[3], b[4]))$p))
+1 + x - 5*x^2 + x^4 - 5*x^6 + x^7 + x^8 
+1 + x - 4*x^2 + x^4 - 4*x^6 + x^7 + x^8 
+1 + x - 3*x^2 + x^4 - 3*x^6 + x^7 + x^8 
+1 + x - 2*x^2 + x^4 - 2*x^6 + x^7 + x^8 
+1 + x - x^2 + x^4 - x^6 + x^7 + x^8 
+1 + x - 0 + x^4 - 0 + x^7 + x^8 
+1 + x + x^2 + x^4 + x^6 + x^7 + x^8 
+1 + x + 2*x^2 + x^4 + 2*x^6 + x^7 + x^8 
+1 + x + 3*x^2 + x^4 + 3*x^6 + x^7 + x^8 
+1 + x + 4*x^2 + x^4 + 4*x^6 + x^7 + x^8 
+1 + x + 5*x^2 + x^4 + 5*x^6 + x^7 + x^8
 
 
+### more Examples
+b = c(1, 1, -1, -1)
+p = solve.p6sym(b)
+p
+x = p$x
+1 + b[1]*x + b[2]*x^2 + b[3]*x^3 + b[4]*x^4 + b[3]*x^5 + b[2]*x^6 + b[1]*x^7 + x^8
+
+
+###
+b = c(1, 1, 2, -1)
+p = solve.p6sym(b)
+p
+x = p$x
+1 + b[1]*x + b[2]*x^2 + b[3]*x^3 + b[4]*x^4 + b[3]*x^5 + b[2]*x^6 + b[1]*x^7 + x^8
+
+
+
+#####################
+#####################
+
+#####################
+### Symmetric P10 ###
+
+# Solution: the P5 is solved numerically!
+
+### more Examples
+b = c(10, 1, -1, -1, 0)
+p = solve.p6sym(b)
+p
+x = p$x
+1 + b[1]*x + b[2]*x^2 + b[3]*x^3 + b[4]*x^4 + b[5]*x^5 + b[4]*x^6 + b[3]*x^7 + b[2]*x^8 + b[1]*x^9 + x^10
+
+
+###
+b = c(1, 1, 2, -1, -1)
+p = solve.p6sym(b)
+p
+x = p$x
+1 + b[1]*x + b[2]*x^2 + b[3]*x^3 + b[4]*x^4 + b[5]*x^5 + b[4]*x^6 + b[3]*x^7 + b[2]*x^8 + b[1]*x^9 + x^10
+
+
+b = c(1, 0, 0, 0, 0)
+# add the function parameter to the list: e.g. b[2] + bx;
+p = sapply(-5:5, function(bx) print(solve.p6sym(c(b[1], b[2] + bx, b[3], b[4], b[5]))$p))
+1 + x - 5*x^2 - 5*x^8 + x^9 + x^10
+1 + x - 4*x^2 - 4*x^8 + x^9 + x^10
+1 + x - 3*x^2 - 3*x^8 + x^9 + x^10
+1 + x - 2*x^2 - 2*x^8 + x^9 + x^10
+1 + x - x^2 - x^8 + x^9 + x^10
+1 + x - 0 - 0 + x^9 + x^10
+1 + x + x^2 + x^8 + x^9 + x^10
+1 + x + 2*x^2 + 2*x^8 + x^9 + x^10
+1 + x + 3*x^2 + 3*x^8 + x^9 + x^10
+1 + x + 4*x^2 + 4*x^8 + x^9 + x^10
+1 + x + 5*x^2 + 5*x^8 + x^9 + x^10
 
 
 #########################
