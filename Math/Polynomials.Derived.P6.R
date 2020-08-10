@@ -7,7 +7,7 @@
 ### P6 Polynomials
 ### Derived from Special Factorizations
 ###
-### draft v.0.3e-z
+### draft v.0.4-pre-a
 
 
 ### Factorization of the P6 Polynomials
@@ -56,6 +56,8 @@
 #####################
 
 ### History
+# draft v.0.4-pre-a:
+# - derived polynomial for the 5-parameter version (see v.0.3e);
 # draft v.0.3e-z:
 # - cleanup: moved Symmetric polynomials to:
 #   Polynomials.Derived.P6.Symmetric.R;
@@ -776,6 +778,8 @@ sapply(n.coeff, function(x) toPoly(solve.p6(c(0,0, 1, x), type=5229)$coeff))
 ### P2 Decompositions ###
 #########################
 
+### P6 = P2 * P2[*] * P2[**]
+
 ########################
 ### Radicals Order 3 ###
 ########################
@@ -829,6 +833,7 @@ b = 3 # (8^3+1) / 27 == 19
 sapply(1:10, function(id) polyConv3.gen( (id^3+1)/b^3, c(b, -id), c(1,-2,0))$p.str)
 
 ###
+m3 = unity(3, all=F)
 m3.all = c(1, m3, m3^2)
 
 ###
@@ -838,7 +843,7 @@ x = sapply(k, function(k) roots(c(1,1, k-1)))
 p = mult.p(c((k[1]-1), 1,1), c((k[2]-1), 1,1))
 p = round0(mult.p(p, c((k[3]-1), 1,1)))
 p
-5 + 3*x - 5*x^3 + 3*x^5 + x^6
+K + 3*x - 5*x^3 + 3*x^5 + x^6
 
 ###
 K = 2
@@ -847,7 +852,7 @@ x = sapply(k, function(k) roots(c(1,1, k-1)))
 p = mult.p(c((k[1]-1), 1,1), c((k[2]-1), 1,1))
 p = round0(mult.p(p, c((k[3]-1), 1,1)))
 p
-2 + 3*x - 5*x^3 + 3*x^5 + x^6
+K + 3*x - 5*x^3 + 3*x^5 + x^6
 
 ### *** ALL K ***
 K = 3
@@ -887,6 +892,7 @@ x = sapply(k, function(k) roots(c(1, s[1], k-n)))
 p = mult.p(c((k[1]-n), s[1],1), c((k[2]-n), s[1],1))
 p = round0(mult.p(p, c((k[3]-n), s[1],1)))
 p
+c(K, 3*n^2*s[1], 3*n*(n-s[1]^2), - s[1]*(6*n-s[1]^2), 3*(s[1]^2-n), 3*s[1], 1)
 K + 3*n^2*s[1]*x + 3*n*(n-s[1]^2)*x^2 - s[1]*(6*n-s[1]^2)*x^3 + 3*(s[1]^2-n)*x^4 + 3*s[1]*x^5 + x^6
 
 
@@ -903,7 +909,8 @@ K + 3*(s[1]*n^2 + s[2]*(K+n^3))*x + 3*(n^2 - s[1]^2*n + s[2]^2*(K+n^3))*x^2 +
 - (6*n*s[1] - s[1]^3 - s[2]^3*(K+n^3))*x^3 + 3*(s[1]^2-n)*x^4 + 3*s[1]*x^5 + x^6
 
 
-### *** ALL K & n + s0, s1, s2 (classic) ***
+### *** ALL K & n + s0, s1, s2 (part-classic) ***
+# Note: generates fractions;
 K = 3
 n = 2
 s = c(1, 1, -1)
@@ -915,21 +922,28 @@ p = round0(mult.p(p, c((k[3]-n), k.t1[3],1)))
 p
 
 
-### TODO: fix vs classic
+### modern vs classic
 ### *** ALL K & n + s0, s1, s2 ***
 d = 5
 c = 2
 s = c(1, 1, -1)
-#
+# exact P3 needs a lot of code to handle (-real)^(1/3)
 det = sqrt(d^2 - c^3 + 0i)
-p.v = (d + det)^(1/3) * m3.all; q.v = (d - det)^(1/3) / m3.all
-b0 = p.v + q.v
+p.v = (d + det)^(1/3) * m3.all; q.v = (d - det)^(1/3) / m3.all # TODO: fails when (d - det) < 0
+b0 = roots(c(1, 0, -3*c, -2*d)); # b0 = p.v + q.v
 r = s[3] * b0^2 + s[2]* b0 + s[1] - 2*c*s[3]
 x = sapply(1:3, function(id) roots(c(1, r[id], b0[id])))
-p = mult.p(c(b0[1], r[1],1), c(b0[2], r[2],1))
-p = round0(mult.p(p, c(b0[3], r[3],1)))
+p = round0(mult.p(c(b0[2], r[2],1), c(b0[3], r[3],1)))
+p = round0(mult.p(p, c(b0[1], r[1],1)))
 p
-# TODO: polynomial
+# Polynomial
+s0 = s[1]; s1 = s[2]; s2 = s[3];
+2*d +
++ 3*(2*s1*d - c*s0 + 2*c^2*s2)*x +
++ 3*(2*d*(c*s2^2 - s0*s2 + s1^2) - 2*c*s0*s1 + 4*c^2*s1*s2 - c)*x^2 +
++ 3*(2*d*(c*s1*s2^2- s0*s1*s2 - s2) - c*s0*(s1^2 + c*s2^2) - 2*c*s1 + 2*c^2*s1^2*s2 + 1/3*(2*s1^3*d + (4*d^2 - 2*c^3)*s2^3 + s0^3))*x^3 +
+- 3*(2*d*s1*s2 + c*s1^2 + c^2*s2^2 - s0^2)*x^4 +
++ 3*s0*x^5 + x^6
 
 
 ###########################
@@ -1420,6 +1434,48 @@ coeff = c(1, - (a1+a2), (a1^2+a2^2-a1*a2-b1-b2), (2*a1*b1+2*a2*b2-a1*b2-a2*b1-c1
 ########################
 
 ### Cross-Entanglements
+
+c3 = 2*cos(2*pi/7 * 1:3)
+
+### some P6
+b = c(1, 0, 0)
+r = roots(c(1,0,1,1))
+r.g = expand.grid(r, r)
+r.g = r.g[ r.g[,1] != r.g[,2] , ]
+x = r.g[,1] + b[1]*r.g[,1]*r.g[,2] + b[2]*r.g[,2]^2 + b[3]*r.g[,1]*r.g[,2]^2
+poly.calc(x)
+1 - x + 6*x^2 + 3*x^3 - 2*x^5 + x^6
+
+### some P6
+b = c(1, 1, -1)
+r.g = expand.grid(c3, c3)
+r.g = r.g[ r.g[,1] != r.g[,2] , ]
+x = r.g[,1] + b[1]*r.g[,1]*r.g[,2] + b[2]*r.g[,2]^2 + b[3]*r.g[,1]*r.g[,2]^2
+poly.calc(x)
+1 - 3*x - 5*x^2 + 15*x^3 - 3*x^4 - 5*x^5 + x^6
+
+###
+b = c(2,-2,1)
+r.g = expand.grid(c3, c3)
+r.g = r.g[ r.g[,1] != r.g[,2] , ]
+x = r.g[,1] + b[1]*r.g[,1]*r.g[,2] + b[2]*r.g[,2]^2 + b[3]*r.g[,1]*r.g[,2]^2
+poly.calc(x)
+29 + 2448*x + 3966*x^2 + 1805*x^3 + 352*x^4 + 31*x^5 + x^6
+
+###
+b = c(-1,-1,-1)
+r.g = expand.grid(c3, c3)
+r.g = r.g[ r.g[,1] != r.g[,2] , ]
+x = r.g[,1] + b[1]*r.g[,1]*r.g[,2] + b[2]*r.g[,2]^2 + b[3]*r.g[,1]*r.g[,2]^2
+poly.calc(x)
+49 + 49*x - 49*x^2 - 35*x^3 + 7*x^4 + 7*x^5 + x^6
+
+
+### Note:
+# c3 = (m7 + m7^3)/m7^2
+
+
+#############
 ### some P12s
 
 ###
@@ -1441,6 +1497,56 @@ poly.calc(x)
 1 + 6*x + 20*x^2 + 44*x^3 + 90*x^4 + 70*x^5 + 58*x^6 - 18*x^7 - 11*x^8 + 8*x^9 + 6*x^10 +  
 - 4*x^11 + x^12
 
+
+###
+b1 = -2
+r = roots(c(1,0,-1,1))
+r.g = expand.grid(r, r)
+r.g = r.g[ r.g[,1] != r.g[,2] , ]
+x = sapply(1:nrow(r.g), function(id) roots(c(1, b1*r.g[id,1], r.g[id,2])))
+poly.calc(x)
+
+
+###
+b1 = -1
+pow = 2
+r = roots(c(1,0,-1,1))
+r.g = expand.grid(r, r)
+r.g = r.g[ r.g[,1] != r.g[,2] , ]
+x = sapply(1:nrow(r.g), function(id) roots(c(1, b1*r.g[id,1]^pow, r.g[id,2])))
+poly.calc(x)
+1 - 2*x + 4*x^2 - 4*x^3 + 7*x^4 - 7*x^5 - 3*x^6 + 9*x^7 - 4*x^8 - 3*x^9 + 6*x^10 - 4*x^11 + x^12
+###
+b1 = -1
+pow = 1
+r = roots(c(1,0,-1,1))
+r.g = expand.grid(r, r)
+r.g = r.g[ r.g[,1] != r.g[,2] , ]
+x = sapply(1:nrow(r.g), function(id) roots(c(1, b1*r.g[id,1]^pow, r.g[id,2])))
+poly.calc(x)
+1 + 3*x + 7*x^2 + 10*x^3 + 8*x^4 + 3*x^5 - 3*x^6 - 3*x^7 + 2*x^8 - 2*x^10 + x^12
+
+
+### P18: 6*3
+b1 = -1
+r = roots(c(1,0,-1,1))
+r.g = expand.grid(r, r)
+r.g = r.g[ r.g[,1] != r.g[,2] , ]
+x = sapply(1:nrow(r.g), function(id) roots(c(1, b1*r.g[id,1], r.g[id,1]+r.g[id,2], r.g[id,2])))
+poly.calc(x)
+1 + 3*x + 8*x^2 + 12*x^3 + 20*x^4 + 10*x^5 + 31*x^6 + 8*x^7 + 46*x^8 - 19*x^9 + 23*x^10 +
+- 12*x^11 - x^12 - 6*x^13 - 6*x^14 + 4*x^15 - 2*x^16 + x^18
+
+
+### P18: 6*3
+b1 = -1
+r = roots(c(1,0,-1,1))
+r.g = expand.grid(r, r)
+r.g = r.g[ r.g[,1] != r.g[,2] , ]
+x = sapply(1:nrow(r.g), function(id) roots(c(1, b1*r.g[id,1], r.g[id,1]*r.g[id,2], r.g[id,2])))
+poly.calc(x)
+1 + x^2 + 2*x^3 + 8*x^4 + 3*x^5 + 20*x^6 + 7*x^7 + 35*x^8 - 3*x^9 + 23*x^10 +
+- 2*x^11 + 14*x^12 - 12*x^13 + 2*x^14 + 5*x^15 - 4*x^16 + x^18
 
 
 ########################
