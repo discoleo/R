@@ -3,7 +3,7 @@
 ### to Higher Order Polynomials
 ###
 ### (C) Leonard Mada
-### draft 0.1
+### draft v.0.2
 ###
 
 ### Citation:
@@ -11,12 +11,19 @@
 ### https://github.com/discoleo/R/blob/master/Math/Polynomials.CardanGeneralisation.R
 ### [I am open to collaboration, if anyone wants to publish properly]
 
+
 ### History:
+# draft v.0.2:
+# - renamed root() to solve.crd();
+# - added section on Special cases: Bugs;
 # Theory for Cardan-type Polynomials:
 # - consistent theory developed during 2018-2019;
 # - disseminated, but never oficially published;
 
-### Introduction
+####################
+
+####################
+### Introduction ###
 
 # Cardan type polynomials:
 # - can be easily solved (see below);
@@ -24,7 +31,7 @@
 #  -- see Polynomial wavelets:
 #   https://github.com/discoleo/R/blob/master/Math/Polynomial.Wavelet.R
 #  -- polynomial fractions: very nice and compact integrals:
-#   TODO: material;
+#   TODO: material on integrals of fractions;
 # - these polynomials are a very special case of a broader class: Class 1 polynomials;
 
 # Note:
@@ -58,8 +65,11 @@
 
 # r is the root of a polynomial of order n with *rational* coefficients based on (c, d);
 # - if (c, d) are integers, the coefficients will also be integers, e.g.:
+
+### Coefficients:
 # [for n = odd]
-# b[2*j-1] = C * c^p, with p = (n+1)/2 - j, j = 1..(n-1)/2;
+# b[2*j-1] = C[j] * c^p,
+# with p = (n+1)/2 - j, j = 1..(n-1)/2 and C[j] some constant;
 # b[even] = 0 for n = odd;
 # b0 = 2*d for n = odd;
 
@@ -101,17 +111,22 @@ f14 = function(x) x^14 - 14*c*x^12 + 77*c^2*x^10 - 210*c^3*x^8 + 294*c^4*x^6 - 1
 
 ### Roots:
 
-root = function(c, d, n) {
+# Note:
+# - these formulas may fail with certain complex type coefficients
+#   (see section on Special Cases);
+# - there is a lot of boiler-plate code to handle:
+#   ( - real_value)^(1/n);
+solve.crd = function(c, d, n=3) {
 	det = d^2 - c^n
 	det = if(Im(det) == 0 && Re(det) >= 0) sqrt(Re(det))
 		else if(Im(det) == 0) complex(re=0, im=sqrt(-Re(det)))
 		else sqrt(det)
-	if(Im(det) != 0) {
+	if(Im(det) != 0 || Im(d) != 0) {
 		pq = (c(d + det, d - det))^(1/n)
 	} else {
 		det = Re(det)
 		pq = c(d + det, d - det)
-		if(pq[1] >=0  && pq[2] >= 0) {
+		if(pq[1] >=0 && pq[2] >= 0) {
 			pq = pq^(1/n)
 		} else if(n %% 2 == 1) {
 			pq.sign = sign(pq)
@@ -149,7 +164,7 @@ n = 5
 c = 1
 d = 2
 ### Roots
-x = root(c, d, n)
+x = solve.crd(c, d, n)
 x
 # residual error
 err = f5(x)
@@ -166,7 +181,7 @@ n = 3
 c = 3
 d = 2
 ### Roots
-x = root(c, d, n)
+x = solve.crd(c, d, n)
 x
 # residual error
 err = f3(x)
@@ -188,7 +203,7 @@ d = 2
 # 4*d^2 - 6*c*d*x - x^3
 # x^3 + 6*c*d*x - 4*d^2
 # d is now 2*d^2; c = -2*c*d;
-x = root( -2*c*d, 2*d^2, n)
+x = solve.crd( -2*c*d, 2*d^2, n)
 x = 2*d/x
 x
 # err
@@ -205,9 +220,46 @@ round0(err)
 # [is already available in some of the other materials]
 
 
-###############
+###########################
 
-### Properties
+### C.) Special cases: Bugs
+
+# the simple formula fails when c = m^j,
+# where m^n = 1, m = root of unity of order n;
+
+# Note:
+# p*q = (c^n)^(1/n) = (m^(j*n))^(1/n)
+# = 1^(1/n) = 1,
+# BUT: 1 != m^j;
+
+### Example: n = 3
+# x^3 - 3*m*x - 2 = 0, where m^3 = 1;
+# c = m, d = -1;
+# => p*q = 1, but 1 != m;
+
+m3 = complex(re=cos(2*pi/3), im=sin(2*pi/3))
+
+# Solution:
+# Step 1:
+# x = y*m^2 =>
+# y^3 - 3*y - 2 = 0
+# => solve for y;
+# Step 2:
+# x = y * m^2;
+y = solve.crd(1, 1, n=3)
+x = y * m3^2
+### Test
+err = x^3 - 3*m3*x - 2
+round0(err)
+x
+
+
+
+####################
+####################
+
+##################
+### Properties ###
 
 # these polynomials have nice properties;
 
@@ -219,6 +271,7 @@ round0(err)
 
 ### TODO:
 # - implement & describe the modern approach;
+#  [the initial code was based on decomposition using fractions of order 1]
 
 
 ### n = 3:
@@ -227,7 +280,7 @@ c = 1
 d = 3
 ### Exact integral:
 # Step 1: compute p & q
-x = root(c, d, 3)
+x = solve.crd(c, d, 3)
 x
 x = x[1] # only real root
 # Step 2:
@@ -258,7 +311,8 @@ integrate(function(x) 1 / (x^3 - 3*c*x - 2*d), lower=lower, upper=upper)
 # [initial approach used a full fraction decomposition; unpublished;]
 
 
-################
+#################
+#################
 
 #################
 ### Generator ###
@@ -288,4 +342,38 @@ expand = function(n, coeff) {
 ###
 coeff = poly.cardan.gen(16)
 coeff
+
+
+
+########################
+########################
+
+### some variants
+
+x^5 - 5*c^2*x^4 + 5*c*(2*d)^2*x^2 - (2*d)^4
+x^5 - 5*c^2*x^4 + 20*c*d^2*x^2 - 16*d^4
+
+# x^5 - 5*B^2/A*x^4 + 20*B*x^2 - 16*A
+A = 3
+B = 1
+#
+d = A^(1/4)
+c = B/d^2
+#
+x = solve.crd(c, d, n=5)
+x = 2*d/x
+err = x^5 - 5*B^2/A*x^4 + 20*B*x^2 - 16*A
+round0(err)
+x
+
+
+### complicated Polynomial with same solution:
+(5/A * (B*x^2 - 2*A)^2 - 4*A)^(1/5) # ==
+(2*A/B - 1/B * sqrt((x^5 + 4*A)*A/5))^(1/2)
+
+err = (5/A * (B*x^2 - 2*A)^2 - 4*A)^2 -
+(2*A/B - 1/B * sqrt((x^5 + 4*A)*A/5))^5
+round0(err)
+
+
 
