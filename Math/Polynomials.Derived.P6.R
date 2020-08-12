@@ -7,7 +7,7 @@
 ### P6 Polynomials
 ### Derived from Special Factorizations
 ###
-### draft v.0.4-pre-a
+### draft v.0.4a
 
 
 ### Factorization of the P6 Polynomials
@@ -56,6 +56,9 @@
 #####################
 
 ### History
+# draft v.0.4a:
+# - some cleanup;
+# - a few experiments: P6 with >= 3 coefficients of zero;
 # draft v.0.4-pre-a:
 # - derived polynomial for the 5-parameter version (see v.0.3e);
 # draft v.0.3e-z:
@@ -155,6 +158,7 @@
 # x^6 + x^5 - x^4 + x^3 + 2*x^2 - 2*x + 1
 #
 # b.) with 2*cos(2*pi/5):
+# Example 1:
 # (x^3 - 2*cos(2*pi/5)*x^2 + 1)*(x^3 - 2*cos(4*pi/5)*x^2 + 1)
 # 1 + x - x^2 + 2*x^3 + x^4 + x^6
 # Example 2:
@@ -167,7 +171,7 @@
 # x^6 + 2*x^5 - 3*x^4 + x^3 + 2*x^2 - 3*x + 1
 #
 # d.) Roots of Cubic as coefficients of special quadratic:
-# Roots of Cubic => x^2 - r*x + b0 = 0:
+# Roots of Cubic: r => x^2 - r*x + b0 = 0:
 # (x^2 - r1*x + b0)*(x^2 - r2*x + b0)*(x^2 - r3*x + b0)
 # - generates a large sub-family of symmetric P6 polynomials (when b0 = +/-1);
 # - moved to separate file: Polynomials.Derived.P6.Symmetric.R;
@@ -1412,7 +1416,7 @@ err = 1 + 2*x + x^2 - 2*x^3 + x^4 + x^6
 round0(err)
 
 
-### Derivation
+### Derivation: P3 x P3[*]
 # Coeffs      | c1*m^2+c2*m      | b1*m^2+b2*m      | a1*m^2+a2*m      | 1
 # c1*m+c2*m^2 | c1^2+c2^2-c1*c2  | b1*c1+b2*c2+     | a1*c1+a2*c2+     | c1*m+c2*m^2
 #             |                  | b1*c2*m+b2*c1*m^2| a1*c2*m+a2*c1*m^2|
@@ -1431,23 +1435,64 @@ coeff = c(1, - (a1+a2), (a1^2+a2^2-a1*a2-b1-b2), (2*a1*b1+2*a2*b2-a1*b2-a2*b1-c1
 
 
 
-########################
+#########################
 
-### Cross-Entanglements
+### Permutations of Roots
+### & Cross-Entanglements using Permutated Roots
 
+### Permutations of Roots:
+# a.) roots of any base P3;
+# b.) cos(2*pi/7);
 c3 = 2*cos(2*pi/7 * 1:3)
 
-### some P6
-b = c(1, 0, 0)
-r = roots(c(1,0,1,1))
-r.g = expand.grid(r, r)
-r.g = r.g[ r.g[,1] != r.g[,2] , ]
-x = r.g[,1] + b[1]*r.g[,1]*r.g[,2] + b[2]*r.g[,2]^2 + b[3]*r.g[,1]*r.g[,2]^2
-poly.calc(x)
+library(polynom)
+library(pracma)
+
+# generate polynomial based on base roots
+fromP3.gen = function(coeff, s) {
+	# coeffs: in descending order (+ leading coeff)
+	r = roots(coeff) # base P3
+	r.g = expand.grid(r, r)
+	r.g = r.g[ r.g[,1] != r.g[,2] , ]
+	# new roots
+	r.g = cbind(r.g[,1], r.g[,1]*r.g[,2], r.g[,2]^2, r.g[,1]*r.g[,2]^2)
+	r.g = r.g[ , 1:length(s)]
+	x = sapply(1:nrow(r.g), function(id) sum(s * r.g[id,]))
+	p = poly.calc(x)
+	return(list(x=x, p=p))
+}
+
+
+### from P3 roots: some P6
+s = c(1, 1, 0, 0)
+coeff = c(1,0,1,1)
+p = fromP3.gen(coeff, s)
+x = p$x
+p
 1 - x + 6*x^2 + 3*x^3 - 2*x^5 + x^6
 
-### some P6
+###
+s = c(1, 1, 0, -1)
+coeff = c(1,0,1,1)
+p = fromP3.gen(coeff, s)
+x = p$x
+p
+1 + 4*x + 34*x^2 + 27*x^3 + 4*x^4 + x^5 + x^6
+
+###
+s = c(2, -1, 0, 1)
+coeff = c(1,-1, 1, 1)
+p = fromP3.gen(coeff, s)
+x = p$x
+p
+4 + 4*x - 24*x^3 + 22*x^4 - 6*x^5 + x^6
+
+
+### cos(2*pi/7)
+
+### from cos(2*pi/7)
 b = c(1, 1, -1)
+coeff = c(1,0,1,1)
 r.g = expand.grid(c3, c3)
 r.g = r.g[ r.g[,1] != r.g[,2] , ]
 x = r.g[,1] + b[1]*r.g[,1]*r.g[,2] + b[2]*r.g[,2]^2 + b[3]*r.g[,1]*r.g[,2]^2
@@ -1477,6 +1522,10 @@ poly.calc(x)
 
 #############
 ### some P12s
+
+### Entanglements using permuted roots
+### {P3} => Coefficients of P2:
+### 6 permutations x 2 [P2] => P12;
 
 ###
 b1 = -1
@@ -1552,7 +1601,10 @@ poly.calc(x)
 ########################
 ########################
 
+########################
 ### Brute-Force Approach
+
+# various experiments
 
 n = 3
 m = complex(re=cos(2*pi/n), im=sin(2*pi/n))
@@ -1657,4 +1709,94 @@ p.c = t(sapply(1:3, function(id) c(c3[id]^2-c3[id], c3[id]^3-1, 1)))
 mult.p(mult.p(p.c[1,], p.c[2,]), p.c[3,])
 x = roots(rev(p.c[1,]))
 1 - 2*x^2 + 6*x^4 - 7*x^5 + x^6
+
+
+
+### Coefficients == 0
+
+### roots of unity
+m7 = unity(7, all=T)
+m7 = m7[-1]
+# VERY FEW examples with >= 3 coeffs of zero!
+# (and x or x^5 present)
+lim2 = 5
+S0 = 0 # tested: S0 = 0, 3, 4, 5
+for(s6 in (-lim2):lim2) {
+for(s5 in (-lim2):lim2) {
+for(s4 in (-lim2):lim2) {
+for(s3 in (-lim2):lim2) {
+	for(s1 in (-6):6) {
+	for(s2 in (-6):6) {
+		s = c(s1,s2,s3,s4,s5,s6)
+		x.p = sapply(m7, function(m) S0 + sum(s * m^(1:6)))
+		p = round0.p(poly.calc(x.p))
+		if(p[7] == 0) next
+		sum0 = sum(as.vector(p) == 0)
+		# cat(sum0); cat(", ")
+		if(sum0 > 2 && any(p[c(2,6)] != 0)) {
+			print(p)
+			if(sum0 > 3) cat("==> !! ")
+			print(s)
+		}
+	}
+}}}}
+	print(s)
+	print(p)
+}
+
+
+p = sapply(-10:10, function(s) print(round0.p(poly.calc(5 + s*m7+6*m7^2+5*m7^3+5*m7^4+5*m7^5+5*m7^6))))
+#
+coeff = c(1,1,2,0,1,1,1)
+x = sapply(m7, function(m) sum(coeff * m^(0:6)))
+p = round0.p(poly.calc(x))
+7 - 7*x + 7*x^3 + x^6
+#
+coeff = c(5,4,6,5,5,5,5)
+x = sapply(m7, function(m) sum(coeff * m^(0:6)))
+p = round0.p(poly.calc(x))
+7 + 14*x + 7*x^2 + x^6
+#
+coeff = c(5,5,6,5,5,5,4)
+x = sapply(m7, function(m) sum(coeff * m^(0:6)))
+p = round0.p(poly.calc(x))
+7 + 7*x - 7*x^3 + x^6
+# 448 = 7 * 2^6 (scaled version from above)
+coeff = c(4,4,6,2,4,4,4)
+x = sapply(m7, function(m) sum(coeff * m^(0:6)))
+p = round0.p(poly.calc(x))
+448 - 224*x + 56*x^3 + x^6
+#
+coeff = c(4,4,6,4,2,4,4)
+x = sapply(m7, function(m) sum(coeff * m^(0:6)))
+p = round0.p(poly.calc(x))
+448 - 448*x + 112*x^2 + x^6
+#
+coeff = c(5,2,6,3,0,4,1)
+x = sapply(m7, function(m) sum(coeff * m^(0:6)))
+p = round0.p(poly.calc(x))
+16807 + 49*x^4 - 14*x^5 + x^6 # 7^5 = 16807
+#
+coeff = c(4,5,6,0,1,2,3)
+x = sapply(m7, function(m) sum(coeff * m^(0:6)))
+p = round0.p(poly.calc(x))
+16807 + 343*x^3 - 7*x^5 + x^6
+# 5103 = 7 * 3^6 (scaled up by 3)
+coeff = c(3,3,6,0,3,3,3)
+x = sapply(m7, function(m) sum(coeff * m^(0:6)))
+p = round0.p(poly.calc(x))
+5103 - 1701*x + 189*x^3 + x^6
+# 201691 = 7 * 28813, where 28813 = prime;
+coeff = c(0,1,-4,-2,5,-2,2)
+x = sapply(m7, function(m) sum(coeff * m^(0:6)))
+p = round0.p(poly.calc(x))
+201691 - 8274*x + 4991*x^2 + x^6
+# 23723 = 7 * 3389, where 3389 = prime;
+coeff = c(0,2,-2,-3,2,-1,2)
+x = sapply(m7, function(m) sum(coeff * m^(0:6)))
+p = round0.p(poly.calc(x))
+23723 - 4466*x + 1071*x^2 + x^6
+
+
+
 
