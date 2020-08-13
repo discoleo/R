@@ -4,14 +4,18 @@
 ### Leonard Mada
 ### [the one and only]
 ###
-### P6 Polynomials
-### Derived from P4
+### P6 Polynomials:
+### Derived from Root Permutations
 ###
-### draft v.0.1b
+### draft v.0.1c
 
 
 ### Generate P6
-### by Entangling roots of P4
+# - by Permuting & Entangling roots,
+#   e.g. the roots of P4 or P3;
+# - P3: new roots = f(r[i], r[j]) based on the 6 permutations;
+# - P4: new roots = (r[i] - r[j])^2,
+#   and using only the 6 distinct values;
 
 ### TODO:
 # - compute elementary polynomials;
@@ -22,6 +26,9 @@
 ###############
 ### History ###
 
+# draft v.0.1c:
+# - added the P3 permutations;
+#   [initially in Polynomials.Derived.P6.R]
 # draft v.0.1b:
 # - added various special cases:
 #   these are however decomposable into P[2]*P[4] or P[3]*P[3];
@@ -66,17 +73,25 @@ round0 = function(m, tol=1E-7) {
 	}
 	return(m)
 }
+### Generator
+permute.p = function(coeff) {
+	r = roots(coeff)
+	r.g = expand.grid(r, r)
+	r.g = r.g[ r.g[,1] != r.g[,2] , ]
+	x = round0((r.g[,1] - r.g[,2])^2)
+	x = unique(x) # TODO: may fail;
+	p = round0.p(poly.calc(x))
+	return(list(x=x, p=p))
+}
 
 ###################
 
 ### P4 => P6
 
 ###
-r4 = roots(c(1,0,0,1, 1))
-r.g = expand.grid(r4, r4)
-x = round0((r.g[,1] - r.g[,2])^2)
-x = unique(x[ x != 0 ])
-round0.p(poly.calc(x))
+coeff = c(1,0,0,1, 1)
+p = permute.p(coeff)
+x = p$x
 229 + 216*x - 112*x^2 + 26*x^3 + 8*x^4 + x^6
 
 # TODO:
@@ -86,11 +101,22 @@ round0.p(poly.calc(x))
 #
 # (3+4)*(E1^4 - 4*E1^2*E2 + 4*E1*E3 + 2*E2^2 - 4*E4)
 # - 4*E1*(E1^3 - 3*E1*E2 + 3*E3) +
-# + 8*r[i]^2*r[j]^2 + ...
+# + 8*r[i]^2*r[j]^2 + # <== TODO
+# - 2*r112 + 12*E4;
 
-# r^4 = E1^4 - 4*E1^2*E2 + 4*E1*E3 + 2*E2^2 - 4*E4
-# r^3 = -(E1^3 - 3*E1*E2 + 3*E3)
-# r^2 = E1^2 - 2*E2
+### Test/Derivation
+E = coeff[-1]
+r2 = E[1]^2 - 2*E[2];
+r3 = -(E[1]^3 - 3*E[1]*E[2] + 3*E[3]);
+r4 = E[1]^4 - 4*E[1]^2*E[2] + 4*E[1]*E[3] + 2*E[2]^2 - 4*E[4];
+r13 = E[1]*(E[1]^3 - 3*E[1]*E[2] + 3*E[3]) - (E[1]^4 - 4*E[1]^2*E[2] + 4*E[1]*E[3] + 2*E[2]^2 - 4*E[4]);
+r112 = E[2] * r2 - r13
+# r[i]*r[j]*r[k]^2 = E2 * r^2 - r[i]*r[j]^3
+#   = E2*(E1^2 - 2*E2) - E1*(E1^3 - 3*E1*E2 + 3*E3) + (E1^4 - 4*E1^2*E2 + 4*E1*E3 + 2*E2^2 - 4*E4);
+# r[i]*r[j]^3 = E1*(E1^3 - 3*E1*E2 + 3*E3) - (E1^4 - 4*E1^2*E2 + 4*E1*E3 + 2*E2^2 - 4*E4);
+# r^4 = E1^4 - 4*E1^2*E2 + 4*E1*E3 + 2*E2^2 - 4*E4;
+# r^3 = -(E1^3 - 3*E1*E2 + 3*E3);
+# r^2 = E1^2 - 2*E2;
 #
 # pow = 3
 # sum(r4[1]*r4[-1]^pow, r4[2]*r4[-2]^pow, r4[3]*r4[-3]^pow, r4[4]*r4[-4]^pow)
@@ -102,32 +128,38 @@ round0.p(poly.calc(x))
 # r^4 = E1*(E1^3 - 3*E1*E2 + 3*E3) - E2*(E1^2 - 2*E2) + E1*E3 - 4*E4
 # (x-(r1-r2)^2)*(x-(r1-r3)^2)*(x-(r1-r4)^2)*(x-(r2-r3)^2)*(x-(r2-r4)^2)*(x-(r3-r4)^2)
 # (x-(a-b)^2)*(x-(a-c)^2)*(x-(a-d)^2)*(x-(b-c)^2)*(x-(b-d)^2)*(x-(c-d)^2)
-
+r.g = expand.grid(1:4,1:4,1:4) # doubled: r.g[,2] vs r.g[,3]
+r.g = r.g[ r.g[,1] != r.g[,2] , ]
+r.g = r.g[ r.g[,1] != r.g[,3] , ]
+r.g = r.g[ r.g[,2] != r.g[,3] , ]
+sum(r[r.g[,1]]^2*r[r.g[,2]]*r[r.g[,3]]) / 2
 
 ###
-coeffs = c(1,0,0,1,-1)
-r4 = roots(coeffs)
-r.g = expand.grid(r4, r4)
-x = round0((r.g[,1] - r.g[,2])^2)
-x = unique(x[ x != 0 ])
-round0.p(poly.calc(x))
+coeff = c(1,0,0,1,-1)
+p = permute.p(coeff)
+x = p$x
 -283 - 216*x - 112*x^2 + 26*x^3 - 8*x^4 + x^6
+
 # and a inverse-symmetric P12 for fun:
-x = sapply(x, function(r) roots(c(1, 1-r, -1))) # parameters: +/- r & +/- 1;
+x = sapply(x, function(r) roots(c(1, 1-r, -1))) # parameters: +/- r & b0 = +/- 1;
 1 - 6*x + x^2 + 16*x^3 - 80*x^4 + 370*x^5 - 436*x^6 - 370*x^7 - 80*x^8 - 16*x^9 +
 + x^10 + 6*x^11 + x^12
 
 
 ###
-coeffs = c(1,0,1,1, 2)
-r4 = roots(coeffs)
-r.g = expand.grid(r4, r4)
-x = round0((r.g[,1] - r.g[,2])^2)
-x = unique(x[ x != 0 ])
-round0.p(poly.calc(x))
+coeff = c(1,0,1,1, 2)
+p = permute.p(coeff)
+x = p$x
 1825 - 250*x - 335*x^2 + 86*x^3 + 38*x^4 + 8*x^5 + x^6
 
+###
+p = sapply(-6:6, function(b) print(permute.p(c(1, 0,0,b,1))$p))
 
+
+p = sapply(-6:6, function(b) print(permute.p(c(1, 0,0,-b,b))$p))
+
+
+#########
 ### P12 !
 coeffs = c(1,2,0,0, 1)
 alpha = 2
@@ -216,4 +248,66 @@ p
 x = p$x
 -1296 - 4212*x - 3816*x^2 - 193*x^3 + 231*x^4 - 27*x^5 + x^6
 (-4 - 12*x - 9*x^2 + x^3) * (324 + 81*x - 18*x^2 + x^3)
+
+
+##########################
+##########################
+
+##########################
+### Permutations of P3 ###
+
+
+library(polynom)
+library(pracma)
+
+# generate polynomial based on base roots
+# - added also r.g[,2];
+fromP3.gen = function(coeff, s) {
+	# coeffs: in descending order (+ leading coeff)
+	r = roots(coeff) # base P3
+	r.g = expand.grid(r, r)
+	r.g = r.g[ r.g[,1] != r.g[,2] , ]
+	if(nrow(r.g) == 0) return(list(x=NA, p=NA))
+	# new roots
+	r.g = cbind(r.g[,1], r.g[,2], r.g[,1]*r.g[,2], r.g[,2]^2, r.g[,1]*r.g[,2]^2)
+	r.g = r.g[ , 1:length(s)]
+	x = sapply(1:nrow(r.g), function(id) round0(sum(s * r.g[id,])))
+	p = round0.p(poly.calc(x))
+	return(list(x=x, p=p))
+}
+
+
+### from P3 roots: some P6
+s = c(1, 0, 1, 0, 0)
+coeff = c(1,0,1,1)
+p = fromP3.gen(coeff, s)
+x = p$x
+p
+1 - x + 6*x^2 + 3*x^3 - 2*x^5 + x^6
+
+###
+s = c(1, 0, 1, 0, -1)
+coeff = c(1,0,1,1)
+p = fromP3.gen(coeff, s)
+x = p$x
+p
+1 + 4*x + 34*x^2 + 27*x^3 + 4*x^4 + x^5 + x^6
+
+###
+s = c(2, 0, -1, 0, 1)
+coeff = c(1,-1, 1, 1)
+p = fromP3.gen(coeff, s)
+x = p$x
+p
+4 + 4*x - 24*x^3 + 22*x^4 - 6*x^5 + x^6
+
+
+###
+p = sapply(-6:6, function(b) print(fromP3.gen(c(1,b,1,1), c(1,0,1,-1))$p))
+
+p = sapply(-6:6, function(b) print(fromP3.gen(c(1,b,1,1), c(1,0,1,-b))$p))
+
+p = sapply(-6:6, function(b) print(fromP3.gen(c(1,b,1,1), c(1,-1,1,0))$p))
+
+p = sapply(-6:6, function(b) print(fromP3.gen(c(1,0,b,b), c(1,-1,1,0))$p))
 
