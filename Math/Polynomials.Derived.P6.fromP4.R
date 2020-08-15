@@ -7,7 +7,7 @@
 ### P6 Polynomials:
 ### Derived from Root Permutations
 ###
-### draft v.0.1c
+### draft v.0.1d
 
 
 ### Generate P6
@@ -16,6 +16,7 @@
 # - P3: new roots = f(r[i], r[j]) based on the 6 permutations;
 # - P4: new roots = (r[i] - r[j])^2,
 #   and using only the 6 distinct values;
+# - also: P3(P3) => P9 and factorization of P9 using initial/base P3;
 
 ### TODO:
 # - compute elementary polynomials;
@@ -26,6 +27,8 @@
 ###############
 ### History ###
 
+# draft v.0.1d:
+# - added some derivations of type P3(P3);
 # draft v.0.1c:
 # - added the P3 permutations;
 #   [initially in Polynomials.Derived.P6.R]
@@ -248,6 +251,45 @@ p
 x = p$x
 -1296 - 4212*x - 3816*x^2 - 193*x^3 + 231*x^4 - 27*x^5 + x^6
 (-4 - 12*x - 9*x^2 + x^3) * (324 + 81*x - 18*x^2 + x^3)
+
+
+##########################
+##########################
+
+### some P3 Derivations
+
+### x^3 = x + 1
+
+p3derived.gen = function(K, coeff=c(1)) {
+	r = roots(c(1,0,coeff,K))
+	x.r = -(r * coeff[1] + K)
+	x = sapply(x.r, function(r) roots(c(1,0,0,-r)))
+	p1 = round0.p(poly.calc(x))
+	p = round0.p(p1 / round0.p(poly.calc(r)))
+	return(list(x=x, p=p))
+}
+
+###
+p = p3derived.gen(1)
+p
+x = p$x
+round0(1 - x + x^2 + 2*x^3 - x^4 + x^6)
+
+
+###
+p = sapply(-6:6, function(s) print(p3derived.gen(s)$p))
+p = sapply(-6:6, function(s) print(p3derived.gen(1, coeff=c(s))$p))
+p = sapply(-6:6, function(s) print(p3derived.gen(s, coeff=c(s))$p))
+#
+s = -4
+p = p3derived.gen(1, coeff=c(s)); x = p$x; p
+round0(1 + 4*x + 16*x^2 + 2*x^3 + 4*x^4 + x^6)
+
+###
+K = 4
+x = p3derived.gen(K, coeff=c(K))$x
+round0( K^2 - K^2*x + K^2*x^2 + 2*K*x^3 - K*x^4 + x^6 )
+round0( (x^3 - K*x + K)^2 + K*x^4 + K^2*x )
 
 
 ##########################

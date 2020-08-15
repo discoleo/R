@@ -20,7 +20,8 @@
 # - moved P6 poynomials to:
 #   https://github.com/discoleo/R/blob/master/Math/Polynomials.Derived.P6.R
 # v.0.3.c - v.0.3.f:
-# - more awesome polynomials with complete solutions:
+# - more awesome P6 polynomials with complete solutions;
+# - moved now to separate file (see v.0.3.x);
 #   1 + x - x^4 - x^5 + x^6 = 0;
 #   1 - x + x^2 + x^3 + x^4 + x^6 = 0;
 #   1 + x + x^2 - x^3 - 2*x^4 + x^6 = 0;
@@ -417,4 +418,81 @@ x
 # 5 of the roots are the real roots
 err = 1 - 6*x - x^2 + 10*x^3 - 6*x^4 + x^5
 round0(err)
+
+
+###################
+
+library(polynom)
+library(pracma)
+
+m5 = complex(re=cos(2*pi/5), im=sin(2*pi/5))
+m5 = m5^(1:4)
+
+
+###
+sol = sapply(m5, function(x) roots(c(1, x^3, x)) )
+sol
+
+x = sol # *NOT* roots of -1!
+1 - x + x^3 - x^4 + x^5 - x^7 + x^8
+
+
+###
+sol = sapply(m5, function(x) roots(c(1, x^4-x^2, x)) )
+sol
+
+poly.calc(x)
+x = sol
+1 - x^2 + 10*x^3 + 11*x^4 - 10*x^5 - x^6 + x^8
+
+
+###
+sol = sapply(m5, function(x) roots(c(1, x^2, -x)) )
+sol
+
+x = sol
+1 + x + 2*x^2 - 2*x^3 - 3*x^5 + 2*x^6 - x^7 + x^8
+
+
+##########################
+##########################
+
+######################
+### P4 Derivations ###
+
+# the P6 variants:
+# - are in file Polynomials.Derived.P6.fromP4.R;
+#  [the file covers both from P3 & P4]
+
+library(polynom)
+library(pracma)
+
+###
+r = roots(c(1,0,0,1,1))
+x.r = r^4 + r^2
+x1 = sapply(x.r, function(r) roots(c(1,0,1,0,-r)))
+x = (x1^2)[c(1,3),]
+p1 = round0.p(poly.calc(x1))
+p2 = round0.p(poly.calc(x))
+p1 # = (x^4+x+1)*(x^4-x+1)*(5 + 9*x^2 + 8*x^4 + 4*x^6 + x^8)
+p2 # = (x^4 + 2*x^2 - x + 1)*(5 + 9*x + 8*x^2 + 4*x^3 + x^4)
+
+
+x.r = r^2*(r+1)
+x = sapply(x.r, function(r) roots(c(1,1,0,-r)))
+p1 = round0.p(poly.calc(x))
+p1
+round0.p(p1 / round0.p(poly.calc(r)))
+1 - x - 4*x^2 - x^3 + 5*x^4 + 6*x^5 + 6*x^6 + 4*x^7 + x^8
+
+
+x.r = -(r+1)
+x = sapply(x.r, function(r) roots(c(1,0,0,0,-r)))
+p1 = round0.p(poly.calc(x))
+p1
+round0.p(p1 / round0.p(poly.calc(r)))
+1 - x + x^2 - x^3 + 3*x^4 - 2*x^5 + x^6 + 3*x^8 - x^9 + x^12
+
+
+
 
