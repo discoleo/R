@@ -7,7 +7,7 @@
 ### P6 Polynomials
 ### Derived from Special Factorizations
 ###
-### draft v.0.4a
+### draft v.0.4b
 
 
 ### Factorization of the P6 Polynomials
@@ -56,9 +56,10 @@
 #####################
 
 ### History
-# draft v.0.4a:
+# draft v.0.4a-v.0.4b:
 # - some cleanup;
 # - a few experiments: P6 with >= 3 coefficients of zero;
+# - more P6 derived from P3 via P3(P3);
 # draft v.0.4-pre-a:
 # - derived polynomial for the 5-parameter version (see v.0.3e);
 # draft v.0.3e-z:
@@ -70,7 +71,7 @@
 #   K + 3*n^2*x + 3*n*(n-1)*x^2 - (6*n-1)*x^3 - 3*(n-1)*x^4 + 3*x^5 + x^6 = 0;
 # - v.0.3e-tris: added another parameter to equation above (K, n, s10);
 # - v.0.3e-x4: added a total of 4 parameters to equation above (K, n, s10, s11);
-# - v.0.3e-pre-z: a 5 parameter version (TODO: the polynomial);
+# - v.0.3e-pre-z: a 5 parameter version (TODO/DONE: the polynomial);
 # draft v.0.3c-d(bis):
 # - solved: -1 + b1*x - b2*x^2 + b3*x^3 + b2*x^4 + b1*x^5 + x^6 = 0;
 # - technique to generate symmetrical P12 polynomials
@@ -931,14 +932,14 @@ p
 d = 5
 c = 2
 s = c(1, 1, -1)
-# exact P3 needs a lot of code to handle (-real)^(1/3)
+# exact P3 needs a lot of code to handle radicals: (-real)^(1/3)
 det = sqrt(d^2 - c^3 + 0i)
-p.v = (d + det)^(1/3) * m3.all; q.v = (d - det)^(1/3) / m3.all # TODO: fails when (d - det) < 0
+p.v = rootn(d + det, n=3) * m3.all; q.v = rootn(d - det, n=3) / m3.all # simple root fails when (d - det) < 0
 b0 = roots(c(1, 0, -3*c, -2*d)); # b0 = p.v + q.v
 r = s[3] * b0^2 + s[2]* b0 + s[1] - 2*c*s[3]
 x = sapply(1:3, function(id) roots(c(1, r[id], b0[id])))
 p = round0(mult.p(c(b0[2], r[2],1), c(b0[3], r[3],1)))
-p = round0(mult.p(p, c(b0[1], r[1],1)))
+p = round0.p(mult.p(p, c(b0[1], r[1],1)))
 p
 # Polynomial
 s0 = s[1]; s1 = s[2]; s2 = s[3];
@@ -949,6 +950,10 @@ s0 = s[1]; s1 = s[2]; s2 = s[3];
 - 3*(2*d*s1*s2 + c*s1^2 + c^2*s2^2 - s0^2)*x^4 +
 + 3*s0*x^5 + x^6
 
+
+#
+s[2] = ((c+1)*s[1]-2*c^2*s[3])/2/d
+# 1/3 * -(b4 + s2*b1) + s0^2 = c*s1^2 + c*s0*s2 - c^2*s2^2
 
 ###########################
 ###########################
@@ -1458,7 +1463,7 @@ fromP3.gen = function(coeff, s) {
 	r.g = cbind(r.g[,1], r.g[,1]*r.g[,2], r.g[,2]^2, r.g[,1]*r.g[,2]^2)
 	r.g = r.g[ , 1:length(s)]
 	x = sapply(1:nrow(r.g), function(id) sum(s * r.g[id,]))
-	p = poly.calc(x)
+	p = round0.p(poly.calc(x))
 	return(list(x=x, p=p))
 }
 
@@ -1518,6 +1523,20 @@ poly.calc(x)
 
 ### Note:
 # c3 = (m7 + m7^3)/m7^2
+
+
+###############
+### pq-Approach
+m3 = unity(3, all=T)
+
+###
+d = 1
+c = 2
+#
+det = sqrt(d^2 - c^3 + 0i)
+p = rootn(d + det, n=3)*m3; q = rootn(d - det, n=3)/m3;
+p.p = sapply(-6:6, function(s) print(round0.p(poly.calc(c(p+s*q, s*p+q)))))
+p.p = sapply(-6:6, function(s) print(round0.p(poly.calc(c(s*q^2-(p+q), s*p^2-(p+q))))))
 
 
 #############
@@ -1596,6 +1615,71 @@ x = sapply(1:nrow(r.g), function(id) roots(c(1, b1*r.g[id,1], r.g[id,1]*r.g[id,2
 poly.calc(x)
 1 + x^2 + 2*x^3 + 8*x^4 + 3*x^5 + 20*x^6 + 7*x^7 + 35*x^8 - 3*x^9 + 23*x^10 +
 - 2*x^11 + 14*x^12 - 12*x^13 + 2*x^14 + 5*x^15 - 4*x^16 + x^18
+
+
+########################
+
+### Derived Polynomials
+
+# TODO: move to file "Derived.fromP4.R"
+# [although these are derived from P3]
+
+m3 = unity(3, all=T)
+
+polyDerived.gen = function(K, coeff=c(0,1,1,1)) {
+	k = if(K >=0) K^(1/3) * m3 else - (-K)^(1/3) * m3;
+	# x.r = k^3 + k^2 + k
+	len = length(coeff) - 1
+	id = 0:len
+	x.r = sapply(k, function(k) sum(coeff * k^id))
+	x = sapply(x.r, function(r) roots(rev(coeff) + c(0,0,0,-r)))
+	p = round0.p(poly.calc(x)) / round0.p(poly.calc(k))
+	p = round0.p(p)
+	return(list(x=x, p=p))
+}
+
+###
+K = 2
+p = polyDerived.gen(K, coeff=c(0,1,1,1))
+p
+x = p$x # 6 of the roots are correct!
+1 - 3*x + 3*x^3 + 6*x^4 + 3*x^5 + x^6
+
+###
+K = 3
+p = polyDerived.gen(K, coeff=c(0,1,1,1))
+p
+x = p$x # 6 of the roots are correct!
+err = 4 - 6*x - 3*x^2 + x^3 + 6*x^4 + 3*x^5 + x^6
+round0(err)
+
+###
+K = 3
+p = polyDerived.gen(K, coeff=c(0,1,2,1))
+p
+x = p$x # 6 of the roots are correct!
+err = 16 - 3*x - 3*x^2 + 14*x^3 + 15*x^4 + 6*x^5 + x^6
+round0(err)
+
+###
+K = 3
+p = polyDerived.gen(K, coeff=c(0,2,1,1))
+p
+x = p$x # 6 of the roots are correct!
+err = 2 - 6*x + 9*x^2 + 7*x^3 + 9*x^4 + 3*x^5 + x^6
+round0(err)
+
+###
+K = 2
+p = sapply(-6:6, function(s) print(polyDerived.gen(s, coeff=c(0,1,-1,1))$p))
+p = sapply(-6:6, function(s) print(polyDerived.gen(s, coeff=c(0,2, 1,1))$p))
+p = sapply(-6:6, function(s) print(polyDerived.gen(s, coeff=c(0,2-s^2,-2,1))$p))
+p = sapply(-6:6, function(s) print(polyDerived.gen(s, coeff=c(0,2-s^2,-2,2))$p))
+
+###
+K = 2
+p = sapply(-6:6, function(s) print(polyDerived.gen(K, coeff=c(0,1,s,1))$p))
+
 
 
 ########################
@@ -1798,5 +1882,51 @@ p = round0.p(poly.calc(x))
 23723 - 4466*x + 1071*x^2 + x^6
 
 
+######################
 
+### Brute-Force Analysis:
+coeff = c(2,4,0,0,0,4,1)
+r = roots(rev(coeff))
+r
+abs(r)^2
+
+xp = r[2]*r[3]
+
+for(s in -3:3) {
+	x = xp + s/xp
+	for(s3 in (-12):12) {
+	for(s2 in (-20):20) {
+	for(s1 in (-20):20) {
+		err = x^4 + s3*x^3 + s2*x^2 + s1*x
+		# cat(sum0); cat(", ")
+		if(round(err) == round(err, 6)) {
+			print(c(s, s1, s2, s3))
+			print(err)
+		}
+	}}}
+}
+
+##############
+
+### other experimental approaches
+# [but not yet working]
+
+m6 = unity(6, all=T)
+m3 = unity(3, all=T)
+
+d = 2
+c = 1
+# p, q: for P5
+s = 2 # + 2*c*(p+q)
+pow = 1/4
+r = p + q
+x1 = sqrt(r) + sqrt(-r + s/r^pow + 0i)
+x2 = sqrt(r) - sqrt(-r + s/(p+q)^pow + 0i)
+x3 = m3[2]*sqrt(r) - m3[2]*sqrt(-r + s/(p+q)^pow + 0i)
+x4 = m3[2]*sqrt(r) + m3[2]*sqrt(-r + s/(p+q)^pow + 0i)
+x5 = m3[3]*sqrt(r) + m3[3]*sqrt(-r + s/(p+q)^pow + 0i)
+x6 = m3[3]*sqrt(r) - m3[3]*sqrt(-r + s/(p+q)^pow + 0i)
+x = c(x1,x2,x3,x4,x5,x6)
+Poly(x)
+round0.p(rev(Poly(x)))
 
