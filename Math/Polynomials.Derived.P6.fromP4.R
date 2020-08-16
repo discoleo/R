@@ -7,7 +7,7 @@
 ### P6 Polynomials:
 ### Derived from Root Permutations
 ###
-### draft v.0.1d
+### draft v.0.1e
 
 
 ### Generate P6
@@ -16,7 +16,11 @@
 # - P3: new roots = f(r[i], r[j]) based on the 6 permutations;
 # - P4: new roots = (r[i] - r[j])^2,
 #   and using only the 6 distinct values;
-# - also: P3(P3) => P9 and factorization of P9 using initial/base P3;
+# - deriving a P9 from composition of 2 P3:
+#   P3(P3) => P9 = P3[base] * P6
+#   and factorization of P9 using initial/base P3;
+# - this will be discussed more extensively in:
+#   Polynomials.Derived.R;
 
 ### TODO:
 # - compute elementary polynomials;
@@ -27,7 +31,7 @@
 ###############
 ### History ###
 
-# draft v.0.1d:
+# draft v.0.1d-v.0.1e:
 # - added some derivations of type P3(P3);
 # draft v.0.1c:
 # - added the P3 permutations;
@@ -39,6 +43,16 @@
 # - moved from Polynomials.Derived.P6.R [v.0.3e [pre-z]]
 #   to separate file;
 
+
+################
+### Sections ###
+
+### Section A:
+# - P4 Permutations;
+### Section B:
+# - P3 Permutations;
+### Section C:
+# - Derived P6 from P3;
 
 
 ####################
@@ -253,43 +267,6 @@ x = p$x
 (-4 - 12*x - 9*x^2 + x^3) * (324 + 81*x - 18*x^2 + x^3)
 
 
-##########################
-##########################
-
-### some P3 Derivations
-
-### x^3 = x + 1
-
-p3derived.gen = function(K, coeff=c(1)) {
-	r = roots(c(1,0,coeff,K))
-	x.r = -(r * coeff[1] + K)
-	x = sapply(x.r, function(r) roots(c(1,0,0,-r)))
-	p1 = round0.p(poly.calc(x))
-	p = round0.p(p1 / round0.p(poly.calc(r)))
-	return(list(x=x, p=p))
-}
-
-###
-p = p3derived.gen(1)
-p
-x = p$x
-round0(1 - x + x^2 + 2*x^3 - x^4 + x^6)
-
-
-###
-p = sapply(-6:6, function(s) print(p3derived.gen(s)$p))
-p = sapply(-6:6, function(s) print(p3derived.gen(1, coeff=c(s))$p))
-p = sapply(-6:6, function(s) print(p3derived.gen(s, coeff=c(s))$p))
-#
-s = -4
-p = p3derived.gen(1, coeff=c(s)); x = p$x; p
-round0(1 + 4*x + 16*x^2 + 2*x^3 + 4*x^4 + x^6)
-
-###
-K = 4
-x = p3derived.gen(K, coeff=c(K))$x
-round0( K^2 - K^2*x + K^2*x^2 + 2*K*x^3 - K*x^4 + x^6 )
-round0( (x^3 - K*x + K)^2 + K*x^4 + K^2*x )
 
 
 ##########################
@@ -352,4 +329,86 @@ p = sapply(-6:6, function(b) print(fromP3.gen(c(1,b,1,1), c(1,0,1,-b))$p))
 p = sapply(-6:6, function(b) print(fromP3.gen(c(1,b,1,1), c(1,-1,1,0))$p))
 
 p = sapply(-6:6, function(b) print(fromP3.gen(c(1,0,b,b), c(1,-1,1,0))$p))
+
+
+##########################
+##########################
+
+#################
+### Section C ###
+#################
+
+### P6 Derivations from P3;
+
+### Variant 1:
+# - let B[3] be an initial/baseline polynomial of order 3 with roots r[b];
+# - let D[3] be another polynomial:
+#  -- the roots of D(x) - D(r) will be the roots of a P[9];
+#  -- P[9] = B[3] * P[6];
+
+### Variant 2:
+# [viewing Polynomials with the eyes of Lagrange and the skills of Gauss]
+# - we can use the structure of B[3] and incorporate it into D[3];
+
+
+### Example 1:
+K = 2
+coeff = c(1,1,1,K)
+r = roots(coeff)
+r.der = -(coeff[3] * r + K); # r^3 + r^2
+x = sapply(1:3, function(id) roots(c(1,0, r[id], -r.der[id])))
+p1 = round0.p(poly.calc(x))
+p = p1 / round0.p(poly.calc(r))
+p1; p;
+err = 2 - 4*x - x^2 + 5*x^3 - x^4 - x^5 + x^6
+round0(err)
+
+
+### Example 2:
+K = 1
+coeff = c(1,1,2,K)
+r = roots(coeff)
+r.der = -(coeff[3] * r + K); # r^3 + r^2
+x = sapply(1:3, function(id) roots(c(1,0, r[id], -r.der[id])))
+p1 = round0.p(poly.calc(x))
+p = p1 / round0.p(poly.calc(r))
+p1; p;
+err = -1 - 3*x + 3*x^2 + 4*x^3 - 2*x^4 - x^5 + x^6
+round0(err)
+
+
+### x^3 = x + 1
+
+p3derived.gen = function(K, coeff=c(1)) {
+	r = roots(c(1,0,coeff,K))
+	x.r = -(r * coeff[1] + K)
+	x = sapply(x.r, function(r) roots(c(1,0,0,-r)))
+	p1 = round0.p(poly.calc(x))
+	p = round0.p(p1 / round0.p(poly.calc(r)))
+	return(list(x=x, p=p))
+}
+
+###
+p = p3derived.gen(1)
+p
+x = p$x
+round0(1 - x + x^2 + 2*x^3 - x^4 + x^6)
+
+
+###
+p = sapply(-6:6, function(s) print(p3derived.gen(s)$p))
+p = sapply(-6:6, function(s) print(p3derived.gen(1, coeff=c(s))$p))
+p = sapply(-6:6, function(s) print(p3derived.gen(s, coeff=c(s))$p))
+#
+s = -4
+p = p3derived.gen(1, coeff=c(s)); x = p$x; p
+round0(1 + 4*x + 16*x^2 + 2*x^3 + 4*x^4 + x^6)
+
+###
+K = 4
+x = p3derived.gen(K, coeff=c(K))$x
+round0( K^2 - K^2*x + K^2*x^2 + 2*K*x^3 - K*x^4 + x^6 )
+round0( (x^3 - K*x + K)^2 + K*x^4 + K^2*x )
+
+
 
