@@ -5,7 +5,7 @@
 ### [the one and only]
 ###
 ### Derived Polynomials
-### v.0.3x
+### v.0.4a
 
 ### Note:
 # This is the 1st part towards:
@@ -16,6 +16,11 @@
 # - includes a different approach to polynomials.
 
 ### History
+# v.0.4.a:
+# - added various derived polynomials starting from:
+#   x^n = x^j + K => roots of: x^j = r^n - K;
+#   Example: x^4 + x^3 + 1 = 0
+#   => 1 + 2*x^3 - x^4 + x^6 - x^7 + x^8 = 0;
 # v.0.3.x:
 # - moved P6 poynomials to:
 #   https://github.com/discoleo/R/blob/master/Math/Polynomials.Derived.P6.R
@@ -464,10 +469,62 @@ x = sol
 # - are in file Polynomials.Derived.P6.fromP4.R;
 #  [the file covers both from P3 & P4]
 
+### other variants
+
 library(polynom)
 library(pracma)
 
+### P4 variants
+
+p4der.gen = function(K, coeff=c(1)) {
+	r = roots(c(1,coeff,0,0,K))
+	if(coeff == 0) {return(list(x=NA, p=NA));}
+	x.r = -(r^4 + K) / coeff
+	x = sapply(x.r, function(r) roots(c(1,0,0,-r)))
+	p1 = round0.p(poly.calc(x))
+	p = round0.p(p1 / round0.p(poly.calc(r)))
+	return(list(x=x, p=p))
+}
+
 ###
+K = 1
+p = p4der.gen(K)
+x = p$x
+p
+err = 1 + 2*x^3 - x^4 + x^6 - x^7 + x^8
+round0(err)
+
+###
+K = 2
+p = p4der.gen(K)
+x = p$x
+p
+err = 4 + 4*x^3 - 2*x^4 + x^6 - x^7 + x^8
+round0(err)
+
+###
+K = 2
+p = p4der.gen(K, coeff=3)
+x = p$x
+p
+err = 4 + 12*x^3 - 2*x^4 + 9*x^6 - 3*x^7 + x^8
+round0(err)
+# (x^2-x+1) * P6
+err = 4 + 4*x + 8*x^3 + 6*x^4 - 2*x^5 + x^6
+round0(err)
+
+###
+K = 1
+p = sapply(-6:6, function(s) print(p4der.gen(K, coeff=s)$p))
+p = sapply(-6:6, function(s) print(p4der.gen(s, coeff=s)$p))
+#
+s = -1
+p = p4der.gen(s, coeff=s)
+x = p$x
+round0( 1 + 2*x^3 + x^4 + x^6 + x^7 + x^8 )
+
+
+# old [very simple]
 r = roots(c(1,0,0,1,1))
 x.r = r^4 + r^2
 x1 = sapply(x.r, function(r) roots(c(1,0,1,0,-r)))
@@ -494,5 +551,30 @@ round0.p(p1 / round0.p(poly.calc(r)))
 1 - x + x^2 - x^3 + 3*x^4 - 2*x^5 + x^6 + 3*x^8 - x^9 + x^12
 
 
+
+### P5
+d = 2
+c = 1
+r = roots(c(1,0,-5*c,0,5*c^2, -2*d))
+x.r = (r^5 + 5*c^2*r - 2*d)/5/c
+x = sapply(x.r, function(r) roots(c(1,0,0,-r)))
+p1 = round0.p(poly.calc(x))
+p1
+round0.p(p1 / round0.p(poly.calc(r)))
+err = 16 + 20*x + 25*x^2 + 40*x^3 + 25*x^4 + 4*x^5 + 20*x^6 + 5*x^8 + x^10
+round0(err)
+
+
+### P5: x^5 = x+1
+b1 = -1
+b0 = -1
+r = roots(c(1,0,0,0, b1, b0))
+x.r = -(b1*r + b0)
+x = sapply(x.r, function(r) roots(c(1,0,0,0,0,-r)))
+p1 = round0.p(poly.calc(x))
+p1
+round0.p(p1 / round0.p(poly.calc(r)))
+err = 1 - x + x^2 - x^3 + x^4 - 4*x^5 + 3*x^6 - 2*x^7 + x^8 + 6*x^10 - 3*x^11 + x^12 - 4*x^15 + x^16 + x^20
+round0(err)
 
 
