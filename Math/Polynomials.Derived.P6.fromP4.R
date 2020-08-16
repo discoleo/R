@@ -7,7 +7,7 @@
 ### P6 Polynomials:
 ### Derived from Root Permutations
 ###
-### draft v.0.1e
+### draft v.0.1f
 
 
 ### Generate P6
@@ -31,8 +31,9 @@
 ###############
 ### History ###
 
-# draft v.0.1d-v.0.1e:
-# - added some derivations of type P3(P3);
+# draft v.0.1d-v.0.1f:
+# - added some derivations of type P3(P3):
+#   including more examples;
 # draft v.0.1c:
 # - added the P3 permutations;
 #   [initially in Polynomials.Derived.P6.R]
@@ -377,6 +378,42 @@ err = -1 - 3*x + 3*x^2 + 4*x^3 - 2*x^4 - x^5 + x^6
 round0(err)
 
 
+
+### Example 3:
+K = 1
+coeff = c(1,1,2,K)
+r = roots(coeff)
+r.der = -(coeff[3] * r + K); # r^3 + r^2
+x = sapply(1:3, function(id) roots(c(1, r[id], 2*r[id], -2 * r.der[id])))
+p1 = round0.p(poly.calc(x))
+p = p1 / round0.p(poly.calc(r))
+p1; p;
+err = -8 - 24*x + 4*x^2 + 12*x^3 - 2*x^5 + x^6
+round0(err)
+
+
+p3der_test.gen = function(coeff) {
+	r = roots(coeff)
+	r.der = -(coeff[3] * r + coeff[4]); # r^3 + r^2
+	x = sapply(1:3, function(id) roots(c(1, r[id], 2*r[id], -2 * r.der[id])))
+	p1 = round0.p(poly.calc(x))
+	p = p1 / round0.p(poly.calc(r))
+	return(list(x=x, p=round0.p(p), p1=p1))
+}
+###
+K = 1
+p = sapply(-6:6, function(s) print(p3der_test.gen(c(1,1,s,K))$p))
+#
+s = -1
+p = p3der_test.gen(c(1,1,s,K))
+x = p$x
+err = 16 - 8*x^2 - 2*x^5 + x^6
+round0(err)
+x
+
+
+
+### simple Examples / Introductory Examples
 ### x^3 = x + 1
 
 p3derived.gen = function(K, coeff=c(1)) {
