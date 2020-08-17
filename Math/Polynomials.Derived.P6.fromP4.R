@@ -7,7 +7,7 @@
 ### P6 Polynomials:
 ### Derived from Root Permutations
 ###
-### draft v.0.1f
+### draft v.0.1f-bis
 
 
 ### Generate P6
@@ -31,9 +31,11 @@
 ###############
 ### History ###
 
-# draft v.0.1d-v.0.1f:
+# draft v.0.1d-v.0.1f-bis:
 # - added some derivations of type P3(P3):
-#   including more examples;
+#   including more examples & even more examples;
+# - solved:
+#   1 - K^2*x + K*x^2 + 2*x^3 + K*x^5 + x^6 = 0;
 # draft v.0.1c:
 # - added the P3 permutations;
 #   [initially in Polynomials.Derived.P6.R]
@@ -394,23 +396,103 @@ round0(err)
 
 p3der_test.gen = function(coeff) {
 	r = roots(coeff)
-	r.der = -(coeff[3] * r + coeff[4]); # r^3 + r^2
-	x = sapply(1:3, function(id) roots(c(1, r[id], 2*r[id], -2 * r.der[id])))
+	r.der = -(coeff[3] * r + coeff[4]); # can be obtained directly: r^3 + coeff[2] * r^2
+	x = sapply(1:3, function(id) roots(c(1, r[id], 2*coeff[2]*r[id], -2 * r.der[id])))
 	p1 = round0.p(poly.calc(x))
 	p = p1 / round0.p(poly.calc(r))
 	return(list(x=x, p=round0.p(p), p1=p1))
 }
-###
+p3der_test2.gen = function(coeff, s2=1) {
+	r = roots(coeff)
+	x = sapply(r, function(r) roots(c(1, 0, -s2 * r, -r^3 + s2*r^2)))
+	p1 = round0.p(poly.calc(x))
+	p = p1 / round0.p(poly.calc(r))
+	return(list(x=x, p=round0.p(p), p1=p1))
+}
+
+### Tests
 K = 1
 p = sapply(-6:6, function(s) print(p3der_test.gen(c(1,1,s,K))$p))
-#
-s = -1
+p = sapply(-6:6, function(s) print(p3der_test.gen(c(1,2,s,K))$p))
+p = sapply(-6:6, function(s) print(p3der_test.gen(c(1,1,s,-s))$p)) # beautiful
+###
+K = 1; s = -1
 p = p3der_test.gen(c(1,1,s,K))
 x = p$x
 err = 16 - 8*x^2 - 2*x^5 + x^6
 round0(err)
 x
+###
+K = NA; s = -3
+p = p3der_test.gen(c(1,1,s,-s))
+x = p$x
+err = 144 + 48*x - 2*x^5 + x^6
+round0(err)
+x
+###
+K = 2; s = -2
+p = p3der_test.gen(c(1,1,s,K))
+x = p$x
+err = 64 + 16*x - 8*x^2 - 2*x^5 + x^6
+round0(err)
+x
+###
+K = 2; s = -1
+p = p3der_test.gen(c(1,2,s,K))
+x = p$x
+err = 64 - 48*x - 44*x^2 - 4*x^5 + x^6
+round0(err)
+x
+###
+K = 1; s = 2
+p = p3der_test.gen(c(1,s,-4,K))
+x = p$x
+err = 72 + 40*x^2 - 28*x^3 - 4*x^5 + x^6
+round0(err)
+x # abs(x)^2 # slightly trivial
+###
+s = 1
+p = p3der_test.gen(c(1,s,-s,1/2))
+x = p$x
+err = 6 - 2*x^2 - 2*x^3 - 2*x^5 + x^6
+round0(err)
+x
 
+
+p = sapply(-6:6, function(s) print(p3der_test2.gen(c(1,0,1,1), s2=s)$p)) # interesting
+p = sapply(-6:6, function(s) print(p3der_test2.gen(c(1,0,1,s), s2=s)$p))
+p = sapply(-6:6, function(s) print(p3der_test2.gen(c(1,0,s,1), s2=s)$p))
+p = sapply(-6:6, function(s) print(p3der_test2.gen(c(1,s,0,1), s2=-s)$p)) # beautiful
+p = sapply(-6:6, function(s) print(p3der_test2.gen(c(1,s,0,1), s2=1-s)$p))
+p = sapply(-6:6, function(s) print(p3der_test2.gen(c(1,2*s,0,1), s2=-s)$p))
+p = sapply(-6:6, function(s) print(p3der_test2.gen(c(1,3*s,0,s), s2=-s)$p))
+###
+K = 3
+p = p3der_test2.gen(c(1,-K,0,1), s2=K)
+x = p$x
+err = 1 - K^2*x + K*x^2 + 2*x^3 + K*x^5 + x^6
+round0(err)
+###
+s = 1
+p = p3der_test2.gen(c(1,0, 1, 1), s2=s)
+x = p$x
+err = 3 - 4*x + 2*x^2 - x^4 + x^6
+round0(err)
+x
+###
+s = -1
+p = p3der_test2.gen(c(1,0, s, 1), s2=s)
+x = p$x
+err = 1 - 2*x + x^4 + x^6
+round0(err)
+x
+###
+s = 0
+p = p3der_test2.gen(c(1,s,0,2-s), s2=-1)
+x = p$x
+err = 2 - 6*x + 4*x^3 + x^6
+round0(err)
+x
 
 
 ### simple Examples / Introductory Examples
