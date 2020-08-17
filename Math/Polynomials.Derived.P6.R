@@ -7,7 +7,7 @@
 ### P6 Polynomials
 ### Derived from Special Factorizations
 ###
-### draft v.0.4b
+### draft v.0.4b-bis
 
 
 ### Factorization of the P6 Polynomials
@@ -1905,6 +1905,157 @@ for(s in -3:3) {
 		}
 	}}}
 }
+
+##############
+
+
+for(s0 in seq(-24, 0, by=2)) {
+	shift = -s0 / 2
+	for(s2 in 0:0) {
+	for(s1 in 0:24) {
+	for(c in (-36):(-18)) {
+	for(d in -18:18) {
+		coeff = c(
+			2*d, 3*(2*s1*d - c*s0 + 2*c^2*s2),
+			3*(2*d*(c*s2^2 - s0*s2 + s1^2) - 2*c*s0*s1 + 4*c^2*s1*s2 - c),
+			3*(2*d*(c*s1*s2^2- s0*s1*s2 - s2) - c*s0*(s1^2 + c*s2^2) - 2*c*s1 + 2*c^2*s1^2*s2 + 1/3*(2*s1^3*d + (4*d^2 - 2*c^3)*s2^3 + s0^3)),
+			- 3*(2*d*s1*s2 + c*s1^2 + c^2*s2^2 - s0^2), 3*s0, 1)
+		p = polynomial(coeff)
+		p = change.origin(p, shift)
+		if(p[1] == 0) next;
+		isZero = as.vector(p) == 0
+		sum0 = sum(isZero)
+		if(sum0 > 2 && (p[2] != 0) ) {
+			print(p)
+			if(sum0 > 3) cat("==> !! ")
+			print(c(c, d, s2, s1, s0))
+		}
+	}
+	}
+	}
+	}
+}
+
+# simplified
+for(s0 in seq(-36, 0, by=2)) {
+	shift = -s0 / 2
+	s2 = 0;
+	for(s1 in -45:45) {
+	for(c in seq(-9, -4, by=1)) {
+	for(d in seq(-45, 45, by=1)) {
+		coeff = c(
+			2*d, 3*(2*s1*d - c*s0 + 2*c^2*s2),
+			3*(2*d*(c*s2^2 - s0*s2 + s1^2) - 2*c*s0*s1 + 4*c^2*s1*s2 - c),
+			3*(2*d*(c*s1*s2^2- s0*s1*s2 - s2) - c*s0*(s1^2 + c*s2^2) - 2*c*s1 + 2*c^2*s1^2*s2 + 1/3*(2*s1^3*d + (4*d^2 - 2*c^3)*s2^3 + s0^3)),
+			- 3*(2*d*s1*s2 + c*s1^2 + c^2*s2^2 - s0^2), 3*s0, 1)
+		p = polynomial(coeff)
+		p = change.origin(p, shift)
+		if(p[1] == 0) next;
+		isZero = as.vector(p) == 0
+		sum0 = sum(isZero)
+		if(sum0 > 2 && (p[2] != 0) ) {
+			print(p)
+			if(sum0 > 3) cat("==> !! ")
+			print(c(c, d, s2, s1, s0))
+		}
+	}}
+	}
+}
+
+
+solve.p3cd = function(coeff) {
+	### c(c, d, s2, s1, s0)
+	shift = coeff[5] / 2
+	b0 = roots(c(1, 0, -3*coeff[1], -2*coeff[2]));
+	r = coeff[3] * b0^2 + coeff[4]* b0 + coeff[5] - 2*coeff[1]*coeff[3]
+	x = sapply(1:3, function(id) roots(c(1, r[id], b0[id])))
+	x = x + shift
+	p = round0.p(poly.calc(x))
+	return(list(x=x, p=p))
+}
+### c(c, d, s2, s1, s0)
+coeff = c(2,  3, -1,  1,  0)
+p = solve.p3cd(coeff)
+x = p$x
+err = 6 - 6*x + 4*x^3 + x^6
+round0(err)
+#
+coeff = c(-1, -1,  0,  1, -2)
+p = solve.p3cd(coeff)
+x = p$x
+err = -29 - 36*x + 10*x^3 + x^6 
+round0(err)
+#
+coeff = c(-4, 2, 0, -1, -4)
+p = solve.p3cd(coeff)
+x = p$x
+err = -116 - 108*x + 20*x^3 + x^6
+round0(err)
+#
+coeff = c(-9,  9,  0, -1, -6)
+p = solve.p3cd(coeff)
+x = p$x
+err = -1845 - 1188*x + 90*x^3 + x^6
+round0(err)
+#
+coeff = c(-9,-18,  0,  1,-6)
+p = solve.p3cd(coeff)
+x = p$x
+err = -6921 - 3672*x + 180*x^3 + x^6
+round0(err)
+#
+coeff = c(-16, -34,   0,   2, -16)
+p = solve.p3cd(coeff)
+x = p$x
+err = -1484036 - 326808*x + 2720*x^3 + x^6
+round0(err)
+#
+coeff = c(-9,  13,   0,  -3, -18)
+p = solve.p3cd(coeff)
+x = p$x
+err = -2466829 - 499356*x + 3510*x^3 + x^6
+round0(err) # 3510 = 13*27*10; # 499356 = 4*9*11*13*97
+#
+coeff = c(-9, -14,   0,   3, -18)
+p = solve.p3cd(coeff)
+x = p$x
+err = -2860705 - 564984*x + 3780*x^3 + x^6
+round0(err)
+
+
+# x & x^2
+coeff = c(-1, -6,  0,  1, -2)
+p = solve.p3cd(coeff)
+x = p$x
+err = -109 - 156*x - 60*x^2 + x^6
+round0(err)
+#
+coeff = c(-4, 12,  0, -1, -4)
+p = solve.p3cd(coeff)
+x = p$x
+err = -136 - 168*x - 60*x^2 + x^6
+round0(err)
+#
+coeff = c(-4, -36,   0,   1,  -4)
+p = solve.p3cd(coeff)
+x = p$x
+err = -2440 - 2232*x - 540*x^2 + x^6
+round0(err)
+#
+coeff = c(-4, 21,  0, -2, -8)
+p = solve.p3cd(coeff)
+x = p$x
+err = -27910 - 17724*x - 2940*x^2 + x^6
+round0(err)
+#
+coeff = c(-4, -27,   0,   2,  -8)
+p = solve.p3cd(coeff)
+x = p$x
+err = -59014 - 33156*x - 4860*x^2 + x^6
+round0(err)
+#
+
+
 
 ##############
 
