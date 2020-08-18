@@ -6,14 +6,15 @@
 ###
 ### Polynomial Systems: P2
 ### Decompositions of Symmetric Systems
-### v.0.3b
+### v.0.3c
 
 
 ### History
-# draft v.0.3a-b:
+# draft v.0.3a-v.0.3c:
 # - systematic approach to entanglements:
 #  -- multiplicative: x*y*(x+y) = R;
 #  -- dividing: x*y/(x+y)^j = R;
+#  -- basic order 5: multiplicative variant, x*y*(x+y) (in v.0.3c);
 # - TODO: all variants (more variants in v.0.3b);
 # draft v.0.2f:
 # - entanglement: x*y*(x+y) = R;
@@ -89,6 +90,19 @@ round0 = function(m, tol=1E-7) {
 round0.p = function(p, tol=1E-7) {
 	p = round0(as.vector(p), tol=tol)
 	class(p) = "polynomial"
+	return(p)
+}
+### helper functions
+unity = function(n=3, all=TRUE) {
+	m = complex(re=cos(2*pi/n), im=sin(2*pi/n))
+	if(all) {
+		m = m^(0:(n-1))
+	}
+	return(m)
+}
+mult.p = function(p1, p2) {
+	p.m = outer(p1, p2)
+    p = as.vector(tapply(p.m, row(p.m) + col(p.m), sum))
 	return(p)
 }
 
@@ -475,8 +489,10 @@ poly.calc(sol$x)
 x = sol$x
 
 
-########################
-########################
+############################
+############################
+
+### Liniar/Polynomial Shifts
 
 library(pracma)
 
@@ -707,7 +723,7 @@ poly.calc(x)
 b = c(2)
 R = c(-2, 1)
 p = sapply(-6:6, function(b) print(round0.p(poly.calc(solve.p2p3ent(b, R)$sol[,1]))))
-#
+# (x^3 + b*x + 1)^2
 1 - 12*x + 36*x^2 + 2*x^3 - 12*x^4 + x^6 
 1 - 10*x + 25*x^2 + 2*x^3 - 10*x^4 + x^6 
 1 - 8*x + 16*x^2 + 2*x^3 - 8*x^4 + x^6 
@@ -721,6 +737,13 @@ p = sapply(-6:6, function(b) print(round0.p(poly.calc(solve.p2p3ent(b, R)$sol[,1
 1 + 8*x + 16*x^2 + 2*x^3 + 8*x^4 + x^6 
 1 + 10*x + 25*x^2 + 2*x^3 + 10*x^4 + x^6 
 1 + 12*x + 36*x^2 + 2*x^3 + 12*x^4 + x^6
+# parametric example (but trivial)
+b = 3
+R = c(-2, 1); # fixed
+p = solve.p2p3ent(b, R)
+x = p$sol[,1]
+err = 1 + 2*b*x + b^2*x^2 + 2*x^3 + 2*b*x^4 + x^6
+round0(err)
 
 ###
 R = c(-2, 1)
@@ -738,12 +761,20 @@ p = sapply(-6:6, function(b) print(round0.p(poly.calc(solve.p2p3ent(c(2*b, -b), 
 1 + 4*x + 16*x^2 + 2*x^3 + 4*x^4 + x^6 
 1 + 5*x + 25*x^2 + 2*x^3 + 5*x^4 + x^6 
 1 + 6*x + 36*x^2 + 2*x^3 + 6*x^4 + x^6
+# parametric example
+b = 3
+b.p = c(2*b, -b)
+R = c(-2, 1); # fixed
+p = solve.p2p3ent(b.p, R)
+x = p$sol[,1]
+err = 1 + b*x + b^2*x^2 + 2*x^3 + b*x^4 + x^6
+round0(err)
 
 
 ###
 R = c(-4,1)
 p = sapply(-6:6, function(b) print(round0.p(poly.calc(solve.p2p3ent(b, R, type="mult")$sol[,1]))))
-#
+# x^6 + b*x^3 - (b*x - 1)^2
 -1 + 12*x - 36*x^2 + 4*x^3 + x^6 
 -1 + 10*x - 25*x^2 + 4*x^3 + x^6 
 -1 + 8*x - 16*x^2 + 4*x^3 + x^6 
@@ -870,4 +901,86 @@ poly.calc(sol)
 x = sol
 1 + 48*x^2 + 26*x^3 + 576*x^4 + 1008*x^5 + 823*x^6 - 1152*x^7 + 438*x^8 +  
 724*x^9 + 576*x^10 + 132*x^11 + 145*x^12 + 102*x^14 - 6*x^15 + x^18
+
+
+b = cbind(4*(k^2 - k), 2*k)
+R = c(2, 2)
+sol = as.vector(sapply(1:3, function(id) solve.p2p3ent(b[id,], R, type="mult", n=3)$sol[,1]))
+poly.calc(sol)
+# still one fraction
+x = sol
+-307 - 1728*x + 3120*x^2 - 9586*x^3 + 7680*x^4 - 7920*x^5 + 4486*x^6 +  
++ 2517*x^8 + 1003*x^9 + 1200*x^10 + 366*x^11 + 300.25*x^12 + 57*x^14 - 6*x^15 + x^18
+
+
+
+################################
+################################
+
+###############
+### Order 5 ###
+###############
+
+### Simple/Basic System
+# x^5 + y^5 = R1
+# x*y*(x+y) = R2
+
+# (x+y)^5 - 5*x*y*(x+y)^3 + 5*(x*y)^2*(x+y) - R1 = 0
+# X = x + y =>
+# X^5 - 5*R2*X^2 + 5*R2^2/X - R1
+# X^6 - 5*R2*X^3 - R1*X + 5*R2^2
+
+R = c(25, 5)
+x.sum = roots(c(1,0,0, - 5*R[2], 0, - R[1], 5*R[2]^2))
+xy = R[2] / x.sum
+x.diff = sqrt(x.sum^2 - 4*xy + 0i)
+x = (x.sum + x.diff)/2
+y = (x.sum - x.diff)/2
+sol = cbind(x, y)
+sol = rbind(sol, sol[,2:1])
+sol
+
+### Test
+x^5 + y^5
+x*y*(x+y)
+
+### Classic
+round0.p(poly.calc(sol[,1]))
+err = 125 - 125*x^4 - 25*x^5 - 25*x^7 + 5*x^9 + x^10 + x^12
+round0(err)
+
+### TODO:
+# - parametric classic polynomial;
+
+
+################################
+################################
+
+
+##########################
+### Asymmetric Systems ###
+##########################
+
+
+### Basic P2 System
+
+# x^3 + b1*y^3 = R1
+# x*y = R2
+
+m3 = unity(3, all=T)
+
+b = c(2)
+R = c(1, 1)
+#
+det = sqrt(R[1]^2 - 4*b[1]*R[2]^3 + 0i)
+x1 = m3 * ((R[1] + det)/2)^(1/3)
+x2 = m3 * ((R[1] - det)/2)^(1/3)
+x = c(x1, x2)
+y = R[2]/x
+sol = cbind(x, y)
+
+### Test
+x^3 + b[1]*y^3
+x*y
+
 
