@@ -7,7 +7,7 @@
 ### Polynomial Systems
 ### Heterogenous Symmetric
 ###
-### draft v.0.1a
+### draft v.0.1a-bis
 
 library(polynom)
 library(pracma)
@@ -70,6 +70,51 @@ round0(err)
 # p*(p^2 - 3*b1*x*p + 3*b1^2*x^2 - b1^3)
 # (x^3 + b1*x - R)*(x^6 - b1*x^4 - 2*R*x^3 + b1^2*x^2 + b1*R*x + R^2 - b1^3)
 
+###################
+
+### (x - s)^3 + b*y
+
+# (x - s)^3 + b1*y = R
+# (y - s)^3 + b1*x = R
+
+### Solution:
+# Diff =>
+# (x - s)^3 - (y - s)^3 - b1*(x-y) = 0
+# (x - y)*(x^2 + x*y + y^2 - 3*s*(x+y) + 3*s^2 - b1) = 0
+# => x = y *OR* x^2 + x*y + y^2 - 3*s*(x+y) + 3*s^2 - b1 = 0;
+# =>
+# (x+y)^2 - 3*s*(x+y) - x*y + 3*s^2 - b1 = 0
+# x*y = (x+y)^2 - 3*s*(x+y) + 3*s^2 - b1;
+# x*y = Z^2 - 3*s*Z + 3*s^2 - b1;
+
+# Sum =>
+# (x - s)^3 + (y - s)^3 + b1*(x+y) = 2*R
+# (x+y)^3 - 3*x*y*(x+y) - 3*s*(x^2+y^2) + (3*s^2+b1)*(x+y) - 2*s^3 - 2*R = 0
+# Z^3 - 3*s*Z^2 - 3*x*y*Z + 6*s*x*y + (3*s^2+b1)*Z - 2*s^3 - 2*R
+# Z^3 - 3*s*Z^2 - 3*(Z^2 - 3*s*Z + 3*s^2 - b1)*Z + 6*s*(Z^2 - 3*s*Z + 3*s^2 - b1) + (3*s^2+b1)*Z - 2*s^3 - 2*R
+# -2*Z^3 + 12*s*Z^2 + 4*(b1-6*s^2)*Z + 16*s^3 - 2*R - 6*s*b1
+# Z^3 - 6*s*Z^2 - 2*(b1-6*s^2)*Z - 8*s^3 + R + 3*s*b1
+
+### Example
+b = 2
+R = 1
+s = 1
+#
+r.sum = roots(c(1, - 6*s, - 2*(b[1]-6*s^2), - 8*s^3 + R + 3*s*b[1]))
+xy = r.sum^2 - 3*s*r.sum + 3*s^2 - b[1];
+r.diff = sqrt(r.sum^2 - 4*xy + 0i)
+x = (r.sum + r.diff)/2
+y = (r.sum - r.diff)/2
+sol = cbind(x, y)
+sol # TODO: include also x = y cases
+
+### Test
+(x-s)^3 + b[1]*y
+(y-s)^3 + b[1]*x
+
+### TODO:
+# - classic + polynomial P6;
+
 
 
 #############
@@ -112,4 +157,10 @@ sol
 ### Test
 x^4 + b[1]*y
 y^4 + b[1]*x
+
+### Classical
+# TODO:
+# b1*y = R - x^4
+# (R - x^4)^4/b1^4 + b1*x - R = 0
+# (R - x^4)^4 + b1^5*x - R*b1^4
 
