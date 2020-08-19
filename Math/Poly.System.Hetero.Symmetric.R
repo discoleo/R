@@ -4,16 +4,31 @@
 ### Leonard Mada
 ### [the one and only]
 ###
-### Polynomial Systems
+### Polynomial Systems:
 ### Heterogenous Symmetric
 ###
-### draft v.0.1a-bis
+### draft v.0.1a-shift
+
+
+###############
+### History ###
+
+### draft v.0.1a-shift:
+# - derivation of the classical polynomial for shifted root;
+# - more interesting polynomials are generated,
+#   when shifted root is shifted back;
+#   [in general not identical to non-shifted root polynomials]
+
+
 
 library(polynom)
 library(pracma)
 
 
-#############
+###############
+
+###############
+### Order 3 ###
 
 ### x^3 + b*y
 
@@ -77,6 +92,18 @@ round0(err)
 # (x - s)^3 + b1*y = R
 # (y - s)^3 + b1*x = R
 
+solve.htShift = function(b, R, shift=0) {
+	s = shift;
+	r.sum = roots(c(1, - 6*s, - 2*(b[1]-6*s^2), - 8*s^3 + R + 3*s*b[1]))
+	xy = r.sum^2 - 3*s*r.sum + 3*s^2 - b[1];
+	r.diff = sqrt(r.sum^2 - 4*xy + 0i)
+	x = (r.sum + r.diff)/2
+	y = (r.sum - r.diff)/2
+	sol = cbind(x, y)
+	sol = rbind(sol, sol[,2:1])
+	sol # TODO: include also x = y cases
+}
+
 ### Solution:
 # Diff =>
 # (x - s)^3 - (y - s)^3 - b1*(x-y) = 0
@@ -106,7 +133,12 @@ r.diff = sqrt(r.sum^2 - 4*xy + 0i)
 x = (r.sum + r.diff)/2
 y = (r.sum - r.diff)/2
 sol = cbind(x, y)
+sol = rbind(sol, sol[,2:1])
 sol # TODO: include also x = y cases
+
+sol = solve.htShift(b, R, shift=s)
+x = sol[,1]; y = sol[,2];
+sol
 
 ### Test
 (x-s)^3 + b[1]*y
@@ -114,10 +146,61 @@ sol # TODO: include also x = y cases
 
 ### TODO:
 # - classic + polynomial P6;
+poly.calc(sol[,1])
+round0.p(poly.calc(sol[,1] - s))
+
+###
+b = 2; R = 1;
+s = 3/2
+#
+sol = solve.htShift(b, R, shift=s)
+x = sol[,1]; y = sol[,2];
+x = sol[,1] - s; # with shift
+-4 - 4*x + 4*x^2 + 4*x^3 - 2*x^4 + x^6
+
+###
+b = 2; R = 1;
+s = 5/2
+#
+sol = solve.htShift(b, R, shift=s)
+x = sol[,1]; y = sol[,2];
+x = sol[,1] - s; # with shift
+8 - 8*x + 4*x^2 + 8*x^3 - 2*x^4 + x^6
+
+###
+p = sapply((-6:6) + 1/2, function(s) print(round0.p(poly.calc(solve.htShift(2, 1, shift=s)[,1] - s))))
+# [some b0] - 4*s0*x + 4*x^2 + 4*s0*x^3 - 2*x^4 + x^6 # s0 = s - 1/2
 
 
+### Classic
+### Derivation:
+# b1*y = R - (x-s)^3
+# =>
+# (R - (x-s)^3 - s*b1)^3 / b1^3 + b1*x - R = 0
+# (R - (x-s)^3 - s*b1)^3 + b1^4*x - R*b1^3
+# ((x-s)^3 - R + s*b1)^3 - b1^4*x + R*b1^3
+# ((x-s)^3 - R + b1*x - b1*x + s*b1)^3 - b1^4*x + R*b1^3 # p = ((x-s)^3 - R + b1*x)
+# ((x-s)^3 - R + b1*x)*(p^2 - 3*(b1*x - s*b1)*p + 3*(b1*x - s*b1)^2) - (b1*x - s*b1)^3 - b1^4*x + R*b1^3
+# p*(p^2 - 3*(b1*x - s*b1)*p + 3*(b1*x - s*b1)^2) - b1^3 * ((x-s)^3 + b1*x - R)
+# p*(p^2 - 3*(b1*x - s*b1)*p + 3*(b1*x - s*b1)^2 - b1^3)
+# p == 0 *OR* 2nd (...) == 0, where p = ((x-s)^3 - R + b1*x)
+# p^2 - 3*b1*(x - s)*p + 3*b1^2*(x - s)^2 - b1^3 == 0
+# (x-s)^6 + b1^2*x^2 + R^2 + 2*b1*x*(x-s)^3 - 2*R*(x-s)^3 - 2*b1*R*x - 3*b1*(x - s)*p + 3*b1^2*(x - s)^2 - b1^3
+# (x-s)^6 + 2*b1*x*(x-s)^3 - 2*R*(x-s)^3 - 3*b1*(x - s)*p + b1^2*x^2 + 3*b1^2*(x - s)^2 - 2*b1*R*x + R^2 - b1^3
+# (x-s)^6 + 2*b1*x*(x-s)^3 - 2*R*(x-s)^3 - 3*b1*(x-s)^4 - 3*b1^2*(x-s)*x + 4*b1^2*x^2 + 3*b1*R*(x-s) - 6*b1^2*s*x + 3*b1^2*s^2 - 2*b1*R*x + R^2 - b1^3
+# (x-s)^6 - 3*b1*(x-s)^4 + 2*b1*x*(x-s)^3 - 2*R*(x-s)^3 + b1^2*x^2 - 3*b1^2*s*x + b1*R*x - 3*b1*R*s + 3*b1^2*s^2 + R^2 - b1^3
+# (x-s)^6 - 3*b1*(x-s)^4 + 2*b1*x*(x-s)^3 - 2*R*x^3 + 6*R*s*x^2 + b1^2*x^2 - 6*R*s^2*x - 3*b1^2*s*x + b1*R*x - 3*b1*R*s + 3*b1^2*s^2 + 2*R*s^3 + R^2 - b1^3
+# (x-s)^6 - (b1*x - 3*b1*s)*(x-s)^3 - 2*R*x^3 + 6*R*s*x^2 + b1^2*x^2 - 6*R*s^2*x - 3*b1^2*s*x + b1*R*x - 3*b1*R*s + 3*b1^2*s^2 + 2*R*s^3 + R^2 - b1^3
+# (x-s)^6 - (b1*x - 3*b1*s)*(x-s)^3 - 2*R*x^3 + (6*R*s + b1^2)*x^2 - (6*R*s^2 + 3*b1^2*s - b1*R)*x - 3*b1*R*s + 3*b1^2*s^2 + 2*R*s^3 + R^2 - b1^3
+#
+# (x-s)^6 - b1*x^4 + (6*b1*s - 2*R)*x^3 - (12*b1*s^2 - 6*R*s - b1^2)*x^2 + (10*b1*s^3 - 6*R*s^2 - 3*b1^2*s + b1*R)*x - 3*b1*R*s + 3*b1^2*s^2 + 2*R*s^3 - 3*b1*s^4 + R^2 - b1^3
 
-#############
+
+########################
+########################
+
+###############
+### Order 4 ###
 
 ### x^4 + b*y
 
