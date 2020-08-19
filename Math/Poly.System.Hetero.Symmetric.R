@@ -7,16 +7,16 @@
 ### Polynomial Systems:
 ### Heterogenous Symmetric
 ###
-### draft v.0.1b-sh
+### draft v.0.1b-x
 
 
 ###############
 ### History ###
 
-### draft v.0.1b - v.0.1b-sh:
+### draft v.0.1b - v.0.1b-x:
 # - added a basic xy-type: x^3 + x*y = R;
-# - added also the shift;
-# - TODO: parametric classic polynomial;
+# - added also the shift (v.0.1b-sh);
+# - TODO: parametric classic polynomial [DONE: in v.0.1b-x];
 ### draft v.0.1a-shift:
 # - derivation of the classical polynomial for shifted root;
 # - more interesting polynomials are generated,
@@ -351,6 +351,7 @@ round0(err)
 # Diff =>
 # (x-s)^3 - (y-s)^3 = 0
 # (x-y)*((x-s)^2 + (x-s)*(y-s) + (y-s)^2) = 0
+# alternatively: x - s = (y-s)*m, where m^3 = 1;
 # Case 2:
 # (x-s)^2 + (x-s)*(y-s) + (y-s)^2 = 0
 # (x+y - 2*s)^2 = (x-s)*(y-s)
@@ -397,24 +398,41 @@ sol
 (y-s)^3 + b[1]*x*y
 
 ### Classical Polynomial
+
+# back-shifted:
+x = x - s
+err = (b[1]*s^2-R)^2 + b[1]*s*(b[1]*s^2 - R)*x + b[1]*R*x^2 + (2*b[1]*s^2 + b[1]^2*s - 2*R)*x^3 + b[1]*(s+b[1])*x^4 - b[1]*x^5 + x^6
+round0(err)
+
+p.coeff = c((b[1]*s^2-R)^2, b[1]*s*(b[1]*s^2 - R), b[1]*R, (2*b[1]*s^2 + b[1]^2*s - 2*R), b[1]*(s+b[1]), - b[1], 1)
+
+# Test
 round0.p(poly.calc(sol[,1]))
 # back-shift
 round0.p(poly.calc(sol[,1] - s))
 
-### TODO:
-# - classical polynomial: parametric;
+
+### Derivation:
+# y - s = (x-s)*m, where m^3 = 1;
+# =>
+# (x-s)^3 + b1*x*(s + (x-s)*m) = R
+# (x-s)^3 + b1*x*(x-s)*m + b1*s*x - R = 0
+round0((x-s)^3 + b[1]*x*(x-s)*m^1 + b[1]*s*x - R)
+# ((x-s)^3 + b[1]*x*(x-s)*m^1 + b[1]*s*x - R)*((x-s)^3 + b[1]*x*(x-s)*m^2 + b[1]*s*x - R)
+# back-shifted: (x^3 + b[1]*x^2*m^1 - b[1]*s*x*m^2 + b[1]*s^2 - R)*(x^3 + b[1]*x^2*m^2 - b[1]*s*x*m + b[1]*s^2 - R)
 
 ###
 b = 2; R = 1
 p = sapply(-6:6, function(s) print(poly.htxy(b, R, s)$p))
-# [] - []*x + b*x^2 + b*[]*x^3 - b*(s+b)*x^4 - b*x^5 + x^6
-5041 - 852*x + 2*x^2 + 118*x^3 - 8*x^4 - 2*x^5 + x^6 
-2401 - 490*x + 2*x^2 + 78*x^3 - 6*x^4 - 2*x^5 + x^6 
-961 - 248*x + 2*x^2 + 46*x^3 - 4*x^4 - 2*x^5 + x^6 
-289 - 102*x + 2*x^2 + 22*x^3 - 2*x^4 - 2*x^5 + x^6 
-49 - 28*x + 2*x^2 + 6*x^3 - 0 - 2*x^5 + x^6 
-1 - 2*x + 2*x^2 - 2*x^3 + 2*x^4 - 2*x^5 + x^6 
-1 - 0 + 2*x^2 - 2*x^3 + 4*x^4 - 2*x^5 + x^6 
+# back-shifted:
+# (b*s^2-R)^2 + b*s*(b*s^2 - R)*x + b*R*x^2 + (2*b*s^2 + b^2*s - 2*R)*x^3 - b*(s+b)*x^4 - b*x^5 + x^6
+5041 - 852*x + 2*x^2 + 118*x^3 - 8*x^4 - 2*x^5 + x^6
+2401 - 490*x + 2*x^2 + 78*x^3 - 6*x^4 - 2*x^5 + x^6
+961 - 248*x + 2*x^2 + 46*x^3 - 4*x^4 - 2*x^5 + x^6
+289 - 102*x + 2*x^2 + 22*x^3 - 2*x^4 - 2*x^5 + x^6
+49 - 28*x + 2*x^2 + 6*x^3 - 0 - 2*x^5 + x^6
+1 - 2*x + 2*x^2 - 2*x^3 + 2*x^4 - 2*x^5 + x^6
+1 - 0 + 2*x^2 - 2*x^3 + 4*x^4 - 2*x^5 + x^6
 1 + 2*x + 2*x^2 + 6*x^3 + 6*x^4 - 2*x^5 + x^6 
 49 + 28*x + 2*x^2 + 22*x^3 + 8*x^4 - 2*x^5 + x^6 
 289 + 102*x + 2*x^2 + 46*x^3 + 10*x^4 - 2*x^5 + x^6 
