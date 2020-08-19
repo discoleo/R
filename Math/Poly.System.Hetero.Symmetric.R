@@ -7,14 +7,16 @@
 ### Polynomial Systems:
 ### Heterogenous Symmetric
 ###
-### draft v.0.1b
+### draft v.0.1b-sh
 
 
 ###############
 ### History ###
 
-### draft v.0.1b:
+### draft v.0.1b - v.0.1b-sh:
 # - added a basic xy-type: x^3 + x*y = R;
+# - added also the shift;
+# - TODO: parametric classic polynomial;
 ### draft v.0.1a-shift:
 # - derivation of the classical polynomial for shifted root;
 # - more interesting polynomials are generated,
@@ -202,6 +204,31 @@ p = sapply((-6:6) + 1/2, function(s) print(round0.p(poly.calc(solve.htShift(2, 1
 # (x-s)^6 - b1*x^4 + (6*b1*s - 2*R)*x^3 - (12*b1*s^2 - 6*R*s - b1^2)*x^2 + (10*b1*s^3 - 6*R*s^2 - 3*b1^2*s + b1*R)*x - 3*b1*R*s + 3*b1^2*s^2 + 2*R*s^3 - 3*b1*s^4 + R^2 - b1^3
 
 
+### some P12s
+shiftSqrt.p = function(b, R, shift) {
+	s = sqrt(shift + 0i)
+	r = c(solve.htShift(b, R, shift=s)[,1] - s, solve.htShift(b, R, shift=-s)[,1] + s)
+	list(r=r, p=round0.p(poly.calc(r)))
+}
+
+b = 2; R = 1;
+p = sapply(-6:6, function(s) print(shiftSqrt.p(b, R, shift=s/2)$p))
+#
+409 + 20*x - 100*x^2 - 4*x^3 - 12*x^4 - 24*x^5 - 2*x^6 + 12*x^7 + 12*x^8 - 4*x^9 - 4*x^10 + x^12 
+329 + 12*x - 92*x^2 + 4*x^3 - 4*x^4 - 24*x^5 - 6*x^6 + 12*x^7 + 12*x^8 - 4*x^9 - 4*x^10 + x^12 
+257 + 4*x - 84*x^2 + 12*x^3 + 4*x^4 - 24*x^5 - 10*x^6 + 12*x^7 + 12*x^8 - 4*x^9 - 4*x^10 + x^12 
+193 - 4*x - 76*x^2 + 20*x^3 + 12*x^4 - 24*x^5 - 14*x^6 + 12*x^7 + 12*x^8 - 4*x^9 - 4*x^10 + x^12 
+137 - 12*x - 68*x^2 + 28*x^3 + 20*x^4 - 24*x^5 - 18*x^6 + 12*x^7 + 12*x^8 - 4*x^9 - 4*x^10 + x^12 
+89 - 20*x - 60*x^2 + 36*x^3 + 28*x^4 - 24*x^5 - 22*x^6 + 12*x^7 + 12*x^8 - 4*x^9 - 4*x^10 + x^12 
+49 - 28*x - 52*x^2 + 44*x^3 + 36*x^4 - 24*x^5 - 26*x^6 + 12*x^7 + 12*x^8 - 4*x^9 - 4*x^10 + x^12 
+17 - 36*x - 44*x^2 + 52*x^3 + 44*x^4 - 24*x^5 - 30*x^6 + 12*x^7 + 12*x^8 - 4*x^9 - 4*x^10 + x^12 
+-7 - 44*x - 36*x^2 + 60*x^3 + 52*x^4 - 24*x^5 - 34*x^6 + 12*x^7 + 12*x^8 - 4*x^9 - 4*x^10 + x^12 
+-23 - 52*x - 28*x^2 + 68*x^3 + 60*x^4 - 24*x^5 - 38*x^6 + 12*x^7 + 12*x^8 - 4*x^9 - 4*x^10 + x^12 
+-31 - 60*x - 20*x^2 + 76*x^3 + 68*x^4 - 24*x^5 - 42*x^6 + 12*x^7 + 12*x^8 - 4*x^9 - 4*x^10 + x^12 
+-31 - 68*x - 12*x^2 + 84*x^3 + 76*x^4 - 24*x^5 - 46*x^6 + 12*x^7 + 12*x^8 - 4*x^9 - 4*x^10 + x^12 
+-23 - 76*x - 4*x^2 + 92*x^3 + 84*x^4 - 24*x^5 - 50*x^6 + 12*x^7 + 12*x^8 - 4*x^9 - 4*x^10 + x^12
+
+
 ########################
 ########################
 
@@ -305,9 +332,94 @@ round0.p(poly.calc(sol[,1]))
 
 b = 5
 #
-sol = solve.htxy(b, 1)
+sol = solve.htxy(b, 1) # R = 1;
 x = sol[,1]; y = sol[,2];
 sol
 err = 1 + b[1]*x^2 - 2*x^3 + b[1]^2*x^4 - b[1]*x^5 + x^6
 round0(err)
+
+
+###################
+
+### Shifted Roots
+
+### (x - s)^3 + b*x*y
+
+# (x-s)^3 + b1*x*y = R
+# (y-s)^3 + b1*x*y = R
+
+# Diff =>
+# (x-s)^3 - (y-s)^3 = 0
+# (x-y)*((x-s)^2 + (x-s)*(y-s) + (y-s)^2) = 0
+# Case 2:
+# (x-s)^2 + (x-s)*(y-s) + (y-s)^2 = 0
+# (x+y - 2*s)^2 = (x-s)*(y-s)
+# x*y = (x+y - 2*s)^2 + s*(x+y) - s^2
+# x*y = (Z - 2*s)^2 + s*Z - s^2
+# x*y = Z^2 - 3*s*Z + 3*s^2 ###
+# Sum =>
+# (x-s)^3 + (y-s)^3 + 2*b1*x*y - 2*R = 0
+# (x+y)^3 - 3*x*y*(x+y) - 3*s*(x^2+y^2) + 3*s^2*(x+y) + 2*b1*x*y - 2*R - 2*s^3
+# Z^3 - 3*s*(Z^2 - 2*x*y) + 3*s^2*Z - 3*x*y*Z + 2*b1*x*y - 2*R - 2*s^3
+# Z^3 - 3*s*Z^2 + 3*s^2*Z - 3*x*y*Z + 6*s*x*y + 2*b1*x*y - 2*R - 2*s^3
+# Z^3 - 3*s*Z^2 + 3*s^2*Z -3*Z*(Z^2 - 3*s*Z + 3*s^2) + (6*s+2*b1)*(Z^2 - 3*s*Z + 3*s^2) - 2*R - 2*s^3
+# Z^3 - (6*s+b1)*Z^2 + (12*s^2+3*b1*s)*Z - 8*s^3 - 3*b1*s^2 + R
+
+
+solve.htxyShift = function(b, R, s) {
+	r.sum = roots(c(1, - (6*s+b[1]), (12*s^2+3*b[1]*s), - 8*s^3 - 3*b[1]*s^2 + R))
+	xy = r.sum^2 - 3*s*r.sum + 3*s^2
+	r.diff = sqrt(r.sum^2 - 4*xy + 0i)
+	x = (r.sum + r.diff)/2
+	y = (r.sum - r.diff)/2
+	sol = cbind(x, y)
+	sol = rbind(sol, sol[,2:1])
+	sol
+}
+poly.htxy = function(b, R, s) {
+	sol = solve.htxyShift(b, R, s=s)
+	p1 = round0.p(poly.calc(sol[,1]))
+	p = round0.p(poly.calc(sol[,1] - s))
+	return(list(r=sol, p1=p1, p=p))
+}
+
+### Example
+b = 2
+R = 1
+s = 3
+#
+sol = solve.htxyShift(b, R, s=s)
+x = sol[,1]; y = sol[,2];
+sol
+
+### Test
+(x-s)^3 + b[1]*x*y
+(y-s)^3 + b[1]*x*y
+
+### Classical Polynomial
+round0.p(poly.calc(sol[,1]))
+# back-shift
+round0.p(poly.calc(sol[,1] - s))
+
+### TODO:
+# - classical polynomial: parametric;
+
+###
+b = 2; R = 1
+p = sapply(-6:6, function(s) print(poly.htxy(b, R, s)$p))
+# [] - []*x + b*x^2 + b*[]*x^3 - b*(s+b)*x^4 - b*x^5 + x^6
+5041 - 852*x + 2*x^2 + 118*x^3 - 8*x^4 - 2*x^5 + x^6 
+2401 - 490*x + 2*x^2 + 78*x^3 - 6*x^4 - 2*x^5 + x^6 
+961 - 248*x + 2*x^2 + 46*x^3 - 4*x^4 - 2*x^5 + x^6 
+289 - 102*x + 2*x^2 + 22*x^3 - 2*x^4 - 2*x^5 + x^6 
+49 - 28*x + 2*x^2 + 6*x^3 - 0 - 2*x^5 + x^6 
+1 - 2*x + 2*x^2 - 2*x^3 + 2*x^4 - 2*x^5 + x^6 
+1 - 0 + 2*x^2 - 2*x^3 + 4*x^4 - 2*x^5 + x^6 
+1 + 2*x + 2*x^2 + 6*x^3 + 6*x^4 - 2*x^5 + x^6 
+49 + 28*x + 2*x^2 + 22*x^3 + 8*x^4 - 2*x^5 + x^6 
+289 + 102*x + 2*x^2 + 46*x^3 + 10*x^4 - 2*x^5 + x^6 
+961 + 248*x + 2*x^2 + 78*x^3 + 12*x^4 - 2*x^5 + x^6 
+2401 + 490*x + 2*x^2 + 118*x^3 + 14*x^4 - 2*x^5 + x^6 
+5041 + 852*x + 2*x^2 + 166*x^3 + 16*x^4 - 2*x^5 + x^6
+
 
