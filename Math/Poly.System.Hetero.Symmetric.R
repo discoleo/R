@@ -7,17 +7,21 @@
 ### Polynomial Systems:
 ### Heterogenous Symmetric
 ###
-### draft v.0.1a-shift
+### draft v.0.1b
 
 
 ###############
 ### History ###
 
+### draft v.0.1b:
+# - added a basic xy-type: x^3 + x*y = R;
 ### draft v.0.1a-shift:
 # - derivation of the classical polynomial for shifted root;
 # - more interesting polynomials are generated,
 #   when shifted root is shifted back;
 #   [in general not identical to non-shifted root polynomials]
+### draft v.0.1a:
+# - initial version: basic heterogenous systems;
 
 
 
@@ -87,6 +91,8 @@ round0(err)
 
 ###################
 
+### Shifted Roots
+
 ### (x - s)^3 + b*y
 
 # (x - s)^3 + b1*y = R
@@ -155,7 +161,7 @@ s = 3/2
 #
 sol = solve.htShift(b, R, shift=s)
 x = sol[,1]; y = sol[,2];
-x = sol[,1] - s; # with shift
+x = sol[,1] - s; # with shift back!
 -4 - 4*x + 4*x^2 + 4*x^3 - 2*x^4 + x^6
 
 ###
@@ -164,7 +170,7 @@ s = 5/2
 #
 sol = solve.htShift(b, R, shift=s)
 x = sol[,1]; y = sol[,2];
-x = sol[,1] - s; # with shift
+x = sol[,1] - s; # with shift back!
 8 - 8*x + 4*x^2 + 8*x^3 - 2*x^4 + x^6
 
 ###
@@ -246,4 +252,62 @@ y^4 + b[1]*x
 # b1*y = R - x^4
 # (R - x^4)^4/b1^4 + b1*x - R = 0
 # (R - x^4)^4 + b1^5*x - R*b1^4
+
+
+########################
+########################
+
+###############
+### Order 3 ###
+
+### x^3 + b*x*y
+
+# x^3 + b1*x*y = R
+# y^3 + b1*x*y = R
+
+# Diff =>
+# x^3 - y^3 = 0
+# (x-y)*(x^2 + x*y + y^2) = 0
+# Case 2:
+# x^2 + x*y + y^2 = 0
+# x*y = (x + y)^2
+# Sum =>
+# x^3 + y^3 + 2*b1*x*y - 2*R = 0
+# (x+y)^3 - 3*x*y*(x+y) + 2*b1*x*y - 2*R
+# Z^3 - 3*Z^3 + 2*b1*Z^2 - 2*R
+# Z^3 - b1*Z^2 + R
+
+solve.htxy = function(b, R) {
+	x.sum = roots(c(1, - b[1], 0, R))
+	xy = x.sum^2
+	x.diff = sqrt(x.sum^2 - 4*xy + 0i)
+	x = (x.sum + x.diff)/2
+	y = (x.sum - x.diff)/2
+	sol = cbind(x, y)
+	sol = rbind(sol, sol[,2:1])
+	sol
+}
+
+
+b = 3
+R = 1
+#
+sol = solve.htxy(b, R)
+x = sol[,1]; y = sol[,2];
+sol
+
+### Test
+x^3 + b[1]*x*y
+y^3 + b[1]*x*y
+
+### Classical Polynomial
+round0.p(poly.calc(sol[,1]))
+
+b = 5
+#
+sol = solve.htxy(b, 1)
+x = sol[,1]; y = sol[,2];
+sol
+err = 1 + b[1]*x^2 - 2*x^3 + b[1]^2*x^4 - b[1]*x^5 + x^6
+round0(err)
 
