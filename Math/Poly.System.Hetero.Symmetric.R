@@ -7,12 +7,26 @@
 ### Polynomial Systems:
 ### Heterogenous Symmetric
 ###
-### draft v.0.1b-x
+### draft v.0.1c
+
+
+### Heterogenous Symmetric Polynomial Systems
+
+### 2 Variables:
+# x^n + P(x, y) = R
+# y^n + P(y, x) = R
 
 
 ###############
 ### History ###
 
+### draft v.0.1c:
+# - added x^3 + b1*x*y + b2*x = R;
+# - added x^3 + b1*x*y + b2*y = R;
+# - added x^3 + b1*(x*y)^2 = R;
+# - TODO:
+#  -- shifted versions;
+#  -- parametric polynomials;
 ### draft v.0.1b - v.0.1b-x:
 # - added a basic xy-type: x^3 + x*y = R;
 # - added also the shift (v.0.1b-sh);
@@ -381,7 +395,8 @@ poly.htxy = function(b, R, s) {
 	sol = solve.htxyShift(b, R, s=s)
 	p1 = round0.p(poly.calc(sol[,1]))
 	p = round0.p(poly.calc(sol[,1] - s))
-	return(list(r=sol, p1=p1, p=p))
+	p.coeff = c((b[1]*s^2-R)^2, b[1]*s*(b[1]*s^2 - R), b[1]*R, (2*b[1]*s^2 + b[1]^2*s - 2*R), b[1]*(s+b[1]), - b[1], 1)
+	return(list(r=sol, coeff=p.coeff, p1=p1, p=p))
 }
 
 ### Example
@@ -412,6 +427,16 @@ round0.p(poly.calc(sol[,1]))
 round0.p(poly.calc(sol[,1] - s))
 
 
+### Example 2:
+b = -1; s = 1; R = -2;
+sol = poly.htxy(b, R, s=s)
+x = sol$r[,1]; y = sol$r[,2];
+sol
+x = sol$r[,1] - s; # shift back;
+err = 1 - x + 2*x^2 + 3*x^3 + x^5 + x^6
+round0(err)
+
+
 ### Derivation:
 # y - s = (x-s)*m, where m^3 = 1;
 # =>
@@ -439,5 +464,181 @@ p = sapply(-6:6, function(s) print(poly.htxy(b, R, s)$p))
 961 + 248*x + 2*x^2 + 78*x^3 + 12*x^4 - 2*x^5 + x^6 
 2401 + 490*x + 2*x^2 + 118*x^3 + 14*x^4 - 2*x^5 + x^6 
 5041 + 852*x + 2*x^2 + 166*x^3 + 16*x^4 - 2*x^5 + x^6
+
+
+################
+################
+
+##################
+### xy & x/y-Terms
+
+### x-Term
+### x^3 + b1*x*y + b2*x
+
+# x^3 + b1*x*y + b2*x = R
+# y^3 + b1*x*y + b2*y = R
+
+### Solution:
+# Diff =>
+# x^3 - y^3 + b2*(x - y) = 0
+# (x-y)*(x^2 + x*y + y^2 + b2) = 0
+# Case 2:
+# x^2 + x*y + y^2 + b2 = 0
+# x*y = (x + y)^2 + b2
+# Sum =>
+# x^3 + y^3 + 2*b1*x*y + b2*(x+y) - 2*R = 0
+# (x+y)^3 - 3*x*y*(x+y) + 2*b1*x*y + b2*(x+y) - 2*R
+# Z^3 - 3*x*y*Z + 2*b1*x*y + b2*Z - 2*R
+# Z^3 - 3*Z^3 - 3*b2*Z + 2*b1*Z^2 + 2*b1*b2 + b2*Z - 2*R
+# Z^3 - b1*Z^2 + b2*Z - b1*b2 + R
+
+solve.htxy = function(b, R, isX=TRUE) {
+	if(length(b) < 2) b = c(b, 0)
+	if(isX) {
+		x.sum = roots(c(1, - b[1], b[2], - b[1]*b[2] + R))
+		xy = x.sum^2 + b[2]
+	} else {
+		x.sum = roots(c(1, - b[1], -2*b[2], b[1]*b[2] + R))
+		xy = x.sum^2 - b[2]
+	}
+	x.diff = sqrt(x.sum^2 - 4*xy + 0i)
+	x = (x.sum + x.diff)/2
+	y = (x.sum - x.diff)/2
+	sol = cbind(x, y)
+	sol = rbind(sol, sol[,2:1])
+	sol
+}
+
+### Example
+b = c(2, 3)
+R = 1
+#
+sol = solve.htxy(b, R)
+x = sol[,1]; y = sol[,2]
+sol
+
+### Test
+x^3 + b[1]*x*y + b[2]*x 
+y^3 + b[1]*x*y + b[2]*y
+
+### Classical Polynomial
+# TODO
+
+round0.p(poly.calc(sol[,1]))
+
+################
+
+### y-Term
+### x^3 + b1*x*y + b2*y
+
+# x^3 + b1*x*y + b2*y = R
+# y^3 + b1*x*y + b2*x = R
+
+### Solution:
+# Diff =>
+# x^3 - y^3 - b2*(x - y) = 0
+# (x-y)*(x^2 + x*y + y^2 - b2) = 0
+# Case 2:
+# x^2 + x*y + y^2 - b2 = 0
+# x*y = (x + y)^2 - b2
+# Sum =>
+# x^3 + y^3 + 2*b1*x*y + b2*(x+y) - 2*R = 0
+# (x+y)^3 - 3*x*y*(x+y) + 2*b1*x*y + b2*(x+y) - 2*R
+# Z^3 - 3*x*y*Z + 2*b1*x*y + b2*Z - 2*R
+# Z^3 - 3*Z^3 + 3*b2*Z + 2*b1*Z^2 - 2*b1*b2 + b2*Z - 2*R
+# Z^3 - b1*Z^2 - 2*b2*Z + b1*b2 + R
+
+### Example
+b = c(-1, 1)
+R = 2
+#
+sol = solve.htxy(b, R, isX=FALSE)
+x = sol[,1]; y = sol[,2]
+sol
+
+### Test
+x^3 + b[1]*x*y + b[2]*y
+y^3 + b[1]*x*y + b[2]*x
+
+### Classical Polynomial
+# TODO
+
+round0.p(poly.calc(sol[,1]))
+
+
+### Example 2
+b = c(-1, -1)
+R = 2
+#
+sol = solve.htxy(b, R, isX=FALSE)
+x = sol[,1]; y = sol[,2]
+sol
+
+### Test
+x^3 + b[1]*x*y + b[2]*y
+y^3 + b[1]*x*y + b[2]*x
+
+err = 5 - 2*x^3 + 2*x^4 + x^5 + x^6
+round0(err)
+
+
+################
+
+### TODO:
+# - shift;
+
+
+
+################
+################
+
+### (xy)^2 Term
+### x^3 + b1*(x*y)^2
+
+# x^3 + b1*(x*y)^2 = R
+# y^3 + b1*(x*y)^2 = R
+
+m3 = unity(3, all=F)
+
+# Diff =>
+# x^3 - y^3 = 0
+# y = x*m, where m^3 = 1;
+# Case 2:
+# separate equations for: m & m^2
+# b1*x^4*m^2 + x^3 - R = 0
+# b1*x^4*m + x^3 - R = 0
+
+solve.xysq = function(b, R, isInverse=FALSE) {
+	coeff = if(isInverse) c(m3^2, b[1], 0,0, - R*b[1]) else c(b[1]*m3^2, 1,0,0, - R);
+	x = roots(coeff)
+	y = x*m
+	sol = cbind(x, y)
+	sol = rbind(sol, sol[,2:1])
+	if(isInverse) coeff = c(R^2*b[1]^2, 0,0, - 2*R*b[1]^2, b[1]*R, 0, b[1]^2, - b[1], 1)
+	else coeff = c(R^2, 0,0, - 2*R, b[1]*R, 0, 1, - b[1], b[1]^2) / b[1]^2
+	return(list(sol=sol, coeff=coeff))
+}
+
+### Example
+b = 1/2
+R = 1
+#
+sol = solve.xysq(b, R, isInverse=F)
+x = sol$sol[,1]; y = sol$sol[,2]
+sol
+
+### Test
+x^3 + b[1]*(x*y)^2
+y^3 + b[1]*(x*y)^2
+
+### Classic Polynomial
+x = sol[,1]
+err = b[1]^2*x^8 - b[1]*x^7 + x^6 + b[1]*R*x^4 - 2*R*x^3 + R^2
+round0(err)
+
+round0.p(poly.calc(x))
+err = round0(4 - 8*x^3 + 2*x^4 + 4*x^6 - 2*x^7 + x^8)
+err
+
 
 
