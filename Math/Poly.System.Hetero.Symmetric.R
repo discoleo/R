@@ -7,7 +7,7 @@
 ### Polynomial Systems:
 ### Heterogenous Symmetric
 ###
-### draft v.0.1c
+### draft v.0.1d
 ### & branch v.0.2a-pre-a
 
 
@@ -24,6 +24,10 @@
 ### branch v.0.2a-pre-a:
 # - initial work on systems with 3 variables;
 # - more complicated and the simple cases are less rewarding;
+### draft v.0.1d:
+# - added variant with 2 high-power terms:
+#  -- variant 1: a1*x^3 + a2*y^3 + b*x;
+#  -- variant 2: a1*x^3 + a2*y^3 + b*x*y;
 ### draft v.0.1c:
 # - added x^3 + b1*x*y + b2*x = R;
 # - added x^3 + b1*x*y + b2*y = R;
@@ -643,6 +647,154 @@ round0(err)
 round0.p(poly.calc(x))
 err = round0(4 - 8*x^3 + 2*x^4 + 4*x^6 - 2*x^7 + x^8)
 err
+
+
+################
+################
+
+### High-Power Terms: > 1
+
+### a1*x^3 + a2*y^3 + b1*x
+
+# a1*x^3 + a2*y^3 + b1*x = R
+# a2*x^3 + a1*y^3 + b1*y = R
+
+### Solution
+
+### Diff =>
+# (a1 - a2)*(x^3 - y^3) = -b1*(x - y)
+# (x - y)*(x^2 + y^2 + x*y + b1/(a1 - a2)) = 0
+# Case x != y:
+# S^2 - x*y + b1/(a1 - a2) = 0
+# x*y = S^2 + b1/(a1 - a2)
+
+### Sum =>
+# (a1+a2)*(x^3 + y^3) + b1*(x+y) = 2*R
+# (a1+a2)*(S^3 - 3*x*y*S) + b1*S - 2*R = 0
+# (a1+a2)*(S^3 - 3*S*(S^2 + b1/(a1 - a2))) + b1*S - 2*R
+# (a1+a2)*(-2*S^3 - 3*S*b1/(a1 - a2)) + b1*S - 2*R
+# 2*(a1+a2)*S^3 + 3*b1*(a1+a2)/(a1 - a2)*S - b1*S + 2*R
+
+
+solve.htm1 = function(b, a, R) {
+	x.sum = roots(c(2*(a[1]+a[2]), 0, 3*b[1]*(a[1]+a[2])/(a[1] - a[2]) - b[1], 2*R))
+	xy = x.sum^2 + b[1]/(a[1] - a[2])
+	x.diff = sqrt(x.sum^2 - 4*xy + 0i)
+	x = (x.sum + x.diff)/2
+	y = (x.sum - x.diff)/2
+	sol = cbind(x, y)
+	sol = rbind(sol, sol[,2:1])
+	p = round0.p(poly.calc(sol[,1]))
+	return(list(sol=sol, p=p))
+}
+
+### Example: has Fractions
+b = 1
+a = c(1/2, 1/3)
+R = 1
+#
+sol = solve.htm1(b, a, R)
+x = sol$sol[,1]; y = sol$sol[,2];
+sol
+
+### Test
+a[1]*x^3 + a[2]*y^3 + b[1]*x
+a[2]*x^3 + a[1]*y^3 + b[1]*y
+
+### Classic Polynomial
+
+### TODO
+
+
+### Example 2:
+b = 3
+a = c(1/2, -1/4)
+R = 1
+#
+sol = solve.htm1(b, a, R)
+x = sol$sol[,1]; y = sol$sol[,2];
+sol
+
+### Test
+a[1]*x^3 + a[2]*y^3 + b[1]*x
+a[2]*x^3 + a[1]*y^3 + b[1]*y
+
+err = 80 - 48*x + 48*x^2 - 8*x^3 + 12*x^4 + x^6
+round0(err)
+
+
+################
+################
+
+### High-Power Terms: > 1
+
+### a1*x^3 + a2*y^3 + b1*x*y
+
+# a1*x^3 + a2*y^3 + b1*x*y = R
+# a2*x^3 + a1*y^3 + b1*x*y = R
+
+### Solution
+
+### Diff =>
+# (a1 - a2)*(x^3 - y^3) = 0
+# (x - y)*(x^2 + y^2 + x*y) = 0
+# Case x != y:
+# S^2 - x*y = 0
+# x*y = S^2
+
+### Sum =>
+# (a1+a2)*(x^3 + y^3) + 2*b1*x*y = 2*R
+# (a1+a2)*(S^3 - 3*x*y*S) + 2*b1*x*y - 2*R = 0
+# (a1+a2)*(S^3 - 3*S^3) + 2*b1*S^2 - 2*R = 0
+# -2*(a1+a2)*S^3 + 2*b1*S^2 - 2*R
+# (a1+a2)*S^3 - b1*S^2 + R
+
+solve.htm = function(b, a, R) {
+	x.sum = roots(c((a[1]+a[2]), - b[1], 0, R))
+	xy = x.sum^2
+	x.diff= sqrt(x.sum^2 - 4*xy + 0i)
+	x = (x.sum + x.diff)/2
+	y = (x.sum - x.diff)/2
+	sol = cbind(x, y)
+	sol = rbind(sol, sol[,2:1])
+	p = round0.p(poly.calc(sol[,1]))
+	return(list(sol=sol, p=p))
+}
+
+
+### Example 1:
+b = 3
+a = c(1, 2)
+R = 1
+#
+sol = solve.htm(b, a, R)
+x = sol$sol[,1]; y = sol$sol[,2];
+sol
+
+
+### Test
+a[1]*x^3 + a[2]*y^3 + b[1]*x*y
+a[2]*x^3 + a[1]*y^3 + b[1]*x*y
+
+### Classic Polynomial
+err = 1/9 + 1/3*x^2 - 2/3*x^3 + x^4 - x^5 + x^6
+round0(err)
+
+### TODO
+
+
+### Example 2:
+b = 3
+a = c(1/2, -1)
+R = 1
+#
+sol = solve.htm(b, a, R)
+x = sol$sol[,1]; y = sol$sol[,2];
+sol
+
+### Classic Polynomial
+err = 4 + 12*x^2 + 4*x^3 + 36*x^4 + 6*x^5 + x^6
+round0(err)
 
 
 ###################################
