@@ -8,6 +8,7 @@
 ### Heterogenous Symmetric
 ###
 ### draft v.0.1c
+### & branch v.0.2a-pre-a
 
 
 ### Heterogenous Symmetric Polynomial Systems
@@ -20,6 +21,9 @@
 ###############
 ### History ###
 
+### branch v.0.2a-pre-a:
+# - initial work on systems with 3 variables;
+# - more complicated and the simple cases are less rewarding;
 ### draft v.0.1c:
 # - added x^3 + b1*x*y + b2*x = R;
 # - added x^3 + b1*x*y + b2*y = R;
@@ -641,4 +645,383 @@ err = round0(4 - 8*x^3 + 2*x^4 + 4*x^6 - 2*x^7 + x^8)
 err
 
 
+###################################
+
+
+###################################
+###################################
+###################################
+
+
+### Heterogenous Symmetric
+### Polynomial Systems: 3 Variables
+
+### 3 Variables:
+# x^n + P(x, y, z) = R
+# y^n + P(y, z, x) = R
+# z^n + P(z, x, y) = R
+
+
+
+###############
+
+###############
+### Order 2 ###
+
+### x[i]^2 + b*x[i+1]
+
+# x^2 + b1*y = R
+# y^2 + b1*z = R
+# z^2 + b1*x = R
+
+# Trivial solution: x = y = z;
+
+### TODO:
+# - find correct solution;
+# - current solution involves P6,
+#   which is also the classic polynomial;
+
+### Method 1:
+# Diff =>
+# x^2 - y^2 = b1*(z-y)
+# y^2 - z^2 = b1*(x-z)
+# z^2 - x^2 = b1*(y-x)
+# Prod =>
+# (x+y)*(x+z)*(y+z) = (-1)*b1^3;
+# (x^2 + x*y + x*z + y*z)*(y+z) = - b1^3
+# S[x^2y] + 2*x*y*z + b1^3 = 0;
+# E2*S - 3*E3 + 2*E3 + b1^3 = 0;
+# E2*S - E3 + b1^3 = 0
+
+# Sum =>
+# x^2 + y^2 + z^2 + b1*(x+y+z) = 3*R
+# S^2 - 2*E2 + b1*S - 3*R = 0;
+# 2*E2 = S^2 + b1*S - 3*R;
+
+# Sum (part):
+# Sxy^2 - 2*x*y + b1*Syz - 2*R = 0
+# Sxz^2 - 2*x*z + b1*Sxy - 2*R = 0
+# Syz^2 - 2*y*z + b1*Sxy - 2*R = 0
+# Sxy*Sxz*Syz + b1^3 = 0
+
+# Prod (variant)
+# (2*x*y - b1*Syz + 2*R)*(2*x*z - b1*Sxy + 2*R)*(2*y*z - b1*Sxy + 2*R) = b1^6
+
+# Prod
+# x^2 = - b1*y + R
+# y^2 = - b1*z + R
+# z^2 = - b1*x + R
+# =>
+# (x*y*z)^2 = (b1^2*y*z - b1*R*y - b1*R*z + R^2)*(- b1*x + R);
+# E3^2 = -b1^3*E3 + b1^2*R*E2 - b1*R^2*S + R^3;
+
+### Variables: S, E2, E3;
+# E3 = E2*S + b1^3
+# 2*E2 = S^2 + b1*S - 3*R
+# E3^2 + b1^3*E3 = b1^2*R*E2 - b1*R^2*S + R^3
+# =>
+# (E2*S + b1^3)^2 + b1^3*(E2*S + b1^3) = b1^2*R*E2 - b1*R^2*S + R^3
+# E2^2*S^2 + 3*b1^3*E2*S + 2*b1^6 = b1^2*R*E2 - b1*R^2*S + R^3
+# 4*E2^2*S^2 + 12*b1^3*E2*S + 8*b1^6 = 4*b1^2*R*E2 - 4*b1*R^2*S + 4*R^3
+# =>
+# (S^2 + b1*S - 3*R)^2*S^2 + 6*b1^3*S*(S^2 + b1*S - 3*R) + 8*b1^6 - 2*b1^2*R*(S^2 + b1*S - 3*R) + 4*b1*R^2*S - 4*R^3
+# S^6 + 2*b1*S^5 + b1^2*S^4 - 6*R*S^4 + 6*b1^3*S^3 - 6*b1*R*S^3 + 6*b1^4*S^2 - 2*b1^2*R*S^2 + 9*R^2*S^2 - 20*b1^3*R*S + 4*b1*R^2*S + 8*b1^6 +  6*b1^2*R^2 - 4*R^3
+#
+# S^6 + 2*b1*S^5 + (b1^2 - 6*R)*S^4 + 6*(b1^3 - b1*R)*S^3 + (6*b1^4 - 2*b1^2*R + 9*R^2)*S^2 - 4*b1*R*(5*b1^2 - R)*S + 8*b1^6 +  6*b1^2*R^2 - 4*R^3
+
+
+### Alternative
+# b1*y = R - x^2
+# b1^3*z = b1^2*R - (R - x^2)^2
+# b1^3*z = b1^2*R - R^2 - x^4 + 2*R*x^2
+# =>
+# x^8 - 4*R*x^6 + (6*R^2 - 2*b1^2*R)*x^4 + 4*R^2*(b1^2 - R)*x^2 + b[1]^7*x + (b1^2*R - R^2)^2 - b[1]^6*R = 0
+# (x^2 + b1*x - R) * P6;
+
+### Example
+b = 2
+R = 1
+#
+coeff = c(1, 2*b[1], (b[1]^2 - 6*R), 6*(b[1]^3 - b[1]*R), (6*b[1]^4 - 2*b[1]^2*R + 9*R^2), - 4*b[1]*R*(5*b[1]^2 - R), 8*b[1]^6 +  6*b[1]^2*R^2 - 4*R^3)
+x.sum = roots(coeff)
+E2 = (x.sum^2 + b[1]*x.sum - 3*R)/2
+E3 = E2*x.sum + b1^3
+#
+x = as.vector(sapply(1:length(x.sum), function(id) roots(c(1, -x.sum[id], E2[id], -E3[id]))))
+y = (R - x^2)/b[1]
+z = (R - y^2)/b[1]
+sol = cbind(x, y, z)
+sol
+
+### Test
+x^2 + b[1]*y 
+y^2 + b[1]*z
+z^2 + b[1]*x
+
+# alternative
+x = roots(c(1,0, - 4*R,0, (6*R^2 - 2*b[1]^2*R), 0, 4*R^2*(b[1]^2 - R), b[1]^7, (b[1]^2*R - R^2)^2 - b[1]^6*R))
+y = (R - x^2)/b[1]
+z = (R - y^2)/b[1]
+sol = cbind(x, y, z)
+sol
+
+### Test
+x^2 + b[1]*y 
+y^2 + b[1]*z
+z^2 + b[1]*x
+
+
+######################
+######################
+
+### x[i]^2 + b*x[-i]
+
+# x^2 + b1*y*z = R
+# y^2 + b1*x*z = R
+# z^2 + b1*x*y = R
+
+### Special Case: b1 = 2
+# Z^2 = 3*R
+
+# x^2 - y^2 = b1*z*(x-y)
+# x^2 - z^2 = b1*y*(x-z)
+# y^2 - z^2 = b1*x*(y-z)
+# => if x != y != z
+#   x + y - b1*z = 0
+#   x - b1*y + z = 0
+# - b1*x + y + z = 0
+# => x = y = z = 0;
+
+# Case 1: x = y
+# x^2 + b1*x*z = R
+# z^2 + b1*x^2 = R
+# =>
+# b1*z = R/x - x
+# b1^2*z^2 + b1^3*x^2 = b1^2*R
+# x^2 - 2*R + R^2/x^2 + b1^3*x^2 - b1^2*R = 0
+# (b1^3+1)*x^4 - R*(b1^2 + 2)*x^2 + R^2 = 0
+
+b = 1
+R = 2
+#
+x = roots(c((b[1]^3+1), 0, - R*(b[1]^2 + 2), 0, R^2))
+y = x
+z = (R - x^2)/y/b[1]
+sol = round0(cbind(x, y, z))
+sol
+
+### Test
+x^2 + b[1]*y*z
+y^2 + b[1]*x*z
+z^2 + b[1]*x*y
+
+
+########################
+########################
+
+### Variant:
+### x[i]^2 + b*(x[j] + x[k])
+
+# x^2 + b1*(y+z) = R
+# y^2 + b1*(x+z) = R
+# z^2 + b1*(x+y) = R
+# [a trivial system]
+
+# Trivial solution: x = y = z;
+
+### Solution
+
+# Diff =>
+# x^2 - y^2 = b1*(x-y)
+# x^2 - z^2 = b1*(x-z)
+# y^2 - z^2 = b1*(y-z)
+
+# if x != y != z
+# x + y = b1
+# x + z = b1
+# y + z = b1
+# => x = y = z, which violates assumption;
+
+# =>
+# x = y
+# x^2 + b1*(x+z) = R
+# z^2 + 2*b1*x = R
+
+# Case x != z
+# x + z = b1
+# x^2 + b1^2 = R
+
+### Example:
+b = 3
+R = 1
+#
+x = sqrt(R - b[1]^2 + 0i)
+x = c(x, -x)
+y = x
+z = b[1] - x
+sol = cbind(x, y, z)
+sol
+
+### Test
+x^2 + b[1]*(y+z)
+y^2 + b[1]*(x+z)
+z^2 + b[1]*(x+y)
+
+####################
+
+### Shifted Variant:
+### (x[i] - s)^2 + b*(x[j] + x[k])
+
+# (x-s)^2 + b1*(y+z) = R
+# (y-s)^2 + b1*(x+z) = R
+# (z-s)^2 + b1*(x+y) = R
+
+
+### Solution
+
+### Diff =>
+# (x-s)^2 - (y-s)^2 = b1*(x - y)
+# (x - y)*(x + y - 2*s) = b1*(x - y)
+# (x - y)*(x + y - 2*s - b1) = 0
+# (x - z)*(x + z - 2*s - b1) = 0
+# (y - z)*(y + z - 2*s - b1) = 0
+
+### Case x != y != z
+# is NOT solvable (except in very special conditions);
+
+### Case x = y && x != z
+# x + z - 2*s - b1 = 0
+# x + z = b1 + 2*s;
+# =>
+# (x-s)^2 + b1*(x+z) - R = 0
+# x^2 - 2*s*x + s^2 + b1*(b1 + 2*s) - R
+# x^2 - 2*s*x + b1^2 + 2*b1*s + s^2 - R
+
+### Example
+b = 3
+s = -1
+R = 1
+#
+x = roots(c(1, - 2*s, b[1]^2 + 2*b[1]*s + s^2 - R))
+y = x
+z = b[1] + 2*s - x
+sol = cbind(x, y, z)
+sol
+
+
+### Test
+(x-s)^2 + b[1]*(y+z)
+(y-s)^2 + b[1]*(x+z)
+(z-s)^2 + b[1]*(x+y)
+
+
+####################
+
+### "Asymmetric" Variant:
+### x[i]^2 + b1*x[j] + b2*x[k]
+
+# x^2 + b1*y + b2*z = R
+# y^2 + b1*z + b2*x = R
+# z^2 + b1*x + b2*y = R
+
+### Solution
+
+# TODO
+
+### Sum =>
+# S^2 - 2*E2 + (b1+b2)*S = 3*R
+
+### Diff =>
+# x^2 - y^2 = b2*(x - z) - b1*(y - z)
+# x^2 - z^2 = b2*(y - z) - b1*(y - x)
+# y^2 - z^2 = b2*(y - x) - b1*(z - x)
+
+
+#########################
+
+#########################
+#########################
+
+### High-Power Terms: > 1
+
+### x[i]^2 + x[j]^2 + b*(x[i] + x[j])
+
+# x^2 + y^2 + b1*(x+y) = R
+# y^2 + z^2 + b1*(y+z) = R
+# x^2 + z^2 + b1*(x+z) = R
+
+# trivial solution: x = y = z;
+
+### Solution
+
+### Diff =>
+# x^2 - z^2 = -b1*(x - z)
+# (x-z)*(x + z + b1) = 0
+
+# Case: x != y != z
+# - has NO solutions;
+
+# Case x = y && x != z
+# TODO: trivial;
+
+
+
+
+########################
+########################
+
+### High-Power Terms: > 1
+
+### x[i]^2 + x[j]^2 + b*x[k]
+
+# x^2 + y^2 + b1*z = R
+# y^2 + z^2 + b1*x = R
+# x^2 + z^2 + b1*y = R
+
+# trivial solution: x = y = z;
+# trivial system;
+
+### Solution
+
+### Diff =>
+# x^2 - z^2 = b1*(x - z)
+# (x-z)*(x + z - b1) = 0
+
+# Case: x != y != z
+# - has NO solutions;
+
+# Case x = y && x != z
+# z = -x + b1;
+# =>
+# 2*x^2 + b1*z - R = 0
+# 2*x^2 - b1*x + b1^2 - R
+
+### Example
+
+b = 3
+R = 1
+#
+x = roots(c(2, - b[1], b[1]^2 - R))
+y = x
+z = -x + b[1]
+sol = cbind(x, y, z)
+sol
+
+### Test
+x^2 + y^2 + b[1]*z
+y^2 + z^2 + b[1]*x
+x^2 + z^2 + b[1]*y
+
+
+########################
+########################
+
+### Order 3
+### x[i]^3 + b*(x[j] + x[k])
+
+# x^3 + b1*(y+z) = R
+# y^3 + b1*(x+z) = R
+# z^3 + b1*(x+y) = R
+
+### TODO
 
