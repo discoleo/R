@@ -8,7 +8,7 @@
 ### Heterogenous Symmetric
 ###
 ### draft v.0.1d
-### & branch v.0.2a-pre-a
+### & branch v.0.2a
 
 
 ### Heterogenous Symmetric Polynomial Systems
@@ -21,9 +21,14 @@
 ###############
 ### History ###
 
+### branch v.0.2a:
+# - more work on systems with 3 variables:
+#   "proper" implementation of: x[i]*2 + b*x[k];
+# - TODO: robust removal of set of wrong solutions;
+#   [or avoid getting superfluous solutions ???]
 ### branch v.0.2a-pre-a:
 # - initial work on systems with 3 variables;
-# - more complicated and the simple cases are less rewarding;
+# - the simple cases are less rewarding;
 ### draft v.0.1d:
 # - added variant with 2 high-power terms:
 #  -- variant 1: a1*x^3 + a2*y^3 + b*x;
@@ -840,46 +845,28 @@ round0(err)
 # z^2 - x^2 = b1*(y-x)
 # Prod =>
 # (x+y)*(x+z)*(y+z) = (-1)*b1^3;
+# S^3 - (x^3 + y^3 + z^3) + 3*b1^3 = 0;
+
 # (x^2 + x*y + x*z + y*z)*(y+z) = - b1^3
 # S[x^2y] + 2*x*y*z + b1^3 = 0;
 # E2*S - 3*E3 + 2*E3 + b1^3 = 0;
 # E2*S - E3 + b1^3 = 0
 
+# Sum(x[i]*...) =>
+# x^3 + y^3 + z^3 + b1*E2 = R*S
+# =>
+# S^3 - (R*S - b1*E2) + 3*b1^3 = 0
+# S^3 - R*S + b1*E2 + 3*b1^3 = 0
+
 # Sum =>
 # x^2 + y^2 + z^2 + b1*(x+y+z) = 3*R
 # S^2 - 2*E2 + b1*S - 3*R = 0;
 # 2*E2 = S^2 + b1*S - 3*R;
-
-# Sum (part):
-# Sxy^2 - 2*x*y + b1*Syz - 2*R = 0
-# Sxz^2 - 2*x*z + b1*Sxy - 2*R = 0
-# Syz^2 - 2*y*z + b1*Sxy - 2*R = 0
-# Sxy*Sxz*Syz + b1^3 = 0
-
-# Prod (variant)
-# (2*x*y - b1*Syz + 2*R)*(2*x*z - b1*Sxy + 2*R)*(2*y*z - b1*Sxy + 2*R) = b1^6
-
-# Prod
-# x^2 = - b1*y + R
-# y^2 = - b1*z + R
-# z^2 = - b1*x + R
 # =>
-# (x*y*z)^2 = (b1^2*y*z - b1*R*y - b1*R*z + R^2)*(- b1*x + R);
-# E3^2 = -b1^3*E3 + b1^2*R*E2 - b1*R^2*S + R^3;
+# S^3 - R*S + b1*(S^2 + b1*S - 3*R)/2 + 3*b1^3 = 0
+# 2*S^3 - 2*R*S + b1*(S^2 + b1*S - 3*R) + 6*b1^3 = 0
+# 2*S^3 + b1*S^2 + (b1^2 - 2*R)*S - 3*b1*R + 6*b1^3 = 0
 
-### Variables: S, E2, E3;
-# E3 = E2*S + b1^3
-# 2*E2 = S^2 + b1*S - 3*R
-# E3^2 + b1^3*E3 = b1^2*R*E2 - b1*R^2*S + R^3
-# =>
-# (E2*S + b1^3)^2 + b1^3*(E2*S + b1^3) = b1^2*R*E2 - b1*R^2*S + R^3
-# E2^2*S^2 + 3*b1^3*E2*S + 2*b1^6 = b1^2*R*E2 - b1*R^2*S + R^3
-# 4*E2^2*S^2 + 12*b1^3*E2*S + 8*b1^6 = 4*b1^2*R*E2 - 4*b1*R^2*S + 4*R^3
-# =>
-# (S^2 + b1*S - 3*R)^2*S^2 + 6*b1^3*S*(S^2 + b1*S - 3*R) + 8*b1^6 - 2*b1^2*R*(S^2 + b1*S - 3*R) + 4*b1*R^2*S - 4*R^3
-# S^6 + 2*b1*S^5 + b1^2*S^4 - 6*R*S^4 + 6*b1^3*S^3 - 6*b1*R*S^3 + 6*b1^4*S^2 - 2*b1^2*R*S^2 + 9*R^2*S^2 - 20*b1^3*R*S + 4*b1*R^2*S + 8*b1^6 +  6*b1^2*R^2 - 4*R^3
-#
-# S^6 + 2*b1*S^5 + (b1^2 - 6*R)*S^4 + 6*(b1^3 - b1*R)*S^3 + (6*b1^4 - 2*b1^2*R + 9*R^2)*S^2 - 4*b1*R*(5*b1^2 - R)*S + 8*b1^6 +  6*b1^2*R^2 - 4*R^3
 
 
 ### Alternative
@@ -894,15 +881,14 @@ round0(err)
 b = 2
 R = 1
 #
-coeff = c(1, 2*b[1], (b[1]^2 - 6*R), 6*(b[1]^3 - b[1]*R), (6*b[1]^4 - 2*b[1]^2*R + 9*R^2), - 4*b[1]*R*(5*b[1]^2 - R), 8*b[1]^6 +  6*b[1]^2*R^2 - 4*R^3)
-x.sum = roots(coeff)
+x.sum = roots(c(2, b[1], (b[1]^2 - 2*R), - 3*b[1]*R + 6*b[1]^3))
 E2 = (x.sum^2 + b[1]*x.sum - 3*R)/2
 E3 = E2*x.sum + b1^3
-#
-x = as.vector(sapply(1:length(x.sum), function(id) roots(c(1, -x.sum[id], E2[id], -E3[id]))))
+x = sapply(1:length(x.sum), function(id) roots(c(1, -x.sum[id], E2[id], -E3[id])))
+x = cbind(as.vector(x[,-1])) # TODO: remove robustly set of wrong solutions
 y = (R - x^2)/b[1]
 z = (R - y^2)/b[1]
-sol = cbind(x, y, z)
+sol = cbind(x,y,z)
 sol
 
 ### Test
@@ -910,7 +896,10 @@ x^2 + b[1]*y
 y^2 + b[1]*z
 z^2 + b[1]*x
 
-# alternative
+round0.p(poly.calc(sol[,1]))
+
+
+# alternative / classic
 x = roots(c(1,0, - 4*R,0, (6*R^2 - 2*b[1]^2*R), 0, 4*R^2*(b[1]^2 - R), b[1]^7, (b[1]^2*R - R^2)^2 - b[1]^6*R))
 y = (R - x^2)/b[1]
 z = (R - y^2)/b[1]
@@ -1168,6 +1157,11 @@ x^2 + z^2 + b[1]*y
 ########################
 ########################
 
+### Problems:
+# - Difference works well for systems with 2 variables;
+# - but it does NOT work well in systems with 3 variables;
+
+###########
 ### Order 3
 ### x[i]^3 + b*(x[j] + x[k])
 
@@ -1175,5 +1169,203 @@ x^2 + z^2 + b[1]*y
 # y^3 + b1*(x+z) = R
 # z^3 + b1*(x+y) = R
 
+# Trivial solution: x = y = z;
+# Trivial system;
+
+### Solution
+
+# Diff =>
+# x^3 - y^3 = b1*(x-y)
+# x^3 - z^3 = b1*(x-z)
+# y^3 - z^3 = b1*(y-z)
+
+# (x-y)*(x^2 + y^2 + x*y - b1) = 0
+
+# Case: x != y != z
+# x^2 + y^2 + x*y - b1 = 0
+# x^2 + z^2 + x*z - b1 = 0
+# y^2 + z^2 + y*z - b1 = 0
+# E2 = 2*S^2/3 - b1
+# Diff =>
+# y^2 - z^2 + x*(y - z) = 0
+# Case x != y != z:
+# x + y + z = 0
+# => E2 = -b1
+
+### Sum =>
+# x^3 + y^3 + z^3 + 2*b1*S = 3*R, where S = 0
+# x^3 + y^3 + z^3 = 3*R
+
+# x^3 + y^3 + z^3 = S^3 - 3*E2*S + 3*E3
+# =>
+# E3 = R
+
+
+### Example 1:
+b = 3
+R = 1
+#
+x = roots(c(1,0, -b[1], -R))
+y = as.vector(sapply(x, function(x) roots(c(1, x, x^2 - b[1]))))
+x = rep(x, each=2)
+z = -x-y
+sol = cbind(x,y,z)
+sol
+
+### Test
+x^3 + b[1]*(y+z)
+y^3 + b[1]*(x+z)
+z^3 + b[1]*(x+y)
+
+# trivial:
+(x^3 - b*x - R)^2
+
+
+########################
+
+###########
+### Order 2
+
+### x[i]^2*x[j] + b*Sum
+
+# x^2*y + b1*(x+y+z) = R
+# y^2*z + b1*(x+y+z) = R
+# z^2*x + b1*(x+y+z) = R
+
+
+# Diff =>
+# x^2 = y*z
+# y^2 = x*z
+# z^2 = x*y
+
+# y = x^2/z
+# => x^4/z^2 = x*z
+# => x^3 = z^3
+# => y^3 = z^3
+
+# Case x != y != z
+# y = x*m
+# z = x*m^2
+# => 1 + m + m^2 = 0!
+# x^3*m = R
+
+m3 = unity(3, all=FALSE)
+
+### Example 1:
+
+b = 3
+R = 1
+#
+x = (R/m3)^(1/3) * c(1, m3, m3^2)
+y = x * m3
+z = x * m3^2
+sol = cbind(x,y,z)
+sol
+
+### Test
+x^2*y + b[1]*(x+y+z)
+y^2*z + b[1]*(x+y+z)
+z^2*x + b[1]*(x+y+z)
+
+### Classical Polynomial
+x^9 - R^3
+
+#######################
+
+### Shifted
+### x[i]^2 * (x[j] - shift) + b*Sum
+
+# x^2*(y - s) + b1*(x+y+z) = R
+# y^2*(z - s) + b1*(x+y+z) = R
+# z^2*(x - s) + b1*(x+y+z) = R
+
+### Solution
+
+# Diff =>
+# x^2*(y - s) = y^2*(z - s)
+# y^2*(z - s) = z^2*(x - s)
+# z^2*(x - s) = x^2*(y - s)
+# =>
+# x^4*(y-s)^2 = y^2*z^2*(x-s)*(z-s)
+
 ### TODO
 
+
+
+#####################
+
+### Shifted
+### x[i]^2 * (x[i] - shift) + b*Sum
+
+# x^2*(x - s) + b1*(x+y+z) = R
+# y^2*(y - s) + b1*(x+y+z) = R
+# z^2*(z - s) + b1*(x+y+z) = R
+
+### Solution
+
+# - trivial solution: x = y = z;
+
+### Diff =>
+# x^2*(x-s) = y^2*(y-s)
+# y^2*(y-s) = z^2*(z-s)
+# z^2*(z-s) = x^2*(x-s)
+# =>
+# x^3 - y^3 - s*(x^2 - y^2) = 0
+# (x-y)*(x^2 + y^2 + x*y - s*(x+y)) = 0
+
+# Case: x != y != z
+# x^2 + y^2 + x*y - s*(x+y) = 0
+# x^2 + z^2 + x*z - s*(x+z) = 0
+# y^2 + z^2 + y*z - s*(y+z) = 0
+# =>
+# y^2 + x*y - s*(x+y) = z^2 + x*z - s*(x+z)
+# y^2 - z^2 + x*(y-z) - s*(y-z) = 0
+# (y-z)*(x + y + z - s) = 0
+# x + y + z = s
+
+### Sum =>
+# x^3 + y^3 + z^3 - s*(x^2 + y^2 + z^2) + 3*b1*S = 3*R
+# x^3 + y^3 + z^3 = S^3 - 3*E2*S + 3*E3 =>
+# S^3 - 3*E2*S + 3*E3 - s*(S^2 - 2*E2) + 3*b1*S - 3*R = 0
+# S = s =>
+# - s*E2 + 3*b1*s - 3*R + 3*E3 = 0
+# E3 =  s*E2/3 - b1*s + R
+
+# E2 = 2/3*S^2 - 2/3*s*S
+# E2 = 0
+# E3 = s*E2/3 - b*s + R
+# E3 = - b1*s + R
+
+### Example:
+
+b = 3
+R = 1
+s = 2
+#
+x = roots(c(1, -s, 0, b[1]*s - R))
+yz.sum = s - x
+yz = yz.sum^2 - s*yz.sum
+yz.diff = sqrt(yz.sum^2 - 4*yz + 0i)
+y = (yz.sum + yz.diff)/2
+z = (yz.sum - yz.diff)/2
+sol = cbind(x,y,z)
+sol
+
+### Test
+x^2*(x - s) + b[1]*(x+y+z)
+y^2*(y - s) + b[1]*(x+y+z)
+z^2*(z - s) + b[1]*(x+y+z)
+
+### Classical Polynomial
+# x => trivial polynomial: P3;
+# y, z => (P3)^2
+
+round0.p(poly.calc(sol[,2:3]))
+round0.p(poly.calc(sol[,2:3] - s))
+
+# (x^3 - 2*x^2 + 5)^2
+err = 25 - 20*x^2 + 10*x^3 + 4*x^4 - 4*x^5 + x^6
+round0(err)
+x = x - s # shift back;
+err = 25 + 40*x + 56*x^2 + 42*x^3 + 24*x^4 + 8*x^5 + x^6
+round0(err)
