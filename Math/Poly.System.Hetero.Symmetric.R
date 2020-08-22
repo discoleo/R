@@ -7,7 +7,7 @@
 ### Polynomial Systems:
 ### Heterogenous Symmetric
 ###
-### draft v.0.1d
+### draft v.0.1e
 ### & branch v.0.2a
 
 
@@ -19,16 +19,45 @@
 
 
 ###############
+### Systems ###
+
+### 2 Variables:
+# x^n + P(x, y) = R
+# y^n + P(y, x) = R
+
+# 1.) x^3 + b*y = R;
+# 2.) (x - s)^3 + b*y = R;
+# 3.) x^3 + b*x*y = R;
+# 4.) (x - s)^3 + b*x*y = R;
+# 5.) x^3 + b1*x*y + b2*x = R;
+# 6.) x^3 + b1*x*y + b2*y = R;
+# 7.) TODO: Shift for [5] & [6];
+# 8.) x^3 + b1*(x*y)^2 = R;
+# 9.) TODO: Shift;
+### 2 High-Power Terms:
+# 10.) a1*x^3 + a2*y^3 + b1*x = R;
+# 11.) a1*x^3 + a2*y^3 + b1*x*y = R;
+# 12.) TODO: Shift for [12] & [13];
+### Order 4:
+# 13.) x^4 + b*y = R;
+# 14.) (x - s)^4 + b*y = R;
+
+
+###############
 ### History ###
 
 ### branch v.0.2a:
 # - more work on systems with 3 variables:
-#   "proper" implementation of: x[i]*2 + b*x[k];
+#   "proper" implementation of: x[i]^2 + b*x[k];
 # - TODO: robust removal of set of wrong solutions;
 #   [or avoid getting superfluous solutions ???]
 ### branch v.0.2a-pre-a:
 # - initial work on systems with 3 variables;
 # - the simple cases are less rewarding;
+
+### [branch v.0.1]
+### draft v.0.1e:
+# - added shifted version: (x-s)^4 + b*y = R;
 ### draft v.0.1d:
 # - added variant with 2 high-power terms:
 #  -- variant 1: a1*x^3 + a2*y^3 + b*x;
@@ -47,7 +76,7 @@
 ### draft v.0.1a-shift:
 # - derivation of the classical polynomial for shifted root;
 # - more interesting polynomials are generated,
-#   when shifted root is shifted back;
+#   when the shifted root is shifted back;
 #   [in general not identical to non-shifted root polynomials]
 ### draft v.0.1a:
 # - initial version: basic heterogenous systems;
@@ -58,7 +87,15 @@ library(polynom)
 library(pracma)
 
 
-###############
+####################
+
+### helper Functions
+
+### see in the other R files:
+# round0(), round0.p;
+
+#####################
+
 
 ###############
 ### Order 3 ###
@@ -118,8 +155,9 @@ round0(err)
 # p*(p^2 - 3*b1*x*p + 3*b1^2*x^2 - b1^3)
 # (x^3 + b1*x - R)*(x^6 - b1*x^4 - 2*R*x^3 + b1^2*x^2 + b1*R*x + R^2 - b1^3)
 
-###################
+#################
 
+#################
 ### Shifted Roots
 
 ### (x - s)^3 + b*y
@@ -257,63 +295,8 @@ p = sapply(-6:6, function(s) print(shiftSqrt.p(b, R, shift=s/2)$p))
 
 
 ########################
-########################
 
 ###############
-### Order 4 ###
-
-### x^4 + b*y
-
-# x^4 + b1*y = R
-# y^4 + b1*x = R
-
-# Diff =>
-# x^4 - y^4 - b1*(x-y) = 0
-# (x - y)*((x+y)*(x^2+y^2) - b1) = 0
-# => x = y *OR* (x+y)*(x^2+y^2) - b1 = 0;
-# =>
-# (x+y)^2 - 2*x*y = b1 / s
-# x*y = (s^2 - b1/s)/2
-
-### Sum =>
-# x^4 + y^4 + b1*s - 2*R = 0
-# s^4 - 4*x*y*s^2 + 2*(x*y)^2 + b1*s - 2*R
-# s^4 - 2*(s^4 - b1*s) + (s^2 - b1/s)^2/2 + b1*s - 2*R
-# -s^4 + 2*b1*s + (s^2 - b1/s)^2/2 + b1*s - 2*R
-# s^4 - 3*b1*s - (s^2 - b1/s)^2/2 + 2*R
-# 2*s^6 - 6*b1*s^3 - (s^3 - b1)^2 + 4*R*s^2
-# s^6 - 4*b1*s^3 + 4*R*s^2 - b1^2
-
-
-### Example
-b = 2
-R = 1
-#
-r.sum = roots(c(1,0,0, -4*b[1], 4*R, 0, - b[1]^2))
-xy = (r.sum^2 - b[1]/r.sum)/2
-r.diff = sqrt(r.sum^2 - 4*xy + 0i)
-x = (r.sum + r.diff)/2
-y = (r.sum - r.diff)/2
-sol = cbind(x, y) # TODO: add also x = y cases;
-sol
-
-### Test
-x^4 + b[1]*y
-y^4 + b[1]*x
-
-### Classical
-# TODO:
-# b1*y = R - x^4
-# (R - x^4)^4/b1^4 + b1*x - R = 0
-# (R - x^4)^4 + b1^5*x - R*b1^4
-
-
-########################
-########################
-
-###############
-### Order 3 ###
-
 ### x^3 + b*x*y
 
 # x^3 + b1*x*y = R
@@ -366,8 +349,9 @@ err = 1 + b[1]*x^2 - 2*x^3 + b[1]^2*x^4 - b[1]*x^5 + x^6
 round0(err)
 
 
-###################
+#################
 
+#################
 ### Shifted Roots
 
 ### (x - s)^3 + b*x*y
@@ -479,8 +463,8 @@ p = sapply(-6:6, function(s) print(poly.htxy(b, R, s)$p))
 5041 + 852*x + 2*x^2 + 166*x^3 + 16*x^4 - 2*x^5 + x^6
 
 
-################
-################
+##################
+##################
 
 ##################
 ### xy & x/y-Terms
@@ -602,10 +586,13 @@ round0(err)
 
 
 
-################
-################
+###################
+###################
 
-### (xy)^2 Term
+###################
+### (xy)^2 Term ###
+###################
+
 ### x^3 + b1*(x*y)^2
 
 # x^3 + b1*(x*y)^2 = R
@@ -654,9 +641,10 @@ err = round0(4 - 8*x^3 + 2*x^4 + 4*x^6 - 2*x^7 + x^8)
 err
 
 
-################
-################
+#########################
+#########################
 
+#########################
 ### High-Power Terms: > 1
 
 ### a1*x^3 + a2*y^3 + b1*x
@@ -800,6 +788,126 @@ sol
 ### Classic Polynomial
 err = 4 + 12*x^2 + 4*x^3 + 36*x^4 + 6*x^5 + x^6
 round0(err)
+
+
+###################################
+###################################
+
+###############
+### Order 4 ###
+
+### x^4 + b*y
+
+# x^4 + b1*y = R
+# y^4 + b1*x = R
+
+# Diff =>
+# x^4 - y^4 - b1*(x-y) = 0
+# (x - y)*((x+y)*(x^2+y^2) - b1) = 0
+# => x = y *OR* (x+y)*(x^2+y^2) - b1 = 0;
+# =>
+# (x+y)^2 - 2*x*y = b1 / s
+# x*y = (s^2 - b1/s)/2
+
+### Sum =>
+# x^4 + y^4 + b1*s - 2*R = 0
+# s^4 - 4*x*y*s^2 + 2*(x*y)^2 + b1*s - 2*R
+# s^4 - 2*(s^4 - b1*s) + (s^2 - b1/s)^2/2 + b1*s - 2*R
+# -s^4 + 2*b1*s + (s^2 - b1/s)^2/2 + b1*s - 2*R
+# s^4 - 3*b1*s - (s^2 - b1/s)^2/2 + 2*R
+# 2*s^6 - 6*b1*s^3 - (s^3 - b1)^2 + 4*R*s^2
+# s^6 - 4*b1*s^3 + 4*R*s^2 - b1^2
+
+
+### Example
+b = 2
+R = 1
+#
+r.sum = roots(c(1,0,0, -4*b[1], 4*R, 0, - b[1]^2))
+xy = (r.sum^2 - b[1]/r.sum)/2
+r.diff = sqrt(r.sum^2 - 4*xy + 0i)
+x = (r.sum + r.diff)/2
+y = (r.sum - r.diff)/2
+sol = cbind(x, y) # TODO: add also x = y cases;
+sol
+
+### Test
+x^4 + b[1]*y
+y^4 + b[1]*x
+
+### Classical
+# TODO:
+# b1*y = R - x^4
+# (R - x^4)^4/b1^4 + b1*x - R = 0
+# (R - x^4)^4 + b1^5*x - R*b1^4
+
+
+##############
+
+#############
+### Shift ###
+
+### (x - s)^4 + b*y
+
+# (x-s)^4 + b1*y = R
+# (y-s)^4 + b1*x = R
+
+### Solution:
+
+# Trivial solution: x = y;
+
+# Diff =>
+# (x-s)^4 - (y-s)^4 - b1*(x-y) = 0
+# (x - y)*((x-s)^3 + (y-s)^3 + (x-s)^2*(y-s) + (x-s)*(y-s)^2 - b1) = 0
+# (x - y)*((x+y-2*s)*((x-s)^2 + (y-s)^2 - (x-s)*(y-s)) + (x+y-2*s)*(x-s)*(y-s) - b1) = 0
+# (x - y)*((x+y-2*s)*(x^2 + y^2 - 2*s*(x+y) + 2*s^2 - (x-s)*(y-s) + (x-s)*(y-s)) - b1) = 0
+# (x - y)*((x+y-2*s)*(x^2 + y^2 - 2*s*(x+y) + 2*s^2) - b1) = 0
+# (x - y)*((x+y-2*s)*((x+y)^2 - 2*s*(x+y) - 2*x*y + 2*s^2) - b1) = 0
+# (x - y)*((x+y)*((x+y)^2 - 2*s*(x+y) - 2*x*y + 2*s^2) - 2*s*(x+y)*((x+y) - 2*s) + 4*s*x*y - 4*s^3 - b1) = 0
+# (x - y)*((x+y)*((x+y)^2 - 4*s*(x+y) - 2*x*y + 2*s^2 + 4*s^2) + 4*s*x*y - 4*s^3 - b1) = 0
+# => x = y *OR* (x+y)*((x+y)^2 - 4*s*(x+y) - 2*x*y + 6*s^2) + 4*s*x*y - 4*s^3 - b1 = 0;
+# =>
+# (x+y)*((x+y)^2 - 4*s*(x+y) - 2*x*y + 6*s^2) + 4*s*x*y - 4*s^3 - b1 = 0
+# Z*(Z^2 - 4*s*Z - 2*x*y + 6*s^2) + 4*s*x*y = 4*s^3 + b1
+# Z*(Z^2 - 4*s*Z + 6*s^2) = (2*Z - 4*s)*x*y + 4*s^3 + b1
+# x*y = (Z*(Z^2 - 4*s*Z + 6*s^2) - 4*s^3 - b1) / (2*Z - 4*s)
+
+### Sum =>
+# (x-s)^4 + (y-s)^4 + b1*(x+y) = 2*R
+# x^4 + y^4 - 4*s*(x^3 + y^3) + 6*s^2*(x^2 + y^2) - 4*s^3*(x+y) + b1*(x+y) + 2*s^4 - 2*R = 0;
+# x^4 + y^4 - 4*s*Z*(Z^2 - 3*x*y) + 6*s^2*(Z^2 - 2*x*y) - (4*s^3 - b1)*Z + 2*s^4 - 2*R = 0;
+# x^4 + y^4 - 4*s*Z^3 + 6*s^2*Z^2 - (4*s^3 - b1)*Z + 12*(s*Z - s^2)*x*y + 2*s^4 - 2*R = 0;
+# Z^4 - 4*x*y*Z^2 + 2*(x*y)^2 - 4*s*Z^3 + 6*s^2*Z^2 - (4*s^3 - b1)*Z + 12*(s*Z - s^2)*x*y + 2*s^4 - 2*R = 0;
+# Z^4 - 4*s*Z^3 + 6*s^2*Z^2 - (4*s^3 - b1)*Z + 2*(x*y)^2 - 4*(Z^2 - 3*s*Z + 3*s^2)*x*y + 2*s^4 - 2*R = 0;
+# =>
+# Z^6 - 12*s*Z^5 + 60*s^2*Z^4 - 4*(b1 + 40*s^3)*Z^3 + 4*(R + 5*b1*s + 60*s^4)*Z^2 - 16*(R*s + 2*b1*s^2 + 12*s^5)*Z + 16*(R*s^2 + b1*s^3 + 4*s^6) - b1^2
+
+
+### Example
+b = 3
+R = 1
+s = 1
+#
+coeff = c(1, -12*s, 60*s^2, -4*(b[1] + 40*s^3), 4*(R + 5*b[1]*s + 60*s^4), -16*(R*s + 2*b[1]*s^2 + 12*s^5), 16*(R*s^2 + b[1]*s^3 + 4*s^6) - b[1]^2)
+x.sum = roots(coeff)
+xy = (x.sum*(x.sum^2 - 4*s*x.sum + 6*s^2) - 4*s^3 - b[1]) / (2*x.sum - 4*s)
+x.diff = sqrt(x.sum^2 - 4*xy + 0i)
+x = (x.sum + x.diff)/2
+y = (x.sum - x.diff)/2
+sol = cbind(x, y)
+sol = rbind(sol, sol[,2:1])
+sol
+
+### Test
+(x - s)^4 + b[1]*y
+(y - s)^4 + b[1]*x
+
+### Classical Polynomial: P12
+round0.p(poly.calc(sol[,1]))
+# shifted back
+round0.p(poly.calc(sol[,1] - s))
+
+### TODO: classical Polynomial;
 
 
 ###################################
