@@ -7,7 +7,7 @@
 ### Polynomial Systems:
 ### Heterogenous Symmetric
 ###
-### draft v.0.1h
+### draft v.0.1h-bis
 ### & branch v.0.2a
 
 
@@ -26,9 +26,9 @@
 # y^n + P(y, x) = R
 
 # 1.) x^3 + b*y = R; [P3 => P6]
-# 2.) (x - s)^3 + b*y = R;
+# 2.) (x - s)^3 + b*y = R; [P3 => P6: equivalent to non-shifted]
 # 3.) x^3 + b*x*y = R; [P3 => trivial P6]
-# 4.) (x - s)^3 + b*x*y = R;
+# 4.) (x - s)^3 + b*x*y = R; [P3 => P6]
 # 5.) x^3 + b2*x*y + b1*x = R;
 # 6.) x^3 + b2*x*y + b1*y = R;
 # 7.) TODO: Shift for [5] & [6];
@@ -67,9 +67,10 @@
 # - the simple cases are less rewarding;
 
 ### [branch v.0.1]
-### draft v.0.1h:
+### draft v.0.1h - v.0.1h-bis:
 # - initial work on:
 #   x^3 + b3*x^2*y + b2*x*y^2 + b1*x = R;
+# - improved formating + some fixes;
 ### draft v.0.1f - v.0.1g:
 # - added various Mixt-High-Power variants:
 #   x^4*y + b*x = R;
@@ -123,44 +124,55 @@ library(pracma)
 # x^3 + b1*y = R
 # y^3 + b1*x = R
 
+### Solution:
+
 # Diff =>
 # x^3 - y^3 - b1*(x-y) = 0
-# (x - y)*(x^2 + x*y + y^2 - b1) = 0
-# => x = y *OR* x^2 + x*y + y^2 - b1 = 0;
+# (x - y)*(x^2 + y^2 + x*y - b1) = 0
+# => x = y *OR* x^2 + y^2 + x*y - b1 = 0;
 # =>
 # (x+y)^2 - x*y - b1 = 0
 # x*y = (x+y)^2 - b1;
 
 # Sum =>
 # (x+y)^3 - 3*x*y*(x+y) + b1*(x+y) = 2*R
-# s^3 - 3*(s^2 - b1)*s + b1*s - 2*R = 0
-# s^3 - 2*b1*s + R = 0
+# S^3 - 3*(S^2 - b1)*S + b1*S - 2*R = 0
+# S^3 - 2*b1*S + R = 0
 
 ### Step 2:
 # Solve:
-# x + y = s
-# x*y = s^2 - b1
+# x + y = S
+# x*y = S^2 - b1
+
+solve.htShift = function(b, R, shift=0) {
+	s = shift;
+	r.sum = roots(c(1, - 6*s, - 2*(b[1]-6*s^2), - 8*s^3 + R + 3*s*b[1]))
+	xy = r.sum^2 - 3*s*r.sum + 3*s^2 - b[1];
+	r.diff = sqrt(r.sum^2 - 4*xy + 0i)
+	x = (r.sum + r.diff)/2
+	y = (r.sum - r.diff)/2
+	sol = cbind(x, y)
+	sol = rbind(sol, sol[,2:1])
+	sol # TODO: include also x = y cases
+}
 
 ### Example
 b = 3
 R = 1
 #
-r.sum = roots(c(1,0, -2*b[1], R))
-xy = r.sum^2 - b[1]
-diff = sqrt(r.sum^2 - 4*xy + 0i)
-x = (r.sum + diff)/2
-y = (r.sum - diff)/2
-sol = cbind(x, y)
+sol = solve.htShift(b, R)
+x = sol[,1]; y = sol[,2];
 sol # TODO: include also x = y cases
 
 ### Test
 x^3 + b[1]*y
 y^3 + b[1]*x
-# Classic
+
+### Classic Polynomial
 err = x^6 - b[1]*x^4 - 2*R*x^3 + b[1]^2*x^2 + b[1]*R*x + R^2 - b[1]^3
 round0(err)
 
-### Classic
+### Derivation:
 # b1*y = R - x^3
 # =>
 # (R - x^3)^3 / b1^3 + b1*x - R = 0
@@ -176,15 +188,17 @@ round0(err)
 (x^3 - b[1]/2 * x - R)^2 + 3/4 * b[1]^2*x^2 - b[1]^3
 
 
-#################
-
-#################
-### Shifted Roots
+#####################
+#####################
+### Shifted Roots ###
 
 ### (x - s)^3 + b*y
 
 # (x - s)^3 + b1*y = R
 # (y - s)^3 + b1*x = R
+
+# trivial shift (only 1 liniar non-shifted term):
+# - after shift-back: only a shift in R;
 
 solve.htShift = function(b, R, shift=0) {
 	s = shift;
@@ -221,15 +235,6 @@ b = 2
 R = 1
 s = 1
 #
-r.sum = roots(c(1, - 6*s, - 2*(b[1]-6*s^2), - 8*s^3 + R + 3*s*b[1]))
-xy = r.sum^2 - 3*s*r.sum + 3*s^2 - b[1];
-r.diff = sqrt(r.sum^2 - 4*xy + 0i)
-x = (r.sum + r.diff)/2
-y = (r.sum - r.diff)/2
-sol = cbind(x, y)
-sol = rbind(sol, sol[,2:1])
-sol # TODO: include also x = y cases
-
 sol = solve.htShift(b, R, shift=s)
 x = sol[,1]; y = sol[,2];
 sol
@@ -241,10 +246,14 @@ sol
 ### Classic Polynomial
 poly.calc(sol[,1])
 round0.p(poly.calc(sol[,1] - s))
-### TODO:
-# - classic + back-shifted;
 
-###
+# back-shift
+x = x - s
+err = x^6 - b[1]*x^4 - 2*(R - b[1]*s)*x^3 + b[1]^2*x^2 + b[1]*(R - b[1]*s)*x + (R - b[1]*s)^2 - b[1]^3
+round0(err)
+
+
+### Example 2:
 b = 2; R = 1;
 s = 3/2
 #
@@ -253,7 +262,7 @@ x = sol[,1]; y = sol[,2];
 x = sol[,1] - s; # with shift back!
 -4 - 4*x + 4*x^2 + 4*x^3 - 2*x^4 + x^6
 
-###
+### Example 3:
 b = 2; R = 1;
 s = 5/2
 #
@@ -318,19 +327,25 @@ p = sapply(-6:6, function(s) print(shiftSqrt.p(b, R, shift=s/2)$p))
 
 ########################
 
-###############
-### x^3 + b*x*y
+###################
+### x^3 + b*x*y ###
 
 # x^3 + b1*x*y = R
 # y^3 + b1*x*y = R
 
-# Diff =>
+# relatively trivial
+# (x^3 - b[1]/2*x^2 - R)^2 + 3/4 * b[1]^2*x^4 = 0
+
+### Solution:
+
+### Diff =>
 # x^3 - y^3 = 0
 # (x-y)*(x^2 + x*y + y^2) = 0
 # Case 2:
 # x^2 + x*y + y^2 = 0
 # x*y = (x + y)^2
-# Sum =>
+
+### Sum =>
 # x^3 + y^3 + 2*b1*x*y - 2*R = 0
 # (x+y)^3 - 3*x*y*(x+y) + 2*b1*x*y - 2*R
 # Z^3 - 3*Z^3 + 2*b1*Z^2 - 2*R
@@ -347,6 +362,7 @@ solve.htxy = function(b, R) {
 	sol
 }
 
+### Example:
 
 b = 3
 R = 1
@@ -365,7 +381,7 @@ round0.p(poly.calc(sol[,1]))
 err = x^6 - b[1]*x^5 + b[1]^2*x^4 - 2*R*x^3 + b[1]*R*x^2 + R^2
 round0(err)
 
-###
+### Example 2:
 b = 5
 #
 sol = solve.htxy(b, 1) # R = 1;
@@ -397,17 +413,20 @@ x^6 - b[1]*x^5 + b[1]^2*x^4 - 2*R*x^3 + b[1]*R*x^2 + R^2
 # (x-s)^3 + b1*x*y = R
 # (y-s)^3 + b1*x*y = R
 
-# Diff =>
+### Solution:
+
+### Diff =>
 # (x-s)^3 - (y-s)^3 = 0
 # (x-y)*((x-s)^2 + (x-s)*(y-s) + (y-s)^2) = 0
 # alternatively: x - s = (y-s)*m, where m^3 = 1;
-# Case 2:
+# Case: x != y
 # (x-s)^2 + (x-s)*(y-s) + (y-s)^2 = 0
 # (x+y - 2*s)^2 = (x-s)*(y-s)
 # x*y = (x+y - 2*s)^2 + s*(x+y) - s^2
 # x*y = (Z - 2*s)^2 + s*Z - s^2
-# x*y = Z^2 - 3*s*Z + 3*s^2 ###
-# Sum =>
+# x*y = Z^2 - 3*s*Z + 3*s^2
+
+### Sum =>
 # (x-s)^3 + (y-s)^3 + 2*b1*x*y - 2*R = 0
 # (x+y)^3 - 3*x*y*(x+y) - 3*s*(x^2+y^2) + 3*s^2*(x+y) + 2*b1*x*y - 2*R - 2*s^3
 # Z^3 - 3*s*(Z^2 - 2*x*y) + 3*s^2*Z - 3*x*y*Z + 2*b1*x*y - 2*R - 2*s^3
@@ -455,8 +474,8 @@ err = (b[1]*s^2-R)^2 + b[1]*s*(b[1]*s^2 - R)*x + b[1]*R*x^2 + (2*b[1]*s^2 + b[1]
 round0(err)
 
 p.coeff = c((b[1]*s^2-R)^2, b[1]*s*(b[1]*s^2 - R), b[1]*R, (2*b[1]*s^2 + b[1]^2*s - 2*R), b[1]*(s+b[1]), - b[1], 1)
+p.coeff
 
-# Test
 round0.p(poly.calc(sol[,1]))
 # back-shift
 round0.p(poly.calc(sol[,1] - s))
@@ -1267,6 +1286,48 @@ round0.p(poly.calc(sol[,1]))
 # (b4 - b3)*x*y = - (b2*Z + b1)
 # Z = -((b4 - b3)*x*y + b1) / b2
 
+### Sum =>
+# 2*(x*y)^2 + (b3+b4)*x*y*(x+y) + b2*(x^2 + y^2) + b1*(x+y) = 2*R
+#  2*(x*y)^2 + (b3+b4)*x*y*Z + b2*(Z^2 - 2*x*y) + b1*Z - 2*R = 0
+# Sub-Case 1:
+#  2*(x*y)^2 - b1/b2*(b3+b4)*x*y + b2*(b1^2/b2^2 - 2*x*y) - b1*b1/b2 - 2*R = 0
+#  2*(x*y)^2 - b1/b2*(b3+b4)*x*y - 2*b2*x*y - 2*R = 0
+#  2*b2*(x*y)^2 - (b1*(b3+b4) + 2*b2^2)*x*y - 2*b2*R = 0
+# Sub-Case 2:
+# ...
+
+### TODO: Sub-Case 2;
+
+solve.htMixt22 = function(b, R) {
+	if(b[3] == b[4]) {
+		x.sum = - b[1]/b[2];
+		xy = roots(c(2*b[2], - (b[1]*(b[3]+b[4]) + 2*b[2]^2), - 2*b[2]*R))
+	}
+	x.diff = sqrt(x.sum^2 - 4*xy + 0i)
+	x = (x.sum + x.diff)/2
+	y = (x.sum - x.diff)/2
+	sol = cbind(x, y)
+	sol = rbind(sol, sol[,2:1])
+	sol
+}
+
+### Example SC-1:
+b = c(3,2,1,1)
+R = 1
+#
+sol = solve.htMixt22(b, R)
+x = sol[,1]; y = sol[,2];
+sol
+
+### Test
+x^2*y^2 + b[4]*x^2*y + b[3]*x*y^2 + b[2]*x^2 + b[1]*x
+y^2*x^2 + b[4]*y^2*x + b[3]*y*x^2 + b[2]*y^2 + b[1]*y
+
+### Classical Polynomial
+round0.p(poly.calc(sol[,1]))
+
+
+### Example SC-2:
 ### TODO
 
 
