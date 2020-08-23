@@ -7,7 +7,7 @@
 ### Polynomial Systems:
 ### Heterogenous Symmetric
 ###
-### draft v.0.1g
+### draft v.0.1h
 ### & branch v.0.2a
 
 
@@ -25,31 +25,33 @@
 # x^n + P(x, y) = R
 # y^n + P(y, x) = R
 
-# 1.) x^3 + b*y = R;
+# 1.) x^3 + b*y = R; [P3 => P6]
 # 2.) (x - s)^3 + b*y = R;
-# 3.) x^3 + b*x*y = R;
+# 3.) x^3 + b*x*y = R; [P3 => trivial P6]
 # 4.) (x - s)^3 + b*x*y = R;
 # 5.) x^3 + b2*x*y + b1*x = R;
 # 6.) x^3 + b2*x*y + b1*y = R;
 # 7.) TODO: Shift for [5] & [6];
 # 8.) x^3 + b1*(x*y)^2 = R;
 # 9.) TODO: Shift;
+# 10.) x^3 + b3*x^2*y + b2*x*y^2 + b1*x = R;
 ### 2 High-Power Terms:
-# 10.) a1*x^3 + a2*y^3 + b1*x = R;
-# 11.) a1*x^3 + a2*y^3 + b1*x*y = R;
-# 12.) TODO: Shift for [10] & [11];
+# B1.) a1*x^3 + a2*y^3 + b1*x = R;
+# B2.) a1*x^3 + a2*y^3 + b1*x*y = R;
+# B3.) TODO: Shift for [10] & [11];
 ### Mixt-High-Power:
 # 13.) x^2*y + b*x: NO solutions ( x != y);
 # 14.) x^2*y + b*y: trivial;
 # 15.) x^2*y + b2*x^2 + b1*x: trivial;
 # 16.) x^2*y^2 + b2*x^2 + b1*x: simple (P2 => P4);
 # 17.) x^2*y^2 + b3*x^2*y + b2*x^2 + b1*x; (TODO: P2 => P4)
+# 18.) TODO: x^2*y^2 + b4*x^2*y + b3*x*y^2 + b2*x^2 + b1*x
 ### Mixt Order 3+1:
-# 18.) x^3*y + b*x: trivial;
-# 19.) x^4*y + b*x; (P5 => P10)
+# 19.) x^3*y + b*x: trivial;
+# 20.) x^4*y + b*x; (P5 => P10)
 ### Order 4:
-# 20.) x^4 + b*y = R; (P6 => P12)
-# 21.) (x - s)^4 + b*y = R; (P6 => P12)
+# 21.) x^4 + b*y = R; (P6 => P12)
+# 22.) (x - s)^4 + b*y = R; (P6 => P12)
 
 
 ###############
@@ -65,6 +67,9 @@
 # - the simple cases are less rewarding;
 
 ### [branch v.0.1]
+### draft v.0.1h:
+# - initial work on:
+#   x^3 + b3*x^2*y + b2*x*y^2 + b1*x = R;
 ### draft v.0.1f - v.0.1g:
 # - added various Mixt-High-Power variants:
 #   x^4*y + b*x = R;
@@ -167,6 +172,9 @@ round0(err)
 # p^3 - 3*b1*x*p^2 + 3*b1^2*x^2*p - b1^3*p
 # p*(p^2 - 3*b1*x*p + 3*b1^2*x^2 - b1^3)
 # (x^3 + b1*x - R)*(x^6 - b1*x^4 - 2*R*x^3 + b1^2*x^2 + b1*R*x + R^2 - b1^3)
+# =>
+(x^3 - b[1]/2 * x - R)^2 + 3/4 * b[1]^2*x^2 - b[1]^3
+
 
 #################
 
@@ -230,10 +238,11 @@ sol
 (x-s)^3 + b[1]*y
 (y-s)^3 + b[1]*x
 
-### TODO:
-# - classic + polynomial P6;
+### Classic Polynomial
 poly.calc(sol[,1])
 round0.p(poly.calc(sol[,1] - s))
+### TODO:
+# - classic + back-shifted;
 
 ###
 b = 2; R = 1;
@@ -353,6 +362,10 @@ y^3 + b[1]*x*y
 ### Classical Polynomial
 round0.p(poly.calc(sol[,1]))
 
+err = x^6 - b[1]*x^5 + b[1]^2*x^4 - 2*R*x^3 + b[1]*R*x^2 + R^2
+round0(err)
+
+###
 b = 5
 #
 sol = solve.htxy(b, 1) # R = 1;
@@ -360,6 +373,18 @@ x = sol[,1]; y = sol[,2];
 sol
 err = 1 + b[1]*x^2 - 2*x^3 + b[1]^2*x^4 - b[1]*x^5 + x^6
 round0(err)
+
+
+### Derivation
+# b1*y = (R - x^3) / x
+(b[1]*y)^3 + b[1]^4*x*y - R*b[1]^3
+(R - x^3)^3 / x^3 + b[1]^3*x*(R - x^3) / x - R*b[1]^3
+(R - x^3)^3 + b[1]^3*x^3*(R - x^3) - R*b[1]^3*x^3
+(x^3 - R)^3 + b[1]^3*x^6
+(x^3 + b[1]*x^2 - R)*((x^3 - R)^2 - b[1]*x^2*(x^3 - R) + b[1]^2*x^4)
+# =>
+x^6 - b[1]*x^5 + b[1]^2*x^4 - 2*R*x^3 + b[1]*R*x^2 + R^2
+(x^3 - b[1]/2*x^2 - R)^2 + 3/4 * b[1]^2*x^4 # relatively trivial
 
 
 #################
@@ -652,6 +677,62 @@ round0(err)
 round0.p(poly.calc(x))
 err = round0(4 - 8*x^3 + 2*x^4 + 4*x^6 - 2*x^7 + x^8)
 err
+
+
+#############################
+
+
+### x^3 + b3*x^2*y + b2*x*y^2 + b1*x
+
+# x^3 + b3*x^2*y + b2*x*y^2 + b1*x = R
+# y^3 + b3*y^2*x + b2*y*x^2 + b1*y = R
+
+### Solution:
+
+### Diff =>
+# x^3 - y^3 + (b3 - b2)*x*y*(x-y) + b1*(x-y) = 0
+# (x-y)*(x^2 + y^2 + x*y + (b3 - b2)*x*y + b1) = 0
+# Case: x != y =>
+# x^2 + y^2 + x*y + (b3 - b2)*x*y + b1 = 0
+# (x+y)^2 + (b3 - b2 - 1)*x*y + b1
+# Z^2 + (b3 - b2 - 1)*x*y + b1
+# (b3 - b2 - 1)*x*y = - Z^2 - b1
+# (b2 - b3 + 1)*x*y = Z^2 + b1
+
+### Sum =>
+# x^3 + y^3 + (b3 + b2)*x*y*(x+y) + b1*(x+y) = 2*R
+# Z^3 - 3*x*y*Z + (b2 + b3)*x*y*Z + b1*Z - 2*R = 0
+# Z^3 + b1*Z - 2*R + (b2 + b3 - 3)*x*y*Z = 0
+# Z^3 + b1*Z - 2*R + (b2 + b3 - 3)*Z*(Z^2 + b1)/(b2 - b3 + 1)
+# (b2 - b3 + 1)*(Z^3 + b1*Z - 2*R) + (b2 + b3 - 3)*Z*(Z^2 + b1)
+# 2*(b2 - 1)*Z^3 + 2*b1*Z*(b2 - 1) - 2*R*(b2 - b3 + 1)
+# (b2 - 1)*Z^3 + b1*Z*(b2 - 1) - R*(b2 - b3 + 1)
+
+### TODO:
+# Case: b2 - b3 + 1 == 0;
+# Case: b2 == 1;
+
+### Example:
+b = c(3, 2, 1)
+R = 1
+#
+x.sum = roots(c(1, 0, b[1], - R*(b[2] - b[3] + 1)/(b[2] - 1)))
+xy = (x.sum^2 + b[1]) / (b[2] - b[3] + 1)
+x.diff = sqrt(x.sum^2 - 4*xy + 0i)
+x = (x.sum + x.diff)/2
+y = (x.sum - x.diff)/2
+sol = cbind(x, y)
+sol = rbind(sol, sol[,2:1])
+sol
+
+### Test
+x^3 + b[3]*x^2*y + b[2]*x*y^2 + b[1]*x
+y^3 + b[3]*y^2*x + b[2]*y*x^2 + b[1]*y
+
+### Classic Polynomial
+round0.p(poly.calc(sol[,1]))
+
+### TODO
 
 
 #########################
@@ -956,8 +1037,12 @@ x^16 + 4*(b[1]*s - R)*x^12 + 6*(b[1]*s - R)^2*x^8 + 4*(b[1]*s - R)^3*x^4 + (b[1]
 ### Mixed Highest Term ###
 ##########################
 
-###############
-### x^2*y + b*x
+#########################
+### x^j*y^k + P(x, y) ###
+
+
+###################
+### x^2*y + b*x ###
 
 # x^2*y + b1*x = R
 # y^2*x + b1*y = R
@@ -1111,7 +1196,7 @@ round0.p(poly.calc(sol[,1]))
 - R + b[1]*x + (b[2] + b[1]^2/b[2]^2)*x^2 + 2*b[1]/b[2]*x^3 + x^4
 
 
-###########################
+######################################
 
 
 ######################################
@@ -1155,6 +1240,34 @@ y^2*x^2 + b[3]*y^2*x + b[2]*y^2 + b[1]*y
 ### Classical Polynomial
 round0.p(poly.calc(sol[,1]))
 
+
+
+#################################
+
+
+#################################
+### x^2*y^2 + b4*x^2*y + b3*x*y^2
+### + b2*x^2 + b1*x
+
+# x^2*y^2 + b4*x^2*y + b3*x*y^2 + b2*x^2 + b1*x = R
+# y^2*x^2 + b4*y^2*x + b3*y*x^2 + b2*y^2 + b1*y = R
+
+### Solution:
+
+### Diff =>
+# (b4 - b3)*x*y*(x-y) + b2*(x^2 - y^2) + b1*(x-y) = 0
+# (x - y)*((b4 - b3)*x*y + b2*(x+y) + b1) = 0
+# Case: x != y
+
+# Sub-Case 1: b4 = b3
+# x + y = - b1/b2;
+# Z = - b1/b2;
+#
+# Sub-Case 2: b4 != b3
+# (b4 - b3)*x*y = - (b2*Z + b1)
+# Z = -((b4 - b3)*x*y + b1) / b2
+
+### TODO
 
 
 ##########################
