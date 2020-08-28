@@ -7,7 +7,7 @@
 ### Polynomial Systems:
 ### Heterogenous Symmetric
 ###
-### draft v.0.1k
+### draft v.0.1k-bis
 ### & branch v.0.2d
 
 
@@ -62,11 +62,13 @@
 ### Mixt 2 High-Power Terms:
 # MT.1) a1*x^3*y + a2*x*y^3 + b*x + R; [interesting P6]
 ### Order 4 & 5:
-# O4.1.) x^4 + b*y = R; (P6 => P12)
-# O4.2.) (x - s)^4 + b*y = R; (P6 => P12)
-# O4.3.) x^4 + b*x*y = R; (trivial P8)
-# O4.4.) x^4 + b2*(x*y)^2 + b1*x*y = R; (TODO: trivial P8)
-# O4.5.) TODO: x^4 + b3*(x*y)^3 + b2*(x*y)^2 + b1*x*y = R;
+# O4.1a.) x^4 + b*y = R; (P6 => P12)
+# O4.1b.) x^4 + b2*x*y + b1*y = R; (TODO: P6 => P12)
+# O4.1c.) x^4 + b3*(x*y)^2 + b2*x*y + b1*y = R; (TODO: P6 => P12)
+# O4.1d.) (x - s)^4 + b*y = R; (P6 => P12; simple shift of O4.1a)
+# O4.2a.) x^4 + b*x*y = R; (trivial P8)
+# O4.2b.) x^4 + b2*(x*y)^2 + b1*x*y = R; (TODO: trivial P8)
+# O4.2c.) TODO: x^4 + b3*(x*y)^3 + b2*(x*y)^2 + b1*x*y = R;
 # O5.1.) x^5 + b*(x+y) = 0; (TODO: based on (P4[x^4])^2)
 # O5.2.) x^5 + b2*x*y + b1*(x+y) = 0; (TODO: based on (P16)^2)
 # O5.3.) x^5 + b*y = R; (P10 => P20)
@@ -96,9 +98,12 @@
 # - the simple cases are less rewarding;
 
 ### [branch v.0.1]
-### draft v.0.1k:
+### draft v.0.1k & v.0.1k-bis:
 # - solved: x^5 + b*y = R;
 # - worked out various older issues;
+# - some extensions:
+#   O4.1b.) x^4 + b2*x*y + b1*y = R; (TODO: P6 => P12)
+#   O4.1c.) x^4 + b3*(x*y)^2 + b2*x*y + b1*y = R; (TODO: P6 => P12)
 ### draft v.0.1j:
 # - added a1*x^3*y + a2*x*y^3 + b*x = R;
 ### draft v.0.1i:
@@ -1100,48 +1105,97 @@ round0(err)
 ###############
 
 ### x^4 + b*y
+### Extension: x^4 + b2*xy + b1*y = R
 
 # x^4 + b1*y = R
 # y^4 + b1*x = R
 
-# Diff =>
+### Solution:
+
+### Diff =>
 # x^4 - y^4 - b1*(x-y) = 0
 # (x - y)*((x+y)*(x^2+y^2) - b1) = 0
 # => x = y *OR* (x+y)*(x^2+y^2) - b1 = 0;
-# =>
-# (x+y)^2 - 2*x*y = b1 / s
-# x*y = (s^2 - b1/s)/2
+# Case: x != y =>
+# (x+y)^2 - 2*x*y = b1 / S
+# x*y = (S^2 - b1/S)/2
 
 ### Sum =>
-# x^4 + y^4 + b1*s - 2*R = 0
-# s^4 - 4*x*y*s^2 + 2*(x*y)^2 + b1*s - 2*R
-# s^4 - 2*(s^4 - b1*s) + (s^2 - b1/s)^2/2 + b1*s - 2*R
-# -s^4 + 2*b1*s + (s^2 - b1/s)^2/2 + b1*s - 2*R
-# s^4 - 3*b1*s - (s^2 - b1/s)^2/2 + 2*R
-# 2*s^6 - 6*b1*s^3 - (s^3 - b1)^2 + 4*R*s^2
-# s^6 - 4*b1*s^3 + 4*R*s^2 - b1^2
+# x^4 + y^4 + b1*S - 2*R = 0
+# S^4 - 4*x*y*S^2 + 2*(x*y)^2 + b1*S - 2*R
+# S^4 - 2*(S^4 - b1*S) + (S^2 - b1/S)^2/2 + b1*S - 2*R
+# -S^4 + 2*b1*S + (S^2 - b1/S)^2/2 + b1*S - 2*R
+# S^4 - 3*b1*S - (S^2 - b1/S)^2/2 + 2*R
+# 2*S^6 - 6*b1*S^3 - (S^3 - b1)^2 + 4*R*S^2
+# S^6 - 4*b1*S^3 + 4*R*S^2 - b1^2
 
+### Simple extensions:
+### E1: x^4 + b2*x*y + b1*y = R
+# S^6 - 2*b2*S^4 - 4*b1*S^3 + 4*R*S^2 + 2*b1*b2*S - b1^2 = 0
+### E2: x^4 + b3*(x*y)^2 + b2*x*y + b1*y = R
+# S^6 - b3*(S^3 - b1)^2 - 2*b2*S^4 - 4*b1*S^3 + 4*R*S^2 + 2*b1*b2*S - b1^2 = 0
+# (1 - b3)*S^6 - 2*b2*S^4 - (4*b1 - 2*b1*b3)*S^3 + 4*R*S^2 + 2*b1*b2*S - b1^2 - b1^2*b3 = 0
+# (b3 - 1)*S^6 + 2*b2*S^4 - (2*b1*b3 - 4*b1)*S^3 - 4*R*S^2 - 2*b1*b2*S + b1^2 + b1^2*b3 = 0
 
-### Example
+solve.ht4 = function(b, R) {
+	r.sum = if(length(b) == 1) { roots(c(1,0,0, -4*b[1], 4*R, 0, - b[1]^2));
+		} else if(length(b) == 2) { roots(c(1,0,-2*b[2], -4*b[1], 4*R, 2*b[1]*b[2], - b[1]^2));
+		} else roots(c(b[3]-1, 0, 2*b[2], -2*b[1]*b[3]+4*b[1], -4*R, -2*b[1]*b[2], b[1]^2 + b[1]^2*b[3]));
+	r.sum = r.sum[r.sum != 0] # if b[3] == -1
+	xy = (r.sum^2 - b[1]/r.sum)/2
+	r.diff = sqrt(r.sum^2 - 4*xy + 0i)
+	x = (r.sum + r.diff)/2
+	y = (r.sum - r.diff)/2
+	sol = cbind(x, y) # TODO: add also x = y cases;
+	sol = round0(rbind(sol, sol[,2:1]))
+	p = round0.p(poly.calc(sol[,1]))
+	return(list(sol=sol, p=p))
+}
+
+### Example 1:
 b = 2
 R = 1
 #
-r.sum = roots(c(1,0,0, -4*b[1], 4*R, 0, - b[1]^2))
-xy = (r.sum^2 - b[1]/r.sum)/2
-r.diff = sqrt(r.sum^2 - 4*xy + 0i)
-x = (r.sum + r.diff)/2
-y = (r.sum - r.diff)/2
-sol = cbind(x, y) # TODO: add also x = y cases;
+sol = solve.ht4(b, R)
+x = sol$sol[,1]; y = sol$sol[,2];
 sol
 
 ### Test
 x^4 + b[1]*y
 y^4 + b[1]*x
 
-### Classical
+### Classical Polynomial
 err = x^12 - b[1]*x^9 - 3*R*x^8 + b[1]^2*x^6 + 2*R*b[1]*x^5 + 3*R^2*x^4 - b[1]^3*x^3 - R*b[1]^2*x^2 - R^2*b[1]*x + b[1]^4 - R^3
 round0(err)
 
+
+### Example 2: Extended version
+b = c(2, 1)
+R = 1
+#
+sol = solve.ht4(b, R)
+x = sol$sol[,1]; y = sol$sol[,2];
+sol
+
+### Test
+x^4 + b[2]*x*y + b[1]*y
+y^4 + b[2]*x*y + b[1]*x
+
+
+### Example 3: Extended version
+b = c(2, 1, -1)
+R = 1
+#
+sol = solve.ht4(b, R)
+x = sol$sol[,1]; y = sol$sol[,2];
+sol
+
+### Test
+x^4 + b[3]*(x*y)^2 + b[2]*x*y + b[1]*y
+y^4 + b[3]*(x*y)^2 + b[2]*x*y + b[1]*x
+
+
+### Classical Polynomial
 ### Derivation:
 # b1*y = R - x^4
 # (R - x^4)^4/b1^4 + b1*x - R = 0
@@ -1150,6 +1204,7 @@ round0(err)
 x^16 - 4*R*x^12 + 6*R^2*x^8 - 4*R^3*x^4 + b[1]^5*x - R*b[1]^4 + R^4
 (x^4 + b[1]*x - R)*(x^12 - b[1]*x^9 - 3*R*x^8 + b[1]^2*x^6 + 2*R*b[1]*x^5 + 3*R^2*x^4 - b[1]^3*x^3 - R*b[1]^2*x^2 - R^2*b[1]*x + b[1]^4 - R^3)
 
+# TODO: for extended version;
 
 
 ##############
