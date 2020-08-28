@@ -7,7 +7,7 @@
 ### Polynomial Systems:
 ### Heterogenous Symmetric
 ###
-### draft v.0.1j
+### draft v.0.1k
 ### & branch v.0.2d
 
 
@@ -33,7 +33,7 @@
 # 6.) x^3 + b2*x*y + b1*y = R; (TODO: P6)
 # 7.) x^3 + b3*x*y + b2*y^2 + b1*y = R; (TODO: P6)
 # 8.) TODO: Shift for [5-7];
-# 9.) x^3 + b*(x*y)^2 = R; [P3 => P6: based on m3]
+# 9.) x^3 + b*(x*y)^2 = R; [P4 => P8: based on m3]
 # 10.) x^3 + b2*(x*y)^2 + b1*(x*y) = R; [P4 => P8: based on m3]
 # 11.) TODO: Shift for [9-10];
 # 12.) x^3 + b3*x^2*y + b2*x*y^2 + b1*x = R;
@@ -69,6 +69,7 @@
 # O4.5.) TODO: x^4 + b3*(x*y)^3 + b2*(x*y)^2 + b1*x*y = R;
 # O5.1.) x^5 + b*(x+y) = 0; (TODO: based on (P4[x^4])^2)
 # O5.2.) x^5 + b2*x*y + b1*(x+y) = 0; (TODO: based on (P16)^2)
+# O5.3.) x^5 + b*y = R; (P10 => P20)
 
 
 
@@ -95,6 +96,9 @@
 # - the simple cases are less rewarding;
 
 ### [branch v.0.1]
+### draft v.0.1k:
+# - solved: x^5 + b*y = R;
+# - worked out various older issues;
 ### draft v.0.1j:
 # - added a1*x^3*y + a2*x*y^3 + b*x = R;
 ### draft v.0.1i:
@@ -782,6 +786,7 @@ m3 = unity(3, all=F)
 # b1*x^4*m + x^3 - R = 0
 
 solve.xysq = function(b, R, isInverse=FALSE) {
+	# isInverse: b = 1/n and parameter b = n;
 	coeff = if(isInverse) c(m3^2, b[1], 0,0, - R*b[1]) else c(b[1]*m3^2, 1,0,0, - R);
 	x = roots(coeff)
 	y = x*m3
@@ -870,6 +875,10 @@ b[2]^2*x^8 - b[2]*x^7 - (b[1]*b[2] - 1)*x^6 - b[1]*x^5 + (b[1]^2 + b[2]*R)*x^4 -
 #############################
 #############################
 
+#####################
+### x^j*y^k Terms ###
+#####################
+
 ### x^3 + b3*x^2*y + b2*x*y^2 + b1*x
 
 # x^3 + b3*x^2*y + b2*x*y^2 + b1*x = R
@@ -897,20 +906,31 @@ b[2]^2*x^8 - b[2]*x^7 - (b[1]*b[2] - 1)*x^6 - b[1]*x^5 + (b[1]^2 + b[2]*R)*x^4 -
 # (b2 - 1)*Z^3 + b1*Z*(b2 - 1) - R*(b2 - b3 + 1)
 
 ### TODO:
-# Case: b2 - b3 + 1 == 0;
+# Case: b2 - b3 + 1 == 0; TODO: verify;
 # Case: b2 == 1;
+
+solve.htxy2 = function(b, R) {
+	if(abs(b[3] - b[2] - 1) < 1E-12) {
+		x.sum = sqrt(-b[1] + 0i) * c(1, -1)
+		xy = (x.sum^3 + b[1]*x.sum - 2*R) / x.sum / (b[2] + b[3] - 3)
+	} else {
+		x.sum = roots(c(1, 0, b[1], - R*(b[2] - b[3] + 1)/(b[2] - 1)))
+		xy = (x.sum^2 + b[1]) / (b[2] - b[3] + 1)
+	}
+	x.diff = sqrt(x.sum^2 - 4*xy + 0i)
+	x = (x.sum + x.diff)/2
+	y = (x.sum - x.diff)/2
+	sol = cbind(x, y)
+	sol = rbind(sol, sol[,2:1])
+	sol
+}
 
 ### Example:
 b = c(3, 2, 1)
 R = 1
 #
-x.sum = roots(c(1, 0, b[1], - R*(b[2] - b[3] + 1)/(b[2] - 1)))
-xy = (x.sum^2 + b[1]) / (b[2] - b[3] + 1)
-x.diff = sqrt(x.sum^2 - 4*xy + 0i)
-x = (x.sum + x.diff)/2
-y = (x.sum - x.diff)/2
-sol = cbind(x, y)
-sol = rbind(sol, sol[,2:1])
+sol = solve.htxy2(b, R)
+x = sol[,1]; y = sol[,2]
 sol
 
 ### Test
@@ -1456,7 +1476,7 @@ b[2]*x^2 - (R/b[2] - b[1])*x - R
 # (x*y)^3*(x - y) + b1*(x-y) = 0
 # (x - y)*((x*y)^3 + b1) = 0
 # Case: x != y
-# x*y = (-b1)^(1/3)
+# x*y = (-b1)^(1/3) * m3.all
 
 ### Sum =>
 # (x*y)^3*(x+y) + 2*b2*(x+y)^2 + b1*(x+y) = 2*R
@@ -1489,7 +1509,7 @@ round0.p(poly.calc(sol[,1]))
 err = -3 - x^3 + 3*x^4 - 3*x^5 + x^6
 round0(err)
 
-# trivial
+# trivial:
 -b[1] + x^3*(x^3 - sqrt(R/b[2]))^3
 
 
@@ -2081,6 +2101,116 @@ err = (1 - 4*x + 16*x^2 - 24*x^3 + 14*x^4 - 4*x^5 + 4*x^6 - 8*x^7 + 4*x^8 + 2*x^
 round0(err)
 
 
+###############
+###############
+
+#############
+### x^5 + b*y
+
+# x^5 + b*y = R
+# y^5 + b*x = R
+
+### Solution
+
+### Diff =>
+# x^5 - y^5 - b*(x-y) = 0
+# (x-y)*(x^4 + y^4 + x*y*(x^2 + y^2) + (x*y)^2 - b) = 0
+# Case: x != y =>
+# x^4 + y^4 + x*y*(x^2 + y^2) + (x*y)^2 - b = 0
+# S^4 - 4*x*y*(x+y)^2 + 2*(x*y)^2 + x*y*(S^2 - 2*x*y) + (x*y)^2 - b = 0
+# S^4 - 3*x*y*S^2 + (x*y)^2 - b = 0
+
+### Sum =>
+# x^5 + y^5 + b*(x+y) = 2*R
+# (x+y)*(x^4 + y^4 - x*y*(x^2 + y^2) + (x*y)^2 + b) - 2*R = 0
+# S*(S^4 - 4*x*y*S^2 + 2*(x*y)^2 - x*y*(S^2 - 2*x*y) + (x*y)^2 + b) - 2*R = 0
+# S*(S^4 - 5*x*y*S^2 + 5*(x*y)^2 + b) - 2*R = 0
+
+### Sum - 5*S*Diff =>
+# S*(S^4 - 5*x*y*S^2 + 5*(x*y)^2 + b - 5*S^4 + 15*x*y*S^2 - 5*(x*y)^2 + 5*b) - 2*R = 0
+# S*(-4*S^4 + 10*x*y*S^2 + 6*b) - 2*R = 0
+# S*(4*S^4 - 10*x*y*S^2 - 6*b) + 2*R = 0
+# S*(2*S^4 - 5*x*y*S^2 - 3*b) + R = 0
+# 5*x*y*S^3 = 2*S^5 - 3*b*S + R
+
+### => Diff =>
+# S^4 - 3*x*y*S^2 + (x*y)^2 - b = 0 # * S^6
+# S^10 - 3*x*y*S^8 + (x*y)^2*S^6 - b*S^6 = 0
+# 25*S^10 - 75*x*y*S^8 + 25*(x*y)^2*S^6 - 25*b*S^6 = 0
+# 25*S^10 - 15*S^5*(2*S^5 - 3*b*S + R) + (2*S^5 - 3*b*S + R)^2 - 25*b*S^6 = 0
+# 5*S^10 - (2*S^5 - 3*b*S + R)^2 - 20*b*S^6 + 15*R*S^5 = 0
+# 5*S^10 - (4*S^10 + 9*b^2*S^2 + R^2 - 12*b*S^6 + 4*R*S^5 - 6*b*R*S) - 20*b*S^6 + 15*R*S^5 = 0
+# S^10 - 8*b*S^6 + 11*R*S^5 - 9*b^2*S^2 + 6*b*R*S - R^2 = 0
+
+solve.ht5Basic = function(b, R) {
+	x.sum = roots(c(1, 0,0,0, -8*b[1], 11*R, 0,0, - 9*b[1]^2, 6*b[1]*R, - R^2))
+	xy = (2*x.sum^5 - 3*b[1]*x.sum + R) / x.sum^3 / 5
+	x.diff = sqrt(x.sum^2 - 4*xy + 0i)
+	x = (x.sum + x.diff)/2
+	y = (x.sum - x.diff)/2
+	sol = cbind(round0(x), round0(y))
+	sol = rbind(sol, sol[,2:1])
+	p = round0.p(poly.calc(sol[,1]))
+	return(list(sol=sol, p=p))
+}
+
+### Example:
+b = 3
+R = 1
+#
+sol = solve.ht5Basic(b, R)
+x = sol$sol[,1]; y = sol$sol[,2]
+sol
+
+### Test
+x^5 + b[1]*y
+y^5 + b[1]*x
+
+
+### Example 2:
+b = -1
+R = 1
+#
+sol = solve.ht5Basic(b, R)
+x = sol$sol[,1]; y = sol$sol[,2]
+sol
+
+### Test
+x^5 + b[1]*y
+y^5 + b[1]*x
+
+### Classic Polynomial
+x^20 - b[1]*x^16 - 4*R*x^15 + b[1]^2*x^12 + 3*R*b[1]*x^11 + 6*R^2*x^10 - b[1]^3*x^8 +
+ - 2*R*b[1]^2*x^7 - 3*R^2*b[1]*x^6 - 4*R^3*x^5 + b[1]^4*x^4 + R*b[1]^3*x^3 +
+ + R^2*b[1]^2*x^2 + R^3*b[1]*x + R^4 - b[1]^5
+
+### Example 3: R^4 - b[1]^5 == 0
+b = 1
+R = -1
+#
+sol = solve.ht5Basic(b, R)
+x = sol$sol[,1]; y = sol$sol[,2]
+sol
+
+### Test
+x^5 + b[1]*y
+y^5 + b[1]*x
+# x*(x+1) * P18
+err = -1 + 2*x - 3*x^2 + 4*x^3 - 3*x^5 + 5*x^6 - 6*x^7 + 6*x^8 - 3*x^10 + 4*x^11 - 4*x^12 + 4*x^13 - x^15 + x^16 - x^17 + x^18
+round0(err)
+ 
+ 
+ 
+### Derivation:
+# y = (-x^5 + R)/b[1]
+(x^5 - R)^5 - b[1]^6*x + R*b[1]^5
+#
+x^25 - 5*R*x^20 + 10*R^2*x^15 - 10*R^3*x^10 + 5*R^4*x^5 - b[1]^6*x + (R*b[1]^5 - R^5)
+(x^5 + b[1]*x - R)*(x^20 - b[1]*x^16 - 4*R*x^15 + b[1]^2*x^12 + 3*R*b[1]*x^11 + 6*R^2*x^10 - b[1]^3*x^8 +
+ - 2*R*b[1]^2*x^7 - 3*R^2*b[1]*x^6 - 4*R^3*x^5 + b[1]^4*x^4 + R*b[1]^3*x^3 +
+ + R^2*b[1]^2*x^2 + R^3*b[1]*x + R^4 - b[1]^5)
+
+
 
 ###################################
 
@@ -2578,6 +2708,8 @@ x^2 + z^2 + b[1]*y
 # Formulas used:
 # x^3 + y^3 + z^3 = S^3 - 3*E2*S + 3*E3;
 # x^4 + y^4 + z^4 = S^4 - 4*E2 * S^2 + 4*E3 * S + 2*E2^2;
+# (x^3*y^3 + x^3*z^3 + y^3*z^3) = E2^3 + 3*E3^2 - 3*E3*E2*S
+# x^4*y^2 + x^4*z^2+ x^2*y^4 + y^4*z^2 + y^2*z^4 + x^2*z^4 = E2^2*S^2 - 2*E3*S^3 + 4*E3*E2*S - 3*E3^2 - 2*E2^3
 
 ### Sum =>
 # x^3 + y^3 + z^3 + b*(x+y+z) = 3*R
@@ -2600,7 +2732,7 @@ x^2 + z^2 + b[1]*y
 # 18*E2^2*S^2 = 3*S^6 + 12*b*S^4 - 27*R*S^3
 # 6*E2^2 = S^4 + 4*b*S^2 - 9*R*S !!!
 # =>
-# 6*E3 = 6*E2*S - 2*S^3 - 2*b*S + 6*R # TODO
+# 6*E3 = 6*E2*S - 2*S^3 - 2*b*S + 6*R !!!
 
 ### Diff =>
 # x^3 - y^3 = b*(z-y)
@@ -2608,8 +2740,26 @@ x^2 + z^2 + b[1]*y
 # z^3 - x^3 = b*(y-x)
 ### Prod =>
 # (x^2 + y^2 + x*y)*(x^2 + z^2 + x*z)*(y^2 + z^2 + y*z) = -b^3
+# =>
+# - E2^3 + E2^2*S^2 - E3*S^3 + b^3 = 0
+# E2^3 - E2^2*S^2 + E3*S^3 - b^3 = 0
 
-### TODO
+### Solve: E2, E3, S
+# 6*E2^2 = S^4 + 4*b*S^2 - 9*R*S
+# 6*E3 = 6*E2*S - 2*S^3 - 2*b*S + 6*R
+# E2^3 - E2^2*S^2 + E3*S^3 - b^3 = 0
+# TODO
+
+### Derivation
+(x^3*y^3 + x^3*z^3 + y^3*z^3) + # = E2^3 - 6*E3^2 - 3*E3*S*(S^2 - 2*E2) + 3*E3*(S^3 - 3*E2*S + 3*E3)
+x^4*y^2 + x^4*z^2+ x^2*y^4 + y^4*z^2 + y^2*z^4 + x^2*z^4 + # = E2^2 *(S^2 - 2*E2) - 2*E3*(E2*S - 2*E3) - 2*E3*(S^3 - 3*E2*S + 3*E3) - E3^2
++ 2*x*y*z*(x^2*y + x^2*z + x*y^2 + y^2*z + x*z^2 + y*z^2) + # = 2*E3*(E2*S - 3*E3)
++ x*y*z*(x^3 + y^3 + z^3) +  3*(x*y*z)^2 + b^3
+#
+E2^3 + 3*E3^2 - 3*E3*E2*S + E2^2*S^2 - 2*E3*S^3 + 4*E3*E2*S - 3*E3^2 - 2*E2^3 + 
++ 2*E3*(E2*S - 3*E3) + E3*(S^3 - 3*E2*S + 3*E3) + 3*E3^2 + b^3
+#
+- E2^3 + E2^2*S^2 - E3*S^3 + b^3
 
 
 ### Example
