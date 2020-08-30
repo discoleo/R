@@ -7,7 +7,7 @@
 ### Polynomial Systems:
 ### Heterogenous Symmetric
 ###
-### draft v.0.1k-pr
+### draft v.0.1k-x
 ### & branch v.0.2d
 
 
@@ -29,7 +29,7 @@
 # 2.) (x - s)^3 + b*y = R; [P3 => P6: equivalent to non-shifted]
 # 3.) x^3 + b*x*y = R; [P3 => trivial P6]
 # 4.) (x - s)^3 + b*x*y = R; [P3 => P6]
-# 5.) x^3 + b2*x*y + b1*x = R; (TODO: progress on P6)
+# 5.) x^3 + b2*x*y + b1*x = R; (P3 => P6)
 # 6.) x^3 + b2*x*y + b1*y = R; (TODO: P6)
 # 7.) x^3 + b3*x*y + b2*y^2 + b1*y = R; (TODO: P6)
 # 8.) TODO: Shift for [5-7];
@@ -98,10 +98,10 @@
 # - the simple cases are less rewarding;
 
 ### [branch v.0.1]
-### draft v.0.1k & v.0.1k-pr:
+### draft v.0.1k & v.0.1k-x:
 # - solved: x^5 + b*y = R;
 # - worked out various older issues;
-# - progress on P6 for x^3 + b2*x*y + b1*x [v.0.1k-progress];
+# - P6 for x^3 + b2*x*y + b1*x [DONE in v.0.1k-x];
 # - some extensions:
 #   O4.1b.) x^4 + b2*x*y + b1*y = R; (TODO: P6 => P12)
 #   O4.1c.) x^4 + b3*(x*y)^2 + b2*x*y + b1*y = R; (TODO: P6 => P12)
@@ -131,7 +131,7 @@
 # - added x^3 + b1*(x*y)^2 = R;
 # - TODO:
 #  -- shifted versions;
-#  -- parametric polynomials;
+#  -- parametric polynomials [DONE for 1st variant];
 ### draft v.0.1b - v.0.1b-x:
 # - added a basic xy-type: x^3 + x*y = R;
 # - added also the shift (v.0.1b-sh);
@@ -638,8 +638,29 @@ y^3 + b[2]*x*y + b[1]*y
 ### Classical Polynomial
 round0.p(poly.calc(sol[,1]))
 
+err = x^6 - b[2]*x^5 + (b[2]^2 + 2*b[1])*x^4 - (b[1]*b[2] + 2*R)*x^3 + (b[1]*b[2]^2 + R*b[2] + b[1]^2)*x^2 - 2*b[1]*R*x + R^2
+round0(err)
 
-# TODO
+
+### Example 2: 4 + 8*x - 2*x^5 + x^6
+b = c(-2, 2)
+R = 2
+#
+sol = solve.htxy(b, R)
+x = sol[,1]; y = sol[,2]
+sol
+
+### Test
+x^3 + b[2]*x*y + b[1]*x 
+y^3 + b[2]*x*y + b[1]*y
+
+### Classical Polynomial
+round0.p(poly.calc(sol[,1]))
+
+err = x^6 - b[2]*x^5 + (b[2]^2 + 2*b[1])*x^4 - (b[1]*b[2] + 2*R)*x^3 + (b[1]*b[2]^2 + R*b[2] + b[1]^2)*x^2 - 2*b[1]*R*x + R^2
+round0(err)
+
+### Derivation:
 # Z^3 - b2*Z^2 + b1*Z - b1*b2 + R
 # x[1]+x[2]+x[3]+x[4]+x[5]+x[6] = b2;
 # (x[1]+x[4])*(x[2]+x[5]+x[3]+x[6]) + (x[2]+x[5])*(x[3]+x[6]) = b1
@@ -659,7 +680,25 @@ round0.p(poly.calc(sol[,1]))
 #    = -S1^3 + b[2]*S1^2 - b[1]*S1 + b[1]*b[2] + ... # Note: Sum = + 3*b[1]*b[2]
 #    = -(b[2]^3 - 3*b[1]*b[2] + 3*(b[1]*b[2] - R)) + b[2]*(b[2]^2 - 2*b[1]) - b[1]*b[2] + 3*b[1]*b[2] + b[1]*b[2] - R
 #    = b[1]*b[2] + 2*R
-x^6 - b[2]*x^5 + (b[2]^2 + 2*b[1])*x^4 - (b[1]*b[2] + 2*R)*x^3 + ...
+# E6 = (S1^2 + b[1])*(S2^2 + b[1])*(S3^2 + b[1])
+#    = (S1^2*S2^2 + b[1]*(S1^2 + S2^2) + b[1]^2)*(S3^2 + b[1])
+#    = (S1*S2*S3)^2 + b[1]^2*(S1^2 + S2^2 + S3^2) + b[1]*(S1^2*S2^2 + S1^2*S3^2 + S2^2*S3^2) + b[1]^3
+#    = (b[1]*b[2] - R)^2 + b[1]^2*(b[2]^2 - 2*b[1]) + b[1]*(b[1]^2 - 2*b[2]*(b[1]*b[2] - R)) + b[1]^3
+#    = R^2
+# E5 = S1*(S2^2 + b[1])*(S3^2 + b[1]) + S2*(S1^2 + b[1])*(S3^2 + b[1]) + S3*(S1^2 + b[1])*(S2^2 + b[1])
+#    = S1*S2^2*S3^2 + b[1]*S1*(S2^2 + S3^2) + b[1]^2*S1 + ...
+#    = S1*S2*S3*E2 + b[1]^2*(S1+S2+S3) + b[1]*(S1*S2^2 + S1*S3^2 + S2*S1^2 + S2*S3^2 + S3*S1^2 + S3*S2^2)
+#    = b[1]*(b[1]*b[2] - R) + b[1]^2*b[2] + b[1]*(b[2]*b[1] - 3*(b[1]*b[2] - R))
+#    = 2*b[1]*R
+# E4 = x[1]*x[4]*(x[2]+x[5])*(x[3]+x[6]) + x[2]*x[5]*(x[1]+x[4])*(x[3]+x[6]) + x[3]*x[6]*(x[1]+x[4])*(x[2]+x[5]) +
+#      + x[1]*x[2]*x[4]*x[5] + x[1]*x[3]*x[4]*x[6] + x[2]*x[3]*x[5]*x[6]
+#    = S2*S3*(S1^2 + b[1]) + S1*S3*(S2^2 + b[1]) + S1*S2*(S3^2 + b[1]) +
+#      + (S1^2 + b[1])*(S2^2 + b[1]) + (S1^2 + b[1])*(S3^2 + b[1]) + (S2^2 + b[1])*(S3^2 + b[1])
+#    = E3*(S1 + S2 + S3) + b[1]*E2 + (S1^2*S2^2 + ... + 2*b[1]*(S1^2 + S2^2 + S3^2) + 3*b[1]^2)
+#    = b[2]*(b[1]*b[2] - R) + b[1]^2 + (E2^2 - 2*E3*(S1 + S2 + S3)) + 2*b[1]*(b[2]^2 - 2*b[1]) + 3*b[1]^2
+#    = 3*b[1]*b[2]^2 - R*b[2] + b[1]^2 - 2*(b[1]*b[2] - R)*b[2]
+#    = b[1]*b[2]^2 + R*b[2] + b[1]^2
+x^6 - b[2]*x^5 + (b[2]^2 + 2*b[1])*x^4 - (b[1]*b[2] + 2*R)*x^3 + (b[1]*b[2]^2 + R*b[2] + b[1]^2)*x^2 - 2*b[1]*R*x + R^2
 
 
 #######################
