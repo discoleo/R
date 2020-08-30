@@ -7,7 +7,7 @@
 ### Polynomial Systems:
 ### Heterogenous Symmetric
 ###
-### draft v.0.1k-bis
+### draft v.0.1k-pr
 ### & branch v.0.2d
 
 
@@ -29,7 +29,7 @@
 # 2.) (x - s)^3 + b*y = R; [P3 => P6: equivalent to non-shifted]
 # 3.) x^3 + b*x*y = R; [P3 => trivial P6]
 # 4.) (x - s)^3 + b*x*y = R; [P3 => P6]
-# 5.) x^3 + b2*x*y + b1*x = R; (TODO: P6)
+# 5.) x^3 + b2*x*y + b1*x = R; (TODO: progress on P6)
 # 6.) x^3 + b2*x*y + b1*y = R; (TODO: P6)
 # 7.) x^3 + b3*x*y + b2*y^2 + b1*y = R; (TODO: P6)
 # 8.) TODO: Shift for [5-7];
@@ -64,7 +64,7 @@
 ### Order 4 & 5:
 # O4.1a.) x^4 + b*y = R; (P6 => P12)
 # O4.1b.) x^4 + b2*x*y + b1*y = R; (TODO: P6 => P12)
-# O4.1c.) x^4 + b3*(x*y)^2 + b2*x*y + b1*y = R; (TODO: P6 => P12)
+# O4.1c.) x^4 + b3*(x*y)^2 + b2*x*y + b1*y = R; (TODO: P6 => P12; if(b3 == 1) P4 => P8)
 # O4.1d.) (x - s)^4 + b*y = R; (P6 => P12; simple shift of O4.1a)
 # O4.2a.) x^4 + b*x*y = R; (trivial P8)
 # O4.2b.) x^4 + b2*(x*y)^2 + b1*x*y = R; (TODO: trivial P8)
@@ -98,9 +98,10 @@
 # - the simple cases are less rewarding;
 
 ### [branch v.0.1]
-### draft v.0.1k & v.0.1k-bis:
+### draft v.0.1k & v.0.1k-pr:
 # - solved: x^5 + b*y = R;
 # - worked out various older issues;
+# - progress on P6 for x^3 + b2*x*y + b1*x [v.0.1k-progress];
 # - some extensions:
 #   O4.1b.) x^4 + b2*x*y + b1*y = R; (TODO: P6 => P12)
 #   O4.1c.) x^4 + b3*(x*y)^2 + b2*x*y + b1*y = R; (TODO: P6 => P12)
@@ -167,17 +168,23 @@ library(pracma)
 # x^3 + b1*y = R
 # y^3 + b1*x = R
 
+### Extensions:
+# E1: x^3 + b2*x*y + b1*y = R; [P3 => P6]
+# E2: x^3 + b3*(x*y)^2 + b2*x*y + b1*y = R; [P4 => P8]
+# - are discussed in a separate section;
+
 ### Solution:
 
-# Diff =>
+### Diff =>
 # x^3 - y^3 - b1*(x-y) = 0
 # (x - y)*(x^2 + y^2 + x*y - b1) = 0
 # => x = y *OR* x^2 + y^2 + x*y - b1 = 0;
 # =>
 # (x+y)^2 - x*y - b1 = 0
 # x*y = (x+y)^2 - b1;
+# x*y = S^2 - b1;
 
-# Sum =>
+### Sum =>
 # (x+y)^3 - 3*x*y*(x+y) + b1*(x+y) = 2*R
 # S^3 - 3*(S^2 - b1)*S + b1*S - 2*R = 0
 # S^3 - 2*b1*S + R = 0
@@ -231,16 +238,19 @@ round0(err)
 (x^3 - b[1]/2 * x - R)^2 + 3/4 * b[1]^2*x^2 - b[1]^3
 
 
-#####################
+
 #####################
 ### Shifted Roots ###
+#####################
 
 ### (x - s)^3 + b*y
 
 # (x - s)^3 + b1*y = R
 # (y - s)^3 + b1*x = R
 
-# trivial shift (only 1 liniar non-shifted term):
+### Equivalent:
+# - trivial shift (only 1 liniar non-shifted term):
+#  (x - s)^3 + b1*(y - s) = R - s*b1;
 # - after shift-back: only a shift in R;
 
 solve.htShift = function(b, R, shift=0) {
@@ -368,7 +378,7 @@ p = sapply(-6:6, function(s) print(shiftSqrt.p(b, R, shift=s/2)$p))
 -23 - 76*x - 4*x^2 + 92*x^3 + 84*x^4 - 24*x^5 - 50*x^6 + 12*x^7 + 12*x^8 - 4*x^9 - 4*x^10 + x^12
 
 
-########################
+###################
 
 ###################
 ### x^3 + b*x*y ###
@@ -568,6 +578,7 @@ p = sapply(-6:6, function(s) print(poly.htxy(b, R, s)$p))
 
 ######################
 ### xy & x/y-Terms ###
+######################
 
 # x-Terms vs y-Terms: are equivalent;
 
@@ -629,7 +640,26 @@ round0.p(poly.calc(sol[,1]))
 
 
 # TODO
-x^6 - b[1]*x^5 + (b[1]^2 + 2*b[2])*x^4 + ...
+# Z^3 - b2*Z^2 + b1*Z - b1*b2 + R
+# x[1]+x[2]+x[3]+x[4]+x[5]+x[6] = b2;
+# (x[1]+x[4])*(x[2]+x[5]+x[3]+x[6]) + (x[2]+x[5])*(x[3]+x[6]) = b1
+# x[1]*(x[2]+x[3] + 0 +x[5]+x[6]) + x[2]*(x[3]+x[4] + 0 + x[6]) +
+#   + x[3]*(x[4]+x[5] + 0) + x[4]*(x[5]+x[6]) + x[5]*x[6] = b1;
+# (x[1]+x[4])*(x[2]+x[5])*(x[3]+x[6]) = b[1]*b[2] - R
+# E2 = b[1] + x[1]*x[4] + x[2]*x[5] + x[3]*x[6] # =
+#  b[1] + (x[1]+x[4])^2 + (x[2]+x[5])^2 + (x[3]+x[6])^2 + 3*b[1]
+#  4*b[1]+ b[2]^2 - 2*b[1]
+#  2*b1] + b[2]^2;
+# E3 = x[1]*x[2]*(x[3]+_x[4]+_x[5]+x[6]) + x[1]*x[3]*(_x[4]+x[5]+_x[6]) + x[1]*x[4]*(_x[5]+_x[6]) + x[1]*x[5]*x[6] +
+#    + x[2]*x[3]*(x[4]+_x[5]+_x[6]) + x[2]*x[4]*(_x[5]+x[6]) + _x[2]*x[5]*x[6] +
+#    + x[3]*x[4]*(x[5]+_x[6]) + _x[3]*x[5]*x[6] + x[4]*x[5]*x[6]
+#    = x[1]*x[4]*(x[2]+x[3]+x[5]+x[6]) + x[2]*x[5]*(x[1]+x[3]+x[4]+x[6]) + x[3]*x[6]*(x[1]+x[2]+x[4]+x[5])
+#      + (x[1]+x[4])*(x[2]+x[5])*(x[3]+x[6])
+#    = (S1^2 + b[1])*(b[2] - S1) + ...
+#    = -S1^3 + b[2]*S1^2 - b[1]*S1 + b[1]*b[2] + ... # Note: Sum = + 3*b[1]*b[2]
+#    = -(b[2]^3 - 3*b[1]*b[2] + 3*(b[1]*b[2] - R)) + b[2]*(b[2]^2 - 2*b[1]) - b[1]*b[2] + 3*b[1]*b[2] + b[1]*b[2] - R
+#    = b[1]*b[2] + 2*R
+x^6 - b[2]*x^5 + (b[2]^2 + 2*b[1])*x^4 - (b[1]*b[2] + 2*R)*x^3 + ...
 
 
 #######################
@@ -1105,7 +1135,8 @@ round0(err)
 ###############
 
 ### x^4 + b*y
-### Extension: x^4 + b2*xy + b1*y = R
+### Extension 1: x^4 + b2*xy + b1*y = R
+### Extension 2: x^4 + b3*(x*y)^2 + b2*x*y + b1*y = R
 
 # x^4 + b1*y = R
 # y^4 + b1*x = R
@@ -1167,7 +1198,10 @@ y^4 + b[1]*x
 ### Classical Polynomial
 err = x^12 - b[1]*x^9 - 3*R*x^8 + b[1]^2*x^6 + 2*R*b[1]*x^5 + 3*R^2*x^4 - b[1]^3*x^3 - R*b[1]^2*x^2 - R^2*b[1]*x + b[1]^4 - R^3
 round0(err)
+# - only for simple case!
 
+# P6 => P12;
+# when b3 == 1: P4 => P8;
 
 ### Example 2: Extended version
 b = c(2, 1)
