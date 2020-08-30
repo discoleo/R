@@ -7,7 +7,7 @@
 ### Polynomial Systems:
 ### Heterogenous Symmetric
 ###
-### draft v.0.1k-x
+### draft v.0.1l
 ### & branch v.0.2d
 
 
@@ -38,9 +38,9 @@
 # 11.) TODO: Shift for [9-10];
 # 12.) x^3 + b3*x^2*y + b2*x*y^2 + b1*x = R;
 ### 2 High-Power Terms:
-# B1.) a1*x^3 + a2*y^3 + b*x = R;
+# B1.) a1*x^3 + a2*y^3 + b*x = R; (TODO: P3 => P6)
 # B2.) a1*x^3 + a2*y^3 + b*x*y = R;
-# B2.) TODO: a1*x^3 + a2*y^3 + b2*x*y + b1*x = R;
+# B2.) a1*x^3 + a2*y^3 + b2*x*y + b1*x = R; (TODO: P3 => P6)
 # B3.) TODO: Shift for [B1-3];
 ### Mixt-High-Power: Order 2+1
 # M1.) x^2*y + b*x: NO solutions (x != y);
@@ -98,6 +98,10 @@
 # - the simple cases are less rewarding;
 
 ### [branch v.0.1]
+### draft v.0.1l:
+# - solved/extension:
+#   a1*x^3 + a2*y^3 + b2*x*y + b1*x = R; (TODO: P3 => P6)
+# - improved formatting;
 ### draft v.0.1k & v.0.1k-x:
 # - solved: x^5 + b*y = R;
 # - worked out various older issues;
@@ -1017,12 +1021,14 @@ round0.p(poly.calc(sol[,1]))
 ### TODO
 
 
-#########################
-#########################
+#############################
+#############################
 
-#########################
-### High-Power Terms: > 1
+#############################
+### High-Power Terms: > 1 ###
+#############################
 
+##########################
 ### a1*x^3 + a2*y^3 + b1*x
 
 # a1*x^3 + a2*y^3 + b1*x = R
@@ -1092,11 +1098,11 @@ err = 80 - 48*x + 48*x^2 - 8*x^3 + 12*x^4 + x^6
 round0(err)
 
 
-################
-################
+#########################
 
 ### High-Power Terms: > 1
 
+############################
 ### a1*x^3 + a2*y^3 + b1*x*y
 
 # a1*x^3 + a2*y^3 + b1*x*y = R
@@ -1164,6 +1170,73 @@ sol
 ### Classic Polynomial
 err = 4 + 12*x^2 + 4*x^3 + 36*x^4 + 6*x^5 + x^6
 round0(err)
+
+
+###################################
+
+###################################
+### a1*x^3 + a2*y^3 + b2*x*y + b1*x
+
+# a1*x^3 + a2*y^3 + b2*x*y + b1*x = R
+# a2*x^3 + a1*y^3 + b2*x*y + b1*y = R
+
+### Solution
+
+### Diff =>
+# (a1 - a2)*(x^3 - y^3) = -b1*(x - y)
+# (x - y)*(x^2 + y^2 + x*y + b1/(a1 - a2)) = 0
+# Case: x != y =>
+# S^2 - x*y + b1/(a1 - a2) = 0
+# x*y = S^2 + b1/(a1 - a2)
+
+### Sum =>
+# (a1+a2)*(x^3 + y^3) + 2*b2*x*y + b1*(x+y) = 2*R
+# (a1+a2)*(S^3 - 3*x*y*S) + 2*b2*(S^2 + b1/(a1 - a2)) + b1*S - 2*R = 0
+# (a1+a2)*(S^3 - 3*S*(S^2 + b1/(a1 - a2))) + 2*b2*S^2 + 2*b1*b2/(a1 - a2) + b1*S - 2*R
+# (a1+a2)*(-2*S^3 - 3*S*b1/(a1 - a2)) + 2*b2*S^2 + b1*S + 2*b1*b2/(a1 - a2) - 2*R
+# 2*(a1+a2)*S^3 - 2*b2*S^2 + 3*b1*(a1+a2)/(a1 - a2)*S - b1*S - 2*b1*b2/(a1 - a2) + 2*R
+# 2*(a1-a2)*(a1+a2)*S^3 - 2*b2*(a1-a2)*S^2 + 3*b1*(a1+a2)*S - b1*(a1-a2)*S - 2*b1*b2 + 2*(a1-a2)*R
+
+solve.ht2a = function(b, a, R) {
+	a.s = a[1]+a[2]; a.d = a[1]-a[2];
+	coeffs = c(2*a.d*a.s, -2*b[2]*a.d, 3*b[1]*a.s - b[1]*a.d, -2*b[1]*b[2] + 2*a.d*R)
+	r.sum = roots(coeffs)
+	xy = r.sum^2 + b[1]/(a[1] - a[2])
+	r.diff = sqrt(r.sum^2 - 4*xy + 0i)
+	x = (r.sum + r.diff)/2
+	y = (r.sum - r.diff)/2
+	sol = cbind(x, y) # TODO: add also x = y cases;
+	sol = round0(rbind(sol, sol[,2:1]))
+	p = round0.p(poly.calc(sol[,1]))
+	return(list(sol=sol, p=p))
+}
+
+### Example:
+a = c(2/3, 1/3)
+b = c(3, -1)
+R = 1
+#
+sol = solve.ht2a(b, a, R)
+x = sol$sol[,1]; y = sol$sol[,2];
+sol
+
+### Test
+a[1]*x^3 + a[2]*y^3 + b[2]*x*y + b[1]*x
+a[2]*x^3 + a[1]*y^3 + b[2]*x*y + b[1]*y
+
+
+### Example 2:
+a = c(2/3, -1/3)
+b = c(1, -3)
+R = 1
+#
+sol = solve.ht2a(b, a, R)
+x = sol$sol[,1]; y = sol$sol[,2];
+sol
+
+### Test
+a[1]*x^3 + a[2]*y^3 + b[2]*x*y + b[1]*x
+a[2]*x^3 + a[1]*y^3 + b[2]*x*y + b[1]*y
 
 
 ###################################
@@ -1366,6 +1439,7 @@ x^16 + 4*(b[1]*s - R)*x^12 + 6*(b[1]*s - R)^2*x^8 + 4*(b[1]*s - R)^3*x^4 + (b[1]
 
 ###################################
 
+###############
 ### x^4 + b*x*y
 
 # x^4 + b1*x*y = R
@@ -1375,7 +1449,7 @@ x^16 + 4*(b[1]*s - R)*x^12 + 6*(b[1]*s - R)^2*x^8 + 4*(b[1]*s - R)^3*x^4 + (b[1]
 
 # Trivial solutions: x = y *OR* x = -y;
 
-# Diff =>
+### Diff =>
 # x^4 - y^4 = 0
 # (x - y)*(x^3 + y^3 + x*y*(x+y)) = 0
 # (x - y)*((x+y)^3 - 2*x*y*(x+y)) = 0
@@ -1474,7 +1548,7 @@ round0.p(poly.calc(sol[,1]))
 
 #########################
 ### x^j*y^k + P(x, y) ###
-
+#########################
 
 ###################
 ### x^2*y + b*x ###
