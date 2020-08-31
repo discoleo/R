@@ -7,7 +7,7 @@
 ### Polynomial Systems:
 ### Heterogenous Symmetric
 ###
-### draft v.0.1l
+### draft v.0.1m
 ### & branch v.0.2d
 
 
@@ -56,11 +56,13 @@
 #      (x*y)^3 + x^3 = R;
 # M8.) TODO: (x*y)^5 + b*x^3 = R
 ### Mixt: Order n+1:
-# M31.) x^3*y + b*x: trivial;
-# M41.) x^4*y + b*x; (P5 => P10)
-# M43.) x^4*y^3 + b3*x*y + b2*x^2 + b1*x = R; (trivial P2; base P7)
+# M31.1) x^3*y + b*x: trivial;
+# M41.1) x^4*y + b*x; (P5 => P10)
+# M43.1) x^4*y^3 + b3*x*y + b2*x^2 + b1*x = R; (trivial P2; base P7)
+# M43.2) x^4*y^3 + b3*(x*y)^2 + b2*x*y + b1*y = R; (TODO: P3 => P6)
+# M43.3) x^4*y^3 + b5*x^2*y + b4*x*y^2 + b3*(x*y)^2 + b2*x*y + b1*y = R; (TODO: P3 => P6)
 ### Mixt 2 High-Power Terms:
-# MT.1) a1*x^3*y + a2*x*y^3 + b*x + R; [interesting P6]
+# MT.1) a1*x^3*y + a2*x*y^3 + b*x + R; [TODO: interesting P6]
 ### Order 4 & 5:
 # O4.1a.) x^4 + b*y = R; (P6 => P12)
 # O4.1b.) x^4 + b2*x*y + b1*y = R; (TODO: P6 => P12)
@@ -98,6 +100,8 @@
 # - the simple cases are less rewarding;
 
 ### [branch v.0.1]
+### draft v.0.1m:
+# - various extensions: x^4*y^3 Series;
 ### draft v.0.1l:
 # - solved/extension:
 #   a1*x^3 + a2*y^3 + b2*x*y + b1*x = R; (TODO: P3 => P6)
@@ -671,10 +675,10 @@ round0(err)
 # x[1]*(x[2]+x[3] + 0 +x[5]+x[6]) + x[2]*(x[3]+x[4] + 0 + x[6]) +
 #   + x[3]*(x[4]+x[5] + 0) + x[4]*(x[5]+x[6]) + x[5]*x[6] = b1;
 # (x[1]+x[4])*(x[2]+x[5])*(x[3]+x[6]) = b[1]*b[2] - R
-# E2 = b[1] + x[1]*x[4] + x[2]*x[5] + x[3]*x[6] # =
-#  b[1] + (x[1]+x[4])^2 + (x[2]+x[5])^2 + (x[3]+x[6])^2 + 3*b[1]
-#  4*b[1]+ b[2]^2 - 2*b[1]
-#  2*b1] + b[2]^2;
+# E2 = b[1] + x[1]*x[4] + x[2]*x[5] + x[3]*x[6]
+#    = b[1] + (x[1]+x[4])^2 + (x[2]+x[5])^2 + (x[3]+x[6])^2 + 3*b[1]
+#    = 4*b[1]+ b[2]^2 - 2*b[1]
+#    = 2*b1] + b[2]^2;
 # E3 = x[1]*x[2]*(x[3]+_x[4]+_x[5]+x[6]) + x[1]*x[3]*(_x[4]+x[5]+_x[6]) + x[1]*x[4]*(_x[5]+_x[6]) + x[1]*x[5]*x[6] +
 #    + x[2]*x[3]*(x[4]+_x[5]+_x[6]) + x[2]*x[4]*(_x[5]+x[6]) + _x[2]*x[5]*x[6] +
 #    + x[3]*x[4]*(x[5]+_x[6]) + _x[3]*x[5]*x[6] + x[4]*x[5]*x[6]
@@ -1621,6 +1625,9 @@ y^2*x + b[1]*x
 # x^2*y + b2*x^2 + b1*x = R
 # y^2*x + b2*y^2 + b1*y = R
 
+### Extension:
+# x^2*y + b3*x*y + b2*x^2 + b1*x = R
+
 ### Solution:
 
 ### Diff =>
@@ -1639,17 +1646,33 @@ y^2*x + b[1]*x
 # b2^2*Z + b1*b2 - R
 # Z = (R - b1*b2) / b2^2
 
+### Extensions:
+### E1: x^2*y + b3*x*y + b2*x^2 + b1*x = R
+### Sum =>
+# b2^2*Z - b3*(b2*Z + b1) + b1*b2 - R = 0
+# (b2^2 - b2*b3)*Z + b1*b2 - b1*b3 - R = 0
+
+solve.ht21 = function(b, R) {
+	if(length(b) == 2) {
+		r.sum = (R - b[1]*b[2]) / b[2]^2
+	} else {
+		r.sum = (R - b[1]*b[2] + b[1]*b[3]) / (b[2]^2 - b[2]*b[3])
+	}
+	xy = -b[2]*r.sum - b[1]
+	r.diff = sqrt(r.sum^2 - 4*xy + 0i)
+	x = (r.sum + r.diff)/2
+	y = (r.sum - r.diff)/2
+	sol = cbind(x, y)
+	sol = rbind(sol, sol[,2:1])
+	sol
+}
+
 ### Example:
 b = c(1, 3)
 R = -1
 #
-x.sum = (R - b[1]*b[2]) / b[2]^2
-xy = -b[2]*x.sum - b[1]
-x.diff = sqrt(x.sum^2 - 4*xy + 0i)
-x = (x.sum + x.diff)/2
-y = (x.sum - x.diff)/2
-sol = cbind(x, y)
-sol = rbind(sol, sol[,2:1])
+sol = solve.ht21(b, R)
+x = sol[,1]; y = sol[,2];
 sol
 
 ### Test
@@ -1661,11 +1684,28 @@ y^2*x + b[2]*y^2 + b[1]*y
 b[2]*x^2 - (R/b[2] - b[1])*x - R
 
 
+### Example 2: Extension
+b = c(1, 3, 1)
+R = -1
+#
+sol = solve.ht21(b, R)
+x = sol[,1]; y = sol[,2];
+sol
+
+### Test
+x^2*y + b[3]*x*y + b[2]*x^2 + b[1]*x
+y^2*x + b[3]*x*y + b[2]*y^2 + b[1]*y
+
+
 ############################
+
 
 ############################
 ### x^4*y^3 + b*x Series ###
 ############################
+
+### Simple variant:
+### x^4*y^3 + b2*(x+y)^2 + b1*x
 
 # x^4*y^3 + b2*(x+y)^2 + b1*x = R
 # y^3*x^4 + b2*(x+y)^2 + b1*y = R
@@ -1715,7 +1755,10 @@ round0(err)
 -b[1] + x^3*(x^3 - sqrt(R/b[2]))^3
 
 
-####################################
+##################
+### Extensions ###
+
+### Extension 1:
 
 ### x^4*y^3 + b3*x*y + b2*x^2 + b1*x
 
@@ -1725,7 +1768,7 @@ round0(err)
 ### Solution:
 
 # "Trivial" solution:: x = y
-# x^7 + (b2+b3)*x^2 + b1*x - R
+# x^7 + (b2+b3)*x^2 + b1*x - R = 0
 # &
 # Trivial remaining P2;
 
@@ -1770,8 +1813,176 @@ x2 = roots(c(1, 0,0,0,0, (b[2]+b[3]), b[1], - R))
 x = c(x, x2); y = c(y, x2)
 
 
-###########################
-###########################
+###############
+### Extension 2
+
+### x^4*y^3 + b3*(x*y)^2 + b2*x*y + b1*y
+
+# x^4*y^3 + b3*(x*y)^2 + b2*x*y + b1*y = R
+# y^3*x^4 + b3*(x*y)^2 + b2*x*y + b1*x = R
+
+### Solution:
+
+# "Trivial" solution: x = y
+# x^7 + b3*x^4 + b2*x^2 + b1*x - R = 0
+
+### Diff =>
+# (x*y)^3*(x - y) - b1*(x-y) = 0
+# (x - y)*((x*y)^3 - b1) = 0
+# Case: x != y
+# (x*y)^3 = b1;
+
+### Sum =>
+# (x*y)^3*(x+y) + 2*b3*(x*y)^2 + 2*b2*x*y + b1*(x+y) = 2*R
+# ((x*y)^3 + b1)*S = 2*R - 2*b3*(x*y)^2 - 2*b2*x*y
+# 2*b1*S = 2*R - 2*b3*(x*y)^2 - 2*b2*x*y
+# b1*S = R - b3*(x*y)^2 - b2*x*y
+
+solve.htMixt = function(b, R) {
+	if(length(b) == 3) {
+		xy = roots(c(1,0,0, -b[1]))
+		r.sum = (R - b[3]*xy^2 - b[2]*xy) / b[1]
+	} else {
+		if(length(b) == 4) b = c(b, 0);
+		xy = roots(c(1,0, b[5]-b[4], -b[1]))
+		div = (b[4]*xy + b[1])
+		r.sum = (R - b[3]*xy^2 - b[2]*xy) / div
+	}
+	r.diff = sqrt(r.sum^2 - 4*xy + 0i)
+	x = (r.sum + r.diff)/2
+	y = (r.sum - r.diff)/2
+	x = round0(x)
+	sol = cbind(x, y)
+	sol = sol[x != 0, ] # x == 0 => y -> Inf!
+	sol = rbind(sol, sol[,2:1])
+	p = round0.p(poly.calc(sol[,1]))
+	return(list(sol=sol, p=p))
+}
+
+
+### Example:
+# b1 == 1 is trivial;
+b = c(1, 2, 3)
+R = 1
+#
+sol =solve.htMixt(b, R)
+x = sol$sol[,1]; y = sol$sol[,2]
+sol
+
+### Test
+x^4*y^3 + b[3]*(x*y)^2 + b[2]*x*y + b[1]*y
+x^3*y^4 + b[3]*(x*y)^2 + b[2]*x*y + b[1]*x
+
+
+### Example 2:
+b = c(1/2, 2, -3)
+R = 1
+#
+sol =solve.htMixt(b, R)
+x = sol$sol[,1]; y = sol$sol[,2]
+sol
+
+### Test
+x^4*y^3 + b[3]*(x*y)^2 + b[2]*x*y + b[1]*y
+x^3*y^4 + b[3]*(x*y)^2 + b[2]*x*y + b[1]*x
+
+
+### Example 3:
+b = c(2,2,-2)
+R = 2
+#
+sol =solve.htMixt(b, R)
+x = sol$sol[,1]; y = sol$sol[,2]
+sol
+
+### Test
+x^4*y^3 + b[3]*(x*y)^2 + b[2]*x*y + b[1]*y
+x^3*y^4 + b[3]*(x*y)^2 + b[2]*x*y + b[1]*x
+
+
+### Classic Polynomial
+round0.p(poly.calc(sol[,1]))
+
+# TODO
+
+
+###############
+### Extension 3
+
+### x^4*y^3 + b5*x^2*y + b4*x*y^2 + b3*(x*y)^2 + b2*x*y + b1*y
+
+# x^4*y^3 + b5*x^2*y + b4*x*y^2 + b3*(x*y)^2 + b2*x*y + b1*y = R
+# y^3*x^4 + b5*x^2*y + b4*x*y^2 + b3*(x*y)^2 + b2*x*y + b1*x = R
+
+### Solution:
+
+# "Trivial" solution: x = y
+# x^7 + b3*x^4 + (b4+b5)*x^3 + b2*x^2 + b1*x - R = 0
+
+### Diff =>
+# (x*y)^3*(x - y) + (b5-b4)*x*y*(x-y) - b1*(x-y) = 0
+# (x - y)*((x*y)^3 + (b5-b4)*x*y - b1) = 0
+# Case: x != y
+# (x*y)^3 + (b5-b4)*x*y - b1 = 0;
+
+### Sum =>
+# (x*y)^3*(x+y) + (b4+b5)*x*y*(x+y) + 2*b3*(x*y)^2 + 2*b2*x*y + b1*(x+y) = 2*R
+# ((x*y)^3 + (b4+b5)*x*y + b1)*S = 2*R - 2*b3*(x*y)^2 - 2*b2*x*y
+# (b4*x*y + b1)*S = R - b3*(x*y)^2 - b2*x*y
+
+
+### Example:
+b = c(1, 2, 3, -1, -2)
+R = 1
+#
+sol =solve.htMixt(b, R)
+x = sol$sol[,1]; y = sol$sol[,2]
+sol
+
+### Test
+x^4*y^3 + b[5]*x^2*y + b[4]*x*y^2 + b[3]*(x*y)^2 + b[2]*x*y + b[1]*y
+x^3*y^4 + b[5]*x*y^2 + b[4]*x^2*y + b[3]*(x*y)^2 + b[2]*x*y + b[1]*x
+
+
+### Example 2:
+b = c(1, 0, -1, -1, 1)
+R = 1
+#
+sol =solve.htMixt(b, R)
+x = sol$sol[,1]; y = sol$sol[,2]
+sol
+
+### Test
+x^4*y^3 + b[5]*x^2*y + b[4]*x*y^2 + b[3]*(x*y)^2 + b[2]*x*y + b[1]*y
+x^3*y^4 + b[5]*x*y^2 + b[4]*x^2*y + b[3]*(x*y)^2 + b[2]*x*y + b[1]*x
+#
+err = 1 - 4*x - 2*x^2 + 2*x^3 - 2*x^5 + x^6
+round0(err)
+
+
+### Example 3:
+b = c(1,1,1,0,-1)
+R = 1
+#
+sol =solve.htMixt(b, R)
+x = sol$sol[,1]; y = sol$sol[,2]
+sol
+
+### Test
+err = 1 + 4*x + 6*x^2 - 4*x^4 - x^5 + x^6
+round0(err)
+
+
+### Classic Polynomial
+# TODO
+
+
+####################
+####################
+
+####################
+### x^2*y^2 Term ###
+####################
 
 ###########################
 ### x^2*y^2 + b2*x^2 + b1*x
