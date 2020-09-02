@@ -2,11 +2,11 @@
 ### Major Theories in Polynomials
 
 ### Polynomials of Class 1
-### Roots with Simple Radicals
+### Roots with "Simple" Radicals
 ###
 ### Leonard Mada
 ###
-### draft v.0.1b
+### draft v.0.1c
 
 ### based on work during:
 ### 2018 - 2020
@@ -16,13 +16,16 @@
 ### History ###
 ###############
 
+# v.0.1c:
+# - added example with triple nested radicals;
+#   [but overflows very easily!]
 # v.0.1b:
 # - added examples for entanglements
 #   with multiple radicals;
 #   [both nested & non-nested]
 # v.0.1a:
 # - initial draft posted on Github;
-# - based on work during 2018-2020;
+# - based largely on work during 2018-2020;
 
 
 ##############
@@ -32,11 +35,16 @@
 ### TODO:
 # - full theory!
 
-# Base root:
-# r = s[n-1]*k^(n-1) + s[n-2]*k^(n-2) + ... + s2*k^2 + s1*k + s0
-# where k = K^(1/n) and s[j] and K are parameters;
+### Simple Radicals
 
-# All roots:
+### Base root:
+# r = sum(s[j]*k^j),
+# where k = K^(1/n) and s[j] and K are parameters;
+# explicit summation:
+# r = s[n-1]*k^(n-1) + s[n-2]*k^(n-2) + ... + s2*k^2 + s1*k + s0
+
+### All roots:
+# *ALL* roots can be derived from the Base root!
 # r[j] = sum(s[id]*k[j]^id)
 # where k[j] = k * m^j, m^n = 1;
 # and index id goes from 0 to n-1;
@@ -113,7 +121,7 @@ K = 5
 # Roots
 k = m * K^(1/5)
 x = k^4 + k^3 + k
-x^5 - 5*K* x^3 - 5*(K^2 + K) * x^2 - 5*K^3 * x - K^4 - K^3 - K - 5*(K^3 - K^2)
+x^5 - 5*K * x^3 - 5*(K^2 + K) * x^2 - 5*K^3 * x - K^4 - K^3 - K - 5*(K^3 - K^2)
 
 # for K=2
 K = 2 # fixed
@@ -128,9 +136,9 @@ x = k^4 + k^3 + k
 x^5 - 15*x^3 - 60*x^2 - 135*x - 201
 
 ###
-K = 3 # can be modified
+K = -3 # can be modified
 # test
-k = K^(1/5)
+k = if(K >= 0) K^(1/5) else  - (-K)^(1/5)
 x = k^4 - 3*k^2 - k
 x
 x^5 + 5*K*x^3 + 15*K*(K + 3)*x^2 + 5*K*(28*K - 3)*x - K^4 + 15*K^3 + 198*K^2 + K
@@ -257,9 +265,14 @@ p.p
 predict(p.p, p$r)
 
 
-####################################
+#####################
+#####################
 
-### Entanglements: multiple Radicals
+#####################
+### Entanglements ###
+#####################
+
+### Multiple Radicals
 
 #######################
 ### A.) Simple Radicals
@@ -298,7 +311,6 @@ x = sapply(k1, function(k) k2^3 + (k^2 - k) * k2^2 + (k-1)*k2)
 
 #######################
 ### A.) Nested Radicals
-
 
 n1 = 5
 n2 = 3
@@ -341,4 +353,72 @@ x = sapply(r, function(x) sum(s2 * x^id2))
 #
 578700 - 279900*x - 807900*x^2 + 2096575*x^3 - 563775*x^4 + 3355995*x^5 - 412805*x^6 +  
 + 735885*x^7 + 101730*x^8 + 25075*x^9 + 1212*x^10 + 225*x^11 - 15*x^12 + 30*x^13 + x^15
+
+
+
+##############################
+### B.) Triple Nested Radicals
+
+library(polynom)
+
+n1 = 3
+n2 = 3
+n3 = 3
+m_1 = unity(n1, all=T)
+m_2 = unity(n2, all=T)
+m_3 = unity(n3, all=T)
+
+### 3x3x3: f3( f2( f1(inner_root^1/3)^1/3 )^(1/3) )
+K = 2
+# !!! Overflows easily !!!
+s1 = c(0, -1, 1) # coeffs of inner root: s0 + s1*k + s2*k^2;
+s2 = c(0, -1, 1) # coeffs of middle root
+s3 = c(0, -1, 1) # coeffs of outer root
+#
+id1 = 0:(length(s1)-1)
+id2 = 0:(length(s2)-1)
+id3 = 0:(length(s3)-1)
+# for ALL n1*n2*n3 roots:
+m.gr = expand.grid(m_1, m_2, m_3)
+
+# Level 1 (innermost)
+k = K^(1/n1) * m.gr[,1]
+x = sapply(k, function(k) sum(s1*k^id1))
+# Level 2 (middle)
+k = x^(1/n2) * m.gr[,2]
+x = sapply(k, function(k) sum(s2*k^id2))
+# Level 3 (outer)
+k = x^(1/n3) * m.gr[,3]
+x = sapply(k, function(k) sum(s3*k^id3))
+
+### Polynomial
+round0.p(poly.calc(x))
+
+err = -3410 - 31050*x - 129600*x^2 - 311076*x^3 - 453222*x^4 - 402894*x^5 - 270270*x^6 - 250614*x^7 +
+- 90882*x^8 + 509070*x^9 + 992844*x^10 + 732240*x^11 + 141462*x^12 - 56754*x^13 + 66582*x^14 +
++ 108162*x^15 + 32238*x^16 - 9234*x^17 - 1464*x^18 + 4752*x^19 + 1620*x^20 - 252*x^21 - 108*x^22 + x^27
+round0(err) # some rounding errors in evaluation!
+
+
+
+#####################
+#####################
+
+
+### Experimental
+# NOT yet functional
+
+m5 = unity(5, all=T)
+
+K = 2
+n = 3
+#
+k = (n^5 + K)^(1/5)*m5
+b0 = k - n
+
+p = mult.p(c(b0[2]*b0[5], -k[2]-k[5], 1), c(b0[3]*b0[4], -k[3]-k[4], 1))
+p = round0.p(mult.p(p, c(-b0[1], 1)))
+p
+
+
 
