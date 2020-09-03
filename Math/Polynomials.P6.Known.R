@@ -7,7 +7,7 @@
 ### P6 Polynomials:
 ### Known Polynomials
 ###
-### draft v.0.1b
+### draft v.0.1c
 
 
 ### Introduction
@@ -16,6 +16,7 @@
 # - many other variants are available in the files:
 #  -- Polynomials.Derived.P6.fromP4.R;
 #  -- Polynomials.Derived.P6.R;
+#  -- Polynomials.Derived.P6.Symmetric.R;
 #  -- Poly.System.Hetero.Symmetric.R;
 
 
@@ -81,4 +82,16 @@ K + 3*n^5*x - 5*n^3*x^3 + 3*n*x^5 + x^6 # root is scaled by n;
 #
 K = 2; k = (1/K+1)^(1/3) * m3.all; x = 1 / sapply(k, function(k) roots(c(1, 1, k-1)))
 K + 3*K*x - 5*K*x^3 + 3*K*x^5 + x^6
+
+
+###################
+### Generalized ###
+
+### Strictly Symmetric Polynomials:
+# *ALL*
+# Note: b0 == 1! (Strictly Symmetric)
+b = c(b1, b2, b3); sol = solve.p6sym(b); x = sol$x;
+1 + b[1]*x + b[2]*x^2 + b[3]*x^3 + b[2]*x^4 + b[1]*x^5 + x^6
+# see file: Polynomials.Derived.P6.Symmetric.R
+
 
