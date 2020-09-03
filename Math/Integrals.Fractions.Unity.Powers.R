@@ -12,8 +12,19 @@
 ### - Polynomial fractions:
 ###   Integral( P(x) / (x^n - 1)^p )dx
 ###
-### draft v.0.1a
+### draft v.0.1a-fix
 
+
+
+### History
+
+# v.0.1a-fix:
+# - bug fix: wrong sign in formulas;
+# v.01a:
+# - initial release;
+
+
+###################
 
 ### Roots of unity: Baseline
 #   Integral( P(x) / (x^n - 1) )dx
@@ -51,14 +62,36 @@
 # = (x^n - 1 - n*p*x^n) / (x^n - 1 )^(p+1)
 # = -(n*p - 1)*F(n, n, p+1) - F(0, n, p+1)
 # =>
-# (n*p - 1)*I(n, n, p+1) + I(0, n, p+1) = F(1, n, p);
+# (n*p - 1)*I(n, n, p+1) + I(0, n, p+1) = - F(1, n, p);
 # Note: Integral = Fraction!
 
 ### I(n, n, p+1)
-# I(n, n, p+1) = 1/(n*p) * (F(1, n, p) + I(0, n, p))
+# I(n, n, p+1) = 1/(n*p) * (I(0, n, p) - F(1, n, p))
 
 ### I(0, n, p+1)
-# I(0, n, p+1) = 1/(n*p) * (F(1, n, p) - (n*p - 1)*I(0, n, p))
+# I(0, n, p+1) = -1/(n*p) * ((n*p - 1)*I(0, n, p) + F(1, n, p))
 
+F.f = function(x, k, n, p) {
+	if(k == 0) {
+		r = 1 / (x^n - 1)^p
+	} else {
+		r = x^k / (x^n - 1)^p
+	}
+	r
+}
+F.range = function(lim, k, n, p) {
+	F.f(lim[2], k,n,p) - F.f(lim[1], k,n,p)
+}
+I.f = function(lim, k, n, p) {
+	integrate(F.f, lower=lim[1], upper=lim[2], k=k, n=n, p=p)
+}
+
+### Test
+n = 5
+p = 1
+lim = c(2, 4)
+### I(0, n, 2)
+integrate(F.f, lower=lim[1], upper=lim[2], k=0, n=n, p = p + 1)
+-1/(n*p) * (F.range(lim, 1, n, p) + (n*p - 1)*I.f(lim, 0, n, p)$value)
 
 ########################
