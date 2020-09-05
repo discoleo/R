@@ -12,12 +12,16 @@
 ### - Polynomial fractions:
 ###   Integral( P(x) / (x^n - 1)^p )dx
 ###
-### draft v.0.1b-cor
+### draft v.0.1c
 
 
 
 ### History
 
+# v 0.1c:
+# - all:
+#   Integral x^k / (x^n - 1)^p dx; [0 <= k;]
+#   Integral x^(n+k) / (x^n - 1)^p dx;
 # v.0.1b - v.0.1b-cor:
 # - added:
 #   Integral x / (x^n - 1)^p dx;
@@ -243,5 +247,64 @@ lim = c(1.1, 4)
 integrate(F.f, lower=lim[1], upper=lim[2], k=2, n=n, p = p + 1)
 -1/(n*p) * (F.range(lim, 3, n, p) + (n*p - 3)*I.f(lim, 2, n, p)$value)
 
+
+########################
+
+
+####################
+### I(n+k, n, p + 1)
+### I(k, n, p + 1)
+
+# x^k*(x^n - 1 + 1) / (x^n - 1)^(p+1)
+# = x^k/(x^n - 1)^p + x^k/(x^n - 1)^(p+1)
+# =>
+# I(n+k, n, p+1) = I(k, n, p) + I(k, n, p+1)
+# I(n+k, n, p+1) - I(k, n, p+1) = I(k, n, p)
+
+# d/dx F(k+1, n, p)
+# = ((k+1)*x^(n+k) - (k+1)*x^k - n*p*x^(n+k)) / (x^n - 1 )^(p+1)
+# = -(n*p - k - 1)*F(n+k, n, p+1) - (k+1)*F(k, n, p+1)
+# =>
+# (n*p - k - 1)*I(n+k, n, p+1) + (k+1)*I(k, n, p+1) = - F(k+1, n, p);
+# Note: sum(Integrals) = Fraction!
+
+### I(n+k, n, p+1)
+# I(n+k, n, p+1) = 1/(n*p) * ((k+1)*I(k, n, p) - F(k+1, n, p))
+
+### I(k, n, p+1)
+# I(k, n, p+1) = -1/(n*p) * ((n*p - k - 1)*I(k, n, p) + F(k+1, n, p))
+
+# Note:
+# - the 2 formulas seem equivalent;
+#   [are valid for any k]
+
+### Test
+n = 5
+p = 3
+k = 3
+lim = c(1.1, 4)
+### I(n+k, n, 2)
+integrate(F.f, lower=lim[1], upper=lim[2], k= n+k, n=n, p = p + 1)
+-1/(n*p) * (F.range(lim, k+1, n, p) - (k+1)*I.f(lim, k, n, p)$value)
+
+
+### Test
+n = 5
+p = 3
+k = 3
+lim = c(1.1, 4)
+### I(k, n, 2)
+integrate(F.f, lower=lim[1], upper=lim[2], k=k, n=n, p = p + 1)
+-1/(n*p) * (F.range(lim, k+1, n, p) + (n*p - k - 1)*I.f(lim, k, n, p)$value)
+
+
+### Test
+n = 5
+p = 3
+k = sqrt(5) - sqrt(3) # works as well;
+lim = c(1.1, 4)
+### I(k, n, 2)
+integrate(F.f, lower=lim[1], upper=lim[2], k=k, n=n, p = p + 1)
+-1/(n*p) * (F.range(lim, k+1, n, p) + (n*p - k - 1)*I.f(lim, k, n, p)$value)
 
 
