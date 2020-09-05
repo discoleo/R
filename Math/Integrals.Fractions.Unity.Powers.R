@@ -12,18 +12,19 @@
 ### - Polynomial fractions:
 ###   Integral( P(x) / (x^n - 1)^p )dx
 ###
-### draft v.0.1b-bis
+### draft v.0.1b-cor
 
 
 
 ### History
 
-# v.0.1b - v.0.1b-bis:
+# v.0.1b - v.0.1b-cor:
 # - added:
 #   Integral x / (x^n - 1)^p dx;
 #   Integral x^2 / (x^n - 1)^p dx; [v.0.1b-bis]
 #   Integral x^(n+1) / (x^n - 1)^p dx;
 #   Integral x^(n+2) / (x^n - 1)^p dx; [v.0.1b-bis]
+# - corrections in comments; [v.0.1b-cor]
 # v.0.1a-fix:
 # - bug fix: wrong sign in formulas;
 # - solved:
@@ -193,7 +194,7 @@ integrate(F.f, lower=lim[1], upper=lim[2], k= n+1, n=n, p = p + 1)
 n = 5
 p = 3
 lim = c(1.1, 4)
-### I(0, n, 2)
+### I(1, n, 2)
 integrate(F.f, lower=lim[1], upper=lim[2], k=1, n=n, p = p + 1)
 -1/(n*p) * (F.range(lim, 2, n, p) + (n*p - 2)*I.f(lim, 1, n, p)$value)
 
@@ -229,7 +230,7 @@ integrate(F.f, lower=lim[1], upper=lim[2], k=1, n=n, p = p + 1)
 n = 5
 p = 3
 lim = c(1.1, 4)
-### I(n+1, n, 2)
+### I(n+2, n, 2)
 integrate(F.f, lower=lim[1], upper=lim[2], k= n+2, n=n, p = p + 1)
 -1/(n*p) * (F.range(lim, 3, n, p) - 3*I.f(lim, 2, n, p)$value)
 
@@ -238,7 +239,7 @@ integrate(F.f, lower=lim[1], upper=lim[2], k= n+2, n=n, p = p + 1)
 n = 5
 p = 3
 lim = c(1.1, 4)
-### I(0, n, 2)
+### I(2, n, 2)
 integrate(F.f, lower=lim[1], upper=lim[2], k=2, n=n, p = p + 1)
 -1/(n*p) * (F.range(lim, 3, n, p) + (n*p - 3)*I.f(lim, 2, n, p)$value)
 
