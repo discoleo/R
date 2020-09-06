@@ -12,15 +12,18 @@
 ### - Polynomial fractions:
 ###   Integral( P(x) / (x^n - 1)^p )dx
 ###
-### draft v.0.1c
+### draft v.0.1d
 
 
 
 ### History
 
+# v 0.1d:
+# - added the base-cases for k < 0:
+#   Integral 1 / (x^k * (x^n - 1)) dx;
 # v 0.1c:
 # - all:
-#   Integral x^k / (x^n - 1)^p dx; [0 <= k;]
+#   Integral x^k / (x^n - 1)^p dx; [0 <= k, but works with k < 0 as well]
 #   Integral x^(n+k) / (x^n - 1)^p dx;
 # v.0.1b - v.0.1b-cor:
 # - added:
@@ -307,4 +310,59 @@ lim = c(1.1, 4)
 integrate(F.f, lower=lim[1], upper=lim[2], k=k, n=n, p = p + 1)
 -1/(n*p) * (F.range(lim, k+1, n, p) + (n*p - k - 1)*I.f(lim, k, n, p)$value)
 
+
+
+#############################
+#############################
+
+### 1 / (x^k * (x^n - 1))
+# Base-case: p = 1;
+
+###  1 / (x * (x^n - 1))
+# x^(n-1)/(x^n - 1) - 1/x = 1 / (x * (x^n - 1))
+# I(-1, n, 1) = I(n-1, n, 1) - log(x)
+# Note: I(n-1, n, 1) is also of type log(...);
+
+###  1 / (x^n * (x^n - 1))
+# 1/(x^n - 1) - 1/x^n = 1 / (x^n * (x^n - 1))
+# I(-n, n, 1) = I(0, n, 1) + 1/(n-1) * 1/x^(n-1)
+
+###  1 / (x^k * (x^n - 1))
+# x^(n-k)/(x^n - 1) - 1/x^k = 1 / (x^k * (x^n - 1))
+# I(-k, n, 1) = I(n-k, n, 1) + 1/(k-1) * 1/x^(k-1)
+
+
+### Test: k = -1, p == 1
+n = 5
+lim = c(1.1, 4)
+integrate(F.f, lower=lim[1], upper=lim[2], k=-1, n=n, p = 1)
+(I.f(lim, n-1, n, 1)$value - log(lim[2]/lim[1]))
+
+
+### Test: k = -n, p == 1
+n = 5
+lim = c(1.1, 4)
+integrate(F.f, lower=lim[1], upper=lim[2], k=-n, n=n, p = 1)
+(I.f(lim, 0, n, 1)$value + (1/lim[2]^(n-1) - 1/lim[1]^(n-1))/(n-1))
+
+
+### Test: p == 1
+n = 5
+k = 3
+lim = c(1.1, 4)
+integrate(F.f, lower=lim[1], upper=lim[2], k=-k, n=n, p = 1)
+(I.f(lim, n-k, n, 1)$value + (1/lim[2]^(k-1) - 1/lim[1]^(k-1))/(k-1))
+
+
+### Higher powers of p
+# - the formulas in Section [A] can be applied with k < 0;
+
+### Test
+n = 5
+p = 3
+k = -sqrt(5) # works as well [even if the base-integral cannot be yet computed exactly];
+lim = c(1.1, 4)
+### I(k, n, 2)
+integrate(F.f, lower=lim[1], upper=lim[2], k=k, n=n, p = p + 1)
+-1/(n*p) * (F.range(lim, k+1, n, p) + (n*p - k - 1)*I.f(lim, k, n, p)$value)
 
