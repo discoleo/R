@@ -4,23 +4,124 @@
 ### Integrals: Polynomial Fractions
 ### Cardan-Type Polynomials
 ###
-### draft 0.1
+### draft v.0.2a
 
 
 ############
 
 ### History
 
+# draft v.02a:
+# - systematic approach to these polynomials;
+# - fraction decomposition for P3;
+# draft v.0.1:
 # - this is the nicer decomposition, using conjugate roots;
+# - basic decomposition of P5;
 # - a previous solution used all the individual order 1 polynomials:
 #  -- the old approach yields a compact solution as well;
 #  -- but the current approach seems better;
 
 
-############
+##########
+
+### Terminology
+
+# F(k) = x^k / Q(x);
+# I(k) = Integral x^k / Q(x) dx;
+# where Q(x) = Cardan-type polynomial;
+
+qdiv.f = function(x, c, d, k=0, n=3) {
+	if(k == 0) {
+		xk = 1
+	} else {
+		xk = x^k
+	}
+	if(n == 3) {
+		div = (x^3 - 3*c*x - 2*d)
+	} else {
+		div = 0
+	}
+	xk / div;
+}
+lnfr.f = function(lim, c, d, k=0, n=3) {
+	# Note: log(Q(x)) = log(1/Fr_Q(x))
+	# => lim[1] / lim[2];
+	log(qdiv.f(lim[1], c=c, d=d, k=k, n=n) / qdiv.f(lim[2], c=c, d=d, k=k, n=n))
+}
+I.f = function(lim, c, d, k=0, n=3) {
+	integrate(qdiv.f, lower=lim[1], upper=lim[2], c=c, d=d, k=k, n=n)$value
+}
+
+#################
 
 
-### Examples
+##########
+### P3 ###
+# 1/(x^3 - 3*c*x - 2*d)
+
+### Fraction Decomposition
+# F(0) = a / (x - r) - (a*x + b0) / (x^2 + r*x + r^2 - 3*c)
+# where r = r[0] = p + q;
+
+### ()*x:
+# 2*r*a - b0 = 0 =>
+# b0 = 2*r*a;
+### Free Term:
+# (r^2 - 3*c)*a + r*b0 = 1
+# (r^2 - 3*c)*a + 2*r^2*a = 1
+# 3*(r^2 - c)*a = 1
+
+# a = 1/3 * 1/(r^2 - c) = 1/3 * (p - q)/(p^3 - q^3)
+# b0 = 2/3 * r*(p - q)/(p^3 - q^3)
+
+
+### Test: Fraction
+x = 5 # arbitrary x;
+c = 1
+d = 2
+#
+det = sqrt(d^2 - c^3 + 0i)
+p = (d + det)^(1/3); q = (d - det)^(1/3); r = p + q;
+a = 1/3 * (p - q)/(p^3 - q^3)
+b0 = 2*r*a;
+#
+1/(x^3 - 3*c*x - 2*d)
+qdiv.f(x, c, d, k=0, n=3)
+a / (x - r) - (a*x + b0) / (x^2 + r*x + r^2 - 3*c)
+
+#############
+### Integrals
+
+### I(0)
+# - can be computed trivially using the partial fraction decomposition;
+
+### I(2)
+# d(Q(x)) / Q(x) =
+# 3*(x^2 - c) / Q(x)
+# =>
+# I(2) = ln(Q(x)) / 3 + c * I(0)
+
+### I(1)
+# F: 1/(x - r) = (x^2 + r*x + r^2 - 3*c) / Q(x);
+# I(1) = (log(x - r) - I(2) - (r^2 - 3*c)*I(0)) / r
+
+### Test
+c = 1
+d = 2
+lim = c(3, 5)
+# I(2)
+integrate(qdiv.f, lower=lim[1], upper=lim[2], c=c, d=d, k=2, n=3)
+1/3 * lnfr.f(lim, c=c, d=d, k=0, n=3) + c * I.f(lim, c=c, d=d, k=0, n=3)
+# I(1)
+# TODO
+
+
+
+##################
+##################
+
+##########
+### P5 ###
 # 1/(x^5 - 5*c*x^3 + 5*c^2*x - 2*d)
 
 n = 5 # b0 is currently limited to n = 5!
@@ -53,11 +154,36 @@ b0/(x-p-q) + sum( (a*x + b) / ((x - p*m.m[,1] - q*m.m[,2]) * (x - p*m.m[,2] - q*
 
 
 
+### TODO:
+1/(x^5 - 5*c^2*x^4 + 5*c*(2*d)^2*x^2 - (2*d)^4) # ==
+
+
+5*(x^4 - 3*c*x^2 + c^2) / (x^5 - 5*c*x^3 + 5*c^2*x - 2*d)
+
+
 #################
-### integrals ###
+### Integrals ###
 
-### TODO: trivial
+### 1.) Base-Integral
 
+# 1 / (x^5 - 5*c*x^3 + 5*c^2*x - 2*d)
+# TODO: trivial
+
+
+
+### 2.) Polynomials
+
+# x^3 / (x^5 - 5*c*x^3 + 5*c^2*x - 2*d)
+c = 1
+d = 3
+#
+lower = 1
+upper = 2
+#
+integrate(function(x) x^3 / (x^5 - 5*c*x^3 + 5*c^2*x - 2*d), lower=lower, upper=upper)
+integrate(function(x) (2*d)^3 / (x^5 - 5*c^2*x^4 + 5*c*(2*d)^2*x^2 - (2*d)^4), lower=2*d/lower, upper=2*d/upper)
+
+# TODO: exact integral;
 
 
 ##################
