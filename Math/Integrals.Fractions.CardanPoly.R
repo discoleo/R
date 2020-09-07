@@ -4,14 +4,17 @@
 ### Integrals: Polynomial Fractions
 ### Cardan-Type Polynomials
 ###
-### draft v.0.2a
+### draft v.0.2b
 
 
 ############
 
 ### History
 
-# draft v.02a:
+# draft v.0.2b:
+# - improved P5 variant;
+# - new P7 variant (needs thorough testing);
+# draft v.0.2a:
 # - systematic approach to these polynomials;
 # - fraction decomposition for P3;
 # draft v.0.1:
@@ -124,36 +127,48 @@ integrate(qdiv.f, lower=lim[1], upper=lim[2], c=c, d=d, k=2, n=3)
 ### P5 ###
 # 1/(x^5 - 5*c*x^3 + 5*c^2*x - 2*d)
 
+unity.sum.f = function(n) {
+	m = complex(re=cos(2*pi/n), im=sin(2*pi/n))
+	n.half = (n-1)/2
+	# m.m = matrix(m^(1:n.half), ncol=1)
+	# m.m = cbind(m.m, 1/m.m)
+	# m.sum = apply(m.m, 1, sum)
+	m.all = m^(0:(n-1))
+	m.half = m^(1:n.half)
+	m.sum = m.half + 1/m.half
+	return(list(m=m.all, m.sum=m.sum))
+}
+
+
+### Roots of unity
 n = 5 # b0 is currently limited to n = 5!
+m = unity.sum.f(n)
+m.sum = m$m.sum
+
 # Parameters: free to change
 c = 1
 d = 3
-# Roots of unity
-m = complex(re=cos(2*pi/n), im=sin(2*pi/n))
-n.half = (n-1)/2
-m.m = matrix(m^(1:n.half), ncol=1)
-m.m = cbind(m.m, 1/m.m)
-m.all = m^(0:(n-1))
-m.sum = apply(m.m, 1, sum)
 # Roots
 det = sqrt(d^2 - c^n)
 p = (d + det)^(1/n)
 q = (d - det)^(1/n)
-r = p*m.all + q/m.all
+r = p*m$m + q/m$m
 r
 # Coefficents of Partial Fractions
-b0 = 1 / (1/(r[1]*r[1]) + 2/(r[2]*r[5]) + 2/(r[3]*r[4]) ) / r[1] / (2*d)
+# b0 = 1 / (1/(r[1]*r[1]) + 2/(r[2]*r[5]) + 2/(r[3]*r[4]) ) / r[1] / (2*d)
+b0 = 1/5 * (p-q)/(p^5-q^5) # TODO: check if always valid!
 b = -2 * b0 * r[1] # ALL b are the same;
-a = -b0 / m.sum[n.half:1]
+a = b0 * m.sum # TODO: check if correct;
 c(a, b0, b) # displays only 1 coeff. b
-# Test
+### Test
 x = 3 # any value - for testing the fraction;
 #
 1/(x^5 - 5*c*x^3 + 5*c^2*x - 2*d) # ==
-b0/(x-p-q) + sum( (a*x + b) / ((x - p*m.m[,1] - q*m.m[,2]) * (x - p*m.m[,2] - q*m.m[,1])) )
+b0/(x-p-q) + sum( (a*x + b) / ((x - r[2:3]) * (x - r[5:4])) )
 
 
 
+#########
 ### TODO:
 1/(x^5 - 5*c^2*x^4 + 5*c*(2*d)^2*x^2 - (2*d)^4) # ==
 
@@ -186,6 +201,38 @@ integrate(function(x) (2*d)^3 / (x^5 - 5*c^2*x^4 + 5*c*(2*d)^2*x^2 - (2*d)^4), l
 # TODO: exact integral;
 
 
+##########
+### P7 ###
+##########
+
+### Roots of unity
+n = 7
+m = unity.sum.f(n)
+m.sum = m$m.sum
+
+# Parameters: free to change
+c = 1
+d = 3
+# Roots
+det = d^2 - c^n; det = if(det >= 0) sqrt(det) else sqrt(det + 0i);
+p = (d + det)^(1/n)
+q = (d - det)^(1/n)
+r = p*m$m + q/m$m
+r
+# Coefficents of Partial Fractions
+b0 = 1/n * (p-q)/(p^n-q^n) # TODO: check if always valid!
+b = -2 * b0 * r[1] # TODO: check if ALL b are the same;
+a = b0 * m.sum # TODO: check if correct
+c(a, b0, b) # displays only 1 coeff. b
+### Test
+x = 3 # any value - for testing the fraction;
+#
+1/(x^7 - 7*c*x^5 + 14*c^2*x^3 - 7*c^3*x - 2*d) # ==
+b0/(x-p-q) + sum( (a*x + b) / ((x - r[2:4]) * (x - r[7:5])) )
+
+
+
+
 ##################
 ##################
 
@@ -206,6 +253,14 @@ R22 = (m^2*p^2 + m^2*q^2 + m^3*p^2 + m^3*q^2) # = (R^2 - 2*c)*(m^2 + m^3)
 a1 + a2 + b0 # = 0
 a1*R11 + a2*R12 + b0*R + b1 + b2 # = 0
 - a1*(R21 + c - c*m^2 - c*m^3) - a2*(R22 + c - c*m - c*m^4) + b0*(R^2 - 5*c) + b1*R11 + b2*R12 # = 0
+a1*(c*R12 - R^3 + 3*c*R) + a2*(c*R11 - R^3 + 3*c*R) + b0*(R^3 - 5*c*R) - b1*(R21 + c - c*m^2 - c*m^3) - b2*(R22 + c - c*m - c*m^4) # = 0
+b0 * (R^4 - 5*c*R^2 + 5*c^2) + b1 * (c*R12 - R^3 + 3*c*R) + b2 * (c*R11 - R^3 + 3*c*R) # = 1
+
+# =>
+a1 + a2 + b0 # = 0
+a1*R*(m + m^4) + a2*R*(m^2 + m^3) + b0*R + b1 + b2 # = 0
+- a1*(R^2*(m + m^4) + 2*c - c*m - c*m^4) - a2*(R^2*(m^2 + m^3) + 2*c - c*m^2 - c*m^3) + b0*(R^2 - 5*c) + b1*R11 + b2*R12 # = 0
+=> a1*(R^2*(m^2 + m^3) - 3*c + c*m + c*m^4) + a2*(R^2*(m + m^4) - 3*c + c*m^2 + c*m^3) + b1*R11 + b2*R12 # = 0
 a1*(c*R12 - R^3 + 3*c*R) + a2*(c*R11 - R^3 + 3*c*R) + b0*(R^3 - 5*c*R) - b1*(R21 + c - c*m^2 - c*m^3) - b2*(R22 + c - c*m - c*m^4) # = 0
 b0 * (R^4 - 5*c*R^2 + 5*c^2) + b1 * (c*R12 - R^3 + 3*c*R) + b2 * (c*R11 - R^3 + 3*c*R) # = 1
 
