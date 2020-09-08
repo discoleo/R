@@ -4,16 +4,17 @@
 ### Integrals: Polynomial Fractions
 ### Cardan-Type Polynomials
 ###
-### draft v.0.2b
+### draft v.0.2b-p9
 
 
 ############
 
 ### History
 
-# draft v.0.2b:
+# draft v.0.2b - v.0.2b-p9:
 # - improved P5 variant;
-# - new P7 variant (needs thorough testing);
+# - added P7 variant (needs thorough testing);
+# - added P9 variant [v.0.2b-p9];
 # draft v.0.2a:
 # - systematic approach to these polynomials;
 # - fraction decomposition for P3;
@@ -25,14 +26,20 @@
 #  -- but the current approach seems better;
 
 
-##########
+###############
+
+### Polynomials:
+# - see https://github.com/discoleo/R/blob/master/Math/Polynomials.CardanGeneralisation.R;
 
 ### Terminology
-
 # F(k) = x^k / Q(x);
 # I(k) = Integral x^k / Q(x) dx;
 # where Q(x) = Cardan-type polynomial;
 
+
+####################
+
+### helper Functions
 qdiv.f = function(x, c, d, k=0, n=3) {
 	if(k == 0) {
 		xk = 1
@@ -60,6 +67,8 @@ I.f = function(lim, c, d, k=0, n=3) {
 
 ##########
 ### P3 ###
+##########
+
 # 1/(x^3 - 3*c*x - 2*d)
 
 ### Fraction Decomposition
@@ -86,11 +95,11 @@ d = 2
 det = sqrt(d^2 - c^3 + 0i)
 p = (d + det)^(1/3); q = (d - det)^(1/3); r = p + q;
 a = 1/3 * (p - q)/(p^3 - q^3)
-b0 = 2*r*a;
+b = 2*r*a;
 #
 1/(x^3 - 3*c*x - 2*d)
 qdiv.f(x, c, d, k=0, n=3)
-a / (x - r) - (a*x + b0) / (x^2 + r*x + r^2 - 3*c)
+a / (x - r) - (a*x + b) / (x^2 + r*x + r^2 - 3*c)
 
 #############
 ### Integrals
@@ -123,10 +132,6 @@ integrate(qdiv.f, lower=lim[1], upper=lim[2], c=c, d=d, k=2, n=3)
 ##################
 ##################
 
-##########
-### P5 ###
-# 1/(x^5 - 5*c*x^3 + 5*c^2*x - 2*d)
-
 unity.sum.f = function(n) {
 	m = complex(re=cos(2*pi/n), im=sin(2*pi/n))
 	n.half = (n-1)/2
@@ -138,33 +143,45 @@ unity.sum.f = function(n) {
 	m.sum = m.half + 1/m.half
 	return(list(m=m.all, m.sum=m.sum))
 }
+decompose.fr = function(coeff, n) {
+	m = unity.sum.f(n)
+	m.sum = m$m.sum
+	# Roots
+	c = coeff[1]; d = coeff[2];
+	det = d^2 - c^n;
+	if(det < 0) {
+		det = sqrt(det + 0i);
+	} else det = sqrt(det)
+	#
+	p = (d + det)^(1/n)
+	q = (d - det)^(1/n)
+	r = p*m$m + q/m$m
+	# Coefficents of Partial Fractions
+	b0 = 1/n * (p-q)/(p^n - q^n) # TODO: check if always valid!
+	b = -2 * b0 * r[1] # ALL b are the same;
+	a = b0 * m.sum # TODO: check if correct;
+	return(list(r=r, b0=b0, a=a, b=b))
+}
 
+##########
+### P5 ###
+##########
 
-### Roots of unity
-n = 5 # b0 is currently limited to n = 5!
-m = unity.sum.f(n)
-m.sum = m$m.sum
+### 1/(x^5 - 5*c*x^3 + 5*c^2*x - 2*d)
 
 # Parameters: free to change
+n = 5
 c = 1
 d = 3
-# Roots
-det = sqrt(d^2 - c^n)
-p = (d + det)^(1/n)
-q = (d - det)^(1/n)
-r = p*m$m + q/m$m
-r
-# Coefficents of Partial Fractions
-# b0 = 1 / (1/(r[1]*r[1]) + 2/(r[2]*r[5]) + 2/(r[3]*r[4]) ) / r[1] / (2*d)
-b0 = 1/5 * (p-q)/(p^5-q^5) # TODO: check if always valid!
-b = -2 * b0 * r[1] # ALL b are the same;
-a = b0 * m.sum # TODO: check if correct;
-c(a, b0, b) # displays only 1 coeff. b
+# Roots & Decomposition
+fr = decompose.fr(c(c, d), n=n)
+fr
 ### Test
 x = 3 # any value - for testing the fraction;
 #
+n.half = (n+1) / 2
 1/(x^5 - 5*c*x^3 + 5*c^2*x - 2*d) # ==
-b0/(x-p-q) + sum( (a*x + b) / ((x - r[2:3]) * (x - r[5:4])) )
+fr$b0/(x - fr$r[1]) + sum( (fr$a*x + fr$b) / ((x - fr$r[2:n.half]) * (x - fr$r[n:(n.half+1)])) )
 
 
 
@@ -205,30 +222,46 @@ integrate(function(x) (2*d)^3 / (x^5 - 5*c^2*x^4 + 5*c*(2*d)^2*x^2 - (2*d)^4), l
 ### P7 ###
 ##########
 
-### Roots of unity
-n = 7
-m = unity.sum.f(n)
-m.sum = m$m.sum
+### 1/(x^7 - 7*c*x^5 + 14*c^2*x^3 - 7*c^3*x - 2*d)
 
 # Parameters: free to change
+n = 7
 c = 1
 d = 3
-# Roots
-det = d^2 - c^n; det = if(det >= 0) sqrt(det) else sqrt(det + 0i);
-p = (d + det)^(1/n)
-q = (d - det)^(1/n)
-r = p*m$m + q/m$m
-r
-# Coefficents of Partial Fractions
-b0 = 1/n * (p-q)/(p^n-q^n) # TODO: check if always valid!
-b = -2 * b0 * r[1] # TODO: check if ALL b are the same;
-a = b0 * m.sum # TODO: check if correct
-c(a, b0, b) # displays only 1 coeff. b
+# Roots & Decomposition
+fr = decompose.fr(c(c, d), n=n)
+fr
 ### Test
 x = 3 # any value - for testing the fraction;
 #
+n.half = (n+1) / 2
 1/(x^7 - 7*c*x^5 + 14*c^2*x^3 - 7*c^3*x - 2*d) # ==
-b0/(x-p-q) + sum( (a*x + b) / ((x - r[2:4]) * (x - r[7:5])) )
+fr$b0/(x - fr$r[1]) + sum( (fr$a*x + fr$b) / ((x - fr$r[2:n.half]) * (x - fr$r[n:(n.half+1)])) )
+
+
+################
+################
+
+##########
+### P9 ###
+##########
+
+### 1/(x^9 - 9*c*x^7 + 27*c^2*x^5 - 30*c^3*x^3 + 9*c^4*x - 2*d)
+
+# Parameters: free to change
+n = 9
+c = 1
+d = 3
+# Roots & Decomposition
+fr = decompose.fr(c(c, d), n=n)
+fr
+### Test
+x = 3 # any value - for testing the fraction;
+#
+n.half = (n+1) / 2
+1/(x^9 - 9*c*x^7 + 27*c^2*x^5 - 30*c^3*x^3 + 9*c^4*x - 2*d) # ==
+fr$b0/(x - fr$r[1]) + sum( (fr$a*x + fr$b) / ((x - fr$r[2:n.half]) * (x - fr$r[n:(n.half+1)])) )
+
 
 
 
@@ -239,8 +272,9 @@ b0/(x-p-q) + sum( (a*x + b) / ((x - r[2:4]) * (x - r[7:5])) )
 ##################
 ### Derivation ###
 
+### n = 5
 # some of the steps used in the derivation:
-
+# for n = 5
 
 R = p + q
 R11 = (m*p + m*q + m^4*p + m^4*q) # = R*(m + m^4)
