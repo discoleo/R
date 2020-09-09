@@ -4,17 +4,18 @@
 ### Integrals: Polynomial Fractions
 ### Cardan-Type Polynomials
 ###
-### draft v.0.2b-p9
+### draft v.0.2b-t3
 
 
 ############
 
 ### History
 
-# draft v.0.2b - v.0.2b-p9:
+# draft v.0.2b - v.0.2b-t3:
 # - improved P5 variant;
 # - added P7 variant (needs thorough testing);
 # - added P9 variant [v.0.2b-p9];
+# - completed the tests for P3 integration [v.0.2b-t3];
 # draft v.0.2a:
 # - systematic approach to these polynomials;
 # - fraction decomposition for P3;
@@ -28,8 +29,17 @@
 
 ###############
 
-### Polynomials:
-# - see https://github.com/discoleo/R/blob/master/Math/Polynomials.CardanGeneralisation.R;
+### Introduction
+
+### Polynomials
+# - Cardan-type polynomials:
+#   see https://github.com/discoleo/R/blob/master/Math/Polynomials.CardanGeneralisation.R;
+
+# Examples:
+# P3: Integral 1 / (x^3 - 3*c*x - 2*d) dx;
+# P5: Integral 1 / (x^5 - 5*c*x^3 + 5*c^2*x - 2*d) dx;
+# P7: Integral 1 / (x^7 - 7*c*x^5 + 14*c^2*x^3 - 7*c^3*x - 2*d) dx;
+
 
 ### Terminology
 # F(k) = x^k / Q(x);
@@ -41,6 +51,7 @@
 
 ### helper Functions
 qdiv.f = function(x, c, d, k=0, n=3) {
+	# the Fraction: F(k);
 	if(k == 0) {
 		xk = 1
 	} else {
@@ -58,7 +69,13 @@ lnfr.f = function(lim, c, d, k=0, n=3) {
 	# => lim[1] / lim[2];
 	log(qdiv.f(lim[1], c=c, d=d, k=k, n=n) / qdiv.f(lim[2], c=c, d=d, k=k, n=n))
 }
+ln.fr = function(lim, r) {
+	# log(x - r)
+	log( (lim[2] - r) / (lim[1] - r))
+}
 I.f = function(lim, c, d, k=0, n=3) {
+	# Integral of the fraction;
+	# TODO: exact integral (based on fraction decomposition);
 	integrate(qdiv.f, lower=lim[1], upper=lim[2], c=c, d=d, k=k, n=n)$value
 }
 
@@ -69,37 +86,44 @@ I.f = function(lim, c, d, k=0, n=3) {
 ### P3 ###
 ##########
 
-# 1/(x^3 - 3*c*x - 2*d)
+### 1/(x^3 - 3*c*x - 2*d)
 
 ### Fraction Decomposition
-# F(0) = a / (x - r) - (a*x + b0) / (x^2 + r*x + r^2 - 3*c)
+# F(0) = a / (x - r) - (a*x + b) / (x^2 + r*x + r^2 - 3*c)
 # where r = r[0] = p + q;
 
 ### ()*x:
-# 2*r*a - b0 = 0 =>
-# b0 = 2*r*a;
+# 2*r*a - b = 0 =>
+# b = 2*r*a;
 ### Free Term:
-# (r^2 - 3*c)*a + r*b0 = 1
+# (r^2 - 3*c)*a + r*b = 1
 # (r^2 - 3*c)*a + 2*r^2*a = 1
 # 3*(r^2 - c)*a = 1
 
 # a = 1/3 * 1/(r^2 - c) = 1/3 * (p - q)/(p^3 - q^3)
-# b0 = 2/3 * r*(p - q)/(p^3 - q^3)
+# b = 2/3 * r*(p - q)/(p^3 - q^3)
 
+decompose.p3 = function(c, d) {
+	det = sqrt(d^2 - c^3 + 0i)
+	p = (d + det)^(1/3); q = (d - det)^(1/3);
+	r = p + q;
+	# Coeffs Fraction
+	a = 1/3 * (p - q)/(p^3 - q^3)
+	b = 2*r*a;
+	return(list(r=r, a=a, b=b))
+}
 
 ### Test: Fraction
 x = 5 # arbitrary x;
 c = 1
 d = 2
 #
-det = sqrt(d^2 - c^3 + 0i)
-p = (d + det)^(1/3); q = (d - det)^(1/3); r = p + q;
-a = 1/3 * (p - q)/(p^3 - q^3)
-b = 2*r*a;
+q.dc = decompose.p3(c, d)
 #
 1/(x^3 - 3*c*x - 2*d)
 qdiv.f(x, c, d, k=0, n=3)
-a / (x - r) - (a*x + b) / (x^2 + r*x + r^2 - 3*c)
+q.dc$a / (x - q.dc$r) - (q.dc$a*x + q.dc$b) / (x^2 + x * q.dc$r + q.dc$r^2 - 3*c)
+
 
 #############
 ### Integrals
@@ -117,15 +141,23 @@ a / (x - r) - (a*x + b) / (x^2 + r*x + r^2 - 3*c)
 # F: 1/(x - r) = (x^2 + r*x + r^2 - 3*c) / Q(x);
 # I(1) = (log(x - r) - I(2) - (r^2 - 3*c)*I(0)) / r
 
+#########
 ### Test
 c = 1
 d = 2
 lim = c(3, 5)
-# I(2)
+#
+q.dc = decompose.p3(c, d);
+r = q.dc$r;
+### I(0)
+integrate(qdiv.f, lower=lim[1], upper=lim[2], c=c, d=d, k=0, n=3)
+I.f(lim, c,d, k=0, n=3)
+### I(2)
 integrate(qdiv.f, lower=lim[1], upper=lim[2], c=c, d=d, k=2, n=3)
 1/3 * lnfr.f(lim, c=c, d=d, k=0, n=3) + c * I.f(lim, c=c, d=d, k=0, n=3)
-# I(1)
-# TODO
+### I(1)
+integrate(qdiv.f, lower=lim[1], upper=lim[2], c=c, d=d, k=1, n=3)
+(ln.fr(lim, r) - I.f(lim, c,d, k=2, n=3) - (r^2 - 3*c)*I.f(lim, c,d, k=0, n=3)) / r
 
 
 
