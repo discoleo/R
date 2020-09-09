@@ -4,13 +4,15 @@
 ### Integrals: Polynomial Fractions
 ### Cardan-Type Polynomials
 ###
-### draft v.0.2b-t3
+### draft v.0.2c
 
 
 ############
 
 ### History
 
+# draft v.0.2b - v.0.2c:
+# - added fraction decomposition for polynomials of even power;
 # draft v.0.2b - v.0.2b-t3:
 # - improved P5 variant;
 # - added P7 variant (needs thorough testing);
@@ -39,6 +41,7 @@
 # P3: Integral 1 / (x^3 - 3*c*x - 2*d) dx;
 # P5: Integral 1 / (x^5 - 5*c*x^3 + 5*c^2*x - 2*d) dx;
 # P7: Integral 1 / (x^7 - 7*c*x^5 + 14*c^2*x^3 - 7*c^3*x - 2*d) dx;
+# P8: Integral 1 / (x^8 - 8*c*x^6 + 20*c^2*x^4 - 16*c^3*x^2 + 2*c^4 - 2*d) dx;
 
 
 ### Terminology
@@ -293,6 +296,54 @@ x = 3 # any value - for testing the fraction;
 n.half = (n+1) / 2
 1/(x^9 - 9*c*x^7 + 27*c^2*x^5 - 30*c^3*x^3 + 9*c^4*x - 2*d) # ==
 fr$b0/(x - fr$r[1]) + sum( (fr$a*x + fr$b) / ((x - fr$r[2:n.half]) * (x - fr$r[n:(n.half+1)])) )
+
+
+###################
+###################
+
+### Even Powers ###
+
+##########
+### P6 ###
+##########
+
+### x^6 - 6*c*x^4 + 9*c^2*x^2 - 2*c^3 - 2*d
+
+# Parameters: free to change
+n = 6
+c = 1
+d = 3
+# Roots & Decomposition
+fr = decompose.fr(c(c, d), n=n)
+fr
+n.half = n / 2
+### Test
+x = 3 # any value - for testing the fraction;
+# Note: b0 = -b!
+1/(x^6 - 6*c*x^4 + 9*c^2*x^2 - 2*c^3 - 2*d) # ==
+-fr$b/(x^2 - fr$r[1]^2) + sum( (fr$a*x + fr$b) / ((x - fr$r[2:n.half]) * (x - fr$r[n:(n.half+2)])) )
+
+
+
+##########
+### P8 ###
+##########
+
+### x^8 - 8*c*x^6 + 20*c^2*x^4 - 16*c^3*x^2 + 2*c^4 - 2*d
+
+# Parameters: free to change
+n = 8
+c = 1
+d = 3
+# Roots & Decomposition
+fr = decompose.fr(c(c, d), n=n)
+fr
+n.half = n / 2
+### Test
+x = 3 # any value - for testing the fraction;
+# Note: b0 = -b!
+1/(x^8 - 8*c*x^6 + 20*c^2*x^4 - 16*c^3*x^2 + 2*c^4 - 2*d) # ==
+-fr$b/(x^2 - fr$r[1]^2) + sum( (fr$a*x + fr$b) / ((x - fr$r[2:n.half]) * (x - fr$r[n:(n.half+2)])) )
 
 
 
