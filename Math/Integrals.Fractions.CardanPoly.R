@@ -4,16 +4,17 @@
 ### Integrals: Polynomial Fractions
 ### Cardan-Type Polynomials
 ###
-### draft v.0.2d-bis
+### draft v.0.2d-der
 
 
 ############
 
 ### History
 
-# draft v.0.2d - v.0.2d-bis:
+# draft v.0.2d - v.0.2d-der:
 # - work on P5 polynomial terms;
-# - some work on the P7 polynomial (v.0.2d-bis);
+# - initial work on the P7 polynomial (v.0.2d-bis);
+# - more formulas using n-th derivatives: d[n](Q(x)) / Q(x) (P7 & generalizable) (v.0.2d-der);
 # draft v.0.2c:
 # - added fraction decomposition for polynomials of even power;
 # draft v.0.2b - v.0.2b-t3:
@@ -419,9 +420,15 @@ x = 3 # any value - for testing the fraction;
 # = d(Q(x)) / Q(x)
 # counterintuitive, but logical;
 
-### sum( 1/ ((x - r[i])*(x - r[j])) )
+### sum( 1/ ((x - r[i])*(x - r[j])) ), where i < j
 # = (21*x^5 + 15*E1*x^4 + 10*E2*x^3 + 6*E3*x^2 + 3*E4*x + E5) / Q(x)
 # = (21*x^5 - 70*c*x^3 + 42*c^2*x) / Q(x)
+# = 1/2 * d2(Q(x)) / Q(x);
+
+### sum( 1/ ((x - r[i])*(x - r[j])*(x - r[k])) ), where i < j < k
+# = 1/3 * (105*x^4 - 210*c*x^2 + 42*c^2) / Q(x)
+# = (35*x^4 - 70*c*x^2 + 14*c^2) / Q(x)
+# = 1/6 * d3(Q(x)) / Q(x);
 
 ### Test
 n = 7
@@ -430,10 +437,25 @@ c = 1
 x = 3 # Test value
 #
 r = decompose.fr(c(c, d), n=n)
+# T2
 id.gr = expand.idgrid(n, 2)
-#
 sum( 1 / ((x - r$r[id.gr[,1]])*(x - r$r[id.gr[,2]])) )
 (21*x^5 - 70*c*x^3 + 42*c^2*x) / (x^7 - 7*c*x^5 + 14*c^2*x^3 - 7*c^3*x - 2*d)
+#
+sum( x / ((x - r$r[id.gr[,1]])*(x - r$r[id.gr[,2]])) )
+(21*x^6 - 70*c*x^4 + 42*c^2*x^2) / (x^7 - 7*c*x^5 + 14*c^2*x^3 - 7*c^3*x - 2*d)
+
+#
+id.gr = expand.idgrid(n, 3)
+# T3
+sum( 1 / ((x - r$r[id.gr[,1]])*(x - r$r[id.gr[,2]])*(x - r$r[id.gr[,3]])) )
+(35*x^4 - 70*c*x^2 + 14*c^2) / (x^7 - 7*c*x^5 + 14*c^2*x^3 - 7*c^3*x - 2*d)
+#
+sum( x / ((x - r$r[id.gr[,1]])*(x - r$r[id.gr[,2]])*(x - r$r[id.gr[,3]])) )
+(35*x^5 - 70*c*x^3 + 14*c^2*x) / (x^7 - 7*c*x^5 + 14*c^2*x^3 - 7*c^3*x - 2*d)
+#
+sum( x^2 / ((x - r$r[id.gr[,1]])*(x - r$r[id.gr[,2]])*(x - r$r[id.gr[,3]])) )
+(35*x^6 - 70*c*x^4 + 14*c^2*x^2) / (x^7 - 7*c*x^5 + 14*c^2*x^3 - 7*c^3*x - 2*d)
 
 
 ##################
