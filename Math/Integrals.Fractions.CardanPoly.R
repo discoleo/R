@@ -4,14 +4,16 @@
 ### Integrals: Polynomial Fractions
 ### Cardan-Type Polynomials
 ###
-### draft v.0.2c
+### draft v.0.2d
 
 
 ############
 
 ### History
 
-# draft v.0.2b - v.0.2c:
+# draft v.0.2d:
+# - work on P5 polynomial terms;
+# draft v.0.2c:
 # - added fraction decomposition for polynomials of even power;
 # draft v.0.2b - v.0.2b-t3:
 # - improved P5 variant;
@@ -37,10 +39,12 @@
 # - Cardan-type polynomials:
 #   see https://github.com/discoleo/R/blob/master/Math/Polynomials.CardanGeneralisation.R;
 
-# Examples:
+### Examples:
 # P3: Integral 1 / (x^3 - 3*c*x - 2*d) dx;
 # P5: Integral 1 / (x^5 - 5*c*x^3 + 5*c^2*x - 2*d) dx;
 # P7: Integral 1 / (x^7 - 7*c*x^5 + 14*c^2*x^3 - 7*c^3*x - 2*d) dx;
+### Even order:
+# P6: Integral 1 / (x^6 - 6*c*x^4 + 9*c^2*x^2 - 2*c^3 - 2*d) dx;
 # P8: Integral 1 / (x^8 - 8*c*x^6 + 20*c^2*x^4 - 16*c^3*x^2 + 2*c^4 - 2*d) dx;
 
 
@@ -103,6 +107,7 @@ I.f = function(lim, c, d, k=0, n=3) {
 # (r^2 - 3*c)*a + 2*r^2*a = 1
 # 3*(r^2 - c)*a = 1
 
+### Coefficients
 # a = 1/3 * 1/(r^2 - c) = 1/3 * (p - q)/(p^3 - q^3)
 # b = 2/3 * r*(p - q)/(p^3 - q^3)
 
@@ -167,6 +172,10 @@ integrate(qdiv.f, lower=lim[1], upper=lim[2], c=c, d=d, k=1, n=3)
 ##################
 ##################
 
+##########
+### Pn ###
+##########
+
 unity.sum.f = function(n) {
 	m = complex(re=cos(2*pi/n), im=sin(2*pi/n))
 	n.half = (n-1)/2
@@ -187,14 +196,14 @@ decompose.fr = function(coeff, n) {
 	if(det < 0) {
 		det = sqrt(det + 0i);
 	} else det = sqrt(det)
-	#
+	# TODO: rootn() when (d +/- det) < 0;
 	p = (d + det)^(1/n)
 	q = (d - det)^(1/n)
 	r = p*m$m + q/m$m
-	# Coefficents of Partial Fractions
+	# Coefficients of Partial Fractions
 	b0 = 1/n * (p-q)/(p^n - q^n) # TODO: check if always valid!
 	b = -2 * b0 * r[1] # ALL b are the same;
-	a = b0 * m.sum # TODO: check if correct;
+	a = b0 * m.sum # TODO: check if always correct;
 	return(list(r=r, b0=b0, a=a, b=b))
 }
 
@@ -221,7 +230,9 @@ fr$b0/(x - fr$r[1]) + sum( (fr$a*x + fr$b) / ((x - fr$r[2:n.half]) * (x - fr$r[n
 
 
 #########
-### TODO:
+### other
+
+# TODO:
 1/(x^5 - 5*c^2*x^4 + 5*c*(2*d)^2*x^2 - (2*d)^4) # ==
 
 
@@ -231,14 +242,40 @@ fr$b0/(x - fr$r[1]) + sum( (fr$a*x + fr$b) / ((x - fr$r[2:n.half]) * (x - fr$r[n
 #################
 ### Integrals ###
 
-### 1.) Base-Integral
-
-# 1 / (x^5 - 5*c*x^3 + 5*c^2*x - 2*d)
+### 1.) I(0)
+# Base-Integral: using fraction decomposition;
+# Integral 1 / (x^5 - 5*c*x^3 + 5*c^2*x - 2*d) dx;
 # TODO: trivial
 
 
-
 ### 2.) Polynomials
+
+### 1/(x - r)
+# = (x^2 - r*x*(m+m^4) + r^2 - (m^4+m+3)*c)*(x^2 - r*x*(m^2+m^3) + r^2 - (m^3+m^2+3)*c) / Q(x)
+# = (x^4 + r*x^3 + (r^2 - 5*c)*x^2 + (r^3 - 5*c*r)*x + r^4 - 5*c*r^2 + 5*c^2) / Q(x)
+# I(...) = log(x - r);
+
+### (x^4 - c*x^2 + c^2) / (x^5 - 5*c*x^3 + 5*c^2*x - 2*d)
+# I(...) = 1/5 * log(Q(x));
+
+### Remaining terms of decomposition;
+### 1 / ((x - r[2])*(x - r[5]))
+# = (x - r)*(x^2 - r*x*(m^2+m^3) + r^2 - (m^3+m^2+3)*c) / Q(x)
+# = (x^3 + r*x^2*(m^4+m) - (r^2*(m^4+m) + (m^3+m^2+3)*c)*x - r^3 + (m^3+m^2+3)*c*r) / Q(x)
+
+### 1 / ((x - r[3])*(x - r[4]))
+# = (x - r)*(x^2 - r*x*(m+m^4) + r^2 - (m^4+m+3)*c) / Q(x)
+# = (x^3 + r*x^2*(m^3+m^2) - (r^2*(m^3+m^2) + (m^4+m+3)*c)*x - r^3 + (m^4+m+3)*c*r) / Q(x)
+
+# =>
+# 1 / ((x - r[2])*(x - r[5])) + 1 / ((x - r[3])*(x - r[4]))
+# = (2*x^3 - r*x^2 + (r^2 - 5*c)*x - 2*r^3 + 5*c*r) / Q(x)
+
+### TODO:
+# - solve individual Terms;
+
+
+### [old]
 
 # x^3 / (x^5 - 5*c*x^3 + 5*c^2*x - 2*d)
 c = 1
