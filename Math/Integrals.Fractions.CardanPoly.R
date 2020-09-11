@@ -4,15 +4,16 @@
 ### Integrals: Polynomial Fractions
 ### Cardan-Type Polynomials
 ###
-### draft v.0.2d
+### draft v.0.2d-bis
 
 
 ############
 
 ### History
 
-# draft v.0.2d:
+# draft v.0.2d - v.0.2d-bis:
 # - work on P5 polynomial terms;
+# - some work on the P7 polynomial (v.0.2d-bis);
 # draft v.0.2c:
 # - added fraction decomposition for polynomials of even power;
 # draft v.0.2b - v.0.2b-t3:
@@ -84,6 +85,17 @@ I.f = function(lim, c, d, k=0, n=3) {
 	# Integral of the fraction;
 	# TODO: exact integral (based on fraction decomposition);
 	integrate(qdiv.f, lower=lim[1], upper=lim[2], c=c, d=d, k=k, n=n)$value
+}
+expand.idgrid = function(n, k) {
+	# expand grid to compute various root combinations
+	id.l = rep(list(1:n), k)
+	id.gr = expand.grid(id.l)
+	for(i in 1:(k-1)) {
+	for(j in (i+1):k) {
+		id.gr = id.gr[id.gr[,i] < id.gr[,j],]
+	}
+	}
+	return(id.gr)
 }
 
 #################
@@ -267,9 +279,12 @@ fr$b0/(x - fr$r[1]) + sum( (fr$a*x + fr$b) / ((x - fr$r[2:n.half]) * (x - fr$r[n
 # = (x - r)*(x^2 - r*x*(m+m^4) + r^2 - (m^4+m+3)*c) / Q(x)
 # = (x^3 + r*x^2*(m^3+m^2) - (r^2*(m^3+m^2) + (m^4+m+3)*c)*x - r^3 + (m^4+m+3)*c*r) / Q(x)
 
-# =>
+# Sum =>
 # 1 / ((x - r[2])*(x - r[5])) + 1 / ((x - r[3])*(x - r[4]))
 # = (2*x^3 - r*x^2 + (r^2 - 5*c)*x - 2*r^3 + 5*c*r) / Q(x)
+# Diff =>
+# 1 / ((x - r[2])*(x - r[5])) - 1 / ((x - r[3])*(x - r[4]))
+# = (m^4 - m^3 - m^2 + m) * (r*x^2 - (r^2 - c)*x - c*r) / Q(x)
 
 ### TODO:
 # - solve individual Terms;
@@ -384,6 +399,41 @@ x = 3 # any value - for testing the fraction;
 
 
 
+##################
+##################
+
+
+###################
+### Integrals   ###
+### Polynomials ###
+
+##########
+### P7 ###
+##########
+
+### x^k/(x^7 - 7*c*x^5 + 14*c^2*x^3 - 7*c^3*x - 2*d)
+
+### Equations
+
+### sum( 1/(x - r) )
+# = d(Q(x)) / Q(x)
+# counterintuitive, but logical;
+
+### sum( 1/ ((x - r[i])*(x - r[j])) )
+# = (21*x^5 + 15*E1*x^4 + 10*E2*x^3 + 6*E3*x^2 + 3*E4*x + E5) / Q(x)
+# = (21*x^5 - 70*c*x^3 + 42*c^2*x) / Q(x)
+
+### Test
+n = 7
+d = 3
+c = 1
+x = 3 # Test value
+#
+r = decompose.fr(c(c, d), n=n)
+id.gr = expand.idgrid(n, 2)
+#
+sum( 1 / ((x - r$r[id.gr[,1]])*(x - r$r[id.gr[,2]])) )
+(21*x^5 - 70*c*x^3 + 42*c^2*x) / (x^7 - 7*c*x^5 + 14*c^2*x^3 - 7*c^3*x - 2*d)
 
 
 ##################
