@@ -4,17 +4,19 @@
 ### Integrals: Polynomial Fractions
 ### Cardan-Type Polynomials
 ###
-### draft v.0.2d-der
+### draft v.0.2d-rTr
 
 
 ############
 
 ### History
 
-# draft v.0.2d - v.0.2d-der:
+# draft v.0.2d - v.0.2d-rTr:
 # - work on P5 polynomial terms;
 # - initial work on the P7 polynomial (v.0.2d-bis);
-# - more formulas using n-th derivatives: d[n](Q(x)) / Q(x) (P7 & generalizable) (v.0.2d-der);
+# - more formulas using n-th derivatives & other transforms:
+#  -- d[n](Q(x)) / Q(x) (P7 & generalizable) (v.0.2d-der);
+#  -- Tr(Q(x)) / Q(x) (P7 & generalizable) (v.0.2d-tr);
 # draft v.0.2c:
 # - added fraction decomposition for polynomials of even power;
 # draft v.0.2b - v.0.2b-t3:
@@ -419,16 +421,26 @@ x = 3 # any value - for testing the fraction;
 ### sum( 1/(x - r) )
 # = d(Q(x)) / Q(x)
 # counterintuitive, but logical;
+### sum( r/(x - r) )
+# = (E1*x^6 - 2*E2*x^5 + 3*E3*x^4 - 4*E4*x^3 + 5*E5*x^2 - 6*E6*x + 7*E7) / Q(x)
+# = (14*c*x^5 - 56*c^2*x^3 + 42*c^3*x + 14*d) / Q(x)
+# = 14*(c*x^5 - 4*c^2*x^3 + 3*c^3*x + d) / Q(x)
+
 
 ### sum( 1/ ((x - r[i])*(x - r[j])) ), where i < j
 # = (21*x^5 + 15*E1*x^4 + 10*E2*x^3 + 6*E3*x^2 + 3*E4*x + E5) / Q(x)
 # = (21*x^5 - 70*c*x^3 + 42*c^2*x) / Q(x)
 # = 1/2 * d2(Q(x)) / Q(x);
+### sum ( x / ...)
+# = 1/2 * x * d2(Q(x)) / Q(x);
 
 ### sum( 1/ ((x - r[i])*(x - r[j])*(x - r[k])) ), where i < j < k
 # = 1/3 * (105*x^4 - 210*c*x^2 + 42*c^2) / Q(x)
 # = (35*x^4 - 70*c*x^2 + 14*c^2) / Q(x)
 # = 1/6 * d3(Q(x)) / Q(x);
+### sum ( x / ...)
+# = 1/6 * x * d3(Q(x)) / Q(x);
+# = 
 
 ### Test
 n = 7
@@ -437,13 +449,21 @@ c = 1
 x = 3 # Test value
 #
 r = decompose.fr(c(c, d), n=n)
+# T1
+# trivial d(Q(x)) / Q(x);
+sum( 1 / (x - r$r) )
+7*(x^6 - 5*c*x^4 + 6*c^2*x^2 - c^3) / (x^7 - 7*c*x^5 + 14*c^2*x^3 - 7*c^3*x - 2*d)
+#
+sum( r$r / (x - r$r) )
+14*(c*x^5 - 4*c^2*x^3 + 3*c^3*x + d) / (x^7 - 7*c*x^5 + 14*c^2*x^3 - 7*c^3*x - 2*d)
+
 # T2
 id.gr = expand.idgrid(n, 2)
 sum( 1 / ((x - r$r[id.gr[,1]])*(x - r$r[id.gr[,2]])) )
-(21*x^5 - 70*c*x^3 + 42*c^2*x) / (x^7 - 7*c*x^5 + 14*c^2*x^3 - 7*c^3*x - 2*d)
+7*(3*x^5 - 10*c*x^3 + 6*c^2*x) / (x^7 - 7*c*x^5 + 14*c^2*x^3 - 7*c^3*x - 2*d)
 #
 sum( x / ((x - r$r[id.gr[,1]])*(x - r$r[id.gr[,2]])) )
-(21*x^6 - 70*c*x^4 + 42*c^2*x^2) / (x^7 - 7*c*x^5 + 14*c^2*x^3 - 7*c^3*x - 2*d)
+7*(3*x^6 - 10*c*x^4 + 6*c^2*x^2) / (x^7 - 7*c*x^5 + 14*c^2*x^3 - 7*c^3*x - 2*d)
 
 #
 id.gr = expand.idgrid(n, 3)
@@ -512,3 +532,25 @@ b = c.sol[4:5]
 
 # the parametric solution can be derived as well;
 # [see section: Examples]
+
+#######################
+
+### Special derivations
+
+### Elementary Polynomials
+
+### P7: r[i] * prod(x - r[-i])
+
+### P7: x^4-term
+sum( r1*(E2 - r1*(E1 - r1)) )
+sum( r1*E2 - r1^2*E1 + r1^3 )
+E1*E2 - E1*(E1^2 - 2*E2) + E1^3 - 3*E1*E2 + 3*E3
+3*E3
+
+### P7: x^3-term
+sum( r1*(E3 - r1*(E2 - r1*(E1 - r1))) )
+sum( r1*E3 - r1^2*(E2 - r1*(E1 - r1)) )
+sum( r1*E3 - r1^2*E2 + r1^3*E1 - r1^4 )
+E1*E3 - (E1^2 - 2*E2)*E2 + (E1^3 - 3*E1*E2 + 3*E3)*E1 - (E1^4 - 4*E1^2*E2 + 4*E3*E1 + 2*E2^2 - 4*E4)
+4*E4
+
