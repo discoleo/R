@@ -4,19 +4,19 @@
 ### Integrals: Polynomial Fractions
 ### Cardan-Type Polynomials
 ###
-### draft v.0.2d-rTr
+### draft v.0.2d-rTr2
 
 
 ############
 
 ### History
 
-# draft v.0.2d - v.0.2d-rTr:
+# draft v.0.2d - v.0.2d-rTr2:
 # - work on P5 polynomial terms;
 # - initial work on the P7 polynomial (v.0.2d-bis);
-# - more formulas using n-th derivatives & other transforms:
+# - more formulas using n-th derivatives & other Transforms:
 #  -- d[n](Q(x)) / Q(x) (P7 & generalizable) (v.0.2d-der);
-#  -- Tr(Q(x)) / Q(x) (P7 & generalizable) (v.0.2d-tr);
+#  -- Tr(Q(x)) / Q(x) (P7 & generalizable) (v.0.2d-rTr, v.0.2d-rTr2);
 # draft v.0.2c:
 # - added fraction decomposition for polynomials of even power;
 # draft v.0.2b - v.0.2b-t3:
@@ -35,9 +35,10 @@
 #  -- but the current approach seems better;
 
 
-###############
+####################
 
-### Introduction
+####################
+### Introduction ###
 
 ### Polynomials
 # - Cardan-type polynomials:
@@ -99,6 +100,22 @@ expand.idgrid = function(n, k) {
 	}
 	}
 	return(id.gr)
+}
+mult.pfr = function(r, k=2) {
+	n = length(r); id.all = 1:n
+	gr = expand.idgrid(n, k=k)
+	p = rep(0, n)
+	for(id in 1:nrow(gr)) {
+		is.id = id.all %in% gr[id,]
+		r.inv = r[ ! is.id]
+		# print(r[is.id])
+		p.m = rev(Poly(r.inv))
+		# p.m = p.m * prod(r[is.id]) # Product vs Sum
+		p.m = p.m * sum(r[is.id]) # Product vs Sum
+		p.m = c(p.m, rep(0, n - length(p.m)))
+		p = p + p.m
+	}
+	round0.p(p)
 }
 
 #################
@@ -433,6 +450,11 @@ x = 3 # any value - for testing the fraction;
 # = 1/2 * d2(Q(x)) / Q(x);
 ### sum ( x / ...)
 # = 1/2 * x * d2(Q(x)) / Q(x);
+### sum( (r1 + r2)/((x - r1)*(x - r2)))
+# = (6*E1, -10*E2, 12*E3, -12*E4, 10*E5, -6*E6) / Q(x)
+# = (70*c*x^4 - 14*12*c^2*x^2 + 42*c^3) / Q(x)
+# = 7*(10*c*x^4 - 24*c^2*x^2 + 6*c^3) / Q(x)
+
 
 ### sum( 1/ ((x - r[i])*(x - r[j])*(x - r[k])) ), where i < j < k
 # = 1/3 * (105*x^4 - 210*c*x^2 + 42*c^2) / Q(x)
@@ -464,6 +486,9 @@ sum( 1 / ((x - r$r[id.gr[,1]])*(x - r$r[id.gr[,2]])) )
 #
 sum( x / ((x - r$r[id.gr[,1]])*(x - r$r[id.gr[,2]])) )
 7*(3*x^6 - 10*c*x^4 + 6*c^2*x^2) / (x^7 - 7*c*x^5 + 14*c^2*x^3 - 7*c^3*x - 2*d)
+#
+sum( (r$r[id.gr[,1]] + r$r[id.gr[,2]]) / ((x - r$r[id.gr[,1]])*(x - r$r[id.gr[,2]])) )
+7*(10*c*x^4 - 24*c^2*x^2 + 6*c^3) / (x^7 - 7*c*x^5 + 14*c^2*x^3 - 7*c^3*x - 2*d)
 
 #
 id.gr = expand.idgrid(n, 3)
@@ -553,4 +578,33 @@ sum( r1*E3 - r1^2*(E2 - r1*(E1 - r1)) )
 sum( r1*E3 - r1^2*E2 + r1^3*E1 - r1^4 )
 E1*E3 - (E1^2 - 2*E2)*E2 + (E1^3 - 3*E1*E2 + 3*E3)*E1 - (E1^4 - 4*E1^2*E2 + 4*E3*E1 + 2*E2^2 - 4*E4)
 4*E4
+
+
+#######
+### P7: (r[i1] + r[i2]) * prod(x - r[-i])
+(6*E1, -10*E2, 12*E3, -12*E4, 10*E5, -6*E6)
+
+### P7: x^5-term
+6*E1
+
+### P7: x^4-term
+- sum( (r[1] + r[2])*(E1 - (r[1] + r[2])) )
+- sum( (r[1] + r[2])*E1 - (r[1] + r[2])^2 )
+- (6*E1^2 - 6*r^2 - 2*E2)
+-10*E2
+
+### P7: x^3-term
+12*E3
+
+### P7: x^2-term
+-12*E4
+
+### P7: x^1-term
+10*E5
+
+### P7: x^0-term
+-6*E6
+
+
+
 
