@@ -4,19 +4,20 @@
 ### Integrals: Polynomial Fractions
 ### Cardan-Type Polynomials
 ###
-### draft v.0.2d-rTr2
+### draft v.0.2d-rTr3
 
 
 ############
 
 ### History
 
-# draft v.0.2d - v.0.2d-rTr2:
+# draft v.0.2d - v.0.2d-rTr3:
 # - work on P5 polynomial terms;
 # - initial work on the P7 polynomial (v.0.2d-bis);
 # - more formulas using n-th derivatives & other Transforms:
 #  -- d[n](Q(x)) / Q(x) (P7 & generalizable) (v.0.2d-der);
 #  -- Tr(Q(x)) / Q(x) (P7 & generalizable) (v.0.2d-rTr, v.0.2d-rTr2);
+#  -- general formulas for some of the root-transforms (v.0.2d-rTr3);
 # draft v.0.2c:
 # - added fraction decomposition for polynomials of even power;
 # draft v.0.2b - v.0.2b-t3:
@@ -57,6 +58,37 @@
 # F(k) = x^k / Q(x);
 # I(k) = Integral x^k / Q(x) dx;
 # where Q(x) = Cardan-type polynomial;
+
+
+#################
+### Relations ###
+
+### Derivatives
+
+### sum( 1/(x - r) )
+# = d(Q(x)) / Q(x);
+# where d() = 1st derivative;
+
+### sum( 1 / ((x - r[i1])*(x - r[i2])) )
+# = 1/2! * d[2](Q(x)) / Q(x);
+# where i1 < i2 and d[2] = 2nd derivative;
+
+### sum( 1 / ((x - r[i1])*(x - r[i2])*(x - r[i3])) )
+# = 1/3! * d[3](Q(x)) / Q(x);
+# where i1 < i2 < i3;
+
+# [...]
+
+
+### Transforms
+
+### sum( r[i] / (x - r[i]) )
+# = (E1*x^(n-1) - 2*E2*x^(n-2) + 3*E3*x^(n-3) - 4*E4*x^(n-4) + ... + (-1)^n * (n-1)*E[n-1]*x + (-1)^(n+1) * n*E[n]) / Q(x)
+
+### sum( (r[i1] + r[i2]) / ((x - r[i1])*(x - r[i2])) )
+# = (1*(n-1)*E1*x^(n-2) - 2*(n-2)*E2*x^(n-3) + 3*(n-3)*E3*x^(n-4) + ... + (-1)^(n-1) * (n-2)*2*E[n-2]*x + (-1)^n * (n-1)*1*E[n-1]) / Q(x)
+# = sum( (-1)^(i+1) * (n-i)*i*E[i]*x^(n-i-1) ) / Q(x);
+# where i = 1:(n-1);
 
 
 ####################
@@ -101,17 +133,24 @@ expand.idgrid = function(n, k) {
 	}
 	return(id.gr)
 }
-mult.pfr = function(r, k=2) {
+mult.pfr = function(r, k=2, type=1) {
+	# type: 0 => 1/..., 1 => sum(r[i])/...,
+	#       k => prod(r[i])/...;
 	n = length(r); id.all = 1:n
-	gr = expand.idgrid(n, k=k)
+	gr = if(k == 1) matrix(id.all, ncol=1) else expand.idgrid(n, k=k);
 	p = rep(0, n)
-	for(id in 1:nrow(gr)) {
+	rows = 1:nrow(gr);
+	for(id in rows) {
 		is.id = id.all %in% gr[id,]
 		r.inv = r[ ! is.id]
 		# print(r[is.id])
 		p.m = rev(Poly(r.inv))
-		# p.m = p.m * prod(r[is.id]) # Product vs Sum
-		p.m = p.m * sum(r[is.id]) # Product vs Sum
+		if(type == 0) {
+		} else if(type == 1) {
+			p.m = p.m * sum(r[is.id]) # Sum
+		} else if(type == k) {
+			p.m = p.m * prod(r[is.id]) # Product
+		}
 		p.m = c(p.m, rep(0, n - length(p.m)))
 		p = p + p.m
 	}
