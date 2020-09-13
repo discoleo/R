@@ -16,6 +16,9 @@
 ###
 ### version 1 [RC1] [draft]
 ###
+### 2020-09-13:
+### - cleanup: moved derived examples to:
+###   Integrals.Fractions.Unity.Derived.R;
 ### 2020-05-20, 2020-06-03, 2020-06-04:
 ### - a new type of fractions: TODO: move to separate file;
 ### - shortcut for even powers (example);
@@ -51,17 +54,22 @@
 ### Polynomial fraction: P(x) / (x^n - 1)
 ### Part C:
 ### Polynomial fraction: P(x) / (x^n - 1)^2
+### TODO: move to: Integrals.Fractions.Unity.Powers.R;
+### [are solvaable using a different approach!]
 
 
 ### Publishing:
-### - it is easy nowadays to find Plagiarism;
-### - it is easy to involve me in specific projects,
+### - I am open to various projects,
 ###   including collaborations on articles/books/other projects;
+### - Academic: it is easy nowadays to find Plagiarism,
+###   but I am happy to get involved in projects related to these topics;
 
 
-# Example:
-n = 7 # e.g. 7, 9, 11; only ODD in this example!
-x = 3 # e.g. 2, 3, pi, 4 # some arbitrary value for testing
+### Examples
+
+### ODD Powers:
+# - only ODD in this example!
+n = 7 # e.g. 7, 9, 11;
 # Roots of unity
 m = complex(re=cos(2*pi/n), im=sin(2*pi/n))
 m = m^(1:(n-1)) # all roots of unity (without 1)
@@ -72,7 +80,8 @@ m.conj = cbind(m.conj, 1/m.conj)
 b0 = 1/n
 b = -2*b0
 a = b0 * (m.conj[,1] + m.conj[,2])
-
+### Tests
+x = 3 # e.g. 2, 3, pi, 4 # some arbitrary value for testing
 # Partial Fractions
 1/(x^n - 1) # ==
 b0/(x - 1) + sum( (a*x + b) / ((x - m.conj[,1]) * (x - m.conj[,2])) )
@@ -82,7 +91,7 @@ b0/(x - 1) + sum( (a*x + b) / ((x - m.conj[,1]) * (x - m.conj[,2])) )
 b0/(x + 1) + sum( (a*x - b) / ((x + m.conj[,1]) * (x + m.conj[,2])) )
 
 
-### Even Powers
+### EVEN Powers:
 # shortcut for even powers
 # [was computed previousy using the difference of the 2 lower powers]
 # TODO: improve also code; 
@@ -1100,6 +1109,11 @@ for(i in 1:(pow*n)) {
 ##########################
 ##########################
 
+### Derived Examples:
+# - moved to:
+#   Integrals.Fractions.Unity.Derived.R;
+# - TODO: remove from here;
+
 lower = 2
 upper = 3
 integrate(function(x) 1/2 * x^3/(x^5 + 1), lower=lower^2, upper=upper^2)
@@ -1122,34 +1136,3 @@ integrate(function(x) sin(x)^(n-3)*cos(x)/(sin(x)^n + cos(x)^n), lower=atan(lowe
 integrate(function(x) 1/2 * x^(n.half - 2)/(x^n.half + (1-x)^n.half), lower=sin(atan(lower))^2, upper=sin(atan(upper))^2)
 integrate(function(x) 1/2 * x^(n.half - 2)/(x^n.half + (1-x)^n.half), lower=1-1/(lower^2+1), upper=1-1/(upper^2+1))
 integrate(function(x) (1+x)^(n.half - 2)/((1+x)^n.half + (1-x)^n.half), lower=1-2/(lower^2+1), upper=1-2/(upper^2+1))
-
-#
-n = 11/2
-#
-n.half = n/2
-integrate(function(x) x^(n-3)/(x^n + 1), lower=lower, upper=upper)
-integrate(function(x) sin(x)^(n-3)*cos(x)/(sin(x)^n + cos(x)^n), lower=atan(lower), upper=atan(upper))
-integrate(function(x) 1/2 * x^(n.half - 2)/(x^n.half + (1-x)^n.half), lower=sin(atan(lower))^2, upper=sin(atan(upper))^2)
-
-###########
-###########
-
-
-lower = 0.2 # 0.6
-upper = 0.8
-integrate(function(x) 1/2 * x^3/(x^5 + 1), lower=2/(1-lower)-1, upper=2/(1-upper)-1 )
-integrate(function(x) (1+x)^3/((1+x)^5 + (1-x)^5), lower=lower, upper=upper)
-
-### x^3 + x
-log( ((1+upper)^5 + (1-upper)^5) / ((1+lower)^5 + (1-lower)^5) ) * 1/40
-integrate(function(x) (x^3 + x)/((1+x)^5 + (1-x)^5), lower=lower, upper=upper)
-
-### only x
-(atan((upper^2+1)*sqrt(5)/2i) - atan((lower^2+1)*sqrt(5)/2i)) * sqrt(5)/2i / 20
-integrate(function(x) x/((1+x)^5 + (1-x)^5), lower=lower, upper=upper)
-# => x^3, 3*x^2 + 1
-
-### 5*x^4 + 10*x^2 + 1
-(upper - lower)/2
-integrate(function(x) (5*x^4 + 10*x^2 + 1)/((1+x)^5 + (1-x)^5), lower=lower, upper=upper)
-
