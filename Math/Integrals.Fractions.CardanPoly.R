@@ -18,7 +18,7 @@
 #  -- d[n](Q(x)) / Q(x) (P7 & generalizable) (v.0.2d-der);
 #  -- Tr(Q(x)) / Q(x) (P7 & generalizable) (v.0.2d-rTr, v.0.2d-rTr2);
 #  -- general formulas for some of the root-transforms (v.0.2d-rTr3);
-#  -- more root-transforms (v.0.2d-Tr3);
+#  -- more root-transforms (v.0.2d-Tr3) (+ bug fix: fraction decomposition formula);
 # draft v.0.2c:
 # - added fraction decomposition for polynomials of even power;
 # draft v.0.2b - v.0.2b-t3:
@@ -61,8 +61,8 @@
 # where Q(x) = Cardan-type polynomial;
 
 
-#############################
-### Fration Decomposition ###
+##############################
+### Fraction Decomposition ###
 
 # p, q = components of root;
 # [see Polynomials.CardanGeneralisation.R]
@@ -73,10 +73,16 @@
 b0 = 1/n * (p-q)/(p^n - q^n)
 b = -2 * b0 * r0 # ALL b are the same;
 a = b0 * (m^j + m^(-j))
+msq = m^(2*j) + m^(-2*j)
 # where m = root of unity of order n, m^n = 1;
+# j = index from 1 to floor((n-1)/2);
 
 ### Decomposition
-1 / Q(x) = b0/(x - r0) + sum( (a*x + b) / (x^2 - (m^j + m^(-j))*x + 1) )
+### Odd Powers:
+1 / Q(x) = b0/(x - r0) + sum( (a*x + b) / (x^2 - r0*(m^j + m^(-j))*x + r0^2 - 3*c*msq) )
+
+### Even Powers:
+1 / Q(x) = -b/(x^2 - r0^2) + sum( (a*x + b) / (x^2 - r0*(m^j + m^(-j))*x + r0^2 - 3*c*msq) )
 
 
 #################
@@ -195,6 +201,16 @@ mult.pfr = function(r, k=2, type=1) {
 	}
 	round0.p(p)
 }
+### Decompositions
+decompose.p3 = function(c, d) {
+	det = sqrt(d^2 - c^3 + 0i)
+	p = (d + det)^(1/3); q = (d - det)^(1/3);
+	r = p + q;
+	# Coeffs Fraction
+	a = 1/3 * (p - q)/(p^3 - q^3)
+	b = 2*r*a;
+	return(list(r=r, a=a, b=b))
+}
 
 #################
 
@@ -221,15 +237,7 @@ mult.pfr = function(r, k=2, type=1) {
 # a = 1/3 * 1/(r^2 - c) = 1/3 * (p - q)/(p^3 - q^3)
 # b = 2/3 * r*(p - q)/(p^3 - q^3)
 
-decompose.p3 = function(c, d) {
-	det = sqrt(d^2 - c^3 + 0i)
-	p = (d + det)^(1/3); q = (d - det)^(1/3);
-	r = p + q;
-	# Coeffs Fraction
-	a = 1/3 * (p - q)/(p^3 - q^3)
-	b = 2*r*a;
-	return(list(r=r, a=a, b=b))
-}
+##################
 
 ### Test: Fraction
 x = 5 # arbitrary x;
