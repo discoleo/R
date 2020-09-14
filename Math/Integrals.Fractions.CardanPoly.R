@@ -4,20 +4,21 @@
 ### Integrals: Polynomial Fractions
 ### Cardan-Type Polynomials
 ###
-### draft v.0.2d-rTr3
+### draft v.0.2d-Tr3
 
 
 ############
 
 ### History
 
-# draft v.0.2d - v.0.2d-rTr3:
+# draft v.0.2d - v.0.2d-Tr3:
 # - work on P5 polynomial terms;
 # - initial work on the P7 polynomial (v.0.2d-bis);
 # - more formulas using n-th derivatives & other Transforms:
 #  -- d[n](Q(x)) / Q(x) (P7 & generalizable) (v.0.2d-der);
 #  -- Tr(Q(x)) / Q(x) (P7 & generalizable) (v.0.2d-rTr, v.0.2d-rTr2);
 #  -- general formulas for some of the root-transforms (v.0.2d-rTr3);
+#  -- more root-transforms (v.0.2d-Tr3);
 # draft v.0.2c:
 # - added fraction decomposition for polynomials of even power;
 # draft v.0.2b - v.0.2b-t3:
@@ -60,8 +61,28 @@
 # where Q(x) = Cardan-type polynomial;
 
 
+#############################
+### Fration Decomposition ###
+
+# p, q = components of root;
+# [see Polynomials.CardanGeneralisation.R]
+# base-root = r0 = p + q
+# all roots: r[j] = p*m^j + q*m^(-j);
+
+### Coefficients
+b0 = 1/n * (p-q)/(p^n - q^n)
+b = -2 * b0 * r0 # ALL b are the same;
+a = b0 * (m^j + m^(-j))
+# where m = root of unity of order n, m^n = 1;
+
+### Decomposition
+1 / Q(x) = b0/(x - r0) + sum( (a*x + b) / (x^2 - (m^j + m^(-j))*x + 1) )
+
+
 #################
 ### Relations ###
+
+# used to decompose: x^k / Q(x);
 
 ### Derivatives
 
@@ -82,13 +103,31 @@
 
 ### Transforms
 
+# TODO: verify alternating signs;
+
+### T1
 ### sum( r[i] / (x - r[i]) )
 # = (E1*x^(n-1) - 2*E2*x^(n-2) + 3*E3*x^(n-3) - 4*E4*x^(n-4) + ... + (-1)^n * (n-1)*E[n-1]*x + (-1)^(n+1) * n*E[n]) / Q(x)
 
+### T2
 ### sum( (r[i1] + r[i2]) / ((x - r[i1])*(x - r[i2])) )
 # = (1*(n-1)*E1*x^(n-2) - 2*(n-2)*E2*x^(n-3) + 3*(n-3)*E3*x^(n-4) + ... + (-1)^(n-1) * (n-2)*2*E[n-2]*x + (-1)^n * (n-1)*1*E[n-1]) / Q(x)
 # = sum( (-1)^(i+1) * (n-i)*i*E[i]*x^(n-i-1) ) / Q(x);
 # where i = 1:(n-1);
+
+### sum( (r[i1] * r[i2]) / ((x - r[i1])*(x - r[i2])) )
+# = (1*E1*x^(n-2) - 3*E2*x^(n-3) + 6*E3*x^(n-4) + ... + (-1)^(n-1) * ...*E[n-2]*x + (-1)^n * ...*E[n-1]) / Q(x)
+# = sum( (-1)^(i+1) * i*(i+1)/2 * E[i]*x^(n-i-1) ) / Q(x);
+# where i = 1:(n-1);
+
+### T3
+### sum( (r[i1] + r[i2] + r[i3]) / ((x - r[i1])*(x - r[i2])*(x - r[i3])) )
+# = ( choose(n-1, 2)*1* E1*x^(n-3) - ... - 10*(n-5)*E[n-5]*x^3 + 6*(n-4)*E[n-4]*x^2 - 3*(n-3)*E[n-3]*x + 1*(n-2)*E[n-2]) / Q(x)
+# = sum( (-1)^(n-i-1) * choose(i, 2)*(n-i)*E[n-i]*x^(i-2) ) / Q(x);
+# where i = 2:(n-1); ### Note: [i] starts at 2 & is in reverse order (vs T2)!
+sapply(5:10, function(n) {r = roots(c(rep(c(1,-1), n-2),-1)); mult.pfr(r=r, k=3);})
+
+### [...] many more;
 
 
 ####################
