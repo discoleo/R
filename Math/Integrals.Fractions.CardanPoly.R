@@ -73,16 +73,19 @@
 b0 = 1/n * (p-q)/(p^n - q^n)
 b = -2 * b0 * r0 # ALL b are the same;
 a = b0 * (m^j + m^(-j))
-msq = m^(2*j) + m^(-2*j)
+msq = m^(2*j) + m^(-2*j) - 2
 # where m = root of unity of order n, m^n = 1;
 # j = index from 1 to floor((n-1)/2);
 
 ### Decomposition
 ### Odd Powers:
-1 / Q(x) = b0/(x - r0) + sum( (a*x + b) / (x^2 - r0*(m^j + m^(-j))*x + r0^2 - 3*c*msq) )
+1 / Q(x) = b0/(x - r0) + sum( (a*x + b) / (x^2 - r0*(m^j + m^(-j))*x + r0^2 + c*msq) )
 
 ### Even Powers:
-1 / Q(x) = -b/(x^2 - r0^2) + sum( (a*x + b) / (x^2 - r0*(m^j + m^(-j))*x + r0^2 - 3*c*msq) )
+1 / Q(x) = -b/(x^2 - r0^2) + sum( (a*x + b) / (x^2 - r0*(m^j + m^(-j))*x + r0^2 + c*msq) )
+
+# Note:
+# (x - r[j])*(x - r[n-j]) = x^2 - r0*(m^j + m^(-j))*x + r0^2 + c*msq;
 
 
 #################
