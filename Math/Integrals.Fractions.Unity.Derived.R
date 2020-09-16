@@ -8,7 +8,7 @@
 ### of Polynomial Fractions
 ### derived from Roots of Unity
 ###
-### draft v.0.1a
+### draft v.0.1b
 
 
 
@@ -27,10 +27,12 @@
 ###############
 ### History ###
 
+# draft v.0.1b:
+# - added more details to the examples with fractinal powers;
 # draft v.0.1a:
 # - moved examples from Integrals.Fractions.Unity.R
 #   to this file;
-# - more examples with fractional powers;
+# - added examples with fractional powers;
 
 
 ################
@@ -41,46 +43,93 @@
 ### B.) Trigonometric Derivations
 ### C.) Derived Polynomials
 
+### Terminology
 
+### I[k, n]
+# I[k, n] = Integral x^k / (x^n + 1) dx;
+# or
+# I[k, n] = Integral x^k / (x^n - 1) dx;
+# (depending on context)
+
+
+#########################
 ### A.) Fractional Powers
 
-### x^(k/m) / (x^(j/n) - 1)
+### I[k/m, j/n]
+# Integral x^(k/m) / (x^(j/n) - 1) dx
+# =>
 # y = x^(1/(m*n))
 # x = y^(m*n)
 # dx = m*n*y^(m*n - 1) * dy
 # =>
-# I (...) dx = I  m*n * y^(k*n + m*n - 1) / (x^(m*j) - 1) dy
+# I[k/m, j/n] = I  m*n * y^(k*n + m*n - 1) / (x^(m*j) - 1) dy
+# = m*n * I[k*n + m*n - 1, m*j];
+# Note: limits of integration also change!
 
+
+#################################
 ### B.) Trigonometric Derivations
 # - TODO: document + expand;
 # - see also file:
 #   Integrals.Exercises.R;
 
 
+###########################
+### C.) Derived Polynomials
+# - TODO
+
+
+######################
 ######################
 
 ### helper function
 I.f = function(f, lim) {
 	integrate(f, lower=lim[1], upper=lim[2])$value
 }
+I.pf = function(b, n, lim) {
+	if(length(b) > 1 && length(n) > 1 && length(b) != length(n)) {
+		stop("Differing lengths!")
+	}
+	pow = n + 1
+	coeff = b / pow
+	sum(coeff * lim[2]^pow) - sum(coeff * lim[1]^pow)
+}
 
 #####################
 
-### Examples
+################
+### Examples ###
+################
 
-### Fractional Powers
+### A.) Fractional Powers
 
 lim = c(1.2, 1.5)
 #
 integrate(function(x) x^(3/5)/(x^(5/4) + 1), lower=lim[1], upper=lim[2]) # ==
-integrate(function(x) 20 * x^31/(x^25 + 1), lower=lim[1]^(1/20), upper=lim[2]^(1/20))
+integrate(function(x) 20 * x^31/(x^25 + 1), lower=lim[1]^(1/20), upper=lim[2]^(1/20)) # ==
+integrate(function(x) 20*x^6 - 20 * x^6/(x^25 + 1), lower=lim[1]^(1/20), upper=lim[2]^(1/20)) # ==
+I.pf(20, 6, lim^(1/20)) - 20 * I.f(function(x) x^6/(x^25 + 1), lim^(1/20))
+# I[6] = Integral x^6/(x^25 + 1) can be computed based on I[0] = 1/(x^25 + 1);
+# I[0] => [1/x] => I[23] => [half] => I[11] => [half] => I[5]
+#      => [half] => I2 => [1/x] => I[21] => [half] => I[10]
+#      => [1/x] => I[13] => [half] => I[6];
+# I[6] = f(I[0]) using the reverse sequence as per:
+#   Integrals.Fractions.Unity.R;
+# I[0] can be computed using the fraction decomposition as per:
+#   Integrals.Fractions.Unity.R;
 
 
 lim = c(1.2, 1.5)
 #
 integrate(function(x) (x^(3/5) + x^(1/3)) / (x^(5/4) + 1), lower=lim[1], upper=lim[2]) # ==
 I.f(function(x) 20 * x^31/(x^25 + 1), lim=lim^(1/20)) +
-	I.f(function(x) 12 * x^15/(x^15 + 1), lim=lim^(1/12))
+	I.f(function(x) 12 * x^15/(x^15 + 1), lim=lim^(1/12)) # ==
+I.f(function(x) 20*x^6 - 20 * x^6/(x^25 + 1), lim=lim^(1/20)) +
+	I.f(function(x) 12 - 12/(x^15 + 1), lim=lim^(1/12)) # ==
+I.pf(20, 6, lim=lim^(1/20)) - 20*I.f(function(x) x^6/(x^25 + 1), lim=lim^(1/20)) +
+	I.pf(12, 0, lim=lim^(1/12)) - 12*I.f(function(x) 1/(x^15 + 1), lim=lim^(1/12))
+# I[6, 25] & I[0, 15] can be computed exactly as per:
+# Integrals.Fractions.Unity.R;
 
 
 ######################
