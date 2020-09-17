@@ -8,7 +8,7 @@
 ### of Polynomial Fractions
 ### derived from Roots of Unity
 ###
-### draft v.0.1b
+### draft v.0.1c
 
 
 
@@ -27,8 +27,12 @@
 ###############
 ### History ###
 
+# draft v.0.1c:
+# - added/documented some derived polynomials;
+# - fraction decomposition for:
+#   1 / ((x^2 + a)^n - 1);
 # draft v.0.1b:
-# - added more details to the examples with fractinal powers;
+# - added more details to the examples with fractional powers;
 # draft v.0.1a:
 # - moved examples from Integrals.Fractions.Unity.R
 #   to this file;
@@ -78,6 +82,38 @@
 ### C.) Derived Polynomials
 # - TODO
 
+### C.1.) Div by (x^n + (1-x)^n)
+
+### x^(n-2) / (x^n + (1-x)^n)
+### x^(n-2) / (x^n - (1-x)^n)
+# I[2*p+1, 2*n] =>
+# y = 1 - 1 / (x^2 + 1)
+# x^2 = 1 / (1 - y) - 1
+# 2*x*dx = (1-y)^(-2) * dy;
+# =>
+# I[2*p+1, 2*n] = 1/2 * Int y^k / (1-y)^(p+2) / (y^n / (1-y)^n + 1) dy
+#  = 1/2 * Int y^p * (1-y)^(n - p - 2) / (y^n + (1-y)^n) dy
+
+### Examples
+n = 5
+lim = c(2, 3)
+# Variant: "+"
+integrate(function(x) 2 * x^(2*n-3)/(x^(2*n) + 1), lower=lim[1], upper=lim[2])
+integrate(function(x) x^(n - 2)/(x^n + (1-x)^n), lower=1-1/(lim[1]^2+1), upper=1-1/(lim[2]^2+1))
+# Variant: "-"
+integrate(function(x) 2 * x^(2*n-3)/(x^(2*n) - 1), lower=lim[1], upper=lim[2])
+integrate(function(x) x^(n - 2)/(x^n - (1-x)^n), lower=1-1/(lim[1]^2+1), upper=1-1/(lim[2]^2+1))
+
+
+### C.2.) Int x^k / ((x^2 + k)^n - 1)
+
+### Fraction Decomposition:
+# F[0] = 1 / ((x^2 + k)^n - 1)
+# = b0 / (x^2 + k - 1) + sum( (a*(x^2 + k) + b) / ((x^2 + k - m^j)*(x^2 + k - m^(-j))) )
+# [n = odd powers]
+# where b0, a, b = coefficients as per:
+# Integrals.Fractions.Unity.R;
+
 
 ######################
 ######################
@@ -93,6 +129,26 @@ I.pf = function(b, n, lim) {
 	pow = n + 1
 	coeff = b / pow
 	sum(coeff * lim[2]^pow) - sum(coeff * lim[1]^pow)
+}
+###
+roots.conj = function(n) {
+	m = complex(re=cos(2*pi/n), im=sin(2*pi/n))
+	n_1 = n - 1; n.half = floor(n_1/2)
+	i = 1:(n.half)
+	m.h = m^(1:n.half)
+	m.sum = m.h + 1/m.h
+	m.h = cbind(m.h, 1/m.h)
+	#
+	r = list(m=m, m.sum=m.sum, m.half = m.h)
+	return(r)
+}
+decompose.fr = function(n, type="minus") {
+	# TODO: n = even powers, type = "plus";
+	m = roots.conj(n)
+	b0 = 1/n
+	a = b0 * m$m.sum
+	b = -2*b0
+	return(list(b0=b0, a=a, b=b, m=m$m, m.sum=m$m.sum, m.half=m$m.half))
 }
 
 #####################
@@ -130,6 +186,38 @@ I.pf(20, 6, lim=lim^(1/20)) - 20*I.f(function(x) x^6/(x^25 + 1), lim=lim^(1/20))
 	I.pf(12, 0, lim=lim^(1/12)) - 12*I.f(function(x) 1/(x^15 + 1), lim=lim^(1/12))
 # I[6, 25] & I[0, 15] can be computed exactly as per:
 # Integrals.Fractions.Unity.R;
+
+
+###########################
+
+###########################
+### C.) Derived Polynomials
+
+
+### Simple Fraction
+x = 3
+n = 5
+# Test
+r = decompose.fr(n)
+#
+1 / (x^n - 1)
+r$b0/(x - 1) + sum( (r$a*x + r$b) / (x^2 - r$m.sum * x + 1) )
+#
+1 / (x^n + 1)
+r$b0/(x + 1) + sum( (r$a*x - r$b) / (x^2 + r$m.sum * x + 1) )
+
+
+### Fraction: 1 / ((x^2 + a)^n - 1)
+x = 2
+a = 1.5
+n = 5
+# Test
+r = decompose.fr(n)
+#
+1 / ((x^2 + a)^n - 1)
+r$b0/(x^2 + a - 1) + sum( (r$a*(x^2+a) + r$b) / ((x^2+a)^2 - r$m.sum * (x^2+a) + 1) )
+r$b0/(x^2 + a - 1) + sum( (r$a*(x^2+a) + r$b) * (1/(x^2+a - r$m.half[,1]) - 1/(x^2+a - r$m.half[,2])) / (r$m.half[,1] - r$m.half[,2]) )
+
 
 
 ######################
