@@ -8,7 +8,7 @@
 ### of Polynomial Fractions
 ### derived from Roots of Unity
 ###
-### draft v.0.1c-sqrt
+### draft v.0.1d
 
 
 
@@ -27,6 +27,11 @@
 ###############
 ### History ###
 
+# draft v.0.1d:
+# - started trigonometric derivatives:
+#   cos(x)^(2*n-2) / (1 - cos(x)^(2*n));
+# - more work on polynomial/radical derivatives:
+#   x^(1/p) / ((x + a)^n - 1);
 # draft v.0.1c - v.0.1c-sqrt:
 # - added/documented some derived polynomials;
 # - fraction decomposition for:
@@ -237,8 +242,11 @@ r$b0/(x^p + a - 1) + sum( (r$a*(x^p+a) + r$b) / ((x^p+a)^2 - r$m.sum * (x^p+a) +
 r$b0/(x^p + a - 1) + sum( (r$a*(x^p+a) + r$b) * (1/(x^p + a - r$m.half[,1]) - 1/(x^p + a - r$m.half[,2])) / (r$m.half[,1] - r$m.half[,2]) )
 # TODO: re-scaling to 1/(x^p - 1);
 
+
 ###
+
 ### Fraction: x^2 / ( (x^2 + a)^n - 1 )
+### Fraction: sqrt(x) / ( (x + a)^n - 1 )
 x = 2
 a = 1.5
 n = 5
@@ -247,16 +255,67 @@ lim = c(1.1, 3)
 r = decompose.fr(n)
 #
 x^2 / ((x^2 + a)^n - 1)
-r$b0 * x^2/(x^2 + a - 1) + sum( (r$a*(x^2+a) + r$b) * x^2 / ((x^2+a)^2 - r$m.sum * (x^2+a) + 1) )
+r$b0 * x^2/(x^2 + a - 1) + sum( (r$a*(x^2+a) + r$b) * x^2 / ((x^2 + a)^2 - r$m.sum * (x^2+a) + 1) )
 r$b0 * x^2/(x^2 + a - 1) + sum( (r$a*(x^2+a) + r$b) * x^2 * (1/(x^2 + a - r$m.half[,1]) - 1/(x^2 + a - r$m.half[,2])) / (r$m.half[,1] - r$m.half[,2]) )
 r$b0 * x^2/(x^2 + a - 1) + sum( (r$a*(x^2+a) + r$b) / (r$m.half[,2] - r$m.half[,1]) *
 	((a - r$m.half[,1])/(x^2 + a - r$m.half[,1]) - (a - r$m.half[,2])/(x^2 + a - r$m.half[,2])) )
 #
 integrate(function(x) sqrt(x) / ((x+a)^n - 1), lower=lim[1], upper=lim[2])
 integrate(function(x) 2 * x^2 / ((x^2+a)^n - 1), lower=sqrt(lim[1]), upper=sqrt(lim[2]))
+#
+integrate(function(x) sqrt(x) / ((x+a)^n + 1), lower=lim[1], upper=lim[2])
+integrate(function(x) 2 * x^2 / ((x^2+a)^n + 1), lower=sqrt(lim[1]), upper=sqrt(lim[2]))
+
+
+### Fraction: x^p / ( (x^p + a)^n - 1 )
+### Fraction: x^(1/p) / ( (x + a)^n - 1 )
+x = 2
+a = 1.5
+n = 5
+p = 3
+lim = c(1.1, 3)
+# Test
+r = decompose.fr(n)
+#
+x^p / ((x^p + a)^n - 1)
+r$b0 * x^p/(x^p + a - 1) + sum( (r$a*(x^p+a) + r$b) * x^p / ((x^p + a)^2 - r$m.sum * (x^p + a) + 1) )
+r$b0 * x^p/(x^p + a - 1) + sum( (r$a*(x^p+a) + r$b) * x^p * (1/(x^p + a - r$m.half[,1]) - 1/(x^p + a - r$m.half[,2])) / (r$m.half[,1] - r$m.half[,2]) )
+r$b0 * x^p/(x^p + a - 1) + sum( (r$a*(x^p+a) + r$b) / (r$m.half[,2] - r$m.half[,1]) *
+	((a - r$m.half[,1])/(x^p + a - r$m.half[,1]) - (a - r$m.half[,2])/(x^p + a - r$m.half[,2])) )
+#
+integrate(function(x) x^(1/p) / ((x+a)^n - 1), lower=lim[1], upper=lim[2])
+integrate(function(x) p * x^p / ((x^p+a)^n - 1), lower=(lim[1])^(1/p), upper=(lim[2])^(1/p))
+#
+integrate(function(x) x^(1/p) / ((x+a)^n + 1), lower=lim[1], upper=lim[2])
+integrate(function(x) p * x^p / ((x^p+a)^n + 1), lower=(lim[1])^(1/p), upper=(lim[2])^(1/p))
+
+
+######################
+######################
+
+### Trigonometric
+
+### cos(x)^(2*n-2) / (1 - cos(x)^(2*n))
+### (1 + cos(x)^(2*n) * sin(x)^2) / (1 - cos(x)^(2*n))
+#
+# from Int 1 / ( (x^2 + 1)^n - 1 )
+# x = tan(y)
+# dx = 1/cos(y)^2 dy
+# =>
+# Int cos(x)^(2*n-2) / (1 - cos(x)^(2*n)) dx
+
+n = 5
+lim = c(1, 2)
+#
+integrate(function(x) 1 / ((x^2 + 1)^n - 1), lower=lim[1], upper=lim[2])
+integrate(function(x) cos(x)^(2*n-2) / (1 - cos(x)^(2*n)), lower=atan(lim[1]), upper=atan(lim[2]))
+# TODO: 1 / (...)
+integrate(function(x) 1 / ((x^2 + 1)^n - 1), lower=lim[1], upper=lim[2])
+I.pf(-1,0, lim=atan(lim)) + I.f(function(x) (1 + cos(x)^(2*n-2) * sin(x)^2) / (1 - cos(x)^(2*n)), lim=atan(lim))
 
 
 
+######################
 ######################
 
 ### Other
