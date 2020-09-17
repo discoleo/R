@@ -8,7 +8,7 @@
 ### of Polynomial Fractions
 ### derived from Roots of Unity
 ###
-### draft v.0.1c
+### draft v.0.1c-bis
 
 
 
@@ -27,10 +27,11 @@
 ###############
 ### History ###
 
-# draft v.0.1c:
+# draft v.0.1c - v.0.1c-bis:
 # - added/documented some derived polynomials;
 # - fraction decomposition for:
 #   1 / ((x^2 + a)^n - 1);
+#   1 / ((x^p + a)^n - 1); [initial thoughts]
 # draft v.0.1b:
 # - added more details to the examples with fractional powers;
 # draft v.0.1a:
@@ -195,6 +196,7 @@ I.pf(20, 6, lim=lim^(1/20)) - 20*I.f(function(x) x^6/(x^25 + 1), lim=lim^(1/20))
 
 
 ### Simple Fraction
+# [Test]
 x = 3
 n = 5
 # Test
@@ -207,7 +209,9 @@ r$b0/(x - 1) + sum( (r$a*x + r$b) / (x^2 - r$m.sum * x + 1) )
 r$b0/(x + 1) + sum( (r$a*x - r$b) / (x^2 + r$m.sum * x + 1) )
 
 
-### Fraction: 1 / ((x^2 + a)^n - 1)
+### Derived Polynomials
+
+### Fraction: 1 / ( (x^2 + a)^n - 1 )
 x = 2
 a = 1.5
 n = 5
@@ -216,7 +220,21 @@ r = decompose.fr(n)
 #
 1 / ((x^2 + a)^n - 1)
 r$b0/(x^2 + a - 1) + sum( (r$a*(x^2+a) + r$b) / ((x^2+a)^2 - r$m.sum * (x^2+a) + 1) )
-r$b0/(x^2 + a - 1) + sum( (r$a*(x^2+a) + r$b) * (1/(x^2+a - r$m.half[,1]) - 1/(x^2+a - r$m.half[,2])) / (r$m.half[,1] - r$m.half[,2]) )
+r$b0/(x^2 + a - 1) + sum( (r$a*(x^2+a) + r$b) * (1/(x^2 + a - r$m.half[,1]) - 1/(x^2 + a - r$m.half[,2])) / (r$m.half[,1] - r$m.half[,2]) )
+
+
+### Fraction: 1 / ( (x^p + a)^n - 1 )
+x = 1.3
+a = -1.1
+n = 5
+p = 4
+# Test
+r = decompose.fr(n)
+#
+1 / ((x^p + a)^n - 1)
+r$b0/(x^p + a - 1) + sum( (r$a*(x^p+a) + r$b) / ((x^p+a)^2 - r$m.sum * (x^p+a) + 1) )
+r$b0/(x^p + a - 1) + sum( (r$a*(x^p+a) + r$b) * (1/(x^p + a - r$m.half[,1]) - 1/(x^p + a - r$m.half[,2])) / (r$m.half[,1] - r$m.half[,2]) )
+# TODO: re-scaling to 1/(x^p - 1);
 
 
 
