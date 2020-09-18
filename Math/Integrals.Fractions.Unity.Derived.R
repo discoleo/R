@@ -8,7 +8,7 @@
 ### of Polynomial Fractions
 ### derived from Roots of Unity
 ###
-### draft v.0.1d-bis
+### draft v.0.1d-std
 
 
 
@@ -27,12 +27,12 @@
 ###############
 ### History ###
 
-# draft v.0.1d - v.0.1d-bis:
+# draft v.0.1d - v.0.1d-std:
 # - started trigonometric derivatives:
 #   cos(x)^(2*n-2) / (1 - cos(x)^(2*n));
 # - more work on polynomial/radical derivatives:
 #   x^(1/p) / ((x + s)^n - 1);
-# - standardize shift notation; [v.0.1d-bis]
+# - standardize shift notation; [v.0.1d-bis & v.0.1d-std]
 # draft v.0.1c - v.0.1c-sqrt:
 # - added/documented some derived polynomials;
 # - fraction decomposition for:
@@ -168,12 +168,13 @@ decompose.fr = function(n, type="minus") {
 ### A.) Fractional Powers
 
 lim = c(1.2, 1.5)
-#
+### Example: x^(3/5)/(x^(5/4) + 1)
 integrate(function(x) x^(3/5)/(x^(5/4) + 1), lower=lim[1], upper=lim[2]) # ==
 integrate(function(x) 20 * x^31/(x^25 + 1), lower=lim[1]^(1/20), upper=lim[2]^(1/20)) # ==
 integrate(function(x) 20*x^6 - 20 * x^6/(x^25 + 1), lower=lim[1]^(1/20), upper=lim[2]^(1/20)) # ==
 I.pf(20, 6, lim^(1/20)) - 20 * I.f(function(x) x^6/(x^25 + 1), lim^(1/20))
 # I[6] = Integral x^6/(x^25 + 1) can be computed based on I[0] = 1/(x^25 + 1);
+#        or using direct polynomial division (within the I[0] decomposition);
 # I[0] => [1/x] => I[23] => [half] => I[11] => [half] => I[5]
 #      => [half] => I2 => [1/x] => I[21] => [half] => I[10]
 #      => [1/x] => I[13] => [half] => I[6];
@@ -184,7 +185,7 @@ I.pf(20, 6, lim^(1/20)) - 20 * I.f(function(x) x^6/(x^25 + 1), lim^(1/20))
 
 
 lim = c(1.2, 1.5)
-#
+### Example: (x^(3/5) + x^(1/3)) / (x^(5/4) + 1)
 integrate(function(x) (x^(3/5) + x^(1/3)) / (x^(5/4) + 1), lower=lim[1], upper=lim[2]) # ==
 I.f(function(x) 20 * x^31/(x^25 + 1), lim=lim^(1/20)) +
 	I.f(function(x) 12 * x^15/(x^15 + 1), lim=lim^(1/12)) # ==
@@ -255,54 +256,64 @@ r$b0/(s - 1) / (x0.s^p + 1) + sum( 1 / (r$m.half[,1] - r$m.half[,2]) *
 
 ### Higher Terms
 
-### Fraction: x^2 / ( (x^2 + a)^n - 1 )
-### Fraction: sqrt(x) / ( (x + a)^n - 1 )
-### Int: x^(2*k + 1) / ( (x^2 + a)^n - 1 ) [trivial]
+### Method 1:
+# - direct polynomial division;
+### Method 2:
+# - TODO: search for compact/simplified formulas;
+
+### Fraction: x^2 / ( (x^2 + s)^n - 1 )
+### Fraction: sqrt(x) / ( (x + s)^n - 1 )
+### Int: x^(2*k + 1) / ( (x^2 + s)^n - 1 ) [trivial]
+### Int: x^(2*k) / ( (x^2 + s)^n - 1 ) [Methods 1 or 2]
 x = 2
-a = 1.5
+s = 1.5
 n = 5
 lim = c(1.1, 3)
 # Test
 r = decompose.fr(n)
 #
-x^2 / ((x^2 + a)^n - 1)
-r$b0 * x^2/(x^2 + a - 1) + sum( (r$a*(x^2+a) + r$b) * x^2 / ((x^2 + a)^2 - r$m.sum * (x^2+a) + 1) )
-r$b0 * x^2/(x^2 + a - 1) + sum( (r$a*(x^2+a) + r$b) * x^2 * (1/(x^2 + a - r$m.half[,1]) - 1/(x^2 + a - r$m.half[,2])) / (r$m.half[,1] - r$m.half[,2]) )
-r$b0 * x^2/(x^2 + a - 1) + sum( (r$a*(x^2+a) + r$b) / (r$m.half[,2] - r$m.half[,1]) *
-	((a - r$m.half[,1])/(x^2 + a - r$m.half[,1]) - (a - r$m.half[,2])/(x^2 + a - r$m.half[,2])) )
+x^2 / ((x^2 + s)^n - 1)
+r$b0 * x^2/(x^2 + s - 1) + sum( (r$a*(x^2+s) + r$b) * x^2 / ((x^2 + s)^2 - r$m.sum * (x^2+s) + 1) )
+r$b0 * x^2/(x^2 + s - 1) + sum( (r$a*(x^2+s) + r$b) * x^2 * (1/(x^2 + s - r$m.half[,1]) - 1/(x^2 + s - r$m.half[,2])) / (r$m.half[,1] - r$m.half[,2]) )
+r$b0 * x^2/(x^2 + s - 1) + sum( (r$a*(x^2+s) + r$b) / (r$m.half[,2] - r$m.half[,1]) *
+	((s - r$m.half[,1])/(x^2 + s - r$m.half[,1]) - (s - r$m.half[,2])/(x^2 + s - r$m.half[,2])) )
+r$b0 - r$b0*(s-1)/(x^2 + s - 1) + sum( 1 / (r$m.half[,2] - r$m.half[,1]) *
+	((s - r$m.half[,1])*(r$a + (r$b + r$a * r$m.half[,1])/(x^2 + s - r$m.half[,1])) -
+	(s - r$m.half[,2])*(r$a + (r$b + r$a * r$m.half[,2])/(x^2 + s - r$m.half[,2]))) )
 #
-integrate(function(x) sqrt(x) / ((x+a)^n - 1), lower=lim[1], upper=lim[2])
-integrate(function(x) 2 * x^2 / ((x^2+a)^n - 1), lower=sqrt(lim[1]), upper=sqrt(lim[2]))
+integrate(function(x) sqrt(x) / ((x+s)^n - 1), lower=lim[1], upper=lim[2])
+integrate(function(x) 2 * x^2 / ((x^2+s)^n - 1), lower=sqrt(lim[1]), upper=sqrt(lim[2]))
 #
-integrate(function(x) sqrt(x) / ((x+a)^n + 1), lower=lim[1], upper=lim[2])
-integrate(function(x) 2 * x^2 / ((x^2+a)^n + 1), lower=sqrt(lim[1]), upper=sqrt(lim[2]))
+integrate(function(x) sqrt(x) / ((x+s)^n + 1), lower=lim[1], upper=lim[2])
+integrate(function(x) 2 * x^2 / ((x^2+s)^n + 1), lower=sqrt(lim[1]), upper=sqrt(lim[2]))
 #
 k = 3
-integrate(function(x) 2 * x^k / ((x^2+a)^n + 1), lower=lim[1], upper=lim[2])
-integrate(function(x) (x-a)^((k-1)/2) / (x^n + 1), lower=(lim[1])^2 + a, upper=(lim[2])^2 + a)
+integrate(function(x) 2 * x^k / ((x^2+s)^n + 1), lower=lim[1], upper=lim[2])
+integrate(function(x) (x-s)^((k-1)/2) / (x^n + 1), lower=(lim[1])^2 + s, upper=(lim[2])^2 + s)
 
 
-### Fraction: x^p / ( (x^p + a)^n - 1 )
-### Fraction: x^(1/p) / ( (x + a)^n - 1 )
+### Generalisation: x^p
+### Fraction: x^p / ( (x^p + s)^n - 1 )
+### Fraction: x^(1/p) / ( (x + s)^n - 1 )
 x = 2
-a = 1.5
+s = 1.5
 n = 5
 p = 3
 lim = c(1.1, 3)
 # Test
 r = decompose.fr(n)
 #
-x^p / ((x^p + a)^n - 1)
-r$b0 * x^p/(x^p + a - 1) + sum( (r$a*(x^p+a) + r$b) * x^p / ((x^p + a)^2 - r$m.sum * (x^p + a) + 1) )
-r$b0 * x^p/(x^p + a - 1) + sum( (r$a*(x^p+a) + r$b) * x^p * (1/(x^p + a - r$m.half[,1]) - 1/(x^p + a - r$m.half[,2])) / (r$m.half[,1] - r$m.half[,2]) )
-r$b0 * x^p/(x^p + a - 1) + sum( (r$a*(x^p+a) + r$b) / (r$m.half[,2] - r$m.half[,1]) *
-	((a - r$m.half[,1])/(x^p + a - r$m.half[,1]) - (a - r$m.half[,2])/(x^p + a - r$m.half[,2])) )
+x^p / ((x^p + s)^n - 1)
+r$b0 * x^p/(x^p + s - 1) + sum( (r$a*(x^p+s) + r$b) * x^p / ((x^p + s)^2 - r$m.sum * (x^p + s) + 1) )
+r$b0 * x^p/(x^p + s - 1) + sum( (r$a*(x^p+s) + r$b) * x^p * (1/(x^p + s - r$m.half[,1]) - 1/(x^p + s - r$m.half[,2])) / (r$m.half[,1] - r$m.half[,2]) )
+r$b0 * x^p/(x^p + s - 1) + sum( (r$a*(x^p+s) + r$b) / (r$m.half[,2] - r$m.half[,1]) *
+	((s - r$m.half[,1])/(x^p + s - r$m.half[,1]) - (s - r$m.half[,2])/(x^p + s - r$m.half[,2])) )
 #
-integrate(function(x) x^(1/p) / ((x+a)^n - 1), lower=lim[1], upper=lim[2])
-integrate(function(x) p * x^p / ((x^p+a)^n - 1), lower=(lim[1])^(1/p), upper=(lim[2])^(1/p))
+integrate(function(x) x^(1/p) / ((x+s)^n - 1), lower=lim[1], upper=lim[2])
+integrate(function(x) p * x^p / ((x^p+s)^n - 1), lower=(lim[1])^(1/p), upper=(lim[2])^(1/p))
 #
-integrate(function(x) x^(1/p) / ((x+a)^n + 1), lower=lim[1], upper=lim[2])
-integrate(function(x) p * x^p / ((x^p+a)^n + 1), lower=(lim[1])^(1/p), upper=(lim[2])^(1/p))
+integrate(function(x) x^(1/p) / ((x+s)^n + 1), lower=lim[1], upper=lim[2])
+integrate(function(x) p * x^p / ((x^p+s)^n + 1), lower=(lim[1])^(1/p), upper=(lim[2])^(1/p))
 
 
 ######################
