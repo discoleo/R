@@ -8,7 +8,7 @@
 ### of Polynomial Fractions
 ### derived from Roots of Unity
 ###
-### draft v.0.1d
+### draft v.0.1d-bis
 
 
 
@@ -27,17 +27,18 @@
 ###############
 ### History ###
 
-# draft v.0.1d:
+# draft v.0.1d - v.0.1d-bis:
 # - started trigonometric derivatives:
 #   cos(x)^(2*n-2) / (1 - cos(x)^(2*n));
 # - more work on polynomial/radical derivatives:
-#   x^(1/p) / ((x + a)^n - 1);
+#   x^(1/p) / ((x + s)^n - 1);
+# - standardize shift notation; [v.0.1d-bis]
 # draft v.0.1c - v.0.1c-sqrt:
 # - added/documented some derived polynomials;
 # - fraction decomposition for:
-#   1 / ((x^2 + a)^n - 1);
-#   1 / ((x^p + a)^n - 1); [initial thoughts: v.0.1c-bis]
-#   sqrt(x) / ((x+a)^n - 1); [initial thoughts: v.0.1c-sqrt]
+#   1 / ((x^2 + s)^n - 1);
+#   1 / ((x^p + s)^n - 1); [initial thoughts: v.0.1c-bis]
+#   sqrt(x) / ((x + s)^n - 1); [initial thoughts: v.0.1c-sqrt]
 # draft v.0.1b:
 # - added more details to the examples with fractional powers;
 # draft v.0.1a:
@@ -217,36 +218,46 @@ r$b0/(x + 1) + sum( (r$a*x - r$b) / (x^2 + r$m.sum * x + 1) )
 
 ### Derived Polynomials
 
-### Fraction: 1 / ( (x^2 + a)^n - 1 )
+### Fraction: 1 / ( (x^2 + s)^n - 1 )
 x = 2
-a = 1.5
+s = 1.5
 n = 5
 # Test
 r = decompose.fr(n)
 #
-1 / ((x^2 + a)^n - 1)
-r$b0/(x^2 + a - 1) + sum( (r$a*(x^2+a) + r$b) / ((x^2+a)^2 - r$m.sum * (x^2+a) + 1) )
-r$b0/(x^2 + a - 1) + sum( (r$a*(x^2+a) + r$b) * (1/(x^2 + a - r$m.half[,1]) - 1/(x^2 + a - r$m.half[,2])) / (r$m.half[,1] - r$m.half[,2]) )
+1 / ((x^2 + s)^n - 1)
+r$b0/(x^2 + s - 1) + sum( (r$a*(x^2+s) + r$b) / ((x^2 + s)^2 - r$m.sum * (x^2 + s) + 1) )
+r$b0/(x^2 + s - 1) + sum( (r$a*(x^2+s) + r$b) * (1/(x^2 + s - r$m.half[,1]) - 1/(x^2 + s - r$m.half[,2])) / (r$m.half[,1] - r$m.half[,2]) )
+r$b0/(x^2 + s - 1) + sum( ((r$a*r$m.half[,1] + r$b)/(x^2 + s - r$m.half[,1]) -
+	(r$a*r$m.half[,2] + r$b)/(x^2 + s - r$m.half[,2])) / (r$m.half[,1] - r$m.half[,2]) )
 
 
-### Fraction: 1 / ( (x^p + a)^n - 1 )
+### Fraction: 1 / ( (x^p + s)^n - 1 )
 x = 1.3
-a = -1.1
+s = -1.1
 n = 5
 p = 4
 # Test
 r = decompose.fr(n)
 #
-1 / ((x^p + a)^n - 1)
-r$b0/(x^p + a - 1) + sum( (r$a*(x^p+a) + r$b) / ((x^p+a)^2 - r$m.sum * (x^p+a) + 1) )
-r$b0/(x^p + a - 1) + sum( (r$a*(x^p+a) + r$b) * (1/(x^p + a - r$m.half[,1]) - 1/(x^p + a - r$m.half[,2])) / (r$m.half[,1] - r$m.half[,2]) )
-# TODO: re-scaling to 1/(x^p - 1);
+1 / ((x^p + s)^n - 1)
+r$b0/(x^p + s - 1) + sum( (r$a*(x^p+s) + r$b) / ((x^p + s)^2 - r$m.sum * (x^p + s) + 1) )
+r$b0/(x^p + s - 1) + sum( (r$a*(x^p+s) + r$b) * (1/(x^p + s - r$m.half[,1]) - 1/(x^p + s - r$m.half[,2])) / (r$m.half[,1] - r$m.half[,2]) )
+r$b0/(x^p + s - 1) + sum( ((r$a*r$m.half[,1] + r$b)/(x^p + s - r$m.half[,1]) -
+	(r$a*r$m.half[,2] + r$b)/(x^p + s - r$m.half[,2])) / (r$m.half[,1] - r$m.half[,2]) )
+# TODO: re-scaling to 1/(x^p + 1);
+x0.s = if(p %% 2 == 0 && s-1 < 0) x / (s - 1 + 0i)^(1/p) else x / (s - 1)^(1/p) # TODO: robust root.f()
+x.s = x / (s - r$m.half)^(1/p) # for n = 5: 2 columns;
+r$b0/(s - 1) / (x0.s^p + 1) + sum( 1 / (r$m.half[,1] - r$m.half[,2]) *
+	((r$a*r$m.half[,1] + r$b)/(s - r$m.half[,1]) / (x.s[,1]^p + 1) -
+	(r$a*r$m.half[,2] + r$b)/(s - r$m.half[,2]) / (x.s[,2]^p + 1)) )
 
 
-###
+### Higher Terms
 
 ### Fraction: x^2 / ( (x^2 + a)^n - 1 )
 ### Fraction: sqrt(x) / ( (x + a)^n - 1 )
+### Int: x^(2*k + 1) / ( (x^2 + a)^n - 1 ) [trivial]
 x = 2
 a = 1.5
 n = 5
@@ -265,6 +276,10 @@ integrate(function(x) 2 * x^2 / ((x^2+a)^n - 1), lower=sqrt(lim[1]), upper=sqrt(
 #
 integrate(function(x) sqrt(x) / ((x+a)^n + 1), lower=lim[1], upper=lim[2])
 integrate(function(x) 2 * x^2 / ((x^2+a)^n + 1), lower=sqrt(lim[1]), upper=sqrt(lim[2]))
+#
+k = 3
+integrate(function(x) 2 * x^k / ((x^2+a)^n + 1), lower=lim[1], upper=lim[2])
+integrate(function(x) (x-a)^((k-1)/2) / (x^n + 1), lower=(lim[1])^2 + a, upper=(lim[2])^2 + a)
 
 
 ### Fraction: x^p / ( (x^p + a)^n - 1 )
