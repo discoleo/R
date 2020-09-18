@@ -8,7 +8,7 @@
 ### of Polynomial Fractions
 ### derived from Roots of Unity
 ###
-### draft v.0.1d-std
+### draft v.0.1e
 
 
 
@@ -27,6 +27,10 @@
 ###############
 ### History ###
 
+# draft v.0.1e:
+# - various radicals:
+#   sqrt(x + s) / (x^n - 1);
+#   (x + s)^(1/p) / (x^n - 1);
 # draft v.0.1d - v.0.1d-std:
 # - started trigonometric derivatives:
 #   cos(x)^(2*n-2) / (1 - cos(x)^(2*n));
@@ -263,6 +267,8 @@ r$b0/(s - 1) / (x0.s^p + 1) + sum( 1 / (r$m.half[,1] - r$m.half[,2]) *
 
 ### Fraction: x^2 / ( (x^2 + s)^n - 1 )
 ### Fraction: sqrt(x) / ( (x + s)^n - 1 )
+### Fraction: sqrt(x + s) / (x^n - 1)
+###
 ### Int: x^(2*k + 1) / ( (x^2 + s)^n - 1 ) [trivial]
 ### Int: x^(2*k) / ( (x^2 + s)^n - 1 ) [Methods 1 or 2]
 x = 2
@@ -280,12 +286,20 @@ r$b0 * x^2/(x^2 + s - 1) + sum( (r$a*(x^2+s) + r$b) / (r$m.half[,2] - r$m.half[,
 r$b0 - r$b0*(s-1)/(x^2 + s - 1) + sum( 1 / (r$m.half[,2] - r$m.half[,1]) *
 	((s - r$m.half[,1])*(r$a + (r$b + r$a * r$m.half[,1])/(x^2 + s - r$m.half[,1])) -
 	(s - r$m.half[,2])*(r$a + (r$b + r$a * r$m.half[,2])/(x^2 + s - r$m.half[,2]))) )
-#
+### sqrt(x)
 integrate(function(x) sqrt(x) / ((x+s)^n - 1), lower=lim[1], upper=lim[2])
 integrate(function(x) 2 * x^2 / ((x^2+s)^n - 1), lower=sqrt(lim[1]), upper=sqrt(lim[2]))
 #
 integrate(function(x) sqrt(x) / ((x+s)^n + 1), lower=lim[1], upper=lim[2])
 integrate(function(x) 2 * x^2 / ((x^2+s)^n + 1), lower=sqrt(lim[1]), upper=sqrt(lim[2]))
+### sqrt(x + s)
+integrate(function(x) sqrt(x+s) / (x^n - 1), lower=lim[1], upper=lim[2])
+integrate(function(x) sqrt(x) / ((x-s)^n - 1), lower=lim[1]+s, upper=lim[2]+s)
+integrate(function(x) 2 * x^2 / ((x^2-s)^n - 1), lower=sqrt(lim[1] + s), upper=sqrt(lim[2] + s))
+#
+integrate(function(x) sqrt(x+s) / (x^n + 1), lower=lim[1], upper=lim[2])
+integrate(function(x) sqrt(x) / ((x-s)^n + 1), lower=lim[1]+s, upper=lim[2]+s)
+integrate(function(x) 2 * x^2 / ((x^2-s)^n + 1), lower=sqrt(lim[1] + s), upper=sqrt(lim[2] + s))
 #
 k = 3
 integrate(function(x) 2 * x^k / ((x^2+s)^n + 1), lower=lim[1], upper=lim[2])
@@ -295,6 +309,7 @@ integrate(function(x) (x-s)^((k-1)/2) / (x^n + 1), lower=(lim[1])^2 + s, upper=(
 ### Generalisation: x^p
 ### Fraction: x^p / ( (x^p + s)^n - 1 )
 ### Fraction: x^(1/p) / ( (x + s)^n - 1 )
+### Fraction: (x+s)^(1/p) / (x^n - 1)
 x = 2
 s = 1.5
 n = 5
@@ -308,12 +323,20 @@ r$b0 * x^p/(x^p + s - 1) + sum( (r$a*(x^p+s) + r$b) * x^p / ((x^p + s)^2 - r$m.s
 r$b0 * x^p/(x^p + s - 1) + sum( (r$a*(x^p+s) + r$b) * x^p * (1/(x^p + s - r$m.half[,1]) - 1/(x^p + s - r$m.half[,2])) / (r$m.half[,1] - r$m.half[,2]) )
 r$b0 * x^p/(x^p + s - 1) + sum( (r$a*(x^p+s) + r$b) / (r$m.half[,2] - r$m.half[,1]) *
 	((s - r$m.half[,1])/(x^p + s - r$m.half[,1]) - (s - r$m.half[,2])/(x^p + s - r$m.half[,2])) )
-#
+### x^(1/p)
 integrate(function(x) x^(1/p) / ((x+s)^n - 1), lower=lim[1], upper=lim[2])
 integrate(function(x) p * x^p / ((x^p+s)^n - 1), lower=(lim[1])^(1/p), upper=(lim[2])^(1/p))
 #
 integrate(function(x) x^(1/p) / ((x+s)^n + 1), lower=lim[1], upper=lim[2])
 integrate(function(x) p * x^p / ((x^p+s)^n + 1), lower=(lim[1])^(1/p), upper=(lim[2])^(1/p))
+### (x + s)^(1/p)
+integrate(function(x) (x + s)^(1/p) / (x^n - 1), lower=lim[1], upper=lim[2])
+integrate(function(x) x^(1/p) / ((x-s)^n - 1), lower=lim[1] + s, upper=lim[2] + s)
+integrate(function(x) p * x^p / ((x^p-s)^n - 1), lower=(lim[1] + s)^(1/p), upper=(lim[2] + s)^(1/p))
+#
+integrate(function(x) (x + s)^(1/p) / (x^n + 1), lower=lim[1], upper=lim[2])
+integrate(function(x) x^(1/p) / ((x-s)^n + 1), lower=lim[1] + s, upper=lim[2] + s)
+integrate(function(x) p * x^p / ((x^p-s)^n + 1), lower=(lim[1] + s)^(1/p), upper=(lim[2] + s)^(1/p))
 
 
 ######################
