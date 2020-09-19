@@ -7,13 +7,14 @@
 ### Differential Equations
 ### ODEs
 ###
-### draft v.0.1a-plot
+### draft v.0.1a-px
 
 
 ### History
 
-### draft v.0.1a-plot:
-# - added diagnostic plots (+ tangents);
+### draft v.0.1a-plot - v.0.1a-px:
+# - added diagnostic plots (+ tangent lines);
+# - added more examples (v.0.1a-px);
 ### draft v.01a:
 # - initial draft:
 #   some ODEs based on Cardan polynomials;
@@ -42,6 +43,13 @@ line.tan = function(x, col="red", dx=5) {
 	lines(c(x, x.max), c(p(x), p(x) + (x.max-x)*slope), col=col)
 	return(slope)
 }
+
+##########################
+
+########################
+###     Order 1      ###
+###   Non-Linear     ###
+########################
 
 
 ##########################
@@ -101,7 +109,8 @@ curve(p, from=0, to=3)
 
 #########
 ### n = 3
-p^6*dp - h^3*dp + h^2*p*dh - 2/3 * p^4 * df = 0
+p^6*dp - h^3*dp - 2/3 * p^4 * df + h^2*p*dh = 0
+# where df, dh = given;
 
 ###
 # h(x) = x
@@ -149,5 +158,48 @@ dp = function(x) {
 }
 curve(p, from=-3, to=9)
 sapply(c(0.001, 2*(1:3), -1), line.tan, dx=2)
+
+
+###
+# h(x) = x
+# f(x) = 3/2 * log(x)
+p^6*dp - h^3*dp - 2/3 * p^4 * df + h^2*p*dh = 0
+p^6*dp - x^3*dp - 1/x*p^4 + x^2*p = 0
+x*p^6*dp - x^4*dp - p^4 + x^3*p = 0
+# p = (f + sqrt(f^2 - h^3))^(1/3)
+p = function(x, n=3) {
+	r = (3/2 * log(x) + sqrt((3/2 * log(x))^2 - x^n))
+	ifelse( (r >= 0), r^(1/n), - (-r)^(1/n) )
+}
+dp = function(x) {
+	div = x*(p(x)^6 - x^3)
+	dp = p(x)^4 - x^3*p(x)
+	dp = if(div != 0) dp / div else Inf;
+	return(dp)
+}
+curve(p, from=0, to=0.8)
+sapply(c(0.001, (1:3)/6), line.tan, dx=2)
+
+
+###
+# h(x) = 1/(x^2 + 1)
+# f(x) = 3/2 * log(x^2 + 1)
+p^6*dp - h^3*dp - 2/3 * p^4 * df + h^2*p*dh = 0
+(x^2 + 1)^4 * p^6*dp - (x^2 + 1)*dp - 2*x*(x^2 + 1)^3 * p^4 - 2*x*p = 0
+# p = (f + sqrt(f^2 - h^3))^(1/3)
+p = function(x, n=3) {
+	r = (3/2 * log(x^2+1) + sqrt(9/4 * log(x^2+1)^2 - 1/(x^2+1)^n))
+	ifelse( (r >= 0), r^(1/n), - (-r)^(1/n) )
+}
+dp = function(x) {
+	x.mult = (x^2+1)^3
+	p.x = p(x)
+	div = (x^2+1)*(x.mult*p.x^6 - 1)
+	dp = 2*x*(x.mult*p.x^4 - p.x)
+	dp = if(div != 0) dp / div else Inf;
+	return(dp)
+}
+curve(p, from=-5, to=5)
+sapply(c(-(1:4), 1:4), line.tan, dx=3)
 
 
