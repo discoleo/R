@@ -7,16 +7,41 @@
 ### Differential Equations
 ### ODEs
 ###
-### draft v.0.1a
+### draft v.0.1a-plot
 
 
-### Terminology
+### History
+
+### draft v.0.1a-plot:
+# - added diagnostic plots (+ tangents);
+### draft v.01a:
+# - initial draft:
+#   some ODEs based on Cardan polynomials;
+
+
+###################
+
+###################
+### Terminology ###
 
 # let f(x), h(x) be 2 functions which are differentiable;
 # p(x), q(x) = functions to be found;
 # dp, dq:
 # dp = d(p(x)); dq = d(q(x));
 # Note: q(x) is an intermediary function used for various derivations;
+
+
+####################
+
+### helper functions
+line.tan = function(x, col="red", dx=5) {
+	slope = dp(x)
+	x.max = ifelse( (abs(x) >= 1), dx*x, 10);
+	isInf = abs(slope) == Inf
+	x.max[isInf] = x[isInf]
+	lines(c(x, x.max), c(p(x), p(x) + (x.max-x)*slope), col=col)
+	return(slope)
+}
 
 
 ##########################
@@ -98,7 +123,14 @@ p = function(x, n=3) {
 	r = (3*x + sqrt(9*x^2 - x^n))
 	ifelse( (r >= 0), r^(1/n), - (-r)^(1/n) )
 }
+dp = function(x) {
+	div = (p(x)^6 - x^3)
+	dp = 2*p(x)^4 - x^2*p(x)
+	dp = if(div != 0) dp / div else Inf;
+	return(dp)
+}
 curve(p, from=-3, to=9)
+sapply(c(0.001, 2*(1:3), -1), line.tan, dx=3)
 
 ###
 # h(x) = x
@@ -109,6 +141,13 @@ p = function(x, n=3) {
 	r = (x^3 + 3*x + sqrt((x^3 + 3*x)^2 - x^n))
 	ifelse( (r >= 0), r^(1/n), - (-r)^(1/n) )
 }
+dp = function(x) {
+	div = (p(x)^6 - x^3)
+	dp = 2*(x^2+1)*p(x)^4 - x^2*p(x)
+	dp = if(div != 0) dp / div else Inf;
+	return(dp)
+}
 curve(p, from=-3, to=9)
+sapply(c(0.001, 2*(1:3), -1), line.tan, dx=2)
 
 
