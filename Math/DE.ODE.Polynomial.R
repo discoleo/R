@@ -7,11 +7,13 @@
 ### Differential Equations
 ### ODEs
 ###
-### draft v.0.1a-px
+### draft v.0.1b
 
 
 ### History
 
+### draft v.0.1b:
+# - added classic/full Cardan Polynomials (P3);
 ### draft v.0.1a-plot - v.0.1a-px:
 # - added diagnostic plots (+ tangent lines);
 # - added more examples (v.0.1a-px);
@@ -35,13 +37,30 @@
 ####################
 
 ### helper functions
-line.tan = function(x, col="red", dx=5) {
+line.tan = function(x, col="red", dx=5, p=p, dp=dp) {
 	slope = dp(x)
 	x.max = ifelse( (abs(x) >= 1), dx*x, 10);
 	isInf = abs(slope) == Inf
 	x.max[isInf] = x[isInf]
 	lines(c(x, x.max), c(p(x), p(x) + (x.max-x)*slope), col=col)
 	return(slope)
+}
+rootn = function(r, n) {
+	ifelse( (Im(r) == 0 & Re(r) >= 0), r^(1/n), - (-r)^(1/n) )
+}
+### round()
+round0 = function(m, tol=1E-7) {
+	m[abs(Re(m)) < tol & abs(Im(m)) < tol] = 0
+	isNotNA =  ! is.na(m)
+	isZero = (Re(m) != 0) & (abs(Re(m)) < tol)
+	if(sum(isZero[isNotNA]) > 0) {
+		m[isZero] = complex(re=0, im=Im(m[isZero]))
+	}
+	isZero = (Im(m) != 0) & (abs(Im(m)) < tol)
+	if(sum(isZero[isNotNA]) > 0) {
+		m[isZero] = Re(m[isZero])
+	}
+	return(m)
 }
 
 ##########################
@@ -77,8 +96,8 @@ line.tan = function(x, col="red", dx=5) {
 
 
 
-############
-### Examples
+################
+### Examples ###
 
 #########
 ### n = 2
@@ -201,5 +220,96 @@ dp = function(x) {
 }
 curve(p, from=-5, to=5)
 sapply(c(-(1:4), 1:4), line.tan, dx=3)
+
+
+##########################
+### Cardan-Polynomials ###
+### Full Root          ###
+##########################
+
+
+### System:
+# y = p + q;
+# where:
+# p^n + q^n = 2*f(x)
+# p*q = h(x)
+
+### Solutions
+# y = p + q, where:
+# p = (f + sqrt(f^2 - h^n))^(1/n)
+# p = (f - sqrt(f^2 - h^n))^(1/n)
+# Note:
+# - it is possible to rotate these solutions using the roots of unity;
+
+################
+### Examples ###
+
+#########
+### n = 3
+# y^3 - 3*h*y - 2*f = 0
+# 3*y^2*dy - 3*h*dy - 3*y*dh - 2*df = 0
+# y^2*dy - h*dy - y*dh - 2/3*df = 0
+
+###
+# h(x) = x
+# f(x) = x^3
+y^2*dy - h*dy - y*dh - 2/3*df = 0
+y^2*dy - x*dy - y - 2*x^2 = 0
+# y = (f + sqrt(f^2 - h^3))^(1/3) + (f - sqrt(f^2 - h^3))^(1/3)
+y = function(x, n=3) {
+	r1 = (x^3 + sqrt(x^6 - x^n + 0i))
+	r2 = (x^3 - sqrt(x^6 - x^n + 0i))
+	r = round0(rootn(r1, n=n) + rootn(r2, n=n))
+	return(r)
+}
+dy = function(x) {
+	y.x = y(x)
+	div = (y.x^2 - x)
+	dp = (y.x + 2*x^2)
+	dp = if(div != 0) dp / div else Inf;
+	return(dp)
+}
+curve(y, from=-2, to=2)
+sapply(c(-(4:1)/5, (1:4)/5, 1.01), line.tan, dx=3, p=y, dp=dy)
+
+###
+# h(x) = x^2
+# f(x) = 3*log(x)
+y^2*dy - h*dy - y*dh - 2/3*df = 0
+y^2*dy - x^2*dy - 2*x*y - 2/x = 0
+x*y^2*dy - x^3*dy - 2*x^2*y - 2 = 0
+# y = (f + sqrt(f^2 - h^3))^(1/3) + (f - sqrt(f^2 - h^3))^(1/3)
+y = function(x, n=3) {
+	r1 = (3*log(x + 0i) + sqrt(9*log(x + 0i)^2 - x^(2*n) + 0i))
+	### imaginary parts do NOT cancel for: x < 0;
+	# sign.x = sign(x)
+	# sign.x[x >= 0] = 1
+	# r2 = (sign.x * 3*log(x + 0i) - sqrt(9*log(x + 0i)^2 - x^(2*n) + 0i))
+	r1 = round0(rootn(r1, n=n))
+	r2 = x^2 / r1
+	return( round0(r1 + r2) )
+}
+dy = function(x) {
+	y.x = y(x)
+	div = (x*y.x^2 - x^3)
+	dp = (2*x^2*y.x + 2)
+	dp = if(div != 0) dp / div else Inf;
+	return(dp)
+}
+curve(y, from=0.01, to=2, ylim=c(-5, 0.5)) # xlim=c(-2, 2)
+sapply((1:4)/5, line.tan, dx=3, p=y, dp=dy)
+# log(x) is complex for x < 0;
+# curve(y, from=-2, to=-0.01, add=T, ylim=c(-5, 0.5))
+# sapply(c(-(4:1)/5), line.tan, dx=3, p=y, dp=dy)
+
+
+#########
+### n = 5
+# y^5 - 5*h*y^3 + 5*h^2*y - 2*f = 0
+# 5*y^4*dy - 15*h*y^2*dy - 5*y^3*dh + 5*h^2*dy + 10*h*y*dh - 2*df = 0
+# y^4*dy - 3*h*y^2*dy + h^2*dy - y^3*dh + 2*h*y*dh - 2/5 * df = 0
+
+### TODO:
+# - concrete examples;
 
 
