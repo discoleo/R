@@ -7,13 +7,14 @@
 ### Differential Equations
 ### ODEs
 ###
-### draft v.0.1b
+### draft v.0.1b-sh
 
 
 ### History
 
-### draft v.0.1b:
+### draft v.0.1b-sh:
 # - added classic/full Cardan Polynomials (P3);
+# - added shifted version (P3) (v.0.1b-sh);
 ### draft v.0.1a-plot - v.0.1a-px:
 # - added diagnostic plots (+ tangent lines);
 # - added more examples (v.0.1a-px);
@@ -237,7 +238,7 @@ sapply(c(-(1:4), 1:4), line.tan, dx=3)
 ### Solutions
 # y = p + q, where:
 # p = (f + sqrt(f^2 - h^n))^(1/n)
-# p = (f - sqrt(f^2 - h^n))^(1/n)
+# q = (f - sqrt(f^2 - h^n))^(1/n)
 # Note:
 # - it is possible to rotate these solutions using the roots of unity;
 
@@ -304,7 +305,50 @@ sapply((1:4)/5, line.tan, dx=3, p=y, dp=dy)
 
 
 #########
-### n = 5
+### n = 3
+### Shifted
+# y^3 + 3*s*y^2 - 3*h*y - 2*f = 0
+# 3*y^2*dy + 6*s*y*dy + 3*y^2*ds - 3*h*dy - 3*y*dh - 2*df = 0
+# =>
+# y^2*dy + 2*s*y*dy - h*dy + y^2*ds - y*dh - 2/3*df = 0
+# (y^2 + 2*s*y - h)*dy + y^2*ds - y*dh - 2/3*df = 0
+
+### Solution: reduce shift
+# y => y - s =>
+# y^3 - 3*(h + s^2)*y - 2*f + 2*s^3 + 3*h*s = 0
+
+###
+# h(x) = x
+# f(x) = x^3
+# s(x) = 1/2
+y^2*dy + 2*s*y*dy - h*dy + y^2*ds - y*dh - 2/3*df = 0
+y^2*dy + y*dy - x*dy - y - 2*x^2 = 0
+# y = - s + (f + sqrt(f^2 - h^3))^(1/3) + (f - sqrt(f^2 - h^3))^(1/3)
+y = function(x, n=3) {
+	d = x^3 - 3/4*x - 1/8
+	det = sqrt(d^2 - (x + 1/4)^3 + 0i)
+	r1 = (d + det); r2 = (d - det)
+	r = round0(rootn(r1, n=n) + rootn(r2, n=n))
+	# shift back
+	r = r - 1/2
+	return(r)
+}
+dy = function(x) {
+	y.x = y(x)
+	div = (y.x^2 + y.x - x)
+	dp = (y.x + 2*x^2)
+	dp = if(div != 0) dp / div else Inf;
+	return(dp)
+}
+curve(y, from=-2, to=2)
+sapply(c(-(4:1)/5, (1:6)/5), line.tan, dx=3, p=y, dp=dy)
+
+
+#############
+
+#############
+### n = 5 ###
+
 # y^5 - 5*h*y^3 + 5*h^2*y - 2*f = 0
 # 5*y^4*dy - 15*h*y^2*dy - 5*y^3*dh + 5*h^2*dy + 10*h*y*dh - 2*df = 0
 # y^4*dy - 3*h*y^2*dy + h^2*dy - y^3*dh + 2*h*y*dh - 2/5 * df = 0
