@@ -8,7 +8,7 @@
 ### of Polynomial Fractions
 ### derived from Roots of Unity
 ###
-### draft v.0.1e-tan
+### draft v.0.1e-tan2
 
 
 
@@ -27,9 +27,10 @@
 ###############
 ### History ###
 
-# draft v.0.1e-tan:
+# draft v.0.1e-tan - v.0.1e-tan2:
 # - added some trigonometric derivatives
 #   (based actually on Cardan-polynomials);
+# - more generalisations using generic P5 polynomials (v.0.1e-tan2);
 # draft v.0.1e:
 # - various radicals:
 #   sqrt(x + s) / (x^n - 1);
@@ -543,4 +544,18 @@ I.f(function(x)  sin(x) / (8 + 6*sin(x) - 12*sin(x)^2 + 5*sin(2*x)), lim=2*atan(
 ### Decomposition
 I.f(function(x)  1 / (8 + 6*sin(x) - 12*sin(x)^2 + 5*sin(2*x)), lim=2*atan(lim))
 1/4 * I.f(function(x) (x^3 + x^2 + x + 1)/(x^5 - 5*x^3 + 5*x + 1), lim=lim)
+
+
+### other/generic P5 polynomials
+b = 8
+I.f(function(x)  1 / (4 - (b-2)*sin(x) - (b+1)*sin(x)^2 - b/2*sin(2*x)), lim=2*atan(lim))
+I.f(function(x) 1/2 / (1 + sin(x)*cos(x) - (b+1)*sin(x)^2*cos(x)^2 - b*sin(x)*cos(x)^3), lim=atan(lim))
+1/2 * I.f(function(x) (x^3 - x^2 + x - 1)/(x^5 - b*x^3 + b*x - 1), lim=lim)
+
+###
+b1 = 8
+b4 = 2
+I.f(function(x)  1 / (4 + (2*b4 - b1 + 2)*sin(x) - (b1+1-b4)*sin(x)^2 - b1/2*sin(2*x)), lim=2*atan(lim))
+I.f(function(x) 1/2 / (1 + (b4+1)*sin(x)*cos(x) - (b1+1-b4)*sin(x)^2*cos(x)^2 - b1*sin(x)*cos(x)^3), lim=atan(lim))
+1/2 * I.f(function(x) (x^3 - x^2 + x - 1)/(x^5 + b4*x^4 - b1*x^3 + (b1-b4)*x - 1), lim=lim)
 
