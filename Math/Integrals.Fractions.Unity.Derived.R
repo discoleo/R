@@ -8,7 +8,7 @@
 ### of Polynomial Fractions
 ### derived from Roots of Unity
 ###
-### draft v.0.1e-tan2
+### draft v.0.1e-tan3
 
 
 
@@ -27,10 +27,10 @@
 ###############
 ### History ###
 
-# draft v.0.1e-tan - v.0.1e-tan2:
+# draft v.0.1e-tan - v.0.1e-tan3:
 # - added some trigonometric derivatives
 #   (based actually on Cardan-polynomials);
-# - more generalisations using generic P5 polynomials (v.0.1e-tan2);
+# - generalisations using generic P5 polynomials (v.0.1e-tan2 & v.0.1e-tan3);
 # draft v.0.1e:
 # - various radicals:
 #   sqrt(x + s) / (x^n - 1);
@@ -546,16 +546,47 @@ I.f(function(x)  1 / (8 + 6*sin(x) - 12*sin(x)^2 + 5*sin(2*x)), lim=2*atan(lim))
 1/4 * I.f(function(x) (x^3 + x^2 + x + 1)/(x^5 - 5*x^3 + 5*x + 1), lim=lim)
 
 
-### other/generic P5 polynomials
+### Generalisation
+### All Trigonometric Fractions
+
+# - based on other/generic P5 polynomials;
+
+### parametrized:
+# TODO:
+# - add also cos(x) term;
+b1 = 8
+b3 = 1
+b4 = 2
+I.f(function(x)  1 / (4 + (2*b4 - b1 + 2)*sin(x) - (b1+b3+1-b4)*sin(x)^2 - b1/2*sin(2*x)), lim=2*atan(lim))
+I.f(function(x) 1/2 / (1 + (b4+1)*sin(x)*cos(x) - (b1+b3+1-b4)*sin(x)^2*cos(x)^2 - b1*sin(x)*cos(x)^3), lim=atan(lim))
+1/2 * I.f(function(x) (x^3 - x^2 + x - 1)/(x^5 + b4*x^4 - (b3+b1)*x^3 + b3*x^2 + (b1-b4)*x - 1), lim=lim)
+
+# Example 1:
+b1= -8; b4 = -3; b3 = 4;
+I.f(function(x)  1 / (4 + 4*sin(x) + 4*sin(2*x)), lim=2*atan(lim))
+1/2 * I.f(function(x) (x^3 - x^2 + x - 1)/(x^5 + b4*x^4 - (b3+b1)*x^3 + b3*x^2 + (b1-b4)*x - 1), lim=lim)
+
+# Example 2:
+b1= -8; b4 = -5; b3 = -2;
+I.f(function(x)  1 / (4 + 4*sin(x)^2 + 4*sin(2*x)), lim=2*atan(lim))
+1/2 * I.f(function(x) (x^3 - x^2 + x - 1)/(x^5 + b4*x^4 - (b3+b1)*x^3 + b3*x^2 + (b1-b4)*x - 1), lim=lim)
+
+### initial version
 b = 8
 I.f(function(x)  1 / (4 - (b-2)*sin(x) - (b+1)*sin(x)^2 - b/2*sin(2*x)), lim=2*atan(lim))
 I.f(function(x) 1/2 / (1 + sin(x)*cos(x) - (b+1)*sin(x)^2*cos(x)^2 - b*sin(x)*cos(x)^3), lim=atan(lim))
 1/2 * I.f(function(x) (x^3 - x^2 + x - 1)/(x^5 - b*x^3 + b*x - 1), lim=lim)
 
-###
-b1 = 8
-b4 = 2
-I.f(function(x)  1 / (4 + (2*b4 - b1 + 2)*sin(x) - (b1+1-b4)*sin(x)^2 - b1/2*sin(2*x)), lim=2*atan(lim))
-I.f(function(x) 1/2 / (1 + (b4+1)*sin(x)*cos(x) - (b1+1-b4)*sin(x)^2*cos(x)^2 - b1*sin(x)*cos(x)^3), lim=atan(lim))
-1/2 * I.f(function(x) (x^3 - x^2 + x - 1)/(x^5 + b4*x^4 - b1*x^3 + (b1-b4)*x - 1), lim=lim)
+#########
+
+### TODO: P7;
+x = pi/7
+(cos(x)^5 - sin(x)^5 - sin(x)*cos(x)*(cos(x)^3 - sin(x)^3) + 2*sin(x)^2*cos(x)^2*(cos(x) - sin(x))) / (cos(x) - sin(x))
+(1 + sin(x)*cos(x) - sin(x)^2*cos(x)^2 - sin(x)*cos(x)*(1 + sin(x)*cos(x)) + 2*sin(x)^2*cos(x)^2) # == 1
+# x^5 - 1 - x^4 + x + 2*x^3 - 2*x^2 # => 1;
+
+### Wrong decomposition:
+(cos(x)^5 - sin(x)^5 - (cos(x)^4 - sin(x)^4) + (cos(x)^3 - sin(x)^3)) / (cos(x) - sin(x))
+(1 + sin(x)*cos(x) - sin(x)^2*cos(x)^2 - (sin(x)+cos(x)) + (1 + sin(x)*cos(x)))
+#
 
