@@ -8,7 +8,7 @@
 ### of Polynomial Fractions
 ### derived from Roots of Unity
 ###
-### draft v.0.1e
+### draft v.0.1e-tan
 
 
 
@@ -27,6 +27,9 @@
 ###############
 ### History ###
 
+# draft v.0.1e-tan:
+# - added some trigonometric derivatives
+#   (based actually on Cardan-polynomials);
 # draft v.0.1e:
 # - various radicals:
 #   sqrt(x + s) / (x^n - 1);
@@ -505,4 +508,39 @@ integrate(function(x) 2 * x^2/(x^(2*n) - 1), lower=sqrt(lower), upper=sqrt(upper
 integrate(function(x) x^(1/2)/(x^(n/3) - 1), lower=lower, upper=upper)
 integrate(function(x) 6 * x^8/(x^(2*n) - 1), lower=lower^(1/6), upper=upper^(1/6))
 
+
+####################
+
+### Derived from
+### Cardan Polynomials
+
+
+lim = c(2.5, 3)
+#
+I.f(function(x) -(cos(x) + 2) / (8 - 6*cos(x) - 12*cos(x)^2 - 5*sin(2*x)), lim=pi/2 - 2*atan(lim))
+I.f(function(x)  (sin(x) + 2) / (8 - 6*sin(x) - 12*sin(x)^2 - 5*sin(2*x)), lim=2*atan(lim))
+# Derivation
+I.f(function(x) (sin(2*x) + 2) / (4 - 3*sin(2*x) - 6*sin(2*x)^2 - 5/2*sin(4*x)), lim=atan(lim))
+I.f(function(x) 1/4 * (sin(2*x) + 2) / (1 + sin(x)*cos(x) - 6*sin(x)^2*cos(x)^2 - 5*sin(x)*cos(x)^3), lim=atan(lim))
+1/2 * I.f(function(x) (x^3 - 1)/(x^5 - 5*x^3 + 5*x - 1), lim=lim)
+### Variants
+I.f(function(x)  sin(x) / (8 - 6*sin(x) - 12*sin(x)^2 - 5*sin(2*x)), lim=2*atan(lim))
+1/2 * I.f(function(x) (x^2 - x)/(x^5 - 5*x^3 + 5*x - 1), lim=lim)
+### Decomposition
+I.f(function(x)  1 / (8 - 6*sin(x) - 12*sin(x)^2 - 5*sin(2*x)), lim=2*atan(lim))
+1/4 * I.f(function(x) (x^3 - x^2 + x - 1)/(x^5 - 5*x^3 + 5*x - 1), lim=lim)
+
+###
+I.f(function(x) -(cos(x) - 2) / (8 + 6*cos(x) - 12*cos(x)^2 + 5*sin(2*x)), lim=pi/2 - 2*atan(lim))
+I.f(function(x)  (sin(x) - 2) / (8 + 6*sin(x) - 12*sin(x)^2 + 5*sin(2*x)), lim=2*atan(lim))
+# Derivation
+I.f(function(x) (sin(2*x) - 2) / (4 + 3*sin(2*x) - 6*sin(2*x)^2 + 5/2*sin(4*x)), lim=atan(lim))
+I.f(function(x) 1/4 * (sin(2*x) - 2) / (1 - sin(x)*cos(x) - 6*sin(x)^2*cos(x)^2 + 5*sin(x)*cos(x)^3), lim=atan(lim))
+1/2 * I.f(function(x) -(x^3 + 1)/(x^5 - 5*x^3 + 5*x + 1), lim=lim)
+### Variants
+I.f(function(x)  sin(x) / (8 + 6*sin(x) - 12*sin(x)^2 + 5*sin(2*x)), lim=2*atan(lim))
+1/2 * I.f(function(x) (x^2 + x)/(x^5 - 5*x^3 + 5*x + 1), lim=lim)
+### Decomposition
+I.f(function(x)  1 / (8 + 6*sin(x) - 12*sin(x)^2 + 5*sin(2*x)), lim=2*atan(lim))
+1/4 * I.f(function(x) (x^3 + x^2 + x + 1)/(x^5 - 5*x^3 + 5*x + 1), lim=lim)
 
