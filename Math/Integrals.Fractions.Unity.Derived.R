@@ -8,7 +8,7 @@
 ### of Polynomial Fractions
 ### derived from Roots of Unity
 ###
-### draft v.0.1e-tan3
+### draft v.0.1e-tan7
 
 
 
@@ -27,10 +27,11 @@
 ###############
 ### History ###
 
-# draft v.0.1e-tan - v.0.1e-tan3:
+# draft v.0.1e-tan - v.0.1e-tan7:
 # - added some trigonometric derivatives
 #   (based actually on Cardan-polynomials);
 # - generalisations using generic P5 polynomials (v.0.1e-tan2 & v.0.1e-tan3);
+# - work in progress using generic P7 polynomials (v.0.1e-tan7);
 # draft v.0.1e:
 # - various radicals:
 #   sqrt(x + s) / (x^n - 1);
@@ -577,16 +578,59 @@ I.f(function(x)  1 / (4 - (b-2)*sin(x) - (b+1)*sin(x)^2 - b/2*sin(2*x)), lim=2*a
 I.f(function(x) 1/2 / (1 + sin(x)*cos(x) - (b+1)*sin(x)^2*cos(x)^2 - b*sin(x)*cos(x)^3), lim=atan(lim))
 1/2 * I.f(function(x) (x^3 - x^2 + x - 1)/(x^5 - b*x^3 + b*x - 1), lim=lim)
 
-#########
+##########
 
-### TODO: P7;
-x = pi/7
+##########
+### P7 ###
+x = pi/7 # some random value
 (cos(x)^5 - sin(x)^5 - sin(x)*cos(x)*(cos(x)^3 - sin(x)^3) + 2*sin(x)^2*cos(x)^2*(cos(x) - sin(x))) / (cos(x) - sin(x))
+# Derivation:
 (1 + sin(x)*cos(x) - sin(x)^2*cos(x)^2 - sin(x)*cos(x)*(1 + sin(x)*cos(x)) + 2*sin(x)^2*cos(x)^2) # == 1
 # x^5 - 1 - x^4 + x + 2*x^3 - 2*x^2 # => 1;
+
+lim = c(2.1, 3)
+b1 = 2
+b2 = -1
+b3 = 1
+b31 = 3
+# TODO: add missing cross-terms
+I.f(function(x)  1 / (8 + (4*b1 + b31 + 4)*sin(x) + 2*(b1 + b2 + b31/2 - 2)*sin(x)^2 - (b1 - b2 - b3 + 1)*sin(x)^3
+	+ 2*b31*sin(x)*cos(x) + b31*sin(x)^2*cos(x) + b31*sin(x)*cos(x)^2), lim=2*atan(lim))
+I.f(function(x) 1/4 / (1 + (b1 + 1)*sin(x)*cos(x) + (b1 + b2 - 2)*sin(x)^2*cos(x)^2 - (b1 - b2 - b3 + 1)*sin(x)^3*cos(x)^3
+	+ b31*sin(x)*cos(x)^4*(sin(x) + cos(x))), lim=atan(lim))
+1/4 * I.f(function(x) (x^5 - 1 - x^4 + x + 2*x^3 - 2*x^2) / (x^7 + b1*x^6 + b2*x^5 + b3*x^4 - (b3 - b31)*x^3 - b2*x^2 - (b1 + b31)*x - 1), lim=lim)
+
 
 ### Wrong decomposition:
 (cos(x)^5 - sin(x)^5 - (cos(x)^4 - sin(x)^4) + (cos(x)^3 - sin(x)^3)) / (cos(x) - sin(x))
 (1 + sin(x)*cos(x) - sin(x)^2*cos(x)^2 - (sin(x)+cos(x)) + (1 + sin(x)*cos(x)))
-#
 
+
+
+#############
+
+### TODO: P9;
+x = pi/9 # some random value
+(cos(x)^7 - sin(x)^7 - sin(x)*cos(x)*(cos(x)^5 - sin(x)^5) + 3*sin(x)^2*cos(x)^2*(cos(x)^3 - sin(x)^3) +
+	- 3*sin(x)^3*cos(x)^3*(cos(x) - sin(x))) / (cos(x) - sin(x))
+# Derivation:
+(1 + sin(x)*cos(x) - 2*sin(x)^2*cos(x)^2 - sin(x)^3*cos(x)^3 +
+	- sin(x)*cos(x)*(1 + sin(x)*cos(x) - sin(x)^2*cos(x)^2) +
+	+ 3*(sin(x)*cos(x))^2*(1 + sin(x)*cos(x)) - 3*(sin(x)*cos(x))^3) # == 1
+# x^7 - 1 - x^6 + x + 3*x^5 - 3*x^2 - 3*x^4 + 3*x^3 # => 1;
+
+
+
+### TODO: P11;
+x = pi/11 # some random value
+for(i1 in -10:10) { for(i2 in -10:10) {
+# TODO
+r = (cos(x)^7 - sin(x)^7 - sin(x)*cos(x)*(cos(x)^5 - sin(x)^5) + 3*sin(x)^2*cos(x)^2*(cos(x)^3 - sin(x)^3) +
+	+ i2*sin(x)^3*cos(x)^3*(cos(x) - sin(x))) / (cos(x) - sin(x))
+	if(i2 == -10) {
+		cat("\n"); cat(i1); cat(": ")
+	}
+	if(abs(round(r, 3)) == 1) {
+		cat(r); cat(", ");  cat(i2)
+	}
+} }
