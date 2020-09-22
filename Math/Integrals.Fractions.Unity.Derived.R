@@ -8,7 +8,7 @@
 ### of Polynomial Fractions
 ### derived from Roots of Unity
 ###
-### draft v.0.1e-tan7
+### draft v.0.1e-tanx
 
 
 
@@ -27,10 +27,10 @@
 ###############
 ### History ###
 
-# draft v.0.1e-tan - v.0.1e-tan7:
+# draft v.0.1e-tan - v.0.1e-tanx:
 # - added some trigonometric derivatives
 #   (based actually on Cardan-polynomials);
-# - generalisations using generic P5 polynomials (v.0.1e-tan2 & v.0.1e-tan3);
+# - generalisations using generic P5 polynomials (v.0.1e-tan2, v.0.1e-tan3, v.0.1e-tanx);
 # - work in progress using generic P7 polynomials (v.0.1e-tan7);
 # draft v.0.1e:
 # - various radicals:
@@ -554,29 +554,38 @@ I.f(function(x)  1 / (8 + 6*sin(x) - 12*sin(x)^2 + 5*sin(2*x)), lim=2*atan(lim))
 
 ### parametrized:
 # TODO:
-# - add also cos(x) term;
-b1 = 8
+# - decouple free term;
 b3 = 1
 b4 = 2
-I.f(function(x)  1 / (4 + (2*b4 - b1 + 2)*sin(x) - (b1+b3+1-b4)*sin(x)^2 - b1/2*sin(2*x)), lim=2*atan(lim))
-I.f(function(x) 1/2 / (1 + (b4+1)*sin(x)*cos(x) - (b1+b3+1-b4)*sin(x)^2*cos(x)^2 - b1*sin(x)*cos(x)^3), lim=atan(lim))
-1/2 * I.f(function(x) (x^3 - x^2 + x - 1)/(x^5 + b4*x^4 - (b3+b1)*x^3 + b3*x^2 + (b1-b4)*x - 1), lim=lim)
+b31 = 8
+b40 = 1
+I.f(function(x)  1 / (4 + 2*b40 + (2*b4 + 2*b40 - b31 + 2)*sin(x) + 2*b40*cos(x) - (b31+b3+1-b4)*sin(x)^2 - b31/2*sin(2*x)), lim=2*atan(lim))
+I.f(function(x) 1/2 / (1 + (b4+b40+1)*sin(x)*cos(x) + b40*cos(x)^2 - (b31+b3+1-b4)*sin(x)^2*cos(x)^2 - b31*sin(x)*cos(x)^3), lim=atan(lim))
+1/2 * I.f(function(x) (x^3 - x^2 + x - 1)/(x^5 + (b4+b40)*x^4 - (b3+b31)*x^3 + b3*x^2 + (b31-b4)*x - 1 - b40), lim=lim)
 
 # Example 1:
-b1= -8; b4 = -3; b3 = 4;
+b31 = -8; b40 = 0; b4 = -3; b3 = 4;
 I.f(function(x)  1 / (4 + 4*sin(x) + 4*sin(2*x)), lim=2*atan(lim))
-1/2 * I.f(function(x) (x^3 - x^2 + x - 1)/(x^5 + b4*x^4 - (b3+b1)*x^3 + b3*x^2 + (b1-b4)*x - 1), lim=lim)
+1/2 * I.f(function(x) (x^3 - x^2 + x - 1)/(x^5 + (b4+b40)*x^4 - (b3+b31)*x^3 + b3*x^2 + (b31-b4)*x - 1 - b40), lim=lim)
 
 # Example 2:
-b1= -8; b4 = -5; b3 = -2;
+b31 = -8; b40 = 0; b4 = -5; b3 = -2;
 I.f(function(x)  1 / (4 + 4*sin(x)^2 + 4*sin(2*x)), lim=2*atan(lim))
-1/2 * I.f(function(x) (x^3 - x^2 + x - 1)/(x^5 + b4*x^4 - (b3+b1)*x^3 + b3*x^2 + (b1-b4)*x - 1), lim=lim)
+1/2 * I.f(function(x) (x^3 - x^2 + x - 1)/(x^5 + (b4+b40)*x^4 - (b3+b31)*x^3 + b3*x^2 + (b31-b4)*x - 1 - b40), lim=lim)
+
+# Example 3:
+# TODO: decouple free term;
+b31 = -8; b40 = 2; b4 = -5; b3 = 2;
+I.f(function(x)  1 / (8 + 4*sin(x) + 4*cos(x) + 4*sin(2*x)), lim=2*atan(lim))
+1/2 * I.f(function(x) (x^3 - x^2 + x - 1)/(x^5 + (b4+b40)*x^4 - (b3+b31)*x^3 + b3*x^2 + (b31-b4)*x - 1 - b40), lim=lim)
+
 
 ### initial version
 b = 8
 I.f(function(x)  1 / (4 - (b-2)*sin(x) - (b+1)*sin(x)^2 - b/2*sin(2*x)), lim=2*atan(lim))
 I.f(function(x) 1/2 / (1 + sin(x)*cos(x) - (b+1)*sin(x)^2*cos(x)^2 - b*sin(x)*cos(x)^3), lim=atan(lim))
 1/2 * I.f(function(x) (x^3 - x^2 + x - 1)/(x^5 - b*x^3 + b*x - 1), lim=lim)
+
 
 ##########
 
