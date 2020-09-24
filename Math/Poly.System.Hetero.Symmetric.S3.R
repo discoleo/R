@@ -7,7 +7,7 @@
 ### Polynomial Systems:
 ### Heterogenous Symmetric S3
 ###
-### draft v.0.1a
+### draft v.0.1b
 
 
 ### Heterogenous Symmetric
@@ -17,6 +17,9 @@
 
 ### History
 
+### draft v.0.1b:
+# - solved: x[i]^2 + b1*x[j] + b2*x[k];
+# - TODO: find/correct (precision) bug;
 ### draft v.0.1a:
 # - moved to new file
 #   from Poly.System.Hetero.Symmetric.R;
@@ -127,7 +130,7 @@
 # - correct superfluous values;
 
 ### Method 1:
-# Diff =>
+### Diff =>
 # x^2 - y^2 = b1*(z-y)
 # y^2 - z^2 = b1*(x-z)
 # z^2 - x^2 = b1*(y-x)
@@ -135,8 +138,9 @@
 # (x+y)*(x+z)*(y+z) = (-1)*b1^3;
 # S^3 - (x^3 + y^3 + z^3) + 3*b1^3 = 0;
 
+# [Prod] =>
 # (x^2 + x*y + x*z + y*z)*(y+z) = - b1^3
-# S[x^2y] + 2*x*y*z + b1^3 = 0;
+# S[x^2*y] + 2*x*y*z + b1^3 = 0;
 # E2*S - 3*E3 + 2*E3 + b1^3 = 0;
 # E2*S - E3 + b1^3 = 0
 
@@ -156,7 +160,8 @@
 # 2*S^3 + b1*S^2 + (b1^2 - 2*R)*S - 3*b1*R + 6*b1^3 = 0
 
 
-### Alternative: classic
+### Alternative:
+### Method 2: classic
 # b1*y = R - x^2
 # b1^3*z = b1^2*R - (R - x^2)^2
 # b1^3*z = b1^2*R - R^2 - x^4 + 2*R*x^2
@@ -200,8 +205,9 @@ y^2 + b[1]*z
 z^2 + b[1]*x
 
 
-######################
+##################
 
+### Shifted roots:
 ### x[i]^2 + s*x[i] + b*x[i+1]
 
 # x^2 + s*x + b1*y = R
@@ -361,7 +367,7 @@ z^2 + b[1]*x*y
 
 ### Solution
 
-# Diff =>
+### Diff =>
 # x^2 - y^2 = b1*(x-y)
 # x^2 - z^2 = b1*(x-z)
 # y^2 - z^2 = b1*(y-z)
@@ -460,11 +466,78 @@ sol
 
 ### Sum =>
 # S^2 - 2*E2 + (b1+b2)*S = 3*R
+# E2 = (S^2 + (b1+b2)*S - 3*R)/2;
+
+### Sum(x[i]*P[i]) =>
+# (x^3+y^3+z^3) + (b1 + b2)*E2 = R*S
+# S^3 - 3*E2*S + 3*E3 - R*S + (b1 + b2)*E2 = 0
+# 2*S^3 - 2*3*E2*S + 6*E3 - 2*R*S + 2*(b1 + b2)*E2 = 0
+# 2*S^3 - 3*(S^2 + (b1+b2)*S - 3*R)*S + 6*E3 - 2*R*S + (b1 + b2)*(S^2 + (b1+b2)*S - 3*R) = 0
+# -S^3 - 2*(b1+b2)*S^2 + 6*E3 + 7*R*S + (b1+b2)*((b1+b2)*S - 3*R) = 0
+# 6*E3 = S^3 + 2*(b1+b2)*S^2 - (b1+b2)^2*S - 7*R*S + 3*(b1+b2)*R
+
+### Eq3:
+# x^2 + b1*y + b1*z = R - (b2-b1)*z
+# x^4 + b1^2*(y+z)^2 + 2*b1*x^2*(y+z) = R^2 + (b2-b1)^2*z^2 - 2*(b2-b1)*R*z
+### Sum =>
+# (x^4+y^4+z^4) + 2*b1^2*(x^2+y^2+z^2 + E2) + 2*b1*(E2*S - 3*E3) = 3*R^2 + (b2-b1)^2*(S^2 - 2*E2) - 2*(b2-b1)*R*S
+# (x^4+y^4+z^4) + 2*b1^2*(S^2 - E2) + 2*b1*E2*S - 6*b1*E3 = 3*R^2 + (b2-b1)^2*S^2 - 2*(b2-b1)^2*E2 - 2*(b2-b1)*R*S
+# (x^4+y^4+z^4) = 3*R^2 + (-b1^2 + b2^2 - 2*b1*b2)*S^2 - 2*b1*E2*S - 2*(b2^2 - 2*b1*b2)*E2 + 6*b1*E3 - 2*(b2-b1)*R*S
+# S^4 - 4*E2*S^2 + 4*E3*S + 2*E2^2 =
+#  = b1*b2*S^2 - (b1^2 + b2^2 - b1*b2)*(b1+b2)*S - 2*b2*R*S - 2*b1*R*S + 3*R^2 + 3*(b1^2 + b2^2 - b1*b2)*R
+# - 2*S^4 - 4*(b1+b2)*S^3 + 8*R*S^2 - 4*(b1^2 + b2^2)*S^2 - 14*b1*b2*S^2 + 3*(S^2 + (b1+b2)*S - 3*R)^2 + 24*(b1+b2)*R*S =
+#  = - 6*(b1^2 + b2^2 - b1*b2)*(b1+b2)*S + 18*R^2 + 18*(b1^2 + b2^2 - b1*b2)*R
+# S^4 + 2*(b1+b2)*S^3 - 10*R*S^2 - (b1^2 + b2^2 + 8*b1*b2)*S^2 + 6*(b1+b2)*R*S +
+#  + 6*(b1^2 + b2^2 - b1*b2)*(b1+b2)*S + 9*R^2 - 18*(b1^2 + b2^2 - b1*b2)*R  =  0;
+
 
 ### Diff =>
+# [NOT used]
 # x^2 - y^2 = b2*(x - z) - b1*(y - z)
 # x^2 - z^2 = b2*(y - z) - b1*(y - x)
 # y^2 - z^2 = b2*(y - x) - b1*(z - x)
+
+solve.htS3L2 = function(b, R) {
+	b.sum = b[1] + b[2]
+	coeff = c(1, 2*b.sum, - 10*R - (b.sum^2 + 6*b[1]*b[2]), 6*b.sum*R + 6*(b.sum^2 - 3*b[1]*b[2])*b.sum,
+		9*R^2 - 18*(b.sum^2 - 3*b[1]*b[2])*R)
+	x.sum = roots(coeff)
+	E2 = (x.sum^2 + b.sum*x.sum - 3*R)/2
+	E3 = - (x.sum^3 - 3*E2*x.sum - R*x.sum + b.sum*E2)/3
+	# solve (x, y, z)
+	x = as.vector(sapply(1:length(x.sum), function(id) roots(c(1, -x.sum[id], E2[id], -E3[id]))) )
+	x.sum = rep(x.sum, each=3)
+	yz.sum = x.sum - x
+	yz.b.sum = R - x^2
+	if(b[1] == b[2]) {
+		E3 = rep(E3, each=3)
+		yz = E3 / x
+		yz.diff = sqrt(yz.sum^2 - 4*yz + 0i)
+		y = (yz.sum + yz.diff)/2
+		z = (yz.sum - yz.diff)/2
+	} else {
+		y = (yz.sum * b[2] - yz.b.sum) / (b[2] - b[1])
+		z = yz.sum - y
+	}
+	sol = cbind(x, y, z)
+	return(sol)
+}
+
+### Example:
+b = c(1,3)
+R = 1
+#
+sol = solve.htS3L2(b, R)
+x = sol[,1]; y = sol[,2]; z = sol[,3]
+sol
+# TODO:
+# - find and correct bugs;
+
+### Test
+x^2 + b[1]*y + b[2]*z
+y^2 + b[1]*z + b[2]*x
+z^2 + b[1]*x + b[2]*y
+
 
 
 #########################
