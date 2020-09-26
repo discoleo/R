@@ -7,7 +7,7 @@
 ### Polynomial Systems:
 ### Heterogenous Symmetric S3
 ###
-### draft v.0.1b-clP
+### draft v.0.1b-ext
 
 
 ### Heterogenous Symmetric
@@ -17,9 +17,10 @@
 
 ### History
 
-### draft v.0.1b - v.0.1b-clP:
-# - solved: x[i]^2 + b1*x[j] + b2*x[k];
-# - classical Polynomial (P8); (TODO: P8 = P2*P6)
+### draft v.0.1b - v.0.1b-ext:
+# - solved: x[i]^2 + b2*x[j] + b1*x[k];
+# - classical Polynomial (P8); (v.0.1b-clP; TODO: P8 = P2*P6)
+# - extension: x[i]^2 + s*x + b3*x*y*z + b2*x[j] + b1*x[k]; (v.0.1b-ext)
 # - TODO: find/correct (precision) bug vs correct roots;
 ### draft v.0.1a:
 # - moved to new file
@@ -504,8 +505,8 @@ solve.htS3L2 = function(b, R) {
 		9*R^2 - 18*(b.sum^2 - 3*b[1]*b[2])*R)
 	x.sum = roots(coeff)
 	E2 = (x.sum^2 + b.sum*x.sum - 3*R)/2
-	# E3 = - (x.sum^3 - 3*E2*x.sum - R*x.sum + b.sum*E2)/3
-	E3 = (x.sum^3 + 2*b.sum*x.sum^2 - b.sum^2*x.sum - 7*R*x.sum + 3*b.sum*R) / 6
+	E3 = - (x.sum^3 - 3*E2*x.sum - R*x.sum + b.sum*E2)/3
+	# E3 = (x.sum^3 + 2*b.sum*x.sum^2 - b.sum^2*x.sum - 7*R*x.sum + 3*b.sum*R) / 6
 	# solve (x, y, z)
 	x = as.vector(sapply(1:length(x.sum), function(id) roots(c(1, -x.sum[id], E2[id], -E3[id]))) )
 	x.sum = rep(x.sum, each=3)
@@ -526,7 +527,7 @@ solve.htS3L2 = function(b, R) {
 }
 
 ### Example:
-b = c(1,3)
+b = c(1,-2)
 R = 1
 #
 sol = solve.htS3L2(b, R)
@@ -541,6 +542,14 @@ y^2 + b[1]*z + b[2]*x
 z^2 + b[1]*x + b[2]*y
 
 ### Classic Polynomial
+# Note: set of valid roots may change!
+round0.p(poly.calc(x[c(4:9)]))
+round0.p(poly.calc(x[-c(4:9)]))
+#
+171 + 36*x - 15*x^2 + 3*x^3 - 2*x^4 + x^5 + x^6
+-1 - 3*x + 5*x^3 - 3*x^5 + x^6
+
+### Derivation:
 
 # b2*z = -x^2 - b1*y + R
 # =>
@@ -588,6 +597,115 @@ coeff
 # sapply(x, function(x) sum(x^(8:0) * coeff))
 # poly.calc(x[c(7,8)])
 # poly.calc(x[-c(7,8)])
+
+
+##############
+### Extensions
+
+# x^2 + s*x + b2*y + b1*z = R;
+# s = shift of main variable;
+# x^2 + s*x + b3*x*y*z + b2*y + b1*z = R;
+
+##############
+### Extension:
+# x^2 + s*x + b3*x*y*z + b2*y + b1*z
+
+### Sum =>
+# S^2 - 2*E2 + 3*b3*E3 + (s+b1+b2)*S = 3*R
+# E2 = (S^2 + (s+b1+b2)*S + 3*b3*E3 - 3*R)/2;
+
+### Sum(x[i]*P[i]) =>
+# (x^3+y^3+z^3) + s*(S^2 - 2*E2) + b3*E3*S + (b1 + b2)*E2 = R*S
+# S^3 + s*S^2 - 3*E2*S + 3*E3 + b3*E3*S - 2*s*E2 - R*S + (b1 + b2)*E2 = 0
+# 2*S^3 + 2*s*S^2 - 2*3*E2*S + 6*E3 + 2*b3*E3*S - 4*s*E2 - 2*R*S + 2*(b1 + b2)*E2 = 0
+# 2*S^3 + 2*s*S^2 - 3*S*(S^2 + (s+b1+b2)*S + 3*b3*E3 - 3*R) + 6*E3 + 2*b3*E3*S +
+#  - 2*s*(S^2 + (s+b1+b2)*S + 3*b3*E3 - 3*R) - 2*R*S +
+#  + (b1 + b2)*(S^2 + (s+b1+b2)*S + 3*b3*E3 - 3*R) = 0
+# -S^3 - 3*s*S^2 - 2*(b1+b2)*S^2 - 2*s^2*S - s*(b1+b2)*S + (b1+b2)^2*S + 7*R*S + 6*s*R - 3*(b1+b2)*R =
+#  = (7*b3*S - 3*b3*(b1 + b2) + 6*s*b3 - 6)*E3
+
+### Eq3:
+# x^2 + s*x + b3*x*y*z + b1*y + b1*z = R - (b2-b1)*z
+# (x^2 + s*x + b3*x*y*z + b1*y + b1*z)^2 = (R + b1*z - b2*z)^2
+
+2*E1_2*E3*b3 + 2*E1_2*b1*b2 + E1_2*b1^2 - E1_2*b2^2 + E1_2*s^2 + 2*E1_3*s + E1_4 + 4*E2*b1*s + 2*E2*b1^2 + 2*E2c1*b1 + 4*E3*S*b1*b3 + 2*E3*S*b3*s + 3*E3^2*b3^2 - 2*R*S*b1 + 2*R*S*b2 - 3*R^2
+
+- 4*E2*E3*b3 + 2*E2*S*b1 - 6*E2*S*s - 4*E2*S^2 - 4*E2*b1*b2 + 4*E2*b1*s + 2*E2*b2^2 - 2*E2*s^2 + 2*E2^2 + 4*E3*S + 4*E3*S*b1*b3 + 2*E3*S*b3*s + 2*E3*S^2*b3 - 6*E3*b1 + 6*E3*s + 3*E3^2*b3^2 - 2*R*S*b1 + 2*R*S*b2 - 3*R^2 + 2*S^2*b1*b2 + S^2*b1^2 - S^2*b2^2 + S^2*s^2 + 2*S^3*s + S^4
+
+- 6*E3*R*b3 + 8*E3*S + 16*E3*S*b1*b3 + 2*E3*S*b2*b3 - 12*E3*S*b3*s - 6*E3*S^2*b3 - 12*E3*b1 - 12*E3*b1*b2*b3 + 12*E3*b1*b3*s + 6*E3*b2^2*b3 - 6*E3*b3*s^2 + 12*E3*s + 3*E3^2*b3^2 - 16*R*S*b1 - 2*R*S*b2 + 12*R*S*s + 6*R*S^2 + 12*R*b1*b2 - 12*R*b1*s - 6*R*b2^2 + 6*R*s^2 + 3*R^2 - 2*S*b1*b2^2 + 2*S*b1*s^2 - 4*S*b1^2*b2 + 4*S*b1^2*s - 2*S*b2*s^2 + 2*S*b2^2*s + 2*S*b2^3 - 2*S*s^3 + 4*S^2*b1*b2 + 2*S^2*b1*s + 5*S^2*b1^2 - 4*S^2*b2*s + S^2*b2^2 - 5*S^2*s^2 - 2*S^3*b2 - 4*S^3*s - S^4
+
+(216*R*b1*b2 - 324*R*b1*b3*s^2 + 216*R*b1*s - 216*R*b1^2 + 324*R*b1^2*b3*s - 108*R*b1^3*b3 - 324*R*b2*b3*s^2 + 216*R*b2*s - 216*R*b2^2 + 324*R*b2^2*b3*s - 108*R*b2^3*b3 + 216*R*b3*s^3 - 216*R*s^2 + 108*R^2) +
+(72*R*b1 - 108*R*b1*b2*b3 - 540*R*b1*b3*s + 324*R*b1^2*b3 + 72*R*b2 - 540*R*b2*b3*s + 324*R*b2^2*b3 + 540*R*b3*s^2 - 360*R*s + 216*b1*b2*b3*s^2 - 216*b1*b2*s - 108*b1*b2^2*b3*s + 36*b1*b2^3*b3 + 36*b1*b3*s^3 - 108*b1^2*b2*b3*s + 72*b1^3 + 36*b1^3*b2*b3 - 72*b1^3*b3*s + 36*b1^4*b3 + 36*b2*b3*s^3 + 72*b2^3 - 72*b2^3*b3*s + 36*b2^4*b3 - 72*b3*s^4 + 72*s^3)*S^1 +
+(- 120*R - 216*R*b1*b3 - 216*R*b2*b3 + 432*R*b3*s - 96*b1*b2 + 396*b1*b2*b3*s - 72*b1*b2^2*b3 + 36*b1*b3*s^2 + 48*b1*s - 12*b1^2 - 72*b1^2*b2*b3 + 36*b1^2*b3*s - 96*b1^3*b3 + 36*b2*b3*s^2 + 48*b2*s - 12*b2^2 + 36*b2^2*b3*s - 96*b2^3*b3 - 204*b3*s^3 + 132*s^2)*S^2 +
+(104*R*b3 + 24*b1 + 148*b1*b2*b3 - 20*b1*b3*s + 12*b1*b3^2*s^2 + 44*b1^2*b3 - 12*b1^2*b3^2*s + 4*b1^3*b3^2 + 24*b2 - 20*b2*b3*s + 12*b2*b3^2*s^2 + 44*b2^2*b3 - 12*b2^2*b3^2*s + 4*b2^3*b3^2 - 196*b3*s^2 - 8*b3^2*s^3 + 72*s)*S^3 +
+(12 + 4*b1*b2*b3^2 - 16*b1*b3 + 20*b1*b3^2*s - 12*b1^2*b3^2 - 16*b2*b3 + 20*b2*b3^2*s - 12*b2^2*b3^2 - 72*b3*s - 20*b3^2*s^2)*S^4 +
+(8*b1*b3^2 + 8*b2*b3^2 - 8*b3 - 16*b3^2*s)*S^5 +
+(- 4*b3^2)*S^6
+
+###############
+
+solve.htS3X2Ext = function(b, R, s) {
+	b1 = b[1]; b2 = b[2]; b3 = b[3]
+	coeff = c(
+	(216*R*b1*b2 - 324*R*b1*b3*s^2 + 216*R*b1*s - 216*R*b1^2 + 324*R*b1^2*b3*s - 108*R*b1^3*b3 - 324*R*b2*b3*s^2 +
+	216*R*b2*s - 216*R*b2^2 + 324*R*b2^2*b3*s - 108*R*b2^3*b3 + 216*R*b3*s^3 - 216*R*s^2 + 108*R^2),
+	(72*R*b1 - 108*R*b1*b2*b3 - 540*R*b1*b3*s + 324*R*b1^2*b3 + 72*R*b2 - 540*R*b2*b3*s + 324*R*b2^2*b3 +
+	540*R*b3*s^2 - 360*R*s + 216*b1*b2*b3*s^2 - 216*b1*b2*s - 108*b1*b2^2*b3*s + 36*b1*b2^3*b3 +
+	36*b1*b3*s^3 - 108*b1^2*b2*b3*s + 72*b1^3 + 36*b1^3*b2*b3 - 72*b1^3*b3*s + 36*b1^4*b3 + 36*b2*b3*s^3 +
+	72*b2^3 - 72*b2^3*b3*s + 36*b2^4*b3 - 72*b3*s^4 + 72*s^3),
+	(- 120*R - 216*R*b1*b3 - 216*R*b2*b3 + 432*R*b3*s - 96*b1*b2 + 396*b1*b2*b3*s - 72*b1*b2^2*b3 +
+	36*b1*b3*s^2 + 48*b1*s - 12*b1^2 - 72*b1^2*b2*b3 + 36*b1^2*b3*s - 96*b1^3*b3 + 36*b2*b3*s^2 +
+	48*b2*s - 12*b2^2 + 36*b2^2*b3*s - 96*b2^3*b3 - 204*b3*s^3 + 132*s^2),
+	(104*R*b3 + 24*b1 + 148*b1*b2*b3 - 20*b1*b3*s + 12*b1*b3^2*s^2 + 44*b1^2*b3 - 12*b1^2*b3^2*s +
+	4*b1^3*b3^2 + 24*b2 - 20*b2*b3*s + 12*b2*b3^2*s^2 + 44*b2^2*b3 - 12*b2^2*b3^2*s + 4*b2^3*b3^2 - 196*b3*s^2 - 8*b3^2*s^3 + 72*s),
+	(12 + 4*b1*b2*b3^2 - 16*b1*b3 + 20*b1*b3^2*s - 12*b1^2*b3^2 - 16*b2*b3 + 20*b2*b3^2*s - 12*b2^2*b3^2 - 72*b3*s - 20*b3^2*s^2),
+	(8*b1*b3^2 + 8*b2*b3^2 - 8*b3 - 16*b3^2*s), (- 4*b3^2)
+	)
+	coeff = rev(coeff)
+	print(coeff)
+	x.sum = round0(roots(coeff))
+	x.sum = x.sum[x.sum != 0]
+	# solve (x, y, z)
+	S = x.sum
+	E3 = (-S^3 - 3*s*S^2 - 2*(b1+b2)*S^2 - 2*s^2*S - s*(b1+b2)*S + (b1+b2)^2*S + 7*R*S + 6*s*R - 3*(b1+b2)*R) /
+		(7*b3*S - 3*b3*(b1 + b2) + 6*s*b3 - 6);
+	E2 = (S^2 + (s+b1+b2)*S + 3*b3*E3 - 3*R)/2;
+	#
+	x = sapply(1:length(x.sum), function(id) roots(c(1, -x.sum[id], E2[id], -E3[id])))
+	x = as.vector(x)
+	x.sum = rep(x.sum, each=3)
+	E3 = rep(E3, each=3)
+	#
+	yz.sum = x.sum - x
+	yz = E3 / x
+	yz.b.sum = R - x^2 - s*x - b3*E3
+	if(b[1] == b[2]) {
+		yz.diff = sqrt(yz.sum^2 - 4*yz + 0i)
+		y = (yz.sum + yz.diff)/2
+		z = (yz.sum - yz.diff)/2
+	} else {
+		y = (yz.b.sum - b[1]*yz.sum) / (b[2] - b[1])
+		z = yz.sum - y
+	}
+	sol = cbind(x, y, z)
+	return(sol)
+}
+
+### Example
+s = 1
+b = c(-2,2,3)
+R = 1
+#
+sol = solve.htS3X2Ext(b, R, s)
+x = sol[,1]; y = sol[,2]; z = sol[,3];
+sol
+
+### Test
+# TODO: precision error vs bug ???
+# some values are correct
+x^2 + s*x + b[3]*x*y*z + b[2]*y + b[1]*z
+y^2 + s*y + b[3]*x*y*z + b[2]*z + b[1]*x
+z^2 + s*z + b[3]*x*y*z + b[2]*x + b[1]*y
 
 
 #########################
@@ -760,7 +878,7 @@ E2^3 + 3*E3^2 - 3*E3*E2*S + E2^2*S^2 - 2*E3*S^3 + 4*E3*E2*S - 3*E3^2 - 2*E2^3 +
 #
 - E2^3 + E2^2*S^2 - E3*S^3 + b^3
 
-
+###########
 ### Example
 b = 2
 R = 1
@@ -1163,6 +1281,48 @@ sol
 x^2*y*z + b[1]*y
 x*y^2*z + b[1]*z
 x*y*z^2 + b[1]*x
+
+
+################################
+
+################################
+### x[i]^3 + b2*x[j]^2 + b1*x[k]
+
+# x^3 + b2*y^2 + b1*z = R
+# y^3 + b2*z^2 + b1*x = R
+# z^3 + b2*x^2 + b1*y = R
+
+### Solution:
+
+### Sum =>
+# (x^3 + y^3 + z^3) + b2*(x^2 + y^2 + z^2) + b1*S = 3*R
+# S^3 - 3*E2*S + 3*E3 + b2*(S^2 - 2*E2) + b1*S - 3*R = 0
+# S^3 + b2*S^2 + b1*S - 3*E2*S - 2*b2*E2 + 3*E3 - 3*R = 0
+# 3*E3 = -(S^3 + b2*S^2 + b1*S - 3*E2*S - 2*b2*E2 - 3*R)
+
+### Eq2:
+# x^3 + b1*z = R - b2*y^2
+# x^3 + b1*y + b1*z = R - b2*y^2 + b1*y
+# (x^3 + b1*y + b1*z)^2 = (b2*y^2 - b1*y - R)^2
+# x^6 + b1^2*y^2 + b1^2*z^2 + 2*b1*x^3*y + 2*b1*x^3*z + 2*b1^2*y*z =
+#  b2^2*y^4 + b1^2*y^2 + R^2 - 2*b1*b2*y^3 - 2*b2*R*y^2 + 2*b1*R*y
+### Sum =>
+# (x^6+y^6+z^6) + 2*b1^2*(x^2+y^2+z^2) + 2*b1*sum(x^3*y) + 2*b1^2*E2 =
+#   b2^2*(x^4+y^4+z^4) - 2*b1*b2*(x^3+y^3+z^3) + (b1^2 - 2*b2*R)*(x^2+y^2+z^2) + 2*b1*R*S + 3*R^2
+### sum(x^3*y) = (x^2+y^2+z^2)*E2 - 3*E3*S
+# TODO: ...
+
+### Eq3:
+# x^3 + b2*y^2 = R - b1*z
+# x^3 + b2*y^2 + b2*z^2 = b2*z^2 - b1*z + R
+# (x^3 + b2*y^2 + b2*z^2)^2 = (b2*z^2 - b1*z + R)^2
+# x^6 + 2*b2*x^3*y^2 + 2*b2*x^3*z^2 + b2^2*y^4 + b2^2*z^4 + 2*b2^2*y^2*z^2 =
+#  b2^2*z^4 - 2*b1*b2*z^3 + b1^2*z^2 - 2*b2*R*z^2 - 2*b1*R*z + R^2
+### Sum =>
+(x^6+y^6+z^6) + 2*b2*sum(x^3*y^2 + x^3*z^2) + 2*b2^2*(x^4+y^4+z^4) + 2*b2^2*(E2^2 - 2*E3*S) =
+b2^2*(x^4+y^4+z^4) - 2*b1*b2*(x^3+y^3+z^3) + (b1^2 - 2*b2*R)*(x^2+y^2+z^2) - 2*b1*R*S + 3*R^2
+### sum(x^3*y^2) = (E2^2 - 2*E3*S)*S - E3*E2
+# TODO: ...
 
 
 
