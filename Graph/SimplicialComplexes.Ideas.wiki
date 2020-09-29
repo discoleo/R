@@ -9,9 +9,14 @@
 == Terminology ==
 
 '''Data:''' a 2D or 3D set of data points;
-'''Operation:''' draw circles (balls) centered on each of the points and tangent to all its neighbours;
+
+'''Operation:''' draw circles (balls) centered on each of the points and tangent to all its neighbours; the circles must grow to their maximal possible size, but without intersecting twice any of the other circles.
+
 '''Optimization:''' minimise or maximise the area of the disks (or the volume of the balls);
-'''Neighbours:''' all points that are reachable through tangent circles; any 2 circles are not allowed to intersect in 2 points;
+
+'''Neighbours:''' all direct points that are reachable through the tangent circles; any 2 circles are not allowed to intersect in 2 points: they can be at most tangent.
+
+'''Connected components:''' all points that are reachable through a continous path of circles/balls.
 
 
 === Results ===
