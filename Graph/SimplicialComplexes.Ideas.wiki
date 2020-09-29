@@ -19,7 +19,7 @@
 '''Connected components:''' all points that are reachable through a continous path of circles/balls.
 
 
-=== Results ===
+== Results ==
 
 Both the configuration with the minimal area (volume) and with the maximal area (volume) should be computed. Analysing these 2 cases may reveal important details about the "simplicial" complex and about the set of data points.
 
@@ -31,7 +31,7 @@ Both the configuration with the minimal area (volume) and with the maximal area 
 ; Connectivity: measures connectivity between points.
 Parameters are needed to measure how strong the connection between different points is.
 
-Note: It nay not be possible to connect all points. This is a useful information per se.
+Note: It may not be possible to connect all points. This is a useful information per se.
 
 
 ; "Connection Builder": transformation which enables the connection of the unconnected components.
