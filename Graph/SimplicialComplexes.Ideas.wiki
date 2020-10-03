@@ -10,11 +10,11 @@
 
 '''Data:''' a 2D or 3D set of data points;
 
-'''Operation:''' draw circles (balls) centered on each of the points and tangent to all its neighbours; the circles must grow to their maximal possible size, but without intersecting twice any of the other circles.
+'''Operation:''' draw circles (balls) centered on each of the points and tangent to all its neighbours; the circles must grow to their maximal possible size, but without intersecting twice any of the other circles. Any 2 circles are not allowed to intersect in 2 points: they can be at most tangent.
 
-'''Optimization:''' minimise or maximise the area of the disks (or the volume of the balls);
+'''Optimization:''' minimise or maximise the area of the disks (or the volume of the balls). Various other quantiles may prove also useful in specific situations.
 
-'''Neighbours:''' all direct points that are reachable through the tangent circles; any 2 circles are not allowed to intersect in 2 points: they can be at most tangent.
+'''Neighbours:''' all points that are directly reachable through one of the tangent circles.
 
 '''Connected components:''' all points that are reachable through a continous path of circles/balls.
 
@@ -23,10 +23,19 @@
 
 Both the configuration with the minimal area (volume) and with the maximal area (volume) should be computed. Analysing these 2 cases may reveal important details about the "simplicial" complex and about the set of data points.
 
+'''Optimization:''' the minimal area/volume is useful to compute the most compact set. This area/volume can be normalized by the number of points (when comparing sets with differing counts).
+
+Each circle is tangent to at least another circle (if there are at leat 2 points in the data set). A point is considered a circle with radius 0 and is a valid ball if it is tangent to at least another circle/ball.
+
+'''Upper Bound:'''
+An absolute upper limit for area = pi * sum[i](min[j](d(x[i], x[j])^2)), where d(x[i], x[j]) = distance bettwen the points x[i] and x[j], and i = over all points in the dataset, and j != i. The minimal distance is computed over j, while the sum is computed over index i.
+
 
 == Discussion ==
 
 === Connected Components ===
+
+; Outliers: points that have an associated disk/ball with a very large radius.
 
 ; Connectivity: measures connectivity between points.
 Parameters are needed to measure how strong the connection between different points is.
@@ -38,7 +47,11 @@ Note: It may not be possible to connect all points. This is a useful information
 
 '''Minimal Connection Builder:''' the minimum number of points that need to be removed in order to be able to connect all components;
 
-'''Barycenter Connection Builder:''' the minimum number of points that need to be collapsed and replaced with their barycenter in order to be able to connect all components. The barycenters can be computed using weights based on the area/volumes of the corresponding disks/balls.
+'''Barycenter Connection Builder:''' the minimum number of points that need to be collapsed and replaced with their barycenter in order to be able to connect all components. The barycenters can be computed using weights based on the area/volumes of the corresponding disks/balls. The weights can be inversely proportional to the radius, such that more "compact" points contribute more to the barycenter.
 
 Barycenter Alternatives: minimise the area (or volume) of the collapsed components.
+
+=== Examples ===
+
+'''Equilateral triangle:''' minimal area is obtained with disks of equal radius d/2 centered on the 3 vertices. Area = 3/4 * pi * d^2;
 
