@@ -3,9 +3,13 @@
 
 Various researchers working in a famous area of science have proposed to replace the rise to power operator '''^''' with 2 multiplication operators: '''**'''. This change would streamline the mathematical terminology with that used in parts of the IT industry.
 
-The ''International Association of Publishers of Mathematical Proofs'' was caught by surprise by this proposal. After analysing the effects on the published literature, they noted that this new terminology would increase significantly the size of various proofs, as the new operator requires now 2 characters, while the old one could be even omitted by printing the exponent slightly elevated.
+The ''International Association of Publishers of Lengthy Proofs in Mathematics'' (1) was caught by surprise by this proposal. After analysing the effects on the published literature, they noted that this new terminology would increase significantly the size of various proofs, as the new operator requires now 2 characters, while the old one could be even omitted by printing the exponent slightly elevated.
 
 A task force working to mitigate such adverse effects recommended that mathematicians use more often the words '''"obvious"''' and '''"obviously"''' during lengthy proofs, with the former having some advantage over the latter.
 
-One stubborn scientist noted however that this new terminology would increase the propensity for errors, as both the single and the double multiplication operators would become valid operators and it would be easy to mistye the wrong number of operators. Therefore, both '''x*2''' and '''x**2''' would be valid and it would be difficult to distinguish the two, as non would raise an error. We do not know if this opinion is shared by any of the other scientists and could not yet contact this stubborn scientist for more comments on this topic.
+One stubborn scientist noted however that this new terminology would increase the propensity for errors, as both the single and the double multiplication operators would become valid operators and it would be easy to mistype the wrong number of operators. Therefore, both '''x*2''' and '''x**2''' would be valid and it would be difficult to distinguish the two, as non would raise an error. Unfortunately, there are only 2 values for x for which the above equality holds, while for '''x*10''' and '''x**10''' (2) there are almost no rational values for which this equality would hold.
 
+We do not know if this opinion is shared by any of the other scientists and could not yet contact this stubborn scientist for additional comments on this topic.
+
+''1.'' Errata: We regret the use of a shortened name in a previous version of this document.
+''2.'' Stubborn Scientist. '''x**10 = x*10''' - A lengthy proof of the paucity of roots over rational numbers.
