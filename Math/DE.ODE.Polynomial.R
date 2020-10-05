@@ -7,11 +7,14 @@
 ### Differential Equations
 ### ODEs
 ###
-### draft v.0.1b-sh
+### draft v.0.1c
 
 
 ### History
 
+### draft v.01c:
+# - added symmetrically shifted, eg:
+#   y^2*dy - 2*y*dy - (x-1)*dy - y = x^2 - 2;
 ### draft v.0.1b-sh:
 # - added classic/full Cardan Polynomials (P3);
 # - added shifted version (P3) (v.0.1b-sh);
@@ -304,6 +307,9 @@ sapply((1:4)/5, line.tan, dx=3, p=y, dp=dy)
 # sapply(c(-(4:1)/5), line.tan, dx=3, p=y, dp=dy)
 
 
+###############
+### Shifted ###
+
 #########
 ### n = 3
 ### Shifted
@@ -344,6 +350,63 @@ curve(y, from=-2, to=2)
 sapply(c(-(4:1)/5, (1:6)/5), line.tan, dx=3, p=y, dp=dy)
 
 
+#########
+### n = 3
+### y-Shifted
+# y^3 + 3*s*y^2 - 3*h*y - 2*f = 0
+# 3*y^2*dy + 6*s*y*dy + 3*y^2*ds - 3*h*dy - 3*y*dh - 2*df = 0
+# =>
+# y^2*dy + 2*s*y*dy - h*dy + y^2*ds - y*dh - 2/3*df = 0
+# (y^2 + 2*s*y - h)*dy + y^2*ds - y*dh - 2/3*df = 0
+
+### y-Shift: u = y*m
+# (m^2*y^2 + 2*s*m*y - h)*(m*dy + y*dm) + m^2*y^2*ds - m*y*dh - 2/3*df = 0
+# (m^3*y^2 + 2*s*m^2*y - h*m)*dy + m^2*y^3*dm + (m^2*ds + 2*m*s*dm)*y^2 - (m*dh + h*dm)*y - 2/3*df = 0
+# or
+### y-Shift: u = y + n
+# ((y+n)^2 + 2*s*(y+n) - h)*(dy + dn) + (y + n)^2*ds - (y + n)*dh - 2/3*df = 0
+# (y^2 + 2*(s+n)*y + n^2 + 2*s*n - h)*(dy + dn) + ds*y^2 - (dh - 2*n*ds)*y - 2/3*df + n^2*ds - n*dh = 0
+# (y^2 + 2*(s+n)*y + n^2 + 2*s*n - h)*dy + (ds + dn)*y^2 - (dh - 2*n*ds - 2*(s+n))*y - 2/3*df + n^2*ds - n*dh +(n^2 + 2*s*n - h)*dn = 0
+
+### Solution: reduce shift
+# y => y - s =>
+# y^3 - 3*(h + s^2)*y - 2*f + 2*s^3 + 3*h*s = 0
+
+###
+# h(x) = x - 1/4
+# f(x) = x^3
+# s(x) = 1/2
+# n(x) = -1/2
+(y^2 + 2*(s+n)*y + n^2 + 2*s*n - h)*dy + (ds + dn)*y^2 - (dh - 2*n*ds - 2*(s+n))*y - 2/3*df + n^2*ds - n*dh +(n^2 + 2*s*n - h)*dn = 0
+y^2*dy - x*dy - y - 2*x^2 + 1/2 = 0
+# simple: d(y^3 - 3*x*y) = 6*x^2 - 3/2;
+# [but useful to test formulas]
+# y = n - s + (f.sh + sqrt(f.sh^2 - h.sh^3))^(1/3) + (f.sh - sqrt(f.sh^2 - h.sh^3))^(1/3)
+y = function(x, n=3) {
+	d = x^3 - 3/4*x + 3/4*1/4 - 1/8
+	det = sqrt(d^2 - (x - 1/4 + 1/4)^3 + 0i)
+	r1 = (d + det); r2 = (d - det)
+	r = round0(rootn(r1, n=n) + rootn(r2, n=n))
+	# shift back
+	r = r - 1/2 + 1/2
+	return(r)
+}
+dy = function(x) {
+	y.x = y(x)
+	div = (y.x^2 - x)
+	dp = (y.x + 2*x^2 - 1/2)
+	dp = if(div != 0) dp / div else Inf;
+	return(dp)
+}
+curve(y, from=-2, to=2)
+sapply(c(-(4:1)/5, (1:6)/5), line.tan, dx=3, p=y, dp=dy)
+
+
+# df = from free term;
+# y*dy, dy, y^2, y: 4 parameters needed;
+# but currently only 3 available: h(x), s(x), n(x);
+
+
 #############
 
 #############
@@ -355,5 +418,46 @@ sapply(c(-(4:1)/5, (1:6)/5), line.tan, dx=3, p=y, dp=dy)
 
 ### TODO:
 # - concrete examples;
+
+
+
+######################
+######################
+
+### Shifted Symmetrically
+
+# (p-s)^3 + (q-s)^3 = r
+# p*q = c
+# y = p + q
+
+y^2*dy - 2*s*y*dy + (s^2 - c)*dy - y^2*ds + (2*s*ds - dc)*y = 1/3*dr - 2*c*ds - 2*s*dc + 2*s^2*ds
+
+### Examples
+
+### Example 1:
+# s = 1
+# c = x
+# r = x^3
+y^2*dy - 2*y*dy - (x-1)*dy - y = x^2 - 2
+###
+y = function(x, n=3) {
+	s = 1
+	d = 1/2 * (x^3 - 3*x + 1)
+	det = sqrt(d^2 - x^3 + 0i)
+	r1 = (d + det); r2 = (d - det)
+	r = round0(rootn(r1, n=n) + rootn(r2, n=n))
+	# shift back
+	r = r + s
+	return(r)
+}
+dy = function(x) {
+	y.x = y(x)
+	div = (y.x^2 - 2*y.x - x + 1)
+	dp = (y.x + x^2 - 2)
+	dp = if(div != 0) dp / div else Inf;
+	return(dp)
+}
+curve(y, from=-2, to=2)
+sapply(c(-(4:1)/5, (1:6)/5), line.tan, dx=3, p=y, dp=dy)
 
 
