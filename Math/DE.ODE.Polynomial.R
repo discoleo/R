@@ -7,14 +7,16 @@
 ### Differential Equations
 ### ODEs
 ###
-### draft v.0.1c
+### draft v.0.1c-sh2
 
 
 ### History
 
-### draft v.01c:
+### Order 1 Non-Liniar
+### draft v.0.1c - v.0.1c-sh2:
 # - added symmetrically shifted, eg:
 #   y^2*dy - 2*y*dy - (x-1)*dy - y = x^2 - 2;
+#   y^2*dy + (x^2 - x)*dy + (2*x-1)*y = 9*x^2 - 4*x; (v.0.1c-sh2)
 ### draft v.0.1b-sh:
 # - added classic/full Cardan Polynomials (P3);
 # - added shifted version (P3) (v.0.1b-sh);
@@ -426,6 +428,7 @@ sapply(c(-(4:1)/5, (1:6)/5), line.tan, dx=3, p=y, dp=dy)
 
 ### Shifted Symmetrically
 
+### Base System:
 # (p-s)^3 + (q-s)^3 = r
 # p*q = c
 # y = p + q
@@ -458,6 +461,63 @@ dy = function(x) {
 	return(dp)
 }
 curve(y, from=-2, to=2)
+sapply(c(-(4:1)/5, (1:6)/5), line.tan, dx=3, p=y, dp=dy)
+
+###########
+
+### Shifted Symmetrically
+
+### Base System:
+# (p-s1)^3 + (q-s1)^3 + 3*b1*(p+q) = r
+# (p-s2)*(q-s2) = c
+# y = p + q
+
+### Solution to Polynomial:
+# (p-s2)*(q-s2) = c # =>
+# p*q - s2*(p+q) + s2^2 - c # = 0
+# p*q = s2*y + c - s2^2
+
+p^3 + q^3 - 3*s1*(p^2+q^2) + 3*s1^2*(p+q) - 2*s1^3 + 3*b1*(p+q) = r
+y^3 - 3*p*q*y - 3*s1*(y^2 - 2*p*q) + 3*(s1^2+b1)*y - 2*s1^3 - r = 0
+y^3 - 3*(s2*y + c - s2^2)*y - 3*s1*(y^2 - 2*(s2*y + c - s2^2)) + 3*(s1^2+b1)*y - 2*s1^3 - r = 0
+y^3 - 3*(s1+s2)*y^2 + 3*(s1^2 + s2^2 + 2*s1*s2 + b1 - c)*y + 6*s1*c - 2*s1^3 - 6*s1*s2^2 - r # = 0
+# Shift: y => y + (s1+s2)
+# Solution is based on this polynomial:
+y^3 + (3*b1 - 3*c)*y + (3*b1*s1 + 3*b1*s2 + 3*c*s1 - 3*c*s2 - r - 3*s1*s2^2 + 3*s1^2*s2 - s1^3 + s2^3)
+
+### ODE
+y^2*dy - 2*(s1+s2)*y*dy - (ds1+ds2)*y^2 + (s1^2 + s2^2 + 2*s1*s2 + b1 - c)*dy +
+ + (2*s1*ds1 + 2*s2*ds2 + 2*ds1*s2 + 2*s1*ds2 + db1 - dc)*y # =
+# = - (2*ds1*c + 2*s1*dc - 2*s1^2*ds1 - 2*ds1*s2^2 - 4*s1*s2*ds2 - 1/3 * dr)
+
+### Example 1:
+# s1 = x
+# s2 = -x
+# b1 = x^2
+# c = x
+# r = x^3
+y^2*dy + (x^2 - x)*dy + (2*x-1)*y = 9*x^2 - 4*x
+###
+y = function(x, n=3) {
+	s1 = x; s2 = -x;
+	b1 = x^2; c = x; r = x^3;
+	d = -1/2 * (3*b1*s1 + 3*b1*s2 + 3*c*s1 - 3*c*s2 - r - 3*s1*s2^2 + 3*s1^2*s2 - s1^3 + s2^3)
+	det = sqrt(d^2 - (c - b1)^3 + 0i)
+	r1 = (d + det); r2 = (d - det)
+	r.sol = round0(rootn(r1, n=n) + rootn(r2, n=n))
+	# shift back
+	r.sol = r.sol + s1 + s2
+	return(r.sol)
+}
+dy = function(x) {
+	y.x = y(x)
+	div = (y.x^2 + x^2 - x)
+	dp =  - y.x * (2*x-1) + 9*x^2 - 4*x
+	dp = if(div != 0) dp / div else Inf;
+	return(dp)
+}
+curve(y, from=-3, to=3)
+# a nice local minimum
 sapply(c(-(4:1)/5, (1:6)/5), line.tan, dx=3, p=y, dp=dy)
 
 
