@@ -20,7 +20,10 @@
 #   y^3*dy + (x+1)*dy - 3*x*y^2 - y = 0; (v.0.1c-tr)
 #   x^2*y*dy + (x+1)*dy - x*y^2 - 1/3*y = 0; (v.0.1c-tr2)
 # - transformation of ODE:
+#   ### f1(x)*y*dy - f2(x)*y^2 variants:
+#   2*x*y*dy + 2*x^3*dy - y^2 - 2*x^2*y = 0;
 #   x^3*y*dy + 3*x*log(x)*dy - x^2*y^2 - y = 0; (v.0.1c-tr3)
+#   ### higher powers:
 #   x*y^2*dy - x^3*dy - 2/3*y^3 + 4*log(x) - 2 = 0; (v.0.1c-tr4)
 #   y^4*dy - 6*log(x)*y*dy - 3*x^4*dy - 6*x^3*y - 6*x = 0; (v.0.1c-tr4)
 
@@ -95,6 +98,11 @@ round0 = function(m, tol=1E-7) {
 ### System:
 # p^n + q^n = 2*f(x)
 # p*q = h(x)
+
+### full P3: is in the next section;
+# y = p + q;
+
+### P6-partial:
 # => q = h / p
 # =>
 # n*p^(n-1)*dp + n*q^(n-1)*dq = 2 * df
@@ -106,11 +114,31 @@ round0 = function(m, tol=1E-7) {
 
 ### Solutions
 # p = (f + sqrt(f^2 - h^n))^(1/n)
-# p = (f - sqrt(f^2 - h^n))^(1/n)
+# q = (f - sqrt(f^2 - h^n))^(1/n)
 # Note:
 # - 2 basic solutions are possible;
 # - it is possible to rotate these solutions using the roots of unity;
 
+
+### Transformations:
+
+### Order 3: [redundant]
+# same as regular solution;
+p^2*dp + q^2*dq = 2/3*df # * p^2
+p^4*dp + p^2*q^2*dq - 2/3*df*p^2 = 0
+p^4*dp + h^2*dq - 2/3*df*p^2 = 0
+p^4*dp + h^2*(dh - q*dp)/p - 2/3*df*p^2 = 0 # * p
+p^5*dp + h^2*(dh - q*dp) - 2/3*df*p^3 = 0 # *p
+p^6*dp + h^2*(dh*p - h*dp) - 2/3*df*p^4 = 0
+
+### Variant:
+p^2*dp + q^2*dq = 2/3*df
+p^4*dp^2 + q^4*dq^2 + 2*p^2*q^2*dp*dq = 4/9*df^2
+p^4*dp^2 + q^4*((dh - q*dp)/p)^2 + 2*h^2*dp*(dh - q*dp)/p = 4/9*df^2 # *p^2
+p^6*dp^2 + q^4*(dh - q*dp)^2 + 2*h^2*dp*(p*dh - p*q*dp) = 4/9*df^2
+p^6*dp^2 + q^4*(dh - q*dp)^2 + 2*h^2*dp*(p*dh - h*dp) = 4/9*df^2
+p^6*dp^2 + q^4*(dh - q*dp)^2 + 2*h^2*dh*p*dp - 2*h^3*dp^2 = 4/9*df^2
+# TODO: ...
 
 
 ################
@@ -128,7 +156,15 @@ p^4*dp - x^2*dp + x*p = 0
 p = function(x) {
 	sqrt(1 + sqrt(1 - x^2))
 }
+dp = function(x) {
+	p.x = p(x)
+	div = (p.x^4 - x^2)
+	dp = - x*p.x
+	dp = if(div != 0) dp / div else Inf;
+	return(dp)
+}
 curve(p, from=-1, to=1)
+sapply(c((0:5)/6), line.tan, dx=2, p=p, dp=dp)
 
 
 ###
@@ -139,7 +175,15 @@ p^4*dp - x^2*dp - 2*p^3 + x*p = 0
 p = function(x) {
 	sqrt(2*x + x*sqrt(3))
 }
+dp = function(x) {
+	p.x = p(x)
+	div = (p.x^4 - x^2)
+	dp = 2*p.x^3 - x*p.x
+	dp = if(div != 0) dp / div else Inf;
+	return(dp)
+}
 curve(p, from=0, to=3)
+sapply(c((0:5)/4.5), line.tan, dx=2, p=p, dp=dp)
 
 #########
 
@@ -152,12 +196,21 @@ p^6*dp - h^3*dp - 2/3 * p^4 * df + h^2*p*dh = 0
 # h(x) = x
 # f(x) = 1
 p^6*dp - x^3*dp + x^2*p = 0
+# Solution & Plot:
 # p = (f + sqrt(f^2 - h^3))^(1/3)
 p = function(x, n=3) {
 	r = (1 + sqrt(1 - x^n))
 	ifelse( (r >= 0), r^(1/n), - (-r)^(1/n) )
 }
+dp = function(x) {
+	div = (p(x)^6 - x^3)
+	dp = - x^2*p(x)
+	dp = if(div != 0) dp / div else Inf;
+	return(dp)
+}
 curve(p, from=-3, to=1)
+sapply(c((0:5)/6), line.tan, dx=2, p=p, dp=dp)
+
 
 ###
 # h(x) = x
@@ -240,6 +293,9 @@ sapply(c(-(1:4), 1:4), line.tan, dx=3)
 
 
 ##########################
+##########################
+
+##########################
 ### Cardan-Polynomials ###
 ### Full Root          ###
 ##########################
@@ -257,6 +313,9 @@ sapply(c(-(1:4), 1:4), line.tan, dx=3)
 # q = (f - sqrt(f^2 - h^n))^(1/n)
 # Note:
 # - it is possible to rotate these solutions using the roots of unity;
+# - transformations of the Polynomial & of the ODE: decouple the derivatives;
+#   [see later]
+
 
 ################
 ### Examples ###
@@ -267,11 +326,12 @@ sapply(c(-(1:4), 1:4), line.tan, dx=3)
 # 3*y^2*dy - 3*h*dy - 3*y*dh - 2*df = 0
 # y^2*dy - h*dy - y*dh - 2/3*df = 0
 
-###
+### Example 1;
 # h(x) = x
 # f(x) = x^3
 y^2*dy - h*dy - y*dh - 2/3*df = 0
 y^2*dy - x*dy - y - 2*x^2 = 0
+### Solution & Plot:
 # y = (f + sqrt(f^2 - h^3))^(1/3) + (f - sqrt(f^2 - h^3))^(1/3)
 y = function(x, n=3) {
 	r1 = (x^3 + sqrt(x^6 - x^n + 0i))
@@ -289,7 +349,25 @@ dy = function(x) {
 curve(y, from=-2, to=2)
 sapply(c(-(4:1)/5, (1:4)/5, 1.01), line.tan, dx=3, p=y, dp=dy)
 
-###
+### Variant: [decoupled]
+y^2*dy - x*dy - y - 2*x^2 = 0 # *y
+y^3*dy - x*y*dy - y^2 - 2*x^2*y = 0
+(3*x*y + 2*x^3)*dy - x*y*dy - y^2 - 2*x^2*y = 0
+2*x*y*dy + 2*x^3*dy - y^2 - 2*x^2*y = 0
+### Solution & Plot:
+# y = is the same as above;
+dy = function(x) {
+	y.x = y(x)
+	div = (2*x*y.x + 2*x^3)
+	dp = (y.x^2 + 2*x^2*y.x)
+	dp = if(div != 0) dp / div else Inf;
+	return(dp)
+}
+curve(y, from=-2, to=2)
+sapply(c(-(4:1)/5, (1:4)/5, 1.01), line.tan, dx=3, p=y, dp=dy)
+
+
+### Example 2:
 # h(x) = x^2
 # f(x) = 3*log(x)
 y^2*dy - h*dy - y*dh - 2/3*df = 0
@@ -388,6 +466,7 @@ sapply((1:8)/5, line.tan, dx=3, p=y, dp=dy)
 ###############
 
 ### Transformed Polynomial
+# - "transformation" of initial polynomial;
 
 #########
 ### n = 3
@@ -661,5 +740,25 @@ dy = function(x) {
 curve(y, from=-3, to=3)
 # a nice local minimum
 sapply(c(-(4:1)/5, (1:6)/5), line.tan, dx=3, p=y, dp=dy)
+
+
+####################
+####################
+####################
+
+### y*e^y + h*e^y = f
+# e^y*dy + y*e^y*dy + h*e^y*dy + dh*e^y = df # *y
+# y*e^y*dy + y*y*e^y*dy + h*y*e^y*dy + dh*y*e^y = df*y
+# f*y*dy + f*dy + h*f*dy + f*dh = df*y
+
+### Examples:
+
+###
+# f = x
+# h = x - 1
+f*y*dy + f*dy + h*f*dy + f*dh = df*y
+x*y*dy + x*dy + x^2*dy - x*dy + x = y
+x*y*dy + x^2*dy - y + x = 0
+# TODO: check result;
 
 
