@@ -7,21 +7,27 @@
 ### Differential Equations
 ### ODEs
 ###
-### draft v.0.1c-tr3
+### draft v.0.1c-tr4
 
 
 ### History
 
 ### Order 1 Non-Liniar
-### draft v.0.1c - v.0.1c-tr3:
-# - added symmetrically shifted, eg:
-#   y^2*dy - 2*y*dy - (x-1)*dy - y = x^2 - 2;
-#   y^2*dy + (x^2 - x)*dy + (2*x-1)*y = 9*x^2 - 4*x; (v.0.1c-sh2)
+###
+### P3 & ODE Transformations:
+### draft v.0.1c-tr - v.0.1c-tr4:
 # - added transformed base-polynomials:
 #   y^3*dy + (x+1)*dy - 3*x*y^2 - y = 0; (v.0.1c-tr)
 #   x^2*y*dy + (x+1)*dy - x*y^2 - 1/3*y = 0; (v.0.1c-tr2)
 # - transformation of ODE:
 #   x^3*y*dy + 3*x*log(x)*dy - x^2*y^2 - y = 0; (v.0.1c-tr3)
+#   x*y^2*dy - x^3*dy - 2/3*y^3 + 4*log(x) - 2 = 0; (v.0.1c-tr4)
+#   y^4*dy - 6*log(x)*y*dy - 3*x^4*dy - 6*x^3*y - 6*x = 0; (v.0.1c-tr4)
+
+### draft v.0.1c - v.0.1c-sh2:
+# - added symmetrically shifted, eg:
+#   y^2*dy - 2*y*dy - (x-1)*dy - y = x^2 - 2;
+#   y^2*dy + (x^2 - x)*dy + (2*x-1)*y = 9*x^2 - 4*x; (v.0.1c-sh2)
 ### draft v.0.1b-sh:
 # - added classic/full Cardan Polynomials (P3);
 # - added shifted version (P3) (v.0.1b-sh);
@@ -314,15 +320,16 @@ sapply((1:4)/5, line.tan, dx=3, p=y, dp=dy)
 # sapply(c(-(4:1)/5), line.tan, dx=3, p=y, dp=dy)
 
 
-### Transformed
+### Transformed & Variants:
 # h(x) = x^2
 # f(x) = 3*log(x)
 y^2*dy - h*dy - y*dh - 2/3*df = 0
 y^2*dy - x^2*dy - 2*x*y - 2/x = 0
-x*y^2*dy - x^3*dy - 2*x^2*y - 2 = 0
+x*y^2*dy - x^3*dy - 2*x^2*y - 2 = 0 # *y
 x*y^3*dy - x^3*y*dy - 2*x^2*y^2 - 2*y = 0
 x*(3*x^2*y + 6*log(x))*dy - x^3*y*dy - 2*x^2*y^2 - 2*y = 0
 x^3*y*dy + 3*x*log(x)*dy - x^2*y^2 - y = 0
+# Solution & Plot:
 # y = (f + sqrt(f^2 - h^3))^(1/3) + (f - sqrt(f^2 - h^3))^(1/3)
 y = function(x, n=3) {
 	r1 = (3*log(x + 0i) + sqrt(9*log(x + 0i)^2 - x^(2*n) + 0i))
@@ -338,6 +345,37 @@ dy = function(x) {
 	y.x = y(x)
 	div = (x^3 * y.x + 3*x*log(x))
 	dp = (x^2 * y.x^2 + y.x)
+	dp = if(div != 0) dp / div else Inf;
+	return(dp)
+}
+curve(y, from=0.01, to=3)
+sapply((1:8)/5, line.tan, dx=3, p=y, dp=dy)
+
+### Variant 1:
+x*y^2*dy - x^3*dy - 2*x^2*y - 2 = 0
+x*y^2*dy - x^3*dy - 2/3*(y^3 - 6*log(x)) - 2 = 0
+x*y^2*dy - x^3*dy - 2/3*y^3 + 4*log(x) - 2 = 0
+### Solution & Plot:
+dy = function(x) {
+	y.x = y(x)
+	div = (x * y.x^2 - x^3)
+	dp = (2/3 * y.x^3 - 4*log(x) + 2)
+	dp = if(div != 0) dp / div else Inf;
+	return(dp)
+}
+curve(y, from=0.01, to=3)
+sapply((1:8)/5, line.tan, dx=3, p=y, dp=dy)
+
+### Variant 2:
+x*y^2*dy - x^3*dy - 2*x^2*y - 2 = 0
+1/3 * 1/x *y*(y^3 - 6*log(x))*dy - x^3*dy - 2*x^2*y - 2 = 0 # * 3*x
+y*(y^3 - 6*log(x))*dy - 3*x^4*dy - 6*x^3*y - 6*x = 0
+y^4*dy - 6*log(x)*y*dy - 3*x^4*dy - 6*x^3*y - 6*x = 0
+### Solution & Plot:
+dy = function(x) {
+	y.x = y(x)
+	div = (y.x^4 - 6*y.x*log(x) - 3*x^4)
+	dp = 6*(y.x*x^3 + x)
 	dp = if(div != 0) dp / div else Inf;
 	return(dp)
 }
