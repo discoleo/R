@@ -7,16 +7,18 @@
 ### Differential Equations
 ### ODEs
 ###
-### draft v.0.1c-sh2
+### draft v.0.1c-tr
 
 
 ### History
 
 ### Order 1 Non-Liniar
-### draft v.0.1c - v.0.1c-sh2:
+### draft v.0.1c - v.0.1c-tr:
 # - added symmetrically shifted, eg:
 #   y^2*dy - 2*y*dy - (x-1)*dy - y = x^2 - 2;
 #   y^2*dy + (x^2 - x)*dy + (2*x-1)*y = 9*x^2 - 4*x; (v.0.1c-sh2)
+# - added transformed base-polynomials:
+#   y^3*dy + (x+1)*dy - 3*x*y^2 - y = 0; (v.0.1c-tr)
 ### draft v.0.1b-sh:
 # - added classic/full Cardan Polynomials (P3);
 # - added shifted version (P3) (v.0.1b-sh);
@@ -307,6 +309,42 @@ sapply((1:4)/5, line.tan, dx=3, p=y, dp=dy)
 # log(x) is complex for x < 0;
 # curve(y, from=-2, to=-0.01, add=T, ylim=c(-5, 0.5))
 # sapply(c(-(4:1)/5), line.tan, dx=3, p=y, dp=dy)
+
+
+###############
+###############
+
+### Transformed Polynomial
+
+#########
+### n = 3
+# y^3 - 3*h*y - 2*f = 0
+# y^2 - 3*h - 2*f/y = 0
+# 2*y*dy - 3*dh - 2*df/y + 2*f*dy/y^2 = 0
+# 2*y^3*dy - 3*dh*y^2 - 2*df*y + 2*f*dy = 0
+
+### Examples
+# h(x) = x^2
+# f(x) = x + 1
+2*y^3*dy - 3*dh*y^2 - 2*df*y + 2*f*dy = 0
+2*y^3*dy - 2*3*x*y^2 - 2*y + 2*(x+1)*dy = 0
+y^3*dy + (x+1)*dy - 3*x*y^2 - y = 0
+# y = (f + sqrt(f^2 - h^3))^(1/3) + (f - sqrt(f^2 - h^3))^(1/3)
+y = function(x, n=3) {
+	det = sqrt((x+1)^2 - x^6 + 0i)
+	r1 = round0(rootn(x+1 + det, n=3))
+	r2 = round0(rootn(x+1 - det, n=3))
+	return( round0(r1 + r2) )
+}
+dy = function(x) {
+	y.x = y(x)
+	div = (y.x^3 + x + 1)
+	dp = (3*x*y.x^2 + y.x)
+	dp = if(div != 0) dp / div else Inf;
+	return(dp)
+}
+curve(y, from=-3, to=3)
+sapply(c(-2, c(-(4:1), 1:4)/5, 2), line.tan, dx=3, p=y, dp=dy)
 
 
 ###############
