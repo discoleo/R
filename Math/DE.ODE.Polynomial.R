@@ -7,7 +7,7 @@
 ### Differential Equations
 ### ODEs
 ###
-### draft v.0.1c-tr4
+### draft v.0.1d
 
 
 ### History
@@ -15,6 +15,10 @@
 ### Order 1 Non-Liniar
 ###
 ### P3 & ODE Transformations:
+### draft v.0.1d:
+# - systematic approach to ODE Transformations:
+#   -- various substitutions;
+#   -- combination of ODE-variants;
 ### draft v.0.1c-tr - v.0.1c-tr4:
 # - added transformed base-polynomials:
 #   y^3*dy + (x+1)*dy - 3*x*y^2 - y = 0; (v.0.1c-tr)
@@ -326,6 +330,35 @@ sapply(c(-(1:4), 1:4), line.tan, dx=3)
 # 3*y^2*dy - 3*h*dy - 3*y*dh - 2*df = 0
 # y^2*dy - h*dy - y*dh - 2/3*df = 0
 
+### Polynomial:
+# Simple P3:
+# y^3 - 3*h*y - 2*f = 0
+### ODE:
+# y^2*dy - h*dy - y*dh - 2/3*df = 0
+
+### Transformations
+
+### ODE-Transformations:
+### T.1: y^3
+y^2*dy - h*dy - y*dh - 2/3*df = 0 # * y
+y^3*dy - h*y*dy - y^2*dh - 2/3*df*y = 0
+(3*h*y + 2*f)*dy - h*y*dy - y^2*dh - 2/3*df*y = 0
+2*h*y*dy + 2*f*dy - y^2*dh - 2/3*df*y = 0
+
+### T.2: y
+y^2*dy - h*dy - y*dh - 2/3*df = 0 # *h
+h*y^2*dy - h^2*dy - h*y*dh - 2/3*h*df = 0
+h*y^2*dy - h^2*dy - 1/3*(y^3 - 2*f)*dh - 2/3*h*df = 0
+h*y^2*dy - h^2*dy - 1/3*y^3*dh + 2/3*f*dh - 2/3*h*df = 0
+
+### T.3: Combinations
+h*y^2*dy - h^2*dy - 1/3*y^3*dh + 2/3*f*dh - 2/3*h*df +
+ + b*(2*h*y*dy + 2*f*dy - y^2*dh - 2/3*df*y) = 0
+
+
+############
+### Examples
+
 ### Example 1;
 # h(x) = x
 # f(x) = x^3
@@ -366,7 +399,30 @@ dy = function(x) {
 curve(y, from=-2, to=2)
 sapply(c(-(4:1)/5, (1:4)/5, 1.01), line.tan, dx=3, p=y, dp=dy)
 
+### V.3: Combinations
+# h(x) = x # as above
+# f(x) = x^3
+# b = 1/2 * 1/x
+h*y^2*dy - h^2*dy - 1/3*y^3*dh + 2/3*f*dh - 2/3*h*df +
+ + b*(2*h*y*dy + 2*f*dy - y^2*dh - 2/3*df*y) = 0
+x*y^2*dy - x^2*dy - 1/3*y^3 + 2/3*x^3 - 2*x^3 +
+ + b*(2*x*y*dy + 2*x^3*dy - y^2 - 2*x^2*y) = 0
+x*y^2*dy + y*dy - 1/3*y^3 - 1/2/x*y^2 - x*y + 2/3*x^3 - 2*x^3 = 0
+### Solution & Plot:
+# y = is the same as above;
+dy = function(x) {
+	y.x = y(x)
+	div = (x*y.x^2 + y.x)
+	dp = (1/3*y.x^3 + 1/2/x*y.x^2 + x*y.x - 2/3*x^3 + 2*x^3)
+	dp = if(div != 0) dp / div else Inf;
+	return(dp)
+}
+curve(y, from=-2, to=2)
+sapply(c(-(4:1)/5, (1:4)/5, 1.01), line.tan, dx=3, p=y, dp=dy)
 
+
+##############
+##############
 ### Example 2:
 # h(x) = x^2
 # f(x) = 3*log(x)
@@ -749,16 +805,17 @@ sapply(c(-(4:1)/5, (1:6)/5), line.tan, dx=3, p=y, dp=dy)
 ### y*e^y + h*e^y = f
 # e^y*dy + y*e^y*dy + h*e^y*dy + dh*e^y = df # *y
 # y*e^y*dy + y*y*e^y*dy + h*y*e^y*dy + dh*y*e^y = df*y
-# f*y*dy + f*dy + h*f*dy + f*dh = df*y
+# (f - h*e^y)*y*dy + (f - h*e^y)*dy + h*(f - h*e^y)*dy + (f - h*e^y)*dh = df*y
+# f*y*dy - h*e^y*y*dy + f*dy - h*e^y*dy + h*(f - h*e^y)*dy + (f - h*e^y)*dh = df*y
+# f*y*dy - h*(f - h*e^y)*dy + f*dy - h*e^y*dy + h*(f - h*e^y)*dy + (f - h*e^y)*dh = df*y
+# f*y*dy - 2*h*e^y*dy + 2*f*dy - df*y = 0
 
 ### Examples:
 
 ###
 # f = x
 # h = x - 1
-f*y*dy + f*dy + h*f*dy + f*dh = df*y
-x*y*dy + x*dy + x^2*dy - x*dy + x = y
-x*y*dy + x^2*dy - y + x = 0
+# ...
 # TODO: check result;
-
+# TODO: implement snack;
 
