@@ -7,7 +7,7 @@
 ### Differential Equations
 ### ODEs
 ###
-### draft v.0.1d
+### draft v.0.1d-dx2
 
 
 ### History
@@ -15,10 +15,11 @@
 ### Order 1 Non-Liniar
 ###
 ### P3 & ODE Transformations:
-### draft v.0.1d:
+### draft v.0.1d - v.0.1d-dx2:
 # - systematic approach to ODE Transformations:
 #   -- various substitutions;
 #   -- combination of ODE-variants;
+# - added an order 2 combination;
 ### draft v.0.1c-tr - v.0.1c-tr4:
 # - added transformed base-polynomials:
 #   y^3*dy + (x+1)*dy - 3*x*y^2 - y = 0; (v.0.1c-tr)
@@ -407,18 +408,48 @@ h*y^2*dy - h^2*dy - 1/3*y^3*dh + 2/3*f*dh - 2/3*h*df +
  + b*(2*h*y*dy + 2*f*dy - y^2*dh - 2/3*df*y) = 0
 x*y^2*dy - x^2*dy - 1/3*y^3 + 2/3*x^3 - 2*x^3 +
  + b*(2*x*y*dy + 2*x^3*dy - y^2 - 2*x^2*y) = 0
-x*y^2*dy + y*dy - 1/3*y^3 - 1/2/x*y^2 - x*y + 2/3*x^3 - 2*x^3 = 0
+x*y^2*dy + y*dy - 1/3*y^3 - 1/2/x*y^2 - x*y - 4/3*x^3 = 0
 ### Solution & Plot:
 # y = is the same as above;
 dy = function(x) {
 	y.x = y(x)
 	div = (x*y.x^2 + y.x)
-	dp = (1/3*y.x^3 + 1/2/x*y.x^2 + x*y.x - 2/3*x^3 + 2*x^3)
+	dp = (1/3*y.x^3 + 1/2/x*y.x^2 + x*y.x + 4/3*x^3)
 	dp = if(div != 0) dp / div else Inf;
 	return(dp)
 }
 curve(y, from=-2, to=2)
 sapply(c(-(4:1)/5, (1:4)/5, 1.01), line.tan, dx=3, p=y, dp=dy)
+
+
+### D2y / Dx2
+# y^2*dy - h*dy - y*dh - 2/3*df = 0 # =>
+# y^2*d2y - h*d2y + 2*y*dy^2 - dh*dy - dh*dy - y*d2h - 2/3*d2f = 0
+y^2*d2y - x*d2y + 2*y*dy^2 - dy - dy - 4*x = 0
+# Sum with one of the other ODEs:
+y^2*d2y - x*d2y + 2*y*dy^2 + 2*x*y*dy + 2*x^3*dy - 2*dy - y^2 - 2*x^2*y - 4*x = 0
+### Solution & Plot:
+# y = is the same as above;
+dy = function(x) {
+	y.x = y(x)
+	div = (2*x*y.x + 2*x^3)
+	dp = (y.x^2 + 2*x^2*y.x)
+	dp = ifelse((div != 0), dp / div, Inf);
+	return(dp)
+}
+d2y = function(x) {
+	y.x = y(x)
+	dy.x = dy(x)
+	div = (y.x^2 - x)
+	dp = - (2*y.x*dy.x^2 + 2*x*y.x*dy.x + 2*x^3*dy.x - 2*dy.x - y.x^2 - 2*x^2*y.x - 4*x)
+	dp = ifelse((div != 0), dp / div, Inf);
+	return(dp)
+}
+curve(dy, from=-2, to=2, col="green")
+curve(y, from=-2, to=2, add=T, col="grey")
+sapply(c(-1.5, -0.5, (1:5)/4.7), line.tan, dx=3, p=dy, dp=d2y)
+
+
 
 
 ##############
