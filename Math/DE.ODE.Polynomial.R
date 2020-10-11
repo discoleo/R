@@ -7,7 +7,7 @@
 ### Differential Equations
 ### ODEs
 ###
-### draft v.0.1d-dx3
+### draft v.0.1d-tr
 
 
 ### History
@@ -15,6 +15,9 @@
 ### Order 1 Non-Liniar
 ###
 ### P3 & ODE Transformations:
+### draft v.0.1d-tr:
+# - more polynomial transformations:
+#   including nested transformations;
 ### draft v.0.1d - v.0.1d-dx3:
 # - systematic approach to ODE Transformations:
 #   -- various substitutions;
@@ -339,22 +342,58 @@ sapply(c(-(1:4), 1:4), line.tan, dx=3)
 
 ### Transformations
 
-### ODE-Transformations:
-### T.1: y^3
+### T.A.) ODE-Transformations:
+### T.A.1: y^3
 y^2*dy - h*dy - y*dh - 2/3*df = 0 # * y
 y^3*dy - h*y*dy - y^2*dh - 2/3*df*y = 0
-(3*h*y + 2*f)*dy - h*y*dy - y^2*dh - 2/3*df*y = 0
-2*h*y*dy + 2*f*dy - y^2*dh - 2/3*df*y = 0
+(3*h*y + 2*f)*dy - h*y*dy - dh*y^2 - 2/3*df*y = 0
+2*h*y*dy + 2*f*dy - dh*y^2 - 2/3*df*y = 0
+h*y*dy + f*dy - 1/2*dh*y^2 - 1/3*df*y = 0
 
-### T.2: y
+### T.A.2: y
 y^2*dy - h*dy - y*dh - 2/3*df = 0 # *h
 h*y^2*dy - h^2*dy - h*y*dh - 2/3*h*df = 0
 h*y^2*dy - h^2*dy - 1/3*(y^3 - 2*f)*dh - 2/3*h*df = 0
 h*y^2*dy - h^2*dy - 1/3*y^3*dh + 2/3*f*dh - 2/3*h*df = 0
 
-### T.3: Combinations
+### T.A.3: Combinations
 h*y^2*dy - h^2*dy - 1/3*y^3*dh + 2/3*f*dh - 2/3*h*df +
  + b*(2*h*y*dy + 2*f*dy - y^2*dh - 2/3*df*y) = 0
+
+
+### T.B.) Poly-Transformations:
+### T.B.1: * 1/y
+# y^3 - 3*h*y - 2*f = 0 # / * 1/y
+# y^2 - 3*h - 2*f/y = 0 # D() =>
+2*y*dy - 3*dh - 2*df/y + 2*f*dy/y^2 = 0 # * y^2
+y^3*dy + f*dy - 3/2*dh*y^2 - df*y = 0
+
+### T.B.1 + T.A.1: y^3
+(3*h*y + 2*f)*dy + f*dy - 3/2*dh*y^2 - df*y = 0
+3*h*y*dy + 3*f*dy - 3/2*dh*y^2 - df*y = 0
+h*y*dy + f*dy - 1/2*dh*y^2 - 1/3*df*y = 0 # same as [T.A.1]
+
+### T.B.1 + T.A.2: y
+# - can replace one occurence or multiple occurances;
+y^3*dy + f*dy - 3/2*dh*y*(y^3 - 2*f)/(3*h) - df*y = 0
+y^3*dy + f*dy - 1/2*dh/h*y^4 + f*dh/h*y - df*y = 0 # * h
+h*y^3*dy + f*h*dy - 1/2*dh*y^4 + f*dh*y - h*df*y = 0
+# ... - D(h*y/f) = 0
+
+# alternative: T.B.1 + T.A.2: y
+y^3*dy + f*dy - 3/2*dh*y^2 - df*(y^3 - 2*f)/(3*h) = 0 # * h
+h*y^3*dy + f*h*dy - 1/3*df*y^3 - 3/2*h*dh*y^2 + 2/3*f*df = 0
+
+### T.B.1 + T.A.3: f
+# - but is trivial: initial derivative;
+y^3*dy + 1/2 * (y^3 - 3*h*y)*dy - 3/2*dh*y^2 - df*y = 0 # *2
+2*y^3*dy + (y^3 - 3*h*y)*dy - 3*dh*y^2 - 2*df*y = 0
+y^3*dy - h*y*dy - dh*y^2 - 2/3*df*y = 0
+y^2*dy - h*dy - dh*y - 2/3*df = 0 # initial derivative;
+
+
+### T.B.2: TODO: y^2;
+
 
 
 ############
@@ -415,6 +454,40 @@ dy = function(x) {
 	y.x = y(x)
 	div = (x*y.x^2 + y.x)
 	dp = (1/3*y.x^3 + 1/2/x*y.x^2 + x*y.x + 4/3*x^3)
+	dp = if(div != 0) dp / div else Inf;
+	return(dp)
+}
+curve(y, from=-2, to=2)
+sapply(c(-(4:1)/5, (1:4)/5, 1.01), line.tan, dx=3, p=y, dp=dy)
+
+### V.B.1: Tr. Poly
+# h(x) = x # as above
+# f(x) = x^3
+h*y^3*dy + f*h*dy - 1/2*dh*y^4 + f*dh*y - h*df*y = 0
+x*y^3*dy + x^4*dy - 1/2*y^4 + x^3*y - 3*x^3*y = 0
+x*y^3*dy + x^4*dy - 1/2*y^4 - 2*x^3*y = 0
+### Solution & Plot:
+# y = is the same as above;
+dy = function(x) {
+	y.x = y(x)
+	div = (x*y.x^3 + x^4)
+	dp = (1/2*y.x^4 + 2*x^3*y.x)
+	dp = if(div != 0) dp / div else Inf;
+	return(dp)
+}
+curve(y, from=-2, to=2)
+sapply(c(-(4:1)/5, (1:4)/5, 1.01), line.tan, dx=3, p=y, dp=dy)
+
+### V.B.1: Tr. Poly / alternative
+h*y^3*dy + h*f*dy - 1/3*df*y^3 - 3/2*h*dh*y^2 + 2/3*f*df = 0
+x*y^3*dy + x^4*dy - x^2*y^3 - 3/2*x*y^2 + 2*x^5 = 0 # / x
+y^3*dy + x^3*dy - x*y^3 - 3/2*y^2 + 2*x^4 = 0
+### Solution & Plot:
+# y = is the same as above;
+dy = function(x) {
+	y.x = y(x)
+	div = (y.x^3 + x^3)
+	dp = (x*y.x^3 + 3/2*y.x^2 - 2*x^4)
 	dp = if(div != 0) dp / div else Inf;
 	return(dp)
 }
@@ -645,8 +718,78 @@ curve(y, from=-3, to=3)
 sapply(c(-2, c(-(4:1), 1:4)/5, 2), line.tan, dx=3, p=y, dp=dy)
 
 
-##################
-##################
+### Example [T.B.1]:
+# h(x) = 2*x
+# f(x) = 1 # Test [trivial]
+# [NOT run]
+y^3*dy + f*dy - 3/2*dh*y^2 - df*y = 0
+y^3*dy + dy - 3*y^2  = 0
+### Solution & Plot:
+# y = (f + sqrt(f^2 - h^3))^(1/3) + (f - sqrt(f^2 - h^3))^(1/3)
+y = function(x, n=3) {
+	d = 1; h.x = 2*x
+	r1 = (d + sqrt(d^2 - h.x^n + 0i))
+	r2 = (d - sqrt(d^2 - h.x^n + 0i))
+	r = round0(rootn(r1, n=n) + rootn(r2, n=n))
+	return(r)
+}
+dy = function(x) {
+	y.x = y(x)
+	div = (y.x^3 + 1)
+	dp = (3*y.x^2)
+	dp = if(div != 0) dp / div else Inf;
+	return(dp)
+}
+curve(y, from=-3, to=3)
+sapply(c(-2, -1, -0.4, (2:5)/5), line.tan, dx=3, p=y, dp=dy)
+
+### T.B.1 + A.1:
+# [NOT run]
+h*y*dy + f*dy - 1/2*dh*y^2 - 1/3*df*y = 0
+(2*x*y + 1)*dy - y^2 = 0
+### Solution & Plot:
+# - same y as above;
+dy = function(x) {
+	y.x = y(x)
+	div = (2*x*y.x + 1)
+	dp = (y.x^2)
+	dp = if(div != 0) dp / div else Inf;
+	return(dp)
+}
+curve(y, from=-3, to=3)
+sapply(c(-2, -1, -0.4, (2:5)/5), line.tan, dx=3, p=y, dp=dy)
+# same plot as above!
+
+
+### T.B.1 + A.1: Example 2
+# h(x) = x^2 + 1
+# f(x) = x^3
+# [NOT run]
+h*y*dy + f*dy - 1/2*dh*y^2 - 1/3*df*y = 0
+(x^2*y + y + x^3)*dy - x*y^2 - x^2*y = 0
+### Solution & Plot:
+y = function(x, n=3) {
+	d = x^3; h.x = x^2 + 1
+	r1 = (d + sqrt(d^2 - h.x^n + 0i))
+	r2 = (d - sqrt(d^2 - h.x^n + 0i))
+	r = round0(rootn(r1, n=n) + rootn(r2, n=n))
+	return(r)
+}
+dy = function(x) {
+	y.x = y(x)
+	div = (x^2*y.x + y.x + x^3)
+	dp = (x*y.x^2 + x^2*y.x)
+	dp = if(div != 0) dp / div else Inf;
+	return(dp)
+}
+curve(y, from=-3, to=3)
+sapply(c(-1.5, (0:3)/1.7), line.tan, dx=3, p=y, dp=dy)
+
+
+
+
+#########################
+#########################
 
 ##################
 ### P3 Shifted ###
@@ -880,4 +1023,34 @@ sapply(c(-(4:1)/5, (1:6)/5), line.tan, dx=3, p=y, dp=dy)
 # ...
 # TODO: check result;
 # TODO: implement snack;
+
+
+
+### y^5
+# y^5 - 5*h*y - f = 0
+# 5*y^4*dy - 5*h*dy - 5*dh*y - df = 0
+# y^4*dy - h*dy - dh*y - 1/5*df = 0 # *y
+# y^5*dy - h*y*dy - dh*y^2 - 1/5*df*y = 0
+# Transform A.1:
+(5*h*y + f)*dy - h*y*dy - dh*y^2 - 1/5*df*y = 0
+(4*h*y + f)*dy - dh*y^2 - 1/5*df*y = 0
+
+
+
+### y^n
+# y^n - n*h*y - f = 0
+# n*y^(n-1)*dy - n*h*dy - n*dh*y - df = 0
+# y^(n-1)*dy - h*dy - dh*y - 1/n*df = 0 # *y
+# y^n*dy - h*y*dy - dh*y^2 - 1/n*df*y = 0
+# Transform A.1:
+(n*h*y + f)*dy - h*y*dy - dh*y^2 - 1/n*df*y = 0
+((n-1)*h*y + f)*dy - dh*y^2 - 1/n*df*y = 0
+
+### Example:
+# f = x
+# h = x
+x*((n-1)*y + 1)*dy - y^2 - 1/n*y = 0
+((n-1)*y + 1)/(y^2 + 1/n*y) * dy = 1/x
+(n-1)/2*(2*y + 1/n - 1/n + 2/(n-1))/(y^2 + 1/n*y) * dy = 1/x
+
 
