@@ -7,7 +7,7 @@
 ### Differential Equations
 ### ODEs
 ###
-### draft v.0.1d-tr
+### draft v.0.1d-tr2
 
 
 ### History
@@ -15,9 +15,10 @@
 ### Order 1 Non-Liniar
 ###
 ### P3 & ODE Transformations:
-### draft v.0.1d-tr:
-# - more polynomial transformations:
-#   including nested transformations;
+### draft v.0.1d-tr - v.0.1d-tr2:
+# - more polynomial transformations,
+#   including nested & combined transformations, e.g.:
+#   x*y*dy + x^3*dy - 1/3*x*y^3 - 1/2*y^2 + 2/3*x^4 = 0;
 ### draft v.0.1d - v.0.1d-dx3:
 # - systematic approach to ODE Transformations:
 #   -- various substitutions;
@@ -325,8 +326,9 @@ sapply(c(-(1:4), 1:4), line.tan, dx=3)
 #   [see later]
 
 
-################
-### Examples ###
+##################
+### Parametric ###
+###  Examples  ###
 
 #########
 ### n = 3
@@ -349,16 +351,26 @@ y^3*dy - h*y*dy - y^2*dh - 2/3*df*y = 0
 (3*h*y + 2*f)*dy - h*y*dy - dh*y^2 - 2/3*df*y = 0
 2*h*y*dy + 2*f*dy - dh*y^2 - 2/3*df*y = 0
 h*y*dy + f*dy - 1/2*dh*y^2 - 1/3*df*y = 0
+# 1/2*D(y^2/h) + (f*dy - 1/3*df*y)/h^2 = 0
 
 ### T.A.2: y
+# - can replace one occurence or multiple occurances;
 y^2*dy - h*dy - y*dh - 2/3*df = 0 # *h
 h*y^2*dy - h^2*dy - h*y*dh - 2/3*h*df = 0
 h*y^2*dy - h^2*dy - 1/3*(y^3 - 2*f)*dh - 2/3*h*df = 0
 h*y^2*dy - h^2*dy - 1/3*y^3*dh + 2/3*f*dh - 2/3*h*df = 0
+# 1/3*(3/h*y^2*dy - y^3*dh/h^2) - dy - 2/3*D(f/h) = 0
+# 1/3*D(y^3/h) - dy - 2/3*D(f/h) = 0
 
-### T.A.3: Combinations
+### T.A.3: "Liniar" Combinations
 h*y^2*dy - h^2*dy - 1/3*y^3*dh + 2/3*f*dh - 2/3*h*df +
  + b*(2*h*y*dy + 2*f*dy - y^2*dh - 2/3*df*y) = 0
+
+### T.A.4: y^3 & y:
+h*y*dy + f*dy - 1/2*dh*y^2 - 1/3*df*y = 0 # * h
+h^2*y*dy + f*h*dy - 1/2*h*dh*y^2 - 1/3*df*h*y = 0
+h^2*y*dy + f*h*dy - 1/2*h*dh*y^2 - 1/9*df*(y^3 - 2*f) = 0
+h^2*y*dy + f*h*dy - 1/9*df*y^3 - 1/2*h*dh*y^2 + 2/9*f*df = 0
 
 
 ### T.B.) Poly-Transformations:
@@ -384,8 +396,9 @@ h*y^3*dy + f*h*dy - 1/2*dh*y^4 + f*dh*y - h*df*y = 0
 y^3*dy + f*dy - 3/2*dh*y^2 - df*(y^3 - 2*f)/(3*h) = 0 # * h
 h*y^3*dy + f*h*dy - 1/3*df*y^3 - 3/2*h*dh*y^2 + 2/3*f*df = 0
 
-### T.B.1 + T.A.3: f
+### T.B.1 + T.A.f: f
 # - but is trivial: initial derivative;
+# - may be useful with higher orders;
 y^3*dy + 1/2 * (y^3 - 3*h*y)*dy - 3/2*dh*y^2 - df*y = 0 # *2
 2*y^3*dy + (y^3 - 3*h*y)*dy - 3*dh*y^2 - 2*df*y = 0
 y^3*dy - h*y*dy - dh*y^2 - 2/3*df*y = 0
@@ -439,7 +452,7 @@ dy = function(x) {
 curve(y, from=-2, to=2)
 sapply(c(-(4:1)/5, (1:4)/5, 1.01), line.tan, dx=3, p=y, dp=dy)
 
-### V.3: Combinations
+### V.A.3: Combinations
 # h(x) = x # as above
 # f(x) = x^3
 # b = 1/2 * 1/x
@@ -459,6 +472,25 @@ dy = function(x) {
 }
 curve(y, from=-2, to=2)
 sapply(c(-(4:1)/5, (1:4)/5, 1.01), line.tan, dx=3, p=y, dp=dy)
+
+### V.A.4: Combinations
+# as above;
+# [NOT run]
+h^2*y*dy + f*h*dy - 1/9*df*y^3 - 1/2*h*dh*y^2 + 2/9*f*df = 0
+x^2*y*dy + x^4*dy - 1/3*x^2*y^3 - 1/2*x*y^2 + 2/3*x^5 = 0
+x*y*dy + x^3*dy - 1/3*x*y^3 - 1/2*y^2 + 2/3*x^4 = 0
+### Solution & Plot:
+# y = is the same as above;
+dy = function(x) {
+	y.x = y(x)
+	div = (x*y.x + x^3)
+	dp = (x*y.x^3 + 3/2*y.x^2 - 2*x^4) / 3
+	dp = if(div != 0) dp / div else Inf;
+	return(dp)
+}
+curve(y, from=-2, to=2)
+sapply(c(-(4:1)/5, (1:4)/5, 1.01), line.tan, dx=3, p=y, dp=dy)
+
 
 ### V.B.1: Tr. Poly
 # h(x) = x # as above
