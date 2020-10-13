@@ -7,13 +7,15 @@
 ### Differential Equations
 ### ODEs
 ###
-### draft v.0.1d-tr2
+### draft v.0.1e-pre-snack
 
 
 ### History
 
 ### Order 1 Non-Liniar
 ###
+### draft v.0.1e-pre-snack:
+# - TODO: derive the snack (D(P5));
 ### P3 & ODE Transformations:
 ### draft v.0.1d-tr - v.0.1d-tr2:
 # - more polynomial transformations,
@@ -397,12 +399,28 @@ y^3*dy + f*dy - 3/2*dh*y^2 - df*(y^3 - 2*f)/(3*h) = 0 # * h
 h*y^3*dy + f*h*dy - 1/3*df*y^3 - 3/2*h*dh*y^2 + 2/3*f*df = 0
 
 ### T.B.1 + T.A.f: f
-# - but is trivial: initial derivative;
+# - but is trivial: initial D(P3);
 # - may be useful with higher orders;
 y^3*dy + 1/2 * (y^3 - 3*h*y)*dy - 3/2*dh*y^2 - df*y = 0 # *2
 2*y^3*dy + (y^3 - 3*h*y)*dy - 3*dh*y^2 - 2*df*y = 0
 y^3*dy - h*y*dy - dh*y^2 - 2/3*df*y = 0
 y^2*dy - h*dy - dh*y - 2/3*df = 0 # initial derivative;
+
+### V.B.1 + Back-Sub: f Back into P3
+# - may be useful with D of higher Order;
+y^3*dy + f*dy - 3/2*dh*y^2 - df*y = 0
+# => f*dy = -y^3*dy + 3/2*dh*y^2 + df*y
+# y^3 - 3*h*y - 2*f = 0 # * dy
+y^3*dy - 3*h*y*dy - 2*f*dy = 0
+y^3*dy - 3*h*y*dy - 2*(-y^3*dy + 3/2*dh*y^2 + df*y) = 0
+3*y^3*dy - 3*h*y*dy - 3*dh*y^2 - 2*df*y = 0
+3*y^2*dy - 3*h*dy - 3*dh*y - 2*df = 0 # initial D(P3)
+# D2: 3*y^2*dy^2 + y^3*d2y + df*dy + f*d2y - 3*dh*y*dy - 3/2*d2h*y^2 - df*dy - d2f*y = 0
+# -f*d2y = 3*y^2*dy^2 + y^3*d2y - 3*dh*y*dy - 3/2*d2h*y^2 - d2f*y
+y^3*dy - 3*h*y*dy - 2*f*dy = 0
+y^3*dy - 3*h*y*dy + 2*(3*y^2*dy^2 + y^3*d2y - 3*dh*y*dy - 3/2*d2h*y^2 - d2f*y) = 0
+2*y^3*d2y + 6*y^2*dy^2 + y^3*dy - 3*h*y*dy - 6*dh*y*dy - 3*d2h*y^2 - 2*d2f*y = 0
+# TODO: substitute dy^2;
 
 
 ### T.B.2: TODO: y^2;
@@ -461,6 +479,7 @@ h*y^2*dy - h^2*dy - 1/3*y^3*dh + 2/3*f*dh - 2/3*h*df +
 x*y^2*dy - x^2*dy - 1/3*y^3 + 2/3*x^3 - 2*x^3 +
  + b*(2*x*y*dy + 2*x^3*dy - y^2 - 2*x^2*y) = 0
 x*y^2*dy + y*dy - 1/3*y^3 - 1/2/x*y^2 - x*y - 4/3*x^3 = 0
+x^2*y^2*dy + x*y*dy - 1/3*x*y^3 - 1/2*y^2 - x^2*y - 4/3*x^4 = 0
 ### Solution & Plot:
 # y = is the same as above;
 dy = function(x) {
@@ -479,12 +498,20 @@ sapply(c(-(4:1)/5, (1:4)/5, 1.01), line.tan, dx=3, p=y, dp=dy)
 h^2*y*dy + f*h*dy - 1/9*df*y^3 - 1/2*h*dh*y^2 + 2/9*f*df = 0
 x^2*y*dy + x^4*dy - 1/3*x^2*y^3 - 1/2*x*y^2 + 2/3*x^5 = 0
 x*y*dy + x^3*dy - 1/3*x*y^3 - 1/2*y^2 + 2/3*x^4 = 0
+# V.A.3 - V.A.4: [initial Derivative / trivial]
+x^2*y^2*dy - x^3*dy - x^2*y - 2*x^4 = 0 # /x^2
+y^2*dy - x*dy - y - 2*x^2 = 0
 ### Solution & Plot:
 # y = is the same as above;
-dy = function(x) {
+dy = function(x, alt=FALSE) {
 	y.x = y(x)
-	div = (x*y.x + x^3)
-	dp = (x*y.x^3 + 3/2*y.x^2 - 2*x^4) / 3
+	if(alt) {
+		div = (y.x^2 - x)
+		dp = (y.x + 2*x^2) # initial Derivative
+	} else {
+		div = (x*y.x + x^3)
+		dp = (x*y.x^3 + 3/2*y.x^2 - 2*x^4) / 3
+	}
 	dp = if(div != 0) dp / div else Inf;
 	return(dp)
 }
@@ -1084,5 +1111,29 @@ sapply(c(-(4:1)/5, (1:6)/5), line.tan, dx=3, p=y, dp=dy)
 x*((n-1)*y + 1)*dy - y^2 - 1/n*y = 0
 ((n-1)*y + 1)/(y^2 + 1/n*y) * dy = 1/x
 (n-1)/2*(2*y + 1/n - 1/n + 2/(n-1))/(y^2 + 1/n*y) * dy = 1/x
+
+
+#######################
+#######################
+
+### Class 1 Polynomials
+
+### n = 5
+
+###
+x = sqrt(2) # some Test
+k = (x^2-x+1)^(1/5)
+# root
+y = (x^2+x)*k^4 - (x^2+2*x+1)*k^3 + x^2*k^2 + (x^2+x)*k
+# P5 Polynomial (in y):
+(1 + 7*x + 21*x^2 + 28*x^3 + 6*x^4 - 18*x^5 - 10*x^6 - 69*x^7 - 163*x^8 - 122*x^9 - 122*x^10 - 184*x^11 - 114*x^12 +
+  - 50*x^13 - 64*x^14 - 27*x^15 + x^16 - x^17 - x^18) +
++ (5*x + 25*x^2 + 55*x^3 + 85*x^4 + 105*x^5 + 125*x^6 + 155*x^7 + 150*x^8 + 90*x^9 + 85*x^10 + 75*x^11 + 20*x^12 +
+  + 10*x^13 + 5*x^14)*y +
++ (- 5*x - 10*x^2 - 5*x^4 - 25*x^5 - 15*x^6 - 10*x^7 - 15*x^8 - 15*x^9 - 10*x^10)*y^2 +
++ y^5
+
+
+
 
 
