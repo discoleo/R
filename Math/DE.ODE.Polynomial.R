@@ -7,15 +7,16 @@
 ### Differential Equations
 ### ODEs
 ###
-### draft v.0.1e-snack
+### draft v.0.1e-snack2
 
 
 ### History
 
 ### Order 1 Non-Liniar
 ###
-### draft v.0.1e-pre-snack - v.0.1e-snack:
+### draft v.0.1e-pre-snack - v.0.1e-snack2:
 # - derived: the snack (D(P5));
+# - added a simpler snack (2): D(P5), where P5 = P((x-1)^(1/5));
 ### P3 & ODE Transformations:
 ### draft v.0.1d-tr - v.0.1d-tr2:
 # - more polynomial transformations,
@@ -1133,7 +1134,7 @@ y = (x^2+x)*k^4 - (x^2+2*x+1)*k^3 + x^2*k^2 + (x^2+x)*k
 + (- 5*x - 10*x^2 - 5*x^4 - 25*x^5 - 15*x^6 - 10*x^7 - 15*x^8 - 15*x^9 - 10*x^10)*y^2 +
 + y^5
 
-# D(P)
+# D(P): The Answer to the Universe and Everything
 42*x*y + 50*x*y^2 - 20*x*y^3 + 84*x^2*y + 165*x^2*y^2 + 24*x^3*y + 340*x^3*y^2 - 20*x^3*y^3 - 90*x^4*y +
  + 525*x^4*y^2 - 125*x^4*y^3 - 60*x^5*y + 750*x^5*y^2 - 90*x^5*y^3 - 483*x^6*y + 1085*x^6*y^2 - 70*x^6*y^3 - 1304*x^7*y +
  + 1200*x^7*y^2 - 120*x^7*y^3 - 1098*x^8*y + 810*x^8*y^2 - 135*x^8*y^3 - 1220*x^9*y + 850*x^9*y^2 - 100*x^9*y^3 +
@@ -1175,4 +1176,46 @@ dy = function(x) {
 curve(y, from=-2, to=2)
 # a nice ?local? minimum
 sapply(c(-(4:1)/5, (1:6)/5), line.tan, dx=3, p=y, dp=dy)
+
+
+#############
+
+### Example: simple n = 5
+x = sqrt(2) # some Test
+k = (x - 1)^(1/5)
+# root
+y = k^4 - k^3 + k^2 + k
+### P5 Polynomial (in y):
+(- 22 + 48*x - 30*x^2 + 5*x^3 - x^4) +
+(15 - 20*x + 5*x^3)*y^1 +
+(- 10 + 20*x - 10*x^2)*y^2 + y^5
+### D(P5)
+48*y - 60*x*y + 15*x^2*y - 4*x^3*y - 20*y^2 + 15*x^2*y^2 + 20*y^3 - 20*x*y^3 +
+ + (110 - 240*x + 150*x^2 - 25*x^3 + 5*x^4) * dy +
+ + (- 60 + 80*x - 20*x^3) * y * dy +
+ + (30 - 60*x + 30*x^2) * y^2 * dy
+### Solution
+y = function(x, n=5) {
+	# root
+	k = rootn(x - 1, n)
+	y = k^4 - k^3 + k^2 + k
+	y = sapply(y, round0)
+	return(y)
+}
+y.free = function(x, y) {
+	48*y - 60*x*y + 15*x^2*y - 4*x^3*y - 20*y^2 + 15*x^2*y^2 + 20*y^3 - 20*x*y^3
+}
+dy = function(x) {
+	y.x = y(x)
+	div = y.x^2 * (30 - 60*x + 30*x^2) +
+		y.x * (- 60 + 80*x - 20*x^3) +
+		(110 - 240*x + 150*x^2 - 25*x^3 + 5*x^4)
+	dp =  -y.free(x, y.x)
+	
+	dp = if(div != 0) dp / div else Inf;
+	return(dp)
+}
+curve(y, from=-2, to=3)
+# a nice ?local? minimum
+sapply(c(-(4:1)/3, (1:6)/3), line.tan, dx=3, p=y, dp=dy)
 
