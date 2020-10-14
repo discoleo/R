@@ -56,7 +56,7 @@ library(magrittr)
 ###################
 
 ### set the Working Directory
-setwd("C:\\Users\\Leo Mada\\Desktop\\DB")
+setwd("...\\DB")
 
 ##############
 
@@ -99,13 +99,13 @@ filter.id.xpath = function(pmid, subpath="/Article/Abstract/AbstractText") {
 #################
 ### Structure ###
 
-src.base = "C:/Users/Leo Mada/Desktop/Practica"
+src.base = "..."
 src.path = paste0(src.base, "/MSc/TextMining/Pubmed.Structure.R")
 
 ### external R script:
 # - explore structure of XML file;
 # - can be skipped;
-SKIP_STRUCTURE = TRUE
+SKIP_STRUCTURE = FALSE
 if( ! SKIP_STRUCTURE) {
 	source(src.path, echo=TRUE, keep.source=TRUE)
 }
