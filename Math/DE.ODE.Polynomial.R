@@ -7,16 +7,17 @@
 ### Differential Equations
 ### ODEs
 ###
-### draft v.0.1e-snack2
+### draft v.0.1e-snack3
 
 
 ### History
 
 ### Order 1 Non-Liniar
 ###
-### draft v.0.1e-pre-snack - v.0.1e-snack2:
+### draft v.0.1e-pre-snack - v.0.1e-snack3:
 # - derived: the snack (D(P5));
-# - added a simpler snack (2): D(P5), where P5 = P((x-1)^(1/5));
+# - added a simpler snack (snack2): D(P5), where P5 = P((x-1)^(1/5)),
+#   and a parametric one (snack3): P5 = P((x-a)^(1/5));
 ### P3 & ODE Transformations:
 ### draft v.0.1d-tr - v.0.1d-tr2:
 # - more polynomial transformations,
@@ -69,12 +70,13 @@
 ####################
 
 ### helper functions
-line.tan = function(x, col="red", dx=5, p=p, dp=dp) {
-	slope = dp(x)
+line.tan = function(x, col="red", dx=5, p=p, dp=dp, ...) {
+	slope = dp(x, ...)
 	x.max = ifelse( (abs(x) >= 1), dx*x, 10);
 	isInf = abs(slope) == Inf
 	x.max[isInf] = x[isInf]
-	lines(c(x, x.max), c(p(x), p(x) + (x.max-x)*slope), col=col)
+	p.x = p(x, ...)
+	lines(c(x, x.max), c(p.x, p.x + (x.max-x)*slope), col=col)
 	return(slope)
 }
 rootn = function(r, n) {
@@ -1174,7 +1176,7 @@ dy = function(x) {
 	return(dp)
 }
 curve(y, from=-2, to=2)
-# a nice ?local? minimum
+# a nice ?global/local? minimum
 sapply(c(-(4:1)/5, (1:6)/5), line.tan, dx=3, p=y, dp=dy)
 
 
@@ -1216,6 +1218,54 @@ dy = function(x) {
 	return(dp)
 }
 curve(y, from=-2, to=3)
-# a nice ?local? minimum
+# a nice global minimum
 sapply(c(-(4:1)/3, (1:6)/3), line.tan, dx=3, p=y, dp=dy)
+
+
+#############
+
+### Example: simple n = 5
+a = 4 # Parameter
+x = sqrt(2) # some Test
+k = rootn(x - a, 5)
+# root
+y = k^4 - k^3 + k^2 + k
+### P5 Polynomial (in y):
+(a + 42*a*x - 3*a*x^2 + 4*a*x^3 - 21*a^2 + 3*a^2*x - 6*a^2*x^2 - a^3 + 4*a^3*x - a^4 - x - 21*x^2 + x^3 - x^4) +
+(5*a - 30*a*x - 15*a*x^2 + 15*a^2 + 15*a^2*x - 5*a^3 - 5*x + 15*x^2 + 5*x^3)*y +
+(20*a*x - 10*a^2 - 10*x^2)*y^2 + y^5
+### D(P5)
+- 6*a*x*y - 30*a*x*y^2 + 12*a*x^2*y + 42*a*y - 30*a*y^2 + 20*a*y^3 - 12*a^2*x*y + 3*a^2*y + 15*a^2*y^2 +
+	+ 4*a^3*y - 42*x*y + 30*x*y^2 - 20*x*y^3 + 3*x^2*y + 15*x^2*y^2 - 4*x^3*y - y - 5*y^2 +
+ + (- 5*a - 210*a*x + 15*a*x^2 - 20*a*x^3 + 105*a^2 - 15*a^2*x + 30*a^2*x^2 + 5*a^3 - 20*a^3*x +
+	+ 5*a^4 + 5*x + 105*x^2 - 5*x^3 + 5*x^4) * dy +
+ + (- 20*a + 120*a*x + 60*a*x^2 - 60*a^2 - 60*a^2*x + 20*a^3 + 20*x - 60*x^2 - 20*x^3) * y * dy +
+ + (- 60*a*x + 30*a^2 + 30*x^2) * y^2 * dy # = 0
+### Solution
+y = function(x, a, n=5) {
+	# root
+	k = rootn(x - a, n)
+	y = k^4 - k^3 + k^2 + k
+	y = sapply(y, round0)
+	return(y)
+}
+y.free = function(x, y, a) {
+	- 6*a*x*y - 30*a*x*y^2 + 12*a*x^2*y + 42*a*y - 30*a*y^2 + 20*a*y^3 - 12*a^2*x*y +
+	+ 3*a^2*y + 15*a^2*y^2 + 4*a^3*y - 42*x*y + 30*x*y^2 - 20*x*y^3 + 3*x^2*y + 15*x^2*y^2 - 4*x^3*y - y - 5*y^2
+}
+dy = function(x, a) {
+	y.x = y(x, a)
+	div = y.x^2 * (- 60*a*x + 30*a^2 + 30*x^2) +
+		y.x * (- 20*a + 120*a*x + 60*a*x^2 - 60*a^2 - 60*a^2*x + 20*a^3 + 20*x - 60*x^2 - 20*x^3) +
+		(- 5*a - 210*a*x + 15*a*x^2 - 20*a*x^3 + 105*a^2 - 15*a^2*x + 30*a^2*x^2 + 5*a^3 - 20*a^3*x +
+		+ 5*a^4 + 5*x + 105*x^2 - 5*x^3 + 5*x^4)
+	dp =  -y.free(x, y.x, a)
+	
+	dp = if(div != 0) dp / div else Inf;
+	return(dp)
+}
+curve(y(x, a=a), from=a-2, to=a+3)
+# a nice global minimum
+sapply(c(a-(4:1)/3, a+(1:6)/3), line.tan, dx=3, p=y, dp=dy, a=a)
+
 
