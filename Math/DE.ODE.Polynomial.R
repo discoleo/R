@@ -7,17 +7,18 @@
 ### Differential Equations
 ### ODEs
 ###
-### draft v.0.1e-snack3
+### draft v.0.1e-snack4
 
 
 ### History
 
 ### Order 1 Non-Liniar
 ###
-### draft v.0.1e-pre-snack - v.0.1e-snack3:
+### draft v.0.1e-pre-snack - v.0.1e-snack4:
 # - derived: the snack (D(P5));
 # - added a simpler snack (snack2): D(P5), where P5 = P((x-1)^(1/5)),
 #   and a parametric one (snack3): P5 = P((x-a)^(1/5));
+# - basic exploration of (hidden) Trigonometric functions; (snack4)
 ### P3 & ODE Transformations:
 ### draft v.0.1d-tr - v.0.1d-tr2:
 # - more polynomial transformations,
@@ -1069,51 +1070,41 @@ sapply(c(-(4:1)/5, (1:6)/5), line.tan, dx=3, p=y, dp=dy)
 ####################
 ####################
 
-### y*e^y + h*e^y = f
-# e^y*dy + y*e^y*dy + h*e^y*dy + dh*e^y = df # *y
-# y*e^y*dy + y*y*e^y*dy + h*y*e^y*dy + dh*y*e^y = df*y
-# (f - h*e^y)*y*dy + (f - h*e^y)*dy + h*(f - h*e^y)*dy + (f - h*e^y)*dh = df*y
-# f*y*dy - h*e^y*y*dy + f*dy - h*e^y*dy + h*(f - h*e^y)*dy + (f - h*e^y)*dh = df*y
-# f*y*dy - h*(f - h*e^y)*dy + f*dy - h*e^y*dy + h*(f - h*e^y)*dy + (f - h*e^y)*dh = df*y
-# f*y*dy - 2*h*e^y*dy + 2*f*dy - df*y = 0
-
-### Examples:
-
-###
-# f = x
-# h = x - 1
-# ...
-# TODO: check result;
-# TODO: implement snack;
-
-
+### Arbitrary Polynomials
 
 ### y^5
-# y^5 - 5*h*y - f = 0
-# 5*y^4*dy - 5*h*dy - 5*dh*y - df = 0
-# y^4*dy - h*dy - dh*y - 1/5*df = 0 # *y
-# y^5*dy - h*y*dy - dh*y^2 - 1/5*df*y = 0
+# y^5 - 5*b1*y - b0 = 0
+# 5*y^4*dy - 5*b1*dy - 5*db1*y - db0 = 0
+# y^4*dy - b1*dy - db1*y - 1/5*db0 = 0 # *y
+# y^5*dy - b1*y*dy - db1*y^2 - 1/5*db0*y = 0
 # Transform A.1:
-(5*h*y + f)*dy - h*y*dy - dh*y^2 - 1/5*df*y = 0
-(4*h*y + f)*dy - dh*y^2 - 1/5*df*y = 0
+(5*b1*y + b0)*dy - b1*y*dy - db1*y^2 - 1/5*db0*y = 0
+(4*b1*y + b0)*dy - db1*y^2 - 1/5*db0*y = 0
 
 
 
 ### y^n
-# y^n - n*h*y - f = 0
-# n*y^(n-1)*dy - n*h*dy - n*dh*y - df = 0
-# y^(n-1)*dy - h*dy - dh*y - 1/n*df = 0 # *y
-# y^n*dy - h*y*dy - dh*y^2 - 1/n*df*y = 0
+# y^n - n*b1*y - b0 = 0
+# n*y^(n-1)*dy - n*b1*dy - n*db1*y - db0 = 0
+# y^(n-1)*dy - b1*dy - db1*y - 1/n*db0 = 0 # *y
+# y^n*dy - b1*y*dy - db1*y^2 - 1/n*db0*y = 0
 # Transform A.1:
-(n*h*y + f)*dy - h*y*dy - dh*y^2 - 1/n*df*y = 0
-((n-1)*h*y + f)*dy - dh*y^2 - 1/n*df*y = 0
+(n*b1*y + b0)*dy - b1*y*dy - db1*y^2 - 1/n*db0*y = 0
+((n-1)*b1*y + b0)*dy - db1*y^2 - 1/n*db0*y = 0
 
 ### Example:
-# f = x
-# h = x
+# b0 = x
+# b1 = x
 x*((n-1)*y + 1)*dy - y^2 - 1/n*y = 0
+# classic:
 ((n-1)*y + 1)/(y^2 + 1/n*y) * dy = 1/x
 (n-1)/2*(2*y + 1/n - 1/n + 2/(n-1))/(y^2 + 1/n*y) * dy = 1/x
+
+
+### Example:
+# b0 = k1 # constant
+# b1 = x^p - k2
+((n-1)*(x^p - k2)*y + k1)*dy - p*x^(p-1)*y^2 = 0
 
 
 #######################
@@ -1231,10 +1222,11 @@ k = rootn(x - a, 5)
 # root
 y = k^4 - k^3 + k^2 + k
 ### P5 Polynomial (in y):
+# y^5 + b2(a)*y^2 + b1(a)*y + b0(a)
 (a + 42*a*x - 3*a*x^2 + 4*a*x^3 - 21*a^2 + 3*a^2*x - 6*a^2*x^2 - a^3 + 4*a^3*x - a^4 - x - 21*x^2 + x^3 - x^4) +
 (5*a - 30*a*x - 15*a*x^2 + 15*a^2 + 15*a^2*x - 5*a^3 - 5*x + 15*x^2 + 5*x^3)*y +
 (20*a*x - 10*a^2 - 10*x^2)*y^2 + y^5
-### D(P5)
+### ODE based on D(P5)
 - 6*a*x*y - 30*a*x*y^2 + 12*a*x^2*y + 42*a*y - 30*a*y^2 + 20*a*y^3 - 12*a^2*x*y + 3*a^2*y + 15*a^2*y^2 +
 	+ 4*a^3*y - 42*x*y + 30*x*y^2 - 20*x*y^3 + 3*x^2*y + 15*x^2*y^2 - 4*x^3*y - y - 5*y^2 +
  + (- 5*a - 210*a*x + 15*a*x^2 - 20*a*x^3 + 105*a^2 - 15*a^2*x + 30*a^2*x^2 + 5*a^3 - 20*a^3*x +
@@ -1267,5 +1259,69 @@ dy = function(x, a) {
 curve(y(x, a=a), from=a-2, to=a+3)
 # a nice global minimum
 sapply(c(a-(4:1)/3, a+(1:6)/3), line.tan, dx=3, p=y, dp=dy, a=a)
+
+
+####################
+####################
+####################
+
+### Exponential & Lambert W
+
+### y*e^y + h*e^y = f
+# e^y*dy + y*e^y*dy + h*e^y*dy + dh*e^y = df # *y
+# y*e^y*dy + y*y*e^y*dy + h*y*e^y*dy + dh*y*e^y = df*y
+# (f - h*e^y)*y*dy + (f - h*e^y)*dy + h*(f - h*e^y)*dy + (f - h*e^y)*dh = df*y
+# f*y*dy - h*e^y*y*dy + f*dy - h*e^y*dy + h*(f - h*e^y)*dy + (f - h*e^y)*dh = df*y
+# f*y*dy - h*(f - h*e^y)*dy + f*dy - h*e^y*dy + h*(f - h*e^y)*dy + (f - h*e^y)*dh = df*y
+# f*y*dy - 2*h*e^y*dy + 2*f*dy - df*y = 0
+
+### Examples:
+
+###
+# f = x
+# h = x - 1
+# ...
+# TODO: check result;
+# TODO: implement snack;
+
+
+######################
+######################
+
+### Trigonometric Functions
+
+###
+x*(1 - x^4)*d2y - (2*x^4 - 1)*dy - x^3*y = (x^4 + 1) / sqrt(1 - x^4)
+### Solution
+y = function(x) {
+	r = asin(x^2)/x
+	r[x == 0] = 0
+	return(r)
+}
+dy = function(x) {
+	y.x = y(x)
+	p = (2*x / sqrt(1- x^4)) - y.x
+	p = p/x
+	p[x == 0] = 1
+	return(p)
+}
+d2y = function(x) {
+	y.x = y(x)
+	dy.x = dy(x)
+	x4 = x^4
+	p = (x4 + 1) / sqrt(1 - x4) + x^3*y.x + (2*x4 - 1)*dy.x
+	p = p / x / (1-x4)
+	return(p)
+}
+### Plot
+curve(y, from=-1, to=1)
+div = 23
+sapply(c(-1 + (1:4)/div, 1 - (1:4)/div), line.tan, dx=0.5, p=y, dp=dy)
+### D2(y):
+curve(dy, from=-1, to=1, col="green", ylim=c(-1, 6))
+curve(y, from=-1, to=1, col="grey", add=T)
+div = 23
+sapply(c(-1 + (1:4)/div, 1 - (1:4)/div), line.tan, dx=0.5, p=dy, dp=d2y)
+
 
 
