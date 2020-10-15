@@ -16,8 +16,16 @@
 # X[i]: each x[i] has an associated cost;
 
 ### Cost:
-# Swap(x[i], x[j]) = mean(Cost(x[i]), Cost(x[j]));
+# Cost(Swap(x[i], x[j])) = mean(Cost(x[i]), Cost(x[j]));
+# Cost(Sort(S)) = sum(Cost(Swaps(sorting of S)));
 
 ### Task:
 # Minimize(Cost(Sort(S)));
+
+################
+################
+
+### Analysis
+
+# TODO
 
