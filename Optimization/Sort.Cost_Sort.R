@@ -22,10 +22,21 @@
 ### Task:
 # Minimize(Cost(Sort(S)));
 
+### Ties:
+# Variant 1: NO ties;
+# Variant 2: all equivaent ties have the same cost;
+# Variant 3: S may contain ties, i.e. x[i] = x[j], with different cost;
+
+
 ################
 ################
 
 ### Analysis
 
 # TODO
+
+# Can we compute the optimal value?
+# ;-)
+
+# minimal Cost = minimum(S => Sorted(S));
 
