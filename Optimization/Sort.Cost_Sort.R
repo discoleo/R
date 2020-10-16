@@ -4,7 +4,7 @@
 ###
 ### Leonard Mada
 ###
-### draft v.0.1a
+### draft v.0.1b
 
 
 ### Problem: Optimize the Cost-Sort sort
@@ -27,6 +27,15 @@
 # Variant 2: all equivaent ties have the same cost;
 # Variant 3: S may contain ties, i.e. x[i] = x[j], with different cost;
 
+###############
+
+###############
+### History ###
+
+### draft v.0.1b:
+# - added costsort.gen() function:
+#   generates data sets;
+
 
 ################
 ################
@@ -39,4 +48,30 @@
 # ;-)
 
 # minimal Cost = minimum(S => Sorted(S));
+
+
+####################
+
+### helper Functions
+
+### generate data-sets
+costsort.gen = function(n, unique=TRUE, scale=1/4, doRank=TRUE) {
+	id = 1:n
+	x = sample(id, n, replace = ! unique)
+	### possible options
+	# x.max = n
+	# x = runif(n, 0, x.max)
+	### Cost
+	cost = sample(id, n) * scale
+	x.df = data.frame(id=id, x=x, cost=cost)
+	if(doRank) {
+		x.df$rank = rank(cost)
+	}
+	return(x.df)
+}
+
+##############
+
+x = costsort.gen(10)
+x
 
