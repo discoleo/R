@@ -6,9 +6,17 @@
 ### TSP Models
 ### Data Generators
 ###
-### draft v.0.1b
+### draft v.0.1c
 
 
+###############
+### History ###
+
+### draft v.0.1c:
+# - added overlapping circles;
+
+
+####################
 ####################
 
 ### Generate Special Graphs for TSP
@@ -34,6 +42,31 @@ watermelon.gen = function(n, m, l, random=TRUE, d=3) {
 	}
 	p.y = sapply(1:m, ellipse.f, x=p.x)
 	return(list("x"=p.x, "y"=p.y))
+}
+
+circles.int.gen = function(n, n.c, r=1) {
+	# intersecting/overlapping circles
+	central.th = (0:(n.c-1)) * 2*pi / n.c;
+	circle.th = (0:(n-1)) * 2*pi / n;
+	circle.f = function(theta, r, centre=c(0,0)) {
+		x = r * cos(theta) + centre[1]	
+		y = r * sin(theta) + centre[2]
+		return(cbind(x, y))
+	}
+	circle.shift = function(id, base.circle, centre) {
+		x = base.circle[1,] + centre[1, id];
+		y = base.circle[2,] + centre[2, id];
+		return(cbind(x, y));
+	}
+	# TODO: nicer code;
+	circles.c = sapply(central.th, circle.f, r=r)
+	circle.base = sapply(circle.th, circle.f, r=r)
+	circles.pxy = sapply(1:ncol(circles.c), circle.shift, base.circle=circle.base, centre=circles.c)
+	circles.pxy = list(
+		x = as.vector(circles.pxy[1:n,]),
+		y = as.vector(circles.pxy[-(1:n),]))
+	# print(circles.pxy)
+	return(circles.pxy)
 }
 
 rnorm2d.gen = function(n1, n2=n1, sd1=1, sd2=1) {
@@ -130,4 +163,37 @@ tour
 
 tour_length(tour)
 plot(etsp, tour, tour_col = "red")
+
+
+#########################
+
+### Overlapping Circles
+p = circles.int.gen(17, 5, 2)
+plot(p$x, p$y)
+
+
+cities = matrix(c(as.vector(p$x), as.vector(p$y)), ncol=2)
+
+etsp <- ETSP(cities)
+etsp
+
+### calculate a tour
+tour <- solve_TSP(etsp, method = "nn")
+tour
+
+tour_length(tour)
+plot(etsp, tour, tour_col = "red")
+
+
+#######################
+
+### Analysis
+# TODO
+
+# 1.) Phase Transitions in the data
+# - How to measure phase transitions?
+# 2.) Invariants, pseudo-Invariants
+# - Higher Moments;
+# - Higher "Moments" of Correlation;
+# - other pseudo-invariants;
 
