@@ -74,7 +74,7 @@ find.base = function(m, middle=FALSE) {
 library(TSP)
 
 
-setwd("C:/Users/Leo Mada/Desktop/DB/Math")
+setwd("/Math")
 
 
 ###########################
