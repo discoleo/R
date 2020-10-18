@@ -6,12 +6,14 @@
 ### TSP Models
 ### Data Generators
 ###
-### draft v.0.1c
+### draft v.0.1d
 
 
 ###############
 ### History ###
 
+### draft v.0.1d:
+# - added 2 overlapping densities (mixture of 2 gaussians);
 ### draft v.0.1c:
 # - added overlapping circles;
 
@@ -85,16 +87,27 @@ runif2d.gen = function(n1, n2=n1, max=2) {
 	return(list("x"=p.x, "y"=p.y))
 }
 
-find.base = function(m, middle=FALSE) {
+r2d.gen = function(n, ep, sd=1, sep.scale=1) {
+	# ep = epochs
+	s = rnorm(10*n, sd=sd)
+	ep.id = 1:ep
+	y1 = as.vector(sapply(ep.id, function(id) sample(s, n))) + sd*sep.scale
+	y2 = as.vector(sapply(ep.id, function(id) sample(s, n))) - sd*sep.scale
+	ep.all = rep(ep.id, each=n)
+	return(list("x"=c(ep.all, ep.all), "y"=c(y1, y2)))
+}
+
+find.base = function(m, y=0, middle=FALSE) {
 	# m = matrix with coordinates of cities
 	# only with non-random
 	# TODO: more options
 	if( ! middle) {
-		isZero = m[,1] == 0 & m[,2] == 0
+		isZero = m[,1] == y & m[,2] == y
 	} else {
-		m0 = m[m[,2] == 0, 1]
+		isZero = m[,2] == y
+		m0 = m[isZero, 1]
 		mid = m0[rank(m0) == round(length(m0)/2)]
-		isZero = m[,2] == 0 & m[,1] == mid
+		isZero = isZero & m[,1] == mid
 	}
 	id = match(TRUE, isZero)
 	return(id)
@@ -107,7 +120,7 @@ find.base = function(m, middle=FALSE) {
 library(TSP)
 
 
-setwd("/Math")
+setwd("C:/Users/Leo Mada/Desktop/DB/Math")
 
 
 ###########################
@@ -170,6 +183,28 @@ plot(etsp, tour, tour_col = "red")
 ### Overlapping Circles
 p = circles.int.gen(17, 5, 2)
 plot(p$x, p$y)
+
+
+cities = matrix(c(as.vector(p$x), as.vector(p$y)), ncol=2)
+
+etsp <- ETSP(cities)
+etsp
+
+### calculate a tour
+tour <- solve_TSP(etsp, method = "nn")
+tour
+
+tour_length(tour)
+plot(etsp, tour, tour_col = "red")
+
+
+#######################
+
+### Specific Densities
+p = r2d.gen(5, 10, sd=2, sep.scale=1.5)
+plot(p$x, p$y)
+
+# Q: Are there any phase transitions determined by sd & sep.scale?
 
 
 cities = matrix(c(as.vector(p$x), as.vector(p$y)), ncol=2)
