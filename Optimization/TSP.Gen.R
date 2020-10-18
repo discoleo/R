@@ -24,10 +24,10 @@
 ### Generate Special Graphs for TSP
 
 # various Generator functions:
-watermelon.gen = function(n, m, l, random=TRUE, d=3) {
+watermelon.gen = function(n, m, l, random=TRUE, v.scale=3) {
 	# n = number of points in a half-ellipse;
-	# m = number of half-ellipses;
-	r2 = l^2 / 4 # * m
+	# m = number of half-ellipses / half-orbits;
+	r2 = l^2 / 4;
 	ellipse.f = function(id, x) {
 		a = 2*id - m - 1
 		if(a == 0) {
@@ -35,13 +35,14 @@ watermelon.gen = function(n, m, l, random=TRUE, d=3) {
 		}
 		a = a/m
 		x.x = abs(x[,id] - l/2)
-		return(sign(a)*sqrt(r2 - x.x^2 + d*(l/2 - x.x)*l*a^2))
+		return(sign(a)*sqrt(r2 - x.x^2 + v.scale*(l/2 - x.x)*l*a^2))
 	}
 	if(random) {
 		p.x = sapply(1:m, function(id) runif(n, 0, l))
 	} else {
 		# TODO: fix repeating (0, 0);
-		p.x = matrix(rep( (0:(n-1)) * l/n, m), ncol=m)
+		p.x = matrix(rep( (1/2 + 0:(n-1)) * l/n, m), ncol=m)
+		p.x[1, round(m/2)] = 0 # first Element;
 	}
 	p.y = sapply(1:m, ellipse.f, x=p.x)
 	return(list("x"=p.x, "y"=p.y))
@@ -103,17 +104,27 @@ r2d.gen = function(n, epochs, sd=1, sep.scale=1, x.jitter=NA) {
 	return(list("x"=ep.all, "y"=c(y1, y2)))
 }
 
-find.base = function(m, y=0, middle=FALSE) {
+find.base = function(m, y=0, middle=FALSE, type=c("gaussian", "regular")) {
 	# m = matrix with coordinates of cities
-	# only with non-random
-	# TODO: more options
-	if( ! middle) {
-		isZero = m[,1] == y & m[,2] == y
+	# - currently works best/only with non-random data;
+	# TODO:
+	# - more options;
+	# - regular vs gaussian vs uniform;
+	
+	# y-Coordinate
+	if(length(y) == 2) {
+		isZero = (m[,2] >= y[1]) & (m[,2] <= y[2])
 	} else {
 		isZero = m[,2] == y
+	}
+	#
+	if( ! middle) {
+		x.min = min(m[isZero, 1])
+		isZero = isZero & m[,1] == x.min
+	} else {
 		m0 = m[isZero, 1]
-		mid = m0[rank(m0) == round(length(m0)/2)]
-		isZero = isZero & m[,1] == mid
+		x.mid = m0[rank(m0) == round((length(m0) + 1)/2)]
+		isZero = isZero & m[,1] == x.mid
 	}
 	id = match(TRUE, isZero)
 	return(id)
@@ -151,15 +162,23 @@ tour
 
 tour_length(tour)
 plot(etsp, tour, tour_col = "red")
+points(cities[id,1], cities[id,2], col="green")
 
 
+### Save tour as image
 SAVE_PNG = TRUE
 if(SAVE_PNG) {
 png(file="TSP.Watermelon.png")
-	plot(etsp, tour, tour_col = "red")
+	plot(etsp, tour, tour_col = "red", xlab="X-Coord", ylab="Y-Coord")
+	points(cities[id,1], cities[id,2], col="green")
 dev.off()
 }
 
+### Save coordinates as TSP file
+write_TSPLIB(etsp, file="Watermelon.tsp")
+
+
+### Other: for ATSP
 # image(atsp, tour)
 
 
@@ -207,12 +226,13 @@ plot(etsp, tour, tour_col = "red")
 #######################
 
 ### Specific Densities
-p = r2d.gen(5, 10, sd=2, sep.scale=2, x.jitter=T)
+p = r2d.gen(5, 10, sd=2, sep.scale=3, x.jitter=T)
 plot(p$x, p$y)
 
 ### Q:
 # Are there any phase transitions determined by sd & sep.scale?
-# Are there phase transitions when sep.scale changes between ~1.5 and ~2?
+# Are there various phase transitions when sep.scale changes:
+# between ~1.5 and ~2 and between ~2 and ~3?
 # How can we measure and describe phase transitions?
 
 
@@ -229,6 +249,19 @@ tour_length(tour)
 plot(etsp, tour, tour_col = "red")
 
 
+### with Base-city:
+id = find.base(cities, y=c(0, 2.5), middle=T)
+id
+#
+tour <- solve_TSP(etsp, method = "nn", control=list(start=id))
+tour
+
+tour_length(tour)
+plot(etsp, tour, tour_col = "red")
+points(cities[id,1], cities[id,2], col="green")
+
+
+#######################
 #######################
 
 ### Analysis
@@ -239,5 +272,7 @@ plot(etsp, tour, tour_col = "red")
 # 2.) Invariants, pseudo-Invariants
 # - Higher Moments;
 # - Higher "Moments" of Correlation;
+# - non-linear correlation, x-"autocorrelation" or y-"autocorrelation";
+# - "divergence", "curl";
 # - other pseudo-invariants;
 
