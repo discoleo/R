@@ -23,6 +23,7 @@
 
 ### Generate Special Graphs for TSP
 
+# various Generator functions:
 watermelon.gen = function(n, m, l, random=TRUE, d=3) {
 	# n = number of points in a half-ellipse;
 	# m = number of half-ellipses;
@@ -87,14 +88,19 @@ runif2d.gen = function(n1, n2=n1, max=2) {
 	return(list("x"=p.x, "y"=p.y))
 }
 
-r2d.gen = function(n, ep, sd=1, sep.scale=1) {
-	# ep = epochs
+r2d.gen = function(n, epochs, sd=1, sep.scale=1, x.jitter=NA) {
+	# n = number of points per epoch
 	s = rnorm(10*n, sd=sd)
-	ep.id = 1:ep
+	ep.id = if(length(epochs) == 1) 1:epochs else epochs;
+	#
 	y1 = as.vector(sapply(ep.id, function(id) sample(s, n))) + sd*sep.scale
 	y2 = as.vector(sapply(ep.id, function(id) sample(s, n))) - sd*sep.scale
 	ep.all = rep(ep.id, each=n)
-	return(list("x"=c(ep.all, ep.all), "y"=c(y1, y2)))
+	ep.all = c(ep.all, ep.all)
+	if( ! is.na(x.jitter)) {
+		ep.all = jitter(ep.all)
+	}
+	return(list("x"=ep.all, "y"=c(y1, y2)))
 }
 
 find.base = function(m, y=0, middle=FALSE) {
@@ -120,7 +126,7 @@ find.base = function(m, y=0, middle=FALSE) {
 library(TSP)
 
 
-setwd("C:/Users/Leo Mada/Desktop/DB/Math")
+setwd("/Math")
 
 
 ###########################
@@ -201,10 +207,13 @@ plot(etsp, tour, tour_col = "red")
 #######################
 
 ### Specific Densities
-p = r2d.gen(5, 10, sd=2, sep.scale=1.5)
+p = r2d.gen(5, 10, sd=2, sep.scale=2, x.jitter=T)
 plot(p$x, p$y)
 
-# Q: Are there any phase transitions determined by sd & sep.scale?
+### Q:
+# Are there any phase transitions determined by sd & sep.scale?
+# Are there phase transitions when sep.scale changes between ~1.5 and ~2?
+# How can we measure and describe phase transitions?
 
 
 cities = matrix(c(as.vector(p$x), as.vector(p$y)), ncol=2)
