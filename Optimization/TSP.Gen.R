@@ -130,6 +130,21 @@ find.base = function(m, y=0, middle=FALSE, type=c("gaussian", "regular")) {
 	return(id)
 }
 
+write.tsp = function(x, file, asInt=TRUE, scale=1000) {
+	if(asInt) {
+		tsp.int = round(x * scale)
+		if(inherits(x, "ETSP")) {
+			tsp.int = ETSP(tsp.int)
+			# still does NOT save as INTEGER!
+			write_TSPLIB(tsp.int, file=file)
+		} else {
+			print("Nothing written: class NOT supported!")
+		}
+	} else {
+		write_TSPLIB(x, file=file)
+	}
+}
+
 ###########################
 
 # install.packages("TSP")
@@ -175,6 +190,10 @@ dev.off()
 }
 
 ### Save coordinates as TSP file
+# as Integer:
+write.tsp(etsp, file="Watermelon.tsp", asInt=TRUE)
+
+# as initial data
 write_TSPLIB(etsp, file="Watermelon.tsp")
 
 
