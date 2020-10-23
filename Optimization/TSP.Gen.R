@@ -6,14 +6,15 @@
 ### TSP Models
 ### Data Generators
 ###
-### draft v.0.1e
+### draft v.0.1f
 
 
 ###############
 ### History ###
 
-### draft v.0.1e:
+### draft v.0.1e - v.0.1f:
 # - added concentric circles;
+# - added variable number of points per circle (v.0.1f);
 ### draft v.0.1d:
 # - added 2 overlapping densities (mixture of 2 gaussians);
 ### draft v.0.1c:
@@ -74,15 +75,24 @@ circles.int.gen = function(n, n.c, r=1) {
 	# print(circles.pxy)
 	return(circles.pxy)
 }
-radial.gen = function(n, n.c, phi=0, r=1, d=NA, addCenter=TRUE) {
+radial.gen = function(n, n.c, phi=0, r=1, d, addCenter=TRUE) {
 	# concentric centers:
 	# n = number of points/circle;
 	# n.c = number of circles;
-	# TODO: d = distance between points (variable points / circle);
-	th = 2*pi/n
-	id = 0:(n-1)
+	# d = distance between points (variable points / circle);
 	if(length(r) == 1) {
 		r = r * 1:n.c;
+	}
+	if(missing(n)) {
+		if(missing(d)) {
+			stop("Number of points n or distance between points d must be provided!")
+		}
+		n = 2*pi*r / d;
+		th = 2*pi/n
+		n = round(n) # check if useful?
+	} else {
+		th = rep(2*pi/n, n.c)
+		n = rep(n, n.c)
 	}
 	if(addCenter) {
 		xy.df = data.frame(x=0, y=0)
@@ -90,8 +100,9 @@ radial.gen = function(n, n.c, phi=0, r=1, d=NA, addCenter=TRUE) {
 		xy.df = data.frame(x=numeric(0), y=numeric(0))
 	}
 	for(i in 1:n.c) {
-		x = r[i] * cos(th * id + phi*i)
-		y = r[i] * sin(th * id + phi*i)
+		id = 0:(n[i]-1)
+		x = r[i] * cos(th[i] * id + phi*i)
+		y = r[i] * sin(th[i] * id + phi*i)
 		xy.df = rbind(xy.df, cbind(x, y))
 	}
 	return(xy.df)
@@ -175,6 +186,8 @@ write.tsp = function(x, file, asInt=TRUE, scale=1000) {
 
 library(TSP)
 
+### 3D
+library(rgl)
 
 setwd("/Math")
 
@@ -343,11 +356,46 @@ plot(etsp, tour, tour_col = "red", xlab="X-Coord", ylab="Y-Coord")
 points(cities[id,1], cities[id,2], col="green")
 
 
+### 3D
+plot3d(p$x, p$y, p$x^2 + p$y^2, type="s", col=1/2*abs(p$y)+1)
+#
+val.r = p$x^2 + p$y^2
+plot3d(p$x, p$y, val.r, type="s", col = val.r/2 + 1)
+plot3d(p$x, p$y, sqrt(val.r), type="s", col = sqrt(val.r)+1)
+
+
+###########
+
+### variable number of points / circle
+phi = -0.01 # 0.2 # 0;
+p = radial.gen(d=1 + (1:7)/17, n.c=7, phi=phi)
+plot(p$x, p$y)
+
+
+cities = matrix(c(as.vector(p$x), as.vector(p$y)), ncol=2)
+
+### with Base-city:
+# id = find.base(cities, y=0, middle=F)
+# id = find.base(cities, y=c(2, 5), middle=T)
+id = find.base(cities, y=c(0.5, 2), middle=T)
+id
+
+etsp <- ETSP(cities)
+etsp
+
+### calculate a tour
+tour <- solve_TSP(etsp, method = "nn", control=list(start=id))
+tour
+
+tour_length(tour)
+plot(etsp, tour, tour_col = "red", xlab="X-Coord", ylab="Y-Coord")
+points(cities[id,1], cities[id,2], col="green")
+
+
 #######################
 #######################
 
 ### Analysis
-# TODO
 
 # 1.) Phase Transitions in the data
 # - How to measure phase transitions?
@@ -358,4 +406,7 @@ points(cities[id,1], cities[id,2], col="green")
 # - "divergence", "curl";
 # - separation in higher dimensions;
 # - other pseudo-invariants;
+
+### TODO:
+# - proper concepts of analysis;
 
