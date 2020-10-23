@@ -6,12 +6,14 @@
 ### TSP Models
 ### Data Generators
 ###
-### draft v.0.1d
+### draft v.0.1e
 
 
 ###############
 ### History ###
 
+### draft v.0.1e:
+# - added concentric circles;
 ### draft v.0.1d:
 # - added 2 overlapping densities (mixture of 2 gaussians);
 ### draft v.0.1c:
@@ -71,6 +73,28 @@ circles.int.gen = function(n, n.c, r=1) {
 		y = as.vector(circles.pxy[-(1:n),]))
 	# print(circles.pxy)
 	return(circles.pxy)
+}
+radial.gen = function(n, n.c, phi=0, r=1, d=NA, addCenter=TRUE) {
+	# concentric centers:
+	# n = number of points/circle;
+	# n.c = number of circles;
+	# TODO: d = distance between points (variable points / circle);
+	th = 2*pi/n
+	id = 0:(n-1)
+	if(length(r) == 1) {
+		r = r * 1:n.c;
+	}
+	if(addCenter) {
+		xy.df = data.frame(x=0, y=0)
+	} else {
+		xy.df = data.frame(x=numeric(0), y=numeric(0))
+	}
+	for(i in 1:n.c) {
+		x = r[i] * cos(th * id + phi*i)
+		y = r[i] * sin(th * id + phi*i)
+		xy.df = rbind(xy.df, cbind(x, y))
+	}
+	return(xy.df)
 }
 
 rnorm2d.gen = function(n1, n2=n1, sd1=1, sd2=1) {
@@ -189,6 +213,14 @@ png(file="TSP.Watermelon.png")
 dev.off()
 }
 
+### 3D
+library(rgl)
+#
+plot3d(p$x, p$y, p$x^2 + p$y^2, type="s", col=1/2*abs(p$y)+1)
+val.r = (p$x - max(p$x)/2)^2 + (abs(p$y) - max(p$y)/2)^2
+plot3d(p$x, p$y, val.r, type="s", col=1/2*abs(p$y)+1)
+plot3d(p$x, p$y, sqrt(val.r), type="s", col=1/2*abs(p$y)+1)
+
 ### Save coordinates as TSP file
 # as Integer:
 write.tsp(etsp, file="Watermelon.tsp", asInt=TRUE)
@@ -280,6 +312,37 @@ plot(etsp, tour, tour_col = "red")
 points(cities[id,1], cities[id,2], col="green")
 
 
+##########################
+##########################
+
+##########################
+### Concentric Circles ###
+
+phi = 0.3 # 0.2 # 0;
+p = radial.gen(17, 5, phi=phi)
+plot(p$x, p$y)
+
+
+cities = matrix(c(as.vector(p$x), as.vector(p$y)), ncol=2)
+
+### with Base-city:
+# id = find.base(cities, y=0, middle=F)
+# id = find.base(cities, y=c(2, 5), middle=T)
+id = find.base(cities, y=c(0.5, 2), middle=T)
+id
+
+etsp <- ETSP(cities)
+etsp
+
+### calculate a tour
+tour <- solve_TSP(etsp, method = "nn", control=list(start=id))
+tour
+
+tour_length(tour)
+plot(etsp, tour, tour_col = "red", xlab="X-Coord", ylab="Y-Coord")
+points(cities[id,1], cities[id,2], col="green")
+
+
 #######################
 #######################
 
@@ -293,5 +356,6 @@ points(cities[id,1], cities[id,2], col="green")
 # - Higher "Moments" of Correlation;
 # - non-linear correlation, x-"autocorrelation" or y-"autocorrelation";
 # - "divergence", "curl";
+# - separation in higher dimensions;
 # - other pseudo-invariants;
 
