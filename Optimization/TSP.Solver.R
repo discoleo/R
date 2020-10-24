@@ -5,12 +5,14 @@
 ###
 ### TSP Solver
 ###
-### draft v.0.1a
+### draft v.0.1b
 
 
 ###############
 ### History ###
 
+### draft v.0.1b:
+# - some experiments with median-based regularisation;
 ### draft v.0.1a:
 # - moved from TSP.Gen.R;
 ### from TSP.Gen.R [v.0.2c - v.0.2d]:
@@ -192,33 +194,58 @@ optim.tour = function(cities, tour=NA, T_Max=1000, T_Min=1E-4) {
 ################
 ### Examples ###
 
+test.Tour.gen = function(n=4, phi=-0.01) {
+	# phi = -0.01 # 0.2 # 0;
+	p = radial.gen(d = 1 + (1:n)/17, r = 5 + (1:n)/3, phi=phi, addCenter=F)
+	plot(p$x, p$y)
+
+	cities = matrix(c(as.vector(p$x), as.vector(p$y)), ncol=2)
+
+	### with Base-city:
+	id = find.base(cities, y=c(0.5, 2), middle=T)
+	print(id)
+
+	etsp = ETSP(cities)
+	return(list(cities=cities, etsp=etsp, id=id))
+}
+
+##################
 ### Examples: Tour
-phi = -0.01 # 0.2 # 0;
-p = radial.gen(d=1 + (1:4)/17, r= 5 + (1:4)/3, phi=phi, addCenter=F)
-plot(p$x, p$y)
+data = test.Tour.gen(4)
+cities = data$cities; etsp = data$etsp; id = data$id;
 
-cities = matrix(c(as.vector(p$x), as.vector(p$y)), ncol=2)
-
-### with Base-city:
-id = find.base(cities, y=c(0.5, 2), middle=T)
-id
-
-etsp = ETSP(cities)
-etsp
-
-### alpha = 1/5; p = 1;
-### alpha = 15; p = 1/5
-
+### Tour
+# alpha = 1/5; p = 1;
+# alpha = 15; p = 1/5
 tour = init.tour(cities, alpha=1/5)
 plot(etsp, tour, tour_col = "red", xlab="X-Coord", ylab="Y-Coord")
+points(cities[id,1], cities[id,2], col="green")
 sum(dist.tour(cities, tour))
+
 
 # Note: takes long!!!
 # and may increase the cost: NO elitism in current implementation;
 tour = optim.tour(cities, tour=tour, 1000, 1E-4)
 sum(dist.tour(cities, tour))
-
 plot(etsp, tour$S, tour_col = "red", xlab="X-Coord", ylab="Y-Coord")
+points(cities[id,1], cities[id,2], col="green")
+
+
+##################
+### Examples: Tour
+data = test.Tour.gen(5)
+cities = data$cities; etsp = data$etsp; id = data$id;
+
+### Tour
+alpha = 1/5; p = 1;
+alpha = 1.1; p = 1/4;
+alpha = 0; # 101.8
+alpha = -0.5; p =1/4; # 88.27
+alpha = -2/3; p =1/5; # 88.27
+tour = init.tour(cities, alpha=alpha, p=p)
+plot(etsp, tour, tour_col = "red", xlab="X-Coord", ylab="Y-Coord")
+points(cities[id,1], cities[id,2], col="green")
+sum(dist.tour(cities, tour))
 
 
 
