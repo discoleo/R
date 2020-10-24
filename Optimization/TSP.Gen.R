@@ -6,17 +6,16 @@
 ### TSP Models
 ### Data Generators
 ###
-### draft v.0.2c
+### draft v.0.2d
 
 
 ###############
 ### History ###
 
-### draft v.0.2c:
+### draft v.0.2c - v.0.2d:
 # - basic annealing algorithm;
-# - TODO:
-#  -- implement specific initialisations
-#     using the global/local medians as regularisation terms;
+# - initialisation using global medians as regularisation terms (v.0.2d);
+# - TODO: explore also local neighbourhood medians;
 ### draft v.0.2b:
 # - concept for algorithm:
 #   add penalty for points with short median distance;
@@ -639,7 +638,48 @@ optim.tour = function(cities, tour=NA, T_Max=1000, T_Min=1E-4) {
     return (list("cost"=S_best_cost, "S"=S))
 }
 
+init.tour = function(cities, start=1, alpha=1/3, p=1) {
+	len = nrow(cities)
+	remain.id = seq(len)
+	d = dist.all(cities)
+	d.med = sapply(1:nrow(d), function(id) median(d[id, ]))
+	d = d.med
+	#
+	dist.reg = function(id, current.city, remain.id, d, current.max) {
+		sqrt(sum((cities[remain.id[id],] - current.city)^2)) +
+		alpha * (current.max^p - d[id]^p)
+	}
+	#
+	tour = remain.id[start]
+	current.id = start
+	iter = rep(0, len-2)
+	for(i in iter) {
+		current.city = cities[remain.id[current.id], ]
+		# remove current city
+		remain.id = remain.id[ - current.id]
+		d = d[ - current.id]
+		# cost of next city
+		current.max = max(d);
+		cost = sapply(seq(remain.id), dist.reg, current.city, remain.id, d, current.max)
+		cost.min = min(cost)
+		next.id = match(cost.min, cost)
+		# update
+		current.id = next.id
+		tour = c(tour, remain.id[current.id])
+	}
+	tour = c(tour, remain.id[-current.id])
+	return(tour)
+}
 
-tour = optim.tour(cities, NA, 1000, 1E-4)
+tour = init.tour(cities, alpha=1/5)
+plot(etsp, tour, tour_col = "red", xlab="X-Coord", ylab="Y-Coord")
+sum(dist.tour(cities, tour))
+
+# Note: takes long!!!
+# and may increase the cost: NO elitism in current implementation;
+tour = optim.tour(cities, tour=tour, 1000, 1E-4)
+sum(dist.tour(cities, tour))
 
 plot(etsp, tour$S, tour_col = "red", xlab="X-Coord", ylab="Y-Coord")
+
+
