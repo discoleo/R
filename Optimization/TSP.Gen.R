@@ -6,12 +6,15 @@
 ### TSP Models
 ### Data Generators
 ###
-### draft v.0.2a
+### draft v.0.2b
 
 
 ###############
 ### History ###
 
+### draft v.0.2b:
+# - concept for algorithm:
+#   add penalty for points with short median distance;
 ### draft v.0.2a:
 # - started work on Analysis tools:
 #  -- distance between locations on tour;
@@ -79,17 +82,24 @@ circles.int.gen = function(n, n.c, r=1) {
 	# print(circles.pxy)
 	return(circles.pxy)
 }
-radial.gen = function(n, n.c, phi=0, r=1, d, addCenter=TRUE) {
+radial.gen = function(n, n.c, r=1, phi=0, d, addCenter=TRUE) {
 	# concentric centers:
 	# n = number of points/circle;
 	# n.c = number of circles;
 	# d = distance between points (variable points / circle);
+	if(missing(n.c)) {
+		if(length(r) > 1) {
+			n.c = length(r)
+		} else {
+			stop("Stop: Must specify number of circles!")
+		}
+	}
 	if(length(r) == 1) {
 		r = r * 1:n.c;
 	}
 	if(missing(n)) {
 		if(missing(d)) {
-			stop("Number of points n or distance between points d must be provided!")
+			stop("Stop: Number of points n or distance between points d must be provided!")
 		}
 		n = 2*pi*r / d;
 		th = 2*pi/n
@@ -424,7 +434,8 @@ points(cities[id,1], cities[id,2], col="green")
 #######################
 #######################
 
-### Analysis
+################
+### Analysis ###
 
 # 1.) Phase Transitions in the data
 # - How to measure phase transitions?
@@ -440,8 +451,23 @@ points(cities[id,1], cities[id,2], col="green")
 # - proper concepts of analysis;
 
 
+#################
+### Algorithm ###
+
+### TODO:
+# - penalty term based on Median distance:
+#   Cost = Distance() +
+#         (Max(median_distances of remaining points) - median_distance(current_point));
+# - penalize points that have short median distance;
+# - force to include first points that are poorly connected (large median distance);
+# - once a point is added to the toor, remove its median value
+#   from the list of remaining points;
+
+
+#############################
 #############################
 
+### Example 1:
 ### variable number of points / circle
 phi = -0.01 # 0.2 # 0;
 p = radial.gen(d=1 + (1:7)/17, n.c=7, phi=phi)
@@ -469,11 +495,68 @@ points(cities[id,1], cities[id,2], col="green")
 
 ### all Locations
 d = dist.all(cities)
-d.v = d.m[d.m != 0]
-summary(d.v)
+# d.v = d.m[d.m != 0]
+# summary(d.v)
+
+d.min = sapply(1:nrow(d), function(id) min(d[id, d[id,] != 0]))
+d.med = sapply(1:nrow(d), function(id) median(d[id, ]))
+summary(d.min)
+summary(d.med)
+plot3d(p$x, p$y, d.min, type="s", col = round(10*d.min) + 1)
+# nice 3D decomposition!
+plot3d(p$x, p$y, d.med, type="s", col = round(10*d.min) + 1)
+# less distortion
+plot3d(p$x, p$y, (d.med)^(1/3), type="s", col = round(d.min + d.med) + 1)
 
 ### Tour
 d.tr = dist.tour(cities, tour)
 summary(d.tr)
 
+len = tour_length(tour)
+id.col = (1:len) / len
+plot3d(p$x[tour], p$y[tour], d.med[tour], type="s", col = rgb(id.col, 1-id.col, 0))
 
+
+#######################
+#######################
+
+### Example2:
+### variable number of points / circle
+phi = -0.01 # 0.2 # 0;
+p = radial.gen(d=1 + (1:4)/17, r= 5 + (1:4)/3, phi=phi, addCenter=F)
+plot(p$x, p$y)
+
+cities = matrix(c(as.vector(p$x), as.vector(p$y)), ncol=2)
+
+### with Base-city:
+id = find.base(cities, y=c(0.5, 2), middle=T)
+id
+
+etsp <- ETSP(cities)
+etsp
+
+### calculate a tour
+tour <- solve_TSP(etsp, method = "nn", control=list(start=id))
+tour
+
+tour_length(tour)
+plot(etsp, tour, tour_col = "red", xlab="X-Coord", ylab="Y-Coord")
+points(cities[id,1], cities[id,2], col="green")
+
+################
+### Analysis ###
+
+### all Locations
+d = dist.all(cities)
+# d.v = d.m[d.m != 0]
+# summary(d.v)
+
+d.min = sapply(1:nrow(d), function(id) min(d[id, d[id,] != 0]))
+d.med = sapply(1:nrow(d), function(id) median(d[id, ]))
+summary(d.min)
+summary(d.med)
+plot3d(p$x, p$y, d.min, type="s", col = round(10*d.min) + 1)
+# nice 3D decomposition!
+plot3d(p$x, p$y, d.med, type="s", col = round(10*d.min) + 1)
+# less distortion
+plot3d(p$x, p$y, (d.med)^(1/3), type="s", col = round(d.min + d.med) + 1)
