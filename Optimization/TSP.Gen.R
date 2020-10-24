@@ -6,12 +6,17 @@
 ### TSP Models
 ### Data Generators
 ###
-### draft v.0.2b
+### draft v.0.2c
 
 
 ###############
 ### History ###
 
+### draft v.0.2c:
+# - basic annealing algorithm;
+# - TODO:
+#  -- implement specific initialisations
+#     using the global/local medians as regularisation terms;
 ### draft v.0.2b:
 # - concept for algorithm:
 #   add penalty for points with short median distance;
@@ -458,10 +463,15 @@ points(cities[id,1], cities[id,2], col="green")
 # - penalty term based on Median distance:
 #   Cost = Distance() +
 #         (Max(median_distances of remaining points) - median_distance(current_point));
+#   Cost = Distance() + alpha * Diff(Max(remaining_median)^p, Median(current)^p),
+#   where alpha = coefficient, p = some power (e.g. p = 1/2; may use an L2 norm as well);
 # - penalize points that have short median distance;
 # - force to include first points that are poorly connected (large median distance);
 # - once a point is added to the toor, remove its median value
 #   from the list of remaining points;
+# - it is possible to use regularisation terms both for the global & the local medians;
+#  -- global = all remaining locations, not yet included in the tour;
+#  -- local = all locations in a local neighbourhood, not yet included in the tour;
 
 
 #############################
@@ -560,3 +570,76 @@ plot3d(p$x, p$y, d.min, type="s", col = round(10*d.min) + 1)
 plot3d(p$x, p$y, d.med, type="s", col = round(10*d.min) + 1)
 # less distortion
 plot3d(p$x, p$y, (d.med)^(1/3), type="s", col = round(d.min + d.med) + 1)
+
+#####################
+
+optim.tour = function(cities, tour=NA, T_Max=1000, T_Min=1E-4) {
+	accept = function(current_cost, new_cost, T) {
+		if (new_cost <= current_cost) {
+			return(TRUE);
+		}
+		if (runif(1, 0, 1) < exp(-(new_cost - current_cost)/T)) {
+			return(TRUE);
+		} else return(FALSE);
+	}
+	update.Temp = function(T, k) {
+		return(T * 0.99995)
+	}
+	eval.tour = function(cities, tour) {
+        return (sum(dist.tour(cities, tour)))
+	}
+	perturb.tour = function(ids, S) {
+		id = sample(ids, 2) # i, j
+        if (id[1] > id[2]){ id = id[c(2, 1)]; }
+		# S is already a copy of the original;
+        for(k in seq((id[2] - id[1]) %/% 2)) {
+			S[c(id[1]+k, id[2]-k)] = S[c(id[2]-k, id[1]+k)]
+		}
+        return(S);
+	}
+	init.tour = function(cities) {
+		# naive initialisation
+		len = nrow(cities)
+		return(sample(seq(len), len));
+	}
+	
+	##########
+	# SA(prob, T_Max, T_Min):
+	if(is.na(tour)) {
+		S = init.tour(cities);
+	} else {
+		S = tour;
+	}
+    S_cost = eval.tour(cities, S);
+    
+    S_best = S
+    S_best_cost = S_cost
+    
+    T = T_Max
+    k = 0
+	idAll = 1:nrow(cities)
+    while (T > T_Min) {
+        k = k+1
+        S_prim = perturb.tour(idAll, S)
+        S_prim_cost = eval.tour(cities, S_prim);
+        
+        if (accept(S_cost, S_prim_cost, T)) {
+            S = S_prim;
+            S_cost = S_prim_cost
+		}
+        if (S_cost < S_best_cost) {
+            S_best = S;
+            S_best_cost = S_cost
+            print(paste(S_best_cost, T))
+		}
+            
+        T = update.Temp(T, k);
+	}
+    
+    return (list("cost"=S_best_cost, "S"=S))
+}
+
+
+tour = optim.tour(cities, NA, 1000, 1E-4)
+
+plot(etsp, tour$S, tour_col = "red", xlab="X-Coord", ylab="Y-Coord")
