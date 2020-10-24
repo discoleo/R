@@ -6,12 +6,16 @@
 ### TSP Models
 ### Data Generators
 ###
-### draft v.0.1f
+### draft v.0.2a
 
 
 ###############
 ### History ###
 
+### draft v.0.2a:
+# - started work on Analysis tools:
+#  -- distance between locations on tour;
+#  -- distance between all locations;
 ### draft v.0.1e - v.0.1f:
 # - added concentric circles;
 # - added variable number of points per circle (v.0.1f);
@@ -178,6 +182,29 @@ write.tsp = function(x, file, asInt=TRUE, scale=1000) {
 	} else {
 		write_TSPLIB(x, file=file)
 	}
+}
+
+### Analysis
+
+### Distance between tour-locations
+# best for regular lattices;
+dist.tour = function(cities, tour) {
+	dist.f = function(c1, c2) {
+		return(sqrt( sum((c1 - c2)^2) ))
+	}
+	dist.byid = function(id) {
+		dist.f(cities[tour[id], ], cities[tour[id + 1], ])
+	}
+	id = c(seq_along(tour), 1)
+	return(sapply(seq(length(tour)-1), dist.byid))
+}
+
+dist.all = function(cities) {
+	dist.byid = function(id) {
+		return(sqrt( ((cities[id,1] - cities[,1])^2 + (cities[id,2] - cities[,2])^2) ))
+	}
+	id = 1:nrow(cities)
+	return(sapply(id, dist.byid))
 }
 
 ###########################
@@ -392,6 +419,8 @@ plot(etsp, tour, tour_col = "red", xlab="X-Coord", ylab="Y-Coord")
 points(cities[id,1], cities[id,2], col="green")
 
 
+# write.tsp(etsp, file="TSP.Circular.tsp", asInt=TRUE)
+
 #######################
 #######################
 
@@ -409,4 +438,42 @@ points(cities[id,1], cities[id,2], col="green")
 
 ### TODO:
 # - proper concepts of analysis;
+
+
+#############################
+
+### variable number of points / circle
+phi = -0.01 # 0.2 # 0;
+p = radial.gen(d=1 + (1:7)/17, n.c=7, phi=phi)
+plot(p$x, p$y)
+
+cities = matrix(c(as.vector(p$x), as.vector(p$y)), ncol=2)
+
+### with Base-city:
+id = find.base(cities, y=c(0.5, 2), middle=T)
+id
+
+etsp <- ETSP(cities)
+etsp
+
+### calculate a tour
+tour <- solve_TSP(etsp, method = "nn", control=list(start=id))
+tour
+
+tour_length(tour)
+plot(etsp, tour, tour_col = "red", xlab="X-Coord", ylab="Y-Coord")
+points(cities[id,1], cities[id,2], col="green")
+
+################
+### Analysis ###
+
+### all Locations
+d = dist.all(cities)
+d.v = d.m[d.m != 0]
+summary(d.v)
+
+### Tour
+d.tr = dist.tour(cities, tour)
+summary(d.tr)
+
 
