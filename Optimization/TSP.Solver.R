@@ -5,14 +5,15 @@
 ###
 ### TSP Solver
 ###
-### draft v.0.1b
+### draft v.0.1c
 
 
 ###############
 ### History ###
 
-### draft v.0.1b:
+### draft v.0.1b - v.0.1c:
 # - some experiments with median-based regularisation;
+# - more experiments & explorations: concentric circles need local optimizations;
 ### draft v.0.1a:
 # - moved from TSP.Gen.R;
 ### from TSP.Gen.R [v.0.2c - v.0.2d]:
@@ -147,7 +148,7 @@ optim.tour = function(cities, tour=NA, T_Max=1000, T_Min=1E-4) {
         T = update.Temp(T, k);
 	}
     
-    return (list("cost"=S_best_cost, "S"=S))
+    return (list("cost"=S_best_cost, "S"=S_best))
 }
 
 #############################
@@ -181,7 +182,7 @@ optim.tour = function(cities, tour=NA, T_Max=1000, T_Min=1E-4) {
 #   where alpha = coefficient, p = some power (e.g. p = 1/2; may use an L2 norm as well);
 # - penalize points that have short median distance;
 # - force to include first points that are poorly connected (large median distance);
-# - once a point is added to the toor, remove its median value
+# - once a point is added to the tour, remove its median value
 #   from the list of remaining points;
 # - it is possible to use regularisation terms both for the global & the local medians;
 #  -- global = all remaining locations, not yet included in the tour;
@@ -194,19 +195,30 @@ optim.tour = function(cities, tour=NA, T_Max=1000, T_Min=1E-4) {
 ################
 ### Examples ###
 
-test.Tour.gen = function(n=4, phi=-0.01) {
+test.Tour.gen = function(n=4, phi=-0.01,
+			start.city=list(y=c(0.5, 2), middle=TRUE), printXY=TRUE) {
 	# phi = -0.01 # 0.2 # 0;
 	p = radial.gen(d = 1 + (1:n)/17, r = 5 + (1:n)/3, phi=phi, addCenter=F)
-	plot(p$x, p$y)
+	if(printXY) {
+		plot(p$x, p$y)
+	}
 
 	cities = matrix(c(as.vector(p$x), as.vector(p$y)), ncol=2)
 
 	### with Base-city:
-	id = find.base(cities, y=c(0.5, 2), middle=T)
+	id = find.base(cities, y=start.city$y, middle=start.city$middle)
 	print(id)
 
 	etsp = ETSP(cities)
 	return(list(cities=cities, etsp=etsp, id=id))
+}
+
+plot.tour = function(tour, cities, etsp, id, col="red", start.col="green", digits=3) {
+	plot(etsp, tour, tour_col = col, xlab="X-Coord", ylab="Y-Coord")
+	points(cities[id,1], cities[id,2], col=start.col)
+	d = sum(dist.tour(cities, tour))
+	mtext(paste0("D = ", round(d, digits)), 3, line=1, adj=0.5)
+	return(d)
 }
 
 ##################
@@ -215,20 +227,22 @@ data = test.Tour.gen(4)
 cities = data$cities; etsp = data$etsp; id = data$id;
 
 ### Tour
-# alpha = 1/5; p = 1;
 # alpha = 15; p = 1/5
-tour = init.tour(cities, alpha=1/5)
-plot(etsp, tour, tour_col = "red", xlab="X-Coord", ylab="Y-Coord")
-points(cities[id,1], cities[id,2], col="green")
-sum(dist.tour(cities, tour))
+alpha = 0; # 85.4
+alpha = -1/2; p = 0.9; # 80.82
+alpha = 1/5; p = 1; # 76.81
+tour = init.tour(cities, alpha=alpha, p=p)
+plot.tour(tour, cities, etsp, id)
 
 
 # Note: takes long!!!
-# and may increase the cost: NO elitism in current implementation;
-tour = optim.tour(cities, tour=tour, 1000, 1E-4)
-sum(dist.tour(cities, tour))
-plot(etsp, tour$S, tour_col = "red", xlab="X-Coord", ylab="Y-Coord")
-points(cities[id,1], cities[id,2], col="green")
+# and may NOT improve the tour!
+Temp = 200; # 1000 # lets start lower
+tour = optim.tour(cities, tour=tour, Temp, 1E-4)
+tour; tour = tour$S
+plot.tour(tour, cities, etsp, id)
+# starting with lower Temp and the 80.8 tour:
+# => 71.257! [but takes quit a while!]
 
 
 ##################
@@ -243,9 +257,7 @@ alpha = 0; # 101.8
 alpha = -0.5; p =1/4; # 88.27
 alpha = -2/3; p =1/5; # 88.27
 tour = init.tour(cities, alpha=alpha, p=p)
-plot(etsp, tour, tour_col = "red", xlab="X-Coord", ylab="Y-Coord")
-points(cities[id,1], cities[id,2], col="green")
-sum(dist.tour(cities, tour))
+plot.tour(tour, cities, etsp, id)
 
 
 
