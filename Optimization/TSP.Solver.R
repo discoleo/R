@@ -5,15 +5,16 @@
 ###
 ### TSP Solver
 ###
-### draft v.0.1c
+### draft v.0.1d
 
 
 ###############
 ### History ###
 
-### draft v.0.1b - v.0.1c:
+### draft v.0.1b - v.0.1d:
 # - some experiments with median-based regularisation;
 # - more experiments & explorations: concentric circles need local optimizations;
+# - bug fix: in tour length (v.0.1d);
 ### draft v.0.1a:
 # - moved from TSP.Gen.R;
 ### from TSP.Gen.R [v.0.2c - v.0.2d]:
@@ -35,10 +36,10 @@ dist.tour = function(cities, tour) {
 		return(sqrt( sum((c1 - c2)^2) ))
 	}
 	dist.byid = function(id) {
-		dist.f(cities[tour[id], ], cities[tour[id + 1], ])
+		dist.f(cities[tour[tour.id[id]], ], cities[tour[tour.id[id + 1]], ])
 	}
-	id = c(seq_along(tour), 1)
-	return(sapply(seq(length(tour)-1), dist.byid))
+	tour.id = c(seq_along(tour), 1)
+	return(sapply(seq_along(tour), dist.byid))
 }
 
 dist.all = function(cities) {
@@ -228,9 +229,9 @@ cities = data$cities; etsp = data$etsp; id = data$id;
 
 ### Tour
 # alpha = 15; p = 1/5
-alpha = 0; # 85.4
-alpha = -1/2; p = 0.9; # 80.82
-alpha = 1/5; p = 1; # 76.81
+alpha = 0; # 95.65
+alpha = -1/2; p = 0.9; # 82.2
+alpha = 1/5; p = 1; # 78.55
 tour = init.tour(cities, alpha=alpha, p=p)
 plot.tour(tour, cities, etsp, id)
 
@@ -241,8 +242,13 @@ Temp = 200; # 1000 # lets start lower
 tour = optim.tour(cities, tour=tour, Temp, 1E-4)
 tour; tour = tour$S
 plot.tour(tour, cities, etsp, id)
-# starting with lower Temp and the 80.8 tour:
-# => 71.257! [but takes quit a while!]
+# starting with lower Temp and the 82.2 tour:
+# => 72.64! [but takes quit a while!]
+tour = c(1, 33, 65, 97, 32, 64, 96, 128, 31, 63, 95, 127, 30, 62, 94, 126, 29, 61, 93, 125, 28, 60, 92, 124, 27, 59,
+	91, 123, 26, 58, 90, 122, 25, 57, 89, 121, 24, 56, 88, 120, 23, 55, 87, 119, 22, 54, 86, 118, 117, 85, 53,
+	21, 20, 52, 84, 116, 115, 83, 51, 19, 18, 50, 82, 114, 113, 81, 49, 17, 16, 48, 80, 112, 15, 47, 79, 111,
+	110, 78, 46, 14, 13, 45, 77, 109, 108, 76, 44, 12, 11, 43, 75, 107, 106, 74, 42, 10, 9, 41, 73, 105, 104,
+	72, 40, 8, 7, 39, 71, 103, 6, 38, 70, 102, 101, 69, 37, 5, 4, 36, 68, 100, 99, 67, 35, 3, 2, 34, 66, 98)
 
 
 ##################
@@ -253,9 +259,9 @@ cities = data$cities; etsp = data$etsp; id = data$id;
 ### Tour
 alpha = 1/5; p = 1;
 alpha = 1.1; p = 1/4;
-alpha = 0; # 101.8
-alpha = -0.5; p =1/4; # 88.27
-alpha = -2/3; p =1/5; # 88.27
+alpha = 0; # 110.73
+alpha = -0.5; p =1/4; # 88.96
+alpha = -2/3; p =1/5; # 88.96
 tour = init.tour(cities, alpha=alpha, p=p)
 plot.tour(tour, cities, etsp, id)
 
@@ -284,10 +290,28 @@ etsp
 ### calculate a tour
 tour <- solve_TSP(etsp, method = "nn", control=list(start=id))
 tour
-
 tour_length(tour)
-plot(etsp, tour, tour_col = "red", xlab="X-Coord", ylab="Y-Coord")
-points(cities[id,1], cities[id,2], col="green")
+
+plot.tour(tour, cities, etsp, id) # 186.986
+
+alpha = 0; # 178.773
+alpha = -2/3; p =1/5; # 175.9
+alpha = 1/3; p =1; # 169.798
+tour = init.tour(cities, alpha=alpha, p=p)
+plot.tour(tour, cities, etsp, id)
+
+
+# Note: takes long!!!
+# and may NOT improve the tour!
+Temp = 200; # 180; # 1000 # lets start lower
+tour = optim.tour(cities, tour=tour, Temp, 1E-4)
+tour; tour = tour$S
+plot.tour(tour, cities, etsp, id)
+# starting with lower Temp and the 169.8 tour:
+# => 163.898 (with T=200) & 165.04 (with T=180)! [but takes quit a while!]
+# [Note: this is a random process!]
+
+
 
 ################
 ### Analysis ###
