@@ -4,7 +4,7 @@
 ### Process Excel files
 ###
 ### Leonard Mada
-### v 0.10
+### v 0.1b
 
 
 # install.packages("readxl")
@@ -13,7 +13,7 @@ library(readxl)
 
 
 
-setwd("...\\BigData\\Data\\historical-files-up-to-oct-1-included")
+setwd(".../Data/historical-files-up-to-oct-1-included")
 
 
 ####################
@@ -69,20 +69,46 @@ readNA.excel = function(files, col.name="KWh", sheet.pattern="^[^ _]+(?=[ _.])",
 	# PRINT_TABLE: for debug purposes;
 	x.df = data.frame(
 		id=seq(length(files.n)),
-		na=NA, Zero=NA, name=files.n)
+		na=NA, Zero=NA, name=files.n, sheet=NA)
 	col.name.pattern = paste0("^", col.name)
+	last.n = nrow(x.df) + 1
 	#
-	for(id in x.df$id) {
+	for(first.pass in 1:2) {
+		if(first.pass == 1) {
+			all.ids = x.df$id
+		} else if(nrow(x.df) >= last.n) {
+			all.ids = x.df$id[last.n:nrow(x.df)]
+		} else {
+			break;
+		}
+	for(id in all.ids) {
 		# Sheet name
 		sheets = excel_sheets(files.n[id])
 		if(length(sheets) == 1) {
 			x = read_excel(files.n[id])
 		} else {
 			# sheet name extracted from filename;
-			name.reg = regexec(sheet.pattern, files.n[id], perl=T)
-			sName = regmatches(files.n[id], name.reg)[[1]]
-			isSheet = grepl(paste0("^", sName), sheets)
-			sheet = sheets[isSheet][[1]]
+			if( ! is.na(x.df$sheet[id])) {
+				sheet = x.df$sheet[id]
+				print("Processing multiple sheets!")
+			} else {
+				name.reg = regexec(sheet.pattern, files.n[id], perl=T)
+				sName = regmatches(files.n[id], name.reg)[[1]]
+				isSheet = grepl(paste0("^", sName), sheets)
+				# if > 1 sheets
+				sheets.all = sheets[isSheet]
+				sheet = sheets.all[[1]]
+				x.df$sheet[id] = sheet;
+				len = length(sheets.all) - 1
+				if(len >= 1) {
+					x2.df = data.frame(
+						id = nrow(x.df) + seq(len),
+						na=NA, Zero=NA, name=files.n[id], sheet=sheets.all[-1])
+					x.df = rbind(x.df, x2.df)
+					cat("\n"); print(x2.df)
+					files.n = c(files.n, rep(files.n[id], len))
+				}
+			}
 			print(paste0("Opening: ID = ", id, "; Sheet = ", sheet))
 			x = read_excel(files.n[id], sheet)
 		}
@@ -106,7 +132,7 @@ readNA.excel = function(files, col.name="KWh", sheet.pattern="^[^ _]+(?=[ _.])",
 		# Zero
 		isZero = x[ , col.name] == 0
 		x.df$Zero[id] = length(isZero[isZero])
-	}
+	}}
 	return(x.df)
 }
 
@@ -124,7 +150,7 @@ files.n = list.files(pattern = flt)
 ### Read from ALL files
 
 # some files contain 2 sheets with data;
-sapply(files.n, get_sheet, DEBUG=T)
+# sapply(files.n, get_sheet, DEBUG=T)
 # TODO: not yet extracted!
 
 # How many NAs & Zero values:
@@ -132,9 +158,12 @@ x.df = readNA.excel(files)
 
 x.df
 
+#################
 
-#############
-### Read data
+#################
+### Read data ###
+
+# read a specific data set;
 
 # file.n = "ALM KWh data.xlsx"
 
