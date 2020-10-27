@@ -5,12 +5,14 @@
 ###
 ### TSP Solver
 ###
-### draft v.0.1d
+### draft v.0.1e
 
 
 ###############
 ### History ###
 
+### draft v.0.1e:
+# - early experiments with multiple (generalized) polynomial terms;
 ### draft v.0.1b - v.0.1d:
 # - some experiments with median-based regularisation;
 # - more experiments & explorations: concentric circles need local optimizations;
@@ -49,19 +51,39 @@ dist.all = function(cities) {
 	id = 1:nrow(cities)
 	return(sapply(id, dist.byid))
 }
+### Median distance to all other points
+dist.med = function(cities) {
+	d = dist.all(cities)
+	return(sapply(1:nrow(d), function(id) median(d[id, ])))
+}
 
 ########
 ### Tour
-init.tour = function(cities, start=1, alpha=1/3, p=1) {
+init.tour = function(cities, start=1, alpha=1/3, p=1, dist.m) {
 	len = nrow(cities)
 	remain.id = seq(len)
-	d = dist.all(cities)
-	d.med = sapply(1:nrow(d), function(id) median(d[id, ]))
+	if(missing(dist.m)) {
+		d = dist.all(cities)
+		d.med = sapply(1:nrow(d), function(id) median(d[id, ]))
+	} else if( ! is.null(dim(dist.m))) {
+		d = dist.m
+		d.med = sapply(1:nrow(d), function(id) median(d[id, ]))
+	} else {
+		d.med = dist.m
+	}
 	d = d.med
 	#
 	dist.reg = function(id, current.city, remain.id, d, current.max) {
 		sqrt(sum((cities[remain.id[id],] - current.city)^2)) +
 		alpha * (current.max^p - d[id]^p)
+	}
+	# multiple coefficients alpha & p
+	dist.mreg = function(id, current.city, remain.id, d, current.max) {
+		sqrt(sum((cities[remain.id[id],] - current.city)^2)) +
+		sum(alpha * (current.max^p - d[id]^p))
+	}
+	if(length(alpha) > 1 || length(p) > 1) {
+		dist.reg = dist.mreg;
 	}
 	#
 	tour = remain.id[start]
@@ -167,6 +189,8 @@ optim.tour = function(cities, tour=NA, T_Max=1000, T_Min=1E-4) {
 # - "divergence", "curl";
 # - separation in higher dimensions;
 # - other pseudo-invariants;
+# 2.) Data
+# - compressible/incompressible vectors/regions/clusters;
 
 ### TODO:
 # - proper concepts of analysis;
@@ -292,7 +316,7 @@ tour <- solve_TSP(etsp, method = "nn", control=list(start=id))
 tour
 tour_length(tour)
 
-plot.tour(tour, cities, etsp, id) # 186.986
+plot.tour(tour, cities, etsp, id) # 186.986, 177.465
 
 alpha = 0; # 178.773
 alpha = -2/3; p =1/5; # 175.9
@@ -301,6 +325,7 @@ tour = init.tour(cities, alpha=alpha, p=p)
 plot.tour(tour, cities, etsp, id)
 
 
+### SA
 # Note: takes long!!!
 # and may NOT improve the tour!
 Temp = 200; # 180; # 1000 # lets start lower
@@ -312,6 +337,23 @@ plot.tour(tour, cities, etsp, id)
 # [Note: this is a random process!]
 
 
+### scan parameter-space
+dist.m = dist.med(cities)
+param.grid = expand.grid((-5:5)/3, (-5:5)/3)
+tours = sapply(seq(nrow(param.grid)),
+	function(id) init.tour(cities, dist.m=dist.m, alpha=c(param.grid[id,1], -1/5), p=c(param.grid[id,2], 1)))
+tours.d = sapply(seq(ncol(tours)), function(id) sum(dist.tour(cities, tours[,id])))
+d.min = min(tours.d)
+tour.id = seq_along(tours.d) [tours.d == d.min]
+list(min=d.min, id=tour.id, alpha=param.grid[tour.id,1], p=param.grid[tour.id,2])
+plot.tour(tours[ , tour.id[1]], cities, etsp, id)
+# 166.65
+tour = init.tour(cities, alpha=c(5/3, -1/5), p=c(2/3, 1))
+plot.tour(tour, cities, etsp, id)
+
+
+
+################
 
 ################
 ### Analysis ###
