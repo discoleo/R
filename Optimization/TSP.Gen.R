@@ -6,15 +6,16 @@
 ### TSP Models
 ### Data Generators
 ###
-### draft v.0.3a
+### draft v.0.3b
 
 
 ###############
 ### History ###
 
-### draft v.0.3a:
+### draft v.0.3a - v.0.3b:
 # - moved Analysis & Tours to TSP.Solver.R;
 #   [basically all v.0.2x-code]
+# - better formatting & comments (v.0.3b);
 ### draft v.0.2c - v.0.2d:
 # - basic annealing algorithm;
 # - initialisation using global medians as regularisation terms (v.0.2d);
@@ -39,11 +40,21 @@
 ####################
 
 ### Generate Special Graphs for TSP
+# Orbits resembling:
+# 1.) Ellipses spanning the same Chord / Watermelon
+# 2.) Intersecting Circles
+# 3.) Concentric Circles
+# 4.) Non-Orbit Densities
 
-# various Generator functions:
+###############################
+
+### various Generator functions
+
+### Watermelon / Ellipses
 watermelon.gen = function(n, m, l, random=TRUE, v.scale=3) {
 	# n = number of points in a half-ellipse;
 	# m = number of half-ellipses / half-orbits;
+	# l = length/radius;
 	r2 = l^2 / 4;
 	ellipse.f = function(id, x) {
 		a = 2*id - m - 1
@@ -64,7 +75,7 @@ watermelon.gen = function(n, m, l, random=TRUE, v.scale=3) {
 	p.y = sapply(1:m, ellipse.f, x=p.x)
 	return(list("x"=p.x, "y"=p.y))
 }
-
+### Intersecting Circles
 circles.int.gen = function(n, n.c, r=1) {
 	# intersecting/overlapping circles
 	central.th = (0:(n.c-1)) * 2*pi / n.c;
@@ -89,6 +100,7 @@ circles.int.gen = function(n, n.c, r=1) {
 	# print(circles.pxy)
 	return(circles.pxy)
 }
+### Concentric Circles
 radial.gen = function(n, n.c, r=1, phi=0, d, addCenter=TRUE) {
 	# concentric centers:
 	# n = number of points/circle;
@@ -128,14 +140,14 @@ radial.gen = function(n, n.c, r=1, phi=0, d, addCenter=TRUE) {
 	}
 	return(xy.df)
 }
-
+### 2D: N(0, sd1) x N(0, sd2)
 rnorm2d.gen = function(n1, n2=n1, sd1=1, sd2=1) {
 	len = n1*n2
 	p.x = rnorm(len, sd=sd1)
 	p.y = rnorm(len, sd=sd2)
 	return(list("x"=p.x, "y"=p.y))
 }
-
+### 2D: U(0, max) x U(0, max)
 runif2d.gen = function(n1, n2=n1, max=2) {
 	# max = 2 is more close to rnorm
 	# alternative: max = 4*sd
@@ -144,7 +156,7 @@ runif2d.gen = function(n1, n2=n1, max=2) {
 	p.y = runif(len, max=max)
 	return(list("x"=p.x, "y"=p.y))
 }
-
+### 2D: 2 bands * epochs * N(0, sd)
 r2d.gen = function(n, epochs, sd=1, sep.scale=1, x.jitter=NA) {
 	# n = number of points per epoch
 	s = rnorm(10*n, sd=sd)
@@ -160,8 +172,12 @@ r2d.gen = function(n, epochs, sd=1, sep.scale=1, x.jitter=NA) {
 	return(list("x"=ep.all, "y"=c(y1, y2)))
 }
 
+### Tools
+
+### find specific location
 find.base = function(m, y=0, middle=FALSE, type=c("gaussian", "regular")) {
 	# m = matrix with coordinates of cities
+	# y = y-limits to filter the city;
 	# - currently works best/only with non-random data;
 	# TODO:
 	# - more options;
@@ -210,10 +226,10 @@ dist.tour = function(cities, tour) {
 		return(sqrt( sum((c1 - c2)^2) ))
 	}
 	dist.byid = function(id) {
-		dist.f(cities[tour[id], ], cities[tour[id + 1], ])
+		dist.f(cities[tour[tour.id[id]], ], cities[tour[tour.id[id + 1]], ])
 	}
-	id = c(seq_along(tour), 1)
-	return(sapply(seq(length(tour)-1), dist.byid))
+	tour.id = c(seq_along(tour), 1)
+	return(sapply(seq_along(tour), dist.byid))
 }
 
 dist.all = function(cities) {
@@ -222,6 +238,11 @@ dist.all = function(cities) {
 	}
 	id = 1:nrow(cities)
 	return(sapply(id, dist.byid))
+}
+### Median distance to all other points
+dist.med = function(cities) {
+	d = dist.all(cities)
+	return(sapply(1:nrow(d), function(id) median(d[id, ])))
 }
 
 ###########################
@@ -232,6 +253,7 @@ library(TSP)
 
 ### 3D
 library(rgl)
+
 
 setwd("/Math")
 
