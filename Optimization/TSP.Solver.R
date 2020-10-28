@@ -5,14 +5,15 @@
 ###
 ### TSP Solver
 ###
-### draft v.0.1e
+### draft v.0.1f
 
 
 ###############
 ### History ###
 
-### draft v.0.1e:
-# - early experiments with multiple (generalized) polynomial terms;
+### draft v.0.1e - v.0.1f:
+# - early experiments with multiple (generalized) polynomial terms (0.1e & 0.1f);
+# - new idea: density of locations in a specified neighbourhood (v.0.1f);
 ### draft v.0.1b - v.0.1d:
 # - some experiments with median-based regularisation;
 # - more experiments & explorations: concentric circles need local optimizations;
@@ -217,13 +218,10 @@ optim.tour = function(cities, tour=NA, T_Max=1000, T_Min=1E-4) {
 ################
 ################
 
-################
-### Examples ###
-
-test.Tour.gen = function(n=4, phi=-0.01,
+test.Tour.gen = function(n=4, phi=-0.01, shift.scale=1/17,
 			start.city=list(y=c(0.5, 2), middle=TRUE), printXY=TRUE) {
 	# phi = -0.01 # 0.2 # 0;
-	p = radial.gen(d = 1 + (1:n)/17, r = 5 + (1:n)/3, phi=phi, addCenter=F)
+	p = radial.gen(d = 1 + (1:n)*shift.scale, r = 5 + (1:n)/3, phi=phi, addCenter=F)
 	if(printXY) {
 		plot(p$x, p$y)
 	}
@@ -246,6 +244,12 @@ plot.tour = function(tour, cities, etsp, id, col="red", start.col="green", digit
 	return(d)
 }
 
+################
+
+################
+### Examples ###
+
+
 ##################
 ### Examples: Tour
 data = test.Tour.gen(4)
@@ -256,6 +260,7 @@ cities = data$cities; etsp = data$etsp; id = data$id;
 alpha = 0; # 95.65
 alpha = -1/2; p = 0.9; # 82.2
 alpha = 1/5; p = 1; # 78.55
+alpha = 2/3; p = 1; # 77.747
 tour = init.tour(cities, alpha=alpha, p=p)
 plot.tour(tour, cities, etsp, id)
 
@@ -268,12 +273,18 @@ tour; tour = tour$S
 plot.tour(tour, cities, etsp, id)
 # starting with lower Temp and the 82.2 tour:
 # => 72.64! [but takes quit a while!]
+# [another tour with 71.95 is also known]
 tour = c(1, 33, 65, 97, 32, 64, 96, 128, 31, 63, 95, 127, 30, 62, 94, 126, 29, 61, 93, 125, 28, 60, 92, 124, 27, 59,
 	91, 123, 26, 58, 90, 122, 25, 57, 89, 121, 24, 56, 88, 120, 23, 55, 87, 119, 22, 54, 86, 118, 117, 85, 53,
 	21, 20, 52, 84, 116, 115, 83, 51, 19, 18, 50, 82, 114, 113, 81, 49, 17, 16, 48, 80, 112, 15, 47, 79, 111,
 	110, 78, 46, 14, 13, 45, 77, 109, 108, 76, 44, 12, 11, 43, 75, 107, 106, 74, 42, 10, 9, 41, 73, 105, 104,
 	72, 40, 8, 7, 39, 71, 103, 6, 38, 70, 102, 101, 69, 37, 5, 4, 36, 68, 100, 99, 67, 35, 3, 2, 34, 66, 98)
 
+# more analysis:
+# see Section at line ~ 400;
+
+
+##################
 
 ##################
 ### Examples: Tour
@@ -299,10 +310,10 @@ plot.tour(tour, cities, etsp, id)
 ### Example 1:
 ### variable number of points / circle
 phi = -0.01 # 0.2 # 0;
-p = radial.gen(d=1 + (1:7)/17, n.c=7, phi=phi)
-plot(p$x, p$y)
+cities.p = radial.gen(d=1 + (1:7)/17, n.c=7, phi=phi)
+plot(cities.p$x, cities.p$y)
 
-cities = matrix(c(as.vector(p$x), as.vector(p$y)), ncol=2)
+cities = matrix(c(as.vector(cities.p$x), as.vector(cities.p$y)), ncol=2)
 
 ### with Base-city:
 id = find.base(cities, y=c(0.5, 2), middle=T)
@@ -318,9 +329,9 @@ tour_length(tour)
 
 plot.tour(tour, cities, etsp, id) # 186.986, 177.465
 
-alpha = 0; # 178.773
-alpha = -2/3; p =1/5; # 175.9
-alpha = 1/3; p =1; # 169.798
+alpha = 0; p = 1; # 178.773
+alpha = -2/3; p = 1/5; # 175.9
+alpha = 1/3; p = 1; # 169.798
 tour = init.tour(cities, alpha=alpha, p=p)
 plot.tour(tour, cities, etsp, id)
 
@@ -352,10 +363,6 @@ tour = init.tour(cities, alpha=c(5/3, -1/5), p=c(2/3, 1))
 plot.tour(tour, cities, etsp, id)
 
 
-
-################
-
-################
 ### Analysis ###
 
 ### all Locations
@@ -365,13 +372,20 @@ d = dist.all(cities)
 
 d.min = sapply(1:nrow(d), function(id) min(d[id, d[id,] != 0]))
 d.med = sapply(1:nrow(d), function(id) median(d[id, ]))
+d.len = sapply(1:nrow(d), function(id) sum(d[id, ] < 2.5))
 summary(d.min)
 summary(d.med)
-plot3d(p$x, p$y, d.min, type="s", col = round(10*d.min) + 1)
+summary(d.len)
+plot3d(cities.p$x, cities.p$y, d.min, type="s", col = round(10*d.min) + 1)
 # nice 3D decomposition!
-plot3d(p$x, p$y, d.med, type="s", col = round(10*d.min) + 1)
+plot3d(cities.p$x, cities.p$y, d.med, type="s", col = round(10*d.min) + 1)
 # less distortion
-plot3d(p$x, p$y, (d.med)^(1/3), type="s", col = round(d.min + d.med) + 1)
+plot3d(cities.p$x, cities.p$y, (d.med)^(1/3), type="s", col = round(d.min + d.med) + 1)
+# density of local points
+plot3d(cities.p$x, cities.p$y, d.len, type="s", col = round(d.min + d.med) + 1)
+#
+plot3d(cities.p$x, cities.p$y, d.med, type="s", col = d.len - min(d.len) + 1)
+
 
 ### Tour
 d.tr = dist.tour(cities, tour)
@@ -385,13 +399,14 @@ plot3d(p$x[tour], p$y[tour], d.med[tour], type="s", col = rgb(id.col, 1-id.col, 
 #######################
 #######################
 
+##############
 ### Example 2:
 ### variable number of points / circle
 phi = -0.01 # 0.2 # 0;
-p = radial.gen(d=1 + (1:4)/17, r= 5 + (1:4)/3, phi=phi, addCenter=F)
-plot(p$x, p$y)
+cities.p = radial.gen(d=1 + (1:4)/17, r= 5 + (1:4)/3, phi=phi, addCenter=F)
+plot(cities.p$x, cities.p$y)
 
-cities = matrix(c(as.vector(p$x), as.vector(p$y)), ncol=2)
+cities = matrix(c(as.vector(cities.p$x), as.vector(cities.p$y)), ncol=2)
 
 ### with Base-city:
 id = find.base(cities, y=c(0.5, 2), middle=T)
@@ -402,11 +417,10 @@ etsp
 
 ### calculate a tour
 tour <- solve_TSP(etsp, method = "nn", control=list(start=id))
-tour
+tour # 102.14
 
 tour_length(tour)
-plot(etsp, tour, tour_col = "red", xlab="X-Coord", ylab="Y-Coord")
-points(cities[id,1], cities[id,2], col="green")
+plot.tour(tour, cities, etsp, id)
 
 ################
 ### Analysis ###
@@ -418,11 +432,63 @@ d = dist.all(cities)
 
 d.min = sapply(1:nrow(d), function(id) min(d[id, d[id,] != 0]))
 d.med = sapply(1:nrow(d), function(id) median(d[id, ]))
+d.len = sapply(1:nrow(d), function(id) sum(d[id, ] < 2.5))
 summary(d.min)
 summary(d.med)
-plot3d(p$x, p$y, d.min, type="s", col = round(10*d.min) + 1)
+summary(d.len)
+plot3d(cities.p$x, cities.p$y, d.min, type="s", col = round(10*d.min) + 1)
 # nice 3D decomposition!
-plot3d(p$x, p$y, d.med, type="s", col = round(10*d.min) + 1)
+plot3d(cities.p$x, cities.p$y, d.med, type="s", col = round(10*d.min) + 1)
 # less distortion
-plot3d(p$x, p$y, (d.med)^(1/3), type="s", col = round(d.min + d.med) + 1)
+plot3d(cities.p$x, cities.p$y, (d.med)^(1/3), type="s", col = round(d.min + d.med) + 1)
+# density of local points
+plot3d(cities.p$x, cities.p$y, d.len, type="s", col = round(d.min + d.med) + 1)
+#
+plot3d(cities.p$x, cities.p$y, d.med, type="s", col = d.len - min(d.len) + 1)
+
+
+### Tour ###
+### scan parameter-space
+dist.m = dist.med(cities)
+param.grid = expand.grid((-5:5)/3, (-5:5)/3)
+tours = sapply(seq(nrow(param.grid)),
+	function(id) init.tour(cities, dist.m=dist.m, alpha=param.grid[id,1], p=param.grid[id,2]))
+tours.d = sapply(seq(ncol(tours)), function(id) sum(dist.tour(cities, tours[,id])))
+d.min = min(tours.d)
+tour.id = seq_along(tours.d) [tours.d == d.min]
+list(min=d.min, id=tour.id, alpha=param.grid[tour.id,1], p=param.grid[tour.id,2])
+plot.tour(tours[ , tour.id[1]], cities, etsp, id)
+# 77.747
+tour = init.tour(cities, alpha=2/3, p=1)
+plot.tour(tour, cities, etsp, id)
+
+###
+tours = sapply(seq(nrow(param.grid)),
+	function(id) init.tour(cities, dist.m=dist.m, alpha=c(2/3, param.grid[id,1]), p=c(1, param.grid[id,2])))
+tours.d = sapply(seq(ncol(tours)), function(id) sum(dist.tour(cities, tours[,id])))
+d.min = min(tours.d)
+tour.id = seq_along(tours.d) [tours.d == d.min]
+list(min=d.min, id=tour.id, alpha=param.grid[tour.id,1], p=param.grid[tour.id,2])
+plot.tour(tours[ , tour.id[1]], cities, etsp, id)
+# 77.55 ### minimal improvement
+tour = init.tour(cities, alpha=c(2/3, -1), p=c(1, -5/3))
+plot.tour(tour, cities, etsp, id)
+
+### SA
+# Note: takes long!!!
+# and may NOT improve the tour!
+Temp = 100; # 180; # lets start lower
+tour = optim.tour(cities, tour=tour, Temp, 1E-4)
+tour; tour = tour$S
+plot.tour(tour, cities, etsp, id)
+# starting with lower Temp and the 77.55 tour:
+# => 71.9509! [but takes quit a while!]
+tour = c(1, 33, 65, 97, 98, 66, 34, 2, 3, 35, 67, 99, 100, 68, 36, 4, 5, 37, 69, 101, 102,
+	70, 38, 6, 7, 39, 71, 103, 104, 72, 40, 8, 9, 41, 73, 105, 106, 74, 42, 10, 107, 75, 43,
+	11, 12, 44, 76, 108, 109, 77, 45, 13, 14, 46, 78, 110, 111, 79, 47, 15, 16, 48, 80, 112,
+	113, 81, 49, 17, 114, 82, 50, 18, 19, 51, 83, 115, 116, 84, 52, 20, 21, 53, 85, 117, 118,
+	86, 54, 22, 119, 87, 55, 23, 120, 88, 56, 24, 121, 89, 57, 25, 122, 90, 58, 26, 123, 91,
+	59, 27, 124, 92, 60, 28, 125, 93, 61, 29, 126, 94, 62, 30, 127, 95, 63, 31, 128, 96, 64, 32)
+plot.tour(tour, cities, etsp, id)
+
 
