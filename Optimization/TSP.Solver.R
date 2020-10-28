@@ -5,14 +5,15 @@
 ###
 ### TSP Solver
 ###
-### draft v.0.1f
+### draft v.0.1g
 
 
 ###############
 ### History ###
 
-### draft v.0.1e - v.0.1f:
-# - early experiments with multiple (generalized) polynomial terms (0.1e & 0.1f);
+### draft v.0.1e - v.0.1g:
+# - early experiments with multiple (generalized) polynomial terms (0.1e & 0.1f & 0.1g);
+# - early experiments with bands of data split into "epochs" (0.1g);
 # - new idea: density of locations in a specified neighbourhood (v.0.1f);
 ### draft v.0.1b - v.0.1d:
 # - some experiments with median-based regularisation;
@@ -86,6 +87,7 @@ init.tour = function(cities, start=1, alpha=1/3, p=1, dist.m) {
 	if(length(alpha) > 1 || length(p) > 1) {
 		dist.reg = dist.mreg;
 	}
+	# else d = d^p; p = 1; # optimization
 	#
 	tour = remain.id[start]
 	current.id = start
@@ -175,6 +177,45 @@ optim.tour = function(cities, tour=NA, T_Max=1000, T_Min=1E-4) {
     return (list("cost"=S_best_cost, "S"=S_best))
 }
 
+scan.tour = function(cities, start.id=1, alpha=(-5:5)/3, p=(-5:5)/3, param.grid, dist.m, ignore.start=FALSE) {
+	### scan parameter-space
+	if(missing(dist.m)) {
+		dist.m = dist.med(cities)
+	}
+	if(missing(param.grid)) {
+		param.grid = expand.grid(alpha, p)
+	}
+	#
+	tours = sapply(seq(nrow(param.grid)),
+		function(id) init.tour(cities, start=if(ignore.start) 1 else start.id, dist.m=dist.m,
+			alpha=param.grid[id,1], p=param.grid[id,2]))
+	tours.d = sapply(seq(ncol(tours)), function(id) sum(dist.tour(cities, tours[,id])))
+	d.min = min(tours.d)
+	tour.id = seq_along(tours.d) [tours.d == d.min]
+	rez = list(min=d.min, id=tour.id, alpha=param.grid[tour.id,1], p=param.grid[tour.id,2])
+	plot.tour(tours[ , tour.id[1]], cities, etsp, start.id)
+	return(rez)
+}
+scan2.tour = function(cities, start.id=1, alpha=2/3, p=2/3, param.grid, dist.m, ignore.start=FALSE) {
+	### scan parameter-space: Level 2
+	if(missing(dist.m)) {
+		dist.m = dist.med(cities)
+	}
+	if(missing(param.grid)) {
+		param.grid = expand.grid((-5:5)/3, (-5:5)/3)
+	}
+	#
+	tours = sapply(seq(nrow(param.grid)),
+		function(id) init.tour(cities, start=if(ignore.start) 1 else start.id, dist.m=dist.m,
+			alpha=c(alpha, param.grid[id,1]), p=c(p, param.grid[id,2])))
+	tours.d = sapply(seq(ncol(tours)), function(id) sum(dist.tour(cities, tours[,id])))
+	d.min = min(tours.d)
+	tour.id = seq_along(tours.d) [tours.d == d.min]
+	rez = list(min=d.min, id=tour.id, alpha=param.grid[tour.id,1], p=param.grid[tour.id,2])
+	plot.tour(tours[ , tour.id[1]], cities, etsp, start.id)
+	return(rez)
+}
+
 #############################
 #############################
 
@@ -217,6 +258,8 @@ optim.tour = function(cities, tour=NA, T_Max=1000, T_Min=1E-4) {
 
 ################
 ################
+
+# uses functions from TSP.Gen.R;
 
 test.Tour.gen = function(n=4, phi=-0.01, shift.scale=1/17,
 			start.city=list(y=c(0.5, 2), middle=TRUE), printXY=TRUE) {
@@ -491,4 +534,107 @@ tour = c(1, 33, 65, 97, 98, 66, 34, 2, 3, 35, 67, 99, 100, 68, 36, 4, 5, 37, 69,
 	59, 27, 124, 92, 60, 28, 125, 93, 61, 29, 126, 94, 62, 30, 127, 95, 63, 31, 128, 96, 64, 32)
 plot.tour(tour, cities, etsp, id)
 
+
+##################
+##################
+
+##################
+### Watermelon ###
+
+ell.n = 7
+cities.p = watermelon.gen(20, m=ell.n, 10, random=F)
+plot(cities.p$x, cities.p$y)
+
+cities = matrix(c(as.vector(cities.p$x), as.vector(cities.p$y)), ncol=2)
+id = find.base(cities, middle=T)
+id
+
+### TSP data
+etsp <- ETSP(cities)
+etsp
+
+### calculate a tour
+# tour <- solve_TSP(etsp, method = "nn")
+tour <- solve_TSP(etsp, method = "nn", control=list(start=id))
+tour
+
+tour_length(tour) # 132.2
+plot.tour(tour, cities, etsp, id)
+
+### Tour ###
+### scan parameter-space
+dist.m = dist.med(cities)
+param.grid = expand.grid((-5:5)/3, (-5:5)/3)
+#
+scan.tour(cities, id, param.grid=param.grid, ignore.start=T)
+# 112.57
+alpha = 2/3; p = 2/3;
+tour = init.tour(cities, alpha=alpha, p=p)
+plot.tour(tour, cities, etsp, id)
+
+### Level 2:
+tours = sapply(seq(nrow(param.grid)),
+	function(id) init.tour(cities, dist.m=dist.m, alpha=c(2/3, param.grid[id,1]), p=c(2/3, param.grid[id,2])))
+tours.d = sapply(seq(ncol(tours)), function(id) sum(dist.tour(cities, tours[,id])))
+d.min = min(tours.d)
+tour.id = seq_along(tours.d) [tours.d == d.min]
+list(min=d.min, id=tour.id, alpha=param.grid[tour.id,1], p=param.grid[tour.id,2])
+plot.tour(tours[ , tour.id[1]], cities, etsp, id)
+# 110.01
+alpha = c(2/3, -5/3) ; p = c(2/3, -1);
+tour = init.tour(cities, alpha=alpha, p=p)
+plot.tour(tour, cities, etsp, id)
+
+### SA
+# Note: takes long!!!
+# and may NOT improve the tour!
+Temp = 120; # 180; # lets start lower
+tour = optim.tour(cities, tour=tour, Temp, 1E-4)
+tour; tour = tour$S
+plot.tour(tour, cities, etsp, id)
+# starting with lower Temp and the 112.57 tour:
+# => ! [but takes quit a while!]
+# only 111.887; [but should be possible to get lower]
+
+
+##################
+##################
+
+##############################
+### 2D: 2 bands ~ N(0, sd) ###
+
+epochs.n = 10
+cities.p = r2d.gen(6, epochs.n, sep.scale=3)
+plot(cities.p$x, cities.p$y)
+
+cities = matrix(c(as.vector(cities.p$x), as.vector(cities.p$y)), ncol=2)
+id = find.base(cities, y=c(0, 2))
+id
+
+### TSP data
+etsp <- ETSP(cities)
+etsp
+
+### calculate a tour
+# tour <- solve_TSP(etsp, method = "nn")
+tour <- solve_TSP(etsp, method = "nn", control=list(start=id))
+tour
+
+tour_length(tour) # 104.91 ### Note: random data!
+plot.tour(tour, cities, etsp, id)
+
+### Tour ###
+### scan parameter-space
+dist.m = dist.med(cities)
+param.grid = expand.grid((-5:5)/3, (-5:5)/3)
+#
+tour = scan.tour(cities, id, dist.m=dist.m, param.grid=param.grid, ignore.start=T)
+tour
+# examples: 84.8, or 90.27 # but data is random!
+
+### Level 2:
+alpha = -2/3; p = -5/3;
+alpha = 4/3; p = 2/3;
+scan2.tour(cities, id, alpha=alpha, p=p, dist.m=dist.m, param.grid=param.grid, ignore.start=T)
+# Level 2 does NOT usually help much!
 
