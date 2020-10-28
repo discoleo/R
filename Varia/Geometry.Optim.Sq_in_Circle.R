@@ -6,15 +6,17 @@
 ### A Famous Geometry
 ### Optimization Problem
 ###
-### draft v.0.3
+### draft v.0.3b
 ### [very early draft]
 
 
 ###############
 ### History ###
 
-### draft v.0.3:
+### draft v.0.3 - v.0.3b:
 # - started work & estimations on the type 2 variant;
+# - modified type 2 variant (v.0.3b);
+#   [but needs correction]
 ### draft v.0.2:
 # - improved estimation for Case 1;
 ### draft v.0.1:
@@ -81,6 +83,23 @@ lines(c(dx2h - dx, dx2h - dx - sh, dx2h - dx, dx2h - dx + sh, dx2h - dx),
 
 # Q: Which circle will be larger?
 # Q: Can we optimize the size even further?
+
+par(par.old)
+
+### Square: modified Type 2
+# TODO: verify if boundaries are correct!
+plot(0,0, xlim=c(-3,3), ylim=c(-2,4))
+### Square 1:
+a.s = 2/sqrt(13); a.c = 3/sqrt(13);
+ab.s = 1/2 + 3/4*sqrt(3/13); ab.c = sqrt(1 - ab.s^2);
+p4.s = 1/sqrt(2*13); p4.c = 5*p4.s;
+lines(c(0, -2*ab.s, -2*sqrt(2)*p4.s, 2*ab.c, 0), c(0, 2*ab.c, 2*sqrt(2)*p4.c, 2*ab.s, 0) - 2)
+### Circle 1:
+x = seq(-2, 2, by=0.01)
+lines(x, -sqrt(4 - x^2), col="green")
+lines(x, sqrt(4 - x^2), col="green")
+points(0, 0, col="green")
+### TODO: Square 2 + Circle 2;
 
 
 par(par.old)
