@@ -603,8 +603,8 @@ plot.tour(tour, cities, etsp, id)
 ##############################
 ### 2D: 2 bands ~ N(0, sd) ###
 
-epochs.n = 10
-cities.p = r2d.gen(6, epochs.n, sep.scale=3)
+epochs.n = 10; seed = 18
+cities.p = r2d.gen(6, epochs.n, sep.scale=3, seed=seed)
 plot(cities.p$x, cities.p$y)
 
 cities = matrix(c(as.vector(cities.p$x), as.vector(cities.p$y)), ncol=2)
@@ -620,7 +620,7 @@ etsp
 tour <- solve_TSP(etsp, method = "nn", control=list(start=id))
 tour
 
-tour_length(tour) # 104.91 ### Note: random data!
+tour_length(tour) # 107.7 # 104.91 ### Note: random data!
 plot.tour(tour, cities, etsp, id)
 
 ### Tour ###
@@ -630,11 +630,12 @@ param.grid = expand.grid((-5:5)/3, (-5:5)/3)
 #
 tour = scan.tour(cities, id, dist.m=dist.m, param.grid=param.grid, ignore.start=T)
 tour
-# examples: 84.8, or 90.27 # but data is random!
+# examples: 88.75, or 87.4, or 90.27 # but data is random!
 
 ### Level 2:
 alpha = -2/3; p = -5/3;
 alpha = 4/3; p = 2/3;
+alpha = 2/3; p = 1;
 scan2.tour(cities, id, alpha=alpha, p=p, dist.m=dist.m, param.grid=param.grid, ignore.start=T)
 # Level 2 does NOT usually help much!
 

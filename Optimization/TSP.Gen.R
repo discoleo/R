@@ -6,12 +6,14 @@
 ### TSP Models
 ### Data Generators
 ###
-### draft v.0.3b
+### draft v.0.3c
 
 
 ###############
 ### History ###
 
+### draft v.0.3c:
+# - added seed option in r2d;
 ### draft v.0.3a - v.0.3b:
 # - moved Analysis & Tours to TSP.Solver.R;
 #   [basically all v.0.2x-code]
@@ -152,13 +154,17 @@ runif2d.gen = function(n1, n2=n1, max=2) {
 	# max = 2 is more close to rnorm
 	# alternative: max = 4*sd
 	len = n1*n2
-	p.x = runif(len, max=max)
-	p.y = runif(len, max=max)
+	p.x = runif(len, max=max[1])
+	max2 = if(length(max) > 1) max[2] else max;
+	p.y = runif(len, max=max2)
 	return(list("x"=p.x, "y"=p.y))
 }
 ### 2D: 2 bands * epochs * N(0, sd)
-r2d.gen = function(n, epochs, sd=1, sep.scale=1, x.jitter=NA) {
+r2d.gen = function(n, epochs, sd=1, sep.scale=1, x.jitter=NA, seed=NA) {
 	# n = number of points per epoch
+	if( ! is.na(seed)) {
+		set.seed(seed)
+	}
 	s = rnorm(10*n, sd=sd)
 	ep.id = if(length(epochs) == 1) 1:epochs else epochs;
 	#
