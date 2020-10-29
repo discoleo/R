@@ -5,12 +5,14 @@
 ###
 ### TSP Solver
 ###
-### draft v.0.1g
+### draft v.0.2a
 
 
 ###############
 ### History ###
 
+### draft v.0.2a:
+# - tools/functions to transform tours: shift, intersect;
 ### draft v.0.1e - v.0.1g:
 # - early experiments with multiple (generalized) polynomial terms (0.1e & 0.1f & 0.1g);
 # - early experiments with bands of data split into "epochs" (0.1g);
@@ -192,7 +194,8 @@ scan.tour = function(cities, start.id=1, alpha=(-5:5)/3, p=(-5:5)/3, param.grid,
 	tours.d = sapply(seq(ncol(tours)), function(id) sum(dist.tour(cities, tours[,id])))
 	d.min = min(tours.d)
 	tour.id = seq_along(tours.d) [tours.d == d.min]
-	rez = list(min=d.min, id=tour.id, alpha=param.grid[tour.id,1], p=param.grid[tour.id,2])
+	rez = list(min=d.min, id=tour.id, alpha=param.grid[tour.id,1], p=param.grid[tour.id,2],
+		tour=tours[ , tour.id])
 	plot.tour(tours[ , tour.id[1]], cities, etsp, start.id)
 	return(rez)
 }
@@ -211,9 +214,35 @@ scan2.tour = function(cities, start.id=1, alpha=2/3, p=2/3, param.grid, dist.m, 
 	tours.d = sapply(seq(ncol(tours)), function(id) sum(dist.tour(cities, tours[,id])))
 	d.min = min(tours.d)
 	tour.id = seq_along(tours.d) [tours.d == d.min]
-	rez = list(min=d.min, id=tour.id, alpha=param.grid[tour.id,1], p=param.grid[tour.id,2])
+	rez = list(min=d.min, id=tour.id, alpha=param.grid[tour.id,1], p=param.grid[tour.id,2],
+		tour=tours[ , tour.id])
 	plot.tour(tours[ , tour.id[1]], cities, etsp, start.id)
 	return(rez)
+}
+
+
+shift.tour = function(tour, id) {
+	id.pos = match(id, tour)
+	if(id.pos <= 0) {
+		stop("ID NOT found!")
+	}
+	new.tour = tour[id.pos:length(tour)]
+	if(id.pos > 1) {
+		id.pos = id.pos - 1;
+		new.tour = c(new.tour, tour[1:id.pos])
+	}
+	return(new.tour)
+}
+
+intersect.tour = function(tour1, tour2, npos) {
+	new1.tour = tour1[1:npos]
+	new2.tour = tour2[1:npos]
+	npos = npos + 1
+	if(npos <= length(tour1))
+		new1.tour = c(new1.tour, intersect(tour2, tour1[npos:length(tour1)]))
+	if(npos <= length(tour2))
+		new2.tour = c(new2.tour, intersect(tour1, tour2[npos:length(tour2)]))
+	return(list(new1.tour, new2.tour))
 }
 
 #############################
