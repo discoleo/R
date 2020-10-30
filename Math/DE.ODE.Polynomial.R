@@ -7,16 +7,18 @@
 ### Differential Equations
 ### ODEs
 ###
-### draft v.0.1f
+### draft v.0.1f-2
 
 
 ### History
 
 ### Order 1 Non-Liniar
 ###
-### draft v.0.1f:
-# - solved: x*y*dy + x*(x+1)*dy - 2*y - x
+### draft v.0.1f - v.0.1f-2:
+# - solved: x*y*dy + x*(x+1)*dy - 2*y = x;
 #   (a Lambert snack)
+# - various generalizations, e.g.:
+#   (x^2+b)*y*dy + (x^2+b)*(x+1)*dy - 2*x*y = x^2 - b; (v.0.1f-2)
 ### draft v.0.1e-pre-snack - v.0.1e-snack4:
 # - derived: the snack (D(P5));
 # - added a simpler snack (snack2): D(P5), where P5 = P((x-1)^(1/5)),
@@ -1289,7 +1291,6 @@ sapply(c(a-(4:1)/3, a+(1:6)/3), line.tan, dx=3, p=y, dp=dy, a=a)
 
 
 ### (x + y)*e^y = x^2
-### TODO: = x^p
 x*y*dy + x*(x+1)*dy - 2*y - x # = 0
 ### Solution:
 y = function(x) {
@@ -1309,6 +1310,53 @@ dy = function(x) {
 curve(y(x), from=-1/5, to=3)
 # a nice global minimum
 sapply(c((0:4)/2), line.tan, dx=3, p=y, dp=dy)
+
+#####################
+### (x + y)*e^y = x^2 + b
+(x^2+b)*y*dy + (x^2+b)*(x+1)*dy - 2*x*y - x^2 + b # = 0
+### Solution:
+y = function(x, b) {
+	# root
+	y = lambertWp((x^2+b) * exp(x)) - x
+	y = sapply(y, round0)
+	return(y)
+}
+dy = function(x, b) {
+	y.x = y(x, b)
+	x2 = x^2 + b
+	div = x2*y.x + x2*(x+1)
+	dp = 2*x*y.x + x2 - 2*b
+	# TODO: find BUG: must be -1 (but why?);
+	dp = if(div != 0) dp / div else -1;
+	return(dp)
+}
+curve(y(x, b=1/2), from=-1, to=3)
+# a nice global minimum
+sapply(c((0:4)/2), line.tan, dx=3, p=y, dp=dy, b=1/2)
+
+
+### (x + y)*e^y = x^n + b*x
+(x^n+b*x)*y*dy + (x^n+b*x)*(x+1)*dy - (n*x^(n-1) + b)*y - (n-1)*x^n # = 0
+(x^3+x)*y*dy + (x^3+x)*(x+1)*dy - (3*x^2 + 1)*y - 2*x^3 # for: n = 3; b = 1;
+### Solution:
+y = function(x, n, b) {
+	# root
+	y = lambertWp((x^n + b*x) * exp(x)) - x
+	y = sapply(y, round0)
+	return(y)
+}
+dy = function(x, n, b) {
+	y.x = y(x, n, b)
+	dp = (n*x^(n-1) + b)*y.x + (n-1)*x^n;
+	xn = x^n + b*x
+	div = xn*y.x + xn*(x+1)
+	# TODO: correct Limit;
+	dp = if(div != 0) dp / div else 0;
+	return(dp)
+}
+curve(y(x, n=3, b=1), from=-1/5, to=3)
+# a nice global minimum
+sapply(c((0:4)/2), line.tan, dx=3, p=y, dp=dy, n=3, b=1)
 
 
 
