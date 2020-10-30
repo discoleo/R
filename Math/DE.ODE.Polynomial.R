@@ -7,13 +7,16 @@
 ### Differential Equations
 ### ODEs
 ###
-### draft v.0.1e-snack4-fixed
+### draft v.0.1f
 
 
 ### History
 
 ### Order 1 Non-Liniar
 ###
+### draft v.0.1f:
+# - solved: x*y*dy + x*(x+1)*dy - 2*y - x
+#   (a Lambert snack)
 ### draft v.0.1e-pre-snack - v.0.1e-snack4:
 # - derived: the snack (D(P5));
 # - added a simpler snack (snack2): D(P5), where P5 = P((x-1)^(1/5)),
@@ -1285,6 +1288,31 @@ sapply(c(a-(4:1)/3, a+(1:6)/3), line.tan, dx=3, p=y, dp=dy, a=a)
 # TODO: implement snack;
 
 
+### (x + y)*e^y = x^2
+### TODO: = x^p
+x*y*dy + x*(x+1)*dy - 2*y - x # = 0
+### Solution:
+y = function(x) {
+	# root
+	y = lambertWp(x^2 * exp(x)) - x
+	y = sapply(y, round0)
+	return(y)
+}
+dy = function(x) {
+	y.x = y(x)
+	div = x*y.x + x*(x+1)
+	dp = 2*y.x + x
+	# TODO: find BUG: must be -1 (but why?);
+	dp = if(div != 0) dp / div else -1;
+	return(dp)
+}
+curve(y(x), from=-1/5, to=3)
+# a nice global minimum
+sapply(c((0:4)/2), line.tan, dx=3, p=y, dp=dy)
+
+
+
+
 ######################
 ######################
 
@@ -1328,7 +1356,7 @@ sapply(c(-1 + (1:4)/div, 1 - (1:4)/div), line.tan, dx=0.5, p=dy, dp=d2y)
 
 
 ### sin(x*y + a) = x^p
-# Note: parameter a does NOT seem to have any impact;
+# Note: parameter [a] does NOT seem to have any impact;
 (x*dy + y)*cos(x*y + a) = p*x^(p-1)
 (x*dy + y) * sqrt(1 - x^(2*p)) = p*x^(p-1)
 # D2 =>
@@ -1343,6 +1371,42 @@ curve(dy(x, n=3), from=-1, to=1, col="green", ylim=c(-4, 6))
 curve(y(x, n=3), from=-1, to=1, col="grey", add=T)
 div = 23
 sapply(c(-1 + (1:4)/div, 1 - (1:4)/div), line.tan, dx=0.5, p=dy, dp=d2y, n=3)
+
+### Combinations:
+x*(1 - x^6)*d2y - (5*x^6 - 2)*dy - 3*x^2*y*sin(x*y + a)  = 6*x*sqrt(1 - x^6)
+### Solution & Plot:
+y = function(x, n=2, a=1/3) {
+	r = (asin(x^n) - a)/x
+	r[x == 0] = if(a == 0) 0 else Inf;
+	return(r)
+}
+dy = function(x, n=2, a=1/3) {
+	y.x = y(x, n=n, a=a)
+	dp = (n*x^(n-1) / sqrt(1- x^(2*n))) - y.x
+	dp = dp/x
+	zero = if(n == 2) 1 else 0; # TODO: dependent on n;
+	zero = if(a == 0) zero else Inf;
+	dp[x == 0] = zero
+	return(dp)
+}
+d2y = function(x, n=2, a=1/3) {
+	y.x = y(x, n=n, a=a)
+	dy.x = dy(x, n=n, a=a)
+	x4 = x^(2*n)
+	dp = if(n == 2) 1 else (n-1)*x^(n-2);
+	dp = (dp * sqrt(1 - x4) + x^(n-1)*y.x*sin(x*y.x + a))*n + ((n+2)*x4 - 2)*dy.x
+	dp = dp / x / (1-x4)
+	return(dp)
+}
+### Plot
+curve(y, from=-1, to=1)
+div = 4.5
+sapply(c(-1 + (1:4)/div, 1 - (1:4)/div), line.tan, dx=0.5, p=y, dp=dy)
+### D2(y):
+curve(dy, from=-1, to=1, col="green", ylim=c(-1, 8))
+curve(y, from=-1, to=1, col="grey", add=T)
+div = 4.5
+sapply(c(-1 + (1:4)/div, 1 - (1:4)/div), line.tan, dx=0.5, p=dy, dp=d2y)
 
 
 ### TODO: tan, ln;
