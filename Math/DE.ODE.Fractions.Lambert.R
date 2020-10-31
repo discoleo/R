@@ -7,13 +7,15 @@
 ### Differential Equations
 ### ODEs - Fractions: Lambert
 ###
-### draft v.0.1a
+### draft v.0.1b
 
 
 ### History
 
 ### Order 1 Non-Liniar
 ###
+### draft v.0.1b:
+# - trigonometric coefficients;
 ### draft v.0.1a:
 # - moved section Exponential/Lambert
 #   to this new file;
@@ -70,6 +72,7 @@ sapply(c((0:4)/2), line.tan, dx=3, p=y, dp=dy)
 
 #####################
 ### (x + y)*e^y = x^2 + b
+# [not run]
 (x^2+b)*y*dy + (x^2+b)*(x+1)*dy - 2*x*y - x^2 + b # = 0
 ### Solution:
 y = function(x, b) {
@@ -81,9 +84,8 @@ y = function(x, b) {
 dy = function(x, b) {
 	y.x = y(x, b)
 	x2 = x^2 + b
-	div = x2*y.x + x2*(x+1)
-	dp = 2*x*y.x + x2 - 2*b
-	# TODO: find BUG: must be -1 (but why?);
+	div = x2*(y.x + x + 1)
+	dp = 2*x*y.x + x2 - 2*b # using x2 instead of x^2
 	dp = if(div != 0) dp / div else -1;
 	return(dp)
 }
@@ -91,6 +93,38 @@ curve(y(x, b=1/2), from=-1, to=3)
 # a nice global minimum
 sapply(c((0:4)/2), line.tan, dx=3, p=y, dp=dy, b=1/2)
 
+
+#####################
+### (x + a + y)*e^y = x^2 + b
+# [not run]
+(1 + dy)*e^y + (x + a + y)*e^y*dy = 2*x
+(1 + dy)*(x^2 + b)/(y + x + a) + (x^2 + b)*dy - 2*x # = 0
+(1 + dy)*(x^2 + b) + (x^2 + b)*(y + x + a)*dy - 2*x*(y + x + a) # = 0
+(x^2 + b)*y*dy + (x + a + 1)*(x^2 + b)*dy - 2*x*y - x^2 - 2*a*x + b # = 0
+###
+(x^2 + b)*y*dy + (x + a + 1)*(x^2 + b)*dy - 2*x*y - x^2 - 2*a*x + b # = 0
+### Solution:
+y = function(x, a, b) {
+	# root
+	y = lambertWp((x^2+b) * exp(x+a)) - x - a
+	y = sapply(y, round0)
+	return(y)
+}
+dy = function(x, a, b) {
+	y.x = y(x, a, b)
+	x2 = x^2 + b
+	div = x2 * (y.x + x + a + 1)
+	dp = 2*x*y.x + x^2 + 2*a*x - b
+	dp = if(div != 0) dp / div else -1; # may need correction
+	return(dp)
+}
+curve(y(x, a=-1, b=1/2), from=-2, to=3)
+# a nice global minimum
+sapply(c(-1, (0:4)/3), line.tan, dx=3, p=y, dp=dy, a=-1, b=1/2)
+
+
+###################
+### Generalisations
 
 ### (x + y)*e^y = x^n + b*x
 (x^n+b*x)*y*dy + (x^n+b*x)*(x+1)*dy - (n*x^(n-1) + b)*y - (n-1)*x^n # = 0
@@ -115,6 +149,39 @@ curve(y(x, n=3, b=1), from=-1/5, to=3)
 # a nice global minimum
 sapply(c((0:4)/2), line.tan, dx=3, p=y, dp=dy, n=3, b=1)
 
+
+##################################
+
+##################################
+### Trigonometric Coefficients ###
+
+#####################
+### (x + a + y)*e^y = sin(x)^2 + b
+# [not run]
+(1 + dy)*e^y + (x + a + y)*e^y*dy = 2*sin(x)*cos(x)
+(1 + dy)*(sin(x)^2 + b)/(y + x + a) + (sin(x)^2 + b)*dy - sin(2*x) # = 0
+(1 + dy)*(sin(x)^2 + b) + (sin(x)^2 + b)*(y + x + a)*dy - sin(2*x)*(y + x + a) # = 0
+(sin(x)^2 + b)*y*dy + (x + a + 1)*(sin(x)^2 + b)*dy - sin(2*x)*y - x*sin(2*x) + sin(x)^2 - a*sin(2*x) + b # = 0
+###
+(sin(x)^2 + b)*y*dy + (x + a + 1)*(sin(x)^2 + b)*dy - sin(2*x)*y - x*sin(2*x) - a*sin(2*x) + sin(x)^2 + b # = 0
+### Solution:
+y = function(x, a, b) {
+	# root
+	y = lambertWp((sin(x)^2+b) * exp(x+a)) - x - a
+	y = sapply(y, round0)
+	return(y)
+}
+dy = function(x, a, b) {
+	y.x = y(x, a, b)
+	x2 = sin(x)^2 + b; x2a = sin(2*x)
+	div = x2 * (y.x + x + a + 1)
+	dp = x2a*y.x + x2a*(x + a) - x2;
+	dp = if(div != 0) dp / div else -1; # may need correction
+	return(dp)
+}
+curve(y(x, a=-1, b=1), from=-2, to=3)
+# a nice global minimum
+sapply(c(-1, (0:3)), line.tan, dx=3, p=y, dp=dy, a=-1, b=1)
 
 #########################
 
