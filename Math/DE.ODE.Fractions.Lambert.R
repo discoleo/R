@@ -7,15 +7,17 @@
 ### Differential Equations
 ### ODEs - Fractions: Lambert
 ###
-### draft v.0.1b
+### draft v.0.1b-2
 
 
 ### History
 
 ### Order 1 Non-Liniar
 ###
-### draft v.0.1b:
+### draft v.0.1b - v.0.1b-2:
 # - trigonometric coefficients;
+# - more examples (but with same structure of trig coeffs);
+# - minor improvements: using ifelse() (v.0.1b-2);
 ### draft v.0.1a:
 # - moved section Exponential/Lambert
 #   to this new file;
@@ -142,7 +144,7 @@ dy = function(x, n, b) {
 	xn = x^n + b*x
 	div = xn*y.x + xn*(x+1)
 	# TODO: correct Limit;
-	dp = if(div != 0) dp / div else 0;
+	dp = ifelse(div != 0, dp / div, 0);
 	return(dp)
 }
 curve(y(x, n=3, b=1), from=-1/5, to=3)
@@ -168,6 +170,11 @@ sapply(c((0:4)/2), line.tan, dx=3, p=y, dp=dy, n=3, b=1)
 y = function(x, a, b) {
 	# root
 	y = lambertWp((sin(x)^2+b) * exp(x+a)) - x - a
+	isNA = is.na(y)
+	if(any(isNA)) {
+		x = x[isNA] # may not play a role ???
+		y[isNA] = lambertWn((sin(x)^2+b) * exp(x+a)) - x - a
+	}
 	y = sapply(y, round0)
 	return(y)
 }
@@ -176,12 +183,27 @@ dy = function(x, a, b) {
 	x2 = sin(x)^2 + b; x2a = sin(2*x)
 	div = x2 * (y.x + x + a + 1)
 	dp = x2a*y.x + x2a*(x + a) - x2;
-	dp = if(div != 0) dp / div else -1; # may need correction
+	dp = ifelse(div != 0, dp / div, -1); # may need correction
 	return(dp)
 }
-curve(y(x, a=-1, b=1), from=-2, to=3)
+###
+a = -1; b = 1;
+curve(y(x, a=a, b=b), from=-2, to=3)
 # a nice global minimum
-sapply(c(-1, (0:3)), line.tan, dx=3, p=y, dp=dy, a=-1, b=1)
+sapply(c(-1, (0:3)), line.tan, dx=3, p=y, dp=dy, a=a, b=b)
+
+###
+a = -1; b = -1;
+curve(y(x, a=a, b=b), from=-3, to=2)
+# a nice global minimum
+sapply(c(-1, 1+(0:3)/3), line.tan, dx=3, p=y, dp=dy, a=a, b=b)
+
+###
+a = -1; b = -1/4;
+curve(y(x, a=a, b=b), from=-3, to=2)
+# a nice global minimum
+sapply(c(-1, (0:3)/2), line.tan, dx=3, p=y, dp=dy, a=a, b=b)
+
 
 #########################
 
