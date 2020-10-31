@@ -7,14 +7,18 @@
 ### Differential Equations
 ### ODEs
 ###
-### draft v.0.1f-2
+### draft v.0.2-pre-a
 
 
 ### History
 
 ### Order 1 Non-Liniar
-###
+### draft v.0.2-pre-a:
+# - moved section Exponentials/Lambert
+#   to seprate file: DE.ODE.Fractions.Lambert.R;
+
 ### draft v.0.1f - v.0.1f-2:
+#   [moved now to seprate file]
 # - solved: x*y*dy + x*(x+1)*dy - 2*y = x;
 #   (a Lambert snack)
 # - various generalizations, e.g.:
@@ -76,6 +80,9 @@
 ####################
 
 ### helper functions
+
+# include: DE.ODE.Helper.R;
+
 line.tan = function(x, col="red", dx=5, p=p, dp=dp, ...) {
 	slope = dp(x, ...)
 	x.max = ifelse( (abs(x) >= 1), dx*x, 10);
@@ -85,6 +92,7 @@ line.tan = function(x, col="red", dx=5, p=p, dp=dp, ...) {
 	lines(c(x, x.max), c(p.x, p.x + (x.max-x)*slope), col=col)
 	return(slope)
 }
+###
 rootn = function(r, n) {
 	ifelse( (Im(r) == 0 & Re(r) >= 0), r^(1/n), - (-r)^(1/n) )
 }
@@ -1269,100 +1277,6 @@ sapply(c(a-(4:1)/3, a+(1:6)/3), line.tan, dx=3, p=y, dp=dy, a=a)
 ####################
 ####################
 ####################
-
-### Exponential & Lambert W
-
-### y*e^y + h*e^y = f
-# e^y*dy + y*e^y*dy + h*e^y*dy + dh*e^y = df # *y
-# y*e^y*dy + y*y*e^y*dy + h*y*e^y*dy + dh*y*e^y = df*y
-# (f - h*e^y)*y*dy + (f - h*e^y)*dy + h*(f - h*e^y)*dy + (f - h*e^y)*dh = df*y
-# f*y*dy - h*e^y*y*dy + f*dy - h*e^y*dy + h*(f - h*e^y)*dy + (f - h*e^y)*dh = df*y
-# f*y*dy - h*(f - h*e^y)*dy + f*dy - h*e^y*dy + h*(f - h*e^y)*dy + (f - h*e^y)*dh = df*y
-# f*y*dy - 2*h*e^y*dy + 2*f*dy - df*y = 0
-
-### Examples:
-
-###
-# f = x
-# h = x - 1
-# ...
-# TODO: check result;
-# TODO: implement snack;
-
-
-### (x + y)*e^y = x^2
-x*y*dy + x*(x+1)*dy - 2*y - x # = 0
-### Solution:
-y = function(x) {
-	# root
-	y = lambertWp(x^2 * exp(x)) - x
-	y = sapply(y, round0)
-	return(y)
-}
-dy = function(x) {
-	y.x = y(x)
-	div = x*y.x + x*(x+1)
-	dp = 2*y.x + x
-	# TODO: find BUG: must be -1 (but why?);
-	dp = if(div != 0) dp / div else -1;
-	return(dp)
-}
-curve(y(x), from=-1/5, to=3)
-# a nice global minimum
-sapply(c((0:4)/2), line.tan, dx=3, p=y, dp=dy)
-
-#####################
-### (x + y)*e^y = x^2 + b
-(x^2+b)*y*dy + (x^2+b)*(x+1)*dy - 2*x*y - x^2 + b # = 0
-### Solution:
-y = function(x, b) {
-	# root
-	y = lambertWp((x^2+b) * exp(x)) - x
-	y = sapply(y, round0)
-	return(y)
-}
-dy = function(x, b) {
-	y.x = y(x, b)
-	x2 = x^2 + b
-	div = x2*y.x + x2*(x+1)
-	dp = 2*x*y.x + x2 - 2*b
-	# TODO: find BUG: must be -1 (but why?);
-	dp = if(div != 0) dp / div else -1;
-	return(dp)
-}
-curve(y(x, b=1/2), from=-1, to=3)
-# a nice global minimum
-sapply(c((0:4)/2), line.tan, dx=3, p=y, dp=dy, b=1/2)
-
-
-### (x + y)*e^y = x^n + b*x
-(x^n+b*x)*y*dy + (x^n+b*x)*(x+1)*dy - (n*x^(n-1) + b)*y - (n-1)*x^n # = 0
-(x^3+x)*y*dy + (x^3+x)*(x+1)*dy - (3*x^2 + 1)*y - 2*x^3 # for: n = 3; b = 1;
-### Solution:
-y = function(x, n, b) {
-	# root
-	y = lambertWp((x^n + b*x) * exp(x)) - x
-	y = sapply(y, round0)
-	return(y)
-}
-dy = function(x, n, b) {
-	y.x = y(x, n, b)
-	dp = (n*x^(n-1) + b)*y.x + (n-1)*x^n;
-	xn = x^n + b*x
-	div = xn*y.x + xn*(x+1)
-	# TODO: correct Limit;
-	dp = if(div != 0) dp / div else 0;
-	return(dp)
-}
-curve(y(x, n=3, b=1), from=-1/5, to=3)
-# a nice global minimum
-sapply(c((0:4)/2), line.tan, dx=3, p=y, dp=dy, n=3, b=1)
-
-
-
-
-######################
-######################
 
 ### Trigonometric Functions
 
