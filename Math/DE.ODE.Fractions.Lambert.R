@@ -7,13 +7,16 @@
 ### Differential Equations
 ### ODEs - Fractions: Lambert
 ###
-### draft v.0.1c
+### draft v.0.1d
 
 
 ### History
 
 ### Order 1 Non-Liniar
 ###
+### draft v.0.1d: [02-11-2020]
+# - added variants based on logarythms (equivalent to y^y):
+#   y*dy + (x+b)*dy - y = 0;
 ### draft v.0.1c:
 # - 3-parameter generalization of ODEs of type:
 #   y*dy + dy + y + f(x) = 0;
@@ -250,6 +253,55 @@ a = -1; b = -1/4;
 curve(y(x, a=a, b=b), from=-3, to=2)
 # NO minimum: only inflexion;
 sapply(c(-1, (0:3)/2), line.tan, dx=3, p=y, dp=dy, a=a, b=b)
+
+
+#########################
+
+###################
+### Logarythmic ###
+###################
+
+### y * log(y) = x + b
+# [not run]
+y*dy + (x+b)*dy - y # = 0
+### Solution:
+y = function(x, b) {
+	# root
+	y = exp(lambertWp(x + b))
+	isNA = is.na(y)
+	if(any(isNA)) {
+		x = x[isNA] # may not play a role ???
+		y[isNA] = exp(lambertWp(x + b))
+	}
+	y = sapply(y, round0)
+	return(y)
+}
+dy = function(x, b) {
+	y.x = y(x, b)
+	div = y.x + x + b
+	dp = y.x;
+	dp = ifelse(div != 0, dp / div, -1); # may need correction
+	return(dp)
+}
+###
+b = 1;
+curve(y(x, b=b), from= - b - 2/3, to = b + 2)
+# NO minimum: only inflexion;
+sapply(c(-1, (0:3)), line.tan, dx=3, p=y, dp=dy, b=b)
+
+###
+b = 2;
+curve(y(x, b=b), from= - b - 2/3, to = b + 2)
+# NO minimum: only inflexion;
+sapply(c(-2, -1, 1, 3), line.tan, dx=3, p=y, dp=dy, b=b)
+
+
+### y*log(y + a) = x + b
+2*(x+b)*y^2*dy + a*(x+b)*y*dy - y^2 - a*y # = 0
+### Solution:
+# TODO:
+# - solve the equation;
+# - check if derivation is correct;
 
 
 #########################
