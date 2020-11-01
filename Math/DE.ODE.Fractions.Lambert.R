@@ -7,13 +7,16 @@
 ### Differential Equations
 ### ODEs - Fractions: Lambert
 ###
-### draft v.0.1b-2
+### draft v.0.1c
 
 
 ### History
 
 ### Order 1 Non-Liniar
 ###
+### draft v.0.1c:
+# - 3-parameter generalization of ODEs of type:
+#   y*dy + dy + y + f(x) = 0;
 ### draft v.0.1b - v.0.1b-2:
 # - trigonometric coefficients;
 # - more examples (but with same structure of trig coeffs);
@@ -65,12 +68,19 @@ dy = function(x) {
 	div = x*y.x + x*(x+1)
 	dp = 2*y.x + x
 	# TODO: find BUG: must be -1 (but why?);
-	dp = if(div != 0) dp / div else -1;
+	dp = ifelse(div != 0, dp / div, -1);
 	return(dp)
 }
+###
 curve(y(x), from=-1/5, to=3)
 # a nice global minimum
 sapply(c((0:4)/2), line.tan, dx=3, p=y, dp=dy)
+###
+curve(y(x), from=-1/5, to=5)
+# a nice global minimum
+sapply(c((0:3)*4/3), line.tan, dx=3, p=y, dp=dy)
+
+
 
 #####################
 ### (x + y)*e^y = x^2 + b
@@ -88,7 +98,7 @@ dy = function(x, b) {
 	x2 = x^2 + b
 	div = x2*(y.x + x + 1)
 	dp = 2*x*y.x + x2 - 2*b # using x2 instead of x^2
-	dp = if(div != 0) dp / div else -1;
+	dp = ifelse(div != 0, dp / div, -1);
 	return(dp)
 }
 curve(y(x, b=1/2), from=-1, to=3)
@@ -117,7 +127,7 @@ dy = function(x, a, b) {
 	x2 = x^2 + b
 	div = x2 * (y.x + x + a + 1)
 	dp = 2*x*y.x + x^2 + 2*a*x - b
-	dp = if(div != 0) dp / div else -1; # may need correction
+	dp = ifelse(div != 0, dp / div, -1); # may need correction
 	return(dp)
 }
 curve(y(x, a=-1, b=1/2), from=-2, to=3)
@@ -150,6 +160,43 @@ dy = function(x, n, b) {
 curve(y(x, n=3, b=1), from=-1/5, to=3)
 # a nice global minimum
 sapply(c((0:4)/2), line.tan, dx=3, p=y, dp=dy, n=3, b=1)
+
+
+### Generalisations
+
+### (y + ax)*e^(y + ex) = fx
+(dy + dax)*e^(y + ex) + (dy + dex)*(y + ax)*e^(y + ex) - dfx # = 0
+(dy + dax)*fx/(y + ax) + (dy + dex)*fx - dfx # = 0 # * (y + ax)
+(y + ax)*(dy + dex)*fx + (dy + dax)*fx - dfx*(y + ax) # = 0
+fx*(y + ax)*(dy + dex) + fx*(dy + dax) - dfx*(y + ax) # = 0
+fx*y*dy + fx*(ax + 1)*dy + (fx*dex - dfx)*y + ax*(fx*dex - dfx) + fx*dax # = 0
+
+### Example 1:
+# fx = x^2
+# ax = x^2 + x - 1
+# ex = -2*x
+x^2*y*dy + x^2*(x^2 + x)*dy - 2*(x^2 + x)*y - 2*(x^2 + x - 1)*(x^2 + x) + x^2*(2*x+1) # = 0
+y*dy + (x^2 + x)*dy - 2*(x + 1)/x * y - 2*(x^2 + x - 1)*(x + 1)/x + 2*x+1 # = 0
+### Solution:
+y = function(x) {
+	# root
+	ax = x^2 + x - 1
+	y = lambertWp(x^2 * exp(ax + 2*x)) - ax
+	y = sapply(y, round0)
+	return(y)
+}
+dy = function(x) {
+	y.x = y(x)
+	ax = x^2 + x - 1
+	dp = 2*(y.x + ax)*(x+1)/ x - 2*x - 1
+	div = y.x + ax + 1;
+	# TODO: correct Limit;
+	dp = ifelse(div != 0, dp / div, 0);
+	return(dp)
+}
+curve(y(x), from=-1, to=1)
+# a nice global minimum
+sapply(c((-4:4)/5), line.tan, dx=3, p=y, dp=dy)
 
 
 ##################################
@@ -189,19 +236,19 @@ dy = function(x, a, b) {
 ###
 a = -1; b = 1;
 curve(y(x, a=a, b=b), from=-2, to=3)
-# a nice global minimum
+# NO minimum: only inflexion;
 sapply(c(-1, (0:3)), line.tan, dx=3, p=y, dp=dy, a=a, b=b)
 
-###
+### y*dy + x*dy + 2*tan(x)*y + 2*x*tan(x) - 2*tan(x) + 1 = 0
 a = -1; b = -1;
 curve(y(x, a=a, b=b), from=-3, to=2)
-# a nice global minimum
+# a "virtual" minimum
 sapply(c(-1, 1+(0:3)/3), line.tan, dx=3, p=y, dp=dy, a=a, b=b)
 
 ###
 a = -1; b = -1/4;
 curve(y(x, a=a, b=b), from=-3, to=2)
-# a nice global minimum
+# NO minimum: only inflexion;
 sapply(c(-1, (0:3)/2), line.tan, dx=3, p=y, dp=dy, a=a, b=b)
 
 
