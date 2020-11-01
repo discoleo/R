@@ -5,24 +5,29 @@
 ### [the one and only]
 ###
 ### Differential Equations
-### ODEs
+### ODEs: Polynomial types
 ###
-### draft v.0.2-pre-a
+### draft v.0.2a
 
 
 ### History
 
 ### Order 1 Non-Liniar
+### draft v.0.2a:
+# - re-organization of sections;
+# - brief theory of polynomial entangling:
+#   the introduction of 1 degree of freedom;
 ### draft v.0.2-pre-a:
 # - moved section Exponentials/Lambert
 #   to seprate file: DE.ODE.Fractions.Lambert.R;
-
 ### draft v.0.1f - v.0.1f-2:
 #   [moved now to seprate file]
+# - Lambert-type equations (not simple polynomial)!
 # - solved: x*y*dy + x*(x+1)*dy - 2*y = x;
 #   (a Lambert snack)
 # - various generalizations, e.g.:
 #   (x^2+b)*y*dy + (x^2+b)*(x+1)*dy - 2*x*y = x^2 - b; (v.0.1f-2)
+
 ### draft v.0.1e-pre-snack - v.0.1e-snack4:
 # - derived: the snack (D(P5));
 # - added a simpler snack (snack2): D(P5), where P5 = P((x-1)^(1/5)),
@@ -71,12 +76,50 @@
 ### Terminology ###
 
 # let f(x), h(x) be 2 functions which are differentiable;
+# y(x) = function to be found;
+# dy = d(y(x));
+# d2y = d(d(y(x)));
+
+### PDE:
+# TODO: move to separate file;
 # p(x), q(x) = functions to be found;
 # dp, dq:
 # dp = d(p(x)); dq = d(q(x));
 # Note: q(x) is an intermediary function used for various derivations;
 
 
+######################
+### (brief) Theory ###
+
+# y^n + P(y) = 0
+# where:
+# - P(y) = polynomial in y of order < n;
+# - the coefficients of P(y) are functions of x;
+#   (both polynomial & non-polynomial functions)
+
+### D() =>
+# n*y^(n-1)*dy + D(P) = 0
+
+# - unfortunately, the coefficients of D(P) are correlated;
+# - we will decorelate these coefficients by combining/entangling
+#   with the original polynomial;
+
+### Multiply with y =>
+# n*y^n*dy + y*D(P) = 0
+### Substitute: y^n = - P(y)
+# n*P*dy - y*D(P) = 0;
+
+### Note:
+# - the coefficients of n*P*dy will combine with
+#   the corresponding coefficients of y*D(P);
+# - this will decorelate the coefficients;
+# - although the coefficients of D(P) are still corelated,
+#   the term n*P*dy introduces 1 degree of freedom;
+# - the numeric coefficient n from n*P*dy
+#   introduces 1 degree of freedom in the equation;
+
+
+####################
 ####################
 
 ### helper functions
@@ -123,217 +166,16 @@ round0 = function(m, tol=1E-7) {
 ### Cardan-Polynomials ###
 ##########################
 
-### System:
-# p^n + q^n = 2*f(x)
-# p*q = h(x)
-
-### full P3: is in the next section;
-# y = p + q;
-
-### P6-partial:
-# => q = h / p
-# =>
-# n*p^(n-1)*dp + n*q^(n-1)*dq = 2 * df
-# p^(n-1)*dp + q^(n-1)*dq = 2/n * df
-# p^(n-1)*dp + (h/p)^(n-1) * (dh/p - h*dp/p^2) = 2/n * df
-# p^(2*n)*dp + h^(n-1) * (p*dh - h*dp) - 2/n * p^(n+1) * df = 0
-#
-# p^(2*n)*dp - h^n*dp + h^(n-1)*p*dh - 2/n * p^(n+1) * df = 0
-
-### Solutions
-# p = (f + sqrt(f^2 - h^n))^(1/n)
-# q = (f - sqrt(f^2 - h^n))^(1/n)
-# Note:
-# - 2 basic solutions are possible;
-# - it is possible to rotate these solutions using the roots of unity;
-
-
-### Transformations:
-
-### Order 3: [redundant]
-# same as regular solution;
-p^2*dp + q^2*dq = 2/3*df # * p^2
-p^4*dp + p^2*q^2*dq - 2/3*df*p^2 = 0
-p^4*dp + h^2*dq - 2/3*df*p^2 = 0
-p^4*dp + h^2*(dh - q*dp)/p - 2/3*df*p^2 = 0 # * p
-p^5*dp + h^2*(dh - q*dp) - 2/3*df*p^3 = 0 # *p
-p^6*dp + h^2*(dh*p - h*dp) - 2/3*df*p^4 = 0
-
-### Variant:
-p^2*dp + q^2*dq = 2/3*df
-p^4*dp^2 + q^4*dq^2 + 2*p^2*q^2*dp*dq = 4/9*df^2
-p^4*dp^2 + q^4*((dh - q*dp)/p)^2 + 2*h^2*dp*(dh - q*dp)/p = 4/9*df^2 # *p^2
-p^6*dp^2 + q^4*(dh - q*dp)^2 + 2*h^2*dp*(p*dh - p*q*dp) = 4/9*df^2
-p^6*dp^2 + q^4*(dh - q*dp)^2 + 2*h^2*dp*(p*dh - h*dp) = 4/9*df^2
-p^6*dp^2 + q^4*(dh - q*dp)^2 + 2*h^2*dh*p*dp - 2*h^3*dp^2 = 4/9*df^2
-# TODO: ...
-
-
-################
-### Examples ###
-
-#########
-### n = 2
-p^4*dp - h^2*dp + h*p*dh - p^3 * df = 0
-
-###
-# h(x) = x
-# f(x) = 1
-p^4*dp - x^2*dp + x*p = 0
-# p = sqrt(f + sqrt(f^2 - h^2))
-p = function(x) {
-	sqrt(1 + sqrt(1 - x^2))
-}
-dp = function(x) {
-	p.x = p(x)
-	div = (p.x^4 - x^2)
-	dp = - x*p.x
-	dp = if(div != 0) dp / div else Inf;
-	return(dp)
-}
-curve(p, from=-1, to=1)
-sapply(c((0:5)/6), line.tan, dx=2, p=p, dp=dp)
-
-
-###
-# h(x) = x
-# f(x) = 2*x
-p^4*dp - x^2*dp - 2*p^3 + x*p = 0
-# p = sqrt(f + sqrt(f^2 - h^2))
-p = function(x) {
-	sqrt(2*x + x*sqrt(3))
-}
-dp = function(x) {
-	p.x = p(x)
-	div = (p.x^4 - x^2)
-	dp = 2*p.x^3 - x*p.x
-	dp = if(div != 0) dp / div else Inf;
-	return(dp)
-}
-curve(p, from=0, to=3)
-sapply(c((0:5)/4.5), line.tan, dx=2, p=p, dp=dp)
-
-#########
-
-#########
-### n = 3
-p^6*dp - h^3*dp - 2/3 * p^4 * df + h^2*p*dh = 0
-# where df, dh = given;
-
-###
-# h(x) = x
-# f(x) = 1
-p^6*dp - x^3*dp + x^2*p = 0
-# Solution & Plot:
-# p = (f + sqrt(f^2 - h^3))^(1/3)
-p = function(x, n=3) {
-	r = (1 + sqrt(1 - x^n))
-	ifelse( (r >= 0), r^(1/n), - (-r)^(1/n) )
-}
-dp = function(x) {
-	div = (p(x)^6 - x^3)
-	dp = - x^2*p(x)
-	dp = if(div != 0) dp / div else Inf;
-	return(dp)
-}
-curve(p, from=-3, to=1)
-sapply(c((0:5)/6), line.tan, dx=2, p=p, dp=dp)
-
-
-###
-# h(x) = x
-# f(x) = 3*x
-p^6*dp - x^3*dp - 2*p^4 + x^2*p = 0
-# p = (f + sqrt(f^2 - h^3))^(1/3)
-p = function(x, n=3) {
-	r = (3*x + sqrt(9*x^2 - x^n))
-	ifelse( (r >= 0), r^(1/n), - (-r)^(1/n) )
-}
-dp = function(x) {
-	div = (p(x)^6 - x^3)
-	dp = 2*p(x)^4 - x^2*p(x)
-	dp = if(div != 0) dp / div else Inf;
-	return(dp)
-}
-curve(p, from=-3, to=9)
-sapply(c(0.001, 2*(1:3), -1), line.tan, dx=3)
-
-###
-# h(x) = x
-# f(x) = x^3 + 3*x
-p^6*dp - x^3*dp - 2*(x^2+1)*p^4 + x^2*p = 0
-# p = (f + sqrt(f^2 - h^3))^(1/3)
-p = function(x, n=3) {
-	r = (x^3 + 3*x + sqrt((x^3 + 3*x)^2 - x^n))
-	ifelse( (r >= 0), r^(1/n), - (-r)^(1/n) )
-}
-dp = function(x) {
-	div = (p(x)^6 - x^3)
-	dp = 2*(x^2+1)*p(x)^4 - x^2*p(x)
-	dp = if(div != 0) dp / div else Inf;
-	return(dp)
-}
-curve(p, from=-3, to=9)
-sapply(c(0.001, 2*(1:3), -1), line.tan, dx=2)
-
-
-###
-# h(x) = x
-# f(x) = 3/2 * log(x)
-p^6*dp - h^3*dp - 2/3 * p^4 * df + h^2*p*dh = 0
-p^6*dp - x^3*dp - 1/x*p^4 + x^2*p = 0
-x*p^6*dp - x^4*dp - p^4 + x^3*p = 0
-# p = (f + sqrt(f^2 - h^3))^(1/3)
-p = function(x, n=3) {
-	r = (3/2 * log(x) + sqrt((3/2 * log(x))^2 - x^n))
-	ifelse( (r >= 0), r^(1/n), - (-r)^(1/n) )
-}
-dp = function(x) {
-	div = x*(p(x)^6 - x^3)
-	dp = p(x)^4 - x^3*p(x)
-	dp = if(div != 0) dp / div else Inf;
-	return(dp)
-}
-curve(p, from=0, to=0.8)
-sapply(c(0.001, (1:3)/6), line.tan, dx=2)
-
-
-###
-# h(x) = 1/(x^2 + 1)
-# f(x) = 3/2 * log(x^2 + 1)
-p^6*dp - h^3*dp - 2/3 * p^4 * df + h^2*p*dh = 0
-(x^2 + 1)^4 * p^6*dp - (x^2 + 1)*dp - 2*x*(x^2 + 1)^3 * p^4 - 2*x*p = 0
-# p = (f + sqrt(f^2 - h^3))^(1/3)
-p = function(x, n=3) {
-	r = (3/2 * log(x^2+1) + sqrt(9/4 * log(x^2+1)^2 - 1/(x^2+1)^n))
-	ifelse( (r >= 0), r^(1/n), - (-r)^(1/n) )
-}
-dp = function(x) {
-	x.mult = (x^2+1)^3
-	p.x = p(x)
-	div = (x^2+1)*(x.mult*p.x^6 - 1)
-	dp = 2*x*(x.mult*p.x^4 - p.x)
-	dp = if(div != 0) dp / div else Inf;
-	return(dp)
-}
-curve(p, from=-5, to=5)
-sapply(c(-(1:4), 1:4), line.tan, dx=3)
-
-
-##########################
-##########################
-
-##########################
-### Cardan-Polynomials ###
-### Full Root          ###
-##########################
-
+### Cardan-Polynomials:
+### Full Root
 
 ### System:
 # y = p + q;
 # where:
 # p^n + q^n = 2*f(x)
 # p*q = h(x)
+### Examples of such polynomials:
+# - see the examples below;
 
 ### Solutions
 # y = p + q, where:
@@ -348,6 +190,7 @@ sapply(c(-(1:4), 1:4), line.tan, dx=3)
 ##################
 ### Parametric ###
 ###  Examples  ###
+##################
 
 #########
 ### n = 3
@@ -358,13 +201,13 @@ sapply(c(-(1:4), 1:4), line.tan, dx=3)
 ### Polynomial:
 # Simple P3:
 # y^3 - 3*h*y - 2*f = 0
-### ODE:
+### Primary ODE:
 # y^2*dy - h*dy - y*dh - 2/3*df = 0
 
 ### Transformations
 
 ### T.A.) ODE-Transformations:
-### T.A.1: y^3
+### T.A.1: Substitute y^3
 y^2*dy - h*dy - y*dh - 2/3*df = 0 # * y
 y^3*dy - h*y*dy - y^2*dh - 2/3*df*y = 0
 (3*h*y + 2*f)*dy - h*y*dy - dh*y^2 - 2/3*df*y = 0
@@ -372,7 +215,7 @@ y^3*dy - h*y*dy - y^2*dh - 2/3*df*y = 0
 h*y*dy + f*dy - 1/2*dh*y^2 - 1/3*df*y = 0
 # 1/2*D(y^2/h) + (f*dy - 1/3*df*y)/h^2 = 0
 
-### T.A.2: y
+### T.A.2: Substitute y
 # - can replace one occurence or multiple occurances;
 y^2*dy - h*dy - y*dh - 2/3*df = 0 # *h
 h*y^2*dy - h^2*dy - h*y*dh - 2/3*h*df = 0
@@ -443,9 +286,10 @@ y^3*dy - 3*h*y*dy + 2*(3*y^2*dy^2 + y^3*d2y - 3*dh*y*dy - 3/2*d2h*y^2 - d2f*y) =
 ### T.B.2: TODO: y^2;
 
 
+################
 
-############
-### Examples
+################
+### Examples ###
 
 ### Example 1;
 # h(x) = x
@@ -1274,10 +1118,214 @@ curve(y(x, a=a), from=a-2, to=a+3)
 sapply(c(a-(4:1)/3, a+(1:6)/3), line.tan, dx=3, p=y, dp=dy, a=a)
 
 
+##########################
+### Cardan-Polynomials ###
+##########################
+
+### System:
+# p^n + q^n = 2*f(x)
+# p*q = h(x)
+
+### full P3: is in the next section;
+# y = p + q;
+
+### P6-partial:
+# => q = h / p
+# =>
+# n*p^(n-1)*dp + n*q^(n-1)*dq = 2 * df
+# p^(n-1)*dp + q^(n-1)*dq = 2/n * df
+# p^(n-1)*dp + (h/p)^(n-1) * (dh/p - h*dp/p^2) = 2/n * df
+# p^(2*n)*dp + h^(n-1) * (p*dh - h*dp) - 2/n * p^(n+1) * df = 0
+#
+# p^(2*n)*dp - h^n*dp + h^(n-1)*p*dh - 2/n * p^(n+1) * df = 0
+
+### Solutions
+# p = (f + sqrt(f^2 - h^n))^(1/n)
+# q = (f - sqrt(f^2 - h^n))^(1/n)
+# Note:
+# - 2 basic solutions are possible;
+# - it is possible to rotate these solutions using the roots of unity;
+
+
+### Transformations:
+
+### Order 3: [redundant]
+# same as regular solution;
+p^2*dp + q^2*dq = 2/3*df # * p^2
+p^4*dp + p^2*q^2*dq - 2/3*df*p^2 = 0
+p^4*dp + h^2*dq - 2/3*df*p^2 = 0
+p^4*dp + h^2*(dh - q*dp)/p - 2/3*df*p^2 = 0 # * p
+p^5*dp + h^2*(dh - q*dp) - 2/3*df*p^3 = 0 # *p
+p^6*dp + h^2*(dh*p - h*dp) - 2/3*df*p^4 = 0
+
+### Variant:
+p^2*dp + q^2*dq = 2/3*df
+p^4*dp^2 + q^4*dq^2 + 2*p^2*q^2*dp*dq = 4/9*df^2
+p^4*dp^2 + q^4*((dh - q*dp)/p)^2 + 2*h^2*dp*(dh - q*dp)/p = 4/9*df^2 # *p^2
+p^6*dp^2 + q^4*(dh - q*dp)^2 + 2*h^2*dp*(p*dh - p*q*dp) = 4/9*df^2
+p^6*dp^2 + q^4*(dh - q*dp)^2 + 2*h^2*dp*(p*dh - h*dp) = 4/9*df^2
+p^6*dp^2 + q^4*(dh - q*dp)^2 + 2*h^2*dh*p*dp - 2*h^3*dp^2 = 4/9*df^2
+# TODO: ...
+
+
+################
+### Examples ###
+
+#########
+### n = 2
+p^4*dp - h^2*dp + h*p*dh - p^3 * df = 0
+
+###
+# h(x) = x
+# f(x) = 1
+p^4*dp - x^2*dp + x*p = 0
+# p = sqrt(f + sqrt(f^2 - h^2))
+p = function(x) {
+	sqrt(1 + sqrt(1 - x^2))
+}
+dp = function(x) {
+	p.x = p(x)
+	div = (p.x^4 - x^2)
+	dp = - x*p.x
+	dp = if(div != 0) dp / div else Inf;
+	return(dp)
+}
+curve(p, from=-1, to=1)
+sapply(c((0:5)/6), line.tan, dx=2, p=p, dp=dp)
+
+
+###
+# h(x) = x
+# f(x) = 2*x
+p^4*dp - x^2*dp - 2*p^3 + x*p = 0
+# p = sqrt(f + sqrt(f^2 - h^2))
+p = function(x) {
+	sqrt(2*x + x*sqrt(3))
+}
+dp = function(x) {
+	p.x = p(x)
+	div = (p.x^4 - x^2)
+	dp = 2*p.x^3 - x*p.x
+	dp = if(div != 0) dp / div else Inf;
+	return(dp)
+}
+curve(p, from=0, to=3)
+sapply(c((0:5)/4.5), line.tan, dx=2, p=p, dp=dp)
+
+#########
+
+#########
+### n = 3
+p^6*dp - h^3*dp - 2/3 * p^4 * df + h^2*p*dh = 0
+# where df, dh = given;
+
+###
+# h(x) = x
+# f(x) = 1
+p^6*dp - x^3*dp + x^2*p = 0
+# Solution & Plot:
+# p = (f + sqrt(f^2 - h^3))^(1/3)
+p = function(x, n=3) {
+	r = (1 + sqrt(1 - x^n))
+	ifelse( (r >= 0), r^(1/n), - (-r)^(1/n) )
+}
+dp = function(x) {
+	div = (p(x)^6 - x^3)
+	dp = - x^2*p(x)
+	dp = if(div != 0) dp / div else Inf;
+	return(dp)
+}
+curve(p, from=-3, to=1)
+sapply(c((0:5)/6), line.tan, dx=2, p=p, dp=dp)
+
+
+###
+# h(x) = x
+# f(x) = 3*x
+p^6*dp - x^3*dp - 2*p^4 + x^2*p = 0
+# p = (f + sqrt(f^2 - h^3))^(1/3)
+p = function(x, n=3) {
+	r = (3*x + sqrt(9*x^2 - x^n))
+	ifelse( (r >= 0), r^(1/n), - (-r)^(1/n) )
+}
+dp = function(x) {
+	div = (p(x)^6 - x^3)
+	dp = 2*p(x)^4 - x^2*p(x)
+	dp = if(div != 0) dp / div else Inf;
+	return(dp)
+}
+curve(p, from=-3, to=9)
+sapply(c(0.001, 2*(1:3), -1), line.tan, dx=3)
+
+###
+# h(x) = x
+# f(x) = x^3 + 3*x
+p^6*dp - x^3*dp - 2*(x^2+1)*p^4 + x^2*p = 0
+# p = (f + sqrt(f^2 - h^3))^(1/3)
+p = function(x, n=3) {
+	r = (x^3 + 3*x + sqrt((x^3 + 3*x)^2 - x^n))
+	ifelse( (r >= 0), r^(1/n), - (-r)^(1/n) )
+}
+dp = function(x) {
+	div = (p(x)^6 - x^3)
+	dp = 2*(x^2+1)*p(x)^4 - x^2*p(x)
+	dp = if(div != 0) dp / div else Inf;
+	return(dp)
+}
+curve(p, from=-3, to=9)
+sapply(c(0.001, 2*(1:3), -1), line.tan, dx=2)
+
+
+###
+# h(x) = x
+# f(x) = 3/2 * log(x)
+p^6*dp - h^3*dp - 2/3 * p^4 * df + h^2*p*dh = 0
+p^6*dp - x^3*dp - 1/x*p^4 + x^2*p = 0
+x*p^6*dp - x^4*dp - p^4 + x^3*p = 0
+# p = (f + sqrt(f^2 - h^3))^(1/3)
+p = function(x, n=3) {
+	r = (3/2 * log(x) + sqrt((3/2 * log(x))^2 - x^n))
+	ifelse( (r >= 0), r^(1/n), - (-r)^(1/n) )
+}
+dp = function(x) {
+	div = x*(p(x)^6 - x^3)
+	dp = p(x)^4 - x^3*p(x)
+	dp = if(div != 0) dp / div else Inf;
+	return(dp)
+}
+curve(p, from=0, to=0.8)
+sapply(c(0.001, (1:3)/6), line.tan, dx=2)
+
+
+###
+# h(x) = 1/(x^2 + 1)
+# f(x) = 3/2 * log(x^2 + 1)
+p^6*dp - h^3*dp - 2/3 * p^4 * df + h^2*p*dh = 0
+(x^2 + 1)^4 * p^6*dp - (x^2 + 1)*dp - 2*x*(x^2 + 1)^3 * p^4 - 2*x*p = 0
+# p = (f + sqrt(f^2 - h^3))^(1/3)
+p = function(x, n=3) {
+	r = (3/2 * log(x^2+1) + sqrt(9/4 * log(x^2+1)^2 - 1/(x^2+1)^n))
+	ifelse( (r >= 0), r^(1/n), - (-r)^(1/n) )
+}
+dp = function(x) {
+	x.mult = (x^2+1)^3
+	p.x = p(x)
+	div = (x^2+1)*(x.mult*p.x^6 - 1)
+	dp = 2*x*(x.mult*p.x^4 - p.x)
+	dp = if(div != 0) dp / div else Inf;
+	return(dp)
+}
+curve(p, from=-5, to=5)
+sapply(c(-(1:4), 1:4), line.tan, dx=3)
+
+
+
+
 ####################
 ####################
 ####################
 
+###########################
 ### Trigonometric Functions
 
 ### sin(x*y) = x^2
