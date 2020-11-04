@@ -7,13 +7,17 @@
 ### Differential Equations
 ### ODEs - Fractions: Lambert
 ###
-### draft v.0.1d
+### draft v.0.1e
 
 
 ### History
 
 ### Order 1 Non-Liniar
 ###
+### draft v.0.1e: [05-11-2020]
+# - started to explore various y powers:
+#   x*y^(1/2)*dy + x*dy - 2*y = 0;
+# - TODO: find bug !!!
 ### draft v.0.1d: [02-11-2020]
 # - added variants based on logarythms (equivalent to y^y):
 #   y*dy + (x+b)*dy - y = 0;
@@ -202,6 +206,47 @@ curve(y(x), from=-1, to=1)
 sapply(c((-4:4)/5), line.tan, dx=3, p=y, dp=dy)
 
 
+#######################
+
+#######################
+### Different Power ###
+
+### sqrt(y)*e^(sqrt(y)) = f(x)
+# [not run]
+1/2 * y^(-1/2)*e^(sqrt(y))*dy + 1/2 * y^(-1/2)*y^(1/2)*e^(sqrt(y))*dy - df # = 0
+f/y * dy + f*y^(-1/2)*dy - 2*df # = 0 # * y
+f*y^(1/2)*dy + f*dy - 2*df*y # = 0
+
+### Example:
+# f = x;
+x*y^(1/2)*dy + x*dy - 2*y # = 0
+### Solution:
+y = function(x, useNeg=FALSE) {
+	# root
+	y = lambertWp(x)^2
+	if(useNeg) {
+		isNeg = (x < 0)
+		if(any(isNeg)) {
+			y[isNeg] = lambertWn(x[isNeg])^2
+		}
+	}
+	y = sapply(y, round0)
+	return(y)
+}
+dy = function(x, useNeg=FALSE) {
+	y.x = y(x, useNeg=useNeg)
+	dp = 2*y.x
+	div = x*(sqrt(y.x) + 1)
+	dp = ifelse(div != 0, dp / div, 0);
+	return(dp)
+}
+curve(y(x), from= -0.5, to=3)
+# a nice global minimum
+sapply(c((-1:4)/3), line.tan, dx=3, p=y, dp=dy)
+### TODO: find BUG !!!
+
+
+
 ##################################
 
 ##################################
@@ -271,7 +316,7 @@ y = function(x, b) {
 	isNA = is.na(y)
 	if(any(isNA)) {
 		x = x[isNA] # may not play a role ???
-		y[isNA] = exp(lambertWp(x + b))
+		y[isNA] = exp(lambertWn(x + b))
 	}
 	y = sapply(y, round0)
 	return(y)
@@ -297,7 +342,7 @@ sapply(c(-2, -1, 1, 3), line.tan, dx=3, p=y, dp=dy, b=b)
 
 
 ### y*log(y + a) = x + b
-2*(x+b)*y^2*dy + a*(x+b)*y*dy - y^2 - a*y # = 0
+y^2*dy + (x+b)*y*dy + a*(x+b)*dy - y^2 - a*y # = 0
 ### Solution:
 # TODO:
 # - solve the equation;
