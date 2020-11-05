@@ -7,17 +7,17 @@
 ### Differential Equations
 ### ODEs - Fractions: Lambert
 ###
-### draft v.0.1e
+### draft v.0.1e-fix
 
 
 ### History
 
 ### Order 1 Non-Liniar
 ###
-### draft v.0.1e: [05-11-2020]
+### draft v.0.1e - v.0.1e-fix: [05-11-2020]
 # - started to explore various y powers:
 #   x*y^(1/2)*dy + x*dy - 2*y = 0;
-# - TODO: find bug !!!
+# - TODO: find bug; [FIXED]
 ### draft v.0.1d: [02-11-2020]
 # - added variants based on logarythms (equivalent to y^y):
 #   y*dy + (x+b)*dy - y = 0;
@@ -236,14 +236,19 @@ y = function(x, useNeg=FALSE) {
 dy = function(x, useNeg=FALSE) {
 	y.x = y(x, useNeg=useNeg)
 	dp = 2*y.x
-	div = x*(sqrt(y.x) + 1)
+	y.sq = sqrt(y.x)
+	isNeg = lambertWp(x) < 0
+	if(any(isNeg)) {
+		y.sq[isNeg] = -y.sq[isNeg]
+	}
+	div = x*(y.sq + 1)
 	dp = ifelse(div != 0, dp / div, 0);
 	return(dp)
 }
 curve(y(x), from= -0.5, to=3)
 # a nice global minimum
-sapply(c((-1:4)/3), line.tan, dx=3, p=y, dp=dy)
-### TODO: find BUG !!!
+sapply(c(-1/3, -1/5, (0:4)/3), line.tan, dx=3, p=y, dp=dy)
+
 
 
 
