@@ -7,17 +7,18 @@
 ### Differential Equations
 ### ODEs - Fractions: Lambert
 ###
-### draft v.0.1e-fix
+### draft v.0.1e-more
 
 
 ### History
 
 ### Order 1 Non-Liniar
 ###
-### draft v.0.1e - v.0.1e-fix: [05-11-2020]
+### draft v.0.1e - v.0.1e-more: [05-11-2020]
 # - started to explore various y powers:
 #   x*y^(1/2)*dy + x*dy - 2*y = 0;
-# - TODO: find bug; [FIXED]
+#   x*sqrt(y + x + 1)*dy + x*dy - 2*y + x*sqrt(y + x + 1) = x + 2; (v.0.1e-more)
+# - find bug; [FIXED] (v.0.1e-fix)
 ### draft v.0.1d: [02-11-2020]
 # - added variants based on logarythms (equivalent to y^y):
 #   y*dy + (x+b)*dy - y = 0;
@@ -250,6 +251,46 @@ curve(y(x), from= -0.5, to=3)
 sapply(c(-1/3, -1/5, (0:4)/3), line.tan, dx=3, p=y, dp=dy)
 
 
+##################
+
+### sqrt(y + g(x))*e^(sqrt(y + g(x))) = f(x)
+# [not run]
+(dy + dg)/sqrt(y + g)*e^(sqrt(y + g)) + (dy + dg)/sqrt(y + g) * sqrt(y + g)*e^(sqrt(y + g)) - 2*df # = 0
+f*(dy + dg)/(y + g) + f*(dy + dg)/sqrt(y + g) - 2*df # = 0 # *(y+g)
+ f*(dy + dg)*sqrt(y + g) + f*(dy + dg) - 2*df*(y + g) # = 0
+ f*(dy + dg)*sqrt(y + g) + f*dy - 2*df*y + f*dg - 2*df*g # = 0
+
+### Example:
+# f = x;
+# g = x + 1
+x*sqrt(y + x + 1)*dy + x*dy - 2*y + x*sqrt(y + x + 1) - x - 2 # = 0
+### Solution:
+y = function(x, useNeg=FALSE) {
+	# root
+	y = lambertWp(x)^2 - x - 1
+	if(useNeg) {
+		isNeg = (x < 0)
+		if(any(isNeg)) {
+			y[isNeg] = lambertWn(x[isNeg])^2 - x - 1
+		}
+	}
+	y = sapply(y, round0)
+	return(y)
+}
+dy = function(x, useNeg=FALSE) {
+	y.x = y(x, useNeg=useNeg)
+	y.sq = sqrt(y.x + x + 1)
+	isNeg = lambertWp(x) < 0
+	if(any(isNeg)) {
+		y.sq[isNeg] = -y.sq[isNeg]
+	}
+	dp = 2*y.x - x*y.sq + x + 2
+	div = x*(y.sq + 1)
+	dp = ifelse(div != 0, dp / div, -1); # TODO: correct limit!
+	return(dp)
+}
+curve(y(x), from= -0.5, to=3)
+sapply(c(-1/3, -1/5, (0:4)/3), line.tan, dx=3, p=y, dp=dy)
 
 
 ##################################
