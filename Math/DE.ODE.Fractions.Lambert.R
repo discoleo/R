@@ -7,13 +7,15 @@
 ### Differential Equations
 ### ODEs - Fractions: Lambert
 ###
-### draft v.0.1e-more
+### draft v.0.1f
 
 
 ### History
 
 ### Order 1 Non-Liniar
 ###
+### draft v.0.1f: [05-11-2020]
+# - solved: x*dz - x^2*z^3 + 2*x*z^2 - z = 0;
 ### draft v.0.1e - v.0.1e-more: [05-11-2020]
 # - started to explore various y powers:
 #   x*y^(1/2)*dy + x*dy - 2*y = 0;
@@ -257,8 +259,8 @@ sapply(c(-1/3, -1/5, (0:4)/3), line.tan, dx=3, p=y, dp=dy)
 # [not run]
 (dy + dg)/sqrt(y + g)*e^(sqrt(y + g)) + (dy + dg)/sqrt(y + g) * sqrt(y + g)*e^(sqrt(y + g)) - 2*df # = 0
 f*(dy + dg)/(y + g) + f*(dy + dg)/sqrt(y + g) - 2*df # = 0 # *(y+g)
- f*(dy + dg)*sqrt(y + g) + f*(dy + dg) - 2*df*(y + g) # = 0
- f*(dy + dg)*sqrt(y + g) + f*dy - 2*df*y + f*dg - 2*df*g # = 0
+f*(dy + dg)*sqrt(y + g) + f*(dy + dg) - 2*df*(y + g) # = 0
+f*(dy + dg)*sqrt(y + g) + f*dy - 2*df*y + f*dg - 2*df*g # = 0
 
 ### Example:
 # f = x;
@@ -415,3 +417,41 @@ y^2*dy + (x+b)*y*dy + a*(x+b)*dy - y^2 - a*y # = 0
 # ...
 # TODO: check result;
 # TODO: implement snack;
+
+
+##############################
+
+### e^y * sin(y) = x^2
+# z = dy; dz = d2y;
+x*dz - x^2*z^3 + 2*x*z^2 - z # = 0
+### Solution
+y = function(x) {
+	# root
+	y.f = function(x, v) exp(x)*sin(x) - v^2;
+	dy.f = function(x, v) exp(x)*(sin(x) + cos(x))
+	y = sapply(x, function(x) newtonRaphson(y.f, 0, dfun=dy.f, v=x)[[1]])
+	y = sapply(y, round0)
+	return(y)
+}
+dy = function(x, y.x) {
+	if(missing(y.x)) y.x = y(x);
+	div = (x^2 + sqrt(exp(2*y.x) - x^4));
+	dp = 2*x;
+	dp = ifelse(div != 0, dp / div, -1); # may need correction
+	return(dp)
+}
+d2y = function(x) {
+	y.x = y(x)
+	z = dy(x, y.x=y.x)
+	div = x
+	dp = x^2*z^3 - 2*x*z^2 + z;
+	dp = ifelse(div != 0, dp / div, -1); # TODO: needs correction!
+	return(dp)
+}
+curve(y(x), from= -1.4, to = 1.4)
+# global minimum;
+sapply(c((-2:2)*2/3), line.tan, dx=3, p=y, dp=dy)
+# sigmoidal
+curve(dy(x), from= -1.4, to = 1.4, add=T, col="green")
+sapply(c((0:5)/5 + 0.01), line.tan, dx=3, p=dy, dp=d2y, col="orange")
+
