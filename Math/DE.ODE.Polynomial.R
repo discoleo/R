@@ -7,20 +7,22 @@
 ### Differential Equations
 ### ODEs: Polynomial types
 ###
-### draft v.0.2a
+### draft v.0.2b
 
 
 ### History
 
 ### Order 1 Non-Liniar
-### draft v.0.2a:
+### draft v.0.2b:
+# - improved code;
+### draft v.0.2a: [01-11-2020]
 # - re-organization of sections;
 # - brief theory of polynomial entangling:
 #   the introduction of 1 degree of freedom;
-### draft v.0.2-pre-a:
+### draft v.0.2-pre-a: [31-10-2020]
 # - moved section Exponentials/Lambert
 #   to seprate file: DE.ODE.Fractions.Lambert.R;
-### draft v.0.1f - v.0.1f-2:
+### draft v.0.1f - v.0.1f-2: [30-10-2020]
 #   [moved now to seprate file]
 # - Lambert-type equations (not simple polynomial)!
 # - solved: x*y*dy + x*(x+1)*dy - 2*y = x;
@@ -144,11 +146,11 @@ round0 = function(m, tol=1E-7) {
 	m[abs(Re(m)) < tol & abs(Im(m)) < tol] = 0
 	isNotNA =  ! is.na(m)
 	isZero = (Re(m) != 0) & (abs(Re(m)) < tol)
-	if(sum(isZero[isNotNA]) > 0) {
+	if(any(isZero[isNotNA])) {
 		m[isZero] = complex(re=0, im=Im(m[isZero]))
 	}
 	isZero = (Im(m) != 0) & (abs(Im(m)) < tol)
-	if(sum(isZero[isNotNA]) > 0) {
+	if(any(isZero[isNotNA])) {
 		m[isZero] = Re(m[isZero])
 	}
 	return(m)
@@ -208,6 +210,7 @@ round0 = function(m, tol=1E-7) {
 
 ### T.A.) ODE-Transformations:
 ### T.A.1: Substitute y^3
+# [not run]
 y^2*dy - h*dy - y*dh - 2/3*df = 0 # * y
 y^3*dy - h*y*dy - y^2*dh - 2/3*df*y = 0
 (3*h*y + 2*f)*dy - h*y*dy - dh*y^2 - 2/3*df*y = 0
@@ -294,8 +297,10 @@ y^3*dy - 3*h*y*dy + 2*(3*y^2*dy^2 + y^3*d2y - 3*dh*y*dy - 3/2*d2h*y^2 - d2f*y) =
 ### Example 1;
 # h(x) = x
 # f(x) = x^3
+# [not run] [NOT decoupled]
 y^2*dy - h*dy - y*dh - 2/3*df = 0
 y^2*dy - x*dy - y - 2*x^2 = 0
+# y^2*dy - D(x*y) = 2*x^2
 ### Solution & Plot:
 # y = (f + sqrt(f^2 - h^3))^(1/3) + (f - sqrt(f^2 - h^3))^(1/3)
 y = function(x, n=3) {
@@ -308,28 +313,33 @@ dy = function(x) {
 	y.x = y(x)
 	div = (y.x^2 - x)
 	dp = (y.x + 2*x^2)
-	dp = if(div != 0) dp / div else Inf;
+	dp = ifelse(div != 0, dp / div, Inf); # TODO: check limit;
 	return(dp)
 }
+# nice local minimum
 curve(y, from=-2, to=2)
 sapply(c(-(4:1)/5, (1:4)/5, 1.01), line.tan, dx=3, p=y, dp=dy)
+
 
 ### Variant: [decoupled]
 y^2*dy - x*dy - y - 2*x^2 = 0 # *y
 y^3*dy - x*y*dy - y^2 - 2*x^2*y = 0
 (3*x*y + 2*x^3)*dy - x*y*dy - y^2 - 2*x^2*y = 0
 2*x*y*dy + 2*x^3*dy - y^2 - 2*x^2*y = 0
+# D(y^2/x) + 2*x^2 * D(y/x) = 0 # simple example
+# (y(2)^2 + 2*2^2*y(2)) - integrate(function(x) Re(y(x)), lower=0, upper=2)$value * 4*2
 ### Solution & Plot:
 # y = is the same as above;
 dy = function(x) {
 	y.x = y(x)
 	div = (2*x*y.x + 2*x^3)
 	dp = (y.x^2 + 2*x^2*y.x)
-	dp = if(div != 0) dp / div else Inf;
+	dp = ifelse(div != 0, dp / div, Inf);
 	return(dp)
 }
 curve(y, from=-2, to=2)
 sapply(c(-(4:1)/5, (1:4)/5, 1.01), line.tan, dx=3, p=y, dp=dy)
+
 
 ### V.A.3: Combinations
 # h(x) = x # as above
@@ -347,11 +357,12 @@ dy = function(x) {
 	y.x = y(x)
 	div = (x*y.x^2 + y.x)
 	dp = (1/3*y.x^3 + 1/2/x*y.x^2 + x*y.x + 4/3*x^3)
-	dp = if(div != 0) dp / div else Inf;
+	dp = ifelse(div != 0, dp / div, Inf);
 	return(dp)
 }
 curve(y, from=-2, to=2)
 sapply(c(-(4:1)/5, (1:4)/5, 1.01), line.tan, dx=3, p=y, dp=dy)
+
 
 ### V.A.4: Combinations
 # as above;
@@ -373,7 +384,7 @@ dy = function(x, alt=FALSE) {
 		div = (x*y.x + x^3)
 		dp = (x*y.x^3 + 3/2*y.x^2 - 2*x^4) / 3
 	}
-	dp = if(div != 0) dp / div else Inf;
+	dp = ifelse(div != 0, dp / div, Inf);
 	return(dp)
 }
 curve(y, from=-2, to=2)
@@ -383,6 +394,7 @@ sapply(c(-(4:1)/5, (1:4)/5, 1.01), line.tan, dx=3, p=y, dp=dy)
 ### V.B.1: Tr. Poly
 # h(x) = x # as above
 # f(x) = x^3
+# [not run]
 h*y^3*dy + f*h*dy - 1/2*dh*y^4 + f*dh*y - h*df*y = 0
 x*y^3*dy + x^4*dy - 1/2*y^4 + x^3*y - 3*x^3*y = 0
 x*y^3*dy + x^4*dy - 1/2*y^4 - 2*x^3*y = 0
@@ -392,7 +404,7 @@ dy = function(x) {
 	y.x = y(x)
 	div = (x*y.x^3 + x^4)
 	dp = (1/2*y.x^4 + 2*x^3*y.x)
-	dp = if(div != 0) dp / div else Inf;
+	dp = ifelse(div != 0, dp / div, Inf);
 	return(dp)
 }
 curve(y, from=-2, to=2)
@@ -408,7 +420,7 @@ dy = function(x) {
 	y.x = y(x)
 	div = (y.x^3 + x^3)
 	dp = (x*y.x^3 + 3/2*y.x^2 - 2*x^4)
-	dp = if(div != 0) dp / div else Inf;
+	dp = ifelse(div != 0, dp / div, Inf);
 	return(dp)
 }
 curve(y, from=-2, to=2)

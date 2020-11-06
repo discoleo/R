@@ -6,11 +6,13 @@
 ### Differential Equations
 ### ODEs - Helper Functions
 ###
-### draft v.0.1a
+### draft v.0.1b
 
 
 ### History
 
+### draft v.0.1b:
+# - code improvement: any() instead of sum();
 ### draft v.0.1a:
 # - moved helper functions to this new file;
 # - old file:
@@ -55,11 +57,11 @@ round0 = function(m, tol=1E-7) {
 	m[abs(Re(m)) < tol & abs(Im(m)) < tol] = 0
 	isNotNA =  ! is.na(m)
 	isZero = (Re(m) != 0) & (abs(Re(m)) < tol)
-	if(sum(isZero[isNotNA]) > 0) {
+	if(any(isZero[isNotNA])) {
 		m[isZero] = complex(re=0, im=Im(m[isZero]))
 	}
 	isZero = (Im(m) != 0) & (abs(Im(m)) < tol)
-	if(sum(isZero[isNotNA]) > 0) {
+	if(any(isZero[isNotNA])) {
 		m[isZero] = Re(m[isZero])
 	}
 	return(m)
