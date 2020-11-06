@@ -7,12 +7,16 @@
 ### Differential Equations
 ### ODEs: Polynomial types
 ###
-### draft v.0.2b
+### draft v.0.2c
 
 
 ### History
 
 ### Order 1 Non-Liniar
+### draft v.0.2c: [06-11-2020]
+# - solved:
+#   x^2*(x^3-1)*dz - c^2*z^3 - c*x^2*z^2 + 2*x*z = 0;
+#   [where c = constant]
 ### draft v.0.2b:
 # - improved code;
 ### draft v.0.2a: [01-11-2020]
@@ -601,9 +605,11 @@ sapply((1:8)/5, line.tan, dx=3, p=y, dp=dy)
 ### Examples
 # h(x) = x^2
 # f(x) = x + 1
+# [not run]
 2*y^3*dy - 3*dh*y^2 - 2*df*y + 2*f*dy = 0
 2*y^3*dy - 2*3*x*y^2 - 2*y + 2*(x+1)*dy = 0
 y^3*dy + (x+1)*dy - 3*x*y^2 - y = 0
+### Solution:
 # y = (f + sqrt(f^2 - h^3))^(1/3) + (f - sqrt(f^2 - h^3))^(1/3)
 y = function(x, n=3) {
 	det = sqrt((x+1)^2 - x^6 + 0i)
@@ -615,7 +621,7 @@ dy = function(x) {
 	y.x = y(x)
 	div = (y.x^3 + x + 1)
 	dp = (3*x*y.x^2 + y.x)
-	dp = if(div != 0) dp / div else Inf;
+	dp = ifelse(div != 0, dp / div, Inf);
 	return(dp)
 }
 curve(y, from=-3, to=3)
@@ -1432,4 +1438,48 @@ sapply(c(-1 + (1:4)/div, 1 - (1:4)/div), line.tan, dx=0.5, p=dy, dp=d2y)
 
 
 ### TODO: tan, ln;
+
+########################
+
+### D2 & D2 Transforms
+
+### y^3 - 3*c*y - 2*f = 0
+# [not run]
+c*y*d2y + f*d2y + c*dy^2 + 2/3*df*dy - 1/2*d2c*y^2 - 1/3*d2f*y # = 0
+# c = constant; f = x^3 - 1
+x^2*(x^3-1)*d2y - c^2*dy^3 - c*x^2*dy^2 + 2*x*dy # = 0
+# z = dy; dz = d2y;
+x^2*(x^3-1)*dz - c^2*z^3 - c*x^2*z^2 + 2*x*z # = 0
+### Solution:
+# y = (f + sqrt(f^2 - c^3))^(1/3) + (f - sqrt(f^2 - c^3))^(1/3)
+y = function(x, h, n=3) {
+	f.x = x^3 - 1
+	det = sqrt(f.x^2 - h^3 + 0i)
+	r1 = round0(rootn(f.x + det, n=n))
+	r2 = round0(rootn(f.x - det, n=n))
+	return( round0(r1 + r2) )
+}
+dy = function(x, h, y.x) {
+	if(missing(y.x)) y.x = y(x, h);
+	div = (h*y.x + x^3 - 1)
+	dp = x^2*y.x;
+	dp = ifelse(div != 0, dp / div, Inf); # TODO
+	return(dp)
+}
+d2y = function(x, h) {
+	dy.x = dy(x, h);
+	div = x^2*(x^3 - 1)
+	dp = h^2*dy.x^3 + h*x^2*dy.x^2 - 2*x*dy.x;
+	dp = ifelse(div != 0, dp / div, Inf); # TODO
+	return(dp)
+}
+#
+c = 1;
+# a small local minimum
+curve(y(x, c), from=-3, to=3)
+sapply(c(-2, c(-(2:1), 1:2)/1.7, 2), line.tan, dx=3, p=y, dp=dy, h=c)
+# D(y)
+curve(dy(x, c), from=-3, to=3, add=T, col="green")
+sapply(c(-2, c(-(2:1), 1:2)/1.7, 2), line.tan, dx=3, p=dy, dp=d2y, h=c, col="orange")
+
 
