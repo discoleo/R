@@ -7,13 +7,16 @@
 ### Differential Equations
 ### ODEs - Fractions: Lambert
 ###
-### draft v.0.1f
+### draft v.0.1g
 
 
 ### History
 
 ### Order 1 Non-Liniar
 ###
+### draft v.0.1g: [07-11-2020]
+# - solved: y^2*dy + c*y*dy - c*x^2*dy - 2*x*y^2 = 0
+#   where c = constant;
 ### draft v.0.1f: [05-11-2020]
 # - solved: x*dz - x^2*z^3 + 2*x*z^2 - z = 0;
 ### draft v.0.1e - v.0.1e-more: [05-11-2020]
@@ -295,6 +298,38 @@ curve(y(x), from= -0.5, to=3)
 sapply(c(-1/3, -1/5, (0:4)/3), line.tan, dx=3, p=y, dp=dy)
 
 
+##################
+
+### c * e^(1/y) + y = f(x)
+# where c = constant;
+# [not run]
+y^2*dy + c*y*dy - c*f*dy - df*y^2 # = 0
+
+### Example:
+# f = x^2
+y^2*dy + c*y*dy - c*x^2*dy - 2*x*y^2 # = 0
+### Solution
+y = function(x, b) {
+	# root
+	y.f = function(x, v) b*exp(1/x) + x - v^2;
+	dy.f = function(x, v) 1 - b*exp(1/x)/x^2;
+	y = sapply(x, function(x) newtonRaphson(y.f, ifelse(x < 0, x, x - 1), dfun=dy.f, v=x)[[1]])
+	y = sapply(y, round0)
+	return(y)
+}
+dy = function(x, b) {
+	y.x = y(x, b)
+	dp = 2*x*y.x^2
+	div = y.x^2 + b*y.x - b*x^2
+	dp = ifelse(div != 0, dp / div, -1); # TODO: correct limit!
+	return(dp)
+}
+###
+c = 1;
+curve(y(x, b=c), from= 1.9, to=4)
+sapply(c(1.9, (4:6)/2), line.tan, dx=3, p=y, dp=dy, b=c)
+
+
 ##################################
 
 ##################################
@@ -453,5 +488,9 @@ curve(y(x), from= -1.4, to = 1.4)
 sapply(c((-2:2)*2/3), line.tan, dx=3, p=y, dp=dy)
 # sigmoidal
 curve(dy(x), from= -1.4, to = 1.4, add=T, col="green")
+sapply(c((0:5)/5 + 0.01), line.tan, dx=3, p=dy, dp=d2y, col="orange")
+
+# check full sigmoidal
+curve(dy(x), from= -1.4, to = 1.4, col="green")
 sapply(c((0:5)/5 + 0.01), line.tan, dx=3, p=dy, dp=d2y, col="orange")
 
