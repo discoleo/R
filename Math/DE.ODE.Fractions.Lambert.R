@@ -7,16 +7,18 @@
 ### Differential Equations
 ### ODEs - Fractions: Lambert
 ###
-### draft v.0.1g
+### draft v.0.1g-ln
 
 
 ### History
 
 ### Order 1 Non-Liniar
 ###
-### draft v.0.1g: [07-11-2020]
-# - solved: y^2*dy + c*y*dy - c*x^2*dy - 2*x*y^2 = 0
-#   where c = constant;
+### draft v.0.1g - v.0.1g-ln: [07-11-2020]
+# - solved:
+#   y^2*dy + c*y*dy - c*x^2*dy - 2*x*y^2 = 0; [v.0.1g]
+#   x^2*dy + n*y^2 - x*y = 0; [v.0.1g-ln]
+#   where c, n = constants;
 ### draft v.0.1f: [05-11-2020]
 # - solved: x*dz - x^2*z^3 + 2*x*z^2 - z = 0;
 ### draft v.0.1e - v.0.1e-more: [05-11-2020]
@@ -328,6 +330,33 @@ dy = function(x, b) {
 c = 1;
 curve(y(x, b=c), from= 1.9, to=4)
 sapply(c(1.9, (4:6)/2), line.tan, dx=3, p=y, dp=dy, b=c)
+
+##############
+### Simple ###
+
+### e^(x/y) = x^n
+x^2*dy + n*y^2 - x*y # = 0
+### Solution:
+y = function(x, n) {
+	# root
+	y = x
+	if(is.integer(n) && n %% 2 == 0) x = abs(x)
+	y = y / (n*log(x))
+	y = sapply(y, round0)
+	return(y)
+}
+dy = function(x, n) {
+	y.x = y(x, n)
+	dp = - y.x*(n*y.x - x)
+	div = x^2
+	dp = ifelse(div != 0, dp / div, 0); # TODO: correct limit!
+	return(dp)
+}
+###
+n = 4L;
+curve(y(x, n=n), from= -2, to=2)
+sapply(c((-5:5)/2.8), line.tan, dx=3, p=y, dp=dy, n=n)
+
 
 
 ##################################
