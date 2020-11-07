@@ -6,13 +6,14 @@
 ### Differential Equations
 ### ODEs - Helper Functions
 ###
-### draft v.0.1b
+### draft v.0.1b-def
 
 
 ### History
 
-### draft v.0.1b:
+### draft v.0.1b - v.0.1b-def:
 # - code improvement: any() instead of sum();
+# - minor change to line.tan();
 ### draft v.0.1a:
 # - moved helper functions to this new file;
 # - old file:
@@ -34,12 +35,14 @@
 
 ####################
 
+library(pracma)
+
 ### helper functions
 
 ### Tangent
 line.tan = function(x, col="red", dx=5, p=p, dp=dp, ...) {
 	slope = dp(x, ...)
-	x.max = ifelse( (abs(x) >= 1), dx*x, 10);
+	x.max = ifelse( (abs(x) >= 1), dx*x, dx*(sign(x) - sign(x)^2 + 1) );
 	isInf = abs(slope) == Inf
 	x.max[isInf] = x[isInf]
 	p.x = p(x, ...)
