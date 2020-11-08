@@ -7,17 +7,20 @@
 ### Differential Equations
 ### ODEs - Fractions: Lambert
 ###
-### draft v.0.1h
+### draft v.0.2-pre-a
 
 
 ### History
 
 ### Order 1 Non-Liniar
 ###
+### draft v.0.2-pre-a:
+# - moved Trigonometric variants to new file:
+#   DE.ODE.Trigonometric.R;
 ### draft v.0.1h:
 # - solved a trigonometric type:
 #   x*(1-x^4)*y^3*d2y - (x^4+1)*y^3*dy + x^3 = 0;
-# - TODO: move to separate file;
+# - [TODO] move to separate file; [DONE]
 ### draft v.0.1g - v.0.1g-ln: [07-11-2020]
 # - solved:
 #   y^2*dy + c*y*dy - c*x^2*dy - 2*x*y^2 = 0; [v.0.1g]
@@ -526,51 +529,4 @@ sapply(c((0:5)/5 + 0.01), line.tan, dx=3, p=dy, dp=d2y, col="orange")
 # check full sigmoidal
 curve(dy(x), from= -1.4, to = 1.4, col="green")
 sapply(c((0:5)/5 + 0.01), line.tan, dx=3, p=dy, dp=d2y, col="orange")
-
-
-########################
-
-### TODO: separate Trig;
-
-### sin(y^2) = f(x);
-
-### Examples:
-# f = x^2;
-# [not run]
-x*(1-x^4)*y^3*d2y - (x^4+1)*y^3*dy + x^3 # = 0
-### Solution:
-y = function(x) {
-	# root
-	y = sqrt(asin(x^2))
-	y = sapply(y, round0)
-	return(y)
-}
-dy = function(x, y.x) {
-	if(missing(y.x)) y.x = y(x);
-	div = y.x * sqrt(1 - x^4)
-	dp = x;
-	dp = ifelse(div != 0, dp / div, -1); # may need correction
-	return(dp)
-}
-d2y = function(x) {
-	y.x = y(x)
-	z = dy(x, y.x=y.x)
-	x4 = x^4
-	div = x*(1-x4)*y.x^3;
-	dp =(x4+1)*y.x^3*z - x^3;
-	dp = ifelse(div != 0, dp / div, -1); # TODO: needs correction!
-	return(dp)
-}
-curve(y(x), from= -1, to = 1)
-# global minimum;
-sapply(c((-2:2)/2.2), line.tan, dx=3, p=y, dp=dy)
-# pseudo-sigmoidal
-curve(dy(x), from= -1, to = 1, add=T, col="green")
-sapply(c(-2, -1.5, 1.5, 2)/2.1, line.tan, dx=1/5, p=dy, dp=d2y, col="orange")
-
-# check full pseudo-sigmoidal
-curve(dy(x), from= -1, to = 1, col="green")
-sapply(c(-2, -1.5, 1.5, 2)/2.1, line.tan, dx=1/5, p=dy, dp=d2y, col="orange")
-
-
 
