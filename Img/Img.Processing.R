@@ -5,11 +5,13 @@
 ###
 ### Image Processing: Tools
 ###
-### draft v.0.1a
+### draft v.0.1b
 
 
 ### History
 
+### draft v.0.1b:
+# - added the fft convolution;
 ### draft v.0.1a: [09-11-2020]
 # - classical pixel-wise convolution;
 
@@ -134,5 +136,33 @@ t.time
 display(new.img)
 
 display(new.img - grey.img)
+
+
+###############
+
+### Brush:
+flt = makeBrush(5, shape='disc', step=FALSE)
+# display(flt, title='Disc filter')
+
+flt = flt/sum(flt)
+
+
+###############
+
+###############
+### FFT-Way ###
+
+img2 = filter2(img, m, boundary=2)
+
+display(img2)
+
+### explicit
+# native fft seems equivalent to fftw2d
+# & is fully automatic;
+x.fft = fft(img)
+dim.len = length(dim(img));
+
+# but needs a transformed kernel!
+# img2 = Re(fft(x.fft * fft(_transformed_m_), inverse=1)/prod(dim(img)[1:dim.len]))
 
 
