@@ -5,13 +5,15 @@
 ###
 ### Image Processing: Tools
 ###
-### draft v.0.1b
+### draft v.0.1c
 
 
 ### History
 
+### draft v.0.1c:
+# - "Adaptive" Blur / Quasi-Non-Local Means;
 ### draft v.0.1b:
-# - added the fft convolution;
+# - added the fft-based convolution;
 ### draft v.0.1a: [09-11-2020]
 # - classical pixel-wise convolution;
 
@@ -30,7 +32,7 @@
 ### Kernel Operations
 
 ### classical (pixelwise) convolution
-conv.grey = function(img, m, center) {
+conv.grey = function(img, m, center = dim(m) %/% 2) {
 	if(length(dim(img)) > 3) {
 		stop("Currently only Greyscale images supported!")
 	}
@@ -47,7 +49,7 @@ conv.grey = function(img, m, center) {
 	x.max = dim(new.img)[1] - k.width + k.xstart;
 	
 	for(y in 1:y.max) {
-		pix_line = pix.line; # copy
+		pix_line = pix.line; # copy vs instantiate inline?
 		sapply(1:nrow(k), function(id) {
 			x = 1:x.max + k$x[id] - 1
 			y.tot = y - 1 + k$y[id]
@@ -62,7 +64,63 @@ conv.grey = function(img, m, center) {
 		new.img[ , y + center[2]] = pix_line;
 		# TODO: Progress
 		if(y %% 20 == 1) {
-			# print(y)
+			# cat(y)
+		}
+	}
+	return(new.img)
+}
+
+### Quasi-Non-Local Means/Convolution
+### aka Similar-Means / "Adaptive" Convolution
+conv.adaptive = function(img, m, thresh=1, center = dim(m) %/% 2) {
+	if(length(dim(img)) != 3 && dim(img)[3] != 3) {
+		stop("Currently only Color images supported!")
+		# TODO: grey-scale;
+	}
+	# Kernel
+	k = decompose.kernel(m)
+	k.width = max(k$x); k.height = max(k$y)
+	k.xstart = min(k$x); k.ystart = min(k$y)
+	# New image: assumes base pixels remain the same;
+	# TODO: implement processing of margins;
+	new.img = img; # copy
+	pix.line = matrix(0, nrow=dim(new.img)[1], ncol=3)
+	w.line = matrix(0, nrow=dim(new.img)[1], ncol=3)
+
+	y.max = dim(new.img)[2] - k.height + k.ystart;
+	x.max = dim(new.img)[1] - k.width + k.xstart;
+
+	for(y in 1:y.max) {
+		pix_line = pix.line; # copy vs instantiate inline?
+		w_line = w.line; # copy
+		pixel = img2[center[1]:(x.max + center[1] - 1), y + center[2], ]
+		dim(pixel) = c(x.max, 3)
+		sapply(1:nrow(k), function(id) {
+			x = 1:x.max + k$x[id] - 1
+			y.tot = y - 1 + k$y[id]
+			# scan image line
+			pix = img2[x, y.tot,]
+			dim(pix) = c(x.max, 3)
+			# print(dim(pix)); print(dim(pixel))
+			diff = abs(pix - pixel)
+			diff = diff[,1] + diff[,2] + diff[,3]
+			isThresh = (diff <= thresh); # similar pixels
+			### Convolve
+			pix[,1] = ifelse(isThresh, pix[,1] * k$w[id], 0)
+			pix[,2] = ifelse(isThresh, pix[,2] * k$w[id], 0)
+			pix[,3] = ifelse(isThresh, pix[,3] * k$w[id], 0)
+			# update pixel-values
+			pix_line[center[1]:(x.max + center[1] - 1), ] <<-
+				pix_line[center[1]:(x.max + center[1] - 1), ] + pix;
+			# update weights: the sum changes!
+			w_line[center[1]:(x.max + center[1] - 1), ][isThresh, ] <<-
+				w_line[center[1]:(x.max + center[1] - 1), ][isThresh, ] + k$w[id];
+		} )
+		new.img[ , y  + center[2], ] = pix_line / w_line;
+	
+		# TODO: Progress
+		if(y %% 20 == 1) {
+			cat(paste0(y, ", "))
 		}
 	}
 	return(new.img)
@@ -117,12 +175,14 @@ m = matrix(c(
 	), ncol=7, byrow=T)
 m = m / sum(m)
 
+##############
+
 ### Test
 # Center of the kernel:
 # - can be asymmetric;
 k.center = dim(m) %/% 2;
 
-# gray-scale
+### gray-scale
 grey.img = Image(img, colormode='Grayscale')
 grey.img = grey.img[,,1]
 
@@ -136,6 +196,27 @@ t.time
 display(new.img)
 
 display(new.img - grey.img)
+
+####################
+
+### "Adaptive" Blur
+### [Color]
+# threshhold:
+# = 0.2; # very strict;
+# = 1; 1.5; # medium;
+# = 2; # extensive blur;
+
+thresh = 2; # 0.75; # 1
+t.time = Sys.time()
+new.img = conv.adaptive(img, m, thresh);
+t.time = Sys.time() - t.time;
+t.time
+# ... with 5x5 kernel;
+# ~2 mins with 7x7 kernel!
+
+display(new.img)
+
+display(new.img - img)
 
 
 ###############
