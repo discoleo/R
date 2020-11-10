@@ -6,13 +6,17 @@
 ### Differential Equations
 ### ODEs - Trigonometric
 ###
-### draft v.0.1a
+### draft v.0.1b
+
 
 ### History
 
 ### Order 1 Non-Liniar:
 ### Trigonometric Variants
 ###
+### draft v.0.1b:
+# - added types of form: y*sin(y) + cos(y) = f(x);
+#   y*d2y + 2*(dy)^2 - (x + b)*y*(dy)^3 = 0;
 ### draft v.0.1a: [08-11-2020]
 # - examples for type: sin(y^2) = f(x)
 #   x*(1-x^4)*y^3*d2y - (x^4+1)*y^3*dy + x^3 = 0;
@@ -108,5 +112,62 @@ sapply(c(-2, -1.5, 1.5, 2)/2.1, line.tan, dx=1/5, p=dy, dp=d2y, b=b, col="orange
 curve(dy(x, b=b), from= -sqrt(2) + 1E-10, to = sqrt(2) - 1E-10, col="green", ylim=c(-4,4))
 sapply(c(-2.8, -2.4, -2, -1.5, 1.5, 2, 2.4, 2.8)/2.1, line.tan, dx=1/5, p=dy, dp=d2y, b=b, col="orange")
 
+
+### b = -1/2;
+b = -1/2
+curve(dy(x, b=b), from= -sqrt(5/4), to = sqrt(5/4), col="green", ylim=c(-4,4))
+sapply(c(-2.4, -2, -1.5, 1.5, 2, 2.4)/2.1, line.tan, dx=1/5, p=dy, dp=d2y, b=b, col="orange")
+
+
+
+############################
+
+### y*sin(y) + cos(y) = f(x)
+
+### D =>
+y*dy*cos(y) - df # = 0
+# D2 =>
+df*y*d2y + 2*df*(dy)^2 - f*y*(dy)^3 - d2f*y*dy # = 0
+
+### Examples:
+# f = x + b, where b = constant;
+y*d2y + 2*(dy)^2 - (x + b)*y*(dy)^3 # = 0
+### Solution:
+y = function(x, b) {
+	# root
+	y.f = function(x, v) x*sin(x) + cos(x) - v - b;
+	dy.f = function(x, v) x*cos(x);
+	x0.f = function(x) {
+		xb = x + b
+		x0 = if(xb >= 1 & xb <= pi/2) 1 else if(xb < 1) 3 else 7;
+		return(x0);
+	}
+	y = sapply(x, function(x) newtonRaphson(y.f, x0.f(x), dfun=dy.f, v=x)[[1]])
+	y = sapply(y, round0)
+	return(y)
+}
+dy = function(x, b, y.x) {
+	if(missing(y.x)) y.x = y(x, b=b);
+	div = y.x * cos(y.x)
+	dp = 1;
+	dp = ifelse(div != 0, dp / div, -1); # may need correction
+	return(dp)
+}
+d2y = function(x, b) {
+	y.x = y(x, b=b)
+	z = dy(x, b=b, y.x=y.x)
+	div = y.x
+	dp = - 2*z^2 + (x+b)*y.x*z^3;
+	dp = ifelse(div != 0, dp / div, -1); # TODO: needs correction!
+	return(dp)
+}
+###
+b = -1/2
+curve(y(x, b=b), from= -3, to = 3, ylim=c(-2,7))
+# oscillating function with local minimum;
+sapply(c(-1, 1.3, 1.6, 1.8, 1.95), line.tan, dx=3, p=y, dp=dy, b=b)
+# spikes
+curve(dy(x, b=b), from= -3, to = 3, add=T, col="green")
+sapply(c(-1, 1.3, 1.6, 1.8, 1.95), line.tan, dx=3, p=dy, dp=d2y, b=b, col="orange")
 
 
