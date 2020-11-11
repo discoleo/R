@@ -7,12 +7,15 @@
 ### Differential Equations
 ### ODEs: Polynomial types
 ###
-### draft v.0.2d
+### draft v.0.2e
 
 
 ### History
 
 ### Order 1 Non-Liniar
+### draft v.0.2e: [11-11-2020]
+# - solved: x*(x^n - 1)*d2y + x*(x^n - 1)*y*dy + n*dy - b0*x*y = -n*b0;
+#   where b0 = constant; [nice mix]
 ### draft v.0.2d: [11-11-2020]
 # - cleanup: moved section with Trigonometric functions
 #   to DE.ODE.Trigonometric.R;
@@ -1389,5 +1392,54 @@ sapply(c(-2, c(-(2:1), 1:2)/1.7, 2), line.tan, dx=3, p=y, dp=dy, h=c)
 # D(y)
 curve(dy(x, c), from=-3, to=3, add=T, col="green")
 sapply(c(-2, c(-(2:1), 1:2)/1.7, 2), line.tan, dx=3, p=dy, dp=d2y, h=c, col="orange")
+
+
+#######################
+
+### (x^n - 1)*dy = f(x);
+# x*(x^n - 1)*d2y + n*dy = x*df - n*f;
+x*(x^n - 1)*d2y + b*(x^n - 1)*y*dy + n*dy - b*f*y - x*df + n*f # = 0
+# where b = a constant or a function;
+# e.g. b = x; f = b0 (constant);
+x*(x^n - 1)*d2y + x*(x^n - 1)*y*dy + n*dy - b0*x*y + n*b0 # = 0
+### Solution:
+y = function(x, n=3, b0=1) {
+	f.x = x^n - 1
+	y.f = function(x) b0/(x^n - 1)
+	y = sapply(x, function(x) integrate(y.f, lower=1 + 1E-5, upper=x)$value);
+	return( y )
+}
+dy = function(x, n, b0=1) {
+	div = x^n - 1
+	dp = b0; # f = b0;
+	dp = ifelse(div != 0, dp / div, Inf); # TODO
+	return(dp)
+}
+d2y = function(x, n, b0=1) {
+	# uses simple equation;
+	dy.x = dy(x, n=n, b0=b0);
+	div = x*(x^n - 1);
+	dp = - n * (dy.x + b0);
+	dp = ifelse(div != 0, dp / div, Inf); # TODO
+	return(dp)
+}
+d2ymixt = function(x, n, b0=1) {
+	# checking the mixt equation;
+	y.x = y(x, n, b0)
+	dy.x = dy(x, n=n, b0=b0);
+	xn = x^n - 1
+	dp = - (x*xn*y.x*dy.x + n*dy.x - b0*x*y.x + n*b0);
+	div = x*xn;
+	dp = ifelse(div != 0, dp / div, Inf); # TODO
+}
+#
+c = 1; n = 5;
+#
+curve(y(x, n, c), from=1 + 1E-5, to=3)
+sapply(c(1.1, 2:5/1.7), line.tan, dx=3, p=y, dp=dy, n=n, b0=c)
+# D(y)
+curve(dy(x, n, c), add=T, col="green")
+# sapply(c(1.1, 2:5/1.7), line.tan, dx=3, p=dy, dp=d2y, n=n, b0=c, col="orange")
+sapply(c(1.1, 2:5/1.7), line.tan, dx=3, p=dy, dp=d2ymixt, n=n, b0=c, col="orange")
 
 
