@@ -7,15 +7,17 @@
 ### Differential Equations
 ### ODEs - Fractions: Lambert
 ###
-### draft v.0.2a
+### draft v.0.2a-pow3
 
 
 ### History
 
 ### Order 1 Non-Liniar
 ###
-### draft v.0.2a: [11-11-2020]
-# - solved: d2z + 2*x*dz - 2*z = 0;
+### draft v.0.2a - v.0.2a-pow3: [11-11-2020]
+# - solved:
+#   d2z + 2*x*dz - 2*z = 0;
+#   d3z + 3*x^2*d2z - 6*x*dz + 6*z = 0; [v.0.2a-pow3]
 ### draft v.0.2-pre-a:
 # - moved Trigonometric variants to new file:
 #   DE.ODE.Trigonometric.R;
@@ -566,4 +568,39 @@ sapply(c(-3:3 * 3/4), line.tan, dx=3, p=y, dp=dy)
 # sigmoidal
 curve(dy(x), add=T, col="green")
 sapply(c(-3:3 * 3/4), line.tan, dx=3, p=dy, dp=d2y, col="orange")
+
+
+
+### dy = e^(-x^3)
+# [not run]
+# d2y = -3*x^2*dy;
+d3z + 3*x^2*d2z - 6*x*dz + 6*z # = 0
+# where d3z = e^(-x^3);
+### Solution:
+y = function(x) {
+	dz = dy(x)
+	d2z = d2y(x)
+	d3z = d3y(x)
+	y = - 1/6 * (d3z + 3*x^2*d2z - 6*x*dz);
+	y = sapply(y, round0)
+	return(y)
+}
+dy = function(x) {
+	dp = sapply(x, function(x) integrate(d2y, lower=0, upper=x)$value)
+	return(dp)
+}
+d2y = function(x) {
+	dp = sapply(x, function(x) integrate(d3y, lower=0, upper=x)$value)
+	return(dp)
+}
+d3y = function(x) {
+	dp = exp(-x^3)
+	return(dp)
+}
+curve(y(x), from= -0.01, to = 3)
+#
+sapply(c(0:3 * 3/4), line.tan, dx=3, p=y, dp=dy)
+# sigmoidal
+curve(dy(x), add=T, col="green")
+sapply(c(0:3 * 3/4), line.tan, dx=3, p=dy, dp=d2y, col="orange")
 
