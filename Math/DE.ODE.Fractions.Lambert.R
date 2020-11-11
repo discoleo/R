@@ -7,17 +7,18 @@
 ### Differential Equations
 ### ODEs - Fractions: Lambert
 ###
-### draft v.0.2a-x2Lev3
+### draft v.0.2a-x2Lev4
 
 
 ### History
 
 ### Order 1 Non-Liniar
 ###
-### draft v.0.2a - v.0.2a-x2Lev3: [11-11-2020]
+### draft v.0.2a - v.0.2a-x2Lev4: [11-11-2020]
 # - solved:
 #   d2z + 2*x*dz - 2*z = 0;
 #   d2z + 2*x*dz - 4*z = 0; [v.0.2a-x2Lev3]
+#   d2z + 2*x*dz - 6*z = 0; [v.0.2a-x2Lev4]
 #   d3z + 3*x^2*d2z - 6*x*dz + 6*z = 0; [v.0.2a-pow3]
 ### draft v.0.2-pre-a:
 # - moved Trigonometric variants to new file:
@@ -574,35 +575,53 @@ sapply(c(-3:3 * 3/4), line.tan, dx=3, p=dy, dp=d2y, col="orange")
 ### y = e^(-x^2)
 # d3z = y;
 # [not run]
+# Level 3:
 d2z + 2*x*dz - 4*z # = 0
+# Level 4:
+d2z + 2*x*dz - 6*z # = 0
 ### Solution:
 dny = function(x, n=2) {
 	dp = exp(-x^n)
 	return(dp)
 }
-y = function(x, n=2) {
-	dz = dy(x, n=n);
-	d2z = d2y(x, n=n);
-	z = 1/4 * d2z + 1/2 * x*dz
+y = function(x, n=2, level=3) {
+	dz = if(level == 3) dp2y(x, n=n) else dp3y(x, n=n);
+	d2z = if(level == 3) dp1y(x, n=n) else dp2y(x, n=n);
+	z = (1/2 * d2z + x*dz) / (level - 1)
 	return(z);
 }
-dy = function(x, n=2) {
-	integrate.y(x, FUN=d2y, n=n, lower=-Inf)
+dp3y = function(x, n=2, ...) {
+	# could also use (recursively) the formula in this+previous sections;
+	integrate.y(x, FUN=dp2y, n=n, lower=-Inf)
 }
-d2y = function(x, n=2) {
+dp2y = function(x, n=2) {
+	# could also use (recursively) the formula in previous section;
+	integrate.y(x, FUN=dp1y, n=n, lower=-Inf)
+}
+dp1y = function(x, n=2) {
 	integrate.y(x, FUN=dny, n=n, lower=-Inf)
 }
 integrate.y = function(x, FUN=dny, n=2, lower=-Inf) {
 	dp = sapply(x, function(x) integrate(FUN, lower=lower, upper=x, n=n)$value)
 	return(dp)
 }
-#
+### Levels: +3, +2, +1;
 curve(y(x), from= -3, to = 2.2)
-#
-sapply(c(-3:3 * 3/4), line.tan, dx=3, p=y, dp=dy)
-# sigmoidal
-curve(dy(x), add=T, col="green")
-sapply(c(-3:3 * 3/4), line.tan, dx=3, p=dy, dp=d2y, col="orange")
+sapply(c(-3:3 * 3/4), line.tan, dx=3, p=y, dp=dp2y)
+# *NON*-sigmoidal / seems increasing
+curve(dp2y(x), add=T, col="green")
+sapply(c(-3:3 * 3/4), line.tan, dx=3, p=dp2y, dp=dp1y, col="orange")
+
+
+### Levels: +4, +3, +2;
+# Note: takes very long !!!
+# - should be implemented using the compact/derived formulas!
+curve(y(x, level=4), from= -3, to = 2.2)
+sapply(c(-3:3 * 3/4), line.tan, dx=3, p=y, dp=dp3y, level=4)
+# *NON*-sigmoidal / seems increasing
+curve(dp3y(x), add=T, col="green")
+sapply(c(-3:3 * 3/4), line.tan, dx=3, p=dp3y, dp=dp2y, col="orange")
+
 
 
 #################
