@@ -7,12 +7,15 @@
 ### Differential Equations
 ### ODEs: Polynomial types
 ###
-### draft v.0.2c
+### draft v.0.2d
 
 
 ### History
 
 ### Order 1 Non-Liniar
+### draft v.0.2d: [11-11-2020]
+# - cleanup: moved section with Trigonometric functions
+#   to DE.ODE.Trigonometric.R;
 ### draft v.0.2c: [06-11-2020]
 # - solved:
 #   x^2*(x^3-1)*dz - c^2*z^3 - c*x^2*z^2 + 2*x*z = 0;
@@ -1144,7 +1147,7 @@ sapply(c(a-(4:1)/3, a+(1:6)/3), line.tan, dx=3, p=y, dp=dy, a=a)
 # p^n + q^n = 2*f(x)
 # p*q = h(x)
 
-### full P3: is in the next section;
+### full P3: see previous section;
 # y = p + q;
 
 ### P6-partial:
@@ -1343,105 +1346,10 @@ sapply(c(-(1:4), 1:4), line.tan, dx=3)
 ####################
 ####################
 
-###########################
-### Trigonometric Functions
 
-### sin(x*y) = x^2
-x*(1 - x^4)*d2y - (4*x^4 - 2)*dy - 2*x^3*y = 2*sqrt(1 - x^4)
-### Solution
-# x*y = t => dy = dt/x - t/x^2; d2y = d2t/x - 2*dt/x^2 + 2*t/x^3;
-y = function(x, n=2) {
-	r = asin(x^n)/x
-	r[x == 0] = 0
-	return(r)
-}
-dy = function(x, n=2) {
-	y.x = y(x, n=n)
-	dp = (n*x^(n-1) / sqrt(1- x^(2*n))) - y.x
-	dp = dp/x
-	zero = if(n == 2) 1 else 0; # TODO: dependent on n;
-	dp[x == 0] = zero
-	return(dp)
-}
-d2y = function(x, n=2) {
-	y.x = y(x, n=n)
-	dy.x = dy(x, n=n)
-	x4 = x^(2*n)
-	dp = if(n == 2) 1 else (n-1)*x^(n-2);
-	dp = (dp * sqrt(1 - x4) + x^(2*n-1)*y.x)*n + ((n+2)*x4 - 2)*dy.x
-	dp = dp / x / (1-x4)
-	return(dp)
-}
-### Plot
-curve(y, from=-1, to=1)
-div = 23
-sapply(c(-1 + (1:4)/div, 1 - (1:4)/div), line.tan, dx=0.5, p=y, dp=dy)
-### D2(y):
-curve(dy, from=-1, to=1, col="green", ylim=c(-1, 6))
-curve(y, from=-1, to=1, col="grey", add=T)
-div = 23
-sapply(c(-1 + (1:4)/div, 1 - (1:4)/div), line.tan, dx=0.5, p=dy, dp=d2y)
+####################
 
-
-### sin(x*y + a) = x^p
-# Note: parameter [a] does NOT seem to have any impact;
-(x*dy + y)*cos(x*y + a) = p*x^(p-1)
-(x*dy + y) * sqrt(1 - x^(2*p)) = p*x^(p-1)
-# D2 =>
-(x*d2y + 2*dy) * sqrt(1 - x^(2*p)) - p*x^(2*p-1)*(x*dy + y)/sqrt(1 - x^(2*p))  = p*(p-1)*x^(p-2)
-(x*d2y + 2*dy) * (1 - x^(2*p)) - p*x^(2*p-1)*(x*dy + y)  = p*(p-1)*x^(p-2)*sqrt(1 - x^(2*p))
-x*(1 - x^(2*p))*d2y - ((p+2)*x^(2*p) - 2)*dy - p*x^(2*p-1)*y  = p*(p-1)*x^(p-2)*sqrt(1 - x^(2*p))
-### p =3
-x*(1 - x^6)*d2y - (5*x^6 - 2)*dy - 3*x^5*y  = 6*x*sqrt(1 - x^6)
-### Plot:
-### D2(y):
-curve(dy(x, n=3), from=-1, to=1, col="green", ylim=c(-4, 6))
-curve(y(x, n=3), from=-1, to=1, col="grey", add=T)
-div = 23
-sapply(c(-1 + (1:4)/div, 1 - (1:4)/div), line.tan, dx=0.5, p=dy, dp=d2y, n=3)
-
-### Combinations:
-x*(1 - x^6)*d2y - (5*x^6 - 2)*dy - 3*x^2*y*sin(x*y + a)  = 6*x*sqrt(1 - x^6)
-### Solution & Plot:
-y = function(x, n=2, a=1/3) {
-	r = (asin(x^n) - a)/x
-	r[x == 0] = if(a == 0) 0 else Inf;
-	return(r)
-}
-dy = function(x, n=2, a=1/3) {
-	y.x = y(x, n=n, a=a)
-	dp = (n*x^(n-1) / sqrt(1- x^(2*n))) - y.x
-	dp = dp/x
-	zero = if(n == 2) 1 else 0; # TODO: dependent on n;
-	zero = if(a == 0) zero else Inf;
-	dp[x == 0] = zero
-	return(dp)
-}
-d2y = function(x, n=2, a=1/3) {
-	y.x = y(x, n=n, a=a)
-	dy.x = dy(x, n=n, a=a)
-	x4 = x^(2*n)
-	dp = if(n == 2) 1 else (n-1)*x^(n-2);
-	dp = (dp * sqrt(1 - x4) + x^(n-1)*y.x*sin(x*y.x + a))*n + ((n+2)*x4 - 2)*dy.x
-	dp = dp / x / (1-x4)
-	return(dp)
-}
-### Plot
-curve(y, from=-1, to=1)
-div = 4.5
-sapply(c(-1 + (1:4)/div, 1 - (1:4)/div), line.tan, dx=0.5, p=y, dp=dy)
-### D2(y):
-curve(dy, from=-1, to=1, col="green", ylim=c(-1, 8))
-curve(y, from=-1, to=1, col="grey", add=T)
-div = 4.5
-sapply(c(-1 + (1:4)/div, 1 - (1:4)/div), line.tan, dx=0.5, p=dy, dp=d2y)
-
-
-### TODO: tan, ln;
-
-########################
-
-### D2 & D2 Transforms
+### F(D1): dz + f(z)
 
 ### y^3 - 3*c*y - 2*f = 0
 # [not run]
