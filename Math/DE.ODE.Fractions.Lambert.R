@@ -7,13 +7,15 @@
 ### Differential Equations
 ### ODEs - Fractions: Lambert
 ###
-### draft v.0.2-pre-a
+### draft v.0.2a
 
 
 ### History
 
 ### Order 1 Non-Liniar
 ###
+### draft v.0.2a: [11-11-2020]
+# - solved: d2z + 2*x*dz - 2*z = 0;
 ### draft v.0.2-pre-a:
 # - moved Trigonometric variants to new file:
 #   DE.ODE.Trigonometric.R;
@@ -529,4 +531,39 @@ sapply(c((0:5)/5 + 0.01), line.tan, dx=3, p=dy, dp=d2y, col="orange")
 # check full sigmoidal
 curve(dy(x), from= -1.4, to = 1.4, col="green")
 sapply(c((0:5)/5 + 0.01), line.tan, dx=3, p=dy, dp=d2y, col="orange")
+
+
+######################
+######################
+
+### by Integration
+
+### dy = e^(-x^2)
+# [not run]
+# d2y = -2*x*dy;
+d2z + 2*x*dz - 2*z # = 0
+# where dz = sqrt(pi)/2 * erf(x); d2z = e^(-x^2);
+### Solution:
+y = function(x) {
+	dy.x = dy(x)
+	d2y.x = d2y(x)
+	y = 1/2 * d2y.x + x*dy.x;
+	y = sapply(y, round0)
+	return(y)
+}
+dy = function(x) {
+	dp = pnorm(x * sqrt(2)) * sqrt(pi)
+	# dp = sapply(x, function(x) integrate(function(x) exp(-x^2), lower=-Inf, upper=x)$value)
+	return(dp)
+}
+d2y = function(x) {
+	dp = exp(-x^2)
+	return(dp)
+}
+curve(y(x), from= -3, to = 3)
+#
+sapply(c(-3:3 * 3/4), line.tan, dx=3, p=y, dp=dy)
+# sigmoidal
+curve(dy(x), add=T, col="green")
+sapply(c(-3:3 * 3/4), line.tan, dx=3, p=dy, dp=d2y, col="orange")
 
