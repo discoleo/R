@@ -7,16 +7,17 @@
 ### Differential Equations
 ### ODEs - Fractions: Lambert
 ###
-### draft v.0.2a-pow3
+### draft v.0.2a-x2Lev3
 
 
 ### History
 
 ### Order 1 Non-Liniar
 ###
-### draft v.0.2a - v.0.2a-pow3: [11-11-2020]
+### draft v.0.2a - v.0.2a-x2Lev3: [11-11-2020]
 # - solved:
 #   d2z + 2*x*dz - 2*z = 0;
+#   d2z + 2*x*dz - 4*z = 0; [v.0.2a-x2Lev3]
 #   d3z + 3*x^2*d2z - 6*x*dz + 6*z = 0; [v.0.2a-pow3]
 ### draft v.0.2-pre-a:
 # - moved Trigonometric variants to new file:
@@ -570,7 +571,41 @@ curve(dy(x), add=T, col="green")
 sapply(c(-3:3 * 3/4), line.tan, dx=3, p=dy, dp=d2y, col="orange")
 
 
+### y = e^(-x^2)
+# d3z = y;
+# [not run]
+d2z + 2*x*dz - 4*z # = 0
+### Solution:
+dny = function(x, n=2) {
+	dp = exp(-x^n)
+	return(dp)
+}
+y = function(x, n=2) {
+	dz = dy(x, n=n);
+	d2z = d2y(x, n=n);
+	z = 1/4 * d2z + 1/2 * x*dz
+	return(z);
+}
+dy = function(x, n=2) {
+	integrate.y(x, FUN=d2y, n=n, lower=-Inf)
+}
+d2y = function(x, n=2) {
+	integrate.y(x, FUN=dny, n=n, lower=-Inf)
+}
+integrate.y = function(x, FUN=dny, n=2, lower=-Inf) {
+	dp = sapply(x, function(x) integrate(FUN, lower=lower, upper=x, n=n)$value)
+	return(dp)
+}
+#
+curve(y(x), from= -3, to = 2.2)
+#
+sapply(c(-3:3 * 3/4), line.tan, dx=3, p=y, dp=dy)
+# sigmoidal
+curve(dy(x), add=T, col="green")
+sapply(c(-3:3 * 3/4), line.tan, dx=3, p=dy, dp=d2y, col="orange")
 
+
+#################
 ### dy = e^(-x^3)
 # [not run]
 # d2y = -3*x^2*dy;
