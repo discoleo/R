@@ -7,18 +7,19 @@
 ### Differential Equations
 ### ODEs - Fractions: Lambert
 ###
-### draft v.0.2a-x2Lev4
+### draft v.0.2a-xTerm
 
 
 ### History
 
 ### Order 1 Non-Liniar
 ###
-### draft v.0.2a - v.0.2a-x2Lev4: [11-11-2020]
+### draft v.0.2a - v.0.2a-xTerm: [11-11-2020]
 # - solved:
 #   d2z + 2*x*dz - 2*z = 0;
 #   d2z + 2*x*dz - 4*z = 0; [v.0.2a-x2Lev3]
 #   d2z + 2*x*dz - 6*z = 0; [v.0.2a-x2Lev4]
+#   d2z + 2*x*dz - 2*z = b0*x^2; [v.0.2a-xTerm]
 #   d3z + 3*x^2*d2z - 6*x*dz + 6*z = 0; [v.0.2a-pow3]
 ### draft v.0.2-pre-a:
 # - moved Trigonometric variants to new file:
@@ -548,31 +549,51 @@ sapply(c((0:5)/5 + 0.01), line.tan, dx=3, p=dy, dp=d2y, col="orange")
 d2z + 2*x*dz - 2*z # = 0
 # where dz = sqrt(pi)/2 * erf(x); d2z = e^(-x^2);
 ### Solution:
-y = function(x) {
-	dy.x = dy(x)
-	d2y.x = d2y(x)
-	y = 1/2 * d2y.x + x*dy.x;
+y = function(x, b0=0, lower = if(b0 == 0) -Inf else 0) {
+	dy.x = dy(x, b0=b0, lower=lower)
+	d2y.x = d2y(x, b0=b0)
+	y = 1/2 * d2y.x + x*dy.x - b0/2 *x^2;
 	y = sapply(y, round0)
 	return(y)
 }
-dy = function(x) {
-	dp = pnorm(x * sqrt(2)) * sqrt(pi)
-	# dp = sapply(x, function(x) integrate(function(x) exp(-x^2), lower=-Inf, upper=x)$value)
+dy = function(x, b0=0, lower = if(b0 == 0) -Inf else 0) {
+	if(b0 == 0) {
+		dp = pnorm(x * sqrt(2)) * sqrt(pi)
+	} else {
+		dp = sapply(x, function(x) integrate(function(x) exp(-x^2) + b0, lower=lower, upper=x)$value)
+	}
 	return(dp)
 }
-d2y = function(x) {
-	dp = exp(-x^2)
+d2y = function(x, b0=0) {
+	dp = exp(-x^2) + b0;
 	return(dp)
 }
+# b0 == 0;
 curve(y(x), from= -3, to = 3)
-#
 sapply(c(-3:3 * 3/4), line.tan, dx=3, p=y, dp=dy)
 # sigmoidal
 curve(dy(x), add=T, col="green")
 sapply(c(-3:3 * 3/4), line.tan, dx=3, p=dy, dp=d2y, col="orange")
 
 
+### y = e^(-x^2) + b0
+# [not run]
+# dy = -2*x*y + 2*b0*x;
+# d2z = y;
+d2z + 2*x*dz - 2*z - b0*x^2 # = 0
+### Plot:
+# using functions defined above;
+b0 = -1;
+curve(y(x, b0=b0), from= -3, to = 3, ylim=c(-3, 2))
+sapply(c(-3:3 * 3/4), line.tan, dx=3, p=y, dp=dy, b0=b0)
+# sigmoidal
+curve(dy(x, b0=b0), add=T, col="green")
+sapply(c(-3:3 * 3/4), line.tan, dx=3, p=dy, dp=d2y, b0=b0, col="orange")
+
+
+################
 ### y = e^(-x^2)
+### Higher Levels
 # d3z = y;
 # [not run]
 # Level 3:
