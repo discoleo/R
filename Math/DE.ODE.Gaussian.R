@@ -6,13 +6,34 @@
 ### Differential Equations
 ### ODEs - Gaussian
 ###
-### draft v.0.1a
+### draft v.0.2a
+
+#############
+### Types ###
+#############
+
+### Simple:
+# d2z + 2*x*dz - 2*n*z = 0;
+### e^f(x)-type, f = order 2:
+# Level 1: d2z + (2*k2*x + k1)*dz - 2*k2*z = 0;
+# Level n: TODO;
+### Higher powers:
+# Level 1: d3z + 3*x^2*d2z - 6*x*dz + 6*z = 0
+# Level n: TODO;
+### Others:
+# - and many more: non-homogenous variants;
 
 
-### History
+###############
+### History ###
+###############
 
 ### Liniar / Non-Liniar Gaussian-type
 ###
+### draft v.0.2a: [12-11-2020]
+# - solved: d2z + (4*x + 1)*dz - 4*z = 0;
+#   including generalisations of type:
+#   d2z + (2*k2*x + k1)*dz - 2*k2*z = 0;
 ### draft v.0.1a: [12-11-2020]
 # - moved section on Gaussian-types
 #   to this new file;
@@ -110,6 +131,44 @@ sapply(c(-3:3 * 3/4), line.tan, dx=3, p=y, dp=dy, b0=b0)
 # sigmoidal
 curve(dy(x, b0=b0), add=T, col="green")
 sapply(c(-3:3 * 3/4), line.tan, dx=3, p=dy, dp=d2y, b0=b0, col="orange")
+
+
+##################
+### y = e^f(x) ###
+
+### y = e^-(k2*x^2 + k1*x)
+# dy = - (2*k2*x + k1)*y
+### Integration by parts =>
+# y = -(2*k2*x + k1)*I(y) + 2*k2*I(I(y));
+# [not run]
+d2z + (2*k2*x + k1)*dz - 2*k2*z # = 0
+### Solution & Plot:
+y = function(x, k, lower = -Inf) {
+	dz = dy(x, k=k, lower=lower)
+	d2z = d2y(x, k=k)
+	# Note: rev(k)
+	y = 1/2 * (d2z + (2*k[1]*x + k[2])*dz) / k[1];
+	y = sapply(y, round0)
+	return(y)
+}
+dy = function(x, k, lower = -Inf) {
+	dp = sapply(x, function(x) integrate(d2y, lower=lower, upper=x, k=k)$value)
+	return(dp)
+}
+d2y = function(x, k) {
+	if(length(k) == 1) k = c(k, 0)
+	len = length(k)
+	dp = sapply(x, function(x) exp(-sum(x^rev(seq(len)) * k)));
+	return(dp)
+}
+# d2z + (4*x + 1)*dz - 4*z = 0
+k = c(2, 1)
+curve(y(x, k), from= -3, to = 3)
+sapply(c(-3:3 * 3/4), line.tan, dx=3, p=y, dp=dy, k=k)
+# sigmoidal
+curve(dy(x, k), add=T, col="green")
+sapply(c(-3:3 * 3/4), line.tan, dx=3, p=dy, dp=d2y, k=k, col="orange")
+
 
 
 #####################
