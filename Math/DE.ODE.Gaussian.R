@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs - Gaussian
 ###
-### draft v.0.2b
+### draft v.0.2b-gen
 
 #############
 ### Types ###
@@ -30,9 +30,10 @@
 
 ### Liniar / Non-Liniar Gaussian-type
 ###
-### draft v.0.2b:
-# - sinh-type variants:
-#   x*d2y + 2*k*x^2*sin(y)*dy - dy = 0;
+### draft v.0.2b - v.0.2b-gen:
+# - sinh-type variants, including generalization:
+#   x*d2y + k*x^2*sin(y)*dy - dy = 0;
+#   x*d2y + k*x^n*sin(y)*dy - (n-1)*dy = 0; [v.0.2b-gen]
 ### draft v.0.2a: [12-11-2020]
 # - solved: d2z + (4*x + 1)*dz - 4*z = 0;
 #   including generalisations of type:
@@ -275,43 +276,70 @@ sapply(c(0:3 * 3/4), line.tan, dx=3, p=dy, dp=d2y, col="orange")
 
 ### Type: sinh(x) / cosh(x)
 
-### tan(y) = 1/2 * (e^(k*x^2) - e^(-k*x^2))
+### tan(y) = 1/2 * (e^(k/2 * x^2) - e^(-k/2 * x^2))
 # [not run]
-dy = 2*k*x*cos(y)
-x*d2y + 2*k*x^2*sin(y)*dy - dy # = 0
+dy = k*x*cos(y)
+x*d2y + k*x^2*sin(y)*dy - dy # = 0
 ### Solution:
-y = function(x, k=1) {
-	y = 1/2 * (exp(k*x^2) - exp(-k*x^2))
+y = function(x, k=2, n=2) {
+	val = k*x^n / n;
+	y = 1/2 * (exp(val) - exp(-val))
 	y = atan(y)
 	y = sapply(y, round0)
 	return(y)
 }
-dy = function(x, k=1) {
-	y.x = y(x, k=k)
-	dp = 2*k*x*cos(y.x)
+dy = function(x, k=2, n=2) {
+	y.x = y(x, k=k, n=n)
+	xn = if(n == 2) x else x^(n-1);
+	dp = k * xn * cos(y.x)
 	return(dp)
 }
-d2y = function(x, k=1) {
-	y.x = y(x, k=k)
-	dy.x = dy(x, k=k)
-	dp = dy.x - 2*k*x^2*sin(y.x)*dy.x;
+d2y = function(x, k=2, n=2) {
+	y.x = y(x, k=k, n=n)
+	dy.x = dy(x, k=k, n=n)
+	dp = (n-1)*dy.x - k*x^n * sin(y.x)*dy.x;
 	div = x;
-	dp = ifelse(div != 0, dp / div, 2*k); # may need correction
+	lim = if(n > 2) 0 else if(n == 2) (n-1)*k else 1E+3;
+	dp = ifelse(div != 0, dp / div, lim); # probably correct
 	return(dp)
 }
-### k == 1
+### k/2 == 1
 curve(y(x), from= -3, to = 3, ylim=c(-2, 2))
 sapply(c(-3:3 * 3/4), line.tan, dx=3, p=y, dp=dy)
-# sigmoidal
+# quasi-sigmoidal
 curve(dy(x), add=T, col="green")
 sapply(c(-3:3 * 3/4), line.tan, dx=3, p=dy, dp=d2y, col="orange")
 
 
-### k == 1/2
-k = 1/2
+### k/2 == 1/2
+k = 1
 curve(y(x, k=k), from= -3, to = 3, ylim=c(-1, 2))
 sapply(c(-3:3 * 3/4), line.tan, dx=3, p=y, dp=dy, k=k)
-# sigmoidal
+# quasi-sigmoidal
 curve(dy(x, k=k), add=T, col="green")
 sapply(c(-3:3 * 3/4), line.tan, dx=3, p=dy, dp=d2y, k=k, col="orange")
+
+
+### tan(y) = 1/2 * (e^(k/n*x^n) - e^(-k/n*x^n))
+# [not run]
+dy = k*x^(n-1)*cos(y)
+x*d2y + k*x^n*sin(y)*dy - (n-1)*dy # = 0
+x*d2y - (n-1)*dy + 1/2 * k^2*x^(2*n-1)*sin(2*y) # = 0
+
+### Plot:
+### n = 3; k/n == 1/3
+n = 3; k = 1;
+curve(y(x, k=k, n=n), from= -3, to = 3, ylim=c(-2, 2))
+sapply(c(-3:3 * 3/4), line.tan, dx=3, p=y, dp=dy, k=k, n=n)
+# non-sigmoidal
+curve(dy(x, k=k, n=n), add=T, col="green")
+sapply(c(-3:3 * 3/4), line.tan, dx=3, p=dy, dp=d2y, k=k, n=n, col="orange")
+
+### n = 3; k/n == 1
+n = 3; k = 3;
+curve(y(x, k=k, n=n), from= -3, to = 3, ylim=c(-2, 2))
+sapply(c(-3:3 * 3/4), line.tan, dx=3, p=y, dp=dy, k=k, n=n)
+# non-sigmoidal
+curve(dy(x, k=k, n=n), add=T, col="green")
+sapply(c(-3:3 * 3/4), line.tan, dx=3, p=dy, dp=d2y, k=k, n=n, col="orange")
 
