@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs - Gaussian
 ###
-### draft v.0.2a
+### draft v.0.2b
 
 #############
 ### Types ###
@@ -30,6 +30,9 @@
 
 ### Liniar / Non-Liniar Gaussian-type
 ###
+### draft v.0.2b:
+# - sinh-type variants:
+#   x*d2y + 2*k*x^2*sin(y)*dy - dy = 0;
 ### draft v.0.2a: [12-11-2020]
 # - solved: d2z + (4*x + 1)*dz - 4*z = 0;
 #   including generalisations of type:
@@ -266,4 +269,49 @@ sapply(c(0:3 * 3/4), line.tan, dx=3, p=y, dp=dy)
 curve(dy(x), add=T, col="green")
 sapply(c(0:3 * 3/4), line.tan, dx=3, p=dy, dp=d2y, col="orange")
 
+
+###########################
+###########################
+
+### Type: sinh(x) / cosh(x)
+
+### tan(y) = 1/2 * (e^(k*x^2) - e^(-k*x^2))
+# [not run]
+dy = 2*k*x*cos(y)
+x*d2y + 2*k*x^2*sin(y)*dy - dy # = 0
+### Solution:
+y = function(x, k=1) {
+	y = 1/2 * (exp(k*x^2) - exp(-k*x^2))
+	y = atan(y)
+	y = sapply(y, round0)
+	return(y)
+}
+dy = function(x, k=1) {
+	y.x = y(x, k=k)
+	dp = 2*k*x*cos(y.x)
+	return(dp)
+}
+d2y = function(x, k=1) {
+	y.x = y(x, k=k)
+	dy.x = dy(x, k=k)
+	dp = dy.x - 2*k*x^2*sin(y.x)*dy.x;
+	div = x;
+	dp = ifelse(div != 0, dp / div, 2*k); # may need correction
+	return(dp)
+}
+### k == 1
+curve(y(x), from= -3, to = 3, ylim=c(-2, 2))
+sapply(c(-3:3 * 3/4), line.tan, dx=3, p=y, dp=dy)
+# sigmoidal
+curve(dy(x), add=T, col="green")
+sapply(c(-3:3 * 3/4), line.tan, dx=3, p=dy, dp=d2y, col="orange")
+
+
+### k == 1/2
+k = 1/2
+curve(y(x, k=k), from= -3, to = 3, ylim=c(-1, 2))
+sapply(c(-3:3 * 3/4), line.tan, dx=3, p=y, dp=dy, k=k)
+# sigmoidal
+curve(dy(x, k=k), add=T, col="green")
+sapply(c(-3:3 * 3/4), line.tan, dx=3, p=dy, dp=d2y, k=k, col="orange")
 
