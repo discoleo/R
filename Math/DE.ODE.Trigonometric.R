@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs - Trigonometric
 ###
-### draft v.0.1c
+### draft v.0.1d
 
 
 ### History
@@ -14,6 +14,9 @@
 ### Order 1 Non-Liniar:
 ### Trigonometric Variants
 ###
+### draft v.0.1d: [14-11-2020]
+# - integration by parts:
+#   x*d4z - 3/2 * d3z + 9/4*a^2*x^2*d2z - 9/2*a^2*x*dz + 9/2*a^2*z = 0;
 ### draft v.0.1c:
 # - moved Section on Trigonometric Functions
 #   from DE.ODE.Polynomial.R;
@@ -109,7 +112,7 @@ curve(y(x, b=b), from= -sqrt(2) + 1E-10, to = sqrt(2) - 1E-10)
 # global minimum;
 sapply(c((-2:2)/2.2), line.tan, dx=3, p=y, dp=dy, b=b)
 # pseudo-sigmoidal
-curve(dy(x, b=b), from= -1, to = 1, add=T, col="green")
+curve(dy(x, b=b), add=T, col="green")
 sapply(c(-2, -1.5, 1.5, 2)/2.1, line.tan, dx=1/5, p=dy, dp=d2y, b=b, col="orange")
 
 # check full pseudo-sigmoidal
@@ -276,4 +279,160 @@ sapply(c(-1 + (1:4)/div, 1 - (1:4)/div), line.tan, dx=0.5, p=dy, dp=d2y)
 
 
 ### TODO: tan, ln;
+
+
+######################
+
+### Simple / Power
+
+### y = sin(a*x^n)
+dy = n*a*x^(n-1)*cos(a*x^n)
+x*d2y - (n-1)*dy + n^2*a^2*x^(2*n-1)*y # = 0
+### Test & Plot:
+y = function(x, a=1, n=2) {
+	r = sin(a*x^n)
+	return(r)
+}
+dy = function(x, a=1, n=2) {
+	xn1 = if(n == 2) x else x^(n-1);
+	xn  = xn1 * x;
+	dp = n*a*xn1*cos(a*xn)
+	return(dp)
+}
+d2y = function(x, a=1, n=2) {
+	y.x = y(x, a=a, n=n)
+	dy.x = dy(x, a=a, n=n)
+	div = x;
+	dp = (n-1)*dy.x - n^2*a^2*x^(2*n-1)*y.x;
+	dp = ifelse(div != 0, dp / div, n*(n-1)*a); # TODO: needs correction!
+	return(dp)
+}
+### Plot
+a = 1; n = 2;
+curve(y(x, a=a, n=n), from= -3, to= 3, ylim=c(-2, 1.5))
+# sinus wave;
+sapply(c((-5:5)/2.2), line.tan, dx=3, p=y, dp=dy, a=a, n=n)
+# wave
+curve(dy(x, a=a, n=n), add=T, col="green")
+sapply(c((-5:5)/2.2), line.tan, dx=1/5, p=dy, dp=d2y, a=a, n=n, col="orange")
+
+### Test wave
+curve(dy(x, a=a, n=n), from=-3, to=3, col="green")
+sapply(c((-5:5)/2.2), line.tan, dx=1/5, p=dy, dp=d2y, a=a, n=n, col="orange")
+
+
+### Example 2:
+a = 1/3; n = 2;
+curve(y(x, a=a, n=n), from= -3, to= 3, ylim=c(-1, 1.5))
+# sinus wave;
+sapply(c((-5:5)/2.2), line.tan, dx=3, p=y, dp=dy, a=a, n=n)
+# wave
+curve(dy(x, a=a, n=n), add=T, col="green")
+sapply(c((-5:5)/2.2), line.tan, dx=1/5, p=dy, dp=d2y, a=a, n=n, col="orange")
+
+
+### Integration by parts
+
+### n = 1
+x*d2y + a^2*x*y # = 0
+### I() =>
+x*dy - y + a^2*x*I(y) - a^2*I(I(y)) # = 0
+# z = I(I(y))
+x*d3z - d2z + a^2*x*dz - a^2*z # = 0
+# D(d2z/x) + a^2*(z/x) = 0;
+
+### n = 3/2
+# x*d2y - (n-1)*dy + n^2*a^2*x^(2*n-1)*y # = 0
+x*d2y - 1/2 * dy + 9/4*a^2*x^2*y # = 0
+### I() =>
+x*dy - y - 1/2 * y + 9/4*a^2*x^2*I(y) - 9/2*a^2*x*I(I(y)) + 9/2*a^2*I(I(I(y))) # = 0
+# z = I(I(I(y)))
+x*d4z - 3/2 * d3z + 9/4*a^2*x^2*d2z - 9/2*a^2*x*dz + 9/2*a^2*z # = 0
+### TODO: test;
+
+
+### Test
+# only n == 1
+y.base = function(x, a=1, n=1) {
+	r = sin(a*x^n)
+	return(r)
+}
+dy.base = function(x, a=1, n=1) {
+	xn1 = if(n == 2) x else x^(n-1);
+	xn  = xn1 * x;
+	dp = n*a*xn1*cos(a*xn)
+	return(dp)
+}
+y = function(x, a=1, n=1) {
+	d3z = dy.base(x, a=a, n=n)
+	d2z = y.base(x, a=a, n=n)
+	dz  = dy(x, a=a, n=n)
+	z = (x*d3z - d2z + a^2*x*dz) / a^2
+	return(z)
+}
+dy = function(x, a=1, n=1, lower=0) {
+	r = sapply(x, function(x) integrate(y.base, lower=lower, upper=x, a=a, n=n)$value)
+	return(r)
+}
+d2y = function(x, a=1, n=1) {
+	return(y.base(x, a=a, n=n))
+}
+### Plot
+a = 1; n = 1;
+curve(y(x, a=a, n=n), from= -3, to= 3, ylim=c(-2, 1.5))
+# sinus wave;
+sapply(c((-5:5)/2.2), line.tan, dx=3, p=y, dp=dy, a=a, n=n)
+# wave
+curve(dy(x, a=a, n=n), add=T, col="green")
+sapply(c((-5:5)/2.2), line.tan, dx=1/5, p=dy, dp=d2y, a=a, n=n, col="orange")
+
+### Test separately:
+curve(dy(x, a=a, n=n), from= -3, to= 3, col="green")
+sapply(c((-5:5)/2.2), line.tan, dx=1/5, p=dy, dp=d2y, a=a, n=n, col="orange")
+
+
+### Test
+# only n == 3/2
+# x*d4z - 3/2 * d3z + 9/4*a^2*x^2*d2z - 9/2*a^2*x*dz + 9/2*a^2*z # = 0
+y.base = function(x, a=1, n=3/2) {
+	r = sin(a*x^n)
+	return(r)
+}
+dy.base = function(x, a=1, n=3/2) {
+	xn1 = if(n == 2) x else x^(n-1);
+	xn  = xn1 * x;
+	dp = n*a*xn1*cos(a*xn)
+	return(dp)
+}
+y = function(x, a=1, n=3/2) {
+	d4z = dy.base(x, a=a, n=n)
+	d3z = y.base(x, a=a, n=n)
+	d2z = d2y(x, a=a, n=n)
+	dz  = dy(x, a=a, n=n)
+	z = -(x*d4z - 3/2 * d3z + 9/4*a^2*x^2*d2z - 9/2*a^2*x*dz) * 2/9 / a^2
+	return(z)
+}
+d2y = function(x, a=1, n=3/2, lower=0) {
+	r = sapply(x, function(x) integrate(y.base, lower=lower, upper=x, a=a, n=n)$value)
+	return(r)
+}
+dy = function(x, a=1, n=3/2, lower=0) {
+	r = sapply(x, function(x) integrate(d2y, lower=lower, upper=x, a=a, n=n)$value)
+	return(r)
+}
+### Plot
+a = 1; n = 3/2;
+# quasi-exponential;
+curve(y(x, a=a, n=n), from= 0, to= 3)
+sapply(c((0:5)/2.2), line.tan, dx=3, p=y, dp=dy, a=a, n=n)
+# wave
+curve(dy(x, a=a, n=n), add=T, col="green")
+sapply(c((0:5)/2.2), line.tan, dx=1/5, p=dy, dp=d2y, a=a, n=n, col="orange")
+
+
+### Test separately:
+curve(dy(x, a=a, n=n), from= 0, to= 3, col="green")
+sapply(c((0:5)*2/3.2), line.tan, dx=1/5, p=dy, dp=d2y, a=a, n=n, col="orange")
+
+
 
