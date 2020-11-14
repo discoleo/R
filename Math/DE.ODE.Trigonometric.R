@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs - Trigonometric
 ###
-### draft v.0.1f
+### draft v.0.1f-cm
 
 
 ### History
@@ -14,11 +14,12 @@
 ### Order 1 Non-Liniar:
 ### Trigonometric Variants
 ###
-### draft v.0.1e - v.0.1f:
+### draft v.0.1e - v.0.1f-cm:
 # - solved:
 #   x^2*dy*d2y + x/(x+1) * dy^2 + (x+1)^2 * y*dy = 0;
 #   [includes generalization]
 #   x*y^2*d2y + x*y*dy^2 - (k^2+1)/2 * x^2*dy^3 - y^2*dy = 0;
+# - fixed comments [minor fix];
 ### draft v.0.1d: [14-11-2020]
 # - integration by parts:
 #   x*d4z - 3/2 * d3z + 9/4*a^2*x^2*d2z - 9/2*a^2*x*dz + 9/2*a^2*z = 0;
@@ -520,7 +521,9 @@ sapply(c((0:5)*2/3.2), line.tan, dx=1/5, p=dy, dp=d2y, a=a, n=n, col="orange")
 # k*dy * cos(k * log(y)) = (2*x*y - x^2*dy) / y;
 x*y^2*d2y + x*y*dy^2 - (k^2+1)/2 * x^2*dy^3 - y^2*dy # = 0;
 ### Solution & Plot:
-y = function(x, k) {
+y = function(x, k, start=1) {
+	# start: default = 1 functions for 0 < x <= sqrt(7) & k == 1;
+	# start = 500: for x <= 9.5 (k == 1/2);
 	# root
 	y.f = function(x, v) {
 		r = if(x == 0) -v^2 else if(x < 0) -Inf else x*sin(k * log(x)) - v^2;
@@ -535,7 +538,7 @@ y = function(x, k) {
 	# damped waves;
 	x0.f = function(x) {
 		x2 = x^2
-		x0 = if(x2 >= 0 & x2 <= 7.46) 1 else if(x2 < 0 & x2 > -0.32) 1/4 else 500; # for k == 1;
+		x0 = if(x2 >= 0 & x2 <= 7.46) start else if(x2 < 0 & x2 > -0.32) 1/4 else 500; # for k == 1;
 		return(x0);
 	}
 	y = sapply(x, function(x) newtonRaphson(y.f, x0.f(x), dfun=dy.f, v=x)[[1]])
@@ -563,7 +566,7 @@ k = 1;
 curve(y(x, k=k), from= 0+1E-3, to = sqrt(7))
 # oscillating function with local minimum;
 sapply(c(1/3, 1.1, 1.6, 1.8, 1.95), line.tan, dx=3, p=y, dp=dy, k=k)
-# spikes
+# log-like
 curve(dy(x, k=k), add=T, col="green")
 sapply(c(1/3, 1.1, 1.7, 2, 2.5), line.tan, dx=3, p=dy, dp=d2y, k=k, col="orange")
 
@@ -575,11 +578,13 @@ sapply(c(1/3, 1.1, 1.7, 2, 2.5), line.tan, dx=3, p=dy, dp=d2y, k=k, col="orange"
 ### k == 1/2; # TODO: may need correcting y0();
 k = 1/2;
 curve(y(x, k=k), from= 0+1E-3, to = 2.7)
+# for x > 2.7 up to 9.5: needs start=500;
 # oscillating function with local minimum;
 sapply(c(1/3, 1.1, 1.6, 1.8, 1.95), line.tan, dx=3, p=y, dp=dy, k=k)
-# spikes
+# log-like
 curve(dy(x, k=k), add=T, col="green")
 sapply(c(1/3, 1/2, 1, 2.2), line.tan, dx=3, p=dy, dp=d2y, k=k, col="orange")
+
 
 # separately D2:
 curve(dy(x, k=k), from= 0+1E-3, to = 2.7, col="green")
