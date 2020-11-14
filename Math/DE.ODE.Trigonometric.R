@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs - Trigonometric
 ###
-### draft v.0.1d
+### draft v.0.1e
 
 
 ### History
@@ -14,6 +14,10 @@
 ### Order 1 Non-Liniar:
 ### Trigonometric Variants
 ###
+### draft v.0.1e:
+# - solved:
+#   x^2*dy*d2y + x/(x+1) * dy^2 + (x+1)^2 * y*dy = 0;
+#   [includes generalization]
 ### draft v.0.1d: [14-11-2020]
 # - integration by parts:
 #   x*d4z - 3/2 * d3z + 9/4*a^2*x^2*d2z - 9/2*a^2*x*dz + 9/2*a^2*z = 0;
@@ -331,6 +335,77 @@ curve(dy(x, a=a, n=n), add=T, col="green")
 sapply(c((-5:5)/2.2), line.tan, dx=1/5, p=dy, dp=d2y, a=a, n=n, col="orange")
 
 
+##########################
+### Simple: Generalization
+
+### y = sin(f(x))
+dy = df * cos(f)
+dy^2 = df^2 * cos(f)^2
+dy^2 = df^2 * (1 - y^2)
+dy^2 + df^2 * y^2 - df^2 # = 0
+
+### Examples:
+
+### f = x + ln(x)
+dy^2 + ((x+1)/x)^2 * y^2 -  ((x+1)/x)^2 # = 0
+x^2 * dy^2 + (x+1)^2 * y^2 - (x+1)^2 # = 0
+### Solution & Plot:
+y = function(x) {
+	f = x + log(x)
+	r = sin(f)
+	return(r)
+}
+dy = function(x) {
+	# Test formula
+	y.x = y(x)
+	x1 = (x+1)^2
+	dp = x1 * (1 - y.x^2)
+	div = x^2
+	dp = ifelse(div != 0, dp / div, 1E+3); # TODO: check!
+	f.sign = ifelse(x + log(x) <= pi/2, FALSE, TRUE)
+	dp = sqrt(dp); dp[f.sign] = - dp[f.sign];
+	return(dp)
+}
+### Plot:
+curve(y(x), from= 0+1E-3, to=3, ylim=c(-1.5, 2))
+sapply(c((1:8)/3.2), line.tan, dx=3, p=y, dp=dy)
+
+
+### D2:
+# dy^2 + df^2 * y^2 - df^2 # = 0
+2*dy*d2y + 2*df^2 * y*dy + 2*df*d2f * y^2 - 2*df*d2f # = 0
+dy*d2y + df^2 * y*dy + df*d2f * y^2 - df*d2f # = 0
+# alternative:
+dy*d2y + df^2 * y*dy + d2f * (df^2 - dy^2)/df - df*d2f # = 0
+dy*d2y - d2f/df * dy^2 + df^2 * y*dy # = 0
+
+### Examples:
+
+### f = x + ln(x)
+dy*d2y + (1/x^2)/((x+1)/x) * dy^2 + ((x+1)/x)^2 * y*dy # = 0
+dy*d2y + 1/((x+1)*x) * dy^2 + ((x+1)/x)^2 * y*dy # = 0 # * x^2
+x^2*dy*d2y + x/(x+1) * dy^2 + (x+1)^2 * y*dy # = 0
+### Solution & Plot:
+# reuses functions y(x) & dy(x) from above;
+d2y = function(x) {
+	y.x = y(x)
+	dy.x = dy(x)
+	dp = - (x/(x+1) * dy.x^2 + (x+1)^2 * y.x*dy.x);
+	div = x^2 * dy.x;
+	dp = ifelse(div != 0, dp / div, 1E+3); # TODO: check!
+	return(dp)
+}
+### Plot:
+curve(y(x), from= 0+1E-3, to=3, ylim=c(-1.5, 3))
+sapply(c((1:5)/2.2), line.tan, dx=3, p=y, dp=dy)
+# wave
+curve(dy(x), add=T, col="green")
+sapply(c((1:5)/2.2), line.tan, dx=1/5, p=dy, dp=d2y, col="orange")
+
+
+
+
+########################
 ### Integration by parts
 
 ### n = 1
@@ -377,7 +452,7 @@ dy = function(x, a=1, n=1, lower=0) {
 d2y = function(x, a=1, n=1) {
 	return(y.base(x, a=a, n=n))
 }
-### Plot
+### Plot:
 a = 1; n = 1;
 curve(y(x, a=a, n=n), from= -3, to= 3, ylim=c(-2, 1.5))
 # sinus wave;
