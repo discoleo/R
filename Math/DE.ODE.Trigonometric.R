@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs - Trigonometric
 ###
-### draft v.0.1f-cm
+### draft v.0.1g
 
 
 ### History
@@ -14,11 +14,13 @@
 ### Order 1 Non-Liniar:
 ### Trigonometric Variants
 ###
-### draft v.0.1e - v.0.1f-cm:
+### draft v.0.1e - v.0.1g:
 # - solved:
 #   x^2*dy*d2y + x/(x+1) * dy^2 + (x+1)^2 * y*dy = 0;
 #   [includes generalization]
-#   x*y^2*d2y + x*y*dy^2 - (k^2+1)/2 * x^2*dy^3 - y^2*dy = 0;
+#   x*y^2*d2y + x*y*dy^2 - (k^2+1)/2 * x^2*dy^3 - y^2*dy = 0; [v.0.1f]
+# - another simple trigonometric example: (type: sin(y^2) = sqrt(x))
+#   2*x*(1 - x)*y^3*d2y + (1 - 2*x)*y^3*dy + 1/8 = 0; [v.0.1g]
 # - fixed comments [minor fix];
 ### draft v.0.1d: [14-11-2020]
 # - integration by parts:
@@ -71,6 +73,9 @@ df*(1 - f^2)*y^3*d2y - (d2f - d2f*f^2 + df^2*f)*y^3*dy + 1/4 * df^3 # = 0
 x*(1-x^4)*y^3*d2y - (x^4+1)*y^3*dy + x^3 # = 0
 # f = x^2 + b;
 x*(1-(x^2+b)^2)*y^3*d2y - (x^4 - b^2 + 1)*y^3*dy + x^3 # = 0
+# f = sqrt(x); df = 1/2 / sqrt(x); d2f = -1/4 * x^(-3/2);
+# df*(1 - x)*y^3*d2y - d2f*(1 - 2*x)*y^3*dy + 1/4 * 1/4 * 1/x * df # = 0 # * 4 * x^(3/2)
+# 2*x*(1 - x)*y^3*d2y + (1 - 2*x)*y^3*dy + 1/8 # = 0
 ### Solution:
 y = function(x, b=0) {
 	# root
@@ -92,7 +97,7 @@ d2y = function(x, b=0) {
 	z = dy(x, b=b, y.x=y.x)
 	x2 = x*x; x4 = x2*x2;
 	div = x*(1 - (x2 + b)^2)*y.x^3;
-	dp =(x4 - b^2 + 1)*y.x^3*z - x^3;
+	dp = (x4 - b^2 + 1)*y.x^3*z - x^3;
 	dp = ifelse(div != 0, dp / div, -1); # TODO: needs correction!
 	return(dp)
 }
@@ -101,7 +106,7 @@ curve(y(x), from= -1, to = 1)
 # global minimum;
 sapply(c((-2:2)/2.2), line.tan, dx=3, p=y, dp=dy)
 # pseudo-sigmoidal
-curve(dy(x), from= -1, to = 1, add=T, col="green")
+curve(dy(x), add=T, col="green")
 sapply(c(-2, -1.5, 1.5, 2)/2.1, line.tan, dx=1/5, p=dy, dp=d2y, col="orange")
 
 # check full pseudo-sigmoidal
@@ -132,7 +137,49 @@ curve(dy(x, b=b), from= -sqrt(5/4), to = sqrt(5/4), col="green", ylim=c(-4,4))
 sapply(c(-2.4, -2, -1.5, 1.5, 2, 2.4)/2.1, line.tan, dx=1/5, p=dy, dp=d2y, b=b, col="orange")
 
 
+### f = sqrt(x);
+# df = 1/2 / sqrt(x); d2f = -1/4 * x^(-3/2);
+# df*(1 - x)*y^3*d2y - d2f*(1 - 2*x)*y^3*dy + 1/4 * 1/4 * 1/x * df # = 0 # * 4 * x^(3/2)
+2*x*(1 - x)*y^3*d2y + (1 - 2*x)*y^3*dy + 1/8 # = 0
+### Solution:
+y = function(x, b=0) {
+	# root: TODO: compute also with b;
+	y = asin(sqrt(x) + b)
+	y[y < 0] = y[y < 0] + 2*pi;
+	y = sqrt(y)
+	y = sapply(y, round0)
+	return(y)
+}
+dy = function(x, b=0, y.x) {
+	if(missing(y.x)) y.x = y(x, b=b);
+	div = y.x * sqrt(1 - (x+b)^2) * sqrt(x) # cos(y^2) = sqrt(...);
+	dp = 1/4;
+	dp = ifelse(div != 0, dp / div, 1E+3); # may need correction
+	return(dp)
+}
+d2y = function(x, b=0) {
+	y.x  = y(x, b=b)
+	dy.x = dy(x, b=b, y.x=y.x)
+	div = - 2*x*(1 - x)*y.x^3;
+	dp  = (1 - 2*x)*y.x^3*dy.x + 1/8
+	dp = ifelse(div != 0, dp / div, 1E+3); # TODO: needs correction!
+	return(dp)
+}
+### b = 0;
+curve(y(x), from= 0, to= 1, ylim=c(0, 1.5))
+# global minimum;
+sapply(c(0, 1/5, 2/3, 0.94), line.tan, dx=3, p=y, dp=dy)
+# pseudo-sigmoidal
+curve(dy(x), add=T, col="green")
+sapply(c(0:4/5, 0.9), line.tan, dx=1/5, p=dy, dp=d2y, col="orange")
 
+
+# check full pseudo-sigmoidal
+curve(dy(x), from= 0, to = 1, col="green", ylim=c(0, 2))
+sapply(c(0:4/5, 0.9), line.tan, dx=1/5, p=dy, dp=d2y, col="orange")
+
+
+############################
 ############################
 
 ### y*sin(y) + cos(y) = f(x)
