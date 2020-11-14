@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs - Trigonometric
 ###
-### draft v.0.1e
+### draft v.0.1f
 
 
 ### History
@@ -14,10 +14,11 @@
 ### Order 1 Non-Liniar:
 ### Trigonometric Variants
 ###
-### draft v.0.1e:
+### draft v.0.1e - v.0.1f:
 # - solved:
 #   x^2*dy*d2y + x/(x+1) * dy^2 + (x+1)^2 * y*dy = 0;
 #   [includes generalization]
+#   x*y^2*d2y + x*y*dy^2 - (k^2+1)/2 * x^2*dy^3 - y^2*dy = 0;
 ### draft v.0.1d: [14-11-2020]
 # - integration by parts:
 #   x*d4z - 3/2 * d3z + 9/4*a^2*x^2*d2z - 9/2*a^2*x*dz + 9/2*a^2*z = 0;
@@ -509,5 +510,79 @@ sapply(c((0:5)/2.2), line.tan, dx=1/5, p=dy, dp=d2y, a=a, n=n, col="orange")
 curve(dy(x, a=a, n=n), from= 0, to= 3, col="green")
 sapply(c((0:5)*2/3.2), line.tan, dx=1/5, p=dy, dp=d2y, a=a, n=n, col="orange")
 
+
+############################
+############################
+
+### y*sin(k * log(y)) = f(x)
+
+### y*sin(k * log(y)) = x^2
+# k*dy * cos(k * log(y)) = (2*x*y - x^2*dy) / y;
+x*y^2*d2y + x*y*dy^2 - (k^2+1)/2 * x^2*dy^3 - y^2*dy # = 0;
+### Solution & Plot:
+y = function(x, k) {
+	# root
+	y.f = function(x, v) {
+		r = if(x == 0) -v^2 else if(x < 0) -Inf else x*sin(k * log(x)) - v^2;
+		return(r)
+	}
+	dy.f = function(x, v) {
+		if(x == 0) return(sign(k));
+		if(x < 0) return(1E+3);
+		x.log = k * log(x)
+		k*cos(x.log) + sin(x.log);
+	}
+	# damped waves;
+	x0.f = function(x) {
+		x2 = x^2
+		x0 = if(x2 >= 0 & x2 <= 7.46) 1 else if(x2 < 0 & x2 > -0.32) 1/4 else 500; # for k == 1;
+		return(x0);
+	}
+	y = sapply(x, function(x) newtonRaphson(y.f, x0.f(x), dfun=dy.f, v=x)[[1]])
+	y = sapply(y, round0)
+	return(y)
+}
+dy = function(x, k, y.x) {
+	if(missing(y.x)) y.x = y(x, k=k);
+	y.log = ifelse(x == 0, -1, log(y.x))
+	div = x^2 + k * y.x * cos(k * y.log)
+	dp = 2*x*y.x;
+	dp = ifelse(div != 0, dp / div, 0); # may need correction
+	return(dp)
+}
+d2y = function(x, k) {
+	y.x = y(x, k=k)
+	dy.x = dy(x, k=k, y.x=y.x)
+	div = - x*y.x^2
+	dp  = x*y.x*dy.x^2 - (k^2+1)/2 * x^2*dy.x^3 - y.x^2*dy.x
+	dp = ifelse(div != 0, dp / div, 0); # TODO: needs correction!
+	return(dp)
+}
+### Plot:
+k = 1;
+curve(y(x, k=k), from= 0+1E-3, to = sqrt(7))
+# oscillating function with local minimum;
+sapply(c(1/3, 1.1, 1.6, 1.8, 1.95), line.tan, dx=3, p=y, dp=dy, k=k)
+# spikes
+curve(dy(x, k=k), add=T, col="green")
+sapply(c(1/3, 1.1, 1.7, 2, 2.5), line.tan, dx=3, p=dy, dp=d2y, k=k, col="orange")
+
+# separately D2:
+curve(dy(x, k=k), from= 0+1E-3, to = sqrt(7), col="green")
+sapply(c(1/3, 1.1, 1.7, 2, 2.5), line.tan, dx=3, p=dy, dp=d2y, k=k, col="orange")
+
+
+### k == 1/2; # TODO: may need correcting y0();
+k = 1/2;
+curve(y(x, k=k), from= 0+1E-3, to = 2.7)
+# oscillating function with local minimum;
+sapply(c(1/3, 1.1, 1.6, 1.8, 1.95), line.tan, dx=3, p=y, dp=dy, k=k)
+# spikes
+curve(dy(x, k=k), add=T, col="green")
+sapply(c(1/3, 1/2, 1, 2.2), line.tan, dx=3, p=dy, dp=d2y, k=k, col="orange")
+
+# separately D2:
+curve(dy(x, k=k), from= 0+1E-3, to = 2.7, col="green")
+sapply(c(1/3, 1/2, 1, 2.2), line.tan, dx=3, p=dy, dp=d2y, k=k, col="orange")
 
 
