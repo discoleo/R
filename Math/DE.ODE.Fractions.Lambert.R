@@ -7,13 +7,18 @@
 ### Differential Equations
 ### ODEs - Fractions: Lambert
 ###
-### draft v.0.3a
+### draft v.0.3b
 
 
 ### History
 
 ### Order 1 Non-Liniar
 ###
+### draft v.0.3b:
+# - [Technique] Integration by parts:
+#   dz^2 + 2*(a*x+1)*dz - 2*a*z + 2*a*x = 0;
+#   TODO:
+#   y*dy + (a*x + 1)*dy + 2*a*x*y + 2*a^2*x^2 + a = 0;
 ### draft v.0.3a: [16-11-2020]
 # - added some theoretical aspects:
 #   f*g*Dg + f*Dg - df*g = 0;
@@ -590,4 +595,102 @@ sapply(c((0:5)/5 + 0.01), line.tan, dx=3, p=dy, dp=d2y, col="orange")
 # check full sigmoidal
 curve(dy(x), from= -1.4, to = 1.4, col="green")
 sapply(c((0:5)/5 + 0.01), line.tan, dx=3, p=dy, dp=d2y, col="orange")
+
+
+#########################
+#########################
+
+### Integration by Parts:
+
+# g = y + a*x; a = constant;
+f*y*dy + f*(a*x + 1)*dy + (a*f - df)*y + a^2*f*x - a*x*df + a*f # = 0
+
+### f = e^(a*x); df = a*f;
+y*dy + (a*x + 1)*dy + a # = 0
+# I() =>
+1/2*y^2 + (a*x+1)*y - a*I(y) + a*x # = 0
+# z = I(y); dz = y;
+dz^2 + 2*(a*x+1)*dz - 2*a*z + 2*a*x # = 0
+
+### Solution:
+y = function(x, a=1) {
+	dz = dy(x, a=a)
+	ax = a*x;
+	div = 2*a
+	dp = dz^2 + 2*(ax+1)*dz + 2*ax;
+	dp = if(div != 0) dp / div else  0; # a != 0
+	return(dp)
+}
+dy = function(x, a=1) {
+	# root
+	y = lambertWp(exp(a*x)) - a*x
+	y = sapply(y, round0)
+	return(y)
+}
+
+### Examples:
+
+### a == 1
+curve(y(x), from=-3, to=3)
+# a nice global minimum
+sapply(c((-2:4)/2), line.tan, dx=3, p=y, dp=dy)
+
+### a == -1
+a = -1
+curve(y(x, a=a), from=-3, to=3)
+# a nice global minimum
+sapply(c((-2:4)/2), line.tan, dx=3, p=y, dp=dy, a=a)
+
+### a == 1/2
+a = 1/2
+curve(y(x, a=a), from=-3, to=3)
+# a nice global minimum
+sapply(c((-2:4)/2), line.tan, dx=3, p=y, dp=dy, a=a)
+
+
+### Example 2:
+### f = e^(-a*x^2); df = -2*a*x*f;
+# complete f = e^(-a*x^2 + a*x);
+y*dy + (a*x + 1)*dy + 2*a*x*y + 2*a^2*x^2 + a # = 0
+
+### Solution:
+y = function(x, a=1) {
+	# root
+	y = lambertWp(exp(-a*x^2 + a*x)) - a*x
+	y = sapply(y, round0)
+	return(y)
+}
+dy = function(x, a=1) {
+	yx = y(x, a=a)
+	ax = a*x;
+	div = -(yx + ax + 1)
+	dp = 2*ax*yx + 2*ax^2 + a;
+	dp = if(div != 0) dp / div else  0; # a != 0
+	return(dp)
+}
+### a == 1
+curve(y(x), from=-3, to=3)
+# quasi-bi-sigmoidal
+sapply(c((-3:3)/1.5), line.tan, dx=3, p=y, dp=dy)
+
+### a == 1/2
+a = 1/2
+curve(y(x, a=a), from=-3, to=3)
+# quasi-bi-sigmoidal
+sapply(c((-3:3)/1.5), line.tan, dx=3, p=y, dp=dy, a=a)
+
+### a == 1/3
+a = 1/3
+curve(y(x, a=a), from=-3, to=3)
+# quasi-bi-sigmoidal
+sapply(c((-3:3)/1.5), line.tan, dx=3, p=y, dp=dy, a=a)
+
+### a == -1/3
+a = -1/3
+curve(y(x, a=a), from=-3, to=3)
+# global minimum
+sapply(c((-3:3)/1.5), line.tan, dx=3, p=y, dp=dy, a=a)
+
+### TODO: Integration by parts;
+
 
