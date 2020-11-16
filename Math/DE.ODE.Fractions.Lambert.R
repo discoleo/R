@@ -7,18 +7,25 @@
 ### Differential Equations
 ### ODEs - Fractions: Lambert
 ###
-### draft v.0.2b
+### draft v.0.3a
 
 
 ### History
 
 ### Order 1 Non-Liniar
 ###
+### draft v.0.3a: [16-11-2020]
+# - added some theoretical aspects:
+#   f*g*Dg + f*Dg - df*g = 0;
+#   where g = g(y), f = f(x);
+# - examples (trivial, but can be extended as in ex.2.):
+#   n*f*y^n*dy + n*f*dy - df*y = 0;
+#   x*y*dy + x*(a*x + 1)*dy - 2*y - a*x = 0;
 ### draft v.0.2b: [12-11-2020]
 # - cleanup: moved Gaussian type to
 #   new file: DE.ODE.Gaussian.R;
 ### draft v.0.2a - v.0.2a-xTerm: [11-11-2020]
-# - solved:
+# - solved [& moved to new file]:
 #   d2z + 2*x*dz - 2*z = 0;
 #   d2z + 2*x*dz - 4*z = 0; [v.0.2a-x2Lev3]
 #   d2z + 2*x*dz - 6*z = 0; [v.0.2a-x2Lev4]
@@ -83,34 +90,78 @@ source("DE.ODE.Helper.R")
 ### W Exponentials =>
 ### Fractions & Lambert W
 
-### Examples
+### Theory
+
+### g(y) * e^(g(y)) = f(x)
+
+### D =>
+g*e^g*Dg + e^g*Dg - df # = 0 # * g
+g^2*e^g*Dg + g*e^g*Dg - df*g # = 0
+# g*e^g = f =>
+f*g*Dg + f*Dg - df*g # = 0
+
+### Examples:
+# g = y:
+f*y*dy + f*dy - df*y # = 0
+# g = y^2
+2*f*y^3*dy + 2*f*y*dy - df*y^2 # = 0
+2*f*y^2*dy + 2*f*dy - df*y # = 0
+# g = y^n
+n*f*y^(2*n-1)*dy + n*f*y^(n-1)*dy - df*y^n # = 0
+n*f*y^n*dy + n*f*dy - df*y # = 0
+
+# g = y + a*x; a = constant;
+f*(y + a*x)*(dy + a) + f*(dy + a) - df*(y + a*x) # = 0
+f*y*dy + f*(a*x + 1)*dy + (a*f - df)*y + a^2*f*x - a*x*df + a*f # = 0
+# for f = x^2 * e^(a*x):
+# e^(a*x) can be factored both from f & df, as df = (a*x^2 + 2*x)*e^(ax):
+x^2*y*dy + x^2*(a*x + 1)*dy + (a*x^2 - a*x^2 - 2*x)*y + a^2*x^3 - a*x*(a*x^2 + 2*x) + a*x^2 # = 0
+x*y*dy + x*(a*x + 1)*dy - 2*y - a*x # = 0
+
+
+################
+### Examples ###
 
 ### (x + y)*e^y = x^2
 x*y*dy + x*(x+1)*dy - 2*y - x # = 0
 y*dy + (x+1)*dy - 2/x * y - 1 # = 0
 ### Solution:
-y = function(x) {
+y = function(x, a=1) {
 	# root
-	y = lambertWp(x^2 * exp(x)) - x
+	y = lambertWp(x^2 * exp(a*x)) - a*x
 	y = sapply(y, round0)
 	return(y)
 }
-dy = function(x) {
-	y.x = y(x)
-	div = x*y.x + x*(x+1)
-	dp = 2*y.x + x
+dy = function(x, a=1) {
+	y.x = y(x, a=a)
+	ax = a*x;
+	div = x*y.x + x*(ax+1)
+	dp = 2*y.x + ax;
 	# TODO: find BUG: must be -1 (but why?);
-	dp = ifelse(div != 0, dp / div, -1);
+	dp = ifelse(div != 0, dp / div, -a);
 	return(dp)
 }
 ###
 curve(y(x), from=-1/5, to=3)
 # a nice global minimum
 sapply(c((0:4)/2), line.tan, dx=3, p=y, dp=dy)
+
 ###
 curve(y(x), from=-1/5, to=5)
 # a nice global minimum
 sapply(c((0:3)*4/3), line.tan, dx=3, p=y, dp=dy)
+
+### a == 2
+a = 2;
+curve(y(x, a=a), from=-1/5, to=3)
+# a nice global minimum
+sapply(c(0:4, 7.5, 10)/5, line.tan, dx=3, p=y, dp=dy, a=a)
+
+### a == 1/2
+a = 1/2;
+curve(y(x, a=a), from=-1/5, to=3)
+# a nice global minimum
+sapply(c(0:4, 10)/5, line.tan, dx=3, p=y, dp=dy, a=a)
 
 
 
