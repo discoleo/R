@@ -7,12 +7,15 @@
 ### Differential Equations
 ### ODEs: Polynomial types
 ###
-### draft v.0.2e
+### draft v.0.3a
 
 
 ### History
 
 ### Order 1 Non-Liniar
+### draft v.0.3a: [16-11-2020]
+# - Technique: Integration by parts:
+#   c/2*dz^2 + (3*x+b)*dz - 4*z = 0;
 ### draft v.0.2e: [11-11-2020]
 # - solved: x*(x^n - 1)*d2y + x*(x^n - 1)*y*dy + n*dy - b0*x*y = -n*b0;
 #   where b0 = constant; [nice mix]
@@ -1442,4 +1445,54 @@ curve(dy(x, n, c), add=T, col="green")
 # sapply(c(1.1, 2:5/1.7), line.tan, dx=3, p=dy, dp=d2y, n=n, b0=c, col="orange")
 sapply(c(1.1, 2:5/1.7), line.tan, dx=3, p=dy, dp=d2ymixt, n=n, b0=c, col="orange")
 
+
+#########################
+
+### Integration by parts:
+
+### Base ODE:
+h*y*dy + f*dy - 1/2*dh*y^2 - 1/3*df*y # = 0
+
+### h = c (constant);
+c*y*dy + f*dy - 1/3*df*y # = 0
+
+### Ex 1:
+# f = 3*x + b;
+c*y*dy + (3*x+b)*dy - y # = 0
+# I() =>
+c/2*y^2 + (3*x+b)*y - 4*I(y) # = 0
+# z = I(y); dz = y;
+# c/2*dz^2 + (3*x+b)*dz - 4*z = 0;
+### Solution & Plot:
+# y = (f + sqrt(f^2 - h^3))^(1/3) + (f - sqrt(f^2 - h^3))^(1/3)
+y = function(x, b, h, n=3) {
+	d = (3*x + b);
+	det = sqrt(d^2 - h^n + 0i)
+	r1 = (d + det)
+	r2 = (d - det)
+	r = round0(rootn(r1, n=n) + rootn(r2, n=n))
+	return(r)
+}
+Iy = function(x, b, h, n=3) {
+	yx = y(x, b=b, h=h, n=n)
+	yI = (h/2*yx^2 + (3*x+b)*yx) / 4
+	return(yI)
+}
+### Plot
+b = 1; h = 1;
+#
+curve(Iy(x, b=b, h=h), from=-3, to=3)
+sapply(c(-2:2), line.tan, dx=3, p=Iy, dp=y, b=b, h=h)
+
+###
+b = -1/3; h = 1;
+#
+curve(Iy(x, b=b, h=h), from=-3, to=3)
+sapply(c(-2:2), line.tan, dx=3, p=Iy, dp=y, b=b, h=h)
+
+###
+b = -2; h = 2;
+#
+curve(Iy(x, b=b, h=h), from=-3, to=3)
+sapply(c(-2:2), line.tan, dx=3, p=Iy, dp=y, b=b, h=h)
 
