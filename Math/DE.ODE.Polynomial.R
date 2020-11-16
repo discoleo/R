@@ -7,15 +7,16 @@
 ### Differential Equations
 ### ODEs: Polynomial types
 ###
-### draft v.0.3a
+### draft v.0.3a-gen
 
 
 ### History
 
 ### Order 1 Non-Liniar
-### draft v.0.3a: [16-11-2020]
+### draft v.0.3a - v.0.3a-gen: [16-11-2020]
 # - Technique: Integration by parts:
 #   c/2*dz^2 + (3*x+b)*dz - 4*z = 0;
+# - slight generalization & more examples; [v.0.3a-gen]
 ### draft v.0.2e: [11-11-2020]
 # - solved: x*(x^n - 1)*d2y + x*(x^n - 1)*y*dy + n*dy - b0*x*y = -n*b0;
 #   where b0 = constant; [nice mix]
@@ -1453,20 +1454,23 @@ sapply(c(1.1, 2:5/1.7), line.tan, dx=3, p=dy, dp=d2ymixt, n=n, b0=c, col="orange
 ### Base ODE:
 h*y*dy + f*dy - 1/2*dh*y^2 - 1/3*df*y # = 0
 
-### h = c (constant);
+### Case: h = c (constant);
 c*y*dy + f*dy - 1/3*df*y # = 0
 
 ### Ex 1:
-# f = 3*x + b;
-c*y*dy + (3*x+b)*dy - y # = 0
+# f = b1*x + b0;
+c*y*dy + (b1*x+b0)*dy - b1/3 * y # = 0
 # I() =>
-c/2*y^2 + (3*x+b)*y - 4*I(y) # = 0
+c/2*y^2 + (b1*x+b0)*y - 4/3*b1*I(y) # = 0
 # z = I(y); dz = y;
-# c/2*dz^2 + (3*x+b)*dz - 4*z = 0;
+# c/2*dz^2 + (3*x+b0)*dz - 4/3*b1*z = 0;
+### Variant:
+c/3*y^3 + 1/2*(b1*x+b0)*y^2 - 2/3*b1*I(y^2) # = 0
+
 ### Solution & Plot:
 # y = (f + sqrt(f^2 - h^3))^(1/3) + (f - sqrt(f^2 - h^3))^(1/3)
 y = function(x, b, h, n=3) {
-	d = (3*x + b);
+	d = (b[1]*x + b[2]);
 	det = sqrt(d^2 - h^n + 0i)
 	r1 = (d + det)
 	r2 = (d - det)
@@ -1475,24 +1479,50 @@ y = function(x, b, h, n=3) {
 }
 Iy = function(x, b, h, n=3) {
 	yx = y(x, b=b, h=h, n=n)
-	yI = (h/2*yx^2 + (3*x+b)*yx) / 4
+	yI = (h/2*yx^2 + (b[1]*x+b[2])*yx) / 4 * 3/b[1]
 	return(yI)
 }
+Iy2 = function(x, b, h, n=3) {
+	yx = y(x, b=b, h=h, n=n)
+	yI = (h/3*yx^3 + 1/2*(b[1]*x+b[2])*yx^2) / 2 * 3/b[1]
+	return(yI)
+}
+dI2 = function(x, b, h, n=3) {
+	yx = y(x, b=b, h=h, n=n)
+	return(yx^2)
+}
 ### Plot
-b = 1; h = 1;
+b = c(3, 1); h = 1;
+#
+curve(Iy(x, b=b, h=h), from=-3, to=3)
+sapply(c(-2:2), line.tan, dx=3, p=Iy, dp=y, b=b, h=h)
+
+#
+curve(Iy2(x, b=b, h=h), from=-3, to=3)
+sapply(c(-2:2), line.tan, dx=3, p=Iy2, dp=dI2, b=b, h=h)
+
+###
+b = c(3, -1/3); h = 1;
 #
 curve(Iy(x, b=b, h=h), from=-3, to=3)
 sapply(c(-2:2), line.tan, dx=3, p=Iy, dp=y, b=b, h=h)
 
 ###
-b = -1/3; h = 1;
+b = c(3, -2); h = 2;
 #
 curve(Iy(x, b=b, h=h), from=-3, to=3)
 sapply(c(-2:2), line.tan, dx=3, p=Iy, dp=y, b=b, h=h)
 
 ###
-b = -2; h = 2;
+b = c(2, 2); h = -3;
 #
 curve(Iy(x, b=b, h=h), from=-3, to=3)
 sapply(c(-2:2), line.tan, dx=3, p=Iy, dp=y, b=b, h=h)
+
+###
+b = c(-2, 2); h = -3;
+#
+curve(Iy(x, b=b, h=h), from=-3, to=3)
+sapply(c(-2:2), line.tan, dx=3, p=Iy, dp=y, b=b, h=h)
+
 
