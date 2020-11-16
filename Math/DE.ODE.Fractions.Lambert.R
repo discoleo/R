@@ -7,16 +7,17 @@
 ### Differential Equations
 ### ODEs - Fractions: Lambert
 ###
-### draft v.0.3b
+### draft v.0.3c
 
 
 ### History
 
 ### Order 1 Non-Liniar
 ###
-### draft v.0.3b:
+### draft v.0.3b - v.0.3c:
 # - [Technique] Integration by parts:
 #   dz^2 + 2*(a*x+1)*dz - 2*a*z + 2*a*x = 0;
+#   I(y^2) = f(y); [v.0.3c]
 #   TODO:
 #   y*dy + (a*x + 1)*dy + 2*a*x*y + 2*a^2*x^2 + a = 0;
 ### draft v.0.3a: [16-11-2020]
@@ -648,6 +649,46 @@ curve(y(x, a=a), from=-3, to=3)
 sapply(c((-2:4)/2), line.tan, dx=3, p=y, dp=dy, a=a)
 
 
+### Higher Powers:
+y*dy + (a*x + 1)*dy + a # = 0
+# I() =>
+# z = I(y); dz = y;
+dz^2 + 2*(a*x+1)*dz - 2*a*z + 2*a*x # = 0
+# Original * y =>
+y^2*dy + (a*x + 1)*y*dy + a*y # = 0
+# I() =>
+1/3*y^3 + 1/2*(a*x + 1)*y^2 - a/2*I(y^2) + a*I(y) # = 0
+# a*I(y) = a*z = 1/2 * (y^2 + 2*(a*x+1)*y + 2*a*x);
+1/3*y^3 + 1/2*(a*x + 1)*y^2 - a/2*I(y^2) + 1/2 * (y^2 + 2*(a*x+1)*y + 2*a*x) # = 0
+1/3*y^3 + 1/2*a*x*y^2 + y^2 + (a*x+1)*y - a/2*I(y^2) + a*x # = 0
+
+### Solution:
+# y = actual dy from above;
+y2.f = function(x, a=1) {
+	yx = dy(x, a=a)
+	ax = a*x
+	Iy2 = 1/3*yx^3 + 1/2*ax*yx^2 + yx^2 + (ax+1)*yx + ax;
+	Iy2 = Iy2 * 2/a;
+	return(Iy2)
+}
+y2.I = function(x, a=1, lower=0) {
+	Iy2 = sapply(x, function(x) integrate(function(x, a) dy(x, a)^2, lower=lower, upper=x, a=a)$value)
+	return(Iy2)
+}
+dy2 = function(x, a) dy(x, a=a)^2
+###
+a = 1
+curve(y2.f(x, a=a), from=-2, to=3)
+# + 0.1 to separate curves;
+curve(y2.I(x, a=a, lower=-1.47 + 0.1), add=T, col="green")
+sapply(c((-3:2)/2, 2), line.tan, dx=3, p=y2.f, dp=dy2, a=a)
+
+# separately: only the integration: I(y^2)
+curve(y2.I(x, a=a), from=-2, to=3)
+sapply(c((-3:2)/2, 2), line.tan, dx=3, p=y2.I, dp=dy2, a=a)
+
+
+
 ### Example 2:
 ### f = e^(-a*x^2); df = -2*a*x*f;
 # complete f = e^(-a*x^2 + a*x);
@@ -665,13 +706,14 @@ dy = function(x, a=1) {
 	ax = a*x;
 	div = -(yx + ax + 1)
 	dp = 2*ax*yx + 2*ax^2 + a;
-	dp = if(div != 0) dp / div else  0; # a != 0
+	dp = ifelse(div != 0, dp / div,  -1/2); # TODO: check!
 	return(dp)
 }
 ### a == 1
-curve(y(x), from=-3, to=3)
+lim = 3
+curve(y(x), from=-lim, to=lim)
 # quasi-bi-sigmoidal
-sapply(c((-3:3)/1.5), line.tan, dx=3, p=y, dp=dy)
+sapply(c((-3:3)/1.5, -0.50404905), line.tan, dx=3, p=y, dp=dy)
 
 ### a == 1/2
 a = 1/2
