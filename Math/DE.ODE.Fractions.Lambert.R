@@ -7,17 +7,18 @@
 ### Differential Equations
 ### ODEs - Fractions: Lambert
 ###
-### draft v.0.3c
+### draft v.0.3c-ex;
 
 
 ### History
 
 ### Order 1 Non-Liniar
 ###
-### draft v.0.3b - v.0.3c:
+### draft v.0.3b - v.0.3c-ex:
 # - [Technique] Integration by parts:
 #   dz^2 + 2*(a*x+1)*dz - 2*a*z + 2*a*x = 0;
-#   I(y^2) = f(y); [v.0.3c]
+#   I(y^2) = f(y, x); [v.0.3c & v.0.3c-ex]
+#   a/2*I(y^2) = 1/3*y^3 + 1/2*a*x*y^2 + y^2 + (a*x+1)*y + a*x;
 #   TODO:
 #   y*dy + (a*x + 1)*dy + 2*a*x*y + 2*a^2*x^2 + a = 0;
 ### draft v.0.3a: [16-11-2020]
@@ -650,6 +651,7 @@ sapply(c((-2:4)/2), line.tan, dx=3, p=y, dp=dy, a=a)
 
 
 ### Higher Powers:
+# (y + a*x)*e^y = 1;
 y*dy + (a*x + 1)*dy + a # = 0
 # I() =>
 # z = I(y); dz = y;
@@ -680,12 +682,20 @@ dy2 = function(x, a) dy(x, a=a)^2
 a = 1
 curve(y2.f(x, a=a), from=-2, to=3)
 # + 0.1 to separate curves;
-curve(y2.I(x, a=a, lower=-1.47 + 0.1), add=T, col="green")
+curve(y2.I(x, a=a, lower=-1.473744 + 0.1), add=T, col="green")
 sapply(c((-3:2)/2, 2), line.tan, dx=3, p=y2.f, dp=dy2, a=a)
+# TODO: compute exact value for -1.473744;
 
 # separately: only the integration: I(y^2)
 curve(y2.I(x, a=a), from=-2, to=3)
 sapply(c((-3:2)/2, 2), line.tan, dx=3, p=y2.I, dp=dy2, a=a)
+
+###
+a = 3/2
+curve(y2.f(x, a=a), from=-2, to=3)
+# + 0.1 to separate curves;
+curve(y2.I(x, a=a, lower=-0.98 + 0), add=T, col="green")
+sapply(c((-3:2)/2, 2), line.tan, dx=3, p=y2.f, dp=dy2, a=a)
 
 
 
