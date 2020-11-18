@@ -1,11 +1,11 @@
 
 = The Daily Combinatorics Problem =
-# before Sleep ... at least 3-4 hours before sleep
+: before Sleep ... at least 3-4 hours before sleep
 
-# Leonard Mada=
-# [the one and only]
+: Leonard Mada
+: [the one and only]
 
-# draft v.0.1a
+: draft v.0.1a
 
 == Introduction ==
 
