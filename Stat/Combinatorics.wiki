@@ -1,15 +1,15 @@
 
 = The Daily Combinatorics Problem =
-: before Sleep ... at least 3-4 hours before sleep
+; Before Sleep ... at least 3-4 hours before sleep!
 
-: Leonard Mada
-: [the one and only]
+: ### Leonard Mada
+: ### (the one and only)
 
-: draft v.0.1a
+: # draft v.0.1a
 
 == Introduction ==
 
-A collection of nice combinatorics problems. Best attacked before sleep, ... at least 3-4 hours before sleep.
+A nice collection of combinatorics problems. Best attacked before sleep, ... at least 3-4 hours before sleep.
 
 Problem:
 - let n be a positive integer.
