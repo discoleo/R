@@ -7,13 +7,15 @@
 ### Differential Equations
 ### ODEs - Fractions: Lambert
 ###
-### draft v.0.3c-ex;
+### draft v.0.3d
 
 
 ### History
 
 ### Order 1 Non-Liniar
 ###
+### draft v.0.3d:
+# - ODEs derived from e^e^f(y, x);
 ### draft v.0.3b - v.0.3c-ex:
 # - [Technique] Integration by parts:
 #   dz^2 + 2*(a*x+1)*dz - 2*a*z + 2*a*x = 0;
@@ -745,4 +747,58 @@ sapply(c((-3:3)/1.5), line.tan, dx=3, p=y, dp=dy, a=a)
 
 ### TODO: Integration by parts;
 
+
+###########################
+###########################
+
+### e^(y + a1*x) * e^(e^(y + a1*x)) = x^n
+
+### D =>
+(dy + a1)*(1 + e^(y + a1*x)) - n/x # = 0
+### D2 =>
+n*x*d2y - x^2*(dy + a1)^3 + n*x*(dy + a1)^2 + n*(dy + a1) # = 0;
+# w = dy:
+# n*x*dw - x^2*(w + a1)^3 + n*x*(w + a1)^2 + n*(w + a1) = 0;
+### Solution & Plot
+y = function(x, a=1, n=2) {
+	# root
+	y = log(lambertWp(x^n)) - a[1]*x
+	y = sapply(y, round0)
+	return(y)
+}
+dy = function(x, a=1, n=2) {
+	yx = y(x, a=a, n=n)
+	fx = x*(1 + exp(yx + a[1]*x));
+	div = fx;
+	dp = n - a[1]*fx;
+	dp = ifelse(div != 0, dp / div,  1E+3); # TODO: check!
+	return(dp)
+}
+d2y = function(x, a=1, n=2) {
+	yx = y(x, a=a, n=n)
+	dyx = dy(x, a=a, n=n)
+	f = (dyx + a[1]);
+	div = n*x;
+	dp = x^2*f^3 - n*x*f^2 - n*f;
+	dp = ifelse(div != 0, dp / div,  0); # TODO: check!
+	return(dp)
+}
+### Plot:
+a = 1; n = 2;
+curve(y(x, a=a, n=n), from= -2, to = 2)
+# global "minimum" / horn;
+sapply(c((-3:3)*2/5), line.tan, dx=3, p=y, dp=dy, a=a, n=n)
+#
+curve(dy(x, a=a, n=n), add=T, col="green")
+sapply(c(-(3:1)/5, 1:5/5), line.tan, dx=3, p=dy, dp=d2y, a=a, n=n, col="orange")
+
+
+### Example 2:
+a = 1/3; n = 2;
+curve(y(x, a=a, n=n), from= -2, to = 2, ylim=c(-7, 3))
+# global "minimum" / horn;
+sapply(c((-3:3)*2/5), line.tan, dx=3, p=y, dp=dy, a=a, n=n)
+#
+curve(dy(x, a=a, n=n), add=T, col="green")
+sapply(c(-(3:1)/5, 1:5/5), line.tan, dx=3, p=dy, dp=d2y, a=a, n=n, col="orange")
 
