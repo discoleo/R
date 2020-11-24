@@ -21,16 +21,14 @@
 library(EBImage)
 
 
-setwd("C:\\Users\\Leo Mada\\Desktop\\Practica/Img")
+setwd(".../Img")
 
 ###################
 
 ### Load image
-# img.str = "Brugia_40x.jpg"
-img.str = "Circuit_BlurAdaptive.jpg"
-img.str = "Houses-2085752-0F6D963700000578-924_964x642.jpg"
+img.str = "....jpg"
 # Tested on:
-# - 1st image with houses in London:
+# - 1st image (houses in London):
 # https://www.dailymail.co.uk/news/article-2085752/Eye-sky-The-pretty-patterns-housing-developments-world.html
 
 
