@@ -4,12 +4,16 @@
 ### Extract Data from XML files
 ###
 ### Leonard Mada
-###  2020-10-15
-### [draft v.0.1]
+###  2020-11-25
+### [draft v.0.2]
 
 
 ### History
 
+### draft v.0.2:
+# - shortcut functions to extract abstract or titles;
+# - correct handling of multiple AbstractText nodes:
+#   concatenation of these nodes;
 ### draft v.0.1:
 # - initial cloned version;
 # - separated xml-structure code (separate R script);
@@ -58,7 +62,7 @@ library(magrittr)
 ### set the Working Directory
 setwd("...\\DB")
 
-##############
+##################
 
 ############
 ### Data ###
@@ -80,32 +84,101 @@ x = read_xml(file.name)
 base_path_articles = "/PubmedArticleSet/PubmedArticle"
 base_path_medline  = paste(base_path_articles, "/MedlineCitation", sep="")
 base_path_article  = paste(base_path_medline, "/Article", sep="")
-base_path_journal  = paste(base_path_article,  "/Journal", sep="")
-base_path_author   = paste(base_path_article,  "/AuthorList/Author", sep="")
-base_path_text     = paste(base_path_article,  "/Abstract/AbstractText", sep="")
+base_path_journal  = paste(base_path_article, "/Journal", sep="")
+base_path_author   = paste(base_path_article, "/AuthorList/Author", sep="")
+base_path_text     = paste(base_path_article, "/Abstract/AbstractText", sep="")
+base_path_title    = paste(base_path_article, "/ArticleTitle", sep="")
 
 path_text = "/Abstract/AbstractText"
 
 ####################
 
 ### helper functions
+
+### Filter by PMID
 filter.id.xpath = function(pmid, subpath="/Article/Abstract/AbstractText") {
-	return(paste0(base_path_medline, "[./PMID/text() =\"",pmid,  "\"]", subpath))
+	return(paste0(base_path_medline, "[./PMID/text() =\"", pmid, "\"]", subpath))
+}
+### Extract Abstract
+extract = function(x, path, type=c("Abstract", "Title"), debug=TRUE) {
+	### Extract ALL abstracts
+	if(missing(path)) {
+		type = match.arg(type)
+		print(type)
+		path = switch(type,
+			Abstract = base_path_text,
+			Title = base_path_title,
+			NA);
+		path = paste(path, "/text()", sep="")
+	}
+	r = xml_find_all(x, path)
+	if(debug) {
+		print(head(r))
+		print(length(r))
+	}
+	return(r)
+}
+### Count <AbstractText> nodes
+count = function(x) {
+	path = paste0(base_path_article, "/Abstract")
+	r.all = xml_find_all(x, path)
+	print(length(r.all))
+	
+	### Count <AbstractText> nodes
+	# includes also Other Nodes!
+	# len = sapply(r.all, function(n) xml_length(n))
+	### Alternative:
+	# - takes some time!
+	len = sapply(r.all, function(x) xml_find_first(x, "count(./AbstractText)"))
+
+	return(len)
+}
+c.xml = function(x, rep) {
+	id = seq(length(rep))
+	id.rep = unlist(sapply(id, function(id) rep(id, rep[id])))
+	print(length(id.rep))
+	tapply(x, id.rep, function(txt) paste(txt, collapse=" "))
 }
 
 #################
 #################
 
+
+### "Shortcut"
+
+########################
+### Extract Abstract ###
+r = extract(x)
+length(r)
+
+len = count(x)
+length(len)
+sum(len)
+head(len, n=20)
+
+# nicely concatenated
+r = c.xml(r, len)
+substr(r.c[1:5], 1, 100)
+length(r)
+
+
+#####################
+### Extract Title ###
+r = extract(x, type="T")
+
+
+
 #################
 ### Structure ###
 
-src.base = "..."
+src.base = "C:/Users/Leo Mada/Desktop/Practica"
 src.path = paste0(src.base, "/MSc/TextMining/Pubmed.Structure.R")
+src2.path = paste0(src.base, "/MSc/TextMining/")
 
 ### external R script:
 # - explore structure of XML file;
 # - can be skipped;
-SKIP_STRUCTURE = FALSE
+SKIP_STRUCTURE = TRUE
 if( ! SKIP_STRUCTURE) {
 	source(src.path, echo=TRUE, keep.source=TRUE)
 }
@@ -220,6 +293,7 @@ r = xml_find_all(x, path)
 head(r)
 sapply(0:10, function(start) substr(r, 80*start, 80*(start+1)))
 
+
 ### Extract ALL abstracts
 path = paste(base_path_text, "/text()", sep="")
 path
@@ -238,6 +312,37 @@ r = xml_find_all(x, path)
 head(r)
 length(r)
 
+
+### Count <AbstractText> nodes
+path = paste0(base_path_article, "/Abstract")
+r.all = xml_find_all(x, path)
+length(r.all)
+
+# takes some time!
+len = sapply(r.all, function(x) xml_find_first(x, "count(./AbstractText)"))
+
+### old
+# includes also other Nodes (see Other Nodes);
+len = sapply(r.all, function(n) xml_length(n))
+head(len)
+
+# Siblings:
+path = paste0(base_path_article, "/Abstract/AbstractText")
+r.all = xml_find_all(x, path)
+length(r.all)
+sibl = sapply(r.all, xml_siblings)
+length(sibl)
+
+len = sapply(sibl, length)
+len = len + 1
+head(len, n=20)
+
+
+### Other Nodes:
+path = paste0(base_path_article, "/Abstract/*[not(self::AbstractText)]")
+r = xml_find_all(x, path)
+head(r)
+length(r)
 
 
 ###############
