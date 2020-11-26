@@ -4,13 +4,31 @@
 ### Lab 5: LDA, LSA, Text Clustering
 ###
 ### Leonard Mada
-### draft v.0.2
+### draft v.0.2b
 
+
+### History
+
+### draft v.0.2 - v.0.2b:
+# - first draft on Github;
+# - added minimalistic visualization of the LDA topic model; [v.0.2b]
+
+
+# original on:
+# https://github.com/discoleo/R/blob/master/TextMining/Lab_5.LDA_LSA.R
+
+
+###################
 
 # install.packages("lsa")
 
 library(ggplot2)
 
+# processing
+library(dplyr)
+library(tidyr)
+library(tidytext)
+# text mining
 library(topicmodels) 
 library(tm)
 library(lsa)
@@ -55,10 +73,11 @@ corpus.f = function(corpus, ...) {
 
 ### r = Abstracts from Pubmed.Base.R
 
-size = 500; # 100; 500
+size = 100; # 100; 500
 s.id = sample(seq_along(r), size=size, replace=FALSE)
 
 textdata = r[s.id]
+textdata = gsub("[\r\n\t \uA0]+", " ", textdata)
 
 #######################
 
@@ -77,6 +96,7 @@ corpus <- VCorpus(VectorSource(as.character(textdata)),
 ### TDM ###
 
 wordStemmer = function(x, language = 'english') {
+	print(x[1])
 	stemDocument(x, language = meta(x, language))
 }
 
@@ -85,7 +105,10 @@ control <- list(bounds = list(local = c(1, Inf)),
 	removeNumbers = TRUE, removePunctuation = TRUE, stopwords = TRUE, stripWhitespace = TRUE,
 	stemWords=wordStemmer, wordLengths = c(3,20), weighting = weightTf)
 
+# DocumentTermMatrix != TermDocumentMatrix
 tdm <- DocumentTermMatrix(corpus, control = control)
+
+tdm$dimnames$Terms[1:100]
 
 ###########
 
@@ -100,6 +123,31 @@ lda@terms[1:10]
 
 ### TODO:
 # - extract additional information from the topic models;
+
+### Analysis
+w.topics <- tidy(lda)
+w.topics
+
+top_terms <- w.topics %>%
+  group_by(topic) %>%
+  top_n(10, beta) %>%
+  ungroup() %>%
+  arrange(topic, -beta)
+
+top_terms
+
+print(top_terms, n=60)
+
+### Visualization
+
+theme_set(theme_bw())
+
+top_terms %>%
+  mutate(term = reorder_within(term, beta, topic)) %>%
+  ggplot(aes(term, beta)) +
+  geom_bar(stat = "identity") +
+  scale_x_reordered() +
+  facet_wrap(~ topic, scales = "free_x")
 
 
 #################
