@@ -8,7 +8,19 @@
 ###   Integral( 1 / tan(x)^(1/p) ) dx
 ###   Integral( tan(x)^(1/p) ) dx
 ###
-### draft v.0.1b
+### draft v.0.1c
+
+
+###############
+### history ###
+
+
+### draft v.0.1b - v.01c:
+# - added: Integral( tan(x)^(1/p) ) dx;
+# - example decomposition into fractions of unity for p == 5;
+### draft v.0.1a:
+# - initial draft:
+#    Integral( 1 / tan(x)^(1/p) ) dx;
 
 
 ##############
@@ -38,6 +50,19 @@
 # = ...;
 # - can be decomposed into a sum of Fractions of Unity;
 
+### Examples
+
+### n = 5
+# I = I( 1 / tan(y)^(1/5) ) dy
+# x^5 = tan(y)^4 =>
+# I = 5/4 * I( 1 / (x^(5/2) + 1) ) dx
+#   = 5/4 * I( (x^(5/2) - 1) / (x^5 - 1) ) dx
+#   = 5/4 * I( x^(5/2) / (x^5 - 1) ) dx - 5/4 * I( 1 / (x^5 - 1) ) dx
+# x = t^2 => dx = 2*t*dt
+# I = 5/2 * I( t^6 / (t^10 - 1) ) dt - 5/4 * I( 1 / (x^5 - 1) ) dx;
+# for simple fraction Decomposition, see:
+# Integrals.Fractions.Unity.R;
+
 
 ####################
 
@@ -62,7 +87,6 @@ unity.rp = function(x, x.pow, n, p=2, b0=1) {
 	}
 }
 unity.conj.rp = function(x, n, p=2, b0=1) {
-	# TODO: generalize
 	r = rootn(x^n, p);
 	### Powers
 	pow = 0:(p-1);
@@ -79,18 +103,30 @@ convert.range = function(x, n, p=n-1) {
 }
 
 ####################
+####################
 
+################
+### Examples ###
 
 lower = 1 + 1E-3
 upper = 3; # 7/3
 
-###
+### n == 5
 p = 5;
 rg = convert.range(c(lower, upper), n=p)
 #
 integrate(tanp, lower = lower, upper = upper, p=p)
 p/(p-1) * integrate(unity.rp, lower = rg[1], upper = rg[2], n=p, p=(p-1)/2)$value
 p/(p-1) * integrate(unity.conj.rp, lower = rg[1], upper = rg[2], n=p, p=(p-1)/2)$value
+
+# convert.range(c(lower, upper)): must NOT include 1;
+lower = 1 + 1E-3; upper = 2; rg = convert.range(c(lower, upper), n=p);
+# numerical integration:
+integrate(tanp, lower = lower, upper = upper, p=p, rel.tol=1E-10)
+# I = 5/2 * I( t^6 / (t^10 - 1) ) dt - 5/4 * I( 1 / (x^5 - 1) ) dx;
+5/2 * integrate(unity.rp, lower = sqrt(rg[1]), upper = sqrt(rg[2]), x.pow=6, n=10, p=1, b0=-1)$value -
+	5/4 * integrate(unity.rp, lower = rg[1], upper = rg[2], n=5, p=1, b0=-1)$value
+
 
 ### (tan(x))^(1/n)
 integrate(tanp, lower = lower, upper = upper, p=p, inv=F)
