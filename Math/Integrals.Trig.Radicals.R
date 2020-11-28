@@ -8,16 +8,18 @@
 ###   Integral( 1 / tan(x)^(1/p) ) dx
 ###   Integral( tan(x)^(1/p) ) dx
 ###
-### draft v.0.1d
+### draft v.0.1e
 
 
 ###############
 ### History ###
 
 
-### draft v.0.1b - v.0.1d:
+### draft v.0.1b - v.0.1e:
 # - added: Integral( tan(x)^(1/p) ) dx;
-# - example: decomposition into fractions of unity for p == 5;
+# - examples with decomposition into fractions of unity:
+#  -- decomposition for p == 5;
+#  -- more decompositions (p = 7, p = 9, generic); [v.0.1e]
 # - simplified some of the decompositions; [v.0.1d]
 ### draft v.0.1a:
 # - initial draft:
@@ -66,6 +68,30 @@
 # I = 5/2 * I( t / (t^5 + 1) ) dt;
 # for simple fraction Decomposition, see:
 # Integrals.Fractions.Unity.R;
+
+
+### n = 7
+# I = I( 1 / tan(y)^(1/7) ) dy
+# x^7 = tan(y)^6 =>
+# I = 7/6 * I( 1 / (x^(7/3) + 1) ) dx
+# x = t^3 => dx = 3*t^2*dt
+# I = 7/2 * I( t^2 / (t^7 + 1) ) dt;
+
+
+### n = 9
+# I = I( 1 / tan(y)^(1/9) ) dy
+# x^9 = tan(y)^8 =>
+# I = 9/8 * I( 1 / (x^(9/4) + 1) ) dx
+# x = t^4 => dx = 4*t^3*dt
+# I = 9/2 * I( t^3 / (t^9 + 1) ) dt;
+
+
+### n = n # ODD
+# I = I( 1 / tan(y)^(1/n) ) dy
+# x^n = tan(y)^(n-1) =>
+# I = n/(n-1) * I( 1 / (x^(2*n/(n-1)) + 1) ) dx
+# x = t^((n-1)/2) => dx = (n-1)/2*t^((n-3)/2)*dt
+# I = n/2 * I( t^((n-3)/2) / (t^n + 1) ) dt;
 
 
 ####################
@@ -171,6 +197,16 @@ p/(p-1) * integrate(unity.conj.rp, lower = rg[1], upper = rg[2], n=p, p=(p-1)/2)
 ### (tan(x))^(1/n)
 integrate(tanp, lower = lower, upper = upper, p=p, inv=F)
 p/(p-1) * integrate(unity.rp, lower = rg[1], upper = rg[2], x.pow=1/4, n=p, p=(p-1)/2)$value
+
+
+##########
+### n == 8
+p = 8;
+rg = convert.range(c(lower, upper), n=p)
+#
+integrate(tanp, lower = lower, upper = upper, p=p, rel.tol=1E-10)
+p/(p-1) * integrate(unity.rp, lower = abs(rg[1]), upper = abs(rg[2]), n=2*p, p=(p-1))$value # TODO: check abs();
+p * integrate(unity.rp, lower = abs(rootn(rg[1], p-1)), upper = abs(rootn(rg[2], p-1)), x.pow=p - 2, n=2*p, p=1)$value
 
 
 
