@@ -8,19 +8,20 @@
 ###   Integral( 1 / tan(x)^(1/p) ) dx
 ###   Integral( tan(x)^(1/p) ) dx
 ###
-### draft v.0.1c
+### draft v.0.1d
 
 
 ###############
-### history ###
+### History ###
 
 
-### draft v.0.1b - v.01c:
+### draft v.0.1b - v.0.1d:
 # - added: Integral( tan(x)^(1/p) ) dx;
-# - example decomposition into fractions of unity for p == 5;
+# - example: decomposition into fractions of unity for p == 5;
+# - simplified some of the decompositions; [v.0.1d]
 ### draft v.0.1a:
 # - initial draft:
-#    Integral( 1 / tan(x)^(1/p) ) dx;
+#   Integral( 1 / tan(x)^(1/p) ) dx;
 
 
 ##############
@@ -55,11 +56,14 @@
 ### n = 5
 # I = I( 1 / tan(y)^(1/5) ) dy
 # x^5 = tan(y)^4 =>
-# I = 5/4 * I( 1 / (x^(5/2) + 1) ) dx
+# I = 5/4 * I( 1 / (x^(5/2) + 1) ) dx # Rationalizing =>
 #   = 5/4 * I( (x^(5/2) - 1) / (x^5 - 1) ) dx
 #   = 5/4 * I( x^(5/2) / (x^5 - 1) ) dx - 5/4 * I( 1 / (x^5 - 1) ) dx
 # x = t^2 => dx = 2*t*dt
 # I = 5/2 * I( t^6 / (t^10 - 1) ) dt - 5/4 * I( 1 / (x^5 - 1) ) dx;
+### Alternative: instead of Rationalizing
+# x = t^2 => dx = 2*t*dt
+# I = 5/2 * I( t / (t^5 + 1) ) dt;
 # for simple fraction Decomposition, see:
 # Integrals.Fractions.Unity.R;
 
@@ -111,12 +115,15 @@ convert.range = function(x, n, p=n-1) {
 lower = 1 + 1E-3
 upper = 3; # 7/3
 
+##########
 ### n == 5
 p = 5;
 rg = convert.range(c(lower, upper), n=p)
 #
-integrate(tanp, lower = lower, upper = upper, p=p)
+integrate(tanp, lower = lower, upper = upper, p=p, rel.tol=1E-10)
 p/(p-1) * integrate(unity.rp, lower = rg[1], upper = rg[2], n=p, p=(p-1)/2)$value
+2*p/(p-1) * integrate(unity.rp, lower = sqrt(rg[1]), upper = sqrt(rg[2]), x.pow=1, n=p, p=1)$value
+# Rationalizing not needed!
 p/(p-1) * integrate(unity.conj.rp, lower = rg[1], upper = rg[2], n=p, p=(p-1)/2)$value
 
 # convert.range(c(lower, upper)): must NOT include 1;
@@ -126,6 +133,7 @@ integrate(tanp, lower = lower, upper = upper, p=p, rel.tol=1E-10)
 # I = 5/2 * I( t^6 / (t^10 - 1) ) dt - 5/4 * I( 1 / (x^5 - 1) ) dx;
 5/2 * integrate(unity.rp, lower = sqrt(rg[1]), upper = sqrt(rg[2]), x.pow=6, n=10, p=1, b0=-1)$value -
 	5/4 * integrate(unity.rp, lower = rg[1], upper = rg[2], n=5, p=1, b0=-1)$value
+5/2 * integrate(unity.rp, lower = sqrt(rg[1]), upper = sqrt(rg[2]), x.pow=1, n=5, p=1)$value # b0 == 1!
 
 
 ### (tan(x))^(1/n)
@@ -133,12 +141,15 @@ integrate(tanp, lower = lower, upper = upper, p=p, inv=F)
 p/(p-1) * integrate(unity.rp, lower = rg[1], upper = rg[2], x.pow=1/2, n=p, p=(p-1)/2)$value
 
 
+##########
 ### n == 7
 p = 7;
 rg = convert.range(c(lower, upper), n=p)
 #
-integrate(tanp, lower = lower, upper = upper, p=p)
+integrate(tanp, lower = lower, upper = upper, p=p, rel.tol=1E-10)
 p/(p-1) * integrate(unity.rp, lower = rg[1], upper = rg[2], n=p, p=(p-1)/2)$value
+3*p/(p-1) * integrate(unity.rp, lower = rootn(rg[1], 3), upper = rootn(rg[2], 3), x.pow=3 - 1, n=p, p=1)$value
+# Rationalizing not needed!
 p/(p-1) * integrate(unity.conj.rp, lower = rg[1], upper = rg[2], n=p, p=(p-1)/2)$value
 
 ### (tan(x))^(1/n)
@@ -146,12 +157,15 @@ integrate(tanp, lower = lower, upper = upper, p=p, inv=F)
 p/(p-1) * integrate(unity.rp, lower = rg[1], upper = rg[2], x.pow=1/3, n=p, p=(p-1)/2)$value
 
 
+##########
 ### n == 9
 p = 9;
 rg = convert.range(c(lower, upper), n=p)
 #
-integrate(tanp, lower = lower, upper = upper, p=p)
+integrate(tanp, lower = lower, upper = upper, p=p, rel.tol=1E-10)
 p/(p-1) * integrate(unity.rp, lower = rg[1], upper = rg[2], n=p, p=(p-1)/2)$value
+4*p/(p-1) * integrate(unity.rp, lower = rootn(rg[1], 4), upper = rootn(rg[2], 4), x.pow=4 - 1, n=p, p=1)$value
+# Rationalizing not needed!
 p/(p-1) * integrate(unity.conj.rp, lower = rg[1], upper = rg[2], n=p, p=(p-1)/2)$value
 
 ### (tan(x))^(1/n)
