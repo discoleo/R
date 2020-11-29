@@ -8,18 +8,19 @@
 ###   Integral( 1 / tan(x)^(1/p) ) dx
 ###   Integral( tan(x)^(1/p) ) dx
 ###
-### draft v.0.1e
+### draft v.0.1f
 
 
 ###############
 ### History ###
 
 
-### draft v.0.1b - v.0.1e:
+### draft v.0.1b - v.0.1f:
 # - added: Integral( tan(x)^(1/p) ) dx;
 # - examples with decomposition into fractions of unity:
 #  -- decomposition for p == 5;
 #  -- more decompositions (p = 7, p = 9, generic); [v.0.1e]
+#  -- more decompositions: tan(x)^(1/p); [v.0.1f]
 # - simplified some of the decompositions; [v.0.1d]
 ### draft v.0.1a:
 # - initial draft:
@@ -36,22 +37,29 @@
 #   Integrals.Fractions.Unity.Derived.R;
 
 
-### I(p) = Integral( 1 / tan(y)^(1/p) dy )
-#
-# x^p = tan(y)^(p-1) =>
-# I(p) = p/(p-1) * I( 1 / (x^(2*p/(p-1)) + 1) )
-# = p/(p-1) * I( Rationalized(1 / (x^(2*p/(p-1)) + 1)) )
+########################
+### 1 / tan(y)^(1/p) ###
+
+### I(p) = I( 1 / tan(y)^(1/p) ) dy
+### x^p = tan(y)^(p-1) =>
+# I(p) = p/(p-1) * I( 1 / (x^(2*p/(p-1)) + 1) ) dx
+### x = t^(p-1) => dx = (p-1)*t^(p-2)
+# I(p) = p * I( t^(p-2) / (t^(2*p) + 1) ) dt
 # = ...;
 # - can be decomposed into a sum of Fractions of Unity;
 
 
-### I(p) = Integral( tan(y)^(1/p) dy )
-#
-# x^p = tan(y)^(p-1) =>
-# I(p) = p/(p-1) * I( x^(2/(p-1)) / (x^(2*p/(p-1)) + 1) )
-# = p/(p-1) * I( Rationalized(x^(2/(p-1)) / (x^(2*p/(p-1)) + 1)) )
+####################
+### tan(y)^(1/p) ###
+
+### I(p) = I( tan(y)^(1/p) ) dy
+### x^p = tan(y)^(p-1) =>
+# I(p) = p/(p-1) * I( x^(2/(p-1)) / (x^(2*p/(p-1)) + 1) ) dx
+### x = t^(p-1) => dx = (p-1)*t^(p-2)
+# I(p) = p * I( t^p / (t^(2*p) + 1) ) dt
 # = ...;
 # - can be decomposed into a sum of Fractions of Unity;
+
 
 ### Examples
 
@@ -107,6 +115,9 @@ tanp = function(x, p=5, inv=TRUE) {
 	if(inv) 1 / rootn(tan(x), p)
 	else rootn(tan(x), p)
 }
+sin.rp = function(x, p=5) {
+	rootn(sin(x), p) / cos(x)
+}
 unity.rp = function(x, x.pow, n, p=2, b0=1) {
 	if(missing(x.pow)) {
 		1 / (rootn(x^n, p) + b0)
@@ -128,8 +139,8 @@ unity.conj.rp = function(x, n, p=2, b0=1) {
 	num = sapply(r, function(x) sum(x^pow * b0.pow) )
 	num / (x^n + if(isOdd) b0^p else -b0^p )
 }
-convert.range = function(x, n, p=n-1) {
-	rootn(tan(x)^p, n)
+convert.range = function(x, n, p=n-1, FUN=tan) {
+	rootn(FUN(x)^p, n)
 }
 
 ####################
@@ -153,18 +164,27 @@ p/(p-1) * integrate(unity.rp, lower = rg[1], upper = rg[2], n=p, p=(p-1)/2)$valu
 p/(p-1) * integrate(unity.conj.rp, lower = rg[1], upper = rg[2], n=p, p=(p-1)/2)$value
 
 # convert.range(c(lower, upper)): must NOT include 1;
+# [because of the numerical integration (of the Rationalized fractions)]
 lower = 1 + 1E-3; upper = 2; rg = convert.range(c(lower, upper), n=p);
 # numerical integration:
 integrate(tanp, lower = lower, upper = upper, p=p, rel.tol=1E-10)
+5/2 * integrate(unity.rp, lower = sqrt(rg[1]), upper = sqrt(rg[2]), x.pow=1, n=5, p=1)$value # b0 == 1!
+# [old] based on Rationalization:
 # I = 5/2 * I( t^6 / (t^10 - 1) ) dt - 5/4 * I( 1 / (x^5 - 1) ) dx;
 5/2 * integrate(unity.rp, lower = sqrt(rg[1]), upper = sqrt(rg[2]), x.pow=6, n=10, p=1, b0=-1)$value -
 	5/4 * integrate(unity.rp, lower = rg[1], upper = rg[2], n=5, p=1, b0=-1)$value
-5/2 * integrate(unity.rp, lower = sqrt(rg[1]), upper = sqrt(rg[2]), x.pow=1, n=5, p=1)$value # b0 == 1!
 
 
+##################
 ### (tan(x))^(1/n)
-integrate(tanp, lower = lower, upper = upper, p=p, inv=F)
+rg = convert.range(c(lower, upper), n=p)
+#
+integrate(tanp, lower = lower, upper = upper, p=p, inv=F, rel.tol=1E-10)
 p/(p-1) * integrate(unity.rp, lower = rg[1], upper = rg[2], x.pow=1/2, n=p, p=(p-1)/2)$value
+# p * I( t^5 / (t^10 + 1) ) dt;
+p * integrate(unity.rp, lower = rootn(rg[1], p-1), upper = rootn(rg[2], p-1), x.pow=p, n=2*p, p=1)$value
+# p/2 * I( u^2 / (u^5 + 1) ) du;
+p/2 * integrate(unity.rp, lower = rootn(rg[1], (p-1)/2), upper = rootn(rg[2], (p-1)/2), x.pow=(p-1)/2, n=p, p=1)$value
 
 
 ##########
@@ -209,4 +229,28 @@ p/(p-1) * integrate(unity.rp, lower = abs(rg[1]), upper = abs(rg[2]), n=2*p, p=(
 p * integrate(unity.rp, lower = abs(rootn(rg[1], p-1)), upper = abs(rootn(rg[2], p-1)), x.pow=p - 2, n=2*p, p=1)$value
 
 
+
+###########################
+###########################
+
+
+### I(p) = I( sin(y)^(1/p) / cos(y) ) dy
+### sin(y) = x^p => cos(y) dy = p*x^(p-1) dx =>
+# I(p) = p * I( x^p / (1 - x^(2*p)) ) dx;
+
+lower = 0; upper = pi/3;
+
+p = 9;
+rg = convert.range(c(lower, upper), n=p, p=1, FUN=sin)
+#
+integrate(sin.rp, lower = lower, upper = upper, p=p, rel.tol=1E-10)
+-p * integrate(unity.rp, lower = rg[1], upper = rg[2], x.pow=p, n=2*p, p=1, b0=-1)$value
+
+# [the classical way is simpler]
+# I(p) = I( (tan(x))^(1/p) ) dx
+### tan(x) = i*sin(y) =>
+# (1 + tan(x)^2) dx = i*cos(y) dy =>
+# dx = i/cos(y) dy =>
+# I(p) =
+# = 1i^(1 + 1/p) * I( sin(y)^(1/p) / cos(y) ) dy;
 
