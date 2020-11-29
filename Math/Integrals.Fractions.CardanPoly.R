@@ -4,14 +4,14 @@
 ### Integrals: Polynomial Fractions
 ### Cardan-Type Polynomials
 ###
-### draft v.0.2e
+### draft v.0.2e-D
 
 
 ############
 
 ### History
 
-### draft v.0.2e:
+### draft v.0.2e - v.0.2e-D:
 # - more experiments with root combinations;
 ### draft v.0.2d - v.0.2d-Tr3:
 # - work on P5 polynomial terms;
@@ -714,12 +714,21 @@ E1*E3 - (E1^2 - 2*E2)*E2 + (E1^3 - 3*E1*E2 + 3*E3)*E1 - (E1^4 - 4*E1^2*E2 + 4*E3
 
 ### TODO: move to separate file;
 
-r = roots(c(1,2,3,4,5,6))
+coeff = c(1,2,3,4,5,6)
+coeff = c(1,0,0,0,1,1)
+coeff = c(1,0,0,0,0,1,1)
+coeff = c(1,0,0,0,1,1,1)
+r = roots(coeff)
 
 ### Test
 poly.calc(r)
 
+p = sapply(0:4, function(pow) print(mult.pfr(r, k=1, type=1, pow=pow)) )
+p = sapply(0:4, function(pow) print(mult.pfr(r, k=2, type=1, pow=pow)) ) # Coeffs = 1 * D([k = 1])
+p = sapply(0:4, function(pow) print(mult.pfr(r, k=3, type=1, pow=pow)) ) # Coeffs = 1/2 * D([k = 2])
+
 ### sum (r[i]^pow / (x - r[i]))
+mult.pfr(r, k=1, type=1, pow=0) # D[1]
 mult.pfr(r, k=1, type=1)
 mult.pfr(r, k=1, type=1, pow=2)
 mult.pfr(r, k=1, type=1, pow=3)
