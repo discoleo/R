@@ -4,14 +4,16 @@
 ### Integrals: Polynomial Fractions
 ### Cardan-Type Polynomials
 ###
-### draft v.0.2d-Tr3
+### draft v.0.2e
 
 
 ############
 
 ### History
 
-# draft v.0.2d - v.0.2d-Tr3:
+### draft v.0.2e:
+# - more experiments with root combinations;
+### draft v.0.2d - v.0.2d-Tr3:
 # - work on P5 polynomial terms;
 # - initial work on the P7 polynomial (v.0.2d-bis);
 # - more formulas using n-th derivatives & other Transforms:
@@ -19,17 +21,17 @@
 #  -- Tr(Q(x)) / Q(x) (P7 & generalizable) (v.0.2d-rTr, v.0.2d-rTr2);
 #  -- general formulas for some of the root-transforms (v.0.2d-rTr3);
 #  -- more root-transforms (v.0.2d-Tr3) (+ bug fix: fraction decomposition formula);
-# draft v.0.2c:
+### draft v.0.2c:
 # - added fraction decomposition for polynomials of even power;
-# draft v.0.2b - v.0.2b-t3:
+### draft v.0.2b - v.0.2b-t3:
 # - improved P5 variant;
 # - added P7 variant (needs thorough testing);
 # - added P9 variant [v.0.2b-p9];
 # - completed the tests for P3 integration [v.0.2b-t3];
-# draft v.0.2a:
+### draft v.0.2a:
 # - systematic approach to these polynomials;
 # - fraction decomposition for P3;
-# draft v.0.1:
+### draft v.0.1:
 # - this is the nicer decomposition, using conjugate roots;
 # - basic decomposition of P5;
 # - a previous solution used all the individual order 1 polynomials:
@@ -141,7 +143,13 @@ sapply(5:10, function(n) {r = roots(c(rep(c(1,-1), n-2),-1)); mult.pfr(r=r, k=3)
 
 ####################
 
+library(polynom)
+library(pracma)
+
 ### helper Functions
+
+# see Polynomials.Helper.R
+
 qdiv.f = function(x, c, d, k=0, n=3) {
 	# the Fraction: F(k);
 	if(k == 0) {
@@ -181,7 +189,7 @@ expand.idgrid = function(n, k) {
 	}
 	return(id.gr)
 }
-mult.pfr = function(r, k=2, type=1) {
+mult.pfr = function(r, k=2, type=1, pow=1) {
 	# type: 0 => 1/..., 1 => sum(r[i])/...,
 	#       k => prod(r[i])/...;
 	n = length(r); id.all = 1:n
@@ -195,9 +203,9 @@ mult.pfr = function(r, k=2, type=1) {
 		p.m = rev(Poly(r.inv))
 		if(type == 0) {
 		} else if(type == 1) {
-			p.m = p.m * sum(r[is.id]) # Sum
+			p.m = p.m * sum(r[is.id]^pow) # Sum
 		} else if(type == k) {
-			p.m = p.m * prod(r[is.id]) # Product
+			p.m = p.m * prod(r[is.id]^pow) # Product
 		}
 		p.m = c(p.m, rep(0, n - length(p.m)))
 		p = p + p.m
@@ -370,6 +378,11 @@ fr$b0/(x - fr$r[1]) + sum( (fr$a*x + fr$b) / ((x - fr$r[2:n.half]) * (x - fr$r[n
 
 
 ### 2.) Polynomials
+
+### [new approach]
+
+
+### [old approach]
 
 ### 1/(x - r)
 # = (x^2 - r*x*(m+m^4) + r^2 - (m^4+m+3)*c)*(x^2 - r*x*(m^2+m^3) + r^2 - (m^3+m^2+3)*c) / Q(x)
@@ -695,5 +708,32 @@ E1*E3 - (E1^2 - 2*E2)*E2 + (E1^3 - 3*E1*E2 + 3*E3)*E1 - (E1^4 - 4*E1^2*E2 + 4*E3
 -6*E6
 
 
+######################
+
+### Root Combinatorics
+
+### TODO: move to separate file;
+
+r = roots(c(1,2,3,4,5,6))
+
+### Test
+poly.calc(r)
+
+### sum (r[i]^pow / (x - r[i]))
+mult.pfr(r, k=1, type=1)
+mult.pfr(r, k=1, type=1, pow=2)
+mult.pfr(r, k=1, type=1, pow=3)
+
+
+### sum ( (r[i]^pow + r[j]^pow) / ((x - r[i])*(x-r[j]) )
+mult.pfr(r, k=2, type=1)
+mult.pfr(r, k=2, type=1, pow=2)
+mult.pfr(r, k=2, type=1, pow=3)
+
+
+### sum ( (r[i] * r[j])^pow) / ((x - r[i])*(x-r[j]) )
+mult.pfr(r, k=2, type=2)
+mult.pfr(r, k=2, type=2, pow=2)
+mult.pfr(r, k=2, type=2, pow=3)
 
 
