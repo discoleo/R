@@ -3,7 +3,7 @@
 ###
 ### Integrals: Strange
 ###
-### draft v.0.1a
+### draft v.0.1b
 
 
 ### TODO:
@@ -17,6 +17,9 @@
 # I = I( x * 1/ (x * (x^sqrt(2) + 1)) ) dx
 # = 1/sqrt(2) * x * I( 1 / (sqrt(y^2 + 1) * (y + 1 + sqrt(y^2 + 1))) ) dy -
 #   1/sqrt(2) * I( I( 1 / (sqrt(y^2 + 1) * (y + 1 + sqrt(y^2 + 1))) )) dy;
+
+# y = tan(z) =>
+# I2 = I( 1 / (sin(z) + cos(z) + 1) ) dz
 
 # conversion function
 convert.powsq = function(x, b=-1, pow=sqrt(2)) {
@@ -35,8 +38,8 @@ integrate.pow = function(range, FUN=pow.fr, rel.tol=1E-10, ...) {
 	integrate(FUN, lower=range[1], upper=range[2], rel.tol=rel.tol, ...)
 }
 integrate.xpow = function(range) {
-	FUN = function(x) {
-		y = convert.powsq(x)
+	FUN = function(y) {
+		x = (y + sqrt(y^2 + 1))^(1/sqrt(2))
 		x * pow.subst(y)
 	}
 	integrate(FUN, lower=range[1], upper=range[2], subdivisions=1000)
@@ -62,8 +65,17 @@ rg2 = convert.powsq(rg)
 rg2
 
 integrate.pow(rg)
-# TODO: fix both integrals
+# TODO: fix integral
 integrate.2Dpow(rg, rg2)
-integrate.xpow(rg)
+integrate.xpow(rg2)
 
 
+###########
+
+### Test: Solution of I2
+
+rg = c(0, pi/5)
+rg2 = tan(rg)
+
+integrate(function(z) 1 / (sin(z) + cos(z) + 1), lower=rg[1], upper=rg[2])
+integrate.pow(rg2, FUN=pow.subst, pow=1)
