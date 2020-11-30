@@ -1,14 +1,26 @@
-
+################
+###
 ### Leonard Mada
+### [the one and only]
 ###
-### Integrals: Strange
+### Integrals: Strange & Complicated
 ###
-### draft v.0.1c
+### draft v.0.1d
+
+
+###############
+### History ###
+
+### draft v.0.1d:
+# - fixed bugs: functional;
+# - TODO: I( log(trigonometric) );
 
 
 ### TODO:
-# - find & fix bugs;
+# - re-study the Vardi integral;
 
+
+#######################
 
 ### I( 1 / (x^sqrt(2) + 1) ) dx
 
@@ -34,26 +46,14 @@ pow.subst = function(x, pow=sqrt(2)) {
 	div = pow * x.sq * (x + 1 + x.sq)
 	1/div
 }
-integrate.pow = function(range, FUN=pow.fr, rel.tol=1E-10, ...) {
-	integrate(FUN, lower=range[1], upper=range[2], rel.tol=rel.tol, ...)
-}
-integrate.xpow = function(range) {
-	FUN = function(y) {
-		x = (y + sqrt(y^2 + 1))^(1/sqrt(2))
-		x * pow.subst(y)
-	}
-	integrate(FUN, lower=range[1], upper=range[2], subdivisions=1000)
-}
-integrate.2Dpow = function(xrg, yrg, FUN=pow.subst, subdivisions=1000, rel.tol=1E-7) {
-	# TODO: ???
-	I1 = xrg[2] * sincos.exact(atan(yrg[2])) - xrg[1] * sincos.exact(atan(yrg[1]))
-	# TODO: replace double integral
-	I2 = integrate(function(x)
-		sapply(x, function(x) integrate.pow(c(yrg[1], x), FUN=pow.subst,
-			subdivisions=subdivisions, rel.tol=rel.tol)$value),
-		lower=yrg[1], upper=yrg[2])$value
-	print(c(I1, I2))
-	return(sqrt(2)*I1 - I2) # check if corect ???
+
+### helper
+### 1/(sin(x) + cos(x) + 1)
+sincos.simple = function(x) {
+	r = 1/2 * log(
+		(1 - cos(x) + sin(x)) / (1 + cos(x) - sin(x)) / tan(x) )
+	r[x == 0] = 0
+	return(r)
 }
 ### 1/(sin(x) + a * cos(x) + b)
 sincos.exact = function(x, a=1, b=1) {
@@ -73,19 +73,50 @@ sincos.exact = function(x, a=1, b=1) {
 	#
 	r = c2/2 * 1/a.sq * log(
 		(a.sq - cos(x + alfa)) / (a.sq + cos(x + alfa)) /
-		(a.sq * tan(x + alfa) - c1)* (a.sq * tan(x + alfa) + c1))
+		(a.sq * tan(x + alfa) - c1) * (a.sq * tan(x + alfa) + c1))
+	return(r)
 }
 
+### Integrate
+integrate.pow = function(range, FUN=pow.fr, rel.tol=1E-10, ...) {
+	integrate(FUN, lower=range[1], upper=range[2], rel.tol=rel.tol, ...)
+}
+integrate.xpow = function(range) {
+	FUN = function(y) {
+		x = (y + sqrt(y^2 + 1))^(1/sqrt(2))
+		x * pow.subst(y)
+	}
+	integrate(FUN, lower=range[1], upper=range[2], subdivisions=1000)
+}
+integrate.2Dnum = function(yrg, subdivisions=1000, rel.tol=1E-7) {
+	# numeric 2D integration: bugs / instability ???
+	integrate(function(x)
+		sapply(x, function(x) integrate.pow(c(yrg[1], x), FUN=pow.subst,
+			subdivisions=subdivisions, rel.tol=rel.tol)$value),
+		lower=yrg[1], upper=yrg[2])$value
+}
+integrate.2Dpow = function(xrg, FUN=pow.subst, subdivisions=200, rel.tol=1E-7) {
+	yrg = atan(convert.powsq(xrg))
+	I1 = xrg[2] * sincos.simple(yrg[2]) - xrg[1] * sincos.exact(yrg[1])
+	# yrg = atan(yrg), BUT needs xrg for numerical integration!
+	I2 = integrate(function(x) {
+			r = sincos.simple(atan(convert.powsq(x)));
+			return(r);
+		},
+		lower=rg[1], upper=rg[2])$value
+	return((I1 - I2)/sqrt(2))
+}
+
+#######################
 
 ### Test
 
-rg = c(1, 2)
+rg = c(1, 5)
 rg2 = convert.powsq(rg)
 rg2
 
 integrate.pow(rg)
-# TODO: fix integral
-integrate.2Dpow(rg, rg2)
+integrate.2Dpow(rg)
 integrate.xpow(rg2)
 
 
