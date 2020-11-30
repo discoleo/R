@@ -5,19 +5,26 @@
 ###
 ### Integrals: Strange & Complicated
 ###
-### draft v.0.1d
+### draft v.0.1d-Ref
 
 
 ###############
 ### History ###
 
-### draft v.0.1d:
+### draft v.0.1d - v.0.1d-Ref:
 # - fixed bugs: functional;
 # - TODO: I( log(trigonometric) );
+# - added some References for study;
 
 
-### TODO:
-# - re-study the Vardi integral;
+### Resources:
+# - TODO: re-study the integrals mentioned below;
+# - Vardi integral:
+#   https://www.youtube.com/watch?v=W2QFhyC_BQ8
+# - Integral of ln(cos x):
+#   https://www.youtube.com/watch?v=7wiybMkEfbc
+# - Integral of (ln(cos x))^2:
+#   https://www.youtube.com/watch?v=ikyVHEHmgP8
 
 
 #######################
