@@ -5,12 +5,14 @@
 ###
 ### Integrals: Strange & Complicated
 ###
-### draft v.0.1d-Ref
+### draft v.0.1e
 
 
 ###############
 ### History ###
 
+### draft v.0.1e:
+# - fixed buggy limits in sincos() & simplified function;
 ### draft v.0.1d - v.0.1d-Ref:
 # - fixed bugs: functional;
 # - TODO: I( log(trigonometric) );
@@ -55,13 +57,6 @@ pow.subst = function(x, pow=sqrt(2)) {
 }
 
 ### helper
-### 1/(sin(x) + cos(x) + 1)
-sincos.simple = function(x) {
-	r = 1/2 * log(
-		(1 - cos(x) + sin(x)) / (1 + cos(x) - sin(x)) / tan(x) )
-	r[x == 0] = 0
-	return(r)
-}
 ### 1/(sin(x) + a * cos(x) + b)
 sincos.exact = function(x, a=1, b=1) {
 	c2 = 1/sqrt(a^2 + 1)
@@ -83,6 +78,20 @@ sincos.exact = function(x, a=1, b=1) {
 		(a.sq * tan(x + alfa) - c1) * (a.sq * tan(x + alfa) + c1))
 	return(r)
 }
+### 1/(sin(x) + cos(x) + 1)
+sincos.simple = function(x) {
+	r = 1/2 * log(
+		(1 - cos(x) + sin(x)) / (1 + cos(x) - sin(x)) / tan(x) )
+	r[x == 0] = -log(2)/2;
+	return(r)
+}
+# sincos with atan() substitution
+sincos.subst = function(x) {
+	div = sqrt(x^2 + 1)
+	r = 1/2 * log( (div - 1 + x) / (div + 1 - x) / x )
+	r[x == 0] = -log(2)/2;
+	return(r)
+}
 
 ### Integrate
 integrate.pow = function(range, FUN=pow.fr, rel.tol=1E-10, ...) {
@@ -102,15 +111,17 @@ integrate.2Dnum = function(yrg, subdivisions=1000, rel.tol=1E-7) {
 			subdivisions=subdivisions, rel.tol=rel.tol)$value),
 		lower=yrg[1], upper=yrg[2])$value
 }
-integrate.2Dpow = function(xrg, FUN=pow.subst, subdivisions=200, rel.tol=1E-7) {
-	yrg = atan(convert.powsq(xrg))
-	I1 = xrg[2] * sincos.simple(yrg[2]) - xrg[1] * sincos.exact(yrg[1])
+integrate.2Dpow = function(xrg, subdivisions=200, rel.tol=1E-7) {
+	# yrg = atan(convert.powsq(xrg))
+	# I1 = xrg[2] * sincos.simple(yrg[2]) - xrg[1] * sincos.simple(yrg[1])
+	yrg = convert.powsq(xrg) # atan() substituted into formula;
+	I1 = xrg[2] * sincos.subst(yrg[2]) - xrg[1] * sincos.subst(yrg[1])
 	# yrg = atan(yrg), BUT needs xrg for numerical integration!
 	I2 = integrate(function(x) {
 			r = sincos.simple(atan(convert.powsq(x)));
 			return(r);
 		},
-		lower=rg[1], upper=rg[2])$value
+		lower=xrg[1], upper=xrg[2])$value
 	return((I1 - I2)/sqrt(2))
 }
 
