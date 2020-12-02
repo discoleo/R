@@ -4,11 +4,13 @@
 ### Lab 5: LDA, LSA, Text Clustering
 ###
 ### Leonard Mada
-### draft v.0.3a
+### draft v.0.3b
 
 
 ### History
 
+### draft v.0.3b:
+# - Clustering: Hierarchical;
 ### draft v.0.3a:
 # - Clustering: k-Means;
 # - more text-processing helper functions;
@@ -25,6 +27,7 @@
 #########################
 
 # install.packages("lsa")
+# install.packages("proxy")
 
 library(ggplot2)
 
@@ -36,6 +39,8 @@ library(tidytext)
 library(topicmodels) 
 library(tm)
 library(lsa)
+# Dist Function: Clustering
+library(proxy)
 
 
 setwd(...)
@@ -57,6 +62,23 @@ print.art = function(r, tlen=81, max=0) {
 	sapply(s, function(s) {cat(s); cat("\n");})
 	cat("\n")
 	invisible(s)
+}
+jitter.txt = function(x, len=4, NOP=FALSE, rnd=FALSE, seed=1234) {
+	if(length(x) == 1) {
+		x = id = seq(x);
+	} else {
+		id = seq_along(x);
+	}
+	if(NOP) return(x);
+	if(rnd) {
+		set.seed(seed)
+		len = sample(1:len, length(id) %/% 2, replace=TRUE)
+		jt.txt = sapply(len, function(len) paste(rep(" ", len), sep="", collapse=""))
+	} else {
+		jt.txt = paste(rep(" ", len), sep="", collapse="")
+	}
+	x[id %% 2 == 0] = paste0(x[id %% 2 == 0], jt.txt)
+	return(x)
 }
 corpus.f = function(corpus, ...) {
 	# TODO: implement as options;
@@ -107,8 +129,8 @@ stopWords = c("also", "although", "can", "may", "among", "respectively", "95%",
 	"due", "one", "two", "three", # TODO: DM
 	"showed", "found", "suggest")
 
-find.nextWord = function(x, s, sort=TRUE) {
-	m = regexec(paste0(s, " ([^ ]+)", collapse=""), x)
+find.nextWord = function(x, s, sort=TRUE, perl=TRUE) {
+	m = regexec(paste0(s, " ([^ ]+)", collapse=""), x, perl=perl)
 	m.txt = regmatches(x, m)
 	isM = sapply(regmatches(x, m), function(l) length(l) > 0)
 	m.txt = sapply(m.txt[isM], function(txt) txt[2])
@@ -322,8 +344,10 @@ normalise_dtm <- function(y) y/apply(y, MARGIN=1,
 	FUN=function(k) sum(k^2)^.5)
 dtm_norm <- normalise_dtm(mat_dtm)
 
+##################
+### Clustering ###
 
-### Clustering
+### K-Means
 cl <- kmeans(dtm_norm, 8)
 str(cl)
 
@@ -340,5 +364,22 @@ head(cl$withinss)
 
 table(find.nextWord(x, "based"))
 table(find.nextWord(x, "gene"))
+table(find.nextWord(x, "(?= [^ ]+ 86Y)"))
 
+
+################
+### Hierarchical
+
+# library(proxy)
+
+### Complexity (O(n^2))
+distance <- dist(dtm_norm, method="cosine")
+hc <- hclust(distance, method="average")
+
+plot(hc, labels=jitter.txt(length(x), rnd=T, len=10, seed=1))
+
+# draw dendogram with red borders around the 5 clusters 
+rect.hclust(hc, k=5, border="red") # 3 major clusters;
+
+group_clust <- cutree(hc, k=5) # cut tree into 5 clusters
 
