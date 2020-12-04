@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs - Gaussian
 ###
-### draft v.0.2d
+### draft v.0.2e
 
 #############
 ### Types ###
@@ -30,9 +30,10 @@
 
 ### Liniar / Non-Liniar Gaussian-type
 ###
-### draft v.0.2d:
+### draft v.0.2d - v.0.2e:
 # - derived from Combinations of Exponentials:
 #   (3*x^2 - 2*x)*d2y + (9*x^4 - 4*x^2 - 6*x + 2)*dy + 6*x^2*(3*x^3 - 2*x^2 - 1)*y = 0;
+# - slight generalization; [v.0.2e]
 ### draft v.0.2c:
 # - derived from Fractions:
 #   x*d2y - k*x*dy + 2*dy - k*y = 0;
@@ -246,6 +247,8 @@ sapply(c(-3:3 * 3/4), line.tan, dx=3, p=dp3y, dp=dp2y, col="orange")
 ### Higher Powers ###
 #####################
 
+### y = I(e^(-x^n))
+
 ### dy = e^(-x^3)
 # [not run]
 # d2y = -3*x^2*dy;
@@ -305,7 +308,6 @@ dy = function(x, a=c(1, 1)) {
 	return(dp)
 }
 d2y = function(x, a=c(1, 1)) {
-	# variant = test equations for variants;
 	y.x = y(x, a=a)
 	dy.x = dy(x, a=a)
 	dp = (9*x^4 - 4*x^2 - 6*x + 2)*dy.x + 6*x^2*(3*x^3 - 2*x^2 - 1)*y.x;
@@ -330,6 +332,75 @@ sapply(c(-3:2 * 2/5, 3/2, 2), line.tan, dx=3, p=y, dp=dy, a=a)
 # non-sigmoidal
 curve(dy(x, a=a), add=T, col="green")
 sapply(c(0.05 + -3:3 /5, 3/2, 2), line.tan, dx=3, p=dy, dp=d2y, a=a, col="orange")
+
+
+###################
+### y = a1*e^(-(x^n + b1*x)) + a2*e^(-(x^n + b2*x))
+# [not run]
+dy = - a1*(n*x^(n-1) + b1)*exp(-(x^n + b1*x)) +
+     - a2*(n*x^(n-1) + b2)*exp(-(x^n + b2*x))
+d2y = a1*(n*x^(n-1) + b1)^2 * exp(-(x^n + b1*x)) +
+      a2*(n*x^(n-1) + b2)^2 * exp(-(x^n + b2*x)) +
+	- a1*n*(n-1)*x^(n-2) * exp(-(x^n + b1*x)) +
+	- a2*n*(n-1)*x^(n-2) * exp(-(x^n + b2*x));
+# e^(-(x^n + b1*x)) =   (dy + (n*x^(n-1) + b2)*y) / (a1*(b2 - b1))
+# e^(-(x^n + b2*x)) = - (dy + (n*x^(n-1) + b1)*y) / (a2*(b2 - b1))
+# =>
+(b2 - b1)*d2y - (n*x^(n-1) + b1)^2 * (dy + (n*x^(n-1) + b2)*y) +
+  + (n*x^(n-1) + b2)^2 * (dy + (n*x^(n-1) + b1)*y) +
+  + n*(n-1)*x^(n-2) * (dy + (n*x^(n-1) + b2)*y) +
+  - n*(n-1)*x^(n-2) * (dy + (n*x^(n-1) + b1)*y) # = 0
+(b2 - b1)*d2y - (n*x^(n-1) + b1)^2 * (dy + (n*x^(n-1) + b2)*y) +
+  + (n*x^(n-1) + b2)^2 * (dy + (n*x^(n-1) + b1)*y) +
+  - n*(n-1)*(b1 - b2)*x^(n-2)*y # = 0
+d2y + (2*n*x^(n-1) + b1 + b2)*dy +
+  + (n^2*x^(2*n-2) + n*(b1 + b2)*x^(n-1) + n*(n-1)*x^(n-2) + b1*b2)*y # = 0
+### Example: n = 2
+d2y + (4*x + b1 + b2)*dy + (4*x^2 + 2*(b1 + b2)*x + b1*b2 + 2)*y # = 0
+
+### Solution:
+y = function(x, a=c(1, 1), b=c(-1, 1), n=2) {
+	y = sapply(x, function(x) sum(a * exp(-x^n - b*x)))
+	y = round0(y)
+	return(y)
+}
+dy = function(x, a=c(1, 1), b=c(-1, 1), n=2) {
+	# y.x = y(x, a=a, b=b, n=n)
+	nxn = n*x^(n-1);
+	dp = sapply(seq_along(x), function(id) {
+		xx = x[id]
+		x.exp = -a * exp(-xx^n - b*xx);
+		sum((nxn[id] + b) * x.exp)
+	})
+	return(dp)
+}
+d2y = function(x, a=c(1, 1), b=c(-1, 1), n=2) {
+	y.x = y(x, a=a, b=b, n=n)
+	dy.x = dy(x, a=a, b=b, n=n)
+	nxn1 = n*x^(n-2);
+	nxn = x * nxn1; nxsq = nxn^2;
+	dp = (2*nxn + b[1] + b[2])*dy.x +
+		+ (nxsq + (b[1] + b[2])*nxn + (n-1)*nxn1 + b[1]*b[2])*y.x
+	div = -1;
+	dp = ifelse(div != 0, dp / div, -Inf); # TODO
+	return(dp)
+}
+### Plot:
+n = 2; a = c(1, 1) # a[] has NO effect on eq of D2;
+curve(y(x, a=a, n=n), from= -2, to = 3, ylim=c(-2, 3))
+sapply(c(-3:2 * 4/7, 2), line.tan, dx=3, p=y, dp=dy, a=a, n=n)
+# wavelet
+curve(dy(x, a=a, n=n), add=T, col="green")
+sapply(c(-3:2 * 4/7, 3/2, 2), line.tan, dx=3, p=dy, dp=d2y, a=a, n=n, col="orange")
+
+### n = 3
+n = 3; a = c(1, 1) # a[] has NO effect on eq of D2;
+curve(y(x, a=a, n=n), from= -1, to = 3, ylim=c(-4, 4))
+sapply(c(-3:0 * 1/7, 0.6, 1, 3/2), line.tan, dx=3, p=y, dp=dy, a=a, n=n)
+# wavelet
+curve(dy(x, a=a, n=n), add=T, col="green")
+sapply(c(-3:3 * 1/7, 1, 3/2, 2), line.tan, dx=3, p=dy, dp=d2y, a=a, n=n, col="orange")
+### TODO: check d2y(1)!
 
 
 ###########################
