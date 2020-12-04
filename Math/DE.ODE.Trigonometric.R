@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs - Trigonometric
 ###
-### draft v.0.1g
+### draft v.0.2a
 
 
 ### History
@@ -14,6 +14,10 @@
 ### Order 1 Non-Liniar:
 ### Trigonometric Variants
 ###
+### draft v.0.2a: [2020-12-04]
+# - based on solving for sin/cos:
+#   (2*x + b) * d2y - 2*dy + (2*x + b)^3 * y = 0;
+#   [including partial generalization]
 ### draft v.0.1e - v.0.1g:
 # - solved:
 #   x^2*dy*d2y + x/(x+1) * dy^2 + (x+1)^2 * y*dy = 0;
@@ -162,19 +166,19 @@ d2y = function(x, b=0) {
 	dy.x = dy(x, b=b, y.x=y.x)
 	div = - 2*x*(1 - x)*y.x^3;
 	dp  = (1 - 2*x)*y.x^3*dy.x + 1/8
-	dp = ifelse(div != 0, dp / div, 1E+3); # TODO: needs correction!
+	dp = ifelse(div != 0, dp / div, 1E+3); # may need correction
 	return(dp)
 }
 ### b = 0;
 curve(y(x), from= 0, to= 1, ylim=c(0, 1.5))
-# global minimum;
+# quasi/inverted sigmoidal;
 sapply(c(0, 1/5, 2/3, 0.94), line.tan, dx=3, p=y, dp=dy)
-# pseudo-sigmoidal
+# global minimum
 curve(dy(x), add=T, col="green")
 sapply(c(0:4/5, 0.9), line.tan, dx=1/5, p=dy, dp=d2y, col="orange")
 
 
-# check full pseudo-sigmoidal
+# check full D(y) curve:
 curve(dy(x), from= 0, to = 1, col="green", ylim=c(0, 2))
 sapply(c(0:4/5, 0.9), line.tan, dx=1/5, p=dy, dp=d2y, col="orange")
 
@@ -562,12 +566,14 @@ sapply(c((0:5)*2/3.2), line.tan, dx=1/5, p=dy, dp=d2y, a=a, n=n, col="orange")
 ############################
 ############################
 
+### Special / Combined Functions
+
 ### y*sin(k * log(y)) = f(x)
 
 ### y*sin(k * log(y)) = x^2
 # k*dy * cos(k * log(y)) = (2*x*y - x^2*dy) / y;
 x*y^2*d2y + x*y*dy^2 - (k^2+1)/2 * x^2*dy^3 - y^2*dy # = 0;
-### Solution & Plot:
+### Solution:
 y = function(x, k, start=1) {
 	# start: default = 1 functions for 0 < x <= sqrt(7) & k == 1;
 	# start = 500: for x <= 9.5 (k == 1/2);
@@ -636,5 +642,60 @@ sapply(c(1/3, 1/2, 1, 2.2), line.tan, dx=3, p=dy, dp=d2y, k=k, col="orange")
 # separately D2:
 curve(dy(x, k=k), from= 0+1E-3, to = 2.7, col="green")
 sapply(c(1/3, 1/2, 1, 2.2), line.tan, dx=3, p=dy, dp=d2y, k=k, col="orange")
+
+
+############################
+############################
+
+### y = a1*sin(x^n + b*x) + a2*cos(x^n + b*x)
+# dy = - (n*x^(n-1) + b) * (a2*sin(x^n + b*x) - a1*cos(x^n + b*x))
+# sin(x^n + b*x) = - (a2*dy - a1*(n*x^(n-1) + b)*y) / (a1^2 + a2^2) / (n*x^(n-1) + b)
+# cos(x^n + b*x) =   (a1*dy + a2*(n*x^(n-1) + b)*y) / (a1^2 + a2^2) / (n*x^(n-1) + b)
+d2y = - n*(n-1)*x^(n-2) * (a2*sin(x^n + b*x) - a1*cos(x^n + b*x)) +
+  - (n*x^(n-1) + b)^2 * (a1*sin(x^n + b*x) + a2*cos(x^n + b*x))
+= - n*(n-1)*x^(n-2) * (a[2]*sin(x^n + b*x) - a[1]*cos(x^n + b*x)) - (n*x^(n-1) + b)^2 * y
+(a1^2 + a2^2)*(n*x^(n-1) + b) * d2y +
+  + n*(n-1)*x^(n-2)*( - a[2]*(a[2]*dy(x) - a[1]*(n*x^(n-1) + b)*y(x)) - a[1]*(a[1]*dy(x) + a[2]*(n*x^(n-1) + b)*y(x))) +
+  + (a[1]^2 + a[2]^2)*(n*x^(n-1) + b)^3 * y(x)
+(n*x^(n-1) + b) * d2y - n*(n-1)*x^(n-2)*dy(x) + (n*x^(n-1) + b)^3 * y(x) # = 0
+### Example: n = 2
+(2*x + b) * d2y(x, n=2) - 2*dy(x, n=2) + (2*x + b)^3 * y(x, n=2) # = 0
+### Example: n = 3
+(3*x^2 + b) * d2y(x, n=3) - 6*x*dy(x, n=3) + (3*x^2 + b)^3 * y(x, n=3) # = 0
+
+### Solution:
+y = function(x, a=c(1, 1), b=1, n=2) {
+	xn = x^n + b*x
+	r = a[1]*sin(xn) + a[2]*cos(xn)
+	return(r)
+}
+dy = function(x, a=c(1, 1), b=1, n=2) {
+	xn1 = x^(n-1)
+	xn = (xn1 + b)*x
+	r = - (n*xn1 + b) * (a[2]*sin(xn) - a[1]*cos(xn))
+	r = round0(r)
+	return(r)
+}
+d2y = function(x, a=c(1, 1), b=1, n=2) {
+	y.x = y(x, a=a, b=b, n=n)
+	dy.x = dy(x, a=a, b=b, n=n)
+	xn2 = n * x^(n-2)
+	xnb = xn2 * x + b
+	#
+	div = xnb;
+	asq = sum(a^2);
+	dp  = (n-1)*xn2*dy.x - xnb^3*y.x
+	dp = ifelse(div != 0, dp / div, n*(n-1)); # TODO: needs correction!
+	return(dp)
+}
+### Plot:
+n = 2; b = 1;
+curve(y(x, b=b, n=n), from= -3, to = 3, ylim=c(-3, 3))
+# oscillating function with local minima;
+# slightly shifted: + 1/2
+sapply(c(-5:7 * 3/7 - 1/2), line.tan, dx=1.5, p=y, dp=dy, b=b, n=n)
+# also sinusoidal:
+curve(dy(x, b=b, n=n), add=T, col="green")
+sapply(c(-5:7 * 3/7 - 1/2), line.tan, dx=1.5, p=dy, dp=d2y, b=b, n=n, col="orange")
 
 
