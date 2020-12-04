@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs - Gaussian
 ###
-### draft v.0.2c
+### draft v.0.2d
 
 #############
 ### Types ###
@@ -30,6 +30,9 @@
 
 ### Liniar / Non-Liniar Gaussian-type
 ###
+### draft v.0.2d:
+# - derived from Combinations of Exponentials:
+#   (3*x^2 - 2*x)*d2y + (9*x^4 - 4*x^2 - 6*x + 2)*dy + 6*x^2*(3*x^3 - 2*x^2 - 1)*y = 0;
 ### draft v.0.2c:
 # - derived from Fractions:
 #   x*d2y - k*x*dy + 2*dy - k*y = 0;
@@ -269,12 +272,64 @@ d3y = function(x) {
 	dp = exp(-x^3)
 	return(dp)
 }
+### Plot:
 curve(y(x), from= -0.01, to = 3)
-#
 sapply(c(0:3 * 3/4), line.tan, dx=3, p=y, dp=dy)
 # sigmoidal
 curve(dy(x), add=T, col="green")
 sapply(c(0:3 * 3/4), line.tan, dx=3, p=dy, dp=d2y, col="orange")
+
+
+####################
+### Combinations ###
+
+### y = a2*e^(-x^2) + a3*e^(-x^3)
+# [not run]
+dy = -2*a2*x*exp(-x^2) - 3*a3*x^2*exp(-x^3)
+d2y = 4*a2*x^2*exp(-x^2) -2*a2*exp(-x^2) + 9*a3*x^4*exp(-x^3) - 3*a3*x*exp(-x^3)
+# e^(-x^2) = (dy + 3*x^2*y) / (a2*(3*x^2 - 2*x))
+# e^(-x^3) = - (dy + 2*x*y) / (a3*(3*x^2 - 2*x))
+# =>
+(3*x^2 - 2*x)*d2y + (9*x^4 - 4*x^2 - 6*x + 2)*dy + 6*x^2*(3*x^3 - 2*x^2 - 1)*y # = 0
+
+
+### Solution:
+y = function(x, a=c(1, 1)) {
+	y = a[1] * exp(-x^2) + a[2] * exp(-x^3)
+	y = round0(y)
+	return(y)
+}
+dy = function(x, a=c(1, 1)) {
+	y.x = y(x, a=a)
+	dp = - (2*a[1]*x*exp(-x^2) + 3*a[2]*x^2*exp(-x^3))
+	return(dp)
+}
+d2y = function(x, a=c(1, 1)) {
+	# variant = test equations for variants;
+	y.x = y(x, a=a)
+	dy.x = dy(x, a=a)
+	dp = (9*x^4 - 4*x^2 - 6*x + 2)*dy.x + 6*x^2*(3*x^3 - 2*x^2 - 1)*y.x;
+	dp = - dp;
+	div = 3*x^2 - 2*x;
+	dp = ifelse(div != 0, dp / div, -Inf); # TODO
+	return(dp)
+}
+### Plot:
+a = c(1, 1) # has NO effect on eq of D2;
+curve(y(x, a=a), from= -1, to = 3, ylim=c(-2, 3))
+sapply(c(-3:2 * 2/5, 3/2, 2), line.tan, dx=3, p=y, dp=dy, a=a)
+# non-sigmoidal
+curve(dy(x, a=a), add=T, col="green")
+sapply(c(-3:2 * 2/5, 3/2, 2), line.tan, dx=3, p=dy, dp=d2y, a=a, col="orange")
+
+###
+a = c(1, -1) # a = c(2, -1/2)
+# although has NO effect on eq. of D2, d2y depends indirectly;
+curve(y(x, a=a), from= -1, to = 3, a=a, ylim=c(-2, 3))
+sapply(c(-3:2 * 2/5, 3/2, 2), line.tan, dx=3, p=y, dp=dy, a=a)
+# non-sigmoidal
+curve(dy(x, a=a), add=T, col="green")
+sapply(c(0.05 + -3:3 /5, 3/2, 2), line.tan, dx=3, p=dy, dp=d2y, a=a, col="orange")
 
 
 ###########################
