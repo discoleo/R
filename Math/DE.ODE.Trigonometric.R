@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs - Trigonometric
 ###
-### draft v.0.2a
+### draft v.0.2a-form
 
 
 ### History
@@ -14,10 +14,11 @@
 ### Order 1 Non-Liniar:
 ### Trigonometric Variants
 ###
-### draft v.0.2a: [2020-12-04]
+### draft v.0.2a - v.0.2a-form: [2020-12-04]
 # - based on solving for sin/cos:
 #   (2*x + b) * d2y - 2*dy + (2*x + b)^3 * y = 0;
 #   [including partial generalization]
+# - added a more formal approach; [v.0.2a-form]
 ### draft v.0.1e - v.0.1g:
 # - solved:
 #   x^2*dy*d2y + x/(x+1) * dy^2 + (x+1)^2 * y*dy = 0;
@@ -647,6 +648,21 @@ sapply(c(1/3, 1/2, 1, 2.2), line.tan, dx=3, p=dy, dp=d2y, k=k, col="orange")
 ############################
 ############################
 
+#####################
+### Linear Simple ###
+###  (Polynomial) ###
+#####################
+
+### y = a1*sin(P(x)) + a2*cos(P(x))
+
+### D =>
+# dy = dP * (a1*cos(P(x)) - a2*sin(P(x)))
+### D2 =>
+# d2y = d2P*(a1*cos(P(x)) - a2*sin(P(x))) - dP^2 * y
+### Solve for sin(P(x)), cos(P(x)) using y & dy;
+
+### Example: P(x) = x^n + b*x;
+
 ### y = a1*sin(x^n + b*x) + a2*cos(x^n + b*x)
 # dy = - (n*x^(n-1) + b) * (a2*sin(x^n + b*x) - a1*cos(x^n + b*x))
 # sin(x^n + b*x) = - (a2*dy - a1*(n*x^(n-1) + b)*y) / (a1^2 + a2^2) / (n*x^(n-1) + b)
@@ -697,5 +713,36 @@ sapply(c(-5:7 * 3/7 - 1/2), line.tan, dx=1.5, p=y, dp=dy, b=b, n=n)
 # also sinusoidal:
 curve(dy(x, b=b, n=n), add=T, col="green")
 sapply(c(-5:7 * 3/7 - 1/2), line.tan, dx=1.5, p=dy, dp=d2y, b=b, n=n, col="orange")
+
+###
+n = 2; b = -2;
+curve(y(x, b=b, n=n), from= -3, to = 3, ylim=c(-4, 4))
+# oscillating function with local minima;
+# slightly shifted: + 1/2
+sapply(c(-5:7 * 3/7 - 1/2), line.tan, dx=1.5, p=y, dp=dy, b=b, n=n)
+# also sinusoidal:
+curve(dy(x, b=b, n=n), add=T, col="green")
+sapply(c(-5:7 * 3/7 - 1/2), line.tan, dx=1.5, p=dy, dp=d2y, b=b, n=n, col="orange")
+
+
+########################
+
+########################
+###  Linear Complex  ###
+### (Non-Polynomial) ###
+########################
+
+###########
+### LOG ###
+
+### y = a1*sin(log(P(x))) + a2*cos(log(P(x)))
+
+### D =>
+# P(x) * dy = dP * (a1*cos(log(P(x))) - a2*sin(log(P(x))))
+### D2 =>
+# P(x)^2 * d2y + P(x) * dp*dy = P(x)*d2P*(a1*cos(log(P(x))) - a2*sin(log(P(x)))) - dP^2 * y
+### Solve for sin(log(P(x))), cos(log(P(x))) using y & dy;
+
+### TODO
 
 
