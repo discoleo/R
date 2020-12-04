@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs - Gaussian
 ###
-### draft v.0.2b-gen
+### draft v.0.2c
 
 #############
 ### Types ###
@@ -30,6 +30,10 @@
 
 ### Liniar / Non-Liniar Gaussian-type
 ###
+### draft v.0.2c:
+# - derived from Fractions:
+#   x*d2y - k*x*dy + 2*dy - k*y = 0;
+#   x*d2y + 2*dy - k^2*x*y = 0;
 ### draft v.0.2b - v.0.2b-gen:
 # - sinh-type variants, including generalization:
 #   x*d2y + k*x^2*sin(y)*dy - dy = 0;
@@ -92,6 +96,8 @@ source("DE.ODE.Helper.R")
 ### y = e^(-x^2)
 # [not run]
 # dy = -2*x*y;
+# d2y + 2*x*dy + 2*y = 0
+### I(D1) by parts =>
 d2z + 2*x*dz - 2*z # = 0
 # where dz = sqrt(pi)/2 * erf(x); d2z = e^(-x^2);
 ### Solution:
@@ -115,7 +121,7 @@ d2y = function(x, b0=0) {
 	return(dp)
 }
 # b0 == 0;
-curve(y(x), from= -3, to = 3)
+curve(y(x), from= -3, to = 3, ylim=c(-1/3, 4))
 sapply(c(-3:3 * 3/4), line.tan, dx=3, p=y, dp=dy)
 # sigmoidal
 curve(dy(x), add=T, col="green")
@@ -280,6 +286,7 @@ sapply(c(0:3 * 3/4), line.tan, dx=3, p=dy, dp=d2y, col="orange")
 # [not run]
 dy = k*x*cos(y)
 x*d2y + k*x^2*sin(y)*dy - dy # = 0
+# alternative: x*d2y - dy + 1/2 * k^2*x^3*sin(2*y) # = 0
 ### Solution:
 y = function(x, k=2, n=2) {
 	val = k*x^n / n;
@@ -342,4 +349,109 @@ sapply(c(-3:3 * 3/4), line.tan, dx=3, p=y, dp=dy, k=k, n=n)
 # non-sigmoidal
 curve(dy(x, k=k, n=n), add=T, col="green")
 sapply(c(-3:3 * 3/4), line.tan, dx=3, p=dy, dp=d2y, k=k, n=n, col="orange")
+
+
+### Integration by parts
+# n = 2
+x*d2y + k*x^2*sin(y)*dy - dy # = 0
+### I() =>
+x*dy - k*x^2*cos(y) + 2*k*I(x*cos(y)) - 2*y # = 0
+# x*dy = k*x^2*cos(y)
+k*x*I(cos(y)) - k*I(I(cos(y))) - y # = 0
+
+### I() =>
+x*dy - k*x^2*cos(y) + 2*k*x*I(cos(y)) - 2*k*I(I(cos(y))) - 2*y # = 0
+
+
+##################
+### Extensions ###
+
+### tan(y) = 1/2 * (e^(k/n*x^n + y) - e^(-k/n*x^n - y))
+# [not run]
+dy = (k*x^(n-1) + dy)*cos(y)
+# =>
+sin(y)^2*dy^2 = k*x^(n-1)*(k*x^(n-1) + 2*dy)
+#
+x*d2y - x*d2y*cos(y) + x*sin(y)*dy^2 + k*x^n*sin(y)*dy - (n-1)*dy # = 0
+### n = 2
+dy = (k*x + dy)*cos(y) # * y
+
+
+
+###########################
+###########################
+
+### Simple Fractions
+
+### y = e^(k*x) / x
+# [not run]
+x*dy = k*x*y - y
+### D2 =>
+x*d2y - k*x*dy + 2*dy - k*y # = 0
+### Variant 1:
+x*d2y + 2*dy - k^2*x*y # = 0
+### Variant 2:
+x^2*d2y + 2*x*dy - k^2*x^2*y # = 0
+x^2*d2y - k^2*x^2*y + 2*k*x*y - 2*y # = 0
+
+
+### Solution:
+y = function(x, k=1, n=1) {
+	xn = if(n == 1) x else x^n;
+	y = exp(k*x) / xn
+	# y = sapply(y, round0)
+	y = round0(y)
+	return(y)
+}
+dy = function(x, k=1, n=1, variant=0) {
+	y.x = y(x, k=k, n=n)
+	dp = (k*x - 1)*y.x;
+	div = x;
+	dp = ifelse(div != 0, dp / div, -Inf); # probably correct
+	return(dp)
+}
+d2y = function(x, k=1, n=1, variant=0) {
+	# variant = test equations for variants;
+	y.x = y(x, k=k, n=n)
+	dy.x = dy(x, k=k, n=n)
+	dp = if(variant == 0) { (k*x - 2)*dy.x + k*y.x; }
+	else if(variant == 1) { -(2*dy.x - k^2*x*y.x); }
+	else if(variant == 2) { (k^2*x^2 - 2*k*x + 2)*y.x; }
+	div = if(variant == 2) x^2 else x;
+	dp = ifelse(div != 0, dp / div, -Inf); # probably correct (check sign)
+	return(dp)
+}
+### Plot:
+k = 1;
+curve(y(x, k=k), from= -3, to = 3)
+sapply(c(-3:3 * 2/7), line.tan, dx=3, p=y, dp=dy, k=k)
+# non-sigmoidal
+curve(dy(x, k=k), add=T, col="green")
+sapply(c(-3:3 * 2/7), line.tan, dx=3, p=dy, dp=d2y, k=k, variant=2, col="orange")
+
+### k = 1/2
+k = 1/2;
+curve(y(x, k=k), from= -3, to = 3)
+sapply(c(-3:3 * 2/7), line.tan, dx=3, p=y, dp=dy, k=k)
+# non-sigmoidal
+curve(dy(x, k=k), add=T, col="green")
+sapply(c(-3:3 * 2/7), line.tan, dx=3, p=dy, dp=d2y, k=k, variant=1, col="orange")
+
+### k = -1
+k = -1;
+curve(y(x, k=k), from= -3, to = 3)
+sapply(c(-3:3 * 2/7), line.tan, dx=3, p=y, dp=dy, k=k)
+# non-sigmoidal
+curve(dy(x, k=k), add=T, col="green")
+sapply(c(-3:3 * 2/7), line.tan, dx=3, p=dy, dp=d2y, k=k, col="orange")
+
+### k = -3/2
+k = -3/2;
+curve(y(x, k=k), from= -3, to = 3)
+sapply(c(-3:3 * 2/7), line.tan, dx=3, p=y, dp=dy, k=k)
+# non-sigmoidal
+curve(dy(x, k=k), add=T, col="green")
+sapply(c(-3:3 * 2/7), line.tan, dx=3, p=dy, dp=d2y, k=k, variant=2, col="orange")
+
+
 
