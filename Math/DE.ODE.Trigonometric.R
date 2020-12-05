@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs - Trigonometric
 ###
-### draft v.0.2a-form
+### draft v.0.2b
 
 
 ### History
@@ -14,6 +14,9 @@
 ### Order 1 Non-Liniar:
 ### Trigonometric Variants
 ###
+### draft v.0.2b:
+# - based on solving for sin/cos(log(P(x))):
+#   (x+b)^2 * d2y + (x+b)*dy + y = 0;
 ### draft v.0.2a - v.0.2a-form: [2020-12-04]
 # - based on solving for sin/cos:
 #   (2*x + b) * d2y - 2*dy + (2*x + b)^3 * y = 0;
@@ -739,10 +742,72 @@ sapply(c(-5:7 * 3/7 - 1/2), line.tan, dx=1.5, p=dy, dp=d2y, b=b, n=n, col="orang
 
 ### D =>
 # P(x) * dy = dP * (a1*cos(log(P(x))) - a2*sin(log(P(x))))
-### D2 =>
-# P(x)^2 * d2y + P(x) * dp*dy = P(x)*d2P*(a1*cos(log(P(x))) - a2*sin(log(P(x)))) - dP^2 * y
+### D2 * P(x) =>
+# P(x)^2 * d2y + P(x) * dP*dy = P(x)*d2P(x)*(a1*cos(log(P(x))) - a2*sin(log(P(x)))) - dP(x)^2 * y
 ### Solve for sin(log(P(x))), cos(log(P(x))) using y & dy;
+# sin(log(P(x))) = (-a2*P*dy + a1*dP*y) / ((a1^2 + a2^2)*dP)
+# cos(log(P(x))) = ( a1*P*dy + a2*dP*y) / ((a1^2 + a2^2)*dP)
+(a1^2 + a2^2)*dP*(P(x)^2 * d2y + P(x)*dP*dy) =
+	P(x)*d2P(x)*(a[1]*(a[1]*P(x)*dy + a[2]*dP(x)*y) + a[2]*(a[2]*P(x)*dy - a[1]*dP(x)*y)) - (a1^2 + a2^2)*dP(x)^3 * y
+dP*P(x)^2 * d2y + P(x)*dP^2*dy - P(x)^2*d2P*dy + dP^3*y # = 0
 
-### TODO
+### Examples:
+### P(x) = x + b
+(x+b)^2 * d2y + (x+b)*dy + y # = 0
 
+### Solution:
+y = function(x, a=c(1, 1), FUN.list, ...) {
+	xlog = log(FUN.list[[1]](x, ...));
+	r = a[1]*sin(xlog) + a[2]*cos(xlog)
+	return(r)
+}
+dy = function(x, a=c(1, 1), FUN.list, ...) {
+	div = FUN.list[[1]](x, ...)
+	xlog = log(div);
+	dp = (a[1]*cos(xlog) - a[2]*sin(xlog)) * FUN.list[[2]](x, ...)
+	dp = ifelse(div != 0, dp / div, 0); # TODO: check;
+	dp = round0(dp)
+	return(dp)
+}
+d2y = function(x, a=c(1, 1), FUN.list, ...) {
+	y.x  =  y(x, a=a, FUN.list=FUN.list, ...)
+	dy.x = dy(x, a=a, FUN.list=FUN.list, ...)
+	Px = FUN.list[[1]](x, ...)
+	dP = FUN.list[[2]](x, ...); dPsq = dP^2;
+	d2P = FUN.list[[3]](x, ...)
+	#
+	div = - dP * Px^2;
+	dp  = Px*(dPsq - Px*d2P)*dy.x + dPsq*dP*y.x
+	dp = ifelse(div != 0, dp / div, d2P/Px*(a[1]*cos(log(Px)) - a[2]*sin(log(Px)))); # TODO: check!
+	return(dp)
+}
+P = function(x, b=c(1, 1)) {
+	x^2 + b[2]*x + b[1]
+}
+dP = function(x, b=c(1, 1)) {
+	2*x + b[2]
+}
+d2P = function(x, b=c(1, 1)) {
+	2
+}
+p.list = list(P, dP, d2P)
+### Plot:
+b = c(1, 1);
+curve(y(x, b=b, FUN.list=p.list), from= -3, to = 3, ylim=c(-2, 2))
+# oscillating function with local minima;
+# slightly shifted: + 1/2
+sapply(c(-5:7 * 3/7 - 1/2), FUN=line.tan, dx=2, p=y, dp=dy, FUN.list=p.list, b=b)
+# also sinusoidal:
+curve(dy(x, b=b, FUN.list=p.list), add=T, col="green")
+sapply(c(-5:7 * 3/7 - 1/2), line.tan, dx=1.5, p=dy, dp=d2y, FUN.list=p.list, b=b, col="orange")
+
+###
+b = c(3, -1);
+curve(y(x, b=b, FUN.list=p.list), from= -3, to = 3, ylim=c(-1, 1.5))
+# possible local maximum;
+# slightly shifted: ???
+sapply(c(-5:7 * 3/7 - 1/2), FUN=line.tan, dx=2, p=y, dp=dy, FUN.list=p.list, b=b)
+#
+curve(dy(x, b=b, FUN.list=p.list), add=T, col="green")
+sapply(c(-5:7 * 3/7 - 1/2), line.tan, dx=1.5, p=dy, dp=d2y, FUN.list=p.list, b=b, col="orange")
 
