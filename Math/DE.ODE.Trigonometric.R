@@ -6,22 +6,32 @@
 ### Differential Equations
 ### ODEs - Trigonometric
 ###
-### draft v.0.2b
+### draft v.0.2b-ex
 
 
 ### History
 
+### Order 1 Non-Liniar & Linear:
+### Trigonometric Variants
+
+### Order 1 Linear:
+### Trigonometric Variants
+###
+### draft v.0.2b - v.0.2b-ex:
+# - based on solving for sin/cos(log(P(x))):
+#   (x+b)^2 * d2y + (x+b)*dy + y = 0;
+# - more examples (based on generalization); [v.0.2b-ex]
+#   [are a special case of v.0.2a]
+### draft v.0.2a - v.0.2a-form: [2020-12-04]
+# - based on solving for sin/cos:
+#   (2*x+b) * d2y - 2*dy + (2*x+b)^3 * y = 0;
+#   [including partial generalization]
+# - added a more formal approach & generalization; [v.0.2a-form]
+#   dP*d2y - d2P*dy + dP^3 * y = 0; [full eq. in v.0.2b-gen]
+
 ### Order 1 Non-Liniar:
 ### Trigonometric Variants
 ###
-### draft v.0.2b:
-# - based on solving for sin/cos(log(P(x))):
-#   (x+b)^2 * d2y + (x+b)*dy + y = 0;
-### draft v.0.2a - v.0.2a-form: [2020-12-04]
-# - based on solving for sin/cos:
-#   (2*x + b) * d2y - 2*dy + (2*x + b)^3 * y = 0;
-#   [including partial generalization]
-# - added a more formal approach; [v.0.2a-form]
 ### draft v.0.1e - v.0.1g:
 # - solved:
 #   x^2*dy*d2y + x/(x+1) * dy^2 + (x+1)^2 * y*dy = 0;
@@ -663,6 +673,20 @@ sapply(c(1/3, 1/2, 1, 2.2), line.tan, dx=3, p=dy, dp=d2y, k=k, col="orange")
 ### D2 =>
 # d2y = d2P*(a1*cos(P(x)) - a2*sin(P(x))) - dP^2 * y
 ### Solve for sin(P(x)), cos(P(x)) using y & dy;
+# dP * sin(P(x)) = (-a2*dy + a1*dP*y) / (a1^2 + a2^2)
+# dP * cos(P(x)) = ( a1*dy + a2*dP*y) / (a1^2 + a2^2)
+### =>
+# (a1^2 + a2^2)*dP*d2y = d2P*(a1*(a1*dy + a2*dP*y) + a2*(a2*dy - a1*dP*y)) - (a1^2 + a2^2)*dP^3 * y
+dP*d2y - d2P*dy + dP^3 * y # = 0
+
+### Examples:
+### P(x) = x^2
+x*d2y - dy + 2*x^2 * y # = 0
+### P(x) = x^n => * x^(2-n)
+x*d2y - (n-1)*dy + n*x^n * y # = 0
+### P(x) = x^n + b*x
+(n*x^(n-1)+b)*d2y - n*(n-1)*x^(n-2)*dy + (n*x^(n-1)+b)^3 * y # = 0
+# [is detailed below]
 
 ### Example: P(x) = x^n + b*x;
 
@@ -676,6 +700,7 @@ d2y = - n*(n-1)*x^(n-2) * (a2*sin(x^n + b*x) - a1*cos(x^n + b*x)) +
 (a1^2 + a2^2)*(n*x^(n-1) + b) * d2y +
   + n*(n-1)*x^(n-2)*( - a[2]*(a[2]*dy(x) - a[1]*(n*x^(n-1) + b)*y(x)) - a[1]*(a[1]*dy(x) + a[2]*(n*x^(n-1) + b)*y(x))) +
   + (a[1]^2 + a[2]^2)*(n*x^(n-1) + b)^3 * y(x)
+### Eq:
 (n*x^(n-1) + b) * d2y - n*(n-1)*x^(n-2)*dy(x) + (n*x^(n-1) + b)^3 * y(x) # = 0
 ### Example: n = 2
 (2*x + b) * d2y(x, n=2) - 2*dy(x, n=2) + (2*x + b)^3 * y(x, n=2) # = 0
@@ -749,11 +774,18 @@ sapply(c(-5:7 * 3/7 - 1/2), line.tan, dx=1.5, p=dy, dp=d2y, b=b, n=n, col="orang
 # cos(log(P(x))) = ( a1*P*dy + a2*dP*y) / ((a1^2 + a2^2)*dP)
 (a1^2 + a2^2)*dP*(P(x)^2 * d2y + P(x)*dP*dy) =
 	P(x)*d2P(x)*(a[1]*(a[1]*P(x)*dy + a[2]*dP(x)*y) + a[2]*(a[2]*P(x)*dy - a[1]*dP(x)*y)) - (a1^2 + a2^2)*dP(x)^3 * y
+### Eq:
 dP*P(x)^2 * d2y + P(x)*dP^2*dy - P(x)^2*d2P*dy + dP^3*y # = 0
 
 ### Examples:
 ### P(x) = x + b
 (x+b)^2 * d2y + (x+b)*dy + y # = 0
+### P(x) = x^2 + b1*x + b0
+(2*x+b1)*(x^2+b1*x+b0)^2 * d2y + (x^2+b1*x+b0)*(2*x+b1)^2*dy - 2*(x^2+b1*x+b0)^2*dy + (2*x+b1)^3*y # = 0
+### P(x) = x^n + b0
+n*x^(n-1)*(x^n+b0)^2 * d2y + n^2*(x^n+b0)*x^(2*n-2)*dy - n*(n-1)*(x^n+b0)^2*x^(n-2)*dy + n^3*x^(3*n-3)*y # = 0 # * x^(2-n) / n
+x*(x^n+b0)^2 * d2y + n*x^n*(x^n+b0)*dy - (n-1)*(x^n+b0)^2*dy + n^2*x^(2*n-1)*y # = 0
+
 
 ### Solution:
 y = function(x, a=c(1, 1), FUN.list, ...) {
