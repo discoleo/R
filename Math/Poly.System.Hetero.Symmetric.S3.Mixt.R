@@ -7,7 +7,7 @@
 ### Heterogenous Symmetric S3:
 ### Mixt Type
 ###
-### draft v.0.1a-ext2
+### draft v.0.1b
 
 
 ### Heterogenous Symmetric
@@ -18,13 +18,16 @@
 
 ### History
 
+### draft v.0.1b: [07-12-2020]
+# - solved + robust:
+#   x*y^3 + y*z^3 + z*x^3 = R1;
 ### draft v.0.1a-ext1 - v.0.1a-ext2:
 # - Extensions:
 #   x*y^2 + y*z^2 + z*x^2 + b1*(x+y+z) = R1;
 #   x*y + x*z + y*z + b2*(x+y+z) = R2;
 ### draft v.0.1a:
 # - moved to new file
-#   from Poly.System.Hetero.Symmetric.S3.Mixt.R;
+#   from Poly.System.Hetero.Symmetric.S3.R;
 #
 #########################
 ### former branch v.0.1c:
@@ -49,7 +52,7 @@ library(pracma)
 
 ### x*y^n + y*z^n + z*x^n = R1
 
-### n = 2
+### Order 2: n = 2
 x*y^2 + y*z^2 + z*x^2 - R1 # = 0
 x*y + y*z + z*x - R2 # = 0
 x*y*z - R3 # = 0
@@ -233,4 +236,90 @@ poly.calc(x)
 
 err = 8 - 72*x + 60*x^2 - 42*x^3 + 60*x^4 - 12*x^5 + 31*x^6 + 9*x^7 + 21*x^8 + x^9
 round0(err)
+
+
+#########################
+#########################
+
+### x*y^n + y*z^n + z*x^n = R1
+
+### Order 3: n = 3
+x*y^3 + y*z^3 + z*x^3 - R1 # = 0
+x*y + y*z + z*x - R2 # = 0
+x*y*z - R3 # = 0
+
+### Eq 1: * x*z^3
+x^2*y^3*z^3 + x*y*z^6 + z^4*x^4 - R1*x*z^3 # = 0
+R3^2*y*z + R3*z^5 + x^4*z^4 - R1*x*z^3 # = 0
+# similar:
+R3^2*x*z + R3*x^5 + x^4*y^4 - R1*y*x^3 # = 0
+R3^2*x*y + R3*y^5 + y^4*z^4 - R1*z*y^3 # = 0
+
+### Sum =>
+R3^2*(x*y+x*z+y*z) + R3*(x^5+y^5+z^5) +
+	+ (x^4*y^4+x^4*z^4+y^4*z^4) - R1*(y*x^3+z*y^3+x*z^3) # = 0
+R3^2*R2 + R3*(S^5 - 5*R2*S^3 + 5*R3*S^2 + 5*R2^2*S  - 5*R2*R3) +
+	+ (x^4*y^4+x^4*z^4+y^4*z^4) - R1*(y*x^3+z*y^3+x*z^3) # = 0
+R3*S^5 - 5*R2*R3*S^3 + 5*R3^2*S^2 + 5*R2^2*R3*S +
+	+ (4*R2*R3^2 + R2^4 - 4*R2^2*R3*S + 2*R3^2*S^2) - R1*(y*x^3+z*y^3+x*z^3) - 4*R2*R3^2 # = 0
+R3*S^5 - 5*R2*R3*S^3 + 7*R3^2*S^2 + R2^2*R3*S +
+	- R1*(y*x^3+z*y^3+x*z^3) + R2^4 # = 0
+### Sum - R1*Initial_Eq =>
+R3*S^5 - 5*R2*R3*S^3 + 7*R3^2*S^2 + R2^2*R3*S +
+	- R1*(y*x^3+z*x^3+x*y^3+z*y^3+x*z^3+y*z^3) + R1^2 + R2^4 # = 0
+R3*S^5 - 5*R2*R3*S^3 + 7*R3^2*S^2 + R2^2*R3*S +
+	- R1*(R2*(S^2 - 2*R2) - R3*S) + R1^2 + R2^4 # = 0
+R3*S^5 - 5*R2*R3*S^3 + (7*R3^2 - R1*R2)*S^2 + (R2^2*R3 + R1*R3)*S +
+	+ R1^2 + 2*R1*R2^2 + R2^4 # = 0
+
+
+### Solution
+solve.ht3 = function(R, b=0) {
+	if(length(b) == 1 && b[1] == 0) {
+		coeff = c(R[3], 0, - 5*R[2]*R[3], (7*R[3]^2 - R[1]*R[2]),
+			(R[2]^2*R[3] + R[1]*R[3]), R[1]^2 + 2*R[1]*R[2]^2 + R[2]^4)
+	} else {
+		# TODO
+	}
+	if(length(b) > 1) {
+		# Ext 2:
+		# TODO
+	}
+	S = roots(coeff)
+	print(S)
+	b2 = if(length(b) > 1) b[2] else 0; # TODO: Ext 2;
+	x = sapply(S, function(x) roots(c(1,-x, R[2] - b2*x, -R[3])))
+	S = matrix(S, ncol=5, nrow=3, byrow=T)
+	yz = R[3]/x
+	yz.s = S - x
+	### robust:
+	if(R[1] == 0) {
+		# TODO
+	} else {
+		x3 = (R[3]*S^5 - 5*R[2]*R[3]*S^3 + 7*R[3]^2*S^2 + R[2]^2*R[3]*S + R[2]^4) / R[1]
+		yz.d = (x3 - R[1]) / (x^3 + yz*yz.s - x*(yz.s^2 - yz))
+	}
+	y = (yz.s + yz.d) / 2
+	z = yz.s - y
+	cbind(as.vector(x), as.vector(y), as.vector(z))
+}
+
+### Examples:
+
+R = c(1, 1, -2);
+sol = solve.ht3(R)
+x = sol[,1]; y = sol[,2]; z = sol[,3];
+
+### Test
+x*y^3 + y*z^3 + z*x^3 # - R[1] # = 0
+x*y + y*z + z*x # - R[2] # = 0
+x*y*z # - R[3] # = 0
+
+
+poly.calc(x)
+
+err = 32 + 80*x + 80*x^2 + 120*x^3 + 130*x^4 + 61*x^5 + 36*x^6 + 6*x^7 - 9.5*x^8 - 17*x^9 +
+	- 19*x^10 - 3*x^11 - 3.5*x^12 + x^15
+round0(err)
+
 
