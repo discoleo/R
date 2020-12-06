@@ -7,7 +7,7 @@
 ### Polynomial Systems:
 ### Heterogenous Symmetric S3
 ###
-### draft v.0.1c-pre-alpha
+### draft v.0.1c
 
 
 ### Heterogenous Symmetric
@@ -17,8 +17,9 @@
 
 ### History
 
-### draft v.0.1c-pre-alpha:
-# - first look at: x*y^2 + y*z^2 + z*x^2 = R1;
+### draft v.0.1c-pre-alpha - v.0.1c:
+# - first look & solved:
+#   x*y^2 + y*z^2 + z*x^2 = R1;
 ### draft v.0.1b - v.0.1b-fix:
 # - solved: x[i]^2 + b2*x[j] + b1*x[k];
 # - classical Polynomial (P8) (v.0.1b-clP; fixed in v.0.1b-fix);
@@ -1421,6 +1422,34 @@ R3*(x^3+y^3+z^3) + (x^3*y^3+x^3*z^3+y^3*z^3) +
 	- R1*((x^2+y^2+z^2)*(x+y+z) - (x^3+y^3+z^3)) + R1^2 + 3*R3^2 # = 0
 (R1+R3)*(x^3+y^3+z^3) + (x^3*y^3+x^3*z^3+y^3*z^3) +
 	- R1*((S^2 - 2*R2)*S) + R1^2 + 3*R3^2 # = 0
+(R1+R3)*(S^3 - 3*R2*S + 3*R3) + (R2^3 - 3*R3*(R2*S - R3)) +
+	- R1*((S^2 - 2*R2)*S) + R1^2 + 3*R3^2 # = 0
+R3*S^3 - (R1+6*R3)*R2*S + R1^2 + R2^3 + 9*R3^2 + 3*R1*R3 # = 0
 
-# TODO
+# Example
+
+R = c(1, 1, 1)
+S = roots(c(R[3], 0, - (R[1]+6*R[3])*R[2], R[1]^2 + R[2]^3 + 9*R[3]^2 + 3*R[1]*R[3]))
+x = sapply(S, function(x) roots(c(1,-x,R[2],-R[3])))
+S = matrix(S, ncol=3, nrow=3, byrow=T)
+yz = R[3]/x
+yz.s = S - x
+# TODO: sign of sqrt()
+yz.d = sqrt(yz.s^2 - 4*yz)
+yz.d = rbind(yz.d, -yz.d)
+yz.s = rbind(yz.s, yz.s)
+y = (yz.s + yz.d)/2
+z = (yz.s - yz.d)/2
+x = rbind(x, x)
+
+### Test
+x*y^2 + y*z^2 + z*x^2 # - R[1] # = 0
+x*y + y*z + z*x # - R[2] # = 0
+x*y*z # - R[3] # = 0
+
+poly.calc(x[1:3,])
+
+err = -1 + 3*x - 3*x^2 + 4*x^3 + x^4 - 4*x^5 + 11*x^6 - 4*x^7 + x^9
+round0(err)
+
 
