@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs - Trigonometric
 ###
-### draft v.0.2c
+### draft v.0.2d
 
 
 ### History
@@ -34,6 +34,10 @@
 ### Order 1 Non-Liniar:
 ### Trigonometric Variants
 ###
+### draft v.0.2d: [06-12-2020]
+# - generalization:
+#   P(y)*sin(P(y)) + cos(P(y)) = f(x);
+### ... [see Section on Liniar Fx]
 ### draft v.0.1e - v.0.1g:
 # - solved:
 #   x^2*dy*d2y + x/(x+1) * dy^2 + (x+1)^2 * y*dy = 0;
@@ -223,15 +227,36 @@ sapply(c(0:4/5, 0.9), line.tan, dx=1/5, p=dy, dp=d2y, col="orange")
 ### D =>
 y*dy*cos(y) - df # = 0
 # D2 =>
-df*y*d2y + 2*df*(dy)^2 - f*y*(dy)^3 - d2f*y*dy # = 0
+df*y*d2y - f*y*(dy)^3 + 2*df*(dy)^2 - d2f*y*dy # = 0
 ### Alternative Eq:
 # y*dy = df / cos(y)
 # needs also D3;
-df*y*d2y + 2*df^3/(y^2 - (f-cos(y))^2) - f*y*(dy)^3 - d2f*y*dy # = 0
+df*y*d2y - f*y*(dy)^3 + 2*df^3/(y^2 - (f-cos(y))^2) - d2f*y*dy # = 0
+
+### Generalization:
+### P(y)*sin(P(y)) + cos(P(y)) = f(x)
+### D =>
+# P*cos(P)*dP = df
+# P*sin(P) = f - df / (P*dP)
+### D2 =>
+P*cos(P)*d2P + cos(P)*dP^2 - P*sin(P)*dP^2 - d2f # = 0
+df/dP*d2P + df/P*dP - (f*dP - df/P)*dP - d2f # = 0
+df*P*d2P - f*P*dP^3 + 2*df*dP^2 - d2f*P*dP # = 0
 
 ### Examples:
+
+### Generalized Case:
+### P(y) = y^2
+2*df*y^2*(y*d2y + dy^2) - 8*f*y^5*dy^3 + 8*df*y^2*dy^2 - 2*d2f*y^3*dy # = 0
+df*(y*d2y + dy^2) - 4*f*y^3*dy^3 + 4*df*dy^2 - d2f*y*dy # = 0
+df*y*d2y - 4*f*y^3*dy^3 + 5*df*dy^2 - d2f*y*dy # = 0
+### P(y) = y^2; f(x) = x + b;
+y*d2y - 4*(x+b)*y^3*dy^3 + 5*dy^2 # = 0
+
+
+### Simple Case:
 # f = x + b, where b = constant;
-y*d2y + 2*(dy)^2 - (x + b)*y*(dy)^3 # = 0
+y*d2y - (x+b)*y*(dy)^3 + 2*(dy)^2 # = 0
 ### Solution:
 y = function(x, b) {
 	# root
@@ -269,6 +294,59 @@ sapply(c(-1, 1.3, 1.6, 1.8, 1.95), line.tan, dx=3, p=y, dp=dy, b=b)
 # spikes
 curve(dy(x, b=b), from= -3, to = 3, add=T, col="green")
 sapply(c(-1, 1.3, 1.6, 1.8, 1.95), line.tan, dx=3, p=dy, dp=d2y, b=b, col="orange")
+
+
+#####################
+### Generalized Case:
+# P(y) = y^2
+# f = x + b, where b = constant;
+y*d2y - 4*(x+b)*y^3*dy^3 + 5*dy^2 # = 0
+### Solution:
+y = function(x, b, n=2) {
+	# root
+	y.f = function(x, v) {
+		x = if(n == 1) x else x^n;
+		x*sin(x) + cos(x) - v - b;
+	}
+	dy.f = function(x, v) {
+		if(n == 1) return(x*cos(x));
+		xn = if(n == 1) x else x^n;
+		n*xn*xn/x*cos(xn);
+	}
+	x0.f = function(x) {
+		xb = x + b
+		x0 = if(xb >= 1 & xb <= pi/2) 3/4 else if(xb < 1) 1.5 else 2.5;
+		return(x0);
+	}
+	y = sapply(x, function(x) newtonRaphson(y.f, x0.f(x), dfun=dy.f, v=x)[[1]])
+	# if(n != 1) y = rootn(y, n)
+	y = sapply(y, round0)
+	return(y)
+}
+dy = function(x, b, y.x, n=2, dF=1) {
+	if(missing(y.x)) y.x = y(x, b=b, n=n);
+	dp = if(n == 1) dF else dF * y.x;
+	y.x = if(n == 1) y.x else y.x^n;
+	div = n * y.x * y.x * cos(y.x)
+	dp = ifelse(div != 0, dp / div, 1E+3); # TODO: needs correction
+	return(dp)
+}
+d2y = function(x, b, n=2) {
+	y.x = y(x, b=b, n=n)
+	dy.x = dy(x, b=b, y.x=y.x, n=n)
+	div = y.x
+	dp = 4*(x+b)*y.x^3*dy.x^3 - 5*dy.x^2;
+	dp = ifelse(div != 0, dp / div, -1); # TODO: needs correction!
+	return(dp)
+}
+###
+b = -1/2
+curve(y(x, b=b), from= -3, to = 3, ylim=c(-2,7))
+# oscillating/spikes (ECG-like) function with local minima;
+sapply(c(seq(1.4, 2.2, by=0.2) - 0.05), line.tan, dx=1.5, p=y, dp=dy, b=b)
+# spikes
+curve(dy(x, b=b), from= -3, to = 3, add=T, col="green")
+sapply(c(seq(1.4, 2.2, by=0.2) - 0.05), line.tan, dx=1.4, p=dy, dp=d2y, b=b, col="orange")
 
 
 #####################
@@ -636,11 +714,14 @@ dy = df * cos(f)
 dy^2 = df^2 * cos(f)^2
 dy^2 = df^2 * (1 - y^2)
 dy^2 + df^2 * y^2 - df^2 # = 0
+# D2 Alternative Eq:
+dP*d2y - d2P*dy + dP^3 * y # = 0
+# [see next Section]
 
 ### Examples:
 
 ### f = x + ln(x)
-dy^2 + ((x+1)/x)^2 * y^2 -  ((x+1)/x)^2 # = 0
+dy^2 + ((x+1)/x)^2 * y^2 - ((x+1)/x)^2 # = 0
 x^2 * dy^2 + (x+1)^2 * y^2 - (x+1)^2 # = 0
 ### Solution & Plot:
 y = function(x) {
