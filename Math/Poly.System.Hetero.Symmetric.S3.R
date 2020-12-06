@@ -7,7 +7,7 @@
 ### Polynomial Systems:
 ### Heterogenous Symmetric S3
 ###
-### draft v.0.1c
+### draft v.0.1c-exact
 
 
 ### Heterogenous Symmetric
@@ -17,8 +17,8 @@
 
 ### History
 
-### draft v.0.1c-pre-alpha - v.0.1c:
-# - first look & solved:
+### draft v.0.1c-pre-alpha - v.0.1c-exact:
+# - first look & solved + exact/robust solution: [v.0.1c-exact]
 #   x*y^2 + y*z^2 + z*x^2 = R1;
 ### draft v.0.1b - v.0.1b-fix:
 # - solved: x[i]^2 + b2*x[j] + b1*x[k];
@@ -1426,30 +1426,70 @@ R3*(x^3+y^3+z^3) + (x^3*y^3+x^3*z^3+y^3*z^3) +
 	- R1*((S^2 - 2*R2)*S) + R1^2 + 3*R3^2 # = 0
 R3*S^3 - (R1+6*R3)*R2*S + R1^2 + R2^3 + 9*R3^2 + 3*R1*R3 # = 0
 
-# Example
+### Solution
+solve.ht3 = function(R) {
+	S = roots(c(R[3], 0, - (R[1]+6*R[3])*R[2], R[1]^2 + R[2]^3 + 9*R[3]^2 + 3*R[1]*R[3]))
+	x = sapply(S, function(x) roots(c(1,-x,R[2],-R[3])))
+	S = matrix(S, ncol=3, nrow=3, byrow=T)
+	yz = R[3]/x
+	yz.s = S - x
+	### robust:
+	# x*y^2 - (x^2+yz)*y + (x^2+yz)*yz.s - R1
+	# x*y^2 - x*yz.s*y + x*yz = 0
+	# (x^2+yz - x*yz.s)*y + x*yz - (x^2+yz)*yz.s + R1 = 0
+	y = - (x*yz - (x^2+yz)*yz.s + R[1]) / (x^2+yz - x*yz.s)
+	z = yz.s - y
+	cbind(as.vector(x), as.vector(y), as.vector(z))
+}
+test.ht3 = function(x, y, z, R) {
+	if(missing(y)) {
+		y = x[,2]; z = x[,3]; x = x[,1];
+	}
+	### Test
+	err1 = x*y^2 + y*z^2 + z*x^2 # - R[1] # = 0
+	err2 = x*y + y*z + z*x # - R[2] # = 0
+	err3 = x*y*z # - R[3] # = 0
+	err = rbind(err1, err2, err3)
+	if( ! missing(R)) {
+		err = err - rep(R, each=length(x))
+	}
+	err = round0(err)
+	return(err)
+}
 
+### Examples
+
+###
 R = c(1, 1, 1)
-S = roots(c(R[3], 0, - (R[1]+6*R[3])*R[2], R[1]^2 + R[2]^3 + 9*R[3]^2 + 3*R[1]*R[3]))
-x = sapply(S, function(x) roots(c(1,-x,R[2],-R[3])))
-S = matrix(S, ncol=3, nrow=3, byrow=T)
-yz = R[3]/x
-yz.s = S - x
-# TODO: sign of sqrt()
-yz.d = sqrt(yz.s^2 - 4*yz)
-yz.d = rbind(yz.d, -yz.d)
-yz.s = rbind(yz.s, yz.s)
-y = (yz.s + yz.d)/2
-z = (yz.s - yz.d)/2
-x = rbind(x, x)
+sol = solve.ht3(R)
+x = sol[,1]; y = sol[,2]; z = sol[,3];
+
 
 ### Test
-x*y^2 + y*z^2 + z*x^2 # - R[1] # = 0
-x*y + y*z + z*x # - R[2] # = 0
-x*y*z # - R[3] # = 0
+test.ht3(x, y, z)
 
-poly.calc(x[1:3,])
+poly.calc(x)
 
 err = -1 + 3*x - 3*x^2 + 4*x^3 + x^4 - 4*x^5 + 11*x^6 - 4*x^7 + x^9
 round0(err)
 
+###
+R = c(0, 1, 1)
+sol = solve.ht3(R)
+
+### Test
+test.ht3(sol)
+
+poly.calc(sol[,1])
+x = sol[,1]
+err = -1 + 3*x - 3*x^2 + 4*x^3 - 3*x^5 + 7*x^6 - 3*x^7 + x^9
+round0(err)
+
+
+###############
+### Extensions:
+
+### x*y^2 + y*z^2 + z*x^2 + b1*(x+y+z) = R1
+
+# TODO
 
