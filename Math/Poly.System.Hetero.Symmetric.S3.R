@@ -7,7 +7,7 @@
 ### Polynomial Systems:
 ### Heterogenous Symmetric S3
 ###
-### draft v.0.1b-fix
+### draft v.0.1c-pre-alpha
 
 
 ### Heterogenous Symmetric
@@ -17,6 +17,8 @@
 
 ### History
 
+### draft v.0.1c-pre-alpha:
+# - first look at: x*y^2 + y*z^2 + z*x^2 = R1;
 ### draft v.0.1b - v.0.1b-fix:
 # - solved: x[i]^2 + b2*x[j] + b1*x[k];
 # - classical Polynomial (P8) (v.0.1b-clP; fixed in v.0.1b-fix);
@@ -520,7 +522,7 @@ solve.htS3L2 = function(b, R) {
 		y = (yz.sum + yz.diff)/2
 		z = (yz.sum - yz.diff)/2
 	} else {
-		# ERROR: wrong order in derivation
+		# Note: order in derivation is b[1]*y + b[2]*z;
 		y = (yz.sum * b[2] - yz.b.sum) / (b[2] - b[1])
 		z = yz.sum - y
 	}
@@ -606,7 +608,30 @@ coeff
 (- 16*b1*b2^4 - 16*b2^5)*x^5 +
 (16*b2^4)*x^6
 
-# x = roots(coeff)
+b1 = b[1]; b2 = b[2]
+coeff = c(
+	(- 64*R*b1*b2^7 + 80*R*b1^2*b2^6 - 64*R*b1^3*b2^5 - 16*R*b1^4*b2^4 - 16*R*b2^8 + 32*R^2*b1^2*b2^4 + 32*R^2*b2^6 - 16*R^3*b2^4 +
+	- 16*b1*b2^9 + 16*b1^2*b2^8 + 16*b1^4*b2^6 - 16*b1^5*b2^5 + 16*b1^6*b2^4 + 16*b2^10),
+	(32*R*b1^3*b2^4 + 32*R*b2^7 - 16*R^2*b1*b2^4 - 16*R^2*b2^5 + 16*b1*b2^8 - 16*b1^2*b2^7 - 16*b1^3*b2^6 + 16*b1^4*b2^5 - 16*b1^5*b2^4 - 16*b2^9),
+	(- 32*R*b1*b2^5 - 48*R*b1^2*b2^4 - 48*R*b2^6 + 48*R^2*b2^4 + 32*b1*b2^7 - 16*b1^2*b2^6 + 32*b1^3*b2^5 + 16*b1^4*b2^4 + 16*b2^8),
+	(32*R*b1*b2^4 + 32*R*b2^5 - 16*b1*b2^6 - 16*b1^2*b2^5 - 16*b1^3*b2^4 - 16*b2^7),
+	(- 48*R*b2^4 + 32*b1*b2^5 + 16*b1^2*b2^4 + 16*b2^6),
+	(- 16*b1*b2^4 - 16*b2^5), (16*b2^4)
+)
+coeff = rev(coeff)
+coeff
+
+x = roots(coeff)
+yz.bsum = R - x^2
+y = as.vector(sapply(1:length(x), function(id) roots(c(1, -b[1]^2/b[2], -R + b[2]*x[id] + b[1]/b[2]*yz.bsum[id]))))
+yz.bsum = rep(yz.bsum, each=2); x = rep(x, each=2);
+z = (yz.bsum - b[1]*y) / b[2]
+
+### Test
+x^2 + b[1]*y + b[2]*z
+y^2 + b[1]*z + b[2]*x
+z^2 + b[1]*x + b[2]*y
+
 # sapply(x, function(x) sum(x^(8:0) * coeff))
 # poly.calc(x[c(7,8)])
 # poly.calc(x[-c(7,8)])
@@ -621,7 +646,7 @@ coeff
 
 ##############
 ### Extension:
-# x^2 + s*x + b3*x*y*z + b2*y + b1*z
+# x^2 + s*x + b3*x*y*z + b2*y + b1*z = R
 
 ### Sum =>
 # S^2 - 2*E2 + 3*b3*E3 + (s+b1+b2)*S = 3*R
@@ -719,6 +744,38 @@ sol
 x^2 + s*x + b[3]*x*y*z + b[2]*y + b[1]*z
 y^2 + s*y + b[3]*x*y*z + b[2]*z + b[1]*x
 z^2 + s*z + b[3]*x*y*z + b[2]*x + b[1]*y
+
+
+#########################
+
+#########################
+### "Asymmetric" Variant:
+### Order 3
+### x[i]^3 + b1*x[j] + b2*x[k]
+
+# x^3 + b1*y + b2*z = R
+# y^3 + b1*z + b2*x = R
+# z^3 + b1*x + b2*y = R
+
+### Solution:
+
+### Sum =>
+# (x^3 + y^3 + z^3) + (b1+b2)*S - 3*R = 0
+# S^3 - 3*E2*S + 3*E3 + (b1+b2)*S - 3*R = 0
+# 3*E3 = -(S^3 - 3*E2*S + (b1+b2)*S - 3*R)
+
+### Sum(x[i]*P(x)) =>
+# (x^4 + y^4 + z^4) + (b1+b2)*E2 - R*S = 0
+# S^4 - 4*E2*S^2 + 4*E3*S + 2*E2^2 + (b1+b2)*E2 - R*S = 0
+
+### Eq 3:
+# (x^3 + b1*y + b1*z)^2 = (R + b1*z - b2*z)^2
+
+
+### Test
+x^3 + b[1]*y + b[2]*z
+y^3 + b[1]*z + b[2]*x
+z^3 + b[1]*x + b[2]*y
 
 
 #########################
@@ -1338,4 +1395,32 @@ b2^2*(x^4+y^4+z^4) - 2*b1*b2*(x^3+y^3+z^3) + (b1^2 - 2*b2*R)*(x^2+y^2+z^2) - 2*b
 # TODO: ...
 
 
+########################
+########################
+
+### x*y^n + y*z^n + z*x^n = R1
+
+### n = 2
+x*y^2 + y*z^2 + z*x^2 - R1 # = 0
+x*y + y*z + z*x - R2 # = 0
+x*y*z - R3 # = 0
+
+### Eq 1: * x
+x^2*y^2 + x*y*z^2 + z*x^3 - R1*x # = 0
+R3^2/z^2 + R3*z + z*x^3 - R1*x # = 0 # *z^2
+R3^2 + R3*z^3 + x^3*z^3 - R1*x*z^2 # = 0
+# similar:
+R3^2 + R3*x^3 + x^3*y^3 - R1*y*x^2 # = 0
+R3^2 + R3*y^3 + y^3*z^3 - R1*z*y^2 # = 0
+
+### Sum =>
+R3*(x^3+y^3+z^3) + (x^3*y^3+x^3*z^3+y^3*z^3) - R1*(x^2*y + y^2*z + x*z^2) + 3*R3^2 # = 0
+R3*(x^3+y^3+z^3) + (x^3*y^3+x^3*z^3+y^3*z^3) +
+	- R1*(x^2*y + x^2*z + x*y^2 + y^2*z + x*z^2 + y*z^2) + R1^2 + 3*R3^2 # = 0
+R3*(x^3+y^3+z^3) + (x^3*y^3+x^3*z^3+y^3*z^3) +
+	- R1*((x^2+y^2+z^2)*(x+y+z) - (x^3+y^3+z^3)) + R1^2 + 3*R3^2 # = 0
+(R1+R3)*(x^3+y^3+z^3) + (x^3*y^3+x^3*z^3+y^3*z^3) +
+	- R1*((S^2 - 2*R2)*S) + R1^2 + 3*R3^2 # = 0
+
+# TODO
 
