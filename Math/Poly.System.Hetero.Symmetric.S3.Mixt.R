@@ -7,7 +7,7 @@
 ### Heterogenous Symmetric S3:
 ### Mixt Type
 ###
-### draft v.0.2a
+### draft v.0.2b
 
 
 ### Heterogenous Symmetric
@@ -19,10 +19,11 @@
 
 ### History
 
-### draft v.0.2a: [08-12-2020]
+### draft v.0.2a - v.0.2b: [08-12-2020]
 # - Generalization:
 #   x^p*y^n + y^p*z^n + z^p*x^n = R1;
-# - first steps to solve: n = 3, p = 2;
+# - solved: n = 3, p = 2; [full in v.0.2b]
+# - TODO: robust special case;
 ### draft v.0.1c: [08-12-2020]
 # - full robust solution: using dS / dR1;
 ### draft v.0.1b: [07-12-2020]
@@ -387,8 +388,70 @@ y^5*z^5 + R3^3*z + R3^2*y^4 - R1*y^3*z^2 # = 0
 ### Sum =>
 R3^3*(x+y+z) + R3^2*(x^4+y^4+z^4) +
 	+ (x^5*y^5+x^5*z^5+y^5*z^5) - R1*(y^2*x^3+z^2*y^3+x^2*z^3) # = 0
+R3^3*S + R3^2*(S^4 - 4*R2*S^2 + 4*R3*S + 2*R2^2) +
+	+ (5*R2^2*R3^2 + R2^5 - 5*R2^3*R3*S - 5*R3^3*S + 5*R2*R3^2*S^2) +
+	- R1*(y^2*x^3+z^2*y^3+x^2*z^3) # = 0
+R3^2*S^4 + R2*R3^2*S^2 - 5*R2^3*R3*S +
+	- R1*(y^2*x^3+z^2*y^3+x^2*z^3) + R2^5 + 7*R2^2*R3^2 # = 0
 
-### TODO:
-# decompose Sum() - R1*(x^2*y^3 + y^2*z^3 + z^2*x^3) + R1^2 # = 0
+# Sum() - R1*(initial Eq) + R1^2 =>
+R3^2*S^4 + R2*R3^2*S^2 - 5*R2^3*R3*S +
+	- R1*(y^2*x^3+z^2*y^3+x^2*z^3 + x^2*y^3 + y^2*z^3 + z^2*x^3) +
+	+ R1^2 + R2^5 + 7*R2^2*R3^2 # = 0
+R3^2*S^4 + R2*R3^2*S^2 - 5*R2^3*R3*S +
+	- R1*((R2^2 - 2*R3*S)*S - R3*R2) +
+	+ R1^2 + R2^5 + 7*R2^2*R3^2 # = 0
+R3^2*S^4 + (2*R1*R3 + R2*R3^2)*S^2 - (R1*R2^2 + 5*R2^3*R3)*S +
+	+ R1^2 + R2^5 + 7*R2^2*R3^2 + R1*R2*R3 # = 0
 
+### Solution
+solve.ht3 = function(R, b=0) {
+	if(length(b) == 1 && b[1] == 0) {
+		coeff = c(R[3]^2, 0, (2*R[1]*R[3] + R[2]*R[3]^2), - (R[1]*R[2]^2 + 5*R[2]^3*R[3]),
+			R[1]^2 + R[2]^5 + 7*R[2]^2*R[3]^2 + R[1]*R[2]*R[3])
+	} else {
+		# TODO
+	}
+	if(length(b) > 1) {
+		# Ext 2:
+		# TODO
+	}
+	S = roots(coeff)
+	print(S)
+	b2 = if(length(b) > 1) b[2] else 0; # TODO: Ext 2;
+	x = sapply(S, function(x) roots(c(1,-x, R[2] - b2*x, -R[3])))
+	S = matrix(S, ncol=4, nrow=3, byrow=T)
+	yz = R[3]/x
+	yz.s = S - x
+	### robust:
+	if(R[1] == 0) {
+		# with chain rule!
+		# TODO
+		dS = - R[2]*S^2 + R[3]*S + 2*R[2]^2
+		x3 = - dS
+	} else {
+		x3 = (R[3]^2*S^4 + R[2]*R[3]^2*S^2 - 5*R[2]^3*R[3]*S + R[2]^5 + 7*R[2]^2*R[3]^2) / R[1]
+	}
+	yz.d = (x3 - R[1]) / (x^3*yz.s + yz^2 - x^2*(yz.s^2 - yz))
+	y = (yz.s + yz.d) / 2
+	z = yz.s - y
+	cbind(as.vector(x), as.vector(y), as.vector(z))
+}
+
+### Examples:
+
+R = c(1, 1, -1);
+sol = solve.ht3(R)
+x = sol[,1]; y = sol[,2]; z = sol[,3];
+
+### Test
+x^2*y^3 + y^2*z^3 + z^2*x^3 # - R[1] # = 0
+x*y + y*z + z*x # - R[2] # = 0
+x*y*z # - R[3] # = 0
+
+
+poly.calc(x)
+
+err = 1 + 4*x + 6*x^2 + 8*x^3 + 12*x^4 + 10*x^5 + 13*x^6 + 14*x^7 + 12*x^8 + 8*x^9 + 3*x^10 + x^12
+round0(err)
 
