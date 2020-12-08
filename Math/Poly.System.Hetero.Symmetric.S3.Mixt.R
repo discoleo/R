@@ -7,7 +7,7 @@
 ### Heterogenous Symmetric S3:
 ### Mixt Type
 ###
-### draft v.0.2b
+### draft v.0.2b-sp
 
 
 ### Heterogenous Symmetric
@@ -19,11 +19,11 @@
 
 ### History
 
-### draft v.0.2a - v.0.2b: [08-12-2020]
+### draft v.0.2a - v.0.2b-sp: [08-12-2020]
 # - Generalization:
 #   x^p*y^n + y^p*z^n + z^p*x^n = R1;
 # - solved: n = 3, p = 2; [full in v.0.2b]
-# - TODO: robust special case;
+# - [TODO][DONE]: robust special case; [v.0.2b-sp]
 ### draft v.0.1c: [08-12-2020]
 # - full robust solution: using dS / dR1;
 ### draft v.0.1b: [07-12-2020]
@@ -427,7 +427,7 @@ solve.ht3 = function(R, b=0) {
 	if(R[1] == 0) {
 		# with chain rule!
 		# TODO
-		dS = - R[2]*S^2 + R[3]*S + 2*R[2]^2
+		dS = 2*R[3]*S^2 - R[2]^2*S + R[2]*R[3]
 		x3 = - dS
 	} else {
 		x3 = (R[3]^2*S^4 + R[2]*R[3]^2*S^2 - 5*R[2]^3*R[3]*S + R[2]^5 + 7*R[2]^2*R[3]^2) / R[1]
@@ -455,3 +455,26 @@ poly.calc(x)
 err = 1 + 4*x + 6*x^2 + 8*x^3 + 12*x^4 + 10*x^5 + 13*x^6 + 14*x^7 + 12*x^8 + 8*x^9 + 3*x^10 + x^12
 round0(err)
 
+
+### Ex 2:
+
+R = c(0, 2, -1);
+sol = solve.ht3(R)
+x = sol[,1]; y = sol[,2]; z = sol[,3];
+
+### Test
+x^2*y^3 + y^2*z^3 + z^2*x^3 # - R[1] # = 0
+x*y + y*z + z*x # - R[2] # = 0
+x*y*z # - R[3] # = 0
+
+
+poly.calc(x)
+
+err = 1 + 8*x + 24*x^2 + 36*x^3 + 42*x^4 + 56*x^5 + 86*x^6 + 108*x^7 + 92*x^8 + 44*x^9 + 10*x^10 + x^12
+round0(err)
+
+
+###############
+### Extensions:
+
+### TODO: A1,A2, A3;
