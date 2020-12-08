@@ -7,7 +7,7 @@
 ### Heterogenous Symmetric S3:
 ### Mixt Type
 ###
-### draft v.0.1b
+### draft v.0.1c
 
 
 ### Heterogenous Symmetric
@@ -18,6 +18,8 @@
 
 ### History
 
+### draft v.0.1c: [08-12-2020]
+# - full robust solution: using dS / dR1;
 ### draft v.0.1b: [07-12-2020]
 # - solved + robust:
 #   x*y^3 + y*z^3 + z*x^3 = R1;
@@ -294,11 +296,14 @@ solve.ht3 = function(R, b=0) {
 	yz.s = S - x
 	### robust:
 	if(R[1] == 0) {
-		# TODO
+		# with chain rule!
+		# x3 = (5*R[3]*S^4 - 15*R[2]*R[3]*S^2 + 14*R[3]^2*S + R[2]^2*R[3]) # * dS/dR
+		dS = - R[2]*S^2 + R[3]*S + 2*R[2]^2
+		x3 = - dS
 	} else {
 		x3 = (R[3]*S^5 - 5*R[2]*R[3]*S^3 + 7*R[3]^2*S^2 + R[2]^2*R[3]*S + R[2]^4) / R[1]
-		yz.d = (x3 - R[1]) / (x^3 + yz*yz.s - x*(yz.s^2 - yz))
 	}
+	yz.d = (x3 - R[1]) / (x^3 + yz*yz.s - x*(yz.s^2 - yz))
 	y = (yz.s + yz.d) / 2
 	z = yz.s - y
 	cbind(as.vector(x), as.vector(y), as.vector(z))
