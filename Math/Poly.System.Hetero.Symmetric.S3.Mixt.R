@@ -7,17 +7,22 @@
 ### Heterogenous Symmetric S3:
 ### Mixt Type
 ###
-### draft v.0.1c
+### draft v.0.2a
 
 
 ### Heterogenous Symmetric
 ### Polynomial Systems: 3 Variables
 ### Mixt: Hetero + Symmetric
 
+
 #####################
 
 ### History
 
+### draft v.0.2a: [08-12-2020]
+# - Generalization:
+#   x^p*y^n + y^p*z^n + z^p*x^n = R1;
+# - first steps to solve: n = 3, p = 2;
 ### draft v.0.1c: [08-12-2020]
 # - full robust solution: using dS / dR1;
 ### draft v.0.1b: [07-12-2020]
@@ -51,6 +56,15 @@ library(pracma)
 ######################
 
 ### Mixt Systems Type 1
+
+### Generalization:
+### x^p*y^n + y^p*z^n + z^p*x^n
+
+################################
+
+##############
+### Simple ###
+### p = 1  ###
 
 ### x*y^n + y*z^n + z*x^n = R1
 
@@ -326,5 +340,55 @@ poly.calc(x)
 err = 32 + 80*x + 80*x^2 + 120*x^3 + 130*x^4 + 61*x^5 + 36*x^6 + 6*x^7 - 9.5*x^8 - 17*x^9 +
 	- 19*x^10 - 3*x^11 - 3.5*x^12 + x^15
 round0(err)
+
+
+### Ex 2:
+R = c(0, 2, -2);
+sol = solve.ht3(R)
+x = sol[,1]; y = sol[,2]; z = sol[,3];
+
+### Test
+x*y^3 + y*z^3 + z*x^3 # - R[1] # = 0
+x*y + y*z + z*x # - R[2] # = 0
+x*y*z # - R[3] # = 0
+
+poly.calc(x)
+
+err = 32 + 160*x + 320*x^2 + 400*x^3 + 400*x^4 + 272*x^5 + 104*x^6 + 8*x^7 - 48*x^8 - 48*x^9 +
+	- 44*x^10 - 16*x^11 - 4*x^12 + x^15
+round0(err)
+
+
+#############################
+#############################
+
+### Generalization:
+### x^p*y^n + y^p*z^n + z^p*x^n
+
+#####################
+### Higher Powers ###
+### p > 1         ###
+
+### p = 2
+### x^2*y^n + y^2*z^n + z^2*x^n = R1
+
+### Order 3: n = 3, p = 2
+x^2*y^3 + y^2*z^3 + z^2*x^3 - R1 # = 0
+x*y + y*z + z*x - R2 # = 0
+x*y*z - R3 # = 0
+
+### Eq 1: * x^3*y^2
+x^5*y^5 + x^3*y^5*z^3 + x^6*y^2*z^2 - R1*x^3*y^2 # = 0
+x^5*y^5 + R3^3*y + R3^2*x^4 - R1*x^3*y^2 # = 0
+# similar:
+x^5*z^5 + R3^3*x + R3^2*z^4 - R1*x^2*z^3 # = 0
+y^5*z^5 + R3^3*z + R3^2*y^4 - R1*y^3*z^2 # = 0
+
+### Sum =>
+R3^3*(x+y+z) + R3^2*(x^4+y^4+z^4) +
+	+ (x^5*y^5+x^5*z^5+y^5*z^5) - R1*(y^2*x^3+z^2*y^3+x^2*z^3) # = 0
+
+### TODO:
+# decompose Sum() - R1*(x^2*y^3 + y^2*z^3 + z^2*x^3) + R1^2 # = 0
 
 
