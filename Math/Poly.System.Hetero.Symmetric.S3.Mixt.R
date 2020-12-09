@@ -7,7 +7,7 @@
 ### Heterogenous Symmetric S3:
 ### Mixt Type
 ###
-### draft v.0.2b-sp
+### draft v.0.2c
 
 
 ### Heterogenous Symmetric
@@ -15,10 +15,15 @@
 ### Mixt: Hetero + Symmetric
 
 
-#####################
+###############
 
-### History
+###############
+### History ###
+###############
 
+### draft v.0.2c:
+# - added system with 2 hetero-symmetric equations:
+#   Order 2: trivial polynomials;
 ### draft v.0.2a - v.0.2b-sp: [08-12-2020]
 # - Generalization:
 #   x^p*y^n + y^p*z^n + z^p*x^n = R1;
@@ -44,6 +49,8 @@
 # - first look & solved + exact/robust solution: [v.0.1c-exact]
 #   x*y^2 + y*z^2 + z*x^2 = R1;
 
+
+####################
 ####################
 
 ### helper functions
@@ -54,9 +61,44 @@ library(pracma)
 # the functions are in the file:
 # Polynomials.Helper.R
 
-######################
+### other functions
 
-### Mixt Systems Type 1
+test.ht3 = function(x, y, z, R, n=2, p=1, b=0) {
+	if(missing(y)) {
+		y = x[,2]; z = x[,3]; x = x[,1];
+	}
+	### Test
+	x.sum = x + y + z
+	err1 = x^p*y^n + y^p*z^n + z^p*x^n + b[1]*x.sum
+	err2 = x*y + y*z + z*x + if(length(b) < 2) 0 else b[2]*x.sum
+	err3 = x*y*z + if(length(b) < 3) 0 else b[3]*x.sum
+	err = rbind(err1, err2, err3)
+	if( ! missing(R)) {
+		err = err - rep(R, each=length(x))
+	}
+	err = round0(err)
+	return(err)
+}
+test.ht3Dual = function(x, y, z, R, n=2, p=1, b=0) {
+	if(missing(y)) {
+		y = x[,2]; z = x[,3]; x = x[,1];
+	}
+	### Test
+	x.sum = x + y + z
+	err1 = x^p*y^n + y^p*z^n + z^p*x^n + b[1]*x.sum
+	err2 = x^p*z^n + y^p*x^n + z^p*y^n + if(length(b) < 2) 0 else b[2]*x.sum
+	err3 = x*y*z + if(length(b) < 3) 0 else b[3]*x.sum
+	err = rbind(err1, err2, err3)
+	if( ! missing(R)) {
+		err = err - rep(R, each=length(x))
+	}
+	err = round0(err)
+	return(err)
+}
+
+############################
+
+### Mixt Systems Type 1 ###
 
 ### Generalization:
 ### x^p*y^n + y^p*z^n + z^p*x^n
@@ -73,6 +115,8 @@ library(pracma)
 x*y^2 + y*z^2 + z*x^2 - R1 # = 0
 x*y + y*z + z*x - R2 # = 0
 x*y*z - R3 # = 0
+
+### Solution:
 
 ### Eq 1: * x
 x^2*y^2 + x*y*z^2 + z*x^3 - R1*x # = 0
@@ -168,10 +212,12 @@ round0(err)
 ###############
 ### Extensions:
 
-### Extension 1:
+### Extension A1:
 ### x*y^2 + y*z^2 + z*x^2 + b1*(x+y+z) = R1
-### Extension 2:
+### Extension A2:
 ### x*y + x*z + y*z + b2*(x+y+z) = R2;
+### Extension A3:
+### x*y*z + b3*(x+y+z) = R3; # TODO!
 
 ### * x*z^2 =>
 x^2*y^2*z^2 + x*y*z^4 + z^3*x^3 + b1*(x+y+z)*x*z^2 - R1*x*z^2 # = 0
@@ -426,7 +472,6 @@ solve.ht3 = function(R, b=0) {
 	### robust:
 	if(R[1] == 0) {
 		# with chain rule!
-		# TODO
 		dS = 2*R[3]*S^2 - R[2]^2*S + R[2]*R[3]
 		x3 = - dS
 	} else {
@@ -477,4 +522,99 @@ round0(err)
 ###############
 ### Extensions:
 
-### TODO: A1,A2, A3;
+### TODO: A1, A2, A3;
+
+
+#############################
+#############################
+
+###############
+### Dual Eq ###
+### p = 1   ###
+
+### x*y^n + y*z^n + z*x^n = R1
+### x*z^n + y*x^n + z*y^n = R2
+
+### Order 2: n = 2
+x*y^2 + y*z^2 + z*x^2 - R1 # = 0
+x*z^2 + y*x^2 + z*y^2 - R2 # = 0
+x*y*z - R3 # = 0
+
+### Solution:
+### Eq 1 + Eq 2 =.
+x*y^2 + y*z^2 + z*x^2 + x*z^2 + y*x^2 + z*y^2 - R1 - R2 # = 0
+E2*S - 3*R3 - R1 - R2 # = 0
+E2 = (R1 + R2 + 3*R3) / S
+
+### see Section "Simple System":
+R3*S^3 - (R1+6*R3)*E2*S + R1^2 + E2^3 + 9*R3^2 + 3*R1*R3 # = 0
+R3*S^3 - (R1+6*R3)*(R1 + R2 + 3*R3) + R1^2 + (3*R3 + R1 + R2)^3 / S^3 + 9*R3^2 + 3*R1*R3 # = 0
+R3*S^6 - ((R1+6*R3)*(R1 + R2 + 3*R3) - R1^2 - 9*R3^2 - 3*R1*R3)*S^3 + (R1 + R2 + 3*R3)^3 # = 0
+R3*S^6 - (R1*R2 + 6*R2*R3 + 9*R3^2 + 6*R1*R3)*S^3 + (R1 + R2 + 3*R3)^3 # = 0
+
+
+### Solution
+solve.ht3Dual = function(R, b=0) {
+	if(length(b) == 1 && b[1] == 0) {
+		coeff = c(R[3], 0, 0, - (R[1]*R[2] + 6*R[2]*R[3] + 9*R[3]^2 + 6*R[1]*R[3]), 0, 0, (R[1] + R[2] + 3*R[3])^3)
+	} else {
+		# TODO
+	}
+	if(length(b) > 1) {
+		# Ext 2:
+		# TODO
+	}
+	S = roots(coeff)
+	len = length(S)
+	print(S)
+	b2 = if(length(b) > 1) b[2] else 0; # TODO: Ext 2;
+	E2 = (R[1] + R[2] + 3*R[3]) # TODO: Ext 2;
+	if(any(S == 0)) {
+		print("Warning: Div by 0!")
+		E2.zero = - rootn(R[1]^2 + 9*R[3]^2 + 3*R[1]*R[3], 3);
+		E2 = ifelse(S == 0, E2.zero, E2 / S);
+		x = sapply(seq(length(S)), function(id) roots(c(1, -S[id], E2[id], -R[3])))
+		len = length(S)
+	} else {
+		x = sapply(S, function(x) roots(c(1,-x, E2 / x, -R[3])))
+	}
+	S = matrix(S, ncol=len, nrow=3, byrow=T)
+	yz = R[3]/x
+	yz.s = S - x
+	### robust:
+	yz.d = (R[2] - R[1]) / (x^2 + yz - x*yz.s)
+	y = (yz.s + yz.d) / 2
+	z = yz.s - y
+	cbind(as.vector(x), as.vector(y), as.vector(z))
+}
+
+### Examples:
+
+R = c(1, 3, -1);
+sol = solve.ht3Dual(R)
+x = sol[,1]; y = sol[,2]; z = sol[,3];
+
+### Test
+test.ht3Dual(x, y, z)
+
+poly.calc(x)
+
+err = 1 - 37*x^6 + 76*x^9 - 37*x^12 + x^18 # trivial;
+round0(err)
+
+
+### Ex 2:
+R = c(1, 2, -1);
+sol = solve.ht3Dual(R)
+x = sol[,1]; y = sol[,2]; z = sol[,3];
+
+### Test
+test.ht3Dual(x, y, z)
+
+# there are some issues!
+poly.calc(x[1:9]^3)
+poly.calc(x[10:18])
+
+err = 1 + 3*x^3 - 4*x^6 + x^9 # trivial;
+round0(err)
+
