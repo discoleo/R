@@ -7,7 +7,7 @@
 ### Heterogenous Symmetric S3:
 ### Mixt Type
 ###
-### draft v.0.2c
+### draft v.0.2c-ord3
 
 
 ### Heterogenous Symmetric
@@ -21,9 +21,11 @@
 ### History ###
 ###############
 
-### draft v.0.2c:
+### draft v.0.2c - v.0.2c-ord3:
 # - added system with 2 hetero-symmetric equations:
 #   Order 2: trivial polynomials;
+#   Order 3: intermediary polynomial of order 13;
+# - TODO: robust roots!
 ### draft v.0.2a - v.0.2b-sp: [08-12-2020]
 # - Generalization:
 #   x^p*y^n + y^p*z^n + z^p*x^n = R1;
@@ -306,6 +308,7 @@ round0(err)
 
 ### x*y^n + y*z^n + z*x^n = R1
 
+############
 ### Order 3: n = 3
 x*y^3 + y*z^3 + z*x^3 - R1 # = 0
 x*y + y*z + z*x - R2 # = 0
@@ -535,6 +538,7 @@ round0(err)
 ### x*y^n + y*z^n + z*x^n = R1
 ### x*z^n + y*x^n + z*y^n = R2
 
+############
 ### Order 2: n = 2
 x*y^2 + y*z^2 + z*x^2 - R1 # = 0
 x*z^2 + y*x^2 + z*y^2 - R2 # = 0
@@ -609,7 +613,88 @@ sol = solve.ht3Dual(R)
 x = sol[,1]; y = sol[,2]; z = sol[,3];
 
 ### Test
-test.ht3Dual(x, y, z)
+test.ht3Dual(x, y, z, n=2)
+
+# there are some issues!
+poly.calc(x[1:9]^3)
+poly.calc(x[10:18])
+
+err = 1 + 3*x^3 - 4*x^6 + x^9 # trivial;
+round0(err)
+
+
+##################
+
+############
+### Order 2: n = 3
+x*y^3 + y*z^3 + z*x^3 - R1 # = 0
+x*z^3 + y*x^3 + z*y^3 - R2 # = 0
+x*y*z - R3 # = 0
+
+### Solution:
+### Eq 1 + Eq 2 =>
+x*y^3 + y*z^3 + z*x^3 + x*z^3 + y*x^3 + z*y^3 - R1 - R2 # = 0
+E2*(S^2 - 2*E2) - R3*S - R1 - R2 # = 0
+2*E2^2 - E2*S^2 + R3*S + R1 + R2 # = 0
+# E2 = (S^2 +/- sqrt(Det))/4
+
+### see Section "Simple System":
+R3*S^5 - 5*E2*R3*S^3 + (7*R3^2 - R1*E2)*S^2 + (E2^2*R3 + R1*R3)*S +
+	+ R1^2 + 2*R1*E2^2 + E2^4 # = 0
+- 128*R1*R2 + 64*R1^2 + 64*R2^2 - 32*Dsq*R1*S^2 - 32*Dsq*R2*S^2 + 1728*R3^2*S^2 - 320*Dsq*R3*S^3 +
+	- 64*R1*S^4 - 64*R2*S^4 - 96*R3*S^5 + 8*Dsq*S^6 + 8*S^8 # = 0
+4*Dsq*R1*S^2 + 4*Dsq*R2*S^2 + 40*Dsq*R3*S^3 - Dsq*S^6 =
+	S^8 - 12*R3*S^5 - 8*R1*S^4 - 8*R2*S^4 + 216*R3^2*S^2 - 16*R1*R2 + 8*R1^2 + 8*R2^2
+R3*S^13 - 26*R3^2*S^10 - (13*R1*R3 + 13*R2*R3)*S^9 - R1*R2*S^8 + 119*R3^3*S^7 +
+	+ (186*R1*R3^2 + 186*R2*R3^2)*S^6 + (90*R1*R2*R3 + 39*R1^2*R3 + 39*R2^2*R3)*S^5 +
+	+ (8*R1*R2^2 + 8*R1^2*R2 + 729*R3^4)*S^4 +
+	(- 108*R1*R2*R3^2 + 54*R1^2*R3^2 + 54*R2^2*R3^2)*S^2 +
+	(- 4*R1*R2^3 + 6*R1^2*R2^2 - 4*R1^3*R2 + R1^4 + R2^4)
+
+
+### Solution
+solve.ht3Dual = function(R, b=0, sign=1) {
+	if(length(b) == 1 && b[1] == 0) {
+		coeff = c(
+			R[3], 0, 0, - 26*R[3]^2, - (13*R[1]*R[3] + 13*R[2]*R[3]), - R[1]*R[2], 119*R[3]^3,
+			(186*R[1]*R[3]^2 + 186*R[2]*R[3]^2), (90*R[1]*R[2]*R[3] + 39*R[1]^2*R[3] + 39*R[2]^2*R[3]),
+			(8*R[1]*R[2]^2 + 8*R[1]^2*R[2] + 729*R[3]^4), 0,
+			(- 108*R[1]*R[2]*R[3]^2 + 54*R[1]^2*R[3]^2 + 54*R[2]^2*R[3]^2), 0,
+			(- 4*R[1]*R[2]^3 + 6*R[1]^2*R[2]^2 - 4*R[1]^3*R[2] + R[1]^4 + R[2]^4))
+	} else {
+		# TODO
+	}
+	if(length(b) > 1) {
+		# Ext 2:
+		# TODO
+	}
+	S = roots(coeff)
+	len = length(S)
+	print(S)
+	b2 = if(length(b) > 1) b[2] else 0; # TODO: Ext 2;
+	# TODO: robust
+	E2 = (S^2 + sign*sqrt(S^4 - 8*R[3]*S - 8*R[1] - 8*R[2]))/4 # TODO: "-" + Ext 2;
+	#
+	x = sapply(seq(length(S)), function(id) roots(c(1, -S[id], E2[id], -R[3])))
+	S = matrix(S, ncol=len, nrow=3, byrow=T)
+	### TODO: Div by 0
+	yz = R[3]/x
+	yz.s = S - x
+	### robust:
+	yz.d = (R[2] - R[1]) / (x^3 + yz*yz.s - x*(yz.s^2 - yz))
+	y = (yz.s + yz.d) / 2
+	z = yz.s - y
+	cbind(as.vector(x), as.vector(y), as.vector(z))
+}
+
+### Examples:
+
+R = c(1, 3, -1);
+sol = solve.ht3Dual(R, sign=-1)
+x = sol[,1]; y = sol[,2]; z = sol[,3];
+
+### Test
+test.ht3Dual(x, y, z, n=3)
 
 # there are some issues!
 poly.calc(x[1:9]^3)
