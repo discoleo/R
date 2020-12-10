@@ -7,7 +7,7 @@
 ### Heterogenous Symmetric S3:
 ### Mixt Type
 ###
-### draft v.0.2c-ord3
+### draft v.0.2c-robust
 
 
 ### Heterogenous Symmetric
@@ -21,11 +21,11 @@
 ### History ###
 ###############
 
-### draft v.0.2c - v.0.2c-ord3:
+### draft v.0.2c - v.0.2c-robust:
 # - added system with 2 hetero-symmetric equations:
 #   Order 2: trivial polynomials;
-#   Order 3: intermediary polynomial of order 13;
-# - TODO: robust roots!
+#   Order 3: intermediary polynomial of order 13; [v.0.2c-ord3]
+# - [DONE]: fixed robust roots! [v.0.2c-robust]
 ### draft v.0.2a - v.0.2b-sp: [08-12-2020]
 # - Generalization:
 #   x^p*y^n + y^p*z^n + z^p*x^n = R1;
@@ -626,7 +626,7 @@ round0(err)
 ##################
 
 ############
-### Order 2: n = 3
+### Order 3: n = 3
 x*y^3 + y*z^3 + z*x^3 - R1 # = 0
 x*z^3 + y*x^3 + z*y^3 - R2 # = 0
 x*y*z - R3 # = 0
@@ -650,6 +650,13 @@ R3*S^13 - 26*R3^2*S^10 - (13*R1*R3 + 13*R2*R3)*S^9 - R1*R2*S^8 + 119*R3^3*S^7 +
 	+ (8*R1*R2^2 + 8*R1^2*R2 + 729*R3^4)*S^4 +
 	(- 108*R1*R2*R3^2 + 54*R1^2*R3^2 + 54*R2^2*R3^2)*S^2 +
 	(- 4*R1*R2^3 + 6*R1^2*R2^2 - 4*R1^3*R2 + R1^4 + R2^4)
+### 2*E2^2 = E2*S^2 - R3*S - R1 - R2
+R3*S^5 - 5*E2*R3*S^3 + (7*R3^2 - R1*E2)*S^2 + (E2^2*R3 + R1*R3)*S +
+	+ R1^2 + 2*R1*E2^2 + E2^4 # = 0
+R3*S^5 - 5*E2*R3*S^3 + (7*R3^2 - R1*E2)*S^2 + (1/2*(E2*S^2 - R3*S - R1 - R2)*R3 + R1*R3)*S +
+	+ R1^2 + R1*(E2*S^2 - R3*S - R1 - R2) + 1/4 * (E2*S^2 - R3*S - R1 - R2)^2 # = 0
+E2*(S^6 - 40*R3*S^3 - 4*S^2*(R1 + R2)) +
+	7*R3*S^5 - (R1 + R2)*S^4 + 54*R3^2*S^2 + 2*(R1 - R2)^2 # = 0
 
 
 ### Solution
@@ -672,8 +679,11 @@ solve.ht3Dual = function(R, b=0, sign=1) {
 	len = length(S)
 	print(S)
 	b2 = if(length(b) > 1) b[2] else 0; # TODO: Ext 2;
-	# TODO: robust
-	E2 = (S^2 + sign*sqrt(S^4 - 8*R[3]*S - 8*R[1] - 8*R[2]))/4 # TODO: "-" + Ext 2;
+	# TODO: Ext 2;
+	# E2 = (S^2 + sign*sqrt(S^4 - 8*R[3]*S - 8*R[1] - 8*R[2]))/4
+	# robust
+	div = - (S^6 - 40*R[3]*S^3 - 4*S^2*(R[1] + R[2]));
+	E2 = (7*R[3]*S^5 - (R[1] + R[2])*S^4 + 54*R[3]^2*S^2 + 2*(R[1] - R[2])^2) / div
 	#
 	x = sapply(seq(length(S)), function(id) roots(c(1, -S[id], E2[id], -R[3])))
 	S = matrix(S, ncol=len, nrow=3, byrow=T)
@@ -696,10 +706,25 @@ x = sol[,1]; y = sol[,2]; z = sol[,3];
 ### Test
 test.ht3Dual(x, y, z, n=3)
 
-# there are some issues!
-poly.calc(x[1:9]^3)
-poly.calc(x[10:18])
+# order 39
+round0.p(poly.calc(x))
 
-err = 1 + 3*x^3 - 4*x^6 + x^9 # trivial;
+# order 39
+err = 1 + 5*x^3 - 6*x^4 + 10*x^6 - 9*x^7 + 9*x^8 + 11*x^9 - 41*x^10 + 4*x^11 - 52*x^12 + 168*x^13 +
+	+ 100*x^14 + 20*x^15 - 65*x^16 - 41*x^17 + 28*x^18 + 250*x^19 + 85*x^20 - 27*x^21 - 25*x^22 +
+	+ 3*x^23 + 33*x^24 + 65*x^25 - 54*x^26 - 30*x^27 + 3*x^28 - x^30 - 16*x^32 - 4*x^33 + 3*x^34 + x^39
 round0(err)
+
+
+### Ex 2:
+R = c(0, -1, -1);
+sol = solve.ht3Dual(R, sign=-1)
+x = sol[,1]; y = sol[,2]; z = sol[,3];
+
+### Test
+test.ht3Dual(x, y, z, n=3)
+
+# order 39
+round0.p(poly.calc(x))
+
 
