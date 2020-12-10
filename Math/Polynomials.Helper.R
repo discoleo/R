@@ -1,6 +1,9 @@
-
-
-
+########################
+###
+### Leonard Mada
+### [the one and only]
+###
+### Helper Functions
 
 
 #######################
@@ -10,6 +13,10 @@ library(pracma)
 
 ### helper Functions
 
+rootn = function(r, n) {
+	if(n %% 2 == 0) return(r^(1/n)); # TODO: complex?
+	ifelse( (Im(r) == 0 & Re(r) >= 0), r^(1/n), - (-r)^(1/n) )
+}
 unity = function(n=3, all=TRUE) {
 	m = complex(re=cos(2*pi/n), im=sin(2*pi/n))
 	if(all) {
