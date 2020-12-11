@@ -7,7 +7,7 @@
 ### Heterogenous Symmetric S3:
 ### Mixt Type
 ###
-### draft v.0.2d
+### draft v.0.2e
 
 
 ### Heterogenous Symmetric
@@ -26,6 +26,9 @@
 ### History ###
 ###############
 
+### draft v.02.e:
+# - combined variant:
+#   (x*y^2 + y*z^2 + z*x^2) - a*(x*z^2 + y*x^2 + z*y^2) = R1;
 ### draft v.0.2d:
 # - Extensions to the Order 2 system:
 #   M3 extension; [v.0.2d]
@@ -696,6 +699,77 @@ round0(err)
 ### TODO: R1 == R2;
 
 
+############
+### Order 2: n = 2
+### Combined Variant
+(x*y^2 + y*z^2 + z*x^2) - b*(x*z^2 + y*x^2 + z*y^2) - R1 # = 0
+x*y + x*z + y*z - R2 # = 0
+x*y*z - R3 # = 0
+
+### Solution:
+(b+1)*(x*y^2 + y*z^2 + z*x^2) - b*(E2*S - 3*E3) - R1 # = 0
+(b+1)*(x*z^2 + y*x^2 + z*y^2) - (E2*S - 3*E3) + R1 # = 0
+# =>
+R3*(x^3+y^3+z^3) + (x^3*y^3+x^3*z^3+y^3*z^3) +
+	- 1/(b+1) * (b*(E2*S - 3*E3) + R1)*(x^2*y + y^2*z + x*z^2) + 3*R3^2 # = 0
+R3*(S^3 - 3*E2*S + 3*E3) + (R2^3 - 3*R3*(R2*S - R3)) +
+	- 1/(b+1) * (b*(E2*S - 3*E3) + R1)*(x^2*y + y^2*z + x*z^2) + 3*R3^2 # = 0
+R3*S^3 - 6*R2*R3*S + R2^3 + 9*R3^2 +
+	- 1/(b+1) * (b*(E2*S - 3*E3) + R1)*(x^2*y + y^2*z + x*z^2) # = 0
+R3*S^3 - 6*R2*R3*S + R2^3 + 9*R3^2 +
+	- 1/(b+1)^2 * (b*(E2*S - 3*E3) + R1)*(E2*S - 3*E3 - R1) # = 0
+(b+1)^2*R3*S^3 - (b+1)^2*6*R2*R3*S + (b+1)^2*R2^3 + 9*(b+1)^2*R3^2 +
+	- (b*(E2*S - 3*E3) + R1)*(E2*S - 3*E3 - R1) # = 0
+(b+1)^2*R3*S^3 - (b+1)^2*6*R2*R3*S + (b+1)^2*R2^3 + 9*(b+1)^2*R3^2 +
+	- b*(R2*S - 3*R3)^2 + (b-1)*R1*(R2*S - 3*R3) + R1^2 # = 0
+(b+1)^2*R3*S^3 - b*R2^2*S^2 - 6*(b+1)^2*R2*R3*S + 6*b*R2*R3*S + (b-1)*R1*R2*S +
+	+ R1^2 + (b+1)^2*R2^3 + 9*((b+1)^2-b)*R3^2 - 3*(b-1)*R1*R3 # = 0
+
+
+### Solution
+solve.ht3Combi = function(R, a, b=0) {
+	if(length(b) == 1 && b[1] == 0) {
+		coeff = c((a+1)^2*R[3], - a*R[2]^2, - 6*(a+1)^2*R[2]*R[3] + 6*a*R[2]*R[3] + (a-1)*R[1]*R[2],
+			R[1]^2 + (a+1)^2*R[2]^3 + 9*((a+1)^2-a)*R[3]^2 - 3*(a-1)*R[1]*R[3])
+	} else {
+		# TODO
+		print("Not yet implemented!")
+	}
+	S = roots(coeff)
+	len = length(S)
+	print(S)
+	b2 = if(length(b) > 1) b[2] else 0; # Ext 2;
+	x = sapply(S, function(x) roots(c(1, -x, R[2] - b2*x, -R[3])))
+	S = matrix(S, ncol=len, nrow=3, byrow=T)
+	yz = R[3]/x
+	yz.s = S - x
+	### robust:
+	R1A = (a*(R[2]*S - 3*R[3]) + R[1]) / (a+1) # TODO: a = -1
+	R1B = ((R[2]*S - 3*R[3]) - R[1]) / (a+1) # TODO: a = -1
+	yz.d = - (R1A - R1B) / (x^2 + yz - x*yz.s)
+	y = (yz.s + yz.d)/2
+	z = yz.s - y
+	cbind(as.vector(x), as.vector(y), as.vector(z))
+}
+
+### Example:
+a = 1
+R = c(1,1,1)
+sol = solve.ht3Combi(R, a=a)
+x = sol[,1]; y = sol[,2]; z = sol[,3];
+
+### Test
+(x*y^2 + y*z^2 + z*x^2) - a*(x*z^2 + y*x^2 + z*y^2) # - R[1] # = 0
+x*y + x*z + y*z # - R[2] # = 0
+x*y*z # - R[3] # = 0
+
+round0.p(poly.calc(x))
+
+err = -1 + 3*x - 3.25*x^2 + 4.5*x^3 - 1.75*x^4 - x^5 + 4.5*x^6 - 1.5*x^7 - 0.25*x^8 + x^9
+round0(err)
+
+
+##################
 ##################
 
 ############
