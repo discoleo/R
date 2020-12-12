@@ -7,7 +7,7 @@
 ### Asymmetric S3:
 ### Composed from Simpler Subsystems
 ###
-### draft v.0.1b-comm
+### draft v.0.1c
 
 
 ##########################
@@ -20,10 +20,10 @@
 ###############
 ### History ###
 
-### draft v.0.1b - v.0.1b-comm:
-# - first 2 sytems based on:
-#   Sys 1: x^2 + y^2 + z^2 = R1;
-# - added more comments, structure;
+### draft v.0.1b - v.0.1c:
+# - first 3 sytems based on:
+#   Sys 1: x^2 + y^2 + z^2 = R1; [v.0.1a - v.0.1c]
+# - added more comments, structure; [v.0.1b-comm]
 
 
 #################################
@@ -173,17 +173,73 @@ poly.calc(x[seq(1,47, by=2)])
 ###############################
 ###############################
 
-### TODO:
-3*x^2 + 3*y^2 + 3*z^2 - 2*y*z + 2*x*y + 2*x*z
-3*x^2 - y^2 - z^2 + 2*y*z + 2*x*y + 2*x*z
-x^3 - y^3 - z^3 + x^2*y + x^2*z - x*y^2 + y^2*z + y*z^2 - x*z^2 + 2*x*y*z
+### Symmetric[3, 2] o Assymetric:
+### Sys 1: => {x1, x2, x3}
+# x^2 + y^2 + z^2 = R1;
+### Sys 2:
+# x+y+z = x1
+# x-y+z = x2
+# x+y-z = x3
+
+### Entangled system:
+3*x^2 + 3*y^2 + 3*z^2 + 2*x*y + 2*x*z - 2*y*z - R[1]
+3*x^2 - y^2 - z^2 + 2*x*y + 2*x*z + 2*y*z - R[2]
+x^3 - y^3 - z^3 + x^2*y + x^2*z - x*y^2 + y^2*z + y*z^2 - x*z^2 + 2*x*y*z - R[3]
 
 ### Diff: [1] - [2]
 y^2 + z^2 - y*z - (R[1]-R[2])/4 # = 0
 # Eq 2 =>
 3*x^2 + 2*x*y + 2*x*z + y*z - (R[1] + 3*R[2])/4 # = 0
+# Eq 3 =>
+x^3 + x^2*y + x^2*z - x*y^2 + y^2*z + y*z^2 - x*z^2 + 2*x*y*z - (y+z)*(R[1] - R[2])/4 - R[3] # = 0
+
+### TODO:
+# - transform system into more compact equations;
+
+### Solution:
+solve.sysEnt = function(R, b) {
+	### Symmetric System: Order 2
+	S = sqrt(R[1] + 2*R[2])
+	S = c(S, -S)
+	len = length(S)
+	### x123
+	x = sapply(S, function(x) roots(c(1, -x, R[2], -R[3])))
+	S = matrix(S, ncol=len, nrow=3, byrow=T)
+	# y, z: robust
+	yz.s = S - x; yz = R[2] - x*yz.s
+	yz.d = sqrt(yz.s^2 - 4*yz)
+	y = (yz.s + yz.d) / 2;
+	z = yz.s - y;
+	x = as.vector(rep(x, 2)); y2 = c(y, z); z = as.vector(c(z, y)); y = as.vector(y2);
+	### final subsystem
+	
+	return(cbind(x=(y+z)/2, y=(x-y)/2, z=(x-z)/2))
+}
+test = function(x, y, z, R) {
+	err1 = 3*x^2 + 3*y^2 + 3*z^2 + 2*x*y + 2*x*z - 2*y*z
+	err2 = 3*x^2 - y^2 - z^2 + 2*x*y + 2*x*z + 2*y*z
+	err3 = x^3 - y^3 - z^3 + x^2*y + x^2*z - x*y^2 + y^2*z + y*z^2 - x*z^2 + 2*x*y*z
+	err = rbind(err1, err2, err3)
+	if( ! missing(R)) {
+		# err = sapply(seq(nrow(err)), function(id) err[id,] - R[id])
+		# err = t(err) # which is better?
+		err = sapply(seq(ncol(err)), function(id) err[,id] - R)
+	}
+	round0(err)
+}
+
+### Solution:
+R = c(2, 1, -1)
+
+sol = solve.sysEnt(R)
+x = sol[,1]; y = sol[,2]; z = sol[,3]
+
+### Test
+test(x, y, z)
 
 
+
+#########
 ### TODO:
 x^4*z^2 + x^2*y^4 + y^2*z^4 + b1*x*y + b1*x*z + b1*y*z + 2*x*y^3*z^2 + 2*x^2*y*z^3 + 2*x^3*y^2*z
 x^2*y^2 + x^2*z^2 + y^2*z^2 + 2*x^2*y*z + 2*x*y^2*z + 2*x*y*z^2 + b1*x*y*z
