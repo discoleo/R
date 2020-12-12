@@ -7,7 +7,7 @@
 ### Asymmetric S3:
 ### Composed from Simpler Subsystems
 ###
-### draft v.0.1b
+### draft v.0.1b-comm
 
 
 ##########################
@@ -16,6 +16,17 @@
 ### Composed Asymmetric Systems
 ### from simpler Subsystems
 
+
+###############
+### History ###
+
+### draft v.0.1b - v.0.1b-comm:
+# - first 2 sytems based on:
+#   Sys 1: x^2 + y^2 + z^2 = R1;
+# - added more comments, structure;
+
+
+#################################
 
 ### Symmetric[3, 2] o Assymetric:
 ### Sys 1: => {x1, x2, x3}
@@ -89,12 +100,19 @@ x^2*y^2*z^2 + b[1]*x*y*z*(x*y + x*z + y*z) + x^3*y^2*z + x^3*y*z^2 + x^2*y^3*z +
 ###############################
 
 ### simpler Variant:
+### Sys 1: => {x1, x2, x3}
+# x^2 + y^2 + z^2 = R1;
+### Sys 2:
+# x^2 + b1*x = x1
+# y^2 +  x*y = x2
+# z^2 +  x*z = x3
+
 x^4 + y^4 + z^4 + 2*b[1]*x^3 + b[1]^2*x^2 + 2*x*y^3 + 2*x*z^3 + x^2*y^2 + x^2*z^2
 x^3*y + x^3*z + x^2*y^2 + x^2*z^2 + y^2*z^2 + x*y*z*(x+y+z) + b[1]*x^2*y + b[1]*x^2*z + b[1]*x*y^2 + b[1]*x*z^2
 x^2*y^2*z^2 + b[1]*x*y*z*(x*y + x*z + y*z) + x^3*y^2*z + x^3*y*z^2 + x^4*y*z + b[1]*x^3*y*z
 
-### Invariants:
-# s = y+z, p = y*z;
+### Pseudo-Invariants:
+# s = y+z; p = y*z;
 # but system can be decomposed even more extensively;
 x^4 + y^4 + z^4 + 2*b[1]*x^3 + b[1]^2*x^2 + 2*x*(s^3 - 3*s*p) + x^2*(s^2 - 2*p)
 x^3*s + x^2*(s^2 - p + b[1]*s) + p^2 + x*p*s + b[1]*x*(s^2 - 2*p)
@@ -131,6 +149,11 @@ test = function(x, y, z, b, R) {
 	err2 = x^3*y + x^3*z + x^2*y^2 + x^2*z^2 + y^2*z^2 + x*y*z*(x+y+z) + b[1]*x^2*y + b[1]*x^2*z + b[1]*x*y^2 + b[1]*x*z^2
 	err3 = x^2*y^2*z^2 + b[1]*x*y*z*(x*y + x*z + y*z) + x^3*y^2*z + x^3*y*z^2 + x^4*y*z + b[1]*x^3*y*z
 	err = rbind(err1, err2, err3)
+	if( ! missing(R)) {
+		# err = sapply(seq(nrow(err)), function(id) err[id,] - R[id])
+		# err = t(err) # which is better?
+		err = sapply(seq(ncol(err)), function(id) err[,id] - R)
+	}
 	round0(err)
 }
 
@@ -150,8 +173,31 @@ poly.calc(x[seq(1,47, by=2)])
 ###############################
 ###############################
 
+### TODO:
+3*x^2 + 3*y^2 + 3*z^2 - 2*y*z + 2*x*y + 2*x*z
+3*x^2 - y^2 - z^2 + 2*y*z + 2*x*y + 2*x*z
+x^3 - y^3 - z^3 + x^2*y + x^2*z - x*y^2 + y^2*z + y*z^2 - x*z^2 + 2*x*y*z
+
+### Diff: [1] - [2]
+y^2 + z^2 - y*z - (R[1]-R[2])/4 # = 0
+# Eq 2 =>
+3*x^2 + 2*x*y + 2*x*z + y*z - (R[1] + 3*R[2])/4 # = 0
+
+
+### TODO:
+x^4*z^2 + x^2*y^4 + y^2*z^4 + b1*x*y + b1*x*z + b1*y*z + 2*x*y^3*z^2 + 2*x^2*y*z^3 + 2*x^3*y^2*z
+x^2*y^2 + x^2*z^2 + y^2*z^2 + 2*x^2*y*z + 2*x*y^2*z + 2*x*y*z^2 + b1*x*y*z
+b1*y*z^2 + b1*x*y^2 + b1*x^2*z + x^2*y^2*z^2
+
+
+###############################
+###############################
+
 ####################
 ### Experimental ###
+
+### TODO:
+# - explore, clean;
 
 x = sqrt(2); y = sqrt(3); z = sqrt(5);
 E2 = x*y + x*z + y*z;
