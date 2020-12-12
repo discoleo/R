@@ -7,7 +7,7 @@
 ### Asymmetric S3:
 ### Composed from Simpler Subsystems
 ###
-### draft v.0.1c
+### draft v.0.1d
 
 
 ##########################
@@ -16,10 +16,15 @@
 ### Composed Asymmetric Systems
 ### from simpler Subsystems
 
+# - some simple Models;
+
 
 ###############
 ### History ###
 
+### draft v.0.1d:
+# - symmetric system based on initial hetero-symmetric system:
+#   x^2 + b1*y = R1;
 ### draft v.0.1b - v.0.1c:
 # - first 3 sytems based on:
 #   Sys 1: x^2 + y^2 + z^2 = R1; [v.0.1a - v.0.1c]
@@ -244,6 +249,81 @@ test(x, y, z)
 x^4*z^2 + x^2*y^4 + y^2*z^4 + b1*x*y + b1*x*z + b1*y*z + 2*x*y^3*z^2 + 2*x^2*y*z^3 + 2*x^3*y^2*z
 x^2*y^2 + x^2*z^2 + y^2*z^2 + 2*x^2*y*z + 2*x*y^2*z + 2*x*y*z^2 + b1*x*y*z
 b1*y*z^2 + b1*x*y^2 + b1*x^2*z + x^2*y^2*z^2
+
+
+###############################
+###############################
+
+
+### Hetero-Symmetric[2, 1] o Symetric[3, 2]:
+### Sys 1: => {xi, yi}
+# x^2 + b1*y = R1;
+# y^2 + b1*x = R1;
+### Sys 2:
+# x^2 + y^2 + z^2 = xi
+# x*y + x*z + y*z = yi
+# x*y*z = R2
+
+### symmetric System:
+x^4 + y^4 + z^4 + b[1]*(x*y + x*z + y*z) + 2*x^2*y^2 + 2*x^2*z^2 + 2*y^2*z^2 - R[1]
+b[1]*(x^2 + y^2 + z^2) + 2*x*y*z*(x+y+z) + x^2*y^2 + x^2*z^2 + y^2*z^2 - R[1]
+x*y*z - R[2]
+# system is extensively decomposable into Sys1 o Sys2;
+
+### Solution:
+solve.sysEnt = function(R, b) {
+	### Hetero-Symmetric System: Order 2
+	sol1 = roots(c(1, b[1], -R[1])) # roots x == y;
+	S = b[1] # 2nd set of roots (x != y);
+	xy = - R[1] + (S^2 + b[1]*S)/2
+	xy.d = sqrt(S^2 - 4*xy + 0i)
+	x = (S + xy.d) / 2; x = c(x, S-x); y = S - x;
+	RS = cbind(x, y); RS = rbind(RS, cbind(sol1, sol1))
+	### Symmetric System: Order 2
+	S = sqrt(RS[,1] + 2*RS[,2])
+	S = c(S, -S); RS = rbind(RS, RS)
+	len = length(S)
+	### x123
+	x = sapply(seq_along(S), function(id) roots(c(1, -S[id], RS[id,2], -R[2])))
+	S = matrix(S, ncol=len, nrow=3, byrow=T)
+	RS = apply(RS, 2, function(x) rep(x, each=3))
+	# y, z: robust
+	yz.s = S - x; yz = RS[,2] - x*yz.s
+	yz.d = sqrt(yz.s^2 - 4*yz)
+	y = (yz.s + yz.d) / 2;
+	z = yz.s - y;
+	x = as.vector(rep(x, 2)); y2 = c(y, z); z = as.vector(c(z, y)); y = as.vector(y2);
+	
+	return(cbind(x=x, y=y, z=z))
+}
+test = function(x, y, z, b, R) {
+	err1 = x^4 + y^4 + z^4 + b[1]*(x*y + x*z + y*z) + 2*x^2*y^2 + 2*x^2*z^2 + 2*y^2*z^2
+	err2 = b[1]*(x^2 + y^2 + z^2) + 2*x*y*z*(x+y+z) + x^2*y^2 + x^2*z^2 + y^2*z^2
+	err3 = x*y*z
+	err = rbind(err1, err2, err3)
+	if( ! missing(R)) {
+		R = c(R[1], R[1], R[length(R)])
+		# err = sapply(seq(nrow(err)), function(id) err[id,] - R[id])
+		# err = t(err) # which is better?
+		err = sapply(seq(ncol(err)), function(id) err[,id] - R)
+	}
+	round0(err)
+}
+
+### Solution:
+R = c(-2, 1)
+b = 1
+
+sol = solve.sysEnt(R, b=b)
+x = sol[,1]; y = sol[,2]; z = sol[,3]
+
+### Test
+test(x, y, z, b)
+
+# polynomial of order 48
+round0.p(poly.calc(x))
+# same roots for initial system (25:48) can be factored
+round0.p(poly.calc(x[1:24]))
 
 
 ###############################
