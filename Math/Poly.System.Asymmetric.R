@@ -7,7 +7,7 @@
 ### Asymmetric S3:
 ### Composed from Simpler Subsystems
 ###
-### draft v.0.1d
+### draft v.0.1e
 
 
 ##########################
@@ -22,9 +22,11 @@
 ###############
 ### History ###
 
-### draft v.0.1d:
-# - symmetric system based on initial hetero-symmetric system:
+### draft v.0.1d - v.0.1e:
+# - systems derived from Hetero-symmetric [2, 2, 1] systems:
 #   x^2 + b1*y = R1;
+#  -- symmetric [3, 2] sub-system; [v.0.1d]
+#  -- mixt hetero-symmetric [3, 2, 1] sub-system; [v.0.1e]
 ### draft v.0.1b - v.0.1c:
 # - first 3 sytems based on:
 #   Sys 1: x^2 + y^2 + z^2 = R1; [v.0.1a - v.0.1c]
@@ -255,7 +257,8 @@ b1*y*z^2 + b1*x*y^2 + b1*x^2*z + x^2*y^2*z^2
 ###############################
 
 
-### Hetero-Symmetric[2, 1] o Symetric[3, 2]:
+### Hetero-Symmetric[2, 2, 1] o
+### o Symetric[3, 2]:
 ### Sys 1: => {xi, yi}
 # x^2 + b1*y = R1;
 # y^2 + b1*x = R1;
@@ -324,6 +327,113 @@ test(x, y, z, b)
 round0.p(poly.calc(x))
 # same roots for initial system (25:48) can be factored
 round0.p(poly.calc(x[1:24]))
+
+
+###############################
+###############################
+
+### Hetero-Symmetric[2, 2, 1] o
+### o Mixt-HeteroSymetric[3, 2, 1]
+
+### Sys 1: => {xi, yi}
+# x^2 + b1*y = R1;
+# y^2 + b1*x = R1;
+### Sys 2:
+# x*y^2 + y*z^2 + z*x^2 = xi
+# x*y + x*z + y*z = yi
+# x*y*z = R2
+
+x^4*z^2 + x^2*y^4 + y^2*z^4 + b[1]*(x*y + x*z + y*z) + 2*x^3*y^2*z + 2*x*y^3*z^2 + 2*x^2*y*z^3 - R[1]
+b[1]*(x^2*z + x*y^2 + y*z^2) + 2*x*y*z*(x + y + z) + (x^2*y^2 + x^2*z^2 + y^2*z^2) - R[1]
+x*y*z - R[2]
+
+
+### Solution:
+solve.ht3 = function(R, b=0) {
+	if(length(b) == 1 && b[1] == 0) {
+		coeff = c(R[3], 0, - (R[1]+6*R[3])*R[2], R[1]^2 + R[2]^3 + 9*R[3]^2 + 3*R[1]*R[3])
+	} else {
+		coeff = c(R[3], (b[1]^2 + b[1]*R[2]), - (R[1]*R[2] + 3*b[1]*R[3] + 6*R[2]*R[3] + 2*b[1]*R[1]),
+			R[1]^2 + R[2]^3 + 9*R[3]^2 + 3*R[1]*R[3])
+	}
+	if(length(b) > 1) {
+		# Ext 2:
+		coeff = coeff - c(b[2]^3 + b[1]*b[2], -b[2]*(R[1] + 3*b[2]*R[2] + 6*R[3]), 3*b[2]*R[2]^2, 0)
+	}
+	S = roots(coeff)
+	b2 = if(length(b) > 1) b[2] else 0; # Ext 2;
+	x = sapply(S, function(x) roots(c(1,-x, R[2] - b2*x, -R[3])))
+	S = matrix(S, ncol=3, nrow=3, byrow=T)
+	yz = R[3]/x
+	yz.s = S - x
+	### robust:
+	y = - (x*yz - (x^2+yz)*yz.s - b[1]*S + R[1]) / (x^2+yz - x*yz.s)
+	z = yz.s - y
+	sol = cbind(as.vector(x), as.vector(y), as.vector(z))
+	return(sol)
+}
+solve.sysEnt = function(R, b) {
+	### Hetero-Symmetric System: Order 2
+	sol1 = roots(c(1, b[1], -R[1])) # Set 1: roots x == y;
+	S = b[1] # Set 2: roots (x != y);
+	xy = - R[1] + (S^2 + b[1]*S)/2
+	xy.d = sqrt(S^2 - 4*xy + 0i)
+	x = (S + xy.d) / 2; x = c(x, S-x); y = S - x;
+	RS = cbind(x, y); RS = rbind(RS, cbind(sol1, sol1))
+	### Mixt Hetero-Symmetric System: Order 2
+	sol = lapply(seq(nrow(RS)), function(id) solve.ht3(c(RS[id,1], RS[id,2], R[2]), b=0))
+	sol = do.call(rbind, sol)
+	return(sol)
+}
+test = function(x, y, z, b, R) {
+	err1 = x^4*z^2 + x^2*y^4 + y^2*z^4 + b[1]*(x*y + x*z + y*z) + 2*x^3*y^2*z + 2*x*y^3*z^2 + 2*x^2*y*z^3
+	err2 = b[1]*(x^2*z + x*y^2 + y*z^2) + 2*x*y*z*(x + y + z) + (x^2*y^2 + x^2*z^2 + y^2*z^2)
+	err3 = x*y*z
+	err = rbind(err1, err2, err3)
+	if( ! missing(R)) {
+		R = c(R[1], R[1], R[length(R)])
+		# err = sapply(seq(nrow(err)), function(id) err[id,] - R[id])
+		# err = t(err) # which is better?
+		err = sapply(seq(ncol(err)), function(id) err[,id] - R)
+	}
+	round0(err)
+}
+
+### Example:
+R = c(-2, 1)
+b = 1
+
+sol = solve.sysEnt(R, b=b)
+x = sol[,1]; y = sol[,2]; z = sol[,3]
+
+### Test
+test(x, y, z, b)
+
+round0.p(poly.calc(x[1:18]))
+# the 2nd set of 2*9 roots can be factored;
+
+err = 1 - 3*x + 12*x^2 - 25*x^3 + 39*x^4 + 15*x^5 - 26*x^6 + 96*x^7 + 114*x^8 + 80*x^9 + 186*x^10 +
+	+ 198*x^11 + 143*x^12 + 96*x^13 + 57*x^14 + 2*x^15 - 9*x^16 + x^18
+round0(err) # only 18 are still roots
+# but there is also some numerical inaccuracy!
+
+
+### Ex 2:
+R = c(0, 1)
+b = 3
+
+sol = solve.sysEnt(R, b=b)
+x = sol[,1]; y = sol[,2]; z = sol[,3]
+
+### Test
+test(x, y, z, b)
+
+round0.p(poly.calc(x[1:18]))
+# the 2nd set of 2*9 roots can be factored;
+
+err = 1 - 9*x + 54*x^2 - 195*x^3 + 495*x^4 - 567*x^5 + 132*x^6 + 1350*x^7 + 1006*x^9 + 2466*x^10 +
+	+ 1242*x^11 + 1365*x^12 + 828*x^13 + 243*x^14 - 42*x^15 - 27*x^16 + x^18
+round0(err) # only 18 are still roots
 
 
 ###############################
