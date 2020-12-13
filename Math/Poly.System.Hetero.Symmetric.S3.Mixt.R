@@ -7,7 +7,7 @@
 ### Heterogenous Symmetric S3:
 ### Mixt Type
 ###
-### draft v.0.2e
+### draft v.0.2f
 
 
 ### Heterogenous Symmetric
@@ -26,7 +26,9 @@
 ### History ###
 ###############
 
-### draft v.02.e:
+### draft v.0.2f:
+# - linear extension (type A3) to the Order 2 system;
+### draft v.0.2e:
 # - combined variant:
 #   (x*y^2 + y*z^2 + z*x^2) - a*(x*z^2 + y*x^2 + z*y^2) = R1;
 ### draft v.0.2d:
@@ -117,6 +119,8 @@ test.ht3Dual = function(x, y, z, R, n=2, p=1, b=0, type) {
 
 ### Generalization:
 ### x^p*y^n + y^p*z^n + z^p*x^n
+### x*y + x*z + y*z
+### x*y*z
 
 ################################
 
@@ -157,19 +161,28 @@ R3*S^3 - (R1+6*R3)*R2*S + R1^2 + R2^3 + 9*R3^2 + 3*R1*R3 # = 0
 solve.ht3 = function(R, b=0) {
 	if(length(b) == 1 && b[1] == 0) {
 		coeff = c(R[3], 0, - (R[1]+6*R[3])*R[2], R[1]^2 + R[2]^3 + 9*R[3]^2 + 3*R[1]*R[3])
-	} else {
+	} else if(length(b) < 3) {
 		coeff = c(R[3], (b[1]^2 + b[1]*R[2]), - (R[1]*R[2] + 3*b[1]*R[3] + 6*R[2]*R[3] + 2*b[1]*R[1]),
 			R[1]^2 + R[2]^3 + 9*R[3]^2 + 3*R[1]*R[3])
-	}
-	if(length(b) > 1) {
-		# Ext 2:
-		coeff = coeff - c(b[2]^3 + b[1]*b[2], -b[2]*(R[1] + 3*b[2]*R[2] + 6*R[3]), 3*b[2]*R[2]^2, 0)
+		if(length(b) > 1) {
+			# Ext 2:
+			coeff = coeff - c(b[2]^3 + b[1]*b[2], -b[2]*(R[1] + 3*b[2]*R[2] + 6*R[3]), 3*b[2]*R[2]^2, 0)
+		}
+	} else {
+		# Ext 3:
+		coeff = c(-b[3], R[3], (b[1]^2 + 3*b[1]*b[3] + 9*b[3]^2 + b[1]*R[2] + 6*b[3]*R[2]),
+			- (R[1]*R[2] + 3*b[1]*R[3] + 6*R[2]*R[3] + 2*b[1]*R[1] + 3*b[3]*R[1] + 18*b[3]*R[3]),
+			R[1]^2 + R[2]^3 + 9*R[3]^2 + 3*R[1]*R[3])
+		coeff = coeff - c(0, b[2]^3 + b[1]*b[2] + 6*b[2]*b[3],
+			- b[2]*(R[1] + 3*b[2]*R[2] + 6*R[3]), 3*b[2]*R[2]^2, 0) # Ext 2
 	}
 	S = roots(coeff)
+	len = length(S)
 	b2 = if(length(b) > 1) b[2] else 0; # Ext 2;
-	x = sapply(S, function(x) roots(c(1,-x, R[2] - b2*x, -R[3])))
-	S = matrix(S, ncol=3, nrow=3, byrow=T)
-	yz = R[3]/x
+	b3 = if(length(b) > 2) b[3] else 0; # Ext 3;
+	x = sapply(S, function(x) roots(c(1, -x, R[2] - b2*x, - R[3] + b3*x)))
+	S = matrix(S, ncol=len, nrow=3, byrow=T)
+	yz = (R[3] - b3*S) / x
 	yz.s = S - x
 	### robust:
 	# x*y^2 - (x^2+yz)*y + (x^2+yz)*yz.s + b1*S - R1
@@ -186,7 +199,7 @@ test.ht3 = function(x, y, z, R, b=0) {
 	### Test
 	err1 = x*y^2 + y*z^2 + z*x^2 + b[1]*(x+y+z) # - R[1] # = 0
 	err2 = x*y + y*z + z*x + if(length(b) < 2) 0 else b[2]*(x+y+z) # - R[2] # = 0
-	err3 = x*y*z # - R[3] # = 0
+	err3 = x*y*z + if(length(b) < 3) 0 else b[3]*(x+y+z) # - R[3] # = 0
 	err = rbind(err1, err2, err3)
 	if( ! missing(R)) {
 		err = err - rep(R, each=length(x))
@@ -199,14 +212,15 @@ test.ht3 = function(x, y, z, R, b=0) {
 
 ###
 R = c(1, 1, 1)
-sol = solve.ht3(R)
+b = 0
+sol = solve.ht3(R, b=b)
 x = sol[,1]; y = sol[,2]; z = sol[,3];
 
 
 ### Test
-test.ht3(x, y, z)
+test.ht3(x, y, z, b=b)
 
-poly.calc(x)
+round0.p(poly.calc(x))
 
 err = -1 + 3*x - 3*x^2 + 4*x^3 + x^4 - 4*x^5 + 11*x^6 - 4*x^7 + x^9
 round0(err)
@@ -232,7 +246,7 @@ round0(err)
 ### Extension A2:
 ### x*y + x*z + y*z + b2*(x+y+z) = R2;
 ### Extension A3:
-### x*y*z + b3*(x+y+z) = R3; # TODO!
+### x*y*z + b3*(x+y+z) = R3;
 
 ### * x*z^2 =>
 x^2*y^2*z^2 + x*y*z^4 + z^3*x^3 + b1*(x+y+z)*x*z^2 - R1*x*z^2 # = 0
@@ -252,6 +266,18 @@ R3*S^3 + (b1*S - R1)*((x^2+y^2+z^2)*(x+y+z) - (x^3+y^3+z^3)) +
 R3*S^3 + (b1*S - R1)*(R2*S - 3*R3) +
 	+ b1^2*S^2 - 6*R2*R3*S - 2*R1*b1*S + R1^2 + R2^3 + 9*R3^2 # = 0
 R3*S^3 + (b1^2 + b1*R2)*S^2 - (R1*R2 + 3*b1*R3 + 6*R2*R3 + 2*b1*R1)*S +
+	+ R1^2 + R2^3 + 9*R3^2 + 3*R1*R3 # = 0
+
+### Extension A3:
+# - includes A1, but A2 was missed;
+#   [see function solve.ht3() for complete variant]
+# E3 = R3 - b3*S
+E3*S^3 + (b1^2 + b1*R2)*S^2 - (R1*R2 + 3*b1*E3 + 6*R2*E3 + 2*b1*R1)*S +
+	+ R1^2 + R2^3 + 9*E3^2 + 3*R1*E3 # = 0
+(R3 - b3*S)*S^3 + (b1^2 + b1*R2)*S^2 - (R1*R2 + 3*b1*(R3 - b3*S) + 6*R2*(R3 - b3*S) + 2*b1*R1)*S +
+	+ R1^2 + R2^3 + 9*(R3 - b3*S)^2 + 3*R1*(R3 - b3*S) # = 0
+-b3*S^4 + R3*S^3 + (b1^2 + 3*b1*b3 + 9*b3^2 + b1*R2 + 6*b3*R2)*S^2 +
+	- (R1*R2 + 3*b1*R3 + 6*R2*R3 + 2*b1*R1 + 3*b3*R1 + 18*b3*R3)*S +
 	+ R1^2 + R2^3 + 9*R3^2 + 3*R1*R3 # = 0
 
 
@@ -313,6 +339,34 @@ test.ht3(x, y, z, b=b)
 poly.calc(x)
 
 err = 8 - 72*x + 60*x^2 - 42*x^3 + 60*x^4 - 12*x^5 + 31*x^6 + 9*x^7 + 21*x^8 + x^9
+round0(err)
+
+
+### Ext 3:
+R = c(1, 1, 0); b = c(-7, 1, 1);
+sol = solve.ht3(R, b=b)
+x = sol[,1]; y = sol[,2]; z = sol[,3];
+
+### Test
+test.ht3(x, y, z, b=b)
+
+round0.p(poly.calc(x))
+
+err = -2 + 15*x - 65*x^2 + 71*x^3 - 15*x^4 + 96*x^5 + 14*x^6 - 95*x^7 - 57*x^8 - 87*x^9 - 36*x^10 + x^12
+round0(err)
+
+
+### Ext 3, ex 2:
+R = c(0, 1, 0); b = c(-7, 1, 1);
+sol = solve.ht3(R, b=b)
+x = sol[,1]; y = sol[,2]; z = sol[,3];
+
+### Test
+test.ht3(x, y, z, b=b)
+
+round0.p(poly.calc(x))
+
+err = -1 + x - 32*x^2 + 67*x^3 - 39*x^4 + 86*x^5 - 4*x^6 - 79*x^7 - 25*x^8 - 75*x^9 - 35*x^10 + x^12
 round0(err)
 
 
