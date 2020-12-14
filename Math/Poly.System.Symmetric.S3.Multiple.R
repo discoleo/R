@@ -7,7 +7,7 @@
 ### Symmetric S3:
 ### Multiple/Composite Monoms
 ###
-### draft v.0.1b
+### draft v.0.1b-name
 
 
 ### Heterogenous Symmetric
@@ -31,9 +31,13 @@
 ###############
 
 
+### draft v.0.1b-name:
+# - renamed extensions:
+#   M1 & D1: [new] modified Eq 1;
+#   M2 / D2, M3 / D3: the previous M1/D1 & M2/D2;
 ### draft v.0.1b:
 # - some solutions to the system of order 3:
-#   [with the non-trivial M1D2 extension]
+#   [with the non-trivial M2D3 extension (extension renamed)]
 #   (x*y)^3 + (x*z)^3 + (y*z)^3 = R1;
 ### draft v.0.1a:
 # - solutions to the system of order 2:
@@ -71,10 +75,12 @@ library(pracma)
 # A3: x*y*z + b3*(x+y+z) = R3
 
 ### Types Other:
-# M1: (x*y + y*z + z*x)*(x+y+z) = R2
-# M2: x*y*z*(x+y+z) = R3
-# D1: (x*y + y*z + z*x)/(x+y+z) = R2
-# D2: x*y*z/(x+y+z) = R3
+# M1: ((x*y)^n + (x*z)^n + (y*z)^n)*(x+y+z) = R1
+# M2: (x*y + y*z + z*x)*(x+y+z) = R2
+# M3: x*y*z*(x+y+z) = R3
+# D1: ((x*y)^n + (x*z)^n + (y*z)^n)/(x+y+z) = R1
+# D2: (x*y + y*z + z*x)/(x+y+z) = R2
+# D3: x*y*z/(x+y+z) = R3
 
 
 ################################
@@ -138,7 +144,7 @@ round0(err)
 
 
 ############
-### Type M1:
+### Type M2:
 (x*y + y*z + z*x)*(x+y+z) - R2 # = 0
 
 ### Solution:
@@ -148,7 +154,7 @@ R2^2 / S^2 - 2*R3*S - R1 # = 0
 
 
 #################
-### Type M1 & M2:
+### Type M2 & M3:
 (x*y + y*z + z*x)*(x+y+z) - R2 # = 0
 x*y*z*(x+y+z) - R3 # = 0
 
@@ -158,8 +164,9 @@ x*y*z*(x+y+z) - R3 # = 0
 R2^2 / S^2 - 2*R3 - R1 # = 0
 (2*R3 + R1)*S^2 - R2^2 # = 0
 
+
 #################
-### Type M1 & D2:
+### Type M2 & D3:
 (x*y + y*z + z*x)*(x+y+z) - R2 # = 0
 x*y*z / (x+y+z) - R3 # = 0
 
@@ -169,8 +176,9 @@ x*y*z / (x+y+z) - R3 # = 0
 R2^2 / S^2 - 2*R3*S^2 - R1 # = 0
 2*R3*S^4 + R1*S^2 - R2^2 # = 0
 
+
 #################
-### Type D1 & D2:
+### Type D2 & D3:
 (x*y + y*z + z*x) / (x+y+z) - R2 # = 0
 x*y*z / (x+y+z) - R3 # = 0
 
@@ -238,7 +246,7 @@ S = (R2^3 + 3*R3^2 - R1) / (3*R2*R3)
 
 
 #################
-### Type M1 & D2:
+### Type M2 & D3:
 (x*y + y*z + z*x)*(x+y+z) - R2 # = 0
 x*y*z / (x+y+z) - R3 # = 0
 
@@ -268,19 +276,19 @@ solve.sym3 = function(R, b=0) {
 	z = yz.s - y
 	cbind(as.vector(x), as.vector(y), as.vector(z))
 }
-test.sym3 = function(x, y, z, b=0, n=3, R, type="M1D2") {
+test.sym3 = function(x, y, z, b=0, n=3, R, type="M2D3") {
 	err1 = x^n*y^n + y^n*z^n + z^n*x^n # - R[1] # = 0
 	err2 = (x*y + y*z + z*x) # - R[2] # = 0
 	err3 = x*y*z # - R[3] # = 0
 	S = x+y+z;
-	if( ! is.na(pmatch("M1", type))) {
+	if( ! is.na(pmatch("M2", type))) {
 		err2 = err2 * S
-	} else if( ! is.na(pmatch("D1", type))) {
+	} else if( ! is.na(pmatch("D2", type))) {
 		err2 = err2 / S
 	}
-	if( ! is.na(pmatch("M2", type))) {
+	if( ! is.na(pmatch("M3", type))) {
 		err3 = err3 * S
-	} else if( ! is.na(pmatch("D2", type))) {
+	} else if( ! is.na(pmatch("D3", type))) {
 		err3 = err3 / S
 	}
 	# TODO: b, R;
