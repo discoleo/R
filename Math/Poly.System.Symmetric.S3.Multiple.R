@@ -7,7 +7,7 @@
 ### Symmetric S3:
 ### Multiple/Composite Monoms
 ###
-### draft v.0.1b-name
+### draft v.0.1c
 
 
 ### Heterogenous Symmetric
@@ -31,6 +31,8 @@
 ###############
 
 
+### draft v.0.1c:
+# - basic examples of M1 & D1 extensions;
 ### draft v.0.1b-name:
 # - renamed extensions:
 #   M1 & D1: [new] modified Eq 1;
@@ -54,6 +56,22 @@ library(pracma)
 
 # the functions are in the file:
 # Polynomials.Helper.R
+
+solve.S = function(S, R, b=0) {
+	# generic solver (based on existing S)
+	b2 = if(length(b) > 1) b[2] else 0; # Ext A2;
+	b3 = if(length(b) > 2) b[3] else 0; # Ext A3;
+	x = sapply(S, function(x) roots(c(1, -x, R[2] - b2*x, - R[3] + b3*x)))
+	len = length(S)
+	S = matrix(S, ncol=len, nrow=3, byrow=T)
+	yz = R[3]/x - b3
+	yz.s = S - x
+	# TODO: robust (when necessary)
+	yz.d = sqrt(yz.s^2 - 4*yz)
+	y = (yz.s + yz.d) / 2
+	z = yz.s - y
+	cbind(as.vector(x), as.vector(y), as.vector(z))
+}
 
 #############################
 
@@ -100,22 +118,13 @@ x*y*z - R3 # = 0
 ### Solution:
 # [not run]
 R2^2 - 2*R3*S - R1 # = 0
-S = 1/2 * (R2^2 - R1) / R3
+S = 1/2 * (R[2]^2 - R[1]) / R[3]
 
 ### Solver
 solve.sym3 = function(R, b=0) {
 	S = 1/2 * (R[2]^2 - R[1]) / R[3]
 	print(S)
-	b2 = if(length(b) > 1) b[2] else 0; # TODO: Ext 2;
-	x = sapply(S, function(x) roots(c(1,-x, R[2] - b2*x, -R[3])))
-	S = matrix(S, ncol=1, nrow=3, byrow=T)
-	yz = R[3]/x
-	yz.s = S - x
-	# TODO: robust
-	yz.d = sqrt(yz.s^2 - 4*yz)
-	y = (yz.s + yz.d) / 2
-	z = yz.s - y
-	cbind(as.vector(x), as.vector(y), as.vector(z))
+	solve.S(S, R, b)
 }
 
 ### Examples:
@@ -144,13 +153,45 @@ round0(err)
 
 
 ############
+### Type M1:
+((x*y)^2 + (x*z)^2 + (y*z)^2) * (x+y+z) - R1 # = 0
+
+### Solution:
+(E2^2 - 2*E3*S)*S - R1 # = 0
+2*E3*S^2 - E2^2*S + R1 # = 0
+2*R[3]*S^2 - R[2]^2*S + R[1] # = 0
+
+### Example:
+R = c(1, 2, 1)
+S = roots(c(2*R[3], - R[2]^2, R[1]))
+sol = solve.S(S, R)
+x = sol[,1]; y = sol[,2]; z = sol[,3];
+
+### Test
+(x^2*y^2 + y^2*z^2 + z^2*x^2)*(x+y+z) # - R[1] # = 0
+x*y + y*z + z*x # - R[2] # = 0
+x*y*z # - R[3] # = 0
+
+
+############
+### Type D1:
+((x*y)^2 + (x*z)^2 + (y*z)^2) / (x+y+z) - R1 # = 0
+
+### Solution:
+(E2^2 - 2*E3*S)/S - R1 # = 0
+2*E3*S + R1*S - E2^2 # = 0
+(2*R3+R1)*S - R2^2 # = 0
+S = R[2]^2 / (2*R[3] + R[1])
+
+
+############
 ### Type M2:
 (x*y + y*z + z*x)*(x+y+z) - R2 # = 0
 
 ### Solution:
 # E2 = R2 / S
 R2^2 / S^2 - 2*R3*S - R1 # = 0
-2*R3*S^3 + R1*S^2 - R2^2 # = 0
+2*R[3]*S^3 + R[1]*S^2 - R[2]^2 # = 0
 
 
 #################
@@ -163,6 +204,18 @@ x*y*z*(x+y+z) - R3 # = 0
 # E3 = R3 / S
 R2^2 / S^2 - 2*R3 - R1 # = 0
 (2*R3 + R1)*S^2 - R2^2 # = 0
+
+
+######################
+### Type M1 & M2 & M3:
+((x*y)^2 + (x*z)^2 + (y*z)^2) / (x+y+z) - R1 # = 0
+(x*y + y*z + z*x)*(x+y+z) - R2 # = 0
+x*y*z*(x+y+z) - R3 # = 0
+
+### Solution:
+(2*R3 + R1/S)*S^2 - R2^2 # = 0
+(2*R3*S + R1)*S - R2^2 # = 0
+2*R[3]*S^2 + R[1]*S - R[2]^2 # = 0
 
 
 #################

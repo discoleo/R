@@ -48,4 +48,19 @@ round0.p = function(p, tol=1E-7) {
 	return(p)
 }
 
+solve.S = function(S, R, b=0) {
+	# generic solver (based on existing S = x+y+z)
+	b2 = if(length(b) > 1) b[2] else 0; # Ext A2;
+	b3 = if(length(b) > 2) b[3] else 0; # Ext A3;
+	x = sapply(S, function(x) roots(c(1, -x, R[2] - b2*x, - R[3] + b3*x)))
+	len = length(S)
+	S = matrix(S, ncol=len, nrow=3, byrow=T)
+	yz = R[3]/x - b3
+	yz.s = S - x
+	# TODO: robust (when necessary)
+	yz.d = sqrt(yz.s^2 - 4*yz)
+	y = (yz.s + yz.d) / 2
+	z = yz.s - y
+	cbind(as.vector(x), as.vector(y), as.vector(z))
+}
 
