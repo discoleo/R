@@ -5,7 +5,7 @@
 ###
 ### Barycenters: MNIST
 ###
-### draft v.0.1a
+### draft v.0.1b
 
 
 ### "Imagine"
@@ -18,6 +18,19 @@
 # - see the respective blog post for the full details on data reshaping;
 # - this implementation uses tensorized functions;
 
+
+################
+
+###############
+### History ###
+
+### draft v.0.1b:
+# - tensorized dist() and grouped tdist();
+### draft v.0.1a:
+# - initial functions: some tensorized base functions;
+
+
+################
 
 library(ggplot2)
 
@@ -108,6 +121,31 @@ tsum.m = function(l, group) {
 		s[,,group[id]] <<- s[,,group[id]] + l[[id]]
 	})
 	return(s)
+}
+dist.l = function(l, m, metric="L2") {
+	dist.f = if(metric == "L2") {
+		function(x.m) sqrt(sum((x.m - m)^2))
+	} else if(metric == "L1") {
+		function(x.m) sum(abs(x.m - m))
+	} else if(metric == "Var") {
+		function(x.m) sum((x.m - m)^2)
+	} else {
+		stop("Distance metric NOT supported!")
+	}
+	sapply(l, dist.f)
+}
+tdist.l = function(l, group, m, metric="L2", gr.offset=1) {
+	# Note: group offset for digit 0;
+	dist.f = if(metric == "L2") {
+		function(id) sqrt(sum((l[[id]] - m[,,group[id] + gr.offset])^2))
+	} else if(metric == "L1") {
+		function(id) sum(abs(l[[id]] - m[,,group[id] + gr.offset]))
+	} else if(metric == "Var") {
+		function(id) sum((l[[id]] - m[,,group[id] + gr.offset])^2)
+	} else {
+		stop("Distance metric NOT supported!")
+	}
+	sapply(seq(length(l)), function(id) dist.f(id))
 }
 scale.l = function(l, q.val) {
 	lapply(seq(length(l)), function(id) {
@@ -220,7 +258,21 @@ ggplot(toRow.l(x.sc), aes(val)) +
 	geom_histogram()
 
 
-###################
+###########################
+###########################
+
+### Distance to Barycenters
+
+s.sc = tsum.m(x.sc, x.lbl)
+s.sc = s.sc / length(x.sc)
+
+DIGIT = 1
+r = dist.l(x.sc[x.lbl == DIGIT], s.sc[,,DIGIT + 1], metric="L1")
+boxplot(r)
+
+
+r = tdist.l(x.sc, x.lbl, s.sc, metric="L1")
+boxplot(r ~ x.lbl)
 
 
 ### TODO:
