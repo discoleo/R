@@ -8,6 +8,11 @@
 ### draft v.0.1a
 
 
+### "Imagine"
+# Imagine there's no for-loops,
+# I wonder if you can!
+
+
 # partially based on:
 # https://www.r-bloggers.com/2018/01/exploring-handwritten-digit-classification-a-tidy-analysis-of-the-mnist-dataset/
 # - see the respective blog post for the full details on data reshaping;
@@ -118,15 +123,22 @@ toRow.m = function(m) {
 	id = rep(seq(0, dim[3]-1), each=dim[1]*dim[2])
 	data.frame(id=id, x=rep(gr[,1], dim[3]), y=rep(gr[,2], dim[3]), val=as.vector(m))
 }
-plot.mean = function(l, x.lbl, mid=127.5) {
+toRow.l = function(l) {
+	l.rows = lapply(l, toRow.m)
+	do.call(rbind, l.rows)
+}
+plot.mean = function(l, x.lbl, mid=127.5, nrow=NA, title.lbl, useTheme=TRUE) {
 	### by Group
 	s = tsum.m(l, x.lbl)
 	### row-wise
 	s.df = toRow.m(s)
-	ggplot(data=s.df, aes(x, y, fill = val)) +
-        geom_tile() +
-        facet_wrap(~ id) +
-		scale_fill_gradient2(low = "white", high = "black", mid = "gray", midpoint = mid)
+	img = ggplot(data=s.df, aes(x, y, fill = val)) +
+        geom_tile();
+	if(is.na(nrow)) img = img + facet_wrap(~ id) else img = img + facet_wrap(~ id, nrow=nrow);
+	img = img + scale_fill_gradient2(low = "white", high = "black", mid = "gray", midpoint = mid)
+	if(useTheme) img = img + theme_void();
+	if( ! missing(title.lbl)) img = img + labs(title = title.lbl);
+	img
 }
 
 #####################
@@ -199,7 +211,14 @@ x.sc = scale.l(x, max.q$val)
 image(x.sc[[2]])
 image(x.sc[[52]])
 
-plot.mean(x.sc, x.lbl, mid=0.5)
+plot.mean(x.sc, x.lbl, mid=0.5, title.lbl = "Average value of each pixel in 10 MNIST digits")
+
+
+# Levels of Grey
+# may be slow: can pre-compute toRow.l(x.sc);
+ggplot(toRow.l(x.sc), aes(val)) +
+	geom_histogram()
+
 
 ###################
 
