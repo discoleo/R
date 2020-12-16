@@ -7,7 +7,7 @@
 ### Polynomial Systems:
 ### Heterogenous Symmetric S3
 ###
-### draft v.0.2a
+### draft v.0.2a-simplify
 
 
 ### Heterogenous Symmetric
@@ -17,8 +17,9 @@
 
 ### History
 
-### draft v.0.2a:
+### draft v.0.2a - v.0.2a-simplify:
 # - solved: Ht[3, 3, 1];
+# - simplified solution: from P11 to P8; [v.0.2a-simplify]
 # - TODO: find robust solution;
 ### draft v.0.1d - v.0.1d-poly:
 # - minor fix: in Ht[3, 2, 1];
@@ -955,6 +956,13 @@ S^4 - 4*E2*S^2 + 4*E3*S + 2*E2^2 + b*E2 - R*S # = 0
 3*S^4 - 12*E2*S^2 + 2*(6*E2*S - 2*S^3 - 2*b*S + 6*R)*S + 6*E2^2 + 3*b*E2 - 3*R*S # = 0
 # E2 =>
 6*E2^2 + 3*b*E2 - (S^4 + 4*b*S^2 - 9*R*S) # = 0
+# alternative: E2 =>
+3*S^4 - 4*3*E2*S^2 + 12*E3*S + 2*3*E2^2 + 3*b*E2 - 3*R*S # = 0
+3*S^4 - 4*(S^3 + 3*E3 + b*S - 3*R)*S + 12*E3*S + 2*3*E2^2 + 3*b*E2 - 3*R*S # = 0
+S^4 + 4*b*S^2 - 9*R*S - 2*3*E2^2 - 3*b*E2 # = 0
+S^5 + 3*b*S^3 - 9*R*S^2 - b^2*S - 2*(S^3 + 3*E3 + b*S - 3*R)*E2 - 3*b*E3 + 3*b*R # = 0
+S^5 + 4*b*S^3 - 9*R*S^2 - 2*(S^3 + 3*E3 + 5/2*b*S - 3*R)*E2 # = 0
+# ??? robust ???
 
 ### Sum(x[i+1]^3*...) =>
 (x^3*y^3 + x^3*z^3 + y^3*z^3) + b*(x^4 + y^4 + z^4) - R*(x^3 + y^3 + z^3) # = 0
@@ -993,10 +1001,13 @@ Det = (9*b^2 + 24*S^4 + 96*b*S^2 - 216*R*S)
 16*S^6 + 28*b*S^4 - 96*R*S^3 + 36*b*R*S - (10*S^4 + 4*b*S^2 - 18*R*S + 9*b^2)*(- b + 1/3 * sqrt(Det))
 48*S^6 + 114*b*S^4 + 12*b^2*S^2 - 288*R*S^3 + 54*b*R*S + 27*b^3 - (10*S^4 + 4*b*S^2 - 18*R*S + 9*b^2)*sqrt(Det)
 
+###############
 ### "P12" / P11 Polynomial:
 S^12 + 6*b*S^10 - 27*R*S^9 - 9*b^2*S^8 + 54*R*b*S^7 + (27*R^2 + 166*b^3)*S^6 +
 	+ (- 756*R*b^2)*S^5 + (972*R^2*b + 45*b^4)*S^4 + (- 351*R*b^3 - 729*R^3)*S^3 +
-	+ (729*R^2*b^2 + 81*b^5)*S^2 + (- 243*R*b^4)*S + 0
+	+ (729*R^2*b^2 + 81*b^5)*S^2 - 243*R*b^4*S + 0
+S*(S^3 + 9*b*x - 27*R)*(S^8 - 3*b*S^6 + 18*b^2*S^4 - 27*R*b*S^3 + (27*R^2 + 4*b^3)*S^2 - 27*R*b^2*S + 9*b^4)
+S^8 - 3*b*S^6 + 18*b^2*S^4 - 27*R*b*S^3 + (27*R^2 + 4*b^3)*S^2 - 27*R*b^2*S + 9*b^4
 
 
 ### Derivation
@@ -1013,17 +1024,16 @@ E2^3 + 3*E3^2 - 3*E3*E2*S + E2^2*S^2 - 2*E3*S^3 + 4*E3*E2*S - 3*E3^2 - 2*E2^3 +
 ### Solution:
 
 solve.sysHt33 = function(R, b) {
-	### TODO: robust !!!
-	# - find way to exclude spurious roots!
-	coeff = c(1, 0, 6*b[1], - 27*R[1], - 9*b[1]^2, 54*R[1]*b[1], (27*R[1]^2 + 166*b[1]^3),
-		(- 756*R[1]*b[1]^2), (972*R[1]^2*b[1] + 45*b[1]^4), (- 351*R[1]*b[1]^3 - 729*R[1]^3),
-		(729*R[1]^2*b[1]^2 + 81*b[1]^5), (- 243*R[1]*b[1]^4))
+	# only S8 used to compute the roots:
+	coeff = c(1, 0, - 3*b[1], 0, 18*b[1]^2, - 27*R[1]*b[1], (27*R[1]^2 + 4*b[1]^3), - 27*R[1]*b[1]^2, 9*b[1]^4)
 	S = roots(coeff)
 	# exclude roots: x == y == z = S/3,
 	# as they create numerical instability due to root multiplicity;
+	# [should be actually excluded from P8]
 	isEq = round0(S^3 + 9*b[1]*S - 27*R) == 0
 	S = S[ ! isEq]
 	print(S)
+	### TODO: find robust roots!
 	Det = sqrt(9*b[1]^2 + 24*S^4 + 96*b[1]*S^2 - 216*R[1]*S)
 	E2 = c(- b[1] + 1/3 * Det, - b[1] - 1/3 * Det) / 4
 	S = c(S, S)
@@ -1033,7 +1043,7 @@ solve.sysHt33 = function(R, b) {
 	S = matrix(S, ncol=len, nrow=3, byrow=T)
 	y = (R - x^3) / b[1]
 	z = (R - y^3) / b[1]
-	return(cbind(as.vector(x), as.vector(y), as.vector(z)))
+	return(cbind(x=as.vector(x), y=as.vector(y), z=as.vector(z), S=as.vector(S)))
 }
 
 ###########
