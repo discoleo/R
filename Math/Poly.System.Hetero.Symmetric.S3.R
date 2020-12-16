@@ -7,7 +7,7 @@
 ### Polynomial Systems:
 ### Heterogenous Symmetric S3
 ###
-### draft v.0.1c-move
+### draft v.0.1d
 
 
 ### Heterogenous Symmetric
@@ -17,6 +17,8 @@
 
 ### History
 
+### draft v.0.1d:
+# - minor fix: in Ht[3, 2, 1];
 ### draft v.0.1c-move:
 # - moved Hetero-Mixt (v.0.1c) to separate file;
 ### draft v.0.1c-pre-alpha - v.0.1c-exact:
@@ -135,10 +137,30 @@
 # Trivial solution: x = y = z;
 
 ### TODO:
-# - find best solution;
-# - correct superfluous values;
+# - find bug;
 
 ### Method 1:
+### Sum =>
+# x^2 + y^2 + z^2 + b1*(x+y+z) = 3*R
+# S^2 - 2*E2 + b1*S - 3*R = 0;
+# 2*E2 = S^2 + b1*S - 3*R;
+
+### Sum(x[i]*...) =>
+# x^3 + y^3 + z^3 + b1*E2 = R*S
+# S^3 - 3*E2*S + 3*E3 + b1*E2 = R*S
+# 2*S^3 - 6*E2*S + 6*E3 + 2*b1*E2 - 2*R*S
+# 2*S^3 - 3*(S^2 + b1*S - 3*R)*S + 6*E3 + b1*(S^2 + b1*S - 3*R) - 2*R*S
+6*E3 -S^3 - 2*b1*S^2 + 7*R*S + b1^2*S - 3*b1*R
+# 6*E3 = S^3 + 2*b1*S^2 - 7*R*S - b1^2*S + 3*b1*R
+
+### Sum(x[i+1]^2*...) =>
+E2^2 - 2*E3*S + b1*(S^3 - 3*E2*S + 3*E3) - R*(S^2 - 2*E2)
+(S^2 + b1*S - 3*R)^2 - 8*E3*S + b1*(4*S^3 - 6*(S^2 + b1*S - 3*R)*S + 12*E3) - 4*R*(S^2 - (S^2 + b1*S - 3*R))
+(S^2 + b1*S - 3*R)^2 - 8*E3*S + b1*(-2*S^3 - 6*b1*S^2 + 22*R*S + 12*E3) - 12*R^2
+S^4 - 6*R*S^2 - 5*b1^2*S^2 + 16*b1*R*S - 8*E3*S + 12*b1*E3 - 3*R^2
+S^4 + 2*b1*S^3 - (10*R + b1^2)*S^2 + 6*(b1*R + b1^3)*S - 18*b1^2*R + 9*R^2
+
+### [old/unstable]
 ### Diff =>
 # x^2 - y^2 = b1*(z-y)
 # y^2 - z^2 = b1*(x-z)
@@ -153,22 +175,6 @@
 # E2*S - 3*E3 + 2*E3 + b1^3 = 0;
 # E2*S - E3 + b1^3 = 0
 
-# Sum(x[i]*...) =>
-# x^3 + y^3 + z^3 + b1*E2 = R*S
-# =>
-# S^3 - (R*S - b1*E2) + 3*b1^3 = 0
-# S^3 - R*S + b1*E2 + 3*b1^3 = 0
-
-# Sum =>
-# x^2 + y^2 + z^2 + b1*(x+y+z) = 3*R
-# S^2 - 2*E2 + b1*S - 3*R = 0;
-# 2*E2 = S^2 + b1*S - 3*R;
-# =>
-# S^3 - R*S + b1*(S^2 + b1*S - 3*R)/2 + 3*b1^3 = 0
-# 2*S^3 - 2*R*S + b1*(S^2 + b1*S - 3*R) + 6*b1^3 = 0
-# 2*S^3 + b1*S^2 + (b1^2 - 2*R)*S - 3*b1*R + 6*b1^3 = 0
-
-
 ### Alternative:
 ### Method 2: classic
 # b1*y = R - x^2
@@ -179,19 +185,29 @@
 # (x^2 + b1*x - R) * P6;
 
 
-### Example
-b = 2
-R = 1
+### Solution:
+solve.sysHt32 = function(R, b, doPrint=TRUE) {
+	S = roots(c(1, 2*b[1], - (10*R[1] + b[1]^2), 6*(b[1]*R[1] + b[1]^3), - 18*b[1]^2*R[1] + 9*R[1]^2))
+	if(doPrint) print(S)
+	# remove x == y == z = S / 3
+	# as it causes numerical instability due to roots multiplicity;
+	isEq = round0(S^2 + 3*b[1]*S - 9*R[1]) == 0
+	S = S[ ! isEq]
+	E2 = round0(S^2 + b[1]*S - 3*R[1])/2
+	E3 = - (S^3 - 3*E2*S + b[1]*E2 - R[1]*S) / 3
+	x = sapply(1:length(S), function(id) roots(c(1, -S[id], E2[id], -E3[id])))
+	y = (R[1] - x^2)/b[1]
+	z = (R[1] - y^2)/b[1]
+	sol = cbind(x=as.vector(x), y=as.vector(y), z=as.vector(z))
+	sol
+}
+
+### Example:
+R = 3
+b = -1
 #
-x.sum = roots(c(2, b[1], (b[1]^2 - 2*R), - 3*b[1]*R + 6*b[1]^3))
-E2 = (x.sum^2 + b[1]*x.sum - 3*R)/2
-E3 = E2*x.sum + b1^3
-x = sapply(1:length(x.sum), function(id) roots(c(1, -x.sum[id], E2[id], -E3[id])))
-x = cbind(as.vector(x[,-1])) # TODO: remove robustly the set of wrong solutions
-y = (R - x^2)/b[1]
-z = (R - y^2)/b[1]
-sol = cbind(x,y,z)
-sol
+sol = solve.sysHt32(R, b=b)
+x = sol[,1]; y = sol[,2]; z = sol[,3]
 
 ### Test
 x^2 + b[1]*y 
@@ -201,7 +217,7 @@ z^2 + b[1]*x
 round0.p(poly.calc(sol[,1]))
 
 
-# alternative / classic
+### alternative / classic
 x = roots(c(1,0, - 4*R,0, (6*R^2 - 2*b[1]^2*R), 0, 4*R^2*(b[1]^2 - R), b[1]^7, (b[1]^2*R - R^2)^2 - b[1]^6*R))
 y = (R - x^2)/b[1]
 z = (R - y^2)/b[1]
