@@ -7,7 +7,7 @@
 ### Polynomial Systems:
 ### Heterogenous Symmetric S3
 ###
-### draft v.0.1d-poly
+### draft v.0.2a
 
 
 ### Heterogenous Symmetric
@@ -17,6 +17,9 @@
 
 ### History
 
+### draft v.0.2a:
+# - solved: Ht[3, 3, 1];
+# - TODO: find robust solution;
 ### draft v.0.1d - v.0.1d-poly:
 # - minor fix: in Ht[3, 2, 1];
 # - classic polynomial (P6) for Ht[3, 2, 1]; [v.0.1d-poly]
@@ -932,33 +935,34 @@ x^2 + z^2 + b[1]*y
 # Formulas used:
 # x^3 + y^3 + z^3 = S^3 - 3*E2*S + 3*E3;
 # x^4 + y^4 + z^4 = S^4 - 4*E2 * S^2 + 4*E3 * S + 2*E2^2;
-# (x^3*y^3 + x^3*z^3 + y^3*z^3) = E2^3 + 3*E3^2 - 3*E3*E2*S
+# x^3*y^3 + x^3*z^3 + y^3*z^3 = E2^3 + 3*E3^2 - 3*E3*E2*S
 # x^4*y^2 + x^4*z^2+ x^2*y^4 + y^4*z^2 + y^2*z^4 + x^2*z^4 = E2^2*S^2 - 2*E3*S^3 + 4*E3*E2*S - 3*E3^2 - 2*E2^3
 
 ### Sum =>
 # x^3 + y^3 + z^3 + b*(x+y+z) = 3*R
-# S^3 - 3*E2*S + 3*E3 + b*S - 3*R = 0;
+S^3 - 3*E2*S + 3*E3 + b*S - 3*R # = 0;
 # 3*E2*S = S^3 + 3*E3 + b*S - 3*R
 # =>
 # 6*E3 = 6*E2*S - 2*S^3 - 2*b*S + 6*R
 
 ### Sum(x[i]*...) =>
 # x^4 + y^4 + z^4 + b*E2 = R*S
-# S^4 - 4*E2 * S^2 + 4*E3 * S + 2*E2^2 - R*S = 0;
+S^4 - 4*E2*S^2 + 4*E3 * S + 2*E2^2 + b*E2 - R*S # = 0;
 
 ### Solve E2 & E3:
-# S^4 - 4*E2*S^2 + 4*E3*S + 2*E2^2 - R*S = 0
-# S^6 - 4*E2*S^4 + 4*E3*S^3 + 2*E2^2*S^2 - R*S^3 = 0
-# 9*S^6 - 36*E2*S^4 + 36*E3*S^3 + 18*E2^2*S^2 - 9*R*S^3 = 0
-# 9*S^6 - 12*S^3*(S^3 + 3*E3 + b*S - 3*R) + 36*E3*S^3 + 18*E2^2*S^2 - 9*R*S^3 = 0
-# -3*S^6 - 12*b*S^4 + 27*R*S^3 + 18*E2^2*S^2 = 0
-# 3*S^6 + 12*b*S^4 - 27*R*S^3 - 18*E2^2*S^2 = 0
-# 18*E2^2*S^2 = 3*S^6 + 12*b*S^4 - 27*R*S^3
-# 6*E2^2 = S^4 + 4*b*S^2 - 9*R*S !!!
-# =>
-# 6*E3 = 6*E2*S - 2*S^3 - 2*b*S + 6*R !!!
+S^4 - 4*E2*S^2 + 4*E3*S + 2*E2^2 + b*E2 - R*S # = 0
+3*S^4 - 12*E2*S^2 + 2*6*E3*S + 6*E2^2 + 3*b*E2 - 3*R*S # = 0
+3*S^4 - 12*E2*S^2 + 2*(6*E2*S - 2*S^3 - 2*b*S + 6*R)*S + 6*E2^2 + 3*b*E2 - 3*R*S # = 0
+# E2 =>
+6*E2^2 + 3*b*E2 - (S^4 + 4*b*S^2 - 9*R*S) # = 0
 
-### Diff =>
+### Sum(x[i+1]^3*...) =>
+(x^3*y^3 + x^3*z^3 + y^3*z^3) + b*(x^4 + y^4 + z^4) - R*(x^3 + y^3 + z^3) # = 0
+E2^3 + 3*E3^2 - 3*E3*E2*S + b*(S^4 - 4*E2 * S^2 + 4*E3 * S + 2*E2^2) +
+	- R*(S^3 - 3*E2*S + 3*E3)
+b*S^4 - R*S^3 - 4*b*E2*S^2 + 3*R*E2*S + 4*b*E3*S - 3*E3*E2*S - 3*R*E3 + E2^3 + 2*b*E2^2 + 3*E3^2
+
+### [old] Diff =>
 # x^3 - y^3 = b*(z-y)
 # y^3 - z^3 = b*(x-z)
 # z^3 - x^3 = b*(y-x)
@@ -969,35 +973,81 @@ x^2 + z^2 + b[1]*y
 # E2^3 - E2^2*S^2 + E3*S^3 - b^3 = 0
 
 ### Solve: E2, E3, S
-# 6*E2^2 = S^4 + 4*b*S^2 - 9*R*S
-# 6*E3 = 6*E2*S - 2*S^3 - 2*b*S + 6*R
-# E2^3 - E2^2*S^2 + E3*S^3 - b^3 = 0
-# TODO
+6*E2^2 + 3*b*E2 - (S^4 + 4*b*S^2 - 9*R*S)
+6*E3 - (6*E2*S - 2*S^3 - 2*b*S + 6*R)
+b*S^4 - R*S^3 - 4*b*E2*S^2 + 3*R*E2*S + 4*b*E3*S - 3*E3*E2*S - 3*R*E3 + E2^3 + 2*b*E2^2 + 3*E3^2
+# [old]
+E2^3 - E2^2*S^2 + E3*S^3 - b^3 # = 0
+
+### E2, E3 =>
+12*b*S^4 - 12*R*S^3 - 48*b*E2*S^2 + 36*R*E2*S + 8*b*(6*E2*S - 2*S^3 - 2*b*S + 6*R)*S +
+	- 6*(6*E2*S - 2*S^3 - 2*b*S + 6*R)*E2*S - 6*R*(6*E2*S - 2*S^3 - 2*b*S + 6*R) +
+	+ 12*E2^3 + 24*b*E2^2 + (6*E2*S - 2*S^3 - 2*b*S + 6*R)^2
+4*S^6 - 12*E2*S^4 + 4*b*S^4 - 24*R*S^3 - 12*b^2*S^2 - 12*b*E2*S^2 + 36*b*R*S +
+	+ 36*R*E2*S + 12*E2^3 + 24*b*E2^2  # (6*E2*S - 2*S^3 - 2*b*S + 6*R)^2
+4*S^6 + 7*b*S^4 - 24*R*S^3 + 9*b*R*S - 10*E2*S^4 - 4*b*E2*S^2 + 18*R*E2*S - 9*b^2*E2
+# 4*E2 = - b + 1/3 * sqrt(Det); 4*E2 = - b - 1/3 * sqrt(Det);
+Det = (9*b^2 + 24*S^4 + 96*b*S^2 - 216*R*S)
+# =>
+4*S^6 + 7*b*S^4 - 24*R*S^3 + 9*b*R*S - (10*S^4 + 4*b*S^2 - 18*R*S + 9*b^2)*E2
+16*S^6 + 28*b*S^4 - 96*R*S^3 + 36*b*R*S - (10*S^4 + 4*b*S^2 - 18*R*S + 9*b^2)*(- b + 1/3 * sqrt(Det))
+48*S^6 + 114*b*S^4 + 12*b^2*S^2 - 288*R*S^3 + 54*b*R*S + 27*b^3 - (10*S^4 + 4*b*S^2 - 18*R*S + 9*b^2)*sqrt(Det)
+
+### "P12" / P11 Polynomial:
+S^12 + 6*b*S^10 - 27*R*S^9 - 9*b^2*S^8 + 54*R*b*S^7 + (27*R^2 + 166*b^3)*S^6 +
+	+ (- 756*R*b^2)*S^5 + (972*R^2*b + 45*b^4)*S^4 + (- 351*R*b^3 - 729*R^3)*S^3 +
+	+ (729*R^2*b^2 + 81*b^5)*S^2 + (- 243*R*b^4)*S + 0
+
 
 ### Derivation
 (x^3*y^3 + x^3*z^3 + y^3*z^3) + # = E2^3 - 6*E3^2 - 3*E3*S*(S^2 - 2*E2) + 3*E3*(S^3 - 3*E2*S + 3*E3)
-x^4*y^2 + x^4*z^2+ x^2*y^4 + y^4*z^2 + y^2*z^4 + x^2*z^4 + # = E2^2 *(S^2 - 2*E2) - 2*E3*(E2*S - 2*E3) - 2*E3*(S^3 - 3*E2*S + 3*E3) - E3^2
-+ 2*x*y*z*(x^2*y + x^2*z + x*y^2 + y^2*z + x*z^2 + y*z^2) + # = 2*E3*(E2*S - 3*E3)
-+ x*y*z*(x^3 + y^3 + z^3) +  3*(x*y*z)^2 + b^3
+	+ x^4*y^2 + x^4*z^2+ x^2*y^4 + y^4*z^2 + y^2*z^4 + x^2*z^4 + # = E2^2 *(S^2 - 2*E2) - 2*E3*(E2*S - 2*E3) - 2*E3*(S^3 - 3*E2*S + 3*E3) - E3^2
+	+ 2*x*y*z*(x^2*y + x^2*z + x*y^2 + y^2*z + x*z^2 + y*z^2) + # = 2*E3*(E2*S - 3*E3)
+	+ x*y*z*(x^3 + y^3 + z^3) +  3*(x*y*z)^2 + b^3
 #
 E2^3 + 3*E3^2 - 3*E3*E2*S + E2^2*S^2 - 2*E3*S^3 + 4*E3*E2*S - 3*E3^2 - 2*E2^3 + 
 + 2*E3*(E2*S - 3*E3) + E3*(S^3 - 3*E2*S + 3*E3) + 3*E3^2 + b^3
 #
 - E2^3 + E2^2*S^2 - E3*S^3 + b^3
 
+### Solution:
+
+solve.sysHt33 = function(R, b) {
+	### TODO: robust !!!
+	# - find way to exclude spurious roots!
+	coeff = c(1, 0, 6*b[1], - 27*R[1], - 9*b[1]^2, 54*R[1]*b[1], (27*R[1]^2 + 166*b[1]^3),
+		(- 756*R[1]*b[1]^2), (972*R[1]^2*b[1] + 45*b[1]^4), (- 351*R[1]*b[1]^3 - 729*R[1]^3),
+		(729*R[1]^2*b[1]^2 + 81*b[1]^5), (- 243*R[1]*b[1]^4))
+	S = roots(coeff)
+	# exclude roots: x == y == z = S/3,
+	# as they create numerical instability due to root multiplicity;
+	isEq = round0(S^3 + 9*b[1]*S - 27*R) == 0
+	S = S[ ! isEq]
+	print(S)
+	Det = sqrt(9*b[1]^2 + 24*S^4 + 96*b[1]*S^2 - 216*R[1]*S)
+	E2 = c(- b[1] + 1/3 * Det, - b[1] - 1/3 * Det) / 4
+	S = c(S, S)
+	E3 = (6*E2*S - 2*S^3 - 2*b[1]*S + 6*R[1]) / 6
+	x = sapply(1:length(S), function(id) roots(c(1, -S[id], E2[id], -E3[id])))
+	len = length(S)
+	S = matrix(S, ncol=len, nrow=3, byrow=T)
+	y = (R - x^3) / b[1]
+	z = (R - y^3) / b[1]
+	return(cbind(as.vector(x), as.vector(y), as.vector(z)))
+}
+
 ###########
 ### Example
-b = 2
 R = 1
+b = 2
 #
-# TODO: x
-y = (R - x^3) / b[1]
-z = (R - y^3) / b[1]
+sol = solve.sysHt33(R, b)
+x = sol[,1]; y = sol[,2]; z = sol[,3];
 
 ### Test
-x^3 + b*y
-y^3 + b*z
-z^3 + b*x
+x^3 + b[1]*y
+y^3 + b[1]*z
+z^3 + b[1]*x
 
 ### Classic Polynomial
 
@@ -1020,7 +1070,6 @@ x = roots(coeff)
 
 ### TODO:
 # - factorization: P3 * P24;
-# - do NOT seem to be the roots of P3 * (P8)^3;
 
 
 ############################
