@@ -7,7 +7,7 @@
 ### Polynomial Systems:
 ### Heterogenous Symmetric S3
 ###
-### draft v.0.1d
+### draft v.0.1d-poly
 
 
 ### Heterogenous Symmetric
@@ -17,8 +17,9 @@
 
 ### History
 
-### draft v.0.1d:
+### draft v.0.1d - v.0.1d-poly:
 # - minor fix: in Ht[3, 2, 1];
+# - classic polynomial (P6) for Ht[3, 2, 1]; [v.0.1d-poly]
 ### draft v.0.1c-move:
 # - moved Hetero-Mixt (v.0.1c) to separate file;
 ### draft v.0.1c-pre-alpha - v.0.1c-exact:
@@ -136,9 +137,6 @@
 
 # Trivial solution: x = y = z;
 
-### TODO:
-# - find bug;
-
 ### Method 1:
 ### Sum =>
 # x^2 + y^2 + z^2 + b1*(x+y+z) = 3*R
@@ -183,6 +181,8 @@ S^4 + 2*b1*S^3 - (10*R + b1^2)*S^2 + 6*(b1*R + b1^3)*S - 18*b1^2*R + 9*R^2
 # =>
 # x^8 - 4*R*x^6 + (6*R^2 - 2*b1^2*R)*x^4 + 4*R^2*(b1^2 - R)*x^2 + b[1]^7*x + (b1^2*R - R^2)^2 - b[1]^6*R = 0
 # (x^2 + b1*x - R) * P6;
+- R*b[1]^4 + 2*R^2*b[1]^2 - R^3 + b[1]^6 + (2*R*b[1]^3 - R^2*b[1] - b[1]^5)*x + (3*R^2 - 3*R*b[1]^2 + b[1]^4)*x^2 +
+	+ (2*R*b[1] - b[1]^3)*x^3 - (3*R - b[1]^2)*x^4 - b[1]*x^5 + x^6
 
 
 ### Solution:
@@ -215,6 +215,23 @@ y^2 + b[1]*z
 z^2 + b[1]*x
 
 round0.p(poly.calc(sol[,1]))
+
+
+### Ex 2:
+R = 3
+b = 3
+#
+sol = solve.sysHt32(R, b=b)
+x = sol[,1]; y = sol[,2]; z = sol[,3]
+
+### Test
+x^2 + b[1]*y 
+y^2 + b[1]*z
+z^2 + b[1]*x
+
+round0.p(poly.calc(sol[,1]))
+
+621 - 108*x + 27*x^2 - 9*x^3 - 3*x^5 + x^6
 
 
 ### alternative / classic
