@@ -37,7 +37,7 @@
 library(ggplot2)
 
 
-setwd("C:/Users/Leo Mada/Desktop/Practica/MSc/ML")
+setwd(".../ML")
 
 
 ############
