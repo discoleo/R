@@ -5,7 +5,7 @@
 ###
 ### Barycenters: MNIST
 ###
-### draft v.0.1d
+### draft v.0.1d-top
 
 
 ### "Imagine"
@@ -24,9 +24,10 @@
 ###############
 ### History ###
 
-### draft v.0.1d:
+### draft v.0.1d - v.0.1d-top:
 # - basic work on outliers:
 #  -- extract & plot outliers;
+#  -- added top() function; [v.0.1d-top]
 ### draft v.0.1c:
 # - dist_similar.l(): dist to most similar barycenter;
 ### draft v.0.1b:
@@ -227,6 +228,13 @@ toRow.l = function(l, id) {
 	}
 	do.call(rbind, l.rows)
 }
+top = function(d, group, n) {
+	top.order = order(d, decreasing=TRUE)
+	id.top = tapply(top.order, group[top.order], function(id) head(id, n))
+	do.call(rbind, id.top)
+}
+
+### Plot
 plot.mean = function(l, x.lbl, mid=127.5, nrow=NA, title.lbl, useTheme=TRUE) {
 	### by Group
 	s = tsum.m(l, x.lbl)
@@ -392,6 +400,7 @@ par(old.par)
 
 ### L...
 r.d = dist_similar.l(x.sc, s.sc, x.lbl, metric="Lpart", pow=0.75)
+# but is NOT better;
 head(r.d, n=10)
 table(r.d$id == r.d$group)
 
@@ -401,16 +410,20 @@ table(r.d$dgr > (r.d$d + 2))
 ###############
 
 # r = tdist.l(x.sc, x.lbl, s.sc, metric="L1")
-
-### Outliers
 head(r)
-image(x.sc[r > 250 & x.lbl == 0][[1]])
 
 ### Outliers
+isOutlier = r > 250 & x.lbl == 0;
+if(any(isOutlier)) {
+	image(x.sc[isOutlier][[1]])
+} else {
+	print("No such Outlier!")
+}
+
+### Top Outliers
 top.n = 6
-top.order = order(r, decreasing=TRUE)
-id.top = tapply(top.order, x.lbl[top.order], function(id) head(id, top.n))
-id.top = do.call(rbind, id.top)
+id.top = top(r, x.lbl, n=top.n)
+
 head(id.top)
 table(x.lbl[id.top])
 
