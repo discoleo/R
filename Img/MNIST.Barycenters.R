@@ -5,7 +5,7 @@
 ###
 ### Barycenters: MNIST
 ###
-### draft v.0.1d-top
+### draft v.0.1d-tfix
 
 
 ### "Imagine"
@@ -24,10 +24,11 @@
 ###############
 ### History ###
 
-### draft v.0.1d - v.0.1d-top:
+### draft v.0.1d - v.0.1d-tfix:
 # - basic work on outliers:
 #  -- extract & plot outliers;
 #  -- added top() function; [v.0.1d-top]
+#  -- minor fix to code; [v.0.1d-tfix]
 ### draft v.0.1c:
 # - dist_similar.l(): dist to most similar barycenter;
 ### draft v.0.1b:
@@ -101,6 +102,7 @@ image(x[[3]])
 # latest version on:
 # https://github.com/discoleo/R/blob/master/Img/MNIST.Barycenters.R
 
+### helper functions
 sum.m = function(l) {
 	dim = dim(l[[1]])
 	s = matrix(0, nrow=dim[1], ncol=dim[2])
@@ -428,12 +430,12 @@ head(id.top)
 table(x.lbl[id.top])
 
 # TODO: add automatic id
-top = toRow.l(x.sc[id.top], x.lbl[id.top])
-top$inst = rep(1:top.n, each=10*WIDTH*WIDTH)
-tail(top)
+out.top = toRow.l(x.sc[id.top], x.lbl[id.top])
+out.top$inst = rep(1:top.n, each=10*WIDTH*WIDTH)
+tail(out.top)
 
 # png(file="Barycenters.Outliers.png")
-plot.group(top, group = inst ~ id,
+plot.group(out.top, group = inst ~ id,
 	title = "Least typical digits",
 	subtitle = "The 6 digits within each label that had the greatest distance to the centroid")
 
