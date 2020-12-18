@@ -5,7 +5,7 @@
 ###
 ### Barycenters: MNIST
 ###
-### draft v.0.1c
+### draft v.0.1d
 
 
 ### "Imagine"
@@ -24,6 +24,9 @@
 ###############
 ### History ###
 
+### draft v.0.1d:
+# - basic work on outliers:
+#  -- extract & plot outliers;
 ### draft v.0.1c:
 # - dist_similar.l(): dist to most similar barycenter;
 ### draft v.0.1b:
@@ -35,6 +38,7 @@
 ################
 
 library(ggplot2)
+library(magrittr)
 
 
 setwd(".../ML")
@@ -214,8 +218,13 @@ toRow.m = function(m, id) {
 	id = rep(id, each=dim[1]*dim[2])
 	data.frame(id=id, x=rep(gr[,1], dim[3]), y=rep(gr[,2], dim[3]), val=as.vector(m))
 }
-toRow.l = function(l) {
-	l.rows = lapply(l, toRow.m)
+toRow.l = function(l, id) {
+	# TODO: add automatic id?
+	if(missing(id)) {
+		l.rows = lapply(l, toRow.m)
+	} else {
+		l.rows = lapply(seq(length(l)), function(l.id) toRow.m(l[[l.id]], id[l.id]))
+	}
 	do.call(rbind, l.rows)
 }
 plot.mean = function(l, x.lbl, mid=127.5, nrow=NA, title.lbl, useTheme=TRUE) {
@@ -242,6 +251,15 @@ plot.mmean = function(m, m.lbl, mid=127.5, nrow=NA, title.lbl, useTheme=TRUE) {
 	if(useTheme) img = img + theme_void();
 	if( ! missing(title.lbl)) img = img + labs(title = title.lbl);
 	img
+}
+plot.group = function(x, group, mid=0.5, title="", subtitle="") {
+	    ggplot(data=x, aes(x, y, fill = val)) +
+        geom_tile(show.legend = FALSE) +
+        scale_fill_gradient2(low = "white", high = "black", mid = "gray", midpoint = mid) +
+        facet_grid(group) +
+        labs(title = title, subtitle = subtitle) +
+        theme_void() +
+        theme(strip.text = element_blank())
 }
 
 #####################
@@ -380,10 +398,37 @@ table(r.d$id == r.d$group)
 table(r.d$dgr > (r.d$d + 2))
 
 
+###############
+
+# r = tdist.l(x.sc, x.lbl, s.sc, metric="L1")
+
+### Outliers
+head(r)
+image(x.sc[r > 250 & x.lbl == 0][[1]])
+
+### Outliers
+top.n = 6
+top.order = order(r, decreasing=TRUE)
+id.top = tapply(top.order, x.lbl[top.order], function(id) head(id, top.n))
+id.top = do.call(rbind, id.top)
+head(id.top)
+table(x.lbl[id.top])
+
+# TODO: add automatic id
+top = toRow.l(x.sc[id.top], x.lbl[id.top])
+top$inst = rep(1:top.n, each=10*WIDTH*WIDTH)
+tail(top)
+
+# png(file="Barycenters.Outliers.png")
+plot.group(top, group = inst ~ id,
+	title = "Least typical digits",
+	subtitle = "The 6 digits within each label that had the greatest distance to the centroid")
+
+# dev.off()
+
 
 ### TODO:
 # - various stuff;
-
 
 ######################
 ######################
