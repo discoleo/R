@@ -7,7 +7,7 @@
 ### Polynomial Systems:
 ### Heterogenous Symmetric S3
 ###
-### draft v.0.2a-poly
+### draft v.0.2b
 
 
 ### Heterogenous Symmetric
@@ -17,6 +17,9 @@
 
 ### History
 
+### draft v.0.2b:
+# - first concepts to solve:
+#   x^2 - y^2 + b*x*y = R;
 ### draft v.0.2a - v.0.2a-poly:
 # - solved: Ht[3, 3, 1];
 # - simplified solution: from P11 to P8; [v.0.2a-simplify]
@@ -109,8 +112,8 @@
 # - can be decomposed as polynomials of: S, E2, E3;,
 #   where S = x + y + z;
 # - S, E2, E3 = elementary polynomials; 
-# (x^n + y^n + z^n) = D1(S^n, E2, E3);
-# (x^n + y^n + z^n) = D2(S^(n+1), E2, E3);
+# n:   (x^n + y^n + z^n) = D1(S^n, E2, E3);
+# n+1: (x^n + y^n + z^n) = D2(S^(n+1), E2, E3);
 
 # Alternative to Eq3: for very low orders;
 ### Diff =>
@@ -120,9 +123,9 @@
 
 ### Complexity:
 # - initial System: => order P[n^3];
-# - can be decomposed = P[n]*P[n^3 - n];
+#  -- polynomial can be decomposed = P[n]*P[n^3 - n];
 # - decomposed system:
-#  -- orders of E2 & E3 are usually much lower;
+#  -- D(S, E2, E3): orders of E2 & E3 are usually much lower;
 
 
 ################################
@@ -1477,7 +1480,36 @@ x*y^2*z + b[1]*z
 x*y*z^2 + b[1]*x
 
 
+#################################
+#################################
+
+
+#################################
+### Higher Power Correlations ###
+
+
 ################################
+### x[i]^3 + b2*x[j]^2 + b1*x[j]
+
+# x^3 + b2*y^2 + b1*y = R
+# y^3 + b2*z^2 + b1*z = R
+# z^3 + b2*x^2 + b1*x = R
+
+
+### TODO
+
+### Sum =>
+# (x^3 + y^3 + z^3) + b2*(x^2 + y^2 + z^2) + b1*S = 3*R
+# S^3 - 3*E2*S + 3*E3 + b2*(S^2 - 2*E2) + b1*S - 3*R = 0
+# S^3 + b2*S^2 + b1*S - 3*E2*S - 2*b2*E2 + 3*E3 - 3*R = 0
+# 3*E3 = -(S^3 + b2*S^2 + b1*S - 3*E2*S - 2*b2*E2 - 3*R)
+
+### Sum( (b[1]*x[i] + b[2]*x[i]^2) * ...) =>
+b[2]*(x^5 + y^5 + z^5) + b[1]*(x^4 + y^4 + z^4) +
+	+ b[1]*b[2]*(x^2*y + x*y^2 + x^2*z + x*z^2 + y^2*z + y*z^2) + b[1]^2*E2 + b[2]^2*(E2^2 - 2*E3*S) +
+	- b[2]*R*(x^2+y^2+z^2) - b[1]*R*S # = 0
+
+
 
 ################################
 ### x[i]^3 + b2*x[j]^2 + b1*x[k]
@@ -1519,5 +1551,56 @@ b2^2*(x^4+y^4+z^4) - 2*b1*b2*(x^3+y^3+z^3) + (b1^2 - 2*b2*R)*(x^2+y^2+z^2) - 2*b
 # TODO: ...
 
 
-########################
-########################
+#############################
+#############################
+
+#############################
+### Negative Correlations ###
+
+# x^2 - y^2 + b*x*y = R
+# y^2 - z^2 + b*y*z = R
+# z^2 - x^2 + b*x*z = R
+
+### Solution:
+
+### Case 1:
+det = sqrt(R[1]/b[1])
+x = y = z = c(det, -det)
+
+### Case 2:
+# (x, y, z) NOT equal;
+
+### Sum =>
+b*E2 - 3*R # = 0
+E2 = 3*R[1] / b[1]
+
+### Sum(z^2*...) =>
+# b*x*y*z*S = R*(x^2+y^2=z^2)
+b*E3*S - R*(S^2 - 2*E2) # = 0
+b*E3*S = R*(S^2 - 2*E2)
+b*E3*S = R*(S^2 - 6*R / b)
+
+### Sum(x*y*...) =>
+(x^3*y - x*y^3 - x^3*z + x*z^3 + y^3*z - y*z^3) + b*(x^2*y^2 + x^2*z^2 + y^2*z^2) - R*E2 # = 0
+E2*(S^2 - 2*E2) - E3*S - 2*(x*y^3 + x^3*z + y*z^3) + b*(E2^2 - 2*E3*S) - R*E2 # = 0
+2*(x*y^3 + x^3*z + y*z^3) - E2*S^2 + 2*b*E3*S + E3*S + (2-b)*E2^2 + R*E2 # = 0
+2*(x*y^3 + x^3*z + y*z^3) - E2*S^2 + 2*(R*S^2 - 2*R*E2) + E3*S + (2-b)*E2^2 + R*E2 # = 0
+2*b*(x*y^3 + x^3*z + y*z^3) - b*E2*S^2 + 2*b*R*S^2 - 4*R*b*E2 + b*E3*S + (2-b)*b*E2^2 + R*b*E2 # = 0
+2*b^2*(x*y^3 + x^3*z + y*z^3) + 2*b^2*R*S^2 - 2*b*R*S^2 + 12*R^2 - 18*b*R^2 # = 0
+### (x^3*y+y^3*z+z^3*x)* =>
+2*b^2*(x^4*y^4+x^4*z^4+y^4*z^4 + E3*(x^5+y^5+z^5) + E3^2*E2) +
+	+ (2*b^2*R*S^2 - 2*b*R*S^2 + 12*R^2 - 18*b*R^2)*(x^3*y+y^3*z+z^3*x) # = 0
+# TODO: solve!
+
+
+# [redundant]
+### Sum((x^2+y^2)*...) =>
+# b*(x^3*y + x*y^3 + x^3*z + x*z^3 + y^3*z + y*z^3) = 2*R*(x^2+y^2+z^2)
+b*(E2*(S^2 - 2*E2) - E3*S) - 2*R*(S^2 - 2*E2) # = 0
+b*E2*S^2 - 2*b*E2^2 - b*E3*S - 2*R*S^2 + 4*R*E2 # = 0
+b*E2*S^2 - 2*b*E2^2 - R*(S^2 - 6*R / b) - 2*R*S^2 + 4*R*E2 # = 0
+b^2*E2*S^2 - 2*b^2*E2^2 - R*(b*S^2 - 6*R) - 2*b*R*S^2 + 4*R*b*E2 # = 0
+3*b*R*S^2 - 3*b*R*S^2 # = 0
+
+
+
