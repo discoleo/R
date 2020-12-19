@@ -64,3 +64,21 @@ solve.S = function(S, R, b=0) {
 	cbind(as.vector(x), as.vector(y), as.vector(z))
 }
 
+solve.mS = function(S, b=0) {
+	# generic solver (based on existing S = x+y+z)
+	# S = cbind(S, E2, E3)
+	b2 = if(length(b) > 1) b[2] else 0; # Ext A2;
+	b3 = if(length(b) > 2) b[3] else 0; # Ext A3;
+	x = sapply(seq(nrow(S)), function(id) roots(c(1, -S[id, 1], S[id, 2] - b2*S[id, 1], - S[id, 3] + b3*S[id, 1])))
+	E2 = S[,2]; E3 = S[,3]; S = S[,1]; len = length(S)
+	S  = matrix(S, ncol=len, nrow=3, byrow=T)
+	E3 = matrix(E3, ncol=len, nrow=3, byrow=T)
+	yz = E3/x - b3
+	yz.s = S - x
+	# TODO: robust (when necessary)
+	yz.d = sqrt(yz.s^2 - 4*yz)
+	y = (yz.s + yz.d) / 2
+	z = yz.s - y
+	cbind(as.vector(x), as.vector(y), as.vector(z))
+}
+
