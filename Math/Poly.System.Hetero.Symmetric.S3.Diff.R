@@ -7,7 +7,7 @@
 ### Polynomial Systems: S3
 ### Hetero-Symmetric Differences
 ###
-### draft v.0.1a
+### draft v.0.1a-ext2
 
 
 ### Hetero-Symmetric Differences
@@ -23,6 +23,8 @@ z^n - x^n + b*z*x = R
 ###############
 ### History ###
 
+### draft v.0.1a-ext2:
+# - extension A1 power 2: + b[3]*(x+y+z)^2;
 ### draft v.0.1a:
 # - moved [Difference] section to this new file;
 ### old file: Poly.System.Hetero.Symmetric.S3.R
@@ -116,7 +118,9 @@ b^3*S^6 + R*(b^4 - 15*b^2)*S^4 + R^2*(27*b - 18*b^3)*S^2 + 81*R^3*(b^2 + 3)
 (b*S^2 - 9*R)^2 * (b*S^2 + R*(b^2 + 3))
 
 ### Extension A1: pow 1:
-(b[1]*S^2 + 9*b[2]*R*S - 9*R)^2 * (b[1]*S^2 - b[2]*(b[1]^2 + 3)*S + R*(b[1]^2 + 3))
+(b[1]*S^2 + 9*b[2]*S - 9*R)^2 * (b[1]*S^2 - b[2]*(b[1]^2 + 3)*S + R*(b[1]^2 + 3))
+### Extension A1: pow 2:
+((b[1] + 9*b[3])*S^2 + 9*b[2]*S - 9*R)^2 * ((b[1] - b[3]*(b[1]^2 + 3))*S^2 - b[2]*(b[1]^2 + 3)*S + R*(b[1]^2 + 3))
 
 
 ### Solution
@@ -128,24 +132,30 @@ solve.Ht3Diff = function(R, b) {
 	} else if(length(b) == 2) {
 		det = sqrt(b[2]^2*(b[1]^2 + 3)^2 - 4*b[1]*R[1]*(b[1]^2 + 3) + 0i)
 		S = c(b[2]*(b[1]^2 + 3) + c(1,-1)*det) / 2 / b[1]
+	} else if(length(b) == 3) {
+		det = sqrt(b[2]^2*(b[1]^2 + 3)^2 - 4*R[1]*(b[1]^2 + 3)*(b[1] - b[3]*(b[1]^2 + 3)) + 0i)
+		S = c(b[2]*(b[1]^2 + 3) + c(1,-1)*det) / 2 / (b[1] - b[3]*(b[1]^2 + 3))
 	}
+	print(S)
 	#
 	b2 = if(length(b) > 1) b[2] else 0; # Ext A1: pow 1;
-	b3 = if(length(b) > 2) b[3] else 0; # TODO: Ext A3;
-	E2 = 3*(R[1] - b2*S) / b[1]
-	E3 = (R[1] - b2*S)*(S^2 - 2*E2) / b[1] / S
+	b3 = if(length(b) > 2) b[3] else 0; # Ext A3: pow 2;
+	R1 = R[1] - b2*S - b3*S^2
+	E2 = 3*R1 / b[1]
+	E3 = R1*(S^2 - 2*E2) / b[1] / S
 	### x
-	x = sapply(seq_along(S), function(id) roots(c(1, -S[id], E2[id], - E3[id] + b3*S[id])))
+	x = sapply(seq_along(S), function(id) roots(c(1, -S[id], E2[id], - E3[id])))
 	len = length(S)
 	S  = rep(S,  each=3)
 	E3 = rep(E3, each=3)
-	isZero = round0(E3 + b3*S) == 0
-	x = x[ ! isZero]
-	yz = E3/x - b3
+	R1 = rep(R1, each=3)
+	isZero = round0(x) == 0
+	x = x[ ! isZero] # TODO: changes length of x => S;
+	yz = E3/x
 	yz.s = S - x
-	### robust: includes Ext A1
-	y2 = (yz.s^2 + R[1] - b2*S - (2 + b[1])*yz) / 2
-	y = (R[1] - b2*S - x^2 + y2) / b[1] / x
+	### robust: includes Ext A1: powers 1 & 2;
+	y2 = (yz.s^2 + R1 - (2 + b[1])*yz) / 2
+	y = (R1 - x^2 + y2) / b[1] / x
 	z = yz.s - y;
 	sol = cbind(x=x, y=y, z=z)
 	### x = 0
@@ -157,6 +167,8 @@ solve.Ht3Diff = function(R, b) {
 		x = y = z = c(1,-1) * sqrt(R[1] / b[1] + 0i)
 	} else if(length(b) == 2) {
 		x = y = z = roots(c(b[1], 3*b[2], -R[1]))
+	} else if(length(b) == 3) {
+		x = y = z = roots(c(b[1] + 9*b[3], 3*b[2], -R[1]))
 	}
 	sol = rbind(sol, cbind(x,y,z))
 	return(sol)
@@ -205,6 +217,25 @@ x = sol[,1]; y = sol[,2]; z = sol[,3];
 x^2 - y^2 + b[1]*x*y + b[2]*(x+y+z) # - R
 y^2 - z^2 + b[1]*y*z + b[2]*(x+y+z) # - R
 z^2 - x^2 + b[1]*x*z + b[2]*(x+y+z) # - R
+
+round0.p(poly.calc(x[1:6]))
+
+err = 25 + 60*x - 131*x^2 - 284*x^3 - 38*x^4 + 8*x^5 + x^6
+round0(err)
+
+##########
+### Ext 2:
+
+R = 1
+b = c(1, -2, 1)
+#
+sol = solve.Ht3Diff(R, b)
+x = sol[,1]; y = sol[,2]; z = sol[,3];
+
+### Test
+x^2 - y^2 + b[1]*x*y + b[3]*(x+y+z)^2 + b[2]*(x+y+z) # - R
+y^2 - z^2 + b[1]*y*z + b[3]*(x+y+z)^2 + b[2]*(x+y+z) # - R
+z^2 - x^2 + b[1]*x*z + b[3]*(x+y+z)^2 + b[2]*(x+y+z) # - R
 
 round0.p(poly.calc(x[1:6]))
 
