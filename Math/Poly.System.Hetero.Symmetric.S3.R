@@ -7,7 +7,7 @@
 ### Polynomial Systems:
 ### Heterogenous Symmetric S3
 ###
-### draft v.0.2b-sol
+### draft v.0.2b-ext
 
 
 ### Heterogenous Symmetric
@@ -17,9 +17,10 @@
 
 ### History
 
-### draft v.0.2b - v.0.2b-sol:
+### draft v.0.2b - v.0.2b-ext:
 # - first concepts / solved [v.0.2b-sol]:
 #   x^2 - y^2 + b*x*y = R;
+# - solved extension A1 (Pow 1): + b[2]*(x+y+z); [v.0.2b-ext]
 ### draft v.0.2a - v.0.2a-poly:
 # - solved: Ht[3, 3, 1];
 # - simplified solution: from P11 to P8; [v.0.2a-simplify]
@@ -1614,30 +1615,29 @@ b^2*(b^2*R*S^2 - b*R*S^2 + 6*R^2 - 9*b*R^2)*(E2*(S^2 - 2*E2) - E3*S) +
 	+ (b^2*R*S^2 - b*R*S^2 + 6*R^2 - 9*b*R^2)*(b^2*R*S^2 - b*R*S^2 + 6*R^2 - 9*b*R^2)
 b^3*S^6 + R*(b^4 - 15*b^2)*S^4 + R^2*(27*b - 18*b^3)*S^2 + 81*R^3*(b^2 + 3)
 (b*S^2 - 9*R)*(b^2*S^4 + R*(b^3 - 6*b)*S^2 - 9*R^2*(b^2 + 3))
-(b*S^2 - 9*R)^2 * (b*S^2 + 3*R + R*b^2)
+(b*S^2 - 9*R)^2 * (b*S^2 + R*(b^2 + 3))
 
+### Extension A1: pow 1:
+(b[1]*S^2 + 9*b[2]*R*S - 9*R)^2 * (b[1]*S^2 - b[2]*(b[1]^2 + 3)*S + R*(b[1]^2 + 3))
 
-# [redundant]
-### Sum((x^2+y^2)*...) =>
-# b*(x^3*y + x*y^3 + x^3*z + x*z^3 + y^3*z + y*z^3) = 2*R*(x^2+y^2+z^2)
-b*(E2*(S^2 - 2*E2) - E3*S) - 2*R*(S^2 - 2*E2) # = 0
-b*E2*S^2 - 2*b*E2^2 - b*E3*S - 2*R*S^2 + 4*R*E2 # = 0
-b*E2*S^2 - 2*b*E2^2 - R*(S^2 - 6*R / b) - 2*R*S^2 + 4*R*E2 # = 0
-b^2*E2*S^2 - 2*b^2*E2^2 - R*(b*S^2 - 6*R) - 2*b*R*S^2 + 4*R*b*E2 # = 0
-3*b*R*S^2 - 3*b*R*S^2 # = 0
 
 ### Solution
 
 solve.Ht3Diff = function(R, b) {
-	S = sqrt( - R*(b^2 + 3) / b + 0i)
-	S = c(S, -S);
+	if(length(b) == 1) {
+		S = sqrt( - R*(b^2 + 3) / b + 0i)
+		S = c(S, -S);
+	} else if(length(b) == 2) {
+		det = sqrt(b[2]^2*(b[1]^2 + 3)^2 - 4*b[1]*R[1]*(b[1]^2 + 3) + 0i)
+		S = c(b[2]*(b[1]^2 + 3) + c(1,-1)*det) / 2 / b[1]
+	}
 	#
-	b2 = if(length(b) > 1) b[2] else 0; # Ext A2;
-	b3 = if(length(b) > 2) b[3] else 0; # Ext A3;
-	E2 = 3*R[1] / b[1]
-	E3 = R[1]*(S^2 - 2*E2) / b[1] / S
+	b2 = if(length(b) > 1) b[2] else 0; # Ext A1: pow 1;
+	b3 = if(length(b) > 2) b[3] else 0; # TODO: Ext A3;
+	E2 = 3*(R[1] - b2*S) / b[1]
+	E3 = (R[1] - b2*S)*(S^2 - 2*E2) / b[1] / S
 	### x
-	x = sapply(seq_along(S), function(id) roots(c(1, -S[id], E2 - b2*S[id], - E3[id] + b3*S[id])))
+	x = sapply(seq_along(S), function(id) roots(c(1, -S[id], E2[id], - E3[id] + b3*S[id])))
 	len = length(S)
 	S  = rep(S,  each=3)
 	E3 = rep(E3, each=3)
@@ -1645,9 +1645,9 @@ solve.Ht3Diff = function(R, b) {
 	x = x[ ! isZero]
 	yz = E3/x - b3
 	yz.s = S - x
-	### robust:
-	y2 = (yz.s^2 + R[1] - (2 + b[1])*yz) / 2
-	y = (R[1] - x^2 + y2) / b[1] / x
+	### robust: includes Ext A1
+	y2 = (yz.s^2 + R[1] - b2*S - (2 + b[1])*yz) / 2
+	y = (R[1] - b2*S - x^2 + y2) / b[1] / x
 	z = yz.s - y;
 	sol = cbind(x=x, y=y, z=z)
 	### x = 0
@@ -1655,7 +1655,11 @@ solve.Ht3Diff = function(R, b) {
 		print("TODO: x == 0")
 	}
 	### x == y == z
-	x = y = z = c(1,-1) * sqrt(R[1] / b[1] + 0i)
+	if(length(b) < 2) {
+		x = y = z = c(1,-1) * sqrt(R[1] / b[1] + 0i)
+	} else if(length(b) == 2) {
+		x = y = z = roots(c(b[1], 3*b[2], -R[1]))
+	}
 	sol = rbind(sol, cbind(x,y,z))
 	return(sol)
 }
@@ -1690,6 +1694,25 @@ z^2 - x^2 + b[1]*x*z # - R
 
 round0.p(poly.calc(x[1:6])) * 5
 
+###############
+### Extensions:
+
+R = 1
+b = c(1, -2)
+#
+sol = solve.Ht3Diff(R, b)
+x = sol[,1]; y = sol[,2]; z = sol[,3];
+
+### Test
+x^2 - y^2 + b[1]*x*y + b[2]*(x+y+z) # - R
+y^2 - z^2 + b[1]*y*z + b[2]*(x+y+z) # - R
+z^2 - x^2 + b[1]*x*z + b[2]*(x+y+z) # - R
+
+round0.p(poly.calc(x[1:6]))
+
+err = 25 + 60*x - 131*x^2 - 284*x^3 - 38*x^4 + 8*x^5 + x^6
+round0(err)
+
 
 ### Debug
 x =  1.6510934088i
@@ -1700,4 +1723,12 @@ S = x+y+z
 E3 = x*y*z
 E2 = x*y + x*z + y*z
 
+# [old][redundant]
+### Sum((x^2+y^2)*...) =>
+# b*(x^3*y + x*y^3 + x^3*z + x*z^3 + y^3*z + y*z^3) = 2*R*(x^2+y^2+z^2)
+b*(E2*(S^2 - 2*E2) - E3*S) - 2*R*(S^2 - 2*E2) # = 0
+b*E2*S^2 - 2*b*E2^2 - b*E3*S - 2*R*S^2 + 4*R*E2 # = 0
+b*E2*S^2 - 2*b*E2^2 - R*(S^2 - 6*R / b) - 2*R*S^2 + 4*R*E2 # = 0
+b^2*E2*S^2 - 2*b^2*E2^2 - R*(b*S^2 - 6*R) - 2*b*R*S^2 + 4*R*b*E2 # = 0
+3*b*R*S^2 - 3*b*R*S^2 # = 0
 
