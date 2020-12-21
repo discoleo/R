@@ -7,7 +7,7 @@
 ### Polynomial Systems: S3
 ### Hetero-Symmetric Differences
 ###
-### draft v.0.2c
+### draft v.0.2c-ext
 
 
 ### Hetero-Symmetric Differences
@@ -26,9 +26,10 @@ z^n - x^n + b*z*x = R
 ###############
 ### History ###
 
-### draft v.0.2c:
+### draft v.0.2c - v.0.2c-ext:
 # - variant system:
 #   x^2 - y^2 + b*x*y*(x+y+z) = R;
+# - including A1 type extensions (powers 1 & 2); [v.0.2c-ext]
 ### draft v.0.2b:
 # - implemented various power extensions of type A1:
 #   powers 1, 2 & 3: system P3 + b[k+1]*(x+y+z)^k;
@@ -473,16 +474,24 @@ z^3 - x^3 + b[1]*x*z + b[2]*(x+y+z) + b[3]*(x+y+z)^2 + b[4]*(x+y+z)^3 # - R
 # b*E3*S^2 = R*(S^2 - 2*E2)
 
 ### Eq:
-(b[1]*S^3 - 9*R) * (b[1]*S^3 + R*b[1]^2*S^2 + 3*R)
+(b[1]*S^3 - 9*R[1]) * (b[1]*S^3 + R[1]*b[1]^2*S^2 + 3*R[1])
+
+### Extension A1: power 1:
+(b[1]*S^3 + 9*b[2]*S - 9*R[1]) *
+	((b[1] - b[1]^2*b[2])*S^3 + R[1]*b[1]^2*S^2 - 3*b[2]*S + 3*R[1])
+### Extension A1: power 2:
+(b[1]*S^3 + 9*b[3]*S^2 + 9*b[2]*S - 9*R[1]) *
+	(- b[1]^2*b[3]*S^4 + (b[1] - b[1]^2*b[2])*S^3 + (R[1]*b[1]^2 - 3*b[3])*S^2 - 3*b[2]*S + 3*R[1])
 
 
 solve.Ht3DiffV1 = function(R, b) {
+	if(R[1] == 0) stop("Currently NOT implemented: R[1] == 0!")
 	if(length(b) == 1) {
 		coeff = c(b[1], R[1]*b[1]^2, 0, 3*R[1])
 	} else if(length(b) == 2) {
-		coeff = c()
+		coeff = c((b[1] - b[1]^2*b[2]), R[1]*b[1]^2, - 3*b[2], 3*R[1])
 	} else if(length(b) == 3) {
-		coeff = c()
+		coeff = c(- b[1]^2*b[3], (b[1] - b[1]^2*b[2]), (R[1]*b[1]^2 - 3*b[3]), - 3*b[2], 3*R[1])
 	}
 	S = roots(coeff)
 	print(S)
@@ -543,4 +552,32 @@ x = sol[,1]; y = sol[,2]; z = sol[,3];
 x^2 - y^2 + b[1]*x*y*(x+y+z) # - R
 y^2 - z^2 + b[1]*y*z*(x+y+z) # - R
 z^2 - x^2 + b[1]*x*z*(x+y+z) # - R
+
+
+### Ext A1: power 1
+
+R = 1
+b = c(-1, -1)
+#
+sol = solve.Ht3DiffV1(R, b)
+x = sol[,1]; y = sol[,2]; z = sol[,3];
+
+### Test
+x^2 - y^2 + b[1]*x*y*(x+y+z) + b[2]*(x+y+z) # - R
+y^2 - z^2 + b[1]*y*z*(x+y+z) + b[2]*(x+y+z) # - R
+z^2 - x^2 + b[1]*x*z*(x+y+z) + b[2]*(x+y+z) # - R
+
+
+### Ext A1: power 2
+
+R = 1
+b = c(-1, -1, 2)
+#
+sol = solve.Ht3DiffV1(R, b)
+x = sol[,1]; y = sol[,2]; z = sol[,3];
+
+### Test
+x^2 - y^2 + b[1]*x*y*(x+y+z) + b[2]*(x+y+z) + b[3]*(x+y+z)^2 # - R
+y^2 - z^2 + b[1]*y*z*(x+y+z) + b[2]*(x+y+z) + b[3]*(x+y+z)^2 # - R
+z^2 - x^2 + b[1]*x*z*(x+y+z) + b[2]*(x+y+z) + b[3]*(x+y+z)^2 # - R
 
