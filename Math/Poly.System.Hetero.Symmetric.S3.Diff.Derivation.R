@@ -7,7 +7,7 @@
 ### Hetero-Symmetric Differences
 ### == Derivation of Formulas ==
 ###
-### draft v.0.1a
+### draft v.0.1b
 
 
 ####################
@@ -16,6 +16,24 @@
 # - this file contains the derivation of formulas for:
 #   Poly.System.Hetero.Symmetric.S3.R
 # - see further details in that file;
+
+
+####################
+
+###############
+### History ###
+###############
+
+### draft v.0.1b:
+# - system:
+#   x^2 - y^2 + b[1]*x*y*(x+y+z) = R;
+### draft v.0.1a:
+# - moved derivations from
+#   Poly.System.Hetero.Symmetric.S3.R
+#   to this file;
+# - systems:
+#   x^n - y^n + b*x*y = R;
+#   [cases: n = 2 and n = 3]
 
 
 ####################
@@ -197,4 +215,69 @@ E2 = x*y + x*z + y*z
 x^3 - y^3 + b[1]*x*y # - R[1]
 y^3 - z^3 + b[1]*y*z # - R[1]
 z^3 - x^3 + b[1]*x*z # - R[1]
+
+#############################
+#############################
+
+##########################
+### Difference Types:  ###
+### Variants           ###
+##########################
+
+### Product with (x+y+z)
+
+### Example:
+x^n - y^n + b*x*y*(x+y+z) = R
+y^n - z^n + b*y*z*(x+y+z) = R
+z^n - x^n + b*z*x*(x+y+z) = R
+
+
+###############
+### Order 2 ###
+###############
+
+### Solution:
+
+### Sum(...) =>
+# b*E2*S = 3*R
+b*E2*S - 3*R # = 0
+
+### Sum(z^2*...) =>
+# b*E3*S^2 = R*(x^2 + y^2 + z^2)
+b*E3*S^2 - R*(S^2 - 2*E2) # = 0
+
+### Eq 3:
+x^2 - y^2 = R - b*x*y*(x+y+z)
+### sq =>
+x^4 + y^4 - 2*x^2*y^2 - (R^2 + b^2*x^2*y^2*S^2 - 2*b*R*x*y*S) # = 0
+### Sum(...) =>
+2*(x^4 + y^4 + z^4) - 2*(x^2*y^2 + x^2*z^2 + y^2*z^2) +
+	- 3*R^2 - b^2*S^2*(x^2*y^2 + x^2*z^2 + y^2*z^2) + 2*b*R*E2*S # = 0
+2*(S^4 - 4*E2*S^2 + 4*E3*S + 2*E2^2) - 2*(E2^2 - 2*E3*S) +
+	- 3*R^2 - b^2*S^2*(E2^2 - 2*E3*S) + 2*b*R*E2*S # = 0
+2*S^4 + 2*b^2*E3*S^3 - b^2*E2^2*S^2 - 8*E2*S^2 + 12*E3*S + 2*E2^2 + 2*b*R*E2*S - 3*R^2 # = 0
+2*S^4 + 2*b*R*S^3 - 8*E2*S^2 + 12*E3*S + 2*E2^2 - 18*R^2 # = 0
+2*b^2*S^4 + 2*b^3*R*S^3 - 24*b*R*S + 12*b*b*E3*S + 2*b^2*E2^2 - 18*b^2*R^2 # = 0
+2*b^2*S^6 + 2*b^3*R*S^5 - 12*b*R*S^3 - 18*b^2*R^2*S^2 - 54*R^2 # = 0
+b^2*S^6 + b^3*R*S^5 - 6*b*R*S^3 - 9*b^2*R^2*S^2 - 27*R^2 # = 0
+
+(b[1]*S^3 - 9*R) * (b[1]*S^3 + R*b[1]^2*S^2 + 3*R)
+
+
+### Debug
+R = 2
+b = 3
+#
+x =  0.3839711784 + 2.6186496599i
+y = -2.2520488675 - 1.5337851056i
+z =  1.8953571195 - 0.5107692382i
+#
+S = x+y+z
+E3 = x*y*z
+E2 = x*y + x*z + y*z
+
+### Test
+x^2 - y^2 + b[1]*x*y*(x+y+z) # - R[1]
+y^2 - z^2 + b[1]*y*z*(x+y+z) # - R[1]
+z^2 - x^2 + b[1]*x*z*(x+y+z) # - R[1]
 
