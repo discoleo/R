@@ -7,7 +7,7 @@
 ### Polynomial Systems: S3
 ### Hetero-Symmetric Differences
 ###
-### draft v.0.2b
+### draft v.0.2c
 
 
 ### Hetero-Symmetric Differences
@@ -26,9 +26,12 @@ z^n - x^n + b*z*x = R
 ###############
 ### History ###
 
+### draft v.0.2c:
+# - variant system:
+#   x^2 - y^2 + b*x*y*(x+y+z) = R;
 ### draft v.0.2b:
 # - implemented various power extensions of type A1:
-#   powers 1, 2 & 3: system + b[k+1]*(x+y+z)^k;
+#   powers 1, 2 & 3: system P3 + b[k+1]*(x+y+z)^k;
 ### draft v.0.2a:
 # - moved derivation of formulas to:
 #   Poly.System.Hetero.Symmetric.S3.Diff.Derivation.R;
@@ -61,6 +64,7 @@ library(pracma)
 
 ##########################
 ### Difference Types   ###
+##########################
 
 # quasi-[Negative Correlations]
 
@@ -125,17 +129,24 @@ solve.Ht3Diff = function(R, b) {
 	E3 = rep(E3, each=3)
 	R1 = rep(R1, each=3)
 	isZero = round0(x) == 0
-	x = x[ ! isZero] # TODO: changes length of x => S;
 	yz = E3/x
 	yz.s = S - x
 	### robust: includes Ext A1: powers 1 & 2;
 	y2 = (yz.s^2 + R1 - (2 + b[1])*yz) / 2
 	y = (R1 - x^2 + y2) / b[1] / x
 	z = yz.s - y;
-	sol = cbind(x=x, y=y, z=z)
+	sol = cbind(x=as.vector(x), y=as.vector(y), z=as.vector(z))
 	### x = 0
 	if(any(isZero)) {
-		print("TODO: x == 0")
+		print("Solution: x == 0")
+		# cleanup
+		sol = sol[ ! isZero , ];
+		R1 = R1[isZero]; yz.s = yz.s[isZero];
+		# y2 = - R1; z2 = R1;
+		yz = 3*R1 / b[1];
+		yz.d = (R1 - b[1]*yz) / yz.s;
+		y = (yz.s + yz.d) / 2; z = yz.s - y;
+		sol = rbind(0, unique(cbind(x,y,z)))
 	}
 	### x == y == z
 	if(length(b) < 2) {
@@ -433,4 +444,103 @@ x = sol[,1]; y = sol[,2]; z = sol[,3];
 x^3 - y^3 + b[1]*x*y + b[2]*(x+y+z) + b[3]*(x+y+z)^2 + b[4]*(x+y+z)^3 # - R
 y^3 - z^3 + b[1]*y*z + b[2]*(x+y+z) + b[3]*(x+y+z)^2 + b[4]*(x+y+z)^3 # - R
 z^3 - x^3 + b[1]*x*z + b[2]*(x+y+z) + b[3]*(x+y+z)^2 + b[4]*(x+y+z)^3 # - R
+
+
+##########################
+
+##########################
+### Difference Types   ###
+### Variants           ###
+##########################
+
+### x^2 - y^2 + b*x*y*(x+y+z)
+
+
+###############
+### Order 2 ###
+###############
+
+# x^2 - y^2 + b*x*y*(x+y+z) = R
+# y^2 - z^2 + b*y*z*(x+y+z) = R
+# z^2 - x^2 + b*x*z*(x+y+z) = R
+
+
+### Solution:
+
+### E2:
+# b*E2*S = 3*R
+### E3:
+# b*E3*S^2 = R*(S^2 - 2*E2)
+
+### Eq:
+(b[1]*S^3 - 9*R) * (b[1]*S^3 + R*b[1]^2*S^2 + 3*R)
+
+
+solve.Ht3DiffV1 = function(R, b) {
+	if(length(b) == 1) {
+		coeff = c(b[1], R[1]*b[1]^2, 0, 3*R[1])
+	} else if(length(b) == 2) {
+		coeff = c()
+	} else if(length(b) == 3) {
+		coeff = c()
+	}
+	S = roots(coeff)
+	print(S)
+	#
+	b2 = if(length(b) > 1) b[2] else 0; # Ext A1: pow 1;
+	b3 = if(length(b) > 2) b[3] else 0; # Ext A3: pow 2;
+	R1 = R[1] - b2*S - b3*S^2
+	E2 = 3*R1 / b[1] / S;
+	E3 = R1*(S^2 - 2*E2) / b[1] / S^2;
+	### x
+	x = sapply(seq_along(S), function(id) roots(c(1, -S[id], E2[id], - E3[id])))
+	len = length(S)
+	S  = rep(S,  each=3)
+	E3 = rep(E3, each=3)
+	R1 = rep(R1, each=3)
+	isZero = round0(x) == 0
+	yz = E3/x
+	yz.s = S - x
+	### robust: includes Ext A1: powers 1 & 2;
+	y2 = (yz.s^2 + R1 - 2*yz - b[1]*yz*S) / 2
+	y = (R1 - x^2 + y2) / b[1] / x / S
+	z = yz.s - y;
+	sol = cbind(x=as.vector(x), y=as.vector(y), z=as.vector(z))
+	### x = 0
+	if(any(isZero)) {
+		print("Solution: x == 0")
+		# cleanup
+		sol = sol[ ! isZero , ];
+		R1 = R1[isZero]; yz.s = yz.s[isZero];
+		# y2 = - R1; z2 = R1;
+		# TODO: check!
+		yz = 3*R1 / b[1] / yz.s;
+		yz.d = (R1 - b[1]*yz^2) / yz.s;
+		y = (yz.s + yz.d) / 2; z = yz.s - y;
+		sol = rbind(0, unique(cbind(x,y,z)))
+	}
+	### x == y == z
+	if(length(b) < 2) {
+		x = y = z = roots(c(3*b[1], 0, 0, -R[1]))
+	} else if(length(b) == 2) {
+		x = y = z = roots(c(3*b[1], 0, 3*b[2], -R[1]))
+	} else if(length(b) == 3) {
+		x = y = z = roots(c(3*b[1], 9*b[3], 3*b[2], -R[1]))
+	}
+	sol = rbind(sol, cbind(x,y,z))
+	return(sol)
+}
+
+### Examples:
+
+R = 1
+b = 1
+#
+sol = solve.Ht3DiffV1(R, b)
+x = sol[,1]; y = sol[,2]; z = sol[,3];
+
+### Test
+x^2 - y^2 + b[1]*x*y*(x+y+z) # - R
+y^2 - z^2 + b[1]*y*z*(x+y+z) # - R
+z^2 - x^2 + b[1]*x*z*(x+y+z) # - R
 
