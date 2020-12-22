@@ -7,7 +7,7 @@
 ### Polynomial Systems: S3
 ### Hetero-Symmetric Differences
 ###
-### draft v.0.2c-ext
+### draft v.0.2d
 
 
 ### Hetero-Symmetric Differences
@@ -26,8 +26,11 @@ z^n - x^n + b*z*x = R
 ###############
 ### History ###
 
+### draft v.0.2d:
+# - variant system: Multiplicative
+#   x^2 - y^2 + b*x*y*(x*y*z) = R;
 ### draft v.0.2c - v.0.2c-ext:
-# - variant system:
+# - variant system: "Additive"
 #   x^2 - y^2 + b*x*y*(x+y+z) = R;
 # - including A1 type extensions (powers 1 & 2); [v.0.2c-ext]
 ### draft v.0.2b:
@@ -484,7 +487,7 @@ z^3 - x^3 + b[1]*x*z + b[2]*(x+y+z) + b[3]*(x+y+z)^2 + b[4]*(x+y+z)^3 # - R
 	(- b[1]^2*b[3]*S^4 + (b[1] - b[1]^2*b[2])*S^3 + (R[1]*b[1]^2 - 3*b[3])*S^2 - 3*b[2]*S + 3*R[1])
 
 
-solve.Ht3DiffV1 = function(R, b) {
+solve.Ht3DiffV1 = function(R, b, debug=TRUE) {
 	if(R[1] == 0) stop("Currently NOT implemented: R[1] == 0!")
 	if(length(b) == 1) {
 		coeff = c(b[1], R[1]*b[1]^2, 0, 3*R[1])
@@ -494,7 +497,7 @@ solve.Ht3DiffV1 = function(R, b) {
 		coeff = c(- b[1]^2*b[3], (b[1] - b[1]^2*b[2]), (R[1]*b[1]^2 - 3*b[3]), - 3*b[2], 3*R[1])
 	}
 	S = roots(coeff)
-	print(S)
+	if(debug) print(S)
 	#
 	b2 = if(length(b) > 1) b[2] else 0; # Ext A1: pow 1;
 	b3 = if(length(b) > 2) b[3] else 0; # Ext A3: pow 2;
@@ -580,4 +583,131 @@ x = sol[,1]; y = sol[,2]; z = sol[,3];
 x^2 - y^2 + b[1]*x*y*(x+y+z) + b[2]*(x+y+z) + b[3]*(x+y+z)^2 # - R
 y^2 - z^2 + b[1]*y*z*(x+y+z) + b[2]*(x+y+z) + b[3]*(x+y+z)^2 # - R
 z^2 - x^2 + b[1]*x*z*(x+y+z) + b[2]*(x+y+z) + b[3]*(x+y+z)^2 # - R
+
+
+#############################
+#############################
+
+### x^2 - y^2 + b*x*y*(x*y*z)
+
+
+###############
+### Order 2 ###
+###############
+
+# x^2 - y^2 + b*x*y*(x*y*z) = R
+# y^2 - z^2 + b*y*z*(x*y*z) = R
+# z^2 - x^2 + b*x*z*(x*y*z) = R
+
+
+### Solution:
+
+### E2:
+# b*E2*E3 = 3*R
+### E3:
+# E3 =
+#    (6*R^2*S^8*b^4 + 162*R^3*S^3*b^3 - 99*R^4*S^4*b^4 - 6*R^5*S^5*b^5 + 486*R^6*b^4) /
+#    (R*S^10*b^5 - 63*R^2*S^5*b^4 - 12*R^3*S^6*b^5 + 243*R^4*S*b^4 - R^4*S^7*b^6 + 135*R^5*S^2*b^5);
+
+### Eq:
+(b[1]*S^5 - 243*R[1]) *
+	(b[1]*S^7 - b[1]^2*R[1]^3*S^4 - 8*b[1]*R[1]^2*S^3 - 3*R[1]*S^2 - 4*b[1]^2*R[1]^5)
+
+coeff = c(R*b^3, - 12*b^2, 0, - 2*R^4*b^4, 4*R^3*b^3, 255*R^2*b^2, (252*R*b + R^7*b^5), # S^14
+	4*R^6*b^4, - 30*R^5*b^3, - 3456*R^4*b^2, (- 2214*R^3*b + 4*R^9*b^5), # S^10
+	(- 648*R^2 - 81*R^8*b^4), 648*R^7*b^3, 18819*R^6*b^2, 5832*R^5*b, - 324*R^10*b^4,
+	3402*R^9*b^3, - 34992*R^8*b^2, - 13122*R^7*b, 0, - 17496*R^11*b^3)
+
+### TODO:
+### Extension A1: power 1:
+(b[1]*S^3 + 9*b[2]*S - 9*R[1]) *
+	()
+### Extension A1: power 2:
+(b[1]*S^3 + 9*b[3]*S^2 + 9*b[2]*S - 9*R[1]) *
+	()
+
+
+solve.Ht3DiffV2 = function(R, b, debug=TRUE) {
+	if(R[1] == 0) stop("Currently NOT implemented: R[1] == 0!")
+	if(length(b) == 1) {
+		coeff = c(b[1], 0, 0, - b[1]^2*R[1]^3, - 8*b[1]*R[1]^2, - 3*R[1], 0, - 4*b[1]^2*R[1]^5)
+	} else if(length(b) == 2) {
+		#
+	} else if(length(b) == 3) {
+		#
+	}
+	S = roots(coeff)
+	if(debug) print(S)
+	#
+	b2 = if(length(b) > 1) b[2] else 0; # Ext A1: pow 1;
+	b3 = if(length(b) > 2) b[3] else 0; # Ext A3: pow 2;
+	R1 = R[1] - b2*S - b3*S^2
+	E3 = (6*R^2*S^8*b^4 + 162*R^3*S^3*b^3 - 99*R^4*S^4*b^4 - 6*R^5*S^5*b^5 + 486*R^6*b^4) /
+		(R*S^10*b^5 - 63*R^2*S^5*b^4 - 12*R^3*S^6*b^5 + 243*R^4*S*b^4 - R^4*S^7*b^6 + 135*R^5*S^2*b^5);
+	E2 = 3*R1 / b[1] / E3;
+	### x
+	x = sapply(seq_along(S), function(id) roots(c(1, -S[id], E2[id], - E3[id])))
+	len = length(S)
+	S  = rep(S,  each=3)
+	E3 = rep(E3, each=3)
+	R1 = rep(R1, each=3)
+	isZero = round0(x) == 0
+	yz = E3/x
+	yz.s = S - x
+	### robust: includes Ext A1: powers 1 & 2;
+	y2 = (yz.s^2 + R1 - 2*yz - b[1]*yz*E3) / 2
+	y = (R1 - x^2 + y2) / b[1] / x / E3
+	z = yz.s - y;
+	sol = cbind(x=as.vector(x), y=as.vector(y), z=as.vector(z), S=S)
+	### x = 0
+	if(any(isZero)) {
+		print("Solution: x == 0")
+		# cleanup
+		sol = sol[ ! isZero , ];
+		R1 = R1[isZero]; yz.s = yz.s[isZero];
+		# y2 = - R1; z2 = R1;
+		# TODO: check!
+		yz = yz.s^2 / 2;
+		yz.d = -2*R1 / yz.s;
+		y = (yz.s + yz.d) / 2; z = yz.s - y;
+		sol = rbind(0, unique(cbind(x,y,z, S[isZero])))
+	}
+	### x == y == z
+	if(length(b) < 2) {
+		x = y = z = roots(c(b[1], 0, 0, 0, 0, -R[1]))
+	} else if(length(b) == 2) {
+		x = y = z = roots(c(b[1], 0, 0, 0, 3*b[2], -R[1]))
+	} else if(length(b) == 3) {
+		x = y = z = roots(c(b[1], 0, 0, 9*b[3], 3*b[2], -R[1]))
+	}
+	sol = rbind(sol, cbind(as.vector(x), as.vector(y), as.vector(z), 3*as.vector(x)))
+	return(sol)
+}
+
+### Examples:
+
+R = 1
+b = 1
+#
+sol = solve.Ht3DiffV2(R, b)
+x = sol[,1]; y = sol[,2]; z = sol[,3];
+
+### Test
+x^2 - y^2 + b[1]*x*y*(x*y*z) # - R
+y^2 - z^2 + b[1]*y*z*(x*y*z) # - R
+z^2 - x^2 + b[1]*x*z*(x*y*z) # - R
+
+#########
+### Ex 2:
+R = 1
+b = -2
+#
+sol = solve.Ht3DiffV2(R, b)
+x = sol[,1]; y = sol[,2]; z = sol[,3];
+
+### Test
+x^2 - y^2 + b[1]*x*y*(x*y*z) # - R
+y^2 - z^2 + b[1]*y*z*(x*y*z) # - R
+z^2 - x^2 + b[1]*x*z*(x*y*z) # - R
+
 
