@@ -4,10 +4,10 @@
 ### Leonard Mada
 ### [the one and only]
 ###
-### Polynomial Systems:
+### Polynomial Systems: S2
 ### Heterogenous Symmetric
 ###
-### draft v.0.3a-pre
+### draft v.0.3a-clean1
 
 
 ### Heterogenous Symmetric Polynomial Systems
@@ -21,6 +21,7 @@
 # P(x, y) = 0
 # P(y, x) = 0
 # where P(x, y) is any polynomial of 2 variables;
+# e.g. P(x, y) = x^n + P2(x, y) - R;
 
 
 ###############
@@ -90,34 +91,17 @@
 
 ###############
 ### History ###
+###############
 
 ### [branch v.0.3]
 #
+### v.0.3a-clean1:
+# - started to move derivations to file:
+#   Poly.System.Hetero.Symmetric.Derivation.R;
 ### v.0.3a-pre:
 # - more work on classic polynomials;
 # - TODO: cleanup;
 
-### [branch v.0.2]
-### P3 Systems:
-# - moved to new file:
-#   Poly.System.Hetero.Symmetric.S3.R;
-### draft v.0.2.d:
-# - more work on x[i]^3 + b*x[i+1] = R;
-# - added: x^2*y*z + b*y = R;
-# - various formatting improvements;
-### draft v.0.2.c:
-# - solved: x[i]^2 + s*x[i] + b*x[i+1] = R;
-# - TODO: correct various bugs [DONE];
-### draft v.0.2b:
-# - some exploration of systems with x*y*z terms;
-### branch v.0.2a:
-# - more work on systems with 3 variables:
-#   "proper" implementation of: x[i]^2 + b*x[k];
-# - TODO: robust removal of set of wrong solutions;
-#   [or avoid getting superfluous solutions ???]
-### branch v.0.2a-pre-a:
-# - initial work on systems with 3 variables;
-# - the simple cases are less rewarding;
 
 ### [branch v.0.1]
 ### draft v.0.1n:
@@ -180,10 +164,32 @@
 # - initial version: basic heterogenous systems;
 
 
+### [branch v.0.2] P3 Systems:
+# - moved to new file:
+#   Poly.System.Hetero.Symmetric.S3.R;
+### draft v.0.2.d:
+# - more work on x[i]^3 + b*x[i+1] = R;
+# - added: x^2*y*z + b*y = R;
+# - various formatting improvements;
+### draft v.0.2.c:
+# - solved: x[i]^2 + s*x[i] + b*x[i+1] = R;
+# - TODO: correct various bugs [DONE];
+### draft v.0.2b:
+# - some exploration of systems with x*y*z terms;
+### branch v.0.2a:
+# - more work on systems with 3 variables:
+#   "proper" implementation of: x[i]^2 + b*x[k];
+# - TODO: robust removal of set of wrong solutions;
+#   [or avoid getting superfluous solutions ???]
+### branch v.0.2a-pre-a:
+# - initial work on systems with 3 variables;
+# - the simple cases are less rewarding;
+
+####################
+####################
 
 library(polynom)
 library(pracma)
-
 
 ####################
 
@@ -192,11 +198,15 @@ library(pracma)
 ### see in the other R files:
 # round0(), round0.p;
 
-#####################
+##########################
 
+##########################
+### Polynomial Systems ###
+##########################
 
 ###############
 ### Order 3 ###
+###############
 
 ### x^3 + b*y
 
@@ -211,17 +221,9 @@ library(pracma)
 ### Solution:
 
 ### Diff =>
-# x^3 - y^3 - b1*(x-y) = 0
-# (x - y)*(x^2 + y^2 + x*y - b1) = 0
-# => x = y *OR* x^2 + y^2 + x*y - b1 = 0;
-# =>
-# (x+y)^2 - x*y - b1 = 0
-# x*y = (x+y)^2 - b1;
 # x*y = S^2 - b1;
 
 ### Sum =>
-# (x+y)^3 - 3*x*y*(x+y) + b1*(x+y) = 2*R
-# S^3 - 3*(S^2 - b1)*S + b1*S - 2*R = 0
 # S^3 - 2*b1*S + R = 0
 
 ### Step 2:
@@ -256,22 +258,6 @@ y^3 + b[1]*x
 ### Classic Polynomial
 err = x^6 - b[1]*x^4 - 2*R*x^3 + b[1]^2*x^2 + b[1]*R*x + R^2 - b[1]^3
 round0(err)
-
-### Derivation:
-# b1*y = R - x^3
-# =>
-# (R - x^3)^3 / b1^3 + b1*x - R = 0
-# (R - x^3)^3 + b1^4*x - R*b1^3
-# (x^3 - R)^3 - b1^4*x + R*b1^3
-# (x^3 + b1*x - R - b1*x)^3 - b1^4*x + R*b1^3
-# (x^3 + b1*x - R)^3 - 3*b1*x*(x^3 + b1*x - R)^2 + 3*b1^2*x^2*(x^3 + b1*x - R) - b1^3*x^3 - b1^4*x + R*b1^3
-# let: p = (x^3 + b1*x - R)
-# p^3 - 3*b1*x*p^2 + 3*b1^2*x^2*p - b1^3*p
-# p*(p^2 - 3*b1*x*p + 3*b1^2*x^2 - b1^3)
-# (x^3 + b1*x - R)*(x^6 - b1*x^4 - 2*R*x^3 + b1^2*x^2 + b1*R*x + R^2 - b1^3)
-# =>
-(x^3 - b[1]/2 * x - R)^2 + 3/4 * b[1]^2*x^2 - b[1]^3
-
 
 
 #####################
