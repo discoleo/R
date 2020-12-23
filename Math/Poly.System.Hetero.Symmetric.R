@@ -7,7 +7,7 @@
 ### Polynomial Systems: S2
 ### Heterogenous Symmetric
 ###
-### draft v.0.3a-clean3
+### draft v.0.3a-clean4
 
 
 ### Heterogenous Symmetric Polynomial Systems
@@ -42,7 +42,7 @@
 # 9.) x^3 + b*(x*y)^2 = R; [P4 => P8: based on m3]
 # 10.) x^3 + b2*(x*y)^2 + b1*(x*y) = R; [P4 => P8: based on m3]
 # 11.) TODO: Shift for [9-10];
-# 12.) x^3 + b3*x^2*y + b2*x*y^2 + b1*x = R;
+# 12.) x^3 + b3*x^2*y + b2*x*y^2 + b1*x = R; [P3 => P6]
 ### 2 High-Power Terms:
 # B1.) a1*x^3 + a2*y^3 + b*x = R; (P3 => P6)
 # B2.) a1*x^3 + a2*y^3 + b*x*y = R;
@@ -96,7 +96,7 @@
 
 ### [branch v.0.3]
 #
-### v.0.3a-clean1 - v.0.3a-clean3:
+### v.0.3a-clean1 - v.0.3a-clean4:
 # - started to move derivations to file:
 #   Poly.System.Hetero.Symmetric.Derivation.R;
 # - more classical polynomials;
@@ -605,7 +605,8 @@ y^3 + b[2]*x*y + b[1]*y
 ### Classical Polynomial
 round0.p(poly.calc(sol[,1]))
 
-err = x^6 - b[2]*x^5 + (b[2]^2 + 2*b[1])*x^4 - (b[1]*b[2] + 2*R)*x^3 + (b[1]*b[2]^2 + R*b[2] + b[1]^2)*x^2 - 2*b[1]*R*x + R^2
+err = x^6 - b[2]*x^5 + (b[2]^2 + 2*b[1])*x^4 - (b[1]*b[2] + 2*R)*x^3 +
+	(b[1]*b[2]^2 + R*b[2] + b[1]^2)*x^2 - 2*b[1]*R*x + R^2
 round0(err)
 
 
@@ -758,9 +759,7 @@ coeff
 m3 = unity(3, all=F)
 
 ### Diff =>
-# x^3 - y^3 = 0
 # y = x*m, where m^3 = 1;
-# Case: x != y =>
 # separate equations for: m & m^2
 # b1*x^4*m^2 + x^3 - R = 0
 # b1*x^4*m + x^3 - R = 0
@@ -799,8 +798,8 @@ err = round0(4 - 8*x^3 + 2*x^4 + 4*x^6 - 2*x^7 + x^8)
 err
 
 
-####################
-####################
+##################
+### Extensions ###
 
 ### x^3 + b2*(x*y)^2 + b1*(x*y)
 
@@ -812,9 +811,7 @@ err
 m3 = unity(3, all=F)
 
 ### Diff =>
-# x^3 - y^3 = 0
 # y = x*m, where m^3 = 1;
-# Case: x != y =>
 # separate equations for: m & m^2
 # b2*m^2*x^4 + x^3 + b1*m^1*x^2 - R = 0
 # b2*m^1*x^4 + x^3 + b1*m^2*x^2 - R = 0
@@ -851,7 +848,6 @@ round0.p(poly.calc(sol$sol[,1]))
 b[2]^2*x^8 - b[2]*x^7 - (b[1]*b[2] - 1)*x^6 - b[1]*x^5 + (b[1]^2 + b[2]*R)*x^4 - 2*R*x^3 + b[1]*R*x^2 + R^2
 
 
-
 #############################
 #############################
 
@@ -868,32 +864,25 @@ b[2]^2*x^8 - b[2]*x^7 - (b[1]*b[2] - 1)*x^6 - b[1]*x^5 + (b[1]^2 + b[2]*R)*x^4 -
 ### Solution:
 
 ### Diff =>
-# x^3 - y^3 + (b3 - b2)*x*y*(x-y) + b1*(x-y) = 0
-# (x-y)*(x^2 + y^2 + x*y + (b3 - b2)*x*y + b1) = 0
-# Case: x != y =>
-# x^2 + y^2 + x*y + (b3 - b2)*x*y + b1 = 0
-# (x+y)^2 + (b3 - b2 - 1)*x*y + b1
-# Z^2 + (b3 - b2 - 1)*x*y + b1
-# (b3 - b2 - 1)*x*y = - Z^2 - b1
 # (b2 - b3 + 1)*x*y = Z^2 + b1 
 
 ### Sum =>
-# x^3 + y^3 + (b3 + b2)*x*y*(x+y) + b1*(x+y) = 2*R
-# Z^3 - 3*x*y*Z + (b2 + b3)*x*y*Z + b1*Z - 2*R = 0
-# Z^3 + b1*Z - 2*R + (b2 + b3 - 3)*x*y*Z = 0
-# Z^3 + b1*Z - 2*R + (b2 + b3 - 3)*Z*(Z^2 + b1)/(b2 - b3 + 1)
-# (b2 - b3 + 1)*(Z^3 + b1*Z - 2*R) + (b2 + b3 - 3)*Z*(Z^2 + b1)
-# 2*(b2 - 1)*Z^3 + 2*b1*Z*(b2 - 1) - 2*R*(b2 - b3 + 1)
-# (b2 - 1)*Z^3 + b1*Z*(b2 - 1) - R*(b2 - b3 + 1)
+(b2 - 1)*Z^3 + b1*Z*(b2 - 1) - R*(b2 - b3 + 1)
 
-### TODO:
-# Case: b2 - b3 + 1 == 0; TODO: verify;
+### TODO: verify
+# Case: b2 - b3 + 1 == 0;
 # Case: b2 == 1;
 
 solve.htxy2 = function(b, R) {
 	if(abs(b[3] - b[2] - 1) < 1E-12) {
 		x.sum = sqrt(-b[1] + 0i) * c(1, -1)
-		xy = (x.sum^3 + b[1]*x.sum - 2*R) / x.sum / (b[2] + b[3] - 3)
+		# TODO: all cases;
+		if(round0(b[2]+b[3] - 3) == 0) {
+			xy = 0;
+			print("Only trivial solution!")
+		} else {
+			xy = (x.sum^3 + b[1]*x.sum - 2*R) / x.sum / (b[2] + b[3] - 3)
+		}
 	} else {
 		x.sum = roots(c(1, 0, b[1], - R*(b[2] - b[3] + 1)/(b[2] - 1)))
 		xy = (x.sum^2 + b[1]) / (b[2] - b[3] + 1)
@@ -921,7 +910,15 @@ y^3 + b[3]*y^2*x + b[2]*y*x^2 + b[1]*y
 ### Classic Polynomial
 round0.p(poly.calc(sol[,1]))
 
-### TODO
+b1 = b[1]; b2 = b[2]; b3 = b[3]; R = R[1];
+#
+err = R^2 +
+	2*R*b[1] * (b[2] - 1)*x +
+	b[1]^2*(1 - b[2])^2 *x^2 +
+	R * (- 2 + b2 - 3*b2*b3 - b2*b3^2 + 2*b2^2 + 2*b2^2*b3 - b2^3 + b3 + b3^2)*x^3 +
+	b[1]*(1 - b[2])^2 * (b2 - b3 + 2)*x^4 +
+	(1 - b[2])^2 * (b2 - b3 + 1)*x^6
+round0(err)
 
 
 #############################
