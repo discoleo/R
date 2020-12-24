@@ -7,7 +7,7 @@
 ### Heterogenous Symmetric S3:
 ### Mixt Type
 ###
-### draft v.0.2f
+### draft v.0.2g
 
 
 ### Heterogenous Symmetric
@@ -26,6 +26,9 @@
 ### History ###
 ###############
 
+### draft v.0.2g:
+# - classic Polynomial for the simple Dual system:
+#   degenerate P18: pseudo-P6;
 ### draft v.0.2f:
 # - linear extension (type A3) to the Order 2 system;
 ### draft v.0.2e:
@@ -694,10 +697,17 @@ x = sol[,1]; y = sol[,2]; z = sol[,3];
 ### Test
 test.ht3Dual(x, y, z)
 
-poly.calc(x)
+round0.p(poly.calc(x))
 
 err = 1 - 37*x^6 + 76*x^9 - 37*x^12 + x^18 # trivial;
 round0(err)
+
+### Classic Polynomial:
+R1 = R[1]; R2 = R[2]; R3 = R[3];
+R3*x^18 + (3*R3^2 - R1*R2)*x^15 + (R1^3 + R2^3 - 5*R1*R2*R3 + 6*R3^3)*x^12 +
+	(-R1^2*R2^2 + 2*R1^3*R3 + 2*R2^3*R3 - 6*R1*R2*R3^2 + 7*R3^4)*x^9 +
+	(R1^3*R3^2 + R2^3*R3^2 - 5*R1*R2*R3^3 + 6*R3^5)*x^6 +
+	(-R1*R2*R3^4 + 3*R3^6)*x^3 + R3^7
 
 
 ### Ex 2:
@@ -751,6 +761,10 @@ round0(err)
 
 
 ### TODO: R1 == R2;
+
+
+### Classic Polynomial:
+# TODO
 
 
 ############
