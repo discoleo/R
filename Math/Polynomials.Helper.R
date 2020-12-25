@@ -24,6 +24,15 @@ unity = function(n=3, all=TRUE) {
 	}
 	return(m)
 }
+roots.f = function(K, s, n=length(s)) {
+	# roots for Class 1 polynomials;
+	# s = includes s0;
+	m = unity(n=n, all=T)
+	k = rootn(K, n);
+	order1 = n - 1;
+	r = sapply(seq(n), function(id) sum(s * (k*m[id])^(0:order1)))
+	return(r)
+}
 mult.p = function(p1, p2) {
 	p.m = outer(p1, p2)
     p = as.vector(tapply(p.m, row(p.m) + col(p.m), sum))
@@ -48,6 +57,7 @@ round0.p = function(p, tol=1E-7) {
 	return(p)
 }
 
+### Solvers: decomposed polynomial systems
 solve.S = function(S, R, b=0) {
 	# generic solver (based on existing S = x+y+z)
 	b2 = if(length(b) > 1) b[2] else 0; # Ext A2;
