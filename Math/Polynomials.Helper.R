@@ -68,6 +68,7 @@ solve.S = function(S, R, b=0) {
 	yz = R[3]/x - b3
 	yz.s = S - x
 	# TODO: robust (when necessary)
+	# Note: this simple method is NOT robust!
 	yz.d = sqrt(yz.s^2 - 4*yz)
 	y = (yz.s + yz.d) / 2
 	z = yz.s - y
