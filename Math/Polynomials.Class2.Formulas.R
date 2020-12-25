@@ -75,7 +75,7 @@ polynom.cl2.gen = function(s, n=length(s)) {
 	return(list(p=coeff, x=r))
 }
 coeff.cl2.order4.f = function(s) {
-	s0 = s[1]; s1 = s[2]; s2 = s[3]; s3 = s[4];
+	s0 = s[1]; s1 = s[2]; s2 = s[3]; s3 = s[4]; s4 = s[5];
 	c((- s0*s1*s2*s3 - s0*s1*s2*s4 + 2*s0*s1*s2^2 - s0*s1*s3*s4 - 3*s0*s1*s3^2 + 2*s0*s1*s4^2 +
 		- 3*s0*s1^2*s2 + 2*s0*s1^2*s3 + 2*s0*s1^2*s4 - s0*s1^3 - s0*s2*s3*s4 + 2*s0*s2*s3^2 +
 		2*s0*s2*s4^2 + 2*s0*s2^2*s3 - 3*s0*s2^2*s4 - s0*s2^3 - 3*s0*s3*s4^2 + 2*s0*s3^2*s4 +
@@ -97,19 +97,20 @@ coeff.cl2.order4.f = function(s) {
 	(- 4*s0 + s1 + s2 + s3 + s4), 1)
 }
 coeff.cl2.order5.f = function(s) {
-	s0 = s[1]; s1 = s[2]; s2 = s[3]; s3 = s[4]; s4 = s[5];
+	s0 = s[1]; s1 = s[2]; s2 = s[3]; s3 = s[4]; s4 = s[5]; s5 = s[6];
 	# TODO:
 	# - there are 363 monoms (see formula below);
 	# - the polynom can be decomposed:
 	#   P[5] = P[1] * P[2] * P[2];
 }
 coeff.cl2.order6.f = function(s) {
-	s0 = s[1]; s1 = s[2]; s2 = s[3]; s3 = s[4]; s4 = s[5]; s5 = s[6];
+	s0 = s[1]; s1 = s[2]; s2 = s[3]; s3 = s[4]; s4 = s[5]; s5 = s[6]; s6 = s[7];
 	# TODO:
 	# there are 1716 monoms (see formula below);
 }
 coeff.cl2.order7.f = function(s) {
-	s0 = s[1]; s1 = s[2]; s2 = s[3]; s3 = s[4]; s4 = s[5]; s5 = s[6]; s6 = s[7];
+	s0 = s[1]; s1 = s[2]; s2 = s[3]; s3 = s[4]; s4 = s[5]; s5 = s[6];
+	s6 = s[7]; s7 = s[8];
 	# TODO
 }
 
