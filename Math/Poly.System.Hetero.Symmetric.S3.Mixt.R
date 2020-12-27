@@ -7,7 +7,7 @@
 ### Heterogenous Symmetric S3:
 ### Mixt Type
 ###
-### draft v.0.2g
+### draft v.0.2h
 
 
 ### Heterogenous Symmetric
@@ -26,6 +26,8 @@
 ### History ###
 ###############
 
+### draft v.0.2h:
+# - Dual system with E2 = R3;
 ### draft v.0.2g:
 # - classic Polynomial for the simple Dual system:
 #   degenerate P18: pseudo-P6;
@@ -725,6 +727,7 @@ poly.calc(x[10:18])
 err = 1 + 3*x^3 - 4*x^6 + x^9 # trivial;
 round0(err)
 
+
 #################
 ### Extension M3:
 
@@ -766,6 +769,147 @@ round0(err)
 ### Classic Polynomial:
 # TODO
 
+
+####################
+
+### E2-Type ###
+
+############
+### Order 2: n = 2
+x*y^2 + y*z^2 + z*x^2 - R1 # = 0
+x*z^2 + y*x^2 + z*y^2 - R2 # = 0
+x*y + x*z + y*z - R3 # = 0
+
+### Extensions:
+### Extension M3:
+# (x*y + x*z + y*z)*(x+y+z) = R3
+### Extension D3:
+# (x*y + x*z + y*z) / (x+y+z) = R3
+
+### Solution:
+### Eq 1 + Eq 2 =.
+x*y^2 + y*z^2 + z*x^2 + x*z^2 + y*x^2 + z*y^2 - R1 - R2 # = 0
+E2*S - 3*E3 - R1 - R2 # = 0
+# 3*E3 = E2*S - R1 - R2 # = 0
+# 3*E3 = R3*S - R1 - R2 # = 0
+
+### see Section "Simple System":
+E3*S^3 - (R1+6*E3)*E2*S + R1^2 + E2^3 + 9*E3^2 + 3*R1*E3 # = 0
+E3*S^3 - (R1+6*E3)*R3*S + R1^2 + R3^3 + 9*E3^2 + 3*R1*E3 # = 0
+E3*S^3 - (R1+2*(R3*S - R1 - R2))*R3*S + R1^2 + R3^3 + (R3*S - R1 - R2)^2 + R1*(R3*S - R1 - R2) # = 0
+E3*S^3 - (2*R3*S - 2*R1 - 2*R2)*R3*S + R3^3 + (R3*S - R1 - R2)^2 - R1*R2 # = 0
+3*E3*S^3 - 3*R3^2*S^2 + 3*R1^2 + 3*R2^2 + 3*R3^3 + 3*R1*R2 # = 0
+(R3*S - R1 - R2)*S^3 - 3*R3^2*S^2 + 3*R1^2 + 3*R2^2 + 3*R3^3 + 3*R1*R2 # = 0
+R3*S^4 - (R1 + R2)*S^3 - 3*R3^2*S^2 + 3*R1^2 + 3*R2^2 + 3*R3^3 + 3*R1*R2 # = 0
+
+### Solution
+solve.ht3Dual = function(R, b=0, type, tol=1E-5) {
+	# TODO: analyse special cases: R3 == 0, R1 == R2;
+	if(missing(type) || type == 1) {
+		type = 1;
+	if(length(b) == 1 && b[1] == 0) {
+		coeff = c(R[3], - (R[1] + R[2]), - 3*R[3]^2, 0, 3*(R[1]^2 + R[2]^2 + R[3]^3 + R[1]*R[2]))
+	} else {
+		# TODO
+	}
+	} else if(match("M3", type) > 0) {
+		type = 3;
+		R12 = R[1] + R[2]
+		coeff = c() # TODO
+	}
+	if(length(b) > 1) {
+		# Ext 2:
+		# TODO
+	}
+	S = roots(coeff)
+	len = length(S)
+	print(S)
+	b2 = if(length(b) > 1) b[2] else 0; # TODO: Ext 2;
+	b3 = if(length(b) > 2) b[3] else 0; # TODO: Ext 3;
+	E2 = rep(R[3], len); # TODO: extensions;
+	E3 = (E2*S - R[1] - R[2]) / 3; # TODO: extensions;
+	x = sapply(seq_along(S), function(id) roots(c(1, -S[id], E2[id], -E3[id])))
+	S  = matrix(S,  ncol=len, nrow=3, byrow=T)
+	E3 = matrix(E3, ncol=len, nrow=3, byrow=T)
+	yz.s = S - x
+	yz = E2 - x*yz.s
+	### robust: R[1] == R[2]
+	if(R[1] == R[2]) {
+		isZero = round0(x*yz.s - x^2 - yz, tol=tol) == 0
+		y = ifelse(isZero, NA, yz.s/2)
+		if(any(isZero)) {
+			print("Special case: == 0")
+			print(paste0("Zeros: ", sum(isZero)))
+			# TODO: still NOT prefect;
+			# - only half of (y, z) are correct!
+			# - but even these are numerically unstable!
+			# - also fails for R[3] != 0;
+			# - remaining: z = x; y = yz.s - x;
+			y[isZero] = - yz.s[isZero]
+		}
+		z = yz.s - y;
+	} else {
+		yz.d = (R[2] - R[1]) / (x^2 + yz - x*yz.s)
+		y = (yz.s + yz.d) / 2
+		z = yz.s - y
+	}
+	cbind(as.vector(x), as.vector(y), as.vector(z))
+}
+
+### Examples:
+
+R = c(0, 3, -3);
+sol = solve.ht3Dual(R)
+x = sol[,1]; y = sol[,2]; z = sol[,3];
+
+### Test
+x*y^2 + y*z^2 + z*x^2 # - R[1] # = 0
+x*z^2 + y*x^2 + z*y^2 # - R[2] # = 0
+x*y + x*z + y*z # - R[3] # = 0
+
+round0.p(poly.calc(x))
+
+err = 27 - 57*x + 19*x^2 + 37*x^3 - 9*x^4 - 33*x^5 + 3*x^6 + 18*x^7 + 3*x^8 +
+	- 6*x^9 - 3*x^10 + x^11 + x^12
+round0(err)
+
+
+#########
+### Ex 2:
+R = c(1, 2, 0);
+sol = solve.ht3Dual(R)
+x = sol[,1]; y = sol[,2]; z = sol[,3];
+
+### Test
+x*y^2 + y*z^2 + z*x^2 # - R[1] # = 0
+x*z^2 + y*x^2 + z*y^2 # - R[2] # = 0
+x*y + x*z + y*z # - R[3] # = 0
+
+round0.p(poly.calc(x)) # trivial polynomial for R3 == 0;
+
+err = 1 + 3*x^3 - 4*x^6 + x^9
+round0(err)
+
+
+#########
+### Ex 3:
+# special Test!
+R = c(1, 1, 0);
+sol = solve.ht3Dual(R)
+x = sol[,1]; y = sol[,2]; z = sol[,3];
+
+### Test
+x*y^2 + y*z^2 + z*x^2 # - R[1] # = 0
+x*z^2 + y*x^2 + z*y^2 # - R[2] # = 0
+x*y + x*z + y*z # - R[3] # = 0
+
+# trivial polynomial for R3 == 0;
+round0.p(poly.calc(x)) * 27
+
+err = 1 + 3*x^3 - 4*x^6 + x^9
+round0(err)
+
+####################
 
 ############
 ### Order 2: n = 2
