@@ -7,7 +7,7 @@
 ### Heterogenous Symmetric S3:
 ### Mixt Type
 ###
-### draft v.0.2h
+### draft v.0.2h-ext1
 
 
 ### Heterogenous Symmetric
@@ -26,8 +26,9 @@
 ### History ###
 ###############
 
-### draft v.0.2h:
+### draft v.0.2h - v.0.2h-ext1:
 # - Dual system with E2 = R3;
+# - extension: E2 + b1*(x+y+z) = R3; [v.0.2h-ext1]
 ### draft v.0.2g:
 # - classic Polynomial for the simple Dual system:
 #   degenerate P18: pseudo-P6;
@@ -802,35 +803,37 @@ E3*S^3 - (2*R3*S - 2*R1 - 2*R2)*R3*S + R3^3 + (R3*S - R1 - R2)^2 - R1*R2 # = 0
 (R3*S - R1 - R2)*S^3 - 3*R3^2*S^2 + 3*R1^2 + 3*R2^2 + 3*R3^3 + 3*R1*R2 # = 0
 R3*S^4 - (R1 + R2)*S^3 - 3*R3^2*S^2 + 3*R1^2 + 3*R2^2 + 3*R3^3 + 3*R1*R2 # = 0
 
+### Extension A2: power 1;
+# (x*y + x*z + y*z) + b1*(x+y+z) = R3;
+
+
 ### Solution
 solve.ht3Dual = function(R, b=0, type, tol=1E-5) {
 	# TODO: analyse special cases: R3 == 0, R1 == R2;
 	if(missing(type) || type == 1) {
 		type = 1;
-	if(length(b) == 1 && b[1] == 0) {
 		coeff = c(R[3], - (R[1] + R[2]), - 3*R[3]^2, 0, 3*(R[1]^2 + R[2]^2 + R[3]^3 + R[1]*R[2]))
-	} else {
-		# TODO
-	}
+		if(length(b) >=1 && b[1] != 0) {
+			coeff = c(0, coeff) +
+				c(- b[1], -3*b[1]^2, 6*b[1]*R[3] - 3*b[1]^3, 9*b[1]^2*R[3], -9*b[1]*R[3]^2, 0)
+		}
+		# TODO: power 2;
 	} else if(match("M3", type) > 0) {
 		type = 3;
 		R12 = R[1] + R[2]
 		coeff = c() # TODO
 	}
-	if(length(b) > 1) {
-		# Ext 2:
-		# TODO
-	}
 	S = roots(coeff)
 	len = length(S)
 	print(S)
-	b2 = if(length(b) > 1) b[2] else 0; # TODO: Ext 2;
-	b3 = if(length(b) > 2) b[3] else 0; # TODO: Ext 3;
-	E2 = rep(R[3], len); # TODO: extensions;
-	E3 = (E2*S - R[1] - R[2]) / 3; # TODO: extensions;
+	b2 = if(length(b) >= 1) b[1] else 0; # Ext 2: power 1;
+	b3 = if(length(b) >= 2) b[2] else 0; # Ext 2: power 2;
+	E2 = R[3] - b2*S - b3*S^2; # Ext 2;
+	E3 = (E2*S - R[1] - R[2]) / 3;
 	x = sapply(seq_along(S), function(id) roots(c(1, -S[id], E2[id], -E3[id])))
 	S  = matrix(S,  ncol=len, nrow=3, byrow=T)
-	E3 = matrix(E3, ncol=len, nrow=3, byrow=T)
+	E2 = matrix(E2, ncol=len, nrow=3, byrow=T)
+	# E3 = matrix(E3, ncol=len, nrow=3, byrow=T) # not used;
 	yz.s = S - x
 	yz = E2 - x*yz.s
 	### robust: R[1] == R[2]
@@ -909,6 +912,29 @@ round0.p(poly.calc(x)) * 27
 err = 1 + 3*x^3 - 4*x^6 + x^9
 round0(err)
 
+
+### Extensions:
+
+### A2: power 1;
+R = c(1, 2, 3);
+b = 1
+sol = solve.ht3Dual(R, b=b)
+x = sol[,1]; y = sol[,2]; z = sol[,3];
+
+### Test
+x*y^2 + y*z^2 + z*x^2 # - R[1] # = 0
+x*z^2 + y*x^2 + z*y^2 # - R[2] # = 0
+x*y + x*z + y*z + b[1]*(x + y + z) # - R[3] # = 0
+
+### Classic Polynomial:
+round0.p(poly.calc(x)) * 3
+
+err = 31/9 - 5*x + 40*x^2 + 167*x^3 - 256*x^4 + 1346*x^5 - 1136*x^6 + 46*x^7 - 557*x^8 +  
+	+ 333*x^9 - 18*x^10 + 81*x^11 - 33*x^12 + 9*x^13 + 3*x^15
+round0(err)
+
+
+####################
 ####################
 
 ############
