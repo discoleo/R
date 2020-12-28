@@ -7,16 +7,21 @@
 ### Asymmetric S2:
 ### Base Types
 ###
-### draft v.0.1b-dual
+### draft v.0.1c
 
 
 ### Asymmetric Polynomial Systems: 2 Variables
 ### Base Types
 
-### Example:
+### Example 1:
 # x^n + b*y = R1
 # y^n + b*x = R2
 # R1 != R2
+
+### Example 2:
+# x^n + b1*y = R
+# y^n + b2*x = R
+# b1 != b2
 
 
 ###############
@@ -24,6 +29,9 @@
 ###############
 
 
+### draft v.0.1c:
+# - solved variant with asymmetric Coefficients:
+#   x^2 + b1*y = R;
 ### draft v.0.1b - v.0.1b-dual:
 # - solved Order 3:
 #   x^3 + b*y = R1;
@@ -453,5 +461,110 @@ y^3 + b[1]*x
 (6*b^4)*E2^5 +
 (- 3*R1*R2)*E2^6 +
 (- 4*b^2)*E2^7 + E2^9 
+
+
+#######################
+#######################
+
+### x^n + b1*y = R
+### y^n + b2*x = R
+
+###############
+### Order 2 ###
+###############
+
+# x^2 + b1*y = R
+# y^2 + b2*x = R
+
+### Sum(x*...) =>
+x^3 + y^3 + (b1+b2)*x*y - R*(x+y) # = 0
+S^3 - 3*x*y*S + (b1+b2)*x*y - R*S # = 0
+# x*y*(3*S - (b1+b2)) = S^3 - R*S
+
+### Prod:
+# x^2 - R = -b1*y # Prod =>
+(x*y)^2 - R*(x^2 + y^2) + R^2 - b1*b2*x*y # = 0
+(x*y)^2 - R*(S^2 - 2*x*y) + R^2 - b1*b2*x*y # = 0
+R*S^2 - (x*y)^2 - (2*R - b1*b2)*x*y - R^2 # = 0
+
+### Dual System:
+S^3 - 3*x*y*S + (b1+b2)*x*y - R*S # = 0
+R*S^2 - (x*y)^2 - (2*R - b1*b2)*x*y - R^2 # = 0
+
+### Auxilliary Eq:
+### Sum =>
+x^2 + y^2 + b2*x + b1*y - 2*R # = 0
+S^2 + 2*x*y + b2*x + b1*y - 2*R # = 0
+### Diff =>
+x*(S - b[2]) - y*(S - b[1]) # = 0
+
+### Eq:
+S^4 - (4*R + 3*b1*b2)*S^2 + (b1 + b2)*(4*R + b1*b2)*S - R*(b1 + b2)^2
+
+### Solution:
+solve.asymCoeff.S2P2 = function(R, b) {
+	coeff = c(1, 0, - (4*R[1] + 3*b[1]*b[2]),
+		(b[1] + b[2])*(4*R + b[1]*b[2]), - R[1]*(b[1] + b[2])^2)
+	S = roots(coeff)
+	#
+	# div = 3*S - (b[1]+b[2]);
+	# isZero = round0(div) == 0;
+	# if(isZero) print("Division by 0!")
+	# xy = (S^3 - R[1]*S) / div
+	x = S*(S - b[1]) / (2*S - b[1] - b[2])
+	y = S*(S - b[2]) / (2*S - b[1] - b[2])
+	return(cbind(x=x, y=y))
+}
+
+### Examples:
+R = 1
+b = c(1, 2)
+#
+sol = solve.asymCoeff.S2P2(R, b)
+x = sol[,1]; y = sol[,2];
+
+### Test
+x^2 + b[1]*y # - R
+y^2 + b[2]*x # - R
+
+
+#########
+### Ex 2:
+# special Case: b1[S] == 0
+R = c(-3)
+b = c(3, 4)
+#
+sol = solve.asymCoeff.S2P2(R, b)
+x = sol[,1]; y = sol[,2];
+
+### Test
+x^2 + b[1]*y # - R
+y^2 + b[2]*x # - R
+
+### Classic Polynomial:
+round0.p(poly.calc(x))
+# S-Polynomial:
+round0.p(poly.calc(x+y))
+
+
+#########
+### Ex 3:
+# special Case: b1[S] == 0
+R = c(2)
+b = c(-1, 8)
+#
+sol = solve.asymCoeff.S2P2(R, b)
+x = sol[,1]; y = sol[,2];
+
+### Test
+x^2 + b[1]*y # - R
+y^2 + b[2]*x # - R
+
+### Classic Polynomial:
+round0.p(poly.calc(x))
+err = 2 + 8*x - 4*x^2 + x^4
+round0(err)
+# S-Polynomial:
+round0.p(poly.calc(x+y))
 
 
