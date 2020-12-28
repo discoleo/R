@@ -7,7 +7,7 @@
 ### Asymmetric S2:
 ### Base Types
 ###
-### draft v.0.1b
+### draft v.0.1b-dual
 
 
 ### Asymmetric Polynomial Systems: 2 Variables
@@ -24,9 +24,10 @@
 ###############
 
 
-### draft v.0.1b:
+### draft v.0.1b - v.0.1b-dual:
 # - solved Order 3:
 #   x^3 + b*y = R1;
+# - added explicitly the Dual system; [v.0.1b-dual]
 ### draft v.0.1a:
 # - solved Order 2:
 #   x^2 + b*y = R1;
@@ -295,6 +296,18 @@ d*S*(2*S^3 - 4*b*S + 4*R1 + 4*R2) - 6*R1*x*S + 6*R2*y*S
 	+ 7*(S^3 - 2*b*S)*(R1 + R2)*S^3 +
 	- (10*R1^2 + 10*R2^2 - 34*R1*R2)*S^3 # = 0
 
+### Prod =>
+(x*y)^3 + b*(x^4 + y^4) + b^2*x*y - R1*R2 # = 0
+(x*y)^3 + b*S^4 - 4*b*x*y*S^2 + 2*b*(x*y)^2 + b^2*x*y - R1*R2 # = 0
+# 3*x*y*S = S^3 + b*S - R1 - R2 =>
+# S^4 = 3*x*y*S^2 - b*S^2 + (R1 + R2)*S
+(x*y)^3 - b*x*y*S^2 - b^2*S^2 + b*(R1 + R2)*S + 2*b*(x*y)^2 + b^2*x*y - R1*R2 # = 0
+
+### Dual System: (S, x*y)
+S^3 - 3*x*y*S + b*S - R1 - R2 # = 0
+b*S^4 + (x*y)^3 - 4*b*x*y*S^2 + 2*b*(x*y)^2 + b^2*x*y - R1*R2 # = 0
+# Q: How is the Dual System helpful?
+
 ### Eq:
 S^9 - 3*(R1 + R2)*S^6 - 12*b^2*S^5 + 18*b*(R1 + R2)*S^4 +
 	+ (3*(R1 + R2)^2 - 27*R1*R2 + 16*b^3)*S^3 - 24*b^2*(R1 + R2)*S^2 +
@@ -406,6 +419,11 @@ round0.p(poly.calc(x))
 x = sol[,1] # Note: x^1!
 err = -53 - 81*x + 3*x^3 + 3*x^6 + x^9
 round0(err)
+#
+round0.p(poly.calc(y))
+x = sol[,2] # Note: x^1!
+err = 19 - 81*x + 12*x^3 - 6*x^6 + x^9
+round0(err)
 # special relationship between polynomials:
 round0.p(poly.calc(x + y))
 x = sol[,1] + sol[,2]
@@ -425,4 +443,15 @@ S = x+y; d = x - y; R1 = R[1]; R2 = R[2];
 ### Test
 x^3 + b[1]*y
 y^3 + b[1]*x
+
+### alternative Eq:
+(- R1*R2*b^6 - R1^3*R2^3 + R1^4*b^3 + R2^4*b^3) +
+(- R1^2*R2^2*b^2 + b^8)*E2 +
+(- R1*R2*b^4)*E2^2 +
+(3*R1^2*R2^2 - 4*b^6)*E2^3 +
+(5*R1*R2*b^2)*E2^4 +
+(6*b^4)*E2^5 +
+(- 3*R1*R2)*E2^6 +
+(- 4*b^2)*E2^7 + E2^9 
+
 
