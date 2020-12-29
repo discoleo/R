@@ -7,7 +7,7 @@
 ### P6 Polynomials:
 ### Symmetric Polynomials
 ###
-### draft v.0.1b
+### draft v.0.1c
 
 
 ### Decomposition of Symmetric Polynomials of order [2n]
@@ -23,9 +23,14 @@
 #   (x+1)*P[2n], where P[2n] is strictly symmetric;
 
 
-################
+###############
 
-### History
+###############
+### History ###
+
+# draft v.0.1c:
+# - generalized symmetric:
+#   x^6 + b[1]*x^5 + b[2]*x^4 + b[3]*x^3 + b[2]*R*x^2 + b[1]*R^2*x + R^3 = 0;
 # draft v.0.1b:
 # - added the decompositions for P8 & P10;
 # - the P[5] (for P10) is solvable numerically;
@@ -252,9 +257,65 @@ x = p$x
 -1 - 2*x - 3*x^2 + 5*x^3 + 3*x^4 - 2*x^5 + x^6
 
 
+##########################
+##########################
+
+### x^6 + b1*x^5 + b2*x^4 + b3*x^3 + b2*R*x^2 + b1*R^2*x + R^3 = 0
+
+### Solution:
+x^6 + b1*x^5 + b2*x^4 + b3*x^3 + b2*R*x^2 + b1*R^2*x + R^3 # = 0 / x^3
+x^3 + (R/x)^3 + b1*(x^2 + (R/x)^2) + b2*(x + R/x) + b3 # = 0
+### R/x = y =>
+x^3 + y^3 + b1*(x^2 + y^2) + b2*(x + y) + b3 # = 0
+### S = x + y =>
+S^3 - 3*x*y*S + b1*(S^2 - 2*x*y) + b2*S + b3
+S^3 - 3*R*S + b1*(S^2 - 2*R) + b2*S + b3
+S^3 + b1*S^2 + (b2 - 3*R)*S - 2*b1*R + b3
+
+### Step 2:
+# solve:
+# x + y = S
+# x*y = R
+
+solve.P6Sym = function(R, b) {
+	coeff = c(1, b[1], (b[2] - 3*R[1]), - 2*b[1]*R[1] + b[3])
+	S = roots(coeff)
+	xy.d = sqrt(S^2 - 4*R[1] + 0i)
+	x = (S + xy.d) / 2;
+	y = (S - xy.d) / 2;
+	return(c(x, y))
+}
+
+### Examples:
+R = 2
+b = c(1,-1,0)
+x = solve.P6Sym(R, b)
+
+err = x^6 + b[1]*x^5 + b[2]*x^4 + b[3]*x^3 + b[2]*R*x^2 + b[1]*R^2*x + R^3
+round0(err)
+
+
+### Ex 2:
+R = 2
+b = c(1,-3,1)
+x = solve.P6Sym(R, b)
+
+err = x^6 + b[1]*x^5 + b[2]*x^4 + b[3]*x^3 + b[2]*R*x^2 + b[1]*R^2*x + R^3
+round0(err)
+
+
+### Ex 3:
+R = 5
+b = c(1, 0, 0)
+x = solve.P6Sym(R, b)
+
+err = x^6 + b[1]*x^5 + b[2]*x^4 + b[3]*x^3 + b[2]*R*x^2 + b[1]*R^2*x + R^3
+round0(err)
+
 
 ####################
 ####################
+
 
 ####################
 ### Symmetric P8 ###
@@ -300,6 +361,9 @@ x = p$x
 ### Symmetric P10 ###
 
 # Solution: the P5 is solved numerically!
+# coeffs of P5:
+# c(1, b[1], b[2]-5, b[3] - 4*b[1], b[4] - 3*b[2] + 5, b[5] + 2*b[1] - 2*b[3])
+
 
 ### more Examples
 b = c(10, 1, -1, -1, 0)
@@ -331,6 +395,11 @@ p = sapply(-5:5, function(bx) print(solve.p6sym(c(b[1], b[2] + bx, b[3], b[4], b
 1 + x + 3*x^2 + 3*x^8 + x^9 + x^10
 1 + x + 4*x^2 + 4*x^8 + x^9 + x^10
 1 + x + 5*x^2 + 5*x^8 + x^9 + x^10
+
+
+# if( b[c(1, 3, 5)] == 0) => actually trivial: r = +/- 1i;
+# 1 + b2*x^2 + b4*x^4 + b4*x^6 + b2*x^8 + x^10 = 0;
+# P5: c(1, 0, b[2]-5, 0, b[4] - 3*b[2] + 5, 0)
 
 
 #########################
