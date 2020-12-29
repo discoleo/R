@@ -7,7 +7,7 @@
 ### Asymmetric S2:
 ### Base Types
 ###
-### draft v.0.1c
+### draft v.0.1d
 
 
 ### Asymmetric Polynomial Systems: 2 Variables
@@ -23,12 +23,19 @@
 # y^n + b2*x = R
 # b1 != b2
 
+### TODO:
+# - understand the advantages of the Dual system;
+
 
 ###############
 ### History ###
 ###############
 
 
+### draft v.0.1cd:
+# - asymmetric Coefficients: Order 3
+#   x^3 + b1*y = R;
+# - TODO: special Case b1 + b2 == 0;
 ### draft v.0.1c:
 # - solved variant with asymmetric Coefficients:
 #   x^2 + b1*y = R;
@@ -566,5 +573,175 @@ err = 2 + 8*x - 4*x^2 + x^4
 round0(err)
 # S-Polynomial:
 round0.p(poly.calc(x+y))
+
+
+########################
+
+###############
+### Order 3 ###
+###############
+
+# x^3 + b1*y = R
+# y^3 + b2*x = R
+
+### Sum(x*...) =>
+x^4 + y^4 + (b1+b2)*x*y - R*(x+y) # = 0
+S^4 - 4*x*y*S^2 + 2*(x*y)^2 + (b1+b2)*x*y - R*S # = 0
+# 2*(x*y)^2 - x*y*(4*S^2 - (b1+b2)) = - S^4 + R*S
+
+### Prod:
+# x^3 - R = -b1*y # Prod =>
+(x*y)^3 - R*(x^3 + y^3) + R^2 - b1*b2*x*y # = 0
+(x*y)^3 - R*(S^3 - 3*x*y*S) + R^2 - b1*b2*x*y # = 0
+R*S^3 - (x*y)^3 - (3*R*S - b1*b2)*x*y - R^2 # = 0
+
+### Dual System:
+S^4 - 4*x*y*S^2 + 2*(x*y)^2 + (b1+b2)*x*y - R*S # = 0
+R*S^3 - (x*y)^3 - (3*R*S - b1*b2)*x*y - R^2 # = 0
+
+### Eq:
+S^9 - 6*R*S^6 - 12*b1*b2*S^5 + 18*R*(b1 + b2)*S^4 - (15*R^2 - 8*b1*b2*(b1+b2))*S^3 +
+	- R*(9*(b1 + b2)^2 + 12*b1*b2)*S^2 +
+	+ (18*R^2*(b1 + b2) - b1*b2*(b1^2 - 2*b1*b2 + b2^2))*S +
+	- R*(4*b1*b2*(b1 + b2) - (b1 + b2)^3 + 8*R^2)
+
+
+### Auxilliary Eq:
+### x*y =>
+# xy = - R*S*b1 - R*S*b2 + 4*R^2 + S^4*b1 + S^4*b2 - 4*S^6
+# div = 14*R*S - 8*S^2*b1 - 8*S^2*b2 + 14*S^4 - 2*b1*b2 + b1^2 + b2^2
+# xy = - xy / div;
+### Diff =>
+x^3 - y^3 - b2*x + b1*y # = 0
+(x - y)*(S^2 - x*y) - b2*x + b1*y
+x*(S^2 - x*y - b2) - y*(S^2 - x*y - b1) # = 0
+# x = S*(S^2 - xy - b1) / (2*S^2 - 2*xy - b1 - b2)
+# y = S*(S^2 - xy - b2) / (2*S^2 - 2*xy - b1 - b2)
+
+
+### Solution:
+solve.asymCoeff.S2P3 = function(R, b) {
+	b12 = b[1] + b[2]; bp = b[1]*b[2];
+	coeff = c(1, 0, 0, - 6*R[1], - 12*bp, 18*R[1]*b12,
+		(- 15*R[1]^2 + 8*bp*b12), - R[1]*(9*b12^2 + 12*bp),
+		(18*R^2*b12 - bp*(b[1] - b[2])^2),
+		- R*(4*bp*b12 - b12^3 + 8*R^2))
+	S = roots(coeff)
+	# x*y
+	xy = - R[1]*S*b12 + 4*R^2 + S^4*b12 - 4*S^6
+	div = 14*R*S - 8*S^2*b12 + 14*S^4 - 4*bp + b12^2
+	xy = - xy / div
+	# x*(S^2 - x*y - b2) - y*(S^2 - x*y - b1) # = 0
+	x = S*(S^2 - xy - b[1]) / (2*S^2 - 2*xy - b12)
+	y = S*(S^2 - xy - b[2]) / (2*S^2 - 2*xy - b12)
+	return(cbind(x=x, y=y))
+}
+
+### Examples:
+
+R = 1
+b = c(2, 3)
+sol = solve.asymCoeff.S2P3(R, b)
+x = sol[,1]; y = sol[,2];
+
+### Test
+x^3 + b[1]*y # - R
+y^3 + b[2]*x # - R
+
+
+#########
+### Ex 2:
+R = 1
+b = c(-1, 1)
+sol = solve.asymCoeff.S2P3(R, b)
+x = sol[,1]; y = sol[,2];
+
+### Test
+x^3 + b[1]*y # - R
+y^3 + b[2]*x # - R
+
+
+##################
+### Special Cases:
+### b1 + b2 == 0
+S^9 - 6*R*S^6 - 12*b1*b2*S^5 - 15*R^2*S^3 - 12*b1*b2*R*S^2 + 4*b1^2*b2^2*S - 8*R^3
+
+### alternative Solution (special Case):
+### Diff =>
+x^3 - y^3 + b1*x + b1*y # = 0
+(x - y)*(S^2 - x*y) + b1*S # = 0
+
+### Sum =>
+x^3 + y^3 - b1*(x - y) - 2*R # = 0
+S^3 - 3*x*y*S - b1*(x - y) - 2*R # = 0
+S^3*(S^2 - x*y) - 3*x*y*S*(S^2 - x*y) - b1*(x - y)*(S^2 - x*y) - 2*R*(S^2 - x*y) # = 0
+S^5 - 4*x*y*S^3 - 2*R*S^2 + 3*(x*y)^2*S + b1^2*S + 2*R*x*y # = 0
+### Dual System:
+S^4 - 4*x*y*S^2 + 2*(x*y)^2 - R*S # = 0
+S^5 - 4*x*y*S^3 + 3*(x*y)^2*S - 2*R*S^2 + b1^2*S + 2*R*x*y # = 0
+### TODO
+
+
+#########
+
+### Debug
+R = 1; b = c(2, 3);
+b1 = b[1]; b2 = b[2];
+x = 0.2947874543
+y = 0.4871915377
+S = x + y;
+
+
+###################
+###################
+
+### S3
+# [Temporary]
+
+# x^2 + b*x*z = R
+# y^2 + b*y*z = R
+# z^2 + b*x*y = R
+
+### Diff: (1) - (2) =>
+x^2 - y^2 + b*z*(x - y) # = 0
+(x - y)*(x + y + b*z) # = 0
+### Cases:
+# x == y *OR*
+# x + y + b*z = 0;
+x + y + b*z # = 0
+
+### Sum => [not used]
+x^2 + y^2 + z^2 + b*E2 - 3*R # = 0
+S^2 + (b - 2)*E2 - 3*R # = 0
+# (b - 2)*E2 = - (S^2 - 3*R);
+
+### Sum: (1) + (2) =>
+x^2 + y^2 + b*z*(x+y) - 2*R # = 0
+(x+y)^2 - 2*x*y + b*z*(-b*z) - 2*R # = 0
+(-b*z)^2 - 2*x*y + b*z*(-b*z) - 2*R # = 0
+x*y + R # = 0
+# =>
+# z^2 = R*(b + 1);
+# =>
+# x + y = - b*z;
+
+### Solution:
+R = 1
+b = 2
+#
+z = sqrt(R[1]*(b[1] + 1) + 0i)
+z = c(z, -z);
+xy.s = - b[1] * z;
+xy = -R[1];
+xy.d = sqrt(xy.s^2 - 4*xy)
+xy.d = c(xy.d, -xy.d)
+xy.s = rep(xy.s, 2); z = rep(z, 2)
+x = (xy.s + xy.d) / 2;
+y = (xy.s - xy.d) / 2;
+
+### Test
+x^2 + b[1]*x*z # - R
+y^2 + b[1]*y*z # - R
+z^2 + b[1]*x*y # - R
 
 
