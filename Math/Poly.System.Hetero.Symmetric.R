@@ -7,7 +7,7 @@
 ### Polynomial Systems: S2
 ### Heterogenous Symmetric
 ###
-### draft v.0.3a-clean5
+### draft v.0.3b
 
 
 ### Heterogenous Symmetric Polynomial Systems
@@ -96,6 +96,10 @@
 
 ### [branch v.0.3]
 #
+### v.0.3b:
+# - Extensions of type A1:
+#   x^3 + b1*y + b2*(x+y) = R;
+#   Example polynomial: -3 + 3*x^2 - 2*x^3 + x^6 = 0;
 ### v.0.3a-clean1 - v.0.3a-clean5:
 # - started to move derivations to file:
 #   Poly.System.Hetero.Symmetric.Derivation.R;
@@ -234,6 +238,12 @@ library(pracma)
 # x + y = S
 # x*y = S^2 - b1
 
+### Supplimentary Eq:
+x^3*y^2 + b1*y^3 - R*y^2 - b1*(y^3 + b1*x - R) # = 0
+x*((x*y)^2 - b1^2) - R*y^2 + b1*R # = 0
+R*x^2 + x*((x*y)^2 - b1^2) + R*(2*x*y - S^2 + b1) # = 0
+
+
 solve.htShift = function(b, R, shift=0) {
 	s = shift;
 	r.sum = roots(c(1, - 6*s, - 2*(b[1]-6*s^2), - 8*s^3 + R + 3*s*b[1]))
@@ -245,8 +255,34 @@ solve.htShift = function(b, R, shift=0) {
 	sol = rbind(sol, sol[,2:1])
 	sol # TODO: include also x = y cases
 }
+solve.ht.S3P3 = function(R, b) {
+	# using the new model of Extensions;
+	b2 = if(length(b) > 1) b[2] else 0;
+	b3 = if(length(b) > 2) b[3] else 0;
+	coeff = c(1, 0, -2*b[1], R[1])
+	if(b2 != 0 || b3 != 0) coeff = coeff + c(0, -b3, -b2, 0)
+	S = roots(coeff)
+	print(S) # Debug
+	R1 = R[1] - b2*S - b3*S^2;
+	xy = S^2 - b[1];
+	len = length(S)
+	# robust
+	if(R[1] == 0) {
+		# TODO
+		r.diff = sqrt(S^2 - 4*xy + 0i);
+		x = (S + r.diff)/2
+	} else {
+		x = sapply(seq(len), function(id)
+			roots(c(R1[id], (xy[id]^2 - b[1]^2), R1[id]*(2*xy[id] - S[id]^2 + b[1]))))
+		S = matrix(S, ncol=len, nrow=2, byrow=T)
+	}
+	y = S - x
+	sol = cbind(x=as.vector(x), y=as.vector(y))
+	sol # TODO: include also x = y cases
+}
 
-### Example
+### Examples:
+
 b = 3
 R = 1
 #
@@ -260,6 +296,44 @@ y^3 + b[1]*x
 
 ### Classic Polynomial
 err = x^6 - b[1]*x^4 - 2*R*x^3 + b[1]^2*x^2 + b[1]*R*x + R^2 - b[1]^3
+round0(err)
+
+
+### Extensions: A1-type
+
+#########
+### Ex 2:
+R = 1
+b = c(1, 1)
+#
+sol = solve.ht.S3P3(R, b)
+x = sol[,1]; y = sol[,2];
+sol
+
+### Test
+x^3 + b[1]*y + b[2]*(x + y)
+y^3 + b[1]*x + b[2]*(x + y)
+
+round0.p(poly.calc(x))
+err = -3 + 3*x^2 - 2*x^3 + x^6
+round0(err)
+
+
+#########
+### Ex 3:
+R = 1
+b = c(1, 0, 1)
+#
+sol = solve.ht.S3P3(R, b)
+x = sol[,1]; y = sol[,2];
+sol
+
+### Test
+x^3 + b[1]*y + b[2]*(x + y) + b[3]*(x + y)^2
+y^3 + b[1]*x + b[2]*(x + y) + b[3]*(x + y)^2
+
+round0.p(poly.calc(x))
+err = -1 - 2*x + 2*x^3 - x^5 + x^6
 round0(err)
 
 
