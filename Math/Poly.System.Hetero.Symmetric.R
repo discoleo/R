@@ -7,7 +7,7 @@
 ### Polynomial Systems: S2
 ### Heterogenous Symmetric
 ###
-### draft v.0.3b-ex
+### draft v.0.3c
 
 
 ### Heterogenous Symmetric Polynomial Systems
@@ -52,6 +52,7 @@
 # M1.) x^2*y + b*x: NO solutions (x != y);
 # M2.) x^2*y + b*y: trivial;
 # M3.) x^2*y + b2*x^2 + b1*x: trivial (trivial P2);
+# M4.) x^2*y + b3*x*y + b2*x^2 + b1*x: trivial (trivial P2);
 ### Mixt: (x*y)^2
 # M4.) x^2*y^2 + b2*x^2 + b1*x: simple (P2 => P4);
 # M5.) x^2*y^2 + b3*x^2*y + b2*x^2 + b1*x; (TODO: P2 => P4)
@@ -96,6 +97,9 @@
 
 ### [branch v.0.3]
 #
+### v.0.3c:
+# - more cleanup;
+# - more examples & more A1 extensions;
 ### v.0.3b-ex:
 # - more/various examples:
 #   5 + 3*x^2 + 6*x^3 + x^6 = 0;
@@ -159,7 +163,7 @@
 # - added x^3 + b1*(x*y)^2 = R;
 # - TODO:
 #  -- shifted versions;
-#  -- parametric polynomials [DONE for 1st variant];
+#  -- parametric polynomials [DONE: x & y variants];
 ### draft v.0.1b - v.0.1b-x:
 # - added a basic xy-type: x^3 + x*y = R;
 # - added also the shift (v.0.1b-sh);
@@ -1297,7 +1301,7 @@ a1 = a[1]; a2 = a[2]; b1 = b[1]; b2 = b[2];
 ### Sum =>
 S^6 - 4*b1*S^3 + 4*R*S^2 - b1^2
 
-### Simple extensions:
+### Simple (x*y) extensions:
 ### E1: x^4 + b2*x*y + b1*y = R
 S^6 - 2*b2*S^4 - 4*b1*S^3 + 4*R*S^2 + 2*b1*b2*S - b1^2 # = 0
 ### E2: x^4 + b3*(x*y)^2 + b2*x*y + b1*y = R
@@ -1305,10 +1309,17 @@ S^6 - 2*b2*S^4 - 4*b1*S^3 + 4*R*S^2 + 2*b1*b2*S - b1^2 # = 0
 
 ### Solution:
 
-solve.ht4 = function(b, R) {
-	r.sum = if(length(b) == 1) { roots(c(1,0,0, -4*b[1], 4*R, 0, - b[1]^2));
-		} else if(length(b) == 2) { roots(c(1,0,-2*b[2], -4*b[1], 4*R, 2*b[1]*b[2], - b[1]^2));
-		} else roots(c(b[3]-1, 0, 2*b[2], -2*b[1]*b[3]+4*b[1], -4*R, -2*b[1]*b[2], b[1]^2 + b[1]^2*b[3]));
+solve.ht4 = function(R, b, b.ext=0) {
+	if(length(b) == 1) coeff = c(1, 0, 0, -4*b[1], 4*R, 0, - b[1]^2)
+	else if(length(b) == 2) coeff = c(1, 0, -2*b[2], -4*b[1], 4*R, 2*b[1]*b[2], - b[1]^2)
+	else if(length(b) == 3) coeff = - c(b[3]-1, 0, 2*b[2], -2*b[1]*b[3]+4*b[1], -4*R,
+		-2*b[1]*b[2], b[1]^2 + b[1]^2*b[3]);
+	# A1-type Extensions:
+	b.e1 = if(length(b.ext) >= 1) b.ext[1] else 0;
+	b.e2 = if(length(b.ext) >= 2) b.ext[2] else 0;
+	if(b.e1 != 0 || b.e2 != 0) coeff = coeff + c(0,0, -4*b.e2, -4*b.e1, 0,0,0)
+	
+	r.sum = roots(coeff);
 	r.sum = r.sum[r.sum != 0] # if b[3] == -1
 	xy = (r.sum^2 - b[1]/r.sum)/2
 	r.diff = sqrt(r.sum^2 - 4*xy + 0i)
@@ -1321,10 +1332,10 @@ solve.ht4 = function(b, R) {
 }
 
 ### Example 1:
-b = 2
 R = 1
+b = 2
 #
-sol = solve.ht4(b, R)
+sol = solve.ht4(R, b=b)
 x = sol$sol[,1]; y = sol$sol[,2];
 sol
 
@@ -1343,10 +1354,10 @@ round0(err)
 # when b3 == 1: P4 => P8;
 
 ### Example 2: Extended version
-b = c(2, 1)
 R = 1
+b = c(2, 1)
 #
-sol = solve.ht4(b, R)
+sol = solve.ht4(R, b=b)
 x = sol$sol[,1]; y = sol$sol[,2];
 sol
 
@@ -1356,10 +1367,10 @@ y^4 + b[2]*x*y + b[1]*x
 
 
 ### Example 3: Extended version
-b = c(2, 1, -1)
 R = 1
+b = c(2, 1, -1)
 #
-sol = solve.ht4(b, R)
+sol = solve.ht4(R, b=b)
 x = sol$sol[,1]; y = sol$sol[,2];
 sol
 
@@ -1379,6 +1390,50 @@ b1 = b[1]; b2 = b[2]; R = R[1];
 x^12 - b2*x^10 - b1*x^9 + (- 3*R + b2^2)*x^8 + 2*b1*b2*x^7 + (2*R*b2 + b1^2 - b2^3)*x^6 +
 	(2*R*b1 - 3*b1*b2^2)*x^5 + (- R*b2^2 + 3*R^2 - 3*b1^2*b2)*x^4 + b1*(-2*R*b2 + b2^3 - b1^2)*x^3 +
 	(- R*b1^2 - R^2*b2 + 3*b1^2*b2^2)*x^2 - b1*(R^2 - 3*b1^2*b2)*x - R^3 + b1^4
+
+
+### Extensions: A1-type
+
+### Ext A1: Ex 1
+R = 1
+b = 2
+b.ext = 1
+#
+sol = solve.ht4(R, b=b, b.ext=b.ext)
+x = sol$sol[,1]; y = sol$sol[,2];
+sol
+
+### Test
+x^4 + b[1]*y + b.ext[1]*(x + y)
+y^4 + b[1]*x + b.ext[1]*(x + y)
+
+
+### Ext A1: Ex 2
+R = 1
+b = 2
+b.ext = c(-1, -1)
+#
+sol = solve.ht4(R, b=b, b.ext=b.ext)
+x = sol$sol[,1]; y = sol$sol[,2];
+sol
+
+### Test
+x^4 + b[1]*y + b.ext[1]*(x + y) + b.ext[2]*(x + y)^2
+y^4 + b[1]*x + b.ext[1]*(x + y) + b.ext[2]*(x + y)^2
+
+
+### Ext A1: Ex 3
+R = 1
+b = c(1, 2)
+b.ext = c(0, -1)
+#
+sol = solve.ht4(R, b=b, b.ext=b.ext)
+x = sol$sol[,1]; y = sol$sol[,2];
+sol
+
+### Test
+x^4 + b[1]*y + b[2]*x*y + b.ext[1]*(x + y) + b.ext[2]*(x + y)^2
+y^4 + b[1]*x + b[2]*x*y + b.ext[1]*(x + y) + b.ext[2]*(x + y)^2
 
 
 #############
@@ -1405,20 +1460,26 @@ x^12 - b2*x^10 - b1*x^9 + (- 3*R + b2^2)*x^8 + 2*b1*b2*x^7 + (2*R*b2 + b1^2 - b2
 Z^6 - 12*s*Z^5 + 60*s^2*Z^4 - 4*(b1 + 40*s^3)*Z^3 + 4*(R + 5*b1*s + 60*s^4)*Z^2 +
 	- 16*(R*s + 2*b1*s^2 + 12*s^5)*Z + 16*(R*s^2 + b1*s^3 + 4*s^6) - b1^2
 
+### Solution:
+solve.ht_sh.S2P4 = function(R, b, s=0) {
+	coeff = c(1, -12*s, 60*s^2, -4*(b[1] + 40*s^3), 4*(R + 5*b[1]*s + 60*s^4),
+		-16*(R*s + 2*b[1]*s^2 + 12*s^5), 16*(R*s^2 + b[1]*s^3 + 4*s^6) - b[1]^2)
+	x.sum = roots(coeff)
+	xy = (x.sum*(x.sum^2 - 4*s*x.sum + 6*s^2) - 4*s^3 - b[1]) / (2*x.sum - 4*s)
+	x.diff = sqrt(x.sum^2 - 4*xy + 0i)
+	x = (x.sum + x.diff)/2
+	y = (x.sum - x.diff)/2
+	sol = cbind(x=x, y=y)
+	return(rbind(sol, sol[,2:1]))
+}
 
 ### Example
-b = 3
 R = 1
+b = 3
 s = 1
 #
-coeff = c(1, -12*s, 60*s^2, -4*(b[1] + 40*s^3), 4*(R + 5*b[1]*s + 60*s^4), -16*(R*s + 2*b[1]*s^2 + 12*s^5), 16*(R*s^2 + b[1]*s^3 + 4*s^6) - b[1]^2)
-x.sum = roots(coeff)
-xy = (x.sum*(x.sum^2 - 4*s*x.sum + 6*s^2) - 4*s^3 - b[1]) / (2*x.sum - 4*s)
-x.diff = sqrt(x.sum^2 - 4*xy + 0i)
-x = (x.sum + x.diff)/2
-y = (x.sum - x.diff)/2
-sol = cbind(x, y)
-sol = rbind(sol, sol[,2:1])
+sol = solve.ht_sh.S2P4(R, b, s)
+x = sol[,1]; y = sol[,2];
 sol
 
 ### Test
@@ -1541,8 +1602,8 @@ round0.p(poly.calc(sol[,1]))
 ### x^j*y^k + P(x, y) ###
 #########################
 
-###################
-### x^2*y + b*x ###
+### Variant: + b*x
+### x^2*y + b*x
 
 # x^2*y + b1*x = R
 # y^2*x + b1*y = R
@@ -1550,21 +1611,19 @@ round0.p(poly.calc(sol[,1]))
 ### Solution: *NO*
 
 ### Diff =>
-# x*y*(x - y) + b1*(x-y) = 0
-# (x - y)*(x*y + b1) = 0
-# Case: x != y
 # x*y = -b1
 
 ### Sum =>
-# x*y*(x+y) + b1*(x+y) = 2*R
-# (x+y)*(x*y + b1) - 2*R = 0
+(x+y)*(x*y + b1) - 2*R # = 0
 # but: x*y + b1 = 0
 # => NO solution (x != y);
 
 ### NO Solution!
 
 
-###############
+###################
+
+### Variant: + b*y
 ### x^2*y + b*y
 
 # x^2*y + b1*y = R
@@ -1575,30 +1634,28 @@ round0.p(poly.calc(sol[,1]))
 ### Solution:
 
 ### Diff =>
-# x*y*(x - y) - b1*(x-y) = 0
-# (x - y)*(x*y - b1) = 0
-# Case: x != y
 # x*y = b1
 
 ### Sum =>
-# x*y*(x+y) + b1*(x+y) = 2*R
-# (x+y)*(x*y + b1) - 2*R = 0
-# 2*b1*Z - 2*R = 0
-# b1*Z = R
 # Z = R / b1
 
+### Solution:
+solve.mx.S2P2 = function(R, b) {
+	x.sum = R[1]/b[1]
+	xy = b[1]
+	x.diff = sqrt(x.sum^2 - 4*xy + 0i)
+	x = (x.sum + x.diff)/2
+	y = (x.sum - x.diff)/2
+	sol = cbind(x, y)
+	return(rbind(sol, sol[,2:1]))
+}
 
 ### Example
-b = 3
 R = 1
+b = 3
 #
-x.sum = R/b[1]
-xy = b[1]
-x.diff = sqrt(x.sum^2 - 4*xy + 0i)
-x = (x.sum + x.diff)/2
-y = (x.sum - x.diff)/2
-sol = cbind(x, y)
-sol = rbind(sol, sol[,2:1])
+sol = solve.mx.S2P2(R, b)
+x = sol[,1]; y = sol[,2];
 sol
 
 
@@ -1607,7 +1664,9 @@ x^2*y + b[1]*y
 y^2*x + b[1]*x
 
 
-#########################
+#####################
+
+### Variant: + b2*x^2
 ### x^2*y + b2*x^2 + b1*x
 
 # x^2*y + b2*x^2 + b1*x = R
@@ -1619,28 +1678,18 @@ y^2*x + b[1]*x
 ### Solution:
 
 ### Diff =>
-# x*y*(x - y) + b2*(x^2 - y^2) + b1*(x-y) = 0
-# (x - y)*(x*y + b2*(x+y) + b1) = 0
-# Case: x != y
-# x*y = -b2*(x+y) - b1
 # x*y = -b2*Z - b1
 
 ### Sum =>
-# x*y*(x+y) + b2*(x^2 + y^2) + b1*(x+y) = 2*R
-# (x+y)*(x*y + b1) + b2*(x^2 + y^2) - 2*R = 0
-# Z*(-b2*Z - b1 + b1) + b2*(Z^2 - 2*x*y) - 2*R
-# -b2*Z^2 + b2*Z^2 - 2*b2*(-b2*Z - b1) - 2*R
-# 2*b2*(b2*Z + b1) - 2*R
-# b2^2*Z + b1*b2 - R
 # Z = (R - b1*b2) / b2^2
 
 ### Extensions:
 ### E1: x^2*y + b3*x*y + b2*x^2 + b1*x = R
 ### Sum =>
-# b2^2*Z - b3*(b2*Z + b1) + b1*b2 - R = 0
-# (b2^2 - b2*b3)*Z + b1*b2 - b1*b3 - R = 0
+(b2^2 - b2*b3)*Z + b1*b2 - b1*b3 - R # = 0
 
-solve.ht21 = function(b, R) {
+
+solve.ht21.S2P2 = function(b, R) {
 	if(length(b) == 2) {
 		r.sum = (R - b[1]*b[2]) / b[2]^2
 	} else {
@@ -1656,10 +1705,10 @@ solve.ht21 = function(b, R) {
 }
 
 ### Example:
-b = c(1, 3)
 R = -1
+b = c(1, 3)
 #
-sol = solve.ht21(b, R)
+sol = solve.ht21.S2P2(b, R)
 x = sol[,1]; y = sol[,2];
 sol
 
@@ -1673,16 +1722,19 @@ b[2]*x^2 - (R/b[2] - b[1])*x - R
 
 
 ### Example 2: Extension
-b = c(1, 3, 1)
 R = -1
+b = c(1, 3, 1)
 #
-sol = solve.ht21(b, R)
+sol = solve.ht21.S2P2(b, R)
 x = sol[,1]; y = sol[,2];
 sol
 
 ### Test
 x^2*y + b[3]*x*y + b[2]*x^2 + b[1]*x
 y^2*x + b[3]*x*y + b[2]*y^2 + b[1]*y
+
+### Classic Polynomial:
+b[2]*(b[2] - b[3])*x^2 + (b[1]*(b[2] - b[3]) - R)*x - R*b[2]
 
 
 ############################

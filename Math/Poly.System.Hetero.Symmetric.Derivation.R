@@ -770,3 +770,94 @@ Z^4 - 2*Z^4 + 2/4*Z^4 + 2/4*b2*Z^4 + b1*Z^2 - 2*R
 (b2 - 1)/2*Z^4 + b1*Z^2 - 2*R
 (b2 - 1)*Z^4 + 2*b1*Z^2 - 4*R
 
+
+##########################
+
+##########################
+### Mixed Highest Term ###
+##########################
+
+### Variant: + b*x
+### x^2*y + b*x
+
+# x^2*y + b1*x = R
+# y^2*x + b1*y = R
+
+### Solution: *NO*
+
+### Diff =>
+x*y*(x - y) + b1*(x-y) # = 0
+(x - y)*(x*y + b1) # = 0
+# Case: x != y
+# x*y = -b1
+
+### Sum =>
+# x*y*(x+y) + b1*(x+y) = 2*R
+(x+y)*(x*y + b1) - 2*R # = 0
+# but: x*y + b1 = 0
+# => NO solution (x != y);
+
+### NO Solution!
+
+
+###################
+
+### Variant: + b*y
+### x^2*y + b*y
+
+# x^2*y + b1*y = R
+# y^2*x + b1*x = R
+
+# very simple system
+
+### Solution:
+
+### Diff =>
+x*y*(x - y) - b1*(x-y) # = 0
+(x - y)*(x*y - b1) # = 0
+# Case: x != y
+# x*y = b1
+
+### Sum =>
+# x*y*(x+y) + b1*(x+y) = 2*R
+(x+y)*(x*y + b1) - 2*R # = 0
+2*b1*Z - 2*R # = 0
+# b1*Z = R
+# Z = R / b1
+
+
+#####################
+
+### Variant: + b2*x^2
+### x^2*y + b2*x^2 + b1*x
+
+# x^2*y + b2*x^2 + b1*x = R
+# y^2*x + b2*y^2 + b1*y = R
+
+### Extension:
+# x^2*y + b3*x*y + b2*x^2 + b1*x = R
+
+### Solution:
+
+### Diff =>
+x*y*(x - y) + b2*(x^2 - y^2) + b1*(x-y) # = 0
+(x - y)*(x*y + b2*(x+y) + b1) # = 0
+# Case: x != y
+# x*y = -b2*(x+y) - b1
+# x*y = -b2*Z - b1
+
+### Sum =>
+# x*y*(x+y) + b2*(x^2 + y^2) + b1*(x+y) = 2*R
+(x+y)*(x*y + b1) + b2*(x^2 + y^2) - 2*R # = 0
+Z*(-b2*Z - b1 + b1) + b2*(Z^2 - 2*x*y) - 2*R
+-b2*Z^2 + b2*Z^2 - 2*b2*(-b2*Z - b1) - 2*R
+2*b2*(b2*Z + b1) - 2*R
+b2^2*Z + b1*b2 - R
+# Z = (R - b1*b2) / b2^2
+
+### Extensions:
+### E1: x^2*y + b3*x*y + b2*x^2 + b1*x = R
+### Sum =>
+b2^2*Z - b3*(b2*Z + b1) + b1*b2 - R # = 0
+(b2^2 - b2*b3)*Z + b1*b2 - b1*b3 - R # = 0
+
