@@ -7,7 +7,7 @@
 ### Polynomial Systems: S3
 ### Heterogenous Symmetric
 ###
-### draft v.0.3a-pre
+### draft v.0.3a-ext
 
 
 ### Hetero-Symmetric
@@ -23,6 +23,9 @@ z^n + P(z, x, y) = R
 ###############
 ### History ###
 
+### draft v.0.3a-ext:
+# - extensions of type A1 for Ht S3P2;
+# - simplification of the base Eq for Ht S3P2;
 ### draft v.0.3a-pre:
 # - moved Difference types to new file:
 #   Poly.System.Hetero.Symmetric.S3.Diff.R;
@@ -187,6 +190,8 @@ E2^2 - 2*E3*S + b1*(S^3 - 3*E2*S + 3*E3) - R*(S^2 - 2*E2)
 (S^2 + b1*S - 3*R)^2 - 8*E3*S + b1*(-2*S^3 - 6*b1*S^2 + 22*R*S + 12*E3) - 12*R^2
 S^4 - 6*R*S^2 - 5*b1^2*S^2 + 16*b1*R*S - 8*E3*S + 12*b1*E3 - 3*R^2
 S^4 + 2*b1*S^3 - (10*R + b1^2)*S^2 + 6*(b1*R + b1^3)*S - 18*b1^2*R + 9*R^2
+### Eq:
+(S^2 + 3*b1*S - 9*R)*(S^2 - b1*S - R + 2*b1^2)
 
 ### [old/unstable]
 ### Diff =>
@@ -217,17 +222,28 @@ S^4 + 2*b1*S^3 - (10*R + b1^2)*S^2 + 6*(b1*R + b1^3)*S - 18*b1^2*R + 9*R^2
 
 ### Solution:
 solve.sysHt32 = function(R, b, doPrint=TRUE) {
-	S = roots(c(1, 2*b[1], - (10*R[1] + b[1]^2), 6*(b[1]*R[1] + b[1]^3), - 18*b[1]^2*R[1] + 9*R[1]^2))
+	b2 = if(length(b) > 1) b[2] else 0; # Ext A1: power 1;
+	b3 = if(length(b) > 2) b[3] else 0; # Ext A1: power 2;
+	# coeff = c(1, 2*b[1], - (10*R[1] + b[1]^2), 6*(b[1]*R[1] + b[1]^3), - 18*b[1]^2*R[1] + 9*R[1]^2)
+	# if(b2 != 0) coeff = coeff + c(0, 10*b2, -6*b[1]*b2 + 9*b2^2, 18*b[1]^2*b2 - 18*R[1]*b2, 0)
+	coeff = c(1 + b3, b2 - b[1], - R[1] + 2*b[1]^2)
+	S = roots(coeff)
 	if(doPrint) print(S)
-	# remove x == y == z = S / 3
+	len = length(S);
+	if(len == 0) stop("NO solutions!")
+	R1 = R[1] - b2*S - b3*S^2;
+	# [REMOVED] remove x == y == z = S / 3;
 	# as it causes numerical instability due to roots multiplicity;
-	isEq = round0(S^2 + 3*b[1]*S - 9*R[1]) == 0
-	S = S[ ! isEq]
-	E2 = round0(S^2 + b[1]*S - 3*R[1])/2
-	E3 = - (S^3 - 3*E2*S + b[1]*E2 - R[1]*S) / 3
+	# isEq = round0(S^2 + 3*b[1]*S - 9*R1) == 0
+	# if(any(isZero)) print("Warning: f(S) == 0!")
+	# S = S[ ! isEq]; R1 = R1[ ! isEq];
+	E2 = round0(S^2 + b[1]*S - 3*R1)/2
+	E3 = - (S^3 - 3*E2*S + b[1]*E2 - R1*S) / 3
+	E3 = round0(E3, tol=1E-10); # improve numerics when E3 == 0;
 	x = sapply(1:length(S), function(id) roots(c(1, -S[id], E2[id], -E3[id])))
-	y = (R[1] - x^2)/b[1]
-	z = (R[1] - y^2)/b[1]
+	R1 = matrix(R1, ncol=len, nrow=3, byrow=TRUE)
+	y = (R1 - x^2)/b[1]
+	z = (R1 - y^2)/b[1]
 	sol = cbind(x=as.vector(x), y=as.vector(y), z=as.vector(z))
 	sol
 }
@@ -240,13 +256,15 @@ sol = solve.sysHt32(R, b=b)
 x = sol[,1]; y = sol[,2]; z = sol[,3]
 
 ### Test
-x^2 + b[1]*y 
+x^2 + b[1]*y
 y^2 + b[1]*z
 z^2 + b[1]*x
 
+### Classic Polynomial: P8 or P6 (for S == 0)
 round0.p(poly.calc(sol[,1]))
 
 
+#########
 ### Ex 2:
 R = 3
 b = 3
@@ -265,16 +283,67 @@ round0.p(poly.calc(sol[,1]))
 
 
 ### alternative / classic
-x = roots(c(1,0, - 4*R,0, (6*R^2 - 2*b[1]^2*R), 0, 4*R^2*(b[1]^2 - R), b[1]^7, (b[1]^2*R - R^2)^2 - b[1]^6*R))
+coeff = c(1,0, - 4*R,0, (6*R^2 - 2*b[1]^2*R), 0, 4*R^2*(b[1]^2 - R), b[1]^7, (b[1]^2*R - R^2)^2 - b[1]^6*R)
+x = roots(coeff)
 y = (R - x^2)/b[1]
 z = (R - y^2)/b[1]
 sol = cbind(x, y, z)
 sol
 
 ### Test
-x^2 + b[1]*y 
+x^2 + b[1]*y
 y^2 + b[1]*z
 z^2 + b[1]*x
+
+
+###############
+### Extensions:
+R = 1
+b = c(1, 1)
+#
+sol = solve.sysHt32(R, b=b)
+x = sol[,1]; y = sol[,2]; z = sol[,3]
+
+### Test
+x^2 + b[1]*y + b[2]*(x+y+z)
+y^2 + b[1]*z + b[2]*(x+y+z)
+z^2 + b[1]*x + b[2]*(x+y+z)
+
+round0.p(poly.calc(sol[,1]))
+
+
+### Ex 2:
+R = -1
+b = c(1, 1)
+#
+sol = solve.sysHt32(R, b=b)
+x = sol[,1]; y = sol[,2]; z = sol[,3]
+
+### Test
+x^2 + b[1]*y + b[2]*(x+y+z)
+y^2 + b[1]*z + b[2]*(x+y+z)
+z^2 + b[1]*x + b[2]*(x+y+z)
+
+round0.p(poly.calc(sol[,1]))
+err = 25 + 12*x^2 - 2*x^3 + 3*x^4 + x^6
+round0(err)
+
+
+### Ex 3:
+R = 2
+b = c(2, 0, 1)
+#
+sol = solve.sysHt32(R, b=b)
+x = sol[,1]; y = sol[,2]; z = sol[,3]
+
+### Test
+x^2 + b[1]*y + b[2]*(x+y+z) + b[3]*(x+y+z)^2
+y^2 + b[1]*z + b[2]*(x+y+z) + b[3]*(x+y+z)^2
+z^2 + b[1]*x + b[2]*(x+y+z) + b[3]*(x+y+z)^2
+
+round0.p(poly.calc(sol[,1]))
+err = 115 + 39*x + 44*x^2 - x^3 - 12*x^4 - x^5 + x^6
+round0(err)
 
 
 ##################
@@ -1028,11 +1097,12 @@ Det = (9*b^2 + 24*S^4 + 96*b*S^2 - 216*R*S)
 48*S^6 + 114*b*S^4 + 12*b^2*S^2 - 288*R*S^3 + 54*b*R*S + 27*b^3 - (10*S^4 + 4*b*S^2 - 18*R*S + 9*b^2)*sqrt(Det)
 
 ###############
-### "P12" / P11 Polynomial:
+### "P12" / P11 / P8 Polynomial:
 S^12 + 6*b*S^10 - 27*R*S^9 - 9*b^2*S^8 + 54*R*b*S^7 + (27*R^2 + 166*b^3)*S^6 +
 	+ (- 756*R*b^2)*S^5 + (972*R^2*b + 45*b^4)*S^4 + (- 351*R*b^3 - 729*R^3)*S^3 +
 	+ (729*R^2*b^2 + 81*b^5)*S^2 - 243*R*b^4*S + 0
 S*(S^3 + 9*b*x - 27*R)*(S^8 - 3*b*S^6 + 18*b^2*S^4 - 27*R*b*S^3 + (27*R^2 + 4*b^3)*S^2 - 27*R*b^2*S + 9*b^4)
+#
 S^8 - 3*b*S^6 + 18*b^2*S^4 - 27*R*b*S^3 + (27*R^2 + 4*b^3)*S^2 - 27*R*b^2*S + 9*b^4
 
 
@@ -1181,7 +1251,7 @@ x = roots(coeff)
 b = 3
 R = 1
 #
-x = roots(c(1,0, -b[1], -R))
+x = roots(c(1,0, -b[1], -R[1]))
 y = as.vector(sapply(x, function(x) roots(c(1, x, x^2 - b[1]))))
 x = rep(x, each=2)
 z = -x-y
