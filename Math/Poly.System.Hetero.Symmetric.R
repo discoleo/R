@@ -7,7 +7,7 @@
 ### Polynomial Systems: S2
 ### Heterogenous Symmetric
 ###
-### draft v.0.3b
+### draft v.0.3b-ex
 
 
 ### Heterogenous Symmetric Polynomial Systems
@@ -96,6 +96,9 @@
 
 ### [branch v.0.3]
 #
+### v.0.3b-ex:
+# - more/various examples:
+#   5 + 3*x^2 + 6*x^3 + x^6 = 0;
 ### v.0.3b:
 # - Extensions of type A1:
 #   x^3 + b1*y + b2*(x+y) = R;
@@ -948,16 +951,17 @@ b[2]^2*x^8 - b[2]*x^7 - (b[1]*b[2] - 1)*x^6 - b[1]*x^5 + (b[1]^2 + b[2]*R)*x^4 -
 # Case: b2 == 1;
 
 solve.htxy2 = function(b, R) {
-	if(abs(b[3] - b[2] - 1) < 1E-12) {
+	if(round0(b[3] - b[2] - 1, tol=1E-10) == 0) {
 		x.sum = sqrt(-b[1] + 0i) * c(1, -1)
 		# TODO: all cases;
 		if(round0(b[2]+b[3] - 3) == 0) {
-			xy = 0;
+			xy = 0; # b2 = 1; b3 = 2;
 			print("Only trivial solution!")
 		} else {
 			xy = (x.sum^3 + b[1]*x.sum - 2*R) / x.sum / (b[2] + b[3] - 3)
 		}
 	} else {
+		if(b[2] == 1) print("Only trivial solution!")
 		x.sum = roots(c(1, 0, b[1], - R*(b[2] - b[3] + 1)/(b[2] - 1)))
 		xy = (x.sum^2 + b[1]) / (b[2] - b[3] + 1)
 	}
@@ -1015,12 +1019,18 @@ round0(err)
 
 ### Sum =>
 2*(a1+a2)*S^3 + 3*b1*(a1+a2)/(a1 - a2)*S - b1*S + 2*R
+### Eq:
+(a1+a2)*S^3 + b1*(a1+2*a2)/(a1 - a2)*S + R # = 0
 
 
 solve.htm1 = function(b, a, R) {
-	coeff = c(2*(a[1]+a[2]), 0, 3*b[1]*(a[1]+a[2])/(a[1] - a[2]) - b[1], 2*R[1])
+	# TODO: Case a1 == a2;
+	b2 = if(length(b) > 1) b[2] else 0; # Ext A1;
+	div = a[1] - a[2];
+	coeff = c(2*(a[1]+a[2]), 0, 3*b[1]*(a[1]+a[2])/div - b[1], 2*R[1])
+	if(b2 != 0) coeff = coeff + c(0, 0, -2*b2/div, 0);
 	x.sum = roots(coeff)
-	xy = x.sum^2 + b[1]/(a[1] - a[2])
+	xy = x.sum^2 + b[1]/div;
 	x.diff = sqrt(x.sum^2 - 4*xy + 0i)
 	x = (x.sum + x.diff)/2
 	y = (x.sum - x.diff)/2
@@ -1030,7 +1040,8 @@ solve.htm1 = function(b, a, R) {
 	return(list(sol=sol, p=p))
 }
 
-### Example: has Fractions
+### Examples:
+# - has Fractions;
 
 b = 1
 a = c(1/2, 1/3)
@@ -1046,15 +1057,35 @@ a[2]*x^3 + a[1]*y^3 + b[1]*y
 
 ### Classic Polynomial:
 
-R[1]^2 * (- 3*a[1]*a[2]^3 + 3*a[1]^2*a[2]^2 - a[1]^3*a[2] + a[2]^4) - a[2]^3*b[1]^3 +
-	b[1]*R[1] * (- 3*a[1]^2*a[2]^2 + 2*a[1]^3*a[2] + a[2]^4)*x +
-	b[1]^2 * (- a[1]^3*a[2] + a[2]^4)*x^2 +
-	R[1] * (4*a[1]*a[2]^4 - 4*a[1]^3*a[2]^2 + 2*a[1]^4*a[2] - 2*a[2]^5)*x^3 +
-	b[1] * (- a[1]*a[2]^4 + 3*a[1]^2*a[2]^3 + a[1]^3*a[2]^2 - 2*a[1]^4*a[2] - a[2]^5)*x^4 +
-	(- a[1]*a[2]^5 - 2*a[1]^2*a[2]^4 + 2*a[1]^3*a[2]^3 + a[1]^4*a[2]^2 - a[1]^5*a[2] + a[2]^6)*x^6
+R[1]^2*(a[1] - a[2])^3 + a[2]^2*b[1]^3 +
+	- (a[1] - a[2])*b[1]*R[1] * (2*a[1]^2 - a[2]^2 - a[1]*a[2])*x +
+	+ b[1]^2 * (a[1]^3 - a[2]^3)*x^2 +
+	- 2*(a[1] - a[2])^3*(a[1] + a[2])*R[1]*x^3 +
+	+ (a[1]^2 - a[2]^2)*b[1] * (2*a[1]^2 - a[2]^2 - a[1]*a[2])*x^4 +
+	+ (a[1] - a[2])^3*(a[1] + a[2])^2*x^6
 
 
-### Example 2:
+#########
+### Ex 2:
+b = -1
+a = c(1/3, -2/3) # a2 = - 2*a1;
+R = 1
+#
+sol = solve.htm1(b, a, R)
+x = sol$sol[,1]; y = sol$sol[,2];
+sol
+
+### Test
+a[1]*x^3 + a[2]*y^3 + b[1]*x
+a[2]*x^3 + a[1]*y^3 + b[1]*y
+
+### Classic Polynomial:
+err = 5 + 3*x^2 + 6*x^3 + x^6
+round0(err)
+
+
+#########
+### Ex 3:
 b = 3
 a = c(1/2, -1/4)
 R = 1
@@ -1069,6 +1100,21 @@ a[2]*x^3 + a[1]*y^3 + b[1]*y
 
 err = 80 - 48*x + 48*x^2 - 8*x^3 + 12*x^4 + x^6
 round0(err)
+
+
+###############
+### Extensions:
+b = c(-1, -2)
+a = c(1/3, -2/3)
+R = 1
+#
+sol = solve.htm1(b, a, R)
+x = sol$sol[,1]; y = sol$sol[,2];
+sol
+
+### Test
+a[1]*x^3 + a[2]*y^3 + b[1]*x + b[2]*(x+y)
+a[2]*x^3 + a[1]*y^3 + b[1]*y + b[2]*(x+y)
 
 
 #########################
@@ -1121,7 +1167,8 @@ err = 1/9 + 1/3*x^2 - 2/3*x^3 + x^4 - x^5 + x^6
 round0(err)
 
 
-### Example 2:
+#########
+### Ex 2:
 b = 3
 a = c(1/2, -1)
 R = 1
@@ -1132,6 +1179,21 @@ sol
 
 ### Classic Polynomial
 err = 4 + 12*x^2 + 4*x^3 + 36*x^4 + 6*x^5 + x^6
+round0(err)
+
+
+#########
+### Ex 3:
+b = -1 # variants: - 1/2; 1/2;
+a = c(1, -1/2)
+R = 1/2
+#
+sol = solve.htm(b, a, R)
+x = sol$sol[,1]; y = sol$sol[,2];
+sol
+
+### Classic Polynomial
+err = 1 - 2*x^2 - 2*x^3 + 4*x^4 + 2*x^5 + x^6
 round0(err)
 
 
