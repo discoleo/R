@@ -7,7 +7,7 @@
 ### Polynomial Systems: S2
 ### Heterogenous Symmetric
 ###
-### draft v.0.3c
+### draft v.0.3c-clean2
 
 
 ### Heterogenous Symmetric Polynomial Systems
@@ -97,9 +97,10 @@
 
 ### [branch v.0.3]
 #
-### v.0.3c:
+### v.0.3c - v.0.3c-clean2:
 # - more cleanup;
 # - more examples & more A1 extensions;
+# - more classic polynomials; [v.0.3c-clean2]
 ### v.0.3b-ex:
 # - more/various examples:
 #   5 + 3*x^2 + 6*x^3 + x^6 = 0;
@@ -1751,20 +1752,13 @@ b[2]*(b[2] - b[3])*x^2 + (b[1]*(b[2] - b[3]) - R)*x - R*b[2]
 ### Solution:
 
 ### Diff =>
-# x*y*(x - y)*(x + y) - b1*(x-y) = 0
-# (x - y)*(x*y*(x+y) - b1) = 0
-# Case: x != y
-# x*y = b1 / (x+y)
 # x*y = b1 / S;
 
 ### Sum =>
-# x*y*(x^2 + y^2) + 2*b3*(x*y)^2 + 2*b2*x*y + b1*(x+y) = 2*R
-# x*y*(S^2 - 2*x*y) + 2*b3*(x*y)^2 + 2*b2*x*y + b1*S - 2*R = 0
-# x*y*S^2*(S^2 - 2*x*y) + 2*b3*(x*y)^2*S^2 + 2*b2*x*y*S^2 + b1*S^3 - 2*R*S^2 = 0
-# b1*(S^3 - 2*b1) + 2*b1^2*b3 + 2*b1*b2*S + b1*S^3 - 2*R*S^2 = 0
-# b1*S^3 - R*S^2 + b1*b2*S + b1^2*b3 - b1^2 = 0
+b1*S^3 - R*S^2 + b1*b2*S + b1^2*b3 - b1^2 # = 0
 
-solve.htx3y = function(b, R) {
+
+solve.htx3y = function(R, b) {
 	if(R == 0 && b[1] == 0) return(list(sol=NA, p=NA))
 	r.sum = roots(c(b[1], - R, b[1]*b[2], b[1]^2*b[3] - b[1]^2))
 	r.sum = round0(r.sum)
@@ -1779,11 +1773,28 @@ solve.htx3y = function(b, R) {
 	return(list(sol=sol, p=p))
 }
 
+test.p = function(R, b) {
+	b1 = b[1]; b2 = b[2]; b3 = b[3];
+	#
+	err = b1^3*(1 - b3^2) +
+	(1 - b3^2)*(- R^2 + 2*b1^2*b2)*x +
+	(- R*b1 + 2*R*b1*b3 + R*b1*b3^2 - 2*R*b1*b3^3 + b1*b2^2 - b1*b2^2*b3^2)*x^2 +
+	(- R*b2 + R*b2*b3^2 + 2*b1^2 - b1^2*b3 - 3*b1^2*b3^2 + b1^2*b3^3 + b1^2*b3^4)*x^3 +
+	b1*b2*(b3^2 - 1)*(b3 - 2)*x^4 +
+	- R*(b3 - 1)*(b3^2 - 1)*x^5 +
+	b1*(b3 - 1)*(b3^2 - 1)*x^6
+	return(round0(err))
+}
+
+### Classic Polynomial:
+((1 + b[3])*x^4 + b[2]*x^2 + b[1]*x - R) * P6
+
+
 ### Example:
-b = c(1/2, -1, 2)
 R = 1
+b = c(1/2, -1, 2)
 #
-sol = solve.htx3y(b, R)
+sol = solve.htx3y(R, b)
 x = sol$sol[,1]; y = sol$sol[,2];
 sol
 
@@ -1793,13 +1804,14 @@ y^3*x + b[3]*(x*y)^2 + b[2]*x*y + b[1]*x
 #
 err = -0.25 + 3*x - 4*x^2 - 2*x^5 + x^6
 round0(err)
+test.p(R, b)
 
 
 ### Example 2:
-b = c(1,-1,-2)
 R = 1
+b = c(1,-1,-2)
 #
-sol = solve.htx3y(b, R)
+sol = solve.htx3y(R, b)
 x = sol$sol[,1]; y = sol$sol[,2];
 sol
 
@@ -1807,12 +1819,14 @@ sol
 x^3*y + b[3]*(x*y)^2 + b[2]*x*y + b[1]*y
 y^3*x + b[3]*(x*y)^2 + b[2]*x*y + b[1]*x
 
+test.p(R, b)
+
 
 ### Example 3:
-b = c(1, -3, 2)
 R = 1
+b = c(1, -3, 2)
 #
-sol = solve.htx3y(b, R)
+sol = solve.htx3y(R, b)
 x = sol$sol[,1]; y = sol$sol[,2];
 sol
 
@@ -1821,20 +1835,37 @@ err = -1 + 7*x - 12*x^2 + x^3 - x^5 + x^6
 round0(err)
 
 
+### Example 4:
+R = 2
+b = c(1,2,2)
+#
+sol = solve.htx3y(R, b)
+x = sol$sol[,1]; y = sol$sol[,2];
+sol
+
+### Test
+x^3*y + b[3]*(x*y)^2 + b[2]*x*y + b[1]*y
+y^3*x + b[3]*(x*y)^2 + b[2]*x*y + b[1]*x
+
+err = -1 - 10*x^2 + 8*x^3 - 2*x^5 + x^6
+round0(err)
+test.p(R, b)
+
+
 ### Examples:
 R = 1
-p = sapply(-6:6, function(r) print(solve.htx3y(c(1, r, 2), R)$p))
+p = sapply(-6:6, function(r) print(solve.htx3y(R, c(1, r, 2))$p))
 #
 b = c(1, -4, 2)
-sol = solve.htx3y(b, R)
+sol = solve.htx3y(R, b)
 x = sol$sol[,1]; y = sol$sol[,2];
 sol
 -1 + 9*x - 19*x^2 - x^5 + x^6
 
 ###
-p = sapply(-6:6, function(r) print(solve.htx3y(c(r, -3, 2), r)$p))
+p = sapply(-6:6, function(r) print(solve.htx3y(r, c(r, -3, 2))$p))
 #
-r = -3; sol = solve.htx3y(c(r, -3, 2), r); x = sol$sol[,1]
+r = -3; sol = solve.htx3y(r, c(r, -3, 2)); x = sol$sol[,1]
 -9 - 21*x - 15*x^3 - x^5 + x^6
 
 
