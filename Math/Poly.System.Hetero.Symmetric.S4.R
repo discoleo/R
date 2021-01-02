@@ -6,7 +6,7 @@
 ### Polynomial Systems: S4
 ### Heterogenous Symmetric
 ###
-### draft v.0.1b
+### draft v.0.1b-sol.eq3
 
 
 
@@ -97,7 +97,7 @@ b^5*S^10 +
 	+ b*(568*R + 2026*R^2*b^2 - 4*R^3*b^4)*S^4 + (1120*R + 2472*R^2*b^2 - 596*R^3*b^4)*S^3 +
 	- (2624*b*R^2 + 6608*b^3*R^3)*S^2 + (-3584*R^2 - 13184*b^2*R^3 + 256*b^4*R^4)*S +
 	+ -7168*b*R^3 + 256*b^3*R^4
-# (4*S^2 - b*S^3 - 64*R) * P[7]
+# (b*S^3 + 4*S^2 - 64*R) * P[7]
 ### P[7]
 (112*R^2*b - 4*R^3*b^3) +
 (56*R + 206*R^2*b^2 - 4*R^3*b^4)*S^1 +
@@ -113,7 +113,13 @@ b^5*S^10 +
 ### Solution:
 
 solve.S4 = function(R, b, tol=1E-3) {
-coeff = c(
+	coeff.3eq = c(b^2, - b, 1, 0, - R);
+	x3 = roots(coeff.3eq);
+	y = (R - x3^2) / b / x3^2;
+	S.3eq = 3*x3 + y;
+	sol3 = list(sol=cbind(x=x3, y=y), S=S.3eq);
+	#
+	coeff = c(
 		b*R^2*(112 - 4*R*b^2), R*(56 + 206*R*b^2 - 4*R^2*b^4),
 		(48*R*b + 103*R^2*b^3),
 		(- 14 - 24*R*b^2 + 9*R^2*b^4), (- 22*R*b^3 - 5*b),
@@ -144,7 +150,7 @@ coeff = c(
 	# true roots:
 	isZero = round0(E4/x - (R - x^2)/b, tol=tol) == 0
 	isZ = apply(isZero, 2, all)
-	return(list(sol=cbind(x=as.vector(x)), S=S1, isZ=isZ, isZero=isZero))
+	return(list(sol=cbind(x=as.vector(x)), sol3=sol3, S=S1, isZ=isZ, isZero=isZero))
 }
 
 ### TODO:
@@ -157,7 +163,13 @@ sol = solve.S4(R=R, b=b, tol=5E-2)
 S = sol$S;
 x = sol$sol[,1]
 
+### Test: Case 3 eq
+x1=x2=x3=sol$sol3$sol[,1];
+x4 = sol$sol3$sol[,2];
+x1^2 + b*x2*x3*x4 # - R
+x4^2 + b*x1*x2*x3 # - R
 
+poly.calc(sol$sol3$S) * 9
 
 ### Cases:
 
@@ -165,6 +177,9 @@ x = sol$sol[,1]
 # - degenerates to a S2 system;
 x^2 + b*x^2*x4 # - R
 x4^2 + b*x^3 # - R
+
+b^3*x^7 - b^2*R*x^4 + x^4 - 2*R*x^2 + R^2 # = 0
+(x^2 + b*x^3 - R) * (b^2*x^4 - b*x^3 + x^2 - R) #= 0
 
 ### Case x1 == x2
 # degenerates to a S3 system:
