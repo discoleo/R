@@ -6,7 +6,7 @@
 ### Polynomial Systems: S4
 ### Heterogenous Symmetric
 ###
-### draft v.0.1a-part
+### draft v.0.1b
 
 
 
@@ -90,6 +90,105 @@ E3Div = - 324*R*S*b^2 - 256*R*S^2*b^3 + 249*R*S^3*b^4 - 5*R*S^4*b^5 + 1008*R*b -
 (- 22*R*S*b^2 + 32*R*b + 6*S - 9*S^2*b + 4*S^3*b^2) * (Subst/E3Div) +
 (3*S*b^3 - 14*b^2) * (Subst/E3Div)^2
 
+### Eq:
+b^5*S^10 +
+	+ 2*b^4*S^9 - (2*b^3 + 6*R*b^5)*S^8  + (19*b^2 - 110*R*b^4)*S^7 +
+	+ b*(-34 + 16*R*b^2 + 9*R^2*b^4)*S^6 + (-56 - 432*R*b^2 + 523*R^2*b^4)*S^5 +
+	+ b*(568*R + 2026*R^2*b^2 - 4*R^3*b^4)*S^4 + (1120*R + 2472*R^2*b^2 - 596*R^3*b^4)*S^3 +
+	- (2624*b*R^2 + 6608*b^3*R^3)*S^2 + (-3584*R^2 - 13184*b^2*R^3 + 256*b^4*R^4)*S +
+	+ -7168*b*R^3 + 256*b^3*R^4
+# (4*S^2 - b*S^3 - 64*R) * P[7]
+### P[7]
+(112*R^2*b - 4*R^3*b^3) +
+(56*R + 206*R^2*b^2 - 4*R^3*b^4)*S^1 +
+(48*R*b + 103*R^2*b^3)*S^2 +
+(- 14 - 24*R*b^2 + 9*R^2*b^4)*S^3 +
+(- 22*R*b^3 - 5*b)*S^4 +
+(- 6*R*b^4 + 6*b^2)*S^5 +
+(- 2*b^3)*S^6 +
+(b^4)*S^7
+
+
+#############
+### Solution:
+
+solve.S4 = function(R, b, tol=1E-3) {
+coeff = c(
+		b*R^2*(112 - 4*R*b^2), R*(56 + 206*R*b^2 - 4*R^2*b^4),
+		(48*R*b + 103*R^2*b^3),
+		(- 14 - 24*R*b^2 + 9*R^2*b^4), (- 22*R*b^3 - 5*b),
+		(- 6*R*b^4 + 6*b^2), (- 2*b^3), (b^4)
+	)
+
+	# Numerical instability of roots!
+	S = roots(rev(coeff))
+	# E3
+	Subst = 560*R*S^2 - 780*R*S^3*b - 224*R*S^4*b^2 + 213*R*S^5*b^3 - 9*R*S^6*b^4 + 3024*R^2*S*b +
+		- 564*R^2*S^2*b^2 - 768*R^2*S^3*b^3 + 24*R^2*S^4*b^4 + 816*R^3*S*b^3 - 16*R^3*S^2*b^4 +
+		3136*R^3*b^2 - 56*S^4 + 36*S^5*b + 37*S^6*b^2 - 18*S^7*b^3 + S^8*b^4;
+	Subst = - Subst;
+
+	E3Div = - 324*R*S*b^2 - 256*R*S^2*b^3 + 249*R*S^3*b^4 - 5*R*S^4*b^5 + 1008*R*b - 252*R^2*S*b^4 +
+		4*R^2*S^2*b^5 - 1408*R^2*b^3 + 336*S - 188*S^2*b - 240*S^3*b^2 + 199*S^4*b^3 - 48*S^5*b^4 + S^6*b^5;
+	E3 = Subst / E3Div;
+	E2 = (S^2 + b*E3 - 4*R) / 2;
+	E4 = - (S^3 - 3*E2*S + 3*E3 - R*S) / 4 / b
+
+	x = sapply(seq(length(S)), function(id) roots(c(1, -S[id], E2[id], -E3[id], E4[id])))
+	#
+	len = length(S)
+	S1 = S;
+	S = matrix(S, ncol=len, nrow=4, byrow=T)
+	E4 = matrix(E4, ncol=len, nrow=4, byrow=T)
+
+	# true roots:
+	isZero = round0(E4/x - (R - x^2)/b, tol=tol) == 0
+	isZ = apply(isZero, 2, all)
+	return(list(sol=cbind(x=as.vector(x)), S=S1, isZ=isZ, isZero=isZero))
+}
+
+### TODO:
+# - full solution;
+# - may still contain numerically unstable roots!
+
+R = 2
+b = 3
+sol = solve.S4(R=R, b=b, tol=5E-2)
+S = sol$S;
+x = sol$sol[,1]
+
+
+
+### Cases:
+
+### Case x1 == x2 == x3, but != x4:
+# - degenerates to a S2 system;
+x^2 + b*x^2*x4 # - R
+x4^2 + b*x^3 # - R
+
+### Case x1 == x2
+# degenerates to a S3 system:
+x^2  + b*x*x3*x4 # - R
+x3^2 + b*x^2*x4 # - R
+x4^2 + b*x^2*x3 # - R
+
+
+### Workout:
+b = -4:4
+b = b[b != 0]
+R = 2;
+
+sapply(b, function(b) {
+	sol = solve.S4(R=R, b, tol=5E-2); # tol=5E-2
+	table(sol$isZ)[1]
+	} )
+
+R = 2
+b = 3
+sol = solve.S4(R=R, b=b, tol=5E-2)
+poly.calc(sol$S[ ! sol$isZ]) * 9 *b^4
+
+### full Polynomial:
 # coefficients are correct;
 (- 16859136*R^5*b^4 + 602112*R^6*b^6) +
 (- 18264064*R^4*b^3 - 23432192*R^5*b^5 + 344064*R^6*b^7)*S^1 +
@@ -108,51 +207,7 @@ E3Div = - 324*R*S*b^2 - 256*R*S^2*b^3 + 249*R*S^3*b^4 - 5*R*S^4*b^5 + 1008*R*b -
 (- 117*R*b^10 + 151*b^8)*S^14 +
 (- 84*b^9)*S^15 +
 (9*b^10)*S^16
-
-# can be factored into P[10] * P[6]
+# can be factored into: P[10] * P[6]
 # P[6]: 9*b^4 * S^6 + ...;
 # P[10]: can be factored itself in P[3]*P[7];
-# TODO!
-
-
-coeff = c(
-	(- 16859136*R^5*b^4 + 602112*R^6*b^6),
-	(- 18264064*R^4*b^3 - 23432192*R^5*b^5 + 344064*R^6*b^7),
-(- 6322176*R^3*b^2 - 6547968*R^4*b^4 - 3177216*R^5*b^6 - 230400*R^6*b^8),
-(- 702464*R^2*b + 6886656*R^3*b^3 + 20108480*R^4*b^5 + 3500096*R^5*b^7 + 27648*R^6*b^9),
-(2728320*R^2*b^2 + 8715168*R^3*b^4 + 5966384*R^4*b^6 + 28224*R^5*b^8),
-(219520*R*b - 1150912*R^2*b^3 - 6173432*R^3*b^5 - 2784304*R^4*b^7 - 76464*R^5*b^9),
-(- 498624*R*b^2 - 2393144*R^2*b^4 - 1846004*R^3*b^6 - 274868*R^4*b^8 - 432*R^5*b^10),
-(125832*R*b^3 + 1536372*R^2*b^5 + 163910*R^3*b^7 + 84660*R^4*b^9 - 10976*b),
-(362644*R*b^4 - 294070*R^2*b^6 + 293519*R^3*b^8 + 1224*R^4*b^10 + 19992*b^2),
-(- 296758*R*b^5 + 260163*R^2*b^7 - 37878*R^3*b^9 - 980*b^3),
-(127503*R*b^6 - 92493*R^2*b^8 - 1251*R^3*b^10 - 16406*b^4),
-(- 48741*R*b^7 + 6021*R^2*b^9 + 11395*b^5),
-(8594*R*b^8 + 567*R^2*b^10 - 3746*b^6),
-(147*R*b^9 + 645*b^7),
-(- 117*R*b^10 + 151*b^8),
-(- 84*b^9), (9*b^10) )
-
-# Numerical instability of roots!
-S = roots(rev(coeff))
-# E3
-Subst = 560*R*S^2 - 780*R*S^3*b - 224*R*S^4*b^2 + 213*R*S^5*b^3 - 9*R*S^6*b^4 + 3024*R^2*S*b +
-	- 564*R^2*S^2*b^2 - 768*R^2*S^3*b^3 + 24*R^2*S^4*b^4 + 816*R^3*S*b^3 - 16*R^3*S^2*b^4 +
-	3136*R^3*b^2 - 56*S^4 + 36*S^5*b + 37*S^6*b^2 - 18*S^7*b^3 + S^8*b^4;
-Subst = - Subst;
-
-E3Div = - 324*R*S*b^2 - 256*R*S^2*b^3 + 249*R*S^3*b^4 - 5*R*S^4*b^5 + 1008*R*b - 252*R^2*S*b^4 +
-	4*R^2*S^2*b^5 - 1408*R^2*b^3 + 336*S - 188*S^2*b - 240*S^3*b^2 + 199*S^4*b^3 - 48*S^5*b^4 + S^6*b^5;
-E3 = Subst / E3Div;
-E2 = (S^2 + b*E3 - 4*R) / 2;
-E4 = - (S^3 - 3*E2*S + 3*E3 - R*S) / 4 / b
-
-x = sapply(seq(length(S)), function(id) roots(c(1, -S[id], E2[id], -E3[id], E4[id])))
-#
-len = length(S)
-S = matrix(S, ncol=len, nrow=4, byrow=T)
-E4 = matrix(E4, ncol=len, nrow=4, byrow=T)
-
-# true roots:
-round0(E4/x - (R - x^2)/b, tol=1E-3)
 
