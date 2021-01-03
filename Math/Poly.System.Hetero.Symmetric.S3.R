@@ -7,7 +7,7 @@
 ### Polynomial Systems: S3
 ### Heterogenous Symmetric
 ###
-### draft v.0.3a-ext
+### draft v.0.3b
 
 
 ### Hetero-Symmetric
@@ -23,6 +23,8 @@ z^n + P(z, x, y) = R
 ###############
 ### History ###
 
+### draft v.0.3b:
+# - solved: x^3 + b*y*z = R;
 ### draft v.0.3a-ext:
 # - extensions of type A1 for Ht S3P2;
 # - simplification of the base Eq for Ht S3P2;
@@ -165,6 +167,14 @@ library(pracma)
 # x^2 + b1*y = R
 # y^2 + b1*z = R
 # z^2 + b1*x = R
+
+### Extensions:
+
+### Ext A1: power 1
+# x^2 + b1*y + b2*(x + y + z) = R
+### Ext A1: power 2
+# x^2 + b1*y + b2*(x + y + z) + b3*(x + y + z)^2 = R
+
 
 ### Solution
 
@@ -592,6 +602,105 @@ sol
 (z-s)^2 + b[1]*(x+y)
 
 
+#########################
+
+### Prod-Type: Order 3
+### x[i]^3 + b*x[-i]
+
+# x^3 + b1*y*z = R
+# y^3 + b1*x*z = R
+# z^3 + b1*x*y = R
+
+### Solution
+
+### Sum =>
+x^3 + y^3 + z^3 + b1*E2 - 3*R # = 0
+S^3 - 3*E2*S + 3*E3 + b1*E2 - 3*R
+
+### Sum(x*...) =>
+x^4 + y^4 + z^4 + 3*b1*E3 - R*S # = 0
+S^4 - 4*E2*S^2 + 4*E3*S + 2*E2^2 + 3*b1*E3 - R*S
+
+### Sum(y*z*...) =>
+E3*(x^2 + y^2 + z^2) + b1*((x*y)^2 + (x*z)^2 + (y*z)^2) - R*E2 # = 0
+E3*(S^2 - 2*E2) + b1*(E2^2 - 2*E3*S) - R*E2 # = 0
+E3*S^2 - 2*E2*E3 + b1*E2^2 - 2*b1*E3*S - R*E2 # = 0
+
+###
+E3 = (54*R + 31*S*b1^2 + 12*S^2*b1 - 30*S^3 - 15*b1^3) /
+     (27*R*S*b1 - 72*R*S^2 + 45*R*b1^2 - 15*S^3*b1^2 + S^4*b1 + 12*S^5)
+E2 = (S^3 + 3*E3 - 3*R) / (3*S - b1)
+
+
+### Eq: (S^3 + 3*b1*S^2 - 27*R) * (6*S - 5*b1) * (S + b1) * P[6]
+(5*R*b1^3 + 27*R^2) +
+(18*R*b1^2)*S^1 +
+(- 27*R*b1)*S^2 +
+(- 5*b1^3)*S^3 +
+(7*b1^2)*S^4 +
+(- 3*b1)*S^5 +
+(1)*S^6
+
+
+### Solver:
+
+solve.htyz.S3P3 = function(R, b, doEq = FALSE, tol=1E-8) {
+	b1 = b[1]; R = R[1];
+	coeff = c(1, - 3*b1, 7*b1^2, -5*b1^3, - 27*R*b1, 18*R*b1^2, (5*R*b1^3 + 27*R^2))
+	S = roots(coeff)
+	S = c(S, -b1);
+	#
+	E2.part = 27*R*S*b1 - 72*R*S^2 + 45*R*b1^2 - 15*S^3*b1^2 + S^4*b1 + 12*S^5;
+	divE2 = (54*R + 31*S*b1^2 + 12*S^2*b1 - 30*S^3 - 15*b1^3);
+	E2 = - E2.part / divE2
+	E3 = - (S^3 - 3*E2*S + b1*E2 - 3*R) / 3
+	# robust complex solutions for x;
+	E2 = round0(E2, tol=tol); E3 = round0(E3, tol=tol);
+	#
+	x = sapply(seq_along(S), function(id) roots(c(1, -S[id], E2[id], -E3[id])))
+	len = length(S)
+	S = matrix(S, ncol=len, nrow=3, byrow=T)
+	E3 = matrix(E3, ncol=len, nrow=3, byrow=T)
+	yz = E3 / x; # (R - x^3)/b1 # robust ???
+	yz.s = S - x;
+	#
+	yz.d = sqrt(yz.s^2 - 4*yz)
+	y = (yz.s + yz.d)/2;
+	z = (yz.s - yz.d)/2;
+	sol = cbind(x=as.vector(x), y=as.vector(y), z=as.vector(z))
+	### y == z
+	if(doEq) {
+		isEq = round0((yz.s)^2 - 4*yz, tol=1E-7) == 0
+		sol = sol[ ! as.vector(isEq) , ]
+		y = z = as.vector(yz.s [isEq]) / 2;
+		sol2 = cbind(x=as.vector(x[isEq]), y=y, z=z)
+		sol = rbind(sol, sol2)
+	}
+	return(sol)
+}
+
+### Examples:
+
+R = 1;
+b = 2;
+#
+sol = solve.htyz.S3P3(R, b)
+x = sol[,1]; y = sol[,2]; z = sol[,3];
+
+### Test
+x^3 + b*y*z # - R
+y^3 + b*x*z # - R
+z^3 + b*x*y # - R
+
+
+### Debug
+x = -0.5886981678 + 1.2138678310i
+y = -0.2089400966 - 0.4200165444i
+z = -0.2089400966 - 0.4200165444i
+S = (x+y+z); E2 = x*(y+z) + y*z; E3 = x*y*z;
+
+
+#########################
 #########################
 
 #########################
