@@ -7,7 +7,7 @@
 ### Polynomial Systems: S3
 ### Heterogenous Symmetric
 ###
-### draft v.0.3b-ord
+### draft v.0.3b-fix
 
 
 ### Hetero-Symmetric
@@ -23,9 +23,10 @@ z^n + P(z, x, y) = R
 ###############
 ### History ###
 
-### draft v.0.3b - v.0.3b-ord:
+### draft v.0.3b - v.0.3b-fix:
 # - solved: x^3 + b*y*z = R;
 # - reordering of sections & better comments; [v.0.3b-ord]
+# - fix of the wrong roots (in an older Shift-x system); [v.0.3b-fix]
 ### draft v.0.3a-ext:
 # - extensions of type A1 for Ht S3P2;
 # - simplification of the base Eq for Ht S3P2;
@@ -271,7 +272,7 @@ x^2 + b[1]*y
 y^2 + b[1]*z
 z^2 + b[1]*x
 
-### Classic Polynomial: P8 or P6 (for S == 0)
+### Classic Polynomial: P8 or P6 (when S == 0)
 round0.p(poly.calc(sol[,1]))
 
 
@@ -404,7 +405,7 @@ round0(err)
 # -S^3 - (3*s + 2*b1)*S^2 + 6*E3 + (b1 - 2*s)*(s+b1)*S + 7*R*S + 6*s*R - 3*b1*R
 # -S^3 - (3*s + 2*b1)*S^2 + (S^3 + (3*s + 2*b1)*S^2 + (2*s-b1)*(s+b1)*S - 7*R*S - 6*s*R + 3*b1*R) +
 #  + (b1 - 2*s)*(s+b1)*S + 7*R*S + 6*s*R - 3*b1*R
-# 0 == 0
+# 0 == 0 [redundant]
 
 ### Prod =>
 # (x+y+s)*(x+z+s)*(y+z+s) = -b1^3
@@ -421,25 +422,34 @@ round0(err)
 # S^3 + (4*s+b1)*S^2 - 2*E3 - 3*R*S + 5*s^2*S + s*b1*S + 2*s^3 + 2*b1^3 - 3*s*R
 # 3*S^3 + 3*(4*s+b1)*S^2 - 6*E3 - 9*R*S + 15*s^2*S + 3*s*b1*S + 6*s^3 + 6*b1^3 - 9*s*R
 # 2*S^3 + (9*s+b1)*S^2 + b1^2*S - 2*R*S + 13*s^2*S + 2*s*b1*S + 6*s^3 + 6*b1^3 - 3*s*R - 3*b1*R
+### Eq:
+(2*S + 3*s + 3*b1)*(S^2 - (b1 - 3*s)*S + (- R - 2*b1*s + 2*b1^2 + 2*s^2))
 
-### Bug corrected: + 6*b1^3;
+# Note:
+# Bug corrected: + 6*b1^3;
+
+### Solver:
+
+solve.htShX.S3P2 = function(R, b, s) {
+	coeff = c(1, - (b[1] - 3*s), (- R[1] - 2*b[1]*s + 2*b[1]^2 + 2*s^2))
+	x.sum = roots(coeff)
+	E3 = (x.sum^3 + (3*s + 2*b[1])*x.sum^2 +
+		(2*s-b[1])*(s+b[1])*x.sum - 7*R*x.sum - 6*s*R + 3*b[1]*R) / 6;
+	E2 = (x.sum^2 + (s+b[1])*x.sum - 3*R)/2
+	x = as.vector(sapply(1:length(x.sum), function(id) roots(c(1, -x.sum[id], E2[id], -E3[id]))))
+	y = (R - x^2 - s*x)/b[1]
+	z = (R - y^2 - s*y)/b[1]
+	sol = cbind(x, y, z)
+	sol = rbind(sol, sol[,c(2,3,1)], sol[,c(3,1,2)])
+	return(sol);
+}
 
 ### Example
+R = 1
 b = 3
 s = 1
-R = 1
-# TODO:
-# - clarify reason for the 3 incorrect roots
-#   & find way to remove 3 incorect roots;
-coeff = c(2, (9*s+b[1]), (b[1]^2 - 2*R + 13*s^2 + 2*s*b[1]), 6*s^3 + 6*b[1]^3 - 3*s*R - 3*b[1]*R)
-x.sum = roots(coeff)
-E3 = (x.sum^3 + (3*s + 2*b[1])*x.sum^2 + (2*s-b[1])*(s+b[1])*x.sum - 7*R*x.sum - 6*s*R + 3*b[1]*R)/6
-E2 = (x.sum^2 + (s+b[1])*x.sum - 3*R)/2
-x = as.vector(sapply(1:length(x.sum), function(id) roots(c(1, -x.sum[id], E2[id], -E3[id]))))
-y = (R - x^2 - s*x)/b[1]
-z = (R - y^2 - s*y)/b[1]
-sol = cbind(x, y, z)
-sol = rbind(sol, sol[,c(2,3,1)], sol[,c(3,2,1)])
+#
+sol = solve.htShX.S3P2(R, b, s)
 x = sol[,1]; y = sol[,2]; z = sol[,3]
 sol
 
@@ -449,7 +459,7 @@ y^2 + s*y + b[1]*z
 z^2 + s*z + b[1]*x
 
 ### Classic polynomial
-round0.p(poly.calc(sol[4:9,1]))
+round0.p(poly.calc(x[1:6]))
 
 
 ########################
