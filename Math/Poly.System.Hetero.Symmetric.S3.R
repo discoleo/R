@@ -7,7 +7,7 @@
 ### Polynomial Systems: S3
 ### Heterogenous Symmetric
 ###
-### draft v.0.3b
+### draft v.0.3b-ord
 
 
 ### Hetero-Symmetric
@@ -23,8 +23,9 @@ z^n + P(z, x, y) = R
 ###############
 ### History ###
 
-### draft v.0.3b:
+### draft v.0.3b - v.0.3b-ord:
 # - solved: x^3 + b*y*z = R;
+# - reordering of sections & better comments; [v.0.3b-ord]
 ### draft v.0.3a-ext:
 # - extensions of type A1 for Ht S3P2;
 # - simplification of the base Eq for Ht S3P2;
@@ -451,58 +452,6 @@ z^2 + s*z + b[1]*x
 round0.p(poly.calc(sol[4:9,1]))
 
 
-######################
-######################
-
-####################
-### x[i]^2 + b*x[-i]
-
-# x^2 + b1*y*z = R
-# y^2 + b1*x*z = R
-# z^2 + b1*x*y = R
-
-### Solution
-
-# - degenerate P4;
-
-# Special Case: b1 = 2
-# Z^2 = 3*R
-
-### Diff =>
-# x^2 - y^2 = b1*z*(x-y)
-# x^2 - z^2 = b1*y*(x-z)
-# y^2 - z^2 = b1*x*(y-z)
-# => if x != y != z
-#   x + y - b1*z = 0
-#   x - b1*y + z = 0
-# - b1*x + y + z = 0
-# => x = y = z = 0; # Contradiction !!!
-
-# Case: x = y
-# x^2 + b1*x*z = R
-# z^2 + b1*x^2 = R
-# =>
-# b1*z = R/x - x
-# b1^2*z^2 + b1^3*x^2 = b1^2*R
-# x^2 - 2*R + R^2/x^2 + b1^3*x^2 - b1^2*R = 0
-# (b1^3+1)*x^4 - R*(b1^2 + 2)*x^2 + R^2 = 0
-
-### Example:
-b = 1
-R = 2
-#
-x = roots(c((b[1]^3+1), 0, - R*(b[1]^2 + 2), 0, R^2))
-y = x
-z = (R - x^2)/y/b[1]
-sol = round0(cbind(x, y, z))
-sol
-
-### Test
-x^2 + b[1]*y*z
-y^2 + b[1]*x*z
-z^2 + b[1]*x*y
-
-
 ########################
 ########################
 
@@ -602,7 +551,62 @@ sol
 (z-s)^2 + b[1]*(x+y)
 
 
-#########################
+####################
+####################
+
+####################
+### Product-type ###
+####################
+
+### x[i]^2 + b*x[-i]
+
+# x^2 + b1*y*z = R
+# y^2 + b1*x*z = R
+# z^2 + b1*x*y = R
+
+### Solution
+
+# - degenerate P4;
+
+### Special Case: b1 = 2
+# Z^2 = 3*R
+
+### Diff =>
+# x^2 - y^2 = b1*z*(x-y)
+# x^2 - z^2 = b1*y*(x-z)
+# y^2 - z^2 = b1*x*(y-z)
+# => if x != y != z
+#   x + y - b1*z = 0
+#   x - b1*y + z = 0
+# - b1*x + y + z = 0
+# => x = y = z = 0; # Contradiction !!!
+
+# Case: x = y
+# x^2 + b1*x*z = R
+# z^2 + b1*x^2 = R
+# =>
+# b1*z = R/x - x
+# b1^2*z^2 + b1^3*x^2 = b1^2*R
+# x^2 - 2*R + R^2/x^2 + b1^3*x^2 - b1^2*R = 0
+# (b1^3+1)*x^4 - R*(b1^2 + 2)*x^2 + R^2 = 0
+
+### Example:
+b = 1
+R = 2
+#
+x = roots(c((b[1]^3+1), 0, - R*(b[1]^2 + 2), 0, R^2))
+y = x
+z = (R - x^2)/y/b[1]
+sol = round0(cbind(x, y, z))
+sol
+
+### Test
+x^2 + b[1]*y*z
+y^2 + b[1]*x*z
+z^2 + b[1]*x*y
+
+
+######################
 
 ### Prod-Type: Order 3
 ### x[i]^3 + b*x[-i]
@@ -612,6 +616,14 @@ sol
 # z^3 + b1*x*y = R
 
 ### Solution
+
+### Case 1: x = y = z
+# x^3 + b1*x^2 - R = 0
+### Case 2: x != y != z
+# x^3 + b1*x^2 + b1^2*x + b1^3 - R = 0
+### Case 3: x = y != z
+# - remaining cases;
+# - unfortunately I haven't found a simpler solution yet!
 
 ### Sum =>
 x^3 + y^3 + z^3 + b1*E2 - 3*R # = 0
@@ -644,10 +656,11 @@ E2 = (S^3 + 3*E3 - 3*R) / (3*S - b1)
 
 ### Solver:
 
-solve.htyz.S3P3 = function(R, b, doEq = FALSE, tol=1E-8) {
+solve.htyz.S3P3 = function(R, b, do2Eq = FALSE, tol=1E-8) {
 	b1 = b[1]; R = R[1];
 	coeff = c(1, - 3*b1, 7*b1^2, -5*b1^3, - 27*R*b1, 18*R*b1^2, (5*R*b1^3 + 27*R^2))
 	S = roots(coeff)
+	# Case: x != y != z
 	S = c(S, -b1);
 	#
 	E2.part = 27*R*S*b1 - 72*R*S^2 + 45*R*b1^2 - 15*S^3*b1^2 + S^4*b1 + 12*S^5;
@@ -661,15 +674,19 @@ solve.htyz.S3P3 = function(R, b, doEq = FALSE, tol=1E-8) {
 	len = length(S)
 	S = matrix(S, ncol=len, nrow=3, byrow=T)
 	E3 = matrix(E3, ncol=len, nrow=3, byrow=T)
-	yz = E3 / x; # (R - x^3)/b1 # robust ???
+	# yz = E3 / x;
+	yz = (R - x^3)/b1; # robust ???
 	yz.s = S - x;
 	#
 	yz.d = sqrt(yz.s^2 - 4*yz)
 	y = (yz.s + yz.d)/2;
 	z = (yz.s - yz.d)/2;
 	sol = cbind(x=as.vector(x), y=as.vector(y), z=as.vector(z))
-	### y == z
-	if(doEq) {
+	# all permutations: x != y != z
+	sol2 = sol[nrow(sol) - 0:2, c(1,3,2)]
+	sol = rbind(sol, sol2)
+	### y == z: ??? more robust ???
+	if(do2Eq) {
 		isEq = round0((yz.s)^2 - 4*yz, tol=1E-7) == 0
 		sol = sol[ ! as.vector(isEq) , ]
 		y = z = as.vector(yz.s [isEq]) / 2;
