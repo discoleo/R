@@ -7,7 +7,7 @@
 ### Polynomial Systems: S3
 ### Heterogenous Symmetric
 ###
-### draft v.0.3b-fix
+### draft v.0.3b-P2ext
 
 
 ### Hetero-Symmetric
@@ -23,10 +23,12 @@ z^n + P(z, x, y) = R
 ###############
 ### History ###
 
-### draft v.0.3b - v.0.3b-fix:
+### draft v.0.3b - v.0.3b-P2ext:
 # - solved: x^3 + b*y*z = R;
 # - reordering of sections & better comments; [v.0.3b-ord]
 # - fix of the wrong roots (in an older Shift-x system); [v.0.3b-fix]
+# - extension A1 for the P2 system;
+# - TODO: cleanup;
 ### draft v.0.3a-ext:
 # - extensions of type A1 for Ht S3P2;
 # - simplification of the base Eq for Ht S3P2;
@@ -204,6 +206,7 @@ S^4 - 6*R*S^2 - 5*b1^2*S^2 + 16*b1*R*S - 8*E3*S + 12*b1*E3 - 3*R^2
 S^4 + 2*b1*S^3 - (10*R + b1^2)*S^2 + 6*(b1*R + b1^3)*S - 18*b1^2*R + 9*R^2
 ### Eq:
 (S^2 + 3*b1*S - 9*R)*(S^2 - b1*S - R + 2*b1^2)
+
 
 ### [old/unstable]
 ### Diff =>
@@ -590,25 +593,48 @@ sol
 #   x - b1*y + z = 0
 # - b1*x + y + z = 0
 # => x = y = z = 0; # Contradiction !!!
+# x == y & x != z =>
+# x + z = b1*y;
+# z = (b1 - 1)*x;
 
-# Case: x = y
+### Case: x = y
 # x^2 + b1*x*z = R
 # z^2 + b1*x^2 = R
 # =>
 # b1*z = R/x - x
 # b1^2*z^2 + b1^3*x^2 = b1^2*R
 # x^2 - 2*R + R^2/x^2 + b1^3*x^2 - b1^2*R = 0
-# (b1^3+1)*x^4 - R*(b1^2 + 2)*x^2 + R^2 = 0
+### Eq:
+(b1^3+1)*x^4 - R*(b1^2 + 2)*x^2 + R^2 # = 0
+((b1^2 - b1 + 1)*x^2 - R) * ((b1+1)*x^2 - R)
+
+
+### Solver:
+
+solve.htYZ.S3P2 = function(R, b, b.ext=0) {
+	coeff1 = c((b[1]^2 - b[1] + 1), 0, -R[1]); # x == y;
+	coeff2 = c((b[1] + 1), 0, -R[1]); # x == y == z;
+	# computes x, NOT S;
+	# simple extensions: adapted to x;
+	if(b.ext[1] != 0) {
+		coeff1 = coeff1 + c(0, b.ext[1] * (b[1]+1), 0); # x == y
+		coeff2 = coeff2 + c(0, 3*b.ext[1], 0);
+	}
+	sol1 = roots(coeff1)
+	sol2 = roots(coeff2)
+	x = c(sol1, sol2);
+	y = x
+	# z = (b[1] - 1)*x; # assumes x == y & x != z;
+	z = (R[1] - x^2 - 2*x*b.ext[1]) / (b[1]*x + b.ext[1]);
+	sol = round0(cbind(x=x, y=y, z=z))
+}
 
 ### Example:
-b = 1
 R = 2
+b = 1
 #
-x = roots(c((b[1]^3+1), 0, - R*(b[1]^2 + 2), 0, R^2))
-y = x
-z = (R - x^2)/y/b[1]
-sol = round0(cbind(x, y, z))
-sol
+sol = solve.htYZ.S3P2(R, b)
+x = sol[,1]; y = sol[,2]; z = sol[,3];
 
 ### Test
 x^2 + b[1]*y*z
@@ -616,6 +642,21 @@ y^2 + b[1]*x*z
 z^2 + b[1]*x*y
 
 
+### Extension A1:
+R = 2
+b = 1
+b.ext = c(1)
+#
+sol = solve.htYZ.S3P2(R, b, b.ext)
+x = sol[,1]; y = sol[,2]; z = sol[,3];
+
+### Test
+x^2 + b[1]*y*z + b.ext[1]*(x+y+z)
+y^2 + b[1]*x*z + b.ext[1]*(x+y+z)
+z^2 + b[1]*x*y + b.ext[1]*(x+y+z)
+
+
+######################
 ######################
 
 ### Prod-Type: Order 3
