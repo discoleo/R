@@ -6,7 +6,7 @@
 ### Polynomial Systems: S4
 ### Heterogenous Symmetric
 ###
-### draft v.0.1b-permute
+### draft v.0.1b-sol:clean
 
 
 
@@ -100,7 +100,7 @@ Subst = - Subst;
 
 E3Div = - 324*R*S*b^2 - 256*R*S^2*b^3 + 249*R*S^3*b^4 - 5*R*S^4*b^5 + 1008*R*b - 252*R^2*S*b^4 + 4*R^2*S^2*b^5 - 1408*R^2*b^3 + 336*S - 188*S^2*b - 240*S^3*b^2 + 199*S^4*b^3 - 48*S^5*b^4 + S^6*b^5;
 
-###
+### =>
 (10*R*S^2 - 14*R*S^3*b + 40*R^2*S*b - S^4 + S^5*b) +
 (- 22*R*S*b^2 + 32*R*b + 6*S - 9*S^2*b + 4*S^3*b^2) * (Subst/E3Div) +
 (3*S*b^3 - 14*b^2) * (Subst/E3Div)^2
@@ -113,7 +113,7 @@ b^5*S^10 +
 	- (2624*b*R^2 + 6608*b^3*R^3)*S^2 + (-3584*R^2 - 13184*b^2*R^3 + 256*b^4*R^4)*S +
 	+ -7168*b*R^3 + 256*b^3*R^4
 # (b*S^3 + 4*S^2 - 64*R) * (b*S + 1) * P[6]
-### b*S + 1: Solution to "distinct" system;
+### b*S + 1: Solution to "distinct" system (but x3 == x4);
 ### P[6]: Solution to degenerate System
 # P[6] = (b*S^2 - 2*S - 4*b*R) * P[4]
 (- 28*R + R^2*b^2) +
@@ -127,26 +127,27 @@ b^5*S^10 +
 ### Solution:
 
 solve.S4 = function(R, b, max.perm=0, tol=1E-3, debug=FALSE, old=FALSE) {
-	# tol: was used for debugging;
+	# tol = was used for debugging;
 	b1 = b[1];
-	### x1 == x2 == x3, but != x4;
-	coeff.3eq = c(b^2, - b, 1, 0, - R);
+	### Case: x1 == x2 == x3, but != x4;
+	coeff.3eq = c(b1^2, - b1, 1, 0, - R);
 	x3 = roots(coeff.3eq);
-	y = (R - x3^2) / b / x3^2;
+	y = (R - x3^2) / b1 / x3^2;
 	S.3eq = 3*x3 + y;
-	sol3 = list(sol=cbind(x=x3, y=y), S=S.3eq);
-	### s1 == x2, x3 == x4, but x1 != x3;
+	sol3 = list(sol=cbind(x123=x3, x4=y), S=S.3eq);
+	### Case: x1 == x2, x3 == x4, but x1 != x3;
 	S2 = roots(c(b1, -1, - b1*R))
 	xy2 = S2 / b1;
 	x2 = sapply(seq_along(S2), function(id) roots(c(1, -S2[id], xy2[id])))
 	y2 = x2[2:1, ];
 	x2 = as.vector(x2); y2 = as.vector(y2);
 	sol22 = cbind(x1=x2, x2=x2, x3=y2, x4=y2); # + many permutations;
-	#
+	### Case: still x1 == x2 == x3
+	# - but with different formula & numerically unstable;
 	coeff = c(b1^2, - b1, (7 - 2*R*b1^2), - 24*R*b1, (- 28*R + R^2*b1^2))
 
 	# Numerical instability of roots!
-	S = roots(coeff)
+	S = roots(coeff); S = round0(S);
 	S = c(S, -1/b1); # add the remaining roots;
 	# E3
 	Subst = 560*R*S^2 - 780*R*S^3*b - 224*R*S^4*b^2 + 213*R*S^5*b^3 - 9*R*S^6*b^4 + 3024*R^2*S*b +
@@ -156,40 +157,18 @@ solve.S4 = function(R, b, max.perm=0, tol=1E-3, debug=FALSE, old=FALSE) {
 
 	E3Div = - 324*R*S*b^2 - 256*R*S^2*b^3 + 249*R*S^3*b^4 - 5*R*S^4*b^5 + 1008*R*b - 252*R^2*S*b^4 +
 		4*R^2*S^2*b^5 - 1408*R^2*b^3 + 336*S - 188*S^2*b - 240*S^3*b^2 + 199*S^4*b^3 - 48*S^5*b^4 + S^6*b^5;
-	E3 = Subst / E3Div;
-	E2 = (S^2 + b*E3 - 4*R) / 2;
-	E4 = - (S^3 - 3*E2*S + 3*E3 - R*S) / 4 / b
+	E3 = round0(Subst / E3Div);
+	E2 = round0(S^2 + b*E3 - 4*R) / 2;
+	E4 = - round0(S^3 - 3*E2*S + 3*E3 - R*S) / 4 / b
 
 	x = sapply(seq(length(S)), function(id) roots(c(1, -S[id], E2[id], -E3[id], E4[id])))
-	#
-	len = length(S)
-	S1 = S; # 1 copy;
-	S = matrix(S, ncol=len, nrow=4, byrow=T)
-	E2 = matrix(E2, ncol=len, nrow=4, byrow=T)
-	E3 = matrix(E3, ncol=len, nrow=4, byrow=T)
-	E4 = matrix(E4, ncol=len, nrow=4, byrow=T)
-
-	# true roots:
+	# debugging: true roots
 	if(debug) {
-		isZero = round0(E4/x - (R - x^2)/b, tol=tol) == 0
-		isZ = apply(isZero, 2, all)
-		return(list(sol=cbind(x=as.vector(x)), sol3=sol3, S=S1, isZ=isZ, isZero=isZero))
+		E = list(S=S, E2=E2, E3=E3, E4=E4)
+		return(debug.old(R, b, x, E, tol=tol))
 	}
 	#
-	solve.old = function(x) {
-		SS3  = S - x; E2S3 = E2 - x*SS3; E3S3 = E4 / x;
-		# x2
-		x2 = sapply(seq_along(x), function(id) roots(c(1, -SS3[id], E2S3[id], -E3S3[id])))
-		#
-		x2 = as.vector(x2);
-		x = rep(as.vector(x), each=3);
-		SS2 = rep(as.vector(SS3), each=3) - x2;
-		E2S2 = rep(as.vector(E3S3), each=3) / x2;
-		# TODO: root[2]
-		x3 = sapply(seq_along(x2), function(id) roots(c(1, -SS2[id], E2S2[id]))[2])
-		x4 = SS2 - x3; sol=cbind(x1=x, x2=x2, x3=x3, x4=x4);
-	}
-	sol = if(old) solve.old(as.vector(x))
+	sol = if(old) solve.old(as.vector(x), E=list(S=S, E2=E2, E3=E3, E4=E4))
 		else solve.EnAll(x, max.perm=max.perm); # generates 5*24 = 120 roots!
 	return(list(sol=sol, sol3=sol3, sol22=sol22))
 }
@@ -199,7 +178,7 @@ solve.S4 = function(R, b, max.perm=0, tol=1E-3, debug=FALSE, old=FALSE) {
 
 R = 2
 b = 3
-sol = solve.S4(R=R, b=b)
+sol = solve.S4(R=R, b=b, max.perm=1)
 sol.sol = sol$sol; # sol$sol22;
 x1 = sol.sol[,1]; x2 = sol.sol[,2];
 x3 = sol.sol[,3]; x4 = sol.sol[,4];
@@ -249,6 +228,35 @@ b*S2^2 - S2 - b*R # = 0
 
 ############
 ### Workout:
+debug.old = function(R, b, x, E, tol) {
+	len = length(E$S)
+	S1 = E$S; # 1 copy;
+	S = matrix(E$S, ncol=len, nrow=4, byrow=T)
+	E2 = matrix(E$E2, ncol=len, nrow=4, byrow=T)
+	E3 = matrix(E$E3, ncol=len, nrow=4, byrow=T)
+	E4 = matrix(E$E4, ncol=len, nrow=4, byrow=T)
+	isZero = round0(E4/x - (R - x^2)/b[1], tol=tol) == 0
+	isZ = apply(isZero, 2, all)
+	return(list(sol=cbind(x=as.vector(x)), S=S1, isZ=isZ, isZero=isZero))
+}
+solve.old = function(x, E) {
+	S = matrix(E$S, ncol=len, nrow=4, byrow=T)
+	E2 = matrix(E$E2, ncol=len, nrow=4, byrow=T)
+	E3 = matrix(E$E3, ncol=len, nrow=4, byrow=T)
+	E4 = matrix(E$E4, ncol=len, nrow=4, byrow=T)
+	SS3  = S - x; E2S3 = E2 - x*SS3; E3S3 = E4 / x;
+	# x2
+	x2 = sapply(seq_along(x), function(id) roots(c(1, -SS3[id], E2S3[id], -E3S3[id])))
+	#
+	x2 = as.vector(x2);
+	x = rep(as.vector(x), each=3);
+	SS2 = rep(as.vector(SS3), each=3) - x2;
+	E2S2 = rep(as.vector(E3S3), each=3) / x2;
+	# TODO: root[2]
+	x3 = sapply(seq_along(x2), function(id) roots(c(1, -SS2[id], E2S2[id]))[2])
+	x4 = SS2 - x3; sol=cbind(x1=x, x2=x2, x3=x3, x4=x4);
+}
+
 b = -4:4
 b = b[b != 0]
 R = 2;
