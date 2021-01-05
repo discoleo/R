@@ -6,7 +6,7 @@
 ### Polynomial Systems: S4
 ### Heterogenous Symmetric
 ###
-### draft v.0.1b-sol.caseS
+### draft v.0.1b-sol.caseS2.2
 
 
 
@@ -98,37 +98,40 @@ b^5*S^10 +
 	- (2624*b*R^2 + 6608*b^3*R^3)*S^2 + (-3584*R^2 - 13184*b^2*R^3 + 256*b^4*R^4)*S +
 	+ -7168*b*R^3 + 256*b^3*R^4
 # (b*S^3 + 4*S^2 - 64*R) * (b*S + 1) * P[6]
-### b*S + 1: Solution to all distinct system;
+### b*S + 1: Solution to "distinct" system;
 ### P[6]: Solution to degenerate System
-(112*R^2*b - 4*R^3*b^3) +
-(56*R + 94*R^2*b^2)*S^1 +
-(- 8*R*b + 9*R^2*b^3)*S^2 +
-(- 14 - 16*R*b^2)*S^3 +
-(- 6*R*b^3 + 9*b)*S^4 +
-(- 3*b^2)*S^5 +
-(b^3)*S^6
+# P[6] = (b*S^2 - 2*S - 4*b*R) * P[4]
+(- 28*R + R^2*b^2) +
+(- 24*R*b)*S^1 +
+(7 - 2*R*b^2)*S^2 +
+(- b)*S^3 +
+(b^2)*S^4
 
 
 #############
 ### Solution:
 
 solve.S4 = function(R, b, tol=1E-3, debug=FALSE) {
-	# x1 == x2 == x3, but != x4;
+	b1 = b[1];
+	### x1 == x2 == x3, but != x4;
 	coeff.3eq = c(b^2, - b, 1, 0, - R);
 	x3 = roots(coeff.3eq);
 	y = (R - x3^2) / b / x3^2;
 	S.3eq = 3*x3 + y;
 	sol3 = list(sol=cbind(x=x3, y=y), S=S.3eq);
+	### s1 == x2, x3 == x4, but x1 != x3;
+	S2 = roots(c(b1, -1, - b1*R))
+	xy2 = S2 / b1;
+	x2 = sapply(seq_along(S2), function(id) roots(c(1, -S2[id], xy2[id])))
+	y2 = x2[2:1, ];
+	x2 = as.vector(x2); y2 = as.vector(y2);
+	sol22 = cbind(x1=x2, x2=x2, x3=y2, x4=y2); # + many permutations;
 	#
-	b1 = b[1];
-	coeff = c(b1^3, - 3*b1^2, (- 6*R*b1^3 + 9*b1),
-		(- 14 - 16*R*b1^2), (- 8*R*b1 + 9*R^2*b1^3),
-		(56*R + 94*R^2*b1^2), (112*R^2*b1 - 4*R^3*b1^3)
-	)
+	coeff = c(b1^2, - b1, (7 - 2*R*b1^2), - 24*R*b1, (- 28*R + R^2*b1^2))
 
 	# Numerical instability of roots!
 	S = roots(coeff)
-	S = c(S, -1/b1); # add all distinct roots;
+	S = c(S, -1/b1); # add the remaining roots;
 	# E3
 	Subst = 560*R*S^2 - 780*R*S^3*b - 224*R*S^4*b^2 + 213*R*S^5*b^3 - 9*R*S^6*b^4 + 3024*R^2*S*b +
 		- 564*R^2*S^2*b^2 - 768*R^2*S^3*b^3 + 24*R^2*S^4*b^4 + 816*R^3*S*b^3 - 16*R^3*S^2*b^4 +
@@ -170,7 +173,7 @@ solve.S4 = function(R, b, tol=1E-3, debug=FALSE) {
 	# TODO: root[2]
 	x3 = sapply(seq_along(x2), function(id) roots(c(1, -SS2[id], E2S2[id]))[2])
 	x4 = SS2 - x3;
-	return(list(sol=cbind(x1=x, x2=x2, x3=x3, x4=x4), sol3=sol3))
+	return(list(sol=cbind(x1=x, x2=x2, x3=x3, x4=x4), sol3=sol3, sol22=sol22))
 }
 
 ### TODO:
@@ -180,8 +183,9 @@ solve.S4 = function(R, b, tol=1E-3, debug=FALSE) {
 R = 2
 b = 3
 sol = solve.S4(R=R, b=b, tol=5E-2)
-x1 = sol$sol[,1]; x2 = sol$sol[,2];
-x3 = sol$sol[,3]; x4 = sol$sol[,4];
+sol.sol = sol$sol; # sol$sol22;
+x1 = sol.sol[,1]; x2 = sol.sol[,2];
+x3 = sol.sol[,3]; x4 = sol.sol[,4];
 
 ### Test
 x1^2 + b*x2*x3*x4 # - R
@@ -216,9 +220,17 @@ x4^2 + b*x^2*x3 # - R
 
 ### SubCase: x1 == x2, x3 == x4
 # x1 != x3;
-# TODO
+x^2 + b*x*y^2 # - R
+y^2 + b*x^2*y # - R
+# - exactly solvable;
+### Diff
+# b*x*y = S2;
+### Sum =>
+S2^2 - 2*x*y + b*x*y*S2 - 2*R # = 0
+b*S2^2 - S2 - b*R # = 0
 
 
+############
 ### Workout:
 b = -4:4
 b = b[b != 0]
@@ -258,4 +270,5 @@ S = sol$S; # ...
 # can be factored into: P[10] * P[6]
 # P[6]: 9*b^4 * S^6 + ...; # is NOT part of solution!
 # P[10]: can be factored itself in P[3]*P[7];
+# P[10] = P[3]*P1[1]*P[2]*P[4];
 
