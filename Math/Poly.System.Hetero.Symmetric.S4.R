@@ -6,7 +6,7 @@
 ### Polynomial Systems: S4
 ### Heterogenous Symmetric
 ###
-### draft v.0.1b-sol.caseS2.2
+### draft v.0.1b-permute
 
 
 
@@ -19,11 +19,26 @@
 ### V2: x1^n + b*x2*x3 = R
 ### V3: x1^n + b*x2*x3*x4 = R
 ### V4: x1^n + b*x1*x2*x3*x4 = R
+### V_: x1^n + b*x1*x2 = R
 ### V_: x1^n + b*x1*x2*x3 = R
 ### ...
 
 ### TODO:
 # - some proper classification;
+
+
+####################
+####################
+
+### helper functions
+
+library(polynom)
+library(pracma)
+
+# the functions are in the file:
+# Polynomials.Helper.R
+# - e.g. round0(), round0.p(),
+#   solve.EnAll(), solveEn();
 
 
 ########################
@@ -111,7 +126,8 @@ b^5*S^10 +
 #############
 ### Solution:
 
-solve.S4 = function(R, b, tol=1E-3, debug=FALSE) {
+solve.S4 = function(R, b, max.perm=0, tol=1E-3, debug=FALSE, old=FALSE) {
+	# tol: was used for debugging;
 	b1 = b[1];
 	### x1 == x2 == x3, but != x4;
 	coeff.3eq = c(b^2, - b, 1, 0, - R);
@@ -160,29 +176,30 @@ solve.S4 = function(R, b, tol=1E-3, debug=FALSE) {
 		return(list(sol=cbind(x=as.vector(x)), sol3=sol3, S=S1, isZ=isZ, isZero=isZero))
 	}
 	#
-	SS3  = S - x;
-	E2S3 = E2 - x*SS3;
-	E3S3 = E4 / x;
-	# x2
-	x2 = sapply(seq_along(x), function(id) roots(c(1, -SS3[id], E2S3[id], -E3S3[id])))
-	#
-	x2 = as.vector(x2);
-	x = rep(as.vector(x), each=3);
-	SS2 = rep(as.vector(SS3), each=3) - x2;
-	E2S2 = rep(as.vector(E3S3), each=3) / x2;
-	# TODO: root[2]
-	x3 = sapply(seq_along(x2), function(id) roots(c(1, -SS2[id], E2S2[id]))[2])
-	x4 = SS2 - x3;
-	return(list(sol=cbind(x1=x, x2=x2, x3=x3, x4=x4), sol3=sol3, sol22=sol22))
+	solve.old = function(x) {
+		SS3  = S - x; E2S3 = E2 - x*SS3; E3S3 = E4 / x;
+		# x2
+		x2 = sapply(seq_along(x), function(id) roots(c(1, -SS3[id], E2S3[id], -E3S3[id])))
+		#
+		x2 = as.vector(x2);
+		x = rep(as.vector(x), each=3);
+		SS2 = rep(as.vector(SS3), each=3) - x2;
+		E2S2 = rep(as.vector(E3S3), each=3) / x2;
+		# TODO: root[2]
+		x3 = sapply(seq_along(x2), function(id) roots(c(1, -SS2[id], E2S2[id]))[2])
+		x4 = SS2 - x3; sol=cbind(x1=x, x2=x2, x3=x3, x4=x4);
+	}
+	sol = if(old) solve.old(as.vector(x))
+		else solve.EnAll(x, max.perm=max.perm); # generates 5*24 = 120 roots!
+	return(list(sol=sol, sol3=sol3, sol22=sol22))
 }
 
 ### TODO:
-# - full solution;
 # - may still contain numerically unstable roots!
 
 R = 2
 b = 3
-sol = solve.S4(R=R, b=b, tol=5E-2)
+sol = solve.S4(R=R, b=b)
 sol.sol = sol$sol; # sol$sol22;
 x1 = sol.sol[,1]; x2 = sol.sol[,2];
 x3 = sol.sol[,3]; x4 = sol.sol[,4];

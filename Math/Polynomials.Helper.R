@@ -33,6 +33,12 @@ roots.f = function(K, s, n=length(s)) {
 	r = sapply(seq(n), function(id) sum(s * (k*m[id])^(0:order1)))
 	return(r)
 }
+roots.cl2.f = function(s, n = length(s)) {
+	# roots for Class 2 polynomials;
+	m = unity(n+1, all=T)[-1]; # exclude 1;
+	r = sapply(seq(n), function(id) sum(s * m[id]^(0:n)))
+	r = round0(r)
+}
 mult.p = function(p1, p2) {
 	p.m = outer(p1, p2)
     p = as.vector(tapply(p.m, row(p.m) + col(p.m), sum))
@@ -57,7 +63,32 @@ round0.p = function(p, tol=1E-7) {
 	return(p)
 }
 
-### Solvers: decomposed polynomial systems
+### Solvers:
+
+### Simple systems:
+solve.En = function(x, max.perm=0) {
+	id = 1:length(x)
+	if(max.perm == 1) {
+		id.gr = matrix(id, nrow=1)
+	} else {
+		id.l = list(id, id, id, id)
+		id.gr = expand.grid(id.l)
+		isDuplic = apply(id.gr, 1, function(id.val) any(duplicated(id.val)))
+		id.gr = id.gr[ ! isDuplic , ]
+		if(max.perm > 0) {
+			max.perm = min(max.perm, nrow(id.gr));
+			id.gr = head(id.gr, n=max.perm);
+		}
+	}
+	sol = cbind(
+			x1=x[id.gr[,1]], x2=x[id.gr[,2]], x3=x[id.gr[,3]], x4=x[id.gr[,4]])
+}
+solve.EnAll = function(m, max.perm=0) {
+	# generates ncol(m) * (nrow(m)!) root combinations/permutations!
+	l = lapply(seq(ncol(m)), function(id) solve.En(as.vector(m[,id]), max.perm=max.perm));
+	do.call(rbind, l)
+}
+### decomposed polynomial systems
 solve.S = function(S, R, b=0) {
 	# generic solver (based on existing S = x+y+z)
 	b2 = if(length(b) > 1) b[2] else 0; # Ext A2;
