@@ -6,7 +6,7 @@
 ### Polynomial Systems: S4
 ### Heterogenous Symmetric
 ###
-### draft v.0.1b-sol.eq3
+### draft v.0.1b-sol.caseS
 
 
 
@@ -97,37 +97,38 @@ b^5*S^10 +
 	+ b*(568*R + 2026*R^2*b^2 - 4*R^3*b^4)*S^4 + (1120*R + 2472*R^2*b^2 - 596*R^3*b^4)*S^3 +
 	- (2624*b*R^2 + 6608*b^3*R^3)*S^2 + (-3584*R^2 - 13184*b^2*R^3 + 256*b^4*R^4)*S +
 	+ -7168*b*R^3 + 256*b^3*R^4
-# (b*S^3 + 4*S^2 - 64*R) * P[7]
-### P[7]
+# (b*S^3 + 4*S^2 - 64*R) * (b*S + 1) * P[6]
+### b*S + 1: Solution to all distinct system;
+### P[6]: Solution to degenerate System
 (112*R^2*b - 4*R^3*b^3) +
-(56*R + 206*R^2*b^2 - 4*R^3*b^4)*S^1 +
-(48*R*b + 103*R^2*b^3)*S^2 +
-(- 14 - 24*R*b^2 + 9*R^2*b^4)*S^3 +
-(- 22*R*b^3 - 5*b)*S^4 +
-(- 6*R*b^4 + 6*b^2)*S^5 +
-(- 2*b^3)*S^6 +
-(b^4)*S^7
+(56*R + 94*R^2*b^2)*S^1 +
+(- 8*R*b + 9*R^2*b^3)*S^2 +
+(- 14 - 16*R*b^2)*S^3 +
+(- 6*R*b^3 + 9*b)*S^4 +
+(- 3*b^2)*S^5 +
+(b^3)*S^6
 
 
 #############
 ### Solution:
 
-solve.S4 = function(R, b, tol=1E-3) {
+solve.S4 = function(R, b, tol=1E-3, debug=FALSE) {
+	# x1 == x2 == x3, but != x4;
 	coeff.3eq = c(b^2, - b, 1, 0, - R);
 	x3 = roots(coeff.3eq);
 	y = (R - x3^2) / b / x3^2;
 	S.3eq = 3*x3 + y;
 	sol3 = list(sol=cbind(x=x3, y=y), S=S.3eq);
 	#
-	coeff = c(
-		b*R^2*(112 - 4*R*b^2), R*(56 + 206*R*b^2 - 4*R^2*b^4),
-		(48*R*b + 103*R^2*b^3),
-		(- 14 - 24*R*b^2 + 9*R^2*b^4), (- 22*R*b^3 - 5*b),
-		(- 6*R*b^4 + 6*b^2), (- 2*b^3), (b^4)
+	b1 = b[1];
+	coeff = c(b1^3, - 3*b1^2, (- 6*R*b1^3 + 9*b1),
+		(- 14 - 16*R*b1^2), (- 8*R*b1 + 9*R^2*b1^3),
+		(56*R + 94*R^2*b1^2), (112*R^2*b1 - 4*R^3*b1^3)
 	)
 
 	# Numerical instability of roots!
-	S = roots(rev(coeff))
+	S = roots(coeff)
+	S = c(S, -1/b1); # add all distinct roots;
 	# E3
 	Subst = 560*R*S^2 - 780*R*S^3*b - 224*R*S^4*b^2 + 213*R*S^5*b^3 - 9*R*S^6*b^4 + 3024*R^2*S*b +
 		- 564*R^2*S^2*b^2 - 768*R^2*S^3*b^3 + 24*R^2*S^4*b^4 + 816*R^3*S*b^3 - 16*R^3*S^2*b^4 +
@@ -143,14 +144,33 @@ solve.S4 = function(R, b, tol=1E-3) {
 	x = sapply(seq(length(S)), function(id) roots(c(1, -S[id], E2[id], -E3[id], E4[id])))
 	#
 	len = length(S)
-	S1 = S;
+	S1 = S; # 1 copy;
 	S = matrix(S, ncol=len, nrow=4, byrow=T)
+	E2 = matrix(E2, ncol=len, nrow=4, byrow=T)
+	E3 = matrix(E3, ncol=len, nrow=4, byrow=T)
 	E4 = matrix(E4, ncol=len, nrow=4, byrow=T)
 
 	# true roots:
-	isZero = round0(E4/x - (R - x^2)/b, tol=tol) == 0
-	isZ = apply(isZero, 2, all)
-	return(list(sol=cbind(x=as.vector(x)), sol3=sol3, S=S1, isZ=isZ, isZero=isZero))
+	if(debug) {
+		isZero = round0(E4/x - (R - x^2)/b, tol=tol) == 0
+		isZ = apply(isZero, 2, all)
+		return(list(sol=cbind(x=as.vector(x)), sol3=sol3, S=S1, isZ=isZ, isZero=isZero))
+	}
+	#
+	SS3  = S - x;
+	E2S3 = E2 - x*SS3;
+	E3S3 = E4 / x;
+	# x2
+	x2 = sapply(seq_along(x), function(id) roots(c(1, -SS3[id], E2S3[id], -E3S3[id])))
+	#
+	x2 = as.vector(x2);
+	x = rep(as.vector(x), each=3);
+	SS2 = rep(as.vector(SS3), each=3) - x2;
+	E2S2 = rep(as.vector(E3S3), each=3) / x2;
+	# TODO: root[2]
+	x3 = sapply(seq_along(x2), function(id) roots(c(1, -SS2[id], E2S2[id]))[2])
+	x4 = SS2 - x3;
+	return(list(sol=cbind(x1=x, x2=x2, x3=x3, x4=x4), sol3=sol3))
 }
 
 ### TODO:
@@ -160,16 +180,23 @@ solve.S4 = function(R, b, tol=1E-3) {
 R = 2
 b = 3
 sol = solve.S4(R=R, b=b, tol=5E-2)
-S = sol$S;
-x = sol$sol[,1]
+x1 = sol$sol[,1]; x2 = sol$sol[,2];
+x3 = sol$sol[,3]; x4 = sol$sol[,4];
 
-### Test: Case 3 eq
+### Test
+x1^2 + b*x2*x3*x4 # - R
+x2^2 + b*x1*x3*x4 # - R
+x3^2 + b*x1*x2*x4 # - R
+x4^2 + b*x1*x2*x3 # - R
+
+### Test: Case 3 equal
 x1=x2=x3=sol$sol3$sol[,1];
 x4 = sol$sol3$sol[,2];
 x1^2 + b*x2*x3*x4 # - R
 x4^2 + b*x1*x2*x3 # - R
 
-poly.calc(sol$sol3$S) * 9
+poly.calc(sol$sol3$S) * b^2
+
 
 ### Cases:
 
@@ -187,6 +214,10 @@ x^2  + b*x*x3*x4 # - R
 x3^2 + b*x^2*x4 # - R
 x4^2 + b*x^2*x3 # - R
 
+### SubCase: x1 == x2, x3 == x4
+# x1 != x3;
+# TODO
+
 
 ### Workout:
 b = -4:4
@@ -202,6 +233,8 @@ R = 2
 b = 3
 sol = solve.S4(R=R, b=b, tol=5E-2)
 poly.calc(sol$S[ ! sol$isZ]) * 9 *b^4
+
+S = sol$S; # ...
 
 ### full Polynomial:
 # coefficients are correct;
@@ -223,6 +256,6 @@ poly.calc(sol$S[ ! sol$isZ]) * 9 *b^4
 (- 84*b^9)*S^15 +
 (9*b^10)*S^16
 # can be factored into: P[10] * P[6]
-# P[6]: 9*b^4 * S^6 + ...;
+# P[6]: 9*b^4 * S^6 + ...; # is NOT part of solution!
 # P[10]: can be factored itself in P[3]*P[7];
 
