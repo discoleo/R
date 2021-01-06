@@ -5,13 +5,13 @@
 ###
 ### Combinatorics
 ###
-### draft v.0.1a
+### draft v.0.1b
 
 
 ####################
 ### Introduction ###
 
-### The famous Evening Combinatorics Provlems
+### The famous Evening Combinatorics Problems
 # Best attacked before sleep, ... at least 3-4 hours before sleep.
 
 # see Combinatorics.wiki
@@ -22,12 +22,15 @@
 
 ### helper functions
 
-plot.cross = function(x1, x2, jitter=TRUE, col=c("red", "green"), ...) {
+plot.cross = function(x1, x2, jitter=TRUE, col=c("red", "green"), add=FALSE, ...) {
 	ncols = length(col)
-	plot(NA, NA, xlim=range(x1, x2), ylim = c(0, 1))
+	ylim = c(0, 1)
+	if( ! add) {
+		plot(NA, NA, xlim=range(x1, x2), ylim = ylim)
+	}
 	id.j = if(jitter) jitter(seq_along(x1)) else 0;
 	r = sapply(seq_along(x1), function(id)
-		lines(c(if(jitter) id.j[id] else id, match(x1[id], x2)), c(1, 0), col=col[1 + (id %% ncols)]))
+		lines(c(if(jitter) id.j[id] else id, match(x1[id], x2)), c(ylim[2], ylim[1]), col=col[1 + (id %% ncols)]))
 }
 
 crossings = function(x1, x2, all=TRUE) {
@@ -70,6 +73,10 @@ cross
 sum(cross[3,])
 
 plot.cross(x1, x2, jitter=F)
+
+
+plot(n, n^2 / cross.mean - (3.85 + 1/log(n)))
+
 
 #########################
 
@@ -139,4 +146,29 @@ ge
 
 # most likely: x^2 / 4 or similar formulas;
 
+
+#####################
+#####################
+
+### Famous Square ###
+
+n = 11
+
+x1 = 1:n
+x2 = sample(x1, n)
+x3 = sample(x1, n)
+x4 = sample(x1, n)
+
+plot.crossy = function(x1, x2, jitter=TRUE, col=c("purple", "blue")) {
+	ncols = length(col)
+	len = length(x1) + 0.1
+	id.j = if(jitter) jitter(seq_along(x1)) else 0;
+	r = sapply(seq_along(x1), function(id)
+		lines(c(1, length(x1)), c(if(jitter) id.j[id] else id, match(x1[id], x2))/len, col=col[1 + (id %% ncols)]))
+}
+
+### Opposite sides:
+# - the number of inter-crossings is fixed: + n^2;
+plot.cross(x1, x2)
+plot.crossy(x3, x4)
 
