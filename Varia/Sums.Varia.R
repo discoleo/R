@@ -185,3 +185,46 @@ print(s212, 12)
 
 s2as21 = sum.fr2vas21(iter)
 print(s2as21, 12)
+
+
+##################
+
+##################
+### 1D Variant ###
+
+sum.1D0 = function(b, start=1, iter=30000) {
+	sum(1 / ((start:iter)^2 + b^2))
+}
+
+sum.1D = function(b, start=1, iter=30000) {
+	len = length(b) - 1; pow = 0:len;
+	sum(sapply(start:iter, function(x) 1 / sum(x^pow * b) ))
+}
+
+sum.1D.exact = function(b) {
+	pi / (2*b) * 1/tanh(pi*b) - 1 / (2*b*b)
+}
+
+###########
+
+iter = 80000
+
+###
+sum.1D0(1, iter=iter)
+sum.1D(c(1^2,0,1), iter=iter)
+sum.1D.exact(1)
+
+
+###
+sum.1D0(sqrt(2), iter=iter)
+sum.1D(c(2,0,1), iter=iter)
+sum.1D.exact(sqrt(2))
+
+
+###
+b0 = 11
+b = 6 # must be even
+sum.1D(c(b0, b, 1), iter=iter)
+sum.1D.exact(sqrt(b0 - b^2/4 + 0i)) - sum(1/((1:(b/2))^2 + b0 - b^2/4))
+
+
