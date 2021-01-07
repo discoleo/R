@@ -18,6 +18,16 @@
 ### TODO:
 # - explore relationships to zeta function;
 
+##################
+
+library(pracma)
+
+
+##################
+
+##################
+### 3D Variant ###
+
 
 ### 1 / (x1*x2*x3 * (x1 + x2 + x3))
 sum.fr3v3 = function(iter) {
@@ -101,3 +111,77 @@ s0 = sum.fr3v0(iter)
 print(s0, digits=12)
 
 
+##################
+
+##################
+### 2D Variant ###
+
+
+### 1 / (x1*x2 * (x1 + x2))
+sum.fr2v2 = function(iter) {
+	sum = 0
+	for(i1 in 1:iter) {
+		sum = sum + sum(1 / ((iter:1) * (i1 + iter:1)) / i1 );
+		if(i1 %% 400 == 1) {
+			print(i1)
+		}
+	}
+	return(sum)
+}
+
+
+### 1 / (x1^2*x2^2 * (x1 + x2))
+sum.fr2v21 = function(iter) {
+	sum = 0
+	for(i1 in 1:iter) {
+		sum = sum + sum(1 / (iter:1)^2 / ((i1 + iter:1)) / i1^2 );
+		if(i1 %% 400 == 1) {
+			print(i1)
+		}
+	}
+	return(sum)
+}
+
+
+### 1 / (x1*x2 * (x1 + x2)^2)
+sum.fr2v12 = function(iter) {
+	sum = 0
+	for(i1 in 1:iter) {
+		sum = sum + sum(1 / (iter:1) / ((i1 + iter:1)^2) / i1 );
+		if(i1 %% 400 == 1) {
+			print(i1)
+		}
+	}
+	return(sum)
+}
+
+### 1 / (x1^2*x2 * (x1 + x2))
+sum.fr2vas21 = function(iter) {
+	sum = 0
+	for(i1 in 1:iter) {
+		sum = sum + sum(1 / (iter:1) / ((i1 + iter:1)) / i1^2 );
+		if(i1 %% 400 == 1) {
+			print(i1)
+		}
+	}
+	return(sum)
+}
+
+###########
+iter = 5000
+
+s22 = sum.fr2v2(iter)
+print(s22, 12) / 2
+print(zeta(3), 12)
+
+
+s221 = sum.fr2v21(iter)
+print(s221, 12)
+
+
+s212 = sum.fr2v12(iter)
+print(s212, 12)
+
+
+s2as21 = sum.fr2vas21(iter)
+print(s2as21, 12)
