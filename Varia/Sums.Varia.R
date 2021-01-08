@@ -193,7 +193,7 @@ print(s2as21, 12)
 ### 1D Variant ###
 
 sum.1D0 = function(b, start=1, iter=30000) {
-	sum(1 / ((start:iter)^2 + b^2))
+	sum(1 / ((start:iter)^2 + b^2)) # Note: b^2;
 }
 
 sum.1D = function(b, start=1, iter=30000) {
@@ -201,8 +201,43 @@ sum.1D = function(b, start=1, iter=30000) {
 	sum(sapply(start:iter, function(x) 1 / sum(x^pow * b) ))
 }
 
-sum.1D.exact = function(b) {
+sum.1Dsq.exact = function(b) {
 	pi / (2*b) * 1/tanh(pi*b) - 1 / (2*b*b)
+}
+sum.1D.exact = function(b0, b1=0) {
+	check = function(b0, b1) {
+		if( ! (round(b1) == b1) ) return(FALSE);
+		if(b1 %% 2 != 0 && b0 != 0) {
+			det = b1^2 - 4*b0;
+			if(det < 0) return(FALSE);
+			det = sqrt(det);
+			if(det != round(det)) return(FALSE);
+			# if( (-b1 + det) %% 2 != 0 ) return(FALSE);
+		}
+		return(TRUE);
+	}
+	if( ! check(b0, b1) ) {
+		stop("b1 MUST be an even integer!")
+	}
+	### b0 == 0
+	if(b0 == 0) {
+		s = sum(1/(1:b1)) / b1;
+		return(s);
+	}
+	### b1 %% 2 != 0
+	if(b1 %% 2 != 0) {
+		det = sqrt(b1^2 - 4*b0);
+		r1 = (-b1 - det)/2; r2 = (-b1 + det)/2;
+		val = 1:det;
+		s = sum(1 / (val - r2)) / det;
+		return(s);
+	}
+	### b1 %% 2 == 0
+	b0.tr = b0 - b1^2/4;
+	b0.tr.sqrt = sqrt(b0.tr + 0i);
+	s = pi / (2*b0.tr.sqrt) * 1/tanh(pi*b0.tr.sqrt) - 1 / (2*b0.tr);
+	if(b1 == 0) return(s);
+	s - sum(1/((1:(b1/2))^2 + b0.tr))
 }
 
 ###########
@@ -212,19 +247,45 @@ iter = 80000
 ###
 sum.1D0(1, iter=iter)
 sum.1D(c(1^2,0,1), iter=iter)
-sum.1D.exact(1)
+sum.1Dsq.exact(1)
 
 
 ###
 sum.1D0(sqrt(2), iter=iter)
 sum.1D(c(2,0,1), iter=iter)
-sum.1D.exact(sqrt(2))
+sum.1Dsq.exact(sqrt(2))
 
 
-###
+### b1 %% 2 == 0
 b0 = 11
-b = 6 # must be even
-sum.1D(c(b0, b, 1), iter=iter)
-sum.1D.exact(sqrt(b0 - b^2/4 + 0i)) - sum(1/((1:(b/2))^2 + b0 - b^2/4))
+b1 = 6 # must be even
+sum.1D(c(b0, b1, 1), iter=iter)
+sum.1D.exact(b0, b1)
+
+
+### b0 == 0
+b0 = 0
+b1 = 6 # must be integer
+sum.1D(c(b0, b1, 1), iter=iter)
+sum.1D.exact(b0, b1)
+
+
+### decomposable Fraction
+b0 = 2
+b1 = 3
+sum.1D(c(b0, b1, 1), iter=iter)
+sum.1D.exact(b0, b1)
+
+#
+b0 = 4
+b1 = 5
+sum.1D(c(b0, b1, 1), iter=iter)
+sum.1D.exact(b0, b1)
+
+#
+b0 = 5/4
+b1 = 3
+sum.1D(c(b0, b1, 1), iter=iter)
+sum.1D.exact(b0, b1)
 
 
