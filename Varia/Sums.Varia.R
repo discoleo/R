@@ -204,7 +204,7 @@ sum.1D = function(b, start=1, iter=30000) {
 sum.1Dsq.exact = function(b) {
 	pi / (2*b) * 1/tanh(pi*b) - 1 / (2*b*b)
 }
-sum.1D.exact = function(b0, b1=0) {
+sum.1D.exact = function(b0, b1=0, useDet=FALSE) {
 	check = function(b0, b1) {
 		if( ! (round(b1) == b1) ) return(FALSE);
 		if(b1 %% 2 != 0 && b0 != 0) {
@@ -225,7 +225,7 @@ sum.1D.exact = function(b0, b1=0) {
 		return(s);
 	}
 	### b1 %% 2 != 0
-	if(b1 %% 2 != 0) {
+	if(useDet || b1 %% 2 != 0) {
 		det = sqrt(b1^2 - 4*b0);
 		r1 = (-b1 - det)/2; r2 = (-b1 + det)/2;
 		val = 1:det;
@@ -288,4 +288,10 @@ b1 = 3
 sum.1D(c(b0, b1, 1), iter=iter)
 sum.1D.exact(b0, b1)
 
-
+# non-standard
+b0 = 0
+b1 = 1/3
+sum.1D(c(b0, b1, 1), iter=iter)
+sum.1D.exact(b0, b1) # NOT yet computable
+sum.1D.exact(-1/9, 0) + 9/2*(1 - log(3))
+### TODO: full solution;
