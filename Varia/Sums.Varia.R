@@ -288,31 +288,56 @@ b1 = 3
 sum.1D(c(b0, b1, 1), iter=iter)
 sum.1D.exact(b0, b1)
 
-# non-standard
-b0 = 0
-b1 = 1/3
-sum.1D(c(b0, b1, 1), iter=iter)
-sum.1D.exact(b0, b1) # NOT yet computable
-sum.1D.exact(-1/9, 0) + 9/2*(1 - log(3))
-### TODO: full solution;
+### non-standard
+# TODO: full solution;
 
+### 1 / (x * (x + 1/3))
+sum.1D(c(0, 1/3, 1), iter=iter)
+sum.1D.exact(0, 1/3) # NOT yet computable
+sum.1D.exact(-1/9, 0) + 9/2*(1 - log(3))
+
+### 1 / (x * (x - 1/3))
 sum.1D(c(0, -1/3, 1), iter=iter)
 2*sum.1D.exact(-1/9, 0) - (sum.1D.exact(-1/9, 0) + 9/2*(1 - log(3)))
 sum.1D.exact(-1/9, 0) - 9/2*(1 - log(3))
 
-### Diff
+### Diff: 1 / (x * (x^2 - 1/9))
 sum.1D(c(0, -1/9, 0, 1), iter=10000)
 27/2*(log(3) - 1)
+
+
+### 1 / (x^2 * (x^2 - 1/9))
+part2 = 3*(sum.1D.exact(-1/9, 0) - zeta(2))
+sum.1D(c(0, 0, -1/9, 0, 1), iter=10000)
+3*part2
+### 1 / (x^2 * (x - 1/3))
+sum.1D(c(0, 0, -1/3, 1), iter=10000)
+(27/2*(log(3) - 1)) + part2
+### 1 / (x^2 * (x + 1/3))
+sum.1D(c(0, 0, +1/3, 1), iter=10000)
+(27/2*(log(3) - 1)) - part2
+
 
 ### 1 / (x^3 * (x^2 - 1/9))
 sum.1D(c(0, 0, 0, -1/9, 0, 1), iter=10000)
 9*(27/2*(log(3) - 1) - zeta(3))
-
 ### 1 / (x^3 * (x - 1/3))
 sum.1D(c(0, 0, 0, -1/3, 1), iter=10000)
 3*(27/2*(log(3) - 1) - zeta(3)) + 9*(sum.1D.exact(-1/9, 0) - zeta(2))
 ### 1 / (x^3 * (x + 1/3))
 sum.1D(c(0, 0, 0, +1/3, 1), iter=10000)
 -3*(27/2*(log(3) - 1) - zeta(3)) + 9*(sum.1D.exact(-1/9, 0) - zeta(2))
+
+
+### 1 / (x^4 * (x^2 - 1/9))
+part2 = 3*(9*(sum.1D.exact(-1/9, 0) - zeta(2)) - zeta(4))
+sum.1D(c(0, 0, 0, 0, -1/9, 0, 1), iter=10000)
+3*part2
+### 1 / (x^4 * (x - 1/3))
+sum.1D(c(0, 0, 0, 0, -1/3, 1), iter=10000)
+9*(27/2*(log(3) - 1) - zeta(3)) + part2
+### 1 / (x^4 * (x + 1/3))
+sum.1D(c(0, 0, 0, 0, +1/3, 1), iter=10000)
+9*(27/2*(log(3) - 1) - zeta(3)) - part2
 
 
