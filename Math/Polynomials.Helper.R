@@ -66,12 +66,12 @@ round0.p = function(p, tol=1E-7) {
 ### Solvers:
 
 ### Simple systems:
-solve.En = function(x, max.perm=0) {
+solve.En = function(x, max.perm=0, n=4) {
 	id = 1:length(x)
 	if(max.perm == 1) {
 		id.gr = matrix(id, nrow=1)
 	} else {
-		id.l = list(id, id, id, id)
+		id.l = rep(list(id), n)
 		id.gr = expand.grid(id.l)
 		isDuplic = apply(id.gr, 1, function(id.val) any(duplicated(id.val)))
 		id.gr = id.gr[ ! isDuplic , ]
@@ -80,12 +80,13 @@ solve.En = function(x, max.perm=0) {
 			id.gr = head(id.gr, n=max.perm);
 		}
 	}
-	sol = cbind(
+	sol = if(n == 4) cbind(
 			x1=x[id.gr[,1]], x2=x[id.gr[,2]], x3=x[id.gr[,3]], x4=x[id.gr[,4]])
+		else cbind(x1=x[id.gr[,1]], x2=x[id.gr[,2]], x3=x[id.gr[,3]])
 }
-solve.EnAll = function(m, max.perm=0) {
+solve.EnAll = function(m, max.perm=0, n=4) {
 	# generates ncol(m) * (nrow(m)!) root combinations/permutations!
-	l = lapply(seq(ncol(m)), function(id) solve.En(as.vector(m[,id]), max.perm=max.perm));
+	l = lapply(seq(ncol(m)), function(id) solve.En(as.vector(m[,id]), max.perm=max.perm, n=n));
 	do.call(rbind, l)
 }
 ### decomposed polynomial systems
