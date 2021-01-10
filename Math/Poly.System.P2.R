@@ -6,12 +6,13 @@
 ###
 ### Polynomial Systems: P2
 ### Decompositions of Symmetric Systems
-### v.0.3d
+### v.0.3d-cases
 
 
 ### History
-### draft v.0.3d:
-# - classic Polynomials for P3 M-type: P6;
+### draft v.0.3d - v.0.3d-cases:
+# - classic Polynomials for P[3] M-type: P[6];
+# - more particular cases for P[6]; (v.0.3d-cases)
 ### draft v.0.3a-v.0.3c:
 # - systematic approach to entanglements:
 #  -- multiplicative: x*y*(x+y) = R;
@@ -122,10 +123,10 @@ mult.p = function(p1, p2) {
 # x*y = R2
 
 # x^2 + y^2 + 2*a*(x + y) + 2*a^2 - R1 = 0
-# X = x + y =>
-# X^2 + 2*a*X + 2*a^2 - R1 - 2*R2 = 0
-# Step 1: Solve for X
-# Step 2: x + y = X
+# S = x + y =>
+# S^2 + 2*a*S + 2*a^2 - R1 - 2*R2 = 0
+# Step 1: Solve for S
+# Step 2: x + y = S
 
 ### Parameters
 a = 1
@@ -747,11 +748,11 @@ poly.calc(x) # (x^3 + 2*x + 1)^2
 ### Simple + Extensions A1:
 # b2 = 0;
 (R2^3) +
-(2*R2^2*b1 - R2^2*b3^2)*x^1 +
-(2*R1*R2*b3 + R2*b1^2 + 5*R2^2*b3)*x^2 +
+R2^2*(2*b1 - b3^2)*x^1 +
+R2*(2*R1*b3 + b1^2 + 5*R2*b3)*x^2 +
 (- 3*R1*R2 - R1^2 + R2*b1*b3)*x^3 +
-(R1*b1 + 4*R2*b1)*x^4 +
-(R1*b3 + 3*R2*b3)*x^5 +
+b1*(R1 + 4*R2)*x^4 +
+b3*(R1 + 3*R2)*x^5 +
 (R1 + 3*R2)*x^6
 
 ### b2 != 0
@@ -760,8 +761,29 @@ poly.calc(x) # (x^3 + 2*x + 1)^2
 (2*R1*R2*b3 - R1*b1*b2 + R2*b1*b2 + R2*b1^2 + 3*R2*b2^2 + 5*R2^2*b3)*x^2 +
 (- 3*R1*R2 - 2*R1*b2*b3 - R1^2 + R2*b1*b3 - 3*R2*b2*b3)*x^3 +
 (R1*b1 + 4*R2*b1 + 3*R2*b2)*x^4 +
-(R1*b3 + 3*R2*b3)*x^5 +
+b3*(R1 + 3*R2)*x^5 +
 (R1 + 3*R2)*x^6
+
+### Special Cases:
+### R1 = -2*R2
+(R2^2 + R2*b2*b3 + b1*b2^2 + 2*b2^3) +
+(2*R2*b1 + 3*R2*b2 - R2*b3^2 - b1*b2*b3 - 2*b2^2*b3)*x +
+(R2*b3 + b1^2 + 3*b1*b2 + 3*b2^2)*x^2 +
+(2*R2 + (b1 + b2)*b3)*x^3 +
+(2*b1 + 3*b2)*x^4 +
+b3*x^5 + x^6
+### b1 = -3/2 * b2
+(2*R2^2 + 2*R2*b2*b3 + b2^3) +
+- (2*R2*b3^2 + b2^2*b3)*x +
+1/2 * (4*R2*b3 + 3*b2^2)*x^2 +
+(4*R2 - b2*b3)*x^3 + 2*b3*x^5 + 2*x^6
+
+### R1 = -4*R2
+(- R2^2 - R2*b2*b3 - b1*b2^2 - 4*b2^3) +
+(- 2*R2*b1 - 9*R2*b2 + R2*b3^2 + b1*b2*b3 + 4*b2^2*b3)*x +
+(3*R2*b3 - 5*b1*b2 - b1^2 - 3*b2^2)*x^2 +
+(4*R2 - b1*b3 - 5*b2*b3)*x^3 +
+- 3*b2*x^4 + b3*x^5 + x^6
 
 
 #########
@@ -799,6 +821,27 @@ x*y*(x+y)
 ### Classic
 poly.calc(x)
 err = 1 - 6*x + 3*x^2 - 2*x^4 + 2*x^5 + x^6
+round0(err)
+
+
+#########
+### Ex 3:
+b3 = 6;
+R = c(1/6 * b3^3, -1/12 * b3^3)
+b = c(1/2*b3^2, -1/3 * b3^2, b3)
+#
+sol = solve.p2p3ent(b, R)
+sol
+
+### Test
+x = sol$sol[,1]; y = sol$sol[,2]
+x^3 + y^3 + b[1]*(x+y) + b[3]*(x+y)^2
+x*y*(x+y) + b[2]*(x+y)
+
+### Classic
+round0.p(poly.calc(x))
+# ...*b3^6 + 1/36*b3^5*x + b3*x^5 + x^6
+err = 21*6^2 + 6^3*x + 6*x^5 + x^6
 round0(err)
 
 
