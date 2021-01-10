@@ -6,25 +6,29 @@
 ###
 ### Polynomial Systems: P2
 ### Decompositions of Symmetric Systems
-### v.0.3c
+### v.0.3d
 
 
 ### History
-# draft v.0.3a-v.0.3c:
+### draft v.0.3d:
+# - classic Polynomials for P3 M-type: P6;
+### draft v.0.3a-v.0.3c:
 # - systematic approach to entanglements:
 #  -- multiplicative: x*y*(x+y) = R;
 #  -- dividing: x*y/(x+y)^j = R;
 #  -- basic order 5: multiplicative variant, x*y*(x+y) (in v.0.3c);
 # - TODO: all variants (more variants in v.0.3b);
-# draft v.0.2f:
+### draft v.0.2f:
 # - entanglement: x*y*(x+y) = R;
-# draft v.0.2e:
+### draft v.0.2e:
 # - solved a symmetric "liniar" etension;
 #   x^3 + y^3 + b1*(x+y) = R1;
 #   x*y + b2*(x+y) = R2;
-# draft v.0.2d:
+### draft v.0.2d:
 # - solved: x^6 + b4*x^4 + b3*x^3 + b4*b2*x^2 + b2^3;
 #   e.g. x^6 - x^4 - x^3 + x^2 - 1 = 0;
+#   Note: this is a generalized symmetric poly;
+#   [see file: Polynomials.Derived.P6.Symmetric.R]
 # draft v.0.2b & v.0.2c:
 # - some examples of derived polynomials of order 8
 #   based on the order 2 system & cos(2*pi/5)-entanglement;
@@ -636,36 +640,55 @@ x^6 - 3*x^5 + 3*x^4 + 3*x^2 + 3*x + 1
 
 
 
-#################
+############################
+############################
 
+############################
+### Non-Liniar Entanglements
+
+### Order 3
+
+### Type Multiplicative:
 # x^3 + y^3 + b1*(x+y) = R1
 # x*y*(x+y) = R2
 
+### Type Div:
+# x^3 + y^3 + b1*(x+y) = R1
+# x*y / (x+y) = R2
+
+### Extensions:
+# x^3 + y^3 + b3*(x+y)^2 + b1*(x+y) = R1
+# x*y {*,/} (x+y) + b2*(x+y) = R2
+
+### Solution:
+
 ### Step 1:
-# s = x + y =>
-# s^3 + b1*s - R1 - 3*R2 = 0
+# S = x + y =>
+S^3 + b1*S - R1 - 3*R2 # = 0
 ### Step 2:
-# x + y = s
-# x*y = R2/s
+# x + y = S
+# x*y = R2/S
 
 solve.p2p3ent = function(b, R, type="mult", n=3) {
 	# type "mult": x*y*(x+y) + b[2]*(x+y) = R[2]
-	# type "div": x*y/(x+y) + b[2]*(x+y) = R[2]
+	# type "div":  x*y/(x+y) + b[2]*(x+y) = R[2]
 	# type "div2": x*y/(x+y)^2 + b[2]*(x+y) = R[2]
 	# simple type: b[2] = 0
 	if(length(b) < 2) { b = c(b, 0) }
+	if(length(b) < 3) { b = c(b, 0) }
 	# Solve:
 	if(type == "mult" && n == 3) {
-		s = roots(c(1, 0, b[1] + 3*b[2], - R[1] - 3*R[2]))
+		s = roots(c(1, b[3], b[1] + 3*b[2], - R[1] - 3*R[2]))
 		xy = R[2]/s - b[2]
 	} else if(type == "div") {
-		s = roots(c(1 + 3*b[2], -3*R[2], b[1], - R[1]))
+		s = roots(c(1 + 3*b[2], b[3] - 3*R[2], b[1], - R[1]))
 		xy = R[2] * s - b[2] * s^2
 	} else if(type == "div2") {
-		s = if(b[2] == 0) roots(c(1 - 3*R[2], 0, b[1], - R[1]))
-			else roots(c(3*b[2], 1 - 3*R[2], 0, b[1], - R[1]))
+		s = if(b[2] == 0) roots(c(1 - 3*R[2], b[3], b[1], - R[1]))
+			else roots(c(3*b[2], 1 - 3*R[2], b[3], b[1], - R[1]))
 		xy = R[2] * s^2 - b[2] * s^3
 	} else if(type == "mult" && n == 2) {
+		# TODO: b[3]
 		s = roots(c(1, b[1], 2*b[2] - R[1], -2*R[2]))
 		xy = R[2]/s - b[2]
 	} else {
@@ -676,11 +699,12 @@ solve.p2p3ent = function(b, R, type="mult", n=3) {
 	y = (s - s.diff)/2
 	sol = cbind(x, y)
 	sol = rbind(sol, sol[,2:1])
-	# Test
-	t1 = x^n + y^n + b[1]*(x+y)
-	t2 = if(type == "mult") x*y*(x+y) + b[2]*(x+y)
-	else if(type == "div") x*y/(x+y) + b[2]*(x+y)
-	else if(type == "div2") x*y/(x+y)^2 + b[2]*(x+y)
+	### Test
+	S = (x+y);
+	t1 = x^n + y^n + b[1]*S + b[3]*S^2;
+	t2 = if(type == "mult") { x*y*S + b[2]*S; }
+	else if(type == "div") { x*y/S + b[2]*S; }
+	else if(type == "div2"){ x*y/S^2 + b[2]*S; }
 	#
 	return(list(sol=sol, test=rbind(t1, t2)))
 }
@@ -698,11 +722,11 @@ x^3 + y^3 + b[1]*(x+y)
 x*y*(x+y)
 
 ### Classic
-poly.calc(x)
+poly.calc(x) # trivial: (x^3 - x + 1)^2
 1 - 2*x + x^2 + 2*x^3 - 2*x^4 + x^6
 
 
-###
+### the 1-coeff variants are trivial
 b = c(2)
 R = c(-2, 1)
 #
@@ -715,16 +739,75 @@ x^3 + y^3 + b[1]*(x+y)
 x*y*(x+y)
 
 ### Classic
-poly.calc(x)
+poly.calc(x) # (x^3 + 2*x + 1)^2
 1 + 4*x + 4*x^2 + 2*x^3 + 4*x^4 + x^6
 
+### Classic Polynomials:
 
-###
+### Simple + Extensions A1:
+# b2 = 0;
+(R2^3) +
+(2*R2^2*b1 - R2^2*b3^2)*x^1 +
+(2*R1*R2*b3 + R2*b1^2 + 5*R2^2*b3)*x^2 +
+(- 3*R1*R2 - R1^2 + R2*b1*b3)*x^3 +
+(R1*b1 + 4*R2*b1)*x^4 +
+(R1*b3 + 3*R2*b3)*x^5 +
+(R1 + 3*R2)*x^6
+
+### b2 != 0
+(- R1*b2^3 + R2*b1*b2^2 + R2^2*b2*b3 + R2^3) +
+(- 3*R1*R2*b2 + R1*b2^2*b3 - R2*b1*b2*b3 + 2*R2^2*b1 - 3*R2^2*b2 - R2^2*b3^2)*x^1 +
+(2*R1*R2*b3 - R1*b1*b2 + R2*b1*b2 + R2*b1^2 + 3*R2*b2^2 + 5*R2^2*b3)*x^2 +
+(- 3*R1*R2 - 2*R1*b2*b3 - R1^2 + R2*b1*b3 - 3*R2*b2*b3)*x^3 +
+(R1*b1 + 4*R2*b1 + 3*R2*b2)*x^4 +
+(R1*b3 + 3*R2*b3)*x^5 +
+(R1 + 3*R2)*x^6
+
+
+#########
+### Ex 1:
+R = c(4, -1)
+b = c(-1, 0, 4)
+#
+sol = solve.p2p3ent(b, R)
+sol
+
+### Test
+x = sol$sol[,1]; y = sol$sol[,2]
+x^3 + y^3 + b[1]*(x+y) + b[3]*(x+y)^2
+x*y*(x+y)
+
+### Classic
+round0.p(poly.calc(x))
+err = -1 - 18*x - 13*x^2 + 4*x^5 + x^6
+round0(err)
+
+
+#########
+### Ex 2:
+R = c(-2, 1)
+b = c(-1, 0, 2)
+#
+sol = solve.p2p3ent(b, R)
+sol
+
+### Test
+x = sol$sol[,1]; y = sol$sol[,2]
+x^3 + y^3 + b[1]*(x+y) + b[3]*(x+y)^2
+x*y*(x+y)
+
+### Classic
+poly.calc(x)
+err = 1 - 6*x + 3*x^2 - 2*x^4 + 2*x^5 + x^6
+round0(err)
+
+
+########
+### only 1 Coeff: Trivial
 b = c(2)
 R = c(-2, 1)
 p = sapply(-6:6, function(b) print(round0.p(poly.calc(solve.p2p3ent(b, R)$sol[,1]))))
 # (x^3 + b*x + 1)^2
-1 - 12*x + 36*x^2 + 2*x^3 - 12*x^4 + x^6 
 1 - 10*x + 25*x^2 + 2*x^3 - 10*x^4 + x^6 
 1 - 8*x + 16*x^2 + 2*x^3 - 8*x^4 + x^6 
 1 - 6*x + 9*x^2 + 2*x^3 - 6*x^4 + x^6 
@@ -736,7 +819,6 @@ p = sapply(-6:6, function(b) print(round0.p(poly.calc(solve.p2p3ent(b, R)$sol[,1
 1 + 6*x + 9*x^2 + 2*x^3 + 6*x^4 + x^6 
 1 + 8*x + 16*x^2 + 2*x^3 + 8*x^4 + x^6 
 1 + 10*x + 25*x^2 + 2*x^3 + 10*x^4 + x^6 
-1 + 12*x + 36*x^2 + 2*x^3 + 12*x^4 + x^6
 # parametric example (but trivial)
 b = 3
 R = c(-2, 1); # fixed
@@ -745,10 +827,9 @@ x = p$sol[,1]
 err = 1 + 2*b*x + b^2*x^2 + 2*x^3 + 2*b*x^4 + x^6
 round0(err)
 
-###
+### (x^3 + b*x + 1)^2 - b*x^4 - b*x
 R = c(-2, 1)
 p = sapply(-6:6, function(b) print(round0.p(poly.calc(solve.p2p3ent(c(2*b, -b), R)$sol[,1]))))
-1 - 6*x + 36*x^2 + 2*x^3 - 6*x^4 + x^6 
 1 - 5*x + 25*x^2 + 2*x^3 - 5*x^4 + x^6 
 1 - 4*x + 16*x^2 + 2*x^3 - 4*x^4 + x^6 
 1 - 3*x + 9*x^2 + 2*x^3 - 3*x^4 + x^6 
@@ -760,7 +841,6 @@ p = sapply(-6:6, function(b) print(round0.p(poly.calc(solve.p2p3ent(c(2*b, -b), 
 1 + 3*x + 9*x^2 + 2*x^3 + 3*x^4 + x^6 
 1 + 4*x + 16*x^2 + 2*x^3 + 4*x^4 + x^6 
 1 + 5*x + 25*x^2 + 2*x^3 + 5*x^4 + x^6 
-1 + 6*x + 36*x^2 + 2*x^3 + 6*x^4 + x^6
 # parametric example
 b = 3
 b.p = c(2*b, -b)
@@ -774,8 +854,7 @@ round0(err)
 ###
 R = c(-4,1)
 p = sapply(-6:6, function(b) print(round0.p(poly.calc(solve.p2p3ent(b, R, type="mult")$sol[,1]))))
-# x^6 + b*x^3 - (b*x - 1)^2
--1 + 12*x - 36*x^2 + 4*x^3 + x^6 
+# x^6 - R[1]*x^3 - (b*x - 1)^2; b0 = 1/(R[1]+3), more terms for other R = c(..., 1)
 -1 + 10*x - 25*x^2 + 4*x^3 + x^6 
 -1 + 8*x - 16*x^2 + 4*x^3 + x^6 
 -1 + 6*x - 9*x^2 + 4*x^3 + x^6 
@@ -785,16 +864,13 @@ p = sapply(-6:6, function(b) print(round0.p(poly.calc(solve.p2p3ent(b, R, type="
 -1 - 2*x - x^2 + 4*x^3 + x^6 
 -1 - 4*x - 4*x^2 + 4*x^3 + x^6 
 -1 - 6*x - 9*x^2 + 4*x^3 + x^6 
--1 - 8*x - 16*x^2 + 4*x^3 + x^6 
--1 - 10*x - 25*x^2 + 4*x^3 + x^6 
--1 - 12*x - 36*x^2 + 4*x^3 + x^6
+-1 - 8*x - 16*x^2 + 4*x^3 + x^6
+-1 - 10*x - 25*x^2 + 4*x^3 + x^6
 
 ###
 R = c(-2,1)
 p = sapply(-8:8, function(b) print(round0.p(poly.calc(solve.p2p3ent(b, R, type="div")$sol[,1]))))
 #
--2 + 6*x - 14*x^2 + 18*x^3 - 5*x^4 - 3*x^5 + x^6 
--2 + 6*x - 13*x^2 + 16*x^3 - 4*x^4 - 3*x^5 + x^6 
 -2 + 6*x - 12*x^2 + 14*x^3 - 3*x^4 - 3*x^5 + x^6 
 -2 + 6*x - 11*x^2 + 12*x^3 - 2*x^4 - 3*x^5 + x^6 
 -2 + 6*x - 10*x^2 + 10*x^3 - x^4 - 3*x^5 + x^6 
@@ -808,8 +884,7 @@ p = sapply(-8:8, function(b) print(round0.p(poly.calc(solve.p2p3ent(b, R, type="
 -2 + 6*x - 2*x^2 - 6*x^3 + 7*x^4 - 3*x^5 + x^6 
 -2 + 6*x - x^2 - 8*x^3 + 8*x^4 - 3*x^5 + x^6 
 -2 + 6*x - 0 - 10*x^3 + 9*x^4 - 3*x^5 + x^6 
--2 + 6*x + x^2 - 12*x^3 + 10*x^4 - 3*x^5 + x^6 
--2 + 6*x + 2*x^2 - 14*x^3 + 11*x^4 - 3*x^5 + x^6
+-2 + 6*x + x^2 - 12*x^3 + 10*x^4 - 3*x^5 + x^6
 
 
 ###
@@ -843,7 +918,7 @@ p = sapply(-6:6, function(b) print(round0.p(poly.calc(solve.p2p3ent(c(b, b), c(2
 p = sapply(-6:6, function(b) print(round0.p(poly.calc(solve.p2p3ent(c(b, b), c(4, 4), type="mult", n=2)$sol[,1]))))
 
 # b0 = b^2 / 2
-p = sapply( (-6:6)[-6], function(b) print(round0.p(poly.calc(solve.p2p3ent(c(-b, -b), c(b, b), type="mult", n=2)$sol[,1]))))
+p = sapply( (-6:6)[-7], function(b) print(round0.p(poly.calc(solve.p2p3ent(c(-b, -b), c(b, b), type="mult", n=2)$sol[,1]))))
 
 sol = solve.p2p3ent(c(-2, -2), c(2, 2), type="mult", n=2)
 x = sol$sol[,1]
