@@ -9,8 +9,14 @@ https://github.com/discoleo/R/tree/master/Physics%20&%20Chemistry/BlackHoles_vs_
 '''Black Holes''' are likely a mathematical artifact:
 https://en.wikipedia.org/wiki/Division_by_zero
 
-
 '''Bose-Einstein condensates''' offer probably a much better description, including a reasonable mathematical description.
+
+=== Gravity ===
+
+'''Gravity:''' is a mass effect on polarized nuclei. The Higgs boson is also an artifact.
+
+Atomic nuclei carry de facto all mass. Gravity must therefore be directly related to the atomic nucleus. The polarized nuclei can interact in a mass effect that becomes manifest as gravity. This "gravity" obeys a similar law to Gauss law computed outside a sphere and decreases with R^2.
+
 
 == History ==
 Building an entire theory around a division by zero should make everyone doubt the theory.
