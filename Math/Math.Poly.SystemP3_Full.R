@@ -4,11 +4,13 @@
 ### P3 Polynomial Systems
 ### Solver: Exact solutions
 ###
-### draft 0.4-pre-alpha3
+### draft 0.4-pre-alpha4
 
 ### P3 Systems
-# v.0.4-pre-alpha3:
-# - special case: partly asymmetric order 2 with exact solution;
+# v.0.4-pre-alpha3 - v.0.4-pre-alpha4:
+# - special cases:
+#  -- partly asymmetric order 2 with exact solution;
+#  -- partly asymmetric order 3 with exact solution;
 # - TODO: a lot of cleanup;
 # v.0.4-pre-alpha2:
 # - partly asymmetric order 2 S3;
@@ -669,7 +671,8 @@ sapply(1:nrow(sol), function(id) prod(sol[id,]))
 #
 # b11*x^2 + (b21*y + b22*z)^2 - 2*b21*b22*R3/x = R1
 # b11*x^6 + (R2*x - b23*R3)^2 - 2*b21*b22*R3*x^3 = R1*x^4
-# b11*x^6 - R1*x^4 - 2*b21*b22*R3*x^3 + R2^2*x^2 - 2*b23*R2*R3*x + b23^2*R3^2 = 0
+b11*x^6 - R1*x^4 - 2*b21*b22*R3*x^3 + R2^2*x^2 - 2*b23*R2*R3*x + b23^2*R3^2 # = 0
+
 
 library(polynom)
 
@@ -914,6 +917,27 @@ sol[correct,]
 
 # b11*x^6 + (R2 - b23*R/x^3)^3 = R1*x^3
 # b11*x^15 + (R2*x^3 - b23*R3)^3 = R1*x^12
+
+
+### Special Case:
+# R2 = 0
+x^9 - R1*x^6 + 3*b1*b2*b3*R3^2*x^3 - b3^3*R3^3 # = 0
+
+### Example:
+R = c(2, 0, 1)
+b = c(2, 3, 1)
+#
+x = roots(c(1,0,0,-R[1],0,0,3*b[1]*b[2]*b[3]*R[3]^2,0,0,- b[3]^3*R[3]^3))
+yz = R[3]/x;
+yz.s = - b[3] * yz / x;
+yz.d = sqrt(yz.s^2 - 4*b[1]*b[2]*yz + 0i);
+y = (yz.s + yz.d) / 2 / b[1];
+z = (yz.s - yz.d) / 2 / b[2];
+
+### Test
+x^3 + b[1]^3*y^3 + b[2]^3*z^3
+b[1]*x*y + b[2]*x*z + b[3]*y*z
+x*y*z
 
 
 ###################
