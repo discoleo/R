@@ -4,14 +4,17 @@
 ### P3 Polynomial Systems
 ### Solver: Exact solutions
 ###
-### draft 0.4-pre-alpha2
+### draft 0.4-pre-alpha3
 
 ### P3 Systems
+# v.0.4-pre-alpha3:
+# - special case: partly asymmetric order 2 with exact solution;
+# - TODO: a lot of cleanup;
 # v.0.4-pre-alpha2:
-# - partly asymmetric order 2 P3;
+# - partly asymmetric order 2 S3;
 # v.0.4-pre-alpha:
 # - basic ideas to solve Asymmetric higher order systems;
-# - basic example for fully asymmetric order 2 P3;
+# - basic example for fully asymmetric order 2 S3;
 # v.0.3e: a less simplified version (see v.0.3b);
 # v.0.3d:
 # - partial extension of asymmetric system to 4 variables;
@@ -22,17 +25,17 @@
 #   of the basic asymmetric system;
 #   [but with exact solution]
 # v.0.3a: basic Asymmetric system;
-# v.0.2d: more roots + classical "solution" to simple PS3 (the P[9] polynomial);
+# v.0.2d: more roots + classical "solution" to simple P3S3 (the P[9] polynomial);
 # v.0.2c: Test the Linear decomposition concept;
-# v.0.2a: P3 system + linear (x+y+z) terms;
-# v.0.1: simple P3 system: the Base System;
+# v.0.2a: S3 system + linear (x+y+z) terms;
+# v.0.1: simple S3 system: the Base System;
 
 
 ######################
 
 ### Theory
 
-### Order n = O(n) Simple P3 System
+### Order n = O(n) Simple S3 System
 # B1 * (x^n, y^n, z^n) = R1
 # B2 * (x*y, x*z, y*z) = R2
 # x*y*z = R3
@@ -41,10 +44,11 @@
 # - B1 = B2 = (1, 1, 1);
 # - can be decomposed into 2 entangled systems:
 # - solve a P[n]-polynomial: with exact solution for n <= 3;
-# - solve a derived P3: exact solution;
+# - solve a derived basic S3: exact solution;
 # 2.) Partly Asymmetric O(n)
 # - b12 = b21^n, b13 = b22^n;
-# - solve a P[3*n] polynomial: exact solution for n=1;
+# - solve a P[3*n] polynomial:
+#  -- exact solution for n=1 or for other special cases;
 # 3.) Fully Asymmetric O(n)
 # - solve a P[6*n] polynomial;
 # - a P[12] example is shown below;
@@ -55,27 +59,27 @@
 
 #######################
 
-### A.) Base P3 system
+### A.) Base S3 system
 
-### P3 System:
-# x^3 + y^3 + z^3 = A
-# x*y + x*z + y*z = B
-# x*y*z = P
+### S3 System:
+# x^3 + y^3 + z^3 = R1
+# x*y + x*z + y*z = R2
+# x*y*z = R3
 
 
 ### Solution Steps:
 
 ### Subsystem 1:
 #
-# X^3 - 3*B*X + 3*P - A = 0
-# solve for X;
-# where X = x + y + z;
+# S^3 - 3*R2*S + 3*R3 - R1 = 0
+# solve for S;
+# where S = x + y + z;
 
 ### Subsystem 2:
 #
-# x + y + z = X
-# x*y + x*z + y*z = B
-# x*y*z = P
+# x + y + z = S
+# x*y + x*z + y*z = R2
+# x*y*z = R3
 # - solve for x, y, z;
 # - exact solution provided;
 
@@ -90,7 +94,7 @@
 # y^3 + z^3 = (y+z)*((y+z)^2 - 3*yz)
 # = (B/x - C/x^2) * ((B/x - C/x^2)^2 - 3*C/x)
 # =>
-# x^9 - A*x^6 - 3*B*C*x^4 + (B^3+3*C^2)*x^3 -3*B^2*C*x^2 + 3*B*C^2*x - C^3 # = 0
+# x^9 - A*x^6 - 3*B*C*x^4 + (B^3+3*C^2)*x^3 - 3*B^2*C*x^2 + 3*B*C^2*x - C^3 # = 0
 
 # Test
 x = sqrt(c(2,3,5))
@@ -100,7 +104,7 @@ C = prod(x)
 x^9 - A*x^6 - 3*B*C*x^4 + (B^3+3*C^2)*x^3 -3*B^2*C*x^2 + 3*B*C^2*x - C^3
 
 
-### C.) Complex P3 System
+### C.) Complex S3 System
 # b31*(x^3+y^3+z^3) + b21*(x^2+y^2+z^2) + b11*(x+y+z) + e21*(xy+xz+yz) + e31*x*y*z = A1
 # b32*(x^3+y^3+z^3) + b22*(x^2+y^2+z^2) + b12*(x+y+z) + e22*(xy+xz+yz) + e32*x*y*z = A2
 # b33*(x^3+y^3+z^3) + b23*(x^2+y^2+z^2) + b13*(x+y+z) + e23*(xy+xz+yz) + e33*x*y*z = A3
@@ -108,7 +112,7 @@ x^9 - A*x^6 - 3*B*C*x^4 + (B^3+3*C^2)*x^3 -3*B^2*C*x^2 + 3*B*C^2*x - C^3
 # see below for complet *exact* solution!
 # 1.) the system is decomposed using a liniar decomposition;
 # 2.) then the "base"-terms are computed;
-# 3.) then the P3 system is solved based on [A];
+# 3.) then the S3 system is solved based on [A];
 
 
 ### D.) Perturbations to break Symmetry
@@ -696,8 +700,44 @@ sapply(1:nrow(sol), function(id) sum(b2*sol[id,c(1,1,2)]*sol[id,c(2,3,3)]))
 sapply(1:nrow(sol), function(id) prod(sol[id,]))
 
 
+### Special Cases:
+# R2 = 0
+b11*x^6 - R1*x^4 - 2*b21*b22*R3*x^3 + b23^2*R3^2 # = 0
+# b11 = 1; b23 = {+/-} b21*b22;
+x^6 - R1*x^4 - 2*b21*b22*R3*x^3 + (b21*b22)^2*R3^2 # = 0
+(x^3 - b21*b22*R3)^2 - R1*x^4 # = 0
+
+library(pracma)
+
+solve.psym.S3P2 = function(R, b) {
+	if(R[2] != 0) stop("Can solve only when R[2] == 0!")
+	# assumes b23 = b[1]*b[2]!
+	x = roots(c(1, 0, -R[1], - 2*b[1]*b[2]*R[3], 0, 0, (b[1]*b[2])^2*R[3]^2))
+	yz = R[3] / x;
+	yz.s = - b[1]*b[2]*R[3]/x^2;
+	yz.d = sqrt(yz.s^2 - 4*b[1]*b[2]*yz + 0i);
+	y = (yz.s + yz.d)/2 / b[1];
+	z = (yz.s - yz.d)/2 / b[2];
+	# x = c(x, x); tmp = y; y = c(y, z); z = c(z, tmp);
+	return(cbind(x=x, y=y, z=z))
+}
+
+###
+R = c(1, 0, 2)
+b = c(-1, 2)
+#
+sol = solve.psym.S3P2(R, b)
+x = sol[,1]; y = sol[,2]; z = sol[,3];
+
+### Test
+x^2 + b[1]^2*y^2 + b[2]^2*z^2 # - R1
+x*(b[1]*y + b[2]*z) + b[1]*b[2]*y*z # = 0
+x*y*z # - R3
+
+
+
 #########################
-### Partly Asyymetric
+### Partly Asymmetric
 ### [very simple version]
 
 # x^2 + y^2 + z^2 = R1
@@ -756,6 +796,8 @@ sapply(1:nrow(sol), function(id) prod(sol[id,]))
 ###
 ### using Cardan-type Polynomials
 
+# (b21*y + b22*z)^n = b21^n*y^n + b22^n*z^n + f((b21*y + b22*z), y*z);
+
 ### P3 Order 2:
 # b11*x^2 + b12*y^2 + b13*z^2 = R1
 # b21*x*y + b22*x*z + b23*y*z = R2
@@ -804,6 +846,8 @@ sol = cbind(x, y, z)
 sol = rbind(sol, cbind(x, -y, z), 
 	cbind(x, y, -z), cbind(x, -y, -z))
 
+# TODO: solve y & z using different approach;
+
 ### Test
 err1 = apply(sol, 1, function(sol) sum(b1*sol^2))
 err2 = apply(sol, 1, function(sol) sum(b2*sol[c(1,1,2)]*sol[c(2,3,3)]))
@@ -832,8 +876,13 @@ sol[correct,]
 # x^3*y^3*z^3 = R3^3
 
 
-###################
 
+
+#####################
+#####################
+
+#####################
+### Other Systems ###
 
 # b11*x^2 + b12*y^2 + b13*z^2 = R1
 # b21*x*y + b22*x*z + b23*y*z = R2
@@ -867,6 +916,23 @@ sol[correct,]
 # b11*x^15 + (R2*x^3 - b23*R3)^3 = R1*x^12
 
 
+###################
+### 
+# b11*x^3 + y^3 + z^3 = R1
+# y + z = R2
+# x*y*z = R3
+
+# b11*x^3 + R2^3 - 3*R2*R3/x = R1
+# b11*x^4 + (R2^3-R1)*x - 3*R2*R3 = 0
+
+
+### 
+# b11*x^3 + y^3 + z^3 = R1
+# x*(y + z) = R2
+# x^2*y*z = R3
+
+# b11*x^3 + R2^3/x^3 - 3*R2*R3/x^3 = R1
+# b11*x^6 - R1*x^3 + R2^3 - 3*R2*R3 = 0
 
 
 ###################
@@ -1022,18 +1088,18 @@ x = solve(p)
 x
 
 ### TODO:
-# - solve assymetric P3 system;
+# - solve assymetric S3 system;
 # - implement solver (see previous sections) as function;
 
-solve.P3subsys = function(x) {
+solve.S3subsys = function(x) {
 	R1.new = R[1] - b1[1]*x
 	R.new = c(R1.new, R[2] - b1[1]*x*R1.new, R[4]/x)
 	sol = solve.P3asym(b1[2:4], b2[4:6], R.new)
 	matrix(t(sol), ncol=3)
 }
 
-sol = sapply(x, solve.P3subsys)
-sol = solve.P3subsys(x[1])
+sol = sapply(x, solve.S3subsys)
+sol = solve.S3subsys(x[1])
 sol = cbind(x[1], sol)
 colnames(sol) = c(paste("x", 1:4, sep=""))
 sol
