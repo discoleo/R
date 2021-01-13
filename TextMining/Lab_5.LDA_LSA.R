@@ -5,13 +5,14 @@
 ### LDA, LSA, Text Clustering
 ###
 ### Leonard Mada
-### draft v.0.3e
+### draft v.0.3e-displ
 
 
 ### History
 
-### draft v.0.3e:
+### draft v.0.3e - v.0.3e-displ:
 # - improved text jittering;
+# - display articles in the cluster;
 ### draft v.0.3d:
 # - improved stemming of nouns;
 ### draft v.0.3c:
@@ -59,7 +60,6 @@ setwd(...)
 
 print.art = function(r, tlen=81, max=0) {
 	len = nchar(r)
-	tlen = 81;
 	part = len %/% tlen
 	id = (0:part)*tlen;
 	if(max > 0) {
@@ -68,6 +68,12 @@ print.art = function(r, tlen=81, max=0) {
 	s = sapply(id, function(id) substr(r, id + 1, id + tlen))
 	sapply(s, function(s) {cat(s); cat("\n");})
 	cat("\n")
+	invisible(s)
+}
+print.clArt = function(x, cl, maxCl=10, maxLen=3, tlen=81) {
+	art = x[cl];
+	art.seq = min(maxCl, length(art));
+	s = sapply(seq(art.seq), function(id) print.art(art[id], tlen=tlen, max=maxLen))
 	invisible(s)
 }
 jitter.txt = function(x, len=20, step=3, NOP=FALSE, rnd=FALSE, seed=1234) {
@@ -89,6 +95,7 @@ jitter.txt = function(x, len=20, step=3, NOP=FALSE, rnd=FALSE, seed=1234) {
 	x[isJitter] = paste0(x[isJitter], jt.txt)
 	return(x)
 }
+### Corpus
 corpus.f = function(corpus, ...) {
 	# TODO: implement as options;
 	x.corpus = corpus;
@@ -103,7 +110,8 @@ corpus.f = function(corpus, ...) {
 dtm.f = function(x) {
 	corpus <- VCorpus(VectorSource(x),
 	readerControl = list(language = 'english'))
-	# DTM
+	### DTM
+	# - IDF = Inverse Document Frequency;
 	dtm <- DocumentTermMatrix(corpus, control = list(
 		weighting = function(x) weightTfIdf(x, normalize = FALSE),
 		stopwords = c(stopwords("en"), stopWords)))
@@ -515,6 +523,9 @@ cl$centers[, 1:20]
 top.terms(cl)
 
 
+print.clArt(x[isFilter], cl$cluster == 1, maxCl=10)
+
+
 ################
 ### Hierarchical
 
@@ -533,4 +544,7 @@ k = 8
 rect.hclust(hc, k=k, border="red") # 3 major clusters;
 
 group_clust <- cutree(hc, k=k) # cut tree into k clusters
+table(group_clust)
+
+
 
