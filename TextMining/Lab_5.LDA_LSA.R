@@ -5,11 +5,13 @@
 ### LDA, LSA, Text Clustering
 ###
 ### Leonard Mada
-### draft v.0.3d
+### draft v.0.3e
 
 
 ### History
 
+### draft v.0.3e:
+# - improved text jittering;
 ### draft v.0.3d:
 # - improved stemming of nouns;
 ### draft v.0.3c:
@@ -68,21 +70,23 @@ print.art = function(r, tlen=81, max=0) {
 	cat("\n")
 	invisible(s)
 }
-jitter.txt = function(x, len=4, NOP=FALSE, rnd=FALSE, seed=1234) {
+jitter.txt = function(x, len=20, step=3, NOP=FALSE, rnd=FALSE, seed=1234) {
 	if(length(x) == 1) {
 		x = id = seq(x);
 	} else {
 		id = seq_along(x);
 	}
 	if(NOP) return(x);
+	id.len = length(id) - (length(id) %/% step)
 	if(rnd) {
 		set.seed(seed)
-		len = sample(1:len, length(id) %/% 2, replace=TRUE)
+		len = sample(1:len, id.len, replace=TRUE)
 		jt.txt = sapply(len, function(len) paste(rep(" ", len), sep="", collapse=""))
 	} else {
 		jt.txt = paste(rep(" ", len), sep="", collapse="")
 	}
-	x[id %% 2 == 0] = paste0(x[id %% 2 == 0], jt.txt)
+	isJitter = id %% step != 0;
+	x[isJitter] = paste0(x[isJitter], jt.txt)
 	return(x)
 }
 corpus.f = function(corpus, ...) {
@@ -480,7 +484,8 @@ head(find.nouns(dtm$dimnames$Terms, base="[a-z]d(?<!aid)"), 100)
 
 ### Section 2.B.)
 
-dtm = dtm.f(x[grepl("(?i)target", x)])
+isFilter = grepl("(?i)target", x)
+dtm = dtm.f(x[isFilter])
 dtm
 
 # len = length(dtm$dimnames$Terms)
@@ -516,13 +521,16 @@ top.terms(cl)
 # library(proxy)
 
 ### Complexity (O(n^2))
-distance <- dist(dtm_norm, method="cosine")
+distance <- dist(dtm.n, method="cosine")
 hc <- hclust(distance, method="average")
 
-plot(hc, labels=jitter.txt(length(x), rnd=T, len=10, seed=1))
+plot(hc, labels=jitter.txt(length(isFilter[isFilter]), rnd=T, len=10, seed=8))
 
-# draw dendogram with red borders around the 5 clusters 
-rect.hclust(hc, k=5, border="red") # 3 major clusters;
+### Clusters
+k = 8
 
-group_clust <- cutree(hc, k=5) # cut tree into 5 clusters
+# draw dendogram with red borders around the k clusters 
+rect.hclust(hc, k=k, border="red") # 3 major clusters;
+
+group_clust <- cutree(hc, k=k) # cut tree into k clusters
 
