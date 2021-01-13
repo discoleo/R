@@ -5,11 +5,13 @@
 ### LDA, LSA, Text Clustering
 ###
 ### Leonard Mada
-### draft v.0.3c
+### draft v.0.3d
 
 
 ### History
 
+### draft v.0.3d:
+# - improved stemming of nouns;
 ### draft v.0.3c:
 # - Clustering: top terms;
 ### draft v.0.3b:
@@ -145,6 +147,8 @@ clean.txt = function(x, rmBrackets=TRUE, rmPunctuation=TRUE) {
 }
 stem.txt = function(x) {
 	x = gsub("(?<=[rnltg]|[lt]e)s(?= |$)|(?<=to)es(?= |$)", "", x, perl=TRUE)
+	x = gsub("(?<=[a-z]{3}ce(?<!ice))s(?= |$)", "", x, perl=TRUE)
+	x = gsub("(?<=[a-z]{3}de(?<!ede|oide))s(?= |$)", "", x, perl=TRUE)
 	x = gsub("(?<=[a-z]ge)s(?= |$)", "", x, perl=TRUE) # fails: Georges
 	x = gsub("(?<=[f])ied(?= |$)", "y", x, perl=TRUE)
 	x = gsub("(?<=[tgdpfhlmns])ies(?= |$)", "y", x, perl=TRUE)
@@ -155,6 +159,8 @@ stem.txt = function(x) {
 	x = gsub("(?<=[Vv])accines", "accine", x, perl=TRUE)
 	x = gsub("scores", "score", x)
 	x = gsub("biotics", "biotic", x)
+	x = gsub("(?<=[a-z]{3}d(?<!aid))s(?= |$)", "", x, perl=TRUE) # exclude: (?i)AIDS
+	x = gsub("olds(?= |$)", "old", x, perl=TRUE)
 	x = gsub("areas(?= |$)", "area", x, perl=TRUE)
 	x = gsub("zones(?= |$)", "zone", x, perl=TRUE)
 	x = gsub("assays(?= |$)", "assay", x, perl=TRUE)
@@ -170,17 +176,29 @@ add.txt = function(x) {
 }
 stopWords = c("also", "although", "can", "may", "among", "respectively", "95%",
 	"due", "one", "two", "three", # TODO: DM
-	"showed", "found", "suggest", "whilst", "yet",
+	"showed", "found", "suggest", "whilst", "whereas", "yet",
 	"however", "thereby", "thereof", "therefore", "though")
 
 find.nextWord = function(x, s, next.reg=" ([^ ]+)", sort=TRUE, perl=TRUE, case.ignore=TRUE) {
 	case.txt = if(case.ignore) "(?i)" else "";
 	m = regexec(paste0(case.txt, s, next.reg, collapse=""), x, perl=perl)
 	m.txt = regmatches(x, m)
-	isM = sapply(regmatches(x, m), function(l) length(l) > 0)
+	isM = sapply(m.txt, function(l) length(l) > 0)
 	m.txt = sapply(m.txt[isM], function(txt) txt[2])
 	if(sort) m.txt = sort(m.txt)
 	return(m.txt)
+}
+find.nouns = function(x, noun.reg, base="[a-z]", sort=TRUE, case.ignore=FALSE) {
+	# plural of potential nouns (+ verbs ending in 's');
+	if(missing(noun.reg)) noun.reg = paste0(".(", base, ")s$")
+	case.txt = if(case.ignore) "(?i)" else "";
+	m = regexec(paste0(case.txt, noun.reg, collapse=""), x, perl=TRUE)
+	m.txt = regmatches(x, m)
+	isM = sapply(m.txt, function(l) length(l) > 0)
+	m.txt = sapply(m.txt[isM], function(txt) txt[2])
+	txt = cbind(m.txt, x[isM])
+	if(sort) txt = txt[order(txt[,1], txt[,2]) , ]
+	return(txt)
 }
 ### Clusters
 top.terms = function(cl, top=8) {
@@ -391,9 +409,7 @@ x = x[ ! isCorrect]
 corpus <- VCorpus(VectorSource(x),
 	readerControl = list(language = 'english'))
 
-# StopWords
-match(stopWords, stopwords("en"))
-
+### DTM: StopWords
 dtm <- DocumentTermMatrix(corpus, control = list(
 	weighting = function(x) weightTfIdf(x, normalize = FALSE),
 	stopwords = c(stopwords("en"), stopWords)))
@@ -448,6 +464,18 @@ table("Ch"=grepl("(?i)chaperon", x), "H"=grepl("(?i)Hsp", x))
 table(grepl("(?i)target", x))
 
 
+#################
+
+### Text Analysis
+
+# StopWords
+match(stopWords, stopwords("en"))
+
+head(find.nouns(dtm$dimnames$Terms), 100)
+
+head(find.nouns(dtm$dimnames$Terms, base="[a-z]d(?<!aid)"), 100)
+
+#################
 #################
 
 ### Section 2.B.)
