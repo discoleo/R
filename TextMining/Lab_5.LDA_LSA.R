@@ -1,14 +1,17 @@
 #########################
 ###
 ### Text Mining
-### Lab 5: LDA, LSA, Text Clustering
+### Project & Lab 5:
+### LDA, LSA, Text Clustering
 ###
 ### Leonard Mada
-### draft v.0.3b
+### draft v.0.3c
 
 
 ### History
 
+### draft v.0.3c:
+# - Clustering: top terms;
 ### draft v.0.3b:
 # - Clustering: Hierarchical;
 ### draft v.0.3a:
@@ -91,9 +94,42 @@ corpus.f = function(corpus, ...) {
 	x.corpus <- tm_map(x.corpus, PlainTextDocument)
 	return(x.corpus)
 }
+dtm.f = function(x) {
+	corpus <- VCorpus(VectorSource(x),
+	readerControl = list(language = 'english'))
+	# DTM
+	dtm <- DocumentTermMatrix(corpus, control = list(
+		weighting = function(x) weightTfIdf(x, normalize = FALSE),
+		stopwords = c(stopwords("en"), stopWords)))
+	dtm
+}
+### Post-Processing
+sparse.dtm = function(dtm, sparse=0.92, print=TRUE, print.n=100) {
+	# Remove sparse terms
+	dtm <- removeSparseTerms(dtm, sparse=sparse)
+	if(print) {
+		print(dtm)
+		print(head(dtm$dimnames$Terms, print.n))
+	}
+	dtm;
+}
+normalize.dtm = function(dtm) {
+	# Normalize
+	dtm.wgt <- weightTfIdf(dtm)
+	dtm.m <- as.matrix(dtm.wgt)
+	rownames(dtm.m) <- 1:nrow(dtm.m)
+	# Term Normalization
+	normalise_dtm <- function(y) {
+		y / apply(y, MARGIN=1, FUN=function(k) sum(k^2)^.5)
+	}
+	dtm_norm <- normalise_dtm(dtm.m)
+}
+### Text
 clean.txt = function(x, rmBrackets=TRUE, rmPunctuation=TRUE) {
+	x = gsub("&amp;", "&", x)
 	x = gsub("&gt;", " > ", x)
 	x = gsub("&lt;", " < ", x)
+	x = gsub("&#039;", "'", x)
 	x = gsub("[\r\n\t \uA0]+", " ", x)
 	x = gsub("P[.]?(?= falc| vivax)", "Plasmodium", x, perl=TRUE)
 	x = gsub("'s(?=[ .)])", "", x, perl=TRUE)
@@ -101,6 +137,7 @@ clean.txt = function(x, rmBrackets=TRUE, rmPunctuation=TRUE) {
 	x = gsub("(?<=[ (])'", "", x, perl=TRUE)
 	x = gsub("(?<=[0-9])-(?=[0-9])", " ", x, perl=TRUE)
 	x = gsub("\"", "", x)
+	x = gsub("\\: ", " : ", x)
 	x = gsub("\\$(?=[0-9])", " $NN $", x, perl=TRUE)
 	if(rmBrackets) x = gsub("[()]", "", x)
 	if(rmPunctuation) x = gsub("[,.;](?= |$)", "", x, perl=TRUE)
@@ -108,14 +145,20 @@ clean.txt = function(x, rmBrackets=TRUE, rmPunctuation=TRUE) {
 }
 stem.txt = function(x) {
 	x = gsub("(?<=[rnltg]|[lt]e)s(?= |$)|(?<=to)es(?= |$)", "", x, perl=TRUE)
+	x = gsub("(?<=[a-z]ge)s(?= |$)", "", x, perl=TRUE) # fails: Georges
 	x = gsub("(?<=[f])ied(?= |$)", "y", x, perl=TRUE)
 	x = gsub("(?<=[tgdpfhlmns])ies(?= |$)", "y", x, perl=TRUE)
-	x = gsub("(?<!fa|spe)cies(?= |$)", "cy", x, perl=TRUE)
+	x = gsub("(?<!fa|[sS]pe)cies(?= |$)", "cy", x, perl=TRUE)
 	x = gsub("(?<!se|ca)ries(?= |$)", "ry", x, perl=TRUE)
+	x = gsub("(?<=rm)s(?= |$)", "", x, perl=TRUE) # {farms, terms}; could fail: HRMS
 	x = gsub("diseases", "disease", x)
-	x = gsub("vaccines", "vaccine", x)
+	x = gsub("(?<=[Vv])accines", "accine", x, perl=TRUE)
+	x = gsub("scores", "score", x)
+	x = gsub("biotics", "biotic", x)
 	x = gsub("areas(?= |$)", "area", x, perl=TRUE)
+	x = gsub("zones(?= |$)", "zone", x, perl=TRUE)
 	x = gsub("assays(?= |$)", "assay", x, perl=TRUE)
+	x = gsub("(?<=nd)s(?= |$)", "", x, perl=TRUE) # fails: NLs, keep "seconds";
 	x = gsub("RDTs(?= |$)", "RDT", x, perl=TRUE)
 	x = gsub("genes(?= |$)", "gene genes", x, perl=TRUE) # keep plural;
 	x = gsub("enzymes(?= |$)", "enzyme enzymes", x, perl=TRUE) # keep plural;
@@ -127,18 +170,32 @@ add.txt = function(x) {
 }
 stopWords = c("also", "although", "can", "may", "among", "respectively", "95%",
 	"due", "one", "two", "three", # TODO: DM
-	"showed", "found", "suggest")
+	"showed", "found", "suggest", "whilst", "yet",
+	"however", "thereby", "thereof", "therefore", "though")
 
-find.nextWord = function(x, s, sort=TRUE, perl=TRUE) {
-	m = regexec(paste0(s, " ([^ ]+)", collapse=""), x, perl=perl)
+find.nextWord = function(x, s, next.reg=" ([^ ]+)", sort=TRUE, perl=TRUE, case.ignore=TRUE) {
+	case.txt = if(case.ignore) "(?i)" else "";
+	m = regexec(paste0(case.txt, s, next.reg, collapse=""), x, perl=perl)
 	m.txt = regmatches(x, m)
 	isM = sapply(regmatches(x, m), function(l) length(l) > 0)
 	m.txt = sapply(m.txt[isM], function(txt) txt[2])
 	if(sort) m.txt = sort(m.txt)
 	return(m.txt)
 }
+### Clusters
+top.terms = function(cl, top=8) {
+	ord = apply(cl$centers, 1, function(w) tail(order(w), top))
+	ord = apply(ord, 2, rev) # top: most important term;
+	m = attr(cl$centers, "dimnames")[[2]][ord]
+	matrix(m, nrow=top)
+}
 
 #################
+
+#################
+### Section 1 ###
+#################
+
 
 ############
 ### Data ###
@@ -149,11 +206,12 @@ size = 100; # 100; 500
 s.id = sample(seq_along(r), size=size, replace=FALSE)
 
 textdata = r[s.id]
-textdata = clean.text(textdata)
+textdata = clean.txt(textdata)
 
 # Abbreviations
 table(grepl(" A[.]", r))
 table(grepl(" [B-OQ-Z][.]", r))
+table(find.nextWord(x, "", "([a-z]{1,20}ges) "))
 
 print.art(textdata[grepl("[AB-OQ-Z][.]", textdata)][1])
 
@@ -182,7 +240,8 @@ wordStemmer = function(x, language = 'english') {
 
 control <- list(bounds = list(local = c(1, Inf)),
 	language = 'english', tolower = TRUE,
-	removeNumbers = TRUE, removePunctuation = TRUE, stopwords = TRUE, stripWhitespace = TRUE,
+	removeNumbers = TRUE, removePunctuation = TRUE, stripWhitespace = TRUE,
+	stopwords = TRUE,
 	stemming = TRUE, wordLengths = c(3,20), weighting = weightTf)
 
 # DocumentTermMatrix != TermDocumentMatrix
@@ -297,16 +356,23 @@ print.art(r[949], max=10)
 ########################
 ########################
 
+#################
+### Section 2 ###
+#################
+
+
 ##################
 ### Clustering ###
 ##################
+
+### Data
 
 x = read.csv("Malaria.Abstracts.csv", stringsAsFactor=F)
 x = x[,1]
 
 x = clean.txt(x)
 x = stem.txt(x)
-x = add.text(x)
+x = add.txt(x)
 print.art(x[1], max=20)
 
 # TODO: lowercase;
@@ -315,6 +381,11 @@ print.art(x[1], max=20)
 isCorrect = grepl("^\\[This correct", x)
 sum(isCorrect)
 x = x[ ! isCorrect]
+
+
+###################
+
+### Section 2.A.)
 
 ### Corpus
 corpus <- VCorpus(VectorSource(x),
@@ -330,25 +401,20 @@ dtm
 dtm$dimnames$Terms[1:100]
 # dtm$dimnames$Terms[grepl("ies$", dtm$dimnames$Terms)]
 
+
+### Post-Processing
+
 # Remove sparse terms
-dtm <- removeSparseTerms(dtm, sparse=0.92)
-dtm
-dtm$dimnames$Terms[1:100]
+dtm <- sparse.dtm(dtm, 0.92)
 
-dtm_tx <- weightTfIdf(dtm)
-mat_dtm <- as.matrix(dtm_tx)
-rownames(mat_dtm) <- 1:nrow(mat_dtm)
-
-# Term Normalization
-normalise_dtm <- function(y) y/apply(y, MARGIN=1,
-	FUN=function(k) sum(k^2)^.5)
-dtm_norm <- normalise_dtm(mat_dtm)
+# Normalize
+dtm.n = normalize.dtm(dtm)
 
 ##################
 ### Clustering ###
 
 ### K-Means
-cl <- kmeans(dtm_norm, 8)
+cl <- kmeans(dtm.n, 8)
 str(cl)
 
 # Check the number of objects in each cluster
@@ -365,6 +431,55 @@ head(cl$withinss)
 table(find.nextWord(x, "based"))
 table(find.nextWord(x, "gene"))
 table(find.nextWord(x, "(?= [^ ]+ 86Y)"))
+
+
+table(grepl("(?i)Anophele|Cul(?:ex|icidae)", x))
+
+table(grepl("(?i)urban|city|rural|region", x))
+table(grepl("(?i)river|estuary", x))
+
+table(grepl("(?i)reservoir", x))
+
+table(grepl("(?i)18S", x))
+table("R"=grepl("(?i)ribosom", x), "S"=grepl("(?i)18S", x))
+# print.art(x[grepl("(?i)S18", x)][1])
+table(grepl("(?i)Hsp", x))
+table("Ch"=grepl("(?i)chaperon", x), "H"=grepl("(?i)Hsp", x))
+table(grepl("(?i)target", x))
+
+
+#################
+
+### Section 2.B.)
+
+dtm = dtm.f(x[grepl("(?i)target", x)])
+dtm
+
+# len = length(dtm$dimnames$Terms)
+tail(dtm$dimnames$Terms, 200)
+
+### Sparse
+dtm = sparse.dtm(dtm, 0.93)
+
+### Normalize
+dtm.n = normalize.dtm(dtm)
+
+##################
+### Clustering ###
+
+### K-Means
+cl <- kmeans(dtm.n, 8)
+str(cl)
+
+# Check the number of objects in each cluster
+table(cl$cluster)
+
+# check the center of each clusters
+cl$centers[, 1:20]
+
+### Topics
+# top terms defining the topics/clusters
+top.terms(cl)
 
 
 ################
