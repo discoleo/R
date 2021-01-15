@@ -7,7 +7,7 @@
 ### Polynomial Systems: S3
 ### Heterogenous Symmetric
 ###
-### draft v.0.3b-P2ext
+### draft v.0.3c
 
 
 ### Hetero-Symmetric
@@ -23,6 +23,8 @@ z^n + P(z, x, y) = R
 ###############
 ### History ###
 
+### draft v.0.3c:
+# - solved: x^2 + y^2 + b1*y = R;
 ### draft v.0.3b - v.0.3b-P2ext:
 # - solved: x^3 + b*y*z = R;
 # - reordering of sections & better comments; [v.0.3b-ord]
@@ -234,6 +236,12 @@ S^4 + 2*b1*S^3 - (10*R + b1^2)*S^2 + 6*(b1*R + b1^3)*S - 18*b1^2*R + 9*R^2
 - R*b[1]^4 + 2*R^2*b[1]^2 - R^3 + b[1]^6 + (2*R*b[1]^3 - R^2*b[1] - b[1]^5)*x + (3*R^2 - 3*R*b[1]^2 + b[1]^4)*x^2 +
 	+ (2*R*b[1] - b[1]^3)*x^3 - (3*R - b[1]^2)*x^4 - b[1]*x^5 + x^6
 
+### Classic Polynomial: Shifted
+# b10 = b1 / 6; x0 = x - b1;
+(- 963*R*b1^4 + 69*R^2*b1^2 - R^3 + 39991*b1^6) +
+	(240*R*b1^3 - 5712*b1^5)*x + (- 90*R*b1^2 + 3*R^2 + 819*b1^4)*x^2 +
+	(- 112*b1^3)*x^3 + (- 3*R + 21*b1^2)*x^4 + x^6
+
 
 ### Solution:
 solve.sysHt32 = function(R, b, doPrint=TRUE) {
@@ -362,6 +370,7 @@ round0(err)
 
 
 ##################
+##################
 
 ### Shifted roots:
 ### x[i]^2 + s*x[i] + b*x[i+1]
@@ -374,9 +383,9 @@ round0(err)
 
 ### Fast Solution:
 # - shift all roots "back" & use solution to simple system: x^2 + b1*y = R;
-# (x + s/2)^2 + b1*(y + s/2) = R + s^2/4 + b1*s/2
-# (y + s/2)^2 + b1*(z + s/2) = R + s^2/4 + b1*s/2
-# (z + s/2)^2 + b1*(x + s/2) = R + s^2/4 + b1*s/2
+(x + s/2)^2 + b1*(y + s/2) = R + s^2/4 + b1*s/2
+(y + s/2)^2 + b1*(z + s/2) = R + s^2/4 + b1*s/2
+(z + s/2)^2 + b1*(x + s/2) = R + s^2/4 + b1*s/2
 
 # Trivial solution: x = y = z;
 
@@ -782,7 +791,7 @@ S = (x+y+z); E2 = x*(y+z) + y*z; E3 = x*y*z;
 ### Solution:
 
 ### Sum =>
-# S^2 - 2*E2 + (b1+b2)*S = 3*R
+S^2 - 2*E2 + (b1+b2)*S - 3*R # = 0
 # E2 = (S^2 + (b1+b2)*S - 3*R)/2;
 
 ### Sum(x[i]*P[i]) =>
@@ -1073,8 +1082,8 @@ z^2 + s*z + b[3]*x*y*z + b[2]*x + b[1]*y
 ### Solution:
 
 ### Sum =>
-# (x^3 + y^3 + z^3) + (b1+b2)*S - 3*R = 0
-# S^3 - 3*E2*S + 3*E3 + (b1+b2)*S - 3*R = 0
+(x^3 + y^3 + z^3) + (b1+b2)*S - 3*R # = 0
+S^3 - 3*E2*S + 3*E3 + (b1+b2)*S - 3*R # = 0
 # 3*E3 = -(S^3 - 3*E2*S + (b1+b2)*S - 3*R)
 
 ### Sum(x[i]*P(x)) =>
@@ -1084,6 +1093,7 @@ z^2 + s*z + b[3]*x*y*z + b[2]*x + b[1]*y
 ### Eq 3:
 # (x^3 + b1*y + b1*z)^2 = (R + b1*z - b2*z)^2
 
+### TODO
 
 ### Test
 x^3 + b[1]*y + b[2]*z
@@ -1096,7 +1106,108 @@ z^3 + b[1]*x + b[2]*y
 #########################
 #########################
 
-### High-Power Terms: > 1
+##########################
+### 2 High-Power Terms ###
+##########################
+
+### x[i]^2 + x[j]^2 + b*x[j]
+
+# x^2 + y^2 + b1*y = R
+# y^2 + z^2 + b1*z = R
+# z^2 + x^2 + b1*x = R
+
+### Solution
+
+### Sum =>
+2*(x^2 + y^2 + z^2) + b1*(x+y+z) - 3*R # = 0
+2*S^2 - 4*E2 + b1*S - 3*R
+# 4*E2 = 2*S^2 + b1*S - 3*R;
+
+### Sum(z*...) =>
+x^2*z+y^2*z + y^2*x+z^2*x + x^2*y+z^2*y + b1*E2 - R*S # = 0
+E2*S - 3*E3 + b1*E2 - R*S # = 0
+
+### Diff =>
+# x^2 - z^2 = -b1*(y - z)
+# Note: excludes x == y == z;
+### Prod =>
+(x+y)*(x+z)*(y+z) - b1^3 # = 0
+x^2*z+y^2*z + y^2*x+z^2*x + x^2*y+z^2*y + 2*x*y*z - b1^3 # = 0
+E2*S - E3 - b1^3 # = 0
+# E3 = E2*S - b1^3
+
+### =>
+E2*S - 3*E3 + b1*E2 - R*S # = 0
+8*E2*S - 4*b1*E2 + 4*R*S - 12*b1^3 # = 0
+2*(2*S^2 + b1*S - 3*R)*S - b1*(2*S^2 + b1*S - 3*R) + 4*R*S - 12*b1^3 # = 0
+4*S^3 - (2*R + b1^2)*S - 12*b1^3 + 3*b1*R # = 0
+### Eq:
+(2*S - 3*b1)*(2*S^2 + 3*b1*S + 4*b1^2 - R)
+
+### Alternatives:
+### Redundant:
+# Sum((x+y)*...), Sum(y*z*...);
+
+### Alternative Eq:
+# Sum(y^2*...) =>
+(x^2*y^2+y^2*z^2+z^2*x^2) + (x^4+y^4+z^4) + b1*(x^3+y^3+z^3) - R*(x^2+y^2+z^2) # = 0
+
+
+### Solver:
+
+solve.2H.S3P2 = function(R, b) {
+	# coeff = c(4, 0, - (2*R[1] + b[1]^2), -12*b[1]^3 + 3*b[1]*R[1])
+	coeff = c(2, 3*b[1], 4*b[1]^2 - R[1])
+	S = round0(roots(coeff)) # numerical stability
+	print(S)
+	R1 = R[1];
+	E2 = (2*S^2 + b[1]*S - 3*R1) / 4
+	E3 = E2*S - b[1]^3;
+	#
+	len = length(S)
+	x = sapply(seq(len), function(id) roots(c(1, -S[id], E2[id], -E3[id])))
+	### fast prototype
+	# max.perm=0; sol = solve.EnAll(x, max.perm=max.perm, n=3)
+	### robust
+	S  = matrix(S, ncol=len, nrow=3, byrow=T)
+	E3 = matrix(E3, ncol=len, nrow=3, byrow=T)
+	yz.s = S - x; yz = E3 / x;
+	y = 2*(R - x^2) - b[1]*x - yz.s^2 + 2*yz;
+	y = y / b[1];
+	z = yz.s - y;
+	sol = cbind(x=as.vector(x), y=as.vector(y), z=as.vector(z))
+	return(sol)
+}
+
+### Examples:
+
+R = -2
+b = 4
+sol = solve.2H.S3P2(R, b)
+x = sol[,1]; y = sol[,2]; z = sol[,3];
+
+### Test
+x^2 + y^2 + b[1]*y # - R
+y^2 + z^2 + b[1]*z # - R
+z^2 + x^2 + b[1]*x # - R
+
+### Classic Polynomial
+round0.p(poly.calc(x))
+# TODO
+
+
+### Debug
+R = 2
+b = 3
+x = -3.0643873807 + 0.5677216544i
+y = -0.7500000000 + 2.3196254315i
+z =  1.5643873807 + 0.5677216544i
+S = x+y+z; E2 = x*(y+z)+y*z; E3 = x*y*z;
+
+
+#########################
+
+### Variant:
 
 ### x[i]^2 + x[j]^2 + b*(x[i] + x[j])
 
