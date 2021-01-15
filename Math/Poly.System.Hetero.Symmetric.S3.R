@@ -7,7 +7,7 @@
 ### Polynomial Systems: S3
 ### Heterogenous Symmetric
 ###
-### draft v.0.3c
+### draft v.0.3c-ext
 
 
 ### Hetero-Symmetric
@@ -22,9 +22,11 @@ z^n + P(z, x, y) = R
 
 ###############
 ### History ###
+###############
 
-### draft v.0.3c:
+### draft v.0.3c - v.0.3c-ext:
 # - solved: x^2 + y^2 + b1*y = R;
+# - added extensions of type A1; [v.0.3c-ext]
 ### draft v.0.3b - v.0.3b-P2ext:
 # - solved: x^3 + b*y*z = R;
 # - reordering of sections & better comments; [v.0.3b-ord]
@@ -1146,7 +1148,7 @@ E2*S - 3*E3 + b1*E2 - R*S # = 0
 
 ### Alternatives:
 ### Redundant:
-# Sum((x+y)*...), Sum(y*z*...);
+# Sum((x+y)*...), Sum(x*y*...);
 
 ### Alternative Eq:
 # Sum(y^2*...) =>
@@ -1155,12 +1157,15 @@ E2*S - 3*E3 + b1*E2 - R*S # = 0
 
 ### Solver:
 
-solve.2H.S3P2 = function(R, b) {
+solve.2H.S3P2 = function(R, b, b.ext=0) {
+	be1 = b.ext[1];
+	be2 = if(length(b.ext) < 2) 0 else b.ext[2];
 	# coeff = c(4, 0, - (2*R[1] + b[1]^2), -12*b[1]^3 + 3*b[1]*R[1])
 	coeff = c(2, 3*b[1], 4*b[1]^2 - R[1])
+	coeff = coeff + c(be2, be1, 0)
 	S = round0(roots(coeff)) # numerical stability
 	print(S)
-	R1 = R[1];
+	R1 = R[1] - be1*S - be2*S^2;
 	E2 = (2*S^2 + b[1]*S - 3*R1) / 4
 	E3 = E2*S - b[1]^3;
 	#
@@ -1171,8 +1176,9 @@ solve.2H.S3P2 = function(R, b) {
 	### robust
 	S  = matrix(S, ncol=len, nrow=3, byrow=T)
 	E3 = matrix(E3, ncol=len, nrow=3, byrow=T)
+	R1 = matrix(R1, ncol=len, nrow=3, byrow=T)
 	yz.s = S - x; yz = E3 / x;
-	y = 2*(R - x^2) - b[1]*x - yz.s^2 + 2*yz;
+	y = 2*(R1 - x^2) - b[1]*x - yz.s^2 + 2*yz;
 	y = y / b[1];
 	z = yz.s - y;
 	sol = cbind(x=as.vector(x), y=as.vector(y), z=as.vector(z))
@@ -1194,6 +1200,45 @@ z^2 + x^2 + b[1]*x # - R
 ### Classic Polynomial
 round0.p(poly.calc(x))
 # TODO
+
+
+### Extensions:
+
+R = -2;
+b = 1;
+b.ext = c(1)
+#
+sol = solve.2H.S3P2(R, b, b.ext=b.ext)
+x = sol[,1]; y = sol[,2]; z = sol[,3];
+
+### Test
+x^2 + y^2 + b[1]*y + b.ext[1]*(x+y+z) # - R
+y^2 + z^2 + b[1]*z + b.ext[1]*(x+y+z) # - R
+z^2 + x^2 + b[1]*x + b.ext[1]*(x+y+z) # - R
+
+### Classic Polynomial
+round0.p(poly.calc(x))
+err = 1 + 2*x^2 + 2*x^3 + 3*x^4 + 2*x^5 + x^6
+round0(err)
+
+
+### Ext 2:
+R = 1;
+b = 1;
+b.ext = c(0, 1)
+#
+sol = solve.2H.S3P2(R, b, b.ext=b.ext)
+x = sol[,1]; y = sol[,2]; z = sol[,3];
+
+### Test
+x^2 + y^2 + b[1]*y + b.ext[1]*(x+y+z) + b.ext[2]*(x+y+z)^2 # - R
+y^2 + z^2 + b[1]*z + b.ext[1]*(x+y+z) + b.ext[2]*(x+y+z)^2 # - R
+z^2 + x^2 + b[1]*x + b.ext[1]*(x+y+z) + b.ext[2]*(x+y+z)^2 # - R
+
+### Classic Polynomial
+round0.p(poly.calc(x))
+err = 1 + x^2 - x^3 - 2*x^4 + x^5 + x^6
+round0(err)
 
 
 ### Debug
