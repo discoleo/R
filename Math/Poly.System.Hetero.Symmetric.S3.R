@@ -7,7 +7,7 @@
 ### Polynomial Systems: S3
 ### Heterogenous Symmetric
 ###
-### draft v.0.3c-poly
+### draft v.0.3c-poly-fix
 
 
 ### Hetero-Symmetric
@@ -24,10 +24,10 @@ z^n + P(z, x, y) = R
 ### History ###
 ###############
 
-### draft v.0.3c - v.0.3c-poly:
+### draft v.0.3c - v.0.3c-poly-fix:
 # - solved: x^2 + y^2 + b1*y = R;
 # - added extensions of type A1; [v.0.3c-ext]
-# - added classical polynomial: P[6]; [v.0.3c-poly]
+# - added classical polynomial: P[6]; [v.0.3c-poly & fixed minor bug]
 ### draft v.0.3b - v.0.3b-P2ext:
 # - solved: x^3 + b*y*z = R;
 # - reordering of sections & better comments; [v.0.3b-ord]
@@ -1199,7 +1199,7 @@ poly.2H.S3P2 = function(R, b, b.ext=0, max.leading=FALSE) {
 			- 2*b1^3*b3*R + 5*b1^5*b3 + 2*b1^2*b2*b3*R - 6*b1^4*b2*b3 - 7*b1^3*b2^2*b3 - 2*b1^3*b3^2*R +
 			5*b1^5*b3^2 + 11*b1^4*b2*b3^2 - 6*b1^5*b3^3),
 		(-R^3 + 2*b1^2*R^2 + 3*b1^4*R + b1^6 - 2*b1*b2*R^2 + 4*b1^3*b2*R + b1^5*b2 - 3*b1^2*b2^2*R + 7*b1^4*b2^2 +
-			- b1^3*b2^3 - 2*b1^2*b3*R^2 + 5*b1^4*b3 + 6*b1^6*b3 + 3*b1^3*b2*b3*R - 12*b1^5*b2*b3 +
+			- b1^3*b2^3 - 2*b1^2*b3*R^2 + 5*b1^4*b3*R + 6*b1^6*b3 + 3*b1^3*b2*b3*R - 12*b1^5*b2*b3 +
 			2*b1^4*b2^2*b3 - 5*b1^4*b3^2*R + 17*b1^6*b3^2 - 3*b1^5*b2*b3^2 + b1^6*b3^3))
 	if(max.leading) coeff else rev(coeff);
 }
@@ -1261,7 +1261,7 @@ poly.2H.S3P2(R, b, b.ext)
 err = 1 + x^2 - x^3 - 2*x^4 + x^5 + x^6
 round0(err)
 
-### Ext 2 ex 2:
+### Ext 2 Ex 2:
 R = 1;
 b = 2;
 b.ext = c(1, -1)
