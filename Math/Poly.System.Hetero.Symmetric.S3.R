@@ -7,7 +7,7 @@
 ### Polynomial Systems: S3
 ### Heterogenous Symmetric
 ###
-### draft v.0.3d
+### draft v.0.3d-simple
 
 
 ### Hetero-Symmetric
@@ -24,9 +24,10 @@ z^n + P(z, x, y) = R
 ### History ###
 ###############
 
-### draft v.0.3d:
+### draft v.0.3d - v.0.3d-simpl:
 # - solved: x*y + b*y = R;
 # - Note: only A1-type extensions have distinct solutions;
+# - simplification of the correct solution (for A1-extensions);
 ### draft v.0.3c - v.0.3c-poly-shift:
 # - solved: x^2 + y^2 + b1*y = R;
 # - added Extensions of type A1; [v.0.3c-ext]
@@ -1728,7 +1729,9 @@ E2 + b1*S - 3*R # = 0
 ### Eq:
 b1*E2 + b1^2*S - 3*b1*R # = 0
 R*S - 3*E3 + b1^2*S - 3*b1*R # = 0
-(R + b1^2)*S - 3*b1^3 - 3*b1*R # = 0
+(R + b1^2)*S - 3*b1*(b1^2 + R) # = 0
+S = 3*b1; # is a FALSE solution;
+
 
 ### Solver:
 
@@ -1739,9 +1742,10 @@ solve.CHP.S3P1 = function(R, b, b.ext=0, debug=TRUE) {
 		stop("NO solutions: x != y != z")
 		S = 3*b[1];
 	} else {
-		S = roots(c(-be2, 3*b[1]*be2 - be1, R + b[1]^2 + 3*b[1]*be1, -3*b[1]^3 - 3*b[1]*R))
-		isWrong = round0(S - 3*b[1]) == 0
-		S = S[ ! isWrong]
+		# S = roots(c(-be2, 3*b[1]*be2 - be1, R + b[1]^2 + 3*b[1]*be1, -3*b[1]^3 - 3*b[1]*R))
+		# isWrong = round0(S - 3*b[1]) == 0
+		# S = S[ ! isWrong]
+		S = roots(c(be2, be1, -R[1] - b[1]^2))
 	}
 	if(debug) print(S);
 	R1 = R[1] - be1*S - be2*S^2;
