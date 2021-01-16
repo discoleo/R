@@ -7,7 +7,7 @@
 ### Polynomial Systems: S3
 ### Heterogenous Symmetric
 ###
-### draft v.0.3c-poly-fix
+### draft v.0.3c-poly2
 
 
 ### Hetero-Symmetric
@@ -24,10 +24,12 @@ z^n + P(z, x, y) = R
 ### History ###
 ###############
 
-### draft v.0.3c - v.0.3c-poly-fix:
+### draft v.0.3c - v.0.3c-poly2:
 # - solved: x^2 + y^2 + b1*y = R;
-# - added extensions of type A1; [v.0.3c-ext]
-# - added classical polynomial: P[6]; [v.0.3c-poly & fixed minor bug]
+# - added Extensions of type A1; [v.0.3c-ext]
+# - added Classical polynomial: P[6]; [v.0.3c-poly & fixed minor bug]
+# - special Case P[6]: b.ext[2] = -3;
+#   e.g. 11 + 2*x + 5*x^2 - 2*x^3 + x^6 = 0;
 ### draft v.0.3b - v.0.3b-P2ext:
 # - solved: x^3 + b*y*z = R;
 # - reordering of sections & better comments; [v.0.3b-ord]
@@ -1261,6 +1263,7 @@ poly.2H.S3P2(R, b, b.ext)
 err = 1 + x^2 - x^3 - 2*x^4 + x^5 + x^6
 round0(err)
 
+
 ### Ext 2 Ex 2:
 R = 1;
 b = 2;
@@ -1279,6 +1282,39 @@ round0.p(poly.calc(x))
 poly.2H.S3P2(R, b, b.ext)
 err = 991 + 447*x - 88*x^2 - 89*x^3 + 7*x^5 + x^6
 round0(err)
+
+
+### Ext 2 Ex 3:
+R = 6;
+b = -1;
+b.ext = c(3, -3)
+#
+sol = solve.2H.S3P2(R, b, b.ext=b.ext)
+x = sol[,1]; y = sol[,2]; z = sol[,3];
+
+### Test
+x^2 + y^2 + b[1]*y + b.ext[1]*(x+y+z) + b.ext[2]*(x+y+z)^2 # - R
+y^2 + z^2 + b[1]*z + b.ext[1]*(x+y+z) + b.ext[2]*(x+y+z)^2 # - R
+z^2 + x^2 + b[1]*x + b.ext[1]*(x+y+z) + b.ext[2]*(x+y+z)^2 # - R
+
+### Classic Polynomial
+round0.p(poly.calc(x))
+poly.2H.S3P2(R, b, b.ext)
+err = 11 + 2*x + 5*x^2 - 2*x^3 + x^6
+round0(err)
+
+
+### Special Cases:
+### b.ext[2] = -3
+b1 = b[1]; b2 = b.ext[1]; b3 = b.ext[2];
+(3*R*b1^2*b2^2 + 5*R*b1^3*b2 + 57*R*b1^4 + 2*R^2*b1*b2 - 8*R^2*b1^2 + R^3 + b1^3*b2^3 +
+		- b1^4*b2^2 - 10*b1^5*b2 - 109*b1^6) +
+	(- 2*R*b1*b2^2 - 2*R*b1^2*b2 + 14*R*b1^3 - 3*R^2*b1 - R^2*b2 - 3*b1^2*b2^3 - 26*b1^3*b2^2 +
+		- 110*b1^4*b2 - 191*b1^5)*x +
+	(- 6*R*b1*b2 - 41*R*b1^2 - R*b2^2 + 3*R^2 + 7*b1^2*b2^2 + 47*b1^3*b2 + 167*b1^4)*x^2 +
+	(- 6*R*b1 - 2*R*b2 + 11*b1*b2^2 + 53*b1^2*b2 + 89*b1^3 + b2^3)*x^3 +
+	(3*R - 8*b1*b2 - 33*b1^2 - b2^2)*x^4 +
+	- (3*b1 + b2)*x^5 + x^6
 
 
 ### Debug
