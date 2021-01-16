@@ -7,7 +7,7 @@
 ### Polynomial Systems: S3
 ### Heterogenous Symmetric
 ###
-### draft v.0.3c-poly2
+### draft v.0.3c-poly-shift
 
 
 ### Hetero-Symmetric
@@ -24,12 +24,13 @@ z^n + P(z, x, y) = R
 ### History ###
 ###############
 
-### draft v.0.3c - v.0.3c-poly2:
+### draft v.0.3c - v.0.3c-poly-shift:
 # - solved: x^2 + y^2 + b1*y = R;
 # - added Extensions of type A1; [v.0.3c-ext]
 # - added Classical polynomial: P[6]; [v.0.3c-poly & fixed minor bug]
 # - special Case P[6]: b.ext[2] = -3;
 #   e.g. 11 + 2*x + 5*x^2 - 2*x^3 + x^6 = 0;
+# - special Case with shifted P[6]: b5 = 0;
 ### draft v.0.3b - v.0.3b-P2ext:
 # - solved: x^3 + b*y*z = R;
 # - reordering of sections & better comments; [v.0.3b-ord]
@@ -1315,6 +1316,17 @@ b1 = b[1]; b2 = b.ext[1]; b3 = b.ext[2];
 	(- 6*R*b1 - 2*R*b2 + 11*b1*b2^2 + 53*b1^2*b2 + 89*b1^3 + b2^3)*x^3 +
 	(3*R - 8*b1*b2 - 33*b1^2 - b2^2)*x^4 +
 	- (3*b1 + b2)*x^5 + x^6
+### shifted
+b1 = b[1] / 2; b2 = b.ext[1] / 6; x = x - b1 - b2;
+(- 324*R*b1*b2^3 - 158*R*b1^2*b2^2 - 132*R*b1^3*b2 + 851*R*b1^4 - 45*R*b2^4 + 18*R^2*b1*b2 +
+		- 35*R^2*b1^2 - 3*R^2*b2^2 + R^3 + 1170*b1*b2^5 + 1905*b1^2*b2^4 + 1692*b1^3*b2^3 +
+		- 4975*b1^4*b2^2 - 8238*b1^5*b2 - 9841*b1^6 + 175*b2^6) +
+	16*(- 27*R*b1*b2^2 - 37*R*b1^2*b2 - 15*R*b1^3 - 6*R*b2^3 + 171*b1*b2^4 + 393*b1^2*b2^3 +
+		504*b1^3*b2^2 + 331*b1^4*b2 + 51*b1^5 + 30*b2^5)*x + # (2*b2 - 3*b1)*(...)
+	(- 108*R*b1*b2 - 182*R*b1^2 - 54*R*b2^2 + 3*R^2 + 1836*b1*b2^3 + 4770*b1^2*b2^2 +
+		5868*b1^3*b2 + 3971*b1^4 + 387*b2^4)*x^2 +
+	16*(9*b1*b2^2 + 15*b1^2*b2 + 9*b1^3 + 2*b2^3)*x^3 + # (2*b2 - 3*b1)*(...)
+	3*(R - 42*b1*b2 - 49*b1^2 - 17*b2^2)*x^4 + x^6
 
 
 ### Debug
