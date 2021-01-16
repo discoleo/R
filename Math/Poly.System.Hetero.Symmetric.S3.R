@@ -7,7 +7,7 @@
 ### Polynomial Systems: S3
 ### Heterogenous Symmetric
 ###
-### draft v.0.3c-poly-shift
+### draft v.0.3d
 
 
 ### Hetero-Symmetric
@@ -24,6 +24,9 @@ z^n + P(z, x, y) = R
 ### History ###
 ###############
 
+### draft v.0.3d:
+# - solved: x*y + b*y = R;
+# - Note: only A1-type extensions have distinct solutions;
 ### draft v.0.3c - v.0.3c-poly-shift:
 # - solved: x^2 + y^2 + b1*y = R;
 # - added Extensions of type A1; [v.0.3c-ext]
@@ -1386,6 +1389,7 @@ x^2 + z^2 + b[1]*(x+z)
 ########################
 
 ### High-Power Terms: > 1
+### Variant
 
 ### x[i]^2 + x[j]^2 + b*x[k]
 
@@ -1433,7 +1437,7 @@ x^2 + z^2 + b[1]*y
 
 ### Problems:
 # - Difference works well for systems with 2 variables;
-# - but it does NOT work well in systems with 3 variables;
+# - but it does NOT work well in systems with 3 variables (and higher power);
 
 ###############
 ### Order 3 ###
@@ -1689,6 +1693,109 @@ z^3 + b[1]*(x+y)
 
 
 #######################
+#######################
+
+######################
+### X*Y High Power ###
+######################
+
+### x*y + b*y = R
+
+# x*y + b1*y = R
+# y*z + b1*z = R
+# z*x + b1*x = R
+
+### Solution:
+
+### Note:
+# - simple system: has NO solutions x != y != z;
+# - type A extensions: have such solutions;
+
+### Sum =>
+E2 + b1*S - 3*R # = 0
+
+### Sum(z*...) =>
+3*E3 + b1*E2 - R*S # = 0
+# b1*E2 = R*S - 3*E3
+
+### Diff =>
+# y*(x-z) = -b1*(y-z)
+# z*(x-y) = -b1*(x-z)
+# x*(y-z) =  b1*(x-y)
+### Prod =>
+# E3 = b1^3
+
+### Eq:
+b1*E2 + b1^2*S - 3*b1*R # = 0
+R*S - 3*E3 + b1^2*S - 3*b1*R # = 0
+(R + b1^2)*S - 3*b1^3 - 3*b1*R # = 0
+
+### Solver:
+
+solve.CHP.S3P1 = function(R, b, b.ext=0, debug=TRUE) {
+	be1 = b.ext[1];
+	be2 = if(length(b.ext) > 1) b.ext[2] else 0;
+	if(be1 == 0 && be2 == 0) {
+		stop("NO solutions: x != y != z")
+		S = 3*b[1];
+	} else {
+		S = roots(c(-be2, 3*b[1]*be2 - be1, R + b[1]^2 + 3*b[1]*be1, -3*b[1]^3 - 3*b[1]*R))
+		isWrong = round0(S - 3*b[1]) == 0
+		S = S[ ! isWrong]
+	}
+	if(debug) print(S);
+	R1 = R[1] - be1*S - be2*S^2;
+	E3 = b[1]^3 - 0*S;
+	E2 = 3*R1 - b[1]*S;
+	#
+	len = length(S)
+	x = sapply(seq(len), function(id) roots(c(1, -S[id], E2[id], -E3[id])))
+	### robust
+	if(len == 1) {
+		S = rep(S, 3); R1 = rep(R1, 3);
+	} else {
+		S  = matrix(S, ncol=len, nrow=3, byrow=T)
+		R1 = matrix(R1, ncol=len, nrow=3, byrow=T)
+		E3 = matrix(E3, ncol=len, nrow=3, byrow=T)
+	}
+	#
+	yz = E3 / x;
+	z = (R1 - yz) / b[1];
+	y = S - x - z;
+	# Note: 1 set of solutions is incorrect!
+	sol = cbind(x=as.vector(x), y=as.vector(y), z=as.vector(z))
+	return(sol)
+}
+test.CHP.S3P1 = function(sol, R, b, b.ext=0) {
+	if(length(b.ext) < 2) b.ext = c(b.ext, 0);
+	x = sol[,1]; y = sol[,2]; z = sol[,3];
+	err1 = x*y + b[1]*y + b.ext[1]*(x+y+z) + b.ext[2]*(x+y+z)^2 # - R
+	err2 = y*z + b[1]*z + b.ext[1]*(x+y+z) + b.ext[2]*(x+y+z)^2 # - R
+	err3 = z*x + b[1]*x + b.ext[1]*(x+y+z) + b.ext[2]*(x+y+z)^2 # - R
+	round0(rbind(err1, err2, err3))
+}
+
+### Examples:
+R = -1
+b = 3
+b.ext = c(1, 0)
+sol = solve.CHP.S3P1(R, b, b.ext=b.ext)
+
+### Test
+test.CHP.S3P1(sol, R, b, b.ext)
+
+
+### Ex 2:
+R = -1
+b = 3
+b.ext = c(1, 3)
+sol = solve.CHP.S3P1(R, b, b.ext=b.ext)
+
+### Test
+test.CHP.S3P1(sol, R, b, b.ext)
+round0.p(poly.calc(sol[1:6, 1]))
+
+
 
 #######################
 ### Mixt-Order: 2+1 ###
