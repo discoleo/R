@@ -7,7 +7,7 @@
 ### Polynomial Systems: S3
 ### Heterogenous Symmetric
 ###
-### draft v.0.3e
+### draft v.0.3f
 
 
 ### Hetero-Symmetric
@@ -24,6 +24,9 @@ z^n + P(z, x, y) = R
 ### History ###
 ###############
 
+### draft v.0.3f:
+# - Structural Extension:
+#   a2*(x*y*z)^2 + a1*x*y*z + x*y + b1*y = R;
 ### draft v.0.3e:
 # - initial work on: x^3 + b2*y^2 + b1*y = R;
 ### draft v.0.3d - v.0.3d-simple:
@@ -1708,6 +1711,14 @@ z^3 + b[1]*(x+y)
 # y*z + b1*z = R
 # z*x + b1*x = R
 
+### Extensions:
+
+### Simple Extension: type A1
+# x*y + b1*y + be2*(x+y+z)^2 + be1*(x+y+z) = R
+### Structural Extension:
+# a*x*y*z + x*y + b1*y = R
+
+
 ### Solution:
 
 ### Note:
@@ -1737,9 +1748,11 @@ S = 3*b1; # is a FALSE solution;
 
 ### Solver:
 
-solve.CHP.S3P1 = function(R, b, b.ext=0, debug=TRUE) {
+solve.CHP.S3P1 = function(R, b, b.ext=0, a=0, debug=TRUE) {
 	be1 = b.ext[1];
 	be2 = if(length(b.ext) > 1) b.ext[2] else 0;
+	a1 = a[1];
+	a2 = if(length(a) > 1) a[2] else 0;
 	if(be1 == 0 && be2 == 0) {
 		stop("NO solutions: x != y != z")
 		S = 3*b[1];
@@ -1747,11 +1760,11 @@ solve.CHP.S3P1 = function(R, b, b.ext=0, debug=TRUE) {
 		# S = roots(c(-be2, 3*b[1]*be2 - be1, R + b[1]^2 + 3*b[1]*be1, -3*b[1]^3 - 3*b[1]*R))
 		# isWrong = round0(S - 3*b[1]) == 0
 		# S = S[ ! isWrong]
-		S = roots(c(be2, be1, -R[1] - b[1]^2))
+		S = roots(c(be2, be1, -R[1] - b[1]^2 + a1*b[1]^3 + a2*b[1]^6))
 	}
 	if(debug) print(S);
-	R1 = R[1] - be1*S - be2*S^2;
 	E3 = b[1]^3 - 0*S;
+	R1 = R[1] - be1*S - be2*S^2 - a1*E3 - a2*E3^2;
 	E2 = 3*R1 - b[1]*S;
 	#
 	len = length(S)
@@ -1772,12 +1785,16 @@ solve.CHP.S3P1 = function(R, b, b.ext=0, debug=TRUE) {
 	sol = cbind(x=as.vector(x), y=as.vector(y), z=as.vector(z))
 	return(sol)
 }
-test.CHP.S3P1 = function(sol, R, b, b.ext=0) {
+test.CHP.S3P1 = function(sol, R, b, b.ext=0, a=0) {
 	if(length(b.ext) < 2) b.ext = c(b.ext, 0);
+	if(length(a) < 2) a = c(a, 0)
 	x = sol[,1]; y = sol[,2]; z = sol[,3];
-	err1 = x*y + b[1]*y + b.ext[1]*(x+y+z) + b.ext[2]*(x+y+z)^2 # - R
-	err2 = y*z + b[1]*z + b.ext[1]*(x+y+z) + b.ext[2]*(x+y+z)^2 # - R
-	err3 = z*x + b[1]*x + b.ext[1]*(x+y+z) + b.ext[2]*(x+y+z)^2 # - R
+	xyz = x*y*z; a.ext = a[1]*xyz + a[2]*xyz^2;
+	s = (x+y+z); s.ext = b.ext[1]*s + b.ext[2]*s^2;
+	ext = a.ext + s.ext;
+	err1 = x*y + b[1]*y + ext # - R
+	err2 = y*z + b[1]*z + ext # - R
+	err3 = z*x + b[1]*x + ext # - R
 	round0(rbind(err1, err2, err3))
 }
 
@@ -1799,6 +1816,42 @@ sol = solve.CHP.S3P1(R, b, b.ext=b.ext)
 
 ### Test
 test.CHP.S3P1(sol, R, b, b.ext)
+round0.p(poly.calc(sol[1:6, 1]))
+
+
+############
+### Str Ext: Ex 1
+R = -1
+b = 3
+b.ext = c(1, 3); a = 2
+sol = solve.CHP.S3P1(R, b, b.ext=b.ext, a=a)
+
+### Test
+test.CHP.S3P1(sol, R, b, b.ext, a=a)
+round0.p(poly.calc(sol[1:6, 1]))
+
+
+############
+### Str Ext: Ex 2
+R = -1
+b = 3
+b.ext = c(1, 3); a = c(-1, 1)
+sol = solve.CHP.S3P1(R, b, b.ext=b.ext, a=a)
+
+### Test
+test.CHP.S3P1(sol, R, b, b.ext, a=a)
+round0.p(poly.calc(sol[1:6, 1]))
+
+
+############
+### Str Ext: Ex 3
+R = -1
+b = 3
+b.ext = c(0, -1); a = c(2, -1)
+sol = solve.CHP.S3P1(R, b, b.ext=b.ext, a=a)
+
+### Test
+test.CHP.S3P1(sol, R, b, b.ext, a=a)
 round0.p(poly.calc(sol[1:6, 1]))
 
 
