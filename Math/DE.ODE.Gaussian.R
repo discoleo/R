@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs - Gaussian
 ###
-### draft v.0.2e
+### draft v.0.3a
 
 #############
 ### Types ###
@@ -30,6 +30,9 @@
 
 ### Liniar / Non-Liniar Gaussian-type
 ###
+### draft v.0.3a:
+# - y = I(e^f(x)) * I(e^(-f(x))), e.g. f(x) = x^n:
+#   (d2y + n*x^(n-1)*dy - 2)*(d2y - n*x^(n-1)*dy - 2) + 4*n^2*x^(2*n-2)*y = 0;
 ### draft v.0.2d - v.0.2e:
 # - derived from Combinations of Exponentials:
 #   (3*x^2 - 2*x)*d2y + (9*x^4 - 4*x^2 - 6*x + 2)*dy + 6*x^2*(3*x^3 - 2*x^2 - 1)*y = 0;
@@ -579,5 +582,61 @@ sapply(c(-3:3 * 2/7), line.tan, dx=3, p=y, dp=dy, k=k)
 curve(dy(x, k=k), add=T, col="green")
 sapply(c(-3:3 * 2/7), line.tan, dx=3, p=dy, dp=d2y, k=k, variant=2, col="orange")
 
+
+###################
+###################
+
+################
+### Combined ###
+################
+
+### y = I(e^(x^n)) * I(e^(-x^n))
+(d2y + n*x^(n-1)*dy - 2)*(d2y - n*x^(n-1)*dy - 2) + 4*n^2*x^(2*n-2)*y = 0
+
+
+### Solution:
+base.I = function(x, n=2, k=1, low=0) {
+	Ip = sapply(x, function(x) integrate(function(v) exp(v^n/k), lower=low, upper=x)$value)
+	In = sapply(x, function(x) integrate(function(v) exp(-v^n/k), lower=low, upper=x)$value)
+	return(list(Ip=Ip, In=In))
+}
+y = function(x, n=2, k=1, I, low=0) {
+	if(missing(I)) I = base.I(x, n=n, k=k, low=low);
+	# return(I$Ip * I$In)
+	# by formula
+	dy = dy(x, n=n, k=k, I=I, low=low)
+	d2y = d2y(x, n=n, k=k, I=I, low=low)
+	- (d2y + n*x^(n-1)*dy - 2)*(d2y - n*x^(n-1)*dy - 2) / (4*n^2*x^(2*n-2))
+}
+dy = function(x, n=2, k=1, I, low=0) {
+	if(missing(I)) I = base.I(x, n=n, k=k, low=low);
+	e = exp(x^n / k);
+	s = I$In * e + I$Ip / e;
+	return(s)
+}
+d2y = function(x, n=2, k=1, I, low=0) {
+	if(missing(I)) I = base.I(x, n=n, k=k, low=low);
+	e = exp(x^n / k);
+	dx = n*x^(n-1);
+	# TODO: k;
+	s = dx * (I$In * e - I$Ip / e) + 2;
+	return(s)
+}
+### Plot:
+n = 2; k = 1;
+curve(y(x, n=n, k=k), from= -2, to = 2, ylim=c(-10,10))
+sapply(c(-3:3 * 3/5), line.tan, dx=3, p=y, dp=dy, n=n, k=k)
+# non-sigmoidal
+curve(dy(x, n=n, k=k), add=T, col="green")
+sapply(c(-3:3 * 3/5), line.tan, dx=3, p=dy, dp=d2y, n=n, k=k, col="orange")
+
+
+### Ex 2:
+n = 3.5; k = 1;
+curve(y(x, n=n, k=k), from= 0, to = 2, ylim=c(0,10))
+sapply(c(0:5 * 3/8), line.tan, dx=3, p=y, dp=dy, n=n, k=k)
+# non-sigmoidal
+curve(dy(x, n=n, k=k), add=T, col="green")
+sapply(c(0:5 * 3/8), line.tan, dx=3, p=dy, dp=d2y, n=n, k=k, col="orange")
 
 
