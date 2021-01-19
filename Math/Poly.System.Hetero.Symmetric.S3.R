@@ -7,7 +7,7 @@
 ### Polynomial Systems: S3
 ### Heterogenous Symmetric
 ###
-### draft v.0.3f
+### draft v.0.3g
 
 
 ### Hetero-Symmetric
@@ -24,6 +24,9 @@ z^n + P(z, x, y) = R
 ### History ###
 ###############
 
+### draft v.0.3g:
+# - solved (with extensions of type A1):
+#   x^2 + a1*y^2 + a2*z^2 = R;
 ### draft v.0.3f:
 # - Structural Extension:
 #   a2*(x*y*z)^2 + a1*x*y*z + x*y + b1*y = R;
@@ -1436,6 +1439,141 @@ sol
 x^2 + y^2 + b[1]*z
 y^2 + z^2 + b[1]*x
 x^2 + z^2 + b[1]*y
+
+
+########################
+########################
+
+### High-Power Terms: 3
+
+# x^2 + a1*y^2 + a2*z^2 = R
+# y^2 + a1*z^2 + a2*x^2 = R
+# z^2 + a1*x^2 + a2*y^2 = R
+
+### Solution:
+# - complicated solution;
+
+### Sum =>
+(a1 + a2 + 1)*(x^2 + y^2 + z^2) - 3*R # = 0
+(a1 + a2 + 1)*(S^2 - 2*E2) - 3*R # = 0
+# 2*(a1 + a2 + 1)*E2 = (a1 + a2 + 1)*S^2 - 3*R;
+
+### Sum(x^2*...) =>
+(x^4 + y^4 + z^4) + (a1 + a2)*((x*y)^2 + (x*z)^2 + (y*z)^2) - R*(x^2 + y^2 + z^2) # = 0
+(S^4 - 4*E2*S^2 + 4*E3*S + 2*E2^2) +
+	+ (a1 + a2)*(E2^2 - 2*E3*S) - R*(S^2 - 2*E2)
+S^4 - R*S^2 - 4*E2*S^2 + (a1 + a2 + 2)*E2^2 - 2*(a1 + a2 - 2)*E3*S + 2*R*E2
+# 2*(a1 + a2 - 2)*E3*S =
+#   S^4 - R*S^2 - 4*E2*S^2 + (a1 + a2 + 2)*E2^2 + 2*R*E2
+
+### TODO
+
+### Eq:
+((a1 + a2 + 1)*S^2 - 9*R)*((a1 + a2 + 1)*S^2 - R)
+
+
+### Solver:
+solve.HP3.S3P2 = function(R, a, b.ext=0, debug=TRUE) {
+	a.s = (a[1] + a[2] + 1);
+	coeff = c(a.s, 0, -R) # only Non-equal roots!
+	len = max(length(coeff), length(b.ext) + 1)
+	coeff = c(rep(0, len - length(coeff)), coeff)
+	b.all = c(rep(0, len - length(b.ext) - 1), rev(b.ext), 0)
+	coeff = coeff + b.all;
+	S = roots(coeff);
+	if(debug) print(S);
+	#
+	pow = seq(length(b.ext));
+	R1 = R[1] - sapply(S, function(S) sum(b.ext * (S^pow)));
+	E2 = (a.s*S^2 - 3*R1) / a.s / 2;
+	E3 = (S^4 - R1*S^2 - 4*E2*S^2 + (a.s + 1)*E2^2 + 2*R1*E2) /
+		(2*(a.s - 3)*S) # TODO: a.s == 3
+	#
+	len = length(S)
+	x = sapply(seq(len), function(id) roots(c(1, -S[id], E2[id], -E3[id])))
+	#
+	sol = solve.EnAll(x, n = 3)
+	return(sol)
+}
+test.HP3.S3P2 = function(sol, R, a, b.ext=0) {
+	a = c(1, a) # TODO: include 1 in a;
+	S = apply(sol, 1, sum)
+	len = length(b.ext)
+	ext = sapply(S, function(S) sum(b.ext * S^seq(len)));
+	err = apply(sol, 1, function(sol) sum(a*sol^2))
+	err = err + ext;
+	return(round0(err))
+}
+
+### Examples:
+
+R = -2
+a = c(2, 3)
+#
+sol = solve.HP3.S3P2(R, a)
+test.HP3.S3P2(sol, R, a)
+
+
+### Ex 2:
+R = -2
+a = c(2, 3)
+b.ext = c(-1)
+#
+sol = solve.HP3.S3P2(R, a, b.ext=b.ext)
+test.HP3.S3P2(sol, R, a, b.ext=b.ext)
+
+
+### Ex 3:
+R = -2
+a = c(2, 3)
+b.ext = c(-1, -1)
+#
+sol = solve.HP3.S3P2(R, a, b.ext=b.ext)
+test.HP3.S3P2(sol, R, a, b.ext=b.ext)
+
+
+### Ex 4:
+R = -5
+a = c(2, 3)
+b.ext = c(0, 10)
+#
+sol = solve.HP3.S3P2(R, a, b.ext=b.ext)
+test.HP3.S3P2(sol, R, a, b.ext=b.ext)
+
+
+### Ex 5:
+R = -2
+a = c(2, 3)
+b.ext = c(-1, -1, 2)
+#
+sol = solve.HP3.S3P2(R, a, b.ext=b.ext)
+test.HP3.S3P2(sol, R, a, b.ext=b.ext)
+
+
+
+### Test
+x^2 + a[2]*y^2 + a[3]*z^2 # - R
+y^2 + a[2]*z^2 + a[3]*x^2 # - R
+z^2 + a[2]*x^2 + a[3]*y^2 # - R
+
+perm.gen = function(x) {
+	len = length(x)
+	id = seq(len)
+	id.m = outer(id, id, function(i, j) ((i+j+1) %% len + 1))
+	p.m = x[id.m]
+	dim(p.m) = dim(id.m)
+	p.m
+}
+
+R = 1;
+a = c(1,2,3)
+a1 = a[2]; a2 = a[3];
+p.m = perm.gen(a)
+d = det(p.m)
+
+sol = solve(p.m, rep(R, 3))
+x = sqrt(sol[1]); y = -x; z = -x;
+S = x+y+z; E2 = x*y+x*z+y*z; E3 = x*y*z;
 
 
 ########################
