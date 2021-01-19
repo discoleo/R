@@ -8,7 +8,7 @@
 ### of Polynomial Fractions
 ### derived from Roots of Unity
 ###
-### draft v.0.1e-tanx
+### draft v.0.1f
 
 
 
@@ -27,7 +27,9 @@
 ###############
 ### History ###
 
-# draft v.0.1e-tan - v.0.1e-tanx:
+### draft v.0.1f:
+# - exact: I(1 / (x*(x^n - 1))) dx;
+### draft v.0.1e-tan - v.0.1e-tanx:
 # - added some trigonometric derivatives
 #   (based actually on Cardan-polynomials);
 # - generalisations using generic P5 polynomials (v.0.1e-tan2, v.0.1e-tan3, v.0.1e-tanx);
@@ -643,3 +645,45 @@ r = (cos(x)^7 - sin(x)^7 - sin(x)*cos(x)*(cos(x)^5 - sin(x)^5) + 3*sin(x)^2*cos(
 		cat(r); cat(", ");  cat(i2)
 	}
 } }
+
+
+#######################
+#######################
+
+### Derived from:
+### I 1/(e^(n*x) - 1) dx
+
+# I 1/(e^(n*x) - 1) dx =
+# 1/n * log(e^(n*x) - 1) - x;
+
+int.exp = function(lim, n) {
+	1/n * log((exp(n*lim[2]) - 1) / (exp(n*lim[1]) - 1)) - lim[2] + lim[1]
+}
+
+lim = c(1/2, 3)
+n = 2
+integrate(function(x) 1/(exp(n*x) - 1), lower=lim[1], upper=lim[2])
+int.exp(lim, n=n)
+
+#################
+
+### I 1 / (x*(x^n - 1)) dx
+
+lim = c(3/2, 5)
+n = 3
+integrate(function(x) 1/ (x*(x^n - 1)), lower=lim[1], upper=lim[2])
+int.exp(log(lim), n=n)
+
+
+###
+lim = c(3/2, 5)
+n = 5
+integrate(function(x) 1/ (x*(x^n - 1)), lower=lim[1], upper=lim[2])
+int.exp(log(lim), n=n)
+
+
+###
+lim = c(3/2, 5)
+n = 7
+integrate(function(x) 1/ (x*(x^n - 1)), lower=lim[1], upper=lim[2])
+int.exp(log(lim), n=n)
