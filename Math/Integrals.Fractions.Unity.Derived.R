@@ -8,7 +8,7 @@
 ### of Polynomial Fractions
 ### derived from Roots of Unity
 ###
-### draft v.0.1f
+### draft v.0.1g
 
 
 
@@ -27,8 +27,10 @@
 ###############
 ### History ###
 
+### draft v.0.1g:
+# - Integral: cos(x)^n / (sin(x)*cos(x) * (sin(x)^n + cos(x)^n)) dx;
 ### draft v.0.1f:
-# - exact: I(1 / (x*(x^n - 1))) dx;
+# - Integral: 1 / (x*(x^n - 1)) dx;
 ### draft v.0.1e-tan - v.0.1e-tanx:
 # - added some trigonometric derivatives
 #   (based actually on Cardan-polynomials);
@@ -656,14 +658,22 @@ r = (cos(x)^7 - sin(x)^7 - sin(x)*cos(x)*(cos(x)^5 - sin(x)^5) + 3*sin(x)^2*cos(
 # I 1/(e^(n*x) - 1) dx =
 # 1/n * log(e^(n*x) - 1) - x;
 
-int.exp = function(lim, n) {
-	1/n * log((exp(n*lim[2]) - 1) / (exp(n*lim[1]) - 1)) - lim[2] + lim[1]
+int.exp = function(lim, n, diff=1) {
+	# TODO: check for diff != +/- 1;
+	(1/n * log((exp(n*lim[2]) - diff) / (exp(n*lim[1]) - diff)) - lim[2] + lim[1]) * diff;
 }
 
 lim = c(1/2, 3)
 n = 2
 integrate(function(x) 1/(exp(n*x) - 1), lower=lim[1], upper=lim[2])
 int.exp(lim, n=n)
+
+###
+lim = c(1/2, 3)
+n = 2
+integrate(function(x) 1/(exp(n*x) + 1), lower=lim[1], upper=lim[2])
+int.exp(lim, n=n, diff=-1)
+
 
 #################
 
@@ -687,3 +697,21 @@ lim = c(3/2, 5)
 n = 7
 integrate(function(x) 1/ (x*(x^n - 1)), lower=lim[1], upper=lim[2])
 int.exp(log(lim), n=n)
+
+#################
+
+### I cos(x)^n / (sin(x)*cos(x)*(sin(x)^n - cos(x)^n)) dx
+### I cos(x)^n / (sin(x)*cos(x)*(sin(x)^n + cos(x)^n)) dx
+
+lim = c(pi/7, pi/5)
+n = 7
+integrate(function(x) cos(x)^n / (sin(x)*cos(x)*(sin(x)^n + cos(x)^n)), lower=lim[1], upper=lim[2])
+int.exp(log(tan(lim)), n=n, diff=-1)
+
+
+###
+lim = c(pi/7, pi/3)
+n = 5
+integrate(function(x) cos(x)^n / (sin(x)*cos(x)*(sin(x)^n + cos(x)^n)), lower=lim[1], upper=lim[2])
+int.exp(log(tan(lim)), n=n, diff=-1)
+
