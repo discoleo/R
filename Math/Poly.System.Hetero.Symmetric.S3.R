@@ -7,7 +7,7 @@
 ### Polynomial Systems: S3
 ### Heterogenous Symmetric
 ###
-### draft v.0.3g-expl
+### draft v.0.3g-fix
 
 
 ### Hetero-Symmetric
@@ -24,10 +24,11 @@ z^n + P(z, x, y) = R
 ### History ###
 ###############
 
-### draft v.0.3g - v.0.3g-expl:
+### draft v.0.3g - v.0.3g-fix:
 # - solved (with extensions of type A1):
 #   x^2 + a1*y^2 + a2*z^2 = R;
 # - more exploration of this system; [v.0.3g-expl]
+# - fixed / full equation; [v.0.3g-fix]
 ### draft v.0.3f:
 # - Structural Extension:
 #   a2*(x*y*z)^2 + a1*x*y*z + x*y + b1*y = R;
@@ -1467,30 +1468,35 @@ S^4 - R*S^2 - 4*E2*S^2 + (a1 + a2 + 2)*E2^2 - 2*(a1 + a2 - 2)*E3*S + 2*R*E2
 # 2*(a1 + a2 - 2)*E3*S =
 #   S^4 - R*S^2 - 4*E2*S^2 + (a1 + a2 + 2)*E2^2 + 2*R*E2
 
-### Sum(y^2*...) =>
-a1*(x^4 + y^4 + z^4) + (a2 + 1)*((x*y)^2 + (x*z)^2 + (y*z)^2) - R*(x^2 + y^2 + z^2) # = 0
-### Diff: Eq2 - Eq3 =>
-(a1 - 1)*((x*y)^2 + (x*z)^2 + (y*z)^2) - (a1 - 1)*(x^4 + y^4 + z^4) # = 0
-### Case: a1 != 1
-((x*y)^2 + (x*z)^2 + (y*z)^2) - (x^4 + y^4 + z^4) # = 0
-(E2^2 - 2*E3*S) - (S^4 - 4*E2*S^2 + 4*E3*S + 2*E2^2) # = 0
-E2^2 + 6*E3*S + S^4 - 4*E2*S^2
-# =>
-(a1 + a2 - 2)*E2^2 + 3*(S^4 - R*S^2 - 4*E2*S^2 + (a1 + a2 + 2)*E2^2 + 2*R*E2) +
-	+ (a1 + a2 - 2)*S^4 - 4*(a1 + a2 - 2)*E2*S^2
-4*(a1 + a2 + 1)*E2^2 - 4*(a1 + a2 + 1)*E2*S^2 +
-	+ (a1 + a2 + 1)*S^4 + 6*R*E2 - 3*R*S^2
-- 2*(a1 + a2 + 1)*E2*S^2 + (a1 + a2 + 1)*S^4 - 3*R*S^2 # redundant
-# but there is an alternative below (but with false solutions);
+### Sum(z*...) =>
+a2*(x^3 + y^3 + z^3) + (x^2*z + y^2*x + z^2*y) + a1*(y^2*z + z^2*x + x^2*y) - R*S # = 0
+a2*(S^3 - 3*E2*S + 3*E3) + (E2*S - 3*E3) + (a1 - 1)*(y^2*z + z^2*x + x^2*y) - R*S # = 0
+(a1 - 1)*(y^2*z + z^2*x + x^2*y) + a2*S^3 - 3*a2*E2*S + E2*S + 3*a2*E3 - 3*E3 - R*S # = 0 # Eq 3a
+# *(x^2*z + y^2*x + z^2*y) =>
+(a1 - 1)*(E3*S^3 + E2^3 - 6*E3*E2*S + 9*E3^2) +
+	+ (a2*S^3 - 3*a2*E2*S + E2*S + 3*a2*E3 - 3*E3 - R*S)*(x^2*z + y^2*x + z^2*y)
+### Sum: Eq 3a + Eq 3b =>
+(a1 - 1)^2*(E3*S^3 + E2^3 - 6*E3*E2*S + 9*E3^2) +
+	+ (a2*S^3 - 3*a2*E2*S + E2*S + 3*a2*E3 - 3*E3 - R*S)*
+	((a1 - 1)*(E2*S - 3*E3) + (a2*S^3 - 3*a2*E2*S + E2*S + 3*a2*E3 - 3*E3 - R*S))
+(a1 - 1)^2*(E3*S^3 + E2^3 - 6*E3*E2*S + 9*E3^2) +
+	+ (a2*S^3 - 3*a2*E2*S + E2*S + 3*a2*E3 - 3*E3 - R*S)*
+	(a2*S^3 - 3*a2*E2*S + a1*E2*S + 3*a2*E3 - 3*a1*E3 - R*S)
+
 
 
 ### Eq:
-((a1 + a2 + 1)*S^2 - 9*R)*((a1 + a2 + 1)*S^2 - R)
+((a1 + a2 + 1)*S^2 - 9*R)^2 * ((a1 + a2 + 1)*S^2 - R)^2 # * P0;
+### P[0]
+(4 - 8*a1 - 8*a2 + 6*a1*a2 - 3*a1^2*a2 - 3*a1*a2^2 + a1*a2^3 + a1^3*a2 +
+	+ 9*a1^2 + 9*a2^2 - 5*a1^3 - 5*a2^3 + a1^4 + a2^4) 
+
 
 ### Q:
 # - Do A1-type extensions have additional roots?
+# - It seems NO additional roots possible!
 ### Technique: Sequential factorization
-# - explore if applicable & useful;
+# - NO additional factors in this case;
 
 
 ### Solver:
@@ -1597,18 +1603,20 @@ x = sqrt(sol[1]); y = -x; z = -x;
 S = x+y+z; E2 = x*y+x*z+y*z; E3 = x*y*z;
 
 
-### Variant Eq:
-# - evaluate if it has true solutions for some extensions;
-# scaled by sqrt(R)
-coeff = c(
-	R^2*(18 - 51*a1 + 21*a1*a2 + 33*a1^2 - 9*a1^2*a2 - 6*a1^3 + 3*a2 - 12*a2^2 + 3*a2^3),
-	0,
-	R*(36 - 66*a1 - 54*a1*a2 + 18*a1*a2^2 + 6*a1*a2^3 - 36*a1^2 + 90*a1^2*a2 +
-		- 18*a1^2*a2^2 + 54*a1^3 - 30*a1^3*a2 - 12*a1^4 + 42*a2 - 18*a2^2 - 18*a2^3 + 6*a2^4),
-	0,
-	(- 6 + 5*a1 + 13*a1*a2 + 9*a1*a2^2 - a1*a2^3 - 2*a1*a2^4 + 17*a1^2 - 15*a1^2*a2^2 + 2*a1^2*a2^3 +
-		- 3*a1^3 - 19*a1^3*a2 + 8*a1^3*a2^2 - 7*a1^4 + 7*a1^4*a2 + 2*a1^5 - 13*a2 - 4*a2^2 + 6*a2^3 + 2*a2^4 - a2^5)
-)
+### Sum(y^2*...) =>
+a1*(x^4 + y^4 + z^4) + (a2 + 1)*((x*y)^2 + (x*z)^2 + (y*z)^2) - R*(x^2 + y^2 + z^2) # = 0
+### Diff: Eq2 - Eq3 =>
+(a1 - 1)*((x*y)^2 + (x*z)^2 + (y*z)^2) - (a1 - 1)*(x^4 + y^4 + z^4) # = 0
+### Case: a1 != 1
+((x*y)^2 + (x*z)^2 + (y*z)^2) - (x^4 + y^4 + z^4) # = 0
+(E2^2 - 2*E3*S) - (S^4 - 4*E2*S^2 + 4*E3*S + 2*E2^2) # = 0
+E2^2 + 6*E3*S + S^4 - 4*E2*S^2
+# =>
+(a1 + a2 - 2)*E2^2 + 3*(S^4 - R*S^2 - 4*E2*S^2 + (a1 + a2 + 2)*E2^2 + 2*R*E2) +
+	+ (a1 + a2 - 2)*S^4 - 4*(a1 + a2 - 2)*E2*S^2
+4*(a1 + a2 + 1)*E2^2 - 4*(a1 + a2 + 1)*E2*S^2 +
+	+ (a1 + a2 + 1)*S^4 + 6*R*E2 - 3*R*S^2
+- 2*(a1 + a2 + 1)*E2*S^2 + (a1 + a2 + 1)*S^4 - 3*R*S^2 # redundant
 
 
 ########################
