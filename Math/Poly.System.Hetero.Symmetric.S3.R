@@ -7,7 +7,7 @@
 ### Polynomial Systems: S3
 ### Heterogenous Symmetric
 ###
-### draft v.0.3g-fix
+### draft v.0.3h
 
 
 ### Hetero-Symmetric
@@ -24,6 +24,9 @@ z^n + P(z, x, y) = R
 ### History ###
 ###############
 
+### draft v.0.3h:
+# - Order 3: (partially solved)
+#   x^3 + a1*y^3 + a2*z^3 = R;
 ### draft v.0.3g - v.0.3g-fix:
 # - solved (with extensions of type A1):
 #   x^2 + a1*y^2 + a2*z^2 = R;
@@ -1362,21 +1365,24 @@ S = x+y+z; E2 = x*(y+z)+y*z; E3 = x*y*z;
 # y^2 + z^2 + b1*(y+z) = R
 # x^2 + z^2 + b1*(x+z) = R
 
-# trivial solution: x = y = z;
-
 ### Solution
+
+### trivial solution: x = y = z;
 
 ### Diff =>
 # x^2 - z^2 = -b1*(x - z)
 # (x-z)*(x + z + b1) = 0
 
-# Case: x != y != z
+### Case: x != y != z
 # - has NO solutions;
 
-# Case x = y && x != z
-# trivial;
+### Case: x = y && x != z
+# - trivial;
 # x^2 + b1*x = R/2
 # z^2 + b1*z = R/2 # x & z are the conjugate roots;
+# also:
+# x + z = - b1
+# x*z = - R / 2
 
 ### Example
 b = 3
@@ -1393,13 +1399,15 @@ x^2 + y^2 + b[1]*(x+y)
 y^2 + z^2 + b[1]*(y+z)
 x^2 + z^2 + b[1]*(x+z)
 
+### TODO:
+# - extensions;
 
 
 
 ########################
 ########################
 
-### High-Power Terms: > 1
+### High-Power Terms: 2
 ### Variant
 
 ### x[i]^2 + x[j]^2 + b*x[k]
@@ -1408,8 +1416,9 @@ x^2 + z^2 + b[1]*(x+z)
 # y^2 + z^2 + b1*x = R
 # x^2 + z^2 + b1*y = R
 
-# trivial solution: x = y = z;
-# trivial system;
+# - trivial solution: x = y = z;
+# - trivial system;
+# - equivalent to the previous variant: + b1*(x+y);
 
 ### Solution
 
@@ -1417,10 +1426,10 @@ x^2 + z^2 + b[1]*(x+z)
 # x^2 - z^2 = b1*(x - z)
 # (x-z)*(x + z - b1) = 0
 
-# Case: x != y != z
+### Case: x != y != z
 # - has NO solutions;
 
-# Case x = y && x != z
+### Case x = y && x != z
 # z = -x + b1;
 # =>
 # 2*x^2 + b1*z - R = 0
@@ -1622,13 +1631,107 @@ E2^2 + 6*E3*S + S^4 - 4*E2*S^2
 ########################
 ########################
 
-### Problems:
-# - Difference works well for systems with 2 variables;
-# - but it does NOT work well in systems with 3 variables (and higher power);
+###############
+### Order 3 ###
+###############
+
+##########################
+### 3 High-Power Terms ###
+
+# x^3 + a1*y^3 + a2*z^3 = R
+# y^3 + a1*z^3 + a2*x^3 = R
+# z^3 + a1*x^3 + a2*y^3 = R
+
+### Solution
+
+### Sum =>
+(a1 + a2 + 1)*(x^3 + y^3 + z^3) - 3*R # = 0
+(a1 + a2 + 1)*(S^3 - 3*E2*S + 3*E3) - 3*R
+
+### Sum(x^3*...) =>
+(x^6 + y^6 + z^6) + (a1 + a2)*(x^3*y^3 + x^3*z^3 + y^3*z^3) - R*(x^3 + y^3 + z^3) # = 0
+(- 2*E2^3 + 3*E3^2 - 12*E2*E3*S + 9*E2^2*S^2 + 6*E3*S^3 - 6*E2*S^4 + S^6) +
+	(a1 + a2)*(E2^3 - 3*E3*E2*S + 3*E3^2) - R*(S^3 - 3*E2*S + 3*E3) # = 0
+(a1 + a2 - 2)*E2^3 + 3*(a1 + a2 + 1)*E3^2 - 3*(a1 + a2 + 4)*E2*E3*S + 9*E2^2*S^2 - 6*E2*S^4 +
+	+ 3*R*E2*S + 6*E3*S^3 - 3*R*E3 + S^6 - R*S^3 # = 0
+
+### Sum(y*...) =>
+a1*(x^4 + y^4 + z^4) + (x^3*y + y^3*z + z^3*x) + a2*(x*y^3 + y*z^3 + z*x^3) - R*S # = 0
+a1*(S^4 - 4*E2*S^2 + 4*E3*S + 2*E2^2) +
+	+ (x^3*y + y^3*z + z^3*x) + a2*(x*y^3 + y*z^3 + z*x^3) - R*S # = 0
+a1*(S^4 - 4*E2*S^2 + 4*E3*S + 2*E2^2) +
+	+ (E2*(S^2 - 2*E2) - 3*E3*S) + (a2 - 1)*(x*y^3 + y*z^3 + z*x^3) - R*S # = 0
+a1*S^4 - 4*a1*E2*S^2 + E2*S^2 + 4*a1*E3*S - 3*E3*S + 2*a1*E2^2 - 2*E2^2 - R*S +
+	+ (a2 - 1)*(x*y^3 + y*z^3 + z*x^3) # = 0 ### Eq 3a
+### * (x^3*y + y^3*z + z^3*x) =>
+(a2 - 1)*(E3*S^5 - 5*E2*E3*S^3 + 7*E3^2*S^2 + E2^2*E3*S + E2^4) +
+	(a1*S^4 - 4*a1*E2*S^2 + E2*S^2 + 4*a1*E3*S - 3*E3*S + 2*a1*E2^2 - 2*E2^2 - R*S) *
+	(x^3*y + y^3*z + z^3*x) ### Eq 3b
+### Eq 3a + Eq 3b =>
+(a2 - 1)^2*(E3*S^5 - 5*E2*E3*S^3 + 7*E3^2*S^2 + E2^2*E3*S + E2^4) +
+	(a1*S^4 - 4*a1*E2*S^2 + E2*S^2 + 4*a1*E3*S - 3*E3*S + 2*a1*E2^2 - 2*E2^2 - R*S)^2 +
+	(a1*S^4 - 4*a1*E2*S^2 + E2*S^2 + 4*a1*E3*S - 3*E3*S + 2*a1*E2^2 - 2*E2^2 - R*S) *
+	(a2 - 1)*(E2*S^2 - 2*E2^2 - 3*E3*S)
+
+
+### TODO:
+
+### Eq:
+S * ((a1 + a2 + 1)*S^3 - 27*R) * ((a1 + a2 + 1)^2 * S^6 + 27*R^2)
+
+### Solver:
+solve.3HT.S3P3 = function(R, a, b.ext=0, max.perm=1, debug=TRUE) {
+	a.s = (a[1] + a[2] + 1);
+	coeff = c(a.s^2,, 0,0,0,0,0, 27*R^2) # only Non-equal roots!
+	len = max(length(coeff), length(b.ext) + 1)
+	coeff = c(rep(0, len - length(coeff)), coeff)
+	b.all = c(rep(0, len - length(b.ext) - 1), rev(b.ext), 0)
+	coeff = coeff + b.all;
+	S = roots(coeff);
+	if(debug) print(S);
+	#
+	pow = seq(length(b.ext));
+	R1 = R[1] - sapply(S, function(S) sum(b.ext * (S^pow)));
+	E2 = 0 # !!! # TODO: has 6000 monoms & overflows !!!
+	# E2[non-linearized] = P[E2^4, S^8];
+	E3 = (3*R1 - a.s*(S^3 - 3*E2*S)) / 3 / a.s;
+	#
+	len = length(S)
+	x = sapply(seq(len), function(id) roots(c(1, -S[id], E2[id], -E3[id])))
+	#
+	sol = solve.EnAll(x, n = 3, max.perm=max.perm)
+	return(sol)
+}
+
+### Test
+x^3 + a[1]*y^3 + a[2]*z^3 # - R
+y^3 + a[1]*z^3 + a[2]*x^3 # - R
+z^3 + a[1]*x^3 + a[2]*y^3 # - R
+
+### Debug
+R = -2
+a = c(2, 3)
+m = complex(re=cos(2*pi/3), im=sin(2*pi/3))
+x = rootn(R / (a[1] + a[2] + 1), 3)
+y = x*m; z = x*m^2;
+a1 = a[1]; a2 = a[2];
+S = x + y + z; E2 = x*(y+z) + y*z; E3 = x*y*z;
+
+poly.calc(c(x+y+y, x+z+z, x+x+y, x+x+z, y+y+z, y+z+z)) * (a[1]+a[2]+1)^2
+
+
+########################
+########################
+########################
 
 ###############
 ### Order 3 ###
 ###############
+
+### Problems:
+# - Difference works well for systems with 2 variables;
+# - but it does NOT work well in systems with 3 variables (and higher power);
+
 
 ### x[i]^3 + b*x[i+1]
 
