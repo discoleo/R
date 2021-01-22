@@ -7,7 +7,7 @@
 ### Polynomial Systems: S3
 ### Heterogenous Symmetric
 ###
-### draft v.0.3h
+### draft v.0.3h-fix
 
 
 ### Hetero-Symmetric
@@ -24,8 +24,8 @@ z^n + P(z, x, y) = R
 ### History ###
 ###############
 
-### draft v.0.3h:
-# - Order 3: (partially solved)
+### draft v.0.3h - v.0.3h-fix:
+# - Order 3: (partially solved + partial bug fix)
 #   x^3 + a1*y^3 + a2*z^3 = R;
 ### draft v.0.3g - v.0.3g-fix:
 # - solved (with extensions of type A1):
@@ -1660,18 +1660,18 @@ a1*(x^4 + y^4 + z^4) + (x^3*y + y^3*z + z^3*x) + a2*(x*y^3 + y*z^3 + z*x^3) - R*
 a1*(S^4 - 4*E2*S^2 + 4*E3*S + 2*E2^2) +
 	+ (x^3*y + y^3*z + z^3*x) + a2*(x*y^3 + y*z^3 + z*x^3) - R*S # = 0
 a1*(S^4 - 4*E2*S^2 + 4*E3*S + 2*E2^2) +
-	+ (E2*(S^2 - 2*E2) - 3*E3*S) + (a2 - 1)*(x*y^3 + y*z^3 + z*x^3) - R*S # = 0
-a1*S^4 - 4*a1*E2*S^2 + E2*S^2 + 4*a1*E3*S - 3*E3*S + 2*a1*E2^2 - 2*E2^2 - R*S +
+	+ (E2*(S^2 - 2*E2) - E3*S) + (a2 - 1)*(x*y^3 + y*z^3 + z*x^3) - R*S # = 0
+a1*S^4 - 4*a1*E2*S^2 + E2*S^2 + 4*a1*E3*S - E3*S + 2*a1*E2^2 - 2*E2^2 - R*S +
 	+ (a2 - 1)*(x*y^3 + y*z^3 + z*x^3) # = 0 ### Eq 3a
 ### * (x^3*y + y^3*z + z^3*x) =>
 (a2 - 1)*(E3*S^5 - 5*E2*E3*S^3 + 7*E3^2*S^2 + E2^2*E3*S + E2^4) +
-	(a1*S^4 - 4*a1*E2*S^2 + E2*S^2 + 4*a1*E3*S - 3*E3*S + 2*a1*E2^2 - 2*E2^2 - R*S) *
+	(a1*S^4 - 4*a1*E2*S^2 + E2*S^2 + 4*a1*E3*S - E3*S + 2*a1*E2^2 - 2*E2^2 - R*S) *
 	(x^3*y + y^3*z + z^3*x) ### Eq 3b
 ### Eq 3a + Eq 3b =>
 (a2 - 1)^2*(E3*S^5 - 5*E2*E3*S^3 + 7*E3^2*S^2 + E2^2*E3*S + E2^4) +
-	(a1*S^4 - 4*a1*E2*S^2 + E2*S^2 + 4*a1*E3*S - 3*E3*S + 2*a1*E2^2 - 2*E2^2 - R*S)^2 +
-	(a1*S^4 - 4*a1*E2*S^2 + E2*S^2 + 4*a1*E3*S - 3*E3*S + 2*a1*E2^2 - 2*E2^2 - R*S) *
-	(a2 - 1)*(E2*S^2 - 2*E2^2 - 3*E3*S)
+	(a1*S^4 - 4*a1*E2*S^2 + E2*S^2 + 4*a1*E3*S - E3*S + 2*a1*E2^2 - 2*E2^2 - R*S)^2 +
+	(a1*S^4 - 4*a1*E2*S^2 + E2*S^2 + 4*a1*E3*S - E3*S + 2*a1*E2^2 - 2*E2^2 - R*S) *
+	(a2 - 1)*(E2*S^2 - 2*E2^2 - E3*S)
 
 
 ### TODO:
@@ -1682,17 +1682,17 @@ S * ((a1 + a2 + 1)*S^3 - 27*R) * ((a1 + a2 + 1)^2 * S^6 + 27*R^2)
 ### Solver:
 solve.3HT.S3P3 = function(R, a, b.ext=0, max.perm=1, debug=TRUE) {
 	a.s = (a[1] + a[2] + 1);
-	coeff = c(a.s^2,, 0,0,0,0,0, 27*R^2) # only Non-equal roots!
+	coeff = c(a.s^2, 0,0,0,0,0, 27*R^2) # only Non-equal roots!
 	len = max(length(coeff), length(b.ext) + 1)
 	coeff = c(rep(0, len - length(coeff)), coeff)
 	b.all = c(rep(0, len - length(b.ext) - 1), rev(b.ext), 0)
 	coeff = coeff + b.all;
-	S = roots(coeff);
+	S = roots(coeff); S = c(S, 0)
 	if(debug) print(S);
 	#
 	pow = seq(length(b.ext));
 	R1 = R[1] - sapply(S, function(S) sum(b.ext * (S^pow)));
-	E2 = 0 # !!! # TODO: has 6000 monoms & overflows !!!
+	E2 = round0(calc.E2(S, R1, a)) # !!! # TODO: has 6000 monoms & overflows !!!
 	# E2[non-linearized] = P[E2^4, S^8];
 	E3 = (3*R1 - a.s*(S^3 - 3*E2*S)) / 3 / a.s;
 	#
@@ -1702,15 +1702,31 @@ solve.3HT.S3P3 = function(R, a, b.ext=0, max.perm=1, debug=TRUE) {
 	sol = solve.EnAll(x, n = 3, max.perm=max.perm)
 	return(sol)
 }
+calc.E2 = function(S, R, a) {
+	if(a[1] != -2 && a[2] != 2) stop("works only with a = c(-2, 2)!");
+	# possible coefficients: BUT possible NOT exact!
+	E2Subst = 108*R*S^2 - 3240*R*S^6 + 11700*R*S^10 + 56610*R^2*S^7 - 112860*R^3*S^4 - 18*S^5 +
+		+ 540*S^9 - 3000*S^13;
+	E2Div = - 135*R + 4050*R*S^4 - 450*R*S^8 - 1404*R^2*S - 71055*R^2*S^5 + 10395*R^3*S^2 +
+		+ 45*S^3 - 1350*S^7 + 7600*S^11;
+	- E2Subst / E2Div;
+}
+
+### Examples:
+R = 4
+a = c(-2, 2)
+sol = solve.3HT.S3P3(R, a)
+x = sol[,1]; y = sol[,2]; z = sol[,3];
 
 ### Test
 x^3 + a[1]*y^3 + a[2]*z^3 # - R
 y^3 + a[1]*z^3 + a[2]*x^3 # - R
 z^3 + a[1]*x^3 + a[2]*y^3 # - R
 
+
 ### Debug
-R = -2
-a = c(2, 3)
+R = 2
+a = c(-2, 2)
 m = complex(re=cos(2*pi/3), im=sin(2*pi/3))
 x = rootn(R / (a[1] + a[2] + 1), 3)
 y = x*m; z = x*m^2;
