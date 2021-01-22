@@ -7,7 +7,7 @@
 ### Polynomial Systems: S3
 ### Heterogenous Symmetric
 ###
-### draft v.0.3h-fix
+### draft v.0.3h-fix2
 
 
 ### Hetero-Symmetric
@@ -1683,9 +1683,11 @@ S * ((a1 + a2 + 1)*S^3 - 27*R) * ((a1 + a2 + 1)^2 * S^6 + 27*R^2)
 solve.3HT.S3P3 = function(R, a, b.ext=0, max.perm=1, debug=TRUE) {
 	a.s = (a[1] + a[2] + 1);
 	coeff = c(a.s^2, 0,0,0,0,0, 27*R^2) # only Non-equal roots!
-	len = max(length(coeff), length(b.ext) + 1)
+	len = max(length(coeff), 2*length(b.ext) + 1)
 	coeff = c(rep(0, len - length(coeff)), coeff)
-	b.all = c(rep(0, len - length(b.ext) - 1), rev(b.ext), 0)
+	b.all = c(rep(0, len - length(b.ext) - 1), -2*27*R*rev(b.ext), 0)
+	id2 = len - rev(2 * seq(1, length(b.ext)))
+	b.all[id2] = b.all[id2] + 27*b.ext^2; # TODO: cross-products
 	coeff = coeff + b.all;
 	S = roots(coeff); S = c(S, 0)
 	if(debug) print(S);
@@ -1703,8 +1705,9 @@ solve.3HT.S3P3 = function(R, a, b.ext=0, max.perm=1, debug=TRUE) {
 	return(sol)
 }
 calc.E2 = function(S, R, a) {
-	if(a[1] != -2 && a[2] != 2) stop("works only with a = c(-2, 2)!");
+	if(a[1] != -2 || a[2] != 2) stop("works only with a = c(-2, 2)!");
 	# possible coefficients: BUT possible NOT exact!
+	# TODO: find exact coefficients;
 	E2Subst = 108*R*S^2 - 3240*R*S^6 + 11700*R*S^10 + 56610*R^2*S^7 - 112860*R^3*S^4 - 18*S^5 +
 		+ 540*S^9 - 3000*S^13;
 	E2Div = - 135*R + 4050*R*S^4 - 450*R*S^8 - 1404*R^2*S - 71055*R^2*S^5 + 10395*R^3*S^2 +
@@ -1713,20 +1716,22 @@ calc.E2 = function(S, R, a) {
 }
 
 ### Examples:
-R = 4
+R = -1
 a = c(-2, 2)
-sol = solve.3HT.S3P3(R, a)
+b.ext = c(3)
+sol = solve.3HT.S3P3(R, a, b.ext=b.ext)
 x = sol[,1]; y = sol[,2]; z = sol[,3];
 
 ### Test
-x^3 + a[1]*y^3 + a[2]*z^3 # - R
-y^3 + a[1]*z^3 + a[2]*x^3 # - R
-z^3 + a[1]*x^3 + a[2]*y^3 # - R
+ext = b.ext[1] * (x+y+z)
+x^3 + a[1]*y^3 + a[2]*z^3 + ext # - R
+y^3 + a[1]*z^3 + a[2]*x^3 + ext # - R
+z^3 + a[1]*x^3 + a[2]*y^3 + ext # - R
 
 
 ### Debug
 R = 2
-a = c(-2, 2)
+a = c(-2, 3)
 m = complex(re=cos(2*pi/3), im=sin(2*pi/3))
 x = rootn(R / (a[1] + a[2] + 1), 3)
 y = x*m; z = x*m^2;
