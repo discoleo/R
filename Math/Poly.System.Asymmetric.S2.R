@@ -7,7 +7,7 @@
 ### Asymmetric S2:
 ### Base Types
 ###
-### draft v.0.2a-sym
+### draft v.0.2b
 
 
 ### Asymmetric Polynomial Systems: 2 Variables
@@ -43,6 +43,12 @@
 ###############
 
 
+### draft v.0.2b:
+# - moved Mixt Symmetric variant to new file:
+#   Poly.System.MixtVar.Hetero.Asym.R;
+# - solved: Simple Asymetric system:
+#   x^2 + b*y^2 = R1;
+#   y^2 + x*y = R2;
 ### draft v.0.2a-sym:
 # - some initial work on:
 #   (x+d)^3 + y^3 = R;
@@ -85,6 +91,94 @@ library(pracma)
 
 ###############
 ### Order 2 ###
+### Simple  ###
+
+### Initial:
+# x^2 + y^2 = R1
+# x*y = R2
+
+### Final:
+# x^2 + b*y^2 = Rf1
+# y^2 + x*y = Rf2
+
+### Transform:
+# x => x + k*y
+# y => y
+
+### Eq 1:
+(x + k*y)^2 + y^2 - R1 # = 0
+x^2 + 2*k*x*y + (k^2 + 1)*y^2 - R1
+
+### Eq 2:
+(x + k*y)*y - R2 # = 0
+x*y + k*y^2 - R2
+
+### Eq 1 - 2*k*Eq2 =>
+x^2 + (1 - k^2)*y^2 - R1 + 2*k*R2 # = 0
+k*y^2 + x*y - R2 # = 0
+
+### y => y/k
+x^2 + (1 - k^2)/k^2*y^2 - R1 + 2*k*R2 # = 0
+y^2 + x*y - k*R2 # = 0
+
+### Solver:
+solve.AsymSimple.P2 = function(R, b.y) {
+	k = sqrt(1/(b.y + 1) + 0i)
+	R2 = R[2] / k;
+	R1 = R[1] + 2*R[2];
+	S = sqrt(R1 + 2*R2 + 0i)
+	S = c(S, -S)
+	xy.d = sqrt(R1 - 2*R2 + 0i)
+	x0 = (S + xy.d) / 2;
+	y0 = (S - xy.d) / 2;
+	x = c(x0, y0)
+	y = c(y0, x0)
+	y = y * k;
+	x = x - y;
+	cbind(x=as.vector(x), y=as.vector(y))
+}
+test.AsymSimple.P2 = function(R, b.y) {
+	err1 = x^2 + b.y*y^2 # - R[1]
+	err2 = y^2 + x*y # - R[2]
+	err = rbind(err1, err2)
+	round0(err)
+}
+
+### Examples:
+R = c(1, 3)
+b.y = 2
+sol = solve.AsymSimple.P2(R, b.y)
+x = sol[,1]; y = sol[,2];
+
+### Test
+test.AsymSimple.P2(R, b.y)
+
+
+### Ex 2:
+R = c(0, 3)
+b.y = 4
+sol = solve.AsymSimple.P2(R, b.y)
+x = sol[,1]; y = sol[,2];
+
+### Test
+test.AsymSimple.P2(R, b.y)
+
+
+### Ex 3:
+R = c(1, -1)
+b.y = 1
+sol = solve.AsymSimple.P2(R, b.y)
+x = sol[,1]; y = sol[,2];
+
+### Test
+test.AsymSimple.P2(R, b.y)
+
+
+###############
+
+###############
+### Order 2 ###
+### Partial ###
 
 # x^2 + b*y = R1
 # y^2 + b*x = R2
@@ -848,71 +942,4 @@ x = sol[1]; y = sol[2];
 (x + d)^2 + y^2 # - R[1]
 x^2 + (y + d)^2 # - R[2]
 x^2 + y^2 # - R[3]
-
-
-########################
-########################
-
-#################
-
-### S3P3: d unknown
-# (x + d)^3 + y^3 = R1
-# x^3 + (y + d)^3 = R1
-# x^3 + y^3 = R3
-
-### Sum Eq 1 + Eq 2:
-(x + d)^3 + (y + d)^3 + x^3 + y^3 - 2*R1 # = 0
-2*(x^3 + y^3) + 3*d*(x^2 + y^2) + 3*d^2*(x + y) + 2*d^3 - 2*R1 # = 0
-2*R3 + 3*d*(S^2 - 2*x*y) + 3*d^2*S + 2*d^3 - 2*R1 # = 0
-3*d*S^2 - 6*d*x*y + 3*d^2*S + 2*d^3 - 2*R1 + 2*R3 # = 0
-
-### Diff: Eq 1 - Eq 2
-(x - y)*((x+d)^2 + (y+d)^2 + (x+d)*(y+d) - x^2 - y^2 - x*y) # = 0
-(x - y)*(3*d*S + 3*d^2) # = 0
-### Case: x != y =>
-# d = 0 OR
-# d = -S
-### =>
-3*x*y*S - S^3 - R1 + R3 # = 0
-# 3*x*y*S = S^3 + R1 - R3
-
-### Eq 3 =>
-S^3 - 3*x*y*S - R3 # = 0
-- R1 # = 0
-# has Solution only if R1 == 0
-# OR various extensions;
-
-
-### Solver:
-solve.MxHtSym.S3P3 = function(R, b.ext=0, debug=TRUE) {
-	if(all(b.ext == 0)) stop("NO solutions: x != y")
-	S = roots(c(rev(b.ext), -R[1]))
-	if(debug) print(S);
-	#
-	lenPow = length(b.ext)
-	R1 = R[1] - sapply(S, function(S) sum(b.ext * S^seq(lenPow)))
-	R3 = R[2];
-	d = -S;
-	xy = (S^3 + R1 - R3) / (3*S)
-	#
-	xy.d = sqrt(S^2 - 4*xy + 0i)
-	x = (S + xy.d)/2;
-	y = (S - xy.d)/2;
-	return(cbind(x=as.vector(x), y=as.vector(y), d=as.vector(d)))
-}
-
-### Examples:
-
-R = c(-1, 2)
-b.ext = c(1, -1)
-#
-sol = solve.MxHtSym.S3P3(R, b.ext=b.ext)
-x = sol[,1]; y = sol[,2]; d = sol[,3];
-
-### Test
-lenPow = nrow(sol); ext = sapply(x+y, function(S) sum(b.ext * S^seq(lenPow)))
-(x + d)^3 + y^3 + ext # - R[1]
-x^3 + (y + d)^3 + ext # - R[1]
-x^3 + y^3 # - R[2]
-
 
