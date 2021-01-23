@@ -7,7 +7,7 @@
 ### Asymmetric S2:
 ### Base Types
 ###
-### draft v.0.2a-pre
+### draft v.0.2a-sym
 
 
 ### Asymmetric Polynomial Systems: 2 Variables
@@ -28,6 +28,12 @@
 # x^n + (y + d)^n = R2
 # R1 != R2
 
+### Example 4: d unknown
+# (x + d)^n + y^n = R1
+# x^n + (y + d)^n = R2
+# x^n + y^n = R3
+# R1 != R2
+
 ### TODO:
 # - understand the advantages of the Dual system;
 
@@ -37,6 +43,10 @@
 ###############
 
 
+### draft v.0.2a-sym:
+# - some initial work on:
+#   (x+d)^3 + y^3 = R;
+# - the symmetric variants (in v.0.2a-sym);
 ### draft v.0.1d:
 # - asymmetric Coefficients: Order 3
 #   x^3 + b1*y = R;
@@ -838,4 +848,71 @@ x = sol[1]; y = sol[2];
 (x + d)^2 + y^2 # - R[1]
 x^2 + (y + d)^2 # - R[2]
 x^2 + y^2 # - R[3]
+
+
+########################
+########################
+
+#################
+
+### S3P3: d unknown
+# (x + d)^3 + y^3 = R1
+# x^3 + (y + d)^3 = R1
+# x^3 + y^3 = R3
+
+### Sum Eq 1 + Eq 2:
+(x + d)^3 + (y + d)^3 + x^3 + y^3 - 2*R1 # = 0
+2*(x^3 + y^3) + 3*d*(x^2 + y^2) + 3*d^2*(x + y) + 2*d^3 - 2*R1 # = 0
+2*R3 + 3*d*(S^2 - 2*x*y) + 3*d^2*S + 2*d^3 - 2*R1 # = 0
+3*d*S^2 - 6*d*x*y + 3*d^2*S + 2*d^3 - 2*R1 + 2*R3 # = 0
+
+### Diff: Eq 1 - Eq 2
+(x - y)*((x+d)^2 + (y+d)^2 + (x+d)*(y+d) - x^2 - y^2 - x*y) # = 0
+(x - y)*(3*d*S + 3*d^2) # = 0
+### Case: x != y =>
+# d = 0 OR
+# d = -S
+### =>
+3*x*y*S - S^3 - R1 + R3 # = 0
+# 3*x*y*S = S^3 + R1 - R3
+
+### Eq 3 =>
+S^3 - 3*x*y*S - R3 # = 0
+- R1 # = 0
+# has Solution only if R1 == 0
+# OR various extensions;
+
+
+### Solver:
+solve.MxHtSym.S3P3 = function(R, b.ext=0, debug=TRUE) {
+	if(all(b.ext == 0)) stop("NO solutions: x != y")
+	S = roots(c(rev(b.ext), -R[1]))
+	if(debug) print(S);
+	#
+	lenPow = length(b.ext)
+	R1 = R[1] - sapply(S, function(S) sum(b.ext * S^seq(lenPow)))
+	R3 = R[2];
+	d = -S;
+	xy = (S^3 + R1 - R3) / (3*S)
+	#
+	xy.d = sqrt(S^2 - 4*xy + 0i)
+	x = (S + xy.d)/2;
+	y = (S - xy.d)/2;
+	return(cbind(x=as.vector(x), y=as.vector(y), d=as.vector(d)))
+}
+
+### Examples:
+
+R = c(-1, 2)
+b.ext = c(1, -1)
+#
+sol = solve.MxHtSym.S3P3(R, b.ext=b.ext)
+x = sol[,1]; y = sol[,2]; d = sol[,3];
+
+### Test
+lenPow = nrow(sol); ext = sapply(x+y, function(S) sum(b.ext * S^seq(lenPow)))
+(x + d)^3 + y^3 + ext # - R[1]
+x^3 + (y + d)^3 + ext # - R[1]
+x^3 + y^3 # - R[2]
+
 
