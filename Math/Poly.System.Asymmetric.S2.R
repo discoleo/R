@@ -7,7 +7,7 @@
 ### Asymmetric S2:
 ### Base Types
 ###
-### draft v.0.1d
+### draft v.0.2a-pre
 
 
 ### Asymmetric Polynomial Systems: 2 Variables
@@ -23,6 +23,11 @@
 # y^n + b2*x = R
 # b1 != b2
 
+### Example 3: d given
+# (x + d)^n + y^n = R1
+# x^n + (y + d)^n = R2
+# R1 != R2
+
 ### TODO:
 # - understand the advantages of the Dual system;
 
@@ -32,7 +37,7 @@
 ###############
 
 
-### draft v.0.1cd:
+### draft v.0.1d:
 # - asymmetric Coefficients: Order 3
 #   x^3 + b1*y = R;
 # - TODO: special Case b1 + b2 == 0;
@@ -664,7 +669,9 @@ y^3 + b[2]*x # - R
 ##################
 ### Special Cases:
 ### b1 + b2 == 0
-S^9 - 6*R*S^6 - 12*b1*b2*S^5 - 15*R^2*S^3 - 12*b1*b2*R*S^2 + 4*b1^2*b2^2*S - 8*R^3
+b1 = b[1]
+S^9 - 6*R*S^6 + 12*b1^2*S^5 - 15*R^2*S^3 + 12*b1^2*R*S^2 + 4*b1^4*S - 8*R^3
+x^9 - 3*R*x^6 + 3*R^2*x^3 + b1^4*x + b1^3*R - R^3
 
 ### alternative Solution (special Case):
 ### Diff =>
@@ -674,12 +681,24 @@ x^3 - y^3 + b1*x + b1*y # = 0
 ### Sum =>
 x^3 + y^3 - b1*(x - y) - 2*R # = 0
 S^3 - 3*x*y*S - b1*(x - y) - 2*R # = 0
+# =>
 S^3*(S^2 - x*y) - 3*x*y*S*(S^2 - x*y) - b1*(x - y)*(S^2 - x*y) - 2*R*(S^2 - x*y) # = 0
 S^5 - 4*x*y*S^3 - 2*R*S^2 + 3*(x*y)^2*S + b1^2*S + 2*R*x*y # = 0
 ### Dual System:
 S^4 - 4*x*y*S^2 + 2*(x*y)^2 - R*S # = 0
 S^5 - 4*x*y*S^3 + 3*(x*y)^2*S - 2*R*S^2 + b1^2*S + 2*R*x*y # = 0
-### TODO
+### =>
+S^9 - 6*R*S^6 + 12*b1^2*S^5 - 15*R^2*S^3 + 12*b1^2*R*S^2 + 4*b1^4*S - 8*R^3
+
+### Sum(x*...) =>
+x^4 + y^4 - R*(x+y) # = 0
+S^4 - 4*x*y*S^2 + 2*(x*y)^2 - R*S # = 0
+### Diff(x*...) =>
+x^4 - y^4 + 2*b1*x*y - R*(x - y) # = 0
+(x - y)*(S^3 - 2*x*y*S - R) + 2*b1*x*y # = 0
+# - (x - y)*(S^3 - 3*x*y*S - 2*R - b1*(x - y)) =>
+(x - y)*(x*y*S + R) + 2*b1*x*y + b1*(x - y)^2 # = 0
+(x - y)*(x*y*S + R) + b1*(S^2 - 2*x*y) # = 0 => [redundant]
 
 
 #########
@@ -692,56 +711,131 @@ y = 0.4871915377
 S = x + y;
 
 
-###################
-###################
+###########################
+###########################
 
-### S3
-# [Temporary]
+########################
+### Asymmetric Shift ###
 
-# x^2 + b*x*z = R
-# y^2 + b*y*z = R
-# z^2 + b*x*y = R
+### S2: d given
+# (x + d)^n + y^n = R1
+# x^n + (y + d)^n = R2
 
-### Diff: (1) - (2) =>
-x^2 - y^2 + b*z*(x - y) # = 0
-(x - y)*(x + y + b*z) # = 0
-### Cases:
-# x == y *OR*
-# x + y + b*z = 0;
-x + y + b*z # = 0
 
-### Sum => [not used]
-x^2 + y^2 + z^2 + b*E2 - 3*R # = 0
-S^2 + (b - 2)*E2 - 3*R # = 0
-# (b - 2)*E2 = - (S^2 - 3*R);
+### S3: d unknown
+# (x + d)^n + y^n = R1
+# x^n + (y + d)^n = R2
+# x^n + y^n = R3
 
-### Sum: (1) + (2) =>
-x^2 + y^2 + b*z*(x+y) - 2*R # = 0
-(x+y)^2 - 2*x*y + b*z*(-b*z) - 2*R # = 0
-(-b*z)^2 - 2*x*y + b*z*(-b*z) - 2*R # = 0
-x*y + R # = 0
-# =>
-# z^2 = R*(b + 1);
-# =>
-# x + y = - b*z;
 
-### Solution:
-R = 1
-b = 2
-#
-z = sqrt(R[1]*(b[1] + 1) + 0i)
-z = c(z, -z);
-xy.s = - b[1] * z;
-xy = -R[1];
-xy.d = sqrt(xy.s^2 - 4*xy)
-xy.d = c(xy.d, -xy.d)
-xy.s = rep(xy.s, 2); z = rep(z, 2)
-x = (xy.s + xy.d) / 2;
-y = (xy.s - xy.d) / 2;
+###############
+### Order 2 ###
+###############
+
+
+### S2: d given
+# (x + d)^2 + y^2 = R1
+# x^2 + (y + d)^2 = R2
+
+### Sum Eq 2 + Eq 3:
+(x + d)^2 + (y + d)^2 + x^2 + y^2 - R1 - R2 # = 0
+2*(x^2 + y^2) + 2*d*(x + y) + 2*d^2 - R1 - R2 # = 0
+2*S^2 + 2*d*S - 4*x*y + 2*d^2 - R1 - R2
+# 4*x*y = 2*S^2 + 2*d*S + 2*d^2 - R1 - R2
+
+### Diff =>
+2*(x - y)*(x + y + d) - R1 + R2 # = 0
+2*(x - y)*(S + d) - R1 + R2 # = 0
+
+### Case: R1 == R2 && x != y
+S + d # = 0
+# S = -d
+
+### Case: R1 != R2
+# TODO
+
+
+### Solver:
+solve.AsymShift.S2P2 = function(R, d) {
+	if(R[1] != R[2]) stop("Not yet impleemnted!")
+	S = -d;
+	xy = (2*S^2 + 2*d*S + 2*d^2 - R[1] - R[2]) / 4;
+	#
+	xy.d = sqrt(S^2 - 4*xy + 0i)
+	x = (S + xy.d)/2;
+	y = (S - xy.d)/2;
+	cbind(x, y)
+}
+
+### Examples:
+R = c(2,2)
+d = 2
+sol = solve.AsymShift.S2P2(R, d)
+x = sol[1]; y = sol[2];
 
 ### Test
-x^2 + b[1]*x*z # - R
-y^2 + b[1]*y*z # - R
-z^2 + b[1]*x*y # - R
+(x + d)^2 + y^2 # - R[1]
+x^2 + (y + d)^2 # - R[2]
 
+
+#################
+
+### S3: d unknown
+# (x + d)^2 + y^2 = R1
+# x^2 + (y + d)^2 = R2
+# x^2 + y^2 = R3
+
+### Sum Eq 1 + Eq 2:
+(x + d)^2 + (y + d)^2 + x^2 + y^2 - R1 - R2 # = 0
+2*(x^2 + y^2) + 2*d*(x + y) + 2*d^2 - R1 - R2 # = 0
+2*d*S + 2*d^2 + 2*R3 - R1 - R2
+# 2*d*S = - 2*d^2 - 2*R3 + R1 + R2
+
+
+### Case 1: R1 == R2 && x != y
+### Diff: Eq 1 - Eq 2
+2*(x - y)*(x + y + d) - R1 + R2 # = 0
+2*(x - y)*(S + d) - R1 + R2 # = 0
+S + d # = 0
+# S = -d
+# NO solution: if 2*R3 != R1 + R2;
+
+
+### Case 2: R1 == R3
+### Diff: Eq 1 - Eq 3
+d*(2*x + d) - R1 + R3 # = 0
+# d = 0 (requires R1 == R2) OR
+# d = -2*x;
+
+
+### Case 3: R1 != R2 != R3
+# TODO
+
+
+### Eq 3 =>
+S^2 - 2*x*y - R3 # = 0
+4*d^2*S^2 - 8*d^2*x*y - 4*d^2*R3
+
+
+### Solver:
+solve.AsymShift.S2P2 = function(R) {
+	# TODO:
+	d = 0
+	#
+	xy.d = sqrt(S^2 - 4*xy + 0i)
+	x = (S + xy.d)/2;
+	y = (S - xy.d)/2;
+	cbind(x, y, d)
+}
+
+### Examples:
+R = c(1,2,3)
+#
+sol = solve.AsymShift.S2P2(R)
+x = sol[1]; y = sol[2];
+
+### Test
+(x + d)^2 + y^2 # - R[1]
+x^2 + (y + d)^2 # - R[2]
+x^2 + y^2 # - R[3]
 
