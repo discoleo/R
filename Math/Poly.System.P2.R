@@ -6,16 +6,19 @@
 ###
 ### Polynomial Systems: P2
 ### Decompositions of Symmetric Systems
-### v.0.3e
+### v.0.3f
 
 
 ###############
 ### History ###
 
-### draft v.0.3e:
-# - 2-Shift systems [Order 3, same shift]:
+### draft v.0.3e - v.0.3f:
+# - 2-Shift systems [Order 3]:
+#   same shift:
 #   (x + d)^n + (y + d)^n = R1;
 #   (x - d)^n + (y - d)^n = R2;
+#   OR different shifts:
+#   (x + d2)^n + (y + d2)^n = R2;
 ### draft v.0.3d - v.0.3d-cases:
 # - classic Polynomials for P[3] M-type: P[6];
 # - more particular cases for P[6]; (v.0.3d-cases)
@@ -1163,6 +1166,100 @@ x = sol[,1]; y = sol[,2];
 
 ### Classic Polynomial:
 round0.p(poly.calc(x)) * 128 * 27
+
+
+##########################
+
+### Order 3:
+# - different shifts;
+# - parameters d are specified;
+
+# (x + d1)^3 + (y + d1)^3 = R1
+# (x + d2)^3 + (y + d2)^3 = R2
+
+### Solution:
+
+### Eq 1:
+(x^3 + y^3) + 3*d1*(x^2 + y^2) + 3*d1^2*(x + y) + 2*d1^3 - R1 # = 0
+S^3 - 3*x*y*S + 3*d1*(S^2 - 2*x*y) + 3*d1^2*S + 2*d1^3 - R1 # = 0
+S^3 - 3*x*y*S - 6*d1*x*y + 3*d1*S^2 + 3*d1^2*S + 2*d1^3 - R1
+
+### Eq 2:
+S^3 - 3*x*y*S + 3*d2*(S^2 - 2*x*y) + 3*d2^2*S + 2*d2^3 - R2 # = 0
+
+### Eq 1 - Eq 2 =>
+3*(d1 - d2)*(S^2 - 2*x*y) + 3*(d1^2 - d2^2)*S + 2*d1^3 - 2*d2^3 - R1 + R2 # = 0
+3*(d1 - d2)*S^2 - 6*(d1 - d2)*x*y + 3*(d1^2 - d2^2)*S + 2*d1^3 - 2*d2^3 - R1 + R2
+# 6*(d1 - d2)*x*y = 3*(d1 - d2)*S^2 + 3*(d1^2 - d2^2)*S + 2*d1^3 - 2*d2^3 - R1 + R2
+
+### =>
+2*(d1 - d2)*S^3 - 6*(d1 - d2)*x*y*S - 2*d1*6*(d1 - d2)*x*y +
+	+ 6*d1*(d1 - d2)*S^2 + 6*d1^2*(d1 - d2)*S + 4*(d1 - d2)*d1^3 - 2*(d1 - d2)*R1
+2*(d1 - d2)*S^3 - (3*(d1 - d2)*S^2 + 3*(d1^2 - d2^2)*S + 2*d1^3 - 2*d2^3 - R1 + R2)*S +
+	- 2*d1*(3*(d1 - d2)*S^2 + 3*(d1^2 - d2^2)*S + 2*d1^3 - 2*d2^3 - R1 + R2) +
+	+ 6*d1*(d1 - d2)*S^2 + 6*d1^2*(d1 - d2)*S + 4*(d1 - d2)*d1^3 - 2*(d1 - d2)*R1
+(d1 - d2)*S^3 + 3*(d1 - d2)*(d1 + d2)*S^2 + (2*d1^3 - 2*d2^3 + 6*d1^2*d2 - 6*d1*d2^2 - R1 + R2)*S +
+	+ 4*d1*d2*(d1 - d2)*(d1 + d2) - 2*d2*R1 + 2*d1*R2
+
+### Solver
+solve.Shift2.S2P3 = function(R, d, debug=TRUE) {
+	isSimple = (length(d) == 1) || (d[1] == -d[2]);
+	if(isSimple) {
+		coeff = c(2*d, 0, - (8*d^3 + R[1] - R[2]), 2*d*R[1] + 2*d*R[2])
+	} else {
+		if(d[1] == d[2]) stop("System is NOT solvable: d1 == d2!");
+		d.diff = d[1] - d[2];
+		d.sum = d[1] + d[2];
+		coeff = c(d.diff, 3*d.diff*d.sum,
+			(2*d.diff*(d.sum^2 + 2*d[1]*d[2]) - R[1] + R[2]),
+			4*d[1]*d[2]*d.diff*d.sum - 2*d[2]*R[1] + 2*d[1]*R[2])
+	}
+	S = roots(coeff)
+	if(debug) print(S);
+	#
+	R1 = R[1]; R2 = R[2];
+	if(isSimple) {
+		xy = (6*d*S^2 + 4*d^3 - R1 + R2) / 12 / d;
+	} else {
+		xy = (3*d.diff*S^2 + 3*d.diff*d.sum*S + 2*(d[1]^3 - d[2]^3) - R1 + R2)
+		xy = xy / 6 / d.diff;
+	}
+	xy.d = sqrt(S^2 - 4*xy + 0i)
+	x = (S + xy.d) / 2;
+	y = (S - xy.d) / 2;
+	sol = cbind(as.vector(x), as.vector(y))
+	return(rbind(sol, sol[,2:1]));
+}
+
+### Examples:
+
+R = c(1, 2)
+d = c(-1, 2)
+sol = solve.Shift2.S2P3(R, d)
+x = sol[,1]; y = sol[,2];
+
+### Test
+(x + d[1])^3 + (y + d[1])^3 # - R[1]
+(x + d[2])^3 + (y + d[2])^3 # - R[2]
+
+### Classic Polynomial:
+round0.p(poly.calc(x)) * 3^6 * 2
+
+
+#########
+### Ex 2:
+
+R = c(1, 1)
+d = c(-2, 1)
+sol = solve.Shift2.S2P3(R, d)
+x = sol[,1]; y = sol[,2];
+
+### Test
+(x + d[1])^3 + (y + d[1])^3 # - R[1]
+(x + d[2])^3 + (y + d[2])^3 # - R[2]
+
+### Classic Polynomial:
+round0.p(poly.calc(x)) * 2
 
 
 ##########################
