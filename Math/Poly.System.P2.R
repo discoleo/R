@@ -6,10 +6,16 @@
 ###
 ### Polynomial Systems: P2
 ### Decompositions of Symmetric Systems
-### v.0.3d-cases
+### v.0.3e
 
 
-### History
+###############
+### History ###
+
+### draft v.0.3e:
+# - 2-Shift systems [Order 3, same shift]:
+#   (x + d)^n + (y + d)^n = R1;
+#   (x - d)^n + (y - d)^n = R2;
 ### draft v.0.3d - v.0.3d-cases:
 # - classic Polynomials for P[3] M-type: P[6];
 # - more particular cases for P[6]; (v.0.3d-cases)
@@ -111,10 +117,11 @@ mult.p = function(p1, p2) {
 	return(p)
 }
 
-####################
+########################
 
-####################
-### Symmetric System
+########################
+### Symmetric System ###
+########################
 
 ### Root Shift ###
 
@@ -163,7 +170,8 @@ R = c(1,1)
 x = vapply(c3, solve.ps, R=R, n=2)
 
 
-###############
+####################
+####################
 
 ### n = 3
 # (x + a)^3 + (y + a)^3 = R1
@@ -777,6 +785,9 @@ b3*x^5 + x^6
 - (2*R2*b3^2 + b2^2*b3)*x +
 1/2 * (4*R2*b3 + 3*b2^2)*x^2 +
 (4*R2 - b2*b3)*x^3 + 2*b3*x^5 + 2*x^6
+### b1 = b2 = 0
+R2^2 - R2*b3^2*x + R2*b3*x^2 + 2*R2*x^3 + b3*x^5 + x^6
+(x^3 + R2)^2 + b3*x^2*(x^3 + R2) - R2*b3^2*x
 
 ### R1 = -4*R2
 (- R2^2 - R2*b2*b3 - b1*b2^2 - 4*b2^3) +
@@ -1074,11 +1085,92 @@ round0(err)
 ################################
 ################################
 
+########################
+### Symmetric System ###
+### Variants         ###
+########################
+
+####################
+### Double Shift ###
+####################
+
+### Order 3: Simple
+# - same shift;
+# - parameter d is specified;
+
+# (x + d)^3 + (y + d)^3 = R1
+# (x - d)^3 + (y - d)^3 = R2
+
+### Solution:
+
+### Diff =>
+6*d*(x^2 + y^2) + 4*d^3 - R1 + R2 # = 0
+6*d*(S^2 - 2*x*y) + 4*d^3 - R1 + R2 # = 0
+6*d*S^2 - 12*d*x*y + 4*d^3 - R1 + R2 # = 0
+# 12*d*x*y = 6*d*S^2 + 4*d^3 - R1 + R2
+
+### Sum =>
+2*(x^3 + y^3) + 6*d^2*(x+y) - R1 - R2 # = 0
+2*S^3 - 6*x*y*S + 6*d^2*S - R1 - R2 # = 0
+4*d*S^3 - 12*d*x*y*S + 12*d^3*S - 2*d*R1 - 2*d*R2 # = 0
+4*d*S^3 - (6*d*S^2 + 4*d^3 - R1 + R2)*S + 12*d^3*S - 2*d*R1 - 2*d*R2 # = 0
+2*d*S^3 - (8*d^3 + R1 - R2)*S + 2*d*R1 + 2*d*R2 # = 0
+
+### Solver
+solve.Shift2.S2P3 = function(R, d, debug=TRUE) {
+	coeff = c(2*d, 0, - (8*d^3 + R[1] - R[2]), 2*d*R[1] + 2*d*R[2])
+	S = roots(coeff)
+	if(debug) print(S);
+	#
+	R1 = R[1]; R2 = R[2];
+	xy = (6*d*S^2 + 4*d^3 - R1 + R2) / 12 / d;
+	xy.d = sqrt(S^2 - 4*xy + 0i)
+	x = (S + xy.d) / 2;
+	y = (S - xy.d) / 2;
+	sol = cbind(as.vector(x), as.vector(y))
+	return(rbind(sol, sol[,2:1]));
+}
+
+# - trivial roots:
+#   if R1 = 0 or R2 = 0: S = -2*d or + 2*d;
+#   if R1 + R2 = 0: S = 0;
+
+### Examples:
+
+R = c(1,2)
+d = 1
+sol = solve.Shift2.S2P3(R, d)
+x = sol[,1]; y = sol[,2];
+
+### Test
+(x + d)^3 + (y + d)^3 # - R[1]
+(x - d)^3 + (y - d)^3 # - R[2]
+
+### Classic Polynomial:
+round0.p(poly.calc(x)) * 16*27
+
+
+#########
+### Ex 2:
+R = c(-2, 1)
+d = 2
+sol = solve.Shift2.S2P3(R, d)
+x = sol[,1]; y = sol[,2];
+
+### Test
+(x + d)^3 + (y + d)^3 # - R[1]
+(x - d)^3 + (y - d)^3 # - R[2]
+
+### Classic Polynomial:
+round0.p(poly.calc(x)) * 128 * 27
+
 
 ##########################
 ### Asymmetric Systems ###
 ##########################
 
+### TODO:
+# - move to separate file;
 
 ### Basic P2 System
 
