@@ -7,7 +7,7 @@
 ### Mixt Variable
 ### Hetero-Symmetric S2 + Symmetric
 ###
-### draft v.0.1a
+### draft v.0.1b
 
 
 ### Mixt Polynomial Systems:
@@ -24,12 +24,19 @@
 # x^n + (y + d)^n = R1
 # (x - d)^n + (y - d)^n = R2
 
+### Example 3:
+# x^n + d*y = R1
+# y^n + d*x = R1
+# Variants: x*y*d = R2
+
 
 ###############
 ### History ###
 ###############
 
 
+### draft v.0.1b:
+# - Mixt Hetero-Symmetric system: Order 2;
 ### draft v.0.1a:
 # - moved to new file
 #   from Poly.System.Asymmetric.S2.R;
@@ -61,6 +68,209 @@ library(pracma)
 ########################
 ### Hetero-Symmetric ###
 ########################
+
+###############
+### Order 2 ###
+###############
+
+# x^2 + d*y = R1
+# y^2 + d*x = R1
+# x*y = R2
+
+### Solution:
+
+### Sum Eq 1 + Eq 2 =>
+x^2 + y^2 + d*(x + y) - 2*R1 # = 0
+S^2 + d*S - 2*x*y - 2*R1 # = 0
+# =>
+S^2 + d*S - 2*R1 - 2*R2 # = 0
+# d*S = - S^2 + 2*R1 + 2*R2
+
+### Diff =>
+x^2 - y^2 - d*(x - y) # = 0
+(x - y)*(x + y - d) # = 0
+(x - y)*(S - d) # = 0
+### Case: x != y =>
+S - d # = 0
+# d = S
+
+### =>
+2*S^2 - 2*R1 - 2*R2 # = 0
+S^2 - R1 - R2 # = 0
+
+### Solver:
+solve.Ht2V.S3P2 = function(R, debug=TRUE) {
+	coeff = c(1, 0, - R[1] - R[2])
+	S = roots(coeff)
+	if(debug) print(S);
+	d = S;
+	R2 = R[2];
+	xy.d = sqrt(S^2 - 4*R2 + 0i);
+	x = (S + xy.d) / 2
+	y = (S - xy.d) / 2
+	sol = cbind(as.vector(x), as.vector(y), as.vector(d));
+	sol = rbind(sol, sol[,c(2,1,3)]);
+	return(sol)
+}
+
+### Examples:
+
+R = c(1, 1)
+sol = solve.Ht2V.S3P2(R)
+x = sol[,1]; y = sol[,2]; d = sol[,3];
+
+### Test
+x^2 + d*y # - R[1]
+y^2 + d*x # - R[1]
+x*y # - R[2]
+
+##################
+
+### Variant:
+# x^2 + d*y = R1
+# y^2 + d*x = R1
+# x*y*(x + y) = R2
+
+### Solution:
+
+### Sum Eq 1 + Eq 2 =>
+x^2 + y^2 + d*(x + y) - 2*R1 # = 0
+S^2 + d*S - 2*x*y - 2*R1 # = 0
+# =>
+S^3 + d*S^2 - 2*R1*S - 2*R2
+
+### Diff =>
+### Case: x != y =>
+S - d # = 0
+# d = S
+
+### =>
+2*S^3 - 2*R1*S - 2*R2 # = 0
+S^3 - R1*S - R2
+
+### Solver:
+solve.Ht2V.S3P2 = function(R, debug=TRUE) {
+	coeff = c(1, 0, - R[1], - R[2])
+	S = roots(coeff)
+	if(debug) print(S);
+	d = S;
+	R2 = R[2];
+	xy = R2 / S;
+	xy.d = sqrt(S^2 - 4*xy + 0i);
+	x = (S + xy.d) / 2
+	y = (S - xy.d) / 2
+	sol = cbind(as.vector(x), as.vector(y), as.vector(d));
+	sol = rbind(sol, sol[,c(2,1,3)]);
+	return(sol)
+}
+
+### Examples:
+
+R = c(3, -1)
+sol = solve.Ht2V.S3P2(R)
+x = sol[,1]; y = sol[,2]; d = sol[,3];
+
+### Test
+x^2 + d*y # - R[1]
+y^2 + d*x # - R[1]
+x*y*(x + y) # - R[2]
+
+
+##################
+
+### Variant:
+# x^2 + d*y = R1
+# y^2 + d*x = R1
+# x*y*d = R2
+
+### Solution:
+
+### Sum Eq 1 + Eq 2 =>
+x^2 + y^2 + d*(x + y) - 2*R1 # = 0
+S^2 + d*S - 2*x*y - 2*R1 # = 0
+# =>
+d*S^2 + d^2*S - 2*R1*d - 2*R2
+
+### Diff =>
+### Case: x != y =>
+S - d # = 0
+# d = S
+
+### =>
+2*S^3 - 2*R1*S - 2*R2
+S^3 - R1*S - R2
+# same as previous case;
+# Note: S == d (for order 2);
+
+
+##################
+
+### Variant:
+# x^2 + d*y = R1
+# y^2 + d*x = R1
+# x^2 + y^2 + d^2 = R2
+
+### Solution:
+
+### Diff =>
+### Case: x != y =>
+S - d # = 0
+# d = S
+
+### Sum Eq 1 + Eq 2 =>
+x^2 + y^2 + d*(x + y) - 2*R1 # = 0
+S^2 + d*S - 2*x*y - 2*R1 # = 0
+### =>
+2*S^2 - 2*x*y - 2*R1 # = 0
+S^2 - x*y - R1 # = 0
+# x*y = S^2 - R1
+
+### Eq 3 =>
+S^2 - 2*x*y + d^2 - R2 # = 0
+2*S^2 - 2*x*y - R2
+2*R1 - R2 # = 0
+# - NO direct solutions, only for extensions;
+
+### Solver:
+solve.Ht2V.S3P2 = function(R, b1.ext=0, b2.ext=0, debug=TRUE) {
+	len = max(length(b1.ext), length(b2.ext));
+	b1.ext = c(rep(0, len - length(b1.ext)), rev(b1.ext));
+	b2.ext = c(rep(0, len - length(b2.ext)), rev(b2.ext));
+	b = - 2*b1.ext + b2.ext;
+	if(all(b == 0)) stop("NO solution possible!")
+	coeff = c(b, 2*R[1] - R[2])
+	S = roots(coeff)
+	if(debug) print(S);
+	d = S;
+	R1 = R[1] - sapply(S, function(S) sum(rev(b1.ext)*S^seq(len)));
+	xy = S^2 - R1;
+	xy.d = sqrt(S^2 - 4*xy + 0i);
+	x = (S + xy.d) / 2
+	y = (S - xy.d) / 2
+	sol = cbind(as.vector(x), as.vector(y), as.vector(d));
+	sol = rbind(sol, sol[,c(2,1,3)]);
+	return(sol)
+}
+
+### Examples:
+
+R = c(3, -1)
+b1.ext = c(1,-1, 1)
+sol = solve.Ht2V.S3P2(R, b1.ext=b1.ext)
+x = sol[,1]; y = sol[,2]; d = sol[,3];
+
+### Test
+S = x+y; len = length(b1.ext); ext1 = sapply(S, function(S) sum(b1.ext*S^seq(len)));
+x^2 + d*y + ext1 # - R[1]
+y^2 + d*x + ext1 # - R[1]
+x^2 + y^2 + d^2 # - R[2]
+
+### Classic Polynomial
+round0.p(poly.calc(x)) * 8
+
+
+####################
+####################
 
 ###############
 ### Order 3 ###
@@ -166,7 +376,7 @@ x = sol[,1]; y = sol[,2]; d = sol[,3];
 
 ### Solution:
 
-### TODO
+### TODO: robust!
 
 ### Diff: Eq 1 - Eq 2 =>
 6*d*(x^2 + y^2) + 4*d^3 - R1 + R2 # = 0
@@ -201,7 +411,7 @@ solve.MSym.S3P3 = function(R, debug=TRUE) {
 	#
 	R1 = R[1]; R2 = R[2]; R3 = R[3];
 	xy = (S^3 - R3) / (3*S);
-	### TODO: robust
+	### TODO: robust!
 	d = -sqrt((R1 + R2 - 2*R3) / 6 / S + 0i);
 	xy.d = sqrt(S^2 - 4*xy + 0i);
 	x = (S + xy.d)/2;
