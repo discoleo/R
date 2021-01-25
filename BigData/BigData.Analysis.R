@@ -4,10 +4,11 @@
 ### Process Excel files
 ###
 ### Leonard Mada
-### v 0.1b
+### v 0.2a
 
 
 # install.packages("readxl")
+# install.packages("xts")
 
 library(readxl)
 
@@ -125,11 +126,11 @@ readNA.excel = function(files, col.name="KWh", sheet.pattern="^[^ _]+(?=[ _.])",
 			}
 		}
 		# x[ x[ , col.name] == 0 , col.name] = NA
-		# NA
+		### NA
 		isNA = is.na(x[,col.name])
 		count = if(length(isNA) == 1) 0 else sum(isNA)
 		x.df$na[id] = count
-		# Zero
+		### Zero
 		isZero = x[ , col.name] == 0
 		x.df$Zero[id] = length(isZero[isZero])
 	}}
@@ -154,8 +155,10 @@ files.n = list.files(pattern = flt)
 # TODO: not yet extracted!
 
 # How many NAs & Zero values:
-x.df = readNA.excel(files)
+x.df = readNA.excel(files.n)
 
+# x.df
+x.df = x.df[order(x.df$name),]
 x.df
 
 #################
@@ -172,10 +175,119 @@ file.n = files.n[id]
 
 x = read_excel(file.n, get_sheet(files.n[id]))
 # x = read_excel(file.n)
+# x = x[,1:4]
+head(x)
 
+### NA: 1st value in series
+table(is.na(x$KWh))
+x = x[ ! is.na(x$KWh), ]
 
 ################
 ################
+
+################
+### TS
+
+library(xts)
+
+### whole Days
+day = 4*24
+nrow(x) %% day
+# missing time points
+day - (nrow(x) %% day)
+### TODO: imputation
+
+
+x.ts <- xts(x$KWh, order.by=x$timeLogged)
+attr(x.ts, 'frequency') = 4*24
+names(x.ts) = "KWh"
+x.ts = x.ts[ ! is.na(x.ts) ]
+head(x.ts)
+
+plot(x.ts)
+
+
+simple.ret <- function(x, col.name, k=1){
+  x[,col.name] / lag(x[,col.name], k=k) - 1
+}
+plot(x.ts, FUN=simple.ret, col.name="KWh", k=4*24) # NO effect
+
+
+### Filter
+filter.val = function(x, limit=c(0, 200), frequency=4*24) {
+	# daily = 4*24
+	# 4 times per day = 4*24 / 4
+	# weekly = 4*24*7
+	attr(x, 'frequency') = frequency;
+	x$KWh[x$KWh > limit[2]] = 0
+	x$KWh[x$KWh < limit[1]] = 0
+	return(x)
+}
+table(x.ts$KWh > 200)
+table(x.ts$KWh > 100)
+table(x.ts$KWh < 0)
+
+
+### Decompose
+plot.decomposed.ts = function (x, start=1, len=end(x.decomp$x), ...) {
+	end = start + len - 1
+	flt = function(x) {
+		window(x, start=start, end=end)
+	}
+    xx <- flt(x$x)
+    if (is.null(xx)) 
+        xx <- with(x, if (type == "additive") 
+            flt(random) + flt(trend) + flt(seasonal)
+        else flt(random) * flt(trend) * flt(seasonal))
+    plot(cbind(observed = xx, trend = flt(x$trend), seasonal = flt(x$seasonal), random = flt(x$random)), 
+         main = paste("Decomposition of", x$type, "time series"), ...)
+}
+
+### Decompose
+# - but only 1 seasonality!
+freq = 4*24;
+freq = 4*24*7;
+x2.ts = filter.val(x.ts, frequency=freq)
+x.decomp <- decompose(as.ts(x2.ts), type="additive")
+
+# daily
+plot(x.decomp, start=50, len=90)
+# weekly
+plot(x.decomp, start=3, len=7)
+
+
+### Multiple Seasonalities
+library(forecast)
+
+x.mts = msts(x2.ts, seasonal.periods=c(4*24, 4*24*7))
+
+x.fit <- tbats(x.mts)
+plot(forecast(x.fit))
+
+
+hw.fit = HoltWinters(x.mts)
+hw.fcst = forecast(hw.fit, h=8)
+
+# analyze the autocorrelation of the residuals
+# (a good model should lead to no autocorrelation in residuals)
+acf(hw.fcst, lag.max=20)
+
+# a good model should also have the forecast errors normally distributed
+# with mean zero and constant variance
+plot.ts(hw.fcst$residuals)
+
+
+### Day of week: simple Mean
+ts.m = matrix(x2.ts, nrow=4*24*7)
+ts.mm = apply(ts.m, 1, mean)
+plot(as.ts(ts.mm))
+plot(ts.mm) # low consumption during certain hours
+
+
+### TODO:
+# fasster: Forecasting multiple seasonality with state switching
+# https://www.youtube.com/watch?v=6YlboftSalY
+
 
 ################
 ### Analyse data
