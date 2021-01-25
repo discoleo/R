@@ -4,7 +4,7 @@
 ### Process Excel files
 ###
 ### Leonard Mada
-### v 0.2a
+### v 0.2b
 
 
 # install.packages("readxl")
@@ -21,6 +21,7 @@ setwd(".../Data/historical-files-up-to-oct-1-included")
 
 ### helper functions
 
+### Sheet name
 get_sheet = function(file.name, sheet.pattern="^[^ _]+(?=[ _])", DEBUG=FALSE) {
 	sheets = excel_sheets(file.name)
 	if(length(sheets) == 1) {
@@ -66,6 +67,7 @@ find_last = function(chars, str) {
 		return(str[has][len])
 	}
 }
+### Read Data from Excel files
 readNA.excel = function(files, col.name="KWh", sheet.pattern="^[^ _]+(?=[ _.])", PRINT_TABLE = TRUE) {
 	# PRINT_TABLE: for debug purposes;
 	x.df = data.frame(
@@ -130,8 +132,8 @@ readNA.excel = function(files, col.name="KWh", sheet.pattern="^[^ _]+(?=[ _.])",
 		isNA = is.na(x[,col.name])
 		count = if(length(isNA) == 1) 0 else sum(isNA)
 		x.df$na[id] = count
-		### Zero
-		isZero = x[ , col.name] == 0
+		### Zero & Negative
+		isZero = x[ , col.name] <= 0 # == 0
 		x.df$Zero[id] = length(isZero[isZero])
 	}}
 	return(x.df)
@@ -162,6 +164,7 @@ x.df = x.df[order(x.df$name),]
 x.df
 
 #################
+#################
 
 #################
 ### Read data ###
@@ -185,8 +188,9 @@ x = x[ ! is.na(x$KWh), ]
 ################
 ################
 
-################
-### TS
+############
+###  TS  ###
+############
 
 library(xts)
 
@@ -261,10 +265,12 @@ library(forecast)
 
 x.mts = msts(x2.ts, seasonal.periods=c(4*24, 4*24*7))
 
+# tbats model
 x.fit <- tbats(x.mts)
 plot(forecast(x.fit))
 
 
+# Holt-Winters model
 hw.fit = HoltWinters(x.mts)
 hw.fcst = forecast(hw.fit, h=8)
 
