@@ -7,7 +7,7 @@
 ### Mixt Variable
 ### Hetero-Symmetric S2 + Symmetric
 ###
-### draft v.0.1c
+### draft v.0.1d
 
 
 ### Mixt Polynomial Systems:
@@ -35,9 +35,10 @@
 ###############
 
 
-### draft v.0.1c:
+### draft v.0.1c - v.0.1d:
 # - Mixt Hetero-Symmetric system: Order 3;
-#  -- first/basic variant: generalized symmetric P[6];
+#  -- first/basic variant: x*y; (=> generalized symmetric P[6])
+#  -- variant: x*y*d (=> P[12]);
 ### draft v.0.1b - v.0.1b-var:
 # - Mixt Hetero-Symmetric system: Order 2;
 # - more variants for Eq 3;
@@ -389,12 +390,22 @@ solve.MxHtSym.S3P3 = function(R, b1.ext=0, b2.ext=0, debug=TRUE) {
 	sol = rbind(sol, sol[,c(2,1,3)])
 	return(sol)
 }
-test.MxHt.S3P3 = function(sol, R, b1.ext=0, b2.ext=0) {
-	x = sol[,1]; y = sol[,2]; d = sol[,3];
-	lenPow1 = length(b1.ext); ext1 = sapply(x+y, function(S) sum(b1.ext * S^seq(lenPow1)))
+test.MxHt.S3P3 = function(sol, R, b1.ext=0, b2.ext=0, type="x*y") {
+	x = sol[,1]; y = sol[,2]; d = sol[,3]; S = x+y;
+	lenPow1 = length(b1.ext); ext1 = sapply(S, function(S) sum(b1.ext * S^seq(lenPow1)))
+	lenPow2 = length(b2.ext); ext3 = sapply(S, function(S) sum(b2.ext * S^seq(lenPow2)))
 	err1 = x^3 + d*y + ext1 # - R[1]
 	err2 = y^3 + d*x + ext1 # - R[1]
-	err3 = x*y # - R[2]
+	type = match(type, c("x*y", "xyd", "xyS"))
+	if(is.na(type)) { stop("Type NOT yet supported!"); }
+	else if(type == 1) {
+		err3 = x*y # - R[2]
+	} else if(type == 2) {
+		err3 = x*y * d;
+	} else if(type == 3) {
+		err3 = x*y * S;
+	}
+	err3 = err3 + ext3;
 	err = rbind(err1, err2, err3)
 	return(round0(err))
 }
@@ -447,6 +458,90 @@ test.MxHt.S3P3(sol, R, b1.ext=b1.ext)
 round0.p(poly.calc(x))
 err = -8 - 4*x + 18*x^2 + 5*x^3 - 9*x^4 - x^5 + x^6
 round0(err)
+
+################
+### Variants ###
+
+# x*y*d = R2
+
+### Solution
+
+### Diff =>
+### Case: x != y =>
+S^2 - x*y - d # = 0
+# d = S^2 - x*y
+
+### Sum =>
+x^3 + y^3 + d*(x + y) - 2*R1 # = 0
+S^3 - 3*x*y*S + d*S - 2*R1
+# =>
+S^3 - 3*x*y*S + (S^2 - x*y)*S - 2*R1
+S^3 - 2*x*y*S - R1
+# 2*x*y*S = S^3 - R1
+
+### Eq 3:
+x*y*(S^2 - x*y) - R2 # = 0
+x*y*S^2 - (x*y)^2 - R2 # = 0
+4*x*y*S^4 - 4*(x*y)^2*S^2 - 4*R2*S^2 # = 0
+2*(S^3 - R1)*S^3 - (S^3 - R1)^2 - 4*R2*S^2 # = 0
+S^6 - 4*R2*S^2 - R1^2 # = 0
+
+### Solver:
+solve.MxHtSym.S3P3 = function(R, b1.ext=0, b2.ext=0, debug=TRUE) {
+	len = max(6, 2*length(b1.ext), 2 + length(b2.ext));
+	b1m.ext = c(rep(0, len - length(b1.ext)), rev(b1.ext));
+	b1sq.ext = c(rep(0, len - 2*length(b1.ext)), rev(b1.ext)^2);
+	b2m.ext = c(rep(0, len - length(b2.ext) - 2), rev(b2.ext));
+	# TODO: cross-terms for ()^2;
+	coeff = c(rep(0, len - 6), 1, 0,0,0, -4*R[2], 0, -R[1]^2) +
+		+ c(2*R[1]*b1m.ext, 0) - c(b1sq.ext, 0, 0) +
+		+ c(4*b2m.ext, 0, 0, 0)
+	S = roots(coeff)
+	if(debug) print(S);
+	#
+	len1 = length(b1.ext); len2 = length(b2.ext);
+	R1 = R[1] - sapply(S, function(S) sum(b1.ext * S^seq(len1)));
+	# R2 = R[2] - sapply(S, function(S) sum(b2.ext * S^seq(len2)));
+	xy = (S^3 - R1) / 2 / S;
+	d = S^2 - xy;
+	#
+	xy.d = sqrt(S^2 - 4*xy + 0i)
+	x = (S + xy.d)/2;
+	y = (S - xy.d)/2;
+	sol = cbind(x=as.vector(x), y=as.vector(y), d=as.vector(d))
+	sol = rbind(sol, sol[,c(2,1,3)])
+	return(sol)
+}
+
+### Examples:
+
+R = c(-1, 2)
+b1.ext = c(0)
+#
+sol = solve.MxHtSym.S3P3(R, b1.ext=b1.ext)
+x = sol[,1]; y = sol[,2]; d = sol[,3];
+
+### Test
+test.MxHt.S3P3(sol, R, b1.ext=b1.ext, type="xyd")
+
+### Classic Polynomial
+round0.p(poly.calc(x[c(1,2,4,7)]))
+err = 2 + x + x^4
+round0(err)
+
+### Ex 2:
+R = c(-1, 2)
+b1.ext = c(-1)
+b2.ext = c(0)
+#
+sol = solve.MxHtSym.S3P3(R, b1.ext=b1.ext, b2.ext=b2.ext)
+x = sol[,1]; y = sol[,2]; d = sol[,3];
+
+### Test
+test.MxHt.S3P3(sol, R, b1.ext=b1.ext, b2.ext=b2.ext, type="xyd")
+
+### Classic Polynomial
+round0.p(poly.calc(x)) # P[12]
 
 
 ####################
