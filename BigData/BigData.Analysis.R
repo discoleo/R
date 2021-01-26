@@ -4,17 +4,21 @@
 ### Process Excel files
 ###
 ### Leonard Mada
-### v 0.2b
+### v 0.2c
 
 
 # install.packages("readxl")
 # install.packages("xts")
+### Forecasting
+# install.packages("forecast")
+# install.packages("fable")
+
 
 library(readxl)
 
 
 
-setwd(".../Data/historical-files-up-to-oct-1-included")
+setwd("F:\\MSc/BigData/Data/historical-files-up-to-oct-1-included")
 
 
 ####################
@@ -178,7 +182,7 @@ file.n = files.n[id]
 
 x = read_excel(file.n, get_sheet(files.n[id]))
 # x = read_excel(file.n)
-# x = x[,1:4]
+x = x[,1:4]
 head(x)
 
 ### NA: 1st value in series
@@ -249,8 +253,8 @@ plot.decomposed.ts = function (x, start=1, len=end(x.decomp$x), ...) {
 
 ### Decompose
 # - but only 1 seasonality!
-freq = 4*24;
-freq = 4*24*7;
+freq = 4*24; # daily
+freq = 4*24*7; # weekly
 x2.ts = filter.val(x.ts, frequency=freq)
 x.decomp <- decompose(as.ts(x2.ts), type="additive")
 
@@ -262,15 +266,17 @@ plot(x.decomp, start=3, len=7)
 
 ### Multiple Seasonalities
 library(forecast)
+library(fable)
 
 x.mts = msts(x2.ts, seasonal.periods=c(4*24, 4*24*7))
 
-# tbats model
+### tbats model
+# - slow!
 x.fit <- tbats(x.mts)
 plot(forecast(x.fit))
 
 
-# Holt-Winters model
+### Holt-Winters model
 hw.fit = HoltWinters(x.mts)
 hw.fcst = forecast(hw.fit, h=8)
 
@@ -290,9 +296,36 @@ plot(as.ts(ts.mm))
 plot(ts.mm) # low consumption during certain hours
 
 
+##################
+
 ### TODO:
 # fasster: Forecasting multiple seasonality with state switching
 # https://www.youtube.com/watch?v=6YlboftSalY
+
+x.tsb = x[,c("timeLogged", "KWh")]
+x.tsb = filter.val(x.tsb)
+# x.tsb$ID = seq(nrow(x.tsb))
+
+# Duplicates
+id.duplicated = x.tsb$timeLogged[duplicated(x.tsb$timeLogged)]
+isDuplicated = x.tsb$timeLogged %in% id.duplicated
+x.tsb[isDuplicated,]
+x.tsb = x.tsb[ ! (isDuplicated & x.tsb$KWh == 0), ]
+
+id.duplicated = x.tsb$timeLogged[duplicated(x.tsb$timeLogged)]
+isDuplicated = x.tsb$timeLogged %in% id.duplicated
+x.tsb[isDuplicated,] # still 1 remaining
+isDuplicated = duplicated(x.tsb$timeLogged)
+x.tsb = x.tsb[ ! isDuplicated, ]
+
+x.tsb = as_tsibble(x.tsb) # key = _BUILDING_
+head(x.tsb)
+
+# fails miserably
+x.tsb = tsibble::fill_gaps(x.tsb)
+# fails miserably
+fts.fit = fabletools::model(x.tsb,
+	Arima = ARIMA(KWh ~ season("day") + fourier("week", K = 8)))
 
 
 ################
