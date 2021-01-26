@@ -7,7 +7,7 @@
 ### Mixt Variable
 ### Hetero-Symmetric S2 + Symmetric
 ###
-### draft v.0.1b-var
+### draft v.0.1c
 
 
 ### Mixt Polynomial Systems:
@@ -35,6 +35,9 @@
 ###############
 
 
+### draft v.0.1c:
+# - Mixt Hetero-Symmetric system: Order 3;
+#  -- first/basic variant: generalized symmetric P[6];
 ### draft v.0.1b - v.0.1b-var:
 # - Mixt Hetero-Symmetric system: Order 2;
 # - more variants for Eq 3;
@@ -335,6 +338,116 @@ round0.p(poly.calc(x)) * 8
 err = 37 + 8*x + 10*x^2 + 12*x^3 + 16*x^4 - 8*x^5 + 8*x^6
 round0(err)
 
+####################
+####################
+
+###############
+### Order 3 ###
+###############
+
+### Hetero-Symmetric
+
+# x^3 + d*y = R1
+# y^3 + d*x = R1
+# x*y = R2
+
+### Diff =>
+x^3 - y^3 - d*(x - y) # = 0
+(x - y)*(x^2 + y^2 + x*y - d) # = 0
+(x - y)*(S^2 - x*y - d) # = 0
+### Case: x != y =>
+S^2 - R2 - d # = 0
+# d = S^2 - R2
+
+### Sum =>
+x^3 + y^3 + d*(x + y) - 2*R1 # = 0
+S^3 - 3*x*y*S + d*S - 2*R1
+S^3 - 3*R2*S + (S^2 - R2)*S - 2*R1
+2*S^3 - 4*R2*S - 2*R1
+S^3 - 2*R2*S - R1
+
+### Solver:
+solve.MxHtSym.S3P3 = function(R, b1.ext=0, b2.ext=0, debug=TRUE) {
+	len = max(3, length(b1.ext), 1 + length(b2.ext));
+	b1m.ext = c(rep(0, len - length(b1.ext)), rev(b1.ext));
+	b2m.ext = c(rep(0, len - length(b2.ext) - 1), rev(b2.ext));
+	coeff = c(rep(0, len - 3), 1, 0, -2*R[2], -R[1]) +
+		+ c(b1m.ext, 0) + c(2*b2m.ext, 0, 0)
+	S = roots(coeff)
+	if(debug) print(S);
+	#
+	len1 = length(b1.ext); len2 = length(b2.ext);
+	# R1 = R[1] - sapply(S, function(S) sum(b1.ext * S^seq(len1)))
+	R2 = R[2] - sapply(S, function(S) sum(b2.ext * S^seq(len2)));
+	d = S^2 - R2;
+	xy = R2;
+	#
+	xy.d = sqrt(S^2 - 4*xy + 0i)
+	x = (S + xy.d)/2;
+	y = (S - xy.d)/2;
+	sol = cbind(x=as.vector(x), y=as.vector(y), d=as.vector(d))
+	sol = rbind(sol, sol[,c(2,1,3)])
+	return(sol)
+}
+test.MxHt.S3P3 = function(sol, R, b1.ext=0, b2.ext=0) {
+	x = sol[,1]; y = sol[,2]; d = sol[,3];
+	lenPow1 = length(b1.ext); ext1 = sapply(x+y, function(S) sum(b1.ext * S^seq(lenPow1)))
+	err1 = x^3 + d*y + ext1 # - R[1]
+	err2 = y^3 + d*x + ext1 # - R[1]
+	err3 = x*y # - R[2]
+	err = rbind(err1, err2, err3)
+	return(round0(err))
+}
+
+### Examples:
+
+R = c(-1, 2)
+b1.ext = c(0)
+#
+sol = solve.MxHtSym.S3P3(R, b1.ext=b1.ext)
+x = sol[,1]; y = sol[,2]; d = sol[,3];
+
+### Test
+test.MxHt.S3P3(sol, R, b1.ext=b1.ext)
+
+### Classic Polynomial
+round0.p(poly.calc(x))
+err = 8 + 4*x^2 + x^3 + 2*x^4 + x^6
+round0(err)
+
+#########
+### Ex 2:
+R = c(-1, -1)
+b1.ext = c(0)
+#
+sol = solve.MxHtSym.S3P3(R, b1.ext=b1.ext)
+x = sol[,1]; y = sol[,2]; d = sol[,3];
+
+### Test
+test.MxHt.S3P3(sol, R, b1.ext=b1.ext)
+
+### Classic Polynomial
+round0.p(poly.calc(x))
+err = -1 + x^2 + x^3 - x^4 + x^6
+round0(err)
+
+
+#########
+### Ex 3: generalized symmetric polynom
+R = c(1, -2)
+b1.ext = c(-1, 1, -2)
+#
+sol = solve.MxHtSym.S3P3(R, b1.ext=b1.ext)
+x = sol[,1]; y = sol[,2]; d = sol[,3];
+
+### Test
+test.MxHt.S3P3(sol, R, b1.ext=b1.ext)
+
+### Classic Polynomial
+round0.p(poly.calc(x))
+err = -8 - 4*x + 18*x^2 + 5*x^3 - 9*x^4 - x^5 + x^6
+round0(err)
+
 
 ####################
 ####################
@@ -436,7 +549,6 @@ x = sol[,1]; y = sol[,2]; d = sol[,3];
 ###############
 ### Order 3 ###
 ###############
-
 
 ### S3P3:
 # (x + d)^3 + (y + d)^3 = R1
