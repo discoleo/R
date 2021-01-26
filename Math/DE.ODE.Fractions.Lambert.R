@@ -7,13 +7,17 @@
 ### Differential Equations
 ### ODEs - Fractions: Lambert
 ###
-### draft v.0.3d
+### draft v.0.3e
 
 
 ### History
 
 ### Order 1 Non-Liniar
 ###
+### draft v.0.3e:
+# - ODEs derived from:
+#   y^n = log(f(x)) * log(g(x));
+# - simple example from: y = log(x + k) * log(x - k);
 ### draft v.0.3d:
 # - ODEs derived from e^e^f(y, x);
 ### draft v.0.3b - v.0.3c-ex:
@@ -801,4 +805,88 @@ sapply(c((-3:3)*2/5), line.tan, dx=3, p=y, dp=dy, a=a, n=n)
 #
 curve(dy(x, a=a, n=n), add=T, col="green")
 sapply(c(-(3:1)/5, 1:5/5), line.tan, dx=3, p=dy, dp=d2y, a=a, n=n, col="orange")
+
+
+##########################
+##########################
+
+###################
+### Logarithmic ###
+###################
+
+### y^n = log(f(x)) * log(g(x))
+
+### D =>
+n*y^(n-1)*dy = df * log(g)/f + dg * log(f)/g # * f*g
+n*f*g*y^(n-1)*dy = g*df * log(g) + f*dg * log(f)
+
+### D2 =>
+n*f*g*y^(n-1)*d2y + n*(n-1)*f*g*y^(n-2)*dy^2 + n*df*g*y^(n-1)*dy + n*f*dg*y^(n-1)*dy =
+	(g*d2f + df*dg) * log(g) + (f*d2g + df*dg) * log(f) + df + dg
+### Solve Liniar =>
+# ...
+
+### Special Cases:
+
+### Order: n = 1
+f*g*dy = g*df * log(g) + f*dg * log(f)
+f*g*d2y + df*g*dy + f*dg*dy - df - dg =
+	(g*d2f + df*dg) * log(g) + (f*d2g + df*dg) * log(f)
+
+### Solve Liniar =>
+log(g) = ...
+log(f) = ...
+
+### Examples:
+
+### y = log(x + k) * log(x - k)
+dy = log(x-k)/(x+k) + log(x+k)/(x-k)
+(x^2 - k^2)*dy = (x-k)*log(x-k) + (x+k)*log(x+k)
+### D2 =>
+(x^2 - k^2)*d2y + 2*x*dy - 2 = log(x-k) + log(x+k)
+### Solve Liniar =>
+2*k*log(x-k) = (x+k)*((x^2 - k^2)*d2y + (x + k)*dy - 2)
+2*k*log(x+k) = -(x-k)*((x^2 - k^2)*d2y + (x - k)*dy - 2)
+
+### ODE:
+(x^2 - k^2)*((x^2 - k^2)*d2y + (x + k)*dy - 2) * ((x^2 - k^2)*d2y + (x - k)*dy - 2) + 4*k^2*y = 0
+
+
+### Solution & Plot
+y = function(x, k=1, n=1, v.dy, v.d2y) {
+	if(missing(v.dy)) v.dy = dy(x, k=k, n=n)
+	if(missing(v.d2y)) v.d2y = d2y(x, k=k, n=n, v.dy=v.dy)
+	x2 = x^2 - k^2
+	y = - x2*(x2*v.d2y + (x + k)*v.dy - 2)*(x2*v.d2y + (x - k)*v.dy - 2)
+	return(y / 4 / k^2)
+}
+dy = function(x, k=1, n=1) {
+	dp = log(x-k)/(x+k) + log(x+k)/(x-k);
+	return(dp)
+}
+d2y = function(x, k=1, n=1, v.dy) {
+	if(missing(v.dy)) v.dy = dy(x, k=k, n=n)
+	dp =log(x-k) + log(x+k) + 2 - 2*x*v.dy;
+	dp = dp / (x^2 - k^2)
+	return(dp)
+}
+### Plot:
+k = 1; n = 1;
+curve(y(x, k=k, n=n), from= 1.01, to = 3, ylim=c(-3, 3))
+# global "minimum" / horn;
+sapply(c(3/5 + (1:3)*3/5), line.tan, dx=3, p=y, dp=dy, k=k, n=n)
+#
+curve(dy(x, k=k, n=n), add=T, col="green")
+sapply(c(3/5 + (1:3)*3/5), line.tan, dx=3, p=dy, dp=d2y, k=k, n=n, col="orange")
+
+
+### Ex 2:
+k = 3; n = 1;
+curve(y(x, k=k, n=n), from= 3.01, to = 6, ylim=c(-3, 3))
+# global "minimum" / horn;
+sapply(c(3 + (1:3)*3/5), line.tan, dx=3, p=y, dp=dy, k=k, n=n)
+#
+curve(dy(x, k=k, n=n), add=T, col="green")
+sapply(c(3 + (1:3)*3/5), line.tan, dx=3, p=dy, dp=d2y, k=k, n=n, col="orange")
+
 
