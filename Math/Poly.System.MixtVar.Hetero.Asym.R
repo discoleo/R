@@ -7,7 +7,7 @@
 ### Mixt Variable
 ### Hetero-Symmetric S2 + Symmetric
 ###
-### draft v.0.1b
+### draft v.0.1b-var
 
 
 ### Mixt Polynomial Systems:
@@ -27,7 +27,7 @@
 ### Example 3:
 # x^n + d*y = R1
 # y^n + d*x = R1
-# Variants: x*y*d = R2
+# Variants: e.g. x*y*d = R2
 
 
 ###############
@@ -35,8 +35,9 @@
 ###############
 
 
-### draft v.0.1b:
+### draft v.0.1b - v.0.1b-var:
 # - Mixt Hetero-Symmetric system: Order 2;
+# - more variants for Eq 3;
 ### draft v.0.1a:
 # - moved to new file
 #   from Poly.System.Asymmetric.S2.R;
@@ -76,6 +77,8 @@ library(pracma)
 # x^2 + d*y = R1
 # y^2 + d*x = R1
 # x*y = R2
+
+# see next sections for various variants of Eq 3;
 
 ### Solution:
 
@@ -269,6 +272,70 @@ x^2 + y^2 + d^2 # - R[2]
 round0.p(poly.calc(x)) * 8
 
 
+##################
+
+### Variant:
+# x^2 + d*y = R1
+# y^2 + d*x = R1
+# x^2 + y^2 = R2
+
+### Solution:
+
+### Diff =>
+### Case: x != y =>
+S - d # = 0
+# d = S
+
+### Sum Eq 1 + Eq 2 =>
+S^2 - x*y - R1 # = 0
+# x*y = S^2 - R1
+
+### Eq 3 =>
+S^2 - 2*x*y - R2 # = 0
+# =>
+x*y - R1 + R2 # = 0
+S^2 - 2*R1 + R2 # = 0
+
+
+### Solver:
+solve.Ht2V.S3P2 = function(R, b1.ext=0, b2.ext=0, debug=TRUE) {
+	len = max(2, length(b1.ext), length(b2.ext));
+	b1.ext = c(rep(0, len - length(b1.ext)), rev(b1.ext));
+	b2.ext = c(rep(0, len - length(b2.ext)), rev(b2.ext));
+	b = 2*b1.ext - b2.ext;
+	coeff = c(rep(0, len - 2), 1, 0, -2*R[1] + R[2]) + c(b, 0)
+	S = roots(coeff)
+	if(debug) print(S);
+	d = S;
+	R1 = R[1] - sapply(S, function(S) sum(rev(b1.ext)*S^seq(len)));
+	xy = S^2 - R1;
+	xy.d = sqrt(S^2 - 4*xy + 0i);
+	x = (S + xy.d) / 2
+	y = (S - xy.d) / 2
+	sol = cbind(as.vector(x), as.vector(y), as.vector(d));
+	sol = rbind(sol, sol[,c(2,1,3)]);
+	return(sol)
+}
+
+### Examples:
+
+R = c(3, -1)
+b1.ext = c(1, -1, 1/2)
+sol = solve.Ht2V.S3P2(R, b1.ext=b1.ext)
+x = sol[,1]; y = sol[,2]; d = sol[,3];
+
+### Test
+S = x+y; len = length(b1.ext); ext1 = sapply(S, function(S) sum(b1.ext*S^seq(len)));
+x^2 + d*y + ext1 # - R[1]
+y^2 + d*x + ext1 # - R[1]
+x^2 + y^2 # - R[2]
+
+### Classic Polynomial
+round0.p(poly.calc(x)) * 8
+err = 37 + 8*x + 10*x^2 + 12*x^3 + 16*x^4 - 8*x^5 + 8*x^6
+round0(err)
+
+
 ####################
 ####################
 
@@ -284,6 +351,8 @@ round0.p(poly.calc(x)) * 8
 
 ### Variants Eq 3:
 # x*y = R2
+# x*y*(x + y) = R2
+# x*y*d = R2
 # x^2 + y^2 = R2
 # (x - d)^3 + (y - d)^3 = R2
 
