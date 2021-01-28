@@ -7,7 +7,7 @@
 ### Differential Equations
 ### ODEs - Exponentials
 ###
-### draft v.0.1b-alpha
+### draft v.0.1c
 
 
 ### ODEs Derived from Exponentials
@@ -137,11 +137,95 @@ curve(dy(x, PFUN=y1.lst), add=T, col="green")
 sapply(c(3/5 + (1:3)*3/5), line.tan, dx=3, p=dy, dp=d2y, PFUN=y1.lst, col="orange")
 
 
-######################
-######################
+########################
+########################
 
-### Section D: Product-Type
+########################
+### Section D:
 ### Non-Linear ODEs
+### Product-Type
+########################
+
+
+########################
+### Integral-Product ###
+########################
+
+### I(e^y) dx * I(e^(-y)) dx = P(x)
+
+# - trivial: y^1;
+#   [but interesting approach to some integrals]
+
+### D =>
+e^y * In + e^(-y) * Ip - dp # = 0
+### D2 =>
+e^y * dy * In - e^(-y) * dy * Ip - d2p + 2 # = 0
+### Solve liniar system =>
+e^y * In = (dp*dy + d2p - 2) / (2*dy)
+e^(-y) * Ip = (dp*dy - d2p + 2) / (2*dy)
+
+### ODE:
+(dp*dy + d2p - 2)*(dp*dy - d2p + 2) - 4*p*dy^2 # = 0
+(dp^2 - 4*p)*dy^2 - (d2p - 2)^2 # = 0
+
+### Examples:
+### P(x) = x
+(1 - 4*x)*dy^2 - 4 # = 0
+# y = sqrt(1 - 4*x)
+
+### Plot
+# TODO: proper sign pairing;
+y = function(x, posRoot=TRUE) {
+	val = sqrt(1 - 4*x)
+	if( ! posRoot) val = - val;
+	return(val)
+}
+y.exp = function(x, posInt=TRUE) {
+	val = sqrt(1 - 4*x)
+	if( ! posInt) val = - val;
+	val = exp(val);
+	return(val)
+}
+dy = function(x, posRoot=TRUE) {
+	dp = 2 / sqrt(1 - 4*x)
+	if( ! posRoot) dp = - dp;
+	return(dp)
+}
+Ip.f = function(x) {
+	dy.x = dy(x)
+	(dy.x + 2) * y.exp(x) / (2*dy.x)
+}
+Ip.int = function(x, upper=0, diff=3/4) {
+	val = sapply(x - diff,
+		function(lower) {
+		integrate(y.exp, lower=lower, upper=upper)$value
+		})
+}
+y.int = function(lower, upper=0) {
+	val = sapply(lower,
+		function(lower) {
+		integrate(y.exp, lower=lower, upper=upper)$value *
+		integrate(y.exp, lower=lower, upper=upper, posInt=FALSE)$value # - upper
+	} )
+}
+###
+lim = c(-7, 1/4)
+# interesting integral
+# D ( 1/2*(1-sqrt(1-4*x))*exp(sqrt(1-4*x))) = exp(sqrt(1-4*x));
+# Note: switched signs;
+curve(Ip.f(x), from=lim[1], to=lim[2])
+curve(Ip.int(x, upper=1/4, diff=3/4), add=T, col="green")
+# TODO:
+# curve(y.int(x), from=lim[1], to=lim[2])
+
+
+
+########################
+
+
+###################
+### Log-Product ###
+###################
 
 ### log(y + x) * log(y - x) = P(x)
 
