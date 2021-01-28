@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs - Trigonometric
 ###
-### draft v.0.3a / v.0.2f
+### draft v.0.3b
 
 
 ### History
@@ -37,6 +37,9 @@
 ### Order 1 & 2 Non-Liniar:
 ### Trigonometric Variants
 ###
+### draft v.0.3b:
+# - linearly combined Trig functions of y:
+#   f1*sin(y) + f2*cos(y) = P(x);
 ### draft v.0.3a: [27-01-2021]
 # - derived from: y^2 = x^p * sin(x^m);
 #   2*x^4*y*d2y + 2*x^4*dy^2 + y^2 = 0;
@@ -1054,4 +1057,43 @@ sapply(c(-5:7 * 3/7 - 1/2), FUN=line.tan, dx=2, p=y, dp=dy, FUN.list=p.list, b=b
 #
 curve(dy(x, b=b, FUN.list=p.list), add=T, col="green")
 sapply(c(-5:7 * 3/7 - 1/2), line.tan, dx=1.5, p=dy, dp=d2y, FUN.list=p.list, b=b, col="orange")
+
+
+############################
+############################
+
+### Combined Functions:
+### Linearly combined
+
+
+### f1(x)*sin(y) + f2(x)*cos(y) = P(x)
+
+f2(x)*cos(y) + f1(x)*sin(y) # = p
+### D =>
+(f1*dy + df2)*cos(y) - (f2*dy - df1)*sin(y) - dp # = 0
+### Solve linear =>
+sin(y) = ((f1*dy + df2)*p - f2*dp) / ((f1*dy + df2)*f1 + (f2*dy - df1)*f2)
+cos(y) = ((f2*dy - df1)*p + f1*dp) / ((f2*dy - df1)*f2 + (f1*dy + df2)*f1)
+
+### D2 =>
+(f1*d2y + df1*dy + d2f2)*cos(y) - (f1*dy + df2)*dy*sin(y) +
+	- (f2*d2y + df2*dy - d2f1)*sin(y) - (f2*dy - df1)*dy*cos(y) - d2p # = 0
+(f1*d2y - f2*dy^2 + 2*df1*dy + d2f2)*cos(y) +
+	- (f2*d2y + f1*dy^2 + 2*df2*dy - d2f1)*sin(y) - d2p # = 0
+
+### ODE:
+(f1*d2y - f2*dy^2 + 2*df1*dy + d2f2)*((f2*dy - df1)*p + f1*dp) +
+	- (f2*d2y + f1*dy^2 + 2*df2*dy - d2f1)*((f1*dy + df2)*p - f2*dp) +
+	- d2p*((f1*dy + df2)*f1 + (f2*dy - df1)*f2) # = 0
+
+### Examples:
+
+### f1(x) = x; f2(x) = 1;
+(x*d2y - dy^2 + 2*dy)*(p*dy - p + x*dp) - (d2y + x*dy^2)*(x*p*dy - dp) +
+	- d2p*(x^2*dy + dy - 1) # = 0
+(dp*x^2 - x*p + dp)*d2y - p*(x^2 + 1)*dy^3 + 3*p*dy^2 - 2*(x^2*d2p - x*dp + p + d2p)*dy + d2p # = 0
+### P(x) = x^2
+(x^3 + 2*x)*d2y - x^2*(x^2 + 1)*dy^3 + 3*x^2*dy^2 - 2*(x^2 + 2)*dy + 2 # = 0
+
+### TODO: check!
 
