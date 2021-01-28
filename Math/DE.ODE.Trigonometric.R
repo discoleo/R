@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs - Trigonometric
 ###
-### draft v.0.3a / v.0.2e
+### draft v.0.3a / v.0.2f
 
 
 ### History
@@ -14,11 +14,12 @@
 ### Order 1 Non-Liniar & Linear:
 ### Trigonometric Variants
 
-### Order 1 Linear:
+### Order 1 & 2 Linear:
 ### Trigonometric Variants
 ###
-### draft v.0.2e:
+### draft v.0.2e - v.0.2f:
 # - minor fixes in older formulas;
+# - better comments & formatting;
 ### draft v.0.2c: [06-12-2020]
 # - re-organizing sections;
 ### draft v.0.2b - v.0.2b-ex:
@@ -33,7 +34,7 @@
 # - added a more formal approach & generalization; [v.0.2a-form]
 #   dP*d2y - d2P*dy + dP^3 * y = 0; [full eq. in v.0.2b-gen]
 
-### Order 1 Non-Liniar:
+### Order 1 & 2 Non-Liniar:
 ### Trigonometric Variants
 ###
 ### draft v.0.3a: [27-01-2021]
@@ -95,7 +96,7 @@ source("DE.ODE.Helper.R")
 
 
 #########################
-### Section A:
+### Section A: Non-Linear
 ### Higher Power
 
 ### y^2 = x^p * sin(x^m)
@@ -119,7 +120,7 @@ source("DE.ODE.Helper.R")
 ### p = 1; m = -1;
 2*x^4*y*d2y + 2*x^4*dy^2 + y^2 # = 0
 
-### Solution:
+### Plot:
 y = function(x, pp=1, m=1, posRoot=TRUE) {
 	# root
 	y = x^pp * sin(x^m)
@@ -142,7 +143,8 @@ d2y = function(x, pp=1, m=1, posRoot=TRUE) {
 	dp = ifelse(div != 0, dp / div, (2*pp + m - 1) / m); # TODO: needs correction!
 	return(dp)
 }
-###
+### Test
+
 pp = 2; m = 1;
 curve(y(x, pp=pp, m=m), from= 0, to = 2)
 # global minimum;
@@ -163,7 +165,7 @@ sapply(c((-3:3)/2.2), line.tan, dx=1/5, p=dy, dp=d2y, pp=pp, m=m, col="orange")
 
 
 #########################
-### Section B:
+### Section B: Non-Linear
 ### Inverse Trigonometric
 
 ### sin(y^2) = f(x);
@@ -174,8 +176,8 @@ sapply(c((-3:3)/2.2), line.tan, dx=1/5, p=dy, dp=d2y, pp=pp, m=m, col="orange")
 ### D =>
 # n*y^(n-1)*cos(y^n)*dy = df;
 ### D2 =>
-# n*y^(n-1)*cos(y^n)*d2y - n^2*y^(2*n-2)*sin(y^n)*dy^2 + n*(n-1)*y^(n-2)*cos(y^n)*dy^2 - d2f = 0
-# df/dy * d2y - n^2*y^(2*n-2)*f*dy^2 + (n-1)*df/y * dy - d2f = 0
+n*y^(n-1)*cos(y^n)*d2y - n^2*y^(2*n-2)*sin(y^n)*dy^2 + n*(n-1)*y^(n-2)*cos(y^n)*dy^2 - d2f # = 0
+df/dy * d2y - n^2*y^(2*n-2)*f*dy^2 + (n-1)*df/y * dy - d2f # = 0
 ### Eq:
 df*y*d2y - n^2*f*y^(2*n-1)*dy^3 + (n-1)*df*dy^2 - d2f*y*dy # = 0
 ### n^2*y^(2*n-2)*cos(y^n)^2*dy^2 = df^2
@@ -193,7 +195,8 @@ x*(1-(x^2+b)^2)*y^3*d2y - (x^4 - b^2 + 1)*y^3*dy + x^3 # = 0
 # f = sqrt(x); df = 1/2 / sqrt(x); d2f = -1/4 * x^(-3/2);
 # df*(1 - x)*y^3*d2y - d2f*(1 - 2*x)*y^3*dy + 1/4 * 1/4 * 1/x * df # = 0 # * 4 * x^(3/2)
 # 2*x*(1 - x)*y^3*d2y + (1 - 2*x)*y^3*dy + 1/8 # = 0
-### Solution:
+
+### Plot:
 y = function(x, b=0) {
 	# root
 	y = asin(x^2 + b)
@@ -218,6 +221,9 @@ d2y = function(x, b=0) {
 	dp = ifelse(div != 0, dp / div, -1); # TODO: needs correction!
 	return(dp)
 }
+
+### Test
+
 ### b = 0;
 curve(y(x), from= -1, to = 1)
 # global minimum;
@@ -258,7 +264,8 @@ sapply(c(-2.4, -2, -1.5, 1.5, 2, 2.4)/2.1, line.tan, dx=1/5, p=dy, dp=d2y, b=b, 
 # df = 1/2 / sqrt(x); d2f = -1/4 * x^(-3/2);
 # df*(1 - x)*y^3*d2y - d2f*(1 - 2*x)*y^3*dy + 1/4 * 1/4 * 1/x * df # = 0 # * 4 * x^(3/2)
 2*x*(1 - x)*y^3*d2y + (1 - 2*x)*y^3*dy + 1/8 # = 0
-### Solution:
+
+### Plot:
 y = function(x, b=0) {
 	# root: TODO: compute also with b;
 	y = asin(sqrt(x) + b)
@@ -729,10 +736,12 @@ sapply(c(1/3, 1/2, 1, 2.2), line.tan, dx=3, p=dy, dp=d2y, k=k, col="orange")
 #####################
 
 ### Simple / Power
+# - generalization in the next sections;
 
 ### y = sin(a*x^n)
 dy = n*a*x^(n-1)*cos(a*x^n)
 x*d2y - (n-1)*dy + n^2*a^2*x^(2*n-1)*y # = 0
+
 ### Test & Plot:
 y = function(x, a=1, n=2) {
 	r = sin(a*x^n)
@@ -777,10 +786,10 @@ sapply(c((-5:5)/2.2), line.tan, dx=1/5, p=dy, dp=d2y, a=a, n=n, col="orange")
 
 #####################
 
-#####################
-### Linear Simple ###
-###   (Basics)    ###
-#####################
+##################
+### Non-Linear ###
+###   Simple   ###
+##################
 
 ### Generalization:
 
@@ -790,8 +799,11 @@ sapply(c((-5:5)/2.2), line.tan, dx=1/5, p=dy, dp=d2y, a=a, n=n, col="orange")
 dy = df * cos(f)
 dy^2 = df^2 * cos(f)^2
 dy^2 = df^2 * (1 - y^2)
+### Non-linear ODE:
 dy^2 + df^2 * y^2 - df^2 # = 0
-# D2 Alternative Eq:
+
+
+### Alternative Linear ODE:
 dP*d2y - d2P*dy + dP^3 * y # = 0
 # [see next Section]
 
@@ -863,6 +875,7 @@ sapply(c((1:5)/2.2), line.tan, dx=1/5, p=dy, dp=d2y, col="orange")
 #####################
 
 ### y = a1*sin(P(x)) + a2*cos(P(x))
+# - both sin(P(x)) & cos(P(x)) are solutions;
 
 ### D =>
 # dy = dP * (a1*cos(P(x)) - a2*sin(P(x)))
