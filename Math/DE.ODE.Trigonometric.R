@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs - Trigonometric
 ###
-### draft v.0.3a
+### draft v.0.3a / v.0.2e
 
 
 ### History
@@ -17,6 +17,8 @@
 ### Order 1 Linear:
 ### Trigonometric Variants
 ###
+### draft v.0.2e:
+# - minor fixes in older formulas;
 ### draft v.0.2c: [06-12-2020]
 # - re-organizing sections;
 ### draft v.0.2b - v.0.2b-ex:
@@ -875,9 +877,9 @@ dP*d2y - d2P*dy + dP^3 * y # = 0
 
 ### Examples:
 ### P(x) = x^2
-x*d2y - dy + 2*x^2 * y # = 0
+x*d2y - dy + 4*x^2 * y # = 0
 ### P(x) = x^n => * x^(2-n)
-x*d2y - (n-1)*dy + n*x^n * y # = 0
+x*d2y - (n-1)*dy + n^2*x^(2*n-1) * y # = 0
 ### P(x) = x^n + b*x
 (n*x^(n-1)+b)*d2y - n*(n-1)*x^(n-2)*dy + (n*x^(n-1)+b)^3 * y # = 0
 # [is detailed below]
@@ -894,7 +896,8 @@ d2y = - n*(n-1)*x^(n-2) * (a2*sin(x^n + b*x) - a1*cos(x^n + b*x)) +
 (a1^2 + a2^2)*(n*x^(n-1) + b) * d2y +
   + n*(n-1)*x^(n-2)*( - a[2]*(a[2]*dy(x) - a[1]*(n*x^(n-1) + b)*y(x)) - a[1]*(a[1]*dy(x) + a[2]*(n*x^(n-1) + b)*y(x))) +
   + (a[1]^2 + a[2]^2)*(n*x^(n-1) + b)^3 * y(x)
-### Eq:
+
+### ODE:
 (n*x^(n-1) + b) * d2y - n*(n-1)*x^(n-2)*dy(x) + (n*x^(n-1) + b)^3 * y(x) # = 0
 ### Example: n = 2
 (2*x + b) * d2y(x, n=2) - 2*dy(x, n=2) + (2*x + b)^3 * y(x, n=2) # = 0
@@ -921,7 +924,6 @@ d2y = function(x, a=c(1, 1), b=1, n=2) {
 	xnb = xn2 * x + b
 	#
 	div = xnb;
-	asq = sum(a^2);
 	dp  = (n-1)*xn2*dy.x - xnb^3*y.x
 	dp = ifelse(div != 0, dp / div, n*(n-1)); # TODO: needs correction!
 	return(dp)
@@ -930,13 +932,15 @@ d2y = function(x, a=c(1, 1), b=1, n=2) {
 n = 2; b = 1;
 curve(y(x, b=b, n=n), from= -3, to = 3, ylim=c(-3, 3))
 # oscillating function with local minima;
-# slightly shifted: + 1/2
+# slightly shifted: + 1/2;
+# dy == 0 also for: x^2 + b*x - pi/4 = 0;
 sapply(c(-5:7 * 3/7 - 1/2), line.tan, dx=1.5, p=y, dp=dy, b=b, n=n)
 # also sinusoidal:
 curve(dy(x, b=b, n=n), add=T, col="green")
 sapply(c(-5:7 * 3/7 - 1/2), line.tan, dx=1.5, p=dy, dp=d2y, b=b, n=n, col="orange")
 
-###
+
+### Ex 2:
 n = 2; b = -2;
 curve(y(x, b=b, n=n), from= -3, to = 3, ylim=c(-4, 4))
 # oscillating function with local minima;
