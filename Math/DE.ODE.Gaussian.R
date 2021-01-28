@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs - Gaussian
 ###
-### draft v.0.3a
+### draft v.0.3b
 
 #############
 ### Types ###
@@ -30,6 +30,8 @@
 
 ### Liniar / Non-Liniar Gaussian-type
 ###
+### draft v.0.3b:
+# - more variants & examples;
 ### draft v.0.3a:
 # - y = I(e^f(x)) * I(e^(-f(x))), e.g. f(x) = x^n:
 #   (d2y + n*x^(n-1)*dy - 2)*(d2y - n*x^(n-1)*dy - 2) + 4*n^2*x^(2*n-2)*y = 0;
@@ -90,9 +92,9 @@ source("DE.ODE.Helper.R")
 ### D() =>
 # dy = df * y + db - df*b;
 ### Integration by parts =>
-# y = df * I(y) + I(d2f * I(y)) + I(df*b);
+# y = df * I(y) - I(d2f * I(y)) + b - I(df*b);
 ### z = I(y):
-# dz = df*z + I(d2f * z) + I(df*b);
+# dz = df*z - I(d2f * z) + b - I(df*b);
 
 
 ####################
@@ -159,6 +161,7 @@ sapply(c(-3:3 * 3/4), line.tan, dx=3, p=dy, dp=d2y, b0=b0, col="orange")
 # y = -(2*k2*x + k1)*I(y) + 2*k2*I(I(y));
 # [not run]
 d2z + (2*k2*x + k1)*dz - 2*k2*z # = 0
+
 ### Solution & Plot:
 y = function(x, k, lower = -Inf) {
 	dz = dy(x, k=k, lower=lower)
@@ -287,19 +290,24 @@ sapply(c(0:3 * 3/4), line.tan, dx=3, p=dy, dp=d2y, col="orange")
 
 
 ####################
+####################
+
+####################
 ### Combinations ###
 
 ### y = a2*e^(-x^2) + a3*e^(-x^3)
 # [not run]
-dy = -2*a2*x*exp(-x^2) - 3*a3*x^2*exp(-x^3)
-d2y = 4*a2*x^2*exp(-x^2) -2*a2*exp(-x^2) + 9*a3*x^4*exp(-x^3) - 3*a3*x*exp(-x^3)
+dy  = -2*a2*x*exp(-x^2) - 3*a3*x^2*exp(-x^3)
+d2y = 4*a2*x^2*exp(-x^2) - 2*a2*exp(-x^2) + 9*a3*x^4*exp(-x^3) - 6*a3*x*exp(-x^3)
 # e^(-x^2) = (dy + 3*x^2*y) / (a2*(3*x^2 - 2*x))
 # e^(-x^3) = - (dy + 2*x*y) / (a3*(3*x^2 - 2*x))
 # =>
+
+### ODE:
 (3*x^2 - 2*x)*d2y + (9*x^4 - 4*x^2 - 6*x + 2)*dy + 6*x^2*(3*x^3 - 2*x^2 - 1)*y # = 0
 
 
-### Solution:
+### Plot:
 y = function(x, a=c(1, 1)) {
 	y = a[1] * exp(-x^2) + a[2] * exp(-x^3)
 	y = round0(y)
@@ -337,7 +345,10 @@ curve(dy(x, a=a), add=T, col="green")
 sapply(c(0.05 + -3:3 /5, 3/2, 2), line.tan, dx=3, p=dy, dp=d2y, a=a, col="orange")
 
 
-###################
+######################
+### Generalization ###
+### (part)         ###
+
 ### y = a1*e^(-(x^n + b1*x)) + a2*e^(-(x^n + b2*x))
 # [not run]
 dy = - a1*(n*x^(n-1) + b1)*exp(-(x^n + b1*x)) +
@@ -356,10 +367,18 @@ d2y = a1*(n*x^(n-1) + b1)^2 * exp(-(x^n + b1*x)) +
 (b2 - b1)*d2y - (n*x^(n-1) + b1)^2 * (dy + (n*x^(n-1) + b2)*y) +
   + (n*x^(n-1) + b2)^2 * (dy + (n*x^(n-1) + b1)*y) +
   - n*(n-1)*(b1 - b2)*x^(n-2)*y # = 0
+### ODE:
 d2y + (2*n*x^(n-1) + b1 + b2)*dy +
   + (n^2*x^(2*n-2) + n*(b1 + b2)*x^(n-1) + n*(n-1)*x^(n-2) + b1*b2)*y # = 0
-### Example: n = 2
+
+### Examples:
+### n = 2
 d2y + (4*x + b1 + b2)*dy + (4*x^2 + 2*(b1 + b2)*x + b1*b2 + 2)*y # = 0
+### b1 + b2 = 0
+d2y + 2*n*x^(n-1) * dy + (n^2*x^(2*n-2) + n*(n-1)*x^(n-2) - b1^2)*y # = 0
+### n = 2; b1 = - b2 = sqrt(2);
+d2y + 4*x*dy + 4*x^2*y # = 0
+
 
 ### Solution:
 y = function(x, a=c(1, 1), b=c(-1, 1), n=2) {
@@ -404,6 +423,57 @@ sapply(c(-3:0 * 1/7, 0.6, 1, 3/2), line.tan, dx=3, p=y, dp=dy, a=a, n=n)
 curve(dy(x, a=a, n=n), add=T, col="green")
 sapply(c(-3:3 * 1/7, 1, 3/2, 2), line.tan, dx=3, p=dy, dp=d2y, a=a, n=n, col="orange")
 ### TODO: check d2y(1)!
+
+
+#################
+
+### Variant:
+### y = a1*e^(x^n) + a2*e^(-x^n)
+# [not run]
+dy = a1*n*x^(n-1) * exp(x^n) - a2*n*x^(n-1) * exp(-x^n)
+### D2 =>
+d2y = a1*n^2*x^(2*n-2) * exp(x^n) + a1*n*(n-1)*x^(n-2) * exp(x^n) +
+	+ a2*n^2*x^(2*n-2) * exp(-x^n) - a2*n*(n-1)*x^(n-2) * exp(-x^n)
+### Linear system:
+exp(x^n)  = ( dy + n*x^(n-1)*y) / (2*a1*n*x^(n-1))
+exp(-x^n) = (-dy + n*x^(n-1)*y) / (2*a2*n*x^(n-1))
+# =>
+2*x*d2y = (n*x^n + (n-1))*(dy + n*x^(n-1)*y) - (n*x^n - (n-1))*(dy - n*x^(n-1)*y)
+
+### ODE:
+x*d2y - (n-1)*dy - n^2*x^(2*n-1)*y # = 0
+
+### Solution:
+y = function(x, n=2, a=c(1, 1), b=c(1, -1)) {
+	y = sapply(x, function(x) sum(a * exp(b*x^n)))
+	y = round0(y)
+	return(y)
+}
+dy = function(x, n=2, a=c(1, 1), b=c(1, -1)) {
+	# y.x = y(x, a=a, b=b, n=n)
+	a[2] = -a[2];
+	nxn = n*x^(n-1);
+	dp = sapply(seq_along(x), function(id) {
+		xx = x[id]
+		sum(a * nxn[id] * exp(b*xx^n));
+	})
+	return(dp)
+}
+d2y = function(x, n=2, a=c(1, 1), b=c(1, -1)) {
+	y.x = y(x, n=n, a=a, b=b)
+	dy.x = dy(x, n=n, a=a, b=b)
+	dp = (n-1)*dy.x + n^2*x^(2*n-1)*y.x
+	div = x;
+	dp = ifelse(div != 0, dp / div, 0); # TODO
+	return(dp)
+}
+### Plot:
+n = 2; a = c(1, 1) # a[] has NO effect on eq of D2;
+curve(y(x, a=a, n=n), from= -2, to = 2, ylim=c(-2, 5))
+sapply(c(-3:3 * 4/7, 2), line.tan, dx=3, p=y, dp=dy, a=a, n=n)
+#
+curve(dy(x, a=a, n=n), add=T, col="green")
+sapply(c(-3:3 * 2/7), line.tan, dx=3, p=dy, dp=d2y, a=a, n=n, col="orange")
 
 
 ###########################
