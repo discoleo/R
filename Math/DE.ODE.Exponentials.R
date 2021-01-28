@@ -7,7 +7,7 @@
 ### Differential Equations
 ### ODEs - Exponentials
 ###
-### draft v.0.1a
+### draft v.0.1a-ex2
 
 
 ### ODEs Derived from Exponentials
@@ -92,10 +92,14 @@ x^2*y*d2y + 2*x^2*y^2*dy^2 + x^2*dy^2 - 1 # = 0
 
 
 ### Solution & Plot:
-y1.f = function(x) { x^2 }
-y1.d1.df = function(x) { 2*x }
-y1.d2.df = function(x) { 2 }
-y1.lst = list(y1.f, y1.d1.df, y1.d2.df)
+y.gen = function(n) {
+	n1=n;
+	y1.f = function(x, n=n1) { x^n }
+	y1.d1.df = function(x, n=n1) { n*x^(n-1) }
+	y1.d2.df = function(x, n=n1) { if(n == 2) 2  else n*(n-1)*x^(n-2) }
+	list(y1.f, y1.d1.df, y1.d2.df)
+}
+y1.lst = y.gen(2)
 y = function(x, PFUN, posRoot=TRUE) {
 	val = sqrt(log(PFUN[[1]](x)));
 	if( ! posRoot) val = - val;
@@ -116,6 +120,16 @@ d2y = function(x, PFUN, posRoot=TRUE) {
 	return(dp)
 }
 ### Plot:
+curve(y(x, PFUN=y1.lst), from= 1, to = 3)
+sapply(c(3/5 + (1:3)*3/5), line.tan, dx=3, p=y, dp=dy, PFUN=y1.lst)
+# inverse-exp-like:
+curve(dy(x, PFUN=y1.lst), add=T, col="green")
+sapply(c(3/5 + (1:3)*3/5), line.tan, dx=3, p=dy, dp=d2y, PFUN=y1.lst, col="orange")
+
+
+### Ex 2:
+n = 3/2;
+y1.lst = y.gen(n=n)
 curve(y(x, PFUN=y1.lst), from= 1, to = 3)
 sapply(c(3/5 + (1:3)*3/5), line.tan, dx=3, p=y, dp=dy, PFUN=y1.lst)
 # inverse-exp-like:
