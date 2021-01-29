@@ -5,7 +5,7 @@
 ###
 ### k-SAT
 ###
-### v.0.1c
+### v.0.1c-step1
 
 
 to.matrix.SAT = function(m) {
@@ -34,13 +34,15 @@ sat.gen = function(n, v, k=3, p=1/3) {
 	ms[id.nn] = - ms[id.nn]
 	return(ms)
 }
-summary.SAT = function(m) {
+summary.sat = function(m) {
 	# TODO: more statistics
 	st.total = apply(m, 1, function(x) sum(abs(x)))
 	st.diff  = apply(m, 1, sum)
-	cbind(st.total, st.diff)
+	data.frame("id"=seq(nrow(m)), "total"=st.total, "diff"=st.diff, "dabs"=abs(st.diff))
 }
 
+################
+################
 
 n = 30 # Clauses
 v = 26 # Variables
@@ -50,13 +52,20 @@ k = 3 # Variables per clause
 ms = sat.gen(n, v, k)
 ms[1:6, 1:6]
 
+
+### basic statistics
 table(ms)
 # number of negations per Clause
 table(apply(ms, 2, function(x) sum(x < 0)))
 
-st = summary.SAT(ms)
+st = summary.sat(ms)
+# st
+st[st$total > 3 & abs(st$dabs) <= 1, ]
+
+
+id = order(st$total, st$dabs, decreasing=c(TRUE, FALSE))
+st = st[id,]
 st
-st[st[,1] > 3 & abs(st[,2]) <= 1, ]
 
 
 ####################
@@ -68,17 +77,14 @@ st[st[,1] > 3 & abs(st[,2]) <= 1, ]
 # - count number of occurrences of each variable:
 #   positive & negated;
 
-
 ### Step 2:
 # - select variable with highest total count;
 # - ties: select variable with smallest difference
 #   between positive & negated counts;
 
-
 ### Step 3:
 # - select value for this variable:
 #   TRUE if positive >= negated, otherwise FALSE;
-
 
 ### Step 4:
 # - evaluate reduced k-SAT;
@@ -87,3 +93,13 @@ st[st[,1] > 3 & abs(st[,2]) <= 1, ]
 
 # TODO: more work;
 
+### Init
+st$val = NA
+
+id.all = seq(nrow(st))
+for(id in id.all) {
+	### 1st non-specified value
+	na.id = match(NA, st)
+	st$val[na.id] = if(st$diff[na.id] >= 0) TRUE else FALSE;
+	# TODO
+}
