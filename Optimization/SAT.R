@@ -5,7 +5,7 @@
 ###
 ### k-SAT
 ###
-### v.0.1b
+### v.0.1c
 
 
 to.matrix.SAT = function(m) {
@@ -21,7 +21,8 @@ sat.gen = function(n, v, k=3, p=1/3) {
 	m = sapply(seq(n), function(id) sample(v, k))
 	ms = to.matrix.SAT(m)
 	### Negated
-	# - TODO: non-sparsely negated;
+	if(p == 0) return(ms);
+	# - non-sparsely negated;
 	isVar = (ms == 1);
 	len = n*k; # sum(isVar)
 	if(p < 0) {
@@ -34,7 +35,10 @@ sat.gen = function(n, v, k=3, p=1/3) {
 	return(ms)
 }
 summary.SAT = function(m) {
-	# TODO
+	# TODO: more statistics
+	st.total = apply(m, 1, function(x) sum(abs(x)))
+	st.diff  = apply(m, 1, sum)
+	cbind(st.total, st.diff)
 }
 
 
@@ -49,6 +53,10 @@ ms[1:6, 1:6]
 table(ms)
 # number of negations per Clause
 table(apply(ms, 2, function(x) sum(x < 0)))
+
+st = summary.SAT(ms)
+st
+st[st[,1] > 3 & abs(st[,2]) <= 1, ]
 
 
 ####################
