@@ -7,7 +7,7 @@
 ### Mixt Variable
 ### Hetero-Symmetric S2 + Symmetric
 ###
-### draft v.0.1g
+### draft v.0.1h
 
 
 ### Mixt Polynomial Systems:
@@ -35,11 +35,12 @@
 ###############
 
 
-### draft v.0.1e - v.0.1g:
+### draft v.0.1e - v.0.1h:
 # - Eq 3 variants for the Mixt-Symmetric S3P3:
 #   x^2 + y^2 + b*d^2 = R3; [v.0.1e]
 #   x^2 + y^2 + b*d = R3; [v.0.1f]
 #   (x + y)*d = R3; [v.0.1g]
+#   (x^2 + y^2)*d = R3; [v.0.1h]
 ### draft v.0.1c - v.0.1d:
 # - Mixt Hetero-Symmetric system: Order 3;
 #  -- first/basic variant: x*y; (=> generalized symmetric P[6])
@@ -917,4 +918,67 @@ x = sol[,1]; y = sol[,2]; d = sol[,3];
 (x+y)*d # - R[3]
 
 print(round0.p(poly.calc(c(x,y))) * 9*16, digits=16)
+
+
+############
+### Variant:
+
+### Eq 3:
+### (x^2 + y^2)*d = R3
+
+### Solution:
+
+### Eq 1 - Eq 2:
+6*d*(S^2 - 2*x*y) + 4*d^3 - R1 + R2 # = 0
+
+### Eq 1 + Eq 2:
+2*S^3 - 6*x*y*S + 6*d^2*S - R1 - R2 # = 0
+
+### Eq 3:
+# Eq 1-bis & Eq 3 =>
+### Eq:
+4*d^3 - R1 + R2 + 6*R3 # = 0
+
+# 2*x*y*d = d*S^2 - R3
+### Eq 2-bis =>
+2*d*S^3 - 6*x*y*d*S + 6*d^3*S - (R1 + R2)*d # = 0
+2*d*S^3 - 3*(d*S^2 - R3)*S + 6*d^3*S - (R1 + R2)*d # = 0
+d*S^3 - (6*d^3 + 3*R3)*S + (R1 + R2)*d # = 0
+
+
+### Solver:
+solve.MSymSum2.S3P3 = function(R, debug=TRUE) {
+	Rd = R[1] - R[2]; Rs = R[1] + R[2];
+	b0 = - Rd + 6*R[3];
+	if(b0 == 0) stop("Not yet implemented!")
+	d = roots(c(4, 0, 0, b0))
+	S.f = function(d) {c(d, 0, - (6*d^3 + 3*R[3]), Rs*d);}
+	S = sapply(d, function(d) {
+		coeff = S.f(d);
+		S = roots(coeff)
+	})
+	#
+	if(debug) { print(d); print(S); }
+	d = matrix(d, ncol=length(d), nrow=3, byrow=TRUE)
+	R1 = R[1]; R2 = R[2]; R3 = R[3];
+	xy = (d*S^2 - R3) / (2*d);
+	xy.d = sqrt(S^2 - 4*xy + 0i);
+	x = (S + xy.d)/2;
+	y = (S - xy.d)/2;
+	sol = cbind(x=as.vector(x), y=as.vector(y), d=as.vector(d))
+	return(sol)
+}
+
+### Examples:
+
+R = c(1, -3, 1/2)
+sol = solve.MSymSum2.S3P3(R)
+x = sol[,1]; y = sol[,2]; d = sol[,3];
+
+### Test
+(x + d)^3 + (y + d)^3 # - R[1]
+(x - d)^3 + (y - d)^3 # - R[2]
+(x^2 + y^2)*d # - R[3]
+
+print(round0.p(poly.calc(c(x,y))) * 64*8, digits=16)
 
