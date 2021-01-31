@@ -7,7 +7,7 @@
 ### Mixt Variable
 ### Hetero-Symmetric S2 + Symmetric
 ###
-### draft v.0.1f
+### draft v.0.1g
 
 
 ### Mixt Polynomial Systems:
@@ -35,10 +35,11 @@
 ###############
 
 
-### draft v.0.1e - v.0.1f:
+### draft v.0.1e - v.0.1g:
 # - Eq 3 variants for the Mixt-Symmetric S3P3:
 #   x^2 + y^2 + b*d^2 = R3; [v.0.1e]
 #   x^2 + y^2 + b*d = R3; [v.0.1f]
+#   (x + y)*d = R3; [v.0.1g]
 ### draft v.0.1c - v.0.1d:
 # - Mixt Hetero-Symmetric system: Order 3;
 #  -- first/basic variant: x*y; (=> generalized symmetric P[6])
@@ -736,6 +737,8 @@ round0.p(poly.calc(d)) * 360 # trivial
 ### Eq 3:
 ### x^2 + b^2 + b*d^2 = R3
 
+### Solution:
+
 ### Eq 1 - Eq 2:
 6*d*(x^2 + y^2) + 4*d^3 - R1 + R2 # = 0
 6*d*(S^2 - 2*x*y) + 4*d^3 - R1 + R2 # = 0
@@ -820,11 +823,13 @@ print(round0.p(poly.calc(c(x,y))) * 64, digits=16)
 round0.p(poly.calc(c(x,y))) * 64*64
 
 
-#############
-### Variants:
+############
+### Variant:
 
 ### Eq 3:
 ### x^2 + b^2 + b*d = R3
+
+### Solution:
 
 ### Eq 3:
 # x^2 + y^2 = R3 - b*d
@@ -855,4 +860,61 @@ x = sol[,1]; y = sol[,2]; d = sol[,3];
 x^2 + y^2 + b[1]*d # - R[3]
 
 print(round0.p(poly.calc(c(x,y))) * 32*32, digits=16)
+
+
+############
+### Variant:
+
+### Eq 3:
+### (x + y)*d = R3
+
+### Solution:
+
+### Eq 1 - Eq 2:
+6*d*(S^2 - 2*x*y) + 4*d^3 - R1 + R2 # = 0
+
+### Eq 1 + Eq 2:
+2*S^3 - 6*x*y*S + 6*d^2*S - R1 - R2 # = 0
+
+### Eq 3:
+# Eq 2-bis & S*d = R3 =>
+2*S^4 - 6*x*y*S^2 + 6*d^2*S^2 - (R1 + R2)*S # = 0
+2*S^4 - 6*x*y*S^2 - (R1 + R2)*S + 6*R3^2 # = 0
+# 6*x*y*S^2 = 2*S^4 - (R1 + R2)*S + 6*R3^2 # = 0
+### Eq 1-bis =>
+6*d*S^5 - 12*d*x*y*S^3 + 4*d^3*S^3 - (R1 - R2)*S^3 # = 0
+6*R3*S^4 - 2*R3*(2*S^4 - (R1 + R2)*S + 6*R3^2) - (R1 - R2)*S^3 + 4*R3^3 # = 0
+### Eq:
+2*R3*S^4 - (R1 - R2)*S^3 + 2*R3*(R1 + R2)*S - 8*R3^3 # = 0
+
+
+### Solver:
+solve.MSymProd.S3P3 = function(R, debug=TRUE) {
+	Rd = R[1] - R[2]; Rs = R[1] + R[2];
+	coeff = c(2*R[3], - Rd, 0, 2*R[3]*Rs, - 8*R[3]^3);
+	S = roots(coeff);
+	#
+	if(debug) { print(S); }
+	R1 = R[1]; R2 = R[2]; R3 = R[3];
+	d  = R3 / S;
+	xy = (2*S^3 + 6*d^2*S - R1 - R2) / (6*S);
+	xy.d = sqrt(S^2 - 4*xy + 0i);
+	x = (S + xy.d)/2;
+	y = (S - xy.d)/2;
+	sol = cbind(x=as.vector(x), y=as.vector(y), d=as.vector(d))
+	return(sol)
+}
+
+### Examples:
+
+R = c(1, -2, 1/2)
+sol = solve.MSymProd.S3P3(R)
+x = sol[,1]; y = sol[,2]; d = sol[,3];
+
+### Test
+(x + d)^3 + (y + d)^3 # - R[1]
+(x - d)^3 + (y - d)^3 # - R[2]
+(x+y)*d # - R[3]
+
+print(round0.p(poly.calc(c(x,y))) * 9*16, digits=16)
 
