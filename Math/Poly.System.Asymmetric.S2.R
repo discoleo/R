@@ -7,7 +7,7 @@
 ### Asymmetric S2:
 ### Base Types
 ###
-### draft v.0.2b
+### draft v.0.2c
 
 
 ### Asymmetric Polynomial Systems: 2 Variables
@@ -43,6 +43,9 @@
 ###############
 
 
+### draft v.0.2c:
+# - generalized approach to:
+#   b1*x + b2*y = R2;
 ### draft v.0.2b:
 # - moved Mixt Symmetric variant to new file:
 #   Poly.System.MixtVar.Hetero.Asym.R;
@@ -92,6 +95,56 @@ library(pracma)
 ###############
 ### Order 2 ###
 ### Simple  ###
+
+# x^2 + y^2 = R1
+# b1*x + b2*y = R2
+
+### Eq 2:
+(b1*x + b2*y)*(b2*x + b1*y) - R2*(b2*x + b1*y) # = 0
+b1*b2*(x^2 + y^2) + (b1^2 + b2^2)*x*y - R2*(b2*x + b1*y) # = 0
+### - R2 * Eq 2 =>
+b1*b2*(x^2 + y^2) + (b1^2 + b2^2)*x*y - R2*(b1 + b2)*(x + y) + R2^2 # = 0
+### generalized Eq:
+b1*b2*(x^2 + y^2) + (b1^2 + b2^2)*x*y - R2*(b1 + b2)*S + R2^2 # = 0
+### =>
+b1*b2*R1 + (b1^2 + b2^2)*x*y - R2*(b1 + b2)*S + R2^2 # = 0
+# (b1^2 + b2^2)*x*y = R2*(b1 + b2)*S - b1*b2*R1 - R2^2
+
+### Eq 1 =>
+S^2 - 2*x*y - R1 # = 0
+(b1^2 + b2^2)*S^2 - 2*(b1^2 + b2^2)*x*y - (b1^2 + b2^2)*R1 # = 0
+(b1^2 + b2^2)*S^2 - 2*(R2*(b1 + b2)*S - b1*b2*R1 - R2^2) - (b1^2 + b2^2)*R1 # = 0
+### Eq:
+(b1^2 + b2^2)*S^2 - 2*R2*(b1 + b2)*S - (b1^2 + b2^2 - 2*b1*b2)*R1 + R2^3 # = 0
+
+
+### Solver:
+solve.AsymSimple.P2 = function(R, b, debug=TRUE) {
+	bs = b[1] + b[2]; bsq = b[1]^2 + b[2]^2;
+	coeff = c(bsq, - 2*R[2]*bs, - (bsq - 2*b[1]*b[2])*R[1] + R[2]^3)
+	S = roots(coeff);
+	if(debug) print(S);
+	#
+	bd = b[2] - b[1];
+	x = (b[2]*S - R[2]) / bd;
+	y = - (b[1]*S - R[2]) / bd;
+	cbind(x=as.vector(x), y=as.vector(y))
+}
+
+### Examples:
+
+R = c(-1, 2)
+b = c(-1, 3)
+sol = solve.AsymSimple.P2(R, b)
+x = sol[,1]; y = sol[,2];
+
+### Test
+x^2 + y^2 # - R[1]
+b[1]*x + b[2]*y # - R[2]
+
+
+##################
+### Transforms ###
 
 ### Initial:
 # x^2 + y^2 = R1
