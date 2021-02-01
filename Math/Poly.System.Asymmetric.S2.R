@@ -7,7 +7,7 @@
 ### Asymmetric S2:
 ### Base Types
 ###
-### draft v.0.2f
+### draft v.0.2f-ext
 
 
 ### Asymmetric Polynomial Systems: 2 Variables
@@ -43,9 +43,10 @@
 ###############
 
 
-### draft v.0.2f:
+### draft v.0.2f - v.0.2f-ext:
 # - generalized approach to Order 2 Asymmetric:
 #   b1*x^2 + b2*y^2 = R2;
+# - A-type extension to the Order 3 system;
 ### draft v.0.2c - v.0.2e:
 # - generalized approach to Order 1 Asymmetric:
 #   b1*x + b2*y = R2;
@@ -297,15 +298,22 @@ S^3 - 3*x*y*S - R1 # = 0
 
 
 ### Solver:
-solve.AsymSimple.P3A2 = function(R, b, debug=TRUE) {
+solve.AsymSimple.P3A2 = function(R, b, b.ext=c(0,0), debug=TRUE) {
 	bs = b[1] + b[2]; bp = b[1]*b[2];
 	bsq = bs^2;
-	coeff = c((bsq - 3*bp), 0, - 3*R[2]*bs, - 2*(bsq - 6*bp)*R[1],
+	coeff = c((bsq - 3*bp), 0, - 3*bs*R[2], - 2*(bsq - 6*bp)*R[1],
 		9*R[2]^2, - 6*bs*R[1]*R[2], bsq*R[1]^2)
+	if(length(b.ext) < 2) b.ext = c(b.ext, 0)
+	if(any(b.ext != 0)) {
+		coeff = coeff + c(0, 3*b.ext[2]*bs, 2*(bsq - 6*bp)*b.ext[1] + 9*b.ext[2]^2,
+			-18*R[2]*b.ext[2] - 6*bs*b.ext[1]*b.ext[2], 6*bs*(R[1]*b.ext[2] + R[2]*b.ext[1]) + bsq*b.ext[1]^2,
+			-2*bsq*R[1]*b.ext[1], 0)
+	}
 	S = roots(coeff);
 	if(debug) print(S);
+	S = S[ ! (S == 0)]
 	#
-	R1 = R[1]; R2 = R[2];
+	R1 = R[1] - b.ext[1]*S; R2 = R[2] - b.ext[2]*S;
 	xy = (S^3 - R1) / (3*S);
 	# b1*b2*(x^3 + y^3) + (x*y*b1^2 - b2*R2)*x + (x*y*b2^2 - b1*R2)*y # = 0
 	T0 = - b[1]*b[2]*R1; bd = b[1] - b[2];
@@ -328,6 +336,23 @@ b[1]*x^2 + b[2]*y^2 # - R[2]
 
 
 round0.p(poly.calc(x)) * 13
+
+
+### Extensions:
+
+R = c(-1, 2)
+b = c(-1, 3)
+b.ext = c(2, -3)
+sol = solve.AsymSimple.P3A2(R, b, b.ext=b.ext)
+x = sol[,1]; y = sol[,2];
+
+### Test
+x^3 + y^3 + b.ext[1]*(x+y) # - R[1]
+b[1]*x^2 + b[2]*y^2 + b.ext[2]*(x+y) # - R[2]
+
+
+round0.p(poly.calc(x)) * 13
+round0.p(poly.calc(x + y)) * 13
 
 
 ##################
