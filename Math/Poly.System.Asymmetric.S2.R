@@ -7,7 +7,7 @@
 ### Asymmetric S2:
 ### Base Types
 ###
-### draft v.0.2d
+### draft v.0.2e
 
 
 ### Asymmetric Polynomial Systems: 2 Variables
@@ -43,10 +43,10 @@
 ###############
 
 
-### draft v.0.2c - v.0.2d:
+### draft v.0.2c - v.0.2e:
 # - generalized approach to:
 #   b1*x + b2*y = R2;
-# - solved Order 3 system;
+# - solved Order 3 & Order 4 systems; [v.0.2d, v.0.2e]
 ### draft v.0.2b:
 # - moved Mixt Symmetric variant to new file:
 #   Poly.System.MixtVar.Hetero.Asym.R;
@@ -190,6 +190,59 @@ x^3 + y^3 # - R[1]
 b[1]*x + b[2]*y # - R[2]
 
 poly.calc(x) * 7
+
+
+###############
+### Order 4 ###
+### Simple  ###
+
+# x^4 + y^4 = R1
+# b1*x + b2*y = R2
+
+### Solution:
+
+### Eq 2 =>
+b1*b2*S^2 + (b1^2 + b2^2 - 2*b1*b2)*x*y - R2*(b1 + b2)*S + R2^2 # = 0
+# (b1 - b2)^2*x*y = - b1*b2*S^2 + R2*(b1 + b2)*S - R2^2
+
+### Eq 1 =>
+S^4 - 4*x*y*S^2 + 2*(x*y)^2 - R1 # = 0
+(b1 - b2)^4*S^4 - 4*(b1 - b2)^4*x*y*S^2 + 2*(b1-b2)^4*(x*y)^2 - (b1-b2)^4*R1 # = 0
+(b1 - b2)^4*S^4 + 4*(b1 - b2)^2*(b1*b2*S^2 - R2*(b1 + b2)*S + R2^2)*S^2 +
+	+ 2*(b1*b2*S^2 - R2*(b1 + b2)*S + R2^2)^2 - (b1 - b2)^4*R1 # = 0
+(b1-b2)^2*(b1+b2)^2*S^4 - 4*(b1 - b2)^2*(b1 + b2)*R2*S^3 + 4*(b1 - b2)^2*R2^2*S^2 +
+	+ 2*(b1*b2*S^2 - R2*(b1 + b2)*S + R2^2)^2 - (b1 - b2)^4*R1 # = 0
+(b1^4 + b2^4)*S^4 - 4*(b1^2 + b2^2 - b1*b2)*(b1+b2)*R2*S^3 +
+	+ 6*(b1^2 + b2^2)*R2^2*S^2 - 4*(b1 + b2)*R2^3*S + 2*R2^4 - (b1 - b2)^4*R1 # = 0
+
+
+### Solver:
+solve.AsymSimple.P4 = function(R, b, debug=TRUE) {
+	bs = b[1] + b[2]; bp = b[1]*b[2];
+	bsq = bs^2 - 2*bp;
+	coeff = c(bsq^2 - 2*bp^2, - 4*(bsq - bp)*bs*R[2],
+		6*bsq*R[2]^2, - 4*bs*R[2]^3, 2*R[2]^4 - (b[1] - b[2])^4*R[1])
+	S = roots(coeff);
+	if(debug) print(S);
+	#
+	bd = b[2] - b[1];
+	x = (b[2]*S - R[2]) / bd;
+	y = - (b[1]*S - R[2]) / bd;
+	cbind(x=as.vector(x), y=as.vector(y))
+}
+
+### Examples:
+
+R = c(-1, 2)
+b = c(-1, 3)
+sol = solve.AsymSimple.P4(R, b)
+x = sol[,1]; y = sol[,2];
+
+### Test
+x^4 + y^4 # - R[1]
+b[1]*x + b[2]*y # - R[2]
+
+poly.calc(x) * 82
 
 
 ##################
