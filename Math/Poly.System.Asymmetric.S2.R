@@ -7,7 +7,7 @@
 ### Asymmetric S2:
 ### Base Types
 ###
-### draft v.0.2c
+### draft v.0.2d
 
 
 ### Asymmetric Polynomial Systems: 2 Variables
@@ -43,9 +43,10 @@
 ###############
 
 
-### draft v.0.2c:
+### draft v.0.2c - v.0.2d:
 # - generalized approach to:
 #   b1*x + b2*y = R2;
+# - solved Order 3 system;
 ### draft v.0.2b:
 # - moved Mixt Symmetric variant to new file:
 #   Poly.System.MixtVar.Hetero.Asym.R;
@@ -142,6 +143,57 @@ x = sol[,1]; y = sol[,2];
 x^2 + y^2 # - R[1]
 b[1]*x + b[2]*y # - R[2]
 
+
+###############
+### Order 3 ###
+### Simple  ###
+
+# x^3 + y^3 = R1
+# b1*x + b2*y = R2
+
+### Solution:
+
+### Eq 2 =>
+b1*b2*(S^2 - 2*x*y) + (b1^2 + b2^2)*x*y - R2*(b1 + b2)*S + R2^2 # = 0
+b1*b2*S^2 + (b1^2 + b2^2 - 2*b1*b2)*x*y - R2*(b1 + b2)*S + R2^2 # = 0
+# (b1^2 + b2^2 - 2*b1*b2)*x*y = - b1*b2*S^2 + R2*(b1 + b2)*S - R2^2
+
+### Eq 1 =>
+S^3 - 3*x*y*S - R1 # = 0
+(b1 - b2)^2*S^3 - 3*(b1 - b2)^2*x*y*S - (b1 - b2)^2*R1 # = 0
+(b1 - b2)^2*S^3 + 3*(b1*b2*S^2 - R2*(b1 + b2)*S + R2^2)*S - (b1 - b2)^2*R1 # = 0
+(b1^2 + b2^2 + b1*b2)*S^3 - 3*R2*(b1 + b2)*S^2 + 3*R2^2*S - (b1 - b2)^2*R1 # = 0
+
+
+### Solver:
+solve.AsymSimple.P3 = function(R, b, debug=TRUE) {
+	bs = b[1] + b[2]; bsq = b[1]^2 + b[2]^2;
+	coeff = c((bsq + b[1]*b[2]), - 3*R[2]*bs, 3*R[2]^2, - (b[1] - b[2])^2*R[1])
+	S = roots(coeff);
+	if(debug) print(S);
+	#
+	bd = b[2] - b[1];
+	x = (b[2]*S - R[2]) / bd;
+	y = - (b[1]*S - R[2]) / bd;
+	cbind(x=as.vector(x), y=as.vector(y))
+}
+
+### Examples:
+
+R = c(-1, 2)
+b = c(-1, 3)
+sol = solve.AsymSimple.P3(R, b)
+x = sol[,1]; y = sol[,2];
+
+### Test
+x^3 + y^3 # - R[1]
+b[1]*x + b[2]*y # - R[2]
+
+poly.calc(x) * 7
+
+
+##################
+##################
 
 ##################
 ### Transforms ###
