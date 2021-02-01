@@ -7,7 +7,7 @@
 ### Asymmetric S2:
 ### Base Types
 ###
-### draft v.0.2e
+### draft v.0.2f
 
 
 ### Asymmetric Polynomial Systems: 2 Variables
@@ -43,8 +43,11 @@
 ###############
 
 
+### draft v.0.2f:
+# - generalized approach to Order 2 Asymmetric:
+#   b1*x^2 + b2*y^2 = R2;
 ### draft v.0.2c - v.0.2e:
-# - generalized approach to:
+# - generalized approach to Order 1 Asymmetric:
 #   b1*x + b2*y = R2;
 # - solved Order 3 & Order 4 systems; [v.0.2d, v.0.2e]
 ### draft v.0.2b:
@@ -243,6 +246,88 @@ x^4 + y^4 # - R[1]
 b[1]*x + b[2]*y # - R[2]
 
 poly.calc(x) * 82
+
+
+##################
+##################
+
+##################
+### Asymmetry: ###
+### Order 2    ###
+##################
+
+### b1*x^2 + b2*y^2 = R2
+
+### =>
+(b1*x^2 + b2*y^2)*(b2*x^2 + b1*y^2) - R2*(b2*x^2 + b1*y^2) # = 0
+b1*b2*(x^4 + y^4) + (b1^2 + b2^2)*x^2*y^2 - R2*(b2*x^2 + b1*y^2) # = 0
+### + R2*Eq2 =>
+b1*b2*(x^4 + y^4) + (b1^2 + b2^2)*x^2*y^2 - R2*(b1 + b2)*(x^2 + y^2) + R2^2 # = 0
+b1*b2*(S^4 - 4*x*y*S^2 + 2*(x*y)^2) + (b1^2 + b2^2)*x^2*y^2 - R2*(b1 + b2)*(S^2 - 2*x*y) + R2^2 # = 0
+b1*b2*S^4 + (b1 + b2)^2*x^2*y^2 - 4*b1*b2*x*y*S^2 + 2*R2*(b1 + b2)*x*y - R2*(b1 + b2)*S^2 + R2^2 # = 0
+
+### Auxiliary Eq:
+### *(b2*x + b1*y) =>
+b1*b2*(x^3 + y^3) + x*y*(b1^2*x + b2^2*y) - R2*(b2*x + b1*y) # = 0
+b1*b2*(x^3 + y^3) + (x*y*b1^2 - b2*R2)*x + (x*y*b2^2 - b1*R2)*y # = 0
+
+
+###############
+### Order 3 ###
+###############
+
+### x^3 + y^3 = R1
+### b1*x^2 + b2*y^2 = R2
+
+### Solution:
+
+### Eq 1:
+S^3 - 3*x*y*S - R1 # = 0
+# 3*x*y*S = S^3 - R1
+
+### Eq 2 =>
+9*b1*b2*S^6 + 9*(b1 + b2)^2*x^2*y^2*S^2 - 4*9*b1*b2*x*y*S^4 +
+	+ 2*9*R2*(b1 + b2)*x*y*S^2 - 9*R2*(b1 + b2)*S^4 + 9*R2^2*S^2 # = 0
+9*b1*b2*S^6 + (b1 + b2)^2*(S^3 - R1)^2 - 12*b1*b2*(S^3 - R1)*S^3 +
+	+ 6*R2*(b1 + b2)*(S^3 - R1)*S - 9*R2*(b1 + b2)*S^4 + 9*R2^2*S^2 # = 0
+	
+### Eq:
+((b1 + b2)^2 - 3*b1*b2)*S^6 - 3*R2*(b1 + b2)*S^4 - 2*((b1 + b2)^2 - 6*b1*b2)*R1*S^3 +
+	+ 9*R2^2*S^2 - 6*(b1 + b2)*R1*R2*S + (b1 + b2)^2*R1^2 # = 0
+
+
+### Solver:
+solve.AsymSimple.P3A2 = function(R, b, debug=TRUE) {
+	bs = b[1] + b[2]; bp = b[1]*b[2];
+	bsq = bs^2;
+	coeff = c((bsq - 3*bp), 0, - 3*R[2]*bs, - 2*(bsq - 6*bp)*R[1],
+		9*R[2]^2, - 6*bs*R[1]*R[2], bsq*R[1]^2)
+	S = roots(coeff);
+	if(debug) print(S);
+	#
+	R1 = R[1]; R2 = R[2];
+	xy = (S^3 - R1) / (3*S);
+	# b1*b2*(x^3 + y^3) + (x*y*b1^2 - b2*R2)*x + (x*y*b2^2 - b1*R2)*y # = 0
+	T0 = - b[1]*b[2]*R1; bd = b[1] - b[2];
+	diff = - xy*bs*bd - R2*bd;
+	x = ((xy*b[2]^2 - b[1]*R2)*S - T0) / diff;
+	y = - ((xy*b[1]^2 - b[2]*R2)*S - T0) / diff;
+	cbind(x=as.vector(x), y=as.vector(y))
+}
+
+### Examples:
+
+R = c(-1, 2)
+b = c(-1, 3)
+sol = solve.AsymSimple.P3A2(R, b)
+x = sol[,1]; y = sol[,2];
+
+### Test
+x^3 + y^3 # - R[1]
+b[1]*x^2 + b[2]*y^2 # - R[2]
+
+
+round0.p(poly.calc(x)) * 13
 
 
 ##################
