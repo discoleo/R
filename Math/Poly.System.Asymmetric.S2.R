@@ -7,7 +7,7 @@
 ### Asymmetric S2:
 ### Base Types
 ###
-### draft v.0.2f-ext
+### draft v.0.2g
 
 
 ### Asymmetric Polynomial Systems: 2 Variables
@@ -43,6 +43,8 @@
 ###############
 
 
+### draft v.0.2g:
+# - comments on basic transforms;
 ### draft v.0.2f - v.0.2f-ext:
 # - generalized approach to Order 2 Asymmetric:
 #   b1*x^2 + b2*y^2 = R2;
@@ -336,6 +338,8 @@ b[1]*x^2 + b[2]*y^2 # - R[2]
 
 
 round0.p(poly.calc(x)) * 13
+round0.p(poly.calc(y)) * 13
+round0.p(poly.calc(x+y)) * 13
 
 
 ### Extensions:
@@ -352,6 +356,7 @@ b[1]*x^2 + b[2]*y^2 + b.ext[2]*(x+y) # - R[2]
 
 
 round0.p(poly.calc(x)) * 13
+round0.p(poly.calc(y)) * 13
 round0.p(poly.calc(x + y)) * 13
 
 
@@ -361,11 +366,16 @@ round0.p(poly.calc(x + y)) * 13
 ##################
 ### Transforms ###
 
+### Simple Transforms:
+# - simple liniar transforms:
+#   e.g. combinations of initial roots;
+# - other simple transforms;
+
 ### Initial:
 # x^2 + y^2 = R1
 # x*y = R2
 
-### Final:
+### Transformed:
 # x^2 + b*y^2 = Rf1
 # y^2 + x*y = Rf2
 
@@ -473,14 +483,14 @@ x*y*S - b*(b*S - R1 - R2) - R1*y - R2*x # = 0
 S^3 + b*S^2 - (R1 + R2 + 2*b^2)*S + 2*b*(R1 + R2) - 2*R1*y - 2*R2*x # = 0
 # 2*R2*x + 2*R1*y = S^3 + b*S^2 - (R1 + R2 + 2*b^2)*S + 2*b*(R1 + R2)
 
-### Eq 2 / 3:
+### Eq 2 +/- 3:
 # 2*(R1^2 - R2^2)*x =
 R1 * (-S^3 - b*S^2 + (3*R1 + 3*R2 + 2*b^2)*S - 2*b*(R1 + R2)) +
-	- R2 * (S^3 + b*S^2 - (R1 + R2 + 2*b^2)*S + 2*b*(R1 + R2))
+	- R2 * (S^3 + b*S^2 - (R1 + R2 + 2*b^2)*S + 2*b*(R1 + R2)) # =
 -(R1+R2)*S^3 - b*(R1+R2)*S^2 + (3*R1^2 + R2^2 + 4*R1*R2 + 2*b^2*R1+ 2*b^2*R2)*S - 2*b*(R1 + R2)^2
 # 2*(R1^2 - R2^2)*y =
 R1*(S^3 + b*S^2 - (R1 + R2 + 2*b^2)*S + 2*b*(R1 + R2)) +
-	- R2*(-S^3 - b*S^2 + (3*R1 + 3*R2 + 2*b^2)*S - 2*b*(R1 + R2))
+	- R2*(-S^3 - b*S^2 + (3*R1 + 3*R2 + 2*b^2)*S - 2*b*(R1 + R2)) # =
 (R1+R2)*S^3 + b*(R1+R2)*S^2 - (R1^2 + 3*R2^2 + 4*R1*R2 + 2*b^2*R1 + 2*b^2*R2)*S + 2*b*(R1 + R2)^2
 
 ### Diff =>
@@ -508,7 +518,7 @@ x^3 - y^3 - R1*x + R2*y # = 0
 
 
 ### TODO:
-# - solve;
+# - solve efficiently?
 # - evaluate higher powers;
 
 
