@@ -6,7 +6,7 @@
 ### Polynomial Systems:
 ### Asymmetric S3: Simple / Basic
 ###
-### draft v.0.1a
+### draft v.0.1b
 
 
 ##########################
@@ -16,6 +16,20 @@
 ### Basic Types
 
 # - some simple Models;
+
+
+####################
+
+###############
+### History ###
+###############
+
+### draft v.0.1b:
+# - entanglement with roots of unity:
+#   Order 1: x + m*y + m^2*z = 0;
+#   Order 2: x^2 + m*y^2 + m^2*z^2 = 0;
+### draft v.0.1a:
+# - initial draft;
 
 
 ####################
@@ -185,4 +199,112 @@ R3 = z^2 + b1*z + b2*S;
 4*(b1 + b2)*x^7 +
 (1)*x^8
 
+
+##########################
+##########################
+
+###################
+### Curiosities ###
+###################
+
+### Omega-Entanglements
+
+# - entanglement with roots of unity:
+#   m^3 = 1;
+# - Eqs 2 & 3: can be anything symmetric;
+
+###############
+### Order 1 ###
+###############
+
+# x + m*y + m^2*z = 0
+# x*y + x*z + y*z = R2
+# x*y*z = R3
+
+### Solution:
+
+### Eq 1 =>
+(x + m*y + m^2*z)*(m^2*x + m*y + z) # = 0
+m^2*(x^2 + y^2 + z^2) + (m+1)*(x*y + x*z + y*z) # = 0
+m^2*(S^2 - 2*E2) + (m+1)*E2 # = 0
+m^2*S^2 + (m+1 - 2*m^2)*E2 # = 0
+m^2*S^2 - 3*m^2*E2 # = 0
+S^2 - 3*E2 # = 0
+### =>
+# S^2 = 3*m^2*E2
+
+### Solver:
+solve.omega.P1 = function(R) {
+	# m = unity(3, all=F);
+	S = sqrt(3*R[1])
+	S = c(S, -S);
+	x = sapply(S, function(S) roots(c(1, -S, R[1], -R[2])))
+	# TODO: robust
+	sol = solve.EnAll(x, n=3)
+	return(sol);
+}
+test.omega.P1 = function(sol, R=0, pow=1) {
+	m = unity(3, all=F);
+	x = sol[,1]; y = sol[,2]; z = sol[,3];
+	err1 = x^pow + m*y^pow + m^2*z^pow # = 0
+	err2 = x*y + x*z + y*z # - R2
+	err3 = x*y*z # - R3
+	err = cbind(err1, err2, err3)
+	err = round0(err)
+	err
+}
+
+### Examples
+
+R = c(1, -1)
+sol = solve.omega.P1(R)
+
+### Test
+test.omega.P1(sol, R);
+
+round0.p(poly.calc(sol[c(1,5,6,7,8,10),1]))
+
+
+###############
+
+###############
+### Order 2 ###
+###############
+
+# x^2 + m*y^2 + m^2*z^2 = 0
+# x*y + x*z + y*z = R2
+# x*y*z = R3
+
+### Solution:
+
+### Eq 1 =>
+(x^2 + m*y^2 + m^2*z^2)*(m^2*x^2 + m*y^2 + z^2) # = 0
+m^2*(x^4 + y^4 + z^4) + (m+1)*((x*y)^2 + (x*z)^2 + (y*z)^2) # = 0
+m^2*(S^4 - 4*E2*S^2 + 4*E3*S + 2*E2^2) + (m+1)*(E2^2 - 2*E3*S) # = 0
+m^2*S^4 - 4*E2*m^2*S^2 + 4*m^2*E3*S + 2*m^2*E2^2 + (m+1)*E2^2 - 2*(m+1)*E3*S # = 0
+m^2*S^4 - 4*E2*m^2*S^2 - 2*(m+1 - 2*m^2)*E3*S + (2*m^2 + m + 1)*E2^2 # = 0
+m^2*S^4 - 4*E2*m^2*S^2 + 6*m^2*E3*S + m^2*E2^2 # = 0
+### Eq:
+S^4 - 4*E2*S^2 + 6*E3*S + E2^2 # = 0
+
+### Solver:
+solve.omega.P2 = function(R) {
+	coeff = c(1, 0, - 4*R[1], 6*R[2], R[1]^2)
+	S = roots(coeff)
+	x = sapply(S, function(S) roots(c(1, -S, R[1], -R[2])))
+	# TODO: robust
+	sol = solve.EnAll(x, n=3, max.perm=1)
+	return(sol);
+}
+
+### Examples
+
+R = c(1, -1)
+sol = solve.omega.P2(R)
+
+### Test
+test.omega.P1(sol, R, pow=2);
+
+x = sol[,1]
+round0.p(poly.calc(sol))
 
