@@ -6,7 +6,7 @@
 ### Polynomial Systems:
 ### Asymmetric S3: Simple / Basic
 ###
-### draft v.0.1b
+### draft v.0.1b-fix
 
 
 ##########################
@@ -24,10 +24,11 @@
 ### History ###
 ###############
 
-### draft v.0.1b:
+### draft v.0.1b - v.0.1b-fix:
 # - entanglement with roots of unity:
 #   Order 1: x + m*y + m^2*z = 0;
 #   Order 2: x^2 + m*y^2 + m^2*z^2 = 0;
+# - improved versions; [v.0.1b-fix]
 ### draft v.0.1a:
 # - initial draft;
 
@@ -230,17 +231,22 @@ m^2*(S^2 - 2*E2) + (m+1)*E2 # = 0
 m^2*S^2 + (m+1 - 2*m^2)*E2 # = 0
 m^2*S^2 - 3*m^2*E2 # = 0
 S^2 - 3*E2 # = 0
-### =>
-# S^2 = 3*m^2*E2
+### Eq:
+# S^2 = 3*E2
 
 ### Solver:
-solve.omega.P1 = function(R) {
-	# m = unity(3, all=F);
+solve.omega.P1 = function(R, debug=TRUE) {
 	S = sqrt(3*R[1])
 	S = c(S, -S);
+	if(debug) print(S);
 	x = sapply(S, function(S) roots(c(1, -S, R[1], -R[2])))
-	# TODO: robust
-	sol = solve.EnAll(x, n=3)
+	# TODO: still NOT robust!
+	m = unity(3, all=F);
+	yz.s = S - x;
+	yz.ms = - x;
+	y = (m^2*yz.s - yz.ms) / (m^2 - m);
+	z = (yz.s - y)
+	sol = cbind(x=as.vector(x), y=as.vector(y), z=as.vector(z))
 	return(sol);
 }
 test.omega.P1 = function(sol, R=0, pow=1) {
@@ -262,7 +268,8 @@ sol = solve.omega.P1(R)
 ### Test
 test.omega.P1(sol, R);
 
-round0.p(poly.calc(sol[c(1,5,6,7,8,10),1]))
+x = sol[,1]
+round0.p(poly.calc(sol[ ,1]))
 
 
 ###############
@@ -292,8 +299,20 @@ solve.omega.P2 = function(R) {
 	coeff = c(1, 0, - 4*R[1], 6*R[2], R[1]^2)
 	S = roots(coeff)
 	x = sapply(S, function(S) roots(c(1, -S, R[1], -R[2])))
+	R2 = R[1]; # !!
+	m = unity(3, all=F);
 	# TODO: robust
-	sol = solve.EnAll(x, n=3, max.perm=1)
+	# sol = solve.EnAll(x, n=3, max.perm=1)
+	yz.s = S - x;
+	yz = R2 - x*yz.s;
+	yz.ms = - x^2;
+	y2 = ((yz.s^2 - 2*yz)*m^2 - yz.ms) / (m^2 - m);
+	y = sqrt(y2 + 0i);
+	y = c(y, -y); yz.s = c(yz.s, yz.s); x = c(x, x)
+	z = (yz.s - y);
+	sol = cbind(x=as.vector(x), y=as.vector(y), z=as.vector(z))
+	isOK = round0(sol[,2]*sol[,3] - as.vector(c(yz, yz))) == 0;
+	sol = sol[isOK,] # still needed;
 	return(sol);
 }
 
@@ -307,4 +326,27 @@ test.omega.P1(sol, R, pow=2);
 
 x = sol[,1]
 round0.p(poly.calc(sol))
+
+
+##################
+
+#############
+### Variants:
+
+# x + m*y + m^2*z = 0
+# x^2 + y^2 + z^2 = R2
+# x*y*z = R3
+
+### Solution:
+
+### Eq 1 =>
+# S^2 = 3*E2
+
+### Eq 2 =>
+S^2 - 2*E2 - R2 # = 0
+E2 - R2 # = 0
+# E2 = R2
+
+# - the same as the simple Order 1 version;
+
 
