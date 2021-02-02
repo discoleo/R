@@ -6,7 +6,7 @@
 ### Polynomial Systems:
 ### Asymmetric S3: Simple / Basic
 ###
-### draft v.0.1c
+### draft v.0.1c-ext
 
 
 ##########################
@@ -24,9 +24,10 @@
 ### History ###
 ###############
 
-### draft v.0.1c:
+### draft v.0.1c - v.0.1c-ext:
 # - Eq 2 variants:
 #   x^2 + y^2 + z^2 = R2;
+# - added A-type extension;
 ### draft v.0.1b - v.0.1b-fix:
 # - entanglement with roots of unity:
 #   Order 1: x + m*y + m^2*z = 0;
@@ -252,7 +253,7 @@ solve.omega.P1 = function(R, debug=TRUE) {
 	sol = cbind(x=as.vector(x), y=as.vector(y), z=as.vector(z))
 	return(sol);
 }
-test.omega.P1 = function(sol, R=0, pow=1, type="E2") {
+test.omega.P1 = function(sol, R=0, pow=1, b.ext=c(0,0), type="E2") {
 	m = unity(3, all=F);
 	x = sol[,1]; y = sol[,2]; z = sol[,3];
 	type = match(type, c("E2", "Pow2"))
@@ -265,6 +266,13 @@ test.omega.P1 = function(sol, R=0, pow=1, type="E2") {
 		NA
 	}
 	err3 = x*y*z # - R3
+	### Ext:
+	if(length(b.ext) < 2) b.ext = c(b.ext, 0)
+	if(any(b.ext != 0)) {
+		S = x + y + z;
+		err2 = err2 + b.ext[1]*S;
+		err3 = err3 + b.ext[2]*S;
+	}
 	err = cbind(err1, err2, err3)
 	err = round0(err)
 	err
@@ -382,16 +390,21 @@ S^2 - 2*E2 - R2 # = 0
 3*S^4 - 6*R2*S^2 - 24*R3*S - R2^2 # = 0
 
 ### Solver:
-solve.omega.P2 = function(R) {
+solve.omega.P2 = function(R, b.ext=c(0, 0)) {
 	coeff = c(3, 0, - 6*R[1], - 24*R[2], - R[1]^2)
+	if(length(b.ext) < 2) b.ext = c(b.ext, 0)
+	if(any(b.ext != 0)) {
+		coeff = coeff + c(0, 6*b.ext[1], 24*b.ext[2] - b.ext[1]^2, 2*R[1]*b.ext[1], 0)
+	}
 	S = roots(coeff)
-	R2 = R[1]; R3 = R[2]; # !!
+	R2 = R[1] - b.ext[1]*S; R3 = R[2] - b.ext[2]*S; # !!
 	E2 = (S^2 - R2) / 2; E3 = R3;
-	x = sapply(seq_along(S), function(id) roots(c(1, -S[id], E2[id], -E3)))
+	x = sapply(seq_along(S), function(id) roots(c(1, -S[id], E2[id], -E3[id])))
 	m = unity(3, all=F);
 	len = length(S);
-	S = matrix(S, ncol=len, nrow=3, byrow=T);
-	E2 = matrix(E2, ncol=len, nrow=3, byrow=T);
+	expand.m = function(m) matrix(m, ncol=len, nrow=3, byrow=T);
+	S = expand.m(S); R2 = expand.m(R2);
+	E2 = expand.m(E2); E3 = expand.m(E3);
 	# sol = solve.EnAll(x, n=3, max.perm=1)
 	# robust
 	yz.s = S - x; yz.sq = R2 - x^2; yz.ms = -x^2;
@@ -415,5 +428,18 @@ test.omega.P1(sol, R, pow=2, type="Pow2");
 
 x = sol[,1]
 round0.p(poly.calc(x[c(1:4, 6,9)])) * 3
+
+
+#########
+### Ex 2:
+R = c(1, -1)
+b.ext = c(1, 1)
+sol = solve.omega.P2(R, b.ext=b.ext)
+
+### Test
+test.omega.P1(sol, R, pow=2, b.ext=b.ext, type="Pow2");
+
+x = sol[,1]
+round0.p(poly.calc(x)) * 9
 
 
