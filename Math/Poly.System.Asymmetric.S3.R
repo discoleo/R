@@ -6,7 +6,7 @@
 ### Polynomial Systems:
 ### Asymmetric S3: Simple / Basic
 ###
-### draft v.0.1b-fix
+### draft v.0.1c
 
 
 ##########################
@@ -24,6 +24,9 @@
 ### History ###
 ###############
 
+### draft v.0.1c:
+# - Eq 2 variants:
+#   x^2 + y^2 + z^2 = R2;
 ### draft v.0.1b - v.0.1b-fix:
 # - entanglement with roots of unity:
 #   Order 1: x + m*y + m^2*z = 0;
@@ -249,11 +252,18 @@ solve.omega.P1 = function(R, debug=TRUE) {
 	sol = cbind(x=as.vector(x), y=as.vector(y), z=as.vector(z))
 	return(sol);
 }
-test.omega.P1 = function(sol, R=0, pow=1) {
+test.omega.P1 = function(sol, R=0, pow=1, type="E2") {
 	m = unity(3, all=F);
 	x = sol[,1]; y = sol[,2]; z = sol[,3];
+	type = match(type, c("E2", "Pow2"))
 	err1 = x^pow + m*y^pow + m^2*z^pow # = 0
-	err2 = x*y + x*z + y*z # - R2
+	err2 = if(type == 1) {
+		x*y + x*z + y*z # - R2
+	} else if(type == 2) {
+		x^2 + y^2 + z^2 # - R2
+	} else {
+		NA
+	}
 	err3 = x*y*z # - R3
 	err = cbind(err1, err2, err3)
 	err = round0(err)
@@ -348,5 +358,62 @@ E2 - R2 # = 0
 # E2 = R2
 
 # - the same as the simple Order 1 version;
+
+
+#############
+### Variants:
+### Order 2
+
+# x^2 + m*y^2 + m^2*z^2 = 0
+# x^2 + y^2 + z^2 = R2
+# x*y*z = R3
+
+### Solution:
+
+### Eq 1 =>
+S^4 - 4*E2*S^2 + 6*E3*S + E2^2 # = 0
+
+### Eq 2 =>
+S^2 - 2*E2 - R2 # = 0
+# 2*E2 = S^2 - R2
+### =>
+4*S^4 - 16*E2*S^2 + 24*E3*S + 4*E2^2 # = 0
+4*S^4 - 8*(S^2 - R2)*S^2 + 24*E3*S + (S^2 - R2)^2 # = 0
+3*S^4 - 6*R2*S^2 - 24*R3*S - R2^2 # = 0
+
+### Solver:
+solve.omega.P2 = function(R) {
+	coeff = c(3, 0, - 6*R[1], - 24*R[2], - R[1]^2)
+	S = roots(coeff)
+	R2 = R[1]; R3 = R[2]; # !!
+	E2 = (S^2 - R2) / 2; E3 = R3;
+	x = sapply(seq_along(S), function(id) roots(c(1, -S[id], E2[id], -E3)))
+	m = unity(3, all=F);
+	len = length(S);
+	S = matrix(S, ncol=len, nrow=3, byrow=T);
+	E2 = matrix(E2, ncol=len, nrow=3, byrow=T);
+	# sol = solve.EnAll(x, n=3, max.perm=1)
+	# robust
+	yz.s = S - x; yz.sq = R2 - x^2; yz.ms = -x^2;
+	yz = (yz.s^2 - yz.sq) / 2;
+	y2 = (yz.sq*m^2 - yz.ms) / (m^2 - m);
+	z2 = yz.sq - y2;
+	yz.ms_m = - (m^2*(S^3 - 3*E2*S + 3*E3) + x*y2 + m*x*z2);
+	y = (yz.s * (x^2 + yz) - yz.ms_m) / ((1-m)*(x^2 + yz));
+	z = (yz.s - y);
+	sol = cbind(x=as.vector(x), y=as.vector(y), z=as.vector(z))
+	return(sol);
+}
+
+### Examples
+
+R = c(1, -1)
+sol = solve.omega.P2(R)
+
+### Test
+test.omega.P1(sol, R, pow=2, type="Pow2");
+
+x = sol[,1]
+round0.p(poly.calc(x[c(1:4, 6,9)])) * 3
 
 
