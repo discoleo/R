@@ -6,7 +6,7 @@
 ### Polynomial Systems:
 ### Asymmetric S3: Simple / Basic
 ###
-### draft v.0.1d
+### draft v.0.1e
 
 
 ##########################
@@ -24,6 +24,8 @@
 ### History ###
 ###############
 
+### draft v.0.1e:
+# - some experiments on Simple Asymmetric systems;
 ### draft v.0.1d:
 # - Mixt Ht system:
 #   Eq 2: x*y^2 + y*z^2 + z*x^2 = R2;
@@ -516,4 +518,252 @@ test.omega.P1(sol, R, pow=2, type="Mixt")
 
 round0.p(poly.calc(sol[13:18,4])) * 64
 # TODO: factorize!
+
+
+#######################
+#######################
+
+#######################
+### Mixt Asymmetric ###
+#######################
+
+##########################
+### Asymmetric Reduced ###
+##########################
+
+### Simple: Half Symmetric & Reduced
+# x + b*y + b*z = 0
+# x*y + x*z + y*z = R2
+# x*y*z = R3
+
+
+### Solution:
+# - classic solution: x^3 + b*R2*x - b*R3 = 0;
+# - non-classic solution: allows easy extensions;
+
+### Eq 1 =>
+b^2*S^3 + b*(b - 1)^2*E2*S - (b - 1)^3*E3 # = 0
+
+### Solver:
+solve.AsymPart.S3P1 = function(R, b, b.ext = c(0, 0), debug=TRUE) {
+	bd = b[1] - 1;
+	R2 = R[1]; R3 = R[2];
+	coeff = c(b[1]^2, 0, b[1]*bd^2*R2, - bd^3*R3)
+	if(any(b.ext != 0)) {
+		coeff = coeff + c(0, - b[1]*bd^2*b.ext[1], bd^3*b.ext[2], 0)
+	}
+	S = roots(coeff)
+	if(debug) print(S)
+	len = length(S)
+	E2 = R2 - S*b.ext[1];
+	E3 = R3 - S*b.ext[2];
+	# x = sapply(seq(len), function(id) roots(coeff(1, -S[id], E2[id], -E3[id])))
+	x = b[1]*S / bd;
+	# expand.m = function(m) matrix(m, ncol=len, nrow=3, byrow=T);
+	# S = expand.m(S);
+	yz.s = S - x;
+	yz = E3 / x;
+	yz.d = sqrt(yz.s^2 - 4*yz + 0i)
+	y = (yz.s + yz.d) / 2;
+	z = yz.s - y;
+	sol = cbind(x=x, y=y, z=z)
+	return(sol)
+}
+
+### Examples:
+R = c(2, -1)
+b = 2
+b.ext = c(-1, 1)
+sol = solve.AsymPart.S3P1(R, b=b, b.ext=b.ext)
+x = sol[,1]; y = sol[,2]; z = sol[,3];
+
+### Test
+S = x+y+z;
+x + b[1]*y + b[1]*z
+x*y + x*z + y*z + b.ext[1]*S # - R2
+x*y*z + b.ext[2]*S # - R3
+
+### Classic Polynomial: x => P3; (y,z) => P6;
+poly.calc(c(y,z))
+
+
+##########################
+
+### Simple: Half Symmetric & Reduced
+# x^2 + b*y^2 + b*z^2 = 0
+# x*y + x*z + y*z = R2
+# x*y*z = R3
+
+
+### Solution:
+# - non-classic solution: allows easy extensions;
+
+### Eq 1 =>
+b^2*(S^2 - 2*E2)^3 + b*(b - 1)^2*(E2^2 - 2*E3*S)*(S^2 - 2*E2) - (b - 1)^3*E3^2 # = 0
+b^2*(S^2 - 2*E2)^3 - 2*b*(b - 1)^2*E3*S^3 + b*(b - 1)^2*E2^2*S^2 + 4*b*(b - 1)^2*E2*E3*S +
+	- 2*b*(b - 1)^2*E2^3 - (b - 1)^3*E3^2 # = 0
+b^2*S^6 - 6*b^2*E2*S^4 - 2*b*(b - 1)^2*E3*S^3 + b*(b^2 + 10*b + 1)*E2^2*S^2 + 4*b*(b - 1)^2*E2*E3*S +
+	- 2*b*(b - 1)^2*E2^3 - 8*b^2*E2^3 - (b - 1)^3*E3^2 # = 0
+
+### Solver:
+solve.AsymPart.S3P2 = function(R, b, b.ext = c(0, 0), debug=TRUE) {
+	bd = b[1] - 1;
+	R2 = R[1]; R3 = R[2];
+	coeff = c(b[1]^2, 0, - 6*b[1]^2*R2, - 2*b[1]*bd^2*R3,
+		b[1]*(b[1]^2 + 10*b[1] + 1)*R2^2, 4*b[1]*bd^2*R2*R3,
+		- 2*b[1]*bd^2*R2^3 - 8*b[1]^2*R2^3 - bd^3*R3^2)
+	if(any(b.ext != 0)) {
+		# TODO:
+		coeff = coeff + c(0, 0)
+	}
+	S = roots(coeff)
+	if(debug) {print(coeff); print(S);}
+	len = length(S)
+	E2 = R2 - S*b.ext[1];
+	E3 = R3 - S*b.ext[2];
+	# x = sapply(seq(len), function(id) roots(coeff(1, -S[id], E2[id], -E3[id])))
+	x2 = b[1]*(S^2 - 2*E2) / bd;
+	yz.s2 = S^2 - 2*E2 - x2;
+	x = (x2*yz.s2 + x2*E2 + E3*S) / (E2*S - E3);
+	yz.s = S - x;
+	yz = E3 / x;
+	yz.d = sqrt(yz.s^2 - 4*yz + 0i)
+	y = (yz.s + yz.d) / 2;
+	z = yz.s - y;
+	sol = cbind(x=as.vector(x), y=as.vector(y), z=as.vector(z), S=S)
+	return(sol)
+}
+
+### Examples:
+R = c(2, -1)
+b = 2
+b.ext = c(0, 0)
+sol = solve.AsymPart.S3P2(R, b=b, b.ext=b.ext)
+x = sol[,1]; y = sol[,2]; z = sol[,3];
+
+### Test
+S = x+y+z;
+x^2 + b[1]*y^2 + b[1]*z^2
+x*y + x*z + y*z + b.ext[1]*S # - R2
+x*y*z + b.ext[2]*S # - R3
+
+
+#########
+### Ex 2: S = 0 & P[5] for S
+R = c(-1, 6)
+b = 2
+b.ext = c(0, 0)
+sol = solve.AsymPart.S3P2(R, b=b, b.ext=b.ext)
+x = sol[,1]; y = sol[,2]; z = sol[,3];
+
+### Test
+S = x+y+z;
+x^2 + b[1]*y^2 + b[1]*z^2
+x*y + x*z + y*z + b.ext[1]*S # - R2
+x*y*z + b.ext[2]*S # - R3
+
+round0.p(poly.calc(x))
+round0.p(poly.calc(c(y, z)) / round0.p(poly.calc(c(y[1], z[1]))))
+
+
+#######################
+#######################
+
+### Asymmetric
+
+### x + b1*y + b2*z = 0
+### x*y + x*z + y*z = R2
+### x*y*z = R3
+
+### Solution:
+
+### Eq 1:
+(x + b1*y + b2*z)*(b1*x + b2*y + z)*(b2*x + y + b1*z)*
+	(x + b2*y + b1*z)*(b2*x + b1*y + z)*(b1*x + y + b2*z) # = 0
+b1^2*b2^2*(x^6 + y^6 + z^6) +
+	+ (b1^3*b2^2 + b1^3*b2 + b1^2*b2^3 + b1*b2^3 + b1^2*b2 + b1*b2^2) *
+		(x^5*y + x^5*z + y^5*x + y^5*z + z^5*x + z^5*y) +
+	+ (b1*b2 + b1*b2^2 + b1*b2^3 + b1*b2^4 + b1^2*b2 + 3*b1^2*b2^2 + b1^2*b2^3 + b1^3 + b1^3*b2 + b1^3*b2^2 +
+		+ b1^3*b2^3 + b1^4*b2 + b2^3) * (x^4*y^2 + x^4*z^2 + y^4*x^2 + y^4*z^2 + z^4*x^2 + z^4*y^2) +
+	+ (2*b1*b2 + 2*b1*b2^2 + 2*b1*b2^3 + 2*b1*b2^4 + b1^2 + 2*b1^2*b2 + 6*b1^2*b2^2 + 2*b1^2*b2^3 +
+		+ b1^2*b2^4 + 2*b1^3*b2 + 2*b1^3*b2^2 + b1^4 + 2*b1^4*b2 + b1^4*b2^2 + b2^2 + b2^4) *
+		x*y*z*(x^3 + y^3 + z^3) +
+	+ (2*b1*b2^2 + 2*b1*b2^3 + b1^2 + 2*b1^2*b2 + 2*b1^2*b2^2 + 2*b1^2*b2^3 + b1^2*b2^4 + 2*b1^3*b2 +
+		+ 2*b1^3*b2^2 + b1^4 + b1^4*b2^2 + b2^2 + b2^4) * (x^3*y^3 + x^3*z^3 + y^3*z^3) +
+	+ (b1 + 2*b1*b2 + 5*b1*b2^2 + 5*b1*b2^3 + 2*b1*b2^4 + b1*b2^5 + b1^2 + 5*b1^2*b2 + 6*b1^2*b2^2 +
+		+ 5*b1^2*b2^3 + b1^2*b2^4 + 2*b1^3 + 5*b1^3*b2 + 5*b1^3*b2^2 + 2*b1^3*b2^3 + b1^4 + 2*b1^4*b2 +
+		+ b1^4*b2^2 + b1^5 + b1^5*b2 + b2 + b2^2 + 2*b2^3 + b2^4 + b2^5) *
+		x*y*z*(x^2*y + x^2*z + y^2*x + y^2*z + z^2*x + z^2*y) +
+	+ (1 + 6*b1*b2 + 6*b1*b2^2 + 6*b1*b2^3 + 6*b1*b2^4 + 3*b1^2 + 6*b1^2*b2 + 9*b1^2*b2^2 + 6*b1^2*b2^3 +
+		+ 3*b1^2*b2^4 + 2*b1^3 + 6*b1^3*b2 + 6*b1^3*b2^2 + 2*b1^3*b2^3 + 3*b1^4 + 6*b1^4*b2 + 3*b1^4*b2^2 +
+		+ b1^6 + 3*b2^2 + 2*b2^3 + 3*b2^4 + b2^6) * (x*y*z)^2
+
+b1^2*b2^2*(- 2*E2^3 + 3*E3^2 - 12*E2*E3*S + 9*E2^2*S^2 + 6*E3*S^3 - 6*E2*S^4 + S^6) +
+	+ (b1^3*b2^2 + b1^3*b2 + b1^2*b2^3 + b1*b2^3 + b1^2*b2 + b1*b2^2) *
+		((S^5 - 5*E2*S^3 + 5*E3*S^2 + 5*E2^2*S - 5*E2*E3)*S +
+		- (- 2*E2^3 + 3*E3^2 - 12*E2*E3*S + 9*E2^2*S^2 + 6*E3*S^3 - 6*E2*S^4 + S^6)) +
+	+ (b1*b2 + b1*b2^2 + b1*b2^3 + b1*b2^4 + b1^2*b2 + 3*b1^2*b2^2 + b1^2*b2^3 + b1^3 + b1^3*b2 + b1^3*b2^2 +
+		+ b1^3*b2^3 + b1^4*b2 + b2^3) * (E2^2*S^2 - 2*E3*S^3 - 2*E2^3 + 4*E2*E3*S - 3*E3^2) +
+	+ (2*b1*b2 + 2*b1*b2^2 + 2*b1*b2^3 + 2*b1*b2^4 + b1^2 + 2*b1^2*b2 + 6*b1^2*b2^2 + 2*b1^2*b2^3 +
+		+ b1^2*b2^4 + 2*b1^3*b2 + 2*b1^3*b2^2 + b1^4 + 2*b1^4*b2 + b1^4*b2^2 + b2^2 + b2^4) *
+		E3*(S^3 - 3*E2*S + 3*E3) +
+	+ (2*b1*b2^2 + 2*b1*b2^3 + b1^2 + 2*b1^2*b2 + 2*b1^2*b2^2 + 2*b1^2*b2^3 + b1^2*b2^4 + 2*b1^3*b2 +
+		+ 2*b1^3*b2^2 + b1^4 + b1^4*b2^2 + b2^2 + b2^4) * (E2^3 - 3*E3*E2*S + 3*E3^2) +
+	+ (b1 + 2*b1*b2 + 5*b1*b2^2 + 5*b1*b2^3 + 2*b1*b2^4 + b1*b2^5 + b1^2 + 5*b1^2*b2 + 6*b1^2*b2^2 +
+		+ 5*b1^2*b2^3 + b1^2*b2^4 + 2*b1^3 + 5*b1^3*b2 + 5*b1^3*b2^2 + 2*b1^3*b2^3 + b1^4 + 2*b1^4*b2 +
+		+ b1^4*b2^2 + b1^5 + b1^5*b2 + b2 + b2^2 + 2*b2^3 + b2^4 + b2^5) *
+		E3*(E2*S - 3*E3) +
+	+ (1 + 6*b1*b2 + 6*b1*b2^2 + 6*b1*b2^3 + 6*b1*b2^4 + 3*b1^2 + 6*b1^2*b2 + 9*b1^2*b2^2 + 6*b1^2*b2^3 +
+		+ 3*b1^2*b2^4 + 2*b1^3 + 6*b1^3*b2 + 6*b1^3*b2^2 + 2*b1^3*b2^3 + 3*b1^4 + 6*b1^4*b2 + 3*b1^4*b2^2 +
+		+ b1^6 + 3*b2^2 + 2*b2^3 + 3*b2^4 + b2^6) * E3^2
+
+b1^2*b2^2*(- 2*E2^3 + 3*E3^2 - 12*E2*E3*S + 9*E2^2*S^2 + 6*E3*S^3 - 6*E2*S^4 + S^6) +
+	+ (b1^3*b2^2 + b1^3*b2 + b1^2*b2^3 + b1*b2^3 + b1^2*b2 + b1*b2^2) *
+		((S^5 - 5*E2*S^3 + 5*E3*S^2 + 5*E2^2*S - 5*E2*E3)*S +
+		- (- 2*E2^3 + 3*E3^2 - 12*E2*E3*S + 9*E2^2*S^2 + 6*E3*S^3 - 6*E2*S^4 + S^6)) +
+	+ (b1*b2 + b1*b2^2 + b1*b2^3 + b1*b2^4 + b1^2*b2 + 3*b1^2*b2^2 + b1^2*b2^3 + b1^3 + b1^3*b2 + b1^3*b2^2 +
+		+ b1^3*b2^3 + b1^4*b2 + b2^3) * (E2^2*S^2 - 2*E3*S^3 - 2*E2^3 + 4*E2*E3*S - 3*E3^2) +
+	+ (2*b1*b2 + 2*b1*b2^2 + 2*b1*b2^3 + 2*b1*b2^4 + b1^2 + 2*b1^2*b2 + 6*b1^2*b2^2 + 2*b1^2*b2^3 +
+		+ b1^2*b2^4 + 2*b1^3*b2 + 2*b1^3*b2^2 + b1^4 + 2*b1^4*b2 + b1^4*b2^2 + b2^2 + b2^4) *
+		E3*(S^3 - 3*E2*S + 3*E3) +
+	+ (2*b1*b2^2 + 2*b1*b2^3 + b1^2 + 2*b1^2*b2 + 2*b1^2*b2^2 + 2*b1^2*b2^3 + b1^2*b2^4 + 2*b1^3*b2 +
+		+ 2*b1^3*b2^2 + b1^4 + b1^4*b2^2 + b2^2 + b2^4) * (E2^3 - 3*E3*E2*S + 3*E3^2) +
+	+ (b1 + 2*b1*b2 + 5*b1*b2^2 + 5*b1*b2^3 + 2*b1*b2^4 + b1*b2^5 + b1^2 + 5*b1^2*b2 + 6*b1^2*b2^2 +
+		+ 5*b1^2*b2^3 + b1^2*b2^4 + 2*b1^3 + 5*b1^3*b2 + 5*b1^3*b2^2 + 2*b1^3*b2^3 + b1^4 + 2*b1^4*b2 +
+		+ b1^4*b2^2 + b1^5 + b1^5*b2 + b2 + b2^2 + 2*b2^3 + b2^4 + b2^5) *
+		E3*(E2*S - 3*E3) +
+	+ (1 + 6*b1*b2 + 6*b1*b2^2 + 6*b1*b2^3 + 6*b1*b2^4 + 3*b1^2 + 6*b1^2*b2 + 9*b1^2*b2^2 + 6*b1^2*b2^3 +
+		+ 3*b1^2*b2^4 + 2*b1^3 + 6*b1^3*b2 + 6*b1^3*b2^2 + 2*b1^3*b2^3 + 3*b1^4 + 6*b1^4*b2 + 3*b1^4*b2^2 +
+		+ b1^6 + 3*b2^2 + 2*b2^3 + 3*b2^4 + b2^6) * E3^2
+# TODO
+
+
+### Eq 1: alternative approach
+(x + b1*y + b2*z)*(b1*x + b2*y + z)*(b2*x + y + b1*z) # = 0
+b1*b2*(x^3 + y^3 + z^3) + (b1^3 + b2^3 + 3*b1*b2 + 1)*x*y*z +
+	+ (b1^2 + b1*b2^2 + b2)*(x*y^2 + y*z^2 + x^2*z) +
+	+ (b1^2*b2 + b2^2 + b1)*(y^2*z + x*z^2 + x^2*y)
+b1*b2*(S^3 - 3*E2*S + 3*E3) + (b1^3 + b2^3 + 3*b1*b2 + 1)*E3 +
+	+ (b1^2 + b1*b2^2 + b2)*(x*y^2 + y*z^2 + x^2*z + y^2*z + x*z^2 + x^2*y) +
+	- (b1^2 + b1*b2^2 + b2 - b1^2*b2 - b2^2 - b1)*(y^2*z + x*z^2 + x^2*y)
+b1*b2*(S^3 - 3*E2*S + 3*E3) + (b1^3 + b2^3 + 3*b1*b2 + 1)*E3 +
+	+ (b1^2 + b1*b2^2 + b2)*(E2*S - 3*E3) +
+	- (b1^2 + b1*b2^2 + b2 - b1^2*b2 - b2^2 - b1)*(y^2*z + x*z^2 + x^2*y)
+# Eq 1-bis
+b1*b2*S^3 + (b1^3 + b2^3 - 3*b1^2 - 3*b1*b2^2 + 6*b1*b2 - 3*b2 + 1)*E3 +
+	+ (b1^2 + b1*b2^2 - 3*b1*b2 + b2)*E2*S +
+	- (b1^2 + b1*b2^2 + b2 - b1^2*b2 - b2^2 - b1)*(y^2*z + x*z^2 + x^2*y)
+# (b1^2 + b1*b2^2 + b2 - b1^2*b2 - b2^2 - b1) == (b2 - b1)*(b2 - 1)*(b1 - 1)
+### =>
+(b1*b2*S^3 + (b1^3 + b2^3 - 3*b1^2 - 3*b1*b2^2 + 6*b1*b2 - 3*b2 + 1)*E3 +
+	+ (b1^2 + b1*b2^2 - 3*b1*b2 + b2)*E2*S)*(x*y^2 + y*z^2 + x^2*z) +
+	- (b1^2 + b1*b2^2 + b2 - b1^2*b2 - b2^2 - b1)*
+	(y^2*z + x*z^2 + x^2*y)*(x*y^2 + y*z^2 + x^2*z)
+# Eq 2-bis
+(b1*b2*S^3 + (b1^2 + b1*b2^2 - 3*b1*b2 + b2)*E2*S +
+		+ (b1^3 + b2^3 - 3*b1^2 - 3*b1*b2^2 + 6*b1*b2 - 3*b2 + 1)*E3) *
+	(x*y^2 + y*z^2 + x^2*z) +
+	- (b1^2 + b1*b2^2 + b2 - b1^2*b2 - b2^2 - b1)*
+		(E3*S^3 + E2^3 - 6*E3*E2*S + 9*E3^2)
+### Sum => ...
 
