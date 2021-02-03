@@ -6,7 +6,7 @@
 ### Polynomial Systems:
 ### Asymmetric S3: Simple / Basic
 ###
-### draft v.0.1c-ext
+### draft v.0.1d
 
 
 ##########################
@@ -24,6 +24,9 @@
 ### History ###
 ###############
 
+### draft v.0.1d:
+# - Mixt Ht system:
+#   Eq 2: x*y^2 + y*z^2 + z*x^2 = R2;
 ### draft v.0.1c - v.0.1c-ext:
 # - Eq 2 variants:
 #   x^2 + y^2 + z^2 = R2;
@@ -256,12 +259,14 @@ solve.omega.P1 = function(R, debug=TRUE) {
 test.omega.P1 = function(sol, R=0, pow=1, b.ext=c(0,0), type="E2") {
 	m = unity(3, all=F);
 	x = sol[,1]; y = sol[,2]; z = sol[,3];
-	type = match(type, c("E2", "Pow2"))
+	type = match(type, c("E2", "Pow2", "Mixt"))
 	err1 = x^pow + m*y^pow + m^2*z^pow # = 0
 	err2 = if(type == 1) {
 		x*y + x*z + y*z # - R2
 	} else if(type == 2) {
 		x^2 + y^2 + z^2 # - R2
+	} else if(type == 3) {
+		x*y^2 + y*z^2 + z*x^2 # - R2
 	} else {
 		NA
 	}
@@ -442,4 +447,73 @@ test.omega.P1(sol, R, pow=2, b.ext=b.ext, type="Pow2");
 x = sol[,1]
 round0.p(poly.calc(x)) * 9
 
+
+
+
+#############
+### Variants: Mixt
+### Order 2
+
+# x^2 + m*y^2 + m^2*z^2 = 0
+# x*y^2 + y*z^2 + z*x^2 = R2
+# x*y*z = R3
+
+### Solution:
+
+### Eq 1 =>
+S^4 + E2^2 - 4*E2*S^2 + 6*E3*S # = 0
+S^4 + E2^2 - 4*E2*S^2 + 6*R3*S # = 0
+
+### Eq 2 =>
+E3*S^3 - R2*E2*S - 6*E2*E3*S + E2^3 + 9*E3^2 + 3*R2*E3 + R2^2 # = 0
+R3*S^3 - R2*E2*S - 6*E2*R3*S + E2^3 + R2^2 + 3*R2*R3 + 9*R3^2 # = 0
+
+### Eq:
+(729*R2*R3^5 + 486*R2^2*R3^4 + 189*R2^3*R3^3 + 54*R2^4*R3^2 + 9*R2^5*R3 + R2^6 + 729*R3^6) +
+(162*R2*R3^4 - 513*R2^2*R3^3 - 252*R2^3*R3^2 - 63*R2^4*R3 + 2187*R3^5)*S^3 +
+(- 6651*R2*R3^3 - 4086*R2^2*R3^2 - 633*R2^3*R3 - 27*R2^4 - 3969*R3^4)*S^6 +
+(13608*R2*R3^2 + 8037*R2^2*R3 + 454*R2^3 + 847*R3^3)*S^9 +
+(- 6291*R2*R3 - 3447*R2^2 - 5781*R3^2)*S^12 +
+(900*R2 + 921*R3)*S^15 +
+(- 64)*S^18
+
+### E2:
+E2Subst = 3*R2*R3 + R2^2 - 23*R3*S^3 + 9*R3^2 - 4*S^6;
+E2div = R2*S + 12*R3*S - 15*S^4;
+
+
+### Solver:
+solve.omegaMixt.P2 = function(R, debug=TRUE) {
+	R2 = R[1]; R3 = R[2]; # !!
+	coeff = c(-64, 0,0, (900*R2 + 921*R3), 0,0, (- 6291*R2*R3 - 3447*R2^2 - 5781*R3^2), 0,0,
+		(13608*R2*R3^2 + 8037*R2^2*R3 + 454*R2^3 + 847*R3^3), 0,0,
+		(- 6651*R2*R3^3 - 4086*R2^2*R3^2 - 633*R2^3*R3 - 27*R2^4 - 3969*R3^4), 0,0,
+		(162*R2*R3^4 - 513*R2^2*R3^3 - 252*R2^3*R3^2 - 63*R2^4*R3 + 2187*R3^5), 0,0,
+		(729*R2*R3^5 + 486*R2^2*R3^4 + 189*R2^3*R3^3 + 54*R2^4*R3^2 + 9*R2^5*R3 + R2^6 + 729*R3^6))
+	S = roots(coeff)
+	if(debug) print(S);
+	E2Subst = 3*R2*R3 + R2^2 - 23*R3*S^3 + 9*R3^2 - 4*S^6;
+	E2Div = R2*S + 12*R3*S - 15*S^4;
+	E2 = E2Subst / E2Div;
+	x = sapply(seq_along(S), function(id) roots(c(1, -S[id], E2[id], -R3)))
+	# m = unity(3, all=F);
+	len = length(S);
+	expand.m = function(m) matrix(m, ncol=len, nrow=3, byrow=T);
+	# S = expand.m(S); # E2 = expand.m(E2);
+	### TODO: robust
+	sol = solve.EnAll(x, n=3, max.perm=1)
+	return(cbind(sol, S=as.vector(S)));
+}
+
+### Examples
+
+R = c(1, -1)
+sol = solve.omegaMixt.P2(R)
+x = sol[,1]; y = sol[,2]; z = sol[,3];
+
+### Test
+test.omega.P1(sol, R, pow=2, type="Mixt")
+
+round0.p(poly.calc(sol[13:18,4])) * 64
+# TODO: factorize!
 
