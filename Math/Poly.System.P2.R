@@ -6,12 +6,50 @@
 ###
 ### Polynomial Systems: P2
 ### Decompositions of Symmetric Systems
-### v.0.3f
+### v.0.3g
+
+
+####################
+### Introduction ###
+####################
+
+# - various types of basic Symmetric Systems;
+
+
+### A.1. Simple Symmetric
+# x^n + y^n = R1
+# x*y = R2
+
+### A.2. Shifted Symmetric
+# (x - d)^n + (y - d)^n = R1
+# x*y = R2
+
+
+### B. Non-Linearly Entangled
+
+### B.1. Order 1 Ent
+# x^n + y^n = R1
+# x*y*(x+y) = R2
+
+### B.2. Order 2 Ent
+# x^n + y^n = R1
+# x*y*(x+y)^2 = R2
+
+### B.3. Div Ent
+# x^n + y^n = R1
+# x*y / (x+y) = R2
 
 
 ###############
-### History ###
 
+###############
+### History ###
+###############
+
+### draft v.0.3g:
+# - multiplicative entanglement for order 2;
+#   [was skipped in v.0.2f - v.0.3a]
+# - moved Section [Derived Polynomials] to the end;
 ### draft v.0.3e - v.0.3f:
 # - 2-Shift systems [Order 3]:
 #   same shift:
@@ -58,7 +96,7 @@
 
 # TODO: use exact solver for P3
 library(polynom)
-# library(pracma) # for polynomials with complex coefficients
+library(pracma) # for polynomials with complex coefficients
 
 
 solve.shift.ps = function(s1, s2, R, n=3) {
@@ -132,13 +170,16 @@ mult.p = function(p1, p2) {
 # (x + a)^2 + (y + a)^2 = R1
 # x*y = R2
 
-# x^2 + y^2 + 2*a*(x + y) + 2*a^2 - R1 = 0
+### Solution:
+
+x^2 + y^2 + 2*a*(x + y) + 2*a^2 - R1 # = 0
 # S = x + y =>
-# S^2 + 2*a*S + 2*a^2 - R1 - 2*R2 = 0
+S^2 + 2*a*S + 2*a^2 - R1 - 2*R2 # = 0
 # Step 1: Solve for S
 # Step 2: x + y = S
 
-### Parameters
+### Examples:
+
 a = 1
 R = c(1, 1)
 ### Solution
@@ -148,7 +189,7 @@ sol = solve.ps(a, R, n=2)
 (sol$x + a)^2 + (sol$y + a)^2
 sol$x * sol$y
 
-###
+### Ex 2:
 a = -2
 R = c(1, 1)
 ### Solution
@@ -180,15 +221,16 @@ x = vapply(c3, solve.ps, R=R, n=2)
 # (x + a)^3 + (y + a)^3 = R1
 # x*y = R2
 
-# x^3 + y^3 + 3*a*(x^2 + y^2) + 3*a^2*(x + y) + 2*a^3 - R1 = 0
+### Solution:
+x^3 + y^3 + 3*a*(x^2 + y^2) + 3*a^2*(x + y) + 2*a^3 - R1 # = 0
 # X = x + y =>
-# X^3 - 3*R2*X + 3*a*X^2 - 6*a*R2 + 3*a^2*X + 2*a^3 - R1 = 0
-# X^3 + 3*a*X^2 + 3*(a^2-R2)*X + 2*a^3 - R1 - 6*a*R2 = 0
+X^3 - 3*R2*X + 3*a*X^2 - 6*a*R2 + 3*a^2*X + 2*a^3 - R1 # = 0
+X^3 + 3*a*X^2 + 3*(a^2-R2)*X + 2*a^3 - R1 - 6*a*R2 # = 0
 # Step 1: Solve for X
 # Step 2: x + y = X
 
+### Examples:
 
-### Parameters
 a = 1
 R = c(1, 1)
 ### Solution
@@ -280,14 +322,14 @@ x = sol$x + 1
 # (x + a)^4 + (y + a)^4 = R1
 # x*y = R2
 
-### TODO:
-# (x + a)^4 + (y + a)^4 - R1 = 0
-# x^4 + y^4 + 4*a*(x^3 + y^3) + 6*a^2*(x^2 + y^2) + 4*a^3*(x + y) + 2*a^4 - R1 = 0
+### Solution:
+(x + a)^4 + (y + a)^4 - R1 # = 0
+x^4 + y^4 + 4*a*(x^3 + y^3) + 6*a^2*(x^2 + y^2) + 4*a^3*(x + y) + 2*a^4 - R1 # = 0
 # X = x + y =>
-# X^4 - 4*R2*(x^2 + y^2) - 6*R2^2 +
-#  + 4*a*X^3 - 12*a*R2*X + 6*a^2*X^2 - 12*a^2*R2 + 4*a^3*X + 2*a^4 - R1 = 0
-#
-# X^4 + 4*a*X^3 + (6*a^2-4*R2)*X^2 + 4*(a^3-3*a*R2)*X + 2*a^4 - R1 + 2*R2^2 - 12*a^2*R2 = 0
+X^4 - 4*R2*(x^2 + y^2) - 6*R2^2 +
+	+ 4*a*X^3 - 12*a*R2*X + 6*a^2*X^2 - 12*a^2*R2 + 4*a^3*X + 2*a^4 - R1 # = 0
+
+X^4 + 4*a*X^3 + (6*a^2-4*R2)*X^2 + 4*(a^3-3*a*R2)*X + 2*a^4 - R1 + 2*R2^2 - 12*a^2*R2 # = 0
 # Step 1: Solve for X
 # Step 2: x + y = X
 
@@ -336,183 +378,12 @@ x = sol$x
 x^4*(x + a)^4 + (x*a + R[2])^4 - R[1]*x^4 # = 0
 
 
-
-#########################
-#########################
-
-### Derived Polynomials
-
-c2 = 2*cos(2*pi/5 * 1:2)
-m = complex(re=cos(2*pi/3), im=sin(2*pi/3))
-r3 = (1 + c(1i, -1i)*sqrt(3))/2
-
-###
-R1 = c(c2[1]-c2[2], 1)
-R2 = c(c2[2]-c2[1], 1)
-sol = rbind(
-	solve.ps(c2[1] - c2[2], R1, n=2),
-	solve.ps(c2[2] - c2[1], R2, n=2) )
-
-# poly.calc(sol$x)
-x = sol$x
-1 + 20*x^3 + 57*x^4 + 20*x^5 + x^8
-# Note: Set {x} == {1/x}
-
-
-###
-R1 = c(c2[2] - c2[1], 1)
-R2 = c(c2[1] - c2[2], 1)
-sol = rbind(
-	solve.ps(c2[1]^3-c2[2]^3, R1, n=2),
-	solve.ps(c2[2]^3-c2[1]^3, R2, n=2) )
-
-# poly.calc(sol$x)
-x = sol$x
-1 - 40*x^3 + 1437*x^4 - 40*x^5 + x^8
-
-
-###
-R1 = c(0, c2[1])
-R2 = c(0, c2[2])
-sol = rbind(
-	solve.ps(c2[1]-c2[2], R1, n=2),
-	solve.ps(c2[2]-c2[1], R2, n=2) )
-
-poly.calc(sol$x)
-x = sol$x
-1 + 10*x + 50*x^2 + 110*x^3 + 123*x^4 + 10*x^5 + x^8
-
-
-###
-R1 = c(c2[1]-c2[2], c2[1])
-R2 = c(c2[2]-c2[1], c2[2])
-sol = rbind(
-	solve.ps(c2[1]-c2[2], R1, n=2),
-	solve.ps(c2[2]-c2[1], R2, n=2) )
-
-poly.calc(sol$x)
-x = sol$x
-1 + 10*x + 45*x^2 + 100*x^3 + 118*x^4 + 30*x^5 + x^8
-
-
-###
-R1 = c(c2[2]-c2[1], c2[1]-c2[2])
-R2 = c(c2[1]-c2[2], c2[2]-c2[1])
-sol = rbind(
-	solve.ps(c2[1] - c2[2], R1, n=2),
-	solve.ps(c2[2] - c2[1], R2, n=2) )
-
-poly.calc(sol$x)
-x = sol$x
-25 + 100*x + 200*x^2 + 200*x^3 + 105*x^4 + x^8
-
-
-###
-R1 = c(0, c2[1]-c2[2])
-R2 = c(0, c2[2]-c2[1])
-sol = rbind(
-	solve.ps(c2[1] - c2[2], R1, n=2),
-	solve.ps(c2[2] - c2[1], R2, n=2) )
-
-poly.calc(sol$x)
-x = sol$x
-25 + 100*x + 200*x^2 + 200*x^3 + 110*x^4 + 20*x^5 + x^8
-
-
-
-###
-R1 = c(c2[1]-c2[2], 1)
-R2 = c(c2[2]-c2[1], 1)
-sol = rbind(
-	solve.shift.ps(0, c2[2]-c2[1], R1, n=2),
-	solve.shift.ps(0, c2[1]-c2[2], R2, n=2) )
-
-poly.calc(sol$x)
-x = sol$x
-131 - 80*x + 50*x^2 + 20*x^3 - 33*x^4 + x^8
-
-
-###
-R1 = c(-1, 1)
-R2 = c(-1, 1)
-sol = rbind(
-	solve.shift.ps(c2[2], c2[1]+1, R1, n=2),
-	solve.shift.ps(c2[1], c2[2]+1, R2, n=2) )
-
-poly.calc(sol$x)
-x = sol$x
-16 + 32*x^2 + 50*x^3 + 39*x^4 + 30*x^5 + 8*x^6 + x^8
-
-
-### Experimental
-R1 = c(c2[1], 1-c2[1])
-R2 = c(c2[2], 1-c2[2])
-sol = rbind(
-	solve.shift.ps(1, -1+c2[1], R1, n=2),
-	solve.shift.ps(1, -1+c2[2], R2, n=2) )
-
-poly.calc(sol$x)
-x = sol$x
-
-
-################
-###
-R1 = c( 1+1i, 1)
-R2 = c( 1-1i, 1)
-sol = rbind(
-	solve.shift.ps(-1-1i, -1i, R1, n=2),
-	solve.shift.ps(-1+1i, +1i, R2, n=2) )
-
-poly.calc(sol$x)
-x = sol$x
-1 + 8*x + 10*x^2 - 20*x^3 + 31*x^4 - 20*x^5 + 10*x^6 - 4*x^7 + x^8
-
-
-###
-R1 = c( 0, 1)
-R2 = c( 0, 1)
-sol = rbind(
-	solve.shift.ps(-m, m^2, R1, n=2),
-	solve.shift.ps(-m^2, m, R2, n=2) )
-
-poly.calc(sol$x)
-x = sol$x
-1 - 2*x - 2*x^3 + 5*x^4 + 2*x^5 + 4*x^6 + x^8
-
-
-###
-R1 = c( 2*m-1, m^2)
-R2 = c( 2*m^2-1, m)
-sol = rbind(
-	solve.shift.ps(m, 0, R1, n=2),
-	solve.shift.ps(m^2, 0, R2, n=2) )
-
-poly.calc(sol$x)
-x = sol$x
-1 + x - 3*x^2 - x^3 + 2*x^4 - x^5 + 3*x^6 - 2*x^7 + x^8
-
-
-### (1 +/- i*sqrt(3))/2
-
-###
-R1 = c( 1, 2*r3[2])
-R2 = c( 1, 2*r3[1])
-sol = rbind(
-	solve.shift.ps(-2, 1, R1, n=2),
-	solve.shift.ps(-2, 1, R2, n=2) )
-
-poly.calc(sol$x)
-x = sol$x
-
-
 ############################
 ############################
 
 ### Liniar/Polynomial Shifts
 
-library(pracma)
-
-###
+### Order 3
 # x^3 + y^3 + b1*(x + y) = R1
 # x*y = R2
 
@@ -658,7 +529,77 @@ x^6 - 3*x^5 + 3*x^4 + 3*x^2 + 3*x + 1
 ############################
 ### Non-Liniar Entanglements
 
-### Order 3
+###############
+### Order 2 ###
+###############
+
+
+### x^2 + y^2 + b*(x+y) = R1
+### x*y*(x+y) = R2
+
+### Solution:
+
+### Eq 1:
+S^2 - 2*x*y + b*S - R1 # = 0
+S^3 + b*S^2 - R1*S - 2*R2 # = 0
+
+### Solver:
+solve.Ent.S2P2 = function(R, b, debug=TRUE) {
+	coeff = c(1, b[1], - R[1], - 2*R[2])
+	S = roots(coeff)
+	if(debug) print(S);
+	#
+	xy = R[2] / S;
+	xy.d = sqrt(S^2 - 4*xy + 0i);
+	x = (S + xy.d)/2;
+	y = (S - xy.d)/2;
+	sol = cbind(x=as.vector(x), y=as.vector(y));
+	sol = rbind(sol, sol[,2:1])
+	return(sol)
+}
+
+### Examples:
+
+R = c(-2, 2)
+b = 2;
+sol = solve.Ent.S2P2(R, b)
+x = sol[,1]; y = sol[,2];
+
+### Test
+x^2 + y^2 + b[1]*(x+y) # - R[1]
+x*y*(x+y) # - R[2]
+
+### Classic Polynomial:
+round0.p(poly.calc(x))
+
+R1 = R[1]; R2 = R[2];
+R2^2 +
+	- R2*(2*R1 + b^2)*x +
+	+ (R1^2 + 3*b*R2)*x^2 +
+	- (R1*b - 2*R2)*x^3 +
+	- 3*R1*x^4 + 2*b*x^5 + 2*x^6
+
+
+#########
+### Ex 2:
+R = c(-2, -4)
+b = 2
+sol = solve.Ent.S2P2(R, b)
+x = sol[,1]; y = sol[,2];
+
+### Test
+x^2 + y^2 + b[1]*(x+y) # - R[1]
+x*y*(x+y) # - R[2]
+
+### Classic Polynomial:
+round0.p(poly.calc(x))
+
+
+###############
+
+###############
+### Order 3 ###
+###############
 
 ### Type Multiplicative:
 # x^3 + y^3 + b1*(x+y) = R1
@@ -1289,5 +1230,180 @@ sol = cbind(x, y)
 ### Test
 x^3 + b[1]*y^3
 x*y
+
+
+###########################
+###########################
+
+###########################
+### Derived Polynomials ###
+
+### Note:
+# - all strictly symmetric Polynomials P[2*n]
+#   can be decomposed into P[2] o P[n];
+# - these were some early experiments;
+
+
+c2 = 2*cos(2*pi/5 * 1:2)
+m = complex(re=cos(2*pi/3), im=sin(2*pi/3))
+r3 = (1 + c(1i, -1i)*sqrt(3))/2
+
+###
+R1 = c(c2[1]-c2[2], 1)
+R2 = c(c2[2]-c2[1], 1)
+sol = rbind(
+	solve.ps(c2[1] - c2[2], R1, n=2),
+	solve.ps(c2[2] - c2[1], R2, n=2) )
+
+# poly.calc(sol$x)
+x = sol$x
+1 + 20*x^3 + 57*x^4 + 20*x^5 + x^8
+# Note: Set {x} == {1/x}
+
+
+###
+R1 = c(c2[2] - c2[1], 1)
+R2 = c(c2[1] - c2[2], 1)
+sol = rbind(
+	solve.ps(c2[1]^3-c2[2]^3, R1, n=2),
+	solve.ps(c2[2]^3-c2[1]^3, R2, n=2) )
+
+# poly.calc(sol$x)
+x = sol$x
+1 - 40*x^3 + 1437*x^4 - 40*x^5 + x^8
+
+
+### non-symmetric
+R1 = c(0, c2[1])
+R2 = c(0, c2[2])
+sol = rbind(
+	solve.ps(c2[1]-c2[2], R1, n=2),
+	solve.ps(c2[2]-c2[1], R2, n=2) )
+
+poly.calc(sol$x)
+x = sol$x
+1 + 10*x + 50*x^2 + 110*x^3 + 123*x^4 + 10*x^5 + x^8
+
+
+###
+R1 = c(c2[1]-c2[2], c2[1])
+R2 = c(c2[2]-c2[1], c2[2])
+sol = rbind(
+	solve.ps(c2[1]-c2[2], R1, n=2),
+	solve.ps(c2[2]-c2[1], R2, n=2) )
+
+poly.calc(sol$x)
+x = sol$x
+1 + 10*x + 45*x^2 + 100*x^3 + 118*x^4 + 30*x^5 + x^8
+
+
+###
+R1 = c(c2[2]-c2[1], c2[1]-c2[2])
+R2 = c(c2[1]-c2[2], c2[2]-c2[1])
+sol = rbind(
+	solve.ps(c2[1] - c2[2], R1, n=2),
+	solve.ps(c2[2] - c2[1], R2, n=2) )
+
+poly.calc(sol$x)
+x = sol$x
+25 + 100*x + 200*x^2 + 200*x^3 + 105*x^4 + x^8
+
+
+###
+R1 = c(0, c2[1]-c2[2])
+R2 = c(0, c2[2]-c2[1])
+sol = rbind(
+	solve.ps(c2[1] - c2[2], R1, n=2),
+	solve.ps(c2[2] - c2[1], R2, n=2) )
+
+poly.calc(sol$x)
+x = sol$x
+25 + 100*x + 200*x^2 + 200*x^3 + 110*x^4 + 20*x^5 + x^8
+
+
+
+###
+R1 = c(c2[1]-c2[2], 1)
+R2 = c(c2[2]-c2[1], 1)
+sol = rbind(
+	solve.shift.ps(0, c2[2]-c2[1], R1, n=2),
+	solve.shift.ps(0, c2[1]-c2[2], R2, n=2) )
+
+poly.calc(sol$x)
+x = sol$x
+131 - 80*x + 50*x^2 + 20*x^3 - 33*x^4 + x^8
+
+
+###
+R1 = c(-1, 1)
+R2 = c(-1, 1)
+sol = rbind(
+	solve.shift.ps(c2[2], c2[1]+1, R1, n=2),
+	solve.shift.ps(c2[1], c2[2]+1, R2, n=2) )
+
+poly.calc(sol$x)
+x = sol$x
+16 + 32*x^2 + 50*x^3 + 39*x^4 + 30*x^5 + 8*x^6 + x^8
+
+
+### Experimental
+R1 = c(c2[1], 1-c2[1])
+R2 = c(c2[2], 1-c2[2])
+sol = rbind(
+	solve.shift.ps(1, -1+c2[1], R1, n=2),
+	solve.shift.ps(1, -1+c2[2], R2, n=2) )
+
+poly.calc(sol$x)
+x = sol$x
+
+
+################
+###
+R1 = c( 1+1i, 1)
+R2 = c( 1-1i, 1)
+sol = rbind(
+	solve.shift.ps(-1-1i, -1i, R1, n=2),
+	solve.shift.ps(-1+1i, +1i, R2, n=2) )
+
+poly.calc(sol$x)
+x = sol$x
+1 + 8*x + 10*x^2 - 20*x^3 + 31*x^4 - 20*x^5 + 10*x^6 - 4*x^7 + x^8
+
+
+###
+R1 = c( 0, 1)
+R2 = c( 0, 1)
+sol = rbind(
+	solve.shift.ps(-m, m^2, R1, n=2),
+	solve.shift.ps(-m^2, m, R2, n=2) )
+
+poly.calc(sol$x)
+x = sol$x
+1 - 2*x - 2*x^3 + 5*x^4 + 2*x^5 + 4*x^6 + x^8
+
+
+###
+R1 = c( 2*m-1, m^2)
+R2 = c( 2*m^2-1, m)
+sol = rbind(
+	solve.shift.ps(m, 0, R1, n=2),
+	solve.shift.ps(m^2, 0, R2, n=2) )
+
+poly.calc(sol$x)
+x = sol$x
+1 + x - 3*x^2 - x^3 + 2*x^4 - x^5 + 3*x^6 - 2*x^7 + x^8
+
+
+### (1 +/- i*sqrt(3))/2
+
+###
+R1 = c( 1, 2*r3[2])
+R2 = c( 1, 2*r3[1])
+sol = rbind(
+	solve.shift.ps(-2, 1, R1, n=2),
+	solve.shift.ps(-2, 1, R2, n=2) )
+
+poly.calc(sol$x)
+x = sol$x
 
 
