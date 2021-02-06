@@ -6,7 +6,7 @@
 ###
 ### Polynomial Systems: P2
 ### Decompositions of Symmetric Systems
-### v.0.3g
+### v.0.3h
 
 
 ####################
@@ -46,8 +46,8 @@
 ### History ###
 ###############
 
-### draft v.0.3g:
-# - multiplicative entanglement for order 2;
+### draft v.0.3g - v.0.3h:
+# - multiplicative & div entanglements for order 2;
 #   [was skipped in v.0.2f - v.0.3a]
 # - moved Section [Derived Polynomials] to the end;
 ### draft v.0.3e - v.0.3f:
@@ -593,6 +593,81 @@ x*y*(x+y) # - R[2]
 
 ### Classic Polynomial:
 round0.p(poly.calc(x))
+
+
+###############
+
+### Div-Variant
+### (x + y)^3 + b2*x*y + b1*(x+y) = R1
+### x*y / (x+y)^2 = R2
+
+### Solution:
+
+### Eq 1:
+S^3 + b2*R2*S^2 + b1*S - R1 # = 0
+
+
+### Solver:
+solve.Ent2.S2 = function(R, b=c(0, 1), debug=TRUE) {
+	coeff = c(1, b[2]*R[2], b[1], - R[1])
+	S = roots(coeff)
+	if(debug) print(S);
+	#
+	xy = R[2] * S^2;
+	xy.d = sqrt(S^2 - 4*xy + 0i);
+	x = (S + xy.d)/2;
+	y = (S - xy.d)/2;
+	sol = cbind(x=as.vector(x), y=as.vector(y));
+	sol = rbind(sol, sol[,2:1])
+	return(sol)
+}
+test.Ent2.S2 = function(sol, R, b=c(0, 1)) {
+	x = sol[,1]; y = sol[,2];
+	err1 = (x + y)^3 + b[2]*x*y + b[1]*(x+y) # - R[1]
+	err2 = x*y / (x+y)^2 # - R[2]
+	err = round0(rbind(err1, err2))
+	return(err)
+}
+
+### Examples:
+
+R = c(-2, 1)
+b = c(1, 1);
+sol = solve.Ent2.S2(R, b)
+x = sol[,1]; y = sol[,2];
+
+### Test
+test.Ent2.S2(sol, R, b)
+
+### Classic Polynomial:
+round0.p(poly.calc(x))
+err = 4 + 2*x - x^2 - 3*x^3 + x^5 + x^6
+round0(err)
+
+
+#########
+### Ex 2:
+R = c(-4, 1)
+b = c(4, 2);
+sol = solve.Ent2.S2(R, b)
+x = sol[,1]; y = sol[,2];
+
+### Test
+test.Ent2.S2(sol, R, b)
+
+### Classic Polynomial:
+round0.p(poly.calc(x))
+err = 16 + 16*x + 8*x^2 + 2*x^5 + x^6
+round0(err)
+
+
+R1 = R[1]; R2 = R[2]; b1 = b[1]; b2 = b[2];
+(R1^2*R2^3) +
+- b1*R1*R2^2*x^1 +
++ R2^2*(2*R1*R2*b2 - R1*b2 + b1^2)*x^2 +
++ (3*R1*R2 + b1*b2*R2^2 - R1)*x^3 +
++ (R2^3*b2^2 - 2*R2*b1 + b1)*x^4 +
++ b2*R2*x^5 + x^6
 
 
 ###############
