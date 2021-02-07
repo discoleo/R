@@ -5,7 +5,7 @@
 ###
 ### Combinatorics
 ###
-### draft v.0.1b
+### draft v.0.1c
 
 
 ####################
@@ -171,4 +171,56 @@ plot.crossy = function(x1, x2, jitter=TRUE, col=c("purple", "blue")) {
 # - the number of inter-crossings is fixed: + n^2;
 plot.cross(x1, x2)
 plot.crossy(x3, x4)
+
+
+######################
+######################
+
+### Cyclic sequence
+
+plot.cycle = function(s1, s2, r=c(1, 2), col=c("red", "green"), f=1.25, add=FALSE) {
+	len1 = length(s1); len2 = length(s2);
+	plot.cyc.text = function(s, id=1) {
+		len = length(s); arc = 2*pi/len;
+		x = r[id] * cos( (0:(len-1)) * arc - pi/2);
+		y = r[id] * sin( (0:(len-1)) * arc - pi/2);
+		text(x, y, s, col=col[id])
+	}
+	# plot(x1, y1)
+	r.max = max(r) * f; lim = c(-r.max, r.max);
+	old.par = par(mar=c(1,1,1,1))
+	plot.new(); plot.window(xlim=lim, ylim=lim);
+	plot.cyc.text(s1, id=1)
+	plot.cyc.text(s2, id=2)
+	par(old.par)
+}
+shift.seq = function(s, first=1) {
+	id = match(first, s)
+	if(is.na(id)) stop("NO such element!")
+	if(id > 1) {
+		s = c(tail(s, 1-id), head(s, id-1))
+	}
+	return(s)
+}
+
+
+### Test
+n = 6
+s1 = seq(n)
+s2 = sample(s1, n)
+s2 = shift.seq(s2)
+
+### Plot:
+plot.cycle(s1, s2)
+
+
+### Save image
+SAVE=FALSE
+if(SAVE) {
+	id = 2
+	png(file=paste0("img/Combinatorics.Cyclic.", id, ".png"))
+	plot.cycle(s1, s2)
+	dev.off()
+}
+
 
