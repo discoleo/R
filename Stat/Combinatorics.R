@@ -178,21 +178,23 @@ plot.crossy(x3, x4)
 
 ### Cyclic sequence
 
-plot.cycle = function(s1, s2, r=c(1, 2), col=c("red", "green"), f=1.25, add=FALSE) {
+plot.cycle = function(s1, s2, r=c(1, 2), col=c("red", "green"), f=1.25, plot=TRUE, add=FALSE) {
 	len1 = length(s1); len2 = length(s2);
 	plot.cyc.text = function(s, id=1) {
 		len = length(s); arc = 2*pi/len;
 		x = r[id] * cos( (0:(len-1)) * arc - pi/2);
 		y = r[id] * sin( (0:(len-1)) * arc - pi/2);
 		text(x, y, s, col=col[id])
+		return(cbind(x,y))
 	}
 	# plot(x1, y1)
 	r.max = max(r) * f; lim = c(-r.max, r.max);
 	old.par = par(mar=c(1,1,1,1))
 	plot.new(); plot.window(xlim=lim, ylim=lim);
-	plot.cyc.text(s1, id=1)
-	plot.cyc.text(s2, id=2)
+	xy1 = plot.cyc.text(s1, id=1)
+	xy2 = plot.cyc.text(s2, id=2)
 	par(old.par)
+	return(list(xy1, xy2))
 }
 shift.seq = function(s, first=1) {
 	id = match(first, s)
@@ -202,24 +204,65 @@ shift.seq = function(s, first=1) {
 	}
 	return(s)
 }
+connect = function(s1, s2, xy, col="orange", lwd=2, delta=0.1, add=TRUE) {
+	if(missing(xy)) xy = plot.cycle(s1, s2);
+	delta.f = function(x) {
+		dl = round(x[1] - x[2], 4)
+		if(dl > 0) {
+			x = x + delta * c(-1, 1);
+		} else if(dl < 0) {
+			x = x + delta * c(1, -1);
+		}
+		return(x)
+	}
+	lines.match = function(id, diff=0, id2=id - diff) {
+		x = c(xy[[1]][id,1], xy[[2]][id2,1])
+		y = c(xy[[1]][id,2], xy[[2]][id2,2])
+		# shrink
+		x = delta.f(x); y = delta.f(y);
+		lines(x, y, col=col[1], lwd=lwd)
+	}
+	#
+	isEq = s1 == s2;
+	if(any(isEq)) {
+		id = seq(length(s1))[isEq]
+		sapply(id, lines.match)
+	}
+	# shifted
+	isEq = c(0, s1) == c(s2, 0);
+	if(any(isEq)) {
+		isEq = head(isEq, -1)
+		id = seq(length(s1))[isEq]
+		sapply(id-1, lines.match, diff=-1)
+	}
+	# shifted L: TODO: check!
+	isEq = c(s1, 0) == c(0, s2);
+	if(any(isEq)) {
+		isEq = head(isEq, -1)
+		id = seq(length(s1))[isEq]
+		sapply(id, lines.match, diff=1)
+	}
+}
 
 
 ### Test
-n = 6
+n = 8
 s1 = seq(n)
 s2 = sample(s1, n)
 s2 = shift.seq(s2)
 
 ### Plot:
-plot.cycle(s1, s2)
+xy = plot.cycle(s1, s2)
+connect(s1, s2, xy)
 
 
 ### Save image
 SAVE=FALSE
 if(SAVE) {
-	id = 2
-	png(file=paste0("img/Combinatorics.Cyclic.", id, ".png"))
-	plot.cycle(s1, s2)
+	id = 4
+	png(file=paste0("img/Combinatorics.Cyclic.8.", id, ".png"))
+	xy = plot.cycle(s1, s2)
+	connect(s1, s2, xy)
 	dev.off()
 }
 
