@@ -7,7 +7,7 @@
 ### Mixt Variable
 ### Hetero-Symmetric S2 + Symmetric
 ###
-### draft v.0.1h
+### draft v.0.2a
 
 
 ### Mixt Polynomial Systems:
@@ -35,6 +35,9 @@
 ###############
 
 
+### draft v.0.2a:
+# - 4 entangled variables:
+#   Ht-S2P3 with 2 other entangled variables;
 ### draft v.0.1e - v.0.1h:
 # - Eq 3 variants for the Mixt-Symmetric S3P3:
 #   x^2 + y^2 + b*d^2 = R3; [v.0.1e]
@@ -981,4 +984,71 @@ x = sol[,1]; y = sol[,2]; d = sol[,3];
 (x^2 + y^2)*d # - R[3]
 
 print(round0.p(poly.calc(c(x,y))) * 64*8, digits=16)
+
+
+#######################
+#######################
+
+### 4 Vars
+
+# x^3 + t*y + B*(x+y) = R1
+# y^3 + t*x + B*(x+y) = R1
+# x*y*B = R2
+# B*t*(x+y) = R3
+
+### Solution:
+
+### Diff =>
+S^2 - x*y - B # = 0
+
+### Sum =>
+S^3 - 3*x*y*S + (t + 2*B)*S - 2*R1 # = 0
+
+### Eq:
+(- R3^2) +
+(- 2*R2*R3)*S^1 +
+(R1*R3 - R2^2)*S^2 +
+(R1*R2)*S^3 + 0 - R3*S^5 + R2*S^6
+
+### Auxiliary:
+xy = R2*S^3 / (R2*S + R3);
+
+
+### Solver:
+solve.S4Mixt.P3 = function(R, debug=TRUE) {
+	coeff = c(R[2], - R[3], 0, R[1]*R[2], (R[1]*R[3] - R[2]^2), - 2*R[2]*R[3], - R[3]^2)
+	S = roots(coeff)
+	if(debug) print(S);
+	R1 = R[1]; R2 = R[2]; R3 = R[3];
+	xy = R2*S^3 / (R2*S + R3);
+	B = R2 / xy;
+	t = R3 / (B*S);
+	xy.d = sqrt(S^2 - 4*xy + 0i)
+	x = (S + xy.d)/2;
+	y = (S - xy.d)/2;
+	sol = cbind(x=x, y=y, B=B, t=t, S=S)
+	return(sol)
+}
+test.S4Mixt.P3 = function(sol, R=c(0,0,0), n=3) {
+	x = sol[,1]; y = sol[,2]; B = sol[,3]; t = sol[,4];
+	S = x + y;
+	err1 = x^n + t*y + B*S # - R1
+	err2 = y^n + t*x + B*S # - R1
+	err3 = x*y*B # - R2
+	err4 = B*t*S # - R3
+	err = round0(rbind(err1, err2, err3, err4))
+	return(err)
+}
+
+### Examples:
+
+R = c(1, -1,-1)
+sol = solve.S4Mixt.P3(R)
+
+### Test
+test.S4Mixt.P3(sol, R)
+
+round0.p(poly.calc(sol[,1:2]))
+round0.p(poly.calc(sol[,3]))
+round0.p(poly.calc(sol[,4]))
 
