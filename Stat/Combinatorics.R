@@ -5,7 +5,7 @@
 ###
 ### Combinatorics
 ###
-### draft v.0.1c
+### draft v.0.1d
 
 
 ####################
@@ -99,6 +99,7 @@ plot(n, n^2 / cross.mean)
 
 
 cross.mean
+# approx n^2 / 4
 n^2 / (4 + 4/n)
 
 ####################
@@ -259,11 +260,26 @@ connect(s1, s2, xy)
 ### Save image
 SAVE=FALSE
 if(SAVE) {
-	id = 4
+	id = 5
 	png(file=paste0("img/Combinatorics.Cyclic.8.", id, ".png"))
 	xy = plot.cycle(s1, s2)
 	connect(s1, s2, xy)
 	dev.off()
 }
 
+### Average Number of Crossings
+
+### Liniar case:
+# - aprox n^2 / 4;
+
+### Cyclic case:
+# - there are 2 pathways for the matching;
+#  -- the max number is therefore at most 1/2 of the liniar case;
+#  -- especially the extreme outliers are therefore reduced;
+# - in addition: we can rotate one of the sequences
+#   to better match the 2 sequences;
+#  -- the "rotation" can be virtual,
+#     but a true rotation aids visualisation;
+# - the average may be far less than n^2 / 8;
+### Q: can it converge to n?
 
