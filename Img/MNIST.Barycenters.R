@@ -5,7 +5,7 @@
 ###
 ### Barycenters: MNIST
 ###
-### draft v.0.2b
+### draft v.0.2b-bckg
 
 
 ### "Imagine"
@@ -24,9 +24,10 @@
 ###############
 ### History ###
 
-### draft v.0.2a - v.0.2b:
+### draft v.0.2a - v.0.2b-bckgr:
 # - Wasserstein distance: package "Barycenter";
 # - exploring package "transport";
+# - exploring impact of background of the barycenter;
 ### draft v.0.1d - v.0.1d-tfix:
 # - basic work on outliers:
 #  -- extract & plot outliers;
@@ -533,11 +534,26 @@ dist.Greenkhorn = function(img1, img2) {
 dist.Wass = function(img1, img2) {
 	dist.Greenkhorn(img1, img2)$Distance
 }
+background = function(x, q=0.3, remove=TRUE) {
+	# remove background
+	isBckg = x <= quantile(as.vector(x), q)
+	if(remove) {
+		x[isBckg] = 0
+	} else {
+		x[isBckg] = x[isBckg] / 10;
+	}
+	x = x / sum(x)
+	return(x)
+}
+
+####
 
 DIGIT = 7;
 isDigit = x.lbl == DIGIT
 x.bary = WaBarycenter(x.sc[isDigit])
 x.bary = x.bary[,rev(seq(ncol(x.bary)))]
+# remove Background
+# x.bary = background(x.bary, q=0.3)
 
 image(x.bary)
 
@@ -599,5 +615,18 @@ plot(tr)
 plot(pgrid(top.img[[id]] / sum(top.img[[id]])), pgrid(x.bary), tplan=tr)
 
 
+### Analysing the Background
+# - a lot of background noise in the barycenter;
 med = lapply.m(x.sc, FUN=median)
 summary(med)
+
+med = lapply.m(x.sc, FUN=quantile, 0.8)
+summary(med)
+
+summary(as.vector(x.bary))
+x.bary = background(x.bary, 0.3)
+image(x.bary)
+
+
+
+
