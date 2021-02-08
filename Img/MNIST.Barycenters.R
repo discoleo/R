@@ -5,7 +5,7 @@
 ###
 ### Barycenters: MNIST
 ###
-### draft v.0.2a
+### draft v.0.2b
 
 
 ### "Imagine"
@@ -24,8 +24,9 @@
 ###############
 ### History ###
 
-### draft v.0.2a:
-# - Wasserstein distance;
+### draft v.0.2a - v.0.2b:
+# - Wasserstein distance: package "Barycenter";
+# - exploring package "transport";
 ### draft v.0.1d - v.0.1d-tfix:
 # - basic work on outliers:
 #  -- extract & plot outliers;
@@ -44,8 +45,13 @@
 library(ggplot2)
 library(magrittr)
 
+### Wasserstein Distance
+# - used in the 2nd part;
+# install.packages("Barycenter")
+# install.packages("transport")
 
-setwd("...")
+
+setwd(".../ML")
 
 
 ############
@@ -133,6 +139,13 @@ qcount.m = function(l, q=0.9, round=FALSE) {
 	if(round) r$val = round(r$val, 0)
 	return(r)
 }
+lapply.m = function(x, FUN=median, ...) {
+	# x = list of matrices;
+	med = lapply(x, function(m) FUN(as.vector(m), ...))
+	med = do.call(rbind, med)
+	return(med)
+}
+### by group
 tsum.m = function(l, group) {
 	dim = dim(l[[1]])
 	group = as.factor(group)
@@ -520,10 +533,6 @@ dist.Greenkhorn = function(img1, img2) {
 dist.Wass = function(img1, img2) {
 	dist.Greenkhorn(img1, img2)$Distance
 }
-top.simple = function(d, x, n=10, decreasing=TRUE) {
-	top.order = order(d, decreasing=decreasing)
-	head(x[top.order], n)
-}
 
 DIGIT = 7;
 isDigit = x.lbl == DIGIT
@@ -535,7 +544,8 @@ image(x.bary)
 ### Wasserstein Distance
 d = dist.Greenkhorn(x.sc[isDigit][[1]], x.bary)
 d$Distance
-img(d$Transportplan) # TODO: how to visualize ???
+# TODO: how to visualize ???
+image(d$Transportplan)
 
 ### All images of the same digit
 d = sapply(x.sc[isDigit], dist.Wass, img2=x.bary)
@@ -548,5 +558,46 @@ top.img = top.simple(d, x.sc[isDigit])
 # display top outliers
 plot.all(top.img)
 
+### Non-Digit
+t1 = Sys.time();
+neg.d = sapply(x.sc[ ! isDigit], dist.Wass, img2=x.bary)
+t2 = Sys.time();
+t2 - t1;
+# Time difference of 12.07101 mins;
+# - for 176 images;
+
+### Top similar
+top.img = top.simple(neg.d, x.sc[ ! isDigit], n=16, decreasing=FALSE)
+
+# display top similar images
+plot.all(top.img)
+
+### Overlap
+summary(d)
+summary(neg.d)
+
+top.simple(neg.d, neg.d, n=16, decreasing=FALSE)
+top.simple(neg.d, x.lbl[ ! isDigit], n=16, decreasing=FALSE)
 
 
+##############
+
+### using "transport"
+library(transport)
+
+
+### Top outliers
+top.img = top.simple(d, x.sc[isDigit])
+
+### Transport Outlier 1 => Barycenter
+id = 1
+wasserstein(pgrid(top.img[[id]] / sum(top.img[[id]])), pgrid(x.bary))
+plot(pgrid(top.img[[id]] / sum(top.img[[id]])), pgrid(x.bary))
+
+tr = transport(pgrid(top.img[[id]] / sum(top.img[[id]])), pgrid(x.bary))
+plot(tr)
+plot(pgrid(top.img[[id]] / sum(top.img[[id]])), pgrid(x.bary), tplan=tr)
+
+
+med = lapply.m(x.sc, FUN=median)
+summary(med)
