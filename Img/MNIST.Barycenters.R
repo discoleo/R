@@ -5,7 +5,7 @@
 ###
 ### Barycenters: MNIST
 ###
-### draft v.0.1d-tfix
+### draft v.0.2a
 
 
 ### "Imagine"
@@ -24,6 +24,8 @@
 ###############
 ### History ###
 
+### draft v.0.2a:
+# - Wasserstein distance;
 ### draft v.0.1d - v.0.1d-tfix:
 # - basic work on outliers:
 #  -- extract & plot outliers;
@@ -43,7 +45,7 @@ library(ggplot2)
 library(magrittr)
 
 
-setwd(".../ML")
+setwd("...")
 
 
 ############
@@ -211,6 +213,8 @@ scale.l = function(l, q.val) {
 		return(m)
 	})
 }
+
+### Convert to Row format
 toRow.m = function(m, id) {
 	dim = dim(m)
 	if(length(dim) == 2) dim = c(dim, 1)
@@ -230,10 +234,15 @@ toRow.l = function(l, id) {
 	}
 	do.call(rbind, l.rows)
 }
+### Top samples
 top = function(d, group, n) {
 	top.order = order(d, decreasing=TRUE)
 	id.top = tapply(top.order, group[top.order], function(id) head(id, n))
 	do.call(rbind, id.top)
+}
+top.simple = function(d, x, n=10, decreasing=TRUE) {
+	top.order = order(d, decreasing=decreasing)
+	head(x[top.order], n)
 }
 
 ### Plot
@@ -263,13 +272,24 @@ plot.mmean = function(m, m.lbl, mid=127.5, nrow=NA, title.lbl, useTheme=TRUE) {
 	img
 }
 plot.group = function(x, group, mid=0.5, title="", subtitle="") {
-	    ggplot(data=x, aes(x, y, fill = val)) +
-        geom_tile(show.legend = FALSE) +
-        scale_fill_gradient2(low = "white", high = "black", mid = "gray", midpoint = mid) +
-        facet_grid(group) +
-        labs(title = title, subtitle = subtitle) +
-        theme_void() +
-        theme(strip.text = element_blank())
+	ggplot(data=x, aes(x, y, fill = val)) +
+		geom_tile(show.legend = FALSE) +
+		scale_fill_gradient2(low = "white", high = "black", mid = "gray", midpoint = mid) +
+		facet_grid(group) +
+		labs(title = title, subtitle = subtitle) +
+		theme_void() +
+		theme(strip.text = element_blank())
+}
+plot.all = function(x, id, mid=0.5, title="", subtitle="") {
+	if(missing(id)) id=seq(length(x))
+	img = toRow.l(x, id=id)
+	ggplot(data=img, aes(x, y, fill = val)) +
+		geom_tile(show.legend = FALSE) +
+		scale_fill_gradient2(low = "white", high = "black", mid = "gray", midpoint = mid) +
+		facet_wrap(~ id) +
+		labs(title = title, subtitle = subtitle) +
+		theme_void() +
+		theme(strip.text = element_blank())
 }
 
 #####################
@@ -283,6 +303,7 @@ s = sum.m(x)
 s / length(x)
 
 image(s/length(x))
+
 
 ### by Digit
 s = tsum.m(x, x.lbl)
@@ -332,6 +353,7 @@ max.q[max.q$val < 30, ]
 
 image(x[[11]])
 
+######################
 
 ######################
 ### Luminosity-Scaling
@@ -361,6 +383,7 @@ ggplot(toRow.l(x.sc), aes(val)) +
 ### Distance to Barycenters
 
 ### Barycenters
+# - simple barycenters (average pixel value);
 s.sc = tsum.m(x.sc, x.lbl)
 s.sc = s.sc / length(x.sc)
 
@@ -451,10 +474,79 @@ plot.group(out.top, group = inst ~ id,
 ############
 ### Test ###
 
+file = "Barycenters.Digits.Big.csv"
+# file = "Barycenters.Digits.csv"
 x.bary = as.matrix(read.csv("Barycenters.Digits.csv"))
 dim(x.bary) = c(28,28,10)
 
 max(x.bary)
 
 plot.mmean(x.bary, 0:9, mid=0.05, title.lbl = "Average value of each pixel in 10 MNIST digits")
+
+### Img: Save Barycenters
+SAVE_BARYC_IMG = TRUE
+if(SAVE_BARYC_IMG) {
+	png(file="Barycenters.Digits.Big2.png")
+		plot.mmean(x.bary, 0:9, mid=0.04, title.lbl = "Average value of each pixel in 10 MNIST digits")
+}
+if(SAVE_BARYC_IMG) {
+	dev.off()
+}
+
+
+#########################
+#########################
+
+###################
+### Barycenters ###
+###################
+
+### Wasserstein Distance 
+
+library(Barycenter)
+
+dist.Greenkhorn = function(img1, img2) {
+	img.dim = dim(img1);
+	n = seq(0, 1, length.out = img.dim[2])
+	costm = as.matrix(dist(expand.grid(n, rev(n)), diag=TRUE, upper=TRUE))
+	len = img.dim[1] * img.dim[2];
+	r1 <- matrix(img1, len, 1)
+	s = sum(r1);
+	if(s > 1) r1 = r1 / s;
+	r2 <- matrix(img2, 1, len) # assumes equal dims;
+	d = Greenkhorn(r1, r2, costm=costm)
+	invisible(d)
+}
+dist.Wass = function(img1, img2) {
+	dist.Greenkhorn(img1, img2)$Distance
+}
+top.simple = function(d, x, n=10, decreasing=TRUE) {
+	top.order = order(d, decreasing=decreasing)
+	head(x[top.order], n)
+}
+
+DIGIT = 7;
+isDigit = x.lbl == DIGIT
+x.bary = WaBarycenter(x.sc[isDigit])
+x.bary = x.bary[,rev(seq(ncol(x.bary)))]
+
+image(x.bary)
+
+### Wasserstein Distance
+d = dist.Greenkhorn(x.sc[isDigit][[1]], x.bary)
+d$Distance
+img(d$Transportplan) # TODO: how to visualize ???
+
+### All images of the same digit
+d = sapply(x.sc[isDigit], dist.Wass, img2=x.bary)
+
+summary(d)
+
+### Top outliers
+top.img = top.simple(d, x.sc[isDigit])
+
+# display top outliers
+plot.all(top.img)
+
+
 
