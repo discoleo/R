@@ -5,7 +5,7 @@
 ###
 ### Barycenters: MNIST
 ###
-### draft v.0.2b-bckg
+### draft v.0.2c
 
 
 ### "Imagine"
@@ -24,6 +24,9 @@
 ###############
 ### History ###
 
+### draft v.0.2c:
+# - Normalization;
+# - various subtypes of same digit;
 ### draft v.0.2a - v.0.2b-bckgr:
 # - Wasserstein distance: package "Barycenter";
 # - exploring package "transport";
@@ -227,6 +230,13 @@ scale.l = function(l, q.val) {
 		return(m)
 	})
 }
+scale.norm.l = function(l) {
+	# TODO: "scale" also the levels of grey;
+	lapply(seq(length(l)), function(id) {
+		m = l[[id]] / sum(l[[id]])
+		return(m)
+	})
+}
 
 ### Convert to Row format
 toRow.m = function(m, id) {
@@ -294,7 +304,8 @@ plot.group = function(x, group, mid=0.5, title="", subtitle="") {
 		theme_void() +
 		theme(strip.text = element_blank())
 }
-plot.all = function(x, id, mid=0.5, title="", subtitle="") {
+plot.all = function(x, id, mid=0.01, title="", subtitle="") {
+	# mid=0.01 for Normalized images;
 	if(missing(id)) id=seq(length(x))
 	img = toRow.l(x, id=id)
 	ggplot(data=img, aes(x, y, fill = val)) +
@@ -307,8 +318,10 @@ plot.all = function(x, id, mid=0.5, title="", subtitle="") {
 }
 
 #####################
+#####################
 
 ### Image Exploration
+# [not necessary]
 
 ### Mean / Pseudo-Barycentre
 
@@ -367,20 +380,25 @@ max.q[max.q$val < 30, ]
 
 image(x[[11]])
 
+
+######################
 ######################
 
 ######################
 ### Luminosity-Scaling
+
 # [done right]
 q.l = 8 # 5.01
 max.q = qcount.m(x, q = 1 - q.l/(WIDTH*WIDTH), round=TRUE)
-x.sc = scale.l(x, max.q$val)
+x.sc = scale.l(x, max.q$val) # scale levels
+x.sc = scale.norm.l(x.sc) # normalize
 
 image(x.sc[[2]])
 image(x.sc[[52]])
 
 # png(file="Barycenters.Digits.png")
-plot.mean(x.sc, x.lbl, mid=0.5, title.lbl = "Average value of each pixel in 10 MNIST digits")
+title.lbl = "Average value of each pixel in 10 MNIST digits"
+plot.mean(x.sc, x.lbl, mid=0.07, title.lbl = title.lbl)
 
 # dev.off()
 
@@ -395,6 +413,7 @@ ggplot(toRow.l(x.sc), aes(val)) +
 ###########################
 
 ### Distance to Barycenters
+# - see major section "Barycenters" for more advanced;
 
 ### Barycenters
 # - simple barycenters (average pixel value);
@@ -540,7 +559,8 @@ background = function(x, q=0.3, remove=TRUE) {
 	if(remove) {
 		x[isBckg] = 0
 	} else {
-		x[isBckg] = x[isBckg] / 10;
+		# x[isBckg] = x[isBckg] / 10;
+		x[isBckg] = x[isBckg]^2;
 	}
 	x = x / sum(x)
 	return(x)
@@ -558,10 +578,15 @@ x.bary = x.bary[,rev(seq(ncol(x.bary)))]
 image(x.bary)
 
 ### Wasserstein Distance
-d = dist.Greenkhorn(x.sc[isDigit][[1]], x.bary)
+id = 1
+img = x.sc[isDigit][[id]];
+# img = top.img[[id]];
+d = dist.Greenkhorn(img, x.bary)
 d$Distance
 # TODO: how to visualize ???
-image(d$Transportplan)
+# image(d$Transportplan)
+# does NOT work with this tplan!
+# plot(pgrid(top.img[[id]] / sum(top.img[[id]])), pgrid(x.bary), tplan=d$Transportplan)
 
 ### All images of the same digit
 d = sapply(x.sc[isDigit], dist.Wass, img2=x.bary)
@@ -596,7 +621,15 @@ top.simple(neg.d, neg.d, n=16, decreasing=FALSE)
 top.simple(neg.d, x.lbl[ ! isDigit], n=16, decreasing=FALSE)
 
 
-##############
+### using "transport"
+id = 1
+tr = transport(pgrid(top.img[[id]] / sum(top.img[[id]])), pgrid(x.bary))
+plot(pgrid(top.img[[id]] / sum(top.img[[id]])), pgrid(x.bary), tplan=tr)
+
+
+
+#####################
+#####################
 
 ### using "transport"
 library(transport)
@@ -628,5 +661,32 @@ x.bary = background(x.bary, 0.3)
 image(x.bary)
 
 
+
+##########################
+##########################
+
+### multiple classes of same digit
+sel = function(isDigit, type.id) {
+	sel.f = function(x) {
+		x[isDigit][type.id]
+	}
+	return(sel.f)
+}
+
+DIGIT = 7;
+isDigit = x.lbl == DIGIT
+
+### Base-Types
+### Digit 7
+type.id = c(2, 17, 15)
+sel7 = sel(isDigit, type.id)
+plot.all(sel7(x.sc), mid=0.01)
+
+# Normalization decreases the density!
+plot.all(x.sc[isDigit], mid=0.01)
+
+
+x.bary = WaBarycenter(x.sc[isDigit])
+x.bary = x.bary[,rev(seq(ncol(x.bary)))]
 
 
