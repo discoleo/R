@@ -5,7 +5,7 @@
 ###
 ### Barycenters: MNIST
 ###
-### draft v.0.2c
+### draft v.0.2d
 
 
 ### "Imagine"
@@ -24,9 +24,10 @@
 ###############
 ### History ###
 
-### draft v.0.2c:
+### draft v.0.2c - v.0.2d:
 # - Normalization;
 # - various subtypes of same digit;
+# - more work to subclassify a digit; [v.0.2d]
 ### draft v.0.2a - v.0.2b-bckgr:
 # - Wasserstein distance: package "Barycenter";
 # - exploring package "transport";
@@ -148,6 +149,9 @@ lapply.m = function(x, FUN=median, ...) {
 	med = lapply(x, function(m) FUN(as.vector(m), ...))
 	med = do.call(rbind, med)
 	return(med)
+}
+match.m = function(x, m) {
+	sapply(seq(nrow(m)), function(id) match(x[id], m[id,]))
 }
 ### by group
 tsum.m = function(l, group) {
@@ -550,8 +554,29 @@ dist.Greenkhorn = function(img1, img2) {
 	d = Greenkhorn(r1, r2, costm=costm)
 	invisible(d)
 }
-dist.Wass = function(img1, img2) {
-	dist.Greenkhorn(img1, img2)$Distance
+dist.Wass = function(x, bary, FUN) {
+	if(missing(FUN)) {
+		dist.f = function(img1, img2) {
+			dist.Greenkhorn(img1, img2)$Distance
+		}
+	} else {
+		dist.f = FUN;
+	}
+	is.imglist = function(x) is.list(x) && is.na(match(class(bary), "pgrid"));
+	if((is.imglist(bary) && length(bary) > 1) ||
+		(length(dim(bary)) > 2)) {
+		d = lapply(bary, function(bary) {
+				cat("B ")
+				dist.Wass(x, bary, FUN=dist.f)
+			})
+		cat("\n")
+		d = do.call(cbind, d)
+	} else if(is.imglist(x)) {
+		d = sapply(x, dist.f, img2=bary)
+	} else {
+		d = dist.f(x, img2=bary)
+	}
+	return(d)
 }
 background = function(x, q=0.3, remove=TRUE) {
 	# remove background
@@ -565,15 +590,29 @@ background = function(x, q=0.3, remove=TRUE) {
 	x = x / sum(x)
 	return(x)
 }
+# multiple selection
+sel = function(isDigit, type.id) {
+	sel.f = function(x) {
+		x[isDigit][type.id]
+	}
+	return(sel.f)
+}
+bary.f = function(x, rm.bg=FALSE, q=0.3) {
+	x.bary = WaBarycenter(x)
+	x.bary = x.bary[ , rev(seq(ncol(x.bary)))]
+	# remove Background:
+	# - some noise (???) in the barycenters;
+	if(rm.bg) {
+		x.bary = background(x.bary, q=q)
+	}
+	invisible(x.bary)
+}
 
 ####
 
 DIGIT = 7;
 isDigit = x.lbl == DIGIT
-x.bary = WaBarycenter(x.sc[isDigit])
-x.bary = x.bary[,rev(seq(ncol(x.bary)))]
-# remove Background
-# x.bary = background(x.bary, q=0.3)
+x.bary = bary.f(x.sc[isDigit])
 
 image(x.bary)
 
@@ -585,11 +624,13 @@ d = dist.Greenkhorn(img, x.bary)
 d$Distance
 # TODO: how to visualize ???
 # image(d$Transportplan)
-# does NOT work with this tplan!
+# - does NOT work with this tplan!
 # plot(pgrid(top.img[[id]] / sum(top.img[[id]])), pgrid(x.bary), tplan=d$Transportplan)
 
+
 ### All images of the same digit
-d = sapply(x.sc[isDigit], dist.Wass, img2=x.bary)
+# d = sapply(x.sc[isDigit], dist.Wass, img2=x.bary)
+d = dist.Wass(x.sc[isDigit], bary=x.bary)
 
 summary(d)
 
@@ -640,7 +681,8 @@ top.img = top.simple(d, x.sc[isDigit])
 
 ### Transport Outlier 1 => Barycenter
 id = 1
-wasserstein(pgrid(top.img[[id]] / sum(top.img[[id]])), pgrid(x.bary))
+# wasserstein(pgrid(top.img[[id]] / sum(top.img[[id]])), pgrid(x.bary))
+wasserstein(pgrid(top.img[[id]]), pgrid(x.bary))
 plot(pgrid(top.img[[id]] / sum(top.img[[id]])), pgrid(x.bary))
 
 tr = transport(pgrid(top.img[[id]] / sum(top.img[[id]])), pgrid(x.bary))
@@ -666,12 +708,6 @@ image(x.bary)
 ##########################
 
 ### multiple classes of same digit
-sel = function(isDigit, type.id) {
-	sel.f = function(x) {
-		x[isDigit][type.id]
-	}
-	return(sel.f)
-}
 
 DIGIT = 7;
 isDigit = x.lbl == DIGIT
@@ -685,6 +721,28 @@ plot.all(sel7(x.sc), mid=0.01)
 # Normalization decreases the density!
 plot.all(x.sc[isDigit], mid=0.01)
 
+### Wasserstein Distance
+# - NOT accurate;
+# d = dist.Wass(x.sc[isDigit], sel7(x.sc))
+d = dist.Wass(x.sc[isDigit], sel7(x.sc),
+	FUN=function(img1, img2) wasserstein(pgrid(img1), pgrid(img2)))
+head(d)
+
+### Simple
+d.min = apply(d, 1, min)
+head(d.min)
+
+d.id = match.m(d.min, d)
+head(d.id)
+table(d.id)
+
+### K-Means
+# TODO
+
+
+###########
+
+wasserstein(pgrid(sel7(x.sc)[[3]]), pgrid(sel7(x.sc)[[3]]))
 
 x.bary = WaBarycenter(x.sc[isDigit])
 x.bary = x.bary[,rev(seq(ncol(x.bary)))]
