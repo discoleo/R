@@ -5,7 +5,7 @@
 ###
 ### Barycenters: MNIST
 ###
-### draft v.0.2e
+### draft v.0.2f
 
 
 ### "Imagine"
@@ -24,6 +24,9 @@
 ###############
 ### History ###
 
+### draft v.0.2f:
+# - basic k-Means:
+#   TODO: very unstable!
 ### draft v.0.2e:
 # - plot by Group;
 ### draft v.0.2c - v.0.2d:
@@ -307,7 +310,7 @@ plot.mmean = function(m, m.lbl, mid=127.5, nrow=NA, title.lbl, useTheme=TRUE) {
 	img
 }
 number.groups = function(group) {
-	el = unique(group); id = seq(length(el));
+	el = sort(unique(group)); id = seq(length(el));
 	tbl = table(group)
 	seq.len = rep(NA, length(group))
 	sapply(id, function(id) {
@@ -762,6 +765,9 @@ isDigit = x.lbl == DIGIT;
 ### Base-Types
 ### Digit 7
 type.id = c(2, 17, 15)
+# TODO:
+# - find optimal sub-clustering "centers";
+
 sel7 = sel(isDigit, type.id)
 plot.all(sel7(x.sc), mid=0.01)
 
@@ -786,11 +792,19 @@ table(d.id)
 ### Plot by Group
 plot.group(x.sc[isDigit], group=d.id)
 
+
+###########
 ### K-Means
-# TODO
+n.clusters = 3;
+# very unstable!!!
+d.cl = kmeans(d, n.clusters)
+table(d.cl$cluster)
+
+plot.group(x.sc[isDigit], group=d.cl$cluster)
 
 
 ###########
+# TODO:
 
 wasserstein(pgrid(sel7(x.sc)[[3]]), pgrid(sel7(x.sc)[[3]]))
 
