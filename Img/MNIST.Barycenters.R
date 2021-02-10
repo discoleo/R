@@ -5,7 +5,7 @@
 ###
 ### Barycenters: MNIST
 ###
-### draft v.0.2d
+### draft v.0.2e
 
 
 ### "Imagine"
@@ -24,6 +24,8 @@
 ###############
 ### History ###
 
+### draft v.0.2e:
+# - plot by Group;
 ### draft v.0.2c - v.0.2d:
 # - Normalization;
 # - various subtypes of same digit;
@@ -227,12 +229,17 @@ dist_similar.l = function(l, m, group, metric="L2", gr.offset=1, pow=1.5) {
 }
 
 ### Scale
-scale.l = function(l, q.val) {
-	lapply(seq(length(l)), function(id) {
+scale.l = function(l, q.val, doNormalize=FALSE) {
+	l.sc = lapply(seq(length(l)), function(id) {
 		m = l[[id]] / q.val[id]
 		m[m > 1] = 1
 		return(m)
 	})
+	if(doNormalize) {
+		invisible(scale.norm.l(l.sc))
+	} else {
+		invisible(l.sc)
+	}
 }
 scale.norm.l = function(l) {
 	# TODO: "scale" also the levels of grey;
@@ -299,7 +306,30 @@ plot.mmean = function(m, m.lbl, mid=127.5, nrow=NA, title.lbl, useTheme=TRUE) {
 	if( ! missing(title.lbl)) img = img + labs(title = title.lbl);
 	img
 }
-plot.group = function(x, group, mid=0.5, title="", subtitle="") {
+number.groups = function(group) {
+	el = unique(group); id = seq(length(el));
+	tbl = table(group)
+	seq.len = rep(NA, length(group))
+	sapply(id, function(id) {
+		isSel = group == el[id]
+		seq.len[isSel] <<- seq(tbl[id])
+	} )
+	return(seq.len)
+}
+group.rows = function(x, group) {
+	each.len = length(x[[1]])
+	x.seq = number.groups(group)
+	# inst = rep(seq(length(unique(group))), each=each.len)
+	inst = as.vector(sapply(x.seq, function(id) rep(id, each.len)))
+	x = toRow.l(x, id=group);
+	x$inst = inst;
+	invisible(x)
+}
+plot.group = function(x, group, mid=0.01, title="", subtitle="") {
+	if(is.list(x)) {
+		x = group.rows(x, group);
+		group = id ~ inst;
+	}
 	ggplot(data=x, aes(x, y, fill = val)) +
 		geom_tile(show.legend = FALSE) +
 		scale_fill_gradient2(low = "white", high = "black", mid = "gray", midpoint = mid) +
@@ -321,10 +351,11 @@ plot.all = function(x, id, mid=0.01, title="", subtitle="") {
 		theme(strip.text = element_blank())
 }
 
-#####################
-#####################
+#########################
+#########################
 
-### Image Exploration
+#########################
+### Image Exploration ###
 # [not necessary]
 
 ### Mean / Pseudo-Barycentre
@@ -385,8 +416,12 @@ max.q[max.q$val < 30, ]
 image(x[[11]])
 
 
-######################
-######################
+##################
+##################
+
+##################
+### Transforms ###
+##################
 
 ######################
 ### Luminosity-Scaling
@@ -394,15 +429,15 @@ image(x[[11]])
 # [done right]
 q.l = 8 # 5.01
 max.q = qcount.m(x, q = 1 - q.l/(WIDTH*WIDTH), round=TRUE)
-x.sc = scale.l(x, max.q$val) # scale levels
-x.sc = scale.norm.l(x.sc) # normalize
+# scale levels & normalize
+x.sc = scale.l(x, max.q$val, doNormalize=T)
 
 image(x.sc[[2]])
 image(x.sc[[52]])
 
 # png(file="Barycenters.Digits.png")
 title.lbl = "Average value of each pixel in 10 MNIST digits"
-plot.mean(x.sc, x.lbl, mid=0.07, title.lbl = title.lbl)
+plot.mean(x.sc, x.lbl, mid=0.02, title.lbl = title.lbl)
 
 # dev.off()
 
@@ -607,11 +642,19 @@ bary.f = function(x, rm.bg=FALSE, q=0.3) {
 	}
 	invisible(x.bary)
 }
+plot.tplan = function(img1, img2, tplan) {
+	plot(pgrid(img1), pgrid(img2), tplan=tplan)
+}
 
-####
+###################
 
+# basic exploration
+
+### Digits
 DIGIT = 7;
 isDigit = x.lbl == DIGIT
+
+### Barycenters
 x.bary = bary.f(x.sc[isDigit])
 
 image(x.bary)
@@ -624,8 +667,8 @@ d = dist.Greenkhorn(img, x.bary)
 d$Distance
 # TODO: how to visualize ???
 # image(d$Transportplan)
-# - does NOT work with this tplan!
-# plot(pgrid(top.img[[id]] / sum(top.img[[id]])), pgrid(x.bary), tplan=d$Transportplan)
+# - plot does NOT work with this tplan!
+# plot.tplan(top.img[[id]], x.bary, tplan=d$Transportplan)
 
 
 ### All images of the same digit
@@ -642,7 +685,8 @@ plot.all(top.img)
 
 ### Non-Digit
 t1 = Sys.time();
-neg.d = sapply(x.sc[ ! isDigit], dist.Wass, img2=x.bary)
+# neg.d = sapply(x.sc[ ! isDigit], dist.Wass, img2=x.bary)
+neg.d = dist.Wass(x.sc[ ! isDigit], bary=x.bary)
 t2 = Sys.time();
 t2 - t1;
 # Time difference of 12.07101 mins;
@@ -664,8 +708,8 @@ top.simple(neg.d, x.lbl[ ! isDigit], n=16, decreasing=FALSE)
 
 ### using "transport"
 id = 1
-tr = transport(pgrid(top.img[[id]] / sum(top.img[[id]])), pgrid(x.bary))
-plot(pgrid(top.img[[id]] / sum(top.img[[id]])), pgrid(x.bary), tplan=tr)
+tr = transport(pgrid(top.img[[id]]), pgrid(x.bary))
+plot.tplan(top.img[[id]], x.bary, tplan=tr)
 
 
 
@@ -683,23 +727,25 @@ top.img = top.simple(d, x.sc[isDigit])
 id = 1
 # wasserstein(pgrid(top.img[[id]] / sum(top.img[[id]])), pgrid(x.bary))
 wasserstein(pgrid(top.img[[id]]), pgrid(x.bary))
-plot(pgrid(top.img[[id]] / sum(top.img[[id]])), pgrid(x.bary))
+plot(pgrid(top.img[[id]]), pgrid(x.bary))
 
-tr = transport(pgrid(top.img[[id]] / sum(top.img[[id]])), pgrid(x.bary))
+tr = transport(pgrid(top.img[[id]]), pgrid(x.bary))
 plot(tr)
-plot(pgrid(top.img[[id]] / sum(top.img[[id]])), pgrid(x.bary), tplan=tr)
+plot.tplan(top.img[[id]], x.bary, tplan=tr)
 
 
 ### Analysing the Background
 # - a lot of background noise in the barycenter;
+# - but NOT in the individual images;
 med = lapply.m(x.sc, FUN=median)
 summary(med)
 
 med = lapply.m(x.sc, FUN=quantile, 0.8)
 summary(med)
 
-summary(as.vector(x.bary))
+# remove background noise
 x.bary = background(x.bary, 0.3)
+summary(as.vector(x.bary))
 image(x.bary)
 
 
@@ -707,10 +753,11 @@ image(x.bary)
 ##########################
 ##########################
 
-### multiple classes of same digit
+### Multiple sub-classes
+### of same digit
 
 DIGIT = 7;
-isDigit = x.lbl == DIGIT
+isDigit = x.lbl == DIGIT;
 
 ### Base-Types
 ### Digit 7
@@ -722,7 +769,7 @@ plot.all(sel7(x.sc), mid=0.01)
 plot.all(x.sc[isDigit], mid=0.01)
 
 ### Wasserstein Distance
-# - NOT accurate;
+# - Greenkhorn: NOT accurate when using standard cost-matrix;
 # d = dist.Wass(x.sc[isDigit], sel7(x.sc))
 d = dist.Wass(x.sc[isDigit], sel7(x.sc),
 	FUN=function(img1, img2) wasserstein(pgrid(img1), pgrid(img2)))
@@ -735,6 +782,9 @@ head(d.min)
 d.id = match.m(d.min, d)
 head(d.id)
 table(d.id)
+
+### Plot by Group
+plot.group(x.sc[isDigit], group=d.id)
 
 ### K-Means
 # TODO
