@@ -5,7 +5,7 @@
 ###
 ### Combinatorics
 ###
-### draft v.0.1d
+### draft v.0.1e
 
 
 ####################
@@ -197,13 +197,33 @@ plot.cycle = function(s1, s2, r=c(1, 2), col=c("red", "green"), f=1.25, plot=TRU
 	par(old.par)
 	return(list(xy1, xy2))
 }
-shift.seq = function(s, first=1) {
-	id = match(first, s)
-	if(is.na(id)) stop("NO such element!")
-	if(id > 1) {
-		s = c(tail(s, 1-id), head(s, id-1))
+shift.by = function(s, by=1) {
+	if(by >= length(s)) by = by %% length(s);
+	if(by == 0) return(s);
+	c(tail(s, -by), head(s, by))
+}
+shift.seq = function(s, by, first) {
+	if(missing(by)) {
+		id = match(first, s)
+		if(is.na(id)) stop("NO such element!")
+		if(id > 1) {
+			s = c(tail(s, 1-id), head(s, id-1))
+		}
+	} else {
+		s = shift.by(s, by)
 	}
 	return(s)
+}
+shift.max = function(s, ref) {
+	by = match.max(s, ref)
+	return(shift.by(s, by))
+}
+match.max = function(s1, s2) {
+	len = length(s1) - 1
+	id = 0:len;
+	matches = sapply(id, function(id) sum(shift.by(s1, id) == s2))
+	max.id = match(max(matches), matches);
+	return(max.id - 1);
 }
 connect = function(s1, s2, xy, col="orange", lwd=2, delta=0.1, add=TRUE) {
 	if(missing(xy)) xy = plot.cycle(s1, s2);
@@ -247,10 +267,10 @@ connect = function(s1, s2, xy, col="orange", lwd=2, delta=0.1, add=TRUE) {
 
 
 ### Test
-n = 8
+n = 10
 s1 = seq(n)
 s2 = sample(s1, n)
-s2 = shift.seq(s2)
+s2 = shift.max(s2, s1)
 
 ### Plot:
 xy = plot.cycle(s1, s2)
@@ -260,8 +280,8 @@ connect(s1, s2, xy)
 ### Save image
 SAVE=FALSE
 if(SAVE) {
-	id = 5
-	png(file=paste0("img/Combinatorics.Cyclic.8.", id, ".png"))
+	id = 2
+	png(file=paste0("img/Combinatorics.Cyclic.", n, ".", id, ".png"))
 	xy = plot.cycle(s1, s2)
 	connect(s1, s2, xy)
 	dev.off()
@@ -281,5 +301,7 @@ if(SAVE) {
 #  -- the "rotation" can be virtual,
 #     but a true rotation aids visualisation;
 # - the average may be far less than n^2 / 8;
-### Q: can it converge to n?
+### Q: 
+# Can it converge to n?
+# Or some O(n^(1.5))?
 
