@@ -5,7 +5,7 @@
 ###
 ### Barycenters: MNIST
 ###
-### draft v.0.2f
+### draft v.0.2g
 
 
 ### "Imagine"
@@ -24,6 +24,9 @@
 ###############
 ### History ###
 
+### draft v.0.2g:
+# - cost matrix;
+# - work on / exploration of barycenter parameters;
 ### draft v.0.2f:
 # - basic k-Means:
 #   TODO: very unstable!
@@ -454,6 +457,8 @@ ggplot(toRow.l(x.sc), aes(val)) +
 ###########################
 ###########################
 
+### Minimalistic Analysis
+
 ### Distance to Barycenters
 # - see major section "Barycenters" for more advanced;
 
@@ -580,22 +585,32 @@ if(SAVE_BARYC_IMG) {
 
 library(Barycenter)
 
-dist.Greenkhorn = function(img1, img2) {
+cost.m = function(n, method, p=1) {
+	if(length(n) > 1) n = n[1]; # TODO
+	n.seq = seq(0, 1, length.out=n)
+	if(missing(method)) {
+		costm = as.matrix(dist(expand.grid(n.seq, rev(n.seq)), diag=TRUE, upper=TRUE))
+	} else {
+		costm = as.matrix(dist(expand.grid(n.seq, rev(n.seq)), method=method, diag=TRUE, upper=TRUE))
+	}
+	if( p != 1) costm = costm^p;
+	return(costm);
+}
+dist.Greenkhorn = function(img1, img2, method="manhattan", p=1, ...) {
 	img.dim = dim(img1);
-	n = seq(0, 1, length.out = img.dim[2])
-	costm = as.matrix(dist(expand.grid(n, rev(n)), diag=TRUE, upper=TRUE))
+	costm = cost.m(img.dim[2], method=method, p=p)
 	len = img.dim[1] * img.dim[2];
+	normalize = function(m) {s = sum(m); if(s > 1) m/s else m;}
 	r1 <- matrix(img1, len, 1)
-	s = sum(r1);
-	if(s > 1) r1 = r1 / s;
 	r2 <- matrix(img2, 1, len) # assumes equal dims;
-	d = Greenkhorn(r1, r2, costm=costm)
+	r1 = normalize(r1); r2 = normalize(r2);
+	d = Greenkhorn(r1, r2, costm=costm, ...)
 	invisible(d)
 }
-dist.Wass = function(x, bary, FUN) {
+dist.Wass = function(x, bary, FUN, ...) {
 	if(missing(FUN)) {
 		dist.f = function(img1, img2) {
-			dist.Greenkhorn(img1, img2)$Distance
+			dist.Greenkhorn(img1, img2, ...)$Distance
 		}
 	} else {
 		dist.f = FUN;
@@ -605,7 +620,7 @@ dist.Wass = function(x, bary, FUN) {
 		(length(dim(bary)) > 2)) {
 		d = lapply(bary, function(bary) {
 				cat("B ")
-				dist.Wass(x, bary, FUN=dist.f)
+				dist.Wass(x, bary, FUN=dist.f, ...)
 			})
 		cat("\n")
 		d = do.call(cbind, d)
@@ -616,16 +631,21 @@ dist.Wass = function(x, bary, FUN) {
 	}
 	return(d)
 }
-background = function(x, q=0.3, remove=TRUE) {
+background = function(x, q=0.3, type="rm") {
 	# remove background
+	type = match(type, c("rm", "sq", "sqq", "div"))
+	if(is.na(type)) stop("Type NOT supported!")
 	isBckg = x <= quantile(as.vector(x), q)
-	if(remove) {
-		x[isBckg] = 0
-	} else {
-		# x[isBckg] = x[isBckg] / 10;
+	if(type == 1) {
+		x[isBckg] = 0;
+	} else if(type == 2) {
+		x = x^2;
+	} else if(type == 3) {
 		x[isBckg] = x[isBckg]^2;
+	} else if(type == 4) {
+		x[isBckg] = x[isBckg] / 10;
 	}
-	x = x / sum(x)
+	x = x / sum(x);
 	return(x)
 }
 # multiple selection
@@ -635,8 +655,8 @@ sel = function(isDigit, type.id) {
 	}
 	return(sel.f)
 }
-bary.f = function(x, rm.bg=FALSE, q=0.3) {
-	x.bary = WaBarycenter(x)
+bary.f = function(x, rm.bg=FALSE, q=0.3, ...) {
+	x.bary = WaBarycenter(x, ...)
 	x.bary = x.bary[ , rev(seq(ncol(x.bary)))]
 	# remove Background:
 	# - some noise (???) in the barycenters;
@@ -658,15 +678,43 @@ DIGIT = 7;
 isDigit = x.lbl == DIGIT
 
 ### Barycenters
-x.bary = bary.f(x.sc[isDigit])
+# lambda > 50 # BUT takes long!
+# lambda =  50: takes 340 s;
+# lambda = 100: takes 400 s (with 24 images);
+# - Manhattan distance: helps;
+x.bary = bary.f(x.sc[isDigit], lambda=100, costm=cost.m(dim(x.sc[[1]]), method="manhattan"))
 
 image(x.bary)
+
+# Background Noise
+# - a lot of background noise in the barycenter;
+summary(as.vector(x.bary))
+sum(x.bary[x.bary < quantile(x.bary, 0.7)])
+
+### Transport Plan: using "transport"
+id = 1
+tr = transport(pgrid(x.sc[isDigit][[id]]), pgrid(x.bary))
+plot.tplan(x.sc[isDigit][[id]], x.bary, tplan=tr)
+
+### Noise
+# - a little bit of cheating;
+x.bary = background(x.bary, type="sq")
+
+id = 3
+tr = transport(pgrid(x.sc[isDigit][[id]]), pgrid(x.bary))
+plot.tplan(x.sc[isDigit][[id]], x.bary, tplan=tr)
+# Q: How to "overload" local densities?
+# - to move mass to locations that are already overloaded;
+
+
+
+###############
 
 ### Wasserstein Distance
 id = 1
 img = x.sc[isDigit][[id]];
 # img = top.img[[id]];
-d = dist.Greenkhorn(img, x.bary)
+d = dist.Greenkhorn(img, x.bary, lambda=0.01)
 d$Distance
 # TODO: how to visualize ???
 # image(d$Transportplan)
