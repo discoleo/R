@@ -5,7 +5,7 @@
 ###
 ### Combinatorics
 ###
-### draft v.0.1e
+### draft v.0.1f
 
 
 ####################
@@ -267,7 +267,7 @@ connect = function(s1, s2, xy, col="orange", lwd=2, delta=0.1, add=TRUE) {
 
 
 ### Test
-n = 10
+n = 40
 s1 = seq(n)
 s2 = sample(s1, n)
 s2 = shift.max(s2, s1)
@@ -280,12 +280,72 @@ connect(s1, s2, xy)
 ### Save image
 SAVE=FALSE
 if(SAVE) {
-	id = 2
+	id = 1
 	png(file=paste0("img/Combinatorics.Cyclic.", n, ".", id, ".png"))
 	xy = plot.cycle(s1, s2)
 	connect(s1, s2, xy)
 	dev.off()
 }
+
+crossings.cyc = function(s) {
+	len = length(s)
+	len2 = length(s) / 2
+	s0 = seq(len)
+	# from L to R
+	typeL1 = (s[s0] > s0) & (s[s0] <= s0 + len2);
+	typeL2 = (s[s0] < s0) & (s[s0] + len2 < s0);
+	typeL = typeL1 | typeL2;
+	#
+	cr = sapply(s0, function(id) {
+			# avoid double counting!
+			if( ! typeL[id]) return(0);
+			# upper bound
+			if(typeL1[id]) {
+				sn.id = c()
+				if(id == len) {
+					sp.id = 1:(len2 - 1)
+				} else if(s[id] <= len2) {
+					sp.id = (id+1):(s[id]+len2)
+				} else if(s[id] > len2) {
+					sp.id = (id+1):len
+					sn.id = 1:(s[id] - len2)
+				}
+				cr = sum((s[sp.id] < s[id]) & (s[sp.id] + len2 > sp.id))
+				cr = cr + sum(s[sp.id] > sp.id + len2)
+				if(length(sn.id) > 0) {
+					cr = cr + sum((s[sn.id] < s[id]) & (s[sn.id] > sn.id + len2))
+				}
+			} else {
+				# type L2: crosses over [1]
+				sn.id = c()
+				if(id == len) {
+					sp.id = 1:(s[id] + len2 - 1)
+				} else {
+					sn.id = (id+1):len
+					sp.id = c(sn.id, 1:(s[id] + len2 - 1))
+				}
+				cr = sum((s[sp.id] < s[id]) & (s[sp.id] + len2 < sp.id))
+				cr = cr + sum((s[sp.id] > s[id]) & (sp.id + len2 < s[sp.id]))
+				if(length(sn.id) > 0) {
+					cr = cr + sum(s[sn.id] + len2 > id)
+				}
+			}
+			return(cr)
+		})
+	return(cr)
+}
+
+cr = crossings.cyc(s2)
+sum(cr)
+
+
+### Upper bound to Average:
+n = 60
+it = 1000
+s1 = 1:n
+sum( sapply(1:it, function(id) sum(crossings.cyc(shift.max(sample(s1, n), s1)))) ) / it / n
+
+
 
 ### Average Number of Crossings
 
