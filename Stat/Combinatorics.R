@@ -5,7 +5,7 @@
 ###
 ### Combinatorics
 ###
-### draft v.0.1g
+### draft v.0.1h
 
 
 ####################
@@ -275,14 +275,29 @@ crossings.cyc = function(s) {
 	len2 = length(s) / 2
 	s0 = seq(len)
 	# from L to R
-	typeL1 = (s[s0] > s0) & (s[s0] <= s0 + len2);
+	typeL1 = (s[s0] >= s0) & (s[s0] <= s0 + len2);
 	typeL2 = (s[s0] < s0) & (s[s0] + len2 < s0);
 	typeL = typeL1 | typeL2;
-	# TODO: R-R crossings;
+	# TODO: check R-R crossings;
 	#
 	cr = sapply(s0, function(id) {
 			# avoid double counting!
-			if( ! typeL[id]) return(0); # TODO: R-R crossings;
+			if( ! typeL[id]) {
+				# R-R crossings;
+				sp.id = c(); sn.id = c();
+				if(id == len) {
+					sn.id = 1:(s[id] - len2);
+				} else if(s[id] < id) {
+					sp.id = (id+1):min(len, s[id] + len2, id+len2);
+				} else {
+					# R-R crossings across START pos;
+					sn.id = (id+1):(s[id] - len2);
+				}
+				cr = sum((s[sp.id] < s[id]) & (s[sp.id] + len2 > sp.id))
+				# R-R crossings across START pos;
+				cr = cr + sum((s[sn.id] < s[id]) & (s[sn.id] > sn.id + len2))
+				return(cr);
+			}
 			# upper bound
 			if(typeL1[id]) {
 				sn.id = c()
@@ -335,6 +350,7 @@ connect(s1, s2, xy)
 
 cr = crossings.cyc(s2)
 sum(cr); cr;
+
 
 ### Save image
 SAVE=FALSE
