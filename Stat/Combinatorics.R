@@ -5,7 +5,7 @@
 ###
 ### Combinatorics
 ###
-### draft v.0.1f
+### draft v.0.1g
 
 
 ####################
@@ -225,7 +225,7 @@ match.max = function(s1, s2) {
 	max.id = match(max(matches), matches);
 	return(max.id - 1);
 }
-connect = function(s1, s2, xy, col="orange", lwd=2, delta=0.1, add=TRUE) {
+connect = function(s1, s2, xy, col=c("orange", "purple"), lwd=2, delta=0.1, add=TRUE) {
 	if(missing(xy)) xy = plot.cycle(s1, s2);
 	delta.f = function(x) {
 		dl = round(x[1] - x[2], 4)
@@ -236,55 +236,38 @@ connect = function(s1, s2, xy, col="orange", lwd=2, delta=0.1, add=TRUE) {
 		}
 		return(x)
 	}
-	lines.match = function(id, diff=0, id2=id - diff) {
+	lines.match = function(id, diff=0, id2=id - diff, col) {
 		x = c(xy[[1]][id,1], xy[[2]][id2,1])
 		y = c(xy[[1]][id,2], xy[[2]][id2,2])
 		# shrink
 		x = delta.f(x); y = delta.f(y);
-		lines(x, y, col=col[1], lwd=lwd)
+		lines(x, y, col=col, lwd=lwd)
 	}
 	#
 	isEq = s1 == s2;
 	if(any(isEq)) {
 		id = seq(length(s1))[isEq]
-		sapply(id, lines.match)
+		sapply(id, lines.match, col=col[1])
 	}
 	# shifted
-	isEq = c(0, s1) == c(s2, 0);
-	if(any(isEq)) {
-		isEq = head(isEq, -1)
-		id = seq(length(s1))[isEq]
-		sapply(id-1, lines.match, diff=-1)
+	con.shift = function(sh=1, ...) {
+		z.sh = rep(0, sh);
+		# shifted R;
+		isEq = c(z.sh, s1) == c(s2, z.sh);
+		if(any(isEq)) {
+			isEq = head(isEq, -sh)
+			id = seq(length(s1))[isEq]
+			sapply(id-sh, lines.match, diff=-sh, ...)
+		}
+		# shifted L: TODO: check!
+		isEq = c(s1, z.sh) == c(z.sh, s2);
+		if(any(isEq)) {
+			isEq = head(isEq, -sh)
+			id = seq(length(s1))[isEq]
+			sapply(id, lines.match, diff=sh, ...)
+		}
 	}
-	# shifted L: TODO: check!
-	isEq = c(s1, 0) == c(0, s2);
-	if(any(isEq)) {
-		isEq = head(isEq, -1)
-		id = seq(length(s1))[isEq]
-		sapply(id, lines.match, diff=1)
-	}
-}
-
-
-### Test
-n = 40
-s1 = seq(n)
-s2 = sample(s1, n)
-s2 = shift.max(s2, s1)
-
-### Plot:
-xy = plot.cycle(s1, s2)
-connect(s1, s2, xy)
-
-
-### Save image
-SAVE=FALSE
-if(SAVE) {
-	id = 1
-	png(file=paste0("img/Combinatorics.Cyclic.", n, ".", id, ".png"))
-	xy = plot.cycle(s1, s2)
-	connect(s1, s2, xy)
-	dev.off()
+	con.shift(1, col=col[1]); con.shift(2, col=col[2]);
 }
 
 crossings.cyc = function(s) {
@@ -295,10 +278,11 @@ crossings.cyc = function(s) {
 	typeL1 = (s[s0] > s0) & (s[s0] <= s0 + len2);
 	typeL2 = (s[s0] < s0) & (s[s0] + len2 < s0);
 	typeL = typeL1 | typeL2;
+	# TODO: R-R crossings;
 	#
 	cr = sapply(s0, function(id) {
 			# avoid double counting!
-			if( ! typeL[id]) return(0);
+			if( ! typeL[id]) return(0); # TODO: R-R crossings;
 			# upper bound
 			if(typeL1[id]) {
 				sn.id = c()
@@ -335,8 +319,33 @@ crossings.cyc = function(s) {
 	return(cr)
 }
 
+
+##############
+
+### Test
+n = 20
+s1 = seq(n)
+s2 = sample(s1, n)
+s2 = shift.max(s2, s1)
+
+### Plot:
+xy = plot.cycle(s1, s2)
+connect(s1, s2, xy)
+
+
 cr = crossings.cyc(s2)
-sum(cr)
+sum(cr); cr;
+
+### Save image
+SAVE=FALSE
+if(SAVE) {
+	id = 1
+	png(file=paste0("img/Combinatorics.Cyclic.", n, ".", id, ".png"))
+	xy = plot.cycle(s1, s2)
+	connect(s1, s2, xy)
+	dev.off()
+}
+
 
 
 ### Upper bound to Average:
@@ -361,7 +370,8 @@ sum( sapply(1:it, function(id) sum(crossings.cyc(shift.max(sample(s1, n), s1))))
 #  -- the "rotation" can be virtual,
 #     but a true rotation aids visualisation;
 # - the average may be far less than n^2 / 8;
+# - the upper bound seems to converge to aprox n^2 / 8;
 ### Q: 
-# Can it converge to n?
-# Or some O(n^(1.5))?
+# Can it converge to some O(n^(1.5))?
+# Or does if converge also to some O(n^2)?
 
