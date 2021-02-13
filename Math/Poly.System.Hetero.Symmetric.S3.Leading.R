@@ -7,7 +7,7 @@
 ### Heterogenous Symmetric
 ### with Composite Leading Term
 ###
-### draft v.0.1b
+### draft v.0.1b-fact
 
 
 ### Hetero-Symmetric
@@ -25,9 +25,9 @@ z^n*x^m + P(z, x, y) = R
 ###############
 
 
-### draft v.0.1b:
+### draft v.0.1b - v.0.1b-fact:
 # - solved: x^2*y + b*y = R;
-# - TODO: factorize P[6];
+# - TODO: factorize P[6]; [DONE]
 ### draft v.0.1a:
 # - moved to this file from:
 #   Poly.System.Hetero.Symmetric.S3.R;
@@ -248,28 +248,21 @@ E3Div = - 27*R*S^2*b^3 - 6*R*S^4*b^2 + 3*S^3*b^4 - S^5*b^3;
 
 
 ### Eq:
-S^4 * (S^3 + 9*b*S - 27*R) * P[11]
+((R^2 + b^3)*S^2 - b^2*R*S + b^4) * S^4 * (S^3 + 9*b*S - 27*R) * P[9]
+### P[9]: false solution;
+(- 6561*R^2*b^3) +
+(2916*R*b^4)*S^1 +
+(- 6561*R^2*b^2 - 243*b^5)*S^2 +
+(2916*R*b^3 - 729*R^3)*S^3 +
+(- 972*R^2*b - 189*b^4)*S^4 +
+(621*R*b^2)*S^5 +
+(- 9*b^3)*S^6 +
+(54*R*b)*S^7 + b^2*S^8 + R*S^9
 
-(- 6561*R^2*b^7) +
-(2916*R*b^8 + 6561*R^3*b^5)*S^1 +
-(- 16038*R^2*b^6 - 6561*R^4*b^3 - 243*b^9)*S^2 +
-(6075*R*b^7 + 8748*R^3*b^4)*S^3 +
-(- 10692*R^2*b^5 - 5832*R^4*b^2 - 432*b^8)*S^4 +
-(3726*R*b^6 + 3159*R^3*b^3 - 729*R^5)*S^5 +
-(- 1782*R^2*b^4 - 972*R^4*b - 198*b^7)*S^6 +
-(684*R*b^5 + 621*R^3*b^2)*S^7 +
-(- 63*R^2*b^3 - 8*b^6)*S^8 +
-(54*R*b^4 + 54*R^3*b)*S^9 +
-(b^5)*S^10 +
-(R*b^3 + R^3)*S^11
-### TODO: factorize
 
 ### Solver:
 solve.CompositeL.S3P21 = function(R, b, debug=TRUE) {
-	coeff = c(R*b^3 + R^3, b^5, 54*R*b^4 + 54*R^3*b, - 63*R^2*b^3 - 8*b^6, 684*R*b^5 + 621*R^3*b^2,
-		- 1782*R^2*b^4 - 972*R^4*b - 198*b^7, 3726*R*b^6 + 3159*R^3*b^3 - 729*R^5,
-		- 10692*R^2*b^5 - 5832*R^4*b^2 - 432*b^8, 6075*R*b^7 + 8748*R^3*b^4,
-		- 16038*R^2*b^6 - 6561*R^4*b^3 - 243*b^9, 2916*R*b^8 + 6561*R^3*b^5, - 6561*R^2*b^7)
+	coeff = c((R^2 + b[1]^3), - b[1]^2*R, b[1]^4)
 	S = roots(coeff)
 	if(debug) print(S);
 	#
@@ -303,7 +296,8 @@ z^2*x + b*x # - R
 
 
 ### Classic Polynomial:
-round0.p(poly.calc(x[28:33])) * 3
+round0.p(poly.calc(x)) * (R^2 + b[1]^3)
+
 
 ### Debug:
 R = 2; b = -1;
