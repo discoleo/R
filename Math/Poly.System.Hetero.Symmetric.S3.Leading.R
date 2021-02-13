@@ -7,7 +7,7 @@
 ### Heterogenous Symmetric
 ### with Composite Leading Term
 ###
-### draft v.0.1a
+### draft v.0.1b
 
 
 ### Hetero-Symmetric
@@ -24,6 +24,10 @@ z^n*x^m + P(z, x, y) = R
 ### History ###
 ###############
 
+
+### draft v.0.1b:
+# - solved: x^2*y + b*y = R;
+# - TODO: factorize P[6];
 ### draft v.0.1a:
 # - moved to this file from:
 #   Poly.System.Hetero.Symmetric.S3.R;
@@ -85,7 +89,8 @@ E2 + b1*S - 3*R # = 0
 ### Eq:
 b1*E2 + b1^2*S - 3*b1*R # = 0
 R*S - 3*E3 + b1^2*S - 3*b1*R # = 0
-(R + b1^2)*S - 3*b1*(b1^2 + R) # = 0
+(R + b1^2)*S - 3*b1*(R + b1^2) # = 0
+(R + b1^2)*(S - 3*b1) # = 0
 S = 3*b1; # is a FALSE solution;
 
 
@@ -207,7 +212,105 @@ round0.p(poly.calc(sol[1:6, 1]))
 
 ### x[i]^2*x[j] + b*x[j]
 
-### TODO:
+# x^2*y + b*y = R
+# y^2*z + b*z = R
+# z^2*x + b*x = R
+
+### Solution:
+
+### Sum =>
+(x^2*y + y^2*z + z^2*x) + b*S - 3*R # = 0 # Eq 1-bis
+(x^2*y + y^2*z + z^2*x)*(x*y^2 + y*z^2 + z*x^2) +
+	+ (b*S - 3*R)*(x*y^2 + y*z^2 + z*x^2) # = 0
+E3*S^3 + E2^3 - 6*E3*E2*S + 9*E3^2 +
+	+ (b*S - 3*R)*(x*y^2 + y*z^2 + z*x^2) # = 0 # Eq 2-bis
+### Sum Eq 1-bis + Eq 2-bis =>
+(b*S - 3*R)*(x*y^2 + y*z^2 + z*x^2 + x^2*y + y^2*z + z^2*x) +
+	+ (b*S - 3*R)^2 + E3*S^3 + E2^3 - 6*E3*E2*S + 9*E3^2 # = 0
+(b*S - 3*R)*(E2*S - 3*E3) +
+	+ b^2*S^2 - 6*b*R*S + 9*R^2 + E3*S^3 + E2^3 - 6*E3*E2*S + 9*E3^2 # = 0
+E3*S^3 - 3*b*E3*S + 9*E3^2 + 9*R*E3 - 6*E3*E2*S +
+	+ E2^3 + b*E2*S^2 - 3*R*E2*S + b^2*S^2 - 6*b*R*S + 9*R^2 # = 0
+
+### Sum(z*...) =>
+x*y*z*(x+y+z) + b*E2 - R*S # = 0
+E3*S + b*E2 - R*S # = 0
+
+### Sum(y*...) =>
+(x^2*y^2 + y^2*z^2 + z^2*x^2) + b*(x^2 + y^2 + z^2) - R*S # = 0
+E2^2 - 2*E3*S + b*(S^2 - 2*E2) - R*S # = 0
+E2^2 - 2*E3*S + b*S^2 - 2*b*E2 - R*S # = 0
+
+### Auxiliary:
+E3Subst = - 27*R*S*b^5 - 12*R*S^3*b^4 + 6*R^2*S^4*b^2 + 9*S^2*b^6 + 5*S^4*b^5;
+E3Div = - 27*R*S^2*b^3 - 6*R*S^4*b^2 + 3*S^3*b^4 - S^5*b^3;
+# E3 = - E3Subst / E3Div;
+
+
+### Eq:
+S^4 * (S^3 + 9*b*S - 27*R) * P[11]
+
+(- 6561*R^2*b^7) +
+(2916*R*b^8 + 6561*R^3*b^5)*S^1 +
+(- 16038*R^2*b^6 - 6561*R^4*b^3 - 243*b^9)*S^2 +
+(6075*R*b^7 + 8748*R^3*b^4)*S^3 +
+(- 10692*R^2*b^5 - 5832*R^4*b^2 - 432*b^8)*S^4 +
+(3726*R*b^6 + 3159*R^3*b^3 - 729*R^5)*S^5 +
+(- 1782*R^2*b^4 - 972*R^4*b - 198*b^7)*S^6 +
+(684*R*b^5 + 621*R^3*b^2)*S^7 +
+(- 63*R^2*b^3 - 8*b^6)*S^8 +
+(54*R*b^4 + 54*R^3*b)*S^9 +
+(b^5)*S^10 +
+(R*b^3 + R^3)*S^11
+### TODO: factorize
+
+### Solver:
+solve.CompositeL.S3P21 = function(R, b, debug=TRUE) {
+	coeff = c(R*b^3 + R^3, b^5, 54*R*b^4 + 54*R^3*b, - 63*R^2*b^3 - 8*b^6, 684*R*b^5 + 621*R^3*b^2,
+		- 1782*R^2*b^4 - 972*R^4*b - 198*b^7, 3726*R*b^6 + 3159*R^3*b^3 - 729*R^5,
+		- 10692*R^2*b^5 - 5832*R^4*b^2 - 432*b^8, 6075*R*b^7 + 8748*R^3*b^4,
+		- 16038*R^2*b^6 - 6561*R^4*b^3 - 243*b^9, 2916*R*b^8 + 6561*R^3*b^5, - 6561*R^2*b^7)
+	S = roots(coeff)
+	if(debug) print(S);
+	#
+	E3Subst = - 27*R*S*b^5 - 12*R*S^3*b^4 + 6*R^2*S^4*b^2 + 9*S^2*b^6 + 5*S^4*b^5;
+	E3Div = - 27*R*S^2*b^3 - 6*R*S^4*b^2 + 3*S^3*b^4 - S^5*b^3;
+	E3 = - E3Subst / E3Div;
+	E2 = (R - E3)*S / b
+	#
+	len = length(S)
+	x = sapply(seq(len), function(id) roots(c(1, -S[id], E2[id], -E3[id])))
+	rep.m = function(x) matrix(x, ncol=len, nrow=3, byrow=TRUE)
+	S = rep.m(S); E3 = rep.m(E3);
+	yz.s = S - x;
+	y = R / (x^2 + b);
+	z = yz.s - y;
+	sol = cbind(x=as.vector(x), y=as.vector(y), z=as.vector(z), S=as.vector(S));
+	return(sol);
+}
+
+### Examples:
+R = 2
+b = -1
+sol = solve.CompositeL.S3P21(R, b)
+x = sol[,1]; y = sol[,2]; z = sol[,3];
+
+
+### Test
+x^2*y + b*y # - R
+y^2*z + b*z # - R
+z^2*x + b*x # - R
+
+
+### Classic Polynomial:
+round0.p(poly.calc(x[28:33])) * 3
+
+### Debug:
+R = 2; b = -1;
+x =  1.5907409211 - 0.9236008907i;
+y =  0.1489943605 + 0.6462891180i;
+z = -1.4064019508 - 0.1940927468i;
+S = x+y+z; E2 = x*y+x*z+y*z; E3 = x*y*z;
 
 
 #######################
