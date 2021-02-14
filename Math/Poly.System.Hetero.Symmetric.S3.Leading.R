@@ -7,7 +7,7 @@
 ### Heterogenous Symmetric
 ### with Composite Leading Term
 ###
-### draft v.0.1c
+### draft v.0.1d
 
 
 ### Hetero-Symmetric
@@ -25,14 +25,16 @@ z^n*x^m + P(z, x, y) = R
 ###############
 
 
-### draft v.0.1c:
-# - solved: x^2*y + b*x = R;
-#   solutions only for: x == y == z;
+### draft v.0.1c - v.0.1d:
+# - solved:
+#   x^2*y + b*x = R; [v.0.1c]
+#   x^2*y + b*z = R; [v.0.1d]
+# - both solutions are trivial, only for: x == y == z;
 ### draft v.0.1b - v.0.1b-sp-case:
 # - solved: x^2*y + b*y = R;
-# - TODO: factorize P[6]; [DONE]
+# - [TODO] factorize P[6]; [DONE]
 # - classic Polynomial: P[6]; [v.0.1b-poly]
-# - also special case: R = 0; [v.0.1b-sp-case]
+# - solved special case: R = 0; [v.0.1b-sp-case]
 ### draft v.0.1a:
 # - moved to this file from:
 #   Poly.System.Hetero.Symmetric.S3.R;
@@ -348,6 +350,7 @@ S = x+y+z; E2 = x*y+x*z+y*z; E3 = x*y*z;
 # z^2*x + b*z = R
 
 ### Solution:
+# - only trivial solution: x == y == z;
 
 ### Sum + Rotation =>
 E3*S^3 - 3*b*E3*S + 9*E3^2 + 9*R*E3 - 6*E3*E2*S +
@@ -384,9 +387,14 @@ E3Div   = - 27*R*S^2*b - 6*R*S^4 - 27*S*b^3 - 6*S^3*b^2;
 solve.CompositeLv.S3P21 = function(R, b, b.ext=0, debug=TRUE) {
 	if(length(b.ext) < 2) b.ext = c(b.ext, 0)
 	if(R[1] == 0) {
-		x = sqrt(-b[1] + 0i)
-		# the (0, 0, 0) solution is not included;
-		return(solve.En(c(x, -x), n=3, duplicates=TRUE))
+		if(b.ext[2] == 0) {
+			x = sqrt(-b[1] - 3*b.ext[1] + 0i); x = c(x, -x);
+			# the (0, 0, 0) solution is not included;
+			# return(solve.En(c(x, -x), n=3, duplicates=TRUE))
+		} else {
+			x = roots(c(1, 9*b.ext[2], 3*b.ext[1] + b[1]));
+		}
+		return(cbind(x=x, y=x, z=x, S=3*x));
 	}
 	coeff = c(1, 0, 9*b[1], - 27*R[1])
 	if(any(b.ext != 0)) {
@@ -429,6 +437,114 @@ S = x+y+z; ext1 = b.ext[1]*S; ext2 = b.ext[2]*S^2;
 x^2*y + b*x + ext1 + ext2 # - R
 y^2*z + b*y + ext1 + ext2 # - R
 z^2*x + b*z + ext1 + ext2 # - R
+
+### Classic Polynomial:
+round0.p(poly.calc(x))
+
+
+#######################
+
+### Variant 2:
+### Mixt-Order: 2+1
+
+### x[i]^2*x[j] + b*x[i]
+
+# x^2*y + b*z = R
+# y^2*z + b*x = R
+# z^2*x + b*y = R
+
+### Solution:
+# - only trivial solution: x == y == z;
+
+### Sum + Rotation =>
+E3*S^3 - 3*b*E3*S + 9*E3^2 + 9*R*E3 - 6*E3*E2*S +
+	+ E2^3 + b*E2*S^2 - 3*R*E2*S + b^2*S^2 - 6*b*R*S + 9*R^2 # = 0
+
+### Sum(z*...) =>
+x*y*z*(x+y+z) + b*(x^2 + y^2 + z^2) - R*S # = 0
+E3*S + b*S^2 - 2*b*E2 - R*S # = 0
+
+### Sum(y*...) =>
+(x^2*y^2 + y^2*z^2 + z^2*x^2) + b*E2 - R*S # = 0
+E2^2 - 2*E3*S + b*E2 - R*S # = 0
+
+### Auxiliary:
+E3Subst = 108*R*b^3 - 3*R*S^2*b^2 - 11*R*S^4*b + 6*R^2*S^3 - 36*S*b^4 - 7*S^3*b^3 + 5*S^5*b^2;
+E3Div   = 7*S^4*b - 6*R*S^3 - 69*S^2*b^2 + 54*R*S*b + 108*b^3;
+# E3 = - E3Subst / E3Div;
+
+### Eq:
+(S^3 + 9*b*S - 27*R)^2 * S^3 * P[12]
+# P[12]: is a false solution
+(15552*b^9) +
+(15552*R*b^7)*S^1 +
+(7776*R^2*b^5 - 25488*b^8)*S^2 +
+(- 23760*R*b^6 + 1944*R^3*b^3)*S^3 +
+(- 9072*R^2*b^4 + 18036*b^7)*S^4 +
+(13644*R*b^5 - 864*R^3*b^2)*S^5 +
+(2880*R^2*b^3 - 27*R^4 - 6667*b^6)*S^6 +
+(- 3243*R*b^4 + 171*R^3*b)*S^7 +
+(- 357*R^2*b^2 + 1231*b^5)*S^8 +
+(310*R*b^3 - R^3)*S^9 +
+(3*R^2*b - 97*b^4)*S^10 +
+(- 3*R*b^2)*S^11 +
+(b^3)*S^12
+
+
+### Solver:
+solve.CompositeLvz.S3P21 = function(R, b, b.ext=0, debug=TRUE) {
+	if(length(b.ext) < 2) b.ext = c(b.ext, 0)
+	if(R[1] == 0) {
+		if(b.ext[2] == 0) {
+			x = sqrt(-b[1] - 3*b.ext[1] + 0i); x = c(x, -x);
+			# the (0, 0, 0) solution is not included;
+			# return(solve.En(c(x, -x), n=3, duplicates=TRUE))
+		} else {
+			x = roots(c(1, 9*b.ext[2], 3*b.ext[1] + b[1]));
+		}
+		return(cbind(x=x, y=x, z=x, S=3*x));
+	}
+	coeff = c(1, 0, 9*b[1], - 27*R[1])
+	if(any(b.ext != 0)) {
+		coeff = coeff + c(0, 27*b.ext[2], 27*b.ext[1], 0);
+	}
+	S = roots(coeff)
+	if(debug) print(S);
+	### Note: numerically unstable
+	# - result is inaccurate as x == y == z;
+	x = S / 3;
+	return(cbind(x=x, y=x, z=x, S=S));
+	# [unstable]
+	R1 = R - b.ext[1]*S - b.ext[2]*S^2;
+	E3Subst = 108*R*b^3 - 3*R*S^2*b^2 - 11*R*S^4*b + 6*R^2*S^3 - 36*S*b^4 - 7*S^3*b^3 + 5*S^5*b^2;
+	E3Div   = 7*S^4*b - 6*R*S^3 - 69*S^2*b^2 + 54*R*S*b + 108*b^3;
+	E3 = - E3Subst / E3Div;
+	E2 = (R1 - E3)*S / b
+	#
+	len = length(S)
+	x = sapply(seq(len), function(id) roots(c(1, -S[id], E2[id], -E3[id])))
+	rep.m = function(x) matrix(x, ncol=len, nrow=3, byrow=TRUE)
+	S = rep.m(S); E3 = rep.m(E3); R1 = rep.m(R1);
+	yz.s = S - x;
+	y = (R1 - b*x)*x / E3;
+	z = yz.s - y;
+	sol = cbind(x=as.vector(x), y=as.vector(y), z=as.vector(z), S=as.vector(S));
+	return(sol);
+}
+
+### Examples:
+R = 2
+b = -1
+b.ext = c(0, 0)
+sol = solve.CompositeLvz.S3P21(R, b, b.ext)
+x = sol[,1]; y = sol[,2]; z = sol[,3];
+
+
+### Test
+S = x+y+z; ext1 = b.ext[1]*S; ext2 = b.ext[2]*S^2;
+x^2*y + b*z + ext1 + ext2 # - R
+y^2*z + b*x + ext1 + ext2 # - R
+z^2*x + b*y + ext1 + ext2 # - R
 
 ### Classic Polynomial:
 round0.p(poly.calc(x))
