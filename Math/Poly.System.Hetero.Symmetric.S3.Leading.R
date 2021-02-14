@@ -7,7 +7,7 @@
 ### Heterogenous Symmetric
 ### with Composite Leading Term
 ###
-### draft v.0.1b-poly
+### draft v.0.1b-sp-case
 
 
 ### Hetero-Symmetric
@@ -25,10 +25,11 @@ z^n*x^m + P(z, x, y) = R
 ###############
 
 
-### draft v.0.1b - v.0.1b-poly:
+### draft v.0.1b - v.0.1b-sp-case:
 # - solved: x^2*y + b*y = R;
 # - TODO: factorize P[6]; [DONE]
 # - classic Polynomial: P[6]; [v.0.1b-poly]
+# - also special case: R = 0; [v.0.2b-sp-case]
 ### draft v.0.1a:
 # - moved to this file from:
 #   Poly.System.Hetero.Symmetric.S3.R;
@@ -263,12 +264,17 @@ E3Div = - 27*R*S^2*b^3 - 6*R*S^4*b^2 + 3*S^3*b^4 - S^5*b^3;
 
 ### Solver:
 solve.CompositeL.S3P21 = function(R, b, debug=TRUE) {
+	if(R[1] == 0) {
+		x = sqrt(-b[1] + 0i)
+		# the (0, 0, 0) solution is not included;
+		return(solve.En(c(x, -x), n=3, duplicates=TRUE))
+	}
 	coeff = c((R^2 + b[1]^3), - b[1]^2*R, b[1]^4)
 	S = roots(coeff)
 	if(debug) print(S);
 	#
-	E3Subst = - 27*R*S*b^5 - 12*R*S^3*b^4 + 6*R^2*S^4*b^2 + 9*S^2*b^6 + 5*S^4*b^5;
-	E3Div = - 27*R*S^2*b^3 - 6*R*S^4*b^2 + 3*S^3*b^4 - S^5*b^3;
+	E3Subst = - 27*R*S*b^3 - 12*R*S^3*b^2 + 6*R^2*S^4 + 9*S^2*b^4 + 5*S^4*b^3;
+	E3Div = - 27*R*S^2*b - 6*R*S^4 + 3*S^3*b^2 - S^5*b;
 	E3 = - E3Subst / E3Div;
 	E2 = (R - E3)*S / b
 	#

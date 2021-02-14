@@ -63,18 +63,30 @@ round0.p = function(p, tol=1E-7) {
 	return(p)
 }
 
+### Other
+perm.gen = function(x) {
+	len = length(x)
+	id = seq(len)
+	id.m = outer(id, id, function(i, j) ((i+j+1) %% len + 1))
+	p.m = x[id.m]
+	dim(p.m) = dim(id.m)
+	p.m
+}
+
 ### Solvers:
 
 ### Simple systems:
-solve.En = function(x, max.perm=0, n=4) {
+solve.En = function(x, max.perm=0, n=4, duplicates=FALSE) {
 	id = 1:length(x)
 	if(max.perm == 1) {
 		id.gr = matrix(id, nrow=1)
 	} else {
 		id.l = rep(list(id), n)
 		id.gr = expand.grid(id.l)
-		isDuplic = apply(id.gr, 1, function(id.val) any(duplicated(id.val)))
-		id.gr = id.gr[ ! isDuplic , ]
+		if( ! duplicates) {
+			isDuplic = apply(id.gr, 1, function(id.val) any(duplicated(id.val)))
+			id.gr = id.gr[ ! isDuplic , ]
+		}
 		if(max.perm > 0) {
 			max.perm = min(max.perm, nrow(id.gr));
 			id.gr = head(id.gr, n=max.perm);
@@ -82,13 +94,18 @@ solve.En = function(x, max.perm=0, n=4) {
 	}
 	sol = if(n == 4) cbind(
 			x1=x[id.gr[,1]], x2=x[id.gr[,2]], x3=x[id.gr[,3]], x4=x[id.gr[,4]])
-		else cbind(x1=x[id.gr[,1]], x2=x[id.gr[,2]], x3=x[id.gr[,3]])
+		else cbind(x[id.gr[,1]], x[id.gr[,2]], x[id.gr[,3]])
+	sol.names = if(n >= 4) paste0("x", seq(n)) else
+		if(n == 3) c("x", "y", "z") else c("x", "y");
+	colnames(sol) = sol.names;
+	return(sol);
 }
 solve.EnAll = function(m, max.perm=0, n=4) {
 	# generates ncol(m) * (nrow(m)!) root combinations/permutations!
 	l = lapply(seq(ncol(m)), function(id) solve.En(as.vector(m[,id]), max.perm=max.perm, n=n));
 	do.call(rbind, l)
 }
+
 ### decomposed polynomial systems
 solve.S = function(S, R, b=0) {
 	# generic solver (based on existing S = x+y+z)
