@@ -7,7 +7,7 @@
 ### Heterogenous Symmetric
 ### with Composite Leading Term
 ###
-### draft v.0.1b-fact
+### draft v.0.1b-poly
 
 
 ### Hetero-Symmetric
@@ -25,9 +25,10 @@ z^n*x^m + P(z, x, y) = R
 ###############
 
 
-### draft v.0.1b - v.0.1b-fact:
+### draft v.0.1b - v.0.1b-poly:
 # - solved: x^2*y + b*y = R;
 # - TODO: factorize P[6]; [DONE]
+# - classic Polynomial: P[6]; [v.0.1b-poly]
 ### draft v.0.1a:
 # - moved to this file from:
 #   Poly.System.Hetero.Symmetric.S3.R;
@@ -294,9 +295,28 @@ x^2*y + b*y # - R
 y^2*z + b*z # - R
 z^2*x + b*x # - R
 
-
 ### Classic Polynomial:
 round0.p(poly.calc(x)) * (R^2 + b[1]^3)
+
+
+#########
+### Ex 2:
+R = 4
+b = 2
+sol = solve.CompositeL.S3P21(R, b)
+x = sol[,1]; y = sol[,2]; z = sol[,3];
+
+### Classic Polynomial:
+round0.p(poly.calc(x)) * 9 # * (R^2 + b[1]^3)
+
+
+(2*R^2*b^3 + R^4 + b^6) +
+	- R*b^4*x +
+	+ b^2*(4*R^2 + 3*b^3)*x^2 +
+	- R*(2*b^3 - R^2)*x^3 +
+	+ 3*b*(R^2 + b^3)*x^4 +
+	- R*b^2*x^5 +
+	+ (R^2 + b^3)*x^6
 
 
 ### Debug:
