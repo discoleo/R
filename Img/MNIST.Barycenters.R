@@ -5,7 +5,7 @@
 ###
 ### Barycenters: MNIST
 ###
-### draft v.0.2g
+### draft v.0.2h
 
 
 ### "Imagine"
@@ -24,6 +24,8 @@
 ###############
 ### History ###
 
+### draft v.0.2h:
+# - plot transport plan;
 ### draft v.0.2g:
 # - cost matrix;
 # - work on / exploration of barycenter parameters;
@@ -56,6 +58,9 @@
 ################
 
 library(ggplot2)
+library(cowplot)
+library(gridGraphics)
+library(patchwork)
 library(magrittr)
 
 ### Wasserstein Distance
@@ -344,9 +349,9 @@ plot.group = function(x, group, mid=0.01, title="", subtitle="") {
 		theme_void() +
 		theme(strip.text = element_blank())
 }
-plot.all = function(x, id, mid=0.01, title="", subtitle="") {
+plot.all = function(x, id, mid=0.01, title=NULL, subtitle=NULL) {
 	# mid=0.01 for Normalized images;
-	if(missing(id)) id=seq(length(x))
+	if(missing(id)) id = if(is.list(x)) seq(length(x)) else 1;
 	img = toRow.l(x, id=id)
 	ggplot(data=img, aes(x, y, fill = val)) +
 		geom_tile(show.legend = FALSE) +
@@ -354,7 +359,7 @@ plot.all = function(x, id, mid=0.01, title="", subtitle="") {
 		facet_wrap(~ id) +
 		labs(title = title, subtitle = subtitle) +
 		theme_void() +
-		theme(strip.text = element_blank())
+		theme(strip.text = element_blank(), plot.margin = unit(c(0,0,0,0), "cm"))
 }
 
 #########################
@@ -584,6 +589,8 @@ if(SAVE_BARYC_IMG) {
 ### Wasserstein Distance 
 
 library(Barycenter)
+### using "transport"
+library(transport)
 
 cost.m = function(n, method, p=1) {
 	if(length(n) > 1) n = n[1]; # TODO
@@ -665,8 +672,21 @@ bary.f = function(x, rm.bg=FALSE, q=0.3, ...) {
 	}
 	invisible(x.bary)
 }
-plot.tplan = function(img1, img2, tplan) {
-	plot(pgrid(img1), pgrid(img2), tplan=tplan)
+plot.tplan = function(img1, img2, tplan, plot=TRUE) {
+	if(plot) {
+		plot(pgrid(img1), pgrid(img2), tplan=tplan)
+	} else {
+		f = function() {
+			old.par = par(mar=c(0,0,0,0))
+			plot(pgrid(img1), pgrid(img2), tplan=tplan)
+			par(old.par)
+		}
+		invisible(f)
+	}
+}
+save.bary = function(x, digit, lambda) {
+	file.name = paste0("MNIST.Barycenter.D", digit, ".L", lambda, ".csv")
+	write.csv(x.bary, file=file.name, row.names=FALSE)
 }
 
 ###################
@@ -681,15 +701,17 @@ isDigit = x.lbl == DIGIT
 # lambda > 50 # BUT takes long!
 # lambda =  50: takes 340 s;
 # lambda = 100: takes 400 s (with 24 images);
+# lambda = 300: takes 400 s (but seems to be less accurate than 100);
 # - Manhattan distance: helps;
-x.bary = bary.f(x.sc[isDigit], lambda=100, costm=cost.m(dim(x.sc[[1]]), method="manhattan"))
+lambda = 300
+x.bary = bary.f(x.sc[isDigit], lambda=lambda, costm=cost.m(dim(x.sc[[1]]), method="manhattan"))
 
 image(x.bary)
 
 # Background Noise
 # - a lot of background noise in the barycenter;
 summary(as.vector(x.bary))
-sum(x.bary[x.bary < quantile(x.bary, 0.7)])
+sum(x.bary[x.bary < quantile(x.bary, 0.6)])
 
 ### Transport Plan: using "transport"
 id = 1
@@ -698,13 +720,36 @@ plot.tplan(x.sc[isDigit][[id]], x.bary, tplan=tr)
 
 ### Noise
 # - a little bit of cheating;
-x.bary = background(x.bary, type="sq")
+x2.bary = background(x.bary, type="sq")
+sum(x2.bary[x2.bary < quantile(x2.bary, 0.6)])
 
 id = 3
-tr = transport(pgrid(x.sc[isDigit][[id]]), pgrid(x.bary))
-plot.tplan(x.sc[isDigit][[id]], x.bary, tplan=tr)
+tr = transport(pgrid(x.sc[isDigit][[id]]), pgrid(x2.bary))
+plot.tplan(x.sc[isDigit][[id]], x2.bary, tplan=tr)
 # Q: How to "overload" local densities?
 # - to move mass to locations that are already overloaded;
+
+
+### Plot
+img1 = plot.all(x.sc[isDigit][id])
+img2 = plot.all(list(x2.bary))
+img.tpl = plot.tplan(x.sc[isDigit][[id]], x2.bary, tplan=tr, plot=F)
+
+### using patchwork
+(img1 + img2) / (~{img.tpl()}) + plot_layout(heights=c(1,2))
+
+
+### using cowplot
+plot_grid(
+	plot_grid(img1, img2, ncol=2, axis="none", labels=NULL),
+	img.tpl, labels = NULL, axis="none", nrow=2, rel_heights=c(1,2))
+
+
+
+SAVE_BARY = FALSE
+if(SAVE_BARY) {
+	save.bary(x.bary, DIGIT, lambda)
+}
 
 
 
@@ -761,7 +806,6 @@ top.simple(neg.d, x.lbl[ ! isDigit], n=16, decreasing=FALSE)
 id = 1
 tr = transport(pgrid(top.img[[id]]), pgrid(x.bary))
 plot.tplan(top.img[[id]], x.bary, tplan=tr)
-
 
 
 #####################
