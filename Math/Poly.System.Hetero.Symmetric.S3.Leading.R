@@ -7,7 +7,7 @@
 ### Heterogenous Symmetric
 ### with Composite Leading Term
 ###
-### draft v.0.1d
+### draft v.0.2a
 
 
 ### Hetero-Symmetric
@@ -25,6 +25,10 @@ z^n*x^m + P(z, x, y) = R
 ###############
 
 
+### draft v.0.2a:
+# - solved (part):
+#   x^2*y + a*x*y^2 = R;
+# - TODO: solve Case 2 & clean solution;
 ### draft v.0.1c - v.0.1d:
 # - solved:
 #   x^2*y + b*x = R; [v.0.1c]
@@ -622,6 +626,132 @@ x^9 - R^3
 # x^4*(y-s)^2 = y^2*z^2*(x-s)*(z-s)
 
 ### TODO
+
+
+#######################
+#######################
+
+#####################
+### Bi-Mixt-Order ###
+
+### x[i]^2*x[j] + a*x[i]*x[j]^2
+
+# x^2*y + a*x*y^2 = R
+# y^2*z + a*y*z^2 = R
+# z^2*x + a*z*x^2 = R
+
+### Solution:
+
+### Sum =>
+(x^2*y + y^2*z + z^2*x) + a*(x*y^2 + y*z^2 + z*x^2) - 3*R # = 0
+(x^2*y + y^2*z + z^2*x + x*y^2 + y*z^2 + z*x^2) +
+	+ (a-1)*(x*y^2 + y*z^2 + z*x^2) - 3*R # = 0
+(E2*S - 3*E3 - 3*R) +
+	+ (a-1)*(x*y^2 + y*z^2 + z*x^2) # = 0 # Eq 1-bis
+### * (x^2*y + y^2*z + z^2*x) =>
+(E2*S - 3*E3 - 3*R) * (x^2*y + y^2*z + z^2*x) +
+	+ (a-1)*(E3*S^3 + E2^3 - 6*E3*E2*S + 9*E3^2) # = 0 # Eq 2-bis
+### (...)*Eq 1-bis + (a-1)*Eq 2-bis =>
+(a-1)*(E2*S - 3*E3 - 3*R) * (x^2*y + y^2*z + z^2*x + x*y^2 + y*z^2 + z*x^2) +
+	+ (a-1)^2*(E3*S^3 + E2^3 - 6*E3*E2*S + 9*E3^2) +
+	+ (E2*S - 3*E3 - 3*R)^2 # = 0
+(a-1)*(E2*S - 3*E3 - 3*R) * (E2*S - 3*E3) +
+	+ (a-1)^2*(E3*S^3 + E2^3 - 6*E3*E2*S + 9*E3^2) +
+	+ (E2*S - 3*E3 - 3*R)^2 # = 0
+(a-1)^2*E2^3 + 9*(a+1)*E3*R + 9*E3^2 + 9*a*(a-1)*E3^2 +
+	- 6*E2*E3*S - 6*a*(a-1)*E2*E3*S - 3*(a+1)*R*E2*S +
+	+ E2^2*S^2 + (a-1)*E2^2*S^2 + (a-1)^2*E3*S^3 + 9*R^2
+
+### Sum(z*...) =>
+(a+1)*E3*S - R*S # = 0
+# S = 0, OR
+# (a+1)*E3 = R;
+
+### Sum(z^2*...) =>
+(a+1)*E3*E2 - R*(x^2 + y^2 + z^2) # = 0
+(a+1)*E3*E2 - R*(S^2 - 2*E2) # = 0
+(a+1)*E3*E2 - R*S^2 + 2*R*E2 # = 0
+
+### Alternative: Diff;
+
+### Case 1: S = 0
+(a+1)*E3*E2 + 2*R*E2 # = 0
+E2*((a+1)*E3 + 2*R) # = 0
+# (a+1)*E3 = - 2*R, OR
+# E2 = 0;
+
+### Case 1.1: E2 != 0:
+(a-1)^2*E2^3 + 9*(a+1)*E3*R + 9*E3^2 + 9*a*(a-1)*E3^2 + 9*R^2 # = 0
+# =>
+(a+1)^2*E2^3 + 27*R^2 # = 0
+
+### Case 1.2: E2 = 0
+E3^2 + a*(a-1)*E3^2 + (a+1)*E3*R + R^2 # = 0
+
+### Case 2:
+# TODO
+
+
+### Solver:
+solve.LeadA.S3P21 = function(R, a, b.ext=0, debug=TRUE) {
+	ap = a[1] + 1;
+	an = a[1] - 1;
+	### Case 1: S = 0
+	S = 0;
+	### Case 1.1: E2 != 0
+	E3 = - 2*R / ap;
+	# currently NO correct solutions: TODO: examine & update;
+	E2 = roots(c(ap^2, 0, 0, 27*R[1]^2));
+	if(debug) print(E2);
+	len = length(E2);
+	# S = rep(S, len); E3 = rep(E3, len);
+	
+	### Case 1.2: E2 = 0
+	E3 = roots(c(1 + a*an, ap*R[1], R[1]^2))
+	if(debug) print(E3);
+	len = length(E3);
+	S = rep(S, len); E2 = 0; E2 = rep(E2, len);
+	### Case 2: TODO !!!
+	#
+	x = sapply(seq(len), function(id) roots(c(1, -S[id], E2[id], -E3[id])))
+	#
+	rep.m = function(x) matrix(x, ncol=len, nrow=3, byrow=TRUE)
+	S = rep.m(S); E3 = rep.m(E3);
+	R1 = R[1];
+	yz.s = S - x;
+	yz = E2 - x*yz.s;
+	yz.sa = R1 / yz;
+	y = (a*yz.s - yz.sa) / an;
+	z = yz.s - y;
+	sol = cbind(x=as.vector(x), y=as.vector(y), z=as.vector(z))
+	return(sol)
+}
+
+### Examples:
+R = 2
+a = -2
+b.ext = c(0, 0)
+sol = solve.LeadA.S3P21(R, a)
+x = sol[,1]; y = sol[,2]; z = sol[,3];
+
+
+### Test
+S = x+y+z; ext1 = b.ext[1]*S; ext2 = b.ext[2]*S^2;
+x^2*y + a*x*y^2 + ext1 + ext2 # - R
+y^2*z + a*y*z^2 + ext1 + ext2 # - R
+z^2*x + a*z*x^2 + ext1 + ext2 # - R
+
+### Classic Polynomial:
+round0.p(poly.calc(x)) * 7
+4 - 2*x^3 + 7*x^6
+
+
+### Debug:
+x =  0.8161669286 - 0.4045961913i;
+y = -0.0576928844 + 0.9091193896i;
+z = -0.7584740442 - 0.5045231983i;
+S = x+y+z; E2 = x*y+x*z+y*z; E3 = x*y*z;
+
 
 
 #######################
