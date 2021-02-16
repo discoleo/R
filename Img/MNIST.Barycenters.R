@@ -5,7 +5,7 @@
 ###
 ### Barycenters: MNIST
 ###
-### draft v.0.2h
+### draft v.0.2i
 
 
 ### "Imagine"
@@ -24,8 +24,9 @@
 ###############
 ### History ###
 
-### draft v.0.2h:
+### draft v.0.2h - v.02i:
 # - plot transport plan;
+# - added option: mid;
 ### draft v.0.2g:
 # - cost matrix;
 # - work on / exploration of barycenter parameters;
@@ -136,6 +137,14 @@ sum.m = function(l) {
 		s <<- s + m
 	})
 	return(s)
+}
+sum.grey = function(img, q=0.6) {
+	f = function(img) sum(img[img < quantile(img, q)])
+	if(is.list(img)) {
+		sapply(img, f)
+	} else {
+		f(img);
+	}
 }
 maxcount.m = function(l) {
 	r = lapply(l, function(m) {
@@ -273,7 +282,9 @@ toRow.m = function(m, id) {
 }
 toRow.l = function(l, id) {
 	# TODO: add automatic id?
-	if(missing(id)) {
+	if(is.matrix(l)) {
+		return(toRow.m(l, id))
+	} else if(missing(id)) {
 		l.rows = lapply(l, toRow.m)
 	} else {
 		l.rows = lapply(seq(length(l)), function(l.id) toRow.m(l[[l.id]], id[l.id]))
@@ -350,7 +361,7 @@ plot.group = function(x, group, mid=0.01, title="", subtitle="") {
 		theme(strip.text = element_blank())
 }
 plot.all = function(x, id, mid=0.01, title=NULL, subtitle=NULL) {
-	# mid=0.01 for Normalized images;
+	# mid = 0.01 for Normalized images;
 	if(missing(id)) id = if(is.list(x)) seq(length(x)) else 1;
 	img = toRow.l(x, id=id)
 	ggplot(data=img, aes(x, y, fill = val)) +
@@ -684,6 +695,28 @@ plot.tplan = function(img1, img2, tplan, plot=TRUE) {
 		invisible(f)
 	}
 }
+plot.alltplan = function(img1, img2, tplan, mid=0.01, useLib) {
+	useLib = if(missing(useLib)) 1 else
+		match(use, c("patchwork", "cowplot"));
+	if(is.na(useLib)) stop("Supported Libraries: patchwork or cowplot!")
+	
+	if(length(mid) == 1) mid = c(mid, mid);
+	img1.gg = plot.all(img1, mid=mid[1]);
+	img2.gg = plot.all(img2, mid=mid[2]);
+	if(missing(tplan)) tplan = transport(pgrid(img1), pgrid(img2))
+	img.tpl = plot.tplan(img1, img2, tplan=tplan, plot=F)
+
+	if(useLib == 1) {
+		### using patchwork
+		(img1.gg + img2.gg) / (~{img.tpl()}) + plot_layout(heights=c(1,2))
+	} else {
+		### using cowplot
+		plot_grid(
+			plot_grid(img1.gg, img2.gg, ncol=2, axis="none", labels=NULL),
+			img.tpl, labels = NULL, axis="none", nrow=2, rel_heights=c(1,2))
+	}
+}
+### IO
 save.bary = function(x, digit, lambda) {
 	file.name = paste0("MNIST.Barycenter.D", digit, ".L", lambda, ".csv")
 	write.csv(x.bary, file=file.name, row.names=FALSE)
@@ -711,7 +744,7 @@ image(x.bary)
 # Background Noise
 # - a lot of background noise in the barycenter;
 summary(as.vector(x.bary))
-sum(x.bary[x.bary < quantile(x.bary, 0.6)])
+sum.grey(x.bary, 0.6)
 
 ### Transport Plan: using "transport"
 id = 1
@@ -721,7 +754,7 @@ plot.tplan(x.sc[isDigit][[id]], x.bary, tplan=tr)
 ### Noise
 # - a little bit of cheating;
 x2.bary = background(x.bary, type="sq")
-sum(x2.bary[x2.bary < quantile(x2.bary, 0.6)])
+sum.grey(x2.bary, 0.6)
 
 id = 3
 tr = transport(pgrid(x.sc[isDigit][[id]]), pgrid(x2.bary))
@@ -730,14 +763,25 @@ plot.tplan(x.sc[isDigit][[id]], x2.bary, tplan=tr)
 # - to move mass to locations that are already overloaded;
 
 
+########
 ### Plot
+id = 3
+# png(file="MNIST.TrPlan.rmBkgr.png")
+# png(file="MNIST.TrPlan.png")
+plot.alltplan(x.sc[isDigit][[id]], x2.bary)
+
+# dev.off()
+
+
+########
+### Plot
+# [old code]
 img1 = plot.all(x.sc[isDigit][id])
 img2 = plot.all(list(x2.bary))
 img.tpl = plot.tplan(x.sc[isDigit][[id]], x2.bary, tplan=tr, plot=F)
 
 ### using patchwork
 (img1 + img2) / (~{img.tpl()}) + plot_layout(heights=c(1,2))
-
 
 ### using cowplot
 plot_grid(
