@@ -5,7 +5,7 @@
 ###
 ### Barycenters: MNIST
 ###
-### draft v.0.2j
+### draft v.0.2j-fix
 
 
 ### "Imagine"
@@ -25,8 +25,9 @@
 ###############
 ### History ###
 
-### draft v.0.2j:
+### draft v.0.2j - v.0.2j-fix:
 # - more work on analysis;
+# - minor fix in older code;
 ### draft v.0.2h - v.0.2i:
 # - plot transport plan;
 # - added option: mid;
@@ -73,7 +74,7 @@ library(magrittr)
 # install.packages("transport")
 
 
-setwd(".../ML")
+setwd("C:/Users/Leo Mada/Desktop/Practica/MSc/ML")
 
 
 ############
@@ -398,16 +399,19 @@ image(s/length(x))
 ### by Digit
 s = tsum.m(x, x.lbl)
 
-image(s[1,,])
+image(s[,,1])
+plot.all(lapply(seq(dim(s)[3]), function(id) s[,,id]))
+
 
 ### row-wise
+# - plot.mean() performs automatic conversion;
 s.df = toRow.m(s)
 # s.df$label = rep(0:9, each=WIDTH*WIDTH)
 head(s.df)
 
 image(matrix(s.df$val[s.df$id == 1], ncol=28))
 
-
+# plot directly
 plot.mean(x, x.lbl, mid=127.5)
 
 
@@ -792,9 +796,13 @@ plot.tplan(x.sc[isDigit][[id]], x2.bary, tplan=tr)
 
 ########
 ### Plot
+id = 1
+# png(file="MNIST.TrPlan.Ex1.png")
+plot.alltplan(x.sc[isDigit][[id]], x.bary, mid=c(0.01, 0.005))
+
+### Ex 2:
 id = 3
-# png(file="MNIST.TrPlan.rmBkgr.png")
-# png(file="MNIST.TrPlan.png")
+# png(file="MNIST.TrPlan.Ex2.rmBkgr.png")
 plot.alltplan(x.sc[isDigit][[id]], x2.bary)
 
 # dev.off()
