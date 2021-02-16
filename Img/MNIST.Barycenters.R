@@ -5,7 +5,7 @@
 ###
 ### Barycenters: MNIST
 ###
-### draft v.0.2j-fix
+### draft v.0.2k
 
 
 ### "Imagine"
@@ -25,6 +25,9 @@
 ###############
 ### History ###
 
+### draft v.0.2k:
+# - transparent colors;
+#   (requires enhancement to transport package)
 ### draft v.0.2j - v.0.2j-fix:
 # - more work on analysis;
 # - minor fix in older code;
@@ -74,7 +77,7 @@ library(magrittr)
 # install.packages("transport")
 
 
-setwd("C:/Users/Leo Mada/Desktop/Practica/MSc/ML")
+setwd(".../ML")
 
 
 ############
@@ -711,19 +714,19 @@ bary.f = function(x, rm.bg=FALSE, q=0.3, ...) {
 	}
 	invisible(x.bary)
 }
-plot.tplan = function(img1, img2, tplan, plot=TRUE) {
+plot.tplan = function(img1, img2, tplan, plot=TRUE, ...) {
 	if(plot) {
-		plot(pgrid(img1), pgrid(img2), tplan=tplan)
+		plot(pgrid(img1), pgrid(img2), tplan=tplan, ...)
 	} else {
 		f = function() {
 			old.par = par(mar=c(0,0,0,0))
-			plot(pgrid(img1), pgrid(img2), tplan=tplan)
+			plot(pgrid(img1), pgrid(img2), tplan=tplan, ...)
 			par(old.par)
 		}
 		invisible(f)
 	}
 }
-plot.alltplan = function(img1, img2, tplan, mid=0.01, useLib) {
+plot.alltplan = function(img1, img2, tplan, mid=0.01, useLib, ...) {
 	useLib = if(missing(useLib)) 1 else
 		match(use, c("patchwork", "cowplot"));
 	if(is.na(useLib)) stop("Supported Libraries: patchwork or cowplot!")
@@ -732,7 +735,7 @@ plot.alltplan = function(img1, img2, tplan, mid=0.01, useLib) {
 	img1.gg = plot.all(img1, mid=mid[1]);
 	img2.gg = plot.all(img2, mid=mid[2]);
 	if(missing(tplan)) tplan = transport(pgrid(img1), pgrid(img2))
-	img.tpl = plot.tplan(img1, img2, tplan=tplan, plot=F)
+	img.tpl = plot.tplan(img1, img2, tplan=tplan, plot=F, ...)
 
 	if(useLib == 1) {
 		### using patchwork
@@ -744,11 +747,21 @@ plot.alltplan = function(img1, img2, tplan, mid=0.01, useLib) {
 			img.tpl, labels = NULL, axis="none", nrow=2, rel_heights=c(1,2))
 	}
 }
+### Color helper
+transparent.col = function(col, min=40) {
+	len = length(col);
+	if(len == 1) { len = col; col = heat.colors(len); }
+	apply(
+		rbind(col2rgb(col),
+			alpha=seq(min, 255, length.out=len))/255, 2,
+		function(x) rgb(x[1], x[2], x[3], x[4]))
+}
 ### IO
 save.bary = function(x, digit, lambda) {
 	file.name = paste0("MNIST.Barycenter.D", digit, ".L", lambda, ".csv")
 	write.csv(x.bary, file=file.name, row.names=FALSE)
 }
+
 
 ###################
 
@@ -799,6 +812,9 @@ plot.tplan(x.sc[isDigit][[id]], x2.bary, tplan=tr)
 id = 1
 # png(file="MNIST.TrPlan.Ex1.png")
 plot.alltplan(x.sc[isDigit][[id]], x.bary, mid=c(0.01, 0.005))
+# needs the enhanced version of plot.pgrid
+plot.alltplan(x.sc[isDigit][[id]], x.bary, mid=c(0.01, 0.005), col=transparent.col(128))
+
 
 ### Ex 2:
 id = 3
