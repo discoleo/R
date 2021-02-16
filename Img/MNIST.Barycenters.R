@@ -5,7 +5,7 @@
 ###
 ### Barycenters: MNIST
 ###
-### draft v.0.2i
+### draft v.0.2j
 
 
 ### "Imagine"
@@ -17,6 +17,7 @@
 # https://www.r-bloggers.com/2018/01/exploring-handwritten-digit-classification-a-tidy-analysis-of-the-mnist-dataset/
 # - see the respective blog post for the full details on data reshaping;
 # - this implementation uses tensorized functions;
+# - the 2nd part computes Barycenters using the Wasserstein distance;
 
 
 ###############
@@ -24,7 +25,9 @@
 ###############
 ### History ###
 
-### draft v.0.2h - v.02i:
+### draft v.0.2j:
+# - more work on analysis;
+### draft v.0.2h - v.0.2i:
 # - plot transport plan;
 # - added option: mid;
 ### draft v.0.2g:
@@ -130,6 +133,9 @@ image(x[[3]])
 # https://github.com/discoleo/R/blob/master/Img/MNIST.Barycenters.R
 
 ### helper functions
+summary.m = function(x) {
+	summary(as.vector(x))
+}
 sum.m = function(l) {
 	dim = dim(l[[1]])
 	s = matrix(0, nrow=dim[1], ncol=dim[2])
@@ -431,11 +437,24 @@ q.l = 80 # 5.01
 max.q = qcount.m(x, q = 1 - q.l/(WIDTH*WIDTH), round=TRUE)
 head(max.q, 20)
 
+x.big = top.simple(max.q[,1], x, decreasing=T)
+plot.all(x.big)
+
+x.big = top.simple(max.q[,2], x, decreasing=T)
+plot.all(x.big)
+
+
+### Small/Thin digits
 min(max.q$val)
 max.q[max.q$Count < 80, ]
 max.q[max.q$val < 30, ]
 
 image(x[[11]])
+
+q.l = 50
+min.q = qcount.m(x, q = 1 - q.l/(WIDTH*WIDTH), round=TRUE)
+x.small = top.simple(min.q[,2], x, decreasing=F)
+plot.all(x.small)
 
 
 ##################
@@ -456,6 +475,8 @@ x.sc = scale.l(x, max.q$val, doNormalize=T)
 
 image(x.sc[[2]])
 image(x.sc[[52]])
+
+image(x[[2]] / sum(x[[2]]) - x.sc[[2]])
 
 # png(file="Barycenters.Digits.png")
 title.lbl = "Average value of each pixel in 10 MNIST digits"
@@ -599,6 +620,9 @@ if(SAVE_BARYC_IMG) {
 
 ### Wasserstein Distance 
 
+# Near-linear time approximation algorithms for optimal transport via Sinkhorn iteration
+# https://arxiv.org/abs/1705.09634
+
 library(Barycenter)
 ### using "transport"
 library(transport)
@@ -741,9 +765,12 @@ x.bary = bary.f(x.sc[isDigit], lambda=lambda, costm=cost.m(dim(x.sc[[1]]), metho
 
 image(x.bary)
 
+# x.bary = as.matrix(read.csv("MNIST.Barycenter.D7.L300.csv"))
+
+
 # Background Noise
 # - a lot of background noise in the barycenter;
-summary(as.vector(x.bary))
+summary.m(x.bary)
 sum.grey(x.bary, 0.6)
 
 ### Transport Plan: using "transport"
