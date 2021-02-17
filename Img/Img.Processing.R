@@ -5,12 +5,12 @@
 ###
 ### Image Processing: Tools
 ###
-### draft v.0.2a
+### draft v.0.2b
 
 
 ### History
 
-### draft v.0.2a:
+### draft v.0.2a - v.0.2b:
 # - Texture analysis:
 #   initial experiments;
 ### draft v.0.1c:
@@ -162,6 +162,7 @@ setwd(".../Img")
 
 # Load image
 img.str = "Brugia_40x.jpg"
+img.str = "Houses-2085752-0F6D963700000578-924_964x642.jpg"
 img.str = "Circuit_BlurAdaptive.jpg"
 
 img = readImage(img.str)
@@ -328,7 +329,7 @@ diff.offset = function(img, off) {
 	r.dim = dim(img)[1:2] - off;
 	r.m = matrix(0, nrow=r.dim[1], ncol=r.dim[2]);
 
-	for(y in seq(dim(img)[2] - off[2])) {
+	for(y in seq(r.dim[2])) {
 		for(ch in seq(dim(img)[3])) {
 			id = seq(r.dim[1])
 			r.m[id,y] = r.m[id,y] + abs(img[id, y, ch] - img[id + off[1], y + off[2], ch])
@@ -337,9 +338,17 @@ diff.offset = function(img, off) {
 	r.m = round(255 * r.m / 3)
 	invisible(r.m)
 }
+pad = function(img, dim, val=0) {
+	img = rbind(img, matrix(val, nrow=dim[1], ncol=dim(img)[2]));
+	img = cbind(img, matrix(val, ncol=dim[2], nrow=dim(img)[1]));
+	invisible(img)
+}
 table.img = function(img, img.diff, ch=1, div=16) {
-	d.dim = dim(img.diff)[1:2]
-	img.part = img[seq(d.dim[1]), seq(d.dim[2]), ch]
+	isImg1 = missing(img.diff);
+	d.dim = if(isImg1) dim(img)[1:2] else dim(img.diff)[1:2];
+	img.part = if(isImg1 && length(dim(img)) == 2) img else
+		img[seq(d.dim[1]), seq(d.dim[2]), ch];
+	if(isImg1) return(table(round(img.part/div)));
 	table(round(img.part*255/div), round(img.diff/div))
 }
 
@@ -353,4 +362,8 @@ d.m = table.img(img, img.diff, ch=2)
 median(d.m)
 median(d.m[d.m > 0])
 mean(d.m)
+
+
+image(img[,,2] - pad(img.diff, off)/255)
+
 
