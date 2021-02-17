@@ -5,11 +5,14 @@
 ###
 ### Image Processing: Tools
 ###
-### draft v.0.1c
+### draft v.0.2a
 
 
 ### History
 
+### draft v.0.2a:
+# - Texture analysis:
+#   initial experiments;
 ### draft v.0.1c:
 # - "Adaptive" Blur / Quasi-Non-Local Means;
 ### draft v.0.1b:
@@ -246,4 +249,108 @@ dim.len = length(dim(img));
 # but needs a transformed kernel!
 # img2 = Re(fft(x.fft * fft(_transformed_m_), inverse=1)/prod(dim(img)[1:dim.len]))
 
+
+####################
+####################
+
+### Integral Image
+
+
+### Method with cumsum():
+# img.int = array(0, dim(img)[1:2])
+# for(y in seq(dim(img)[2])) {
+#	sum = cumsum(as.vector(img[ , y, 1]))
+#	img.int[ , y] = sum;
+# }
+
+
+integral.img = function(img, ch=1) {
+	img.int = apply(img[,, ch], 2, cumsum)
+	tmp = apply(img.int, 1, cumsum)
+	tmp = rbind(0, tmp[ - dim(img)[2], ])
+	# tmp = rbind(rep(0, dim(img)[1]), tmp[ - dim(img)[2], ])
+	img.int = img.int + t(tmp)
+	return(img.int)
+}
+shift.m = function(m, nrow=0, ncol=0, val=0) {
+	m = m[1:(nrow(m) - nrow), 1:(ncol(m) - ncol)]
+	m = rbind(matrix(val, nrow=nrow, ncol=ncol(m)), m)
+	m = cbind(matrix(val, ncol=ncol, nrow=nrow(m)), m)
+	m
+}
+
+###
+img.int = integral.img(img, ch=2)
+
+
+### Average: 4x7 window
+wd.h = 4; wd.w = 7;
+img.mean = img.int +
+	- cbind(matrix(0, ncol=wd.w, nrow=nrow(img.int)), img.int[, seq(ncol(img.int) - wd.w)]) +
+	- rbind(matrix(0, nrow=wd.h, ncol=ncol(img.int)), img.int[seq(nrow(img.int) - wd.h), ]) +
+	+ shift.m(img.int, wd.h, wd.w)
+display(img.mean / max(img.mean))
+
+
+### Other Test
+x.min = 5
+y.min = 4
+img.int[10,10] - img.int[10, y.min] - img.int[x.min,10] + img.int[x.min, y.min]
+sum(img[(x.min+1):10, (y.min+1):10, 1])
+
+
+### initial Method:
+### 2D
+img.int = array(0, dim(img)[1:2])
+
+for(y in seq(dim(img)[2])) {
+	sum = cumsum(as.vector(img[ , y, 1]))
+	
+	if(y == 1) {
+		img.int[ , 1] = sum;
+	} else {
+		img.int[ , y] = sum + img.int[ , y-1]
+	}
+	if(y %% 20 == 1) print(y)
+}
+
+img.int[10,10] - img.int[10,4] - img.int[4,10] + img.int[4,4]
+sum(img[5:10, 5:10, 1])
+
+
+#######################
+#######################
+
+
+### Texture Analysis
+
+diff.offset = function(img, off) {
+	r.dim = dim(img)[1:2] - off;
+	r.m = matrix(0, nrow=r.dim[1], ncol=r.dim[2]);
+
+	for(y in seq(dim(img)[2] - off[2])) {
+		for(ch in seq(dim(img)[3])) {
+			id = seq(r.dim[1])
+			r.m[id,y] = r.m[id,y] + abs(img[id, y, ch] - img[id + off[1], y + off[2], ch])
+		}
+	}
+	r.m = round(255 * r.m / 3)
+	invisible(r.m)
+}
+table.img = function(img, img.diff, ch=1, div=16) {
+	d.dim = dim(img.diff)[1:2]
+	img.part = img[seq(d.dim[1]), seq(d.dim[2]), ch]
+	table(round(img.part*255/div), round(img.diff/div))
+}
+
+
+off = c(5, 3)
+img.diff = diff.offset(img, off)
+image(img.diff)
+
+
+d.m = table.img(img, img.diff, ch=2)
+median(d.m)
+median(d.m[d.m > 0])
+mean(d.m)
 
