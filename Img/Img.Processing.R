@@ -5,14 +5,15 @@
 ###
 ### Image Processing: Tools
 ###
-### draft v.0.2c
+### draft v.0.2d
 
 
 ### History
 
-### draft v.0.2c:
+### draft v.0.2c - v.0.2d:
 # - wapply: apply to window;
 #   e.g. MaxPool done correctly;
+# - apply quantiles & display modified image;
 ### draft v.0.2a - v.0.2b:
 # - Texture analysis:
 #   initial experiments;
@@ -393,6 +394,31 @@ wapply = function(d, window, FUN, diagonal, ...) {
 	d.dim = dim(d)
 	outer(seq(d.dim[1] - wnd[1]), seq(d.dim[2] - wnd[2]), f)
 }
+display.apply = function(img, wnd, ch=1, FUN, ...) {
+	dm = dim(img)
+	if(length(dm) >= 3) {
+		# operations on native img are VERY SLOW!
+		# TODO: debug!
+		# workaround: => to matrix;
+		ch.img = matrix(img[,,ch], nrow=dm[1], ncol=dm[2]);
+		tx.v = wapply(ch.img, wnd, FUN=FUN, ...)
+	} else {
+		tx.v = wapply(img[,], wnd, FUN=FUN, ...)
+	}
+	print(summary(as.vector(tx.v)))
+	#
+	img2 = img
+	img2[,,ch] = pad(tx.v, wnd)
+	print(display(img2, method="browser"))
+	invisible(tx.v)
+}
+display.combimg = function(img, ch.img, wnd=c(0,0), ch=1) {
+	img2 = img
+	img2[,,ch] = pad(ch.img, wnd)
+	displ = EBImage::display(img2, method="browser", embed=T)
+	print(displ)
+	invisible(displ)
+}
 
 wnd = c(5, 5)
 # "MaxPool" done correctly
@@ -401,4 +427,17 @@ summary(as.vector(tx.max))
 
 image(tx.max)
 display(tx.max/255)
+
+
+tx.v = wapply(img.diff, wnd, FUN=quantile, probs=0.9, names=F)
+summary(as.vector(tx.v))
+display(tx.v/255)
+display(img[,,1] - pad(tx.v/255, wnd+off, 0))
+
+
+tx.v = display.apply(img, wnd, FUN=quantile, probs=0.9, names=F)
+tx.v = display.apply(img, wnd, FUN=quantile, probs=0.25, names=F)
+
+tx.v = display.apply(img, wnd, FUN=min)
+
 
