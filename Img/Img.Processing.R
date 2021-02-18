@@ -5,11 +5,14 @@
 ###
 ### Image Processing: Tools
 ###
-### draft v.0.2b
+### draft v.0.2c
 
 
 ### History
 
+### draft v.0.2c:
+# - wapply: apply to window;
+#   e.g. MaxPool done correctly;
 ### draft v.0.2a - v.0.2b:
 # - Texture analysis:
 #   initial experiments;
@@ -164,6 +167,7 @@ setwd(".../Img")
 img.str = "Brugia_40x.jpg"
 img.str = "Houses-2085752-0F6D963700000578-924_964x642.jpg"
 img.str = "Circuit_BlurAdaptive.jpg"
+img.str = "Corn_Maize_Corncobs.jpg"
 
 img = readImage(img.str)
 
@@ -358,12 +362,43 @@ img.diff = diff.offset(img, off)
 image(img.diff)
 
 
-d.m = table.img(img, img.diff, ch=2)
+d.m = table.img(img, img.diff, ch=1)
 median(d.m)
 median(d.m[d.m > 0])
 mean(d.m)
 
+table.img(img.diff)
 
 image(img[,,2] - pad(img.diff, off)/255)
 
+
+###################
+
+### WAPPLY
+
+wapply = function(d, window, FUN, diagonal, ...) {
+	wnd = window;
+	if(length(wnd) < 2) wnd = c(wnd, wnd);
+	noDiagonal = missing(diagonal);
+	hasDiagonal = (! noDiagonal) && any(diagonal != 0);
+	f = function(i, j) {
+		r = rep(0, length(i))
+		if(hasDiagonal) r[i == j] = diagonal;
+		isUpper = if(noDiagonal) TRUE else (i > j);
+		i2 = i[isUpper]; j2 = j[isUpper];
+		r[isUpper] = sapply(seq(length(i2)), function(id)
+			FUN(d[i2[id]:(i2[id] + wnd[1]), j2[id]:(j2[id] + wnd[2])], ...))
+		return(r)
+	}
+	d.dim = dim(d)
+	outer(seq(d.dim[1] - wnd[1]), seq(d.dim[2] - wnd[2]), f)
+}
+
+wnd = c(5, 5)
+# "MaxPool" done correctly
+tx.max = wapply(img.diff, wnd, FUN=max)
+summary(as.vector(tx.max))
+
+image(tx.max)
+display(tx.max/255)
 
