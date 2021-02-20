@@ -7,7 +7,7 @@
 ### Differential Equations
 ### ODEs - Logarithms
 ###
-### draft v.0.1c-fix
+### draft v.0.1c-fix2
 
 
 ### ODEs Derived from Logarithms
@@ -232,15 +232,15 @@ y = (log(x^2 + a))^2 + (log(x^2 + b))^2
 4*(3*x^2 + b)*log(x^2 + a) + 4*(3*x^2 + a)*log(x^2 + b) +
 	+ 8*x^2*(x^2+b) / (x^2 + a) + 8*x^2*(x^2+a) / (x^2 + b)
 ### Solve Linear system:
-# T = 8*x^2*(x^2+b) / (x^2 + a) + 8*x^2*(x^2+a) / (x^2 + b);
+# T = 8*x^2*(x^2+b) / (x^2 + a) + 8*x^2*(x^2+a) / (x^2 + b) - D((x^2+a)*(x^2+b))*dy;
 log(x^2 + a) =
-	(x*(x^2+a)*d2y - (3*x^2 + a)*dy - x*(x^2+a)*T) / (8*(a-b)*x^3)
+	(x*(x^2+a)^2*(x^2+b)*d2(...) - (3*x^2 + a)*dy - x*(x^2+a)*T) / (8*(a-b)*x^3)
 log(x^2 + b) =
-	(x*(x^2+b)*d2y - (3*x^2 + b)*dy - x*(x^2+b)*T) / -(8*(a-b)*x^3)
+	(x*(x^2+b)^2*(x^2+a)*d2(...) - (3*x^2 + b)*dy - x*(x^2+b)*T) / -(8*(a-b)*x^3)
 # TODO: check!
 
 ### ODE:
 y +
-	(x*(x^2+a)*d2y - (3*x^2 + a)*dy - x*(x^2+a)*T) *
-	(x*(x^2+b)*d2y - (3*x^2 + b)*dy - x*(x^2+b)*T) / (64*x^6) # = 0
+	(x*(x^2+a)^2*(x^2+b)*d2y - (3*x^2 + a)*dy - x*(x^2+a)*T) *
+	(x*(x^2+b)^2*(x^2+a)*d2y - (3*x^2 + b)*dy - x*(x^2+b)*T) / (64*x^6) # = 0
 
