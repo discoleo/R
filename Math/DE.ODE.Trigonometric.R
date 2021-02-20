@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs - Trigonometric
 ###
-### draft v.0.3c-pre
+### draft v.0.3d-pre
 
 
 ### History
@@ -37,6 +37,8 @@
 ### Order 1 & 2 Non-Liniar:
 ### Trigonometric Variants
 ###
+### draft v.0.3d-pre:
+# - ODE: d2y + n^2*x^(2*n-2)*y = n*x^(n-1);
 ### draft v.0.3c-pre:
 # - derived from:
 #   y = I(sin(x^n)) * I(cos(x^n));
@@ -1119,3 +1121,19 @@ Is = (n*x^(n-1)*cos(x^n)*dy - sin(x^n)*d2y + sin(x^n)*sin(2*x^n));
 Ic = (n*x^(n-1)*sin(x^n)*dy + cos(x^n)*d2y - cos(x^n)*sin(2*x^n));
 # TODO: check;
 
+
+#########################
+#########################
+
+### y = sin(x^n) * I(cos(x^n)) - cos(x^n) * I(sin(x^n))
+
+### D(y)
+n*x^(n-1)*cos(x^n) * Ic + n*x^(n-1)*sin(x^n) * Is
+
+### D2(y)
+n*x^(n-1) - n^2*x^(2*n-2)*(sin(x^n) * Ic - cos(x^n) * Is)
+n*x^(n-1) - n^2*x^(2*n-2)*y
+# TODO: check;
+
+### ODE:
+d2y + n^2*x^(2*n-2)*y - n*x^(n-1) # = 0
