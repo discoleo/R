@@ -7,7 +7,7 @@
 ### Differential Equations
 ### ODEs - Logarithms
 ###
-### draft v.0.1a
+### draft v.0.1a-fix
 
 
 ### ODEs Derived from Logarithms
@@ -60,36 +60,45 @@ log(x^n + a) + log(x^n + b) = (dy - n*T) / (m*x^(m-1));
 ###
 (x^n + a)*(x^n + b) * dy +
 	- m*x^(m-1)*(x^n + a)*(x^n + b)*(log(x^n + a) + log(x^n + b)) +
-	- n*x^(n-1)*(2*x^(m+n) + (a+b)*x^m - c*(a-b))
+	- n*x^(n-1)*(2*x^(m+n) + (a+b)*x^m - c*(a-b));
+T(x) = x^(n-1)*(2*x^(m+n) + (a+b)*x^m - c*(a-b)) / ((x^n + a) * (x^n + b))
 
 ### D2(y)
-# TODO: correct
-(x^n + a)*(x^n + b) * d2y + n*x^(n-1)*(2*x^n + a + b) * dy +
+(x^n + a)*(x^n + b) * d2y.x + n*x^(n-1)*(2*x^n + a + b) * dy.x +
 	- (m*(m-1)*x^(m-2)*(x^n + a)*(x^n + b) + m*n*x^(m+n-2)*(2*x^n + a + b)) *
 		(log(x^n + a) + log(x^n + b)) +
-	- n*(n-1)*x^(n-2)*(2*x^(m+n) + (a+b)*x^m - c*(a-b)) +
-	- n*x^(m+n-2)*(2*(m+n)*x^n + m*(a+b))
-(x^n + a)*(x^n + b) * d2y + # TODO: Error: - n*T !
-	- ((m-1)*x^(-1)*(x^n + a)*(x^n + b)) * dy +
-	# TODO: Error: expand - n*T !
-	- n * T * (m*(m-1)*x^(m-2)*(x^n + a)*(x^n + b) + m*n*x^(m+n-2)*(2*x^n + a + b)) +
-	- n*(n-1)*x^(n-2)*(2*x^(m+n) + (a+b)*x^m - c*(a-b)) +
-	- n*x^(m+n-2)*(2*(m+n)*x^n + m*(a+b))
+	- n*x^(m+n-2)*(2*m*x^n + m*(a + b)) +
+	- n*x^(m+n-2)*(2*(m+n)*x^n + m*(a+b)) +
+	- n*(n-1)*x^(n-2)*(2*x^(m+n) + (a+b)*x^m - c*(a-b))
+(x^n + a)*(x^n + b) * d2y.x + n*x^(n-1)*(2*x^n + a + b) * dy.x +
+	- (m*(m-1)*x^(m-2)*(x^n + a)*(x^n + b) + m*n*x^(m+n-2)*(2*x^n + a + b)) *
+		(log(x^n + a) + log(x^n + b)) +
+	- n*x^(m+n-2)*(2*(2*m+2*n-1)*x^n + (2*m+n-1)*(a+b)) +
+	+ n*(n-1)*c*(a-b)*x^(n-2)
+x*(x^n + a)*(x^n + b) * d2y + n*x^n*(2*x^n + a + b) * dy +
+	- ((m-1)*(x^n + a)*(x^n + b) + n*x^n*(2*x^n + a + b)) *
+		(dy - n*T) +
+	- n*x^(m+n-1)*(2*(2*m+2*n-1)*x^n + (2*m+n-1)*(a+b)) +
+	+ n*(n-1)*c*(a-b)*x^(n-1)
+x*(x^n + a)*(x^n + b) * d2y +
+	- (m-1)*x^n*(x^n + (a+b)) * dy  - (m-1)*a*b*dy + # - (m-1)*(x^n+a)*(x^n+b)*dy
+	+ n*((m-1)*(x^n + a)*(x^n + b) + n*x^n*(2*x^n + a + b)) * T +
+	- n*x^(m+n-1)*(2*(2*m+2*n-1)*x^n + (2*m+n-1)*(a+b)) +
+	+ n*(n-1)*c*(a-b)*x^(n-1)
+x*(x^n + a)*(x^n + b) * d2y.x +
+	- (m-1)*(x^n + a)*(x^n + b)*dy.x +
+	- n*x^(m+n-1)*(2*(m+2*n)*x^n + (m+n)*(a+b)) +
+	+ n*(n-m)*c*(a-b)*x^(n-1) +
+	+ n^2*x^n*(2*x^n + a + b) * T
 
 
 ### Example 1:
 m = 2
-#
-x*(x^n + a)*(x^n + b) * d2y +
-	- (x^n + a)*(x^n + b) * dy +
-	- 2*c*(a-b)*n*(2*n+1)*x^(2*n+1) +
-	- (a+b)*n*(n+1)*x^(n+1) + n*(n-1)*x^(n-1)
-	- n * T * (2*(x^n + a)*(x^n + b) + 2*n*x^n*(2*x^n + a + b))
+# TODO
 
 ### m = 2; a+b = 0;
-x*(x^n + a)*(x^n - a) * d2y +
-	- (x^n + a)*(x^n - a) * dy +
-	- 4*c*a*n*(2*n+1)*x^(2*n+1) + n*(n-1)*x^(n-1)
+# TODO
+
 
 ### Solution & Plot:
 y = function(x, a, b=-a, ct=0, n=2, m=2) {
@@ -100,7 +109,7 @@ y = function(x, a, b=-a, ct=0, n=2, m=2) {
 }
 dy = function(x, a, b=-a, ct=0, n=2, m=2) {
 	xm = x^m; xn = x^n;
-	# y.x = y(x, a=a, b=b, c=c, n=n, m=m);
+	# y.x = y(x, a=a, b=b, ct=ct, n=n, m=m);
 	x.prod = (xn + a)*(xn + b);
 	div = x;
 	Tnx = n*xn*(2*xm*xn + (a+b)*xm - ct*(a-b)) / (x.prod);
@@ -109,16 +118,39 @@ dy = function(x, a, b=-a, ct=0, n=2, m=2) {
 	return(dp)
 }
 d2y = function(x, a, b=-a, ct=0, n=2, m=2) {
-	# TODO: need to correct first formulas;
+	xm = x^m; xn = x^n;
+	x.prod = (xn + a)*(xn + b);
+	### T
+	div = x * x.prod
+	T = xn*(2*xm*xn + (a+b)*xm - ct*(a-b)) / div;
+	### d2y
+	# y.x  =  y(x, a=a, b=b, ct=ct, n=n, m=m);
+	dy.x = dy(x, a=a, b=b, ct=ct, n=n, m=m);
+	d2p =
+	(m-1) * x.prod * dy.x +
+		+ n*(xm*(2*(m+2*n)*xn + (m+n)*(a+b)) - (n-m)*ct*(a-b)) * xn / x +
+		- n^2*xn*(2*xn + a + b) * T;
+	d2p / div;
 }
 ### Plot:
 n = 2; m = 2;
 a = 1; b = -a;
 ct = 2;
-px = 5/7 + (1:3)*3/7
+px = 6/7 + (1:4)*2/7
 curve(y(x, a=a, b=b, ct=ct, n=n, m=m), from= 1, to = 2.5, ylim=c(-2,20))
 sapply(px, line.tan, dx=3, p=y, dp=dy, a=a, b=b, ct=ct, n=n, m=m)
 # x*log(x)-like:
 curve(dy(x, a=a, b=b, ct=ct, n=n, m=m), add=T, col="green")
 sapply(px, line.tan, dx=3, p=dy, dp=d2y, a=a, b=b, ct=ct, n=n, m=m, col="orange")
 
+
+### Ex 2:
+n = 2; m = 1/2;
+a = 1; b = 3/2;
+ct = 2;
+px = 6/7 + c(1, 4)*2/7
+curve(y(x, a=a, b=b, ct=ct, n=n, m=m), from= 1, to = 2.5, ylim=c(1/2,7))
+sapply(px, line.tan, dx=3, p=y, dp=dy, a=a, b=b, ct=ct, n=n, m=m)
+#
+curve(dy(x, a=a, b=b, ct=ct, n=n, m=m), add=T, col="green")
+sapply(px, line.tan, dx=3, p=dy, dp=d2y, a=a, b=b, ct=ct, n=n, m=m, col="orange")
