@@ -7,7 +7,7 @@
 ### Differential Equations
 ### ODEs - Logarithms
 ###
-### draft v.0.1b-fix
+### draft v.0.1b-trig
 
 
 ### ODEs Derived from Logarithms
@@ -177,4 +177,36 @@ y = (x^2 + k*x)*log(x^n + a) + (x^2 - k*x)*log(x^n + b)
 	+ n*x^(n-1)*(2*x+k) / (x^n+a) + n*x^(n-1)*(2*x-k) / (x^n+b) +
 	+ D( n*x^n*(2*x^(n+1) + (a+b)*x - k*(a-b))/((x^n+a)*(x^n+b)) );
 # TODO: ...
+
+
+############
+### Example:
+y = x^3*log(x^n + a) + x^2*log(x^n + b)
+
+### D(y)
+3*x^2*log(x^n + a) + 2*x*log(x^n + b) + n*x^(n+2)/(x^n+a) + n*x^(n+1)/(x^n+b)
+
+### D2(y)
+6*x*log(x^n + a) + 2*log(x^n + b) +
+	+ 3*n*x^(n+1) / (x^n + a) + 2*n*x^n / (x^n + b) +
+	+ D( n*x^(n+2)/(x^n+a) + n*x^(n+1)/(x^n+b) )
+2*(2*dy - 3*y) / x^2 +
+	+ 3*n*x^(n+1) / (x^n + a) + 2*n*x^n / (x^n + b) +
+	+ D( n*x^(n+2)/(x^n+a) + n*x^(n+1)/(x^n+b) )
+
+
+############
+### Example:
+y = sin(x)*log(p1) + cos(x)*log(p2)
+
+### D(y)
+cos(x)*log(p1) - sin(x)*log(p2) + sin(x) / p1 * dp1 + cos(x) / p2 * dp2
+
+### D2(y)
+- sin(x)*log(p1) - cos(x)*log(p2) +
+	+ cos(x) / p1 * dp1 - sin(x) / p2 * dp2 +
+	D( sin(x) / p1 * dp1 + cos(x) / p2 * dp2 )
+- y +
+	+ cos(x) / p1 * dp1 - sin(x) / p2 * dp2 +
+	D( sin(x) / p1 * dp1 + cos(x) / p2 * dp2 )
 
