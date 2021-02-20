@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs - Trigonometric
 ###
-### draft v.0.3d-pre
+### draft v.0.3d
 
 
 ### History
@@ -37,8 +37,8 @@
 ### Order 1 & 2 Non-Liniar:
 ### Trigonometric Variants
 ###
-### draft v.0.3d-pre:
-# - ODE: d2y + n^2*x^(2*n-2)*y = n*x^(n-1);
+### draft v.0.3d-pre - v.0.3d:
+# - ODE: x*d2y - (n-1)*dy + n^2*x^(2*n-1)*y = n*x^n; [fixed]
 ### draft v.0.3c-pre:
 # - derived from:
 #   y = I(sin(x^n)) * I(cos(x^n));
@@ -1131,9 +1131,65 @@ Ic = (n*x^(n-1)*sin(x^n)*dy + cos(x^n)*d2y - cos(x^n)*sin(2*x^n));
 n*x^(n-1)*cos(x^n) * Ic + n*x^(n-1)*sin(x^n) * Is
 
 ### D2(y)
-n*x^(n-1) - n^2*x^(2*n-2)*(sin(x^n) * Ic - cos(x^n) * Is)
-n*x^(n-1) - n^2*x^(2*n-2)*y
-# TODO: check;
+n*x^(n-1) - n^2*x^(2*n-2)*(sin(x^n) * Ic - cos(x^n) * Is) + (n-1) * dy / x
+n*x^(n-1) - n^2*x^(2*n-2)*y + (n-1) * dy / x
 
 ### ODE:
-d2y + n^2*x^(2*n-2)*y - n*x^(n-1) # = 0
+x*d2y - (n-1)*dy + n^2*x^(2*n-1)*y - n*x^n # = 0
+
+### Solution & Plot:
+y.sin = function(x, n=2, lower=0) {
+	sapply(x, function(upper)
+		integrate(function(x) sin(x^n), lower=lower, upper=upper)$value )
+}
+y.cos = function(x, n=2, lower=0) {
+	sapply(x, function(upper)
+		integrate(function(x) cos(x^n), lower=lower, upper=upper)$value )
+}
+y = function(x, n=2, lower=0) {
+	xn = x^n
+	I.s = y.sin(x, n=n, lower=lower)
+	I.c = y.cos(x, n=n, lower=lower)
+	r = sin(xn)*I.c - cos(xn)*I.s;
+	return(r)
+}
+dy = function(x, n=2, lower=0) {
+	I.s = y.sin(x, n=n, lower=lower)
+	I.c = y.cos(x, n=n, lower=lower)
+	xn = x^n;
+	r = n*xn*cos(xn) * I.c + n*xn*sin(xn) * I.s
+	div = x;
+	r = ifelse(div != 0, r / div, 0) # TODO: check!
+	return(r)
+}
+d2y = function(x, n=2, lower=0) {
+	y.x = y(x, n=n, lower=0)
+	dy.x = dy(x, n=n, lower=0)
+	xn = x^n;
+	#
+	dp  = (n-1)*dy.x - n^2*x^(2*n-1)*y.x + n*xn;
+	div = x;
+	dp = ifelse(div != 0, dp / div, 0); # TODO: needs correction!
+	return(dp)
+}
+### Plot:
+n = 2; lim=3.5;
+x.px = c(-5:7 * 3/7)
+curve(y(x, n=n), from= -3, to = 3, ylim=c(-lim, lim))
+sapply(x.px, line.tan, dx=1.5, p=y, dp=dy, n=n)
+#
+curve(dy(x, n=n), add=T, col="green")
+sapply(x.px, line.tan, dx=1.5, p=dy, dp=d2y, n=n, col="orange")
+
+
+#########
+### Ex 2:
+n = 3; lim=3.5;
+x.px = c(-5:5 * 3/7)
+curve(y(x, n=n), from= -2.5, to = 2.5, ylim=c(-lim, lim))
+sapply(x.px, line.tan, dx=1.5, p=y, dp=dy, n=n)
+#
+curve(dy(x, n=n), add=T, col="green")
+sapply(x.px, line.tan, dx=1.5, p=dy, dp=d2y, n=n, col="orange")
+
+
