@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs - Gaussian
 ###
-### draft v.0.3b
+### draft v.0.3c
 
 #############
 ### Types ###
@@ -30,6 +30,9 @@
 
 ### Liniar / Non-Liniar Gaussian-type
 ###
+### draft v.0.3c:
+# - derived from:
+#   y = sin(x^n) * exp(-x^n);
 ### draft v.0.3b:
 # - more variants & examples;
 ### draft v.0.3a:
@@ -85,7 +88,7 @@ source("DE.ODE.Helper.R")
 ### Theory ###
 ##############
 
-### by Integration
+### Section A: by Integration
 
 ### Base:
 # y = e^f(x) + b(x);
@@ -95,6 +98,18 @@ source("DE.ODE.Helper.R")
 # y = df * I(y) - I(d2f * I(y)) + b - I(df*b);
 ### z = I(y):
 # dz = df*z - I(d2f * z) + b - I(df*b);
+
+
+### Section B: Mixt
+
+### B.1. Mixt Liniar
+### y = e^(F1(x)) + e^(F2(x))
+
+### B.2. Mixt Exponential-Trigonometric
+### y = sin(F1(x)) * exp(-F1(x))
+
+### B.3. Mixt Non-Liniar
+### y = Integral(exp(F1(x))) * Integral(exp(-F1(x)))
 
 
 ####################
@@ -289,11 +304,17 @@ curve(dy(x), add=T, col="green")
 sapply(c(0:3 * 3/4), line.tan, dx=3, p=dy, dp=d2y, col="orange")
 
 
-####################
-####################
+#######################
+#######################
 
-####################
-### Combinations ###
+#######################
+### Section B: Mixt ###
+#######################
+
+################
+### Section B.1:
+
+### Liniar Combinations
 
 ### y = a2*e^(-x^2) + a3*e^(-x^3)
 # [not run]
@@ -653,8 +674,88 @@ curve(dy(x, k=k), add=T, col="green")
 sapply(c(-3:3 * 2/7), line.tan, dx=3, p=dy, dp=d2y, k=k, variant=2, col="orange")
 
 
-###################
-###################
+####################
+####################
+
+####################
+### Section B.2. ###
+####################
+
+### Mixt Exp-Trig
+
+### y = sin(F(x)) * exp(-F(x))
+
+### Examples:
+
+### y = sin(x^n) * exp(-x^n)
+
+### D(y)
+n*x^(n-1)*cos(x^n)*exp(-x^n) - n*x^(n-1)*sin(x^n)*exp(-x^n)
+n*x^(n-1)*cos(x^n)*exp(-x^n) - n*x^(n-1) * y
+# n*x^(n-1)*cos(x^n)*exp(-x^n) =
+dy + n*x^(n-1) * y
+
+### D2(y)
+n*(n-1)*x^(n-2)*cos(x^n)*exp(-x^n) +
+	- n^2*x^(2*n-2)*sin(x^n)*exp(-x^n) +
+	- n^2*x^(2*n-2)*cos(x^n)*exp(-x^n) +
+	- n*x^(n-1) * dy - n*(n-1)*x^(n-2) * y
+(n-1)*(dy + n*x^(n-1) * y) / x +
+	- n*x^(n-1) * (dy + n*x^(n-1) * y) +
+	- n*x^(n-1) * dy +
+	- n^2*x^(2*n-2) * y - n*(n-1)*x^(n-2) * y
+
+### ODE:
+x*d2y - (n-1)*dy + 2*n*x^n*dy + 2*n^2*x^(2*n-1)*y
+
+### Examples
+### n = 2
+x*d2y - dy + 4*x^2*dy + 8*x^3*y # = 0
+
+
+### Solution & Plot:
+y = function(x, n=2) {
+	xn = if(n == 1) x else x^n;
+	y = sin(xn) * exp(-xn);
+	return(y)
+}
+dy = function(x, n=2) {
+	xn = if(n == 1) x else x^n;
+	x.e = exp(-xn);
+	dp = n*xn*x.e*(cos(xn) - sin(xn))
+	div = x;
+	dp = ifelse(div != 0, dp / div,
+		if(n > 1) 0 else if(n == 1) 1 else -Inf); # probably correct
+	return(dp)
+}
+d2y = function(x, n=2) {
+	# variant = test equations for variants;
+	y.x = y(x, n=n)
+	dy.x = dy(x, n=n)
+	xn = if(n == 1) x else x^n;
+	dp = (n-1)*x*dy.x - 2*n*x*xn*dy.x - 2*n^2*xn*xn*y.x;
+	div = x*x;
+	dp = ifelse(div != 0, dp / div,
+		if(n > 1) 1 else if(n == 1) 1 else -Inf); # TODO: correct
+	return(dp)
+}
+### Plot:
+n = 2;
+x.px = c(-4:4 * 4/7)
+curve(y(x, n=n), from= -3, to = 3, ylim=c(-0.5, 0.5))
+sapply(x.px, line.tan, dx=2, p=y, dp=dy, n=n)
+# wave
+curve(dy(x, n=n), add=T, col="green")
+sapply(x.px, line.tan, dx=1.25, p=dy, dp=d2y, n=n, col="orange")
+
+
+
+####################
+####################
+
+####################
+### Section B.3. ###
+####################
 
 ################
 ### Combined ###
