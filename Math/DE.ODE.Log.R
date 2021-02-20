@@ -7,7 +7,7 @@
 ### Differential Equations
 ### ODEs - Logarithms
 ###
-### draft v.0.1b-trig
+### draft v.0.1c
 
 
 ### ODEs Derived from Logarithms
@@ -209,4 +209,33 @@ cos(x)*log(p1) - sin(x)*log(p2) + sin(x) / p1 * dp1 + cos(x) / p2 * dp2
 - y +
 	+ cos(x) / p1 * dp1 - sin(x) / p2 * dp2 +
 	D( sin(x) / p1 * dp1 + cos(x) / p2 * dp2 )
+
+
+#########################
+#########################
+
+
+### Section B: Non-Linear ODEs
+
+### Derived from:
+### y = (log(P1(x)))^2 + (log(P2(x)))^2
+
+### Example:
+y = (log(x^3 + a))^2 + (log(x^2 + b))^2
+
+### D(y)
+6*x^2*log(x^3 + a) + 4*x*log(x^2 + b)
+
+### D2(y)
+12*x*log(x^3 + a) + 4*log(x^2 + b) +
+	+ 18*x^4 / (x^3 + a) + 8*x^2 / (x^2 + b)
+### Solve Linear system:
+# T = 18*x^4 / (x^3 + a) + 8*x^2 / (x^2 + b);
+log(x^3 + a) =
+	(x*d2y - dy - x*T) / (6*x^2)
+log(x^2 + b) =
+	(x*d2y - 2*dy - x*T) / (-4*x^2)
+
+### ODE:
+y + (x*d2y - dy - x*T)*(x*d2y - 2*dy - x*T) / (24*x^4) # = 0
 
