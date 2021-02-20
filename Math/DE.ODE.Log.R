@@ -7,7 +7,7 @@
 ### Differential Equations
 ### ODEs - Logarithms
 ###
-### draft v.0.1b
+### draft v.0.1b-fix
 
 
 ### ODEs Derived from Logarithms
@@ -164,17 +164,17 @@ sapply(px, line.tan, dx=3, p=dy, dp=d2y, a=a, b=b, ct=ct, n=n, m=m, col="orange"
 y = (x^2 + k*x)*log(x^n + a) + (x^2 - k*x)*log(x^n + b)
 
 ### D(y)
-(2*x + k)*log(x^n + a) + (2*x - k)*log(x^n + b) + n*x^n*((x^n+k)/(x^n+a) + (x^n-k)/(x^n+b))
+(2*x + k)*log(x^n + a) + (2*x - k)*log(x^n + b) + n*x^n*((x+k)/(x^n+a) + (x-k)/(x^n+b))
 (2*x + k)*log(x^n + a) + (2*x - k)*log(x^n + b) +
-	+ n*x^n*(2*x^(2*n) + (a+b)*x^n - k*(a-b))/((x^n+a)*(x^n+b))
+	+ n*x^n*(2*x^(n+1) + (a+b)*x - k*(a-b))/((x^n+a)*(x^n+b))
 
 ### D2(y)
 2*(log(x^n + a) + log(x^n + b)) +
-	+ n*x^(n-1)*(2*x+k) / (x^n+a) + n*x^(n-1)*(2*x-k) (x^n+b) +
-	+ D( n*x^n*(2*x^(2*n) + (a+b)*x^n - k*(a-b))/((x^n+a)*(x^n+b)) );
+	+ n*x^(n-1)*(2*x+k) / (x^n+a) + n*x^(n-1)*(2*x-k) / (x^n+b) +
+	+ D( n*x^n*(2*x^(n+1) + (a+b)*x - k*(a-b))/((x^n+a)*(x^n+b)) );
 2*(x*dy - y) / x^2 +
-	- n*x^(n-1)*(2*x^(2*n) + (a+b)*x^n - k*(a-b))/((x^n+a)*(x^n+b)) + # from x*dy
-	+ n*x^(n-1)*(2*x+k) / (x^n+a) + n*x^(n-1)*(2*x-k) (x^n+b) +
-	+ D( n*x^n*(2*x^(2*n) + (a+b)*x^n - k*(a-b))/((x^n+a)*(x^n+b)) );
+	- n*x^(n-1)*(2*x^(n+1) + (a+b)*x - k*(a-b))/((x^n+a)*(x^n+b)) + # from x*dy
+	+ n*x^(n-1)*(2*x+k) / (x^n+a) + n*x^(n-1)*(2*x-k) / (x^n+b) +
+	+ D( n*x^n*(2*x^(n+1) + (a+b)*x - k*(a-b))/((x^n+a)*(x^n+b)) );
 # TODO: ...
 
