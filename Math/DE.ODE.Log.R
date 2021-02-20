@@ -7,7 +7,7 @@
 ### Differential Equations
 ### ODEs - Logarithms
 ###
-### draft v.0.1a-fix
+### draft v.0.1b
 
 
 ### ODEs Derived from Logarithms
@@ -39,6 +39,8 @@ source("DE.ODE.Helper.R")
 
 ### Examples:
 ### y = (x^m + c)*log(x^n + a) + (x^m - c)*log(x^n + b)
+# - simplifies massively & eliminates y from D2(y);
+# - does NOT simplify when: F1 - F2 != constant;
 
 ### D(y)
 # [not run]
@@ -85,11 +87,12 @@ x*(x^n + a)*(x^n + b) * d2y +
 	+ n*((m-1)*(x^n + a)*(x^n + b) + n*x^n*(2*x^n + a + b)) * T +
 	- n*x^(m+n-1)*(2*(2*m+2*n-1)*x^n + (2*m+n-1)*(a+b)) +
 	+ n*(n-1)*c*(a-b)*x^(n-1)
-x*(x^n + a)*(x^n + b) * d2y.x +
-	- (m-1)*(x^n + a)*(x^n + b)*dy.x +
+x*(x^n + a)*(x^n + b) * d2y +
+	- (m-1)*(x^n + a)*(x^n + b)*dy +
 	- n*x^(m+n-1)*(2*(m+2*n)*x^n + (m+n)*(a+b)) +
 	+ n*(n-m)*c*(a-b)*x^(n-1) +
 	+ n^2*x^n*(2*x^n + a + b) * T
+# D(D(y) / x^(m-1)) = ... * x^(m-1) / (x*(x^n + a)*(x^n + b));
 
 
 ### Example 1:
@@ -154,3 +157,24 @@ sapply(px, line.tan, dx=3, p=y, dp=dy, a=a, b=b, ct=ct, n=n, m=m)
 #
 curve(dy(x, a=a, b=b, ct=ct, n=n, m=m), add=T, col="green")
 sapply(px, line.tan, dx=3, p=dy, dp=d2y, a=a, b=b, ct=ct, n=n, m=m, col="orange")
+
+
+############
+### Example:
+y = (x^2 + k*x)*log(x^n + a) + (x^2 - k*x)*log(x^n + b)
+
+### D(y)
+(2*x + k)*log(x^n + a) + (2*x - k)*log(x^n + b) + n*x^n*((x^n+k)/(x^n+a) + (x^n-k)/(x^n+b))
+(2*x + k)*log(x^n + a) + (2*x - k)*log(x^n + b) +
+	+ n*x^n*(2*x^(2*n) + (a+b)*x^n - k*(a-b))/((x^n+a)*(x^n+b))
+
+### D2(y)
+2*(log(x^n + a) + log(x^n + b)) +
+	+ n*x^(n-1)*(2*x+k) / (x^n+a) + n*x^(n-1)*(2*x-k) (x^n+b) +
+	+ D( n*x^n*(2*x^(2*n) + (a+b)*x^n - k*(a-b))/((x^n+a)*(x^n+b)) );
+2*(x*dy - y) / x^2 +
+	- n*x^(n-1)*(2*x^(2*n) + (a+b)*x^n - k*(a-b))/((x^n+a)*(x^n+b)) + # from x*dy
+	+ n*x^(n-1)*(2*x+k) / (x^n+a) + n*x^(n-1)*(2*x-k) (x^n+b) +
+	+ D( n*x^n*(2*x^(2*n) + (a+b)*x^n - k*(a-b))/((x^n+a)*(x^n+b)) );
+# TODO: ...
+
