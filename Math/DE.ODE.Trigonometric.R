@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs - Trigonometric
 ###
-### draft v.0.3d
+### draft v.0.3e
 
 
 ### History
@@ -37,6 +37,9 @@
 ### Order 1 & 2 Non-Liniar:
 ### Trigonometric Variants
 ###
+### draft v.0.3e:
+# - extension of [v.0.3d] to cases derived from:
+#   sin(x^n + k*x);
 ### draft v.0.3d-pre - v.0.3d:
 # - ODE: x*d2y - (n-1)*dy + n^2*x^(2*n-1)*y = n*x^n; [fixed]
 ### draft v.0.3c-pre:
@@ -1137,6 +1140,7 @@ n*x^(n-1) - n^2*x^(2*n-2)*y + (n-1) * dy / x
 ### ODE:
 x*d2y - (n-1)*dy + n^2*x^(2*n-1)*y - n*x^n # = 0
 
+
 ### Solution & Plot:
 y.sin = function(x, n=2, lower=0) {
 	sapply(x, function(upper)
@@ -1191,5 +1195,94 @@ sapply(x.px, line.tan, dx=1.5, p=y, dp=dy, n=n)
 #
 curve(dy(x, n=n), add=T, col="green")
 sapply(x.px, line.tan, dx=1.5, p=dy, dp=d2y, n=n, col="orange")
+
+
+#########
+### Ex 3:
+n = 1.5; lim=2;
+x.px = c(0:5 * 3/7)
+curve(y(x, n=n), from= 0, to = 2.5, ylim=c(-lim, lim))
+sapply(x.px, line.tan, dx=1.5, p=y, dp=dy, n=n)
+#
+curve(dy(x, n=n), add=T, col="green")
+sapply(x.px, line.tan, dx=1.5, p=dy, dp=d2y, n=n, col="orange")
+
+
+###################
+
+### Extension
+### y = sin(x^n + k*x) * I(cos(x^n + k*x)) - cos(x^n + k*x) * I(sin(x^n + k*x))
+
+### D(y)
+(n*x^(n-1) + k) * (cos(x^n + k*x) * Ic + sin(x^n + k*x) * Is)
+
+### D2(y)
+(n*x^(n-1) + k) - (n*x^(n-1) + k)^2 * (sin(x^n + k*x) * Ic - cos(x^n + k*x) * Is) +
+	+ n*(n-1)*x^(n-2) / (n*x^(n-1) + k) * dy
+n*x^(n-1) + k - (n*x^(n-1) + k)^2*y + n*(n-1)*x^(n-2) / (n*x^(n-1) + k) * dy
+
+### ODE:
+(n*x^(n-1) + k)*d2y - n*(n-1)*x^(n-2)*dy + (n*x^(n-1) + k)^3*y +
+	- (n*x^(n-1) + k)^2 # = 0
+
+### Example:
+### n = 2
+(2*x + k)*d2y - 2*dy + (2*x + k)^3*y + (2*x + k)^2 # = 0
+
+
+### Solution & Plot:
+y.sin = function(x, n=2, k=0, lower=0) {
+	sapply(x, function(upper)
+		integrate(function(x) sin(x^n + k*x), lower=lower, upper=upper)$value )
+}
+y.cos = function(x, n=2, k=0, lower=0) {
+	sapply(x, function(upper)
+		integrate(function(x) cos(x^n + k*x), lower=lower, upper=upper)$value )
+}
+y = function(x, n=2, k=0, lower=0) {
+	xn = x^n + k*x;
+	I.s = y.sin(x, n=n, k=k, lower=lower)
+	I.c = y.cos(x, n=n, k=k, lower=lower)
+	r = sin(xn)*I.c - cos(xn)*I.s;
+	return(r)
+}
+dy = function(x, n=2, k=0, lower=0) {
+	I.s = y.sin(x, n=n, k=k, lower=lower)
+	I.c = y.cos(x, n=n, k=k, lower=lower)
+	xn = x^n; xnk = xn + k*x; nxn = n*xn + k*x;
+	r = nxn*cos(xnk) * I.c + nxn*sin(xnk) * I.s
+	div = x;
+	r = ifelse(div != 0, r / div, 0) # TODO: check!
+	return(r)
+}
+d2y = function(x, n=2, k=0, lower=0) {
+	y.x = y(x, n=n, k=k, lower=0)
+	dy.x = dy(x, n=n, k=k, lower=0)
+	xn = x^n; xnk = xn + k*x; nxn = n*xn + k*x;
+	#
+	dp  = n*(n-1)*x*xn*dy.x - nxn^3*y.x + x*nxn^2
+	div = x^2 * nxn;
+	dp = ifelse(div != 0, dp / div, n*k/2); # TODO: needs correction!
+	return(dp)
+}
+### Plot:
+n = 2; k = 1; lim=3.5;
+x.px = c(-5:7 * 3/7)
+curve(y(x, n=n, k=k), from= -3, to = 3, ylim=c(-lim, lim))
+sapply(x.px, line.tan, dx=1.5, p=y, dp=dy, n=n, k=k)
+#
+curve(dy(x, n=n, k=k), add=T, col="green")
+sapply(x.px, line.tan, dx=1.5, p=dy, dp=d2y, n=n, k=k, col="orange")
+
+
+#########
+### Ex 2:
+n = 1/2; k = 3; lim=2;
+x.px = c(0:7 * 3/7)
+curve(y(x, n=n, k=k), from= 0, to = 3, ylim=c(-1, lim))
+sapply(x.px, line.tan, dx=1.5, p=y, dp=dy, n=n, k=k)
+# x.px = 0: needs correction;
+curve(dy(x, n=n, k=k), add=T, col="green")
+sapply(x.px, line.tan, dx=1.5, p=dy, dp=d2y, n=n, k=k, col="orange")
 
 
