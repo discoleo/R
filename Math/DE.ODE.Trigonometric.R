@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs - Trigonometric
 ###
-### draft v.0.3b
+### draft v.0.3c-pre
 
 
 ### History
@@ -37,6 +37,9 @@
 ### Order 1 & 2 Non-Liniar:
 ### Trigonometric Variants
 ###
+### draft v.0.3c-pre:
+# - derived from:
+#   y = I(sin(x^n)) * I(cos(x^n));
 ### draft v.0.3b:
 # - linearly combined Trig functions of y:
 #   f1*sin(y) + f2*cos(y) = P(x);
@@ -1096,4 +1099,23 @@ cos(y) = ((f2*dy - df1)*p + f1*dp) / ((f2*dy - df1)*f2 + (f1*dy + df2)*f1)
 (x^3 + 2*x)*d2y - x^2*(x^2 + 1)*dy^3 + 3*x^2*dy^2 - 2*(x^2 + 2)*dy + 2 # = 0
 
 ### TODO: check!
+
+
+#########################
+#########################
+
+### y = I(sin(x^n)) * I(cos(x^n))
+
+### D(y)
+sin(x^n) * Ic + cos(x^n) * Is
+
+### D2(y)
+n*x^(n-1)*cos(x^n) * Ic - n*x^(n-1)*sin(x^n) * Is +
+	+ sin(2*x^n)
+
+### Solve Linear system:
+# TODO:
+Is = (n*x^(n-1)*cos(x^n)*dy - sin(x^n)*d2y + sin(x^n)*sin(2*x^n));
+Ic = (n*x^(n-1)*sin(x^n)*dy + cos(x^n)*d2y - cos(x^n)*sin(2*x^n));
+# TODO: check;
 
