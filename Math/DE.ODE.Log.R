@@ -7,7 +7,7 @@
 ### Differential Equations
 ### ODEs - Logarithms
 ###
-### draft v.0.1c
+### draft v.0.1c-fix
 
 
 ### ODEs Derived from Logarithms
@@ -221,21 +221,26 @@ cos(x)*log(p1) - sin(x)*log(p2) + sin(x) / p1 * dp1 + cos(x) / p2 * dp2
 ### y = (log(P1(x)))^2 + (log(P2(x)))^2
 
 ### Example:
-y = (log(x^3 + a))^2 + (log(x^2 + b))^2
+y = (log(x^2 + a))^2 + (log(x^2 + b))^2
 
 ### D(y)
-6*x^2*log(x^3 + a) + 4*x*log(x^2 + b)
+4*x*log(x^2 + a) / (x^2 + a) + 4*x*log(x^2 + b) / (x^2 + b)
+### (x^2+a)*(x^2+b)*dy
+4*x*(x^2+b)*log(x^2 + a) + 4*x*(x^2+a)*log(x^2 + b)
 
-### D2(y)
-12*x*log(x^3 + a) + 4*log(x^2 + b) +
-	+ 18*x^4 / (x^3 + a) + 8*x^2 / (x^2 + b)
+### (x^2+a)*(x^2+b)*D2(y) + D((x^2+a)*(x^2+b))*dy
+4*(3*x^2 + b)*log(x^2 + a) + 4*(3*x^2 + a)*log(x^2 + b) +
+	+ 8*x^2*(x^2+b) / (x^2 + a) + 8*x^2*(x^2+a) / (x^2 + b)
 ### Solve Linear system:
-# T = 18*x^4 / (x^3 + a) + 8*x^2 / (x^2 + b);
-log(x^3 + a) =
-	(x*d2y - dy - x*T) / (6*x^2)
+# T = 8*x^2*(x^2+b) / (x^2 + a) + 8*x^2*(x^2+a) / (x^2 + b);
+log(x^2 + a) =
+	(x*(x^2+a)*d2y - (3*x^2 + a)*dy - x*(x^2+a)*T) / (8*(a-b)*x^3)
 log(x^2 + b) =
-	(x*d2y - 2*dy - x*T) / (-4*x^2)
+	(x*(x^2+b)*d2y - (3*x^2 + b)*dy - x*(x^2+b)*T) / -(8*(a-b)*x^3)
+# TODO: check!
 
 ### ODE:
-y + (x*d2y - dy - x*T)*(x*d2y - 2*dy - x*T) / (24*x^4) # = 0
+y +
+	(x*(x^2+a)*d2y - (3*x^2 + a)*dy - x*(x^2+a)*T) *
+	(x*(x^2+b)*d2y - (3*x^2 + b)*dy - x*(x^2+b)*T) / (64*x^6) # = 0
 
