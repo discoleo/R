@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs - Gaussian
 ###
-### draft v.0.3c
+### draft v.0.3d
 
 #############
 ### Types ###
@@ -30,6 +30,9 @@
 
 ### Liniar / Non-Liniar Gaussian-type
 ###
+### draft v.0.3d:
+# - derived from: y = exp(I), where I = I(exp(P(x))) dx;
+#   y*d2y - dy^2 - dp*y*dy = 0;
 ### draft v.0.3c:
 # - derived from:
 #   y = sin(x^n) * exp(-x^n);
@@ -110,6 +113,9 @@ source("DE.ODE.Helper.R")
 
 ### B.3. Mixt Non-Liniar
 ### y = Integral(exp(F1(x))) * Integral(exp(-F1(x)))
+
+### B.4. Non-Liniar Double Exp
+### y = e^I, where I = I(e^P(x)) dx;
 
 
 ####################
@@ -765,7 +771,7 @@ sapply(x.px, line.tan, dx=1.25, p=dy, dp=d2y, n=n, col="orange")
 (d2y + n*x^(n-1)*dy - 2)*(d2y - n*x^(n-1)*dy - 2) + 4*n^2*x^(2*n-2)*y = 0
 
 
-### Solution:
+### Solution & Plot:
 base.I = function(x, n=2, k=1, low=0) {
 	Ip = sapply(x, function(x) integrate(function(v) exp(v^n/k), lower=low, upper=x)$value)
 	In = sapply(x, function(x) integrate(function(v) exp(-v^n/k), lower=low, upper=x)$value)
@@ -809,5 +815,66 @@ sapply(c(0:5 * 3/8), line.tan, dx=3, p=y, dp=dy, n=n, k=k)
 # non-sigmoidal
 curve(dy(x, n=n, k=k), add=T, col="green")
 sapply(c(0:5 * 3/8), line.tan, dx=3, p=dy, dp=d2y, n=n, k=k, col="orange")
+
+
+#######################
+
+########################
+### B.4. Non-Liniar: ###
+###      Double Exp  ###
+########################
+
+### y = e^I, where I = I(e^P(x)) dx;
+
+### Note:
+# - see file DE.ODE.Log.R for similar variants,
+#   where I is replaced by log(P(x))^2;
+
+### D(y)
+exp(p) * y
+
+### D2(y)
+exp(p)*dy + dp*exp(p)*y
+(dy)^2 / y + dp*dy
+
+### ODE:
+y*d2y - dy^2 - dp*y*dy # = 0
+
+### Examples:
+### Case: P(x) = -k*x^n;
+y*d2y - dy^2 + k*n*x^(n-1)*y*dy # = 0
+
+
+### Solution & Plot:
+base.I = function(x, n=2, k=1, low=0) {
+	I.v = sapply(x, function(x) integrate(function(v) exp(-k * v^n), lower=low, upper=x)$value)
+	return(I.v)
+}
+y = function(x, FUN=base.I, I, ..., low=0) {
+	if(missing(I)) I = FUN(x, ..., low=low);
+	return(exp(I));
+}
+dy = function(x, FUN=base.I, I, ..., low=0) {
+	if(missing(I)) I = FUN(x, ..., low=low);
+	e = exp(-k * x^n);
+	return(e * exp(I))
+}
+d2y = function(x, FUN=base.I, n=2, k=1, low=0) {
+	y.x = y(x, FUN=FUN, n=n, k=k, low=low)
+	dy.x = dy(x, FUN=FUN, n=n, k=k, low=low)
+	v = dy.x^2 - k*n*x^(n-1)*y.x*dy.x;
+	div = y.x;
+	r = ifelse(div != 0, v/div, 1) # TODO
+	return(r)
+}
+### Plot:
+n = 2; k = 1;
+px = c(-3:3 * 3/5);
+curve(y(x, n=n, k=k), from= -2, to = 2, ylim=c(-0.5,3.5))
+sapply(px, line.tan, dx=3, p=y, dp=dy, n=n, k=k)
+# gaussian
+curve(dy(x, n=n, k=k), add=T, col="green")
+sapply(px, line.tan, dx=3, p=dy, dp=d2y, n=n, k=k, col="orange")
+
 
 
