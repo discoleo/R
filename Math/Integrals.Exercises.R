@@ -2,7 +2,7 @@
 ### Leonard Mada
 ###
 ### Integrals: Exercises
-### draft 0.43
+### draft 0.44
 
 
 ### Various Exercises
@@ -13,7 +13,7 @@
 ### History ###
 ###############
 
-### draft v.0.43:
+### draft v.0.43 - v.0.44:
 # - some atan exercises;
 
 
@@ -649,4 +649,26 @@ part.f(lim[2]) - part.f(lim[1]) +
 	+ integrate(function(x) log(x^2+1) / (x^2+1), lower=lim[1], upper=lim[2])$value
 part.f(lim[2]) - part.f(lim[1]) +
 	- 2*integrate(function(x) log(cos(x)), lower=atan(lim[1]), upper=atan(lim[2]))$value
+
+### TODO
+# - can be expressed as a function of Li(...);
+
+
+#####################
+
+### I(x * (atan(x))^3) dx + 3/2 * I(atan(x)^2) dx
+
+1/2 * x^2*atan(x)^3 - 3/2 * I(atan(x)^2 * x^2 / (x^2+1)) + 3/2* I(atan(x)^2)
+1/2 * x^2*atan(x)^3 - 3/2* I(atan(x)^2 - atan(x)^2 / (x^2+1)) + 3/2 * I(atan(x)^2)
+1/2 * x^2*atan(x)^3 + 3/2 * I(atan(x)^2 / (x^2+1))
+1/2 * x^2*atan(x)^3 + 1/2 * (atan(x))^3
+
+
+### Test
+lim = c(0, 2)
+all.f = function(x) 1/2 * x^2*atan(x)^3 + 1/2 * (atan(x))^3
+integrate(function(x) x*atan(x)^3, lower=lim[1], upper=lim[2])$value +
+	+ 3/2 * integrate(function(x) atan(x)^2, lower=lim[1], upper=lim[2])$value
+all.f(lim[2]) - all.f(lim[1])
+
 
