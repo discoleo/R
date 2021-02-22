@@ -2,16 +2,22 @@
 ### Leonard Mada
 ###
 ### Integrals: Exercises
-### draft 0.42e still Special Edition
-### [somehow appropriate]
+### draft 0.43
 
 
 ### Various Exercises
 
 # Students are invited to solve these exercises! ;-)
 
+###############
+### History ###
+###############
+
+### draft v.0.43:
+# - some atan exercises;
 
 
+#####################
 #####################
 
 #########
@@ -445,7 +451,10 @@ integrate(function(x) cos(x) / (sin(x)^5 + cos(x)^5), lower=lower, upper=upper)
 pseudo.exact(n, 2, lower, upper)$value + pseudo.exact(n, 0, lower, upper)$value
 
 
-### A[5, 0] + A[0, 5] = x
+### A[3, 2] & A[2, 3]
+# Derivation:
+# a.) A[5, 0] + A[0, 5] = x
+# b.) d(...) / (...) => log(...)
 # sin(x)^5 + cos(x)^5 =
 # = (sin(x) + cos(x))*(1 - 2*A[2,2] - A[1,1] + A[2,2])
 # = (sin(x) + cos(x))*(1 - A[2,2] - A[1,1])
@@ -454,7 +463,7 @@ pseudo.exact(n, 2, lower, upper)$value + pseudo.exact(n, 0, lower, upper)$value
 # Test
 integrate(function(x) (cos(x)*sin(x)^4 - sin(x)*cos(x)^4) / (sin(x)^5 + cos(x)^5), lower=lower, upper=upper)
 log.exact(lower, upper, n)
-# A[3, 2] & A[2, 3]
+### A[3, 2] & A[2, 3]
 # A[3, 2]
 integrate(function(x) sin(x)^3*cos(x)^2 / (sin(x)^5 + cos(x)^5), lower=lower, upper=upper)
 A32 = 1/2 * (log.exact(lower, upper, n) +
@@ -503,6 +512,11 @@ integrate(function(x) sqrt(2)*4 * (5/4)^(1/4) / 5 / (x^4 - 1),
 	lower = (4/5)^(1/4) * cos(lower - pi/4), upper= (4/5)^(1/4) * cos(upper - pi/4))
 A2Diff.exact(upper) - A2Diff.exact(lower)
 
+### Generalisation:
+k = 1
+integrate(function(x) (sin(x)^2 - cos(x)^2)*sin(x)^k*cos(x)^k / (sin(x)^5 + cos(x)^5), lower=lower, upper=upper)
+integrate(function(x) sqrt(2)*4/2^k * (5/4)^(1/4) * (2*x^2*(5/4)^(2/4)-1)^k / 5 / (x^4 - 1),
+	lower = (4/5)^(1/4) * cos(lower - pi/4), upper= (4/5)^(1/4) * cos(upper - pi/4))
 
 ### TODO:
 ### A[2, 2] = (A[0,0] - (A[4,0] + A[0,4]))/2
@@ -577,4 +591,62 @@ exact = function(x) sqrt(2)/4 * log(
 	(sqrt((sin(x)^2 +1)*2) - 1 + sin(x)) /
 	(sqrt((sin(x)^2 +1)*2) + 1 - sin(x)))
 exact(upper) - exact(lower)
+
+
+#####################
+
+### I(atan(x)) dx
+
+x*atan(x) - I(x / (x^2+1))
+x*atan(x) - 1/2 * log(x^2 + 1)
+
+### Test
+lim = c(0, 1)
+all.f = function(x) x*atan(x) - 1/2 * log(x^2 + 1)
+integrate(function(x) atan(x), lower=lim[1], upper=lim[2])
+all.f(lim[2]) - all.f(lim[1])
+
+
+#####################
+
+### I(x * (atan(x))^2) dx
+
+1/2 * x^2*atan(x)^2 - I(atan(x) * x^2 / (x^2+1))
+1/2 * x^2*atan(x)^2 - I(atan(x) - atan(x) / (x^2+1))
+1/2 * x^2*atan(x)^2 - I(atan(x)) + I(atan(x) / (x^2+1))
+1/2 * x^2*atan(x)^2 - x*atan(x) + 1/2*log(x^2 + 1) + 1/2 * (atan(x))^2
+
+
+part.f = function(x) 1/2 * x^2*atan(x)^2
+part.f(lim[2]) - part.f(lim[1]) +
+	- integrate(function(x) atan(x) * x^2 / (x^2+1), lower=lim[1], upper=lim[2])$value
+
+### Test
+lim = c(0, 2)
+all.f = function(x) 1/2 * x^2*atan(x)^2 - x*atan(x) + 1/2*log(x^2 + 1) + 1/2 * (atan(x))^2
+integrate(function(x) x*atan(x)^2, lower=lim[1], upper=lim[2])
+all.f(lim[2]) - all.f(lim[1])
+
+
+#####################
+
+### I((atan(x))^2) dx
+
+x*atan(x)^2 - 2*I(atan(x) * x / (x^2+1))
+x*atan(x)^2 - log(x^2+1)*atan(x) + I(log(x^2+1) / (x^2+1))
+x*atan(x)^2 - log(x^2+1)*atan(x) - 2*I(log(cos(t))); # t = atan(x);
+
+### Test
+lim = c(0, 2)
+integrate(function(x) atan(x)^2, lower=lim[1], upper=lim[2])
+
+part.f = function(x) x*atan(x)^2
+part.f(lim[2]) - part.f(lim[1]) +
+	- 2*integrate(function(x) x*atan(x) / (x^2+1), lower=lim[1], upper=lim[2])$value
+
+part.f = function(x) x*atan(x)^2 - log(x^2+1)*atan(x)
+part.f(lim[2]) - part.f(lim[1]) +
+	+ integrate(function(x) log(x^2+1) / (x^2+1), lower=lim[1], upper=lim[2])$value
+part.f(lim[2]) - part.f(lim[1]) +
+	- 2*integrate(function(x) log(cos(x)), lower=atan(lim[1]), upper=atan(lim[2]))$value
 
