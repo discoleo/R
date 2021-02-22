@@ -7,7 +7,7 @@
 ### Differential Equations
 ### ODEs - Logarithms
 ###
-### draft v.0.1c-fix2
+### draft v.0.1e
 
 
 ### ODEs Derived from Logarithms
@@ -22,11 +22,14 @@
 ### History ###
 ###############
 
-### draft v.0.1d:
-# - derived from: x^log(x)
+### draft v.0.1d - v.0.1e:
+# - derived from: y = x^log(x)
 #   x^2*y*d2y - x^2*dy^2 + x*y*dy - 2*y^2 = 0;
+# - extension: y = (x+k)^log(x+k)
+#  (x+k)^2*y*d2y - (x+k)^2*dy^2 + (x+k)*y*dy - 2*y^2 = 0;
 
 
+#########################
 #########################
 
 ### Helper functions
@@ -274,24 +277,37 @@ x^2/y * dy^2 - x*dy + 2*y
 x^2*y*d2y - x^2*dy^2 + x*y*dy - 2*y^2 # = 0
 
 
+### Extension
+### y = (x + k)^log(x + k)
+
+### D(y)
+2*log(x+k)*y / (x+k)
+
+### D2(y)
+(x+k)^2*y*d2y - (x+k)^2*dy^2 + (x+k)*y*dy - 2*y^2 # = 0
+
+
 ### Solution & Plot:
-y = function(x) {
-	val = x^(log(x));
+y = function(x, k=0) {
+	xk = if(k == 0) x else x+k;
+	val = xk^log(xk);
 	return(val)
 }
-dy = function(x) {
-	logx = log(x);
-	dp = 2*logx * x^logx
-	div = x;
+dy = function(x, k=0) {
+	xk = x + k;
+	logx = log(xk);
+	dp = 2*logx * (xk)^logx
+	div = xk;
 	dp = ifelse(div != 0, dp/div, 1); # TODO
 	return(dp)
 }
-d2y = function(x) {
+d2y = function(x, k=0) {
 	### D()
-	y.x  =  y(x);
-	dy.x = dy(x);
-	div = x^2 * y.x;
-	d2p = x^2*dy.x^2 - x*y.x*dy.x + 2*y.x^2
+	y.x  =  y(x, k=k);
+	dy.x = dy(x, k=k);
+	xk = if(k == 0) x else x+k;
+	div = xk^2 * y.x;
+	d2p = xk^2*dy.x^2 - xk*y.x*dy.x + 2*y.x^2
 	d2p = ifelse(div != 0, d2p/div, 1); # TODO
 	return(d2p)
 }
@@ -303,5 +319,14 @@ sapply(px, line.tan, dx=3, p=y, dp=dy)
 curve(dy(x), add=T, col="green")
 sapply(px, line.tan, dx=3, p=dy, dp=d2y, col="orange")
 
+
+### Ex 2:
+k = 2
+px = 3/7 + (0:4)*2/7 - k;
+curve(y(x, k=k), from= -k+1E-1, to = 2.5, ylim=c(-2,5))
+sapply(px, line.tan, dx=3, p=y, dp=dy, k=k)
+#
+curve(dy(x, k=k), add=T, col="green")
+sapply(px, line.tan, dx=3, p=dy, dp=d2y, k=k, col="orange")
 
 
