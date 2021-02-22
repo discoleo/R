@@ -16,6 +16,16 @@
 # Lambert W examples:
 # - should be in a different file;
 
+###############
+
+###############
+### History ###
+###############
+
+### draft v.0.1d:
+# - derived from: x^log(x)
+#   x^2*y*d2y - x^2*dy^2 + x*y*dy - 2*y^2 = 0;
+
 
 #########################
 
@@ -234,13 +244,64 @@ y = (log(x^2 + a))^2 + (log(x^2 + b))^2
 ### Solve Linear system:
 # T = 8*x^2*(x^2+b) / (x^2 + a) + 8*x^2*(x^2+a) / (x^2 + b) - D((x^2+a)*(x^2+b))*dy;
 log(x^2 + a) =
-	(x*(x^2+a)^2*(x^2+b)*d2(...) - (3*x^2 + a)*dy - x*(x^2+a)*T) / (8*(a-b)*x^3)
+	(x*(x^2+a)^2*(x^2+b)*d2y - (3*x^2 + a)*dy - x*(x^2+a)*T) / (8*(a-b)*x^3)
 log(x^2 + b) =
-	(x*(x^2+b)^2*(x^2+a)*d2(...) - (3*x^2 + b)*dy - x*(x^2+b)*T) / -(8*(a-b)*x^3)
+	(x*(x^2+b)^2*(x^2+a)*d2y - (3*x^2 + b)*dy - x*(x^2+b)*T) / -(8*(a-b)*x^3)
 # TODO: check!
 
 ### ODE:
 y +
 	(x*(x^2+a)^2*(x^2+b)*d2y - (3*x^2 + a)*dy - x*(x^2+a)*T) *
 	(x*(x^2+b)^2*(x^2+a)*d2y - (3*x^2 + b)*dy - x*(x^2+b)*T) / (64*x^6) # = 0
+
+
+######################
+######################
+
+### y = x^log(x)
+
+### D(y)
+2*log(x)/x * x^log(x)
+2*log(x)/x * y
+
+### D2(y)
+2*log(x)/x * dy + 2*(1 - log(x))/x^2 * y
+### x^2 * D2(y)
+2*x*log(x) * dy + 2*(1 - log(x)) * y
+x^2/y * dy^2 - x*dy + 2*y
+
+### ODE:
+x^2*y*d2y - x^2*dy^2 + x*y*dy - 2*y^2 # = 0
+
+
+### Solution & Plot:
+y = function(x) {
+	val = x^(log(x));
+	return(val)
+}
+dy = function(x) {
+	logx = log(x);
+	dp = 2*logx * x^logx
+	div = x;
+	dp = ifelse(div != 0, dp/div, 1); # TODO
+	return(dp)
+}
+d2y = function(x) {
+	### D()
+	y.x  =  y(x);
+	dy.x = dy(x);
+	div = x^2 * y.x;
+	d2p = x^2*dy.x^2 - x*y.x*dy.x + 2*y.x^2
+	d2p = ifelse(div != 0, d2p/div, 1); # TODO
+	return(d2p)
+}
+### Plot:
+px = 3/7 + (0:4)*2/7
+curve(y(x), from= 0+1E-1, to = 2.5, ylim=c(-2,5))
+sapply(px, line.tan, dx=3, p=y, dp=dy)
+#
+curve(dy(x), add=T, col="green")
+sapply(px, line.tan, dx=3, p=dy, dp=d2y, col="orange")
+
+
 
