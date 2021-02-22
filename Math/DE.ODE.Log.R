@@ -7,7 +7,7 @@
 ### Differential Equations
 ### ODEs - Logarithms
 ###
-### draft v.0.1e
+### draft v.0.1f
 
 
 ### ODEs Derived from Logarithms
@@ -22,11 +22,13 @@
 ### History ###
 ###############
 
-### draft v.0.1d - v.0.1e:
+### draft v.0.1d - v.0.1f:
 # - derived from: y = x^log(x)
 #   x^2*y*d2y - x^2*dy^2 + x*y*dy - 2*y^2 = 0;
 # - extension: y = (x+k)^log(x+k)
 #  (x+k)^2*y*d2y - (x+k)^2*dy^2 + (x+k)*y*dy - 2*y^2 = 0;
+# - generalization to higher orders:
+#   y = (x^n+k)^log(x^n+k); [v.0.1f]
 
 
 #########################
@@ -283,7 +285,7 @@ x^2*y*d2y - x^2*dy^2 + x*y*dy - 2*y^2 # = 0
 ### D(y)
 2*log(x+k)*y / (x+k)
 
-### D2(y)
+### ODE:
 (x+k)^2*y*d2y - (x+k)^2*dy^2 + (x+k)*y*dy - 2*y^2 # = 0
 
 
@@ -328,5 +330,72 @@ sapply(px, line.tan, dx=3, p=y, dp=dy, k=k)
 #
 curve(dy(x, k=k), add=T, col="green")
 sapply(px, line.tan, dx=3, p=dy, dp=d2y, k=k, col="orange")
+
+
+### Extensions: Higher Order
+### y = (x^n + k)^log(x^n + k)
+
+### D(y)
+2*n*log(x^n+k)*x^(n-1) / (x^n+k) * y
+
+### D2(y)
+2*n*log(x^n+k)*x^(n-1) / (x^n+k) * dy +
+	+ 2*n^2*x^(2*n-2) / (x^n+k)^2 * y +
+	+ 2*n*log(x^n+k)*((n-1)*x^(n-2)*(x^n+k) - n*x^(2*n-2)) / (x^n+k)^2 * y
+(dy)^2 / y +
+	+ 2*n^2*x^(2*n-2) / (x^n+k)^2 * y +
+	- (x^n + k - n*k) / (x^n+k) * dy / x
+
+### ODE:
+x*(x^n+k)^2*y*d2y - x*(x^n+k)^2*dy^2 + (x^n+k-n*k)*(x^n+k)*y*dy - 2*n^2*x^(2*n-1)*y^2 # = 0
+
+### Case: n = 2
+x*(x^2+k)^2*y*d2y - x*(x^2+k)^2*dy^2 + (x^4-k^2)*y*dy - 8*x^3*y^2 # = 0
+
+
+### Solution & Plot:
+y = function(x, k=0, n=2) {
+	xk = if(k == 0) x^n else x^n + k;
+	val = xk^log(xk);
+	return(val)
+}
+dy = function(x, k=0, n=2) {
+	xn = x^n;
+	xk = if(k == 0) xn else xn + k;
+	logx = log(xk);
+	dp = 2*n * logx * xn * (xk)^logx;
+	div = x * xk;
+	dp = ifelse(div != 0, dp/div, 0); # TODO
+	return(dp)
+}
+d2y = function(x, k=0, n=2) {
+	### D()
+	y.x  =  y(x, k=k, n=n);
+	dy.x = dy(x, k=k, n=n);
+	xn = x^n; x2 = x^2;
+	xk = if(k == 0) xn else xn + k;
+	div = x2 * xk^2 * y.x;
+	d2p = x2*xk^2*dy.x^2 - x*(xk - n*k)*xk*y.x*dy.x + 2*n^2*xn^2*y.x^2
+	d2p = ifelse(div != 0, d2p/div, d2y(1E-5, k=k, n=n)); # TODO
+	return(d2p)
+}
+### Plot:
+n = 2; k = 2;
+px = (-3:3)*2/7
+curve(y(x, k=k, n=n), from= -2.5, to = 2.5, ylim=c(-2,5))
+sapply(px, line.tan, dx=3, p=y, dp=dy, k=k, n=n)
+# TODO: px = 0;
+curve(dy(x, k=k, n=n), add=T, col="green")
+sapply(px, line.tan, dx=3, p=dy, dp=d2y, k=k, n=n, col="orange")
+
+
+### Ex 2:
+n = 2; k = 0.9;
+px = (-3:3)*2/7
+curve(y(x, k=k, n=n), from= -2.5, to = 2.5, ylim=c(-2,5))
+sapply(px, line.tan, dx=3, p=y, dp=dy, k=k, n=n)
+# TODO: px = 0;
+curve(dy(x, k=k, n=n), add=T, col="green")
+sapply(px, line.tan, dx=3, p=dy, dp=d2y, k=k, n=n, col="orange")
 
 
