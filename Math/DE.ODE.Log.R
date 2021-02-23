@@ -7,7 +7,7 @@
 ### Differential Equations
 ### ODEs - Logarithms
 ###
-### draft v.0.1f
+### draft v.0.1g
 
 
 ### ODEs Derived from Logarithms
@@ -22,13 +22,15 @@
 ### History ###
 ###############
 
-### draft v.0.1d - v.0.1f:
+### draft v.0.1d - v.0.1g:
 # - derived from: y = x^log(x)
 #   x^2*y*d2y - x^2*dy^2 + x*y*dy - 2*y^2 = 0;
 # - extension: y = (x+k)^log(x+k)
 #  (x+k)^2*y*d2y - (x+k)^2*dy^2 + (x+k)*y*dy - 2*y^2 = 0;
 # - generalization to higher orders:
 #   y = (x^n+k)^log(x^n+k); [v.0.1f]
+# - generalization:
+#   y = P(x)^log(P(x));
 
 
 #########################
@@ -397,5 +399,76 @@ sapply(px, line.tan, dx=3, p=y, dp=dy, k=k, n=n)
 # TODO: px = 0;
 curve(dy(x, k=k, n=n), add=T, col="green")
 sapply(px, line.tan, dx=3, p=dy, dp=d2y, k=k, n=n, col="orange")
+
+
+######################
+### Generalization ###
+
+### y = P(x)^log(P(x))
+
+### D(y)
+2*log(p)*dp / p * y
+
+### D2(y)
+# p*d2y + dp*dy
+2*log(p)*dp*dy + 2*(dp)^2 / p * y + 2*log(p)*d2p*y
+p / y * (dy)^2 + 2*(dp)^2 / p * y + p*d2p/dp * dy
+
+### ODE:
+dp*p^2*y*d2y - dp*p^2*(dy)^2 + dp^2*p*y*dy - d2p*p^2*y*dy - 2*(dp)^3*y^2
+
+### Examples:
+### p = exp(x) + k; dp = exp(x)
+(e^x+k)^2*y*d2y - (e^x+k)^2*(dy)^2 + e^x*(e^x+k)*y*dy - (e^x+k)^2*y*dy - 2*e^(2*x)*y^2
+### p = ln(k*x); dp = 1/x
+x^2*ln(k*x)^2*y*d2y - x^2*ln(k*x)^2*(dy)^2 + x*ln(k*x)*y*dy + x*ln(k*x)^2*y*dy - 2*y^2
+
+
+### Solution & Plot:
+y = function(x, k=2) {
+	# p = exp(x) + k;
+	p = if(k == 0) exp(x) else exp(x) + k;
+	val = p^log(p);
+	return(val)
+}
+dy = function(x, k=2) {
+	# 2*log(p)*dp / p * y
+	x.exp = exp(x);
+	p = if(k == 0) x.exp else x.exp + k;
+	x.log = log(p);
+	dp = 2 * x.log * x.exp * (p)^x.log;
+	div = p;
+	dp = ifelse(div != 0, dp/div, 0); # TODO
+	return(dp)
+}
+d2y = function(x, k=2) {
+	### D()
+	y.x  =  y(x, k=k);
+	dy.x = dy(x, k=k);
+	x.exp = exp(x);
+	xk = if(k == 0) x.exp else x.exp + k;
+	div = xk^2 * y.x;
+	d2p = xk^2*(dy.x)^2 - x.exp*xk*y.x*dy.x + xk^2*y.x*dy.x + 2*x.exp*x.exp*y.x^2
+	d2p = ifelse(div != 0, d2p/div, 1); # TODO
+	return(d2p)
+}
+### Plot:
+k = 2;
+px = (-4:2)*3/7
+curve(y(x, k=k), from= -2.5, to = 2, ylim=c(-1,10))
+sapply(px, line.tan, dx=3, p=y, dp=dy, k=k)
+#
+curve(dy(x, k=k), add=T, col="green")
+sapply(px, line.tan, dx=3, p=dy, dp=d2y, k=k, col="orange")
+
+
+### Ex 2:
+k = -1/2;
+px = (-1:3)*3/7
+curve(y(x, k=k), from= -1/2, to = 2, ylim=c(-2,10))
+sapply(px, line.tan, dx=3, p=y, dp=dy, k=k)
+#
+curve(dy(x, k=k), add=T, col="green")
+sapply(px, line.tan, dx=3, p=dy, dp=d2y, k=k, col="orange")
 
 
