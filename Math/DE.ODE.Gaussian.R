@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs - Gaussian
 ###
-### draft v.0.3d
+### draft v.0.3e
 
 #############
 ### Types ###
@@ -30,9 +30,13 @@
 
 ### Liniar / Non-Liniar Gaussian-type
 ###
-### draft v.0.3d:
-# - derived from: y = exp(I), where I = I(exp(P(x))) dx;
+### draft v.0.3d - v.0.3e:
+# - derived from: y = exp(I),
+#   where I = I(exp(P(x))) dx;
 #   y*d2y - dy^2 - dp*y*dy = 0;
+# - derived from: y = exp(I^2),
+#   where I = I(exp(P(x))) dx; [v.0.3e]
+#   y*d2y - dy^2 - dp*y*dy - 2*e^(2*p) * y^2 = 0;
 ### draft v.0.3c:
 # - derived from:
 #   y = sin(x^n) * exp(-x^n);
@@ -827,8 +831,9 @@ sapply(c(0:5 * 3/8), line.tan, dx=3, p=dy, dp=d2y, n=n, k=k, col="orange")
 ### y = e^I, where I = I(e^P(x)) dx;
 
 ### Note:
-# - see file DE.ODE.Log.R for similar variants,
-#   where I is replaced by log(P(x))^2;
+# - for similar variants see file:
+#   DE.ODE.Log.R;
+#   [I is replaced by log(P(x))^2]
 
 ### D(y)
 exp(p) * y
@@ -876,5 +881,63 @@ sapply(px, line.tan, dx=3, p=y, dp=dy, n=n, k=k)
 curve(dy(x, n=n, k=k), add=T, col="green")
 sapply(px, line.tan, dx=3, p=dy, dp=d2y, n=n, k=k, col="orange")
 
+
+###################
+###################
+
+### y = e^(I^2)
+# where I = I(e^P(x)) dx;
+
+### Note:
+# - for other variants, see file:
+#   DE.ODE.Log.R;
+
+### D(y)
+2*e^p * I*y
+
+### D2(y)
+2*e^p * I*dy + 2*e^(2*p) * y + 2*dp*e^p * I*y
+(dy)^2 / y + 2*e^(2*p) * y + dp*dy
+
+### ODE:
+y*d2y - (dy)^2 - dp*y*dy - 2*e^(2*p) * y^2 # = 0
+
+### Examples:
+### Case: P(x) = - k * x^2;
+y*d2y - (dy)^2 + 2*k*x*y*dy - 2*e^(-2*k*x^2) * y^2 # = 0
+
+
+### Solution & Plot:
+base.I = function(x, n=2, k=1, low=0) {
+	I.v = sapply(x, function(lim)
+		integrate(function(x) exp(-k * x^n), lower=low, upper=lim)$value)
+	return(I.v)
+}
+y = function(x, FUN=base.I, I, ..., low=0) {
+	if(missing(I)) I = FUN(x, ..., low=low);
+	return(exp(I^2));
+}
+dy = function(x, FUN=base.I, I, ..., low=0) {
+	if(missing(I)) I = FUN(x, ..., low=low);
+	e = 2*exp(-k * x^n);
+	return(e * I * exp(I^2))
+}
+d2y = function(x, FUN=base.I, n=2, k=1, low=0) {
+	y.x = y(x, FUN=FUN, n=n, k=k, low=low)
+	dy.x = dy(x, FUN=FUN, n=n, k=k, low=low)
+	v = dy.x^2 - k*n*x^(n-1)*y.x*dy.x + 2*exp(-2*k*x^n) * y.x^2;
+	div = y.x;
+	r = ifelse(div != 0, v/div, 1) # TODO
+	return(r)
+}
+### Plot:
+n = 2; k = 1;
+px = c(-3:3 * 3/5);
+# inverse gaussian
+curve(y(x, n=n, k=k), from= -2, to = 2, ylim=c(-2,3))
+sapply(px, line.tan, dx=2, p=y, dp=dy, n=n, k=k)
+# 2-wave
+curve(dy(x, n=n, k=k), add=T, col="green")
+sapply(px, line.tan, dx=3, p=dy, dp=d2y, n=n, k=k, col="orange")
 
 
