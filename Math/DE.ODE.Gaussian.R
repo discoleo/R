@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs - Gaussian
 ###
-### draft v.0.3e
+### draft v.0.3f
 
 #############
 ### Types ###
@@ -30,13 +30,15 @@
 
 ### Liniar / Non-Liniar Gaussian-type
 ###
-### draft v.0.3d - v.0.3e:
+### draft v.0.3d - v.0.3f:
 # - derived from: y = exp(I),
 #   where I = I(exp(P(x))) dx;
 #   y*d2y - dy^2 - dp*y*dy = 0;
 # - derived from: y = exp(I^2),
 #   where I = I(exp(P(x))) dx; [v.0.3e]
 #   y*d2y - dy^2 - dp*y*dy - 2*e^(2*p) * y^2 = 0;
+# - derived from: y^2 + b*y = e^I; [v.0.3f]
+#   (y^2 + b*y)*(2*y + b)*d2y - ... = 0;
 ### draft v.0.3c:
 # - derived from:
 #   y = sin(x^n) * exp(-x^n);
@@ -940,4 +942,89 @@ sapply(px, line.tan, dx=2, p=y, dp=dy, n=n, k=k)
 curve(dy(x, n=n, k=k), add=T, col="green")
 sapply(px, line.tan, dx=3, p=dy, dp=d2y, n=n, k=k, col="orange")
 
+
+######################
+######################
+
+### Polynomial Extensions
+### Y(y) = e^I, where I = I(e^P(x)) dx;
+
+### Example:
+### y^2 + b*y = e^I
+
+### Note:
+# - for similar variants see file:
+#   DE.ODE.Log.R;
+#   [I is replaced by log(P(x))^2]
+
+### D(Y(y))
+# (2*y + b)*dy
+exp(p) * (y^2 + b*y)
+
+### D2(Y(y))
+# (2*y + b)*d2y + 2*(dy)^2
+exp(p) * (2*y + b)*dy + dp*exp(p)*(y^2 + b*y)
+exp(p) * (2*y + b)*dy + dp*(2*y + b)*dy
+(2*y + b)^2*dy^2 / (y^2 + b*y) + dp*(2*y + b)*dy
+# =>
+(y^2 + b*y)*(2*y + b)*d2y + 2*(y^2 + b*y)*dy^2 +
+	- (2*y + b)^2*dy^2 - dp*(y^2 + b*y)*(2*y + b)*dy
+
+### ODE:
+(y^2 + b*y)*(2*y + b)*d2y - (2*y^2 + 2*b*y + b^2)*dy^2 +
+	- dp*(y^2 + b*y)*(2*y + b)*dy # = 0
+
+### Examples:
+### Case: P(x) = -k*x^n;
+(y^2 + b*y)*(2*y + b)*d2y - (2*y^2 + 2*b*y + b^2)*dy^2 +
+	+ k*n*x^(n-1)*(y^2 + b*y)*(2*y + b)*dy # = 0
+
+### Solution & Plot:
+base.I = function(x, n=2, k=1, low=0) {
+	I.v = sapply(x, function(x) integrate(function(v) exp(-k * v^n), lower=low, upper=x)$value)
+	return(I.v)
+}
+y = function(x, b=2, FUN=base.I, I, ..., low=0, only.y=TRUE) {
+	if(missing(I)) I = FUN(x, ..., low=low);
+	I = exp(I);
+	# y^2 + b*y - I = 0;
+	y.v = -b/2 + sqrt(b^2 + 4*I)/2;
+	if(only.y) {
+		return(y.v);
+	}
+	return(list(y=y.v, Iexp=I));
+}
+dy = function(x, b=2, FUN=base.I, I, ..., low=0) {
+	if(missing(I)) {
+		sol = y(x, b=b, FUN=FUN, ..., low=low, only.y=FALSE);
+	} else sol = I;
+	# f.args = as.list(match.call());
+	f.args = as.list(match.call(expand.dots = FALSE)$'...');
+	k = eval(f.args$k, list2env(list(...), parent = parent.frame()));
+	n = eval(f.args$n, list2env(list(...), parent = parent.frame()));
+	# exp(p) * (y^2 + b*y)
+	e = exp(-k * x^n);
+	dy.v = e * sol$Iexp;
+	div = (2*sol$y + b);
+	dy.v = ifelse(div != 0, dy.v/div, Inf) # TODO
+	return(dy.v)
+}
+d2y = function(x, b=2, FUN=base.I, n=2, k=1, low=0) {
+	sol = y(x, b=b, FUN=FUN, n=n, k=k, low=low, only.y=FALSE)
+	dy.x = dy(x, b=b, FUN=FUN, I=sol, n=n, k=k, low=low)
+	y.x = sol$y; yf.x = sol$Iexp; y.2 = 2*y.x + b;
+	v = (2*yf.x + b^2)*dy.x^2 +
+		- k*n*x^(n-1)*yf.x*y.2*dy.x;
+	div = yf.x*y.2;
+	r = ifelse(div != 0, v/div, 1) # TODO
+	return(r)
+}
+### Plot:
+n = 2; k = 1; b = 3;
+px = c(-2:2 * 4/7);
+curve(y(x, b=b, n=n, k=k), from= -2, to = 2, ylim=c(-0.3, 1))
+sapply(px, line.tan, dx=3, p=y, dp=dy, b=b, n=n, k=k)
+# gaussian
+curve(dy(x, n=n, k=k), add=T, col="green")
+sapply(px, line.tan, dx=3, p=dy, dp=d2y, n=n, k=k, col="orange")
 
