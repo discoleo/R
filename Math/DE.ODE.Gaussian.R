@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs - Gaussian
 ###
-### draft v.0.3f
+### draft v.0.3g
 
 #############
 ### Types ###
@@ -30,6 +30,9 @@
 
 ### Liniar / Non-Liniar Gaussian-type
 ###
+### draft v.0.3g:
+# - derived from:
+#   y = x^m * I(e^(x^n)) * I(e^(-x^n));
 ### draft v.0.3d - v.0.3f:
 # - derived from: y = exp(I),
 #   where I = I(exp(P(x))) dx;
@@ -821,6 +824,41 @@ sapply(c(0:5 * 3/8), line.tan, dx=3, p=y, dp=dy, n=n, k=k)
 # non-sigmoidal
 curve(dy(x, n=n, k=k), add=T, col="green")
 sapply(c(0:5 * 3/8), line.tan, dx=3, p=dy, dp=d2y, n=n, k=k, col="orange")
+
+#######################
+
+### Combined:
+### Extensions
+
+
+### y = x^m * I(e^(x^n)) * I(e^(-x^n))
+
+### D(y)
+m*y / x + x^m*e^(x^n)*In + x^m*e^(-x^n)*Ip
+# x*dy =
+m*y + x^(m+1)*(e^(x^n)*In + e^(-x^n)*Ip)
+
+### D2(y)
+# x*d2y + dy =
+m*dy + (m+1)*(x*dy - m*y) / x + 2*x^(m+1) +
+	+ n*x^(m+n)*(e^(x^n)*In - e^(-x^n)*Ip)
+# x^2*d2y + x*dy =
+(2*m+1)*x*dy - m*(m+1)*y + 2*x^(m+2) +
+	+ n*x^(m+n+1)*(e^(x^n)*In - e^(-x^n)*Ip)
+# x^2*d2y =
+2*m*x*dy - m*(m+1)*y + 2*x^(m+2) +
+	+ n*x^(m+n+1)*(e^(x^n)*In - e^(-x^n)*Ip)
+
+### Solve liniar system:
+T = 2*m*x*dy - m*(m+1)*y + 2*x^(m+2)
+e^(x^n)*In  = (n*x^n*(x*dy - m*y) + x^2*d2y - T) / (2*n*x^(m+n+1))
+e^(x^-n)*Ip = (n*x^n*(x*dy - m*y) - x^2*d2y + T) / (2*n*x^(m+n+1))
+
+### ODE:
+(n*x^n*(x*dy - m*y) + x^2*d2y - T) * (n*x^n*(x*dy - m*y) - x^2*d2y + T) +
+	- 4*n^2*x^(m+2*n+2)*y # = 0
+
+### TODO: verify;
 
 
 #######################
