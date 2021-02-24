@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs - Gaussian
 ###
-### draft v.0.3g
+### draft v.0.3g-test
 
 #############
 ### Types ###
@@ -30,7 +30,7 @@
 
 ### Liniar / Non-Liniar Gaussian-type
 ###
-### draft v.0.3g:
+### draft v.0.3g - v.0.3g-test:
 # - derived from:
 #   y = x^m * I(e^(x^n)) * I(e^(-x^n));
 ### draft v.0.3d - v.0.3f:
@@ -776,14 +776,16 @@ sapply(x.px, line.tan, dx=1.25, p=dy, dp=d2y, n=n, col="orange")
 ### Combined ###
 ################
 
-### y = I(e^(x^n)) * I(e^(-x^n))
-(d2y + n*x^(n-1)*dy - 2)*(d2y - n*x^(n-1)*dy - 2) + 4*n^2*x^(2*n-2)*y = 0
+### y = I(e^(k*x^n)) * I(e^(-k*x^n))
+
+### ODE:
+(d2y + n*k*x^(n-1)*dy - 2)*(d2y - n*k*x^(n-1)*dy - 2) + 4*n^2*k^2*x^(2*n-2)*y = 0
 
 
 ### Solution & Plot:
 base.I = function(x, n=2, k=1, low=0) {
-	Ip = sapply(x, function(x) integrate(function(v) exp(v^n/k), lower=low, upper=x)$value)
-	In = sapply(x, function(x) integrate(function(v) exp(-v^n/k), lower=low, upper=x)$value)
+	Ip = sapply(x, function(upper) integrate(function(x) exp( k*x^n), lower=low, upper=upper)$value)
+	In = sapply(x, function(upper) integrate(function(x) exp(-k*x^n), lower=low, upper=upper)$value)
 	return(list(Ip=Ip, In=In))
 }
 y = function(x, n=2, k=1, I, low=0) {
@@ -792,44 +794,56 @@ y = function(x, n=2, k=1, I, low=0) {
 	# by formula
 	dy = dy(x, n=n, k=k, I=I, low=low)
 	d2y = d2y(x, n=n, k=k, I=I, low=low)
-	- (d2y + n*x^(n-1)*dy - 2)*(d2y - n*x^(n-1)*dy - 2) / (4*n^2*x^(2*n-2))
+	# TODO: check k;
+	- (d2y + n*k*x^(n-1)*dy - 2)*(d2y - n*k*x^(n-1)*dy - 2) / (4*n^2*k^2*x^(2*n-2))
 }
 dy = function(x, n=2, k=1, I, low=0) {
 	if(missing(I)) I = base.I(x, n=n, k=k, low=low);
-	e = exp(x^n / k);
+	e = exp(k * x^n);
 	s = I$In * e + I$Ip / e;
 	return(s)
 }
 d2y = function(x, n=2, k=1, I, low=0) {
 	if(missing(I)) I = base.I(x, n=n, k=k, low=low);
-	e = exp(x^n / k);
-	dx = n*x^(n-1);
-	# TODO: k;
+	e = exp(k * x^n);
+	dx = n*k*x^(n-1);
 	s = dx * (I$In * e - I$Ip / e) + 2;
 	return(s)
 }
 ### Plot:
 n = 2; k = 1;
+px = c(-3:3 * 3/5);
 curve(y(x, n=n, k=k), from= -2, to = 2, ylim=c(-10,10))
-sapply(c(-3:3 * 3/5), line.tan, dx=3, p=y, dp=dy, n=n, k=k)
+sapply(px, line.tan, dx=3, p=y, dp=dy, n=n, k=k)
 # non-sigmoidal
 curve(dy(x, n=n, k=k), add=T, col="green")
-sapply(c(-3:3 * 3/5), line.tan, dx=3, p=dy, dp=d2y, n=n, k=k, col="orange")
+sapply(px, line.tan, dx=3, p=dy, dp=d2y, n=n, k=k, col="orange")
 
 
 ### Ex 2:
 n = 3.5; k = 1;
+px = c(0:5 * 3/8);
 curve(y(x, n=n, k=k), from= 0, to = 2, ylim=c(0,10))
-sapply(c(0:5 * 3/8), line.tan, dx=3, p=y, dp=dy, n=n, k=k)
+sapply(px, line.tan, dx=3, p=y, dp=dy, n=n, k=k)
 # non-sigmoidal
 curve(dy(x, n=n, k=k), add=T, col="green")
-sapply(c(0:5 * 3/8), line.tan, dx=3, p=dy, dp=d2y, n=n, k=k, col="orange")
+sapply(px, line.tan, dx=3, p=dy, dp=d2y, n=n, k=k, col="orange")
+
+
+### Ex 3:
+n = 2; k = 3;
+px = c(-3:3 * 4/13);
+curve(y(x, n=n, k=k), from= -2, to = 2, ylim=c(-10,10))
+sapply(px, line.tan, dx=3, p=y, dp=dy, n=n, k=k)
+# non-sigmoidal / tan-like
+curve(dy(x, n=n, k=k), add=T, col="green")
+sapply(px, line.tan, dx=3, p=dy, dp=d2y, n=n, k=k, col="orange")
+
 
 #######################
 
 ### Combined:
 ### Extensions
-
 
 ### y = x^m * I(e^(x^n)) * I(e^(-x^n))
 
@@ -859,6 +873,49 @@ e^(x^-n)*Ip = (n*x^n*(x*dy - m*y) - x^2*d2y + T) / (2*n*x^(m+n+1))
 	- 4*n^2*x^(m+2*n+2)*y # = 0
 
 ### TODO: verify;
+
+### Solution & Plot:
+base.I = function(x, n=2, k=1, low=0) {
+	Ip = sapply(x, function(x) integrate(function(v) exp(v^n/k), lower=low, upper=x)$value)
+	In = sapply(x, function(x) integrate(function(v) exp(-v^n/k), lower=low, upper=x)$value)
+	return(list(Ip=Ip, In=In))
+}
+y = function(x, m=1, n=2, k=1, I, low=0) {
+	if(missing(I)) I = base.I(x, n=n, k=k, low=low);
+	return(x^m * I$Ip * I$In)
+}
+dy = function(x, m=1, n=2, k=1, I, low=0) {
+	if(missing(I)) I = base.I(x, n=n, k=k, low=low);
+	e = exp(x^n / k);
+	s = I$In * e + I$Ip / e;
+	xm = x^m;
+	s = m*xm*I$Ip*I$In + xm*x*s;
+	div = x;
+	s = ifelse(div != 0, s/div, 0) # TODO
+	return(s)
+}
+d2y = function(x, m=1, n=2, k=1, I, low=0) {
+	# TODO: k;
+	if(missing(I)) I = base.I(x, n=n, k=k, low=low);
+	y.x  =  y(x, m=m, n=n, k=k, I=I, low=low);
+	dy.x = dy(x, m=m, n=n, k=k, I=I, low=low);
+	xnn = n*x^n; xm = x^(m+2);
+	s.sq = (xnn*(x*dy.x - m*y.x))^2 - 4*xnn*xnn*xm*y.x;
+	s = sqrt(s.sq) * sign(x); # TODO: sign?
+	T = 2*m*x*dy.x - m*(m+1)*y.x + 2*xm;
+	s = s + T; div = x^2;
+	s = ifelse(div != 0, s/div, 0); # TODO
+	return(s)
+}
+### Plot:
+m = 1; n = 2; k = 1;
+px = -3:3 * 3/7;
+curve(y(x, m=m, n=n, k=k), from= -2, to = 2, ylim=c(-10,10))
+sapply(px, line.tan, dx=3, p=y, dp=dy, m=m, n=n, k=k)
+# non-sigmoidal
+curve(dy(x, m=m, n=n, k=k), add=T, col="green")
+sapply(px, line.tan, dx=3, p=dy, dp=d2y, m=m, n=n, k=k, col="orange")
+
 
 
 #######################
