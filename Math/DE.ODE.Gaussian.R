@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs - Gaussian
 ###
-### draft v.0.3g-test
+### draft v.0.3h
 
 #############
 ### Types ###
@@ -30,6 +30,10 @@
 
 ### Liniar / Non-Liniar Gaussian-type
 ###
+### draft v.0.3h:
+# - generalization:
+#   y = F1(x) * I(e^(P(x))) * I(e^(-P(x))) + F0(x);
+# - complicated example: see specific section;
 ### draft v.0.3g - v.0.3g-test:
 # - derived from:
 #   y = x^m * I(e^(x^n)) * I(e^(-x^n));
@@ -915,6 +919,112 @@ sapply(px, line.tan, dx=3, p=y, dp=dy, m=m, n=n, k=k)
 # non-sigmoidal
 curve(dy(x, m=m, n=n, k=k), add=T, col="green")
 sapply(px, line.tan, dx=3, p=dy, dp=d2y, m=m, n=n, k=k, col="orange")
+
+
+#######################
+
+### Combined:
+### Fully Generalized
+
+### y = F1(x) * I(e^(P(x))) * I(e^(-P(x))) + F0(x)
+
+### D(y)
+df1 / f1 * (y - f0) + df0 + f1*(e^p*In + e^(-p)*Ip)
+# f1*dy =
+df1*y - f0*df1 + f1*df0 + f1^2*(e^p*In + e^(-p)*Ip)
+
+### D2(y)
+# f1*d2y =
+d2f1*y - f0*d2f1 + f1*d2f0 + 2*f1^2 +
+	+ 2*f1*df1 / f1^2*(f1*dy - df1*y + f0*df1 - f1*df0) +
+	+ f1^2*dp*(e^p*In - e^(-p)*Ip);
+
+### Solve liniar system:
+f1^2*(e^p*In + e^(-p)*Ip) # =
+	f1*dy - df1*y + f0*df1 - f1*df0;
+f1^3*dp*(e^p*In - e^(-p)*Ip) # =
+	f1^2*d2y - 2*f1*df1*dy + 2*df1^2*y - f1*d2f1*y +
+	+ f0*f1*d2f1 - f1^2*d2f0 - 2*f1^3 - 2*f0*df1^2 + 2*f1*df0*df1;
+
+
+### Examples:
+# f0 = x + b0; df0 = 1;
+# f1 = 1/x; df1 = -1/x^2; d2f1 = 2/x^3;
+(e^p*In + e^(-p)*Ip) # =
+	x*dy + y - 2*x - b0;
+x*dp*(e^p*In - e^(-p)*Ip) # =
+	x^2*d2y + 2*x*dy - 4*x;
+###
+2*x*dp*e^(-p)*Ip = x*dp*(x*dy + y - 2*x - b0) - x^2*d2y - 2*x*dy + 4*x;
+2*x*dp*e^( p)*In = x*dp*(x*dy + y - 2*x - b0) + x^2*d2y + 2*x*dy - 4*x;
+
+### ODE:
+4*x^3*dp^2*y # =
+	(x*dp*(x*dy + y - 2*x - b0) - x^2*d2y - 2*x*dy + 4*x) *
+	(x*dp*(x*dy + y - 2*x - b0) + x^2*d2y + 2*x*dy - 4*x) + 4*x^3*(x + b0)*dp^2;
+### p = k*x^n
+4*k^2*n^2*x^(2*n+1)*y # =
+	(k*n*x^n*(x*dy + y - 2*x - b0) - x^2*d2y - 2*x*dy + 4*x) *
+	(k*n*x^n*(x*dy + y - 2*x - b0) + x^2*d2y + 2*x*dy - 4*x) + 4*k^2*n^2*x^(2*n+1)*(x + b0);
+
+
+### Solution & Plot:
+base.I = function(x, n=2, k=1, low=0) {
+	Ip = sapply(x, function(upper) integrate(function(x) exp( k*x^n), lower=low, upper=upper)$value)
+	In = sapply(x, function(upper) integrate(function(x) exp(-k*x^n), lower=low, upper=upper)$value)
+	return(list(Ip=Ip, In=In))
+}
+y = function(x, m=-1, n=2, k=1, b0=1, I, low=0) {
+	if(missing(I)) I = base.I(x, n=n, k=k, low=low);
+	if(m > 0) {
+		r = x^m * I$Ip * I$In;
+	} else r = ifelse(x != 0, x^m * I$Ip * I$In, 0);
+	r = r + x + b0;
+	return(r)
+}
+dy = function(x, m=-1, n=2, k=1, b0=1, I, low=0) {
+	if(missing(I)) I = base.I(x, n=n, k=k, low=low);
+	e = exp(k * x^n);
+	s = I$In * e + I$Ip / e;
+	s = 2*x + b0 + s - y(x, m=m, n=n, k=k, b0=b0, I=I, low=low);
+	div = x; # m = -1;
+	s = ifelse(div != 0, s/div, 2) # TODO
+	return(s)
+}
+d2y = function(x, m=-1, n=2, k=1, b0=1, I, low=0) {
+	# TODO: k;
+	if(missing(I)) I = base.I(x, n=n, k=k, low=low);
+	y.x  =  y(x, m=m, n=n, k=k, b0=b0, I=I, low=low);
+	dy.x = dy(x, m=m, n=n, k=k, b0=b0, I=I, low=low);
+	xnn = n*x^n; xm = x^(m+2);
+	# 4*k^2*n^2*x^(2*n+1)*y = (k*n*x^n*(x*dy + y - 2*x - b0) - x^2*d2y - 2*x*dy + 4*x) *
+	#  (k*n*x^n*(x*dy + y - 2*x - b0) + x^2*d2y + 2*x*dy - 4*x) + 4*k^2*n^2*x^(2*n+1)*(x + b0)
+	s.sq = (k*xnn*(x*dy.x + y.x - 2*x - b0))^2 +
+		- 4*k^2*xnn*xnn*x * (y.x - x - b0);
+	s = sqrt(s.sq) * sign(x); # TODO: sign?
+	T = 2*x*dy.x - 4*x;
+	s = s - T; div = x^2;
+	s = ifelse(div != 0, s/div, 0); # TODO
+	return(s)
+}
+### Plot:
+n = 2; k = 1; b0 = 1; # m = -1; is fixed;
+px = -3:3 * 4/7;
+curve(y(x, n=n, k=k, b0=b0), from= -2, to = 2, ylim=c(-6,10))
+sapply(px, line.tan, dx=3, p=y, dp=dy, n=n, k=k, b0=b0)
+# non-sigmoidal
+curve(dy(x, n=n, k=k, b=b0), add=T, col="green")
+sapply(px, line.tan, dx=3, p=dy, dp=d2y, n=n, k=k, b=b0, col="orange")
+
+
+### Ex 2:
+n = 2; k = 1; b0 = 3; # m = -1; is fixed;
+px = -3:3 * 4/7;
+curve(y(x, n=n, k=k, b0=b0), from= -2, to = 2, ylim=c(-6,10))
+sapply(px, line.tan, dx=3, p=y, dp=dy, n=n, k=k, b0=b0)
+# non-sigmoidal
+curve(dy(x, n=n, k=k, b=b0), add=T, col="green")
+sapply(px, line.tan, dx=3, p=dy, dp=d2y, n=n, k=k, b=b0, col="orange")
 
 
 
