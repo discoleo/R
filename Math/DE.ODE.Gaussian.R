@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs - Gaussian
 ###
-### draft v.0.3h
+### draft v.0.3i
 
 #############
 ### Types ###
@@ -30,6 +30,8 @@
 
 ### Liniar / Non-Liniar Gaussian-type
 ###
+### draft v.0.3i:
+# - extension to: v.0.3g;
 ### draft v.0.3h:
 # - generalization:
 #   y = F1(x) * I(e^(P(x))) * I(e^(-P(x))) + F0(x);
@@ -849,39 +851,38 @@ sapply(px, line.tan, dx=3, p=dy, dp=d2y, n=n, k=k, col="orange")
 ### Combined:
 ### Extensions
 
-### y = x^m * I(e^(x^n)) * I(e^(-x^n))
+### y = x^m * I(e^(k*x^n)) * I(e^(-k*x^n))
 
 ### D(y)
-m*y / x + x^m*e^(x^n)*In + x^m*e^(-x^n)*Ip
+m*y / x + x^m*e^(k*x^n)*In + x^m*e^(-k*x^n)*Ip
 # x*dy =
-m*y + x^(m+1)*(e^(x^n)*In + e^(-x^n)*Ip)
+m*y + x^(m+1)*(e^(k*x^n)*In + e^(-k*x^n)*Ip)
 
 ### D2(y)
 # x*d2y + dy =
 m*dy + (m+1)*(x*dy - m*y) / x + 2*x^(m+1) +
-	+ n*x^(m+n)*(e^(x^n)*In - e^(-x^n)*Ip)
+	+ n*k*x^(m+n)*(e^(k*x^n)*In - e^(-k*x^n)*Ip)
 # x^2*d2y + x*dy =
 (2*m+1)*x*dy - m*(m+1)*y + 2*x^(m+2) +
-	+ n*x^(m+n+1)*(e^(x^n)*In - e^(-x^n)*Ip)
+	+ n*k*x^(m+n+1)*(e^(k*x^n)*In - e^(-k*x^n)*Ip)
 # x^2*d2y =
 2*m*x*dy - m*(m+1)*y + 2*x^(m+2) +
-	+ n*x^(m+n+1)*(e^(x^n)*In - e^(-x^n)*Ip)
+	+ n*k*x^(m+n+1)*(e^(k*x^n)*In - e^(-k*x^n)*Ip)
 
 ### Solve liniar system:
 T = 2*m*x*dy - m*(m+1)*y + 2*x^(m+2)
-e^(x^n)*In  = (n*x^n*(x*dy - m*y) + x^2*d2y - T) / (2*n*x^(m+n+1))
-e^(x^-n)*Ip = (n*x^n*(x*dy - m*y) - x^2*d2y + T) / (2*n*x^(m+n+1))
+e^( k*x^n)*In = (n*k*x^n*(x*dy - m*y) + x^2*d2y - T) / (2*n*k*x^(m+n+1))
+e^(-k*x^n)*Ip = (n*k*x^n*(x*dy - m*y) - x^2*d2y + T) / (2*n*k*x^(m+n+1))
 
 ### ODE:
-(n*x^n*(x*dy - m*y) + x^2*d2y - T) * (n*x^n*(x*dy - m*y) - x^2*d2y + T) +
-	- 4*n^2*x^(m+2*n+2)*y # = 0
+(n*k*x^n*(x*dy - m*y) + x^2*d2y - T) * (n*k*x^n*(x*dy - m*y) - x^2*d2y + T) +
+	- 4*n^2*k^2*x^(m+2*n+2)*y # = 0
 
-### TODO: verify;
 
 ### Solution & Plot:
 base.I = function(x, n=2, k=1, low=0) {
-	Ip = sapply(x, function(x) integrate(function(v) exp(v^n/k), lower=low, upper=x)$value)
-	In = sapply(x, function(x) integrate(function(v) exp(-v^n/k), lower=low, upper=x)$value)
+	Ip = sapply(x, function(upper) integrate(function(x) exp( k*x^n), lower=low, upper=upper)$value)
+	In = sapply(x, function(upper) integrate(function(x) exp(-k*x^n), lower=low, upper=upper)$value)
 	return(list(Ip=Ip, In=In))
 }
 y = function(x, m=1, n=2, k=1, I, low=0) {
@@ -890,7 +891,7 @@ y = function(x, m=1, n=2, k=1, I, low=0) {
 }
 dy = function(x, m=1, n=2, k=1, I, low=0) {
 	if(missing(I)) I = base.I(x, n=n, k=k, low=low);
-	e = exp(x^n / k);
+	e = exp(k * x^n);
 	s = I$In * e + I$Ip / e;
 	xm = x^m;
 	s = m*xm*I$Ip*I$In + xm*x*s;
@@ -899,11 +900,10 @@ dy = function(x, m=1, n=2, k=1, I, low=0) {
 	return(s)
 }
 d2y = function(x, m=1, n=2, k=1, I, low=0) {
-	# TODO: k;
 	if(missing(I)) I = base.I(x, n=n, k=k, low=low);
 	y.x  =  y(x, m=m, n=n, k=k, I=I, low=low);
 	dy.x = dy(x, m=m, n=n, k=k, I=I, low=low);
-	xnn = n*x^n; xm = x^(m+2);
+	xnn = n*k*x^n; xm = x^(m+2);
 	s.sq = (xnn*(x*dy.x - m*y.x))^2 - 4*xnn*xnn*xm*y.x;
 	s = sqrt(s.sq) * sign(x); # TODO: sign?
 	T = 2*m*x*dy.x - m*(m+1)*y.x + 2*xm;
@@ -916,6 +916,16 @@ m = 1; n = 2; k = 1;
 px = -3:3 * 3/7;
 curve(y(x, m=m, n=n, k=k), from= -2, to = 2, ylim=c(-10,10))
 sapply(px, line.tan, dx=3, p=y, dp=dy, m=m, n=n, k=k)
+# non-sigmoidal
+curve(dy(x, m=m, n=n, k=k), add=T, col="green")
+sapply(px, line.tan, dx=3, p=dy, dp=d2y, m=m, n=n, k=k, col="orange")
+
+
+### Ex 2:
+m = 1; n = 2; k = 3;
+px = -3:3 * 2/7;
+curve(y(x, m=m, n=n, k=k), from= -2, to = 2, ylim=c(-10,10))
+sapply(px * 1.3, line.tan, dx=3, p=y, dp=dy, m=m, n=n, k=k)
 # non-sigmoidal
 curve(dy(x, m=m, n=n, k=k), add=T, col="green")
 sapply(px, line.tan, dx=3, p=dy, dp=d2y, m=m, n=n, k=k, col="orange")
