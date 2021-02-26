@@ -7,7 +7,7 @@
 ### Differential Equations
 ### ODEs - Logarithms
 ###
-### draft v.0.1g
+### draft v.0.2a
 
 
 ### ODEs Derived from Logarithms
@@ -22,6 +22,9 @@
 ### History ###
 ###############
 
+### draft v.0.2a:
+# - derived from:
+#   y = x * I(1/log(x + k)) dx + F0(x);
 ### draft v.0.1d - v.0.1g:
 # - derived from: y = x^log(x)
 #   x^2*y*d2y - x^2*dy^2 + x*y*dy - 2*y^2 = 0;
@@ -470,5 +473,86 @@ sapply(px, line.tan, dx=3, p=y, dp=dy, k=k)
 #
 curve(dy(x, k=k), add=T, col="green")
 sapply(px, line.tan, dx=3, p=dy, dp=d2y, k=k, col="orange")
+
+
+#######################
+#######################
+
+#################
+### Integrals ###
+#################
+
+### y = x * I(1/log(x + k)) dx + F0(x)
+
+### D(y)
+I + x/log(x + k) + df0
+# x*dy =
+y - f0 + x^2/log(x + k) + x*df0
+
+### D2(y)
+# x*d2y + dy =
+dy + x*d2f0 + 2*x/log(x + k) - x^2/((x+k)*log(x+k)^2)
+dy + x*d2f0 + 2*(x*dy - y + f0 - x*df0)/x - (x*dy - y + f0 - x*df0)^2/(x^2*(x+k))
+# x^3*(x+k)*d2y =
+2*x*(x+k)*(x*dy - y + f0 - x*df0) - (x*dy - y + f0 - x*df0)^2 + x^3*(x+k)*d2f0;
+
+### Examples:
+### k = 0
+x^4*d2y - 2*x^2*(x*dy - y + f0 - x*df0) + (x*dy - y + f0 - x*df0)^2 - x^4*d2f0 # = 0
+
+
+### Solution & Plot:
+y.I = function(x, k=0, n=1, lower=1+1E-3) {
+	sapply(x, function(upper)
+		integrate(function(x) 1/log(x^n + k), lower=lower, upper=upper)$value)
+}
+y = function(x, b=0, k=0, n=1, lower=1+1E-3) {
+	# x * I(1/log(x^n + k)) + F0(x)
+	I.v = y.I(x, k=k, n=n, lower=lower)
+	r = x*I.v + eval.pol(x, b);
+	return(r)
+}
+dy = function(x, b=0, k=0, n=1, lower=1+1E-3) {
+	I.v = y.I(x, k=k, n=n, lower=lower)
+	# (y - f0) + x^2/log(x^n + k) + x*df0
+	# y - f0 = x*I.v;
+	r = x*I.v + x^2 / log(x^n + k) + deriv.pol(x, b, x.mult=1); # x*df0
+	div = x;
+	r = ifelse(div != 0, r / div,
+		dy(x + 1E-3, b=b, k=k, n=n, lower=lower)) # TODO
+	return(r)
+}
+d2y = function(x, b=0, k=0, n=1, lower=1+1E-3) {
+	y.x = y(x, b=b, k=k, n=n, lower=lower)
+	dy.x = dy(x, b=b, k=k, n=n, lower=lower)
+	# 2*x*(x+k)*(x*dy - y + f0 - x*df0) - (x*dy - y + f0 - x*df0)^2 + x^3*(x+k)*d2f0
+	f0 = eval.pol(x, b); xdf0 = deriv.pol(x, b, dn=1, x.mult=1);
+	d2f0 = deriv.pol(x, b, dn=2, x.mult=0);
+	x3 = x^3; x3k = x3 * (x+k);
+	Tx = x*dy.x - y.x + f0 - xdf0;
+	dp = 2*x*(x+k)*Tx - Tx^2 + x3k*d2f0;
+	div = x3k;
+	dp = ifelse(div != 0, dp / div,
+		d2y(x + 1E-3, b=b, k=k, n=n, lower=lower)); # TODO
+	return(dp)
+}
+### Plot:
+b = c(0, 1); k = 0;
+x.px = c(0.01, 1:3 * 2/13) + (1-k); xlim = c(1-k + 1E-3, 1-k + 3);
+curve(y(x, b=b, k=k), from= xlim[1], to = xlim[2], ylim=c(0, 30))
+sapply(x.px, line.tan, dx=1.6, p=y, dp=dy, b=b, k=k)
+#
+curve(dy(x, b=b, k=k), add=T, col="green")
+sapply(x.px, line.tan, dx=1.5, p=dy, dp=d2y, b=b, k=k, col="orange")
+
+
+### Ex 2:
+b = c(0, 1); k = 2;
+x.px = c(0.01, 1:4 * 3/7) + (1-k); xlim = c(1-k + 1E-3, 1-k + 3);
+curve(y(x, b=b, k=k), from= xlim[1], to = xlim[2], ylim=c(-5, 10))
+sapply(x.px, line.tan, dx=1.6, p=y, dp=dy, b=b, k=k)
+#
+curve(dy(x, b=b, k=k), add=T, col="green")
+sapply(x.px*1.5 + 0.8, line.tan, dx=1.5, p=dy, dp=d2y, b=b, k=k, col="orange")
 
 
