@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs - Trigonometric
 ###
-### draft v.0.3g
+### draft v.0.3h
 
 
 ### History
@@ -37,6 +37,8 @@
 ### Order 1 & 2 Non-Liniar:
 ### Trigonometric Variants
 ###
+### draft v.0.3h:
+# - minor extension to: [v.0.3f];
 ### draft v.0.3g:
 # - derived from:
 #   y = x * I(tan(k*x^2)) + F0(x);
@@ -1295,29 +1297,29 @@ sapply(x.px, line.tan, dx=1.5, p=dy, dp=d2y, n=n, k=k, col="orange")
 ############################
 ############################
 
-### y = x * I(atan(x)^2) + F0(x)
+### y = x * I(atan(k*x)^2) + F0(x)
 
 ### D(y)
-(y - f0)/x + x*atan(x)^2 + df0
+(y - f0)/x + x*atan(k*x)^2 + df0
 ### x*dy =
-(y - f0) + x^2*atan(x)^2 + x*df0
+(y - f0) + x^2*atan(k*x)^2 + x*df0
 
 ### D2(y)
 # x*d2y + dy =
-dy + 2*x*atan(x)^2 + 2*x^2 / (x^2+1) *atan(x) + x*d2f0
+dy + 2*x*atan(k*x)^2 + 2*k*x^2 / (k^2*x^2+1) *atan(x) + x*d2f0
 dy + 2*(x*dy - y + f0 - x*df0)/x +
-	+ 2*x / (x^2+1) * sqrt(x*dy - y + f0 - x*df0) + x*d2f0
-# x^2*(x^2+1)*d2y =
-2*(x^2+1)*(x*dy - y + f0 - x*df0) +
-	+ 2*x^2*sqrt(x*dy - y + f0 - x*df0) + x^2*(x^2+1)*d2f0
+	+ 2*k*x / (k^2*x^2+1) * sqrt(x*dy - y + f0 - x*df0) + x*d2f0
+# x^2*(k^2*x^2+1)*d2y =
+2*(k^2*x^2+1)*(x*dy - y + f0 - x*df0) +
+	+ 2*k*x^2*sqrt(x*dy - y + f0 - x*df0) + x^2*(k^2*x^2+1)*d2f0
 
 ### ODE:
-(x^2*(x^2+1)*d2y - 2*(x^2+1)*(x*dy - y + f0 - x*df0) - x^2*(x^2+1)*d2f0)^2 +
-	- 4*x^4*(x*dy - y + f0 - x*df0) # = 0
+(x^2*(k^2*x^2+1)*d2y - 2*(k^2*x^2+1)*(x*dy - y + f0 - x*df0) - x^2*(k^2*x^2+1)*d2f0)^2 +
+	- 4*k^2*x^4*(x*dy - y + f0 - x*df0) # = 0
 
 ### Examples:
 ### f0 = x; df0 = 1;
-(x^2*(x^2+1)*d2y - 2*(x^2+1)*(x*dy - y))^2 - 4*x^4*(x*dy - y) # = 0
+(x^2*(k^2*x^2+1)*d2y - 2*(k^2*x^2+1)*(x*dy - y))^2 - 4*k^2*x^4*(x*dy - y) # = 0
 
 
 ### Solution & Plot:
@@ -1356,14 +1358,13 @@ dy = function(x, b=0, k=1, n=2, lower=0) {
 d2y = function(x, b=0, k=1, n=2, lower=0) {
 	y.x = y(x, b=b, k=k, n=n, lower=0)
 	dy.x = dy(x, b=b, k=k, n=n, lower=0)
-	# TODO: k;
-	# (x^2*(x^2+1)*d2y - 2*(x^2+1)*(x*dy - y + f0 - x*df0) - x^2*(x^2+1)*d2f0)^2 +
-	#  - 4*x^4*(x*dy - y + f0 - x*df0) # = 0
-	x2 = x^2; x21 = x2 + 1;
+	# (x^2*(k^2*x^2+1)*d2y - 2*(k^2*x^2+1)*(x*dy - y + f0 - x*df0) - x^2*(k^2*x^2+1)*d2f0)^2 +
+	#  - 4*k^2*x^4*(x*dy - y + f0 - x*df0) # = 0
+	x2 = x^2; x21 = k^2 * x2 + 1;
 	f0 = eval.pol(x, b); xdf0 = deriv.pol(x, b, dn=1, x.mult=1);
 	d2f0 = deriv.pol(x, b, dn=2, x.mult=0);
 	Tx = x*dy.x - y.x + f0 - xdf0;
-	dp  = 4*x2*x2*Tx;
+	dp  = 4*k^2*x2*x2*Tx;
 	dp = sqrt(dp);
 	dp = dp + 2*x21*Tx + x2*x21*d2f0;
 	div = x2 * x21;
@@ -1388,6 +1389,17 @@ sapply(x.px, line.tan, dx=1.6, p=y, dp=dy, b=b)
 #
 curve(dy(x, b=b), add=T, col="green")
 sapply(x.px, line.tan, dx=1.5, p=dy, dp=d2y, b=b, col="orange")
+
+
+### Ex 3:
+b = c(0, -2, 1); k =1/3;
+x.scale = 1; xlim = c(-1.5, 2.5) * x.scale;
+x.px = c(-5:7 * 3/7) * x.scale;
+curve(y(x, b=b, k=k), from= xlim[1], to = xlim[2], ylim=c(-3, 4))
+sapply(x.px, line.tan, dx=1.6, p=y, dp=dy, b=b, k=k)
+#
+curve(dy(x, b=b, k=k), add=T, col="green")
+sapply(x.px, line.tan, dx=1.5, p=dy, dp=d2y, b=b, k=k, col="orange")
 
 
 ############################

@@ -6,11 +6,13 @@
 ### Differential Equations
 ### ODEs - Helper Functions
 ###
-### draft v.0.1b-def
+### draft v.0.1c
 
 
 ### History
 
+### draft v.0.1c:
+# - derivative of a polynomial;
 ### draft v.0.1b - v.0.1b-def:
 # - code improvement: any() instead of sum();
 # - minor change to line.tan();
@@ -68,4 +70,18 @@ round0 = function(m, tol=1E-7) {
 		m[isZero] = Re(m[isZero])
 	}
 	return(m)
+}
+
+### Polynoms
+deriv.pol = function(x, b, dn=1, x.mult=0) {
+	coeff = tail(b, -1);
+	pow = seq(length(coeff));
+	coeff = coeff * pow;
+	if(dn > 1) return(deriv.pol(x, coeff, dn=dn-1, x.mult=x.mult))
+	if(x.mult != 1) pow = pow + x.mult - 1; # x * df0;
+	sapply(x, function(x) sum(coeff * x^pow));
+}
+eval.pol = function(x, b) {
+	pow = seq(0, length(b) - 1)
+	sapply(x, function(x) sum(b * x^pow))
 }
