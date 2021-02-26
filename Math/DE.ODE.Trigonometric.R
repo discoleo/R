@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs - Trigonometric
 ###
-### draft v.0.3h
+### draft v.0.4a
 
 
 ### History
@@ -37,6 +37,9 @@
 ### Order 1 & 2 Non-Liniar:
 ### Trigonometric Variants
 ###
+### draft v.0.4a:
+# - derived from Inverse Integrals:
+#   y * I(sin(x^n)) = F0(x);
 ### draft v.0.3h:
 # - minor extension to: [v.0.3f];
 ### draft v.0.3g:
@@ -44,7 +47,7 @@
 #   y = x * I(tan(k*x^2)) + F0(x);
 ### draft v.0.3f - v.0.3f-test:
 # - derived from:
-#   y = x * I(atan(x)^2) + F0(x);
+#   y = x * I(atan(k*x)^2) + F0(x); [extended in v.0.3h]
 ### draft v.0.3e:
 # - extension of [v.0.3d] to cases derived from:
 #   sin(x^n + k*x);
@@ -1473,5 +1476,28 @@ sapply(x.px*2.08, line.tan, dx=1.6, p=y, dp=dy, b=b, k=k)
 #
 curve(dy(x, b=b, k=k), add=T, col="green")
 sapply(x.px*1.7, line.tan, dx=1.5, p=dy, dp=d2y, b=b, k=k, col="orange")
+
+
+#########################
+#########################
+
+#########################
+### Inverse Integrals ###
+#########################
+
+### y * I(sin(x^n)) = F0(x)
+
+### D(y)
+I*dy + y*sin(x^n) - df0 # = 0
+f0*dy + sin(x^n)*y^2 - y*df0 # = 0
+
+### D2(y)
+f0*d2y + 2*sin(x^n)*y*dy + n*x^(n-1)*cos(x^n)*y^2 - y*d2f0 # = 0
+f0*y*d2y - 2*(f0*dy - y*df0)*dy + n*x^(n-1)*cos(x^n)*y^3 - y^2*d2f0 # = 0
+f0*y*d2y - 2*(f0*dy - y*df0)*dy - y^2*d2f0 + n*x^(n-1)*sqrt(y^4 - (f0*dy - y*df0)^2)*y # = 0
+(f0*y*d2y - 2*(f0*dy - y*df0)*dy - y^2*d2f0)^2 +
+	- n^2*x^(2*n-2)*(y^4 - (f0*dy - y*df0)^2)*y^2 # = 0
+
+### TODO: check;
 
 
