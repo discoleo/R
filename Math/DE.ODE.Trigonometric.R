@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs - Trigonometric
 ###
-### draft v.0.3f
+### draft v.0.3f-test
 
 
 ### History
@@ -37,7 +37,7 @@
 ### Order 1 & 2 Non-Liniar:
 ### Trigonometric Variants
 ###
-### draft v.0.3f:
+### draft v.0.3f - v.0.3f-test:
 # - derived from:
 #   y = x * I(atan(x)^2) + F0(x);
 ### draft v.0.3e:
@@ -1312,4 +1312,75 @@ dy + 2*(x*dy - y + f0 - x*df0)/x +
 (x^2*(x^2+1)*d2y - 2*(x^2+1)*(x*dy - y + f0 - x*df0) - x^2*(x^2+1)*d2f0)^2 +
 	- 4*x^4*(x*dy - y + f0 - x*df0) # = 0
 
-### TODO: check!
+### Examples:
+### f0 = x; df0 = 1;
+(x^2*(x^2+1)*d2y - 2*(x^2+1)*(x*dy - y))^2 - 4*x^4*(x*dy - y) # = 0
+
+
+### Solution & Plot:
+y.I = function(x, n=2, lower=0) {
+	sapply(x, function(upper)
+		integrate(function(x) atan(x)^n, lower=lower, upper=upper)$value)
+}
+deriv.pol = function(x, b, dn=1, x.mult=0) {
+	coeff = tail(b, -1);
+	pow = seq(length(coeff));
+	coeff = coeff * pow;
+	if(dn > 1) return(deriv.pol(x, coeff, dn=dn-1, x.mult=x.mult))
+	if(x.mult != 1) pow = pow + x.mult - 1; # x * df0;
+	sapply(x, function(x) sum(coeff * x^pow));
+}
+eval.pol = function(x, b) {
+	pow = seq(0, length(b) - 1)
+	sapply(x, function(x) sum(b * x^pow))
+}
+y = function(x, b=0, n=2, lower=0) {
+	# x * I(atan(x)^2) + F0(x)
+	I.v = y.I(x, n=n, lower=lower)
+	r = x*I.v + eval.pol(x, b);
+	return(r)
+}
+dy = function(x, b=0, n=2, lower=0) {
+	I.v = y.I(x, n=n, lower=lower)
+	# (y - f0) + x^2*atan(x)^2 + x*df0
+	# y - f0 = x*I.v;
+	r = x*I.v + x^2 * atan(x)^2 + deriv.pol(x, b, x.mult=1); # x*df0
+	div = x;
+	r = ifelse(div != 0, r / div, dy(x + 1E-3, b=b, n=n, lower=lower)) # TODO
+	return(r)
+}
+d2y = function(x, b=0, n=2, lower=0) {
+	y.x = y(x, b=b, n=n, lower=0)
+	dy.x = dy(x, b=b, n=n, lower=0)
+	# (x^2*(x^2+1)*d2y - 2*(x^2+1)*(x*dy - y + f0 - x*df0) - x^2*(x^2+1)*d2f0)^2 +
+	#  - 4*x^4*(x*dy - y + f0 - x*df0) # = 0
+	x2 = x^2; x21 = x2 + 1;
+	f0 = eval.pol(x, b); xdf0 = deriv.pol(x, b, dn=1, x.mult=1);
+	d2f0 = deriv.pol(x, b, dn=2, x.mult=0);
+	Tx = x*dy.x - y.x + f0 - xdf0;
+	dp  = 4*x2*x2*Tx;
+	dp = sqrt(dp);
+	dp = dp + 2*x21*Tx + x2*x21*d2f0;
+	div = x2 * x21;
+	dp = ifelse(div != 0, dp / div, d2y(x + 1E-3, b=b, n=n, lower=lower)); # TODO
+	return(dp)
+}
+### Plot:
+b = c(0, 1);
+x.px = c(-5:7 * 3/7)
+curve(y(x, b=b), from= -3, to = 2, ylim=c(-2, 3.5))
+sapply(x.px, line.tan, dx=1.6, p=y, dp=dy, b=b)
+#
+curve(dy(x, b=b), add=T, col="green")
+sapply(x.px, line.tan, dx=1.5, p=dy, dp=d2y, b=b, col="orange")
+
+
+### Ex 2:
+b = c(0, -2, 1);
+x.px = c(-5:7 * 3/7)
+curve(y(x, b=b), from= -1.5, to = 2.5, ylim=c(-3, 4))
+sapply(x.px, line.tan, dx=1.6, p=y, dp=dy, b=b)
+#
+curve(dy(x, b=b), add=T, col="green")
+sapply(x.px, line.tan, dx=1.5, p=dy, dp=d2y, b=b, col="orange")
+
