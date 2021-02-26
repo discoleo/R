@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs - Gaussian
 ###
-### draft v.0.3j
+### draft v.0.3k
 
 #############
 ### Types ###
@@ -30,9 +30,10 @@
 
 ### Liniar / Non-Liniar Gaussian-type
 ###
-### draft v.0.3j:
+### draft v.0.3j - v.0.3k:
 # - derived from:
 #   y = x^2*e^(x^3) + x^3*e^(x^2) + F0(x);
+#   y = m*x^m*e^(k*x^n) - n*x^n*e^(k*x^m) + F0(x);
 ### draft v.0.3i:
 # - extension to: v.0.3g;
 ### draft v.0.3h:
@@ -598,6 +599,89 @@ sapply(px * 1.2, line.tan, dx=2.2, p=y, dp=dy, a=a)
 #
 curve(dy(x, a=a), add=T, col="green")
 sapply(px, line.tan, dx=3, p=dy, dp=d2y, a=a, col="orange")
+
+
+### Partial Extension
+### y = m*x^m*e^(k*x^n) - n*x^n*e^(k*x^m) + F0(x)
+
+### D(y)
+m^2*x^(m-1)*e^(k*x^n) - n^2*x^(n-1)*e^(k*x^m) + df0
+
+### Solve Liniar system:
+e^(k*x^n) = (n*(y - f0) - x*(dy - df0)) / (m*(n-m)*x^m)
+e^(k*x^m) = (m*(y - f0) - x*(dy - df0)) / (n*(n-m)*x^n)
+
+### D2(y)
+m^2*(m-1)*x^(m-2)*e^(k*x^n) - n^2*(n-1)*x^(n-2)*e^(k*x^m) +
+	+ k*m^2*n*x^(m+n-2)*e^(k*x^n) - k*m*n^2*x^(m+n-2)*e^(k*x^m) + d2f0
+### (n-m)*x^2*D2(y) =
+m*(m-1)*(n*y - x*dy) - n*(n-1)*(m*y - x*dy) +
+	+ k*m*n*x^n*(n*y - x*(dy - df0)) - k*m*n*x^m*(m*y - x*(dy - df0)) +
+	- m*n*(m-n)*f0 - k*m*n*(n*x^n - m*x^m)*f0 +
+	+ (m-n)*(m+n-1)*x*df0 +
+	+ (n-m)*x^2*d2f0
+k*m*n*x*(x^m - x^n)*dy + (n-m)*(n + m - 1)*x*dy +
+	+ k*m*n*(n*x^n - m*x^m)*y + m*n*(m-n)*y +
+	- k*m*n*(n*x^n - m*x^m)*f0 - m*n*(m-n)*f0 +
+	+ k*m*n*x*(x^n - x^m)*df0 + (m-n)*(m + n - 1)*x*df0 + (n-m)*x^2*d2f0
+
+### Examples:
+### f0 = x^2
+### (n-m)*x^2*D2(y) =
+k*m*n*x*(x^m - x^n)*dy + (n-m)*(n + m - 1)*x*dy +
+	+ k*m*n*(n*x^n - m*x^m)*y + m*n*(m-n)*y +
+	- k*m*n*(n*x^n - m*x^m)*x^2 + 2*k*m*n*(x^n - x^m)*x^2 +
+	+ 2*(m-n)*(m+n - 2)*x^2 - m*n*(m-n)*x^2;
+
+
+### Solution & Plot:
+y = function(x, m=c(2,3), k=1, a=c(1, 1)) {
+	xm = x^m[1]; xn = x^m[2];
+	y = a[1]*m[1]*xm*exp(k*xn) - a[2]*m[2]*xn*exp(k*xm) + x^2;
+	return(y)
+}
+dy = function(x, m=c(2,3), k=1, a=c(1, 1)) {
+	# TODO: a;
+	xm = x^m[1]; xn = x^m[2];
+	dy.v = m[1]^2*xm*exp(k*xn) - m[2]^2*xn*exp(k*xm) + 2*x^2; # x*df0
+	div = x;
+	dy.v = ifelse(div != 0, dy.v / div, dy(x + 1E-3, m=m, k=k, a=a)); # TODO
+	return(dy.v)
+}
+d2y = function(x, m=c(2,3), k=1, a=c(1, 1)) {
+	y.x = y(x, m=m, k=k, a=a)
+	dy.x = dy(x, m=m, k=k, a=a)
+	xm = x^m[1]; xn = x^m[2]; x2 = x^2;
+	n = m[2]; m = m[1];
+	mn = m*n; kmn = k*mn;
+	dp = kmn*x*(xm - xn)*dy.x + (n-m)*(n + m - 1)*x*dy.x +
+		+ kmn*(n*xn - m*xm)*y.x + mn*(m-n)*y.x +
+		- kmn*(n*xn - m*xm)*x2 +
+		+ 2*kmn*(xn - xm)*x2 + 2*(m-n)*(n + m - 2)*x2 - mn*(m-n)*x2;
+	div = (n-m)*x2;
+	dp = ifelse(div != 0, dp / div, d2y(x + 1E-2, m=c(m,n), k=k, a=a)); # TODO
+	return(dp)
+}
+### Plot:
+m = c(2, 3); k = 1;
+a = c(1, 1) # a[] has NO effect on eq of D2;
+px = c(-3:5 * 1/7);
+curve(y(x, m=m, k=k, a=a), from= -1.5, to = 1.5, ylim=c(-10, 10))
+sapply(px * 2, line.tan, dx=3, p=y, dp=dy, m=m, k=k, a=a)
+#
+curve(dy(x, m=m, k=k, a=a), add=T, col="green")
+sapply(px, line.tan, dx=3, p=dy, dp=d2y, m=m, k=k, a=a, col="orange")
+
+
+### Ex 2:
+m = c(2, 3); k = -1;
+a = c(1, 1) # a[] has NO effect on eq of D2;
+px = c(-2:1 * 2/7, 0.8, 1.3);
+curve(y(x, m=m, k=k, a=a), from= -1.5, to = 1.8, ylim=c(-10, 10))
+sapply(px * 1.2, line.tan, dx=3, p=y, dp=dy, m=m, k=k, a=a)
+#
+curve(dy(x, m=m, k=k, a=a), add=T, col="green")
+sapply(px, line.tan, dx=3, p=dy, dp=d2y, m=m, k=k, a=a, col="orange")
 
 
 
