@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs - Gaussian
 ###
-### draft v.0.3i
+### draft v.0.3j
 
 #############
 ### Types ###
@@ -30,6 +30,9 @@
 
 ### Liniar / Non-Liniar Gaussian-type
 ###
+### draft v.0.3j:
+# - derived from:
+#   y = x^2*e^(x^3) + x^3*e^(x^2) + F0(x);
 ### draft v.0.3i:
 # - extension to: v.0.3g;
 ### draft v.0.3h:
@@ -516,6 +519,86 @@ sapply(c(-3:3 * 4/7, 2), line.tan, dx=3, p=y, dp=dy, a=a, n=n)
 #
 curve(dy(x, a=a, n=n), add=T, col="green")
 sapply(c(-3:3 * 2/7), line.tan, dx=3, p=dy, dp=d2y, a=a, n=n, col="orange")
+
+
+###########################
+###########################
+
+### Partial Extension
+### y = x^2*e^(x^3) + x^3*e^(x^2) + F0(x)
+
+### D(y)
+(3*x^4 + 2*x)*e^(x^3) + (2*x^4 + 3*x^2)*e^(x^2) + df0
+
+### Solve liniar system:
+div = (2*x^4 + 3*x^2)*x^2 - x^3*(3*x^4 + 2*x)
+div = -3*x^7 + 2*x^6 + x^4;
+e^(x^3) = ((2*x^4 + 3*x^2)*(y - f0) - x^3*(dy - df0)) / div;
+e^(x^2) = ((3*x^4 + 2*x)*(y - f0) - x^2*(dy - df0)) / - div;
+
+### D2(y)
+(3*x^2*(3*x^4 + 2*x) + 12*x^3 + 2)*e^(x^3) +
+	+ (2*x*(2*x^4 + 3*x^2) + 8*x^3 + 6*x)*e^(x^2) + d2f0
+(9*x^6 + 18*x^3 + 2)*e^(x^3) +
+	+ (4*x^5 + 14*x^3 + 6*x)*e^(x^2) + d2f0
+### div * d2y =
+(9*x^6 + 18*x^3 + 2)*((2*x^4 + 3*x^2)*(y - f0) - x^3*(dy - df0)) +
+	- (4*x^5 + 14*x^3 + 6*x)*((3*x^4 + 2*x)*(y - f0) - x^2*(dy - df0)) + div*d2f0
+
+### Examples:
+### f = x^3
+div = -3*x^7 + 2*x^6 + x^4;
+### div * d2y =
+(9*x^6 + 18*x^3 + 2)*((2*x^4 + 3*x^2)*y - x^3*dy) +
+	- (4*x^5 + 14*x^3 + 6*x)*((3*x^4 + 2*x)*y - x^2*dy) +
+	- 2*x^7*(9*x^6 + 18*x^3 + 2) + x^3*(3*x^4 - x)*(4*x^5 + 14*x^3 + 6*x) + 6*x*(-3*x^7 + 2*x^6 + x^4)
+(4*x^3 + 14*x^5 - 18*x^6 + 4*x^7 - 9*x^9)*dy +
+	+ (-6*x^2 - 24*x^4 + 36*x^5 - 8*x^6 - 6*x^7 + 27*x^8 - 12*x^9 + 18*x^10)*y +
+	- 6*x^7 - 4*x^9 + 6*x^10 + 12*x^12 - 18*x^13
+
+
+### Solution & Plot:
+y = function(x, a=c(1, 1)) {
+	x2 = x^2; x3 = x^3;
+	y = a[1]*x2*exp(x3) +
+		a[2]*x3*exp(x2) + x3;
+	return(y)
+}
+dy = function(x, a=c(1, 1)) {
+	x2 = x^2; x4 = x2*x2;
+	dy.v = a[1]*(3*x4 + 2*x)*exp(x^3) +
+		a[2]*(2*x4 + 3*x2)*exp(x2) + 3*x2;
+	return(dy.v)
+}
+d2y = function(x, a=c(1, 1)) {
+	y.x = y(x, a=a)
+	dy.x = dy(x, a=a)
+	dp = (4*x^3 + 14*x^5 - 18*x^6 + 4*x^7 - 9*x^9)*dy.x +
+		+ (-6*x^2 - 24*x^4 + 36*x^5 - 8*x^6 - 6*x^7 + 27*x^8 - 12*x^9 + 18*x^10)*y.x +
+		- 6*x^7 - 4*x^9 + 6*x^10 + 12*x^12 - 18*x^13;
+	div = -3*x^7 + 2*x^6 + x^4;
+	dp = ifelse(div != 0, dp / div, d2y(x + 1E-5, a=a)); # TODO
+	return(dp)
+}
+### Plot:
+a = c(1, 1) # a[] has NO effect on eq of D2;
+px = c(-3:3 * 2/7);
+curve(y(x, a=a), from= -1.5, to = 1.5, ylim=c(-10, 10))
+sapply(px * 1.2, line.tan, dx=3, p=y, dp=dy, a=a)
+#
+curve(dy(x, a=a), add=T, col="green")
+sapply(px, line.tan, dx=3, p=dy, dp=d2y, a=a, col="orange")
+
+
+### Ex 2:
+a = c(1.5, -2) # a[] has NO effect on eq of D2;
+px = c(-3:3 * 2/7);
+curve(y(x, a=a), from= -1.5, to = 1.5, ylim=c(-12, 8))
+sapply(px * 1.2, line.tan, dx=2.2, p=y, dp=dy, a=a)
+#
+curve(dy(x, a=a), add=T, col="green")
+sapply(px, line.tan, dx=3, p=dy, dp=d2y, a=a, col="orange")
+
 
 
 ###########################
