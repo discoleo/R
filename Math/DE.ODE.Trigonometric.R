@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs - Trigonometric
 ###
-### draft v.0.3f-test
+### draft v.0.3g
 
 
 ### History
@@ -37,6 +37,9 @@
 ### Order 1 & 2 Non-Liniar:
 ### Trigonometric Variants
 ###
+### draft v.0.3g:
+# - derived from:
+#   y = x * I(tan(k*x^2)) + F0(x);
 ### draft v.0.3f - v.0.3f-test:
 # - derived from:
 #   y = x * I(atan(x)^2) + F0(x);
@@ -1318,9 +1321,9 @@ dy + 2*(x*dy - y + f0 - x*df0)/x +
 
 
 ### Solution & Plot:
-y.I = function(x, n=2, lower=0) {
+y.I = function(x, k=1, n=2, lower=0) {
 	sapply(x, function(upper)
-		integrate(function(x) atan(x)^n, lower=lower, upper=upper)$value)
+		integrate(function(x) atan(k*x)^n, lower=lower, upper=upper)$value)
 }
 deriv.pol = function(x, b, dn=1, x.mult=0) {
 	coeff = tail(b, -1);
@@ -1334,24 +1337,26 @@ eval.pol = function(x, b) {
 	pow = seq(0, length(b) - 1)
 	sapply(x, function(x) sum(b * x^pow))
 }
-y = function(x, b=0, n=2, lower=0) {
+y = function(x, b=0, k=1, n=2, lower=0) {
 	# x * I(atan(x)^2) + F0(x)
-	I.v = y.I(x, n=n, lower=lower)
+	I.v = y.I(x, k=k, n=n, lower=lower)
 	r = x*I.v + eval.pol(x, b);
 	return(r)
 }
-dy = function(x, b=0, n=2, lower=0) {
-	I.v = y.I(x, n=n, lower=lower)
-	# (y - f0) + x^2*atan(x)^2 + x*df0
+dy = function(x, b=0, k=1, n=2, lower=0) {
+	I.v = y.I(x, k=k, n=n, lower=lower)
+	# (y - f0) + x^2*atan(k*x)^2 + x*df0
 	# y - f0 = x*I.v;
-	r = x*I.v + x^2 * atan(x)^2 + deriv.pol(x, b, x.mult=1); # x*df0
+	r = x*I.v + x^2 * atan(k*x)^2 + deriv.pol(x, b, x.mult=1); # x*df0
 	div = x;
-	r = ifelse(div != 0, r / div, dy(x + 1E-3, b=b, n=n, lower=lower)) # TODO
+	r = ifelse(div != 0, r / div,
+		dy(x + 1E-3, b=b, k=k, n=n, lower=lower)) # TODO
 	return(r)
 }
-d2y = function(x, b=0, n=2, lower=0) {
-	y.x = y(x, b=b, n=n, lower=0)
-	dy.x = dy(x, b=b, n=n, lower=0)
+d2y = function(x, b=0, k=1, n=2, lower=0) {
+	y.x = y(x, b=b, k=k, n=n, lower=0)
+	dy.x = dy(x, b=b, k=k, n=n, lower=0)
+	# TODO: k;
 	# (x^2*(x^2+1)*d2y - 2*(x^2+1)*(x*dy - y + f0 - x*df0) - x^2*(x^2+1)*d2f0)^2 +
 	#  - 4*x^4*(x*dy - y + f0 - x*df0) # = 0
 	x2 = x^2; x21 = x2 + 1;
@@ -1383,4 +1388,78 @@ sapply(x.px, line.tan, dx=1.6, p=y, dp=dy, b=b)
 #
 curve(dy(x, b=b), add=T, col="green")
 sapply(x.px, line.tan, dx=1.5, p=dy, dp=d2y, b=b, col="orange")
+
+
+############################
+############################
+
+### y = x * I(tan(k*x^2)) + F0(x)
+
+### D(y)
+(y - f0)/x + x*tan(k*x^2) + df0
+### x*dy =
+(y - f0) + x^2*tan(k*x^2) + x*df0
+
+### D2(y)
+# x*d2y + dy =
+dy + 2*x*tan(k*x^2) + 2*k*x^3*(tan(k*x^2)^2 + 1) + x*d2f0
+# x*d2y =
+2*x*tan(k*x^2) + 2*k*x^3*tan(k*x^2)^2 + 2*k*x^3 + x*d2f0
+# x^2*d2y =
+2*(x*dy - y + f0 - x*df0) + 2*k*(x*dy - y + f0 - x*df0)^2 + 2*k*x^4 + x^2*d2f0
+
+
+### Solution & Plot:
+y.I = function(x, k=1, n=2, lower=0) {
+	sapply(x, function(upper)
+		integrate(function(x) tan(k*x^n), lower=lower, upper=upper)$value)
+}
+y = function(x, b=0, k=1, n=2, lower=0) {
+	# x * I(tan(k*x^2)) + F0(x)
+	I.v = y.I(x, k=k, n=n, lower=lower)
+	r = x*I.v + eval.pol(x, b);
+	return(r)
+}
+dy = function(x, b=0, k=1, n=2, lower=0) {
+	I.v = y.I(x, k=k, n=n, lower=lower)
+	# (y - f0) + x^2*tan(k*x^2) + x*df0
+	# y - f0 = x*I.v;
+	r = x*I.v + x^2 * tan(k*x^2) + deriv.pol(x, b, x.mult=1); # x*df0
+	div = x;
+	r = ifelse(div != 0, r / div,
+		dy(x + 1E-3, b=b, k=k, n=n, lower=lower)) # TODO
+	return(r)
+}
+d2y = function(x, b=0, k=1, n=2, lower=0) {
+	y.x = y(x, b=b, k=k, n=n, lower=0)
+	dy.x = dy(x, b=b, k=k, n=n, lower=0)
+	# 2*(x*dy - y + f0 - x*df0) + 2*k*(x*dy - y + f0 - x*df0)^2 + 2*k*x^4 + x^2*d2f0
+	f0 = eval.pol(x, b); xdf0 = deriv.pol(x, b, dn=1, x.mult=1);
+	d2f0 = deriv.pol(x, b, dn=2, x.mult=0);
+	x2 = x^2;
+	Tx = x*dy.x - y.x + f0 - xdf0;
+	dp = 2*Tx + 2*k*Tx^2 + 2*k*x2*x2 + x2*d2f0;
+	div = x2;
+	dp = ifelse(div != 0, dp / div, d2y(x + 1E-3, b=b, n=n, lower=lower)); # TODO
+	return(dp)
+}
+### Plot:
+b = c(0, 1); k = 1;
+x.px = c(-2:2 * 2/7); xlim = sqrt(pi/2)/k - 1E-2;
+curve(y(x, b=b, k=k), from= -xlim, to = xlim, ylim=c(-2, 3.5))
+sapply(x.px*2.08, line.tan, dx=1.6, p=y, dp=dy, b=b, k=k)
+#
+curve(dy(x, b=b, k=k), add=T, col="green")
+sapply(x.px*1.6, line.tan, dx=1.5, p=dy, dp=d2y, b=b, k=k, col="orange")
+
+
+### Ex 2:
+b = c(0, 1); k = 2;
+x.px = c(-2:2 * 1/7); xlim = sqrt(pi/2)/k - 1E-2;
+curve(y(x, b=b, k=k), from= -xlim, to = xlim, ylim=c(-1, 2))
+sapply(x.px*2.08, line.tan, dx=1.6, p=y, dp=dy, b=b, k=k)
+#
+curve(dy(x, b=b, k=k), add=T, col="green")
+sapply(x.px*1.7, line.tan, dx=1.5, p=dy, dp=d2y, b=b, k=k, col="orange")
+
 
