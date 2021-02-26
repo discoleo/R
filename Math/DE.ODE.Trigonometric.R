@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs - Trigonometric
 ###
-### draft v.0.3e
+### draft v.0.3f
 
 
 ### History
@@ -37,6 +37,9 @@
 ### Order 1 & 2 Non-Liniar:
 ### Trigonometric Variants
 ###
+### draft v.0.3f:
+# - derived from:
+#   y = x * I(atan(x)^2) + F0(x);
 ### draft v.0.3e:
 # - extension of [v.0.3d] to cases derived from:
 #   sin(x^n + k*x);
@@ -1286,3 +1289,27 @@ curve(dy(x, n=n, k=k), add=T, col="green")
 sapply(x.px, line.tan, dx=1.5, p=dy, dp=d2y, n=n, k=k, col="orange")
 
 
+############################
+############################
+
+### y = x * I(atan(x)^2) + F0(x)
+
+### D(y)
+(y - f0)/x + x*atan(x)^2 + df0
+### x*dy =
+(y - f0) + x^2*atan(x)^2 + x*df0
+
+### D2(y)
+# x*d2y + dy =
+dy + 2*x*atan(x)^2 + 2*x^2 / (x^2+1) *atan(x) + x*d2f0
+dy + 2*(x*dy - y + f0 - x*df0)/x +
+	+ 2*x / (x^2+1) * sqrt(x*dy - y + f0 - x*df0) + x*d2f0
+# x^2*(x^2+1)*d2y =
+2*(x^2+1)*(x*dy - y + f0 - x*df0) +
+	+ 2*x^2*sqrt(x*dy - y + f0 - x*df0) + x^2*(x^2+1)*d2f0
+
+### ODE:
+(x^2*(x^2+1)*d2y - 2*(x^2+1)*(x*dy - y + f0 - x*df0) - x^2*(x^2+1)*d2f0)^2 +
+	- 4*x^4*(x*dy - y + f0 - x*df0) # = 0
+
+### TODO: check!
