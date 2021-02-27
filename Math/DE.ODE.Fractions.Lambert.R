@@ -7,13 +7,18 @@
 ### Differential Equations
 ### ODEs - Fractions: Lambert
 ###
-### draft v.0.4b
+### draft v.0.4c
 
 
 ### History
 
 ### Order 1 Non-Liniar
 ###
+### draft v.0.4c:
+# - derived from:
+#   y = F1(x) * W(x+k) + F0(x);
+# - examples:
+#   (x+k)*f1*y*dy - (x+k)*df1*y^2 - f1^2*y + f1^3 = 0;
 ### draft v.0.4b:
 # - cleanup:
 #   moved section with y = log(P1(x))*log(P2(x))
@@ -652,19 +657,19 @@ dy = function(x, a=1) {
 ### a == 1
 curve(y(x), from=-3, to=3)
 # a nice global minimum
-sapply(c((-2:4)/2), line.tan, dx=3, p=y, dp=dy)
+line.tan(c((-2:4)/2), dx=3, p=y, dp=dy)
 
 ### a == -1
 a = -1
 curve(y(x, a=a), from=-3, to=3)
 # a nice global minimum
-sapply(c((-2:4)/2), line.tan, dx=3, p=y, dp=dy, a=a)
+line.tan(c((-2:4)/2), dx=3, p=y, dp=dy, a=a)
 
 ### a == 1/2
 a = 1/2
 curve(y(x, a=a), from=-3, to=3)
 # a nice global minimum
-sapply(c((-2:4)/2), line.tan, dx=3, p=y, dp=dy, a=a)
+line.tan(c((-2:4)/2), dx=3, p=y, dp=dy, a=a)
 
 
 ### Higher Powers:
@@ -700,19 +705,19 @@ a = 1
 curve(y2.f(x, a=a), from=-2, to=3)
 # + 0.1 to separate curves;
 curve(y2.I(x, a=a, lower=-1.473744 + 0.1), add=T, col="green")
-sapply(c((-3:2)/2, 2), line.tan, dx=3, p=y2.f, dp=dy2, a=a)
+line.tan(c((-3:2)/2, 2), dx=3, p=y2.f, dp=dy2, a=a)
 # TODO: compute exact value for -1.473744;
 
 # separately: only the integration: I(y^2)
 curve(y2.I(x, a=a), from=-2, to=3)
-sapply(c((-3:2)/2, 2), line.tan, dx=3, p=y2.I, dp=dy2, a=a)
+line.tan(c((-3:2)/2, 2), dx=3, p=y2.I, dp=dy2, a=a)
 
 ###
 a = 3/2
 curve(y2.f(x, a=a), from=-2, to=3)
 # + 0.1 to separate curves;
 curve(y2.I(x, a=a, lower=-0.98 + 0), add=T, col="green")
-sapply(c((-3:2)/2, 2), line.tan, dx=3, p=y2.f, dp=dy2, a=a)
+line.tan(c((-3:2)/2, 2), dx=3, p=y2.f, dp=dy2, a=a)
 
 
 ### Example 2:
@@ -897,4 +902,76 @@ curve(y(x, b=b, k=k), from= -k, to = -k + 2, ylim=c(-5, 2))
 #
 line.tan(px, dx=3, p=y, dp=dy, b=b, k=k)
 
+
+#######################
+#######################
+
+### y = F1(x) * W(x+k) + F0(x)
+
+### D(y)
+df1*W + f1*W / ((x+k)*(W+1)) + df0
+### f1*dy =
+df1*(y - f0) + f1*(y - f0) / ((x+k)*(W+1)) + df0*f1
+### (x+k)*f1*dy =
+(x+k)*df1*(y - f0) + f1^2*(y - f0) / (f1*W+f1) + (x+k)*df0*f1
+(x+k)*df1*(y - f0) + f1^2*(y - f0) / (y - f0 + f1) + (x+k)*df0*f1
+(x+k)*df1*y + f1^2*(y - f0) / (y - f0 + f1) + (x+k)*(df0*f1 - f0*df1)
+
+### ODE:
+### (x+k)*f1*(y - f0 + f1)*dy =
+(x+k)*df1*(y - f0 + f1)*y + f1^2*(y - f0) + (x+k)*(df0*f1 - f0*df1)*(y - f0 + f1)
+
+### Examples:
+### f0 = f1
+(x+k)*f1*y*dy - (x+k)*df1*y^2 - f1^2*y + f1^3 # = 0
+
+
+### Solution & Plot
+y = function(x, b0=1, b1=1, k=0, n=1, pos.br=TRUE) {
+	W.x = if(pos.br) lambertWp(x^n + k) else lambertWn(x^n + k);
+	f0 = eval.pol(x, b0);
+	f1 = eval.pol(x, b1);
+	r = f1 * W.x + f0;
+	return(r)
+}
+dy = function(x, b0=1, b1=1, k=0, n=1, pos.br=TRUE) {
+	y.x = y(x, b0=b0, b1=b1, k=k, n=n, pos.br=pos.br);
+	f0 = eval.pol(x, b0); df0 = deriv.pol(x, b0, dn=1);
+	f1 = eval.pol(x, b1); df1 = deriv.pol(x, b1, dn=1);
+	# (x+k)*df1*(y - f0 + f1)*y + f1^2*(y - f0) + (x+k)*(df0*f1 - f0*df1)*(y - f0 + f1)
+	fs = (y.x - f0 + f1); xf = (x + k)*fs;
+	dp = xf*df1*y.x + f1^2*fs + xf*(df0*f1 - f0*df1) - f1^3;
+	div = xf*f1;
+	dp = ifelse(div != 0, dp/div,
+		dy(x + 1E-3, b0=b0, b1=b1, k=k, n=n, pos.br=pos.br)) # TODO
+	return(dp)
+}
+### Plot:
+b0 = c(1, 1); b1 = c(1, 1)
+k = 0;
+lim = -exp(-1) - k;
+px = c(-4,-3, -0.3) * 1/12
+curve(y(x, b0=b0, b1=b1, k=k), from= lim[1], to = 0, ylim=c(-0.5, 1))
+#
+line.tan(px, dx=3, p=y, dp=dy, b0=b0, b1=b1, k=k)
+
+
+### Ex 2:
+b0 = c(1, 1); b1 = c(1, 1)
+k = 2;
+lim = -exp(-1) - k;
+px = c(-7,-6, -5, -2) * 1/3
+curve(y(x, b0=b0, b1=b1, k=k), from= lim[1], to = 0, ylim=c(-3, 1))
+#
+line.tan(px, dx=3, p=y, dp=dy, b0=b0, b1=b1, k=k)
+
+
+### Ex 3:
+b0 = c(1, 1); b1 = c(1, -2, -3)
+k = 2;
+lim = -exp(-1) - k;
+px = c(-10,-9, -8, -6, -4, -3) * 1/5
+curve(y(x, b0=b0, b1=b1, k=k), from= lim[1], to = 0, ylim=c(-3, 1))
+# slight concavity between -1.3 to 0;
+line.tan(px, dx=1.4, p=y, dp=dy, b0=b0, b1=b1, k=k)
 
