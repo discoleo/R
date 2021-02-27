@@ -7,7 +7,7 @@
 ### Differential Equations
 ### ODEs - Logarithms
 ###
-### draft v.0.2a
+### draft v.0.2b
 
 
 ### ODEs Derived from Logarithms
@@ -22,6 +22,9 @@
 ### History ###
 ###############
 
+### draft v.0.2b:
+# - derived from:
+#   y * I(1/log(x + k)) dx = F0(x);
 ### draft v.0.2a:
 # - derived from:
 #   y = x * I(1/log(x + k)) dx + F0(x);
@@ -499,6 +502,8 @@ dy + x*d2f0 + 2*(x*dy - y + f0 - x*df0)/x - (x*dy - y + f0 - x*df0)^2/(x^2*(x+k)
 ### Examples:
 ### k = 0
 x^4*d2y - 2*x^2*(x*dy - y + f0 - x*df0) + (x*dy - y + f0 - x*df0)^2 - x^4*d2f0 # = 0
+### f0 = x
+x^4*d2y + x^2*dy^2 - 2*x*y*dy - 2*x^3*dy + y^2 + 2*x^2*y # = 0
 
 
 ### Solution & Plot:
@@ -555,4 +560,104 @@ sapply(x.px, line.tan, dx=1.6, p=y, dp=dy, b=b, k=k)
 curve(dy(x, b=b, k=k), add=T, col="green")
 sapply(x.px*1.5 + 0.8, line.tan, dx=1.5, p=dy, dp=d2y, b=b, k=k, col="orange")
 
+
+#########################
+#########################
+
+#########################
+### Inverse Integrals ###
+#########################
+
+### y * I(1/log(x + k)) dx = F0(x)
+
+### D(y)
+I*dy + 1/log(x+k) * y - df0 # = 0
+f0*dy + 1/log(x+k) * y^2 - df0*y # = 0
+
+### D2(y)
+f0*d2y + 2/log(x+k) * y*dy - y^2/((x+k)*log(x+k)^2) - d2f0*y # = 0
+(x+k)*f0*d2y + 2*(x+k)/log(x+k) * y*dy - y^2/log(x+k)^2 - (x+k)*d2f0*y # = 0
+# 1/log(x+k) = - (f0*dy - df0*y) / y^2;
+(x+k)*f0*d2y - 2*(x+k)*(f0*dy - df0*y)/y * dy +
+	- (f0*dy - df0*y)^2/y^2 - (x+k)*d2f0*y # = 0
+(x+k)*f0*y^2*d2y - 2*(x+k)*(f0*dy - df0*y)*y*dy +
+	- (f0*dy - df0*y)^2 - (x+k)*d2f0*y^3 # = 0
+
+### ODE:
+(x+k)*f0*y^2*d2y - 2*(x+k)*(f0*dy - df0*y)*y*dy - (f0*dy - df0*y)^2 - (x+k)*d2f0*y^3 # = 0
+
+### Examples:
+### k = 0
+x*f0*y^2*d2y - 2*x*(f0*dy - df0*y)*y*dy - (f0*dy - df0*y)^2 - x*d2f0*y^3 # = 0
+### f0 = 1
+(x+k)*y^2*d2y - 2*(x+k)*y*dy^2 - dy^2 # = 0
+
+
+### Solution & Plot:
+y.I = function(x, k=0, n=1, lower=1+1E-3) {
+	sapply(x, function(upper)
+		integrate(function(x) 1/log(x^n + k), lower=lower, upper=upper)$value)
+}
+y = function(x, b=0, k=0, n=1, lower=1+1E-3) {
+	# y * I(1/log(x + k)) = F0(x)
+	I.v = y.I(x, k=k, n=n, lower=lower)
+	r = eval.pol(x, b);
+	div = I.v;
+	r = ifelse(I.v != 0, r / div, Inf);
+	return(r)
+}
+dy = function(x, b=0, k=0, n=1, lower=1+1E-3) {
+	I.v = y.I(x, k=k, n=n, lower=lower)
+	# f0*log(x+k)*dy = - y^2 + log(x+k)*df0*y # = 0
+	logx = log(x^n + k); f0 = eval.pol(x, b);
+	r = - f0 + I.v * logx * deriv.pol(x, b);
+	div = I.v^2 * logx;
+	r = ifelse(div != 0, r / div,
+		dy(x + 1E-3, b=b, k=k, n=n, lower=lower)) # TODO
+	return(r)
+}
+d2y = function(x, b=0, k=0, n=1, lower=1+1E-3) {
+	y.x = y(x, b=b, k=k, n=n, lower=lower)
+	dy.x = dy(x, b=b, k=k, n=n, lower=lower)
+	# (x+k)*f0*y^2*d2y - 2*(x+k)*(f0*dy - df0*y)*y*dy + (f0*dy - df0*y)^2 - (x+k)*d2f0*y^3
+	f0 = eval.pol(x, b); df0 = deriv.pol(x, b, dn=1);
+	d2f0 = deriv.pol(x, b, dn=2, x.mult=0);
+	xk = x + k; xkf = xk * f0;
+	Tx = f0*dy.x - df0*y.x;
+	dp = 2*xk*Tx*y.x*dy.x + Tx^2 + xk*d2f0*y.x^3;
+	div = xkf * y.x^2;
+	dp = ifelse(div != 0, dp / div,
+		d2y(x + 1E-3, b=b, k=k, n=n, lower=lower)); # TODO
+	return(dp)
+}
+### Plot:
+b = c(0, 1); k = 0;
+x.px = c(0.1, 1:3 * 2/13) + (1-k); xlim = c(1-k + 1E-3, 1-k + 3);
+#
+curve(y(x, b=b, k=k), from= xlim[1], to = xlim[2], ylim=c(-0.5, 0.45))
+sapply(x.px, line.tan, dx=1.6, p=y, dp=dy, b=b, k=k)
+#
+curve(dy(x, b=b, k=k), add=T, col="green")
+sapply(x.px, line.tan, dx=1.5, p=dy, dp=d2y, b=b, k=k, col="orange")
+
+
+### Ex 2:
+b = c(0, 1); k = 2;
+x.px = c(0.1, 1:3 * 2/13) + (1-k); xlim = c(1-k + 1E-3, 1-k + 1);
+#
+curve(y(x, b=b, k=k), from= xlim[1], to = xlim[2], ylim=c(-0.5, 1))
+sapply(x.px, line.tan, dx=1.6, p=y, dp=dy, b=b, k=k)
+#
+curve(dy(x, b=b, k=k), add=T, col="green")
+sapply(x.px, line.tan, dx=1.5, p=dy, dp=d2y, b=b, k=k, col="orange")
+
+### Ex 2 (cont):
+b = c(0, 1); k = 2;
+x.px = c(0.1, 1:4 * 2/5) + (1-k); xlim = c(1-k + 1E-3, 1-k + 3);
+#
+curve(y(x, b=b, k=k), from= xlim[1], to = xlim[2], ylim=c(-5, 1))
+sapply(x.px, line.tan, dx=1.6, p=y, dp=dy, b=b, k=k)
+#
+curve(dy(x, b=b, k=k), add=T, col="green")
+sapply(x.px, line.tan, dx=0.75, p=dy, dp=d2y, b=b, k=k, col="orange")
 
