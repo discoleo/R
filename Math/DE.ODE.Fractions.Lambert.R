@@ -7,13 +7,16 @@
 ### Differential Equations
 ### ODEs - Fractions: Lambert
 ###
-### draft v.0.4c
+### draft v.0.4d-pre
 
 
 ### History
 
 ### Order 1 Non-Liniar
 ###
+### draft v.0.4d-pre:
+# - generalization:
+#   (y + F1(x)) * (W(x+k) + F2(x)) = F0(x);
 ### draft v.0.4c:
 # - derived from:
 #   y = F1(x) * W(x+k) + F0(x);
@@ -974,4 +977,27 @@ px = c(-10,-9, -8, -6, -4, -3) * 1/5
 curve(y(x, b0=b0, b1=b1, k=k), from= lim[1], to = 0, ylim=c(-3, 1))
 # slight concavity between -1.3 to 0;
 line.tan(px, dx=1.4, p=y, dp=dy, b0=b0, b1=b1, k=k)
+
+
+########################
+########################
+
+### (y + F1(x)) * (W(x+k) + F2(x)) = F0(x)
+
+### D(y)
+(dy + df1)*(W + f2) + (y + f1)*(W/((x+k)*(W+1)) + df2) - df0 # = 0
+(dy + df1)*f0 / (y + f1) + (y + f1)*(W/((x+k)*(W+1)) + df2) - df0 # = 0
+(dy + df1)*f0 + (y + f1)^2*(W/((x+k)*(W+1)) + df2) - df0*(y + f1) # = 0
+(x+k)*f0*(dy + df1) + (y + f1)^2*(W/(W+1) + (x+k)*df2) - (x+k)*df0*(y + f1) # = 0
+(x+k)*f0*(dy + df1) + (y + f1)^2*W/(W+1) + (x+k)*df2*(y + f1)^2 - (x+k)*df0*(y + f1) # = 0
+(x+k)*f0*(W+1)*(dy + df1) + (f0 - f2*(y + f1))*(y + f1) +
+	+ (x+k)*df2*(W+1)*(y + f1)^2 - (x+k)*df0*(W+1)*(y + f1) # = 0
+(x+k)*f0*(W+1)*(dy + df1) + (f0 - f2*(y + f1))*(y + f1) +
+	+ (x+k)*df2*(f0 - f2*(y + f1) + y + f1)*(y + f1) - (x+k)*df0*(f0 - f2*(y + f1) + y + f1) # = 0
+(x+k)*f0*(W+1)*(dy + df1) + (f0 - f2*(y + f1))*(y + f1) +
+	+ (x+k)*(df2*(y + f1) - df0)*(f0 - f2*(y + f1) + y + f1) # = 0
+(x+k)*f0*(f0 - f2*(y + f1) + y + f1)*(dy + df1) + (f0 - f2*(y + f1))*(y + f1)^2 +
+	+ (x+k)*(df2*(y + f1) - df0)*(f0 - f2*(y + f1) + y + f1)*(y + f1) # = 0
+
+### TODO: check;
 
