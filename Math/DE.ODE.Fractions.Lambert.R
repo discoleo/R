@@ -7,13 +7,17 @@
 ### Differential Equations
 ### ODEs - Fractions: Lambert
 ###
-### draft v.0.3e
+### draft v.0.4a
 
 
 ### History
 
 ### Order 1 Non-Liniar
 ###
+### draft v.0.4a:
+# - derived from:
+#   y * W(x) = F0(x);
+# - example: x*y*dy + b0*x*dy + y^2 = 0;
 ### draft v.0.3e:
 # - ODEs derived from:
 #   y^n = log(f(x)) * log(g(x));
@@ -834,8 +838,17 @@ f*g*d2y + df*g*dy + f*dg*dy - df - dg =
 	(g*d2f + df*dg) * log(g) + (f*d2g + df*dg) * log(f)
 
 ### Solve Liniar =>
-log(g) = ...
+(f*dg*(g*d2f + df*dg) - g*df*(f*d2g + df*dg))*log(g) = ...
+(f*g*dg*d2f + f*df*dg^2 - f*g*df*d2g - g*df^2*dg)*log(g) = ...
+#
 log(f) = ...
+
+
+### Order: n = 1/2
+1/2*f*g*y^(-1/2)*dy = g*df * log(g) + f*dg * log(f)
+1/2*f*g*y^(-1/2)*d2y - 1/4*f*g*y^(-3/2)*dy^2 + 1/2*df*g*y^(-1/2)*dy + 1/2*f*dg*y^(-1/2)*dy -df - dg =
+	(g*d2f + df*dg) * log(g) + (f*d2g + df*dg) * log(f)
+
 
 ### Examples:
 
@@ -850,6 +863,19 @@ dy = log(x-k)/(x+k) + log(x+k)/(x-k)
 
 ### ODE:
 (x^2 - k^2)*((x^2 - k^2)*d2y + (x + k)*dy - 2) * ((x^2 - k^2)*d2y + (x - k)*dy - 2) + 4*k^2*y = 0
+
+### Ex 2:
+### y^(1/2) = log(x + k) * log(x - k)
+1/2*y^(-1/2)*dy = log(x-k)/(x+k) + log(x+k)/(x-k)
+(x^2 - k^2)*y^(-1/2)*dy = 2*(x-k)*log(x-k) + 2*(x+k)*log(x+k)
+### D2 =>
+(x^2 - k^2)*y^(-1/2)*d2y + 2*x*y^(-1/2)*dy - 1/2*(x^2 - k^2)*y^(-3/2)*dy^2 - 4 = 2*log(x-k) + 2*log(x+k)
+### Solve Liniar =>
+4*k*log(x-k) =  (x+k)*y^(-1/2)*((x^2 - k^2)*d2y + (x + k)*dy - 1/2*(x^2 - k^2)*dy^2/y - 4)
+4*k*log(x+k) = -(x-k)*y^(-1/2)*((x^2 - k^2)*d2y + (x - k)*dy - 1/2*(x^2 - k^2)*dy^2/y - 4)
+
+### ODE:
+(x^2 - k^2)*(...)*(...) + 4*k^2*y^(3/2) = 0
 
 
 ### Solution & Plot
@@ -888,5 +914,50 @@ sapply(c(3 + (1:3)*3/5), line.tan, dx=3, p=y, dp=dy, k=k, n=n)
 #
 curve(dy(x, k=k, n=n), add=T, col="green")
 sapply(c(3 + (1:3)*3/5), line.tan, dx=3, p=dy, dp=d2y, k=k, n=n, col="orange")
+
+
+#####################
+#####################
+
+### y * W(x) = F0(x)
+
+### D(y)
+W*dy + W/(W*x + x) * y - df0 # = 0
+y*W*dy + W/(x*W + x) * y^2 - df0*y # = 0
+f0*dy + f0/(x*y*W + x*y) * y^2 - df0*y # = 0
+f0*dy + f0/(x*f0 + x*y) * y^2 - df0*y # = 0
+f0*(x*f0 + x*y)*dy + f0*y^2 - df0*(x*f0 + x*y)*y # = 0
+x*f0*y*dy + x*f0^2*dy - x*df0*y^2 + f0*y^2 - x*f0*df0*y # = 0
+
+### Examples:
+### f0 = b0
+x*y*dy + b0*x*dy + y^2 # = 0
+
+
+### Solution & Plot
+y = function(x, b=0, k=0, n=1, pos.br=TRUE) {
+	W.x = if(pos.br) lambertWp(x^n + k) else lambertWn(x^n + k);
+	f0 = eval.pol(x, b);
+	div = W.x;
+	r = ifelse(div != 0, f0/div, Inf) # TODO
+	return(r)
+}
+dy = function(x, b=0, k=0, n=1, pos.br=TRUE) {
+	y.x = y(x, b=b, k=k, n=n, pos.br=pos.br);
+	# x*f0*(f0 + y)*dy + f0*y^2 - df0*x*(f0 + y)*y
+	f0 = eval.pol(x, b); df0 = deriv.pol(x, b, dn=1);
+	xf0 = x*(f0 + y.x);
+	dp = - f0*y.x^2 + df0*xf0*y.x;
+	div = xf0 * f0;
+	dp = ifelse(div != 0, dp/div, 1) # TODO
+	return(dp)
+}
+### Plot:
+b = c(1, 1)
+lim = -exp(-1)
+px = c(-(4:1) * 1/13)
+curve(y(x, b=b), from= lim[1], to = 0, ylim=c(-15, 2))
+#
+sapply(px, line.tan, dx=3, p=y, dp=dy, b=b)
 
 
