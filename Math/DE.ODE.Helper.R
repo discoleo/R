@@ -6,11 +6,13 @@
 ### Differential Equations
 ### ODEs - Helper Functions
 ###
-### draft v.0.1c
+### draft v.0.1d
 
 
 ### History
 
+### draft v.0.1d:
+# - vectorization of line.tan();
 ### draft v.0.1c:
 # - derivative of a polynomial;
 ### draft v.0.1b - v.0.1b-def:
@@ -48,7 +50,9 @@ line.tan = function(x, col="red", dx=5, p=p, dp=dp, ...) {
 	isInf = abs(slope) == Inf
 	x.max[isInf] = x[isInf]
 	p.x = p(x, ...)
-	lines(c(x, x.max), c(p.x, p.x + (x.max-x)*slope), col=col)
+	y.end = p.x + (x.max-x)*slope
+	sapply(seq(length(x)),
+		function(id) lines(c(x[id], x.max[id]), c(p.x[id], y.end[id]), col=col) )
 	return(slope)
 }
 

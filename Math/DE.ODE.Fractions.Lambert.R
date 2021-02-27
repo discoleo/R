@@ -7,17 +7,20 @@
 ### Differential Equations
 ### ODEs - Fractions: Lambert
 ###
-### draft v.0.4a
+### draft v.0.4a-ext
 
 
 ### History
 
 ### Order 1 Non-Liniar
 ###
-### draft v.0.4a:
+### draft v.0.4a - v.0.4a-ext:
 # - derived from:
 #   y * W(x) = F0(x);
-# - example: x*y*dy + b0*x*dy + y^2 = 0;
+#   y * W(x + k) = F0(x); [v.0.4a-ext]
+# - examples:
+#   x*y*dy + b0*x*dy + y^2 = 0;
+#   (x + k)*y*dy + b0*(x + k)*dy + y^2 = 0;
 ### draft v.0.3e:
 # - ODEs derived from:
 #   y^n = log(f(x)) * log(g(x));
@@ -898,22 +901,24 @@ d2y = function(x, k=1, n=1, v.dy) {
 }
 ### Plot:
 k = 1; n = 1;
+px = c(3/5 + (1:3)*3/5);
 curve(y(x, k=k, n=n), from= 1.01, to = 3, ylim=c(-3, 3))
 # global "minimum" / horn;
-sapply(c(3/5 + (1:3)*3/5), line.tan, dx=3, p=y, dp=dy, k=k, n=n)
+line.tan(px, dx=3, p=y, dp=dy, k=k, n=n)
 #
 curve(dy(x, k=k, n=n), add=T, col="green")
-sapply(c(3/5 + (1:3)*3/5), line.tan, dx=3, p=dy, dp=d2y, k=k, n=n, col="orange")
+line.tan(px, dx=3, p=dy, dp=d2y, k=k, n=n, col="orange")
 
 
 ### Ex 2:
 k = 3; n = 1;
+px = c(3 + (1:3)*3/5);
 curve(y(x, k=k, n=n), from= 3.01, to = 6, ylim=c(-3, 3))
 # global "minimum" / horn;
-sapply(c(3 + (1:3)*3/5), line.tan, dx=3, p=y, dp=dy, k=k, n=n)
+line.tan(px, dx=3, p=y, dp=dy, k=k, n=n)
 #
 curve(dy(x, k=k, n=n), add=T, col="green")
-sapply(c(3 + (1:3)*3/5), line.tan, dx=3, p=dy, dp=d2y, k=k, n=n, col="orange")
+line.tan(px, dx=3, p=dy, dp=d2y, k=k, n=n, col="orange")
 
 
 #####################
@@ -929,9 +934,19 @@ f0*dy + f0/(x*f0 + x*y) * y^2 - df0*y # = 0
 f0*(x*f0 + x*y)*dy + f0*y^2 - df0*(x*f0 + x*y)*y # = 0
 x*f0*y*dy + x*f0^2*dy - x*df0*y^2 + f0*y^2 - x*f0*df0*y # = 0
 
+### Extensions:
+### y * W(x + k) = F0(x)
+
+### D(y)
+W*dy + W/((x + k)*(W + 1)) * y - df0 # = 0
+f0*(x+k)*(f0 + y)*dy + f0*y^2 - df0*(x+k)*(f0 + y)*y # = 0
+
+
 ### Examples:
 ### f0 = b0
 x*y*dy + b0*x*dy + y^2 # = 0
+### Ext:
+(x + k)*y*dy + b0*(x + k)*dy + y^2 # = 0
 
 
 ### Solution & Plot
@@ -946,7 +961,7 @@ dy = function(x, b=0, k=0, n=1, pos.br=TRUE) {
 	y.x = y(x, b=b, k=k, n=n, pos.br=pos.br);
 	# x*f0*(f0 + y)*dy + f0*y^2 - df0*x*(f0 + y)*y
 	f0 = eval.pol(x, b); df0 = deriv.pol(x, b, dn=1);
-	xf0 = x*(f0 + y.x);
+	xf0 = (x + k)*(f0 + y.x);
 	dp = - f0*y.x^2 + df0*xf0*y.x;
 	div = xf0 * f0;
 	dp = ifelse(div != 0, dp/div, 1) # TODO
@@ -958,6 +973,23 @@ lim = -exp(-1)
 px = c(-(4:1) * 1/13)
 curve(y(x, b=b), from= lim[1], to = 0, ylim=c(-15, 2))
 #
-sapply(px, line.tan, dx=3, p=y, dp=dy, b=b)
+line.tan(px, dx=3, p=y, dp=dy, b=b)
+
+
+### Ex 2:
+b = c(1, 1)
+lim = -exp(-1)
+px = - c(9,7, 5, 2,1) * 1/23 + 0.03
+curve(y(x, b=b, pos.br=FALSE), from= lim[1], to = 0, ylim=c(-0.8, 0))
+#
+line.tan(px, dx=c(0.32, 0.37, 0.37, 1/4, 0.2), p=y, dp=dy, b=b, pos.br=FALSE)
+
+
+### Ex 3:
+b = c(1, 1); k = 2;
+px = c(-(4:1) * 6/13) + 0.1
+curve(y(x, b=b, k=k), from= -k, to = -k + 2, ylim=c(-5, 2))
+#
+line.tan(px, dx=3, p=y, dp=dy, b=b, k=k)
 
 
