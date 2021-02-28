@@ -7,14 +7,14 @@
 ### Differential Equations
 ### ODEs - Fractions: Lambert
 ###
-### draft v.0.4d-pre
+### draft v.0.4d-test
 
 
 ### History
 
 ### Order 1 Non-Liniar
 ###
-### draft v.0.4d-pre:
+### draft v.0.4d: pre & test:
 # - generalization:
 #   (y + F1(x)) * (W(x+k) + F2(x)) = F0(x);
 ### draft v.0.4c:
@@ -998,6 +998,72 @@ line.tan(px, dx=1.4, p=y, dp=dy, b0=b0, b1=b1, k=k)
 	+ (x+k)*(df2*(y + f1) - df0)*(f0 - f2*(y + f1) + y + f1) # = 0
 (x+k)*f0*(f0 - f2*(y + f1) + y + f1)*(dy + df1) + (f0 - f2*(y + f1))*(y + f1)^2 +
 	+ (x+k)*(df2*(y + f1) - df0)*(f0 - f2*(y + f1) + y + f1)*(y + f1) # = 0
+# T = f0 - f2*(y + f1) + y + f1;
+(x+k)*f0*T*(dy + df1) + (T - (y + f1))*(y + f1)^2 +
+	+ (x+k)*(df2*(y + f1) - df0)*T*(y + f1) # = 0
+(x+k)*f0*T*dy - (y + f1)^3 + (x+k)*df2*T*(y + f1)^2 + T*(y + f1)^2 +
+	- (x+k)*df0*T*(y + f1) + (x+k)*f0*df1*T # = 0
 
-### TODO: check;
+### ODE:
+T = f0 - (f2 - 1)*(y + f1);
+(x+k)*f0*T*dy - f2*(y + f1)^3 + (x+k)*df2*T*(y + f1)^2 + f0*(y + f1)^2 +
+	- (x+k)*df0*T*(y + f1) + (x+k)*f0*df1*T # = 0
+
+
+### Solution & Plot
+y = function(x, b, k=0, n=1, pos.br=TRUE, all=FALSE) {
+	W.x = if(pos.br) lambertWp(x^n + k) else lambertWn(x^n + k);
+	f0 = eval.pol(x, b[[1]]);
+	f1 = eval.pol(x, b[[2]]);
+	f2 = eval.pol(x, b[[3]]);
+	div = f2 + W.x;
+	# (y + F1(x)) * (W(x+k) + F2(x)) = F0(x)
+	r = ifelse(div != 0, f0/div,
+		y(x - 1E-3, b=b, k=k, n=n, pos.br=pos.br)); # TODO
+	r = r - f1;
+	if(all) return(list(y=r, f0=f0, f1=f1, f2=f2));
+	return(r)
+}
+dy = function(x, b, k=0, n=1, pos.br=TRUE) {
+	y.all = y(x, b=b, k=k, n=n, pos.br=pos.br, all=T);
+	f0 = y.all$f0; f1 = y.all$f1; f2 = y.all$f2;
+	y.x = y.all$y;
+	df.all = lapply(b, deriv.pol, x=x);
+	df0 = df.all[[1]]; df1 = df.all[[2]]; df2 = df.all[[3]];
+	#
+	yf = y.x + f1;
+	T = f0 - (f2 - 1)*yf; xk = x + k; Tk = xk*T;
+	div = f0*Tk;
+	dp = f2*yf^3 - df2*Tk*yf^2 - f0*yf^2 + df0*Tk*yf - div*df1;
+	dp = ifelse(div != 0, dp/div,
+		dy(x + 1E-3, b=b, k=k, n=n, pos.br=pos.br)) # TODO
+	return(dp)
+}
+### Plot:
+b = list(b0 = c(1, 1), b1 = c(-1, 2, 3), b2 = c(0, 1, -1));
+k = 0;
+lim = -exp(-1) - k;
+px = c(-4,-3, -2, -1, -0.75) * 1/12
+curve(y(x, b=b, k=k), from= lim[1], to = 0, ylim=c(-15, 1))
+#
+line.tan(px, dx=3, p=y, dp=dy, b=b, k=k)
+
+
+### Ex 2:
+b = list(b0 = c(1, 1), b1 = c(-1, 2, 3), b2 = c(0, 1, -1));
+k = 0;
+px = c(1:5) * 3/11
+curve(y(x, b=b, k=k), from = 1E-3, to = 1.5, ylim=c(-1, 10))
+#
+line.tan(px, dx=3, p=y, dp=dy, b=b, k=k)
+
+
+### Ex 3:
+b = list(b0 = c(1, 1), b1 = c(-1, 2, 3), b2 = c(0, 1, -1));
+k = 2;
+px = c(1,2,4,5, 5.3) * 3/11
+curve(y(x, b=b, k=k), from = 1E-3, to = 1.5, ylim=c(-5, 2.5))
+#
+line.tan(px, dx=c(1,1,1.5, 2,2), p=y, dp=dy, b=b, k=k)
+curve(dy(x, b=b, k=k), add=T, col="green")
 
