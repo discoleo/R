@@ -7,12 +7,15 @@
 ### Differential Equations
 ### ODEs: Polynomial types
 ###
-### draft v.0.3b
+### draft v.0.4a
 
 
 ### History
 
 ### Order 1 Non-Liniar
+### draft v.0.4a:
+# - derived from:
+#   y = x * I(dx / (x^n + k)) + F0(x);
 ### draft v.0.3b:
 # - Base-solution with Radicals:
 #   2*x*y^2*d2y - (n-2)*y^2*dy - n*dy = 0;
@@ -1593,19 +1596,52 @@ d2y = function(x, n=4, b0=1, variant=FALSE) {
 n = 4;
 # nice global minimum
 curve(y(x, n=n), from=-3, to=3, ylim=c(-2, 8))
-sapply(c(-2:2), line.tan, dx=3, p=y, dp=dy, n=n)
+line.tan(c(-2:2), dx=3, p=y, dp=dy, n=n)
 # D(y)
 curve(dy(x, n=n), add=T, col="green")
-sapply(c(-3:3)/2.7, line.tan, dx=3, p=dy, dp=d2y, n=n, col="orange")
+line.tan(c(-3:3)/2.7, dx=3, p=dy, dp=d2y, n=n, col="orange")
 
 
 ### Variant
 n = 2;
 # nice global minimum
 curve(y(x, n=n), from=-3, to=3, ylim=c(-2, 4))
-sapply(c(-2:2), line.tan, dx=3, p=y, dp=dy, n=n)
+line.tan(c(-2:2), dx=3, p=y, dp=dy, n=n)
 # D(y)
 curve(dy(x, n=n), add=T, col="green")
-sapply(c(-3:3)/2.4, line.tan, dx=3, p=dy, dp=d2y, n=n, variant=T, col="orange")
+line.tan(c(-3:3)/2.4, dx=3, p=dy, dp=d2y, n=n, variant=T, col="orange")
 
+
+#########################
+#########################
+
+### y = x * I(dx / (x^n + k)) + F0(x)
+
+### D(y)
+(y - f0)/x + x / (x^n + k) + df0
+# x*dy =
+(y - f0) + x^2 / (x^n + k) + x*df0
+# x^n =
+x^2 / (x*dy - y + f0 - x*df0) - k
+
+### D2(y)
+# x*d2y + dy =
+dy + 2*x / (x^n + k)) - n*x^(n + 1) / (x^n + k)^2 + x*d2f0;
+# x^2*d2y =
+2*(x*dy - y + f0 - x*df0) - n*x^(n + 2) / (x^n + k)^2 + x^2*d2f0;
+2*(x*dy - y + f0 - x*df0) - n*x^(n - 2) / (x*dy - y + f0 - x*df0)^2 + x^2*d2f0;
+
+### ODE:
+x^2*(x*dy - y + f0 - x*df0)^2*d2y +
+	- 2*(x*dy - y + f0 - x*df0)^3 - x^2*d2f0*(x*dy - y + f0 - x*df0)^2 + n*x^(n - 2)
+
+### Note:
+# - it is possible to leave n*x^(n + 1) / (x^n + k)^2 as such;
+# - it is possible to express x^n as a function of: dy, y;
+# - this latter case becomes interesting when n = sqrt(n0):
+x^2*(x*dy - y + f0 - x*df0)^2*d2y +
+	- 2*(x*dy - y + f0 - x*df0)^3 - x^2*d2f0*(x*dy - y + f0 - x*df0)^2 +
+	+ sqrt(n0) / (x*dy - y + f0 - x*df0) - k/x^2;
+
+### TODO: check;
 
