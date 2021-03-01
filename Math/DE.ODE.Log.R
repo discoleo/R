@@ -7,7 +7,7 @@
 ### Differential Equations
 ### ODEs - Logarithms
 ###
-### draft v.0.3a
+### draft v.0.3b
 
 
 ### ODEs Derived from Logarithms
@@ -22,8 +22,10 @@
 ### History ###
 ###############
 
-### draft v.0.3a:
-# - from: y = (x + k1)^(x + k2) + F0(x);
+### draft v.0.3a - v.0.3b:
+# - from:
+#   y = (x + k1)^(x + k2) + F0(x);
+#   y * (x + k1)^(x + k2) = F0(x);
 # - example:
 #   (x+k1)*(y - f0)*d2y = (x+k1)*(dy - df0)^2 + (y - f0)^2 + (x+k1)*d2f0*(y - f0);
 ### draft v.0.2c:
@@ -705,6 +707,93 @@ sapply(px, line.tan, dx=dx, p=y, dp=dy, k=k, b=b)
 #
 curve(dy(x, k=k, b=b), add=T, col="green")
 sapply(px, line.tan, dx=dx, p=dy, dp=d2y, k=k, b=b, col="orange")
+
+
+#######################
+#######################
+
+### y * (x + k1)^(x + k2) = F0(x)
+
+# "another problem which stumped Photomath!" ;-)
+
+### D(y)
+f0*dy/y + (log(x+k1) + (x+k2)/(x+k1))*y*f0/y - df0 # = 0
+f0*dy + (log(x+k1) + (x+k2)/(x+k1))*f0*y - df0*y # = 0
+(x+k1)*f0*dy + ((x+k1)*log(x+k1) + (x+k2))*f0*y - (x+k1)*df0*y # = 0
+
+# (x+k1)*log(x+k1)*f0*y = -(x+k1)*(f0*dy - df0*y) - (x + k2)*f0*y;
+
+### D2(y)
+(x+k1)*f0*d2y + f0*dy - df0*y - (x+k1)*d2f0*y +
+	+ ((x+k1)*log(x+k1) + (x+k2))*(f0*dy + df0*y) +
+	+ (log(x+k1) + 2)*f0*y # = 0
+(x+k1)*f0*d2y + f0*dy - df0*y - (x+k1)*d2f0*y +
+	- (x+k1)*(f0*dy - df0*y)*(dy/y + df0/f0) +
+	+ log(x+k1)*f0*y + 2*f0*y # = 0
+(x+k1)^2*f0^2*y*d2y +
+	- (x+k1)^2*(f0*dy + df0*y)*(f0*dy - df0*y) +
+	- (x+k1)^2*f0*d2f0*y^2 + (x+k1)*f0^2*y^2 + (k1 - k2)*f0^2*y^2 # = 0
+
+### Examples:
+### k1 == k2
+(x+k1)*f0^2*y*d2y +
+	- (x+k1)*(f0*dy + df0*y)*(f0*dy - df0*y) +
+	- (x+k1)*f0*d2f0*y^2 + f0^2*y^2 # = 0
+
+
+### Solution & Plot:
+y = function(x, k=c(0,0), b=1, asList=FALSE) {
+	f0 = eval.pol(x, b=b);
+	div = (x + k[1])^(x + k[2]);
+	y.x = ifelse(div != 0, f0/div, 0); # TODO
+	if(asList) return(list(y=y.x, f0=f0));
+	return(y.x)
+}
+dy = function(x, k=c(0,0), b=1, asList=FALSE) {
+	y.all = y(x, k=k, b=b, asList=TRUE);
+	y.x = y.all$y; f0 = y.all$f0;
+	df0 = deriv.pol(x, b=b, dn=1);
+	xk = x + k[1]; x.log = log(xk);
+	dp = -((xk*x.log + x + k[2])*f0 - xk*df0)*y.x;
+	div = xk * f0;
+	dp = ifelse(div != 0, dp/div,
+		dy(x + 1E-3, k=k, b=b)); # TODO
+	if(asList) return(c(y.all, dy=dp, df0=df0));
+	return(dp)
+}
+d2y = function(x, k=c(0,0), b=1) {
+	y.all = dy(x, k=k, b=b, asList=TRUE);
+	y.x = y.all$y; dy.x = y.all$dy;
+	f0 = y.all$f0; df0 = y.all$df0;
+	d2f0 = deriv.pol(x, b=b, dn=2);
+	Tx  = f0*dy.x - df0*y.x;
+	Txp = f0*dy.x + df0*y.x;
+	xk = x + k[1]; xk2 = xk*xk; y2 = y.x*y.x;
+	div = xk2*f0^2*y.x;
+	d2p = xk2*Txp*Tx +
+		+ xk2*f0*d2f0*y2 - xk*f0^2*y2 - (k[1] - k[2])*f0^2*y2;
+	d2p = ifelse(div != 0, d2p/div,
+		d2y(x + 1E-3, k=k, b=b)); # TODO
+	return(d2p)
+}
+### Plot:
+k = c(0,0); b = c(0, 1)
+px = (0:4)*4/7 + 0.1;
+curve(y(x, k=k, b=b), from = 1E-3, to = 3, ylim=c(-1.5,2))
+sapply(px, line.tan, dx=3, p=y, dp=dy, k=k, b=b)
+#
+curve(dy(x, k=k, b=b), add=T, col="green")
+sapply(px, line.tan, dx=3, p=dy, dp=d2y, k=k, b=b, col="orange")
+
+
+### Ex 2:
+k = c(1, -2); b = c(0, 1)
+px = (0:4)*4/7 + 0.1;
+curve(y(x, k=k, b=b), from = 0, to = 3, ylim=c(-1.5, 3))
+sapply(px, line.tan, dx=3, p=y, dp=dy, k=k, b=b)
+#
+curve(dy(x, k=k, b=b), add=T, col="green")
+sapply(px, line.tan, dx=3, p=dy, dp=d2y, k=k, b=b, col="orange")
 
 
 
