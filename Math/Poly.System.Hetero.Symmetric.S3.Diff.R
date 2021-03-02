@@ -7,7 +7,7 @@
 ### Polynomial Systems: S3
 ### Hetero-Symmetric Differences
 ###
-### draft v.0.3a-fix
+### draft v.0.3a-class
 
 
 ### Hetero-Symmetric Differences
@@ -26,8 +26,8 @@ z^n - x^n + b*z*x = R
 ###############
 ### History ###
 
-### draft v.0.3a - v.0.3a-fix:
-# - started work on:
+### draft v.0.3a - v.0.3a-class:
+# - started work on + classic Polynomial (P[24]):
 #   x^3 + y^3 - z^3 + b*x = R;
 ### draft v.0.2d:
 # - variant system: Multiplicative
@@ -730,6 +730,11 @@ z^2 - x^2 + b[1]*x*z*(x*y*z) # - R
 # - x^3 + y^3 + z^3 + b*y = R
 #   x^3 - y^3 + z^3 + b*z = R
 
+### Equivalent system:
+2*x^3 + b*(x+z) - 2*R # = 0
+2*y^3 + b*(x+y) - 2*R # = 0
+2*z^3 + b*(y+z) - 2*R # = 0
+
 ### Solution:
 
 ### Sum =>
@@ -741,26 +746,8 @@ S^3 - 3*E2*S + 3*E3 + b*S - 3*R
 (- 2*E2^3 + 3*E3^2 - 12*E2*E3*S + 9*E2^2*S^2 + 6*E3*S^3 - 6*E2*S^4 + S^6) +
 	+ b*(S^4 - 4*E2*S^2 + 4*E3*S + 2*E2^2) - R*(S^3 - 3*E2*S + 3*E3) # = 0
 
-### Sum(x*...) =>
-(x^4 + y^4 + z^4) + (x*y^3 + y*z^3 + z*x^3) - (x*z^3 + y*x^3 + z*y^3) +
-	+ b*(x^2 + y^2 + z^2) - R*S # = 0
-(S^4 - 4*E2*S^2 + 4*E3*S + 2*E2^2) +
-	+ (x*y^3 + y*z^3 + z*x^3 + x*z^3 + y*x^3 + z*y^3) - 2*(x*z^3 + y*x^3 + z*y^3) +
-	+ b*(S^2 - 2*E2) - R*S # = 0
-# 2*(x*z^3 + y*x^3 + z*y^3) # =
-(S^4 - 4*E2*S^2 + 4*E3*S + 2*E2^2) +
-	+ (S*(S^3 - 3*E2*S + 3*E3) - (S^4 - 4*E2*S^2 + 4*E3*S + 2*E2^2)) +
-	+ b*(S^2 - 2*E2) - R*S
-S^4 - 3*E2*S^2 + 3*E3*S + b*S^2 - 2*b*E2 - R*S # Eq-bis-1
-# 2*(x*z^3 + y*x^3 + z*y^3)*(x*y^3 + y*z^3 + z*x^3) # =
-2*(E3*S^5 - 5*E2*E3*S^3 + 7*E3^2*S^2 + E2^2*E3*S + E2^4) # =
-(S^4 - 3*E2*S^2 + 3*E3*S + b*S^2 - 2*b*E2 - R*S)*(x*y^3 + y*z^3 + z*x^3) # Eq-bis-2
-### (...)*Eq-bis-1 + 2*Eq-bis-2 =>
-2*(S^4 - 3*E2*S^2 + 3*E3*S + b*S^2 - 2*b*E2 - R*S) *
-	(E2*S^2 - E3*S - 2*E2^2) +
-	- (S^4 - 3*E2*S^2 + 3*E3*S + b*S^2 - 2*b*E2 - R*S)^2 +
-	- 4*(E3*S^5 - 5*E2*E3*S^3 + 7*E3^2*S^2 + E2^2*E3*S + E2^4) # = 0
-#
+### Sum(x*...) & Rotation =>
+# [see Derivation]
 (4*E2^2*b^2 - 8*E2^3*b + 4*E2^4) +
 (- 16*E2*E3*b + 4*E2*R*b + 16*E2^2*E3 - 4*E2^2*R)*S^1 +
 (- 4*E2*b^2 + 20*E2^2*b - 12*E2^3 - 8*E3*R + 43*E3^2 + R^2)*S^2 +
@@ -782,12 +769,18 @@ E2Div = - 162*R*S^2*b^4 - 882*R*S^4*b^3 + 396*R*S^6*b^2 + 72*R*S^8*b + 576*R*S^1
 
 ### TODO: solve!
 # - massive overflow!
+# - S-Polynomial: actually P[8];
 
 
 ### Test
   x^3 + y^3 - z^3 + b*x # - R
 - x^3 + y^3 + z^3 + b*y # - R
   x^3 - y^3 + z^3 + b*z # - R
+
+### Classic Polynomial: P[3] * P[24]
+# see file:
+# Poly.System.Hetero.Symmetric.S3.Diff.Derivation.R;
+
 
 ### Debug
 b = 3; R = 2;
