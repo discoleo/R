@@ -7,7 +7,7 @@
 ### Polynomial Systems: S3
 ### Hetero-Symmetric Differences
 ###
-### draft v.0.3a-class
+### draft v.0.3a-eq
 
 
 ### Hetero-Symmetric Differences
@@ -26,7 +26,7 @@ z^n - x^n + b*z*x = R
 ###############
 ### History ###
 
-### draft v.0.3a - v.0.3a-class:
+### draft v.0.3a - v.0.3a-eq:
 # - started work on + classic Polynomial (P[24]):
 #   x^3 + y^3 - z^3 + b*x = R;
 ### draft v.0.2d:
@@ -767,9 +767,10 @@ E2Div = - 162*R*S^2*b^4 - 882*R*S^4*b^3 + 396*R*S^6*b^2 + 72*R*S^8*b + 576*R*S^1
 - E2Subst / E2Div;
 
 
-### TODO: solve!
+### Eq:
+16*S^8 + 24*b*S^6 + 72*b^2*S^4 + 216*b*R*S^3 + (432*R^2 + 46*b^3)*S^2 - 108*b^2*R*S + 9*b^4
+### TODO: thorough checking;
 # - massive overflow!
-# - S-Polynomial: actually P[8];
 
 
 ### Test

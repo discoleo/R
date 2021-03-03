@@ -440,6 +440,10 @@ S^4 - 3*E2*S^2 + 3*E3*S + b*S^2 - 2*b*E2 - R*S # Eq-bis-1
 (12*E3 - 2*R)*S^5 +
 (- 8*E2 + 2*b)*S^6 + S^8
 
+### Eq:
+16*S^8 + 24*b*S^6 + 72*b^2*S^4 + 216*b*R*S^3 +
+	+ (432*R^2 + 46*b^3)*S^2 - 108*b^2*R*S + 9*b^4
+ 
 
 ### Classic Polynomial:
 # P[3] * P[24]
@@ -468,7 +472,8 @@ S^4 - 3*E2*S^2 + 3*E3*S + b*S^2 - 2*b*E2 - R*S # Eq-bis-1
 (14336*b)*x^22 +
 (4096)*x^24
 
-coeff = c((8*R^2*b^9 + 4096*R^8 + b^12),
+solve.L3.S3P3 = function(R, b, debug=FALSE) {
+	coeff = c((8*R^2*b^9 + 4096*R^8 + b^12),
 	(- 4*R*b^10 - 768*R^5*b^4 - 14336*R^7*b),
 	(48*R^2*b^8 + 1536*R^4*b^5 + 22528*R^6*b^2 + 2*b^11),
 	(- 40*R*b^9 - 1344*R^3*b^6 - 22016*R^5*b^3 - 32768*R^7),
@@ -489,8 +494,10 @@ coeff = c((8*R^2*b^9 + 4096*R^8 + b^12),
 	114688*R^2 + 22016*b^3,
 	- 100352*R*b, 22528*b^2,
 	- 32768*R, 14336*b, 0, 4096)
-coeff = rev(coeff);
-x = roots(coeff)
-z = (2*R - 2*x^3 - b*x) / b;
-y = (2*R - 2*z^3 - b*z) / b;
+	coeff = rev(coeff);
+	x = roots(coeff)
+	z = (2*R - 2*x^3 - b*x) / b;
+	y = (2*R - 2*z^3 - b*z) / b;
+	return(data.frame(x=x, y=y, z=z, S=x+y+z))
+}
 
