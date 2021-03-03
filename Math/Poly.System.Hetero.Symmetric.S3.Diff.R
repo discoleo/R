@@ -7,7 +7,7 @@
 ### Polynomial Systems: S3
 ### Hetero-Symmetric Differences
 ###
-### draft v.0.3a-eq
+### draft v.0.3a-fix2
 
 
 ### Hetero-Symmetric Differences
@@ -26,8 +26,8 @@ z^n - x^n + b*z*x = R
 ###############
 ### History ###
 
-### draft v.0.3a - v.0.3a-eq:
-# - started work on + classic Polynomial (P[24]):
+### draft v.0.3a - v.0.3a-fix2:
+# - solved + classic Polynomial (P[24]):
 #   x^3 + y^3 - z^3 + b*x = R;
 ### draft v.0.2d:
 # - variant system: Multiplicative
@@ -768,10 +768,37 @@ E2Div = - 162*R*S^2*b^4 - 882*R*S^4*b^3 + 396*R*S^6*b^2 + 72*R*S^8*b + 576*R*S^1
 
 
 ### Eq:
-16*S^8 + 24*b*S^6 + 72*b^2*S^4 + 216*b*R*S^3 + (432*R^2 + 46*b^3)*S^2 - 108*b^2*R*S + 9*b^4
-### TODO: thorough checking;
-# - massive overflow!
+16*S^8 + 24*b*S^6 + 72*b^2*S^4 - 216*b*R*S^3 + (432*R^2 + 46*b^3)*S^2 - 108*b^2*R*S + 9*b^4
 
+
+### Solver:
+solve.L3.S3P3 = function(R, b, debug=TRUE) {
+	coeff = c(16, 0, 24*b[1], 0, 72*b[1]^2, -216*b[1]*R,
+		(432*R^2 + 46*b[1]^3), - 108*b[1]^2*R, 9*b[1]^4)
+	S = roots(coeff)
+	if(debug) print(S);
+	R1 = R[1] - 0*S;
+	E2Subst = 360*R*S^6*b^3 + 1098*R*S^8*b^2 - 306*R*S^10*b - 1152*R*S^12 + 243*R^2*S*b^4 +
+		+ 1458*R^2*S^3*b^3 + 4185*R^2*S^5*b^2 - 2862*R^2*S^7*b - 3024*R^2*S^9 - 1458*R^3*S^2*b^2 +
+		- 6318*R^3*S^4*b + 7776*R^3*S^6 - 27*S^3*b^6 - 138*S^5*b^5 - 432*S^7*b^4 - 468*S^9*b^3 +
+		+ 219*S^11*b^2 + 606*S^13*b + 240*S^15;
+	E2Div = - 162*R*S^2*b^4 - 882*R*S^4*b^3 + 396*R*S^6*b^2 + 72*R*S^8*b + 576*R*S^10 +
+		- 243*R^2*S*b^3 - 729*R^2*S^3*b^2 - 3348*R^2*S^5*b + 4320*R^2*S^7 + 153*S^3*b^5 +
+		+ 575*S^5*b^4 + 571*S^7*b^3 + 33*S^9*b^2 - 724*S^11*b - 608*S^13;
+	E2 = - E2Subst / E2Div;
+	E3 = - (S^3 - 3*E2*S + b[1]*S - 3*R) / 3;
+	x = sapply(seq_along(S), function(id) roots(c(1, -S[id], E2[id], -E3[id])))
+	S = rep(S, each=3); R1 = rep(R1, each=3);
+	z = - (2*x^3 + b[1]*x - 2*R1) / b;
+	y = S - x - z;
+	return(cbind(x=as.vector(x), y=as.vector(y), z=as.vector(z)))
+}
+
+### Examples:
+R = 1;
+b = 2;
+sol = solve.L3.S3P3(R, b)
+x = sol[,1]; y = sol[,2]; z = sol[,3];
 
 ### Test
   x^3 + y^3 - z^3 + b*x # - R

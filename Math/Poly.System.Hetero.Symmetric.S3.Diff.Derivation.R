@@ -7,7 +7,7 @@
 ### Hetero-Symmetric Differences
 ### == Derivation of Formulas ==
 ###
-### draft v.0.1c
+### draft v.0.1c-fix
 
 
 ####################
@@ -24,9 +24,9 @@
 ### History ###
 ###############
 
-### draft v.0.1c:
+### draft v.0.1c - v.0.1c-fix:
 # - system:
-#   x^3 + y^3 - z^3 + b*x = R;
+#   x^3 + y^3 - z^3 + b*x = R; [minor sign fix]
 ### draft v.0.1b:
 # - system:
 #   x^2 - y^2 + b[1]*x*y*(x+y+z) = R;
@@ -441,7 +441,7 @@ S^4 - 3*E2*S^2 + 3*E3*S + b*S^2 - 2*b*E2 - R*S # Eq-bis-1
 (- 8*E2 + 2*b)*S^6 + S^8
 
 ### Eq:
-16*S^8 + 24*b*S^6 + 72*b^2*S^4 + 216*b*R*S^3 +
+16*S^8 + 24*b*S^6 + 72*b^2*S^4 - 216*b*R*S^3 +
 	+ (432*R^2 + 46*b^3)*S^2 - 108*b^2*R*S + 9*b^4
  
 
