@@ -7,7 +7,7 @@
 ### Polynomial Systems: S3
 ### Heterogenous Symmetric
 ###
-### draft v.0.4b
+### draft v.0.4b-fix
 
 
 ### Hetero-Symmetric
@@ -24,9 +24,9 @@ z^n + P(z, x, y) = R
 ### History ###
 ###############
 
-### draft v.0.4b:
+### draft v.0.4b - v.0.4b-fix:
 # - partial solution for:
-#   x^3 + y^2 = R; [solution without b2/b1]
+#   x^3 + y^2 = R; [solution without b2/b1 [fixed]]
 ### draft v.0.4a:
 # - moved to new file:
 #   systems with Composite Leading Term: e.g. x^m*y^n;
@@ -2251,18 +2251,18 @@ E2Div = 1539*R*S*b1*b2^2 - 486*R*S*b1^2 - 459*R*S*b2^4 + 648*R*S^2*b1*b2 + 702*R
 ### Eq: has 730 monoms
 # TODO: find way to factorize;
 ### for b2 == 1; b1 == 0;
-R^2*(27*R - 7) - R^2*(27*R + 2)*S + (27*R^2 + 14*R + 7)*S^2 - (27*R + 5)*S^3 +
+R*(27*R - 7) - R*(27*R + 2)*S + (27*R^2 + 14*R + 7)*S^2 - (27*R + 5)*S^3 +
 	- S^4 + 8*S^5 + 2*S^6 - S^7 + S^8
 
 
 ### Solver
-solve.SimpleY2.S3P3 = function(R, b, debug=TRUE) {
+solve.SimpleY2.S3P3 = function(R, b=c(1,0), debug=TRUE) {
 	# assumes: b[1] == 1 && b[2] == 0!
 	coeff = c(1, -1, 2, 8, -1, - (27*R + 5),
-		(27*R^2 + 14*R + 7), - R^2*(27*R + 2), R^2*(27*R - 7))
+		(27*R^2 + 14*R + 7), - R*(27*R + 2), R*(27*R - 7))
 	S = roots(coeff)
 	if(debug) print(S);
-	R1 = R[1] - 0*S;
+	R = R[1] - 0*S; # extensions
 	b2 = b[1]; b1 = if(length(b) > 1) b[2] else 0;
 	E2Subst = 1701*R*S*b1*b2^4 - 243*R*S*b1^3 - 756*R*S*b2^6 + 918*R*S^2*b1*b2^3 - 243*R*S^2*b1^2*b2 +
 		+ 288*R*S^2*b2^5 - 1782*R*S^3*b1*b2^2 + 648*R*S^3*b1^2 + 450*R*S^3*b2^4 - 486*R*S^4*b1*b2 +
@@ -2278,14 +2278,14 @@ solve.SimpleY2.S3P3 = function(R, b, debug=TRUE) {
 		+ 162*S^3*b1^2*b2 + 312*S^3*b2^5 - 945*S^4*b1*b2^2 + 270*S^4*b1^2 - 369*S^4*b2^4 - 108*S^5*b1*b2 +
 		- 684*S^5*b2^3 - 225*S^6*b2^2 - 756*b1*b2^6 + 1458*b1^2*b2^4 - 1026*b1^3*b2^2 + 243*b1^4;
 	E2 = - E2Subst / E2Div;
-	E3 = - (S^3 + b2*S^2 + b1*S - 3*E2*S - 2*b2*E2 - 3*R1) / 3;
+	E3 = - (S^3 + b2*S^2 + b1*S - 3*E2*S - 2*b2*E2 - 3*R) / 3;
 	# solve: x
 	x = sapply(seq_along(S), function(id) roots(c(1, -S[id], E2[id], -E3[id])))
-	R1 = rep(R1, each=3); S = rep(S, each=3); E3 = rep(E3, each=3);
+	R = rep(R, each=3); S = rep(S, each=3); E3 = rep(E3, each=3);
 	###
 	yz.s = S - x; yz = E3 / x;
 	y = b1*x^3 - b2^2*(yz.s^3 - 3*yz.s*yz) - b2^3*x^2 - b1*b2^2*x - (b1 - b2^2)*R;
-	ydiv =  b2*(x^3 - R1) - b1*b2;
+	ydiv =  b2*(x^3 - R) - b1*b2;
 	y = y / ydiv;
 	z = yz.s - y;
 	return(cbind(x=as.vector(x), y=as.vector(y), z=as.vector(z)));
