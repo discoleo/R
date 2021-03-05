@@ -2303,6 +2303,10 @@ y^3 + b[1]*z^2 + b[2]*z # - R
 z^3 + b[1]*x^2 + b[2]*x # - R
 
 
+### Classic Polynomial
+# - see file: Poly.System.S3P3.Mega.ClassicPoly.R;
+
+
 ### Debug
 R = 2; b = c(-1, 3); b2=b[1]; b1 = b[2];
 x = -0.8426668811 - 0.6742950178i;
