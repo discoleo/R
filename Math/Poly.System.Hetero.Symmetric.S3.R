@@ -2257,14 +2257,14 @@ S^8 - b2*S^7 + (2*b2^2 - 3*b1)*S^6 + (8*b2^3 + 12*b2*b1)*S^5 +
 	+ (27*R^2 + 14*R*b2^3 + 7*b2^6 - 36*R*b2*b1 - 18*b2^4*b1 - 10*b2^2*b1^2 + 4*b1^3)*S^2 +
 	+ (-27*R^2*b2 - 2*R*b2^4 + 27*R*b2^2*b1 + 21*b2^5*b1 - 27*R*b1^2 - 26*b2^3*b1^2 + 2*b2*b1^3)*S +
 	(27*R^2*b2^2 - 7*R*b2^5 - 18*R*b2^3*b1 + 27*R*b2*b1^2 + 14*b2^4*b1^2 - 20*b2^2*b1^3 + 9*b1^4)
-	
+
 ### for b2 == 1; b1 == 0;
 R*(27*R - 7) - R*(27*R + 2)*S + (27*R^2 + 14*R + 7)*S^2 - (27*R + 5)*S^3 +
 	- S^4 + 8*S^5 + 2*S^6 - S^7 + S^8
 
 
 ### Solver
-solve.SimpleY2.S3P3 = function(R, b=c(1,0), debug=TRUE) {
+solve.Y2Y1.S3P3 = function(R, b=c(1,0), debug=TRUE) {
 	# assumes: b[1] == 1 && b[2] == 0!
 	b2 = b[1]; b1 = if(length(b) > 1) b[2] else 0;
 	coeff = c(1, - b2, (2*b2^2 - 3*b1), (8*b2^3 + 12*b2*b1),
@@ -2309,7 +2309,7 @@ solve.SimpleY2.S3P3 = function(R, b=c(1,0), debug=TRUE) {
 ### Examples
 R = 2
 b = c(-1, 3)
-sol = solve.SimpleY2.S3P3(R, b)
+sol = solve.Y2Y1.S3P3(R, b)
 x = sol[,1]; y = sol[,2]; z = sol[,3];
 
 ### Test
