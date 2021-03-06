@@ -7,7 +7,7 @@
 ### Polynomial Systems: S3
 ### Heterogenous Symmetric
 ###
-### draft v.0.4b-fix
+### draft v.0.4b-full
 
 
 ### Hetero-Symmetric
@@ -24,9 +24,10 @@ z^n + P(z, x, y) = R
 ### History ###
 ###############
 
-### draft v.0.4b - v.0.4b-fix:
-# - partial solution for:
-#   x^3 + y^2 = R; [solution without b2/b1 [fixed]]
+### draft v.0.4b - v.0.4b-full:
+# - [full] solution for:
+#   x^3 + y^2 = R; [partial solution]
+#   x^3 + b2*y^2 + b1*y = R; [v.0.4b-full]
 ### draft v.0.4a:
 # - moved to new file:
 #   systems with Composite Leading Term: e.g. x^m*y^n;
@@ -2248,8 +2249,15 @@ E2Subst = 1701*R*S*b1*b2^4 - 243*R*S*b1^3 - 756*R*S*b2^6 + 918*R*S^2*b1*b2^3 - 2
 E2Div = 1539*R*S*b1*b2^2 - 486*R*S*b1^2 - 459*R*S*b2^4 + 648*R*S^2*b1*b2 + 702*R*S^2*b2^3 + 810*R*S^3*b2^2 - 567*R*b1*b2^3 + 189*R*b2^5 - 729*R^2*b2^2 + 819*S*b1*b2^5 - 45*S*b1^2*b2^3 - 108*S*b1^3*b2 - 504*S*b2^7 + 954*S^2*b1*b2^4 - 621*S^2*b1^2*b2^2 + 108*S^2*b1^3 - 123*S^2*b2^6 - 810*S^3*b1*b2^3 + 162*S^3*b1^2*b2 + 312*S^3*b2^5 - 945*S^4*b1*b2^2 + 270*S^4*b1^2 - 369*S^4*b2^4 - 108*S^5*b1*b2 - 684*S^5*b2^3 - 225*S^6*b2^2 - 756*b1*b2^6 + 1458*b1^2*b2^4 - 1026*b1^3*b2^2 + 243*b1^4;
 # E2 = - E2Subst / E2Div;
 
-### Eq: has 730 monoms
-# TODO: find way to factorize;
+### Eq: P[3] * P[8]
+# [the original eq. had 730 monoms]
+S^8 - b2*S^7 + (2*b2^2 - 3*b1)*S^6 + (8*b2^3 + 12*b2*b1)*S^5 +
+	+ (-b2^4 + 27*b2^2*b1 + 18*b1^2)*S^4 +
+	- (27*R*b2^2 + 5*b2^5 + 27*R*b1 + 9*b2^3*b1 - 24*b2*b1^2)*S^3 +
+	+ (27*R^2 + 14*R*b2^3 + 7*b2^6 - 36*R*b2*b1 - 18*b2^4*b1 - 10*b2^2*b1^2 + 4*b1^3)*S^2 +
+	+ (-27*R^2*b2 - 2*R*b2^4 + 27*R*b2^2*b1 + 21*b2^5*b1 - 27*R*b1^2 - 26*b2^3*b1^2 + 2*b2*b1^3)*S +
+	(27*R^2*b2^2 - 7*R*b2^5 - 18*R*b2^3*b1 + 27*R*b2*b1^2 + 14*b2^4*b1^2 - 20*b2^2*b1^3 + 9*b1^4)
+	
 ### for b2 == 1; b1 == 0;
 R*(27*R - 7) - R*(27*R + 2)*S + (27*R^2 + 14*R + 7)*S^2 - (27*R + 5)*S^3 +
 	- S^4 + 8*S^5 + 2*S^6 - S^7 + S^8
@@ -2258,12 +2266,19 @@ R*(27*R - 7) - R*(27*R + 2)*S + (27*R^2 + 14*R + 7)*S^2 - (27*R + 5)*S^3 +
 ### Solver
 solve.SimpleY2.S3P3 = function(R, b=c(1,0), debug=TRUE) {
 	# assumes: b[1] == 1 && b[2] == 0!
-	coeff = c(1, -1, 2, 8, -1, - (27*R + 5),
-		(27*R^2 + 14*R + 7), - R*(27*R + 2), R*(27*R - 7))
+	b2 = b[1]; b1 = if(length(b) > 1) b[2] else 0;
+	coeff = c(1, - b2, (2*b2^2 - 3*b1), (8*b2^3 + 12*b2*b1),
+		(-b2^4 + 27*b2^2*b1 + 18*b1^2),
+		- (27*R*b2^2 + 5*b2^5 + 27*R*b1 + 9*b2^3*b1 - 24*b2*b1^2),
+		(27*R^2 + 14*R*b2^3 + 7*b2^6 - 36*R*b2*b1 - 18*b2^4*b1 - 10*b2^2*b1^2 + 4*b1^3),
+		(-27*R^2*b2 - 2*R*b2^4 + 27*R*b2^2*b1 + 21*b2^5*b1 - 27*R*b1^2 - 26*b2^3*b1^2 + 2*b2*b1^3),
+		(27*R^2*b2^2 - 7*R*b2^5 - 18*R*b2^3*b1 + 27*R*b2*b1^2 + 14*b2^4*b1^2 - 20*b2^2*b1^3 + 9*b1^4));
+	# [OLD] simple coeffs
+	# coeff = c(1, -1, 2, 8, -1, - (27*R + 5),
+	#	(27*R^2 + 14*R + 7), - R*(27*R + 2), R*(27*R - 7))
 	S = roots(coeff)
 	if(debug) print(S);
 	R = R[1] - 0*S; # extensions
-	b2 = b[1]; b1 = if(length(b) > 1) b[2] else 0;
 	E2Subst = 1701*R*S*b1*b2^4 - 243*R*S*b1^3 - 756*R*S*b2^6 + 918*R*S^2*b1*b2^3 - 243*R*S^2*b1^2*b2 +
 		+ 288*R*S^2*b2^5 - 1782*R*S^3*b1*b2^2 + 648*R*S^3*b1^2 + 450*R*S^3*b2^4 - 486*R*S^4*b1*b2 +
 		- 945*R*S^4*b2^3 - 702*R*S^5*b2^2 - 1134*R*b1*b2^5 + 1620*R*b1^2*b2^3 - 729*R*b1^3*b2 +
@@ -2284,16 +2299,16 @@ solve.SimpleY2.S3P3 = function(R, b=c(1,0), debug=TRUE) {
 	R = rep(R, each=3); S = rep(S, each=3); E3 = rep(E3, each=3);
 	###
 	yz.s = S - x; yz = E3 / x;
-	y = b1*x^3 - b2^2*(yz.s^3 - 3*yz.s*yz) - b2^3*x^2 - b1*b2^2*x - (b1 - b2^2)*R;
-	ydiv =  b2*(x^3 - R) - b1*b2;
-	y = y / ydiv;
+	y_x  = b1*x^3 - b2^2*(yz.s^3 - 3*yz.s*yz) - b2^3*x^2 - b1*b2^2*x - (b1 - b2^2)*R;
+	ydiv =  b2*(x^3 - R) - b1^2;
+	y = y_x / ydiv;
 	z = yz.s - y;
 	return(cbind(x=as.vector(x), y=as.vector(y), z=as.vector(z)));
 }
 
 ### Examples
-R = 1
-b = c(1, 0) # FIXED!
+R = 2
+b = c(-1, 3)
 sol = solve.SimpleY2.S3P3(R, b)
 x = sol[,1]; y = sol[,2]; z = sol[,3];
 
