@@ -29,7 +29,8 @@ Replacing the C-9 ketone with other polar groups may stabilize the binding of th
 
 Various hydrophobic and rigid groups may also wrap around the tubulin alpha-helix and block the mobility of this chain. Examples may include:
 * long chain alkyl groups;
-* monocyclic groups: e.g. cyclohexane-derivatives;
-* polycyclic (rigid) groups: various bi- or tri-cyclic groups;
+* monocyclic groups: e.g. cyclohexane-derivatives, cyclohexene;
+* polycyclic (rigid) groups: various bi- or tri-cyclic groups, e.g. camphene, bornene;
 * other aromatic derivatives, including bi-arylic compounds;
 
+Such hydrophobic groups cannot easily leave the intra-tubulin environment, as they would be exposed to the polar environment of the cell cytoplasm. Consequently, they would rigidly fix the alpha-helix. Various side chains on these groups can enhance the binding to the alpha helix; but the primary mechanism of action would NOT depend on enhanced binding.
