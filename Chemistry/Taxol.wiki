@@ -1,0 +1,34 @@
+
+= Taxol =
+
+== Interactins with Tubulin ==
+
+=== Taxol Backbone ===
+
+; Hydrogen Bonds
+* C-9 Ketone: proximity to Arg 278 & Gln 282;
+* may actually occur in vivo as the C-9 di-ol form: the 2 oxygens would be closer to Arg 278 & Gln 282;
+* structural refinments may incorectly correct the diol form to the ketone form;
+
+=== Mechanism: Alpha-Helix ===
+
+; Aromatic groups
+The 3 aromatic groups are wrapping around one of the alpha-helixes which forms the pocket for GDP. The mechanism probably involves sterically blocking the mobility of this alpha-helix.
+
+
+== Rational Design of Derivatives ==
+
+=== C-9 Ketone ===
+
+Replacing the C-9 ketone with other polar groups may stabilize the binding of the taxol backbone to tubulin. Possible candidates:
+* 9,9-di-flouro-taxol;
+* 9-nitro-taxol;
+* 9-phospho-taxol;
+
+=== Aromatic Side-Groups ===
+
+Various hydrophobic and rigid groups may also wrap around the tubulin alpha-helix and block the mobility of this chain. Examples may include:
+* long chain alkyl groups;
+* polycyclic groups: various bi- or tri-cyclic groups;
+* other aromatic derivatives;
+
