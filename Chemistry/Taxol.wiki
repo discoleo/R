@@ -1,7 +1,7 @@
 
 = Taxol =
 
-== Interactins with Tubulin ==
+== Interactions with Tubulin ==
 
 === Taxol Backbone ===
 
@@ -21,7 +21,7 @@ The 3 aromatic groups are wrapping around one of the alpha-helixes which forms t
 === C-9 Ketone ===
 
 Replacing the C-9 ketone with other polar groups may stabilize the binding of the taxol backbone to tubulin. Possible candidates:
-* 9,9-di-flouro-taxol;
+* 9,9-di-fluoro-taxol;
 * 9-nitro-taxol;
 * 9-phospho-taxol;
 
@@ -29,6 +29,7 @@ Replacing the C-9 ketone with other polar groups may stabilize the binding of th
 
 Various hydrophobic and rigid groups may also wrap around the tubulin alpha-helix and block the mobility of this chain. Examples may include:
 * long chain alkyl groups;
-* polycyclic groups: various bi- or tri-cyclic groups;
-* other aromatic derivatives;
+* monocyclic groups: e.g. cyclohexane-derivatives;
+* polycyclic (rigid) groups: various bi- or tri-cyclic groups;
+* other aromatic derivatives, including bi-arylic compounds;
 
