@@ -41,15 +41,23 @@ solve.sir = function(sir.f, init, parameters, times) {
 }
 
 ### Plot SIR
-plot.sir = function(y, times, legend.xy=c(max(times)*2/3, 0.7)) {
+basic.lbl = c("Susceptible", "Infected", "Recovered");
+legend.xyf = function(times, y=0.7, off=c(0,0)) {
+	c(max(times)*2/3, y) + off;
+}
+plot.sir = function(y, times, legend.lbl=c(basic.lbl, "Terminal", "Dead"),
+		legend.xy, leg.off=c(0,0), ylab="Susceptible and Recovered", col) {
+	if(missing(legend.xy)) legend.xy=legend.xyf(times, y=max(y) * 0.7, leg.off)
+	if(missing(col)) col = seq(2, ncol(y) + 1);
 	matplot(x = times, y = y, type = "l",
-        xlab = "Time", ylab = "Susceptible and Recovered", main = "SIR Model",
-        lwd = 1, lty = 1, bty = "l", col = 2:6)
+        xlab = "Time", ylab = ylab, main = "SIR Model",
+        lwd = 1, lty = 1, bty = "l", col = col)
 
 	## Add legend
-	legend(legend.xy[1], legend.xy[2], c("Susceptible", "Infected", "Recovered", "Terminal", "Dead"),
-		pch = 1, col = 2:6, bty = "n")
+	legend(legend.xy[1], legend.xy[2], legend.lbl,
+		pch = 1, col = col, bty = "n")
 }
+# critical ploting function
 plot.leo = function(x=NA, y=0.25, end.time=NA, adj=0, addYear=TRUE) {
 	# critical function for anyone wanting to publish in Nature
 	str = "Created\nby Leo"
@@ -65,9 +73,11 @@ plot.leo = function(x=NA, y=0.25, end.time=NA, adj=0, addYear=TRUE) {
 ### Create an SIR function
 sir <- function(time, state, parameters) {
   with(as.list(c(state, parameters)), {
-
-    dS = -beta * S * I - sv * S * T - vi * S * T^2 - vc * S * T * D
-    dI =  beta * S * I - gamma * I - m * I + sv * S * T + vi * S * T^2 + vc * S * T * D 
+	
+	dVirulence = vi * S * T^2; # has almost NO effect in this model;
+	dcVir = vc * S * I * D;
+    dS = -beta * S * I - sv * S * T - dVirulence - dcVir;
+    dI =  beta * S * I - gamma * I - m * I + sv * S * T + dVirulence + dcVir; 
     dR =  gamma * I
 	dT = m * I - mt * T
 	dD = mt * T
@@ -78,23 +88,26 @@ sir <- function(time, state, parameters) {
 
 ### Set parameters
 
-## Proportion in each compartment:
+### Proportion in each compartment:
 # Susceptible = 0.999999;
 # Infected = 0.000001;
 # Recovered = 0;
 init = c(S = 1-1e-6, I = 1e-6, R = 0.0, T = 0.0, D = 0.0)
 
-## beta: infection parameter;
-## gamma: recovery parameter;
+
+### Time frame
+end.time = 120 # 70
+times = seq(0, end.time, by = 1)
+
+### Parameters
+# beta: infection parameter;
+# gamma: recovery parameter;
 beta = 1.4247 / 4
-gamma = 0.14286
+gamma = 0.14286 / 1.2
 #
 parameters = c(beta = beta, gamma = gamma, sv = 3*beta,
 	vi = 2, vc = 10,
-	m = gamma * 10000/80000, mt = gamma)
-## Time frame
-end.time = 120 # 70
-times = seq(0, end.time, by = 1)
+	m = gamma * 10000/80000, mt = gamma/2)
 
 
 ## Solve using ode
@@ -102,7 +115,7 @@ out = solve.sir(sir, init, parameters, times)
 head(out, 10)
 
 
-#############
+### Plot
 
 # png(file="SIR.AdvancedModel.png", bg ="white", pointsize=15)
 
@@ -111,4 +124,25 @@ plot.sir(out, times, legend.xy=c(end.time*2/3, 0.7))
 plot.leo(end.time=end.time)
 
 # dev.off()
+
+###################
+###################
+
+### Comparison
+
+solve.SIR = function(param, parameters, type="sv") {
+	type = match(type, c("beta", "gamma", "sv", "vi", "vc", "m", "mt"))
+	parameters[type] = param;
+	solve.sir(sir, init, parameters, times)$D;
+}
+
+sv.seq = seq(0, 1, by=0.2)
+out = sapply(sv.seq, solve.SIR, parameters=parameters, type="sv")
+plot.sir(out, times, ylab="Death", legend.lbl=paste("SV", sv.seq))
+
+
+# very small effect: dying earlier;
+vc.seq = seq(0, 5000, by=1000)
+out = sapply(vc.seq, solve.SIR, parameters=parameters, type="vc")
+plot.sir(out, times, ylab="Death", legend.lbl=paste("CummVir", vc.seq))
 
