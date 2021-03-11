@@ -5,7 +5,7 @@
 ###
 ### Graphics Tools
 ###
-### draft v.0.1a-ex
+### draft v.0.1b
 
 
 ### Graphics Tools
@@ -24,8 +24,16 @@ find.col = function(name="red", start=1, max=30, bottom.mrg=8, ...) {
 	old.par = par(mar=c(bottom.mrg,1,2,1) + 0.1)
 		barplot(x, col=name.col, las=3, ...)
 	par(old.par)
+	invisible(name.col)
 }
-
+plot.col = function(col, bottom.mrg=8, ...) {
+	x = rep(1, length(col)); names(x) = names(col);
+	# set bottom margin
+	old.par = par(mar=c(bottom.mrg,1,2,1) + 0.1)
+		barplot(x, col=col, las=3, ...)
+	par(old.par)
+	invisible()
+}
 
 
 ######################
@@ -34,4 +42,8 @@ find.col = function(name="red", start=1, max=30, bottom.mrg=8, ...) {
 
 find.col()
 find.col("green")
+find.col("pale")
+
+plot.col(heat.colors(30))
+
 
