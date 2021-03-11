@@ -12,17 +12,23 @@
 
 ###############
 
+### Groups / Aggregates
+
+# TODO
+
+
 ### Encrypt IDs
-encrypt = function(x, isRandom=TRUE, DEBUG=TRUE) {
+encrypt = function(x, offset=0, isRandom=TRUE, DEBUG=TRUE) {
 	# TODO: multiple columns in df;
 	old.id = unique(x)
 	len = length(old.id)
 	if(DEBUG) print(len)
 	
+	new.id = seq(1+offset, len+offset)
 	if(isRandom) {
-		new.ids = sample(seq(len), len)
+		new.ids = sample(new.id, len)
 	} else {
-		new.ids = seq(len)
+		new.ids = new.id
 	}
 	new.id = new.ids[match(x, old.id)]
 	return(new.id)
