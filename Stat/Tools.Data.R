@@ -5,7 +5,7 @@
 ###
 ### Data Tools
 ###
-### draft v.0.1a
+### draft v.0.1b
 
 
 ### Tools to Process/Transform Data
@@ -15,6 +15,18 @@
 ### Groups / Aggregates
 
 # TODO
+
+### Row DF
+# Matrix => Row DF
+toRow.df = function(m, val=rownames(m), group=colnames(m), asNumVal=TRUE, asNumGroup=TRUE) {
+	if(asNumVal && (! is.numeric(val))) val = as.numeric(val);
+	if(asNumGroup && (! is.numeric(group))) group = as.numeric(group);
+	count.df = data.frame(
+		v = val,
+		count = as.vector(m),
+		group = rep(group, each=nrow(m))
+	)
+}
 
 
 ### Encrypt IDs
