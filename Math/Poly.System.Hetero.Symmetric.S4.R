@@ -6,7 +6,7 @@
 ### Polynomial Systems: S4
 ### Heterogenous Symmetric
 ###
-### draft v.0.1c
+### draft v.0.1d
 
 
 
@@ -315,10 +315,48 @@ S = sol$S; # ...
 # s1 = s2; c1 = c2;
 s^2 + c^2 - R1 # = 0
 (a2 + a3 + 1)*s*c - R2 # = 0
+# s1 = -s2; c1 = -c2;
+s^2 + c^2 - R1 # = 0
+(a2 + a3 - 1)*s*c - R2 # = 0
 
+S^2 - 2*s*c - R1 # = 0
 
 ### Case:
-# s1 != s2, c1 != c2
-# TODO
+# s1 != +/- s2; c1 != +/- c2;
+# TODO:
+# - are any such solutions ???
+
+### Solution
+solve.S4P2 = function(R, a) {
+	solve.part = function(div) {
+		sc = R[2] / div;
+		S = roots(c(1, 0, -2*sc - R[1]));
+		sc = rep(sc, each=2);
+		sc.diff = sqrt(R[1] - 2*sc + 0i)
+		s = (S + sc.diff) / 2;
+		c = (S - sc.diff) / 2;
+		sol = cbind(s, c); sol = rbind(sol, sol[,2:1])
+	}
+	a.s = a[1] + a[2];
+	sol2 = solve.part(a.s + 1);
+	# - R[2]
+	R[2] = - R[2];
+	sol = cbind(sol2, sol2);
+	sol2 = solve.part(a.s - 1);
+	sol = rbind(sol, cbind(sol2, -sol2));
+	return(sol)
+}
+
+### Examples
+R = c(-1, 2)
+a = c(3,4)
+sol = solve.S4P2(R, a);
+s1 = sol[,1]; s2 = sol[,3]; c1 = sol[,2]; c2 = sol[,4];
+
+### Test
+s1^2 + c1^2 # - R[1]
+s2^2 + c2^2 # - R[1]
+s1*c1 + a[1]*s1*c2 + a[2]*c1*s2 # - R[2]
+s2*c2 + a[1]*s2*c1 + a[2]*c2*s1 # - R[2]
 
 
