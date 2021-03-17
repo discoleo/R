@@ -6,7 +6,7 @@
 ### Polynomial Systems: S4
 ### Heterogenous Symmetric
 ###
-### draft v.0.1b-sol:clean
+### draft v.0.1c
 
 
 
@@ -293,7 +293,32 @@ S = sol$S; # ...
 (- 84*b^9)*S^15 +
 (9*b^10)*S^16
 # can be factored into: P[10] * P[6]
-# P[6]: 9*b^4 * S^6 + ...; # is NOT part of solution!
+# P[6]: 9*b^4 * S^6 + ...; # TODO: check: is NOT part of solution!
 # P[10]: can be factored itself in P[3]*P[7];
-# P[10] = P[3]*P1[1]*P[2]*P[4];
+# P[10] = P[3]*P[1]*P[2]*P[4];
+
+###################
+###################
+
+### Hetero-Systems
+
+### s^2 + c^2 = R1
+### s1*c1 + a12*s1*c2 + a13*c1*s2 = R2
+
+
+# s1^2 + c1^2 = R1
+# s2^2 + c2^2 = R1
+# s1*c1 + a2*s1*c2 + a3*c1*s2 = R2
+# s2*c2 + a2*s2*c1 + a3*c2*s1 = R2
+
+### Special Case:
+# s1 = s2; c1 = c2;
+s^2 + c^2 - R1 # = 0
+(a2 + a3 + 1)*s*c - R2 # = 0
+
+
+### Case:
+# s1 != s2, c1 != c2
+# TODO
+
 
