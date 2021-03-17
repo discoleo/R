@@ -6,7 +6,7 @@
 ### Polynomial Systems: S4
 ### Heterogenous Symmetric
 ###
-### draft v.0.1d
+### draft v.0.1d-rename
 
 
 
@@ -300,48 +300,49 @@ S = sol$S; # ...
 ###################
 ###################
 
-### Hetero-Systems
+### Mixt Hetero-Systems
 
-### s^2 + c^2 = R1
-### s1*c1 + a12*s1*c2 + a13*c1*s2 = R2
+### x^2 + y^2 = R1
+### x1*y1 + a2*x1*y2 + a3*y1*x2 = R2
 
 
-# s1^2 + c1^2 = R1
-# s2^2 + c2^2 = R1
-# s1*c1 + a2*s1*c2 + a3*c1*s2 = R2
-# s2*c2 + a2*s2*c1 + a3*c2*s1 = R2
+# x1^2 + y1^2 = R1
+# x2^2 + y2^2 = R1
+# x1*y1 + a2*x1*y2 + a3*x2*y1 = R2
+# x2*y2 + a2*x2*y1 + a3*x1*y2 = R2
+
 
 ### Special Case:
-# s1 = s2; c1 = c2;
-s^2 + c^2 - R1 # = 0
-(a2 + a3 + 1)*s*c - R2 # = 0
-# s1 = -s2; c1 = -c2;
-s^2 + c^2 - R1 # = 0
-(a2 + a3 - 1)*s*c - R2 # = 0
+# x1 = x2; y1 = y2;
+x^2 + y^2 - R1 # = 0
+(a2 + a3 + 1)*x*y - R2 # = 0
+# x1 = -x2; y1 = -y2;
+x^2 + y^2 - R1 # = 0
+(a2 + a3 - 1)*x*y + R2 # = 0
 
-S^2 - 2*s*c - R1 # = 0
+S^2 - 2*x*y - R1 # = 0
 
 ### Case:
-# s1 != +/- s2; c1 != +/- c2;
+# x1 != +/- x2; y1 != +/- y2;
 # TODO:
-# - are any such solutions ???
+# - are there any such solutions ???
 
 ### Solution
 solve.S4P2 = function(R, a) {
 	solve.part = function(div) {
-		sc = R[2] / div;
-		S = roots(c(1, 0, -2*sc - R[1]));
-		sc = rep(sc, each=2);
-		sc.diff = sqrt(R[1] - 2*sc + 0i)
-		s = (S + sc.diff) / 2;
-		c = (S - sc.diff) / 2;
-		sol = cbind(s, c); sol = rbind(sol, sol[,2:1])
+		xy = R[2] / div;
+		S = roots(c(1, 0, -2*xy - R[1]));
+		xy = rep(xy, each=2);
+		xy.diff = sqrt(R[1] - 2*xy + 0i)
+		x = (S + xy.diff) / 2;
+		y = (S - xy.diff) / 2;
+		sol = cbind(x, y); sol = rbind(sol, sol[,2:1])
 	}
 	a.s = a[1] + a[2];
 	sol2 = solve.part(a.s + 1);
+	sol = cbind(sol2, sol2);
 	# - R[2]
 	R[2] = - R[2];
-	sol = cbind(sol2, sol2);
 	sol2 = solve.part(a.s - 1);
 	sol = rbind(sol, cbind(sol2, -sol2));
 	return(sol)
@@ -351,12 +352,12 @@ solve.S4P2 = function(R, a) {
 R = c(-1, 2)
 a = c(3,4)
 sol = solve.S4P2(R, a);
-s1 = sol[,1]; s2 = sol[,3]; c1 = sol[,2]; c2 = sol[,4];
+x1 = sol[,1]; x2 = sol[,3]; y1 = sol[,2]; y2 = sol[,4];
 
 ### Test
-s1^2 + c1^2 # - R[1]
-s2^2 + c2^2 # - R[1]
-s1*c1 + a[1]*s1*c2 + a[2]*c1*s2 # - R[2]
-s2*c2 + a[1]*s2*c1 + a[2]*c2*s1 # - R[2]
+x1^2 + y1^2 # - R[1]
+x2^2 + y2^2 # - R[1]
+x1*y1 + a[1]*x1*y2 + a[2]*x2*y1 # - R[2]
+x2*y2 + a[1]*x2*y1 + a[2]*x1*y2 # - R[2]
 
 
