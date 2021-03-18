@@ -6,7 +6,7 @@
 ### Polynomial Systems: S4
 ### Heterogenous Symmetric
 ###
-### draft v.0.1d-rename
+### draft v.0.1e-ideas:Sphere
 
 
 
@@ -359,5 +359,44 @@ x1^2 + y1^2 # - R[1]
 x2^2 + y2^2 # - R[1]
 x1*y1 + a[1]*x1*y2 + a[2]*x2*y1 # - R[2]
 x2*y2 + a[1]*x2*y1 + a[2]*x1*y2 # - R[2]
+
+
+######################
+######################
+
+### 3D
+# - possible extension to 3D sphere;
+
+# x1^2 + y1^2 + z1^2 = R1
+# x2^2 + y2^2 + z2^2 = R1
+# x1*y2 + a1*y1*z2 + a2*z1*x2 = R2
+# x2*y1 + a1*y2*z1 + a2*z2*x1 = R2
+# x1*z2 + a3*y1*x2 + a4*z1*y2 = R3
+# x2*z1 + a3*y2*x1 + a4*z2*y1 = R3
+
+### Case:
+# x1 = x2; y1 = y2; z1 = z2;
+x^2 + y^2 + z^2 - R1 # = 0
+x*y + a1*y*z + a2*x*z - R2 # = 0
+x*z + a3*x*y + a4*y*z - R3 # = 0
+### Case:
+# x1 = -x2; y1 = -y2; z1 = -z2;
+x^2 + y^2 + z^2 - R1 # = 0
+x*y + a1*y*z + a2*x*z + R2 # = 0
+x*z + a3*x*y + a4*y*z + R3 # = 0
+
+
+### Variants Eqs [5]&[6]:
+### V1:
+# x1*y1*z1 = R3
+# x2*y2*z2 = R3; # must be the same R3;
+# - but does NOT preserve the negative solution;
+### V2:
+# x1*y1*z1 + a1*x1*y1*z2 + a2*y1*z1*x2 + a3*z1*x1*y2 = R3
+# x2*y2*z2 + a1*x2*y2*z1 + a2*y2*z2*x1 + a3*z2*x2*y1 = R3
+# - does NOT preserve the negative solution;
+### V3:
+# x1*y1*y2*z2 + a1*y1*z1*z2*x2 + a2*z1*x1*x2*y2 = R3
+# x2*y2*y1*z1 + a1*y2*z2*z1*x1 + a2*z2*x2*x1*y1 = R3
 
 
