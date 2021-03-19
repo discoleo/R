@@ -6,7 +6,7 @@
 ### Polynomial Systems: S4
 ### Heterogenous Symmetric
 ###
-### draft v.0.1e-ideas:Sphere
+### draft v.0.1f
 
 
 
@@ -359,6 +359,75 @@ x1^2 + y1^2 # - R[1]
 x2^2 + y2^2 # - R[1]
 x1*y1 + a[1]*x1*y2 + a[2]*x2*y1 # - R[2]
 x2*y2 + a[1]*x2*y1 + a[2]*x1*y2 # - R[2]
+
+
+######################
+
+### Simple P3
+
+### x^3 + y^3 = R1
+### a1*x1*y2 + a2*y1*x2 = R2
+
+# x1^3 + y1^3 = R1
+# x2^3 + y2^3 = R1
+# a1*x1*y2 + a2*x2*y1 = R2
+# a1*x2*y1 + a2*x1*y2 = R2
+
+### Solution:
+
+### Diff: Eq 3 - 4
+(a1 - a2)*(x1*y2 - x2*y1) # = 0
+# assumption: a1 != a2
+x1*y2 - x2*y1 # = 0
+# x1*y2 = x2*y1 = R2 / (a1+a2);
+
+### Mult Eq 1r * 2r
+x1^3*y2^3 - y1^3*x2^3 + R1*(x2^3 + y1^3) - R1^2 # = 0
+R1*(x2^3 + y1^3) - R1^2 # = 0
+# x2^3 + y1^3 = R1;
+# x1^3 + y2^3 = R1;
+# =>
+(x1+y2)^3 - 3*x1*y2*(x1+y2) - R1 # = 0
+S12^3 - 3*R2/(a1+a2)*S12 - R1 # = 0
+(a1+a2)*S12^3 - 3*R2*S12 - (a1+a2)*R1 # = 0
+
+# =>
+(x2+y1)^3 - 3*x2*y1*(x2+y1) - R1 # = 0
+S21^3 - 3*R2/(a1+a2)*S21 - R1 # = 0
+(a1+a2)*S21^3 - 3*R2*S21 - (a1+a2)*R1 # = 0
+
+### Solver:
+solve.simple.S4P3 = function(R, a, debug=TRUE) {
+	as = a[1] + a[2];
+	S12 = roots(c(as, 0, - 3*R[2], -as*R[1]))
+	S21 = roots(c(as, 0, - 3*R[2], -as*R[1]))
+	if(debug) print(S12);
+	solve.S2 = function(S, xy) {
+		xy.diff = sqrt(S^2 - 4*xy + 0i);
+		x = (S + xy.diff) / 2;
+		y = (S - x);
+		sol = cbind(x, y)
+		return(rbind(sol, sol[,2:1]))
+	}
+	xy = R[2] / as;
+	sol1 = solve.S2(S12, xy);
+	sol2 = solve.S2(S21, xy);
+	sol = cbind(sol1, sol2)
+	# (x1, y2, x2, y1)
+	return(sol[,c(1,4,3,2)])
+}
+
+### Examples
+R = c(-1, 2)
+a = c(3, 4)
+sol = solve.simple.S4P3(R, a);
+x1 = sol[,1]; x2 = sol[,3]; y1 = sol[,2]; y2 = sol[,4];
+
+### Test
+x1^3 + y1^3 # - R[1]
+x2^3 + y2^3 # - R[1]
+a[1]*x1*y2 + a[2]*x2*y1 # - R[2]
+a[1]*x2*y1 + a[2]*x1*y2 # - R[2]
 
 
 ######################
