@@ -6,7 +6,7 @@
 ### Polynomial Systems: S4
 ### Heterogenous Symmetric
 ###
-### draft v.0.1g-pre
+### draft v.0.1g-alpha
 
 
 
@@ -451,6 +451,92 @@ a[1]*x2*y1 + a[2]*x1*y2 # - R[2]
 
 ### Mult Eq 1r * 2r
 x1^3*y2^3 - y1^3*x2^3 + R1*(x2^3 + y1^3) - R1^2 # = 0
+# =>
+# x1^3 + y2^3 =
+2*R1 - (x2^3 + y1^3)
+# =>
+# x2^3 = ... - y1^3
+# y1^3 = R1 - x1^3 *OR*
+# y2^3 = R1 - x2^3
+# => Mult =>
+x2^3*y1^3 + x1^3*y1^3 - R1*(...) + R1*y1^3 + (...)*x1^3 # = 0
+
+### Diff =>
+# x1^3 - y2^3 = x2^3 - y1^3
+
+### Mult =>
+x1^3*x2^3 + y1^3*y2^3 + x1^3*y2^3 + x2^3*y1^3 - R1^2 # = 0
+# also:
+x1^3*x2^3 - y1^3*y2^3 + R1*(y1^3 + y2^3) - R1^2 # = 0
+
+### TODO:
+# - general case;
+
+### Special Cases:
+# x1 = x2; y1 != y2;
+# valid if: (a2 - a1 + 1) == 0;
+(a2 - a1 + 1)*y1 - (a2 - a1 + 1)*y2 # = 0
+# y1 = y2; x1 != x2;
+# valid if: (a1 - a2 + 1) == 0;
+(a1 - a2 + 1)*x1 - (a1 - a2 + 1)*x2 # = 0
+
+
+### Solver
+solve.complete.S4P3 = function(R, a) {
+	a.diff = a[1] - a[2];
+	if(abs(a.diff) == 1) {
+		# simple solution
+		m.all = unity(3, all=TRUE)
+		m = m.all[2]
+		if(a.diff > 0) {
+			# (a1*m^j + (a2+1))*y1 = R2 / x;
+			id = 1; # TODO
+			div = (a[1]*m^id + (a[2]+1));
+			x3 = roots(c(1, -R[1], R[2]^3 / div^3));
+			x = as.vector(sapply(rootn(x3, 3), function(x) x*m.all));
+			y = R[2] / x / div;
+			sol = cbind(x1=x, y1=y, x2=x, y2=y*m^id);
+		} else {
+			# (a2*m^j + (a1+1))*x1 = R2 / y;
+			id = 1; # TODO
+			div = (a[2]*m^id + (a[1]+1));
+			y3 = roots(c(1, -R[1], R[2]^3 / div^3));
+			y = as.vector(sapply(rootn(y3, 3), function(y) y*m.all));
+			x = R[2] / y / div;
+			sol = cbind(x1=x, y1=y, x2=x*m^id, y2=y);
+		}
+	}
+}
+
+### Examples:
+
+### Special case: x1 == x2
+R = c(-1, 2)
+a = c(4, 3)
+sol = solve.complete.S4P3(R, a)
+x1 = sol[,1]; x2 = sol[,3]; y1 = sol[,2]; y2 = sol[,4];
+
+
+### Special case: y1 == y2
+R = c(-1, 2)
+a = c(3, 4)
+sol = solve.complete.S4P3(R, a)
+x1 = sol[,1]; x2 = sol[,3]; y1 = sol[,2]; y2 = sol[,4];
+
+### Test
+x1^3 + y1^3 # - R[1]
+x2^3 + y2^3 # - R[1]
+x1*y1 + a[1]*x1*y2 + a[2]*x2*y1 # - R[2]
+x2*y2 + a[1]*x2*y1 + a[2]*x1*y2 # - R[2]
+
+
+### Debug
+R = c(-1, 2)
+a = c(3, 5)
+x1 = -1.3908831512 - 2.5503258859i;
+y1 =  1.4119576563 + 2.5831136271i;
+x2 =  0.4925974849 + 0.7567717580i;
+y2 =  0.2526662764 + 0.6178135417i;
 
 
 ######################
