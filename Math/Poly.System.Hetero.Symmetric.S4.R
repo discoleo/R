@@ -6,7 +6,7 @@
 ### Polynomial Systems: S4
 ### Heterogenous Symmetric
 ###
-### draft v.0.1f
+### draft v.0.1g-pre
 
 
 
@@ -311,6 +311,7 @@ S = sol$S; # ...
 # x1*y1 + a2*x1*y2 + a3*x2*y1 = R2
 # x2*y2 + a2*x2*y1 + a3*x1*y2 = R2
 
+### Solution:
 
 ### Special Case:
 # x1 = x2; y1 = y2;
@@ -428,6 +429,28 @@ x1^3 + y1^3 # - R[1]
 x2^3 + y2^3 # - R[1]
 a[1]*x1*y2 + a[2]*x2*y1 # - R[2]
 a[1]*x2*y1 + a[2]*x1*y2 # - R[2]
+
+
+######################
+
+### P3
+
+### x^3 + y^3 = R1
+### x1*y1 + a1*x1*y2 + a2*y1*x2 = R2
+
+# x1^3 + y1^3 = R1
+# x2^3 + y2^3 = R1
+# x1*y1 + a1*x1*y2 + a2*x2*y1 = R2
+# x2*y2 + a1*x2*y1 + a2*x1*y2 = R2
+
+### Solution:
+
+### Solve Pseudo-Liniar:
+# (a1^2 - a2^2) * x1*y2 = (a1 - a2)*R2 - (a1*x1*y1 - a2*x2*y2)
+# (a1^2 - a2^2) * x2*y1 = (a1 - a2)*R2 + (a2*x1*y1 - a1*x2*y2)
+
+### Mult Eq 1r * 2r
+x1^3*y2^3 - y1^3*x2^3 + R1*(x2^3 + y1^3) - R1^2 # = 0
 
 
 ######################
