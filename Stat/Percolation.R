@@ -5,13 +5,17 @@
 ###
 ### Percolation
 ###
-### draft v.0.1c
+### draft v.0.1d
 
 ### Percolation
 
 # - some experiments in Percolation
 
+### Github:
+# https://github.com/discoleo/R/blob/master/Stat/Percolation.R
 
+
+####################
 ####################
 
 ### helper Functions
@@ -94,7 +98,8 @@ toRaster = function(m, showVal=0) {
 	### R
 	layer.m = m;
 	layer.m[m < 0] = 0
-	layer.m = layer.m / max(layer.m)
+	val.max = max(layer.m);
+	if(val.max > 0) layer.m = layer.m / val.max;
 	if(doShow) layer.m[isZero] = 1;
 	rs.m[,,1] = layer.m;
 
@@ -114,6 +119,20 @@ toRaster = function(m, showVal=0) {
 	rs.m = as.raster(rs.m)
 	return(rs.m);
 }
+plot.rs = function(m, main, mar, line=0.5) {
+	if( ! missing(main) ) hasTitle = TRUE;
+	if(missing(mar)) mar = c(0,0, if(hasTitle) 2 else 0, 0) + 0.1;
+	type = match(class(m), c("raster", "matrix"));
+	if(all(is.na(type))) stop("Data NOT supported!")
+	if(any(type == 2)) {
+		m = toRaster(m);
+	}
+	old.par = par(mar=mar);
+		plot(m);
+		if(hasTitle) mtext(main, line=line)
+	par(old.par);
+	invisible();
+}
 
 ################
 ################
@@ -125,13 +144,19 @@ p = 0.3
 m = sample(c(-1, 0), prod(dims), replace=T, prob=c(p, 1-p))
 m = matrix(m, nrow=dims[1])
 m[1:10, 1:10]
+plot.rs(m, "Percolation")
 
+
+### Flood Fill
 m = flood.all(m)
 
 m[1:10, 1:10]
 
 table(m)
 table(m[,dims[2]])
+
+plot.rs(m, "Percolation")
+
 
 ### Shortest Path
 path.m = length.path(m)
@@ -141,9 +166,9 @@ path.m[1:10, seq(id - 10, id)]
 
 table(path.m[,dims[2]])
 
+
 ### Raster
-rs.m = toRaster(path.m);
-plot(rs.m)
+plot.rs(rs.m, main="Path Length")
 
 #############
 
@@ -202,4 +227,8 @@ m[1:10, 1:10]
 
 table(m == 0)
 
+
+### Test Raster
+rs.m = toRaster(path.m);
+plot(rs.m)
 
