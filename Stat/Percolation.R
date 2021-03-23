@@ -5,7 +5,7 @@
 ###
 ### Percolation
 ###
-### draft v.0.1d
+### draft v.0.1e
 
 ### Percolation
 
@@ -82,6 +82,7 @@ length.path = function(m, id, debug=TRUE) {
 	}
 	
 	p.m[m == 0] =  0;
+	p.m[p.m < 0 & m > 0] =  0; # other non-connected "paths";
 	return(p.m);
 }
 
@@ -120,7 +121,7 @@ toRaster = function(m, showVal=0) {
 	return(rs.m);
 }
 plot.rs = function(m, main, mar, line=0.5) {
-	if( ! missing(main) ) hasTitle = TRUE;
+	if( ! missing(main) ) hasTitle = TRUE else hasTitle = FALSE;
 	if(missing(mar)) mar = c(0,0, if(hasTitle) 2 else 0, 0) + 0.1;
 	type = match(class(m), c("raster", "matrix"));
 	if(all(is.na(type))) stop("Data NOT supported!")
@@ -170,8 +171,12 @@ table(path.m[,dims[2]])
 ### Raster
 plot.rs(rs.m, main="Path Length")
 
-#############
 
+### Stat/Percolation
+sum(m == 0) / prod(dim(m))
+
+
+#############
 
 ### Ex 2:
 dims = c(80, 80)
@@ -188,6 +193,10 @@ m[1:10, 1:10]
 table(m)
 table(m[,dims[2]])
 
+
+plot.rs(m, main="Percolation: Multiple Paths")
+
+
 ### Shortest Path
 path.m = length.path(m)
 
@@ -196,9 +205,16 @@ path.m[1:10, seq(id - 10, id)]
 
 table(path.m[,dims[2]])
 
+
 ### Raster
-rs.m = toRaster(path.m);
-plot(rs.m)
+plot.rs(path.m, main="Path Length")
+# Note:
+# - only "dominant" path is visualized;
+
+# plot.rs(length.path(m, id=5), main="Path Length")
+
+### Stat/Percolation
+sum(m == 0) / prod(dim(m))
 
 
 #############
