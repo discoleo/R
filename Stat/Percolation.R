@@ -5,7 +5,7 @@
 ###
 ### Percolation
 ###
-### draft v.0.1b
+### draft v.0.1c
 
 ### Percolation
 
@@ -47,6 +47,10 @@ length.path = function(m, id, debug=TRUE) {
 	if(missing(id)) {
 		out.m = m[, ncol(m)]
 		out = table(out.m[out.m > 0])
+		if(dim(out) == 0) {
+			print("NO percolation!");
+			out = table(m[m > 0])
+		}
 		id = match(max(out), out);
 		id = as.integer(names(out)[id])
 		if(debug) print(id);
@@ -77,6 +81,42 @@ length.path = function(m, id, debug=TRUE) {
 	return(p.m);
 }
 
+### Raster
+toRaster = function(m, showVal=0) {
+	rs.m = array(0, c(dim(m), 3));
+	if( ! is.na(showVal)) {
+		isZero = (m == showVal);
+		doShow = TRUE;
+	} else {
+		doShow = FALSE;
+	}
+
+	### R
+	layer.m = m;
+	layer.m[m < 0] = 0
+	layer.m = layer.m / max(layer.m)
+	if(doShow) layer.m[isZero] = 1;
+	rs.m[,,1] = layer.m;
+
+	### G
+	layer.m = 1 - layer.m;
+	layer.m[m <= 0] = 0
+	if(doShow) layer.m[isZero] = 1;
+	rs.m[,,2] = layer.m
+
+	### B
+	if(doShow) {
+		layer.m = array(0, dim(m));
+		layer.m[isZero] = 1;
+		rs.m[,,3] = layer.m
+	}
+
+	rs.m = as.raster(rs.m)
+	return(rs.m);
+}
+
+################
+################
 
 ### Examples
 dims = c(80, 80)
@@ -101,8 +141,44 @@ path.m[1:10, seq(id - 10, id)]
 
 table(path.m[,dims[2]])
 
+### Raster
+rs.m = toRaster(path.m);
+plot(rs.m)
+
+#############
+
 
 ### Ex 2:
+dims = c(80, 80)
+p = 0.4
+
+m = sample(c(-1, 0), prod(dims), replace=T, prob=c(p, 1-p))
+m = matrix(m, nrow=dims[1])
+m[1:10, 1:10]
+
+m = flood.all(m)
+
+m[1:10, 1:10]
+
+table(m)
+table(m[,dims[2]])
+
+### Shortest Path
+path.m = length.path(m)
+
+id = dim(path.m)[2];
+path.m[1:10, seq(id - 10, id)]
+
+table(path.m[,dims[2]])
+
+### Raster
+rs.m = toRaster(path.m);
+plot(rs.m)
+
+
+#############
+
+### Ex 3:
 dims = c(200, 200) # takes long!
 p = 0.40
 
