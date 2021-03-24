@@ -5,7 +5,7 @@
 ###
 ### Percolation
 ###
-### draft v.0.1g
+### draft v.0.1h
 
 ### Percolation
 
@@ -57,6 +57,7 @@ max.id = function(m) {
 	id = match(max(out), out);
 	id = as.integer(names(out)[id])
 }
+### Path Length
 length.path = function(m, id, debug=TRUE) {
 	if(missing(id)) {
 		id = max.id(m)
@@ -87,6 +88,20 @@ length.path = function(m, id, debug=TRUE) {
 	p.m[m == 0] =  0;
 	p.m[p.m < 0 & m > 0] =  0; # other non-connected "paths";
 	return(p.m);
+}
+### Contact Area
+contact.area = function(m, id) {
+	area = 0;
+	for(nc in 1:ncol(m)) {
+		for(nr in 1:nrow(m)) {
+			if(m[nr, nc] != id) next;
+			if(nr > 1 && m[nr-1,nc] != id) area = area + 1;
+			if(nr < nrow(m) && m[nr+1,nc] != id) area = area + 1;
+			if(nc > 1 && m[nr,nc-1] != id) area = area + 1;
+			if(nc < ncol(m) && m[nr,nc+1] != id) area = area + 1;
+		}
+	}
+	return(area);
 }
 
 ### Raster
@@ -137,18 +152,25 @@ plot.rs = function(m, main, mar, line=0.5) {
 	par(old.par);
 	invisible();
 }
-contact.area = function(m, id) {
-	area = 0;
-	for(nc in 1:ncol(m)) {
-		for(nr in 1:nrow(m)) {
-			if(m[nr, nc] != id) next;
-			if(nr > 1 && m[nr-1,nc] != id) area = area + 1;
-			if(nr < nrow(m) && m[nr+1,nc] != id) area = area + 1;
-			if(nc > 1 && m[nr,nc-1] != id) area = area + 1;
-			if(nc < nrow(m) && m[nr,nc+1] != id) area = area + 1;
-		}
+split.rs = function(m, n=5, from=1, max.len=5, w=10) {
+	nr.tot = round(nrow(m) / n);
+	frg.tot = ceiling(nrow(m) / nr.tot);
+	# TODO: nrow(m) %% nr.tot > 0;
+	if(from == 0) from = 1;
+	if(from > 0) {
+		frg.to = min(frg.tot, from + max.len);
+	} else {
+		from = max(1, frg.tot + 1 + from - max.len);
+		frg.to = min(frg.tot, from + max.len);
 	}
-	return(area);
+	m0 = matrix(0, ncol=w, nrow=nr.tot);
+	m2 =  array(0, c(nr.tot, 0))
+	for(frg in from:frg.to) {
+		r.start = (frg - 1) * nr.tot + 1;
+		r.end   = r.start + nr.tot - 1;
+		m2 = cbind(m2, cbind(m[r.start:r.end,], m0))
+	}
+	invisible(m2);
 }
 
 
@@ -287,7 +309,9 @@ table(m)
 table(m[,dims[2]])
 
 
-plot.rs(m, main="Percolation: Multiple Paths")
+plot.rs(split.rs(m), main="Percolation: Multiple Paths")
+
+# plot.rs(m, main="Percolation: Multiple Paths")
 
 
 ### Shortest Path
@@ -313,6 +337,12 @@ plot.rs(path.m, main="Path Length")
 # - cells that are not accessible;
 sum(m == 0) / prod(dim(m))
 # ~ 17%;
+### TODO: compute over all paths;
+# - total contact area
+a0 = contact.area(m, -1)
+# - liquid contact area
+a1 = contact.area(m, max.id(m))
+a0; a1; a1 / a0;
 
 
 ### Other:
