@@ -5,7 +5,7 @@
 ###
 ### Percolation
 ###
-### draft v.0.1h
+### draft v.0.1i
 
 ### Percolation
 
@@ -20,6 +20,17 @@
 
 ### helper Functions
 
+reset.m = function(m, id, val=0) {
+	if(missing(id)) {
+		m[m > 0] = val;
+	} else if(id > 0) {
+		m[m == id] = val;
+	} else {
+		m[(m > 0) & (m != id)] = val;
+	}
+	invisible(m)
+}
+### Percolation Functions
 flood = function(m, pyx, val=1, val0=0) {
 	vals = pyx; pos = 1;
 	
@@ -36,10 +47,10 @@ flood = function(m, pyx, val=1, val0=0) {
 	return(m);
 }
 
-flood.all = function(m, type="by Col 1", val0=0) {
+flood.all = function(m, type="by Col 1", val0=0, debug=TRUE) {
 	# TODO: type
 	while(TRUE) {
-		print("Iteration")
+		if(debug) print("Iteration");
 		id.row = match(val0, m[,1])
 		if(is.na(id.row)) break;
 		m = flood(m, c(id.row,1), max(m)+1)
@@ -85,7 +96,7 @@ length.path = function(m, id, debug=TRUE) {
 		lvl = lvl + 1; pos = 1;
 	}
 	
-	p.m[m == 0] =  0;
+	if(id != 0) p.m[m == 0] =  0;
 	p.m[p.m < 0 & m > 0] =  0; # other non-connected "paths";
 	return(p.m);
 }
@@ -351,6 +362,15 @@ a0; a1; a1 / a0;
 # - Average Outputs;
 # - Average Length;
 # - Flux, Bottleneck;
+
+
+path.all = length.path(reset.m(m), id=0)
+plot.rs(split.rs(path.all), main="All Path Lengths")
+
+### Mean Distance from In
+# - includes also non-precolating paths;
+mean(path.all[path.all > 0]) / ncol(m)
+# ~ 0.98%;
 
 
 ###########
