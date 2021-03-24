@@ -5,7 +5,7 @@
 ###
 ### Percolation
 ###
-### draft v.0.1e
+### draft v.0.1f
 
 ### Percolation
 
@@ -173,6 +173,7 @@ plot.rs(rs.m, main="Path Length")
 
 
 ### Stat/Percolation
+# - not accessible;
 sum(m == 0) / prod(dim(m))
 
 
@@ -214,6 +215,7 @@ plot.rs(path.m, main="Path Length")
 # plot.rs(length.path(m, id=5), main="Path Length")
 
 ### Stat/Percolation
+# - not accessible;
 sum(m == 0) / prod(dim(m))
 
 
@@ -233,6 +235,63 @@ m[1:10, 1:10]
 
 table(m)
 table(m[,dims[2]])
+
+
+#################
+#################
+
+### Periodic Boundary Condition
+
+# - takes ~20 s;
+dims = c(2000, 80)
+p = 0.4
+
+m = sample(c(-1, 0), prod(dims), replace=T, prob=c(p, 1-p))
+m = matrix(m, nrow=dims[1])
+m[1:10, 1:10]
+
+m = flood.all(m)
+
+m[1:10, 1:10]
+
+table(m)
+table(m[,dims[2]])
+
+
+plot.rs(m, main="Percolation: Multiple Paths")
+
+
+### Shortest Path
+path.m = length.path(m)
+
+id = dim(path.m)[2];
+path.m[1:10, seq(id - 10, id)]
+
+table(path.m[,dims[2]])
+
+
+### Raster
+plot.rs(path.m, main="Path Length")
+# Note:
+# - only "dominant" path is visualized;
+
+# plot.rs(length.path(m, id=5), main="Path Length")
+
+####################
+### Stat/Percolation
+
+### Inaccessible
+# - cells that are not accessible;
+sum(m == 0) / prod(dim(m))
+# ~ 17%;
+
+
+### Other:
+# - Average Path Height;
+# - Average Inputs;
+# - Average Outputs;
+# - Average Length;
+# - Flux, Bottleneck;
 
 
 ###########
