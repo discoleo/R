@@ -5,7 +5,7 @@
 ###
 ### Percolation
 ###
-### draft v.0.1f
+### draft v.0.1g
 
 ### Percolation
 
@@ -47,16 +47,19 @@ flood.all = function(m, type="by Col 1", val0=0) {
 	return(m)
 }
 
+max.id = function(m) {
+	out.m = m[, ncol(m)]
+	out = table(out.m[out.m > 0])
+	if(dim(out) == 0) {
+		print("NO percolation!");
+		out = table(m[m > 0])
+	}
+	id = match(max(out), out);
+	id = as.integer(names(out)[id])
+}
 length.path = function(m, id, debug=TRUE) {
 	if(missing(id)) {
-		out.m = m[, ncol(m)]
-		out = table(out.m[out.m > 0])
-		if(dim(out) == 0) {
-			print("NO percolation!");
-			out = table(m[m > 0])
-		}
-		id = match(max(out), out);
-		id = as.integer(names(out)[id])
+		id = max.id(m)
 		if(debug) print(id);
 	}
 	p.m = m;
@@ -134,6 +137,20 @@ plot.rs = function(m, main, mar, line=0.5) {
 	par(old.par);
 	invisible();
 }
+contact.area = function(m, id) {
+	area = 0;
+	for(nc in 1:ncol(m)) {
+		for(nr in 1:nrow(m)) {
+			if(m[nr, nc] != id) next;
+			if(nr > 1 && m[nr-1,nc] != id) area = area + 1;
+			if(nr < nrow(m) && m[nr+1,nc] != id) area = area + 1;
+			if(nc > 1 && m[nr,nc-1] != id) area = area + 1;
+			if(nc < nrow(m) && m[nr,nc+1] != id) area = area + 1;
+		}
+	}
+	return(area);
+}
+
 
 ################
 ################
@@ -173,11 +190,17 @@ plot.rs(rs.m, main="Path Length")
 
 
 ### Stat/Percolation
-# - not accessible;
+# - cells not accessible;
 sum(m == 0) / prod(dim(m))
+# - total contact area
+a0 = contact.area(m, -1)
+# - liquid contact area
+a1 = contact.area(m, max.id(m))
+a0; a1; a1 / a0;
 
 
-#############
+
+###################
 
 ### Ex 2:
 dims = c(80, 80)
@@ -214,9 +237,15 @@ plot.rs(path.m, main="Path Length")
 
 # plot.rs(length.path(m, id=5), main="Path Length")
 
+
 ### Stat/Percolation
-# - not accessible;
+# - cells not accessible;
 sum(m == 0) / prod(dim(m))
+# - total contact area
+a0 = contact.area(m, -1)
+# - liquid contact area
+a1 = contact.area(m, max.id(m))
+a0; a1; a1 / a0;
 
 
 #############
