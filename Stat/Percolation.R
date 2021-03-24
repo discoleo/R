@@ -5,7 +5,7 @@
 ###
 ### Percolation
 ###
-### draft v.0.1i
+### draft v.0.1j
 
 ### Percolation
 
@@ -369,8 +369,13 @@ plot.rs(split.rs(path.all), main="All Path Lengths")
 
 ### Mean Distance from In
 # - includes also non-precolating paths;
-mean(path.all[path.all > 0]) / ncol(m)
-# ~ 0.98%;
+mean(path.all[path.all > 0]) / ncol(path.all)
+# ~ 0.98;
+### Mean Out Distance
+nc = ncol(path.all)
+mean(path.all[path.all[,nc] > 0, nc]) / nc
+# ~ 2.02;
+
 
 
 ###########
