@@ -5,7 +5,7 @@
 ###
 ### Percolation
 ###
-### draft v.0.1k
+### draft v.0.1l
 
 ### Percolation
 
@@ -42,6 +42,19 @@ clean.percol = function(m, val=0) {
 	ids  = ids[(ids > 0) & ! (ids %in% pids)]
 	m[m %in% ids] = val;
 	invisible(m);
+}
+shuffle.colors = function(m) {
+	m2 = array(0, dim(m))
+	m2[m < 0] = m[m < 0]
+	vals = unique(as.vector(m))
+	vals = vals[vals > 0];
+	vnew = sample(vals, length(vals));
+	id = 1
+	for(val in vals) {
+		m2[m == val] = vnew[id];
+		id = id + 1;
+	}
+	invisible(m2)
 }
 
 max.id = function(m) {
@@ -130,6 +143,27 @@ contact.area = function(m, id) {
 		}
 	}
 	return(area);
+}
+### Height
+height.m = function(m) {
+	ids = unique(as.vector(m));
+	ids = ids[ids > 0];
+	hm = array(as.integer(0), c(length(ids), 2, ncol(m)));
+	
+	for(nc in seq(ncol(m))) {
+		for(nr in seq(nrow(m))) {
+			val = m[nr, nc];
+			val.id = match(val, ids);
+			if(val <= 0) next;
+			if(hm[val.id, 1, nc] == 0) {
+				hm[val.id, 1, nc] = nr;
+				hm[val.id, 2, nc] = nr;
+			} else {
+				hm[val.id, 2, nc] = nr;
+			}
+		}
+	}
+	invisible(hm);
 }
 
 ### Raster
@@ -358,6 +392,8 @@ plot.rs(path.m, main="Path Length")
 
 # plot.rs(length.path(m, id=5), main="Path Length")
 
+plot.rs(split.rs(shuffle.colors(clean.percol(m))), main="Percolating Paths")
+
 plot.rs(split.rs(clean.percol(m)), main="Percolating Paths")
 
 
@@ -376,8 +412,16 @@ a1 = contact.area(m, max.id(m))
 a0; a1; a1 / a0;
 
 
+### Average Path Height
+# - may be useful for Normalization;
+h.m = height.m(clean.percol(m))
+h.diff.m = h.m[,2,] - h.m[,1,]
+plot.rs(h.diff.m, "Height per column")
+h.diff.m[1:10, 1:10]
+apply(h.diff.m, 1, mean)
+
+
 ### Other:
-# - Average Path Height;
 # - Average Inputs;
 # - Average Outputs;
 # - Average Length;
