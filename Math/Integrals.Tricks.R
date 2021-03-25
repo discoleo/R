@@ -5,7 +5,7 @@
 ###
 ### Integral Tricks
 ###
-### draft v.0.1b
+### draft v.0.1c
 
 
 ### various Integral Tricks
@@ -41,6 +41,12 @@ b1 = 2
 integrate(function(x) (x^2 + b1n*x + a^2)*log(x)/
 	(x^4 + b1*x^3 + b1*a^2*x + a^4), lower=0, upper=Inf)
 integrate(function(x) log(a)/a * (x^2 + b1n/a*x + 1)/
+	(x^4 + b1/a*x^3 + b1/a*x + 1), lower=0, upper=Inf)
+
+### only x:
+integrate(function(x) x*log(x)/
+	(x^4 + b1*x^3 + b1*a^2*x + a^4), lower=0, upper=Inf)
+integrate(function(x) log(a)/a^2 * x /
 	(x^4 + b1/a*x^3 + b1/a*x + 1), lower=0, upper=Inf)
 
 
