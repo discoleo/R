@@ -5,7 +5,7 @@
 ###
 ### Percolation
 ###
-### draft v.0.1j
+### draft v.0.1k
 
 ### Percolation
 
@@ -30,7 +30,34 @@ reset.m = function(m, id, val=0) {
 	}
 	invisible(m)
 }
+revcol = function(m) {
+	m = m[,rev(seq(ncol(m)))];
+	invisible(m);
+}
+clean.percol = function(m, val=0) {
+	# removes the non-percolating paths;
+	pids = unique(m[,ncol(m)]);
+	pids = pids[pids > 0];
+	ids  = unique(m);
+	ids  = ids[(ids > 0) & ! (ids %in% pids)]
+	m[m %in% ids] = val;
+	invisible(m);
+}
+
+max.id = function(m) {
+	out.m = m[, ncol(m)]
+	out = table(out.m[out.m > 0])
+	if(dim(out) == 0) {
+		print("NO percolation!");
+		out = table(m[m > 0])
+	}
+	id = match(max(out), out);
+	id = as.integer(names(out)[id])
+	return(id)
+}
+
 ### Percolation Functions
+
 flood = function(m, pyx, val=1, val0=0) {
 	vals = pyx; pos = 1;
 	
@@ -58,16 +85,6 @@ flood.all = function(m, type="by Col 1", val0=0, debug=TRUE) {
 	return(m)
 }
 
-max.id = function(m) {
-	out.m = m[, ncol(m)]
-	out = table(out.m[out.m > 0])
-	if(dim(out) == 0) {
-		print("NO percolation!");
-		out = table(m[m > 0])
-	}
-	id = match(max(out), out);
-	id = as.integer(names(out)[id])
-}
 ### Path Length
 length.path = function(m, id, debug=TRUE) {
 	if(missing(id)) {
@@ -341,6 +358,9 @@ plot.rs(path.m, main="Path Length")
 
 # plot.rs(length.path(m, id=5), main="Path Length")
 
+plot.rs(split.rs(clean.percol(m)), main="Percolating Paths")
+
+
 ####################
 ### Stat/Percolation
 
@@ -368,9 +388,12 @@ path.all = length.path(reset.m(m), id=0)
 plot.rs(split.rs(path.all), main="All Path Lengths")
 
 ### Mean Distance from In
-# - includes also non-precolating paths;
+# - includes also non-percolating paths;
 mean(path.all[path.all > 0]) / ncol(path.all)
-# ~ 0.98;
+# ~ 0.98; # sum over the entire path length;
+path.percol = path.all; path.percol[clean.percol(m) == 0] = 0;
+mean(path.percol[path.percol > 0]) / ncol(path.percol)
+# ~ 1.096; # sum over the entire path length;
 ### Mean Out Distance
 nc = ncol(path.all)
 mean(path.all[path.all[,nc] > 0, nc]) / nc
