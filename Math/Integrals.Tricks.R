@@ -5,7 +5,7 @@
 ###
 ### Integral Tricks
 ###
-### draft v.0.1c
+### draft v.0.1d
 
 
 ### various Integral Tricks
@@ -29,6 +29,12 @@ integrate(function(x) sapply(x,
 
 integrate(function(x) sapply(x,
 	function(x) log(a)/a * (x+1)/sum(bf*x^(3:0))), lower=0, upper=Inf)
+
+###
+integrate(function(x)
+	sapply(x, function(x) sqrt(x)*log(x)/sum(b*x^(3:0))), lower=0, upper=Inf)
+integrate(function(x)
+	sapply(x, function(x) log(a)*sqrt(a)/a^2 *sqrt(x)/ sum(bf*x^(3:0))), lower=0, upper=Inf)
 
 
 #########
