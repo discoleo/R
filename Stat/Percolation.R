@@ -5,7 +5,7 @@
 ###
 ### Percolation
 ###
-### draft v.0.2b
+### draft v.0.2c
 
 ### Percolation
 
@@ -122,13 +122,14 @@ flood = function(m, pyx, val=1, val0=0) {
 	invisible(m);
 }
 
-flood.all = function(m, type="Col1", val0=0, debug=TRUE) {
-	# TODO: type
+flood.all = function(m, type="Col1", val0=0, id.start, debug=TRUE) {
 	type = match(type, c("Col1", "All"))
 	if(is.na(type)) stop("Type NOT supported!")
 	ncols = if(type == 2) seq(ncol(m)) else 1;
 	
-	it = 1;
+	if(missing(id.start)) {
+		it = 1 + if(type == 2) max(m) else max(m[,1]);
+	} else it = id.start;
 	for(nc in ncols) {
 		if(debug) print("Iteration: ");
 		while(TRUE) {
@@ -541,7 +542,7 @@ plot.rs(split.rs(path.m), main="Paths")
 #############
 
 ### Ex 3:
-# - foamy structure, little percolation;
+# - foamy structure, little (or no) percolation;
 m = rblock.gen(c(450, 10), c(3,3), min=c(4,5), prob=c(0.65, 0.35))
 
 plot.rs(split.rs(m))
@@ -551,6 +552,7 @@ path.m = flood.all(m)
 path.m = shuffle.colors(path.m)
 plot.rs(split.rs(path.m), main="Paths")
 
+table(path.m[,dim(m)[2]])
 
 cfill.m = count.fill(path.m)
 plot.rs(split.rs(cfill.m), main="Confluent Areas")
@@ -560,8 +562,43 @@ plot.rs(split.rs(cfill.m), main="Confluent Areas")
 cfill.m[(cfill.m > 0) & (cfill.m < 5)] = 0
 plot.rs(split.rs(cfill.m), main="Confluent Areas")
 
+# How many inputs & In-widths:
+table(path.m[,1])
+# Area of inputs:
+table(cfill.m[,1])
 
-###########
+
+#############
+
+### Ex 4:
+# - foamy structure, little percolation;
+m = rblock.gen(c(450, 10), c(3,3), min=c(4,5), prob=c(0.704, 0.296))
+
+plot.rs(split.rs(m))
+
+
+path.m = flood.all(m)
+path.m = shuffle.colors(path.m)
+plot.rs(split.rs(path.m), main="Paths")
+
+table(path.m[,dim(m)[2]])
+
+cfill.m = count.fill(path.m)
+plot.rs(split.rs(cfill.m), main="Confluent Areas")
+
+### Filter
+# - remove small areas;
+cfill.m[(cfill.m > 0) & (cfill.m < 5)] = 0
+plot.rs(split.rs(cfill.m), main="Confluent Areas")
+
+# How many inputs & In-widths:
+table(path.m[,1])
+# Area of inputs:
+table(cfill.m[,1])
+
+
+##############
+##############
 
 ### Test
 m = flood(m, c(1,1), max(m)+1)
