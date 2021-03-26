@@ -5,7 +5,7 @@
 ###
 ### Percolation
 ###
-### draft v.0.1l
+### draft v.0.2a
 
 ### Percolation
 
@@ -67,6 +67,41 @@ max.id = function(m) {
 	id = match(max(out), out);
 	id = as.integer(names(out)[id])
 	return(id)
+}
+
+### Generators
+
+rugrid.gen = function(dims, p) {
+	m = sample(c(-1, 0), prod(dims), replace=T, prob=c(p, 1-p))
+	m = matrix(m, nrow=dims[1])
+}
+
+rblock.gen = function(n, block.dim, min=0, max, prob, val=-1) {
+	if(missing(max)) {
+		if(length(min) >= 2) {
+			max = min[2]; min = min[1];
+		} else {
+			max = prod(block.dim);
+		}
+	}
+	val.count = seq(min, max);
+	if(missing(prob)) {
+		nn = sample(val.count, prod(n), replace=TRUE);
+	} else {
+		nn = sample(val.count, prod(n), replace=TRUE, prob=prob);
+	}
+	blocks.n = prod(block.dim);
+	sample.block = function(n) {
+		bm = array(as.integer(0), block.dim)
+		npos = sample(seq(blocks.n), n)
+		bm[npos] = val;
+		bm
+	}
+	m = lapply(nn, sample.block);
+	m = do.call(rbind, m);
+	dims = n * block.dim;
+	dim(m) = dims;
+	invisible(m);
 }
 
 ### Percolation Functions
@@ -442,6 +477,50 @@ mean(path.percol[path.percol > 0]) / ncol(path.percol)
 nc = ncol(path.all)
 mean(path.all[path.all[,nc] > 0, nc]) / nc
 # ~ 2.02;
+
+
+#####################
+#####################
+
+### Random Blocks
+# - NOT uniformyl random;
+
+m = rblock.gen(c(450, 10), c(3,3))
+
+plot.rs(split.rs(m))
+
+
+path.m = flood.all(m)
+path.m = shuffle.colors(path.m)
+plot.rs(split.rs(path.m), main="Paths")
+
+
+
+#############
+
+### Ex 2
+m = rblock.gen(c(450, 10), c(3,3), min=c(1,7))
+
+plot.rs(split.rs(m))
+
+
+path.m = flood.all(m)
+path.m = shuffle.colors(path.m)
+plot.rs(split.rs(path.m), main="Paths")
+
+
+
+#############
+
+### Ex 3
+m = rblock.gen(c(450, 10), c(3,3), min=c(4,5), prob=c(0.65, 0.35))
+
+plot.rs(split.rs(m))
+
+
+path.m = flood.all(m)
+path.m = shuffle.colors(path.m)
+plot.rs(split.rs(path.m), main="Paths")
 
 
 
