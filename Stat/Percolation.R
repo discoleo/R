@@ -5,7 +5,7 @@
 ###
 ### Percolation
 ###
-### draft v.0.2a
+### draft v.0.2b
 
 ### Percolation
 
@@ -119,18 +119,28 @@ flood = function(m, pyx, val=1, val0=0) {
 		if(vals[pos+1] < ncol(m)) vals = c(vals, vals[pos], vals[pos + 1] + 1);
 		pos = pos + 2;
 	}
-	return(m);
+	invisible(m);
 }
 
-flood.all = function(m, type="by Col 1", val0=0, debug=TRUE) {
+flood.all = function(m, type="Col1", val0=0, debug=TRUE) {
 	# TODO: type
-	while(TRUE) {
-		if(debug) print("Iteration");
-		id.row = match(val0, m[,1])
-		if(is.na(id.row)) break;
-		m = flood(m, c(id.row,1), max(m)+1)
+	type = match(type, c("Col1", "All"))
+	if(is.na(type)) stop("Type NOT supported!")
+	ncols = if(type == 2) seq(ncol(m)) else 1;
+	
+	it = 1;
+	for(nc in ncols) {
+		if(debug) print("Iteration: ");
+		while(TRUE) {
+			id.row = match(val0, m[,nc]);
+			if(is.na(id.row)) break;
+			if(debug) { cat(it); cat(", "); it = it + 1;}
+			m = flood(m, c(id.row, nc), max(m)+1)
+		}
+		if(debug) cat("\n");
 	}
-	return(m)
+	class(m) = c(class(m), if(type == 1) "filled" else "filledAll");
+	invisible(m)
 }
 
 ### Path Length
@@ -199,6 +209,24 @@ height.m = function(m) {
 		}
 	}
 	invisible(hm);
+}
+
+### Count Area
+count.fill = function(m, debug=TRUE) {
+	isNotFilled = is.na(match("filledAll", class(m)))
+	if(isNotFilled) m = flood.all(m, type="All");
+	#
+	count = table(m);
+	ids   = as.integer(names(count));
+	count = count[ids > 0];
+	ids   = ids[ids > 0];
+	if(debug) print(head(count), 20)
+	# replace id with count:
+	cn.m = m;
+	for(id in seq(length(ids))) {
+		cn.m[m == ids[id]] = count[id];
+	}
+	invisible(cn.m)
 }
 
 ### Raster
@@ -483,7 +511,7 @@ mean(path.all[path.all[,nc] > 0, nc]) / nc
 #####################
 
 ### Random Blocks
-# - NOT uniformyl random;
+# - NOT uniformly random;
 
 m = rblock.gen(c(450, 10), c(3,3))
 
@@ -512,7 +540,8 @@ plot.rs(split.rs(path.m), main="Paths")
 
 #############
 
-### Ex 3
+### Ex 3:
+# - foamy structure, little percolation;
 m = rblock.gen(c(450, 10), c(3,3), min=c(4,5), prob=c(0.65, 0.35))
 
 plot.rs(split.rs(m))
@@ -522,6 +551,14 @@ path.m = flood.all(m)
 path.m = shuffle.colors(path.m)
 plot.rs(split.rs(path.m), main="Paths")
 
+
+cfill.m = count.fill(path.m)
+plot.rs(split.rs(cfill.m), main="Confluent Areas")
+
+### Filter
+# - remove small areas;
+cfill.m[(cfill.m > 0) & (cfill.m < 5)] = 0
+plot.rs(split.rs(cfill.m), main="Confluent Areas")
 
 
 ###########
