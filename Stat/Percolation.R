@@ -5,7 +5,7 @@
 ###
 ### Percolation
 ###
-### draft v.0.3b
+### draft v.0.3c
 
 ### Percolation
 
@@ -305,8 +305,9 @@ flux.dynamic = function(m, id, it=5, val0 = 1.0, debug=TRUE) {
 		nn = double();
 		while(pos <= length(vals)) {
 			if(p.m[vals[pos], vals[pos + 1]] < 0) {pos = pos + 3; next;}
+			# update Value
 			valNew = p.m[vals[pos], vals[pos + 1]];
-			valNew = valNew + p.m[vals[pos], vals[pos + 1]] + vals[pos + 2];
+			valNew = valNew + vals[pos + 2];
 			p.m[vals[pos], vals[pos + 1]] = valNew;
 			cflow = 0; fflow = 0; # only push-forward Flow;
 			if(vals[pos] > 1 && p.m[vals[pos]-1, vals[pos + 1]] >= 0) {
@@ -343,7 +344,7 @@ flux.dynamic = function(m, id, it=5, val0 = 1.0, debug=TRUE) {
 			valNew = (valNew + fflow) / (cflow + 1);
 			p.m[vals[pos], vals[pos + 1]] = valNew;
 			n.len = length(nn); idNext = n.len - seq(0, cflow-1)*3;
-			nn[idNext] = valNew - p.m[nn[idNext - 2], nn[idNext - 1]];
+			nn[idNext] = valNew - nn[idNext];
 			pos = pos + 3;
 		}
 		vals = nn;
