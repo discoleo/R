@@ -5,7 +5,7 @@
 ###
 ### Percolation
 ###
-### draft v.0.3d
+### draft v.0.3e
 
 ### Percolation
 
@@ -284,6 +284,7 @@ flux = function(m, id, val0 = 1.0, debug=TRUE) {
 	p.m[p.m < 0 & m > 0] =  0; # other non-connected "paths";
 	return(p.m);
 }
+### Dynamic Flux
 flux.dynamic = function(m, id, it=5, val0 = 1.0, max.size.scale=3, debug=TRUE) {
 	if(missing(id)) {
 		id = max.id(m)
@@ -367,6 +368,75 @@ flux.dynamic = function(m, id, it=5, val0 = 1.0, max.size.scale=3, debug=TRUE) {
 		# TODO: evaluate NO new flow vs new flow;
 		vals = as.vector(rbind(y.start, 1, 0));
 		pos = 1;
+	}
+	
+	if(id != 0) p.m[m == 0] =  0;
+	p.m[p.m < 0 & m > 0] =  0; # other non-connected "paths";
+	return(p.m);
+}
+### Dynamic Flux: new Sequential Algorithm
+flux.dynamic = function(m, id, iter=40, val0 = 1.0, max.size.scale=3, debug=TRUE) {
+	if(missing(id)) {
+		id = max.id(m)
+		if(debug) print(id);
+	}
+	#
+	y.start = which(m[,1] %in% id)
+	if(length(y.start) == 0) stop("NO such path!")
+	# Init
+	p.m = m;
+	p.m[m != id] = -1;
+	p.m[m == id] =  0;
+	p.m[y.start, 1] = val0; # start of flow;
+	tol = 1E-24;
+	#
+	for(itN in seq(iter)) {
+		for(nc in seq(ncol(m))) {
+		for(nr in seq(nrow(m))) {
+			if(p.m[nr, nc] <= 0) next;
+			valNew = p.m[nr, nc];
+			nn = double();
+			cflow = 0; fflow = 0;
+			if(nc < ncol(m) && p.m[nr, nc + 1] >= 0) {
+				valC = p.m[nr, nc + 1];
+				if(valNew > valC + tol) {
+					nn = c(nn, nr, nc + 1);
+					cflow = cflow + 1;
+					fflow = fflow + valC;
+				} }
+			if(nr < nrow(m) && p.m[nr + 1, nc] >= 0) {
+				valC = p.m[nr + 1, nc];
+				if(valNew > valC + tol) {
+					nn = c(nn, nr + 1, nc);
+					cflow = cflow + 1;
+					fflow = fflow + valC;
+				} }
+			if(nc > 1 && p.m[nr, nc - 1] >= 0) {
+				valC = p.m[nr, nc - 1];
+				if(valNew > valC + tol) {
+					nn = c(nn, nr, nc - 1);
+					cflow = cflow + 1;
+					fflow = fflow + valC;
+				} }
+			if(nr > 1 && p.m[nr - 1, nc] >= 0) {
+				valC = p.m[nr - 1, nc];
+				if(valNew > valC + tol) {
+					nn = c(nn, nr - 1, nc);
+					cflow = cflow + 1;
+					fflow = fflow + valC;
+				}
+			}
+			if(cflow == 0) next;
+			# Update
+			valNew = (valNew + fflow) / (cflow + 1);
+			p.m[nr, nc] = valNew;
+			n.len = length(nn); idNext = n.len - seq(0, cflow-1)*2;
+			for(idNext in (n.len - seq(0, cflow-1)*2)) {
+				p.m[nn[idNext - 1], nn[idNext]] = valNew;
+			}
+		}
+		}
+		if(debug) print(paste0("Iteration: ", itN))
 	}
 	
 	if(id != 0) p.m[m == 0] =  0;
@@ -477,10 +547,13 @@ plot.rs(mflux)
 
 # dynamic Flux:
 # - with Mixing effects;
-# - takes very LONG!!!
-# TODO: debug!!!
-mflux = flux.dynamic(m)
+# - initial algorithm: takes very LONG!!!
+# - new sequential algorithm:
+#   BUT convergence extremely slow!
+mflux = flux.dynamic(m, iter=120)
 sum(mflux[m[,dim(m)[2]] > 0, dim(m)[2]])
+apply(mflux, 2, function(x) sum(x[x>0]))
+#
 mflux = norm.flux(mflux);
 plot.rs(mflux)
 
