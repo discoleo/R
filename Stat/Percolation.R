@@ -5,7 +5,7 @@
 ###
 ### Percolation
 ###
-### draft v.0.3a
+### draft v.0.3b
 
 ### Percolation
 
@@ -67,6 +67,11 @@ max.id = function(m) {
 	id = match(max(out), out);
 	id = as.integer(names(out)[id])
 	return(id)
+}
+
+norm.flux = function(m, add=0) {
+	m[m > 0] = abs(log(add + m[m > 0]))
+	invisible(m)
 }
 
 ### Generators
@@ -279,6 +284,80 @@ flux = function(m, id, val0 = 1.0, debug=TRUE) {
 	p.m[p.m < 0 & m > 0] =  0; # other non-connected "paths";
 	return(p.m);
 }
+flux.dynamic = function(m, id, it=5, val0 = 1.0, debug=TRUE) {
+	if(missing(id)) {
+		id = max.id(m)
+		if(debug) print(id);
+	}
+	#
+	y.start = which(m[,1] %in% id)
+	if(length(y.start) == 0) stop("NO such path!")
+	vals = as.vector(rbind(y.start, 1, val0))
+	# Init
+	p.m = m;
+	p.m[p.m != id] = -1;
+	p.m[p.m == id] =  0;
+	#
+	pos = 1;
+	# TODO: mixing of flows!
+	for(itN in seq(it)) {
+	while(pos <= length(vals)) {
+		nn = double();
+		while(pos <= length(vals)) {
+			if(p.m[vals[pos], vals[pos + 1]] < 0) {pos = pos + 3; next;}
+			valNew = p.m[vals[pos], vals[pos + 1]];
+			valNew = valNew + p.m[vals[pos], vals[pos + 1]] + vals[pos + 2];
+			p.m[vals[pos], vals[pos + 1]] = valNew;
+			cflow = 0; fflow = 0; # only push-forward Flow;
+			if(vals[pos] > 1 && p.m[vals[pos]-1, vals[pos + 1]] >= 0) {
+				valC = p.m[vals[pos]-1, vals[pos + 1]];
+				if(valNew > valC + 1E-8) {
+					nn = c(nn, vals[pos]-1, vals[pos + 1], valC);
+					cflow = cflow + 1;
+					fflow = fflow + valC;
+				} }
+			if(vals[pos] < nrow(m) && p.m[vals[pos]+1, vals[pos + 1]] >= 0) {
+				valC = p.m[vals[pos]+1, vals[pos + 1]];
+				if(valNew > valC + 1E-8) {
+					nn = c(nn, vals[pos]+1, vals[pos + 1], valC);
+					cflow = cflow + 1;
+					fflow = fflow + valC;
+				} }
+			if(vals[pos+1] > 1 && p.m[vals[pos], vals[pos + 1] - 1] >= 0) {
+				valC = p.m[vals[pos], vals[pos + 1] - 1];
+				if(valNew > valC + 1E-8) {
+					nn = c(nn, vals[pos], vals[pos + 1] - 1, valC);
+					cflow = cflow + 1;
+					fflow = fflow + valC;
+				} }
+			if(vals[pos+1] < ncol(m) && p.m[vals[pos], vals[pos + 1] + 1] >= 0) {
+				valC = p.m[vals[pos], vals[pos + 1] + 1];
+				if(valNew > valC + 1E-8) {
+					nn = c(nn, vals[pos], vals[pos + 1] + 1, valC);
+					cflow = cflow + 1;
+					fflow = fflow + valC;
+				}
+			}
+			if(cflow == 0) {pos = pos + 3; next; }
+			# Update
+			valNew = (valNew + fflow) / (cflow + 1);
+			p.m[vals[pos], vals[pos + 1]] = valNew;
+			n.len = length(nn); idNext = n.len - seq(0, cflow-1)*3;
+			nn[idNext] = valNew - p.m[nn[idNext - 2], nn[idNext - 1]];
+			pos = pos + 3;
+		}
+		vals = nn;
+		pos = 1;
+	}
+		if(debug) print("Iteration")
+		# TODO: evaluate NO new flow vs new flow;
+		vals = as.vector(rbind(y.start, 1, 0));
+	}
+	
+	if(id != 0) p.m[m == 0] =  0;
+	p.m[p.m < 0 & m > 0] =  0; # other non-connected "paths";
+	return(p.m);
+}
 
 ### Raster
 
@@ -375,10 +454,20 @@ table(m[,dims[2]])
 plot.rs(m, "Percolation")
 
 ### Flow
-# TODO: Mixing effects;
-flux.m = flux(m)
-flux.m[flux.m > 0] = abs(log(flux.m[flux.m > 0]))
-plot.rs(flux.m)
+# - NO Mixing effects;
+mflux = flux(m)
+sum(mflux[m[,dim(m)[2]] > 0, dim(m)[2]])
+mflux = norm.flux(mflux);
+plot.rs(mflux)
+
+# dynamic Flux:
+# - with Mixing effects;
+# - takes very LONG!!!
+# TODO: debug!!!
+mflux = flux.dynamic(m)
+sum(mflux[m[,dim(m)[2]] > 0, dim(m)[2]])
+mflux = norm.flux(mflux);
+plot.rs(mflux)
 
 
 ### Shortest Path
