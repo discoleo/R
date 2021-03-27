@@ -5,7 +5,7 @@
 ###
 ### Percolation
 ###
-### draft v.0.2c
+### draft v.0.3a
 
 ### Percolation
 
@@ -230,7 +230,58 @@ count.fill = function(m, debug=TRUE) {
 	invisible(cn.m)
 }
 
+### Flow / Flux
+flux = function(m, id, val0 = 1.0, debug=TRUE) {
+	if(missing(id)) {
+		id = max.id(m)
+		if(debug) print(id);
+	}
+	#
+	y.start = which(m[,1] %in% id)
+	if(length(y.start) == 0) stop("NO such path!")
+	vals = as.vector(rbind(y.start, 1, val0))
+	# Init
+	p.m = m;
+	p.m[p.m != id] = -1;
+	p.m[p.m == id] =  0;
+	#
+	pos = 1;
+	# TODO: mixing of flows!
+	while(pos <= length(vals)) {
+		nn = double();
+		while(pos <= length(vals)) {
+			if(p.m[vals[pos], vals[pos + 1]] != 0) {pos = pos + 3; next;}
+			p.m[vals[pos], vals[pos + 1]] = vals[pos + 2];
+			fflow = 0;
+			if(vals[pos] > 1 && p.m[vals[pos]-1, vals[pos + 1]] == 0) {
+				nn = c(nn, vals[pos]-1, vals[pos + 1], 0);
+				fflow = fflow + 1; }
+			if(vals[pos] < nrow(m) && p.m[vals[pos]+1, vals[pos + 1]] == 0) {
+				nn = c(nn, vals[pos]+1, vals[pos + 1], 0);
+				fflow = fflow + 1; }
+			if(vals[pos+1] > 1 && p.m[vals[pos], vals[pos + 1] - 1] == 0) {
+				nn = c(nn, vals[pos], vals[pos + 1] - 1, 0);
+				fflow = fflow + 1; }
+			if(vals[pos+1] < ncol(m) && p.m[vals[pos], vals[pos + 1] + 1] == 0) {
+				nn = c(nn, vals[pos], vals[pos + 1] + 1, 0);
+				fflow = fflow + 1;
+			}
+			if(fflow == 0) {pos = pos + 3; next; }
+			n.len = length(nn);
+			nn[n.len - seq(0, fflow-1)*3] = vals[pos + 2] / fflow;
+			pos = pos + 3;
+		}
+		vals = nn;
+		pos = 1;
+	}
+	
+	if(id != 0) p.m[m == 0] =  0;
+	p.m[p.m < 0 & m > 0] =  0; # other non-connected "paths";
+	return(p.m);
+}
+
 ### Raster
+
 toRaster = function(m, showVal=0) {
 	rs.m = array(0, c(dim(m), 3));
 	if( ! is.na(showVal)) {
@@ -322,6 +373,12 @@ table(m)
 table(m[,dims[2]])
 
 plot.rs(m, "Percolation")
+
+### Flow
+# TODO: Mixing effects;
+flux.m = flux(m)
+flux.m[flux.m > 0] = abs(log(flux.m[flux.m > 0]))
+plot.rs(flux.m)
 
 
 ### Shortest Path
