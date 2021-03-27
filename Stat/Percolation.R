@@ -5,7 +5,7 @@
 ###
 ### Percolation
 ###
-### draft v.0.3c
+### draft v.0.3d
 
 ### Percolation
 
@@ -284,7 +284,7 @@ flux = function(m, id, val0 = 1.0, debug=TRUE) {
 	p.m[p.m < 0 & m > 0] =  0; # other non-connected "paths";
 	return(p.m);
 }
-flux.dynamic = function(m, id, it=5, val0 = 1.0, debug=TRUE) {
+flux.dynamic = function(m, id, it=5, val0 = 1.0, max.size.scale=3, debug=TRUE) {
 	if(missing(id)) {
 		id = max.id(m)
 		if(debug) print(id);
@@ -298,7 +298,7 @@ flux.dynamic = function(m, id, it=5, val0 = 1.0, debug=TRUE) {
 	p.m[p.m != id] = -1;
 	p.m[p.m == id] =  0;
 	#
-	pos = 1;
+	pos = 1; tol = 1E-24;
 	# TODO: mixing of flows!
 	for(itN in seq(it)) {
 	while(pos <= length(vals)) {
@@ -310,31 +310,31 @@ flux.dynamic = function(m, id, it=5, val0 = 1.0, debug=TRUE) {
 			valNew = valNew + vals[pos + 2];
 			p.m[vals[pos], vals[pos + 1]] = valNew;
 			cflow = 0; fflow = 0; # only push-forward Flow;
-			if(vals[pos] > 1 && p.m[vals[pos]-1, vals[pos + 1]] >= 0) {
-				valC = p.m[vals[pos]-1, vals[pos + 1]];
-				if(valNew > valC + 1E-8) {
-					nn = c(nn, vals[pos]-1, vals[pos + 1], valC);
+			if(vals[pos+1] < ncol(m) && p.m[vals[pos], vals[pos + 1] + 1] >= 0) {
+				valC = p.m[vals[pos], vals[pos + 1] + 1];
+				if(valNew > valC + tol) {
+					nn = c(nn, vals[pos], vals[pos + 1] + 1, valC);
 					cflow = cflow + 1;
 					fflow = fflow + valC;
 				} }
 			if(vals[pos] < nrow(m) && p.m[vals[pos]+1, vals[pos + 1]] >= 0) {
 				valC = p.m[vals[pos]+1, vals[pos + 1]];
-				if(valNew > valC + 1E-8) {
+				if(valNew > valC + tol) {
 					nn = c(nn, vals[pos]+1, vals[pos + 1], valC);
 					cflow = cflow + 1;
 					fflow = fflow + valC;
 				} }
 			if(vals[pos+1] > 1 && p.m[vals[pos], vals[pos + 1] - 1] >= 0) {
 				valC = p.m[vals[pos], vals[pos + 1] - 1];
-				if(valNew > valC + 1E-8) {
+				if(valNew > valC + tol) {
 					nn = c(nn, vals[pos], vals[pos + 1] - 1, valC);
 					cflow = cflow + 1;
 					fflow = fflow + valC;
 				} }
-			if(vals[pos+1] < ncol(m) && p.m[vals[pos], vals[pos + 1] + 1] >= 0) {
-				valC = p.m[vals[pos], vals[pos + 1] + 1];
-				if(valNew > valC + 1E-8) {
-					nn = c(nn, vals[pos], vals[pos + 1] + 1, valC);
+			if(vals[pos] > 1 && p.m[vals[pos]-1, vals[pos + 1]] >= 0) {
+				valC = p.m[vals[pos]-1, vals[pos + 1]];
+				if(valNew > valC + tol) {
+					nn = c(nn, vals[pos]-1, vals[pos + 1], valC);
 					cflow = cflow + 1;
 					fflow = fflow + valC;
 				}
@@ -346,6 +346,19 @@ flux.dynamic = function(m, id, it=5, val0 = 1.0, debug=TRUE) {
 			n.len = length(nn); idNext = n.len - seq(0, cflow-1)*3;
 			nn[idNext] = valNew - nn[idNext];
 			pos = pos + 3;
+			if(length(nn) > max.size.scale * prod(dim(m))) {
+				print("Internal Break!")
+				while(pos <= length(vals)) {
+					# update rapidly the remaining values
+					if(p.m[vals[pos], vals[pos + 1]] < 0) {pos = pos + 3; next;}
+					# update Value
+					valNew = p.m[vals[pos], vals[pos + 1]];
+					valNew = valNew + vals[pos + 2];
+					p.m[vals[pos], vals[pos + 1]] = valNew;
+					pos = pos + 3;
+				}
+				break;
+			}
 		}
 		vals = nn;
 		pos = 1;
@@ -353,6 +366,7 @@ flux.dynamic = function(m, id, it=5, val0 = 1.0, debug=TRUE) {
 		if(debug) print("Iteration")
 		# TODO: evaluate NO new flow vs new flow;
 		vals = as.vector(rbind(y.start, 1, 0));
+		pos = 1;
 	}
 	
 	if(id != 0) p.m[m == 0] =  0;
