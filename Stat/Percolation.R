@@ -5,7 +5,7 @@
 ###
 ### Percolation
 ###
-### draft v.0.3f
+### draft v.0.3g
 
 ### Percolation
 
@@ -257,6 +257,13 @@ diffusion = function(m, id, val0 = 1.0, debug=TRUE) {
 	p.m[p.m != id] = -1;
 	p.m[p.m == id] =  0;
 	#
+	p.m = diffusion.internal(p.m, vals)
+	
+	if(id != 0) p.m[m == 0] =  0;
+	p.m[p.m < 0 & m > 0] =  0; # other non-connected "paths";
+	return(p.m);
+}
+diffusion.internal = function(p.m, vals) {
 	pos = 1;
 	# TODO: mixing of flows!
 	while(pos <= length(vals)) {
@@ -286,13 +293,10 @@ diffusion = function(m, id, val0 = 1.0, debug=TRUE) {
 		vals = nn;
 		pos = 1;
 	}
-	
-	if(id != 0) p.m[m == 0] =  0;
-	p.m[p.m < 0 & m > 0] =  0; # other non-connected "paths";
-	return(p.m);
+	invisible(p.m);
 }
 ### Dynamic diffusion [old]
-diffusion.dynamic = function(m, id, it=5, val0 = 1.0, max.size.scale=3, debug=TRUE) {
+diffusion.dynamic = function(m, id, iter=5, val0 = 1.0, max.size.scale=3, debug=TRUE) {
 	if(missing(id)) {
 		id = max.id(m)
 		if(debug) print(id);
@@ -305,10 +309,13 @@ diffusion.dynamic = function(m, id, it=5, val0 = 1.0, max.size.scale=3, debug=TR
 	p.m = m;
 	p.m[p.m != id] = -1;
 	p.m[p.m == id] =  0;
-	#
+	# pre-compute Diffusion
+	# - better results, but still extremely slow!
+	p.m = diffusion.internal(p.m, vals);
+	# next iterations
+	vals = as.vector(rbind(y.start, 1, 0)); # 0 vs val0?
 	pos = 1; tol = 1E-24;
-	# TODO: mixing of flows!
-	for(itN in seq(it)) {
+	for(itN in seq(iter)) {
 	while(pos <= length(vals)) {
 		nn = double();
 		while(pos <= length(vals)) {
@@ -353,6 +360,7 @@ diffusion.dynamic = function(m, id, it=5, val0 = 1.0, max.size.scale=3, debug=TR
 			p.m[vals[pos], vals[pos + 1]] = valNew;
 			n.len = length(nn); idNext = n.len - seq(0, cflow-1)*3;
 			nn[idNext] = valNew - nn[idNext];
+			nn[idNext][nn[idNext] < 0] = 0;
 			pos = pos + 3;
 			if(length(nn) > max.size.scale * prod(dim(m))) {
 				print("Internal Break!")
@@ -383,7 +391,7 @@ diffusion.dynamic = function(m, id, it=5, val0 = 1.0, max.size.scale=3, debug=TR
 }
 ### Dynamic diffusion:
 # - new Sequential Algorithm;
-diffusion.dynamic = function(m, id, iter=40, val0 = 1.0, max.size.scale=3, debug=TRUE) {
+diffusion.dynamic = function(m, id, iter=40, val0 = 1.0, debug=TRUE) {
 	if(missing(id)) {
 		id = max.id(m)
 		if(debug) print(id);
