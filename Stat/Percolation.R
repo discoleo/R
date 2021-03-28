@@ -5,7 +5,7 @@
 ###
 ### Percolation
 ###
-### draft v.0.3e
+### draft v.0.3f
 
 ### Percolation
 
@@ -20,6 +20,12 @@
 
 ### helper Functions
 
+tail.m = function(m, n=30, print=FALSE) {
+	len = dim(m)[2];
+	m = m[ , seq(max(1, len - n), len)]
+	if(print) return(m);
+	invisible(m);
+}
 reset.m = function(m, id, val=0) {
 	if(missing(id)) {
 		m[m > 0] = val;
@@ -235,8 +241,9 @@ count.fill = function(m, debug=TRUE) {
 	invisible(cn.m)
 }
 
-### Flow / Flux
-flux = function(m, id, val0 = 1.0, debug=TRUE) {
+### Diffusion
+# - simple diffusion;
+diffusion = function(m, id, val0 = 1.0, debug=TRUE) {
 	if(missing(id)) {
 		id = max.id(m)
 		if(debug) print(id);
@@ -284,8 +291,8 @@ flux = function(m, id, val0 = 1.0, debug=TRUE) {
 	p.m[p.m < 0 & m > 0] =  0; # other non-connected "paths";
 	return(p.m);
 }
-### Dynamic Flux
-flux.dynamic = function(m, id, it=5, val0 = 1.0, max.size.scale=3, debug=TRUE) {
+### Dynamic diffusion [old]
+diffusion.dynamic = function(m, id, it=5, val0 = 1.0, max.size.scale=3, debug=TRUE) {
 	if(missing(id)) {
 		id = max.id(m)
 		if(debug) print(id);
@@ -374,8 +381,9 @@ flux.dynamic = function(m, id, it=5, val0 = 1.0, max.size.scale=3, debug=TRUE) {
 	p.m[p.m < 0 & m > 0] =  0; # other non-connected "paths";
 	return(p.m);
 }
-### Dynamic Flux: new Sequential Algorithm
-flux.dynamic = function(m, id, iter=40, val0 = 1.0, max.size.scale=3, debug=TRUE) {
+### Dynamic diffusion:
+# - new Sequential Algorithm;
+diffusion.dynamic = function(m, id, iter=40, val0 = 1.0, max.size.scale=3, debug=TRUE) {
 	if(missing(id)) {
 		id = max.id(m)
 		if(debug) print(id);
@@ -437,6 +445,8 @@ flux.dynamic = function(m, id, iter=40, val0 = 1.0, max.size.scale=3, debug=TRUE
 		}
 		}
 		if(debug) print(paste0("Iteration: ", itN))
+		# add new flow;
+		p.m[y.start, 1] = p.m[y.start, 1] + val0;
 	}
 	
 	if(id != 0) p.m[m == 0] =  0;
@@ -538,24 +548,31 @@ table(m[,dims[2]])
 
 plot.rs(m, "Percolation")
 
-### Flow
-# - NO Mixing effects;
-mflux = flux(m)
-sum(mflux[m[,dim(m)[2]] > 0, dim(m)[2]])
-mflux = norm.flux(mflux);
-plot.rs(mflux)
+### Diffusion
 
-# dynamic Flux:
+# - simple: NO Mixing effects;
+diffm = diffusion(m)
+sum(diffm[m[,dim(m)[2]] > 0, dim(m)[2]])
+diffm = norm.flux(diffm);
+plot.rs(diffm)
+
+# dynamic Diffusion:
 # - with Mixing effects;
 # - initial algorithm: takes very LONG!!!
 # - new sequential algorithm:
-#   BUT convergence extremely slow!
-mflux = flux.dynamic(m, iter=120)
-sum(mflux[m[,dim(m)[2]] > 0, dim(m)[2]])
-apply(mflux, 2, function(x) sum(x[x>0]))
+#   BUT converges/advances extremely slow!
+# TODO: combine simple + dynamic;
+diffm = diffusion.dynamic(m)
+sum(diffm[m[,dim(m)[2]] > 0, dim(m)[2]])
+apply(diffm, 2, function(x) sum(x[x>0]))
 #
-mflux = norm.flux(mflux);
-plot.rs(mflux)
+diffm = norm.flux(diffm / max(diffm));
+plot.rs(diffm)
+plot.rs(diffm[,1:30]) # Input
+plot.rs(tail.m(diffm, 30)) # Output
+
+
+# TODO: advective transport;
 
 
 ### Shortest Path
