@@ -5,7 +5,7 @@
 ###
 ### Percolation
 ###
-### draft v.0.3g
+### draft v.0.3h
 
 ### Percolation
 
@@ -261,7 +261,7 @@ diffusion = function(m, id, val0 = 1.0, debug=TRUE) {
 	
 	if(id != 0) p.m[m == 0] =  0;
 	p.m[p.m < 0 & m > 0] =  0; # other non-connected "paths";
-	return(p.m);
+	invisible(p.m);
 }
 diffusion.internal = function(p.m, vals) {
 	pos = 1;
@@ -296,7 +296,7 @@ diffusion.internal = function(p.m, vals) {
 	invisible(p.m);
 }
 ### Dynamic diffusion [old]
-diffusion.dynamic = function(m, id, iter=5, val0 = 1.0, max.size.scale=3, debug=TRUE) {
+diffusion.dynamic.slow = function(m, id, iter=5, val0 = 1.0, max.size.scale=3, debug=TRUE) {
 	if(missing(id)) {
 		id = max.id(m)
 		if(debug) print(id);
@@ -325,31 +325,32 @@ diffusion.dynamic = function(m, id, iter=5, val0 = 1.0, max.size.scale=3, debug=
 			valNew = valNew + vals[pos + 2];
 			p.m[vals[pos], vals[pos + 1]] = valNew;
 			cflow = 0; fflow = 0; # only push-forward Flow;
+			nnew = double();
 			if(vals[pos+1] < ncol(m) && p.m[vals[pos], vals[pos + 1] + 1] >= 0) {
 				valC = p.m[vals[pos], vals[pos + 1] + 1];
 				if(valNew > valC + tol) {
-					nn = c(nn, vals[pos], vals[pos + 1] + 1, valC);
+					nnew = c(nnew, vals[pos], vals[pos + 1] + 1, valC);
 					cflow = cflow + 1;
 					fflow = fflow + valC;
 				} }
 			if(vals[pos] < nrow(m) && p.m[vals[pos]+1, vals[pos + 1]] >= 0) {
 				valC = p.m[vals[pos]+1, vals[pos + 1]];
 				if(valNew > valC + tol) {
-					nn = c(nn, vals[pos]+1, vals[pos + 1], valC);
+					nnew = c(nnew, vals[pos]+1, vals[pos + 1], valC);
 					cflow = cflow + 1;
 					fflow = fflow + valC;
 				} }
 			if(vals[pos+1] > 1 && p.m[vals[pos], vals[pos + 1] - 1] >= 0) {
 				valC = p.m[vals[pos], vals[pos + 1] - 1];
 				if(valNew > valC + tol) {
-					nn = c(nn, vals[pos], vals[pos + 1] - 1, valC);
+					nnew = c(nnew, vals[pos], vals[pos + 1] - 1, valC);
 					cflow = cflow + 1;
 					fflow = fflow + valC;
 				} }
 			if(vals[pos] > 1 && p.m[vals[pos]-1, vals[pos + 1]] >= 0) {
 				valC = p.m[vals[pos]-1, vals[pos + 1]];
 				if(valNew > valC + tol) {
-					nn = c(nn, vals[pos]-1, vals[pos + 1], valC);
+					nnew = c(nnew, vals[pos]-1, vals[pos + 1], valC);
 					cflow = cflow + 1;
 					fflow = fflow + valC;
 				}
@@ -357,29 +358,28 @@ diffusion.dynamic = function(m, id, iter=5, val0 = 1.0, max.size.scale=3, debug=
 			if(cflow == 0) {pos = pos + 3; next; }
 			# Update
 			valNew = (valNew + fflow) / (cflow + 1);
+			n.len = length(nnew); idNext = n.len - seq(0, cflow-1)*3;
+			# Priority: lower initial value;
+			n.id = order(nnew[idNext]);
+			idSorted = idNext[n.id];
+			nnew = nnew[rbind(idSorted-2, idSorted-1, idSorted)];
+			# Propagate Update immediately
 			p.m[vals[pos], vals[pos + 1]] = valNew;
-			n.len = length(nn); idNext = n.len - seq(0, cflow-1)*3;
-			nn[idNext] = valNew - nn[idNext];
-			nn[idNext][nn[idNext] < 0] = 0;
+			for(idN1 in idNext) {
+				p.m[nnew[idN1 - 2], nnew[idN1 - 1]] = valNew;
+			}
+			nnew[idNext] = 0;
+			nn = c(nn, nnew);
 			pos = pos + 3;
 			if(length(nn) > max.size.scale * prod(dim(m))) {
 				print("Internal Break!")
-				while(pos <= length(vals)) {
-					# update rapidly the remaining values
-					if(p.m[vals[pos], vals[pos + 1]] < 0) {pos = pos + 3; next;}
-					# update Value
-					valNew = p.m[vals[pos], vals[pos + 1]];
-					valNew = valNew + vals[pos + 2];
-					p.m[vals[pos], vals[pos + 1]] = valNew;
-					pos = pos + 3;
-				}
 				break;
 			}
 		}
 		vals = nn;
 		pos = 1;
 	}
-		if(debug) print("Iteration")
+		if(debug) print(paste0("Iteration: ", itN));
 		# TODO: evaluate NO new flow vs new flow;
 		vals = as.vector(rbind(y.start, 1, 0));
 		pos = 1;
@@ -570,6 +570,7 @@ plot.rs(diffm)
 # - new sequential algorithm:
 #   BUT converges/advances extremely slow!
 # TODO: combine simple + dynamic;
+# diffm = diffusion.dynamic.slow(m)
 diffm = diffusion.dynamic(m)
 sum(diffm[m[,dim(m)[2]] > 0, dim(m)[2]])
 apply(diffm, 2, function(x) sum(x[x>0]))
