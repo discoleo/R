@@ -5,11 +5,13 @@
 ###
 ### Image Processing: Tools
 ###
-### draft v.0.2d
+### draft v.0.2e
 
 
 ### History
 
+### draft v.0.2e:
+# - extract neighbours;
 ### draft v.0.2c - v.0.2d:
 # - wapply: apply to window;
 #   e.g. MaxPool done correctly;
@@ -149,6 +151,37 @@ decompose.kernel = function(m) {
 		}
 	}
 	return(data.frame("y"=pos.y, "x"=pos.x, "w"=w))
+}
+
+### Neighbours
+neighbours = function(m1, m2, val1, val2, asUnique=TRUE) {
+	# Initial Cells
+	isSelect = (m1 >= val1); # TODO: formula?
+	idSelect = which(isSelect);
+	# Neighbours
+	nRow = idSelect %% nrow(m);
+	idN = c(idSelect-nrow(m), idSelect[nRow != 1]-1,
+		idSelect[nRow != 0]+1, idSelect+nrow(m))
+	idN = sort(idN);
+	# out of bounds
+	posStart = 1;
+	while(posStart <= length(idN)) {
+		if(idN[posStart] >= 1) break;
+		posStart = posStart + 1;
+	}
+	posEnd = length(idN);
+	posMax = prod(dim(m));
+	while(posEnd >= 1) {
+		if(idN[posEnd] <= posMax) break;
+		posEnd = posEnd - 1;
+	}
+	idN = idN[posStart:posEnd];
+	if(asUnique) idN = unique(idN);
+	# Condition 2
+	isTrue = (m2[idN] == val2);
+	idN = idN[isTrue];
+	# All Neighbours
+	invisible(idN);
 }
 
 ####################
