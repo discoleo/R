@@ -8,3 +8,5 @@
 Does it act like a hinge or a stator?
 
 The cells may use Wnt-Frizzled complexes to move/flex/rotate around a fixed point.
+
+The many Cys-Cys covalent bonds add stability and rigidity to the Wnt molecule. This supports the idea of a rigid stator or hinge.
