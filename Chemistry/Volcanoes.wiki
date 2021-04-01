@@ -1,0 +1,49 @@
+
+= Volcanoes =
+
+'''The exploration of Volcanoes'''
+
+
+== Perfusion / Diffusion Studies ==
+
+=== Principle ===
+
+A tracer material is introduced into an active volcano. The tracer is then ejected gradually with the lava flow. Rocks sampled on the surface are analysed for the tracer material.
+
+=== Device ===
+
+A special device is used to introduce the tracer inside the volcano.
+
+: '''Outer Shell'''
+The outer shell is made of a relatively heat-resistant material, e.g. nickel, steel, or silica glasses/porcelain.
+
+: '''Middle Layer'''
+The mmiddle layer consists of the tracer material. Examples may include relatively non-toxic metals that melt at relatively low tmperatures, e.g. gallium. The amount of tracer dissolved in the bulk of the volcano is relatively low: toxicity is less a concern for non-radioactive tracers.
+
+: '''Inner Core'''
+A mixture of substances that can react strongly exothermically, e.g. Al2O3 + Mg.
+
+After the device is introduced into the molten magma, it starts sinking. It also heats up. At some point, the inner core starts reacting exothermically, generating additional heat that breaks the outer enclosing shell. The tracer can now freely diffuse in the hot magma.
+
+: '''Shape'''
+Efficient shapes which increase sinking speed should be designed based on the density and temperature of the magma.
+
+
+=== Radioactive Tracers ===
+
+Radioactive tracers offer a better screening and quantification of the ejected lava. However, a careful selection of the tracer based on its half life is needed. The half life should match the time to ejection from the volcano and this information may not yet be available.
+
+=== Collection of Rock Samples ===
+
+Both hot magma and samples from solidified magma can be collected. Volunteer students from the fields of geo-sciences could be particularly helpful.
+
+=== Analytic Measurments ===
+
+The samples can be dissolved in various acids and the tracer quantified using chromatography and mass spectrometry.
+
+
+== Exploration Vehicle ==
+
+'''Design of a Submersible Vehicle'''
+
+'''TODO'''
