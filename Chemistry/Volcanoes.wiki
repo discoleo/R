@@ -18,10 +18,10 @@ A special device is used to introduce the tracer inside the volcano.
 The outer shell is made of a relatively heat-resistant material, e.g. nickel, steel, or silica glasses/porcelain.
 
 : '''Middle Layer'''
-The mmiddle layer consists of the tracer material. Examples may include relatively non-toxic metals that melt at relatively low tmperatures, e.g. gallium. The amount of tracer dissolved in the bulk of the volcano is relatively low: toxicity is less a concern for non-radioactive tracers.
+The mmiddle layer consists of the tracer material. Examples may include relatively non-toxic metals that melt at relatively low tmperatures, e.g. gallium (30 °C), stanium (tin, 232 °C), zinc (420 °C). The amount of tracer dissolved in the bulk of the volcano is relatively low: toxicity is less a concern for non-radioactive tracers.
 
 : '''Inner Core'''
-A mixture of substances that can react strongly exothermically, e.g. Al2O3 + Mg.
+A mixture of substances that can react strongly exothermically, e.g. Fe2O3 + Al, Fe2O3 + Mg, maybe even Al2O3 + some Fe2O3 + Mg.
 
 After the device is introduced into the molten magma, it starts sinking. It also heats up. At some point, the inner core starts reacting exothermically, generating additional heat that breaks the outer enclosing shell. The tracer can now freely diffuse in the hot magma.
 
