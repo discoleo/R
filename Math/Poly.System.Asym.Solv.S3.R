@@ -6,7 +6,7 @@
 ### Polynomial Systems: S3
 ### Asymmetric: solvable
 ###
-### draft v.0.2b
+### draft v.0.2c
 
 
 
@@ -16,6 +16,9 @@
 ### History ###
 ###############
 
+### draft v.0.2c:
+# - system Order 2:
+#   A * (x^2+y^2+z^2) + B %*% c(x*y, x*z, y*z) = R;
 ### draft v.0.2b:
 # - system Order 3:
 #   A * (x^3+y^3+z^3) + B %*% c(x,y,z) = R;
@@ -201,7 +204,7 @@ solve.E3.S3P1 = function(R, B, a=c(1,1,1), debug=TRUE) {
 	return(sol)
 }
 E2.f = function(sol) {
-	matrix(c(sol[1,]*sol[2,], sol[1,]*sol[3,], sol[2,]*sol[3,]), ncol=3, byrow=TRUE)
+	matrix(c(sol[1,]*sol[2,], sol[1,]*sol[3,], sol[2,]*sol[3,]), nrow=3, byrow=TRUE)
 }
 
 ### Examples:
@@ -314,7 +317,7 @@ a1*(x^3+y^3+z^3) + b11*x + b12*y + b13*z = R1
 ### Solution:
 
 ### Step 1:
-# - solve for: x, y, z as f(S2);
+# - solve for: x, y, z as f(S3);
 
 ### Step 2:
 S3 - x^3 - y^3 - z^3 # = 0
@@ -368,5 +371,114 @@ sol = solve.S3.S3P3(R, B, a=a);
 
 ### Test
 round0(a * rep(apply(sol^3, 2, sum), each=3) + B %*% sol)
+
+
+
+
+################################
+################################
+
+### A * (x^n+y^n+z^n) + B %*% c(x*y, x*z, y*z) = R
+
+### Order 2:
+### A * (x^2+y^2+z^2) + B %*% c(x*y, x*z, y*z) = R
+
+a1*(x^2+y^2+z^2) + b11*x*y + b12*x*z + b13*y*z = R1
+# ...
+
+### Solution:
+
+### Step 1:
+# - solve for: x*y, x*z, y*z as f(S2);
+
+### Step 2:
+S2 - (x*y)*(x*z)/(y*z) - (x*y)*(y*z)/(x*z) - (x*z)*(y*z)/(x*y) # = 0
+(x*y)*(x*z)*(y*z)*S2 - ((x*y)*(x*z))^2 - ((x*y)*(y*z))^2 - ((x*z)*(y*z))^2 # = 0
+(ra1*S2+r1)*(ra2*S2+r2)*(ra3*S2+r3)*S2 +
+	- ((ra1*S2+r1)*(ra2*S2+r2))^2 - ((ra1*S2+r1)*(ra3*S2+r3))^2 - ((ra2*S2+r2)*(ra3*S2+r3))^2 # = 0
+ra1*ra2*ra3*S2^4 + (ra1*ra2*r3+ra1*ra3*r2+ra2*ra3*r1)*S2^3 +
+	+ (ra1*r2*r3+ra2*r1*r3+ra3*r1*r2)*S2^2 + r1*r2*r3*S2 +
+	- ((ra1*ra2)^2+(ra1*ra3)^2+(ra2*ra3)^2)*S2^4 +
+	- 2*(ra1*ra2*(ra1*r2+ra2*r1) + ra1*ra3*(ra1*r3+ra3*r1) + ra2*ra3*(ra2*r3+ra3*r2))*S2^3 +
+	- ((ra1*r2+ra2*r1)^2 + (ra1*r3+ra3*r1)^2 + (ra2*r3+ra3*r2)^2 +
+		+ 2*ra1*ra2*r1*r2 + 2*ra1*ra3*r1*r3 + 2*ra2*ra3*r2*r3)*S2^2 +
+	- 2*(r1*r2*(ra1*r2+ra2*r1) + r1*r3*(ra1*r3+ra3*r1) + r2*r3*(ra2*r3+ra3*r2))*S2 +
+	- ((r1*r2)^2 + (r1*r3)^2 + (r2*r3)^2) # = 0
+p = prod(m.coeff[,1]); pa = prod(m.coeff[,2]);
+# TODO:
+(pa - pa^2 * sum(1 / m.coeff[,2]^2))*S2^4 +
+	+ pa * sum(m.coeff[,1] / m.coeff[,2])*S2^3 +
+	- 2*(sum(m.coeff[,2]^2)*sum(m.coeff[,1]*m.coeff[,2]) - sum(m.coeff[,1]*m.coeff[,2]^3))*S2^3 +
+	+ p * sum(m.coeff[,2] / m.coeff[,1])*S2^2 +
+	- (sum(m.coeff[,1]^2)*sum(m.coeff[,2]^2) - sum(m.coeff[,1]^2*m.coeff[,2]^2) +
+		+ 4*p*pa * sum(1/(m.coeff[,1]*m.coeff[,2])))*S2^2 +
+	- 2*(sum(m.coeff[,1]^2)*sum(m.coeff[,1]*m.coeff[,2]) - sum(m.coeff[,1]^3*m.coeff[,2]))*S2 +
+	+ p*S2 +
+	- p^2 * sum(1 / m.coeff[,1]^2) # = 0
+
+
+### Solver:
+solve.S2E2.S3P2 = function(R, B, a=c(1,1,1), debug=TRUE) {
+	m.coeff = solve(B, cbind(R, -1 * a))
+	# solve S2
+	# TODO: case any() == 0;
+	p = prod(m.coeff[,1]); pa = prod(m.coeff[,2]);
+	coeff = c(
+		(pa - pa^2 * sum(1 / m.coeff[,2]^2)),
+		pa * sum(m.coeff[,1] / m.coeff[,2]) +
+		- 2*(sum(m.coeff[,2]^2)*sum(m.coeff[,1]*m.coeff[,2]) - sum(m.coeff[,1]*m.coeff[,2]^3)),
+		p * sum(m.coeff[,2] / m.coeff[,1]) +
+			- (sum(m.coeff[,1]^2)*sum(m.coeff[,2]^2) - sum(m.coeff[,1]^2*m.coeff[,2]^2) +
+			+ 4*p*pa * sum(1/(m.coeff[,1]*m.coeff[,2]))),
+		- 2*(sum(m.coeff[,1]^2)*sum(m.coeff[,1]*m.coeff[,2]) - sum(m.coeff[,1]^3*m.coeff[,2])) +
+			+ p,
+		- p^2 * sum(1 / m.coeff[,1]^2)
+	)
+	S2 = roots(coeff);
+	if(debug) print(S2);
+	# solve (xy, xz, yz)
+	sol = sapply(S2, function(s2) m.coeff[,1] + m.coeff[,2]*s2);
+	# x, y, z; TODO: robust
+	E3 = apply(sol, 2, prod);
+	E3 = sqrt(E3 + 0i); E3 = c(E3, -E3);
+	E3 = rep(E3, each=3); sol = cbind(sol, sol);
+	sol = E3 / sol[c(3,2,1),]
+	rownames(sol) = c("x","y","z")
+	return(sol)
+}
+E2.f = function(sol) {
+	matrix(c(sol[1,]*sol[2,], sol[1,]*sol[3,], sol[2,]*sol[3,]), nrow=3, byrow=TRUE)
+}
+
+### Examples:
+R = c(1,2,3)
+B = matrix(c(1,2,-1, 3,3,1, -1,2,-2), ncol=3, byrow=TRUE)
+
+sol = solve.S2E2.S3P2(R, B);
+
+### Test
+rep(apply(sol^2, 2, sum), each=3) + B %*% E2.f(sol)
+
+
+### Ex 2:
+R = c(0,-1,3)
+B = matrix(c(1,2,-1, 3,3,1, -1,2,-2), ncol=3, byrow=TRUE)
+
+sol = solve.S2E2.S3P2(R, B);
+
+### Test
+round0(rep(apply(sol^2, 2, sum), each=3) + B %*% E2.f(sol))
+
+
+#########
+### Ex 3:
+R = c(0,-1,3)
+B = matrix(c(1,2,-1, 3,3,1, -1,2,-2), ncol=3, byrow=TRUE)
+a = c(1,1,0)
+
+sol = solve.S2E2.S3P2(R, B, a=a);
+
+### Test
+round0(a * rep(apply(sol^2, 2, sum), each=3) + B %*% E2.f(sol))
 
 
