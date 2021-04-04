@@ -6,7 +6,7 @@
 ### Polynomial Systems: S3
 ### Asymmetric: solvable
 ###
-### draft v.0.2d-pre
+### draft v.0.2d-fix
 
 
 
@@ -16,9 +16,10 @@
 ### History ###
 ###############
 
-### draft v.0.2d-pre:
+### draft v.0.2d-pre - v.0.2d-fix:
 # - started work on system of Order 4:
 #   A * (x^4+y^4+z^4) + B %*% c(x*y, x*z, y*z) = R;
+# - fixed bugs & tested;
 ### draft v.0.2c:
 # - system Order 2:
 #   A * (x^2+y^2+z^2) + B %*% c(x*y, x*z, y*z) = R;
@@ -509,38 +510,38 @@ S4 - ((x*y)*(x*z)/(y*z))^2 - ((x*y)*(y*z)/(x*z))^2 - ((x*z)*(y*z)/(x*y))^2 # = 0
 	+ 2*(ra1*ra2*ra3)*(ra1*ra2*r3+ra1*ra3*r2+ra2*ra3*r1)*S4^6 +
 	+ (ra1*ra2*r3+ra1*ra3*r2+ra2*ra3*r1)^2*S4^5 +
 	+ 2*(ra1*ra2*ra3)*(ra1*r2*r3+ra2*r1*r3+ra3*r1*r2)*S4^5 +
-	+ 2*(ra1*ra2*ra3)*(r1*r2*r3)*S4^3 +
-	+ 2*(ra1*ra2*r3+ra1*ra3*r2+ra2*ra3*r1)*(ra1*r2*r3+ra2*r1*r3+ra3*r1*r2)*S4^3
+	+ 2*(ra1*ra2*ra3)*(r1*r2*r3)*S4^4 +
+	+ 2*(ra1*ra2*r3+ra1*ra3*r2+ra2*ra3*r1)*(ra1*r2*r3+ra2*r1*r3+ra3*r1*r2)*S4^4 +
 	+ (ra1*r2*r3+ra2*r1*r3+ra3*r1*r2)^2*S4^3 +
 	+ 2*(ra1*ra2*r3+ra1*ra3*r2+ra2*ra3*r1)*(r1*r2*r3)*S4^3 +
 	+ 2*(ra1*r2*r3+ra2*r1*r3+ra3*r1*r2)*(r1*r2*r3)*S4^2 +
 	+ (r1*r2*r3)^2*S4 +
 	# (ra1^2*ra2^2*S4^2 + (ra1*r2+ra2*r1)*S4 + r1*r2)^4
-	- ((ra1*ra2)^8+(ra1*ra3)^8+(ra2*ra3)^8)*S4^8 +
-	- 4*((ra1*ra2)^6*(ra1*r2+ra2*r1) + (ra1*ra3)^6*(ra1*r3+ra3*r1) +
-		+ (ra2*ra3)^6*(ra2*r3+ra3*r2))*S4^7 +
-	- 4*((ra1*ra2)^6*r1*r2 + (ra1*ra3)^6*r1*r3 + (ra2*ra3)^6*r2*r3)*S4^6 +
-	- 6*((ra1*ra2)^4*(ra1*r2+ra2*r1)^2 + (ra1*ra3)^4*(ra1*r3+ra3*r1)^2 +
-		+ (ra2*ra3)^4*(ra2*r3+ra3*r2)^2)*S4^6 +
-	- 12*((ra1*ra2)^4*(ra1*r2+ra2*r1)*r1*r2 + (ra1*ra3)^4*(ra1*r3+ra3*r1)*r1*r3 +
-		+ (ra2*ra3)^4*(ra2*r3+ra3*r2)*r2*r3)*S4^5 +
-	- 4*((ra1*ra2)^2*(ra1*r2+ra2*r1)^3 + (ra1*ra3)^2*(ra1*r3+ra3*r1)^3 +
-		+ (ra2*ra3)^2*(ra2*r3+ra3*r2)^3)*S4^5 +
-	- 6*((ra1*ra2)^4*(r1*r2)^2 + (ra1*ra3)^4*(r1*r3)^2 + (ra2*ra3)^4*(r2*r3)^2)*S4^4 +
-	- 12*((ra1*ra2)^2*(ra1*r2+ra2*r1)^2*r1*r2 + (ra1*ra3)^2*(ra1*r3+ra3*r1)^2*r1*r3 +
-		+ (ra2*ra3)^2*(ra2*r3+ra3*r2)^2*r2*r3)*S4^4 +
+	- ((ra1*ra2)^4+(ra1*ra3)^4+(ra2*ra3)^4)*S4^8 +
+	- 4*((ra1*ra2)^3*(ra1*r2+ra2*r1) + (ra1*ra3)^3*(ra1*r3+ra3*r1) +
+		+ (ra2*ra3)^3*(ra2*r3+ra3*r2))*S4^7 +
+	- 4*((ra1*ra2)^3*r1*r2 + (ra1*ra3)^3*r1*r3 + (ra2*ra3)^3*r2*r3)*S4^6 +
+	- 6*((ra1*ra2)^2*(ra1*r2+ra2*r1)^2 + (ra1*ra3)^2*(ra1*r3+ra3*r1)^2 +
+		+ (ra2*ra3)^2*(ra2*r3+ra3*r2)^2)*S4^6 +
+	- 12*((ra1*ra2)^2*(ra1*r2+ra2*r1)*r1*r2 + (ra1*ra3)^2*(ra1*r3+ra3*r1)*r1*r3 +
+		+ (ra2*ra3)^2*(ra2*r3+ra3*r2)*r2*r3)*S4^5 +
+	- 4*((ra1*ra2)*(ra1*r2+ra2*r1)^3 + (ra1*ra3)*(ra1*r3+ra3*r1)^3 +
+		+ (ra2*ra3)*(ra2*r3+ra3*r2)^3)*S4^5 +
+	- 6*((ra1*ra2)^2*(r1*r2)^2 + (ra1*ra3)^2*(r1*r3)^2 + (ra2*ra3)^2*(r2*r3)^2)*S4^4 +
+	- 12*((ra1*ra2)*(ra1*r2+ra2*r1)^2*r1*r2 + (ra1*ra3)*(ra1*r3+ra3*r1)^2*r1*r3 +
+		+ (ra2*ra3)*(ra2*r3+ra3*r2)^2*r2*r3)*S4^4 +
 	- ((ra1*r2+ra2*r1)^4 + (ra1*r3+ra3*r1)^4 + (ra2*r3+ra3*r2)^4)*S4^4 +
-	- 12*((ra1*ra2)^2*(ra1*r2+ra2*r1)*(r1*r2)^2 + (ra1*ra3)^2*(ra1*r3+ra3*r1)*(r1*r3)^2 +
-		+ (ra2*ra3)^2*(ra2*r3+ra3*r2)*(r2*r3)^2)*S4^3 +
+	- 12*((ra1*ra2)*(ra1*r2+ra2*r1)*(r1*r2)^2 + (ra1*ra3)*(ra1*r3+ra3*r1)*(r1*r3)^2 +
+		+ (ra2*ra3)*(ra2*r3+ra3*r2)*(r2*r3)^2)*S4^3 +
 	- 4*((ra1*r2+ra2*r1)^3*r1*r2 + (ra1*r3+ra3*r1)^3*r1*r3 + (ra2*r3+ra3*r2)^3*r2*r3)*S4^3 +
-	- 4*((ra1*ra2)^2*(r1*r2)^3 + (ra1*ra3)^2*(r1*r3)^3 + (ra2*ra3)^2*(r2*r3)^3)*S4^2 +
+	- 4*((ra1*ra2)*(r1*r2)^3 + (ra1*ra3)*(r1*r3)^3 + (ra2*ra3)*(r2*r3)^3)*S4^2 +
 	- 6*((ra1*r2+ra2*r1)^2*(r1*r2)^2 + (ra1*r3+ra3*r1)^2*(r1*r3)^2 +
 		+ (ra2*r3+ra3*r2)^2*(r2*r3)^2)*S4^2 +
 	- 4*((ra1*r2+ra2*r1)*(r1*r2)^3 + (ra1*r3+ra3*r1)*(r1*r3)^3 +
 		+ (ra2*r3+ra3*r2)*(r2*r3)^3)*S4 +
 	- ((r1*r2)^4 + (r1*r3)^4 + (r2*r3)^4) # = 0
 p = prod(m.coeff[,1]); pa = prod(m.coeff[,2]);
-# TODO:
+# TODO: compact coefficients;
 
 
 ### Solver:
@@ -549,10 +550,11 @@ solve.S4E2.S3P4 = function(R, B, a=c(1,1,1), debug=TRUE) {
 	# solve S4
 	# TODO: case any() == 0;
 	p = prod(m.coeff[,1]); pa = prod(m.coeff[,2]);
-	coeff = c(
-		# TODO
-	)
-	S2 = roots(coeff);
+	# TODO: coeffs;
+	coeff = coeff.S4E2.S3P4(m.coeff);
+	if(debug) print(m.coeff);
+	if(debug) print(coeff);
+	S4 = roots(coeff);
 	if(debug) print(S4);
 	# solve (xy, xz, yz)
 	sol = sapply(S4, function(s) m.coeff[,1] + m.coeff[,2]*s);
