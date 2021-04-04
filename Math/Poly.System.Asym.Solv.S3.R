@@ -1,0 +1,82 @@
+########################
+###
+### Leonard Mada
+### [the one and only]
+###
+### Polynomial Systems: S3
+### Asymmetric: solvable
+###
+### draft v.0.1a
+
+
+
+####################
+
+###############
+### History ###
+###############
+
+### draft v.0.1a:
+# - system:
+#   x*y*z * c(1,1,1) + B %*% c(x,y,z) = R;
+
+
+####################
+####################
+
+### helper functions
+
+library(polynom)
+library(pracma)
+
+# the functions are in the file:
+# Polynomials.Helper.R
+
+
+################################
+################################
+
+### x*y*z * c(1,1,1) + B %*% c(x,y,z) = R
+
+x*y*z + b11*x + b12*y + b13*z = R1
+# ...
+
+### Solution:
+
+### Step 1: solve for: x, y, z;
+
+### Step 2:
+(r1 + E3)*(r2 + E3)*(r3 + E3) - a*E3 # = 0
+E3^3 + (r1+r2+r3)*E3^2 + (r1*r2+r1*r3+r2*r3 - a)*E3 + r1*r2*r3 # = 0
+
+### Solver
+solve.E3.S3P1 = function(R, B, debug=TRUE) {
+	m.coeff = solve(B, cbind(R, -1 * c(1,1,1)))
+	print(m.coeff)
+	r = m.coeff[,1] / m.coeff[,2];
+	a = 1 / prod(m.coeff[,2]);
+	E3 = roots(c(1, sum(r), (r[1]*r[2]+r[1]*r[3]+r[2]*r[3] - a), prod(r)));
+	if(debug) print(E3);
+	sol = sapply(E3, function(e3) m.coeff[,1] + m.coeff[,2]*e3)
+	return(sol)
+}
+
+### Examples:
+R = c(1,2,3)
+B = matrix(c(1,2,-1, 3,3,1, -1,2,-2), ncol=3, byrow=TRUE)
+
+sol = solve.E3.S3P1(R, B);
+
+### Test
+rep(apply(sol, 2, prod), each=3) + B %*% sol
+
+
+### Ex 2:
+R = c(0,-1,3)
+B = matrix(c(1,2,-1, 3,3,1, -1,2,-2), ncol=3, byrow=TRUE)
+
+sol = solve.E3.S3P1(R, B);
+
+### Test
+round0(rep(apply(sol, 2, prod), each=3) + B %*% sol)
+
