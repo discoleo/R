@@ -6,7 +6,7 @@
 ### Polynomial Systems: S3
 ### Asymmetric: solvable
 ###
-### draft v.0.1d
+### draft v.0.1d-ext
 
 
 
@@ -16,9 +16,10 @@
 ### History ###
 ###############
 
-### draft v.0.1d:
+### draft v.0.1d - v.0.1d-ext:
 # - extensions:
 #   A * x*y*z + B %*% c(x^n, y^n, z^n) = R;
+#   A * x*y*z + B %*% c(x*y, x*z, y*z) = R;
 ### draft v.0.1c:
 # - system:
 #   x*y*z + B %*% c(x*y, x*z, y*z) = R;
@@ -125,7 +126,9 @@ solve.E3.S3P1 = function(R, B, a=c(1,1,1), debug=TRUE) {
 	E3 = roots(c(1, sum(r) - a, (r[1]*r[2]+r[1]*r[3]+r[2]*r[3]), prod(r)));
 	if(debug) print(E3);
 	sol = sapply(E3, function(e3) m.coeff[,1] + m.coeff[,2]*e3)
-	return(-sqrt(sol + 0i)) # TODO: robust!
+	sol = -sqrt(sol + 0i) # TODO: robust!
+	rownames(sol) = c("x","y","z");
+	return(sol)
 }
 
 ### Examples:
@@ -179,8 +182,8 @@ E3^3 + (r1+r2+r3 - a)*E3^2 + (r1*r2+r1*r3+r2*r3)*E3 + r1*r2*r3 # = 0
 # x = E3 / (y*z);
 
 ### Solver
-solve.E3.S3P1 = function(R, B, debug=TRUE) {
-	m.coeff = solve(B, cbind(R, -1 * c(1,1,1)))
+solve.E3.S3P1 = function(R, B, a=c(1,1,1), debug=TRUE) {
+	m.coeff = solve(B, cbind(R, -1 * a))
 	r = m.coeff[,1] / m.coeff[,2];
 	a = 1 / prod(m.coeff[,2]);
 	E3 = roots(c(1, sum(r) - a, (r[1]*r[2]+r[1]*r[3]+r[2]*r[3]), prod(r)));
@@ -213,4 +216,16 @@ sol = solve.E3.S3P1(R, B);
 
 ### Test
 round0(rep(apply(sol, 2, prod), each=3) + B %*% E2.f(sol))
+
+
+### Ex 3:
+R = c(0,-1,3)
+B = matrix(c(1,2,-1, 3,3,1, -1,2,-2), ncol=3, byrow=TRUE)
+a = c(1,1,0)
+
+sol = solve.E3.S3P1(R, B, a=a);
+
+### Test
+round0(a * rep(apply(sol, 2, prod), each=3) + B %*% E2.f(sol))
+
 
