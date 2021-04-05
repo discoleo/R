@@ -7,28 +7,32 @@
 ### Asymmetric S2:
 ### Base Types
 ###
-### draft v.0.2g
+### draft v.0.3a
 
 
 ### Asymmetric Polynomial Systems: 2 Variables
 ### Base Types
 
 ### Example 1:
+# x^n + b1*x*y = R1
+# y^n + b2*x*y = R2
+
+### Example 2:
 # x^n + b*y = R1
 # y^n + b*x = R2
 # R1 != R2
 
-### Example 2:
+### Example 3:
 # x^n + b1*y = R
 # y^n + b2*x = R
 # b1 != b2
 
-### Example 3: d given
+### Example 4: d given
 # (x + d)^n + y^n = R1
 # x^n + (y + d)^n = R2
 # R1 != R2
 
-### Example 4: d unknown
+### Example 5: d unknown
 # (x + d)^n + y^n = R1
 # x^n + (y + d)^n = R2
 # x^n + y^n = R3
@@ -43,6 +47,9 @@
 ###############
 
 
+### draft v.0.3a:
+# - solved:
+#   x^n + b1*x*y = R1;
 ### draft v.0.2g:
 # - comments on basic transforms;
 ### draft v.0.2f - v.0.2f-ext:
@@ -97,6 +104,86 @@ library(pracma)
 
 ##########################
 ### Polynomial Systems ###
+##########################
+
+###############
+### Simple  ###
+###############
+
+# x^n + b1*x*y = R1
+# y^n + b2*x*y = R2
+
+### Solution:
+
+### Step 1:
+# - solve for (x*y);
+# x^n = R1 - b1*x*y
+# y^n = R2 - b2*x*y
+### Prod =>
+(x*y)^n - b1*b2*(x*y)^2 + (b1*R2+b2*R1)*(x*y) - R1*R2 # = 0
+
+### Step 2:
+# - solve for (x+y);
+x^n + y^n + (b1+b2)*x*y - R1 - R2 # = 0
+
+### Examples:
+
+###############
+### Order 3 ###
+###############
+
+# x^3 + b1*x*y = R1
+# y^3 + b2*x*y = R2
+
+### Solution
+
+### Prod =>
+(x*y)^3 - b1*b2*(x*y)^2 + (b1*R2+b2*R1)*(x*y) - R1*R2 # = 0
+
+### Step 2:
+x^3 + y^3 + (b1+b2)*x*y - R1 - R2 # = 0
+S^3 - 3*(x*y)*S + (b1+b2)*x*y - R1 - R2 # = 0
+
+### Solver
+solve.Simplxy.S2P3 = function(R, b, debug=TRUE) {
+	coeff = c(1, -b[1]*b[2], (b[1]*R[2]+b[2]*R[1]), - R[1]*R[2])
+	xy = roots(coeff);
+	if(debug) print(xy);
+	# S
+	S = sapply(xy, function(xy) roots(c(1, 0, - 3*xy, (b[1]+b[2])*xy - (R[1]+R[2]))));
+	xy = rep(xy, each=3);
+	xy.diff = (R[1] - R[2] - (b[1] - b[2])*xy) / (S^2 - xy);
+	x = (S + xy.diff) / 2;
+	y = S - x;
+	sol = cbind(x=as.vector(x), y=as.vector(y));
+}
+
+### Examples:
+R = c(1, 2)
+b = c(-1, 3)
+
+sol = solve.Simplxy.S2P3(R, b)
+x = sol[,1]; y = sol[,2];
+
+### Test
+x^3 + b[1]*x*y # - R[1]
+y^3 + b[2]*x*y # - R[2]
+
+
+
+### Ex 2:
+R = c(3, -2)
+b = c(-1, 2)
+
+sol = solve.Simplxy.S2P3(R, b)
+x = sol[,1]; y = sol[,2];
+
+### Test
+x^3 + b[1]*x*y # - R[1]
+y^3 + b[2]*x*y # - R[2]
+
+
+
 ##########################
 
 ###############
