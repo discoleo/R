@@ -6,7 +6,7 @@
 ### Polynomial Systems: S3
 ### Asymmetric: solvable
 ###
-### draft v.0.2d-fix
+### draft v.0.2e
 
 
 
@@ -16,6 +16,9 @@
 ### History ###
 ###############
 
+### draft v.0.2e:
+# - solved mixed-leading term system:
+#   A * x^4*y^4*z + B %*% c(x^2*y, x*y^2, x*y*z) = R;
 ### draft v.0.2d-pre - v.0.2d-fix:
 # - started work on system of Order 4:
 #   A * (x^4+y^4+z^4) + B %*% c(x*y, x*z, y*z) = R;
@@ -600,4 +603,91 @@ sol = solve.S4E2.S3P4(R, B, a=a);
 
 ### Test
 round0(a * rep(apply(sol^4, 2, sum), each=3) + B %*% E2.f(sol))
+
+
+################################
+################################
+
+### Special/Artificial Systems
+
+### Order 4: Mixt Term
+### A * x^4*y^4*z + B %*% c(x^2*y, x*y^2, x*y*z) = R
+
+a1*x^4*y^4*z + b11*x^2*y + b12*x*y^2 + b13*x*y*z = R1
+# ...
+
+### Solution:
+
+### Step 1:
+# - solve for: x^2*y, x*y^2, x*y*z as f(Sa),
+#   where Sa = x^4*y^4*z;
+
+### Step 2:
+Sa - (x^2*y) * (x*y^2) * (x*y*z) # = 0
+Sa - (ra1*Sa + r1)*(ra2*Sa + r2)*(ra2*Sa + r2) # = 0
+# rescale r[i] by 1/ra[i]; a = 1 / (ra1*ra2*ra3);
+a*Sa - (Sa + r1)*(Sa + r2)*(Sa + r2) # = 0
+Sa^3 + (r1+r2+r3)*Sa^2 + (r1*r2+r1*r3+r2*r3 - a)*Sa + r1*r2*r3 # = 0
+
+### Step 3:
+# - solve:
+# x^2*y = ra1*Sa + r1;
+# x*y^2 = ra2*Sa + r2;
+# x*y*z = ra3*Sa + r3;
+
+
+### Solver
+solve.E3V.S3P441 = function(R, B, a=c(1,1,1), debug=TRUE) {
+	m.coeff = solve(B, cbind(R, -1 * a))
+	# print(m.coeff)
+	r = m.coeff[,1] / m.coeff[,2];
+	a = 1 / prod(m.coeff[,2]);
+	E3 = roots(c(1, sum(r), (r[1]*r[2]+r[1]*r[3]+r[2]*r[3] - a), prod(r)));
+	if(debug) print(E3);
+	sol = sapply(E3, function(e3) m.coeff[,1] + m.coeff[,2]*e3)
+	m = unity(3, all=TRUE);
+	p = sol[1,] * sol[2,];
+	xy = rootn(p, 3); xy = sapply(xy, function(xy) xy*m);
+	sol = sol[, rep(seq(ncol(sol)), each=3)];
+	x = as.vector(sol[1,] / xy);
+	y = as.vector(sol[2,] / xy);
+	z = as.vector(sol[3,] / xy);
+	sol = rbind(x=x, y=y, z=z);
+	return(sol)
+}
+calc = function(v) {
+	c(v[1]^2*v[2], v[1]*v[2]^2, prod(v))
+}
+
+### Examples:
+R = c(1,2,3)
+B = matrix(c(1,2,-1, 3,3,1, -1,2,-2), ncol=3, byrow=TRUE)
+
+sol = solve.E3V.S3P441(R, B);
+
+### Test
+rep(apply(sol^c(4,4,1), 2, prod), each=3) + B %*% apply(sol, 2, calc)
+
+
+### Ex 2:
+R = c(0,-1,3)
+B = matrix(c(1,2,-1, 3,3,1, -1,2,-2), ncol=3, byrow=TRUE)
+
+sol = solve.E3V.S3P441(R, B);
+
+### Test
+round0(rep(apply(sol^c(4,4,1), 2, prod), each=3) + B %*% apply(sol, 2, calc))
+
+
+#########
+### Ex 3:
+R = c(0,-1,3)
+B = matrix(c(1,2,-1, 3,3,1, -1,2,-2), ncol=3, byrow=TRUE)
+a = c(1,1,0)
+
+sol = solve.E3V.S3P441(R, B, a=a);
+
+### Test
+round0(a * rep(apply(sol^c(4,4,1), 2, prod), each=3) + B %*% apply(sol, 2, calc))
+
 
