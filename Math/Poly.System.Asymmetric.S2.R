@@ -47,11 +47,12 @@
 ###############
 
 
-### draft v.0.3c - v.0.3d:
+### draft v.0.3c - v.0.3e:
 # - solved Mixed Leading Term:
 #   x^2*y + b1*x*y = R1;
-# - solved variant:
-#   x^2*y + a*x*y^2 + b1*x*y = R1;
+# - solved variants:
+#   x^2*y + a*x*y^2 + b1*x*y = R1; [v.0.3d]
+#   x^2*y + b*y + b1*x*y = R1; [v.0.3e]
 ### draft v.0.3a - v.0.3b:
 # - solved:
 #   x^n + b1*x*y = R1;
@@ -130,7 +131,7 @@ library(pracma)
 (x*y)^n - b1*b2*(x*y)^2 + (b1*R2+b2*R1)*(x*y) - R1*R2 # = 0
 
 ### Step 2:
-# - solve for (x+y);
+# - solve for (x+y); [robust]
 x^n + y^n + (b1+b2)*x*y - R1 - R2 # = 0
 
 ### Examples:
@@ -339,6 +340,64 @@ x = sol[,1]; y = sol[,2];
 ### Test
 x^2*y + a*x*y^2 + b[1]*x*y # - R[1]
 y^2*x + a*x^2*y + b[2]*x*y # - R[2]
+
+##########################
+
+#################
+### Extension ###
+
+# x^2*y + b*y + b1*x*y = R1
+# y^2*x + b*x + b2*x*y = R2
+
+### Solution
+
+### Sum:
+x^2*y + x*y^2 + b*S + (b1+b2)*x*y - R1 - R2 # = 0
+(x*y + b)*S + (b1+b2)*x*y - R1 - R2 # = 0
+# (x*y + b)*S = R1 + R2 - (b1+b2)*x*y;
+
+### Prod =>
+(x*y)^3 + b*x*y*(x^2+y^2) + b^2*x*y - b1*b2*(x*y)^2 + (b1*R2+b2*R1)*(x*y) - R1*R2 # = 0
+(x*y)^3 + b*x*y*(S^2 - 2*x*y) - b1*b2*(x*y)^2 + (b1*R2+b2*R1 + b^2)*(x*y) - R1*R2 # = 0
+(x*y)^3 + b*x*y*S^2 - (2*b + b1*b2)*(x*y)^2 + (b1*R2+b2*R1 + b^2)*(x*y) - R1*R2
+### Eq:
+(- R1*R2*b^2) +
+((R1*b2 + R2*b1)*b^2 + (R1^2 + R2^2)*b + b^4)*x*y +
+- (R1*R2 + 2*(R1*b1 + R2*b2)*b + b^2*b1*b2)*(x*y)^2 +
+(R1*b2 + R2*b1 + b*(b1^2 + b2^2) - 2*b^2)*(x*y)^3 +
+(- b1*b2)*(x*y)^4 + (x*y)^5
+
+
+### Solver
+solve.MLxy.S2P3 = function(R, b, ba, debug=TRUE) {
+	coeff = c(1, -ba[1]*ba[2], (ba[1]*R[2]+ba[2]*R[1] + b*(ba[1]^2 + ba[2]^2) - 2*b^2),
+		- (R[1]*R[2] + 2*(R[1]*ba[1] + R[2]*ba[2])*b + b^2*ba[1]*ba[2]),
+		((R[1]*ba[2] + R[2]*ba[1])*b^2 + (R[1]^2 + R[2]^2)*b + b^4),
+		- R[1]*R[2]*b^2)
+	xy = roots(coeff);
+	if(debug) print(xy);
+	# S
+	S = (R[1] + R[2] - (ba[1]+ba[2])*xy) / (xy + b);
+	xy.diff = (R[1] - R[2] - (ba[1] - ba[2])*xy) / (xy - b);
+	x = (S + xy.diff) / 2;
+	y = S - x;
+	sol = cbind(x=as.vector(x), y=as.vector(y));
+}
+
+### Examples:
+R = c(-1, 2)
+b = 2;
+ba = c(-1, 3)
+
+sol = solve.MLxy.S2P3(R, b=b, ba=ba)
+x = sol[,1]; y = sol[,2];
+
+### Test
+x^2*y + b*y + ba[1]*x*y # - R[1]
+y^2*x + b*x + ba[2]*x*y # - R[2]
+
+### simple P[5]
+poly.calc(x)
 
 
 ##########################
