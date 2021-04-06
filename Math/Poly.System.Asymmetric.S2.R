@@ -7,7 +7,7 @@
 ### Asymmetric S2:
 ### Base Types
 ###
-### draft v.0.3c
+### draft v.0.3e
 
 
 ### Asymmetric Polynomial Systems: 2 Variables
@@ -47,9 +47,11 @@
 ###############
 
 
-### draft v.0.3c:
+### draft v.0.3c - v.0.3d:
 # - solved Mixed Leading Term:
 #   x^2*y + b1*x*y = R1;
+# - solved variant:
+#   x^2*y + a*x*y^2 + b1*x*y = R1;
 ### draft v.0.3a - v.0.3b:
 # - solved:
 #   x^n + b1*x*y = R1;
@@ -286,6 +288,57 @@ x^2*y + b[1]*x*y # - R[1]
 y^2*x + b[2]*x*y # - R[2]
 
 # simple P[3];
+
+
+##########################
+
+### Extensions
+
+# x^2*y + a*x*y^2 + b1*x*y = R1
+# y^2*x + a*x^2*y + b2*x*y = R2
+
+### Solution
+
+### Sum:
+(a+1)*x*y*(x+y) + (b1+b2)*x*y - R1 - R2 # = 0
+(a+1)*x*y*S + (b1+b2)*x*y - R1 - R2 # = 0
+
+### Prod =>
+(a+1)*(x*y)^3 + a*(x*y)^2*(x^2+y^2) - b1*b2*(x*y)^2 + (b1*R2+b2*R1)*(x*y) - R1*R2 # = 0
+(a+1)*(x*y)^3 + a*(x*y)^2*(S^2 - 2*x*y) - b1*b2*(x*y)^2 + (b1*R2+b2*R1)*(x*y) - R1*R2 # = 0
+(1-a)*(x*y)^3 + a*(x*y)^2*S^2 - b1*b2*(x*y)^2 + (b1*R2+b2*R1)*(x*y) - R1*R2
+(a+1)^2*(1-a)*(x*y)^3 + a*((b1+b2)*x*y - R1 - R2)^2 +
+	- (a+1)^2*b1*b2*(x*y)^2 + (a+1)^2*(b1*R2+b2*R1)*(x*y) - (a+1)^2*R1*R2
+(a+1)^2*(1-a)*(x*y)^3 + a*(b1+b2)^2*(x*y)^2 - (a+1)^2*b1*b2*(x*y)^2 +
+	+ (a+1)^2*(b1*R2+b2*R1)*(x*y) - 2*a*(b1+b2)*(R1 + R2)*x*y + a*(R1+R2)^2 - (a+1)^2*R1*R2
+
+
+### Solver
+solve.MLxy.S2P3 = function(R, b, a, debug=TRUE) {
+	bs = b[1] + b[2]; Rs = R[1] + R[2];
+	coeff = c((a+1)^2*(1-a), a*(bs)^2 - (a+1)^2*b[1]*b[2],
+		(a+1)^2*(b[1]*R[2]+b[2]*R[1]) - 2*a*bs*Rs, a*Rs^2 - (a+1)^2*R[1]*R[2])
+	xy = roots(coeff);
+	if(debug) print(xy);
+	# S
+	S = (R[1] + R[2] - (b[1]+b[2])*xy) / xy / (a+1); # TODO: a = -1;
+	xy.diff = (R[1] - R[2] - (b[1] - b[2])*xy) / xy / (1-a);
+	x = (S + xy.diff) / 2;
+	y = S - x;
+	sol = cbind(x=as.vector(x), y=as.vector(y));
+}
+
+### Examples:
+R = c(-1, 2)
+b = c(-1, 3)
+a = 2
+
+sol = solve.MLxy.S2P3(R, b, a=a)
+x = sol[,1]; y = sol[,2];
+
+### Test
+x^2*y + a*x*y^2 + b[1]*x*y # - R[1]
+y^2*x + a*x^2*y + b[2]*x*y # - R[2]
 
 
 ##########################
