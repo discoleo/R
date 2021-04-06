@@ -7,7 +7,7 @@
 ### Asymmetric S2:
 ### Base Types
 ###
-### draft v.0.3b
+### draft v.0.3c
 
 
 ### Asymmetric Polynomial Systems: 2 Variables
@@ -47,6 +47,9 @@
 ###############
 
 
+### draft v.0.3c:
+# - solved Mixed Leading Term:
+#   x^2*y + b1*x*y = R1;
 ### draft v.0.3a - v.0.3b:
 # - solved:
 #   x^n + b1*x*y = R1;
@@ -237,6 +240,52 @@ y^3 + b[4]*(x*y)^2 + b[3]*x*y # - R[2]
 
 # degenerate polynomial:
 round0.p(poly.calc(x)) * 3
+
+
+##########################
+
+##########################
+### Mixed Leading Term ###
+##########################
+
+# x^2*y + b1*x*y = R1
+# y^2*x + b2*x*y = R2
+
+### Solution
+
+### Prod =>
+(x*y)^3 - b1*b2*(x*y)^2 + (b1*R2+b2*R1)*(x*y) - R1*R2 # = 0
+
+### Step 2:
+x^2*y + x*y^2 + (b1+b2)*x*y - R1 - R2 # = 0
+x*y*S + (b1+b2)*x*y - R1 - R2 # = 0
+
+
+### Solver
+solve.MLxy.S2P3 = function(R, b, debug=TRUE) {
+	coeff = c(1, -b[1]*b[2], (b[1]*R[2]+b[2]*R[1]), - R[1]*R[2])
+	xy = roots(coeff);
+	if(debug) print(xy);
+	# S
+	S = (R[1] + R[2] - (b[1]+b[2])*xy) / xy;
+	xy.diff = (R[1] - R[2] - (b[1] - b[2])*xy) / xy;
+	x = (S + xy.diff) / 2;
+	y = S - x;
+	sol = cbind(x=as.vector(x), y=as.vector(y));
+}
+
+### Examples:
+R = c(-1, 2)
+b = c(-1, 3)
+
+sol = solve.MLxy.S2P3(R, b)
+x = sol[,1]; y = sol[,2];
+
+### Test
+x^2*y + b[1]*x*y # - R[1]
+y^2*x + b[2]*x*y # - R[2]
+
+# simple P[3];
 
 
 ##########################
