@@ -7,7 +7,7 @@
 ### Asymmetric S2:
 ### Base Types
 ###
-### draft v.0.3a
+### draft v.0.3b
 
 
 ### Asymmetric Polynomial Systems: 2 Variables
@@ -47,9 +47,11 @@
 ###############
 
 
-### draft v.0.3a:
+### draft v.0.3a - v.0.3b:
 # - solved:
 #   x^n + b1*x*y = R1;
+# - extension:
+#   x^n + b2*(x*y)^2 + b1*x*y = R1;
 ### draft v.0.2g:
 # - comments on basic transforms;
 ### draft v.0.2f - v.0.2f-ext:
@@ -170,7 +172,7 @@ x^3 + b[1]*x*y # - R[1]
 y^3 + b[2]*x*y # - R[2]
 
 
-
+#########
 ### Ex 2:
 R = c(3, -2)
 b = c(-1, 2)
@@ -183,7 +185,62 @@ x^3 + b[1]*x*y # - R[1]
 y^3 + b[2]*x*y # - R[2]
 
 
+################
+### Extended ###
+################
 
+# x^3 + b12*(x*y)^2 + b11*x*y = R1
+# y^3 + b22*(x*y)^2 + b21*x*y = R2
+
+### Solution
+
+### Prod =>
+b12*b22*(x*y)^4 + (b12*b21+b11*b22 - 1)*(x*y)^3 + (b11*b21 - b12*R2 - b22*R1)*(x*y)^2 +
+	- (b11*R2+b21*R1)*(x*y) + R1*R2 # = 0
+
+### Step 2:
+x^3 + y^3 + (b12+b22)*(x*y)^2 + (b11+b21)*x*y - R1 - R2 # = 0
+S^3 - 3*(x*y)*S + (b12+b22)*(x*y)^2 + (b11+b21)*x*y - R1 - R2 # = 0
+
+
+### Solver
+solve.xy.S2P3 = function(R, b, debug=TRUE) {
+	b11 = b[1]; b12 = b[2]; b21 = b[3]; b22 = b[4];
+	coeff = c(b12*b22, (b12*b21+b11*b22 - 1), (b11*b21 - b12*R[2] - b22*R[1]),
+		- (b11*R[2] + b21*R[1]), R[1]*R[2])
+	xy = roots(coeff);
+	if(debug) print(xy);
+	# S
+	S = sapply(xy, function(xy) roots(
+		c(1, 0, - 3*xy, (b12+b22)*(xy)^2 + (b11+b21)*xy - (R[1]+R[2]))));
+	xy = rep(xy, each=3);
+	# x - y
+	x3 = R[1] - b12*xy^2 - b11*xy;
+	y3 = R[2] - b22*xy^2 - b21*xy;
+	xy.diff = (x3 - y3) / (S^2 - xy);
+	x = (S + xy.diff) / 2;
+	y = S - x;
+	sol = cbind(x=as.vector(x), y=as.vector(y));
+}
+
+### Examples:
+R = c(1, 2)
+b = c(-1, 3, 2, 2)
+
+sol = solve.xy.S2P3(R, b)
+x = sol[,1]; y = sol[,2];
+
+### Test
+x^3 + b[2]*(x*y)^2 + b[1]*x*y # - R[1]
+y^3 + b[4]*(x*y)^2 + b[3]*x*y # - R[2]
+
+
+# degenerate polynomial:
+round0.p(poly.calc(x)) * 3
+
+
+##########################
+##########################
 ##########################
 
 ###############
@@ -539,7 +596,11 @@ x = sol[,1]; y = sol[,2];
 test.AsymSimple.P2(R, b.y)
 
 
-###############
+########################
+########################
+
+##############
+### Hetero ###
 
 ###############
 ### Order 2 ###
@@ -945,6 +1006,48 @@ y^3 + b[1]*x
 
 
 #######################
+
+################
+### Extended ###
+################
+
+# x^n + b*y + bm1*x*y = R1
+# y^n + b*x + bm2*x*y = R2
+
+### Solution:
+
+### Prod =>
+# x^n + b*y = R1 - bm1*x*y
+# y^n + b*x = R2 - bm2*x*y
+### Prod =>
+(x*y)^n + b*(x^(n+1) + y^(n+1)) + (b^2 - bm1*bm2)*(x*y)^2 + (bm1*R2+bm2*R1)*(x*y) - R1*R2 # = 0
+
+### Sum =>
+x^n + y^n + b*(x+y) + (bm1+bm2)*x*y - R1 - R2 # = 0
+
+###############
+### Order 3 ###
+###############
+
+# x^3 + b*y + bm1*x*y = R1
+# y^3 + b*x + bm2*x*y = R2
+
+### Solution:
+
+### Sum =>
+x^3 + y^3 + b*S + (bm1+bm2)*x*y - R1 - R2 # = 0
+S^3 - 3*x*y*S + b*S + (bm1+bm2)*x*y - R1 - R2 # = 0
+# (3*S - (bm1+bm2))*x*y =
+S^3 + b*S - R1 - R2;
+
+### Prod =>
+(x*y)^3 + b*(x^4 + y^4) + b^2*x*y - bm1*bm2*(x*y)^2 + (bm1*R2+bm2*R1)*(x*y) - R1*R2 # = 0
+(x*y)^3 + b*S^4 - 4*b*x*y*S + (2*b - bm1*bm2)*(x*y)^2 + (b^2 + bm1*R2+bm2*R1)*(x*y) - R1*R2
+
+### TODO
+
+
+#######################
 #######################
 
 ### x^n + b1*y = R
@@ -1178,6 +1281,32 @@ b1 = b[1]; b2 = b[2];
 x = 0.2947874543
 y = 0.4871915377
 S = x + y;
+
+######################
+
+######################
+### Asymmetric Ext ###
+
+# x^3 + b*y + bc1*(x+y) = R
+# y^3 + b*x + bc2*(x+y) = R
+
+### Sum =>
+x^3 + y^3 + (b + bc1 + bc2)*S - 2*R # = 0
+S^3 - 3*x*y*S + (b + bc1 + bc2)*S - 2*R # = 0
+# 3*x*y*S = S^3 + (b + bc1 + bc2)*S - 2*R;
+
+### =>
+# x^3 + b*y = R - bc1*S
+### Prod =>
+(x*y)^3 + b*(x^4 + y^4) + b^2*(x*y) - bc1*bc2*S^2 + R*(bc1+bc2)*S - R^2 # = 0
+(x*y)^3 + b*(S^4 - 4*x*y*S + 2*(x*y)^2) + b^2*(x*y) - bc1*bc2*S^2 + R*(bc1+bc2)*S - R^2
+b*S^4 - bc1*bc2*S^2 + R*(bc1+bc2)*S + (x*y)^3 + 2*b*(x*y)^2 - 4*b*x*y*S + b^2*(x*y) - R^2
+
+### TODO
+
+
+
+######################
 
 
 ###########################
