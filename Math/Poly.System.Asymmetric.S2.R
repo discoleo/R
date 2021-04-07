@@ -7,7 +7,7 @@
 ### Asymmetric S2:
 ### Base Types
 ###
-### draft v.0.3f
+### draft v.0.3f-edit
 
 
 ### Asymmetric Polynomial Systems: 2 Variables
@@ -1478,6 +1478,10 @@ b*S^4 - bc1*bc2*S^2 + R*(bc1+bc2)*S + (x*y)^3 + 2*b*(x*y)^2 - 4*b*x*y*S + b^2*(x
 # x^3 + 3*x*y^2 = R1
 # y^3 + 3*x^2*y = R2
 
+### Extensions:
+# x^3 + 3*x*y^2 + b2*y^2 + b2*x*y + b1*y = R1
+# y^3 + 3*x^2*y + b2*x^2 + b2*x*y + b1*x = R2
+
 ### Solution:
 
 ### Sum =>
@@ -1513,13 +1517,8 @@ y^3 + 3*x^2*y # - R[2]
 ### degenerate Polynomial:
 round0.p(poly.calc(x)) * 2^8
 
-######################
-
+###############
 ### Extensions:
-
-# x^3 + 3*x*y^2 + b2*y^2 + b2*x*y + b1*y = R1
-# y^3 + 3*x^2*y + b2*x^2 + b2*x*y + b1*x = R2
-
 
 ### Examples:
 R = c(-1,2)
@@ -1532,7 +1531,7 @@ x = sol[,1]; y = sol[,2];
 x^3 + 3*x*y^2 + b[2]*y^2 + b[2]*x*y + b[1]*y # - R[1]
 y^3 + 3*x^2*y + b[2]*x^2 + b[2]*x*y + b[1]*x # - R[2]
 
-### degenerate Polynomial:
+### Classic Polynomial:
 round0.p(poly.calc(x)) * 2^6
 
 
