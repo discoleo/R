@@ -4,9 +4,9 @@
 ### [the one and only]
 ###
 ### Polynomial Systems: S4
-### Heterogenous Symmetric
+### Heterogeneous Symmetric
 ###
-### draft v.0.1g-alpha
+### draft v.0.2a
 
 
 
@@ -452,7 +452,7 @@ a[1]*x2*y1 + a[2]*x1*y2 # - R[2]
 ### Mult Eq 1r * 2r
 x1^3*y2^3 - y1^3*x2^3 + R1*(x2^3 + y1^3) - R1^2 # = 0
 # =>
-# x1^3 + y2^3 =
+# x1^3 + y2^3 # =
 2*R1 - (x2^3 + y1^3)
 # =>
 # x2^3 = ... - y1^3
@@ -505,6 +505,8 @@ solve.complete.S4P3 = function(R, a) {
 			x = R[2] / y / div;
 			sol = cbind(x1=x, y1=y, x2=x*m^id, y2=y);
 		}
+	} else if(round0(a[1] + a[2]) == 0) {
+		# x1*y1 + x2*y2 = 2*R2;
 	}
 }
 
@@ -537,6 +539,14 @@ x1 = -1.3908831512 - 2.5503258859i;
 y1 =  1.4119576563 + 2.5831136271i;
 x2 =  0.4925974849 + 0.7567717580i;
 y2 =  0.2526662764 + 0.6178135417i;
+
+
+R = c(-1, 2)
+a = c(3, -3)
+x1 = -0.1559428928 - 2.0642921485i;
+y1 =  0.2316237980 + 2.0785818464i;
+x2 = -0.7699227697 + 0.3433777972i;
+y2 =  0.6635372661 - 0.7460946871i;
 
 
 ######################
@@ -577,4 +587,69 @@ x*z + a3*x*y + a4*y*z + R3 # = 0
 # x1*y1*y2*z2 + a1*y1*z1*z2*x2 + a2*z1*x1*x2*y2 = R3
 # x2*y2*y1*z1 + a1*y2*z2*z1*x1 + a2*z2*x2*x1*y1 = R3
 
+
+#####################
+#####################
+#####################
+
+# and now for the many variants
+# and roots of the asymmetric types!
+
+# x1^3*x2 + b1*x1*x2*x3*x4 = R1
+# x2^3*x3 + b2*x1*x2*x3*x4 = R2
+# x3^3*x4 + b3*x1*x2*x3*x4 = R3
+# x4^3*x1 + b4*x1*x2*x3*x4 = R4
+
+### Solution:
+
+### =>
+# x1^3*x2 = R1 - b1*x1*x2*x3*x4
+### Prod =>
+(x1*x2*x3*x4)^4 - b1*b2*b3*b4*(x1*x2*x3*x4)^4 +
+	+ b1*b2*b3*b4*(R1/b1 + R2/b2 + R3/b3 + R4/b4)*(x1*x2*x3*x4)^3 +
+	- (b1*b2*R3*R4 + b1*b3*R2*R4 + b1*b4*R2*R3 + b2*b3*R1*R4 + b2*b4*R1*R3 + b3*b4*R1*R2)*
+		(x1*x2*x3*x4)^2 +
+	+ R1*R2*R3*R4*(b1/R1 + b2/R2 + b3/R3 + b4/R4)*(x1*x2*x3*x4) +
+	- R1*R2*R3*R4 # = 0
+
+### Special Case: b1*b2*b3*b4 = 1
+b1*b2*b3*b4*(R1/b1 + R2/b2 + R3/b3 + R4/b4)*(x1*x2*x3*x4)^3 +
+	- (b1*b2*R3*R4 + b1*b3*R2*R4 + b1*b4*R2*R3 + b2*b3*R1*R4 + b2*b4*R1*R3 + b3*b4*R1*R2)*
+		(x1*x2*x3*x4)^2 +
+	+ R1*R2*R3*R4*(b1/R1 + b2/R2 + b3/R3 + b4/R4)*(x1*x2*x3*x4) +
+	- R1*R2*R3*R4 # = 0
+
+### Solver
+solve.Pr2.S4P31 = function(R, b, debug=TRUE) {
+	R1 = R[1]; R2 = R[2]; R3 = R[3]; R4 = R[4];
+	b1 = b[1]; b2 = b[2]; b3 = b[3]; b4 = b[4];
+	coeff = c(1- b1*b2*b3*b4,
+		b1*b2*b3*b4*(R1/b1 + R2/b2 + R3/b3 + R4/b4),
+		- (b1*b2*R3*R4 + b1*b3*R2*R4 + b1*b4*R2*R3 + b2*b3*R1*R4 + b2*b4*R1*R3 + b3*b4*R1*R2),
+		R1*R2*R3*R4*(b1/R1 + b2/R2 + b3/R3 + b4/R4),
+		- R1*R2*R3*R4)
+	p = roots(coeff);
+	if(debug) print(p);
+	len = length(p)
+	Xij = sapply(p, function(p) R - b*p);
+	x1 = sapply(seq(len),
+		function(id) rootn(Xij[1,id]^27 * Xij[3,id]^3 / Xij[2,id]^9 / Xij[4,id], 80))
+		# TODO: 80 roots per p;
+	x2 = Xij[1,] / x1^3; x3 = Xij[2,] / x2^3; x4 = Xij[3,] / x3^3;
+	sol = cbind(x1=as.vector(x1), x2=as.vector(x2), x3=as.vector(x3), x4=as.vector(x4))
+	invisible(sol);
+}
+
+### Examples:
+R = c(1,2,3,4)
+b = c(1,2,-2, -1/4)
+sol = solve.Pr2.S4P31(R, b)
+x1 = sol[,1]; x2 = sol[,2]; x3 = sol[,3]; x4 = sol[,4];
+
+### Test
+# TODO: debug vs robust ???
+x1^3*x2 + b[1]*x1*x2*x3*x4 # - R1
+x2^3*x3 + b[2]*x1*x2*x3*x4 # - R2
+x3^3*x4 + b[3]*x1*x2*x3*x4 # - R3
+x4^3*x1 + b[4]*x1*x2*x3*x4 # - R4
 
