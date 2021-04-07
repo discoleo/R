@@ -6,7 +6,7 @@
 ### Polynomial Systems: S4
 ### Heterogeneous Symmetric
 ###
-### draft v.0.2a
+### draft v.0.2a-robust
 
 
 
@@ -632,9 +632,16 @@ solve.Pr2.S4P31 = function(R, b, debug=TRUE) {
 	if(debug) print(p);
 	len = length(p)
 	Xij = sapply(p, function(p) R - b*p);
-	x1 = sapply(seq(len),
-		function(id) rootn(Xij[1,id]^27 * Xij[3,id]^3 / Xij[2,id]^9 / Xij[4,id], 80))
-		# TODO: 80 roots per p;
+	X13sq = Xij[1,]*Xij[3,] / p;
+	# X24sq = p^2 / X13sq;
+	X13 = sqrt(X13sq + 0i); X13 = c(X13, -X13);
+	p = c(p, p); len = length(p); Xij = cbind(Xij, Xij);
+	X24 = p / X13;
+	# TODO: 10 roots per p;
+	x1 = rootn(Xij[1,]^3 / Xij[2,] * X13, 10);
+	# NOT robust!
+	# sapply(seq(len),
+		# function(id) rootn(Xij[1,id]^27 * Xij[3,id]^3 / Xij[2,id]^9 / Xij[4,id], 80));
 	x2 = Xij[1,] / x1^3; x3 = Xij[2,] / x2^3; x4 = Xij[3,] / x3^3;
 	sol = cbind(x1=as.vector(x1), x2=as.vector(x2), x3=as.vector(x3), x4=as.vector(x4))
 	invisible(sol);
@@ -643,6 +650,7 @@ solve.Pr2.S4P31 = function(R, b, debug=TRUE) {
 ### Examples:
 R = c(1,2,3,4)
 b = c(1,2,-2, -1/4)
+#
 sol = solve.Pr2.S4P31(R, b)
 x1 = sol[,1]; x2 = sol[,2]; x3 = sol[,3]; x4 = sol[,4];
 
