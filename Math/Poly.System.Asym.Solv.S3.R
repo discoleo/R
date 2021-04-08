@@ -6,7 +6,7 @@
 ### Polynomial Systems: S3
 ### Asymmetric: solvable
 ###
-### draft v.0.2e
+### draft v.0.2f
 
 
 
@@ -16,6 +16,9 @@
 ### History ###
 ###############
 
+### draft v.0.2f:
+# - solved Product-Type:
+#   x^2*y + b1*x*y*z = R1;
 ### draft v.0.2e:
 # - solved mixed-leading term system:
 #   A * x^4*y^4*z + B %*% c(x^2*y, x*y^2, x*y*z) = R;
@@ -610,7 +613,7 @@ round0(a * rep(apply(sol^4, 2, sum), each=3) + B %*% E2.f(sol))
 
 ### Special/Artificial Systems
 
-### Order 4: Mixt Term
+### Order 4: Mixed Term
 ### A * x^4*y^4*z + B %*% c(x^2*y, x*y^2, x*y*z) = R
 
 a1*x^4*y^4*z + b11*x^2*y + b12*x*y^2 + b13*x*y*z = R1
@@ -689,5 +692,71 @@ sol = solve.E3V.S3P441(R, B, a=a);
 
 ### Test
 round0(a * rep(apply(sol^c(4,4,1), 2, prod), each=3) + B %*% apply(sol, 2, calc))
+
+# a masked cubic:
+round0.p(poly.calc(sol[1,]) * 9)
+
+#####################
+#####################
+#####################
+
+### Product-Type Base-System
+
+# x^2*y + b1*x*y*z = R1
+# y^2*z + b2*x*y*z = R2
+# z^2*x + b3*x*y*z = R3
+
+### Solution:
+
+### =>
+# x^2*y = R1 - b1*x*y*z
+### Prod =>
+(x*y*z)^3 + b1*b2*b3*(x*y*z)^3 +
+	- b1*b2*b3*(R1/b1 + R2/b2 + R3/b3)*(x*y*z)^2 +
+	+ R1*R2*R3*(b1/R1 + b2/R2 + b3/R3)*(x*y*z) +
+	- R1*R2*R3 # = 0
+
+### Special Case: b1*b2*b3 = - 1
+b1*b2*b3*(R1/b1 + R2/b2 + R3/b3)*(x*y*z)^2 +
+	- R1*R2*R3*(b1/R1 + b2/R2 + b3/R3)*(x*y*z) +
+	+ R1*R2*R3 # = 0
+
+### Solver
+solve.Pr2.S3P21 = function(R, b, debug=TRUE) {
+	R1 = R[1]; R2 = R[2]; R3 = R[3];
+	b1 = b[1]; b2 = b[2]; b3 = b[3];
+	coeff = c(1 + b1*b2*b3,
+		- b1*b2*b3*(R1/b1 + R2/b2 + R3/b3),
+		R1*R2*R3*(b1/R1 + b2/R2 + b3/R3),
+		- R1*R2*R3)
+	p = roots(coeff);
+	if(debug) print(p);
+	#
+	Xij = sapply(p, function(p) R - b*p);
+	x2z = Xij[1,] * Xij[3,] / p;
+	x3  = Xij[1,] * x2z / p;
+	m = unity(3, all=TRUE);
+	x = sapply(rootn(x3, 3), function(x) x*m);
+	Xij = Xij[, rep(seq(ncol(Xij)), each=3)]
+	y = Xij[1,] / x^2; z = Xij[2,] / y^2;
+	sol = cbind(x=as.vector(x), y=as.vector(y), z=as.vector(z))
+	invisible(sol);
+}
+
+### Examples:
+R = c(1,2,3)
+b = c(1,2,-2)
+#
+sol = solve.Pr2.S3P21(R, b)
+x = sol[,1]; y = sol[,2]; z = sol[,3];
+
+### Test
+x^2*y + b[1]*x*y*z # - R1
+y^2*z + b[2]*x*y*z # - R2
+z^2*x + b[3]*x*y*z # - R3
+
+
+### degenerate P[9]
+round0.p(poly.calc(x)) * 3
 
 
