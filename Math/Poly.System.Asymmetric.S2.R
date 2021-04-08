@@ -7,7 +7,7 @@
 ### Asymmetric S2:
 ### Base Types
 ###
-### draft v.0.3f-edit
+### draft v.0.3g
 
 
 ### Asymmetric Polynomial Systems: 2 Variables
@@ -47,6 +47,9 @@
 ###############
 
 
+### draft v.0.3g:
+# - solved composed system:
+#   x^4*y^2 + b2*x^3*y^3 + b1*x*y^2 = R1;
 ### draft v.0.3f:
 # - solved Binomial-Derived system:
 #   x^3 + 3*x*y^2 + b2*y^2 + b2*x*y + b1*y = R1;
@@ -1662,4 +1665,102 @@ x = sol[1]; y = sol[2];
 (x + d)^2 + y^2 # - R[1]
 x^2 + (y + d)^2 # - R[2]
 x^2 + y^2 # - R[3]
+
+
+########################
+########################
+########################
+
+########################
+### Composed Systems ###
+########################
+
+### x*y*(x+y)
+
+# x^4*y^2 + b2*x^3*y^3 + b1*x*y^2 = R1
+# x^2*y^4 + (2-b2)*x^3*y^3 + b1*x^2*y = R2
+
+### Solution:
+
+# 2 approaches:
+# x1 = x^2*y; y1 = x*y^2;
+# - solve for x1 & y1:
+#   x1^2 + b2*x1*y1 + b1*y1 = R1;
+# - decouples b2 from (2-b2);
+
+### Approach 2:
+### Sum =>
+# V = x*y*(x+y)
+V^2 + b1*V - R1 - R2 # = 0
+
+### Step 2:
+# - uglier;
+x^4*y^2 + b2*x^3*y^3 + b1*x*y^2 - R1 # = 0
+x^3*x*y*(S-x) + b2*x^3*y^3 + b1*x*y*(S-x) - R1 # = 0
+x^3*x*y*S - x^5*y + b2*x^3*y^3 + b1*x*y*S - b1*x^2*y - R1 # = 0
+V*x^3 - x^5*y + b2*x^2*y*x*y*(S - x) - b1*x^2*y + b1*V - R1 # = 0
+V*x^3 - x^5*y + b2*V*x^2*y - b2*x^4*y^2 - b1*x^2*y + b1*V - R1 # = 0
+
+### alternative Step 2:
+### Diff =>
+x^2*y^2*S*(x-y) + 2*(b2-1)*x^3*y^3 - b1*x*y*(x-y) - R1 + R2 # = 0
+V*x*y*(2*x-S) + 2*(b2-1)*x^3*y^3 - b1*x*y*(2*x-S) - R1 + R2 # = 0
+2*V*x^2*y + 2*(b2-1)*x^3*y^3 - 2*b1*x^2*y - V^2 + b1*V - R1 + R2
+2*V*x^2*y + 2*(b2-1)*x^2*y*x*y*(S - x) - 2*b1*x^2*y - V^2 + b1*V - R1 + R2
+2*V*x^2*y + 2*(b2-1)*V*x^2*y - 2*(b2-1)*x^4*y^2 - 2*b1*x^2*y - V^2 + b1*V - R1 + R2
+2*(b2*V - b1)*x^2*y - 2*(b2-1)*x^4*y^2 - V^2 + b1*V - R1 + R2
+### solve for x^2*y
+
+
+### Solver:
+solve.AsM.S2P42 = function(R, b, debug=TRUE) {
+	V = roots(c(1, b[1], - (R[1] + R[2])));
+	if(debug) print(V);
+	x2y = sapply(V, function(V) roots(c(
+		- 2*(b[2]-1), 2*(b[2]*V - b[1]), - V^2 + b[1]*V - R[1] + R[2])));
+	len = length(x2y) / length(V)
+	V = rep(V, each=len);
+	# x, y
+	ydx = (V - x2y) / x2y;
+	x3 = x2y / ydx;
+	x = rootn(x3, 3);
+	m = unity(3, all=TRUE);
+	x = sapply(x, function(x) x*m);
+	y = x * rep(ydx, each=3);
+	sol = cbind(x=as.vector(x), y=as.vector(y));
+	return(sol);
+}
+
+### Examples:
+R = c(-1, 2)
+b = c(3, -3)
+#
+sol = solve.AsM.S2P42(R, b);
+x = sol[,1]; y = sol[,2];
+
+### Test
+x^4*y^2 + b[2]*x^3*y^3 + b[1]*x*y^2 # - R1
+x^2*y^4 + (2-b[2])*x^3*y^3 + b[1]*x^2*y # - R2
+
+
+#########
+### Ex 2:
+R = c(-1, 2)
+b = c(3, 2)
+#
+sol = solve.AsM.S2P42(R, b);
+x = sol[,1]; y = sol[,2];
+
+### Test
+x^4*y^2 + b[2]*x^3*y^3 + b[1]*x*y^2 # - R1
+x^2*y^4 + (2-b[2])*x^3*y^3 + b[1]*x^2*y # - R2
+
+
+### Debug
+R = c(-1, 2)
+b = c(3, -3)
+x =  0.5829666585 - 0.7755174525i;
+y = -0.6425343366 + 0.3544215388i;
+b1 = b[1]; b2 = b[2]; R1 = R[1]; R2 = R[2];
+S = x+y; V = x*y*S;
 
