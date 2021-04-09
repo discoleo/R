@@ -7,7 +7,7 @@
 ### Asymmetric S2:
 ### Base Types
 ###
-### draft v.0.3l
+### draft v.0.3m
 
 
 ### Asymmetric Polynomial Systems: 2 Variables
@@ -47,6 +47,9 @@
 ###############
 
 
+### draft v.0.3m:
+# - solved Cross-Product type:
+#   x^2*y + b3*x*y + b1*x = R;
 ### draft v.0.3k - v.0.3l:
 # - started work on:
 #   x^3 + b1*x*y^2 = R;
@@ -1376,6 +1379,73 @@ x = sol[,1]; y = sol[,2];
 ### Test
 x^2*y + b[1]*x*y^2 + b.ext[1]*(x+y) # - R
 x*y^2 + 1/b[1]*x^2*y + b.ext[1]*(x+y) # - R
+
+
+#######################
+#######################
+
+### Cross-Products
+
+# x^2*y + b1*x = R
+# y^2*x + b2*y = R
+
+### Variant:
+# x^2*y + b3*x*y + b1*x = R
+# y^2*x + b3*x*y + b2*y = R
+
+### Sum(y*...) =>
+2*(x*y)^2 + (b1+b2)*(x*y) - R*S # = 0
+# for Variant:
+2*(x*y)^2 + (b1+b2)*(x*y) - (R - b3*x*y)*S # = 0
+
+### Prod =>
+(x*y)^3 + (b1+b2)*(x*y)^2 + b1*b2*(x*y) - R^2 # = 0
+# for Variant:
+# x^2*y + b1*x = R - b3*x*y
+(x*y)^3 + (b1+b2-b3^2)*(x*y)^2 + (b1*b2+2*b3*R)*(x*y) - R^2 # = 0
+
+### Solution
+solve.Pr.S2P21 = function(R, b, debug=TRUE) {
+	b.s = b[1] + b[2];
+	if(length(b) < 3) b = c(b, 0);
+	coeff = c(1, b.s - b[3]^2, b[1]*b[2] + 2*b[3]*R, - R[1]^2);
+	xy = roots(coeff);
+	# TODO: Case R[1] - b[3]*xy == 0;
+	S = (2*(xy)^2 + b.s*xy) / (R[1] - b[3]*xy);
+	if(debug) print(xy);
+	if(debug) print(S);
+	# sum =>
+	xy.sb = 2*R[1] - xy*S - 2*b[3]*xy;
+	x = (b[2]*S - xy.sb) / (b[2] - b[1]);
+	y = S - x;
+	sol = cbind(x=as.vector(x), y=as.vector(y));
+	return(sol);
+}
+
+### Examples:
+R = -1
+b = c(2,3)
+#
+sol = solve.Pr.S2P21(R, b)
+x = sol[,1]; y = sol[,2];
+
+### Test
+x^2*y + b[1]*x # - R
+y^2*x + b[2]*y # - R
+
+
+#########
+### Ex 2:
+R = -1
+b = c(2,3, -1)
+#
+sol = solve.Pr.S2P21(R, b)
+x = sol[,1]; y = sol[,2];
+
+### Test
+x^2*y + b[3]*x*y + b[1]*x # - R
+y^2*x + b[3]*x*y + b[2]*y # - R
+
 
 
 #######################
