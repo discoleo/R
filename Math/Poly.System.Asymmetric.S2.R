@@ -7,7 +7,7 @@
 ### Asymmetric S2:
 ### Base Types
 ###
-### draft v.0.3k
+### draft v.0.3k-improve
 
 
 ### Asymmetric Polynomial Systems: 2 Variables
@@ -47,7 +47,7 @@
 ###############
 
 
-### draft v.0.3k:
+### draft v.0.3k - v.0.3k-improve:
 # - started work on:
 #   x^3 + b1*x*y^2 = R;
 # - solved special case: b1*b2 = 1 & extension;
@@ -1260,14 +1260,18 @@ S^3 - 3*x*y*S - R # = 0
 9*S^6 - 36*x*y*S^4 + 9*(b1+b2+2)*(x*y)^2*S^2 - 9*R*S^3 # = 0
 9*S^6 - 12*(S^3 - R)*S^3 + (b1+b2+2)*(S^3 - R)^2 - 9*R*S^3 # = 0
 (b1+b2-1)*S^6 - (2*b1+2*b2+1)*R*S^3 + (b1+b2+2)*R^2 # = 0
+### alternative:
+(S^3 - R + R)*S - 4*x*y*S^2 + (b1+b2+2)*(x*y)^2 - R*S
+S^2 - (b1+b2+2)*(x*y) # = 0
+3*S^3 - (b1+b2+2)*(S^3 - R) # = 0
+(b1+b2-1)*S^3 - (b1+b2+2)*R # = 0
 
 ### Solver:
 solve.special.S2P3Asym = function(R, b, b.ext=0, debug=TRUE) {
 	if(length(b) == 1) {
 		b[2] = 1 / b[1];
 	} else if(round0(b[1]*b[2] - 1) != 0) stop("Only special case implemented!");
-	coeff = c((b[1]+b[2]-1), 0, (2*b[1]+2*b[2]+1)*b.ext[1], - (2*b[1]+2*b[2]+1)*R[1],
-		(b[1]+b[2]+2)*b.ext[1]^2, -2*R[1]*(b[1]+b[2]+2)*b.ext[1], (b[1]+b[2]+2)*R[1]^2)
+	coeff = c((b[1]+b[2]-1), 0, (b[1]+b[2]+2)*b.ext[1], - (b[1]+b[2]+2)*R)
 	S = roots(coeff);
 	if(debug) print(S);
 	R1 = R[1] - b.ext[1]*S;
