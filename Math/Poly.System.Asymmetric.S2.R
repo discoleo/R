@@ -7,7 +7,7 @@
 ### Asymmetric S2:
 ### Base Types
 ###
-### draft v.0.3g
+### draft v.0.3h
 
 
 ### Asymmetric Polynomial Systems: 2 Variables
@@ -47,6 +47,9 @@
 ###############
 
 
+### draft v.0.3h:
+# - more Binomial Expansions:
+#   various derivatives of Order 3;
 ### draft v.0.3g:
 # - solved composed system:
 #   x^4*y^2 + b2*x^3*y^3 + b1*x*y^2 = R1;
@@ -1476,7 +1479,7 @@ b*S^4 - bc1*bc2*S^2 + R*(bc1+bc2)*S + (x*y)^3 + 2*b*(x*y)^2 - 4*b*x*y*S + b^2*(x
 ######################
 ######################
 
-### Binomial
+### Binomial Expansions
 
 # x^3 + 3*x*y^2 = R1
 # y^3 + 3*x^2*y = R2
@@ -1538,6 +1541,51 @@ y^3 + 3*x^2*y + b[2]*x^2 + b[2]*x*y + b[1]*x # - R[2]
 round0.p(poly.calc(x)) * 2^6
 
 
+############################
+
+### Binomial Expansions:
+### Derivatives
+
+# x^3 + y^3 + 3*x^2*y + 3*x*y^2 - b2*y^2 + b1*y = R1
+# b2*y^2 + b1*x = R2
+
+### Solution:
+
+### Sum =>
+S^3 + b1*S - R1 - R2 # = 0
+
+### Step 2:
+b2*(S-x)^2 + b1*x - R2 # = 0
+b2*x^2 + (b1 - 2*b2*S)*x + b2*S^2 - R2 # = 0
+
+
+### Solver:
+solve.Bin.S2P3 = function(R, b=c(1,1), debug=TRUE) {
+	S = roots(c(1, 0, b[1], - (R[1] + R[2])));
+	if(debug) print(S);
+	x = sapply(S, function(S) roots(c(b[2], (b[1] - 2*b[2]*S), b[2]*S^2 - R[2])));
+	y = rep(S, each=2) - x; # assumes b[2] != 0;
+	sol = cbind(x=as.vector(x), y=as.vector(y));
+	return(sol);
+}
+
+### Examples:
+R = c(-1/2, -1/2)
+b = c(-1, 1)
+#
+sol = solve.Bin.S2P3(R, b=b);
+x = sol[,1]; y = sol[,2];
+
+### Test
+x^3 + y^3 + 3*x^2*y + 3*x*y^2 - b[2]*y^2 + b[1]*y # - R1
+b[2]*y^2 + b[1]*x # - R[2]
+
+
+### P[6]
+round0.p(poly.calc(x))
+
+
+###########################
 ###########################
 ###########################
 
@@ -1754,6 +1802,9 @@ x = sol[,1]; y = sol[,2];
 ### Test
 x^4*y^2 + b[2]*x^3*y^3 + b[1]*x*y^2 # - R1
 x^2*y^4 + (2-b[2])*x^3*y^3 + b[1]*x^2*y # - R2
+
+# degenerate P[12]
+round0.p(poly.calc(x)) * 13
 
 
 ### Debug
