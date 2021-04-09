@@ -7,7 +7,7 @@
 ### Asymmetric S2:
 ### Base Types
 ###
-### draft v.0.3m
+### draft v.0.3m-ext
 
 
 ### Asymmetric Polynomial Systems: 2 Variables
@@ -47,9 +47,10 @@
 ###############
 
 
-### draft v.0.3m:
+### draft v.0.3m - v.0.3m-ext:
 # - solved Cross-Product type:
 #   x^2*y + b3*x*y + b1*x = R;
+# - extension: + b4*(x*y)^2;
 ### draft v.0.3k - v.0.3l:
 # - started work on:
 #   x^3 + b1*x*y^2 = R;
@@ -1384,38 +1385,54 @@ x*y^2 + 1/b[1]*x^2*y + b.ext[1]*(x+y) # - R
 #######################
 #######################
 
-### Cross-Products
+######################
+### Cross-Products ###
+######################
 
 # x^2*y + b1*x = R
 # y^2*x + b2*y = R
 
-### Variant:
+### Variant 1:
 # x^2*y + b3*x*y + b1*x = R
 # y^2*x + b3*x*y + b2*y = R
 
+### Variant 2:
+# x^2*y + b4*(x*y)^2 + b3*x*y + b1*x = R
+# y^2*x + b4*(x*y)^2 + b3*x*y + b2*y = R
+
 ### Sum(y*...) =>
 2*(x*y)^2 + (b1+b2)*(x*y) - R*S # = 0
-# for Variant:
-2*(x*y)^2 + (b1+b2)*(x*y) - (R - b3*x*y)*S # = 0
+# for Variants:
+2*(x*y)^2 + (b1+b2)*(x*y) - (R - b3*x*y)*S # = 0 # V1
+2*(x*y)^2 + (b1+b2)*(x*y) - (R - b4*(x*y)^2 - b3*x*y)*S # = 0 # V2
 
 ### Prod =>
 (x*y)^3 + (b1+b2)*(x*y)^2 + b1*b2*(x*y) - R^2 # = 0
-# for Variant:
-# x^2*y + b1*x = R - b3*x*y
-(x*y)^3 + (b1+b2-b3^2)*(x*y)^2 + (b1*b2+2*b3*R)*(x*y) - R^2 # = 0
+# for Variants:
+# x^2*y + b1*x = R - b3*x*y - b4*(x*y)^2
+(x*y)^3 + (b1+b2-b3^2)*(x*y)^2 + (b1*b2+2*b3*R)*(x*y) - R^2 # = 0 # V1
+b4^2*(x*y)^4 + (2*b3*b4 - 1)*(x*y)^3 - (b1+b2-b3^2+2*b4*R)*(x*y)^2 +
+	- (b1*b2+2*b3*R)*(x*y) + R^2 # = 0 # V2
 
 ### Solution
 solve.Pr.S2P21 = function(R, b, debug=TRUE) {
 	b.s = b[1] + b[2];
-	if(length(b) < 3) b = c(b, 0);
-	coeff = c(1, b.s - b[3]^2, b[1]*b[2] + 2*b[3]*R, - R[1]^2);
+	len = length(b)
+	if(len < 4) b = c(b, rep(0, 4 - len));
+	if(len < 4) {
+		coeff = c(1, b.s - b[3]^2, b[1]*b[2] + 2*b[3]*R, - R[1]^2);
+	} else {
+		coeff = c(b[4]^2, (2*b[3]*b[4] - 1), - (b.s - b[3]^2 + 2*b[4]*R[1]),
+			- (b[1]*b[2] + 2*b[3]*R), R[1]^2);
+	}
 	xy = roots(coeff);
 	# TODO: Case R[1] - b[3]*xy == 0;
-	S = (2*(xy)^2 + b.s*xy) / (R[1] - b[3]*xy);
+	bxy = b[3]*xy + b[4]*xy^2;
+	S = (2*(xy)^2 + b.s*xy) / (R[1] - bxy);
 	if(debug) print(xy);
 	if(debug) print(S);
 	# sum =>
-	xy.sb = 2*R[1] - xy*S - 2*b[3]*xy;
+	xy.sb = 2*R[1] - xy*S - 2*bxy;
 	x = (b[2]*S - xy.sb) / (b[2] - b[1]);
 	y = S - x;
 	sol = cbind(x=as.vector(x), y=as.vector(y));
@@ -1445,6 +1462,19 @@ x = sol[,1]; y = sol[,2];
 ### Test
 x^2*y + b[3]*x*y + b[1]*x # - R
 y^2*x + b[3]*x*y + b[2]*y # - R
+
+
+#########
+### Ex 3:
+R = -1
+b = c(2,3, -1, -1)
+#
+sol = solve.Pr.S2P21(R, b)
+x = sol[,1]; y = sol[,2];
+
+### Test
+x^2*y + b[4]*(x*y)^2 + b[3]*x*y + b[1]*x # - R
+y^2*x + b[4]*(x*y)^2 + b[3]*x*y + b[2]*y # - R
 
 
 
