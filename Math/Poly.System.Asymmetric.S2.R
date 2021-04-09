@@ -7,7 +7,7 @@
 ### Asymmetric S2:
 ### Base Types
 ###
-### draft v.0.3h
+### draft v.0.3i
 
 
 ### Asymmetric Polynomial Systems: 2 Variables
@@ -47,7 +47,7 @@
 ###############
 
 
-### draft v.0.3h:
+### draft v.0.3h - v.0.3i:
 # - more Binomial Expansions:
 #   various derivatives of Order 3;
 ### draft v.0.3g:
@@ -1577,12 +1577,53 @@ sol = solve.Bin.S2P3(R, b=b);
 x = sol[,1]; y = sol[,2];
 
 ### Test
-x^3 + y^3 + 3*x^2*y + 3*x*y^2 - b[2]*y^2 + b[1]*y # - R1
+x^3 + y^3 + 3*x^2*y + 3*x*y^2 - b[2]*y^2 + b[1]*y # - R[1]
 b[2]*y^2 + b[1]*x # - R[2]
 
 
 ### P[6]
 round0.p(poly.calc(x))
+
+######################
+
+### Derivatives
+
+# x^3 + y^3 + b1*y = R1
+# x*y*(x+y) + b1/3 * x = R2
+
+### Solution:
+
+### Sum =>
+S^3 + b1*S - R1 - R2 # = 0
+
+### Step 2:
+x*y*S + b1/3 * x - R2 # = 0
+x*(S-x)*S + b1/3 * x - R2 # = 0
+S*x^2 - x*(S^2 + b1/3) + R2 # = 0
+
+### Solver:
+solve.Bin.S2P3 = function(R, b=-1, debug=TRUE) {
+	S = roots(c(1, 0, b[1], - (R[1] + R[2])));
+	if(debug) print(S);
+	x = sapply(S, function(S) roots(c(S, - (S^2 + b[1]/3), R[2])));
+	y = rep(S, each=2) - x; # assumes b[2] != 0;
+	sol = cbind(x=as.vector(x), y=as.vector(y));
+	return(sol);
+}
+
+### Examples:
+R = c(-1, -2)
+b = c(-1)
+#
+sol = solve.Bin.S2P3(R, b=b);
+x = sol[,1]; y = sol[,2];
+
+### Test
+x^3 + y^3 + b[1]*y # - R[1]
+x*y*(x+y) + b[1]/3 * x # - R[2]
+
+### P[6]
+round0.p(poly.calc(x)) * 9
 
 
 ###########################
