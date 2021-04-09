@@ -7,7 +7,7 @@
 ### Asymmetric S2:
 ### Base Types
 ###
-### draft v.0.3k-improve
+### draft v.0.3l
 
 
 ### Asymmetric Polynomial Systems: 2 Variables
@@ -47,10 +47,12 @@
 ###############
 
 
-### draft v.0.3k - v.0.3k-improve:
+### draft v.0.3k - v.0.3l:
 # - started work on:
 #   x^3 + b1*x*y^2 = R;
 # - solved special case: b1*b2 = 1 & extension;
+# - simple system:
+#   x^2*y + b1*x*y^2 = R;
 ### draft v.0.3h - v.0.3j:
 # - more Binomial Expansions:
 #   various derivatives of Order 3;
@@ -1240,6 +1242,8 @@ S^3 + b*S - R1 - R2;
 # x^3 + b1*x*y^2 = R
 # y^3 + b2*x^2*y = R
 
+### Solution:
+
 ### Sum(x*...) =>
 x^4 + y^4 + (b1+b2)*x^2*y^2 - R*(x+y) # = 0
 S^4 - 4*x*y*S^2 + (b1+b2+2)*(x*y)^2 - R*S # = 0
@@ -1249,6 +1253,7 @@ S^4 - 4*x*y*S^2 + (b1+b2+2)*(x*y)^2 - R*S # = 0
 (x*y)^3 - R*(x^3 + y^3) + R^2 - b1*b2*(x*y)^3 # = 0
 (x*y)^3 - R*(S^3 - 3*x*y*S) + R^2 - b1*b2*(x*y)^3 # = 0
 (x*y)^3 - b1*b2*(x*y)^3 - R*S^3 + 3*R*x*y*S + R^2 # = 0
+
 ### TODO: solve;
 
 
@@ -1311,6 +1316,66 @@ x = sol[,1]; y = sol[,2];
 ### Test
 x^3 + b[1]*x*y^2 + b.ext[1]*(x+y) # - R
 y^3 + 1/b[1]*x^2*y + b.ext[1]*(x+y) # - R
+
+#######################
+
+### Variants:
+
+# x^2*y + b1*x*y^2 = R
+# y^2*x + b2*x^2*y = R
+
+
+### Solution:
+# - method using linear algebra: NOT generalizable;
+
+### Prod:
+# x^2*y - R = -b1*x*y^2
+(x*y)^3 - R*x*y*S + R^2 - b1*b2*(x*y)^3 # = 0
+### Case: b1*b2 = 1
+# - has NO solutions!
+x*y*S - R # = 0
+# x*y*S = R;
+
+### Diff =>
+(1-b2)*x + (b1-1)*y # = 0
+# =>
+(b2-1)*x^2*S - (b1-1)*R # = 0
+(b2-1)*(b1+b2-2)*x^3 - (b1-1)^2*R # = 0
+
+### Sum(x*...) =>
+x*y*(x^2 + y^2) + (b1+b2)*x^2*y^2 - R*(x+y) # = 0
+x*y*(S^2 - 2*x*y) + (b1+b2)*x^2*y^2 - R*S # = 0
+x*y*S^2 + (b1+b2-2)*x^2*y^2 - R*S # = 0
+x*y*S*S^3 + (b1+b2-2)*x^2*y^2*S^2 - R*S^3 # = 0
+(b1+b2-2)*R^2 # = 0
+# NO solution: ?? except for extensions ??
+
+### Solver:
+solve.special.S2P3Asym = function(R, b, b.ext=1, debug=TRUE) {
+	if(length(b) == 1) {
+		b[2] = 1 / b[1];
+	} else if(round0(b[1]*b[2] - 1) != 0) stop("Only special case implemented!");
+	if(all(b.ext == 0)) stop("NO solutions!");
+	S = (b[1]-1)*R[1] / (b.ext[1]*(b[1] - 1));
+	x = (b[1] - 1) * S / (b[1]+b[2]-2);
+	y = S - x;
+	sol = cbind(x=as.vector(x), y=as.vector(y));
+	return(sol);
+}
+
+### Examples:
+
+### Special Case:
+R = 2
+b = 2
+b.ext = 1;
+#
+sol = solve.special.S2P3Asym(R, b, b.ext = b.ext);
+x = sol[,1]; y = sol[,2];
+
+### Test
+x^2*y + b[1]*x*y^2 + b.ext[1]*(x+y) # - R
+x*y^2 + 1/b[1]*x^2*y + b.ext[1]*(x+y) # - R
 
 
 #######################
