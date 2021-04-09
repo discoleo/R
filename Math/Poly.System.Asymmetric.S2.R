@@ -7,7 +7,7 @@
 ### Asymmetric S2:
 ### Base Types
 ###
-### draft v.0.3j
+### draft v.0.3k
 
 
 ### Asymmetric Polynomial Systems: 2 Variables
@@ -47,6 +47,10 @@
 ###############
 
 
+### draft v.0.3k:
+# - started work on:
+#   x^3 + b1*x*y^2 = R;
+# - solved special case: b1*b2 = 1 & extension;
 ### draft v.0.3h - v.0.3j:
 # - more Binomial Expansions:
 #   various derivatives of Order 3;
@@ -1215,6 +1219,94 @@ S^3 + b*S - R1 - R2;
 (x*y)^3 + b*S^4 - 4*b*x*y*S + (2*b - bm1*bm2)*(x*y)^2 + (b^2 + bm1*R2+bm2*R1)*(x*y) - R1*R2
 
 ### TODO
+
+
+#######################
+#######################
+
+
+#######################
+#######################
+
+### Existence of Symmetrization
+
+### x^n + b1*x*y^(n-1) = R
+### y^n + b2*x^(n-1)*y = R
+
+###############
+### Order 3 ###
+###############
+
+# x^3 + b1*x*y^2 = R
+# y^3 + b2*x^2*y = R
+
+### Sum(x*...) =>
+x^4 + y^4 + (b1+b2)*x^2*y^2 - R*(x+y) # = 0
+S^4 - 4*x*y*S^2 + (b1+b2+2)*(x*y)^2 - R*S # = 0
+
+### Prod:
+# x^3 - R = -b1*x*y^2 # Prod =>
+(x*y)^3 - R*(x^3 + y^3) + R^2 - b1*b2*(x*y)^3 # = 0
+(x*y)^3 - R*(S^3 - 3*x*y*S) + R^2 - b1*b2*(x*y)^3 # = 0
+(x*y)^3 - b1*b2*(x*y)^3 - R*S^3 + 3*R*x*y*S + R^2 # = 0
+### TODO: solve;
+
+
+### Case: b1*b2 = 1
+(x^3 + y^3) - R # = 0
+S^3 - 3*x*y*S - R # = 0
+# 3*x*y*S = S^3 - R
+### =>
+9*S^6 - 36*x*y*S^4 + 9*(b1+b2+2)*(x*y)^2*S^2 - 9*R*S^3 # = 0
+9*S^6 - 12*(S^3 - R)*S^3 + (b1+b2+2)*(S^3 - R)^2 - 9*R*S^3 # = 0
+(b1+b2-1)*S^6 - (2*b1+2*b2+1)*R*S^3 + (b1+b2+2)*R^2 # = 0
+
+### Solver:
+solve.special.S2P3Asym = function(R, b, b.ext=0, debug=TRUE) {
+	if(length(b) == 1) {
+		b[2] = 1 / b[1];
+	} else if(round0(b[1]*b[2] - 1) != 0) stop("Only special case implemented!");
+	coeff = c((b[1]+b[2]-1), 0, (2*b[1]+2*b[2]+1)*b.ext[1], - (2*b[1]+2*b[2]+1)*R[1],
+		(b[1]+b[2]+2)*b.ext[1]^2, -2*R[1]*(b[1]+b[2]+2)*b.ext[1], (b[1]+b[2]+2)*R[1]^2)
+	S = roots(coeff);
+	if(debug) print(S);
+	R1 = R[1] - b.ext[1]*S;
+	xy = (S^3 - R1) / (3*S);
+	isZero = round0(xy) == 0;
+	if(any(isZero)) print("Invalid cases: x*y == 0!")
+	xy = xy[ ! isZero]; S = S[ ! isZero]; R1 = R1[ ! isZero];
+	xy.sb = (2*R1 - (S^3 - 3*xy*S)) / xy;
+	x = (b[1]*S - xy.sb) / (b[1] - b[2]);
+	y = S - x;
+	sol = cbind(x=as.vector(x), y=as.vector(y));
+	return(sol);
+}
+
+### Examples:
+
+### Special Case:
+R = 2
+b = 2
+#
+sol = solve.special.S2P3Asym(R, b);
+x = sol[,1]; y = sol[,2];
+
+### Test
+x^3 + b[1]*x*y^2 # - R
+y^3 + 1/b[1]*x^2*y # - R
+
+###########
+### Special: Ex 2
+R = 2
+b = 2
+b.ext = 3
+#
+sol = solve.special.S2P3Asym(R, b, b.ext=b.ext);
+x = sol[,1]; y = sol[,2];
+
+### Test
+x^3 + b[1]*x*y^2 + b.ext[1]*(x+y) # - R
+y^3 + 1/b[1]*x^2*y + b.ext[1]*(x+y) # - R
 
 
 #######################
