@@ -7,7 +7,7 @@
 ### Asymmetric S2:
 ### Base Types
 ###
-### draft v.0.3n
+### draft v.0.4a
 
 
 ### Asymmetric Polynomial Systems: 2 Variables
@@ -47,6 +47,9 @@
 ###############
 
 
+### draft v.0.4a:
+# - generalized:
+#   a11*x^3*y + a12*x*y^3 + b12*(x*y)^2 + b11*(x*y) = R1;
 ### draft v.0.3n:
 # - solved Cross-Product Order 3+1:
 #   x^3*y + b3*(x*y)^2 + b1*x^2 = R;
@@ -1516,7 +1519,7 @@ solve.Pr.S2P31 = function(R, b, debug=TRUE) {
 	if(debug) print(S);
 	len = 2; # length(S) / length(xy);
 	xy = rep(xy, each=len);
-	# sum =>
+	# robust:
 	xb3 = b[3]*(xy)^2;
 	x2 = (R[1] - xb3) / (xy + b[1]);
 	y2 = S^2 - x2 - 2*xy;
@@ -1537,6 +1540,65 @@ x = sol[,1]; y = sol[,2];
 ### Test
 x^3*y + b[3]*(x*y)^2 + b[1]*x^2 # - R
 y^3*x + b[3]*(x*y)^2 + b[2]*y^2 # - R
+
+### degenerate P[8]
+round0.p(poly.calc(x)) * 27
+round0.p(poly.calc(y)) * 19*3
+
+
+#######################
+#######################
+
+### Generalized
+
+# a11*x^3*y + a12*x*y^3 + b12*(x*y)^2 + b11*(x*y) = R1
+# a21*x^3*y + a22*x*y^3 + b22*(x*y)^2 + b21*(x*y) = R2
+
+### Solution:
+
+### Prod (x^3*y)*(x*y^3)
+(x*y)^4 - (r10 + ra12*(x*y)^2 + ra11*(x*y))*(r20 + ra22*(x*y)^2 + ra21*(x*y))
+(x*y)^4 - ra12*ra22*(x*y)^4 - (ra11*ra22 + ra12*ra21)*(x*y)^3 +
+	- (ra11*ra21 + r10*ra22 + r20*ra12)*(x*y)^2 +
+	- (r10*ra21 + r20*ra11)*(x*y) - r10*r20;
+
+### Sum =>
+x^3*y + x*y^3 - (r10 + r12*(x*y)^2 + r11*(x*y)) - (r20 + r22*(x*y)^2 + r21*(x*y)) # = 0
+x*y*(x^2+y^2) - (r10+r20 + (r12+r22)*(x*y)^2 + (r11+r21)*(x*y))
+
+### Solver:
+solve.Gen.S2P31 = function(R, b, a, debug=TRUE) {
+	coeff.m = solve(a, cbind(R, -b));
+	r1 = coeff.m[1,]; r10 = r1[1]; r11 = r1[2]; r12 = r1[3];
+	r2 = coeff.m[2,]; r20 = r2[1]; r21 = r2[2]; r22 = r2[3];
+	coeff = c(1 - r12*r22, - (r11*r22 + r12*r21),
+		- (r11*r21 + r10*r22 + r20*r12),
+		- (r10*r21 + r20*r11), - r10*r20);
+	xy = roots(coeff);
+	if(debug) print(xy);
+	# TODO: x*y = 0;
+	S2 = (r10+r20 + (r12+r22 + 2)*(xy)^2 + (r11+r21)*(xy)) / xy;
+	S = sqrt(S2 + 0i); S = c(S, -S);
+	xy = c(xy, xy);
+	# TODO: robust;
+	xy.diff = sqrt(S^2 - 4*xy)
+	x = (S + xy.diff) / 2
+	y = S - x;
+	sol = cbind(x=as.vector(x), y=as.vector(y));
+	return(sol);
+}
+
+### Examples:
+R = c(-1, 2)
+a = matrix(c(2,3, 1, -2), nrow=2, byrow=T)
+b = matrix(c(1,2, -2,3), nrow=2, byrow=T)
+#
+sol = solve.Gen.S2P31(R, b=b, a=a)
+x = sol[,1]; y = sol[,2];
+
+### Test
+a[1,1]*x^3*y + a[1,2]*x*y^3 + b[1,2]*(x*y)^2 + b[1,1]*x*y # - R[1]
+a[2,1]*x^3*y + a[2,2]*x*y^3 + b[2,2]*(x*y)^2 + b[2,1]*x*y # - R[2]
 
 
 
