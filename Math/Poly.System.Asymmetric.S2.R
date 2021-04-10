@@ -7,7 +7,7 @@
 ### Asymmetric S2:
 ### Base Types
 ###
-### draft v.0.3m-ext
+### draft v.0.3n
 
 
 ### Asymmetric Polynomial Systems: 2 Variables
@@ -47,6 +47,9 @@
 ###############
 
 
+### draft v.0.3n:
+# - solved Cross-Product Order 3+1:
+#   x^3*y + b3*(x*y)^2 + b1*x^2 = R;
 ### draft v.0.3m - v.0.3m-ext:
 # - solved Cross-Product type:
 #   x^2*y + b3*x*y + b1*x = R;
@@ -1414,7 +1417,7 @@ x*y^2 + 1/b[1]*x^2*y + b.ext[1]*(x+y) # - R
 b4^2*(x*y)^4 + (2*b3*b4 - 1)*(x*y)^3 - (b1+b2-b3^2+2*b4*R)*(x*y)^2 +
 	- (b1*b2+2*b3*R)*(x*y) + R^2 # = 0 # V2
 
-### Solution
+### Solver:
 solve.Pr.S2P21 = function(R, b, debug=TRUE) {
 	b.s = b[1] + b[2];
 	len = length(b)
@@ -1477,9 +1480,72 @@ x^2*y + b[4]*(x*y)^2 + b[3]*x*y + b[1]*x # - R
 y^2*x + b[4]*(x*y)^2 + b[3]*x*y + b[2]*y # - R
 
 
+#######################
+
+### Cross-Products
+
+################
+### Order 3+ ###
+################
+
+# x^3*y + b3*(x*y)^2 + b1*x^2 = R
+# y^3*x + b3*(x*y)^2 + b2*y^2 = R
+
+### Solution:
+
+### Prod =>
+(x*y)^4 - b3^2*(x*y)^4 + (b1+b2)*(x*y)^3 + (b1*b2 + 2*b3*R)*(x*y)^2 - R^2 # = 0
+
+### Sum(y^2*...) =>
+2*(x*y)^3 + b3*(x*y)^2*(x^2+y^2) + (b1+b2)*(x*y)^2 - R*(x^2+y^2) # = 0
+2*(x*y)^3 + b3*(x*y)^2*(S^2 - 2*x*y) + (b1+b2)*(x*y)^2 - R*(S^2 - 2*x*y) # = 0
+(b3*(x*y)^2 - R)*S^2 + 2*(x*y)^3 - 2*b3*(x*y)^3 + (b1+b2)*(x*y)^2 + 2*R*x*y # = 0
+
+
+### Solver:
+solve.Pr.S2P31 = function(R, b, debug=TRUE) {
+	b.s = b[1] + b[2];
+	len = length(b)
+	coeff = c(1 - b[3]^2, b.s, (b[1]*b[2] + 2*b[3]*R[1]), 0, - R[1]^2);
+	xy = roots(coeff);
+	S = sapply(xy, function(xy) {
+			coeff = c((b[3]*(xy)^2 - R[1]), 0, 2*(1 - b[3])*(xy)^3 + b.s*(xy)^2 + 2*R[1]*xy);
+			roots(coeff);
+		});
+	if(debug) print(xy);
+	if(debug) print(S);
+	len = 2; # length(S) / length(xy);
+	xy = rep(xy, each=len);
+	# sum =>
+	xb3 = b[3]*(xy)^2;
+	x2 = (R[1] - xb3) / (xy + b[1]);
+	y2 = S^2 - x2 - 2*xy;
+	xy.diff = (x2 - y2) / S;
+	x = (S + xy.diff)/2;
+	y = S - x;
+	sol = cbind(x=as.vector(x), y=as.vector(y));
+	return(sol);
+}
+
+### Examples:
+R = -1
+b = c(2,3, 2)
+#
+sol = solve.Pr.S2P31(R, b)
+x = sol[,1]; y = sol[,2];
+
+### Test
+x^3*y + b[3]*(x*y)^2 + b[1]*x^2 # - R
+y^3*x + b[3]*(x*y)^2 + b[2]*y^2 # - R
+
+
 
 #######################
 #######################
+
+##############
+### Simple ###
+##############
 
 ### x^n + b1*y = R
 ### y^n + b2*x = R
