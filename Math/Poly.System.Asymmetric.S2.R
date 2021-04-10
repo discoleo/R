@@ -7,7 +7,7 @@
 ### Asymmetric S2:
 ### Base Types
 ###
-### draft v.0.4a
+### draft v.0.4b
 
 
 ### Asymmetric Polynomial Systems: 2 Variables
@@ -47,6 +47,9 @@
 ###############
 
 
+### draft v.0.4b:
+# - complex transformation (symmetry breaking) of:
+#   x^3 + b*y = R;
 ### draft v.0.4a:
 # - generalized:
 #   a11*x^3*y + a12*x*y^3 + b12*(x*y)^2 + b11*(x*y) = R1;
@@ -1840,6 +1843,63 @@ b1 = b[1]; b2 = b[2];
 x = 0.2947874543
 y = 0.4871915377
 S = x + y;
+
+
+######################
+######################
+
+### Complex Transforms
+
+# x^3 - 3*x*y^2 + b*x = R
+# y^3 - 3*x^2*y + b*y = 0
+
+### Base System:
+# x^3 + b*y = R
+# y^3 + b*x = R
+
+### Solver:
+solve.htC.S2P3 = function(R, b, debug=TRUE) {
+	coeff = c(1, 0, -2*b[1], R[1])
+	S = roots(coeff)
+	if(debug) print(S); # Debug
+	xy = S^2 - b[1];
+	#
+	x.diff = sqrt(S^2 - 4*xy + 0i);
+	x.diff = c(x.diff, - x.diff);
+	S = c(S, S);
+	x0 = (S + x.diff)/2;
+	y0 = S - x0
+	# modified roots
+	x = S / 2;
+	y = - (x0 - y0) * 0.5i;
+	sol = cbind(x=as.vector(x), y=as.vector(y))
+	sol # TODO: include also x = y cases
+}
+
+### Examples
+R = 2
+b = 3
+#
+sol = solve.htC.S2P3(R, b)
+x = sol[,1]; y = sol[,2];
+
+### Test
+x^3 - 3*x*y^2 + b*x # - R[1]
+y^3 - 3*x^2*y + b*y # == 0
+
+
+#########
+### Ex 2:
+R = -1
+b = 4
+#
+sol = solve.htC.S2P3(R, b)
+x = sol[,1]; y = sol[,2];
+
+### Test
+x^3 - 3*x*y^2 + b*x # - R[1]
+y^3 - 3*x^2*y + b*y # == 0
+
 
 ######################
 
