@@ -7,7 +7,7 @@
 ### Asymmetric S3:
 ### Composed from Simpler Subsystems
 ###
-### draft v.0.1g
+### draft v.0.1h
 
 
 ##########################
@@ -22,9 +22,10 @@
 ###############
 ### History ###
 
-### draft v.0.1f - v.0.1g:
+### draft v.0.1f - v.0.1h:
 # - system derived from Ht[3, 3, 1]:
 #   [Alternating Diff] o Ht[3, 3, 1];
+# - cleanup & more examples: Ht[3, 3, 1] + b*S; [v.0.1h]
 ### draft v.0.1d - v.0.1e:
 # - systems derived from Hetero-symmetric [2, 2, 1] systems:
 #   x^2 + b1*y = R1;
@@ -486,6 +487,9 @@ round0(err) # only 18 are still roots
 ### Base: Ht 3 ###
 ##################
 
+### Transformations:
+### Symmetry-Preserving
+
 ### Order 3
 
 ### Base System: Ht[3,3,1]
@@ -509,55 +513,13 @@ z^3 - 6*x*y*z + 3*y^2*z + 3*x^2*z + b1*x = R
 700*y^3 + 504*x*y*z - 24*b1*x - 24*b1*y + 76*b1*z + 204*x^2*y - 96*x^2*z - 696*x*y^2 - 96*x*z^2 - 696*y^2*z + 204*y*z^2
 700*z^3 + 504*x*y*z + 76*b1*x - 24*b1*y - 24*b1*z - 96*x^2*y + 204*x^2*z - 96*x*y^2 - 696*x*z^2 + 204*y^2*z - 696*y*z^2
 
+### TODO: (-3,1,1) + 24/28*b1*S
+700*x^3 + 504*x*y*z + 100*b1*y - 696*x^2*y - 696*x^2*z + 204*x*y^2 + 204*x*z^2 - 96*y^2*z - 96*y*z^2
+700*y^3 + 504*x*y*z + 100*b1*z + 204*x^2*y - 96*x^2*z - 696*x*y^2 - 96*x*z^2 - 696*y^2*z + 204*y*z^2
+700*z^3 + 504*x*y*z + 100*b1*x - 96*x^2*y + 204*x^2*z - 96*x*y^2 - 696*x*z^2 + 204*y^2*z - 696*y*z^2
 
 
 
-###############################
-###############################
-
-### TODO:
-# x+y, y+z, z-x
-x^2 + y^2 + z^2 + x*y - x*z + y*z
-- x^2 + y^2 + z^2 - x*y + x*z + 3*y*z
-x*z^2 - x^2*y - x^2*z - x*y^2 + y^2*z + y*z^2
-
-
-### TODO:
-# HtAs[3, 2, 1] & x+y, y+z, z-x: Paradox
-x^2 + y^2 + b[1]*y + b[1]*z + 2*x*y
-y^2 + z^2 - b[1]*x + b[1]*z + 2*y*z
-x^2 + z^2 + b[1]*x + b[1]*y - 2*x*z
-# =>
-x^2 + y^2 + z^2 + b1*y + b1*z + x*y - x*z + y*z = 3/2*R
-
-### Solution:
-# TODO: Paradox
-solve.sysHt32 = function(R, b) {
-	x.sum = roots(c(2, b[1], (b[1]^2 - 2*R[1]), - 3*b[1]*R[1] + 6*b[1]^3))
-	E2 = (x.sum^2 + b[1]*x.sum - 3*R[1])/2
-	E3 = E2*x.sum + b[1]^3
-	x = sapply(1:length(x.sum), function(id) roots(c(1, -x.sum[id], E2[id], -E3[id])))
-	x = cbind(as.vector(x[,-1])) # TODO: remove robustly the set of wrong solutions
-	y = (R[1] - x^2)/b[1]
-	z = (R[1] - y^2)/b[1]
-	sol = cbind(x=x, y=y, z=z)
-	sol
-}
-solve.sysEntHtLSD = function(R, b) {
-	# uses solve.sysHt32()!
-	sol = solve.sysHt32(R, b)
-	x = 1
-	y = sol[,1] - x
-	z = sol[,3] + x
-	cbind(x=x, y=y, z=z, sol)
-}
-
-### Example:
-R = 1
-b = 3
-
-sol = solve.sysEntHtLSD(R, b=b)
-x = sol[,1]; y = sol[,2]; z = sol[,3]
 
 ###############################
 ###############################
