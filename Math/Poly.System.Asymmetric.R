@@ -7,7 +7,7 @@
 ### Asymmetric S3:
 ### Composed from Simpler Subsystems
 ###
-### draft v.0.1e
+### draft v.0.1f
 
 
 ##########################
@@ -22,6 +22,9 @@
 ###############
 ### History ###
 
+### draft v.0.1f:
+# - system derived from Ht[3, 3, 1]:
+#   [Alternating Diff] o Ht[3, 3, 1];
 ### draft v.0.1d - v.0.1e:
 # - systems derived from Hetero-symmetric [2, 2, 1] systems:
 #   x^2 + b1*y = R1;
@@ -33,9 +36,30 @@
 # - added more comments, structure; [v.0.1b-comm]
 
 
+###################
+
+###################
+### Terminology ###
+###################
+
+### Symmetric [v, n]
+# x1^n + x2^n + ... + xv^n = R1;
+
+### Hetero-Symmetric [v, n, ...]
+# x1^n + ... = R
+# x2^n + ... = R
+# ...
+# xv^n + ... = R
+
+#################################
 #################################
 
-### Symmetric[3, 2] o Assymetric:
+#################
+### Symmetric ###
+#################
+
+### Symmetric[3, 2] o Asymmetric:
+
 ### Sys 1: => {x1, x2, x3}
 # x^2 + y^2 + z^2 = R1;
 ### Sys 2:
@@ -256,6 +280,9 @@ b1*y*z^2 + b1*x*y^2 + b1*x^2*z + x^2*y^2*z^2
 ###############################
 ###############################
 
+##################
+### Base: Ht 2 ###
+##################
 
 ### Hetero-Symmetric[2, 2, 1] o
 ### o Symetric[3, 2]:
@@ -273,8 +300,24 @@ b[1]*(x^2 + y^2 + z^2) + 2*x*y*z*(x+y+z) + x^2*y^2 + x^2*z^2 + y^2*z^2 - R[1]
 x*y*z - R[2]
 # system is extensively decomposable into Sys1 o Sys2;
 
+### Classic:
+### Eq 1:
+S^4 - 4*E2*S^2 + 4*E3*S + 2*E2^2 + b[1]*E2 + 2*(E2^2 - 2*E3*S) - R[1]
+S^4 - 4*E2*S^2 + 4*E2^2 + b[1]*E2 - R[1]
+### Eq 2:
+b[1]*(S^2 - 2*E2) + 2*E3*S + (E2^2 - 2*E3*S) - R[1]
+b[1]*S^2 + E2^2 - 2*b[1]*E2 - R[1]
+# =>
+b[1]^2*S^4 - 4*b[1]^2*E2*S^2 + 4*b[1]^2*E2^2 + b[1]^3*E2 - b[1]^2*R[1]
+(E2^2 - 2*b[1]*E2 - R[1])^2 + 4*b[1]*E2*(E2^2 - 2*b[1]*E2 - R[1]) + 4*b[1]^2*E2^2 + b[1]^3*E2 - b[1]^2*R[1]
+E2^4 - 2*R[1]*E2^2 + b[1]^3*E2 + R[1]^2 - b[1]^2*R[1]
+(E2^2 - R[1])^2 + b[1]^2*(b[1]*E2 - R[1])
+# - both the equations for E2 & S are order 4 polynomials;
+# - the system can be actually decomposed further;
+
+
 ### Solution:
-solve.sysEnt = function(R, b) {
+solve.sysEntHt2 = function(R, b) {
 	### Hetero-Symmetric System: Order 2
 	sol1 = roots(c(1, b[1], -R[1])) # roots x == y;
 	S = b[1] # 2nd set of roots (x != y);
@@ -315,9 +358,9 @@ test = function(x, y, z, b, R) {
 
 ### Solution:
 R = c(-2, 1)
-b = 1
+b = 3
 
-sol = solve.sysEnt(R, b=b)
+sol = solve.sysEntHt2(R, b=b)
 x = sol[,1]; y = sol[,2]; z = sol[,3]
 
 ### Test
@@ -435,6 +478,73 @@ err = 1 - 9*x + 54*x^2 - 195*x^3 + 495*x^4 - 567*x^5 + 132*x^6 + 1350*x^7 + 1006
 	+ 1242*x^11 + 1365*x^12 + 828*x^13 + 243*x^14 - 42*x^15 - 27*x^16 + x^18
 round0(err) # only 18 are still roots
 
+
+###############################
+###############################
+
+##################
+### Base: Ht 3 ###
+##################
+
+### Order 3
+
+### Base System: Ht[3,3,1]
+### System 2: Ht-Diff
+# Ht-Diff o Ht[3,3,1]
+# (x,y,z) => - x + y + z, x - y + z, x + y - z;
+# Transform: Eq[1] + Eq[2], ...;
+
+x^3 - 6*x*y*z + 3*x*y^2 + 3*x*z^2 + b1*y = R
+y^3 - 6*x*y*z + 3*y*z^2 + 3*x^2*y + b1*z = R
+z^3 - 6*x*y*z + 3*y^2*z + 3*x^2*z + b1*x = R
+
+
+###############################
+###############################
+
+### TODO:
+# x+y, y+z, z-x
+x^2 + y^2 + z^2 + x*y - x*z + y*z
+- x^2 + y^2 + z^2 - x*y + x*z + 3*y*z
+x*z^2 - x^2*y - x^2*z - x*y^2 + y^2*z + y*z^2
+
+
+### TODO:
+# HtAs[3, 2, 1] & x+y, y+z, z-x: Paradox
+x^2 + y^2 + b[1]*y + b[1]*z + 2*x*y
+y^2 + z^2 - b[1]*x + b[1]*z + 2*y*z
+x^2 + z^2 + b[1]*x + b[1]*y - 2*x*z
+# =>
+x^2 + y^2 + z^2 + b1*y + b1*z + x*y - x*z + y*z = 3/2*R
+
+### Solution:
+# TODO: Paradox
+solve.sysHt32 = function(R, b) {
+	x.sum = roots(c(2, b[1], (b[1]^2 - 2*R[1]), - 3*b[1]*R[1] + 6*b[1]^3))
+	E2 = (x.sum^2 + b[1]*x.sum - 3*R[1])/2
+	E3 = E2*x.sum + b[1]^3
+	x = sapply(1:length(x.sum), function(id) roots(c(1, -x.sum[id], E2[id], -E3[id])))
+	x = cbind(as.vector(x[,-1])) # TODO: remove robustly the set of wrong solutions
+	y = (R[1] - x^2)/b[1]
+	z = (R[1] - y^2)/b[1]
+	sol = cbind(x=x, y=y, z=z)
+	sol
+}
+solve.sysEntHtLSD = function(R, b) {
+	# uses solve.sysHt32()!
+	sol = solve.sysHt32(R, b)
+	x = 1
+	y = sol[,1] - x
+	z = sol[,3] + x
+	cbind(x=x, y=y, z=z, sol)
+}
+
+### Example:
+R = 1
+b = 3
+
+sol = solve.sysEntHtLSD(R, b=b)
+x = sol[,1]; y = sol[,2]; z = sol[,3]
 
 ###############################
 ###############################
