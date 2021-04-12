@@ -5,13 +5,14 @@
 ###
 ### Integral Tricks
 ###
-### draft v.0.1f
+### draft v.0.1g
 
 
 ### various Integral Tricks
 
-### draft v.0.1f:
+### draft v.0.1f - v.0.1g:
 # - experiments with complex integrals;
+#   I( log(x) / (x^2 - 1) ) dx over complex path;
 ### draft v.0.1e:
 # - extension of the log() trick;
 
@@ -89,7 +90,23 @@ integrate(function(x) log(2)/2 * (x^3+1)/(x^5 + 3/2*x^4 + 3/2*x + 1), lower=0, u
 
 library(pracma)
 
-### TODO:
+### I( log(x) / (x^2 - 1) ) dx
 line_integral(function(x)  log(x) / (x^2+1), c((1-1i)/sqrt(2), (1+1i)/sqrt(2)))
 line_integral(function(x) -log(-x*1i)*1i / (x^2-1), c((-1+1i)/sqrt(2), (1+1i)/sqrt(2)))
+line_integral(function(x) (-1i*log(x) - pi/2) / (x^2-1), c((-1+1i)/sqrt(2), (1+1i)/sqrt(2)))
+
+
+a = 2
+line_integral(function(x)  log(x) / (x^2+1), c(1/a*(1-1i)/sqrt(2), a*(1+1i)/sqrt(2)))
+line_integral(function(x) -log(-x*1i)*1i / (x^2-1), c(1/a*(-1+1i)/sqrt(2), a*(1+1i)/sqrt(2)))
+line_integral(function(x) (-1i*log(x) - pi/2) / (x^2-1), c(1/a*(-1+1i)/sqrt(2), a*(1+1i)/sqrt(2)))
+
+a = 2
+line_integral(function(x) log(x) / (x^2-1), c(1/a*(-1+1i)/sqrt(2), a*(1+1i)/sqrt(2)))
+line_integral(function(x) 1i*pi/2 / (x^2-1), c(1/a*(-1+1i)/sqrt(2), a*(1+1i)/sqrt(2)))
+1i*pi/4 * log((a*(1+1i) - sqrt(2))*(1/a*(-1+1i) + sqrt(2)) /
+	((1/a*(-1+1i) - sqrt(2))*(a*(1+1i) + sqrt(2))))
+
+### TODO:
+# - full path;
 
