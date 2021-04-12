@@ -5,12 +5,15 @@
 ###
 ### Integrals: Strange & Complicated
 ###
-### draft v.0.1e
+### draft v.0.1f
 
 
 ###############
 ### History ###
 
+### draft v.0.1f:
+# - some definite integrals:
+#   I (exp(x)/(x * (exp(x) + exp(1/x)))) dx;
 ### draft v.0.1e:
 # - fixed buggy limits in sincos() & simplified function;
 ### draft v.0.1d - v.0.1d-Ref:
@@ -149,4 +152,21 @@ rg2 = tan(rg)
 integrate(function(z) 1 / (sin(z) + cos(z) + 1), lower=rg[1], upper=rg[2])
 integrate.pow(rg2, FUN=pow.subst, pow=1)
 diff(sincos.exact(rg))
+
+#######################
+#######################
+
+### Other
+
+### I (exp(x)/(x * (exp(x) + exp(1/x)))) dx
+# lower = 1/a, upper = a, I = log(a)
+lim = 2
+integrate(function(x) exp(x)/x/(exp(x) + exp(1/x)), lower=1/lim, upper=lim)
+log(lim)
+
+### I (log(x)/(x * (x^sqrt(2) + x^(-sqrt(2))))) dx
+# lower = 1/a, upper = a, I = 0
+lim = 2
+integrate(function(x) log(x)/(x * (x^sqrt(2) + x^(-sqrt(2)))), lower=1/lim, upper=lim)
+
 
