@@ -5,16 +5,17 @@
 ###
 ### Integrals: Strange & Complicated
 ###
-### draft v.0.1g
+### draft v.0.1h
 
 
 ###############
 ### History ###
 
-### draft v.0.1f - v.0.1g:
-# - some definite integrals:
+### draft v.0.1f - v.0.1h:
+# - some definite integrals (from 1/a to a):
 #   I (exp(x)/(x * (exp(x) + exp(1/x)))) dx;
 #   I (log(x)^n * x^sqrt(2) /(x * (x^sqrt(2) + x^(-sqrt(2))))) dx;
+#   I (x /((x^2 + 1) * (log(x)^2 + 1))) dx;
 ### draft v.0.1e:
 # - fixed buggy limits in sincos() & simplified function;
 ### draft v.0.1d - v.0.1d-Ref:
@@ -177,3 +178,24 @@ integrate(function(x) log(x)^2 * x^sqrt(2)/(x * (x^sqrt(2) + x^(-sqrt(2)))), low
 ### I (log(x)^4 * x^sqrt(2) /(x * (x^sqrt(2) + x^(-sqrt(2))))) dx
 integrate(function(x) log(x)^4 * x^sqrt(2)/(x * (x^sqrt(2) + x^(-sqrt(2)))), lower=1/lim, upper=lim)
 1/5* log(lim)^5
+
+
+#####################
+#####################
+
+### I (x /((x^2 + 1) * (log(x)^2 + 1))) dx
+lim = 2
+integrate(function(x) x /((x^2 + 1) * (log(x)^2 + 1)), lower=1/lim, upper=lim)
+atan(log(lim))
+
+
+#####################
+#####################
+
+### Gaussian-Based
+
+### I(e^(x^2) / (e^(x^2) + e^(-x^2))) dx
+# lower = - a - a*i, upper = a - a*i;
+# - a - a*i => a - a*i => a + a*i => - a + a*i => - a - a*i;
+
+### TODO
