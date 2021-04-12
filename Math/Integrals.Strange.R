@@ -5,15 +5,16 @@
 ###
 ### Integrals: Strange & Complicated
 ###
-### draft v.0.1f
+### draft v.0.1g
 
 
 ###############
 ### History ###
 
-### draft v.0.1f:
+### draft v.0.1f - v.0.1g:
 # - some definite integrals:
 #   I (exp(x)/(x * (exp(x) + exp(1/x)))) dx;
+#   I (log(x)^n * x^sqrt(2) /(x * (x^sqrt(2) + x^(-sqrt(2))))) dx;
 ### draft v.0.1e:
 # - fixed buggy limits in sincos() & simplified function;
 ### draft v.0.1d - v.0.1d-Ref:
@@ -169,4 +170,10 @@ log(lim)
 lim = 2
 integrate(function(x) log(x)/(x * (x^sqrt(2) + x^(-sqrt(2)))), lower=1/lim, upper=lim)
 
+### I (log(x)^2 * x^sqrt(2) /(x * (x^sqrt(2) + x^(-sqrt(2))))) dx
+integrate(function(x) log(x)^2 * x^sqrt(2)/(x * (x^sqrt(2) + x^(-sqrt(2)))), lower=1/lim, upper=lim)
+1/3 * log(lim)^3
 
+### I (log(x)^4 * x^sqrt(2) /(x * (x^sqrt(2) + x^(-sqrt(2))))) dx
+integrate(function(x) log(x)^4 * x^sqrt(2)/(x * (x^sqrt(2) + x^(-sqrt(2)))), lower=1/lim, upper=lim)
+1/5* log(lim)^5
