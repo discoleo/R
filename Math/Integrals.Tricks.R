@@ -5,11 +5,13 @@
 ###
 ### Integral Tricks
 ###
-### draft v.0.1e
+### draft v.0.1f
 
 
 ### various Integral Tricks
 
+### draft v.0.1f:
+# - experiments with complex integrals;
 ### draft v.0.1e:
 # - extension of the log() trick;
 
@@ -82,4 +84,12 @@ integrate(function(x) log(a)/a^2 * x /
 integrate(function(x) (x^3+8)*log(x)/(x^5 + 3*x^4 + 24*x + 32), lower=0, upper=Inf)
 integrate(function(x) log(2)/2 * (x^3+1)/(x^5 + 3/2*x^4 + 3/2*x + 1), lower=0, upper=Inf)
 
+
+###############
+
+library(pracma)
+
+### TODO:
+line_integral(function(x)  log(x) / (x^2+1), c((1-1i)/sqrt(2), (1+1i)/sqrt(2)))
+line_integral(function(x) -log(-x*1i)*1i / (x^2-1), c((-1+1i)/sqrt(2), (1+1i)/sqrt(2)))
 
