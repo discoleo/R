@@ -5,17 +5,18 @@
 ###
 ### Integrals: Strange & Complicated
 ###
-### draft v.0.1h
+### draft v.0.1i
 
 
 ###############
 ### History ###
 
-### draft v.0.1f - v.0.1h:
+### draft v.0.1f - v.0.1i:
 # - some definite integrals (from 1/a to a):
 #   I (exp(x)/(x * (exp(x) + exp(1/x)))) dx;
 #   I (log(x)^n * x^sqrt(2) /(x * (x^sqrt(2) + x^(-sqrt(2))))) dx;
 #   I (x /((x^2 + 1) * (log(x)^2 + 1))) dx;
+#   I (x^2 * log(x) /(x^2 + 1)) dx;
 ### draft v.0.1e:
 # - fixed buggy limits in sincos() & simplified function;
 ### draft v.0.1d - v.0.1d-Ref:
@@ -187,6 +188,17 @@ integrate(function(x) log(x)^4 * x^sqrt(2)/(x * (x^sqrt(2) + x^(-sqrt(2)))), low
 lim = 2
 integrate(function(x) x /((x^2 + 1) * (log(x)^2 + 1)), lower=1/lim, upper=lim)
 atan(log(lim))
+
+
+### I (log(x) /(x^2 + 1)) dx = 0
+lim = 2
+integrate(function(x) log(x) /(x^2 + 1), lower=1/lim, upper=lim)
+
+### I (x^2 * log(x) /(x^2 + 1)) dx
+lim = 2
+integrate(function(x) x^2 * log(x) /(x^2 + 1), lower=1/lim, upper=lim)
+(lim+1/lim)*log(lim) + 1/lim - lim
+
 
 
 #####################
