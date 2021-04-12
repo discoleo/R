@@ -5,19 +5,40 @@
 ###
 ### Integral Tricks
 ###
-### draft v.0.1d
+### draft v.0.1e
 
 
 ### various Integral Tricks
 
+### draft v.0.1e:
+# - extension of the log() trick;
 
 
-################
+##################
+##################
+
+##################
+### Logarithms ###
+##################
 
 ### Example 1:
 # - based on: "This trick is new to me!"
 #   https://www.youtube.com/watch?v=JCuplIQ6JG4
 
+
+### I (log(x) / (x^2 + b*x + 1)) dx
+# lower = 1/a, upper = a, I = 0;
+b = 3
+lim = 2
+integrate(function(x) log(x) / (x^2 + b*x + 1), lower=1/lim, upper=lim)
+
+b = c(5, 2)
+lim = 2
+integrate(function(x) log(x) / (x^2 + b[2]*b[1]*x + b[1]^2), lower=b[1]/lim, upper=b[1]*lim)
+integrate(function(x) log(b[1]) / (x^2 + b[2]*b[1]*x + b[1]^2), lower=b[1]/lim, upper=b[1]*lim)
+
+
+### Higher Powers
 a  = 3
 b2 = 5
 #

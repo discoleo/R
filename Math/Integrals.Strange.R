@@ -200,6 +200,24 @@ integrate(function(x) x^2 * log(x) /(x^2 + 1), lower=1/lim, upper=lim)
 (lim+1/lim)*log(lim) + 1/lim - lim
 
 
+#####################
+#####################
+
+### I( log(x)*log(x+1) ) dx
+int.logprod = function(lim, b=1) {
+	logprod.f = function(x) {
+		x*log(x)*log(x+b) - (x+b)*log(x+b) + (2*x + b) - x*log(x)
+		# + I (log(x) / (x+b))
+	}
+	logprod.f(lim[2]) - logprod.f(lim[1]) +
+		+ b*integrate(function(x) log(x)/(x+b), lower=lim[1], upper=lim[2])$value;
+}
+
+lim = c(1, 2)
+b = 2
+integrate(function(x) log(x) * log(x+b), lower=lim[1], upper=lim[2])
+int.logprod(lim, b=b)
+
 
 #####################
 #####################
