@@ -29,5 +29,5 @@ Note 2: there are less metallic bonds in the melted metals. Therefore, the elect
 == Metal Bonds ==
 The s-orbitals have spherical symmetry. While the electron-density over the surface area may be lower than for other symmetries, the full area of the s-orbital becomes available for metal-bonds. The s-orbitals may play therefore an important role in metal-bonds, while the strength of the covalent bonds decreases markedly with increasing shell number.
 
-The surface area vs the density over the surface area may offer explanations for the strong reactivity and strong ionic bonds of alkali metals, but the very weak metal-bonds in these metals (low melting points, low strength).
+The surface area vs the density over the surface area may offer explanations for the strong reactivity and strong ionic bonds of alkali metals, but the very weak ''metal-bonds'' in these metals (low melting points, low strength, due to only 1 electron covering the entire area of the sphere).
 
