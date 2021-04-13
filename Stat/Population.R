@@ -30,7 +30,7 @@ population.gen = function(n, startDate, endDate, simHorizon, format="%d/%m/%Y",
 	
 	age <- trunc(as.numeric(simHorizon[1] - birthDates)/365.25)
 	s1 = sample(sex, N, replace=TRUE)
-	s2 = rpois(N, ifelse(age <= 18, 0, 1)) # Fertility
+	s2 = rpois(N, ifelse(age <= 18, 0, fertility.lambda)) # Fertility
 	# Marital
 	s3 = ifelse(age <= 18, marital[1],
 			ifelse(age <= 22,
@@ -43,7 +43,7 @@ population.gen = function(n, startDate, endDate, simHorizon, format="%d/%m/%Y",
 				sample(edu[-1], N, replace=TRUE))))
 	
 	if( ! is.null(collapse)) {
-		# TODO: can implement upper bound on fertility;
+		# TODO: can implement option with upper bound on fertility;
 		s2ch = as.character(s2);
 		s2ch[s2 >= 3] = "3+";
 		s = paste(s1,s2ch,s3,s4, sep=collapse)
