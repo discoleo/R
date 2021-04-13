@@ -1,0 +1,26 @@
+
+= Nuclear Structure =
+
+== Wolfram Paradox ==
+
+=== Melting Point ===
+: Melting point: 3422 C;
+: Boiling point: 5555 C;
+
+However, the reported electron shell of Wolfram is: ''6s2 4f14 5d4''. This implies that only 4 d-orbitals are available to form metallic bonds.
+
+The alternative 6s1 5d5 hybridization could allow Wolfram to use 6 electrons for the metallic bonds.
+
+=== Group ===
+The other transitional metals in this group (Cr, Mo) have the s1 d5 electronic configuration.
+
+This also supports the higher melting points compared to the elements in the next group, which have the s2 d5 configuration:
+
+: Cr: 1907 C vs Mn: 1246 C.
+: Mo: 2623 C vs Tc: 2157 C.
+: W: 3422 C vs Re: 3185 C.
+
+Note 1: the melting point of Rhenium is still 200 C below that of Wolfram.
+
+Note 2: there are less metallic bonds in the melted metals. Therefore, the electronic structure may be slightly different in melted (or in gaseous) wolfram. But the melting temperature strongly suggests that metallic Wolfram has the ''s1 d5'' electronic configuration.
+
