@@ -5,14 +5,14 @@
 ###
 ### Integral Tricks
 ###
-### draft v.0.1g
+### draft v.0.1h
 
 
 ### various Integral Tricks
 
-### draft v.0.1f - v.0.1g:
+### draft v.0.1f - v.0.1h:
 # - experiments with complex integrals;
-#   I( log(x) / (x^2 - 1) ) dx over complex path;
+#   I( log(x) / (x^2 - 1) ) dx over or using complex path;
 ### draft v.0.1e:
 # - extension of the log() trick;
 
@@ -107,6 +107,20 @@ line_integral(function(x) 1i*pi/2 / (x^2-1), c(1/a*(-1+1i)/sqrt(2), a*(1+1i)/sqr
 1i*pi/4 * log((a*(1+1i) - sqrt(2))*(1/a*(-1+1i) + sqrt(2)) /
 	((1/a*(-1+1i) - sqrt(2))*(a*(1+1i) + sqrt(2))))
 
+lim = c(1.1, 3) # lim[1] > 1; # strictly greater than 1!
+line_integral(function(x) log(x) / (x^2-1), c(lim[1]*1i, lim[2]*1i))
+1i*pi/4 * log((lim[2]*1i - 1)*(lim[1]*1i + 1) /
+	((lim[2]*1i + 1)*(lim[1]*1i - 1))) +
+	+ 1i * integrate(function(x) log(x) / (x^2+1), lower=1/lim[2], upper=lim[1])$value
+
+
+lim = c(1.1, 3) # lim[1] > 1; # strictly greater than 1!
+integrate(function(x) log(x) / (x^2-1), lower=lim[1], upper=lim[2])
+1i * line_integral(function(x) log(-1i*x) / (x^2+1), c(lim[1]*1i, lim[2]*1i))
+1i * line_integral(function(x) log(x) / (x^2+1), c(lim[1]*1i, lim[2]*1i)) +
+	+ pi/2 * (atan(lim[2]*1i) - atan(lim[1]*1i))
+
+
 ### TODO:
-# - full path;
+# - find full path;
 
