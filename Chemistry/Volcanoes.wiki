@@ -30,7 +30,7 @@ After the device is introduced into the molten magma, it starts sinking. It also
 
 : '''Shape'''
 : Efficient shapes which increase sinking speed should be designed based on the density and temperature of the magma. Special shapes can be designed if the lava flow is too high, interfering with the sinking.
-: '''Exotic Shapes'':' the shape of the transport vehicle could resemble a very big drill bit. The side-channels permit the flow of lava along its sides, while the vehicle sinks.
+: '''Exotic Shapes:''' the shape of the transport vehicle could resemble a very big drill bit. The side-channels permit the flow of lava along its sides, while the vehicle sinks.
 
 : '''Operation Temperatures'''
 : Magma temperature: may differ for different volcanoes, e.g. 500 °C, 600 °C or 700 °C;
