@@ -27,7 +27,7 @@ Note 1: the melting point of Rhenium is still 200 C below that of Wolfram. The s
 Note 2: there are less metallic bonds in the melted metals. Therefore, the electronic structure may be slightly different in melted (or in gaseous) wolfram. But the melting temperature strongly suggests that metallic Wolfram has the ''s1 d5'' electronic configuration.
 
 == Metal Bonds ==
-The s-orbitals have spherical symmetry. While the electron-density over the surface area may be lower than for other symmetries, the full area of the s-orbital becomes available for metal-bonds. The s-orbitals may play therefore an important role in metal-bonds, while the strength of the covalent bonds decreases markedly with increasing shell number.
+The s-orbitals have spherical symmetry. While the charge-density (electron-density) over the unit surface area may be lower than for other symmetries, the full area of the s-orbital becomes available for metal-bonds. The s-orbitals may play therefore an important role in metal-bonds, while the strength of the "localized" covalent bonds decreases markedly with increasing shell number.
 
 The surface area vs the density over the surface area may offer explanations for the strong reactivity and strong ionic bonds of alkali metals, but the very weak ''metal-bonds'' in these metals (low melting points, low strength, due to only 1 electron covering the entire area of the sphere).
 
