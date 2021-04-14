@@ -10,9 +10,9 @@
 
 A tracer material is introduced into an active volcano. The tracer is then ejected gradually with the lava flow. Rocks sampled on the surface are analysed for the tracer material.
 
-=== Device ===
+=== Transport Vehicle ===
 
-A special device is used to introduce the tracer inside the volcano.
+A special vehicle is used to introduce the tracer inside the volcano. The design of this vehicle may be based on a 3 layered solid body.
 
 : '''Outer Shell'''
 : The outer shell is made of a relatively heat-resistant material, e.g. nickel, steel, or silica glasses/porcelain.
@@ -29,7 +29,8 @@ A special device is used to introduce the tracer inside the volcano.
 After the device is introduced into the molten magma, it starts sinking. It also heats up. At some point, the inner core starts reacting exothermically, generating additional heat that breaks the outer enclosing shell. The tracer can now freely diffuse in the hot magma.
 
 : '''Shape'''
-: Efficient shapes which increase sinking speed should be designed based on the density and temperature of the magma.
+: Efficient shapes which increase sinking speed should be designed based on the density and temperature of the magma. Special shapes can be designed if the lava flow is too high, interfering with the sinking.
+: '''Exotic Shapes'':' the shape of the transport vehicle could resemble a very big drill bit. The side-channels permit the flow of lava along its sides, while the vehicle sinks.
 
 : '''Operation Temperatures'''
 : Magma temperature: may differ for different volcanoes, e.g. 500 °C, 600 °C or 700 °C;
