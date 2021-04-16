@@ -19,8 +19,8 @@
 ### History ###
 ###############
 
-### draft v.0.1c:
-# - calculate exact age;
+### draft v.0.1c - v.0.1c-fix:
+# - calculate exact age; [fixed]
 ### draft v.0.1b:
 # - new parameter: proportion males;
 ### draft v.0.1a:
@@ -37,6 +37,7 @@ age.years = function(d, at.date, asFraction=FALSE) {
 	age  = y.cr - y0 - 1;
 	age[age < 0] = 0;
 	# Days
+	days0 = (as.Date(paste0(y0 + 1, "-01-01")) - d); # days in 1st life-year;
 	overhead.days = (d - as.Date(paste0(y0, "-01-01")));
 	days.cr = (at.date - as.Date(paste0(y.cr, "-01-01")));
 	# print(overhead.days); print(days.cr);
@@ -46,10 +47,11 @@ age.years = function(d, at.date, asFraction=FALSE) {
 	isBirthday = overhead.days <= (days.cr + dLeap);
 	age[isBirthday] = age[isBirthday] + 1;
 	if(asFraction) {
-		days.startYear = days.cr - overhead.days - dLeap;
+		# days.startYear = days.cr + dLeap - overhead.days;
+		days.startYear = ifelse(isBirthday,
+			days.cr + dLeap - overhead.days,
+			days0 + days.cr);
 		# TODO: Leap Years;
-		days.startYear[ ! isBirthday] = 365 +
-			dLeap[ ! isBirthday] - days.startYear[ ! isBirthday];
 		age = age + days.startYear / (365 + isLeap.cr); # TODO: proper Leap Year;
 	}
 	return(age);
@@ -57,7 +59,9 @@ age.years = function(d, at.date, asFraction=FALSE) {
 
 ### Test
 # TODO: needs a lot of debugging!
-age.years(as.Date(c("2020-04-20", "2000-04-20", "2000-04-21")), as.Date("2021-04-20"), asFraction=T)
+age.years(as.Date(c("2020-04-20", "2000-04-20", "2000-04-21", "2000-04-19")),
+	as.Date("2021-04-20"), asFraction=T)
+
 
 rpopulation.gen = function(n, startDate, endDate, simHorizon, format="%d/%m/%Y",
 	fertility.lambda=1, collapse=NULL, sex=c("M", "F"), sex.p=0.5,
