@@ -19,11 +19,45 @@
 ### History ###
 ###############
 
+### draft v.0.1c:
+# - calculate exact age;
 ### draft v.0.1b:
 # - new parameter: proportion males;
 ### draft v.0.1a:
 # - basic functionality;
 
+
+is.LeapYear = function(y) {
+	(y %% 4 == 0) & ((y %% 100 != 0) | (y %% 400 == 0));
+}
+age.years = function(d, at.date, asFraction=FALSE) {
+	# TODO: check thoroughly !!!
+	y0   = as.numeric(format(d, format="%Y"));
+	y.cr = as.numeric(format(at.date, format="%Y"));
+	age  = y.cr - y0 - 1;
+	age[age < 0] = 0;
+	# Days
+	overhead.days = (d - as.Date(paste0(y0, "-01-01")));
+	days.cr = (at.date - as.Date(paste0(y.cr, "-01-01")));
+	# print(overhead.days); print(days.cr);
+	isLeap0 = is.LeapYear(y0);
+	isLeap.cr = is.LeapYear(y.cr);
+	dLeap = isLeap0 - isLeap.cr;
+	isBirthday = overhead.days <= (days.cr + dLeap);
+	age[isBirthday] = age[isBirthday] + 1;
+	if(asFraction) {
+		days.startYear = days.cr - overhead.days - dLeap;
+		# TODO: Leap Years;
+		days.startYear[ ! isBirthday] = 365 +
+			dLeap[ ! isBirthday] - days.startYear[ ! isBirthday];
+		age = age + days.startYear / (365 + isLeap.cr); # TODO: proper Leap Year;
+	}
+	return(age);
+}
+
+### Test
+# TODO: needs a lot of debugging!
+age.years(as.Date(c("2020-04-20", "2000-04-20", "2000-04-21")), as.Date("2021-04-20"), asFraction=T)
 
 rpopulation.gen = function(n, startDate, endDate, simHorizon, format="%d/%m/%Y",
 	fertility.lambda=1, collapse=NULL, sex=c("M", "F"), sex.p=0.5,
@@ -43,7 +77,7 @@ rpopulation.gen = function(n, startDate, endDate, simHorizon, format="%d/%m/%Y",
 	
 	age <- trunc(as.numeric(simHorizon[1] - birthDates)/365.25)
 	s1 = if(length(sex.p) == 1 && sex.p[1] == 1/2) sample(sex, N, replace=TRUE)
-		else if(length(sex.p) == 1) sample(sex, N, replace=TRUE, prob=c(sex.p, 1 - sex.p))
+		else if(length(sex) - length(sex.p) == 1) sample(sex, N, replace=TRUE, prob=c(sex.p, 1 - sum(sex.p)))
 		else sample(sex, N, replace=TRUE, prob=sex.p)
 	s2 = rpois(N, ifelse(age <= 18, 0, fertility.lambda)) # Fertility
 	# Marital
@@ -86,6 +120,10 @@ boxplot(initPop$age[initPop$s3 == "W"])
 
 
 initPop = rpopulation.gen(N, dates, simHorizon=simHorizon, sex.p=0.4)
+table(initPop$s1)
+
+initPop = rpopulation.gen(N, dates, simHorizon=simHorizon,
+	sex=c("M", "F", "FF"), sex.p=c(0.4, 0.4))
 table(initPop$s1)
 
 
