@@ -5,13 +5,14 @@
 ###
 ### Image Processing: Tools
 ###
-### draft v.0.2e
+### draft v.0.2f
 
 
 ### History
 
-### draft v.0.2e:
-# - extract neighbours;
+### draft v.0.2e - v.0.2f:
+# - extract neighbours:
+#   4 neighbours [v.0.2e] & varying neighbours; [v.0.2f]
 ### draft v.0.2c - v.0.2d:
 # - wapply: apply to window;
 #   e.g. MaxPool done correctly;
@@ -154,14 +155,16 @@ decompose.kernel = function(m) {
 }
 
 ### Neighbours
-neighbours = function(m1, m2, val1, val2, asUnique=TRUE) {
+neighbours = function(m1, m2=m1, flt1, flt2=NA, asUnique=TRUE) {
+	# 4 neighbours: fast version;
 	# Initial Cells
-	isSelect = (m1 >= val1); # TODO: formula?
+	isSelect = (m1 >= flt1); # TODO: formula?
 	idSelect = which(isSelect);
 	# Neighbours
-	nRow = idSelect %% nrow(m);
-	idN = c(idSelect-nrow(m), idSelect[nRow != 1]-1,
-		idSelect[nRow != 0]+1, idSelect+nrow(m))
+	nRow = idSelect %% nrow(m1);
+	idN = c(idSelect-nrow(m1), idSelect[nRow != 1]-1,
+		idSelect[nRow != 0]+1, idSelect+nrow(m1))
+	# TODO: merge from MergeSort;
 	idN = sort(idN);
 	# out of bounds
 	posStart = 1;
@@ -170,7 +173,7 @@ neighbours = function(m1, m2, val1, val2, asUnique=TRUE) {
 		posStart = posStart + 1;
 	}
 	posEnd = length(idN);
-	posMax = prod(dim(m));
+	posMax = prod(dim(m1));
 	while(posEnd >= 1) {
 		if(idN[posEnd] <= posMax) break;
 		posEnd = posEnd - 1;
@@ -178,10 +181,54 @@ neighbours = function(m1, m2, val1, val2, asUnique=TRUE) {
 	idN = idN[posStart:posEnd];
 	if(asUnique) idN = unique(idN);
 	# Condition 2
-	isTrue = (m2[idN] == val2);
-	idN = idN[isTrue];
+	if( ! is.na(flt2)) {
+		isTrue = (m2[idN] == flt2);
+		idN = idN[isTrue];
+	}
 	# All Neighbours
 	invisible(idN);
+}
+neighbours.m = function(m1, m2=m1, nb.m, flt1, flt2=NA, asUnique=TRUE) {
+	# nb.m = matrix with (nr, nc) values for each neighbour;
+	# Initial Cells
+	isSelect = (m1 >= flt1); # TODO: formula?
+	idSelect = which(isSelect);
+	# Neighbours
+	nbRow = idSelect %% nrow(m1);
+	idNb = numeric();
+	for(id.nb in seq(nrow(nb.m))) {
+		if(nb.m[id.nb, 1] == 0) {
+			idNb = c(idNb, idSelect + nrow(m1)*nb.m[id.nb, 2]);
+		} else if(nb.m[id.nb, 1] < 0) {
+			idNb2 = idSelect[nbRow > abs(nb.m[id.nb, 1])];
+			idNb = c(idNb, idNb2 + nb.m[id.nb, 1] + nrow(m1)*nb.m[id.nb, 2]);
+		} else {
+			idNb2 = idSelect[nbRow < nrow(m1) - nb.m[id.nb, 1]];
+			idNb = c(idNb, idNb2 + nb.m[id.nb, 1] + nrow(m1)*nb.m[id.nb, 2]);
+		}
+	}
+	idNb = sort(idNb);
+	# out of bounds
+	posStart = 1;
+	while(posStart <= length(idNb)) {
+		if(idNb[posStart] >= 1) break;
+		posStart = posStart + 1;
+	}
+	posEnd = length(idNb);
+	posMax = prod(dim(m1));
+	while(posEnd >= 1) {
+		if(idNb[posEnd] <= posMax) break;
+		posEnd = posEnd - 1;
+	}
+	idNb = idNb[posStart:posEnd];
+	if(asUnique) idNb = unique(idNb);
+	# Condition 2
+	if( ! is.na(flt2)) {
+		isTrue = (m2[idNb] == flt2);
+		idNb = idNb[isTrue];
+	}
+	# All Neighbours
+	invisible(idNb);
 }
 
 ####################
