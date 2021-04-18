@@ -5,13 +5,14 @@
 ###
 ### Image Processing: Tools
 ###
-### draft v.0.2g
+### draft v.0.2g-fix
 
 
 ### History
 
-### draft v.0.2g:
+### draft v.0.2g - v.0.2g-fix:
 # - filtering using expression;
+# - fixed minor bug: overflow beyond margin;
 ### draft v.0.2e - v.0.2f:
 # - extract neighbours:
 #   4 neighbours [v.0.2e] & varying neighbours; [v.0.2f]
@@ -192,6 +193,7 @@ neighbours = function(m1, m2=m1, flt1, flt2=NULL, asUnique=TRUE) {
 }
 neighbours.m = function(m1, m2=m1, nb.m, flt1, flt2=NULL, asUnique=TRUE) {
 	# nb.m = matrix with (nr, nc) values for each neighbour;
+	# flt: can be expressions with var name = "x";
 	### Initial Cells
 	if(is.expression(flt1)) {
 		isSelect = eval(flt1, envir=list(x=m1));
@@ -200,16 +202,17 @@ neighbours.m = function(m1, m2=m1, nb.m, flt1, flt2=NULL, asUnique=TRUE) {
 	}
 	idSelect = which(isSelect);
 	# Neighbours
-	nbRow = idSelect %% nrow(m1);
+	nbRow = (idSelect - 1) %% nrow(m1);
 	idNb = numeric();
 	for(id.nb in seq(nrow(nb.m))) {
 		if(nb.m[id.nb, 1] == 0) {
 			idNb = c(idNb, idSelect + nrow(m1)*nb.m[id.nb, 2]);
 		} else if(nb.m[id.nb, 1] < 0) {
-			idNb2 = idSelect[nbRow > abs(nb.m[id.nb, 1])];
+			idNb2 = idSelect[nbRow >= abs(nb.m[id.nb, 1])];
 			idNb = c(idNb, idNb2 + nb.m[id.nb, 1] + nrow(m1)*nb.m[id.nb, 2]);
 		} else {
-			idNb2 = idSelect[nbRow < nrow(m1) - nb.m[id.nb, 1]];
+			# strictly less;
+			idNb2 = idSelect[nbRow < (nrow(m1) - nb.m[id.nb, 1])];
 			idNb = c(idNb, idNb2 + nb.m[id.nb, 1] + nrow(m1)*nb.m[id.nb, 2]);
 		}
 	}
