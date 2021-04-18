@@ -5,11 +5,14 @@
 ###
 ### Integral Tricks
 ###
-### draft v.0.1k
+### draft v.0.2a
 
 
 ### various Integral Tricks
 
+### draft v.0.2a:
+# - sin(log(x)) type:
+#   I( sin(log(x)) / (x^2+b*x+1) ) dx;
 ### draft v.0.1i - v.0.1k:
 # - atan() trick:
 #   I( atan(x) / (x^2+b*x+1) ) dx;
@@ -128,6 +131,18 @@ integrate(function(x) log(x) / (x^2-1), lower=lim[1], upper=lim[2])
 
 ### TODO:
 # - find full path;
+
+########################
+
+### sin(log(x))
+a = 3
+b = 3
+integrate(function(x) sin(log(x)) / (x^2+b*x+1), lower=1/a, upper=a)
+# 0
+
+integrate(function(x) sin(log(x)) / sqrt(x^4+b*x^3+b*x+1), lower=1/a, upper=a)
+# 0
+
 
 ########################
 ########################
