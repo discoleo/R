@@ -5,11 +5,14 @@
 ###
 ### Integral Tricks
 ###
-### draft v.0.2a
+### draft v.0.2b
 
 
 ### various Integral Tricks
 
+### draft v.0.2b:
+# - just for completion:
+#   I( atan(x) / x ) dx;
 ### draft v.0.2a:
 # - sin(log(x)) type:
 #   I( sin(log(x)) / (x^2+b*x+1) ) dx;
@@ -139,6 +142,9 @@ a = 3
 b = 3
 integrate(function(x) sin(log(x)) / (x^2+b*x+1), lower=1/a, upper=a)
 # 0
+integrate(function(x) cos(log(exp(pi/2)/x)) / (x^2+b*x+1), lower=1/a, upper=a)
+integrate(function(x) cos(log(exp(pi/2)*x)) / (x^2+b*x+1), lower=1/a, upper=a)
+# 0
 
 integrate(function(x) sin(log(x)) / sqrt(x^4+b*x^3+b*x+1), lower=1/a, upper=a)
 # 0
@@ -148,6 +154,12 @@ integrate(function(x) sin(log(x)) / sqrt(x^4+b*x^3+b*x+1), lower=1/a, upper=a)
 ########################
 
 ### ARCTAN
+
+a = 3
+integrate(function(x) atan(x) / x, lower=1/a, upper=a)
+integrate(function(x) pi/4 / x, lower=1/a, upper=a)
+pi/2*log(a)
+
 
 a = 3
 b = 3
