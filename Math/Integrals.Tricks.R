@@ -5,14 +5,15 @@
 ###
 ### Integral Tricks
 ###
-### draft v.0.2d
+### draft v.0.2e
 
 
 ### various Integral Tricks
 
-### draft v.0.2d:
+### draft v.0.2d - v.0.2e:
 # - more exponential tricks:
 #   I( atan(exp(x)) ) dx;
+#   I( atan(exp(x)) / (x^2 + 1) ) dx;
 ### draft v.0.2c:
 # - partial results:
 #   I( atan(x)^3 / x ) dx;
@@ -217,10 +218,12 @@ integrate(function(x) (exp(pi/2) - 1)*exp(-atan(x)) / x, lower=1/a, upper=a)
 integrate(function(x) (exp(atan(x)) - exp(pi/2)*exp(-atan(x))) / x, lower=1/a, upper=a)
 # 0
 
-
 a = 3
 integrate(function(x) exp(atan(x)) / (x * (exp(atan(x)) + exp(-atan(x)))), lower=1/a, upper=a)
+# TODO
 
+
+### atan(exp(x))
 a = 3
 integrate(function(x) atan(exp(x)), lower=-a, upper=a)
 integrate(function(x) atan(exp(-x)), lower=-a, upper=a)
@@ -229,4 +232,10 @@ a * pi/2
 integrate(function(x) atan(exp(x^3)), lower=-a, upper=a)
 integrate(function(x) atan(exp(-x^3)), lower=-a, upper=a)
 a * pi/2
+
+
+a = 3
+integrate(function(x) atan(exp(x)) / (x^2 + 1), lower=-a, upper=a)
+integrate(function(x) atan(exp(-x)) / (x^2 + 1), lower=-a, upper=a)
+pi/2 * atan(a)
 
