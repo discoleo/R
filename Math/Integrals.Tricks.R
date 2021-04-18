@@ -5,11 +5,14 @@
 ###
 ### Integral Tricks
 ###
-### draft v.0.2e
+### draft v.0.2f
 
 
 ### various Integral Tricks
 
+### draft v.0.2f:
+# - started work on:
+#   I( log(x-1) / x ) dx;
 ### draft v.0.2d - v.0.2e:
 # - more exponential tricks:
 #   I( atan(exp(x)) ) dx;
@@ -238,4 +241,24 @@ a = 3
 integrate(function(x) atan(exp(x)) / (x^2 + 1), lower=-a, upper=a)
 integrate(function(x) atan(exp(-x)) / (x^2 + 1), lower=-a, upper=a)
 pi/2 * atan(a)
+
+integrate(function(x) atan(exp(x)) * x^2 / (x^2 + 1), lower=-a, upper=a)
+integrate(function(x) atan(exp(-x)) * x^2 / (x^2 + 1), lower=-a, upper=a)
+pi/2 * (a - atan(a))
+
+
+####################
+####################
+
+a = 2
+integrate(function(x) log(x-1) / x, lower=a, upper=a+1)
+integrate(function(x) log(x-1) / (x*(x-1)), lower=a/(a-1), upper=(a+1)/a)
+
+i.f = function(x) 1/2*log(x-1)^2
+i.f((a+1)/a) - i.f(a/(a-1))
+integrate(function(x) log(x-1) / x, lower=a, upper=a+1)$value +
+	+ integrate(function(x) log(x-1) / x, lower=a/(a-1), upper=(a+1)/a)$value
+1/2*log(a)^2 - 1/2*log(a-1)^2
+
+# TODO: both limits;
 
