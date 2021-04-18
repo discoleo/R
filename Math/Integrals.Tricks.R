@@ -5,11 +5,14 @@
 ###
 ### Integral Tricks
 ###
-### draft v.0.2b
+### draft v.0.2c
 
 
 ### various Integral Tricks
 
+### draft v.0.2c:
+# - partial results:
+#   I( atan(x)^3 / x ) dx;
 ### draft v.0.2b:
 # - just for completion:
 #   I( atan(x) / x ) dx;
@@ -172,6 +175,7 @@ b = 3
 integrate(function(x) x*atan(x) / (x^4+b*x^3+b*x+1), lower=1/a, upper=a)
 integrate(function(x) pi/4 * x / (x^4+b*x^3+b*x+1), lower=1/a, upper=a)
 
+
 ### Sqrt
 a = 3
 b = 3
@@ -183,4 +187,23 @@ a = 3
 b = 3
 integrate(function(x) atan(x) / sqrt(x^4+b*x^3+b*x+1), lower=1/a, upper=a)
 integrate(function(x) pi/4 / sqrt(x^4+b*x^3+b*x+1), lower=1/a, upper=a)
+
+
+### Power 3
+a = 3
+integrate(function(x) atan(x)^3 / x, lower=1/a, upper=a)
+integrate(function(x) (3*pi/4*atan(x)^2 - pi^3/32) / x, lower=1/a, upper=a)
+
+
+### Exp
+a = 3
+integrate(function(x) (1 - exp(-pi/2))*exp(atan(x)) / x, lower=1/a, upper=a)
+integrate(function(x) (exp(pi/2) - 1)*exp(-atan(x)) / x, lower=1/a, upper=a)
+
+integrate(function(x) (exp(atan(x)) - exp(pi/2)*exp(-atan(x))) / x, lower=1/a, upper=a)
+# 0
+
+
+a = 3
+integrate(function(x) exp(atan(x)) / (x * (exp(atan(x)) + exp(-atan(x)))), lower=1/a, upper=a)
 
