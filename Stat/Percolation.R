@@ -5,7 +5,7 @@
 ###
 ### Percolation
 ###
-### draft v.0.3h
+### draft v.0.3i
 
 ### Percolation
 
@@ -113,6 +113,30 @@ rblock.gen = function(n, block.dim, min=0, max, prob, val=-1) {
 	dims = n * block.dim;
 	dim(m) = dims;
 	invisible(m);
+}
+rliniar.gen = function(n, w, d, ppore=3, pblock=0.5, val=-1) {
+	nc = d*n+n+1;
+	m = matrix(0, nrow=w, ncol=nc);
+	# Channel walls
+	idChW = seq(1, nc, by=d+1)
+	m[, idChW] = val;
+	# add Pores
+	npores = rpois(length(idChW), ppore)
+	xwidth = seq(w);
+	for(id in seq(n+1)) {
+		xPore = sample(xwidth, npores[id])
+		m[xPore, idChW[id]] = 0;
+	}
+	# block Channels
+	nBlock = rpois(n, pblock)
+	for(id in seq(n)) {
+		if(nBlock[id] == 0) next;
+		xBlock = sample(xwidth, nBlock[id]);
+		# (id-1)*(d+1)+1
+		m[xBlock, seq(idChW[id] + 1, length.out=d)] = -1;
+	}
+	
+	return(t(m));
 }
 
 ### Percolation Functions
@@ -855,6 +879,27 @@ plot.rs(split.rs(cfill.m), main="Confluent Areas")
 table(path.m[,1])
 # Area of inputs:
 table(cfill.m[,1])
+
+##################
+##################
+
+### Liniar Channels
+
+m = rliniar.gen(100, 80, d=1)
+plot.rs(m)
+
+m.fl = flood.all(m)
+m.fl = shuffle.colors(m.fl)
+plot.rs(m.fl)
+
+
+### pBlock
+m = rliniar.gen(100, 80, d=1, pblock=1)
+plot.rs(m)
+
+m.fl = flood.all(m)
+m.fl = shuffle.colors(m.fl)
+plot.rs(m.fl)
 
 
 ##############
