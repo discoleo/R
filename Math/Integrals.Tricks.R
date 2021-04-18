@@ -5,11 +5,14 @@
 ###
 ### Integral Tricks
 ###
-### draft v.0.1h
+### draft v.0.1i
 
 
 ### various Integral Tricks
 
+### draft v.0.1i:
+# - atan() trick:
+#   I( atan(x) / (x^2+b*x+1)) dx;
 ### draft v.0.1f - v.0.1h:
 # - experiments with complex integrals;
 #   I( log(x) / (x^2 - 1) ) dx over or using complex path;
@@ -123,4 +126,20 @@ integrate(function(x) log(x) / (x^2-1), lower=lim[1], upper=lim[2])
 
 ### TODO:
 # - find full path;
+
+########################
+########################
+
+### ARCTAN
+
+a = 3
+b = 3
+integrate(function(x) atan(x) / (x^2+b*x+1), lower=1/a, upper=a)
+integrate(function(x) pi/4 / (x^2+b*x+1), lower=1/a, upper=a)
+
+
+a = 3
+b = 3
+integrate(function(x) x*atan(x) / (x^4+b*x^3+b*x+1), lower=1/a, upper=a)
+integrate(function(x) pi/4 * x / (x^4+b*x^3+b*x+1), lower=1/a, upper=a)
 
