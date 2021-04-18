@@ -5,11 +5,13 @@
 ###
 ### Image Processing: Tools
 ###
-### draft v.0.2f
+### draft v.0.2g
 
 
 ### History
 
+### draft v.0.2g:
+# - filtering using expression;
 ### draft v.0.2e - v.0.2f:
 # - extract neighbours:
 #   4 neighbours [v.0.2e] & varying neighbours; [v.0.2f]
@@ -29,10 +31,10 @@
 
 # Note:
 # - the specific algorithms were mostly developed over the previous years,
-#   but never oficially published;
+#   but never officially published;
 # - TODO:
 #  -- add all algorithms;
-#  -- native R impleemntations are much slower than the Java or C# variants;
+#  -- native R implementations are much slower than the Java or C# variants;
 
 
 ####################
@@ -155,7 +157,7 @@ decompose.kernel = function(m) {
 }
 
 ### Neighbours
-neighbours = function(m1, m2=m1, flt1, flt2=NA, asUnique=TRUE) {
+neighbours = function(m1, m2=m1, flt1, flt2=NULL, asUnique=TRUE) {
 	# 4 neighbours: fast version;
 	# Initial Cells
 	isSelect = (m1 >= flt1); # TODO: formula?
@@ -181,17 +183,21 @@ neighbours = function(m1, m2=m1, flt1, flt2=NA, asUnique=TRUE) {
 	idN = idN[posStart:posEnd];
 	if(asUnique) idN = unique(idN);
 	# Condition 2
-	if( ! is.na(flt2)) {
+	if( ! is.null(flt2)) {
 		isTrue = (m2[idN] == flt2);
 		idN = idN[isTrue];
 	}
 	# All Neighbours
 	invisible(idN);
 }
-neighbours.m = function(m1, m2=m1, nb.m, flt1, flt2=NA, asUnique=TRUE) {
+neighbours.m = function(m1, m2=m1, nb.m, flt1, flt2=NULL, asUnique=TRUE) {
 	# nb.m = matrix with (nr, nc) values for each neighbour;
-	# Initial Cells
-	isSelect = (m1 >= flt1); # TODO: formula?
+	### Initial Cells
+	if(is.expression(flt1)) {
+		isSelect = eval(flt1, envir=list(x=m1));
+	} else {
+		isSelect = (m1 >= flt1);
+	}
 	idSelect = which(isSelect);
 	# Neighbours
 	nbRow = idSelect %% nrow(m1);
@@ -223,9 +229,13 @@ neighbours.m = function(m1, m2=m1, nb.m, flt1, flt2=NA, asUnique=TRUE) {
 	idNb = idNb[posStart:posEnd];
 	if(asUnique) idNb = unique(idNb);
 	# Condition 2
-	if( ! is.na(flt2)) {
-		isTrue = (m2[idNb] == flt2);
-		idNb = idNb[isTrue];
+	if( ! is.null(flt2)) {
+		if(is.expression(flt2)) {
+			idNb = subset(idNb, eval(flt2, envir=list(x=m2[idNb])));
+		} else {
+			isTrue = (m2[idNb] == flt2);
+			idNb = idNb[isTrue];
+		}
 	}
 	# All Neighbours
 	invisible(idNb);
