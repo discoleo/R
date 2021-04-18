@@ -5,11 +5,14 @@
 ###
 ### Integral Tricks
 ###
-### draft v.0.2c
+### draft v.0.2d
 
 
 ### various Integral Tricks
 
+### draft v.0.2d:
+# - more exponential tricks:
+#   I( atan(exp(x)) ) dx;
 ### draft v.0.2c:
 # - partial results:
 #   I( atan(x)^3 / x ) dx;
@@ -178,9 +181,19 @@ integrate(function(x) pi/4 * x / (x^4+b*x^3+b*x+1), lower=1/a, upper=a)
 
 ### Sqrt
 a = 3
+integrate(function(x) atan(sqrt(x)) / x, lower=1/a, upper=a)
+integrate(function(x) pi/4 / x, lower=1/a, upper=a)
+
+a = 3
 b = 3
 integrate(function(x) atan(sqrt(x)) / (x^2+b*x+1), lower=1/a, upper=a)
 integrate(function(x) pi/4 / (x^2+b*x+1), lower=1/a, upper=a)
+
+
+a = 3
+integrate(function(x) atan(x) * sqrt(x+1/x) / x, lower=1/a, upper=a)
+integrate(function(x) pi/4 * sqrt(x+1/x) / x, lower=1/a, upper=a)
+integrate(function(x) pi/2 * sqrt(x^4+1) / x^2, lower=1/sqrt(a), upper=sqrt(a))
 
 
 a = 3
@@ -193,6 +206,7 @@ integrate(function(x) pi/4 / sqrt(x^4+b*x^3+b*x+1), lower=1/a, upper=a)
 a = 3
 integrate(function(x) atan(x)^3 / x, lower=1/a, upper=a)
 integrate(function(x) (3*pi/4*atan(x)^2 - pi^3/32) / x, lower=1/a, upper=a)
+integrate(function(x) 3*pi/4*atan(x)^2 / x, lower=1/a, upper=a)$value - pi^3/16*log(a)
 
 
 ### Exp
@@ -206,4 +220,13 @@ integrate(function(x) (exp(atan(x)) - exp(pi/2)*exp(-atan(x))) / x, lower=1/a, u
 
 a = 3
 integrate(function(x) exp(atan(x)) / (x * (exp(atan(x)) + exp(-atan(x)))), lower=1/a, upper=a)
+
+a = 3
+integrate(function(x) atan(exp(x)), lower=-a, upper=a)
+integrate(function(x) atan(exp(-x)), lower=-a, upper=a)
+a * pi/2
+
+integrate(function(x) atan(exp(x^3)), lower=-a, upper=a)
+integrate(function(x) atan(exp(-x^3)), lower=-a, upper=a)
+a * pi/2
 
