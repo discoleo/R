@@ -7,17 +7,24 @@
 ######################
 
 rpois.heavy = function(n, lambda, rm.zero=FALSE) {
-	# heavy-tailed Poisson distribution
+	# heavy-tailed pseudo-Poisson distribution
 	x = rpois(n, lambda)
 	if(rm.zero) x = x[x != 0];
 	y = sapply(x, function(n) rpois(1, n))
 	invisible(y);
 }
-rpois.cor = function(n, lambda, dL, rm.zero=TRUE) {
-	# correlated Poisson processes
+rpois.cor = function(n, lambda, dL, scale.by=0, rm.zero=TRUE) {
+	# correlated pseudo-Poisson processes
 	x = rpois(n, lambda1)
 	if(rm.zero) x = x[x != 0];
-	y = sapply(x - dL, function(n) rpois(1, max(0, n)))
+	x1 = x - dL; x1[x1 < 0] = 0;
+	if(scale.by != 0) {
+		isGr = (x > lambda); isLs = (x < lambda);
+		x1[isGr] = x1[isGr] - scale.by;
+		x1[isLs] = x1[isLs] + scale.by;
+		x1[x1 < 0] = 0;
+	}
+	y = sapply(x1, function(n) rpois(1, n));
 	invisible(list(x=x, y=y));
 }
 simulate = function(n, FUN, FUN2, iter=100, ...) {
@@ -59,7 +66,8 @@ lines(gs.seq, y, col="red")
 ############
 ### Test ###
 
-r = rpois.cor(n, lambda1, dL=dL)
+scale.by = 0
+r = rpois.cor(n, lambda1, dL=dL, scale.by=scale.by)
 x = r$x; y = r$y;
 
 ### Analysis
