@@ -69,7 +69,8 @@ table(y - x)
 
 v = c(x, -y)
 hist(v, breaks=12)
-sum(v) / n
+sum(v) / n; cor(x, y);
+plot(jitter(x), jitter(y))
 
 ### Heavy-tailed (negative) Poisson
 x = rpois(1000, lambda1*2 - dL) -  lambda1 - dL
@@ -88,6 +89,11 @@ y1 = dpois(gs.seq, lambda);
 y2 = dpois(gs.seq, lambda + 0.5);
 lines(gs.seq, y1, col="red")
 lines(gs.seq, y2, col="green")
+
+### Heatmap
+cor(x, y)
+tbl = table(x, y)
+heatmap(tbl, Rowv=NA, Colv=NA)
 
 
 ######################
