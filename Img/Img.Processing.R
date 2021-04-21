@@ -5,11 +5,13 @@
 ###
 ### Image Processing: Tools
 ###
-### draft v.0.2g-fix
+### draft v.0.2h
 
 
 ### History
 
+### draft v.0.2h:
+# - example using neighbours();
 ### draft v.0.2g - v.0.2g-fix:
 # - filtering using expression;
 # - fixed minor bug: overflow beyond margin;
@@ -160,40 +162,49 @@ decompose.kernel = function(m) {
 ### Neighbours
 neighbours = function(m1, m2=m1, flt1, flt2=NULL, asUnique=TRUE) {
 	# 4 neighbours: fast version;
-	# Initial Cells
-	isSelect = (m1 >= flt1); # TODO: formula?
+	### Initial Cells
+	if(is.expression(flt1)) {
+		isSelect = eval(flt1, envir=list(x=m1));
+	} else {
+		isSelect = (m1 >= flt1);
+	}
 	idSelect = which(isSelect);
-	# Neighbours
+	### Neighbours
 	nRow = idSelect %% nrow(m1);
-	idN = c(idSelect-nrow(m1), idSelect[nRow != 1]-1,
+	idNb = c(idSelect-nrow(m1), idSelect[nRow != 1]-1,
 		idSelect[nRow != 0]+1, idSelect+nrow(m1))
 	# TODO: merge from MergeSort;
-	idN = sort(idN);
+	idNb = sort(idNb);
 	# out of bounds
 	posStart = 1;
-	while(posStart <= length(idN)) {
-		if(idN[posStart] >= 1) break;
+	while(posStart <= length(idNb)) {
+		if(idNb[posStart] >= 1) break;
 		posStart = posStart + 1;
 	}
-	posEnd = length(idN);
+	posEnd = length(idNb);
 	posMax = prod(dim(m1));
 	while(posEnd >= 1) {
-		if(idN[posEnd] <= posMax) break;
+		if(idNb[posEnd] <= posMax) break;
 		posEnd = posEnd - 1;
 	}
-	idN = idN[posStart:posEnd];
-	if(asUnique) idN = unique(idN);
+	idNb = idNb[posStart:posEnd];
+	if(asUnique) idNb = unique(idNb);
 	# Condition 2
 	if( ! is.null(flt2)) {
-		isTrue = (m2[idN] == flt2);
-		idN = idN[isTrue];
+		if(is.expression(flt2)) {
+			idNb = subset(idNb, eval(flt2, envir=list(x=m2[idNb])));
+		} else {
+			isTrue = (m2[idNb] == flt2);
+			idNb = idNb[isTrue];
+		}
 	}
 	# All Neighbours
-	invisible(idN);
+	invisible(idNb);
 }
-neighbours.m = function(m1, m2=m1, nb.m, flt1, flt2=NULL, asUnique=TRUE) {
+neighbours.m = function(m1, m2=m1, nb.m, flt1, flt2=NULL, invert.cols=TRUE, asUnique=TRUE) {
 	# nb.m = matrix with (nr, nc) values for each neighbour;
-	# flt: can be expressions with var name = "x";
+	if(invert.cols) nb.m = nb.m[, c(2,1)];
+	# flt: can be an expression with var name = "x";
 	### Initial Cells
 	if(is.expression(flt1)) {
 		isSelect = eval(flt1, envir=list(x=m1));
@@ -266,6 +277,37 @@ img.str = "Corn_Maize_Corncobs.jpg"
 img = readImage(img.str)
 
 ########################
+
+##################
+### Neighbours ###
+##################
+
+# - basic test of neigbours() function;
+
+n = 100
+lambda = 3
+m = matrix(rpois(n*n, lambda), ncol=n)
+
+nb.m = neighbours(m, flt1=expression(x < 2), flt2=expression(x > 4))
+# nb.m = vector with the (absolute) positions of the neighbours;
+
+### Neighbours
+# - Cells with few sheep & neighbouring cells with many wolfs;
+# - toRaster() & plot.rs(): functions in Percolation.R;
+# - white: NO grass (and therefore NO sheep);
+# - green: sheep; red: wolfs; (approximately)
+m.rs = m; m.rs[nb.m] = -1;
+plot.rs(m.rs)
+
+
+########################
+
+####################
+### Convolutions ###
+####################
+
+### TODO:
+# - clean & improve;
 
 # Kernel: can have even rows/columns;
 m = matrix(c(
@@ -420,8 +462,9 @@ sum(img[5:10, 5:10, 1])
 #######################
 #######################
 
-
-### Texture Analysis
+########################
+### Texture Analysis ###
+########################
 
 diff.offset = function(img, off) {
 	r.dim = dim(img)[1:2] - off;
