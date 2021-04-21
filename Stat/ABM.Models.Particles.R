@@ -10,7 +10,7 @@
 ### Leonard Mada
 ### [the one and only]
 ###
-### draft v.0.1c
+### draft v.0.1d
 
 # - based on:
 #   https://onlinelibrary.wiley.com/doi/full/10.1111/ecog.04516
@@ -25,9 +25,10 @@
 ### History ###
 ###############
 
-### draft v.0.1b - v.0.1c:
+### draft v.0.1b - v.0.1d:
 # - added lines.turtles();
 # - improved colors;
+# - path inherits colors;
 ### draft v.0.1a:
 # - replaced package lcmix with LaplacesDemon;
 # - TODO: multivariate rgamma;
@@ -77,6 +78,7 @@ run.model = function(turtles, land, distRate, iter=10, plot=FALSE, pch=16) {
 		if(plot) points(turtles, pch=pch, col= of(agents=turtles, var="color"))
 		t.df = rbind(t.df, turtles@.Data[,c("xcor", "ycor", "who")]);
 	}
+	attr(t.df, "col") = of(agents=turtles, var="color");
 	invisible(list(t=turtles, path=t.df));
 }
 plot.turtles = function(turtles, pch=16, col, ...) {
@@ -84,6 +86,7 @@ plot.turtles = function(turtles, pch=16, col, ...) {
 	points(turtles@.Data, pch=pch, col=col, ...);
 }
 lines.turtles = function(path, col) {
+	if(missing(col)) col = attr(path, "col");
 	who = unique(path$who);
 	sapply(seq(length(who)),
 		function(id) lines(path[path$who == (id-1), 1:2], col=col[id]))
@@ -115,8 +118,10 @@ points(t1, pch=16, col=of(agents=t1, var="color"))
 
 # plot(land)
 
+# the code below can be repeated a few times;
+
 t.all = run.model(t1, land, distRate);
 t1 = t.all$t;
 plot.turtles(t1)
-lines.turtles(t.all$path, col = of(agents=t1, var="color"))
+lines.turtles(t.all$path)
 
