@@ -5,7 +5,7 @@
 ###
 ### Image Processing: Tools
 ###
-### draft v.0.2h
+### draft v.0.2h-com
 
 
 ### History
@@ -201,7 +201,7 @@ neighbours = function(m1, m2=m1, flt1, flt2=NULL, asUnique=TRUE) {
 	# All Neighbours
 	invisible(idNb);
 }
-neighbours.m = function(m1, m2=m1, nb.m, flt1, flt2=NULL, invert.cols=TRUE, asUnique=TRUE) {
+neighbours.m = function(m1, m2=m1, nb.m, flt1, flt2=NULL, asUnique=TRUE, invert.cols=TRUE) {
 	# nb.m = matrix with (nr, nc) values for each neighbour;
 	if(invert.cols) nb.m = nb.m[, c(2,1)];
 	# flt: can be an expression with var name = "x";
@@ -282,7 +282,7 @@ img = readImage(img.str)
 ### Neighbours ###
 ##################
 
-# - basic test of neigbours() function;
+# - basic test: neigbours() function;
 
 n = 100
 lambda = 3
@@ -291,11 +291,12 @@ m = matrix(rpois(n*n, lambda), ncol=n)
 nb.m = neighbours(m, flt1=expression(x < 2), flt2=expression(x > 4))
 # nb.m = vector with the (absolute) positions of the neighbours;
 
-### Neighbours
-# - Cells with few sheep & neighbouring cells with many wolfs;
-# - toRaster() & plot.rs(): functions in Percolation.R;
+### Neighbours:
+# - neighbouring Cells with few sheep & the cells with many wolfs;
+# - toRaster() & plot.rs(): functions in stat/Percolation.R;
 # - white: NO grass (and therefore NO sheep);
-# - green: sheep; red: wolfs; (approximately)
+# - green: sheep;
+# - red & black: wolfs; (approximately)
 m.rs = m; m.rs[nb.m] = -1;
 plot.rs(m.rs)
 
