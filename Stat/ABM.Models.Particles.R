@@ -10,7 +10,7 @@
 ### Leonard Mada
 ### [the one and only]
 ###
-### draft v.0.1b
+### draft v.0.1c
 
 # - based on:
 #   https://onlinelibrary.wiley.com/doi/full/10.1111/ecog.04516
@@ -25,8 +25,9 @@
 ### History ###
 ###############
 
-### draft v.0.1b:
+### draft v.0.1b - v.0.1c:
 # - added lines.turtles();
+# - improved colors;
 ### draft v.0.1a:
 # - replaced package lcmix with LaplacesDemon;
 # - TODO: multivariate rgamma;
@@ -78,8 +79,9 @@ run.model = function(turtles, land, distRate, iter=10, plot=FALSE, pch=16) {
 	}
 	invisible(list(t=turtles, path=t.df));
 }
-plot.turtles = function(turtles, pch=16, ...) {
-	points(turtles@.Data, pch=pch, col = of(agents=turtles, var="color"))
+plot.turtles = function(turtles, pch=16, col, ...) {
+	if(missing(col)) col = of(agents=turtles, var="color");
+	points(turtles@.Data, pch=pch, col=col, ...);
 }
 lines.turtles = function(path, col) {
 	who = unique(path$who);
@@ -105,7 +107,7 @@ land = createWorld(minPxcor=1, maxPxcor = size, minPycor=1, maxPycor = size,
 t1 = createTurtles(n=agents, world=land)
 
 # Visualize the turtles on the landscape with their respective color
-plot(land)
+plot(land, c(1,2), col=c("#FFFFFF", "#00FF0064"))
 points(t1, pch=16, col=of(agents=t1, var="color"))
 
 
