@@ -10,14 +10,29 @@
 ### Leonard Mada
 ### [the one and only]
 ###
-### draft v.0.1a
+### draft v.0.1b
 
-# based on:
-# https://onlinelibrary.wiley.com/doi/full/10.1111/ecog.04516
-# the original used package: lcmix;
+# - based on:
+#   https://onlinelibrary.wiley.com/doi/full/10.1111/ecog.04516
+# - the original used package: lcmix;
 # - but this package is NOT maintained anymore;
 # install.packages("lcmix", repos="http://R-Forge.R-project.org")
 # library(lcmix) # multivariate distributions
+
+################
+
+###############
+### History ###
+###############
+
+### draft v.0.1b:
+# - added lines.turtles();
+### draft v.0.1a:
+# - replaced package lcmix with LaplacesDemon;
+# - TODO: multivariate rgamma;
+
+
+################
 
 
 # install.packages("NetLogoR")
@@ -36,6 +51,8 @@ rWorld.gen = function(size, ntypes) {
 		sample(seq(ntypes), size*size, replace = TRUE));
 }
 run.model = function(turtles, land, distRate, iter=10, plot=FALSE, pch=16) {
+	# t.df = data.frame(xcor=numeric(), ycor=numeric(), who=numeric());
+	t.df = data.frame(turtles@.Data[,c("xcor", "ycor", "who")]);
 	for(i in seq(iter)) {
 		# Identify the cells the turtles are on
 		cellTurtle = patchHere(world=land, turtles=turtles)
@@ -57,10 +74,19 @@ run.model = function(turtles, land, distRate, iter=10, plot=FALSE, pch=16) {
 		# set Direction
 		turtles = right(turtles=turtles, angle=as.vector(angleInd))
 		if(plot) points(turtles, pch=pch, col= of(agents=turtles, var="color"))
+		t.df = rbind(t.df, turtles@.Data[,c("xcor", "ycor", "who")]);
 	}
-	invisible(turtles);
+	invisible(list(t=turtles, path=t.df));
 }
-
+plot.turtles = function(turtles, pch=16, ...) {
+	points(turtles@.Data, pch=pch, col = of(agents=turtles, var="color"))
+}
+lines.turtles = function(path, col) {
+	who = unique(path$who);
+	sapply(seq(length(who)),
+		function(id) lines(path[path$who == (id-1), 1:2], col=col[id]))
+	invisible();
+}
 
 ######################
 
@@ -87,6 +113,8 @@ points(t1, pch=16, col=of(agents=t1, var="color"))
 
 # plot(land)
 
-t1 = run.model(t1, land, distRate);
-points(t1, pch=16, col= of(agents=t1, var="color"))
+t.all = run.model(t1, land, distRate);
+t1 = t.all$t;
+plot.turtles(t1)
+lines.turtles(t.all$path, col = of(agents=t1, var="color"))
 
