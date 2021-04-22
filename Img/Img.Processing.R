@@ -5,13 +5,14 @@
 ###
 ### Image Processing: Tools
 ###
-### draft v.0.2h-com
+### draft v.0.2i
 
 
 ### History
 
-### draft v.0.2h:
+### draft v.0.2h - v.0.2i:
 # - example using neighbours();
+# - option: includeBase to add also base cell;
 ### draft v.0.2g - v.0.2g-fix:
 # - filtering using expression;
 # - fixed minor bug: overflow beyond margin;
@@ -160,8 +161,10 @@ decompose.kernel = function(m) {
 }
 
 ### Neighbours
-neighbours = function(m1, m2=m1, flt1, flt2=NULL, asUnique=TRUE) {
+neighbours = function(m1, m2=m1, flt1, flt2=NULL, includeBase=FALSE, asUnique=TRUE) {
 	# 4 neighbours: fast version;
+	# - includeBase: include initial cells;
+	# - asUnique: only unique neighbours;
 	### Initial Cells
 	if(is.expression(flt1)) {
 		isSelect = eval(flt1, envir=list(x=m1));
@@ -171,9 +174,11 @@ neighbours = function(m1, m2=m1, flt1, flt2=NULL, asUnique=TRUE) {
 	idSelect = which(isSelect);
 	### Neighbours
 	nRow = idSelect %% nrow(m1);
-	idNb = c(idSelect-nrow(m1), idSelect[nRow != 1]-1,
+	idNb = if(includeBase) idSelect else numeric(); # flt2 may filter it out;
+	idNb = c(idNb,
+		idSelect-nrow(m1), idSelect[nRow != 1]-1,
 		idSelect[nRow != 0]+1, idSelect+nrow(m1))
-	# TODO: merge from MergeSort;
+	# TODO: use merge from MergeSort;
 	idNb = sort(idNb);
 	# out of bounds
 	posStart = 1;
@@ -288,7 +293,7 @@ n = 100
 lambda = 3
 m = matrix(rpois(n*n, lambda), ncol=n)
 
-nb.m = neighbours(m, flt1=expression(x < 2), flt2=expression(x > 4))
+nb.m = neighbours(m, flt1=expression(x < 2), flt2=expression(x > 4), includeBase=FALSE)
 # nb.m = vector with the (absolute) positions of the neighbours;
 
 ### Neighbours:
