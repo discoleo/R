@@ -4,7 +4,7 @@
 ### Gamma(1/n)
 ### Relations between the G(1/n) functions
 ###
-### draft 0.3a
+### draft 0.3b
 
 # including:
 # - Gamma(1/ (2*n)) = f(Gamma(1/n))
@@ -22,7 +22,7 @@
 ### History ###
 ###############
 
-### draft v.0.3a:
+### draft v.0.3a - v.0.3b:
 # - complex line integrals (experimental);
 
 
@@ -228,3 +228,16 @@ integrate(function(x) x^3*(1-x^3)^(-1/2), lower=0, upper=1)$value * 3/2 / 2^(2/3
 	line_integral(function(x) x^3*(1-x^3)^(-1/2), c(m^2, 1))) * 1/2 / 2^(2/3)
 
 ### TODO
+
+
+### B(1/5, 1/5)
+m5 = complex(re=cos(2*pi/5), im=sin(2*pi/5))
+integrate(function(x) x^(1/5)*(1-x)^(1/5), lower=0, upper=1)
+integrate(function(x) (1-x^2)^(1/5), lower=0, upper=1)$value / 2^(2/5)
+integrate(function(x) x^5*(1-x^5)^(-1/2), lower=0, upper=1)$value * 5/2 / 2^(2/5)
+
+(line_integral(function(x) x^5*(1-x^5)^(-1/2), c(0, m5)) +
+	line_integral(function(x) x^5*(1-x^5)^(-1/2), c(0, m5^2)) +
+	line_integral(function(x) x^5*(1-x^5)^(-1/2), c(0, m5^3)) +
+	line_integral(function(x) x^5*(1-x^5)^(-1/2), c(0, m5^4))) * -5/2 / 2^(2/5)
+
