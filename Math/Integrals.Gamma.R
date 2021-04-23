@@ -4,7 +4,7 @@
 ### Gamma(1/n)
 ### Relations between the G(1/n) functions
 ###
-### draft 0.3b
+### draft 0.3b-ext
 
 # including:
 # - Gamma(1/ (2*n)) = f(Gamma(1/n))
@@ -226,6 +226,7 @@ integrate(function(x) x^3*(1-x^3)^(-1/2), lower=0, upper=1)$value * 3/2 / 2^(2/3
 	line_integral(function(x) x^3*(1-x^3)^(-1/2), c(0, m^2))) * -3/2 / 2^(2/3)
 (line_integral(function(x) x^3*(1-x^3)^(-1/2), c(m, 1)) +
 	line_integral(function(x) x^3*(1-x^3)^(-1/2), c(m^2, 1))) * 1/2 / 2^(2/3)
+line_integral(function(x) x^3*(1-x^3)^(-1/2), c(m, m^2)) * 1/2 / 2^(2/3) * (m-m^2)
 
 ### TODO
 
@@ -240,4 +241,10 @@ integrate(function(x) x^5*(1-x^5)^(-1/2), lower=0, upper=1)$value * 5/2 / 2^(2/5
 	line_integral(function(x) x^5*(1-x^5)^(-1/2), c(0, m5^2)) +
 	line_integral(function(x) x^5*(1-x^5)^(-1/2), c(0, m5^3)) +
 	line_integral(function(x) x^5*(1-x^5)^(-1/2), c(0, m5^4))) * -5/2 / 2^(2/5)
+(line_integral(function(x) x^5*(1-x^5)^(-1/2), c(1, m5)) +
+	line_integral(function(x) x^5*(1-x^5)^(-1/2), c(1, m5^2)) +
+	line_integral(function(x) x^5*(1-x^5)^(-1/2), c(1, m5^3)) +
+	line_integral(function(x) x^5*(1-x^5)^(-1/2), c(1, m5^4))) * -1/2 / 2^(2/5)
+line_integral(function(x) x^5*(1-x^5)^(-1/2), c(m5, m5^4)) * 1/2 / 2^(2/5) * (m5-m5^4) +
+	line_integral(function(x) x^5*(1-x^5)^(-1/2), c(m5^2, m5^3)) * 1/2 / 2^(2/5) * (m5^2-m5^3)
 
