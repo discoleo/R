@@ -4,7 +4,7 @@
 ### Gamma(1/n)
 ### Relations between the G(1/n) functions
 ###
-### draft 0.2
+### draft 0.3a
 
 # including:
 # - Gamma(1/ (2*n)) = f(Gamma(1/n))
@@ -15,6 +15,16 @@
 # - formulas can be derived
 #   using Legendre's duplication formula;
 #   (or the equivalent higher order formulas)
+
+#########################
+
+###############
+### History ###
+###############
+
+### draft v.0.3a:
+# - complex line integrals (experimental);
+
 
 #########################
 
@@ -108,6 +118,29 @@ gamma(13/14)
 1/(gamma(1/7) * gamma(3/7)) * sqrt(pi)^3 / 2^(6/7) / (sin(pi/14) * sin(3*pi/7))
 
 
+###########
+### G(1/18)
+gamma(1/18)
+gamma(1/9) * gamma(4/9) * 2^(8/9) / pi^(1/2) * sin(4*pi/9)
+#
+gamma(5/18)
+gamma(5/9) / gamma(7/9) * 2^(4/9) * pi^(1/2)
+#
+gamma(7/18)
+gamma(7/9) / gamma(8/9) * 2^(2/9) * pi^(1/2)
+#
+gamma(11/18)
+gamma(2/9) / gamma(1/9) * 2^(7/9) * pi^(1/2)
+gamma(4/9) / gamma(1/3) / 2^(2/9) / 3^(1/6) * pi^(1/2) / sin(2*pi/9)
+#
+gamma(13/18)
+gamma(4/9) / gamma(2/9) * 2^(5/9) * pi^(1/2)
+#
+gamma(17/18)
+1 / (gamma(1/9) * gamma(4/9)) / 2^(8/9) * pi^(3/2) / (sin(4*pi/9) * sin(pi/18))
+##
+
+
 #######
 ### ...
 
@@ -174,3 +207,24 @@ n = 5
 n = 7
 # ...
 
+
+#####################
+#####################
+
+### Beta
+library(pracma)
+
+m = complex(re=cos(2*pi/3), im=sin(2*pi/3))
+
+integrate(function(x) x^(1/3)*(1-x)^(1/3), lower=0, upper=1)
+integrate(function(x) (1-x^2)^(1/3), lower=0, upper=1)$value / 2^(2/3)
+integrate(function(x) x^(5/3)*(1-x^2)^(-1/2), lower=0, upper=1)$value / 2^(2/3)
+integrate(function(x) x^3*(1-x^3)^(-1/2), lower=0, upper=1)$value * 3/2 / 2^(2/3)
+
+
+(line_integral(function(x) x^3*(1-x^3)^(-1/2), c(0, m)) +
+	line_integral(function(x) x^3*(1-x^3)^(-1/2), c(0, m^2))) * -3/2 / 2^(2/3)
+(line_integral(function(x) x^3*(1-x^3)^(-1/2), c(m, 1)) +
+	line_integral(function(x) x^3*(1-x^3)^(-1/2), c(m^2, 1))) * 1/2 / 2^(2/3)
+
+### TODO
