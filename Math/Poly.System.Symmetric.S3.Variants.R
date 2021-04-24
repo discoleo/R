@@ -7,7 +7,7 @@
 ### Polynomial Systems: S3
 ### Symmetric Variants
 ###
-### draft v.0.1c
+### draft v.0.1c-examples
 
 
 ### Polynomial Systems: 3 Variables
@@ -30,13 +30,15 @@ x^n + y^n + z^n = R1
 ###############
 ### History ###
 
-### draft v.0.1b - v.0.1c:
+### draft v.0.1b - v.0.1c-examples:
 # - another simple entangled system:
 #   E2*E3 = R2;
 #   E3*S = R3;
 # - extension:
-#   x*y*z * S + b3*S = R3;
-# - example: 4/3 + 2*x + 5*x^2 - 5*x^3 + x^6;
+#   E3*S + b3*S = R3;
+# - various examples:
+#   4/3 + 2*x + 5*x^2 - 5*x^3 + x^6;
+#   1 + 4*x + 5*x^2 - x^5 + x^6;
 ### draft v.0.1a:
 # - variants of the S3 symmetric systems:
 #   S3 = 3 variables;
@@ -320,7 +322,7 @@ round0(err)
 
 
 #########
-### Ex 2:
+### Ex 3:
 R = c(0,-2,-1)
 b = c(1,0,-1)
 sol = solve.S3P2(R, b=b)
@@ -335,5 +337,62 @@ x*y*z * S + b[3]*S # - R[3]
 ### Classic Poly
 round0.p(poly.calc(x))
 err = 4/3 + 2*x + 5*x^2 - 5*x^3 + x^6
+round0(err)
+
+
+#########
+### Ex 4:
+R = c(1,-2,0)
+b = c(1,0,-1)
+sol = solve.S3P2(R, b=b)
+x = sol[,1]; y = sol[,2]; z = sol[,3];
+
+### Test
+S = x+y+z;
+x^2 + y^2 + z^2 + b[1]*S # - R[1]
+(x*y+x*z+y*z) * x*y*z # - R[2]
+x*y*z * S + b[3]*S # - R[3]
+
+### Classic Poly
+round0.p(poly.calc(x))
+err = 1 + 4*x + 3*x^2 - 4*x^3 - x^4 + x^5 + x^6
+round0(err)
+
+
+#########
+### Ex 5:
+R = c(0,-2,0)
+b = c(1,0,-1)
+sol = solve.S3P2(R, b=b)
+x = sol[,1]; y = sol[,2]; z = sol[,3];
+
+### Test
+S = x+y+z;
+x^2 + y^2 + z^2 + b[1]*S # - R[1]
+(x*y+x*z+y*z) * x*y*z # - R[2]
+x*y*z * S + b[3]*S # - R[3]
+
+### Classic Poly
+round0.p(poly.calc(x))
+err = 1 + 4*x + 3*x^2 - 4*x^3 + x^5 + x^6
+round0(err)
+
+
+#########
+### Ex 6:
+R = c(0,-2,0)
+b = c(-1,0,-1)
+sol = solve.S3P2(R, b=b)
+x = sol[,1]; y = sol[,2]; z = sol[,3];
+
+### Test
+S = x+y+z;
+x^2 + y^2 + z^2 + b[1]*S # - R[1]
+(x*y+x*z+y*z) * x*y*z # - R[2]
+x*y*z * S + b[3]*S # - R[3]
+
+### Classic Poly
+round0.p(poly.calc(x))
+err = 1 + 4*x + 5*x^2 - x^5 + x^6
 round0(err)
 
