@@ -7,7 +7,7 @@
 ### Polynomial Systems: S3
 ### Symmetric Variants
 ###
-### draft v.0.1b
+### draft v.0.1c
 
 
 ### Polynomial Systems: 3 Variables
@@ -30,9 +30,13 @@ x^n + y^n + z^n = R1
 ###############
 ### History ###
 
-### draft v.0.1b:
+### draft v.0.1b - v.0.1c:
 # - another simple entangled system:
 #   E2*E3 = R2;
+#   E3*S = R3;
+# - extension:
+#   x*y*z * S + b3*S = R3;
+# - example: 4/3 + 2*x + 5*x^2 - 5*x^3 + x^6;
 ### draft v.0.1a:
 # - variants of the S3 symmetric systems:
 #   S3 = 3 variables;
@@ -257,12 +261,21 @@ S^2 - 2*E2 - R1 # = 0
 S^2 - 2*R2/R3*S - R1
 
 ### Solver:
-solve.S3P2 = function(R, b=0, max.perm=1, debug=TRUE) {
-	S = roots(c(1, b[1] - 2*R[2]/R[3], -R[1]))
+solve.S3P2 = function(R, b=c(0,0,0), max.perm=1, debug=TRUE) {
+	if(length(b) < 3) b = c(b, rep(0, 3 - length(b)))
+	if(b[3] == 0) {
+		coeff = c(1, b[1] - 2*R[2]/R[3], -R[1])
+	} else {
+		coeff = c(-b[3], R[3] - b[1]*b[3], b[1]*R[3] + b[3]*R[1] - 2*R[2], -R[1]*R[3]);
+	}
+	S = roots(coeff);
 	if(debug) print(S);
+	S = S[ S != 0]
 	R1 = R[1] - b[1]*S;
-	E2 = R[2]/R[3] * S;
-	E3 = R[3]/S;
+	R2 = R[2] - b[2]*S;
+	R3 = R[3] - b[3]*S;
+	E2 = R2/R3 * S;
+	E3 = R3/S;
 	x = sapply(seq_along(S), function(id) roots(c(1, -S[id], E2[id], -E3[id])))
 	sol = solve.EnAll(x, n=3, max.perm=max.perm)
 	if(max.perm == 1) sol = rbind(sol, sol[,c(2,3,1)], sol[,c(3,1,2)])
@@ -283,7 +296,8 @@ x*y*z * S # - R[3]
 
 ### Classic Poly
 round0.p(poly.calc(x))
--1 - 36*x + 14*x^2 + 7*x^4 - 4*x^5 + x^6
+err = -1 - 36*x + 14*x^2 + 7*x^4 - 4*x^5 + x^6
+round0(err)
 
 
 #########
@@ -301,5 +315,25 @@ x*y*z * S # - R[3]
 
 ### Classic Poly
 round0.p(poly.calc(x))
--1 - 6*x - x^2 + 5*x^3 - 3*x^4 + x^5 + x^6
+err = -1 - 6*x - x^2 + 5*x^3 - 3*x^4 + x^5 + x^6
+round0(err)
+
+
+#########
+### Ex 2:
+R = c(0,-2,-1)
+b = c(1,0,-1)
+sol = solve.S3P2(R, b=b)
+x = sol[,1]; y = sol[,2]; z = sol[,3];
+
+### Test
+S = x+y+z;
+x^2 + y^2 + z^2 + b[1]*S # - R[1]
+(x*y+x*z+y*z) * x*y*z # - R[2]
+x*y*z * S + b[3]*S # - R[3]
+
+### Classic Poly
+round0.p(poly.calc(x))
+err = 4/3 + 2*x + 5*x^2 - 5*x^3 + x^6
+round0(err)
 
