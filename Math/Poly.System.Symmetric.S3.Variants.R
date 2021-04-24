@@ -7,23 +7,33 @@
 ### Polynomial Systems: S3
 ### Symmetric Variants
 ###
-### draft v.0.1a
+### draft v.0.1b
 
 
 ### Polynomial Systems: 3 Variables
 ### Symmetric Variants
 
-### Example:
+### Simple Entanglements
+
+### Examples:
 x^n + y^n + z^n = R1
-(x*y + x*z + y*z) {*,/} (x + y +z) = R2
+(x*y + x*z + y*z) {*,/} (x + y + z) = R2
 x*y*z {*,/} (x + y + z)^k = R3
+
+### Ex 2:
+x^n + y^n + z^n = R1
+(x*y + x*z + y*z) * x*y*z = R2
+
 
 ####################
 
 ###############
 ### History ###
 
-### branch v.0.1a:
+### draft v.0.1b:
+# - another simple entangled system:
+#   E2*E3 = R2;
+### draft v.0.1a:
 # - variants of the S3 symmetric systems:
 #   S3 = 3 variables;
 # - for the simple symmetric S3 systems, see:
@@ -67,7 +77,7 @@ solve.S3P2 = function(R, b, k=1, type="M") {
 	if(type == "M") {
 		E3 = R[3] / S^k;
 	} else {
-		E3 = R[3] * S^k;
+		E3 = R[3] * sapply(S, function(S) sum(S^k)); # more than 1 powers
 	}
 	x = sapply(seq_along(S), function(id) roots(c(1, -S[id], E2[id], -E3[id])))
 	sol = solve.EnAll(x, n=3)
@@ -224,4 +234,72 @@ coeff = c(
 zSubst = - 10*R1*R2*R3*x^5 - 7*R1*R2*R3^2*x^3 - 2*R1*R2*R3^3*x - 5*R1*R2*x^7 + 17*R1*R2^2*R3*x^4 + 9*R1*R2^2*R3^2*x^2 + R1*R2^2*R3^3 + 10*R1*R2^2*x^6 - 12*R1*R2^3*R3*x^3 - 3*R1*R2^3*R3^2*x - 10*R1*R2^3*x^5 + 3*R1*R2^4*R3*x^2 + 5*R1*R2^4*x^4 - R1*R2^5*x^3 + 2*R1*R3*x^6 + R1*R3^2*x^4 + R1*x^8 + 5*R2*R3*b1*x^6 + 4*R2*R3*x^7 + 2*R2*R3^2*b1*x^4 + 4*R2*b1*x^8 + 5*R2*x^9 - 6*R2^2*R3*b1*x^5 - 11*R2^2*R3*x^6 - R2^2*R3^2*b1*x^3 - 4*R2^2*R3^2*x^4 - 6*R2^2*b1*x^7 - 11*R2^2*x^8 + 2*R2^3*R3*b1*x^4 + 12*R2^3*R3*x^5 + 2*R2^3*R3^2*x^3 + 4*R2^3*b1*x^6 + 13*R2^3*x^7 - 4*R2^4*R3*x^4 - R2^4*b1*x^5 - 8*R2^4*x^6 + 2*R2^5*x^5 - R3*b1*x^7 - b1*x^9 - x^10;
 
 zDiv = - 14*R1*R2*R3*x^4 - 9*R1*R2*R3^2*x^2 - 2*R1*R2*R3^3 - 7*R1*R2*x^6 + 15*R1*R2^2*R3*x^3 + 6*R1*R2^2*R3^2*x + 10*R1*R2^2*x^5 - 6*R1*R2^3*R3*x^2 - 7*R1*R2^3*x^4 + 2*R1*R2^4*x^3 + 5*R1*R3*x^5 + 4*R1*R3^2*x^3 + R1*R3^3*x + 2*R1*x^7 + 6*R2*R3*b1*x^5 + 8*R2*R3*x^6 + 2*R2*R3^2*b1*x^3 + 2*R2*R3^2*x^4 + 5*R2*b1*x^7 + 7*R2*x^8 - 4*R2^2*R3*b1*x^4 - 12*R2^2*R3*x^5 - 4*R2^2*R3^2*x^3 - 5*R2^2*b1*x^6 - 12*R2^2*x^7 + 8*R2^3*R3*x^4 + 2*R2^3*b1*x^5 + 10*R2^3*x^6 - 4*R2^4*x^5 - 3*R3*b1*x^6 - R3*x^7 - R3^2*b1*x^4 - 2*b1*x^8 - 2*x^9;
+
+
+#####################
+#####################
+
+#################
+### Entangled ###
+### Order 2   ###
+
+# x^2 + y^2 + z^2 = R1
+# E2 * E3 = R2
+# E3 * S = R3
+
+### Solution:
+
+### E2
+R2/R3 * S
+
+### =>
+S^2 - 2*E2 - R1 # = 0
+S^2 - 2*R2/R3*S - R1
+
+### Solver:
+solve.S3P2 = function(R, b=0, max.perm=1, debug=TRUE) {
+	S = roots(c(1, b[1] - 2*R[2]/R[3], -R[1]))
+	if(debug) print(S);
+	R1 = R[1] - b[1]*S;
+	E2 = R[2]/R[3] * S;
+	E3 = R[3]/S;
+	x = sapply(seq_along(S), function(id) roots(c(1, -S[id], E2[id], -E3[id])))
+	sol = solve.EnAll(x, n=3, max.perm=max.perm)
+	if(max.perm == 1) sol = rbind(sol, sol[,c(2,3,1)], sol[,c(3,1,2)])
+	return(sol)
+}
+
+### Example:
+R = c(1,-2,-1)
+b = 0
+sol = solve.S3P2(R)
+x = sol[,1]; y = sol[,2]; z = sol[,3];
+
+### Test
+S = x+y+z;
+x^2 + y^2 + z^2 + b[1]*S # - R[1]
+(x*y+x*z+y*z) * x*y*z # - R[2]
+x*y*z * S # - R[3]
+
+### Classic Poly
+round0.p(poly.calc(x))
+-1 - 36*x + 14*x^2 + 7*x^4 - 4*x^5 + x^6
+
+
+#########
+### Ex 2:
+R = c(1,-2,-1)
+b = 5
+sol = solve.S3P2(R, b=b)
+x = sol[,1]; y = sol[,2]; z = sol[,3];
+
+### Test
+S = x+y+z;
+x^2 + y^2 + z^2 + b[1]*S # - R[1]
+(x*y+x*z+y*z) * x*y*z # - R[2]
+x*y*z * S # - R[3]
+
+### Classic Poly
+round0.p(poly.calc(x))
+-1 - 6*x - x^2 + 5*x^3 - 3*x^4 + x^5 + x^6
 
