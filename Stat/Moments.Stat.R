@@ -5,7 +5,7 @@
 ###
 ### Statistics: Moments
 ###
-### draft v.0.1a
+### draft v.0.1a-fix
 
 
 ### Harmonic Moments & other Moments
@@ -24,10 +24,13 @@ moments.h20 = function(x, pow=1) {
 	if(pow != 1) x = x^pow;
 	xinv = 1/x;
 	h.m = function(id) {
-		xinv[id] * sum(tail(xinv[-id]));
+		v = xinv[id] * sum(tail(xinv, -id));
 	}
-	xm = sum(sapply(seq(length(x) - 1), h.m))
-	xm = length(x) / xm;
+	len = length(x) - 1;
+	xm = sum(sapply(seq(len), h.m))
+	xm = 1 / xm;
+	### Normalization
+	xm = xm * len * (len + 1) / 2;
 	xm = if(pow != 1) xm^(1/(2*pow)) else (xm^(1/2));
 	return(xm)
 }
@@ -35,7 +38,7 @@ moments.h21 = function(x, pow=1) {
 	if(pow != 1) x = x^pow;
 	xinv = 1/x;
 	h.m = function(id) {
-		xinv[id] * sum((x[id] + tail(x[-id])) * tail(xinv[-id]));
+		xinv[id] * sum((x[id] + tail(x, -id)) * tail(xinv, -id));
 	}
 	xm = sum(sapply(seq(length(x) - 1), h.m))
 	xm = length(x) / xm;
@@ -60,10 +63,17 @@ x = x[x != 0]
 ### H(2, 1) = n / sum((x[i]+x[j]) / (x[i]*x[j])))
 
 ### Q:
-# - H(2, 0): Do we need a normalization factor of x 2? Or x 1/2?
 # - H(2, 1): What is the proper normalization?
 
 moments.h10(x)
 moments.h20(x)
 moments.h21(x)
 
+
+#################
+
+### Tests
+x.test = rep(4, 20)
+moments.h10(x.test)
+moments.h20(x.test)
+moments.h21(x.test)
