@@ -7,32 +7,42 @@
 ### Asymmetric S2:
 ### Base Types
 ###
-### draft v.0.4c
+### draft v.0.4d
 
 
 ### Asymmetric Polynomial Systems: 2 Variables
 ### Base Types
 
-### Example 1:
+### Reducible
+
+### Example 1: (x*y)-Variants
 # x^n + b1*x*y = R1
 # y^n + b2*x*y = R2
 
-### Example 2:
+### Example 2: Binomial Expansions
+# x^n + P1(x, y) = R1
+# y^n + P2(x, y) = R2
+# where: x^n + y^n  + P1(x, y) + P2(x, y) = P(S);
+
+
+### Complicated
+
+### Example 1:
 # x^n + b*y = R1
 # y^n + b*x = R2
 # R1 != R2
 
-### Example 3:
+### Example 2:
 # x^n + b1*y = R
 # y^n + b2*x = R
 # b1 != b2
 
-### Example 4: d given
+### Example 3: d given
 # (x + d)^n + y^n = R1
 # x^n + (y + d)^n = R2
 # R1 != R2
 
-### Example 5: d unknown
+### Example 4: d unknown
 # (x + d)^n + y^n = R1
 # x^n + (y + d)^n = R2
 # x^n + y^n = R3
@@ -47,6 +57,9 @@
 ###############
 
 
+### draft v.0.4d:
+# - better classification:
+#   Reducible vs Complicated;
 ### draft v.0.4c:
 # - special case: coupled asymmetry
 #   x^2*y + b[1]*x^2 - R/b[2]*x = R;
@@ -480,6 +493,8 @@ x*(x*y + b11) + b12*x*y - R1 # = 0
 ### Sum: Eq 1b + 2b =>
 2*(x*y)^4 + (b12+b22)*(x*y)^3 + b*(x*y)^2*S - R*x*y*(S^2 - 2*x*y) # = 0
 2*(x*y)^3 + (b12+b22)*(x*y)^2 + b*(x*y)*S - R*(S^2 - 2*x*y) # = 0
+
+### TODO!
 
 
 ###############
