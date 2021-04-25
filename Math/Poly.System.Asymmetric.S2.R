@@ -7,7 +7,7 @@
 ### Asymmetric S2:
 ### Base Types
 ###
-### draft v.0.4b
+### draft v.0.4c
 
 
 ### Asymmetric Polynomial Systems: 2 Variables
@@ -47,6 +47,9 @@
 ###############
 
 
+### draft v.0.4c:
+# - special case: coupled asymmetry
+#   x^2*y + b[1]*x^2 - R/b[2]*x = R;
 ### draft v.0.4b:
 # - complex transformation (symmetry breaking) of:
 #   x^3 + b*y = R;
@@ -429,6 +432,128 @@ poly.calc(x)
 
 
 ##########################
+
+### Reducible
+
+# x^2*y + b11*x + b12*x*y = R1
+# y^2*x + b21*y + b22*x*y = R2
+
+# trivial system: P[3];
+
+### Solution
+
+### Prod: x^2*y + b11*x = R1 - b12*x*y
+(x*y)^3 + (b11+b21-b12*b22)*(x*y)^2 + (b11*b21+b12*R2+b22*R1)*x*y - R1*R2 # = 0
+
+### =>
+x*(x*y + b11) + b12*x*y - R1 # = 0
+
+
+############
+### P3+1 ###
+############
+
+# x^3*y + b11*x^2 + b12*x*y = R1
+# y^3*x + b21*y^2 + b22*x*y = R2
+
+# still relatively trivial: (x, y), (-x, -y);
+
+### Prod: x^3*y + b11*x^2 = R1 - b12*x*y
+(x*y)^4 + (b11+b21)*(x*y)^3 + (b11*b21-b12*b22)*(x*y)^2 + (b12*R2+b22*R1)*x*y - R1*R2 # = 0
+
+
+############
+### P3+1 ###
+############
+
+# x^3*y + b12*x^2 + b*x = R
+# y^3*x + b22*y^2 + b*y = R
+
+### Solution:
+
+### Prod: x^3*y + b12*x^2 = R - b*x
+(x*y)^4 + (b12+b22)*(x*y)^3 + b12*b22*(x*y)^2 - b^2*x*y + b*R*S - R^2 # = 0
+
+### Prod: x^3*y + b*x - R = - b12*x^2
+(x*y)^4 + b*(x*y)^2*S - R*x*y*(S^2 - 2*x*y) - b12*b22*(x*y)^2 + b^2*x*y - b*R*S + R^2 # = 0
+
+### Sum: Eq 1b + 2b =>
+2*(x*y)^4 + (b12+b22)*(x*y)^3 + b*(x*y)^2*S - R*x*y*(S^2 - 2*x*y) # = 0
+2*(x*y)^3 + (b12+b22)*(x*y)^2 + b*(x*y)*S - R*(S^2 - 2*x*y) # = 0
+
+
+###############
+### P2+1    ###
+### Special ###
+###############
+
+# x^2*y + b1*x^2 - R/b2*x = R
+# y^2*x + b2*y^2 - R/b1*y = R
+
+### Solution:
+
+### Prod: - (x^2*y - R) = b1*x^2 - R/b2*x
+(x*y)^3 - b1*b2*(x*y)^2 - R^2/(b1*b2)*x*y + R^2 # = 0
+(x*y - b1*b2)*(b1*b2*(x*y)^2 - R^2) # = 0
+
+### * y =>
+# - b1*(x*y)*x + R*y =
+(x*y)^2 - R/b2*(x*y)
+# - b2*(x*y)*y + R*x =
+(x*y)^2 - R/b1*(x*y)
+
+### Solver:
+solve.pAsym.S2P21 = function(R, b, debug=TRUE) {
+	bpr = b[1]*b[2];
+	coeff = c(bpr, 0, - R^2)
+	xy2 = roots(coeff); xy = c(bpr, xy2);
+	if(debug) print(xy);
+	xy.s1 = (xy)^2 - R[1]/b[2]*(xy);
+	xy.s2 = (xy)^2 - R[1]/b[1]*(xy);
+	### Root 1:
+	xy = xy[1];
+	div = R[1]^2 - b[1]*b[2]*(xy)^2;
+	x = (b[2]*(xy)*xy.s1 + R*xy.s2)[1] / div;
+	y = (b[1]*(xy)*xy.s2 + R*xy.s1)[1] / div;
+	### other Roots:
+	xy = xy2; # xy.s1 = xy.s1[-1]; xy.s2 = xy.s2[-1];
+	x2 = sapply(xy, function(xy) roots(c(b[1], xy - R[1]/b[2], - R[1])));
+	xy = rep(xy, each=2); y2 = xy / x2;
+	x = c(x, x2); y = c(y, y2);
+	sol = cbind(x=as.vector(x), y=as.vector(y))
+	return(sol);
+}
+
+### Examples:
+
+R = 1
+b = c(-1, 3)
+sol = solve.pAsym.S2P21(R, b)
+x = sol[,1]; y = sol[,2];
+
+### Test
+x^2*y + b[1]*x^2 - R/b[2]*x # - R
+y^2*x + b[2]*y^2 - R/b[1]*y # - R
+
+### Poly:
+poly.calc(x[-1]) * 9
+
+
+### Ex 2:
+R = 3
+b = c(-1, 3)
+sol = solve.pAsym.S2P21(R, b)
+x = sol[,1]; y = sol[,2];
+
+### Test
+x^2*y + b[1]*x^2 - R/b[2]*x # - R
+y^2*x + b[2]*y^2 - R/b[1]*y # - R
+
+### Poly:
+poly.calc(x[-1])
+
+
+##########################
 ##########################
 ##########################
 
@@ -700,7 +825,7 @@ round0.p(poly.calc(x + y)) * 13
 ### Transforms ###
 
 ### Simple Transforms:
-# - simple liniar transforms:
+# - simple linear transforms:
 #   e.g. combinations of initial roots;
 # - other simple transforms;
 
@@ -790,6 +915,7 @@ test.AsymSimple.P2(R, b.y)
 
 ##############
 ### Hetero ###
+##############
 
 ###############
 ### Order 2 ###
@@ -979,16 +1105,43 @@ S^3 - 3*x*y*S + b*S - R1 - R2
 ### Sum(x*...) =>
 x^4 + y^4 + 2*b*x*y - R1*x - R2*y # = 0
 S^4 - 4*x*y*S^2 + 2*(x*y)^2 + 2*b*x*y - R1*x - R2*y # = 0
+# R1*x + R2*y = ...;
 S^6 - 4*x*y*S^4 + 2*(x*y)^2*S^2 + 2*b*x*y*S^2 - R1*x*S^2 - R2*y*S^2 # = 0
 -3*S^6 - 6*b*S^4 + 6*(2*R1 + 2*R2)*S^3 + 2*(S^3 + b*S - R1 - R2)^2 +
 	+ 6*b^2*S^2 - 6*b*(R1 + R2)*S - 9*R1*x*S^2 - 9*R2*y*S^2 # = 0
 -S^6 - 2*b*S^4 + (8*R1 + 8*R2)*S^3 + 8*b^2*S^2 - 10*b*(R1 + R2)*S +
 	- 9*R1*x*S^2 - 9*R2*y*S^2 + 2*(R1+R2)^2 # = 0
-# (9*R1*x + 9*R2*y)*S^2 =
-	-S^6 - 2*b*S^4 + (8*R1 + 8*R2)*S^3 + 8*b^2*S^2 - 10*b*(R1 + R2)*S + 2*(R1+R2)^2
+# 9*(R1*x + R2*y)*S^2 =
+	-S^6 - 2*b*S^4 + 8*(R1+R2)*S^3 + 8*b^2*S^2 - 10*b*(R1+R2)*S + 2*(R1+R2)^2
+
+### Sum(y*...) =>
+x*y*(x^2+y^2) + b*(x^2+y^2) - R2*x - R1*y # = 0
+x*y*S^2 - 2*(x*y)^2 + b*S^2 - 2*b*x*y - R2*x - R1*y # = 0
+# R2*x + R1*y = ...;
+
+### Liniar (x, y) =>
+### (R1^2 - R2^2) * x =
+R1*(S^4 - 4*x*y*S^2 + 2*(x*y)^2 + 2*b*x*y) +
+	- R2*(x*y*S^2 - 2*(x*y)^2 + b*S^2 - 2*b*x*y)
+R1*S^4 - (4*R1+R2)*x*y*S^2 - b*R2*S^2 + 2*(R1+R2)*(x*y)^2 + 2*b*(R1+R2)*x*y
+### -(R1^2 - R2^2) * y =
+R2*(S^4 - 4*x*y*S^2 + 2*(x*y)^2 + 2*b*x*y) +
+	- R1*(x*y*S^2 - 2*(x*y)^2 + b*S^2 - 2*b*x*y)
+R2*S^4 - (4*R2+R1)*x*y*S^2 - b*R1*S^2 + 2*(R1+R2)*(x*y)^2 + 2*b*(R1+R2)*x*y
+
+### =>
+# (R1^2 - R2^2)*(x+y) =
+(R1-R2)*S^4 - 3*(R1-R2)*x*y*S^2 + b*(R1-R2)*S^2
+# =>
+(R1-R2)*S^4 - 3*(R1-R2)*x*y*S^2 + b*(R1-R2)*S^2 - (R1^2 - R2^2)*S # = 0
+S^3 - 3*x*y*S + b*S - (R1 + R2) # = 0 # cyclic redundancy!
+# (R1^2 - R2^2)*(x-y) =
+(R1+R2)*S^4 - 5*(R1+R2)*x*y*S^2 - b*(R1+R2)*S^2 + 4*(R1+R2)*(x*y)^2 + 4*b*(R1+R2)*x*y
+# (R1 - R2)*(x-y) =
+S^4 - 5*x*y*S^2 - b*S^2 + 4*(x*y)^2 + 4*b*x*y
 
 
-### Diff =>
+### Diff(x*...) =>
 x^3 - y^3 - b*(x - y) - R1 + R2 # = 0
 (x-y)*(x^2 + y^2 + x*y) - b*(x - y) - R1 + R2 # = 0
 d * (S^2 - x*y - b) - R1 + R2
@@ -1868,12 +2021,12 @@ solve.htC.S2P3 = function(R, b, debug=TRUE) {
 	x.diff = c(x.diff, - x.diff);
 	S = c(S, S);
 	x0 = (S + x.diff)/2;
-	y0 = S - x0
+	y0 = S - x0 # TODO: include also x = y cases
 	# modified roots
 	x = S / 2;
 	y = - (x0 - y0) * 0.5i;
 	sol = cbind(x=as.vector(x), y=as.vector(y))
-	sol # TODO: include also x = y cases
+	sol
 }
 
 ### Examples
