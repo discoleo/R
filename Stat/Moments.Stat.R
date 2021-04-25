@@ -5,7 +5,7 @@
 ###
 ### Statistics: Moments
 ###
-### draft v.0.1a-norm
+### draft v.0.1a-norm-fix
 
 
 ### Harmonic Moments & other Moments
@@ -45,8 +45,8 @@ moments.h21 = function(x, pow=1) {
 	xm = 1 / xm;
 	### Normalization
 	# TODO: proper Normalization, e.g. when pow > 1?
-	xm = xm * mean(x) * len * (len + 1) / 4;
-	xm = if(pow != 1) xm^(1/(pow)) else xm;
+	xm = xm * mean(x) * len * (len + 1);
+	xm = if(pow != 1) xm^(1/(2*pow)) else sqrt(xm);
 	return(xm)
 }
 
@@ -77,6 +77,11 @@ moments.h21(x)
 
 ### Tests
 x.test = rep(4, 20)
+moments.h10(x.test)
+moments.h20(x.test)
+moments.h21(x.test)
+
+x.test = rep(7, 20)
 moments.h10(x.test)
 moments.h20(x.test)
 moments.h21(x.test)
