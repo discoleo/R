@@ -5,7 +5,7 @@
 ###
 ### Statistics: Moments
 ###
-### draft v.0.1a-fix
+### draft v.0.1a-norm
 
 
 ### Harmonic Moments & other Moments
@@ -40,9 +40,12 @@ moments.h21 = function(x, pow=1) {
 	h.m = function(id) {
 		xinv[id] * sum((x[id] + tail(x, -id)) * tail(xinv, -id));
 	}
-	xm = sum(sapply(seq(length(x) - 1), h.m))
-	xm = length(x) / xm;
-	# TODO: proper Normalization?
+	len = length(x) - 1;
+	xm = sum(sapply(seq(len), h.m))
+	xm = 1 / xm;
+	### Normalization
+	# TODO: proper Normalization, e.g. when pow > 1?
+	xm = xm * mean(x) * len * (len + 1) / 4;
 	xm = if(pow != 1) xm^(1/(pow)) else xm;
 	return(xm)
 }
