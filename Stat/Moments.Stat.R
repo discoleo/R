@@ -5,7 +5,7 @@
 ###
 ### Statistics: Moments
 ###
-### draft v.0.1a-norm-fix
+### draft v.0.1b
 
 
 ### Harmonic Moments & other Moments
@@ -34,7 +34,8 @@ moments.h20 = function(x, pow=1) {
 	xm = if(pow != 1) xm^(1/(2*pow)) else (xm^(1/2));
 	return(xm)
 }
-moments.h21 = function(x, pow=1) {
+moments.h21 = function(x, pow=1, type=c("Mean", "Simple")) {
+	type = match.arg(type);
 	if(pow != 1) x = x^pow;
 	xinv = 1/x;
 	h.m = function(id) {
@@ -45,8 +46,14 @@ moments.h21 = function(x, pow=1) {
 	xm = 1 / xm;
 	### Normalization
 	# TODO: proper Normalization, e.g. when pow > 1?
-	xm = xm * mean(x) * len * (len + 1);
-	xm = if(pow != 1) xm^(1/(2*pow)) else sqrt(xm);
+	xm = xm * len * (len + 1);
+	if(type == "Mean") {
+		xm = xm * mean(x);
+		xm = if(pow != 1) xm^(1/(2*pow)) else sqrt(xm);
+	} else {
+		xm = xm;
+		xm = if(pow != 1) xm^(1/(pow)) else xm;
+	}
 	return(xm)
 }
 
@@ -71,6 +78,7 @@ x = x[x != 0]
 moments.h10(x)
 moments.h20(x)
 moments.h21(x)
+moments.h21(x, type="Simple")
 
 
 #################
@@ -80,8 +88,10 @@ x.test = rep(4, 20)
 moments.h10(x.test)
 moments.h20(x.test)
 moments.h21(x.test)
+moments.h21(x.test, type="Simple")
 
 x.test = rep(7, 20)
 moments.h10(x.test)
 moments.h20(x.test)
 moments.h21(x.test)
+moments.h21(x.test, type="Simple")
