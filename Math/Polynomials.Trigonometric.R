@@ -6,7 +6,7 @@
 ### Polynomial Systems:
 ### Trigonometric Solutions
 ###
-### draft v.0.1a
+### draft v.0.1a-all
 
 
 ### Trigonometric Polynomials
@@ -48,9 +48,10 @@ solve.Trig.P4 = function(R) {
 	y = roots(c(1, -4, -16*R));
 	y = sqrt(y + 0i); y = c(y, -y);
 	print(y)
-	a = asin(y) / 2;
+	a = asin(y);
+	a = c(a, pi-a) / 2;
 	x = sin(a)^2;
-	# TODO: all roots; HOW ???
+	# TODO: filter duplicate roots!
 	return(x);
 }
 
