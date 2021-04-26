@@ -5,7 +5,7 @@
 ###
 ### Percolation
 ###
-### draft v.0.3j
+### draft v.0.3k
 
 ### Percolation
 
@@ -153,8 +153,8 @@ rlinwalk.gen = function(n, w, d, walk=c(-1,0,1), pwalk=c(1,2,1), ppore=3, val=-1
 	wall = cbind(1, matrix(wall, nrow=w-1));
 	wall = rbind(nposChWAbs, wall);
 	wall = apply(wall, 2, cumsum);
-	# may contain bugs ???
-	# wall = sort(unique(as.vector(wall)));
+	# unique(sort(...)): common paths may be rare;
+	wall = unique(sort(as.vector(wall)));
 	wall = wall[wall > 0 & wall <= (w*nc)];
 	m[wall] = val;
 	invisible(t(m));
@@ -944,6 +944,16 @@ plot.rs(split.rs(m.fl, n=3))
 ##############
 ### Example 2:
 m = rlinwalk.gen(99, 80, 8)
+plot.rs(split.rs(m, n=4))
+
+m.fl = flood.all(m)
+m.fl = shuffle.colors(m.fl)
+plot.rs(split.rs(m.fl, n=4))
+
+##############
+### Example 3:
+# skewed pores
+m = rlinwalk.gen(99, 80, 8, pwalk=c(1,1,3))
 plot.rs(split.rs(m, n=4))
 
 m.fl = flood.all(m)
