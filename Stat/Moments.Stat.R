@@ -5,13 +5,21 @@
 ###
 ### Statistics: Moments
 ###
-### draft v.0.1c
+### draft v.0.1d
 
 
 ### Harmonic Moments
 ### Geometric Moments
+### Geometric Harmonic Moments
 ### & other Moments
 
+
+### Moments
+
+### Harmonic
+### H(1, 0) = n / sum(1/x[i])
+### H(2, 0) = sqrt(n / sum(1/(x[i]*x[j])))
+### H(2, 1) = n / sum((x[i]+x[j]) / (x[i]*x[j])))
 
 ####################
 
@@ -79,6 +87,41 @@ gmean.Gnm10 = function(x, pow=1) {
 	return(xm)
 }
 
+### Geometric Harmonic Moments
+moments.GH20 = function(x, pow=1, useLog=TRUE) {
+	if(useLog) {
+		return(moments.GH20Log(x, pow=pow));
+	}
+	if(pow != 1) x = x^pow;
+	xinv = 1/x;
+	h.m = function(id) {
+		v = xinv[id] + tail(xinv, -id);
+	}
+	len = length(x) - 1;
+	xm = prod(unlist(lapply(seq(len), h.m)))
+	xm = 1 / xm;
+	### Normalization
+	npow = pow * len * (len + 1) / 2;
+	xm = xm^(1/npow);
+	xm = xm * 2;
+	return(xm)
+}
+moments.GH20Log = function(x, pow=1) {
+	if(pow != 1) x = x^pow;
+	xinv = 1/x;
+	h.m = function(id) {
+		v = xinv[id] + tail(xinv, -id);
+	}
+	len = length(x) - 1;
+	xm = unlist(lapply(seq(len), h.m));
+	xm = - sum(log(xm));
+	### Normalization
+	npow = pow * len * (len + 1) / 2;
+	xm = xm / npow;
+	xm = exp(xm) * 2;
+	return(xm)
+}
+
 
 ###################
 
@@ -91,10 +134,6 @@ x = rpois(n, lambda)
 x = x[x != 0]
 
 ### Moments
-
-### H(1, 0) = n / sum(1/x[i])
-### H(2, 0) = sqrt(n / sum(1/(x[i]*x[j])))
-### H(2, 1) = n / sum((x[i]+x[j]) / (x[i]*x[j])))
 
 ### Q:
 # - H(2, 1):
@@ -109,6 +148,8 @@ moments.h21(x, type="Simple") # same as H10
 ### Geometric
 gmean.Gn0(x)
 gmean.Gnm10(x)
+### Geometric Harmonic
+moments.GH20(x, useLog=TRUE)
 
 
 #################
@@ -121,6 +162,7 @@ moments.h21(x.test)
 moments.h21(x.test, type="Simple")
 gmean.Gn0(x.test)
 gmean.Gnm10(x.test)
+moments.GH20(x.test, useLog=TRUE)
 
 x.test = rep(7, 20)
 moments.h10(x.test)
@@ -129,3 +171,4 @@ moments.h21(x.test)
 moments.h21(x.test, type="Simple")
 gmean.Gn0(x.test)
 gmean.Gnm10(x.test)
+moments.GH20(x.test, useLog=TRUE)
