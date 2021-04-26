@@ -5,7 +5,7 @@
 ###
 ### Percolation
 ###
-### draft v.0.3i
+### draft v.0.3j
 
 ### Percolation
 
@@ -115,6 +115,7 @@ rblock.gen = function(n, block.dim, min=0, max, prob, val=-1) {
 	invisible(m);
 }
 rliniar.gen = function(n, w, d, ppore=3, pblock=0.5, val=-1) {
+	# n = no. of channels; w = width;
 	nc = d*n+n+1;
 	m = matrix(0, nrow=w, ncol=nc);
 	# Channel walls
@@ -138,6 +139,28 @@ rliniar.gen = function(n, w, d, ppore=3, pblock=0.5, val=-1) {
 	
 	return(t(m));
 }
+rlinwalk.gen = function(n, w, d, walk=c(-1,0,1), pwalk=c(1,2,1), ppore=3, val=-1) {
+	# n = no. of channels; w = width of Material;
+	# d = diameter of channel;
+	nc = d*n+n+1;
+	m = matrix(0, nrow=w, ncol=nc);
+	# Channel walls:
+	# walls start at fixed positions
+	walk = walk * w + 1; # walk[walk == 0] = 1;
+	wall = sample(walk, n*(w-1), replace=TRUE, prob=pwalk);
+	idChW = seq(1, nc, by=d+1);
+	nposChWAbs = (idChW-1)*w + 1;
+	wall = cbind(1, matrix(wall, nrow=w-1));
+	wall = rbind(nposChWAbs, wall);
+	wall = apply(wall, 2, cumsum);
+	# may contain bugs ???
+	# wall = sort(unique(as.vector(wall)));
+	wall = wall[wall > 0 & wall <= (w*nc)];
+	m[wall] = val;
+	invisible(t(m));
+	# TODO: add Pores
+}
+
 
 ### Percolation Functions
 
@@ -536,6 +559,7 @@ plot.rs = function(m, main, mar, line=0.5) {
 	invisible();
 }
 split.rs = function(m, n=5, from=1, max.len=5, w=10) {
+	# w = width between displayed fragments;
 	nr.tot = round(nrow(m) / n);
 	frg.tot = ceiling(nrow(m) / nr.tot);
 	# TODO: nrow(m) %% nr.tot > 0;
@@ -546,12 +570,17 @@ split.rs = function(m, n=5, from=1, max.len=5, w=10) {
 		from = max(1, frg.tot + 1 + from - max.len);
 		frg.to = min(frg.tot, from + max.len);
 	}
-	m0 = matrix(0, ncol=w, nrow=nr.tot);
-	m2 =  array(0, c(nr.tot, 0))
+	m0 = matrix(0, ncol=w, nrow=nr.tot); # spacer
+	m2 = array(0, c(nr.tot, 0));
 	for(frg in from:frg.to) {
 		r.start = (frg - 1) * nr.tot + 1;
 		r.end   = r.start + nr.tot - 1;
-		m2 = cbind(m2, cbind(m[r.start:r.end,], m0))
+		if(r.end > nrow(m)) {
+			m1 = matrix(0, ncol=ncol(m), nrow= r.end - nrow(m))
+			m2 = cbind(m2, rbind(m[r.start:nrow(m),], m1), m0)
+		} else {
+			m2 = cbind(m2, m[r.start:r.end,], m0)
+		}
 	}
 	invisible(m2);
 }
@@ -883,7 +912,7 @@ table(cfill.m[,1])
 ##################
 ##################
 
-### Liniar Channels
+### Linear Channels
 
 m = rliniar.gen(100, 80, d=1)
 plot.rs(m)
@@ -900,6 +929,26 @@ plot.rs(m)
 m.fl = flood.all(m)
 m.fl = shuffle.colors(m.fl)
 plot.rs(m.fl)
+
+########################
+
+### Linear Walk Channels
+
+m = rlinwalk.gen(100, 80, 10)
+plot.rs(split.rs(m, n=3))
+
+m.fl = flood.all(m)
+m.fl = shuffle.colors(m.fl)
+plot.rs(split.rs(m.fl, n=3))
+
+##############
+### Example 2:
+m = rlinwalk.gen(99, 80, 8)
+plot.rs(split.rs(m, n=4))
+
+m.fl = flood.all(m)
+m.fl = shuffle.colors(m.fl)
+plot.rs(split.rs(m.fl, n=4))
 
 
 ##############
