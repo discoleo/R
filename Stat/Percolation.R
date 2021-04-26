@@ -5,7 +5,7 @@
 ###
 ### Percolation
 ###
-### draft v.0.3k
+### draft v.0.3l
 
 ### Percolation
 
@@ -139,7 +139,8 @@ rliniar.gen = function(n, w, d, ppore=3, pblock=0.5, val=-1) {
 	
 	return(t(m));
 }
-rlinwalk.gen = function(n, w, d, walk=c(-1,0,1), pwalk=c(1,2,1), ppore=3, val=-1) {
+rlinwalk.gen = function(n, w, d, walk=c(-1,0,1), pwalk=c(1,2,1), ppore=3,
+		first.const=TRUE, val=-1) {
 	# n = no. of channels; w = width of Material;
 	# d = diameter of channel;
 	nc = d*n+n+1;
@@ -147,10 +148,12 @@ rlinwalk.gen = function(n, w, d, walk=c(-1,0,1), pwalk=c(1,2,1), ppore=3, val=-1
 	# Channel walls:
 	# walls start at fixed positions
 	walk = walk * w + 1; # walk[walk == 0] = 1;
-	wall = sample(walk, n*(w-1), replace=TRUE, prob=pwalk);
+	nW = if(first.const) n else (n+1);
+	wall = sample(walk, nW*(w-1), replace=TRUE, prob=pwalk);
 	idChW = seq(1, nc, by=d+1);
 	nposChWAbs = (idChW-1)*w + 1;
-	wall = cbind(1, matrix(wall, nrow=w-1));
+	wall = matrix(wall, nrow=w-1);
+	if(first.const) wall = cbind(1, wall);
 	wall = rbind(nposChWAbs, wall);
 	wall = apply(wall, 2, cumsum);
 	# unique(sort(...)): common paths may be rare;
@@ -952,10 +955,24 @@ plot.rs(split.rs(m.fl, n=4))
 
 ##############
 ### Example 3:
-# skewed pores
-m = rlinwalk.gen(99, 80, 8, pwalk=c(1,1,3))
+# skewed/tilted channels
+m = rlinwalk.gen(99, 80, 8, pwalk=c(1,1,3), first.const=FALSE)
 plot.rs(split.rs(m, n=4))
 
+m.fl = flood.all(m)
+m.fl = shuffle.colors(m.fl)
+plot.rs(split.rs(m.fl, n=4))
+
+##############
+### Example 4:
+# crossing channels
+m = rlinwalk.gen(99, 80, 5, walk=c(-2,-1,0,1,2), pwalk=c(1,4,4,4,1))
+plot.rs(split.rs(m, n=4))
+
+# - discontinuities/pores are also created;
+# - with pwalk=c(1,2,2,2,1):
+#  -- one huge connected component!
+#  -- takes quite long to flood-fill (1-4 mins)!
 m.fl = flood.all(m)
 m.fl = shuffle.colors(m.fl)
 plot.rs(split.rs(m.fl, n=4))
