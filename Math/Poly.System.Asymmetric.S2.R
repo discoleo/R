@@ -7,7 +7,7 @@
 ### Asymmetric S2:
 ### Base Types
 ###
-### draft v.0.4e
+### draft v.0.4f
 
 
 ### Asymmetric Polynomial Systems: 2 Variables
@@ -62,9 +62,10 @@
 ###############
 
 
-### draft v.0.4e:
+### draft v.0.4e - v.0.4f:
 # - more Cross-Products:
-#   x^2*(x^2 + b11*y + b10) = R1*(y^2 + b21*x + b20);
+#   Ex 1: x^2*(x + b) = R1*(y + b); [v.0.4f]
+#   Ex 2: x^2*(x^2 + b11*y + b10) = R1*(y^2 + b21*x + b20);
 ### draft v.0.4d:
 # - better classification:
 #   Reducible vs Complicated;
@@ -1801,6 +1802,50 @@ x = sol[,1]; y = sol[,2];
 ### Test
 a[1,1]*x^3*y + a[1,2]*x*y^3 + b[1,2]*(x*y)^2 + b[1,1]*x*y # - R[1]
 a[2,1]*x^3*y + a[2,2]*x*y^3 + b[2,2]*(x*y)^2 + b[2,1]*x*y # - R[2]
+
+
+#######################
+
+### Cross-Products
+
+### Simple Order 3
+# - decomposable
+
+# x^2*(x + b) = R1*(y + b)
+# y^2*(y + b) = R2*(x + b)
+
+### Solution:
+
+### Case 1:
+# x = -b; y = -b;
+
+### Case 2:
+(x*y)^2 - R1*R2 # = 0
+
+### *x =>
+x^4 + b*x^3 - b*R1*x - R1*(x*y) # = 0
+
+
+### Solver:
+solve.Asym.S2P3 = function(R, b, debug=TRUE) {
+	xy = sqrt(R[1]*R[2] + 0i);
+	xy = c(xy, - xy);
+	x = sapply(xy, function(xy) roots(c(1, b[1], 0, - b[1]*R[1], - R[1]*(xy))));
+	xy = rep(xy, each=4);
+	y = xy / x;
+	sol = cbind(x=as.vector(x), y=as.vector(y));
+	return(sol);
+}
+
+### Examples:
+R = c(2,-1)
+b = -1
+sol = solve.Asym.S2P3(R, b)
+x = sol[,1]; y = sol[,2];
+
+### Test:
+x^2*(x + b) - R[1]*y # = R[1]*b
+y^2*(y + b) - R[2]*x # = R[2]*b
 
 
 #######################
