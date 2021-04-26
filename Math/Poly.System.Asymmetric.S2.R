@@ -7,7 +7,7 @@
 ### Asymmetric S2:
 ### Base Types
 ###
-### draft v.0.4d
+### draft v.0.4e
 
 
 ### Asymmetric Polynomial Systems: 2 Variables
@@ -18,6 +18,11 @@
 ### Example 1: (x*y)-Variants
 # x^n + b1*x*y = R1
 # y^n + b2*x*y = R2
+
+### Variant:
+# x^n * P1(x, y) = R1 * P2(x, y)
+# y^n * P2(x, y) = R2 * P1(x, y)
+
 
 ### Example 2: Binomial Expansions
 # x^n + P1(x, y) = R1
@@ -57,6 +62,9 @@
 ###############
 
 
+### draft v.0.4e:
+# - more Cross-Products:
+#   x^2*(x^2 + b11*y + b10) = R1*(y^2 + b21*x + b20);
 ### draft v.0.4d:
 # - better classification:
 #   Reducible vs Complicated;
@@ -493,8 +501,31 @@ x*(x*y + b11) + b12*x*y - R1 # = 0
 ### Sum: Eq 1b + 2b =>
 2*(x*y)^4 + (b12+b22)*(x*y)^3 + b*(x*y)^2*S - R*x*y*(S^2 - 2*x*y) # = 0
 2*(x*y)^3 + (b12+b22)*(x*y)^2 + b*(x*y)*S - R*(S^2 - 2*x*y) # = 0
+2*b^2*R*(x*y)^3 + b^2*R*(b12+b22)*(x*y)^2 + b^2*R*b*(x*y)*S - b^2*R^2*S^2 + 2*b^2*R^2*x*y
+2*b^2*R*(x*y)^3 + b^2*R*(b12+b22)*(x*y)^2 +
+	- b^2*(x*y)*((x*y)^4 + (b12+b22)*(x*y)^3 + b12*b22*(x*y)^2 - b^2*x*y - R^2) +
+	- ((x*y)^4 + (b12+b22)*(x*y)^3 + b12*b22*(x*y)^2 - b^2*x*y - R^2)^2 + 2*b^2*R^2*x*y
+b^2*(x*y)^5 + b^2*(b12+b22)*(x*y)^4 - b^2*(2*R - b12*b22)*(x*y)^3 +
+	- b^2*R*(b12+b22)*(x*y)^2 - b^4*(x*y)^2 - 3*b^2*R^2*x*y +
+	+ ((x*y)^4 + (b12+b22)*(x*y)^3 + b12*b22*(x*y)^2 - b^2*x*y - R^2)^2
+
+### Diff(y^2*...) =>
+(b12-b22)*x^2*y^2 - b*x*y*(x-y) + R*(x-y)*S # = 0
+
+### Sum(y^2*...) =>
+2*x^3*y^3 + (b12+b22)*x^2*y^2 + b*x*y*S - R*(S^2 - 2*x*y) # = 0 # same as Sum above;
 
 ### TODO!
+
+###
+R = 2
+b = 3
+bi = c(3, 2)
+
+### Debug
+x = -1.0901825396;
+y = -1.3159531274;
+S = x+y; b12 = bi[1]; b22 = bi[2];
 
 
 ###############
@@ -1771,6 +1802,66 @@ x = sol[,1]; y = sol[,2];
 a[1,1]*x^3*y + a[1,2]*x*y^3 + b[1,2]*(x*y)^2 + b[1,1]*x*y # - R[1]
 a[2,1]*x^3*y + a[2,2]*x*y^3 + b[2,2]*(x*y)^2 + b[2,1]*x*y # - R[2]
 
+
+#######################
+
+### Cross-Products
+
+###############
+### Order 4 ###
+
+x^4 + b13*x^3 - R1/b23*y = R1
+y^4 + b23*y^3 - R2/b13*x = R2
+
+### Solution:
+
+### Prod:
+# b13*x^3 - R1/b23*y = R1 - x^4
+b13*b23*(x*y)^3 + R1*R2/(b13*b23)*(x*y) - R1*R2 - (x*y)^4 # = 0
+(x*y)^4 - b13*b23*(x*y)^3 - R1*R2/(b13*b23)*(x*y) + R1*R2 # = 0
+# decomposable:
+# Case 1: (x*y)^3 = R1*R2/(b1*b2);
+# Case 2: x = -b1; y = -b2;
+
+### Solver:
+solver.Asym.S2P4 = function(R, b, debug=TRUE) {
+	coeffs = c(b[1]*b[2], 0, 0, -R[1]*R[2]);
+	xy = roots(coeffs);
+	if(debug) print(xy);
+	# x^5 + b1*x^4 - R1*x - R1/b2*(xy)
+	x = sapply(xy, function(xy) roots(c(1, b[1], 0, 0, -R[1], -R[1]/b[2]*xy)));
+	xy = rep(xy, each=5);
+	y = xy / x;
+	sol = cbind(x= c(-b[1], as.vector(x)), y= c(-b[2], as.vector(y)));
+	return(sol)
+}
+
+### Examples:
+R = c(-1, 3)
+b = c(2, 3)
+sol = solver.Asym.S2P4(R, b)
+x = sol[,1]; y = sol[,2];
+
+### Test:
+x^4 + b[1]*x^3 - R[1]/b[2]*y # - R[1]
+y^4 + b[2]*y^3 - R[2]/b[1]*x # - R[2]
+
+##################
+
+### Variant
+
+x^2*(x^2 + b11*y + b10) = R1*(y^2 + b21*x + b20)
+y^2*(y^2 + b21*x + b20) = R2*(x^2 + b11*y + b10)
+
+### Solution:
+
+### Case 1:
+# (x*y)^2 = R1*R2;
+
+### Case 2:
+# x^2 + b11*y + b10 = 0
+# y^2 + b21*x + b20 = 0
+# - special case: b = symmetric, only R different;
 
 
 #######################
