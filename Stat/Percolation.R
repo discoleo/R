@@ -5,7 +5,7 @@
 ###
 ### Percolation
 ###
-### draft v.0.3l
+### draft v.0.3m
 
 ### Percolation
 
@@ -140,7 +140,7 @@ rliniar.gen = function(n, w, d, ppore=3, pblock=0.5, val=-1) {
 	return(t(m));
 }
 rlinwalk.gen = function(n, w, d, walk=c(-1,0,1), pwalk=c(1,2,1), ppore=3,
-		first.const=TRUE, val=-1) {
+		first.const=TRUE, duplicate.at=NULL, val=-1) {
 	# n = no. of channels; w = width of Material;
 	# d = diameter of channel;
 	nc = d*n+n+1;
@@ -156,6 +156,7 @@ rlinwalk.gen = function(n, w, d, walk=c(-1,0,1), pwalk=c(1,2,1), ppore=3,
 	if(first.const) wall = cbind(1, wall);
 	wall = rbind(nposChWAbs, wall);
 	wall = apply(wall, 2, cumsum);
+	if( ! is.null(duplicate.at)) wall = cbind(wall, wall + duplicate.at*w);
 	# unique(sort(...)): common paths may be rare;
 	wall = unique(sort(as.vector(wall)));
 	wall = wall[wall > 0 & wall <= (w*nc)];
@@ -963,10 +964,34 @@ m.fl = flood.all(m)
 m.fl = shuffle.colors(m.fl)
 plot.rs(split.rs(m.fl, n=4))
 
+
+### Ex 3b:
+# skewed/tilted channels
+m = rlinwalk.gen(99, 80, 8, pwalk=c(1,1,3), first.const=FALSE, duplicate.at=4)
+plot.rs(split.rs(m, n=4))
+
+m.fl = flood.all(m)
+m.fl = shuffle.colors(m.fl)
+plot.rs(split.rs(m.fl, n=4))
+
+
 ##############
 ### Example 4:
+# crossing + duplicated channels
+m = rlinwalk.gen(99, 80, 8, walk=c(-1,0,1,2), pwalk=c(4,4,2,1),
+	duplicate.at=8+5, first.const=FALSE)
+plot.rs(split.rs(m, n=4))
+
+# - discontinuities/pores are also created;
+# - takes slightly longer to flood-fill (~1 min)!
+m.fl = flood.all(m)
+m.fl = shuffle.colors(m.fl)
+plot.rs(split.rs(m.fl, n=4))
+
+##############
+### Example 5:
 # crossing channels
-m = rlinwalk.gen(99, 80, 5, walk=c(-2,-1,0,1,2), pwalk=c(1,4,4,4,1))
+m = rlinwalk.gen(99, 80, 5, walk=c(-2,-1,0,1,2), pwalk=c(1,6,4,6,1))
 plot.rs(split.rs(m, n=4))
 
 # - discontinuities/pores are also created;
