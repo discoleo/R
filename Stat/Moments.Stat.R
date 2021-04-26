@@ -5,14 +5,17 @@
 ###
 ### Statistics: Moments
 ###
-### draft v.0.1b
+### draft v.0.1c
 
 
-### Harmonic Moments & other Moments
+### Harmonic Moments
+### Geometric Moments
+### & other Moments
 
 
 ####################
 
+### Harmonic Moments
 moments.h10 = function(x, pow=1) {
 	if(pow != 1) x = x^pow;
 	xm = sum(1/x);
@@ -51,12 +54,33 @@ moments.h21 = function(x, pow=1, type=c("Mean", "Simple")) {
 		xm = xm * mean(x);
 		xm = if(pow != 1) xm^(1/(2*pow)) else sqrt(xm);
 	} else {
+		# same as H10
 		xm = xm;
 		xm = if(pow != 1) xm^(1/(pow)) else xm;
 	}
 	return(xm)
 }
 
+### Geometric Moments
+gmean.Gn0 = function(x, pow=NA) {
+	xm = prod(x);
+	len = length(x);
+	if(len > 1) xm = xm^(1/len);
+	return(xm)
+}
+gmean.Gnm10 = function(x, pow=1) {
+	len = length(x);
+	if(len < 2) return(x);
+	if(pow != 1) x = x^pow; # TODO
+	xm = prod(x);
+	xs = sum(1/x);
+	xm = xm * xs / len;
+	if(len > 2) xm = xm^(1/(len-1));
+	return(xm)
+}
+
+
+###################
 
 ### Examples
 
@@ -73,12 +97,18 @@ x = x[x != 0]
 ### H(2, 1) = n / sum((x[i]+x[j]) / (x[i]*x[j])))
 
 ### Q:
-# - H(2, 1): What is the proper normalization?
+# - H(2, 1):
+#   What is the proper normalization?
+#   Simple H(2, 1) = H(1, 0);
 
+### Harmonic
 moments.h10(x)
 moments.h20(x)
 moments.h21(x)
-moments.h21(x, type="Simple")
+moments.h21(x, type="Simple") # same as H10
+### Geometric
+gmean.Gn0(x)
+gmean.Gnm10(x)
 
 
 #################
@@ -89,9 +119,13 @@ moments.h10(x.test)
 moments.h20(x.test)
 moments.h21(x.test)
 moments.h21(x.test, type="Simple")
+gmean.Gn0(x.test)
+gmean.Gnm10(x.test)
 
 x.test = rep(7, 20)
 moments.h10(x.test)
 moments.h20(x.test)
 moments.h21(x.test)
 moments.h21(x.test, type="Simple")
+gmean.Gn0(x.test)
+gmean.Gnm10(x.test)
