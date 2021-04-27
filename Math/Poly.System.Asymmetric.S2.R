@@ -7,7 +7,7 @@
 ### Asymmetric S2:
 ### Base Types
 ###
-### draft v.0.4f
+### draft v.0.4f-description
 
 
 ### Asymmetric Polynomial Systems: 2 Variables
@@ -18,16 +18,31 @@
 ### Example 1: (x*y)-Variants
 # x^n + b1*x*y = R1
 # y^n + b2*x*y = R2
-
-### Variant:
-# x^n * P1(x, y) = R1 * P2(x, y)
-# y^n * P2(x, y) = R2 * P1(x, y)
-
+# where it is possible to transform into P(x*y);
+# => solve directly for (x*y).
 
 ### Example 2: Binomial Expansions
 # x^n + P1(x, y) = R1
 # y^n + P2(x, y) = R2
-# where: x^n + y^n  + P1(x, y) + P2(x, y) = P(S);
+# where: x^n + y^n  + P1(x, y) + P2(x, y) = P(S) = R1 + R2;
+# => solve directly for S = x+y;
+
+
+### Example 3: Decomposable System
+# x^n * P1(x, y) = R1 * P2(x, y)
+# y^n * P2(x, y) = R2 * P1(x, y)
+
+### Generalization 2:
+# Q1(x, y) * P1(x, y) = R1 * P2(x, y)
+# Q2(x, y) * P2(x, y) = R2 * P1(x, y)
+# => Decomposition into 2 distinct Subsystems:
+
+### Sub-Sys 1:
+# P1(x, y) = 0
+# P2(x, y) = 0
+
+### Sub-Sys 2:
+# Q1(x, y) * Q2(x, y) = R1*R2;
 
 
 ### Complicated
