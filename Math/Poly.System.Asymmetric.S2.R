@@ -7,7 +7,7 @@
 ### Asymmetric S2:
 ### Base Types
 ###
-### draft v.0.4g
+### draft v.0.4h
 
 
 ### Asymmetric Polynomial Systems: 2 Variables
@@ -77,9 +77,11 @@
 ###############
 
 
-### draft v.0.4g:
+### draft v.0.4g - v.0.4h:
 # - simple xy-Variant:
 #   x^3*y^3 + b1*x^2*y + b2*x*y^2 = R1; (trivial P[6])
+# - simple Cross-Product example:
+#   x*(x^3 + y^3 + b1) = R1*(x*y + b2);
 ### draft v.0.4e - v.0.4f:
 # - more Cross-Products:
 #   Ex 1: x^2*(x + b) = R1*(y + b); [v.0.4f]
@@ -1962,9 +1964,9 @@ x = sol[,1]; y = sol[,2];
 x^4 + b[1]*x^3 - R[1]/b[2]*y # - R[1]
 y^4 + b[2]*y^3 - R[2]/b[1]*x # - R[2]
 
-##################
+#######################
 
-### Variant
+### Full Cross-Products
 
 x^2*(x^2 + b11*y + b10) = R1*(y^2 + b21*x + b20)
 y^2*(y^2 + b21*x + b20) = R2*(x^2 + b11*y + b10)
@@ -1979,6 +1981,47 @@ y^2*(y^2 + b21*x + b20) = R2*(x^2 + b11*y + b10)
 # y^2 + b21*x + b20 = 0
 # - special case: b = symmetric, only R different;
 
+
+#######################
+
+### Cross-Product
+
+x*(x^3 + y^3 + b1) = R1*(x*y + b2)
+y*(x*y + b2) = R2*(x^3 + y^3 + b1)
+
+### Solution:
+
+### Decomposition =>
+### Sys 1:
+# x^3 + y^3 + b1 = 0
+# x*y + b2 = 0
+
+### Sys 2:
+# x*y = R1*R2;
+# =>
+x^6 + b1*x^3 - R1*(x*y + b2)*x^2 + (R1*R2)^3 # = 0
+
+### Solver:
+solve.AsymDecomp.S2PS3 = function(R, b, debug=TRUE) {
+	# Note: does NOT solve sub-system 1!
+	xy = R[1]*R[2];
+	coeff = c(1, 0, 0, b[1], - R[1]*(xy + b[2]), 0, (R[1]*R[2])^3);
+	x = roots(coeff);
+	y = xy / x;
+	sol = cbind(x=x, y=y);
+	return(sol);
+}
+
+### Examples:
+
+R = c(-1, 3)
+b = c(2, -1)
+sol = solve.AsymDecomp.S2PS3(R, b)
+x = sol[,1]; y = sol[,2];
+
+### Test
+round0( x*(x^3 + y^3 + b[1]) - R[1]*(x*y + b[2]) )
+round0( y*(x*y + b[2]) - R[2]*(x^3 + y^3 + b[1]) )
 
 #######################
 #######################
@@ -2300,10 +2343,14 @@ b*S^4 - bc1*bc2*S^2 + R*(bc1+bc2)*S + (x*y)^3 + 2*b*(x*y)^2 - 4*b*x*y*S + b^2*(x
 
 
 
-######################
-######################
+###########################
+###########################
 
-### Binomial Expansions
+### Section C
+
+###########################
+### Binomial Expansions ###
+###########################
 
 # x^3 + 3*x*y^2 = R1
 # y^3 + 3*x^2*y = R2
@@ -2528,8 +2575,12 @@ round0.p(poly.calc(x)) * 9
 ###########################
 ###########################
 
+### Section D
+
 ########################
 ### Asymmetric Shift ###
+########################
+
 
 ### S2: d given
 # (x + d)^n + y^n = R1
