@@ -7,7 +7,7 @@
 ### Asymmetric S2:
 ### Base Types
 ###
-### draft v.0.4j
+### draft v.0.4j-sol
 
 
 ### Asymmetric Polynomial Systems: 2 Variables
@@ -77,7 +77,7 @@
 ###############
 
 
-### draft v.0.4j:
+### draft v.0.4j - v.0.4j-sol:
 # - decomposition using: (x^2+y^2) & x*y;
 #   x^3*y + b1*y^2 = R1;
 ### draft v.0.4g - v.0.4i:
@@ -2863,6 +2863,9 @@ S = x+y; V = x*y*S;
 
 ### (x, y) & (-x, -y)
 
+##############
+### Order: 3+1
+
 x^3*y + b*y^2 = R1
 y^3*x + b*x^2 = R2
 
@@ -2878,8 +2881,43 @@ p*s + b*s - R1 - R2 # = 0
 
 ### Prod =>
 p^4 + b*p*(s^2 - 2*p^2) + b^2*p^2 - R1*R2 # = 0
+p^4*(p + b)^2 + b*p*((R1+R2)^2 - 2*p^2*(p + b)^2) + b^2*p^2*(p + b)^2 - R1*R2*(p + b)^2 # = 0
+p^6 - 2*b^2*p^4 + (b^4 - R1*R2)*p^2 +
+	+ b*p*(R1^2+R2^2) - R1*R2*b^2 # = 0
 
-### TODO:
+
+### Solver:
+solve.AsymMinus.S2P31 = function(R, b, debug=TRUE) {
+	if(R[1] == R[2]) print("Special case R1 == R2: NOT implemented!");
+	coeff = c(1, 0, - 2*b[1]^2, 0, (b[1]^4 - R[1]*R[2]),
+		b[1]*(R[1]^2+R[2]^2), - R[1]*R[2]*b^2);
+	xy = roots(coeff);
+	s2 = (R[1] + R[2]) / (xy + b[1]);
+	if(debug) print(xy);
+	# robust: (x*y)*x^2 + b*y^2 = R1;
+	x2 = (R[1] - b[1]*s2) / (xy - b[1]);
+	x = sqrt(x2); x = c(x, -x);
+	y = rep(xy, 2) / x;
+	sol = cbind(x = as.vector(x), y = as.vector(y));
+	# sol = rbind(sol, - sol);
+	sol = sol[order(sol[,1]),];
+	return(sol);
+}
+
+### Examples:
+R = c(-1, 3)
+b = 2
+sol = solve.AsymMinus.S2P31(R, b);
+x = sol[,1]; y = sol[,2];
+
+### Test
+x^3*y + b[1]*y^2 # - R[1]
+y^3*x + b[1]*x^2 # - R[2]
+
+
+### degenerate P[12]
+round0.p(poly.calc(x))
+
 
 ##############
 ### Extension:
