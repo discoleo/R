@@ -7,7 +7,7 @@
 ### Asymmetric S2:
 ### Base Types
 ###
-### draft v.0.4i-TODO
+### draft v.0.4j
 
 
 ### Asymmetric Polynomial Systems: 2 Variables
@@ -77,6 +77,9 @@
 ###############
 
 
+### draft v.0.4j:
+# - decomposition using: (x^2+y^2) & x*y;
+#   x^3*y + b1*y^2 = R1;
 ### draft v.0.4g - v.0.4i:
 # - simple xy-Variant:
 #   x^3*y^3 + b1*x^2*y + b2*x*y^2 = R1; (trivial P[6])
@@ -1905,6 +1908,17 @@ X^2*Y + b23*Y^2 + b22*X^2 + b21*X*Y - R2*X # = 0
 x^2*y*(x^3 + b1*x*y^2 + b10) = R1*(y^3 + b2*x^2*y + b20)
 x*y^2*(y^3 + b2*x^2*y + b20) = R2*(x^3 + b1*x*y^2 + b10)
 
+### System Decomposition
+### Sub-Sys 1:
+x^3 + b1*x*y^2 + b10 # = 0
+y^3 + b2*x^2*y + b20 # = 0
+
+### Sub-Sys 2:
+(x*y)^3 - R1*R2 # = 0
+# let: X = x^2*y, Y = x*y^2 =>
+X*Y - R1*R2 # = 0
+X^2*(X^2 + b1*Y^2 + b10*Y) - R1*Y*(Y^2 + b2*X^2 + b20*X) # = 0
+
 ### TODO
 
 
@@ -2056,6 +2070,7 @@ x = sol[,1]; y = sol[,2];
 ### Test
 round0( x*(x^3 + y^3 + b[1]) - R[1]*(x*y + b[2]) )
 round0( y*(x*y + b[2]) - R[2]*(x^3 + y^3 + b[1]) )
+
 
 #######################
 #######################
@@ -2838,4 +2853,43 @@ x =  0.5829666585 - 0.7755174525i;
 y = -0.6425343366 + 0.3544215388i;
 b1 = b[1]; b2 = b[2]; R1 = R[1]; R2 = R[2];
 S = x+y; V = x*y*S;
+
+
+#########################
+
+#######################
+### Root Symmetries ###
+#######################
+
+### (x, y) & (-x, -y)
+
+x^3*y + b*y^2 = R1
+y^3*x + b*x^2 = R2
+
+### Solution:
+
+# - if (x, y) is a root, then:
+#   (-x, -y) is also a root;
+
+### Sum =>
+# let: s = x^2 + y^2, p = x*y;
+p*s + b*s - R1 - R2 # = 0
+# s = (R1 + R2) / (p + b)
+
+### Prod =>
+p^4 + b*p*(s^2 - 2*p^2) + b^2*p^2 - R1*R2 # = 0
+
+### TODO:
+
+##############
+### Extension:
+
+x^3*y + b1*y^2 = R1
+y^3*x + b2*x^2 = R2
+
+### Symmetrization:
+# let: y => k*y;
+x^3*y + k*b1*y^2 - R1/k
+y^3*x + b2/k^3*x^2 - R2/k^3
+# k^4 = b2 / b1;
 
