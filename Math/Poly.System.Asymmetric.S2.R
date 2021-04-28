@@ -7,7 +7,7 @@
 ### Asymmetric S2:
 ### Base Types
 ###
-### draft v.0.4i
+### draft v.0.4i-TODO
 
 
 ### Asymmetric Polynomial Systems: 2 Variables
@@ -1892,6 +1892,12 @@ x^3*y^3 + b23*y^3 + b22*x^2*y + b21*x*y^2 = R2
 #   (x*m, y*m), (x*m^2, y*m^2) are also solutions;
 
 ### TODO
+
+
+### TODO: also
+x^2*y*(x^3 + b1*x*y^2 + b10) = R1*(y^3 + b2*x^2*y + b20)
+x*y^2*(y^3 + b2*x^2*y + b20) = R2*(x^3 + b1*x*y^2 + b10)
+
 
 
 #######################
