@@ -1891,13 +1891,21 @@ x^3*y^3 + b23*y^3 + b22*x^2*y + b21*x*y^2 = R2
 # - if (x, y) is a solution, then:
 #   (x*m, y*m), (x*m^2, y*m^2) are also solutions;
 
-### TODO
+### Y * ... =>
+# - where: X = x^2*y, Y = x*y^2;
+# - reduction of order;
+X*Y^2 + b13*X^2 + b12*X*Y + b11*Y^2 - R1*Y # = 0
+X^2*Y + b23*Y^2 + b22*X^2 + b21*X*Y - R2*X # = 0
+# false solution: X = 0, Y = 0, but mat help to simplify system;
 
 
-### TODO: also
+##########################
+### Cross-Product Variant:
+
 x^2*y*(x^3 + b1*x*y^2 + b10) = R1*(y^3 + b2*x^2*y + b20)
 x*y^2*(y^3 + b2*x^2*y + b20) = R2*(x^3 + b1*x*y^2 + b10)
 
+### TODO
 
 
 #######################
