@@ -7,7 +7,7 @@
 ### Asymmetric S2:
 ### Base Types
 ###
-### draft v.0.4f-description
+### draft v.0.4g
 
 
 ### Asymmetric Polynomial Systems: 2 Variables
@@ -77,6 +77,9 @@
 ###############
 
 
+### draft v.0.4g:
+# - simple xy-Variant:
+#   x^3*y^3 + b1*x^2*y + b2*x*y^2 = R1; (trivial P[6])
 ### draft v.0.4e - v.0.4f:
 # - more Cross-Products:
 #   Ex 1: x^2*(x + b) = R1*(y + b); [v.0.4f]
@@ -94,10 +97,10 @@
 # - generalized:
 #   a11*x^3*y + a12*x*y^3 + b12*(x*y)^2 + b11*(x*y) = R1;
 ### draft v.0.3n:
-# - solved Cross-Product Order 3+1:
+# - solved [Cross-Product] Order 3+1:
 #   x^3*y + b3*(x*y)^2 + b1*x^2 = R;
 ### draft v.0.3m - v.0.3m-ext:
-# - solved Cross-Product type:
+# - solved [Cross-Product] type:
 #   x^2*y + b3*x*y + b1*x = R;
 # - extension: + b4*(x*y)^2;
 ### draft v.0.3k - v.0.3l:
@@ -1819,6 +1822,59 @@ a[1,1]*x^3*y + a[1,2]*x*y^3 + b[1,2]*(x*y)^2 + b[1,1]*x*y # - R[1]
 a[2,1]*x^3*y + a[2,2]*x*y^3 + b[2,2]*(x*y)^2 + b[2,1]*x*y # - R[2]
 
 
+#######################
+
+### Order 3 Mixt/Mixt-Term
+
+# x^3*y^3 + b1*x^2*y + b2*x*y^2 = R1
+# x^2*y + b3*x*y^2 = R2
+
+### Solution
+
+### {1,b3}*Eq 1 - {b1, b2}*Eq 2 =>
+x^3*y^3 + (b2-b1*b3)*x*y^2 = R1 - b1*R2
+b3*x^3*y^3 - (b2-b1*b3)*x^2*y = b3*R1 - b2*R2
+
+### Re-order & Prod =>
+b3*(x*y)^6 - (2*b3*R1 - (b1*b3+b2)*R2)*(x*y)^3 + (b2-b1*b3)^2*(x*y)^3  +
+	+ (R1 - b1*R2)*(b3*R1 - b2*R2) # = 0
+
+### Solver:
+solve.Asym.S2P33 = function(R, b, debug=TRUE) {
+	coeff = c(b[3], 0, 0, - (2*b[3]*R[1] - (b[1]*b[3]+b[2])*R[2]) + (b[2]-b[1]*b[3])^2,
+		0, 0, (R[1] - b[1]*R[2])*(b[3]*R[1] - b[2]*R[2]))
+	xy = roots(coeff);
+	if(debug) print(xy);
+	xy.sb2 = (R[1] - xy^3) / xy;
+	bdiv = 1;
+	if(b[1] != 0) {
+		xy.sb2 = xy.sb2 / b[1];
+		xy.sb3 = R[2] / xy;
+		xy.sb2 = xy.sb2 - xy.sb3;
+		bdiv = b[2]/b[1] - b[3];
+	}
+	y = xy.sb2 / bdiv;
+	x = xy / y;
+	sol = cbind(x=as.vector(x), y=as.vector(y));
+	return(sol);
+}
+
+### Examples:
+
+R = c(-1, 3)
+b = c(2,-1,2)
+sol = solve.Asym.S2P33(R, b)
+x = sol[,1]; y = sol[,2];
+
+### Test
+x^3*y^3 + b[1]*x^2*y + b[2]*x*y^2 # - R[1]
+x^2*y + b[3]*x*y^2 # - R[2]
+
+# trivial P[6] Poly
+round0.p(poly.calc(x)) * 7
+
+
+#######################
 #######################
 
 ### Cross-Products
