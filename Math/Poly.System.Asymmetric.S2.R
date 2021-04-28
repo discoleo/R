@@ -7,7 +7,7 @@
 ### Asymmetric S2:
 ### Base Types
 ###
-### draft v.0.4h
+### draft v.0.4i
 
 
 ### Asymmetric Polynomial Systems: 2 Variables
@@ -77,11 +77,12 @@
 ###############
 
 
-### draft v.0.4g - v.0.4h:
+### draft v.0.4g - v.0.4i:
 # - simple xy-Variant:
 #   x^3*y^3 + b1*x^2*y + b2*x*y^2 = R1; (trivial P[6])
 # - simple Cross-Product example:
 #   x*(x^3 + y^3 + b1) = R1*(x*y + b2);
+# - TODO: variants with roots {(x,y), m*(x,y), m^2*(x,y)};
 ### draft v.0.4e - v.0.4f:
 # - more Cross-Products:
 #   Ex 1: x^2*(x + b) = R1*(y + b); [v.0.4f]
@@ -1833,6 +1834,10 @@ a[2,1]*x^3*y + a[2,2]*x*y^3 + b[2,2]*(x*y)^2 + b[2,1]*x*y # - R[2]
 
 ### Solution
 
+# alternative solution:
+# X = x^2*y; Y = x*y^2;
+# solve for (X, Y);
+
 ### {1,b3}*Eq 1 - {b1, b2}*Eq 2 =>
 x^3*y^3 + (b2-b1*b3)*x*y^2 = R1 - b1*R2
 b3*x^3*y^3 - (b2-b1*b3)*x^2*y = b3*R1 - b2*R2
@@ -1875,11 +1880,26 @@ x^2*y + b[3]*x*y^2 # - R[2]
 # trivial P[6] Poly
 round0.p(poly.calc(x)) * 7
 
+##################
+
+### Generalization:
+x^3*y^3 + b13*x^3 + b12*x^2*y + b11*x*y^2 = R1
+x^3*y^3 + b23*y^3 + b22*x^2*y + b21*x*y^2 = R2
+
+### Solution:
+
+# - if (x, y) is a solution, then:
+#   (x*m, y*m), (x*m^2, y*m^2) are also solutions;
+
+### TODO
+
 
 #######################
 #######################
 
-### Cross-Products
+######################
+### Cross-Products ###
+######################
 
 ### Simple Order 3
 # - decomposable
