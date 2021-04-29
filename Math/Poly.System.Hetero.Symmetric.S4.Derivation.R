@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric
 ###  == Derivation ==
 ###
-### draft v.0.1a
+### draft v.0.1b
 
 
 ####################
@@ -64,12 +64,13 @@ S^3 - 3*E2*S + 3*E3 + 4*b*E4 - R*S # = 0
 
 ### Sum(Diff 1)^2 vs Sum(Diff 2):
 x1^2 + x2^2 + 2*x1*x2 - b^2*(x3*x4)^2 # = 0
-2*S^2 - 4*E2 + 2*E2 - b^2*(E2^2 - 2*S*E3 + 2*E4) # = 0
+3*S^2 - 6*E2 + 2*E2 - b^2*(E2^2 - 2*S*E3 + 2*E4) # = 0
 ### Sum(Diff 2):
-2*S^2 - 4*E2 + E2 - 6*R # = 0
+3*S^2 - 5*E2 - 6*R # = 0
 # =>
 E2 - b^2*(E2^2 - 2*S*E3 + 2*E4) + 6*R = 0
 # TODO:
+# - verify!
 # - analyze existence of solutions;
 # - possibility to simplify solution using this Diff;
 
@@ -153,4 +154,41 @@ x2^2 + b*x1*x3*x4 # - R
 x3^2 + b*x1*x2*x4 # - R
 x4^2 + b*x1*x2*x3 # - R
 
+
+#######################
+#######################
+
+
+
+###############
+### Order 3 ###
+###############
+
+### V3:
+### x1^3 + b*x2*x3*x4 = R
+x1^3 + b*x2*x3*x4 # - R
+x2^3 + b*x1*x3*x4 # - R
+x3^3 + b*x1*x2*x4 # - R
+x4^3 + b*x1*x2*x3 # - R
+
+### Solution:
+
+### Diff Eq[i] - Eq[i+1] =>
+(x1 - x2)*(x1^2 + x2^2 + x1*x2 - b*x3*x4) # = 0
+# ...
+# Case: x[i] != x[j]: Sum =>
+3*S^2 - 5*E2 - b*E2 # = 0
+
+### Sum =>
+S^3 - 3*E2*S + 3*E3 + b*E3 - 4*R # = 0
+
+### Sum(x1*...) =>
+(x1^4 + x2^4 + x3^4 + x4^4) + 4*b*E4 - R*S # = 0
+S^4 - 4*E2*S^2 + 4*E3*S + 2*E2^2 - 4*E4 + 4*b*E4 - R*S # = 0
+
+### Diff(x[i]*Eq[i] - x[i+1]*Eq[i+1]) =>
+(x1 - x2)*(x1^3 + x2^3 + x1^2*x2 + x1*x2^2 - R) # = 0
+(x2 - x3)*(x2^3 + x3^3 + x2^2*x3 + x2*x3^2 - R) # = 0
+# ...
+# TODO: sum(Diff);
 
