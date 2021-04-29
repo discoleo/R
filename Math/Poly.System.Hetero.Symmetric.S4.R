@@ -6,7 +6,7 @@
 ### Polynomial Systems: S4
 ### Heterogeneous Symmetric
 ###
-### draft v.0.2d
+### draft v.0.2d-comm
 
 
 
@@ -51,6 +51,28 @@ library(pracma)
 ### x1^2 + b*x2*x3*x4 = R
 
 ### Solution:
+
+### Case 1:
+# x1 = x2 = x3 = x4
+x^2 + b*x^3 - R # = 0
+
+### Case 2:
+# x1 = x2 = x3, but != x4;
+x1^2 + b*x1^2*x4 - R # = 0
+x4^2 + b*x1^3 - R # = 0
+
+### Case 3:
+# x1 = x2 and x3 = x4
+x1^2 + b*x1*x3^2 - R # = 0
+x3^2 + b*x3*x1^2 - R # = 0
+
+### Case 4:
+# x1 = x2 and x3 != x4
+x1^2 + b*x1*x3*x4 - R # = 0
+x3^2 + b*x1^2*x4 - R # = 0
+x4^2 + b*x1^2*x3 - R # = 0
+
+### Case 5: x[1:4] all distinct;
 
 ### Diff Eq[i] - Eq[i+1] =>
 (x1 - x2)*(x1 + x2 - b*x3*x4) = 0
@@ -162,6 +184,7 @@ solve.S4 = function(R, b, max.perm=0, tol=1E-3, debug=TRUE, old=FALSE) {
 	y = (R - x3^2) / b1 / x3^2;
 	S.3eq = 3*x3 + y;
 	sol3 = list(sol=cbind(x123=x3, x4=y), S=S.3eq);
+	
 	### Case: x1 == x2, x3 == x4, but x1 != x3;
 	S2 = roots(c(b1, -1, - b1*R))
 	xy2 = S2 / b1;
@@ -169,17 +192,20 @@ solve.S4 = function(R, b, max.perm=0, tol=1E-3, debug=TRUE, old=FALSE) {
 	y2 = x2[2:1, ];
 	x2 = as.vector(x2); y2 = as.vector(y2);
 	sol22 = cbind(x1=x2, x2=x2, x3=y2, x4=y2); # + many permutations;
-	### Case: x1 = x2, x3 != x4;
+	
+	### Case: x1 = x2, x3 != x4; [only 1 real case]
 	coeff = c(b1^2, b1, 1 - 2*b1^2*R, -2*b1*R, b1^2*R^2);
 	S34 = roots(coeff);
-	S34 = c(1/b1, S34); # (b*S - 1) * P[4]
+	S34 = c(1/b1, S34); # the real case: (b*S - 1) * P[4]
 	if(debug) print(S34);
 	p = S34^2 - R;
 	x34.d = sqrt(S34^2 - 4*p + 0i); # TODO: +/-;
 	x3 = (S34 + x34.d) / 2; x4 = (S34 - x34.d) / 2;
 	# robust
 	x1 = ((b1*x4-1)*R + x3^2) / (b1^2*p*x4);
+	# contains also the variants: x1 == x2 == x3 != x4;
 	sol22 = rbind(sol22, cbind(x1=x1, x2=x1, x3=x3, x4=x4));
+	
 	### Case: x[i] != x[j]
 	# TDODO !!!
 	# b^3*S^4 - 16*b^2*S^3 - b^3*R*S^2 + 34*b*S^2 + 24*b^2*R*S + 24*S + 16*b*R
