@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric
 ###  == Derivation ==
 ###
-### draft v.0.1b
+### draft v.0.1c
 
 
 ####################
@@ -190,5 +190,18 @@ S^4 - 4*E2*S^2 + 4*E3*S + 2*E2^2 - 4*E4 + 4*b*E4 - R*S # = 0
 (x1 - x2)*(x1^3 + x2^3 + x1^2*x2 + x1*x2^2 - R) # = 0
 (x2 - x3)*(x2^3 + x3^3 + x2^2*x3 + x2*x3^2 - R) # = 0
 # ...
-# TODO: sum(Diff);
+# sum(Diff) =>
+3*(x1^3 + x2^3 + x3^3 + x4^3) + (E2*S - 3*E3) - 6*R # = 0
+3*(S^3 - 3*E2*S + 3*E3) + E2*S - 3*E3 - 6*R # = 0
+3*S^3 - 9*E2*S + 6*E3 + E2*S - 6*R # = 0
+
+### Sum(x[i]^2*Eq[i]) =>
+# TODO: is it necessary?
+
+
+### Relations:
+# (b+5)*E2 = 3*S^2
+# 6*E3 = -(3*S^3 - 9*E2*S + E2*S - 6*R)
+# (b+3)*E3 = -(S^3 - 3*E2*S - 4*R) # check for cyclic redundancy?
+# 4*(b-1)*E4 = S^4 - 4*E2*S^2 + 4*E3*S + 2*E2^2 - R*S
 
