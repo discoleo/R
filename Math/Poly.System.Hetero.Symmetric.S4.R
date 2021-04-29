@@ -6,7 +6,7 @@
 ### Polynomial Systems: S4
 ### Heterogeneous Symmetric
 ###
-### draft v.0.2d-clean
+### draft v.0.2d-clean-2
 
 
 
@@ -75,19 +75,11 @@ x4^2 + b*x1^2*x3 - R # = 0
 ### Case 5: x[1:4] all distinct;
 
 ### Diff Eq[i] - Eq[i+1] =>
-(x1 - x2)*(x1 + x2 - b*x3*x4) = 0
-(x2 - x3)*(x2 + x3 - b*x1*x4) = 0
-(x3 - x4)*(x3 + x4 - b*x1*x2) = 0
-(x4 - x1)*(x1 + x4 - b*x2*x3) = 0
-### Diff Eq[i] - Eq[i+2], etc. =>
-(x1 - x3)*(x1 + x3 - b*x2*x4) = 0
-(x2 - x4)*(x2 + x4 - b*x1*x3) = 0
+(x1 - x2)*(x1 + x2 - b*x3*x4) # = 0
+(x2 - x3)*(x2 + x3 - b*x1*x4) # = 0
+# ...
 # Case: x[i] != x[j]: Sum =>
 3*S - b*E2 # = 0
-### TODO:
-# - use this formula;
-# - clean old code, as it may contain a cyclic redundancy:
-#   Sum(x2*x3*x4*...) vs Sum(x1*...);
 
 ### Sum =>
 S^2 - 2*E2 + b*E3 - 4*R # = 0
@@ -102,15 +94,10 @@ S^3 - 3*E2*S + 3*E3 + 4*b*E4 - R*S # = 0
 # - 4*b^3*E4 = b^2*S^3 - 12*b*S^2 - b^2*R*S + 18*S + 12*b*R
 
 ### Sum(x1^2*...) =>
-(x1^4 + x2^4 + x3^4 + x4^4) + b*E4*S - R*(S^2 - 2*E2) # = 0
-S^4 - 4*E2*S^2 + 4*E3*S + 2*E2^2 - 4*E4 + b*E4*S - R*(S^2 - 2*E2) # = 0
-S^4 - R*S^2 + 2*E2^2 - 4*E2*S^2 + 2*R*E2 + 4*E3*S + b*E4*S - 4*E4 # = 0
-#
-3*b^3*S^4 - 48*b^2*S^3 - 3*b^3*R*S^2 + 102*b*S^2 + 72*b^2*R*S + 72*S + 48*b*R # = 0
 b^3*S^4 - 16*b^2*S^3 - b^3*R*S^2 + 34*b*S^2 + 24*b^2*R*S + 24*S + 16*b*R # = 0
 
 ### TODO:
-# - may be still a false root!
+# - may still be a false root!
 
 
 ###########
