@@ -6,7 +6,7 @@
 ### Polynomial Systems: S4
 ### Heterogeneous Symmetric
 ###
-### draft v.0.2b
+### draft v.0.2d
 
 
 
@@ -50,6 +50,23 @@ library(pracma)
 ### V3:
 ### x1^2 + b*x2*x3*x4 = R
 
+### Solution:
+
+### Diff Eq[i] - Eq[i+1] =>
+(x1 - x2)*(x1 + x2 - b*x3*x4) = 0
+(x2 - x3)*(x2 + x3 - b*x1*x4) = 0
+(x3 - x4)*(x3 + x4 - b*x1*x2) = 0
+(x4 - x1)*(x1 + x4 - b*x2*x3) = 0
+### Diff Eq[i] - Eq[i+2], etc. =>
+(x1 - x3)*(x1 + x3 - b*x2*x4) = 0
+(x2 - x4)*(x2 + x4 - b*x1*x3) = 0
+# Case: x[i] != x[j]: Sum =>
+3*S - b*E2 # = 0
+### TODO:
+# - use this formula;
+# - clean old code, as it may contain a cyclic redundancy:
+#   Sum(x2*x3*x4*...) vs Sum(x1*...);
+
 ### Sum =>
 S^2 - 2*E2 + b*E3 - 4*R # = 0
 
@@ -57,12 +74,22 @@ S^2 - 2*E2 + b*E3 - 4*R # = 0
 (x1^3 + x2^3 + x3^3 + x4^3) + 4*b*E4 - R*S # = 0
 S^3 - 3*E2*S + 3*E3 + 4*b*E4 - R*S # = 0
 
+### =>
+#   b*E2 = 3*S
+# - b^2*E3 = b*S^2 - 6*S - 4*b*R
+# - 4*b^3*E4 = b^2*S^3 - 12*b*S^2 - b^2*R*S + 18*S + 12*b*R
+
 ### Sum(x1^2*...) =>
 (x1^4 + x2^4 + x3^4 + x4^4) + b*E4*S - R*(S^2 - 2*E2) # = 0
 S^4 - 4*E2*S^2 + 4*E3*S + 2*E2^2 - 4*E4 + b*E4*S - R*(S^2 - 2*E2) # = 0
 S^4 - R*S^2 + 2*E2^2 - 4*E2*S^2 + 2*R*E2 + 4*E3*S + b*E4*S - 4*E4 # = 0
+#
+3*b^3*S^4 - 48*b^2*S^3 - 3*b^3*R*S^2 + 102*b*S^2 + 72*b^2*R*S + 72*S + 48*b*R # = 0
+b^3*S^4 - 16*b^2*S^3 - b^3*R*S^2 + 34*b*S^2 + 24*b^2*R*S + 24*S + 16*b*R # = 0
+
 
 ### Sum(x2*x3*x4*...) =>
+# - possibly redundant!
 E4*S + b*Sum((x2*x3*x4)^2 ) - R*E3 # = 0
 E4*S + b*(E3^2 - 2*E4*E2) - R*E3 # = 0
 E4*S - 2*b*E2*E4 + b*E3^2 - R*E3 # = 0
@@ -126,7 +153,7 @@ b^5*S^10 +
 #############
 ### Solution:
 
-solve.S4 = function(R, b, max.perm=0, tol=1E-3, debug=FALSE, old=FALSE) {
+solve.S4 = function(R, b, max.perm=0, tol=1E-3, debug=TRUE, old=FALSE) {
 	# tol = was used for debugging;
 	b1 = b[1];
 	### Case: x1 == x2 == x3, but != x4;
@@ -142,28 +169,30 @@ solve.S4 = function(R, b, max.perm=0, tol=1E-3, debug=FALSE, old=FALSE) {
 	y2 = x2[2:1, ];
 	x2 = as.vector(x2); y2 = as.vector(y2);
 	sol22 = cbind(x1=x2, x2=x2, x3=y2, x4=y2); # + many permutations;
-	### Case: still x1 == x2 == x3
-	# - but with different formula & numerically unstable;
-	coeff = c(b1^2, - b1, (7 - 2*R*b1^2), - 24*R*b1, (- 28*R + R^2*b1^2))
+	### Case: x1 = x2, x3 != x4;
+	coeff = c(b1^2, b1, 1 - 2*b1^2*R, -2*b1*R, b1^2*R^2);
+	S34 = roots(coeff);
+	S34 = c(1/b1, S34); # (b*S - 1) * P[4]
+	if(debug) print(S34);
+	p = S34^2 - R;
+	x34.d = sqrt(S34^2 - 4*p + 0i); # TODO: +/-;
+	x3 = (S34 + x34.d) / 2; x4 = (S34 - x34.d) / 2;
+	# robust
+	x1 = ((b1*x4-1)*R + x3^2) / (b1^2*p*x4);
+	sol22 = rbind(sol22, cbind(x1=x1, x2=x1, x3=x3, x4=x4));
+	### Case: x[i] != x[j]
+	# TDODO !!!
+	# b^3*S^4 - 16*b^2*S^3 - b^3*R*S^2 + 34*b*S^2 + 24*b^2*R*S + 24*S + 16*b*R
+	coeff = c(b1^3, - 16*b1^2, - b1^3*R + 34*b1, 24*b1^2*R + 24, 16*b1*R);
+	S = roots(coeff);
+	if(debug) print(S);
+	E2 = 3*S / b1;
+	E3 = - (S^2 - 2*E2 - 4*R) / b1;
+	E4 = - (S^3 - 3*E2*S + 3*E3 - R*S) / (4*b1);
 
-	# Numerical instability of roots!
-	S = roots(coeff); S = round0(S);
-	S = c(S, -1/b1); # add the remaining roots;
-	# E3
-	Subst = 560*R*S^2 - 780*R*S^3*b - 224*R*S^4*b^2 + 213*R*S^5*b^3 - 9*R*S^6*b^4 + 3024*R^2*S*b +
-		- 564*R^2*S^2*b^2 - 768*R^2*S^3*b^3 + 24*R^2*S^4*b^4 + 816*R^3*S*b^3 - 16*R^3*S^2*b^4 +
-		3136*R^3*b^2 - 56*S^4 + 36*S^5*b + 37*S^6*b^2 - 18*S^7*b^3 + S^8*b^4;
-	Subst = - Subst;
-
-	E3Div = - 324*R*S*b^2 - 256*R*S^2*b^3 + 249*R*S^3*b^4 - 5*R*S^4*b^5 + 1008*R*b - 252*R^2*S*b^4 +
-		4*R^2*S^2*b^5 - 1408*R^2*b^3 + 336*S - 188*S^2*b - 240*S^3*b^2 + 199*S^4*b^3 - 48*S^5*b^4 + S^6*b^5;
-	E3 = round0(Subst / E3Div);
-	E2 = round0(S^2 + b*E3 - 4*R) / 2;
-	E4 = - round0(S^3 - 3*E2*S + 3*E3 - R*S) / 4 / b
-
-	x = sapply(seq(length(S)), function(id) roots(c(1, -S[id], E2[id], -E3[id], E4[id])))
+	x = sapply(seq(length(S)), function(id) roots(c(1, -S[id], E2[id], -E3[id], E4[id])));
 	# debugging: true roots
-	if(debug) {
+	if(FALSE) {
 		E = list(S=S, E2=E2, E3=E3, E4=E4)
 		return(debug.old(R, b, x, E, tol=tol))
 	}
@@ -176,10 +205,10 @@ solve.S4 = function(R, b, max.perm=0, tol=1E-3, debug=FALSE, old=FALSE) {
 ### TODO:
 # - may still contain numerically unstable roots!
 
-R = 2
+R = -5;
 b = 3
 sol = solve.S4(R=R, b=b, max.perm=1)
-sol.sol = sol$sol; # sol$sol22;
+sol.sol = sol$sol22; # sol$sol; #
 x1 = sol.sol[,1]; x2 = sol.sol[,2];
 x3 = sol.sol[,3]; x4 = sol.sol[,4];
 
@@ -240,6 +269,7 @@ debug.old = function(R, b, x, E, tol) {
 	return(list(sol=cbind(x=as.vector(x)), S=S1, isZ=isZ, isZero=isZero))
 }
 solve.old = function(x, E) {
+	len = length(E$S);
 	S = matrix(E$S, ncol=len, nrow=4, byrow=T)
 	E2 = matrix(E$E2, ncol=len, nrow=4, byrow=T)
 	E3 = matrix(E$E3, ncol=len, nrow=4, byrow=T)
@@ -253,8 +283,8 @@ solve.old = function(x, E) {
 	SS2 = rep(as.vector(SS3), each=3) - x2;
 	E2S2 = rep(as.vector(E3S3), each=3) / x2;
 	# TODO: root[2]
-	x3 = sapply(seq_along(x2), function(id) roots(c(1, -SS2[id], E2S2[id]))[2])
-	x4 = SS2 - x3; sol=cbind(x1=x, x2=x2, x3=x3, x4=x4);
+	x3 = sapply(seq_along(x2), function(id) roots(c(1, -SS2[id], E2S2[id]))[1])
+	x4 = rep(SS2, each=1) - x3; sol=cbind(x1=x, x2=x2, x3=x3, x4=x4);
 }
 
 b = -4:4
@@ -708,7 +738,6 @@ sol = solve.Pr3.S4P211(R, b)
 x1 = sol[,1]; x2 = sol[,2]; x3 = sol[,3]; x4 = sol[,4];
 
 ### Test
-# TODO: debug vs robust ???
 x1^2*x2*x3 + b[1]*x1*x2*x3*x4 # - R1
 x2^2*x3*x4 + b[2]*x1*x2*x3*x4 # - R2
 x3^2*x4*x1 + b[3]*x1*x2*x3*x4 # - R3
@@ -723,7 +752,6 @@ sol = solve.Pr3.S4P211(R, b)
 x1 = sol[,1]; x2 = sol[,2]; x3 = sol[,3]; x4 = sol[,4];
 
 ### Test
-# TODO: debug vs robust ???
 x1^2*x2*x3 + b[1]*x1*x2*x3*x4 # - R1
 x2^2*x3*x4 + b[2]*x1*x2*x3*x4 # - R2
 x3^2*x4*x1 + b[3]*x1*x2*x3*x4 # - R3
