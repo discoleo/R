@@ -6,7 +6,7 @@
 ### Polynomial Systems: S3
 ### Heterogenous Symmetric: Y*Z-Type
 ###
-### draft v.0.1a
+### draft v.0.1b
 
 
 ### Hetero-Symmetric
@@ -25,6 +25,10 @@ z^n + b*x*y = R
 ### History ###
 ###############
 
+
+### draft v.0.1b:
+# - started work on extension:
+#   x^3 + b*y*z + b1*x = R;
 ### draft v.0.1a:
 # - moved to this new file from file:
 #   Poly.System.Hetero.Symmetric.S3.R;
@@ -166,3 +170,45 @@ y = -0.2089400963 - 0.4200165444i;
 z = -0.2089400963 - 0.4200165444i;
 S = x+y+z; E2 = x*(y+z)+y*z; E3 = x*y*z;
 
+
+#######################
+
+### Extension:
+# x^3 + b*y*z + b1*x = R
+# y^3 + b*x*z + b1*y = R
+# z^3 + b*x*y + b1*z = R
+
+### Solution:
+
+### Case 3:
+# x != y != z
+
+### Diff =>
+(x-y)*(x^2 + y^2 + x*y - b*z + b1) # = 0
+(x-z)*(x^2 + z^2 + x*z - b*y + b1) # = 0
+(y-z)*(y^2 + z^2 + y*z - b*x + b1) # = 0
+### Sum =>
+2*(x^2+y^2+z^2) + E2 - b*S + 3*b1 # = 0
+2*S^2 - 3*E2 - b*S + 3*b1 # = 0
+
+# x*... =>
+x^4 + b*x*y*z + b1*x^2 - R*x # = 0
+# ...
+### Diff: (x[i]*Eq[i] - x[j]*Eq[j]) =>
+(x^4 - y^4) + b1*(x^2 - y^2) - R*(x - y) # = 0
+(x-y)*(x^3 + y^3 + x^2*y + x*y^2 + b1*(x+y) - R) # = 0
+### Sum(Diff) =>
+2*(x^3 + y^3 + z^3) + (E2*S - 3*E3) + 2*b1*S - 3*R # = 0
+2*(S^3 - 3*E2*S + 3*E3) + E2*S - 3*E3 + 2*b1*S - 3*R
+2*S^3 - 5*E2*S + 3*E3 + 2*b1*S - 3*R
+
+### Sum =>
+(x^3 + y^3 + z^3) + b*E2 + b1*S - 3*R # = 0
+S^3 - 3*E2*S + 3*E3 + b*E2 + b1*S - 3*R
+
+### Relations:
+# 3*E2 = 2*S^2 - b*S + 3*b1
+# 3*E3 = - (2*S^3 - 5*E2*S + 2*b1*S - 3*R)
+# 3*E3 = - (S^3 - 3*E2*S + b*E2 + b1*S - 3*R)
+
+### TODO
