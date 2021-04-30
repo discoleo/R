@@ -6,7 +6,7 @@
 ### Polynomial Systems: S3
 ### Heterogenous Symmetric: Y*Z-Type
 ###
-### draft v.0.1b-sol
+### draft v.0.1c
 
 
 ### Hetero-Symmetric
@@ -26,7 +26,7 @@ z^n + b*x*y = R
 ###############
 
 
-### draft v.0.1b - v.0.1b-sol:
+### draft v.0.1b - v.0.1c:
 # - [started work] / solved extension:
 #   x^3 + b*y*z + b1*x = R;
 # - TODO: Case x == y, but != z;
@@ -36,7 +36,7 @@ z^n + b*x*y = R
 ### [old file]
 # - solved Order 3:
 #   x^3 + b*y*z = R;
-# - TODO: Case x == y, but != z;
+# - [DONE] Case x == y, but != z; [v.0.1c]
 
 
 ####################
@@ -130,6 +130,31 @@ S^3 - 2*E2*S - b*E2 # = 0
 3*S^3 - 2*(2*S^2 - b*S)*S - b*(2*S^2 - b*S) # = 0
 S^3 - b^2*S # = 0
 
+###########
+### Case 2:
+# x = y, but != z
+x^3 + b*x*z - R # = 0
+z^3 + b*x^2 - R # = 0
+
+### Diff =>
+(x-z)*(x^2 + z^2 + x*z - b*x) # = 0
+x^2 + z^2 + x*z - b*x # = 0 # * z =>
+z^3 + x^2*z + x*z^2 - b*x*z # + Eq 1 =>
+x^3 + z^3 + x^2*z + x*z^2 - R
+s^3 - 2*x*z*s - R
+### Diff: x*Eq1 - z*Eq2 => [redundant]
+x^4 - z^4 - R*(x-z) # = 0
+(x-z)*(x^3 + z^3 + x*z*s - R) # = 0
+### Diff: z*Eq1 - x*Eq2 =>
+x*z*(x^2 - z^2) - b*x*(x-z)*s + R*(x-z) # = 0
+x*z*s - b*x*s + R # = 0
+
+### [classic approach]
+(x^3 - R)^3 - b^4*x^5 + b^3*x^3*R # = 0
+x^9 - 3*R*x^6 - b^4*x^5 + 3*R^2*x^3 + b^3*x^3*R - R^3
+# (x^3 + b*x^2 - R) * P[6]
+x^6 - b*x^5 + b^2*x^4 - (b^3 + 2*R)*x^3 + b*R*x^2 + R^2
+
 
 ### Solver:
 solve.Htxy.S3P3 = function(R, b, debug=TRUE) {
@@ -148,6 +173,12 @@ solve.Htxy.S3P3 = function(R, b, debug=TRUE) {
 	z = (yz.s - yz.d) / 2;
 	sol = cbind(x=as.vector(x), y=as.vector(y), z=as.vector(z));
 	sol = rbind(sol, sol[,c(1,3,2)])
+	### Case: x == y, but != z;
+	coeff = c(1, - b[1], b[1]^2, - (b[1]^3 + 2*R[1]), b[1]*R[1], 0, R[1]^2);
+	x = roots(coeff);
+	z = (R - x^3) / (b[1]*x);
+	sol21 = cbind(x=x, y=x, z=z);
+	sol = rbind(sol, sol21);
 	return(sol);
 }
 
@@ -166,15 +197,16 @@ z^3 + b*x*y # - R
 
 ### Debug
 R = 2; b = 3;
-x = -0.5886981677 + 1.2138678312i;
+x = -0.2089400963 - 0.4200165444i;
 y = -0.2089400963 - 0.4200165444i;
-z = -0.2089400963 - 0.4200165444i;
+z = -0.5886981677 + 1.2138678312i;
 S = x+y+z; E2 = x*(y+z)+y*z; E3 = x*y*z;
 
 
-#######################
+#########################
 
-### Extension:
+### Asymmetric Extension:
+
 # x^3 + b*y*z + b1*x = R
 # y^3 + b*x*z + b1*y = R
 # z^3 + b*x*y + b1*z = R
