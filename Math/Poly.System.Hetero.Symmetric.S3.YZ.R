@@ -6,7 +6,7 @@
 ### Polynomial Systems: S3
 ### Heterogenous Symmetric: Y*Z-Type
 ###
-### draft v.0.1c
+### draft v.0.1d
 
 
 ### Hetero-Symmetric
@@ -26,6 +26,10 @@ z^n + b*x*y = R
 ###############
 
 
+### draft v.0.1d:
+# - solved type x*y*z:
+#   x^3 + b*x*y*z + b1*x = R;
+# - TODO: Case x == y, but != z;
 ### draft v.0.1b - v.0.1c:
 # - [started work] / solved extension:
 #   x^3 + b*y*z + b1*x = R;
@@ -285,4 +289,73 @@ x = sol[,1]; y = sol[,2]; z = sol[,3];
 x^3 + b*y*z + bc*x # - R
 y^3 + b*x*z + bc*y # - R
 z^3 + b*x*y + bc*z # - R
+
+
+################################
+################################
+
+###########################
+### Type: x^n + b*x*y*z ###
+###########################
+
+###############
+### Order 3 ###
+###############
+
+# x^3 + b*x*y*z + b1*x = R
+# y^3 + b*x*y*z + b1*y = R
+# z^3 + b*x*y*z + b1*z = R
+
+### Solution:
+
+### Case 3:
+# x != y != z
+
+### Diff =>
+(x-y)*(x^2 + y^2 + x*y + b1) # = 0
+(x-z)*(x^2 + z^2 + x*z + b1) # = 0
+(y-z)*(y^2 + z^2 + y*z + b1) # = 0
+### Diff(Diff) =>
+(y-z)*S # = 0
+# S = 0!
+
+### Sum(Diff) =>
+2*(S^2 - 2*E2) + E2 + 3*b1 # = 0
+# 3*E2 = 2*S^2 + 3*b1
+
+### Sum =>
+S^3 - 3*E2*S + 3*E3 + 3*b*E3 + b1*S - 3*R # = 0
+# 3*(b+1)*E3 = - (S^3 - 3*E2*S + b1*S - 3*R)
+
+### Solver:
+solve.Htxyz.S3P3 = function(R, b, bc, debug=TRUE) {
+	S = c(0);
+	if(debug) print(S);
+	E2 = (2*S^2 + 3*bc[1]) / 3; # bc[1]
+	E3 = - (S^3 - 3*E2*S + bc[1]*S - 3*R) / (3*(b[1]+1));
+	len = length(S);
+	x = sapply(seq(len), function(id) roots(c(1, -S[id], E2[id], -E3[id])));
+	S = rep(S, each=3); E3 = rep(E3, each=3);
+	if(any(round0(x) == 0)) print("Division by 0!")
+	yz.s = S - x; yz = E3 / x;
+	yz.d = sqrt(yz.s^2 - 4*yz + 0i);
+	y = (yz.s + yz.d) / 2;
+	z = (yz.s - yz.d) / 2;
+	sol = cbind(x=as.vector(x), y=as.vector(y), z=as.vector(z));
+	sol = rbind(sol, sol[,c(1,3,2)])
+	return(sol);
+}
+
+### Examples:
+
+R = -1
+b = 2
+bc = 3
+sol = solve.Htxyz.S3P3(R, b, bc)
+x = sol[,1]; y = sol[,2]; z = sol[,3];
+
+### Test
+x^3 + b*x*y*z + bc*x # - R
+y^3 + b*x*y*z + bc*y # - R
+z^3 + b*x*y*z + bc*z # - R
 
