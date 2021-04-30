@@ -6,7 +6,7 @@
 ### Polynomial Systems: S3
 ### Heterogenous Symmetric: Y*Z-Type
 ###
-### draft v.0.1b
+### draft v.0.1b-sol
 
 
 ### Hetero-Symmetric
@@ -26,9 +26,10 @@ z^n + b*x*y = R
 ###############
 
 
-### draft v.0.1b:
-# - started work on extension:
+### draft v.0.1b - v.0.1b-sol:
+# - [started work] / solved extension:
 #   x^3 + b*y*z + b1*x = R;
+# - TODO: Case x == y, but != z;
 ### draft v.0.1a:
 # - moved to this new file from file:
 #   Poly.System.Hetero.Symmetric.S3.R;
@@ -201,14 +202,55 @@ x^4 + b*x*y*z + b1*x^2 - R*x # = 0
 2*(x^3 + y^3 + z^3) + (E2*S - 3*E3) + 2*b1*S - 3*R # = 0
 2*(S^3 - 3*E2*S + 3*E3) + E2*S - 3*E3 + 2*b1*S - 3*R
 2*S^3 - 5*E2*S + 3*E3 + 2*b1*S - 3*R
+### Diff(Diff) =>
+(y^3 - z^3) + (x^2*y + x*y^2 - x^2*z - x*z^2) + b1*(y-z) # = 0
+(y-z)*(x^2 + y^2 + z^2 + y*z + x*(y+z) + b1) # = 0
+S^2 - E2 + b1 # = 0
+
 
 ### Sum =>
 (x^3 + y^3 + z^3) + b*E2 + b1*S - 3*R # = 0
 S^3 - 3*E2*S + 3*E3 + b*E2 + b1*S - 3*R
 
 ### Relations:
+# E2 = S^2 + b1
 # 3*E2 = 2*S^2 - b*S + 3*b1
 # 3*E3 = - (2*S^3 - 5*E2*S + 2*b1*S - 3*R)
 # 3*E3 = - (S^3 - 3*E2*S + b*E2 + b1*S - 3*R)
 
-### TODO
+### =>
+3*S^2 + 3*b1 - (2*S^2 - b*S + 3*b1) # = 0
+S^2 + b*S # = 0
+
+### Solver:
+solve.Htxy.S3P3 = function(R, b, bc, debug=TRUE) {
+	S = c(-b[1]); # it seems this is the ONLY solution;
+	if(debug) print(S);
+	E2 = S^2 + bc[1];
+	E3 = - (2*S^3 - 5*E2*S + 2*bc[1]*S - 3*R[1]) / 3;
+	len = length(S);
+	x = sapply(seq(len), function(id) roots(c(1, -S[id], E2[id], -E3[id])));
+	S = rep(S, each=3); E3 = rep(E3, each=3);
+	if(any(round0(x) == 0)) print("Division by 0!")
+	yz.s = S - x; yz = E3 / x;
+	yz.d = sqrt(yz.s^2 - 4*yz + 0i);
+	y = (yz.s + yz.d) / 2;
+	z = (yz.s - yz.d) / 2;
+	sol = cbind(x=as.vector(x), y=as.vector(y), z=as.vector(z));
+	sol = rbind(sol, sol[,c(1,3,2)])
+	return(sol);
+}
+
+### Examples:
+
+R = -1
+b = 2
+bc = 3
+sol = solve.Htxy.S3P3(R, b, bc)
+x = sol[,1]; y = sol[,2]; z = sol[,3];
+
+### Test
+x^3 + b*y*z + bc*x # - R
+y^3 + b*x*z + bc*y # - R
+z^3 + b*x*y + bc*z # - R
+
