@@ -6,7 +6,7 @@
 ### Polynomial Systems: S3
 ### Heterogenous Symmetric: Y*Z-Type
 ###
-### draft v.0.1d-case
+### draft v.0.1d-case2
 
 
 ### Hetero-Symmetric
@@ -33,7 +33,7 @@ z^n + b*x*y = R
 ### draft v.0.1b - v.0.1c:
 # - [started work] / solved extension:
 #   x^3 + b*y*z + b1*x = R;
-# - TODO: Case x == y, but != z;
+# - [DONE] Case x == y, but != z; [v.0.1d-case2]
 ### draft v.0.1a:
 # - moved to this new file from file:
 #   Poly.System.Hetero.Symmetric.S3.R;
@@ -258,6 +258,26 @@ S^3 - 3*E2*S + 3*E3 + b*E2 + b1*S - 3*R
 3*S^2 + 3*b1 - (2*S^2 - b*S + 3*b1) # = 0
 S^2 + b*S # = 0
 
+### Case 2:
+# x == y, but != z;
+x^3 + b*x*z + b1*x - R # = 0
+z^3 + b*x^2 + b1*z - R # = 0
+
+### [classic approach]
+b^3*x^3*z^3 + b^4*x^5 + b^3*b1*z*x^3 - b^3*R*x^3 # = 0
+(x^3 + b1*x - R)^3 - b^4*x^5 + b^2*b1*(x^3 + b1*x - R)*x^2 + b^3*R*x^3 # = 0
+(x^3 + b*x^2 + b1*x - R)^3 - 3*b*x^2*(x^3 + b*x^2 + b1*x - R)^2 +
+	+ 3*b^2*x^4*(x^3 + b*x^2 + b1*x - R) + b^2*b1*(x^3 + b*x^2 + b1*x - R)*x^2 +
+	- b^3*(x^3 + b*x^2 + b1*x - R)*x^3 # = 0
+(x^3 + b*x^2 + b1*x - R) *
+	((x^3 + b*x^2 + b1*x - R)^2 - 3*b*x^2*(x^3 + b*x^2 + b1*x - R) +
+	+ 3*b^2*x^4 + b^2*b1*x^2 - b^3*x^3) # = 0
+# P[3] * P[6]
+(x^3 + b*x^2 + b1*x - R) *
+	(x^6 - b*x^5 + b^2*x^4 + 2*b1*x^4 - (b^3 + b*b1 + 2*R)*x^3 +
+	+ (b^2*b1 + b1^2 + b*R)*x^2 - 2*b1*R*x + R^2) # = 0
+
+
 ### Solver:
 solve.Htxy.S3P3 = function(R, b, bc, debug=TRUE) {
 	S = c(-b[1]); # it seems this is the ONLY solution;
@@ -274,6 +294,13 @@ solve.Htxy.S3P3 = function(R, b, bc, debug=TRUE) {
 	z = (yz.s - yz.d) / 2;
 	sol = cbind(x=as.vector(x), y=as.vector(y), z=as.vector(z));
 	sol = rbind(sol, sol[,c(1,3,2)])
+	### Case: x == y, but != z
+	coeff = c(1, - b[1], b[1]^2 + 2*bc[1], - (b[1]^3 + b[1]*bc[1] + 2*R),
+		(b[1]^2*bc[1] + bc[1]^2 + b[1]*R), - 2*bc[1]*R, R^2);
+	x = roots(coeff);
+	z = - (x^3 + bc[1]*x - R[1]) / (b*x);
+	sol2 = cbind(x=x, y=x, z=z);
+	sol = rbind(sol, sol2);
 	return(sol);
 }
 
@@ -289,6 +316,16 @@ x = sol[,1]; y = sol[,2]; z = sol[,3];
 x^3 + b*y*z + bc*x # - R
 y^3 + b*x*z + bc*y # - R
 z^3 + b*x*y + bc*z # - R
+
+
+### Derivation:
+p = list(
+	x = c(3,2,1,0),
+	b = c(0,1,0,0),
+	b1= c(0,0,1,0),
+	R = c(0,0,0,1),
+	coeff = c(1,1,1,-1)
+	)
 
 
 ################################
