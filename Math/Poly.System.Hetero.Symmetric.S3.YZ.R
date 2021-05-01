@@ -6,7 +6,7 @@
 ### Polynomial Systems: S3
 ### Heterogenous Symmetric: Y*Z-Type
 ###
-### draft v.0.1d
+### draft v.0.1d-case
 
 
 ### Hetero-Symmetric
@@ -26,10 +26,10 @@ z^n + b*x*y = R
 ###############
 
 
-### draft v.0.1d:
+### draft v.0.1d - v.0.1d-case:
 # - solved type x*y*z:
 #   x^3 + b*x*y*z + b1*x = R;
-# - TODO: Case x == y, but != z;
+# - [DONE] Case x == y, but != z; [v.0.1d-case]
 ### draft v.0.1b - v.0.1c:
 # - [started work] / solved extension:
 #   x^3 + b*y*z + b1*x = R;
@@ -327,6 +327,24 @@ z^3 + b*x*y + bc*z # - R
 S^3 - 3*E2*S + 3*E3 + 3*b*E3 + b1*S - 3*R # = 0
 # 3*(b+1)*E3 = - (S^3 - 3*E2*S + b1*S - 3*R)
 
+
+###########
+### Case 2:
+# x = y, but != z
+x^3 + b*x^2*z + b1*x - R # = 0
+z^3 + b*x^2*z + b1*z - R # = 0
+
+### [classic approach]
+(x^3 + b1*x - R)^3 + b^3*x^9 + b^3*b1*x^7 + b^2*b1*x^7 +
+	+ b^2*b1^2*x^5 - b^2*b1*R*x^4
+(b^3+1)*x^9 + (b^3 + b^2 + 3)*b1*x^7 - 3*R*x^6 + (b^2+3)*b1^2*x^5 - (b^2+6)*b1*R*x^4 +
+	+ b1^3*x^3 + 3*R^2*x^3 - 3*b1^2*R*x^2 + 3*b1*R^2*x - R^3
+### ((b+1)*x^3 + b1*x - R) * P[6]
+(1 - b + b^2)*x^6 +
+	+ b1*(b^2 - b + 2)*x^4 + R*(b - 2)*x^3 +
+	+ b1^2*x^2 - 2*R*b1*x + R^2
+
+
 ### Solver:
 solve.Htxyz.S3P3 = function(R, b, bc, debug=TRUE) {
 	S = c(0);
@@ -343,6 +361,14 @@ solve.Htxyz.S3P3 = function(R, b, bc, debug=TRUE) {
 	z = (yz.s - yz.d) / 2;
 	sol = cbind(x=as.vector(x), y=as.vector(y), z=as.vector(z));
 	sol = rbind(sol, sol[,c(1,3,2)])
+	
+	### Case: x == y, but != z;
+	bb = b[1]^2 - b[1] + 1;
+	coeff = c(bb, 0, bc[1]*(bb + 1), R[1]*(b[1] - 2), bc[1]^2, - 2*R[1]*bc[1], R[1]^2);
+	x = roots(coeff);
+	z = - (x^3 + bc[1]*x - R[1]) / (b[1]*x^2);
+	sol2 = cbind(x=x, y=x, z=z);
+	sol = rbind(sol, sol2);
 	return(sol);
 }
 
