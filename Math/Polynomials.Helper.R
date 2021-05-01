@@ -39,11 +39,78 @@ roots.cl2.f = function(s, n = length(s)) {
 	r = sapply(seq(n), function(id) sum(s * m[id]^(0:n)))
 	r = round0(r)
 }
+### Multiplication
 mult.p = function(p1, p2) {
 	p.m = outer(p1, p2)
     p = as.vector(tapply(p.m, row(p.m) + col(p.m), sum))
 	return(p)
 }
+### Multi-variable Multiplication
+mult.pm = function(p1, p2) {
+	# P1
+	split.df = function(p.df) {
+		p.l = lapply(colnames(p.df), function(name) p.df[,name]);
+		names(p.l) = colnames(p.df);
+		return(p.l);
+	}
+	if(is.data.frame(p1)) {
+		p1 = split.df(p1);
+	}
+	p1.b0 = p1$coeff;
+	p1 = p1[ ! names(p1) %in% "coeff"];
+	# P2
+	if(missing(p2)) {
+		p2.b0 = p1.b0;
+		p2 = p1;
+	} else {
+		if(is.data.frame(p2)) {
+			p2 = split.df(p2);
+		}
+		p2.b0 = p2$coeff;
+		p2 = p2[ ! names(p2) %in% "coeff"];
+	}
+	# helper
+	prod.b0 = function(p1, p2=p1) outer(p1, p2);
+	# Adjust Vars
+	vars = unique(c(names(p1), names(p2)));
+	len  = length(p1[[1]])
+	for(v in vars[ ! vars %in% names(p1)]) p1[[v]] = rep(0, len);
+	len  = length(p2[[1]])
+	for(v in vars[ ! vars %in% names(p2)]) p2[[v]] = rep(0, len);
+	# print(p1); print(p2);
+	# Multiply
+	p.m = lapply(vars, function(name) outer(p1[[name]], p2[[name]], function(i, j) i+j))
+	p.b0 = prod.b0(p1.b0, p2.b0);
+	p.l = lapply(p.m, as.vector);
+	p.v = do.call(cbind, p.l)
+	p.v = cbind(p.v, b0=as.vector(p.b0))
+	p.r = aggregate(b0~., p.v, sum);
+	colnames(p.r) = c(vars, "coeff");
+	return(p.r);
+}
+pow.p = function(p, n=2) {
+	if(n == 1) return(p);
+	if(is.double(n) && (n == round(n))) n = as.integer(n);
+	if( ! is.integer(n)) stop("n must be integer!")
+	# Multiply
+	# TODO: vectorize: as.integer(intToBits(3));
+	p.r = NULL;
+	p.pow = p;
+	while (n > 0) {
+		print(n)
+		if (n %% 2 == 1) {
+			if(is.null(p.r)) p.r = p.pow else p.r = mult.pm(p.r, p.pow);
+		}
+		if(n == 1) break;
+        p.pow = mult.pm(p.pow);
+        n = n %/% 2;
+    }
+	x.name = names(p)[1];
+	id = order(p.r[,x.name], decreasing=TRUE);
+	p.r = p.r[id,];
+	return(p.r);
+}
+
 # round to 0
 round0 = function(m, tol=1E-7) {
 	m[abs(Re(m)) < tol & abs(Im(m)) < tol] = 0
@@ -141,4 +208,28 @@ solve.mS = function(S, b=0) {
 	z = yz.s - y
 	cbind(as.vector(x), as.vector(y), as.vector(z))
 }
+
+
+#######################
+#######################
+
+#############
+### Tests ###
+#############
+
+### Multi-variable Multiplication
+
+# (x^3 + b1*x - R)^3
+p = list(
+	x = c(3,1,0),
+	b1 = c(0,1,0),
+	R = c(0,0,1),
+	coeff = c(1,1,-1)
+)
+
+### Test
+mult.pm(p)
+
+p.v = pow.p(p, 3)
+p.v
 
