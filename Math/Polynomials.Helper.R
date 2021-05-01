@@ -209,6 +209,32 @@ solve.mS = function(S, b=0) {
 	cbind(as.vector(x), as.vector(y), as.vector(z))
 }
 
+### Print
+
+# Print multi-variable Poly
+print.monome = function(name, p) {
+	v = p[,name];
+	v.r = rep("", length(v));
+	v.r[v > 1] = paste0(name, "^", v[v > 1]);
+	v.r[v == 1] = name;
+	return(v.r);
+}
+print.p = function(p) {
+	id.coeff = match("coeff", colnames(p));
+	coeff = p[,id.coeff]; p = p[, - id.coeff];
+	p.str = sapply(colnames(p), print.monome, p=p);
+	paste.nonempty = function(str, collapse="*") {
+		str = str[nchar(str) > 0]
+		paste(str, collapse=collapse)
+	}
+	p.str = apply(p.str, 1, paste.nonempty);
+	coeff.str = as.character(coeff);
+	hasCoeff = (coeff != 1);
+	p.str[hasCoeff] = paste(coeff.str[hasCoeff], p.str[hasCoeff], sep = "*");
+	return(paste(p.str, collapse=" + "));
+}
+
+
 
 #######################
 #######################
@@ -232,4 +258,6 @@ mult.pm(p)
 
 p.v = pow.p(p, 3)
 p.v
+
+print.p(p.v[,c(2,3,4,1)])
 
