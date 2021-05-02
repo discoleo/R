@@ -5,7 +5,7 @@
 ###
 ### Percolation
 ###
-### draft v.0.3n
+### draft v.0.3o
 
 ### Percolation
 
@@ -164,50 +164,53 @@ rlinwalk.gen = function(n, w, d, walk=c(-1,0,1), pwalk=c(1,2,1), ppore=3,
 	invisible(t(m));
 	# TODO: add Pores
 }
-rrect.gen = function(n, dim, w.lim, h.lim, lambda.pores=2, prob.dir=c(1,1), val=-1) {
+rrect.gen = function(n, dim, w.lim, h.lim, lambda.pores=2, addPores=TRUE,
+		prob.dir=c(1,1), type=c("Simple", "Poisson"), val=-1) {
 	HD = 1; VD = 2;
 	x0 = round(runif(n, 1, dim[HD]));
 	y0 = round(runif(n, 1, dim[VD]));
 	dw = round(runif(n, w.lim[1], w.lim[2]));
 	dh = round(runif(n, h.lim[1], h.lim[2]));
-	dir.r = sample(c(-1,1), n, replace=TRUE, prob=prob.dir);
+	xdir.r = sample(c(-1,1), n, replace=TRUE, prob=prob.dir);
+	ydir.r = sample(c(-1,1), n, replace=TRUE, prob=prob.dir);
+	# OX
+	xe = x0 + dw - 1; xs = x0 - dw; # offset: - 1;
+	xe[xdir.r < 0] = x0[xdir.r < 0] - 1;
+	xs[xdir.r > 0] = x0[xdir.r > 0] - 1;
+	hasV2 = ifelse(xdir.r > 0, xe < dim[HD], xs >= 0);
+	xe[xe >= dim[HD]] = dim[HD] - 1;
+	xs[xs < 0] = 0;
+	# OY
+	ye = y0 + dh - 1; ys = y0 - dh + 1; # offset: -/+ 1 ???
+	ye[xdir.r < 0] = y0[xdir.r < 0];
+	ys[xdir.r > 0] = y0[xdir.r > 0];
+	hasH2e = (ye <= dim[VD]);
+	ye[ ! hasH2e] = dim[VD];
+	hasH2s = (ys > 0);
+	ys[ ! hasH2s] = 0;
+	hasH2 = hasH2e & hasH2s;
 	#
-	vseq = seq(1, dim[VD], by=1);
 	vline.r = function(id) {
-		y.end = min(dim[VD], y0[id] + dh[id] - 1); # downwards
-		l.seq = vseq[y0[id]:y.end];
-		m.offset = (x0[id] - 1)*dim[VD];
-		px = m.offset + l.seq;
-		if(dir.r[id] > 0) {
-			x.end = max(1, x0[id] + dw[id] - 2);
-			if(x.end < dim[HD]) {
-				m.offset = x.end*dim[VD];
-				px = c(px, m.offset + l.seq);
-			}
+		l.seq = (ys[id]:ye[id]);
+		if(hasV2[id]) {
+			px = xs[id] * dim[VD] + l.seq;
+			px = c(px, xe[id] * dim[VD] + l.seq);
+		} else if(xdir.r[id] > 0) {
+			px = xs[id] * dim[VD] + l.seq;
 		} else {
-			x.end = x0[id] - dw[id]; # + 1;
-			if(x.end >= 0) {
-				m.offset = x.end*dim[VD];
-				px = c(px, m.offset + l.seq);
-			}
+			px = xe[id] * dim[VD] + l.seq;
 		}
 		return(px);
 	}
-	# TODO: What is faster?
-	# xseq = seq(0, dim[HD], by=1);
 	hline.r = function(id) {
-		if(dir.r[id] > 0) {
-			x.end   = min(dim[HD] - 1, x0[id] + dw[id] - 2);
-			x.start = max(0, x0[id] - 1);
-			l.seq = x.start:x.end;
+		l.seq = (xs[id]:xe[id]) * dim[VD];
+		if(hasH2[id]) {
+			px = ys[id] + l.seq;
+			px = c(px, ye[id] + l.seq);
+		} else if(xdir.r[id] > 0) {
+			px = ys[id] + l.seq;
 		} else {
-			x.start = max(0, x0[id] - dw[id]);
-			x.end   = max(0, x0[id]-1)
-			l.seq = x.start:x.end;
-		}
-		px = l.seq * dim[VD] + y0[id];
-		if(y0[id] + dh[id] <= dim[VD]) {
-			px = c(px, px + dh[id]); # TODO: std: dh vs dh - 1;
+			px = ye[id] + l.seq;
 		}
 		return(px);
 	}
@@ -218,14 +221,44 @@ rrect.gen = function(n, dim, w.lim, h.lim, lambda.pores=2, prob.dir=c(1,1), val=
 	if(any(hl < 1)) print("ERROR: H");
 	print(max(vl));
 	print(max(hl));
-	px = unique(c(vl, hl));
+	px = sort(unique(c(vl, hl)));
 	m = matrix(0, nrow=dim[VD], ncol=dim[HD]);
 	m[px] = val;
+	### Pores
+	if(addPores) {
+		type = match.arg(type);
+		if(type == "Simple") {
+			nPores = sum(rpois(n, lambda.pores));
+			print(paste0("Pores: ", nPores));
+			idPores = sample(px, nPores);
+			m[idPores] = 0;
+		} else {
+		# TODO
+		nPores = rpois(n, lambda.pores);
+		hasPores = (nPores > 0);
+		nPores = nPores[hasPores];
+		# idAll = sum(hasPores);
+		idPores = rep(seq(n)[hasPores], each=nPores);
+		nAll = sum(nPores);
+		# OX: 1 & 2; OY: 3 & 4;
+		dir.p = sample(1:4, nAll, replace=TRUE);
+		#
+		dx = rep(0, nAll); dy = rep(0, nAll);
+		dx[dir.p <= 2] = (w.lim[1] + w.lim[2]) %/% 2;
+		dy[dir.p >= 3] = (h.lim[1] + h.lim[2]) %/% 2;
+		# idPores = c(1, cumsum(nPores));
+		pores.f = function(id) {
+			id0 = idPores[id];
+			# TODO
+		}
+		pores = sapply(seq(nAll), pores.f);
+		}
+	}
 	invisible(m);
 }
 
 ### TODO: pores;
-m = rrect.gen(120, c(40, 200), c(6, 20), c(6, 16))
+m = rrect.gen(120, c(40, 200), c(6, 20), c(6, 16), lambda=3)
 plot.rs(m)
 
 m.fl = flood.all(m)
