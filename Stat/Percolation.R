@@ -5,7 +5,7 @@
 ###
 ### Percolation
 ###
-### draft v.0.3m
+### draft v.0.3n
 
 ### Percolation
 
@@ -164,7 +164,72 @@ rlinwalk.gen = function(n, w, d, walk=c(-1,0,1), pwalk=c(1,2,1), ppore=3,
 	invisible(t(m));
 	# TODO: add Pores
 }
+rrect.gen = function(n, dim, w.lim, h.lim, lambda.pores=2, prob.dir=c(1,1), val=-1) {
+	HD = 1; VD = 2;
+	x0 = round(runif(n, 1, dim[HD]));
+	y0 = round(runif(n, 1, dim[VD]));
+	dw = round(runif(n, w.lim[1], w.lim[2]));
+	dh = round(runif(n, h.lim[1], h.lim[2]));
+	dir.r = sample(c(-1,1), n, replace=TRUE, prob=prob.dir);
+	#
+	vseq = seq(1, dim[VD], by=1);
+	vline.r = function(id) {
+		y.end = min(dim[VD], y0[id] + dh[id] - 1); # downwards
+		l.seq = vseq[y0[id]:y.end];
+		m.offset = (x0[id] - 1)*dim[VD];
+		px = m.offset + l.seq;
+		if(dir.r[id] > 0) {
+			x.end = max(1, x0[id] + dw[id] - 2);
+			if(x.end < dim[HD]) {
+				m.offset = x.end*dim[VD];
+				px = c(px, m.offset + l.seq);
+			}
+		} else {
+			x.end = x0[id] - dw[id]; # + 1;
+			if(x.end >= 0) {
+				m.offset = x.end*dim[VD];
+				px = c(px, m.offset + l.seq);
+			}
+		}
+		return(px);
+	}
+	# TODO: What is faster?
+	# xseq = seq(0, dim[HD], by=1);
+	hline.r = function(id) {
+		if(dir.r[id] > 0) {
+			x.end   = min(dim[HD] - 1, x0[id] + dw[id] - 2);
+			x.start = max(0, x0[id] - 1);
+			l.seq = x.start:x.end;
+		} else {
+			x.start = max(0, x0[id] - dw[id]);
+			x.end   = max(0, x0[id]-1)
+			l.seq = x.start:x.end;
+		}
+		px = l.seq * dim[VD] + y0[id];
+		if(y0[id] + dh[id] <= dim[VD]) {
+			px = c(px, px + dh[id]); # TODO: std: dh vs dh - 1;
+		}
+		return(px);
+	}
+	vl = unlist(lapply(seq(n), vline.r));
+	hl = unlist(lapply(seq(n), hline.r));
+	### Debug
+	if(any(vl < 1)) print("ERROR: V");
+	if(any(hl < 1)) print("ERROR: H");
+	print(max(vl));
+	print(max(hl));
+	px = unique(c(vl, hl));
+	m = matrix(0, nrow=dim[VD], ncol=dim[HD]);
+	m[px] = val;
+	invisible(m);
+}
 
+### TODO: pores;
+m = rrect.gen(120, c(40, 200), c(6, 20), c(6, 16))
+plot.rs(m)
+
+m.fl = flood.all(m)
+plot.rs(m.fl)
 
 ### Percolation Functions
 
