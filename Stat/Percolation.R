@@ -5,7 +5,7 @@
 ###
 ### Percolation
 ###
-### draft v.0.3o
+### draft v.0.3p
 
 ### Percolation
 
@@ -165,12 +165,17 @@ rlinwalk.gen = function(n, w, d, walk=c(-1,0,1), pwalk=c(1,2,1), ppore=3,
 	# TODO: add Pores
 }
 rrect.gen = function(n, dim, w.lim, h.lim, lambda.pores=2, addPores=TRUE,
-		prob.dir=c(1,1), type=c("Simple", "Poisson"), val=-1) {
+		type=c("Poisson", "Simple"), aspect.fixed, prob.dir=c(1,1), val=-1) {
+	# n = no. of rectangles;
 	HD = 1; VD = 2;
 	x0 = round(runif(n, 1, dim[HD]));
 	y0 = round(runif(n, 1, dim[VD]));
 	dw = round(runif(n, w.lim[1], w.lim[2]));
-	dh = round(runif(n, h.lim[1], h.lim[2]));
+	if(missing(aspect.fixed)) {
+		dh = round(runif(n, h.lim[1], h.lim[2]));
+	} else {
+		dh = dw * aspect.fixed;
+	}
 	xdir.r = sample(c(-1,1), n, replace=TRUE, prob=prob.dir);
 	ydir.r = sample(c(-1,1), n, replace=TRUE, prob=prob.dir);
 	# OX
@@ -228,36 +233,90 @@ rrect.gen = function(n, dim, w.lim, h.lim, lambda.pores=2, addPores=TRUE,
 	if(addPores) {
 		type = match.arg(type);
 		if(type == "Simple") {
-			nPores = sum(rpois(n, lambda.pores));
+			nPores = round(n * lambda.pores);
+			# nPores = sum(rpois(n, lambda.pores));
 			print(paste0("Pores: ", nPores));
 			idPores = sample(px, nPores);
 			m[idPores] = 0;
 		} else {
-		# TODO
-		nPores = rpois(n, lambda.pores);
-		hasPores = (nPores > 0);
-		nPores = nPores[hasPores];
-		# idAll = sum(hasPores);
-		idPores = rep(seq(n)[hasPores], each=nPores);
+			pores = rpores(data.frame(hasH2 = hasH2, hasV2 = hasV2), lambda.pores);
+		
+			lapply(pores, function(x) {
+				hasHV = attr(x, "f");
+				if(all(hasHV[1,])) {
+					print("Both")
+				} else if(hasHV$hasH2[1]) {
+					print("H2")
+				} else if(hasHV$hasV2[1]) {
+				} else {
+				}
+			})
+			return(m);
+		### TODO
 		nAll = sum(nPores);
-		# OX: 1 & 2; OY: 3 & 4;
-		dir.p = sample(1:4, nAll, replace=TRUE);
-		#
 		dx = rep(0, nAll); dy = rep(0, nAll);
-		dx[dir.p <= 2] = (w.lim[1] + w.lim[2]) %/% 2;
-		dy[dir.p >= 3] = (h.lim[1] + h.lim[2]) %/% 2;
-		# idPores = c(1, cumsum(nPores));
-		pores.f = function(id) {
-			id0 = idPores[id];
-			# TODO
-		}
-		pores = sapply(seq(nAll), pores.f);
+		dx[dir.p <= 2] = (w.lim[1] + w.lim[2]) * idEach[dir.p <= 2] %/% len[dir.p <= 2];
+		dy[dir.p >= 3] = (h.lim[1] + h.lim[2]) * idEach[dir.p <= 2] %/% len[dir.p <= 2];
+		idP2 = idPores[dir.p == 2];
 		}
 	}
 	invisible(m);
 }
+rpores = function(x, lambda) {
+	n = nrow(x);
+	nPores = rpois(n, lambda);
+	hasPores = (nPores > 0);
+	nPores = nPores[hasPores];
+	### Categories
+	# - using columns present in x;
+	pores.df  = cbind(x[hasPores,], nPores = nPores);
+	pores.cat = rpores.cat(pores.df);
+	# by Category
+	pores.df$id = seq(n)[hasPores];
+	prle = split.cat(pores.df);
+	# pl = list(pores=pores.df, hasPores=hasPores, cat=pores.cat, prle=prle);
+	pl = lapply(seq(length(prle)), function(id) {
+		x.df = prle[[id]];
+		ids = rep(x.df$id, x.df$nPores);
+		Total = rep(x.df$nPores, x.df$nPores);
+		pores.df = data.frame(id=ids, cat=pores.cat$n.cat[[id]], Total=Total);
+		attr(pores.df, "f") = attr(x.df, "f");
+		return(pores.df);
+	})
+	print(str(pl))
+	invisible(pl);
+}
+rpores.cat = function(pores.df) {
+	pores.part = aggregate(nPores ~ ., pores.df, sum);
+	len = nrow(pores.part);
+	p.cat = data.frame(Any=TRUE, pores.part[ ! names(pores.part) %in% "nPores"]);
+	p.cat.m = as.matrix(p.cat);
+	id.cat = seq(ncol(p.cat.m));
+	rp.cat = function(id) {
+		sample(id.cat[p.cat.m[id,]], pores.part$nPores[id], replace=TRUE);
+	}
+	pores.l = list(p.cat=p.cat, n.cat=lapply(seq(len), rp.cat));
+	return(pores.l);
+}
+split.cat = function(x, var.names=c("id", "nPores"), aggr.var=var.names[1]) {
+	names.p = names(x);
+	names.p = names.p[ ! names.p %in% var.names];
+	# only in R 4.1.0!
+	# frml = reformulate(names.p)
+	prle = split(x[, var.names], f=x[ , names.p], drop=TRUE)
+	var1 = var.names[1];
+	aggr = aggregate(
+		formula(paste0(aggr.var, "~.")),
+		x[,c(aggr.var, names.p)], length)
+	names(aggr)[length(names(aggr))] = "len";
+	for(id in seq(length(prle))) {
+		attr(prle[[id]], "f") = aggr[id,];
+	}
+	prle;
+}
 
 ### TODO: pores;
+# m = rrect.gen(120, c(40, 200), c(6, 20), c(6, 16), lambda=3, aspect.fixed=2)
 m = rrect.gen(120, c(40, 200), c(6, 20), c(6, 16), lambda=3)
 plot.rs(m)
 
