@@ -6,7 +6,7 @@
 ### Polynomial Systems: S3
 ### Heterogenous Symmetric: Y*Z-Type
 ###
-### draft v.0.1d-case2
+### draft v.0.2a
 
 
 ### Hetero-Symmetric
@@ -26,6 +26,9 @@ z^n + b*x*y = R
 ###############
 
 
+### draft v.0.2a:
+# - started work on Order 4:
+#   x^4 + b*y*z = R;
 ### draft v.0.1d - v.0.1d-case:
 # - solved type x*y*z:
 #   x^3 + b*x*y*z + b1*x = R;
@@ -326,6 +329,43 @@ p = list(
 	R = c(0,0,0,1),
 	coeff = c(1,1,1,-1)
 	)
+
+
+###########################
+###########################
+
+###############
+### Order 4 ###
+###############
+
+# x^4 + b*y*z = R
+# y^4 + b*x*z = R
+# z^4 + b*x*y = R
+
+### Solution:
+
+# - if (x,y,z) is a solution,
+#   then (-x,-y,-z) is also a solution;
+#   [for all systems with even total-powers]
+
+### Case: x !=y != z;
+
+### Diff =>
+(x-y)*(x^3 + y^3 + x*y*(x+y) - b*z) # = 0
+x^3 + y^3 + x*y*S - E3 - b*z # = 0
+# ... (2 more Eqs)
+### Diff(Diff) =>
+(y-z)*(y^2+z^2 + y*z + x*S - b) # = 0
+y^2+z^2 + y*z + x*S - b # = 0
+# ... (2 more Eqs
+### Sum(Diff(Diff)) =>
+2*(x^2 + y^2 + z^2) + E2 + S^2 - 3*b # = 0
+3*S^2 - 3*E2 - 3*b # = 0
+S^2 - E2 - b # = 0
+
+
+### Relations:
+# E2 = S^2 - b
 
 
 ################################
