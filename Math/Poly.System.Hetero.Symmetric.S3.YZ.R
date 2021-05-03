@@ -6,7 +6,7 @@
 ### Polynomial Systems: S3
 ### Heterogenous Symmetric: Y*Z-Type
 ###
-### draft v.0.2a
+### draft v.0.2a-sol
 
 
 ### Hetero-Symmetric
@@ -26,8 +26,8 @@ z^n + b*x*y = R
 ###############
 
 
-### draft v.0.2a:
-# - started work on Order 4:
+### draft v.0.2a - v.0.2a-sol:
+# - [started work] / solved Order 4:
 #   x^4 + b*y*z = R;
 ### draft v.0.1d - v.0.1d-case:
 # - solved type x*y*z:
@@ -345,8 +345,8 @@ p = list(
 ### Solution:
 
 # - if (x,y,z) is a solution,
-#   then (-x,-y,-z) is also a solution;
-#   [for all systems with even total-powers]
+#   then (-x,-y,-z) and (x,z,y) are also solutions;
+#   [sign: for all systems with even total-powers]
 
 ### Case: x !=y != z;
 
@@ -355,17 +355,78 @@ p = list(
 x^3 + y^3 + x*y*S - E3 - b*z # = 0
 # ... (2 more Eqs)
 ### Diff(Diff) =>
-(y-z)*(y^2+z^2 + y*z + x*S - b) # = 0
-y^2+z^2 + y*z + x*S - b # = 0
+(y-z)*(y^2 + z^2 + y*z + x*S + b) # = 0
+y^2 + z^2 + y*z + x*S + b # = 0
 # ... (2 more Eqs
 ### Sum(Diff(Diff)) =>
-2*(x^2 + y^2 + z^2) + E2 + S^2 - 3*b # = 0
-3*S^2 - 3*E2 - 3*b # = 0
-S^2 - E2 - b # = 0
+2*(x^2 + y^2 + z^2) + E2 + S^2 + 3*b # = 0
+3*S^2 - 3*E2 + 3*b # = 0
+S^2 - E2 + b # = 0
+
+### Diff(x*...) =>
+(x-y)*(x^4 + y^4 + x*y*(x^2+y^2) + (x*y)^2 - R) # = 0
+x^4 + y^4 + x*y*(x^2+y^2+z^2) - E3*z + (x*y)^2 - R # = 0
+x^4 + y^4 + x*y*(S^2 - 2*E2) - E3*z + (x*y)^2 - R # = 0
+x^4 + z^4 + x*z*(S^2 - 2*E2) - E3*y + (x*z)^2 - R # = 0
+# ...
+### Diff(Diff(x*...)) =>
+(y-z)*(y^3+z^3 + y*z*(y+z) + x*(S^2-2*E2) + E3 + x^2*(y+z)) # = 0
+y^3 + z^3 + y*z*S + x*(S^2-2*E2) + x^2*S - x^3 # = 0
+x^3 + z^3 + x*z*S + y*(S^2-2*E2) + y^2*S - y^3 # = 0
+# ...
+### Sum(all Diff(Diff(x*...))) =>
+x^3+y^3+z^3 + E2*S + S*(S^2-2*E2) + (x^2+y^2+z^2)*S # = 0
+(S^3 - 3*E2*S + 3*E3) + E2*S + (S^2-2*E2)*S + (S^2 - 2*E2)*S # = 0
+S^3 - 2*E2*S + 3*E3 + 2*S*(S^2-2*E2) # = 0
+S^3 - 2*E2*S + E3 # = 0
+S^3 - 2*(S^2 + b)*S + E3 # = 0
+S^3 + 2*b*S - E3 # = 0
+
+### Sum =>
+(x^4+y^4+z^4) + b*E2 - 3*R # = 0
+S^4 - 4*E2*S^2 + 4*E3*S + 2*E2^2 + b*E2 - 3*R # = 0
+S^4 - 4*(S^2 + b)*S^2 + 4*E3*S + 2*(S^2 + b)^2 + b*(S^2 + b) - 3*R # = 0
+S^4 - b*S^2 - 4*E3*S - 3*b^2 + 3*R # = 0
+S^4 + 3*b*S^2 + b^2 - R # = 0
 
 
 ### Relations:
-# E2 = S^2 - b
+# E2 = S^2 + b
+# E3 = S^3 + 2*b*S
+
+### Solver:
+solve.HtYZ.S3P4 = function(R, b, debug=TRUE, sort=TRUE) {
+	coeff = c(1, 0, 3*b[1], 0, b[1]^2 - R[1]);
+	S = roots(coeff);
+	if(debug) print(S);
+	E2 = S^2 + b[1];
+	E3 = S^3 + 2*b[1]*S;
+	x = sapply(seq(length(S)), function(id) roots(c(1, -S[id], E2[id], -E3[id])));
+	S = rep(S, each=3); E3 = rep(E3, each=3);
+	yz.s = S - x; yz = E3 / x;
+	yz.d = sqrt(yz.s^2 - 4*yz + 0i)
+	y = (yz.s + yz.d) / 2;
+	z = yz.s - y;
+	sol = cbind(as.vector(x), y = as.vector(y), z=as.vector(z));
+	sol = rbind(sol, sol[,c(1,3,2)])
+	if(sort) {
+		id = order(abs(sol[,1]));
+		sol = sol[id, ];
+	}
+	return(sol);
+}
+
+### Examples:
+
+R = -1
+b = 3
+sol = solve.HtYZ.S3P4(R, b);
+x = sol[,1]; y = sol[,2]; z = sol[,3];
+
+### Test
+x^4 + b*y*z # - R
+y^4 + b*x*z # - R
+z^4 + b*x*y # - R
 
 
 ################################
