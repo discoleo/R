@@ -5,7 +5,7 @@
 ###
 ### Percolation
 ###
-### draft v.0.3p
+### draft v.0.3p-add
 
 ### Percolation
 
@@ -165,13 +165,13 @@ rlinwalk.gen = function(n, w, d, walk=c(-1,0,1), pwalk=c(1,2,1), ppore=3,
 	# TODO: add Pores
 }
 rrect.gen = function(n, dim, w.lim, h.lim, lambda.pores=2, addPores=TRUE,
-		type=c("Poisson", "Simple"), aspect.fixed, prob.dir=c(1,1), val=-1) {
+		type=c("Poisson", "Simple"), aspect.fixed=NULL, prob.dir=c(1,1), val=-1) {
 	# n = no. of rectangles;
 	HD = 1; VD = 2;
 	x0 = round(runif(n, 1, dim[HD]));
 	y0 = round(runif(n, 1, dim[VD]));
 	dw = round(runif(n, w.lim[1], w.lim[2]));
-	if(missing(aspect.fixed)) {
+	if(is.null(aspect.fixed)) {
 		dh = round(runif(n, h.lim[1], h.lim[2]));
 	} else {
 		dh = dw * aspect.fixed;
@@ -212,7 +212,7 @@ rrect.gen = function(n, dim, w.lim, h.lim, lambda.pores=2, addPores=TRUE,
 		if(hasH2[id]) {
 			px = ys[id] + l.seq;
 			px = c(px, ye[id] + l.seq);
-		} else if(xdir.r[id] > 0) {
+		} else if(ydir.r[id] > 0) {
 			px = ys[id] + l.seq;
 		} else {
 			px = ye[id] + l.seq;
@@ -241,18 +241,40 @@ rrect.gen = function(n, dim, w.lim, h.lim, lambda.pores=2, addPores=TRUE,
 		} else {
 			pores = rpores(data.frame(hasH2 = hasH2, hasV2 = hasV2), lambda.pores);
 		
-			lapply(pores, function(x) {
+			pxy = lapply(pores, function(x) {
 				hasHV = attr(x, "f");
+				xs = xs[x$id]; xe = xe[x$id]; ys = ys[x$id]; ye = ye[x$id];
+				xm = (xs + xe)/2;
+				ym = (ys + ye)/2;
+				# xdir = xdir.r[x$id]; ydir = ydir.r[id];
+				### Categories: OX = 1 & 2; OY = 3 & 4;
 				if(all(hasHV[1,])) {
 					print("Both")
+					p = xm; # valid for both Cat: 1 & 2;
+					p[x$cat == 3] = xs[x$cat == 3];
+					p[x$cat == 4] = xe[x$cat == 4];
+					p = p * dim[VD];
+					p[x$cat >= 3] = p[x$cat >= 3] + ym[x$cat >= 3];
+					p[x$cat == 1] = p[x$cat == 1] + ys[x$cat == 1];
+					p[x$cat == 2] = p[x$cat == 2] + ye[x$cat == 2];
 				} else if(hasHV$hasH2[1]) {
 					print("H2")
+					p = xm; # valid for both Cat: 1 & 2;
+					p = p * dim[VD];
+					p[x$cat == 1] = p[x$cat == 1] + ys[x$cat == 1];
+					p[x$cat == 2] = p[x$cat == 2] + ye[x$cat == 2];
 				} else if(hasHV$hasV2[1]) {
+					p = ifelse(x$cat == 1, xs, xe);
+					p = p * dim[VD] + ym;
 				} else {
+					p = c()
 				}
+				return(p);
 			})
+			pxy = sort(unique(unlist(pxy)));
+			m[pxy] = 0; # set pores
 			return(m);
-		### TODO
+		### TODO: correct number of pores!
 		nAll = sum(nPores);
 		dx = rep(0, nAll); dy = rep(0, nAll);
 		dx[dir.p <= 2] = (w.lim[1] + w.lim[2]) * idEach[dir.p <= 2] %/% len[dir.p <= 2];
