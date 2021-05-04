@@ -5,7 +5,7 @@
 ###
 ### Percolation
 ###
-### draft v.0.3p-add
+### draft v.0.3p-fix
 
 ### Percolation
 
@@ -187,8 +187,8 @@ rrect.gen = function(n, dim, w.lim, h.lim, lambda.pores=2, addPores=TRUE,
 	xs[xs < 0] = 0;
 	# OY
 	ye = y0 + dh - 1; ys = y0 - dh + 1; # offset: -/+ 1 ???
-	ye[xdir.r < 0] = y0[xdir.r < 0];
-	ys[xdir.r > 0] = y0[xdir.r > 0];
+	ye[ydir.r < 0] = y0[ydir.r < 0];
+	ys[ydir.r > 0] = y0[ydir.r > 0];
 	hasH2e = (ye <= dim[VD]);
 	ye[ ! hasH2e] = dim[VD];
 	hasH2s = (ys > 0);
@@ -267,7 +267,9 @@ rrect.gen = function(n, dim, w.lim, h.lim, lambda.pores=2, addPores=TRUE,
 					p = ifelse(x$cat == 1, xs, xe);
 					p = p * dim[VD] + ym;
 				} else {
-					p = c()
+					# rectangles are in corners;
+					# pores added to H1-stub;
+					p = xm * dim[VD] + ifelse(ydir.r[x$id] > 0, ys, ye);
 				}
 				return(p);
 			})
