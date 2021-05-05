@@ -5,14 +5,14 @@
 ###
 ### Polynomial Systems:
 ### Heterogenous Symmetric S3:
-### Mixt Type
+### Mixed Type
 ###
-### draft v.0.2h-ext1
+### draft v.0.2i-exp
 
 
 ### Heterogenous Symmetric
 ### Polynomial Systems: 3 Variables
-### Mixt: Hetero + Symmetric
+### Mixed: Hetero + Symmetric
 
 ### Example:
 # x^p*y^n + y^p*z^n + z^p*x^n = R1
@@ -26,9 +26,11 @@
 ### History ###
 ###############
 
+### draft v.0.2i-exp:
+# - minor experiments with redundancy;
 ### draft v.0.2h - v.0.2h-ext1:
 # - Dual system with E2 = R3;
-# - extension: E2 + b1*(x+y+z) = R3; [v.0.2h-ext1]
+# - Extension: E2 + b1*(x+y+z) = R3; [v.0.2h-ext1]
 ### draft v.0.2g:
 # - classic Polynomial for the simple Dual system:
 #   degenerate P18: pseudo-P6;
@@ -121,7 +123,7 @@ test.ht3Dual = function(x, y, z, R, n=2, p=1, b=0, type) {
 
 ############################
 
-### Mixt Systems Type 1 ###
+### Mixed Systems Type 1 ###
 
 ### Generalization:
 ### x^p*y^n + y^p*z^n + z^p*x^n
@@ -165,7 +167,7 @@ R3*S^3 - (R1+6*R3)*R2*S + R1^2 + R2^3 + 9*R3^2 + 3*R1*R3 # = 0
 
 ### Solution
 solve.ht3 = function(R, b=0) {
-	if(length(b) == 1 && b[1] == 0) {
+	if(all(b == 0)) {
 		coeff = c(R[3], 0, - (R[1]+6*R[3])*R[2], R[1]^2 + R[2]^3 + 9*R[3]^2 + 3*R[1]*R[3])
 	} else if(length(b) < 3) {
 		coeff = c(R[3], (b[1]^2 + b[1]*R[2]), - (R[1]*R[2] + 3*b[1]*R[3] + 6*R[2]*R[3] + 2*b[1]*R[1]),
@@ -216,12 +218,11 @@ test.ht3 = function(x, y, z, R, b=0) {
 
 ### Examples
 
-###
+### Ex 1:
 R = c(1, 1, 1)
 b = 0
 sol = solve.ht3(R, b=b)
 x = sol[,1]; y = sol[,2]; z = sol[,3];
-
 
 ### Test
 test.ht3(x, y, z, b=b)
@@ -231,7 +232,23 @@ round0.p(poly.calc(x))
 err = -1 + 3*x - 3*x^2 + 4*x^3 + x^4 - 4*x^5 + 11*x^6 - 4*x^7 + x^9
 round0(err)
 
-###
+
+#########
+### Ex 2:
+k = 1 # trivial
+R = c(3*k^3, 3*k^2, k^3)
+b = 1 # not trivial anymore
+sol = solve.ht3(R, b=b)
+x = sol[,1]; y = sol[,2]; z = sol[,3];
+
+### Test
+test.ht3(x, y, z, b=b)
+
+round0.p(poly.calc(x))
+
+
+#########
+### Ex 3:
 R = c(0, 1, 1)
 sol = solve.ht3(R)
 
@@ -843,7 +860,7 @@ solve.ht3Dual = function(R, b=0, type, tol=1E-5) {
 		if(any(isZero)) {
 			print("Special case: == 0")
 			print(paste0("Zeros: ", sum(isZero)))
-			# TODO: still NOT prefect;
+			# TODO: still NOT perfect;
 			# - only half of (y, z) are correct!
 			# - but even these are numerically unstable!
 			# - also fails for R[3] != 0;
