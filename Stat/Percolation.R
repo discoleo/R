@@ -5,7 +5,7 @@
 ###
 ### Percolation
 ###
-### draft v.0.3p-fix
+### draft v.0.3p-multiple
 
 ### Percolation
 
@@ -244,8 +244,9 @@ rrect.gen = function(n, dim, w.lim, h.lim, lambda.pores=2, addPores=TRUE,
 			pxy = lapply(pores, function(x) {
 				hasHV = attr(x, "f");
 				xs = xs[x$id]; xe = xe[x$id]; ys = ys[x$id]; ye = ye[x$id];
-				xm = (xs + xe)/2;
-				ym = (ys + ye)/2;
+				# x$Total: is NOT perfect;
+				xm = round((xs * (x$Total + 1 - x$seq) + x$seq * xe)/ (x$Total + 1));
+				ym = round((ys * (x$Total + 1 - x$seq) + x$seq * ye)/ (x$Total + 1));
 				# xdir = xdir.r[x$id]; ydir = ydir.r[id];
 				### Categories: OX = 1 & 2; OY = 3 & 4;
 				if(all(hasHV[1,])) {
@@ -275,13 +276,9 @@ rrect.gen = function(n, dim, w.lim, h.lim, lambda.pores=2, addPores=TRUE,
 			})
 			pxy = sort(unique(unlist(pxy)));
 			m[pxy] = 0; # set pores
+			print(paste("Unique pores: ", length(pxy), collapse=""));
 			return(m);
 		### TODO: correct number of pores!
-		nAll = sum(nPores);
-		dx = rep(0, nAll); dy = rep(0, nAll);
-		dx[dir.p <= 2] = (w.lim[1] + w.lim[2]) * idEach[dir.p <= 2] %/% len[dir.p <= 2];
-		dy[dir.p >= 3] = (h.lim[1] + h.lim[2]) * idEach[dir.p <= 2] %/% len[dir.p <= 2];
-		idP2 = idPores[dir.p == 2];
 		}
 	}
 	invisible(m);
@@ -303,23 +300,26 @@ rpores = function(x, lambda) {
 		x.df = prle[[id]];
 		ids = rep(x.df$id, x.df$nPores);
 		Total = rep(x.df$nPores, x.df$nPores);
-		pores.df = data.frame(id=ids, cat=pores.cat$n.cat[[id]], Total=Total);
+		pores.df = data.frame(id=ids, cat = pores.cat$id.cat[[id]], Total=Total);
+		p.seq = tapply.seq(pores.df[,c("id", "cat")]);
+		pores.df$seq = p.seq;
 		attr(pores.df, "f") = attr(x.df, "f");
 		return(pores.df);
 	})
-	print(str(pl))
+	print(str(pl)) # Debug
 	invisible(pl);
 }
 rpores.cat = function(pores.df) {
-	pores.part = aggregate(nPores ~ ., pores.df, sum);
-	len = nrow(pores.part);
-	p.cat = data.frame(Any=TRUE, pores.part[ ! names(pores.part) %in% "nPores"]);
+	# nPores per each Category:
+	pores.total = aggregate(nPores ~ ., pores.df, sum);
+	len = nrow(pores.total); # no. of categories;
+	p.cat = data.frame(Any=TRUE, pores.total[ ! names(pores.total) %in% "nPores"]);
 	p.cat.m = as.matrix(p.cat);
-	id.cat = seq(ncol(p.cat.m));
+	id.cat = seq(ncol(p.cat.m)); # the categories;
 	rp.cat = function(id) {
-		sample(id.cat[p.cat.m[id,]], pores.part$nPores[id], replace=TRUE);
+		sample(id.cat[p.cat.m[id,]], pores.total$nPores[id], replace=TRUE);
 	}
-	pores.l = list(p.cat=p.cat, n.cat=lapply(seq(len), rp.cat));
+	pores.l = list(p.cat=p.cat, id.cat=lapply(seq(len), rp.cat));
 	return(pores.l);
 }
 split.cat = function(x, var.names=c("id", "nPores"), aggr.var=var.names[1]) {
@@ -338,8 +338,11 @@ split.cat = function(x, var.names=c("id", "nPores"), aggr.var=var.names[1]) {
 	}
 	prle;
 }
+tapply.seq = function(x, id1=1, FUN=seq_along) {
+	ave(x[,id1], x, FUN=FUN);
+}
 
-### TODO: pores;
+### TODO: multiple pores by category;
 # m = rrect.gen(120, c(40, 200), c(6, 20), c(6, 16), lambda=3, aspect.fixed=2)
 m = rrect.gen(120, c(40, 200), c(6, 20), c(6, 16), lambda=3)
 plot.rs(m)
@@ -1197,4 +1200,27 @@ table(m == 0)
 ### Test Raster
 rs.m = toRaster(path.m);
 plot(rs.m)
+
+###################
+
+tapply.old.toDF = function(x) {
+	# instead use: tapply.seq();
+	n = nrow(x);
+	res.l = tapply(seq(n), x, function(x) seq(length(x)));
+	dims = attr(res.l, "dim");
+	f1.len = dims[1]; # may NOT be robust!
+	f2.len = dims[2];
+	id1 = sapply(seq(length(res.l)), function(id) {
+		id0 = ((id - 1) %% f1.len) + 1;
+		rep(id0, length(res.l[[id]]))
+	})
+	id2 = sapply(seq(length(res.l)), function(id) {
+		id2 = ((id - 1) %/% f2.len) + 1;
+		rep(id2, length(res.l[[id]]))
+	})
+	fs = attr(res.l, "dimnames");
+	data.frame(
+		id1=as.numeric(fs[[1]][unlist(id1)]),
+		id2=as.numeric(fs[[2]][unlist(id2)]), n=unlist(res.l));
+}
 
