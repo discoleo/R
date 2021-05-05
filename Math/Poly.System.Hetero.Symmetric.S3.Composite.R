@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric S3:
 ### Mixed Type: Composite
 ###
-### draft v.0.1a-var
+### draft v.0.1a-eq
 
 
 ### Heterogeneous Symmetric
@@ -32,10 +32,13 @@
 ###############
 
 
-### draft v.0.1a - v.0.1a-var:
+### draft v.0.1a - v.0.1a-eq:
 # - simple linear system:
 #   x^2 + b*y = Ru;
-# - variant: x^2 + y^2 + z^2 = R;
+# - classic P[6] example:
+#   1 - x^2 + 2*x^3 - 2*x^5 + x^6;
+# - variant: x^2 + y^2 + z^2 = R; [v.0.1a-var]
+# - explicit handling of cases: x = y = z; [v.0.1a-eq]
 
 
 ####################
@@ -86,8 +89,6 @@ S^2 - 2*E2 + b1*S - 3*Ru # = 0
 solve.CompLin.S3P2 = function(R, b, debug=TRUE) {
 	coeff = c(1, - 2*b[1], R[1] + 3*b[1]^2);
 	S  = roots(coeff);
-	S2 = roots(c(1, 0, -3*R[1]));
-	S = c(S, S2);
 	if(debug) print(S);
 	len = length(S);
 	E2 = rep(R[1], len);
@@ -99,6 +100,11 @@ solve.CompLin.S3P2 = function(R, b, debug=TRUE) {
 	y = (Ru - x^2) / b[1];
 	z = S - x - y;
 	sol = cbind(x=as.vector(x), y=as.vector(y), z=as.vector(z));
+	sol = sol[order(abs(sol[,1])), ];
+	### Case: x == y == z
+	x = roots(c(1, 0, -3*R[1])) / 3;
+	solEq = cbind(x=x, y=x, z=x);
+	sol = rbind(sol, solEq);
 	return(sol);
 }
 
@@ -148,8 +154,6 @@ x^2 + y^2 + z^2 + b1*(x+y+z) - 3*Ru # = 0
 solve.CompLin.S3P2 = function(R, b, debug=TRUE) {
 	coeff = c(3, - 4*b[1], -R[1] + 6*b[1]^2);
 	S  = roots(coeff);
-	S2 = roots(c(1, 0, -3*R[1]));
-	S = c(S, S2);
 	if(debug) print(S);
 	len = length(S);
 	E2 = (S^2 - R) / 2;
@@ -161,6 +165,11 @@ solve.CompLin.S3P2 = function(R, b, debug=TRUE) {
 	y = (Ru - x^2) / b[1];
 	z = S - x - y;
 	sol = cbind(x=as.vector(x), y=as.vector(y), z=as.vector(z));
+	sol = sol[order(abs(sol[,1])), ];
+	### Case: x == y == z
+	x = roots(c(1, 0, -3*R[1])) / 3;
+	solEq = cbind(x=x, y=x, z=x);
+	sol = rbind(sol, solEq);
 	return(sol);
 }
 
