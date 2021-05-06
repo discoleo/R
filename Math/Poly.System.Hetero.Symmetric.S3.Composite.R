@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric S3:
 ### Mixed Type: Composite
 ###
-### draft v.0.1d-sol
+### draft v.0.1d-true
 
 
 ### Heterogeneous Symmetric
@@ -34,9 +34,9 @@
 ###############
 
 
-### draft v.0.1d - v.0.1d-sol:
+### draft v.0.1d - v.0.1d-true:
 # - variant: x^2*y + y^2*z + z^2*x = R;
-#   [solved; TODO: factorize]
+#   [solved & factorized: true solutions]
 ### draft v.0.1c:
 # - variant: x*y*z = R;
 ### draft v.0.1b:
@@ -392,13 +392,13 @@ E3*S^3 + E2^3 - 6*E3*E2*S + 9*E3^2 + R^2 - R*(E2*S - 3*E3) # = 0
 E3*S^3 + E2^3 - 6*E3*E2*S + 9*E3^2 + 3*R*E3 - R*E2*S + R^2 # = 0
 S^6 - 4*b1*S^5 + 6*b1^2*S^4 - 3*b1^3*S^3 - 2*R*S^3 - 12*b1^4*S^2 +
 	4*b1*R*S^2 + 18*b1^5*S - 6*b1^2*R*S - 18*b1^6 + 3*b1^3*R + R^2
-### TODO: factorize into P[3] * P[3];
+### P[6] = (S^3 + 3*b1^3 - R) * P[3];
+(S^3 - 4*b1*S^2 + 6*b1^2*S - 6*b1^3 - R) # true roots
 
 
 ### Solver:
 solve.CompLin.S3P2 = function(R, b, be=0, sort=TRUE, debug=TRUE) {
-	coeff = c(1, - 4*b[1], 6*b[1]^2, - 3*b[1]^3 - 2*R[1], - 4*(3*b[1]^4 - b[1]*R[1]),
-		18*b[1]^5 - 6*b[1]^2*R[1], - 18*b[1]^6 + 3*b[1]^3*R[1] + R[1]^2);
+	coeff = c(1, - 4*b[1], 6*b[1]^2, - 6*b[1]^3 - R[1]);
 	S = roots(coeff);
 	if(debug) print(S);
 	len = length(S);
@@ -438,9 +438,28 @@ x^2*y + y^2*z + z^2*x # - R
 ###
 round0.p(poly.calc(x[1:9]))
 x = x[1:9]
-err = 
+err = -5 - 3*x + 7*x^2 + 14*x^3 + 4*x^4 - 15*x^5 - 13*x^6 + x^7 + 4*x^8 + x^9
 round0(err)
 
+
+### Ex 2:
+R = 5
+b = -1
+sol = solve.CompLin.S3P2(R, b)
+x = sol[,1]; y = sol[,2]; z = sol[,3];
+
+### Test
+cbind(
+x^2 + b*y,
+y^2 + b*z,
+z^2 + b*x)
+x^2*y + y^2*z + z^2*x # - R
+
+###
+round0.p(poly.calc(x[1:9]))
+x = x[1:9]
+err = 19 - 90*x - 56*x^2 + 44*x^3 + 43*x^4 - 9*x^5 - 16*x^6 + x^7 + 4*x^8 + x^9
+round0(err)
 
 
 ### Debug
