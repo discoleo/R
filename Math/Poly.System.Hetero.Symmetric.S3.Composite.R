@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric S3:
 ### Mixed Type: Composite
 ###
-### draft v.0.1d
+### draft v.0.1d-sol
 
 
 ### Heterogeneous Symmetric
@@ -34,9 +34,9 @@
 ###############
 
 
-### draft v.0.1d:
+### draft v.0.1d - v.0.1d-sol:
 # - variant: x^2*y + y^2*z + z^2*x = R;
-#   [started work]
+#   [solved; TODO: factorize]
 ### draft v.0.1c:
 # - variant: x*y*z = R;
 ### draft v.0.1b:
@@ -390,5 +390,89 @@ E3*S^3 + E2^3 - 6*E3*E2*S + 9*E3^2 + R^2
 # =>
 E3*S^3 + E2^3 - 6*E3*E2*S + 9*E3^2 + R^2 - R*(E2*S - 3*E3) # = 0
 E3*S^3 + E2^3 - 6*E3*E2*S + 9*E3^2 + 3*R*E3 - R*E2*S + R^2 # = 0
-### TODO: seems to be S^6;
+S^6 - 4*b1*S^5 + 6*b1^2*S^4 - 3*b1^3*S^3 - 2*R*S^3 - 12*b1^4*S^2 +
+	4*b1*R*S^2 + 18*b1^5*S - 6*b1^2*R*S - 18*b1^6 + 3*b1^3*R + R^2
+### TODO: factorize into P[3] * P[3];
+
+
+### Solver:
+solve.CompLin.S3P2 = function(R, b, be=0, sort=TRUE, debug=TRUE) {
+	coeff = c(1, - 4*b[1], 6*b[1]^2, - 3*b[1]^3 - 2*R[1], - 4*(3*b[1]^4 - b[1]*R[1]),
+		18*b[1]^5 - 6*b[1]^2*R[1], - 18*b[1]^6 + 3*b[1]^3*R[1] + R[1]^2);
+	S = roots(coeff);
+	if(debug) print(S);
+	len = length(S);
+	E3 = - (S^3 - 2*b[1]*S^2 + 3*b[1]^2*S - b[1]^3);
+	Ru = S^2 - b[1]*S + 2*b[1]^2;
+	E2 = - (S^2 - 2*b[1]*S + 3*b[1]^2);
+	x = sapply(seq_along(S), function(id) roots(c(1, -S[id], E2[id], -E3[id])));
+	#
+	Ru = rep(Ru, each=3); S = rep(S, each=3);
+	y = (Ru - x^2) / b[1];
+	z = S - x - y;
+	sol = cbind(x=as.vector(x), y=as.vector(y), z=as.vector(z));
+	if(sort) sol = sol[order(
+		round(abs(sol[,1]), 10),
+		round(abs(Re(sol[,1])), 10)), ];
+	### Case: x == y == z
+	x = roots(c(3, 0, 3*be[1], -R[1]));
+	solEq = cbind(x=x, y=x, z=x);
+	sol = rbind(sol, solEq);
+	return(sol);
+}
+
+### Examples:
+
+R = 2
+b = -1
+sol = solve.CompLin.S3P2(R, b)
+x = sol[,1]; y = sol[,2]; z = sol[,3];
+
+### Test
+cbind(
+x^2 + b*y,
+y^2 + b*z,
+z^2 + b*x)
+x^2*y + y^2*z + z^2*x # - R
+
+###
+round0.p(poly.calc(x[1:9]))
+x = x[1:9]
+err = 
+round0(err)
+
+
+
+### Debug
+R = 2; b = -1; b1 = b[1];
+x =  0.7952618850 + 0.1596169599i;
+y = -0.3930361082 - 0.7461254313i;
+z = -1.4022257769 - 0.4134915286i;
+S = x+y+z; E2 = x*(y+z)+y*z; E3 = x*y*z;
+Ru = x^2 + b[1]*y;
+
+
+### Derivation
+p3 = list(
+	S = 3:0,
+	b1 = 0:3,
+	coeff = c(-1, 2, -3, 1)
+)
+# - (S^2 - 2*b1*S + 3*b1^2)
+p2 = list(
+	S = 2:0,
+	b1 = 0:2,
+	coeff = c(-1, 2, -3)
+)
+pS = list(S=1, coeff=1)
+pR = list(R=1, coeff=1)
+#
+pRez = add.pm(mult.pm(p3, pow.pm(pS, 3)), pow.pm(p2, 3))
+pRez = add.pm(pRez, mult.all.pm(list(p3, -6, p2, pS)))
+pRez = add.pm(pRez, mult.sc.pm(pow.pm(p3, 2), 9))
+pRez = add.pm(pRez, mult.all.pm(list(p3, 3, pR)))
+pRez = add.pm(pRez, mult.all.pm(list(p2, -1, pR, pS)))
+pRez
+
+print.poly(pR)
 
