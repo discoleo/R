@@ -69,6 +69,20 @@ mult.p = function(p1, p2) {
 	return(p)
 }
 ### Multi-variable Multiplication
+mult.all.pm = function(p) {
+	if( ! is.list(p)) stop("p must be a list of polynomials");
+	len = length(p);
+	pR = p[[1]];
+	for(id in seq(2, len)) {
+		p2 = p[[id]];
+		if(is.numeric(p2)) {
+			pR = mult.sc.pm(pR, p2);
+		} else {
+			pR = mult.pm(pR, p2);
+		}
+	}
+	return(pR);
+}
 mult.pm = function(p1, p2) {
 	# P1
 	split.df = function(p.df) {
@@ -111,7 +125,7 @@ mult.pm = function(p1, p2) {
 	colnames(p.r) = c(vars, "coeff");
 	return(p.r);
 }
-pow.p = function(p, n=2) {
+pow.pm = function(p, n=2) {
 	if(n == 1) return(p);
 	if(is.double(n) && (n == round(n))) n = as.integer(n);
 	if( ! is.integer(n)) stop("n must be integer!")
@@ -291,7 +305,14 @@ print.monome = function(name, p) {
 	v.r[v == 1] = name;
 	return(v.r);
 }
-print.p = function(p) {
+print.p = function(p, leading=1, order=TRUE, sort.order=TRUE) {
+	### Var order
+	if( ! is.numeric(leading)) leading = match(leading, names(p));
+	if( ! is.na(leading)) {
+		if(order) p = p[order(p[, leading], decreasing=sort.order), ];
+		p = cbind(p[,-leading], p[,leading, drop=FALSE]);
+	}
+	###
 	id.coeff = match("coeff", colnames(p));
 	coeff = p[,id.coeff]; p = p[, - id.coeff];
 	p.str = sapply(colnames(p), print.monome, p=p);
@@ -300,10 +321,12 @@ print.p = function(p) {
 		paste(str, collapse=collapse)
 	}
 	p.str = apply(p.str, 1, paste.nonempty);
-	coeff.str = as.character(coeff);
-	hasCoeff = (coeff != 1);
+	sign.str = ifelse(coeff > 0, " + ", " - ");
+	sign.str[1] = if(coeff[1] > 0) "" else "- ";
+	coeff.str = as.character(abs(coeff));
+	hasCoeff = (abs(coeff) != 1);
 	p.str[hasCoeff] = paste(coeff.str[hasCoeff], p.str[hasCoeff], sep = "*");
-	return(paste(p.str, collapse=" + "));
+	return(paste(sign.str, p.str, sep="", collapse=""));
 }
 
 
@@ -328,7 +351,7 @@ p = list(
 ### Test
 mult.pm(p)
 
-p.v = pow.p(p, 3)
+p.v = pow.pm(p, 3)
 p.v
 
 print.p(p.v[,c(2,3,4,1)])
