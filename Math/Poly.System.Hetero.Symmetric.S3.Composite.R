@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric S3:
 ### Mixed Type: Composite
 ###
-### draft v.0.1c
+### draft v.0.1d
 
 
 ### Heterogeneous Symmetric
@@ -34,6 +34,9 @@
 ###############
 
 
+### draft v.0.1d:
+# - variant: x^2*y + y^2*z + z^2*x = R;
+#   [started work]
 ### draft v.0.1c:
 # - variant: x*y*z = R;
 ### draft v.0.1b:
@@ -344,4 +347,48 @@ round0.p(poly.calc(x[1:9]))
 x = x[1:9]
 err = 1 - 77*x + 119*x^2 - 200*x^3 + 94*x^4 - 53*x^5 + 7*x^6 + 3*x^7 - 4*x^8 + x^9
 round0(err)
+
+
+###############
+
+###############
+### Variant ###
+
+x^2 + b*y = Ru # where Ru = unknown
+y^2 + b*z = Ru
+z^2 + b*x = Ru
+x^2*y + y^2*z + z^2*x = R
+
+### Solution
+
+### Sum =>
+x^2 + y^2 + z^2 + b1*(x+y+z) - 3*Ru # = 0
+# 3*Ru = S^2 - 2*E2 + b1*S;
+3*(S^2 - b1*S + 2*b1^2) - (S^2 - 2*E2 + b1*S) # = 0
+S^2 - 2*b1*S + 3*b1^2 + E2 # = 0
+# E2 = - (S^2 - 2*b1*S + 3*b1^2);
+
+### Eq 2:
+(S^2 + 3*b1*S - 9*Ru)*(S^2 - b1*S - Ru + 2*b1^2) # = 0
+# Ru = S^2 - b1*S + 2*b1^2
+
+### Sum(x[i]*...) =>
+6*E3 - S^3 - 2*b1*S^2 + 7*Ru*S + b1^2*S - 3*b1*Ru # = 0
+# (7*S - 3*b1)*Ru = (S^3 + 2*b1*S^2 - b1^2*S - 6*E3);
+(7*S - 3*b1)*(S^2 - 2*E2 + b1*S) - 3*(S^3 + 2*b1*S^2 - b1^2*S - 6*E3) # = 0
+4*S^3 - 14*E2*S - 2*b1*S^2 + 6*b1*E2 + 18*E3 # = 0
+4*S^3 + 14*(S^2 - 2*b1*S + 3*b1^2)*S - 2*b1*S^2 +
+	- 6*b1*(S^2 - 2*b1*S + 3*b1^2) + 18*E3 # = 0
+S^3 - 2*b1*S^2 + 3*b1^2*S - b1^3 + E3 # = 0
+# E3 = - (S^3 - 2*b1*S^2 + 3*b1^2*S - b1^3);
+
+
+### R*(x^2*y + y^2*z + z^2*x) + R*(x^2*z + y^2*x + z^2*y) =
+R^2 + (x^2*y + y^2*z + z^2*x)*(x^2*z + y^2*x + z^2*y) # =
+((x*y)^3 + (x*z)^3 + (y*z)^3) + E3*(x^3 + y^3 + z^3) + 3*E3^2 + R^2
+E3*S^3 + E2^3 - 6*E3*E2*S + 9*E3^2 + R^2
+# =>
+E3*S^3 + E2^3 - 6*E3*E2*S + 9*E3^2 + R^2 - R*(E2*S - 3*E3) # = 0
+E3*S^3 + E2^3 - 6*E3*E2*S + 9*E3^2 + 3*R*E3 - R*E2*S + R^2 # = 0
+### TODO: seems to be S^6;
 
