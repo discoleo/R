@@ -13,6 +13,26 @@ library(pracma)
 
 ### helper Functions
 
+### Round to 0
+round0 = function(m, tol=1E-7) {
+	m[abs(Re(m)) < tol & abs(Im(m)) < tol] = 0
+	isZero = (Re(m) != 0) & (abs(Re(m)) < tol)
+	if(any(isZero)) {
+		m[isZero] = complex(re=0, im=Im(m[isZero]))
+	}
+	isZero = (Im(m) != 0) & (abs(Im(m)) < tol)
+	if(any(isZero)) {
+		m[isZero] = Re(m[isZero])
+	}
+	return(m)
+}
+round0.p = function(p, tol=1E-7) {
+	p = round0(as.vector(p), tol=tol)
+	class(p) = "polynomial"
+	return(p)
+}
+
+### Root
 rootn = function(r, n) {
 	if(n %% 2 == 0) return(r^(1/n)); # TODO: complex?
 	ifelse( (Im(r) == 0 & Re(r) < 0), - (-r)^(1/n), r^(1/n) )
@@ -39,6 +59,9 @@ roots.cl2.f = function(s, n = length(s)) {
 	r = sapply(seq(n), function(id) sum(s * m[id]^(0:n)))
 	r = round0(r)
 }
+
+### Polynomials
+
 ### Multiplication
 mult.p = function(p1, p2) {
 	p.m = outer(p1, p2)
@@ -110,27 +133,76 @@ pow.p = function(p, n=2) {
 	p.r = p.r[id,];
 	return(p.r);
 }
-
-# round to 0
-round0 = function(m, tol=1E-7) {
-	m[abs(Re(m)) < tol & abs(Im(m)) < tol] = 0
-	isZero = (Re(m) != 0) & (abs(Re(m)) < tol)
-	if(any(isZero)) {
-		m[isZero] = complex(re=0, im=Im(m[isZero]))
-	}
-	isZero = (Im(m) != 0) & (abs(Im(m)) < tol)
-	if(any(isZero)) {
-		m[isZero] = Re(m[isZero])
-	}
-	return(m)
+mult.sc.pm = function(p, s, coeff.name="coeff") {
+	# Multiplication by scalar
+	if(is.data.frame(p)) {
+		p[ , coeff.name] = p[ , coeff.name] * s;
+	} else if(is.list(p)) {
+		p[[coeff.name]] = p[[coeff.name]] * s;
+	} else stop("p must be a polynomial!")
+	return(p);
 }
-round0.p = function(p, tol=1E-7) {
-	p = round0(as.vector(p), tol=tol)
-	class(p) = "polynomial"
-	return(p)
+reduce.pm = function(p) {
+	# remove Monomes with coeff == 0;
+	id = which(p$coeff != 0)
+	if(is.data.frame(p)) {
+		return(p[id, ]);
+	}
+	p = lapply(p, function(m) m[id]);
+	return(p);
+}
+align.pm = function(p1, p2, align.names=TRUE) {
+	p1 = reduce.pm(p1); p2 = reduce.pm(p2);
+	n1 = names(p1); n2 = names(p2);
+	### Coefficients
+	n1 = n1[ ! n1 %in% "coeff"];
+	n2 = n2[ ! n2 %in% "coeff"];
+	xc = intersect(n1, n2);
+	xall = union(n1, n2);
+	pad.pm = function(p, vnew) {
+		if(is.data.frame(p)) {
+			p[, vnew] = 0;
+		} else {
+			len = length(p$coeff);
+			zero = rep(0, len);
+			for(nn in vnew) {
+				p[[nn]] = zero;
+			}
+		}
+		return(p);
+	}
+	# add missing variables
+	if(length(xall) != length(xc)) {
+		### p1
+		n1new = n2[ ! n2 %in% n1];
+		p1 = pad.pm(p1, n1new);
+		### p2
+		n2new = n1[ ! n1 %in% n2];
+		p2 = pad.pm(p2, n2new);
+	}
+	#
+	if(align.names) {
+		id = match(names(p1), names(p2));
+		list(p1=p1, p2=p2[id]);
+	} else {
+		list(p1=p1, p2=p2);
+	}
+}
+add.pm = function(p1, p2) {
+	l = align.pm(p1, p2);
+	p1 = l[[1]]; p2 = l[[2]];
+	n1 = names(p1); n2 = names(p2);
+	### to DF
+	id = match(n2, n1);
+	p = rbind(as.data.frame(p1), as.data.frame(p2)[,id]);
+	### Sum
+	p.r = aggregate(coeff~., p, sum);
+	return(reduce.pm(p.r));
 }
 
-### Other
+#############
+### Other ###
+
 perm.gen = function(x) {
 	len = length(x)
 	id = seq(len)
