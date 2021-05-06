@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric S3:
 ### Mixed Type: Composite
 ###
-### draft v.0.1b
+### draft v.0.1c
 
 
 ### Heterogeneous Symmetric
@@ -22,6 +22,8 @@
 
 ### Variants:
 # x^n + y^n + z^n = R2
+# or
+# x*y*z = R2
 
 
 ######################
@@ -32,6 +34,8 @@
 ###############
 
 
+### draft v.0.1c:
+# - variant: x*y*z = R;
 ### draft v.0.1b:
 # - A2 extension:
 #   x*y + x*z + y*z + be*S = R;
@@ -247,3 +251,97 @@ round0.p(poly.calc(x[1:6]))
 x = x[1:6]
 err = 173 + 28*x - 8*x^2 + 6*x^3 + 5*x^4 + 4*x^5 + x^6
 round0(err)
+
+
+###############
+
+###############
+### Variant ###
+
+x^2 + b*y = Ru # where Ru = unknown
+y^2 + b*z = Ru
+z^2 + b*x = Ru
+x*y*z = R
+
+### Solution
+
+### Sum =>
+x^2 + y^2 + z^2 + b1*(x+y+z) - 3*Ru # = 0
+# 3*Ru = S^2 - 2*E2 + b1*S;
+
+### Sum(x[i]*...) =>
+6*E3 - S^3 - 2*b1*S^2 + 7*Ru*S + b1^2*S - 3*b1*Ru # = 0
+# (7*S - 3*b1)*Ru = (S^3 + 2*b1*S^2 - b1^2*S - 6*E3);
+
+### Eq:
+(S^2 + 3*b1*S - 9*Ru)*(S^2 - b1*S - Ru + 2*b1^2) # = 0
+(7*S - 3*b1)*(S^2 - b1*S + 2*b1^2) - (S^3 + 2*b1*S^2 - b1^2*S - 6*E3)
+S^3 - 2*b1*S^2 + 3*b1^2*S - b1^3 + E3
+
+### Solver:
+solve.CompLin.S3P2 = function(R, b, be=0, debug=TRUE) {
+	coeff = c(1, - 2*b[1], 3*b[1]^2 - be[1], R[1] - b[1]^3);
+	S  = roots(coeff);
+	if(debug) print(S);
+	len = length(S);
+	E3 = R[1] - be[1]*S;
+	Ru = (S^3 + 2*b[1]*S^2 - b[1]^2*S - 6*E3) / (7*S - 3*b[1]);
+	E2 = (S^2 + b[1]*S - 3*Ru) / 2;
+	x = sapply(seq_along(S), function(id) roots(c(1, -S[id], E2[id], -E3[id])));
+	#
+	Ru = rep(Ru, each=3); S = rep(S, each=3);
+	y = (Ru - x^2) / b[1];
+	z = S - x - y;
+	sol = cbind(x=as.vector(x), y=as.vector(y), z=as.vector(z));
+	sol = sol[order(
+		round(abs(sol[,1]), 10),
+		round(abs(Re(sol[,1])), 10)), ];
+	### Case: x == y == z
+	x = roots(c(1, 0, 3*be[1], -R[1]));
+	solEq = cbind(x=x, y=x, z=x);
+	sol = rbind(sol, solEq);
+	return(sol);
+}
+
+### Examples:
+
+R = -1
+b = 1
+sol = solve.CompLin.S3P2(R, b)
+x = sol[,1]; y = sol[,2]; z = sol[,3];
+
+### Test
+cbind(
+x^2 + b*y,
+y^2 + b*z,
+z^2 + b*x)
+x*y*z # - R
+
+###
+round0.p(poly.calc(x[1:9]))
+x = x[1:9]
+err = 1 - 3*x + 2*x^2 - x^3 + x^4 - x^5 + x^6 - 2*x^8 + x^9
+round0(err)
+
+
+#########
+### Ex 2:
+R = -1
+b = 2
+be = -1
+sol = solve.CompLin.S3P2(R, b, be)
+x = sol[,1]; y = sol[,2]; z = sol[,3];
+
+### Test
+cbind(
+x^2 + b*y,
+y^2 + b*z,
+z^2 + b*x)
+x*y*z + be[1]*(x+y+z) # - R
+
+###
+round0.p(poly.calc(x[1:9]))
+x = x[1:9]
+err = 1 - 77*x + 119*x^2 - 200*x^3 + 94*x^4 - 53*x^5 + 7*x^6 + 3*x^7 - 4*x^8 + x^9
+round0(err)
+
