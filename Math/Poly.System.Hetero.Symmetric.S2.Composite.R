@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric S2:
 ### Mixed Type: Composite
 ###
-### draft v.0.1b-o4
+### draft v.0.1b-fix
 
 
 ### Heterogeneous Symmetric
@@ -34,11 +34,11 @@
 ###############
 
 
-### draft v.0.1b - v.0.1b-04:
+### draft v.0.1b - v.0.1b-ord4:
 # - Order 3 & Order 4 variants:
 #   x*y*(x+y) = R;
 # - example P[6]:
-#   1 - 2*x + x^2 + 4*x^4 + 3*x^6 = 0;
+#   1 - 2*x + x^2 + 4*x^4 + 3*x^6 = 0; [v.0.1b-ord4]
 ### draft v.0.1a:
 # - solved: double Ht-Symmetric Composite;
 # - example P[6]:
@@ -69,7 +69,7 @@ S^3 - b2*S^2 - b1*S - R # = 0
 
 
 ### Solver:
-solve.HtComposite.S2P3 = function(b, debug=TRUE) {
+solve.HtComposite.S2P3 = function(R, b, debug=TRUE) {
 	if(length(b) < 2) b = c(b, 0);
 	coeff = c(1, -b[2], -b[1], -R[1]);
 	S = roots(coeff);
@@ -87,7 +87,7 @@ solve.HtComposite.S2P3 = function(b, debug=TRUE) {
 
 R = -1
 b = c(1, -2)
-sol = solve.HtComposite.S2P3(b)
+sol = solve.HtComposite.S2P3(R, b)
 x = sol[,1]; y = sol[,2];
 
 ### Test
@@ -120,7 +120,7 @@ S^3 - 2*x*y*S - b2*S - b1 # = 0
 S^3 - b2*S - b1 - 2*R # = 0
 
 ### Solver:
-solve.HtComposite.S2P4 = function(b, debug=TRUE) {
+solve.HtComposite.S2P4 = function(R, b, debug=TRUE) {
 	if(length(b) < 2) b = c(b, 0);
 	coeff = c(1, 0, -b[2], -b[1] - 2*R[1]);
 	S = roots(coeff);
@@ -139,7 +139,7 @@ solve.HtComposite.S2P4 = function(b, debug=TRUE) {
 
 R = -1
 b = c(-1, -1)
-sol = solve.HtComposite.S2P4(b)
+sol = solve.HtComposite.S2P4(R, b)
 x = sol[,1]; y = sol[,2];
 
 ### Test
@@ -156,7 +156,7 @@ round0(err)
 ### Ex 2:
 R = -1
 b = c(-1, 2)
-sol = solve.HtComposite.S2P4(b)
+sol = solve.HtComposite.S2P4(R, b)
 x = sol[,1]; y = sol[,2];
 
 ### Test
