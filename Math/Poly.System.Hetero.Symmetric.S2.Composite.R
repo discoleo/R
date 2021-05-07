@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric S2:
 ### Mixed Type: Composite
 ###
-### draft v.0.1b-poly
+### draft v.0.1c
 
 
 ### Heterogeneous Symmetric
@@ -34,9 +34,10 @@
 ###############
 
 
-### draft v.0.1b - v.0.1b-poly:
+### draft v.0.1b - v.0.1c:
 # - Order 3 & Order 4 variants:
-#   x*y*(x+y) = R;
+#   x*y*(x+y) = R; [v.0.1b]
+#   x*y = R; [v.0.1c]
 # - example P[6]:
 #   1 - 2*x + x^2 + 4*x^4 + 3*x^6 = 0; [v.0.1b-ord4]
 # - full parametric polynomial: P[6]; [v.0.1b-poly]
@@ -111,6 +112,9 @@ round0(err)
 # y^4 + b2*x^2 + b1*x = Ru1
 # x*y*(x+y) = R
 
+### Simple Variant:
+# x*y = R;
+
 ### Solution:
 
 ### Case: x != y
@@ -120,14 +124,22 @@ S^3 - 2*x*y*S - b2*S - b1 # = 0
 ### =>
 S^3 - b2*S - b1 - 2*R # = 0
 
+### Simple Variant:
+S^3 - (2*R + b2)*S - b1 # = 0
+
 ### Solver:
-solve.HtComposite.S2P4 = function(R, b, debug=TRUE) {
+solve.HtComposite.S2P4 = function(R, b, type=c("Sum", "Simple"), k=2, debug=TRUE) {
 	if(length(b) < 2) b = c(b, 0);
-	coeff = c(1, 0, -b[2], -b[1] - 2*R[1]);
+	type = pmatch(type[1], eval(formals(solve.HtComposite.S2P4)$type));
+	if(type == 1) {
+		coeff = c(1, 0, -b[2], -b[1] - k*R[1]);
+	} else {
+		coeff = c(1, 0, -b[2] - k*R[1], -b[1]);
+	}
 	S = roots(coeff);
 	if(debug) print(S);
 	S = S[S != 0]; # exclude 0!
-	xy = R[1] / S;
+	xy = if(type == 1) R[1] / S else R[1];
 	xy.d = sqrt(S^2 - 4*xy + 0i);
 	x = (S + xy.d) / 2;
 	y = S - x;
@@ -148,7 +160,7 @@ cbind(x^4 + b[2]*y^2 + b[1]*y, y^4 + b[2]*x^2 + b[1]*x)
 x*y*(x+y) # - R[1]
 
 ###
-round0.p(poly.calc(x) * 3)
+round0.p(poly.calc(x) * (2*R + b[1]))
 err = 1 - 2*x + x^2 + 4*x^4 + 3*x^6
 round0(err)
 
@@ -172,6 +184,44 @@ round0(err)
 ### parametric
 R^3 - 2*b[2]*R^2*x + R*b[2]^2*x^2 + (2*R^2 - b[1]*R - b[1]^2)*x^3 +
 	- b[2]*(3*R + b[1])*x^4 + (2*R + b[1])*x^6
+# - special case: b1 = 1 - 2*R
+R^3 - 2*b[2]*R^2*x + R*b[2]^2*x^2 + (3*R - 1)*x^3 +
+	- b[2]*(R + 1)*x^4 + x^6
+
+
+#########
+### Ex 3: Simple type
+R = -1
+b = c(1, -3)
+sol = solve.HtComposite.S2P4(R, b, type="Simple")
+x = sol[,1]; y = sol[,2];
+
+### Test
+cbind(x^4 + b[2]*y^2 + b[1]*y, y^4 + b[2]*x^2 + b[1]*x)
+x*y # - R[1]
+
+###
+round0.p(poly.calc(x))
+err = -1 - 2*x^2 - x^3 + 2*x^4 + x^6
+round0(err)
+# (x^3 - 1/2)^2 + 2*(x^2 - 1/2)^2 - 7/4
+
+
+#########
+### Ex 4:
+R = -1
+b = c(-1, -1)
+k = 3
+sol = solve.HtComposite.S2P4(R, b, k=k)
+x = sol[,1]; y = sol[,2];
+
+### Test
+# [fails] k != 2
+
+###
+round0.p(poly.calc(x) * -(k*R + b[1]))
+err = 1 - 2*x + x^2 + 4*x^3 + 5*x^4 + 4*x^6
+round0(err)
 
 
 ######################
