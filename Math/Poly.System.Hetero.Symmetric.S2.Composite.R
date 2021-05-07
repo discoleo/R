@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric S2:
 ### Mixed Type: Composite
 ###
-### draft v.0.1c
+### draft v.0.1d
 
 
 ### Heterogeneous Symmetric
@@ -34,6 +34,9 @@
 ###############
 
 
+### draft v.0.1d:
+# - Variant: sum of powers;
+#   x^3 + y^3 = R;
 ### draft v.0.1b - v.0.1c:
 # - Order 3 & Order 4 variants:
 #   x*y*(x+y) = R; [v.0.1b]
@@ -128,7 +131,7 @@ S^3 - b2*S - b1 - 2*R # = 0
 S^3 - (2*R + b2)*S - b1 # = 0
 
 ### Solver:
-solve.HtComposite.S2P4 = function(R, b, type=c("Sum", "Simple"), k=2, debug=TRUE) {
+solve.HtComposite.S2P4 = function(R, b, type=c("PSum", "Simple"), k=2, debug=TRUE) {
 	if(length(b) < 2) b = c(b, 0);
 	type = pmatch(type[1], eval(formals(solve.HtComposite.S2P4)$type));
 	if(type == 1) {
@@ -221,6 +224,82 @@ x = sol[,1]; y = sol[,2];
 ###
 round0.p(poly.calc(x) * -(k*R + b[1]))
 err = 1 - 2*x + x^2 + 4*x^3 + 5*x^4 + 4*x^6
+round0(err)
+
+
+######################
+######################
+
+#################
+### Variant:  ###
+### Power Sum ###
+#################
+
+# x^4 + b2*y^2 + b1*y = Ru1
+# y^4 + b2*x^2 + b1*x = Ru1
+# x^3 + y^3 = R
+
+### Solution:
+
+### Case: x != y
+
+### Diff Eqs 1, 2 =>
+S^3 - 2*x*y*S - b2*S - b1 # = 0
+
+### Eq 3:
+S^3 - 3*x*y*S - R # = 0
+# 3*x*y*S = S^3 - R;
+# =>
+3*S^3 - 2*(S^3 - R) - 3*b2*S - 3*b1 # = 0
+S^3 - 3*b2*S - 3*b1 + 2*R # = 0
+
+### Solver:
+solve.HtComposite.S2P4 = function(R, b, k=2, debug=TRUE) {
+	if(length(b) < 2) b = c(b, 0);
+	coeff = c(1, 0, -3*b[2], -3*b[1] + k*R[1]);
+	S = roots(coeff);
+	if(debug) print(S);
+	S = S[S != 0]; # exclude 0!
+	xy = (S^3 - R) / (3*S);
+	xy.d = sqrt(S^2 - 4*xy + 0i);
+	x = (S + xy.d) / 2;
+	y = S - x;
+	sol = cbind(x=x, y=y);
+	sol = rbind(sol, sol[,2:1]);
+	return(sol);
+}
+
+### Examples:
+
+R = 2
+b = c(1, 3)
+sol = solve.HtComposite.S2P4(R, b)
+x = sol[,1]; y = sol[,2];
+
+### Test
+cbind(x^4 + b[2]*y^2 + b[1]*y, y^4 + b[2]*x^2 + b[1]*x)
+x^3 + y^3 # - R[1]
+
+###
+round0.p(poly.calc(x) * (2*R - 3*b[1]))
+err = -53 + 9*x + 27*x^2 - 2*x^3 - 9*x^4 + x^6
+round0(err)
+
+
+#########
+### Ex 2:
+R = 2
+b = c(-1, 1)
+k = -R
+sol = solve.HtComposite.S2P4(R, b, k=k)
+x = sol[,1]; y = sol[,2];
+
+### Test
+# [fails] k != 2
+
+###
+round0.p(poly.calc(x) * (k*R - 3*b[1]) * -27)
+err = 53 - 45*x - 27*x^2 - 54*x^3 + 27*x^4 + 27*x^6
 round0(err)
 
 
