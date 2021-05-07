@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric S2:
 ### Mixed Type: Composite
 ###
-### draft v.0.1b-fix
+### draft v.0.1b-poly
 
 
 ### Heterogeneous Symmetric
@@ -34,11 +34,12 @@
 ###############
 
 
-### draft v.0.1b - v.0.1b-ord4:
+### draft v.0.1b - v.0.1b-poly:
 # - Order 3 & Order 4 variants:
 #   x*y*(x+y) = R;
 # - example P[6]:
 #   1 - 2*x + x^2 + 4*x^4 + 3*x^6 = 0; [v.0.1b-ord4]
+# - full parametric polynomial: P[6]; [v.0.1b-poly]
 ### draft v.0.1a:
 # - solved: double Ht-Symmetric Composite;
 # - example P[6]:
@@ -164,12 +165,14 @@ cbind(x^4 + b[2]*y^2 + b[1]*y, y^4 + b[2]*x^2 + b[1]*x)
 x*y*(x+y) # - R[1]
 
 ###
-round0.p(poly.calc(x) * 3)
+round0.p(poly.calc(x) * (2*R + b[1]))
 err = 1 + 4*x + 4*x^2 - 8*x^4 + 3*x^6
 round0(err)
 
-### TODO:
--R^3 + 2*b[2]*R^2*x - R*b[2]^2*x^2 + (...)*x^3 - (4)*b[2]*x^4 - (2*R-1)*x^6
+### parametric
+R^3 - 2*b[2]*R^2*x + R*b[2]^2*x^2 + (2*R^2 - b[1]*R - b[1]^2)*x^3 +
+	- b[2]*(3*R + b[1])*x^4 + (2*R + b[1])*x^6
+
 
 ######################
 
