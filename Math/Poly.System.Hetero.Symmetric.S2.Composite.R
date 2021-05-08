@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric S2:
 ### Mixed Type: Composite
 ###
-### draft v.0.1e
+### draft v.0.1f
 
 
 ### Heterogeneous Symmetric
@@ -34,6 +34,9 @@
 ###############
 
 
+### draft v.0.1f:
+# - other sums of powers:
+#   x^3 + y^3 = R*(x^2 + y^2);
 ### draft v.0.1e:
 # - experimental systems: difference of powers;
 ### draft v.0.1d - v.0.1d-poly:
@@ -326,6 +329,65 @@ x = sol[,1]; y = sol[,2];
 ###
 round0.p(poly.calc(x) * (k*R - 3*b[1]) * -27)
 err = 53 - 45*x - 27*x^2 - 54*x^3 + 27*x^4 + 27*x^6
+round0(err)
+
+
+#######################
+
+#################
+### Variant:  ###
+### Power Sum ###
+#################
+
+# x^4 + b2*y^2 + b1*y = Ru1
+# y^4 + b2*x^2 + b1*x = Ru1
+# x^3 + y^3 = R*(x^2 + y^2)
+
+### Solution:
+
+### Case: x != y
+
+### Diff Eqs 1, 2 =>
+S^3 - 2*x*y*S - b2*S - b1 # = 0
+
+### Eq 3:
+S^3 - 3*x*y*S - R*S^2 + 2*R*x*y # = 0
+# (3*S - 2*R)*x*y = S^3 - R*S^2
+# =>
+(3*S - 2*R)*S^3 - 2*(3*S - 2*R)*x*y*S - b2*(3*S - 2*R)*S - b1*(3*S - 2*R) # = 0
+S^4 - 3*b2*S^2 + 2*b2*R*S - 3*b1*S + 2*b1*R # = 0
+
+
+### Solver:
+solve.HtCompositePows.S2P4 = function(R, b, debug=TRUE) {
+	if(length(b) < 2) b = c(b, 0);
+	coeff = c(1, 0, -3*b[2], 2*b[2]*R[1] - 3*b[1], 2*b[1]*R[1]);
+	S = roots(coeff);
+	if(debug) print(S);
+	xy = (S^3 - R*S^2) / (3*S - 2*R[1]);
+	xy.d = sqrt(S^2 - 4*xy + 0i);
+	x = (S + xy.d) / 2;
+	y = S - x;
+	sol = cbind(x=x, y=y);
+	sol = rbind(sol, sol[,2:1]);
+	sol = sort.sol(sol);
+	return(sol);
+}
+
+### Examples:
+
+R = -1
+b = c(1, 3)
+sol = solve.HtCompositePows.S2P4(R, b)
+x = sol[,1]; y = sol[,2];
+
+### Test
+cbind(x^4 + b[2]*y^2 + b[1]*y, y^4 + b[2]*x^2 + b[1]*x)
+x^3 + y^3 - R[1]*(x^2 + y^2) # - R[1]
+
+###
+round0.p(poly.calc(x) * 2^2)
+err = -1 - 4*x - 8*x^2 + 24*x^3 + 49*x^4 + 10*x^5 - 15*x^6 + 4*x^8
 round0(err)
 
 
