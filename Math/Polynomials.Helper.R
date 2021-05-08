@@ -60,6 +60,15 @@ roots.cl2.f = function(s, n = length(s)) {
 	r = round0(r)
 }
 
+sort.sol = function(sol, useRe=TRUE, ncol=1) {
+	if(useRe) {
+		id = order(abs(sol[,ncol]), Re(sol[,ncol]));
+	} else {
+		id = order(abs(sol[,ncol]));
+	}
+	return(sol[id,]);
+}
+
 ### Polynomials
 
 ### Multiplication
