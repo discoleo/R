@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric S2:
 ### Mixed Type: Composite
 ###
-### draft v.0.1d
+### draft v.0.1d-poly
 
 
 ### Heterogeneous Symmetric
@@ -34,9 +34,12 @@
 ###############
 
 
-### draft v.0.1d:
+### draft v.0.1d - v.0.1d-poly:
 # - Variant: sum of powers;
 #   x^3 + y^3 = R;
+# - parametric P[6];
+# - example:
+#   3 - 3*x + 3*x^2 - 2*x^3 + 3*x^4 + x^6 = 0;
 ### draft v.0.1b - v.0.1c:
 # - Order 3 & Order 4 variants:
 #   x*y*(x+y) = R; [v.0.1b]
@@ -285,9 +288,30 @@ round0.p(poly.calc(x) * (2*R - 3*b[1]))
 err = -53 + 9*x + 27*x^2 - 2*x^3 - 9*x^4 + x^6
 round0(err)
 
+### parametric P[6]
+(R - b[1])^3 - R*b[2]^3 + 3*b[1]*b[2]*(R - b[1])*x +
+	+ 3*b[2]^2*(R - b[1])*x^2 - R*(2*R - 3*b[1])*x^3 +
+	- 3*b[2]*(R - b[1])*x^4 + (2*R - 3*b[1])*x^6
 
 #########
 ### Ex 2:
+R = 2
+b = c(1, -1)
+sol = solve.HtComposite.S2P4(R, b)
+x = sol[,1]; y = sol[,2];
+
+### Test
+cbind(x^4 + b[2]*y^2 + b[1]*y, y^4 + b[2]*x^2 + b[1]*x)
+x^3 + y^3 # - R[1]
+
+###
+round0.p(poly.calc(x) * (2*R - 3*b[1]))
+err = 3 - 3*x + 3*x^2 - 2*x^3 + 3*x^4 + x^6
+round0(err)
+# x^3*(x^3+1)*(x+1) + 3*(x^5 + 1)
+
+#########
+### Ex 3:
 R = 2
 b = c(-1, 1)
 k = -R
