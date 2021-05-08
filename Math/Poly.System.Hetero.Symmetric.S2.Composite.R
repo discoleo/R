@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric S2:
 ### Mixed Type: Composite
 ###
-### draft v.0.1f
+### draft v.0.1g
 
 
 ### Heterogeneous Symmetric
@@ -34,6 +34,11 @@
 ###############
 
 
+### draft v.0.1g:
+# - inter-connected system:
+#   b3*x*y + Ru = R;
+# - example P[6]:
+#   2 + 6*x + 6*x^2 + 4*x^4 + x^6 = 0;
 ### draft v.0.1f:
 # - other sums of powers:
 #   x^3 + y^3 = R*(x^2 + y^2);
@@ -560,5 +565,84 @@ cbind(x^4 + b[2]*y, y^4 + b[2]*x)
 ###
 round0.p(poly.calc(x))
 err = 3 - 2*x + x^2 + 4*x^3 - x^4 + x^6
+round0(err)
+
+
+#######################
+#######################
+
+#######################
+### Inter-Connected ###
+#######################
+
+# x^3 + b2*y^2 + b1*y = Ru
+# y^3 + b2*x^2 + b1*x = Ru
+# b3*x*y + Ru = R
+
+### Solution:
+
+### Case: x != y
+
+### Diff Eqs 1, 2 =>
+S^2 - x*y - b2*S - b1 # = 0
+# x*y = S^2 - b2*S - b1;
+
+### Sum =>
+x^3 + y^3 + b2*(x^2+y^2) + b1*(x+y) - 2*Ru # = 0
+S^3 - 3*x*y*S + b2*(S^2 - 2*x*y) + b1*S - 2*Ru # = 0
+# =>
+S^3 - b2*S^2 - 2*b1*S - b2^2*S - b1*b2 + Ru # = 0
+S^3 - b2*S^2 - 2*b1*S - b2^2*S - b1*b2 + R - b3*x*y
+S^3 - (b2+b3)*S^2 - (2*b1 + b2^2 - b2*b3)*S + R - b1*(b2 - b3)
+
+
+### Solver:
+solve.HtCompositeDep.S2P4 = function(R, b, debug=TRUE) {
+	if(length(b) < 2) stop("At least b1 and b3 are needed!")
+	coeff = c(1, - (b[2]+b[3]), - (2*b[1] + b[2]^2 - b[2]*b[3]),
+		- b[1]*(b[2] - b[3]) + R[1]);
+	S = roots(coeff);
+	if(debug) print(S);
+	xy = S^2 - b[2]*S - b[1];
+	xy.d = sqrt(S^2 - 4*xy + 0i);
+	x = (S + xy.d) / 2;
+	y = S - x;
+	sol = cbind(x=x, y=y);
+	sol = rbind(sol, sol[,2:1]);
+	sol = sort.sol(sol);
+	return(sol);
+}
+
+### Examples:
+
+R = 1
+b = c(-2, 1, -1)
+sol = solve.HtCompositeDep.S2P4(R, b)
+x = sol[,1]; y = sol[,2];
+
+### Test
+Ru  = x^3 + b[2]*y^2 + b[1]*y;
+Ru2 = y^3 + b[2]*x^2 + b[1]*x;
+round0(Ru - Ru2)
+b[3]*x*y + Ru # - R[1]
+
+###
+round0.p(poly.calc(x))
+err = 14 + 3*x + 6*x^2 - 6*x^3 + 4*x^4 + x^6
+round0(err)
+
+###
+b = c(-2, 1, -1)
+sapply(-4:4, function(x) print(round0.p(
+	poly.calc(solve.HtCompositeDep.S2P4(x, b, debug=F)[,1]))))
+
+### Ex 2:
+R = -2
+b = c(-2, 1, -1)
+sol = solve.HtCompositeDep.S2P4(R, b)
+x = sol[,1]; y = sol[,2];
+
+round0.p(poly.calc(x))
+err = 2 + 6*x + 6*x^2 + 4*x^4 + x^6
 round0(err)
 
