@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric S2:
 ### Mixed Type: Composite
 ###
-### draft v.0.1g
+### draft v.0.1g-poly
 
 
 ### Heterogeneous Symmetric
@@ -34,11 +34,13 @@
 ###############
 
 
-### draft v.0.1g:
+### draft v.0.1g - v.0.1g-poly:
 # - inter-connected system:
 #   b3*x*y + Ru = R;
+# - parametric P[6]; [v.0.1g-poly]
 # - example P[6]:
 #   2 + 6*x + 6*x^2 + 4*x^4 + x^6 = 0;
+#   32*(20 + 6*x + 3*x^2) + x^6 = 0;
 ### draft v.0.1f:
 # - other sums of powers:
 #   x^3 + y^3 = R*(x^2 + y^2);
@@ -631,6 +633,15 @@ round0.p(poly.calc(x))
 err = 14 + 3*x + 6*x^2 - 6*x^3 + 4*x^4 + x^6
 round0(err)
 
+### parametric P[6]
+b1 = b[1]; b2 = b[2]; b3 = b[3];
+x^6 - (b2+b3)*x^5 + (- b1 + b2^2 + b3^2)*x^4 +
+	- (2*R - 2*b1*(b2+b3) + b2*(b2-b3)^2)*x^3 +
+	+ (R*(b2+b3) + b1^2 + b2^4 - b1*b2*b3 - b2^3*b3 - b1*b3^2)*x^2 +
+	+ (R*b1 - R*b2*b3 + b1*b2^3 - 2*b1^2*b3 - b1*b2^2*b3)*x +
+	+ R^2 - 3*R*b1*b2 - R*b2^3 - b1^3
+
+
 ###
 b = c(-2, 1, -1)
 sapply(-4:4, function(x) print(round0.p(
@@ -644,5 +655,31 @@ x = sol[,1]; y = sol[,2];
 
 round0.p(poly.calc(x))
 err = 2 + 6*x + 6*x^2 + 4*x^4 + x^6
+round0(err)
+
+
+#########
+### Ex 3:
+b = c(0, 2, -1);
+b[1] = b[2]^2 + b[3]^2;
+R = b[1]*(b[2]+b[3]) - (b[2]*(b[2]-b[3])^2) / 2;
+sol = solve.HtCompositeDep.S2P4(R, b)
+x = sol[,1]; y = sol[,2];
+
+round0.p(poly.calc(x))
+err = 43 + 82*x + 50*x^2 - x^5 + x^6
+round0(err)
+
+
+#########
+### Ex 4:
+b = c(0, 2, -2);
+b[1] = b[2]^2 + b[3]^2;
+R = b[1]*(b[2]+b[3]) - (b[2]*(b[2]-b[3])^2) / 2;
+sol = solve.HtCompositeDep.S2P4(R, b)
+x = sol[,1]; y = sol[,2];
+
+round0.p(poly.calc(x))
+err = 32*(20 + 6*x + 3*x^2) + x^6
 round0(err)
 
