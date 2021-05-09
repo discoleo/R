@@ -5,14 +5,15 @@
 ###
 ### Integral Tricks
 ###
-### draft v.0.3a
+### draft v.0.3a-ex2
 
 
 ### various Integral Tricks
 
-### draft v.0.3a:
+### draft v.0.3a - v.0.3a-ex2:
 # - Transformations:
 #   f((a*x + b) / (c*x + d)) = - f(x);
+# - a 2nd example;
 ### draft v.0.2f:
 # - started work on:
 #   I( log(x-1) / x ) dx;
@@ -272,13 +273,30 @@ integrate(function(x) log(x-1) / x, lower=a, upper=a+1)$value +
 ### Decompositions
 
 
-### (a*x + b) / (c*x + d)
+### Tr(x) = (a*x + b) / (c*x + d)
 
 ### f(Tr(x)) = - f(x)
+
+### Examples:
 # Tr(x) = (3*x+3) / (5*x - 3)
 # Tr(c(1, 3)) = (3, 1);
 # f1(x) = f(x) / (5*x - 3);
 f1 = function(x) 1/(5*x-3) * sin(((1-2*sqrt(6)/3)*x+1) / ((1+2*sqrt(6)/3)*x + 1))
 integrate(f1, lower=1, upper=3)
 # I(f1)[1 -> 3] = 0
+
+
+f2 = function(x) x/(5*x-3) * sin(((1-2*sqrt(6)/3)*x+1) / ((1+2*sqrt(6)/3)*x + 1))
+f3 = function(x) 1/5 * sin(((1-2*sqrt(6)/3)*x+1) / ((1+2*sqrt(6)/3)*x + 1))
+integrate(f2, lower=1, upper=3)
+integrate(f3, lower=1, upper=3)
+
+
+#########
+### Ex 2:
+# Tr(x) = (3*x+1) / (4*x - 3)
+# Tr(c(1, 4)) = (4, 1);
+# f1(x) = f(x) / (4*x - 3);
+f1 = function(x) 1/(4*x-3) * sin(((3-sqrt(13))*x+1) / ((3+sqrt(13))*x + 1))
+integrate(f1, lower=1, upper=4)
 
