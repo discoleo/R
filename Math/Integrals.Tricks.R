@@ -5,15 +5,16 @@
 ###
 ### Integral Tricks
 ###
-### draft v.0.3a-ex2
+### draft v.0.3b
 
 
 ### various Integral Tricks
 
-### draft v.0.3a - v.0.3a-ex2:
+### draft v.0.3a - v.0.3b:
 # - Transformations:
 #   f((a*x + b) / (c*x + d)) = - f(x);
-# - a 2nd example;
+# - added 2nd example;
+# - acos() variant; [v.0.3b]
 ### draft v.0.2f:
 # - started work on:
 #   I( log(x-1) / x ) dx;
@@ -291,6 +292,20 @@ f3 = function(x) 1/5 * sin(((1-2*sqrt(6)/3)*x+1) / ((1+2*sqrt(6)/3)*x + 1))
 integrate(f2, lower=1, upper=3)
 integrate(f3, lower=1, upper=3)
 
+### relation between sin() & cos()
+alpha = (1-2*sqrt(6)/3) / (1+2*sqrt(6)/3);
+f1 = function(x) 1/(5*x-3) * sin((1 - alpha) / ((1+2*sqrt(6)/3)*x + 1))
+f2 = function(x) 1/(5*x-3) * cos((1 - alpha) / ((1+2*sqrt(6)/3)*x + 1))
+integrate(f1, lower=1, upper=3)
+integrate(f2, lower=1, upper=3)$value * (- tan(alpha))
+
+
+### Ex 1b:
+f1 = function(x) 1/(5*x-3) * acos(((1-2*sqrt(6)/3)*x+1) / ((1+2*sqrt(6)/3)*x + 1))
+f1.exact = function(x) pi/10 * log(5*x-3)
+integrate(f1, lower=1, upper=3)
+f1.exact(3) - f1.exact(1)
+
 
 #########
 ### Ex 2:
@@ -299,4 +314,11 @@ integrate(f3, lower=1, upper=3)
 # f1(x) = f(x) / (4*x - 3);
 f1 = function(x) 1/(4*x-3) * sin(((3-sqrt(13))*x+1) / ((3+sqrt(13))*x + 1))
 integrate(f1, lower=1, upper=4)
+
+
+### Ex 2b:
+f1 = function(x) 1/(4*x-3) * acos(((3-sqrt(13))*x+1) / ((3+sqrt(13))*x + 1))
+f1.exact = function(x) pi/8 * log(4*x-3)
+integrate(f1, lower=1, upper=4)
+f1.exact(4) - f1.exact(1)
 
