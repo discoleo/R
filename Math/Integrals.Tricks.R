@@ -5,11 +5,14 @@
 ###
 ### Integral Tricks
 ###
-### draft v.0.2f
+### draft v.0.3a
 
 
 ### various Integral Tricks
 
+### draft v.0.3a:
+# - Transformations:
+#   f((a*x + b) / (c*x + d)) = - f(x);
 ### draft v.0.2f:
 # - started work on:
 #   I( log(x-1) / x ) dx;
@@ -261,4 +264,21 @@ integrate(function(x) log(x-1) / x, lower=a, upper=a+1)$value +
 1/2*log(a)^2 - 1/2*log(a-1)^2
 
 # TODO: both limits;
+
+
+########################
+########################
+
+### Decompositions
+
+
+### (a*x + b) / (c*x + d)
+
+### f(Tr(x)) = - f(x)
+# Tr(x) = (3*x+3) / (5*x - 3)
+# Tr(c(1, 3)) = (3, 1);
+# f1(x) = f(x) / (5*x - 3);
+f1 = function(x) 1/(5*x-3) * sin(((1-2*sqrt(6)/3)*x+1) / ((1+2*sqrt(6)/3)*x + 1))
+integrate(f1, lower=1, upper=3)
+# I(f1)[1 -> 3] = 0
 
