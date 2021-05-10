@@ -14,6 +14,7 @@
 # - definite integrals using Moebius Transform:
 #   I( log(4*x-3) / (x*(3*x+1)) ) on c(1, 4);
 #   I( log(5*x-3) / (x*(x+1)) ) on c(1, 3);
+#   I( log(x-3) / (x*(3*x+1)) ) on c(5, 8);
 ### draft v.0.3a - v.0.3b:
 # - Transformations:
 #   f((a*x + b) / (c*x + d)) = - f(x);
@@ -345,5 +346,33 @@ f1.exact = function(x) 2 * log(4*x-3) *
 	- pi * log(4*x-3);
 integrate(f1, lower=1, upper=4)
 f1.exact(4) - f1.exact(1)
-# numeric instability?
+# small numeric instability?
+
+
+#########
+
+#########
+### Ex 3:
+# Tr(x) = (3*x+1) / (x - 3)
+# Tr(c(5, 8)) = (8, 5);
+# f1(x) = f(x) / (x - 3);
+f1 = function(x) 1/(x-3) * sin(((3-sqrt(10))*x+1) / ((3+sqrt(10))*x + 1))
+integrate(f1, lower=5, upper=8)
+
+
+### Ex 2b:
+f1 = function(x) 1/(x-3) * acos(((3-sqrt(10))*x+1) / ((3+sqrt(10))*x + 1))
+f1.exact = function(x) pi/2 * log(x-3)
+integrate(f1, lower=5, upper=8)
+f1.exact(8) - f1.exact(5)
+
+
+###
+f1 = function(x) log(x-3) / (x*(3*x+1));
+f1.exact = function(x) 2 * log(x-3) *
+	acos(((3-sqrt(10))*x+1) / ((3+sqrt(10))*x + 1)) +
+	- pi * log(x-3);
+integrate(f1, lower=5, upper=8)
+f1.exact(8) - f1.exact(5)
+# small numeric instability?
 
