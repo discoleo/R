@@ -5,13 +5,15 @@
 ###
 ### Integral Tricks
 ###
-### draft v.0.3c
+### draft v.0.3c-ex2
 
 
 ### various Integral Tricks
 
-### draft v.0.3c:
-# - I( log(4*x-3) / (x*(3*x+1)) ) on c(1, 4);
+### draft v.0.3c - v.0.3c-ex2:
+# - definite integrals using Moebius Transform:
+#   I( log(4*x-3) / (x*(3*x+1)) ) on c(1, 4);
+#   I( log(5*x-3) / (x*(x+1)) ) on c(1, 3);
 ### draft v.0.3a - v.0.3b:
 # - Transformations:
 #   f((a*x + b) / (c*x + d)) = - f(x);
@@ -308,6 +310,17 @@ f1.exact = function(x) pi/10 * log(5*x-3)
 integrate(f1, lower=1, upper=3)
 f1.exact(3) - f1.exact(1)
 
+###
+f1 = function(x) log(5*x-3) / (x*(x+1));
+f1.exact = function(x) 2 * log(5*x-3) *
+	acos(((1-sqrt(8/3))*x+1) / ((1+sqrt(8/3))*x + 1)) +
+	- pi * log(5*x-3);
+integrate(f1, lower=1, upper=3)
+f1.exact(3) - f1.exact(1)
+# numeric instability?
+
+
+#########
 
 #########
 ### Ex 2:
@@ -332,5 +345,5 @@ f1.exact = function(x) 2 * log(4*x-3) *
 	- pi * log(4*x-3);
 integrate(f1, lower=1, upper=4)
 f1.exact(4) - f1.exact(1)
-# small error?
+# numeric instability?
 
