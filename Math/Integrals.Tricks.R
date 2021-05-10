@@ -5,11 +5,13 @@
 ###
 ### Integral Tricks
 ###
-### draft v.0.3b
+### draft v.0.3c
 
 
 ### various Integral Tricks
 
+### draft v.0.3c:
+# - I( log(4*x-3) / (x*(3*x+1)) ) on c(1, 4);
 ### draft v.0.3a - v.0.3b:
 # - Transformations:
 #   f((a*x + b) / (c*x + d)) = - f(x);
@@ -321,4 +323,14 @@ f1 = function(x) 1/(4*x-3) * acos(((3-sqrt(13))*x+1) / ((3+sqrt(13))*x + 1))
 f1.exact = function(x) pi/8 * log(4*x-3)
 integrate(f1, lower=1, upper=4)
 f1.exact(4) - f1.exact(1)
+
+
+###
+f1 = function(x) log(4*x-3) / (x*(3*x+1));
+f1.exact = function(x) 2 * log(4*x-3) *
+	acos(((3-sqrt(13))*x+1) / ((3+sqrt(13))*x + 1)) +
+	- pi * log(4*x-3);
+integrate(f1, lower=1, upper=4)
+f1.exact(4) - f1.exact(1)
+# small error?
 
