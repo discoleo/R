@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric S2:
 ### Mixed Type: Composite
 ###
-### draft v.0.2a
+### draft v.0.2b
 
 
 ### Heterogeneous Symmetric
@@ -34,9 +34,15 @@
 ###############
 
 
+### draft v.0.2b:
+# - unknown coefficients, variant:
+#   Bu + b3*S = R2;
+# - P[6] examples:
+#   -4 - 10*x - 3*x^2 - x^3 + x^5 + x^6 = 0;
 ### draft v.0.2a:
 # - unknown coefficients:
 #   x^3 + Bu*x*y + b2*y^2 + b1*y = R1;
+#   Bu * S = R2;
 ### draft v.0.1g - v.0.1h:
 # - inter-connected system:
 #   b3*x*y + Ru = R; [v.0.1g]
@@ -807,9 +813,133 @@ err = -387 + 66*x + 102*x^2 - 4*x^5 + 4*x^6
 round0(err)
 
 
-#######################
+############################
+############################
 
-### Variant
+############################
+### Unknown Coefficients ###
+############################
+
+# x^3 + Bu*x*y + b2*y^2 + b1*y = R1
+# y^3 + Bu*x*y + b2*x^2 + b1*x = R1
+# Bu + b3*S = R2
+
+### Solution:
+
+### Case: x != y
+
+### Diff Eqs 1, 2 =>
+S^2 - x*y - b2*S - b1 # = 0
+# x*y = S^2 - b2*S - b1;
+
+### Sum =>
+S^3 - 3*x*y*S + 2*Bu*x*y + b2*(S^2 - 2*x*y) + b1*S - 2*R1 # = 0
+S^3 - b2*S^2 - 2*b1*S - b2^2*S - Bu*(S^2 - b2*S - b1) - b1*b2 + R1 # = 0
+# =>
+S^3 - b2*S^2 - 2*b1*S - b2^2*S - (R2 - b3*S)*(S^2 - b2*S - b1) - b1*b2 + R1 # = 0
+(b3+1)*S^3 - (R2 + b2 + b2*b3)*S^2 - 2*b1*S - b1*b3*S - b2^2*S + b2*R2*S +
+	- b1*b2 + b1*R2 + R1 # = 0
+
+
+### Solver:
+solve.HtCompositeDep.S2P3 = function(R, b, debug=TRUE) {
+	if(length(b) < 2) b = c(b, 0);
+	if(length(R) < 2) stop("R-parameter: 2 values needed!");
+	b31 = b[3] + 1;
+	coeff = c(b31, - (R[2] + b[2]*b31), - b[1] - b[1]*b31 - b[2]^2 + b[2]*R[2],
+		- b[1]*b[2] + b[1]*R[2] + R[1]);
+	S = roots(coeff);
+	if(debug) print(S);
+	# S = S[S != 0]; # exclude 0;
+	xy = S^2 - b[2]*S - b[1];
+	xy.d = sqrt(S^2 - 4*xy + 0i);
+	x = (S + xy.d) / 2;
+	y = S - x;
+	Bu = R[2] - b[3]*S;
+	sol = cbind(x=x, y=y, Bu=Bu);
+	sol = rbind(sol, sol[,c(2:1, 3)]);
+	sol = sort.sol(sol);
+	return(sol);
+}
+
+### Examples:
+
+R = c(0, -1)
+b = c(-1, 2, -2)
+sol = solve.HtCompositeDep.S2P3(R, b)
+x = sol[,1]; y = sol[,2]; Bu = sol[,3];
+
+### Test
+x^3 + Bu*x*y + b[2]*y^2 + b[1]*y # - R[1]
+y^3 + Bu*x*y + b[2]*x^2 + b[1]*x # - R[1]
+Bu + b[3]*(x+y) # - R[2]
+
+###
+round0.p(poly.calc(x) * abs(b[3]+1))
+err = 1 - 6*x + 6*x^2 + 6*x^3 - 3*x^5 + x^6
+round0(err)
+
+
+#########
+### Ex 2:
+R = c(1, -1)
+b = c(1, -2, -2)
+sol = solve.HtCompositeDep.S2P3(R, b)
+x = sol[,1]; y = sol[,2]; Bu = sol[,3];
+
+### Test
+x^3 + Bu*x*y + b[2]*y^2 + b[1]*y # - R[1]
+y^3 + Bu*x*y + b[2]*x^2 + b[1]*x # - R[1]
+Bu + b3*(x+y) # - R[2]
+
+###
+round0.p(poly.calc(x) * abs(b[3]+1))
+err = 14 - 19*x + 21*x^2 - 4*x^3 - 6*x^4 + x^5 + x^6
+round0(err)
+
+
+#########
+### Ex 3:
+R = c(1, 2)
+b = c(NA, -2, -2); b[1] = (R[2]^2 + b[2]^2 + b[2]^2*b[3]) / (1 + 3*b[3] + 2*b[3]^2)
+sol = solve.HtCompositeDep.S2P3(R, b)
+x = sol[,1]; y = sol[,2]; Bu = sol[,3];
+
+###
+round0.p(poly.calc(x) * abs(b[3]+1))
+err = 9 - 4*x + 36*x^2 + 2*x^3 + 4*x^5 + x^6
+round0(err)
+
+
+#########
+### Ex 4:
+R = c(1, 2)
+b = c(NA, 1, -2); b[1] = (R[2]^2 + b[2]^2 + b[2]^2*b[3]) / (1 + 3*b[3] + 2*b[3]^2)
+sol = solve.HtCompositeDep.S2P3(R, b)
+x = sol[,1]; y = sol[,2]; Bu = sol[,3];
+
+###
+round0.p(poly.calc(x) * abs(b[3]+1))
+err = -4 - 10*x - 3*x^2 - x^3 + x^5 + x^6
+round0(err)
+
+
+### P[6]
+R1 = R[1]; R2 = R[2]; b1 = b[1]; b2 = b[2]; b3 = b[3];
+(b3+1)^2*x^6 - (R2 + b2 + R2*b3 + 2*b2*b3 + b2*b3^2)*x^5 +
+	+ (R2^2 - b1 + b2^2 - 3*b1*b3 + b2^2*b3 - 2*b1*b3^2)*x^4 +
+	+ (- 2*R1 + 2*R2*b1 - R2^2*b2 + 2*b1*b2 + 2*R2*b2^2 - b2^3 - 2*R1*b3 +
+		+ R2*b1*b3 + 3*b1*b2*b3 + R2*b2^2*b3 - b2^3*b3 + b1*b2*b3^2)*x^3 +
+	+ (R1*R2 - R2^2*b1 + b1^2 + R1*b2 - R2*b1*b2 - R2*b2^3 + b2^4 +
+		+ b1^2*b3 + R1*b2*b3 + R2*b1*b2*b3 - 2*b1*b2^2*b3 + b1^2*b3^2)*x^2 +
+	+ (R1*b1 - 2*R2*b1^2 - R1*R2*b2 - R2*b1*b2^2 + b1*b2^3 + 2*R1*b1*b3 - b1^2*b2*b3 +
+		+ R1*b2^2*b3)*x +
+	+ R1^2 - b1^3 - 3*R1*b1*b2 - R1*b2^3
+
+
+####################
+
+### Variant:
 
 # x^3 + Bu*x*y + b2*y^2 + b1*y = R1
 # y^3 + Bu*x*y + b2*x^2 + b1*x = R1
