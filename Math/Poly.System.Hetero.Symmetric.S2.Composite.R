@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric S2:
 ### Mixed Type: Composite
 ###
-### draft v.0.1h
+### draft v.0.2a
 
 
 ### Heterogeneous Symmetric
@@ -34,6 +34,9 @@
 ###############
 
 
+### draft v.0.2a:
+# - unknown coefficients:
+#   x^3 + Bu*x*y + b2*y^2 + b1*y = R1;
 ### draft v.0.1g - v.0.1h:
 # - inter-connected system:
 #   b3*x*y + Ru = R; [v.0.1g]
@@ -801,5 +804,82 @@ x*y*(x+y) + b[3]*Ru # - R[1]
 ###
 round0.p(poly.calc(x) * (b[3]-1)^2)
 err = -387 + 66*x + 102*x^2 - 4*x^5 + 4*x^6
+round0(err)
+
+
+#######################
+
+### Variant
+
+# x^3 + Bu*x*y + b2*y^2 + b1*y = R1
+# y^3 + Bu*x*y + b2*x^2 + b1*x = R1
+# Bu*S = R2
+
+### Solution:
+
+### Case: x != y
+
+### Diff Eqs 1, 2 =>
+S^2 - x*y - b2*S - b1 # = 0
+# x*y = S^2 - b2*S - b1;
+
+### Sum =>
+S^3 - 3*x*y*S + 2*Bu*x*y + b2*(S^2 - 2*x*y) + b1*S - 2*R1 # = 0
+S^3 - b2*S^2 - 2*b1*S - b2^2*S - Bu*(S^2 - b2*S - b1) - b1*b2 + R1 # = 0
+S^4 - b2*S^3 - 2*b1*S^2 - b2^2*S^2 - R2*S^2 + R2*b2*S - b1*b2*S + R1*S + R2*b1 # = 0
+
+### Solver:
+solve.HtCompositeDep.S2P3 = function(R, b, debug=TRUE) {
+	if(length(b) < 2) b = c(b, 0);
+	if(length(R) < 2) stop("R-parameter: 2 values needed!")
+	coeff = c(1, - b[2], - (2*b[1] + b[2]^2 + R[2]),
+		R[2]*b[2] - b[1]*b[2] + R[1], R[2]*b[1]);
+	S = roots(coeff);
+	if(debug) print(S);
+	S = S[S != 0]; # exclude 0;
+	xy = S^2 - b[2]*S - b[1];
+	xy.d = sqrt(S^2 - 4*xy + 0i);
+	x = (S + xy.d) / 2;
+	y = S - x;
+	Bu = R[2] / S;
+	sol = cbind(x=x, y=y, Bu=Bu);
+	sol = rbind(sol, sol[,c(2:1, 3)]);
+	sol = sort.sol(sol);
+	return(sol);
+}
+
+### Examples:
+
+R = c(0, -1)
+b = c(-1, 2)
+sol = solve.HtCompositeDep.S2P3(R, b)
+x = sol[,1]; y = sol[,2]; Bu = sol[,3];
+
+### Test
+x^3 + Bu*x*y + b[2]*y^2 + b[1]*y # - R[1]
+y^3 + Bu*x*y + b[2]*x^2 + b[1]*x # - R[1]
+Bu*(x+y) # - R[2]
+
+###
+round0.p(poly.calc(x))
+err = 1 - 10*x + 20*x^2 - 14*x^3 + 10*x^4 - 8*x^5 + 5*x^6 - 2*x^7 + x^8
+round0(err)
+
+
+#########
+### Ex 2:
+R = c(2, -1)
+b = c(0, -1)
+sol = solve.HtCompositeDep.S2P3(R, b)
+x = sol[,1]; y = sol[,2]; Bu = sol[,3];
+
+### Test
+x^3 + Bu*x*y + b[2]*y^2 + b[1]*y # - R[1]
+y^3 + Bu*x*y + b[2]*x^2 + b[1]*x # - R[1]
+Bu*(x+y) # - R[2]
+
+###
+round0.p(poly.calc(x))
+err = 9 + 3*x - 3*x^2 - 6*x^3 + x^5 + x^6
 round0(err)
 
