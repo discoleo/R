@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric S3:
 ### Mixed Type: Composite
 ###
-### draft v.0.1d-true
+### draft v.0.1e
 
 
 ### Heterogeneous Symmetric
@@ -34,6 +34,8 @@
 ###############
 
 
+### draft v.0.1e:
+# - P[6] classic poly (for the case: E2 = R);
 ### draft v.0.1d - v.0.1d-true:
 # - variant: x^2*y + y^2*z + z^2*x = R;
 #   [solved & factorized: true solutions]
@@ -104,7 +106,7 @@ S^2 - 2*E2 + b1*S - 3*Ru # = 0
 
 
 ### Solver:
-solve.CompLin.S3P2 = function(R, b, be=0, debug=TRUE) {
+solve.CompLin.S3P2 = function(R, b, be=0, all.roots=TRUE, debug=TRUE) {
 	coeff = c(1, - 2*b[1] - be, R[1] + 3*b[1]^2);
 	S  = roots(coeff);
 	if(debug) print(S);
@@ -120,9 +122,11 @@ solve.CompLin.S3P2 = function(R, b, be=0, debug=TRUE) {
 	sol = cbind(x=as.vector(x), y=as.vector(y), z=as.vector(z));
 	sol = sol[order(abs(sol[,1])), ];
 	### Case: x == y == z
-	x = roots(c(1, 3*be[1], -3*R[1])) / 3;
-	solEq = cbind(x=x, y=x, z=x);
-	sol = rbind(sol, solEq);
+	if(all.roots) {
+		x = roots(c(1, 3*be[1], -3*R[1])) / 3;
+		solEq = cbind(x=x, y=x, z=x);
+		sol = rbind(sol, solEq);
+	}
 	return(sol);
 }
 
@@ -169,6 +173,33 @@ round0.p(poly.calc(x[1:6]))
 x = x[1:6]
 err = 11 + 2*x + 5*x^2 - 2*x^3 + x^6
 round0(err)
+
+
+#########
+### Ex 3:
+b = 1
+be = -3
+R = - (3*b + be)*(b - be) / 3;
+sol = solve.CompLin.S3P2(R, b, be)
+x = sol[,1]; y = sol[,2]; z = sol[,3];
+
+###
+round0.p(poly.calc(x[1:6]))
+x = x[1:6]
+err = 67 + 30*x + 17*x^2 - 5*x^3 + x^5 + x^6
+round0(err)
+
+
+### P[6]
+b1 = b[1]; be = be;
+x^6 - (2*b1 + be)*x^5 +
+	+ (3*R + 3*b1^2 - 2*b1*be - be^2)*x^4 + # (3*b1 + be)*(b1 - be)
+	- (2*(2*b1 + be)*R + 2*b1^3 - 4*b1^2*be - 4*b1*be^2 - be^3)*x^3 +
+	+ (3*R^2 + 6*b1^2*R + 2*b1^4 - 4*b1*be*R - 5*b1^3*be - be^2*R)*x^2 +
+	- (2*b1*R^2 + 2*b1^3*R + be*R^2 - 4*b1^2*be*R - 2*b1^4*be - 2*b1*be^2*R +
+		+ 5*b1^3*be^2 + 3*b1^2*be^3)*x +
+	+ R^3 + 144 - 108*b1 + 3*b1^2*R^2 - 88*b1^2 + 39*b1^3 + 2*b1^4*R + 17*b1^4 - 3*b1^5 +
+		- 2*b1*be*R^2 - 3*b1^3*be*R + 2*b1^5*be + 3*b1^2*be^2*R + 5*b1^4*be^2 - b1^3*be^3
 
 
 ###############
