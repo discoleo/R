@@ -7,7 +7,7 @@
 ### Heterogenous Symmetric S3:
 ### Mixed Type
 ###
-### draft v.0.2i-ex
+### draft v.0.2j
 
 
 ### Heterogenous Symmetric
@@ -26,6 +26,9 @@
 ### History ###
 ###############
 
+
+### draft v.0.2j:
+# - variant: E2*S = R2;
 ### draft v.0.2i-exp - v.0.2i-ex:
 # - minor experiments with redundancy;
 # - more examples;
@@ -107,7 +110,7 @@ test.ht3Dual = function(x, y, z, R, n=2, p=1, b=0, type) {
 	if(missing(y)) {
 		y = x[,2]; z = x[,3]; x = x[,1];
 	}
-	x.sum = x + y + z
+	x.sum = x + y + z;
 	e3f = if(missing(type)) 1 else if(match("M3", type) > 0) x.sum else if(match("D3", type) > 0) 1/x.sum;
 	if( ! missing(type)) print(paste0("Type: ", type))
 	### Test
@@ -166,7 +169,10 @@ R3*(x^3+y^3+z^3) + (x^3*y^3+x^3*z^3+y^3*z^3) +
 	- R1*((S^2 - 2*R2)*S) + R1^2 + 3*R3^2 # = 0
 R3*S^3 - (R1+6*R3)*R2*S + R1^2 + R2^3 + 9*R3^2 + 3*R1*R3 # = 0
 
-### Solution
+### Eq:
+E3*S^3 - (R1+6*E3)*E2*S + R1^2 + E2^3 + 9*E3^2 + 3*R1*E3 # = 0
+
+### Solver:
 solve.ht3 = function(R, b=0, debug=TRUE) {
 	if(all(b == 0)) {
 		coeff = c(R[3], 0, - (R[1]+6*R[3])*R[2], R[1]^2 + R[2]^3 + 9*R[3]^2 + 3*R[1]*R[3])
@@ -185,12 +191,12 @@ solve.ht3 = function(R, b=0, debug=TRUE) {
 		coeff = coeff - c(0, b[2]^3 + b[1]*b[2] + 6*b[2]*b[3],
 			- b[2]*(R[1] + 3*b[2]*R[2] + 6*R[3]), 3*b[2]*R[2]^2, 0) # Ext 2
 	}
-	S = roots(coeff)
+	S = roots(coeff);
 	if(debug) print(S);
 	len = length(S)
 	b2 = if(length(b) > 1) b[2] else 0; # Ext 2;
 	b3 = if(length(b) > 2) b[3] else 0; # Ext 3;
-	x = sapply(S, function(x) roots(c(1, -x, R[2] - b2*x, - R[3] + b3*x)))
+	x = sapply(S, function(S) roots(c(1, -S, R[2] - b2*S, - R[3] + b3*S)))
 	S = matrix(S, ncol=len, nrow=3, byrow=T)
 	yz = (R[3] - b3*S) / x
 	yz.s = S - x
@@ -635,6 +641,72 @@ round0(err)
 ### TODO: A1, A2, A3;
 
 
+
+#############################
+#############################
+
+### Variant: E2*S = R2
+
+### Order 2: n = 2
+x*y^2 + y*z^2 + z*x^2 - R1 # = 0
+(x*y + y*z + z*x)*S - R2 # = 0
+x*y*z - R3 # = 0
+
+### Solution:
+
+### Eq:
+E3*S^3 - (R1+6*E3)*E2*S + R1^2 + E2^3 + 9*E3^2 + 3*R1*E3 # = 0
+# =>
+R3*S^6 + (R1^2 - R1*R2)*S^3 + 3*(3*R3^2 + R1*R3 - 2*R2*R3)*S^3 + R2^3 # = 0
+
+
+### Solver:
+solve.ht3v.S3P21 = function(R, b=0, debug=TRUE) {
+	if(all(b == 0)) {
+		coeff = c(R[3], 0, 0, (R[1]^2 - R[1]*R[2]) + 3*(3*R[3]^2 + R[1]*R[3] - 2*R[2]*R[3]),
+			0, 0, R[2]^3);
+	} else {
+		# TODO
+	}
+	S = roots(coeff);
+	if(debug) print(S);
+	S = S[S != 0];
+	len = length(S)
+	b2 = if(length(b) > 1) b[2] else 0; # Ext 2;
+	b3 = if(length(b) > 2) b[3] else 0; # Ext 3;
+	R2 = R[2]/S - b2;
+	R3 = R[3] - b3*S;
+	x = sapply(seq(len), function(id) roots(c(1, -S[id], R2[id], - R3[id])))
+	# S = matrix(S, ncol=len, nrow=3, byrow=T);
+	S = rep(S, each=3);
+	R3 = rep(R3, each=3);
+	yz = R3 / x;
+	yz.s = S - x;
+	### robust:
+	# x*y^2 - (x^2+yz)*y + (x^2+yz)*yz.s + b1*S - R1
+	# x*y^2 + x*yz - x*y*yz.s = 0 # x*y*(y+z - yz.sum) = 0
+	# (x^2+yz - x*yz.s)*y + x*yz - (x^2+yz)*yz.s - b1*S + R1 = 0
+	y = - (x*yz - (x^2+yz)*yz.s - b[1]*S + R[1]) / (x^2+yz - x*yz.s)
+	z = yz.s - y;
+	cbind(x=as.vector(x), y=as.vector(y), z=as.vector(z))
+}
+
+### Examples:
+
+R = c(0, -1, 1)
+sol = solve.ht3v.S3P21(R);
+x = sol[,1]; y = sol[,2]; z = sol[,3];
+
+### Test
+test = test.ht3(sol);
+test[2,] = test[2,] * (x+y+z);
+test
+
+###
+round0.p(poly.calc(x))
+# reducible to symmetric P[6];
+
+
 #############################
 #############################
 
@@ -1018,6 +1090,7 @@ solve.ht3Combi = function(R, a, b=0) {
 	### robust:
 	R1A = (a*(R[2]*S - 3*R[3]) + R[1]) / (a+1) # TODO: a = -1
 	R1B = ((R[2]*S - 3*R[3]) - R[1]) / (a+1) # TODO: a = -1
+	if(any(round0(R1A - R1B) == 0)) print("Numerical instability!")
 	yz.d = - (R1A - R1B) / (x^2 + yz - x*yz.s)
 	y = (yz.s + yz.d)/2
 	z = yz.s - y
