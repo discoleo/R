@@ -7,7 +7,7 @@
 ### Heterogenous Symmetric S3:
 ### Mixed Type
 ###
-### draft v.0.2j
+### draft v.0.2k
 
 
 ### Heterogenous Symmetric
@@ -27,6 +27,8 @@
 ###############
 
 
+### draft v.0.2k:
+# - parametric P[9] for simple case;
 ### draft v.0.2j:
 # - variant: E2*S = R2;
 ### draft v.0.2i-exp - v.0.2i-ex:
@@ -89,6 +91,7 @@ library(pracma)
 # Polynomials.Helper.R
 
 ### other functions
+
 
 test.ht3 = function(x, y, z, R, n=2, p=1, b=0) {
 	if(missing(y)) {
@@ -173,7 +176,7 @@ R3*S^3 - (R1+6*R3)*R2*S + R1^2 + R2^3 + 9*R3^2 + 3*R1*R3 # = 0
 E3*S^3 - (R1+6*E3)*E2*S + R1^2 + E2^3 + 9*E3^2 + 3*R1*E3 # = 0
 
 ### Solver:
-solve.ht3 = function(R, b=0, debug=TRUE) {
+solve.Ht3 = function(R, b=0, debug=TRUE) {
 	if(all(b == 0)) {
 		coeff = c(R[3], 0, - (R[1]+6*R[3])*R[2], R[1]^2 + R[2]^3 + 9*R[3]^2 + 3*R[1]*R[3])
 	} else if(length(b) < 3) {
@@ -208,28 +211,13 @@ solve.ht3 = function(R, b=0, debug=TRUE) {
 	z = yz.s - y
 	cbind(as.vector(x), as.vector(y), as.vector(z))
 }
-test.ht3 = function(x, y, z, R, b=0) {
-	if(missing(y)) {
-		y = x[,2]; z = x[,3]; x = x[,1];
-	}
-	### Test
-	err1 = x*y^2 + y*z^2 + z*x^2 + b[1]*(x+y+z) # - R[1] # = 0
-	err2 = x*y + y*z + z*x + if(length(b) < 2) 0 else b[2]*(x+y+z) # - R[2] # = 0
-	err3 = x*y*z + if(length(b) < 3) 0 else b[3]*(x+y+z) # - R[3] # = 0
-	err = rbind(err1, err2, err3)
-	if( ! missing(R)) {
-		err = err - rep(R, each=length(x))
-	}
-	err = round0(err)
-	return(err)
-}
 
 ### Examples
 
 ### Ex 1:
 R = c(1, 1, 1)
 b = 0
-sol = solve.ht3(R, b=b)
+sol = solve.Ht3(R, b=b)
 x = sol[,1]; y = sol[,2]; z = sol[,3];
 
 ### Test
@@ -240,13 +228,36 @@ round0.p(poly.calc(x))
 err = -1 + 3*x - 3*x^2 + 4*x^3 + x^4 - 4*x^5 + 11*x^6 - 4*x^7 + x^9
 round0(err)
 
+### P[9]
+R1 = R[1]; R2 = R[2]; R3 = R[3];
+R3*x^9 - R2*(R1 + 3*R3)*x^7 + (R1^2 + R2^3 + 3*R1*R3 + 6*R3^2)*x^6 +
+	- R2^2*(R1 + 3*R3)*x^5 + R1*R2*R3*x^4 + R3*(R2^3 + 3*R3^2)*x^3 +
+	- 3*R2^2*R3^2*x^2 + 3*R2*R3^3*x - R3^4
+
 
 #########
 ### Ex 2:
+R = c(-3*6, -6, 6)
+b = 0
+sol = solve.Ht3(R, b=b)
+x = sol[,1]; y = sol[,2]; z = sol[,3];
+
+### Test
+test.ht3(x, y, z, b=b)
+
+round0.p(poly.calc(x))
+err = -216 - 648*x - 648*x^2 - 108*x^3 + 108*x^4 + x^9
+round0(err)
+# also R = c(c-3*3, -3, 3)
+# -27 - 81*x - 81*x^2 + 27*x^4 + 9*x^6 + x^9
+
+
+#########
+### Ex 3:
 k = 1 # trivial
 R = c(3*k^3, 3*k^2, k^3)
 b = 1 # not trivial anymore
-sol = solve.ht3(R, b=b)
+sol = solve.Ht3(R, b=b)
 x = sol[,1]; y = sol[,2]; z = sol[,3];
 
 ### Test
@@ -258,7 +269,7 @@ round0.p(poly.calc(x))
 #########
 ### Ex 3:
 R = c(0, 1, 1)
-sol = solve.ht3(R)
+sol = solve.Ht3(R)
 
 ### Test
 test.ht3(sol)
@@ -316,7 +327,7 @@ E3*S^3 + (b1^2 + b1*R2)*S^2 - (R1*R2 + 3*b1*E3 + 6*R2*E3 + 2*b1*R1)*S +
 
 ###
 R = c(1, 1, 1); b = 1;
-sol = solve.ht3(R, b=b)
+sol = solve.Ht3(R, b=b)
 x = sol[,1]; y = sol[,2]; z = sol[,3];
 
 ### Test
@@ -330,7 +341,7 @@ round0(err)
 ### Ex 2:
 R = c(0, 0, 1);
 b = 1; # b = -2;
-sol = solve.ht3(R, b=b)
+sol = solve.Ht3(R, b=b)
 x = sol[,1]; y = sol[,2]; z = sol[,3];
 
 ### Test
@@ -345,7 +356,7 @@ round0(err)
 
 ### Ex 3:
 R = c(0, 1, -1); b = 1;
-sol = solve.ht3(R, b=b)
+sol = solve.Ht3(R, b=b)
 x = sol[,1]; y = sol[,2]; z = sol[,3];
 
 ### Test
@@ -360,7 +371,7 @@ round0(err)
 ###
 # R3 = (b[2]^2 + b[1]*b[2]) +/- 1;
 R = c(0, 1, 9); b = c(1, 2);
-sol = solve.ht3(R, b=b)
+sol = solve.Ht3(R, b=b)
 x = sol[,1]; y = sol[,2]; z = sol[,3];
 
 ### Test
@@ -376,7 +387,7 @@ round0(err)
 ###
 # R3 = (b[2]^2 + b[1]*b[2]) +/- 1;
 R = c(0, 1, -2); b = c(2, -1);
-sol = solve.ht3(R, b=b)
+sol = solve.Ht3(R, b=b)
 x = sol[,1]; y = sol[,2]; z = sol[,3];
 
 ### Test
@@ -390,7 +401,7 @@ round0(err)
 
 ### Ext 3:
 R = c(1, 1, 0); b = c(-7, 1, 1);
-sol = solve.ht3(R, b=b)
+sol = solve.Ht3(R, b=b)
 x = sol[,1]; y = sol[,2]; z = sol[,3];
 
 ### Test
@@ -404,7 +415,7 @@ round0(err)
 
 ### Ext 3, ex 2:
 R = c(0, 1, 0); b = c(-7, 1, 1);
-sol = solve.ht3(R, b=b)
+sol = solve.Ht3(R, b=b)
 x = sol[,1]; y = sol[,2]; z = sol[,3];
 
 ### Test
@@ -421,8 +432,10 @@ round0(err)
 
 ### x*y^n + y*z^n + z*x^n = R1
 
-############
-### Order 3: n = 3
+###############
+### Order 3 ###
+###############
+
 x*y^3 + y*z^3 + z*x^3 - R1 # = 0
 x*y + y*z + z*x - R2 # = 0
 x*y*z - R3 # = 0
