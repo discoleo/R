@@ -7,7 +7,7 @@
 ### Heterogenous Symmetric S3:
 ### Mixed Type
 ###
-### draft v.0.2i-exp
+### draft v.0.2i-ex
 
 
 ### Heterogenous Symmetric
@@ -26,8 +26,9 @@
 ### History ###
 ###############
 
-### draft v.0.2i-exp:
+### draft v.0.2i-exp - v.0.2i-ex:
 # - minor experiments with redundancy;
+# - more examples;
 ### draft v.0.2h - v.0.2h-ext1:
 # - Dual system with E2 = R3;
 # - Extension: E2 + b1*(x+y+z) = R3; [v.0.2h-ext1]
@@ -166,7 +167,7 @@ R3*(x^3+y^3+z^3) + (x^3*y^3+x^3*z^3+y^3*z^3) +
 R3*S^3 - (R1+6*R3)*R2*S + R1^2 + R2^3 + 9*R3^2 + 3*R1*R3 # = 0
 
 ### Solution
-solve.ht3 = function(R, b=0) {
+solve.ht3 = function(R, b=0, debug=TRUE) {
 	if(all(b == 0)) {
 		coeff = c(R[3], 0, - (R[1]+6*R[3])*R[2], R[1]^2 + R[2]^3 + 9*R[3]^2 + 3*R[1]*R[3])
 	} else if(length(b) < 3) {
@@ -185,6 +186,7 @@ solve.ht3 = function(R, b=0) {
 			- b[2]*(R[1] + 3*b[2]*R[2] + 6*R[3]), 3*b[2]*R[2]^2, 0) # Ext 2
 	}
 	S = roots(coeff)
+	if(debug) print(S);
 	len = length(S)
 	b2 = if(length(b) > 1) b[2] else 0; # Ext 2;
 	b3 = if(length(b) > 2) b[3] else 0; # Ext 3;
@@ -255,7 +257,7 @@ sol = solve.ht3(R)
 ### Test
 test.ht3(sol)
 
-poly.calc(sol[,1])
+round0.p(poly.calc(sol[,1]))
 x = sol[,1]
 err = -1 + 3*x - 3*x^2 + 4*x^3 - 3*x^5 + 7*x^6 - 3*x^7 + x^9
 round0(err)
@@ -314,13 +316,28 @@ x = sol[,1]; y = sol[,2]; z = sol[,3];
 ### Test
 test.ht3(x, y, z, b=b)
 
-poly.calc(x)
-
+round0.p(poly.calc(x))
 err = -1 + 3*x - x^2 + 8*x^4 - 13*x^5 + 15*x^6 - 9*x^7 + 2*x^8 + x^9
 round0(err)
 
 
-###
+### Ex 2:
+R = c(0, 0, 1);
+b = 1; # b = -2;
+sol = solve.ht3(R, b=b)
+x = sol[,1]; y = sol[,2]; z = sol[,3];
+
+### Test
+test.ht3(x, y, z, b=b)
+
+round0.p(poly.calc(x[4:9]))
+# works only with b = 1, b = -2
+err = 1 + 2*x^2 - 2*x^3 + 3*x^4 - 2*x^5 + x^6
+# err = 1 - x^2 - 2*x^3 + 3*x^4 + x^5 + x^6
+round0(err)
+
+
+### Ex 3:
 R = c(0, 1, -1); b = 1;
 sol = solve.ht3(R, b=b)
 x = sol[,1]; y = sol[,2]; z = sol[,3];
@@ -328,7 +345,7 @@ x = sol[,1]; y = sol[,2]; z = sol[,3];
 ### Test
 test.ht3(x, y, z, b=b)
 
-poly.calc(x)
+round0.p(poly.calc(x))
 
 err = 1 + 3*x + x^2 - 5*x^4 - 10*x^5 - 11*x^6 - 6*x^7 - 2*x^8 + x^9
 round0(err)
@@ -430,7 +447,7 @@ R3*S^5 - 5*R2*R3*S^3 + (7*R3^2 - R1*R2)*S^2 + (R2^2*R3 + R1*R3)*S +
 
 
 ### Solution
-solve.ht3 = function(R, b=0) {
+solve.ht3 = function(R, b=0, debug=TRUE) {
 	if(length(b) == 1 && b[1] == 0) {
 		coeff = c(R[3], 0, - 5*R[2]*R[3], (7*R[3]^2 - R[1]*R[2]),
 			(R[2]^2*R[3] + R[1]*R[3]), R[1]^2 + 2*R[1]*R[2]^2 + R[2]^4)
@@ -441,8 +458,8 @@ solve.ht3 = function(R, b=0) {
 		# Ext 2:
 		# TODO
 	}
-	S = roots(coeff)
-	print(S)
+	S = roots(coeff);
+	if(debug) print(S);
 	b2 = if(length(b) > 1) b[2] else 0; # TODO: Ext 2;
 	x = sapply(S, function(x) roots(c(1,-x, R[2] - b2*x, -R[3])))
 	S = matrix(S, ncol=5, nrow=3, byrow=T)
