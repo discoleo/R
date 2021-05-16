@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric S3:
 ### Mixed Type
 ###
-### draft v.0.2m
+### draft v.0.2m-ext
 
 
 ### Heterogeneous Symmetric
@@ -27,8 +27,10 @@
 ###############
 
 
-### draft v.0.2m:
-# - extensions of type A to the HtDual system;
+### draft v.0.2m - v.0.2m-ext:
+# - extensions of type A to the HtDual E3-variant system;
+# - extensions of type A to the HtDual E2-variant system:
+#   P[12] => P[6]: degeneracy possible;
 ### draft v.0.2l:
 # - moved Derivations to new file:
 #   Poly.System.Hetero.Symmetric.S3.Mixt.Derivation.R;
@@ -824,7 +826,7 @@ x = sol[,1]; y = sol[,2]; z = sol[,3];
 ### Test
 test.Ht3Dual(x, y, z, n=2)
 
-# there are some issues!
+### degenerate!
 round0.p(poly.calc(x[1:6]^3))
 x = x^3
 err = 1 + 5*x + 23*x^2 + 29*x^3 + 23*x^4 + 5*x^5 + x^6 # symmetric;
@@ -841,7 +843,7 @@ x = sol[,1]; y = sol[,2]; z = sol[,3];
 ### Test
 test.Ht3Dual(x, y, z, b=b, n=2)
 
-# there are some issues!
+###
 round0.p(poly.calc(x))
 err = 1 + 3*x + 3*x^2 + 4*x^3 + 9*x^4 + 10*x^5 + 10*x^6 + 13*x^7 + 11*x^8 + 12*x^9 +
 	+ 12*x^10 + 7*x^11 + 7*x^12 + 5*x^13 + 4*x^14 + 2*x^15 + 2*x^16 + x^18;
@@ -858,7 +860,7 @@ x = sol[,1]; y = sol[,2]; z = sol[,3];
 ### Test
 test.Ht3Dual(x, y, z, b=b, n=2)
 
-# there are some issues!
+###
 round0.p(poly.calc(x))
 err = 1 - x^2 + 3*x^3 + 8*x^5 + 6*x^6 - 9*x^7 + 17*x^8 + 7*x^9 + 19*x^11 + 6*x^12 +
 	+ 10*x^14 + 3*x^15 + x^17 + x^18;
@@ -907,9 +909,13 @@ round0(err)
 # TODO
 
 
-####################
+################
+################
 
-### E2-Type ###
+################
+### Variant: ###
+### E2-Type  ###
+################
 
 ############
 ### Order 2: n = 2
@@ -943,37 +949,53 @@ R3*S^4 - (R1 + R2)*S^3 - 3*R3^2*S^2 + 3*R1^2 + 3*R2^2 + 3*R3^3 + 3*R1*R2 # = 0
 # (x*y + x*z + y*z) + b1*(x+y+z) = R3;
 
 
-### Solution
-solve.ht3Dual = function(R, b=0, type, tol=1E-5) {
+### Solver:
+solve.Ht3Dual.E2 = function(R, b=0, type, tol=1E-5, debug=TRUE) {
 	# TODO: analyse special cases: R3 == 0, R1 == R2;
 	if(missing(type) || type == 1) {
 		type = 1;
-		coeff = c(R[3], - (R[1] + R[2]), - 3*R[3]^2, 0, 3*(R[1]^2 + R[2]^2 + R[3]^3 + R[1]*R[2]))
-		if(length(b) >=1 && b[1] != 0) {
-			coeff = c(0, coeff) +
-				c(- b[1], -3*b[1]^2, 6*b[1]*R[3] - 3*b[1]^3, 9*b[1]^2*R[3], -9*b[1]*R[3]^2, 0)
+		coeff = c(R[3], - (R[1] + R[2]), - 3*R[3]^2, 0, 3*(R[1]^2 + R[2]^2 + R[3]^3 + R[1]*R[2]));
+		if(all(b == 0)) {
+		} else {
+			if(b[1] != 0) {
+				coeff = coeff + c(b[1], 0, 3*b[1]^2, -6*b[1]*R[1] - 3*b[1]*R[2], 0);
+			}
+			if(length(b) > 1 && b[2] != 0) {
+				coeff = coeff + c(b[2], 0, 3*b[2]^2, -6*b[2]*R[2] - 3*b[2]*R[1], 0);
+			}
+			if(length(b) > 1 && b[1] != 0 && b[2] != 0) {
+				coeff = coeff + c(0, 0, 3*b[1]*b[2], 0, 0);
+			}
+			if(length(b) > 2 && b[3] != 0) {
+				coeff = c(0, coeff) +
+					c(- b[3], -3*b[3]^2, 6*b[3]*R[3] - 3*b[3]^3, 9*b[3]^2*R[3], -9*b[3]*R[3]^2, 0)
+			}
+			# TODO: power 2;
 		}
-		# TODO: power 2;
 	} else if(match("M3", type) > 0) {
 		type = 3;
 		R12 = R[1] + R[2]
 		coeff = c() # TODO
 	}
 	S = roots(coeff)
-	len = length(S)
-	print(S)
-	b2 = if(length(b) >= 1) b[1] else 0; # Ext 2: power 1;
-	b3 = if(length(b) >= 2) b[2] else 0; # Ext 2: power 2;
-	E2 = R[3] - b2*S - b3*S^2; # Ext 2;
-	E3 = (E2*S - R[1] - R[2]) / 3;
-	x = sapply(seq_along(S), function(id) roots(c(1, -S[id], E2[id], -E3[id])))
+	if(debug) print(S);
+	b2  = if(length(b) > 1) b[2] else 0;
+	b31 = if(length(b) > 2) b[3] else 0; # Ext A[E2]: power 1;
+	b32 = if(length(b) > 3) b[4] else 0; # Ext A[E2]: power 2;
+	R1 = R[1] - b[1]*S;
+	R2 = R[2] - b2*S; R3 = R[3] - b31*S - b32*S^2;
+	E2 = R3; # Ext A;
+	E3 = (E2*S - R1 - R2) / 3;
+	len = length(S);
+	x = sapply(seq(len), function(id) roots(c(1, -S[id], E2[id], -E3[id])))
 	S  = matrix(S,  ncol=len, nrow=3, byrow=T)
-	E2 = matrix(E2, ncol=len, nrow=3, byrow=T)
+	E2 = matrix(E2, ncol=len, nrow=3, byrow=T);
+	R1 = rep(R1, each=3); R2 = rep(R2, each=3);
 	# E3 = matrix(E3, ncol=len, nrow=3, byrow=T) # not used;
 	yz.s = S - x
 	yz = E2 - x*yz.s
 	### robust: R[1] == R[2]
-	if(R[1] == R[2]) {
+	y = ifelse(R1 == R2, {
 		isZero = round0(x*yz.s - x^2 - yz, tol=tol) == 0
 		y = ifelse(isZero, NA, yz.s/2)
 		if(any(isZero)) {
@@ -986,19 +1008,20 @@ solve.ht3Dual = function(R, b=0, type, tol=1E-5) {
 			# - remaining: z = x; y = yz.s - x;
 			y[isZero] = - yz.s[isZero]
 		}
-		z = yz.s - y;
-	} else {
-		yz.d = (R[2] - R[1]) / (x^2 + yz - x*yz.s)
-		y = (yz.s + yz.d) / 2
-		z = yz.s - y
-	}
-	cbind(as.vector(x), as.vector(y), as.vector(z))
+		y;
+		}, {
+		yz.d = (R2 - R1) / (x^2 + yz - x*yz.s);
+		y = (yz.s + yz.d) / 2;
+		y;
+	});
+	z = yz.s - y;
+	cbind(x=as.vector(x), y=as.vector(y), z=as.vector(z))
 }
 
 ### Examples:
 
 R = c(0, 3, -3);
-sol = solve.ht3Dual(R)
+sol = solve.Ht3Dual.E2(R)
 x = sol[,1]; y = sol[,2]; z = sol[,3];
 
 ### Test
@@ -1016,7 +1039,7 @@ round0(err)
 #########
 ### Ex 2:
 R = c(1, 2, 0);
-sol = solve.ht3Dual(R)
+sol = solve.Ht3Dual.E2(R)
 x = sol[,1]; y = sol[,2]; z = sol[,3];
 
 ### Test
@@ -1034,7 +1057,7 @@ round0(err)
 ### Ex 3:
 # special Test!
 R = c(1, 1, 0);
-sol = solve.ht3Dual(R)
+sol = solve.Ht3Dual.E2(R)
 x = sol[,1]; y = sol[,2]; z = sol[,3];
 
 ### Test
@@ -1051,16 +1074,35 @@ round0(err)
 
 ### Extensions:
 
-### A2: power 1;
+### A Eq 1&2:
+R = c(1, -1, 2);
+b = c(1,1,0)
+sol = solve.Ht3Dual.E2(R, b=b)
+x = sol[,1]; y = sol[,2]; z = sol[,3];
+
+### Test
+S = (x + y + z);
+x*y^2 + y*z^2 + z*x^2 + b[1]*S # - R[1] # = 0
+x*z^2 + y*x^2 + z*y^2 + b[2]*S # - R[2] # = 0
+x*y + x*z + y*z + b[3]*S # - R[3] # = 0
+
+### Classic Polynomial: P[12] => P[6]
+round0.p(poly.calc(x) * 6)
+err = 128 + 352*x^2 + 448*x^4 + 334*x^6 + 154.5*x^8 + 43.5*x^10 + 6*x^12
+round0(err)
+
+
+########
+### AE2: power 1;
 R = c(1, 2, 3);
-b = 1
-sol = solve.ht3Dual(R, b=b)
+b = c(0,0,1)
+sol = solve.Ht3Dual.E2(R, b=b)
 x = sol[,1]; y = sol[,2]; z = sol[,3];
 
 ### Test
 x*y^2 + y*z^2 + z*x^2 # - R[1] # = 0
 x*z^2 + y*x^2 + z*y^2 # - R[2] # = 0
-x*y + x*z + y*z + b[1]*(x + y + z) # - R[3] # = 0
+x*y + x*z + y*z + b[3]*(x + y + z) # - R[3] # = 0
 
 ### Classic Polynomial:
 round0.p(poly.calc(x)) * 3
@@ -1070,12 +1112,15 @@ err = 31/9 - 5*x + 40*x^2 + 167*x^3 - 256*x^4 + 1346*x^5 - 1136*x^6 + 46*x^7 - 5
 round0(err)
 
 
-####################
-####################
+########################
+########################
+
+########################
+### Combined Variant ###
+########################
 
 ############
 ### Order 2: n = 2
-### Combined Variant
 (x*y^2 + y*z^2 + z*x^2) - b*(x*z^2 + y*x^2 + z*y^2) - R1 # = 0
 x*y + x*z + y*z - R2 # = 0
 x*y*z - R3 # = 0
