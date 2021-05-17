@@ -7,7 +7,7 @@
 ### Heterogenous Symmetric
 ### with Composite Leading Term
 ###
-### draft v.0.2b
+### draft v.0.2b-S11
 
 
 ### Hetero-Symmetric
@@ -25,9 +25,10 @@ z^n*x^m + P(z, x, y) = R
 ###############
 
 
-### draft v.0.2b:
+### draft v.0.2b - v.0.2b-S11:
 # - [started work] Mixed Order 3+1:
 #   x^3*y + b*z = R;
+# - [DONE] S11;
 ### draft v.0.2a:
 # - solved (part):
 #   x^2*y + a*x*y^2 = R;
@@ -689,8 +690,13 @@ E3^2*S^4 + 2*R*E3*S^3 + E2*E3^2*S^2 - 2*b*E2*E3*S^2 - R*E2^2*S^2 +
 	- 5*E2^3*E3*S + b*E2^3*S + R*E2*E3*S - 2*b*R*E2*S +
 	+ E2^5 + 7*E2^2*E3^2 - b*E2^2*E3 + b^2*E2^2 +R^2*S^2 # = 0
 
-### TODO:
-# - solve: P[11](S);
+### Eq:
+b1*3*S^11 - 3*R*b1^2*S^10 + 3*R^2*b1*S^9 - (R^3 + 9*b1^4)*S^8 + 20*R*b1^3*S^7 - 15*R^2*b1^2*S^6 +
+	+ 2*R^3*b1*S^5 + 72*b1^5*S^5 + (R^4 - 208*R*b1^4)*S^4 + 264*R^2*b1^3*S^3 +
+	- (188*R^3*b1^2 + 64*b1^6)*S^2 + (80*R^4*b1 + 96*R*b1^5)*S - 16*R^5 - 48*R^2*b1^4
+
+### Auxiliary Eqs:
+### TODO: E2, E3;
 
 
 ### Test
@@ -783,10 +789,11 @@ unique.S = function(sol, digits=5) {
 	return(S)
 }
 
-R = -2; b = 1;
+R = -2; b = 3;
 sol = solve.classic(R, b)
 x = sol[,1]; y = sol[,2]; z = sol[,3];
 S = unique.S(sol);
+round0.p(poly.calc(S) * b^3)
 
 
 #######################
