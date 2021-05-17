@@ -7,7 +7,7 @@
 ### Heterogenous Symmetric
 ### with Composite Leading Term
 ###
-### draft v.0.2a
+### draft v.0.2b
 
 
 ### Hetero-Symmetric
@@ -25,6 +25,9 @@ z^n*x^m + P(z, x, y) = R
 ###############
 
 
+### draft v.0.2b:
+# - [started work] Mixed Order 3+1:
+#   x^3*y + b*z = R;
 ### draft v.0.2a:
 # - solved (part):
 #   x^2*y + a*x*y^2 = R;
@@ -229,7 +232,12 @@ round0.p(poly.calc(sol[1:6, 1]))
 
 ### Solution:
 
+# - shortcut: using eq. from the HtSymmetric Mixed system;
+
 ### Sum =>
+# shortcut: Eq1[Mixed](R1 = 3*R - b*S) =>
+E3*S^3 - ((3*R - b*S) + 6*E3)*E2*S + (3*R - b*S)^2 + E2^3 + 9*E3^2 + 3*(3*R - b*S)*E3 # = 0
+# long:
 (x^2*y + y^2*z + z^2*x) + b*S - 3*R # = 0 # Eq 1-bis
 (x^2*y + y^2*z + z^2*x)*(x*y^2 + y*z^2 + z*x^2) +
 	+ (b*S - 3*R)*(x*y^2 + y*z^2 + z*x^2) # = 0
@@ -451,7 +459,7 @@ round0.p(poly.calc(x))
 ### Variant 2:
 ### Mixt-Order: 2+1
 
-### x[i]^2*x[j] + b*x[i]
+### x[i]^2*x[i+1] + b*x[i+2]
 
 # x^2*y + b*z = R
 # y^2*z + b*x = R
@@ -459,6 +467,7 @@ round0.p(poly.calc(x))
 
 ### Solution:
 # - only trivial solution: x == y == z;
+# - shortcut: using eq. from the HtSymmetric Mixed system;
 
 ### Sum + Rotation =>
 E3*S^3 - 3*b*E3*S + 9*E3^2 + 9*R*E3 - 6*E3*E2*S +
@@ -628,11 +637,164 @@ x^9 - R^3
 ### TODO
 
 
+########################
+########################
+
+########################
+### Mixed-Order: 3+1 ###
+########################
+
+### x[i]^3*x[i+1] + b*x[i+2]
+
+# x^3*y + b*z = R
+# y^3*z + b*x = R
+# z^3*x + b*y = R
+
+### Solution:
+# R1 = 3*R - b*S;
+# - shortcut: using eq. from the HtSymmetric Mixed system;
+
+### Sum + Rotation =>
+E3*S^5 - 5*E2*E3*S^3 + (7*E3^2 - R1*E2)*S^2 + (E2^2*E3 + R1*E3)*S +
+	+ R1^2 + 2*R1*E2^2 + E2^4 # = 0
+# R1 = 3*R - b*S;
+E3*S^5 - 5*E2*E3*S^3 + (7*E3^2 - (3*R - b*S)*E2)*S^2 + (E2^2*E3 + (3*R - b*S)*E3)*S +
+	+ (3*R - b*S)^2 + 2*(3*R - b*S)*E2^2 + E2^4 # = 0
+E3*S^5 - 5*E2*E3*S^3 + 7*E3^2*S^2 + b*E2*S^3 - 3*R*E2*S^2 + E2^2*E3*S + 3*R*E3*S - b*S*E3*S +
+	- 2*b*S*E2^2 + E2^4 + 6*R*E2^2 + b^2*S^2 - 6*b*R*S + 9*R^2 # = 0
+
+### Sum(z*...) =>
+x*y*z*(x^2 + y^2 + z^2) + b*(x^2 + y^2 + z^2) - R*S # = 0
+E3*(S^2 - 2*E2) + b*S^2 - 2*b*E2 - R*S # = 0
+E3*S^2 - 2*E2*E3 + b*S^2 - 2*b*E2 - R*S # = 0
+
+### Sum(y*...) =>
+(x^3*y^2 + y^3*z^2 + z^3*x^2) + b*E2 - R*S # = 0
+### Rotation/Inversion =>
+# - shortcut: using eq. from the HtSymmetric Mixed system;
+# R31 = R*S - b*E2;
+E3^2*S^4 + (2*R31*E3 + E2*E3^2)*S^2 - (R31*E2^2 + 5*E2^3*E3)*S +
+	+ R31^2 + E2^5 + 7*E2^2*E3^2 + R31*E2*E3 # = 0
+E3^2*S^4 + (2*(R*S - b*E2)*E3 + E2*E3^2)*S^2 - ((R*S - b*E2)*E2^2 + 5*E2^3*E3)*S +
+	+ (R*S - b*E2)^2 + E2^5 + 7*E2^2*E3^2 + (R*S - b*E2)*E2*E3 # = 0
+E3^2*S^4 + 2*R*E3*S^3 + E2*E3^2*S^2 - 2*b*E2*E3*S^2 - R*E2^2*S^2 +
+	- 5*E2^3*E3*S + b*E2^3*S + R*E2*E3*S - 2*b*R*E2*S +
+	+ E2^5 + 7*E2^2*E3^2 - b*E2^2*E3 + b^2*E2^2 +R^2*S^2 # = 0
+
+### System:
+E3*S^2 - 2*E2*E3 + b*S^2 - 2*b*E2 - R*S # = 0
+E3*S^5 - 5*E2*E3*S^3 + 7*E3^2*S^2 + b*E2*S^3 - 3*R*E2*S^2 + E2^2*E3*S + 3*R*E3*S - b*S*E3*S +
+	- 2*b*S*E2^2 + E2^4 + 6*R*E2^2 + b^2*S^2 - 6*b*R*S + 9*R^2 # = 0
+E3^2*S^4 + 2*R*E3*S^3 + E2*E3^2*S^2 - 2*b*E2*E3*S^2 - R*E2^2*S^2 +
+	- 5*E2^3*E3*S + b*E2^3*S + R*E2*E3*S - 2*b*R*E2*S +
+	+ E2^5 + 7*E2^2*E3^2 - b*E2^2*E3 + b^2*E2^2 +R^2*S^2 # = 0
+
+### TODO:
+# - solve: P[11](S);
+
+
+### Test
+x^3*y + b*z # - R
+y^3*z + b*x # - R
+z^3*x + b*y # - R
+
+
+### P[33]
+b1 = b[1];
+(- R^3*b1^10 + b1^14) +
+(- R^2*b1^11 + 3*R^5*b1^7)*x +
+(- R*b1^12 + 3*R^4*b1^8 - 3*R^7*b1^4)*x^2 +
+(4*R^3*b1^9 - 3*R^6*b1^5 + R^9*b1 - b1^13)*x^3 +
+(- 7*R^2*b1^10 - 6*R^5*b1^6 + R^8*b1^2)*x^4 +
+(2*R*b1^11 - 3*R^4*b1^7 + 4*R^7*b1^3)*x^5 +
+(R^6*b1^4 - R^9 + b1^12)*x^6 +
+(15*R^2*b1^9 - 2*R^5*b1^5)*x^7 +
+(- 3*R*b1^10 + 17*R^4*b1^6 + R^7*b1^2)*x^8 +
+(- 11*R^3*b1^7 + 5*R^6*b1^3 - b1^11)*x^9 +
+(- 15*R^2*b1^8 + 6*R^5*b1^4 - R^8)*x^10 +
+(4*R*b1^9 - 36*R^4*b1^5 - R^7*b1)*x^11 +
+(21*R^3*b1^6 - 10*R^6*b1^2 + b1^10)*x^12 +
+(10*R^2*b1^7 + 5*R^5*b1^3)*x^13 +
+(- 5*R*b1^8 + 29*R^4*b1^4 - R^7)*x^14 +
+(- 25*R^3*b1^5 + 7*R^6*b1 - b1^9)*x^15 +
+(- 4*R^2*b1^6 - 12*R^5*b1^2)*x^16 +
+(8*R*b1^7 - 7*R^4*b1^3)*x^17 +
+(22*R^3*b1^4 - R^6 - b1^8)*x^18 +
+(- 3*R^2*b1^5 + 6*R^5*b1)*x^19 +
+(- 7*R*b1^6 - 6*R^4*b1^2)*x^20 +
+(2*R^3*b1^3 + b1^7)*x^21 +
+(- 6*R^2*b1^4 - R^5)*x^22 +
+(6*R*b1^5 + 5*R^4*b1)*x^23 +
+(- 10*R^3*b1^2 - b1^6)*x^24 +
+(10*R^2*b1^3)*x^25 +
+(- 5*R*b1^4 - R^4)*x^26 +
+(4*R^3*b1 + b1^5)*x^27 +
+(- 6*R^2*b1^2)*x^28 +
+(4*R*b1^3)*x^29 +
+(- R^3 - b1^4)*x^30 +
+(3*R^2*b1)*x^31 +
+(- 3*R*b1^2)*x^32 +
+(b1^3)*x^33
+
+### Debug
+R = 2; b = -1;
+x =  0.4910569800 - 0.8076735584i;
+y = -1.9917091152 + 0.0333588950i;
+z = -0.3198882225 + 0.0862258573i;
+S = x+y+z; E3 = x*y*z; E2 = x*(y+z)+y*z;
+
+coeff.f = function(R, b) {
+	b1 = b[1];
+	coeff = c(b1^3, - 3*R*b1^2, 3*R^2*b1, - R^3 - b1^4, 4*R*b1^3, - 6*R^2*b1^2, 4*R^3*b1 + b1^5,
+		- 5*R*b1^4 - R^4, 10*R^2*b1^3, - 10*R^3*b1^2 - b1^6, 6*R*b1^5 + 5*R^4*b1, - 6*R^2*b1^4 - R^5,
+		2*R^3*b1^3 + b1^7, - 7*R*b1^6 - 6*R^4*b1^2, - 3*R^2*b1^5 + 6*R^5*b1, 22*R^3*b1^4 - R^6 - b1^8,
+		8*R*b1^7 - 7*R^4*b1^3, - 4*R^2*b1^6 - 12*R^5*b1^2, - 25*R^3*b1^5 + 7*R^6*b1 - b1^9,
+		- 5*R*b1^8 + 29*R^4*b1^4 - R^7, 10*R^2*b1^7 + 5*R^5*b1^3, 21*R^3*b1^6 - 10*R^6*b1^2 + b1^10,
+		4*R*b1^9 - 36*R^4*b1^5 - R^7*b1, - 15*R^2*b1^8 + 6*R^5*b1^4 - R^8,
+		- 11*R^3*b1^7 + 5*R^6*b1^3 - b1^11, - 3*R*b1^10 + 17*R^4*b1^6 + R^7*b1^2,
+		15*R^2*b1^9 - 2*R^5*b1^5, R^6*b1^4 - R^9 + b1^12, 2*R*b1^11 - 3*R^4*b1^7 + 4*R^7*b1^3,
+		- 7*R^2*b1^10 - 6*R^5*b1^6 + R^8*b1^2, 4*R^3*b1^9 - 3*R^6*b1^5 + R^9*b1 - b1^13,
+		- R*b1^12 + 3*R^4*b1^8 - 3*R^7*b1^4, - R^2*b1^11 + 3*R^5*b1^7, - R^3*b1^10 + b1^14);
+	coeff;
+}
+solve.y = function(x, R, b) {
+	b1 = b[1];
+	y0 = - 2*R^2*b1^5*x^18 + 10*R^2*b1^6*x^15 + 2*R^3*b1^4*x^17 - 10*R^3*b1^5*x^14 +
+	8*R^4*b1^2*x^19 - 4*R^4*b1^6*x^7 + 8*R^4*b1^7*x^4 + 2*R^4*b1^8*x - 8*R^5*b1*x^18 + 2*R^6*b1^3*x^8 - 8*R^6*b1^4*x^5 + 2*R^8*x^9 - 2*R^2*b1^11;
+	y.div = - 2*R*b1^6*x^18 + 2*R*b1^12 + 2*R^2*b1^5*x^17 - 6*R^3*b1^2*x^22 - 2*R^3*b1^6*x^10 +
+	10*R^3*b1^7*x^7 - 14*R^3*b1^8*x^4 + 6*R^4*b1*x^21 - 14*R^5*b1^3*x^11 + 20*R^5*b1^4*x^8 - 2*R^7*x^12
+
+	y = - y0 / y.div;
+}
+solve.classic = function(R, b, debug=TRUE) {
+	coeff = coeff.f(R, b);
+	x = roots(coeff);
+	isZero = (round0(x) == 0);
+	if(debug) print(sum(isZero));
+	x = x[ ! isZero]
+	y = solve.y(x, R, b);
+	z = (R - x^3*y) / b[1];
+	return(cbind(x=x, y=y, z=z));
+}
+unique.S = function(sol, digits=5) {
+	S = apply(sol, 1, sum);
+	S = S[order(abs(S))];
+	S = S[ ! duplicated(round(S, digits=digits))]
+	return(S)
+}
+
+R = -2; b = 1;
+sol = solve.classic(R, b)
+x = sol[,1]; y = sol[,2]; z = sol[,3];
+S = unique.S(sol);
+
+
 #######################
 #######################
 
 #####################
 ### Bi-Mixt-Order ###
+#####################
 
 ### x[i]^2*x[j] + a*x[i]*x[j]^2
 
