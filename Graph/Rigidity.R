@@ -1,9 +1,10 @@
+###################
 ###
 ### Rigidity Theory
 ###
 ### Leonard Mada
 ###
-### draft v.0.1a
+### draft v.0.1b
 
 
 ### Rigidity Theory
@@ -42,13 +43,21 @@ gcd.all = function(v) {
 ### 1D Frameworks ###
 #####################
 
-p = rpx1D(10)
+n = 10;
+f = rpx1D(n)
 
 
 ### Q: Is this a valid cyclic framework?
-# (exists) b[i] = {-1, 1} such that sum(b*p) = 0;
-gcd.all(p)
+# (exists) b[i] = {-1, 1} such that sum(b*f) = 0;
+gcd.all(f)
+
+# prime number
+p = 3
+# if(sum(p) %% p == 1): NOT realizable (for odd n)!
+sum(f) %% p # but n = even;
+table(gcd.v(f, 3)) # more work
+
 
 ### TODO:
-# - design algorithm;
+# - design full algorithm;
 
