@@ -4,7 +4,7 @@
 ###
 ### Leonard Mada
 ###
-### draft v.0.1c
+### draft v.0.1d
 
 
 ### Rigidity Theory
@@ -22,6 +22,22 @@ library(pracma)
 rpx1D = function(n, lim=c(1, 20), replace=TRUE) {
 	sample(seq(lim[1], lim[2]), 10, replace=replace)
 }
+# connect the points
+rpx1D.con = function(r, p=NULL) {
+	len = length(r);
+	p = if(missing(p) || is.null(p)) NULL
+		else if(length(p) >= 2) p[1:2]
+		else c(p, 1-p);
+	b = sample(c(1,-1), len, TRUE, prob=p);
+	s = sum(b*r);
+	if(s != 0) {
+		b = c(b, -sign(s));
+		r = c(r, abs(s));
+	}
+	return(list(p=r, b=b));
+}
+
+### Analyse
 gcd.v = function(v, p) {
 	gcd(v, p)
 }
@@ -40,9 +56,13 @@ test = function(v, p) {
 }
 simplify = function(x) {
 	if(x$sum == 0) return(0);
+	# 2 types of simplification: %% p or %% 2;
 	tbl = x$tbl %% 2;
+	# correction for: (%% p)-times;
+	tbl[tbl == 1] = (x$tbl[tbl == 1] %% x$p) %% 2;
 	r = sum(tbl * as.integer(names(tbl))) %% x$p;
 	# TODO: more simplifications possible;
+	# Note: should do the sum( tbl %% p == 0)!
 	return(list(tbl=tbl, r=r));
 }
 
@@ -80,4 +100,7 @@ simplify(l)
 
 ### TODO:
 # - design full algorithm;
+
+### generate a valid framework
+rpx1D.con(f)
 
