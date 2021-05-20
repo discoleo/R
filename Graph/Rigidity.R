@@ -4,7 +4,7 @@
 ###
 ### Leonard Mada
 ###
-### draft v.0.1b
+### draft v.0.1b-test
 
 
 ### Rigidity Theory
@@ -35,6 +35,9 @@ gcd.all = function(v) {
 	m[id[,1] > id[,2]] = d;
 	return(m);
 }
+test = function(v, p) {
+	list(sum=sum(f) %% p, tbl=table(f %% p))
+}
 
 #####################
 #####################
@@ -51,11 +54,16 @@ f = rpx1D(n)
 # (exists) b[i] = {-1, 1} such that sum(b*f) = 0;
 gcd.all(f)
 
-# prime number
+# p = prime number
+# if(sum(p) %% p == 1):
+# NOT realizable (for odd n)!
+# for n = even => more work;
 p = 3
-# if(sum(p) %% p == 1): NOT realizable (for odd n)!
-sum(f) %% p # but n = even;
-table(gcd.v(f, 3)) # more work
+test(f, p)
+p = 5
+test(f, p)
+p = 7
+test(f, p)
 
 
 ### TODO:
