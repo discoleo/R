@@ -4,7 +4,7 @@
 ###
 ### Leonard Mada
 ###
-### draft v.0.1b-test
+### draft v.0.1c
 
 
 ### Rigidity Theory
@@ -36,7 +36,14 @@ gcd.all = function(v) {
 	return(m);
 }
 test = function(v, p) {
-	list(sum=sum(f) %% p, tbl=table(f %% p))
+	list(sum=sum(f) %% p, tbl=table(f %% p), p=p)
+}
+simplify = function(x) {
+	if(x$sum == 0) return(0);
+	tbl = x$tbl %% 2;
+	r = sum(tbl * as.integer(names(tbl))) %% x$p;
+	# TODO: more simplifications possible;
+	return(list(tbl=tbl, r=r));
 }
 
 #####################
@@ -58,12 +65,17 @@ gcd.all(f)
 # if(sum(p) %% p == 1):
 # NOT realizable (for odd n)!
 # for n = even => more work;
+p = 2
+test(f, p)
 p = 3
-test(f, p)
+l = test(f, p)
+simplify(l)
 p = 5
-test(f, p)
+l = test(f, p)
+simplify(l)
 p = 7
-test(f, p)
+l = test(f, p)
+simplify(l)
 
 
 ### TODO:
