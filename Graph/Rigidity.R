@@ -4,7 +4,7 @@
 ###
 ### Leonard Mada
 ###
-### draft v.0.1d
+### draft v.0.1d-quasi-fix
 
 
 ### Rigidity Theory
@@ -24,6 +24,7 @@ rpx1D = function(n, lim=c(1, 20), replace=TRUE) {
 }
 # connect the points
 rpx1D.con = function(r, p=NULL) {
+	# does NOT check if a framework is already possible;
 	len = length(r);
 	p = if(missing(p) || is.null(p)) NULL
 		else if(length(p) >= 2) p[1:2]
@@ -56,13 +57,19 @@ test = function(v, p) {
 }
 simplify = function(x) {
 	if(x$sum == 0) return(0);
+	# works only with p = prime number;
 	# 2 types of simplification: %% p or %% 2;
 	tbl = x$tbl %% 2;
 	# correction for: (%% p)-times;
-	tbl[tbl == 1] = (x$tbl[tbl == 1] %% x$p) %% 2;
-	r = sum(tbl * as.integer(names(tbl))) %% x$p;
+	m = as.integer(names(tbl));
+	# Note: should do the sum(tbl %% p == 0);
+	# but even then it is only = 0 (mod p)!
+	doCorrect = (tbl == 1) & (m != 0);
+	cum.sum = sum((x$tbl[doCorrect] %/% x$p) * m[doCorrect]) + tbl[m == 0];
+	tbl[m == 0] = cum.sum %% 2;
+	tbl[doCorrect] = (x$tbl[doCorrect] %% x$p) %% 2;
+	r = sum(tbl * m) %% x$p;
 	# TODO: more simplifications possible;
-	# Note: should do the sum( tbl %% p == 0)!
 	return(list(tbl=tbl, r=r));
 }
 
