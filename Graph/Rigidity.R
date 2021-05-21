@@ -4,7 +4,7 @@
 ###
 ### Leonard Mada
 ###
-### draft v.0.1d-quasi-fix
+### draft v.0.1e
 
 
 ### Rigidity Theory
@@ -70,7 +70,59 @@ simplify = function(x) {
 	tbl[doCorrect] = (x$tbl[doCorrect] %% x$p) %% 2;
 	r = sum(tbl * m) %% x$p;
 	# TODO: more simplifications possible;
+	# TODO: all correct combinations;
 	return(list(tbl=tbl, r=r));
+}
+simplify.p3 = function(x) {
+	# full implementation of congruence (mod 3);
+	# SAT: only for (mod 3)!
+	if( ! is.list(x)) {
+		l = test(x, 3);
+	} else l = x;
+	m = as.integer(names(l$tbl));
+	simple.mod = function(l, mlog) {
+		s2 = l$tbl[mlog];
+		l$SAT = TRUE; l$type = "Simple";
+		if(length(s2) == 0) return(l);
+		if(s2 %% 2 == 0) {
+			l$tbl[mlog] = 0;
+		} else if(s2 %% 3 == 0) {
+			l$tbl[mlog] = 0;
+		} else {
+			# else NO realization possible!
+			l$SAT = FALSE;
+		}
+		return(l);
+	} 
+	if(all(m != 1)) {
+		return(simple.mod(l, m == 2));
+	} else if(all(m != 2)) {
+		return(simple.mod(l, m == 1));
+	}
+	print("Non-simple")
+	# both present: = 1 (mod 3) & = 2 (mod 3);
+	s1 = l$tbl[m == 1]; s2 = l$tbl[m == 2];
+	l$SAT = TRUE; l$tbl0 = l$tbl;
+	if((s1 %% 3 == 0 || s1 %% 2 == 0) && (s2 %% 3 == 0 || s2 %% 2 == 0)) {
+		l$tbl = l$tbl[m == 0];
+		return(l);
+	}
+	if(s1 %% 2 == 0) {
+		s2 = s2 %% 2; # == 1;
+		s1 = -2;
+		l$tbl[m == 1] = s1; l$tbl[m == 2] = s2;
+		return(l);
+	}
+	if(s2 %% 2 == 0) {
+		s1 = s1 %% 2; # == 1;
+		s2 = -2;
+		l$tbl[m == 1] = s1; l$tbl[m == 2] = s2;
+		return(l);
+	}
+	s1 = s1 %% 2; # == 1;
+	s2 = s2 %% 2; # == 1;
+	l$tbl[m == 1] = s1; l$tbl[m == 2] = s2;
+	return(l);
 }
 
 #####################
@@ -86,8 +138,27 @@ f = rpx1D(n)
 
 ### Q: Is this a valid cyclic framework?
 # (exists) b[i] = {-1, 1} such that sum(b*f) = 0;
-gcd.all(f)
 
+test(f, 2)$tbl;
+
+l = simplify.p3(f)
+l
+
+### Example:
+f = c(1, 3, 8, 10, 13, 14, 17, 18, 18, 20)
+l = simplify.p3(f)
+l
+
+### Solution:
+# {1, 3, 13, 17}: {(1+/-3), (13+/-17)}, ...;
+# {1, 10, 13}, {8, 14, 17, 20}:
+#   "3x1" + "2-2" => {(1+10+13), (8-14), (17-20)}, ...;
+#   "3x2" + "1+2" => {(1-10), (13+8), (14+17+20)}, ...;
+### TODO: solve recursive problem
+# e.g. {3, 18, 18, 24, -6, -3} => scale by +/-1/3
+#   = > {1, 6, 6, 8, 2, 1}; # smaller problem;
+
+###
 # p = prime number
 # if(sum(p) %% p == 1):
 # NOT realizable (for odd n)!
@@ -110,4 +181,10 @@ simplify(l)
 
 ### generate a valid framework
 rpx1D.con(f)
+
+
+########################
+
+### Complex Analysis
+gcd.all(f)
 
