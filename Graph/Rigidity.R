@@ -4,7 +4,7 @@
 ###
 ### Leonard Mada
 ###
-### draft v.0.1e-ex2
+### draft v.0.1e-ex3
 
 
 ### Rigidity Theory
@@ -38,26 +38,14 @@ rpx1D.con = function(r, p=NULL) {
 	return(list(p=r, b=b));
 }
 
-### Analyse
-gcd.v = function(v, p) {
-	gcd(v, p)
-}
-gcd.all = function(v) {
-	len = length(v) - 1;
-	d = sapply(seq(1, len), function(id) gcd(tail(v,-id), v[id]));
-	d = unlist(d);
-	m = diag(v);
-	len = length(v);
-	id = expand.grid(1:len, 1:len);
-	m[id[,1] > id[,2]] = d;
-	return(m);
-}
+### Framework Realizations
 test = function(v, p) {
 	list(sum=sum(f) %% p, tbl=table(f %% p), p=p)
 }
 simplify = function(x) {
 	if(x$sum == 0) return(0);
 	# works only with p = prime number;
+	# Note: NOT fully correct!
 	# 2 types of simplification: %% p or %% 2;
 	tbl = x$tbl %% 2;
 	# correction for: (%% p)-times;
@@ -125,6 +113,21 @@ simplify.p3 = function(x) {
 	return(l);
 }
 
+### Analyse
+gcd.v = function(v, p) {
+	gcd(v, p)
+}
+gcd.all = function(v) {
+	len = length(v) - 1;
+	d = sapply(seq(1, len), function(id) gcd(tail(v,-id), v[id]));
+	d = unlist(d);
+	m = diag(v);
+	len = length(v);
+	id = expand.grid(1:len, 1:len);
+	m[id[,1] > id[,2]] = d;
+	return(m);
+}
+
 #####################
 #####################
 
@@ -155,21 +158,28 @@ l
 # {1, 10, 13}, {8, 14, 17, 20}:
 #   "3x1" + "2-2" => {(1+10+13), (8-14), (17-20)}, ...; # 3 variants
 #   "3x2" + "1+2" => {(1-10), (13+8), (14+17+20)}, ...; # 4*3 = 12 variants;
-### TODO: solve recursive problem
-### Case: "3x1" + "2-2"
-# e.g. {3, 18, 18, 24, -6, -3} => scale by +/-1/3
+### Case 1: "3x1" + "2-2"
+# C.1.1: {3, 18, 18, 24, -6, -3} => scale by +/-1/3
 #   => {1, 6, 6, 8, 2, 1}; # smaller problem;
 #   =>  (1-1), {6,6,8,2} => NO realization!
-# e.g. {3, 18, 18, 24, -9, -6} => scale by +/-1/3
+#   =>  (1+1), {6,6,8,2} => realization: see below;
+# C.1.2: {3, 18, 18, 24, -9, -6} => scale by +/-1/3
 #   = > {1, 6, 6, 8, 3, 2}; # smaller problem;
 #   =>  (1-3), {6,6,8,2} => 6+6-(8+2+3-1)
 18 + 18 - (1+10+13) - (20-14 + (17-8) - 3); # = 0;
-# e.g. {3, 18, 18, 24, -12, -3} => scale by +/-1/3
+# C.1.3: {3, 18, 18, 24, -12, -3} => scale by +/-1/3
 #   => {1, 6, 6, 8, 4, 1}; # smaller problem;
 #   =>  (1-1), {6,6,8,4} => 6+6-8-4 + (1-1)
 18 + 18 - (1+10+13) - (20-8) + 3 - (17-14) # (same as previous) OR
 18 + 18 - (1+10+13) - (20-8) - 3 + (17-14); # = 0;
+### Case 2: "3x2" + "1+2"
+# C.2.1: {3, 18, 18, 14+17+20, 8+1, 10-13} => scale by +/-1/3
+#   => {1, 6, 6, 17, 3, 1}; # smaller problem;
+#   =>  (1-3), {6,6,8,2} => 17 - (6+6+1+3+1)
+14 + 17 + 20 - (18+18+3+8+1+13-10); # = 0;
 
+
+### TODO: solve recursive problem
 
 ###
 # p = prime number
