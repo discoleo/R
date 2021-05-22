@@ -4,7 +4,7 @@
 ###
 ### Leonard Mada
 ###
-### draft v.0.1e-ex3
+### draft v.0.1f
 
 
 ### Rigidity Theory
@@ -39,8 +39,90 @@ rpx1D.con = function(r, p=NULL) {
 }
 
 ### Framework Realizations
-test = function(v, p) {
-	list(sum=sum(f) %% p, tbl=table(f %% p), p=p)
+### Problem:
+# - massive redundancy!
+# - the reductions simplify greatly the subproblems,
+#   but create massive redundancy between the subproblems;
+solve.fr1D = function(f) {
+	l = test(f, 2);
+	if(l$sum == 1) {
+		l$SAT = FALSE;
+		return(l);
+	}
+	l = test(f, 3);
+	m = as.integer(names(l$tbl));
+	len1 = l$tbl[m == 1]; len2 = l$tbl[m == 2];
+	if(length(len1) == 0) len1 = 0;
+	if(length(len2) == 0) len2 = 0;
+	l$R = list();
+	if(len1 == 0 && len2 == 0) {
+		len = l$tbl[1];
+		# few Elements vs Many
+		if(len <= 3) {
+			if(len == 1) {
+				isSat = (f[1] == 0); id = 1;
+			} else if(len == 2) {
+				isSat = (f[1] == f[2]); id = c(1, -2);
+			} else {
+				iSat = c(f[1]+f[2]-f[3], f[1]-f[2]+f[3], f[1]-f[2]-f[3]);
+				isSat.all = (iSat == 0); isSat = any(isSat.all);
+				id = list(c(1,2,-3), c(1,-2,3), c(1,-2,-3));
+				id = if(isSat) unlist(id[isSat.all]) else 0;
+			}
+			l$SAT = isSat; l$R = list(id=id);
+		} else {
+			l2 = solve.fr1D(f / 3);
+			if(l2$SAT) {
+				l$SAT = TRUE;
+				l$R = c(l$R, l2$R);
+			} else {
+				l$SAT = FALSE;
+			}
+		}
+		return(l);
+	}
+	# TODO:
+	m3 = f %% 3;
+	if(len1 == 0) {
+		if(len2 == 1) {
+			l$SAT = FALSE;
+			return(l);
+		}
+		if(len2 %% 2 == 0) {
+			f2 = combine.diff2(f[m3 == 2], add=f[m3 == 0], p=3);
+			l2 = solve.fr1D(f2);
+			if(l2$SAT) {
+				l$R = c(l$R, l2$R);
+			}
+		}
+		if(len2 %% 3 == 0) {
+			f2 = combine.sum3(f[m3 == 2], add=f[m3 == 0], p=3);
+			l2 = solve.fr1D(f2);
+			if(l2$SAT) {
+				l$R = c(l$R, l2$R);
+			}
+		}
+	} else if(len2 == 0) {
+	}
+	return(l)
+}
+combine.diff2 = function(v, add, p=3) {
+	# TODO: resolve massive redundancy!
+	# - creating all combinations generates massive redundancy;
+	id = seq(1, length(v), by=2);
+	v2 = c(add, abs(v[id] - v[id + 1])) / p;
+	return(v2);
+}
+combine.sum3 = function(v, add, p=3) {
+	# TODO: resolve massive redundancy!
+	# - creating all combinations generates massive redundancy;
+	id = seq(1, length(v), by=3);
+	v2 = c(add, abs(v[id] + v[id + 1] + v[id + 2])) / p;
+	return(v2);
+}
+###  Test Sat
+test = function(x, p) {
+	list(sum=sum(x) %% p, tbl=table(x %% p), p=p)
 }
 simplify = function(x) {
 	if(x$sum == 0) return(0);
