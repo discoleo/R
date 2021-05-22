@@ -4,7 +4,7 @@
 ###
 ### Leonard Mada
 ###
-### draft v.0.1f
+### draft v.0.1g
 
 
 ### Rigidity Theory
@@ -120,6 +120,26 @@ combine.sum3 = function(v, add, p=3) {
 	v2 = c(add, abs(v[id] + v[id + 1] + v[id + 2])) / p;
 	return(v2);
 }
+# exploratory test to reduce redundancy
+latin6 = function() {
+	m = matrix(c(
+		1, 1, 1, 1, 1, 1, # s3 + s3
+		1, 1, 1,-1,-1,-1, # s3 - s3
+		1, 1,-1, 1,-1,-1,
+		1, 1,-1,-1, 1,-1,
+		1, 1,-1,-1,-1, 1,
+		1,-1, 1, 1,-1,-1,
+		1,-1, 1,-1, 1,-1,
+		1,-1, 1,-1,-1, 1,
+		-1,1, 1, 1,-1,-1,
+		-1,1, 1,-1, 1,-1,
+		-1,1, 1,-1,-1, 1
+	), nrow=6)
+	return(m);
+}
+# Test
+sort(abs(apply(latin6() * sqrt(2:7), 2, sum)))
+
 ###  Test Sat
 test = function(x, p) {
 	list(sum=sum(x) %% p, tbl=table(x %% p), p=p)
