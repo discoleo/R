@@ -4,7 +4,7 @@
 ###
 ### Leonard Mada
 ###
-### draft v.0.1g
+### draft v.0.1g-fix
 
 
 ### Rigidity Theory
@@ -151,9 +151,9 @@ test = function(x) {
 	UNSAT = function(p) {
 		return(list(SAT=FALSE, p=p));
 	}
-	fail.mod = function(tbl, p) {
-		t.sum = sum(tbl);
-		if(t.sum < p && t.sum %% 2 == 1) return(TRUE);
+	fail.mod = function(s, nm, p) {
+		len = length(nm);
+		if(len == 1 && t.sum < p && t.sum %% 2 == 1) return(TRUE);
 		return(FALSE);
 	}
 	#
@@ -167,15 +167,15 @@ test = function(x) {
 	p = 5;
 	tp = mod.all(x, p)$tbl;
 	tp = tp[-1];
-	if(fail.mod(tp, p)) return(UNSAT(p));
 	s = sum(tp); nm = which(tp != 0);
+	if(fail.mod(s, nm, p)) return(UNSAT(p));
 	if(s == 2 && length(nm) == 2 && sum(nm) != p) return(UNSAT(p));
 	### 7
 	p = 7;
 	tp = mod.all(x, p)$tbl;
 	tp = tp[-1];
-	if(fail.mod(tp, p)) return(UNSAT(p));
 	s = sum(tp); nm = which(tp != 0);
+	if(fail.mod(s, nm, p)) return(UNSAT(p));
 	if(s == 2 && length(nm) == 2 && sum(nm) != p) return(UNSAT(p));
 	# TODO: combination of 3;
 	# did NOT fail by congruence!
