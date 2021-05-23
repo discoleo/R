@@ -44,12 +44,12 @@ rpx1D.con = function(r, p=NULL) {
 # - the reductions simplify greatly the subproblems,
 #   but create massive redundancy between the subproblems;
 solve.fr1D = function(f) {
-	l = test(f, 2);
+	l = mod(f, 2);
 	if(l$sum == 1) {
 		l$SAT = FALSE;
 		return(l);
 	}
-	l = test(f, 3);
+	l = mod(f, 3);
 	m = as.integer(names(l$tbl));
 	len1 = l$tbl[m == 1]; len2 = l$tbl[m == 2];
 	if(length(len1) == 0) len1 = 0;
@@ -141,8 +141,45 @@ latin6 = function() {
 sort(abs(apply(latin6() * sqrt(2:7), 2, sum)))
 
 ###  Test Sat
-test = function(x, p) {
+mod = function(x, p) {
 	list(sum=sum(x) %% p, tbl=table(x %% p), p=p)
+}
+mod.all = function(x, p) {
+	list(tbl=tabulate(x %% p), p=p)
+}
+test = function(x) {
+	UNSAT = function(p) {
+		return(list(SAT=FALSE, p=p));
+	}
+	fail.mod = function(tbl, p) {
+		t.sum = sum(tbl);
+		if(t.sum < p && t.sum %% 2 == 1) return(TRUE);
+		return(FALSE);
+	}
+	#
+	t2 = mod(x, 2);
+	if(t2$sum == 1) return(UNSAT(2));
+	### 3
+	tp = mod.all(x, 3)$tbl;
+	tp = tp[-1];
+	if(sum(tp) == 1) return(UNSAT(3));
+	### 5
+	p = 5;
+	tp = mod.all(x, p)$tbl;
+	tp = tp[-1];
+	if(fail.mod(tp, p)) return(UNSAT(p));
+	s = sum(tp); nm = which(tp != 0);
+	if(s == 2 && length(nm) == 2 && sum(nm) != p) return(UNSAT(p));
+	### 7
+	p = 7;
+	tp = mod.all(x, p)$tbl;
+	tp = tp[-1];
+	if(fail.mod(tp, p)) return(UNSAT(p));
+	s = sum(tp); nm = which(tp != 0);
+	if(s == 2 && length(nm) == 2 && sum(nm) != p) return(UNSAT(p));
+	# TODO: combination of 3;
+	# did NOT fail by congruence!
+	return(list(SAT=TRUE, p=c(2,3,5,7)));
 }
 simplify = function(x) {
 	if(x$sum == 0) return(0);
@@ -167,7 +204,7 @@ simplify.p3 = function(x) {
 	# full implementation of congruence (mod 3);
 	# SAT: only for (mod 3)!
 	if( ! is.list(x)) {
-		l = test(x, 3);
+		l = mod(x, 3);
 	} else l = x;
 	m = as.integer(names(l$tbl));
 	simple.mod = function(l, mlog) {
@@ -244,7 +281,7 @@ f = rpx1D(n)
 ### Q: Is this a valid cyclic framework?
 # (exists) b[i] = {-1, 1} such that sum(b*f) = 0;
 
-test(f, 2)$tbl;
+mod(f, 2)$tbl;
 
 l = simplify.p3(f)
 l
@@ -288,16 +325,14 @@ l
 # if(sum(p) %% p == 1):
 # NOT realizable (for odd n)!
 # for n = even => more work;
-p = 2
-test(f, p)
-p = 3
-l = test(f, p)
-simplify(l)
-p = 5
-l = test(f, p)
-simplify(l)
-p = 7
-l = test(f, p)
+
+n = 10;
+f = rpx1D(n)
+
+l = test(f)
+l
+
+### TODO: different algorithm
 simplify(l)
 
 
