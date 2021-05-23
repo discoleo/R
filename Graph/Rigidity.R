@@ -4,7 +4,7 @@
 ###
 ### Leonard Mada
 ###
-### draft v.0.1g-fix
+### draft v.0.1g-fix2
 
 
 ### Rigidity Theory
@@ -153,7 +153,7 @@ test = function(x) {
 	}
 	fail.mod = function(s, nm, p) {
 		len = length(nm);
-		if(len == 1 && t.sum < p && t.sum %% 2 == 1) return(TRUE);
+		if(len == 1 && s < p && s %% 2 == 1) return(TRUE);
 		return(FALSE);
 	}
 	#
@@ -161,22 +161,25 @@ test = function(x) {
 	if(t2$sum == 1) return(UNSAT(2));
 	### 3
 	tp = mod.all(x, 3)$tbl;
-	tp = tp[-1];
+	if(length(tp) == 3) tp = tp[-1];
 	if(sum(tp) == 1) return(UNSAT(3));
 	### 5
 	p = 5;
 	tp = mod.all(x, p)$tbl;
-	tp = tp[-1];
+	if(length(tp) == p) tp = tp[-1];
 	s = sum(tp); nm = which(tp != 0);
 	if(fail.mod(s, nm, p)) return(UNSAT(p));
 	if(s == 2 && length(nm) == 2 && sum(nm) != p) return(UNSAT(p));
+	if(s == 3 && length(nm) == 2 && (sum(nm) %% p == 0)) return(UNSAT(p));
 	### 7
 	p = 7;
 	tp = mod.all(x, p)$tbl;
-	tp = tp[-1];
+	if(length(tp) == p) tp = tp[-1];
 	s = sum(tp); nm = which(tp != 0);
 	if(fail.mod(s, nm, p)) return(UNSAT(p));
 	if(s == 2 && length(nm) == 2 && sum(nm) != p) return(UNSAT(p));
+	if(s == 3 && length(nm) == 2 && (sum(nm) %% p == 0)) return(UNSAT(p));
+	# TODO: (1,2*2), (1,2*5), (2*1,3), ...;
 	# TODO: combination of 3;
 	# did NOT fail by congruence!
 	return(list(SAT=TRUE, p=c(2,3,5,7)));
