@@ -4,7 +4,7 @@
 ###
 ### Leonard Mada
 ###
-### draft v.0.1g-fix2
+### draft v.0.1h
 
 
 ### Rigidity Theory
@@ -121,6 +121,8 @@ combine.sum3 = function(v, add, p=3) {
 	return(v2);
 }
 # exploratory test to reduce redundancy
+# - unique decomposition into subproblems;
+#   [similar somehow to a matrix factorization]
 latin6 = function() {
 	m = matrix(c(
 		1, 1, 1, 1, 1, 1, # s3 + s3
@@ -134,6 +136,16 @@ latin6 = function() {
 		-1,1, 1, 1,-1,-1,
 		-1,1, 1,-1, 1,-1,
 		-1,1, 1,-1,-1, 1
+	), nrow=6)
+	return(m);
+}
+latin5 = function() {
+	m = matrix(c(
+		1, 1, 1, 1,-1, # s3 + s2
+		1, 1, 1,-1, 1, # s3 - s2
+		1, 1,-1, 1, 1,
+		1,-1, 1, 1, 1,
+		-1,1, 1, 1, 1
 	), nrow=6)
 	return(m);
 }
@@ -322,6 +334,30 @@ l
 
 
 ### TODO: solve recursive problem
+
+f = c(1, 3, 8, 10, 13, 14, 17, 18, 18, 20)
+b1 = 1
+A = matrix(c(
+	3, 8, 10, 13, 14,
+	0, 2,  1,  1,  2, # mod 3
+	3, 3,  0,  3,  4, # mod 5
+	3, 1,  3,  6,  0, # mod 7
+	3, 8, 10,  2,  3  # mod 11
+), ncol=5, byrow=T)
+B = matrix(c(
+	-1,-17,-18,-20,  0, 0, 0, 0, # + 0 * c(3*k3, 5*k5, 7*k7, 11*k11)
+	-1, -2,  0, -2,  3, 0, 0, 0,
+	-1, -2, -3,  0,  0, 5, 0, 0,
+	-1, -3, -4, -6,  0, 0, 7, 0,
+	-1, -6, -7, -9,  0, 0, 0,11
+), ncol=8, byrow=T)
+
+det(A)
+# (b2, b3, b4, b5, b6) = {+/- 1};
+solve(A, B)
+
+# for M[6*6] det == 0
+
 
 ###
 # p = prime number
