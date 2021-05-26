@@ -4,7 +4,7 @@
 ###
 ### Leonard Mada
 ###
-### draft v.0.1i
+### draft v.0.1j
 
 
 ### Rigidity Theory
@@ -47,7 +47,13 @@ m = matrix(c(
 sort(sapply(seq(ncol(m)), function(id) abs(sum(m[,id] * sqrt(2:(nr+1))))))
 
 
-### Modular Arithmetic Constraints
+### Modular Arithmetic
+
+### Constraints Mod 2:
+# Note: all b = 1 (MOD 2);
+# => sum(b*x) = sum(x) (MOD 2);
+# => sum(b*x) = 0 <=> sum(x) = 0 (MOD 2);
+
 # TODO
 
 
@@ -434,6 +440,49 @@ simplify(l)
 
 ### generate a valid framework
 rpx1D.con(f)
+
+
+########################
+
+#############
+### MOD 2 ###
+#############
+
+### Example:
+x = c(2,4,3,5,7,7)
+
+### 0 (MOD 2)
+c(2, 4)
+# possible combinations =>
+c(4+2, 4-2)
+### 1 (MOD 2)
+c(3,5,7,7)
+# possible combinations =>
+matrix(c(
+3+5, 7+7,
+3+5, 7-7,
+5-3, 7+7,
+5-3, 7-7
+), nrow=2)
+
+### Combinations: 1*0(MOD 2) + 2*1(MOD 2):
+c(6, 8,14) # => c(3,4,7) # SAT => (2+4)+(3+5)-(7+7)
+c(2, 8,14) # => c(1,4,7) # NO (other);
+c(6, 8, 0) # => c(3,4,0) # NO (MOD 2);
+c(2, 8, 0) # => c(1,4,0) # NO (MOD 2);
+c(6, 2,14) # => c(3,1,7) # NO (MOD 2);
+c(2, 2,14) # => c(1,1,7) # NO (MOD 2);
+c(6, 2, 0) # => c(3,1,0) # NO (other);
+c(2, 2, 0) # => c(1,1,0) # SAT => (4-2)-(5-3)+(7-7)
+# 8 simpler subproblems;
+
+### Notes:
+# Note 1:
+# - testing subproblems is simpler (fewer terms);
+# - gain in efficiency: compute each of the MOD subgroups only once!
+# Note 2:
+# - it may be possible to avoid the actual computations
+#   using (MOD 4) arithmetic: eliminate unfeasible permutations;
 
 
 ########################
