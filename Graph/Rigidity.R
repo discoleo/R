@@ -4,12 +4,51 @@
 ###
 ### Leonard Mada
 ###
-### draft v.0.1h-fix
+### draft v.0.1i
 
 
 ### Rigidity Theory
 ### Global Rigidity
 
+
+###################
+### 1D Rigidity ###
+###################
+
+### Satisfiability:
+# - let x be n positive integers;
+# - is there a set of coefficients b
+#   with values in {-1, 1},
+#   such that sum(b*x) = 0;
+
+
+### Very Naive Approach
+# - iterate through all permutations of b[i];
+# - Complexity: 2^n permutations;
+
+
+### Improved Very Naive Approach:
+# - sum(b*x) is a solution <=> sum((-b)*x) is a solution;
+# - iterate only through the quasi-unique permutations;
+# - Complexity: 2^(n-1) permutations;
+
+### Example: n=4
+nr = 4
+m = matrix(c(
+ 1, 1, 1, 1,
+-1, 1, 1, 1,
+ 1,-1, 1, 1,
+ 1, 1,-1, 1,
+ 1, 1, 1,-1,
+-1,-1, 1, 1,
+-1, 1,-1, 1,
+-1, 1, 1,-1 ), nrow=nr)
+# all quasi-unique permutations
+sort(sapply(seq(ncol(m)), function(id) abs(sum(m[,id] * sqrt(2:(nr+1))))))
+
+
+### Modular Arithmetic Constraints
+# TODO
 
 
 ###################
