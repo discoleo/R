@@ -4,7 +4,7 @@
 ###
 ### Leonard Mada
 ###
-### draft v.0.1j
+### draft v.0.1l
 
 
 ### Rigidity Theory
@@ -65,7 +65,7 @@ library(pracma)
 
 ### generate 1D Framework
 rpx1D = function(n, lim=c(1, 20), replace=TRUE) {
-	sample(seq(lim[1], lim[2]), 10, replace=replace)
+	sample(seq(lim[1], lim[2]), n, replace=replace)
 }
 # connect the points
 rpx1D.con = function(r, p=NULL) {
@@ -489,4 +489,41 @@ c(2, 2, 0) # => c(1,1,0) # SAT => (4-2)-(5-3)+(7-7)
 
 ### Complex Analysis
 gcd.all(f)
+
+
+########################
+
+##########
+### LP ###
+##########
+
+# install.packages("lpSolve")
+
+library(lpSolve)
+
+##########
+
+n = 20
+
+x = rpx1D(n, lim=c(1,2*n))
+mod(x, 2) # basic SAT
+
+###
+objective.coeff = rep(1, n)
+# alternative:
+# n2 = n %/% 2; objective.coeff = c(rep(1, n2), rep(-1, n-n2));
+# (1/2 - bl)*x = 0 => 2*bl*x = sum(x)
+constr.mat = matrix(2*x, nrow=1)
+constr.val = c(sum(x))
+constr.dir = c("=")
+b.logic = rep(1, n)
+
+optimum = lp(direction="max", objective.coeff, constr.mat, constr.dir, constr.val, all.bin=TRUE)
+optimum
+#
+b = 1 - 2*optimum$solution
+b
+
+### Test
+sum(b*x)
 
