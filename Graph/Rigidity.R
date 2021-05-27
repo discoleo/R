@@ -4,7 +4,7 @@
 ###
 ### Leonard Mada
 ###
-### draft v.0.1l
+### draft v.0.1l-formatted
 
 
 ### Rigidity Theory
@@ -503,6 +503,19 @@ library(lpSolve)
 
 ##########
 
+solve.lp = function(x, objective.coeff) {
+	n = length(x);
+	if(missing(objective.coeff)) objective.coeff = rep(1, n);
+	# (1/2 - bl)*x = 0 => 2*bl*x = sum(x)
+	constr.mat = matrix(2*x, nrow=1)
+	constr.val = c(sum(x))
+	constr.dir = c("=");
+	b.logic = rep(1, n); # not used;
+
+	optimum = lp(direction="max", objective.coeff, constr.mat, constr.dir, constr.val, all.bin=TRUE)
+	optimum
+}
+
 n = 20
 
 x = rpx1D(n, lim=c(1,2*n))
@@ -511,18 +524,13 @@ mod(x, 2) # basic SAT
 ###
 objective.coeff = rep(1, n)
 # alternative:
-# n2 = n %/% 2; objective.coeff = c(rep(1, n2), rep(-1, n-n2));
-# (1/2 - bl)*x = 0 => 2*bl*x = sum(x)
-constr.mat = matrix(2*x, nrow=1)
-constr.val = c(sum(x))
-constr.dir = c("=")
-b.logic = rep(1, n)
+# n2 = n %/% 2; objective.coeff = rep(c(1,-1), c(n2, n-n2));
 
-optimum = lp(direction="max", objective.coeff, constr.mat, constr.dir, constr.val, all.bin=TRUE)
+optimum = solve.lp(x, objective.coeff)
 optimum
 #
 b = 1 - 2*optimum$solution
-b
+(b*x)[order(x)]
 
 ### Test
 sum(b*x)
