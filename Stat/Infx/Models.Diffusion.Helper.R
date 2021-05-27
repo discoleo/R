@@ -1,13 +1,16 @@
 #####################
 ###
+### Project: Modeling Spread of Infections
+###
 ### Team Project 2021
 ### West University
 ###
-### Team Project: Modeling Spread of Infections
 ### Team: Calea D et al;
 ### Supervisor: Leonard Mada / Syonic
 ###
-### draft v0.1a
+### draft v0.1b
+### L. Mada: New/Improved functionality
+
 
 ### Basic Diffusion Functions
 
@@ -17,12 +20,15 @@
 
 # - improved functions compared to the student's project;
 
+### Analysis
+# - basic summary;
+
 
 ####################
 
 ### helper Functions
 
-# - uses plot.rs from file:
+# - uses toRaster & plot.rs from file:
 #   Percolation.R;
 
 
@@ -99,6 +105,36 @@ bridge = function(n, m, w=5, dy=0, y=NULL){
 		}
 	}
 	invisible(m)
+}
+
+### Analysis
+table.infx = function(m, filter=TRUE) {
+	m = as.vector(m);
+	frecv = table(m);
+	if(filter) {
+		nm = as.integer(names(frecv));
+		frecv = frecv[nm > 0];
+	}
+	invisible(frecv);
+}
+analyse = function(m, q=0.9, ncat=6, doCategories=TRUE) {
+	frecv = table.infx(m);
+	# Maximum infections
+	max = max(frecv);
+	# almost max:
+	isMax = (frecv >= q*max);
+	nMax = sum(isMax);
+	idMax = names(frecv)[isMax];
+	if( ! doCategories) {
+		return(list(frecv=frecv, max=max, nMax=nMax, days=idMax));
+	}
+	# Categories
+	fcat = cut(frecv, ncat);
+	frecvC = table(fcat);
+	attr(frecvC, "dimnames")$fcat = gsub("\\.[0-9]+", "", attr(frecvC, "dimnames")$fcat);
+	# no. of days with infections in the given range
+	names(attr(frecvC, "dimnames")) = "DaysWithInfx";
+	return(list(frecv=frecvC, max=max, nMax=nMax, days=idMax));
 }
 
 ###################
