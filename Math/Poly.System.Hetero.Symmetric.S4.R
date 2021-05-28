@@ -6,7 +6,7 @@
 ### Polynomial Systems: S4
 ### Heterogeneous Symmetric
 ###
-### draft v.0.2d-clean-2
+### draft v.0.2e
 
 
 
@@ -280,10 +280,59 @@ S = sol$S; # ...
 # P[10]: can be factored itself in P[3]*P[7];
 # P[10] = P[3]*P[1]*P[2]*P[4];
 
-###################
-###################
+###########################
+###########################
 
-### Mixt Hetero-Systems
+###############
+### Order 2 ###
+###############
+
+### x[i]^2 + b*x2[i+1] = R
+
+### Solution:
+
+### Case 1: x1=x2=x3=x4
+# - 2 solutions;
+
+### Case 2: x1=x3, x2=x4
+# - 4 solutions: 2 overlap Case 1;
+
+### Case 3: all distinct;
+# Classic Poly: P[16 - 4] = P[12];
+# S: P[3];
+
+### TODO;
+
+
+###############
+
+###############
+### Order 3 ###
+###############
+
+### x[i]^3 + b*x2[i+1] = R
+
+### Solution:
+
+### Case 1: x1=x2=x3=x4
+# - 3 solutions;
+
+### Case 2: x1=x3, x2=x4
+# - 9 solutions: 3 overlap Case 1;
+
+### Case 3: all distinct;
+# Classic Poly: P[81 - 9] = P[72];
+# S: P[18];
+
+### TODO;
+
+
+###########################
+###########################
+
+###########################
+### Mixt Hetero-Systems ###
+###########################
 
 ### x^2 + y^2 = R1
 ### x1*y1 + a2*x1*y2 + a3*y1*x2 = R2
