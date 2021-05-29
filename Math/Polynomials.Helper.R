@@ -222,6 +222,21 @@ add.pm = function(p1, p2) {
 	p.r = aggregate(coeff~., p, sum);
 	return(reduce.pm(p.r));
 }
+sort.pm = function(p) {
+	pP = p[, - which(names(p) == "coeff")];
+	pow.tot = sapply(seq(nrow(p)), function(id) sum(pP[id, ]));
+	pow.max = sapply(seq(nrow(p)), function(id) max(pP[id, ]));
+	id = order(p$coeff, pow.tot, pow.max);
+	return(p[id,])
+}
+eval.pm = function(p, x) {
+	pP = p[, - which(names(p) == "coeff")];
+	eval.p = function(id) {
+		idx = which(pP[id,] != 0);
+		prod(x[idx]^pP[id, idx], p$coeff[id]);
+	}
+	sum(sapply(seq(nrow(p)), eval.p))
+}
 
 #############
 ### Other ###
@@ -304,6 +319,8 @@ solve.mS = function(S, b=0) {
 	cbind(as.vector(x), as.vector(y), as.vector(z))
 }
 
+#########
+
 ### Print
 
 # Print multi-variable Poly
@@ -338,6 +355,75 @@ print.p = function(p, leading=1, order=TRUE, sort.order=TRUE) {
 	return(paste(sign.str, p.str, sep="", collapse=""));
 }
 
+### Poly Calculations
+perm2 = function(n, p=c(1,1)) {
+	# all 2 permutations
+	n1 = n - 1;
+	len = n*n1/2;
+	m = matrix(0, nrow=len, ncol=n);
+	ioff = 0;
+	for(i in seq(1, n1)) {
+		m[seq(ioff+i, ioff+n1), i] = p[1];
+		ioff = ioff + n1 - i;
+	}
+	nC = unlist(sapply(seq(2, n), function(id) seq(id, n)));
+	for(i in seq(1, len)) {
+		m[i, nC[i]] = p[2];
+	}
+	return(m)
+}
+perm3 = function(n, p=c(1,1,1)) {
+	p2 = perm2(n, p=p[1:2]);
+	if(p[1] != p[2]) p2 = rbind(p2, array(rev(p2), dim(p2)));
+	if(any(p[3] == p[1:2])) {
+		# TODO
+	} else {
+		p2 = t(p2);
+		id = sapply(seq(ncol(p2)), function(id) which(p2[,id] == 0));
+		putVar = function(pos=c(T,F)) {
+			p21 = p2;
+			id1 = id[rep(pos, length(id) %/% 2)];
+			p21[seq(0, ncol(p2)-1)*n + id1] = p[3];
+			return(p21);
+		}
+		p2 = cbind(putVar(c(T,F)), putVar(c(F,T)));
+		p2 = t(p2);
+	}
+	return(p2);
+}
+prod.perm.poly = function(n, pow=c(1,1)) {
+	# all 2 permutations
+	m = perm2(n, p=pow);
+	xn = paste0("x", seq(n));
+	toPoly = function(mr) {
+		id = which(mr != 0);
+		pP = list(c(pow[1],0), c(0,pow[2]));
+		names(pP) = xn[id];
+		pP$coeff = c(1,1);
+		return(pP);
+	}
+	if(n == 2) return(toPoly(m[1,]));
+	pR = mult.pm(toPoly(m[1,]), toPoly(m[2,]));
+	for(id in seq(3, nrow(m))) {
+		pR = mult.pm(pR, toPoly(m[id,]));
+	}
+	return(pR)
+}
+perm.poly = function(n, p=c(1,1)) {
+	m = as.data.frame(perm2(n, p=p))
+	names(m) = paste0("x", seq(n));
+	m$coeff = rep(1, nrow(m))
+	return(m);
+}
+sym.poly = function(p, var="x") {
+	n = length(p)
+	l = list(p);
+	l = rep(l, n);
+	pP = 0; # TODO!
+	names(pP) = paste0(var, seq(n));
+	pP$coeff = 1;
+	return(pP);
+}
 
 
 #######################
@@ -364,4 +450,16 @@ p.v = pow.pm(p, 3)
 p.v
 
 print.p(p.v[,c(2,3,4,1)])
+
+################
+### Permutations
+n = 4
+p = prod.perm.poly(n)
+p = sort.pm(p);
+p
+
+print.p(p)
+
+apply(perm3(4, p=c(3,2,1)), 1, sum)
+table(duplicated(perm3(4, p=c(3,2,1))))
 
