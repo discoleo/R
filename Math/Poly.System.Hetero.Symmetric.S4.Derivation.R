@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric
 ###  == Derivation ==
 ###
-### draft v.0.1d-DiffEq
+### draft v.0.1d-P16
 
 
 ####################
@@ -228,7 +228,7 @@ S^2 - 2*E2 + b*S - 4*R # = 0
 
 ### Diff =>
 (x1+x2)*(x1+x3)*(x1+x4)*(x2+x3)*(x2+x4)*(x3+x4) + b^6 # = 0
-(-E3^2 + E3*E2*S - E4*S^2 + 6*E4*E2 - 6*E4*E2) + b^6 # = 0
+(-E3^2 + E3*E2*S - E4*S^2) + b^6 # = 0
 
 ### Eq 3:
 ### TODO!
@@ -279,3 +279,48 @@ x1^2 + b*x2 # - R
 x2^2 + b*x3 # - R
 x3^2 + b*x4 # - R
 x4^2 + b*x1 # - R
+
+b^3*x3 = b^2*R - (x1^2 - R)^2
+b^7*x4 = b^6*R - ((x1^2 - R)^2 - b^2*R)^2
+(((x1^2 - R)^2 - b^2*R)^2 - b^6*R)^2 + b^15*x1 - b^14*R # = 0
+
+p1 = list(
+	x = c(2,0),
+	b = c(0,0),
+	R = c(0,1),
+	coeff = c(1,-1)
+)
+bR.gen = function(pb, pR=1) list(b = pb, R = pR, coeff = 1)
+bx.gen = function(pb, px=1) list(b = pb, x = px, coeff = 1)
+p1 = pow.pm(p1, 2)
+p1 = diff.pm(p1, bR.gen(2, pR=1))
+p1 = pow.pm(p1, 2)
+p1 = diff.pm(p1, bR.gen(6, pR=1))
+p1 = pow.pm(p1, 2)
+p1 = diff.pm(p1, bR.gen(14, pR=1))
+p1 = add.pm(p1, bx.gen(15, px=1))
+p1 = sort.pm(p1, sort.coeff=c(4,2,3,1), xn="x")
+p1
+
+print.p(p1)
+
+x^16 - 8*R*x^14 - 4*b^2*R*x^12 + 28*R^2*x^12 + 24*b^2*R^2*x^10 - 56*R^3*x^10 +
+	- 2*b^6*R*x^8 + 6*b^4*R^2*x^8 - 60*b^2*R^3*x^8 + 70*R^4*x^8 +
+	+ 8*b^6*R^2*x^6 - 24*b^4*R^3*x^6 + 80*b^2*R^4*x^6 - 56*R^5*x^6 +
+	+ 4*b^8*R^2*x^4 - 16*b^6*R^3*x^4 + 36*b^4*R^4*x^4 - 60*b^2*R^5*x^4 + 28*R^6*x^4 +
+	- 8*b^8*R^3*x^2 + 16*b^6*R^4*x^2 - 24*b^4*R^5*x^2 + 24*b^2*R^6*x^2 - 8*R^7*x^2 +
+	+ b^15*x - b^14*R + b^12*R^2 - 2*b^10*R^3 + 5*b^8*R^4 - 6*b^6*R^5 + 6*b^4*R^6 - 4*b^2*R^7 + R^8
+
+(x^4 - 2*R*x^2 + b^3*x - b^2*R + R^2) # * P[12]
+
+
+###
+R = -1
+b = 3
+xi.f = function(x, R, b, n=2) {
+	(R - x^n) / b[1];
+}
+x = roots(c(1, 0, - 2*R, b^3, R^2 - b^2*R))
+x1 = x;
+x2 = xi.f(x1, R, b); x3 = xi.f(x2, R, b); x4 = xi.f(x3, R, b);
+
