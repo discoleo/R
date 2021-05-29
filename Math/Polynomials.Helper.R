@@ -222,11 +222,22 @@ add.pm = function(p1, p2) {
 	p.r = aggregate(coeff~., p, sum);
 	return(reduce.pm(p.r));
 }
-sort.pm = function(p) {
+diff.pm = function(p1, p2) {
+	p2$coeff = - p2$coeff;
+	return(add.pm(p1, p2));
+}
+sort.pm = function(p, sort.coeff=1, xn=NULL) {
 	pP = p[, - which(names(p) == "coeff")];
 	pow.tot = sapply(seq(nrow(p)), function(id) sum(pP[id, ]));
 	pow.max = sapply(seq(nrow(p)), function(id) max(pP[id, ]));
-	id = order(p$coeff, pow.tot, pow.max);
+	if(length(sort.coeff) == 1) {
+		id = order(abs(p$coeff), pow.tot, pow.max);
+	} else {
+		coeff.df = data.frame(abs(p$coeff), -pow.tot, -pow.max);
+		if( ! is.null(xn)) coeff.df$x = -pP[,xn];
+		coeff.df = coeff.df[, sort.coeff];
+		id = do.call(order, coeff.df)
+	}
 	return(p[id,])
 }
 eval.pm = function(p, x) {
