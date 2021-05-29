@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric
 ###  == Derivation ==
 ###
-### draft v.0.1d
+### draft v.0.1d-DiffEq
 
 
 ####################
@@ -227,8 +227,10 @@ S^4 - 4*E2*S^2 + 4*E3*S + 2*E2^2 - 4*E4 + 4*b*E4 - R*S # = 0
 S^2 - 2*E2 + b*S - 4*R # = 0
 
 ### Diff =>
-(x1+x2)*(x1+x3)*(x1+x4)*(x2+x3)*(x2+x4)*(x3+x4) - b^6 # = 0
+(x1+x2)*(x1+x3)*(x1+x4)*(x2+x3)*(x2+x4)*(x3+x4) + b^6 # = 0
+(-E3^2 + E3*E2*S - E4*S^2 + 6*E4*E2 - 6*E4*E2) + b^6 # = 0
 
+### Eq 3:
 ### TODO!
 
 
@@ -242,19 +244,29 @@ p
 	+ 2*(x1^2*x2^2*x3^2 + ...) +
 	+ 2*x1*x2*x3*x4*(x1^2+x2^2+x3^2+x4^2) +
 	+ 4*x1*x2*x3*x4*E2;
-(E2^3 - (x1^3*x2^2 + ...)*S + (...) +
-	- 6*(E3^2 - 2*E4*E2) - 6*E4*(S^2 - 2*E2) - 15*E4*E2) / 2 +
+(-3*E3^2 + E3*E2*S - 3*E4*S^2 + 6*E4*E2 - 2*E4*E2) +
 	+ 2*(E3^2 - 2*E4*E2) +
 	+ 2*E4*(S^2 - 2*E2) +
 	+ 4*E4*E2;
-### TODO!
 
 p = perm.poly(4)
 # sort.pm(pow.pm(p, 3))
 eval.pm(p, x)^3
 
+pow = c(3,3)
+p3 = perm.poly(4, p=pow)
+eval.pm(p3, x)
+
+p321 = perm3(4, p=c(3,2,1))
+p321 = as.data.frame(p321)
+names(p321) = paste0("x", seq(4));
+p321$coeff = 1;
+eval.pm(p321, x)
+(-3*E3^2 + E3*E2*S - 3*E4*S^2 + 6*E4*E2 - 2*E4*E2)
+
 ### Debug:
 x = sqrt(2:5)
+x1 = x[1]; x2 = x[2]; x3 = x[3]; x4 = x[4];
 S = sum(x)
 E4 = prod(x)
 E3 = prod(x)*sum(1/x)
