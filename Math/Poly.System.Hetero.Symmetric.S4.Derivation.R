@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric
 ###  == Derivation ==
 ###
-### draft v.0.1c
+### draft v.0.1d
 
 
 ####################
@@ -205,3 +205,65 @@ S^4 - 4*E2*S^2 + 4*E3*S + 2*E2^2 - 4*E4 + 4*b*E4 - R*S # = 0
 # (b+3)*E3 = -(S^3 - 3*E2*S - 4*R) # check for cyclic redundancy?
 # 4*(b-1)*E4 = S^4 - 4*E2*S^2 + 4*E3*S + 2*E2^2 - R*S
 
+
+###########################
+###########################
+
+##############
+### Simple ###
+##############
+
+###############
+### Order 2 ###
+###############
+
+### x[i]^2 + b*x[i+1] = R
+
+### Solution:
+
+### Case: all x[i] different;
+
+### Sum =>
+S^2 - 2*E2 + b*S - 4*R # = 0
+
+### Diff =>
+(x1+x2)*(x1+x3)*(x1+x4)*(x2+x3)*(x2+x4)*(x3+x4) - b^6 # = 0
+
+### TODO!
+
+
+### Elementary Polynomials:
+n = 4
+p = prod.perm.poly(n)
+p = sort.pm(p);
+p
+
+(x1^3*x2^2*x3 + ...) +
+	+ 2*(x1^2*x2^2*x3^2 + ...) +
+	+ 2*x1*x2*x3*x4*(x1^2+x2^2+x3^2+x4^2) +
+	+ 4*x1*x2*x3*x4*E2;
+(E2^3 - (x1^3*x2^2 + ...)*S + (...) +
+	- 6*(E3^2 - 2*E4*E2) - 6*E4*(S^2 - 2*E2) - 15*E4*E2) / 2 +
+	+ 2*(E3^2 - 2*E4*E2) +
+	+ 2*E4*(S^2 - 2*E2) +
+	+ 4*E4*E2;
+### TODO!
+
+p = perm.poly(4)
+# sort.pm(pow.pm(p, 3))
+eval.pm(p, x)^3
+
+### Debug:
+x = sqrt(2:5)
+S = sum(x)
+E4 = prod(x)
+E3 = prod(x)*sum(1/x)
+m = perm2(4)
+E2 = sum(sapply(seq(nrow(m)), function(id) prod(x[which(m[id,] != 0)])))
+
+
+### Test
+x1^2 + b*x2 # - R
+x2^2 + b*x3 # - R
+x3^2 + b*x4 # - R
+x4^2 + b*x1 # - R
