@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric
 ###  == Derivation ==
 ###
-### draft v.0.1d-classic [P16/P12]
+### draft v.0.1e
 
 
 ####################
@@ -231,8 +231,20 @@ S^2 - 2*E2 + b*S - 4*R # = 0
 (-E3^2 + E3*E2*S - E4*S^2) + b^6 # = 0
 
 ### Eq 3:
-### TODO!
+# TODO!
 
+### Eq 4:
+# TODO!
+
+### Eq:
+S^3 + (3*b^2 - 4*R)*S - 4*b^3 # = 0
+
+
+### Solver:
+# TODO!
+
+
+### Helper Derivation:
 
 ### Elementary Polynomials:
 n = 4
@@ -370,6 +382,7 @@ b = 3
 ### distinct:
 sol = solve.Simple.Classic.S4P2(R, b);
 x1 = sol[,1]; x2 = sol[,2]; x3 = sol[,3]; x4 = sol[,4];
+S = x1 + x2 + x3 + x4;
 
 ### equal:
 x = roots(c(1, 0, - 2*R, b^3, R^2 - b^2*R))
