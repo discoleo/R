@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric
 ###  == Derivation ==
 ###
-### draft v.0.1e
+### draft v.0.1f
 
 
 ####################
@@ -231,13 +231,22 @@ S^2 - 2*E2 + b*S - 4*R # = 0
 (-E3^2 + E3*E2*S - E4*S^2) + b^6 # = 0
 
 ### Eq 3:
-# TODO!
+# x1^2 = R - b*x2 => Prod =>
+(x1*x2*x3*x4)^2 - R^4 + b*S*R^3 - b^2*E2*R^2 + b^3*E3*R - b^4*E4 # = 0
+E4^2 - b^4*E4 + b*R^3*S - b^2*R^2*E2 + b^3*R*E3 - R^4 # = 0
 
 ### Eq 4:
+# b*x2 = R - x1^2 => Prod =>
+b^4*E4 - R^4 + R^3*(x1^2+x2^2+x3^2+x4^2) - R^2*E2_2 + R*E3_2 - E4^2 # = 0
 # TODO!
 
 ### Eq:
 S^3 + (3*b^2 - 4*R)*S - 4*b^3 # = 0
+
+### Auxiliary Eqs:
+# E2 = (S^2 + b*S - 4*R) / 2;
+# E3
+# E4
 
 
 ### Solver:
