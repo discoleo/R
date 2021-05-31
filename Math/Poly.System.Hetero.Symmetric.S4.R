@@ -6,7 +6,7 @@
 ### Polynomial Systems: S4
 ### Heterogeneous Symmetric
 ###
-### draft v.0.2e
+### draft v.0.2f
 
 
 
@@ -280,14 +280,42 @@ S = sol$S; # ...
 # P[10]: can be factored itself in P[3]*P[7];
 # P[10] = P[3]*P[1]*P[2]*P[4];
 
+
 ###########################
 ###########################
+###########################
+
+##############
+### Simple ###
+##############
+
+### x[i]^n + b*x[i+1] = R
+
+# x1^n + b*x2 = R
+# x2^n + b*x3 = R
+# x3^n + b*x4 = R
+# x4^n + b*x1 = R
+
+### Solution:
+
+### Case 1: x1=x2=x3=x4
+# P[n]: n solutions;
+
+### Case 2: x1=x3, x2=x4, x1 != x3
+# P[2] o P[(n^2 - n)/2];
+
+### Case 3: all distinct;
+# P[4] o P[(n^4 - n^2)/4];
+
+# - System is decomposable into 3 subsystems:
+#   P[n] * (P[2] o P[(n^2 - n)/2]) * (P[4] o P[(n^4 - n^2)/4]);
+
 
 ###############
 ### Order 2 ###
 ###############
 
-### x[i]^2 + b*x2[i+1] = R
+### x[i]^2 + b*x[i+1] = R
 
 ### Solution:
 
@@ -301,7 +329,77 @@ S = sol$S; # ...
 # Classic Poly: P[16 - 4] = P[12];
 # S: P[3];
 
-### TODO;
+### Derivation:
+# - see file: Poly.System.Hetero.Symmetric.S4.Derivation.R;
+
+### Sum =>
+S^2 - 2*E2 + b*S - 4*R # = 0
+### Diff =>
+(-E3^2 + E3*E2*S - E4*S^2) + b^6 # = 0
+### Eq 3:
+E4^2 - b^4*E4 + b*R^3*S - b^2*R^2*E2 + b^3*R*E3 - R^4 # = 0
+### Eq 4:
+E4^2 - b^4*E4 + 2*R^2*E4 + 2*R*E2*E4 - R*E3^2 - 2*R^2*E3*S +
+	+ 2*R^3*E2 + R^2*E2^2 - R^3*S^2 + R^4 # = 0
+
+### Eq:
+S^3 + (3*b^2 - 4*R)*S - 4*b^3 # = 0
+
+### Solver:
+solve.Simple.S4P2 = function(R, b, debug=TRUE) {
+	coeff = c(1, 0, 3*b[1]^2 - 4*R, - 4*b[1]^3);
+	S = roots(coeff);
+	if(debug) print(S);
+	E2 = (S^2 + b*S - 4*R) / 2;
+	E3 = E3.helper(S, E2, R, b);
+	E4 = (-E3^2 + E3*E2*S + b^6) / S^2;
+	#
+	len = length(S);
+	x1 = sapply(seq(len), function(id) roots(c(1, -S[id], E2[id], -E3[id], E4[id])));
+	x1 = as.vector(x1);
+	x2 = xi.f(x1, R, b, n=2);
+	x3 = xi.f(x2, R, b, n=2);
+	x4 = xi.f(x3, R, b, n=2);
+	sol = cbind(x1=x1, x2=x2, x3=x3, x4=x4);
+	id = order(abs(x1), abs(Re(x1)));
+	sol = sol[id,];
+	return(sol);
+}
+xi.f = function(x, R, b, n=2) {
+	(R - x^n) / b[1];
+}
+E3.helper = function(S, E2, R, b) {
+	# see file:
+	# Poly.System.Hetero.Symmetric.S4.Derivation.R;
+	E3.helper.f(S, E2, R, b);
+}
+test.S4P2.Simple = function(sol, R, b, n=2) {
+	x1 = sol[,1]; x2 = sol[,2]; x3 = sol[,3]; x4 = sol[,4];
+	err1 = x1^n + b*x2 # - R
+	err2 = x2^n + b*x3 # - R
+	err3 = x3^n + b*x4 # - R
+	err4 = x4^n + b*x1 # - R
+	err = rbind(err1, err2, err3, err4);
+	if( ! missing(R)) err = err - R;
+	err = round0(err);
+	return(err);
+}
+
+### Examples:
+
+R = -1
+b = 3
+sol = solve.Simple.S4P2(R, b);
+x1 = sol[,1]; x2 = sol[,2]; x3 = sol[,3]; x4 = sol[,4];
+
+test.S4P2.Simple(sol, b=b)
+
+
+### Test
+x1^2 + b*x2 # - R
+x2^2 + b*x3 # - R
+x3^2 + b*x4 # - R
+x4^2 + b*x1 # - R
 
 
 ###############
@@ -310,7 +408,7 @@ S = sol$S; # ...
 ### Order 3 ###
 ###############
 
-### x[i]^3 + b*x2[i+1] = R
+### x[i]^3 + b*x[i+1] = R
 
 ### Solution:
 
