@@ -353,17 +353,36 @@ print.p = function(p, leading=1, order=TRUE, sort.order=TRUE) {
 	id.coeff = match("coeff", colnames(p));
 	coeff = p[,id.coeff]; p = p[, - id.coeff];
 	p.str = sapply(colnames(p), print.monome, p=p);
+	# print(p.str)
 	paste.nonempty = function(str, collapse="*") {
 		str = str[nchar(str) > 0]
 		paste(str, collapse=collapse)
 	}
-	p.str = apply(p.str, 1, paste.nonempty);
+	if( ! is.null(dim(p.str))) p.str = apply(p.str, 1, paste.nonempty)
+	else p.str = paste.nonempty(p.str);
 	sign.str = ifelse(coeff > 0, " + ", " - ");
 	sign.str[1] = if(coeff[1] > 0) "" else "- ";
 	coeff.str = as.character(abs(coeff));
 	hasCoeff = (abs(coeff) != 1);
 	p.str[hasCoeff] = paste(coeff.str[hasCoeff], p.str[hasCoeff], sep = "*");
 	return(paste(sign.str, p.str, sep="", collapse=""));
+}
+toCoeff = function(p, x="x") {
+	idx = match(x, names(p));
+	if(idx < 0) stop(paste0("No variable ", x));
+	px = p[,x]; p = p[, - idx];
+	str = tapply(seq(nrow(p)), px, function(nr) print.p(p[nr,], leading=NA))
+	str[nchar(str) == 0] = "1";
+	# missing powers
+	x.all = seq(0, max(px));
+	p.all = rep("0", length(x.all));
+	p.all[1 + sort(unique(px))] = str;
+	return(p.all)
+}
+print.coeff = function(p, x="x") {
+	p = rev(toCoeff(p, x));
+	sapply(p, function(p) cat(paste(p, ",\n", sep="")));
+	invisible(p);
 }
 
 ### Poly Calculations
