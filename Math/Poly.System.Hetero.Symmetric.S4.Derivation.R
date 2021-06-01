@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric
 ###  == Derivation ==
 ###
-### draft v.0.1f-auxEq
+### draft v.0.1g
 
 
 ####################
@@ -23,6 +23,23 @@ library(pracma)
 # - e.g. round0(), round0.p(),
 #   solve.EnAll(), solveEn();
 
+### other
+
+### Simple:
+xi.f = function(x, R, b, n=2) {
+	(R - x^n) / b[1];
+}
+test.S4.Simple = function(sol, R, b, n=2) {
+	x1 = sol[,1]; x2 = sol[,2]; x3 = sol[,3]; x4 = sol[,4];
+	err1 = x1^n + b*x2 # - R
+	err2 = x2^n + b*x3 # - R
+	err3 = x3^n + b*x4 # - R
+	err4 = x4^n + b*x1 # - R
+	err = rbind(err1, err2, err3, err4);
+	if( ! missing(R)) err = err - R;
+	err = round0(err);
+	return(err);
+}
 
 ########################
 
@@ -437,4 +454,115 @@ x2 = xi.f(x1, R, b); x3 = xi.f(x2, R, b); x4 = xi.f(x3, R, b);
 
 ### E2_2
 sapply(seq(12), function(id) sum(apply(perm2(4), 1, function(id2) prod(sol[id, id2 !=0]^2))))
+
+
+#########################
+#########################
+
+###############
+### Order 3 ###
+###############
+
+### x[i]^3 + b*x[i+1] = R
+
+### Solution:
+
+### Case: all x[i] different;
+
+### Sum =>
+S^3 - 3*E2*S + 3*E3 + b*S - 4*R # = 0
+
+### Diff =>
+# PROD((x1^2+x2^2+x1*x2)) + b^6 # = 0
+(...) + b^6 # = 0
+
+### Eq 3:
+# x1^3 = R - b*x2 => Prod =>
+(x1*x2*x3*x4)^3 - R^4 + b*S*R^3 - b^2*E2*R^2 + b^3*E3*R - b^4*E4 # = 0
+E4^3 - b^4*E4 + b*R^3*S - b^2*R^2*E2 + b^3*R*E3 - R^4 # = 0
+
+### Eq 4:
+# b*x2 = R - x1^3 => Prod =>
+# TODO
+
+
+### Test
+x1^3 + b*x2 # - R
+x2^3 + b*x3 # - R
+x3^3 + b*x4 # - R
+x4^3 + b*x1 # - R
+
+
+### Classic Polynomial:
+n = 3
+b^(n+1)*x3 = b^n*R - (x1^n - R)^n
+b^(n^2+n+1)*x4 = b^(n^2+n)*R - (b^n*R - (R - x1^n)^n)^n
+(b^(n^2+n)*R - (b^n*R - (R - x1^n)^n)^n)^n +
+	+ b^((n^4-1)/(n-1))*x1 - b^(n^3+n^2+n)*R # = 0
+
+n = 3
+p1 = list(
+	x = c(n,0),
+	b = c(0,0),
+	R = c(0,1),
+	coeff = c(-1, 1)
+)
+bR.gen = function(pb, pR=1) list(b = pb, R = pR, coeff = 1)
+bx.gen = function(pb, px=1) list(b = pb, x = px, coeff = 1)
+p1 = pow.pm(p1, n)
+p1 = diff.pm(bR.gen(n, pR=1), p1)
+p1 = pow.pm(p1, n)
+p1 = diff.pm(bR.gen(n^2+n, pR=1), p1)
+p1 = pow.pm(p1, n)
+p1 = diff.pm(p1, bR.gen((n^4-1)/(n-1) - 1, pR=1))
+p1 = add.pm(p1, bx.gen((n^4-1)/(n-1), px=1))
+p1 = sort.pm(p1, sort.coeff=c(4,2,3,1), xn="x")
+rownames(p1) = seq(nrow(p1))
+p1 = mult.sc.pm(p1, -1)
+p1
+
+pprint.m = matrix(c(
+	 1, 12,
+	13, 23,
+	24, 28,
+	29, 39,
+	40, 51,
+	52, 58,
+	59, 65,
+	66, 72,
+	73, 81,
+	82, 91,
+	92, 99,
+	100, 109,
+	110, 119,
+	120, 129,
+	130, 140,
+	141, 151,
+	152, 162,
+	163, 176
+), nrow=2)
+
+apply(pprint.m, 2, function(rw.id) print.p(p1[rw.id[1]:rw.id[2], ], leading="x"))
+# huge polynomial
+
+### Coefficients
+print.coeff(p1)
+
+
+solve.Simple.Classic.S4P3 = function(R, b, debug=TRUE) {
+	coeff = coeff.S4P3(R, b);
+	x1 = roots(coeff);
+	n = 3;
+	x2 = xi.f(x1, R, b, n=n);
+	x3 = xi.f(x2, R, b, n=n);
+	x4 = xi.f(x3, R, b, n=n);
+	sol = cbind(x1=x1, x2=x2, x3=x3, x4=x4);
+	return(sol);
+}
+
+### Test
+R = -1
+b = 3
+sol = solve.Simple.Classic.S4P3(R, b)
+test.S4.Simple(sol, R,b, n=3)
 
