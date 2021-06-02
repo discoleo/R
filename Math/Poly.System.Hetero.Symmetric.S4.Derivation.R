@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric
 ###  == Derivation ==
 ###
-### draft v.0.1h
+### draft v.0.1h-more
 
 
 ####################
@@ -474,7 +474,14 @@ S^3 - 3*E2*S + 3*E3 + b*S - 4*R # = 0
 
 ### Diff =>
 # PROD((x1^2+x2^2+x1*x2)) + b^6 # = 0
-(...) + b^6 # = 0
+(x1^6*x2^4*x3*x4 + ...) + (x1^6*x2^4*x3^2 + ...) + (x1^6*x2^3*x3^3 + ...) +
+	+ 2*(x1^6*x2^3*x3^2*x4 + ...) + 3*(x1^6*x2^2*x3^2*x4^2 + ...) +
+	+ (x1^5*x2^5*x3*x4 + ...) + (x1^5*x2^5*x3^2 + ...) +
+	+ 2*(x1^5*x2^4*x3^3 + ...) + 4*(x1^5*x2^4*x3^2*x4 + ...) +
+	+ 5*(x1^5*x2^3*x3^3*x4 + ...) + 7*(x1^5*x2^3*x3^2*x4^2 + ...) +
+	+ 3*(x1^4*x2^4*x3^4 + ...) + 7*(x1^4*x2^4*x3^3*x4 + ...) +
+	+ 10*(x1^4*x2^4*x3^2*x4^2 + ...) + 12*(x1^4*x2^3*x3^3*x4^2 + ...) +
+	+ 15*E4^3 + b^6 # = 0
 
 ### Eq 3:
 # x1^3 = R - b*x2 => Prod =>
@@ -483,6 +490,9 @@ E4^3 - b^4*E4 + b*R^3*S - b^2*R^2*E2 + b^3*R*E3 - R^4 # = 0
 
 ### Eq 4:
 # b*x2 = R - x1^3 => Prod =>
+b^4*E4 - R^4 + R^3*(x1^3+x2^3+x3^3+x4^3) - R^2*E2_3 + R*E3_3 - E4^3 # = 0
+b^4*E4 + R^3*(S^3 - 3*E2*S + 3*E3) - R^2*(E2^3 + 3*E3^2 - 3*E3*E2*S + 3*E4*S^2 - 3*E2*E4) +
+	+ R*E3_3 - E4^3 - R^4 # = 0
 # TODO
 
 
@@ -583,4 +593,38 @@ test.S4.Simple(sol, R, b, n=3)
 
 S = sort(apply(sol, 1, sum))[ ! duplicated(round(sort(apply(sol, 1, sum)), 5))]
 round0.p(poly.calc(S))
+
+
+### Deriving Diff:
+# PROD((x1^2+x2^2+x1*x2))
+pp1 = data.frame(
+	x1 = c(2, 0, 1),
+	x2 = c(0, 2, 1),
+	coeff = c(1, 1, 1)
+)
+pAll = perm2.pm(pp1, paste0("x", 1:4))
+pR = mult.all.pm(pAll);
+pR = sort.pm(pR, sort.coeff=c(2,3,1,5,4), xn="x1")
+pR
+
+### E polynomials
+### E2_3
+E2^3 - 3*(-3*E3^2 + E3*E2*S - 3*E4*S^2 + 4*E4*E2) +
+	- 6*E4*(S^2 - 2*E2) - 15*E2*E4 - 6*(E3^2 - 2*E2*E4)
+E2^3 + 3*E3^2 - 3*E3*E2*S + 3*E4*S^2 - 3*E2*E4
+
+p33  = perm.poly(4, p=c(3,3))
+p321 = perm.poly(4, p=c(3,2,1))
+p321 = mult.sc.pm(p321, 3);
+diff.pm(pow.pm(perm.poly(4), 3), add.pm(p33, p321))
+
+### Test
+x1 = sol[,1]; x2 = sol[,2]; x3 = sol[,3]; x4 = sol[,4];
+x = sol[10,]
+S = sum(x)
+E4 = prod(x)
+E3 = prod(x)*sum(1/x)
+m = perm2(4)
+E2 = sum(sapply(seq(nrow(m)), function(id) prod(x[which(m[id,] != 0)])))
+eval.pm(p33, x) # E2_3: seems correct
 
