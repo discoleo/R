@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric
 ###  == Derivation ==
 ###
-### draft v.0.1g
+### draft v.0.1h
 
 
 ####################
@@ -495,7 +495,7 @@ x4^3 + b*x1 # - R
 
 ### Classic Polynomial:
 n = 3
-b^(n+1)*x3 = b^n*R - (x1^n - R)^n
+b^(n+1)*x3 = b^n*R - (R - x1^n)^n
 b^(n^2+n+1)*x4 = b^(n^2+n)*R - (b^n*R - (R - x1^n)^n)^n
 (b^(n^2+n)*R - (b^n*R - (R - x1^n)^n)^n)^n +
 	+ b^((n^4-1)/(n-1))*x1 - b^(n^3+n^2+n)*R # = 0
@@ -543,10 +543,25 @@ pprint.m = matrix(c(
 ), nrow=2)
 
 apply(pprint.m, 2, function(rw.id) print.p(p1[rw.id[1]:rw.id[2], ], leading="x"))
-# huge polynomial
 
 ### Coefficients
 print.coeff(p1)
+
+### P[3] * P[6] * P[54]
+# P[9]:
+# (x^3 + b*x - R) * (x^6 - b*x^4 - 2*R*x^3 + b^2*x^2 + b*R*x + R^2 - b^3)
+# x^9 - 3*R*x^6 + 3*R^2*x^3 - b^4*x - R^3 + b^3*R
+pDiv = list(
+	x = c(9, 6, 3, 1, 0, 0),
+	b = c(0, 0, 0, 4, 0, 3),
+	R = c(0, 1, 2, 0, 3, 1),
+	coeff = c(1,-3, 3,-1, -1, 1)
+)
+pR = div.pm(p1, pDiv)
+pR$Rez = sort.pm(pR$Rez, sort.coeff=c(4,2,3,1), xn="x")
+
+# significant numerical error!
+eval.pm(pR$Rez, c(b, R, sol[10,1]))
 
 
 solve.Simple.Classic.S4P3 = function(R, b, debug=TRUE) {
@@ -562,7 +577,10 @@ solve.Simple.Classic.S4P3 = function(R, b, debug=TRUE) {
 
 ### Test
 R = -1
-b = 3
+b = 2
 sol = solve.Simple.Classic.S4P3(R, b)
-test.S4.Simple(sol, R,b, n=3)
+test.S4.Simple(sol, R, b, n=3)
+
+S = sort(apply(sol, 1, sum))[ ! duplicated(round(sort(apply(sol, 1, sum)), 5))]
+round0.p(poly.calc(S))
 
