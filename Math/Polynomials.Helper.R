@@ -212,6 +212,8 @@ align.pm = function(p1, p2, align.names=TRUE) {
 	}
 }
 add.pm = function(p1, p2) {
+	if(is.data.frame(p1) && nrow(p1) == 0) return(reduce.pm(p2));
+	if(is.data.frame(p2) && nrow(p2) == 0) return(reduce.pm(p1));
 	l = align.pm(p1, p2);
 	p1 = l[[1]]; p2 = l[[2]];
 	n1 = names(p1); n2 = names(p2);
@@ -247,6 +249,46 @@ eval.pm = function(p, x) {
 		prod(x[idx]^pP[id, idx], p$coeff[id]);
 	}
 	sum(sapply(seq(nrow(p)), eval.p))
+}
+div.pm = function(p1, p2, by="x", debug=TRUE) {
+	# very simple division
+	xn = by;
+	idx2 = match(xn, names(p2));
+	if(is.na(idx2)) stop(paste0("P2 must contain the variable: ", xn));
+	idx1 = match(xn, names(p1));
+	if(is.na(idx1)) stop(paste0("P1 must contain the variable: ", xn));
+	if( ! is.data.frame(p2)) p2 = as.data.frame(p2);
+	#
+	xpow2 = max(p2[,idx2]);
+	pDx = p2[p2[,idx2] == xpow2, ];
+	idc2 = match("coeff", names(p2));
+	idc1 = match("coeff", names(p1));
+	c2 = pDx[,idc2];
+	pRez = as.data.frame(array(0, c(0,2)));
+	names(pRez) = c(xn, "coeff");
+	#
+	if(nrow(pDx) == 1) {
+		idn = match(names(pDx)[-idc2], names(p1));
+		print(idn);
+		if(any(is.na(idn))) stop(paste0("No matching variables: ", names(pDx)[is.na(idn)]));
+		while(TRUE) {
+			if(nrow(p1) == 0) break;
+			xpow1 = max(p1[,xn]);
+			if(xpow1 < xpow2) break;
+			px1 = p1[p1[,xn] == xpow1, ];
+			for(nc in seq_along(idn)) {
+				px1[, idn[nc]] = px1[, idn[nc]] - pDx[, nc];
+			}
+			px1[, idc1] = px1[, idc1] / c2;
+			pRez = add.pm(pRez, px1);
+			p1 = diff.pm(p1, mult.pm(px1, p2));
+		}
+	}
+	if(debug) {
+		if(nrow(p1) > 0) print("Not divisible!")
+		else print("Divisible!");
+	}
+	return(list(Rez=pRez, Rem=p1));
 }
 
 #############
