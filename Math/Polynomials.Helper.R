@@ -237,6 +237,9 @@ sort.pm = function(p, sort.coeff=1, xn=NULL) {
 	} else {
 		coeff.df = data.frame(abs(p$coeff), -pow.tot, -pow.max);
 		if( ! is.null(xn)) coeff.df$x = -pP[,xn];
+		if(length(sort.coeff) > 3 + length(xn)) {
+			coeff.df$min = sapply(seq(nrow(p)), function(id) -min(pP[id, ]));
+		}
 		coeff.df = coeff.df[, sort.coeff];
 		id = do.call(order, coeff.df)
 	}
@@ -482,7 +485,11 @@ prod.perm.poly = function(n, pow=c(1,1)) {
 	return(pR)
 }
 perm.poly = function(n, p=c(1,1)) {
-	m = as.data.frame(perm2(n, p=p))
+	if(length(p) == 2) {
+		m = as.data.frame(perm2(n, p=p))
+	} else if(length(p) == 3) {
+		m = as.data.frame(perm3(n, p=p))
+	}
 	names(m) = paste0("x", seq(n));
 	m$coeff = rep(1, nrow(m))
 	return(m);
@@ -495,6 +502,28 @@ sym.poly = function(p, var="x") {
 	names(pP) = paste0(var, seq(n));
 	pP$coeff = 1;
 	return(pP);
+}
+perm2.pm = function(p, xn) {
+	xn0 = names(p);
+	idn = match(xn0, xn);
+	idVar = which( ! is.na(idn)); # TODO: exclude coeff;
+	m = perm2(length(xn));
+	m = (m == 1); m = t(m);
+	permute = function(nc) {
+		pp = p;
+		names(pp)[idVar] = xn[m[ , nc]];
+		return(pp);
+	}
+	pAll = lapply(seq(ncol(m)), permute);
+	return(pAll);
+}
+mult.all.pm = function(lpoly) {
+	# lpoly = list of polynomials;
+	pR = data.frame(x1=0, coeff=1)
+	for(id in seq(length(lpoly))) {
+		pR = mult.pm(pR, lpoly[[id]]);
+	}
+	return(pR);
 }
 
 
