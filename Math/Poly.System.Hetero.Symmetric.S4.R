@@ -6,7 +6,7 @@
 ### Polynomial Systems: S4
 ### Heterogeneous Symmetric
 ###
-### draft v.0.2f
+### draft v.0.2f-types
 
 
 
@@ -16,11 +16,11 @@
 
 
 ### V1: x1^n + b*x2 = R
-### V2: x1^n + b*x2*x3 = R
-### V3: x1^n + b*x2*x3*x4 = R
+### V2a: x1^n + b*x1*x2 = R
+### V2b: x1^n + b*x2*x3 = R
+### V3a: x1^n + b*x1*x2*x3 = R
+### V3b: x1^n + b*x2*x3*x4 = R
 ### V4: x1^n + b*x1*x2*x3*x4 = R
-### V_: x1^n + b*x1*x2 = R
-### V_: x1^n + b*x1*x2*x3 = R
 ### ...
 
 ### TODO:

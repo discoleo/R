@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric
 ###  == Derivation ==
 ###
-### draft v.0.1h-more
+### draft v.0.1i
 
 
 ####################
@@ -627,4 +627,30 @@ E3 = prod(x)*sum(1/x)
 m = perm2(4)
 E2 = sum(sapply(seq(nrow(m)), function(id) prod(x[which(m[id,] != 0)])))
 eval.pm(p33, x) # E2_3: seems correct
+
+
+#############################
+#############################
+
+#############################
+### Mixed Terms: Type V2a ###
+#############################
+
+###############
+### Order 2 ###
+###############
+
+### x1^2 + b*x1*x2 = R
+
+### Solution:
+
+### Case: all x[i] different;
+
+### Sum =>
+S^2 - 2*E2 + b*(x1*x2+x2*x3+x3*x4+x4*x1) - 4*R # = 0
+# P2_4a = (x1*x2+x2*x3+x3*x4+x4*x1);
+
+### x1^2 = R - b*x1*x2 => Prod =>
+E4^2 - R^4 + b*R^3*P2_4a - b^2*R^2*P3_4 + b^3*R*E4*P2_4b - b^4*E4^2 # = 0
+# TODO;
 
