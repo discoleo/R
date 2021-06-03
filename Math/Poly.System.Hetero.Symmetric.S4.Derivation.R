@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric
 ###  == Derivation ==
 ###
-### draft v.0.1i
+### draft v.0.1j
 
 
 ####################
@@ -482,6 +482,7 @@ S^3 - 3*E2*S + 3*E3 + b*S - 4*R # = 0
 	+ 3*(x1^4*x2^4*x3^4 + ...) + 7*(x1^4*x2^4*x3^3*x4 + ...) +
 	+ 10*(x1^4*x2^4*x3^2*x4^2 + ...) + 12*(x1^4*x2^3*x3^3*x4^2 + ...) +
 	+ 15*E4^3 + b^6 # = 0
+# TODO;
 
 ### Eq 3:
 # x1^3 = R - b*x2 => Prod =>
@@ -492,9 +493,13 @@ E4^3 - b^4*E4 + b*R^3*S - b^2*R^2*E2 + b^3*R*E3 - R^4 # = 0
 # b*x2 = R - x1^3 => Prod =>
 b^4*E4 - R^4 + R^3*(x1^3+x2^3+x3^3+x4^3) - R^2*E2_3 + R*E3_3 - E4^3 # = 0
 b^4*E4 + R^3*(S^3 - 3*E2*S + 3*E3) - R^2*(E2^3 + 3*E3^2 - 3*E3*E2*S + 3*E4*S^2 - 3*E2*E4) +
-	+ R*E3_3 - E4^3 - R^4 # = 0
-# TODO
+	+ R*(E3^3 - 3*E4*E3*E2 + 3*E4^2*S) - E4^3 - R^4 # = 0
 
+### TODO:
+# - solve;
+
+
+########
 
 ### Test
 x1^3 + b*x2 # - R
@@ -532,24 +537,15 @@ p1 = mult.sc.pm(p1, -1)
 p1
 
 pprint.m = matrix(c(
-	 1, 12,
-	13, 23,
-	24, 28,
-	29, 39,
-	40, 51,
-	52, 58,
-	59, 65,
-	66, 72,
-	73, 81,
-	82, 91,
-	92, 99,
-	100, 109,
-	110, 119,
-	120, 129,
-	130, 140,
-	141, 151,
-	152, 162,
-	163, 176
+	 1, 12,	13, 23,
+	24, 28,	29, 39,
+	40, 51,	52, 58,
+	59, 65,	66, 72,
+	73, 81,	82, 91,
+	92, 99,	100, 109,
+	110, 119,	120, 129,
+	130, 140,	141, 151,
+	152, 162,	163, 176
 ), nrow=2)
 
 apply(pprint.m, 2, function(rw.id) print.p(p1[rw.id[1]:rw.id[2], ], leading="x"))
@@ -615,8 +611,7 @@ E2^3 + 3*E3^2 - 3*E3*E2*S + 3*E4*S^2 - 3*E2*E4
 
 p33  = perm.poly(4, p=c(3,3))
 p321 = perm.poly(4, p=c(3,2,1))
-p321 = mult.sc.pm(p321, 3);
-diff.pm(pow.pm(perm.poly(4), 3), add.pm(p33, p321))
+diff.lpm(pow.pm(perm.poly(4), 3), list(p33, mult.sc.pm(p321, 3)))
 
 ### Test
 x1 = sol[,1]; x2 = sol[,2]; x3 = sol[,3]; x4 = sol[,4];
@@ -627,6 +622,14 @@ E3 = prod(x)*sum(1/x)
 m = perm2(4)
 E2 = sum(sapply(seq(nrow(m)), function(id) prod(x[which(m[id,] != 0)])))
 eval.pm(p33, x) # E2_3: seems correct
+
+### E3_3
+E3^3 - 3*E4*E3*E2 + 3*E4^2*S
+diff.lpm(pow.pm(perm.poly(4, c(1,1,1)), 3),
+	list(perm.poly(4, c(3,3,3)),
+		mult.pm(Eprod.pm(4, 2), Esum.pm(4), sc=-3),
+		mult.all.pm(
+			list(Eprod.pm(4, 1), perm.poly(4, c(1,1,1)), perm.poly(4, c(1,1)), sc=3))))
 
 
 #############################
