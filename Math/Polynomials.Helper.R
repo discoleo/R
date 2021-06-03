@@ -431,11 +431,16 @@ print.coeff = function(p, x="x") {
 }
 
 ### Poly Calculations
-perm2 = function(n, p=c(1,1)) {
+perm1 = function(n, p=1, val0=0) {
+	m = matrix(val0, nrow=n, ncol=n);
+	diag(m) = p;
+	return(m);
+}
+perm2 = function(n, p=c(1,1), val0=0) {
 	# all 2 permutations
 	n1 = n - 1;
 	len = n*n1/2;
-	m = matrix(0, nrow=len, ncol=n);
+	m = matrix(val0, nrow=len, ncol=n);
 	ioff = 0;
 	for(i in seq(1, n1)) {
 		m[seq(ioff+i, ioff+n1), i] = p[1];
@@ -447,8 +452,12 @@ perm2 = function(n, p=c(1,1)) {
 	}
 	return(m)
 }
-perm3 = function(n, p=c(1,1,1)) {
-	p2 = perm2(n, p=p[1:2]);
+perm3 = function(n, p=c(1,1,1), val0=0) {
+	if(min(p) == max(p)) {
+		# works for: length(p) = n-1;
+		return(perm1(n, p=val0, val0=p[1]));
+	}
+	p2 = perm2(n, p=p[1:2], val0=val0);
 	if(p[1] != p[2]) p2 = rbind(p2, array(rev(p2), dim(p2)));
 	if(any(p[3] == p[1:2])) {
 		# TODO
