@@ -92,7 +92,7 @@ mult.all.pm = function(p) {
 	}
 	return(pR);
 }
-mult.pm = function(p1, p2) {
+mult.pm = function(p1, p2, sc=1) {
 	# P1
 	split.df = function(p.df) {
 		p.l = lapply(colnames(p.df), function(name) p.df[,name]);
@@ -132,6 +132,7 @@ mult.pm = function(p1, p2) {
 	p.v = cbind(p.v, b0=as.vector(p.b0))
 	p.r = aggregate(b0~., p.v, sum);
 	colnames(p.r) = c(vars, "coeff");
+	if(sc != 1) p.r$coeff = p.r$coeff * sc;
 	return(p.r);
 }
 pow.pm = function(p, n=2) {
@@ -227,6 +228,12 @@ add.pm = function(p1, p2) {
 diff.pm = function(p1, p2) {
 	p2$coeff = - p2$coeff;
 	return(add.pm(p1, p2));
+}
+diff.lpm = function(p1, lp) {
+	for(pd in lp) {
+		p1 = diff.pm(p1, pd);
+	}
+	return(p1);
 }
 sort.pm = function(p, sort.coeff=1, xn=NULL) {
 	pP = p[, - which(names(p) == "coeff")];
@@ -493,11 +500,11 @@ prod.perm.poly = function(n, pow=c(1,1)) {
 	}
 	return(pR)
 }
-perm.poly = function(n, p=c(1,1)) {
+perm.poly = function(n, p=c(1,1), val0=0) {
 	if(length(p) == 2) {
-		m = as.data.frame(perm2(n, p=p))
+		m = as.data.frame(perm2(n, p=p, val0=val0))
 	} else if(length(p) == 3) {
-		m = as.data.frame(perm3(n, p=p))
+		m = as.data.frame(perm3(n, p=p, val0=val0))
 	}
 	names(m) = paste0("x", seq(n));
 	m$coeff = rep(1, nrow(m))
@@ -526,13 +533,17 @@ perm2.pm = function(p, xn) {
 	pAll = lapply(seq(ncol(m)), permute);
 	return(pAll);
 }
-mult.all.pm = function(lpoly) {
-	# lpoly = list of polynomials;
-	pR = data.frame(x1=0, coeff=1)
-	for(id in seq(length(lpoly))) {
-		pR = mult.pm(pR, lpoly[[id]]);
-	}
-	return(pR);
+Eprod.pm = function(n, p=1, xn="x") {
+	p = data.frame(array(p, c(1, n)));
+	names(p) = if(length(xn) == n) xn else paste0(xn, seq(n));
+	p$coeff = 1;
+	return(p);
+}
+Esum.pm = function(n, p=1, xn="x") {
+	p = as.data.frame(perm1(n, p=p));
+	names(p) = if(length(xn) == n) xn else paste0(xn, seq(n));
+	p$coeff = 1;
+	return(p);
 }
 
 
