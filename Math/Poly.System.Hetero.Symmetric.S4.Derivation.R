@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric
 ###  == Derivation ==
 ###
-### draft v.0.1j
+### draft v.0.2a
 
 
 ####################
@@ -29,6 +29,9 @@ library(pracma)
 xi.f = function(x, R, b, n=2) {
 	(R - x^n) / b[1];
 }
+xip.f = function(x, R, b, n=2, p=1) {
+	(R - x^n) / b[1] / x^p;
+}
 test.S4.Simple = function(sol, R, b, n=2) {
 	x1 = sol[,1]; x2 = sol[,2]; x3 = sol[,3]; x4 = sol[,4];
 	err1 = x1^n + b*x2 # - R
@@ -39,6 +42,15 @@ test.S4.Simple = function(sol, R, b, n=2) {
 	if( ! missing(R)) err = err - R;
 	err = round0(err);
 	return(err);
+}
+debug.E = function(x) {
+	x1 = x[1]; x2 = x[2]; x3 = x[3]; x4 = x[4];
+	S = sum(x)
+	E4 = prod(x)
+	E3 = prod(x)*sum(1/x)
+	m = perm2(4)
+	E2 = sum(sapply(seq(nrow(m)), function(id) prod(x[which(m[id,] != 0)])))
+	data.frame(S=S, E2=E2, E3=E3, E4=E4);
 }
 
 ########################
@@ -625,10 +637,10 @@ eval.pm(p33, x) # E2_3: seems correct
 
 ### E3_3
 E3^3 - 3*E4*E3*E2 + 3*E4^2*S
-diff.lpm(pow.pm(perm.poly(4, c(1,1,1)), 3),
+diff.lpm(pow.pm(perm.poly(4, c(1,1,1)), 3), # E3^3
 	list(perm.poly(4, c(3,3,3)),
-		mult.pm(Eprod.pm(4, 2), Esum.pm(4), sc=-3),
-		mult.all.pm(
+		mult.pm(Eprod.pm(4, 2), Esum.pm(4), sc=-3), # + 3*E4^2*S
+		mult.all.pm( # - 3*E4*E3*E2
 			list(Eprod.pm(4, 1), perm.poly(4, c(1,1,1)), perm.poly(4, c(1,1)), sc=3))))
 
 
@@ -649,11 +661,131 @@ diff.lpm(pow.pm(perm.poly(4, c(1,1,1)), 3),
 
 ### Case: all x[i] different;
 
+### Eq 1: Sum(Prod(x2*x3*x4*...)) =>
+E4*S + b*E4*S - R*E3 # = 0
+(b+1)*E4*S - R*E3 # = 0
+
+### Eq 2:
 ### Sum =>
 S^2 - 2*E2 + b*(x1*x2+x2*x3+x3*x4+x4*x1) - 4*R # = 0
-# P2a = (x1*x2+x2*x3+x3*x4+x4*x1);
+# P2a = (x1*x2+x2*x3+x3*x4+x4*x1); P2a = round0(P2a);
+# b*P2a = 2*E2 - S^2 + 4*R;
 
 ### x1^2 = R - b*x1*x2 => Prod =>
 E4^2 - R^4 + b*R^3*P2a - b^2*R^2*(P3a + 2*E4) + b^3*R*E4*P2a - b^4*E4^2 # = 0
-# TODO;
+# Eq 2:
+(b^4 - 1)*(b^2 + 2)*E4^2 - 2*b^2*(b^2 + 4)*R^2*E4 +
+	- 2*b^2*(b^2 + 2)*R*E4*E2 + b^2*(b^2 + 2)*R*E4*S^2 +
+	+ 4*R^2*E2^2 + 2*(b^2 + 6)*R^3*E2 - 4*R^2*E2*S^2 +
+	+ (b^2+10)*R^4 - (b^2+6)*R^3*S^2 + R^2*S^4 # = 0
+
+### Eq 3:
+### b*x1*x2 = R - x1^2 => Prod =>
+# [see Simple version: E4 => E4^2]
+E4^2 - b^4*E4^2 + 2*R^2*E4 + 2*R*E2*E4 - R*E3^2 - 2*R^2*E3*S +
+	+ 2*R^3*E2 + R^2*E2^2 - R^3*S^2 + R^4 # = 0
+
+
+### Workout:
+### Half-Elementary Polynomials
+P3a = x1*x2^2*x3 + x1^2*x2*x4 + x2*x3^2*x4 + x1*x3*x4^2
+p2a = perm.poly(4, c(1,1))[c(1,3,4,6),]
+pR = data.frame(x1=0, coeff=1);
+for(nr in seq(nrow(p2a))) {
+	p1 = p2a[nr,];
+	p1 = rbind(p1, 0); p1$coeff[2] = -1;
+	p1$R = c(0, 1);
+	pR = mult.pm(pR, p1);
+}
+pR = sort.pm(pR, c(4,2,3,1), xn="R")
+pR
+
+### P3a:
+### x1^2 = R - b*x1*x2 => Sum(Prod(2 eqs)) =>
+b^2*P3a - 2*b*R*P2a + 4*R^2 - (P2a^2 - 2*P3a - 4*E4) # = 0
+(b^2 + 2)*P3a - 2*R*(2*E2 - S^2 + 4*R) - P2a^2 + 4*E4 + 4*R^2
+b^2*(b^2 + 2)*P3a - 2*b^2*R*(2*E2 - S^2 + 4*R) - (2*E2 - S^2 + 4*R)^2 + 4*b^2*E4 + 4*b^2*R^2
+b^2*(b^2 + 2)*P3a - 4*E2^2 + 4*E2*S^2 - 4*(b^2+4)*R*E2 +
+	+ 4*b^2*E4 - S^4 + 2*(b^2+4)*R*S^2 - 4*(b^2+4)*R^2
+
+
+### Test
+x1^2 + b*x1*x2 # - R
+x2^2 + b*x2*x3 # - R
+x3^2 + b*x3*x4 # - R
+x4^2 + b*x4*x1 # - R
+
+### Debug:
+R = -1; b = 2;
+x1 = roots(coeff.S4P2V2(R, b));
+x2 = xip.f(x1, R, b, p=1);
+x3 = xip.f(x2, R, b, p=1);
+x4 = xip.f(x3, R, b, p=1);
+sol = cbind(x1, x2, x3, x4)
+E = do.call(rbind, lapply(seq(nrow(sol)), function(id) debug.E(sol[id,])));
+E$S = round0(E$S);
+S = E$S; E2 = E$E2; E3 = E$E3; E4 = E$E4;
+
+
+### Classic Polynomial:
+b^n*x1^(n-1)*(R - x1^n)*x3 = b^n*x1^n*R - (R - x1^n)^n;
+b^3*x1*(R - x1^n)*(b^2*x1^2*R - (R - x1^n)^2)*x4 =
+	b^4*x1^2*(R - x1^n)^2*R - (b^2*x1^2*R - (R - x1^n)^2)^2
+(b^4*R*x1^2*(R - x1^n)^2 - (b^2*R*x1^2 - (R - x1^n)^2)^2)^2 +
+	+ b^4*x1^2*(R - x1^n)*(b^2*R*x1^2 - (R - x1^n)^2)*
+		(b^4*R*x1^2*(R - x1^n)^2 - (b^2*R*x1^2 - (R - x1^n)^2)^2) +
+	- b^6*R*x1^2*(R - x1^n)^2*(b^2*R*x1^2 - (R - x1^n)^2)^2
+# pRx = (R - x1^n); pRx2 = pRx^2;
+# pBd = (b^2*R*x1^2 - pRx2); pBd2 = pBd^2;
+# pBB = (b^4*R*x1^2*pRx2 - pBd2);
+pBB^2 + b^4*x1^2*pRx*pBd*pBB - b^6*R*x1^2*pRx2*pBd2
+
+n = 2
+pRx = list(
+	x = c(n,0),
+	b = c(0,0),
+	R = c(0,1),
+	coeff = c(-1, 1)
+)
+bRx.gen = function(pb, px=n, pR=1) list(x = px, b = pb, R = pR, coeff = 1)
+pRx2 = pow.pm(pRx, 2);
+pBd  = diff.pm(bRx.gen(2, px=2, pR=1), pRx2);
+pBd2 = pow.pm(pBd, 2);
+pBB  = diff.pm(mult.pm(bRx.gen(4, px=2, pR=1), pRx2), pBd2);
+#
+p1 = mult.all.pm(list(pRx, pBd, pBB, bRx.gen(4, px=2, pR=0)))
+p2 = mult.all.pm(list(pRx2, pBd2, bRx.gen(6, px=2, pR=1)))
+p1 = diff.pm(p1, p2);
+p1 = add.pm(p1, pow.pm(pBB, 2));
+p1 = mult.sc.pm(p1, -1);
+p1 = sort.pm(p1, sort.coeff=c(4,2,3,1), xn="x")
+p1
+
+print.p(p1)
+
+
+(b^4-1)*x^16 + (- b^8*R - 2*b^6*R - 5*b^4*R + 4*b^2*R + 8*R)*x^14 +
+	+ (b^10*R^2 + 5*b^8*R^2 + 5*b^6*R^2 + 3*b^4*R^2 - 24*b^2*R^2 - 28*R^2)*x^12 +
+	+ (- 3*b^10*R^3 - 5*b^8*R^3 + 5*b^6*R^3 + 19*b^4*R^3 + 60*b^2*R^3 + 56*R^3)*x^10 +
+	+ (2*b^10*R^4 - 4*b^8*R^4 - 22*b^6*R^4 - 41*b^4*R^4 - 80*b^2*R^4 - 70*R^4)*x^8 +
+	+ (6*b^8*R^5 + 20*b^6*R^5 + 33*b^4*R^5 + 60*b^2*R^5 + 56*R^5)*x^6 +
+	+ (- 2*b^8*R^6 - 7*b^6*R^6 - 11*b^4*R^6 - 24*b^2*R^6 - 28*R^6)*x^4 +
+	+ (b^6*R^7 + b^4*R^7 + 4*b^2*R^7 + 8*R^7)*x^2 - R^8
+
+### Classic solver:
+coeff.S4P2V2 = function(R, b) {
+	coeff = c(b^4 - 1, 0,
+		- b^8*R - 2*b^6*R - 5*b^4*R + 4*b^2*R + 8*R, 0,
+		b^10*R^2 + 5*b^8*R^2 + 5*b^6*R^2 + 3*b^4*R^2 - 24*b^2*R^2 - 28*R^2, 0,
+		- 3*b^10*R^3 - 5*b^8*R^3 + 5*b^6*R^3 + 19*b^4*R^3 + 60*b^2*R^3 + 56*R^3, 0,
+		2*b^10*R^4 - 4*b^8*R^4 - 22*b^6*R^4 - 41*b^4*R^4 - 80*b^2*R^4 - 70*R^4, 0,
+		6*b^8*R^5 + 20*b^6*R^5 + 33*b^4*R^5 + 60*b^2*R^5 + 56*R^5, 0,
+		- 2*b^8*R^6 - 7*b^6*R^6 - 11*b^4*R^6 - 24*b^2*R^6 - 28*R^6, 0,
+		b^6*R^7 + b^4*R^7 + 4*b^2*R^7 + 8*R^7, 0, - R^8)
+	return(coeff);
+}
+
+### TODO:
+# - factorize;
+
 
