@@ -6,7 +6,7 @@
 ### Polynomial Systems: S4
 ### Heterogeneous Symmetric
 ###
-### draft v.0.2f-types
+### draft v.0.2g
 
 
 
@@ -423,6 +423,79 @@ x4^2 + b*x1 # - R
 # S: P[18];
 
 ### TODO;
+
+
+#############################
+#############################
+
+#############################
+### Mixed Terms: Type V2a ###
+#############################
+
+###############
+### Order 2 ###
+###############
+
+### x1^2 + b*x1*x2 = R
+
+### Solution:
+
+### Case: all x[i] different;
+# - for derivation, see file:
+#   Poly.System.Hetero.Symmetric.S4.Derivation.R;
+
+### Eq:
+S^3 - R*(b^4 - 2*b^3 + 4*b^2 - 4*b + 4)*S
+
+### Auxiliary eqs:
+### Special Case: S = 0
+E3 = 0; E2 = -2*R; E4 = R^2 / (b^2 + 1);
+
+### Case: S != 0
+# TODO;
+
+### Solver:
+xip.f = function(x, R, b, n=2, p=1) {
+	(R - x^n) / b[1] / x^p;
+}
+solve.S4P2.V2a = function(R, b, debug=TRUE) {
+	coeff = c(1, 0, - R*(b[1]^4 - 2*b[1]^3 + 4*b[1]^2 - 4*b[1] + 4))
+	S = roots(coeff);
+	if(debug) print(c(S, 0));
+	#
+	solve0 = function(x1) {
+		x2 = xip.f(x1, R, b, p=1);
+		x3 = xip.f(x2, R, b, p=1);
+		x4 = xip.f(x3, R, b, p=1);
+		sol = cbind(x1, x2, x3, x4);
+		return(sol);
+	}
+	### Special case: S == 0
+	E3 = 0; E2 = -2*R; E4 = R^2 / (b^2 + 1);
+	x1 = roots(c(1, 0, E2, -E3, E4));
+	sol = solve0(x1);
+	### Case: S != 0
+	# TODO;
+	### Case: all equal | pair-wise equal:
+	# ((b+1)*x^2 - R) * ((b-1)*x^2 + R)
+	return(sol);
+}
+
+### Examples:
+R = 2
+b = -3
+sol = solve.S4P2.V2a(R, b);
+x1 = sol[,1]; x2 = sol[,2]; x3 = sol[,3]; x4 = sol[,4];
+
+### Test
+x1^2 + b*x1*x2 # - R
+x2^2 + b*x2*x3 # - R
+x3^2 + b*x3*x4 # - R
+x4^2 + b*x4*x1 # - R
+
+
+### Classic polynomial
+# - see Derivation;
 
 
 ###########################
