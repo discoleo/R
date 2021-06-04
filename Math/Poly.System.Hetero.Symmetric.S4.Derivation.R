@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric
 ###  == Derivation ==
 ###
-### draft v.0.2b
+### draft v.0.2b-p12
 
 
 ####################
@@ -761,11 +761,18 @@ b^3*x1*(R - x1^n)*(b^2*x1^2*R - (R - x1^n)^2)*x4 =
 pBB^2 + b^4*x1^2*pRx*pBd*pBB - b^6*R*x1^2*pRx2*pBd2
 
 n = 2
-pRx = list(
+pRx = data.frame(
 	x = c(n,0),
 	b = c(0,0),
 	R = c(0,1),
 	coeff = c(-1, 1)
+)
+# (b^2-1)*x^4 + 2*R*x^2 - R^2
+pDiv = data.frame(
+	x = c(4, 4, 2, 0),
+	b = c(2, 0, 0, 0),
+	R = c(0, 0, 1, 2),
+	coeff = c(1,-1, 2,-1)
 )
 bRx.gen = function(pb, px=n, pR=1) list(x = px, b = pb, R = pR, coeff = 1)
 pRx2 = pow.pm(pRx, 2);
@@ -782,8 +789,10 @@ p1 = sort.pm(p1, sort.coeff=c(4,2,3,1), xn="x")
 p1
 
 print.p(p1)
+p12 = div.pm(p1, pDiv, by="b")
+print.coeff(p12$Rez)
 
-
+### P[16] = P[2] * P[2] * P[12]
 (b^4-1)*x^16 + (- b^8*R - 2*b^6*R - 5*b^4*R + 4*b^2*R + 8*R)*x^14 +
 	+ (b^10*R^2 + 5*b^8*R^2 + 5*b^6*R^2 + 3*b^4*R^2 - 24*b^2*R^2 - 28*R^2)*x^12 +
 	+ (- 3*b^10*R^3 - 5*b^8*R^3 + 5*b^6*R^3 + 19*b^4*R^3 + 60*b^2*R^3 + 56*R^3)*x^10 +
@@ -791,9 +800,24 @@ print.p(p1)
 	+ (6*b^8*R^5 + 20*b^6*R^5 + 33*b^4*R^5 + 60*b^2*R^5 + 56*R^5)*x^6 +
 	+ (- 2*b^8*R^6 - 7*b^6*R^6 - 11*b^4*R^6 - 24*b^2*R^6 - 28*R^6)*x^4 +
 	+ (b^6*R^7 + b^4*R^7 + 4*b^2*R^7 + 8*R^7)*x^2 - R^8
+# P[2] * P[2] * P[12]
+((b^2-1)*x^4 + 2*R*x^2 - R^2) * P[12]
+((b+1)*x^2 - R)*((b-1)*x^2 + R) * P[12]
 
 ### Classic solver:
 coeff.S4P2V2 = function(R, b) {
+	# P[12]
+	coeff = c(b^2 + 1, 0,
+		- 6*R - 8*b^2*R - 3*b^4*R - b^6*R, 0,
+		15*R^2 + 22*b^2*R^2 + 13*b^4*R^2 + 6*b^6*R^2 + b^8*R^2, 0,
+		- 20*R^3 - 28*b^2*R^3 - 18*b^4*R^3 - 10*b^6*R^3 - 3*b^8*R^3, 0,
+		15*R^4 + 17*b^2*R^4 + 9*b^4*R^4 + 5*b^6*R^4 + 2*b^8*R^4, 0,
+		- 6*R^5 - 4*b^2*R^5 - b^4*R^5 - b^6*R^5, 0,
+		R^6);
+	return(coeff);
+}
+coeff.S4P2V2_P16 = function(R, b) {
+	# P[16]
 	coeff = c(b^4 - 1, 0,
 		- b^8*R - 2*b^6*R - 5*b^4*R + 4*b^2*R + 8*R, 0,
 		b^10*R^2 + 5*b^8*R^2 + 5*b^6*R^2 + 3*b^4*R^2 - 24*b^2*R^2 - 28*R^2, 0,
@@ -804,9 +828,4 @@ coeff.S4P2V2 = function(R, b) {
 		b^6*R^7 + b^4*R^7 + 4*b^2*R^7 + 8*R^7, 0, - R^8)
 	return(coeff);
 }
-
-### TODO:
-# - factorize;
-(b^2-1)*x^4 + 2*R*x^2 - R^2 # = 0
-((b+1)*x^2 - R)*((b-1)*x^2 + R) * P[12]
 
