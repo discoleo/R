@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric
 ###  == Derivation ==
 ###
-### draft v.0.2b-p12
+### draft v.0.2b-EqS
 
 
 ####################
@@ -697,7 +697,18 @@ b^2*E3^2 - b^2*E4*S^2 + 8*b^2*R*E4 - 4*R*E2^2 + 4*R*E2*S^2 - 16*R^2*E2 +
 	- R*S^4 + 4*R^2*S^2 - 8*R^3 # = 0
 # TODO: check for redundancies;
 
-### Alternative 2:
+#######
+### Eq:
+S^3 - R*(b^4 - 2*b^3 + 4*b^2 - 4*b + 4)*S
+
+### Auxiliary eqs:
+### Special Case: S = 0
+E3 = 0; E2 = -2*R; E4 = R^2 / (b^2 + 1);
+### Case: S != 0
+# TODO;
+
+
+### [Eq 4] Alternative 2:
 ### Sum(x4*...) =>
 (x1^2*x4 + x2^2*x1 + x3^2*x2 + x4^2*x3) + b*E3 - R*S # = 0
 ### Sum(x3*x4*...) =>
@@ -736,12 +747,18 @@ x3^2 + b*x3*x4 # - R
 x4^2 + b*x4*x1 # - R
 
 ### Debug:
+solve.S4P2V2.classic = function(R, b, debug=FALSE) {
+	x1 = roots(coeff.S4P2V2(R, b));
+	x2 = xip.f(x1, R, b, p=1);
+	x3 = xip.f(x2, R, b, p=1);
+	x4 = xip.f(x3, R, b, p=1);
+	sol = cbind(x1, x2, x3, x4);
+	return(sol);
+}
+#
 R = -1; b = 2;
-x1 = roots(coeff.S4P2V2(R, b));
-x2 = xip.f(x1, R, b, p=1);
-x3 = xip.f(x2, R, b, p=1);
-x4 = xip.f(x3, R, b, p=1);
-sol = cbind(x1, x2, x3, x4)
+sol = solve.S4P2V2.classic(R, b);
+x1 = sol[,1]; x2 = sol[,2]; x3 = sol[,3]; x4 = sol[,4];
 E = do.call(rbind, lapply(seq(nrow(sol)), function(id) debug.E(sol[id,])));
 E$S = round0(E$S);
 S = E$S; E2 = E$E2; E3 = E$E3; E4 = E$E4;
@@ -808,7 +825,7 @@ print.coeff(p12$Rez)
 coeff.S4P2V2 = function(R, b) {
 	# P[12]
 	coeff = c(b^2 + 1, 0,
-		- 6*R - 8*b^2*R - 3*b^4*R - b^6*R, 0,
+		- R*(b^2+1)*(b^4 + 2*b^2 + 6), 0,
 		15*R^2 + 22*b^2*R^2 + 13*b^4*R^2 + 6*b^6*R^2 + b^8*R^2, 0,
 		- 20*R^3 - 28*b^2*R^3 - 18*b^4*R^3 - 10*b^6*R^3 - 3*b^8*R^3, 0,
 		15*R^4 + 17*b^2*R^4 + 9*b^4*R^4 + 5*b^6*R^4 + 2*b^8*R^4, 0,
@@ -828,4 +845,38 @@ coeff.S4P2V2_P16 = function(R, b) {
 		b^6*R^7 + b^4*R^7 + 4*b^2*R^7 + 8*R^7, 0, - R^8)
 	return(coeff);
 }
+
+
+### Special Case: S = 0; E3 = 0;
+- 2*(b^4 + 3*b^2 - 2)*R*E4 +
+	- 2*(b^4 + b^2 - 2)*E4*E2 + (b^2+6)*R*E2^2 + 4*(b^2 + 4)*R^2*E2 + 2*(b^2+6)*R^3 # = 0
+2*(b^2 + 1)*R*E4 - R*E2^2 - 2*R^2*E2 - 2*R^3 # = 0
+# =>
+(b^2-1)*E4*E2 - 4*R*E4 - R^2*E2
+# => E2 = -2*R; E4 = R^2 / (b^2 + 1);
+
+
+pEEq1 = data.frame(
+	E4 = c(1, 1, 1,   1, 1, 1,  0, 0,   0, 0,   0, 0),
+	E2 = c(0, 0, 0,   1, 1, 1,  2, 2,   1, 1,   0, 0),
+	b  = c(4, 2, 0,   4, 2, 0,  2, 0,   2, 0,   2, 0),
+	R  = c(2, 2, 2,   1, 1, 1,  2, 2,   3, 3,   4, 4) - 1,
+	coeff = c(-2,-6,4, -2,-2,4,  1, 6,  4,16,   2,12)
+)
+pEEq2 = data.frame(
+	E4 = c(1, 1,   0, 0, 0),
+	E2 = c(0, 0,   2, 1, 0),
+	b  = c(2, 0,   0, 0, 0),
+	R  = c(2, 2,   2, 3, 4) - 2,
+	coeff = c(2, 2,  -1,-2,-2)
+)
+pb.gen = function(pB, pCoeff, pR=0) {
+	data.frame(
+		b = pB, R = pR, coeff = pCoeff
+	)
+}
+round0(sapply(seq_along(E4), function(id) eval.pm(pEEq1, c(E4[id], E2[id], b, R))))
+round0(sapply(seq_along(E4), function(id) eval.pm(pEEq2, c(E4[id], E2[id], b, R))))
+
+pEEq3 = add.pm(pEEq1, mult.pm(pEEq2, pb.gen(c(2,0), c(1,6), pR=1)))
 
