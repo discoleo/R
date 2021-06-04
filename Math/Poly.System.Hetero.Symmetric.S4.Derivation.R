@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric
 ###  == Derivation ==
 ###
-### draft v.0.2a
+### draft v.0.2b
 
 
 ####################
@@ -685,7 +685,27 @@ E4^2 - R^4 + b*R^3*P2a - b^2*R^2*(P3a + 2*E4) + b^3*R*E4*P2a - b^4*E4^2 # = 0
 E4^2 - b^4*E4^2 + 2*R^2*E4 + 2*R*E2*E4 - R*E3^2 - 2*R^2*E3*S +
 	+ 2*R^3*E2 + R^2*E2^2 - R^3*S^2 + R^4 # = 0
 
+### Eq 4:
+### Alternative 1:
+### Sum(x3^2*x4^2*...) =>
+(E3^2 - 2*E4*E2) + b*E4*P2a - R*(P2a^2 - 2*P3a - 4*E4) # = 0
+b^2*E3^2 - b^2*E4*S^2 + 8*b^2*R*E4 - R*(2*E2 - S^2 + 4*R)^2 + 2*b^2*R*P3a # = 0
+b^2*E3^2 - b^2*E4*S^2 + 8*b^2*R*E4 - 4*R*E2^2 + 4*R*E2*S^2 - 16*R^2*E2 +
+	- R*(S^4 - 8*R*S^2 + 16*R^2) + 2*b^2*R*P3a # = 0
+(b^2 + 2)*E3^2 - (b^2 + 2)*E4*S^2 + 8*(b^2 + 1)*R*E4 +
+	- 4*R*E2^2 + 4*R*E2*S^2 - 8*R^2*E2 +
+	- R*S^4 + 4*R^2*S^2 - 8*R^3 # = 0
+# TODO: check for redundancies;
 
+### Alternative 2:
+### Sum(x4*...) =>
+(x1^2*x4 + x2^2*x1 + x3^2*x2 + x4^2*x3) + b*E3 - R*S # = 0
+### Sum(x3*x4*...) =>
+P3b = x1^2*x3*x4 + x2^2*x1*x4 + x3^2*x1*x2 + x4^2*x2*x3;
+P3b + 4*b*E4 - R*P2a # = 0
+# [...]
+
+############
 ### Workout:
 ### Half-Elementary Polynomials
 P3a = x1*x2^2*x3 + x1^2*x2*x4 + x2*x3^2*x4 + x1*x3*x4^2
@@ -787,5 +807,6 @@ coeff.S4P2V2 = function(R, b) {
 
 ### TODO:
 # - factorize;
-
+(b^2-1)*x^4 + 2*R*x^2 - R^2 # = 0
+((b+1)*x^2 - R)*((b-1)*x^2 + R) * P[12]
 
