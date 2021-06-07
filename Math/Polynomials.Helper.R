@@ -243,6 +243,7 @@ diff.lpm = function(p1, lp) {
 	return(p1);
 }
 replace.pm = function(p1, p2, x, pow=1) {
+	# replace x^pow by p2;
 	idx = match(x, names(p1));
 	if(is.na(idx)) stop(paste0("Polynomial does NOT contain variable: ", x));
 	# xPow
@@ -259,6 +260,33 @@ replace.pm = function(p1, p2, x, pow=1) {
 	for(nr in seq(nrow(p1))) {
 		pR = if(rpow[nr] == 0) add.pm(pR, p1[nr,])
 			else add.pm(pR, mult.pm(p2.pows[[rpow[nr]]], p1[nr,]));
+	}
+	return(reduce.var.pm(pR));
+}
+replace.fr.pm = function(p1, p2, p2fr, x, pow=1) {
+	# replace x^pow by p2/p2fr;
+	idx = match(x, names(p1));
+	if(is.na(idx)) stop(paste0("Polynomial does NOT contain variable: ", x));
+	# xPow
+	rpow = if(pow == 1) p1[,idx] else p1[,idx] %/% pow;
+	p1[,idx] = if(pow == 1) 0 else p1[,idx] %% pow;
+	max.pow = max(rpow);
+	p2.pows = list(p2);
+	p2fr.pows = list(p2fr);
+	if(max.pow > 1) {
+		for(ipow in seq(2, max.pow)) {
+			p2.pows[[ipow]] = mult.pm(p2.pows[[ipow - 1]], p2);
+			p2fr.pows[[ipow]] = mult.pm(p2fr.pows[[ipow - 1]], p2fr);
+		}
+	}
+	pR = data.frame();
+	for(nr in seq(nrow(p1))) {
+		ipow = rpow[nr];
+		lp = if(ipow == 0) list(p2fr.pows[[max.pow]])
+			else if(max.pow == ipow) list(p2.pows[[max.pow]])
+			else list(p2.pows[[ipow]], p2fr.pows[[max.pow - ipow]]);
+		lp = c(lp, list(p1[nr,]));
+		pR = add.pm(pR, mult.all.pm(lp));
 	}
 	return(reduce.var.pm(pR));
 }
