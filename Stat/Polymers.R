@@ -5,7 +5,7 @@
 ###
 ### Polymers
 ###
-### draft v.0.1b
+### draft v.0.1c
 
 ### Polymers
 
@@ -13,6 +13,11 @@
 
 ### Github:
 # https://github.com/discoleo/R/blob/master/Stat/Polymers.R
+
+
+### TODO: Copolymers
+# Bifurcation Points in the Ohta-Kawasaki Model
+# https://www.youtube.com/watch?v=jH63fOA56eA
 
 
 ####################
@@ -74,11 +79,11 @@ polymer.gen = function(pm, xy0, val=1) {
 	ph = hinges(pm, xy0);
 	# TODO
 }
-draw.polymer = function(pm, xy0, bckg=1, autoInc=TRUE, col=NULL) {
+draw.polymer = function(pm, xy0, bckg=1, autoInc=TRUE, col=NULL, add=FALSE) {
 	ph = hinges(pm, xy0, doConnect=F);
 	m = array(bckg, c(xy0$gr.dim[2], xy0$gr.dim[1], 3))
 	m = as.raster(m);
-	plot(m)
+	if( ! add) plot(m);
 	len = pm$s + 1;
 	n = ncol(pm$alpha);
 	if(is.null(col)) {
@@ -87,7 +92,8 @@ draw.polymer = function(pm, xy0, bckg=1, autoInc=TRUE, col=NULL) {
 			paste0("#00", sample(hex, n), hex);
 		} else rep(0, n);
 	} else {
-		if(length(col) == 1) col = rep(col, n);
+		if(length(col) == 1) col = rep(col, n)
+		else if(length(col) < n) col = rep(col, ceiling(n / length(col)));
 	}
 	sapply(seq(n), function(id) {
 		id0 = (id-1)*len + 1; id1 = id0 + len - 1;
@@ -157,4 +163,36 @@ m.rs$col
 
 ### Debug:
 diff(pm.str$alpha[,10])/pi
+
+
+####################
+
+### Example 4: Mixture of polymers
+
+n = 40
+gr.lim = c(80, 200)
+xy0 = xy0.gen(n, gr.lim)
+
+s = 10
+d = 5
+alpha = c(pi/10, pi/6)
+pm.str = rpolymer(n, s, d=d, alpha.range=alpha);
+#
+m.rs = draw.polymer(pm.str, xy0)
+
+### Polymer 2:
+n = 20
+xy0 = xy0.gen(n, gr.lim)
+
+s = 15
+d = 5
+alpha = c(pi/4, 3*pi/4)
+pm.str = rpolymer(n, s, d=d, alpha.range=alpha);
+#
+m.rs = draw.polymer(pm.str, xy0, add=TRUE, col=c("red", "#A03232"))
+
+
+### Debug:
+diff(pm.str$alpha[,10])/pi
+
 
