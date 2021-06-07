@@ -748,7 +748,7 @@ x4^2 + b*x4*x1 # - R
 
 ### Debug:
 solve.S4P2V2.classic = function(R, b, debug=FALSE) {
-	x1 = roots(coeff.S4P2V2(R, b));
+	x1 = roots(coeff.S4P2V2(R, b)); # see below for coeff.S4P2V2();
 	x2 = xip.f(x1, R, b, p=1);
 	x3 = xip.f(x2, R, b, p=1);
 	x4 = xip.f(x3, R, b, p=1);
@@ -819,7 +819,7 @@ print.coeff(p12$Rez)
 	+ (b^6*R^7 + b^4*R^7 + 4*b^2*R^7 + 8*R^7)*x^2 - R^8
 # P[2] * P[2] * P[12]
 ((b^2-1)*x^4 + 2*R*x^2 - R^2) * P[12]
-((b+1)*x^2 - R)*((b-1)*x^2 + R) * P[12]
+((b+1)*x^2 - R) * ((b-1)*x^2 + R) * P[12]
 
 ### Classic solver:
 coeff.S4P2V2 = function(R, b) {
@@ -879,4 +879,50 @@ round0(sapply(seq_along(E4), function(id) eval.pm(pEEq1, c(E4[id], E2[id], b, R)
 round0(sapply(seq_along(E4), function(id) eval.pm(pEEq2, c(E4[id], E2[id], b, R))))
 
 pEEq3 = add.pm(pEEq1, mult.pm(pEEq2, pb.gen(c(2,0), c(1,6), pR=1)))
+
+### Full Case:
+### Eq 1:
+(b+1)*E4*S - R*E3 # = 0
+### Eq 3:
+E4^2 - b^4*E4^2 + 2*R^2*E4 + 2*R*E2*E4 - R*E3^2 - 2*R^2*E3*S +
+	+ 2*R^3*E2 + R^2*E2^2 - R^3*S^2 + R^4 # = 0
+### Eq S:
+S^3 - R*(b^4 - 2*b^3 + 4*b^2 - 4*b + 4)*S
+
+
+pEq3 = data.frame(
+	E4 = c(2, 2, 1, 1, 0, 0, 0, 0, 0, 0),
+	E3 = c(0, 0, 0, 0, 2, 1, 0, 0, 0, 0),
+	E2 = c(0, 0, 0, 1, 0, 0, 1, 2, 0, 0),
+	S  = c(0, 0, 0, 0, 0, 1, 0, 0, 2, 0),
+	b  = c(0, 4, 0, 0, 0, 0, 0, 0, 0, 0),
+	R  = c(0, 0, 2, 1, 1, 2, 3, 2, 3, 4),
+	coeff = c(1,-1, 2, 2, -1, -2, 2, 1, -1, 1)
+)
+pEq1   = data.frame(E3=1, R=1, coeff=1);
+pEq1fr = data.frame(S=c(1,1), b=c(1,0), coeff=c(1,1));
+pDiv = data.frame(
+	S = c(2, 0, 0, 0, 0, 0),
+	b = c(0, 4, 3, 2, 1, 0),
+	R = c(0, 1, 1, 1, 1, 1),
+	coeff = c(1,-1, 2, -4, 4, -4)
+)
+#
+pEq1r = replace.fr.pm(pEq3, pEq1, pEq1fr, "E4", pow=1)
+lP = div.pm(pEq1r, pDiv, by="S")
+# lP$Rem
+lP = div.pm(lP$Rem, data.frame(b=c(1,0), coeff=c(1,1)), by="b")
+lP$Rez$R = lP$Rez$R - 2; lP$Rez$coeff = - lP$Rez$coeff;
+id = order( - lP$Rez$E3, - lP$Rez$E2); lP$Rez = lP$Rez[id,];
+print.p(lP$Rez, "E3")
+lP$Rez
+
+# Debug:
+eval.pm(pEq3, c(E4[10], E3[10], E2[10], S[10], b, R))
+
+
+(3 + b - b^2 + 3*b^3 - b^4 + b^5)*E3^2 +
+	- 2*(E2 - 3*R - 2*R*b^3 + R*b^4 - R*b^5)*S*E3 +
+	- R*(b^5 - b^4 + 2*b^3 + 4)*(E2^2 + 2*R*E2) +
+	+ (b^9 - 3*b^8 + 8*b^7 - 12*b^6 + 15*b^5 - 7*b^4 - 2*b^3 + 16*b^2 - 16*b + 12)*R^3
 
