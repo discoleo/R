@@ -5,7 +5,7 @@
 ###
 ### Polymers
 ###
-### draft v.0.1c
+### draft v.0.1d
 
 ### Polymers
 
@@ -33,7 +33,7 @@ xy0.gen = function(n, gr.dim, xy0=c(1,1)) {
 	y0 = runif(n, xy0[2], gr.dim[2]);
 	return(list(x0=x0, y0=y0, gr.dim=gr.dim));
 }
-rpolymer = function(n, s, alpha.range, d=5, dir0=c(0, 2*pi)) {
+rpolymer = function(n, s, alpha.range, d=5, dir0=c(0, 2*pi), both=TRUE, angle.FUN=NULL) {
 	n.a = s - 1;
 	n.aall = n*n.a;
 	a.rg.len = length(alpha.range);
@@ -43,14 +43,34 @@ rpolymer = function(n, s, alpha.range, d=5, dir0=c(0, 2*pi)) {
 		if(a.rg.len > 2) warning("Warning: only the first 2 values of Range will be used!")
 		alfa = runif(n.aall, alpha.range[1], alpha.range[2]);
 		# both angles
-		invert = rbinom(n.aall, 1, prob=c(1/2, 1/2));
-		alfa[invert == 1] = - alfa[invert == 1];
+		if(both) {
+			invert = rbinom(n.aall, 1, prob=c(1/2, 1/2));
+			alfa[invert == 1] = - alfa[invert == 1];
+		}
 	}
 	dir0 = runif(n, dir0[1], dir0[2]);
 	alfa = rbind(dir0, matrix(alfa, ncol=n));
+	if( ! is.null(angle.FUN)) {
+		rl = angle.FUN(alfa); alfa = rl$alpha; s = rl$s;
+	}
 	alfa = apply(alfa, 2, cumsum); # each col = 1 polymer;
 	return(list(alpha=alfa, s=s, d=d, alpha.range=alpha.range));
 }
+### Angles:
+set.angle.gen = function(npos, angle) {
+	FUN = function(alfa) {
+		len = length(npos) * ncol(alfa);
+		if(length(angle) == 1) a = rep(angle, len)
+		else a = runif(len, angle[1], angle[2]);
+		# both angles
+		invert = rbinom(length(a), 1, prob=c(1/2, 1/2));
+		a[invert == 1] = - a[invert == 1];
+		alfa[npos,] = a;
+		return(invisible(list(s=s, alpha=alfa)));
+	}
+	return(FUN);
+}
+### Polymers:
 hinges = function(pm, xy0, doConnect=TRUE) {
 	s = pm$s; s1 = s + 1;
 	n = ncol(pm$alpha);
@@ -195,4 +215,48 @@ m.rs = draw.polymer(pm.str, xy0, add=TRUE, col=c("red", "#A03232"))
 ### Debug:
 diff(pm.str$alpha[,10])/pi
 
+
+###################
+
+### Example 5:
+# - set Fixed angle;
+
+n = 30
+gr.lim = c(80, 200)
+xy0 = xy0.gen(n, gr.lim)
+
+s = 16
+d = 5
+alpha = c(pi/5, pi-pi/5)
+pm.str = rpolymer(n, s, d=d, alpha.range=alpha, angle.FUN=set.angle.gen(c(6,8,10), 0));
+draw.polymer(pm.str, xy0);
+
+### Polymer 2:
+n = 20
+xy0 = xy0.gen(n, gr.lim)
+
+s = 16
+d = 5
+alpha = c(0, pi)
+pm.str = rpolymer(n, s, d=d, alpha.range=alpha);
+#
+m.rs = draw.polymer(pm.str, xy0, add=TRUE, col=c("red", "#A03232"))
+
+
+###################
+
+### Example 6:
+# - quasi-cyclic;
+
+n = 30
+gr.lim = c(80, 200)
+xy0 = xy0.gen(n, gr.lim)
+
+s = 16
+d = 5
+a0 = pi - (s-2)*pi / s;
+avar = pi/10;
+alpha = c(a0 - avar, a0 + avar);
+pm.str = rpolymer(n, s, d=d, alpha.range=alpha, both=FALSE);
+draw.polymer(pm.str, xy0);
 
