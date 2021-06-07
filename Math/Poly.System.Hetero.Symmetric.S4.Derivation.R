@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric
 ###  == Derivation ==
 ###
-### draft v.0.2b-EqS
+### draft v.0.2b-EqE3
 
 
 ####################
@@ -907,6 +907,7 @@ pDiv = data.frame(
 	R = c(0, 1, 1, 1, 1, 1),
 	coeff = c(1,-1, 2, -4, 4, -4)
 )
+pEq3Coeff = data.frame(b=5:0, coeff=c(1,-1,3,-1,1,3));
 #
 pEq1r = replace.fr.pm(pEq3, pEq1, pEq1fr, "E4", pow=1)
 lP = div.pm(pEq1r, pDiv, by="S")
@@ -925,4 +926,50 @@ eval.pm(pEq3, c(E4[10], E3[10], E2[10], S[10], b, R))
 	- 2*(E2 - 3*R - 2*R*b^3 + R*b^4 - R*b^5)*S*E3 +
 	- R*(b^5 - b^4 + 2*b^3 + 4)*(E2^2 + 2*R*E2) +
 	+ (b^9 - 3*b^8 + 8*b^7 - 12*b^6 + 15*b^5 - 7*b^4 - 2*b^3 + 16*b^2 - 16*b + 12)*R^3
+
+### Eq 4:
+(b^2 + 2)*E3^2 - (b^2 + 2)*E4*S^2 + 8*(b^2 + 1)*R*E4 +
+	- 4*R*E2^2 + 4*R*E2*S^2 - 8*R^2*E2 +
+	- R*S^4 + 4*R^2*S^2 - 8*R^3 # = 0
+
+pEq4 = data.frame(
+	E4 = c(0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0),
+	E3 = c(2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+	E2 = c(0, 0, 0, 0, 0, 0, 2, 1, 1, 0, 0, 0),
+	S  = c(0, 0, 2, 2, 0, 0, 0, 2, 0, 4, 2, 0),
+	b  = c(2, 0, 2, 0, 2, 0, 0, 0, 0, 0, 0, 0),
+	R  = c(0, 0, 0, 0, 1, 1, 1, 1, 2, 1, 2, 3),
+	coeff = c(1, 2,-1,-2, 8, 8,-4, 4,-8,-1, 4,-8)
+)
+pEq4Coeff = data.frame(S=1, b=c(3,2,1,0), coeff=c(1,1,2,2));
+#
+pEq2r = replace.fr.pm(pEq4, pEq1, pEq1fr, "E4", pow=1)
+lP2 = div.pm(pEq2r, pDiv, by="S")
+id = order( - lP2$Rem$E3, - lP2$Rem$E2, -lP2$Rem$b); lP2$Rem = lP2$Rem[id,];
+print.p(lP2$Rem, "E3")
+# lP$Rem
+
+pR = diff.pm(mult.pm(lP$Rez, pEq4Coeff), mult.pm(lP2$Rem, pEq3Coeff))
+lP2r = div.pm(pR, pDiv, by="S")
+id = order( - lP2r$Rem$E3, - lP2r$Rem$E2, -lP2r$Rem$b); lP2r$Rem = lP2r$Rem[id,];
+print.p(lP2r$Rem, "E3")
+
+# Debug:
+eval.pm(pEq4, c(E4[10], E3[10], E2[10], S[10], b, R))
+
+(b+1)*(b^2 + 2)*E3^2*S +
+	+ R^2 * (- b^6 + 2*b^5 - 6*b^4 + 8*b^3 - 4*b^2 + 8*b)*E3 +
+	- 4*R*(b+1)*E2^2*S +
+	+ 4*R^2 * (b+1)*(b^4 - 2*b^3 + 4*b^2 - 4*b + 2)*E2*S +
+	- R^3 * (b+1)*(b^8 - 4*b^7 + 12*b^6 - 24*b^5 + 36*b^4 - 40*b^3 + 32*b^2 - 16*b + 8)*S
+	# (b^9 - 3*b^8 + 8*b^7 - 12*b^6 + 12*b^5 - 4*b^4 - 8*b^3 + 16*b^2 - 8*b + 8)*S
+
+((- 2*b^7 + 2*b^6 - 8*b^5 + 4*b^4 - 8*b^3 - 8*b^2 - 16)*E2 +
+	+ R*(2*b^12 - 3*b^11 + 11*b^10 - 5*b^9 + 7*b^8 + 31*b^7 - 39*b^6 + 84*b^5 - 46*b^4 +
+		+ 44*b^3 + 28*b^2 - 24*b + 48))*E3 +
+	- (b^8 - b^6 + 2*b^5 - 6*b^4 + 4*b^2 - 8*b - 4)*E2^2*S +
+	- (4*b^10 - 8*b^9 + 26*b^8 - 24*b^7 + 30*b^6 + 20*b^5 - 32*b^4 + 72*b^3 - 8*b^2 + 40)*R*E2*S +
+	+ (b^14 - 4*b^13 + 15*b^12 - 32*b^11 + 59*b^10 - 68*b^9 + 56*b^8 + 12*b^7 - 71*b^6 + 134*b^5 - 86*b^4 +
+		+ 48*b^3 + 44*b^2 - 24*b + 48)*R^2*S
+
 
