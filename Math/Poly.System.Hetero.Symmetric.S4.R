@@ -6,7 +6,7 @@
 ### Polynomial Systems: S4
 ### Heterogeneous Symmetric
 ###
-### draft v.0.2g
+### draft v.0.2h
 
 
 
@@ -496,6 +496,33 @@ x4^2 + b*x4*x1 # - R
 
 ### Classic polynomial
 # - see Derivation;
+
+
+###########################
+###########################
+
+###############
+### Order 3 ###
+###############
+
+### x1^3 + b*x1*x2 = R
+
+### Solution:
+
+### Case 1: all equal
+# - 3 solutions;
+
+### Case 2: x1=x3, x2=x4, distinct;
+# x1^3 = x2^3 (6 solutions when distinct);
+
+### Case 3: all x[i] distinct;
+# - if (x1, x2, x3, x4) is a solution,
+#   then the following are also solutions:
+#   (m*x1, m^2*x2, m*x3, m^2*x4) & (m^2*x1, m*x2, m^2*x3, m*x4);
+# - system is decomposable into:
+#   P[4] o P[3] o P[6], where P[3] is degenerate;
+
+### TODO
 
 
 ###########################
