@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric
 ###  == Derivation ==
 ###
-### draft v.0.2b-EqE3
+### draft v.0.2c
 
 
 ####################
@@ -484,6 +484,11 @@ sapply(seq(12), function(id) sum(apply(perm2(4), 1, function(id2) prod(sol[id, i
 ### Sum =>
 S^3 - 3*E2*S + 3*E3 + b*S - 4*R # = 0
 
+### Square => Sum =>
+(x1^6 + x2^6 + x3^6 + x4^6) - b^2*(S^2 - 2*E2) + 2*b*R*S - 4*R^2 # = 0
+
+### Alternative:
+# - unfortunately NOT simpler;
 ### Diff =>
 # PROD((x1^2+x2^2+x1*x2)) + b^6 # = 0
 (x1^6*x2^4*x3*x4 + ...) + (x1^6*x2^4*x3^2 + ...) + (x1^6*x2^3*x3^3 + ...) +
@@ -518,6 +523,33 @@ x1^3 + b*x2 # - R
 x2^3 + b*x3 # - R
 x3^3 + b*x4 # - R
 x4^3 + b*x1 # - R
+
+### Classic Solver:
+solve.Simple.Classic.S4P3 = function(R, b, debug=TRUE) {
+	# coeff: generate using print.coeff(p1);
+	# from Classic Polynomial!
+	coeff = coeff.S4P3.Classic(R, b);
+	x1 = roots(coeff);
+	n = 3;
+	x2 = xi.f(x1, R, b, n=n);
+	x3 = xi.f(x2, R, b, n=n);
+	x4 = xi.f(x3, R, b, n=n);
+	sol = cbind(x1=x1, x2=x2, x3=x3, x4=x4);
+	return(sol);
+}
+
+### Test
+R = -1
+b = 2
+sol = solve.Simple.Classic.S4P3(R, b)
+x1 = sol[,1]; x2 = sol[,2]; x3 = sol[,3]; x4 = sol[,4];
+test.S4.Simple(sol, R, b, n=3)
+E = do.call(rbind, lapply(seq(nrow(sol)), function(id) debug.E(sol[id,])));
+E$S = round0(E$S);
+S = E$S; E2 = E$E2; E3 = E$E3; E4 = E$E4;
+
+# S = sort(apply(sol, 1, sum))[ ! duplicated(round(sort(apply(sol, 1, sum)), 5))]
+round0.p(poly.calc(S))
 
 
 ### Classic Polynomial:
@@ -582,27 +614,6 @@ pR$Rez = sort.pm(pR$Rez, sort.coeff=c(4,2,3,1), xn="x")
 eval.pm(pR$Rez, c(b, R, sol[10,1]))
 
 
-solve.Simple.Classic.S4P3 = function(R, b, debug=TRUE) {
-	coeff = coeff.S4P3(R, b);
-	x1 = roots(coeff);
-	n = 3;
-	x2 = xi.f(x1, R, b, n=n);
-	x3 = xi.f(x2, R, b, n=n);
-	x4 = xi.f(x3, R, b, n=n);
-	sol = cbind(x1=x1, x2=x2, x3=x3, x4=x4);
-	return(sol);
-}
-
-### Test
-R = -1
-b = 2
-sol = solve.Simple.Classic.S4P3(R, b)
-test.S4.Simple(sol, R, b, n=3)
-
-S = sort(apply(sol, 1, sum))[ ! duplicated(round(sort(apply(sol, 1, sum)), 5))]
-round0.p(poly.calc(S))
-
-
 ### Deriving Diff:
 # PROD((x1^2+x2^2+x1*x2))
 pp1 = data.frame(
@@ -626,13 +637,10 @@ p321 = perm.poly(4, p=c(3,2,1))
 diff.lpm(pow.pm(perm.poly(4), 3), list(p33, mult.sc.pm(p321, 3)))
 
 ### Test
-x1 = sol[,1]; x2 = sol[,2]; x3 = sol[,3]; x4 = sol[,4];
-x = sol[10,]
-S = sum(x)
-E4 = prod(x)
-E3 = prod(x)*sum(1/x)
-m = perm2(4)
-E2 = sum(sapply(seq(nrow(m)), function(id) prod(x[which(m[id,] != 0)])))
+E = do.call(rbind, lapply(seq(nrow(sol)), function(id) debug.E(sol[id,])));
+E$S = round0(E$S);
+S = E$S; E2 = E$E2; E3 = E$E3; E4 = E$E4;
+
 eval.pm(p33, x) # E2_3: seems correct
 
 ### E3_3
