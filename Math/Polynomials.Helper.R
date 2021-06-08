@@ -601,7 +601,51 @@ Esum.pm = function(n, p=1, xn="x") {
 	p$coeff = 1;
 	return(p);
 }
+Epoly.gen = function(n, v=4, E=NULL) {
+	vn = c("S", paste0("E", seq(2, v)));
+	to.df = function(v) {
+		x.df = data.frame(1, 1);
+		names(x.df) = c(v, "coeff");
+		return(x.df);
+	}
+	if(is.null(E)) {
+		E = list(
+			data.frame(S=1, coeff=1),
+			data.frame(S=c(2,0), E2=c(0,1), coeff=c(1,-2)),
+			data.frame(S=c(3,1,0), E2=c(0,1,0), E3=c(0,0,1), coeff=c(1,-3,3)));
+		ipow = 4;
+		while(ipow <= v) {
+			p = mult.pm(E[[ipow - 1]], to.df(vn[1]));
+			signE = -1;
+			for(i2 in 2:ipow) {
+				if(ipow == i2) {
+					p = add.pm(p, mult.sc.pm(to.df(vn[i2]), v*signE));
+				} else {
+					p = add.pm(p, mult.pm(E[[ipow - i2]], to.df(vn[i2]), sc=signE));
+				}
+				signE = -signE;
+			}
+			E[[ipow]] = p;
+			ipow = ipow + 1;
+		}
+	} else {
+		ipow = length(E) + 1;
+	}
+	# compute remaining
+	while(ipow <= n) {
+		p = mult.pm(E[[ipow - 1]], to.df(vn[1]));
+		signE = -1;
+		for(i2 in 2:v) {
+			p = add.pm(p, mult.pm(E[[ipow - i2]], to.df(vn[i2]), sc=signE));
+			signE = -signE;
+		}
+		E[[ipow]] = p;
+		ipow = ipow + 1;
+	}
+	return(E); # TODO
+}
 
+Epoly.gen(5, 4)
 
 #######################
 #######################
