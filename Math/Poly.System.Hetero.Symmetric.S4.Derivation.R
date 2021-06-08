@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric
 ###  == Derivation ==
 ###
-### draft v.0.2c
+### draft v.0.2c-Edecomp
 
 
 ####################
@@ -486,9 +486,18 @@ S^3 - 3*E2*S + 3*E3 + b*S - 4*R # = 0
 
 ### Square => Sum =>
 (x1^6 + x2^6 + x3^6 + x4^6) - b^2*(S^2 - 2*E2) + 2*b*R*S - 4*R^2 # = 0
+S^6 - 6*E2*S^4 + 6*E3*S^3 + 9*E2^2*S^2 - 6*E4*S^2 - 12*E2*E3*S - 2*E2^3 + 3*E3^2 + 6*E2*E4 +
+	- b^2*(S^2 - 2*E2) + 2*b*R*S - 4*R^2 # = 0
 
-### Alternative:
+
+### Alternatives:
 # - unfortunately NOT simpler;
+### other Square => Sum =>
+(x1^6 + x2^6 + x3^6 + x4^6) - 2*R*(x1^3 + x2^3 + x3^3 + x4^3) - b^2*(S^2 - 2*E2) + 4*R^2 # = 0
+### Diff(Sq1 - Sq2) =>
+2*R*(x1^3 + x2^3 + x3^3 + x4^3) + b^2*(S^2 - 2*E2) - b^2*(S^2 - 2*E2) + 2*b*R*S - 8*R^2 # = 0
+2*R*(S^3 - 3*E2*S + 3*E3) + 2*b*R*S - 8*R^2 # = 0 # redundancy!
+### Alternative:
 ### Diff =>
 # PROD((x1^2+x2^2+x1*x2)) + b^6 # = 0
 (x1^6*x2^4*x3*x4 + ...) + (x1^6*x2^4*x3^2 + ...) + (x1^6*x2^3*x3^3 + ...) +
