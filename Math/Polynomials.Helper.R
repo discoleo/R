@@ -157,12 +157,15 @@ pow.pm = function(p, n=2) {
 	p.r = p.r[id,];
 	return(p.r);
 }
-mult.sc.pm = function(p, s, coeff.name="coeff") {
+mult.sc.pm = function(p, s, div=1, coeff.name="coeff") {
 	# Multiplication by scalar
+	# div = for numerical stability;
 	if(is.data.frame(p)) {
 		p[ , coeff.name] = p[ , coeff.name] * s;
+		if(div != 1) p[ , coeff.name] = p[ , coeff.name] / div;
 	} else if(is.list(p)) {
 		p[[coeff.name]] = p[[coeff.name]] * s;
+		if(div != 1) p[[coeff.name]] = p[[coeff.name]] / div;
 	} else stop("p must be a polynomial!")
 	return(p);
 }
@@ -601,7 +604,7 @@ Esum.pm = function(n, p=1, xn="x") {
 	p$coeff = 1;
 	return(p);
 }
-Epoly.gen = function(n, v=4, E=NULL) {
+Epoly.base = function(n, v=4, E=NULL) {
 	vn = c("S", paste0("E", seq(2, v)));
 	to.df = function(v) {
 		x.df = data.frame(1, 1);
@@ -644,7 +647,38 @@ Epoly.gen = function(n, v=4, E=NULL) {
 	}
 	return(E); # TODO
 }
+Epoly.gen = function(n, v=4, e=1, E=NULL, full=FALSE) {
+	if(e == 1) {
+		if(is.null(E) || length(E) < n) {
+			E = Epoly.base(n, v, E=E);
+		}
+		if(full) return(Epoly.base(n, v, E=E));
+		return(E[[n]]);
+	}
+	if(e == 2) {
+		if(is.null(E) || length(E) < 2*n) {
+			E = Epoly.base(2*n, v, E=E);
+		}
+		p = diff.pm(pow.pm(E[[n]], 2), E[[2*n]]);
+		p = mult.sc.pm(p, 1, 2);
+		if(full) return(list(E=E, p=p));
+		return(p);
+	}
+	if(e == 3) {
+		if(is.null(E) || length(E) < 3*n) {
+			E = Epoly.base(3*n, v, E=E);
+		}
+		# TODO: check & implement properly!
+		p = diff.pm(E[[3*n]], pow.pm(E[[n]], 3));
+		p = mult.sc.pm(p, 1, 3);
+		p = add.pm(p, mult.pm(Epoly.gen(n, v, e=2, E=E), E[[n]]))
+		if(full) return(list(E=E, p=p));
+		return(p);
+	}
+}
 
+### TODO:
+# - thoroughly check!
 Epoly.gen(5, 4)
 
 #######################
