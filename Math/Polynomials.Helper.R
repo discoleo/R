@@ -568,6 +568,9 @@ perm.poly = function(n, p=c(1,1), val0=0) {
 		m = as.data.frame(perm2(n, p=p, val0=val0))
 	} else if(length(p) == 3) {
 		m = as.data.frame(perm3(n, p=p, val0=val0))
+	} else if(length(p) == 4) {
+		# may work sometimes (see perm3());
+		m = as.data.frame(perm3(n, p=p, val0=val0))
 	}
 	names(m) = paste0("x", seq(n));
 	m$coeff = rep(1, nrow(m))
@@ -653,11 +656,17 @@ Epoly.base = function(n, v=4, E=NULL) {
 	return(E); # TODO
 }
 Epoly.gen = function(n, v=4, e=1, E=NULL, full=FALSE) {
+	if(e > v) return(data.frame(S=0, coeff=0));
+	if(e == v) {
+		p = data.frame(n, 1);
+		names(p) = c(paste0("E", v), "coeff");
+		return(p);
+	}
 	if(e == 1) {
 		if(is.null(E) || length(E) < n) {
 			E = Epoly.base(n, v, E=E);
 		}
-		if(full) return(Epoly.base(n, v=v, E=E));
+		if(full) return(E); # TODO: list;
 		return(E[[n]]);
 	}
 	if(e == 2) {
@@ -673,13 +682,31 @@ Epoly.gen = function(n, v=4, e=1, E=NULL, full=FALSE) {
 		if(is.null(E) || length(E) < 3*n) {
 			E = Epoly.base(3*n, v=v, E=E);
 		}
-		# TODO: check & implement properly!
 		p = diff.pm(E[[3*n]], pow.pm(E[[n]], 3));
 		p = mult.sc.pm(p, 1, 3);
 		p = add.pm(p, mult.pm(Epoly.gen(n, v=v, e=2, E=E), E[[n]]))
 		if(full) return(list(E=E, p=p));
 		return(p);
 	}
+	# e > 3
+	return(Epoly.adv(n=n, v=v, e=e, E=E, full=full));
+}
+Epoly.adv = function(n, v=4, e=1, E=NULL, full=FALSE) {
+	if(is.null(E) || length(E) < e*n) {
+		E = Epoly.base(e*n, v=v, E=E);
+	}
+	p = E[[e*n]];
+	signE = -1;
+	iPow = 1;
+	while(iPow < e) {
+		p = add.pm(p, mult.pm(Epoly.gen(n, v=v, e=iPow, E=E), E[[(e - iPow)*n]], sc=signE));
+		iPow = iPow + 1;
+		signE = -signE;
+	}
+	#
+	p = mult.sc.pm(p, 1, -e);
+	if(full) return(list(E=E, p=p));
+	return(p);
 }
 
 
@@ -694,6 +721,24 @@ Epoly.gen = function(n, v=4, e=1, E=NULL, full=FALSE) {
 ### TODO:
 # - thoroughly check!
 Epoly.gen(5, 4)
+
+###
+x1 = sqrt(2); x2 = sqrt(3); x3 = sqrt(5); x4 = sqrt(7); x5 = sqrt(11);
+xx = c(x1, x2, x3, x4, x5);
+E2 = eval.pm(perm.poly(5, c(1,1)), xx);
+E3 = x1*x2*(x3+x4+x5) + (x1+x2)*x3*(x4+x5) + (x1+x2+x3)*x4*x5;
+E4 = prod(xx) * sum(1/xx); S = sum(xx);
+#
+eval.pm(perm.poly(5, c(3,3,3)), xx)
+eval.pm(Epoly.gen(3, 5, 3), c(S,E2,E3,E4,E5))
+
+### TODO:
+# check for larger n:
+Epoly.gen(4, 5, 4)
+#
+eval.pm(perm.poly(5, rep(4, 4)), xx)
+eval.pm(Epoly.gen(4, 5, 4), c(S,E2,E3,E4,E5))
+
 
 ### Multi-variable Multiplication
 
