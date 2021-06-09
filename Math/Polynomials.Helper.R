@@ -520,8 +520,12 @@ perm2 = function(n, p=c(1,1), val0=0) {
 }
 perm3 = function(n, p=c(1,1,1), val0=0) {
 	if(min(p) == max(p)) {
-		# works for: length(p) = n-1;
-		return(perm1(n, p=val0, val0=p[1]));
+		if(length(p) == n-1) {
+			# works for: length(p) = n-1;
+			return(perm1(n, p=val0, val0=p[1]));
+		} else if(length(p) == n-2) {
+			return(perm2(n, p=c(val0, val0), val0=p[1]));
+		} else stop("Not yet implemented!")
 	}
 	p2 = perm2(n, p=p[1:2], val0=val0);
 	if(p[1] != p[2]) p2 = rbind(p2, array(rev(p2), dim(p2)));
@@ -579,6 +583,7 @@ sym.poly = function(p, var="x") {
 	return(pP);
 }
 perm2.pm = function(p, xn) {
+	# permute the variables with the set in xn;
 	xn0 = names(p);
 	idn = match(xn0, xn);
 	idVar = which( ! is.na(idn)); # TODO: exclude coeff;
@@ -622,7 +627,7 @@ Epoly.base = function(n, v=4, E=NULL) {
 			signE = -1;
 			for(i2 in 2:ipow) {
 				if(ipow == i2) {
-					p = add.pm(p, mult.sc.pm(to.df(vn[i2]), v*signE));
+					p = add.pm(p, mult.sc.pm(to.df(vn[i2]), ipow*signE));
 				} else {
 					p = add.pm(p, mult.pm(E[[ipow - i2]], to.df(vn[i2]), sc=signE));
 				}
@@ -652,12 +657,12 @@ Epoly.gen = function(n, v=4, e=1, E=NULL, full=FALSE) {
 		if(is.null(E) || length(E) < n) {
 			E = Epoly.base(n, v, E=E);
 		}
-		if(full) return(Epoly.base(n, v, E=E));
+		if(full) return(Epoly.base(n, v=v, E=E));
 		return(E[[n]]);
 	}
 	if(e == 2) {
 		if(is.null(E) || length(E) < 2*n) {
-			E = Epoly.base(2*n, v, E=E);
+			E = Epoly.base(2*n, v=v, E=E);
 		}
 		p = diff.pm(pow.pm(E[[n]], 2), E[[2*n]]);
 		p = mult.sc.pm(p, 1, 2);
@@ -666,20 +671,17 @@ Epoly.gen = function(n, v=4, e=1, E=NULL, full=FALSE) {
 	}
 	if(e == 3) {
 		if(is.null(E) || length(E) < 3*n) {
-			E = Epoly.base(3*n, v, E=E);
+			E = Epoly.base(3*n, v=v, E=E);
 		}
 		# TODO: check & implement properly!
 		p = diff.pm(E[[3*n]], pow.pm(E[[n]], 3));
 		p = mult.sc.pm(p, 1, 3);
-		p = add.pm(p, mult.pm(Epoly.gen(n, v, e=2, E=E), E[[n]]))
+		p = add.pm(p, mult.pm(Epoly.gen(n, v=v, e=2, E=E), E[[n]]))
 		if(full) return(list(E=E, p=p));
 		return(p);
 	}
 }
 
-### TODO:
-# - thoroughly check!
-Epoly.gen(5, 4)
 
 #######################
 #######################
@@ -687,6 +689,11 @@ Epoly.gen(5, 4)
 #############
 ### Tests ###
 #############
+
+### E Polynomials:
+### TODO:
+# - thoroughly check!
+Epoly.gen(5, 4)
 
 ### Multi-variable Multiplication
 
