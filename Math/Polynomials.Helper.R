@@ -724,11 +724,12 @@ Epoly.distinct = function(pow, v=3, E=NULL, full=FALSE) {
 		return(p);
 	}
 	if(length(pow) == 3) {
-		# TODO: debug;
 		p = Epoly.distinct(pow[1:2], v=v, E=E);
 		p = mult.pm(p, E[[pow[3]]]);
-		p = diff.pm(p, Epoly.distinct(c(pow[1]+pow[3], pow[2]), v=v, E=E));
-		p = diff.pm(p, Epoly.distinct(c(pow[1], pow[2]+pow[3]), v=v, E=E));
+		sc = if(pow[1] + pow[3] != pow[2]) 1 else 2;
+		p = diff.pm(p, mult.sc.pm(Epoly.distinct(c(pow[1]+pow[3], pow[2]), v=v, E=E), sc));
+		sc = if(pow[1] != pow[2] + pow[3]) 1 else 2;
+		p = diff.pm(p, mult.sc.pm(Epoly.distinct(c(pow[1], pow[2]+pow[3]), v=v, E=E), sc));
 		if(full) return(list(E=E, p=p));
 		return(p);
 	}
