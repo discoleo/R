@@ -534,6 +534,7 @@ perm3 = function(n, p=c(1,1,1), val0=0) {
 	} else {
 		p2 = t(p2);
 		id = sapply(seq(ncol(p2)), function(id) which(p2[,id] == 0));
+		# TODO: c(T,F) => c(T, rep(F, ...));
 		putVar = function(pos=c(T,F)) {
 			p21 = p2;
 			id1 = id[rep(pos, length(id) %/% 2)];
@@ -707,6 +708,31 @@ Epoly.adv = function(n, v=4, e=1, E=NULL, full=FALSE) {
 	p = mult.sc.pm(p, 1, -e);
 	if(full) return(list(E=E, p=p));
 	return(p);
+}
+Epoly.distinct = function(pow, v=3, E=NULL, full=FALSE) {
+	pow = pow[pow != 0];
+	if(length(pow) > v) print("Warning!"); # TODO
+	p.rg = range(pow);
+	if(p.rg[1] == p.rg[2]) return(Epoly.gen(p.rg[1], v=v, e=length(pow), E=E, full=full));
+	len = sum(pow);
+	E = Epoly.base(len, v=v, E=E); # TODO: more accurate power;
+	if(length(pow) == 2) {
+		print(p.rg);
+		p = mult.pm(E[[p.rg[2]]], E[[p.rg[1]]]);
+		p = diff.pm(p, E[[len]]);
+		if(full) return(list(E=E, p=p));
+		return(p);
+	}
+	if(length(pow) == 3) {
+		# TODO: debug;
+		p = Epoly.distinct(pow[1:2], v=v, E=E);
+		p = mult.pm(p, E[[pow[3]]]);
+		p = diff.pm(p, Epoly.distinct(c(pow[1]+pow[3], pow[2]), v=v, E=E));
+		p = diff.pm(p, Epoly.distinct(c(pow[1], pow[2]+pow[3]), v=v, E=E));
+		if(full) return(list(E=E, p=p));
+		return(p);
+	}
+	# TODO: generalize & check;
 }
 
 
