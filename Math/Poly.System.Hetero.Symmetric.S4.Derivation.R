@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric
 ###  == Derivation ==
 ###
-### draft v.0.2c-Edecomp
+### draft v.0.2c-AuxProblems
 
 
 ####################
@@ -187,8 +187,6 @@ x4^2 + b*x1*x2*x3 # - R
 #######################
 #######################
 
-
-
 ###############
 ### Order 3 ###
 ###############
@@ -237,6 +235,7 @@ S^4 - 4*E2*S^2 + 4*E3*S + 2*E2^2 - 4*E4 + 4*b*E4 - R*S # = 0
 
 ###########################
 ###########################
+###########################
 
 ##############
 ### Simple ###
@@ -279,6 +278,7 @@ S^3 + (3*b^2 - 4*R)*S - 4*b^3 # = 0
 # E3 = ; [see below]
 # E4 = (-E3^2 + E3*E2*S + b^6) / S^2;
 
+### TODO: simplify!
 E3.helper.f = function(S, E2, R, b) {
 pE3 = - 4*E2*R*S^6*b^12 + 4*E2*R*S^8*b^10 + 8*E2*R^2*S^6*b^10 - 12*E2*R^2*S^7*b^9 + E2*R^2*S^8*b^8 +
 	- E2*R^2*S^10*b^6 + 4*E2*R^3*S^6*b^8 - 4*E2*R^3*S^7*b^7 - 22*E2*R^3*S^8*b^6 + 4*E2*R^3*S^10*b^4 +
@@ -714,6 +714,7 @@ b^2*E3^2 - b^2*E4*S^2 + 8*b^2*R*E4 - 4*R*E2^2 + 4*R*E2*S^2 - 16*R^2*E2 +
 	- R*S^4 + 4*R^2*S^2 - 8*R^3 # = 0
 # TODO: check for redundancies;
 
+
 #######
 ### Eq:
 S^3 - R*(b^4 - 2*b^3 + 4*b^2 - 4*b + 4)*S
@@ -722,7 +723,9 @@ S^3 - R*(b^4 - 2*b^3 + 4*b^2 - 4*b + 4)*S
 ### Special Case: S = 0
 E3 = 0; E2 = -2*R; E4 = R^2 / (b^2 + 1);
 ### Case: S != 0
-# TODO;
+# TODO: E2 = ???;
+# E3 = p(E2); # see below;
+# (b+1)*E4*S = R*E3;
 
 
 ### [Eq 4] Alternative 2:
@@ -864,6 +867,7 @@ coeff.S4P2V2_P16 = function(R, b) {
 }
 
 
+### Auxiliary Eqs:
 ### Special Case: S = 0; E3 = 0;
 - 2*(b^4 + 3*b^2 - 2)*R*E4 +
 	- 2*(b^4 + b^2 - 2)*E4*E2 + (b^2+6)*R*E2^2 + 4*(b^2 + 4)*R^2*E2 + 2*(b^2+6)*R^3 # = 0
@@ -897,6 +901,7 @@ round0(sapply(seq_along(E4), function(id) eval.pm(pEEq2, c(E4[id], E2[id], b, R)
 
 pEEq3 = add.pm(pEEq1, mult.pm(pEEq2, pb.gen(c(2,0), c(1,6), pR=1)))
 
+
 ### Full Case:
 ### Eq 1:
 (b+1)*E4*S - R*E3 # = 0
@@ -916,7 +921,7 @@ pEq3 = data.frame(
 	R  = c(0, 0, 2, 1, 1, 2, 3, 2, 3, 4),
 	coeff = c(1,-1, 2, 2, -1, -2, 2, 1, -1, 1)
 )
-pEq1   = data.frame(E3=1, R=1, coeff=1);
+pEq1   = data.frame(E3=1, R=1, coeff=1); # E4 vs E3
 pEq1fr = data.frame(S=c(1,1), b=c(1,0), coeff=c(1,1));
 pDiv = data.frame(
 	S = c(2, 0, 0, 0, 0, 0),
@@ -926,23 +931,23 @@ pDiv = data.frame(
 )
 pEq3Coeff = data.frame(b=5:0, coeff=c(1,-1,3,-1,1,3));
 #
-pEq1r = replace.fr.pm(pEq3, pEq1, pEq1fr, "E4", pow=1)
-lP = div.pm(pEq1r, pDiv, by="S")
-# lP$Rem
-lP = div.pm(lP$Rem, data.frame(b=c(1,0), coeff=c(1,1)), by="b")
-lP$Rez$R = lP$Rez$R - 2; lP$Rez$coeff = - lP$Rez$coeff;
-id = order( - lP$Rez$E3, - lP$Rez$E2); lP$Rez = lP$Rez[id,];
-print.p(lP$Rez, "E3")
-lP$Rez
+pEq3r = replace.fr.pm(pEq3, pEq1, pEq1fr, "E4", pow=1)
+lP3 = div.pm(pEq3r, pDiv, by="S")
+# lP3$Rem
+lP3 = div.pm(lP3$Rem, data.frame(b=c(1,0), coeff=c(1,1)), by="b")
+lP3 = lP3$Rez; lP3$R = lP3$R - 2; lP3$coeff = - lP3$coeff;
+id = order( - lP3$E3, - lP3$E2, - lP3$b); lP3 = lP3[id,];
+print.p(lP3, "E3")
+lP3
 
 # Debug:
 eval.pm(pEq3, c(E4[10], E3[10], E2[10], S[10], b, R))
-
 
 (3 + b - b^2 + 3*b^3 - b^4 + b^5)*E3^2 +
 	- 2*(E2 - 3*R - 2*R*b^3 + R*b^4 - R*b^5)*S*E3 +
 	- R*(b^5 - b^4 + 2*b^3 + 4)*(E2^2 + 2*R*E2) +
 	+ (b^9 - 3*b^8 + 8*b^7 - 12*b^6 + 15*b^5 - 7*b^4 - 2*b^3 + 16*b^2 - 16*b + 12)*R^3
+
 
 ### Eq 4:
 (b^2 + 2)*E3^2 - (b^2 + 2)*E4*S^2 + 8*(b^2 + 1)*R*E4 +
@@ -960,16 +965,19 @@ pEq4 = data.frame(
 )
 pEq4Coeff = data.frame(S=1, b=c(3,2,1,0), coeff=c(1,1,2,2));
 #
-pEq2r = replace.fr.pm(pEq4, pEq1, pEq1fr, "E4", pow=1)
-lP2 = div.pm(pEq2r, pDiv, by="S")
-id = order( - lP2$Rem$E3, - lP2$Rem$E2, -lP2$Rem$b); lP2$Rem = lP2$Rem[id,];
-print.p(lP2$Rem, "E3")
-# lP$Rem
+pEq4r = replace.fr.pm(pEq4, pEq1, pEq1fr, "E4", pow=1)
+lP4 = div.pm(pEq4r, pDiv, by="S")
+lP4 = lP4$Rem;
+id = order( - lP4$E3, - lP4$E2, -lP4$b); lP4 = lP4[id,];
+print.p(lP4, "E3")
+# lP4
 
-pR = diff.pm(mult.pm(lP$Rez, pEq4Coeff), mult.pm(lP2$Rem, pEq3Coeff))
+pR = diff.pm(mult.pm(lP3, pEq4Coeff), mult.pm(lP4, pEq3Coeff))
 lP2r = div.pm(pR, pDiv, by="S")
-id = order( - lP2r$Rem$E3, - lP2r$Rem$E2, -lP2r$Rem$b); lP2r$Rem = lP2r$Rem[id,];
-print.p(lP2r$Rem, "E3")
+lP2r = lP2r$Rem;
+id = order( - lP2r$E3, - lP2r$E2, -lP2r$b); lP2r = lP2r[id,];
+print.p(lP2r, "E3")
+
 
 # Debug:
 eval.pm(pEq4, c(E4[10], E3[10], E2[10], S[10], b, R))
@@ -988,5 +996,68 @@ eval.pm(pEq4, c(E4[10], E3[10], E2[10], S[10], b, R))
 	- (4*b^10 - 8*b^9 + 26*b^8 - 24*b^7 + 30*b^6 + 20*b^5 - 32*b^4 + 72*b^3 - 8*b^2 + 40)*R*E2*S +
 	+ (b^14 - 4*b^13 + 15*b^12 - 32*b^11 + 59*b^10 - 68*b^9 + 56*b^8 + 12*b^7 - 71*b^6 + 134*b^5 - 86*b^4 +
 		+ 48*b^3 + 44*b^2 - 24*b + 48)*R^2*S
+
+### Eq 2:
+(b^4 - 1)*(b^2 + 2)*E4^2 - 2*b^2*(b^2 + 4)*R^2*E4 +
+	- 2*b^2*(b^2 + 2)*R*E4*E2 + b^2*(b^2 + 2)*R*E4*S^2 +
+	+ 4*R^2*E2^2 + 2*(b^2 + 6)*R^3*E2 - 4*R^2*E2*S^2 +
+	+ (b^2+10)*R^4 - (b^2+6)*R^3*S^2 + R^2*S^4 # = 0
+
+pEq2 = data.frame(
+	E4 = c(2, 2, 2, 2, 1, 1,   1, 1, 1, 1,   0, 0, 0, 0,   0, 0, 0, 0, 0),
+	E2 = c(0, 0, 0, 0, 0, 0,   1, 1, 0 ,0,   2, 1, 1, 1,   0, 0, 0, 0, 0),
+	S  = c(0 ,0, 0, 0, 0, 0,   0, 0, 2, 2,   0, 0, 0, 2,   0, 0, 2, 2, 4),
+	b  = c(6, 4, 2, 0, 4, 2,   4, 2, 4, 2,   0, 2, 0, 0,   2, 0, 2, 0, 0),
+	R  = c(0, 0, 0, 0, 2, 2,   1, 1, 1, 1,   2, 3, 3, 2,   4, 4, 3, 3, 2),
+	coeff = c(1, 2,-1,-2,-2,-8,  -2,-4,1, 2,  4, 2,12,-4,  1,10,-1,-6, 1)
+)
+bDiv4 = data.frame(b=0:9, coeff=c(8,16,12,12,10,4,5,3,1,1))
+bDiv3 = data.frame(b=0:8, coeff=c(8,8,4,8,2,2,3,0,1))
+
+pEq2r = replace.fr.pm(pEq2, pEq1, pEq1fr, "E4", pow=1)
+lP2 = div.pm(pEq2r, pDiv, by="S")
+id = order( - lP2$Rem$E3, - lP2$Rem$E2, -lP2$Rem$b); lP2$Rem = lP2$Rem[id,];
+print.p(lP2$Rem, "E3")
+# lP$Rem
+
+# lP2r: E3 vs E2
+ncE3 = match("E3", names(lP2r))
+isDivE3 = (lP2r[, ncE3] > 0);
+E3fr = lP2r[isDivE3, -ncE3];
+E3p  = lP2r[ ! isDivE3, -ncE3];
+E3p$coeff = - E3p$coeff;
+#
+lP2 = replace.fr.pm(lP2$Rem, E3p, E3fr, "E3", pow=1)
+lP2 = div.pm(lP2, pDiv, by="S")
+lP2 = lP2$Rem;
+lP2$S = lP2$S - min(lP2$S);
+lP2$R = lP2$R - min(lP2$R);
+lP2 = div.pm(lP2, bDiv3, by="b");
+lP2 = lP2$Rez;
+id = order( - lP2$E2, -lP2$b); lP2 = lP2[id,];
+rownames(lP2) = seq(nrow(lP2));
+lP2
+
+# lP2 & lP4b are similar: redundancy or simplification method?
+pEq4r = replace.fr.pm(lP4, E3p, E3fr, "E3", pow=1)
+lP4b = div.pm(pEq4r, pDiv, by="S")
+lP4b = lP4b$Rem;
+lP4b$S = lP4b$S - min(lP4b$S);
+lP4b$R = lP4b$R - min(lP4b$R);
+id = order( - lP4b$E2, -lP4b$b); lP4b = lP4b[id,];
+lP4b = div.pm(lP4b, bDiv3, by="b");
+lP4b = lP4b$Rez;
+id = order( - lP4b$E2, -lP4b$b); lP4b = lP4b[id,];
+rownames(lP4b) = seq(nrow(lP4b));
+lP4b
+# print.p(lP4, "E2")
+
+# Debug:
+eval.pm(pEq2, c(E4[10],E2[10],S[10],b,R))
+eval.pm(E3p, c(R,E2[10],S[10],b))
+
+gcd.pm(lP2[lP2$E2 == 4, c("b", "coeff")], lP4b[lP4b$E2 == 4, c("b", "coeff")], by="b", div.sc=5974.576)
+div.pm(lP2[lP2$E2 == 4, c("b", "coeff")], bDiv4, "b")
+div.pm(lP4b[lP4b$E2 == 4, c("b", "coeff")], bDiv4, "b")
 
 
