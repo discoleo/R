@@ -6,7 +6,7 @@
 ### Polynomial Systems: S4
 ### Heterogeneous Symmetric
 ###
-### draft v.0.2i
+### draft v.0.2j
 
 
 
@@ -452,7 +452,10 @@ S^3 - R*(b^4 - 2*b^3 + 4*b^2 - 4*b + 4)*S
 E3 = 0; E2 = -2*R; E4 = R^2 / (b^2 + 1);
 
 ### Case: S != 0
-# TODO;
+E2 = -b*R*(b^2 - b + 2);
+# E3 = p(E2); # see below;
+E4 = R*E3 / ((b+1)*S);
+
 
 ### Solver:
 xip.f = function(x, R, b, n=2, p=1) {
@@ -475,15 +478,12 @@ solve.S4P2.V2a = function(R, b, debug=TRUE) {
 	x1 = roots(c(1, 0, E2, -E3, E4));
 	sol = solve0(x1);
 	### Case: S != 0
-	if(FALSE) {
-		# TODO;
-		# E2 = ???
-		E3 = getE3(S, E2, R, b);
-		E4 = R*E3 / ((b+1)*S); # TODO: b = -1;
-		x1 = sapply(seq_along(S), function(id) roots(c(1, -S[id], E2[id], -E3[id], E4[id]));
-		sol2 = solve0(x1);
-		sol = rbind(sol, sol2);
-	}
+	E2 = -b*R*(b^2 - b + 2); E2 = rep(E2, length(S));
+	E3 = getE3(S, E2, R, b);
+	E4 = R*E3 / ((b+1)*S); # TODO: b = -1;
+	x1 = sapply(seq_along(S), function(id) roots(c(1, -S[id], E2[id], -E3[id], E4[id])));
+	sol2 = solve0(as.vector(x1));
+	sol = rbind(sol, sol2);
 	### Case: all equal | pair-wise equal:
 	# ((b+1)*x^2 - R) * ((b-1)*x^2 + R)
 	return(sol);
