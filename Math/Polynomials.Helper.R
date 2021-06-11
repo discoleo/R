@@ -359,6 +359,24 @@ div.pm = function(p1, p2, by="x", debug=TRUE) {
 	}
 	return(list(Rez=pRez, Rem=p1));
 }
+gcd.pm = function(p1, p2, by="x", div.sc=1) {
+	# basic implementation without much thought!
+	if(max(p2[,by]) > max(p1[,by])) { tmp = p1; p1 = p2; p2 = tmp; }
+	pR = div.pm(p1, p2, by=by);
+	if(nrow(pR$Rem) == 0) return(pR);
+	while(TRUE) {
+		p1 = diff.pm(p1, mult.pm(p2, pR$Rez));
+		p1$coeff = round0(p1$coeff);
+		p1 = p1[p1$coeff != 0, ];
+		print(mult.sc.pm(p1, 1, div.sc));
+		n1 = max(p1[,by]); n2 = max(p2[,by]);
+		if(n1 == 0 || n2 == 0) return(pR);
+		if(n2 > n1) { tmp = p1; p1 = p2; p2 = tmp; }
+		pR = div.pm(p1, p2, by=by);
+		if(nrow(pR$Rem) == 0) return(pR);
+	}
+	return(pR);
+}
 
 #############
 ### Other ###
