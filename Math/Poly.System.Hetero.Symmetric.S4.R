@@ -6,7 +6,7 @@
 ### Polynomial Systems: S4
 ### Heterogeneous Symmetric
 ###
-### draft v.0.2j
+### draft v.0.2j-ext
 
 
 
@@ -135,7 +135,7 @@ solve.S4 = function(R, b, max.perm=0, tol=1E-3, debug=TRUE, old=FALSE) {
 	sol22 = rbind(sol22, cbind(x1=x1, x2=x1, x3=x3, x4=x4));
 	
 	### Case: x[i] != x[j]
-	# TDODO !!!
+	# TODO !!!
 	# b^3*S^4 - 16*b^2*S^3 - b^3*R*S^2 + 34*b*S^2 + 24*b^2*R*S + 24*S + 16*b*R
 	coeff = c(b1^3, - 16*b1^2, - b1^3*R + 34*b1, 24*b1^2*R + 24, 16*b1*R);
 	S = roots(coeff);
@@ -461,12 +461,18 @@ E4 = R*E3 / ((b+1)*S);
 xip.f = function(x, R, b, n=2, p=1) {
 	(R - x^n) / b[1] / x^p;
 }
-solve.S4P2.V2a = function(R, b, debug=TRUE) {
-	coeff = c(1, 0, - R*(b[1]^4 - 2*b[1]^3 + 4*b[1]^2 - 4*b[1] + 4))
+solve.S4P2.V2a = function(R, b, be=0, all=FALSE, debug=TRUE) {
+	b0 = (b[1]^4 - 2*b[1]^3 + 4*b[1]^2 - 4*b[1] + 4);
+	coeff = c(1, 0, - R*b0);
+	noExt = TRUE; if(length(be) < 2) be = c(be, 0);
+	if(any(be != 0)) {
+		noExt = FALSE;
+		coeff = coeff + c(be[2]*b0, be[1]*b0, 0); # only powers: 1 & 2;
+	}
 	S = roots(coeff);
 	if(debug) print(c(S, 0));
 	#
-	solve0 = function(x1) {
+	solve0 = function(x1, R) {
 		x2 = xip.f(x1, R, b, p=1);
 		x3 = xip.f(x2, R, b, p=1);
 		x4 = xip.f(x3, R, b, p=1);
@@ -476,16 +482,26 @@ solve.S4P2.V2a = function(R, b, debug=TRUE) {
 	### Special case: S == 0
 	E3 = 0; E2 = -2*R; E4 = R^2 / (b^2 + 1);
 	x1 = roots(c(1, 0, E2, -E3, E4));
-	sol = solve0(x1);
+	sol = solve0(x1, R);
 	### Case: S != 0
-	E2 = -b*R*(b^2 - b + 2); E2 = rep(E2, length(S));
-	E3 = getE3(S, E2, R, b);
-	E4 = R*E3 / ((b+1)*S); # TODO: b = -1;
+	R1 = if(noExt) rep(R, length(S)) else R - sapply(S, function(S) sum(be * S^seq_along(be)));
+	E2 = -b*R1*(b^2 - b + 2); # E2 = rep(E2, length(S));
+	E3 = getE3(S, E2, R1, b);
+	E4 = R1*E3 / ((b+1)*S); # TODO: b = -1;
 	x1 = sapply(seq_along(S), function(id) roots(c(1, -S[id], E2[id], -E3[id], E4[id])));
-	sol2 = solve0(as.vector(x1));
+	R1 = rep(R1, each=4)
+	sol2 = solve0(as.vector(x1), R=R1);
 	sol = rbind(sol, sol2);
 	### Case: all equal | pair-wise equal:
 	# ((b+1)*x^2 - R) * ((b-1)*x^2 + R)
+	if(all) {
+		if(b != -1) {
+			x1 = roots(c(b+1 + 4*be[2], 4*be[1], -R));
+			sol2 = cbind(x1, x1, x1, x1);
+			sol = rbind(sol, sol2);
+		}
+		# TODO: x1 = x3, x2 = x4;
+	}
 	return(sol);
 }
 getE3 = function(S, E2, R, b) {
@@ -513,6 +529,22 @@ x1^2 + b*x1*x2 # - R
 x2^2 + b*x2*x3 # - R
 x3^2 + b*x3*x4 # - R
 x4^2 + b*x4*x1 # - R
+
+
+#########
+### Ex 2:
+R = -4
+b = 3
+be = 1
+sol = solve.S4P2.V2a(R, b, be=be, all=TRUE);
+x1 = sol[,1]; x2 = sol[,2]; x3 = sol[,3]; x4 = sol[,4];
+
+### Test
+S = x1+x2+x3+x4; ext = be[1]*S;
+x1^2 + b*x1*x2 + ext # - R
+x2^2 + b*x2*x3 + ext # - R
+x3^2 + b*x3*x4 + ext # - R
+x4^2 + b*x4*x1 + ext # - R
 
 
 ### Classic polynomial
