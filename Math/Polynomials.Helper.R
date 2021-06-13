@@ -245,6 +245,13 @@ diff.lpm = function(p1, lp) {
 	}
 	return(p1);
 }
+add.lpm = function(lp) {
+	pR = data.frame();
+	for(pd in lp) {
+		pR = add.pm(pR, pd);
+	}
+	return(pR);
+}
 replace.pm = function(p1, p2, x, pow=1) {
 	# replace x^pow by p2;
 	idx = match(x, names(p1));
@@ -372,6 +379,10 @@ gcd.pm = function(p1, p2, by="x", div.sc=1) {
 		n1 = max(p1[,by]); n2 = max(p2[,by]);
 		if(n1 == 0 || n2 == 0) return(pR);
 		if(n2 > n1) { tmp = p1; p1 = p2; p2 = tmp; }
+		else if(n1 == n2 && max(abs(p1$coeff[p1[,by] == n1])) < max(abs(p2$coeff[p2[,by] == n1]))) {
+			# non-robust for multi-variate polynomials!
+			tmp = p1; p1 = p2; p2 = tmp;
+		}
 		pR = div.pm(p1, p2, by=by);
 		if(nrow(pR$Rem) == 0) return(pR);
 	}
@@ -476,11 +487,11 @@ print.p = function(p, leading=1, order=TRUE, sort.order=TRUE) {
 	if( ! is.numeric(leading)) leading = match(leading, names(p));
 	if( ! is.na(leading)) {
 		if(order) p = p[order(p[, leading], decreasing=sort.order), ];
-		p = cbind(p[,-leading], p[,leading, drop=FALSE]);
+		p = cbind(p[,-leading, drop=FALSE], p[,leading, drop=FALSE]);
 	}
 	###
 	id.coeff = match("coeff", colnames(p));
-	coeff = p[,id.coeff]; p = p[, - id.coeff];
+	coeff = p[,id.coeff]; p = p[, - id.coeff, drop=FALSE];
 	p.str = sapply(colnames(p), print.monome, p=p);
 	# print(p.str)
 	paste.nonempty = function(str, collapse="*") {
@@ -492,7 +503,7 @@ print.p = function(p, leading=1, order=TRUE, sort.order=TRUE) {
 	sign.str = ifelse(coeff > 0, " + ", " - ");
 	sign.str[1] = if(coeff[1] > 0) "" else "- ";
 	coeff.str = as.character(abs(coeff));
-	hasCoeff = (abs(coeff) != 1);
+	hasCoeff = (abs(coeff) != 1); # TODO: ERROR "+ b0*";
 	p.str[hasCoeff] = paste(coeff.str[hasCoeff], p.str[hasCoeff], sep = "*");
 	return(paste(sign.str, p.str, sep="", collapse=""));
 }
