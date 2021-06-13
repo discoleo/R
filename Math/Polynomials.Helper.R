@@ -747,6 +747,7 @@ Epoly.distinct = function(pow, v=3, E=NULL, full=FALSE) {
 	E = Epoly.base(len, v=v, E=E); # TODO: more accurate power;
 	if(length(pow) == 2) {
 		print(p.rg);
+		### Case: p.rg[1] == p.rg[2]: already handled;
 		p = mult.pm(E[[p.rg[2]]], E[[p.rg[1]]]);
 		p = diff.pm(p, E[[len]]);
 		if(full) return(list(E=E, p=p));
@@ -757,8 +758,10 @@ Epoly.distinct = function(pow, v=3, E=NULL, full=FALSE) {
 		p = mult.pm(p, E[[pow[3]]]);
 		sc = if(pow[1] + pow[3] != pow[2]) 1 else 2;
 		p = diff.pm(p, mult.sc.pm(Epoly.distinct(c(pow[1]+pow[3], pow[2]), v=v, E=E), sc));
-		sc = if(pow[1] != pow[2] + pow[3]) 1 else 2;
-		p = diff.pm(p, mult.sc.pm(Epoly.distinct(c(pow[1], pow[2]+pow[3]), v=v, E=E), sc));
+		if(pow[1] != pow[2]) {
+			sc = if(pow[1] != pow[2] + pow[3]) 1 else 2;
+			p = diff.pm(p, mult.sc.pm(Epoly.distinct(c(pow[1], pow[2]+pow[3]), v=v, E=E), sc));
+		}
 		if(full) return(list(E=E, p=p));
 		return(p);
 	}
