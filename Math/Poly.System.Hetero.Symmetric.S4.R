@@ -6,7 +6,7 @@
 ### Polynomial Systems: S4
 ### Heterogeneous Symmetric
 ###
-### draft v.0.2j-ext
+### draft v.0.2j-simplified
 
 
 
@@ -453,8 +453,8 @@ E3 = 0; E2 = -2*R; E4 = R^2 / (b^2 + 1);
 
 ### Case: S != 0
 E2 = -b*R*(b^2 - b + 2);
-# E3 = p(E2); # see below;
-E4 = R*E3 / ((b+1)*S);
+E3 = - (b+1) * R * S;
+E4 = R*E3 / ((b+1)*S); # - R^2;
 
 
 ### Solver:
@@ -486,8 +486,8 @@ solve.S4P2.V2a = function(R, b, be=0, all=FALSE, debug=TRUE) {
 	### Case: S != 0
 	R1 = if(noExt) rep(R, length(S)) else R - sapply(S, function(S) sum(be * S^seq_along(be)));
 	E2 = -b*R1*(b^2 - b + 2); # E2 = rep(E2, length(S));
-	E3 = getE3(S, E2, R1, b);
-	E4 = R1*E3 / ((b+1)*S); # TODO: b = -1;
+	E3 = - (b+1) * R1 * S;
+	E4 = - R1^2;
 	x1 = sapply(seq_along(S), function(id) roots(c(1, -S[id], E2[id], -E3[id], E4[id])));
 	R1 = rep(R1, each=4)
 	sol2 = solve0(as.vector(x1), R=R1);
@@ -503,19 +503,6 @@ solve.S4P2.V2a = function(R, b, be=0, all=FALSE, debug=TRUE) {
 		# TODO: x1 = x3, x2 = x4;
 	}
 	return(sol);
-}
-getE3 = function(S, E2, R, b) {
-	# only for Case: S != 0;
-	# E3 = 0 for S == 0; [this formula actually works as well]
-	pDiv = ((2*b^7 - 2*b^6 + 8*b^5 - 4*b^4 + 8*b^3 + 8*b^2 + 16)*E2 +
-		- R*(2*b^12 - 3*b^11 + 11*b^10 - 5*b^9 + 7*b^8 + 31*b^7 - 39*b^6 + 84*b^5 - 46*b^4 +
-			+ 44*b^3 + 28*b^2 - 24*b + 48));
-	#
-	pE3 = - (b^8 - b^6 + 2*b^5 - 6*b^4 + 4*b^2 - 8*b - 4)*E2^2 +
-		- (4*b^10 - 8*b^9 + 26*b^8 - 24*b^7 + 30*b^6 + 20*b^5 - 32*b^4 + 72*b^3 - 8*b^2 + 40)*R*E2 +
-		+ (b^14 - 4*b^13 + 15*b^12 - 32*b^11 + 59*b^10 - 68*b^9 + 56*b^8 + 12*b^7 - 71*b^6 + 134*b^5 - 86*b^4 +
-			+ 48*b^3 + 44*b^2 - 24*b + 48)*R^2;
-	return(pE3 * S / pDiv);
 }
 
 ### Examples:

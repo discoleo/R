@@ -712,7 +712,6 @@ b^2*E3^2 - b^2*E4*S^2 + 8*b^2*R*E4 - 4*R*E2^2 + 4*R*E2*S^2 - 16*R^2*E2 +
 (b^2 + 2)*E3^2 - (b^2 + 2)*E4*S^2 + 8*(b^2 + 1)*R*E4 +
 	- 4*R*E2^2 + 4*R*E2*S^2 - 8*R^2*E2 +
 	- R*S^4 + 4*R^2*S^2 - 8*R^3 # = 0
-# TODO: check for redundancies;
 
 
 #######
@@ -723,9 +722,9 @@ S^3 - R*(b^4 - 2*b^3 + 4*b^2 - 4*b + 4)*S
 ### Special Case: S = 0
 E3 = 0; E2 = -2*R; E4 = R^2 / (b^2 + 1);
 ### Case: S != 0
-# TODO: E2 = ???;
-# E3 = p(E2); # see below;
-# (b+1)*E4*S = R*E3;
+E2 = -b*R*(b^2 - b + 2);
+E3 = - (b+1) * R * S;
+E4 = R*E3 / ((b+1)*S); # - R^2;
 
 
 ### [Eq 4] Alternative 2:
@@ -782,7 +781,7 @@ x1 = sol[,1]; x2 = sol[,2]; x3 = sol[,3]; x4 = sol[,4];
 E = do.call(rbind, lapply(seq(nrow(sol)), function(id) debug.E(sol[id,])));
 E$S = round0(E$S);
 S = E$S; E2 = E$E2; E3 = E$E3; E4 = E$E4;
-
+E2 = -b*R*(b^2 - b + 2);
 
 ### Classic Polynomial:
 b^n*x1^(n-1)*(R - x1^n)*x3 = b^n*x1^n*R - (R - x1^n)^n;
@@ -1052,6 +1051,23 @@ rownames(lP4b) = seq(nrow(lP4b));
 lP4b
 # print.p(lP4, "E2")
 
+### simplification of E3:
+# -b*(b^2 - b + 2)
+pRepl = data.frame(b=c(3,2,1), coeff=c(-1,1,-2));
+pDiv = add.pm(mult.pm(E3fr[E3fr$E2 == 1, c("b", "coeff")], pRepl),
+	E3fr[E3fr$E2 == 0, c("b", "coeff")])
+print.p(pDiv, "b")
+
+pE3p = add.lpm(
+	list(mult.pm(E3p[E3p$E2 == 2, c("b", "coeff")], pow.pm(pRepl, 2)),
+	mult.pm(E3p[E3p$E2 == 1, c("b", "coeff")], pRepl),
+	E3p[E3p$E2 == 0, c("b", "coeff")]))
+pE3p$coeff = - pE3p$coeff; # use: - E3 !!!
+print.p(pE3p, "b")
+
+gcd.pm(pE3p, pDiv, by="b");
+# (b+1) !!!
+
 # Debug:
 eval.pm(pEq2, c(E4[10],E2[10],S[10],b,R))
 eval.pm(E3p, c(R,E2[10],S[10],b))
@@ -1060,4 +1076,19 @@ gcd.pm(lP2[lP2$E2 == 4, c("b", "coeff")], lP4b[lP4b$E2 == 4, c("b", "coeff")], b
 div.pm(lP2[lP2$E2 == 4, c("b", "coeff")], bDiv4, "b")
 div.pm(lP4b[lP4b$E2 == 4, c("b", "coeff")], bDiv4, "b")
 
+diff.pm(mult.pm(lP2, lP4b[lP4b$E2 == 4, c("b", "coeff")]), mult.pm(lP4b, lP2[lP2$E2 == 4, c("b", "coeff")]))
 
+### [old]
+getE3.old = function(S, E2, R, b) {
+	# only for Case: S != 0;
+	# E3 = 0 for S == 0; [this formula actually works as well]
+	pDiv = ((2*b^7 - 2*b^6 + 8*b^5 - 4*b^4 + 8*b^3 + 8*b^2 + 16)*E2 +
+		- R*(2*b^12 - 3*b^11 + 11*b^10 - 5*b^9 + 7*b^8 + 31*b^7 - 39*b^6 + 84*b^5 - 46*b^4 +
+			+ 44*b^3 + 28*b^2 - 24*b + 48));
+	#
+	pE3 = - (b^8 - b^6 + 2*b^5 - 6*b^4 + 4*b^2 - 8*b - 4)*E2^2 +
+		- (4*b^10 - 8*b^9 + 26*b^8 - 24*b^7 + 30*b^6 + 20*b^5 - 32*b^4 + 72*b^3 - 8*b^2 + 40)*R*E2 +
+		+ (b^14 - 4*b^13 + 15*b^12 - 32*b^11 + 59*b^10 - 68*b^9 + 56*b^8 + 12*b^7 - 71*b^6 + 134*b^5 - 86*b^4 +
+			+ 48*b^3 + 44*b^2 - 24*b + 48)*R^2;
+	return(pE3 * S / pDiv);
+}
