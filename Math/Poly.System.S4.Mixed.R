@@ -6,7 +6,7 @@
 ### Polynomial Systems: S4
 ### Mixed Heterogeneous Symmetric
 ###
-### draft v.0.1b-Eq2
+### draft v.0.1b-structure
 
 
 ###############
@@ -16,8 +16,9 @@
 ###############
 
 
-### draft v.0.1b:
+### draft v.0.1b - v.0.1b-structure:
 # - exploration of Rotations;
+# - structure of solutions; [v.0.1b-structure]
 ### draft v.0.1a:
 # - moved section on Mixed S4 systems
 #   from: Poly.System.Hetero.Symmetric.S4.R
@@ -347,6 +348,22 @@ x*z + a3*x*y + a4*y*z + R3 # = 0
 
 ### Solution:
 
+### Root Structure:
+# - if (x1,x2,x3,x4) is a solution,
+#   then (x2,x3,x4,x1),...,(x4,x1,x2,x3) are also solutions;
+# - system is decomposable: P[???] = P[4] o P[???];
+
+### Variants:
+### Variant: E4 = R4;
+# - in addition, if (x1,x2,x3,x4) is a solution,
+#   then {-1, i, -i} * (x1,x2,x3,x4) are also solutions;
+# - system is decomposable: P[???] = P[4] o (degenerate P[4]) o P[???];
+### Variant: E2 = R4;
+# - in addition, if (x1,x2,x3,x4) is a solution,
+#   then -1 * (x1,x2,x3,x4) is also a solution;
+# - system is decomposable: P[???] = P[4] o (degenerate P[2]) o P[???];
+
+
 ### Sum =>
 E3*S - 4*E4 - (R1+R2+R3) # = 0
 
@@ -391,4 +408,5 @@ E4^2*(S^4 - 4*E2*S^2 + 4*E3*S + 2*E2^2 - 4*E4) + 4*E4^2*((x1*x3)^2+(x2*x4)^2) + 
 	- 4*E2*E3^2*E4 + 4*R2*E2^2*E4 + 2*R2*E3*E4*S - R2*E2*E4*S^2 + 2*(R1^2 + R3^2 - R2*(R1+R3))*E4 +
 	+ E3^4 - R2*E2*E3^2 + R2*(R1*R2 + R2*R3) # = 0
 # 2*E2*E4 = sqrt(4*E4*Eq2a) + sqrt(Eq2b);
+# - unknown if signs of radicals have any effect?
 
