@@ -457,6 +457,10 @@ E4^2*(S^4 - 4*E2*S^2 + 4*E3*S + 2*E2^2 - 4*E4) + 4*E4^2*((x1*x3)^2+(x2*x4)^2) + 
 (E3^2 - 2*E2*E4)*(S^2 - 2*E2) - 4*E4^2 +
 	+ 2*E4*((x1*x2 + x2*x3 + x3*x4 + x4*x1)^2 - 2*R2 - 4*E4) +
 	+ 4*E4*((x1*x3 + x2*x4)^2 - 2*E4) + 4*R2*E4 + 4*E4^2 - (R1^2 + R2^2 + R3^2)
+(E3^2 - 2*E2*E4)*(S^2 - 2*E2) - 32*E4^2 +
+	- 2*(E2*E4*S^2 - 2*E3*E4*S + E2*E3^2 - 4*E2^2*E4 + 2*E4*(R1+R3 - R2)) +
+	+ 4*E4*(x1*x3 + x2*x4)^2 +
+	+ 2*(R1*R2 + R1*R3 + R2*R3) - (R1^2 + R2^2 + R3^2)
 ### TODO
 
 
@@ -466,9 +470,7 @@ p2 = rotate(c(1,2,1), 4)
 p3 = rotate(c(1,1,2), 4)
 p = sum.lpm(lapply(list(p1,p2, p3), pow.pm, n=2))
 p = diff.pm(p, perm.poly(4, c(4,2,2), val0=0))
-p = diff.pm(p, mult.sc.pm(perm.poly(4, 4, val0=2), 3))
-p = diff.pm(p, perm.poly(4, c(4,3,3), val0=0))
-p = diff.pm(p, perm.poly(4, c(4,3,2), val0=1))
+p = diff.pm(p, mult.sc.pm(rotate(c(3,3), 4, val0=1), 2))
 p = sort.pm(p, c(5,3,2,1,4), xn="x1")
 rownames(p) = seq(nrow(p))
 p
