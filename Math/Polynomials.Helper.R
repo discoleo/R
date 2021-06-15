@@ -222,7 +222,7 @@ align.pm = function(p1, p2, align.names=TRUE) {
 		list(p1=p1, p2=p2);
 	}
 }
-add.pm = function(p1, p2) {
+sum.pm = function(p1, p2) {
 	if(is.data.frame(p1) && nrow(p1) == 0) return(reduce.pm(p2));
 	if(is.data.frame(p2) && nrow(p2) == 0) return(reduce.pm(p1));
 	l = align.pm(p1, p2);
@@ -235,6 +235,16 @@ add.pm = function(p1, p2) {
 	p.r = aggregate(coeff~., p, sum);
 	return(reduce.pm(p.r));
 }
+sum.lpm = function(lp) {
+	pR = data.frame();
+	for(pd in lp) {
+		pR = add.pm(pR, pd);
+	}
+	return(pR);
+}
+add.pm = function(p1, p2) return(sum.pm(p1, p2));
+add.lpm = function(lp) return(sum.lpm(lp));
+### Diff
 diff.pm = function(p1, p2) {
 	p2$coeff = - p2$coeff;
 	return(add.pm(p1, p2));
@@ -244,13 +254,6 @@ diff.lpm = function(p1, lp) {
 		p1 = diff.pm(p1, pd);
 	}
 	return(p1);
-}
-add.lpm = function(lp) {
-	pR = data.frame();
-	for(pd in lp) {
-		pR = add.pm(pR, pd);
-	}
-	return(pR);
 }
 replace.pm = function(p1, p2, x, pow=1) {
 	# replace x^pow by p2;
@@ -526,6 +529,27 @@ print.coeff = function(p, x="x") {
 }
 
 ### Poly Calculations
+rotate = function(p, n, val0=0, asPoly=TRUE) {
+	m = matrix(val0, nrow=n, ncol=n);
+	len = length(p);
+	max.len = n - len + 1;
+	for(nc in seq(n)) {
+		if(nc <= max.len) {
+			m[seq(nc, length.out=len), nc] = p;
+		} else {
+			dn = nc - max.len;
+			m[seq(1, dn), nc] = p[seq(len - dn + 1, len)];
+			m[seq(nc, n), nc] = p[seq(1, len - dn)];
+		}
+	}
+	m = t(m);
+	if(asPoly) {
+		m = data.frame(m);
+		names(m) = paste0("x", seq(n));
+		m$coeff = 1;
+	}
+	return(m)
+}
 perm1 = function(n, p=1, val0=0) {
 	m = matrix(val0, nrow=n, ncol=n);
 	diag(m) = p;
@@ -556,24 +580,28 @@ perm3 = function(n, p=c(1,1,1), val0=0) {
 			return(perm2(n, p=c(val0, val0), val0=p[1]));
 		} else stop("Not yet implemented!")
 	}
-	p2 = perm2(n, p=p[1:2], val0=val0);
-	if(p[1] != p[2]) p2 = rbind(p2, array(rev(p2), dim(p2)));
 	if(any(p[3] == p[1:2])) {
-		# TODO
+		pP = perm2(n, p=c(p[3], p[3]), val0=val0);
+		p3 = p[p != p[3]];
 	} else {
-		p2 = t(p2);
-		id = sapply(seq(ncol(p2)), function(id) which(p2[,id] == 0));
+		pP = perm2(n, p=p[1:2], val0=val0);
+		if(p[1] != p[2]) pP = rbind(pP, array(rev(pP), dim(pP)));
+		p3 = p[3];
+	}
+	{
+		pP = t(pP);
+		id = sapply(seq(ncol(pP)), function(id) which(pP[,id] == val0));
 		# TODO: c(T,F) => c(T, rep(F, ...));
 		putVar = function(pos=c(T,F)) {
-			p21 = p2;
+			p21 = pP;
 			id1 = id[rep(pos, length(id) %/% 2)];
-			p21[seq(0, ncol(p2)-1)*n + id1] = p[3];
+			p21[seq(0, ncol(pP)-1)*n + id1] = p3;
 			return(p21);
 		}
-		p2 = cbind(putVar(c(T,F)), putVar(c(F,T)));
-		p2 = t(p2);
+		pP = cbind(putVar(c(T,F)), putVar(c(F,T)));
+		pP = t(pP);
 	}
-	return(p2);
+	return(pP);
 }
 prod.perm.poly = function(n, pow=c(1,1)) {
 	# all 2 permutations
@@ -594,7 +622,9 @@ prod.perm.poly = function(n, pow=c(1,1)) {
 	return(pR)
 }
 perm.poly = function(n, p=c(1,1), val0=0) {
-	if(length(p) == 2) {
+	if(length(p) == 1) {
+		m = as.data.frame(perm1(n, p=p, val0=val0))
+	} else if(length(p) == 2) {
 		m = as.data.frame(perm2(n, p=p, val0=val0))
 	} else if(length(p) == 3) {
 		m = as.data.frame(perm3(n, p=p, val0=val0))
@@ -759,9 +789,10 @@ Epoly.distinct = function(pow, v=3, E=NULL, full=FALSE) {
 		sc = if(pow[1] + pow[3] != pow[2]) 1 else 2;
 		p = diff.pm(p, mult.sc.pm(Epoly.distinct(c(pow[1]+pow[3], pow[2]), v=v, E=E), sc));
 		if(pow[1] != pow[2]) {
-			sc = if(pow[1] != pow[2] + pow[3]) 1 else 2;
+			sc = if(pow[1] != (pow[2] + pow[3])) 1 else 2;
 			p = diff.pm(p, mult.sc.pm(Epoly.distinct(c(pow[1], pow[2]+pow[3]), v=v, E=E), sc));
 		}
+		if(any(pow[1:2] == pow[3])) p = mult.sc.pm(p, 1, 2);
 		if(full) return(list(E=E, p=p));
 		return(p);
 	}
