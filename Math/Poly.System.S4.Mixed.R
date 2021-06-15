@@ -6,7 +6,7 @@
 ### Polynomial Systems: S4
 ### Mixed Heterogeneous Symmetric
 ###
-### draft v.0.1b-Eq2
+### draft v.0.1b-Eq3
 
 
 ###############
@@ -339,7 +339,9 @@ x*z + a3*x*y + a4*y*z + R3 # = 0
 ### Rotations ###
 #################
 
-### Order: (2,1,1)
+######################
+### Order: [2,1,1] ###
+######################
 
 # x1^2*x2*x3 + x2^2*x3*x4 + x3^2*x4*x1 + x4^2*x1*x2 = R1
 # x1*x2^2*x3 + x2*x3^2*x4 + x3*x4^2*x1 + x4*x1^2*x2 = R2
@@ -451,5 +453,76 @@ E4^2*(S^4 - 4*E2*S^2 + 4*E3*S + 2*E2^2 - 4*E4) + 4*E4^2*((x1*x3)^2+(x2*x4)^2) + 
 	+ (- 2*E2*E3^2*R1*R2^3 - 2*E2*E3^2*R2^3*R3 - 2*E2*E3^6*R2 + E2^2*E3^4*R2^2 + 2*E3^4*R1*R2^2 +
 		+ 2*E3^4*R2^2*R3 + E3^8 + 2*R1*R2^4*R3 + R1^2*R2^4 + R2^4*R3^2) # = 0
 
+### Eq 3: Sum(R^2)
+(E3^2 - 2*E2*E4)*(S^2 - 2*E2) - 4*E4^2 +
+	+ 2*E4*((x1*x2 + x2*x3 + x3*x4 + x4*x1)^2 - 2*R2 - 4*E4) +
+	+ 4*E4*((x1*x3 + x2*x4)^2 - 2*E4) + 4*R2*E4 + 4*E4^2 - (R1^2 + R2^2 + R3^2)
+### TODO
 
 
+### Derivation:
+p1 = rotate(c(2,1,1), 4)
+p2 = rotate(c(1,2,1), 4)
+p3 = rotate(c(1,1,2), 4)
+p = sum.lpm(lapply(list(p1,p2, p3), pow.pm, n=2))
+p = diff.pm(p, perm.poly(4, c(4,2,2), val0=0))
+p = diff.pm(p, mult.sc.pm(perm.poly(4, 4, val0=2), 3))
+p = diff.pm(p, perm.poly(4, c(4,3,3), val0=0))
+p = diff.pm(p, perm.poly(4, c(4,3,2), val0=1))
+p = sort.pm(p, c(5,3,2,1,4), xn="x1")
+rownames(p) = seq(nrow(p))
+p
+
+R1 = eval.pm(p1, x); R2 = eval.pm(p2, x); R3 = eval.pm(p3, x);
+E2 = eval.pm(perm.poly(4, c(1,1)), x)
+E4 = prod(x); E3 = E4 * sum(1/x);
+
+
+
+######################
+######################
+
+######################
+### Order: [2,2,1] ###
+######################
+
+# x1^2*x2^2*x3 + x2^2*x3^2*x4 + x3^2*x4^2*x1 + x4^2*x1^2*x2 = R1
+# x1^2*x2*x3^2 + x2^2*x3*x4^2 + x3^2*x4*x1^2 + x4^2*x1*x2^2 = R1
+# x1*x2^2*x3^2 + x2*x3^2*x4^2 + x3*x4^2*x1^2 + x4*x1^2*x2^2 = R3
+# E3 = R4
+
+### Solution:
+
+### Sum =>
+E3*E2 - 3*E4*S - (R1+R2+R3) # = 0
+
+### Sum(Eq[i]*Eq[i+1])
+# Eq for: (x1*x2 + x2*x3 + x3*x4 + x4*x1)
+3*E4^2*(S^2 - 2*E2) + (3*E4^2*S^2 + E3^3*S - 3*E2*E3*E4*S - E3^2*E4 + 2*E2*E4^2) +
+	- E4*(3*E4*S^2 - E2*E3*S + 3*E3^2 - 4*E2*E4) +
+	+ E4^2*(x1*x2 + x2*x3 + x3*x4 + x4*x1) +
+	+ E4*((x1*x2)^3 + (x2*x3)^3 + (x3*x4)^3 + (x4*x1)^3) - (R1*R2 + R1*R3 + R2*R3) +
+	- (x1^4*x2^3*x3*x4^2 + x1^4*x2^2*x3*x4^3 + x1^3*x2^4*x3^2*x4 + x1^3*x2*x3^2*x4^4 +
+		+ x1^2*x2^4*x3^3*x4 + x1^2*x2*x3^3*x4^4 + x1*x2^3*x3^4*x4^2 + x1*x2^2*x3^4*x4^3)
+# TODO
+E4^2*(S^2 - 2*E2) + E4^2*(x1*x2 + x2*x3 + x3*x4 + x4*x1) +
+	+ E4*((x1*x2)^3 + (x2*x3)^3 + (x3*x4)^3 + (x4*x1)^3) +
+	+ ((x1*x2*x3)^3 + (x1*x2*x4)^3 + (x1*x3*x4)^3 + (x2*x3*x4)^3)*S +
+	- E4*((x1*x2*x3)^2 + (x1*x2*x4)^2 + (x1*x3*x4)^2 + (x2*x3*x4)^2) - R1*R3
+
+
+### Derivation:
+p1 = rotate(c(2,2,1), 4)
+p2 = rotate(c(2,1,2), 4)
+p3 = rotate(c(1,2,2), 4)
+p = sum.lpm(list(mult.pm(p1,p2), mult.pm(p1,p3), mult.pm(p2,p3)))
+p = diff.pm(p, mult.sc.pm(perm.poly(4, 4, val0=2), 3))
+p = diff.pm(p, perm.poly(4, c(4,3,3), val0=0))
+p = diff.pm(p, perm.poly(4, c(4,3,2), val0=1))
+p = sort.pm(p, c(5,3,2,1,4), xn="x1")
+rownames(p) = seq(nrow(p))
+p
+
+R1 = eval.pm(p1, x); R2 = eval.pm(p2, x); R3 = eval.pm(p3, x);
+E2 = eval.pm(perm.poly(4, c(1,1)), x)
+E4 = prod(x); E3 = E4 * sum(1/x);
