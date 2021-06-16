@@ -6,7 +6,7 @@
 ### Polynomial Systems: S4
 ### Heterogeneous Symmetric
 ###
-### draft v.0.3a-clean
+### draft v.0.3b
 
 
 
@@ -40,6 +40,17 @@ library(pracma)
 # - e.g. round0(), round0.p(),
 #   solve.EnAll(), solveEn();
 
+test.S4P2.Simple = function(sol, R, b, n=2) {
+	x1 = sol[,1]; x2 = sol[,2]; x3 = sol[,3]; x4 = sol[,4];
+	err1 = x1^n + b*x2 # - R
+	err2 = x2^n + b*x3 # - R
+	err3 = x3^n + b*x4 # - R
+	err4 = x4^n + b*x1 # - R
+	err = rbind(err1, err2, err3, err4);
+	if( ! missing(R)) err = err - R;
+	err = round0(err);
+	return(err);
+}
 
 ########################
 
@@ -351,7 +362,7 @@ solve.Simple.S4P2 = function(R, b, debug=TRUE) {
 	S = roots(coeff);
 	if(debug) print(S);
 	E2 = (S^2 + b*S - 4*R) / 2;
-	E3 = E3.helper(S, E2, R, b);
+	E3 = E3.helper(S, R, b);
 	E4 = (-E3^2 + E3*E2*S + b^6) / S^2;
 	#
 	len = length(S);
@@ -368,21 +379,18 @@ solve.Simple.S4P2 = function(R, b, debug=TRUE) {
 xi.f = function(x, R, b, n=2) {
 	(R - x^n) / b[1];
 }
-E3.helper = function(S, E2, R, b) {
-	# see file:
-	# Poly.System.Hetero.Symmetric.S4.Derivation.R;
-	E3.helper.f(S, E2, R, b);
-}
-test.S4P2.Simple = function(sol, R, b, n=2) {
-	x1 = sol[,1]; x2 = sol[,2]; x3 = sol[,3]; x4 = sol[,4];
-	err1 = x1^n + b*x2 # - R
-	err2 = x2^n + b*x3 # - R
-	err3 = x3^n + b*x4 # - R
-	err4 = x4^n + b*x1 # - R
-	err = rbind(err1, err2, err3, err4);
-	if( ! missing(R)) err = err - R;
-	err = round0(err);
-	return(err);
+E3.helper = function(S, R, b) {
+	pE3 = ((87*b^16 + 57*R*b^14 + 2987*R^2*b^12 - 14958*R^3*b^10 + 16796*R^4*b^8 + 1052*R^5*b^6 +
+			- 11312*R^6*b^4 + 6464*R^7*b^2 - 1280*R^8)*S^2 +
+		(727*R*b^15 - 9711*R^2*b^13 + 11120*R^3*b^11 + 30776*R^4*b^9 - 68788*R^5*b^7 + 49168*R^6*b^5 +
+			- 13760*R^7*b^3 + 768*R^8*b + 111*b^17)*S +
+		(- 948*R*b^16 + 6132*R^2*b^14 + 6224*R^3*b^12 - 35360*R^4*b^10 + 34736*R^5*b^8 - 11904*R^6*b^6 +
+			+ 768*R^7*b^4 - 196*b^18));
+	pDiv = ((- 28*b^13 - 262*R*b^11 + 2450*R^2*b^9 - 4616*R^3*b^7 + 2596*R^4*b^5 + 32*R^5*b^3 - 448*R^6*b)*S^2 +
+		(114*b^14 + 116*R*b^12 - 12*R^2*b^10 - 7044*R^3*b^8 + 16236*R^4*b^6 - 14768*R^5*b^4 + 6208*R^6*b^2 +
+			- 1280*R^7)*S +
+		(80*R*b^13 - 2256*R^2*b^11 + 8432*R^3*b^9 - 10384*R^4*b^7 + 5248*R^5*b^5 - 1280*R^6*b^3 - 88*b^15));
+	return(- pE3/pDiv);
 }
 
 ### Examples:
