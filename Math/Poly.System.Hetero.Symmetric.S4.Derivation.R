@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric
 ###  == Derivation ==
 ###
-### draft v.0.2c-AuxProblems
+### draft v.0.2d
 
 
 ####################
@@ -250,6 +250,10 @@ S^4 - 4*E2*S^2 + 4*E3*S + 2*E2^2 - 4*E4 + 4*b*E4 - R*S # = 0
 ### Solution:
 
 ### Case: all x[i] different;
+# Special Sub-Case: x1 = Conj(x3); x2 = Conj(x4);
+# - 4 roots;
+# - properties: Re(x1) * Re(x2) = - b^2 / 4;
+# Remaining roots: 8;
 
 ### Sum =>
 S^2 - 2*E2 + b*S - 4*R # = 0
@@ -269,17 +273,21 @@ b^4*E4 - R^4 + R^3*(x1^2+x2^2+x3^2+x4^2) - R^2*E2_2 + R*E3_2 - E4^2 # = 0
 b^4*E4 - R^4 + R^3*(S^2 - 2*E2) - R^2*(E2^2 - 2*E3*S + 2*E4) + R*(E3^2 - 2*E4*E2) - E4^2 # = 0
 E4^2 - b^4*E4 + 2*R^2*E4 + 2*R*E2*E4 - R*E3^2 - 2*R^2*E3*S +
 	+ 2*R^3*E2 + R^2*E2^2 - R^3*S^2 + R^4 # = 0
+# Diff(Eq 4 - Eq 3) =>
+2*R^2*E4 + 2*R*E2*E4 - R*E3^2 - 2*R^2*E3*S - b^3*R*E3 +
+	+ R^2*E2^2 + 2*R^3*E2 + b^2*R^2*E2 - R^3*S^2 - b*R^3*S + 2*R^4 # = 0
 
 ### Eq:
 S^3 + (3*b^2 - 4*R)*S - 4*b^3 # = 0
 
 ### Auxiliary Eqs:
 # E2 = (S^2 + b*S - 4*R) / 2;
-# E3 = ; [see below]
+# E3 = ...; [see file Poly.System.Hetero.Symmetric.S4.R]
 # E4 = (-E3^2 + E3*E2*S + b^6) / S^2;
 
-### TODO: simplify!
-E3.helper.f = function(S, E2, R, b) {
+### [old]
+# - simplified version available in the primary file;
+E3.helper.old = function(S, E2, R, b) {
 pE3 = - 4*E2*R*S^6*b^12 + 4*E2*R*S^8*b^10 + 8*E2*R^2*S^6*b^10 - 12*E2*R^2*S^7*b^9 + E2*R^2*S^8*b^8 +
 	- E2*R^2*S^10*b^6 + 4*E2*R^3*S^6*b^8 - 4*E2*R^3*S^7*b^7 - 22*E2*R^3*S^8*b^6 + 4*E2*R^3*S^10*b^4 +
 	+ 2*E2*R^3*S^11*b^3 + E2*R^3*S^12*b^2 + 12*E2*R^4*S^6*b^6 + 8*E2*R^4*S^7*b^5 - 8*E2*R^4*S^8*b^4 +
@@ -316,7 +324,14 @@ pE3div = - 4*E2*R*S^6*b^9 + 4*E2*R*S^8*b^7 + E2*R*S^11*b^4 + 8*E2*R^2*S^6*b^7 - 
 
 
 ### Solver:
-# TODO!
+R = -1
+b = 3
+sol = solve.Simple.S4P2(R, b);
+E = do.call(rbind, lapply(seq(nrow(sol)), function(id) debug.E(sol[id,])));
+x1 = sol[,1]; x2 = sol[,2]; x3 = sol[,3]; x4 = sol[,4];
+S = E$S; E2 = E$E2; E3 = E$E3; E4 = E$E4;
+
+test.S4P2.Simple(sol, b=b)
 
 
 ### Helper Derivation:
@@ -357,8 +372,7 @@ x1 = x[1]; x2 = x[2]; x3 = x[3]; x4 = x[4];
 S = sum(x)
 E4 = prod(x)
 E3 = prod(x)*sum(1/x)
-m = perm2(4)
-E2 = sum(sapply(seq(nrow(m)), function(id) prod(x[which(m[id,] != 0)])))
+E2 = eval.pm(perm.poly(4, c(1,1)), x)
 
 
 ### Test
@@ -466,6 +480,17 @@ x2 = xi.f(x1, R, b); x3 = xi.f(x2, R, b); x4 = xi.f(x3, R, b);
 
 ### E2_2
 sapply(seq(12), function(id) sum(apply(perm2(4), 1, function(id2) prod(sol[id, id2 !=0]^2))))
+
+### E3: Simplification (but NO progress on further simplification)
+87*b^16 + 57*R*b^14 + 2987*R^2*b^12 - 14958*R^3*b^10 + 16796*R^4*b^8 + 1052*R^5*b^6 - 11312*R^6*b^4 +
+	+ 6464*R^7*b^2 - 1280*R^8
+pE3S2 = data.frame(
+	b = seq(16, 0, by=-2), R = 0:8, coeff = c(87, 57, 2987, - 14958, 16796, 1052, - 11312, 6464, - 1280) )
+pE3DS2 = data.frame(
+	b = seq(13, 1, by=-2), R = 0:6, coeff = c(28, 262, -2450, 4616, -2596, -32, 448) ) # *-1
+
+eval.pm(pE3S2, c(b, R))
+eval.pm(pE3DS2, c(b, R))
 
 
 #########################
@@ -1092,3 +1117,9 @@ getE3.old = function(S, E2, R, b) {
 			+ 48*b^3 + 44*b^2 - 24*b + 48)*R^2;
 	return(pE3 * S / pDiv);
 }
+
+
+###########################
+###########################
+
+
