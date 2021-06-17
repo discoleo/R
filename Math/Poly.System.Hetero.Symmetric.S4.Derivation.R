@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric
 ###  == Derivation ==
 ###
-### draft v.0.2d
+### draft v.0.2e
 
 
 ####################
@@ -250,7 +250,9 @@ S^4 - 4*E2*S^2 + 4*E3*S + 2*E2^2 - 4*E4 + 4*b*E4 - R*S # = 0
 ### Solution:
 
 ### Case: all x[i] different;
-# Special Sub-Case: x1 = Conj(x3); x2 = Conj(x4);
+# - root structure: P[4] o P[18];
+### Special Sub-Case:
+# x1 = Conj(x3); x2 = Conj(x4);
 # - 4 roots;
 # - properties: Re(x1) * Re(x2) = - b^2 / 4;
 # Remaining roots: 8;
@@ -505,6 +507,14 @@ eval.pm(pE3DS2, c(b, R))
 ### Solution:
 
 ### Case: all x[i] different;
+# - root structure: P[4] o P[18];
+### Special Sub-Case:
+# x1 = Conj(x3); x2 = Conj(x4);
+# - 8 roots;
+# - properties:
+#  (x1^2+x3^2+x1*x3)*(x2^2+x4^2+x2*x4) = - b^2; [valid for all roots]
+#  (3*Re(x1)^2 - Im(x1)^2)*(3*Re(x2)^2 - Im(x2)^2) = - b^2;
+### Remaining roots: 64;
 
 ### Sum =>
 S^3 - 3*E2*S + 3*E3 + b*S - 4*R # = 0
@@ -548,6 +558,7 @@ b^4*E4 + R^3*(S^3 - 3*E2*S + 3*E3) - R^2*(E2^3 + 3*E3^2 - 3*E3*E2*S + 3*E4*S^2 -
 
 ### TODO:
 # - solve;
+# - solve special Sub-Case;
 
 
 ########
@@ -561,7 +572,7 @@ x4^3 + b*x1 # - R
 ### Classic Solver:
 solve.Simple.Classic.S4P3 = function(R, b, debug=TRUE) {
 	# coeff: generate using print.coeff(p1);
-	# from Classic Polynomial!
+	# from Classic Polynomial! [see below]
 	coeff = coeff.S4P3.Classic(R, b);
 	x1 = roots(coeff);
 	n = 3;
@@ -577,10 +588,12 @@ R = -1
 b = 2
 sol = solve.Simple.Classic.S4P3(R, b)
 x1 = sol[,1]; x2 = sol[,2]; x3 = sol[,3]; x4 = sol[,4];
-test.S4.Simple(sol, R, b, n=3)
+
 E = do.call(rbind, lapply(seq(nrow(sol)), function(id) debug.E(sol[id,])));
 E$S = round0(E$S);
 S = E$S; E2 = E$E2; E3 = E$E3; E4 = E$E4;
+
+test.S4.Simple(sol, R, b, n=3)
 
 # S = sort(apply(sol, 1, sum))[ ! duplicated(round(sort(apply(sol, 1, sum)), 5))]
 round0.p(poly.calc(S))
@@ -593,27 +606,32 @@ b^(n^2+n+1)*x4 = b^(n^2+n)*R - (b^n*R - (R - x1^n)^n)^n
 (b^(n^2+n)*R - (b^n*R - (R - x1^n)^n)^n)^n +
 	+ b^((n^4-1)/(n-1))*x1 - b^(n^3+n^2+n)*R # = 0
 
-n = 3
-p1 = list(
-	x = c(n,0),
-	b = c(0,0),
-	R = c(0,1),
-	coeff = c(-1, 1)
-)
+### generate Classic Polynomial:
 bR.gen = function(pb, pR=1) list(b = pb, R = pR, coeff = 1)
 bx.gen = function(pb, px=1) list(b = pb, x = px, coeff = 1)
-p1 = pow.pm(p1, n)
-p1 = diff.pm(bR.gen(n, pR=1), p1)
-p1 = pow.pm(p1, n)
-p1 = diff.pm(bR.gen(n^2+n, pR=1), p1)
-p1 = pow.pm(p1, n)
-p1 = diff.pm(p1, bR.gen((n^4-1)/(n-1) - 1, pR=1))
-p1 = add.pm(p1, bx.gen((n^4-1)/(n-1), px=1))
-p1 = sort.pm(p1, sort.coeff=c(4,2,3,1), xn="x")
-rownames(p1) = seq(nrow(p1))
-p1 = mult.sc.pm(p1, -1)
-p1
+S4P3.gen.Classic.P81 = function() {
+	n = 3
+	p1 = list(
+		x = c(n,0),
+		b = c(0,0),
+		R = c(0,1),
+		coeff = c(-1, 1)
+	)
+	p1 = pow.pm(p1, n)
+	p1 = diff.pm(bR.gen(n, pR=1), p1)
+	p1 = pow.pm(p1, n)
+	p1 = diff.pm(bR.gen(n^2+n, pR=1), p1)
+	p1 = pow.pm(p1, n)
+	p1 = diff.pm(p1, bR.gen((n^4-1)/(n-1) - 1, pR=1))
+	p1 = add.pm(p1, bx.gen((n^4-1)/(n-1), px=1))
+	p1 = sort.pm(p1, sort.coeff=c(4,2,3,1), xn="x")
+	rownames(p1) = seq(nrow(p1))
+	p1 = mult.sc.pm(p1, -1)
+	return(p1);
+}
+p1 = S4P3.gen.Classic.P81();
 
+# print with line breaks:
 pprint.m = matrix(c(
 	 1, 12,	13, 23,
 	24, 28,	29, 39,
@@ -642,7 +660,8 @@ pDiv = list(
 	coeff = c(1,-3, 3,-1, -1, 1)
 )
 pR = div.pm(p1, pDiv)
-pR$Rez = sort.pm(pR$Rez, sort.coeff=c(4,2,3,1), xn="x")
+pR = sort.pm(pR$Rez, sort.coeff=c(4,2,3,1), xn="x")
+print.coeff(pR)
 
 # significant numerical error!
 eval.pm(pR$Rez, c(b, R, sol[10,1]))
