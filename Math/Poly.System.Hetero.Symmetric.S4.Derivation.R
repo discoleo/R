@@ -250,7 +250,7 @@ S^4 - 4*E2*S^2 + 4*E3*S + 2*E2^2 - 4*E4 + 4*b*E4 - R*S # = 0
 ### Solution:
 
 ### Case: all x[i] different;
-# - root structure: P[4] o P[18];
+# - root structure: P[4] o P[3];
 ### Special Sub-Case:
 # x1 = Conj(x3); x2 = Conj(x4);
 # - 4 roots;
@@ -560,6 +560,21 @@ b^4*E4 + R^3*(S^3 - 3*E2*S + 3*E3) - R^2*(E2^3 + 3*E3^2 - 3*E3*E2*S + 3*E4*S^2 -
 # - solve;
 # - solve special Sub-Case;
 
+### Special Sub-Case:
+# x1 = Conj(x3); x2 = Conj(x4);
+r1 = Re(x1); r2 = Re(x2); z1 = Im(x1); z2 = Im(x2);
+### Sum: Eq[i] + Eq[i+2]
+r1^3 - 3*r1*z1^2 + b*r2 - R # = 0
+r2^3 - 3*r2*z2^2 + b*r1 - R # = 0
+### Diff: Eq[i] - Eq[i+2] # Anti-Symmetric!
+z1*(3*r1^2 - z1^2) + b*z2 # = 0
+z2*(3*r2^2 - z2^2) - b*z1 # = 0
+# if (z1, z2) is a solution => so is: (-z1, -z2);
+
+### Diff(r1*Sum) =>
+(r1-r2)*(r1^3 + r2^3 + r1*r2*(r1+r2) - R) - 3*(r1*z1 - r2*z2)*(r1*z1 + r2*z2) # = 0
+### Diff(r2*Sum) =>
+(r1-r2)*(r1*r2*(r1+r2) - b*(r1+r2) + R) - 3*r1*r2*(z1-z2)*(z1+z2) # = 0
 
 ########
 
