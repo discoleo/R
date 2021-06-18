@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric
 ###  == Derivation ==
 ###
-### draft v.0.3a-Eq4
+### draft v.0.3a-clPoly-alpha
 
 
 ####################
@@ -1272,4 +1272,37 @@ x = c(x1, x2, x3, x4);
 E = debug.E(x)
 S = E$S; E2 = E$E2; E3 = E$E3; E4 = E$E4;
 
+
+### Classic Polynomial:
+# x1^2*x2^2 = R - b*x3
+(R - b*x3)*x3^2 + b*x1^2*x4 - x1^2*R
+b*x3^3 - R*x3^2 - b*x1^2*x4 + x1^2*R
+# b*x3^3*x4^2 + b^2*x1*x3 - b*R*x3
+R*x3^2*x4^2 + b^2*x1*x3 - b*R*x3 + b*x1^2*x4^3 - R*x1^2*x4^2
+# =>
+(b^2*x1 - b*R)*x3 + b*x1^2*x4^3 - R*x1^2*x4^2 - b*R*x1 + R^2
+# =>
+(b*x1^2*x4^3 - R*x1^2*x4^2 - b*R*x1 + R^2)^2*x4^2 + (b*x1 - R)*(b^2*x1 - b*R)^2 # = 0
+b^2*x1^4*x4^8 - 2*b*R*x1^4*x4^7 + R^2*x1^4*x4^6 + 2*b*R^2*x1^2*x4^5 - 2*b^2*R*x1^3*x4^5 - 2*R^3*x1^2*x4^4 +
+	+ 2*b*R^2*x1^3*x4^4 + R^4*x4^2 + b^2*R^2*x1^2*x4^2 - 2*b*R^3*x1*x4^2 - b^2*R^3 + b^5*x1^3 +
+	+ 3*b^3*R^2*x1 - 3*b^4*R*x1^2
+# TODO
+
+
+p14 = data.frame(
+	x1 = c(2, 2, 1, 0),
+	x4 = c(3, 2, 0, 0),
+	b  = c(1, 0, 1, 0),
+	R  = c(0, 1, 1, 2),
+	coeff = c(1,-1,-1,1)
+)
+p1a = data.frame(x1=c(1,0), b=c(1,0), R=c(0,1), coeff=c(1,-1));
+p1b = pow.pm(p1a, 3); p1b$b = p1b$b + 2;
+#
+p14sq = pow.pm(p14, 2);
+p14sq$x4 = p14sq$x4 + 2;
+p14r = sum.pm(p14sq, p1b);
+p14r = sort.pm(p14r, xn="x4");
+p14r = p14r[,c("b", "R", "x1", "x4", "coeff")]
+print.p(p14r, leading="x4")
 
