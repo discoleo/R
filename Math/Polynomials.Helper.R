@@ -284,8 +284,8 @@ replace.fr.pm = function(p1, p2, p2fr, x, pow=1) {
 	rpow = if(pow == 1) p1[,idx] else p1[,idx] %/% pow;
 	p1[,idx] = if(pow == 1) 0 else p1[,idx] %% pow;
 	max.pow = max(rpow);
-	p2.pows = list(p2);
-	p2fr.pows = list(p2fr);
+	p2.pows = list(p2); # powers of p2
+	p2fr.pows = list(p2fr); # powers of p2fr
 	if(max.pow > 1) {
 		for(ipow in seq(2, max.pow)) {
 			p2.pows[[ipow]] = mult.pm(p2.pows[[ipow - 1]], p2);
@@ -391,6 +391,51 @@ gcd.pm = function(p1, p2, by="x", div.sc=1) {
 	}
 	return(pR);
 }
+solve.pm = function(p1, p2, xn, stop.at=NULL) {
+	max1 = max(p1[,xn]); max2 = max(p2[,xn]);
+	if(max1 == 0) stop("No variable!")
+	if(max2 == 0) stop("No variable!")
+	if(max1 < max2) {
+		tmp = p1; p1 = p2; p2 = tmp;
+		tmp = max1; max1 = max2; max2 = tmp;
+	} else if(max1 == max2 && nrow(p1) < nrow(p2)) {
+		tmp = p1; p1 = p2; p2 = tmp;
+	}
+	if( ! is.null(stop.at) && max2 == stop.at) return(list(p1, p2));
+	split.pm = function(p, pow) {
+		px = p[,xn];
+		p2 = p[, - match(xn, names(p)), drop=FALSE];
+		p2x = p2[px == pow,];
+		p20 = p2[px != pow,];
+		return(list(p20, p2x));
+	}
+	if(max2 == 1) {
+		lp2 = split.pm(p2, max2);
+		if(nrow(lp2[[1]]) == 0) {
+			print("Warning: x == 0!");
+			p1 = p1[p1[,xn] == 0,];
+			return(p1);
+		}
+		p1 = replace.fr.pm(p1, lp2[[1]], lp2[[2]], x=xn, pow=1);
+		return(list(p1, x0=lp2[[1]], div=lp2[[2]], xn=xn));
+	}
+	leading.pm = function(p, pow) {
+		px = p[,xn];
+		p2 = p[, - match(xn, names(p)), drop=FALSE];
+		p2x = p2[px == pow,];
+		return(p2x);
+	}
+	p1cf = leading.pm(p1, max1);
+	p2cf = leading.pm(p2, max2);
+	dmax = max1 - max2;
+	if(dmax < 0) p2cf[,xn] = -dmax;
+	if(dmax > 0) p1cf[,xn] = dmax;
+	# TODO: gcd of coefficients & polynomials;
+	p1 = diff.pm(mult.pm(p1, p2cf), mult.pm(p2, p1cf));
+	print(paste0("Max pow: ", max1, "; Len = ", nrow(p1)));
+	return(solve.pm(p1, p2, xn=xn, stop.at=stop.at));
+}
+
 
 #############
 ### Other ###
