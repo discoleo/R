@@ -6,7 +6,7 @@
 ### Polynomial Systems: S4
 ### Heterogeneous Symmetric
 ###
-### draft v.0.3b
+### draft v.0.3c
 
 
 
@@ -40,7 +40,7 @@ library(pracma)
 # - e.g. round0(), round0.p(),
 #   solve.EnAll(), solveEn();
 
-test.S4P2.Simple = function(sol, R, b, n=2) {
+test.S4.Simple = function(sol, R, b, n=2) {
 	x1 = sol[,1]; x2 = sol[,2]; x3 = sol[,3]; x4 = sol[,4];
 	err1 = x1^n + b*x2 # - R
 	err2 = x2^n + b*x3 # - R
@@ -54,11 +54,15 @@ test.S4P2.Simple = function(sol, R, b, n=2) {
 
 ########################
 
+##################
+### Type: V3a  ###
+##################
+
 ###############
 ### Order 2 ###
 ###############
 
-### V3:
+### V3a:
 ### x1^2 + b*x2*x3*x4 = R
 
 ### Solution:
@@ -194,7 +198,7 @@ poly.calc(sol$sol3$S) * b^2
 ### Cases:
 
 ### Case x1 == x2 == x3, but != x4:
-# - degenerates to a S2 system;
+# - degenerates to a non-symmetric S2 system;
 x^2 + b*x^2*x4 # - R
 x4^2 + b*x^3 # - R
 
@@ -202,7 +206,7 @@ b^3*x^7 - b^2*R*x^4 + x^4 - 2*R*x^2 + R^2 # = 0
 (x^2 + b*x^3 - R) * (b^2*x^4 - b*x^3 + x^2 - R) #= 0
 
 ### Case x1 == x2
-# degenerates to a S3 system:
+# degenerates to a non-symmetric S3 system:
 x^2  + b*x*x3*x4 # - R
 x3^2 + b*x^2*x4 # - R
 x4^2 + b*x^2*x3 # - R
@@ -400,7 +404,7 @@ b = 3
 sol = solve.Simple.S4P2(R, b);
 x1 = sol[,1]; x2 = sol[,2]; x3 = sol[,3]; x4 = sol[,4];
 
-test.S4P2.Simple(sol, b=b)
+test.S4.Simple(sol, b=b, n=2)
 
 
 ### Test
@@ -410,7 +414,8 @@ x3^2 + b*x4 # - R
 x4^2 + b*x1 # - R
 
 
-###############
+######################
+######################
 
 ###############
 ### Order 3 ###
@@ -429,6 +434,33 @@ x4^2 + b*x1 # - R
 ### Case 3: all distinct;
 # Classic Poly: P[81 - 9] = P[72];
 # S: P[18];
+
+### Eq S:
+S^18 - 15*R*S^15 + 48*b^2*S^14 - 126*R*b*S^13 + (222*R^2 - 256*b^3)*S^12 + 609*R*b^2*S^11 +
+	- (1764*R^2*b + 540*b^4)*S^10 + (2158*R^3 + 5061*R*b^3)*S^9 +
+	- (8433*R^2*b^2 + 960*b^5)*S^8 + (6048*R^3*b - 1170*R*b^4)*S^7 +
+	- (7671*R^4 - 3435*R^2*b^3 - 5800*b^6)*S^6 + (6099*R^3*b^2 - 18840*R*b^5)*S^5 +
+	- (6300*R^4*b - 16632*R^2*b^4 + 3600*b^7)*S^4  + (8049*R^5 - 23297*R^3*b^3 + 10080*R*b^6)*S^3 +
+	+ (1677*R^4*b^2 + 3672*R^2*b^5 - 10125*b^8)*S^2 +
+	+ (2142*R^5*b - 7470*R^3*b^4 + 8100*R*b^7)*S +
+	- 2744*R^6 + 9225*R^4*b^3 - 8910*R^2*b^6;
+
+
+###########
+### Solver:
+coeff.S4P3.Simple = function(R, b) {
+	coeffs = c(
+		1, 0, 0, - 15*R, 48*b^2, - 126*R*b, (222*R^2 - 256*b^3), 609*R*b^2, # S^11
+		- (1764*R^2*b + 540*b^4), (2158*R^3 + 5061*R*b^3), # S^9
+		- (8433*R^2*b^2 + 960*b^5), (6048*R^3*b - 1170*R*b^4), # S^7
+		- (7671*R^4 - 3435*R^2*b^3 - 5800*b^6), (6099*R^3*b^2 - 18840*R*b^5), # S^5
+		- (6300*R^4*b - 16632*R^2*b^4 + 3600*b^7), (8049*R^5 - 23297*R^3*b^3 + 10080*R*b^6), # S^3
+		(1677*R^4*b^2 + 3672*R^2*b^5 - 10125*b^8),
+		(2142*R^5*b - 7470*R^3*b^4 + 8100*R*b^7),
+		- 2744*R^6 + 9225*R^4*b^3 - 8910*R^2*b^6
+	);
+	return(coeffs);
+}
 
 ### TODO;
 

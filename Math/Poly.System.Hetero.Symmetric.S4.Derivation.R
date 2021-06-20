@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric
 ###  == Derivation ==
 ###
-### draft v.0.3b-part3
+### draft v.0.3b-EqS
 
 
 ####################
@@ -561,7 +561,7 @@ b^4*E4 + R^3*(S^3 - 3*E2*S + 3*E3) - R^2*(E2^3 + 3*E3^2 - 3*E3*E2*S + 3*E4*S^2 -
 	+ R*(E3^3 - 3*E4*E3*E2 + 3*E4^2*S) - E4^3 - R^4 # = 0
 
 
-### Eq:
+### Eq S:
 S^18 - 15*R*S^15 + 48*b^2*S^14 - 126*R*b*S^13 + (222*R^2 - 256*b^3)*S^12 + 609*R*b^2*S^11 +
 	- (1764*R^2*b + 540*b^4)*S^10 + (2158*R^3 + 5061*R*b^3)*S^9 +
 	- (8433*R^2*b^2 + 960*b^5)*S^8 + (6048*R^3*b - 1170*R*b^4)*S^7 +
@@ -569,11 +569,12 @@ S^18 - 15*R*S^15 + 48*b^2*S^14 - 126*R*b*S^13 + (222*R^2 - 256*b^3)*S^12 + 609*R
 	- (6300*R^4*b - 16632*R^2*b^4 + 3600*b^7)*S^4  + (8049*R^5 - 23297*R^3*b^3 + 10080*R*b^6)*S^3 +
 	+ (1677*R^4*b^2 + 3672*R^2*b^5 - 10125*b^8)*S^2 +
 	+ (2142*R^5*b - 7470*R^3*b^4 + 8100*R*b^7)*S +
-	+ ...
+	- 2744*R^6 + 9225*R^4*b^3 - 8910*R^2*b^6;
 
 
 ### TODO:
-# - solve: substantial numerical instability for coeffs of S;
+# - check thoroughly Eq for S:
+#  -- substantial numerical instability for coeffs of S;
 # - solve special Sub-Case;
 
 ### Special Sub-Case:
@@ -591,6 +592,7 @@ z2*(3*r2^2 - z2^2) - b*z1 # = 0
 (r1-r2)*(r1^3 + r2^3 + r1*r2*(r1+r2) - R) - 3*(r1*z1 - r2*z2)*(r1*z1 + r2*z2) # = 0
 ### Diff(r2*Sum) =>
 (r1-r2)*(r1*r2*(r1+r2) - b*(r1+r2) + R) - 3*r1*r2*(z1-z2)*(z1+z2) # = 0
+
 
 ########
 
