@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric
 ###  == Derivation ==
 ###
-### draft v.0.3b-part2
+### draft v.0.3b-part3
 
 
 ####################
@@ -51,6 +51,10 @@ debug.E = function(x) {
 	m = perm2(4)
 	E2 = sum(sapply(seq(nrow(m)), function(id) prod(x[which(m[id,] != 0)])))
 	data.frame(S=S, E2=E2, E3=E3, E4=E4);
+}
+isConj = function(x, y, tol=1E-3) {
+	isConj = (abs(Re(x) - Re(y)) < tol) & (abs(Im(x) + Im(y)) < tol);
+	return(isConj);
 }
 
 ########################
@@ -558,11 +562,15 @@ b^4*E4 + R^3*(S^3 - 3*E2*S + 3*E3) - R^2*(E2^3 + 3*E3^2 - 3*E3*E2*S + 3*E4*S^2 -
 
 
 ### Eq:
-S^18 - 15*R*S^15 + 48*b^2*S^14 - 126*R*b*S^13 + 222*R^2*S^12 - 256*b^3*S^12 + 609*R*b^2*S^11 +
+S^18 - 15*R*S^15 + 48*b^2*S^14 - 126*R*b*S^13 + (222*R^2 - 256*b^3)*S^12 + 609*R*b^2*S^11 +
 	- (1764*R^2*b + 540*b^4)*S^10 + (2158*R^3 + 5061*R*b^3)*S^9 +
 	- (8433*R^2*b^2 + 960*b^5)*S^8 + (6048*R^3*b - 1170*R*b^4)*S^7 +
 	- (7671*R^4 - 3435*R^2*b^3 - 5800*b^6)*S^6 + (6099*R^3*b^2 - 18840*R*b^5)*S^5 +
-	- ...
+	- (6300*R^4*b - 16632*R^2*b^4 + 3600*b^7)*S^4  + (8049*R^5 - 23297*R^3*b^3 + 10080*R*b^6)*S^3 +
+	+ (1677*R^4*b^2 + 3672*R^2*b^5 - 10125*b^8)*S^2 +
+	+ (2142*R^5*b - 7470*R^3*b^4 + 8100*R*b^7)*S +
+	+ ...
+
 
 ### TODO:
 # - solve: substantial numerical instability for coeffs of S;
