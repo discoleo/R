@@ -2852,10 +2852,10 @@ round0(err)
 #####################
 
 #####################
-### x^5 + b*(x+y) = 0
+### x^5 + b*(x+y) = R
 
-# x^5 + b1*(x+y) = 0
-# y^5 + b1*(y+x) = 0
+# x^5 + b1*(x+y) = R
+# y^5 + b1*(y+x) = R
 
 ### Solution:
 # [trivial]
@@ -2868,7 +2868,8 @@ x^5 - y^5 # = 0
 # y = x * m5^j
 
 ### =>
-x^5 + b1*(m5+1)*x # = 0
+x^5 + b1*(m5+1)*x # = R
+# variant for R = 0:
 x^4 + b1*(m5+1) # = 0
 
 ### Solver:
@@ -2901,6 +2902,45 @@ err = 1 + 4*x^4 + 12*x^8 + 22*x^12 + 30*x^16 + 28*x^20 + 17*x^24 + 6*x^28 + x^32
 round0(err)
 # based on: (1 + 2*x + 4*x^2 + 3*x^3 + x^4)^2
 
+
+### Derived System:
+x^5 - 10*x^3*y^2 + 5*x*y^4 + 2*b*x - R # = 0
+y^4 - 10*x^2*y^2 + 5*x^4 # = 0
+
+R = -1
+b = 1
+#
+sol = solve.S2P5Trivial(R, b);
+isConj = isConj.f(sol[,1], sol[,2]);
+# 4 of the solutions of the Derived system
+sol = sol[isConj, ];
+x = Re(sol[,1]); y = Im(sol[,1]);
+
+### Test:
+x^5 - 10*x^3*y^2 + 5*x*y^4 + 2*b*x # - R
+round0(y^4 - 10*x^2*y^2 + 5*x^4) # = 0
+
+
+### Classic Poly (Derived system):
+24*x^5 - 40*x^3*y^2 - 2*b*x + R # = 0
+# 2 variants:
+16*(11 + 5*sqrt(5))*x^5 + 2*b*x - R # = 0
+16*(11 - 5*sqrt(5))*x^5 + 2*b*x - R # = 0
+# a somehow "cyclic" dependency;
+
+
+### Example 2:
+# [one of the variants]
+R = 16*(11 + 5*sqrt(5));
+b = - 8*(11 + 5*sqrt(5));
+sol = solve.S2P5Trivial(R, b);
+isConj = isConj.f(sol[,1], sol[,2]);
+# actually only 2 of the solutions:
+sol = sol[isConj, ];
+x = Re(sol[,1]); y = Im(sol[,1]);
+
+err = x^5 - x - 1 # = 0
+round0(err)
 
 
 ###############################
