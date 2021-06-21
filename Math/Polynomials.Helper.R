@@ -68,6 +68,10 @@ sort.sol = function(sol, useRe=TRUE, ncol=1) {
 	}
 	return(sol[id,]);
 }
+isConj.f = function(x, y, tol=1E-3) {
+	isConj = (abs(Re(x) - Re(y)) < tol) & (abs(Im(x) + Im(y)) < tol);
+	return(isConj);
+}
 
 ### Polynomials
 
@@ -573,6 +577,23 @@ print.coeff = function(p, x="x") {
 	invisible(p);
 }
 
+### Classic Polynomials
+bR.gen = function(pb, pR=1) data.frame(b = pb, R = pR, coeff = 1)
+bx.gen = function(pb, px=1) data.frame(b = pb, x = px, coeff = 1)
+classic.BaseSimple.gen = function(n) data.frame(x=c(n, 1, 0), b=c(0,1,0), R=c(0,0,1), coeff=c(1,1,-1));
+classic.S2Simple.gen = function(n=3) {
+	p1 = data.frame(
+		x = c(n,0), b = c(0,0), R = c(0,1),
+		coeff = c(-1, 1)
+	)
+	p1 = pow.pm(p1, n);
+	p1 = diff.pm(p1, bR.gen(n, pR=1));
+	p1 = add.pm(p1, bx.gen(n+1, px=1));
+	if(n %% 2 == 1) p1$coeff = - p1$coeff;
+	p1 = sort.pm(p1, sort.coeff=c(4,2,3,1), xn="x")
+	rownames(p1) = seq(nrow(p1))
+	return(p1);
+}
 ### Poly Calculations
 rotate = function(p, n, val0=0, asPoly=TRUE) {
 	m = matrix(val0, nrow=n, ncol=n);
