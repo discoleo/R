@@ -5,12 +5,12 @@
 ### [the one and only]
 ###
 ### Polynomial Systems: S2
-### Heterogenous Symmetric
+### Heterogeneous Symmetric
 ###
-### draft v.0.3c-clean4
+### draft v.0.3c-explore
 
 
-### Heterogenous Symmetric Polynomial Systems
+### Heterogeneous Symmetric Polynomial Systems
 
 ### 2 Variables:
 ### Simple System:
@@ -2789,7 +2789,7 @@ S^10 - 8*b*S^6 + 11*R*S^5 - 9*b^2*S^2 + 6*b*R*S - R^2 # = 0
 
 
 ### Solver:
-solve.ht5Basic = function(b, R) {
+solve.ht5Basic = function(R, b) {
 	x.sum = roots(c(1, 0,0,0, -8*b[1], 11*R, 0,0, - 9*b[1]^2, 6*b[1]*R, - R^2))
 	xy = (2*x.sum^5 - 3*b[1]*x.sum + R) / x.sum^3 / 5
 	x.diff = sqrt(x.sum^2 - 4*xy + 0i)
@@ -2802,10 +2802,10 @@ solve.ht5Basic = function(b, R) {
 }
 
 ### Examples:
-b = 3
 R = 1
+b = 3
 #
-sol = solve.ht5Basic(b, R)
+sol = solve.ht5Basic(R, b)
 x = sol$sol[,1]; y = sol$sol[,2]
 sol
 
@@ -2815,10 +2815,10 @@ y^5 + b[1]*x
 
 
 ### Example 2:
-b = -1
 R = 1
+b = -1
 #
-sol = solve.ht5Basic(b, R)
+sol = solve.ht5Basic(R, b)
 x = sol$sol[,1]; y = sol$sol[,2]
 sol
 
@@ -2832,12 +2832,15 @@ x^20 - b[1]*x^16 - 4*R*x^15 + b[1]^2*x^12 + 3*R*b[1]*x^11 + 6*R^2*x^10 - b[1]^3*
  - 2*R*b[1]^2*x^7 - 3*R^2*b[1]*x^6 - 4*R^3*x^5 + b[1]^4*x^4 + R*b[1]^3*x^3 +
  + R^2*b[1]^2*x^2 + R^3*b[1]*x + R^4 - b[1]^5
 
-### Example 3: R^4 - b[1]^5 == 0
-b = 1
+
+#########
+### Ex 3:
+# R^4 - b[1]^5 == 0
 R = -1
+b = 1
 #
-sol = solve.ht5Basic(b, R)
-x = sol$sol[,1]; y = sol$sol[,2]
+sol = solve.ht5Basic(R, b)
+x = sol$sol[,1]; y = sol$sol[,2];
 sol
 
 ### Test
@@ -2847,6 +2850,33 @@ y^5 + b[1]*x
 err = -1 + 2*x - 3*x^2 + 4*x^3 - 3*x^5 + 5*x^6 - 6*x^7 + 6*x^8 - 3*x^10 + 4*x^11 - 4*x^12 +
 	+ 4*x^13 - x^15 + x^16 - x^17 + x^18
 round0(err)
+
+
+### Derived System:
+# - based on the conjugated roots;
+R = -1
+b = 1
+#
+sol = solve.ht5Basic(R, b)$sol;
+sol = sol[isConj.f(sol[,1], sol[,2]),];
+# 4 of the roots:
+x = Re(sol[,1]); y = Im(sol[,1]);
+
+x^5 - 10*x^3*y^2 + 5*x*y^4 + b*x - R # = 0
+y^4 - 10*x^2*y^2 + 5*x^4 - b # = 0
+
+### Sum(Eq 1 + y*Eq 2) => Original system
+(x + y*1i)^5 + b*(x-y*1i) - R
+(x - y*1i)^5 + b*(x+y*1i) - R
+
+# Classic Polynomial =>
+12*x^5 - 20*x^3*y^2 - 3*b*x + R/2
+(88*x^5 + 3*b*x - R/2)^2 - 400*x^6*(20*x^4 + b)
+2^10*x^10 - 2^9*b*x^6 + 2^5*11*R*x^5 - 4*9*b^2*x^2 + 4*3*b*R*x - R^2
+x = 2*x # re-scaled
+x^10 - 8*b*x^6 + 11*R*x^5 - 9*b^2*x^2 + 6*b*R*x - R^2
+# original Eq for S:
+# S^10 - 8*b*S^6 + 11*R*S^5 - 9*b^2*S^2 + 6*b*R*S - R^2
 
 
 #####################
