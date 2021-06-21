@@ -7,7 +7,7 @@
 ### Polynomial Systems: S2
 ### Heterogenous Symmetric
 ###
-### draft v.0.3c-clean2
+### draft v.0.3c-clean4
 
 
 ### Heterogenous Symmetric Polynomial Systems
@@ -1778,8 +1778,8 @@ test.p = function(R, b) {
 	#
 	err = b1^3*(1 - b3^2) +
 	(1 - b3^2)*(- R^2 + 2*b1^2*b2)*x +
-	(- R*b1 + 2*R*b1*b3 + R*b1*b3^2 - 2*R*b1*b3^3 + b1*b2^2 - b1*b2^2*b3^2)*x^2 +
-	(- R*b2 + R*b2*b3^2 + 2*b1^2 - b1^2*b3 - 3*b1^2*b3^2 + b1^2*b3^3 + b1^2*b3^4)*x^3 +
+	b1*(1 - b3^2)*(- R + 2*R*b3 + b2^2)*x^2 +
+	(1 - b3^2)*(- R*b2 + 2*b1^2 - b1^2*b3 - b1^2*b3^2)*x^3 +
 	b1*b2*(b3^2 - 1)*(b3 - 2)*x^4 +
 	- R*(b3 - 1)*(b3^2 - 1)*x^5 +
 	b1*(b3 - 1)*(b3^2 - 1)*x^6
@@ -1852,6 +1852,23 @@ round0(err)
 test.p(R, b)
 
 
+### Example 5:
+R = -108
+b = c(2*9, 18, 2)
+#
+sol = solve.htx3y(R, b)
+x = sol$sol[,1]; y = sol$sol[,2];
+sol
+
+### Test
+x^3*y + b[3]*(x*y)^2 + b[2]*x*y + b[1]*y
+y^3*x + b[3]*(x*y)^2 + b[2]*x*y + b[1]*x
+
+err = -324 - 36*x^3 + 6*x^5 + x^6
+round0(err)
+test.p(R, b)
+
+
 ### Examples:
 R = 1
 p = sapply(-6:6, function(r) print(solve.htx3y(R, c(1, r, 2))$p))
@@ -1881,34 +1898,28 @@ r = -3; sol = solve.htx3y(r, c(r, -3, 2)); x = sol$sol[,1]
 ### Solution:
 
 ### Diff =>
-# x*y*(x^2 - y^2) + b1*(x-y) = 0
-# (x - y)*(x*y*(x+y) + b1) = 0
-# Case: x != y
-# x*y = -b1 / (x+y)
 # x*y = -b1/Z
 
 ### Sum =>
-# x*y*(x^2 + y^2) + b1*(x+y) = 2*R
-# -b1/Z * (Z^2 - 2*x*y) + b1*Z - 2*R = 0
-# -b1*(Z^2 - 2*x*y) + b1*Z^2 - 2*R*Z = 0
-# 2*b1*x*y - 2*R*Z = 0
-# R*Z - b1*x*y = 0
-# R*Z + b1^2/Z = 0
-# R*Z^2 + b1^2 = 0
 # Z^2 = -b1^2 / R;
 
+solve.htx3y.S2P3 = function(R, b) {
+	x.sum = sqrt(-b[1]^2 / R + 0i)
+	x.sum = c(x.sum, -x.sum)
+	xy = -b[1]/x.sum
+	x.diff = sqrt(x.sum^2 - 4*xy + 0i)
+	x = (x.sum + x.diff)/2
+	y = (x.sum - x.diff)/2
+	sol = cbind(x=x, y=y)
+	return(rbind(sol, sol[,2:1]))
+}
+
 ### Example:
-b = 3
 R = 1
+b = 3
 #
-x.sum = sqrt(-b[1]^2 / R + 0i)
-x.sum = c(x.sum, -x.sum)
-xy = -b[1]/x.sum
-x.diff = sqrt(x.sum^2 - 4*xy + 0i)
-x = (x.sum + x.diff)/2
-y = (x.sum - x.diff)/2
-sol = cbind(x, y)
-sol = rbind(sol, sol[,2:1])
+sol = solve.htx3y.S2P3(R, b)
+x = sol[,1]; y = sol[,2];
 sol
 
 
@@ -2754,31 +2765,129 @@ a1 = a[1]; a2 = a[2]; b1 = b[1]; R = R[1];
 ### Order 5 ###
 ###############
 
+##############
+### Simple ###
+
+### x^5 + b*y
+
+# x^5 + b*y = R
+# y^5 + b*x = R
+
+### Solution
+
+### Diff =>
+S^4 - 3*x*y*S^2 + (x*y)^2 - b # = 0
+
+### Sum =>
+S*(S^4 - 5*x*y*S^2 + 5*(x*y)^2 + b) - 2*R # = 0
+
+### Auxiliary Eq:
+# 5*x*y*S^3 = 2*S^5 - 3*b*S + R
+
+### Eq:
+S^10 - 8*b*S^6 + 11*R*S^5 - 9*b^2*S^2 + 6*b*R*S - R^2 # = 0
+
+
+### Solver:
+solve.ht5Basic = function(b, R) {
+	x.sum = roots(c(1, 0,0,0, -8*b[1], 11*R, 0,0, - 9*b[1]^2, 6*b[1]*R, - R^2))
+	xy = (2*x.sum^5 - 3*b[1]*x.sum + R) / x.sum^3 / 5
+	x.diff = sqrt(x.sum^2 - 4*xy + 0i)
+	x = (x.sum + x.diff)/2
+	y = (x.sum - x.diff)/2
+	sol = cbind(round0(x), round0(y))
+	sol = rbind(sol, sol[,2:1])
+	p = round0.p(poly.calc(sol[,1]))
+	return(list(sol=sol, p=p))
+}
+
+### Examples:
+b = 3
+R = 1
+#
+sol = solve.ht5Basic(b, R)
+x = sol$sol[,1]; y = sol$sol[,2]
+sol
+
+### Test
+x^5 + b[1]*y
+y^5 + b[1]*x
+
+
+### Example 2:
+b = -1
+R = 1
+#
+sol = solve.ht5Basic(b, R)
+x = sol$sol[,1]; y = sol$sol[,2]
+sol
+
+### Test
+x^5 + b[1]*y
+y^5 + b[1]*x
+
+### Classic Polynomial
+# P[5] * P[20]
+x^20 - b[1]*x^16 - 4*R*x^15 + b[1]^2*x^12 + 3*R*b[1]*x^11 + 6*R^2*x^10 - b[1]^3*x^8 +
+ - 2*R*b[1]^2*x^7 - 3*R^2*b[1]*x^6 - 4*R^3*x^5 + b[1]^4*x^4 + R*b[1]^3*x^3 +
+ + R^2*b[1]^2*x^2 + R^3*b[1]*x + R^4 - b[1]^5
+
+### Example 3: R^4 - b[1]^5 == 0
+b = 1
+R = -1
+#
+sol = solve.ht5Basic(b, R)
+x = sol$sol[,1]; y = sol$sol[,2]
+sol
+
+### Test
+x^5 + b[1]*y
+y^5 + b[1]*x
+# x*(x+1) * P18
+err = -1 + 2*x - 3*x^2 + 4*x^3 - 3*x^5 + 5*x^6 - 6*x^7 + 6*x^8 - 3*x^10 + 4*x^11 - 4*x^12 +
+	+ 4*x^13 - x^15 + x^16 - x^17 + x^18
+round0(err)
+
+
+#####################
+
 #####################
 ### x^5 + b*(x+y) = 0
 
 # x^5 + b1*(x+y) = 0
 # y^5 + b1*(y+x) = 0
 
-### Solution
+### Solution:
+# [trivial]
 
 m5 = unity(5, all=F)
 m4 = unity(4, all=T)
 
 ### Diff =>
-# x^5 - y^5 = 0
+x^5 - y^5 # = 0
 # y = x * m5^j
 
 ### =>
-# x^5 + b1*(m5+1)*x = 0
-# x^4 + b1*(m5+1) = 0
+x^5 + b1*(m5+1)*x # = 0
+x^4 + b1*(m5+1) # = 0
+
+### Solver:
+m5 = unity(5, all=F)
+solve.S2P5Trivial = function(R, b) {
+	# does NOT include case x == y;
+	x = sapply(1:4, function(id) roots(c(1, 0,0,0, b[1]*(m5^id + 1), -R[1])));
+	x = as.vector(x);
+	y = x * rep(m5^(1:4), each=5);
+	sol = cbind(x, y);
+	return(sol);
+}
 
 ### Example
+R = 0
 b = 1
-x = as.vector(sapply(1:4, function(j) ( - b[1]*(m5^j + 1))^(1/4) * m4))
-y = - (x^5 / b[1] + x)
-sol = cbind(x, y)
-sol = rbind(sol, sol[,2:1])
+#
+sol = solve.S2P5Trivial(R, b);
+x = sol[,1]; y = sol[,2];
 sol
 
 ### Test
@@ -2857,117 +2966,6 @@ round0.p(poly.calc(sol[,1]))
 
 err = (1 - 4*x + 16*x^2 - 24*x^3 + 14*x^4 - 4*x^5 + 4*x^6 - 8*x^7 + 4*x^8 + 2*x^9 + 4*x^10 - 3*x^12 - 2*x^13 + x^16)^2
 round0(err)
-
-
-###############
-###############
-
-#############
-### x^5 + b*y
-
-# x^5 + b*y = R
-# y^5 + b*x = R
-
-### Solution
-
-### Diff =>
-# x^5 - y^5 - b*(x-y) = 0
-# (x-y)*(x^4 + y^4 + x*y*(x^2 + y^2) + (x*y)^2 - b) = 0
-# Case: x != y =>
-# x^4 + y^4 + x*y*(x^2 + y^2) + (x*y)^2 - b = 0
-# S^4 - 4*x*y*(x+y)^2 + 2*(x*y)^2 + x*y*(S^2 - 2*x*y) + (x*y)^2 - b = 0
-# S^4 - 3*x*y*S^2 + (x*y)^2 - b = 0
-
-### Sum =>
-# x^5 + y^5 + b*(x+y) = 2*R
-# (x+y)*(x^4 + y^4 - x*y*(x^2 + y^2) + (x*y)^2 + b) - 2*R = 0
-# S*(S^4 - 4*x*y*S^2 + 2*(x*y)^2 - x*y*(S^2 - 2*x*y) + (x*y)^2 + b) - 2*R = 0
-# S*(S^4 - 5*x*y*S^2 + 5*(x*y)^2 + b) - 2*R = 0
-
-### Sum - 5*S*Diff =>
-# S*(S^4 - 5*x*y*S^2 + 5*(x*y)^2 + b - 5*S^4 + 15*x*y*S^2 - 5*(x*y)^2 + 5*b) - 2*R = 0
-# S*(-4*S^4 + 10*x*y*S^2 + 6*b) - 2*R = 0
-# S*(4*S^4 - 10*x*y*S^2 - 6*b) + 2*R = 0
-# S*(2*S^4 - 5*x*y*S^2 - 3*b) + R = 0
-# 5*x*y*S^3 = 2*S^5 - 3*b*S + R
-
-### => Diff =>
-# S^4 - 3*x*y*S^2 + (x*y)^2 - b = 0 # * S^6
-# S^10 - 3*x*y*S^8 + (x*y)^2*S^6 - b*S^6 = 0
-# 25*S^10 - 75*x*y*S^8 + 25*(x*y)^2*S^6 - 25*b*S^6 = 0
-# 25*S^10 - 15*S^5*(2*S^5 - 3*b*S + R) + (2*S^5 - 3*b*S + R)^2 - 25*b*S^6 = 0
-# 5*S^10 - (2*S^5 - 3*b*S + R)^2 - 20*b*S^6 + 15*R*S^5 = 0
-# 5*S^10 - (4*S^10 + 9*b^2*S^2 + R^2 - 12*b*S^6 + 4*R*S^5 - 6*b*R*S) - 20*b*S^6 + 15*R*S^5 = 0
-# S^10 - 8*b*S^6 + 11*R*S^5 - 9*b^2*S^2 + 6*b*R*S - R^2 = 0
-
-solve.ht5Basic = function(b, R) {
-	x.sum = roots(c(1, 0,0,0, -8*b[1], 11*R, 0,0, - 9*b[1]^2, 6*b[1]*R, - R^2))
-	xy = (2*x.sum^5 - 3*b[1]*x.sum + R) / x.sum^3 / 5
-	x.diff = sqrt(x.sum^2 - 4*xy + 0i)
-	x = (x.sum + x.diff)/2
-	y = (x.sum - x.diff)/2
-	sol = cbind(round0(x), round0(y))
-	sol = rbind(sol, sol[,2:1])
-	p = round0.p(poly.calc(sol[,1]))
-	return(list(sol=sol, p=p))
-}
-
-### Example:
-b = 3
-R = 1
-#
-sol = solve.ht5Basic(b, R)
-x = sol$sol[,1]; y = sol$sol[,2]
-sol
-
-### Test
-x^5 + b[1]*y
-y^5 + b[1]*x
-
-
-### Example 2:
-b = -1
-R = 1
-#
-sol = solve.ht5Basic(b, R)
-x = sol$sol[,1]; y = sol$sol[,2]
-sol
-
-### Test
-x^5 + b[1]*y
-y^5 + b[1]*x
-
-### Classic Polynomial
-x^20 - b[1]*x^16 - 4*R*x^15 + b[1]^2*x^12 + 3*R*b[1]*x^11 + 6*R^2*x^10 - b[1]^3*x^8 +
- - 2*R*b[1]^2*x^7 - 3*R^2*b[1]*x^6 - 4*R^3*x^5 + b[1]^4*x^4 + R*b[1]^3*x^3 +
- + R^2*b[1]^2*x^2 + R^3*b[1]*x + R^4 - b[1]^5
-
-### Example 3: R^4 - b[1]^5 == 0
-b = 1
-R = -1
-#
-sol = solve.ht5Basic(b, R)
-x = sol$sol[,1]; y = sol$sol[,2]
-sol
-
-### Test
-x^5 + b[1]*y
-y^5 + b[1]*x
-# x*(x+1) * P18
-err = -1 + 2*x - 3*x^2 + 4*x^3 - 3*x^5 + 5*x^6 - 6*x^7 + 6*x^8 - 3*x^10 + 4*x^11 - 4*x^12 + 4*x^13 - x^15 + x^16 - x^17 + x^18
-round0(err)
- 
- 
- 
-### Derivation:
-# y = (-x^5 + R)/b[1]
-(x^5 - R)^5 - b[1]^6*x + R*b[1]^5
-#
-x^25 - 5*R*x^20 + 10*R^2*x^15 - 10*R^3*x^10 + 5*R^4*x^5 - b[1]^6*x + (R*b[1]^5 - R^5)
-(x^5 + b[1]*x - R)*(x^20 - b[1]*x^16 - 4*R*x^15 + b[1]^2*x^12 + 3*R*b[1]*x^11 + 6*R^2*x^10 - b[1]^3*x^8 +
- - 2*R*b[1]^2*x^7 - 3*R^2*b[1]*x^6 - 4*R^3*x^5 + b[1]^4*x^4 + R*b[1]^3*x^3 +
- + R^2*b[1]^2*x^2 + R^3*b[1]*x + R^4 - b[1]^5)
-
 
 
 ###################################
