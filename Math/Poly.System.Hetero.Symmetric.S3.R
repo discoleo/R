@@ -6,7 +6,7 @@
 ### Polynomial Systems: S3
 ### Heterogenous Symmetric
 ###
-### draft v.0.4e
+### draft v.0.4e-sol
 
 
 ### Hetero-Symmetric
@@ -2376,7 +2376,45 @@ b2*E2*E3 + 2*b2*E3*S^2 - 2*b2^2*E3*S - b1*E3*S +
 	- b2^2*S^4 + b1^2*S^2 + 2*b2*R*S^2 - 2*b1*R*S # = 0
 
 ### Eq S:
+# TODO:
 # P[12]: needs to be factorized to P[8]!
+
+### Auxiliary Eqs:
+# E2 = ...; see file PP.S3P3.MixedSCh.R;
+# 3*E3 = -(S^3 + b2*S^2 + b1*S - 3*E2*S - 2*b2*E2 - 3*R)
+
+### Solver:
+solve.S3P3.MixedSCh = function(R, b, debug=TRUE) {
+	coeff = coeff.S3P3.MixedSideChain(R, b);
+	S = roots(coeff);
+	if(debug) print(S);
+	E2 = E2.S3P3.MixedSideChain(S, R, b);
+	b1 = b[1]; b2 = b[2]; R = R[1];
+	E3 = -(S^3 + b2*S^2 + b1*S - 3*E2*S - 2*b2*E2 - 3*R) / 3;
+	len = length(S);
+	x = sapply(seq(len), function(id) roots(c(1, -S[id], E2[id], -E3[id])));
+	S = rep(S, each=3); E3 = rep(E3, each=3);
+	yz.s = S - x; yz = E3 / x;
+	# robust
+	yz.d = R - x^3 + b2*x^2 - b1*x - b2*(yz.s^2 - 2*yz);
+	yz.d = yz.d / (yz.s^2 - yz - b1);
+	y = (yz.s + yz.d)/2;
+	z = (yz.s - y);
+	sol = cbind(x=as.vector(x), y=as.vector(y), z=as.vector(z))
+	return(sol);
+}
+
+### Examples:
+
+R = -1;
+b = c(3,-1);
+sol = solve.S3P3.MixedSCh(R, b);
+x = sol[,1]; y = sol[,2]; z= sol[,3];
+
+### Test
+x^3 + b[2]*y^2 + b[1]*z # - R
+y^3 + b[2]*z^2 + b[1]*x # - R
+z^3 + b[2]*x^2 + b[1]*y # - R
 
 
 ##########################

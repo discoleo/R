@@ -7,6 +7,10 @@
 # x^3 + b2*y^2 + b1*z = R;
 
 coeff.S3P3.MixedSideChain = function(R, b) {
+	if(length(b) < 2) {
+		print("Warning: Missing b!");
+		b = c(b, 0);
+	}
 	b1 = b[1]; b2 = b[2]; R = R[1];
 	# formula for coeff's is in reverse order;
 	# but return(rev(coeff))!
@@ -33,6 +37,7 @@ coeff.S3P3.MixedSideChain = function(R, b) {
 }
 
 E2.S3P3.MixedSideChain = function(S, R, b) {
+	b1 = b[1]; b2 = b[2]; R = R[1];
 	coeff = c(- 441*b1*b2^5*R - 324*b1^3*b2*R - 756*b1^2*b2^3*R,
 		252*b2^6*R + 147*b1^2*b2^5 + 108*b1^4*b2 + 594*b1*b2^4*R + 252*b1^3*b2^3 +
 			+ 81*b1^3*R + 162*b2^3*R^2 + 378*b1^2*b2^2*R + 243*b1*b2*R^2,
@@ -43,7 +48,7 @@ E2.S3P3.MixedSideChain = function(S, R, b) {
 		36*b1^2 + 42*b1*b2^2 - 62*b2^4,
 		15*b1*b2 - 99*b2^3,
 		- 30*b2^2);
-	E2 = sum(coeff * S^seq(0, 8));
+	E2 = sapply(S, function(S) sum(coeff * S^seq(0, 8)));
 	# DIV
 	coeff = c(294*b1*b2^6 + 63*b2^5*R + 81*b1^4 + 525*b1^2*b2^4 + 360*b1^3*b2^2 +
 			+ 432*b1*b2^3*R + 162*b1^2*b2*R - 243*b2^2*R^2,
@@ -53,6 +58,6 @@ E2.S3P3.MixedSideChain = function(S, R, b) {
 		90*b1^2 + 195*b1*b2^2 - 123*b2^4,
 		36*b1*b2 - 228*b2^3,
 		- 75*b2^2);
-	pDiv = sum(coeff * S^seq(0, 6));
+	pDiv = sapply(S, function(S) sum(coeff * S^seq(0, 6)));
 	return(E2 / pDiv);
 }
