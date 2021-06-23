@@ -48,7 +48,85 @@ library(pracma)
 ### Order 2 ###
 ###############
 
-# ...
+# x^2 + b1*y = R
+# y^2 + b1*z = R
+# z^2 + b1*x = R
+
+
+### Solution
+
+# Trivial solution: x = y = z;
+
+### Method 1:
+### Sum =>
+x^2 + y^2 + z^2 + b1*(x+y+z) - 3*R # = 0
+S^2 - 2*E2 + b1*S - 3*R # = 0
+# 2*E2 = S^2 + b1*S - 3*R;
+
+### Sum(x[i]*...) =>
+x^3 + y^3 + z^3 + b1*E2 - R*S # = 0
+S^3 - 3*E2*S + 3*E3 + b1*E2 - R*S # = 0
+2*S^3 - 6*E2*S + 6*E3 + 2*b1*E2 - 2*R*S
+2*S^3 - 3*(S^2 + b1*S - 3*R)*S + 6*E3 + b1*(S^2 + b1*S - 3*R) - 2*R*S
+6*E3 - S^3 - 2*b1*S^2 + 7*R*S + b1^2*S - 3*b1*R
+# 6*E3 = S^3 + 2*b1*S^2 - 7*R*S - b1^2*S + 3*b1*R
+
+### Sum(x[i+1]^2*...) =>
+E2^2 - 2*E3*S + b1*(S^3 - 3*E2*S + 3*E3) - R*(S^2 - 2*E2) # = 0
+(S^2 + b1*S - 3*R)^2 - 8*E3*S + b1*(4*S^3 - 6*(S^2 + b1*S - 3*R)*S + 12*E3) - 4*R*(S^2 - (S^2 + b1*S - 3*R))
+(S^2 + b1*S - 3*R)^2 - 8*E3*S + b1*(-2*S^3 - 6*b1*S^2 + 22*R*S + 12*E3) - 12*R^2
+S^4 - 6*R*S^2 - 5*b1^2*S^2 + 16*b1*R*S - 8*E3*S + 12*b1*E3 - 3*R^2
+S^4 + 2*b1*S^3 - (10*R + b1^2)*S^2 + 6*(b1*R + b1^3)*S - 18*b1^2*R + 9*R^2
+
+### Eq:
+(S^2 + 3*b1*S - 9*R)*(S^2 - b1*S - R + 2*b1^2)
+
+
+### [old]
+
+### Diff =>
+# - simplification for Order 2:
+# x^2 - y^2 = b1*(z-y)
+# y^2 - z^2 = b1*(x-z)
+# z^2 - x^2 = b1*(y-x)
+# Prod =>
+# (x+y)*(x+z)*(y+z) = (-1)*b1^3;
+# S^3 - (x^3 + y^3 + z^3) + 3*b1^3 = 0;
+
+# [Prod] =>
+# (x^2 + x*y + x*z + y*z)*(y+z) = - b1^3
+# S[x^2*y] + 2*x*y*z + b1^3 = 0;
+# E2*S - 3*E3 + 2*E3 + b1^3 = 0;
+# E2*S - E3 + b1^3 = 0
+
+
+### Classic Polynomial:
+
+### Alternative:
+### Method 2: classic
+# b1*y = R - x^2
+# b1^3*z = b1^2*R - (R - x^2)^2
+# b1^3*z = b1^2*R - R^2 - x^4 + 2*R*x^2
+# =>
+# x^8 - 4*R*x^6 + (6*R^2 - 2*b1^2*R)*x^4 + 4*R^2*(b1^2 - R)*x^2 + b[1]^7*x + (b1^2*R - R^2)^2 - b[1]^6*R = 0
+# (x^2 + b1*x - R) * P6;
+- R*b[1]^4 + 2*R^2*b[1]^2 - R^3 + b[1]^6 + (2*R*b[1]^3 - R^2*b[1] - b[1]^5)*x + (3*R^2 - 3*R*b[1]^2 + b[1]^4)*x^2 +
+	+ (2*R*b[1] - b[1]^3)*x^3 - (3*R - b[1]^2)*x^4 - b[1]*x^5 + x^6
+
+### Debug:
+### alternative / classic
+coeff = c(1,0, - 4*R,0, (6*R^2 - 2*b[1]^2*R), 0, 4*R^2*(b[1]^2 - R), b[1]^7, (b[1]^2*R - R^2)^2 - b[1]^6*R)
+x = roots(coeff)
+y = (R - x^2)/b[1]
+z = (R - y^2)/b[1]
+sol = cbind(x, y, z)
+sol
+
+### Test
+x^2 + b[1]*y
+y^2 + b[1]*z
+z^2 + b[1]*x
+
 
 ###################
 
@@ -177,13 +255,25 @@ pDiv$coeff = as.bigz(pDiv$coeff);
 pSd = div.bigpm(pSr, pDiv, by="S")
 pSd = pSd[[1]];
 
-pSd$coeff = as.numeric(pSd$coeff)
+pSd$coeff = - as.numeric(pSd$coeff)
 pSd = sort.pm(pSd, c(4,3), xn=c("S"))
 pSd
 eval.pm(pSd, c(S, b1, b2, R))
+# toCoeff(pSd, "S")
+
 # P[12]
 # TODO: factorize to P[8];
+# b[2]^2*x^4 + b[2]^2*(3*b[1] - b[2])*x^3 + 3*b1*b2^2*x^2 + ...
 
+pE2x = pS[[2]];
+pE2x$coeff = as.numeric(pE2x$coeff)
+pE2x = sort.pm(pE2x, c(4,3), xn=c("S"))
+# cat(paste(toCoeff(pE2x, "S"), sep="", collapse=",\n")); cat("\n");
+
+pE2Div = pS[[3]];
+pE2Div$coeff = as.numeric(pE2Div$coeff)
+pE2Div = sort.pm(pE2Div, c(4,3), xn=c("S"))
+# cat(paste(toCoeff(pE2Div, "S"), sep="", collapse=",\n")); cat("\n");
 
 ### Test:
 x^3 + b2*y^2 + b1*z # - R
@@ -193,8 +283,8 @@ z^3 + b2*x^2 + b1*y # - R
 ### Debug:
 R = 3; b = c(2,-1);
 b1 = b[1]; b2 = b[2];
-x = -1.6372728335 + 0.4783896280i;
-y = -1.0979359210 - 1.8696544136i;
-z =  1.9873631239 + 0.1839015917i;
+x = -1.6372723783 + 0.4783895464i;
+y = -1.0979358419 - 1.8696543548i;
+z =  1.9873630466 + 0.1839016351i;
 S = x+y+z; E2 = x*y+x*z+y*z; E3 = x*y*z;
 

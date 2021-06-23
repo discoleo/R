@@ -4,9 +4,9 @@
 ### [the one and only]
 ###
 ### Polynomial Systems: S3
-### Heterogenous Symmetric
+### Heterogeneous Symmetric
 ###
-### draft v.0.4e-sol
+### draft v.0.4f-clean
 
 
 ### Hetero-Symmetric
@@ -24,14 +24,15 @@ z^n + P(z, x, y) = R
 ###############
 
 ### draft v.0.4e:
-# - cleanup;
-# - work on x^3 + b2*y^2 + b18z = R;
+# - cleanup: moved to new file
+#   Poly.System.Hetero.Symmetric.S3.Derivation.R;
+# - work on x^3 + b2*y^2 + b1*z = R;
 ### draft v.0.4c - v.0.4d:
 # - solved Order 3:
 #   x^3 + b*y*z = R;
 # - TODO: Case x == y, but != z;
 # - moved to new file:
-#   oly.System.Hetero.Symmetric.S3.YZ.R; [draft v.0.4d]
+#   Poly.System.Hetero.Symmetric.S3.YZ.R; [draft v.0.4d]
 ### draft v.0.4b - v.0.4b-full:
 # - [full] solution for:
 #   x^3 + y^2 = R; [partial solution]
@@ -142,7 +143,7 @@ z^n + P(z, x, y) = R
 # z^n + b*x = R
 
 ### Solution:
-# - decomposing system into lower order system;
+# - decomposing system into a lower order system;
 # - the trivial solution x = y = z will not be covered here;
 
 ### Sum =>
@@ -151,13 +152,13 @@ z^n + P(z, x, y) = R
 ### Sum(x[i] * P[i]) =>
 # (x^(n+1) + y^(n+1) + z^(n+1)) + b*E2 = R*S
 
-###  Eq3:
+###  Eq 3:
 # x^n = R - b*y
 # x^(2*n) = R^2 + b^2*y^2 - 2*b*R*y
 ### [3a] Sum =>
 # x^(2*n) + y^(2*n) + z^(2*n) = 3*R^2 + b^2*S^2 - 2*b^2*E2 - 2*b*R*S;
 
-### Eq3-variant:
+### Eq 3-variant:
 # x^n - b*x = R - b*y - b*x
 # x^(2*n) - 2*b*x^(n+1) + b^2*x^2 = R^2 + b^2*y^2 + b^2*x^2 - 2*b*R*y - 2*b*R*x + 2*b^2*x*y
 ### [3b] Sum =>
@@ -186,6 +187,7 @@ z^n + P(z, x, y) = R
 # - initial System: => order P[n^3];
 #  -- polynomial can be decomposed = P[n]*P[n^3 - n];
 # - decomposed system:
+#  -- P[3] o P[(n^3 - n)/3];
 #  -- D(S, E2, E3): orders of E2 & E3 are usually much lower;
 
 
@@ -204,9 +206,15 @@ library(pracma)
 ################################
 ################################
 
+##############
+### Simple ###
+##############
+
+### x^n + b*y = R
 
 ###############
 ### Order 2 ###
+###############
 
 ### x[i]^2 + b*x[i+1]
 
@@ -227,80 +235,40 @@ library(pracma)
 # Trivial solution: x = y = z;
 
 ### Method 1:
-### Sum =>
-x^2 + y^2 + z^2 + b1*(x+y+z) - 3*R # = 0
+### Eq 1: Sum =>
 S^2 - 2*E2 + b1*S - 3*R # = 0
-# 2*E2 = S^2 + b1*S - 3*R;
 
-### Sum(x[i]*...) =>
-# x^3 + y^3 + z^3 + b1*E2 = R*S
-# S^3 - 3*E2*S + 3*E3 + b1*E2 = R*S
-# 2*S^3 - 6*E2*S + 6*E3 + 2*b1*E2 - 2*R*S
-# 2*S^3 - 3*(S^2 + b1*S - 3*R)*S + 6*E3 + b1*(S^2 + b1*S - 3*R) - 2*R*S
+### Eq 2: Sum(x[i]*...) =>
 6*E3 - S^3 - 2*b1*S^2 + 7*R*S + b1^2*S - 3*b1*R
-# 6*E3 = S^3 + 2*b1*S^2 - 7*R*S - b1^2*S + 3*b1*R
 
-### Sum(x[i+1]^2*...) =>
-E2^2 - 2*E3*S + b1*(S^3 - 3*E2*S + 3*E3) - R*(S^2 - 2*E2)
-(S^2 + b1*S - 3*R)^2 - 8*E3*S + b1*(4*S^3 - 6*(S^2 + b1*S - 3*R)*S + 12*E3) - 4*R*(S^2 - (S^2 + b1*S - 3*R))
-(S^2 + b1*S - 3*R)^2 - 8*E3*S + b1*(-2*S^3 - 6*b1*S^2 + 22*R*S + 12*E3) - 12*R^2
-S^4 - 6*R*S^2 - 5*b1^2*S^2 + 16*b1*R*S - 8*E3*S + 12*b1*E3 - 3*R^2
+### Eq 3: Sum(x[i+1]^2*...) =>
 S^4 + 2*b1*S^3 - (10*R + b1^2)*S^2 + 6*(b1*R + b1^3)*S - 18*b1^2*R + 9*R^2
+
 ### Eq:
 (S^2 + 3*b1*S - 9*R)*(S^2 - b1*S - R + 2*b1^2)
 
+### Auxiliary Eqs:
+# E2 = (S^2 + b[1]*S - 3*R1) / 2;
+# E3 = - (S^3 - 3*E2*S + b[1]*E2 - R1*S) / 3;
 
-### [old/unstable]
-### Diff =>
-# x^2 - y^2 = b1*(z-y)
-# y^2 - z^2 = b1*(x-z)
-# z^2 - x^2 = b1*(y-x)
-# Prod =>
-# (x+y)*(x+z)*(y+z) = (-1)*b1^3;
-# S^3 - (x^3 + y^3 + z^3) + 3*b1^3 = 0;
-
-# [Prod] =>
-# (x^2 + x*y + x*z + y*z)*(y+z) = - b1^3
-# S[x^2*y] + 2*x*y*z + b1^3 = 0;
-# E2*S - 3*E3 + 2*E3 + b1^3 = 0;
-# E2*S - E3 + b1^3 = 0
-
-### Alternative:
-### Method 2: classic
-# b1*y = R - x^2
-# b1^3*z = b1^2*R - (R - x^2)^2
-# b1^3*z = b1^2*R - R^2 - x^4 + 2*R*x^2
-# =>
-# x^8 - 4*R*x^6 + (6*R^2 - 2*b1^2*R)*x^4 + 4*R^2*(b1^2 - R)*x^2 + b[1]^7*x + (b1^2*R - R^2)^2 - b[1]^6*R = 0
-# (x^2 + b1*x - R) * P6;
-- R*b[1]^4 + 2*R^2*b[1]^2 - R^3 + b[1]^6 + (2*R*b[1]^3 - R^2*b[1] - b[1]^5)*x + (3*R^2 - 3*R*b[1]^2 + b[1]^4)*x^2 +
-	+ (2*R*b[1] - b[1]^3)*x^3 - (3*R - b[1]^2)*x^4 - b[1]*x^5 + x^6
-
-### Classic Polynomial: Shifted
-# b10 = b1 / 6; x0 = x - b1;
-(- 963*R*b1^4 + 69*R^2*b1^2 - R^3 + 39991*b1^6) +
-	(240*R*b1^3 - 5712*b1^5)*x + (- 90*R*b1^2 + 3*R^2 + 819*b1^4)*x^2 +
-	(- 112*b1^3)*x^3 + (- 3*R + 21*b1^2)*x^4 + x^6
-
-
-### Solution:
-solve.sysHt32 = function(R, b, doPrint=TRUE) {
+### Solver:
+solve.sysHt32 = function(R, b, debug=TRUE) {
 	b2 = if(length(b) > 1) b[2] else 0; # Ext A1: power 1;
 	b3 = if(length(b) > 2) b[3] else 0; # Ext A1: power 2;
 	# coeff = c(1, 2*b[1], - (10*R[1] + b[1]^2), 6*(b[1]*R[1] + b[1]^3), - 18*b[1]^2*R[1] + 9*R[1]^2)
 	# if(b2 != 0) coeff = coeff + c(0, 10*b2, -6*b[1]*b2 + 9*b2^2, 18*b[1]^2*b2 - 18*R[1]*b2, 0)
 	coeff = c(1 + b3, b2 - b[1], - R[1] + 2*b[1]^2)
 	S = roots(coeff)
-	if(doPrint) print(S)
+	if(debug) print(S)
 	len = length(S);
 	if(len == 0) stop("NO solutions!")
 	R1 = R[1] - b2*S - b3*S^2;
 	# [REMOVED] remove x == y == z = S / 3;
-	# as it causes numerical instability due to roots multiplicity;
+	# as it causes numerical instability due to multiplicity of roots;
 	# isEq = round0(S^2 + 3*b[1]*S - 9*R1) == 0
 	# if(any(isZero)) print("Warning: f(S) == 0!")
 	# S = S[ ! isEq]; R1 = R1[ ! isEq];
-	E2 = round0(S^2 + b[1]*S - 3*R1)/2
+	E2 = round0(S^2 + b[1]*S - 3*R1) / 2;
 	E3 = - (S^3 - 3*E2*S + b[1]*E2 - R1*S) / 3
 	E3 = round0(E3, tol=1E-10); # improve numerics when E3 == 0;
 	x = sapply(1:length(S), function(id) roots(c(1, -S[id], E2[id], -E3[id])))
@@ -311,7 +279,7 @@ solve.sysHt32 = function(R, b, doPrint=TRUE) {
 	sol
 }
 
-### Example:
+### Examples:
 R = 3
 b = -1
 #
@@ -325,6 +293,17 @@ z^2 + b[1]*x
 
 ### Classic Polynomial: P8 or P6 (when S == 0)
 round0.p(poly.calc(sol[,1]))
+
+
+### Classic Polynomial:
+- R*b[1]^4 + 2*R^2*b[1]^2 - R^3 + b[1]^6 + (2*R*b[1]^3 - R^2*b[1] - b[1]^5)*x + (3*R^2 - 3*R*b[1]^2 + b[1]^4)*x^2 +
+	+ (2*R*b[1] - b[1]^3)*x^3 - (3*R - b[1]^2)*x^4 - b[1]*x^5 + x^6
+
+### Classic Polynomial: Shifted
+# b10 = b1 / 6; x0 = x - b1;
+(- 963*R*b1^4 + 69*R^2*b1^2 - R^3 + 39991*b1^6) +
+	(240*R*b1^3 - 5712*b1^5)*x + (- 90*R*b1^2 + 3*R^2 + 819*b1^4)*x^2 +
+	(- 112*b1^3)*x^3 + (- 3*R + 21*b1^2)*x^4 + x^6
 
 
 #########
@@ -343,20 +322,6 @@ z^2 + b[1]*x
 round0.p(poly.calc(sol[,1]))
 
 621 - 108*x + 27*x^2 - 9*x^3 - 3*x^5 + x^6
-
-
-### alternative / classic
-coeff = c(1,0, - 4*R,0, (6*R^2 - 2*b[1]^2*R), 0, 4*R^2*(b[1]^2 - R), b[1]^7, (b[1]^2*R - R^2)^2 - b[1]^6*R)
-x = roots(coeff)
-y = (R - x^2)/b[1]
-z = (R - y^2)/b[1]
-sol = cbind(x, y, z)
-sol
-
-### Test
-x^2 + b[1]*y
-y^2 + b[1]*z
-z^2 + b[1]*x
 
 
 ###############
@@ -383,9 +348,10 @@ sol = solve.sysHt32(R, b=b)
 x = sol[,1]; y = sol[,2]; z = sol[,3]
 
 ### Test
-x^2 + b[1]*y + b[2]*(x+y+z)
-y^2 + b[1]*z + b[2]*(x+y+z)
-z^2 + b[1]*x + b[2]*(x+y+z)
+S = (x+y+z);
+x^2 + b[1]*y + b[2]*S
+y^2 + b[1]*z + b[2]*S
+z^2 + b[1]*x + b[2]*S
 
 round0.p(poly.calc(sol[,1]))
 err = 25 + 12*x^2 - 2*x^3 + 3*x^4 + x^6
@@ -400,9 +366,10 @@ sol = solve.sysHt32(R, b=b)
 x = sol[,1]; y = sol[,2]; z = sol[,3]
 
 ### Test
-x^2 + b[1]*y + b[2]*(x+y+z) + b[3]*(x+y+z)^2
-y^2 + b[1]*z + b[2]*(x+y+z) + b[3]*(x+y+z)^2
-z^2 + b[1]*x + b[2]*(x+y+z) + b[3]*(x+y+z)^2
+S = (x+y+z);
+x^2 + b[1]*y + b[2]*S + b[3]*S^2
+y^2 + b[1]*z + b[2]*S + b[3]*S^2
+z^2 + b[1]*x + b[2]*S + b[3]*S^2
 
 round0.p(poly.calc(sol[,1]))
 err = 115 + 39*x + 44*x^2 - x^3 - 12*x^4 - x^5 + x^6
