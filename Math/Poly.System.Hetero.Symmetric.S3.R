@@ -6,7 +6,7 @@
 ### Polynomial Systems: S3
 ### Heterogeneous Symmetric
 ###
-### draft v.0.4f-clean
+### draft v.0.4f-clean2
 
 
 ### Hetero-Symmetric
@@ -23,6 +23,8 @@ z^n + P(z, x, y) = R
 ### History ###
 ###############
 
+### draft v.0.4f-clean:
+# - more cleaning;
 ### draft v.0.4e:
 # - cleanup: moved to new file
 #   Poly.System.Hetero.Symmetric.S3.Derivation.R;
@@ -2185,22 +2187,13 @@ z^3 + b[2]*x*y*z^2 + b[1]*z
 # z^3 + b2*x^2 + b1*x = R
 
 
-### TODO
-# - partial solution: for b2 == 1; b1 == 0;
+### Solution:
 
 ### Sum =>
-# (x^3 + y^3 + z^3) + b2*(x^2 + y^2 + z^2) + b1*S = 3*R
-S^3 - 3*E2*S + 3*E3 + b2*(S^2 - 2*E2) + b1*S - 3*R # = 0
 S^3 + b2*S^2 + b1*S - 3*E2*S - 2*b2*E2 + 3*E3 - 3*R # = 0
 # 3*E3 = -(S^3 + b2*S^2 + b1*S - 3*E2*S - 2*b2*E2 - 3*R)
 
 ### Sum( (b[1]*x[i] + b[2]*x[i]^2) * ...) =>
-b[2]*(x^5 + y^5 + z^5) + b[1]*(x^4 + y^4 + z^4) +
-	+ b[1]*b[2]*(x^2*y + x*y^2 + x^2*z + x*z^2 + y^2*z + y*z^2) + b[1]^2*E2 + b[2]^2*(E2^2 - 2*E3*S) +
-	- b[2]*R*(x^2+y^2+z^2) - b[1]*R*S # = 0
-b[2]*(S^5 - 5*E2*S^3 + 5*E3*S^2 + 5*E2^2*S - 5*E2*E3) + b[1]*(S^4 - 4*E2*S^2 + 4*E3*S + 2*E2^2) +
-	+ b[1]*b[2]*(E2*S - 3*E3) + b[1]^2*E2 + b[2]^2*(E2^2 - 2*E3*S) +
-	- b[2]*R*(S^2 - 2*E2) - b[1]*R*S # = 0
 b2*S^5 + b1*S^4 - 5*b2*E2*S^3 + 5*b2*E3*S^2 - 5*b2*E2*E3 + 4*b1*E3*S - 2*b2^2*E3*S +
 	- 4*b1*E2*S^2 + 5*b2*E2^2*S - 2*b1*b2*E2*S +
 	+ 2*b1*E2^2 + b2^2*E2^2 + b1^2*E2 - 2*b1*b2^2*E2 +
@@ -2208,21 +2201,11 @@ b2*S^5 + b1*S^4 - 5*b2*E2*S^3 + 5*b2*E3*S^2 - 5*b2*E2*E3 + 4*b1*E3*S - 2*b2^2*E3
 	- b2*R*S^2 + 2*b2*R*E2 - b1*R*S - 3*b1*b2*R # = 0
 
 ### Sum(y^3*...) =>
-(x^3*y^3 + x^3*z^3 + y^3*z^3) + b2*(x^5 + y^5 + z^5) + b1*(x^4 + y^4 + z^4) +
-	- R*(x^3 + y^3 + z^3) # = 0
-(E2^3 - 3*E3*(E2*S - E3)) +
-	+ b2*(S^5 - 5*E2*S^3 + 5*E3*S^2 + 5*E2^2*S - 5*E2*E3) +
-	+ b1*(S^4 - 4*E2*S^2 + 4*E3*S + 2*E2^2) +
-	- R*(S^3 - 3*E2*S + 3*E3) # = 0
 E2^3 - 3*E3*E2*S + 3*E3^2 +
 	+ b2*S^5 - 5*b2*E2*S^3 + 5*b2*E3*S^2 + 5*b2*E2^2*S - 5*b2*E2*E3 +
 	+ b1*S^4 - 4*b1*E2*S^2 + 4*b1*E3*S + 2*b1*E2^2 +
 	- R*S^3 + 3*R*E2*S - 3*R*E3 # = 0
 
-E2Subst = 1701*R*S*b1*b2^4 - 243*R*S*b1^3 - 756*R*S*b2^6 + 918*R*S^2*b1*b2^3 - 243*R*S^2*b1^2*b2 + 288*R*S^2*b2^5 - 1782*R*S^3*b1*b2^2 + 648*R*S^3*b1^2 + 450*R*S^3*b2^4 - 486*R*S^4*b1*b2 - 945*R*S^4*b2^3 - 702*R*S^5*b2^2 - 1134*R*b1*b2^5 + 1620*R*b1^2*b2^3 - 729*R*b1^3*b2 + 729*R^2*S*b1*b2 - 486*R^2*S*b2^3 + 972*R^2*S^2*b2^2 - 729*R^2*b1*b2^2 + 378*S*b1^2*b2^5 - 540*S*b1^3*b2^3 + 243*S*b1^4*b2 + 630*S^2*b1*b2^6 - 1233*S^2*b1^2*b2^4 + 504*S^2*b1^3*b2^2 - 537*S^3*b1*b2^5 - 180*S^3*b1^2*b2^3 + 90*S^3*b1^3*b2 + 252*S^3*b2^7 - 516*S^4*b1*b2^4 + 540*S^4*b1^2*b2^2 - 189*S^4*b1^3 + 30*S^4*b2^6 + 576*S^5*b1*b2^3 - 27*S^5*b1^2*b2 - 144*S^5*b2^5 + 513*S^6*b1*b2^2 - 108*S^6*b1^2 + 186*S^6*b2^4 + 45*S^7*b1*b2 + 297*S^7*b2^3 + 90*S^8*b2^2;
-
-E2Div = 1539*R*S*b1*b2^2 - 486*R*S*b1^2 - 459*R*S*b2^4 + 648*R*S^2*b1*b2 + 702*R*S^2*b2^3 + 810*R*S^3*b2^2 - 567*R*b1*b2^3 + 189*R*b2^5 - 729*R^2*b2^2 + 819*S*b1*b2^5 - 45*S*b1^2*b2^3 - 108*S*b1^3*b2 - 504*S*b2^7 + 954*S^2*b1*b2^4 - 621*S^2*b1^2*b2^2 + 108*S^2*b1^3 - 123*S^2*b2^6 - 810*S^3*b1*b2^3 + 162*S^3*b1^2*b2 + 312*S^3*b2^5 - 945*S^4*b1*b2^2 + 270*S^4*b1^2 - 369*S^4*b2^4 - 108*S^5*b1*b2 - 684*S^5*b2^3 - 225*S^6*b2^2 - 756*b1*b2^6 + 1458*b1^2*b2^4 - 1026*b1^3*b2^2 + 243*b1^4;
-# E2 = - E2Subst / E2Div;
 
 ### Eq: P[3] * P[8]
 # [the original eq. had 730 monomials]
@@ -2233,12 +2216,15 @@ S^8 - b2*S^7 + (2*b2^2 - 3*b1)*S^6 + (8*b2^3 + 12*b2*b1)*S^5 +
 	+ (-27*R^2*b2 - 2*R*b2^4 + 27*R*b2^2*b1 + 21*b2^5*b1 - 27*R*b1^2 - 26*b2^3*b1^2 + 2*b2*b1^3)*S +
 	(27*R^2*b2^2 - 7*R*b2^5 - 18*R*b2^3*b1 + 27*R*b2*b1^2 + 14*b2^4*b1^2 - 20*b2^2*b1^3 + 9*b1^4)
 
-### for b2 == 1; b1 == 0;
+### Special Case:
+# for b2 == 1; b1 == 0;
 R*(27*R - 7) - R*(27*R + 2)*S + (27*R^2 + 14*R + 7)*S^2 - (27*R + 5)*S^3 +
 	- S^4 + 8*S^5 + 2*S^6 - S^7 + S^8
+# TODO:
+# - simplified solution: for b2 == 1; b1 == 0; (if it is useful?)
 
 
-### Solver
+### Solver:
 solve.Y2Y1.S3P3 = function(R, b=c(1,0), debug=TRUE) {
 	# assumes: b[1] == 1 && b[2] == 0!
 	b2 = b[1]; b1 = if(length(b) > 1) b[2] else 0;
@@ -2254,6 +2240,22 @@ solve.Y2Y1.S3P3 = function(R, b=c(1,0), debug=TRUE) {
 	S = roots(coeff)
 	if(debug) print(S);
 	R = R[1] - 0*S; # extensions
+	E2 = E2.S3P3.UnivSCh(S, R, b);
+	E3 = - (S^3 + b2*S^2 + b1*S - 3*E2*S - 2*b2*E2 - 3*R) / 3;
+	# solve: x
+	x = sapply(seq_along(S), function(id) roots(c(1, -S[id], E2[id], -E3[id])))
+	R = rep(R, each=3); S = rep(S, each=3); E3 = rep(E3, each=3);
+	# robust
+	yz.s = S - x; yz = E3 / x;
+	y_x  = b1*x^3 - b2^2*(yz.s^3 - 3*yz.s*yz) - b2^3*x^2 - b1*b2^2*x - (b1 - b2^2)*R;
+	ydiv =  b2*(x^3 - R) - b1^2; # TODO: DIV0!
+	y = y_x / ydiv;
+	z = yz.s - y;
+	return(cbind(x=as.vector(x), y=as.vector(y), z=as.vector(z)));
+}
+E2.S3P3.UnivSCh = function(S, R, b) {
+	# TODO: re-order b!
+	b1 = b[2]; b2 = b[1]; R = R[1];
 	E2Subst = 1701*R*S*b1*b2^4 - 243*R*S*b1^3 - 756*R*S*b2^6 + 918*R*S^2*b1*b2^3 - 243*R*S^2*b1^2*b2 +
 		+ 288*R*S^2*b2^5 - 1782*R*S^3*b1*b2^2 + 648*R*S^3*b1^2 + 450*R*S^3*b2^4 - 486*R*S^4*b1*b2 +
 		- 945*R*S^4*b2^3 - 702*R*S^5*b2^2 - 1134*R*b1*b2^5 + 1620*R*b1^2*b2^3 - 729*R*b1^3*b2 +
@@ -2268,17 +2270,7 @@ solve.Y2Y1.S3P3 = function(R, b=c(1,0), debug=TRUE) {
 		+ 162*S^3*b1^2*b2 + 312*S^3*b2^5 - 945*S^4*b1*b2^2 + 270*S^4*b1^2 - 369*S^4*b2^4 - 108*S^5*b1*b2 +
 		- 684*S^5*b2^3 - 225*S^6*b2^2 - 756*b1*b2^6 + 1458*b1^2*b2^4 - 1026*b1^3*b2^2 + 243*b1^4;
 	E2 = - E2Subst / E2Div;
-	E3 = - (S^3 + b2*S^2 + b1*S - 3*E2*S - 2*b2*E2 - 3*R) / 3;
-	# solve: x
-	x = sapply(seq_along(S), function(id) roots(c(1, -S[id], E2[id], -E3[id])))
-	R = rep(R, each=3); S = rep(S, each=3); E3 = rep(E3, each=3);
-	###
-	yz.s = S - x; yz = E3 / x;
-	y_x  = b1*x^3 - b2^2*(yz.s^3 - 3*yz.s*yz) - b2^3*x^2 - b1*b2^2*x - (b1 - b2^2)*R;
-	ydiv =  b2*(x^3 - R) - b1^2;
-	y = y_x / ydiv;
-	z = yz.s - y;
-	return(cbind(x=as.vector(x), y=as.vector(y), z=as.vector(z)));
+	return(E2);
 }
 
 ### Examples
@@ -2295,19 +2287,6 @@ z^3 + b[1]*x^2 + b[2]*x # - R
 
 ### Classic Polynomial
 # - see file: Poly.System.S3P3.Mega.ClassicPoly.R;
-(3*b1*b2*y^3 + 2*b2^4*x^2 + 2*b1*b2^3*x - 2*b2^3*R - b1^3 - 3*b1*b2*R)^2 +
-	+ (b2*y^3 - b1^2 - b2*R)^2*(4*b2*y^3 - b1^2 - 4*b2*R)
-(3*b1^3*y - 3*b1*b2*(x^3 - R)*y + 3*b1^2*x^3 + 2*b2^5*x^2 + 2*b1*b2^4*x +
-		- 3*b1^2*R - 2*b2^4*R - b1^3*b2 - 3*b1*b2^2*R)^2 +
-	+ (b1^2*y - b2*(x^3-R)*y + b1*x^3 - b1^2*b2 - b1*R - b2^2*R)^2*(4*b2*y^3 - b1^2 - 4*b2*R)
-
-
-### Debug
-R = 2; b = c(-1, 3); b2=b[1]; b1 = b[2];
-x = -0.8426668811 - 0.6742950178i;
-y =  0.4545225198 + 0.5403469156i;
-z =  1.7559415104 + 0.3460249473i;
-S = x+y+z; E2 = x*y+x*z+y*z; E3 = x*y*z;
 
 
 ########################
