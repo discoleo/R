@@ -6,7 +6,7 @@
 ### Polynomial Systems: S3
 ### Heterogeneous Symmetric
 ###
-### draft v.0.4f-clean2
+### draft v.0.4f-TrueSol
 
 
 ### Hetero-Symmetric
@@ -2171,15 +2171,14 @@ z^3 + b[2]*x*y*z^2 + b[1]*z
 ### TODO
 
 
-#################################
-#################################
+#############################
+#############################
 
+#############################
+### Univariate Side-Chain ###
+### Higher Powers         ###
+#############################
 
-#################################
-### Higher Power Correlations ###
-
-
-################################
 ### x[i]^3 + b2*x[j]^2 + b1*x[j]
 
 # x^3 + b2*y^2 + b1*y = R
@@ -2226,7 +2225,6 @@ R*(27*R - 7) - R*(27*R + 2)*S + (27*R^2 + 14*R + 7)*S^2 - (27*R + 5)*S^3 +
 
 ### Solver:
 solve.Y2Y1.S3P3 = function(R, b=c(1,0), debug=TRUE) {
-	# assumes: b[1] == 1 && b[2] == 0!
 	b2 = b[1]; b1 = if(length(b) > 1) b[2] else 0;
 	coeff = c(1, - b2, (2*b2^2 - 3*b1), (8*b2^3 + 12*b2*b1),
 		(-b2^4 + 27*b2^2*b1 + 18*b1^2),
@@ -2322,18 +2320,24 @@ b2*E2*E3 + 2*b2*E3*S^2 - 2*b2^2*E3*S - b1*E3*S +
 	- b2^2*S^4 + b1^2*S^2 + 2*b2*R*S^2 - 2*b1*R*S # = 0
 
 ### Eq S:
-# TODO:
-# P[12]: needs to be factorized to P[8]!
+S^8 - b2*S^7 - 3*b1*S^6 + 2*b2^2*S^6 - 9*b1*b2*S^5 + 8*b2^3*S^5 + (18*b1^2 - b2^4)*S^4 +
+	- (5*b2^5 + b1*b2^3 + 27*b1*R + 27*b2^2*R)*S^3 +
+	+ (7*b2^6 + 11*b1*b2^4 + 4*b1^3 + 14*b2^3*R - 7*b1^2*b2^2 + 45*b1*b2*R + 27*R^2)*S^2 +
+	- (7*b1*b2^5 + 2*b2^4*R + b1^3*b2 + 9*b1^2*b2^3 + 27*b1^2*R + 18*b1*b2^2*R + 27*b2*R^2)*S +
+	- 7*b2^5*R + 9*b1^4 + 14*b1^2*b2^4 + 19*b1^3*b2^2 - 27*b1*b2^3*R + 27*b2^2*R^2
 
 ### Auxiliary Eqs:
 # E2 = ...; see file PP.S3P3.MixedSCh.R;
 # 3*E3 = -(S^3 + b2*S^2 + b1*S - 3*E2*S - 2*b2*E2 - 3*R)
+
 
 ### Solver:
 solve.S3P3.MixedSCh = function(R, b, debug=TRUE) {
 	coeff = coeff.S3P3.MixedSideChain(R, b);
 	S = roots(coeff);
 	if(debug) print(S);
+	# function E2.S3P3.MixedSideChain(S, R, b):
+	# is defined in file: PP.S3P3.MixedSCh.R;
 	E2 = E2.S3P3.MixedSideChain(S, R, b);
 	b1 = b[1]; b2 = b[2]; R = R[1];
 	E3 = -(S^3 + b2*S^2 + b1*S - 3*E2*S - 2*b2*E2 - 3*R) / 3;
@@ -2348,6 +2352,24 @@ solve.S3P3.MixedSCh = function(R, b, debug=TRUE) {
 	z = (yz.s - y);
 	sol = cbind(x=as.vector(x), y=as.vector(y), z=as.vector(z))
 	return(sol);
+}
+coeff.S3P3.MixedSideChain = function(R, b) {
+	if(length(b) < 2) {
+		print("Warning: Missing b!");
+		b = c(b, 0);
+	}
+	b1 = b[1]; b2 = b[2]; R = R[1];
+	# formula for coeff's is in reverse order;
+	coeff = c(
+		- 7*b2^5*R + 9*b1^4 + 14*b1^2*b2^4 + 19*b1^3*b2^2 - 27*b1*b2^3*R + 27*b2^2*R^2,
+		- 7*b1*b2^5 - 2*b2^4*R - b1^3*b2 - 9*b1^2*b2^3 - 27*b1^2*R - 18*b1*b2^2*R - 27*b2*R^2,
+		7*b2^6 + 11*b1*b2^4 + 4*b1^3 + 14*b2^3*R - 7*b1^2*b2^2 + 45*b1*b2*R + 27*R^2,
+		- 5*b2^5 - b1*b2^3 - 27*b1*R - 27*b2^2*R,
+		18*b1^2 - b2^4,
+		- 9*b1*b2 + 8*b2^3,
+		- 3*b1 + 2*b2^2, - b2, 1
+	);
+	return(rev(coeff));
 }
 
 ### Examples:

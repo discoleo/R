@@ -338,10 +338,26 @@ pSd
 eval.pm(pSd, c(S, b1, b2, R))
 # toCoeff(pSd, "S")
 
-# P[12]
-# TODO: factorize to P[8];
-# b[2]^2*x^4 + b[2]^2*(3*b[1] - b[2])*x^3 + 3*b1*b2^2*x^2 + ...
+### True Solutions
+### P[12] = P[4] * P[8];
+b2^3*S^4 - b2^2*(3*b1 - 2*b2^2)*S^3 - 3*b1*b2^3*S^2 +
+	+ (3*b1^3 + 3*b1^2*b2^2 - 6*b2^3*R + 4*b1*b2^4)*S +
+	- 3*b1^3*b2 + 9*b1*b2^2*R - 7*b1^2*b2^3
+p4non = data.frame(
+	S  = c(4, 3, 3, 2,   1, 1, 1, 1,   0, 0, 0),
+	b1 = c(0, 1, 0, 1,   3, 2, 0, 1,   3, 1, 2),
+	b2 = c(3, 2, 4, 3,   0, 2, 3, 4,   1, 2, 3),
+	R  = c(0, 0, 0, 0,   0, 0, 1, 0,   0, 1, 0),
+	coeff = c(1,-3, 2,-3,  3, 3,-6, 4,  -3, 9,-7)
+)
+### The True Solutions:
+pSd2 = div.pm(pSd, p4non, by="S")$Rez;
+pSd2 = div.pm(pSd2, data.frame(b1=c(2,1,0), b2=c(0,2,4), coeff=c(108,252,147)), by="b2")$Rez;
+pSd2 = sort.pm(pSd2, c(4,3), xn=c("S"))
+# cat(paste(toCoeff(pSd2, "S"), sep="", collapse=",\n")); cat("\n");
 
+
+### Auxiliary Eqs:
 pE2x = pS[[2]];
 pE2x$coeff = as.numeric(pE2x$coeff)
 pE2x = sort.pm(pE2x, c(4,3), xn=c("S"))
@@ -364,4 +380,5 @@ x = -1.6372723783 + 0.4783895464i;
 y = -1.0979358419 - 1.8696543548i;
 z =  1.9873630466 + 0.1839016351i;
 S = x+y+z; E2 = x*y+x*z+y*z; E3 = x*y*z;
+
 
