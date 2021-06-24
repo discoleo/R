@@ -6,7 +6,7 @@
 ### Polynomial Systems: S3
 ### Heterogeneous Symmetric
 ###
-### draft v.0.4f-TrueSol
+### draft v.0.4f-clean2
 
 
 ### Hetero-Symmetric
@@ -23,8 +23,10 @@ z^n + P(z, x, y) = R
 ### History ###
 ###############
 
-### draft v.0.4f-clean:
+### draft v.0.4f-clean 1 & 2:
 # - more cleaning;
+# - S3P3 MixedSideChain: factorized P[12] => P[8]
+#   => 3*8 = 24 true solutions; [v.0.4f-TrueSol]
 ### draft v.0.4e:
 # - cleanup: moved to new file
 #   Poly.System.Hetero.Symmetric.S3.Derivation.R;
@@ -236,6 +238,8 @@ library(pracma)
 
 # Trivial solution: x = y = z;
 
+### Case: (x, y, z) distinct
+
 ### Method 1:
 ### Eq 1: Sum =>
 S^2 - 2*E2 + b1*S - 3*R # = 0
@@ -391,66 +395,21 @@ round0(err)
 ### Solution
 
 ### Fast Solution:
-# - shift all roots "back" & use solution to simple system: x^2 + b1*y = R;
+# - shift all roots "back" & use solution to simple system: x^2 + b1*y = Rs,
+#   where Rs = R + s^2/4 + b1*s/2;
 (x + s/2)^2 + b1*(y + s/2) = R + s^2/4 + b1*s/2
 (y + s/2)^2 + b1*(z + s/2) = R + s^2/4 + b1*s/2
 (z + s/2)^2 + b1*(x + s/2) = R + s^2/4 + b1*s/2
 
-# Trivial solution: x = y = z;
+### Long Solution:
+# - moved to file:
+#   Poly.System.Hetero.Symmetric.S3.Derivation.R;
 
-### Diff =>
-# (x-y)*(x+y+s) = -b1*(y-z)
-# (y-z)*(y+z+s) = b1*(x-z)
-# (x-z)*(x+z+s) = b1*(x-y)
-### Prod =>
-# (x+y+s)*(x+z+s)*(y+z+s) = -b1^3
-
-### Sum =>
-# S^2 - 2*E2 + (s+b1)*S = 3*R
-# 2*E2 = S^2 + (s+b1)*S - 3*R;
-
-### Sum(x[-i] * ...) =>
-# S[x^2*y] + 2*s*E2 + b1*(x^2+y^2+z^2) + b1*E2 = 2*R*S
-# S*E2 - 3*E3 + 2*s*E2 + b1*(S^2 - 2*E2) + b1*E2 - 2*R*S = 0
-# 3*E3 = S*E2 + 2*s*E2 + b1*(S^2 - 2*E2) + b1*E2 - 2*R*S
-# 3*E3 = S*E2 + 2*s*E2 + b1*(S^2 - E2) - 2*R*S
-# 3*E3 = b1*S^2 + E2*S + 2*s*E2 - b1*E2 - 2*R*S
-# 6*E3 = 2*b1*S^2 + 2*E2*S + 4*s*E2 - 2*b1*E2 - 4*R*S
-# 6*E3 = 2*b1*S^2 + S*(S^2 + (s+b1)*S - 3*R) + 4*s*E2 - 2*b1*E2 - 4*R*S
-# 6*E3 = S^3 + (3*s + 2*b1)*S^2 + (2*s-b1)*(s+b1)*S - 7*R*S - 6*s*R + 3*b1*R
-
-### Sum(x[i]*...) =>
-# x^3 + y^3 + z^3 + s*(x^2 + y^2 + z^2) + b1*E2 = R*S
-# S^3 - 3*E2*S + 3*E3 + s*(S^2 - 2*E2) + b1*E2 - R*S = 0
-# 2*S^3 - 6*E2*S + 6*E3 + 2*s*(S^2 - 2*E2) + 2*b1*E2 - 2*R*S
-# -S^3 - (3*s + 2*b1)*S^2 + 6*E3 + (b1 - 2*s)*(s+b1)*S + 7*R*S + 6*s*R - 3*b1*R
-# -S^3 - (3*s + 2*b1)*S^2 + (S^3 + (3*s + 2*b1)*S^2 + (2*s-b1)*(s+b1)*S - 7*R*S - 6*s*R + 3*b1*R) +
-#  + (b1 - 2*s)*(s+b1)*S + 7*R*S + 6*s*R - 3*b1*R
-# 0 == 0 [redundant]
-
-### Prod =>
-# (x+y+s)*(x+z+s)*(y+z+s) = -b1^3
-# (x^2 + x*y + x*z + y*z + s*(2*x+y+z) + s^2)*(y+z+s) + b1^3 = 0
-# (x^2 + x*y + x*z + y*z)*(y+z+s) + (s*(2*x+y+z) + s^2)*(y+z+s) + b1^3 = 0
-# (x^2 + x*y + x*z + y*z)*(y+z) + s*(x^2 + x*y + x*z + y*z) + (s*(2*x+y+z) + s^2)*(y+z+s) + b1^3 = 0
-# S*E2 - E3 + s*x^2 + s*E2 + s*(2*x+y+z)*(y+z+s) + s^2*(y+z+s) + b1^3
-# S*E2 - E3 + s*x^2 + s*E2 + s*(2*x+y+z)*(y+z) + s^2*(2*x+y+z) + s^2*(y+z+s) + b1^3
-# S*E2 - E3 + s*x^2 + s*E2 + s*(2*x+y+z)*(y+z) + 2*s^2*(x+y+z) + s^3 + b1^3
-# S*E2 - E3 + s*(x^2+y^2+z^2) + s*E2 + 2*s*E2 + 2*s^2*S + s^3 + b1^3
-# S*E2 - E3 + s*S^2 + s*E2 + 2*s^2*S + s^3 + b1^3
-# 2*S*E2 - 2*E3 + 2*s*S^2 + 2*s*E2 + 4*s^2*S + 2*s^3 + 2*b1^3
-# S*(S^2 + (s+b1)*S - 3*R) - 2*E3 + 2*s*S^2 + s*(S^2 + (s+b1)*S - 3*R) + 4*s^2*S + 2*s^3 + 2*b1^3
-# S^3 + (4*s+b1)*S^2 - 2*E3 - 3*R*S + 5*s^2*S + s*b1*S + 2*s^3 + 2*b1^3 - 3*s*R
-# 3*S^3 + 3*(4*s+b1)*S^2 - 6*E3 - 9*R*S + 15*s^2*S + 3*s*b1*S + 6*s^3 + 6*b1^3 - 9*s*R
-# 2*S^3 + (9*s+b1)*S^2 + b1^2*S - 2*R*S + 13*s^2*S + 2*s*b1*S + 6*s^3 + 6*b1^3 - 3*s*R - 3*b1*R
 ### Eq:
-(2*S + 3*s + 3*b1)*(S^2 - (b1 - 3*s)*S + (- R - 2*b1*s + 2*b1^2 + 2*s^2))
+(2*S + 3*s + 3*b1) * (S^2 - (b1 - 3*s)*S + (- R - 2*b1*s + 2*b1^2 + 2*s^2))
 
-# Note:
-# Bug corrected: + 6*b1^3;
 
 ### Solver:
-
 solve.htShX.S3P2 = function(R, b, s) {
 	coeff = c(1, - (b[1] - 3*s), (- R[1] - 2*b[1]*s + 2*b[1]^2 + 2*s^2))
 	x.sum = roots(coeff)
@@ -494,9 +453,9 @@ round0.p(poly.calc(x[1:6]))
 # z^2 + b1*(x+y) = R
 # [a trivial system]
 
-# Trivial solution: x = y = z;
 
-### Solution
+### Solution:
+# Trivial solution: x = y = z;
 
 ### Diff =>
 # x^2 - y^2 = b1*(x-y)

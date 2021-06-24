@@ -129,6 +129,82 @@ z^2 + b[1]*x
 
 
 ###################
+###################
+
+### Shifted roots:
+### x[i]^2 + s*x[i] + b*x[i+1]
+
+# x^2 + s*x + b1*y = R
+# y^2 + s*y + b1*z = R
+# z^2 + s*z + b1*x = R
+
+### Solution:
+
+### Fast Solution:
+# - shift all roots "back" & use solution to simple system: x^2 + b1*y = R;
+(x + s/2)^2 + b1*(y + s/2) = R + s^2/4 + b1*s/2
+(y + s/2)^2 + b1*(z + s/2) = R + s^2/4 + b1*s/2
+(z + s/2)^2 + b1*(x + s/2) = R + s^2/4 + b1*s/2
+
+### Long Solution:
+# - Trivial solution: x = y = z;
+
+
+### Diff =>
+# (x-y)*(x+y+s) = -b1*(y-z)
+# (y-z)*(y+z+s) = b1*(x-z)
+# (x-z)*(x+z+s) = b1*(x-y)
+### Prod =>
+(x+y+s)*(x+z+s)*(y+z+s) + b1^3 # = 0
+# [see Workout below]
+
+### Sum =>
+S^2 - 2*E2 + (s+b1)*S - 3*R # = 0
+# 2*E2 = S^2 + (s+b1)*S - 3*R;
+
+### Sum(x[-i] * ...) =>
+# Sum(x^2*y) + 2*s*E2 + b1*(x^2+y^2+z^2) + b1*E2 = 2*R*S
+S*E2 - 3*E3 + 2*s*E2 + b1*(S^2 - 2*E2) + b1*E2 - 2*R*S # = 0
+# 3*E3 = S*E2 + 2*s*E2 + b1*(S^2 - 2*E2) + b1*E2 - 2*R*S
+# 3*E3 = S*E2 + 2*s*E2 + b1*(S^2 - E2) - 2*R*S
+# 3*E3 = b1*S^2 + E2*S + 2*s*E2 - b1*E2 - 2*R*S
+# 6*E3 = 2*b1*S^2 + 2*E2*S + 4*s*E2 - 2*b1*E2 - 4*R*S
+# 6*E3 = 2*b1*S^2 + S*(S^2 + (s+b1)*S - 3*R) + 4*s*E2 - 2*b1*E2 - 4*R*S
+# 6*E3 = S^3 + (3*s + 2*b1)*S^2 + (2*s-b1)*(s+b1)*S - 7*R*S - 6*s*R + 3*b1*R
+
+### Sum(x[i]*...) =>
+x^3 + y^3 + z^3 + s*(x^2 + y^2 + z^2) + b1*E2 - R*S # = 0
+S^3 - 3*E2*S + 3*E3 + s*(S^2 - 2*E2) + b1*E2 - R*S # = 0
+2*S^3 - 6*E2*S + 6*E3 + 2*s*(S^2 - 2*E2) + 2*b1*E2 - 2*R*S
+-S^3 - (3*s + 2*b1)*S^2 + 6*E3 + (b1 - 2*s)*(s+b1)*S + 7*R*S + 6*s*R - 3*b1*R
+-S^3 - (3*s + 2*b1)*S^2 + (S^3 + (3*s + 2*b1)*S^2 + (2*s-b1)*(s+b1)*S - 7*R*S - 6*s*R + 3*b1*R) +
+	+ (b1 - 2*s)*(s+b1)*S + 7*R*S + 6*s*R - 3*b1*R
+# 0 == 0 [redundant]
+
+### [Workout] Prod =>
+# (x+y+s)*(x+z+s)*(y+z+s) = -b1^3
+(x^2 + x*y + x*z + y*z + s*(2*x+y+z) + s^2)*(y+z+s) + b1^3 # = 0
+(x^2 + x*y + x*z + y*z)*(y+z+s) + (s*(2*x+y+z) + s^2)*(y+z+s) + b1^3 # = 0
+(x^2 + x*y + x*z + y*z)*(y+z) + s*(x^2 + x*y + x*z + y*z) + (s*(2*x+y+z) + s^2)*(y+z+s) + b1^3 = 0
+S*E2 - E3 + s*x^2 + s*E2 + s*(2*x+y+z)*(y+z+s) + s^2*(y+z+s) + b1^3
+S*E2 - E3 + s*x^2 + s*E2 + s*(2*x+y+z)*(y+z) + s^2*(2*x+y+z) + s^2*(y+z+s) + b1^3
+S*E2 - E3 + s*x^2 + s*E2 + s*(2*x+y+z)*(y+z) + 2*s^2*(x+y+z) + s^3 + b1^3
+S*E2 - E3 + s*(x^2+y^2+z^2) + s*E2 + 2*s*E2 + 2*s^2*S + s^3 + b1^3
+S*E2 - E3 + s*S^2 + s*E2 + 2*s^2*S + s^3 + b1^3
+2*S*E2 - 2*E3 + 2*s*S^2 + 2*s*E2 + 4*s^2*S + 2*s^3 + 2*b1^3
+S*(S^2 + (s+b1)*S - 3*R) - 2*E3 + 2*s*S^2 + s*(S^2 + (s+b1)*S - 3*R) + 4*s^2*S + 2*s^3 + 2*b1^3
+S^3 + (4*s+b1)*S^2 - 2*E3 - 3*R*S + 5*s^2*S + s*b1*S + 2*s^3 + 2*b1^3 - 3*s*R
+3*S^3 + 3*(4*s+b1)*S^2 - 6*E3 - 9*R*S + 15*s^2*S + 3*s*b1*S + 6*s^3 + 6*b1^3 - 9*s*R
+2*S^3 + (9*s+b1)*S^2 + b1^2*S - 2*R*S + 13*s^2*S + 2*s*b1*S + 6*s^3 + 6*b1^3 - 3*s*R - 3*b1*R
+
+# Note:
+# Bug corrected: + 6*b1^3;
+
+### Eq:
+(2*S + 3*s + 3*b1) * (S^2 - (b1 - 3*s)*S + (- R - 2*b1*s + 2*b1^2 + 2*s^2))
+
+
+###################
 
 ###############
 ### Order 3 ###
