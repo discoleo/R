@@ -7,7 +7,7 @@
 ### Heterogenous Symmetric
 ### with Composite Leading Term
 ###
-### draft v.0.2c
+### draft v.0.2d-clean
 
 
 ### Hetero-Symmetric
@@ -25,6 +25,9 @@ z^n*x^m + P(z, x, y) = R
 ###############
 
 
+### draft v.0.2d-clean:
+# - [cleanup] started moving derivations to file:
+#   Poly.System.Hetero.Symmetric.S3.Leading.Derivations.R;
 ### draft v.0.2c:
 # - [started work] Mixed Order 2+2:
 #   x^2*y^2 + b*z = R;
@@ -62,13 +65,31 @@ library(pracma)
 # the functions are in the file:
 # Polynomials.Helper.R
 
+### other functions
+
+test.CHP.S3.Symmetric = function(sol, R, b, b.ext=0, a=0, n=1) {
+	if(length(b.ext) < 2) b.ext = c(b.ext, 0);
+	if(length(a) < 2) a = c(a, 0)
+	x = sol[,1]; y = sol[,2]; z = sol[,3];
+	xyz = x*y*z; a.ext = a[1]*xyz + a[2]*xyz^2;
+	s = (x+y+z); s.ext = b.ext[1]*s + b.ext[2]*s^2;
+	ext = a.ext + s.ext;
+	err1 = (x*y)^n + b[1]*y + ext # - R
+	err2 = (y*z)^n + b[1]*z + ext # - R
+	err3 = (z*x)^n + b[1]*x + ext # - R
+	round0(rbind(err1, err2, err3))
+}
 
 ################################
 ################################
 
-######################
-### X*Y High Power ###
-######################
+########################
+### Leading: (X*Y)^n ###
+########################
+
+###############
+### Order 1 ###
+###############
 
 ### x*y + b*y = R
 
@@ -95,25 +116,23 @@ E2 + b1*S - 3*R # = 0
 
 ### Sum(z*...) =>
 3*E3 + b1*E2 - R*S # = 0
-# b1*E2 = R*S - 3*E3
 
-### Diff =>
-# y*(x-z) = -b1*(y-z)
-# z*(x-y) = -b1*(x-z)
-# x*(y-z) =  b1*(x-y)
-### Prod =>
+### Diff & Prod =>
 # E3 = b1^3
 
+### Auxiliary Eqs:
+# E3 = b1^3
+# b1*E2 = R*S - 3*E3
+
 ### Eq:
-b1*E2 + b1^2*S - 3*b1*R # = 0
-R*S - 3*E3 + b1^2*S - 3*b1*R # = 0
-(R + b1^2)*S - 3*b1*(R + b1^2) # = 0
 (R + b1^2)*(S - 3*b1) # = 0
-S = 3*b1; # is a FALSE solution;
+# Note:
+# S = 3*b1 is a FALSE solution;
+# R + b1^2: can have solutions
+# (in the extensions, e.g.: be*S = R + b1^2);
 
 
 ### Solver:
-
 solve.CHP.S3P1 = function(R, b, b.ext=0, a=0, debug=TRUE) {
 	be1 = b.ext[1];
 	be2 = if(length(b.ext) > 1) b.ext[2] else 0;
@@ -123,45 +142,24 @@ solve.CHP.S3P1 = function(R, b, b.ext=0, a=0, debug=TRUE) {
 		stop("NO solutions: x != y != z")
 		S = 3*b[1];
 	} else {
-		# S = roots(c(-be2, 3*b[1]*be2 - be1, R + b[1]^2 + 3*b[1]*be1, -3*b[1]^3 - 3*b[1]*R))
-		# isWrong = round0(S - 3*b[1]) == 0
-		# S = S[ ! isWrong]
 		S = roots(c(be2, be1, -R[1] - b[1]^2 + a1*b[1]^3 + a2*b[1]^6))
 	}
 	if(debug) print(S);
+	len = length(S)
 	E3 = b[1]^3 - 0*S;
 	R1 = R[1] - be1*S - be2*S^2 - a1*E3 - a2*E3^2;
 	E2 = 3*R1 - b[1]*S;
+	x = sapply(seq(len), function(id) roots(c(1, -S[id], E2[id], -E3[id])));
 	#
-	len = length(S)
-	x = sapply(seq(len), function(id) roots(c(1, -S[id], E2[id], -E3[id])))
+	R1 = rep(R1, each=3);
+	S  = rep(S, each=3);
+	E3 = rep(E3, each=3);
 	### robust
-	if(len == 1) {
-		S = rep(S, 3); R1 = rep(R1, 3);
-	} else {
-		S  = matrix(S, ncol=len, nrow=3, byrow=T)
-		R1 = matrix(R1, ncol=len, nrow=3, byrow=T)
-		E3 = matrix(E3, ncol=len, nrow=3, byrow=T)
-	}
-	#
 	yz = E3 / x;
 	z = (R1 - yz) / b[1];
 	y = S - x - z;
-	# Note: 1 set of solutions is incorrect!
 	sol = cbind(x=as.vector(x), y=as.vector(y), z=as.vector(z))
 	return(sol)
-}
-test.CHP.S3P1 = function(sol, R, b, b.ext=0, a=0) {
-	if(length(b.ext) < 2) b.ext = c(b.ext, 0);
-	if(length(a) < 2) a = c(a, 0)
-	x = sol[,1]; y = sol[,2]; z = sol[,3];
-	xyz = x*y*z; a.ext = a[1]*xyz + a[2]*xyz^2;
-	s = (x+y+z); s.ext = b.ext[1]*s + b.ext[2]*s^2;
-	ext = a.ext + s.ext;
-	err1 = x*y + b[1]*y + ext # - R
-	err2 = y*z + b[1]*z + ext # - R
-	err3 = z*x + b[1]*x + ext # - R
-	round0(rbind(err1, err2, err3))
 }
 
 ### Examples:
@@ -171,7 +169,7 @@ b.ext = c(1, 0)
 sol = solve.CHP.S3P1(R, b, b.ext=b.ext)
 
 ### Test
-test.CHP.S3P1(sol, R, b, b.ext)
+test.CHP.S3.Symmetric(sol, R, b, b.ext=b.ext, n=1)
 
 
 ### Ex 2:
@@ -181,7 +179,7 @@ b.ext = c(1, 3)
 sol = solve.CHP.S3P1(R, b, b.ext=b.ext)
 
 ### Test
-test.CHP.S3P1(sol, R, b, b.ext)
+test.CHP.S3.Symmetric(sol, R, b, b.ext=b.ext, n=1)
 round0.p(poly.calc(sol[1:6, 1]))
 
 
@@ -193,7 +191,7 @@ b.ext = c(1, 3); a = 2
 sol = solve.CHP.S3P1(R, b, b.ext=b.ext, a=a)
 
 ### Test
-test.CHP.S3P1(sol, R, b, b.ext, a=a)
+test.CHP.S3.Symmetric(sol, R, b, b.ext=b.ext, a=a, n=1)
 round0.p(poly.calc(sol[1:6, 1]))
 
 
@@ -205,7 +203,7 @@ b.ext = c(1, 3); a = c(-1, 1)
 sol = solve.CHP.S3P1(R, b, b.ext=b.ext, a=a)
 
 ### Test
-test.CHP.S3P1(sol, R, b, b.ext, a=a)
+test.CHP.S3.Symmetric(sol, R, b, b.ext=b.ext, a=a, n=1)
 round0.p(poly.calc(sol[1:6, 1]))
 
 
@@ -217,7 +215,7 @@ b.ext = c(0, -1); a = c(2, -1)
 sol = solve.CHP.S3P1(R, b, b.ext=b.ext, a=a)
 
 ### Test
-test.CHP.S3P1(sol, R, b, b.ext, a=a)
+test.CHP.S3.Symmetric(sol, R, b, b.ext, a=a)
 round0.p(poly.calc(sol[1:6, 1]))
 
 
