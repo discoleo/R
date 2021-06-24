@@ -7,7 +7,7 @@
 ### Heterogenous Symmetric
 ### with Composite Leading Term
 ###
-### draft v.0.2b-S11
+### draft v.0.2c
 
 
 ### Hetero-Symmetric
@@ -25,6 +25,9 @@ z^n*x^m + P(z, x, y) = R
 ###############
 
 
+### draft v.0.2c:
+# - [started work] Mixed Order 2+2:
+#   x^2*y^2 + b*z = R;
 ### draft v.0.2b - v.0.2b-S11:
 # - [started work] Mixed Order 3+1:
 #   x^3*y + b*z = R;
@@ -218,12 +221,45 @@ test.CHP.S3P1(sol, R, b, b.ext, a=a)
 round0.p(poly.calc(sol[1:6, 1]))
 
 
-#######################
-#######################
+########################
+########################
+
+########################
+### Mixed-Order: 2+2 ###
+########################
+
+### x[i]^2*x[j]^2 + b*x[k]
+
+# x^2*y^2 + b*z = R
+# y^2*z^2 + b*x = R
+# z^2*x^2 + b*y = R
+
+### Solution:
+
+### Case: (x, y, z) distinct;
+
+### Diff =>
+(x-z)*(y^2*(x+z) - b) # = 0
+y^2*(x+z) - b # = 0
+### Sum(...) =>
+x^2*(y+z) + y^2*(x+z) + z^2*(x+y) - 3*b # = 0
+E2*S - 3*b # = 0
+
+### Sum =>
+E2^2 - E3*S + b*S - 3*R # = 0
+
+### Sum(z*...) =>
+E2*E3 + b*(S^2 - 2*E2) - R*S # = 0
+
+### TODO
 
 
-#######################
-### Mixt-Order: 2+1 ###
+########################
+########################
+
+########################
+### Mixed-Order: 2+1 ###
+########################
 
 ### x[i]^2*x[j] + b*x[j]
 
@@ -238,6 +274,7 @@ round0.p(poly.calc(sol[1:6, 1]))
 ### Sum =>
 # shortcut: Eq1[Mixed](R1 = 3*R - b*S) =>
 E3*S^3 - ((3*R - b*S) + 6*E3)*E2*S + (3*R - b*S)^2 + E2^3 + 9*E3^2 + 3*(3*R - b*S)*E3 # = 0
+
 # long:
 (x^2*y + y^2*z + z^2*x) + b*S - 3*R # = 0 # Eq 1-bis
 (x^2*y + y^2*z + z^2*x)*(x*y^2 + y*z^2 + z*x^2) +
@@ -354,7 +391,7 @@ S = x+y+z; E2 = x*y+x*z+y*z; E3 = x*y*z;
 #######################
 
 ### Variant:
-### Mixt-Order: 2+1
+### Mixed-Order: 2+1
 
 ### x[i]^2*x[j] + b*x[i]
 
@@ -458,7 +495,7 @@ round0.p(poly.calc(x))
 #######################
 
 ### Variant 2:
-### Mixt-Order: 2+1
+### Mixed-Order: 2+1
 
 ### x[i]^2*x[i+1] + b*x[i+2]
 
@@ -691,12 +728,13 @@ E3^2*S^4 + 2*R*E3*S^3 + E2*E3^2*S^2 - 2*b*E2*E3*S^2 - R*E2^2*S^2 +
 	+ E2^5 + 7*E2^2*E3^2 - b*E2^2*E3 + b^2*E2^2 +R^2*S^2 # = 0
 
 ### Eq:
-b1*3*S^11 - 3*R*b1^2*S^10 + 3*R^2*b1*S^9 - (R^3 + 9*b1^4)*S^8 + 20*R*b1^3*S^7 - 15*R^2*b1^2*S^6 +
-	+ 2*R^3*b1*S^5 + 72*b1^5*S^5 + (R^4 - 208*R*b1^4)*S^4 + 264*R^2*b1^3*S^3 +
+b1^3*S^11 - 3*R*b1^2*S^10 + 3*R^2*b1*S^9 - (R^3 + 9*b1^4)*S^8 + 20*R*b1^3*S^7 - 15*R^2*b1^2*S^6 +
+	+ (2*R^3*b1 + 72*b1^5)*S^5 + (R^4 - 208*R*b1^4)*S^4 + 264*R^2*b1^3*S^3 +
 	- (188*R^3*b1^2 + 64*b1^6)*S^2 + (80*R^4*b1 + 96*R*b1^5)*S - 16*R^5 - 48*R^2*b1^4
 
 ### Auxiliary Eqs:
-### TODO: E2, E3;
+### TODO: E3;
+# E2 = (E3*S^2 + b*S^2 - R*S) / (2*(E3  + b));
 
 
 ### Test
@@ -792,7 +830,7 @@ unique.S = function(sol, digits=5) {
 R = -2; b = 3;
 sol = solve.classic(R, b)
 x = sol[,1]; y = sol[,2]; z = sol[,3];
-S = unique.S(sol);
+S = unique.S(sol); # S = unique.S(sol[-c(1,2,3),])
 round0.p(poly.calc(S) * b^3)
 
 
