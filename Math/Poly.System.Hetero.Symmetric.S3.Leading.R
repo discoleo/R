@@ -7,7 +7,7 @@
 ### Heterogenous Symmetric
 ### with Composite Leading Term
 ###
-### draft v.0.2d-clean
+### draft v.0.2e
 
 
 ### Hetero-Symmetric
@@ -25,6 +25,8 @@ z^n*x^m + P(z, x, y) = R
 ###############
 
 
+### draft v.0.2e:
+# - solved: x^2*y^2 + b*z = R;
 ### draft v.0.2d-clean:
 # - [cleanup] started moving derivations to file:
 #   Poly.System.Hetero.Symmetric.S3.Leading.Derivations.R;
@@ -235,21 +237,98 @@ round0.p(poly.calc(sol[1:6, 1]))
 ### Solution:
 
 ### Case: (x, y, z) distinct;
+# - NO solutions;
 
-### Diff =>
-(x-z)*(y^2*(x+z) - b) # = 0
-y^2*(x+z) - b # = 0
-### Sum(...) =>
-x^2*(y+z) + y^2*(x+z) + z^2*(x+y) - 3*b # = 0
-E2*S - 3*b # = 0
+### Case: x == y, z distinct;
 
 ### Sum =>
-E2^2 - E3*S + b*S - 3*R # = 0
+E2^2 - 2*E3*S + b*S - 3*R # = 0
 
 ### Sum(z*...) =>
 E2*E3 + b*(S^2 - 2*E2) - R*S # = 0
 
-### TODO
+### Sum(z^2*...) =>
+3*E3^2 + 3*b*E3 - 3*b*E2*S + 2*R*E2 + b*S^3 - R*S^2 # = 0
+
+### Note:
+# Invalid Solution: Diff & Sum =>
+E2*S - 3*E3 - 3*b # = 0
+
+
+### Eq:
+# S = 0; # seems to have NO solutions;
+b^2*S^6 - 2*b*R*S^5 + R^2*S^4 - 9*b^3*S^3 + 9*b^2*R*S^2 - 3*b*R^2*S + 27*b^4 - R^3
+
+
+### Solver:
+solve.S3L22.Simple = function(R, b, be=0, debug=TRUE) {
+	coeff = coeff.S3L22Simple(R, b, be=be);
+	S = roots(coeff);
+	if(debug) print(S);
+	R1 = R - be[1]*S; # Extension
+	E2x0 = 2*b*R1*S^5 - 2*R1^2*S^4 - 9*b^3*S^3 + 27*b^2*R1*S^2 + 36*b*R1^2*S - 243*b^4 - 18*R1^3;
+	E2Div = 30*b^2*S^4 - 48*b*R1*S^3 + 20*R1^2*S^2 - 189*b^3*S + 81*b^2*R1;
+	E2 = E2x0 / E2Div;
+	# E2*E3 + b*(S^2 - 2*E2) - R*S
+	E3 = - (b*S^2 - 2*b*E2 - R1*S) / E2;
+	len = length(S);
+	x = sapply(seq(len), function(id) roots(c(1, -S[id], E2[id], -E3[id])));
+	S = rep(S, each=3); E3 = rep(E3, each=3);
+	yz.s = S - x;
+	yz = E3 / x;
+	# yz.d = sqrt(yz.s^2 - 4*yz)
+	# robust
+	isEq = round0(x^2*yz.s - b, tol=1E-3) != 0;
+	y = z = as.vector(yz.s[isEq]/2);
+	sol = cbind(x=as.vector(x[isEq]), y=y, z=z);
+	# TODO: each sol2 is duplicated
+	y = x[ ! isEq]; z = yz.s[ ! isEq] - y;
+	sol2 = cbind(x=as.vector(x[ ! isEq]), y=as.vector(y), z=as.vector(z))
+	sol = rbind(sol, sol2, sol2[, c(1,3,2)]);
+	### Case: S == 0
+	# does NOT seem to be a valid solution!
+	# S = 0; E3 = 2*b; E2 = - (27*b^4 + 2*R^3) / (9*b^2*R);
+	# x = roots(c(1, 0, E2, -E3));
+	# sol = rbind(sol, x[c(1,2,3)], x[c(1,3,2)]);
+	return(sol);
+}
+coeff.S3L22Simple = function(R, b, be=0) {
+	coeff = c(b^2, - 2*b*R, R^2, - 9*b^3, 9*b^2*R, - 3*b*R^2, 27*b^4 - R^3);
+	if(any(be != 0)) {
+		coeff = coeff +
+			c(2*b*be[1] + be[1]^2, -2*R*be[1], 0, be[1]^3 - 3*b*be[1]^2 - 9*b^2*be[1],
+				-3*R*be[1]^2 + 6*b*R*be[1], 3*R^2*be[1], 0);
+	}
+	return(coeff);
+}
+
+### Examples;
+R = -1;
+b = 3;
+be = 0;
+sol = solve.S3L22.Simple(R, b, be=be);
+x = sol[,1]; y = sol[,2]; z = sol[,3];
+
+### Test:
+S = (x+y+z);
+x^2*y^2 + b*z + be*S # - R
+y^2*z^2 + b*x + be*S # - R
+z^2*x^2 + b*y + be*S # - R
+
+
+### Extensions:
+### Ex 2:
+R = -1;
+b = 3;
+be = 2;
+sol = solve.S3L22.Simple(R, b, be=be);
+x = sol[,1]; y = sol[,2]; z = sol[,3];
+
+### Test:
+S = (x+y+z);
+x^2*y^2 + b*z + be*S # - R
+y^2*z^2 + b*x + be*S # - R
+z^2*x^2 + b*y + be*S # - R
 
 
 ########################

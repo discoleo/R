@@ -82,3 +82,147 @@ R*S - 3*E3 + b1^2*S - 3*b1*R # = 0
 # S = 3*b1 is a FALSE solution;
 
 
+########################
+########################
+
+########################
+### Mixed-Order: 2+2 ###
+########################
+
+### x[i]^2*x[j]^2 + b*x[k]
+
+# x^2*y^2 + b*z = R
+# y^2*z^2 + b*x = R
+# z^2*x^2 + b*y = R
+
+### Solution:
+
+### Case 1: (x, y, z) distinct;
+# - NO solutions;
+### Diff =>
+(x-z)*(y^2*(x+z) - b) # = 0
+y^2*(x+z) - b # = 0
+### Sum(...) =>
+x^2*(y+z) + y^2*(x+z) + z^2*(x+y) - 3*b # = 0
+E2*S - 3*E3 - 3*b # = 0
+
+
+### Case 2:
+# x = y, but z distinct;
+
+### Sum =>
+E2^2 - 2*E3*S + b*S - 3*R # = 0
+
+### Sum(z*...) =>
+E2*E3 + b*(S^2 - 2*E2) - R*S # = 0
+
+### Sum(z^2*...) =>
+3*E3^2 + b*(x^3+y^3+z^3) - R*(x^2+y^2+z^2) # = 0
+3*E3^2 + b*(S^3 - 3*E2*S + 3*E3) - R*(S^2 - 2*E2) # = 0
+3*E3^2 + 3*b*E3 - 3*b*E2*S + 2*R*E2 + b*S^3 - R*S^2 # = 0
+
+
+### Eq:
+# S = 0;
+b^2*S^6 - 2*b*R*S^5 + R^2*S^4 - 9*b^3*S^3 + 9*b^2*R*S^2 - 3*b*R^2*S + 27*b^4 - R^3
+
+
+### Derivation:
+
+###
+pE3x0 = data.frame(E2=c(2,0,0), S=c(0,1,0), b=c(0,1,0), R=c(0,0,1), coeff=c(1,1,-3))
+pE3Div = data.frame(S=1, coeff=2)
+pz2 = data.frame(
+	E3 = c(2, 1, 0, 0, 0, 0),
+	E2 = c(0, 0, 1, 1, 0, 0),
+	S  = c(0, 0, 1, 0, 3, 2),
+	b  = c(0, 1, 1, 0, 1, 0),
+	R  = c(0, 0, 0, 1, 0, 1),
+	coeff = c(3, 3, -3, 2, 1, -1)
+)
+p3 = data.frame(
+	E3 = c(1, 0, 0, 0),
+	E2 = c(1, 0, 1, 0),
+	S  = c(0, 2, 0, 1),
+	b  = c(0, 1, 1, 0),
+	R  = c(0, 0, 0, 1),
+	coeff = c(1, 1, -2, -1)
+)
+pTriv = data.frame(S=c(4, 1, 0), b=c(0,1,0), R=c(0,0,1), coeff=c(1,27,-81))
+# 7*9*b^3*S^3 - 139*b^2*R*S^2 + 97*b*R^2*S - 21*R^3
+pDiv = data.frame(S=3:0, b=3:0, R=0:3, coeff=c(7*9,-139,97,-21))
+#
+p2r = replace.fr.pm(pz2, pE3x0, pE3Div, "E3", 1)
+p3r = replace.fr.pm(p3, pE3x0, pE3Div, "E3", 1)
+#
+pE3r = solve.pm(p2r, p3r, "E2");
+pS = pE3r[[1]]
+pS$coeff = pS$coeff / 384;
+pS$S = pS$S - min(pS$S); # S^6!
+pS = div.pm(pS, pTriv, "S")$Rez;
+pS = div.pm(pS, pDiv, "S")$Rez;
+pS = sort.pm(pS, c(4,2), xn="S");
+pS
+print.p(pS, "S")
+### Aux:
+pE3r$x0$coeff = pE3r$x0$coeff / 8;
+pE3r$div$coeff = pE3r$div$coeff / 8;
+S.min = min(pE3r$x0$S, pE3r$div$S);
+pE3r$x0$S = pE3r$x0$S - S.min;
+pE3r$div$S = pE3r$div$S - S.min;
+pE3r$x0 = diff.pm(pE3r$x0, mult.sc.pm(pS, 9))
+print.p(pE3r$x0, "S")
+print.p(pE3r$div, "S")
+cat(paste(toCoeff(pS, "S"), collapse=",\n"))
+
+
+# FALSE "solutions"
+9*(E3 + b)^2 - 2*E3*S^3 + b*S^3 - 3*R*S^2 # = 0
+9*E3^2 + 18*b*E3 - 2*E3*S^3 + b*S^3 - 3*R*S^2 + 9*b^2 # = 0
+#
+p2f = data.frame(
+	E3 = c(2, 1, 1,   0, 0, 0),
+	S  = c(0, 0, 3,   3, 2, 0),
+	b  = c(0, 1, 0,   1, 0, 2),
+	R  = c(0, 0, 0,   0, 1, 0),
+	coeff = c(9, 18, -2, 1, -3, 9)
+)
+pE3x0f = data.frame(E3=c(1,0), b=c(0,1), coeff=c(3,3))
+pE3Divf = data.frame(S=1, coeff=3)
+#
+p3rf = replace.fr.pm(p3, pE3x0f, pE3Divf, "E2", 1)
+p3rf$coeff = p3rf$coeff / 3;
+p3rf
+pE3rf = solve.pm(p3rf, p2f, "E3");
+pSf = pE3rf[[1]]
+pSf$S = pSf$S - min(pSf$S); # S^2!
+pSf = sort.pm(pSf, c(4,2), xn="S")
+pSf
+print.p(pSf, "S")
+print.p(pE3rf$x0, "S")
+
+
+### Test
+x^2*y^2 + b*z # - R
+y^2*z^2 + b*x # - R
+z^2*x^2 + b*y # - R
+
+### Debug:
+R = 2; b = -1;
+x = -0.6359778;
+y = -1.8364059538;
+z = -0.6359778;
+S = x+y+z; E2 = x*y+x*z+y*z; E3 = x*y*z;
+
+
+### Case: all distinct
+# but NO solutions;
+# S = 0;
+4*b*S^7 - 4*R*S^6 - 36*b^2*S^4 + 36*R^2*S^2 + 243*b^3*S - 243*b^2*R
+
+### Case: S == 0
+# - still NO solutions;
+E2^2 - 3*R # = 0
+# =>
+# E3 = b;
+
