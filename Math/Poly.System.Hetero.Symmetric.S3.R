@@ -6,7 +6,7 @@
 ### Polynomial Systems: S3
 ### Heterogeneous Symmetric
 ###
-### draft v.0.4f-clean3
+### draft v.0.4g
 
 
 ### Hetero-Symmetric
@@ -23,6 +23,9 @@ z^n + P(z, x, y) = R
 ### History ###
 ###############
 
+
+### draft v.0.4g:
+# - robust solution for S3P3 Simple;
 ### draft v.0.4f-clean 1 & 2 & 3:
 # - more cleaning;
 # - S3P3 MixedSideChain: factorized P[12] => P[8]
@@ -1721,6 +1724,10 @@ S^4 - 4*E2*S^2 + 4*E3 * S + 2*E2^2 + b*E2 - R*S # = 0;
 ### Sum(x[i+1]^3*...) =>
 b*S^4 - R*S^3 - 4*b*E2*S^2 + 3*R*E2*S + 4*b*E3*S - 3*E3*E2*S - 3*R*E3 + E2^3 + 2*b*E2^2 + 3*E3^2
 
+### Auxiliary Eqs:
+E2x0 = 6*S^6 + 13*b*S^4 - 30*R*S^3 + 4*b^2*S^2 - 9*b*R*S + 12*b^3;
+E2Div = 14*S^4 + 14*b*S^2 - 18*R*S + 3*b^2;
+E2 = E2x0 / E2Div;
 
 #######
 ### Eq:
@@ -1731,30 +1738,25 @@ S^8 - 3*b*S^6 + 18*b^2*S^4 - 27*R*b*S^3 + (27*R^2 + 4*b^3)*S^2 - 27*R*b^2*S + 9*
 
 
 ### Solver:
-solve.sysHt33 = function(R, b) {
+solve.sysHt33 = function(R, b, debug=TRUE, do.S=FALSE) {
 	# only S8 used to compute the roots:
 	coeff = c(1, 0, - 3*b[1], 0, 18*b[1]^2, - 27*R[1]*b[1], (27*R[1]^2 + 4*b[1]^3), - 27*R[1]*b[1]^2, 9*b[1]^4)
-	S = roots(coeff)
-	# exclude roots: x == y == z = S/3,
-	# as they create numerical instability due to root multiplicity;
-	# [should be actually excluded from P8]
+	S = roots(coeff);
 	isEq = round0(S^3 + 9*b[1]*S - 27*R) == 0
 	S = S[ ! isEq]
-	print(S)
-	### TODO: find robust roots!
-	# - there are 2 sets, each of 24 roots;
-	# - system of the 2nd set is unknown;
-	#   e.g. {S1-4: + Det, S5-8: - Det}, {S1-4: - Det, S5-8: + Det};
-	Det = sqrt(9*b[1]^2 + 24*S^4 + 96*b[1]*S^2 - 216*R[1]*S)
-	E2 = c(- b[1] + 1/3 * Det, - b[1] - 1/3 * Det) / 4
-	S = c(S, S)
-	E3 = (6*E2*S - 2*S^3 - 2*b[1]*S + 6*R[1]) / 6
+	if(debug) print(S);
+	E2x0 = 6*S^6 + 13*b*S^4 - 30*R*S^3 + 4*b^2*S^2 - 9*b*R*S + 12*b^3;
+	E2Div = 14*S^4 + 14*b*S^2 - 18*R*S + 3*b^2;
+	E2 = E2x0 / E2Div;
+	E3 = (6*E2*S - 2*S^3 - 2*b[1]*S + 6*R[1]) / 6;
 	x = sapply(1:length(S), function(id) roots(c(1, -S[id], E2[id], -E3[id])))
 	len = length(S)
 	S = matrix(S, ncol=len, nrow=3, byrow=T)
 	y = (R - x^3) / b[1]
 	z = (R - y^3) / b[1]
-	return(cbind(x=as.vector(x), y=as.vector(y), z=as.vector(z), S=as.vector(S)))
+	sol = cbind(x=as.vector(x), y=as.vector(y), z=as.vector(z));
+	if(do.S) sol = cbind(sol, S=as.vector(S));
+	return(sol);
 }
 
 ###########
