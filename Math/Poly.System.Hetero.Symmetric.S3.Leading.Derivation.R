@@ -226,3 +226,75 @@ E2^2 - 3*R # = 0
 # =>
 # E3 = b;
 
+
+### Classic Polynomial:
+R = -1;
+b = 3
+x0 = roots(c(1, 0, 0, - b, - R, 0, b^2));
+x = x0; y = (R - x0^4) / b; S = 2*x + y;
+err = x^6 - b*x^3 - R*x^2 + b^2;
+round0(err)
+
+x = y;
+err = b^2*x^6 - 2*b*R*x^5 + R^2*x^4 - b^3*x^3 + 3*b^2*R*x^2 - b*R^2*x + b^4 - R^3;
+round0(err)
+
+err = b^2*S^6 - 2*b*R*S^5 + R^2*S^4 - 9*b^3*S^3 + 9*b^2*R*S^2 - 3*b*R^2*S + 27*b^4 - R^3;
+round0(err)
+
+
+########################
+########################
+
+########################
+### Mixed-Order: 3+3 ###
+########################
+
+### x[i]^3*x[j]^3 + b*x[k]
+
+# x^3*y^3 + b*z = R
+# y^3*z^3 + b*x = R
+# z^3*x^3 + b*y = R
+
+### Solution:
+
+### TODO
+
+
+### Classic Polynomial:
+
+### Case: x == y
+# x^6 + b*z = R
+# x^3*z^3 + b*x = R
+# (but one has to know this)
+
+n = 3
+p0 = data.frame(x=c(2*n,1,0), b=c(0,1,0), R=c(0,0,1), coeff=c(1,1,-1))
+p1 = data.frame(x=c(2*n,0,0), z=c(0,1,0), b=c(0,1,0), R=c(0,0,1), coeff=c(1,1,-1))
+p2 = data.frame(x=c(n,1,0), z=c(n,0,0), b = c(0,1,0), R=c(0,0,1), coeff=c(1,1,-1))
+var.name = "x"
+p = solve.pm(p1, p2, x=var.name)
+var.other = "z"
+names(p$Rez)[names(p$Rez) == var.other] = "x";
+p$Rez$x = p$Rez$x - min(p$Rez$x);
+p$Rez$b = p$Rez$b - min(p$Rez$b);
+p$Rez = sort.pm(p$Rez, c(4,3), xn="x")
+print.p(p$Rez, "x")
+#
+pR = div.pm(p$Rez, p0, "x")$Rez;
+pR$b = pR$b - min(pR$b);
+pR = sort.pm(pR, c(4,3), xn="x")
+print.p(pR, "x")
+
+
+# Case x == y;
+x^21 - 3*R*x^15 + 3*R^2*x^9 - R^3*x^3 - b^4*x + b^3*R
+# Case y == z;
+b^3*x^21 - 3*b^2*R*x^20 + 3*b*R^2*x^19 - R^3*x^18 + 3*b^2*R^2*x^14 - 6*b*R^3*x^13 + 3*R^4*x^12 +
+	- 2*b^5*x^11 + 4*b^4*R*x^10 - 2*b^3*R^2*x^9 + 3*b*R^4*x^7 - 3*R^5*x^6 + 6*b^4*R^2*x^4 +
+	- 6*b^3*R^3*x^3 + b^7*x - b^6*R + R^6
+#
+(x^6 + b*x - R) * (x^15 - b*x^10 - 2*R*x^9 + b^2*x^5 + b*R*x^4 + R^2*x^3 - b^3) *
+(b^3*x^15 - 3*b^2*R*x^14 + 3*b*R^2*x^13 - R^3*x^12 - b^4*x^10 + 4*b^3*R*x^9 - 3*b^2*R^2*x^8 +
+	- 2*b*R^3*x^7 + 2*R^4*x^6 - b^5*x^5 - b^4*R*x^4 + 5*b^3*R^2*x^3 - b^2*R^3*x^2 - b*R^4*x + b^6 - R^5)
+	
