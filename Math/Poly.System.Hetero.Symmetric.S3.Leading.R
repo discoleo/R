@@ -7,7 +7,7 @@
 ### Heterogenous Symmetric
 ### with Composite Leading Term
 ###
-### draft v.0.2e
+### draft v.0.2e-clPoly
 
 
 ### Hetero-Symmetric
@@ -25,8 +25,9 @@ z^n*x^m + P(z, x, y) = R
 ###############
 
 
-### draft v.0.2e:
+### draft v.0.2e - v.0.2e-clPoly:
 # - solved: x^2*y^2 + b*z = R;
+# - classic Polynomial (for case x == y);
 ### draft v.0.2d-clean:
 # - [cleanup] started moving derivations to file:
 #   Poly.System.Hetero.Symmetric.S3.Leading.Derivations.R;
@@ -282,8 +283,9 @@ solve.S3L22.Simple = function(R, b, be=0, debug=TRUE) {
 	y = z = as.vector(yz.s[isEq]/2);
 	sol = cbind(x=as.vector(x[isEq]), y=y, z=z);
 	# TODO: each sol2 is duplicated
-	y = x[ ! isEq]; z = yz.s[ ! isEq] - y;
-	sol2 = cbind(x=as.vector(x[ ! isEq]), y=as.vector(y), z=as.vector(z))
+	# y = x[ ! isEq]; z = yz.s[ ! isEq] - y;
+	# sol2 = cbind(x=as.vector(x[ ! isEq]), y=as.vector(y), z=as.vector(z))
+	sol2 = sol[, c(2,1,3)];
 	sol = rbind(sol, sol2, sol2[, c(1,3,2)]);
 	### Case: S == 0
 	# does NOT seem to be a valid solution!
@@ -329,6 +331,11 @@ S = (x+y+z);
 x^2*y^2 + b*z + be*S # - R
 y^2*z^2 + b*x + be*S # - R
 z^2*x^2 + b*y + be*S # - R
+
+### Classic Polynomial:
+# - for case x == y; (but one has to know this)
+x^10 - 2*R*x^6 + R^2*x^2 + b^3*x - b^2*R
+(x^4 + b*x - R) * (x^6 - b*x^3 - R*x^2 + b^2)
 
 
 ########################
