@@ -7,7 +7,7 @@
 ### Heterogenous Symmetric
 ### with Composite Leading Term
 ###
-### draft v.0.2e-clPoly
+### draft v.0.2e-clPoly2
 
 
 ### Hetero-Symmetric
@@ -333,11 +333,42 @@ y^2*z^2 + b*x + be*S # - R
 z^2*x^2 + b*y + be*S # - R
 
 ### Classic Polynomial:
-# - for case x == y; (but one has to know this)
+# - for case x == y:
 x^10 - 2*R*x^6 + R^2*x^2 + b^3*x - b^2*R
-(x^4 + b*x - R) * (x^6 - b*x^3 - R*x^2 + b^2)
+# - for case y == z:
+(b^2*x^10 - 2*b*R*x^9 + R^2*x^8 + 2*b*R^2*x^5 - 2*R^3*x^4 + 4*b^3*R*x^3 +
+	- 4*b^2*R^2*x^2 + b^5*x - b^4*R + R^4)
+# (but one has to know this)
+(x^4 + b*x - R) * (x^6 - b*x^3 - R*x^2 + b^2) *
+	(b^2*x^6 - 2*b*R*x^5 + R^2*x^4 - b^3*x^3 + 3*b^2*R*x^2 - b*R^2*x + b^4 - R^3)
 
 
+
+########################
+########################
+
+########################
+### Mixed-Order: 3+3 ###
+########################
+
+### x[i]^3*x[j]^3 + b*x[k]
+
+# x^3*y^3 + b*z = R
+# y^3*z^3 + b*x = R
+# z^3*x^3 + b*y = R
+
+### Solution:
+
+### TODO
+
+
+### Classic Polynomial:
+# - for case x == y; (but one has to know this)
+x^21 - 3*R*x^15 + 3*R^2*x^9 - R^3*x^3 - b^4*x + b^3*R
+(x^6 + b*x - R) * (x^15 - b*x^10 - 2*R*x^9 + b^2*x^5 + b*R*x^4 + R^2*x^3 - b^3)
+
+
+########################
 ########################
 ########################
 
