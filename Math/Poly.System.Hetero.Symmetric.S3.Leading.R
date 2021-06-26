@@ -7,7 +7,7 @@
 ### Heterogenous Symmetric
 ### with Composite Leading Term
 ###
-### draft v.0.2e-sol
+### draft v.0.2e-sol-robust
 
 
 ### Hetero-Symmetric
@@ -25,11 +25,11 @@ z^n*x^m + P(z, x, y) = R
 ###############
 
 
-### draft v.0.2e-clPoly3 - v.0.2e-sol:
+### draft v.0.2e-clPoly3 - v.0.2e-sol-robust:
 # - classic Polynomial for:
 #   x^3*y*3 + b^z = R;
 # - solved: x^3*y*3 + b^z = R;
-# - TODO: robust solution;
+# - [DONE] robust solution;
 ### draft v.0.2e - v.0.2e-clPoly:
 # - solved: x^2*y^2 + b*z = R;
 # - classic Polynomial (for case x == y);
@@ -375,12 +375,11 @@ E2^3 - 3*E3*E2*S + 3*E3^2 + b*S - 3*R
 E2^2 - E3*S # = 0
 
 ### Eq S:
-b^3*S^11 - 3*b^2*R*S^10 + 3*b*R^2*S^9 - R^3*S^8 - 26*b^4*S^6 + 162*b^3*R*S^5 - 324*b^2*R^2*S^4 +
-	+ 270*b*R^3*S^3 - 81*R^4*S^2 - 27*b^5*S + 81*b^4*R
+b^3*S^5 - 3*b^2*R*S^4 + 3*b*R^2*S^3 - R^3*S^2 + b^4
 
 ### Solver:
-solve.S3L33Simple = function(R, b, debug=TRUE) {
-	coeff = coeff.S3L33Simple(R, b);
+solve.S3L33Simple = function(R, b, be=0, debug=TRUE) {
+	coeff = coeff.S3L33Simple(R, b, be=be);
 	S = roots(coeff);
 	if(debug) print(S);
 	len = length(S);
@@ -391,17 +390,22 @@ solve.S3L33Simple = function(R, b, debug=TRUE) {
 	x = sapply(seq(len), function(id) roots(c(1, -S[id], E2[id], -E3[id])));
 	S = rep(S, each=3); E3 = rep(E3, each=3);
 	yz.s = S - x; yz = E3 / x;
-	# robust: ???
+	# robust:
+	# x^3*yz*y^2 + b*z^2 - R*z = 0
+	# x^3*yz*y^2 + b*(yz.s - y)^2 - R*(yz.s - y) = 0
 	x = as.vector(x); yz.s = as.vector(yz.s);
-	y = sapply(seq_along(x), function(id) roots(c(x[id]^3, 0, 0, -R, b*yz[id])))
-	x = rep(x, each=4); yz.s = rep(yz.s, each=4); y = as.vector(y);
+	y = sapply(seq_along(x), function(id)
+		roots(c(x[id]^3*yz[id] +b, -2*b*yz.s[id] + R, b*yz.s[id]^2 - R*yz.s[id])));
+	x = rep(x, each=2); yz.s = rep(yz.s, each=2);
+	y = as.vector(y);
 	z = yz.s - y;
 	sol = cbind(x=x, y=y, z=z);
+	# TODO:
+	# add also the roots with pairwise equal variables;
 	return(sol);
 }
-coeff.S3L33Simple = function(R, b) {
-	coeff = c(b^3, - 3*b^2*R, 3*b*R^2, - R^3, 0, - 26*b^4, 162*b^3*R, - 324*b^2*R^2,
-		270*b*R^3, - 81*R^4, - 27*b^5, 81*b^4*R);
+coeff.S3L33Simple = function(R, b, be=0) {
+	coeff = c(b^3, - 3*b^2*R, 3*b*R^2, - R^3, 0, b^4);
 	return(coeff);
 }
 
@@ -419,13 +423,14 @@ z^3*x^3 + b*y # - R
 
 
 ### Classic Polynomial:
-# Case x == y:
+### Case x == y:
 x^21 - 3*R*x^15 + 3*R^2*x^9 - R^3*x^3 - b^4*x + b^3*R
-# Case y == z:
+### Case y == z:
 b^3*x^21 - 3*b^2*R*x^20 + 3*b*R^2*x^19 - R^3*x^18 + 3*b^2*R^2*x^14 - 6*b*R^3*x^13 + 3*R^4*x^12 +
 	- 2*b^5*x^11 + 4*b^4*R*x^10 - 2*b^3*R^2*x^9 + 3*b*R^4*x^7 - 3*R^5*x^6 + 6*b^4*R^2*x^4 +
 	- 6*b^3*R^3*x^3 + b^7*x - b^6*R + R^6
 # (but one has to know this)
+### Case: all distinct: TODO;
 (x^6 + b*x - R) * (x^15 - b*x^10 - 2*R*x^9 + b^2*x^5 + b*R*x^4 + R^2*x^3 - b^3) *
 (b^3*x^15 - 3*b^2*R*x^14 + 3*b*R^2*x^13 - R^3*x^12 - b^4*x^10 + 4*b^3*R*x^9 - 3*b^2*R^2*x^8 +
 	- 2*b*R^3*x^7 + 2*R^4*x^6 - b^5*x^5 - b^4*R*x^4 + 5*b^3*R^2*x^3 - b^2*R^3*x^2 - b*R^4*x + b^6 - R^5)

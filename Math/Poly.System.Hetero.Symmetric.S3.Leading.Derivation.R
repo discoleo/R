@@ -287,6 +287,8 @@ E2Div = (104*b^2*S^5 - 168*b*R*S^4 + 72*R^2*S^3 + 216*b^3);
 E2 = E2x0 / E2Div;
 
 ### Eq:
+b^3*S^5 - 3*b^2*R*S^4 + 3*b*R^2*S^3 - R^3*S^2 + b^4
+### P[5] * (S^6 - 27*b*S + 81*R)
 b^3*S^11 - 3*b^2*R*S^10 + 3*b*R^2*S^9 - R^3*S^8 - 26*b^4*S^6 + 162*b^3*R*S^5 - 324*b^2*R^2*S^4 +
 	+ 270*b*R^3*S^3 - 81*R^4*S^2 - 27*b^5*S + 81*b^4*R
 
@@ -311,6 +313,9 @@ pSr$Rez$S = pSr$Rez$S - min(pSr$Rez$S);
 pSr$Rez$b = pSr$Rez$b - min(pSr$Rez$b);
 pS = sort.pm(pSr$Rez, c(4,3), "S")
 print.p(pS, "S")
+pS = div.pm(pS, data.frame(S=c(6,1,0), b=c(0,1,0), R=c(0,0,1), coeff=c(1,-3^3, 3^4)), "S")
+pS = sort.pm(pS$Rez, c(4,3), "S")
+print.p(pS, "S")
 #
 pE2x0 = pSr$x0; pE2Div = pSr$div;
 Scmm = min(pE2x0$S, pE2Div$S);
@@ -320,6 +325,7 @@ pE2Div = sort.pm(pE2Div, c(4,3), "S");
 pE2x0; pE2Div;
 print.p(pE2x0, "S");
 print.p(pE2Div, "S");
+
 
 ### Classic Polynomial:
 
