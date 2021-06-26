@@ -7,7 +7,7 @@
 ### Heterogenous Symmetric
 ### with Composite Leading Term
 ###
-### draft v.0.2e-clPoly3
+### draft v.0.2e-sol
 
 
 ### Hetero-Symmetric
@@ -25,9 +25,11 @@ z^n*x^m + P(z, x, y) = R
 ###############
 
 
-### draft v.0.2e-clPoly3:
+### draft v.0.2e-clPoly3 - v.0.2e-sol:
 # - classic Polynomial for:
 #   x^3*y*3 + b^z = R;
+# - solved: x^3*y*3 + b^z = R;
+# - TODO: robust solution;
 ### draft v.0.2e - v.0.2e-clPoly:
 # - solved: x^2*y^2 + b*z = R;
 # - classic Polynomial (for case x == y);
@@ -362,7 +364,58 @@ x^10 - 2*R*x^6 + R^2*x^2 + b^3*x - b^2*R
 
 ### Solution:
 
-### TODO
+### Sum =>
+E2^3 - 3*E3*E2*S + 3*E3^2 + b*S - 3*R
+
+### Sum(z*...) =>
+2*E3^2*S - E2^2*E3 + 2*b*E2 - b*S^2 + R*S # = 0
+
+### Diff =>
+# - if distinct solutions exist?
+E2^2 - E3*S # = 0
+
+### Eq S:
+b^3*S^11 - 3*b^2*R*S^10 + 3*b*R^2*S^9 - R^3*S^8 - 26*b^4*S^6 + 162*b^3*R*S^5 - 324*b^2*R^2*S^4 +
+	+ 270*b*R^3*S^3 - 81*R^4*S^2 - 27*b^5*S + 81*b^4*R
+
+### Solver:
+solve.S3L33Simple = function(R, b, debug=TRUE) {
+	coeff = coeff.S3L33Simple(R, b);
+	S = roots(coeff);
+	if(debug) print(S);
+	len = length(S);
+	E2x0 = (32*b^2*S^7 - 56*b*R*S^6 + 24*R^2*S^5 + 144*b^3*S^2 - 216*b^2*R*S);
+	E2Div = (104*b^2*S^5 - 168*b*R*S^4 + 72*R^2*S^3 + 216*b^3);
+	E2 = E2x0 / E2Div;
+	E3 = E2^2 / S;
+	x = sapply(seq(len), function(id) roots(c(1, -S[id], E2[id], -E3[id])));
+	S = rep(S, each=3); E3 = rep(E3, each=3);
+	yz.s = S - x; yz = E3 / x;
+	# robust: ???
+	x = as.vector(x); yz.s = as.vector(yz.s);
+	y = sapply(seq_along(x), function(id) roots(c(x[id]^3, 0, 0, -R, b*yz[id])))
+	x = rep(x, each=4); yz.s = rep(yz.s, each=4); y = as.vector(y);
+	z = yz.s - y;
+	sol = cbind(x=x, y=y, z=z);
+	return(sol);
+}
+coeff.S3L33Simple = function(R, b) {
+	coeff = c(b^3, - 3*b^2*R, 3*b*R^2, - R^3, 0, - 26*b^4, 162*b^3*R, - 324*b^2*R^2,
+		270*b*R^3, - 81*R^4, - 27*b^5, 81*b^4*R);
+	return(coeff);
+}
+
+### Examples:
+R = -1;
+b = 3;
+sol = solve.S3L33Simple(R, b);
+x = sol[,1]; y = sol[,2]; z = sol[,3];
+
+
+### Test
+x^3*y^3 + b*z # - R
+y^3*z^3 + b*x # - R
+z^3*x^3 + b*y # - R
 
 
 ### Classic Polynomial:

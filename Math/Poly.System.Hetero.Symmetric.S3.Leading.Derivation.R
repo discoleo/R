@@ -258,8 +258,68 @@ round0(err)
 
 ### Solution:
 
-### TODO
+### Sum =>
+(x^3*y^3 + y^3*z^3 + z^3*x^3) + b*S - 3*R # = 0
+E2^3 - 3*E3*E2*S + 3*E3^2 + b*S - 3*R
 
+### Sum(z*...) =>
+E3*(x^2*y^2 + y^2*z^2 + z^2*x^2) + b*(S^2 - 2*E2) - R*S # = 0
+E3*(E2^2 - 2*E3*S) + b*(S^2 - 2*E2) - R*S # = 0
+2*E3^2*S - E2^2*E3 + 2*b*E2 - b*S^2 + R*S # = 0
+
+### Diff =>
+y^3*(x^3-z^3) - b*(x-z) # = 0
+### Case: (x, y, z) distinct =>
+y^3*(x^2 + z^2 + x*z) - b # = 0
+z^3*(x^2 + y^2 + x*y) - b # = 0
+x^3*(y^2 + z^2 + y*z) - b # = 0
+### Diff =>
+x^2*(y^3-z^3) + y^2*z^2*(y-z) + E3*(y^2-z^2) # = 0
+x^2*(y^2 + z^2 + y*z) + y^2*z^2 + E3*(y+z) # = 0
+### Sum =>
+3*(x^2*y^2 + y^2*z^2 + z^2*x^2) + 3*E3*S # = 0
+E2^2 - E3*S # = 0
+# E3*S = E2^2
+
+### Auxiliary Eqs:
+E2x0 = (32*b^2*S^7 - 56*b*R*S^6 + 24*R^2*S^5 + 144*b^3*S^2 - 216*b^2*R*S);
+E2Div = (104*b^2*S^5 - 168*b*R*S^4 + 72*R^2*S^3 + 216*b^3);
+E2 = E2x0 / E2Div;
+
+### Eq:
+b^3*S^11 - 3*b^2*R*S^10 + 3*b*R^2*S^9 - R^3*S^8 - 26*b^4*S^6 + 162*b^3*R*S^5 - 324*b^2*R^2*S^4 +
+	+ 270*b*R^3*S^3 - 81*R^4*S^2 - 27*b^5*S + 81*b^4*R
+
+
+### Solve:
+### Eq 1:
+3*E2^4 - 2*E2^3*S^2 + b*S^3 - 3*R*S^2 # = 0
+### Eq 2:
+E2^4 + 2*b*E2*S - b*S^3 + R*S^2 # = 0
+
+p1 = data.frame(
+	E2 = c(4, 3, 0, 0), S = c(0, 2, 3, 2),
+	b  = c(0, 0, 1, 0), R = c(0, 0, 0, 1), coeff = c(3,-2,1,-3)
+)
+p2 = data.frame(
+	E2 = c(4, 1, 0, 0), S = c(0, 1, 3, 2),
+	b  = c(0, 1, 1, 0), R = c(0, 0, 0, 1), coeff = c(1, 2,-1,1)
+)
+pSr = solve.pm(p1, p2, xn="E2")
+pSr$Rez$coeff = pSr$Rez$coeff / 1152;
+pSr$Rez$S = pSr$Rez$S - min(pSr$Rez$S);
+pSr$Rez$b = pSr$Rez$b - min(pSr$Rez$b);
+pS = sort.pm(pSr$Rez, c(4,3), "S")
+print.p(pS, "S")
+#
+pE2x0 = pSr$x0; pE2Div = pSr$div;
+Scmm = min(pE2x0$S, pE2Div$S);
+pE2x0$S = pE2x0$S - Scmm; pE2Div$S = pE2Div$S - Scmm;
+pE2x0 = sort.pm(pE2x0, c(4,3), "S");
+pE2Div = sort.pm(pE2Div, c(4,3), "S");
+pE2x0; pE2Div;
+print.p(pE2x0, "S");
+print.p(pE2Div, "S");
 
 ### Classic Polynomial:
 
@@ -297,4 +357,16 @@ b^3*x^21 - 3*b^2*R*x^20 + 3*b*R^2*x^19 - R^3*x^18 + 3*b^2*R^2*x^14 - 6*b*R^3*x^1
 (x^6 + b*x - R) * (x^15 - b*x^10 - 2*R*x^9 + b^2*x^5 + b*R*x^4 + R^2*x^3 - b^3) *
 (b^3*x^15 - 3*b^2*R*x^14 + 3*b*R^2*x^13 - R^3*x^12 - b^4*x^10 + 4*b^3*R*x^9 - 3*b^2*R^2*x^8 +
 	- 2*b*R^3*x^7 + 2*R^4*x^6 - b^5*x^5 - b^4*R*x^4 + 5*b^3*R^2*x^3 - b^2*R^3*x^2 - b*R^4*x + b^6 - R^5)
-	
+
+
+### Test
+x^3*y^3 + b*z # - R
+y^3*z^3 + b*x # - R
+z^3*x^3 + b*y # - R
+
+### Debug
+R = -1; b = 3;
+x = roots(c(1,0,0,0,0, - b, - 2*R, 0,0,0, b^2, b*R, R^2, 0,0, - b^3))
+x = x[1]; y = x; z = (R - x^6) / b;
+S = x+y+z; E2 = x*y+x*z+y*z; E3 = x*y*z;
+
