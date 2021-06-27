@@ -82,6 +82,12 @@ mult.p = function(p1, p2) {
 	return(p)
 }
 ### Multi-variable Multiplication
+# p = multi-variable polynomial;
+#  => data.frame with exponents of variables;
+#  => coeff = column with the coefficients;
+# Note:
+# - initial idea was to allow also basic lists,
+#   but most functions work only with data frames!
 mult.all.pm = function(p) {
 	if( ! is.list(p)) stop("p must be a list of polynomials");
 	len = length(p);
@@ -89,9 +95,11 @@ mult.all.pm = function(p) {
 	for(id in seq(2, len)) {
 		p2 = p[[id]];
 		if(is.numeric(p2)) {
-			pR = mult.sc.pm(pR, p2);
+			if(is.numeric(pR)) pR = pR * p2
+			else pR = mult.sc.pm(pR, p2);
 		} else {
-			pR = mult.pm(pR, p2);
+			if(is.numeric(pR)) pR = mult.sc.pm(p2, pR)
+			else pR = mult.pm(pR, p2);
 		}
 	}
 	return(pR);
@@ -103,7 +111,16 @@ mult.pm = function(p1, p2, sc=1) {
 		names(p.l) = colnames(p.df);
 		return(p.l);
 	}
+	if(is.numeric(p1)) {
+		if(is.list(p2)) return(mult.sc.pm(p2, p1));
+		return(data.frame(coeff=p1*p2));
+	}
 	if(is.data.frame(p1)) {
+		if(ncol(p1) == 1) {
+			if(is.numeric(p2)) return(data.frame(coeff=p1$coeff * p2));
+			if(ncol(p2) == 1) return(data.frame(coeff=p1$coeff * p2$coeff));
+			return(mult.sc.pm(p2, p1$coeff));
+		}
 		p1 = split.df(p1);
 	}
 	p1.b0 = p1$coeff;
@@ -123,9 +140,9 @@ mult.pm = function(p1, p2, sc=1) {
 	prod.b0 = function(p1, p2=p1) outer(p1, p2);
 	# Adjust Vars
 	vars = unique(c(names(p1), names(p2)));
-	len  = length(p1[[1]])
+	len  = if(length(p1) > 0) length(p1[[1]]) else 0; # ???
 	for(v in vars[ ! vars %in% names(p1)]) p1[[v]] = rep(0, len);
-	len  = length(p2[[1]])
+	len  = if(length(p2) > 0) length(p2[[1]]) else 0;
 	for(v in vars[ ! vars %in% names(p2)]) p2[[v]] = rep(0, len);
 	# print(p1); print(p2);
 	# Multiply
@@ -133,7 +150,7 @@ mult.pm = function(p1, p2, sc=1) {
 	p.b0 = prod.b0(p1.b0, p2.b0);
 	p.l = lapply(p.m, as.vector);
 	p.v = do.call(cbind, p.l)
-	p.v = cbind(p.v, b0=as.vector(p.b0))
+	p.v = cbind(p.v, b0=as.vector(p.b0));
 	p.r = aggregate(b0~., p.v, sum);
 	colnames(p.r) = c(vars, "coeff");
 	if(sc != 1) p.r$coeff = p.r$coeff * sc;
@@ -173,8 +190,33 @@ mult.sc.pm = function(p, s, div=1, coeff.name="coeff") {
 	} else stop("p must be a polynomial!")
 	return(p);
 }
+simplify.spm = function(p1) {
+	nms = names(p1);
+	nms = nms[ ! nms %in% "coeff"];
+	for(nm in nms) {
+		v.pow = min(p1[,nm]);
+		if(v.pow > 0) {
+			p1[,nm] = p1[,nm] - v.pow;
+		}
+	}
+	return(p1);
+}
+simplify.pm = function(p1, p2) {
+	# simplify fractions: x^n1 / x^n2;
+	if(is.null(p2)) return(simplify.spm(p1));
+	com.nm = intersect(names(p1), names(p2));
+	com.nm = com.nm[ ! com.nm %in% "coeff"];
+	for(nm in com.nm) {
+		v.pow = min(p1[,nm], p2[,nm]);
+		if(v.pow > 0) {
+			p1[,nm] = p1[,nm] - v.pow;
+			p2[,nm] = p2[,nm] - v.pow;
+		}
+	}
+	return(list(p1=p1, p2=p2));
+}
 reduce.pm = function(p) {
-	# remove Monomes with coeff == 0;
+	# remove Monomials with coeff == 0;
 	id = which(p$coeff != 0)
 	if(is.data.frame(p)) {
 		return(p[id, ]);
@@ -269,8 +311,12 @@ replace.pm = function(p1, p2, x, pow=1) {
 	max.pow = max(rpow);
 	p2.pows = list(p2);
 	if(max.pow > 1) {
-		for(ipow in seq(2, max.pow)) {
-			p2.pows[[ipow]] = mult.pm(p2.pows[[ipow - 1]], p2);
+		if(ncol(p2) > 1) {
+			for(ipow in seq(2, max.pow)) {
+				p2.pows[[ipow]] = mult.pm(p2.pows[[ipow - 1]], p2);
+			}
+		} else {
+			p2.pows = sum(p2$coeff)^seq(max.pow);
 		}
 	}
 	pR = data.frame();
@@ -303,19 +349,20 @@ replace.fr.pm = function(p1, p2, p2fr, x, pow=1) {
 			else if(max.pow == ipow) list(p2.pows[[max.pow]])
 			else list(p2.pows[[ipow]], p2fr.pows[[max.pow - ipow]]);
 		lp = c(lp, list(p1[nr,]));
-		pR = add.pm(pR, mult.all.pm(lp));
-	}
+		tmp = mult.all.pm(lp);
+		pR = add.pm(pR, tmp);
+	};
 	return(reduce.var.pm(pR));
 }
 sort.pm = function(p, sort.coeff=1, xn=NULL) {
-	pP = p[, - which(names(p) == "coeff")];
+	pP = p[, - which(names(p) == "coeff"), drop=FALSE];
 	pow.tot = sapply(seq(nrow(p)), function(id) sum(pP[id, ]));
 	pow.max = sapply(seq(nrow(p)), function(id) max(pP[id, ]));
 	if(length(sort.coeff) == 1) {
 		id = order(abs(p$coeff), pow.tot, pow.max);
 	} else {
 		coeff.df = data.frame(abs(p$coeff), -pow.tot, -pow.max);
-		if( ! is.null(xn)) coeff.df$x = -pP[,xn];
+		if( ! is.null(xn)) coeff.df = cbind(coeff.df, -pP[,xn]);
 		if(length(sort.coeff) > 3 + length(xn)) {
 			# minimum power of Monome: may be 0;
 			coeff.df$min = sapply(seq(nrow(p)), function(id) -min(pP[id, ]));
@@ -395,7 +442,7 @@ gcd.pm = function(p1, p2, by="x", div.sc=1) {
 	}
 	return(pR);
 }
-solve.pm = function(p1, p2, xn, stop.at=NULL) {
+solve.pm = function(p1, p2, xn, stop.at=NULL, simplify=TRUE) {
 	max1 = max(p1[,xn]); max2 = max(p2[,xn]);
 	if(max1 == 0) stop("No variable!")
 	if(max2 == 0) stop("No variable!")
@@ -410,7 +457,7 @@ solve.pm = function(p1, p2, xn, stop.at=NULL) {
 		px = p[,xn];
 		p2 = p[, - match(xn, names(p)), drop=FALSE];
 		p2x = p2[px == pow,];
-		p20 = p2[px != pow,];
+		p20 = p2[px != pow,]; # changed to (- coeff) in max2-section;
 		return(list(p20, p2x));
 	}
 	if(max2 == 1) {
@@ -420,23 +467,28 @@ solve.pm = function(p1, p2, xn, stop.at=NULL) {
 			p1 = p1[p1[,xn] == 0,];
 			return(p1);
 		}
-		p1 = replace.fr.pm(p1, lp2[[1]], lp2[[2]], x=xn, pow=1);
-		return(list(p1, x0=lp2[[1]], div=lp2[[2]], xn=xn));
+		print(paste0("Substituting: Len = ", nrow(p1),
+			"; Len = ", nrow(lp2[[1]]), " + ", nrow(lp2[[2]])));
+		lp2[[2]]$coeff = - lp2[[2]]$coeff; # !
+		p1 = replace.fr.bigpm(p1, lp2[[1]], lp2[[2]], x=xn, pow=1);
+		if(simplify) p1 = simplify.spm(p1);
+		return(list(Rez=p1, x0=lp2[[1]], div=lp2[[2]], xn=xn));
 	}
 	leading.pm = function(p, pow) {
 		px = p[,xn];
 		p2 = p[, - match(xn, names(p)), drop=FALSE];
 		p2x = p2[px == pow,];
 		return(p2x);
-	}
+	};
 	p1cf = leading.pm(p1, max1);
 	p2cf = leading.pm(p2, max2);
 	dmax = max1 - max2;
 	if(dmax < 0) p2cf[,xn] = -dmax;
 	if(dmax > 0) p1cf[,xn] = dmax;
 	# TODO: gcd of coefficients & polynomials;
-	p1 = diff.pm(mult.pm(p1, p2cf), mult.pm(p2, p1cf));
+	p1 = sum.bigpm(mult.bigpm(p1, p2cf), mult.bigpm(p2, p1cf, -1));
 	print(paste0("Max pow: ", max1, "; Len = ", nrow(p1)));
+	if(simplify) { p1 = simplify.spm(p1); p2 = simplify.spm(p2); }
 	return(solve.pm(p1, p2, xn=xn, stop.at=stop.at));
 }
 
