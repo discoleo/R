@@ -4,10 +4,10 @@
 ### [the one and only]
 ###
 ### Polynomial Systems: S3
-### Heterogenous Symmetric
+### Heterogeneous Symmetric
 ### with Composite Leading Term
 ###
-### draft v.0.2e-sol-robust
+### draft v.0.2e-clPoly-d
 
 
 ### Hetero-Symmetric
@@ -430,10 +430,14 @@ b^3*x^21 - 3*b^2*R*x^20 + 3*b*R^2*x^19 - R^3*x^18 + 3*b^2*R^2*x^14 - 6*b*R^3*x^1
 	- 2*b^5*x^11 + 4*b^4*R*x^10 - 2*b^3*R^2*x^9 + 3*b*R^4*x^7 - 3*R^5*x^6 + 6*b^4*R^2*x^4 +
 	- 6*b^3*R^3*x^3 + b^7*x - b^6*R + R^6
 # (but one has to know this)
-### Case: all distinct: TODO;
+### Case: all distinct:
+b^3*x^15 - 3*b^2*R*x^14 + 3*b*R^2*x^13 - R^3*x^12 + b^4*x^10 - b^3*R*x^9 +
+	- b*R^3*x^7 + R^4*x^6 + b^5*x^5 + b^4*R*x^4 - 2*b^3*R^2*x^3 + b^6
+### All Cases:
 (x^6 + b*x - R) * (x^15 - b*x^10 - 2*R*x^9 + b^2*x^5 + b*R*x^4 + R^2*x^3 - b^3) *
 (b^3*x^15 - 3*b^2*R*x^14 + 3*b*R^2*x^13 - R^3*x^12 - b^4*x^10 + 4*b^3*R*x^9 - 3*b^2*R^2*x^8 +
 	- 2*b*R^3*x^7 + 2*R^4*x^6 - b^5*x^5 - b^4*R*x^4 + 5*b^3*R^2*x^3 - b^2*R^3*x^2 - b*R^4*x + b^6 - R^5)
+# * P[15][all distinct]
 
 
 ########################
