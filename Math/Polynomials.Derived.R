@@ -4,7 +4,7 @@
 ### [the one and only]
 ###
 ### Derived Polynomials
-### v.0.4b
+### v.0.4b-coeff2
 
 ### Note:
 # This is the 1st part towards:
@@ -326,13 +326,38 @@ p = mult.lpm(list(p1, p2, p3, p4, p5))
 p = sort.pm(p, c(4,3), "x")
 p = p[, c("x", paste0("r", 5:1), paste0("s", 4:1), "coeff")]
 rownames(p) = seq(nrow(p))
+#
+sort.rpm = function(p) {
+	pr.max = sapply(seq(nrow(p)), function(id) max(p[id, paste0("r", 5:1)]));
+	pr.min = sapply(seq(nrow(p)), function(id)
+		min(p[id, paste0("r", 5:1)][p[id, paste0("r", 5:1)] > 0]) );
+	id = order(-pr.max, -pr.min);
+	p = p[id,];
+	rownames(p) = seq(nrow(p));
+	return(p)
+}
+unique.rpm =  function(p) {
+	r = p[, paste0("r", 1:5)];
+	pr = t(sapply(seq(nrow(p)), function(id) sort(r[id,], decreasing=TRUE)));
+	p = cbind(pr, p[, - match(paste0("r", 1:5), names(p)) ]);
+	p = unique(p); rownames(p) = seq(nrow(p));
+	return(p);
+}
 
-p[p$x == 3,]
+# p[p$x == 2,]
+# sort.rpm(p[p$x == 2, ])
+unique.rpm(p[p$x == 2, ])
 
 # x^5 + (s4*S4 + s3*S3 + s2*S2 + s1*S1) +
 #	+ (s4^2*E2_44 + s3*s4*E2_43 + s2*s4*E2_42 + s1*s4*E2_41 +
 #		+ s3^2*E2_33 + s3*s2*E2_32 + s3*s1*E2_31 +)
-#		+ s2^2*E2_22 + s2*s1*E2_21)*x^3 + ...
+#		+ s2^2*E2_22 + s2*s1*E2_21)*x^3 +
+#	- (s4*3*E3_444 + s4^2*s3*E3_443 + s4*s3^2*E3_433 +
+#		+ s4^2*s2*E3_442 + s4*s3*s2*E3_432 + s4*s2^2*E4_422 +
+#		+ s4^2*s1*E3_441 + s4*s3*s1*E3_431 + s4*s2*s1*E3_421 + s4*s1^2*E3_411 +
+#		+ s3^3*E3_333 + s3^2*s2*E3_332 + s3*s2^2*E3_322 +
+#		+ s3^2*s1*E3_331 + s3*s2*s1*E3_321 + s3*s1^2*E3_311 +
+#		+ s2^3*E3_222 + s2^2*s1*E3_221 + s2*s1^2*E3_211 + s1^3*E3_111)*x^2 + ...
 x^5 - 4*s4*x^4 + (6*s4^2 + 5*s1*s4*K + 5*K*s3*s2 - 4*s3*s1 - 2*s2^2)*x^3 +
 	+ 0; # TODO: remaining coefficients;
 
