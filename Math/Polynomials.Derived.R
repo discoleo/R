@@ -1,11 +1,10 @@
-
 ########################
 ###
 ### Leonard Mada
 ### [the one and only]
 ###
 ### Derived Polynomials
-### v.0.4a
+### v.0.4b
 
 ### Note:
 # This is the 1st part towards:
@@ -16,6 +15,9 @@
 # - includes a different approach to polynomials.
 
 ### History
+# v.0.4b:
+# - [started] parametric P[5] derived from:
+#   x^5 - x + K = 0;
 # v.0.4.a:
 # - added various derived polynomials starting from:
 #   x^n = x^j + K => roots of: x^j = r^n - K;
@@ -48,6 +50,7 @@
 
 
 library(polynom)
+library(pracma) # needed if the coefficients are complex
 
 # needed to get the roots of the base polynomial;
 # the derived polynomial is currently derived "empirically";
@@ -56,6 +59,10 @@ library(polynom)
 ######################
 
 ### helper functions
+
+# - see file: Polynomials.Helper.R;
+# - TODO: clean section;
+
 unity = function(n=3, all=TRUE) {
 	m = complex(re=cos(2*pi/n), im=sin(2*pi/n))
 	if(all) {
@@ -158,6 +165,7 @@ solve.P3 = function(b) {
 ### Examples:
 
 ### Base polynomial:
+# x^5 - x - 1
 p = polynomial(c(-1,-1,0,0,0,1))
 p
 
@@ -296,9 +304,77 @@ poly.calc(x)
 - x^11 + x^12 + x^13 + x^14 + x^15 + x^16 + x^18 - x^19 + x^20
 
 
-###############
-### Decomposing
-### derived polynomial
+##########################
+
+##################
+### Parametric ###
+##################
+
+K = -1
+# x^5 - x + K
+x0 = roots(c(1,0,0,0,-1, K))
+
+# Derivation:
+S = diag(4); s = lapply(seq(nrow(S)), function(nr) S[nr,]);
+s = data.frame(s); names(s) = paste0("s", 4:1);
+p1 = data.frame(x=c(0,0,0,0), r1=4:1, s, coeff=-1)
+p1 = rbind(p1, c(1,rep(0,5), 1))
+p2 = p3 = p4 = p5 = p1;
+names(p2)[2] = "r2"; names(p3)[2] = "r3";
+names(p4)[2] = "r4"; names(p5)[2] = "r5";
+p = mult.lpm(list(p1, p2, p3, p4, p5))
+p = sort.pm(p, c(4,3), "x")
+p = p[, c("x", paste0("r", 5:1), paste0("s", 4:1), "coeff")]
+rownames(p) = seq(nrow(p))
+
+p[p$x == 3,]
+
+# x^5 + (s4*S4 + s3*S3 + s2*S2 + s1*S1) +
+#	+ (s4^2*E2_44 + s3*s4*E2_43 + s2*s4*E2_42 + s1*s4*E2_41 +
+#		+ s3^2*E2_33 + s3*s2*E2_32 + s3*s1*E2_31 +)
+#		+ s2^2*E2_22 + s2*s1*E2_21)*x^3 + ...
+x^5 - 4*s4*x^4 + (6*s4^2 + 5*s1*s4*K + 5*K*s3*s2 - 4*s3*s1 - 2*s2^2)*x^3 +
+	+ 0; # TODO: remaining coefficients;
+
+### Examples:
+s4=1; s3=-5; s2=0; s1=3;
+r = sapply(seq(5), function(id) sum(x0[id]^seq(4) * c(s1,s2,s3,s4)));
+round0.p(poly.calc(r))
+#
+eval.pm(p[p$x == 3,], c(1, x0, s4,s3,s2,s1))
+
+### Sn = sum(r^n)
+# Epoly.gen(n, 5, 1)
+S4 = -4; # S^4 - 4*E2*S^2 + 4*E3*S + 2*E2^2 - 4*E4
+S3 = 0; # (S^3 - 3*E2*S + 3*E3 = 0;)
+S2 = 0; S1 = 0;
+### E2_nm
+# Epoly.distinct(c(n,m), 5)
+# print.p(Epoly.distinct(c(4,4), 5), "S")
+# - Note: S = 0 (and omitted); E2 = 0; E3 = 0; E4 = -1;
+E2_44 = 6; # E2^4 + 4*E2*E3^2 - 4*E2^2*E4 + 6*E4^2 - 4*E3*E5
+E2_43 = 0; E2_42 = 0;
+E2_41 = 5*K; # (5*E2*E3 - 5*E5 = 5*K;)
+E2_33 = 0; # E2^3 + 3*E3^2 - 3*E2*E4
+E2_32 = 5*K; # - E2*E3 - 5*E5
+E2_31 = -4; # - 2*E2^2 + 4*E4
+E2_22 = -2; # E2^2 + 2*E4
+E2_21 = 0;
+
+
+##########################
+
+##########################
+### Decomposition of   ###
+### derived polynomial ###
+
+### Base polynomial:
+# x^5 - x - 1
+p = polynomial(c(-1,-1,0,0,0,1))
+p
+
+x0 = solve(p)
+x0
 
 ###
 x = x0^2 + x0
@@ -338,7 +414,7 @@ round0(err)
 ################
 ################
 
-# a nice technique to create "awsome" polynomials
+# a nice technique to create "awesome" polynomials
 
 n = 5
 m = complex(re=cos(2*pi/n), im=sin(2*pi/n))
@@ -485,6 +561,24 @@ p4der.gen = function(K, coeff=c(1)) {
 	p = round0.p(p1 / round0.p(poly.calc(r)))
 	return(list(x=x, p=p))
 }
+p4der2.gen = function(K, coeff=c(1, 0, 1)) {
+	r = roots(c(1,coeff,K))
+	if(coeff[1] == 0 && coeff[2] == 0) {return(list(x=NA, p=NA));}
+	x.r = -(r^4 + coeff[2]*r^2 + K) / coeff[1]
+	x = sapply(x.r, function(r) roots(c(1,0,coeff[3],-r)))
+	p1 = round0.p(poly.calc(x))
+	p = round0.p(p1 / round0.p(poly.calc(r)))
+	return(list(x=x, p=p))
+}
+
+###
+K = 1
+p = p4der2.gen(K)
+x = p$x
+p
+round0(predict(p$p, p$x))
+err = 4 + 4*x + 5*x^2 + 4*x^3 + 7*x^4 - x^5 + 5*x^6 - x^7 + x^8
+round0(err)
 
 ###
 K = 1
@@ -577,4 +671,18 @@ round0.p(p1 / round0.p(poly.calc(r)))
 err = 1 - x + x^2 - x^3 + x^4 - 4*x^5 + 3*x^6 - 2*x^7 + x^8 + 6*x^10 - 3*x^11 + x^12 - 4*x^15 + x^16 + x^20
 round0(err)
 
+
+######################
+######################
+
+### Analysis
+
+# - various experimental analysis;
+
+### x^5 - x^2 + k = 0
+# - 3 real roots;
+curve(x^5, from=-1.2, to=1.2)
+curve(x^2 - 3/5 * (4/25)^(1/3), add=T, col="green")
+curve(-x^2 + 3/5 * (4/25)^(1/3), add=T, col="red")
+curve(x^2, add=T, col="orange")
 
