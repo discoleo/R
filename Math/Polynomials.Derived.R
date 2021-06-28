@@ -4,7 +4,7 @@
 ### [the one and only]
 ###
 ### Derived Polynomials
-### v.0.4b-coeff2-full
+### v.0.4c
 
 ### Note:
 # This is the 1st part towards:
@@ -24,8 +24,8 @@
 #   Example: x^4 + x^3 + 1 = 0
 #   => 1 + 2*x^3 - x^4 + x^6 - x^7 + x^8 = 0;
 # v.0.3.x:
-# - moved P6 poynomials to:
-#   https://github.com/discoleo/R/blob/master/Math/Polynomials.Derived.P6.R
+# - moved P6 polynomials to:
+#   Polynomials.Derived.P6.R
 # v.0.3.c - v.0.3.f:
 # - more awesome P6 polynomials with complete solutions;
 # - moved now to separate file (see v.0.3.x);
@@ -351,7 +351,7 @@ replace.rpm = function(p) {
 		pow = unlist(pr[id, pr[id,] > 0]);
 		E = Epoly.distinct(pow, 5);
 		# filter: S = 0; E2 = 0; E3 = 0
-		E = E[E$S == 0 & E$E2 == 0 & E$E3 == 0, ];
+		E = E[E$S == 0 & E$E2 == 0 & E$E3 == 0, , drop=FALSE];
 		if(nrow(E) == 0) return(data.frame());
 		E = reduce.var.pm(E);
 		return(mult.pm(ps[id,], E));
@@ -362,8 +362,8 @@ replace.rpm = function(p) {
 
 # p[p$x == 2,]
 # sort.rpm(p[p$x == 2, ])
-unique.rpm(p[p$x == 2, ])
-replace.rpm(p[p$x == 3, ])
+# unique.rpm(p[p$x == 2, ])
+replace.rpm(p[p$x == 2, ])
 
 # x^5 + (s4*S4 + s3*S3 + s2*S2 + s1*S1) +
 #	+ (s4^2*E2_44 + s3*s4*E2_43 + s2*s4*E2_42 + s1*s4*E2_41 +
@@ -729,4 +729,48 @@ curve(x^5, from=-1.2, to=1.2)
 curve(x^2 - 3/5 * (4/25)^(1/3), add=T, col="green")
 curve(-x^2 + 3/5 * (4/25)^(1/3), add=T, col="red")
 curve(x^2, add=T, col="orange")
+
+
+#########################
+#########################
+
+### Experimental
+
+### x^5 - x = R
+
+### roots: r1, Conj(r1) =>
+(a1+b1*1i)^5 - (a1+b1*1i) - R # = 0
+(a1-b1*1i)^5 - (a1-b1*1i) - R # = 0
+
+### Diff =>
+5*a1^4 - 10*a1^2*b1^2 + b1^4 - 1 # = 0
+5*a2^4 - 10*a2^2*b2^2 + b2^4 - 1 # = 0
+
+### Sum =>
+a1^5 - 10*a1^3*b1^2 + 5*a1*b1^4 - a1 - R # = 0
+a2^5 - 10*a2^3*b2^2 + 5*a2*b2^4 - a2 - R # = 0
+
+### Diff Eq(r1) - Eq(r2):
+(a1+b1*1i)^4 + (a2+b2*1i)^4 + (a1+b1*1i)*(a2+b2*1i)*(a1^2+a2^2-b1^2-b2^2 + 2*(a1*b1+a2*b2)*1i) +
+	+ (a1+b1*1i)^2*(a2+b2*1i)^2 - 1 # = 0
+a1^4 + a2^4 + b1^4 + b2^4 - 6*(a1^2*b1^2 + a2^2*b2^2) + 4*(a1^3*b1 + a2^3*b2 - a1*b1^3 - a2*b2^3)*1i +
+	+ (a1*a2 - b1*b2 + (a1*b2+a2*b1)*1i)*(a1^2+a2^2-b1^2-b2^2 + 2*(a1*b1+a2*b2)*1i) +
+	+ (a1*a2 - b1*b2 + (a1*b2+a2*b1)*1i)^2 - 1 # = 0
+# =>
+a1^4 + a2^4 + b1^4 + b2^4 - 6*(a1^2*b1^2 + a2^2*b2^2) +
+	+ (a1*a2 - b1*b2)*(a1^2+a2^2-b1^2-b2^2) - 2*(a1*b2 + a2*b1)*(a1*b1 + a2*b2) +
+	+ (a1*a2 - b1*b2)^2 - (a1*b2+a2*b1)^2 - 1 # = 0
+# TODO
+
+# []alternative =>
+a1^5 + 5*a1^4*b1*1i - 10*a1^3*b1^2 - 10*a1^2*b1^3*1i + 5*a1*b1^4 + b1^5*1i - (a1+b1*1i) +
+	- a2^5 - 5*a2^4*b2*1i + 10*a2^3*b2^2 + 10*a2^2*b2^3*1i - 5*a2*b2^4 - b2^5*1i + (a2+b2*1i) # = 0
+a1^5 - a2^5 - 10*a1^3*b1^2 + 10*a2^3*b2^2 + 5*a1*b1^4 - 5*a2*b2^4 - (a1-a2) # = 0
+
+
+### Debug:
+R = 1
+x = roots(c(1,0,0,0,-1,-R));
+a1 = Re(x[2]); b1 = Im(x[2]);
+a2 = Re(x[4]); b2 = Im(x[4]);
 
