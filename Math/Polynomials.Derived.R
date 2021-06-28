@@ -4,7 +4,7 @@
 ### [the one and only]
 ###
 ### Derived Polynomials
-### v.0.4b-coeff2
+### v.0.4b-coeff2-full
 
 ### Note:
 # This is the 1st part towards:
@@ -343,10 +343,27 @@ unique.rpm =  function(p) {
 	p = unique(p); rownames(p) = seq(nrow(p));
 	return(p);
 }
+replace.rpm = function(p) {
+	p = unique.rpm(p);
+	pr = p[, paste0("r", 1:5)];
+	ps = p[, - match(paste0("r", 1:5), names(p))];
+	r = lapply(seq(nrow(p)), function(id) {
+		pow = unlist(pr[id, pr[id,] > 0]);
+		E = Epoly.distinct(pow, 5);
+		# filter: S = 0; E2 = 0; E3 = 0
+		E = E[E$S == 0 & E$E2 == 0 & E$E3 == 0, ];
+		if(nrow(E) == 0) return(data.frame());
+		E = reduce.var.pm(E);
+		return(mult.pm(ps[id,], E));
+	})
+	r = r[sapply(r, function(x) nrow(x) > 0)]
+	return(sum.lpm(r));
+}
 
 # p[p$x == 2,]
 # sort.rpm(p[p$x == 2, ])
 unique.rpm(p[p$x == 2, ])
+replace.rpm(p[p$x == 3, ])
 
 # x^5 + (s4*S4 + s3*S3 + s2*S2 + s1*S1) +
 #	+ (s4^2*E2_44 + s3*s4*E2_43 + s2*s4*E2_42 + s1*s4*E2_41 +
@@ -359,6 +376,8 @@ unique.rpm(p[p$x == 2, ])
 #		+ s3^2*s1*E3_331 + s3*s2*s1*E3_321 + s3*s1^2*E3_311 +
 #		+ s2^3*E3_222 + s2^2*s1*E3_221 + s2*s1^2*E3_211 + s1^3*E3_111)*x^2 + ...
 x^5 - 4*s4*x^4 + (6*s4^2 + 5*s1*s4*K + 5*K*s3*s2 - 4*s3*s1 - 2*s2^2)*x^3 +
+	- (5*s4*s3^2*K^2 + 5*s4^2*s2*K^2 - 5*s2^2*s1*K - 5*s3*s1^2*K - 3*s3^3*K + 2*s4*s3*s2*K +
+		+ 11*s4^2*s1*K + 4*s2*s1^2 + 4*s3^2*s2 - 4*s4*s2^2 - 8*s4*s3*s1 + 4*s4^3)*x^2 +
 	+ 0; # TODO: remaining coefficients;
 
 ### Examples:
