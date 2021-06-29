@@ -169,6 +169,39 @@ permSum.simple = function(p1, p2, n1, n2) {
 	p = t(p);
 	return(p);
 }
+permSum.all = function(p1, p2) {
+	# TODO
+	if(length(p1) < length(p2)) {
+		tmp = p1; p1 = p2; p2 = tmp;
+	}
+	n2 = length(p2);
+	if(length(p1) > 2 || n2 > 2) stop("Not yet implemented!")
+	p0 = c(p1, rep(0, n2 - 1));
+	p = p0;
+	p[seq(n2)] = p[seq(n2)] + p2;
+	#
+	pp = p0;
+	pp[seq(n2)] = pp[seq(n2)] + p2[c(2,1)];
+	p = cbind(p, pp);
+	#
+	pp = p0;
+	pp[1] = pp[1] + p2[1]; pp[3] = p2[2];
+	p = cbind(p, pp);
+	pp = p0;
+	pp[2] = pp[2] + p2[1]; pp[3] = p2[2];
+	p = cbind(p, pp);
+	#
+	pp = p0;
+	pp[1] = pp[1] + p2[2]; pp[3] = p2[1];
+	p = cbind(p, pp);
+	pp = p0;
+	pp[2] = pp[2] + p2[2]; pp[3] = p2[1];
+	p = cbind(p, pp);
+	p = unique(t(p));
+	isD2 = (p[,1] == p[,2]) & (p[,3] > 0);
+	pD2 = p[isD2,]; p = rbind(p, pD2);
+	return(p);
+}
 
 ### Elementary Polynomials
 
@@ -334,10 +367,6 @@ Epoly.distinct = function(pow, v=3, E=NULL, full=FALSE) {
 		pow.unq = as.integer(names(tbl));
 		last.pow = pow.unq[id];
 		isLastDuplic = (pow == last.pow);
-		if(length(pow[ ! isLastDuplic]) > 1 && length(tbl) > 2) {
-			stop("Not yet implemented!");
-			# TODO!
-		}
 		p  = Epoly.distinct(pow[ ! isLastDuplic], v=v, E=E);
 		p2 = Epoly.distinct(pow[isLastDuplic], v=v, E=E);
 		p = mult.pm(p2, p);
@@ -347,6 +376,11 @@ Epoly.distinct = function(pow, v=3, E=NULL, full=FALSE) {
 		} else if(length(tbl) == 2) {
 			len1 = sum(isLastDuplic); len2 = length(pow) - len1;
 			pp = permSum.simple(last.pow, pow[ ! isLastDuplic][1], n1=len1, n2=len2);
+			for(nr in seq(nrow(pp))) {
+				p = diff.pm(p, Epoly.distinct(pp[nr,], v=v, E=E));
+			}
+		} else {
+			pp = permSum.all(pow[ ! isLastDuplic], pow[isLastDuplic]);
 			for(nr in seq(nrow(pp))) {
 				p = diff.pm(p, Epoly.distinct(pp[nr,], v=v, E=E));
 			}
@@ -399,17 +433,22 @@ eval.pm(perm.poly(5, rep(4, 4)), xx)
 eval.pm(Epoly.gen(4, 5, 4), c(S,E2,E3,E4,E5))
 
 ###
+test.epoly = function(pseq.all) {
+	pseq = pseq.all[pseq.all != 0]
+	s = sapply(1:10000, function(id) sample(pseq.all, N))
+	s = t(s)
+	s = unique(s)
+	print(nrow(s));
+	r.s = sum(sapply(seq(nrow(s)), function(id) prod(xx^s[id,])))
+	r.p = eval.pm(Epoly.distinct(pseq, N), c(S, E2, E3, E4, E5))
+	data.frame(r=c(r.s, r.p));
+}
 N = 5;
 pseq.all = 0:4;
 # pseq.all = c(0, 1,3,4,6); # pseq.all = c(0, 3,3,3,5);
 # pseq.all = c(0, 2,2,3,3); # pseq.all = c(0, 2,2,4,4);
-pseq = pseq.all[pseq.all != 0]
-s = sapply(1:10000, function(id) sample(pseq.all, N))
-s = t(s)
-s = unique(s)
-nrow(s)
-sum(sapply(seq(nrow(s)), function(id) prod(xx^s[id,])))
-eval.pm(Epoly.distinct(pseq, N), c(S, E2, E3, E4, E5))
+# pseq.all = c(0, 3,2,1,1); # pseq.all = c(0, 4,1,3,3);
+test.epoly(pseq.all)
 
 
 ################
