@@ -88,7 +88,7 @@ mult.p = function(p1, p2) {
 # Note:
 # - initial idea was to allow also basic lists,
 #   but most functions work only with data frames!
-mult.all.pm = function(p) return(mult,lpm(p));
+mult.all.pm = function(p) return(mult.lpm(p));
 mult.lpm = function(p) {
 	if( ! is.list(p)) stop("p must be a list of polynomials");
 	len = length(p);
@@ -889,7 +889,22 @@ Epoly.adv = function(n, v=4, e=1, E=NULL, full=FALSE) {
 }
 Epoly.distinct = function(pow, v=3, E=NULL, full=FALSE) {
 	pow = pow[pow != 0];
-	if(length(pow) > v) print("Warning!"); # TODO
+	if(length(pow) > v) stop("Error! Longer than no. of variables."); # TODO
+	if(length(pow) == v) {
+		# Case: Prod[over_v]
+		p.min = min(pow);
+		pow = pow - p.min; pow = pow[pow != 0];
+		p = Epoly.distinct(pow, v=v, E=E);
+		Ep.nm = paste0("E", v);
+		id = match(Ep.nm, names(p));
+		if(is.na(id)) {
+			p[, Ep.nm] = p.min;
+		} else p[, id] = p[, id] + p.min;
+		if(full) return(list(E=E, p=p));
+		return(p);
+	}
+	if(length(pow) == 1) return(Epoly.gen(p.rg[1], v=v, e=1, E=E, full=full));
+	# Composite Cases:
 	p.rg = range(pow);
 	if(p.rg[1] == p.rg[2]) return(Epoly.gen(p.rg[1], v=v, e=length(pow), E=E, full=full));
 	len = sum(pow);
