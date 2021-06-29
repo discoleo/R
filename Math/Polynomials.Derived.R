@@ -4,7 +4,7 @@
 ### [the one and only]
 ###
 ### Derived Polynomials
-### v.0.4c
+### v.0.4c-coeff-x1
 
 ### Note:
 # This is the 1st part towards:
@@ -15,7 +15,7 @@
 # - includes a different approach to polynomials.
 
 ### History
-# v.0.4b:
+# v.0.4b - v.0.4c:
 # - [started] parametric P[5] derived from:
 #   x^5 - x + K = 0;
 # v.0.4.a:
@@ -363,7 +363,7 @@ replace.rpm = function(p) {
 # p[p$x == 2,]
 # sort.rpm(p[p$x == 2, ])
 # unique.rpm(p[p$x == 2, ])
-replace.rpm(p[p$x == 2, ])
+replace.rpm(p[p$x == 1, ])
 
 # x^5 + (s4*S4 + s3*S3 + s2*S2 + s1*S1) +
 #	+ (s4^2*E2_44 + s3*s4*E2_43 + s2*s4*E2_42 + s1*s4*E2_41 +
@@ -378,14 +378,19 @@ replace.rpm(p[p$x == 2, ])
 x^5 - 4*s4*x^4 + (6*s4^2 + 5*s1*s4*K + 5*K*s3*s2 - 4*s3*s1 - 2*s2^2)*x^3 +
 	- (5*s4*s3^2*K^2 + 5*s4^2*s2*K^2 - 5*s2^2*s1*K - 5*s3*s1^2*K - 3*s3^3*K + 2*s4*s3*s2*K +
 		+ 11*s4^2*s1*K + 4*s2*s1^2 + 4*s3^2*s2 - 4*s4*s2^2 - 8*s4*s3*s1 + 4*s4^3)*x^2 +
+	+ (5*s4^3*s3*K^3 + 5*s3^2*s2^2*K^2 - 5*s4*s2^3*K^2 - 5*s3^3*s1*K^2 - 5*s4*s3*s2*s1*K^2 + 5*s4^2*s1^2*K^2 +
+		- s4^2*s3^2*K^2 + 6*s4^3*s2*K^2 + 5*s2*s1^3*K - s3*s2^3*K + 7*s3^2*s2*s1*K - 3*s4*s2^2*s1*K +
+		- 13*s4*s3*s1^2*K + s4*s3^3*K - 3*s4^2*s3*s2*K + 7*s4^3*s1*K - s1^4 + s2^4 - s3^4 + s4^4 +
+		- 4*s3*s2^2*s1 + 2*s3^2*s1^2 + 4*s4*s2*s1^2 + 4*s4*s3^2*s2 - 2*s4^2*s2^2 - 4*s4^2*s3*s1)*x +
 	+ 0; # TODO: remaining coefficients;
+
 
 ### Examples:
 s4=1; s3=-5; s2=0; s1=3;
 r = sapply(seq(5), function(id) sum(x0[id]^seq(4) * c(s1,s2,s3,s4)));
 round0.p(poly.calc(r))
 #
-eval.pm(p[p$x == 3,], c(1, x0, s4,s3,s2,s1))
+eval.pm(p[p$x == 1,], c(1, x0, s4,s3,s2,s1))
 
 ### Sn = sum(r^n)
 # Epoly.gen(n, 5, 1)
@@ -756,11 +761,11 @@ a2^5 - 10*a2^3*b2^2 + 5*a2*b2^4 - a2 - R # = 0
 a1^4 + a2^4 + b1^4 + b2^4 - 6*(a1^2*b1^2 + a2^2*b2^2) + 4*(a1^3*b1 + a2^3*b2 - a1*b1^3 - a2*b2^3)*1i +
 	+ (a1*a2 - b1*b2 + (a1*b2+a2*b1)*1i)*(a1^2+a2^2-b1^2-b2^2 + 2*(a1*b1+a2*b2)*1i) +
 	+ (a1*a2 - b1*b2 + (a1*b2+a2*b1)*1i)^2 - 1 # = 0
-# =>
+# Re =>
 a1^4 + a2^4 + b1^4 + b2^4 - 6*(a1^2*b1^2 + a2^2*b2^2) +
-	+ (a1*a2 - b1*b2)*(a1^2+a2^2-b1^2-b2^2) - 2*(a1*b2 + a2*b1)*(a1*b1 + a2*b2) +
-	+ (a1*a2 - b1*b2)^2 - (a1*b2+a2*b1)^2 - 1 # = 0
-# TODO
+	+ (a1*a2 - b1*b2)*(a1^2+a2^2 - (b1^2+b2^2)) - 2*(a1*b2 + a2*b1)*(a1*b1 + a2*b2) +
+	+ (a1*a2 - b1*b2)^2 - (a1*b2 + a2*b1)^2 - 1 # = 0
+# TODO + Im()
 
 # []alternative =>
 a1^5 + 5*a1^4*b1*1i - 10*a1^3*b1^2 - 10*a1^2*b1^3*1i + 5*a1*b1^4 + b1^5*1i - (a1+b1*1i) +
