@@ -903,7 +903,7 @@ Epoly.distinct = function(pow, v=3, E=NULL, full=FALSE) {
 		if(full) return(list(E=E, p=p));
 		return(p);
 	}
-	if(length(pow) == 1) return(Epoly.gen(p.rg[1], v=v, e=1, E=E, full=full));
+	if(length(pow) == 1) return(Epoly.gen(pow[1], v=v, e=1, E=E, full=full));
 	# Composite Cases:
 	p.rg = range(pow);
 	if(p.rg[1] == p.rg[2]) return(Epoly.gen(p.rg[1], v=v, e=length(pow), E=E, full=full));
@@ -934,15 +934,21 @@ Epoly.distinct = function(pow, v=3, E=NULL, full=FALSE) {
 	tbl = table(pow);
 	tbl.max = max(tbl);
 	if(tbl.max > 1) {
-		stop("Not yet implemented!");
 		id = which(tbl == tbl.max)[1];
 		pow.unq = as.integer(names(tbl));
 		last.pow = pow.unq[id];
 		isLastDuplic = (pow == last.pow);
+		if(length(pow[ ! isLastDuplic]) > 1) {
+			stop("Not yet implemented!");
+			# TODO!
+		}
 		p  = Epoly.distinct(pow[ ! isLastDuplic], v=v, E=E);
 		p2 = Epoly.distinct(pow[isLastDuplic], v=v, E=E);
-		p = mult.pm(p, p2);
-		# TODO!
+		p = mult.pm(p2, p);
+		if(length(pow[ ! isLastDuplic]) == 1) {
+			cmb.pow = pow[isLastDuplic]; cmb.pow[1] = cmb.pow[1] + pow[ ! isLastDuplic];
+			p = diff.pm(p, Epoly.distinct(cmb.pow, v=v, E=E));
+		}
 	} else {
 		last.pow = tail(pow, 1);
 		other.pow = head(pow, -1);
@@ -994,7 +1000,7 @@ eval.pm(Epoly.gen(4, 5, 4), c(S,E2,E3,E4,E5))
 ###
 N = 5;
 pseq.all = 0:4;
-# pseq.all = c(0, 1,3,4,6);
+# pseq.all = c(0, 1,3,4,6); # pseq.all = c(0, 3,3,3,5);
 pseq = pseq.all[pseq.all != 0]
 s = sapply(1:10000, function(id) sample(pseq.all, N))
 s = t(s)
