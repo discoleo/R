@@ -310,58 +310,27 @@ poly.calc(x)
 ### Parametric ###
 ##################
 
+### Derivation:
+p = roots.derived(5)
+p = mult.lpm(p)
+p = sort.pm(p, c(4,3), "x")
+p = p[, c("x", paste0("r", 5:1), paste0("s", 4:1), "coeff")]
+rownames(p) = seq(nrow(p))
+
+# helper functions:
+# - moved to Polynomials.helper.EP.R;
+
+
 K = -1
 # x^5 - x + K
 x0 = roots(c(1,0,0,0,-1, K))
 
-# Derivation:
-S = diag(4); s = lapply(seq(nrow(S)), function(nr) S[nr,]);
-s = data.frame(s); names(s) = paste0("s", 4:1);
-p1 = data.frame(x=c(0,0,0,0), r1=4:1, s, coeff=-1)
-p1 = rbind(p1, c(1,rep(0,5), 1))
-p2 = p3 = p4 = p5 = p1;
-names(p2)[2] = "r2"; names(p3)[2] = "r3";
-names(p4)[2] = "r4"; names(p5)[2] = "r5";
-p = mult.lpm(list(p1, p2, p3, p4, p5))
-p = sort.pm(p, c(4,3), "x")
-p = p[, c("x", paste0("r", 5:1), paste0("s", 4:1), "coeff")]
-rownames(p) = seq(nrow(p))
+### Examples:
+s4=1; s3=-5; s2=0; s1=3;
+r = sapply(seq(5), function(id) sum(x0[id]^seq(4) * c(s1,s2,s3,s4)));
+round0.p(poly.calc(r))
 #
-sort.rpm = function(p) {
-	pr.max = sapply(seq(nrow(p)), function(id) max(p[id, paste0("r", 5:1)]));
-	pr.min = sapply(seq(nrow(p)), function(id)
-		min(p[id, paste0("r", 5:1)][p[id, paste0("r", 5:1)] > 0]) );
-	id = order(-pr.max, -pr.min);
-	p = p[id,];
-	rownames(p) = seq(nrow(p));
-	return(p)
-}
-unique.rpm =  function(p) {
-	r = p[, paste0("r", 1:5)];
-	pr = t(sapply(seq(nrow(p)), function(id) sort(r[id,], decreasing=TRUE)));
-	p = cbind(pr, p[, - match(paste0("r", 1:5), names(p)) ]);
-	p = unique(p); rownames(p) = seq(nrow(p));
-	return(p);
-}
-replace.rpm = function(p) {
-	p = unique.rpm(p);
-	pr = p[, paste0("r", 1:5)];
-	ps = p[, - match(paste0("r", 1:5), names(p))];
-	r = lapply(seq(nrow(p)), function(id) {
-		pow = unlist(pr[id, pr[id,] > 0]);
-		E = Epoly.distinct(pow, 5);
-		# filter: S = 0; E2 = 0; E3 = 0
-		idCol = match(c("S", "E2", "E3"), names(E));
-		idCol = idCol[ ! is.na(idCol)];
-		if(length(idCol) > 0) E = E[apply(E[,idCol, drop=FALSE] == 0, 1, all), , drop=FALSE];
-		if(nrow(E) == 0) return(data.frame());
-		E = reduce.var.pm(E);
-		return(mult.pm(ps[id,], E));
-	})
-	r = r[sapply(r, function(x) nrow(x) > 0)]
-	return(sum.lpm(r));
-}
-
+eval.pm(p[p$x == 1,], c(1, x0, s4,s3,s2,s1))
 
 x^5 - 4*s4*x^4 + (6*s4^2 + 5*s1*s4*K + 5*K*s3*s2 - 4*s3*s1 - 2*s2^2)*x^3 +
 	- (5*s4*s3^2*K^2 + 5*s4^2*s2*K^2 - 5*s2^2*s1*K - 5*s3*s1^2*K - 3*s3^3*K + 2*s4*s3*s2*K +
@@ -377,13 +346,6 @@ x^5 - 4*s4*x^4 + (6*s4^2 + 5*s1*s4*K + 5*K*s3*s2 - 4*s3*s1 - 2*s2^2)*x^3 +
 		+ s1^5*K - s2^4*s1*K + 4*s3*s2^2*s1^2*K - 2*s3^2*s1^3*K - 4*s4*s2*s1^3*K + s3^4*s1*K +
 		- 4*s4*s3^2*s2*s1*K + 2*s4^2*s2^2*s1*K + 4*s4^2*s3*s1^2*K - s4^4*s1*K;
 
-
-### Examples:
-s4=1; s3=-5; s2=0; s1=3;
-r = sapply(seq(5), function(id) sum(x0[id]^seq(4) * c(s1,s2,s3,s4)));
-round0.p(poly.calc(r))
-#
-eval.pm(p[p$x == 1,], c(1, x0, s4,s3,s2,s1))
 
 ### Derivation:
 # p[p$x == 2,]
@@ -780,7 +742,7 @@ a1^4 + a2^4 + b1^4 + b2^4 - 6*(a1^2*b1^2 + a2^2*b2^2) +
 	+ (a1*a2 - b1*b2)^2 - (a1*b2 + a2*b1)^2 - 1 # = 0
 # TODO + Im()
 
-# []alternative =>
+# [alternative] =>
 a1^5 + 5*a1^4*b1*1i - 10*a1^3*b1^2 - 10*a1^2*b1^3*1i + 5*a1*b1^4 + b1^5*1i - (a1+b1*1i) +
 	- a2^5 - 5*a2^4*b2*1i + 10*a2^3*b2^2 + 10*a2^2*b2^3*1i - 5*a2*b2^4 - b2^5*1i + (a2+b2*1i) # = 0
 a1^5 - a2^5 - 10*a1^3*b1^2 + 10*a2^3*b2^2 + 5*a1*b1^4 - 5*a2*b2^4 - (a1-a2) # = 0
