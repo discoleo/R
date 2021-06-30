@@ -323,7 +323,8 @@ Epoly.distinct = function(pow, v=3, E=NULL, full=FALSE) {
 		# Case: Prod[over_v]
 		p.min = min(pow);
 		pow = pow - p.min; pow = pow[pow != 0];
-		p = Epoly.distinct(pow, v=v, E=E);
+		if(length(pow) == 0) { p = data.frame(coeff=1); }
+		else p = Epoly.distinct(pow, v=v, E=E);
 		Ep.nm = paste0("E", v);
 		id = match(Ep.nm, names(p));
 		if(is.na(id)) {
