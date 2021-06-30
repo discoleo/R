@@ -81,13 +81,19 @@ mult.p = function(p1, p2) {
     p = as.vector(tapply(p.m, row(p.m) + col(p.m), sum))
 	return(p)
 }
-### Multi-variable Multiplication
+
+### Multi-variable Polynomials:
 # p = multi-variable polynomial;
 #  => data.frame with exponents of variables;
 #  => coeff = column with the coefficients;
 # Note:
 # - initial idea was to allow also basic lists,
 #   but most functions work only with data frames!
+aggregate0.pm = function(p) {
+	p.r = aggregate(coeff~., p, sum);
+	return(p.r);
+}
+### Multiplication
 mult.all.pm = function(p) return(mult.lpm(p));
 mult.lpm = function(p) {
 	if( ! is.list(p)) stop("p must be a list of polynomials");
@@ -216,6 +222,7 @@ simplify.pm = function(p1, p2) {
 	}
 	return(list(p1=p1, p2=p2));
 }
+### Simplify functions
 reduce.pm = function(p) {
 	# remove Monomials with coeff == 0;
 	id = which(p$coeff != 0)
@@ -232,7 +239,9 @@ reduce.var.pm = function(p) {
 	nc[-id] = sapply(seq(ncol(p))[-id], function(id) any(p[,id] != 0));
 	return(p[, nc]);
 }
+### Helper functions
 align.pm = function(p1, p2, align.names=TRUE) {
+	# align columns of 2 data.frames for sum.pm();
 	p1 = reduce.pm(p1); p2 = reduce.pm(p2);
 	n1 = names(p1); n2 = names(p2);
 	### Coefficients
@@ -302,10 +311,34 @@ diff.lpm = function(p1, lp) {
 	}
 	return(p1);
 }
+replace.withVal.pm = function(p, x, pow=1, val, simplify=TRUE) {
+	if(val == 0) {
+		if(pow != 1) {
+			warning("Only some terms will be replaced with 0!");
+			isZero = p[,x] >= pow;
+			p = p[ ! isZero, , drop=FALSE];
+		} else p = p[p[,x] == 0, , drop=FALSE];
+		return(p);
+	}
+	xpow = p[,x];
+	p[,x] = if(pow == 1) 0 else xpow %% pow;
+	hasX  = xpow >= pow; xpow = xpow[hasX];
+	# Replace with value:
+	x.pow = if(pow == 1) xpow else xpow %/% pow;
+	xpow.unq = sort(unique(x.pow));
+	id = match(x.pow, xpow.unq);
+	xval = val^xpow.unq;
+	p[hasX, "coeff"] = p[hasX, "coeff"] * xval[id];
+	p = aggregate0.pm(p);
+	p = reduce.pm(p);
+	if(simplify) p = reduce.var.pm(p);
+	return(p)
+}
 replace.pm = function(p1, p2, x, pow=1) {
 	# replace x^pow by p2;
 	idx = match(x, names(p1));
 	if(is.na(idx)) stop(paste0("Polynomial does NOT contain variable: ", x));
+	if(is.numeric(p2)) return(replace.withVal.pm(p1, x=x, pow=pow, val=p2));
 	# xPow
 	rpow = if(pow == 1) p1[,idx] else p1[,idx] %/% pow;
 	p1[,idx] = if(pow == 1) 0 else p1[,idx] %% pow;
