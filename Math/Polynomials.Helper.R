@@ -648,6 +648,27 @@ classic.S2Simple.gen = function(n=3) {
 	return(p1);
 }
 
+### Derived Polynomials
+roots.derived = function(n, pow=seq(n-1), rn="r", sn="s", all.roots=TRUE) {
+	slen = length(pow);
+	S = diag(slen);
+	s = lapply(seq(nrow(S)), function(nr) S[nr,]);
+	s = data.frame(s); names(s) = paste0(sn, pow);
+	p1 = data.frame(x=rep(0, slen), r1=pow, s, coeff=-1);
+	names(p1)[2] = paste0(rn, 1);
+	p1 = rbind(p1, c(1, rep(0, slen+1), 1))
+	if(all.roots) {
+		p.list = list(p1);
+		for(id in seq(2, n)) {
+			pT = p1;
+			names(pT)[2] = paste0(rn, id);
+			p.list[[id]] = pT;
+		}
+		p1 = p.list;
+	}
+	return(p1)
+}
+
 #######################
 #######################
 
