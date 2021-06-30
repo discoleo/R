@@ -12,6 +12,43 @@
 
 ### helper Functions
 
+### Processing Symmetric Polynomials
+
+### Extract Base-Terms of Symmetric Polynomials:
+unique.rpm =  function(p, xn="r", v=5) {
+	vn = paste0(xn, seq(v));
+	r = p[, vn, drop=FALSE];
+	pr = t(sapply(seq(nrow(p)), function(id) sort(r[id,], decreasing=TRUE)));
+	p = cbind(pr, p[, - match(vn, names(p)) ]);
+	p = unique(p); rownames(p) = seq(nrow(p));
+	return(p);
+}
+filter.byCol = function(E, idCol, val=0) {
+	# returns ids of rows
+	apply(E[ , idCol, drop=FALSE] == val, 1, all)
+}
+### Decompose Symmetric Polynomial
+replace.rpm = function(p, xn="r", v=5, flt=c("S", "E2", "E3")) {
+	# extract Base-Terms: does NOT check that poly is Symmetric!!!
+	p = unique.rpm(p, xn=xn, v=v);
+	vn = paste0(xn, seq(v));
+	pr = p[, vn];
+	ps = p[, - match(vn, names(p))];
+	r = lapply(seq(nrow(p)), function(id) {
+		pow = unlist(pr[id, pr[id,] > 0]);
+		E = Epoly.distinct(pow, v);
+		# filter: S = 0; E2 = 0; E3 = 0
+		idCol = match(flt, names(E));
+		idCol = idCol[ ! is.na(idCol)];
+		if(length(idCol) > 0) E = E[filter.byCol(E, idCol, val=0), , drop=FALSE];
+		if(nrow(E) == 0) return(data.frame());
+		E = reduce.var.pm(E);
+		return(mult.pm(ps[id,], E));
+	})
+	r = r[sapply(r, function(x) nrow(x) > 0)]
+	return(sum.lpm(r));
+}
+
 ### Poly Generators
 rotate = function(p, n, val0=0, asPoly=TRUE) {
 	m = matrix(val0, nrow=n, ncol=n);
