@@ -16,7 +16,7 @@
 
 ### Extract Base-Terms of Symmetric Polynomials:
 unique.rpm =  function(p, xn="r", v=5) {
-	vn = paste0(xn, seq(v));
+	vn = if(length(xn) > 1) xn else paste0(xn, seq(v));
 	r = p[, vn, drop=FALSE];
 	pr = t(sapply(seq(nrow(p)), function(id) sort(r[id,], decreasing=TRUE)));
 	p = cbind(pr, p[, - match(vn, names(p)) ]);
@@ -31,7 +31,7 @@ filter.byCol = function(E, idCol, val=0) {
 replace.rpm = function(p, xn="r", v=5, flt=c("S", "E2", "E3")) {
 	# extract Base-Terms: does NOT check that poly is Symmetric!!!
 	p = unique.rpm(p, xn=xn, v=v);
-	vn = paste0(xn, seq(v));
+	vn = if(length(xn) > 1) xn else paste0(xn, seq(v));
 	pr = p[, vn];
 	ps = p[, - match(vn, names(p))];
 	r = lapply(seq(nrow(p)), function(id) {
@@ -47,6 +47,29 @@ replace.rpm = function(p, xn="r", v=5, flt=c("S", "E2", "E3")) {
 	})
 	r = r[sapply(r, function(x) nrow(x) > 0)]
 	return(sum.lpm(r));
+}
+sort.rpm = function(p, xn="r", v=5, sortPowers=TRUE) {
+	# sortPowers = sort individual Powers (partially);
+	vn = if(length(xn) > 1) xn else paste0("r", 5:1);
+	pr.max = sapply(seq(nrow(p)), function(id) max(p[id, vn]));
+	pr.min = sapply(seq(nrow(p)), function(id) {
+		mP = p[id, vn];
+		min(mP[mP > 0]); # extract only non-0;
+	});
+	pr.nmax = sapply(seq(nrow(p)), function(id) {
+		mP = p[id, vn];
+		max.p = max(mP);
+		sum(mP == max.p); # how many vars have max power?
+	});
+	pr.id = if( ! sortPowers) 0
+		else sapply(seq(nrow(p)), function(id) {
+			mP = p[id, vn]; max.p = max(mP);
+			sum(which(mP == max.p));
+		});
+	id = if(sortPowers) order(-pr.max, -pr.nmax, -pr.min, - pr.id) else order(-pr.max, -pr.nmax, -pr.min);
+	p = p[id,];
+	rownames(p) = seq(nrow(p));
+	return(p)
 }
 
 ### Poly Generators
