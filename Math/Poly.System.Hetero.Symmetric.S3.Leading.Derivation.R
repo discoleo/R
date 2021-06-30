@@ -242,7 +242,7 @@ round0(err)
 x = y;
 err = b^2*x^6 - 2*b*R*x^5 + R^2*x^4 - b^3*x^3 + 3*b^2*R*x^2 - b*R^2*x + b^4 - R^3;
 round0(err)
-
+# S = 2*x0 + (R - x0^4)/b;
 err = b^2*S^6 - 2*b*R*S^5 + R^2*S^4 - 9*b^3*S^3 + 9*b^2*R*S^2 - 3*b*R^2*S + 27*b^4 - R^3;
 round0(err)
 
@@ -346,14 +346,30 @@ var.name = "x"
 p = solve.pm(p1, p2, x=var.name)
 var.other = "z"
 names(p$Rez)[names(p$Rez) == var.other] = "x";
-p$Rez$x = p$Rez$x - min(p$Rez$x);
-p$Rez$b = p$Rez$b - min(p$Rez$b);
 p$Rez = sort.pm(p$Rez, c(4,3), xn="x")
 print.p(p$Rez, "x")
 #
 pR = div.pm(p$Rez, p0, "x")$Rez;
-pR$b = pR$b - min(pR$b);
 pR = sort.pm(pR, c(4,3), xn="x")
+print.p(pR, "x")
+
+### Case: x != y != z
+E2^2 - E3*S # = 0
+#
+p3 = data.frame(
+	x=c(2,2,0,2,1,1), y=c(2,0,2,1,2,1), z=c(0,2,2,1,1,2),
+	coeff = c(1,1,1,1,1,1)
+)
+p1 = data.frame(x=c(n,0,0), y=c(n,0,0), z=c(0,1,0), b = c(0,1,0), R=c(0,0,1), coeff=c(1,1,-1))
+p2 = data.frame(x=c(n,0,0), y=c(0,1,0), z=c(n,0,0), b = c(0,1,0), R=c(0,0,1), coeff=c(1,1,-1))
+#
+# pR = solve.pm(p1, p2, "y")
+# p3 = replace.fr.pm(p3, pR$x0, pR$div, pR$xn);
+# solve.pm(pR$Rez, p3, "z")
+pR = solve.pm(p3, p2, "y")
+p1 = replace.fr.pm(p1, pR$x0, pR$div, pR$xn);
+pR = solve.pm(pR$Rez, p1, "z")
+pR = sort.pm(pR$Rez, c(4,3), xn="x")
 print.p(pR, "x")
 
 
@@ -363,10 +379,15 @@ x^21 - 3*R*x^15 + 3*R^2*x^9 - R^3*x^3 - b^4*x + b^3*R
 b^3*x^21 - 3*b^2*R*x^20 + 3*b*R^2*x^19 - R^3*x^18 + 3*b^2*R^2*x^14 - 6*b*R^3*x^13 + 3*R^4*x^12 +
 	- 2*b^5*x^11 + 4*b^4*R*x^10 - 2*b^3*R^2*x^9 + 3*b*R^4*x^7 - 3*R^5*x^6 + 6*b^4*R^2*x^4 +
 	- 6*b^3*R^3*x^3 + b^7*x - b^6*R + R^6
-#
+# Case: all distinct
+b^3*x^15 - 3*b^2*R*x^14 + 3*b*R^2*x^13 - R^3*x^12 + b^4*x^10 - b^3*R*x^9 +
+	- b*R^3*x^7 + R^4*x^6 + b^5*x^5 + b^4*R*x^4 - 2*b^3*R^2*x^3 + b^6
+# All Cases:
 (x^6 + b*x - R) * (x^15 - b*x^10 - 2*R*x^9 + b^2*x^5 + b*R*x^4 + R^2*x^3 - b^3) *
 (b^3*x^15 - 3*b^2*R*x^14 + 3*b*R^2*x^13 - R^3*x^12 - b^4*x^10 + 4*b^3*R*x^9 - 3*b^2*R^2*x^8 +
-	- 2*b*R^3*x^7 + 2*R^4*x^6 - b^5*x^5 - b^4*R*x^4 + 5*b^3*R^2*x^3 - b^2*R^3*x^2 - b*R^4*x + b^6 - R^5)
+	- 2*b*R^3*x^7 + 2*R^4*x^6 - b^5*x^5 - b^4*R*x^4 + 5*b^3*R^2*x^3 - b^2*R^3*x^2 - b*R^4*x + b^6 - R^5) *
+(b^3*x^15 - 3*b^2*R*x^14 + 3*b*R^2*x^13 - R^3*x^12 + b^4*x^10 - b^3*R*x^9 +
+	- b*R^3*x^7 + R^4*x^6 + b^5*x^5 + b^4*R*x^4 - 2*b^3*R^2*x^3 + b^6)
 
 
 ### Test
@@ -430,4 +451,76 @@ y = -0.7530613076 + 0.8767452519i;
 z = -1.2267275591 - 0.2810649213i;
 S = x+y+z; E2 = x*y+x*z+y*z; E3 = x*y*z;
 
+
+########################
+########################
+########################
+
+########################
+### Mixed-Order: 2+1 ###
+########################
+
+### x[i]^2*x[j] + b*x[j]
+
+# x^2*y + b*y = R
+# y^2*z + b*z = R
+# z^2*x + b*x = R
+
+### Solution:
+
+# - shortcut: using eq. from the HtSymmetric Mixed system;
+
+### Sum =>
+# shortcut: Eq1[Mixed](R1 = 3*R - b*S) =>
+E3*S^3 - ((3*R - b*S) + 6*E3)*E2*S + (3*R - b*S)^2 + E2^3 + 9*E3^2 + 3*(3*R - b*S)*E3 # = 0
+
+# long:
+(x^2*y + y^2*z + z^2*x) + b*S - 3*R # = 0 # Eq 1-bis
+(x^2*y + y^2*z + z^2*x)*(x*y^2 + y*z^2 + z*x^2) +
+	+ (b*S - 3*R)*(x*y^2 + y*z^2 + z*x^2) # = 0
+E3*S^3 + E2^3 - 6*E3*E2*S + 9*E3^2 +
+	+ (b*S - 3*R)*(x*y^2 + y*z^2 + z*x^2) # = 0 # Eq 2-bis
+### Sum Eq 1-bis + Eq 2-bis =>
+(b*S - 3*R)*(x*y^2 + y*z^2 + z*x^2 + x^2*y + y^2*z + z^2*x) +
+	+ (b*S - 3*R)^2 + E3*S^3 + E2^3 - 6*E3*E2*S + 9*E3^2 # = 0
+(b*S - 3*R)*(E2*S - 3*E3) +
+	+ b^2*S^2 - 6*b*R*S + 9*R^2 + E3*S^3 + E2^3 - 6*E3*E2*S + 9*E3^2 # = 0
+E3*S^3 - 3*b*E3*S + 9*E3^2 + 9*R*E3 - 6*E3*E2*S +
+	+ E2^3 + b*E2*S^2 - 3*R*E2*S + b^2*S^2 - 6*b*R*S + 9*R^2 # = 0
+
+### Sum(z*...) =>
+x*y*z*(x+y+z) + b*E2 - R*S # = 0
+E3*S + b*E2 - R*S # = 0
+
+### Sum(y*...) =>
+(x^2*y^2 + y^2*z^2 + z^2*x^2) + b*(x^2 + y^2 + z^2) - R*S # = 0
+E2^2 - 2*E3*S + b*(S^2 - 2*E2) - R*S # = 0
+E2^2 - 2*E3*S + b*S^2 - 2*b*E2 - R*S # = 0
+
+### Auxiliary:
+E3Subst = - 27*R*S*b^5 - 12*R*S^3*b^4 + 6*R^2*S^4*b^2 + 9*S^2*b^6 + 5*S^4*b^5;
+E3Div = - 27*R*S^2*b^3 - 6*R*S^4*b^2 + 3*S^3*b^4 - S^5*b^3;
+# E3 = - E3Subst / E3Div;
+
+
+### Eq S:
+((R^2 + b^3)*S^2 - b^2*R*S + b^4) * S^4 * (S^3 + 9*b*S - 27*R) * P[9]
+
+### P[9]: false solution;
+(- 6561*R^2*b^3) +
+(2916*R*b^4)*S^1 +
+(- 6561*R^2*b^2 - 243*b^5)*S^2 +
+(2916*R*b^3 - 729*R^3)*S^3 +
+(- 972*R^2*b - 189*b^4)*S^4 +
+(621*R*b^2)*S^5 +
+(- 9*b^3)*S^6 +
+(54*R*b)*S^7 + b^2*S^8 + R*S^9
+
+
+### Debug:
+R = 2; b = -1;
+x =  1.5907409211 - 0.9236008907i;
+y =  0.1489943605 + 0.6462891180i;
+z = -1.4064019508 - 0.1940927468i;
+S = x+y+z; E2 = x*y+x*z+y*z; E3 = x*y*z;
 

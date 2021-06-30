@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric
 ### with Composite Leading Term
 ###
-### draft v.0.2e-clPoly-d
+### draft v.0.2f-clean
 
 
 ### Hetero-Symmetric
@@ -261,9 +261,12 @@ E2*E3 + b*(S^2 - 2*E2) - R*S # = 0
 E2*S - 3*E3 - 3*b # = 0
 
 
-### Eq:
-# S = 0; # seems to have NO solutions;
+### Eq S:
+# Case: S = 0; # seems to have NO solutions;
 b^2*S^6 - 2*b*R*S^5 + R^2*S^4 - 9*b^3*S^3 + 9*b^2*R*S^2 - 3*b*R^2*S + 27*b^4 - R^3
+# alternatively: solve directly for x
+x^6 - b*x^3 - R*x^2 + b^2;
+# S = 2*x + (R - x^4)/b;
 
 
 ### Solver:
@@ -457,32 +460,19 @@ b^3*x^15 - 3*b^2*R*x^14 + 3*b*R^2*x^13 - R^3*x^12 + b^4*x^10 - b^3*R*x^9 +
 ### Solution:
 
 # - shortcut: using eq. from the HtSymmetric Mixed system;
+#   (see x^2*y + y^2*z + z^2*x = R1)
 
 ### Sum =>
 # shortcut: Eq1[Mixed](R1 = 3*R - b*S) =>
 E3*S^3 - ((3*R - b*S) + 6*E3)*E2*S + (3*R - b*S)^2 + E2^3 + 9*E3^2 + 3*(3*R - b*S)*E3 # = 0
-
-# long:
-(x^2*y + y^2*z + z^2*x) + b*S - 3*R # = 0 # Eq 1-bis
-(x^2*y + y^2*z + z^2*x)*(x*y^2 + y*z^2 + z*x^2) +
-	+ (b*S - 3*R)*(x*y^2 + y*z^2 + z*x^2) # = 0
-E3*S^3 + E2^3 - 6*E3*E2*S + 9*E3^2 +
-	+ (b*S - 3*R)*(x*y^2 + y*z^2 + z*x^2) # = 0 # Eq 2-bis
-### Sum Eq 1-bis + Eq 2-bis =>
-(b*S - 3*R)*(x*y^2 + y*z^2 + z*x^2 + x^2*y + y^2*z + z^2*x) +
-	+ (b*S - 3*R)^2 + E3*S^3 + E2^3 - 6*E3*E2*S + 9*E3^2 # = 0
-(b*S - 3*R)*(E2*S - 3*E3) +
-	+ b^2*S^2 - 6*b*R*S + 9*R^2 + E3*S^3 + E2^3 - 6*E3*E2*S + 9*E3^2 # = 0
+# long (see Derivation):
 E3*S^3 - 3*b*E3*S + 9*E3^2 + 9*R*E3 - 6*E3*E2*S +
 	+ E2^3 + b*E2*S^2 - 3*R*E2*S + b^2*S^2 - 6*b*R*S + 9*R^2 # = 0
 
 ### Sum(z*...) =>
-x*y*z*(x+y+z) + b*E2 - R*S # = 0
 E3*S + b*E2 - R*S # = 0
 
 ### Sum(y*...) =>
-(x^2*y^2 + y^2*z^2 + z^2*x^2) + b*(x^2 + y^2 + z^2) - R*S # = 0
-E2^2 - 2*E3*S + b*(S^2 - 2*E2) - R*S # = 0
 E2^2 - 2*E3*S + b*S^2 - 2*b*E2 - R*S # = 0
 
 ### Auxiliary:
@@ -491,17 +481,9 @@ E3Div = - 27*R*S^2*b^3 - 6*R*S^4*b^2 + 3*S^3*b^4 - S^5*b^3;
 # E3 = - E3Subst / E3Div;
 
 
-### Eq:
+### Eq S:
 ((R^2 + b^3)*S^2 - b^2*R*S + b^4) * S^4 * (S^3 + 9*b*S - 27*R) * P[9]
 ### P[9]: false solution;
-(- 6561*R^2*b^3) +
-(2916*R*b^4)*S^1 +
-(- 6561*R^2*b^2 - 243*b^5)*S^2 +
-(2916*R*b^3 - 729*R^3)*S^3 +
-(- 972*R^2*b - 189*b^4)*S^4 +
-(621*R*b^2)*S^5 +
-(- 9*b^3)*S^6 +
-(54*R*b)*S^7 + b^2*S^8 + R*S^9
 
 
 ### Solver:
@@ -565,14 +547,6 @@ round0.p(poly.calc(x)) * 9 # * (R^2 + b[1]^3)
 	+ 3*b*(R^2 + b^3)*x^4 +
 	- R*b^2*x^5 +
 	+ (R^2 + b^3)*x^6
-
-
-### Debug:
-R = 2; b = -1;
-x =  1.5907409211 - 0.9236008907i;
-y =  0.1489943605 + 0.6462891180i;
-z = -1.4064019508 - 0.1940927468i;
-S = x+y+z; E2 = x*y+x*z+y*z; E3 = x*y*z;
 
 
 #######################
