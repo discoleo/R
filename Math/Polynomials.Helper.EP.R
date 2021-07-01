@@ -28,6 +28,23 @@ filter.byCol = function(E, idCol, val=0) {
 	apply(E[ , idCol, drop=FALSE] == val, 1, all)
 }
 ### Decompose Symmetric Polynomial
+coef.rpm = function(p, flt=c("S", "E2", "E3"), rpl=NULL, pow=NULL, xn="x", sort=TRUE, debug=TRUE) {
+	xpow = if(is.null(pow)) sort(unique(p$x), decreasing=FALSE) else pow;
+	l = lapply(xpow, function(pow) {
+		if(debug) print(paste0("Processing power = ", pow));
+		pp = replace.rpm(p[p$x == pow, ], flt=flt);
+		if( ! is.null(rpl)) {
+			for(i in seq(length(rpl))) {
+				pp = replace.pm(pp, rpl[[i]], names(rpl)[i]);
+			}
+		}
+		return(pp);
+	});
+	pp = sum.lpm(l);
+	if(sort) pp = sort.pm(pp, c(4,3), xn);
+	rownames(pp) = seq(nrow(pp));
+	return(pp);
+}
 replace.rpm = function(p, xn="r", v=5, flt=c("S", "E2", "E3")) {
 	# extract Base-Terms: does NOT check that poly is Symmetric!!!
 	p = unique.rpm(p, xn=xn, v=v);
@@ -36,6 +53,7 @@ replace.rpm = function(p, xn="r", v=5, flt=c("S", "E2", "E3")) {
 	ps = p[, - match(vn, names(p))];
 	r = lapply(seq(nrow(p)), function(id) {
 		pow = unlist(pr[id, pr[id,] > 0]);
+		if(is.null(pow)) return(ps[id,]);
 		E = Epoly.distinct(pow, v);
 		# filter: S = 0; E2 = 0; E3 = 0
 		idCol = match(flt, names(E));
