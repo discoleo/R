@@ -318,7 +318,7 @@ p = p[, c("x", paste0("r", 5:1), paste0("s", 4:1), "coeff")]
 rownames(p) = seq(nrow(p))
 
 # helper functions:
-# - moved to Polynomials.helper.EP.R;
+# - moved to Polynomials.Helper.R & Polynomials.Helper.EP.R;
 
 
 K = -1
@@ -384,6 +384,55 @@ E2_32 = 5*K; # - E2*E3 - 5*E5
 E2_31 = -4; # - 2*E2^2 + 4*E4
 E2_22 = -2; # E2^2 + 2*E4
 E2_21 = 0;
+
+
+##########################
+##########################
+
+### From: x^5 - x^2 + K
+
+### Derivation:
+p = roots.derived(5)
+p = mult.lpm(p)
+p = sort.pm(p, c(4,3), "x")
+p = p[, c("x", paste0("r", 5:1), paste0("s", 4:1), "coeff")]
+rownames(p) = seq(nrow(p))
+
+K = -1
+# x^5 - x^2 + K
+x0 = roots(c(1,0,0,-1, 0, K))
+
+### Examples:
+s4=1; s3=-5; s2=0; s1=3;
+r = sapply(seq(5), function(id) sum(x0[id]^seq(4) * c(s1,s2,s3,s4)));
+round0.p(poly.calc(r))
+#
+eval.pm(p[p$x == 1,], c(1, x0, s4,s3,s2,s1))
+
+x^5 - 3*s3*x^4 +
+	+ (4*s4^2*K + 5*s3*s2*K + 5*s4*s1*K + 3*s3^2 - 3*s4*s2 - 3*s2*s1)*x^3 +
+	+ (- 5*s4*s3^2*K^2 - 5*s4^2*s2*K^2 - s4^2*s3*K - 7*s3^2*s2*K + 8*s4*s2^2*K + s4*s3*s1*K + 5*s2^2*s1*K +
+		+ 5*s3*s1^2*K - s4^3 - s3^3 - s2^3 - s1^3 + 3*s4*s3*s2 - 3*s4^2*s1 + 3*s3*s2*s1 - 3*s4*s1^2)*x^2 +
+	+ (5*s4^3*s3*K^3 + 2*s4^4*K^2 + 2*s4*s3^3*K^2 - 5*s4*s2^3*K^2 + 7*s4^3*s1*K^2 - 5*s3^3*s1*K^2 +
+		- 4*s4^2*s3*s2*K^2 + 5*s3^2*s2^2*K^2 - 5*s4*s3*s2*s1*K^2 + 5*s4^2*s1^2*K^2 + 2*s2^4*K +
+		+ 2*s4^3*s2*K + 2*s3^3*s2*K + 5*s2*s1^3*K - 6*s4*s3*s2^2*K + 6*s4^2*s2*s1*K - 6*s3*s2^2*s1*K +
+		- 3*s3^2*s1^2*K + 9*s4*s2*s1^2*K)*x +
+	+ (- s4^5*K^4 + s3^5*K^3 - 2*s4^4*s2*K^3 + s4^3*s3^2*K^3 - 5*s4*s3^3*s2*K^3 + 5*s4^2*s3*s2^2*K^3 +
+		+ 5*s4^2*s3^2*s1*K^3 - 5*s4^3*s2*s1*K^3 - s2^5*K^2 + 2*s3^4*s1*K^2 - s4^3*s2^2*K^2 - s3^3*s2^2*K^2 +
+		+ 3*s4*s3*s2^3*K^2 + 2*s4^3*s3*s1*K^2 + 5*s3*s2^3*s1*K^2 + 5*s4*s3*s1^3*K^2 - 6*s4*s3^2*s2*s1*K^2 +
+		- 3*s4^2*s2^2*s1*K^2 + 7*s4^2*s3*s1^2*K^2 - 5*s3^2*s2*s1^2*K^2 - 5*s4*s2^2*s1^2*K^2 + s1^5*K +
+		+ 3*s4*s1^4*K + s4^3*s1^2*K + s3^3*s1^2*K + s2^3*s1^2*K + 3*s4^2*s1^3*K - 3*s3*s2*s1^3*K - 3*s4*s3*s2*s1^2*K)
+
+
+### Derivation:
+rpl = list(
+	"E5" = data.frame(K=1, coeff=-1),
+	"E3" = data.frame(coeff=1)
+);
+
+pK = coef.rpm(p, flt=c("S", "E2", "E4"), rpl=rpl)
+sapply(5:0, function(pow) cat("(", print.p(pK[pK$x == pow, - match("x", names(pK))], "K"), ")*x^", pow, " +\n", sep=""))
+
 
 
 ##########################
