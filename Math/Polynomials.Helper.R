@@ -288,13 +288,13 @@ sum.pm = function(p1, p2) {
 	id = match(n2, n1);
 	p = rbind(as.data.frame(p1), as.data.frame(p2)[,id]);
 	### Sum
-	p.r = aggregate(coeff~., p, sum);
+	p.r = aggregate0.pm(p);
 	return(reduce.pm(p.r));
 }
 sum.lpm = function(lp) {
 	pR = data.frame();
 	for(pd in lp) {
-		pR = add.pm(pR, pd);
+		pR = sum.pm(pR, pd);
 	}
 	return(pR);
 }
@@ -337,7 +337,10 @@ replace.withVal.pm = function(p, x, pow=1, val, simplify=TRUE) {
 replace.pm = function(p1, p2, x, pow=1) {
 	# replace x^pow by p2;
 	idx = match(x, names(p1));
-	if(is.na(idx)) stop(paste0("Polynomial does NOT contain variable: ", x));
+	if(is.na(idx)) {
+		warning(paste0("Polynomial does NOT contain variable: ", x));
+		return(p1);
+	}
 	if(is.numeric(p2)) return(replace.withVal.pm(p1, x=x, pow=pow, val=p2));
 	# xPow
 	rpow = if(pow == 1) p1[,idx] else p1[,idx] %/% pow;
@@ -700,6 +703,23 @@ roots.derived = function(n, pow=seq(n-1), rn="r", sn="s", all.roots=TRUE) {
 		p1 = p.list;
 	}
 	return(p1)
+}
+
+### Extensions
+extend.spm = function(p, n=2, vb="be", vR="R", vS="S", sort=TRUE) {
+	pS = data.frame(R=0, S=seq(n), coeff=-1);
+	pS = rbind(pS, c(1,0,1));
+	names(pS)[1:2] = c(vR, vS);
+	b.all = paste0(vb, seq(n));
+	for(id in seq(n)) {
+		pB = data.frame(rep(0, n+1));
+		pB[id,1] = id; names(pB) = b.all[id];
+		pS = cbind(pS, pB);
+	}
+	# substitute in p
+	p = replace.pm(p, pS, vR, pow=1);
+	if(sort) p = sort.pm(p, c(4,3), xn=vS);
+	return(p);
 }
 
 #######################
