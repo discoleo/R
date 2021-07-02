@@ -8,7 +8,7 @@
 ###  Mixed Leading Term
 ###  == Derivation ==
 ###
-### draft v.0.2b
+### draft v.0.2b-clPoly
 
 
 ###############
@@ -16,8 +16,9 @@
 ###############
 
 
-### draft v.0.2b:
+### draft v.0.2b - v.0.2b-clPoly:
 # - [started work] x^4*y^4 + b*z = R;
+# - classic Poly: P[28] for Case x == y or y == z;
 ### draft v.0.2a:
 # - solved: x^3*y^3 + b*z = R;
 ### draft v.0.1a:
@@ -40,7 +41,27 @@ library(pracma)
 #   solve.EnAll(), solveEn();
 
 ### other
-# ...
+
+### Classic Polynomial:
+### Type: x^n*y^n
+classic.P3Lnn = function(n, type="x") {
+	id = match(type, c("x", "z"));
+	if(is.na(id)) stop("Invalid variable type!")
+	p0 = data.frame(x=c(2*n,1,0), b=c(0,1,0), R=c(0,0,1), coeff=c(1,1,-1))
+	p1 = data.frame(x=c(2*n,0,0), z=c(0,1,0), b=c(0,1,0), R=c(0,0,1), coeff=c(1,1,-1))
+	p2 = data.frame(x=c(n,1,0),   z=c(n,0,0), b=c(0,1,0), R=c(0,0,1), coeff=c(1,1,-1))
+	var.name = type
+	p = solve.pm(p1, p2, x=var.name)
+	if(type == "x") {
+		var.other = "z"
+		names(p$Rez)[names(p$Rez) == var.other] = "x";
+	}
+	p$Rez = sort.pm(p$Rez, c(4,3), xn="x")
+	#
+	pR = div.pm(p$Rez, p0, "x")$Rez;
+	pR = sort.pm(pR, c(4,3), xn="x")
+	return(list(pL=p$Rez, p=pR))
+}
 
 
 ########################
@@ -339,19 +360,9 @@ print.p(pE2Div, "S");
 # (but one has to know this)
 
 n = 3
-p0 = data.frame(x=c(2*n,1,0), b=c(0,1,0), R=c(0,0,1), coeff=c(1,1,-1))
-p1 = data.frame(x=c(2*n,0,0), z=c(0,1,0), b=c(0,1,0), R=c(0,0,1), coeff=c(1,1,-1))
-p2 = data.frame(x=c(n,1,0), z=c(n,0,0), b = c(0,1,0), R=c(0,0,1), coeff=c(1,1,-1))
-var.name = "x"
-p = solve.pm(p1, p2, x=var.name)
-var.other = "z"
-names(p$Rez)[names(p$Rez) == var.other] = "x";
-p$Rez = sort.pm(p$Rez, c(4,3), xn="x")
-print.p(p$Rez, "x")
-#
-pR = div.pm(p$Rez, p0, "x")$Rez;
-pR = sort.pm(pR, c(4,3), xn="x")
-print.p(pR, "x")
+p = classic.P3Lnn(n)
+print.p(p$pL, "x")
+print.p(p$p, "x")
 
 ### Case: x != y != z
 E2^2 - E3*S # = 0
@@ -450,6 +461,48 @@ x =  0.5665027820 + 0.8399445356i;
 y = -0.7530613076 + 0.8767452519i;
 z = -1.2267275591 - 0.2810649213i;
 S = x+y+z; E2 = x*y+x*z+y*z; E3 = x*y*z;
+
+
+### Classic Polynomial:
+
+### Case: x == y
+x^36 - 4*R*x^28 + 6*R^2*x^20 - 4*R^3*x^12 + R^4*x^4 + b^5*x - b^4*R
+# P[8] * P[28]
+x^28 - b*x^21 - 3*R*x^20 + b^2*x^14 + 2*b*R*x^13 + 3*R^2*x^12 - b^3*x^7 - b^2*R*x^6 - b*R^2*x^5 - R^3*x^4 + b^4
+
+### Case: y == z
+# Note: z = (R - x^8) / b;
+# x = z; # test polynomial
+b^4*x^36 - 4*b^3*R*x^35 + 6*b^2*R^2*x^34 - 4*b*R^3*x^33 + R^4*x^32 + 4*b^3*R^2*x^27 - 12*b^2*R^3*x^26 +
+	+ 12*b*R^4*x^25 - 4*R^5*x^24 + 6*b^2*R^4*x^18 - 12*b*R^5*x^17 + 6*R^6*x^16 - 8*b^6*R*x^14 +
+	+ 16*b^5*R^2*x^13 - 8*b^4*R^3*x^12 + 4*b*R^6*x^9 - 4*R^7*x^8 + 8*b^5*R^3*x^5 - 8*b^4*R^4*x^4 + b^9*x +
+	- b^8*R + R^8
+# P[8] * P[28]
+b^4*x^28 - 4*b^3*R*x^27 + 6*b^2*R^2*x^26 - 4*b*R^3*x^25 + R^4*x^24 - b^5*x^21 + 5*b^4*R*x^20 - 6*b^3*R^2*x^19 +
+	- 2*b^2*R^3*x^18 + 7*b*R^4*x^17 - 3*R^5*x^16 + b^6*x^14 - 6*b^5*R*x^13 + 11*b^4*R^2*x^12 +
+	- 4*b^3*R^3*x^11 - 3*b^2*R^4*x^10 - 2*b*R^5*x^9 + 3*R^6*x^8 - b^7*x^7 - b^6*R*x^6 - b^5*R^2*x^5 +
+	+ 7*b^4*R^3*x^4 - b^3*R^4*x^3 - b^2*R^5*x^2 - b*R^6*x + b^8 - R^7
+
+### Case: (x,y,z) all distinct
+### TODO
+
+### Derivation:
+
+### Case: x == y
+# x^8 + b*z = R
+# x^4*z^4 + b*x = R
+# (but one has to know this)
+
+n = 4
+p = classic.P3Lnn(n, type="z")
+print.p(p$pL, "x")
+print.p(p$p, "x")
+
+R = -1
+b = 3
+coeff = rev(eval(parse(text=paste0("c(", paste(toCoeff(p$p, "x"), collapse=", "), ")"))));
+x = roots(coeff);
+y = x; z = (R - x^8)/b;
 
 
 ########################
