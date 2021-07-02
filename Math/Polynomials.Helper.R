@@ -156,9 +156,9 @@ mult.pm = function(p1, p2, sc=1) {
 	p.m = lapply(vars, function(name) outer(p1[[name]], p2[[name]], function(i, j) i+j))
 	p.b0 = prod.b0(p1.b0, p2.b0);
 	p.l = lapply(p.m, as.vector);
-	p.v = do.call(cbind, p.l)
-	p.v = cbind(p.v, b0=as.vector(p.b0));
-	p.r = aggregate(b0~., p.v, sum);
+	p.v = do.call(cbind, p.l);
+	p.v = cbind(p.v, coeff = as.vector(p.b0));
+	p.r = aggregate0.pm(p.v);
 	colnames(p.r) = c(vars, "coeff");
 	if(sc != 1) p.r$coeff = p.r$coeff * sc;
 	return(p.r);
@@ -507,7 +507,7 @@ solve.pm = function(p1, p2, xn, stop.at=NULL, simplify=TRUE) {
 		print(paste0("Substituting: Len = ", nrow(p1),
 			"; Len = ", nrow(lp2[[1]]), " + ", nrow(lp2[[2]])));
 		lp2[[2]]$coeff = - lp2[[2]]$coeff; # !
-		p1 = replace.fr.bigpm(p1, lp2[[1]], lp2[[2]], x=xn, pow=1);
+		p1 = replace.fr.pm(p1, lp2[[1]], lp2[[2]], x=xn, pow=1);
 		if(simplify) p1 = simplify.spm(p1);
 		return(list(Rez=p1, x0=lp2[[1]], div=lp2[[2]], xn=xn));
 	}
@@ -523,7 +523,7 @@ solve.pm = function(p1, p2, xn, stop.at=NULL, simplify=TRUE) {
 	if(dmax < 0) p2cf[,xn] = -dmax;
 	if(dmax > 0) p1cf[,xn] = dmax;
 	# TODO: gcd of coefficients & polynomials;
-	p1 = sum.bigpm(mult.bigpm(p1, p2cf), mult.bigpm(p2, p1cf, -1));
+	p1 = sum.pm(mult.pm(p1, p2cf), mult.pm(p2, p1cf, -1));
 	print(paste0("Max pow: ", max1, "; Len = ", nrow(p1)));
 	if(simplify) { p1 = simplify.spm(p1); p2 = simplify.spm(p2); }
 	return(solve.pm(p1, p2, xn=xn, stop.at=stop.at));
