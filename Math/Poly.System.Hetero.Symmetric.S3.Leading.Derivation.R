@@ -463,15 +463,81 @@ z = -1.2267275591 - 0.2810649213i;
 S = x+y+z; E2 = x*y+x*z+y*z; E3 = x*y*z;
 
 
+### Eq S Derivation:
+4*E2*E3^2 + 2*E3^2*S^2 - 4*E2^2*E3*S + E2^4 + b*S - 3*R # = 0
+3*E3^3 - 3*E2*E3^2*S + E2^3*E3 - 2*b*E2 + b*S^2 - R*S # = 0
+E3^2 - 2*E2*E3*S + E2^3 # = 0
+# =>
+2*E3^2*S^2 + 4*E2^2*E3*S - 3*E2^4 + b*S - 3*R # - 2*S^2 =>
+3*E2*E3^2*S - 2*E2^3*E3 - 2*b*E2 + b*S^2 - R*S # - 3*E2*S =>
+# =>
+4*E2^2*E3*S + 4*E2*E3*S^3 - 3*E2^4 - 2*E2^3*S^2 + b*S - 3*R
+3*E2^4*S + 2*E2^3*E3 - 6*E2^2*E3*S^2 + 2*b*E2 - b*S^2 + R*S
+# =>
+(2*E2^3*S^2 + 4*E2^2*S^4 - 3*E2^4 + b*S - 3*R)^2 - (4*E2^2*S + 4*E2*S^3)^2*(E2^2*S^2 - E2^3)
+(5*E2^4*S - 6*E2^3*S^3 + 2*b*E2 - b*S^2 + R*S)^2 - (2*E2^3 - 6*E2^2*S^2)^2*(E2^2*S^2 - E2^3)
+#
+p1 = data.frame(
+	E3 = c(2, 2, 1, 0, 0, 0),
+	E2 = c(1, 0, 2, 4, 0, 0),
+	S  = c(0, 2, 1, 0, 1, 0),
+	b  = c(0, 0, 0, 0, 1, 0),
+	R  = c(0, 0, 0, 0, 0, 1),
+	coeff = c(4, 2, -4, 1, 1, -3)
+)
+p2 = data.frame(
+	E3 = c(3, 2, 1, 0, 0, 0),
+	E2 = c(0, 1, 3, 1, 0, 0),
+	S  = c(0, 1, 0, 0, 2, 1),
+	b  = c(0, 0, 0, 1, 1, 0),
+	R  = c(0, 0, 0, 0, 0, 1),
+	coeff = c(3,-3, 1,-2, 1,-1)
+)
+p3 = data.frame(
+	E3 = c(2, 1, 0),
+	E2 = c(0, 1, 3),
+	S  = c(0, 1, 0),
+	coeff = c(1,-2,1)
+)
+p11 = diff.pm(p1, mult.pm(p3, data.frame(E2=c(1,0), S=c(0,2), coeff=c(4,2))))
+p21 = diff.pm(p2, mult.pm(p3, data.frame(E3=c(1,0), E2=c(0,1), S=c(0,1), coeff=c(3,3))))
+#
+library(gmp)
+solve.3pm = function(p, v, bigz=FALSE, xn=NULL, val=1, stop.at=NULL) {
+	if( ! is.null(xn)) {
+		for(i in seq_along(xn)) {
+			p[[1]] = replace.pm(p[[1]], val, x=xn[i]);
+			p[[2]] = replace.pm(p[[2]], val, x=xn[i]);
+			p[[3]] = replace.pm(p[[3]], val, x=xn[i]);
+		}
+	}
+	#
+	pE3R = solve.pm(p[[1]], p[[2]], v[[1]])
+	p3sub = replace.fr.pm(p[[3]], pE3R$x0, pE3R$div, v[[2]]);
+	p3sub = sort.pm(p3sub, c(4,3), v[[2]]);
+	if(bigz) {
+		pE3R$Rez$coeff = as.bigz(pE3R$Rez$coeff);
+		p3sub$coeff = as.bigz(p3sub$coeff);
+	}
+	pS = solve.pm(pE3R$Rez, p3sub, v[[2]]);
+	return(pS);
+}
+xn = c("R", "b")
+pR = solve.3pm(list(p2, p3, p1), c("E2", "E3"), bigz=TRUE, xn=xn)
+
+
+pR = solve.3pm(list(p11, p21, p3), c("E3", "E2"), bigz=TRUE, xn=xn)
+
+
 ### Classic Polynomial:
 
 ### Case: x == y
+# Note: z = (R - x^8) / b; # is the solution for the Case y == z;
 x^36 - 4*R*x^28 + 6*R^2*x^20 - 4*R^3*x^12 + R^4*x^4 + b^5*x - b^4*R
 # P[8] * P[28]
 x^28 - b*x^21 - 3*R*x^20 + b^2*x^14 + 2*b*R*x^13 + 3*R^2*x^12 - b^3*x^7 - b^2*R*x^6 - b*R^2*x^5 - R^3*x^4 + b^4
 
 ### Case: y == z
-# Note: z = (R - x^8) / b;
 # x = z; # test polynomial
 b^4*x^36 - 4*b^3*R*x^35 + 6*b^2*R^2*x^34 - 4*b*R^3*x^33 + R^4*x^32 + 4*b^3*R^2*x^27 - 12*b^2*R^3*x^26 +
 	+ 12*b*R^4*x^25 - 4*R^5*x^24 + 6*b^2*R^4*x^18 - 12*b*R^5*x^17 + 6*R^6*x^16 - 8*b^6*R*x^14 +
