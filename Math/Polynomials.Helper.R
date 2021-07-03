@@ -240,6 +240,22 @@ reduce.var.pm = function(p) {
 	nc[-id] = sapply(seq(ncol(p))[-id], function(id) any(p[,id] != 0));
 	return(p[, nc]);
 }
+reduce.cpm = function(p, asBigNum=FALSE) {
+	# simplify coefficients
+	xgcd = if(asBigNum) as.bigz(0) else 0;
+	xgcd = gcd.vpm(p, xgcd);
+	if(xgcd != 1) {
+		p$coeff = p$coeff / xgcd;
+		if(asBigNum) p$coeff = as.bigz(p$coeff);
+	}
+	return(p);
+}
+toDouble.pm = function(p) {
+	isZero = (p$coeff == 0);
+	div = min(abs(p$coeff[ ! isZero]));
+	p$coeff = as.double(p$coeff / div);
+	return(p);
+}
 ### Helper functions
 align.pm = function(p1, p2, align.names=TRUE) {
 	# align columns of 2 data.frames for sum.pm();
@@ -376,9 +392,11 @@ replace.fr.pm = function(p1, p2, p2fr, x, pow=1) {
 	p2fr.pows = list(p2fr); # powers of p2fr
 	if(max.pow > 1) {
 		for(ipow in seq(2, max.pow)) {
+			print(paste0("Pow = ", ipow))
 			p2.pows[[ipow]] = mult.pm(p2.pows[[ipow - 1]], p2);
 			p2fr.pows[[ipow]] = mult.pm(p2fr.pows[[ipow - 1]], p2fr);
 		}
+		print("Finished Powers!");
 	}
 	pR = data.frame();
 	for(nr in seq(nrow(p1))) {
@@ -388,7 +406,7 @@ replace.fr.pm = function(p1, p2, p2fr, x, pow=1) {
 			else list(p2.pows[[ipow]], p2fr.pows[[max.pow - ipow]]);
 		lp = c(lp, list(p1[nr,]));
 		tmp = mult.all.pm(lp);
-		pR = add.pm(pR, tmp);
+		pR = sum.pm(pR, tmp);
 	};
 	return(reduce.var.pm(pR));
 }
@@ -458,6 +476,10 @@ div.pm = function(p1, p2, by="x", debug=TRUE) {
 	}
 	return(list(Rez=pRez, Rem=p1));
 }
+gcd.vpm = function(p, xgcd=0) {
+	for(i in seq(nrow(p))) xgcd = gcd(xgcd, p$coeff[i]);
+	return(xgcd);
+}
 gcd.pm = function(p1, p2, by="x", div.sc=1) {
 	# basic implementation without much thought!
 	if(max(p2[,by]) > max(p1[,by])) { tmp = p1; p1 = p2; p2 = tmp; }
@@ -480,7 +502,7 @@ gcd.pm = function(p1, p2, by="x", div.sc=1) {
 	}
 	return(pR);
 }
-solve.pm = function(p1, p2, xn, stop.at=NULL, simplify=TRUE) {
+solve.pm = function(p1, p2, xn, stop.at=NULL, simplify=TRUE, asBigNum=FALSE) {
 	max1 = max(p1[,xn]); max2 = max(p2[,xn]);
 	if(max1 == 0) stop("No variable!")
 	if(max2 == 0) stop("No variable!")
@@ -507,7 +529,18 @@ solve.pm = function(p1, p2, xn, stop.at=NULL, simplify=TRUE) {
 		}
 		print(paste0("Substituting: Len = ", nrow(p1),
 			"; Len = ", nrow(lp2[[1]]), " + ", nrow(lp2[[2]])));
-		lp2[[2]]$coeff = - lp2[[2]]$coeff; # !
+		lp2[[2]]$coeff = - lp2[[2]]$coeff; # "-" !!!
+		if(asBigNum) {
+			print("Computing GCD!")
+			xgcd = as.bigz(0);
+			for(i in seq(nrow(lp2[[1]]))) xgcd = gcd(xgcd, lp2[[1]]$coeff[i]);
+			for(i in seq(nrow(lp2[[2]]))) xgcd = gcd(xgcd, lp2[[2]]$coeff[i]);
+			if(xgcd > 1) {
+				print("Simplifying by GCD!")
+				lp2[[1]]$coeff = as.bigz(lp2[[1]]$coeff / xgcd);
+				lp2[[2]]$coeff = as.bigz(lp2[[2]]$coeff / xgcd);
+			}
+		}
 		p1 = replace.fr.pm(p1, lp2[[1]], lp2[[2]], x=xn, pow=1);
 		if(simplify) p1 = simplify.spm(p1);
 		return(list(Rez=p1, x0=lp2[[1]], div=lp2[[2]], xn=xn));
@@ -527,7 +560,7 @@ solve.pm = function(p1, p2, xn, stop.at=NULL, simplify=TRUE) {
 	p1 = sum.pm(mult.pm(p1, p2cf), mult.pm(p2, p1cf, -1));
 	print(paste0("Max pow: ", max1, "; Len = ", nrow(p1)));
 	if(simplify) { p1 = simplify.spm(p1); p2 = simplify.spm(p2); }
-	return(solve.pm(p1, p2, xn=xn, stop.at=stop.at));
+	return(solve.pm(p1, p2, xn=xn, stop.at=stop.at, simplify=simplify, asBigNum=asBigNum));
 }
 
 
