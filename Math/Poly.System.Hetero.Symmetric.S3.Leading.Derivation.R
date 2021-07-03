@@ -42,9 +42,31 @@ library(pracma)
 
 ### other
 
+library(gmp)
+
+solve.3pm = function(p, v, bigz=FALSE, xn=NULL, val=1, stop.at=NULL) {
+	if( ! is.null(xn)) {
+		for(i in seq_along(xn)) {
+			p[[1]] = replace.pm(p[[1]], val, x=xn[i]);
+			p[[2]] = replace.pm(p[[2]], val, x=xn[i]);
+			p[[3]] = replace.pm(p[[3]], val, x=xn[i]);
+		}
+	}
+	#
+	pE3R = solve.pm(p[[1]], p[[2]], v[[1]])
+	p3sub = replace.fr.pm(p[[3]], pE3R$x0, pE3R$div, v[[1]]);
+	p3sub = sort.pm(p3sub, c(4,3), v[[2]]);
+	if(bigz) {
+		pE3R$Rez$coeff = as.bigz(pE3R$Rez$coeff);
+		p3sub$coeff = as.bigz(p3sub$coeff);
+	}
+	pS = solve.pm(pE3R$Rez, p3sub, v[[2]], asBigNum=bigz);
+	return(pS);
+}
+
 ### Classic Polynomial:
 ### Type: x^n*y^n
-classic.P3Lnn = function(n, type="x") {
+classic.P3Lnn = function(n, type="x", div=TRUE) {
 	id = match(type, c("x", "z"));
 	if(is.na(id)) stop("Invalid variable type!")
 	p0 = data.frame(x=c(2*n,1,0), b=c(0,1,0), R=c(0,0,1), coeff=c(1,1,-1))
@@ -58,8 +80,10 @@ classic.P3Lnn = function(n, type="x") {
 	}
 	p$Rez = sort.pm(p$Rez, c(4,3), xn="x")
 	#
-	pR = div.pm(p$Rez, p0, "x")$Rez;
-	pR = sort.pm(pR, c(4,3), xn="x")
+	if(div) {
+		pR = div.pm(p$Rez, p0, "x")$Rez;
+		pR = sort.pm(pR, c(4,3), xn="x");
+	}
 	return(list(pL=p$Rez, p=pR))
 }
 
@@ -502,31 +526,79 @@ p3 = data.frame(
 p11 = diff.pm(p1, mult.pm(p3, data.frame(E2=c(1,0), S=c(0,2), coeff=c(4,2))))
 p21 = diff.pm(p2, mult.pm(p3, data.frame(E3=c(1,0), E2=c(0,1), S=c(0,1), coeff=c(3,3))))
 #
-library(gmp)
-solve.3pm = function(p, v, bigz=FALSE, xn=NULL, val=1, stop.at=NULL) {
-	if( ! is.null(xn)) {
-		for(i in seq_along(xn)) {
-			p[[1]] = replace.pm(p[[1]], val, x=xn[i]);
-			p[[2]] = replace.pm(p[[2]], val, x=xn[i]);
-			p[[3]] = replace.pm(p[[3]], val, x=xn[i]);
-		}
+
+solve.P3L44 = function(pS, debug=TRUE) {
+	if(is.data.frame(pS)) {
+		S = roots(rev(pS$coeff));
+	} else {
+		S = roots(pS);
 	}
-	#
-	pE3R = solve.pm(p[[1]], p[[2]], v[[1]])
-	p3sub = replace.fr.pm(p[[3]], pE3R$x0, pE3R$div, v[[2]]);
-	p3sub = sort.pm(p3sub, c(4,3), v[[2]]);
-	if(bigz) {
-		pE3R$Rez$coeff = as.bigz(pE3R$Rez$coeff);
-		p3sub$coeff = as.bigz(p3sub$coeff);
-	}
-	pS = solve.pm(pE3R$Rez, p3sub, v[[2]]);
-	return(pS);
+	if(debug) print(length(S));
+	len = nrow(pE2x0);
+	print("Starting E2");
+	E2 = sapply(S, function(S) {
+			Spow = S^seq(len);
+			sum(pE2x0$coeff * Spow) / sum(pE2div$coeff * c(0, head(Spow, -2)))
+		});
+	R = 1; b = 1;
+	E3 = (3*E2^4 + 2*E2^3*S^2 - b*S + 3*R) / (4*E2^2*S + 4*E2*S^3);
+	len = length(S);
+	print("Starting x");
+	x = sapply(seq(len), function(id) roots(c(1, -S[id], E2[id], -E3[id])));
+	S = rep(S, each=3); E3 = rep(E3, each=3);
+	yz = E3 / x; yz.s = S - x;
+	len = length(x);
+	if(debug) print(len);
+	print("Starting y");
+	y = sapply(seq(len), function(id) {
+		coeff = c(x[id]^4*yz[id], b, R - 2*b*yz.s[id], b*yz.s[id]^2 - R*yz.s[id]);
+		roots(coeff);
+	});
+	x = as.vector(x); x = rep(x, each=3);
+	yz.s = as.vector(yz.s); yz.s = rep(yz.s, each=3);
+	y = as.vector(y); z = yz.s - y;
+	sol = cbind(x=x, y=y, z=z);
+	return(sol);
 }
+R = 1; b = 1;
+sol = solve.P3L44(pS);
+x = sol[,1]; y = sol[,2]; z = sol[,3];
+sol = cbind(sol, x+y+z);
+# true roots: only 18 pairs!
+sol2 = sol[abs(round0(x^4*y^4 + b*z - R)) < 1E-4,]
+
+
+### from csv:
+library(gmp);
+pE2x0 = read.csv("S3L44.E2x0.csv", colClasses=c("numeric", "character"))
+pE2x0$coeff = as.bigz(pE2x0$coeff)
+pE2div = read.csv("S3L44.E2div.csv", colClasses=c("numeric", "character"))
+pE2div$coeff = as.bigz(pE2div$coeff)
+r = toDouble.lpm(list(pE2x0, pE2div));
+pE2x0 = r[[1]]; pE2div = r[[2]];
+### S
+pS = read.csv("S3L44.S.csv", colClasses=c("numeric", "character"))
+pS$coeff = as.bigz(pS$coeff);
+pS = toDouble.pm(pS, scale=1E+50);
+
+
+### Variable elimination:
 xn = c("R", "b")
-pR = solve.3pm(list(p2, p3, p1), c("E2", "E3"), bigz=TRUE, xn=xn)
+# slow
+# pR = solve.3pm(list(p2, p3, p1), c("E2", "E3"), bigz=TRUE, xn=xn)
 
-
+# the actual method used [~1 hour]
 pR = solve.3pm(list(p11, p21, p3), c("E3", "E2"), bigz=TRUE, xn=xn)
+
+# [failed as well]
+pI1 = data.frame(x=c(4,0,0), y=c(4,0,0), z=c(0,1,0), b=c(0,1,0), R=c(0,0,1), coeff=c(1,1,-1))
+pI2 = pI3 = pI1; nm = c("x", "y", "z");
+names(pI2)[1:3] = nm[c(2,3,1)];
+names(pI3)[1:3] = nm[c(3,1,2)];
+#
+pR = solve.3pm(list(pI1, pI3, pI2), c("z", "y"), bigz=TRUE)
+pR2 = div.pm(pR$Rez, classic.P3Lnn(n, type="x")$pL, "x")
+pR2 = div.pm(pR2$Rez, classic.P3Lnn(n, type="z")$p, "x")
 
 
 ### Classic Polynomial:
