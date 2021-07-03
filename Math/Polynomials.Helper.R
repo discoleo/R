@@ -250,11 +250,25 @@ reduce.cpm = function(p, asBigNum=FALSE) {
 	}
 	return(p);
 }
-toDouble.pm = function(p) {
+toDouble.pm = function(p, scale=1) {
 	isZero = (p$coeff == 0);
 	div = min(abs(p$coeff[ ! isZero]));
+	div = div * scale;
 	p$coeff = as.double(p$coeff / div);
 	return(p);
+}
+toDouble.lpm = function(lp) {
+	div = lapply(lp, function(p) {
+		isZero = (p$coeff == 0);
+		div = min(abs(p$coeff[ ! isZero]));
+		matrix(div, ncol=1, nrow=1);
+	});
+	div = do.call(cbind, div); # workaround for bigz;
+	div = max(div);
+	for(id in seq(length(lp))) {
+		lp[[id]]$coeff = as.double(lp[[id]]$coeff / div);
+	}
+	return(lp);
 }
 ### Helper functions
 align.pm = function(p1, p2, align.names=TRUE) {
