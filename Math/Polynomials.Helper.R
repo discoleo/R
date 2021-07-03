@@ -154,10 +154,11 @@ mult.pm = function(p1, p2, sc=1) {
 	# print(p1); print(p2);
 	# Multiply
 	p.m = lapply(vars, function(name) outer(p1[[name]], p2[[name]], function(i, j) i+j))
-	p.b0 = prod.b0(p1.b0, p2.b0);
+	p.b0 = as.vector(prod.b0(p1.b0, p2.b0));
 	p.l = lapply(p.m, as.vector);
-	p.v = do.call(cbind, p.l);
-	p.v = cbind(p.v, coeff = as.vector(p.b0));
+	p.v = as.data.frame(do.call(cbind, p.l));
+	# p.v = cbind(p.v, coeff = p.b0);
+	p.v$coeff = p.b0;
 	p.r = aggregate0.pm(p.v);
 	colnames(p.r) = c(vars, "coeff");
 	if(sc != 1) p.r$coeff = p.r$coeff * sc;
