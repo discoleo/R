@@ -66,7 +66,7 @@ solve.3pm = function(p, v, bigz=FALSE, xn=NULL, val=1, stop.at=NULL) {
 
 ### Classic Polynomial:
 ### Type: x^n*y^n
-classic.P3Lnn = function(n, type="x", div=TRUE) {
+classic.P3Lnn = function(n, type="x") {
 	id = match(type, c("x", "z"));
 	if(is.na(id)) stop("Invalid variable type!")
 	p0 = data.frame(x=c(2*n,1,0), b=c(0,1,0), R=c(0,0,1), coeff=c(1,1,-1))
@@ -79,11 +79,9 @@ classic.P3Lnn = function(n, type="x", div=TRUE) {
 		names(p$Rez)[names(p$Rez) == var.other] = "x";
 	}
 	p$Rez = sort.pm(p$Rez, c(4,3), xn="x")
-	#
-	if(div) {
-		pR = div.pm(p$Rez, p0, "x")$Rez;
-		pR = sort.pm(pR, c(4,3), xn="x");
-	}
+	# Div:
+	pR = div.pm(p$Rez, p0, "x")$Rez;
+	pR = sort.pm(pR, c(4,3), xn="x");
 	return(list(pL=p$Rez, p=pR))
 }
 
@@ -474,6 +472,11 @@ x^3*(y^4-z^4) + y^3*z^3*(y-z) + E3*(x*(y^2+z^2+y*z)*(y-z) + y*z*(y+z)*(y-z)) # =
 E3^2 - 2*E3*E2*S + E2^3 # = 0
 
 
+### Eq S:
+# P[3] with huge / very complicated coefficients;
+# TODO;
+
+
 ### Test
 x^4*y^4 + b*z # - R
 y^4*z^4 + b*x # - R
@@ -527,7 +530,7 @@ p11 = diff.pm(p1, mult.pm(p3, data.frame(E2=c(1,0), S=c(0,2), coeff=c(4,2))))
 p21 = diff.pm(p2, mult.pm(p3, data.frame(E3=c(1,0), E2=c(0,1), S=c(0,1), coeff=c(3,3))))
 #
 
-solve.P3L44 = function(pS, debug=TRUE) {
+solve.S3L44 = function(pS, debug=TRUE) {
 	if(is.data.frame(pS)) {
 		S = roots(rev(pS$coeff));
 	} else {
@@ -551,21 +554,26 @@ solve.P3L44 = function(pS, debug=TRUE) {
 	if(debug) print(len);
 	print("Starting y");
 	y = sapply(seq(len), function(id) {
-		coeff = c(x[id]^4*yz[id], b, R - 2*b*yz.s[id], b*yz.s[id]^2 - R*yz.s[id]);
+		yz = yz[id]; yz.s = yz.s[id];
+		# coeff = c(x[id]^4*yz, b, R - 2*b*yz.s, b*yz.s^2 - R*yz.s);
+		# robust
+		b2 = 3*x[id]^4*yz*yz.s;
+		coeff = c(b2, -b2*yz.s, b2*yz.s^2 / 3 + b*(yz.s^2 - 2*yz) - R*yz.s);
 		roots(coeff);
 	});
-	x = as.vector(x); x = rep(x, each=3);
-	yz.s = as.vector(yz.s); yz.s = rep(yz.s, each=3);
+	x = as.vector(x); x = rep(x, each=2);
+	yz.s = as.vector(yz.s); yz.s = rep(yz.s, each=2);
 	y = as.vector(y); z = yz.s - y;
 	sol = cbind(x=x, y=y, z=z);
 	return(sol);
 }
 R = 1; b = 1;
-sol = solve.P3L44(pS);
-x = sol[,1]; y = sol[,2]; z = sol[,3];
-sol = cbind(sol, x+y+z);
+solAll = solve.S3L44(pS);
+x = solAll[,1]; y = solAll[,2]; z = solAll[,3];
+solAll = cbind(solAll, x+y+z);
 # true roots: only 18 pairs!
-sol2 = sol[abs(round0(x^4*y^4 + b*z - R)) < 1E-4,]
+sol = solAll[abs(round0(x^4*y^4 + b*z - R)) < 1E-4,]
+x = sol[,1]; y = sol[,2]; z = sol[,3];
 
 
 ### from csv:
