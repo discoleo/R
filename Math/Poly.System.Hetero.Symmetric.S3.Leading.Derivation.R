@@ -473,9 +473,10 @@ E3^2 - 2*E3*E2*S + E2^3 # = 0
 
 
 ### Eq S:
-# P[3] with huge / very complicated coefficients;
+# [initial] P[3] with huge / very complicated coefficients;
+# P[12] with ??? coefficients?
 # TODO;
-
+2.919878684 + 4.332531871*S + 3.03005575*S^2 + S^3 # for R = 1; b = 1;
 
 ### Test
 x^4*y^4 + b*z # - R
@@ -585,9 +586,25 @@ pE2div$coeff = as.bigz(pE2div$coeff)
 r = toDouble.lpm(list(pE2x0, pE2div));
 pE2x0 = r[[1]]; pE2div = r[[2]];
 ### S
-pS = read.csv("S3L44.S.csv", colClasses=c("numeric", "character"))
+pS = read.csv("S3L44.S106.csv", colClasses=c("numeric", "character"))
 pS$coeff = as.bigz(pS$coeff);
-pS = toDouble.pm(pS, scale=1E+50);
+pS = toDouble.pm(pS, scale=1E+10);
+### [initial]
+# pS = read.csv("S3L44.S.csv", colClasses=c("numeric", "character"))
+# pS$coeff = as.bigz(pS$coeff);
+# pS = toDouble.pm(pS, scale=1E+50);
+### SDiv
+pSDiv = read.csv("S3L44.SDiv.csv", colClasses=c("numeric", "character"))
+pSDiv$coeff = as.bigz(pSDiv$coeff);
+# pS = toDouble.pm(pSDiv, scale=1E+50);
+pR = div.pm(pS, pSDiv, "S")
+
+
+2.919878684 + 4.332531871*S + 3.03005575*S^2 + S^3 # for R = 1; b = 1;
+div.pm(pSd, data.frame(x=0:3, coeff=poly.calc(sol[c(1,7,13),4])))
+dS = dp.pm(pS, "S")
+gcd.vpm(dS, xgcd=as.bigz(0))
+pDiv = gcd.exact.p(pS, dS, "S")
 
 
 ### Variable elimination:
