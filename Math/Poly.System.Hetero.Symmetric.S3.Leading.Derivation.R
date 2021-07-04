@@ -473,10 +473,12 @@ E3^2 - 2*E3*E2*S + E2^3 # = 0
 
 
 ### Eq S:
-# [initial] P[3] with huge / very complicated coefficients;
-# P[12] with ??? coefficients?
-# TODO;
-2.919878684 + 4.332531871*S + 3.03005575*S^2 + S^3 # for R = 1; b = 1;
+# Case: R = 1; b = 1;
+# TODO: P[12] (true roots);
+5*S^30 - 30*S^29 + 75*S^28 - 100*S^27 + 75*S^26 - 30*S^25 + 5*S^24 - 1961*S^23 + 18389*S^22 - 68563*S^21 +
+	+ 136015*S^20 - 157435*S^19 + 107211*S^18 - 39969*S^17 - 56953*S^16 + 447444*S^15 - 1238976*S^14 +
+	+ 1908684*S^13 - 1913058*S^12 + 1336500*S^11 - 641520*S^10 + 128871*S^9 + 595350*S^8 - 2462562*S^7 +
+	+ 5060718*S^6 - 6202332*S^5 + 4881384*S^4 - 2558790*S^3 + 890109*S^2 - 203391*S + 39366
 
 ### Test
 x^4*y^4 + b*z # - R
@@ -586,13 +588,17 @@ pE2div$coeff = as.bigz(pE2div$coeff)
 r = toDouble.lpm(list(pE2x0, pE2div));
 pE2x0 = r[[1]]; pE2div = r[[2]];
 ### S
-pS = read.csv("S3L44.S106.csv", colClasses=c("numeric", "character"))
-pS$coeff = as.bigz(pS$coeff);
-pS = toDouble.pm(pS, scale=1E+10);
+pS = read.csv("S3L44.S30.csv")
+# pS = read.csv("S3L44.S30.csv", colClasses=c("numeric", "character"))
+# pS$coeff = as.bigz(pS$coeff);
 ### [initial]
 # pS = read.csv("S3L44.S.csv", colClasses=c("numeric", "character"))
 # pS$coeff = as.bigz(pS$coeff);
 # pS = toDouble.pm(pS, scale=1E+50);
+### [S106]
+# pS = read.csv("S3L44.S106.csv", colClasses=c("numeric", "character"))
+# pS$coeff = as.bigz(pS$coeff);
+# pS = toDouble.pm(pS, scale=1E+10);
 ### SDiv
 pSDiv = read.csv("S3L44.SDiv.csv", colClasses=c("numeric", "character"))
 pSDiv$coeff = as.bigz(pSDiv$coeff);
@@ -605,6 +611,11 @@ div.pm(pSd, data.frame(x=0:3, coeff=poly.calc(sol[c(1,7,13),4])))
 dS = dp.pm(pS, "S")
 gcd.vpm(dS, xgcd=as.bigz(0))
 pDiv = gcd.exact.p(pS, dS, "S")
+# Step 2:
+pDiv2 = gcd.exact.p(pS, pSDiv, "S"); # S^76
+pR = div.pm(pS, pDiv2, "S");
+# write.csv(pDiv2, file="S3L44.S76.csv", row.names=FALSE)
+# write.csv(pR$Rez, file="S3L44.S30.csv", row.names=FALSE)
 
 
 ### Variable elimination:
