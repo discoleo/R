@@ -490,6 +490,9 @@ div.pm = function(p1, p2, by="x", debug=TRUE) {
 	}
 	return(list(Rez=pRez, Rem=p1));
 }
+divByZero.pm = function(p1, pDiv, xn="x", asBigNum=TRUE) {
+	return(gcd.exact.p(p1, pDiv, xn=xn, asBigNum=asBigNum, doGCD=FALSE))
+}
 gcd.vpm = function(p, xgcd=0) {
 	for(i in seq(nrow(p))) xgcd = gcd(xgcd, p$coeff[i]);
 	return(xgcd);
@@ -516,11 +519,13 @@ gcd.pm = function(p1, p2, by="x", div.sc=1) {
 	}
 	return(pR);
 }
-gcd.exact.p = function(p1, p2, xn="x", asBigNum=TRUE) {
+gcd.exact.p = function(p1, p2, xn="x", asBigNum=TRUE, doGCD=TRUE) {
 	# exact implementation: only univariate polynomials;
+	if( ! doGCD) fact = if(asBigNum) as.bigz(1) else 1;
 	while(TRUE) {
 		n1 = max(p1[,xn]); n2 = max(p2[,xn]);
-		if(n2 > n1) {
+		if( ! doGCD && n1 < n2) return(list(p=p1, f=fact));
+		if(doGCD && (n2 > n1)) {
 			tmp = p1; p1 = p2; p2 = tmp;
 			tmp = n1; n1 = n2; n2 = tmp;
 		}
@@ -538,18 +543,23 @@ gcd.exact.p = function(p1, p2, xn="x", asBigNum=TRUE) {
 		else if(dn < 0) p1m[,xn] = p1m[,xn] - dn;
 		#
 		dp = diff.pm(p1m, p2m);
-		if(nrow(dp) == 0) return(p2);
+		if(nrow(dp) == 0) {
+			print("Factor found!");
+			if(doGCD) return(p2) else return(list(p=0, f=0));
+		}
 		# simplify the coefficients: robust for BigNumbers;
 		xgcd = gcd.vpm(dp, xgcd=dp$coeff[1]);
 		if(xgcd != 1) {
 			dp$coeff = dp$coeff / xgcd;
 			if(asBigNum) dp$coeff = as.bigz(dp$coeff);
 		}
+		if( ! doGCD) fact = fact * c2 / xgcd;
 		n0 = max(dp[, xn, drop=TRUE]);
 		print(paste0("Pow = ", n0, ", Len = ", nrow(dp)));
 		if(n0 == 0) {
 			print("Not divisible!");
-			return(dp);
+			if(doGCD) return(dp);
+			return(list(p=dp, f=fact));
 		}
 		p1 = dp;
 	}
