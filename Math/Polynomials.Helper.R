@@ -516,6 +516,44 @@ gcd.pm = function(p1, p2, by="x", div.sc=1) {
 	}
 	return(pR);
 }
+gcd.exact.p = function(p1, p2, xn="x", asBigNum=TRUE) {
+	# exact implementation: only univariate polynomials;
+	while(TRUE) {
+		n1 = max(p1[,xn]); n2 = max(p2[,xn]);
+		if(n2 > n1) {
+			tmp = p1; p1 = p2; p2 = tmp;
+			tmp = n1; n1 = n2; n2 = tmp;
+		}
+		c1 = p1$coeff[p1[,xn] == n1];
+		c2 = p2$coeff[p2[,xn] == n2];
+		div = gcd(c1, c2);
+		if(div != 1) {
+			c1 = c1/div; c2 = c2 / div;
+			if(asBigNum) {c1 = as.bigz(c1); c2 = as.bigz(c2);}
+		}
+		p1m = p1; p1m$coeff = p1m$coeff * c2;
+		p2m = p2; p2m$coeff = p2m$coeff * c1;
+		dn = n1 - n2;
+		if(dn > 0) p2m[,xn] = p2m[,xn] + dn
+		else if(dn < 0) p1m[,xn] = p1m[,xn] - dn;
+		#
+		dp = diff.pm(p1m, p2m);
+		if(nrow(dp) == 0) return(p2);
+		# simplify the coefficients: robust for BigNumbers;
+		xgcd = gcd.vpm(dp, xgcd=dp$coeff[1]);
+		if(xgcd != 1) {
+			dp$coeff = dp$coeff / xgcd;
+			if(asBigNum) dp$coeff = as.bigz(dp$coeff);
+		}
+		n0 = max(dp[, xn, drop=TRUE]);
+		print(paste0("Pow = ", n0, ", Len = ", nrow(dp)));
+		if(n0 == 0) {
+			print("Not divisible!");
+			return(dp);
+		}
+		p1 = dp;
+	}
+}
 solve.pm = function(p1, p2, xn, stop.at=NULL, simplify=TRUE, asBigNum=FALSE) {
 	max1 = max(p1[,xn]); max2 = max(p2[,xn]);
 	if(max1 == 0) stop("No variable!")
@@ -575,6 +613,14 @@ solve.pm = function(p1, p2, xn, stop.at=NULL, simplify=TRUE, asBigNum=FALSE) {
 	print(paste0("Max pow: ", max1, "; Len = ", nrow(p1)));
 	if(simplify) { p1 = simplify.spm(p1); p2 = simplify.spm(p2); }
 	return(solve.pm(p1, p2, xn=xn, stop.at=stop.at, simplify=simplify, asBigNum=asBigNum));
+}
+
+### Factorize
+dp.pm = function(p, xn="x") {
+	p = p[(p[,xn] != 0),];
+	p$coeff = p$coeff * p[,xn];
+	p[,xn] = p[,xn] - 1;
+	return(p);
 }
 
 
