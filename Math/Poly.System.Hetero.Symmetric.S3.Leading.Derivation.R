@@ -474,7 +474,10 @@ E3^2 - 2*E3*E2*S + E2^3 # = 0
 
 ### Eq S:
 # Case: R = 1; b = 1;
-# TODO: P[12] (true roots);
+# P[14] (true roots):
+-2 + 9*S - 39*S^2 + 103*S^3 - 175*S^4 + 187*S^5 - 113*S^6 + 29*S^7 + S^8 - 6*S^9 + 15*S^10 +
+	- 20*S^11 + 15*S^12 - 6*S^13 + S^14
+# P[30] = P[14] * P[16]
 5*S^30 - 30*S^29 + 75*S^28 - 100*S^27 + 75*S^26 - 30*S^25 + 5*S^24 - 1961*S^23 + 18389*S^22 - 68563*S^21 +
 	+ 136015*S^20 - 157435*S^19 + 107211*S^18 - 39969*S^17 - 56953*S^16 + 447444*S^15 - 1238976*S^14 +
 	+ 1908684*S^13 - 1913058*S^12 + 1336500*S^11 - 641520*S^10 + 128871*S^9 + 595350*S^8 - 2462562*S^7 +
@@ -534,18 +537,17 @@ p21 = diff.pm(p2, mult.pm(p3, data.frame(E3=c(1,0), E2=c(0,1), S=c(0,1), coeff=c
 #
 
 solve.S3L44 = function(pS, debug=TRUE) {
-	if(is.data.frame(pS)) {
+	if(missing(pS)) {
+		coeff = c(1, -6, 15, -20, 15, -6, 1, 29, -113, 187, -175, 103, -39, 9, -2);
+		S = roots(coeff);
+	} else if(is.data.frame(pS)) {
 		S = roots(rev(pS$coeff));
 	} else {
 		S = roots(pS);
 	}
 	if(debug) print(length(S));
-	len = nrow(pE2x0);
 	print("Starting E2");
-	E2 = sapply(S, function(S) {
-			Spow = S^seq(len);
-			sum(pE2x0$coeff * Spow) / sum(pE2div$coeff * c(0, head(Spow, -2)))
-		});
+	E2 = E2.S3L44(S);
 	R = 1; b = 1;
 	E3 = (3*E2^4 + 2*E2^3*S^2 - b*S + 3*R) / (4*E2^2*S + 4*E2*S^3);
 	len = length(S);
@@ -570,25 +572,38 @@ solve.S3L44 = function(pS, debug=TRUE) {
 	sol = cbind(x=x, y=y, z=z);
 	return(sol);
 }
-R = 1; b = 1;
-solAll = solve.S3L44(pS);
+E2.S3L44 = function(S) {
+	len = nrow(pE2x0);
+	E2 = sapply(S, function(S) {
+			# Spow = S^seq(len);
+			# sum(pE2x0$coeff * Spow) / sum(pE2div$coeff * c(1, head(Spow, -2)));
+			Spow = S^seq(0, len-1);
+			sum(pE2x0$coeff * Spow) / sum(pE2div$coeff * Spow);
+		}); print(E2);
+	return(E2);
+}
+R = 1; b = 1; # values are fixed
+solAll = solve.S3L44();
 x = solAll[,1]; y = solAll[,2]; z = solAll[,3];
 solAll = cbind(solAll, x+y+z);
-# true roots: only 18 pairs!
-sol = solAll[abs(round0(x^4*y^4 + b*z - R)) < 1E-4,]
+# true roots: only 7*6 vs 14*6 pairs ???
+sol = solAll[abs(round0(x^4*y^4 + b*z - R)) < 1E-3,]
 x = sol[,1]; y = sol[,2]; z = sol[,3];
 
 
 ### from csv:
 library(gmp);
-pE2x0 = read.csv("S3L44.E2x0.csv", colClasses=c("numeric", "character"))
+#
+pE2x0 = read.csv("S3L44.E2x0.S11.csv", colClasses=c("numeric", "character"))
 pE2x0$coeff = as.bigz(pE2x0$coeff)
-pE2div = read.csv("S3L44.E2div.csv", colClasses=c("numeric", "character"))
+pE2div = read.csv("S3L44.E2div.S11.csv", colClasses=c("numeric", "character"))
 pE2div$coeff = as.bigz(pE2div$coeff)
 r = toDouble.lpm(list(pE2x0, pE2div));
+# E2 factors: c(1, 1)
 pE2x0 = r[[1]]; pE2div = r[[2]];
-### S
+### S: not needed anymore
 pS = read.csv("S3L44.S30.csv")
+
 # pS = read.csv("S3L44.S30.csv", colClasses=c("numeric", "character"))
 # pS$coeff = as.bigz(pS$coeff);
 ### [initial]
@@ -616,6 +631,19 @@ pDiv2 = gcd.exact.p(pS, pSDiv, "S"); # S^76
 pR = div.pm(pS, pDiv2, "S");
 # write.csv(pDiv2, file="S3L44.S76.csv", row.names=FALSE)
 # write.csv(pR$Rez, file="S3L44.S30.csv", row.names=FALSE)
+
+### Reduce E2:
+pS = data.frame(S=14:0, coeff = c(1, -6, 15, -20, 15, -6, 1, 29, -113, 187, -175, 103, -39, 9, -2));
+pS$coeff = as.bigz(pS$coeff);
+pE2x0 = read.csv("S3L44.E2x0.S199.csv", colClasses=c("numeric", "character"))
+pE2x0$coeff = as.bigz(pE2x0$coeff)
+pE2div = read.csv("S3L44.E2div.S197.csv", colClasses=c("numeric", "character"))
+pE2div$coeff = as.bigz(pE2div$coeff)
+#
+pE2x0Red = divByZero.pm(pE2x0, pS, "S")
+pE2divRed = divByZero.pm(pE2div, pS, "S")
+# write.csv(pE2x0Red$p, file="S3L44.E2x0.S11.csv", row.names=FALSE)
+# write.csv(pE2divRed$p, file="S3L44.E2div.S11.csv", row.names=FALSE)
 
 
 ### Variable elimination:
