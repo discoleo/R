@@ -238,7 +238,7 @@ reduce.var.pm = function(p) {
 	id = match("coeff", names(p));
 	nc = rep(TRUE, ncol(p));
 	nc[-id] = sapply(seq(ncol(p))[-id], function(id) any(p[,id] != 0));
-	return(p[, nc]);
+	return(p[, nc, drop=FALSE]);
 }
 reduce.cpm = function(p, asBigNum=FALSE) {
 	# simplify coefficients
@@ -626,6 +626,50 @@ solve.pm = function(p1, p2, xn, stop.at=NULL, simplify=TRUE, asBigNum=FALSE) {
 }
 
 ### Factorize
+factorize.p = function(p, xn="x", f.all=FALSE, asBigNum=TRUE, file="_R.Temp.") {
+	# factorize.all = FALSE
+	# - p1 is usually sufficient;
+	# - dos NOT handle: p1 * p2^3*p3^4 or p1^2*p2^3;
+	id = match(xn, names(p));
+	if(is.na(id)) stop("Variable NOT present!");
+	lvl = 1; # level of factorization;
+	doSave = ! (is.null(file) || is.na(file));
+	rez = list();
+	dp = dp.pm(p, xn);
+	if(nrow(dp) == 0 || ncol(dp) < 2) return(list(list(GCD=NULL, p1=p)));
+	while(TRUE) {
+		# Step 1: GCD
+		cat("\n"); print(paste0("Level = ", lvl));
+		pGCD = gcd.exact.p(p, dp, xn, asBigNum=asBigNum);
+		pGCD = reduce.var.pm(pGCD);
+		if(nrow(pGCD) < 1 || ncol(pGCD) < 2) break;
+		id = match(xn, names(pGCD));
+		if(is.na(id)) break;
+		# Leading Sign:
+		isMaxPow = (pGCD[,id] == max(pGCD[,id]));
+		if(pGCD$coeff[isMaxPow][[1]] < 0) pGCD$coeff = - pGCD$coeff;
+		if(doSave) write.csv(pGCD, file=paste0(file, "GCD.", lvl, ".csv"));
+		# Step 2:
+		p.all = div.pm(p, pGCD, xn)$Rez;
+		if(doSave) write.csv(pGCD, file=paste0(file, "ALL.", lvl, ".csv"));
+		p.minus1 = gcd.exact.p(pGCD, p.all, xn, asBigNum=asBigNum);
+		# TODO: IF(p.minus1 == p.all) => multiplicity!
+		p1 = div.pm(p.all, p.minus1, xn)$Rez;
+		if(doSave) write.csv(pGCD, file=paste0(file, "p1.", lvl, ".csv"));
+		#
+		rez[[lvl]] = list();
+		rez[[lvl]][["GCD"]] = pGCD;
+		rez[[lvl]][["p1"]]  = p1;
+		rez[[lvl]][["All"]] = p.all;
+		if( ! f.all) break;
+		lvl = lvl + 1;
+		p = pGCD;
+		dp = dp.pm(pGCD, xn)
+		if(nrow(dp) < 1 || ncol(dp) < 2) break;
+		if(is.na(match(xn, names(dp)))) break;
+	}
+	return(rez);
+}
 dp.pm = function(p, xn="x") {
 	p = p[(p[,xn] != 0),];
 	p$coeff = p$coeff * p[,xn];
