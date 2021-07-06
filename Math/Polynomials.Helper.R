@@ -648,14 +648,18 @@ factorize.p = function(p, xn="x", f.all=FALSE, asBigNum=TRUE, file="_R.Temp.") {
 		# Leading Sign:
 		isMaxPow = (pGCD[,id] == max(pGCD[,id]));
 		if(pGCD$coeff[isMaxPow][[1]] < 0) pGCD$coeff = - pGCD$coeff;
-		if(doSave) write.csv(pGCD, file=paste0(file, "GCD.", lvl, ".csv"));
+		if(doSave) write.csv(pGCD, file=paste0(file, "GCD.", lvl, ".csv"), row.names=FALSE);
 		# Step 2:
 		p.all = div.pm(p, pGCD, xn)$Rez;
-		if(doSave) write.csv(pGCD, file=paste0(file, "ALL.", lvl, ".csv"));
+		if(asBigNum) {
+			if(all(denominator(p.all$coeff) == 1)) p.all$coeff = as.bigz(p.all$coeff)
+			else print("Warning: some Denominators != 1!")
+		}
+		if(doSave) write.csv(p.all, file=paste0(file, "ALL.", lvl, ".csv"), row.names=FALSE);
 		p.minus1 = gcd.exact.p(pGCD, p.all, xn, asBigNum=asBigNum);
 		# TODO: IF(p.minus1 == p.all) => multiplicity!
 		p1 = div.pm(p.all, p.minus1, xn)$Rez;
-		if(doSave) write.csv(pGCD, file=paste0(file, "p1.", lvl, ".csv"));
+		if(doSave) write.csv(p1, file=paste0(file, "p1.", lvl, ".csv"), row.names=FALSE);
 		#
 		rez[[lvl]] = list();
 		rez[[lvl]][["GCD"]] = pGCD;
