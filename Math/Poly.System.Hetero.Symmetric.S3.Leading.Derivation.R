@@ -8,7 +8,7 @@
 ###  Mixed Leading Term
 ###  == Derivation ==
 ###
-### draft v.0.2b-clPoly
+### draft v.0.2b-S-cases
 
 
 ###############
@@ -16,9 +16,10 @@
 ###############
 
 
-### draft v.0.2b - v.0.2b-clPoly:
+### draft v.0.2b - v.0.2b-S-cases:
 # - [started work] x^4*y^4 + b*z = R;
 # - classic Poly: P[28] for Case x == y or y == z;
+# - Eq S: for cases R = 1, b = +/- 1; [v.0.2b-S-cases]
 ### draft v.0.2a:
 # - solved: x^3*y^3 + b*z = R;
 ### draft v.0.1a:
@@ -46,10 +47,11 @@ library(gmp)
 
 solve.3pm = function(p, v, bigz=FALSE, xn=NULL, val=1, stop.at=NULL) {
 	if( ! is.null(xn)) {
+		if(length(xn) > length(val)) val = rep(val, length(xn));
 		for(i in seq_along(xn)) {
-			p[[1]] = replace.pm(p[[1]], val, x=xn[i]);
-			p[[2]] = replace.pm(p[[2]], val, x=xn[i]);
-			p[[3]] = replace.pm(p[[3]], val, x=xn[i]);
+			p[[1]] = replace.pm(p[[1]], val[i], x=xn[i]);
+			p[[2]] = replace.pm(p[[2]], val[i], x=xn[i]);
+			p[[3]] = replace.pm(p[[3]], val[i], x=xn[i]);
 		}
 	}
 	#
@@ -329,8 +331,12 @@ E2^2 - E3*S # = 0
 # E3*S = E2^2
 
 ### Auxiliary Eqs:
-E2x0 = (32*b^2*S^7 - 56*b*R*S^6 + 24*R^2*S^5 + 144*b^3*S^2 - 216*b^2*R*S);
-E2Div = (104*b^2*S^5 - 168*b*R*S^4 + 72*R^2*S^3 + 216*b^3);
+E2x0 = (4*b^2*S^7 - 7*b*R*S^6 + 3*R^2*S^5 + 18*b^3*S^2 - 27*b^2*R*S);
+E2Div = (13*b^2*S^5 - 21*b*R*S^4 + 9*R^2*S^3 + 27*b^3);
+E2 = E2x0 / E2Div;
+# TODO: S^6
+E2x0 = (5*b^2*R*S^6 - 9*b*R^2*S^5 + 4*R^3*S^4 + 14*b^4*S^2 - 27*b^3*R*S)
+E2Div = (18*b^2*R*S^4 - 30*b*R^2*S^3 + 13*R^3*S^2 + 14*b^4);
 E2 = E2x0 / E2Div;
 
 ### Eq S:
@@ -477,7 +483,11 @@ E3^2 - 2*E3*E2*S + E2^3 # = 0
 # P[14] (true roots):
 -2 + 9*S - 39*S^2 + 103*S^3 - 175*S^4 + 187*S^5 - 113*S^6 + 29*S^7 + S^8 - 6*S^9 + 15*S^10 +
 	- 20*S^11 + 15*S^12 - 6*S^13 + S^14
-# P[30] = P[14] * P[16]
+### Case: R = 1; b = -1;
+-2 - 9*S - 39*S^2 - 103*S^3 - 175*S^4 - 187*S^5 - 113*S^6 - 29*x^7 + S^8 + 6*S^9 + 15*S^10 +  
+	+ 20*S^11 + 15*S^12 + 6*S^13 + S^14
+
+# R = 1; b = 1; P[30] = P[14] * P[16]
 5*S^30 - 30*S^29 + 75*S^28 - 100*S^27 + 75*S^26 - 30*S^25 + 5*S^24 - 1961*S^23 + 18389*S^22 - 68563*S^21 +
 	+ 136015*S^20 - 157435*S^19 + 107211*S^18 - 39969*S^17 - 56953*S^16 + 447444*S^15 - 1238976*S^14 +
 	+ 1908684*S^13 - 1913058*S^12 + 1336500*S^11 - 641520*S^10 + 128871*S^9 + 595350*S^8 - 2462562*S^7 +
@@ -536,9 +546,13 @@ p11 = diff.pm(p1, mult.pm(p3, data.frame(E2=c(1,0), S=c(0,2), coeff=c(4,2))))
 p21 = diff.pm(p2, mult.pm(p3, data.frame(E3=c(1,0), E2=c(0,1), S=c(0,1), coeff=c(3,3))))
 #
 
-solve.S3L44 = function(pS, debug=TRUE) {
+solve.S3L44 = function(pS, R=1, b=1, debug=TRUE) {
 	if(missing(pS)) {
-		coeff = c(1, -6, 15, -20, 15, -6, 1, 29, -113, 187, -175, 103, -39, 9, -2);
+		if(b == 1) {
+			coeff = c(1,-6, 15,-20, 15,-6, 1, 29, -113, 187, -175, 103, -39, 9, -2);
+		} else if(b == -1) {
+			coeff = c(1, 6, 15, 20, 15, 6, 1,-29, -113,-187, -175,-103, -39,-9, -2);
+		}
 		S = roots(coeff);
 	} else if(is.data.frame(pS)) {
 		S = roots(rev(pS$coeff));
@@ -548,7 +562,6 @@ solve.S3L44 = function(pS, debug=TRUE) {
 	if(debug) print(length(S));
 	print("Starting E2");
 	E2 = E2.S3L44(S);
-	R = 1; b = 1;
 	E3 = (3*E2^4 + 2*E2^3*S^2 - b*S + 3*R) / (4*E2^2*S + 4*E2*S^3);
 	len = length(S);
 	print("Starting x");
@@ -572,21 +585,26 @@ solve.S3L44 = function(pS, debug=TRUE) {
 	sol = cbind(x=x, y=y, z=z);
 	return(sol);
 }
-E2.S3L44 = function(S) {
+E2.S3L44 = function(S, type=199) {
 	len = nrow(pE2x0);
 	E2 = sapply(S, function(S) {
-			# Spow = S^seq(len);
-			# sum(pE2x0$coeff * Spow) / sum(pE2div$coeff * c(1, head(Spow, -2)));
+		if(type == 199) {
+			Spow = S^seq(len);
+			sum(pE2x0$coeff * Spow) / sum(pE2div$coeff * c(1, head(Spow, -2)));
+		} else {
 			Spow = S^seq(0, len-1);
 			sum(pE2x0$coeff * Spow) / sum(pE2div$coeff * Spow);
+		}
 		}); print(E2);
 	return(E2);
 }
 R = 1; b = 1; # values are fixed
-solAll = solve.S3L44();
+R = 1; b = -1; # values are fixed
+solAll = solve.S3L44(b=b);
+# solAll = solve.S3L44(p1, b=b);
 x = solAll[,1]; y = solAll[,2]; z = solAll[,3];
 solAll = cbind(solAll, x+y+z);
-# true roots: only 7*6 vs 14*6 pairs ???
+# true roots: only 14*6 pairs;
 sol = solAll[abs(round0(x^4*y^4 + b*z - R)) < 1E-3,]
 x = sol[,1]; y = sol[,2]; z = sol[,3];
 
@@ -594,9 +612,11 @@ x = sol[,1]; y = sol[,2]; z = sol[,3];
 ### from csv:
 library(gmp);
 #
-pE2x0 = read.csv("S3L44.E2x0.S11.csv", colClasses=c("numeric", "character"))
+E2.files = c("S3L44.E2x0.S11.csv", "S3L44.E2div.S11.csv")
+E2.files = c("S3L44.E2x0.b-1.S199.csv", "S3L44.E2div.b-1.S197.csv")
+pE2x0 = read.csv(E2.files[1], colClasses=c("numeric", "character"))
 pE2x0$coeff = as.bigz(pE2x0$coeff)
-pE2div = read.csv("S3L44.E2div.S11.csv", colClasses=c("numeric", "character"))
+pE2div = read.csv(E2.files[2], colClasses=c("numeric", "character"))
 pE2div$coeff = as.bigz(pE2div$coeff)
 r = toDouble.lpm(list(pE2x0, pE2div));
 # E2 factors: c(1, 1)
@@ -621,16 +641,20 @@ pSDiv$coeff = as.bigz(pSDiv$coeff);
 pR = div.pm(pS, pSDiv, "S")
 
 
-2.919878684 + 4.332531871*S + 3.03005575*S^2 + S^3 # for R = 1; b = 1;
-div.pm(pSd, data.frame(x=0:3, coeff=poly.calc(sol[c(1,7,13),4])))
-dS = dp.pm(pS, "S")
-gcd.vpm(dS, xgcd=as.bigz(0))
-pDiv = gcd.exact.p(pS, dS, "S")
-# Step 2:
-pDiv2 = gcd.exact.p(pS, pSDiv, "S"); # S^76
-pR = div.pm(pS, pDiv2, "S");
-# write.csv(pDiv2, file="S3L44.S76.csv", row.names=FALSE)
-# write.csv(pR$Rez, file="S3L44.S30.csv", row.names=FALSE)
+# for R = 1; b = 1;
+# for R = 1; b = -1;
+pS = read.csv("S3L44.S474.b-1.csv", colClasses=c("numeric", "character"))
+pS$coeff = as.bigz(pS$coeff);
+# pS = pR$Rez;
+pS = factorize.p(pS, xn="S")
+# write.csv(pS[[1]]$p1, file="S3L44.S30.b-1.csv", row.names=FALSE)
+# write.csv(pS[[1]]$p1, file="S3L44.S30.csv", row.names=FALSE)
+
+# pGCD = read.csv("_R.Temp.GCD.1.csv", colClasses=c("numeric", "character"))
+# pGCD$coeff = as.bigz(pGCD$coeff);
+# pAll = read.csv("_R.Temp.ALL.1.csv", colClasses=c("numeric", "character"))
+# pAll$coeff = as.bigz(pAll$coeff);
+
 
 ### Reduce E2:
 pS = data.frame(S=14:0, coeff = c(1, -6, 15, -20, 15, -6, 1, 29, -113, 187, -175, 103, -39, 9, -2));
@@ -651,8 +675,16 @@ xn = c("R", "b")
 # slow
 # pR = solve.3pm(list(p2, p3, p1), c("E2", "E3"), bigz=TRUE, xn=xn)
 
+
+xn = c("R", "b")
 # the actual method used [~1 hour]
-pR = solve.3pm(list(p11, p21, p3), c("E3", "E2"), bigz=TRUE, xn=xn)
+# pR = solve.3pm(list(p11, p21, p3), c("E3", "E2"), bigz=TRUE, xn=xn)
+# b = -1;
+pR = solve.3pm(list(p11, p21, p3), c("E3", "E2"), bigz=TRUE, xn=xn, val=c(1,-1))
+# write.csv(pR$Rez, file="S3L44.S474.b-1.csv", row.names=FALSE)
+# write.csv(pR$x0, file="S3L44.E2x0.b-1.S199.csv", row.names=FALSE)
+# write.csv(pR$div, file="S3L44.E2div.b-1.S197.csv", row.names=FALSE)
+
 
 # [failed as well]
 pI1 = data.frame(x=c(4,0,0), y=c(4,0,0), z=c(0,1,0), b=c(0,1,0), R=c(0,0,1), coeff=c(1,1,-1))
