@@ -8,7 +8,7 @@
 ###  Mixed Leading Term
 ###  == Derivation ==
 ###
-### draft v.0.2b-EqS-b
+### draft v.0.2b-EqS-full
 
 
 ###############
@@ -16,11 +16,11 @@
 ###############
 
 
-### draft v.0.2b - v.0.2b-EqS-b:
+### draft v.0.2b - v.0.2b-EqS-full:
 # - [started work] x^4*y^4 + b*z = R;
 # - classic Poly: P[28] for Case x == y or y == z;
 # - Eq S: for cases R = 1, b = +/- 1; [v.0.2b-S-cases]
-# - Eq S: any parameter b; [v.0.2b-Eq-S-b]
+# - Eq S: full: any parameter b & R; [v.0.2b-Eq-S-b & v.0.2b-Eq-S-full]
 ### draft v.0.2a:
 # - solved: x^3*y^3 + b*z = R;
 ### draft v.0.1a:
@@ -480,10 +480,12 @@ E3^2 - 2*E3*E2*S + E2^3 # = 0
 
 
 ### Eq S:
-### Case: R = 1;
 # P[14] (true roots):
--1 - b^8 + 9*b*S - 39*b^2*S^2 + 103*b^3*S^3 - 175*b^4*S^4 + 187*b^5*S^5 - 113*b^6*S^6 + 29*b^7*S^7 +
-	+ S^8 - 6*b*S^9 + 15*b^2*S^10 - 20*b^3*S^11 + 15*b^4*S^12 - 6*b^5*S^13 + b^6*S^14
+-R^7 - b^8 + 9*b*R^6*S - 39*b^2*R^5*S^2 + 103*b^3*R^4*S^3 - 175*b^4*R^3*S^4 + 187*b^5*R^2*S^5 +
+	- 113*b^6*R*S^6 + 29*b^7*S^7 + R^6*S^8 - 6*b*R^5*S^9 + 15*b^2*R^4*S^10 - 20*b^3*R^3*S^11 +
+	+ 15*b^4*R^2*S^12 - 6*b^5*R*S^13 + b^6*S^14
+
+### Derivation:
 ### Case: R = 1; b = 1;
 -2 + 9*S - 39*S^2 + 103*S^3 - 175*S^4 + 187*S^5 - 113*S^6 + 29*S^7 + S^8 - 6*S^9 + 15*S^10 +
 	- 20*S^11 + 15*S^12 - 6*S^13 + S^14
@@ -558,8 +560,9 @@ p21 = diff.pm(p2, mult.pm(p3, data.frame(E3=c(1,0), E2=c(0,1), S=c(0,1), coeff=c
 
 solve.S3L44 = function(pS, R=1, b=1, debug=TRUE) {
 	if(missing(pS)) {
-		coeff = c(b^6, -6*b^5, 15*b^4, -20*b^3, 15*b^2, -6*b, 1,
-				29*b^7, -113*b^6, 187*b^5, -175*b^4, 103*b^3, -39*b^2, 9*b, -1 - b^8);
+		coeff = c(b^6, -6*b^5*R, 15*b^4*R^2, -20*b^3*R^3, 15*b^2*R^4, -6*b*R^5, R^6,
+				29*b^7, -113*b^6*R, 187*b^5*R^2, -175*b^4*R^3, 103*b^3*R^4, -39*b^2*R^5,
+				9*b*R^6, - R^7 - b^8);
 		S = roots(coeff);
 	} else if(is.data.frame(pS)) {
 		S = roots(rev(pS$coeff));
@@ -638,12 +641,14 @@ init.E2.S3L44 = function(b=1, type=13, toDouble=TRUE) {
 
 library(gmp);
 
-R = 1; # value is fixed
-b = -2; # value NOT fixed anymore; [but TODO: E2]
+# values are NOT fixed anymore;
+# but still problems with E2!
+R = 1;
+b = -2;
 #
-E2.type = 199; # 13; # 199;
+E2.type = 13; # 13; # 199;
 r = init.E2.S3L44(b=b, type=E2.type)
-pE2x0 = r[[1]]; pE2div = r[[2]];
+pE2x0 = r[[1]]; pE2div = r[[2]] * 2; # *2 only for b = -2;
 #
 solAll = solve.S3L44(b=b);
 # solAll = solve.S3L44(p1, b=b);
@@ -683,10 +688,11 @@ pS = factorize.p(pS, xn="S")
 
 
 ### Reduce E2:
-pS = data.frame(S=14:0, coeff = c(1,-6, 15,-20, 15,-6, 1, 29, -113, 187, -175, 103, -39, 9, -2)); # b = 1;
-pS = data.frame(S=14:0, coeff = c(1, 6, 15, 20, 15, 6, 1,-29, -113,-187, -175,-103, -39,-9, -2)); # b =-1;
+b = -2;
+pS = data.frame(S=14:0, coeff = c(b^6, -6*b^5, 15*b^4, -20*b^3, 15*b^2, -6*b, 1,
+	29*b^7, -113*b^6, 187*b^5, -175*b^4, 103*b^3, -39*b^2, 9*b, -1 - b^8));
 pS$coeff = as.bigz(pS$coeff);
-E2.files = c("S3L44.E2x0.b-1.S199.csv", "S3L44.E2div.b-1.S197.csv")
+E2.files = c("S3L44.E2x0.S199.b-2.csv", "S3L44.E2div.S197.b-2.csv")
 pE2x0 = read.csv(E2.files[1], colClasses=c("numeric", "character"))
 pE2x0$coeff = as.bigz(pE2x0$coeff)
 pE2div = read.csv(E2.files[2], colClasses=c("numeric", "character"))
@@ -695,8 +701,11 @@ pE2div$coeff = as.bigz(pE2div$coeff)
 pE2x0Red = divByZero.pm(pE2x0, pS, "S")
 pE2divRed = divByZero.pm(pE2div, pS, "S")
 pE2x0Red$p = pE2x0Red$p[order(-pE2x0Red$p$S), ]
-# write.csv(pE2x0Red$p, file="S3L44.E2x0.S13.b-1.csv", row.names=FALSE)
-# write.csv(pE2divRed$p, file="S3L44.E2div.S13.b-1.csv", row.names=FALSE)
+pE2divRed$p = pE2divRed$p[order(-pE2divRed$p$S), ]
+# write.csv(pE2x0Red$p, file="S3L44.E2x0.S13.b-2.csv", row.names=FALSE)
+# write.csv(pE2divRed$p, file="S3L44.E2div.S13.b-2.csv", row.names=FALSE)
+# 46768052394588893382517914646921056628989841375232
+# 23384026197294446691258957323460528314494920687616
 
 
 ### Variable elimination:
