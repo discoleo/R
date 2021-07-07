@@ -8,7 +8,7 @@
 ###  Mixed Leading Term
 ###  == Derivation ==
 ###
-### draft v.0.2b-S-cases
+### draft v.0.2b-EqS-b
 
 
 ###############
@@ -16,10 +16,11 @@
 ###############
 
 
-### draft v.0.2b - v.0.2b-S-cases:
+### draft v.0.2b - v.0.2b-EqS-b:
 # - [started work] x^4*y^4 + b*z = R;
 # - classic Poly: P[28] for Case x == y or y == z;
 # - Eq S: for cases R = 1, b = +/- 1; [v.0.2b-S-cases]
+# - Eq S: any parameter b; [v.0.2b-Eq-S-b]
 ### draft v.0.2a:
 # - solved: x^3*y^3 + b*z = R;
 ### draft v.0.1a:
@@ -479,12 +480,15 @@ E3^2 - 2*E3*E2*S + E2^3 # = 0
 
 
 ### Eq S:
-# Case: R = 1; b = 1;
+### Case: R = 1;
 # P[14] (true roots):
+-1 - b^8 + 9*b*S - 39*b^2*S^2 + 103*b^3*S^3 - 175*b^4*S^4 + 187*b^5*S^5 - 113*b^6*S^6 + 29*b^7*S^7 +
+	+ S^8 - 6*b*S^9 + 15*b^2*S^10 - 20*b^3*S^11 + 15*b^4*S^12 - 6*b^5*S^13 + b^6*S^14
+### Case: R = 1; b = 1;
 -2 + 9*S - 39*S^2 + 103*S^3 - 175*S^4 + 187*S^5 - 113*S^6 + 29*S^7 + S^8 - 6*S^9 + 15*S^10 +
 	- 20*S^11 + 15*S^12 - 6*S^13 + S^14
 ### Case: R = 1; b = -1;
--2 - 9*S - 39*S^2 - 103*S^3 - 175*S^4 - 187*S^5 - 113*S^6 - 29*x^7 + S^8 + 6*S^9 + 15*S^10 +  
+-2 - 9*S - 39*S^2 - 103*S^3 - 175*S^4 - 187*S^5 - 113*S^6 - 29*S^7 + S^8 + 6*S^9 + 15*S^10 +  
 	+ 20*S^11 + 15*S^12 + 6*S^13 + S^14
 
 # R = 1; b = 1; P[30] = P[14] * P[16]
@@ -503,6 +507,12 @@ R = -2; b = 3;
 x =  0.5665027820 + 0.8399445356i;
 y = -0.7530613076 + 0.8767452519i;
 z = -1.2267275591 - 0.2810649213i;
+S = x+y+z; E2 = x*y+x*z+y*z; E3 = x*y*z;
+
+R = 1; b = 2;
+x =  0.3802393865 - 1.0711999097i;
+y =  0.5185862609 + 1.0269618578i;
+z = -0.7789741406 + 0.7088699732i;
 S = x+y+z; E2 = x*y+x*z+y*z; E3 = x*y*z;
 
 
@@ -548,11 +558,8 @@ p21 = diff.pm(p2, mult.pm(p3, data.frame(E3=c(1,0), E2=c(0,1), S=c(0,1), coeff=c
 
 solve.S3L44 = function(pS, R=1, b=1, debug=TRUE) {
 	if(missing(pS)) {
-		if(b == 1) {
-			coeff = c(1,-6, 15,-20, 15,-6, 1, 29, -113, 187, -175, 103, -39, 9, -2);
-		} else if(b == -1) {
-			coeff = c(1, 6, 15, 20, 15, 6, 1,-29, -113,-187, -175,-103, -39,-9, -2);
-		}
+		coeff = c(b^6, -6*b^5, 15*b^4, -20*b^3, 15*b^2, -6*b, 1,
+				29*b^7, -113*b^6, 187*b^5, -175*b^4, 103*b^3, -39*b^2, 9*b, -1 - b^8);
 		S = roots(coeff);
 	} else if(is.data.frame(pS)) {
 		S = roots(rev(pS$coeff));
@@ -561,7 +568,7 @@ solve.S3L44 = function(pS, R=1, b=1, debug=TRUE) {
 	}
 	if(debug) print(length(S));
 	print("Starting E2");
-	E2 = E2.S3L44(S);
+	E2 = E2.S3L44(S, R=R, b=b);
 	E3 = (3*E2^4 + 2*E2^3*S^2 - b*S + 3*R) / (4*E2^2*S + 4*E2*S^3);
 	len = length(S);
 	print("Starting x");
@@ -585,21 +592,59 @@ solve.S3L44 = function(pS, R=1, b=1, debug=TRUE) {
 	sol = cbind(x=x, y=y, z=z);
 	return(sol);
 }
-E2.S3L44 = function(S, type=199) {
+E2.S3L44 = function(S, R=1, b=1, type=E2.type) {
 	len = nrow(pE2x0);
 	E2 = sapply(S, function(S) {
 		if(type == 199) {
 			Spow = S^seq(len);
 			sum(pE2x0$coeff * Spow) / sum(pE2div$coeff * c(1, head(Spow, -2)));
 		} else {
-			Spow = S^seq(0, len-1);
+			# Spow = S^seq(0, len-1);
+			Spow = S^seq(len-1, 0);
 			sum(pE2x0$coeff * Spow) / sum(pE2div$coeff * Spow);
 		}
 		}); print(E2);
 	return(E2);
 }
-R = 1; b = 1; # values are fixed
-R = 1; b = -1; # values are fixed
+init.E2.S3L44 = function(b=1, type=13, toDouble=TRUE) {
+	if(b == 1) {
+		if(type == 13) {
+			E2.files = c("S3L44.E2x0.S13.csv", "S3L44.E2div.S13.csv")
+		} else {
+			E2.files = c("S3L44.E2x0.S199.csv", "S3L44.E2div.S197.csv")
+		}
+	} else if(b == -1) {
+		if(type == 13) {
+			E2.files = c("S3L44.E2x0.S13.b-1.csv", "S3L44.E2div.S13.b-1.csv")
+		} else {
+			E2.files = c("S3L44.E2x0.S199.b-1.csv", "S3L44.E2div.S197.b-1.csv")
+		}
+	} else if(b == -2) {
+		if(type == 13) {
+			E2.files = c("S3L44.E2x0.S13.b-2.csv", "S3L44.E2div.S13.b-2.csv")
+		} else {
+			E2.files = c("S3L44.E2x0.S199.b-2.csv", "S3L44.E2div.S197.b-2.csv")
+		}
+	}
+	pE2x0 = read.csv(E2.files[1], colClasses=c("numeric", "character"))
+	pE2x0$coeff = as.bigz(pE2x0$coeff)
+	pE2div = read.csv(E2.files[2], colClasses=c("numeric", "character"))
+	pE2div$coeff = as.bigz(pE2div$coeff)
+	# E2 factors: c(1, 1)
+	if(toDouble) r = toDouble.lpm(list(pE2x0, pE2div))
+	else r = list(pE2x0 = pE2x0, pE2div = pE2div);
+	return(r)
+}
+
+library(gmp);
+
+R = 1; # value is fixed
+b = -2; # value NOT fixed anymore; [but TODO: E2]
+#
+E2.type = 199; # 13; # 199;
+r = init.E2.S3L44(b=b, type=E2.type)
+pE2x0 = r[[1]]; pE2div = r[[2]];
+#
 solAll = solve.S3L44(b=b);
 # solAll = solve.S3L44(p1, b=b);
 x = solAll[,1]; y = solAll[,2]; z = solAll[,3];
@@ -607,20 +652,9 @@ solAll = cbind(solAll, x+y+z);
 # true roots: only 14*6 pairs;
 sol = solAll[abs(round0(x^4*y^4 + b*z - R)) < 1E-3,]
 x = sol[,1]; y = sol[,2]; z = sol[,3];
+nrow(sol);
 
 
-### from csv:
-library(gmp);
-#
-E2.files = c("S3L44.E2x0.S11.csv", "S3L44.E2div.S11.csv")
-E2.files = c("S3L44.E2x0.b-1.S199.csv", "S3L44.E2div.b-1.S197.csv")
-pE2x0 = read.csv(E2.files[1], colClasses=c("numeric", "character"))
-pE2x0$coeff = as.bigz(pE2x0$coeff)
-pE2div = read.csv(E2.files[2], colClasses=c("numeric", "character"))
-pE2div$coeff = as.bigz(pE2div$coeff)
-r = toDouble.lpm(list(pE2x0, pE2div));
-# E2 factors: c(1, 1)
-pE2x0 = r[[1]]; pE2div = r[[2]];
 ### S: not needed anymore
 pS = read.csv("S3L44.S30.csv")
 
@@ -630,15 +664,6 @@ pS = read.csv("S3L44.S30.csv")
 # pS = read.csv("S3L44.S.csv", colClasses=c("numeric", "character"))
 # pS$coeff = as.bigz(pS$coeff);
 # pS = toDouble.pm(pS, scale=1E+50);
-### [S106]
-# pS = read.csv("S3L44.S106.csv", colClasses=c("numeric", "character"))
-# pS$coeff = as.bigz(pS$coeff);
-# pS = toDouble.pm(pS, scale=1E+10);
-### SDiv
-pSDiv = read.csv("S3L44.SDiv.csv", colClasses=c("numeric", "character"))
-pSDiv$coeff = as.bigz(pSDiv$coeff);
-# pS = toDouble.pm(pSDiv, scale=1E+50);
-pR = div.pm(pS, pSDiv, "S")
 
 
 # for R = 1; b = 1;
@@ -647,6 +672,7 @@ pS = read.csv("S3L44.S474.b-1.csv", colClasses=c("numeric", "character"))
 pS$coeff = as.bigz(pS$coeff);
 # pS = pR$Rez;
 pS = factorize.p(pS, xn="S")
+# write.csv(pS[[1]]$p1, file="S3L44.S30.b-2.csv", row.names=FALSE)
 # write.csv(pS[[1]]$p1, file="S3L44.S30.b-1.csv", row.names=FALSE)
 # write.csv(pS[[1]]$p1, file="S3L44.S30.csv", row.names=FALSE)
 
@@ -657,17 +683,20 @@ pS = factorize.p(pS, xn="S")
 
 
 ### Reduce E2:
-pS = data.frame(S=14:0, coeff = c(1, -6, 15, -20, 15, -6, 1, 29, -113, 187, -175, 103, -39, 9, -2));
+pS = data.frame(S=14:0, coeff = c(1,-6, 15,-20, 15,-6, 1, 29, -113, 187, -175, 103, -39, 9, -2)); # b = 1;
+pS = data.frame(S=14:0, coeff = c(1, 6, 15, 20, 15, 6, 1,-29, -113,-187, -175,-103, -39,-9, -2)); # b =-1;
 pS$coeff = as.bigz(pS$coeff);
-pE2x0 = read.csv("S3L44.E2x0.S199.csv", colClasses=c("numeric", "character"))
+E2.files = c("S3L44.E2x0.b-1.S199.csv", "S3L44.E2div.b-1.S197.csv")
+pE2x0 = read.csv(E2.files[1], colClasses=c("numeric", "character"))
 pE2x0$coeff = as.bigz(pE2x0$coeff)
-pE2div = read.csv("S3L44.E2div.S197.csv", colClasses=c("numeric", "character"))
+pE2div = read.csv(E2.files[2], colClasses=c("numeric", "character"))
 pE2div$coeff = as.bigz(pE2div$coeff)
 #
 pE2x0Red = divByZero.pm(pE2x0, pS, "S")
 pE2divRed = divByZero.pm(pE2div, pS, "S")
-# write.csv(pE2x0Red$p, file="S3L44.E2x0.S11.csv", row.names=FALSE)
-# write.csv(pE2divRed$p, file="S3L44.E2div.S11.csv", row.names=FALSE)
+pE2x0Red$p = pE2x0Red$p[order(-pE2x0Red$p$S), ]
+# write.csv(pE2x0Red$p, file="S3L44.E2x0.S13.b-1.csv", row.names=FALSE)
+# write.csv(pE2divRed$p, file="S3L44.E2div.S13.b-1.csv", row.names=FALSE)
 
 
 ### Variable elimination:
@@ -679,11 +708,11 @@ xn = c("R", "b")
 xn = c("R", "b")
 # the actual method used [~1 hour]
 # pR = solve.3pm(list(p11, p21, p3), c("E3", "E2"), bigz=TRUE, xn=xn)
-# b = -1;
-pR = solve.3pm(list(p11, p21, p3), c("E3", "E2"), bigz=TRUE, xn=xn, val=c(1,-1))
-# write.csv(pR$Rez, file="S3L44.S474.b-1.csv", row.names=FALSE)
-# write.csv(pR$x0, file="S3L44.E2x0.b-1.S199.csv", row.names=FALSE)
-# write.csv(pR$div, file="S3L44.E2div.b-1.S197.csv", row.names=FALSE)
+# b = -2;
+pR = solve.3pm(list(p11, p21, p3), c("E3", "E2"), bigz=TRUE, xn=xn, val=c(1,-2))
+# write.csv(pR$Rez, file="S3L44.S474.b-2.csv", row.names=FALSE)
+# write.csv(pR$x0, file="S3L44.E2x0.S199.b-2.csv", row.names=FALSE)
+# write.csv(pR$div, file="S3L44.E2div.S197.b-2.csv", row.names=FALSE)
 
 
 # [failed as well]
