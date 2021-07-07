@@ -633,6 +633,8 @@ init.E2.S3L44 = function(b=1, type=13, toDouble=TRUE) {
 	pE2x0$coeff = as.bigz(pE2x0$coeff)
 	pE2div = read.csv(E2.files[2], colClasses=c("numeric", "character"))
 	pE2div$coeff = as.bigz(pE2div$coeff)
+	# *2 only for b = -2;
+	if(b == -2 && type == 13) pE2div$coeff = 2 * pE2div$coeff;
 	# E2 factors: c(1, 1)
 	if(toDouble) r = toDouble.lpm(list(pE2x0, pE2div))
 	else r = list(pE2x0 = pE2x0, pE2div = pE2div);
@@ -648,7 +650,7 @@ b = -2;
 #
 E2.type = 13; # 13; # 199;
 r = init.E2.S3L44(b=b, type=E2.type)
-pE2x0 = r[[1]]; pE2div = r[[2]] * 2; # *2 only for b = -2;
+pE2x0 = r[[1]]; pE2div = r[[2]];
 #
 solAll = solve.S3L44(b=b);
 # solAll = solve.S3L44(p1, b=b);
@@ -756,7 +758,13 @@ b^4*x^28 - 4*b^3*R*x^27 + 6*b^2*R^2*x^26 - 4*b*R^3*x^25 + R^4*x^24 - b^5*x^21 + 
 	+ 7*b^4*R^3*x^4 - b^3*R^4*x^3 - b^2*R^5*x^2 - b*R^6*x + b^8 - R^7
 
 ### Case: (x,y,z) all distinct
-### TODO
+b^12 - 3*b^8*x^4 + b^9*x^5 + b^10*x^6 + b^11*x^7 + 3*b^4*x^8 - 2*b^5*x^9 - b^6*x^10 +
+	- (4*b^8+1)*x^12 + b*(4*b^8+1)*x^13 + # TODO: for b = -2: - 1025*x^12 - 2050*x^13
+	- b^4*x^16 + 5*b^5*x^17 - 2*b^6*x^18 - 6*b^7*x^19 + (4*b^8+3)*x^20 - 8*b*x^21 + 6*b^2*x^22 +
+	- 5*b^4*x^24 + 12*b^5*x^25 - 12*b^6*x^26 + 4*b^7*x^27 - 3*x^28 + 13*b*x^29 - 21*b^2*x^30 +
+	+ 15*b^3*x^31 - 5*b^4*x^32 + 3*b^5*x^33 - 3*b^6*x^34 + b^7*x^35 + x^36 - 6*b*x^37 +
+	+ 15*b^2*x^38 - 20*b^3*x^39 + 15*b^4*x^40 - 6*b^5*x^41 + b^6*x^42
+
 
 ### Derivation:
 
