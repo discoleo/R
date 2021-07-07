@@ -525,7 +525,7 @@ gcd.exact.p = function(p1, p2, xn="x", asBigNum=TRUE, doGCD=TRUE) {
 	while(TRUE) {
 		n1 = max(p1[,xn]); n2 = max(p2[,xn]);
 		if( ! doGCD && n1 < n2) return(list(p=p1, f=fact));
-		if(doGCD && (n2 > n1)) {
+		if(doGCD && (n1 < n2)) {
 			tmp = p1; p1 = p2; p2 = tmp;
 			tmp = n1; n1 = n2; n2 = tmp;
 		}
@@ -533,7 +533,7 @@ gcd.exact.p = function(p1, p2, xn="x", asBigNum=TRUE, doGCD=TRUE) {
 		c2 = p2$coeff[p2[,xn] == n2];
 		div = gcd(c1, c2);
 		if(div != 1) {
-			c1 = c1/div; c2 = c2 / div;
+			c1 = c1 / div; c2 = c2 / div;
 			if(asBigNum) {c1 = as.bigz(c1); c2 = as.bigz(c2);}
 		}
 		p1m = p1; p1m$coeff = p1m$coeff * c2;
@@ -816,6 +816,46 @@ print.coeff = function(p, x="x") {
 	p = rev(toCoeff(p, x));
 	sapply(p, function(p) cat(paste(p, ",\n", sep="")));
 	invisible(p);
+}
+print.pcoeff = function(l, print=TRUE, strip=NULL, len=10) {
+	nlast = length(l);
+	lsep = rep(", ", nlast);
+	lsep[nlast] = ""; # tail(lsep, 1) = ""; # DOES NOT function!
+	lsep[seq(len+1, nlast-1, by=len)] = ",\n";
+	l.str = paste0(l, lsep, collapse="");
+	if( ! is.null(strip)) {
+		l.str = gsub(paste0("[ *]*+", strip, "\\^[0-9]++"), "", l.str, perl=TRUE);
+	}
+	if(print) { cat(l.str); cat("\n"); }
+	return(invisible(l.str));
+}
+### Parse expression
+parse.pm = function(e) {
+	if( ! is.expression(e)) stop("Input must be an expression!")
+	if( ! is.language(e[[1]])) return(NULL);
+	e = e[[1]];
+	e.txt = character(0);
+	c.e = function(e, x.sign) {
+		xi = if(nchar(x.sign) == 0) format(e[[3]]) else paste(x.sign, format(e[[3]]));
+		c(e.txt, xi);
+	}
+	while(TRUE) {
+		if(is.symbol(e[[1]])) {
+			x.sign = paste0(e[[1]]);
+			if(x.sign == "+") x.sign = ""
+			else if(x.sign != "-") {
+				e.txt = c(e.txt, format(e));
+				break;
+			}
+		} else {
+			print(e); break;
+		}
+		e.txt = c.e(e, x.sign);
+		if(is.language(e[[2]])) e = e[[2]]
+		else break;
+		
+	}
+	return(e.txt);
 }
 
 ### Classic Polynomials
