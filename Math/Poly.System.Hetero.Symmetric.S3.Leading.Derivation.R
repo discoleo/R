@@ -794,15 +794,28 @@ x^8*(y*z)^3*(y+z) + R*x^4*(y*z)*(y+z) - b^2*(y+z) + b*R
 	+ b*y*z*(x^8*(y*z)^3 + R*x^4*(y*z) - b^2)^2 - b^3*R^2
 - 2*b*R^2*x^8*(y*z)^3 + b^3*R*x^4*(y*z)^2 - (b*R*x^12*(R-b*x) + b*R^3*x^4)*(y*z) +
 	+ b*y*z*(x^8*(y*z)^3 + R*x^4*(y*z) - b^2)^2
-# TODO
+(b*x^16*(R-b*x) - b*R^2*x^8)*(y*z)^3 - b^3*R*x^4*(y*z)^2 + (b*R*x^12*(R-b*x) - b*R^3*x^4 + b^5)*(y*z) +
+	- 2*b^3*x^8*(R - b*x)
+# (y*z)^4 = R - b*x =>
+pyz4 = data.frame(yz=c(4,0,0), x=c(0,1,0), b=c(0,1,0), R=c(0,0,1), coeff=c(1,1,-1))
+pyz3 = data.frame(
+	yz = c( 3, 3,   2,   1, 1, 1, 0),
+	x  = c(16, 8,   4,  12, 4, 0, 8),
+	b  = c( 1, 1,   3,   1, 1, 5, 3),
+	R  = c( 0, 2,   1,   1, 3, 0, 0),
+	Rbx= c( 1, 0,   0,   1, 0, 0, 1),
+	coeff = c(1,-1, -1,  1,-1, 1,-2)
+)
+solve.pm(pyz4, pyz3, "yz")
 
 
+### Classic Solver:
 solver.S3L44.classic = function(R, b) {
 	coeff = coeff.S3L44.classic(R, b);
 	x = roots(coeff);
-	# NON-robust !!!
-	yz = sapply(x, function(x) roots(c(1, 0, 0, 0, b*x - R)));
-	x = rep(x, each=4);
+	# robust:
+	yz = solve.yz.S3L44.classic(x, R, b);
+	# x = rep(x, each=4);
 	yz.s = - b*R / (x^8*(yz)^3 + R*x^4*(yz) - b^2);
 	len = length(x);
 	y = sapply(seq(len), function(id) {
@@ -824,6 +837,27 @@ coeff.S3L44.classic = function(R, b) {
 		(4 * b^8 + 3), - 6 * b^7, - 2 * b^6, 5 * b^5, -b^4, 0, 0, b*(4 * b^8 + 1), -(4 * b^8 + 1), 0,
 		- b^6, - 2*b^5, 3*b^4, b^11, b^10, b^9, - 3*b^8, 0, 0, 0, b^12);
 	return(coeff);
+}
+solve.yz.S3L44.classic = function(x, R, b) {
+	Rbx = R - b*x;
+	yz0 = 2*b^3*Rbx^5*x^57 - 2*b^2*R*Rbx^5*x^56 - 10*b^3*R^2*Rbx^4*x^49 + 10*b^2*R^3*Rbx^4*x^48 +
+		- 2*b^2*R^2*Rbx^5*x^48 + 20*b^3*R^4*Rbx^3*x^41 - 20*b^2*R^5*Rbx^3*x^40 + 8*b^2*R^4*Rbx^4*x^40 +
+		- 2*b^7*R*Rbx^3*x^37 + 2*b^6*R^2*Rbx^3*x^36 - 20*b^3*R^6*Rbx^2*x^33 + 20*b^2*R^7*Rbx^2*x^32 +
+		- 12*b^2*R^6*Rbx^3*x^32 + 7*b^7*R^3*Rbx^2*x^29 - 7*b^6*R^4*Rbx^2*x^28 + 4*b^6*R^3*Rbx^3*x^28 +
+		+ 10*b^3*R^8*Rbx*x^25 - 10*b^2*R^9*Rbx*x^24 + 8*b^2*R^8*Rbx^2*x^24 - 2*b^10*Rbx^3*x^24 +
+		- 8*b^7*R^5*Rbx*x^21 + 8*b^6*R^6*Rbx*x^20 - 8*b^6*R^5*Rbx^2*x^20 - 2*b^3*R^10*x^17 +
+		+ 2*b^2*R^11*x^16 - 2*b^2*R^10*Rbx*x^16 + 4*b^10*R^2*Rbx^2*x^16 + 3*b^7*R^7*x^13 +
+		- 3*b^6*R^8*x^12 + 4*b^6*R^7*Rbx*x^12 - 2*b^10*R^4*Rbx*x^8;
+	yzdiv = - b*R*Rbx^5*x^61 + R^2*Rbx^5*x^60 + 5*b*R^3*Rbx^4*x^53 - 5*R^4*Rbx^4*x^52 - R^3*Rbx^5*x^52 +
+		- b^5*Rbx^4*x^49 + b^4*R*Rbx^4*x^48 - 4*b^4*Rbx^5*x^48 - 10*b*R^5*Rbx^3*x^45 + 10*R^6*Rbx^3*x^44 +
+		+ 5*R^5*Rbx^4*x^44 + 5*b^5*R^2*Rbx^3*x^41 - 5*b^4*R^3*Rbx^3*x^40 + 13*b^4*R^2*Rbx^4*x^40 +
+		+ 10*b*R^7*Rbx^2*x^37 - 10*R^8*Rbx^2*x^36 - 10*R^7*Rbx^3*x^36 - 9*b^5*R^4*Rbx^2*x^33 +
+		+ 9*b^4*R^5*Rbx^2*x^32 - 12*b^4*R^4*Rbx^3*x^32 - 5*b*R^9*Rbx*x^29 + 5*R^10*Rbx*x^28 +
+		+ 10*R^9*Rbx^2*x^28 + b^8*R*Rbx^3*x^28 + 7*b^5*R^6*Rbx*x^25 - 7*b^4*R^7*Rbx*x^24 +
+		- 2*b^4*R^6*Rbx^2*x^24 + b*R^11*x^21 - R^12*x^20 - 5*R^11*Rbx*x^20 + b^8*R^3*Rbx^2*x^20 +
+		- 2*b^5*R^8*x^17 + 2*b^4*R^9*x^16 + 8*b^4*R^8*Rbx*x^16 - b^12*Rbx^2*x^16 + R^13*x^12 +
+		- 5*b^8*R^5*Rbx*x^12 - 3*b^4*R^10*x^8 + 2*b^12*R^2*Rbx*x^8 + 3*b^8*R^7*x^4 - b^12*R^4;
+	return(yz0 / yzdiv);
 }
 
 R = 1;
