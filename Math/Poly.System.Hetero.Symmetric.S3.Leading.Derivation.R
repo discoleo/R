@@ -610,24 +610,16 @@ E2.S3L44 = function(S, R=1, b=1, type=E2.type) {
 	return(E2);
 }
 init.E2.S3L44 = function(b=1, type=13, toDouble=TRUE) {
+	strS = if(type == 13) { strS = "S13"; } else strS = c("S199", "S197");
+	fn = c("E2x0.", "E2div.");
 	if(b == 1) {
-		if(type == 13) {
-			E2.files = c("S3L44.E2x0.S13.csv", "S3L44.E2div.S13.csv")
-		} else {
-			E2.files = c("S3L44.E2x0.S199.csv", "S3L44.E2div.S197.csv")
-		}
+		E2.files = paste0("S3L44.", fn, strS, ".csv");
 	} else if(b == -1) {
-		if(type == 13) {
-			E2.files = c("S3L44.E2x0.S13.b-1.csv", "S3L44.E2div.S13.b-1.csv")
-		} else {
-			E2.files = c("S3L44.E2x0.S199.b-1.csv", "S3L44.E2div.S197.b-1.csv")
-		}
+		E2.files = paste0("S3L44.", fn, strS, ".b-1.csv");
 	} else if(b == -2) {
-		if(type == 13) {
-			E2.files = c("S3L44.E2x0.S13.b-2.csv", "S3L44.E2div.S13.b-2.csv")
-		} else {
-			E2.files = c("S3L44.E2x0.S199.b-2.csv", "S3L44.E2div.S197.b-2.csv")
-		}
+		E2.files = paste0("S3L44.", fn, strS, ".b-2.csv");
+	} else if(b == -3) {
+		E2.files = paste0("S3L44.", fn, strS, ".b-3.csv");
 	}
 	pE2x0 = read.csv(E2.files[1], colClasses=c("numeric", "character"))
 	pE2x0$coeff = as.bigz(pE2x0$coeff)
@@ -646,9 +638,9 @@ library(gmp);
 # values are NOT fixed anymore;
 # but still problems with E2!
 R = 1;
-b = -2;
+b = -3;
 #
-E2.type = 13; # 13; # 199;
+E2.type = 199; # 13; # 199;
 r = init.E2.S3L44(b=b, type=E2.type)
 pE2x0 = r[[1]]; pE2div = r[[2]];
 #
@@ -679,7 +671,7 @@ pS = read.csv("S3L44.S474.b-1.csv", colClasses=c("numeric", "character"))
 pS$coeff = as.bigz(pS$coeff);
 # pS = pR$Rez;
 pS = factorize.p(pS, xn="S")
-# write.csv(pS[[1]]$p1, file="S3L44.S30.b-2.csv", row.names=FALSE)
+# write.csv(pS[[1]]$p1, file="S3L44.S30.b-3.csv", row.names=FALSE)
 # write.csv(pS[[1]]$p1, file="S3L44.S30.b-1.csv", row.names=FALSE)
 # write.csv(pS[[1]]$p1, file="S3L44.S30.csv", row.names=FALSE)
 
@@ -719,11 +711,11 @@ xn = c("R", "b")
 xn = c("R", "b")
 # the actual method used [~1 hour]
 # pR = solve.3pm(list(p11, p21, p3), c("E3", "E2"), bigz=TRUE, xn=xn)
-# b = -2;
-pR = solve.3pm(list(p11, p21, p3), c("E3", "E2"), bigz=TRUE, xn=xn, val=c(1,-2))
-# write.csv(pR$Rez, file="S3L44.S474.b-2.csv", row.names=FALSE)
-# write.csv(pR$x0, file="S3L44.E2x0.S199.b-2.csv", row.names=FALSE)
-# write.csv(pR$div, file="S3L44.E2div.S197.b-2.csv", row.names=FALSE)
+# b = -3;
+pR = solve.3pm(list(p11, p21, p3), c("E3", "E2"), bigz=TRUE, xn=xn, val=c(1,-3))
+# write.csv(pR$Rez, file="S3L44.S474.b-3.csv", row.names=FALSE)
+# write.csv(pR$x0, file="S3L44.E2x0.S199.b-3.csv", row.names=FALSE)
+# write.csv(pR$div, file="S3L44.E2div.S197.b-3.csv", row.names=FALSE)
 
 
 # [failed as well]
@@ -759,12 +751,14 @@ b^4*x^28 - 4*b^3*R*x^27 + 6*b^2*R^2*x^26 - 4*b*R^3*x^25 + R^4*x^24 - b^5*x^21 + 
 
 ### Case: (x,y,z) all distinct
 b^12 - 3*b^8*x^4 + b^9*x^5 + b^10*x^6 + b^11*x^7 + 3*b^4*x^8 - 2*b^5*x^9 - b^6*x^10 +
-	- (4*b^8+1)*x^12 + b*(4*b^8+1)*x^13 + # TODO: for b = -2: - 1025*x^12 - 2050*x^13
-	- b^4*x^16 + 5*b^5*x^17 - 2*b^6*x^18 - 6*b^7*x^19 + (4*b^8+3)*x^20 - 8*b*x^21 + 6*b^2*x^22 +
+	- (4*b^8+1)*x^12 + b*(4*b^8+1)*x^13 - b^4*x^16 + 5*b^5*x^17 - 2*b^6*x^18 +
+	- 6*b^7*x^19 + (4*b^8+3)*x^20 - 8*b*x^21 + 6*b^2*x^22 +
 	- 5*b^4*x^24 + 12*b^5*x^25 - 12*b^6*x^26 + 4*b^7*x^27 - 3*x^28 + 13*b*x^29 - 21*b^2*x^30 +
 	+ 15*b^3*x^31 - 5*b^4*x^32 + 3*b^5*x^33 - 3*b^6*x^34 + b^7*x^35 + x^36 - 6*b*x^37 +
 	+ 15*b^2*x^38 - 20*b^3*x^39 + 15*b^4*x^40 - 6*b^5*x^41 + b^6*x^42
 
+
+round(poly.calc(x[seq(1,84, by=2)]) * b^6, 3)
 
 ### Derivation:
 
@@ -783,6 +777,60 @@ b = 3
 coeff = rev(eval(parse(text=paste0("c(", paste(toCoeff(p$p, "x"), collapse=", "), ")"))));
 x = roots(coeff);
 y = x; z = (R - x^8)/b;
+
+
+# robust solution:
+x^4*(y^3 + z^3 + y*z*(y+z)) - b;
+x^4*(y*z*(y^2+z^2) + (y*z)^2) - b*(y+z) + R
+x^4*(y*z)^2*(y+z) - b*(y+z)^2 + R*(y+z) + b*y*z
+x^8*(y*z)^3*(y+z) + R*x^4*(y*z)*(y+z) - b^2*(y+z) + b*R
+(y+z)*(x^8*(y*z)^3 + R*x^4*(y*z) - b^2) + b*R
+# =>
+- b*R*x^4*(y*z)^2*(x^8*(y*z)^3 + R*x^4*(y*z) - b^2) +
+	- b^3*R^2 - b*R^2*(x^8*(y*z)^3 + R*x^4*(y*z) - b^2) +
+	+ b*y*z*(x^8*(y*z)^3 + R*x^4*(y*z) - b^2)^2
+- b*R*x^4*(R*x^4*(y*z)^3 - b^2*(y*z)^2 + x^8*(R-b*x)*(y*z)) +
+	- b*R^2*(x^8*(y*z)^3 + R*x^4*(y*z) - b^2) +
+	+ b*y*z*(x^8*(y*z)^3 + R*x^4*(y*z) - b^2)^2 - b^3*R^2
+- 2*b*R^2*x^8*(y*z)^3 + b^3*R*x^4*(y*z)^2 - (b*R*x^12*(R-b*x) + b*R^3*x^4)*(y*z) +
+	+ b*y*z*(x^8*(y*z)^3 + R*x^4*(y*z) - b^2)^2
+# TODO
+
+
+solver.S3L44.classic = function(R, b) {
+	coeff = coeff.S3L44.classic(R, b);
+	x = roots(coeff);
+	# NON-robust !!!
+	yz = sapply(x, function(x) roots(c(1, 0, 0, 0, b*x - R)));
+	x = rep(x, each=4);
+	yz.s = - b*R / (x^8*(yz)^3 + R*x^4*(yz) - b^2);
+	len = length(x);
+	y = sapply(seq(len), function(id) {
+		yz = yz[id]; yz.s = yz.s[id];
+		# robust
+		b2 = 3*x[id]^4*yz*yz.s;
+		coeff = c(b2, -b2*yz.s, b2*yz.s^2 / 3 + b*(yz.s^2 - 2*yz) - R*yz.s);
+		roots(coeff);
+	});
+	x = as.vector(x); x = rep(x, each=2);
+	yz.s = as.vector(yz.s); yz.s = rep(yz.s, each=2);
+	y = as.vector(y); z = yz.s - y;
+	sol = cbind(x=x, y=y, z=z);
+	return(sol);
+}
+coeff.S3L44.classic = function(R, b) {
+	coeff = c(b^6, - 6*b^5, 15*b^4, - 20*b^3, 15*b^2, - 6*b, 1, b^7, - 3*b^6, 3*b^5, - 5*b^4,
+		15 * b^3, - 21 * b^2, 13 * b, - 3, 4 * b^7, - 12 * b^6, 12*b^5, -5*b^4, 0, 6*b^2, - 8*b,
+		(4 * b^8 + 3), - 6 * b^7, - 2 * b^6, 5 * b^5, -b^4, 0, 0, b*(4 * b^8 + 1), -(4 * b^8 + 1), 0,
+		- b^6, - 2*b^5, 3*b^4, b^11, b^10, b^9, - 3*b^8, 0, 0, 0, b^12);
+	return(coeff);
+}
+
+R = 1;
+b = -5
+sol = solver.S3L44.classic(R, b);
+x = sol[,1]; y = sol[,2]; z = sol[,3];
+
 
 
 ########################
