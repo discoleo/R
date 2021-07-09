@@ -54,18 +54,27 @@ library(pracma)
 ### Solution:
 
 ### Diff =>
-# x^3 - y^3 - b1*(x-y) = 0
-# (x - y)*(x^2 + y^2 + x*y - b1) = 0
+x^3 - y^3 - b1*(x-y) # = 0
+(x - y)*(x^2 + y^2 + x*y - b1) # = 0
 # => x = y *OR* x^2 + y^2 + x*y - b1 = 0;
 # =>
-# (x+y)^2 - x*y - b1 = 0
+S^2 - x*y - b1 # = 0
 # x*y = (x+y)^2 - b1;
 # x*y = S^2 - b1;
 
 ### Sum =>
-# (x+y)^3 - 3*x*y*(x+y) + b1*(x+y) = 2*R
-# S^3 - 3*(S^2 - b1)*S + b1*S - 2*R = 0
-# S^3 - 2*b1*S + R = 0
+(x+y)^3 - 3*x*y*(x+y) + b1*(x+y) - 2*R # = 0
+S^3 - 3*(S^2 - b1)*S + b1*S - 2*R # = 0
+S^3 - 2*b1*S + R # = 0
+
+
+### Supplementary Eq:
+# - not really needed;
+# - can simply solve quadratic system: x+y = S, x*y = ...;
+x^3*y^2 + b1*y^3 - R*y^2 - b1*(y^3 + b1*x - R) # = 0
+x*((x*y)^2 - b1^2) - R*y^2 + b1*R # = 0
+R*x^2 + x*((x*y)^2 - b1^2) + R*(2*x*y - S^2 + b1) # = 0
+
 
 ### Classic Polynomial:
 ### Derivation:

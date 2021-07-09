@@ -7,7 +7,7 @@
 ### Polynomial Systems: S2
 ### Heterogeneous Symmetric
 ###
-### draft v.0.3d
+### draft v.0.3d-clean2
 
 
 ### Heterogeneous Symmetric Polynomial Systems
@@ -210,19 +210,19 @@
 # - initial work on systems with 3 variables;
 # - the simple cases are less rewarding; [but major work since then!]
 
-####################
-####################
 
-library(polynom)
-library(pracma)
-
+####################
 ####################
 
 ### helper Functions
 
+library(polynom)
+library(pracma)
+
 # the functions are in the file:
 # Polynomials.Helper.R;
 # e.g. round0(), round0.p;
+
 
 ##########################
 ##########################
@@ -251,19 +251,15 @@ library(pracma)
 # x*y = S^2 - b1;
 
 ### Sum =>
-# S^3 - 2*b1*S + R = 0
+S^3 - 2*b1*S + R # = 0
 
 ### Step 2:
 # Solve:
 # x + y = S
 # x*y = S^2 - b1
 
-### Supplimentary Eq:
-x^3*y^2 + b1*y^3 - R*y^2 - b1*(y^3 + b1*x - R) # = 0
-x*((x*y)^2 - b1^2) - R*y^2 + b1*R # = 0
-R*x^2 + x*((x*y)^2 - b1^2) + R*(2*x*y - S^2 + b1) # = 0
 
-
+### Solver:
 solve.htShift = function(b, R, shift=0) {
 	s = shift;
 	r.sum = roots(c(1, - 6*s, - 2*(b[1]-6*s^2), - 8*s^3 + R + 3*s*b[1]))
@@ -765,7 +761,7 @@ round0(err)
 #########################
 #########################
 
-################################
+### Mixed Side Chain:
 ### x^3 + b3*x*y + b2*y^2 + b1*y
 
 # x^3 + b3*x*y + b2*y^2 + b1*y = R
@@ -780,6 +776,7 @@ round0(err)
 S^3 - (b[2] + b[3])*S^2 - (2*b[1] - b[2]*b[3] + b[2]^2)*S - b[1]*b[2] + b[1]*b[3] + R
 
 
+### Solver:
 solve.htxy = function(b, R) {
 	x.sum = roots(c(1, - (b[2] + b[3]), - (2*b[1] - b[2]*b[3] + b[2]^2), - b[1]*b[2] + b[1]*b[3] + R))
 	xy =  x.sum^2 - b[2]*x.sum - b[1]
@@ -958,10 +955,10 @@ b[2]^2*x^8 - b[2]*x^7 - (b[1]*b[2] - 1)*x^6 - b[1]*x^5 + (b[1]^2 + b[2]*R)*x^4 -
 ### Solution:
 
 ### Diff =>
-# (b2 - b3 + 1)*x*y = Z^2 + b1 
+# (b2 - b3 + 1)*x*y = S^2 + b1 
 
 ### Sum =>
-(b2 - 1)*Z^3 + b1*Z*(b2 - 1) - R*(b2 - b3 + 1)
+(b2 - 1)*S^3 + b1*Z*(b2 - 1) - R*(b2 - b3 + 1)
 
 ### TODO: verify
 # Case: b2 - b3 + 1 == 0;
@@ -1019,9 +1016,9 @@ round0(err)
 #############################
 #############################
 
-#############################
-### High-Power Terms: > 1 ###
-#############################
+##########################
+### Leading Terms: > 1 ###
+##########################
 
 ##########################
 ### a1*x^3 + a2*y^3 + b1*x
@@ -1135,8 +1132,8 @@ a[2]*x^3 + a[1]*y^3 + b[1]*y + b[2]*(x+y)
 
 
 #########################
-### High-Power Terms: > 1
 
+### Leading Terms: > 1
 ### Variant:
 ### a1*x^3 + a2*y^3 + b1*x*y
 
@@ -1152,6 +1149,7 @@ a[2]*x^3 + a[1]*y^3 + b[1]*y + b[2]*(x+y)
 (a1+a2)*S^3 - b1*S^2 + R
 
 
+### Solver:
 solve.htm = function(b, a, R) {
 	x.sum = roots(c((a[1]+a[2]), - b[1], 0, R))
 	xy = x.sum^2
@@ -1835,7 +1833,7 @@ round0.p(poly.calc(sol[,1]))
 
 ##########################
 ### 2 Highest Terms:   ###
-###   Simple + Mixt    ###
+###   Simple + Mixed   ###
 ##########################
 
 ###############
