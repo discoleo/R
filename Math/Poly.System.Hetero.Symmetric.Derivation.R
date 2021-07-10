@@ -8,7 +8,7 @@
 ###
 ### Derivation of Formulas
 ###
-### draft v.0.3a-clean4
+### draft v.0.3b
 
 
 ### Systems:
@@ -16,6 +16,16 @@
 #   Poly.System.Hetero.Symmetric.R;
 
 # this file contains the detailed derivations;
+
+###############
+### History ###
+###############
+
+### draft v.0.3b:
+# - started work on S2P4 Full:
+#   x^4 + b3*y^3 + b2*y^2 + b1*y = R;
+### [old]
+# - moved Derivation to this file;
 
 
 ####################
@@ -713,11 +723,97 @@ x^16 + 4*(b[1]*s - R)*x^12 + 6*(b[1]*s - R)^2*x^8 + 4*(b[1]*s - R)^3*x^4 + (b[1]
 (x^4 + b[1]*x + b[1]*s - R)*(x^12 - b[1]*x^9 - 3*(R - b[1]*s)*x^8 + b[1]^2*x^6 - 2*b[1]*(b[1]*s - R)*x^5 +
 + 3*(b[1]*s - R)^2*x^4 - b[1]^3*x^3 + b[1]^2*(b[1]*s - R)*x^2 - b[1]*(b[1]*s - R)^2*x + (b[1]*s - R)^3 + b[1]^4)
 
+################
 
 ################
 ### Variants ###
+################
 
-### Variant:
+### Extended Variant:
+
+# x^4 + b3*y^3 + b2*y^2 + b1*y = R
+# y^4 + b3*x^3 + b2*x^2 + b1*x = R
+
+### Solution:
+
+### Diff =>
+x^4 - y^4 - b3*(x^3-y^3) - b2*(x^2-y^2) - b1*(x-y) # = 0
+(x-y)*(x^3 + y^3 + x*y*(x+y) - b3*(x^2 + y^2 + x*y) - b2*(x+y) - b1) # = 0
+### Case: x != y =>
+S^3 - 2*x*y*S - b3*(S^2 - x*y) - b2*S - b1 # = 0
+S^3 - b3*S^2 - b2*S - b1 - x*y*(2*S-b3) # = 0
+
+### TODO
+
+
+### Classic Polynomial:
+p1 = toPoly.pm(parse(text="S^3 - b3*S^2 - b2*S - b1 - 2*x*y*S + b3*x*y"));
+p1 = replace.pm(p1, data.frame(x=1:0, y=0:1, coeff=1), "S");
+p2 = toPoly.pm(parse(text="x^4 + b3*y^3 + b2*y^2 + b1*y - R"));
+#
+pR = solve.pm(p1, p2, "y")
+pR$Rez$coeff = - pR$Rez$coeff;
+pR$Rez = sort.pm(pR$Rez, c(4,3), "x")
+# print.p(pR$Rez, NA)
+print.coeff(pR$Rez)
+
+pR = div.pm(pR$Rez, pow.pm(data.frame(x=c(1,0,0), b3=c(1,2,0), b2=c(0,0,1), coeff=c(1,-1,-1)), 2), "x")
+pR$Rez = sort.pm(pR$Rez, c(4,3), "x")
+# print.p(pR$Rez, NA)
+print.coeff(pR$Rez)
+
+
+coeff.S2P4Full = function(R, b) {
+	b1 = b[1]; b2 = b[2]; b3 = b[3];
+	coeff = c(1, - b3, - b2 + b3^2,
+		- b1 + 2*b2*b3 - b3^3,
+		- 3*R + b2^2 + 2*b1*b3 - 3*b2*b3^2 + b3^4,
+		2*b1*b2 + 2*R*b3 - b2^2*b3 + b1*b3^2 + 4*b2*b3^3 - b3^5,
+		b1^2 + 2*R*b2 + b2^3 - 2*b1*b2*b3 - R*b3^2 + 4*b2^2*b3^2 - b2*b3^4 + b3^6,
+		2*R*b1 - b1*b2^2 + b1^2*b3 - 2*R*b2*b3 + 4*b1*b2*b3^2 - b1*b3^4 + 2*b2*b3^5,
+		2*b1*b3^5 + 3*R^2 - 3*b1^2*b2 - 3*R*b2^2 - b2^4 - 6*R*b1*b3 + 4*b1*b2^2*b3 - 2*b1^2*b3^2 +
+			+ R*b3^4 + b2^2*b3^4,
+		- 2*R*b3^5 + b2^4*b3 + 2*b1*b2*b3^4 - b1^3 - 2*R*b1*b2 - R^2*b3 - 4*b1*b2^2*b3^2 + 2*b1^2*b3^3 - 4*R*b2*b3^3,
+		b2^5 + b1^2*b3^4 - 2*R*b2*b3^4 - 4*b1*b2^3*b3 - R*b1^2 - R^2*b2 + 2*b1^2*b2*b3^2 - 4*R*b2^2*b3^2,
+		b1*b2^4 - 2*R*b1*b3^4 + 2*b1^3*b3^2 - R^2*b1 - 4*b1^2*b2^2*b3 - 4*R*b1*b2*b3^2,
+		b1^4 - R*b2^4 + R^2*b3^4 - R^3 + 4*R*b1^2*b2 + 2*R^2*b2^2 + 4*R^2*b1*b3 + 4*R*b1*b2^2*b3 +
+			- 2*R*b1^2*b3^2 + 4*R^2*b2*b3^2);
+		return(coeff);
+}
+solve.y.S2P4Full = function(x, R, b) {
+	b1 = b[1]; b2 = b[2]; b3 = b[3];
+	y0 = - b1*R - 2*b2*b3*R - b3^3*R + b2*x*R + b3^2*x*R - b1*b2^2 + b1^2*b3 - b2^3*x + 2*b1*b2*b3*x +
+		+ b1*b3^3*x + b2*b3^3*x^2 + b2^2*x^3 - b1*b3*x^3 + b3^4*x^3 + b1*x^4 + b2*b3*x^4 - b3^3*x^4 - b2*x^5;
+	ydiv = - b2*R - b3^2*R + b3*x*R - b1^2 + b2^3 - 2*b1*b2*b3 + b1*b2*x + b2^2*b3*x - b1*b3^2*x +
+		- b2^2*x^2 + b1*b3*x^2 + b2*x^4 + b3^2*x^4 - b3*x^5;
+	y = y0 / ydiv;
+	return(y);
+}
+solver.S2P4Full.Classic = function(R, b) {
+	coeff = coeff.S2P4Full(R, b);
+	x = roots(coeff);
+	y = solve.y.S2P4Full(x, R=R, b=b);
+	sol = cbind(x=x, y=y)
+	return(sol);
+}
+
+R = -1;
+b = c(3,0,-1);
+sol = solver.S2P4Full.Classic(R, b);
+x = sol[,1]; y = sol[,2];
+
+### Test
+x^4 + b[3]*y^3 + b[2]*y^2 + b[1]*y # - R
+y^4 + b[3]*x^3 + b[2]*x^2 + b[1]*x # - R
+
+
+### Classic Polynomial
+round0.p(poly.calc(x))
+
+
+###################
+
+### Simple Variants
 ### x^4 + b*x*y
 
 # x^4 + b1*x*y = R
