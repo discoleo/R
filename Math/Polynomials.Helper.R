@@ -858,6 +858,72 @@ parse.pm = function(e) {
 	return(e.txt);
 }
 
+toMonom.pm = function(e, xsign = 1) {
+	m = data.frame(coeff=xsign);
+	acc = list();
+	while(TRUE) {
+		if(length(e) == 1) {
+			if(is.symbol(e)) {
+				vn1 = as.character(e); # a variable name;
+				m[, vn1] = 1;
+			} else if(is.numeric(e)) {
+				m[, "coeff"] = m[, "coeff"] * e;
+			} else print(paste0("Error: ", e));
+		} else {
+			op = e[[1]];
+			if(is.symbol(op)) {
+				if(op == "*") {
+					acc = c(acc, e[[2]]);
+					e = e[[3]]; next;
+				}
+				if(op == "^") {
+					vn1 = as.character(e[[2]]); # TODO: 8^8
+					pow = e[[3]];
+					if( ! is.numeric(pow)) {
+						warning(paste0("Power = ", pow, " is NOT numeric!"));
+						pow = NA;
+					}
+					m[, vn1] = pow;
+				} else {
+					vn1 = as.character(op); # a variable name;
+					m[, vn1] = 1;
+				}
+			} else if(is.numeric(op)) {
+				m[, "coeff"] = m[, "coeff"] * op;
+			}
+		}
+		if(length(acc) == 0) break;
+		e = acc[[length(acc)]];
+		acc = head(acc, -1);
+	}
+	return(m);
+}
+toPoly.pm = function(e) {
+	if( ! is.expression(e)) stop("Input must be an expression!")
+	if( ! is.language(e[[1]])) return(NULL);
+	e = e[[1]];
+	p = data.frame();
+	while(TRUE) {
+		if(is.symbol(e[[1]])) {
+			op = e[[1]];
+			if(op == "+") {
+				m = toMonom.pm(e[[3]]);
+				p = if(nrow(p) == 0) m else sum.pm(p, m);
+				e = e[[2]];
+			} else if(op == "-") {
+				m = toMonom.pm(e[[3]], xsign=-1);
+				p = if(nrow(p) == 0) m else sum.pm(p, m);
+				e = e[[2]];
+			} else {
+				m = toMonom.pm(e);
+				p = if(nrow(p) == 0) m else sum.pm(p, m);
+				break;
+			}
+		} else break;
+	}
+	return(p);
+}
+
 ### Classic Polynomials
 bR.gen = function(pb, pR=1) data.frame(b = pb, R = pR, coeff = 1)
 bx.gen = function(pb, px=1) data.frame(b = pb, x = px, coeff = 1)
