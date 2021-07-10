@@ -803,7 +803,7 @@ print.p = function(p, leading=1, order=TRUE, sort.order=TRUE) {
 toCoeff = function(p, x="x") {
 	idx = match(x, names(p));
 	if(idx < 0) stop(paste0("No variable ", x));
-	px = p[,x]; p = p[, - idx];
+	px = p[,x]; p = p[, - idx, drop=FALSE];
 	str = tapply(seq(nrow(p)), px, function(nr) print.p(p[nr,], leading=NA))
 	str[nchar(str) == 0] = "1";
 	# missing powers
@@ -814,7 +814,9 @@ toCoeff = function(p, x="x") {
 }
 print.coeff = function(p, x="x") {
 	p = rev(toCoeff(p, x));
-	sapply(p, function(p) cat(paste(p, ",\n", sep="")));
+	last = tail(p, 1);
+	sapply(head(p, -1), function(p) cat(paste(p, ",\n", sep="")));
+	cat(paste(last, "\n", sep=""));
 	invisible(p);
 }
 print.pcoeff = function(l, print=TRUE, strip=NULL, len=10) {
