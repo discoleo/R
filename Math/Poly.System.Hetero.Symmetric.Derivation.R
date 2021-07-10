@@ -1046,3 +1046,38 @@ b2*S^2 - R # = 0
 
 m3.all = unity(3, all=T)
 
+
+############################
+############################
+
+#################
+### Leading Term:
+### Trivial: (x*y)^n
+
+# - similar behavior to that of the remaining side chain;
+
+####################
+### x^2*y^2 Term ###
+####################
+
+### x^2*y^2 + b2*x^2 + b1*x
+
+# x^2*y^2 + b2*x^2 + b1*x = R
+# y^2*x^2 + b2*y^2 + b1*y = R
+
+### Solution:
+
+### Diff =>
+b2*(x^2 - y^2) + b1*(x-y) # = 0
+(x - y)*(b2*(x+y) + b1) # = 0
+# Case: x != y
+# x + y = -b1/b2
+# S = -b1/b2
+
+### Sum =>
+2*(x*y)^2 + b2*(x^2 + y^2) + b1*(x+y) - 2*R # = 0
+2*(x*y)^2 + b2*(S^2 - 2*x*y) + b1*S - 2*R # = 0
+2*(x*y)^2 - 2*b2*x*y + b2*S^2 + b1*S - 2*R # = 0
+(x*y)^2 - b2*x*y - R # = 0
+
+
