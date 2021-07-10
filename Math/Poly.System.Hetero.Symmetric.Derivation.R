@@ -4,14 +4,14 @@
 ### [the one and only]
 ###
 ### Polynomial Systems: S2
-### Heterogenous Symmetric
+### Heterogeneous Symmetric
 ###
 ### Derivation of Formulas
 ###
-### draft v.0.3b
+### draft v.0.3b-sol
 
 
-### Systems:
+### Polynomial Systems:
 # - are described in file:
 #   Poly.System.Hetero.Symmetric.R;
 
@@ -21,8 +21,8 @@
 ### History ###
 ###############
 
-### draft v.0.3b:
-# - started work on S2P4 Full:
+### draft v.0.3b - v.0.3b-sol:
+# - [started work / full solution] for S2P4 Full:
 #   x^4 + b3*y^3 + b2*y^2 + b1*y = R;
 ### [old]
 # - moved Derivation to this file;
@@ -742,8 +742,28 @@ x^4 - y^4 - b3*(x^3-y^3) - b2*(x^2-y^2) - b1*(x-y) # = 0
 ### Case: x != y =>
 S^3 - 2*x*y*S - b3*(S^2 - x*y) - b2*S - b1 # = 0
 S^3 - b3*S^2 - b2*S - b1 - x*y*(2*S-b3) # = 0
+# x*y*(2*S-b3) = S^3 - b3*S^2 - b2*S - b1
 
-### TODO
+### Sum =>
+x^4 + y^4 + b3*(x^3+y^3) + b2*(x^2+y^2) + b1*(x+y) - 2*R # = 0
+S^4 - 4*x*y*S^2 + 2*(x*y)^2 + b3*(S^3 - 3*x*y*S) + b2*(S^2 - 2*x*y) + b1*S - 2*R # = 0
+S^4 - 4*x*y*S^2 + 2*(x*y)^2 + b3*S^3 - 3*b3*x*y*S + b2*S^2 - 2*b2*x*y + b1*S - 2*R # = 0
+
+
+### Eq S:
+S^6 - b3*S^5 - 2*b3^2*S^4 - 2*b2*S^4 + b3^3*S^3 - 4*b1*S^3 - 4*b3*b2*S^3 + 4*R*S^2 - b3*b1*S^2 +
+	+ 2*b3^2*b2*S^2 - 3*b2^2*S^2 + b3^2*b1*S + b3*b2^2*S - 4*b3*R*S - 4*b1*b2*S + b3^2*R - b1^2 + b3*b1*b2
+
+
+### Derivation:
+p1 = toPoly.pm(parse(text="S^4 - 4*xy*S^2 + 2*xy^2 + b3*S^3 - 3*b3*xy*S + b2*S^2 - 2*b2*xy + b1*S - 2*R"))
+pxy0 = toPoly.pm(parse(text="S^3 - b3*S^2 - b2*S - b1"));
+pxyDiv = data.frame(S=1:0, b3=0:1, coeff=c(2,-1));
+pR = replace.fr.pm(p1, pxy0, pxyDiv, "xy")
+pR$coeff = - pR$coeff / gcd.vpm(pR)
+pR = sort.pm(pR, c(4,3), "S")
+print.p(pR, "S")
+print.coeff(pR, "S")
 
 
 ### Classic Polynomial:
@@ -798,9 +818,11 @@ solver.S2P4Full.Classic = function(R, b) {
 }
 
 R = -1;
-b = c(3,0,-1);
+b = c(3,2,-1);
 sol = solver.S2P4Full.Classic(R, b);
 x = sol[,1]; y = sol[,2];
+b1 = b[1]; b2 = b[2]; b3 = b[3];
+S = x+y;
 
 ### Test
 x^4 + b[3]*y^3 + b[2]*y^2 + b[1]*y # - R

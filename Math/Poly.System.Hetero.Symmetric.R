@@ -7,7 +7,7 @@
 ### Polynomial Systems: S2
 ### Heterogeneous Symmetric
 ###
-### draft v.0.3d-clean3
+### draft v.0.3f
 
 
 ### Heterogeneous Symmetric Polynomial Systems
@@ -47,6 +47,7 @@
 # P4.1b.) x^4 + b2*x*y + b1*y = R; (P6 => P12)
 # P4.1c.) x^4 + b3*(x*y)^2 + b2*x*y + b1*y = R; (TODO: P6 => P12; if(b3 == 1) P4 => P8)
 # P4.1d.) (x - s)^4 + b*y = R; (P6 => P12; simple shift of P4.1a)
+# P4.1e.) x^4 + b3*y^3 + b2*y^2 + b1*y = R; (P6 => P12)
 # P4.2a.) x^4 + b*x*y = R; (trivial P8)
 # P4.2b.) x^4 + b2*(x*y)^2 + b1*x*y = R; (TODO: trivial P8)
 # P4.2c.) TODO: x^4 + b3*(x*y)^3 + b2*(x*y)^2 + b1*x*y = R;
@@ -104,6 +105,8 @@
 
 ### [branch v.0.3]
 #
+### v.0.3f:
+# - solved: x^4 + b3*y^3 + b2*y^2 + b1*y = R;
 ### v.0.3e:
 # - more refactoring & cleanup;
 # - moved section with Mixed Leading Term to new file:
@@ -1298,7 +1301,9 @@ a1 = a[1]; a2 = a[2]; b1 = b[1]; b2 = b[2];
 ###############
 
 ### x^4 + b*y
-### Extension 1: x^4 + b2*xy + b1*y = R
+
+### Structural extensions:
+### Extension 1: x^4 + b2*x*y + b1*y = R
 ### Extension 2: x^4 + b3*(x*y)^2 + b2*x*y + b1*y = R
 
 # x^4 + b1*y = R
@@ -1318,8 +1323,7 @@ S^6 - 2*b2*S^4 - 4*b1*S^3 + 4*R*S^2 + 2*b1*b2*S - b1^2 # = 0
 ### E2: x^4 + b3*(x*y)^2 + b2*x*y + b1*y = R
 (b3 - 1)*S^6 + 2*b2*S^4 - (2*b1*b3 - 4*b1)*S^3 - 4*R*S^2 - 2*b1*b2*S + b1^2 + b1^2*b3 # = 0
 
-### Solution:
-
+### Solver:
 solve.ht4 = function(R, b, b.ext=0) {
 	if(length(b) == 1) coeff = c(1, 0, 0, -4*b[1], 4*R, 0, - b[1]^2)
 	else if(length(b) == 2) coeff = c(1, 0, -2*b[2], -4*b[1], 4*R, 2*b[1]*b[2], - b[1]^2)
@@ -1465,11 +1469,11 @@ y^4 + b[1]*x + b[2]*x*y + b.ext[1]*(x + y) + b.ext[2]*(x + y)^2
 # Trivial solution: x = y;
 
 # Diff =>
-# x*y = (Z*(Z^2 - 4*s*Z + 6*s^2) - 4*s^3 - b1) / (2*Z - 4*s)
+# x*y = (S*(S^2 - 4*s*S + 6*s^2) - 4*s^3 - b1) / (2*S - 4*s)
 
 ### Sum =>
-Z^6 - 12*s*Z^5 + 60*s^2*Z^4 - 4*(b1 + 40*s^3)*Z^3 + 4*(R + 5*b1*s + 60*s^4)*Z^2 +
-	- 16*(R*s + 2*b1*s^2 + 12*s^5)*Z + 16*(R*s^2 + b1*s^3 + 4*s^6) - b1^2
+S^6 - 12*s*S^5 + 60*s^2*S^4 - 4*(b1 + 40*s^3)*S^3 + 4*(R + 5*b1*s + 60*s^4)*S^2 +
+	- 16*(R*s + 2*b1*s^2 + 12*s^5)*S + 16*(R*s^2 + b1*s^3 + 4*s^6) - b1^2
 
 ### Solution:
 solve.ht_sh.S2P4 = function(R, b, s=0) {
@@ -1513,9 +1517,66 @@ round0(err)
 
 ################
 ### Variants ###
+################
+
+### Extended Variant:
+
+# x^4 + b3*y^3 + b2*y^2 + b1*y = R
+# y^4 + b3*x^3 + b2*x^2 + b1*x = R
 
 
-###############
+### Solution:
+
+### Diff =>
+S^3 - b3*S^2 - b2*S - b1 - x*y*(2*S-b3) # = 0
+
+### Sum =>
+S^4 - 4*x*y*S^2 + 2*(x*y)^2 + b3*S^3 - 3*b3*x*y*S + b2*S^2 - 2*b2*x*y + b1*S - 2*R # = 0
+
+### Eq S:
+S^6 - b3*S^5 - 2*(b3^2 + 2*b2)*S^4 + b3^3*S^3 - 4*b1*S^3 - 4*b3*b2*S^3 + 4*R*S^2 - b3*b1*S^2 +
+	+ 2*b3^2*b2*S^2 - 3*b2^2*S^2 + b3^2*b1*S + b3*b2^2*S - 4*b3*R*S - 4*b1*b2*S + b3^2*R - b1^2 + b3*b1*b2
+
+### Auxiliary Eq:
+# x*y*(2*S-b3) = S^3 - b3*S^2 - b2*S - b1
+
+
+### Solver:
+solve.S2P4Full = function(R, b, debug=TRUE) {
+	b1 = b[1]; b2 = b[2]; b3 = b[3];
+	coeff = c(1, - b3, - 2*b3^2 - 2*b2, b3^3 - 4*b1 - 4*b3*b2,
+			4*R - b3*b1 + 2*b3^2*b2 - 3*b2^2, b3^2*b1 + b3*b2^2 - 4*b3*R - 4*b1*b2,
+			b3^2*R - b1^2 + b3*b1*b2);
+	S = roots(coeff);
+	if(debug) print(S);
+	xy = (S^3 - b3*S^2 - b2*S - b1) / (2*S - b3);
+	xy.d = sqrt(S^2 - 4*xy + 0i)
+	x = (S + xy.d) / 2;
+	y = (S - xy.d) / 2;
+	sol = cbind(x=x, y=y);
+	sol = rbind(sol, sol[,2:1]);
+	return(sol);
+}
+
+### Examples:
+
+R = -1;
+b = c(3,3,-1)
+sol = solve.S2P4Full(R, b);
+x = sol[,1]; y = sol[,2];
+
+### Test:
+x^4 + b[3]*y^3 + b[2]*y^2 + b[1]*y # - R
+y^4 + b[3]*x^3 + b[2]*x^2 + b[1]*x # - R
+
+
+### Classic Polynomial
+# - see derivation;
+
+###################
+###################
+
+### Simple Variants
 ### x^4 + b*x*y
 
 # x^4 + b1*x*y = R
@@ -1529,10 +1590,10 @@ round0(err)
 # => x =  y *OR*
 #    x = -y *OR* 2*x*y = (x+y)^2;
 # Case: x != +/- y =>
-# 2*x*y = Z^2
+# 2*x*y = S^2
 
 ### Sum =>
-Z^4 - 2*b1*Z^2 + 4*R
+S^4 - 2*b1*S^2 + 4*R
 
 
 ### Example
