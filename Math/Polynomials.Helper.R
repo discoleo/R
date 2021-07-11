@@ -111,6 +111,25 @@ mult.lpm = function(p) {
 	}
 	return(pR);
 }
+mult.m = function(p, m) {
+	# optimized for multiplication with monomial;
+	if(nrow(m) > 1) stop("Cannot multiply with a polynomial!")
+	id = match("coeff", names(m));
+	if( ! is.na(id)) {
+		p$coeff = p$coeff * m[,id];
+		m = m[, - id];
+	}
+	xn.all = intersect(names(p), names(m));
+	for(xn in xn.all) {
+		p[, xn] = p[, xn] + m[1,xn];
+	}
+	isNew = ! (names(m) %in% xn.all);
+	xn.all = names(m)[isNew];
+	for(xn in xn.all) {
+		p[, xn] = m[1,xn];
+	}
+	return(p);
+}
 mult.pm = function(p1, p2, sc=1) {
 	# P1
 	split.df = function(p.df) {
@@ -831,6 +850,33 @@ print.pcoeff = function(l, print=TRUE, strip=NULL, len=10) {
 	if(print) { cat(l.str); cat("\n"); }
 	return(invisible(l.str));
 }
+### Parse expressions / polynomials
+toPoly.pm = function(e) {
+	if(is.character(e)) e = parse(text=e);
+	if( ! is.expression(e)) stop("Input must be an expression!")
+	if( ! is.language(e[[1]])) return(NULL);
+	e = e[[1]];
+	p = data.frame();
+	while(TRUE) {
+		if(is.symbol(e[[1]])) {
+			op = e[[1]];
+			if(op == "+") {
+				m = toMonom.pm(e[[3]]);
+				p = if(nrow(p) == 0) m else sum.pm(p, m);
+				e = e[[2]];
+			} else if(op == "-") {
+				m = toMonom.pm(e[[3]], xsign=-1);
+				p = if(nrow(p) == 0) m else sum.pm(p, m);
+				e = e[[2]];
+			} else {
+				m = toMonom.pm(e);
+				p = if(nrow(p) == 0) m else sum.pm(p, m);
+				break;
+			}
+		} else break;
+	}
+	return(p);
+}
 ### Parse expression
 parse.pm = function(e) {
 	if( ! is.expression(e)) stop("Input must be an expression!")
@@ -866,8 +912,12 @@ toMonom.pm = function(e, xsign = 1) {
 	while(TRUE) {
 		if(length(e) == 1) {
 			if(is.symbol(e)) {
-				vn1 = as.character(e); # a variable name;
-				m[, vn1] = 1;
+				if(e == "-") {
+					m$coeff = - m$coeff;
+				} else {
+					vn1 = as.character(e); # a variable name;
+					m[, vn1] = 1;
+				}
 			} else if(is.numeric(e)) {
 				m[, "coeff"] = m[, "coeff"] * e;
 			} else print(paste0("Error: ", e));
@@ -886,6 +936,9 @@ toMonom.pm = function(e, xsign = 1) {
 						pow = NA;
 					}
 					m[, vn1] = pow;
+				} else if(op == "-") {
+					m$coeff = - m$coeff;
+					e = e[[2]]; next;
 				} else {
 					vn1 = as.character(op); # a variable name;
 					m[, vn1] = 1;
@@ -899,31 +952,6 @@ toMonom.pm = function(e, xsign = 1) {
 		acc = head(acc, -1);
 	}
 	return(m);
-}
-toPoly.pm = function(e) {
-	if( ! is.expression(e)) stop("Input must be an expression!")
-	if( ! is.language(e[[1]])) return(NULL);
-	e = e[[1]];
-	p = data.frame();
-	while(TRUE) {
-		if(is.symbol(e[[1]])) {
-			op = e[[1]];
-			if(op == "+") {
-				m = toMonom.pm(e[[3]]);
-				p = if(nrow(p) == 0) m else sum.pm(p, m);
-				e = e[[2]];
-			} else if(op == "-") {
-				m = toMonom.pm(e[[3]], xsign=-1);
-				p = if(nrow(p) == 0) m else sum.pm(p, m);
-				e = e[[2]];
-			} else {
-				m = toMonom.pm(e);
-				p = if(nrow(p) == 0) m else sum.pm(p, m);
-				break;
-			}
-		} else break;
-	}
-	return(p);
 }
 
 ### Classic Polynomials
