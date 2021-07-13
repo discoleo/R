@@ -5,7 +5,7 @@
 ###
 ### Prime Factorizations
 ###
-### draft v.0.1a
+### draft v.0.1b
 
 # - some experiments with Prime factorizations;
 
@@ -24,6 +24,11 @@ mod.inv = function(x, N, type=1) {
 		xn = x^N;
 		xn + 1/xn;
 	}
+}
+bezout.mod = function(x, N) {
+	xn = x^N;
+	xi = 1/x; xin = 1/xn;
+	(x + xi)^N - (xn + xin);
 }
 pollard = function(x0, N, iter=14, pow=4) {
 	x = x0;
@@ -58,6 +63,25 @@ x = as.bigz(2, mod=N); x = x + 1/x;
 x
 pollard(x, N, pow=5)
 pollard(x, N, pow=25)
+pollard(x, N, pow=125) # BEST!
+
+
+### Bezout
+# [rather inefficient]
+x = as.bigz(2, mod=N);
+x = bezout.mod(x, N);
+x
+pollard(x, N, pow=3)
+pollard(x, N, pow=27)
+
+### Bezout
+x = as.bigz(3, mod=N);
+x = bezout.mod(x, N);
+x
+pollard(x, N, pow=2)
+pollard(x, N, pow=16)
+pollard(x, N, pow=64)
+pollard(x, N, pow=128)
 
 
 ######################
