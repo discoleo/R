@@ -5,7 +5,7 @@
 ###
 ### Prime Factorizations
 ###
-### draft v.0.1c
+### draft v.0.1c-types
 
 # - some experiments with Prime factorizations;
 
@@ -91,6 +91,35 @@ pollard(x, N, pow=128)
 ### Analysis ###
 ################
 
+
+### Types of numbers (mod p1*p2)
+# - depending on the number of solutions
+#   of the equation: x + 1/x = b;
+
+### Type 0:
+# - NO solutions for given b:
+#   x^2 - b*x + 1 = 0 (mod N);
+# - Size: ~ 75% of numbers (parameter b);
+
+### Type 1:
+# - very special: x^2 = 1 (mod N);
+# - Size: 4;
+#   x0 = (1, -1, (x0 == 1/x0), -(x0 == 1/x0));
+
+### Type 2:
+# - only 2 solutions of eq:
+#   x^2 - b*x + 1 = 0 (mod N);
+# - easy factorization of N:
+#   gcd(x - 1/x, N) > 1;
+# - Size: relatively rare;
+
+### Type 4:
+# - exactly 4 solutions of eq:
+#   x^2 - b*x + 1 = 0 (mod N);
+# - TODO: factorization of N;
+
+
+### Example 1:
 p1 = 97; p2 = 47;
 N = p1 * p2;
 
@@ -108,6 +137,23 @@ tbl[tbl == 1]
 # x0 = (1, (x0 == 1/x0), (x0 == 1/x0), p1*p2 - 1)
 # special properties: x0^2 = 1;
 
+
+### Example 2
+p1 = 1229; p2 = 1951;
+N = p1 * p2;
+
+x = as.bigz(seq(N), mod=N)
+x = x[x %% p1 != 0]
+x = x[x %% p2 != 0]
+x = x + (1/x);
+# Types of numbers:
+tbl = table(as.integer(x))
+head(tbl, 20)
+table(tbl)
+# Type 2: 5.3 / 1000;
+
+
+################
 
 ### experimental
 N = as.bigz("50003491") * as.bigz("84300971")
