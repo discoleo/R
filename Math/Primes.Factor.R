@@ -5,7 +5,7 @@
 ###
 ### Prime Factorizations
 ###
-### draft v.0.1c-types
+### draft v.0.1d
 
 # - some experiments with Prime factorizations;
 
@@ -112,6 +112,8 @@ pollard(x, N, pow=128)
 # - easy factorization of N:
 #   gcd(x - 1/x, N) > 1;
 # - Size: relatively rare;
+#   initial approx = 2*(p1 + p2) - 12;
+#   (but NOT correct; TODO: exact)
 
 ### Type 4:
 # - exactly 4 solutions of eq:
@@ -123,9 +125,10 @@ pollard(x, N, pow=128)
 p1 = 97; p2 = 47;
 N = p1 * p2;
 
-x = as.bigz(seq(N), mod=N)
-x = x[x %% p1 != 0]
-x = x[x %% p2 != 0]
+x = seq(N-1);
+x[x %% p1 == 0] = NA
+x[x %% p2 == 0] = NA
+x = as.bigz(x, mod=N)
 x = x + (1/x);
 # Types of numbers:
 tbl = table(as.integer(x))
@@ -137,20 +140,48 @@ tbl[tbl == 1]
 # x0 = (1, (x0 == 1/x0), (x0 == 1/x0), p1*p2 - 1)
 # special properties: x0^2 = 1;
 
+x.all = as.integer(names(tbl[tbl == 2]))
+x.all
+as.vector(sapply(x.all, function(v) which(x == v)))
 
-### Example 2
+head(tbl[tbl == 2], 20)
+gcd(diff(which(x == 45)), N)
+
+
+### Example 2:
 p1 = 1229; p2 = 1951;
 N = p1 * p2;
 
-x = as.bigz(seq(N), mod=N)
-x = x[x %% p1 != 0]
-x = x[x %% p2 != 0]
+x = seq(N-1);
+x[x %% p1 == 0] = NA
+x[x %% p2 == 0] = NA
+x = as.bigz(x, mod=N)
 x = x + (1/x);
 # Types of numbers:
 tbl = table(as.integer(x))
 head(tbl, 20)
 table(tbl)
 # Type 2: 5.3 / 1000;
+
+gcd(diff(which(x == 1231)), N)
+
+
+### Example 3:
+p1 = 97; p2 = 59;
+N = p1 * p2;
+
+x = seq(N-1)
+x[x %% p1 == 0] = NA; x[x %% p2 == 0] = NA;
+x = as.bigz(x, mod=N);
+x = x + (1/x);
+# Types of numbers:
+tbl = table(as.integer(x))
+table(tbl)
+head(tbl[tbl == 2], 20)
+
+which(x == 61)
+# 1299 4485
+gcd(diff(which(x == 61)), N)
 
 
 ################
