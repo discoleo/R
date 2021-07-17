@@ -5,7 +5,7 @@
 ###
 ### Prime Factorizations
 ###
-### draft v.0.1d
+### draft v.0.1e
 
 # - some experiments with Prime factorizations;
 
@@ -17,6 +17,14 @@ library(gmp)
 
 ### Helper Functions
 
+seq.mod = function(N, p) {
+	x = seq(N-1);
+	for(px in p) {
+		x[seq(px, N-1, by=px)] = NA;
+	}
+	x = as.bigz(x, mod=N);
+	return(x);
+}
 mod.inv = function(x, N, type=1) {
 	if(type == 1) {
 		(x + 1/x)^N;
@@ -101,7 +109,7 @@ pollard(x, N, pow=128)
 #   x^2 - b*x + 1 = 0 (mod N);
 # - Size: ~ 75% of numbers (parameter b);
 
-### Type 1:
+### Type 1: Squares
 # - very special: x^2 = 1 (mod N);
 # - Size: 4;
 #   x0 = (1, -1, (x0 == 1/x0), -(x0 == 1/x0));
@@ -125,21 +133,21 @@ pollard(x, N, pow=128)
 p1 = 97; p2 = 47;
 N = p1 * p2;
 
-x = seq(N-1);
-x[x %% p1 == 0] = NA
-x[x %% p2 == 0] = NA
-x = as.bigz(x, mod=N)
+x = seq.mod(N, c(p1, p2));
 x = x + (1/x);
 # Types of numbers:
 tbl = table(as.integer(x))
 head(tbl, 20)
 table(tbl)
 
+### Squares
 tbl[tbl == 1]
+which(x == 1647)
 # very special, but there are only 2 which are useful:
-# x0 = (1, (x0 == 1/x0), (x0 == 1/x0), p1*p2 - 1)
+# x0 = (1, x0, - x0, - 1), where x0 == 1/x0;
 # special properties: x0^2 = 1;
 
+### Quadratic-like
 x.all = as.integer(names(tbl[tbl == 2]))
 x.all
 as.vector(sapply(x.all, function(v) which(x == v)))
@@ -148,6 +156,14 @@ head(tbl[tbl == 2], 20)
 gcd(diff(which(x == 45)), N)
 
 
+### Gaps
+xs = sort(as.integer(x))
+head(xs, 100)
+# gap is actually diff() - 1;
+table(diff(xs))
+
+
+##############
 ### Example 2:
 p1 = 1229; p2 = 1951;
 N = p1 * p2;
