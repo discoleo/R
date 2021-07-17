@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric
 ### with Composite Leading Term
 ###
-### draft v.0.2f-clean
+### draft v.0.2g
 
 
 ### Hetero-Symmetric
@@ -25,6 +25,12 @@ z^n*x^m + P(z, x, y) = R
 ###############
 
 
+### draft v.0.2g:
+# - solved S3L33M system:
+#   x^3*y^3 + b*x*y = R;
+# - Eq S & classic Poly for S3L44 Simple:
+#   x^4*y^4 + b*z = R;
+#   [see more details in the Derivation]
 ### draft v.0.2e-clPoly3 - v.0.2e-sol-robust:
 # - classic Polynomial for:
 #   x^3*y*3 + b^z = R;
@@ -441,6 +447,137 @@ b^3*x^15 - 3*b^2*R*x^14 + 3*b*R^2*x^13 - R^3*x^12 + b^4*x^10 - b^3*R*x^9 +
 (b^3*x^15 - 3*b^2*R*x^14 + 3*b*R^2*x^13 - R^3*x^12 - b^4*x^10 + 4*b^3*R*x^9 - 3*b^2*R^2*x^8 +
 	- 2*b*R^3*x^7 + 2*R^4*x^6 - b^5*x^5 - b^4*R*x^4 + 5*b^3*R^2*x^3 - b^2*R^3*x^2 - b*R^4*x + b^6 - R^5)
 # * P[15][all distinct]
+
+
+########################
+########################
+
+########################
+### Mixed-Order: 4+4 ###
+########################
+
+### x[i]^4*x[j]^4 + b*x[k]
+
+# x^4*y^4 + b*z = R
+# y^4*z^4 + b*x = R
+# z^4*x^4 + b*y = R
+
+### Solution:
+
+### Sum =>
+4*E2*E3^2 + 2*E3^2*S^2 - 4*E2^2*E3*S + E2^4 + b*S - 3*R
+
+### Sum(z*...) =>
+3*E3^3 - 3*E3^2*E2*S + E2^3*E3 - 2*b*E2 + b*S^2 - R*S # = 0
+
+### Diff =>
+E3^2 - 2*E3*E2*S + E2^3 # = 0
+
+
+### Eq S:
+# P[14] (true roots):
+-R^7 - b^8 + 9*b*R^6*S - 39*b^2*R^5*S^2 + 103*b^3*R^4*S^3 - 175*b^4*R^3*S^4 + 187*b^5*R^2*S^5 +
+	- 113*b^6*R*S^6 + 29*b^7*S^7 + R^6*S^8 - 6*b*R^5*S^9 + 15*b^2*R^4*S^10 - 20*b^3*R^3*S^11 +
+	+ 15*b^4*R^2*S^12 - 6*b^5*R*S^13 + b^6*S^14
+
+
+### Auxiliary Eqs:
+# TODO
+
+
+### Solver:
+# TODO
+
+
+### Classic Polynomial:
+
+### Case: (x,y,z) all distinct
+b^12 - 3*b^8*R^3*x^4 + b^9*R^2*x^5 + b^10*R*x^6 + b^11*x^7 + 3*b^4*R^6*x^8 - 2*b^5*R^5*x^9 - b^6*R^4*x^10 +
+	- (4*b^8*R^2 + R^9)*x^12 + b*R*(4*b^8 + R^7)*x^13 - b^4*R^5*x^16 + 5*b^5*R^4*x^17 - 2*b^6*R^3*x^18 +
+	- 6*b^7*R^2*x^19 + (4*b^8*R+3*R^8)*x^20 - 8*b*R^7*x^21 + 6*b^2*R^6*x^22 - 5*b^4*R^4*x^24 +
+	+ 12*b^5*R^3*x^25 - 12*b^6*R^2*x^26 + 4*b^7*R*x^27 - 3*R^7*x^28 + 13*b*R^6*x^29 - 21*b^2*R^5*x^30 +
+	+ 15*b^3*R^4*x^31 - 5*b^4*R^3*x^32 + 3*b^5*R^2*x^33 - 3*b^6*R*x^34 + b^7*x^35 + R^6*x^36 - 6*b*R^5*x^37 +
+	+ 15*b^2*R^4*x^38 - 20*b^3*R^3*x^39 + 15*b^4*R^2*x^40 - 6*b^5*R*x^41 + b^6*x^42
+
+### Case: x == y
+# - see file:
+#   Poly.System.Hetero.Symmetric.S3.Leading.Derivation.R;
+
+
+#########################
+#########################
+
+#########################
+### Variants:          ###
+### (x*y)^n + b*(x*y) ###
+#########################
+
+###############
+### Order 3 ###
+###############
+
+# x^3*y^3 + b*x*y = R
+# y^3*z^3 + b*y*z = R
+# z^3*x^3 + b*z*x = R
+
+### Solution:
+
+### Case: (x,y,z) all distinct
+
+### Diff =>
+E2 # = 0
+
+### Sum =>
+E3^2 - R # = 0
+
+### Sum(z^3*...) =>
+3*E3^3 - 2*b*E2*E3 + b*E3*S^2 - 3*R*E3 + 3*R*E2*S - R*S^3 # = 0
+
+### Eq S:
+R*S^6 - b^2*S^4 # = 0
+# S = 0 is NOT a solution for the base-system;
+
+### Auxiliary Eqs:
+# E2 = 0
+# b*E3 = R*S
+
+
+### Solver:
+solve.S3L33M = function(R, b, be=0, debug=TRUE) {
+	coeff = c(R, 0, - b^2);
+	# TODO: extensions;
+	S = roots(coeff);
+	if(debug) print(S);
+	len = length(S);
+	E2 = rep(0, len);
+	E3 = R*S / b;
+	x = sapply(seq(len), function(id) roots(c(1, -S[id], E2[id], -E3[id])));
+	S = rep(S, each=3); E3 = rep(E3, each=3);
+	yz.s = S - x; yz = E3 / x;
+	### robust
+	yz.d = sqrt(yz.s^2 - 4*yz + 0i);
+	y = (yz.s + yz.d)/2;
+	z = (yz.s - yz.d)/2;
+	sol = cbind(x=as.vector(x), y=as.vector(y), z=as.vector(z));
+	sol = rbind(sol, sol[,c(1,3,2)]);
+	return(sol);
+}
+
+### Examples:
+R = -2
+b = -3
+#
+sol = solve.S3L33M(R, b)
+x = sol[,1]; y = sol[,2]; z = sol[,3];
+
+### Test:
+x^3*y^3 + b*x*y # - R
+y^3*z^3 + b*y*z # - R
+z^3*x^3 + b*z*x # - R
+
+
+### Classic Poly:
+# TODO
 
 
 ########################
