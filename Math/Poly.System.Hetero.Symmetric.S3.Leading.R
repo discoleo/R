@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric
 ### with Composite Leading Term
 ###
-### draft v.0.2g
+### draft v.0.2g-ext
 
 
 ### Hetero-Symmetric
@@ -25,8 +25,8 @@ z^n*x^m + P(z, x, y) = R
 ###############
 
 
-### draft v.0.2g:
-# - solved S3L33M system:
+### draft v.0.2g - v.0.2g-ext:
+# - solved S3L33M system & with simple extensions:
 #   x^3*y^3 + b*x*y = R;
 # - Eq S & classic Poly for S3L44 Simple:
 #   x^4*y^4 + b*z = R;
@@ -456,13 +456,15 @@ b^3*x^15 - 3*b^2*R*x^14 + 3*b*R^2*x^13 - R^3*x^12 + b^4*x^10 - b^3*R*x^9 +
 ### Mixed-Order: 4+4 ###
 ########################
 
-### x[i]^4*x[j]^4 + b*x[k]
+### x^4*y^4 + b*z
 
 # x^4*y^4 + b*z = R
 # y^4*z^4 + b*x = R
 # z^4*x^4 + b*y = R
 
 ### Solution:
+
+### Case: (x,y,z) all distinct
 
 ### Sum =>
 4*E2*E3^2 + 2*E3^2*S^2 - 4*E2^2*E3*S + E2^4 + b*S - 3*R
@@ -508,7 +510,7 @@ b^12 - 3*b^8*R^3*x^4 + b^9*R^2*x^5 + b^10*R*x^6 + b^11*x^7 + 3*b^4*R^6*x^8 - 2*b
 #########################
 
 #########################
-### Variants:          ###
+### Variants:         ###
 ### (x*y)^n + b*(x*y) ###
 #########################
 
@@ -534,7 +536,7 @@ E3^2 - R # = 0
 3*E3^3 - 2*b*E2*E3 + b*E3*S^2 - 3*R*E3 + 3*R*E2*S - R*S^3 # = 0
 
 ### Eq S:
-R*S^6 - b^2*S^4 # = 0
+R*S^2 - b^2 # = 0
 # S = 0 is NOT a solution for the base-system;
 
 ### Auxiliary Eqs:
@@ -543,14 +545,19 @@ R*S^6 - b^2*S^4 # = 0
 
 
 ### Solver:
-solve.S3L33M = function(R, b, be=0, debug=TRUE) {
+solve.S3L33M = function(R, b, be=0, all.sol="Eq2", debug=TRUE) {
+	sol.type = match(all.sol, c("Distinct", "Eq2", "All"));
 	coeff = c(R, 0, - b^2);
-	# TODO: extensions;
+	if(any(be != 0)) {
+		coeff = c(-be, coeff);
+	}
 	S = roots(coeff);
 	if(debug) print(S);
 	len = length(S);
+	# Extensions:
+	R1 = R[1] - sapply(S, function(S) sum(be*S^seq(length(be))));
 	E2 = rep(0, len);
-	E3 = R*S / b;
+	E3 = R1*S / b;
 	x = sapply(seq(len), function(id) roots(c(1, -S[id], E2[id], -E3[id])));
 	S = rep(S, each=3); E3 = rep(E3, each=3);
 	yz.s = S - x; yz = E3 / x;
@@ -560,12 +567,25 @@ solve.S3L33M = function(R, b, be=0, debug=TRUE) {
 	z = (yz.s - yz.d)/2;
 	sol = cbind(x=as.vector(x), y=as.vector(y), z=as.vector(z));
 	sol = rbind(sol, sol[,c(1,3,2)]);
+	if(sol.type > 1) {
+		sol = rbind(sol, solve.S3L33MEq(R, b, be=be));
+	}
 	return(sol);
+}
+solve.S3L33MEq = function(R, b, be=0) {
+	if(all(be == 0)) {
+		coeff = c(1, 0,0,0, b, 0, -R[1]);
+		x = roots(coeff);
+		z = sapply(x, function(x) roots(c(x^3, 0, b*x, -R[1])));
+		x = rep(x, each=3);
+		return(cbind(x=x, y=x, z=as.vector(z)));
+	}
+	# TODO
 }
 
 ### Examples:
-R = -2
-b = -3
+R = -3
+b = -1
 #
 sol = solve.S3L33M(R, b)
 x = sol[,1]; y = sol[,2]; z = sol[,3];
@@ -574,6 +594,21 @@ x = sol[,1]; y = sol[,2]; z = sol[,3];
 x^3*y^3 + b*x*y # - R
 y^3*z^3 + b*y*z # - R
 z^3*x^3 + b*z*x # - R
+
+
+### Extensions:
+R = -2
+b = -2
+be = 1/3
+#
+sol = solve.S3L33M(R, b, be=be)
+x = sol[,1]; y = sol[,2]; z = sol[,3];
+
+### Test:
+S = (x+y+z); ext = be[1]*S;
+x^3*y^3 + b*x*y + ext # - R
+y^3*z^3 + b*y*z + ext # - R
+z^3*x^3 + b*z*x + ext # - R
 
 
 ### Classic Poly:
