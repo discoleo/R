@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric S3:
 ### Mixed Type
 ###
-### draft v.0.2n-clPoly
+### draft v.0.2o-clean
 
 
 ### Heterogeneous Symmetric
@@ -27,6 +27,8 @@
 ###############
 
 
+### draft v.0.2o-clean:
+# - more cleanup: moved to Derivation;
 ### draft v.0.2n - v.0.2n-clPoly:
 # - solved: Mixed Ht S3P21 + Symmetric P3;
 #   x^3 + y^3 + z^3 = R2;
@@ -721,6 +723,8 @@ S^3 - 3*E2*S + 3*E3 - R2 # = 0
 
 ### Auxiliary Eqs:
 # 3*E2*S = S^3 + 3*E3 - R2
+# Case: S = 0
+# E2^3 + (R1^2 + 9*E3^2 + 3*R1*E3) = 0; # all 3 solutions
 
 ### Eq S:
 S^9 - (9*R1 + 3*R2 + 18*E3)*S^6 + (3*R2^2 + 36*R2*E3 + 108*E3^2 + 9*R1*R2 + 54*R1*E3 + 27*R1^2)*S^3 +
@@ -780,15 +784,14 @@ x^27 - 3*R2*x^24 + 3*(R2^2 - R2*R3 - 3*R3^2)*x^21 +
 ### Type 2: 2 Rotations ###
 ###########################
 
-###############
-### Dual Eq ###
-### p = 1   ###
-
+### Dual Eq: p = 1
 ### x*y^n + y*z^n + z*x^n = R1
 ### x*z^n + y*x^n + z*y^n = R2
 
-############
-### Order 2: n = 2
+###############
+### Order 2 ###
+###############
+
 x*y^2 + y*z^2 + z*x^2 - R1 # = 0
 x*z^2 + y*x^2 + z*y^2 - R2 # = 0
 x*y*z - R3 # = 0
@@ -800,21 +803,14 @@ x*y*z - R3 # = 0
 # x*y*z / (x+y+z) = R3
 
 ### Solution:
-### Eq 1 + Eq 2 =.
-x*y^2 + y*z^2 + z*x^2 + x*z^2 + y*x^2 + z*y^2 - R1 - R2 # = 0
+### Eq 1 + Eq 2 =>
 E2*S - 3*E3 - R1 - R2 # = 0
-# E2 = (R1 + R2 + 3*E3) / S
 
 ### see Section "Simple System":
-R3*S^3 - (R1+6*R3)*E2*S + R1^2 + E2^3 + 9*R3^2 + 3*R1*R3 # = 0
-R3*S^3 - (R1+6*R3)*(R1 + R2 + 3*R3) + R1^2 + (3*R3 + R1 + R2)^3 / S^3 + 9*R3^2 + 3*R1*R3 # = 0
-R3*S^6 - ((R1+6*R3)*(R1 + R2 + 3*R3) - R1^2 - 9*R3^2 - 3*R1*R3)*S^3 + (R1 + R2 + 3*R3)^3 # = 0
-R3*S^6 - (R1*R2 + 6*R2*R3 + 9*R3^2 + 6*R1*R3)*S^3 + (R1 + R2 + 3*R3)^3 # = 0
+R3*S^6 - (R1*R2 + 6*R1*R3 + 6*R2*R3 + 9*R3^2)*S^3 + (R1 + R2 + 3*R3)^3 # = 0
 
 ### Extension M3:
-R3*S^5 - (R1*R2 + 6*R2*R3/S + 9*R3^2/S^2 + 6*R1*R3/S)*S^3 + (R1 + R2 + 3*R3/S)^3 # = 0
-R3*S^8 - (R1*R2 + 6*R2*R3/S + 9*R3^2/S^2 + 6*R1*R3/S)*S^6 + ((R1 + R2)*S + 3*R3)^3 # = 0
-R3*S^8 - R1*R2*S^6 - 6*(R1*R3+R2*R3)*S^5 - 9*R3^2*S^4 + (R1 + R2)^3*S^3 +
+R3*S^8 - R1*R2*S^6 - 6*R3*(R1 + R2)*S^5 - 9*R3^2*S^4 + (R1 + R2)^3*S^3 +
 	+ 9*R3*(R1 + R2)^2*S^2 + 27*R3^2*(R1 + R2)*S + 27*R3^3 # = 0
 
 ### Solver:
