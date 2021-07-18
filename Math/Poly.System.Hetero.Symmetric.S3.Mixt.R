@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric S3:
 ### Mixed Type
 ###
-### draft v.0.2m-ext
+### draft v.0.2n
 
 
 ### Heterogeneous Symmetric
@@ -27,6 +27,9 @@
 ###############
 
 
+### draft v.0.2n:
+# - solved: Mixed Ht S3P21 + Symmetric P3;
+#   x^3 + y^3 + z^3 = R2;
 ### draft v.0.2m - v.0.2m-ext:
 # - extensions of type A to the HtDual E3-variant system;
 # - extensions of type A to the HtDual E2-variant system:
@@ -421,6 +424,8 @@ x*y*z - R3 # = 0
 ### Solution:
 
 ### Eq:
+E3*S^5 - 5*E2*E3*S^3 + (7*E3^2 - R1*E2)*S^2 + (E2^2*E3 + R1*E3)*S +
+	+ R1^2 + 2*R1*E2^2 + E2^4 # = 0
 R3*S^5 - 5*R2*R3*S^3 + (7*R3^2 - R1*R2)*S^2 + (R2^2*R3 + R1*R3)*S +
 	+ R1^2 + 2*R1*R2^2 + R2^4 # = 0
 
@@ -624,6 +629,10 @@ round0(err)
 #############################
 #############################
 
+################
+### Variants ###
+################
+
 ### Variant: E2*S = R2
 
 ### Order 2: n = 2
@@ -684,6 +693,72 @@ test
 ###
 round0.p(poly.calc(x))
 # reducible to symmetric P[6];
+
+
+#############################
+#############################
+
+################
+### Variants ###
+################
+
+### Mixed with Symmetric
+### x^3 + y^3 + z^3 = R2
+
+### Ht Order 2+1:
+# x*y^2 + y*z^2 + z*x^2 = R1
+# x^3 + y^3 + z^3 = R2
+# x*y*z = R3
+
+### Solution:
+
+### Eq 1:
+E3*S^3 - (R1+6*E3)*E2*S + R1^2 + E2^3 + 9*E3^2 + 3*R1*E3 # = 0
+
+### Eq 2:
+S^3 - 3*E2*S + 3*E3 - R2 # = 0
+
+### Auxiliary Eqs:
+# 3*E2*S = S^3 + 3*E3 - R2
+
+### Eq S:
+S^9 - (9*R1 + 3*R2 + 18*E3)*S^6 + (3*R2^2 + 36*R2*E3 + 108*E3^2 + 9*R1*R2 + 54*R1*E3 + 27*R1^2)*S^3 +
+	- R2^3 + 27*E3^3 + 9*R2^2*E3 - 27*R2*E3^2
+
+### Solver:
+solve.S3Mixed.P21P3 = function(R, b=0, debug=TRUE) {
+	R1 = R[1]; R2 = R[2]; E3 = R[3];
+	coeff = c(1, 0, 0, - (9*R1 + 3*R2 + 18*E3), 0, 0,
+		(3*R2^2 + 36*R2*E3 + 108*E3^2 + 9*R1*R2 + 54*R1*E3 + 27*R1^2), 0, 0,
+		- R2^3 + 27*E3^3 + 9*R2^2*E3 - 27*R2*E3^2);
+	S = roots(coeff);
+	if(debug) print(S);
+	len = length(S);
+	E2 = (S^3 + 3*E3 - R2) / (3*S);
+	E3 = rep(E3, len);
+	x = sapply(seq(len), function(id) roots(c(1, -S[id], E2[id], -E3[id])));
+	S = rep(S, each=3); E3 = rep(E3, each=3);
+	yz.s = S - x; yz = E3 / x;
+	# robust
+	y = - (x*yz - (x^2+yz)*yz.s - b[1]*S + R[1]) / (x^2 + yz - x*yz.s)
+	z = yz.s - y
+	sol = cbind(x=as.vector(x), y=as.vector(y), z=as.vector(z));
+	return(sol);
+}
+
+### Examples:
+R = c(-1,-3,1)
+sol = solve.S3Mixed.P21P3(R)
+x = sol[,1]; y = sol[,2]; z = sol[,3];
+
+### Test:
+x*y^2 + y*z^2 + z*x^2 # - R1
+x^3 + y^3 + z^3 # - R2
+x*y*z # - R3
+
+### Classic Polynomial:
+# - degenerate P27;
+round0.p(poly.calc(x))
 
 
 #############################
@@ -1283,6 +1358,7 @@ err = 1 + 5*x^3 - 6*x^4 + 10*x^6 - 9*x^7 + 9*x^8 + 11*x^9 - 41*x^10 + 4*x^11 - 5
 round0(err)
 
 
+#########
 ### Ex 2:
 R = c(0, -1, -1);
 sol = solve.ht3Dual(R)
@@ -1294,4 +1370,32 @@ test.ht3Dual(x, y, z, n=3)
 # order 39
 round0.p(poly.calc(x))
 
+
+############################
+############################
+
+####################
+### HtComponents ###
+####################
+
+x^2*y + b*z # = R
+y^2*z + b*x # = R
+z^2*x + b*y # = R
+
+### Solution:
+
+# - see file:
+#   Poly.System.Hetero.Symmetric.S3.Leading.R;
+# - section: Mixt-Order: 2+1;
+
+### [main technique]
+### Sum =>
+(x^2*y + y^2*z + z^2*x) + b*S - 3*R # = 0
+# "Inversion/Rotation" =>
+E3*S^3 - (3*R - b*S + 6*E3)*E2*S + (3*R - b*S)^2 + E2^3 + 9*E3^2 + 3*(3*R - b*S)*E3 # = 0
+E3*S^3 + 9*E3^2 - 3*b*E3*S + 9*R*E3 - 6*E2*E3*S + E2^3 + b*E2*S^2 - 3*R*E2*S +
+	 + b^2*S^2 - 6*b*R*S + 9*R^2 # = 0
+
+#####################
+#####################
 
