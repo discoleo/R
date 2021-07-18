@@ -274,3 +274,47 @@ R3*S^8 - (R1*R2 + 6*R2*R3/S + 9*R3^2/S^2 + 6*R1*R3/S)*S^6 + ((R1 + R2)*S + 3*R3)
 R3*S^8 - R1*R2*S^6 - 6*R3*(R1 + R2)*S^5 - 9*R3^2*S^4 + (R1 + R2)^3*S^3 +
 	+ 9*R3*(R1 + R2)^2*S^2 + 27*R3^2*(R1 + R2)*S + 27*R3^3 # = 0
 
+
+##################
+##################
+##################
+
+##################
+### Resonances ###
+##################
+
+######################
+### Roots of Unity ###
+######################
+
+### Order: k + n
+# - Base-Eq with terms: x^k*y^n, y^k*z^n, z^k*x^n
+# - roots of unity: m^p = 1;
+# - reusing: "x" = power of m in x;
+
+k*x + n*y # = 0 (mod p);
+k*y + n*z # = 0 (mod p);
+k*z + n*x # = 0 (mod p);
+
+### Sum =>
+(k+n)*(x+y+z) # = 0 (mod p);
+
+### Reduction =>
+2*(k*y + n*z) + (k*z + n*x) # = 0 (mod p);
+2*k*y + (2*n+k)*z) + n*x # = 0 (mod p);
+### Diff((2*n+k)*(x+y+z) - ...) =>
+(2*n-k)*y + (n+k)*x # = 0 (mod p);
+### Reduction with Eq 1:
+# n*Eq... - (2*n-k)*Eq_1  =>
+(n*(n+k) - k*(2*n-k))*x # = 0 (mod p);
+(n^2 + k^2 - n*k)*x # = 0 (mod p);
+
+### Trivial Powers
+# p = (k+n) # or one of its Divisors;
+
+### Non-Trivial Powers
+# p = (n^2 + k^2 - n*k) # or one of its Divisors;
+
+### Combinations:
+# p = Divisors of (k+n)*(n^2 + k^2 - n*k)
+

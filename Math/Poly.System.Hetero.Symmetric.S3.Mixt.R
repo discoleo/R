@@ -1403,6 +1403,81 @@ E3*S^3 - (3*R - b*S + 6*E3)*E2*S + (3*R - b*S)^2 + E2^3 + 9*E3^2 + 3*(3*R - b*S)
 E3*S^3 + 9*E3^2 - 3*b*E3*S + 9*R*E3 - 6*E2*E3*S + E2^3 + b*E2*S^2 - 3*R*E2*S +
 	 + b^2*S^2 - 6*b*R*S + 9*R^2 # = 0
 
-#####################
-#####################
+
+##################
+##################
+##################
+
+##################
+### Resonances ###
+##################
+
+######################
+### Roots of Unity ###
+######################
+
+### Order: k + n
+# - Base-Eq with terms: x^k*y^n, y^k*z^n, z^k*x^n
+# - roots of unity: m^p = 1;
+# - reusing: "x" = power of m in x;
+
+k*x + n*y # = 0 (mod p);
+k*y + n*z # = 0 (mod p);
+k*z + n*x # = 0 (mod p);
+
+### Sum =>
+(k+n)*(x+y+z) # = 0 (mod p);
+
+### Reduction =>
+(n^2 + k^2 - n*k)*x # = 0 (mod p);
+
+### Trivial Powers
+# p = (k+n) # or one of its Divisors;
+
+### Non-Trivial Powers
+# p = (n^2 + k^2 - n*k) # or one of its Divisors;
+
+### Combinations:
+# p = Divisors of (k+n)*(n^2 + k^2 - n*k)
+
+#############
+### Examples:
+
+### Note:
+# - entire system has to be compatible with these "rotations",
+#   if they should represent valid transformations;
+
+#######
+### Ex:
+# k = 2; n = 1;
+### Trivial:
+p = 3;
+### Non-Trivial & Combinations:
+p = c(3, 9); # p[non-trivial] is the same!
+# ex: p = 9 =>
+# new solution: (x,y,z) * (m^1, m^7, m^4);
+
+
+#######
+### Ex:
+# k = 3; n = 1;
+### Trivial:
+p = 4;
+### Non-Trivial & Combinations:
+p = c(7, 14, 28);
+# ex: p = 7 =>
+# new solution: (x,y,z) * (m^1, m^4, m^2);
+
+
+#######
+### Ex:
+# k = 3; n = 2;
+### Trivial:
+p = 5;
+### Non-Trivial & Combinations:
+p = c(7, 35);
+# ex: p = 7 =>
+# new solution: (x,y,z) * (m^1, m^2, m^4);
+# ex: p = 15 =>
+# new solution: (x,y,z) * (m^1, m^16, m^11);
 
