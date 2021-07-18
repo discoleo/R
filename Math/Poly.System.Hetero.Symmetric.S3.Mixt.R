@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric S3:
 ### Mixed Type
 ###
-### draft v.0.2n
+### draft v.0.2n-clPoly
 
 
 ### Heterogeneous Symmetric
@@ -27,9 +27,10 @@
 ###############
 
 
-### draft v.0.2n:
+### draft v.0.2n - v.0.2n-clPoly:
 # - solved: Mixed Ht S3P21 + Symmetric P3;
 #   x^3 + y^3 + z^3 = R2;
+# - Classic polynomial: degenerate P[27];
 ### draft v.0.2m - v.0.2m-ext:
 # - extensions of type A to the HtDual E3-variant system;
 # - extensions of type A to the HtDual E2-variant system:
@@ -735,6 +736,7 @@ solve.S3Mixed.P21P3 = function(R, b=0, debug=TRUE) {
 	if(debug) print(S);
 	len = length(S);
 	E2 = (S^3 + 3*E3 - R2) / (3*S);
+	if(any(S == 0)) E2[S == 0] = roots(c(1,0,0, 9*E3^2 + R1^2 + R1*R2));
 	E3 = rep(E3, len);
 	x = sapply(seq(len), function(id) roots(c(1, -S[id], E2[id], -E3[id])));
 	S = rep(S, each=3); E3 = rep(E3, each=3);
@@ -759,6 +761,15 @@ x*y*z # - R3
 ### Classic Polynomial:
 # - degenerate P27;
 round0.p(poly.calc(x))
+
+R1 = R[1]; R2 = R[2]; R3 = R[3];
+x^27 - 3*R2*x^24 + 3*(R2^2 - R2*R3 - 3*R3^2)*x^21 +
+	+ (6*R2^2*R3 + 18*R2*R3^2 - R2^3 - 3*R3^3)*x^18 +
+	- (R1^3*R2 + 6*R1^3*R3 + 3*R2^3*R3 + 6*R2^2*R3^2 - 24*R2*R3^3 - 27*R3^4)*x^15 +
+	+ (R1^3*R2^2 + 6*R1^3*R2*R3 - 3*R2^3*R3^2 - 21*R2^2*R3^3 - 21*R2*R3^4 + 18*R3^5)*x^12 +
+	- (R1^6 - 6*R1^3*R2*R3^2 - 9*R1^3*R3^3 + R2^3*R3^3 + 15*R2^2*R3^4 + 45*R2*R3^5 + 24*R3^6)*x^9 +
+	+ (R1^3*R2*R3^3 + 6*R1^3*R3^4 - 3*R2^2*R3^5 - 21*R2*R3^6 - 27*R3^7)*x^6 +
+	- (3*R2*R3^7 + 9*R3^8)*x^3 - R3^9
 
 
 #############################
