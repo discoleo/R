@@ -1467,6 +1467,8 @@ p = 4;
 p = c(7, 14, 28);
 # ex: p = 7 =>
 # new solution: (x,y,z) * (m^1, m^4, m^2);
+# ex: p = 14 =>
+# new solution: (x,y,z) * (m^1, m^11, m^9);
 
 
 #######
@@ -1478,6 +1480,6 @@ p = 5;
 p = c(7, 35);
 # ex: p = 7 =>
 # new solution: (x,y,z) * (m^1, m^2, m^4);
-# ex: p = 15 =>
+# ex: p = 35 =>
 # new solution: (x,y,z) * (m^1, m^16, m^11);
 
