@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric S3:
 ### Mixed Type
 ###
-### draft v.0.2p
+### draft v.0.2p-full
 
 
 ### Heterogeneous Symmetric
@@ -27,7 +27,7 @@
 ###############
 
 
-### draft v.0.2p:
+### draft v.0.2p - v.0.2p-full:
 # - Resonances with roots of unity;
 ### draft v.0.2o-clean:
 # - more cleanup: moved to Derivation;
@@ -108,6 +108,14 @@ library(pracma)
 
 ### other functions
 
+resonance = function(p, n=3) {
+	# "Resonance" with Roots of unity;
+	# currently only for 2-variable terms: x^p1*y^p2;
+	sg = if(n %% 2 == 1) 1 else -1;
+	p.all = p[1]^n + sg*p[2]^n;
+	r = list(p=p.all, f=factors(p.all), p.trivial = sum(p));
+	return(r);
+}
 test.ht3 = function(x, y, z, R, n=2, p=1, b=0) {
 	if(missing(y)) {
 		y = x[,2]; z = x[,3]; x = x[,1];
@@ -1494,7 +1502,7 @@ p = c(7, 35);
 ######################
 
 ### System with [i] Variables
-# - for i = prime, e.g. 3, 5, 7 variables;
+# - for i = all odd;
 ### Order: k + n
 # - Base-Eq with terms:
 #   x[1]^k*x[2]^n, x[2]^k*x[3]^n, ..., x[i-1]^k*x[i]^n, x[i]^k*x[1]^n;
@@ -1554,7 +1562,6 @@ p = c(11, 25, 55, 275);
 #   x[1]^k*x[2]^n, x[2]^k*x[3]^n, ..., x[i-1]^k*x[i]^n, x[i]^k*x[1]^n;
 
 ### All Powers
-# i = 4; # !!!
 # p = Divisors of (k^i - n^i)
 
 
@@ -1611,5 +1618,22 @@ p = c(3, 17); # and higher
 # ex: p = 17 =>
 # new solution:
 # (x1,x2,x3,x4) * (m^1, m^13, m^16, m^4);
+
+
+#######
+### Ex:
+# i = 6; k = 2; n = 1;
+resonance(c(2,1), n=6)
+# p = Divisors(63);
+### Trivial:
+p = 3;
+### Non-Trivial & Combinations:
+p = c(7, 9, 21, 63);
+# ex: p = 7 =>
+# new solution:
+# (x1,x2,...,x6) * (m^1, m^5, m^4, m^6, m^2, m^3);
+# ex: p = 9 =>
+# new solution:
+# (x1,x2,...,x6) * (m^1, m^7, m^4, m^1, m^7, m^4);
 
 
