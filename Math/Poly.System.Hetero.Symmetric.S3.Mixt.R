@@ -1494,7 +1494,7 @@ p = c(7, 35);
 ######################
 
 ### System with [i] Variables
-# - for i = odd;
+# - for i = prime, e.g. 3, 5, 7 variables;
 ### Order: k + n
 # - Base-Eq with terms:
 #   x[1]^k*x[2]^n, x[2]^k*x[3]^n, ..., x[i-1]^k*x[i]^n, x[i]^k*x[1]^n;
@@ -1585,5 +1585,31 @@ p = c(5, 8, 10); # and higher
 # ex: p = 8 =>
 # new solution:
 # (x1,x2,x3,x4) * (m^1, m^5, m^1, m^5);
+
+
+#######
+### Ex:
+# i = 4; k = 3; n = 2;
+# p = Divisors(???);
+### Trivial:
+p = 5;
+### Non-Trivial & Combinations:
+p = c(); # ???
+# ex: p = ??? =>
+# new solution:
+# (x1,x2,x3,x4) * (m^, m^, m^, m^);
+
+
+#######
+### Ex:
+# i = 4; k = 4; n = 1;
+# p = Divisors(255);
+### Trivial:
+p = 5;
+### Non-Trivial & Combinations:
+p = c(3, 17); # and higher
+# ex: p = 17 =>
+# new solution:
+# (x1,x2,x3,x4) * (m^1, m^13, m^16, m^4);
 
 
