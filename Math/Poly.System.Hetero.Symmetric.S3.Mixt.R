@@ -1555,7 +1555,7 @@ p = c(11, 25, 55, 275);
 
 ### All Powers
 # i = 4; # !!!
-# p = Divisors of (k^i + n^i - 2)
+# p = Divisors of (k^i - n^i)
 
 
 #######
@@ -1590,14 +1590,14 @@ p = c(5, 8, 10); # and higher
 #######
 ### Ex:
 # i = 4; k = 3; n = 2;
-# p = Divisors(???);
+# p = Divisors(65);
 ### Trivial:
 p = 5;
 ### Non-Trivial & Combinations:
-p = c(); # ???
-# ex: p = ??? =>
+p = c(13, 65);
+# ex: p = 13 =>
 # new solution:
-# (x1,x2,x3,x4) * (m^, m^, m^, m^);
+# (x1,x2,x3,x4) * (m^1, m^5, m^12, m^8);
 
 
 #######
