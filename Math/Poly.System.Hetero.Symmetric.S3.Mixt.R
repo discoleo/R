@@ -1530,7 +1530,7 @@ p = c(61, 122, 244);
 #######
 ### Ex:
 # i = 5; k = 3; n = 2;
-# p = Divisors(244);
+# p = Divisors(275);
 ### Trivial:
 p = 5;
 ### Non-Trivial & Combinations:
