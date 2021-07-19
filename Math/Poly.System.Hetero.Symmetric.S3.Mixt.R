@@ -1527,3 +1527,19 @@ p = c(61, 122, 244);
 # (x1,x2,x3,x4,x5) * (m^1, m^58, m^9, m^34, m^20);
 
 
+#######
+### Ex:
+# i = 5; k = 3; n = 2;
+# p = Divisors(244);
+### Trivial:
+p = 5;
+### Non-Trivial & Combinations:
+p = c(11, 25, 55, 275);
+# ex: p = 11 =>
+# new solution:
+# (x1,x2,x3,x4,x5) * (m^1, m^4, m^5, m^9, m^3);
+# ex: p = 25 =>
+# new solution:
+# (x1,x2,x3,x4,x5) * (m^1, m^11, m^21, m^6, m^16);
+
+
