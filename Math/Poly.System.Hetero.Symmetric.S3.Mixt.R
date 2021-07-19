@@ -1469,6 +1469,8 @@ p = c(7, 14, 28);
 # new solution: (x,y,z) * (m^1, m^4, m^2);
 # ex: p = 14 =>
 # new solution: (x,y,z) * (m^1, m^11, m^9);
+# ex: p = 28 =>
+# new solution: (x,y,z) * (m^1, m^25, m^9);
 
 
 #######
@@ -1482,4 +1484,46 @@ p = c(7, 35);
 # new solution: (x,y,z) * (m^1, m^2, m^4);
 # ex: p = 35 =>
 # new solution: (x,y,z) * (m^1, m^16, m^11);
+
+
+######################
+### Roots of Unity ###
+### Generalization ###
+######################
+
+### System with [i] Variables
+# - for i = odd;
+### Order: k + n
+# - Base-Eq with terms:
+#   x[1]^k*x[2]^n, x[2]^k*x[3]^n, ..., x[i-1]^k*x[i]^n, x[i]^k*x[1]^n;
+
+### All Powers
+# p = Divisors of (k^i + n^i)
+
+
+#######
+### Ex:
+# i = 5; k = 2; n = 1;
+# p = Divisors(33);
+### Trivial:
+p = 3;
+### Non-Trivial & Combinations:
+p = c(11, 33);
+# ex: p = 11 =>
+# new solution:
+# (x1,x2,x3,x4,x5) * (m^1, m^9, m^4, m^3, m^5);
+
+
+#######
+### Ex:
+# i = 5; k = 3; n = 1;
+# p = Divisors(244);
+### Trivial:
+p = 4;
+### Non-Trivial & Combinations:
+p = c(61, 122, 244);
+# ex: p = 61 =>
+# new solution:
+# (x1,x2,x3,x4,x5) * (m^1, m^58, m^9, m^34, m^20);
+
 
