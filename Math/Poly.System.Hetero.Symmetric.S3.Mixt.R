@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric S3:
 ### Mixed Type
 ###
-### draft v.0.2p-full
+### draft v.0.3a
 
 
 ### Heterogeneous Symmetric
@@ -27,6 +27,9 @@
 ###############
 
 
+### draft v.0.3a:
+# - solved: Mixed Ht S3P31 + Symmetric P7;
+#   x^7 + y^7 + z^7 = R2;
 ### draft v.0.2p - v.0.2p-full:
 # - Resonances with roots of unity;
 ### draft v.0.2o-clean:
@@ -785,6 +788,111 @@ x^27 - 3*R2*x^24 + 3*(R2^2 - R2*R3 - 3*R3^2)*x^21 +
 	+ (R1^3*R2*R3^3 + 6*R1^3*R3^4 - 3*R2^2*R3^5 - 21*R2*R3^6 - 27*R3^7)*x^6 +
 	- (3*R2*R3^7 + 9*R3^8)*x^3 - R3^9
 
+
+########################
+########################
+
+### Mixed with Symmetric
+### x^7 + y^7 + z^7 = R2
+
+### Ht Order 3+1:
+# x*y^3 + y*z^3 + z*x^3 = R1
+# x^7 + y^7 + z^7 = R2
+# x*y*z = R3
+
+
+### Solution:
+
+### Note:
+# - Eq S is P[28];
+# - but classic polynomial is a degenerate P[84];
+# TODO:
+# - evaluate if the P[12] obtained from the P[84] could be used to back-solve the P[28];
+
+### Eq 1:
+R3*S^5 - 5*E2*R3*S^3 + (7*R3^2 - R1*E2)*S^2 + (E2^2*R3 + R1*R3)*S +
+	+ R1^2 + 2*R1*E2^2 + E2^4 # = 0
+
+### Eq 2:
+S^7 - 7*E2*S^5 + 7*E3*S^4 + 14*E2^2*S^3 - 21*E3*E2*S^2 - 7*E2^3*S + 7*E3^2*S + 7*E3*E2^2 - R2 # = 0
+
+### Eq S: P[28]
+# see Derivation;
+
+
+### Solver:
+solve.S3P21SymmP7 = function(R, debug=TRUE) {
+	coeff = coeff.S3P21SymmP7(R);
+	S = roots(coeff);
+	if(debug) print(S);
+	len = length(S);
+	E2 = E2.S3P21SymmP7(S, R);
+	E3 = R[3]; E3 = rep(E3, len);
+	x = sapply(seq(len), function(id) roots(c(1, -S[id], E2[id], -E3[id])));
+	S = rep(S, each=3); E2 = rep(E2, each=3); E3 = rep(E3, each=3);
+	yz.s = S - x; yz = E3 / x;
+	# robust
+	R1 = R[1]; R2 = E2; R3 = E3;
+	x3 = if(R1 == 0) {
+		# with chain rule!
+		# x3 = (5*R[3]*S^4 - 15*R[2]*R[3]*S^2 + 14*R[3]^2*S + R[2]^2*R[3]) # * dS/dR
+		dS = - R2*S^2 + R3*S + 2*R2^2;
+		x3 = - dS;
+		x3
+	} else {
+		x3 = (R3*S^5 - 5*R2*R3*S^3 + 7*R3^2*S^2 + R2^2*R3*S + R2^4) / R1;
+		x3
+	};
+	yz.d = (x3 - R1) / (x^3 + yz*yz.s - x*(yz.s^2 - yz));
+	y = (yz.s + yz.d) / 2
+	z = yz.s - y
+	cbind(x=as.vector(x), y=as.vector(y), z=as.vector(z))
+}
+coeff.S3P21SymmP7 = function(R) {
+	R1 = R[1]; R2 = R[2]; E3 = R[3];
+	coeff = c(1, 0, 0, - 56*E3, - 28*R1, 0, 1190*E3^2, - 4*R2 + 1148*E3*R1, 294*R1^2,
+		- 11564*E3^3, 560*R2*E3 - 15386*E3^2*R1, - 210*R2*R1 - 9114*E3*R1^2,
+		47383*E3^4 - 1274*R1^3, - 13370*R2*E3^2 + 62818*E3^3*R1,
+		6*R2^2 + 476*R2*E3*R1 + 81928*E3^2*R1^2, - 58996*E3^5 + 784*R2*R1^2 + 19208*E3*R1^3,
+		91728*R2*E3^3 + 93982*E3^4*R1 + 6517*R1^4,
+		1792*R2^2*E3 + 41062*R2*E3^2*R1 - 173558*E3^3*R1^2,
+		148862*E3^6 + 161*R2^2*R1 + 10682*R2*E3*R1^2 - 5831*E3^2*R1^3,
+		- 48118*R2*E3^4 - 461678*E3^5*R1 + 5978*R2*R1^3 - 25382*E3*R1^4,
+		12194*R2^2*E3^2 - 72128*R2*E3^3*R1 + 124509*E3^4*R1^2 + 4802*R1^5,
+		- 4*R2^3 - 67228*E3^7 + 3150*R2^2*E3*R1 + 9016*R2*E3^2*R1^2 - 92610*E3^3*R1^3,
+		- 104272*R2*E3^5 + 177674*E3^6*R1 + 1323*R2^2*R1^2 - 4802*R2*E3*R1^3 + 50421*E3^2*R1^4,
+		6272*R2^2*E3^3 + 26068*R2*E3^4*R1 - 57624*E3^5*R1^2 + 686*R2*R1^4 - 4802*E3*R1^5,
+		105*R2^3*E3 + 117649*E3^8 - 1666*R2^2*E3^2*R1 - 1715*R2*E3^3*R1^2 + 72030*E3^4*R1^3 + 2401*R1^6,
+		- 4802*R2*E3^6 + 77*R2^3*R1 - 33614*E3^7*R1 + 833*R2^2*E3*R1^2 + 1029*R2*E3^2*R1^3 - 7203*E3^3*R1^4,
+		735*R2^2*E3^4 + 10290*R2*E3^5*R1 + 36015*E3^6*R1^2 + 98*R2^2*R1^3 + 1372*R2*E3*R1^4 + 4802*E3^2*R1^5,
+		- 14*R2^3*E3^2 - 294*R2^2*E3^3*R1 - 2058*R2*E3^4*R1^2 - 4802*E3^5*R1^3,
+		R2^4 + 28*R2^3*E3*R1 + 294*R2^2*E3^2*R1^2 + 1372*R2*E3^3*R1^3 + 2401*E3^4*R1^4);
+	return(coeff)
+}
+E2.S3P21SymmP7 = function(S, R) {
+	R1 = R[1]; R2 = R[2]; E3 = R[3];
+	px0 = 5*S^17 - 57*E3*S^14 + 42*R1*S^13 - 343*E3^2*S^11 - 3*R2*S^10 - 49*E3*R1*S^10 - 175*R1^2*S^9 +
+		+ 2541*E3^3*S^8 - 89*R2*E3*S^7 - 574*E3^2*R1*S^7 - 42*R2*R1*S^6 + 245*E3*R1^2*S^6 - 245*E3^4*S^5 +
+		- 147*R1^3*S^5 - 637*E3^3*R1*S^4 - 2*R2^2*S^3 - 343*E3^5*S^2 - 21*R2*R1^2*S^2 - 98*E3*R1^3*S^2 +
+		+ 7*R2*E3^3*S + 49*E3^4*R1*S - R2^2*E3 - 14*R2*E3^2*R1 - 49*E3^3*R1^2;
+	pDiv = 22*S^15 - 448*E3*S^12 + 84*R1*S^11 + 2030*E3^2*S^9 + 26*R2*S^8 + 98*E3*R1*S^8 - 98*R1^2*S^7 +
+		- 392*E3^3*S^6 + 154*R2*E3*S^5 - 1176*E3^2*R1*S^5 + 14*R2*R1*S^4 + 294*E3*R1^2*S^4 - 686*E3^4*S^3 +
+		- 98*R1^3*S^3 + 28*R2*E3^2*S^2 + 196*E3^3*R1*S^2 + R2^2*S - 49*E3^2*R1^2*S;
+	return(px0 / pDiv);
+}
+
+### Examples:
+
+R = c(-1,2,-2)
+sol = solve.S3P21SymmP7(R);
+x = sol[,1]; y = sol[,2]; z = sol[,3];
+
+### Test
+x*y^3 + y*z^3 + z*x^3 # - R1
+x^7 + y^7 + z^7 # - R2
+x*y*z # - R3 # = 0
+
+round0.p(poly.calc(x), tol=0.5)
 
 #############################
 #############################
