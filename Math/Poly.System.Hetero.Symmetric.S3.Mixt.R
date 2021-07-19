@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric S3:
 ### Mixed Type
 ###
-### draft v.0.2o-clean
+### draft v.0.2p
 
 
 ### Heterogeneous Symmetric
@@ -27,6 +27,8 @@
 ###############
 
 
+### draft v.0.2p:
+# - Resonances with roots of unity;
 ### draft v.0.2o-clean:
 # - more cleanup: moved to Derivation;
 ### draft v.0.2n - v.0.2n-clPoly:
@@ -1541,5 +1543,47 @@ p = c(11, 25, 55, 275);
 # ex: p = 25 =>
 # new solution:
 # (x1,x2,x3,x4,x5) * (m^1, m^11, m^21, m^6, m^16);
+
+
+###################
+
+### System with [i] Variables
+# - for i = even;
+### Order: k + n
+# - Base-Eq with terms:
+#   x[1]^k*x[2]^n, x[2]^k*x[3]^n, ..., x[i-1]^k*x[i]^n, x[i]^k*x[1]^n;
+
+### All Powers
+# i = 4; # !!!
+# p = Divisors of (k^i + n^i - 2)
+
+
+#######
+### Ex:
+# i = 4; k = 2; n = 1;
+# p = Divisors(15);
+### Trivial:
+p = 3;
+### Non-Trivial & Combinations:
+p = c(5, 15);
+# ex: p = 5 =>
+# new solution:
+# (x1,x2,x3,x4) * (m^1, m^3, m^4, m^2);
+
+
+#######
+### Ex:
+# i = 4; k = 3; n = 1;
+# p = Divisors(80);
+### Trivial:
+p = 4;
+### Non-Trivial & Combinations:
+p = c(5, 8, 10); # and higher
+# ex: p = 5 =>
+# new solution:
+# (x1,x2,x3,x4) * (m^1, m^2, m^4, m^3);
+# ex: p = 8 =>
+# new solution:
+# (x1,x2,x3,x4) * (m^1, m^5, m^1, m^5);
 
 
