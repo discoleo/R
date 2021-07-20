@@ -117,7 +117,7 @@ mult.m = function(p, m) {
 	id = match("coeff", names(m));
 	if( ! is.na(id)) {
 		p$coeff = p$coeff * m[,id];
-		m = m[, - id];
+		m = m[, - id, drop=FALSE];
 	}
 	xn.all = intersect(names(p), names(m));
 	for(xn in xn.all) {
@@ -247,7 +247,7 @@ reduce.pm = function(p) {
 	# remove Monomials with coeff == 0;
 	id = which(p$coeff != 0)
 	if(is.data.frame(p)) {
-		return(p[id, ]);
+		return(p[id, , drop=FALSE]);
 	}
 	p = lapply(p, function(m) m[id]);
 	return(p);
@@ -471,7 +471,7 @@ eval.pm = function(p, x) {
 }
 div.pm = function(p1, p2, by="x", debug=TRUE) {
 	# very simple division
-	xn = by;
+	xn = by[1];
 	idx2 = match(xn, names(p2));
 	if(is.na(idx2)) stop(paste0("P2 must contain the variable: ", xn));
 	idx1 = match(xn, names(p1));
@@ -486,10 +486,10 @@ div.pm = function(p1, p2, by="x", debug=TRUE) {
 	pRez = as.data.frame(array(0, c(0,2)));
 	names(pRez) = c(xn, "coeff");
 	#
+	idn = match(names(pDx)[-idc2], names(p1));
+	print(idn);
+	if(any(is.na(idn))) stop(paste0("No matching variables: ", names(pDx)[is.na(idn)]));
 	if(nrow(pDx) == 1) {
-		idn = match(names(pDx)[-idc2], names(p1));
-		print(idn);
-		if(any(is.na(idn))) stop(paste0("No matching variables: ", names(pDx)[is.na(idn)]));
 		while(TRUE) {
 			if(nrow(p1) == 0) break;
 			xpow1 = max(p1[,xn]);
@@ -501,6 +501,17 @@ div.pm = function(p1, p2, by="x", debug=TRUE) {
 			px1[, idc1] = px1[, idc1] / c2;
 			pRez = add.pm(pRez, px1);
 			p1 = diff.pm(p1, mult.pm(px1, p2));
+		}
+	} else {
+		if(length(by) == 1) stop("Not yet implemented!")
+		while(TRUE) {
+			if(nrow(p1) == 0) break;
+			xpow1 = max(p1[,xn]);
+			if(xpow1 < xpow2) break;
+			pCoeff = div.pm(p1[p1[,xn] == xpow1, ], p2[p2[,xn] == xpow2,], by=by[2])$Rez;
+			print(pCoeff)
+			pRez = add.pm(pRez, pCoeff);
+			p1 = diff.pm(p1, mult.pm(pCoeff, p2));
 		}
 	}
 	if(debug) {
@@ -913,7 +924,9 @@ toMonom.pm = function(e, xsign = 1) {
 		if(length(e) == 1) {
 			if(is.symbol(e)) {
 				if(e == "-") {
-					m$coeff = - m$coeff;
+					m$coeff = - m$coeff; # NO effect?
+				} else if(e == "+") {
+					# an extra "+"; # NO effect?
 				} else {
 					vn1 = as.character(e); # a variable name;
 					m[, vn1] = 1;
@@ -938,6 +951,8 @@ toMonom.pm = function(e, xsign = 1) {
 					m[, vn1] = pow;
 				} else if(op == "-") {
 					m$coeff = - m$coeff;
+					e = e[[2]]; next;
+				} else if(op == "+") {
 					e = e[[2]]; next;
 				} else {
 					vn1 = as.character(op); # a variable name;
