@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric S3:
 ### Mixed Type
 ###
-### draft v.0.3b-clPP77
+### draft v.0.3b-spCase
 
 
 ### Heterogeneous Symmetric
@@ -27,9 +27,10 @@
 ###############
 
 
-### draft v.0.3b - v.0.3b-clPP77:
+### draft v.0.3b - v.0.3b-spCase:
 # - classic Polynomial: P[15] for S3P31;
-# - [started] classic Polynomial: P[77] for Mixed S3P31 + Symmetric P7;
+# - [started] classic Polynomial: P[77] for Mixed S3P31 + Symmetric P7; [v.0.3b-clPP77]
+# - solved Special Case: S == 0; [v.0.3b-spCase]
 ### draft v.0.3a:
 # - solved: Mixed Ht S3P31 + Symmetric P7;
 #   x^7 + y^7 + z^7 = R2;
@@ -836,6 +837,7 @@ S^7 - 7*E2*S^5 + 7*E3*S^4 + 14*E2^2*S^3 - 21*E3*E2*S^2 - 7*E2^3*S + 7*E3^2*S + 7
 solve.S3P21SymmP7 = function(R, debug=TRUE) {
 	coeff = coeff.S3P21SymmP7(R);
 	S = roots(coeff);
+	S = round0(S);
 	if(debug) print(S);
 	len = length(S);
 	E2 = E2.S3P21SymmP7(S, R);
@@ -855,9 +857,17 @@ solve.S3P21SymmP7 = function(R, debug=TRUE) {
 		x3 = (R3*S^5 - 5*R2*R3*S^3 + 7*R3^2*S^2 + R2^2*R3*S + R2^4) / R1;
 		x3
 	};
-	yz.d = (x3 - R1) / (x^3 + yz*yz.s - x*(yz.s^2 - yz));
-	y = (yz.s + yz.d) / 2
-	z = yz.s - y
+	xdiv = (x^3 + yz*yz.s - x*(yz.s^2 - yz));
+	yz.d = (x3 - R1) / xdiv;
+	if(any(S == 0)) {
+		isZero = (S == 0);
+		half = sum(isZero) / 2;
+		yz.d[isZero][seq(half)] = sqrt(yz.s[isZero][seq(half)]^2 - 4*yz[isZero][seq(half)] + 0i);
+		# - sqrt();
+		yz.d[isZero][seq(half+1, 2*half)] = - yz.d[isZero][seq(half)];
+	}
+	y = (yz.s + yz.d) / 2;
+	z = yz.s - y;
 	cbind(x=as.vector(x), y=as.vector(y), z=as.vector(z))
 }
 coeff.S3P21SymmP7 = function(R) {
@@ -877,7 +887,7 @@ coeff.S3P21SymmP7 = function(R) {
 		105*R2^3*E3 + 117649*E3^8 - 1666*R2^2*E3^2*R1 - 1715*R2*E3^3*R1^2 + 72030*E3^4*R1^3 + 2401*R1^6,
 		- 4802*R2*E3^6 + 77*R2^3*R1 - 33614*E3^7*R1 + 833*R2^2*E3*R1^2 + 1029*R2*E3^2*R1^3 - 7203*E3^3*R1^4,
 		735*R2^2*E3^4 + 10290*R2*E3^5*R1 + 36015*E3^6*R1^2 + 98*R2^2*R1^3 + 1372*R2*E3*R1^4 + 4802*E3^2*R1^5,
-		- 14*R2^3*E3^2 - 294*R2^2*E3^3*R1 - 2058*R2*E3^4*R1^2 - 4802*E3^5*R1^3,
+		- 14*(R2^3 + 21*R2^2*E3*R1 + 147*R2*E3^2*R1^2 + 343*E3^3*R1^3)*E3^2,
 		(R2 + 7*R1*E3)^4);
 		# R2^4 + 28*R2^3*E3*R1 + 294*R2^2*E3^2*R1^2 + 1372*R2*E3^3*R1^3 + 2401*E3^4*R1^4
 	return(coeff)
@@ -893,16 +903,15 @@ E2.S3P21SymmP7 = function(S, R, digits=4) {
 		- 98*R1^3*S^3 + 28*R2*E3^2*S^2 + 196*E3^3*R1*S^2 + R2^2*S - 49*E3^2*R1^2*S;
 	isZero = (round(pDiv, digits) == 0);
 	if(any(isZero)) {
+		isSZero = (S == 0);
+		isZero  = isZero & (! isSZero);
 		# TODO: check & improve! R = c(1,-1,-1)
-		S = S[isZero];
-		px0[isZero] = 5*17*S^16 - 57*14*E3*S^13 + 42*13*R1*S^12 - 343*11*E3^2*S^10 - 30*R2*S^9 - 490*E3*R1*S^9 +
-		- 175*9*R1^2*S^8 + 2541*8*E3^3*S^7 - 89*7*R2*E3*S^6 - 574*7*E3^2*R1*S^6 - 42*6*R2*R1*S^5 +
-		+ 245*6*E3*R1^2*S^5 - 245*5*E3^4*S^4 - 147*5*R1^3*S^4 - 637*4*E3^3*R1*S^3 - 6*R2^2*S^2 +
-		- 343*2*E3^5*S - 42*R2*R1^2*S - 98*2*E3*R1^3*S + 7*R2*E3^3 + 49*E3^4*R1;
-		pDiv[isZero] = 22*15*S^14 - 448*12*E3*S^11 + 84*11*R1*S^10 + 2030*9*E3^2*S^8 +
-		+ 26*8*R2*S^7 + 98*8*E3*R1*S^7 - 98*7*R1^2*S^6 - 392*6*E3^3*S^5 + 154*5*R2*E3*S^4 - 1176*5*E3^2*R1*S^4 +
-		+ 14*4*R2*R1*S^3 + 294*4*E3*R1^2*S^3 - 686*3*E3^4*S^2 - 98*3*R1^3*S^2 +
-		+ 28*2*R2*E3^2*S + 196*2*E3^3*R1*S + R2^2 - 49*E3^2*R1^2;
+		px0[isZero]  = roots(c(1,-2,2));
+		pDiv[isZero] = 1;
+		# S == 0
+		px0[isSZero]  = roots(c(7*E3, 0, -R2));
+		pDiv[isSZero] = 1;
+		print("Gargamel!")
 	}
 	return(px0 / pDiv);
 }
@@ -910,6 +919,20 @@ E2.S3P21SymmP7 = function(S, R, digits=4) {
 ### Examples:
 
 R = c(-1,2,-2)
+sol = solve.S3P21SymmP7(R);
+x = sol[,1]; y = sol[,2]; z = sol[,3];
+
+### Test
+x*y^3 + y*z^3 + z*x^3 # - R1
+x^7 + y^7 + z^7 # - R2
+x*y*z # - R3 # = 0
+
+round0.p(poly.calc(x), tol=0.5)
+
+
+### Ex 2:
+# S = 0
+R = c(1,-7,-1)
 sol = solve.S3P21SymmP7(R);
 x = sol[,1]; y = sol[,2]; z = sol[,3];
 
