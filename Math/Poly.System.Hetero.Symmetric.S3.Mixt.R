@@ -834,13 +834,13 @@ S^7 - 7*E2*S^5 + 7*E3*S^4 + 14*E2^2*S^3 - 21*E3*E2*S^2 - 7*E2^3*S + 7*E3^2*S + 7
 
 
 ### Solver:
-solve.S3P21SymmP7 = function(R, debug=TRUE) {
-	coeff = coeff.S3P21SymmP7(R);
+solve.S3P31SymmP7 = function(R, debug=TRUE) {
+	coeff = coeff.S3P31SymmP7(R);
 	S = roots(coeff);
 	S = round0(S);
 	if(debug) print(S);
 	len = length(S);
-	E2 = E2.S3P21SymmP7(S, R);
+	E2 = E2.S3P31SymmP7(S, R);
 	E3 = R[3]; E3 = rep(E3, len);
 	x = sapply(seq(len), function(id) roots(c(1, -S[id], E2[id], -E3[id])));
 	S = rep(S, each=3); E2 = rep(E2, each=3); E3 = rep(E3, each=3);
@@ -870,7 +870,7 @@ solve.S3P21SymmP7 = function(R, debug=TRUE) {
 	z = yz.s - y;
 	cbind(x=as.vector(x), y=as.vector(y), z=as.vector(z))
 }
-coeff.S3P21SymmP7 = function(R) {
+coeff.S3P31SymmP7 = function(R) {
 	R1 = R[1]; R2 = R[2]; E3 = R[3];
 	coeff = c(1, 0, 0, - 56*E3, - 28*R1, 0, 1190*E3^2, - 4*R2 + 1148*E3*R1, 294*R1^2,
 		- 11564*E3^3, 560*R2*E3 - 15386*E3^2*R1, - 210*R2*R1 - 9114*E3*R1^2,
@@ -892,7 +892,7 @@ coeff.S3P21SymmP7 = function(R) {
 		# R2^4 + 28*R2^3*E3*R1 + 294*R2^2*E3^2*R1^2 + 1372*R2*E3^3*R1^3 + 2401*E3^4*R1^4
 	return(coeff)
 }
-E2.S3P21SymmP7 = function(S, R, digits=4) {
+E2.S3P31SymmP7 = function(S, R, digits=4) {
 	R1 = R[1]; R2 = R[2]; E3 = R[3];
 	px0 = 5*S^17 - 57*E3*S^14 + 42*R1*S^13 - 343*E3^2*S^11 - 3*R2*S^10 - 49*E3*R1*S^10 - 175*R1^2*S^9 +
 		+ 2541*E3^3*S^8 - 89*R2*E3*S^7 - 574*E3^2*R1*S^7 - 42*R2*R1*S^6 + 245*E3*R1^2*S^6 - 245*E3^4*S^5 +
@@ -919,7 +919,7 @@ E2.S3P21SymmP7 = function(S, R, digits=4) {
 ### Examples:
 
 R = c(-1,2,-2)
-sol = solve.S3P21SymmP7(R);
+sol = solve.S3P31SymmP7(R);
 x = sol[,1]; y = sol[,2]; z = sol[,3];
 
 ### Test
@@ -932,8 +932,8 @@ round0.p(poly.calc(x), tol=0.5)
 
 ### Ex 2:
 # S = 0
-R = c(1,-7,-1)
-sol = solve.S3P21SymmP7(R);
+R = c(1,-7,1)
+sol = solve.S3P31SymmP7(R);
 x = sol[,1]; y = sol[,2]; z = sol[,3];
 
 ### Test
