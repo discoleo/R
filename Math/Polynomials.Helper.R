@@ -869,8 +869,9 @@ toPoly.pm = function(e) {
 	e = e[[1]];
 	p = data.frame();
 	while(TRUE) {
-		if(is.symbol(e[[1]])) {
-			op = e[[1]];
+		isSymbol = is.symbol(e);
+		if(isSymbol || is.symbol(e[[1]])) {
+			op = if(isSymbol) e else e[[1]];
 			if(op == "+") {
 				m = toMonom.pm(e[[3]]);
 				p = if(nrow(p) == 0) m else sum.pm(p, m);
