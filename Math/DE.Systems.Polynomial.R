@@ -6,16 +6,18 @@
 ### Differential Equations
 ### DE Systems: Polynomial
 ###
-### draft v.0.1c
+### draft v.0.1d
+
 
 #############
 ### Types ###
 #############
 
 ### Simple:
-# Level n: TODO;
+# - TODO;
 ### Hetero-Symmetric:
-# Simple Order n: TODO;
+# - Simple, derived from:
+#   y1^n + c1*y2 = R;
 ### Others:
 # TODO
 
@@ -25,6 +27,8 @@
 ###############
 
 
+### draft v.0.1d:
+# - improved document structure;
 ### draft v.0.1a - v.0.1c:
 # - system:
 #   n*(R - c0*y2)*dy1 + c0*y1*dy2 = y1*dR; [plot in v.0.1c]
@@ -43,6 +47,27 @@ library(pracma)
 # include: DE.ODE.Helper.R;
 source("DE.ODE.Helper.R")
 
+
+### Real roots
+isRe.f = function(x) {
+	lapply(x, function(x) (Im(x) == 0));
+}
+Re.f = function(x, isRe=NULL) {
+	if( ! is.null(isRe) && is.list(isRe) && ! is.list(x)) {
+		x = lapply(seq_along(isRe), function(id) x);
+	}
+	if(is.null(isRe)) isRe = isRe.f(x);
+	x = lapply(seq_along(x), function(id) Re(x[[id]][isRe[[id]]]));
+	return(x);
+}
+range.c = function(x, isRe=NULL) {
+	if(is.null(isRe)) isRe = isRe.f(x);
+	x1 = Re(x[[1]][isRe[[1]]]);
+	x2 = Re(x[[2]][isRe[[2]]]);
+	xmax = max(x1, x2)
+	xmin = min(x1, x2)
+	return(list(rg=c(xmin, xmax), isRe=isRe));
+}
 
 ########################
 ########################
@@ -105,25 +130,6 @@ dy.f = function(x, b0=1, c1=1, n=3) {
 	dy1 = (nxb*y1 - n*c1*y1^2 - c1*y1*y2) / div;
 	dy2 = (nxb*y2 - n*c1*y2^2 - c1*y1*y2) / div;
 	return(list(dy1=dy1, dy2=dy2, y=list(y1=y1, y2=y2)));
-}
-isRe.f = function(x) {
-	lapply(x, function(x) (Im(x) == 0));
-}
-range.c = function(x, isRe=NULL) {
-	if(is.null(isRe)) isRe = isRe.f(x);
-	x1 = Re(x[[1]][isRe[[1]]]);
-	x2 = Re(x[[2]][isRe[[2]]]);
-	xmax = max(x1, x2)
-	xmin = min(x1, x2)
-	return(list(rg=c(xmin, xmax), isRe=isRe));
-}
-Re.f = function(x, isRe=NULL) {
-	if( ! is.null(isRe) && is.list(isRe) && ! is.list(x)) {
-		x = lapply(seq_along(isRe), function(id) x);
-	}
-	if(is.null(isRe)) isRe = isRe.f(x);
-	x = lapply(seq_along(x), function(id) Re(x[[id]][isRe[[id]]]));
-	return(x);
 }
 # TODO:
 # - multiple values for functions;
