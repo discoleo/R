@@ -6,11 +6,13 @@
 ### Differential Equations
 ### ODEs - Helper Functions
 ###
-### draft v.0.1d
+### draft v.0.1e
 
 
 ### History
 
+### draft v.0.1e:
+# - line.tan: numerical values vs functions;
 ### draft v.0.1d:
 # - vectorization of line.tan();
 ### draft v.0.1c:
@@ -45,11 +47,11 @@ library(pracma)
 
 ### Tangent
 line.tan = function(x, col="red", dx=5, p=p, dp=dp, ...) {
-	slope = dp(x, ...)
+	slope = if(is.function(dp)) dp(x, ...) else dp;
 	x.max = ifelse( (abs(x) >= 1), dx*x, dx*(sign(x) - sign(x)^2 + 1) );
 	isInf = abs(slope) == Inf
 	x.max[isInf] = x[isInf]
-	p.x = p(x, ...)
+	p.x = if(is.function(p)) p(x, ...) else p;
 	y.end = p.x + (x.max-x)*slope
 	sapply(seq(length(x)),
 		function(id) lines(c(x[id], x.max[id]), c(p.x[id], y.end[id]), col=col) )
