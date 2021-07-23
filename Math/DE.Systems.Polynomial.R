@@ -6,15 +6,16 @@
 ### Differential Equations
 ### DE Systems: Polynomial
 ###
-### draft v.0.1e
+### draft v.0.1f
 
 
 #############
 ### Types ###
 #############
 
-### Simple:
-# - TODO;
+### Symmetric:
+# - Simple, derived from:
+#   y1^n + y2^n = R1;
 ### Hetero-Symmetric:
 # - Simple, derived from:
 #   S.1.) y1^n + c1*y2 = R;
@@ -28,6 +29,9 @@
 ###############
 
 
+### draft v.0.1f:
+# - derived from Simple Symmetric:
+#   y1^n + y2^n = R1;
 ### draft v.0.1e:
 # - plot/test for system derived from:
 #   (y1*y2)^n + c1*y2 = R;
@@ -281,4 +285,57 @@ xr = Re.f(xr, isRe);
 line.tan(xr[[1]], dx=3, p=y[[1]], dp=dy[[1]], col="green")
 line.tan(xr[[2]], dx=3, p=y[[2]], dp=dy[[2]], col="red")
 
+
+########################
+########################
+
+#################
+### Symmetric ###
+#################
+
+### Derived from:
+# y1^n + y2^n = R1
+# y1*y2 = cx
+# where (y1, y2) = functions in x;
+# R, c are given parameters / functions;
+
+### Note:
+# - resulting system is NOT symmetric;
+
+
+### Order 3:
+# y1^3 + y2^3 = R1
+
+### Eq =>
+(y1 + y2)^3 - 3*cx*(y1 + y2) - R1 # = 0
+### D =>
+3*(y1 + y2)^2*(dy1 + dy2) - 3*dcx*(y1 + y2) - 3*cx*(dy1 + dy2) - dR1 # = 0
+### Mult((y1+y2)*) =>
+3*(R1 + 3*cx*(y1 + y2))*(dy1 + dy2) - 3*dcx*(y1 + y2)^2 +
+	- 3*cx*(y1 + y2)*(dy1 + dy2) - (y1 + y2)*dR1 # = 0
+2*cx*(y1 + y2)*(dy1 + dy2) + R1*(dy1 + dy2) - dcx*(y1 + y2)^2 - (y1 + y2)*dR1/3 # = 0
+
+### Eq 2 =>
+y1*dy2 + y2*dy1 - dcx # = 0
+
+### (Eq-2bis)*y1 =>
+2*cx*(y1^2 - y2^2)*dy1 + R1*(y1 - y2)*dy1 +
+	- dcx*y1*(y1 + y2)^2 - y1*(y1 + y2)*dR1/3 + 2*cx*dcx*(y1 + y2) + R1*dcx # = 0
+### (Eq-2bis)*y2 =>
+2*cx*(y2^2 - y1^2)*dy2 + R1*(y2 - y1)*dy2 +
+	- dcx*y2*(y1 + y2)^2 - y2*(y1 + y2)*dR1/3 + 2*cx*dcx*(y1 + y2) + R1*dcx # = 0
+
+### System:
+2*cx*(y1^2 - y2^2)*dy1 + R1*(y1 - y2)*dy1 +
+	- dcx*y1*(y1 + y2)^2 - y1*(y1 + y2)*dR1/3 + 2*cx*dcx*(y1 + y2) + R1*dcx # = 0
+2*cx*(y2^2 - y1^2)*dy2 + R1*(y2 - y1)*dy2 +
+	- dcx*y2*(y1 + y2)^2 - y2*(y1 + y2)*dR1/3 + 2*cx*dcx*(y1 + y2) + R1*dcx # = 0
+
+
+### Example:
+# R1 = b01; cx = x + b02;
+2*(x+b02)*(y1^2 - y2^2)*dy1 + b01*(y1 - y2)*dy1 +
+	- y1*(y1 + y2)^2 + 2*(x+b02)*(y1 + y2) + b01 # = 0
+2*(x+b02)*(y2^2 - y1^2)*dy2 + b01*(y2 - y1)*dy2 +
+	- y2*(y1 + y2)^2 + 2*(x+b02)*(y1 + y2) + b01 # = 0
 
