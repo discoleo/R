@@ -6,7 +6,7 @@
 ### Differential Equations
 ### DE Systems: Polynomial
 ###
-### draft v.0.1f
+### draft v.0.1f-plot
 
 
 #############
@@ -29,9 +29,10 @@
 ###############
 
 
-### draft v.0.1f:
+### draft v.0.1f - v.0.1f-plot:
 # - derived from Simple Symmetric:
 #   y1^n + y2^n = R1;
+# - plot for this system; [v.0.1f-plot]
 ### draft v.0.1e:
 # - plot/test for system derived from:
 #   (y1*y2)^n + c1*y2 = R;
@@ -338,4 +339,62 @@ y1*dy2 + y2*dy1 - dcx # = 0
 	- y1*(y1 + y2)^2 + 2*(x+b02)*(y1 + y2) + b01 # = 0
 2*(x+b02)*(y2^2 - y1^2)*dy2 + b01*(y2 - y1)*dy2 +
 	- y2*(y1 + y2)^2 + 2*(x+b02)*(y1 + y2) + b01 # = 0
+
+
+### Solution:
+y.f = function(x, b0=c(1,1), asMatrix=FALSE) {
+	if(length(b0) == 1) b0 = rep(b0, 2);
+	solve.ypr = function(x) {
+		coeff = c(1, 0, 0, - b0[1], 0, 0, (x + b0[2])^3);
+		return(roots(coeff));
+	}
+	y1 = round0(sapply(x, solve.ypr));
+	x  = rep(x, each=6);
+	y2 = (x + b0[2]) / y1;
+	y2[y1 == 0] = 0; # TODO: check;
+	if( ! asMatrix) {
+		sol = list(y1=as.vector(y1), y2=as.vector(y2));
+	} else {
+		sol = list(y1=y1, y2=y2); # ??? also Matrix ???
+	}
+	return(sol);
+}
+dy.f = function(x, b0=c(1,1)) {
+	y.all = y.f(x, b0=b0);
+	y1 = y.all[[1]]; y2 = y.all[[2]];
+	x = rep(x, each=6);
+	xb = x + b0[2]; b01 = b0[1];
+	ys = y1 + y2; nyb = 2*xb*ys + b01;
+	div = 2*xb*(y1^2 - y2^2) + b01*(y1 - y2);
+	#
+	dy1 =   (y1*ys^2 - nyb) / div;
+	dy2 = - (y2*ys^2 - nyb) / div;
+	dy1[div == 0] = 0; dy2[div == 0] = 0; # TODO
+	#
+	return(list(dy1=dy1, dy2=dy2, y=list(y1=y1, y2=y2)));
+}
+# TODO:
+# - handle multiple values for functions;
+
+
+### Test
+b0 = c(1, 2)
+x = seq(-4, -1, by=0.05)
+y = y.f(x, b0=b0)
+### Plot
+xr = rep(x, each=6);
+ylim = range.c(y); isRe = ylim$isRe;
+plot(xr[isRe[[1]]], y[[1]][isRe[[1]]], type="l", ylim=ylim$rg);
+lines(xr[isRe[[2]]], y[[2]][isRe[[2]]], col="darkgreen");
+### dy
+x = c(-3.5, -3, -1.75, -1.5)
+xr = rep(x, each=6)
+dy = dy.f(x, b0=b0);
+y = dy$y; dy = dy[-3];
+isRe = isRe.f(dy);
+dy = Re.f(dy, isRe);
+y  = Re.f(y, isRe);
+xr = Re.f(xr, isRe);
+line.tan(xr[[1]], dx=3, p=y[[1]], dp=dy[[1]], col="green")
+line.tan(xr[[2]], dx=3, p=y[[2]], dp=dy[[2]], col="red")
 
