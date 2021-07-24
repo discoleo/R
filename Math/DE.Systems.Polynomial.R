@@ -6,7 +6,7 @@
 ### Differential Equations
 ### DE Systems: Polynomial
 ###
-### draft v.0.1g-plot
+### draft v.0.1h
 
 
 #############
@@ -29,9 +29,12 @@
 ###############
 
 
+### draft v.0.1h:
+# - Extensions to baseline Polynomial System:
+#   y1*y2 + c1*y1 + c2*y2 = cx;
 ### draft v.0.1g - v.0.1g-plot:
 # - derived from Simple Symmetric Order 4:
-#   2*cx*y1^2*dy1 + R1*dy2 - dcx*y1^3 - y2*dR1/4 = 0; [plot in v.01g-plot]
+#   2*cx*y1^2*dy1 + R1*dy2 - dcx*y1^3 - y2*dR1/4 = 0; [plot in v.0.1g-plot]
 # - exact solutions to the polynomial system; [v.0.1g-exact]
 ### draft v.0.1f - v.0.1f-var:
 # - derived from Simple Symmetric:
@@ -615,4 +618,45 @@ xr = Re.f(xr, isRe);
 line.tan(xr[[1]], dx=1.5, p=y[[1]], dp=dy[[1]], col="green")
 line.tan(xr[[2]], dx=1.5, p=y[[2]], dp=dy[[2]], col="red")
 
+
+####################
+####################
+
+##################
+### Extensions ###
+### Type A     ###
+##################
+
+# y1^n + y2^n = R1
+# y1 * y2  + c1*y1 + c2*y2 = cx
+
+### Note:
+# - the polynomial system is easier to solve
+#   when c1 == c2;
+
+### D =>
+y1^(n-1)*dy1 + y2^(n-1)*dy2 - dR1/n # = 0
+### *y1 OR *y2 =>
+y1^n*dy1 + y1*y2^(n-1)*dy2 - y1*dR1/n # = 0
+y2*y1^(n-1)*dy1 + y2^n*dy2 - y2*dR1/n # = 0
+# =>
+(R1 - y2^n)*dy1 + y1*y2^(n-1)*dy2 - y1*dR1/n # = 0
+y2*y1^(n-1)*dy1 + (R1 - y1^n)*dy2 - y2*dR1/n # = 0
+# Substituting D(Eq 2) =>
+# - assuming (c1, c2) = numeric constants;
+y2^(n-1)*(y1*dy2 + c1*dy1 + c2*dy2 - dcx) + y1*y2^(n-1)*dy2 + R1*dy1 - y1*dR1/n # = 0
+y1^(n-1)*(y2*dy1 + c1*dy1 + c2*dy2 - dcx) + y2*y1^(n-1)*dy1 + R1*dy2 - y2*dR1/n # = 0
+
+### System:
+2*(cx - c1*y1 - c2*y2)*y2^(n-2)*dy2 + c1*y2^(n-1)*dy1 + c2*y2^(n-1)*dy2 + R1*dy1 - dcx*y2^(n-1) - y1*dR1/n # = 0
+2*(cx - c1*y1 - c2*y2)*y1^(n-2)*dy1 + c1*y1^(n-1)*dy1 + c2*y1^(n-1)*dy2 + R1*dy2 - dcx*y1^(n-1) - y2*dR1/n # = 0
+
+### Special Cases:
+
+### n = 2:
+  c1*y2*dy1 + R1*dy1 - (2*c1*y1 + c2*y2)*dy2 + 2*cx*dy2 - dcx*y2 - y1*dR1/2 # = 0
+- (c1*y1 + 2*c2*y2)*dy1 + 2*cx*dy1 + c2*y1*dy2 + R1*dy2 - dcx*y1 - y2*dR1/2 # = 0
+### n = 2; c1 = c2;
+  c1*y2*dy1 + R1*dy1 - c1*(2*y1 + y2)*dy2 + 2*cx*dy2 - dcx*y2 - y1*dR1/2 # = 0
+- c1*(y1 + 2*y2)*dy1 + 2*cx*dy1 + c2*y1*dy2 + R1*dy2 - dcx*y1 - y2*dR1/2 # = 0
 
