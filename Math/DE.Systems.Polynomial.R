@@ -6,7 +6,7 @@
 ### Differential Equations
 ### DE Systems: Polynomial
 ###
-### draft v.0.1g-exact
+### draft v.0.1g-plot
 
 
 #############
@@ -29,14 +29,14 @@
 ###############
 
 
-### draft v.0.1g - v.0.1g-exact:
+### draft v.0.1g - v.0.1g-plot:
 # - derived from Simple Symmetric Order 4:
-#   2*cx*y1^2*dy1 + R1*dy2 - dcx*y1^3 - y2*dR1/4 = 0;
+#   2*cx*y1^2*dy1 + R1*dy2 - dcx*y1^3 - y2*dR1/4 = 0; [plot in v.01g-plot]
 # - exact solutions to the polynomial system; [v.0.1g-exact]
 ### draft v.0.1f - v.0.1f-var:
 # - derived from Simple Symmetric:
 #   y1^n + y2^n = R1;
-# - plot for this system; [v.0.1f-plot]
+# - plot for this system; [Order 3: v.0.1f-plot]
 # - simplified variant:
 #   2*(x + b02)*y1*dy1 + b01*dy2 - y1^2 = 0;
 ### draft v.0.1e:
@@ -362,6 +362,7 @@ y.f = function(x, b0=c(1,1), n=3, asMatrix=FALSE) {
 		y1 = y1 * m;
 		y2 = rootn(d - det, n);
 		y2 = y2 / m;
+		if(n %% 2 == 0 && cx < 0) y2 = -y2;
 		return(cbind(y1, y2));
 	}
 	sol = round0(sapply(x, solve.exact));
@@ -431,7 +432,7 @@ xr = Re.f(xr, isRe);
 line.tan(xr[[1]], dx=1.5, p=y[[1]], dp=dy[[1]], col="green")
 line.tan(xr[[2]], dx=1.5, p=y[[2]], dp=dy[[2]], col="red")
 
-### with old code
+### with old code:
 # plot(xr[isRe[[1]]][c(T,F)], y[[1]][isRe[[1]]][c(T,F)], type="l", ylim=ylim$rg);
 # lines(xr[isRe[[1]]][c(F,T)], y[[1]][isRe[[1]]][c(F,T)], type="l", ylim=ylim$rg);
 # lines(xr[isRe[[2]]][c(T,F)], y[[2]][isRe[[2]]][c(T,F)], col="darkgreen");
@@ -461,7 +462,7 @@ xr = Re.f(xr, isRe);
 line.tan(xr[[1]], dx=1.5, p=y[[1]], dp=dy[[1]], col="green")
 line.tan(xr[[2]], dx=1.5, p=y[[2]], dp=dy[[2]], col="red")
 
-### old code:
+### with old code:
 # plot(xr[isRe[[1]]][c(T,F)], y[[1]][isRe[[1]]][c(T,F)], type="l", ylim=ylim$rg);
 # lines(xr[isRe[[1]]][c(F,T)], y[[1]][isRe[[1]]][c(F,T)], type="l", ylim=ylim$rg);
 # lines(xr[isRe[[2]]][c(T,F)], y[[2]][isRe[[2]]][c(T,F)], col="darkgreen");
@@ -502,16 +503,17 @@ y1^2*(dcx - y2*dy1) - R1*dy2 - cx*y1*dy1 + y2*dR1/3 # = 0
 
 ### Solution:
 # y.f(): see in previous section;
+# dy.f():
 dy.f = function(x, b0=c(1,1), n=3) {
-	# currently only n=3 !!
 	y.all = y.f(x, b0=b0, n=n);
 	y1 = y.all[[1]]; y2 = y.all[[2]];
 	x = rep(x, each=n);
 	xb = x + b0[2]; b01 = b0[1];
-	div = b01^2 - 4*xb^2*y1*y2;
+	ypr = (y1*y2); yprn2 = ypr^(n-2);
+	div = b01^2 - 4*xb^2*yprn2;
 	#
-	dy1 = (b01*y2^2 - 2*xb*y1^2*y2) / div;
-	dy2 = (b01*y1^2 - 2*xb*y1*y2^2) / div;
+	dy1 = (b01*y2^(n-1) - 2*xb*yprn2*y1) / div;
+	dy2 = (b01*y1^(n-1) - 2*xb*yprn2*y2) / div;
 	dy1[div == 0] = 0; dy2[div == 0] = 0; # TODO
 	#
 	return(list(dy1=dy1, dy2=dy2, y=list(y1=y1, y2=y2)));
@@ -577,5 +579,40 @@ y1^3*(y2*dy1 - dcx) + y2*y1^3*dy1 + R1*dy2 - y2*dR1/4 # = 0
 # R1 = b01; cx = x + b02;
 2*(x + b02)*y2^2*dy2 + b01*dy1 - y2^3 # = 0
 2*(x + b02)*y1^2*dy1 + b01*dy2 - y1^3 # = 0
+
+### Solution:
+# - uses the generalized functions from the previous section;
+
+
+### Test
+n = 4
+b0 = c(1, 2)
+x = seq(-4, -1, by=0.025)
+y = y.f(x, b0=b0, n=n)
+### Plot
+xr = rep(x, each=n);
+ylim = range.c(y); isRe = ylim$isRe;
+# plot(xr[isRe[[1]]], y[[1]][isRe[[1]]], type="l", ylim=ylim$rg);
+# lines(xr[isRe[[2]]], y[[2]][isRe[[2]]], col="darkgreen");
+# TODO: still needed for n > 3
+id = diag(T, n);
+isT = isRe[[1]] & id[1,]; plot(xr[isT], y[[1]][isT], type="l", ylim=ylim$rg);
+isT = isRe[[2]] & id[1,]; lines(xr[isT], y[[2]][isT], type="l", ylim=ylim$rg, col="darkgreen");
+zero = sapply(seq(2, n), function(id1) {
+	isT = isRe[[1]] & id[id1,]; lines(xr[isT], y[[1]][isT], type="l", ylim=ylim$rg);
+	isT = isRe[[2]] & id[id1,]; lines(xr[isT], y[[2]][isT], type="l", ylim=ylim$rg, col="darkgreen");
+})
+
+### dy
+x = c(-2.65, -2.25, -1, -1.35)
+xr = rep(x, each=n)
+dy = dy.f(x, b0=b0, n=n);
+y = dy$y; dy = dy[-3];
+isRe = isRe.f(dy);
+dy = Re.f(dy, isRe);
+y  = Re.f(y, isRe);
+xr = Re.f(xr, isRe);
+line.tan(xr[[1]], dx=1.5, p=y[[1]], dp=dy[[1]], col="green")
+line.tan(xr[[2]], dx=1.5, p=y[[2]], dp=dy[[2]], col="red")
 
 
