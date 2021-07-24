@@ -6,7 +6,7 @@
 ### Differential Equations
 ### DE Systems: Polynomial
 ###
-### draft v.0.1f-var
+### draft v.0.1g
 
 
 #############
@@ -29,6 +29,9 @@
 ###############
 
 
+### draft v.0.1g:
+# - derived from Simple Symmetric Order 4:
+#   2*cx*y1^2*dy1 + R1*dy2 - dcx*y1^3 - y2*dR1/4 = 0;
 ### draft v.0.1f - v.0.1f-var:
 # - derived from Simple Symmetric:
 #   y1^n + y2^n = R1;
@@ -305,8 +308,10 @@ line.tan(xr[[2]], dx=3, p=y[[2]], dp=dy[[2]], col="red")
 ### Note:
 # - resulting system is NOT symmetric;
 
+###############
+### Order 3 ###
+###############
 
-### Order 3:
 # y1^3 + y2^3 = R1
 
 ### Eq =>
@@ -511,4 +516,38 @@ y  = Re.f(y, isRe);
 xr = Re.f(xr, isRe);
 line.tan(xr[[1]], dx=1.5, p=y[[1]], dp=dy[[1]], col="green")
 line.tan(xr[[2]], dx=1.5, p=y[[2]], dp=dy[[2]], col="red")
+
+
+####################
+####################
+
+###############
+### Order 4 ###
+###############
+
+# y1^4 + y2^4 = R1
+# y1 * y2 = cx
+
+### D =>
+y1^3*dy1 + y2^3*dy2 - dR1/4 # = 0
+### *y1 OR *y2 =>
+y1^4*dy1 + y1*y2^3*dy2 - y1*dR1/4 # = 0
+y2*y1^3*dy1 + y2^4*dy2 - y2*dR1/4 # = 0
+# =>
+(R1 - y2^4)*dy1 + y1*y2^3*dy2 - y1*dR1/4 # = 0
+y2*y1^3*dy1 + (R1 - y1^4)*dy2 - y2*dR1/4 # = 0
+# Substituting D(Eq 2) =>
+y2^3*(y1*dy2 - dcx) + y1*y2^3*dy2 + R1*dy1 - y1*dR1/4 # = 0
+y1^3*(y2*dy1 - dcx) + y2*y1^3*dy1 + R1*dy2 - y2*dR1/4 # = 0
+
+### System:
+2*cx*y2^2*dy2 + R1*dy1 - dcx*y2^3 - y1*dR1/4 # = 0
+2*cx*y1^2*dy1 + R1*dy2 - dcx*y1^3 - y2*dR1/4 # = 0
+
+
+### Example:
+# R1 = b01; cx = x + b02;
+2*(x + b02)*y2^2*dy2 + b01*dy1 - y2^3 # = 0
+2*(x + b02)*y1^2*dy1 + b01*dy2 - y1^3 # = 0
+
 
