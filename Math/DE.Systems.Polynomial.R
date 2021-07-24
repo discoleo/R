@@ -6,7 +6,7 @@
 ### Differential Equations
 ### DE Systems: Polynomial
 ###
-### draft v.0.1g
+### draft v.0.1g-exact
 
 
 #############
@@ -29,9 +29,10 @@
 ###############
 
 
-### draft v.0.1g:
+### draft v.0.1g - v.0.1g-exact:
 # - derived from Simple Symmetric Order 4:
 #   2*cx*y1^2*dy1 + R1*dy2 - dcx*y1^3 - y2*dR1/4 = 0;
+# - exact solutions to the polynomial system; [v.0.1g-exact]
 ### draft v.0.1f - v.0.1f-var:
 # - derived from Simple Symmetric:
 #   y1^n + y2^n = R1;
@@ -349,7 +350,30 @@ y1*dy2 + y2*dy1 - dcx # = 0
 
 
 ### Solution:
-y.f = function(x, b0=c(1,1), asMatrix=FALSE) {
+y.f = function(x, b0=c(1,1), n=3, asMatrix=FALSE) {
+	if(length(b0) == 1) b0 = rep(b0, 2);
+	m = unity(n, all=TRUE);
+	d = b0[1]/2;
+	solve.exact = function(x) {
+		cx = x + b0[2];
+		det = d^2 - cx^n;
+		det = if(det >= 0) sqrt(det) else complex(re=0, im=sqrt(-det));
+		y1 = rootn(d + det, n);
+		y1 = y1 * m;
+		y2 = rootn(d - det, n);
+		y2 = y2 / m;
+		return(cbind(y1, y2));
+	}
+	sol = round0(sapply(x, solve.exact));
+	y1 = sol[1:n,]; y2 = sol[seq(n+1, 2*n),];
+	if( ! asMatrix) {
+		sol = list(y1=as.vector(y1), y2=as.vector(y2));
+	} else {
+		sol = list(y1=y1, y2=y2); # ??? also Matrix ???
+	}
+	return(sol);
+}
+y.f.old = function(x, b0=c(1,1), asMatrix=FALSE) {
 	if(length(b0) == 1) b0 = rep(b0, 2);
 	solve.ypr = function(x) {
 		coeff = c(1, 0, 0, - b0[1], 0, 0, (x + b0[2])^3);
@@ -366,10 +390,11 @@ y.f = function(x, b0=c(1,1), asMatrix=FALSE) {
 	}
 	return(sol);
 }
-dy.f = function(x, b0=c(1,1)) {
-	y.all = y.f(x, b0=b0);
+dy.f = function(x, b0=c(1,1), n=3) {
+	# currently only n=3 !!
+	y.all = y.f(x, b0=b0, n=n);
 	y1 = y.all[[1]]; y2 = y.all[[2]];
-	x = rep(x, each=6);
+	x = rep(x, each=n);
 	xb = x + b0[2]; b01 = b0[1];
 	ys = y1 + y2; nyb = 2*xb*ys + b01;
 	div = 2*xb*(y1^2 - y2^2) + b01*(y1 - y2);
@@ -389,19 +414,14 @@ b0 = c(1, 2)
 x = seq(-4, -1, by=0.025)
 y = y.f(x, b0=b0)
 ### Plot
-xr = rep(x, each=6);
+xr = rep(x, each=3);
 ylim = range.c(y); isRe = ylim$isRe;
 plot(xr[isRe[[1]]], y[[1]][isRe[[1]]], type="l", ylim=ylim$rg);
 lines(xr[isRe[[2]]], y[[2]][isRe[[2]]], col="darkgreen");
-### TODO:
-plot(xr[isRe[[1]]][c(T,F)], y[[1]][isRe[[1]]][c(T,F)], type="l", ylim=ylim$rg);
-lines(xr[isRe[[1]]][c(F,T)], y[[1]][isRe[[1]]][c(F,T)], type="l", ylim=ylim$rg);
-lines(xr[isRe[[2]]][c(T,F)], y[[2]][isRe[[2]]][c(T,F)], col="darkgreen");
-lines(xr[isRe[[2]]][c(F,T)], y[[2]][isRe[[2]]][c(F,T)], col="darkgreen");
 
 ### dy
 x = c(-3.5, -3, -1.75, -1.5)
-xr = rep(x, each=6)
+xr = rep(x, each=3)
 dy = dy.f(x, b0=b0);
 y = dy$y; dy = dy[-3];
 isRe = isRe.f(dy);
@@ -410,6 +430,12 @@ y  = Re.f(y, isRe);
 xr = Re.f(xr, isRe);
 line.tan(xr[[1]], dx=1.5, p=y[[1]], dp=dy[[1]], col="green")
 line.tan(xr[[2]], dx=1.5, p=y[[2]], dp=dy[[2]], col="red")
+
+### with old code
+# plot(xr[isRe[[1]]][c(T,F)], y[[1]][isRe[[1]]][c(T,F)], type="l", ylim=ylim$rg);
+# lines(xr[isRe[[1]]][c(F,T)], y[[1]][isRe[[1]]][c(F,T)], type="l", ylim=ylim$rg);
+# lines(xr[isRe[[2]]][c(T,F)], y[[2]][isRe[[2]]][c(T,F)], col="darkgreen");
+# lines(xr[isRe[[2]]][c(F,T)], y[[2]][isRe[[2]]][c(F,T)], col="darkgreen");
 
 
 #########
@@ -418,19 +444,14 @@ b0 = c(-2, -3)
 x = seq(-2, 4, by=0.025)
 y = y.f(x, b0=b0)
 ### Plot
-xr = rep(x, each=6);
+xr = rep(x, each=3);
 ylim = range.c(y); isRe = ylim$isRe;
 plot(xr[isRe[[1]]], y[[1]][isRe[[1]]], type="l", ylim=ylim$rg);
 lines(xr[isRe[[2]]], y[[2]][isRe[[2]]], col="darkgreen");
-### TODO:
-plot(xr[isRe[[1]]][c(T,F)], y[[1]][isRe[[1]]][c(T,F)], type="l", ylim=ylim$rg);
-lines(xr[isRe[[1]]][c(F,T)], y[[1]][isRe[[1]]][c(F,T)], type="l", ylim=ylim$rg);
-lines(xr[isRe[[2]]][c(T,F)], y[[2]][isRe[[2]]][c(T,F)], col="darkgreen");
-lines(xr[isRe[[2]]][c(F,T)], y[[2]][isRe[[2]]][c(F,T)], col="darkgreen");
 
 ### dy
-x = c(-1.5, -0.5, 1, 2, 2.75, 3.5)
-xr = rep(x, each=6)
+x = c(-1.5, -0.5, 1, 2, 2.75, 3.75)
+xr = rep(x, each=3)
 dy = dy.f(x, b0=b0);
 y = dy$y; dy = dy[-3];
 isRe = isRe.f(dy);
@@ -440,6 +461,11 @@ xr = Re.f(xr, isRe);
 line.tan(xr[[1]], dx=1.5, p=y[[1]], dp=dy[[1]], col="green")
 line.tan(xr[[2]], dx=1.5, p=y[[2]], dp=dy[[2]], col="red")
 
+### old code:
+# plot(xr[isRe[[1]]][c(T,F)], y[[1]][isRe[[1]]][c(T,F)], type="l", ylim=ylim$rg);
+# lines(xr[isRe[[1]]][c(F,T)], y[[1]][isRe[[1]]][c(F,T)], type="l", ylim=ylim$rg);
+# lines(xr[isRe[[2]]][c(T,F)], y[[2]][isRe[[2]]][c(T,F)], col="darkgreen");
+# lines(xr[isRe[[2]]][c(F,T)], y[[2]][isRe[[2]]][c(F,T)], col="darkgreen");
 
 ################
 
@@ -476,10 +502,11 @@ y1^2*(dcx - y2*dy1) - R1*dy2 - cx*y1*dy1 + y2*dR1/3 # = 0
 
 ### Solution:
 # y.f(): see in previous section;
-dy.f = function(x, b0=c(1,1)) {
-	y.all = y.f(x, b0=b0);
+dy.f = function(x, b0=c(1,1), n=3) {
+	# currently only n=3 !!
+	y.all = y.f(x, b0=b0, n=n);
 	y1 = y.all[[1]]; y2 = y.all[[2]];
-	x = rep(x, each=6);
+	x = rep(x, each=n);
 	xb = x + b0[2]; b01 = b0[1];
 	div = b01^2 - 4*xb^2*y1*y2;
 	#
@@ -495,19 +522,14 @@ b0 = c(1, 2)
 x = seq(-4, -1, by=0.025)
 y = y.f(x, b0=b0)
 ### Plot
-xr = rep(x, each=6);
+xr = rep(x, each=3);
 ylim = range.c(y); isRe = ylim$isRe;
 plot(xr[isRe[[1]]], y[[1]][isRe[[1]]], type="l", ylim=ylim$rg);
 lines(xr[isRe[[2]]], y[[2]][isRe[[2]]], col="darkgreen");
-### TODO:
-plot(xr[isRe[[1]]][c(T,F)], y[[1]][isRe[[1]]][c(T,F)], type="l", ylim=ylim$rg);
-lines(xr[isRe[[1]]][c(F,T)], y[[1]][isRe[[1]]][c(F,T)], type="l", ylim=ylim$rg);
-lines(xr[isRe[[2]]][c(T,F)], y[[2]][isRe[[2]]][c(T,F)], col="darkgreen");
-lines(xr[isRe[[2]]][c(F,T)], y[[2]][isRe[[2]]][c(F,T)], col="darkgreen");
 
 ### dy
 x = c(-3.5, -3, -1.75, -1.5)
-xr = rep(x, each=6)
+xr = rep(x, each=3)
 dy = dy.f(x, b0=b0);
 y = dy$y; dy = dy[-3];
 isRe = isRe.f(dy);
@@ -516,6 +538,12 @@ y  = Re.f(y, isRe);
 xr = Re.f(xr, isRe);
 line.tan(xr[[1]], dx=1.5, p=y[[1]], dp=dy[[1]], col="green")
 line.tan(xr[[2]], dx=1.5, p=y[[2]], dp=dy[[2]], col="red")
+
+### old code:
+# plot(xr[isRe[[1]]][c(T,F)], y[[1]][isRe[[1]]][c(T,F)], type="l", ylim=ylim$rg);
+# lines(xr[isRe[[1]]][c(F,T)], y[[1]][isRe[[1]]][c(F,T)], type="l", ylim=ylim$rg);
+# lines(xr[isRe[[2]]][c(T,F)], y[[2]][isRe[[2]]][c(T,F)], col="darkgreen");
+# lines(xr[isRe[[2]]][c(F,T)], y[[2]][isRe[[2]]][c(F,T)], col="darkgreen");
 
 
 ####################
