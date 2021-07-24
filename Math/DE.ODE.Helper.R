@@ -61,7 +61,11 @@ line.tan = function(x, col="red", dx=5, p=p, dp=dp, ...) {
 ### Mathematical
 
 rootn = function(r, n) {
-	ifelse( (Im(r) == 0 & Re(r) >= 0), r^(1/n), - (-r)^(1/n) )
+	if(n %% 2 == 1) {
+		ifelse( (Im(r) != 0 | Re(r) >= 0), r^(1/n), - (-r)^(1/n) )
+	} else {
+		ifelse( (Im(r) != 0 | Re(r) >= 0), r^(1/n), complex(re=0, im=(-r)^(1/n)) );
+	}
 }
 ### round()
 round0 = function(m, tol=1E-7) {
