@@ -6,7 +6,7 @@
 ### Differential Equations
 ### DE Systems: Polynomial
 ###
-### draft v.0.1f-plot2
+### draft v.0.1f-var
 
 
 #############
@@ -29,10 +29,12 @@
 ###############
 
 
-### draft v.0.1f - v.0.1f-plot:
+### draft v.0.1f - v.0.1f-var:
 # - derived from Simple Symmetric:
 #   y1^n + y2^n = R1;
 # - plot for this system; [v.0.1f-plot]
+# - simplified variant:
+#   2*(x + b02)*y1*dy1 + b01*dy2 - y1^2 = 0;
 ### draft v.0.1e:
 # - plot/test for system derived from:
 #   (y1*y2)^n + c1*y2 = R;
@@ -423,6 +425,83 @@ lines(xr[isRe[[2]]][c(F,T)], y[[2]][isRe[[2]]][c(F,T)], col="darkgreen");
 
 ### dy
 x = c(-1.5, -0.5, 1, 2, 2.75, 3.5)
+xr = rep(x, each=6)
+dy = dy.f(x, b0=b0);
+y = dy$y; dy = dy[-3];
+isRe = isRe.f(dy);
+dy = Re.f(dy, isRe);
+y  = Re.f(y, isRe);
+xr = Re.f(xr, isRe);
+line.tan(xr[[1]], dx=1.5, p=y[[1]], dp=dy[[1]], col="green")
+line.tan(xr[[2]], dx=1.5, p=y[[2]], dp=dy[[2]], col="red")
+
+
+################
+
+### Variant
+
+
+### D =>
+y1^2*dy1 + y2^2*dy2 - dR1/3 # = 0
+### *y1 OR *y2 =>
+y1^3*dy1 + cx*y2*dy2 - y1*dR1/3 # = 0
+cx*y1*dy1 + y2^3*dy2 - y2*dR1/3 # = 0
+# =>
+# System variant:
+y2^3*dy1 - R1*dy1 - cx*y2*dy2 + y1*dR1/3 # = 0
+y1^3*dy2 - R1*dy2 - cx*y1*dy1 + y2*dR1/3 # = 0
+# Another variant:
+y2^2*(dcx - y1*dy2) - R1*dy1 - cx*y2*dy2 + y1*dR1/3 # = 0
+y1^2*(dcx - y2*dy1) - R1*dy2 - cx*y1*dy1 + y2*dR1/3 # = 0
+# =>
+2*cx*y2*dy2 + R1*dy1 - y2^2*dcx - y1*dR1/3 # = 0
+2*cx*y1*dy1 + R1*dy2 - y1^2*dcx - y2*dR1/3 # = 0
+
+### D2 =>
+3*y2^2*dy1*dy2 + y2^3*d2y1 - R1*d2y1 - dR1*dy1 +
+	- cx*y2*d2y2 - cx*(dy2)^2 - dcx*y2*dy2 + dy1*dR1/3 + y1*d2R1/3 # = 0
+# TODO
+
+
+### Example:
+# R1 = b01; cx = x + b02;
+2*(x + b02)*y2*dy2 + b01*dy1 - y2^2 # = 0
+2*(x + b02)*y1*dy1 + b01*dy2 - y1^2 # = 0
+
+
+### Solution:
+# y.f(): see in previous section;
+dy.f = function(x, b0=c(1,1)) {
+	y.all = y.f(x, b0=b0);
+	y1 = y.all[[1]]; y2 = y.all[[2]];
+	x = rep(x, each=6);
+	xb = x + b0[2]; b01 = b0[1];
+	div = b01^2 - 4*xb^2*y1*y2;
+	#
+	dy1 = (b01*y2^2 - 2*xb*y1^2*y2) / div;
+	dy2 = (b01*y1^2 - 2*xb*y1*y2^2) / div;
+	dy1[div == 0] = 0; dy2[div == 0] = 0; # TODO
+	#
+	return(list(dy1=dy1, dy2=dy2, y=list(y1=y1, y2=y2)));
+}
+
+### Test
+b0 = c(1, 2)
+x = seq(-4, -1, by=0.025)
+y = y.f(x, b0=b0)
+### Plot
+xr = rep(x, each=6);
+ylim = range.c(y); isRe = ylim$isRe;
+plot(xr[isRe[[1]]], y[[1]][isRe[[1]]], type="l", ylim=ylim$rg);
+lines(xr[isRe[[2]]], y[[2]][isRe[[2]]], col="darkgreen");
+### TODO:
+plot(xr[isRe[[1]]][c(T,F)], y[[1]][isRe[[1]]][c(T,F)], type="l", ylim=ylim$rg);
+lines(xr[isRe[[1]]][c(F,T)], y[[1]][isRe[[1]]][c(F,T)], type="l", ylim=ylim$rg);
+lines(xr[isRe[[2]]][c(T,F)], y[[2]][isRe[[2]]][c(T,F)], col="darkgreen");
+lines(xr[isRe[[2]]][c(F,T)], y[[2]][isRe[[2]]][c(F,T)], col="darkgreen");
+
+### dy
+x = c(-3.5, -3, -1.75, -1.5)
 xr = rep(x, each=6)
 dy = dy.f(x, b0=b0);
 y = dy$y; dy = dy[-3];
