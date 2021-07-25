@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric S3:
 ### Mixed Type
 ###
-### draft v.0.3c
+### draft v.0.3c-ex6v
 
 
 ### Heterogeneous Symmetric
@@ -1819,6 +1819,10 @@ p = c(7, 9, 21, 63);
 ### 3 Powers ###
 ################
 
+### Order: (p1,1,1)
+# p = Divisors(p1^3*(p1-1)*(2*p1^2 + 3))
+# - but often insufficient;
+
 ### Order: 2+1+1
 ### 5 Variables
 # i = 5; p = c(2,1,1)
@@ -1831,4 +1835,23 @@ p = c(11, 22); # & higher
 # new solution:
 # (x1,x2,...,x5) * (m^1, m^4, m^5, m^9, m^3);
 # (1,4,5), (4,5,9), (5,9,3), (9,3,1), (3,1,4)
+# ex: p = 22 =>
+# new solution:
+# (x1,x2,...,x5) * (m^1, m^15, m^5, m^9, m^3);
+# (1,15,5), (15,5,9), (5,9,3), (9,3,1), (3,1,15)
+
+
+
+### Order: 3+1+1
+### 6 Variables
+# i = 6; p = c(3,1,1)
+# p = Divisors(???);
+### Trivial:
+p = 5;
+### Non-Trivial & Combinations:
+p = c(9); # possible others
+# ex: p = 9 =>
+# new solution:
+# (x1,x2,...,x6) * (m^1, m^2, m^4, m^8, m^7, m^5);
+# (1,2,4), (2,4,8), (4,8,7), (8,7,5), (7,5,1), (5,1,2)
 
