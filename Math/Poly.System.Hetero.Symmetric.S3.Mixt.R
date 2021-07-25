@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric S3:
 ### Mixed Type
 ###
-### draft v.0.3c-ex6v
+### draft v.0.3c-ex4v
 
 
 ### Heterogeneous Symmetric
@@ -28,7 +28,9 @@
 
 
 ### draft v.0.3c:
-# - [started] Resonances for 3 Powers: 5 variables;
+# - [started] Resonances for 3 Powers:
+#  -- formula for 5 variables;
+#  -- some quasi-non-trivial examples with 4 variables;
 ### draft v.0.3b - v.0.3b-spCase:
 # - classic Polynomial: P[15] for S3P31;
 # - [started] classic Polynomial: P[77] for Mixed S3P31 + Symmetric P7; [v.0.3b-clPP77]
@@ -1820,8 +1822,30 @@ p = c(7, 9, 21, 63);
 ################
 
 ### Order: (p1,1,1)
+
+### Order: 3+1+1
+### 4 Variables
+# i = 4; p = c(3,1,1)
+# p = Divisors(???);
+### Trivial:
+p = 5;
+### Non-Trivial & Combinations:
+p = c();
+# - the computed ones do NOT work;
+# - but there are quasi-non-trivial solutions for p = 5;
+### Ex: p = 5 =>
+# new "non-trivial" solution:
+# (x1,x2,x3,x4) * (m^1, m^2, m^0, m^4);
+# (1,2,0), (2,0,4), (0,4,1), (4,1,2)
+### Ex: p = 10 =>
+# new "non-trivial" solution:
+# (x1,x2,x3,x4) * (m^1, m^3, m^4, m^2);
+# (1,3,4), (3,4,2), (4,2,1), (2,1,3)
+
+
+### 5 Variables:
 # p = Divisors(p1^3*(p1-1)*(2*p1^2 + 3))
-# - but often insufficient;
+# - but condition is often insufficient;
 
 ### Order: 2+1+1
 ### 5 Variables
@@ -1839,7 +1863,6 @@ p = c(11, 22); # & higher
 # new solution:
 # (x1,x2,...,x5) * (m^1, m^15, m^5, m^9, m^3);
 # (1,15,5), (15,5,9), (5,9,3), (9,3,1), (3,1,15)
-
 
 
 ### Order: 3+1+1
