@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric S3:
 ### Mixed Type
 ###
-### draft v.0.3b-spCase
+### draft v.0.3c
 
 
 ### Heterogeneous Symmetric
@@ -27,6 +27,8 @@
 ###############
 
 
+### draft v.0.3c:
+# - [started] Resonances for 3 Powers: 5 variables;
 ### draft v.0.3b - v.0.3b-spCase:
 # - classic Polynomial: P[15] for S3P31;
 # - [started] classic Polynomial: P[77] for Mixed S3P31 + Symmetric P7; [v.0.3b-clPP77]
@@ -862,9 +864,10 @@ solve.S3P31SymmP7 = function(R, debug=TRUE) {
 	if(any(S == 0)) {
 		isZero = (S == 0);
 		half = sum(isZero) / 2;
-		yz.d[isZero][seq(half)] = sqrt(yz.s[isZero][seq(half)]^2 - 4*yz[isZero][seq(half)] + 0i);
+		yz.d.half = sqrt(yz.s[isZero][seq(half)]^2 - 4*yz[isZero][seq(half)] + 0i);
+		yz.d[isZero][seq(half)] = yz.d.half;
 		# - sqrt();
-		yz.d[isZero][seq(half+1, 2*half)] = - yz.d[isZero][seq(half)];
+		yz.d[isZero][seq(half+1, 2*half)] = - yz.d.half;
 	}
 	y = (yz.s + yz.d) / 2;
 	z = yz.s - y;
@@ -886,10 +889,10 @@ coeff.S3P31SymmP7 = function(R) {
 		6272*R2^2*E3^3 + 26068*R2*E3^4*R1 - 57624*E3^5*R1^2 + 686*R2*R1^4 - 4802*E3*R1^5,
 		105*R2^3*E3 + 117649*E3^8 - 1666*R2^2*E3^2*R1 - 1715*R2*E3^3*R1^2 + 72030*E3^4*R1^3 + 2401*R1^6,
 		- 4802*R2*E3^6 + 77*R2^3*R1 - 33614*E3^7*R1 + 833*R2^2*E3*R1^2 + 1029*R2*E3^2*R1^3 - 7203*E3^3*R1^4,
-		735*R2^2*E3^4 + 10290*R2*E3^5*R1 + 36015*E3^6*R1^2 + 98*R2^2*R1^3 + 1372*R2*E3*R1^4 + 4802*E3^2*R1^5,
-		- 14*(R2^3 + 21*R2^2*E3*R1 + 147*R2*E3^2*R1^2 + 343*E3^3*R1^3)*E3^2,
+		# 49*(15*R2^2*E3^4 + 210*R2*E3^5*R1 + 735*E3^6*R1^2 + 2*R2^2*R1^3 + 28*R2*E3*R1^4 + 98*E3^2*R1^5),
+		49*(R2 + 7*R1*E3)^2 * (2*R1^3 + 15*E3^4),
+		- 14*(R2 + 7*R1*E3)^3 * E3^2,
 		(R2 + 7*R1*E3)^4);
-		# R2^4 + 28*R2^3*E3*R1 + 294*R2^2*E3^2*R1^2 + 1372*R2*E3^3*R1^3 + 2401*E3^4*R1^4
 	return(coeff)
 }
 E2.S3P31SymmP7 = function(S, R, digits=4) {
@@ -1809,4 +1812,23 @@ p = c(7, 9, 21, 63);
 # new solution:
 # (x1,x2,...,x6) * (m^1, m^7, m^4, m^1, m^7, m^4);
 
+
+####################
+
+################
+### 3 Powers ###
+################
+
+### Order: 2+1+1
+### 5 Variables
+# i = 5; p = c(2,1,1)
+# p = Divisors(88);
+### Trivial:
+p = 4;
+### Non-Trivial & Combinations:
+p = c(11, 22); # & higher
+# ex: p = 11 =>
+# new solution:
+# (x1,x2,...,x5) * (m^1, m^4, m^5, m^9, m^3);
+# (1,4,5), (4,5,9), (5,9,3), (9,3,1), (3,1,4)
 
