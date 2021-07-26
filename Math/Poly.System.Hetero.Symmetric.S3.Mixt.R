@@ -1821,16 +1821,33 @@ p = c(7, 9, 21, 63);
 ### 3 Powers ###
 ################
 
-### Order: (p1,1,1)
+## Order (a,b,c)
+# a^2*c^4 - 2*a^4*c^2 + 4*b^2*a^3*c - b^4*a^2 + a^6
+
+
+### Order: 2+1+1
+### 4 Variables
+# i = 4; p = c(2,1,1)
+# p = Divisors(2^6);
+### Trivial:
+p = 4;
+### Non-Trivial & Combinations:
+p = c();
+# - there are various quasi-non-trivial solutions;
+### Ex: p = 8 =>
+# new "non-trivial" solution:
+# (x1,x2,x3,x4) * (m^3, m^7, m^3, m^7);
+# (3,7,3), (7,3,7), (3,7,3), (7,3,7)
+
 
 ### Order: 3+1+1
 ### 4 Variables
 # i = 4; p = c(3,1,1)
-# p = Divisors(???);
+# p = Divisors(3^3*5^2);
 ### Trivial:
 p = 5;
 ### Non-Trivial & Combinations:
-p = c();
+p = c(15);
 # - the computed ones do NOT work;
 # - but there are quasi-non-trivial solutions for p = 5;
 ### Ex: p = 5 =>
@@ -1842,6 +1859,24 @@ p = c();
 # (x1,x2,x3,x4) * (m^1, m^11, m^1, m^11);
 # (1,11,1), (11,1,11), (1,11,1), (11,1,11)
 
+
+### Order: 4+1+1
+### 4 Variables
+# i = 4; p = c(4,1,1)
+# p = Divisors(2^8*3*5);
+### Trivial:
+p = 6;
+### Non-Trivial & Combinations:
+p = c();
+# - some of the computed ones do NOT work;
+# - but there are various quasi-non-trivial solutions;
+### Ex: p = 8 =>
+# new "non-trivial" solution:
+# (x1,x2,x3,x4) * (m^5, m^7, m^5, m^7);
+# (5,7,5), (7,5,7), (5,7,5), (7,5,7)
+
+
+### Order: (p1,1,1)
 
 ### 5 Variables:
 # p = Divisors(p1^3*(p1-1)*(2*p1^2 + 3))
