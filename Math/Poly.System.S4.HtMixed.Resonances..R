@@ -56,6 +56,53 @@ library(pracma)
 ##################
 
 ### Order: 3+1+1
+# x1^3*x2*x3 + x2^3*x3*x4 + x3^3*x4*x1 + x4^3*x1*x2 = R1
+# x1^5 + x2^5 + x3^5 + x4^5 = R2
+# x1^10 + x2^10 + x3^10 + x4^10 = R3
+# (x1*x2)^5 + (x2*x3)^5 + (x3*x4)^5 + (x4*x1)^5 = R4
+
+
+### Classic Solution:
+
+# a toy model for computing robust roots;
+solve.byx1.S4M5.classic = function(x1, R) {
+	A = roots(c(1, -R[2], R[4]));
+	B = R[2] - A;
+	x1 = rep(x1, each=2);
+	x3p5  = A - x1^5;
+	x24p5 = (R[2]^2 - R[3] - 2*R[4]) / 2 - x1^5*x3p5;
+	# non-robust
+	# x2^10 - B*x2^5 + x24p5 = 0
+	len = length(x3p5);
+	x2p5 = sapply(seq(len), function(id) roots(c(1, - B[id], x24p5[id])));
+	B = rep(B, each=2); x1 = rep(x1, each=2);
+	x3p5 = rep(x3p5, each=2);
+	x4p5 = B - x2p5;
+	# TODO: ???
+}
+
+### let:
+A = x1^5 + x3^5;
+B = x2^5 + x4^5;
+# Eq 2 =>
+A + B - R2 # = 0
+# Eq 4 =>
+A*B - R4 # = 0
+# =>
+A^2 - R2*A + R4 # = 0
+
+### (Eq 2)^2 - Eq 3 - 2*Eq 4 =>
+2*(x1*x3)^5 + 2*(x2*x4)^5 - R2^2 + R3 + 2*R4 # = 0
+# (x1*x3)^5 + (x2*x4)^5 = (R2^2 - R3 - 2*R4) / 2;
+# =>
+x2^10 - B*x2^5 + (R2^2 - R3 - 2*R4) / 2 - (x1*x3)^5 # = 0
+
+### Eq 2 =>
+# x1^5 + x3^5 = R2 - (x2^5 + x4^5) # sq =>
+x1^10 + x3^10 + 2*(x1*x3)^5 - (x2^10 + x4^10 + 2*(x2*x4)^5 - 2*R2*(x2^5 + x4^5) + R2^2) # = 0
+x2^10 + x4^10 + 2*(x2*x4)^5 - (x1^10 + x3^10 + 2*(x1*x3)^5 - 2*R2*(x1^5 + x3^5) + R2^2) # = 0
+### Sum => [redundant]
+
 
 ### Test
 x1^3*x2*x3 + x2^3*x3*x4 + x3^3*x4*x1 + x4^3*x1*x2 # - R1
@@ -66,6 +113,7 @@ x1^10 + x2^10 + x3^10 + x4^10 # - R3
 
 ### Debug:
 R = c(1, -2, -1, 3);
+R1 = R[1]; R2 = R[2]; R3 = R[3]; R4 = R[4];
 x1 =  0.0451568676 + 0.1440038706i;
 x2 =  0.9916018740 + 0.5052387172i;
 x3 = -0.1370521599 - 1.1076829770i;
