@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric S4:
 ### Mixed Type with Resonances
 ###
-### draft v.0.1a
+### draft v.0.1b-more
 
 
 ### Heterogeneous Symmetric
@@ -27,6 +27,9 @@
 ###############
 
 
+### draft v.0.1b:
+# - [started] classic roots;
+# - more entangled roots; [v.0.1b-more]
 ### draft v.0.1a:
 # - Proof of concept:
 #   Rotations Entangled with Roots of Unity;
@@ -75,11 +78,38 @@ solve.byx1.S4M5.classic = function(x1, R) {
 	# x2^10 - B*x2^5 + x24p5 = 0
 	len = length(x3p5);
 	x2p5 = sapply(seq(len), function(id) roots(c(1, - B[id], x24p5[id])));
-	B = rep(B, each=2); x1 = rep(x1, each=2);
+	x2p5 = as.vector(x2p5);
+	# repeat x1
+	x1rep = rep(x1, each=2);
+	B = rep(B, each=2);
 	x3p5 = rep(x3p5, each=2);
 	x4p5 = B - x2p5;
 	# TODO: ???
+	m = unity(5, all=TRUE);
+	x = lapply(seq_along(x1), function(id) {
+		x2 = rootn(x2p5[id], 5) * m;
+		x3 = rootn(x3p5[id], 5) * m;
+		x4 = rootn(x4p5[id], 5) * m;
+		expand.grid(x1[id], x2, x3, x4);
+	})
+	sol = do.call(rbind, x);
+	names(sol) = paste0("x", seq(4));
+	return(sol);
 }
+test.R1 = function(x) {
+	sum(x[1]^3*x[2]*x[3], x[2]^3*x[3]*x[4], x[3]^3*x[4]*x[1], x[4]^3*x[1]*x[2]);
+}
+
+### Test:
+# x1 & R: see below;
+x = solve.byx1.S4M5.classic(x1, R);
+R1r = apply(x, 1, test.R1);
+R1r = round(R1r, 2);
+# only 5 root-tuples are real!
+x[R1r == R[1], ]
+
+
+### Derivation:
 
 ### let:
 A = x1^5 + x3^5;
@@ -94,7 +124,7 @@ A^2 - R2*A + R4 # = 0
 ### (Eq 2)^2 - Eq 3 - 2*Eq 4 =>
 2*(x1*x3)^5 + 2*(x2*x4)^5 - R2^2 + R3 + 2*R4 # = 0
 # (x1*x3)^5 + (x2*x4)^5 = (R2^2 - R3 - 2*R4) / 2;
-# =>
+# if (x1*x3)^5 is known =>
 x2^10 - B*x2^5 + (R2^2 - R3 - 2*R4) / 2 - (x1*x3)^5 # = 0
 
 ### Eq 2 =>
@@ -126,10 +156,14 @@ x = t(x)
 x1 = x[,1]; x2 = x[,2]; x3 = x[,3]; x4 = x[,4];
 
 x0 = x[1,];
+sol0 = x0 * m[2]^c(1,0,2,3);
 sol1 = x0 * m[2]^c(1,2,0,4);
-sol3 = x0 * m[2]^c(3,2,4,0);
-x = rbind(x, sol1, sol3);
+sol2 = x0 * m[2]^c(3,2,4,0);
+sol3 = x0 * m[2]^c(1,4,3,0);
+sol4 = x0 * m[2]^c(1,3,4,2);
+x = rbind(x, sol0, sol1, sol2, sol3, sol4);
 x = rbind(x, x[,c(2,3,4,1)], x[,c(3,4,1,2)], x[,c(4,1,2,3)]);
+rownames(x) = NULL
 x1 = x[,1]; x2 = x[,2]; x3 = x[,3]; x4 = x[,4];
 
 
@@ -156,6 +190,9 @@ p = c(15);
 # new "non-trivial" solution:
 # (x1,x2,x3,x4) * (m^1, m^2, m^0, m^4);
 # (1,2,0), (2,0,4), (0,4,1), (4,1,2)
+# (1,3,4), (3,4,2), (4,2,1), (2,1,3)
+# (1,4,3), (4,3,0), (3,0,1), (0,1,4)
+# (1,0,2), (0,2,3), (2,3,1), (3,1,0)
 # (3,2,4), (2,4,0), (4,0,3), (0,3,2)
 ### Ex: p = 15 =>
 # new "non-trivial" solution:
