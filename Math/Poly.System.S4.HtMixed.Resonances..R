@@ -70,6 +70,7 @@ library(pracma)
 # a toy model for computing robust roots;
 solve.byx1.S4M5.classic = function(x1, R) {
 	A = roots(c(1, -R[2], R[4]));
+	A = rep(A, each=length(x1));
 	B = R[2] - A;
 	x1 = rep(x1, each=2);
 	x3p5  = A - x1^5;
@@ -80,10 +81,11 @@ solve.byx1.S4M5.classic = function(x1, R) {
 	x2p5 = sapply(seq(len), function(id) roots(c(1, - B[id], x24p5[id])));
 	x2p5 = as.vector(x2p5);
 	# repeat x1
-	x1rep = rep(x1, each=2);
+	x1 = rep(x1, each=2);
 	B = rep(B, each=2);
 	x3p5 = rep(x3p5, each=2);
 	x4p5 = B - x2p5;
+	print(cbind(x1, x2p5, x3p5, x4p5))
 	# TODO: ???
 	m = unity(5, all=TRUE);
 	x = lapply(seq_along(x1), function(id) {
