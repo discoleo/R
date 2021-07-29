@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric S4:
 ### Mixed Type with Resonances
 ###
-### draft v.0.1b-more
+### draft v.0.1c
 
 
 ### Heterogeneous Symmetric
@@ -27,6 +27,9 @@
 ###############
 
 
+### draft v.0.1c:
+# - another example with Resonances:
+#   x1^3*x2*x3 + b*x4^5 = Ru;
 ### draft v.0.1b:
 # - [started] classic roots;
 # - more entangled roots; [v.0.1b-more]
@@ -47,7 +50,27 @@ library(pracma)
 # Polynomials.Helper.R
 
 ### other functions
-# ...
+
+### Rotate roots & Entangle with Roots of Unity
+rotate.roots = function(x, n=5, r.m = NULL) {
+	x0 = x;
+	# Roots of unity
+	m = unity(n, all=TRUE);
+	x = sapply(seq_along(m), function(id) x*m[id]);
+	x = t(x);
+	if(is.null(r.m)) {
+		r.m = matrix(
+			c(1,0,2,3,  1,2,0,4,  3,2,4,0,  1,4,3,0,  1,3,4,2), ncol=5
+		);
+	}
+	sol = apply(r.m, 2, function(pow) x0 * m[2]^pow);
+	sol = t(sol);
+	x = rbind(x, sol);
+	# Rotate / Cycle
+	x = rbind(x, x[,c(2,3,4,1)], x[,c(3,4,1,2)], x[,c(4,1,2,3)]);
+	rownames(x) = NULL
+	return(x)
+}
 
 
 #####################
@@ -151,20 +174,8 @@ x3 = -0.1370521599 - 1.1076829770i;
 x4 =  0.7725898004 + 0.1223347600i;
 x = c(x1, x2, x3, x4);
 
-m = unity(5, all=TRUE);
-x = sapply(seq_along(m), function(id) x*m[id]);
-x = t(x)
-x1 = x[,1]; x2 = x[,2]; x3 = x[,3]; x4 = x[,4];
 
-x0 = x[1,];
-sol0 = x0 * m[2]^c(1,0,2,3);
-sol1 = x0 * m[2]^c(1,2,0,4);
-sol2 = x0 * m[2]^c(3,2,4,0);
-sol3 = x0 * m[2]^c(1,4,3,0);
-sol4 = x0 * m[2]^c(1,3,4,2);
-x = rbind(x, sol0, sol1, sol2, sol3, sol4);
-x = rbind(x, x[,c(2,3,4,1)], x[,c(3,4,1,2)], x[,c(4,1,2,3)]);
-rownames(x) = NULL
+x = rotate.roots(x, n=5);
 x1 = x[,1]; x2 = x[,2]; x3 = x[,3]; x4 = x[,4];
 
 
@@ -176,6 +187,45 @@ pR = solve.pm(p1, p2, "x2")
 pR$Rez = replace.pm(pR$Rez, p45, "x4", 5);
 # Memory overflow!
 pR4 = solve.pm(pR$Rez, p4, "x4")
+
+
+#############################
+#############################
+
+######################
+### Mixed: 3+1+1   ###
+### & with Unknown ###
+######################
+
+# x1^3*x2*x3 + x2^3*x3*x4 + x3^3*x4*x1 + x4^3*x1*x2 = R1
+# x1^3*x2*x3 + b*x4^5 = Ru
+# x2^3*x3*x4 + b*x1^5 = Ru
+# x3^3*x4*x1 + b*x2^5 = Ru
+# x4^3*x1*x2 + b*x3^5 = Ru
+# where Ru = unknown
+
+### Test
+x1^3*x2*x3 + x2^3*x3*x4 + x3^3*x4*x1 + x4^3*x1*x2 # - R1
+tmp1 = x1^3*x2*x3 + b*x4^5
+tmp2 = x2^3*x3*x4 + b*x1^5
+tmp3 = x3^3*x4*x1 + b*x2^5
+tmp4 = x4^3*x1*x2 + b*x3^5
+cbind(tmp1, tmp2, tmp3, tmp4)
+
+
+### Debug:
+R = 2; b = 3;
+x1 = -0.9511358311 - 0.3938106618i;
+x2 =  1.0126064890 - 0.2503814432i;
+x3 =  0.4904683198 + 0.9794972522i;
+x4 =  0.9652251325 - 0.1464569610i;
+x = c(x1, x2, x3, x4);
+
+
+# 40 roots derived from a base-root
+x = rotate.roots(x, n=5);
+x1 = x[,1]; x2 = x[,2]; x3 = x[,3]; x4 = x[,4];
+
 
 
 ##################
