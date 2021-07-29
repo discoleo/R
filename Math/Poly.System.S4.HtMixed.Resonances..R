@@ -85,7 +85,6 @@ solve.byx1.S4M5.classic = function(x1, R) {
 	B = rep(B, each=2);
 	x3p5 = rep(x3p5, each=2);
 	x4p5 = B - x2p5;
-	print(cbind(x1, x2p5, x3p5, x4p5))
 	# TODO: ???
 	m = unity(5, all=TRUE);
 	x = lapply(seq_along(x1), function(id) {
@@ -107,7 +106,7 @@ test.R1 = function(x) {
 x = solve.byx1.S4M5.classic(x1, R);
 R1r = apply(x, 1, test.R1);
 R1r = round(R1r, 2);
-# only 5 root-tuples are real!
+# only 2*5 = 10 root-tuples are real!
 x[R1r == R[1], ]
 
 
@@ -168,6 +167,15 @@ x = rbind(x, x[,c(2,3,4,1)], x[,c(3,4,1,2)], x[,c(4,1,2,3)]);
 rownames(x) = NULL
 x1 = x[,1]; x2 = x[,2]; x3 = x[,3]; x4 = x[,4];
 
+
+p1 = toPoly.pm("x1^3*x2*x3 + x2^3*x3*x4 + x3^3*x4*x1 + x4^3*x1*x2 - R1")
+p2 = toPoly.pm("x2^5 - x25");
+p4 = toPoly.pm("x4^5 - x45");
+p45 = data.frame(x45=1, coeff=1);
+pR = solve.pm(p1, p2, "x2")
+pR$Rez = replace.pm(pR$Rez, p45, "x4", 5);
+# Memory overflow!
+pR4 = solve.pm(pR$Rez, p4, "x4")
 
 
 ##################
