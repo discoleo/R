@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric S4:
 ### Mixed Type with Resonances
 ###
-### draft v.0.1c
+### draft v.0.1c-cases
 
 
 ### Heterogeneous Symmetric
@@ -27,9 +27,10 @@
 ###############
 
 
-### draft v.0.1c:
+### draft v.0.1c - v.0.1c-cases:
 # - another example with Resonances:
 #   x1^3*x2*x3 + b*x4^5 = Ru;
+# - special cases: all equal vs other cases;
 ### draft v.0.1b:
 # - [started] classic roots;
 # - more entangled roots; [v.0.1b-more]
@@ -204,6 +205,24 @@ pR4 = solve.pm(pR$Rez, p4, "x4")
 # x4^3*x1*x2 + b*x3^5 = Ru
 # where Ru = unknown
 
+
+### Solution:
+
+### Case 1:
+# x1 = x2 = x3 = x4
+# - trivial case;
+x1^5 - R1 / 4 # = 0
+
+### Case 2:
+# x1 = x3, x2 = x4;
+# x1^4*x2 + x2^4*x1 = R1/2
+# x1^4*x2 + b*x2^5 = Ru
+# x2^4*x1 + b*x1^5 = Ru
+
+### Case 3:
+# - all distinct;
+
+
 ### Test
 x1^3*x2*x3 + x2^3*x3*x4 + x3^3*x4*x1 + x4^3*x1*x2 # - R1
 tmp1 = x1^3*x2*x3 + b*x4^5
@@ -226,6 +245,11 @@ x = c(x1, x2, x3, x4);
 x = rotate.roots(x, n=5);
 x1 = x[,1]; x2 = x[,2]; x3 = x[,3]; x4 = x[,4];
 
+### another set of roots
+x1 = x2 = x3 = x4 = rootn(R[1]/4, 5);
+x = c(x1, x2, x3, x4);
+x = rotate.roots(x, n=5);
+x1 = x[,1]; x2 = x[,2]; x3 = x[,3]; x4 = x[,4];
 
 
 ##################
