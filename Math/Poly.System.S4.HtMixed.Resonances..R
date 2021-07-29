@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric S4:
 ### Mixed Type with Resonances
 ###
-### draft v.0.1c-cases
+### draft v.0.1d
 
 
 ### Heterogeneous Symmetric
@@ -27,6 +27,9 @@
 ###############
 
 
+### draft v.0.1d:
+# - S4MHt311 + P5:
+#   robust computation of x2;
 ### draft v.0.1c - v.0.1c-cases:
 # - another example with Resonances:
 #   x1^3*x2*x3 + b*x4^5 = Ru;
@@ -84,6 +87,27 @@ rotate.roots = function(x, n=5, r.m = NULL) {
 	rownames(x) = NULL
 	return(x)
 }
+### E
+calc.E = function(x) {
+	if(is.matrix(x) && nrow(x) > 1) {
+		sol = t(apply(x, 1, calc.E));
+		colnames(sol) = c("S", "E2", "E3", "E4");
+		return(sol);
+	}
+	S = sum(x); E4 = prod(x);
+	E2 = x[1]*(S - x[1]) + x[2]*(x[3]+x[4]) + x[3]*x[4];
+	E3 = E4 * sum(1/x);
+	E = cbind(S=S, E2=E2, E3=E3, E4=E4);
+	return(E);
+}
+reduce.E = function(x1, E) {
+	if( ! is.matrix(E)) E = matrix(E, nrow=1);
+	S = E[,1]; E2 = E[,2]; E4 = E[,4];
+	S  = S - x1;
+	E2 = E2 - x1*S;
+	E3 = E4 / x1;
+	return(cbind(S, E2, E3));
+}
 
 
 #####################
@@ -104,6 +128,39 @@ rotate.roots = function(x, n=5, r.m = NULL) {
 ### Classic Solution:
 
 # a toy model for computing robust roots;
+solve.byE.S4M5 = function(E, R, mpow=0, debug=TRUE) {
+	if( ! is.matrix(E)) E = matrix(E, nrow=1);
+	x1 = sapply(seq(nrow(E)), function(id) roots(c(1, -E[id,1], E[id,2], -E[id,3], E[id,4])));
+	if(debug) print(x1);
+	S  = rep(E[,1], each=4);
+	E2 = rep(E[,2], each=4);
+	E4 = rep(E[,4], each=4);
+	S  = S - x1;
+	E2 = E2 - x1*S;
+	E3 = E4 / x1;
+	### TODO:
+	# - robust computation of x2;
+	# - use: solve.x2.byE.S4MHt311() in file:
+	#   Poly.System.S4.HtMixed.Resonances.Helper.R;
+	### non-robust:
+	A = roots(c(1, -R[2], R[4]));
+	A = rep(A, each=length(x1));
+	B = R[2] - A;
+	x1 = rep(x1, 2); # NOT each;
+	x3p5 = A - x1^5;
+	x3 = rootn(x3p5, n=5);
+	if(mpow != 0) {m = unity(5, FALSE); x3 = x3 * m^mpow;}
+	#
+	S  = rep(S, 2);
+	E2 = rep(E2, 2);
+	E3 = rep(E3, 2);
+	s24 = S - x3; x24 = E3 / x3;
+	x2 = x1*s24*x3^3 - x24^2*(x1+x3) + x24*x1*s24^2 - R[1];
+	x2 = - x2 / ((x1 - x3)*(x1*x3*(x1 + x3) - x24*s24));
+	x4 = s24 - x2;
+	sol = cbind(x1=x1, x2=x2, x3=x3, x4=x4);
+	return(sol);
+}
 solve.byx1.S4M5.classic = function(x1, R) {
 	A = roots(c(1, -R[2], R[4]));
 	A = rep(A, each=length(x1));
@@ -138,12 +195,32 @@ test.R1 = function(x) {
 }
 
 ### Test:
+
+### by E:
+R = c(1, -2, -1, 3);
+# x = see below;
+S = sum(x); E4 = prod(x);
+E2 = x[1]*(S - x[1]) + x[2]*(x[3]+x[4]) + x[3]*x[4];
+E3 = E4 * sum(1/x);
+E = cbind(S=S, E2=E2, E3=E3, E4=E4);
+sol = solve.byE.S4M5(E, R, mpow=1);
+x1 = sol[,1]; x2 = sol[,2]; x3 = sol[,3]; x4 = sol[,4];
+
+
+### Classic by x1
 # x1 & R: see below;
 x = solve.byx1.S4M5.classic(x1, R);
 R1r = apply(x, 1, test.R1);
 R1r = round(R1r, 2);
 # only 2*5 = 10 root-tuples are real!
 x[R1r == R[1], ]
+
+
+### Test
+x1^3*x2*x3 + x2^3*x3*x4 + x3^3*x4*x1 + x4^3*x1*x2 # - R1
+x1^5 + x2^5 + x3^5 + x4^5 # - R2
+x1^10 + x2^10 + x3^10 + x4^10 # - R3
+(x1*x2)^5 + (x2*x3)^5 + (x3*x4)^5 + (x4*x1)^5 # - R4
 
 
 ### Derivation:
@@ -171,13 +248,6 @@ x2^10 + x4^10 + 2*(x2*x4)^5 - (x1^10 + x3^10 + 2*(x1*x3)^5 - 2*R2*(x1^5 + x3^5) 
 ### Sum => [redundant]
 
 
-### Test
-x1^3*x2*x3 + x2^3*x3*x4 + x3^3*x4*x1 + x4^3*x1*x2 # - R1
-x1^5 + x2^5 + x3^5 + x4^5 # - R2
-x1^10 + x2^10 + x3^10 + x4^10 # - R3
-(x1*x2)^5 + (x2*x3)^5 + (x3*x4)^5 + (x4*x1)^5 # - R4
-
-
 ### Debug:
 R = c(1, -2, -1, 3);
 R1 = R[1]; R2 = R[2]; R3 = R[3]; R4 = R[4];
@@ -200,6 +270,28 @@ pR = solve.pm(p1, p2, "x2")
 pR$Rez = replace.pm(pR$Rez, p45, "x4", 5);
 # Memory overflow!
 pR4 = solve.pm(pR$Rez, p4, "x4")
+
+
+p1 = toPoly.pm("x1^3*x2*x3 + x2^2*x3*x24 + x3^3*x4*x1 + x4^2*x1*x24 - R1")
+p1 = replace.pm(p1, toPoly.pm("s24 - x2"), "x4", 1);
+p2 = toPoly.pm("x2^2 - s24*x2 + x24");
+pR = solve.pm(p1, p2, "x2")
+
+
+p1 = toPoly.pm("x1^3*x2*x3 + E3*x2^2 + x3^3*x4*x1 + x4^3*x1*x2 - R1")
+p1 = replace.pm(p1, toPoly.pm("S - x2 - x3"), "x4", 1);
+pS = toPoly.pm("x2^2*x3 + x2*x3^2 + E3 - x2*x3*S");
+p2 = toPoly.pm("x2^2*S - x2^3 + E3 - E2*x2");
+#
+pR1 = solve.pm(p1, pS, "x3");
+pR  = solve.pm(pR1$Rez, p2, "x2");
+str(pR)
+# - polynomial with 7039 monomials;
+# - robust formula for x2: ~300 / 366 monomials;
+
+### Robust computation of x2:
+# - see solve.x2.byE.S4MHt311() in file:
+#   Poly.System.S4.HtMixed.Resonances.Helper.R;
 
 
 #############################
