@@ -863,7 +863,13 @@ print.pcoeff = function(l, print=TRUE, strip=NULL, len=10) {
 }
 ### Parse expressions / polynomials
 toPoly.pm = function(e) {
-	if(is.character(e)) e = parse(text=e);
+	if(is.character(e)) {
+		if(length(e) > 1) {
+			pl = lapply(e, function(e) toPoly.pm(e));
+			return(pl);
+		}
+		e = parse(text=e);
+	}
 	if( ! is.expression(e)) stop("Input must be an expression!")
 	if( ! is.language(e[[1]])) return(NULL);
 	e = e[[1]];
@@ -877,9 +883,15 @@ toPoly.pm = function(e) {
 				p = if(nrow(p) == 0) m else sum.pm(p, m);
 				e = e[[2]];
 			} else if(op == "-") {
-				m = toMonom.pm(e[[3]], xsign=-1);
-				p = if(nrow(p) == 0) m else sum.pm(p, m);
-				e = e[[2]];
+				if(length(e) > 2) {
+					m = toMonom.pm(e[[3]], xsign=-1);
+					p = if(nrow(p) == 0) m else sum.pm(p, m);
+					e = e[[2]];
+				} else {
+					m = toMonom.pm(e[[2]], xsign=-1);
+					p = if(nrow(p) == 0) m else sum.pm(p, m);
+					break;
+				}
 			} else {
 				m = toMonom.pm(e);
 				p = if(nrow(p) == 0) m else sum.pm(p, m);
@@ -954,6 +966,9 @@ toMonom.pm = function(e, xsign = 1) {
 					m$coeff = - m$coeff;
 					e = e[[2]]; next;
 				} else if(op == "+") {
+					e = e[[2]]; next;
+				} else if(op == "/") {
+					m[, "coeff"] = m[, "coeff"] / e[[3]];
 					e = e[[2]]; next;
 				} else {
 					vn1 = as.character(op); # a variable name;
