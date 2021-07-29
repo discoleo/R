@@ -57,15 +57,27 @@ rotate.roots = function(x, n=5, r.m = NULL) {
 	x0 = x;
 	# Roots of unity
 	m = unity(n, all=TRUE);
-	x = sapply(seq_along(m), function(id) x*m[id]);
-	x = t(x);
+	if(is.matrix(x0) && nrow(x0) > 1) {
+		x = lapply(seq(nrow(x0)), function(id1)
+			t(sapply(seq_along(m), function(id2) x[id1,]*m[id2])));
+		x = do.call(rbind, x);
+	} else {
+		x = sapply(seq_along(m), function(id) x*m[id]);
+		x = t(x);
+	}
 	if(is.null(r.m)) {
 		r.m = matrix(
 			c(1,0,2,3,  1,2,0,4,  3,2,4,0,  1,4,3,0,  1,3,4,2), ncol=5
 		);
 	}
-	sol = apply(r.m, 2, function(pow) x0 * m[2]^pow);
-	sol = t(sol);
+	if(is.matrix(x0) && nrow(x0) > 1) {
+		sol = lapply(seq(nrow(x0)), function(id)
+			t(apply(r.m, 2, function(pow) x0[id,] * m[2]^pow)));
+		sol = do.call(rbind, sol);
+	} else {
+		sol = apply(r.m, 2, function(pow) x0 * m[2]^pow);
+		sol = t(sol);
+	}
 	x = rbind(x, sol);
 	# Rotate / Cycle
 	x = rbind(x, x[,c(2,3,4,1)], x[,c(3,4,1,2)], x[,c(4,1,2,3)]);
@@ -230,34 +242,35 @@ b*(x1^5 - x2^5) - x1*x2*(x1^3 - x2^3) # = 0
 ### x1 ! = x2 =>
 b*(x1^4 + x2^4 + x1*x2*(x1^2+x2^2) + (x1*x2)^2) - x1*x2*(x1^2 + x2^2 + x1*x2) # = 0
 # S = (x1 + x2);
-b*(S^4 + x1*x2*(S^2 - 2*x1*x2) + (x1*x2)^2) - x1*x2*(S^2 - x1*x2) # = 0
-b*S^4 + (b-1)*x1*x2*S^2 - (b-1)*(x1*x2)^2 # = 0
+b*(S^4 - 4*x1*x2*S^2 + x1*x2*(S^2 - 2*x1*x2) + 3*(x1*x2)^2) - x1*x2*(S^2 - x1*x2) # = 0
+b*(S^4 - 3*x1*x2*S^2 + (x1*x2)^2) - x1*x2*(S^2 - x1*x2) # = 0
+b*S^4 - (3*b+1)*x1*x2*S^2 + (b+1)*(x1*x2)^2 # = 0
 
 ### Eq 1 (the "Sum") =>
 x1*x2*(S^3 - 3*x1*x2*S) - R1/2 # = 0
 x1*x2*S^3 - 3*x1^2*x2^2*S - R1/2 # = 0
 
 ### Derivation:
-p1 = toPoly.pm("b*S^4 + b*x12*S^2 - x12*S^2 - b*x12^2 + x12^2")
+p1 = toPoly.pm("b*S^4 - 3*b*x12*S^2 - x12*S^2 + b*x12^2 + x12^2")
 p2 = toPoly.pm("x12*S^3 - 3*x12^2*S - R1/2")
 pR = solve.pm(p1, p2, "x12")
 pR$Rez$coeff = -4 * pR$Rez$coeff;
 print.p(pR$Rez, "S")
 
 ### Eq S:
-12*(11*b^2 - 2*b)*S^10 + 12*R1*(1 - 5*b + 4*b^2)*S^5 + 3*(b-1)^2*R1^2
+12*(b^2 - 2*b)*S^10 + 12*R1*(1 + 4*b + 9*b^2)*S^5 + 3*R1^2*(b+1)^2
 
 ### Solver:
 solve.S4M311.Case2 = function(R, b, debug=TRUE, all.rotated=FALSE) {
-	coeff = c(12*(11*b^2 - 2*b), 12*R[1]*(1 - 5*b + 4*b^2), 3*(b-1)^2*R[1]^2);
+	coeff = c(12*(b^2 - 2*b), 12*R[1]*(1 + 4*b + 9*b^2), 3*R[1]^2*(b+1)^2);
 	S = roots(coeff);
 	S = rootn(S, 5);
 	m = unity(5, all=TRUE);
 	if( ! all.rotated) S = sapply(S, function(S) S*m);
 	S = as.vector(S);
 	if(debug) print(S);
-	xy = - 3*b*S^5 - R[1]*(b-1)/2;
-	xy = xy / (2*(b-1)*S^3);
+	xy = - 3*b*S^5 + R[1]*(b+1)/2;
+	xy = xy / -(2*(4*b+1)*S^3);
 	xy.d = sqrt(S^2 - 4*xy + 0i);
 	x = (S + xy.d) / 2;
 	y = (S - xy.d) / 2;
@@ -271,8 +284,8 @@ solve.S4M311.Case2 = function(R, b, debug=TRUE, all.rotated=FALSE) {
 ### Example:
 R = 2
 b = 3
-sol = solve.S4M311.Case2(R, b);
-x1 = x[,1]; x2 = x[,2]; x3 = x[,3]; x4 = x[,4];
+sol = solve.S4M311.Case2(R, b, all.rotated=TRUE);
+x1 = sol[,1]; x2 = sol[,2]; x3 = sol[,3]; x4 = sol[,4];
 
 
 ### Test
