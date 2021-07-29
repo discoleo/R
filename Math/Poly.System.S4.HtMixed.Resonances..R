@@ -223,6 +223,58 @@ x1^5 - R1 / 4 # = 0
 # - all distinct;
 
 
+### Sol Case 2:
+
+### Diff =>
+b*(x1^5 - x2^5) - x1*x2*(x1^3 - x2^3) # = 0
+### x1 ! = x2 =>
+b*(x1^4 + x2^4 + x1*x2*(x1^2+x2^2) + (x1*x2)^2) - x1*x2*(x1^2 + x2^2 + x1*x2) # = 0
+# S = (x1 + x2);
+b*(S^4 + x1*x2*(S^2 - 2*x1*x2) + (x1*x2)^2) - x1*x2*(S^2 - x1*x2) # = 0
+b*S^4 + (b-1)*x1*x2*S^2 - (b-1)*(x1*x2)^2 # = 0
+
+### Eq 1 (the "Sum") =>
+x1*x2*(S^3 - 3*x1*x2*S) - R1/2 # = 0
+x1*x2*S^3 - 3*x1^2*x2^2*S - R1/2 # = 0
+
+### Derivation:
+p1 = toPoly.pm("b*S^4 + b*x12*S^2 - x12*S^2 - b*x12^2 + x12^2")
+p2 = toPoly.pm("x12*S^3 - 3*x12^2*S - R1/2")
+pR = solve.pm(p1, p2, "x12")
+pR$Rez$coeff = -4 * pR$Rez$coeff;
+print.p(pR$Rez, "S")
+
+### Eq S:
+12*(11*b^2 - 2*b)*S^10 + 12*R1*(1 - 5*b + 4*b^2)*S^5 + 3*(b-1)^2*R1^2
+
+### Solver:
+solve.S4M311.Case2 = function(R, b, debug=TRUE, all.rotated=FALSE) {
+	coeff = c(12*(11*b^2 - 2*b), 12*R[1]*(1 - 5*b + 4*b^2), 3*(b-1)^2*R[1]^2);
+	S = roots(coeff);
+	S = rootn(S, 5);
+	m = unity(5, all=TRUE);
+	if( ! all.rotated) S = sapply(S, function(S) S*m);
+	S = as.vector(S);
+	if(debug) print(S);
+	xy = - 3*b*S^5 - R[1]*(b-1)/2;
+	xy = xy / (2*(b-1)*S^3);
+	xy.d = sqrt(S^2 - 4*xy + 0i);
+	x = (S + xy.d) / 2;
+	y = (S - xy.d) / 2;
+	sol = cbind(x1=x, x2=y, x3=x, x4=y);
+	if(all.rotated) {
+		sol = rotate.roots(sol, n=5);
+	} else sol = rbind(sol, sol[,c(2,1,2,1)]);
+	return(sol);
+}
+
+### Example:
+R = 2
+b = 3
+sol = solve.S4M311.Case2(R, b);
+x1 = x[,1]; x2 = x[,2]; x3 = x[,3]; x4 = x[,4];
+
+
 ### Test
 x1^3*x2*x3 + x2^3*x3*x4 + x3^3*x4*x1 + x4^3*x1*x2 # - R1
 tmp1 = x1^3*x2*x3 + b*x4^5
