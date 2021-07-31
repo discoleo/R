@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric S4:
 ### Mixed Type with Resonances
 ###
-### draft v.0.1d
+### draft v.0.1e
 
 
 ### Heterogeneous Symmetric
@@ -27,6 +27,10 @@
 ###############
 
 
+### draft v.0.1e:
+# - partial solution for:
+#   x1^5 + b*x2^3*x3*x4 = R1;
+# - Case: x1 = x3, x2 = x4 & distinct roots derived through entanglement;
 ### draft v.0.1d:
 # - S4MHt311 + P5:
 #   robust computation of x2;
@@ -199,10 +203,7 @@ test.R1 = function(x) {
 ### by E:
 R = c(1, -2, -1, 3);
 # x = see below;
-S = sum(x); E4 = prod(x);
-E2 = x[1]*(S - x[1]) + x[2]*(x[3]+x[4]) + x[3]*x[4];
-E3 = E4 * sum(1/x);
-E = cbind(S=S, E2=E2, E3=E3, E4=E4);
+E = calc.E(x)
 sol = solve.byE.S4M5(E, R, mpow=1);
 x1 = sol[,1]; x2 = sol[,2]; x3 = sol[,3]; x4 = sol[,4];
 
@@ -407,6 +408,106 @@ x1 = x2 = x3 = x4 = rootn(R[1]/4, 5);
 x = c(x1, x2, x3, x4);
 x = rotate.roots(x, n=5);
 x1 = x[,1]; x2 = x[,2]; x3 = x[,3]; x4 = x[,4];
+
+
+########################
+########################
+
+########################
+### Mixed: P5 with   ###
+### 3+1+1 Side Chain ###
+########################
+
+# x1^5 + b*x2^3*x3*x4 = R1
+# x2^5 + b*x3^3*x4*x1 = R1
+# x3^5 + b*x4^3*x1*x2 = R1
+# x4^5 + b*x1^3*x2*x3 = R1
+
+
+### Solution:
+
+### Case 1:
+# x1 = x2 = x3 = x4
+# - trivial case;
+(b+1)*x1^5 - R1 # = 0
+
+### Case 2:
+# x1 = x3, x2 = x4;
+# x1^5 + b*x1*x2^4 = R1
+# x2^5 + b*x2*x1^4 = R1
+
+### Case 3:
+# - all distinct;
+# - some of these roots can be derived from Case 2;
+
+
+### Sol Case 2:
+
+### Diff =>
+(x1^5 - x2^5) - b*x1*x2*(x1^3 - x2^3) # = 0
+### x1 ! = x2 =>
+(x1^4 + x2^4 + x1*x2*(x1^2+x2^2) + (x1*x2)^2) - b*x1*x2*(x1^2 + x2^2 + x1*x2) # = 0
+# S = (x1 + x2);
+(S^4 - 4*x1*x2*S^2 + x1*x2*(S^2 - 2*x1*x2) + 3*(x1*x2)^2) - b*x1*x2*(S^2 - x1*x2) # = 0
+S^4 - 3*x1*x2*S^2 + (x1*x2)^2 - b*x1*x2*(S^2 - x1*x2) # = 0
+S^4 - (b+3)*x1*x2*S^2 + (b+1)*(x1*x2)^2 # = 0
+
+### Sum =>
+x1^5 + x2^5 + b*x1*x2*(x1^3 + x2^3) - 2*R1 # = 0
+S^5 - 5*x1*x2*S^3 + 5*(x1*x2)^2*S + b*x1*x2*(S^3 - 3*x1*x2*S) - 2*R1 # = 0
+S^5 + (b-5)*x1*x2*S^3 - (3*b-5)*(x1*x2)^2*S - 2*R1 # = 0
+
+### Eq S:
+(b+1)*(b-1)^2*S^10 - R1*(b-1)*(b^2 + 4*b + 11)*S^5 - R1^2*(b + 1)^2
+
+### Solver:
+solve.S4M311.Case2 = function(R, b, debug=TRUE, all.rotated=FALSE) {
+	coeff = c((b+1)*(b-1)^2, - R[1]*(b-1)*(b^2 + 4*b + 11), - R[1]^2*(b + 1)^2);
+	S = roots(coeff);
+	S = rootn(S, 5);
+	m = unity(5, all=TRUE);
+	if( ! all.rotated) S = sapply(S, function(S) S*m);
+	S = as.vector(S);
+	if(debug) print(S);
+	xy = 4*(b-1)*S^5 - 2*R[1]*(b+1);
+	xy = xy / (2*(b^2+4*b-5)*S^3);
+	xy.d = sqrt(S^2 - 4*xy + 0i);
+	x = (S + xy.d) / 2;
+	y = (S - xy.d) / 2;
+	sol = cbind(x1=x, x2=y, x3=x, x4=y);
+	if(all.rotated) {
+		sol = rotate.roots(sol, n=5);
+	} else sol = rbind(sol, sol[,c(2,1,2,1)]);
+	return(sol);
+}
+
+### Example:
+R = 2
+b = 3
+sol = solve.S4M311.Case2(R, b, all.rotated=TRUE);
+x1 = sol[,1]; x2 = sol[,2]; x3 = sol[,3]; x4 = sol[,4];
+
+
+### Test
+x1^5 + b*x2^3*x3*x4 # - R1
+x2^5 + b*x3^3*x4*x1 # - R1
+x3^5 + b*x4^3*x1*x2 # - R1
+x4^5 + b*x1^3*x2*x3 # - R1
+
+# sum(duplicated(round(sol, 8)))
+
+
+### Derivation:
+p1 = toPoly.pm("S^5 + b*x12*S^3 - 5*x12*S^3 - 3*b*x12^2*S + 5*x12^2*S - 2*R1");
+p2 = toPoly.pm("S^4 - b*x12*S^2 - 3*x12*S^2 + b*x12^2 + x12^2");
+pR = solve.pm(p1, p2, "x12");
+pR$Rez$coeff = - pR$Rez$coeff / gcd.vpm(pR$Rez)
+pR$Rez = sort.pm(pR$Rez, c(4,5,3), c("S","b"))
+str(pR)
+print.p(pR$Rez, "S")
+
+div.pm(toPoly.pm("b^4 + 4*b^3 + 10*b^2 - 4*b - 11"), toPoly.pm("b^2 - 1"), "b")
+(b^2 - 1)^2*S^10 - R1*(b^2-1)*(b^2 + 4*b + 11)*S^5 - R1^2*(b + 1)^3
 
 
 ##################
