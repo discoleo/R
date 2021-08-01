@@ -461,13 +461,76 @@ sort.pm = function(p, sort.coeff=1, xn=NULL) {
 	}
 	return(p[id,])
 }
-eval.pm = function(p, x) {
+eval.pm = function(p, x, progress=FALSE) {
 	pP = p[, - which(names(p) == "coeff")];
 	eval.p = function(id) {
 		idx = which(pP[id,] != 0);
 		prod(x[idx]^pP[id, idx], p$coeff[id]);
 	}
 	sum(sapply(seq(nrow(p)), eval.p))
+}
+eval.cpm = function(p, x, bits=120, tol=1E-12, progress=FALSE) {
+	# uses the Rmpfr package;
+	# currently assumes that only coeffs are big and
+	# have an impact on numeric stability;
+	pP = p[, - which(names(p) == "coeff")];
+	# pow = lapply(seq(ncol(pP)), function(nc) sort(unique(pP[,nc])));
+	# currently only max:
+	pow = lapply(seq(ncol(pP)), function(nc) max(pP[,nc]));
+	xpows = lapply(seq(length(x)), function(id) {
+		x0 = x[id];
+		len = tail(pow[[id]], 1);
+		if(is.complex(x0) && Im(x0) != 0) {
+			# TODO: explore polar coordinates;
+			x = x0^seq(len);
+			re = Re(x); im = Im(x);
+			div = 1;
+			re = mpfr(re * div, bits);
+			im = mpfr(im * div, bits);
+			return(cbind(Re=re, Im=im, Div=div));
+		} else {
+			x0 = mpfr(Re(x0), bits);
+			x = x0^seq(len); # power 0 NOT needed;
+			if(x0 == 0) {
+				return(cbind(Re=x, Im=0, Div=1));
+			} else {
+				div = 1; # 12 - round(log(abs(x)) / log(10));
+				return(cbind(Re=x, Im=0, Div=div));
+			}
+		}
+	})
+	if(progress) cat("Processing row:\n");
+	eval.p = function(id) {
+		if(progress && id %% 16 == 1) cat(paste0(id, if(id %% 64 == 1) "\n" else ", "));
+		idx = which(pP[id,] != 0);
+		xpows = xpows[idx]; lenv = length(idx);
+		re = mpfr2array(sapply(seq(lenv), function(id2) xpows[[id2]][pP[id, idx[id2]], 1]), lenv);
+		im = mpfr2array(sapply(seq(lenv), function(id2) xpows[[id2]][pP[id, idx[id2]], 2]), lenv);
+		if(length(re) > 0) {
+		while(TRUE) {
+			len = length(re);
+			if(len == 1) break;
+			iend = (len %% 2);
+			i  = seq(1, len - iend, by=2);
+			re1 = re[i] * re[i+1] - im[i] * im[i+1];
+			im1 = re[i] * im[i+1] + im[i] * re[i+1];
+			if(iend > 0) {
+				re.last = re[len]; im.last = im[len];
+				re2 = re1[1] * re.last - im1[1] * im.last;
+				im2 = re1[1] * im.last + im1[1] * re.last;
+				re1[1] = re2; im1[1] = im2;
+			}
+			re = re1; im = im1;
+		}
+		} else {re = 1; im = 0;}
+		re = re * p$coeff[id]; im = im * p$coeff[id];
+		sol = mpfr2array(c(Re=re, Im=im, Div=1), c(3));
+		return(sol);
+	}
+	sol = sapply(seq(nrow(p)), eval.p);
+	sdim = attr(sol, "dim"); sol = mpfr2array(t(sol), rev(sdim));
+	sol = apply(sol, 2, sum);
+	return(sol);
 }
 div.pm = function(p1, p2, by="x", debug=TRUE) {
 	# very simple division
