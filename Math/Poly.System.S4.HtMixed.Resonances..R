@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric S4:
 ### Mixed Type with Resonances
 ###
-### draft v.0.1e-sol-p3
+### draft v.0.1e-sol-p4
 
 
 ### Heterogeneous Symmetric
@@ -27,7 +27,7 @@
 ###############
 
 
-### draft v.0.1e - v.0.1e-sol-p3:
+### draft v.0.1e - v.0.1e-sol-p4:
 # - partial solution for:
 #   x1^5 + b*x2^3*x3*x4 = R1;
 # - Case: x1 = x3, x2 = x4 & distinct roots derived through entanglement;
@@ -523,6 +523,28 @@ B^2*(B^4 - b^2*E4*B^2 - 5*E4*B^2 + 3*b^2*E4^2 + 5*E4^2)^2 +
 	- R1^2*(S^5 - 5*E2*S^3 + 5*E3*S^2 + 5*E2^2*S - 5*E4*S - 5*E2*E3 - 2*R1)^2 # = 0
 ### Eq S2:
 # TODO
+
+p1 = toPoly.pm("E2^2 + 2*E4 - 2*E3*S + 2*E4 - A22");
+p2 = toPoly.pm("B^4 - b^2*E4*B^2 - 5*E4*B^2 + 3*b^2*E4^2 + 5*E4^2");
+p3 = toPoly.pm("S^5 - 5*E2*S^3 + 5*E3*S^2 + 5*E2^2*S - 5*E4*S - 5*E2*E3 - 2*R1");
+p3$R1 = p3$R1 + 1;
+p2 = replace.pm(p2, toPoly.pm("E2^2 + 2*E4 - 2*E3*S + 2*E4 - A22"), "B", 2);
+pA = toPoly.pm("S^8 - 8*E2*S^6 + 8*E3*S^5 + 20*E2^2*S^4 - 8*E4*S^4 - 32*E2*E3*S^3 - 16*E2^3*S^2 + 12*E3^2*S^2 +
+	+ 24*E2*E4*S^2 + 24*E2^2*E3*S - 16*E3*E4*S + 2*E2^4 - 8*E2*E3^2 - 8*E2^2*E4 + 4*E4^2 +
+	- R1*S^3 + 3*R1*E2*S - 3*R1*E3"); # b*E4*pA !!!
+pA$coeff = - pA$coeff;
+#
+pR = mult.pm(p1, pow.pm(p2, 2));
+pR = diff.pm(pR, pow.pm(p3, 2));
+id = 7
+eval.pm(pR, c(A22[id], E4[id], S[id], E3[id], E2[id], b[1], R1))
+print.p(pR, "S")
+pR = replace.fr.pm(pR, pA, data.frame(b=1,E4=1,coeff=1), "A22", pow=1)
+str(pR) # 5436 monomials;
+pR = sort.pm(pR, c(4,5,6), c("E4","E3", "S"))
+id = 8
+eval.pm(pR, c(E3[id], R1, S[id], E2[id], E4[id], b[1]))
+# TODO: check!
 
 
 ### E231
