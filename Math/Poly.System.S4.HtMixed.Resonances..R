@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric S4:
 ### Mixed Type with Resonances
 ###
-### draft v.0.1e-sol-p2
+### draft v.0.1e-sol-p3
 
 
 ### Heterogeneous Symmetric
@@ -27,7 +27,7 @@
 ###############
 
 
-### draft v.0.1e - v.0.1e-sol-p2:
+### draft v.0.1e - v.0.1e-sol-p3:
 # - partial solution for:
 #   x1^5 + b*x2^3*x3*x4 = R1;
 # - Case: x1 = x3, x2 = x4 & distinct roots derived through entanglement;
@@ -508,6 +508,23 @@ E321 = x1^3*x2^2*x3 + x2^3*x3^2*x4 + x3^3*x4^2*x1 + x4^3*x1^2*x2;
 (x1*x3^5 + x2*x4^5 + x3*x1^5 + x4*x2^5) + b*E321 - R1*S # = 0
 # can extract sum(x1*x3^5) = f(E321);
 
+
+### Eq S2:
+# b*x2^3*x3*x4 = R1 - x1^5 => |
+# b*x4^3*x1*x2 = R1 - x3^5 => | Prod =>
+b^2*E4*x2^3*x4^3 - x1^5*x3^5 + R1*(x1^5 + x3^5) - R1^2 # = 0
+### Sum =>
+b^2*E4*(x2^3*x4^3 + x1^3*x3^3) - (x1^5*x3^5 + x2^5*x4^5) + R1*(x1^5 + x2^5 + x3^5 + x4^5) - 2*R1^2 # = 0
+b^2*E4*(B^3 - 3*E4*B) - (B^5 - 5*E4*B^3 + 5*E4^2*B) +
+	+ R1*(S^5 - 5*E2*S^3 + 5*E3*S^2 + 5*E2^2*S - 5*E4*S - 5*E2*E3) - 2*R1^2 # = 0
+B^2*(B^4 - b^2*E4*B^2 - 5*E4*B^2 + 3*b^2*E4^2 + 5*E4^2)^2 +
+	- R1^2*(S^5 - 5*E2*S^3 + 5*E3*S^2 + 5*E2^2*S - 5*E4*S - 5*E2*E3 - 2*R1)^2 # = 0
+(E2^2 + 2*E4 - 2*E3*S + 2*E4 - A22)*(B^4 - b^2*E4*B^2 - 5*E4*B^2 + 3*b^2*E4^2 + 5*E4^2)^2 +
+	- R1^2*(S^5 - 5*E2*S^3 + 5*E3*S^2 + 5*E2^2*S - 5*E4*S - 5*E2*E3 - 2*R1)^2 # = 0
+### Eq S2:
+# TODO
+
+
 ### E231
 E231 = x1^2*x2^3*x3 + x2^2*x3^3*x4 + x3^2*x4^3*x1 + x4^2*x1^3*x2;
 # b*x4^3*x1*x2 = R1 - x3^5 => Sum(Prod) =>
@@ -591,8 +608,11 @@ pR = sum.lpm(list(p1, p2, p3, p4));
 
 ### Sum(x2*x3*x4^3*...) =>
 E113 = x1*x2*x3^3 + x2*x3*x4^3 + x3*x4*x1^3 + x4*x1*x2^3;
-E4*(x1^4*x4^2 + x2^4*x1^2 + x3^4*x2^2 + x4^4*x3^2) +
-	+ b*((E3^2 - 2*E2*E4)*(B^2 - 2*E4) - E4^2*(S^2-2*E2)) - R1*E113 # = 0
+E4*(x1^4*x4^2 + x2^4*x1^2 + x3^4*x2^2 + x4^4*x3^2) + b*E424 - R1*E113 # = 0
+E4*E24 + b*E424 - R1*E113 # = 0
+E4*E24 + b*((E3^2 - 2*E2*E4)*(E2^2 + 2*E4 - 2*E3*S - A22) - E4^2*S^2 + 2*E2*E4^2) - R1*E113 # = 0
+E4*E24 + b*(4*E2*E3*E4*S - 2*E2*E4^2 - E4^2*S^2 - 2*E4*E2^3 + 2*E4*E3^2 - 2*E3^3*S + E2^2*E3^2) +
+	- b*(E3^2 - 2*E2*E4)*A22 - R1*E113 # = 0
 E4*E24 +
 	+ b*((E3^2 - 2*E2*E4)*(B^2 - 2*E4) - E4^2*(S^2-2*E2)) - R1*E113 # = 0
 # E113 = f(E24);
@@ -667,6 +687,8 @@ R = 2
 b = 3
 sol = solve.S4M311.Case2(R, b, all.rotated=TRUE);
 x1 = sol[,1]; x2 = sol[,2]; x3 = sol[,3]; x4 = sol[,4];
+E = calc.E(sol);
+S = E[,1]; E2 = E[,2]; E3 = E[,3]; E4 = E[,4];
 
 
 ### Test
