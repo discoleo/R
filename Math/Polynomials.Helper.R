@@ -481,31 +481,50 @@ sort.pm = function(p, sort.coeff=1, xn=NULL) {
 	return(p[id,])
 }
 eval.pm = function(p, x, progress=FALSE) {
-	pP = p[, - which(names(p) == "coeff")];
+	pP = p[, - which(names(p) == "coeff"), drop=FALSE];
 	eval.p = function(id) {
 		idx = which(pP[id,] != 0);
 		prod(x[idx]^pP[id, idx], p$coeff[id]);
 	}
 	sum(sapply(seq(nrow(p)), eval.p))
 }
-eval.cpm = function(p, x, bits=120, tol=1E-12, progress=FALSE) {
+eval.cpm = function(p, x, bits=120, tol=1E-10, doPolar=TRUE, progress=FALSE) {
 	# uses the Rmpfr package;
 	# currently assumes that only coeffs are big and
 	# have an impact on numeric stability;
-	pP = p[, - which(names(p) == "coeff")];
+	pP = p[, - which(names(p) == "coeff"), drop=FALSE];
 	# pow = lapply(seq(ncol(pP)), function(nc) sort(unique(pP[,nc])));
 	# currently only max:
 	pow = lapply(seq(ncol(pP)), function(nc) max(pP[,nc]));
 	xpows = lapply(seq(length(x)), function(id) {
-		x0 = x[id];
+		x0 = round0(x[id], tol=tol);
 		len = tail(pow[[id]], 1);
 		if(is.complex(x0) && Im(x0) != 0) {
-			# TODO: explore polar coordinates;
-			x = x0^seq(len);
-			re = Re(x); im = Im(x);
 			div = 1;
-			re = mpfr(re * div, bits);
-			im = mpfr(im * div, bits);
+			# polar coordinates:
+			# - but less accuracy with certain complex numbers;
+			# - needed when r^max.pow overflows;
+			if(doPolar) {
+				re = mpfr(Re(x0), bits); im = mpfr(Im(x0), bits);
+				r = sqrt(re^2 + im^2);
+				pib = Const("pi", bits); pih = pib / 2;
+				# seems NO difference between asin & atan versions;
+				th  = asin(abs(im/r));
+				if(re == 0) {th = pih; if(im < 0) th = - th;}
+				else if(re < 0) {
+					th = pib + if(im > 0) - th else th;
+				} else if(im < 0) {
+					th = -th;
+				}
+				r  = r^seq(len);
+				th = th * seq(len);
+				re = r * cos(th); im = r * sin(th);
+			} else {
+				x = x0^seq(len);
+				re = Re(x); im = Im(x);
+				re = mpfr(re * div, bits);
+				im = mpfr(im * div, bits);
+			}
 			return(cbind(Re=re, Im=im, Div=div));
 		} else {
 			x0 = mpfr(Re(x0), bits);
@@ -520,7 +539,7 @@ eval.cpm = function(p, x, bits=120, tol=1E-12, progress=FALSE) {
 	})
 	if(progress) cat("Processing row:\n");
 	eval.p = function(id) {
-		if(progress && id %% 16 == 1) cat(paste0(id, if(id %% 64 == 1) "\n" else ", "));
+		if(progress && id %% 16 == 1) cat(paste0(id, if(id %% 96 == 1) "\n" else ", "));
 		idx = which(pP[id,] != 0);
 		xpows = xpows[idx]; lenv = length(idx);
 		re = mpfr2array(sapply(seq(lenv), function(id2) xpows[[id2]][pP[id, idx[id2]], 1]), lenv);
