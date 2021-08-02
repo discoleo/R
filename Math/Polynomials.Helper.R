@@ -249,6 +249,7 @@ reduce.pm = function(p) {
 	if(is.data.frame(p)) {
 		return(p[id, , drop=FALSE]);
 	}
+	# old list code: but still assumes equal length;
 	p = lapply(p, function(m) m[id]);
 	return(p);
 }
@@ -270,6 +271,7 @@ reduce.cpm = function(p, asBigNum=FALSE) {
 	return(p);
 }
 toDouble.pm = function(p, scale=1) {
+	# convert Big Integers to some sensible Double;
 	isZero = (p$coeff == 0);
 	div = min(abs(p$coeff[ ! isZero]));
 	div = div * scale;
@@ -290,9 +292,9 @@ toDouble.lpm = function(lp) {
 	return(lp);
 }
 ### Helper functions
-align.pm = function(p1, p2, align.names=TRUE) {
+align.pm = function(p1, p2, align.names=TRUE, doReduce=TRUE) {
 	# align columns of 2 data.frames for sum.pm();
-	p1 = reduce.pm(p1); p2 = reduce.pm(p2);
+	if(doReduce) {p1 = reduce.pm(p1); p2 = reduce.pm(p2);}
 	n1 = names(p1); n2 = names(p2);
 	### Coefficients
 	n1 = n1[ ! n1 %in% "coeff"];
@@ -328,10 +330,10 @@ align.pm = function(p1, p2, align.names=TRUE) {
 		list(p1=p1, p2=p2);
 	}
 }
-sum.pm = function(p1, p2) {
+sum.pm = function(p1, p2, doReduce=FALSE) {
 	if(is.data.frame(p1) && nrow(p1) == 0) return(reduce.pm(p2));
 	if(is.data.frame(p2) && nrow(p2) == 0) return(reduce.pm(p1));
-	l = align.pm(p1, p2);
+	l = align.pm(p1, p2, doReduce=doReduce); # no need to pre-reduce;
 	p1 = l[[1]]; p2 = l[[2]];
 	n1 = names(p1); n2 = names(p2);
 	### to DF
@@ -433,8 +435,13 @@ replace.fr.pm = function(p1, p2, p2fr, x, pow=1) {
 	}
 	p2m = c(tail(p2fr.pows, 1), p2.pows);
 	print("Starting cross-multiplication:");
+	pall = align.pm(p1, p2); # pre-align p1 & p2;
+	p1 = pall[[1]];
+	if(max.pow > 1) {
 	for(ipow in seq(1, max.pow - 1)) {
 		p2m[[ipow + 1]] = mult.pm(p2m[[ipow + 1]], p2fr.pows[[max.pow - ipow]]);
+		p2m[[ipow + 1]] = align.pm(p1, p2m[[ipow + 1]], doReduce=FALSE)[[2]];
+	}
 	}
 	print("Finished cross-multiplication!");
 	pR = data.frame();
