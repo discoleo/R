@@ -291,6 +291,14 @@ toDouble.lpm = function(lp) {
 	}
 	return(lp);
 }
+toBigz.pm = function(p) {
+	p$coeff = as.bigz(p$coeff);
+	return(p);
+}
+as.numeric.pm = function(p) {
+	p$coeff = as.numeric(p$coeff);
+	return(p);
+}
 ### Helper functions
 align.pm = function(p1, p2, align.names=TRUE, doReduce=TRUE) {
 	# align columns of 2 data.frames for sum.pm();
@@ -435,7 +443,8 @@ replace.fr.pm = function(p1, p2, p2fr, x, pow=1) {
 	}
 	p2m = c(tail(p2fr.pows, 1), p2.pows);
 	print("Starting cross-multiplication:");
-	pall = align.pm(p1, p2); # pre-align p1 & p2;
+	# pre-align p1 & p2: verify if useful?
+	pall = align.pm(p1, p2);
 	p1 = pall[[1]];
 	if(max.pow > 1) {
 	for(ipow in seq(1, max.pow - 1)) {
@@ -542,14 +551,6 @@ eval.cpm = function(p, x, bits=120, tol=1E-12, progress=FALSE) {
 	sdim = attr(sol, "dim"); sol = mpfr2array(t(sol), rev(sdim));
 	sol = apply(sol, 2, sum);
 	return(sol);
-}
-toBigz.pm = function(p) {
-	p$coeff = as.bigz(p$coeff);
-	return(p);
-}
-as.numeric.pm = function(p) {
-	p$coeff = as.numeric(p$coeff);
-	return(p);
 }
 ## === Div ===
 div.pm = function(p1, p2, by="x", debug=TRUE) {
@@ -677,6 +678,7 @@ gcd.exact.p = function(p1, p2, xn="x", asBigNum=TRUE, doGCD=TRUE) {
 		p1 = dp;
 	}
 }
+### Solve Variable
 solve.pm = function(p1, p2, xn, stop.at=NULL, simplify=TRUE, asBigNum=FALSE) {
 	max1 = max(p1[,xn]); max2 = max(p2[,xn]);
 	if(max1 == 0) stop("No variable!")
