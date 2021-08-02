@@ -431,14 +431,17 @@ replace.fr.pm = function(p1, p2, p2fr, x, pow=1) {
 		}
 		print("Finished Powers!");
 	}
+	p2m = c(tail(p2fr.pows, 1), p2.pows);
+	print("Starting cross-multiplication:");
+	for(ipow in seq(1, max.pow - 1)) {
+		p2m[[ipow + 1]] = mult.pm(p2m[[ipow + 1]], p2fr.pows[[max.pow - ipow]]);
+	}
+	print("Finished cross-multiplication!");
 	pR = data.frame();
 	for(nr in seq(nrow(p1))) {
 		ipow = rpow[nr];
-		lp = if(ipow == 0) list(p2fr.pows[[max.pow]])
-			else if(max.pow == ipow) list(p2.pows[[max.pow]])
-			else list(p2.pows[[ipow]], p2fr.pows[[max.pow - ipow]]);
-		lp = c(lp, list(p1[nr,]));
-		tmp = mult.all.pm(lp);
+		tmp = mult.pm(p2m[[ipow + 1]], p1[nr,]);
+		# TODO: separate sum
 		pR = sum.pm(pR, tmp);
 	};
 	return(reduce.var.pm(pR));
@@ -527,11 +530,21 @@ eval.cpm = function(p, x, bits=120, tol=1E-12, progress=FALSE) {
 		sol = mpfr2array(c(Re=re, Im=im, Div=1), c(3));
 		return(sol);
 	}
+	if(progress) cat("\n");
 	sol = sapply(seq(nrow(p)), eval.p);
 	sdim = attr(sol, "dim"); sol = mpfr2array(t(sol), rev(sdim));
 	sol = apply(sol, 2, sum);
 	return(sol);
 }
+toBigz.pm = function(p) {
+	p$coeff = as.bigz(p$coeff);
+	return(p);
+}
+as.numeric.pm = function(p) {
+	p$coeff = as.numeric(p$coeff);
+	return(p);
+}
+## === Div ===
 div.pm = function(p1, p2, by="x", debug=TRUE) {
 	# very simple division
 	xn = by[1];
