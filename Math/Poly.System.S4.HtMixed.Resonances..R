@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric S4:
 ### Mixed Type with Resonances
 ###
-### draft v.0.1e-sol-p5
+### draft v.0.1e-sol-p6
 
 
 ### Heterogeneous Symmetric
@@ -27,7 +27,7 @@
 ###############
 
 
-### draft v.0.1e - v.0.1e-sol-p5:
+### draft v.0.1e - v.0.1e-sol-p6:
 # - partial solution for:
 #   x1^5 + b*x2^3*x3*x4 = R1;
 # - Case: x1 = x3, x2 = x4 & distinct roots derived through entanglement;
@@ -474,6 +474,7 @@ S^6 + 3*E3^2 - 12*E2*E3*S + 6*E3*S^3 - 2*E2^3 + 9*E2^2*S^2 - 6*E2*S^4 +
 	- 2*b*E2*E4 + 6*E2*E4 + b*E4*S^2 - 6*E4*S^2 - R1*S # = 0
 
 
+### Preparation for Eq S2:
 ### Sum(x1^3*...) =>
 (x1^8 + x2^8 + x3^8 + x4^8) + b*E4*(x1^2*x2^2+x2^2*x3^2+x3^2*x4^2+x4^2*x1^2) +
 	- R1*(x1^3 + x2^3 + x3^3 + x4^3) # = 0
@@ -488,20 +489,6 @@ A22 = E2^2 + 2*E4 - 2*E3*S - B^2 + 2*E4;
 (S^8 - 8*E2*S^6 + 8*E3*S^5 + 20*E2^2*S^4 - 8*E4*S^4 - 32*E2*E3*S^3 - 16*E2^3*S^2 + 12*E3^2*S^2 +
 	+ 24*E2*E4*S^2 + 24*E2^2*E3*S - 16*E3*E4*S + 2*E2^4 - 8*E2*E3^2 - 8*E2^2*E4 + 4*E4^2) +
 	+ b*E4*(E2^2 + 2*E4 - 2*E3*S - B^2 + 2*E4) - R1*(S^3 - 3*E2*S + 3*E3) # = 0
-
-### Sum(x1^2*...) =>
-(x1^7 + x2^7 + x3^7 + x4^7) + b*E4*(x1*x2^2+x2*x3^2+x3*x4^2+x4*x1^2) +
-	- R1*(x1^2 + x2^2 + x3^2 + x4^2) # = 0
-(S^7 - 7*E2*S^5 + 7*E3*S^4 + 14*E2^2*S^3 - 7*E4*S^3 - 21*E2*E3*S^2 - 7*E2^3*S + 7*E3^2*S + 14*E2*E4*S +
-	+ 7*E2^2*E3 - 7*E3*E4) + b*E4*(x1*x2^2+x2*x3^2+x3*x4^2+x4*x1^2) +
-	- R1*(S^2 - 2*E2) # = 0
-A12 = x1*x2^2+x2*x3^2+x3*x4^2+x4*x1^2;
-A21 = x2*x1^2+x3*x2^2+x4*x3^2+x1*x4^2;
-(S^7 - 7*E2*S^5 + 7*E3*S^4 + 14*E2^2*S^3 - 7*E4*S^3 - 21*E2*E3*S^2 - 7*E2^3*S + 7*E3^2*S + 14*E2*E4*S +
-	+ 7*E2^2*E3 - 7*E3*E4) + b*E4*A12 - R1*(S^2 - 2*E2) # = 0
-# A21 + A12 = A*S - 2*E3;
-# can compute A12 & A21;
-# can compute E143 from A12*A21;
 
 
 ### Sum(x3*...) =>
@@ -530,18 +517,18 @@ p2 = toPoly.pm("B^4 - b^2*E4*B^2 - 5*E4*B^2 + 3*b^2*E4^2 + 5*E4^2");
 p2 = replace.pm(p2, p1, "B", 2);
 p3 = toPoly.pm("S^5 - 5*E2*S^3 + 5*E3*S^2 + 5*E2^2*S - 5*E4*S - 5*E2*E3 - 2*R1");
 p3$R1 = p3$R1 + 1;
-pA = toPoly.pm("S^8 - 8*E2*S^6 + 8*E3*S^5 + 20*E2^2*S^4 - 8*E4*S^4 - 32*E2*E3*S^3 - 16*E2^3*S^2 + 12*E3^2*S^2 +
+pA22 = toPoly.pm("S^8 - 8*E2*S^6 + 8*E3*S^5 + 20*E2^2*S^4 - 8*E4*S^4 - 32*E2*E3*S^3 - 16*E2^3*S^2 + 12*E3^2*S^2 +
 	+ 24*E2*E4*S^2 + 24*E2^2*E3*S - 16*E3*E4*S + 2*E2^4 - 8*E2*E3^2 - 8*E2^2*E4 + 4*E4^2 +
-	- R1*S^3 + 3*R1*E2*S - 3*R1*E3"); # b*E4*pA !!!
-pA$coeff = - pA$coeff;
+	- R1*S^3 + 3*R1*E2*S - 3*R1*E3"); # b*E4*pA22 !!!
+pA22$coeff = - pA22$coeff;
 #
 pR = mult.pm(p1, pow.pm(p2, 2));
 pR = diff.pm(pR, pow.pm(p3, 2));
 id = 7
 eval.pm(pR, c(A22[id], E4[id], S[id], E3[id], E2[id], b[1], R1))
 print.p(pR, "S")
-# pR$coeff = as.bigz(pR$coeff); pA$coeff = as.bigz(pA$coeff);
-pR = replace.fr.pm(pR, pA, data.frame(b=1, E4=1, coeff=1), "A22", pow=1)
+# pR$coeff = as.bigz(pR$coeff); pA22$coeff = as.bigz(pA22$coeff);
+pR = replace.fr.pm(pR, pA22, data.frame(b=1, E4=1, coeff=1), "A22", pow=1)
 str(pR) # 5436 monomials;
 pR = sort.pm(pR, c(4,5,6,7), c("E4","E3", "S","b"))
 id = 8
@@ -575,6 +562,12 @@ b^2*E622 - (x1^10+x2^10+x3^10+x4^10) + 2*R1*(x1^5+x2^5+x3^5+x4^5) - 4*R1^2 # = 0
 ### Sum(x1^5*...) =>
 E42 = x1^2*x4^4 + x2^2*x1^4 + x3^2*x2^4 + x4^2*x3^4;
 (x1^10+x2^10+x3^10+x4^10) + b*E4*E42 - R1*(x1^5+x2^5+x3^5+x4^5) # = 0
+b*E4*E42  +
+	+ (S^10 - 10*E2*S^8 + 10*E3*S^7 + 35*E2^2*S^6 - 10*E4*S^6 - 60*E2*E3*S^5 - 50*E2^3*S^4 +
+	+ 25*E3^2*S^4 + 50*E2*E4*S^4 + 100*E2^2*E3*S^3 - 40*E3*E4*S^3 + 25*E2^4*S^2 +
+	- 60*E2*E3^2*S^2 - 60*E2^2*E4*S^2 + 15*E4^2*S^2 - 40*E2^3*E3*S + 10*E3^3*S +
+	+ 60*E2*E3*E4*S - 2*E2^5 + 15*E2^2*E3^2 + 10*E2^3*E4 - 10*E3^2*E4 - 10*E2*E4^2) +
+	- R1*(S^5 - 5*E2*S^3 + 5*E3*S^2 + 5*E2^2*S - 5*E4*S - 5*E2*E3) # = 0
 # can extract E42;
 
 ### Sum(x2^3*x3*x4*...) =>
@@ -617,9 +610,13 @@ b*E4*E42 + S^10 - 10*E2*S^8 + 10*E3*S^7 + 35*E2^2*S^6 - 10*E4*S^6 - 3*R1*S^5 +
 	+ 10*E3^3*S - 15*R1*E2^2*S - 40*E3*E2^3*S + 15*R1*E4*S + 60*E3*E2*E4*S + 4*R1^2 + 15*R1*E3*E2 +
 	+ 15*E3^2*E2^2 - 2*E2^5 - 10*E3^2*E4 + 10*E2^3*E4 - 10*E2*E4^2 +
 	+ 6*b^2*E4^2*B + 10*E4^2*B - 2*b^2*E4*B^3 - 10*E4*B^3 + 2*B^5
-# E42 is computable;
+# substituting E42 =>
+(2*R1*S^5 - 10*R1*E2*S^3 + 10*R1*E3*S^2 + 10*R1*E2^2*S - 10*R1*E4*S - 4*R1^2 - 10*R1*E3*E2)^2 +
+	- B^2*(6*b^2*E4^2 + 10*E4^2 - 2*b^2*E4*B^2 - 10*E4*B^2 + 2*B^4)^2
+###
 
-p1 = pow.pm(toPoly.pm("S^5 - 5*E2*S^3 + 5*E3*S^2 + 5*E2^2*S - 5*E4*S - 5*E2*E3 - 4*R1"), 2);
+p1 = toPoly.pm("S^5 - 5*E2*S^3 + 5*E3*S^2 + 5*E2^2*S - 5*E4*S - 5*E2*E3 - 4*R1");
+p1sq = pow.pm(p1, 2);
 p2 = toPoly.pm("- 5*E3*E4*S^3 + 5*E2*E3^2*S^2 + 5*E2^2*E4*S^2 + 5*E4^2*S^2 - 5*E2^3*E3*S - 5*E3^3*S - 5*E2*E3*E4*S +
 		+ E2^5 + 5*E2^2*E3^2 - 5*E2^3*E4 + 5*E3^2*E4 + 5*E2*E4^2 - B^5 + 5*E4*B^3 - 5*E4^2*B + 4*R1^2");
 p2$coeff = -2 * p2$coeff;
@@ -627,8 +624,26 @@ p3 = toPoly.pm("S^5 - 5*E2*S^3 + 5*E3*S^2 + 5*E2^2*S - 5*E4*S - 5*E2*E3");
 p3$R1 = 1; p3$coeff = 4 * p3$coeff;
 p4 = toPoly.pm("S^5 - 5*E2*S^3 + 5*E3*S^2 + 5*E2^2*S - 5*E4*S - 5*E2*E3 - 4*R1");
 p4$R1 = p4$R1 + 1;
-pR = sum.lpm(list(p1, p2, p3, p4));
-
+pR = sum.lpm(list(p1sq, p2, p3, p4));
+# 4*R1^2*(p1 + 2*R1)^2
+p1b = p1; p1b$coeff[p1b$R1 == 1] = -2; p1b = pow.pm(p1b, 2);
+p1b$coeff = 4* p1b$coeff; p1b$R1 = p1b$R1 + 2;
+pB = toPoly.pm("E2^2 + 2*E4 - 2*E3*S + 2*E4 - A22");
+p4 = toPoly.pm("6*b^2*E4^2 + 10*E4^2 - 2*b^2*E4*B^2 - 10*E4*B^2 + 2*B^4");
+p4 = replace.pm(p4, pB, "B", 2);
+p4 = pow.pm(p4, 2)
+pR = mult.pm(pB, p4);
+pR = diff.pm(p1b, pR);
+pR = sort.pm(pR, c(5,4), c("E4", "S"));
+### Test
+id = 76
+eval.pm(pR, c(R1, E3[id], E2[id], S[id], E4[id], A22[id], b[1]))
+# pA: see previous section;
+pR = replace.fr.pm(pR, pA, data.frame(b=1, E4=1, coeff=1), "A22", pow=1)
+str(pR) # same 5436 monomials;
+### Test
+id = 76
+eval.cpm(pR, c(b[1], E4[id], R1, E3[id], E2[id], S[id]), progress=T)
 
 
 ### E24 vs E42
@@ -645,6 +660,46 @@ A22*(S^2 - 2*E2) - 2*(E3^2 - 2*E2*E4) + (B^2 - 2*E4)*(S^2 - 2*E2) - E3^2 + 2*E2*
 	- E3^2 + 2*E2*E4 + 2*E3*S^3 - E2^2*S^2 - 2*E4*S^2 +
 	- 4*E2*E3*S + 2*E2^3 + E3^2 + 2*E2*E4 # = 0
 # 0 = 0
+
+
+### A12 & A21:
+### Sum(x1^2*...) =>
+A12 = x1*x2^2+x2*x3^2+x3*x4^2+x4*x1^2;
+A21 = x2*x1^2+x3*x2^2+x4*x3^2+x1*x4^2;
+(x1^7 + x2^7 + x3^7 + x4^7) + b*E4*(x1*x2^2+x2*x3^2+x3*x4^2+x4*x1^2) +
+	- R1*(x1^2 + x2^2 + x3^2 + x4^2) # = 0
+(S^7 - 7*E2*S^5 + 7*E3*S^4 + 14*E2^2*S^3 - 7*E4*S^3 - 21*E2*E3*S^2 - 7*E2^3*S + 7*E3^2*S + 14*E2*E4*S +
+	+ 7*E2^2*E3 - 7*E3*E4) + b*E4*(x1*x2^2+x2*x3^2+x3*x4^2+x4*x1^2) +
+	- R1*(S^2 - 2*E2) # = 0
+(S^7 - 7*E2*S^5 + 7*E3*S^4 + 14*E2^2*S^3 - 7*E4*S^3 - 21*E2*E3*S^2 - 7*E2^3*S + 7*E3^2*S + 14*E2*E4*S +
+	+ 7*E2^2*E3 - 7*E3*E4) + b*E4*A12 - R1*(S^2 - 2*E2) # = 0
+### A21:
+# A21 + A12 = A*S - 2*E3;
+A21 = A*S - 2*E3 - A12;
+# can compute A12 & A21;
+# can compute E143 from A12*A21;
+
+
+### from A21:
+A21 = x1^2*x2 + x2^2*x3 + x3^2*x4 + x4^2*x1;
+A21^2 - E42 - 2*E231 - 2*E4*B # = 0
+
+
+### pE42: b*E4*E42
+pS5  = Epoly.gen(5,4,1);
+pS5R = pS5; pS5R$R1 = 1;
+pE42 = diff.pm(Epoly.gen(10,4,1), pS5R);
+pE42$coeff = - pE42$coeff;
+### pA12: b*E4*A12
+pS2 = Epoly.gen(2,4,1); pS2$R1 = 1;
+pA12 = diff.pm(pS2, Epoly.gen(7,4,1));
+eval.pm(pA12, c(S[id], E2[id], R1, E3[id], E4[id])) - b*E4[id]*A12[id];
+# pA22: see previous sections;
+pA21 = toPoly.pm("A*S - 2*E3 - A12")
+pE4b = data.frame(b=1, E4=1, coeff=1);
+pA21 = replace.fr.pm(pA21, pA12, pE4b, "A12", 1);
+eval.pm(pA21, c(S[id], E2[id], R1, E3[id], E4[id], A[id], b[1])) - (b[1]*E4[id]) * A21[id]
+# TODO
 
 
 ### E24 * E42
@@ -755,6 +810,7 @@ x4^5 + b*x1^3*x2*x3 # - R1
 
 
 ### Derivation:
+### Case 2:
 p1 = toPoly.pm("S^5 + b*x12*S^3 - 5*x12*S^3 - 3*b*x12^2*S + 5*x12^2*S - 2*R1");
 p2 = toPoly.pm("S^4 - b*x12*S^2 - 3*x12*S^2 + b*x12^2 + x12^2");
 pR = solve.pm(p1, p2, "x12");
