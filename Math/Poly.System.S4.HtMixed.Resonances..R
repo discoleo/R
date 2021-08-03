@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric S4:
 ### Mixed Type with Resonances
 ###
-### draft v.0.1e-sol-p6
+### draft v.0.1f
 
 
 ### Heterogeneous Symmetric
@@ -27,6 +27,8 @@
 ###############
 
 
+### draft v.0.1f:
+# - generalization of solution: 1st ideas;
 ### draft v.0.1e - v.0.1e-sol-p6:
 # - partial solution for:
 #   x1^5 + b*x2^3*x3*x4 = R1;
@@ -683,6 +685,9 @@ A21 = A*S - 2*E3 - A12;
 ### from A21:
 A21 = x1^2*x2 + x2^2*x3 + x3^2*x4 + x4^2*x1;
 A21^2 - E42 - 2*E231 - 2*E4*B # = 0
+A^2*S^2 - 4*A*E3*S - 2*A*A12*S + 4*E3^2 + A12^2 + 4*A12*E3 - E42 - 2*E231 - 2*E4*B # = 0
+(A^2*S^2 + 4*E3^2 + A12^2 + 4*A12*E3 - E42 - 2*E231 - 2*E4*B)^2 +
+	- (4*E3*S + 2*A12*S)^2 * A^2 # = 0
 
 
 ### pE42: b*E4*E42
@@ -768,6 +773,7 @@ x1*x3*S*(x1+x3)^2 + x2*x4*S*(x2+x4)^2 - x1*x3*(x1+x3)^3 - x2*x4*(x2+x4)^3 +
 ### Note:
 # - sum(x1^n * x2^n) = is computable;
 # - sum(x1^(2*n) * x2^n * x3^(2*n)) = is computable;
+#   E3(n)*E2b(n) - E4^n*S(n);
 
 
 ### Solver:
@@ -821,6 +827,71 @@ print.p(pR$Rez, "S")
 
 div.pm(toPoly.pm("b^4 + 4*b^3 + 10*b^2 - 4*b - 11"), toPoly.pm("b^2 - 1"), "b")
 (b^2 - 1)^2*S^10 - R1*(b^2-1)*(b^2 + 4*b + 11)*S^5 - R1^2*(b + 1)^3
+
+
+######################
+
+######################
+### Generalization ###
+
+# x1^n + b*x2^k*x3*x4 = R1
+# x2^n + b*x3^k*x4*x1 = R1
+# x3^n + b*x4^k*x1*x2 = R1
+# x4^n + b*x1^k*x2*x3 = R1
+
+
+### Solution:
+
+### Case: all distinct
+Sn = function(n, x=sol) {
+	if(is.matrix(x)) {
+		apply(x, 1, function(x) sum(x^n));
+	} else sum(x^n);
+}
+E2a = function(n, x=sol) {
+	sumn = function(x) {xn = x^n; xnsh = c(tail(xn, -1), xn[1]); sum(xn * xnsh);}
+	if(is.matrix(x)) {
+		apply(x, 1, sumn);
+	} else {
+		sumn(x);
+	}
+}
+E2b = function(n, x=sol) {
+	sumn = function(x) {xn = x^n; sum(xn[1]*xn[3], xn[2]*xn[4]);}
+	if(is.matrix(x)) {
+		apply(x, 1, sumn);
+	} else {
+		sumn(x);
+	}
+}
+
+### Eq S1:
+### Sum(x1*...) =>
+Sn(n+1) + b*E4*Sn(k-1) - R1*S # = 0
+
+### Preparation Eq S2:
+
+### Sum(x1^k*...) =>
+Sn(n+k) + b*E4*E2a(k-1) - R1*Sn(k) # = 0 (Eq S-2a)
+
+### Tr Diff:
+# b*x2^k*x3*x4 = R1 - x1^n
+# b*x4^k*x1*x2 = R1 - x3^n
+### Prod =>
+b^2*E4*(x2*x4)^k - (x1*x3)^n + R1*(x1^n + x3^n) - R1^2 # = 0
+### Sum =>
+b^2*E4*E2b(k) - E2b(n) + R1*Sn(n) - 2*R1^2 # = 0 (Eq S-2b)
+
+### Eq S2:
+# - based on Eq S-2a & Eq S-2b;
+#   E2a(1) + E2b(1) = E2;
+# - the following terms have to be decomposed:
+#   E2a(k-1), E2b(n), E2b(k); (E2b is trivial)
+
+### Note:
+# E3(2*n, n, 2*n) = E3(n)*E2b(n) - E4^n*Sn(n);
+# E3(n, 2*n, n) * 2 = E2a(n)^2 + E2b(2*n) - E2(2*n) - 2*E4^n;
+
 
 
 ##################
