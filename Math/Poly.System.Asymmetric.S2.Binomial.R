@@ -7,7 +7,7 @@
 ### Asymmetric S2:
 ### Binomial Expansions
 ###
-### draft v.0.1c
+### draft v.0.1d
 
 
 ### Asymmetric Polynomial Systems: 2 Variables
@@ -22,6 +22,8 @@
 ###############
 
 
+### draft v.0.1d:
+# - Order 3 variant: 1st equation;
 ### draft v.0.1c:
 # - exact solution to Order 3 system;
 ### draft v.0.1b:
@@ -152,6 +154,48 @@ b11 = b[1]; b21 = b[2];
 x^3 + y^3 - 3*b11*K*x - 3*b21*K*y # = 2*K^2 + (b11^3 + b21^3)*K
 err = x*y*(x+y) - (b11 + 2*b21)*K*x - (2*b11 + b21)*K*y - 2*K^2 - b11*b21*(b11+b21)*K
 round0(err)
+
+
+#############
+### Variants:
+
+# A^3 - 3*c1*A - 2*d1 = 0
+# B^3 - 3*c2*B - 2*d2 = 0
+# x = A + B
+# y = A - B
+
+### System
+x^4 - y^4 - x*y*(x^2-y^2) - 3*(c1+3*c2)*(x^2-y^2) - 4*(d1+3*d2)*x + 4*(d1-3*d2)*y # = 0
+
+
+### Derivation:
+### x^3 + Y^3: [simple/redundant]
+x^3 + y^3 - 2*A^3 - 6*A*B^2 # = 0
+x^3 + y^3 - 2*(3*c1*A + 2*d1) - 6*A*B^2 # = 0
+4*x^3 + 4*y^3 - 12*c1*(x+y) - 16*d1 - 3*(x+y)*(x-y)^2 # = 0
+4*x^3 + 4*y^3 - 12*c1*(x+y) - 16*d1 - 3*(x+y)*(x^2 + y^2 - 2*x*y) # = 0
+x^3 + y^3 + 3*x*y*(x + y) - 12*c1*(x+y) - 16*d1 # = 0
+# variant:
+B*(x^3 + y^3) - 2*B*(3*c1*A + 2*d1) - 6*A*B^3 # = 0
+(x-y)*(x^3 + y^3) - (x-y)*(3*c1*(x+y) + 4*d1) - 3*(x+y)*(3*c2*(x-y) + 4*d2) # = 0
+x^4 - y^4 - x*y*(x^2-y^2) - 3*c1*(x^2-y^2) - 4*d1*(x-y) - 9*c2*(x^2-y^2) - 12*d2*(x+y) # = 0
+x^4 - y^4 - x*y*(x^2-y^2) - 3*(c1+3*c2)*(x^2-y^2) - 4*(d1+3*d2)*x + 4*(d1-3*d2)*y # = 0
+
+### Eq 2:
+# TODO
+
+
+### Examples
+c = c(1, 2)
+d  = c(2, 1)
+#
+c1 = c[1]; c2 = c[2]; d1 = d[1]; d2 = d[2];
+A = solve.Cardano(c[1], d[1], n=3)
+B = solve.Cardano(c[2], d[2], n=3)
+x = A + B; y = A - B;
+
+### Test
+
 
 
 #####################
