@@ -7,7 +7,7 @@
 ### Asymmetric S2:
 ### Binomial Expansions
 ###
-### draft v.0.1b
+### draft v.0.1c
 
 
 ### Asymmetric Polynomial Systems: 2 Variables
@@ -22,6 +22,8 @@
 ###############
 
 
+### draft v.0.1c:
+# - exact solution to Order 3 system;
 ### draft v.0.1b:
 # - Simple Order 5: Cardano-type;
 ### draft v.0.1a:
@@ -97,8 +99,21 @@ x*y*(x+y) - (b11 + 2*b21)*K*x - (2*b11 + b21)*K*y - 2*K^2 - b11*b21*(b11+b21)*K 
 
 
 ### Solver:
+solve.DP3 = function(K, b, all=TRUE) {
+	d.f = function(b) 4*K^2 + b^3*K / 2;
+	# can also use the direct formulas;
+	bs = b[1] + b[2];
+	S = solve.Cardano(2*bs*K, d.f(bs), n=3);
+	x = sapply(S, function(S) {
+		roots(c(-S, S^2 + (b[1] - b[2])*K, -2*K^2 - b[1]*b[2]*bs*K - (bs + b[1])*K*S))
+	})
+	S = rep(S, each=2);
+	y = S - x;
+	sol = cbind(x=as.vector(x), y=as.vector(y));
+	return(sol);
+}
 # simple variant of solver (non-robust);
-solve.DP3 = function(K, b, all=FALSE) {
+solve.DP3.old = function(K, b, all=FALSE) {
 	c.f = function(b) b*K;
 	d.f = function(b) (K^2 + b^3*K) / 2;
 	# can also use the direct formulas;
@@ -154,7 +169,7 @@ round0(err)
 
 ### System:
 # x^5 + y^5 - 5*b11*K*x^3 - 5*b21*K*y^3 + 5*b11^2*K^2*x + 5*b21^2*K^2*y = 2*K^4 + (b11^5 + b21^5)*K
-# 
+# Eq 2: see derivation;
 
 
 ### Derivation:
