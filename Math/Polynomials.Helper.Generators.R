@@ -6,7 +6,7 @@
 ### Helper Functions
 ### Polynomial Generators
 ###
-### draft v.0.1b
+### draft v.0.1b-v2
 
 
 ### Polynomial Generators
@@ -18,7 +18,7 @@
 ###############
 
 
-### draft v.0.1b:
+### draft v.0.1b - v.0.1b-v2:
 # - simple Generator for Class 1 polynomials;
 ### draft v.0.1a:
 # - moved Generators from file:
@@ -48,13 +48,14 @@ library(pracma)
 ### Simple Generator
 # - roots = sum(b * k^seq(n-1)), where k^n = K;
 # - accepts only numerical coefficients;
-class1.simple.gen = function(b, n=length(b), kn="K") {
-	if(n < length(b)) stop("Invalid length of root coefficients");
+class1.simple.gen = function(b, n=length(b), kn="K", add.top=TRUE) {
+	if(n < length(b)) warning("Invalid length of root coefficients");
+	rename = function(p, name) {names(p)[1] = name; return(p);}
 	nK = length(b);
 	pK = data.frame(k=seq(0, nK-1), coeff=b);
 	kn.lower = tolower(kn); # component of the root;
-	names(pK)[1] = kn.lower;
 	pK = pK[pK$coeff != 0,];
+	pK = rename(pK, kn.lower);
 	pR = pK; lR = list();
 	reduce.pow = function(p) {
 		p[,kn] = p[,kn.lower] %/% n;
@@ -73,20 +74,21 @@ class1.simple.gen = function(b, n=length(b), kn="K") {
 		pR = mult.pm(pR, pK);
 		pR = pR[pR$coeff !=0, ];
 	}
+	if(add.top) lR[[n]] = rename(data.frame(K=0, coeff=1), kn);
 	pR = reduce.pow(pR);
 	pR$coeff = - pR$coeff;
-	lR$b0 = pR; lR$n  = n;
+	lR$b0 = pR;
+	attr(lR, "n") = n;
 	return(lR);
 }
 toPoly.Class1S.pm = function(b, n=length(b), kn="K", xn="x") {
-	p = class1.simple.gen(b, n=n, kn=kn);
-	p$n = NULL;
+	p = class1.simple.gen(b, n=n, kn=kn, add.top=TRUE);
 	lp = lapply(seq(length(p)), function(id) {
-		if(is.data.frame(p[[id]])) cbind(p[[id]], x = if(id == n) 0 else id);
+		if(is.data.frame(p[[id]])) cbind(p[[id]], x = if(id == (n+1)) 0 else id);
 	});
 	pR = do.call(rbind, lp);
-	pxtop = data.frame(x=n, coeff=1); names(pxtop)[1] = xn;
-	pR = sum.pm(pR, pxtop);
+	# pxtop = data.frame(x=n, coeff=1); names(pxtop)[1] = xn;
+	# pR = sum.pm(pR, pxtop);
 	return(pR);
 }
 
@@ -152,4 +154,20 @@ extend.spm = function(p, n=2, vb="be", vR="R", vS="S", sort=TRUE) {
 	if(sort) p = sort.pm(p, c(4,3), xn=vS);
 	return(p);
 }
+
+
+
+######################
+######################
+
+### Tests
+
+### Class 1 Poly:
+b = c(0,1,-1,0,2)
+K = 2;
+p = toPoly.Class1S.pm(b, 5)
+r = sum((K^(1/5))^seq(4) * b[-1])
+
+print.p(p, "x")
+eval.pm(p, c(K, r));
 
