@@ -7,7 +7,7 @@
 ### Asymmetric S2:
 ### Binomial Expansions
 ###
-### draft v.0.1d
+### draft v.0.1d-Eq2
 
 
 ### Asymmetric Polynomial Systems: 2 Variables
@@ -22,8 +22,9 @@
 ###############
 
 
-### draft v.0.1d:
-# - Order 3 variant: 1st equation;
+### draft v.0.1d - v.0.1d-Eq2:
+# - Order 3 variant:
+#   1st equation & 2nd Eq;
 ### draft v.0.1c:
 # - exact solution to Order 3 system;
 ### draft v.0.1b:
@@ -166,12 +167,20 @@ round0(err)
 
 ### System
 x^4 - y^4 - x*y*(x^2-y^2) - 3*(c1+3*c2)*(x^2-y^2) - 4*(d1+3*d2)*x + 4*(d1-3*d2)*y # = 0
+x^4 - y^4 + x*y*(x^2-y^2) - 3*(3*c1+c2)*(x^2-y^2) - 4*(3*d1+d2)*x + 4*(3*d1-d2)*y # = 0
 
+
+### Solution:
+### Trivial solution
+# x = y = 0;
+### Non-trivial solution:
+# see above & Derivation;
 
 ### Derivation:
-### x^3 + Y^3: [simple/redundant]
+### Eq 1: x^3 + Y^3:
 x^3 + y^3 - 2*A^3 - 6*A*B^2 # = 0
 x^3 + y^3 - 2*(3*c1*A + 2*d1) - 6*A*B^2 # = 0
+# [simple/redundant]
 4*x^3 + 4*y^3 - 12*c1*(x+y) - 16*d1 - 3*(x+y)*(x-y)^2 # = 0
 4*x^3 + 4*y^3 - 12*c1*(x+y) - 16*d1 - 3*(x+y)*(x^2 + y^2 - 2*x*y) # = 0
 x^3 + y^3 + 3*x*y*(x + y) - 12*c1*(x+y) - 16*d1 # = 0
@@ -181,8 +190,14 @@ B*(x^3 + y^3) - 2*B*(3*c1*A + 2*d1) - 6*A*B^3 # = 0
 x^4 - y^4 - x*y*(x^2-y^2) - 3*c1*(x^2-y^2) - 4*d1*(x-y) - 9*c2*(x^2-y^2) - 12*d2*(x+y) # = 0
 x^4 - y^4 - x*y*(x^2-y^2) - 3*(c1+3*c2)*(x^2-y^2) - 4*(d1+3*d2)*x + 4*(d1-3*d2)*y # = 0
 
-### Eq 2:
-# TODO
+### Eq 2: x^3 - y^3
+x^3 - y^3 - 2*B^3 - 6*A^2*B # = 0
+x^3 - y^3 - 2*(3*c2*B + 2*d2) - 6*A^2*B # = 0
+A*(x^3 - y^3) - 2*A*(3*c2*B + 2*d2) - 6*A^3*B # = 0
+(x+y)*(x^3 - y^3) - 2*(x+y)*(3*c2*B + 2*d2) - 6*(3*c1*A + 2*d1)*(x-y) # = 0
+(x+y)*(x^3 - y^3) - 2*(x+y)*(3*c2*B + 2*d2) - 3*(3*c1*(x+y) + 4*d1)*(x-y) # = 0
+x^4 - y^4 + x*y*(x^2-y^2) - 9*c1*(x^2-y^2) - (x+y)*(3*c2*(x-y) + 4*d2) - 12*d1*(x-y) # = 0
+x^4 - y^4 + x*y*(x^2-y^2) - 3*(3*c1+c2)*(x^2-y^2) - 4*(3*d1+d2)*x + 4*(3*d1-d2)*y # = 0
 
 
 ### Examples
@@ -193,6 +208,10 @@ c1 = c[1]; c2 = c[2]; d1 = d[1]; d2 = d[2];
 A = solve.Cardano(c[1], d[1], n=3)
 B = solve.Cardano(c[2], d[2], n=3)
 x = A + B; y = A - B;
+### "all" roots
+sol = expand.grid(A, B);
+x = sol[,1] + sol[,2]; y = sol[,1] - sol[,2];
+
 
 ### Test
 
