@@ -34,7 +34,10 @@ round0.p = function(p, tol=1E-7) {
 
 ### Root
 rootn = function(r, n) {
-	if(n %% 2 == 0) return(r^(1/n)); # TODO: complex?
+	if(n %% 2 == 0) {
+		if(all(Im(r) == 0) && all(Re(r) >= 0)) return(Re(r)^(1/n));
+		return((r + 0i)^(1/n));
+	}
 	ifelse( (Im(r) == 0 & Re(r) < 0), - (-r)^(1/n), r^(1/n) )
 }
 unity = function(n=3, all=TRUE) {
