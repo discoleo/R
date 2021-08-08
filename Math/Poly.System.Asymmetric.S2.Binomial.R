@@ -7,7 +7,7 @@
 ### Asymmetric S2:
 ### Binomial Expansions
 ###
-### draft v.0.1d-Eq2
+### draft v.0.1d-var
 
 
 ### Asymmetric Polynomial Systems: 2 Variables
@@ -23,8 +23,9 @@
 
 
 ### draft v.0.1d - v.0.1d-Eq2:
-# - Order 3 variant:
-#   1st equation & 2nd Eq;
+# - Base Order 3 variants:
+#   1st equation & 2nd Eq; (v.0.1d - v.0.1d-Eq2)
+# - analysis of the variants; (v.0.1d-var)
 ### draft v.0.1c:
 # - exact solution to Order 3 system;
 ### draft v.0.1b:
@@ -165,9 +166,25 @@ round0(err)
 # x = A + B
 # y = A - B
 
+# Note:
+# - variants seem to be reducible;
+#   (at least for base-order 3)
+
 ### System
 x^4 - y^4 - x*y*(x^2-y^2) - 3*(c1+3*c2)*(x^2-y^2) - 4*(d1+3*d2)*x + 4*(d1-3*d2)*y # = 0
 x^4 - y^4 + x*y*(x^2-y^2) - 3*(3*c1+c2)*(x^2-y^2) - 4*(3*d1+d2)*x + 4*(3*d1-d2)*y # = 0
+
+### Transformed
+x^4 - y^4 - 6*(c1+c2)*(x^2-y^2) - 8*(d1+d2)*x + 8*(d1-d2)*y # = 0
+x*y*(x^2-y^2) - 3*(c1-c2)*(x^2-y^2) - 4*(d1-d2)*x + 4*(d1+d2)*y # = 0
+# Case: (x,y) != 0 => (x != y) =>
+x^3 + y^3 + 3*x*y*(x+y) - 12*c1*(x+y) - 16*d1 # = 0
+
+### Transformed: Variant
+x^4 - y^4 - 6*(c1+c2)*(x^2-y^2) - 8*(d1+d2)*x + 8*(d1-d2)*y # = 0
+x^3 + y^3 + 3*x*y*(x+y) + x*y*(x^2-y^2) - 3*(c1-c2)*(x^2-y^2) - 4*(d1-d2+3*c1)*x + 4*(d1+d2-3*c1)*y - 16*d1 # = 0
+# Sum(Eq 1 + 2*Eq 2) =>
+(x - y + 2)*(x^3 + y^3 + 3*x*y*(x+y) - 12*c1*(x+y) - 16*d1) # = 0
 
 
 ### Solution:
