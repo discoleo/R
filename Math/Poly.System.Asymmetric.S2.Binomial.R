@@ -7,7 +7,7 @@
 ### Asymmetric S2:
 ### Binomial Expansions
 ###
-### draft v.0.1d-var
+### draft v.0.1e
 
 
 ### Asymmetric Polynomial Systems: 2 Variables
@@ -22,6 +22,8 @@
 ###############
 
 
+### draft v.0.1e:
+# - Multiplicative entanglement;
 ### draft v.0.1d - v.0.1d-Eq2:
 # - Base Order 3 variants:
 #   1st equation & 2nd Eq; (v.0.1d - v.0.1d-Eq2)
@@ -161,6 +163,9 @@ round0(err)
 #############
 ### Variants:
 
+### non-Correlated Variants
+
+### Base
 # A^3 - 3*c1*A - 2*d1 = 0
 # B^3 - 3*c2*B - 2*d2 = 0
 # x = A + B
@@ -232,6 +237,48 @@ x = sol[,1] + sol[,2]; y = sol[,1] - sol[,2];
 
 ### Test
 
+
+##################
+
+### Multiplicative Variants
+
+### Base:
+# x = k^2 + b11*k
+# y = k^2 + b21*k
+# where k^3 = K;
+
+### System:
+x^3 + y^3 - 3*b11*K*x - 3*b21*K*y - (2*K^2 + (b11^3 + b21^3)*K) # = 0
+(b11+b21)*(x*y)^2 - K*((b11+b21)^2 + 2*b11*b21)*x*y +
+	- b11*K*(K + b21^3)*x - b21*K*(K + b11^3)*y # = 0
+
+
+### Prod =>
+# (x*y) = b11*b21*k^2 + K*k + (b11+b21)*K;
+# =>
+(x*y)^3 - 3*(b11+b21)*K*(x*y)^2 + 3*(b11+b21)^2*K^2*x*y - 3*b11*b21*K^2*x*y +
+	- K^4 + 3*b11*b21*(b11+b21)*K^3 - (b11+b21)^3*K^3 - (b11*b21)^3*K^2 # = 0
+(3*b11*K*x + K^2 + b11^3*K)*(3*b21*K*y + K^2 + b21^3*K) - 3*(b11+b21)*K*(x*y)^2 + 3*(b11+b21)^2*K^2*x*y - 3*b11*b21*K^2*x*y +
+	- K^4 + 3*b11*b21*(b11+b21)*K^3 - (b11+b21)^3*K^3 - (b11*b21)^3*K^2
+K*(3*b11*x + K + b11^3)*(3*b21*y + K + b21^3) - 3*(b11+b21)*(x*y)^2 + 3*(b11+b21)^2*K*x*y - 3*b11*b21*K*x*y +
+	- K^3 + 3*b11*b21*(b11+b21)*K^2 - (b11+b21)^3*K^2 - (b11*b21)^3*K
+K*(9*b11*b21*x*y + 3*b11*K*x + 3*b11*b21^3*x + 3*b21*K*y + 3*b21*b11^3*y + K^2 + (b11^3+b21^3)*K + b11^3*b21^3) +
+	- 3*(b11+b21)*(x*y)^2 + 3*((b11+b21)^2 - b11*b21)*K*x*y +
+	- K^3 + 3*b11*b21*(b11+b21)*K^2 - (b11+b21)^3*K^2 - (b11*b21)^3*K
+(b11+b21)*(x*y)^2 - ((b11+b21)^2 + 2*b11*b21)*K*x*y +
+	- b11*K*(K + b21^3)*x - b21*K*(K + b11^3)*y # = 0
+
+
+### Examples:
+
+### Ex 1:
+b = c(1,-2)
+K = 3
+#
+b11 = b[1]; b21 = b[2];
+k = rootn(K, 3);
+x = k^2 + b[1]*k;
+y = k^2 + b[2]*k;
 
 
 #####################
