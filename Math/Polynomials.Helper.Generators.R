@@ -5,6 +5,8 @@
 ###
 ### Helper Functions
 ### Polynomial Generators
+###
+### draft v.0.1b
 
 
 ### Polynomial Generators
@@ -16,6 +18,8 @@
 ###############
 
 
+### draft v.0.1b:
+# - simple Generator for Class 1 polynomials;
 ### draft v.0.1a:
 # - moved Generators from file:
 #   Polynomials.Helper.R;
@@ -37,6 +41,58 @@ library(pracma)
 ########################
 ########################
 
+###############
+### Class 1 ###
+###############
+
+### Simple Generator
+# - roots = sum(b * k^seq(n-1)), where k^n = K;
+# - accepts only numerical coefficients;
+class1.simple.gen = function(b, n=length(b), kn="K") {
+	if(n < length(b)) stop("Invalid length of root coefficients");
+	nK = length(b);
+	pK = data.frame(k=seq(0, nK-1), coeff=b);
+	kn.lower = tolower(kn); # component of the root;
+	names(pK)[1] = kn.lower;
+	pK = pK[pK$coeff != 0,];
+	pR = pK; lR = list();
+	reduce.pow = function(p) {
+		p[,kn] = p[,kn.lower] %/% n;
+		p = p[, - match(kn.lower, names(p))];
+		p = p[,c(2,1)];
+		return(p)
+	}
+	for(pow in seq(n-1)) {
+		pCoeff = pR[pR[, kn.lower] %% n == 0,];
+		if(nrow(pCoeff) > 0) {
+			pCoeff$coeff = -pCoeff$coeff * n / pow;
+			pR = add.pm(pR, pCoeff);
+			pCoeff = reduce.pow(pCoeff);
+			lR[[n - pow]] = pCoeff;
+		} else lR[[n - pow]] = 0;
+		pR = mult.pm(pR, pK);
+		pR = pR[pR$coeff !=0, ];
+	}
+	pR = reduce.pow(pR);
+	pR$coeff = - pR$coeff;
+	lR$b0 = pR; lR$n  = n;
+	return(lR);
+}
+toPoly.Class1S.pm = function(b, n=length(b), kn="K", xn="x") {
+	p = class1.simple.gen(b, n=n, kn=kn);
+	p$n = NULL;
+	lp = lapply(seq(length(p)), function(id) {
+		if(is.data.frame(p[[id]])) cbind(p[[id]], x = if(id == n) 0 else id);
+	});
+	pR = do.call(rbind, lp);
+	pxtop = data.frame(x=n, coeff=1); names(pxtop)[1] = xn;
+	pR = sum.pm(pR, pxtop);
+	return(pR);
+}
+
+
+#######################
+#######################
 
 ### Classic Polynomials
 bR.gen = function(pb, pR=1) data.frame(b = pb, R = pR, coeff = 1)
@@ -79,7 +135,9 @@ roots.derived = function(n, pow=seq(n-1), rn="r", sn="s", all.roots=TRUE) {
 }
 
 ### Extensions
+### Extensions to Eq S:
 extend.spm = function(p, n=2, vb="be", vR="R", vS="S", sort=TRUE) {
+	# R => (R - be[1]*S - be[2]*S^2);
 	pS = data.frame(R=0, S=seq(n), coeff=-1);
 	pS = rbind(pS, c(1,0,1));
 	names(pS)[1:2] = c(vR, vS);
