@@ -7,7 +7,7 @@
 ### Asymmetric S2:
 ### Binomial Expansions
 ###
-### draft v.0.1e
+### draft v.0.1f
 
 
 ### Asymmetric Polynomial Systems: 2 Variables
@@ -22,6 +22,8 @@
 ###############
 
 
+### draft v.0.1f:
+# - solver for the Order 5 / Simple system;
 ### draft v.0.1e:
 # - Multiplicative entanglement;
 ### draft v.0.1d - v.0.1d-Eq2:
@@ -29,7 +31,7 @@
 #   1st equation & 2nd Eq; (v.0.1d - v.0.1d-Eq2)
 # - analysis of the variants; (v.0.1d-var)
 ### draft v.0.1c:
-# - exact solution to Order 3 system;
+# - exact solution to the Order 3 system;
 ### draft v.0.1b:
 # - Simple Order 5: Cardano-type;
 ### draft v.0.1a:
@@ -313,7 +315,32 @@ x*y*(x^3 + y^3) + 2*x^2*y^2*(x+y) - (b11+2*b21)*K*x^3 - (2*b11+b21)*K*y^3 - 6*(b
 	+ (3*b11^2 + 4*b21^2 + 8*b11*b21)*K^2*x + (4*b11^2 + 3*b21^2 + 8*b11*b21)*K^2*y +
 	- 6*K^4 - b11*b21*((b11+b21)^2 - b11*b21)*(b11+b21)*K # = 0
 
-###
+### Solution:
+x*y*(S^3 - 3*x*y*S) + 2*x^2*y^2*S - (b11+2*b21)*K*x^3 - (2*b11+b21)*K*y^3 - 6*(b11+b21)*K*x*y*S +
+	+ (3*b11^2 + 4*b21^2 + 8*b11*b21)*K^2*x + (4*b11^2 + 3*b21^2 + 8*b11*b21)*K^2*y +
+	- 6*K^4 - b11*b21*((b11+b21)^2 - b11*b21)*(b11+b21)*K # = 0
+S*x^4 - (2*S^2 + (b11-b21)*K)*x^3 + (2*S^3 - 3*b21*K*S)*x^2 +
+	- S^4*x + (b11^2 - b21^2)*K^2*x + 3*b21*K*S^2*x +
+	- (4*b11^2 + 3*b21^2 + 8*b11*b21)*K^2*S +
+	+ 6*K^4 + b11*b21*((b11+b21)^2 - b11*b21)*(b11+b21)*K + (2*b11+b21)*K*S^3 # = 0
+
+
+### Solver:
+solve.DP5 = function(K, b) {
+	bs = b[1] + b[2]; bd = b[1] - b[2]; bp = b[1]*b[2];
+	S = solve.Cardano(c=2*bs*K, d=(16*K^4 + bs^5*K/2), n=5);
+	x = sapply(S, function(S) {
+		coeff = c(S, - (2*S^2 + bd*K), (2*S^3 - 3*b[2]*K*S),
+			- S^4 + bs*bd*K^2 + 3*b[2]*K*S^2,
+			- (b[1]^2 + 3*bs^2 + 2*bp)*K^2*S +
+				+ 6*K^4 + bp*(bs^2 - bp)*bs*K + (b[1]+bs)*K*S^3);
+			return(roots(coeff));
+	})
+	S = rep(S, each=4);
+	y = S - x;
+	sol = cbind(x = as.vector(x), y = as.vector(y));
+	return(sol);
+}
 test.DP5 = function(x, y, K, b) {
 	b11 = b[1]; b21 = b[2];
 	err1 = x^5 + y^5 - 5*b11*K*x^3 - 5*b21*K*y^3 + 5*b11^2*K^2*x + 5*b21^2*K^2*y - 2*K^4 - (b11^5 + b21^5)*K;
@@ -334,11 +361,36 @@ b11 = b[1]; b21 = b[2];
 k = rootn(K, n);
 x = k^4 + b[1]*k;
 y = k^4 + b[2]*k;
+S = x + y;
 ### concrete Example:
 x^5 + y^5 + 5*K*x^3 - 10*K*y^3 + 5*K^2*x + 20*K^2*y - 2*K^4 - 31*K # = 0
 x*y*(x^3 + y^3) + 2*x^2*y^2*(x+y) - 3*K*x^3 - 6*K*x*y*(x+y) + 3*K^2*x - 6*K^4 + 6*K # = 0
 
 
+### Ex 1:
+b = c(-1, 2)
+K = 3
+sol = solve.DP5(K, b);
+x = sol[,1]; y = sol[,2];
+
 ### Test
 test.DP5(x, y, K, b)
+
+
+### Classic Polynomial
+p1 = toPoly.pm("x^5 + y^5 + 5*K*x^3 - 10*K*y^3 + 5*K^2*x + 20*K^2*y - 2*K^4 - 31*K");
+p2 = toPoly.pm("x^4*y + x*y^4 + 2*x^3*y^2 + 2*x^2*y^3 - 3*K*x^3 - 6*K*x^2*y - 6*K*x*y^2 + 3*K^2*x - 6*K^4 + 6*K");
+# Big-Integers
+library(gmp)
+p1$coeff = as.bigz(p1$coeff);
+p2$coeff = as.bigz(p2$coeff);
+pR = solve.pm(p1, p2, "y", asBigNum=TRUE);
+str(pR) # pR$Rez = polynomial with 221 terms;
+max(pR$Rez$x) # the question to the universe!
+# Q: Are there also other roots?
+# Or: Are the remaining False-roots?
+# Solver: only 20 roots;
+
+
+round0.p(poly.calc(x) * (32*K^3 + 1))
 
