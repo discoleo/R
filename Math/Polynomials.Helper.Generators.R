@@ -6,7 +6,7 @@
 ### Helper Functions
 ### Polynomial Generators
 ###
-### draft v.0.1c
+### draft v.0.1c-v2
 
 
 ### Polynomial Generators
@@ -18,7 +18,7 @@
 ###############
 
 
-### draft v.0.1c:
+### draft v.0.1c - v.0.1c-v2:
 # - Generator for basic Class 2 polynomials;
 ### draft v.0.1b - v.0.1b-v2:
 # - simple Generator for Class 1 polynomials;
@@ -96,9 +96,10 @@ toPoly.Class1S.pm = function(b, n=length(b), kn="K", xn="x") {
 
 ### Class 2: Simple Type
 # - from roots of unity of Order (n+1);
-toPoly.Class2.pm = function(n, sn="s", xn="x", include.last=FALSE) {
+toPoly.Class2.pm = function(n, s.id=NULL, sn="s", xn="x", include.last=FALSE) {
 	# include.last = if s[n] should be removed (as it is redundant);
-	len = if(include.last) n else n-1;
+	# s.id = offers greater control;
+	len = if(include.last || ! is.null(s.id)) n else n-1;
 	sn = paste0(sn, seq(0, len));
 	ddf = as.data.frame(diag(len+1));
 	ddf = rbind(ddf, 0);
@@ -106,6 +107,14 @@ toPoly.Class2.pm = function(n, sn="s", xn="x", include.last=FALSE) {
 	ddf$m = 0; ddf$m[seq(2, len+1)] = seq(len);
 	ddf$x = 0; ddf$coeff = -1;
 	ddf$x[len+2] = 1; ddf$coeff[len+2] = 1;
+	if( ! is.null(s.id)) {
+		if(is.logical(s.id)) {
+			ddf = rbind(ddf[s.id,, drop=FALSE], ddf[len+2,, drop=FALSE]);
+		} else if(is.numeric(s.id)) {
+			ddf = ddf[c(s.id+1, len+2),];
+		} else stop("Unsupported indexes!");
+		ddf = reduce.var.pm(ddf);
+	}
 	#
 	pR = ddf;
 	for(pow in seq(2, n)) {
