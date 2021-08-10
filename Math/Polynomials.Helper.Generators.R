@@ -6,7 +6,7 @@
 ### Helper Functions
 ### Polynomial Generators
 ###
-### draft v.0.1b-v2
+### draft v.0.1c
 
 
 ### Polynomial Generators
@@ -18,6 +18,8 @@
 ###############
 
 
+### draft v.0.1c:
+# - Generator for basic Class 2 polynomials;
 ### draft v.0.1b - v.0.1b-v2:
 # - simple Generator for Class 1 polynomials;
 ### draft v.0.1a:
@@ -94,15 +96,16 @@ toPoly.Class1S.pm = function(b, n=length(b), kn="K", xn="x") {
 
 ### Class 2: Simple Type
 # - from roots of unity of Order (n+1);
-toPoly.Class2.pm = function(n, sn="s", xn="x") {
-	# TODO: decide if s[n] should be removed (as it is redundant);
-	sn = paste0(sn, seq(0, n));
-	ddf = as.data.frame(diag(n+1));
+toPoly.Class2.pm = function(n, sn="s", xn="x", include.last=FALSE) {
+	# include.last = if s[n] should be removed (as it is redundant);
+	len = if(include.last) n else n-1;
+	sn = paste0(sn, seq(0, len));
+	ddf = as.data.frame(diag(len+1));
 	ddf = rbind(ddf, 0);
 	names(ddf) = sn;
-	ddf$m = 0; ddf$m[seq(2, n+1)] = seq(n);
+	ddf$m = 0; ddf$m[seq(2, len+1)] = seq(len);
 	ddf$x = 0; ddf$coeff = -1;
-	ddf$x[n+2] = 1; ddf$coeff[n+2] = 1;
+	ddf$x[len+2] = 1; ddf$coeff[len+2] = 1;
 	#
 	pR = ddf;
 	for(pow in seq(2, n)) {
