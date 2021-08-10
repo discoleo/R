@@ -92,6 +92,45 @@ toPoly.Class1S.pm = function(b, n=length(b), kn="K", xn="x") {
 	return(pR);
 }
 
+### Class 2: Simple Type
+# - from roots of unity of Order (n+1);
+toPoly.Class2.pm = function(n, sn="s", xn="x") {
+	# TODO: decide if s[n] should be removed (as it is redundant);
+	sn = paste0(sn, seq(0, n));
+	ddf = as.data.frame(diag(n+1));
+	ddf = rbind(ddf, 0);
+	names(ddf) = sn;
+	ddf$m = 0; ddf$m[seq(2, n+1)] = seq(n);
+	ddf$x = 0; ddf$coeff = -1;
+	ddf$x[n+2] = 1; ddf$coeff[n+2] = 1;
+	#
+	pR = ddf;
+	for(pow in seq(2, n)) {
+		p2 = ddf;
+		p2$m = (pow * p2$m) %% (n+1);
+		pR = mult.pm(pR, p2);
+		pR$m = pR$m %% (n+1);
+	}
+	pR = aggregate0.pm(pR);
+	# reduce sum of unity;
+	pM = pR[pR$m == 1, ];
+	idm = match("m", names(pM));
+	for(nr in seq(nrow(pM))) {
+		pm1 = pM[nr, -idm];
+		pm1$coeff = - pm1$coeff;
+		pm1 = as.data.frame(sapply(pm1, function(x) rep(x, n+1)));
+		pm1$m = seq(0, n);
+		pR = rbind(pR, pm1); # faster
+		# pR = sum.pm(pR, pm1);
+	}
+	pR = aggregate0.pm(pR);
+	pR = pR[pR$coeff != 0, ];
+	if(all(pR$m == 0)) pR$m = NULL
+	else print("Error: Roots of unity should have canceled out!")
+	return(pR)
+}
+
+
 
 #######################
 #######################
