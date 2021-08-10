@@ -6,6 +6,10 @@
 ### Helper Functions
 
 
+### fast load:
+# source("Polynomials.Helper.R")
+
+
 #######################
 
 library(polynom)
@@ -825,6 +829,8 @@ dp.pm = function(p, xn="x") {
 perm.gen = function(x) {
 	len = length(x)
 	id = seq(len)
+	# What was the purpose ???
+	# id.m = outer(id, id, function(i, j) ((i-j) %% len + 1))
 	id.m = outer(id, id, function(i, j) ((i+j+1) %% len + 1))
 	p.m = x[id.m]
 	dim(p.m) = dim(id.m)
@@ -1105,21 +1111,6 @@ toMonom.pm = function(e, xsign = 1) {
 ### Tests ###
 #############
 
-### Multi-variable Multiplication
-
-# (x^3 + b1*x - R)^3
-p = list(
-	x = c(3,1,0),
-	b1 = c(0,1,0),
-	R = c(0,0,1),
-	coeff = c(1,1,-1)
-)
-
-### Test
-mult.pm(p)
-
-p.v = pow.pm(p, 3)
-p.v
-
-print.p(p.v[,c(2,3,4,1)])
+# - moved to file:
+#   Polynomials.Helper.Tests.R;
 
