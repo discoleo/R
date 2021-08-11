@@ -7,7 +7,7 @@
 ### Asymmetric S2:
 ### Binomial Expansions
 ###
-### draft v.0.2b-vars
+### draft v.0.2b-sol
 
 
 ### Asymmetric Polynomial Systems: 2 Variables
@@ -22,10 +22,11 @@
 ###############
 
 
-### draft v.0.2b-ht - v.0.2b-vars:
+### draft v.0.2b-ht - v.0.2b-sol:
 # - Ht-variant for Class 1 Order 3;
 # - some concrete & special cases; (v.0.2b-sp)
 # - Entangled variants: Ht & Diff-type; (v.0.2b-vars)
+# - more work on the solver; (v.0.2b-sol)
 ### draft v.0.2a:
 # - System derived from Class 2 polynomials;
 ### draft v.0.1f:
@@ -91,6 +92,7 @@ solve.Cardano = function(c, d, n=3) {
 ### Simple System:
 x^3 + y^3 - 3*b11*K*x - 3*b21*K*y - 2*K^2 - (b11^3 + b21^3)*K # = 0
 x*y*(x+y) - (b11 + 2*b21)*K*x - (2*b11 + b21)*K*y - 2*K^2 - b11*b21*(b11+b21)*K # = 0
+# - linked to the Binomial expansion of S^3, S = (x+y);
 
 ### Entangled Variants:
 
@@ -127,18 +129,47 @@ x*y*(x+y) - (b11 + 2*b21)*K*x - (2*b11 + b21)*K*y - 2*K^2 - b11*b21*(b11+b21)*K 
 
 
 ### Solver:
-solve.DP3 = function(K, b, all=TRUE) {
+solve.DP3 = function(K, b, type="Simple", all=TRUE) {
+	# parameter "all" = not used anymore;
 	d.f = function(b) 4*K^2 + b^3*K / 2;
 	# can also use the direct formulas;
 	bs = b[1] + b[2];
 	S = solve.Cardano(2*bs*K, d.f(bs), n=3);
-	x = sapply(S, function(S) {
-		roots(c(-S, S^2 + (b[1] - b[2])*K, -2*K^2 - b[1]*b[2]*bs*K - (bs + b[1])*K*S))
-	})
-	S = rep(S, each=2);
-	y = S - x;
+	type = pmatch(type, c("Simple", "Ht", "Diff"));
+	if(is.na(type)) stop("Type NOT supported!");
+	if(type == 1) {
+		x = sapply(S, function(S) {
+			roots(c(-S, S^2 + (b[1] - b[2])*K, -2*K^2 - b[1]*b[2]*bs*K - (bs + b[1])*K*S))
+		})
+		S = rep(S, each=2);
+		y = S - x;
+	} else if(type == 2) {
+		# TODO: correct solution?
+		if(FALSE) {
+			x = sapply(S, function(S) {
+				coeff = c(-3*S, 3*S^2 + 3*(b[1]-b[2])*K, S^3 + 3*b[2]*K*S - 12*bs*K*S - 14*K^2 - (bs^3 + 3*b[1]*b[2]*bs)*K);
+				roots(coeff);
+			})
+			S = rep(S, each=2);
+			y = S - x;
+		} else {
+			# only 3 of the roots!
+			m = unity(3, all=TRUE); k = rootn(K, 3);
+			x = (k*m)^2 + b[1]*k*m;
+			y = (k*m)^2 + b[2]*k*m; # direct, but only 3 roots;
+			# y = solve.y.HtP3(x, K, b); # all roots;
+		}
+	}
 	sol = cbind(x=as.vector(x), y=as.vector(y));
 	return(sol);
+}
+solve.y.HtP3 = function(x, K, b) {
+	bs = b[1] + b[2]; b11 = b[1]; b21 = b[2];
+	y0 = - 6*x^5 - 3*K*(7*bs - 8*b11)*x^3 - 3*K*(7*K + bs^3 - 3*b11^3 + 2*b21^3)*x^2 +
+		+ 18*bs*K^2*(bs + b11)*x +
+		+ 21*(bs + b11)*K^3 + 3*(2*bs^4 - bs^3*b21 - 2*bs*b21^3 + b21^4)*K^2;
+	div = - 6*x^4 + 9*K*(2*bs + b21)*x^2 - 3*K*(7*K + bs^3 - b21^3)*x - 9*K^2*(bs + b11)^2;
+	return(y0 / div);
 }
 # simple variant of solver (non-robust);
 solve.DP3.old = function(K, b, all=FALSE) {
@@ -168,6 +199,9 @@ round0(x^3 + y^3 - 3*K*x + 6*K*y - 2*K^2 + 7*K) # = 0
 round0(x*y*(x+y) + 3*K*x - 2*K^2 - 2*K) # = 0
 
 ### Ht-Variant / concrete:
+sol = solve.DP3(K, b, type="Ht");
+x = sol[,1]; y = sol[,2];
+#
 x^3 + 3*x*y*(x+y) + 6*K*(x+y) - 6*K*y - 7*K^2 - 7*K # = 0
 y^3 + 3*x*y*(x+y) + 6*K*(x+y) + 3*K*x - 7*K^2 + 2*K # = 0
 
