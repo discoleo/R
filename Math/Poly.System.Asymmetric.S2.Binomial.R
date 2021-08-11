@@ -7,7 +7,7 @@
 ### Asymmetric S2:
 ### Binomial Expansions
 ###
-### draft v.0.1f
+### draft v.0.2a
 
 
 ### Asymmetric Polynomial Systems: 2 Variables
@@ -22,6 +22,8 @@
 ###############
 
 
+### draft v.0.2a:
+# - System derived from Class 2 polynomials;
 ### draft v.0.1f:
 # - solver for the Order 5 / Simple system;
 ### draft v.0.1e:
@@ -393,4 +395,76 @@ max(pR$Rez$x) # the question to the universe!
 
 
 round0.p(poly.calc(x) * (32*K^3 + 1))
+
+
+#####################
+#####################
+
+#####################
+### Base: Class 2 ###
+#####################
+
+# Binomial expansions of Class 2 polynomials;
+
+###############
+### Order 4 ###
+###############
+
+### Base:
+# x = s2*m^2 + s1*m
+# y = s3*m^3 - s1*m
+# where m^5 = 1;
+
+### Simple System:
+# x^4 + y^4 = ...;
+# (x + y)^4 = ...;
+
+### Entangled Variant:
+# x^4 + 4*x*y*(x^2+y^2) + 6*x^2*y^2 = ...;
+# y^4 + 4*x*y*(x^2+y^2) + 6*x^2*y^2 = ...;
+
+
+### Solution:
+
+### Simple system:
+# Step 1: compute S = x + y;
+# Step 2:
+# - solve:
+#   x + y = S;
+#   the 1st Eq;
+
+
+### Examples:
+
+m = unity(5, all=FALSE);
+
+s = c(3, 2, -1)
+s1 = s[1]; s2 = s[2]; s3 = s[3];
+x = s2*m^2 + s1*m;
+y = s3*m^3 - s1*m;
+
+### Test
+### Eq 1:
+x^4 + (s1 + s2)*x^3 + (s1^2 + 2*s1*s2 + s2^2)*x^2 + (s1^3 + 3*s1^2*s2 - 2*s1*s2^2 + s2^3)*x +
+	+ s1^4 - s1^3*s2 + s1^2*s2^2 - s1*s2^3 + s2^4 +
+y^4 - (s1 - s3)*y^3 + (s1^2 - 2*s1*s3 + s3^2)*y^2 - (s1^3 + 2*s1^2*s3 + 3*s1*s3^2 - s3^3)*y +
+	+ s1^4 + s1^3*s3 + s1^2*s3^2 + s1*s3^3 + s3^4 # = 0
+### Eq 2:
+x^4 + y^4 + 4*x^3*y + 4*x*y^3 + 6*x^2*y^2 + 3*(s2+s3)*x*y*(x+y) + 2*(s2^2 - 3*s2*s3 + s3^2)*y*x +
+	+ (s2 + s3) * (x^3 + y^3) + (s2^2 - 3*s2*s3 + s3^2) * (x^2 + y^2) +
+	+ (s2^3 - 2*s2^2*s3 - 2*s2*s3^2 + s3^3) * (x + y) +
+	+ s2^4 + s3^4 - s2^3*s3 + s2^2*s3^2 - s2*s3^3 # = 0
+
+
+### Derivation:
+p1 = toPoly.Class2.pm(4, s.id=c(1,2));
+print.p(p1, "x")
+
+p2 = toPoly.Class2.pm(4, s.id=c(1,3), xn="y");
+p2 = replace.pm(p2, toPoly.pm("-s1"), "s1", 1);
+print.p(p2, "y")
+
+p3 = toPoly.Class2.pm(4, s.id=c(2,3));
+p3 = replace.pm(p3, toPoly.pm("x+y"), "x", 1);
+print.p(p3, "x")
 
