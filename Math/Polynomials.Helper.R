@@ -379,6 +379,15 @@ diff.lpm = function(p1, lp) {
 	return(p1);
 }
 replace.withVal.pm = function(p, x, pow=1, val, simplify=TRUE) {
+	if(length(val) > 1) {
+		len = length(val);
+		if(length(pow) == 1) pow = rep(pow, len);
+		if(length(x) == 1) {x = rep(x, len); warning("Same variable used!");}
+		for(i in seq(len)) {
+			p = replace.withVal.pm(p, x=x[i], pow=pow[i], val=val[i]);
+		}
+		return(p);
+	}
 	if(val == 0) {
 		if(pow != 1) {
 			warning("Only some terms will be replaced with 0!");
@@ -404,11 +413,11 @@ replace.withVal.pm = function(p, x, pow=1, val, simplify=TRUE) {
 replace.pm = function(p1, p2, x, pow=1) {
 	# replace x^pow by p2;
 	idx = match(x, names(p1));
-	if(is.na(idx)) {
+	if(any(is.na(idx))) {
 		warning(paste0("Polynomial does NOT contain variable: ", x));
 		return(p1);
 	}
-	if(is.numeric(p2)) return(replace.withVal.pm(p1, x=x, pow=pow, val=p2));
+	if(is.numeric(p2) || is.complex(p2)) return(replace.withVal.pm(p1, x=x, pow=pow, val=p2));
 	# xPow
 	rpow = if(pow == 1) p1[,idx] else p1[,idx] %/% pow;
 	p1[,idx] = if(pow == 1) 0 else p1[,idx] %% pow;
