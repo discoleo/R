@@ -7,7 +7,7 @@
 ### Asymmetric S2:
 ### Binomial Expansions
 ###
-### draft v.0.2b-ht
+### draft v.0.2b-sp
 
 
 ### Asymmetric Polynomial Systems: 2 Variables
@@ -22,8 +22,9 @@
 ###############
 
 
-### draft v.0.2b-ht:
+### draft v.0.2b-ht - v.0.2b-sp:
 # - Ht-variant for Class 1 Order 3;
+# - some concrete & special cases;
 ### draft v.0.2a:
 # - System derived from Class 2 polynomials;
 ### draft v.0.1f:
@@ -155,6 +156,10 @@ b11 = b[1]; b21 = b[2];
 round0(x^3 + y^3 - 3*K*x + 6*K*y - 2*K^2 + 7*K) # = 0
 round0(x*y*(x+y) + 3*K*x - 2*K^2 - 2*K) # = 0
 
+### Ht-Variant / concrete:
+x^3 + 3*x*y*(x+y) + 6*K*(x+y) - 6*K*y - 7*K^2 - 7*K # = 0
+y^3 + 3*x*y*(x+y) + 6*K*(x+y) + 3*K*x - 7*K^2 + 2*K # = 0
+
 
 ### Ex 2:
 b = c(-2,3)
@@ -262,6 +267,13 @@ x^3 + y^3 - 3*b11*K*x - 3*b21*K*y - (2*K^2 + (b11^3 + b21^3)*K) # = 0
 (b11+b21)*(x*y)^2 - K*((b11+b21)^2 + 2*b11*b21)*x*y +
 	- b11*K*(K + b21^3)*x - b21*K*(K + b11^3)*y # = 0
 
+### Special Case:
+# b21 = - b11
+x^3 + y^3 - 3*b11*K*x + 3*b11*K*y - 2*K^2 # = 0
+2*b11*x*y - (K - b11^3)*x + (K + b11^3)*y # = 0
+
+
+### Derivation:
 
 ### Prod =>
 # (x*y) = b11*b21*k^2 + K*k + (b11+b21)*K;
@@ -283,6 +295,16 @@ K*(9*b11*b21*x*y + 3*b11*K*x + 3*b11*b21^3*x + 3*b21*K*y + 3*b21*b11^3*y + K^2 +
 
 ### Ex 1:
 b = c(1,-2)
+K = 3
+#
+b11 = b[1]; b21 = b[2];
+k = rootn(K, 3);
+x = k^2 + b[1]*k;
+y = k^2 + b[2]*k;
+
+
+### Ex 2: Special case
+b = c(2,-2)
 K = 3
 #
 b11 = b[1]; b21 = b[2];
