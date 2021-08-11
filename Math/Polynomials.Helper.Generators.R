@@ -105,8 +105,8 @@ toPoly.Class2.pm = function(n, s.id=NULL, sn="s", xn="x", include.last=FALSE) {
 	ddf = rbind(ddf, 0);
 	names(ddf) = sn;
 	ddf$m = 0; ddf$m[seq(2, len+1)] = seq(len);
-	ddf$x = 0; ddf$coeff = -1;
-	ddf$x[len+2] = 1; ddf$coeff[len+2] = 1;
+	ddf[,xn] = 0; ddf$coeff = -1;
+	ddf[len+2, xn] = 1; ddf$coeff[len+2] = 1;
 	if( ! is.null(s.id)) {
 		if(is.logical(s.id)) {
 			ddf = rbind(ddf[s.id,, drop=FALSE], ddf[len+2,, drop=FALSE]);
