@@ -7,7 +7,7 @@
 ### Asymmetric S2:
 ### Binomial Expansions
 ###
-### draft v.0.2a
+### draft v.0.2b-ht
 
 
 ### Asymmetric Polynomial Systems: 2 Variables
@@ -22,6 +22,8 @@
 ###############
 
 
+### draft v.0.2b-ht:
+# - Ht-variant for Class 1 Order 3;
 ### draft v.0.2a:
 # - System derived from Class 2 polynomials;
 ### draft v.0.1f:
@@ -87,6 +89,10 @@ solve.Cardano = function(c, d, n=3) {
 ### System:
 # x^3 + y^3 - 3*b11*K*x - 3*b21*K*y = 2*K^2 + (b11^3 + b21^3)*K
 # x*y*(x+y) - (b11 + 2*b21)*K*x - (2*b11 + b21)*K*y = 2*K^2 + b11*b21*(b11+b21)*K
+
+### Ht-Variant:
+x^3 + 3*x*y*(x+y) - 6*(b11+b21)*K*(x+y) + 3*b21*K*y - 7*K^2 + b21^3*K - (b11+b21)^3*K # = 0
+y^3 + 3*x*y*(x+y) - 6*(b11+b21)*K*(x+y) + 3*b11*K*x - 7*K^2 + b11^3*K - (b11+b21)^3*K # = 0
 
 
 ### Derivation:
