@@ -26,7 +26,7 @@
 # - Ht-variant for Class 1 Order 3;
 # - some concrete & special cases; (v.0.2b-sp)
 # - Entangled variants: Ht & Diff-type; (v.0.2b-vars)
-# - more work on the solver; (v.0.2b-sol)
+# - more work on the Ht-solver; (v.0.2b-sol)
 ### draft v.0.2a:
 # - System derived from Class 2 polynomials;
 ### draft v.0.1f:
@@ -204,6 +204,16 @@ x = sol[,1]; y = sol[,2];
 #
 x^3 + 3*x*y*(x+y) + 6*K*(x+y) - 6*K*y - 7*K^2 - 7*K # = 0
 y^3 + 3*x*y*(x+y) + 6*K*(x+y) + 3*K*x - 7*K^2 + 2*K # = 0
+### Classic Poly:
+x = roots(c(28, 0, - 378, 558, 5103, - 11826, 2943, 0, - 381024, - 592704));
+y = solve.y.HtP3(x, K, b);
+round0.p(poly.calc(x[c(1:4, 6,7)]) * 28);
+
+
+p2  = toPoly.pm("y^3 + 3*x^2*y + 3*x*y^2 - 6*bs*K*x - 6*bs*K*y + 3*b11*K*x - 7*K^2 + b11^3*K - bs^3*K")
+p2s = p2
+p2s = replace.pm(p2s, c(b[1], b[1]+b[2], K), c("b11", "bs", "K"))
+p2s = shift.pm(p2s, c(x[5], y[5]), c("x", "y"))
 
 
 ### Ex 2:
