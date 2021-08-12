@@ -520,6 +520,7 @@ eval.pm = function(p, x, progress=FALSE) {
 	pP = p[, - which(names(p) == "coeff"), drop=FALSE];
 	eval.p = function(id) {
 		idx = which(pP[id,] != 0);
+		if(length(idx) == 0) return(p$coeff[id]);
 		prod(x[idx]^pP[id, idx], p$coeff[id]);
 	}
 	sum(sapply(seq(nrow(p)), eval.p))
