@@ -378,13 +378,33 @@ diff.lpm = function(p1, lp) {
 	}
 	return(p1);
 }
+shift.pm = function(p, val, x="x", tol=1E-10) {
+	len = length(val);
+	if(len > 1) {
+		if(length(x) == 1) {x = rep(x, len); warning("Same variable used!");}
+		for(i in seq(len)) {
+			p = shift.pm(p, val = val[i], x=x[i], tol=tol);
+		}
+		return(p);
+	}
+	x.new = paste0(x, "__sh");
+	new.x = function(x)	{
+		x.df = data.frame(x=1:0, x.new=0:1, coeff=1);
+		names(x.df)[1:2] = c(x, x.new);
+		return(x.df);
+	}
+	p = replace.pm(p, new.x(x), x, pow=1);
+	p = replace.pm(p, val, x=x.new, pow=1);
+	if( ! is.null(tol)) p$coeff = round0(p$coeff, tol=tol);
+	return(p);
+}
 replace.withVal.pm = function(p, x, pow=1, val, simplify=TRUE) {
 	if(length(val) > 1) {
 		len = length(val);
 		if(length(pow) == 1) pow = rep(pow, len);
 		if(length(x) == 1) {x = rep(x, len); warning("Same variable used!");}
 		for(i in seq(len)) {
-			p = replace.withVal.pm(p, x=x[i], pow=pow[i], val=val[i]);
+			p = replace.withVal.pm(p, x=x[i], pow=pow[i], val=val[i], simplify=simplify);
 		}
 		return(p);
 	}
