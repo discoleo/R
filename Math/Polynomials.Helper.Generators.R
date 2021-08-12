@@ -6,7 +6,7 @@
 ### Helper Functions
 ### Polynomial Generators
 ###
-### draft v.0.1c-v2
+### draft v.0.1c-v3
 
 
 ### Polynomial Generators
@@ -18,7 +18,7 @@
 ###############
 
 
-### draft v.0.1c - v.0.1c-v2:
+### draft v.0.1c - v.0.1c-v3:
 # - Generator for basic Class 2 polynomials;
 ### draft v.0.1b - v.0.1b-v2:
 # - simple Generator for Class 1 polynomials;
@@ -32,6 +32,9 @@
 
 ### helper functions
 
+### fast load:
+# source("Polynomials.Helper.R")
+
 library(polynom)
 library(pracma)
 
@@ -39,6 +42,43 @@ library(pracma)
 # Polynomials.Helper.R;
 # e.g. round0(), round0.p;
 
+reduce.unity.pm = function(p, n, mn="m") {
+	# reduce sum of unity;
+	# Note: m^n = 1;
+	pM = p[p[, mn] == 1, ];
+	idm = match(mn, names(pM));
+	for(nr in seq(nrow(pM))) {
+		pm1 = pM[nr, -idm];
+		pm1$coeff = - pm1$coeff;
+		pm1 = as.data.frame(sapply(pm1, function(x) rep(x, n)));
+		pm1[, mn] = seq(0, n-1);
+		p = rbind(p, pm1); # faster
+		# p = sum.pm(p, pm1);
+	}
+	p = aggregate0.pm(p);
+	p = p[p$coeff != 0, ];
+	return(p);
+}
+polypart.Class2.pm = function(n, s.id=NULL, sn="s", xn="x", mn="m") {
+	# r = x - s0 - s1*m - s2*m^2 - ...;
+	sn = paste0(sn, seq(0, n-1));
+	ddf = diag(n);
+	ddf = rbind(ddf, 0);
+	ddf = as.data.frame(ddf);
+	names(ddf) = sn;
+	ddf[, mn] = 0; ddf[seq(2, n), mn] = seq(n-1);
+	ddf[, xn] = 0; ddf$coeff = -1;
+	ddf[n+1, xn] = 1; ddf$coeff[n+1] = 1;
+	if( ! is.null(s.id)) {
+		if(is.logical(s.id)) {
+			ddf = rbind(ddf[s.id,, drop=FALSE], ddf[n+1,, drop=FALSE]);
+		} else if(is.numeric(s.id)) {
+			ddf = ddf[c(s.id+1, n+1),];
+		} else stop("Unsupported indexes!");
+		ddf = reduce.var.pm(ddf);
+	}
+	return(ddf);
+}
 
 ########################
 ########################
@@ -65,6 +105,7 @@ class1.simple.gen = function(b, n=length(b), kn="K", add.top=TRUE) {
 		p = p[,c(2,1)];
 		return(p)
 	}
+	# Horner-type Algorithm
 	for(pow in seq(n-1)) {
 		pCoeff = pR[pR[, kn.lower] %% n == 0,];
 		if(nrow(pCoeff) > 0) {
@@ -94,27 +135,19 @@ toPoly.Class1S.pm = function(b, n=length(b), kn="K", xn="x") {
 	return(pR);
 }
 
-### Class 2: Simple Type
+###############
+
+###############
+### Class 2 ###
+###############
+
+### Class 2: Basic Type
 # - from roots of unity of Order (n+1);
 toPoly.Class2.pm = function(n, s.id=NULL, sn="s", xn="x", include.last=FALSE) {
 	# include.last = if s[n] should be removed (as it is redundant);
 	# s.id = offers greater control;
 	len = if(include.last || ! is.null(s.id)) n else n-1;
-	sn = paste0(sn, seq(0, len));
-	ddf = as.data.frame(diag(len+1));
-	ddf = rbind(ddf, 0);
-	names(ddf) = sn;
-	ddf$m = 0; ddf$m[seq(2, len+1)] = seq(len);
-	ddf[,xn] = 0; ddf$coeff = -1;
-	ddf[len+2, xn] = 1; ddf$coeff[len+2] = 1;
-	if( ! is.null(s.id)) {
-		if(is.logical(s.id)) {
-			ddf = rbind(ddf[s.id,, drop=FALSE], ddf[len+2,, drop=FALSE]);
-		} else if(is.numeric(s.id)) {
-			ddf = ddf[c(s.id+1, len+2),];
-		} else stop("Unsupported indexes!");
-		ddf = reduce.var.pm(ddf);
-	}
+	ddf = polypart.Class2.pm(len, s.id=s.id, sn=sn, xn=xn, mn="m");
 	#
 	pR = ddf;
 	for(pow in seq(2, n)) {
@@ -125,18 +158,7 @@ toPoly.Class2.pm = function(n, s.id=NULL, sn="s", xn="x", include.last=FALSE) {
 	}
 	pR = aggregate0.pm(pR);
 	# reduce sum of unity;
-	pM = pR[pR$m == 1, ];
-	idm = match("m", names(pM));
-	for(nr in seq(nrow(pM))) {
-		pm1 = pM[nr, -idm];
-		pm1$coeff = - pm1$coeff;
-		pm1 = as.data.frame(sapply(pm1, function(x) rep(x, n+1)));
-		pm1$m = seq(0, n);
-		pR = rbind(pR, pm1); # faster
-		# pR = sum.pm(pR, pm1);
-	}
-	pR = aggregate0.pm(pR);
-	pR = pR[pR$coeff != 0, ];
+	pR = reduce.unity.pm(pR, n+1, "m")
 	if(all(pR$m == 0)) pR$m = NULL
 	else print("Error: Roots of unity should have canceled out!")
 	return(pR)
@@ -222,3 +244,44 @@ r = sum((K^(1/5))^seq(4) * b[-1])
 print.p(p, "x")
 eval.pm(p, c(K, r));
 
+
+#################
+
+### Class 2 Poly:
+
+### P[4]
+n = 5
+m = unity(n, all=FALSE)
+p = toPoly.Class2.pm(n-1)
+
+### Ex 1:
+s = c(1,2,3)
+p2 = replace.pm(p, s, paste0("s", 0:2))
+print.p(p2, "x")
+
+x = sum(s * m^(0:2))
+round0(eval.pm(p2, x))
+x^4 + x^3 + 16*x^2 - 4*x + 41
+
+### Ex 2:
+s = c(1,-3,3)
+p2 = replace.pm(p, s, paste0("s", 0:2))
+print.p(p2, "x")
+
+x = sum(s * m^(0:2))
+round0(eval.pm(p2, x))
+
+
+### P[6]
+n = 7
+m = unity(n, all=FALSE)
+pow = c(1,2,5)
+p = toPoly.Class2.pm(n-1, s.id=pow)
+
+### Ex 1:
+s = c(1,-2,3)
+p2 = replace.pm(p, s, paste0("s", pow))
+print.p(p2, "x")
+
+x = sum(s * m^pow)
+round0(eval.pm(p2, x))
