@@ -6,7 +6,7 @@
 ### Helper Functions
 ### Polynomial Generators
 ###
-### draft v.0.1c-v3
+### draft v.0.1d
 
 
 ### Polynomial Generators
@@ -18,6 +18,8 @@
 ###############
 
 
+### draft v.0.1d:
+# - Generator for Class 3 polynomials;
 ### draft v.0.1c - v.0.1c-v3:
 # - Generator for basic Class 2 polynomials;
 ### draft v.0.1b - v.0.1b-v2:
@@ -164,6 +166,32 @@ toPoly.Class2.pm = function(n, s.id=NULL, sn="s", xn="x", include.last=FALSE) {
 	return(pR)
 }
 
+### Class 3:
+toPoly.Class3.pm = function(n, s.id=NULL, sn="s", xn="x", include.last=FALSE) {
+	# include.last = if s[n+1] should be removed (as it is redundant);
+	# s.id = offers greater control;
+	ntot = 2*n + 1;
+	len = if(include.last || ! is.null(s.id)) n+1 else n;
+	ddf = polypart.Class2.pm(len, s.id=s.id, sn=sn, xn=xn, mn="m");
+	ddfinv = ddf[ c(-1, - nrow(ddf)),];
+	ddfinv$m = ntot - ddfinv$m;
+	ddf = rbind(ddf, ddfinv);
+	#
+	pR = ddf;
+	for(pow in seq(2, n)) {
+		p2 = ddf;
+		p2$m = (pow * p2$m) %% ntot;
+		pR = mult.pm(pR, p2);
+		pR$m = pR$m %% ntot;
+	}
+	pR = aggregate0.pm(pR);
+	# reduce sum of unity;
+	pR = reduce.unity.pm(pR, ntot, "m")
+	if(all(pR$m == 0)) pR$m = NULL
+	else print("Error: Roots of unity should have canceled out!")
+	return(pR)
+}
+
 
 
 #######################
@@ -285,3 +313,22 @@ print.p(p2, "x")
 
 x = sum(s * m^pow)
 round0(eval.pm(p2, x))
+
+
+##################
+
+### Class 3
+
+n = 3
+m = 2*cos(2*pi/(2*n+1) * seq(n));
+p = toPoly.Class3.pm(n)
+p
+
+### Ex 1:
+s = c(1,-2,3)
+p2 = replace.pm(p, s, paste0("s", 0:2))
+print.p(p2, "x")
+
+x = sum(s[1], s[-1] * m[-3])
+round0(eval.pm(p2, x))
+
