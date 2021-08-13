@@ -4,6 +4,11 @@
 
 ###################
 
+shift = function(x, by=1) {
+	x = c(tail(x, by), head(x, -by));
+	return(x);
+}
+
 ### TODO: p = matrix;
 urn.gen = function(n, p=1/2) {
 	# Equal Urns
@@ -58,7 +63,7 @@ swap.urn = function(urn, iter=10) {
 	for(i in seq(iter)) {
 		balls = sapply(seq(nall), function(idu) urn[[idu]][ids[idu, i]]);
 		# swap the balls
-		balls = c(tail(balls, 1), head(balls, -1));
+		balls = shift(balls, by=1);
 		# insert balls back
 		for(idu in seq(nall)) {
 			urn[[idu]][ids[idu, i]] = balls[idu];
