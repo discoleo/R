@@ -64,18 +64,19 @@ urn.simple = function(n, balls.cat) {
 	if(len == 1) {len = len + 1; n = c(n,n);}
 	if(missing(balls.cat)) {balls.cat = seq(0, len-1);}
 	else if(length(balls.cat) > len) warning("More categories than urns!");
-	b.uqcat = sort(unique(balls.cat)); # unique categories;
-	zero = rep(0, length(b.uqcat));
+	b.unqcat = sort(unique(balls.cat)); # unique categories;
+	zero = rep(0, length(b.unqcat));
 	#
-	urn = list();
+	urn = array(numeric(0), c(length(b.unqcat), len));
 	for(i in seq(len)) {
 		balls.count = zero;
-		balls.count[which(balls.cat[i] == b.uqcat)] = n[i];
-		urn[[i]] = balls.count;
+		balls.count[which(balls.cat[i] == b.unqcat)] = n[i];
+		urn[,i] = balls.count;
 	}
+	urn = t(urn);
 	class(urn) = c("urn.n", class(urn));
-	attr(urn, "cat") = b.uqcat;
-	attr(urn, "plen") = length(b.uqcat);
+	attr(urn, "cat") = b.unqcat;
+	attr(urn, "plen") = length(b.unqcat);
 	return(urn)
 }
 
