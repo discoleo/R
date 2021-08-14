@@ -43,6 +43,8 @@ rurn = function(n, p=1/2) {
 	return(urn)
 }
 rurn.simple = function(n, nbc) {
+	# Urns: each containing balls of same type;
+	# nbc = count with the types of balls;
 	len = length(n);
 	if(len == 1) {len = len + 1; n = c(n,n);}
 	if(missing(nbc)) nbc = seq(0, len-1);
@@ -52,6 +54,28 @@ rurn.simple = function(n, nbc) {
 	}
 	class(urn) = c("urn", class(urn));
 	attr(urn, "plen") = len;
+	return(urn)
+}
+### Non-random
+urn.simple = function(n, balls.cat) {
+	# Urns: each containing balls of same type;
+	# balls.cat = types of balls;
+	len = length(n);
+	if(len == 1) {len = len + 1; n = c(n,n);}
+	if(missing(balls.cat)) {balls.cat = seq(0, len-1);}
+	else if(length(balls.cat) > len) warning("More categories than urns!");
+	b.uqcat = sort(unique(balls.cat)); # unique categories;
+	zero = rep(0, length(b.uqcat));
+	#
+	urn = list();
+	for(i in seq(len)) {
+		balls.count = zero;
+		balls.count[which(balls.cat[i] == b.uqcat)] = n[i];
+		urn[[i]] = balls.count;
+	}
+	class(urn) = c("urn.n", class(urn));
+	attr(urn, "cat") = b.uqcat;
+	attr(urn, "plen") = length(b.uqcat);
 	return(urn)
 }
 
@@ -107,6 +131,11 @@ sapply(urn, mean)
 
 urn2 = swap.urn(urn, iter=100)
 sapply(urn2, mean)
+
+
+### Count-Urns:
+urn = urn.simple(c(20,10,10), c(3,3,1))
+urn
 
 
 ### TODO:
