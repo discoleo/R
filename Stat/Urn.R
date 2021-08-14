@@ -30,7 +30,7 @@ urn.simple = function(n, balls.cat) {
 		balls.count[which(balls.cat[i] == b.unqcat)] = n[i];
 		urn[,i] = balls.count;
 	}
-	urn = t(urn);
+	colnames(urn) = paste0("U", seq(len));
 	class(urn) = c("urn", class(urn));
 	attr(urn, "cat") = b.unqcat;
 	attr(urn, "plen") = length(b.unqcat);
@@ -93,6 +93,28 @@ rurn.simple = function(n, nbc) {
 
 ### Urn Processes
 
+swap.urn = function(urn, iter=10) {
+	len = ncol(urn);
+	n.cat = length(attr(urn, "cat")); # attr(urn, "plen");
+	b.cat = seq(n.cat);
+	
+	#
+	balls = seq(len);
+	for(i in seq(iter)) {
+		for(idu in seq(len)) {
+			balls[idu] = sample(b.cat, 1, prob=urn[,idu]);
+		}
+		balls2 = shift(balls, by=1);
+		for(idu in seq(len)) {
+			if(balls[idu] == balls2[idu]) next;
+			urn[balls[idu], idu] = urn[balls[idu], idu] - 1;
+			urn[balls2[idu], idu] = urn[balls2[idu], idu] + 1;
+		}
+	}
+	return(urn);
+}
+
+### [old] Explicit Urn
 swap.urnb = function(urn, iter=10) {
 	nall = length(urn);
 	n = sapply(urn, length);
@@ -118,6 +140,10 @@ swap.urnb = function(urn, iter=10) {
 ### Count-Urns:
 urn = urn.simple(c(20,10,10), c(3,3,1))
 urn
+
+urn2 = swap.urn(urn)
+urn2
+
 
 #################
 
