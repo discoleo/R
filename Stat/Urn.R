@@ -9,6 +9,37 @@ shift = function(x, by=1) {
 	return(x);
 }
 
+############
+### Urns ###
+############
+
+### Non-random Urns
+urn.simple = function(n, balls.cat) {
+	# Urns: each containing balls of same type;
+	# balls.cat = types of balls;
+	len = length(n);
+	if(len == 1) {len = len + 1; n = c(n,n);}
+	if(missing(balls.cat)) {balls.cat = seq(0, len-1);}
+	else if(length(balls.cat) > len) warning("More categories than urns!");
+	b.unqcat = sort(unique(balls.cat)); # unique categories;
+	zero = rep(0, length(b.unqcat));
+	#
+	urn = array(numeric(0), c(length(b.unqcat), len));
+	for(i in seq(len)) {
+		balls.count = zero;
+		balls.count[which(balls.cat[i] == b.unqcat)] = n[i];
+		urn[,i] = balls.count;
+	}
+	urn = t(urn);
+	class(urn) = c("urn.n", class(urn));
+	attr(urn, "cat") = b.unqcat;
+	attr(urn, "plen") = length(b.unqcat);
+	return(urn)
+}
+
+#################
+### Explicit Urns
+
 ### Random Urns
 
 ### TODO: p = matrix;
@@ -42,6 +73,7 @@ rurn = function(n, p=1/2) {
 	attr(urn, "plen") = plen;
 	return(urn)
 }
+### Non-random Urns
 rurn.simple = function(n, nbc) {
 	# Urns: each containing balls of same type;
 	# nbc = count with the types of balls;
@@ -56,30 +88,8 @@ rurn.simple = function(n, nbc) {
 	attr(urn, "plen") = len;
 	return(urn)
 }
-### Non-random
-urn.simple = function(n, balls.cat) {
-	# Urns: each containing balls of same type;
-	# balls.cat = types of balls;
-	len = length(n);
-	if(len == 1) {len = len + 1; n = c(n,n);}
-	if(missing(balls.cat)) {balls.cat = seq(0, len-1);}
-	else if(length(balls.cat) > len) warning("More categories than urns!");
-	b.unqcat = sort(unique(balls.cat)); # unique categories;
-	zero = rep(0, length(b.unqcat));
-	#
-	urn = array(numeric(0), c(length(b.unqcat), len));
-	for(i in seq(len)) {
-		balls.count = zero;
-		balls.count[which(balls.cat[i] == b.unqcat)] = n[i];
-		urn[,i] = balls.count;
-	}
-	urn = t(urn);
-	class(urn) = c("urn.n", class(urn));
-	attr(urn, "cat") = b.unqcat;
-	attr(urn, "plen") = length(b.unqcat);
-	return(urn)
-}
 
+### Urn Processes
 
 swap.urn = function(urn, iter=10) {
 	nall = length(urn);
@@ -101,6 +111,15 @@ swap.urn = function(urn, iter=10) {
 
 
 ###############
+
+### Count-Urns:
+urn = urn.simple(c(20,10,10), c(3,3,1))
+urn
+
+#################
+
+### [old]
+# - explicit urns;
 
 ### Ex: Eq urns
 urn = rurn(10)
@@ -132,12 +151,6 @@ sapply(urn, mean)
 
 urn2 = swap.urn(urn, iter=100)
 sapply(urn2, mean)
-
-
-### Count-Urns:
-urn = urn.simple(c(20,10,10), c(3,3,1))
-urn
-
 
 ### TODO:
 # - Mixing times;
