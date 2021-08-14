@@ -9,8 +9,10 @@ shift = function(x, by=1) {
 	return(x);
 }
 
+### Random Urns
+
 ### TODO: p = matrix;
-urn.gen = function(n, p=1/2) {
+rurn = function(n, p=1/2) {
 	# Equal Urns
 	# length(p) = categories of balls;
 	len = length(n);
@@ -40,7 +42,7 @@ urn.gen = function(n, p=1/2) {
 	attr(urn, "plen") = plen;
 	return(urn)
 }
-urn.simple.gen = function(n, nbc) {
+rurn.simple = function(n, nbc) {
 	len = length(n);
 	if(len == 1) {len = len + 1; n = c(n,n);}
 	if(missing(nbc)) nbc = seq(0, len-1);
@@ -76,7 +78,7 @@ swap.urn = function(urn, iter=10) {
 ###############
 
 ### Ex: Eq urns
-urn = urn.gen(10)
+urn = rurn(10)
 sapply(urn, mean)
 
 urn2 = swap.urn(urn)
@@ -84,7 +86,7 @@ sapply(urn2, mean)
 
 
 ### Ex: non-Eq urns
-urn = urn.gen(c(20, 10))
+urn = rurn(c(20, 10))
 sapply(urn, mean)
 
 urn2 = swap.urn(urn)
@@ -92,7 +94,7 @@ sapply(urn2, mean)
 
 
 ### Ex: non-Eq urns
-urn = urn.gen(c(30, 20, 10))
+urn = rurn(c(30, 20, 10))
 sapply(urn, mean)
 
 urn2 = swap.urn(urn)
@@ -100,7 +102,7 @@ sapply(urn2, mean)
 
 
 ### 1-Coloured Urns
-urn = urn.simple.gen(c(30, 20, 10))
+urn = rurn.simple(c(30, 20, 10))
 sapply(urn, mean)
 
 urn2 = swap.urn(urn, iter=100)
