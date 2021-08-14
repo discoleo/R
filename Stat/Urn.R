@@ -31,7 +31,7 @@ urn.simple = function(n, balls.cat) {
 		urn[,i] = balls.count;
 	}
 	urn = t(urn);
-	class(urn) = c("urn.n", class(urn));
+	class(urn) = c("urn", class(urn));
 	attr(urn, "cat") = b.unqcat;
 	attr(urn, "plen") = length(b.unqcat);
 	return(urn)
@@ -39,6 +39,8 @@ urn.simple = function(n, balls.cat) {
 
 #################
 ### Explicit Urns
+
+# - specific realization with balls; 
 
 ### Random Urns
 
@@ -69,7 +71,7 @@ rurn = function(n, p=1/2) {
 		balls = rep(seq(0, plen-1), ngr[[i]]);
 		urn[[i]] = sample(balls, n[i]);
 	}
-	class(urn) = c("urn", class(urn));
+	class(urn) = c("urnb", class(urn));
 	attr(urn, "plen") = plen;
 	return(urn)
 }
@@ -84,14 +86,14 @@ rurn.simple = function(n, nbc) {
 	for(i in seq(len)) {
 		urn[[i]] = rep(nbc[i], n[i]);
 	}
-	class(urn) = c("urn", class(urn));
+	class(urn) = c("urnb", class(urn));
 	attr(urn, "plen") = len;
 	return(urn)
 }
 
 ### Urn Processes
 
-swap.urn = function(urn, iter=10) {
+swap.urnb = function(urn, iter=10) {
 	nall = length(urn);
 	n = sapply(urn, length);
 	#
@@ -110,7 +112,8 @@ swap.urn = function(urn, iter=10) {
 }
 
 
-###############
+################
+################
 
 ### Count-Urns:
 urn = urn.simple(c(20,10,10), c(3,3,1))
@@ -125,7 +128,7 @@ urn
 urn = rurn(10)
 sapply(urn, mean)
 
-urn2 = swap.urn(urn)
+urn2 = swap.urnb(urn)
 sapply(urn2, mean)
 
 
@@ -133,7 +136,7 @@ sapply(urn2, mean)
 urn = rurn(c(20, 10))
 sapply(urn, mean)
 
-urn2 = swap.urn(urn)
+urn2 = swap.urnb(urn)
 sapply(urn2, mean)
 
 
@@ -141,7 +144,7 @@ sapply(urn2, mean)
 urn = rurn(c(30, 20, 10))
 sapply(urn, mean)
 
-urn2 = swap.urn(urn)
+urn2 = swap.urnb(urn)
 sapply(urn2, mean)
 
 
@@ -149,7 +152,7 @@ sapply(urn2, mean)
 urn = rurn.simple(c(30, 20, 10))
 sapply(urn, mean)
 
-urn2 = swap.urn(urn, iter=100)
+urn2 = swap.urnb(urn, iter=100)
 sapply(urn2, mean)
 
 ### TODO:
