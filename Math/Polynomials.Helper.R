@@ -875,26 +875,11 @@ sort.pm = function(p, xn=NULL, sort.coeff) {
 	}
 	s.df = cbind(s.df, to.df(2 + id0, pP, max));
 	s.df = cbind(s.df, to.df(3 + id0, pP, min));
-	s.df = cbind(s.df, to.df(4 + id0, pP, function(x) min(x[x != 0])));
-	s.df = cbind(s.df, to.df(5 + id0, p[, "coeff", drop=FALSE], function(x) {x;}));
+	s.df = cbind(s.df, to.df(4 + id0, pP, function(x) min(x[x != 0]) ));
+	s.df = cbind(s.df, to.df(5 + id0, p[, "coeff", drop=FALSE], function(x) - abs(x) ));
 	if( ! is.null(xn)) s.df = cbind(s.df, pP[, xn, drop=FALSE]);
 	s.df = s.df[, sort.coeff, drop=FALSE];
 	id = order.df(s.df, decreasing=TRUE);
-	#
-	# pow.tot = sapply(seq(nrow(p)), function(id) sum(pP[id, ]));
-	# pow.max = sapply(seq(nrow(p)), function(id) max(pP[id, ]));
-	# if(length(sort.coeff) == 1) {
-		# id = order(abs(p$coeff), pow.tot, pow.max);
-	# } else {
-		# coeff.df = data.frame(abs(p$coeff), -pow.tot, -pow.max);
-		# if( ! is.null(xn)) coeff.df = cbind(coeff.df, -pP[,xn]);
-		# if(length(sort.coeff) > 3 + length(xn)) {
-			# minimum power of Monome: may be 0;
-			# coeff.df$min = sapply(seq(nrow(p)), function(id) -min(pP[id, ]));
-		# }
-		# coeff.df = coeff.df[, sort.coeff];
-		# id = do.call(order, coeff.df);
-	# }
 	p = p[id,]; rownames(p) = seq(nrow(p));
 	return(p)
 }
