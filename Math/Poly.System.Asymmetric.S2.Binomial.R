@@ -14,7 +14,10 @@
 ### Binomial Expansions
 
 
-### Base: Class 1 Polynomials
+### Base Polynomials:
+# - Class 1 Polynomials
+# - Class 2 Polynomials
+# - Class 3 Polynomials
 
 
 ###############
@@ -50,11 +53,16 @@
 
 ### helper functions
 
+### fast load:
+# source("Polynomials.Helper.R")
+# source("Polynomials.Helper.Generators.R")
+
 library(polynom)
 library(pracma)
 
 # the functions are in the file:
 # Polynomials.Helper.R;
+# Polynomials.Helper.Generators.R;
 # e.g. round0(), round0.p;
 
 solve.Cardano = function(c, d, n=3) {
@@ -171,6 +179,7 @@ solve.y.HtP3 = function(x, K, b) {
 	div = - 6*x^4 + 9*K*(2*bs + b21)*x^2 - 3*K*(7*K + bs^3 - b21^3)*x - 9*K^2*(bs + b11)^2;
 	return(y0 / div);
 }
+### [old]
 # simple variant of solver (non-robust);
 solve.DP3.old = function(K, b, all=FALSE) {
 	c.f = function(b) b*K;
@@ -214,6 +223,7 @@ p2  = toPoly.pm("y^3 + 3*x^2*y + 3*x*y^2 - 6*bs*K*x - 6*bs*K*y + 3*b11*K*x - 7*K
 p2s = p2
 p2s = replace.pm(p2s, c(b[1], b[1]+b[2], K), c("b11", "bs", "K"))
 p2s = shift.pm(p2s, c(x[5], y[5]), c("x", "y"))
+print.p(round.pm(p2s),  c("x", "y"))
 
 
 ### Ex 2:
@@ -224,8 +234,10 @@ sol = solve.DP3(K, b, all=T);
 x = sol[,1]; y = sol[,2];
 b11 = b[1]; b21 = b[2];
 ### Test
-# only 3 solutions are correct, but not necessarily the base-set;
-x^3 + y^3 - 3*b11*K*x - 3*b21*K*y # = 2*K^2 + (b11^3 + b21^3)*K
+# [with non-robust solver]
+# - only 3 solutions are correct, but not necessarily the base-set;
+x^3 + y^3 - 3*b11*K*x - 3*b21*K*y # = ...
+2*K^2 + (b11^3 + b21^3)*K
 err = x*y*(x+y) - (b11 + 2*b21)*K*x - (2*b11 + b21)*K*y - 2*K^2 - b11*b21*(b11+b21)*K
 round0(err)
 
@@ -242,7 +254,7 @@ round0(err)
 # y = A - B
 
 # Note:
-# - variants seem to be reducible;
+# - Simple variants seem to be reducible;
 #   (at least for base-order 3)
 
 ### System
@@ -327,6 +339,17 @@ x^3 + y^3 - 3*b11*K*x - 3*b21*K*y - (2*K^2 + (b11^3 + b21^3)*K) # = 0
 x^3 + y^3 - 3*b11*K*x + 3*b11*K*y - 2*K^2 # = 0
 2*b11*x*y - (K - b11^3)*x + (K + b11^3)*y # = 0
 
+### Solver:
+test.SP3M = function(sol, K, b) {
+	b11 = b[1]; b21 = b[2];
+	if(is.matrix(sol)) {x = sol[,1]; y = sol[,2];}
+	else {x = sol[1]; y = sol[2];}
+	err1 = x^3 + y^3 - 3*b11*K*x - 3*b21*K*y - (2*K^2 + (b11^3 + b21^3)*K);
+	err2 = (b11+b21)*(x*y)^2 - K*((b11+b21)^2 + 2*b11*b21)*x*y +
+		- b11*K*(K + b21^3)*x - b21*K*(K + b11^3)*y
+	err = rbind(err1, err2); err = round0(err);
+	return(err);
+}
 
 ### Derivation:
 
@@ -356,6 +379,7 @@ b11 = b[1]; b21 = b[2];
 k = rootn(K, 3);
 x = k^2 + b[1]*k;
 y = k^2 + b[2]*k;
+test.SP3M(c(x, y), K, b)
 
 
 ### Ex 2: Special case
@@ -366,6 +390,7 @@ b11 = b[1]; b21 = b[2];
 k = rootn(K, 3);
 x = k^2 + b[1]*k;
 y = k^2 + b[2]*k;
+test.SP3M(c(x, y), K, b)
 
 
 #####################
@@ -473,11 +498,13 @@ pR = solve.pm(p1, p2, "y", asBigNum=TRUE);
 str(pR) # pR$Rez = polynomial with 221 terms;
 max(pR$Rez$x) # the question to the universe!
 # Q: Are there also other roots?
-# Or: Are the remaining False-roots?
+# Or: Are the remaining "roots" False-roots?
 # Solver: only 20 roots;
+# TODO: factor the big polynomial;
 
 
 round0.p(poly.calc(x) * (32*K^3 + 1))
+round0(poly.calc.mpfr(x, tol=1E-4) * (32*K^3 + 1))
 
 
 #####################
@@ -549,5 +576,24 @@ print.p(p2, "y")
 
 p3 = toPoly.Class2.pm(4, s.id=c(2,3));
 p3 = replace.pm(p3, toPoly.pm("x+y"), "x", 1);
-print.p(p3, "x")
+print.p(p3, c("x", "y"))
 
+
+###################
+###################
+
+###############
+### Class 3 ###
+###############
+
+
+### TODO:
+x^3 + x^2 - 3*s0*x^2 + s1*x^2 +
+	+ 3*s0^2*x - 2*s1^2*x - 2*s0*s1*x - 2*s0*x + 3*s1*x - 2*x +
+	- 1 + 2*s0 - 3*s0*s1 + s0^2 + s0^2*s1 - s0^3 - s1^3 + 4*s1 + 2*s0*s1^2 - 3*s1^2
+
+m = 2*cos(2*pi/7 * (1:3));
+
+s = c(1, -2, 3, 0);
+s0 = s[1]; s1 = s[2]; s2 = s[3];
+x = sapply(1:3, function(id) sum(s0, s[-1]*m))
