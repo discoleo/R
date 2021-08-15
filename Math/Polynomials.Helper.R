@@ -924,8 +924,8 @@ print.p = function(p, leading=1, do.sort=TRUE, do.rev=FALSE, sort.order=TRUE) {
 	}
 	if( ! is.null(dim(p.str))) p.str = apply(p.str, 1, paste.nonempty)
 	else p.str = paste.nonempty(p.str);
-	sign.str = ifelse(coeff > 0, " + ", " - ");
-	sign.str[1] = if(coeff[1] > 0) "" else "- ";
+	sign.str = ifelse(Re(coeff) > 0, " + ", " - ");
+	sign.str[1] = if(Re(coeff[1]) > 0) "" else "- "; # TODO: Re() == 0;
 	coeff.str = as.character(abs(coeff));
 	hasCoeff = (abs(coeff) != 1 & nchar(p.str) > 0);
 	isB0 = (nchar(p.str) == 0);
