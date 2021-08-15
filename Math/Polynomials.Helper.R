@@ -984,8 +984,10 @@ print.p = function(p, leading=1, do.sort=TRUE, do.rev=FALSE, sort.order=TRUE) {
 	sign.str = ifelse(coeff > 0, " + ", " - ");
 	sign.str[1] = if(coeff[1] > 0) "" else "- ";
 	coeff.str = as.character(abs(coeff));
-	hasCoeff = (abs(coeff) != 1); # TODO: ERROR "+ b0*";
+	hasCoeff = (abs(coeff) != 1 & nchar(p.str) > 0);
+	isB0 = (nchar(p.str) == 0);
 	p.str[hasCoeff] = paste(coeff.str[hasCoeff], p.str[hasCoeff], sep = "*");
+	p.str[isB0] = coeff.str[isB0]; # [should be fixed]: ERROR "+ b0*";
 	return(paste(sign.str, p.str, sep="", collapse=""));
 }
 toCoeff = function(p, x="x") {
