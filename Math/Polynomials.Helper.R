@@ -100,6 +100,20 @@ mult.p = function(p1, p2) {
     p = as.vector(tapply(p.m, row(p.m) + col(p.m), sum))
 	return(p)
 }
+poly.calc.mpfr = function(x, bits=120, tol=1E-7) {
+	one  = mpfr(1, precBits=bits);
+	zero = mpfr(0, precBits=bits);
+	p  = mpfr2array(c(Re=one, Im=zero), c(1,2));
+	p0 = mpfr2array(c(Re=zero, Im=zero), c(1,2));
+	xRe = Re(x); xIm = Im(x);
+	for (i in seq(length(x))) {
+		px = mult.mpfr(p[,1], p[,2], xRe[i], xIm[i]);
+		p = rbind(p0, p);
+		p  = p - rbind(px, p0);
+	}
+	p = round0(p, tol=tol);
+	return(p);
+}
 
 ### Multi-variable Polynomials:
 # p = multi-variable polynomial;
@@ -518,6 +532,30 @@ eval.pm = function(p, x, progress=FALSE) {
 		prod(x[idx]^pP[id, idx], p$coeff[id]);
 	}
 	sum(sapply(seq(nrow(p)), eval.p))
+}
+toPolar.mpfr = function(x, len=1, bits=120, tol=1E-10) {
+	re = mpfr(Re(x), bits); im = mpfr(Im(x), bits);
+	r = sqrt(re^2 + im^2);
+	pib = Const("pi", bits); pih = pib / 2;
+	# seems NO difference between asin & atan versions;
+	th  = asin(abs(im/r));
+	if(re == 0) {th = pih; if(im < 0) th = - th;}
+	else if(re < 0) {
+		th = pib + if(im > 0) - th else th;
+	} else if(im < 0) {
+		th = -th;
+	}
+	if(len > 1) {
+		r  = r^seq(len);
+		th = th * seq(len);
+	}
+	re = r * cos(th); im = r * sin(th);
+	return(cbind(Re=re, Im=im));
+}
+mult.mpfr = function(re1, im1, re2, im2) {
+	reN = re1 * re2 - im1 * im2;
+	imN = re1 * im2 + im1 * re2;
+	return(cbind(Re=reN, Im=imN));
 }
 eval.cpm = function(p, x, bits=120, tol=1E-10, doPolar=TRUE, progress=FALSE) {
 	# uses the Rmpfr package;
