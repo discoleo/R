@@ -848,23 +848,55 @@ order.df = function(x, decreasing=TRUE) {
 	id = do.call(order.s, x);
 	return(id);
 }
-sort.pm = function(p, sort.coeff=1, xn=NULL) {
-	pP = p[, - which(names(p) == "coeff"), drop=FALSE];
-	pow.tot = sapply(seq(nrow(p)), function(id) sum(pP[id, ]));
-	pow.max = sapply(seq(nrow(p)), function(id) max(pP[id, ]));
-	if(length(sort.coeff) == 1) {
-		id = order(abs(p$coeff), pow.tot, pow.max);
-	} else {
-		coeff.df = data.frame(abs(p$coeff), -pow.tot, -pow.max);
-		if( ! is.null(xn)) coeff.df = cbind(coeff.df, -pP[,xn]);
-		if(length(sort.coeff) > 3 + length(xn)) {
-			# minimum power of Monome: may be 0;
-			coeff.df$min = sapply(seq(nrow(p)), function(id) -min(pP[id, ]));
-		}
-		coeff.df = coeff.df[, sort.coeff];
-		id = do.call(order, coeff.df);
+### TODO: update use of sort.pm() everywhere!
+sort.pm = function(p, xn=NULL, sort.coeff) {
+	### Special Cols:
+	# - over xn: c(1,2,3,4) = Sum, Max, Min, MinNZ; (IF length(xn) > 1)
+	# - over all: c(5,6,7,8,9) = SumAll, MaxAll, MinAll, MinNZAll, Coeff;
+	isM = ( ! is.null(xn) && length(xn) > 1); # isMultiple
+	if(missing(sort.coeff)) {
+		sort.coeff = if(isM) c(1,2, seq(10, length.out=length(xn)), 5,6)
+			else if(is.null(xn)) c(1,2) else c(6,1,2);
 	}
-	return(p[id,])
+	pP = p[, - which(names(p) == "coeff"), drop=FALSE];
+	summary.sort = function(p, FUN=sum) sapply(seq(nrow(p)), function(id) FUN(p[id, ]));
+	to.df = function(i, p, FUN) if(any(sort.coeff == i)) summary.sort(p, FUN) else rep(0, nrow(p));
+	if(isM) {
+		pP.pp = pP[, xn, drop=FALSE];
+		s.df = to.df(1, pP.pp, sum);
+		s.df = cbind(s.df, to.df(2, pP.pp, max));
+		s.df = cbind(s.df, to.df(3, pP.pp, min));
+		s.df = cbind(s.df, to.df(4, pP.pp, function(x) min(x[x != 0])));
+		id0 = 4;
+		s.df = cbind(s.df, to.df(1 + id0, pP, sum));
+	} else {
+		id0 = 0;
+		s.df = to.df(1, pP, sum);
+	}
+	s.df = cbind(s.df, to.df(2 + id0, pP, max));
+	s.df = cbind(s.df, to.df(3 + id0, pP, min));
+	s.df = cbind(s.df, to.df(4 + id0, pP, function(x) min(x[x != 0])));
+	s.df = cbind(s.df, to.df(5 + id0, p[, "coeff", drop=FALSE], function(x) {x;}));
+	if( ! is.null(xn)) s.df = cbind(s.df, pP[, xn, drop=FALSE]);
+	s.df = s.df[, sort.coeff, drop=FALSE];
+	id = order.df(s.df, decreasing=TRUE);
+	#
+	# pow.tot = sapply(seq(nrow(p)), function(id) sum(pP[id, ]));
+	# pow.max = sapply(seq(nrow(p)), function(id) max(pP[id, ]));
+	# if(length(sort.coeff) == 1) {
+		# id = order(abs(p$coeff), pow.tot, pow.max);
+	# } else {
+		# coeff.df = data.frame(abs(p$coeff), -pow.tot, -pow.max);
+		# if( ! is.null(xn)) coeff.df = cbind(coeff.df, -pP[,xn]);
+		# if(length(sort.coeff) > 3 + length(xn)) {
+			# minimum power of Monome: may be 0;
+			# coeff.df$min = sapply(seq(nrow(p)), function(id) -min(pP[id, ]));
+		# }
+		# coeff.df = coeff.df[, sort.coeff];
+		# id = do.call(order, coeff.df);
+	# }
+	p = p[id,]; rownames(p) = seq(nrow(p));
+	return(p)
 }
 # Print multi-variable Poly
 print.monome = function(name, p) {
