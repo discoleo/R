@@ -6,7 +6,7 @@
 ### Helper Functions
 ### Polynomial Generators
 ###
-### draft v.0.1d
+### draft v.0.1d - v.0.1d-fix
 
 
 ### Polynomial Generators
@@ -18,7 +18,7 @@
 ###############
 
 
-### draft v.0.1d:
+### draft v.0.1d - v.0.1d-fix:
 # - Generator for Class 3 polynomials;
 ### draft v.0.1c - v.0.1c-v3:
 # - Generator for basic Class 2 polynomials;
@@ -173,7 +173,9 @@ toPoly.Class3.pm = function(n, s.id=NULL, sn="s", xn="x", include.last=FALSE) {
 	ntot = 2*n + 1;
 	len = if(include.last || ! is.null(s.id)) n+1 else n;
 	ddf = polypart.Class2.pm(len, s.id=s.id, sn=sn, xn=xn, mn="m");
-	ddfinv = ddf[ c(-1, - nrow(ddf)),];
+	nr.inv = if(is.null(s.id) || any(s.id == 0)) -1 else c();
+	nr.inv = c(nr.inv, - nrow(ddf));
+	ddfinv = ddf[ nr.inv, ];
 	ddfinv$m = ntot - ddfinv$m;
 	ddf = rbind(ddf, ddfinv);
 	#
@@ -191,7 +193,6 @@ toPoly.Class3.pm = function(n, s.id=NULL, sn="s", xn="x", include.last=FALSE) {
 	else print("Error: Roots of unity should have canceled out!")
 	return(pR)
 }
-
 
 
 #######################
