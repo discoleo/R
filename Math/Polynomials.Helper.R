@@ -512,7 +512,7 @@ sort.pm = function(p, sort.coeff=1, xn=NULL) {
 			coeff.df$min = sapply(seq(nrow(p)), function(id) -min(pP[id, ]));
 		}
 		coeff.df = coeff.df[, sort.coeff];
-		id = do.call(order, coeff.df)
+		id = do.call(order, coeff.df);
 	}
 	return(p[id,])
 }
@@ -948,11 +948,26 @@ print.monome = function(name, p) {
 	v.r[v == 1] = name;
 	return(v.r);
 }
-print.p = function(p, leading=1, order=TRUE, sort.order=TRUE) {
+print.p = function(p, leading=1, do.sort=TRUE, do.rev=FALSE, sort.order=TRUE) {
 	### Var order
 	if( ! is.numeric(leading)) leading = match(leading, names(p));
-	if( ! is.na(leading)) {
-		if(order) p = p[order(p[, leading], decreasing=sort.order), ];
+	if(any(is.na(leading))) {
+		warning("Sort var does NOT exist!");
+		leading = leading[ ! is.na(leading)];
+	}
+	if(length(leading) > 0) {
+		if(do.sort) {
+			if(length(leading) == 1) {
+				p = p[order(p[, leading], decreasing=sort.order), ];
+			} else {
+				coeff.df = data.frame(vs=apply(p[, leading, drop=FALSE], 1, sum));
+				coeff.df = cbind(coeff.df, (p[, leading]));
+				order.s = function(...) order(..., decreasing=sort.order);
+				id = do.call(order.s, coeff.df);
+				p = p[id,];
+				if(do.rev) leading = rev(leading);
+			}
+		}
 		p = cbind(p[,-leading, drop=FALSE], p[,leading, drop=FALSE]);
 	}
 	###
