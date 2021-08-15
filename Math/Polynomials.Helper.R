@@ -39,6 +39,14 @@ round0.p = function(p, tol=1E-7) {
 	class(p) = "polynomial"
 	return(p)
 }
+round0.pm = function(p, tol=1E-7) {
+	p$coeff = round0(p$coeff, tol=tol);
+	return(p);
+}
+round.pm = function(p, digits=4) {
+	p$coeff = round(p$coeff, digits=digits);
+	return(p);
+}
 
 ### Root
 rootn = function(r, n) {
