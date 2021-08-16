@@ -82,7 +82,18 @@ roots.Cl3 = function(s, n=3) {
 	cs  = 2*cos(seq(n) * (2*pi/div));
 	len = length(s) %% (n+1);
 	if(len != 0) s = c(s, rep(0, (n+1 - len)));
-	r = sapply(seq(n), function(id) sum(s[1], s[-1] * shift(cs, by=id)) );
+	s0 = s[seq(1, length(s), by=n+1)]; s = s[ - seq(1, length(s), by=n+1)];
+	r = sapply(seq(n), function(id) sum(s0, s * shift(cs, by=id)) );
+	return(r);
+}
+roots.Cl3P = function(s, n=3) {
+	# based on Powers;
+	div = 2*n + 1;
+	cs  = 2*cos(seq(n) * (2*pi/div));
+	len = length(s) %% (n+1);
+	if(len != 0) s = c(s, rep(0, (n+1 - len)));
+	s0 = s[seq(1, length(s), by=n+1)]; s = s[ - seq(1, length(s), by=n+1)];
+	r = sapply(seq(n), function(id) sum(s0, s * cs[id]^seq(n)) );
 	return(r);
 }
 
