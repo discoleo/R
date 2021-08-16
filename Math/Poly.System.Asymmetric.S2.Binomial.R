@@ -7,7 +7,7 @@
 ### Asymmetric S2:
 ### Binomial Expansions
 ###
-### draft v.0.2c
+### draft v.0.2d
 
 
 ### Asymmetric Polynomial Systems: 2 Variables
@@ -25,8 +25,9 @@
 ###############
 
 
-### draft v.0.2c:
+### draft v.0.2c - v.0.2d:
 # - Ht system with Class 3 polynomials;
+# - Ht system: automatic Generator for Class 3 polynomials;
 ### draft v.0.2b-ht - v.0.2b-sol:
 # - Ht-variant for Class 1 Order 3;
 # - some concrete & special cases; (v.0.2b-sp)
@@ -75,6 +76,31 @@ solve.Cardano = function(c, d, n=3) {
 	if(n %% 2 == 0 && c < 0) q = -q;
 	sol = p*m + q/m;
 	return(sol);
+}
+
+### Generators
+
+### Base: Class 3
+system.S2Cl3Ht = function(s1, s2, n=3, tol=1E-10, debug=TRUE) {
+	p.gen = function(s, xn="x") {
+		s.id = which(s != 0);
+		s = s[s.id];
+		p = toPoly.Class3.pm(n, s.id = (s.id - 1), xn=xn, sn = "s");
+		p = replace.pm(p, s, paste0("s", (s.id - 1)) );
+		return(p);
+	}
+	s = round0(s1 + s2, tol=tol);
+	if(debug) print(s);
+	pS = p.gen(s);
+	pS = replace.pm(pS, data.frame(x=1:0, y=0:1, coeff=1), "x");
+	#
+	px = p.gen(s1);
+	py = p.gen(s2, xn="y");
+	#
+	p1 = diff.pm(pS, py);
+	p2 = diff.pm(pS, px);
+	rez = list(p1=p1, p2=p2);
+	return(rez);
 }
 
 
@@ -622,6 +648,13 @@ x^3 - 3*s0*x^2 + s1*x^2 + s2*x^2 +
 
 
 ### Derivation
+p = system.S2Cl3Ht(s, s*c(-1,-1,1,0), n=3)
+print.p(p[[1]], c("x","y"))
+print.p(p[[2]], c("x","y"))
+
+
+### Derivation
+# [old] [explicit]
 p1 = toPoly.Class3.pm(3)
 print.p(p1, "x")
 
