@@ -7,7 +7,7 @@
 ### Asymmetric S2:
 ### Binomial Expansions
 ###
-### draft v.0.2b-sol
+### draft v.0.2c
 
 
 ### Asymmetric Polynomial Systems: 2 Variables
@@ -25,6 +25,8 @@
 ###############
 
 
+### draft v.0.2c:
+# - Ht system with Class 3 polynomials;
 ### draft v.0.2b-ht - v.0.2b-sol:
 # - Ht-variant for Class 1 Order 3;
 # - some concrete & special cases; (v.0.2b-sp)
@@ -586,14 +588,62 @@ print.p(p3, c("x", "y"))
 ### Class 3 ###
 ###############
 
+### Base:
+# x = s2*m[2] + s1*m[1] + s0;
+# y = s2*m[2] - s1*m[1] - s0;
+# where m = 2*cos(2*id*pi/7), id = seq(3);
 
-### TODO:
-x^3 + x^2 - 3*s0*x^2 + s1*x^2 +
-	+ 3*s0^2*x - 2*s1^2*x - 2*s0*s1*x - 2*s0*x + 3*s1*x - 2*x +
-	- 1 + 2*s0 - 3*s0*s1 + s0^2 + s0^2*s1 - s0^3 - s1^3 + 4*s1 + 2*s0*s1^2 - 3*s1^2
+### System:
+x^3 + 3*x^2*y + 3*x*y^2 - (3*s0*y^2 - s1*y^2 + s2*y^2 + 3*s0^2*y - 2*s0*s1*y - 2*s1^2*y + 2*s0*s2*y - 3*s1*s2*y - 2*s2^2*y +
+	+ s0^3 - s0^2*s1 - 2*s0*s1^2 + s1^3 + s0^2*s2 - 3*s0*s1*s2 - 3*s1^2*s2 - 2*s0*s2^2 - 4*s1*s2^2 - s2^3) +
+	+ 2*s2*x^2 + 4*s2*x*y + 2*s2*y^2 - 8*s2^2*x - 8*s2^2*y - 8*s2^3 # = 0
+y^3 + 3*x^2*y + 3*x*y^2 - (- 3*s0*x^2 + s1*x^2 + s2*x^2 + 3*s0^2*x - 2*s0*s1*x - 2*s1^2*x - 2*s0*s2*x + 3*s1*s2*x - 2*s2^2*x +
+	- s0^3 + s0^2*s1 + 2*s0*s1^2 - s1^3 + s0^2*s2 - 3*s0*s1*s2 - 3*s1^2*s2 + 2*s0*s2^2 + 4*s1*s2^2 - s2^3) +
+	+ 2*s2*x^2 + 4*s2*x*y + 2*s2*y^2 - 8*s2^2*x - 8*s2^2*y - 8*s2^3 # = 0
 
+
+### Examples:
 m = 2*cos(2*pi/7 * (1:3));
 
 s = c(1, -2, 3, 0);
 s0 = s[1]; s1 = s[2]; s2 = s[3];
-x = sapply(1:3, function(id) sum(s0, s[-1]*m))
+x = sapply(1:3, function(id) sum(  s0, s[-1] * shift(m, by=id)))
+y = sapply(1:3, function(id) sum(- s0, c(-1,1,0) * s[-1] * shift(m, by=id)))
+
+### concrete Example:
+x^3 + 3*x^2*y + 3*x*y^2 + 6*x^2 + 12*x*y - 2*y^2 - 72*x - 77*y - 215 # = 0
+y^3 + 3*x^2*y + 3*x*y^2 + 8*x^2 + 12*x*y + 6*y^2 - 29*x - 72*y - 133 # = 0
+
+
+### Test:
+x^3 - 3*s0*x^2 + s1*x^2 + s2*x^2 +
+	+ 3*s0^2*x - 2*s0*s1*x - 2*s1^2*x - 2*s0*s2*x + 3*s1*s2*x - 2*s2^2*x +
+	- s0^3 + s0^2*s1 + 2*s0*s1^2 - s1^3 + s0^2*s2 - 3*s0*s1*s2 - 3*s1^2*s2 + 2*s0*s2^2 + 4*s1*s2^2 - s2^3
+
+
+### Derivation
+p1 = toPoly.Class3.pm(3)
+print.p(p1, "x")
+
+p2 = toPoly.Class3.pm(3, xn="y")
+p2 = replace.pm(p2, data.frame(s0=1, coeff=-1), "s0")
+p2 = replace.pm(p2, data.frame(s1=1, coeff=-1), "s1")
+print.p(p2, "y")
+
+p3 = toPoly.Class3.pm(3, s.id=c(1,2));
+p3 = replace.pm(p3, data.frame(x=1:0, y=0:1, coeff=1), "x");
+p3 = replace.pm(p3, data.frame(s2=1, coeff=2), "s2");
+# simplify: s11 + s21 = 0
+p3 = replace.pm(p3, 0, "s1");
+print.p(p3, c("x", "y"))
+
+x^3 + 3*x^2*y + 3*x*y^2 + y^3 + 2*s2*x^2 + 4*s2*x*y + 2*s2*y^2 - 8*s2^2*x - 8*s2^2*y - 8*s2^3 # = 0
+
+pS1 = diff.pm(p3, p2)
+pS1 = replace.pm(pS1, s[-4], paste0("s", 0:2));
+print.p(pS1, c("x","y"))
+
+pS2 = diff.pm(p3, p1)
+pS2 = replace.pm(pS2, s[-4], paste0("s", 0:2));
+print.p(pS2, c("x","y"))
+
