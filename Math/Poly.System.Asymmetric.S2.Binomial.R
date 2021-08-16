@@ -7,7 +7,7 @@
 ### Asymmetric S2:
 ### Binomial Expansions
 ###
-### draft v.0.2d-varP
+### draft v.0.2d-varP-ex
 
 
 ### Asymmetric Polynomial Systems: 2 Variables
@@ -25,10 +25,11 @@
 ###############
 
 
-### draft v.0.2c - v.0.2d-varP:
+### draft v.0.2c - v.0.2d-varP-ex:
 # - Ht system with Class 3 polynomials;
 # - Ht system: automatic Generator for Class 3 polynomials & base-roots; [v.0.2d-sol]
 # - Ht system: Class 3 variant based on Powers; [v.0.2d-varP]
+#   & example; [v.0.2d-varP-ex]
 ### draft v.0.2b-ht - v.0.2b-sol:
 # - Ht-variant for Class 1 Order 3;
 # - some concrete & special cases; (v.0.2b-sp)
@@ -690,16 +691,33 @@ y^3 + 3*x^2*y + 3*x*y^2 - 3*x^2 - 10*x*y - 5*y^2 + 21*x - 22*y + 96 # = 0
 
 
 ### Ex 3:
-s1 = c(1, -2, 3, 0);
-s2 = c(0, -1,-2, 0);
-x = roots.Cl3P(s1, n=3);
-y = roots.Cl3P(s2, n=3);
-p = system.S2Cl3Ht(s1, s2, n=3, type="Powers")
+n = 3
+s1 = c(1, -2, 3);
+s2 = c(0, -1,-2);
+x = roots.Cl3P(s1, n=n);
+y = roots.Cl3P(s2, n=n);
+p = system.S2Cl3Ht(s1, s2, n=n, type="Powers")
 print.p(p[[1]], c("x","y"))
 print.p(p[[2]], c("x","y"))
 ### Test:
 x^3 + 3*x^2*y + 3*x*y^2 - 11*x^2 - 22*x*y - 20*y^2 + 10*x - 10*y + 30 # = 0
 y^3 + 3*x^2*y + 3*x*y^2 + 9*x^2 - 22*x*y - 11*y^2 - 79*x + 10*y + 142 # = 0
+
+
+### Ex 4:
+n = 5
+s1 = c(1, -2, 3,-1);
+s2 = c(0, -1,-2, 1);
+x = roots.Cl3P(s1, n=n);
+y = roots.Cl3P(s2, n=n);
+p = system.S2Cl3Ht(s1, s2, n=n, type="Powers")
+print.p(p[[1]], c("x","y"))
+print.p(p[[2]], c("x","y"))
+### Test:
+x^5 + 5*x^4*y + 10*x^3*y^2 + 10*x^2*y^3 + 5*x*y^4 - 17*x^4 - 68*x^3*y - 102*x^2*y^2 - 68*x*y^3 - 38*y^4 +
+	+ 65*x^3 + 195*x^2*y + 195*x*y^2 - 63*y^3 + 54*x^2 + 108*x*y - 235*y^2 - 171*x - 372*y - 108 # = 0
+y^5 + 5*x^4*y + 10*x^3*y^2 + 10*x^2*y^3 + 5*x*y^4 + 21*x^4 - 68*x^3*y - 102*x^2*y^2 - 68*x*y^3 - 17*y^4 +
+	- 330*x^3 + 195*x^2*y + 195*x*y^2 + 65*y^3 + 1252*x^2 + 108*x*y + 54*y^2 - 1551*x - 171*y + 398 # = 0
 
 
 ### Derivation
