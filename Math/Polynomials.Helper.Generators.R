@@ -44,6 +44,12 @@ library(pracma)
 # Polynomials.Helper.R;
 # e.g. round0(), round0.p;
 
+### shift values
+shift = function(x, by=1) {
+	x = c(tail(x, by), head(x, -by));
+	return(x);
+}
+
 reduce.unity.pm = function(p, n, mn="m") {
 	# reduce sum of unity;
 	# Note: m^n = 1;
