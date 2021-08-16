@@ -6,7 +6,7 @@
 ### Helper Functions
 ### Polynomial Generators
 ###
-### draft v.0.1d - v.0.1d-fix
+### draft v.0.1d - v.0.1d-pow
 
 
 ### Polynomial Generators
@@ -18,8 +18,9 @@
 ###############
 
 
-### draft v.0.1d - v.0.1d-fix:
+### draft v.0.1d - v.0.1d-pow:
 # - Generator for Class 3 polynomials;
+# - including variant based on Powers; [v.0.1d-pow]
 ### draft v.0.1c - v.0.1c-v3:
 # - Generator for basic Class 2 polynomials;
 ### draft v.0.1b - v.0.1b-v2:
@@ -189,6 +190,33 @@ toPoly.Class3.pm = function(n, s.id=NULL, sn="s", xn="x", include.last=FALSE) {
 	for(pow in seq(2, n)) {
 		p2 = ddf;
 		p2$m = (pow * p2$m) %% ntot;
+		pR = mult.pm(pR, p2);
+		pR$m = pR$m %% ntot;
+	}
+	pR = aggregate0.pm(pR);
+	# reduce sum of unity;
+	pR = reduce.unity.pm(pR, ntot, "m")
+	if(all(pR$m == 0)) pR$m = NULL
+	else print("Error: Roots of unity should have canceled out!")
+	return(pR)
+}
+### based on Powers:
+# r = s0 + s1*cos() + s2*cos()^2 + ...;
+toPoly.Class3P.pm = function(n, s.id=NULL, sn="s", xn="x", include.last=FALSE) {
+	# include.last = if s[n+1] should be removed (as it is redundant);
+	# s.id = offers greater control;
+	ntot = 2*n + 1;
+	len = if(include.last || ! is.null(s.id)) n+1 else n;
+	ddf = polypart.Class2.pm(len, s.id=s.id, sn=sn, xn=xn, mn="m");
+	replace.m = function(pow) {
+		p = replace.pm(ddf, data.frame(m=c(pow, ntot-pow), coeff=1), "m", pow=1);
+		p$m = p$m %% ntot;
+		return(p);
+	}
+	#
+	pR = replace.m(1);
+	for(pow in seq(2, n)) {
+		p2 = replace.m(pow);
 		pR = mult.pm(pR, p2);
 		pR$m = pR$m %% ntot;
 	}
