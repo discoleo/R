@@ -7,7 +7,7 @@
 ### Asymmetric S2:
 ### Binomial Expansions
 ###
-### draft v.0.2d
+### draft v.0.2d-sol
 
 
 ### Asymmetric Polynomial Systems: 2 Variables
@@ -25,9 +25,9 @@
 ###############
 
 
-### draft v.0.2c - v.0.2d:
+### draft v.0.2c - v.0.2d-sol:
 # - Ht system with Class 3 polynomials;
-# - Ht system: automatic Generator for Class 3 polynomials;
+# - Ht system: automatic Generator for Class 3 polynomials & base-roots;
 ### draft v.0.2b-ht - v.0.2b-sol:
 # - Ht-variant for Class 1 Order 3;
 # - some concrete & special cases; (v.0.2b-sp)
@@ -76,6 +76,14 @@ solve.Cardano = function(c, d, n=3) {
 	if(n %% 2 == 0 && c < 0) q = -q;
 	sol = p*m + q/m;
 	return(sol);
+}
+roots.Cl3 = function(s, n=3) {
+	div = 2*n + 1;
+	cs  = 2*cos(seq(n) * (2*pi/div));
+	len = length(s) %% (n+1);
+	if(len != 0) s = c(s, rep(0, (n+1 - len)));
+	r = sapply(seq(n), function(id) sum(s[1], s[-1] * shift(cs, by=id)) );
+	return(r);
 }
 
 ### Generators
@@ -633,24 +641,37 @@ m = 2*cos(2*pi/7 * (1:3));
 
 s = c(1, -2, 3, 0);
 s0 = s[1]; s1 = s[2]; s2 = s[3];
-x = sapply(1:3, function(id) sum(  s0, s[-1] * shift(m, by=id)))
-y = sapply(1:3, function(id) sum(- s0, c(-1,1,0) * s[-1] * shift(m, by=id)))
+x = roots.Cl3(s, n=3);
+y = roots.Cl3(s * c(-1,-1,1,0), n=3);
 
 ### concrete Example:
 x^3 + 3*x^2*y + 3*x*y^2 + 6*x^2 + 12*x*y - 2*y^2 - 72*x - 77*y - 215 # = 0
 y^3 + 3*x^2*y + 3*x*y^2 + 8*x^2 + 12*x*y + 6*y^2 - 29*x - 72*y - 133 # = 0
 
 
-### Test:
+### Derivation
+s = c(1, -2, 3, 0);
+p = system.S2Cl3Ht(s, s*c(-1,-1,1,0), n=3)
+print.p(p[[1]], c("x","y"))
+print.p(p[[2]], c("x","y"))
+
+### Base-Test:
 x^3 - 3*s0*x^2 + s1*x^2 + s2*x^2 +
 	+ 3*s0^2*x - 2*s0*s1*x - 2*s1^2*x - 2*s0*s2*x + 3*s1*s2*x - 2*s2^2*x +
 	- s0^3 + s0^2*s1 + 2*s0*s1^2 - s1^3 + s0^2*s2 - 3*s0*s1*s2 - 3*s1^2*s2 + 2*s0*s2^2 + 4*s1*s2^2 - s2^3
 
 
-### Derivation
-p = system.S2Cl3Ht(s, s*c(-1,-1,1,0), n=3)
+### Ex 2:
+s1 = c(1, -2, 3, 0);
+s2 = c(0, -1,-2, 0);
+x = roots.Cl3(s1, n=3);
+y = roots.Cl3(s2, n=3);
+p = system.S2Cl3Ht(s1, s2, n=3)
 print.p(p[[1]], c("x","y"))
 print.p(p[[2]], c("x","y"))
+### Test:
+x^3 + 3*x^2*y + 3*x*y^2 - 5*x^2 - 10*x*y - 2*y^2 - 22*x - 18*y + 14 # = 0
+y^3 + 3*x^2*y + 3*x*y^2 - 3*x^2 - 10*x*y - 5*y^2 + 21*x - 22*y + 96 # = 0
 
 
 ### Derivation
