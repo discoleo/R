@@ -139,6 +139,7 @@ toPoly.Class1S.pm = function(b, n=length(b), kn="K", xn="x") {
 		if(is.data.frame(p[[id]])) cbind(p[[id]], x = if(id == (n+1)) 0 else id);
 	});
 	pR = do.call(rbind, lp);
+	names(pR)[names(pR) == "x"] = xn;
 	# pxtop = data.frame(x=n, coeff=1); names(pxtop)[1] = xn;
 	# pR = sum.pm(pR, pxtop);
 	return(pR);
