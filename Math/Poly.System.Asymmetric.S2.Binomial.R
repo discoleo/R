@@ -7,7 +7,7 @@
 ### Asymmetric S2:
 ### Binomial Expansions
 ###
-### draft v.0.2f
+### draft v.0.2g
 
 
 ### Asymmetric Polynomial Systems: 2 Variables
@@ -25,7 +25,9 @@
 ###############
 
 
-### draft v.0,2f:
+### draft v.0.2g:
+# - another variant of Ht-system: Dual/Double-variant;
+### draft v.0.2f:
 # - reordered sections: non-Correlated Variants;
 ### draft v.0.2e - v.0.2e-var2:
 # - Ht system: automatic Generator for Class 1 polynomials;
@@ -119,7 +121,7 @@ roots.Cl3P = function(s, n=3) {
 
 ### Base: Class 1
 system.S2Cl1Ht = function(K, s1, s2, n=3, type="Ht", tol=1E-10, debug=TRUE) {
-	type = pmatch(type, c("Ht", "Sum", "HtSumDiff"));
+	type = pmatch(type, c("Ht", "Sum", "HtSumDiff", "HtDual"));
 	if(is.na(type)) stop("Unsupported type!");
 	if(length(K) > 1) stop("Parameter K must have only 1 value!")
 	FUN = toPoly.Class1S.pm;
@@ -136,6 +138,11 @@ system.S2Cl1Ht = function(K, s1, s2, n=3, type="Ht", tol=1E-10, debug=TRUE) {
 	px = p.gen(s1);
 	py = p.gen(s2, xn="y");
 	#
+	diff.p = function() {
+		s.d = round0(s1 - s2);
+		pD = p.gen(s.d);
+		pD = replace.pm(pD, data.frame(x=1:0, y=0:1, coeff=c(1,-1)), "x");
+	}
 	if(type == 1) {
 		p1 = diff.pm(pS, py);
 		p2 = diff.pm(pS, px);
@@ -143,11 +150,13 @@ system.S2Cl1Ht = function(K, s1, s2, n=3, type="Ht", tol=1E-10, debug=TRUE) {
 		p1 = pS;
 		p2 = diff.pm(sum.pm(px, py), pS);
 	} else if(type == 3) {
-		s.d = round0(s1 - s2);
-		pD = p.gen(s.d);
-		pD = replace.pm(pD, data.frame(x=1:0, y=0:1, coeff=c(1,-1)), "x");
+		pD = diff.p();
 		p1 = diff.pm(pS, py);
 		p2 = diff.pm(px, pD);
+	} else if(type == 4) {
+		pD = diff.p();
+		p1 = diff.pm(sum.pm(pS, pD), px);
+		p2 = diff.pm(diff.pm(pS, pD), py);
 	}
 	rez = list(p1=p1, p2=p2);
 	return(rez);
@@ -370,6 +379,19 @@ print.p(p[[1]], c("x","y"))
 print.p(p[[2]], c("x","y"))
 x^3 + 3*x^2*y + 3*x*y^2 - 3*x^2 - 6*x*y - 3*y^2 - 6*x - 24*y + 11 # = 0
 y^3 + 3*x^2*y - 3*x*y^2 - 6*x*y + 3*y^2 - 63*x + 84*y + 156 # = 0
+
+
+### Ex 5:
+n = 3
+K = 3
+s1 = c(1,-1,2); s2 = c(0,2,-1);
+x = roots.Cl1(K, s1, n=n);
+y = roots.Cl1(K, s2, n=n);
+p = system.S2Cl1Ht(K, s1, s2, n=n, type="HtDual");
+print.p(p[[1]], c("x","y"))
+print.p(p[[2]], c("x","y"))
+x^3 + 6*x*y^2 - 3*x^2 - 6*y^2 + 57*x - 90*y - 160 # = 0
+y^3 + 6*x^2*y - 12*x*y - 90*x + 60*y + 255 # = 0
 
 
 #############
