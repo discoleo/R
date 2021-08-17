@@ -7,7 +7,7 @@
 ### Asymmetric S2:
 ### Binomial Expansions
 ###
-### draft v.0.2e
+### draft v.0.2e-var2
 
 
 ### Asymmetric Polynomial Systems: 2 Variables
@@ -25,8 +25,9 @@
 ###############
 
 
-### draft v.0.2e:
+### draft v.0.2e - v.0.2e-var2:
 # - Ht system: automatic Generator for Class 1 polynomials;
+# - Generator: for Ht-SumDiff variant;
 ### draft v.0.2c - v.0.2d-varP-ex:
 # - Ht system with Class 3 polynomials;
 # - Ht system: automatic Generator for Class 3 polynomials & base-roots; [v.0.2d-sol]
@@ -116,7 +117,7 @@ roots.Cl3P = function(s, n=3) {
 
 ### Base: Class 1
 system.S2Cl1Ht = function(K, s1, s2, n=3, type="Ht", tol=1E-10, debug=TRUE) {
-	type = pmatch(type, c("Ht", "Sum"));
+	type = pmatch(type, c("Ht", "Sum", "HtSumDiff"));
 	if(is.na(type)) stop("Unsupported type!");
 	if(length(K) > 1) stop("Parameter K must have only 1 value!")
 	FUN = toPoly.Class1S.pm;
@@ -133,8 +134,18 @@ system.S2Cl1Ht = function(K, s1, s2, n=3, type="Ht", tol=1E-10, debug=TRUE) {
 	px = p.gen(s1);
 	py = p.gen(s2, xn="y");
 	#
-	p1 = diff.pm(pS, py);
-	p2 = diff.pm(pS, px);
+	if(type == 1) {
+		p1 = diff.pm(pS, py);
+		p2 = diff.pm(pS, px);
+	} else if(type == 2) {
+		# TODO
+	} else if(type == 3) {
+		s.d = round0(s1 - s2);
+		pD = p.gen(s.d);
+		pD = replace.pm(pD, data.frame(x=1:0, y=0:1, coeff=c(1,-1)), "x");
+		p1 = diff.pm(pS, py);
+		p2 = diff.pm(px, pD);
+	}
 	rez = list(p1=p1, p2=p2);
 	return(rez);
 }
@@ -343,6 +354,20 @@ print.p(p[[1]], c("x","y"))
 print.p(p[[2]], c("x","y"))
 x^3 + 3*x^2*y + 3*x*y^2 - 3*x^2 - 6*x*y - 3*y^2 - 6*x - 24*y + 11 # = 0
 y^3 + 3*x^2*y + 3*x*y^2 - 6*x*y - 3*y^2 - 27*x - 6*y + 84 # = 0
+round0(err)
+
+
+### Ex 4:
+n = 3
+K = 3
+s1 = c(1,-1,2); s2 = c(0,2,-1);
+x = roots.Cl1(K, s1, n=n);
+y = roots.Cl1(K, s2, n=n);
+p = system.S2Cl1Ht(K, s1, s2, n=n, type="HtSumDiff");
+print.p(p[[1]], c("x","y"))
+print.p(p[[2]], c("x","y"))
+x^3 + 3*x^2*y + 3*x*y^2 - 3*x^2 - 6*x*y - 3*y^2 - 6*x - 24*y + 11 # = 0
+y^3 + 3*x^2*y - 3*x*y^2 - 6*x*y + 3*y^2 - 63*x + 84*y + 156 # = 0
 
 
 #############
