@@ -7,7 +7,7 @@
 ### Asymmetric S2:
 ### Binomial Expansions
 ###
-### draft v.0.2g
+### draft v.0.2g-auto
 
 
 ### Asymmetric Polynomial Systems: 2 Variables
@@ -25,8 +25,9 @@
 ###############
 
 
-### draft v.0.2g:
+### draft v.0.2g - v.0.2g-auto:
 # - another variant of Ht-system: Dual/Double-variant;
+# - automatic generation of System & all roots; [v.0.2g-auto]
 ### draft v.0.2f:
 # - reordered sections: non-Correlated Variants;
 ### draft v.0.2e - v.0.2e-var2:
@@ -204,6 +205,25 @@ clPoly.S2Cl1 = function(K, s1, s2, n=3, div=NULL, type="Ht", tol=1E-10) {
 		pR$Rez = pR2$Rez;
 	}
 	return(pR);
+}
+sysAll.S2Cl1 = function(K, s1, s2, n=3, div=toPoly.pm("x^2-2*x+1"), type="Ht", allRoots=TRUE) {
+	# Px
+	p = system.S2Cl1Ht(K, s1, s2, n=n, type=type);
+	# roots
+	x = roots.Cl1(K, s1, n=n);
+	y = roots.Cl1(K, s2, n=n);
+	sol = cbind(x=x, y=y);
+	# remaining roots:
+	if(allRoots) {
+		px = clPoly.S2Cl1(K, s1, s2, n=n, div=div, type=type);
+		x = roots(evalCoeff(px$Rez, "x", c(), c()));
+		y = sapply(x, function(x) eval.pm(px$x0, x, "x"));
+		y = y / sapply(x, function(x) eval.pm(px$div, x, "x"));
+		sol = rbind(sol, cbind(x=x, y=y));
+	}
+	# px = the classic polynomial;
+	sol = c(p, list(px=px$Rez, sol=sol));
+	return(sol)
 }
 
 
@@ -416,6 +436,18 @@ px = clPoly.S2Cl1(K, s1, s2, n=n, div=toPoly.pm("x^2-2*x+1"), type="HtDual");
 x = roots(evalCoeff(px$Rez, "x", c(), c()));
 y = sapply(x, function(x) eval.pm(px$x0, x, "x"));
 y = y / sapply(x, function(x) eval.pm(px$div, x, "x"));
+
+
+### Ex 6:
+n = 3
+K = 3
+s1 = c(1,-1, 2)
+s2 = c(1,-1, 4)
+p = sysAll.S2Cl1(K, s1, s2, n=n, type="Ht")
+sol = p$sol; x = sol[,1]; y = sol[,2];
+#
+print.p(p[[1]], c("x","y"))
+print.p(p[[2]], c("x","y"))
 
 
 #############
