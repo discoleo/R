@@ -216,7 +216,7 @@ mult.pm = function(p1, p2, sc=1) {
 	if(sc != 1) p.r$coeff = p.r$coeff * sc;
 	return(p.r);
 }
-pow.pm = function(p, n=2) {
+pow.pm = function(p, n=2, do.order=TRUE) {
 	if(n == 1) return(p);
 	if(is.double(n) && (n == round(n))) n = as.integer(n);
 	if( ! is.integer(n)) stop("n must be integer!")
@@ -233,9 +233,24 @@ pow.pm = function(p, n=2) {
         p.pow = mult.pm(p.pow);
         n = n %/% 2;
     }
-	x.name = names(p)[1];
-	id = order(p.r[,x.name], decreasing=TRUE);
-	p.r = p.r[id,];
+	if(do.order) {
+		x.name = names(p)[1];
+		id = order(p.r[,x.name], decreasing=TRUE);
+		p.r = p.r[id,];
+	}
+	return(p.r);
+}
+powAll.pm = function(p, n=2) {
+	if(n == 1) return(p);
+	if(is.double(n) && (n == round(n))) n = as.integer(n);
+	if( ! is.integer(n)) stop("n must be integer!")
+	# Multiply
+	p.r = list(p);
+	p.pow = p;
+	for(i in seq(2, n)) {
+        p.pow = mult.pm(p.pow, p);
+		p.r[[i]] = p.pow;
+    }
 	return(p.r);
 }
 mult.sc.pm = function(p, s, div=1, coeff.name="coeff") {
@@ -695,6 +710,13 @@ div.pm = function(p1, p2, by="x", debug=TRUE) {
 divByZero.pm = function(p1, pDiv, xn="x", asBigNum=TRUE) {
 	return(gcd.exact.p(p1, pDiv, xn=xn, asBigNum=asBigNum, doGCD=FALSE))
 }
+divOK.pm = function(p, div, xn="x", warn=TRUE) {
+	pR = div.pm(p, div, xn);
+	if(nrow(pR$Rem) == 0) {
+		return(list(Rez=pR$Rez, isDiv=TRUE));
+	} else if(warn) warning("Division went wrong!");
+	return(list(Rez=p, isDiv=FALSE));
+}
 gcd.vpm = function(p, xgcd=0) {
 	for(i in seq(nrow(p))) xgcd = gcd(xgcd, p$coeff[i]);
 	return(xgcd);
@@ -939,9 +961,10 @@ print.monome = function(name, p) {
 }
 print.p = function(p, leading=1, do.sort=TRUE, do.rev=FALSE, sort.order=TRUE) {
 	### Var order
-	if( ! is.numeric(leading)) leading = match(leading, names(p));
+	isNA = all(is.na(leading));
+	if( ! isNA && ! is.numeric(leading)) leading = match(leading, names(p));
 	if(any(is.na(leading))) {
-		warning("Sort var does NOT exist!");
+		if( ! isNA) warning("Sort var does NOT exist!");
 		leading = leading[ ! is.na(leading)];
 	}
 	if(length(leading) > 0) {
@@ -983,13 +1006,25 @@ toCoeff = function(p, x="x") {
 	idx = match(x, names(p));
 	if(idx < 0) stop(paste0("No variable ", x));
 	px = p[,x]; p = p[, - idx, drop=FALSE];
-	str = tapply(seq(nrow(p)), px, function(nr) print.p(p[nr,], leading=NA))
+	str = tapply(seq(nrow(p)), px, function(nr) print.p(p[nr,, drop=FALSE], leading=NA))
 	str[nchar(str) == 0] = "1";
 	# missing powers
 	x.all = seq(0, max(px));
 	p.all = rep("0", length(x.all));
 	p.all[1 + sort(unique(px))] = str;
 	return(p.all)
+}
+evalCoeff = function(p, x="x", ...) {
+	idx = match(x, names(p));
+	if(idx < 0) stop(paste0("No variable ", x));
+	px = p[,x]; p = p[, - idx, drop=FALSE];
+	coeff = tapply(seq(nrow(p)), px, function(nr) eval.pm(p[nr,, drop=FALSE], ...));
+	# missing powers
+	x.all = seq(0, max(px));
+	p.all = rep(0, length(x.all));
+	p.all[1 + sort(unique(px))] = coeff;
+	p.all = rev(p.all);
+	return(p.all);
 }
 print.coeff = function(p, x="x") {
 	p = rev(toCoeff(p, x));
