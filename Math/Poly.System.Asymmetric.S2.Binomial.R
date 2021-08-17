@@ -120,7 +120,7 @@ roots.Cl3P = function(s, n=3) {
 ### Generators
 
 ### Base: Class 1
-system.S2Cl1Ht = function(K, s1, s2, n=3, type="Ht", tol=1E-10, debug=TRUE) {
+system.S2Cl1Ht = function(K, s1, s2, n=3, type="Ht", tol=1E-10, withBase=FALSE, debug=TRUE) {
 	type = pmatch(type, c("Ht", "Sum", "HtSumDiff", "HtDual"));
 	if(is.na(type)) stop("Unsupported type!");
 	if(length(K) > 1) stop("Parameter K must have only 1 value!")
@@ -159,6 +159,7 @@ system.S2Cl1Ht = function(K, s1, s2, n=3, type="Ht", tol=1E-10, debug=TRUE) {
 		p2 = diff.pm(diff.pm(pS, pD), py);
 	}
 	rez = list(p1=p1, p2=p2);
+	if(withBase) rez = c(rez, list(px=px, py=py));
 	return(rez);
 }
 
@@ -186,6 +187,23 @@ system.S2Cl3Ht = function(s1, s2, n=3, type="Simple", tol=1E-10, debug=TRUE) {
 	p2 = diff.pm(pS, px);
 	rez = list(p1=p1, p2=p2);
 	return(rez);
+}
+
+### Classic Polynomial
+
+clPoly.S2Cl1 = function(K, s1, s2, n=3, div=NULL, type="Ht", tol=1E-10) {
+	pL = system.S2Cl1Ht(K=K, s1=s1, s2=s2, n=n, type=type, tol=tol, withBase=TRUE);
+	pR = solve.pm(pL[[1]], pL[[2]], "y");
+	xgcd = gcd.vpm(pR$Rez);
+	pR$Rez$coeff = pR$Rez$coeff / xgcd;
+	pR2 = divOK.pm(pR$Rez, pL$px, "x", warn=TRUE);
+	if(pR2$isDiv) {
+		if( ! is.null(div)) {
+			pR2 = divOK.pm(pR2$Rez, div, "x", warn=TRUE);
+		}
+		pR$Rez = pR2$Rez;
+	}
+	return(pR);
 }
 
 
@@ -392,6 +410,12 @@ print.p(p[[1]], c("x","y"))
 print.p(p[[2]], c("x","y"))
 x^3 + 6*x*y^2 - 3*x^2 - 6*y^2 + 57*x - 90*y - 160 # = 0
 y^3 + 6*x^2*y - 12*x*y - 90*x + 60*y + 255 # = 0
+
+# remaining roots:
+px = clPoly.S2Cl1(K, s1, s2, n=n, div=toPoly.pm("x^2-2*x+1"), type="HtDual");
+x = roots(evalCoeff(px$Rez, "x", c(), c()));
+y = sapply(x, function(x) eval.pm(px$x0, x, "x"));
+y = y / sapply(x, function(x) eval.pm(px$div, x, "x"));
 
 
 #############
