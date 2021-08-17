@@ -7,7 +7,7 @@
 ### Asymmetric S2:
 ### Binomial Expansions
 ###
-### draft v.0.2e-var2
+### draft v.0.2f
 
 
 ### Asymmetric Polynomial Systems: 2 Variables
@@ -25,6 +25,8 @@
 ###############
 
 
+### draft v.0,2f:
+# - reordered sections: non-Correlated Variants;
 ### draft v.0.2e - v.0.2e-var2:
 # - Ht system: automatic Generator for Class 1 polynomials;
 # - Generator: for Ht-SumDiff variant;
@@ -138,7 +140,8 @@ system.S2Cl1Ht = function(K, s1, s2, n=3, type="Ht", tol=1E-10, debug=TRUE) {
 		p1 = diff.pm(pS, py);
 		p2 = diff.pm(pS, px);
 	} else if(type == 2) {
-		# TODO
+		p1 = pS;
+		p2 = diff.pm(sum.pm(px, py), pS);
 	} else if(type == 3) {
 		s.d = round0(s1 - s2);
 		pD = p.gen(s.d);
@@ -354,7 +357,6 @@ print.p(p[[1]], c("x","y"))
 print.p(p[[2]], c("x","y"))
 x^3 + 3*x^2*y + 3*x*y^2 - 3*x^2 - 6*x*y - 3*y^2 - 6*x - 24*y + 11 # = 0
 y^3 + 3*x^2*y + 3*x*y^2 - 6*x*y - 3*y^2 - 27*x - 6*y + 84 # = 0
-round0(err)
 
 
 ### Ex 4:
@@ -368,6 +370,80 @@ print.p(p[[1]], c("x","y"))
 print.p(p[[2]], c("x","y"))
 x^3 + 3*x^2*y + 3*x*y^2 - 3*x^2 - 6*x*y - 3*y^2 - 6*x - 24*y + 11 # = 0
 y^3 + 3*x^2*y - 3*x*y^2 - 6*x*y + 3*y^2 - 63*x + 84*y + 156 # = 0
+
+
+#############
+### Variants:
+
+### Multiplicative Variants
+
+### Base:
+# x = k^2 + b11*k
+# y = k^2 + b21*k
+# where k^3 = K;
+
+### System:
+x^3 + y^3 - 3*b11*K*x - 3*b21*K*y - (2*K^2 + (b11^3 + b21^3)*K) # = 0
+(b11+b21)*(x*y)^2 - K*((b11+b21)^2 + 2*b11*b21)*x*y +
+	- b11*K*(K + b21^3)*x - b21*K*(K + b11^3)*y # = 0
+
+### Special Case:
+# b21 = - b11
+x^3 + y^3 - 3*b11*K*x + 3*b11*K*y - 2*K^2 # = 0
+2*b11*x*y - (K - b11^3)*x + (K + b11^3)*y # = 0
+
+### Solver:
+test.SP3M = function(sol, K, b) {
+	b11 = b[1]; b21 = b[2];
+	if(is.matrix(sol)) {x = sol[,1]; y = sol[,2];}
+	else {x = sol[1]; y = sol[2];}
+	err1 = x^3 + y^3 - 3*b11*K*x - 3*b21*K*y - (2*K^2 + (b11^3 + b21^3)*K);
+	err2 = (b11+b21)*(x*y)^2 - K*((b11+b21)^2 + 2*b11*b21)*x*y +
+		- b11*K*(K + b21^3)*x - b21*K*(K + b11^3)*y
+	err = rbind(err1, err2); err = round0(err);
+	return(err);
+}
+
+### Derivation:
+
+### Prod =>
+# (x*y) = b11*b21*k^2 + K*k + (b11+b21)*K;
+# =>
+(x*y)^3 - 3*(b11+b21)*K*(x*y)^2 + 3*(b11+b21)^2*K^2*x*y - 3*b11*b21*K^2*x*y +
+	- K^4 + 3*b11*b21*(b11+b21)*K^3 - (b11+b21)^3*K^3 - (b11*b21)^3*K^2 # = 0
+(3*b11*K*x + K^2 + b11^3*K)*(3*b21*K*y + K^2 + b21^3*K) - 3*(b11+b21)*K*(x*y)^2 + 3*(b11+b21)^2*K^2*x*y - 3*b11*b21*K^2*x*y +
+	- K^4 + 3*b11*b21*(b11+b21)*K^3 - (b11+b21)^3*K^3 - (b11*b21)^3*K^2
+K*(3*b11*x + K + b11^3)*(3*b21*y + K + b21^3) - 3*(b11+b21)*(x*y)^2 + 3*(b11+b21)^2*K*x*y - 3*b11*b21*K*x*y +
+	- K^3 + 3*b11*b21*(b11+b21)*K^2 - (b11+b21)^3*K^2 - (b11*b21)^3*K
+K*(9*b11*b21*x*y + 3*b11*K*x + 3*b11*b21^3*x + 3*b21*K*y + 3*b21*b11^3*y + K^2 + (b11^3+b21^3)*K + b11^3*b21^3) +
+	- 3*(b11+b21)*(x*y)^2 + 3*((b11+b21)^2 - b11*b21)*K*x*y +
+	- K^3 + 3*b11*b21*(b11+b21)*K^2 - (b11+b21)^3*K^2 - (b11*b21)^3*K
+(b11+b21)*(x*y)^2 - ((b11+b21)^2 + 2*b11*b21)*K*x*y +
+	- b11*K*(K + b21^3)*x - b21*K*(K + b11^3)*y # = 0
+
+
+### Examples:
+
+### Ex 1:
+b = c(1,-2)
+K = 3
+#
+b11 = b[1]; b21 = b[2];
+k = rootn(K, 3);
+x = k^2 + b[1]*k;
+y = k^2 + b[2]*k;
+test.SP3M(c(x, y), K, b)
+
+
+### Ex 2: Special case
+b = c(2,-2)
+K = 3
+#
+b11 = b[1]; b21 = b[2];
+k = rootn(K, 3);
+x = k^2 + b[1]*k;
+y = k^2 + b[2]*k;
+test.SP3M(c(x, y), K, b)
 
 
 #############
@@ -446,79 +522,6 @@ x = sol[,1] + sol[,2]; y = sol[,1] - sol[,2];
 
 
 ### Test
-
-
-##################
-
-### Multiplicative Variants
-
-### Base:
-# x = k^2 + b11*k
-# y = k^2 + b21*k
-# where k^3 = K;
-
-### System:
-x^3 + y^3 - 3*b11*K*x - 3*b21*K*y - (2*K^2 + (b11^3 + b21^3)*K) # = 0
-(b11+b21)*(x*y)^2 - K*((b11+b21)^2 + 2*b11*b21)*x*y +
-	- b11*K*(K + b21^3)*x - b21*K*(K + b11^3)*y # = 0
-
-### Special Case:
-# b21 = - b11
-x^3 + y^3 - 3*b11*K*x + 3*b11*K*y - 2*K^2 # = 0
-2*b11*x*y - (K - b11^3)*x + (K + b11^3)*y # = 0
-
-### Solver:
-test.SP3M = function(sol, K, b) {
-	b11 = b[1]; b21 = b[2];
-	if(is.matrix(sol)) {x = sol[,1]; y = sol[,2];}
-	else {x = sol[1]; y = sol[2];}
-	err1 = x^3 + y^3 - 3*b11*K*x - 3*b21*K*y - (2*K^2 + (b11^3 + b21^3)*K);
-	err2 = (b11+b21)*(x*y)^2 - K*((b11+b21)^2 + 2*b11*b21)*x*y +
-		- b11*K*(K + b21^3)*x - b21*K*(K + b11^3)*y
-	err = rbind(err1, err2); err = round0(err);
-	return(err);
-}
-
-### Derivation:
-
-### Prod =>
-# (x*y) = b11*b21*k^2 + K*k + (b11+b21)*K;
-# =>
-(x*y)^3 - 3*(b11+b21)*K*(x*y)^2 + 3*(b11+b21)^2*K^2*x*y - 3*b11*b21*K^2*x*y +
-	- K^4 + 3*b11*b21*(b11+b21)*K^3 - (b11+b21)^3*K^3 - (b11*b21)^3*K^2 # = 0
-(3*b11*K*x + K^2 + b11^3*K)*(3*b21*K*y + K^2 + b21^3*K) - 3*(b11+b21)*K*(x*y)^2 + 3*(b11+b21)^2*K^2*x*y - 3*b11*b21*K^2*x*y +
-	- K^4 + 3*b11*b21*(b11+b21)*K^3 - (b11+b21)^3*K^3 - (b11*b21)^3*K^2
-K*(3*b11*x + K + b11^3)*(3*b21*y + K + b21^3) - 3*(b11+b21)*(x*y)^2 + 3*(b11+b21)^2*K*x*y - 3*b11*b21*K*x*y +
-	- K^3 + 3*b11*b21*(b11+b21)*K^2 - (b11+b21)^3*K^2 - (b11*b21)^3*K
-K*(9*b11*b21*x*y + 3*b11*K*x + 3*b11*b21^3*x + 3*b21*K*y + 3*b21*b11^3*y + K^2 + (b11^3+b21^3)*K + b11^3*b21^3) +
-	- 3*(b11+b21)*(x*y)^2 + 3*((b11+b21)^2 - b11*b21)*K*x*y +
-	- K^3 + 3*b11*b21*(b11+b21)*K^2 - (b11+b21)^3*K^2 - (b11*b21)^3*K
-(b11+b21)*(x*y)^2 - ((b11+b21)^2 + 2*b11*b21)*K*x*y +
-	- b11*K*(K + b21^3)*x - b21*K*(K + b11^3)*y # = 0
-
-
-### Examples:
-
-### Ex 1:
-b = c(1,-2)
-K = 3
-#
-b11 = b[1]; b21 = b[2];
-k = rootn(K, 3);
-x = k^2 + b[1]*k;
-y = k^2 + b[2]*k;
-test.SP3M(c(x, y), K, b)
-
-
-### Ex 2: Special case
-b = c(2,-2)
-K = 3
-#
-b11 = b[1]; b21 = b[2];
-k = rootn(K, 3);
-x = k^2 + b[1]*k;
-y = k^2 + b[2]*k;
-test.SP3M(c(x, y), K, b)
 
 
 #####################
