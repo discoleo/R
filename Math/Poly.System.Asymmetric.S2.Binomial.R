@@ -7,7 +7,7 @@
 ### Asymmetric S2:
 ### Binomial Expansions
 ###
-### draft v.0.2d-varP-ex
+### draft v.0.2e
 
 
 ### Asymmetric Polynomial Systems: 2 Variables
@@ -25,6 +25,8 @@
 ###############
 
 
+### draft v.0.2e:
+# - Ht system: automatic Generator for Class 1 polynomials;
 ### draft v.0.2c - v.0.2d-varP-ex:
 # - Ht system with Class 3 polynomials;
 # - Ht system: automatic Generator for Class 3 polynomials & base-roots; [v.0.2d-sol]
@@ -79,6 +81,17 @@ solve.Cardano = function(c, d, n=3) {
 	sol = p*m + q/m;
 	return(sol);
 }
+roots.Cl1 = function(K, s, n=3, debug=TRUE) {
+	m = unity(n, all=TRUE);
+	k = rootn(K, n=n);
+	k = k * m;
+	len = length(s);
+	if(debug) {
+		if(len > n) warning("Length of shifts > n!");
+	}
+	r = sapply(k, function(k) sum(s * k^seq(0, len-1)) );
+	return(r);
+}
 roots.Cl3 = function(s, n=3) {
 	div = 2*n + 1;
 	cs  = 2*cos(seq(n) * (2*pi/div));
@@ -100,6 +113,31 @@ roots.Cl3P = function(s, n=3) {
 }
 
 ### Generators
+
+### Base: Class 1
+system.S2Cl1Ht = function(K, s1, s2, n=3, type="Ht", tol=1E-10, debug=TRUE) {
+	type = pmatch(type, c("Ht", "Sum"));
+	if(is.na(type)) stop("Unsupported type!");
+	if(length(K) > 1) stop("Parameter K must have only 1 value!")
+	FUN = toPoly.Class1S.pm;
+	p.gen = function(s, xn="x") {
+		p = FUN(b=s, n=n, kn="K", xn=xn);
+		p = replace.pm(p, K, "K");
+		return(p);
+	}
+	s = round0(s1 + s2, tol=tol);
+	if(debug) print(s);
+	pS = p.gen(s);
+	pS = replace.pm(pS, data.frame(x=1:0, y=0:1, coeff=1), "x");
+	#
+	px = p.gen(s1);
+	py = p.gen(s2, xn="y");
+	#
+	p1 = diff.pm(pS, py);
+	p2 = diff.pm(pS, px);
+	rez = list(p1=p1, p2=p2);
+	return(rez);
+}
 
 ### Base: Class 3
 system.S2Cl3Ht = function(s1, s2, n=3, type="Simple", tol=1E-10, debug=TRUE) {
@@ -292,6 +330,19 @@ x^3 + y^3 - 3*b11*K*x - 3*b21*K*y # = ...
 2*K^2 + (b11^3 + b21^3)*K
 err = x*y*(x+y) - (b11 + 2*b21)*K*x - (2*b11 + b21)*K*y - 2*K^2 - b11*b21*(b11+b21)*K
 round0(err)
+
+
+### Ex 3:
+n = 3
+K = 3
+s1 = c(1,-1,2); s2 = c(0,2,-1);
+x = roots.Cl1(K, s1, n=n);
+y = roots.Cl1(K, s2, n=n);
+p = system.S2Cl1Ht(K, s1, s2, n=n);
+print.p(p[[1]], c("x","y"))
+print.p(p[[2]], c("x","y"))
+x^3 + 3*x^2*y + 3*x*y^2 - 3*x^2 - 6*x*y - 3*y^2 - 6*x - 24*y + 11 # = 0
+y^3 + 3*x^2*y + 3*x*y^2 - 6*x*y - 3*y^2 - 27*x - 6*y + 84 # = 0
 
 
 #############
