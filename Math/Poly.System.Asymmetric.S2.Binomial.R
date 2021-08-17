@@ -7,7 +7,7 @@
 ### Asymmetric S2:
 ### Binomial Expansions
 ###
-### draft v.0.2g-auto
+### draft v.0.2h
 
 
 ### Asymmetric Polynomial Systems: 2 Variables
@@ -25,6 +25,8 @@
 ###############
 
 
+### draft v.0.2h:
+# - Generator: for various subtypes of Class 3 systems;
 ### draft v.0.2g - v.0.2g-auto:
 # - another variant of Ht-system: Dual/Double-variant;
 # - automatic generation of System & all roots; [v.0.2g-auto]
@@ -149,7 +151,7 @@ system.S2Cl1Ht = function(K, s1, s2, n=3, type="Ht", tol=1E-10, withBase=FALSE, 
 		p2 = diff.pm(pS, px);
 	} else if(type == 2) {
 		p1 = pS;
-		p2 = diff.pm(sum.pm(px, py), pS);
+		p2 = diff.pm(pS, sum.pm(px, py));
 	} else if(type == 3) {
 		pD = diff.p();
 		p1 = diff.pm(pS, py);
@@ -165,10 +167,11 @@ system.S2Cl1Ht = function(K, s1, s2, n=3, type="Ht", tol=1E-10, withBase=FALSE, 
 }
 
 ### Base: Class 3
-system.S2Cl3Ht = function(s1, s2, n=3, type="Simple", tol=1E-10, debug=TRUE) {
-	type = pmatch(type, c("Simple", "Powers"));
+system.S2Cl3 = function(s1, s2, n=3, type="HtSimple", tol=1E-10, debug=TRUE) {
+	type = pmatch(type, c("HtSimple", "HtPowers", "Simple", "Powers",
+		"DiffSimple", "DiffPowers", "HtDualSimple", "HtDualPowers"));
 	if(is.na(type)) stop("Unsupported type!");
-	FUN = if(type == 1) toPoly.Class3.pm else toPoly.Class3P.pm;
+	FUN = if(type %% 2 == 1) toPoly.Class3.pm else toPoly.Class3P.pm;
 	p.gen = function(s, xn="x") {
 		s.id = which(s != 0);
 		s = s[s.id];
@@ -184,8 +187,26 @@ system.S2Cl3Ht = function(s1, s2, n=3, type="Simple", tol=1E-10, debug=TRUE) {
 	px = p.gen(s1);
 	py = p.gen(s2, xn="y");
 	#
-	p1 = diff.pm(pS, py);
-	p2 = diff.pm(pS, px);
+	diff.p = function() {
+		s.d = round0(s1 - s2);
+		pD = p.gen(s.d);
+		pD = replace.pm(pD, data.frame(x=1:0, y=0:1, coeff=c(1,-1)), "x");
+	}
+	if(type == 1 || type == 2) {
+		p1 = diff.pm(pS, py);
+		p2 = diff.pm(pS, px);
+	} else if(type == 3 || type == 4) {
+		p1 = pS;
+		p2 = diff.pm(pS, sum.pm(px, py));
+	} else if(type == 5 || type == 6) {
+		pD = diff.p();
+		p1 = diff.pm(pS, py);
+		p2 = diff.pm(px, pD);
+	} else if(type == 7 || type == 8) {
+		pD = diff.p();
+		p1 = diff.pm(sum.pm(pS, pD), px);
+		p2 = diff.pm(diff.pm(pS, pD), py);
+	}
 	rez = list(p1=p1, p2=p2);
 	return(rez);
 }
@@ -824,7 +845,7 @@ y^3 + 3*x^2*y + 3*x*y^2 + 8*x^2 + 12*x*y + 6*y^2 - 29*x - 72*y - 133 # = 0
 
 ### Derivation
 s = c(1, -2, 3, 0);
-p = system.S2Cl3Ht(s, s*c(-1,-1,1,0), n=3)
+p = system.S2Cl3(s, s*c(-1,-1,1,0), n=3, type="HtSimple")
 print.p(p[[1]], c("x","y"))
 print.p(p[[2]], c("x","y"))
 
@@ -839,7 +860,7 @@ s1 = c(1, -2, 3, 0);
 s2 = c(0, -1,-2, 0);
 x = roots.Cl3(s1, n=3);
 y = roots.Cl3(s2, n=3);
-p = system.S2Cl3Ht(s1, s2, n=3)
+p = system.S2Cl3(s1, s2, n=3, type="HtSimple")
 print.p(p[[1]], c("x","y"))
 print.p(p[[2]], c("x","y"))
 ### Test:
@@ -853,7 +874,7 @@ s1 = c(1, -2, 3);
 s2 = c(0, -1,-2);
 x = roots.Cl3P(s1, n=n);
 y = roots.Cl3P(s2, n=n);
-p = system.S2Cl3Ht(s1, s2, n=n, type="Powers")
+p = system.S2Cl3(s1, s2, n=n, type="HtPowers")
 print.p(p[[1]], c("x","y"))
 print.p(p[[2]], c("x","y"))
 ### Test:
@@ -867,7 +888,7 @@ s1 = c(1, -2, 3,-1);
 s2 = c(0, -1,-2, 1);
 x = roots.Cl3P(s1, n=n);
 y = roots.Cl3P(s2, n=n);
-p = system.S2Cl3Ht(s1, s2, n=n, type="Powers")
+p = system.S2Cl3(s1, s2, n=n, type="HtPowers")
 print.p(p[[1]], c("x","y"))
 print.p(p[[2]], c("x","y"))
 ### Test:
@@ -877,6 +898,21 @@ y^5 + 5*x^4*y + 10*x^3*y^2 + 10*x^2*y^3 + 5*x*y^4 + 21*x^4 - 68*x^3*y - 102*x^2*
 	- 330*x^3 + 195*x^2*y + 195*x*y^2 + 65*y^3 + 1252*x^2 + 108*x*y + 54*y^2 - 1551*x - 171*y + 398 # = 0
 
 
+### Ex 5:
+n = 3
+s1 = c(0, -2, 3,-1);
+s2 = c(0, -1,-2, 1);
+x = roots.Cl3P(s1, n=n);
+y = roots.Cl3P(s2, n=n);
+p = system.S2Cl3(s1, s2, n=n, type="HtDualPowers")
+print.p(p[[1]], c("x","y"))
+print.p(p[[2]], c("x","y"))
+### Test
+x^3 + 6*x*y^2 - 21*x^2 + 52*x*y - 42*y^2 + 87*x - 140*y - 91 # = 0
+y^3 + 6*x^2*y + 26*x^2 - 84*x*y + 13*y^2 - 140*x + 96*y + 155 # = 0
+
+
+##############
 ### Derivation
 # [old] [explicit]
 p1 = toPoly.Class3.pm(3)
