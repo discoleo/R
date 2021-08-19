@@ -52,7 +52,7 @@ encrypt = function(x, offset=0, isRandom=TRUE, DEBUG=TRUE) {
 
 ### Formulas / Expressions
 
-extract.vars = function(e) {
+extract.vars = function(e, unique=TRUE) {
 	if(is.expression(e)) e = e[[1]];
 	signs = numeric(0);
 	vars  = character(0);
@@ -79,7 +79,15 @@ extract.vars = function(e) {
 		signs = c(signs, 1);
 		vars = c(vars, as.character(e));
 	}
-	return(list(vars=rev(vars), signs=rev(signs)));
+	vars = rev(vars); signs = rev(signs);
+	if(unique) {
+		isDuplicated = duplicated(vars);
+		if(any(isDuplicated)) {
+			vars = vars[ ! isDuplicated];
+			signs = signs[ ! isDuplicated];
+		}
+	}
+	return(list(vars=vars, signs=signs));
 }
 
 
@@ -87,7 +95,9 @@ extract.vars = function(e) {
 e = parse(text="x+y+z+2+e")
 extract.vars(e)
 
-
 e = parse(text="-x+y-z+2+e")
+extract.vars(e)
+
+e = parse(text="-x+y-z+2+e+x-y")
 extract.vars(e)
 
