@@ -29,6 +29,15 @@ toRow.df = function(m, val=rownames(m), group=colnames(m), asNumVal=TRUE, asNumG
 }
 
 
+countDuplicates = function(m, onlyDuplicates=FALSE) {
+	count = rep(0, nrow(m));
+	xd = aggregate(count ~ ., m, length);
+	if(onlyDuplicates) {
+		xd = xd[xd$count > 1, , drop=FALSE];
+	}
+	return(xd)
+}
+
 ### Encrypt IDs
 encrypt = function(x, offset=0, isRandom=TRUE, DEBUG=TRUE) {
 	# TODO: multiple columns in df;
