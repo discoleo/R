@@ -53,6 +53,7 @@ encrypt = function(x, offset=0, isRandom=TRUE, DEBUG=TRUE) {
 ### Formulas / Expressions
 
 extract.vars = function(e) {
+	if(is.expression(e)) e = e[[1]];
 	signs = numeric(0);
 	vars  = character(0);
 	isNum = logical(0); # TODO
@@ -84,9 +85,9 @@ extract.vars = function(e) {
 
 ### Test
 e = parse(text="x+y+z+2+e")
-extract.vars(e[[1]])
+extract.vars(e)
 
 
 e = parse(text="-x+y-z+2+e")
-extract.vars(e[[1]])
+extract.vars(e)
 
