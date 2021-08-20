@@ -7,7 +7,7 @@
 ### Asymmetric S2:
 ### Binomial Expansions
 ###
-### draft v.0.2h-refact
+### draft v.0.2h-solAll
 
 
 ### Asymmetric Polynomial Systems: 2 Variables
@@ -25,9 +25,10 @@
 ###############
 
 
-### draft v.0.2h - v.0.2h-refact:
+### draft v.0.2h - v.0.2h-solAll:
 # - Generator: for various subtypes of Class 3 systems;
 # - refactoring: uniform types; [v.0.2h-refact]
+# - all solutions; [v.0.2h-solAll]
 ### draft v.0.2g - v.0.2g-auto:
 # - another variant of Ht-system: Dual/Double-variant;
 # - automatic generation of System & all roots; [v.0.2g-auto]
@@ -101,7 +102,10 @@ roots.Cl1 = function(K, s, n=3, debug=TRUE) {
 	r = sapply(k, function(k) sum(s * k^seq(0, len-1)) );
 	return(r);
 }
-roots.Cl3 = function(s, n=3) {
+roots.Cl3 = function(s, n=3, root.type="Simple") {
+	root.type = pmatch(root.type, c("Simple", "Powers"));
+	if(is.na(root.type)) stop("Root type NOT supported!")
+	if(root.type == 2) return(roots.Cl3P(s, n=n));
 	div = 2*n + 1;
 	cs  = 2*cos(seq(n) * (2*pi/div));
 	len = length(s) %% (n+1);
@@ -168,7 +172,7 @@ system.S2Cl1Ht = function(K, s1, s2, n=3, type="Ht", tol=1E-10, withBase=FALSE, 
 }
 
 ### Base: Class 3
-system.S2Cl3 = function(s1, s2, n=3, type="Ht", root.type="Power", tol=1E-10, debug=TRUE) {
+system.S2Cl3 = function(s1, s2, n=3, type="Ht", root.type="Power", withBase=FALSE, tol=1E-10, debug=TRUE) {
 	root.type = pmatch(root.type, c("Simple", "Powers"));
 	if(is.na(root.type)) stop("Unsupported root type!");
 	FUN = if(root.type == 1) toPoly.Class3.pm else toPoly.Class3P.pm;
@@ -211,11 +215,13 @@ system.S2Cl3 = function(s1, s2, n=3, type="Ht", root.type="Power", tol=1E-10, de
 		p2 = diff.pm(diff.pm(pS, pD), py);
 	}
 	rez = list(p1=p1, p2=p2);
+	if(withBase) rez = c(rez, list(px=px, py=py));
 	return(rez);
 }
 
 ### Classic Polynomial
 
+### Class 1
 clPoly.S2Cl1 = function(K, s1, s2, n=3, div=NULL, type="Ht", tol=1E-10) {
 	pL = system.S2Cl1Ht(K=K, s1=s1, s2=s2, n=n, type=type, tol=tol, withBase=TRUE);
 	pR = solve.pm(pL[[1]], pL[[2]], "y");
@@ -240,6 +246,41 @@ sysAll.S2Cl1 = function(K, s1, s2, n=3, div=toPoly.pm("x^2-2*x+1"), type="Ht", a
 	# remaining roots:
 	if(allRoots) {
 		px = clPoly.S2Cl1(K, s1, s2, n=n, div=div, type=type);
+		x = roots(evalCoeff(px$Rez, "x", c(), c()));
+		y = sapply(x, function(x) eval.pm(px$x0, x, "x"));
+		y = y / sapply(x, function(x) eval.pm(px$div, x, "x"));
+		sol = rbind(sol, cbind(x=x, y=y));
+	}
+	# px = the classic polynomial;
+	sol = c(p, list(px=px$Rez, sol=sol));
+	return(sol)
+}
+
+### Class 3
+clPoly.S2Cl3 = function(s1, s2, n=3, div=NULL, type="Ht", root.type="Power", tol=1E-10) {
+	pL = system.S2Cl3(s1=s1, s2=s2, n=n, type=type, root.type=root.type, tol=tol, withBase=TRUE);
+	pR = solve.pm(pL[[1]], pL[[2]], "y");
+	xgcd = gcd.vpm(pR$Rez);
+	pR$Rez$coeff = pR$Rez$coeff / xgcd;
+	pR2 = divOK.pm(pR$Rez, pL$px, "x", warn=TRUE);
+	if(pR2$isDiv) {
+		if( ! is.null(div)) {
+			pR2 = divOK.pm(pR2$Rez, div, "x", warn=TRUE);
+		}
+		pR$Rez = pR2$Rez;
+	}
+	return(pR);
+}
+sysAll.S2Cl3 = function(s1, s2, n=3, div=toPoly.pm("x^2+2*x+1"), type="Ht", root.type="Powers", allRoots=TRUE) {
+	# Px
+	p = system.S2Cl3(s1, s2, n=n, type=type, root.type=root.type);
+	# roots
+	x = roots.Cl3(s1, n=n, root.type=root.type);
+	y = roots.Cl3(s2, n=n, root.type=root.type);
+	sol = cbind(x=x, y=y);
+	# remaining roots:
+	if(allRoots) {
+		px = clPoly.S2Cl3(s1, s2, n=n, div=div, type=type, root.type=root.type);
 		x = roots(evalCoeff(px$Rez, "x", c(), c()));
 		y = sapply(x, function(x) eval.pm(px$x0, x, "x"));
 		y = y / sapply(x, function(x) eval.pm(px$div, x, "x"));
@@ -913,6 +954,19 @@ print.p(p[[2]], c("x","y"))
 ### Test
 x^3 + 6*x*y^2 - 21*x^2 + 52*x*y - 42*y^2 + 87*x - 140*y - 91 # = 0
 y^3 + 6*x^2*y + 26*x^2 - 84*x*y + 13*y^2 - 140*x + 96*y + 155 # = 0
+
+
+### Ex 6:
+n = 3
+s1 = c(0, 1, 2, 3)
+s2 = c(0, 1,-2, 2)
+p = sysAll.S2Cl3(s1, s2, n=n, type="Ht", root.type="Powers")
+sol = p$sol; x = sol[,1]; y = sol[,2];
+print.p(p[[1]], c("x","y"))
+print.p(p[[2]], c("x","y"))
+### Test
+x^3 + 3*x^2*y + 3*x*y^2 + 22*x^2 + 44*x*y + 3*y^2 - 373*x - 351*y - 492 # = 0
+y^3 + 3*x^2*y + 3*x*y^2 + 19*x^2 + 44*x*y + 22*y^2 - 243*x - 373*y - 492 # = 0
 
 
 ##############
