@@ -125,6 +125,36 @@ sym.poly = function(p, var="x") {
 
 ### Permutations
 
+# TODO: use this function;
+perm = function(x, unique=FALSE, sort=TRUE) {
+	# adapted from package DescTools;
+	# other variants:
+	# https://stackoverflow.com/questions/11095992/generating-all-distinct-permutations-of-a-list-in-r
+	n = length(x)
+	if (n == 1L) return(matrix(x));
+	z = matrix(1L);
+	for (i in 2L:n) {
+		y = cbind(z, i);
+		a = c(1L:i, 1:(i - 1L));
+		z = matrix(0L, ncol = ncol(y), nrow = i * nrow(y));
+		z[seq(nrow(y)), ] = y;
+		for (j in seq(i - 1L)) {
+			z[j * nrow(y) + seq(nrow(y)), ] = y[, a[seq(i) + j]]
+		}
+	}
+    dimnames(z) = NULL;
+	m = apply(z, 2L, function(i) x[i]);
+	if (unique && any(duplicated(x))) m = unique(m);
+	if (sort) {
+		order.f = function(...) order(..., decreasing=TRUE);
+		id = do.call(order.f, data.frame(m));
+		m = m[id,];
+	}
+	return(m);
+}
+
+# countDuplicates(perm(c(3,1,1,0,0)))
+
 perm.poly = function(n, p=c(1,1), val0=0) {
 	if(length(p) == 1) {
 		m = as.data.frame(perm1(n, p=p, val0=val0))
