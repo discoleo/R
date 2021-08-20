@@ -7,7 +7,7 @@
 ### Asymmetric S2:
 ### Binomial Expansions
 ###
-### draft v.0.2i
+### draft v.0.2j
 
 
 ### Asymmetric Polynomial Systems: 2 Variables
@@ -25,6 +25,8 @@
 ###############
 
 
+### draft v.0.2j:
+# - Base: symmetric system;
 ### draft v.0.2i:
 # - [refactoring] renaming functions;
 ### draft v.0.2h - v.0.2h-solAll:
@@ -92,6 +94,16 @@ solve.Cardano = function(c, d, n=3) {
 	if(n %% 2 == 0 && c < 0) q = -q;
 	sol = p*m + q/m;
 	return(sol);
+}
+roots.ppCardano = function(c, d, n=3) {
+	# returns the root-parts;
+	m = unity(n=n, all=TRUE);
+	xdet = rootn(d^2 - c^n, 2);
+	p = d + xdet; p = rootn(p, n);
+	q = d - xdet; q = rootn(q, n);
+	if(n %% 2 == 0 && c < 0) q = -q;
+	# sol = p*m + q/m;
+	return(cbind(p=p*m, q=q/m));
 }
 roots.Cl1 = function(K, s, n=3, debug=TRUE) {
 	m = unity(n, all=TRUE);
@@ -1003,4 +1015,70 @@ print.p(pS1, c("x","y"))
 pS2 = diff.pm(p3, p1)
 pS2 = replace.pm(pS2, s[-4], paste0("s", 0:2));
 print.p(pS2, c("x","y"))
+
+
+########################
+########################
+
+##################
+### Transforms ###
+##################
+
+#######################
+### Base: Symmetric ###
+#######################
+
+# x^3 + y^3 = R1
+# x*y = R2
+
+### Transform:
+# x[Base] = x + a1*y;
+# y[Base] = x + a2*y;
+
+### Simple System:
+2*x^3 + 3*(a1+a2)*x^2*y + 3*(a1^2 + a2^2)*x*y^2 + (a1^3+a2^3)*y^3 - R1 # = 0
+x^2 + (a1+a2)*x*y + a1*a2*y^2 - R2 # = 0
+
+### Entangled Variants:
+
+### Ht
+x^3 - 3*(a1^2 + a2^2 - a1*a2)*x*y^2 - (a1^3+a2^3)*y^3 - 3*R2*x + R1 # = 0
+(a1+a2)*(a1-a2)^2*y^3 + 2*(a1-a2)^2*x*y^2 + 2*R2*x + (a1+a2)*R2*y - R1 # = 0
+
+
+### Solver:
+transform.S2Linear = function(sol, a) {
+	x0 = sol[,1]; y0 = sol[,2];
+	a.d = a[1] - a[2];
+	x = - (a[2]*x0 - a[1]*y0) / a.d;
+	y = (x0 - y0) / a.d;
+	return(cbind(x=x, y=y));
+}
+
+### Examples:
+R = c(1,-1)
+a = c(1,2)
+a1 = a[1]; a2 = a[2]; R1 = R[1]; R2 = R[2];
+sol = roots.ppCardano(R[2], R[1]/2, n=3)
+sol = transform.S2Linear(sol, a);
+x = sol[,1]; y = sol[,2];
+
+# Ht concrete Example:
+x^3 - 9*x*y^2 - 9*y^3 + 3*x + 1 # = 0
+3*y^3 + 2*x*y^2 - 2*x - 3*y - 1 # = 0
+### variant:
+x^3 - 3*x*y^2 - 3*x - 9*y - 2 # = 0
+3*y^3 + 2*x*y^2 - 2*x - 3*y - 1 # = 0
+
+
+### Variants: Derivation
+
+### Ht
+2*x^3 + 3*(R2 - x^2 - a1*a2*y^2)*x + 3*(a1^2 + a2^2)*x*y^2 + (a1^3+a2^3)*y^3 - R1 # = 0
+2*x^3 + 3*(a1+a2)*x^2*y + 3*(a1+a2)*(R2 - x^2 - a1*a2*y^2)*y - 6*a1*a2*x*y^2 + (a1^3+a2^3)*y^3 - R1 # = 0
+# =>
+x^3 - 3*(a1^2 + a2^2 - a1*a2)*x*y^2 - (a1^3+a2^3)*y^3 - 3*R2*x + R1 # = 0
+2*x^3 - 6*a1*a2*x*y^2 + (a1^3+a2^3 - 3*(a1+a2)*a1*a2)*y^3 + 3*(a1+a2)*R2*y - R1 # = 0
+# Eq[2] - 2*Eq[1] =>
+(a1+a2)*(a1-a2)^2*y^3 + 2*(a1-a2)^2*x*y^2 + 2*R2*x + (a1+a2)*R2*y - R1 # = 0
 
