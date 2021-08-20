@@ -7,7 +7,7 @@
 ### Asymmetric S2:
 ### Base Types
 ###
-### draft v.0.4j-sol
+### draft v.0.4k-O3
 
 
 ### Asymmetric Polynomial Systems: 2 Variables
@@ -77,6 +77,10 @@
 ###############
 
 
+### draft v.0.4k - v.0.4k-O3:
+# - systems with Equalities of variables:
+#   Order 1: x == y;
+#   Order 3: x^3 = y^3; [v.0.4k-O3]
 ### draft v.0.4j - v.0.4j-sol:
 # - decomposition using: (x^2+y^2) & x*y;
 #   x^3*y + b1*y^2 = R1;
@@ -183,6 +187,13 @@ library(pracma)
 # the functions are in the file:
 # Polynomials.Helper.R;
 # e.g. round0(), round0.p;
+
+### Other
+
+order.c = function(x, digits=5) {
+	id = order(round(Re(x), digits), round(Im(x), digits));
+	return(id);
+}
 
 
 ##########################
@@ -2937,11 +2948,15 @@ y^3*x + b2/k^3*x^2 - R2/k^3
 # k^4 = b2 / b1;
 
 
-######################
+##################
+##################
 
-#################
-### Eq x == y ###
-#################
+##################
+###  Equality  ###
+##################
+
+### Equality Order 1
+### x == y
 
 ### Order 3
 
@@ -2961,5 +2976,82 @@ x^3 - R # = 0
 S^2 - x*y + b11 - b21 # = 0
 
 ### TODO:
-# - properlysolve for the remaining roots;
+# - properly solve for the remaining roots;
+
+
+####################
+
+### Equality Order 3
+### x^3 == y^3
+
+### Order 4
+
+# x^4 + x^3*y - x*y^3 + b2*y^3 + b1*y = R
+# y^4 + b2*x^3 + b1*y = R
+
+### Solution:
+
+### Case 1: x^3 == y^3
+# - trivial;
+y^4 + b2*y^3 + b1*y - R # = 0
+
+### Case 2: x^3 != y^3
+# TODO
+
+### Solver:
+# - does NOT compute "all" roots;
+# - does NOT work for Case 1;
+roots.y.Case2.S2Equal = function(y, R, b, n=3) {
+	# b1 = b[1]; b2 = b[2];
+	x = b[2] - y;
+	return(cbind(x=x, y=y));
+}
+### Simple
+# - NOT robust!
+roots.y.S2Equal = function(x, R, b, n=3, sort=TRUE) {
+	sol = cbind(x=x, y=x); # base-set;
+	m = unity(3, all=FALSE);
+	sol2 = cbind(x=rep(x, 2), y=c(x*m, x*m^2));
+	sol2 = rbind(sol2, sol2[,2:1]);
+	sol = rbind(sol, sol2);
+	if(sort) {
+		id = order.c(sol[,1], 5);
+		sol = sol[id,];
+	}
+	return(sol);
+}
+solve.Case1.S2Equal = function(R, b) {
+	y = roots(c(1, b[2], 0, b[1], -R[1]));
+	sol = roots.y.S2Equal(y, R=R, b=b, n=3);
+	return(sol);
+}
+solve.Case2.S2Equal = function(R, b) {
+	y = roots(c(1, -b[2], 3*b[2]^2, b[1] - 3*b[2]^3, b[2]^4 - R[1]));
+	x = b[2] - y;
+	return(cbind(x=x, y=y));
+}
+
+### Examples:
+R = 2
+b = c(2,-1)
+#
+sol = solve.Case1.S2Equal(R, b)
+# TODO: exclude set of false roots & duplicates;
+
+# set with 4 correct roots;
+sol2 = solve.Case2.S2Equal(R, b);
+sol = rbind(sol2, sol);
+x = sol[,1]; y = sol[,2];
+
+
+### Test:
+b1 = b[1]; b2 = b[2];
+x^4 + x^3*y - x*y^3 + b2*y^3 + b1*y # = R
+y^4 + b2*x^3 + b1*y # = R
+
+
+### Derivation:
+### x = b2 - y =>
+y^4 - b2*y^3 + 3*b2^2*y^2 + b1*y - 3*b2^3*y - R + b2^4
+y^4 - b2*y^3 + 3*b2^2*y^2 + b1*y - 3*b2^3*y - R + b2^4
 
