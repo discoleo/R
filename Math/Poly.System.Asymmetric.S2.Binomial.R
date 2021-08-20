@@ -7,7 +7,7 @@
 ### Asymmetric S2:
 ### Binomial Expansions
 ###
-### draft v.0.2h-solAll
+### draft v.0.2i
 
 
 ### Asymmetric Polynomial Systems: 2 Variables
@@ -25,6 +25,8 @@
 ###############
 
 
+### draft v.0.2i:
+# - [refactoring] renaming functions;
 ### draft v.0.2h - v.0.2h-solAll:
 # - Generator: for various subtypes of Class 3 systems;
 # - refactoring: uniform types; [v.0.2h-refact]
@@ -128,7 +130,7 @@ roots.Cl3P = function(s, n=3) {
 ### Generators
 
 ### Base: Class 1
-system.S2Cl1Ht = function(K, s1, s2, n=3, type="Ht", tol=1E-10, withBase=FALSE, debug=TRUE) {
+system.S2Cl1 = function(K, s1, s2, n=3, type="Ht", tol=1E-10, withBase=FALSE, debug=TRUE) {
 	type = pmatch(type, c("Ht", "Sum", "HtSumDiff", "HtDual"));
 	if(is.na(type)) stop("Unsupported type!");
 	if(length(K) > 1) stop("Parameter K must have only 1 value!")
@@ -223,7 +225,7 @@ system.S2Cl3 = function(s1, s2, n=3, type="Ht", root.type="Power", withBase=FALS
 
 ### Class 1
 clPoly.S2Cl1 = function(K, s1, s2, n=3, div=NULL, type="Ht", tol=1E-10) {
-	pL = system.S2Cl1Ht(K=K, s1=s1, s2=s2, n=n, type=type, tol=tol, withBase=TRUE);
+	pL = system.S2Cl1(K=K, s1=s1, s2=s2, n=n, type=type, tol=tol, withBase=TRUE);
 	pR = solve.pm(pL[[1]], pL[[2]], "y");
 	xgcd = gcd.vpm(pR$Rez);
 	pR$Rez$coeff = pR$Rez$coeff / xgcd;
@@ -238,7 +240,7 @@ clPoly.S2Cl1 = function(K, s1, s2, n=3, div=NULL, type="Ht", tol=1E-10) {
 }
 sysAll.S2Cl1 = function(K, s1, s2, n=3, div=toPoly.pm("x^2-2*x+1"), type="Ht", allRoots=TRUE) {
 	# Px
-	p = system.S2Cl1Ht(K, s1, s2, n=n, type=type);
+	p = system.S2Cl1(K, s1, s2, n=n, type=type);
 	# roots
 	x = roots.Cl1(K, s1, n=n);
 	y = roots.Cl1(K, s2, n=n);
@@ -320,11 +322,13 @@ x*y*(x+y) - (b11 + 2*b21)*K*x - (2*b11 + b21)*K*y - 2*K^2 - b11*b21*(b11+b21)*K 
 
 ### Entangled Variants:
 
-### 1.) Ht-Variant:
+### 1.a.) Ht-Variant:
 x^3 + 3*x*y*(x+y) - 6*(b11+b21)*K*(x+y) + 3*b21*K*y - 7*K^2 + b21^3*K - (b11+b21)^3*K # = 0
 y^3 + 3*x*y*(x+y) - 6*(b11+b21)*K*(x+y) + 3*b11*K*x - 7*K^2 + b11^3*K - (b11+b21)^3*K # = 0
 
-### 2.) Diff-Variant
+### 1.b.) Ht-Dual/Double-variant
+
+### 2.) Simple Diff-Variant
 x^3 - y^3 - 3*b11*K*x + 3*b21*K*y - (b11^3 - b21^3)*K # = 0
 x*y*(x+y) - (b11 + 2*b21)*K*x - (2*b11 + b21)*K*y - 2*K^2 - b11*b21*(b11+b21)*K # = 0
 # variant: y => -y;
@@ -464,7 +468,7 @@ K = 3
 s1 = c(1,-1,2); s2 = c(0,2,-1);
 x = roots.Cl1(K, s1, n=n);
 y = roots.Cl1(K, s2, n=n);
-p = system.S2Cl1Ht(K, s1, s2, n=n);
+p = system.S2Cl1(K, s1, s2, n=n);
 print.p(p[[1]], c("x","y"))
 print.p(p[[2]], c("x","y"))
 x^3 + 3*x^2*y + 3*x*y^2 - 3*x^2 - 6*x*y - 3*y^2 - 6*x - 24*y + 11 # = 0
@@ -477,7 +481,7 @@ K = 3
 s1 = c(1,-1,2); s2 = c(0,2,-1);
 x = roots.Cl1(K, s1, n=n);
 y = roots.Cl1(K, s2, n=n);
-p = system.S2Cl1Ht(K, s1, s2, n=n, type="HtSumDiff");
+p = system.S2Cl1(K, s1, s2, n=n, type="HtSumDiff");
 print.p(p[[1]], c("x","y"))
 print.p(p[[2]], c("x","y"))
 x^3 + 3*x^2*y + 3*x*y^2 - 3*x^2 - 6*x*y - 3*y^2 - 6*x - 24*y + 11 # = 0
@@ -490,7 +494,7 @@ K = 3
 s1 = c(1,-1,2); s2 = c(0,2,-1);
 x = roots.Cl1(K, s1, n=n);
 y = roots.Cl1(K, s2, n=n);
-p = system.S2Cl1Ht(K, s1, s2, n=n, type="HtDual");
+p = system.S2Cl1(K, s1, s2, n=n, type="HtDual");
 print.p(p[[1]], c("x","y"))
 print.p(p[[2]], c("x","y"))
 x^3 + 6*x*y^2 - 3*x^2 - 6*y^2 + 57*x - 90*y - 160 # = 0
@@ -513,6 +517,9 @@ sol = p$sol; x = sol[,1]; y = sol[,2];
 #
 print.p(p[[1]], c("x","y"))
 print.p(p[[2]], c("x","y"))
+#
+x^3 + 3*x^2*y + 3*x*y^2 - 6*x^2 - 12*x*y - 3*y^2 + 120*x + 81*y - 1534 # = 0
+y^3 + 3*x^2*y + 3*x*y^2 - 3*x^2 - 12*x*y - 6*y^2 + 99*x + 120*y - 2056 # = 0
 
 
 #############
