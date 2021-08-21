@@ -81,7 +81,7 @@
 # - systems with Equalities of variables:
 #   Order 1: x == y;
 #   Order 3: x^3 = y^3; [v.0.4k-O3]
-# - robust roots for Order 3; [v.04k-robust]
+# - robust roots for Order 3; [v.0.4k-robust]
 ### draft v.0.4j - v.0.4j-sol:
 # - decomposition using: (x^2+y^2) & x*y;
 #   x^3*y + b1*y^2 = R1;
@@ -3004,7 +3004,14 @@ S^2 - x*y + b11 - b21 # = 0
 y^4 + b2*y^3 + b1*y - R # = 0
 
 ### Case 2: x^3 != y^3
-# [TODO]
+
+### Diff =>
+(x^3 - y^3)*(x + y - b2) # = 0
+# S = b2;
+
+### Eq y:
+y^4 - b2*y^3 + 3*b2^2*y^2 + b1*y - 3*b2^3*y - R + b2^4 # = 0
+
 
 ### Solver:
 solve.S2Equal = function(R, b, sort=TRUE) {
@@ -3083,7 +3090,6 @@ y^4 + b2*x^3 + b1*y # = R
 ### Derivation:
 ### Case: x^3 != y^3
 ### x = b2 - y =>
-y^4 - b2*y^3 + 3*b2^2*y^2 + b1*y - 3*b2^3*y - R + b2^4
 y^4 - b2*y^3 + 3*b2^2*y^2 + b1*y - 3*b2^3*y - R + b2^4
 
 ### Eq y: Py-Case2[4] * PyEq[4]^3
