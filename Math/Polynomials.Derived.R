@@ -4,7 +4,7 @@
 ### [the one and only]
 ###
 ### Derived Polynomials
-### v.0.4c-coeff-x1
+### v.0.4d
 
 ### Note:
 # This is the 1st part towards:
@@ -14,8 +14,14 @@
 # - introducing interesting properties of polynomial roots;
 # - includes a different approach to polynomials.
 
-### History
-# v.0.4b - v.0.4c:
+###############
+### History ###
+###############
+
+### draft v.0.4d:
+# - [cleanup] moved section on special P[5]
+#   to new file: Polynomials.P5.R;
+### v.0.4b - v.0.4c:
 # - [started] parametric P[5] derived from:
 #   x^5 - x + K = 0;
 # v.0.4.a:
@@ -59,6 +65,8 @@ library(pracma) # needed if the coefficients are complex
 ######################
 
 ### helper functions
+
+# source("Polynomials.Helper.R");
 
 # - see file: Polynomials.Helper.R;
 # - TODO: clean section;
@@ -192,7 +200,8 @@ err = -4 - 14*x - 21*x^2 - 11*x^3 + x^5
 round0(err)
 x = x0
 # p.calc() o (x^3 + x^2 + x) =
-err = - 4 - 14*x - 35*x^2 - 67*x^3 - 96*x^4 - 107*x^5 - 93*x^6 - 51*x^7 - 3*x^8 + 34*x^9 + 51*x^10 + 45*x^11 + 30*x^12 + 15*x^13 + 5*x^14 + x^15
+err = - 4 - 14*x - 35*x^2 - 67*x^3 - 96*x^4 - 107*x^5 - 93*x^6 - 51*x^7 - 3*x^8 + 34*x^9 + 51*x^10 +
+	+ 45*x^11 + 30*x^12 + 15*x^13 + 5*x^14 + x^15
 round0(err)
 # ==
 err = (4 + 10*x + 25*x^2 + 42*x^3 + 54*x^4 + 57*x^5 + 46*x^6 + 30*x^7 + 15*x^8 + 5*x^9 + x^10) *
@@ -765,41 +774,8 @@ curve(x^2, add=T, col="orange")
 
 ### Experimental
 
+### Solving the Special Polynomial:
 ### x^5 - x = R
-
-### roots: r1, Conj(r1) =>
-(a1+b1*1i)^5 - (a1+b1*1i) - R # = 0
-(a1-b1*1i)^5 - (a1-b1*1i) - R # = 0
-
-### Diff =>
-5*a1^4 - 10*a1^2*b1^2 + b1^4 - 1 # = 0
-5*a2^4 - 10*a2^2*b2^2 + b2^4 - 1 # = 0
-
-### Sum =>
-a1^5 - 10*a1^3*b1^2 + 5*a1*b1^4 - a1 - R # = 0
-a2^5 - 10*a2^3*b2^2 + 5*a2*b2^4 - a2 - R # = 0
-
-### Diff Eq(r1) - Eq(r2):
-(a1+b1*1i)^4 + (a2+b2*1i)^4 + (a1+b1*1i)*(a2+b2*1i)*(a1^2+a2^2-b1^2-b2^2 + 2*(a1*b1+a2*b2)*1i) +
-	+ (a1+b1*1i)^2*(a2+b2*1i)^2 - 1 # = 0
-a1^4 + a2^4 + b1^4 + b2^4 - 6*(a1^2*b1^2 + a2^2*b2^2) + 4*(a1^3*b1 + a2^3*b2 - a1*b1^3 - a2*b2^3)*1i +
-	+ (a1*a2 - b1*b2 + (a1*b2+a2*b1)*1i)*(a1^2+a2^2-b1^2-b2^2 + 2*(a1*b1+a2*b2)*1i) +
-	+ (a1*a2 - b1*b2 + (a1*b2+a2*b1)*1i)^2 - 1 # = 0
-# Re =>
-a1^4 + a2^4 + b1^4 + b2^4 - 6*(a1^2*b1^2 + a2^2*b2^2) +
-	+ (a1*a2 - b1*b2)*(a1^2+a2^2 - (b1^2+b2^2)) - 2*(a1*b2 + a2*b1)*(a1*b1 + a2*b2) +
-	+ (a1*a2 - b1*b2)^2 - (a1*b2 + a2*b1)^2 - 1 # = 0
-# TODO + Im()
-
-# [alternative] =>
-a1^5 + 5*a1^4*b1*1i - 10*a1^3*b1^2 - 10*a1^2*b1^3*1i + 5*a1*b1^4 + b1^5*1i - (a1+b1*1i) +
-	- a2^5 - 5*a2^4*b2*1i + 10*a2^3*b2^2 + 10*a2^2*b2^3*1i - 5*a2*b2^4 - b2^5*1i + (a2+b2*1i) # = 0
-a1^5 - a2^5 - 10*a1^3*b1^2 + 10*a2^3*b2^2 + 5*a1*b1^4 - 5*a2*b2^4 - (a1-a2) # = 0
-
-
-### Debug:
-R = 1
-x = roots(c(1,0,0,0,-1,-R));
-a1 = Re(x[2]); b1 = Im(x[2]);
-a2 = Re(x[4]); b2 = Im(x[4]);
+# - moved to file:
+#   Polynomials.P5.R;
 
