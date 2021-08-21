@@ -7,7 +7,7 @@
 ### Asymmetric S2:
 ### Base Types
 ###
-### draft v.0.4k-O3
+### draft v.0.4k-robust
 
 
 ### Asymmetric Polynomial Systems: 2 Variables
@@ -77,10 +77,11 @@
 ###############
 
 
-### draft v.0.4k - v.0.4k-O3:
+### draft v.0.4k - v.0.4k-robust:
 # - systems with Equalities of variables:
 #   Order 1: x == y;
 #   Order 3: x^3 = y^3; [v.0.4k-O3]
+# - robust roots for Order 3; [v.04k-robust]
 ### draft v.0.4j - v.0.4j-sol:
 # - decomposition using: (x^2+y^2) & x*y;
 #   x^3*y + b1*y^2 = R1;
@@ -190,8 +191,14 @@ library(pracma)
 
 ### Other
 
-order.c = function(x, digits=5) {
-	id = order(round(Re(x), digits), round(Im(x), digits));
+order.cm = function(x, digits=5) {
+	if(is.null(dim(x)) || length(dim(x)) == 1) {
+		id = order(round(Re(x), digits), round(Im(x), digits));
+	} else {
+		id = order(
+			round(Re(x[,1]), digits), round(Im(x[,1]), digits),
+			round(Re(x[,2]), digits), round(Im(x[,2]), digits));
+	}
 	return(id);
 }
 
@@ -2958,10 +2965,10 @@ y^3*x + b2/k^3*x^2 - R2/k^3
 ### Equality Order 1
 ### x == y
 
-### Order 3
+### System Order 3
 
-# x^3 + b11*(x - y) = R
-# y^3 + b21*(x - y) = R
+# x^3 + b11*(x^k1 - y^k1) = R
+# y^3 + b21*(x^k2 - y^k2) = R
 
 ### Solution:
 
@@ -2970,6 +2977,7 @@ y^3*x + b2/k^3*x^2 - R2/k^3
 x^3 - R # = 0
 
 ### Case 2: x != y
+# for k1 = k2 = 1
 
 ### Diff =>
 (x-y)*(S^2 - x*y + b11 - b21) # = 0
@@ -2980,12 +2988,12 @@ S^2 - x*y + b11 - b21 # = 0
 
 
 ####################
+####################
 
 ### Equality Order 3
 ### x^3 == y^3
 
-### Order 4
-
+### System Order 4
 # x^4 + x^3*y - x*y^3 + b2*y^3 + b1*y = R
 # y^4 + b2*x^3 + b1*y = R
 
@@ -2996,17 +3004,54 @@ S^2 - x*y + b11 - b21 # = 0
 y^4 + b2*y^3 + b1*y - R # = 0
 
 ### Case 2: x^3 != y^3
-# TODO
+# [TODO]
 
 ### Solver:
+solve.S2Equal = function(R, b, sort=TRUE) {
+	# [solved] removed false roots & duplicates;
+	sol = solve.Case1.S2Equal(R, b, sort=sort)
+	# set with 4 distinct (correct) roots;
+	sol2 = solve.Case2.S2Equal(R, b);
+	sol = rbind(sol2, sol);
+	return(sol);
+}
+solve.Case1.S2Equal = function(R, b, sort=TRUE, add.duplicates=FALSE) {
+	y = solve.Case1Eq.S2Equal(R, b, permute=FALSE)[,2];
+	x = sapply(y, function(y) roots(c(b[2], 0, 0, y^4 + b[1]*y - R)));
+	y = rep(y, each=3);
+	sol = cbind(x=as.vector(x), y=as.vector(y));
+	if(add.duplicates) {
+		# probably duplicates: TODO: check!
+		sol2 = solve.Case1Eq.S2Equal(R, b, permute=FALSE);
+		sol = rbind(sol2, sol);
+	}
+	if(sort) {
+		id = order.cm(sol, 5);
+		sol = sol[id,];
+	}
+	return(sol);
+}
+solve.Case1Eq.S2Equal = function(R, b, permute=FALSE) {
+	y = roots(c(1, b[2], 0, b[1], -R[1]));
+	if(permute) {
+		sol = roots.y.S2Equal(y, R=R, b=b, n=3);
+	} else sol = cbind(x=y, y=y);
+	return(sol);
+}
+solve.Case2.S2Equal = function(R, b) {
+	y = roots(c(1, -b[2], 3*b[2]^2, b[1] - 3*b[2]^3, b[2]^4 - R[1]));
+	x = b[2] - y;
+	return(cbind(x=x, y=y));
+}
+### Case 2:
 # - does NOT compute "all" roots;
 # - does NOT work for Case 1;
-roots.y.Case2.S2Equal = function(y, R, b, n=3) {
+roots.x.Case2.S2Equal = function(y, R, b, n=3) {
 	# b1 = b[1]; b2 = b[2];
 	x = b[2] - y;
 	return(cbind(x=x, y=y));
 }
-### Simple
+### [old] Simple
 # - NOT robust!
 roots.y.S2Equal = function(x, R, b, n=3, sort=TRUE) {
 	sol = cbind(x=x, y=x); # base-set;
@@ -3015,32 +3060,17 @@ roots.y.S2Equal = function(x, R, b, n=3, sort=TRUE) {
 	sol2 = rbind(sol2, sol2[,2:1]);
 	sol = rbind(sol, sol2);
 	if(sort) {
-		id = order.c(sol[,1], 5);
+		id = order.cm(sol, 5);
 		sol = sol[id,];
 	}
 	return(sol);
-}
-solve.Case1.S2Equal = function(R, b) {
-	y = roots(c(1, b[2], 0, b[1], -R[1]));
-	sol = roots.y.S2Equal(y, R=R, b=b, n=3);
-	return(sol);
-}
-solve.Case2.S2Equal = function(R, b) {
-	y = roots(c(1, -b[2], 3*b[2]^2, b[1] - 3*b[2]^3, b[2]^4 - R[1]));
-	x = b[2] - y;
-	return(cbind(x=x, y=y));
 }
 
 ### Examples:
 R = 2
 b = c(2,-1)
-#
-sol = solve.Case1.S2Equal(R, b)
-# TODO: exclude set of false roots & duplicates;
-
-# set with 4 correct roots;
-sol2 = solve.Case2.S2Equal(R, b);
-sol = rbind(sol2, sol);
+# [solved] removed false roots & duplicates;
+sol = solve.S2Equal(R, b)
 x = sol[,1]; y = sol[,2];
 
 
@@ -3051,7 +3081,17 @@ y^4 + b2*x^3 + b1*y # = R
 
 
 ### Derivation:
+### Case: x^3 != y^3
 ### x = b2 - y =>
 y^4 - b2*y^3 + 3*b2^2*y^2 + b1*y - 3*b2^3*y - R + b2^4
 y^4 - b2*y^3 + 3*b2^2*y^2 + b1*y - 3*b2^3*y - R + b2^4
+
+### Eq y: Py-Case2[4] * PyEq[4]^3
+
+b1 = b[1]; b2 = b[2];
+# actually PyEq^2
+coeff = c(1, 2*b2, b2^2, 2*b1, - 2*R + 2*b1*b2, - 2*R*b2, b1^2, - 2*R*b1, R^2);
+y = roots(coeff)
+x = sapply(y, function(y) roots(c(b[2], 0, 0, y^4 + b[1]*y - R)));
+y = rep(y, each=3)
 
