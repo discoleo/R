@@ -76,7 +76,9 @@ encrypt = function(x, offset=0, isRandom=TRUE, DEBUG=TRUE) {
 
 extract.vars = function(e, unique=TRUE, debug=TRUE) {
 	if(is.expression(e)) e = e[[1]];
-	if(e[[1]] == '~') e = e[[2]];
+	if(e[[1]] == '~') {
+		e = if(length(e) == 2) e[[2]] else e[[3]]; # Note: discards e[[2]]
+	}
 	signs = numeric(0);
 	vars  = character(0);
 	isNum = logical(0); # TODO
@@ -137,4 +139,9 @@ extract.vars(e)
 
 e = parse(text="~ -x+y-z+2|+e+x-y+z")
 extract.vars(e)
+
+# e = parse(text = "~ median(x) + (min(x) - max(x))")
+# is.name(e[[1]][[2]][[2]][[1]])
+# ef = e[[1]][[2]][[2]]; if(is.name(ef[[1]]) && length(ef) > 1) print("Function!");
+# is.function(eval(e[[1]][[2]][[2]][[1]])) # but error on "x";
 
