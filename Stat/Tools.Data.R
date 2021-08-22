@@ -74,7 +74,10 @@ encrypt = function(x, offset=0, isRandom=TRUE, DEBUG=TRUE) {
 
 ### Formulas / Expressions
 
-extract.vars = function(e, unique=TRUE, debug=TRUE) {
+extract.vars = function(e, unique=TRUE, simplify="Skip", debug=TRUE) {
+	simplify = pmatch(simplify, c("Skip", "First", "Last", "Aggregate"));
+	if(is.na(simplify)) stop("Invalid argument simplify!")
+	# "Skip" = as.unique;
 	if(is.expression(e)) e = e[[1]];
 	if(e[[1]] == '~') {
 		e = if(length(e) == 2) e[[2]] else e[[3]]; # Note: discards e[[2]]
@@ -111,14 +114,34 @@ extract.vars = function(e, unique=TRUE, debug=TRUE) {
 		signs = c(signs, 1);
 		vars = c(vars, as.character(e));
 	}
-	vars = rev(vars); signs = rev(signs);
-	if(unique) {
+	filterDuplicates = function(reverse=FALSE) {
 		isDuplicated = duplicated(vars);
 		if(any(isDuplicated)) {
 			vars = vars[ ! isDuplicated];
 			signs = signs[ ! isDuplicated];
 			if(debug) print("Duplicates excluded!");
 		}
+		if(reverse) {
+			vars = rev(vars); signs = rev(signs);
+		}
+		return(list(vars=vars, signs=signs));
+	}
+	if(simplify < 3) {
+		vars = rev(vars); signs = rev(signs);
+		if(unique || simplify == 2) {
+			return(filterDuplicates());
+		}
+	} else if(simplify == 3) {
+		return(filterDuplicates(reverse=TRUE));
+	} else {
+		vars = rev(vars); signs = rev(signs);
+		tmp = data.frame(vars=vars, signs=signs);
+		tmp = aggregate(signs ~ vars, tmp, sum);
+		tmp = tmp[tmp$signs != 0,]
+		# initial order:
+		id = match(tmp$vars, vars);
+		id = sort(id); id = match(vars[id], tmp$vars); tmp = tmp[id, ];
+		return(tmp);
 	}
 	return(list(vars=vars, signs=signs));
 }
@@ -137,11 +160,24 @@ extract.vars(e)
 e = parse(text="~ -x+y-z+2+e+x-y")
 extract.vars(e)
 
+e = parse(text="~ -x+y-z+2+e+x-y")
+extract.vars(e, simplify="Last")
+
+e = parse(text="~ -x+y-z+2+e+x-y")
+extract.vars(e, simplify="Aggregate")
+
 e = parse(text="~ -x+y-z+2|+e+x-y+z")
 extract.vars(e)
 
-# e = parse(text = "~ median(x) + (min(x) - max(x))")
-# is.name(e[[1]][[2]][[2]][[1]])
-# ef = e[[1]][[2]][[2]]; if(is.name(ef[[1]]) && length(ef) > 1) print("Function!");
+
+### Experimental: Functions
+e = parse(text = "~ median(x) + (min(x) - max(x))")
+is.name(e[[1]][[2]][[2]][[1]])
+ef = e[[1]][[2]][[2]];
+### Function
+ef[[1]]
+if(is.name(ef[[1]]) && length(ef) > 1) print("Function!");
+### Argument:
+ef[[2]]
 # is.function(eval(e[[1]][[2]][[2]][[1]])) # but error on "x";
 
