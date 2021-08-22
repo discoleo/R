@@ -28,7 +28,20 @@ toRow.df = function(m, val=rownames(m), group=colnames(m), asNumVal=TRUE, asNumG
 	)
 }
 
+### Order
+order.df = function(x, decreasing=TRUE, lim=c(1E+5, 10)) {
+	if( ! is.null(lim)) {
+		if(nrow(x) > lim[1] || ncol(x) > lim[2]) {
+			msg = "Data frame is too big! Set lim = NULL to sort big data frames."
+			stop(msg);
+		}
+	}
+	order.s = function(...) order(..., decreasing=decreasing);
+	id = do.call(order.s, x);
+	return(id);
+}
 
+### Duplicates
 countDuplicates = function(m, onlyDuplicates=FALSE) {
 	count = rep(0, nrow(m));
 	xd = aggregate(count ~ ., m, length);
