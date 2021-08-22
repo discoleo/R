@@ -72,10 +72,17 @@ extract.vars = function(e, unique=TRUE, debug=TRUE) {
 			signs = c(signs, 1);
 		} else if(e[[1]] == "-") {
 			signs = c(signs, -1);
+		} else if(e[[1]] == "|") {
+			warning("Operator | not fully supported!");
+			tmp1 = extract.vars(e[[3]], unique=unique, debug=debug);
+			signs = c(signs, tmp1$signs);
+			vars = c(vars, tmp1$vars);
+			e = e[[2]]; next;
 		}
 		len = length(e);
 		if(len == 3) {
 			# TODO: if(is.numeric(e[[3]])) {...}
+			if(is.numeric(e[[3]])) warning("Numeric values not yet implemented!")
 			# as.character needed for vector vs list
 			vars = c(vars, as.character(e[[3]]));
 			e = e[[2]];
@@ -113,5 +120,8 @@ e = parse(text="-x+y-z+2+e+x-y")
 extract.vars(e)
 
 e = parse(text="~ -x+y-z+2+e+x-y")
+extract.vars(e)
+
+e = parse(text="~ -x+y-z+2|+e+x-y+z")
 extract.vars(e)
 
