@@ -114,27 +114,30 @@ extract.vars = function(e, unique=TRUE, simplify="Skip", debug=TRUE) {
 		signs = c(signs, 1);
 		vars = c(vars, as.character(e));
 	}
+	vars = rev(vars); signs = rev(signs);
+	if(simplify ==1 && unique) simplify = 2;
+	return(filter.vars(vars=vars, signs=signs, simplify=simplify, debug=debug));
+}
+filter.vars = function(vars, signs, simplify, debug=TRUE) {
+	if(is.character(simplify)) {
+		simplify = pmatch(simplify, c("Skip", "First", "Last", "Aggregate"));
+		if(is.na(simplify)) stop("Invalid argument simplify!")
+	}
 	filterDuplicates = function(reverse=FALSE) {
-		isDuplicated = duplicated(vars);
+		isDuplicated = if(reverse) rev(duplicated(rev(vars))) else duplicated(vars);
 		if(any(isDuplicated)) {
 			vars = vars[ ! isDuplicated];
 			signs = signs[ ! isDuplicated];
 			if(debug) print("Duplicates excluded!");
 		}
-		if(reverse) {
-			vars = rev(vars); signs = rev(signs);
-		}
 		return(list(vars=vars, signs=signs));
 	}
-	if(simplify < 3) {
-		vars = rev(vars); signs = rev(signs);
-		if(unique || simplify == 2) {
-			return(filterDuplicates());
-		}
+	#
+	if(simplify == 2) {
+		return(filterDuplicates());
 	} else if(simplify == 3) {
 		return(filterDuplicates(reverse=TRUE));
 	} else {
-		vars = rev(vars); signs = rev(signs);
 		tmp = data.frame(vars=vars, signs=signs);
 		tmp = aggregate(signs ~ vars, tmp, sum);
 		tmp = tmp[tmp$signs != 0,]
@@ -143,7 +146,6 @@ extract.vars = function(e, unique=TRUE, simplify="Skip", debug=TRUE) {
 		id = sort(id); id = match(vars[id], tmp$vars); tmp = tmp[id, ];
 		return(tmp);
 	}
-	return(list(vars=vars, signs=signs));
 }
 
 
