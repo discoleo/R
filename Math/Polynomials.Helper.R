@@ -79,11 +79,13 @@ roots.cl2.f = function(s, n = length(s)) {
 	r = round0(r)
 }
 
-sort.sol = function(sol, useRe=TRUE, ncol=1) {
+sort.sol = function(sol, useRe=TRUE, ncol=1, digits=5) {
 	if(useRe) {
-		id = order(abs(sol[,ncol]), Re(sol[,ncol]));
+		id = order(
+			abs(round(sol[,ncol], digits)),
+			round(Re(sol[,ncol]), digits) );
 	} else {
-		id = order(abs(sol[,ncol]));
+		id = order(abs(round(sol[,ncol], digits)) );
 	}
 	return(sol[id,]);
 }
@@ -1128,7 +1130,7 @@ toMonom.pm = function(e, xsign = 1) {
 					vn1 = as.character(e); # a variable name;
 					m[, vn1] = 1;
 				}
-			} else if(is.numeric(e)) {
+			} else if(is.numeric(e) || is.complex(e)) {
 				m[, "coeff"] = m[, "coeff"] * e;
 			} else print(paste0("Error: ", e));
 		} else {
@@ -1139,13 +1141,18 @@ toMonom.pm = function(e, xsign = 1) {
 					e = e[[3]]; next;
 				}
 				if(op == "^") {
-					vn1 = as.character(e[[2]]); # TODO: 8^8
 					pow = e[[3]];
 					if( ! is.numeric(pow)) {
 						warning(paste0("Power = ", pow, " is NOT numeric!"));
 						pow = NA;
 					}
-					m[, vn1] = pow;
+					if(is.numeric(e[[2]])) {
+						# TODO: check;
+						m[, "coeff"] = m[, "coeff"] * e[[2]]^pow;
+					} else {
+						vn1 = as.character(e[[2]]);
+						m[, vn1] = pow;
+					}
 				} else if(op == "-") {
 					m$coeff = - m$coeff;
 					e = e[[2]]; next;
@@ -1158,7 +1165,7 @@ toMonom.pm = function(e, xsign = 1) {
 					vn1 = as.character(op); # a variable name;
 					m[, vn1] = 1;
 				}
-			} else if(is.numeric(op)) {
+			} else if(is.numeric(op) || is.complex(op)) {
 				m[, "coeff"] = m[, "coeff"] * op;
 			}
 		}
