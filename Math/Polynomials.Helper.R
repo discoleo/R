@@ -1056,9 +1056,9 @@ toPoly.pm = function(e) {
 		}
 		e = parse(text=e);
 	}
-	if( ! is.expression(e)) stop("Input must be an expression!")
-	if( ! is.language(e[[1]])) return(NULL);
+	if( ! is.expression(e)) stop("Input must be an expression!");
 	e = e[[1]];
+	if( ! (is.language(e) || is.numeric(e) || is.complex(e)) ) return(NULL);
 	p = data.frame();
 	while(TRUE) {
 		isSymbol = is.symbol(e);
@@ -1083,6 +1083,10 @@ toPoly.pm = function(e) {
 				p = if(nrow(p) == 0) m else sum.pm(p, m);
 				break;
 			}
+		} else if(is.numeric(e) || is.complex(e)) {
+			m = toMonom.pm(e);
+			p = if(nrow(p) == 0) m else sum.pm(p, m);
+			break;
 		} else break;
 	}
 	return(p);
@@ -1147,8 +1151,19 @@ toMonom.pm = function(e, xsign = 1) {
 						pow = NA;
 					}
 					if(is.numeric(e[[2]])) {
-						# TODO: check;
 						m[, "coeff"] = m[, "coeff"] * e[[2]]^pow;
+					} else if(is.language(e[[2]]) && ! is.symbol(e[[2]])) {
+						e = e[[2]];
+						if(e[[1]] == "(") {
+							pp = parse.parenth.pm(e[[2]]);
+							if(pp$Err) {
+								warning("Expressions NOT yet implemented!");
+							} else {
+								m[, "coeff"] = m[, "coeff"] * pp$coeff^pow;
+							}
+						} else {
+							warning("Power of px: Not yet implemented!"); # TODO
+						}
 					} else {
 						vn1 = as.character(e[[2]]);
 						m[, vn1] = pow;
@@ -1174,6 +1189,15 @@ toMonom.pm = function(e, xsign = 1) {
 		acc = head(acc, -1);
 	}
 	return(m);
+}
+parse.parenth.pm = function(e) {
+	p = toPoly.pm(as.expression(e)); # TODO: remove as.expression();
+	if(ncol(p) == 1) {
+		return(list(coeff=p$coeff, Err=FALSE));
+	} else {
+		warning("Power of Expression: Not yet implemented!"); # TODO
+	}
+	return(list(Err=TRUE));
 }
 
 
