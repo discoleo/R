@@ -75,6 +75,7 @@ encrypt = function(x, offset=0, isRandom=TRUE, DEBUG=TRUE) {
 ### Formulas / Expressions
 
 extract.vars = function(e, unique=TRUE, simplify="Skip", debug=TRUE) {
+	if(is.character(unique)) simplify = unique;
 	simplify = pmatch(simplify, c("Skip", "First", "Last", "Aggregate"));
 	if(is.na(simplify)) stop("Invalid argument simplify!")
 	# "Skip" = as.unique;
@@ -115,10 +116,10 @@ extract.vars = function(e, unique=TRUE, simplify="Skip", debug=TRUE) {
 		vars = c(vars, as.character(e));
 	}
 	vars = rev(vars); signs = rev(signs);
-	if(simplify ==1 && unique) simplify = 2;
+	if(simplify == 1 && unique == TRUE) simplify = 2;
 	return(filter.vars(vars=vars, signs=signs, simplify=simplify, debug=debug));
 }
-filter.vars = function(vars, signs, simplify, debug=TRUE) {
+filter.vars = function(vars, signs, simplify="First", FUN=sum, debug=TRUE) {
 	if(is.character(simplify)) {
 		simplify = pmatch(simplify, c("Skip", "First", "Last", "Aggregate"));
 		if(is.na(simplify)) stop("Invalid argument simplify!")
@@ -133,13 +134,16 @@ filter.vars = function(vars, signs, simplify, debug=TRUE) {
 		return(list(vars=vars, signs=signs));
 	}
 	#
+	if(simplify == 1) {
+		return(list(vars=vars, signs=signs));
+	}
 	if(simplify == 2) {
 		return(filterDuplicates());
 	} else if(simplify == 3) {
 		return(filterDuplicates(reverse=TRUE));
 	} else {
 		tmp = data.frame(vars=vars, signs=signs);
-		tmp = aggregate(signs ~ vars, tmp, sum);
+		tmp = aggregate(signs ~ vars, tmp, FUN=FUN);
 		tmp = tmp[tmp$signs != 0,]
 		# initial order:
 		id = match(tmp$vars, vars);
