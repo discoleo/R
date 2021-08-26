@@ -222,7 +222,7 @@ mult.pm = function(p1, p2, sc=1) {
 	if(sc != 1) p.r$coeff = p.r$coeff * sc;
 	return(p.r);
 }
-pow.pm = function(p, n=2, do.order=TRUE) {
+pow.pm = function(p, n=2, do.order=TRUE, debug=TRUE) {
 	if(n == 1) return(p);
 	if(is.double(n) && (n == round(n))) n = as.integer(n);
 	if( ! is.integer(n)) stop("n must be integer!")
@@ -231,7 +231,7 @@ pow.pm = function(p, n=2, do.order=TRUE) {
 	p.r = NULL;
 	p.pow = p;
 	while (n > 0) {
-		print(n)
+		if(debug) print(n);
 		if (n %% 2 == 1) {
 			if(is.null(p.r)) p.r = p.pow else p.r = mult.pm(p.r, p.pow);
 		}
@@ -1141,6 +1141,9 @@ toMonom.pm = function(e, xsign = 1) {
 					vn1 = as.character(e); # a variable name;
 					m[, vn1] = 1;
 				}
+			} else if(is.language(e)) {
+				pp = parse.epm(e); # another polynomial
+				m  = mult.pm(pp, m);
 			} else if(is.numeric(e) || is.complex(e)) {
 				m[, "coeff"] = m[, "coeff"] * e;
 			} else print(paste0("Error: ", e));
@@ -1149,7 +1152,18 @@ toMonom.pm = function(e, xsign = 1) {
 			if(is.symbol(op)) {
 				if(op == "*") {
 					acc = c(acc, e[[2]]);
-					e = e[[3]]; next;
+					e = e[[3]];
+					if(is.language(e) && ! is.symbol(e)) {
+						pp = toMonom.pm(e);
+						nLast = length(acc);
+						pp2 = toMonom.pm(acc[[nLast]])
+						pp = mult.pm(pp, pp2);
+						m  = mult.pm(pp, m); # may NOT be correct!
+						acc = acc[ - nLast];
+						if(length(acc) == 0) break;
+						e = acc[[length(acc)]];
+					}
+					next;
 				}
 				if(op == "^") {
 					pow = e[[3]];
@@ -1170,7 +1184,10 @@ toMonom.pm = function(e, xsign = 1) {
 								m[, "coeff"] = m[, "coeff"] * pp$coeff^pow;
 							}
 						} else {
-							warning("Power of px: Not yet implemented!"); # TODO
+							print("Power of px!");
+							pp = parse.epm(e);
+							pp = pow.pm(pp, pow);
+							m  = mult.pm(pp, m);
 						}
 					} else {
 						vn1 = as.character(e[[2]]);
@@ -1188,6 +1205,9 @@ toMonom.pm = function(e, xsign = 1) {
 					vn1 = as.character(op); # a variable name;
 					m[, vn1] = 1;
 				}
+			} else if(is.language(op)) {
+				pp = parse.epm(op); # another polynomial: check if reachable?
+				m  = mult.pm(pp, m);
 			} else if(is.numeric(op) || is.complex(op)) {
 				m[, "coeff"] = m[, "coeff"] * op;
 			}
@@ -1197,6 +1217,10 @@ toMonom.pm = function(e, xsign = 1) {
 		acc = head(acc, -1);
 	}
 	return(m);
+}
+parse.epm = function(e) {
+	p = eval(e[[1]]);
+	return(p)
 }
 parse.parenth.pm = function(e) {
 	p = toPoly.pm(e);
