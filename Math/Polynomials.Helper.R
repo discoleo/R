@@ -1056,9 +1056,11 @@ toPoly.pm = function(e) {
 		}
 		e = parse(text=e);
 	}
-	if( ! is.expression(e)) stop("Input must be an expression!");
-	e = e[[1]];
-	if( ! (is.language(e) || is.numeric(e) || is.complex(e)) ) return(NULL);
+	if(is.expression(e)) {
+		e = e[[1]];
+	} else if( ! (is.language(e) || is.numeric(e) || is.complex(e)) ) {
+		stop("Input must be an expression!");
+	}
 	p = data.frame();
 	while(TRUE) {
 		isSymbol = is.symbol(e);
@@ -1191,7 +1193,7 @@ toMonom.pm = function(e, xsign = 1) {
 	return(m);
 }
 parse.parenth.pm = function(e) {
-	p = toPoly.pm(as.expression(e)); # TODO: remove as.expression();
+	p = toPoly.pm(e);
 	if(ncol(p) == 1) {
 		return(list(coeff=p$coeff, Err=FALSE));
 	} else {
