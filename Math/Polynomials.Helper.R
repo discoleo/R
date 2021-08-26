@@ -1153,7 +1153,7 @@ toMonom.pm = function(e, xsign = 1) {
 				if(op == "*") {
 					acc = c(acc, e[[2]]);
 					e = e[[3]];
-					if(is.language(e) && ! is.symbol(e)) {
+					if(is.call(e)) {
 						pp = toMonom.pm(e);
 						nLast = length(acc);
 						pp2 = toMonom.pm(acc[[nLast]])
@@ -1202,13 +1202,13 @@ toMonom.pm = function(e, xsign = 1) {
 				} else if(op == "/") {
 					m[, "coeff"] = m[, "coeff"] / e[[3]];
 					e = e[[2]]; next;
+				} else if(is.call(e)) {
+					pp = parse.epm(e); # another polynomial: check if reachable?
+					m  = mult.pm(pp, m); break;
 				} else {
 					vn1 = as.character(op); # a variable name;
 					m[, vn1] = 1;
 				}
-			} else if(is.language(op)) {
-				pp = parse.epm(op); # another polynomial: check if reachable?
-				m  = mult.pm(pp, m);
 			} else if(is.numeric(op) || is.complex(op)) {
 				m[, "coeff"] = m[, "coeff"] * op;
 			}
@@ -1221,6 +1221,13 @@ toMonom.pm = function(e, xsign = 1) {
 }
 parse.epm = function(e) {
 	p = eval(e[[1]]);
+	pnames = names(e); len = length(pnames);
+	if(len > 1) {
+		for(i in seq(2, len)) {
+			tmp = toPoly.pm(e[[i]]);
+			p = replace.pm(p, tmp, pnames[i]);
+		}
+	}
 	return(p)
 }
 parse.parenth.pm = function(e) {
