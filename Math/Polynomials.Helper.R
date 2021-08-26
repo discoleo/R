@@ -172,16 +172,20 @@ mult.pm = function(p1, p2, sc=1) {
 		names(p.l) = colnames(p.df);
 		return(p.l);
 	}
-	if(is.numeric(p1)) {
+	if(is.numeric(p1) || is.complex(p1) || ncol(p1) == 1) {
+		if( ! (is.numeric(p1) || is.complex(p1)) ) p1 = p1$coeff;
+		if(missing(p2)) p2 = p1;
 		if(is.list(p2)) return(mult.sc.pm(p2, p1));
 		return(data.frame(coeff=p1*p2));
 	}
+	if( ! missing(p2)) {
+	if(is.numeric(p2) || is.complex(p2) || ncol(p2) == 1) {
+		if( ! (is.numeric(p2) || is.complex(p2)) ) p2 = p2$coeff;
+		return(mult.sc.pm(p1, p2));
+	}
+	}
+	# TODO: drop support for simple lists
 	if(is.data.frame(p1)) {
-		if(ncol(p1) == 1) {
-			if(is.numeric(p2)) return(data.frame(coeff=p1$coeff * p2));
-			if(ncol(p2) == 1) return(data.frame(coeff=p1$coeff * p2$coeff));
-			return(mult.sc.pm(p2, p1$coeff));
-		}
 		p1 = split.df(p1);
 	}
 	p1.b0 = p1$coeff;
@@ -1094,6 +1098,7 @@ toPoly.pm = function(e) {
 	return(p);
 }
 ### Parse expression
+# Splits expression into (text) Monomials:
 parse.pm = function(e) {
 	if( ! is.expression(e)) stop("Input must be an expression!")
 	if( ! is.language(e[[1]])) return(NULL);
@@ -1158,8 +1163,9 @@ toMonom.pm = function(e, xsign = 1) {
 						e = e[[2]];
 						if(e[[1]] == "(") {
 							pp = parse.parenth.pm(e[[2]]);
-							if(pp$Err) {
-								warning("Expressions NOT yet implemented!");
+							if(pp$IsPoly) {
+								pp = pow.pm(pp$p, pow);
+								m  = mult.pm(pp, m);
 							} else {
 								m[, "coeff"] = m[, "coeff"] * pp$coeff^pow;
 							}
@@ -1195,11 +1201,11 @@ toMonom.pm = function(e, xsign = 1) {
 parse.parenth.pm = function(e) {
 	p = toPoly.pm(e);
 	if(ncol(p) == 1) {
-		return(list(coeff=p$coeff, Err=FALSE));
+		return(list(coeff=p$coeff, IsPoly=FALSE));
 	} else {
-		warning("Power of Expression: Not yet implemented!"); # TODO
+		return(list(p=p, IsPoly=TRUE));
 	}
-	return(list(Err=TRUE));
+	stop("Unknown Error!")
 }
 
 
