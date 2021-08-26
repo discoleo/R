@@ -1158,14 +1158,19 @@ toMonom.pm = function(e, xsign = 1) {
 						nLast = length(acc);
 						pp2 = toMonom.pm(acc[[nLast]])
 						pp = mult.pm(pp, pp2);
-						m  = mult.pm(pp, m); # may NOT be correct!
+						# TODO: enforce multiplication;
+						m  = mult.pm(pp, m);
 						acc = acc[ - nLast];
 						if(length(acc) == 0) break;
 						e = acc[[length(acc)]];
 					}
 					next;
 				}
-				if(op == "^") {
+				if(op == "(") {
+					if(length(e) > 2) stop("Arrays NOT yet supported!");
+					pp = parse.parenth.pm(e[[2]]);
+					m  = mult.pm(pp, m);
+				} else if(op == "^") {
 					pow = e[[3]];
 					if( ! is.numeric(pow)) {
 						warning(paste0("Power = ", pow, " is NOT numeric!"));
@@ -1177,12 +1182,8 @@ toMonom.pm = function(e, xsign = 1) {
 						e = e[[2]];
 						if(e[[1]] == "(") {
 							pp = parse.parenth.pm(e[[2]]);
-							if(pp$IsPoly) {
-								pp = pow.pm(pp$p, pow);
-								m  = mult.pm(pp, m);
-							} else {
-								m[, "coeff"] = m[, "coeff"] * pp$coeff^pow;
-							}
+							pp = pow.pm(pp, pow);
+							m  = mult.pm(pp, m);
 						} else {
 							print("Power of px!");
 							pp = parse.epm(e);
@@ -1224,12 +1225,7 @@ parse.epm = function(e) {
 }
 parse.parenth.pm = function(e) {
 	p = toPoly.pm(e);
-	if(ncol(p) == 1) {
-		return(list(coeff=p$coeff, IsPoly=FALSE));
-	} else {
-		return(list(p=p, IsPoly=TRUE));
-	}
-	stop("Unknown Error!")
+	return(p);
 }
 
 
