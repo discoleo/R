@@ -53,7 +53,7 @@ countDuplicates = function(m, onlyDuplicates=FALSE) {
 
 ### Formatting
 
-split.names = function(names, extend=0, justify="Right", blank.rm=FALSE, split.ch = "\n") {
+split.names = function(names, extend=0, justify="Right", blank.rm=FALSE, split.ch = "\n", detailed=TRUE) {
 	justify = if(is.null(justify)) 0 else pmatch(justify, c("Left", "Right"));
 	str = strsplit(names, split.ch);
 	if(blank.rm) str = lapply(str, function(s) s[nchar(s) > 0]);
@@ -72,6 +72,7 @@ split.names = function(names, extend=0, justify="Right", blank.rm=FALSE, split.c
 	if(extend > 0) {
 		mx = cbind(mx, matrix("", nr=nr, ncol=extend));
 	}
+	if(detailed) attr(mx, "nchar") = unlist(nch);
 	return(mx);
 }
 
