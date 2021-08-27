@@ -51,6 +51,37 @@ countDuplicates = function(m, onlyDuplicates=FALSE) {
 	return(xd)
 }
 
+### Formatting
+
+split.names = function(names, extend=0, blank.rm=FALSE, split.ch = "\n") {
+	str = strsplit(names, split.ch);
+	if(blank.rm) str = lapply(str, function(s) s[nchar(s) > 0]);
+	nr  = max(sapply(str, function(s) length(s)));
+	nch = lapply(str, function(s) max(nchar(s)));
+	chf = function(nch) paste0(rep(" ", nch), collapse="");
+	ch0 = sapply(nch, chf);
+	mx  = matrix(rep(ch0, each=nr), nrow=nr, ncol=length(names));
+	for(nc in seq(length(names))) {
+		mx[seq(nr + 1 - length(str[[nc]]), nr) , nc] = str[[nc]];
+	}
+	if(extend > 0) {
+		mx = cbind(mx, matrix("", nr=nr, ncol=extend));
+	}
+	return(mx);
+}
+
+ftable2 = function(ftbl, print=TRUE, quote=FALSE, ...) {
+	ftbl2 = format(ftbl, quote=quote, ...);
+	row.vars = names(attr(ftbl, "row.vars"))
+	nr = length(row.vars);
+	nms = split.names(row.vars, extend = ncol(ftbl2) - nr);
+	ftbl2 = rbind(ftbl2[1,], nms, ftbl2[-c(1,2),]);
+	if(print) {
+		cat(t(ftbl2), sep = c(rep(" ", ncol(ftbl2) - 1), "\n"))
+	}
+	invisible(ftbl2);
+}
+
 ### Encrypt IDs
 encrypt = function(x, offset=0, isRandom=TRUE, DEBUG=TRUE) {
 	# TODO: multiple columns in df;
