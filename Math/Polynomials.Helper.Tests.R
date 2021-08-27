@@ -49,3 +49,19 @@ R = 2; b1 = 3; x = -5;
 eval.pm(p.v, c(R, x, b1))
 (x^3 + b1*x - R)^3
 
+
+###################
+###################
+
+### Advanced Parser
+
+p1 = toPoly.pm("(x+1)^3")
+p1
+
+toPoly.pm(paste("(x+", seq(1,6), ")", collapse="*"))
+
+p2 = toPoly.pm("(x+a+b)^3")
+p2
+
+toPoly.pm("p1(x = x-1)*p2(x = x-a)")
+
