@@ -53,7 +53,8 @@ countDuplicates = function(m, onlyDuplicates=FALSE) {
 
 ### Formatting
 
-split.names = function(names, extend=0, blank.rm=FALSE, split.ch = "\n") {
+split.names = function(names, extend=0, justify="Right", blank.rm=FALSE, split.ch = "\n") {
+	justify = if(is.null(justify)) 0 else pmatch(justify, c("Left", "Right"));
 	str = strsplit(names, split.ch);
 	if(blank.rm) str = lapply(str, function(s) s[nchar(s) > 0]);
 	nr  = max(sapply(str, function(s) length(s)));
@@ -62,7 +63,11 @@ split.names = function(names, extend=0, blank.rm=FALSE, split.ch = "\n") {
 	ch0 = sapply(nch, chf);
 	mx  = matrix(rep(ch0, each=nr), nrow=nr, ncol=length(names));
 	for(nc in seq(length(names))) {
-		mx[seq(nr + 1 - length(str[[nc]]), nr) , nc] = str[[nc]];
+		n = length(str[[nc]]);
+		# Justifying
+		s = sapply(seq(n), function(nr) paste0(rep(" ", nch[[nc]] - nchar(str[[nc]][nr])), collapse=""));
+		s = if(justify == 2) paste0(s, str[[nc]]) else paste0(str[[nc]], s);
+		mx[seq(nr + 1 - length(str[[nc]]), nr) , nc] = s;
 	}
 	if(extend > 0) {
 		mx = cbind(mx, matrix("", nr=nr, ncol=extend));
