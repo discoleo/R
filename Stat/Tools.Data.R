@@ -76,6 +76,8 @@ split.names = function(names, extend=0, justify="Right", blank.rm=FALSE, split.c
 	return(mx);
 }
 
+### ftable with name splitting
+# - this code should be ideally inside format.ftable;
 ftable2 = function(ftbl, print=TRUE, quote=FALSE, ...) {
 	ftbl2 = format(ftbl, quote=quote, ...);
 	row.vars = names(attr(ftbl, "row.vars"))
