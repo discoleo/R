@@ -5,7 +5,7 @@
 ###
 ### Graphics Tools
 ###
-### draft v.0.1b
+### draft v.0.1d
 
 
 ### Graphics Tools
@@ -68,6 +68,48 @@ barchart.adv = function(formula, data, main, col="steelblue", xlab="Response", y
 		layout=dm, cex.axis=2, ylim=c(0,1), xlab=xlab, ylab=ylab,
 		scales=list(tck=c(0.8,0.8), col="black", x=list(cex=1), y=list(cex=1)),
 		main=main);
+}
+
+
+######################
+
+
+library(DescTools)
+
+
+### Mosaic Plot based on PlotMosaic in DescTools
+# - code should be ideally inside PlotMosaic;
+plot.mosaic = function(tbl, main=NULL, col=NULL, ...) {
+	dm  = dim(tbl);
+	len = length(dm)
+	if(len == 3) {
+		if(is.null(main)) main = attr(tbl, "dimnames")[[len]];
+		# old.par = par(mfrow = c(1, dm[len]));
+		layout(matrix(c(1,1, seq(2, dm[len])), ncol = 1 + dm[len], nrow = 1));
+		sapply(seq(dm[len]), function(id) {
+			mar = getMar(tbl[,,id]);
+			# Note: accuracy problem due to y-margin!
+			if(id == 1) {
+				PlotMosaic(tbl[,,id], main=main[id], col=col, ...);
+			} else {
+				PlotMosaic(tbl[,,id], main=main[id], cols=col, ylab="", mar=c(5.1,0,mar[1] + 4,0), ...);
+			}
+		})
+		# par(old.par);
+	} else if(len == 2) {
+		if(is.null(main)) main = paste0(names(attr(tbl, "dimnames"))[1:2], collapse=" ~ ");
+		PlotMosaic(tbl, main=main, cols=col, ...);
+	}
+	invisible()
+}
+# helper function
+getMar = function(x) {
+	inches_to_lines <- (par("mar")/par("mai"))[1]
+	lab.width <- max(strwidth(colnames(x), units = "inches")) * inches_to_lines;
+	xmar <- lab.width + 1
+	lab.width <- max(strwidth(rownames(x), units = "inches")) * inches_to_lines
+	ymar <- lab.width + 1
+	return(c(xmar, ymar))
 }
 
 
