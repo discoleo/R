@@ -63,5 +63,18 @@ toPoly.pm(paste("(x+", seq(1,6), ")", collapse="*"))
 p2 = toPoly.pm("(x+a+b)^3")
 p2
 
-toPoly.pm("p1(x = x-1)*p2(x = x-a)")
+toPoly.pm("p1(x = x-1) * p2(x = x-a)")
+# x^3 * (x+b)^3
 
+
+### Power n
+n = 3
+p = toPoly.pm("x^n + b*x - R")
+p
+
+
+###
+n = 3
+m = 2 # "m" clashes with an internal variable;
+p = toPoly.pm("x^(n+m) + b*x - R")
+p

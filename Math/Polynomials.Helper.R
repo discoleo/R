@@ -1173,8 +1173,11 @@ toMonom.pm = function(e, xsign = 1) {
 				} else if(op == "^") {
 					pow = e[[3]];
 					if( ! is.numeric(pow)) {
-						warning(paste0("Power = ", pow, " is NOT numeric!"));
-						pow = NA;
+						pow = eval(pow, envir=.GlobalEnv);
+						if( ! is.numeric(pow)) {
+							warning(paste0("Power = ", pow, " is NOT numeric!"));
+							pow = NA;
+						}
 					}
 					if(is.numeric(e[[2]])) {
 						m[, "coeff"] = m[, "coeff"] * e[[2]]^pow;
@@ -1203,7 +1206,7 @@ toMonom.pm = function(e, xsign = 1) {
 					m[, "coeff"] = m[, "coeff"] / e[[3]];
 					e = e[[2]]; next;
 				} else if(is.call(e)) {
-					pp = parse.epm(e); # another polynomial: check if reachable?
+					pp = parse.epm(e); # another polynomial;
 					m  = mult.pm(pp, m); break;
 				} else {
 					vn1 = as.character(op); # a variable name;
