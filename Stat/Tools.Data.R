@@ -84,6 +84,8 @@ ftable2 = function(ftbl, print=TRUE, quote=FALSE, ...) {
 	nr = length(row.vars);
 	nms = split.names(row.vars, extend = ncol(ftbl2) - nr);
 	ftbl2 = rbind(ftbl2[1,], nms, ftbl2[-c(1,2),]);
+	# TODO: update width of factor labels;
+	# - new width available in attr(nms, "nchar");
 	if(print) {
 		cat(t(ftbl2), sep = c(rep(" ", ncol(ftbl2) - 1), "\n"))
 	}
