@@ -63,10 +63,10 @@ cut.formula = function(e, data, FUN = median) {
 	FUNP = function(x) c(sum(x), length(x) - sum(x)) / length(x);
 	dX.tbl = aggregate(e, data, FUNP)
 	lvl = c("< Med", "> Med"); # c("LesserMed", "GreaterMed")
-	dX1 = dX.tbl; dX1$Type = factor(lvl[1], levels=lvl); dX1$Freq = dX.tbl[,3][,1];
-	dX2 = dX.tbl; dX2$Type = factor(lvl[2], levels=lvl); dX2$Freq = dX.tbl[,3][,2];
+	len = 3; # TODO
+	dX1 = dX.tbl; dX1$Type = factor(lvl[1], levels=lvl); dX1$Freq = dX.tbl[,len][,1];
+	dX2 = dX.tbl; dX2$Type = factor(lvl[2], levels=lvl); dX2$Freq = dX.tbl[,len][,2];
 	dX.tbl = rbind(dX1, dX2);
-	len = 3;
 	dX.tbl = dX.tbl[, -len];
 	dX.tbl
 }
