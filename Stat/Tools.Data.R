@@ -59,8 +59,9 @@ countDuplicates = function(m, onlyDuplicates=FALSE) {
 # - N = total N;
 cut.formula = function(e, data, FUN = median) {
 	lhs = e[[2]];
-	Mx_tmp = eval(parse(text=paste0("FUN(data[, \"", lhs, "\"])")), list(FUN=FUN, data=data));
-	e[[2]] = str2lang(paste0("(", lhs, " < ", Mx_tmp, ")"));
+	Mx_tmp = FUN(data[ , as.character(lhs)]);
+	e[[2]] = as.call(list(as.symbol("<"), lhs, Mx_tmp));
+	# e[[2]] = str2lang(paste0("(", lhs, " < ", Mx_tmp, ")"));
 	FUNP = function(x) { s = sum(x) / length(x); c(s, 1 - s, length(x)); }
 	dX.tbl = aggregate(e, data, FUNP)
 	lvl = c("< Med", "> Med"); # c("LesserMed", "GreaterMed")
