@@ -56,16 +56,17 @@ countDuplicates = function(m, onlyDuplicates=FALSE) {
 # - compute proportions less/greater than population Median
 #   in the various groups;
 # - e = formula of type: lhs ~ groups;
+# - N = total N;
 cut.formula = function(e, data, FUN = median) {
 	lhs = e[[2]];
 	Mx_tmp = eval(parse(text=paste0("FUN(data[, \"", lhs, "\"])")), list(FUN=FUN, data=data));
 	e[[2]] = str2lang(paste0("(", lhs, " < ", Mx_tmp, ")"));
-	FUNP = function(x) c(sum(x), length(x) - sum(x)) / length(x);
+	FUNP = function(x) { s = sum(x) / length(x); c(s, 1 - s, length(x)); }
 	dX.tbl = aggregate(e, data, FUNP)
 	lvl = c("< Med", "> Med"); # c("LesserMed", "GreaterMed")
-	len = 3; # TODO
-	dX1 = dX.tbl; dX1$Type = factor(lvl[1], levels=lvl); dX1$Freq = dX.tbl[,len][,1];
-	dX2 = dX.tbl; dX2$Type = factor(lvl[2], levels=lvl); dX2$Freq = dX.tbl[,len][,2];
+	len = ncol(dX.tbl);
+	dX1 = dX.tbl; dX1$Type = factor(lvl[1], levels=lvl); dX1$Freq = dX.tbl[,len][,1]; dX1$N = dX.tbl[,len][,3];
+	dX2 = dX.tbl; dX2$Type = factor(lvl[2], levels=lvl); dX2$Freq = dX.tbl[,len][,2]; dX2$N = dX.tbl[,len][,3];
 	dX.tbl = rbind(dX1, dX2);
 	dX.tbl = dX.tbl[, -len];
 	dX.tbl
