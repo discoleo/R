@@ -51,6 +51,26 @@ countDuplicates = function(m, onlyDuplicates=FALSE) {
 	return(xd)
 }
 
+### Cut
+# - cut by the Population Median;
+# - compute proportions less/greater than population Median
+#   in the various groups;
+# - e = formula of type: lhs ~ groups;
+cut.formula = function(e, data, FUN = median) {
+	lhs = e[[2]];
+	Mx_tmp = eval(parse(text=paste0("FUN(data[, \"", lhs, "\"])")), list(FUN=FUN, data=data));
+	e[[2]] = str2lang(paste0("(", lhs, " < ", Mx_tmp, ")"));
+	FUNP = function(x) c(sum(x), length(x) - sum(x)) / length(x);
+	dX.tbl = aggregate(e, data, FUNP)
+	lvl = c("< Med", "> Med"); # c("LesserMed", "GreaterMed")
+	dX1 = dX.tbl; dX1$Type = factor(lvl[1], levels=lvl); dX1$Freq = dX.tbl[,3][,1];
+	dX2 = dX.tbl; dX2$Type = factor(lvl[2], levels=lvl); dX2$Freq = dX.tbl[,3][,2];
+	dX.tbl = rbind(dX1, dX2);
+	len = 3;
+	dX.tbl = dX.tbl[, -len];
+	dX.tbl
+}
+
 ### Formatting
 
 split.names = function(names, extend=0, justify="Right", blank.rm=FALSE, split.ch = "\n", detailed=TRUE) {
