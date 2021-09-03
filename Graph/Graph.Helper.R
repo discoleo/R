@@ -10,16 +10,16 @@ library(igraph)
 ### Connected components
 
 bind.components = function(net, mode="strong") {
-    cnet = components(net, mode = mode);
-    lapply(seq(cnet$no),function(id)  attr(cnet$membership, "names")[cnet$membership == id]);
+	cnet = components(net, mode = mode);
+	lapply(seq(cnet$no),function(id)  attr(cnet$membership, "names")[cnet$membership == id]);
 }
 
 print.components = function(net, mode="strong", print=TRUE) {
-    comp = bind.components(net, mode=mode);
-    str = sapply(comp, function(s) paste0(s, collapse=", "));
-    str = paste0("Component ", seq(length(str)), ": ", str, "\n");
-    if(print) {cat(str, sep=""); cat("\n");}
-    invisible(str);
+	comp = bind.components(net, mode=mode);
+	str = sapply(comp, function(s) paste0(s, collapse=", "));
+	str = paste0("Component ", seq(length(str)), ": ", str, "\n");
+	if(print) {cat(str, sep=""); cat("\n");}
+	invisible(str);
 }
 
 ### Examples:
