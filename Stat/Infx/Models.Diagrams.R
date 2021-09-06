@@ -1,9 +1,9 @@
 ###
-### Vest University:
-### Group Project 2021
+### West University:
+### Team Project 2021
 ###
 ### Team: Modeling Infection Spread
-### Supervisor: Leonard Mada
+### Supervisor: Leonard Mada / Syonic
 ###
 ### draft v0.2a
 
@@ -87,9 +87,10 @@ cvlarrow = function(xy1, xy2, col, w=w0, r=r0, mid.off = c(-0.035, 0), arr.lengt
 	} else {
 	}
 }
-circle = function(txt, xy, r=r0, col) {
+circle = function(txt, xy, r=r0, col, cex) {
 	filledcircle(r, mid=xy, col=col)
-	text(xy[1], xy[2], txt)
+	if(missing(cex)) cex = par("cex");
+	text(xy[1], xy[2], txt, cex=cex)
 }
 ### double arrows
 dlarrows = function(xy1, xy2, x.jt=0.005) {
@@ -110,52 +111,116 @@ w0 = 0.01;
 ### Diagrams ###
 ################
 
-x0 = 0.05;
-y0 = 0.6;
+### Simple SIR
 
-### SIR + Hospital + Death
+diagram.SIR = function(file=NULL, cex=2, dim=c(11.7, 8.3), xy=c(0.05, 0.6), main="SIR Model") {
+	if(is.null(file)) {
+		dev.new(width = dim[1], height = dim[2])
+	} else {
+		png(file=file, width = dim[1], height = dim[2], units="in", res=100);
+	}
+	
+	par.old = par(mar=c(0,0,2,0) + 0.01);
+	emptyplot(main = main);
+	x0 = xy[1]; y0 = xy[2];
 
-dev.new(width = 11.7, height = 8.3)
-# png(file="Diagram.Model.H.png", width = 11.7, height = 8.3, units="in", res=100) # run this to save as png;
-par.old = par(mar=c(0,0,2,0) + 0.01)
-emptyplot(main = "SIR Model")
-
-### Compartments
-xyS = c(x0, y0);
-circle("S", xyS, col="yellow");
-
-xyI = c(x0 + 0.3, y0);
-circle("I", xyI, col="red");
-
-xyHs = c(x0, y0 - 3*r0);
-circle("Hs", xyHs, col="grey");
-
-xyHi = c(x0 + 0.3, y0 - 3*r0);
-circle("Hi", xyHi, col="indianred1");
-
-### R & D
-xyR = c(x0 + 0.7, y0);
-circle("R", xyR, col="green");
-
-xyD = c(x0 + 0.7, y0 - 3*r0);
-circle("D", xyD, col="indianred1");
+	### Compartments
+	
+	# S
+	xyS = c(x0, y0);
+	circle("S", xyS, col="yellow", cex=cex);
+	
+	# I
+	xyI = c(x0 + 0.35, y0);
+	circle("I", xyI, col="red", cex=cex);
+	
+	# R
+	xyR = c(x0 + 0.7, y0);
+	circle("R", xyR, col="green", cex=cex);
 
 
-### Arrows
-lnarrow(xyS, xyI)
-lnarrow(xyHs, xyHi)
-# R & D
-lnarrow(xyI, xyR)
-lnarrow(xyI, xyD)
-lnarrow(xyHi, xyR)
-lnarrow(xyHi, xyD)
+	### Arrows
+	lnarrow(xyS, xyI)
+	# R
+	lnarrow(xyI, xyR)
+	# I -> S
+	cvarrow(xyI, col="red")
+	
+	if( ! is.null(file)) dev.off();
+	return(invisible());
+}
 
-dlarrows(xyS, xyHs)
-lnarrow(xyI, xyHi)
+diagram.SIR()
 
 
-cvarrow(xyI, col="red")
-cvarrow(xyHi, col="indianred1")
+# diagram.SIR(file = "Diagram.Model.Simple.png", dim=c(8, 4))
+
+
+################
+################
+
+### Extended SIR
+### + Hospital + Death
+
+diagram.ExtHD = function(xy=c(0.05, 0.6), cex=2, file=NULL, dim=c(11.7, 8.3),
+		main="SIR Model\n+ Hospitalization & Death", save.png=FALSE) {
+	if(is.null(file) && ! save.png) {
+		dev.new(width = dim[1], height = dim[2]);
+	} else {
+		if(is.null(file)) file = "Diagram.Model.H.png";
+		png(file=file, width = dim[1], height = dim[2], units="in", res=100);
+	}
+	
+	par.old = par(mar=c(0,0,2,0) + 0.01)
+	emptyplot(main = main)
+	x0 = xy[1]; y0 = xy[2];
+	
+	### Compartments
+	xyS = c(x0, y0);
+	circle("S", xyS, col="yellow", cex=cex);
+	
+	xyI = c(x0 + 0.35, y0);
+	circle("I", xyI, col="red", cex=cex);
+	
+	xyHs = c(x0, y0 - 3*r0);
+	circle(expression(H[S]), xyHs, col="grey", cex=cex);
+	
+	xyHi = c(x0 + 0.35, y0 - 3*r0);
+	circle(expression(H[I]), xyHi, col="indianred1", cex=cex);
+
+	### R & D
+	xyR = c(x0 + 0.7, y0);
+	circle("R", xyR, col="green", cex=cex);
+
+	xyD = c(x0 + 0.7, y0 - 3*r0);
+	circle("D", xyD, col="indianred1", cex=cex);
+
+
+	### Arrows
+	lnarrow(xyS, xyI)
+	lnarrow(xyHs, xyHi)
+	# R & D
+	lnarrow(xyI, xyR)
+	lnarrow(xyI, xyD)
+	lnarrow(xyHi, xyR)
+	lnarrow(xyHi, xyD)
+
+	dlarrows(xyS, xyHs)
+	lnarrow(xyI, xyHi)
+
+	cvarrow(xyI, col="red")
+	cvarrow(xyHi, col="indianred1")
+	# Cross-Category
+	cvlarrow(xyHi, xyI, col="indianred1")
+	cvlarrow(xyI, xyHi, col="red")
+	
+	if( ! is.null(file)) dev.off();
+	return(invisible());
+}
+
+diagram.ExtHD()
+
+# diagram.ExtHD(save.png=TRUE)
 
 
 #######################
@@ -168,65 +233,69 @@ cvarrow(xyHi, col="indianred1")
 # - H => (S -> I);
 # - H => Hs + Hi;
 
-Diagram2 = function(x0=0.02, y0=0.6, file="Diagram.Model.oldAge.png", save.png=FALSE) {
+diagram.ExtAge = function(xy = c(0.02, 0.6), cex=2, file="Diagram.Model.oldAge.png",
+		main="SIR Model\nOld Age", save.png=FALSE) {
 	if(save.png) {
-		# run this to save as png;
 		png(file=file, width = 11.7, height = 8.3, units="in", res=100)
 	} else {
 		dev.new(width = 11.7, height = 8.3)
 	}
+	
+	x0 = xy[1]; y0 = xy[2];
 	par.old = par(mar=c(0,0,2,0) + 0.01)
-	emptyplot(main = "SIR Model + Hospitalization")
+	emptyplot(main=main)
 
 	### Compartments
 
 	### S & Old
 	xyS = c(x0, y0);
-	circle(expression(S[Y]), xyS, col="yellow");
+	circle(expression(S[Y]), xyS, col="yellow", cex=cex);
 
 	xyO = c(x0, y0 - 3*r0);
-	circle(expression(S[Old]), xyO, col="grey");
+	circle(expression(S[Old]), xyO, col="grey", cex=cex);
 
 	### Is & Iv
-	xyIs = c(x0 + 0.3, y0);
-	circle(expression(I[Y]), xyIs, col="red");
+	xyIs = c(x0 + 0.35, y0);
+	circle(expression(I[Y]), xyIs, col="red", cex=cex);
 
-	xyIv = c(x0 + 0.3, y0 - 3*r0);
-	circle(expression(I[Old]), xyIv, col="indianred1");
+	xyIo = c(x0 + 0.35, y0 - 3*r0);
+	circle(expression(I[Old]), xyIo, col="indianred1", cex=cex);
 
 	### H
 	# - only H due to Infection;
 	xyH = c(x0 + 0.65, y0 + 0.25);
-	circle("H", xyH, col="orange");
+	circle("H", xyH, col="orange", cex=cex);
 
 	### R & D
 	xyR = c(x0 + 1, y0);
-	circle("R", xyR, col="green");
+	circle("R", xyR, col="green", cex=cex);
 
 	xyD = c(x0 + 1, y0 - 3*r0);
-	circle("D", xyD, col="indianred1");
+	circle("D", xyD, col="indianred1", cex=cex);
 
 
 	### Arrows
 	lnarrow(xyS, xyIs)
-	lnarrow(xyO, xyIv)
+	lnarrow(xyO, xyIo)
 
 	cvarrow(xyIs, col="red")
-	cvarrow(xyIv, col="indianred1")
-	cvlarrow(xyIs, xyIv, col="red")
-	cvlarrow(xyIv, xyIs, col="indianred1")
+	cvarrow(xyIo, col="indianred1")
+	# Cross-Category
+	cvlarrow(xyIs, xyIo, col="red")
+	cvlarrow(xyIo, xyIs, col="indianred1")
 
 	lnarrow(xyIs, xyR)
 	lnarrow(xyIs, xyD)
-	lnarrow(xyIv, xyR)
-	lnarrow(xyIv, xyD)
+	lnarrow(xyIo, xyR)
+	lnarrow(xyIo, xyD)
 
 	# Hospitalization
-	lnarrow(xyIv, xyH)
+	lnarrow(xyIo, xyH)
 	lnarrow(xyIs, xyH)
 	# Outcome from H:
 	lnarrow(xyH, xyR)
 	lnarrow(xyH, xyD)
+	
 	if(save.png) {
 		# close png
 		Sys.sleep(0.1); # may be needed
@@ -234,16 +303,11 @@ Diagram2 = function(x0=0.02, y0=0.6, file="Diagram.Model.oldAge.png", save.png=F
 	}
 }
 
-x0 = 0.02;
-y0 = 0.6;
 
-Diagram2();
+diagram.ExtAge();
 
 
-# png(file="Diagram.Model.oldAge.png", width = 11.7, height = 8.3, units="in", res=100)
-	# ... run specific code: without dev.new()!
-# dev.off() # close file
-
+# diagram.ExtAge(save.png=TRUE);
 
 
 #######################
