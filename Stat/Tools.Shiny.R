@@ -1,4 +1,14 @@
 
+
+### Html Styles
+
+### Approaches
+# 1.) "text ... %tag%...tagged_text...%%"
+# - easy, can be processed linearly;
+# - nested tags not permitted;
+# 2.) "text ... %tag%{...tagged_text...}"
+# - difficult, needs a proper parser (to handle nested tags);
+
 format.style = function(s, style=NULL) {
 	# TODO: style;
 	# current default: color;
