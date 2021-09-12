@@ -45,7 +45,8 @@ plot.col = function(col, bottom.mrg=8, ...) {
 library(lattice) 
 
 ### Panel with Barcharts
-barchart.adv = function(formula, data, main, col="steelblue", xlab="Response", ylab="Percent") {
+barchart.adv = function(formula, data, main, col=c("steelblue4", "cornflowerblue"),
+		xlab="Response", ylab="Percent") {
 	rhs = formula[[3]];
 	if(rhs[[1]] == '|') rhs = rhs[[3]];
 	lenFact = function(id) {
