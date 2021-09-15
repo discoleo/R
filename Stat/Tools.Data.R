@@ -5,7 +5,7 @@
 ###
 ### Data Tools
 ###
-### draft v.0.1d
+### draft v.0.1e
 
 
 ### Tools to Process/Transform Data
@@ -75,30 +75,37 @@ cut.formula = function(e, data, FUN = median) {
 
 ### Formatting
 
-# Merge 2 string matrixes;
+# Merge 2 string matrices;
+# Proper name: merge vs cbind?
 merge.align = function(m1, m2, pos="Top", add.space=FALSE) {
 	nr1 = nrow(m1); nr2 = nrow(m2);
 	# TODO: "middle"-variants
 	pos = if(is.numeric(pos)) pos else pmatch(pos, c("Top", "Bottom", "MiddleTop", "MiddleBottom"));
-	chf = function(nch, each) rep(paste0(rep(" ", nch), collapse=""), each=each);
-	mcf = function(m, each) {
-		nch = apply(m, 2, function(s) max(nchar(s)));
-		ch0 = sapply(nch, chf, each=each);
+	# nchar
+	getChars = function(m) {
+		nch = attr(m, "nchar");
+		if(is.null(nch)) nch = apply(m, 2, function(s) max(nchar(s)));
+		return(nch);
 	}
+	chf = function(nch, each) rep(paste0(rep(" ", nch), collapse=""), each=each);
+	mcf = function(nch, each) sapply(nch, chf, each=each);
+	nch1 = getChars(m1); nch2 = getChars(m2);
+	# align
 	if(nr1 > nr2) {
 		if(add.space) {
 			# add space to each cell of m2
-			ch0 = mcf(m2, each = nr1 - nr2);
+			ch0 = mcf(nch2, each = nr1 - nr2);
 		} else {
 			ch0 = matrix("", nrow = nr1 - nr2, ncol = ncol(m2));
 		}
 		m2 = if(pos == 1) rbind(m2, ch0) else rbind(ch0, m2);
 	} else if(nr1 < nr2) {
 		# add space to new rows of m1
-		ch0 = mcf(m1, each = nr2 - nr1);
+		ch0 = mcf(nch1, each = nr2 - nr1);
 		m1 = if(pos == 1) rbind(m1, ch0) else rbind(ch0, m1);
 	}
 	m1 = cbind(m1, m2);
+	attr(m1, "nchar") = c(nch1, nch2);
 	return(m1);
 }
 # Split names and align
@@ -128,13 +135,13 @@ split.names = function(names, extend=0, justify="Right", pos="Top", split.ch = "
 			# TODO: Middle-variants;
 		}
 	}
+	if(detailed) attr(mx, "nchar") = unlist(nch);
 	# Extend matrix: if option to extend;
 	if(is.matrix(extend)) {
 		mx = merge.align(mx, extend, pos=pos, add.space=TRUE);
 	} else if(extend > 0) {
 		mx = cbind(mx, matrix("", nr=nr, ncol=extend));
 	}
-	if(detailed) attr(mx, "nchar") = unlist(nch);
 	return(mx);
 }
 
@@ -153,6 +160,8 @@ ftable2 = function(ftbl, print=TRUE, quote=FALSE, ...) {
 	}
 	invisible(ftbl2);
 }
+
+###############
 
 ### Encrypt IDs
 encrypt = function(x, offset=0, isRandom=TRUE, DEBUG=TRUE) {
