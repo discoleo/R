@@ -87,14 +87,14 @@ merge.align = function(m1, m2, pos="Top", add.space=FALSE) {
 	}
 	if(nr1 > nr2) {
 		if(add.space) {
-			# adds space to each cell of m2
+			# add space to each cell of m2
 			ch0 = mcf(m2, each = nr1 - nr2);
 		} else {
 			ch0 = matrix("", nrow = nr1 - nr2, ncol = ncol(m2));
 		}
 		m2 = if(pos == 1) rbind(m2, ch0) else rbind(ch0, m2);
 	} else if(nr1 < nr2) {
-		# adds space to each cell of m2
+		# add space to new rows of m1
 		ch0 = mcf(m1, each = nr2 - nr1);
 		m1 = if(pos == 1) rbind(m1, ch0) else rbind(ch0, m1);
 	}
