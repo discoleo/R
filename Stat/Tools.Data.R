@@ -79,7 +79,7 @@ cut.formula = function(e, data, FUN = median) {
 merge.align = function(m1, m2, pos="Top", add.space=FALSE) {
 	nr1 = nrow(m1); nr2 = nrow(m2);
 	# TODO: "middle"-variants
-	pos = pmatch(pos, c("Top", "Bottom", "MiddleTop", "MiddleBottom"));
+	pos = if(is.numeric(pos)) pos else pmatch(pos, c("Top", "Bottom", "MiddleTop", "MiddleBottom"));
 	chf = function(nch, each) rep(paste0(rep(" ", nch), collapse=""), each=each);
 	mcf = function(m, each) {
 		nch = apply(m, 2, function(s) max(nchar(s)));
@@ -104,23 +104,31 @@ merge.align = function(m1, m2, pos="Top", add.space=FALSE) {
 # Split names and align
 split.names = function(names, extend=0, justify="Right", pos="Top", split.ch = "\n",
 			blank.rm=FALSE, detailed=TRUE) {
-	# TODO: pos = align top / bottom / middle
-	justify = if(is.null(justify)) 0 else pmatch(justify, c("Left", "Right"));
-	# split strings
+	justify = if(is.null(justify)) 1 else pmatch(justify, c("Left", "Right"));
+	pos = if(is.null(pos)) 1 else pmatch(pos, c("Top", "Bottom", "MiddleTop", "MiddleBottom"));
+	# Split strings
 	str = strsplit(names, split.ch);
 	if(blank.rm) str = lapply(str, function(s) s[nchar(s) > 0]);
 	nr  = max(sapply(str, function(s) length(s)));
 	nch = lapply(str, function(s) max(nchar(s)));
 	chf = function(nch) paste0(rep(" ", nch), collapse="");
 	ch0 = sapply(nch, chf);
+	# Result
 	mx  = matrix(rep(ch0, each=nr), nrow=nr, ncol=length(names));
 	for(nc in seq(length(names))) {
-		n = length(str[[nc]]);
+		nrx = length(str[[nc]]); # current number of rows
 		# Justifying
-		s = sapply(seq(n), function(nr) paste0(rep(" ", nch[[nc]] - nchar(str[[nc]][nr])), collapse=""));
+		s = sapply(seq(nrx), function(nr) paste0(rep(" ", nch[[nc]] - nchar(str[[nc]][nr])), collapse=""));
 		s = if(justify == 2) paste0(s, str[[nc]]) else paste0(str[[nc]], s);
-		mx[seq(nr + 1 - length(str[[nc]]), nr) , nc] = s;
+		if(pos == 1) {
+			mx[seq(1, nrx), nc] = s;
+		} else if(pos == 2) {
+			mx[seq(nr + 1 - nrx, nr) , nc] = s;
+		} else {
+			# TODO: Middle-variants;
+		}
 	}
+	# Extend matrix: if option to extend;
 	if(is.matrix(extend)) {
 		mx = merge.align(mx, extend, pos=pos, add.space=TRUE);
 	} else if(extend > 0) {
