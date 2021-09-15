@@ -5,7 +5,7 @@
 ###
 ### Data Tools
 ###
-### draft v.0.1c
+### draft v.0.1d
 
 
 ### Tools to Process/Transform Data
@@ -75,8 +75,38 @@ cut.formula = function(e, data, FUN = median) {
 
 ### Formatting
 
-split.names = function(names, extend=0, justify="Right", blank.rm=FALSE, split.ch = "\n", detailed=TRUE) {
+# Merge 2 string matrixes;
+merge.align = function(m1, m2, pos="Top", add.space=FALSE) {
+	nr1 = nrow(m1); nr2 = nrow(m2);
+	# TODO: "middle"-variants
+	pos = pmatch(pos, c("Top", "Bottom", "MiddleTop", "MiddleBottom"));
+	chf = function(nch, each) rep(paste0(rep(" ", nch), collapse=""), each=each);
+	mcf = function(m, each) {
+		nch = apply(m, 2, function(s) max(nchar(s)));
+		ch0 = sapply(nch, chf, each=each);
+	}
+	if(nr1 > nr2) {
+		if(add.space) {
+			# adds space to each cell of m2
+			ch0 = mcf(m2, each = nr1 - nr2);
+		} else {
+			ch0 = matrix("", nrow = nr1 - nr2, ncol = ncol(m2));
+		}
+		m2 = if(pos == 1) rbind(m2, ch0) else rbind(ch0, m2);
+	} else if(nr1 < nr2) {
+		# adds space to each cell of m2
+		ch0 = mcf(m1, each = nr2 - nr1);
+		m1 = if(pos == 1) rbind(m1, ch0) else rbind(ch0, m1);
+	}
+	m1 = cbind(m1, m2);
+	return(m1);
+}
+# Split names and align
+split.names = function(names, extend=0, justify="Right", pos="Top", split.ch = "\n",
+			blank.rm=FALSE, detailed=TRUE) {
+	# TODO: pos = align top / bottom / middle
 	justify = if(is.null(justify)) 0 else pmatch(justify, c("Left", "Right"));
+	# split strings
 	str = strsplit(names, split.ch);
 	if(blank.rm) str = lapply(str, function(s) s[nchar(s) > 0]);
 	nr  = max(sapply(str, function(s) length(s)));
@@ -91,7 +121,9 @@ split.names = function(names, extend=0, justify="Right", blank.rm=FALSE, split.c
 		s = if(justify == 2) paste0(s, str[[nc]]) else paste0(str[[nc]], s);
 		mx[seq(nr + 1 - length(str[[nc]]), nr) , nc] = s;
 	}
-	if(extend > 0) {
+	if(is.matrix(extend)) {
+		mx = merge.align(mx, extend, pos=pos, add.space=TRUE);
+	} else if(extend > 0) {
 		mx = cbind(mx, matrix("", nr=nr, ncol=extend));
 	}
 	if(detailed) attr(mx, "nchar") = unlist(nch);
