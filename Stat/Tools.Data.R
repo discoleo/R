@@ -5,7 +5,7 @@
 ###
 ### Data Tools
 ###
-### draft v.0.1f
+### draft v.0.1g
 
 
 ### Tools to Process/Transform Data
@@ -109,15 +109,18 @@ merge.align = function(m1, m2, pos="Top", add.space=FALSE) {
 	return(m1);
 }
 # Split names and align
-split.names = function(names, extend=0, justify="Right", pos="Top", split.ch = "\n",
+split.names = function(names, min=0, extend=0, justify="Right", pos="Top", split.ch = "\n",
 			blank.rm=FALSE, detailed=TRUE) {
 	justify = if(is.null(justify)) 1 else pmatch(justify, c("Left", "Right"));
 	pos = if(is.null(pos)) 1 else pmatch(pos, c("Top", "Bottom", "MiddleTop", "MiddleBottom"));
 	# Split strings
 	str = strsplit(names, split.ch);
 	if(blank.rm) str = lapply(str, function(s) s[nchar(s) > 0]);
+	# nRows
 	nr  = max(sapply(str, function(s) length(s)));
-	nch = lapply(str, function(s) max(nchar(s)));
+	# Width of each Column
+	nch = sapply(str, function(s) max(nchar(s)));
+	nch = pmax(nch, min);
 	chf = function(nch) paste0(rep(" ", nch), collapse="");
 	ch0 = sapply(nch, chf);
 	# Result
@@ -155,7 +158,8 @@ ftable2 = function(ftbl, print=TRUE, quote=FALSE, sep="|", extend=TRUE, ...) {
 	row.vars = names(attr(ftbl, "row.vars"))
 	nr  = length(row.vars); nc = ncol(ftbl2) - nr;
 	nch = nchar(ftbl2[1, seq(nr + 1, ncol(ftbl2))]);
-	nms = split.names(row.vars, extend = if(extend) nch else nc);
+	w = 0; # TODO: max width for each factor (all levels per factor);
+	nms = split.names(row.vars, min=w, extend = if(extend) nch else nc);
 	ftbl2 = rbind(ftbl2[1,], nms, ftbl2[-c(1,2),]);
 	# TODO: update width of factor labels;
 	# - new width available in attr(nms, "nchar");
