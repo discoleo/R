@@ -5,7 +5,7 @@
 ###
 ### Data Tools
 ###
-### draft v.0.1e
+### draft v.0.1f
 
 
 ### Tools to Process/Transform Data
@@ -139,6 +139,9 @@ split.names = function(names, extend=0, justify="Right", pos="Top", split.ch = "
 	# Extend matrix: if option to extend;
 	if(is.matrix(extend)) {
 		mx = merge.align(mx, extend, pos=pos, add.space=TRUE);
+	} else if(length(extend) > 1) {
+		m.ext = matrix(rep(sapply(extend, chf), each=nr), nr=nr, ncol=length(extend));
+		mx = cbind(mx, m.ext);
 	} else if(extend > 0) {
 		mx = cbind(mx, matrix("", nr=nr, ncol=extend));
 	}
@@ -147,16 +150,17 @@ split.names = function(names, extend=0, justify="Right", pos="Top", split.ch = "
 
 ### ftable with name splitting
 # - this code should be ideally inside format.ftable;
-ftable2 = function(ftbl, print=TRUE, quote=FALSE, ...) {
+ftable2 = function(ftbl, print=TRUE, quote=FALSE, sep="|", extend=TRUE, ...) {
 	ftbl2 = format(ftbl, quote=quote, ...);
 	row.vars = names(attr(ftbl, "row.vars"))
-	nr = length(row.vars);
-	nms = split.names(row.vars, extend = ncol(ftbl2) - nr);
+	nr  = length(row.vars); nc = ncol(ftbl2) - nr;
+	nch = nchar(ftbl2[1, seq(nr + 1, ncol(ftbl2))]);
+	nms = split.names(row.vars, extend = if(extend) nch else nc);
 	ftbl2 = rbind(ftbl2[1,], nms, ftbl2[-c(1,2),]);
 	# TODO: update width of factor labels;
 	# - new width available in attr(nms, "nchar");
 	if(print) {
-		cat(t(ftbl2), sep = c(rep(" ", ncol(ftbl2) - 1), "\n"))
+		cat(t(ftbl2), sep = c(rep(sep, ncol(ftbl2) - 1), "\n"))
 	}
 	invisible(ftbl2);
 }
