@@ -5,7 +5,7 @@
 ###
 ### Data Tools
 ###
-### draft v.0.1g
+### draft v.0.1h
 
 
 ### Tools to Process/Transform Data
@@ -73,7 +73,16 @@ cut.formula = function(e, data, FUN = median) {
 	dX.tbl
 }
 
+
+###############
+
 ### Formatting
+
+# Helper
+space.builder = function(nch, each=1, ch=" ") {
+	chf = function(nch, each) rep(paste0(rep(" ", nch), collapse=""), each=each);
+	sapply(nch, chf, each=each);
+}
 
 # Merge 2 string matrices;
 # Proper name: merge vs cbind?
@@ -87,21 +96,19 @@ merge.align = function(m1, m2, pos="Top", add.space=FALSE) {
 		if(is.null(nch)) nch = apply(m, 2, function(s) max(nchar(s)));
 		return(nch);
 	}
-	chf = function(nch, each) rep(paste0(rep(" ", nch), collapse=""), each=each);
-	mcf = function(nch, each) sapply(nch, chf, each=each);
 	nch1 = getChars(m1); nch2 = getChars(m2);
 	# align
 	if(nr1 > nr2) {
 		if(add.space) {
 			# add space to each cell of m2
-			ch0 = mcf(nch2, each = nr1 - nr2);
+			ch0 = space.builder(nch2, each = nr1 - nr2);
 		} else {
 			ch0 = matrix("", nrow = nr1 - nr2, ncol = ncol(m2));
 		}
 		m2 = if(pos == 1) rbind(m2, ch0) else rbind(ch0, m2);
 	} else if(nr1 < nr2) {
 		# add space to new rows of m1
-		ch0 = mcf(nch1, each = nr2 - nr1);
+		ch0 = space.builder(nch1, each = nr2 - nr1);
 		m1 = if(pos == 1) rbind(m1, ch0) else rbind(ch0, m1);
 	}
 	m1 = cbind(m1, m2);
@@ -121,10 +128,9 @@ split.names = function(names, min=0, extend=0, justify="Right", pos="Top", split
 	# Width of each Column
 	nch = sapply(str, function(s) max(nchar(s)));
 	nch = pmax(nch, min);
-	chf = function(nch) paste0(rep(" ", nch), collapse="");
-	ch0 = sapply(nch, chf);
 	# Result
-	mx  = matrix(rep(ch0, each=nr), nrow=nr, ncol=length(names));
+	ch0 = space.builder(nch, each=nr);
+	mx  = matrix(ch0, nrow=nr, ncol=length(names));
 	for(nc in seq(length(names))) {
 		nrx = length(str[[nc]]); # current number of rows
 		# Justifying
@@ -143,7 +149,7 @@ split.names = function(names, min=0, extend=0, justify="Right", pos="Top", split
 	if(is.matrix(extend)) {
 		mx = merge.align(mx, extend, pos=pos, add.space=TRUE);
 	} else if(length(extend) > 1) {
-		m.ext = matrix(rep(sapply(extend, chf), each=nr), nr=nr, ncol=length(extend));
+		m.ext = matrix(space.builder(extend, each=nr), nrow=nr, ncol=length(extend));
 		mx = cbind(mx, m.ext);
 	} else if(extend > 0) {
 		mx = cbind(mx, matrix("", nr=nr, ncol=extend));
