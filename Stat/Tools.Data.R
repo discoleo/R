@@ -86,8 +86,8 @@ space.builder = function(nch, each=1, ch=" ") {
 nchar.list = function(l) {
 	lapply(l, nchar);
 }
-pad.list = function(l, n, min=0, justify="Right", ch=" ") {
-	justify = pmatch(justify, c("Right", "Left", "Center"));
+pad.list = function(l, n, min=0, justify="right", ch=" ") {
+	justify = pmatch(justify, c("right", "left", "center"));
 	if(is.na(justify)) stop("Option for justify NOT supported!");
 	nch = nchar.list(l);
 	nsp = sapply(nch, function(n) max(n));
@@ -96,9 +96,9 @@ pad.list = function(l, n, min=0, justify="Right", ch=" ") {
 		space.builder(nmx[[id]] - nch[[id]], each=1, ch=ch))
 	pad.f = if(justify == 1) function(id) {
 			paste0(ch0[[id]], l[[id]])
-		} else if(justify == 2) {
+		} else if(justify == 2) function(id) {
 			paste0(l[[id]], ch0[[id]])
-		} else {
+		} else function(id) {
 			nl = l[[id]] %/% 2; nr = l[[id]] - nl;
 			paste0(nl, ch0[[id]], nr);
 		}
@@ -139,10 +139,10 @@ merge.align = function(m1, m2, pos="Top", add.space=FALSE) {
 	return(m1);
 }
 # Split names and align
-split.names = function(names, min=0, extend=0, justify="Right", pos="Top", split.ch = "\n",
+split.names = function(names, min=0, extend=0, justify="right", pos="Top", split.ch = "\n",
 			blank.rm=FALSE, detailed=TRUE) {
 	# TODO: "Center"
-	justify = if(is.null(justify)) 1 else pmatch(justify, c("Left", "Right", "Center"));
+	justify = if(is.null(justify)) 1 else pmatch(justify, c("left", "right", "center"));
 	pos = if(is.null(pos)) 1 else pmatch(pos, c("Top", "Bottom", "MiddleTop", "MiddleBottom"));
 	# Split strings
 	str = strsplit(names, split.ch);
@@ -185,7 +185,8 @@ split.names = function(names, min=0, extend=0, justify="Right", pos="Top", split
 
 ### ftable with name splitting
 # - this code should be ideally inside format.ftable;
-ftable2 = function(ftbl, print=TRUE, quote=FALSE, sep="|", extend=TRUE, ...) {
+ftable2 = function(ftbl, print=TRUE, quote=FALSE, sep="|", extend=TRUE,
+		justify="right", justify.lvl=justify,...) {
 	rvars = attr(ftbl, "row.vars");
 	row.vars = names(rvars);
 	cvars = attr(ftbl, "col.vars");
@@ -196,8 +197,8 @@ ftable2 = function(ftbl, print=TRUE, quote=FALSE, sep="|", extend=TRUE, ...) {
 	nch = nchar(unlist(lapply(seq_along(cvars), function(id) c(col.vars[[id]], cvars[[id]]))));
 	# max width for each factor (all levels per factor);
 	w = sapply(nchar.list(rvars), max);
-	nms = split.names(row.vars, min=w, extend = if(extend) nch else ncc);
-	lvl = pad.list(rvars, min=attr(nms, "nchar")[seq(nr)]);
+	nms = split.names(row.vars, min=w, justify=justify, extend = if(extend) nch else ncc);
+	lvl = pad.list(rvars, min=attr(nms, "nchar")[seq(nr)], justify=justify.lvl);
 	### format.ftbl
 	# HACK: code should be ideally inside format.ftable!
 	# - update width of factor labels;
@@ -205,7 +206,7 @@ ftable2 = function(ftbl, print=TRUE, quote=FALSE, sep="|", extend=TRUE, ...) {
 	tmp.lvl = lvl;
 	names(tmp.lvl) = nms[1, seq_along(rvars)];
 	attr(ftbl, "row.vars") = tmp.lvl;
-	ftbl2 = format(ftbl, quote=quote, ...);
+	ftbl2 = format(ftbl, quote=quote, justify=justify, ...);
 	ftbl2 = rbind(ftbl2[1,], nms, ftbl2[-c(1,2),]);
 	if(print) {
 		cat(t(ftbl2), sep = c(rep(sep, ncol(ftbl2) - 1), "\n"))
