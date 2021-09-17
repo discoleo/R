@@ -99,8 +99,9 @@ pad.list = function(l, n, min=0, justify="right", ch=" ") {
 		} else if(justify == 2) function(id) {
 			paste0(l[[id]], ch0[[id]])
 		} else function(id) {
-			nl = l[[id]] %/% 2; nr = l[[id]] - nl;
-			paste0(nl, ch0[[id]], nr);
+			nLeft = (nmx[[id]] - nch[[id]]) %/% 2; nRight = nmx[[id]] - nLeft;
+			ch0 = space.builder(c(nLeft, nRight), each=1, ch=ch);
+			paste0(ch0[1], l[[id]], ch0[2]);
 		}
 	l = lapply(seq_along(l), pad.f);
 	attr(l, "nchar") = nmx;
@@ -186,7 +187,7 @@ split.names = function(names, min=0, extend=0, justify="right", pos="Top", split
 ### ftable with name splitting
 # - this code should be ideally inside format.ftable;
 ftable2 = function(ftbl, print=TRUE, quote=FALSE, sep="|", extend=TRUE,
-		justify="right", justify.lvl=justify,...) {
+		justify="right", justify.lvl=justify, ...) {
 	rvars = attr(ftbl, "row.vars");
 	row.vars = names(rvars);
 	cvars = attr(ftbl, "col.vars");
