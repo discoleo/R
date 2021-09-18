@@ -5,7 +5,7 @@
 ###
 ### Graphics Tools
 ###
-### draft v.0.1d
+### draft v.0.1e
 
 
 ### Graphics Tools
@@ -29,9 +29,36 @@ find.col = function(name="red", start=1, max=30, bottom.mrg=8, ...) {
 	par(old.par)
 	invisible(name.col)
 }
+findSimilar.col = function(col, tol=3, start=1, max=30, type="Saturation") {
+	cols = colours();
+	rgbAll = col2rgb(cols);
+	this = as.vector(col2rgb(col));
+	### Distance
+	dAll = abs(rgbAll - this);
+	d1 = apply(dAll, 2, sum);
+	if(tol > 1) d1 = d1 %/% tol;
+	### Type
+	type = pmatch(type, c("Luminosity", "Saturation"));
+	if(is.na(type)) stop("Type not supported!")
+	if(type == 1) {
+		d2 = apply(rgbAll, 2, sum);
+	} else {
+		d2 = apply(rgbAll, 2, min) - apply(rgbAll, 2, max);
+	}
+	id = order(d1, d2);
+	cols = colours()[id];
+	if(max > 0) cols = cols[seq(start, length.out=max)];
+	return(cols);
+}
+
 ### Plot colours
 plot.col = function(col, bottom.mrg=8, ...) {
-	x = rep(1, length(col)); names(x) = names(col);
+	x = rep(1, length(col));
+	if(is.null(names(col))) {
+		names(x) = col;
+	} else {
+		names(x) = names(col);
+	}
 	# set bottom margin
 	old.par = par(mar=c(bottom.mrg,1,2,1) + 0.1)
 		barplot(x, col=col, las=3, ...)
@@ -123,5 +150,7 @@ find.col("green")
 find.col("pale")
 
 plot.col(heat.colors(30))
+
+plot.col(findSimilar.col("#0032D0", type="L", tol=3, start=10))
 
 
