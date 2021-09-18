@@ -30,21 +30,31 @@ find.col = function(name="red", start=1, max=30, bottom.mrg=8, ...) {
 	invisible(name.col)
 }
 findSimilar.col = function(col, tol=3, start=1, max=30, type="Saturation") {
+	type = pmatch(type, c("Luminosity", "Saturation", "byLTotal", "bySTotal"));
+	if(is.na(type)) stop("Type not supported!");
+	### Colours
 	cols = colours();
 	rgbAll = col2rgb(cols);
 	this = as.vector(col2rgb(col));
 	### Distance
 	dAll = abs(rgbAll - this);
 	d1 = apply(dAll, 2, sum);
-	if(tol > 1) d1 = d1 %/% tol;
 	### Type
-	type = pmatch(type, c("Luminosity", "Saturation"));
-	if(is.na(type)) stop("Type not supported!")
-	if(type == 1) {
+	if(type == 1 || type == 3) {
 		d2 = apply(rgbAll, 2, sum);
-	} else {
+	} else if(type == 2 || type == 4) {
 		d2 = apply(rgbAll, 2, min) - apply(rgbAll, 2, max);
 	}
+	if(type >= 3) {
+		tmp = d1; d1 = d2; d2 = tmp;
+		if(type == 3) {
+			d1 = abs(d1 - sum(this));
+		} else {
+			d1 = abs(max(this) - min(this) + d1);
+		}
+	}
+	if(tol[1] > 1) d1 = d1 %/% tol[1];
+	if(length(tol) > 2 && tol[2] > 1) d2 = d2 %/% tol[2];
 	id = order(d1, d2);
 	cols = colours()[id];
 	if(max > 0) cols = cols[seq(start, length.out=max)];
@@ -153,4 +163,7 @@ plot.col(heat.colors(30))
 
 plot.col(findSimilar.col("#0032D0", type="L", tol=3, start=10))
 
+plot.col(findSimilar.col("#0032D0", type="byLT", tol=5, start=1))
+
+plot.col(findSimilar.col("#0032D0", type="byST", tol=5, start=1))
 
