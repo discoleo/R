@@ -5,7 +5,7 @@
 ###
 ### Data Tools
 ###
-### draft v.0.1j
+### draft v.0.1k
 
 
 ### Tools to Process/Transform Data
@@ -16,6 +16,8 @@
 ###############
 
 
+### draft v.0.1k:
+# - [fix] align = center;
 ### draft v.0.1j:
 # - the Section on Formulas/Expressions
 #   has been moved to a separate file:
@@ -112,9 +114,12 @@ pad.list = function(l, n, min=0, justify="right", ch=" ") {
 		} else if(justify == 2) function(id) {
 			paste0(l[[id]], ch0[[id]])
 		} else function(id) {
-			nLeft = (nmx[[id]] - nch[[id]]) %/% 2; nRight = nmx[[id]] - nLeft;
-			ch0 = space.builder(c(nLeft, nRight), each=1, ch=ch);
-			paste0(ch0[1], l[[id]], ch0[2]);
+			nSpaces = nmx[[id]] - nch[[id]];
+			nLeft = nSpaces %/% 2; nRight = nSpaces - nLeft;
+			mnCh = c(nLeft, nRight);
+			ch0 = space.builder(mnCh, each=1, ch=ch);
+			ch0 = matrix(ch0, ncol=2);
+			paste0(ch0[,1], l[[id]], ch0[,2]);
 		}
 	l = lapply(seq_along(l), pad.f);
 	attr(l, "nchar") = nmx;
@@ -219,8 +224,9 @@ ftable2 = function(ftbl, print=TRUE, quote=FALSE, sep="|", extend=TRUE,
 	# - new width available in attr(nms, "nchar");
 	tmp.lvl = lvl;
 	names(tmp.lvl) = nms[1, seq_along(rvars)];
-	attr(ftbl, "row.vars") = tmp.lvl;
+	attr(ftbl, "row.vars") = tmp.lvl; # use part of the name
 	ftbl2 = format(ftbl, quote=quote, justify=justify, ...);
+	# hack: insert the full names;
 	ftbl2 = rbind(ftbl2[1,], nms, ftbl2[-c(1,2),]);
 	if(print) {
 		cat(t(ftbl2), sep = c(rep(sep, ncol(ftbl2) - 1), "\n"))
