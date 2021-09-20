@@ -5,7 +5,7 @@
 ###
 ### Data Tools
 ###
-### draft v.0.1k-fix-4
+### draft v.0.1k-fix-6
 
 
 ### Tools to Process/Transform Data
@@ -16,11 +16,12 @@
 ###############
 
 
-### draft v.0.1k [fix-4]:
+### draft v.0.1k [fix-6]:
 # - [fix] align = center; [fix-1]
 # - [fix] proper argument: split.ch; [fix-2]
 # - [fix] added missing argument: pos; [fix-3]
-# - [fix] added method = row.compact; [fix-4]
+# - [fix] added: method = row.compact & col.compact; [fix-4 & 5]
+# - [fix] proper justifying; [fix-6]
 ### draft v.0.1j:
 # - the Section on Formulas/Expressions
 #   has been moved to a separate file:
@@ -102,7 +103,7 @@ cut.formula = function(e, data, FUN = median) {
 # Helper
 match.halign = function(justify, msg="Option for justify NOT supported!") {
 	if(is.character(justify)) {
-		id = pmatch(justify, c("right", "left", "center"));
+		id = pmatch(justify, c("left", "right", "center"));
 		if(is.na(id) && justify == "centre") id = 3;
 	}
 	if(is.na(id)) stop(msg);
@@ -122,9 +123,9 @@ pad.list = function(l, n, min=0, justify="right", ch=" ") {
 	nmx = pmax(nsp, min);
 	ch0 = lapply(seq_along(nch), function(id)
 		space.builder(nmx[[id]] - nch[[id]], each=1, ch=ch))
-	pad.f = if(justify == 1) function(id) {
+	pad.f = if(justify == 2) function(id) {
 			paste0(ch0[[id]], l[[id]])
-		} else if(justify == 2) function(id) {
+		} else if(justify == 1) function(id) {
 			paste0(l[[id]], ch0[[id]])
 		} else function(id) {
 			nSpaces = nmx[[id]] - nch[[id]];
@@ -218,20 +219,24 @@ split.names = function(names, min=0, extend=0, justify="right", pos="Top", split
 ### ftable with name splitting
 # - this code should be ideally inside format.ftable;
 ftable2 = function(ftbl, print=TRUE, quote=FALSE, sep="|",
-		justify="right", justify.lvl=justify, pos="Top", extend=TRUE, split.ch="\n",
+		justify="right", justify.lvl=justify, justify.num="right",
+		pos="Top", extend=TRUE, split.ch="\n",
 		method="row.compact", ...) {
 	rvars = attr(ftbl, "row.vars");
 	row.vars = names(rvars);
 	cvars = attr(ftbl, "col.vars");
 	col.vars = names(cvars);
 	nr  = length(row.vars);
+	ncv = length(cvars); # TODO
 	# Col columns
-	ncc = length(col.vars) + sum(sapply(cvars, function(l) length(l)));
+	ncc = ncv + sum(sapply(cvars, function(l) length(l)));
 	cch = unlist(lapply(seq_along(cvars), function(id) c(col.vars[[id]], cvars[[id]])));
 	nch = nchar(cch);
 	# max width for each factor (all levels per factor);
 	w = sapply(nchar.list(rvars), max);
-	extend = if(method == "row.compact") matrix(cch, nrow=1) else if(extend) nch else ncc;
+	extend = if(method == "row.compact") matrix(cch, nrow=1)
+		else if(method == "col.compact") nch[-1]
+		else if(extend) nch else ncc;
 	nms = split.names(row.vars, min=w, justify=justify, pos=pos,
 		extend = extend, split.ch=split.ch);
 	lvl = pad.list(rvars, min=attr(nms, "nchar")[seq(nr)], justify=justify.lvl);
@@ -242,7 +247,7 @@ ftable2 = function(ftbl, print=TRUE, quote=FALSE, sep="|",
 	tmp.lvl = lvl;
 	names(tmp.lvl) = nms[1, seq_along(rvars)];
 	attr(ftbl, "row.vars") = tmp.lvl; # use part of the name
-	ftbl2 = format(ftbl, quote=quote, method=method, justify=justify, ...);
+	ftbl2 = format(ftbl, quote=quote, method=method, justify=justify.num, ...);
 	# hack: insert the full names;
 	if(method == "row.compact") {
 		ftbl2 = rbind(nms, ftbl2[-c(1),]);
