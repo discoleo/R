@@ -5,7 +5,7 @@
 ###
 ### Data Tools
 ###
-### draft v.0.1k-fix-6
+### draft v.0.1k-fix-7
 
 
 ### Tools to Process/Transform Data
@@ -16,12 +16,13 @@
 ###############
 
 
-### draft v.0.1k [fix-6]:
+### draft v.0.1k [fix-7]:
 # - [fix] align = center; [fix-1]
 # - [fix] proper argument: split.ch; [fix-2]
 # - [fix] added missing argument: pos; [fix-3]
 # - [fix] added: method = row.compact & col.compact; [fix-4 & 5]
 # - [fix] proper justifying; [fix-6]
+# - [implemented] justify = center; [fix-7]
 ### draft v.0.1j:
 # - the Section on Formulas/Expressions
 #   has been moved to a separate file:
@@ -128,16 +129,20 @@ pad.list = function(l, n, min=0, justify="right", ch=" ") {
 		} else if(justify == 1) function(id) {
 			paste0(l[[id]], ch0[[id]])
 		} else function(id) {
-			nSpaces = nmx[[id]] - nch[[id]];
-			nLeft = nSpaces %/% 2; nRight = nSpaces - nLeft;
-			mnCh = c(nLeft, nRight);
-			ch0 = space.builder(mnCh, each=1, ch=ch);
-			ch0 = matrix(ch0, ncol=2);
-			paste0(ch0[,1], l[[id]], ch0[,2]);
+			pad.justify(l[[id]], nmx[[id]], nch[[id]], ch=ch);
 		}
 	l = lapply(seq_along(l), pad.f);
 	attr(l, "nchar") = nmx;
 	return(l);
+}
+pad.justify = function(s, nmax, nch, ch=" ") {
+	if(missing(nch)) stop("nch: Not yet implemented!")
+	nSpaces = nmax - nch;
+	nLeft = nSpaces %/% 2; nRight = nSpaces - nLeft;
+	mnCh = c(nLeft, nRight);
+	ch0 = space.builder(mnCh, each=1, ch=ch);
+	ch0 = matrix(ch0, ncol=2);
+	paste0(ch0[,1], s, ch0[,2]);
 }
 
 # Merge 2 string matrices;
@@ -191,8 +196,12 @@ split.names = function(names, min=0, extend=0, justify="right", pos="Top", split
 	for(nc in seq(length(names))) {
 		nrx = length(str[[nc]]); # current number of rows
 		# Justifying
+		nch.v = nchar(str[[nc]]);
 		s = sapply(seq(nrx), function(nr) paste0(rep(" ", nch[[nc]] - nchar(str[[nc]][nr])), collapse=""));
-		s = if(justify == 2) paste0(s, str[[nc]]) else paste0(str[[nc]], s);
+		s = if(justify == 2) paste0(s, str[[nc]]) else if(justify == 1) paste0(str[[nc]], s)
+			else {
+				pad.justify(str[[nc]], nch[[nc]], nch.v, ch=" ");
+			}
 		if(pos == 1) {
 			mx[seq(1, nrx), nc] = s;
 		} else if(pos == 2) {
