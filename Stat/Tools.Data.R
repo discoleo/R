@@ -5,7 +5,7 @@
 ###
 ### Data Tools
 ###
-### draft v.0.1k-fix2
+### draft v.0.1k-fix-4
 
 
 ### Tools to Process/Transform Data
@@ -16,10 +16,11 @@
 ###############
 
 
-### draft v.0.1k - v.0.1k-fix2:
-# - [fix] align = center;
-# - [fix] proper argument: split.ch; [v.0.1k-fix]
-# - [fix] added missing argument: pos; [v.0.1k-fix2]
+### draft v.0.1k [fix-4]:
+# - [fix] align = center; [fix-1]
+# - [fix] proper argument: split.ch; [fix-2]
+# - [fix] added missing argument: pos; [fix-3]
+# - [fix] added method = row.compact; [fix-4]
 ### draft v.0.1j:
 # - the Section on Formulas/Expressions
 #   has been moved to a separate file:
@@ -217,7 +218,8 @@ split.names = function(names, min=0, extend=0, justify="right", pos="Top", split
 ### ftable with name splitting
 # - this code should be ideally inside format.ftable;
 ftable2 = function(ftbl, print=TRUE, quote=FALSE, sep="|",
-		justify="right", justify.lvl=justify, pos="Top", extend=TRUE, split.ch="\n", ...) {
+		justify="right", justify.lvl=justify, pos="Top", extend=TRUE, split.ch="\n",
+		method="row.compact", ...) {
 	rvars = attr(ftbl, "row.vars");
 	row.vars = names(rvars);
 	cvars = attr(ftbl, "col.vars");
@@ -225,11 +227,13 @@ ftable2 = function(ftbl, print=TRUE, quote=FALSE, sep="|",
 	nr  = length(row.vars);
 	# Col columns
 	ncc = length(col.vars) + sum(sapply(cvars, function(l) length(l)));
-	nch = nchar(unlist(lapply(seq_along(cvars), function(id) c(col.vars[[id]], cvars[[id]]))));
+	cch = unlist(lapply(seq_along(cvars), function(id) c(col.vars[[id]], cvars[[id]])));
+	nch = nchar(cch);
 	# max width for each factor (all levels per factor);
 	w = sapply(nchar.list(rvars), max);
+	extend = if(method == "row.compact") matrix(cch, nrow=1) else if(extend) nch else ncc;
 	nms = split.names(row.vars, min=w, justify=justify, pos=pos,
-		extend = if(extend) nch else ncc, split.ch=split.ch);
+		extend = extend, split.ch=split.ch);
 	lvl = pad.list(rvars, min=attr(nms, "nchar")[seq(nr)], justify=justify.lvl);
 	### format.ftbl
 	# HACK: code should be ideally inside format.ftable!
@@ -238,9 +242,13 @@ ftable2 = function(ftbl, print=TRUE, quote=FALSE, sep="|",
 	tmp.lvl = lvl;
 	names(tmp.lvl) = nms[1, seq_along(rvars)];
 	attr(ftbl, "row.vars") = tmp.lvl; # use part of the name
-	ftbl2 = format(ftbl, quote=quote, justify=justify, ...);
+	ftbl2 = format(ftbl, quote=quote, method=method, justify=justify, ...);
 	# hack: insert the full names;
-	ftbl2 = rbind(ftbl2[1,], nms, ftbl2[-c(1,2),]);
+	if(method == "row.compact") {
+		ftbl2 = rbind(nms, ftbl2[-c(1),]);
+	} else {
+		ftbl2 = rbind(ftbl2[1,], nms, ftbl2[-c(1,2),]);
+	}
 	if(print) {
 		cat(t(ftbl2), sep = c(rep(sep, ncol(ftbl2) - 1), "\n"))
 	}
