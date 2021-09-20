@@ -5,7 +5,7 @@
 ###
 ### Data Tools
 ###
-### draft v.0.1k-fix
+### draft v.0.1k-fix2
 
 
 ### Tools to Process/Transform Data
@@ -16,9 +16,10 @@
 ###############
 
 
-### draft v.0.1k - v.0.1k-fix:
+### draft v.0.1k - v.0.1k-fix2:
 # - [fix] align = center;
-# - [fix] proper argument: split.ch;
+# - [fix] proper argument: split.ch; [v.0.1k-fix]
+# - [fix] added missing argument: pos; [v.0.1k-fix2]
 ### draft v.0.1j:
 # - the Section on Formulas/Expressions
 #   has been moved to a separate file:
@@ -90,11 +91,22 @@ cut.formula = function(e, data, FUN = median) {
 }
 
 
-###############
+##################
+##################
 
-### Formatting
+##################
+### Formatting ###
+##################
 
 # Helper
+match.halign = function(justify, msg="Option for justify NOT supported!") {
+	if(is.character(justify)) {
+		id = pmatch(justify, c("right", "left", "center"));
+		if(is.na(id) && justify == "centre") id = 3;
+	}
+	if(is.na(id)) stop(msg);
+	return(id);
+}
 space.builder = function(nch, each=1, ch=" ") {
 	chf = function(nch, each) rep(paste0(rep(ch, nch), collapse=""), each=each);
 	sapply(nch, chf, each=each);
@@ -103,8 +115,7 @@ nchar.list = function(l) {
 	lapply(l, nchar);
 }
 pad.list = function(l, n, min=0, justify="right", ch=" ") {
-	justify = pmatch(justify, c("right", "left", "center"));
-	if(is.na(justify)) stop("Option for justify NOT supported!");
+	justify = match.halign(justify);
 	nch = nchar.list(l);
 	nsp = sapply(nch, function(n) max(n));
 	nmx = pmax(nsp, min);
@@ -162,7 +173,7 @@ merge.align = function(m1, m2, pos="Top", add.space=FALSE) {
 split.names = function(names, min=0, extend=0, justify="right", pos="Top", split.ch = "\n",
 			blank.rm=FALSE, detailed=TRUE, perl=TRUE) {
 	# TODO: "Middle"
-	justify = if(is.null(justify)) 1 else pmatch(justify, c("left", "right", "center"));
+	justify = if(is.null(justify)) 1 else match.halign(justify);
 	pos = if(is.null(pos)) 1 else pmatch(pos, c("Top", "Bottom", "MiddleTop", "MiddleBottom"));
 	# Split strings
 	str = strsplit(names, split.ch, perl=perl);
@@ -206,7 +217,7 @@ split.names = function(names, min=0, extend=0, justify="right", pos="Top", split
 ### ftable with name splitting
 # - this code should be ideally inside format.ftable;
 ftable2 = function(ftbl, print=TRUE, quote=FALSE, sep="|",
-		justify="right", justify.lvl=justify, extend=TRUE, split.ch="\n", ...) {
+		justify="right", justify.lvl=justify, pos="Top", extend=TRUE, split.ch="\n", ...) {
 	rvars = attr(ftbl, "row.vars");
 	row.vars = names(rvars);
 	cvars = attr(ftbl, "col.vars");
@@ -217,7 +228,8 @@ ftable2 = function(ftbl, print=TRUE, quote=FALSE, sep="|",
 	nch = nchar(unlist(lapply(seq_along(cvars), function(id) c(col.vars[[id]], cvars[[id]]))));
 	# max width for each factor (all levels per factor);
 	w = sapply(nchar.list(rvars), max);
-	nms = split.names(row.vars, min=w, justify=justify, extend = if(extend) nch else ncc, split.ch=split.ch);
+	nms = split.names(row.vars, min=w, justify=justify, pos=pos,
+		extend = if(extend) nch else ncc, split.ch=split.ch);
 	lvl = pad.list(rvars, min=attr(nms, "nchar")[seq(nr)], justify=justify.lvl);
 	### format.ftbl
 	# HACK: code should be ideally inside format.ftable!
