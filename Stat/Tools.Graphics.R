@@ -5,7 +5,7 @@
 ###
 ### Graphics Tools
 ###
-### draft v.0.1e
+### draft v.0.1f
 
 
 ### Graphics Tools
@@ -57,7 +57,7 @@ findSimilar.col = function(col, tol=3, start=1, max=30, type="Saturation") {
 	if(length(tol) > 2 && tol[2] > 1) d2 = d2 %/% tol[2];
 	id = order(d1, d2);
 	cols = colours()[id];
-	if(max > 0) cols = cols[seq(start, length.out=max)];
+	if(max > 0) cols = cols[seq(start, length.out = min(length(cols), max))];
 	return(cols);
 }
 
@@ -74,6 +74,35 @@ plot.col = function(col, bottom.mrg=8, ...) {
 		barplot(x, col=col, las=3, ...)
 	par(old.par)
 	invisible()
+}
+
+image.col = function(col, bottom.mrg=8, cex.axis=1, las=2) {
+	# set bottom margin
+	old.par = par(mar=c(bottom.mrg,1,bottom.mrg,1) + 0.1);
+	on.exit(old.par);
+	len = length(col);
+	if(len > 90) {
+		col = col[1:90]; len = 90;
+		print("Warning: only first 90 colors shown!")
+	}
+	#
+	nr = if(len > 60) 3 else if(len > 30) 2 else 1;
+	if(nr > 1) { len = len - (len %% nr); col = col[1:len]; }
+	nc = len %/% nr;
+	z = matrix(seq(len), nrow=nc, ncol=nr);
+	if(is.null(names(col))) {
+		nms = col;
+	} else {
+		nms = names(col);
+	}
+	image(1:nc, 1:nr, z=z,
+		xaxt = "n", yaxt = "n", frame.plot = FALSE, xlab = "", ylab = "", col=col);
+	id = seq(1, nc);
+	axis(side = 1, at = id, labels = nms[id], 
+            cex.axis = cex.axis, las = las, lwd = -1);
+	if(nr > 1)
+	axis(side = 3, at = id, labels = nms[id + (nr-1)*nc], 
+            cex.axis = cex.axis, las = las, lwd = -1);
 }
 
 
@@ -166,4 +195,6 @@ plot.col(findSimilar.col("#0032D0", type="L", tol=3, start=10))
 plot.col(findSimilar.col("#0032D0", type="byLT", tol=5, start=1))
 
 plot.col(findSimilar.col("#0032D0", type="byST", tol=5, start=1))
+
+image.col(findSimilar.col("#B83280", max=90))
 
