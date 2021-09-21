@@ -57,7 +57,7 @@ findSimilar.col = function(col, tol=3, start=1, max=30, type="Saturation") {
 	if(length(tol) > 2 && tol[2] > 1) d2 = d2 %/% tol[2];
 	id = order(d1, d2);
 	cols = colours()[id];
-	if(max > 0) cols = cols[seq(start, length.out = min(length(cols), max))];
+	if(max > 0) cols = cols[seq(start, length.out = min(max(0, length(cols) - max), max))];
 	return(cols);
 }
 
