@@ -5,7 +5,7 @@
 ###
 ### Data Tools
 ###
-### draft v.0.1k-fix-7
+### draft v.0.1l
 
 
 ### Tools to Process/Transform Data
@@ -16,6 +16,8 @@
 ###############
 
 
+### draft v.0.1l:
+# - [changed] justify: argument as list;
 ### draft v.0.1k [fix-7]:
 # - [fix] align = center; [fix-1]
 # - [fix] proper argument: split.ch; [fix-2]
@@ -197,7 +199,7 @@ split.names = function(names, min=0, extend=0, justify="right", pos="Top", split
 		nrx = length(str[[nc]]); # current number of rows
 		# Justifying
 		nch.v = nchar(str[[nc]]);
-		s = sapply(seq(nrx), function(nr) paste0(rep(" ", nch[[nc]] - nchar(str[[nc]][nr])), collapse=""));
+		s = sapply(seq(nrx), function(nr) paste0(rep(" ", nch[[nc]] - nch.v[nr]), collapse=""));
 		s = if(justify == 2) paste0(s, str[[nc]]) else if(justify == 1) paste0(str[[nc]], s)
 			else {
 				pad.justify(str[[nc]], nch[[nc]], nch.v, ch=" ");
@@ -228,9 +230,21 @@ split.names = function(names, min=0, extend=0, justify="right", pos="Top", split
 ### ftable with name splitting
 # - this code should be ideally inside format.ftable;
 ftable2 = function(ftbl, print=TRUE, quote=FALSE, sep="|",
-		justify="right", justify.lvl=justify, justify.num="right",
-		pos="Top", extend=TRUE, split.ch="\n",
+		justify="right", pos="Top", split.ch="\n", extend=TRUE,
 		method="row.compact", ...) {
+	# Justify: the components
+	if(is.list(justify)) {
+		len = length(justify);
+		if(len == 1) {
+			justify = justify[[1]]; justify.lvl = justify; justify.num = "right";
+		} else if(len == 2) {
+			justify.lvl=justify[[2]]; justify = justify[[1]]; justify.num="right";
+		} else {
+			justify.lvl=justify[[2]]; justify.num = justify[[3]]; justify = justify[[1]];
+		}
+	} else {
+		justify.lvl=justify; justify.num="right";
+	}
 	rvars = attr(ftbl, "row.vars");
 	row.vars = names(rvars);
 	cvars = attr(ftbl, "col.vars");
