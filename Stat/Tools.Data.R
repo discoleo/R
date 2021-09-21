@@ -5,7 +5,7 @@
 ###
 ### Data Tools
 ###
-### draft v.0.1m
+### draft v.0.1n
 
 
 ### Tools to Process/Transform Data
@@ -16,9 +16,11 @@
 ###############
 
 
+### draft v.0.1n:
+# - major refactoring of function ftable2;
 ### draft v.0.1l - v.0.1m:
 # - [changed] justify: argument as list; [v.0.1l]
-# - refactored makeLabels function; [v.0.1m]
+# - adapted expand.labels (makeLabels) function; [v.0.1m]
 ### draft v.0.1k [fix-7]:
 # - [fix] align = center; [fix-1]
 # - [fix] proper argument: split.ch; [fix-2]
@@ -104,7 +106,9 @@ cut.formula = function(e, data, FUN = median) {
 ### Formatting ###
 ##################
 
-# Helper
+### Helper
+
+# Argument matching
 match.halign = function(justify, msg="Option for justify NOT supported!") {
 	if(is.character(justify)) {
 		id = pmatch(justify, c("left", "right", "center"));
@@ -113,12 +117,18 @@ match.halign = function(justify, msg="Option for justify NOT supported!") {
 	if(is.na(id)) stop(msg);
 	return(id);
 }
+# String Operations
 space.builder = function(nch, each=1, ch=" ") {
 	chf = function(nch, each) rep(paste0(rep(ch, nch), collapse=""), each=each);
 	sapply(nch, chf, each=each);
 }
 nchar.list = function(l) {
 	lapply(l, nchar);
+}
+nchar.m = function(m) {
+	nChD  = nchar(m);
+	nDMax = apply(nChD, 2, max);
+	return(list(max=nDMax, n=nChD));
 }
 pad.list = function(l, n, min=0, justify="right", ch=" ") {
 	justify = match.halign(justify);
@@ -136,6 +146,24 @@ pad.list = function(l, n, min=0, justify="right", ch=" ") {
 		}
 	l = lapply(seq_along(l), pad.f);
 	attr(l, "nchar") = nmx;
+	return(l);
+}
+pad.all = function(s, w, nch, justify="right", ch=" ") {
+	justify = match.halign(justify);
+	if(is.matrix(s)) w = rep(w, each=nrow(s));
+	ch0 = sapply(seq_along(nch), function(id)
+		space.builder(w[[id]] - nch[[id]], each=1, ch=ch));
+	pad.f = if(justify == 2) function(id) {
+			paste0(ch0[[id]], s[[id]])
+		} else if(justify == 1) function(id) {
+			paste0(s[[id]], ch0[[id]])
+		} else function(id) {
+			pad.justify(s[[id]], w[[id]], nch[[id]], ch=ch);
+		}
+	l = sapply(seq_along(s), pad.f);
+	l.dim = dim(s);
+	if( ! is.null(l.dim)) dim(l) = l.dim;
+	attr(l, "nchar") = w;
 	return(l);
 }
 pad.justify = function(s, nmax, nch, ch=" ") {
@@ -178,6 +206,32 @@ merge.align = function(m1, m2, pos="Top", add.space=FALSE) {
 	m1 = cbind(m1, m2);
 	attr(m1, "nchar") = c(nch1, nch2);
 	return(m1);
+}
+rbind.align = function(m1, m2, justify="right", between=NULL) {
+	# m1
+	if(is.matrix(m1)) {
+		nCh1  = nchar.m(m1);
+		nMax1 = nCh1$max; nCh1 = nCh1$n;
+	} else {
+		nCh1 = nchar(m1); nMax1 = nCh1;
+	}
+	# m2
+	nCh2  = nchar.m(m2);
+	nMax2 = nCh2$max; nCh2 = nCh2$n;
+	#
+	wAll = pmax(nMax1, nMax2);
+	m1 = pad.all(m1, w=wAll, nCh1, justify=justify);
+	m2 = pad.all(m2, w=wAll, nCh2, justify=justify);
+	if(is.null(between)) {
+		m = rbind(m1, m2);
+	} else {
+		if(is.numeric(between)) {
+			mB = space.builder(wAll, each = between, ch=" ");
+		} else stop("Not yet implemented: \"between\"!");
+		m = rbind(m1, mB, m2);
+	}
+	attr(m, "nchar") = wAll;
+	return(m);
 }
 # Split names and align
 split.names = function(names, min=0, extend=0, justify="right", pos="Top", split.ch = "\n",
@@ -227,7 +281,7 @@ split.names = function(names, min=0, extend=0, justify="right", pos="Top", split
 	}
 	return(mx);
 }
-makeLabels = function(lst, default=" ", quote=FALSE) {
+expand.labels = function(lst, default=" ", quote=FALSE) {
 	len = lengths(lst);
 	cpLensU = c(1, cumprod(len));
 	cpLensD = rev(c(1, cumprod(rev(len))));
@@ -243,11 +297,11 @@ makeLabels = function(lst, default=" ", quote=FALSE) {
 }
 
 ### ftable with name splitting
-# - this code should be ideally inside format.ftable;
+# - this code should ideally replace format.ftable;
 ftable2 = function(ftbl, print=TRUE, quote=FALSE, sep="|",
-		justify="right", pos="Top", split.ch="\n", extend=TRUE,
-		method="row.compact", ...) {
-	# Justify: the components
+		justify="right", pos="Top", split.ch="\n", print.zero="-",
+		method="auto", extend=TRUE, ...) {
+	# Justify: the components of the argument
 	if(is.list(justify)) {
 		len = length(justify);
 		if(len == 1) {
@@ -264,39 +318,68 @@ ftable2 = function(ftbl, print=TRUE, quote=FALSE, sep="|",
 	row.vars = names(rvars);
 	cvars = attr(ftbl, "col.vars");
 	col.vars = names(cvars);
-	nr  = length(row.vars);
+	nV  = length(row.vars);
 	ncv = length(cvars); # TODO
-	# Col columns
-	ncc = ncv + sum(sapply(cvars, function(l) length(l)));
-	cch = unlist(lapply(seq_along(cvars), function(id) c(col.vars[[id]], cvars[[id]])));
-	nch = nchar(cch);
 	# max width for each factor (all levels per factor);
-	w = sapply(nchar.list(rvars), max);
-	extend = if(method == "row.compact") matrix(cch, nrow=1)
-		else if(method == "col.compact") nch[-1]
-		else if(extend) nch else ncc;
-	nms = split.names(row.vars, min=w, justify=justify, pos=pos,
-		extend = extend, split.ch=split.ch);
-	lvl = pad.list(rvars, min=attr(nms, "nchar")[seq(nr)], justify=justify.lvl);
-	### format.ftbl
-	# HACK: code should be ideally inside format.ftable!
-	# - update width of factor labels;
-	# - new width available in attr(nms, "nchar");
-	tmp.lvl = lvl;
-	names(tmp.lvl) = nms[1, seq_along(rvars)];
-	attr(ftbl, "row.vars") = tmp.lvl; # use part of the name
-	ftbl2 = format(ftbl, quote=quote, method=method, justify=justify.num, ...);
-	# hack: insert the full names;
-	if(method == "row.compact") {
-		ftbl2 = rbind(nms, ftbl2[-c(1),]);
-	} else {
-		ftbl2 = rbind(ftbl2[1,], nms, ftbl2[-c(1,2),]);
+	wL = sapply(nchar.list(rvars), max);
+	nms = split.names(row.vars, min=wL, justify=justify, pos=pos,
+		extend = 0, split.ch=split.ch);
+	wL = attr(nms, "nchar")[seq(nV)];
+	lvl = pad.list(rvars, min=wL, justify=justify.lvl);
+	### Labels:
+	ch0 = space.builder(wL, ch=" ");
+	LBL = expand.labels(lvl, default = ch0, quote=quote);
+	rownames(LBL) = NULL;
+	
+	### Data:
+	DATA = sapply(ftbl, format, print.zero = print.zero, ...);
+	dim(DATA) = dim(ftbl);
+	# Column Vars
+	ncc = ncv + sum(sapply(cvars, function(l) length(l))); # not yet used
+	
+	### Build ftbl
+	LBL = rbind(nms, LBL);
+	H0 = NULL;
+	nrH = nrow(nms); between = NULL;
+	method = pmatch(method, c("auto", "non.compact", "row.compact", "col.compact"));
+	if(method == 3) {
+		# "row.compact"
+		if(nrH > 1) between = nrH - 1;
+		nCh = nchar(col.vars);
+		colVars = rbind(col.vars, space.builder(nCh, each = nrow(LBL) - 1));
+		LBL = cbind(LBL, colVars);
+	} else if(method == 4) {
+		# "col.compact"
+		# TODO
+	} else if(method == 2) {
+		between = nrH; # "non.compact"
+		nH1 = sum(wL, (ncol(nms) - 1) * nchar(sep) );
+		nCh = nchar(col.vars);
+		colVars = space.builder(nCh, each = nrow(LBL));
+		LBL = cbind(LBL, colVars);
+		H0 = c(space.builder(nH1), col.vars);
+	} else if(method == 1) {
+		# "auto"
+		H0 = space.builder(sum(wL, (ncol(nms) - 1) * nchar(sep) ));
+		H0 = c(H0, col.vars); # TODO: all variables
+		if(nrH > 1) between = nrH - 1;
 	}
+	
+	### DATA
+	DATA = rbind.align(unlist(cvars), DATA, between=between);
+	if(method == 2) { H0 = c(H0, DATA[1,]); DATA = DATA[-1, ]; }
+	
+	### Build ftbl
+	ftbl2 = cbind(LBL, DATA);
 	if(print) {
+		if( ! is.null(H0)) cat(H0, sep=c(rep(sep, length(H0) - 1), "\n"));
 		cat(t(ftbl2), sep = c(rep(sep, ncol(ftbl2) - 1), "\n"))
 	}
 	invisible(ftbl2);
 }
+
+ftable2(ftbl, sep=" | ", zero.print="-", j="l", pos="Top", split.ch="\n", me="auto")
+
 
 ###############
 
