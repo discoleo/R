@@ -5,7 +5,7 @@
 ###
 ### Data Tools
 ###
-### draft v.0.1l
+### draft v.0.1m
 
 
 ### Tools to Process/Transform Data
@@ -16,8 +16,9 @@
 ###############
 
 
-### draft v.0.1l:
-# - [changed] justify: argument as list;
+### draft v.0.1l - v.0.1m:
+# - [changed] justify: argument as list; [v.0.1l]
+# - refactored makeLabels function; [v.0.1m]
 ### draft v.0.1k [fix-7]:
 # - [fix] align = center; [fix-1]
 # - [fix] proper argument: split.ch; [fix-2]
@@ -225,6 +226,20 @@ split.names = function(names, min=0, extend=0, justify="right", pos="Top", split
 		attr(mx, "nchar") = nch;
 	}
 	return(mx);
+}
+makeLabels = function(lst, default=" ", quote=FALSE) {
+	len = lengths(lst);
+	cpLensU = c(1, cumprod(len));
+	cpLensD = rev(c(1, cumprod(rev(len))));
+	y = NULL
+	for (i in rev(seq_along(lst))) {
+	    id = 1 + seq.int(from = 0, to = len[i] - 1) * cpLensD[i + 1L]
+		ch0 = if(length(default) == 1) default else default[i];
+	    tmp = rep(ch0, cpLensD[i])
+	    tmp[id] = if(quote) charQuote(lst[[i]]) else lst[[i]];
+	    y <- cbind(rep(tmp, times = cpLensU[i]), y)
+	}
+	y
 }
 
 ### ftable with name splitting
