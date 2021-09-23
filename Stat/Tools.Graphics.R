@@ -5,7 +5,7 @@
 ###
 ### Graphics Tools
 ###
-### draft v.0.1f
+### draft v.0.1g
 
 
 ### Graphics Tools
@@ -178,6 +178,112 @@ getMar = function(x) {
 	ymar <- lab.width + 1
 	return(c(xmar, ymar))
 }
+colors.ramp = function(col1="#E02032", col2="#3220D0", middle="white", alpha=NULL) {
+	if(is.null(alpha))
+		return(colorRampPalette(c(col1, middle, col2), space = "rgb"));
+	colorRampPalette(c(col1, middle, col2), alpha=TRUE)
+}
+
+####################
+
+####################
+### Correlations ###
+####################
+
+library(DescTools)
+
+setStamp = function(set=FALSE) {
+	if(set) {
+		DescToolsOptions("stamp", reset=TRUE);
+	} else {
+		DescToolsOptions("stamp" = NULL);
+		print("Stamp disabled!")
+	}
+	invisible();
+}
+
+# based on PlotCorr in package(DescTools)
+plot.corr = function (data, m, clust = TRUE, lbl = TRUE, lower = TRUE, len = 20,
+		cex.lbl = 0.75, cex.axis = 1, cor.min = 0, p.max = 0.10,
+		cols = colors.ramp()(len),
+		breaks = seq(-1, 1, length = len + 1), border = "grey",
+		lwd = 1, args.colorlegend = NULL, xaxt = par("xaxt"), yaxt = par("yaxt"),
+		las = 2, mar = c(7, 7, 3, 7),
+		main = "", stamp=TRUE, ...) 
+{
+	par.old = par(mar = mar);
+	on.exit(par(par.old));
+	# Clustering
+	if(missing(m)) m = cor(data);
+	if (clust == TRUE) {
+		idx = order.dendrogram(as.dendrogram(
+			hclust(dist(m), method = "mcquitty") ));
+		if(p.max > 0) {
+			p = PairApply(data, function(x, y) cor.test(x, y)$p.value, symmetric=TRUE);
+			m[p > p.max] = NA;
+		}
+		m = m[idx, idx];
+    }
+	if (cor.min != 0) m[abs(m) < abs(cor.min)] = NA;
+	if(lower) {
+		m[upper.tri(m, diag=TRUE)] = 0;
+	}
+	# Plot
+	m = m[nrow(m):1, ];
+	image(x = 1:nrow(m), y = 1:ncol(m), xaxt = "n", yaxt = "n", 
+		z = m, frame.plot = FALSE, xlab = "", ylab = "", 
+		col = cols, breaks = breaks, ...);
+	# Axis
+	if (xaxt != "n")
+		axis(side = 1, at = 1:nrow(m), labels = rownames(m), 
+			cex.axis = cex.axis, las = las, lwd = -1);
+	if (yaxt != "n") 
+		axis(side = 2, at = 1:ncol(m), labels = colnames(m), 
+			cex.axis = cex.axis, las = las, lwd = -1);
+	# Legend
+	if (is.list(args.colorlegend) || is.null(args.colorlegend)) {
+		len.col  = length(cols);
+		x.offset = 0.75;
+		args.colorlegend1 <- list(
+				labels = sprintf("%.1f", seq(-1, 1, length = len.col/2 + 1)),
+				x = nrow(m) + 0.5 + x.offset,
+				y = ncol(m) + 0.5, width = nrow(m)/len.col,
+				height = ncol(m), cols = cols, cex = 0.8);
+		if ( ! is.null(args.colorlegend)) {
+			args.colorlegend1[names(args.colorlegend)] <- args.colorlegend;
+		}
+		do.call("ColorLegend", args.colorlegend1)
+	}
+	# Border
+	if ( ! is.na(border)) {
+        usr = par("usr");
+		xleft = 0.5; xright = nrow(m) + xleft;
+		ybottom = 0.5; ytop = nrow(m) + ybottom;
+        rect(xleft = xleft, xright = xright, ybottom = ybottom, ytop = ytop,
+			lwd = lwd, border = border);
+		# usr <- par("usr") # ???
+		clip(xleft, xright, ybottom, ytop);
+		abline(h = seq(-2, nrow(m) + 1, 1) - 0.5,
+			v = seq(1, nrow(m) + 1, 1) - 0.5, col = border, lwd = lwd)
+		do.call("clip", as.list(usr))
+	}
+	# Labels
+	if( ! is.na(lbl)) {
+		m = t(m)[nrow(m):1, ];
+		xc = matrix(rep(1:nrow(m), each=ncol(m)), ncol=ncol(m));
+		yc = matrix(rep(ncol(m):1, ncol(m)), ncol=ncol(m));
+		txt = Format(m, d=3, ldigits = 0, na.form = "n.s.");
+		idx = lower.tri(xc, diag=FALSE);
+		text(x=xc[idx], y=yc[idx], label=txt[idx], cex=cex.lbl, xpd=TRUE);
+	}
+	if ( ! is.null(DescToolsOptions("stamp"))) 
+		Stamp();
+	if (main != "") 
+		title(main = main)
+}
+
+### Test
+plot.corr(data=mtcars, clust=TRUE)
 
 
 ######################
