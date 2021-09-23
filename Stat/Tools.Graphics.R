@@ -5,7 +5,7 @@
 ###
 ### Graphics Tools
 ###
-### draft v.0.1g-refact-3
+### draft v.0.1g-refact-4
 
 
 ### Graphics Tools
@@ -217,7 +217,8 @@ filter.corr = function(m, data=NULL, cluster=TRUE, lower=TRUE, p.max=0.10, cor.m
 	if(p.max > 0) {
 		if(! is.null(data)) {
 			# p = PairApply(data, function(x, y) cor.test(x, y)$p.value, symmetric=TRUE);
-			p = apply.pair(data, function(x, y) cor.test(x, y)$p.value, symmetric=TRUE);
+			p = apply.pair(data, function(x, y) cor.test(x, y)$p.value,
+				lower=TRUE, do.all="Symmetric");
 			m[p > p.max] = NA;
 		} else warning("Corr: No p-values as Data is NULL!")
 	}
@@ -227,19 +228,33 @@ filter.corr = function(m, data=NULL, cluster=TRUE, lower=TRUE, p.max=0.10, cor.m
 	}
 	return(m);
 }
-apply.pair = function(x, FUN, lower=TRUE, symmetric=TRUE, ...) {
+expand.pair = function(n, all=FALSE) {
+	if(all) return(expand.grid(n, n));
+	id1 = unlist(lapply(seq(n), function(id) rep(id, n + 1 - id)));
+	id2 = unlist(lapply(seq(n), function(id) seq(id, n)));
+	return(cbind(id1, id2));
+}
+apply.pair = function(x, FUN, lower=TRUE, do.all=c("None", "Symmetric", "All"), ...) {
 	if (is.matrix(x)) x = as.data.frame(x);
+	#
 	nc = ncol(x);
+	do.all = match.arg(do.all);
+	isAll  = if(do.all == "All") TRUE else FALSE;
+	id = expand.pair(nc, all = isAll); 
+	# enable simple lists:
+	f  = function(idi) FUN(x[[id[idi, 1]]], x[[id[idi, 2]]], ...);
 	m  = matrix(0, nrow=nc, ncol=nc);
-	f  = function(id2, id1) FUN(x[,id1], x[,id2], ...);
-	rez = unlist(lapply(seq(nc), function(id1) lapply(seq(id1, nc), f, id1=id1)));
-	if(lower) {
+	rez = sapply(seq(nrow(id)), f);
+	if(do.all == "All") {
+		m = rez;
+	} else if(lower) {
 		m[lower.tri(m, diag=TRUE)] = rez;
+		if(do.all == "Symmetric") {
+			m[upper.tri(m)] <- t(m)[upper.tri(m)];
+		}
 	} else {
+		# TODO:
 		m[upper.tri(m, diag=TRUE)] = rez;
-	}
-	if(symmetric) {
-		m[upper.tri(m)] <- t(m)[upper.tri(m)];
 	}
 	dimnames(m) <- list(names(x), names(x))
 	return(m)
