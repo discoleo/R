@@ -5,7 +5,7 @@
 ###
 ### Graphics Tools
 ###
-### draft v.0.1g-refact-2
+### draft v.0.1g-refact-3
 
 
 ### Graphics Tools
@@ -216,7 +216,8 @@ filter.corr = function(m, data=NULL, cluster=TRUE, lower=TRUE, p.max=0.10, cor.m
     }
 	if(p.max > 0) {
 		if(! is.null(data)) {
-			p = PairApply(data, function(x, y) cor.test(x, y)$p.value, symmetric=TRUE);
+			# p = PairApply(data, function(x, y) cor.test(x, y)$p.value, symmetric=TRUE);
+			p = apply.pair(data, function(x, y) cor.test(x, y)$p.value, symmetric=TRUE);
 			m[p > p.max] = NA;
 		} else warning("Corr: No p-values as Data is NULL!")
 	}
@@ -225,6 +226,23 @@ filter.corr = function(m, data=NULL, cluster=TRUE, lower=TRUE, p.max=0.10, cor.m
 		m[upper.tri(m, diag=TRUE)] = 0;
 	}
 	return(m);
+}
+apply.pair = function(x, FUN, lower=TRUE, symmetric=TRUE, ...) {
+	if (is.matrix(x)) x = as.data.frame(x);
+	nc = ncol(x);
+	m  = matrix(0, nrow=nc, ncol=nc);
+	f  = function(id2, id1) FUN(x[,id1], x[,id2], ...);
+	rez = unlist(lapply(seq(nc), function(id1) lapply(seq(id1, nc), f, id1=id1)));
+	if(lower) {
+		m[lower.tri(m, diag=TRUE)] = rez;
+	} else {
+		m[upper.tri(m, diag=TRUE)] = rez;
+	}
+	if(symmetric) {
+		m[upper.tri(m)] <- t(m)[upper.tri(m)];
+	}
+	dimnames(m) <- list(names(x), names(x))
+	return(m)
 }
 plot.corr = function (m, lbl = TRUE, len = 20, cex.lbl = 0.75, cex.axis = 1,
 		cols = colors.ramp()(len),
