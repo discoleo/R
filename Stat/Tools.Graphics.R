@@ -61,6 +61,12 @@ findSimilar.col = function(col, tol=3, start=1, max=30, type="Saturation") {
 	return(cols);
 }
 
+colors.ramp = function(col1="#E02032", col2="#3220D0", middle="white", alpha=NULL) {
+	if(is.null(alpha))
+		return(colorRampPalette(c(col1, middle, col2), space = "rgb"));
+	colorRampPalette(c(col1, middle, col2), alpha=TRUE)
+}
+
 ### Plot colours
 plot.col = function(col, bottom.mrg=8, ...) {
 	x = rep(1, length(col));
@@ -178,11 +184,6 @@ getMar = function(x) {
 	ymar <- lab.width + 1
 	return(c(xmar, ymar))
 }
-colors.ramp = function(col1="#E02032", col2="#3220D0", middle="white", alpha=NULL) {
-	if(is.null(alpha))
-		return(colorRampPalette(c(col1, middle, col2), space = "rgb"));
-	colorRampPalette(c(col1, middle, col2), alpha=TRUE)
-}
 
 ####################
 
@@ -213,17 +214,18 @@ plot.corr = function (data, m, clust = TRUE, lbl = TRUE, lower = TRUE, len = 20,
 {
 	par.old = par(mar = mar);
 	on.exit(par(par.old));
-	# Clustering
+	# Corr
 	if(missing(m)) m = cor(data);
+	# Clustering
 	if (clust == TRUE) {
 		idx = order.dendrogram(as.dendrogram(
 			hclust(dist(m), method = "mcquitty") ));
-		if(p.max > 0) {
-			p = PairApply(data, function(x, y) cor.test(x, y)$p.value, symmetric=TRUE);
-			m[p > p.max] = NA;
-		}
 		m = m[idx, idx];
     }
+	if(p.max > 0) {
+		p = PairApply(data, function(x, y) cor.test(x, y)$p.value, symmetric=TRUE);
+		m[p > p.max] = NA;
+	}
 	if (cor.min != 0) m[abs(m) < abs(cor.min)] = NA;
 	if(lower) {
 		m[upper.tri(m, diag=TRUE)] = 0;
