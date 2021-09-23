@@ -5,7 +5,7 @@
 ###
 ### Graphics Tools
 ###
-### draft v.0.1g-refact-4
+### draft v.0.1h-fix1
 
 
 ### Graphics Tools
@@ -212,13 +212,13 @@ filter.corr = function(m, data=NULL, cluster=TRUE, lower=TRUE, p.max=0.10, cor.m
 	if (cluster == TRUE) {
 		idx = order.dendrogram(as.dendrogram(
 			hclust(dist(m), method = "mcquitty") ));
-		m = m[idx, idx];
+		m = m[idx, idx]; print(idx)
     }
 	if(p.max > 0) {
 		if(! is.null(data)) {
 			# p = PairApply(data, function(x, y) cor.test(x, y)$p.value, symmetric=TRUE);
-			p = apply.pair(data, function(x, y) cor.test(x, y)$p.value,
-				lower=TRUE, do.all="Symmetric");
+			p = apply.pair(if(cluster) data[idx] else data,
+				function(x, y) cor.test(x, y)$p.value, lower=TRUE, do.all="Symmetric");
 			m[p > p.max] = NA;
 		} else warning("Corr: No p-values as Data is NULL!")
 	}
