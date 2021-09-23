@@ -5,7 +5,7 @@
 ###
 ### Graphics Tools
 ###
-### draft v.0.1g
+### draft v.0.1g-refact-1
 
 
 ### Graphics Tools
@@ -272,16 +272,19 @@ plot.corr = function (data, m, clust = TRUE, lbl = TRUE, lower = TRUE, len = 20,
 	# Labels
 	if( ! is.na(lbl)) {
 		m = t(m)[nrow(m):1, ];
-		xc = matrix(rep(1:nrow(m), each=ncol(m)), ncol=ncol(m));
-		yc = matrix(rep(ncol(m):1, ncol(m)), ncol=ncol(m));
-		txt = Format(m, d=3, ldigits = 0, na.form = "n.s.");
-		idx = lower.tri(xc, diag=FALSE);
-		text(x=xc[idx], y=yc[idx], label=txt[idx], cex=cex.lbl, xpd=TRUE);
+		labels.m(m, na.form = "n.s.", cex.lbl=cex.lbl);
 	}
 	if ( ! is.null(DescToolsOptions("stamp"))) 
 		Stamp();
 	if (main != "") 
 		title(main = main)
+}
+labels.m = function(m, digits=3, ld=0, na.form=NULL, cex.lbl=0.75) {
+	xc = matrix(rep(1:nrow(m), each=ncol(m)), ncol=ncol(m));
+	yc = matrix(rep(ncol(m):1, ncol(m)), ncol=ncol(m));
+	txt = Format(m, d=digits, ldigits = ld, na.form = na.form);
+	idx = lower.tri(xc, diag=FALSE);
+	text(x=xc[idx], y=yc[idx], label=txt[idx], cex=cex.lbl, xpd=TRUE);
 }
 
 ### Test
