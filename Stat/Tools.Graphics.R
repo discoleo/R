@@ -5,7 +5,7 @@
 ###
 ### Graphics Tools
 ###
-### draft v.0.1g-refact-1
+### draft v.0.1g-refact-2
 
 
 ### Graphics Tools
@@ -150,6 +150,18 @@ barchart.adv = function(formula, data, main, col=c("steelblue4", "cornflowerblue
 library(DescTools)
 
 
+### Enable/Disable Stamp
+setStamp = function(set=FALSE) {
+	if(set) {
+		DescToolsOptions("stamp", reset=TRUE);
+	} else {
+		DescToolsOptions("stamp" = NULL);
+		print("Stamp disabled!")
+	}
+	invisible();
+}
+
+
 ### Mosaic Plot based on PlotMosaic in DescTools
 # - code should be ideally inside PlotMosaic;
 plot.mosaic = function(tbl, main=NULL, col=NULL, ...) {
@@ -193,19 +205,28 @@ getMar = function(x) {
 
 library(DescTools)
 
-setStamp = function(set=FALSE) {
-	if(set) {
-		DescToolsOptions("stamp", reset=TRUE);
-	} else {
-		DescToolsOptions("stamp" = NULL);
-		print("Stamp disabled!")
-	}
-	invisible();
-}
-
 # based on PlotCorr in package(DescTools)
-plot.corr = function (data, m, clust = TRUE, lbl = TRUE, lower = TRUE, len = 20,
-		cex.lbl = 0.75, cex.axis = 1, cor.min = 0, p.max = 0.10,
+# - but done correctly;
+filter.corr = function(m, data=NULL, cluster=TRUE, lower=TRUE, p.max=0.10, cor.min = 0) {
+	# Clustering
+	if (cluster == TRUE) {
+		idx = order.dendrogram(as.dendrogram(
+			hclust(dist(m), method = "mcquitty") ));
+		m = m[idx, idx];
+    }
+	if(p.max > 0) {
+		if(! is.null(data)) {
+			p = PairApply(data, function(x, y) cor.test(x, y)$p.value, symmetric=TRUE);
+			m[p > p.max] = NA;
+		} else warning("Corr: No p-values as Data is NULL!")
+	}
+	if (cor.min != 0) m[abs(m) < abs(cor.min)] = NA;
+	if(lower) {
+		m[upper.tri(m, diag=TRUE)] = 0;
+	}
+	return(m);
+}
+plot.corr = function (m, lbl = TRUE, len = 20, cex.lbl = 0.75, cex.axis = 1,
 		cols = colors.ramp()(len),
 		breaks = seq(-1, 1, length = len + 1), border = "grey",
 		lwd = 1, args.colorlegend = NULL, xaxt = par("xaxt"), yaxt = par("yaxt"),
@@ -214,22 +235,6 @@ plot.corr = function (data, m, clust = TRUE, lbl = TRUE, lower = TRUE, len = 20,
 {
 	par.old = par(mar = mar);
 	on.exit(par(par.old));
-	# Corr
-	if(missing(m)) m = cor(data);
-	# Clustering
-	if (clust == TRUE) {
-		idx = order.dendrogram(as.dendrogram(
-			hclust(dist(m), method = "mcquitty") ));
-		m = m[idx, idx];
-    }
-	if(p.max > 0) {
-		p = PairApply(data, function(x, y) cor.test(x, y)$p.value, symmetric=TRUE);
-		m[p > p.max] = NA;
-	}
-	if (cor.min != 0) m[abs(m) < abs(cor.min)] = NA;
-	if(lower) {
-		m[upper.tri(m, diag=TRUE)] = 0;
-	}
 	# Plot
 	m = m[nrow(m):1, ];
 	image(x = 1:nrow(m), y = 1:ncol(m), xaxt = "n", yaxt = "n", 
@@ -288,7 +293,9 @@ labels.m = function(m, digits=3, ld=0, na.form=NULL, cex.lbl=0.75) {
 }
 
 ### Test
-plot.corr(data=mtcars, clust=TRUE)
+m = cor(mtcars)
+m = filter.corr(m, data=mtcars)
+plot.corr(m)
 
 
 ######################
