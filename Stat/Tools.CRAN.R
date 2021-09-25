@@ -5,7 +5,7 @@
 ###
 ### Tools: Packages & CRAN
 ###
-### draft v.0.1a
+### draft v.0.1b
 
 
 
@@ -14,15 +14,15 @@
 # - locally installed packages;
 
 # Basic Info:
-info.pkg = function(pkg=NULL) {
-	if(is.null(pkg)) { pkg = installed.packages(); }
+info.pkg = function(pkg=NULL, fields="Repository") {
+	if(is.null(pkg)) { pkg = installed.packages(fields=fields); }
 	else {
 		all.pkg = installed.packages();
 		pkg = all.pkg[all.pkg[,1] %in% pkg, ];
 	}
 	p = pkg;
 	p = as.data.frame(p);
-	p = p[ , c("Package", "Version", "Built", "Imports")];
+	p = p[ , c("Package", "Version", "Built", fields, "Imports")];
 	return(p);
 }
 # Imported packages:
@@ -103,6 +103,12 @@ f = imports.pkg();
 
 # Size
 head(x, 20)
+
+
+# - some are NOT Bioconductor packages;
+# - TODO: filter by biocViews?
+p[is.na(p$Repository), 1:4]
+
 
 # No imports
 table(is.na(p$Imports))
