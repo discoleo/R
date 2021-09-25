@@ -5,7 +5,7 @@
 ###
 ### Tools: Packages & CRAN
 ###
-### draft v.0.1b
+### draft v.0.1c
 
 
 
@@ -14,7 +14,7 @@
 # - locally installed packages;
 
 # Basic Info:
-info.pkg = function(pkg=NULL, fields="Repository") {
+info.pkg = function(pkg=NULL, fields=c("Repository", "Description")) {
 	if(is.null(pkg)) { pkg = installed.packages(fields=fields); }
 	else {
 		all.pkg = installed.packages();
@@ -57,7 +57,7 @@ size.f.pkg = function(path=NULL) {
 	sapply(xd, size.f);
 }
 
-size.pkg = function(path=NULL, sort=TRUE) {
+size.pkg = function(path=NULL, sort=TRUE, file="Packages.Size.csv") {
 	x = size.f.pkg(path=path);
 	x = as.data.frame(x);
 	names(x) = "Size"
@@ -66,6 +66,11 @@ size.pkg = function(path=NULL, sort=TRUE) {
 	if(sort) {
 		id = order(x$Size, decreasing=TRUE)
 		x = x[id,];
+	}
+	if( ! is.null(file)) {
+		if( ! is.character(file)) {
+			print("Error: Size NOT written to file!");
+		} else write.csv(x, file=file, row.names=FALSE);
 	}
 	return(x);
 }
@@ -91,15 +96,31 @@ match.imports = function(pkg, x=NULL, quote=FALSE) {
 ###############
 ###############
 
-### takes ages!
-x = size.pkg();
+### Package Size
+# Note: takes ages!
+if(FALSE) {
+	# !! setwd(...); !!
+	x = size.pkg();
+}
+if(FALSE) {
+	system.time({
+		x = size.pkg(file=NULL);
+	})
+	# elapsed time: 509 s !!!
+	# 512 Packages; 1.64 GB;
+}
 
-# much faster: but NO size
+x = read.csv("Packages.Size.csv")
+
+
+### Imports
+# - much faster: but NO size;
 p = info.pkg();
 f = imports.pkg();
 
 
-### Analyze data
+#####################
+### Data Analysis ###
 
 # Size
 head(x, 20)
