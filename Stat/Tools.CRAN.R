@@ -5,7 +5,7 @@
 ###
 ### Tools: Packages & CRAN
 ###
-### draft v.0.1c
+### draft v.0.1d
 
 
 
@@ -92,6 +92,53 @@ match.imports = function(pkg, x=NULL, quote=FALSE) {
 	}
 }
 
+split.line = function(s, w=80, nL=NULL, indent = "   ") {
+	if(is.null(nL)) nL = 1 + ((nchar(s) - 1) %/% w);
+	if(nL == 1) return(s);
+	nMax = nchar(s); n0 = 1; n = w; dn = w %/% 2;
+	#
+	s2 = character(nL);
+	for(id in seq(nL - 1)) {
+		DO_NEXT = FALSE;
+		indent0 = if(id == 1) "" else indent;
+		for(npos in seq(n, n - dn)) {
+			if(substr(s, npos, npos) %in% c(" ", "\n", ",", "-", ")")) {
+				s2[id] = paste0(indent0, substr(s, n0, npos));
+				n0 = npos + 1; n = min(nMax, n0 + w);
+				DO_NEXT = TRUE;
+				break;
+			}
+		}
+		if(DO_NEXT) next;
+		s2[id] = paste0(indent0, substr(s, n0, n));
+		n0 = min(nMax, n + 1); n = min(nMax, n0 + w);
+	}
+	s2[nL] = paste0(indent, substr(s, n0, nMax));
+	return(s2);
+}
+format.lines = function(x, w=80, justify="left", NL.rm=TRUE) {
+	if(NL.rm) {
+		for(nc in seq(ncol(x))) {
+			x[, nc] = gsub("[ \t]*+\n++[ \t]*+", " ", x[, nc], perl=TRUE);
+		}
+	}
+	# Detect Long Lines
+	n  = sapply(seq(ncol(x)), function(nc) nchar(x[,nc]));
+	nL = as.matrix(n);
+	nL = 1 + ((nL - 1) %/% w);
+	maxL = apply(nL, 1, max, na.rm=TRUE);
+	nL[is.na(nL)] = 1;
+	csm = cumsum(c(1, maxL));
+	txt = matrix("", nrow=tail(csm, 1), ncol=ncol(x));
+	for(nc in seq(ncol(x))) {
+		for(nr in seq(nrow(x))) {
+			nL0 = nL[nr, nc];
+			txt[seq(csm[nr], length.out=nL0), nc] = split.line(x[nr, nc], w=w, nL=nL0);
+		}
+	}
+	return(apply(txt, 2, format, justify=justify));
+}
+
 
 ###############
 ###############
@@ -122,8 +169,12 @@ f = imports.pkg();
 #####################
 ### Data Analysis ###
 
-# Size
+### Size
 head(x, 20)
+
+### Description
+# - packages which do NOT import any other package;
+format.lines(p[is.na(p$Imports), ][1:20, -6])
 
 
 # - some are NOT Bioconductor packages;
