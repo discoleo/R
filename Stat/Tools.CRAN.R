@@ -5,7 +5,7 @@
 ###
 ### Tools: Packages & CRAN
 ###
-### draft v.0.1d
+### draft v.0.1d-ext
 
 
 
@@ -92,15 +92,16 @@ match.imports = function(pkg, x=NULL, quote=FALSE) {
 	}
 }
 
-split.line = function(s, w=80, nL=NULL, indent = "   ") {
+split.line = function(s, w=80, nL=NULL, indent = c("   ", "")) {
 	if(is.null(nL)) nL = 1 + ((nchar(s) - 1) %/% w);
-	if(nL == 1) return(s);
+	if(nL == 1) return(paste0(indent[1], s));
 	nMax = nchar(s); n0 = 1; n = w; dn = w %/% 2;
+	if(length(indent) == 1) indent = c(indent, "");
 	#
 	s2 = character(nL);
 	for(id in seq(nL - 1)) {
 		DO_NEXT = FALSE;
-		indent0 = if(id == 1) "" else indent;
+		indent0 = if(id == 1) indent[1] else indent[2];
 		for(npos in seq(n, n - dn)) {
 			if(substr(s, npos, npos) %in% c(" ", "\n", ",", "-", ")")) {
 				s2[id] = paste0(indent0, substr(s, n0, npos));
@@ -113,7 +114,7 @@ split.line = function(s, w=80, nL=NULL, indent = "   ") {
 		s2[id] = paste0(indent0, substr(s, n0, n));
 		n0 = min(nMax, n + 1); n = min(nMax, n0 + w);
 	}
-	s2[nL] = paste0(indent, substr(s, n0, nMax));
+	s2[nL] = paste0(indent[2], substr(s, n0, nMax));
 	return(s2);
 }
 format.lines = function(x, w=80, justify="left", NL.rm=TRUE) {
