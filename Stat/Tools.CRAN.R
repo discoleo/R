@@ -5,7 +5,7 @@
 ###
 ### Tools: Packages & CRAN
 ###
-### draft v.0.1e
+### draft v.0.1f
 
 
 
@@ -153,6 +153,23 @@ cat.mlines = function(m, sep=" ") {
 	cat(m, sep=c(rep(sep, nc - 1), "\n"));
 }
 
+scroll.pkg = function(pkg, start=0, len=15, w = c(12, 80, 16)) {
+	id = match(c("Package", "Description"), names(pkg));
+	if(any(is.na(id))) stop("Package info must contain both the name & description!")
+	pkg = cbind(pkg[, id], pkg[, - id]);
+	# Column Lengths
+	len.col = ncol(pkg); len.other = len.col - 2;
+	w = if(len.other == 0) w[1:2]
+		else if(length(w) == len.col) w
+		else w[c(1,2, rep(w[3], len.other))];
+	# Indent
+	indent = c(list(c(" ", "   "), c("   ", "")), rep(list(""), len.other));
+	# Entries
+	if(start > nrow(pkg)) stop("No more entries!");
+	nend = min(nrow(pkg), start + len);
+	cat.mlines(format.lines(pkg[seq(start, nend), ], w=w, indent=indent));
+}
+
 
 ###############
 ###############
@@ -191,11 +208,10 @@ head(x, 20)
 format.lines(p[is.na(p$Imports), ][1:20, -6])
 
 # - pretty print:
-cat.mlines(format.lines(p[is.na(p$Imports), ][1:20, c(1,5,2,3,4)]))
+cat.mlines(format.lines(p[is.na(p$Imports), c(1,5,2,3,4)][1:20, ]))
 
-cat.mlines(format.lines(p[is.na(p$Imports), ][21:30, c(1,5,2,3,4)],
-	w=c(10,80, rep(10,3)),
-	indent=list(c(" ", "   "), c("   ", ""), "", "", "")))
+# - pretty print:
+scroll.pkg(p[is.na(p$Imports), c(1,5,2,3,4)], start=30)
 
 
 # - some are NOT Bioconductor packages;
