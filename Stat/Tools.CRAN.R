@@ -5,7 +5,7 @@
 ###
 ### Tools: Packages & CRAN
 ###
-### draft v.0.1d-ext2
+### draft v.0.1e
 
 
 
@@ -117,7 +117,7 @@ split.line = function(s, w=80, nL=NULL, indent = c("   ", "")) {
 	s2[nL] = paste0(indent[2], substr(s, n0, nMax));
 	return(s2);
 }
-format.lines = function(x, w=80, justify="left", NL.rm=TRUE) {
+format.lines = function(x, w=80, justify="left", NL.rm=TRUE, indent=c("   ", "")) {
 	if(NL.rm) {
 		for(nc in seq(ncol(x))) {
 			x[, nc] = gsub("[ \t]*+\n++[ \t]*+", " ", x[, nc], perl=TRUE);
@@ -126,17 +126,25 @@ format.lines = function(x, w=80, justify="left", NL.rm=TRUE) {
 	# Detect Long Lines
 	n  = sapply(seq(ncol(x)), function(nc) nchar(x[,nc]));
 	nL = as.matrix(n);
-	nL = 1 + ((nL - 1) %/% w);
+	if(length(w) == 1) {
+		nL = 1 + ((nL - 1) %/% w);
+		w = rep(w, ncol(x));
+	} else {
+		nL = sapply(seq(ncol(x)), function(nc) 1 + ((nL[,nc] - 1) %/% w[nc]));
+	}
 	maxL = apply(nL, 1, max, na.rm=TRUE);
 	nL[is.na(nL)] = 1;
 	csm = cumsum(c(1, maxL));
 	txt = matrix("", nrow=tail(csm, 1), ncol=ncol(x));
 	for(nc in seq(ncol(x))) {
+		indent0 = if(is.list(indent)) indent[[nc]] else indent;
 		for(nr in seq(nrow(x))) {
 			nL0 = nL[nr, nc];
-			txt[seq(csm[nr], length.out=nL0), nc] = split.line(x[nr, nc], w=w, nL=nL0);
+			txt[seq(csm[nr], length.out=nL0), nc] =
+				split.line(x[nr, nc], w=w[nc], nL=nL0, indent=indent0);
 		}
 	}
+	# TODO: 2nd pass;
 	return(apply(txt, 2, format, justify=justify));
 }
 
@@ -184,6 +192,10 @@ format.lines(p[is.na(p$Imports), ][1:20, -6])
 
 # - pretty print:
 cat.mlines(format.lines(p[is.na(p$Imports), ][1:20, c(1,5,2,3,4)]))
+
+cat.mlines(format.lines(p[is.na(p$Imports), ][21:30, c(1,5,2,3,4)],
+	w=c(10,80, rep(10,3)),
+	indent=list(c(" ", "   "), c("   ", ""), "", "", "")))
 
 
 # - some are NOT Bioconductor packages;
