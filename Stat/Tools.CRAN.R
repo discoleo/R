@@ -46,12 +46,16 @@ imports.pkg = function(pkg=NULL, sort=TRUE) {
 }
 
 # Package Size:
-size.f.pkg = function(path=NULL) {
+size.f.pkg = function(path=NULL, exclude=NULL) {
 	if(is.null(path)) path = R.home("library");
 	xd = list.dirs(path = path, full.names = FALSE, recursive = FALSE);
+	if( ! is.null(exclude)) {
+		isExclude = grepl(exclude, xd);
+		xd = xd[ ! isExclude];
+	}
 	size.f = function(p) {
 		p = paste0(path, "/", p);
-		sum(file.info(list.files(path=p, pattern=".",
+		sum(file.info(list.files(path=p, pattern=NULL,
 			full.names = TRUE, all.files = TRUE, recursive = TRUE))$size);
 	}
 	sapply(xd, size.f);
