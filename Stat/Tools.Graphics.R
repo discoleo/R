@@ -5,7 +5,7 @@
 ###
 ### Graphics Tools
 ###
-### draft v.0.1h-fix1
+### draft v.0.1h-ref
 
 
 ### Graphics Tools
@@ -207,12 +207,14 @@ library(DescTools)
 
 # based on PlotCorr in package(DescTools)
 # - but done correctly;
-filter.corr = function(m, data=NULL, cluster=TRUE, lower=TRUE, p.max=0.10, cor.min = 0) {
+# - many more variants in package: corrplot!
+filter.corr = function(m, data=NULL, cluster=TRUE, lower=TRUE, p.max=0.10, cor.min = 0, debug=TRUE) {
 	# Clustering
 	if (cluster == TRUE) {
 		idx = order.dendrogram(as.dendrogram(
 			hclust(dist(m), method = "mcquitty") ));
-		m = m[idx, idx]; print(idx)
+		m = m[idx, idx];
+		if(debug) print(idx);
     }
 	if(p.max > 0) {
 		if(! is.null(data)) {
@@ -259,11 +261,13 @@ apply.pair = function(x, FUN, lower=TRUE, do.all=c("None", "Symmetric", "All"), 
 	dimnames(m) <- list(names(x), names(x))
 	return(m)
 }
+# - many more variants in package: corrplot!
+# TODO: diagonal labels;
 plot.corr = function (m, lbl = TRUE, len = 20, cex.lbl = 0.75, cex.axis = 1,
 		cols = colors.ramp()(len),
 		breaks = seq(-1, 1, length = len + 1), border = "grey",
 		lwd = 1, args.colorlegend = NULL, xaxt = par("xaxt"), yaxt = par("yaxt"),
-		las = 2, mar = c(7, 7, 3, 7),
+		las = 2, mar = c(7, 7, 3, 7), legend.offset = 0.75,
 		main = "", stamp=TRUE, ...) 
 {
 	par.old = par(mar = mar);
@@ -283,11 +287,11 @@ plot.corr = function (m, lbl = TRUE, len = 20, cex.lbl = 0.75, cex.axis = 1,
 	# Legend
 	if (is.list(args.colorlegend) || is.null(args.colorlegend)) {
 		len.col  = length(cols);
-		x.offset = 0.75;
+		x.offset = legend.offset;
 		args.colorlegend1 <- list(
 				labels = sprintf("%.1f", seq(-1, 1, length = len.col/2 + 1)),
 				x = nrow(m) + 0.5 + x.offset,
-				y = ncol(m) + 0.5, width = nrow(m)/len.col,
+				y = ncol(m) + 0.5, width = nrow(m)/len.col, # option: fixed width?
 				height = ncol(m), cols = cols, cex = 0.8);
 		if ( ! is.null(args.colorlegend)) {
 			args.colorlegend1[names(args.colorlegend)] <- args.colorlegend;
