@@ -5,7 +5,7 @@
 ###
 ### Tools: Packages & CRAN
 ###
-### draft v.0.1d-ext
+### draft v.0.1d-ext2
 
 
 
@@ -140,6 +140,11 @@ format.lines = function(x, w=80, justify="left", NL.rm=TRUE) {
 	return(apply(txt, 2, format, justify=justify));
 }
 
+cat.mlines = function(m, sep=" ") {
+	nc = ncol(m); m = t(m);
+	cat(m, sep=c(rep(sep, nc - 1), "\n"));
+}
+
 
 ###############
 ###############
@@ -176,6 +181,9 @@ head(x, 20)
 ### Description
 # - packages which do NOT import any other package;
 format.lines(p[is.na(p$Imports), ][1:20, -6])
+
+# - pretty print:
+cat.mlines(format.lines(p[is.na(p$Imports), ][1:20, c(1,5,2,3,4)]))
 
 
 # - some are NOT Bioconductor packages;
