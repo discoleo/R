@@ -5,7 +5,7 @@
 ###
 ### Tools: Packages & CRAN
 ###
-### draft v.0.1g
+### draft v.0.1h
 
 
 
@@ -228,6 +228,13 @@ scroll.pkg = function(pkg, start=0, len=15, w = c(12, 80, 16), iter=2) {
 	cat.mlines(format.lines(pkg[seq(start, nend), ], w=w, indent=indent, iter=iter));
 }
 
+find.pkg = function(s, pkg=NULL, perl=TRUE) {
+	if(is.null(pkg)) pkg = info.pkg();
+	isF = grepl(s, pkg$Description, perl=perl);
+	pkg = pkg[isF, ];
+	return(pkg);
+}
+
 
 ###############
 ###############
@@ -292,4 +299,19 @@ match.imports("rpart.plot", p)
 
 # Concept?
 match.imports(c("pROC", "ROCR"), p)
+
+
+###################
+
+### Find in Package
+
+p = info.pkg();
+
+nrow(find.pkg("(?i)matrix", pkg=p))
+scroll.pkg(find.pkg("(?i)matrix", pkg=p), start=1)
+
+scroll.pkg(find.pkg("(?i)colou?+r", pkg=p), start=1)
+
+scroll.pkg(find.pkg("(?i)dendro|phylo|tree", pkg=p), start=1)
+scroll.pkg(find.pkg("(?i)dendro|phylo", pkg=p), start=1)
 
