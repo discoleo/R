@@ -5,7 +5,7 @@
 ###
 ### Tools: Packages & CRAN
 ###
-### draft v.0.1i
+### draft v.0.1j
 
 
 
@@ -216,10 +216,7 @@ scroll.pkg = function(pkg, start=0, len=15, w = c(12, 80, 16), iter=2) {
 	if(any(is.na(id))) {
 		if( ! inherits(pkg, "pkg_search_result"))
 			stop("Package info must contain both the name & description!");
-		pkg = lapply(pkg$package_data, function(x)
-			data.frame(Package = x$Package, Description = x$Description,
-				Version = x$Version, Repository = x$Repository));
-		pkg = do.call(rbind, pkg);
+		pkg = extract.pkg(pkg, type="Basic");
 		id = c(1, 2);
 	}
 	pkg = cbind(pkg[, id], pkg[, - id]);
@@ -234,6 +231,16 @@ scroll.pkg = function(pkg, start=0, len=15, w = c(12, 80, 16), iter=2) {
 	if(start > nrow(pkg)) stop("No more entries!");
 	nend = min(nrow(pkg), start + len);
 	cat.mlines(format.lines(pkg[seq(start, nend), ], w=w, indent=indent, iter=iter));
+}
+
+extract.pkg = function(x, type="Basic") {
+	# TODO: type
+	pkg = lapply(x$package_data, function(x)
+			data.frame(
+				Package = x$Package, Description = x$Description,
+				Version = x$Version, Repository = x$Repository));
+	pkg = do.call(rbind, pkg);
+	return(pkg);
 }
 
 find.pkg = function(s, pkg=NULL, perl=TRUE) {
@@ -324,10 +331,17 @@ scroll.pkg(find.pkg("(?i)dendro|phylo|tree", pkg=p), start=1)
 scroll.pkg(find.pkg("(?i)dendro|phylo", pkg=p), start=1)
 
 
-###
+### Search CRAN
 library(pkgsearch)
 
 # only simple expressions are possible:
 x = advanced_search("dendro*", size=20)
 
 scroll.pkg(x, len=20)
+
+
+### PDB
+x = advanced_search("pdb", size=20)
+
+scroll.pkg(x, len=20)
+
