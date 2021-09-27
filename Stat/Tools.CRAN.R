@@ -100,7 +100,7 @@ match.imports = function(pkg, x=NULL, quote=FALSE) {
 ### Formatting ###
 
 # Note:
-# - a 1-pass algorithm is possible (and not too complicated),
+# - a 1-pass exact algorithm is possible (and not too complicated),
 #   but it requires to process sequentially each row;
 format.lines = function(x, w=80, justify="left", NL.rm=TRUE, indent=c("   ", ""), iter=2) {
 	if(NL.rm) {
@@ -186,6 +186,9 @@ split.some.lines = function(txt, idL, w=80, indent="") {
 	return(tmp);
 }
 
+# TODO:
+# - explore also package gridtext;
+#   src: https://github.com/wilkelab/gridtext
 split.line = function(s, w=80, nL=NULL, indent = c("   ", "")) {
 	if(is.null(nL)) nL = 1 + ((nchar(s) - 1) %/% w);
 	if(is.na(nL) || nL == 0) return(s);
@@ -276,7 +279,7 @@ cat.mlines = function(m, sep=" ") {
 	cat(m, sep=c(rep(sep, nc - 1), "\n"));
 }
 
-scroll.pkg = function(pkg, start=0, len=15, w = c(12, 80, 16), iter=2) {
+scroll.pkg = function(pkg, start=1, len=15, w = c(12, 80, 16), iter=2, print=TRUE) {
 	if(len < 1) return();
 	len  = len - 1;
 	id = match(c("Package", "Description"), names(pkg));
@@ -297,23 +300,28 @@ scroll.pkg = function(pkg, start=0, len=15, w = c(12, 80, 16), iter=2) {
 	# Entries
 	if(start > nrow(pkg)) stop("No more entries!");
 	nend = min(nrow(pkg), start + len);
+	if(print) cat(c("Showing packages ", start, " to ", nend, "."), sep=c(rep("", 4), "\n"))
 	cat.mlines(format.lines(pkg[seq(start, nend), ], w=w, indent=indent, iter=iter));
 }
 
-extract.pkg = function(x, type="Basic") {
+extract.pkg = function(x, type="Basic", print=TRUE) {
 	# TODO: type
+	# ex: Title, Maintainer, Date/Publication, downloads
 	pkg = lapply(x$package_data, function(x)
 			data.frame(
 				Package = x$Package, Description = x$Description,
 				Version = x$Version, Repository = x$Repository));
 	pkg = do.call(rbind, pkg);
+	nTotal = attr(x, "metadata")$size;
+	if(print) cat(c("Found ", nTotal, " packages."), sep=c(rep("", 2), "\n"))
 	return(pkg);
 }
 
-find.pkg = function(s, pkg=NULL, perl=TRUE) {
+find.pkg = function(s, pkg=NULL, print=TRUE, perl=TRUE) {
 	if(is.null(pkg)) pkg = info.pkg();
 	isF = grepl(s, pkg$Description, perl=perl);
-	pkg = pkg[isF, ];
+	pkg = pkg[isF, , drop=FALSE];
+	if(print) print(paste0("Found ", nrow(pkg), " packages."))
 	return(pkg);
 }
 
@@ -406,6 +414,20 @@ scroll.pkg(find.pkg("(?i)dendro|phylo", pkg=p), start=1)
 
 ### Search CRAN
 library(pkgsearch)
+
+
+searchCran = function(s, len=60, len.print=20, extend="*") {
+	if( ! is.null(extend)) s = paste0(s, extend);
+	x = advanced_search(s, size=len)
+	scroll.pkg(x, len=len.print);
+	invisible(x)
+}
+
+x = searchCran("text")
+
+scroll.pkg(x, start=1, len=20)
+
+
 
 # only simple expressions are possible:
 x = advanced_search("dendro*", size=20)
