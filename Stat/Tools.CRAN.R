@@ -5,7 +5,7 @@
 ###
 ### Tools: Packages & CRAN
 ###
-### draft v.0.1k
+### draft v.0.1k-fix
 
 
 
@@ -210,9 +210,10 @@ split.line = function(s, w=80, nL=NULL, indent = c("   ", "")) {
 		}
 		if(DO_NEXT) next;
 		s2[id] = paste0(indent0, substr(s, n0, n));
-		n0 = min(nMax, n + 1); n = min(nMax, n0 + w);
+		n0 = n + 1; n = min(nMax, n0 + w);
 	}
-	s2[nL] = paste0(indent[2], substr(s, n0, nMax));
+	if(n0 <= nMax)
+		s2[nL] = paste0(indent[2], substr(s, n0, nMax));
 	return(s2);
 }
 
@@ -416,20 +417,22 @@ scroll.pkg(find.pkg("(?i)dendro|phylo", pkg=p), start=1)
 library(pkgsearch)
 
 
-searchCran = function(s, len=60, len.print=20, extend="*") {
+# only simple expressions are possible:
+searchCran = function(s, from=1, len=60, len.print=20, extend="*") {
 	if( ! is.null(extend)) s = paste0(s, extend);
-	x = advanced_search(s, size=len)
+	x = advanced_search(s, size=len, from=from)
 	scroll.pkg(x, len=len.print);
 	invisible(x)
 }
 
-x = searchCran("text")
+### Text-Processing
 
-scroll.pkg(x, start=1, len=20)
+x = searchCran("text", from=60)
+
+scroll.pkg(x, start=1, len=21)
 
 
 
-# only simple expressions are possible:
 x = advanced_search("dendro*", size=20)
 
 scroll.pkg(x, len=20)
@@ -440,3 +443,8 @@ x = advanced_search("pdb", size=20)
 
 scroll.pkg(x, len=20)
 
+
+### Other packages
+# TODO: explore;
+# - sources: pubmed.mineR, rplos, rbhl (biodiversity);
+# - tools: diffr, LDAShiny;
