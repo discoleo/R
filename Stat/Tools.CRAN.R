@@ -5,7 +5,7 @@
 ###
 ### Tools: Packages & CRAN
 ###
-### draft v.0.1j
+### draft v.0.1k
 
 
 
@@ -96,41 +96,25 @@ match.imports = function(pkg, x=NULL, quote=FALSE) {
 	}
 }
 
-split.line = function(s, w=80, nL=NULL, indent = c("   ", "")) {
-	if(is.null(nL)) nL = 1 + ((nchar(s) - 1) %/% w);
-	if(is.na(nL) || nL == 0) return(s);
-	if(nL == 1) return(paste0(indent[1], s));
-	nMax = nchar(s); n0 = 1; n = w; dn = w %/% 2;
-	if(length(indent) == 1) indent = c(indent, "");
-	#
-	s2 = character(nL);
-	for(id in seq(nL - 1)) {
-		DO_NEXT = FALSE;
-		indent0 = if(id == 1) indent[1] else indent[2];
-		for(npos in seq(n, n - dn)) {
-			if(substr(s, npos, npos) %in% c(" ", "\n", ",", "-", ")")) {
-				s2[id] = paste0(indent0, substr(s, n0, npos));
-				n0 = npos + 1; n = min(nMax, n0 + w);
-				DO_NEXT = TRUE;
-				break;
-			}
-		}
-		if(DO_NEXT) next;
-		s2[id] = paste0(indent0, substr(s, n0, n));
-		n0 = min(nMax, n + 1); n = min(nMax, n0 + w);
-	}
-	s2[nL] = paste0(indent[2], substr(s, n0, nMax));
-	return(s2);
-}
+##################
+### Formatting ###
+
+# Note:
+# - a 1-pass algorithm is possible (and not too complicated),
+#   but it requires to process sequentially each row;
 format.lines = function(x, w=80, justify="left", NL.rm=TRUE, indent=c("   ", ""), iter=2) {
 	if(NL.rm) {
 		for(nc in seq(ncol(x))) {
-			x[, nc] = gsub("[ \t]*+\n++[ \t]*+", " ", x[, nc], perl=TRUE);
+			x[, nc] = gsub("[ \t]*+[\n\r]++[ \t\r]*+", " ", x[, nc], perl=TRUE);
 		}
 	}
 	# Detect Long Lines
 	n  = sapply(seq(ncol(x)), function(nc) nchar(x[,nc]));
 	nL = matrix(n, ncol=ncol(x));
+	# Indentation:
+	indent = rep.indent(indent, ncol(x));
+	addCh  = nchar.L1.indent(indent);
+	nL = nL + addCh; # 1-st line gets always indented;
 	if(length(w) == 1) {
 		nL = 1 + ((nL - 1) %/% w);
 		w = rep(w, ncol(x));
@@ -151,9 +135,7 @@ format.lines = function(x, w=80, justify="left", NL.rm=TRUE, indent=c("   ", "")
 	}
 	# Better formatting: 2nd pass;
 	if(iter >= 2) {
-		indent0 = if(is.list(indent)) lapply(indent, function(ind) rep(ind[2], 2))
-			else if(length(indent) > 1) c(indent[2], indent[2])
-			else c(indent, indent);
+		indent0 = extract.L2.indent(indent);
 		while(iter > 1) {
 			iter = iter - 1;
 			# re-format only last lines
@@ -204,6 +186,91 @@ split.some.lines = function(txt, idL, w=80, indent="") {
 	return(tmp);
 }
 
+split.line = function(s, w=80, nL=NULL, indent = c("   ", "")) {
+	if(is.null(nL)) nL = 1 + ((nchar(s) - 1) %/% w);
+	if(is.na(nL) || nL == 0) return(s);
+	if(nL == 1) return(paste0(indent[1], s));
+	nMax = nchar(s); n0 = 1; n = w; dn = w %/% 2;
+	if(length(indent) == 1) indent = c(indent, "");
+	#
+	s2 = character(nL);
+	for(id in seq(nL - 1)) {
+		DO_NEXT = FALSE;
+		indent0 = if(id == 1) indent[1] else indent[2];
+		for(npos in seq(n, n - dn)) {
+			if(substr(s, npos, npos) %in% c(" ", "\n", ",", "-", ")")) {
+				s2[id] = paste0(indent0, substr(s, n0, npos));
+				n0 = npos + 1; n = min(nMax, n0 + w);
+				DO_NEXT = TRUE;
+				break;
+			}
+		}
+		if(DO_NEXT) next;
+		s2[id] = paste0(indent0, substr(s, n0, n));
+		n0 = min(nMax, n + 1); n = min(nMax, n0 + w);
+	}
+	s2[nL] = paste0(indent[2], substr(s, n0, nMax));
+	return(s2);
+}
+
+### Helper Functions (Formatting)
+nchar.L1.indent = function(s) {
+	if(is.list(s)) sapply(s, function(ind) nchar(ind[[1]]))
+	else if(is.matrix(s)) nchar(s[1,])
+	else nchar(s[1]);
+}
+extract.L2.indent = function(s) {
+	if(is.list(s)) lapply(s, function(ind) rep(ind[2], 2))
+	else if(is.matrix(s)) s[c(2,2),]
+	else if(length(s) > 1) c(s[2], s[2])
+	else c(s, s);
+}
+rep.indent = function(s, len, other=3, default="") {
+	if(is.list(s)) {
+		len0 = length(s);
+		if(len0 < len) {
+			if(len0 == other) {
+				default = s[[other]];
+				if(is.list(default)) {
+					default = unlist(default);
+					s[[other]] = default; # for consistency
+				}
+			}
+			default = list(default);
+			s = c(s, rep(default, len - len0));
+		}
+		return(s);
+	} else if(is.matrix(s)) {
+		nc = ncol(s);
+		if(nc < len) {
+			if(nc == other) {
+				default = s[,other];
+			} else default = rep(default, nrow(s));
+			s = cbind(s, rep(default, len - nc));
+		}
+		s = lapply(seq(nc), function(nc) s[,nc]);
+		return(s);
+	} else if(length(s) > 1) {
+		len0 = length(s);
+		if(len0 < len) {
+			if(len0 == other) {
+				default = s[other];
+			} else if(len0 == 2) {
+				# special Case: 1-st & next lines;
+				return(matrix(s, nrow=2, ncol=len));
+			}
+			s = c(s, rep(default, len - len0));
+		}
+		return(s);
+	} else {
+		rep(s, len);
+	}
+	return(s);
+}
+
+
+### Other / UI / Display
+
 cat.mlines = function(m, sep=" ") {
 	nc = ncol(m); m = t(m);
 	cat(m, sep=c(rep(sep, nc - 1), "\n"));
@@ -251,8 +318,8 @@ find.pkg = function(s, pkg=NULL, perl=TRUE) {
 }
 
 
-###############
-###############
+################
+################
 
 ### Package Size
 # Note: takes ages!
@@ -268,7 +335,8 @@ if(FALSE) {
 	# 512 Packages; 1.64 GB;
 }
 
-x = read.csv("Packages.Size.csv")
+# using previously saved data:
+xsz = read.csv("Packages.Size.csv")
 
 
 ### Imports
@@ -281,7 +349,8 @@ f = imports.pkg();
 ### Data Analysis ###
 
 ### Size
-head(x, 20)
+head(xsz, 20)
+
 
 ### Description
 # - packages which do NOT import any other package;
@@ -293,6 +362,8 @@ cat.mlines(format.lines(p[is.na(p$Imports), c(1,5,2,3,4)][1:20, ]))
 # - pretty print:
 scroll.pkg(p[is.na(p$Imports), c(1,5,2,3,4)], start=30)
 
+
+### Exploratory analysis
 
 # - some are NOT Bioconductor packages;
 # - TODO: filter by biocViews?
@@ -330,6 +401,8 @@ scroll.pkg(find.pkg("(?i)colou?+r", pkg=p), start=1)
 scroll.pkg(find.pkg("(?i)dendro|phylo|tree", pkg=p), start=1)
 scroll.pkg(find.pkg("(?i)dendro|phylo", pkg=p), start=1)
 
+
+###############
 
 ### Search CRAN
 library(pkgsearch)
