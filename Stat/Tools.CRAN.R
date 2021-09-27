@@ -5,7 +5,7 @@
 ###
 ### Tools: Packages & CRAN
 ###
-### draft v.0.1h
+### draft v.0.1i
 
 
 
@@ -213,7 +213,15 @@ scroll.pkg = function(pkg, start=0, len=15, w = c(12, 80, 16), iter=2) {
 	if(len < 1) return();
 	len  = len - 1;
 	id = match(c("Package", "Description"), names(pkg));
-	if(any(is.na(id))) stop("Package info must contain both the name & description!")
+	if(any(is.na(id))) {
+		if( ! inherits(pkg, "pkg_search_result"))
+			stop("Package info must contain both the name & description!");
+		pkg = lapply(pkg$package_data, function(x)
+			data.frame(Package = x$Package, Description = x$Description,
+				Version = x$Version, Repository = x$Repository));
+		pkg = do.call(rbind, pkg);
+		id = c(1, 2);
+	}
 	pkg = cbind(pkg[, id], pkg[, - id]);
 	# Column Lengths
 	len.col = ncol(pkg); len.other = len.col - 2;
@@ -315,3 +323,11 @@ scroll.pkg(find.pkg("(?i)colou?+r", pkg=p), start=1)
 scroll.pkg(find.pkg("(?i)dendro|phylo|tree", pkg=p), start=1)
 scroll.pkg(find.pkg("(?i)dendro|phylo", pkg=p), start=1)
 
+
+###
+library(pkgsearch)
+
+# only simple expressions are possible:
+x = advanced_search("dendro*", size=20)
+
+scroll.pkg(x, len=20)
