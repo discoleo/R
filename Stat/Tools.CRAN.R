@@ -5,9 +5,22 @@
 ###
 ### Tools: Packages & CRAN
 ###
-### draft v.0.1k-fix
+### draft v.0.1l
 
 
+###############
+### History ###
+###############
+
+
+### draft v.0.1l:
+# - more examples;
+### draft v.0.1k:
+# - [minor] bug fix;
+# - added more examples & comments;
+
+
+#######################
 
 ### Info about Packages
 
@@ -101,7 +114,7 @@ match.imports = function(pkg, x=NULL, quote=FALSE) {
 
 # Note:
 # - a 1-pass exact algorithm is possible (and not too complicated),
-#   but it requires to process sequentially each row;
+#   but it requires sequential processing of each row;
 format.lines = function(x, w=80, justify="left", NL.rm=TRUE, indent=c("   ", ""), iter=2) {
 	if(NL.rm) {
 		for(nc in seq(ncol(x))) {
@@ -313,7 +326,7 @@ extract.pkg = function(x, type="Basic", print=TRUE) {
 				Package = x$Package, Description = x$Description,
 				Version = x$Version, Repository = x$Repository));
 	pkg = do.call(rbind, pkg);
-	nTotal = attr(x, "metadata")$size;
+	nTotal = attr(x, "metadata")$total;
 	if(print) cat(c("Found ", nTotal, " packages."), sep=c(rep("", 2), "\n"))
 	return(pkg);
 }
@@ -420,31 +433,58 @@ library(pkgsearch)
 # only simple expressions are possible:
 searchCran = function(s, from=1, len=60, len.print=20, extend="*") {
 	if( ! is.null(extend)) s = paste0(s, extend);
-	x = advanced_search(s, size=len, from=from)
-	scroll.pkg(x, len=len.print);
+	x = advanced_search(s, size=len, from=from);
+	if(length(x$package_data) == 0) {
+		cat("No packages found!", sep="\n");
+	} else {
+		scroll.pkg(x, len=len.print);
+	}
 	invisible(x)
 }
+
+### Examples:
 
 ### Text-Processing
 
 x = searchCran("text", from=60)
 
-scroll.pkg(x, start=1, len=21)
-
-
-
-x = advanced_search("dendro*", size=20)
-
-scroll.pkg(x, len=20)
-
-
-### PDB
-x = advanced_search("pdb", size=20)
-
-scroll.pkg(x, len=20)
+scroll.pkg(x, start=20, len=21)
 
 
 ### Other packages
 # TODO: explore;
-# - sources: pubmed.mineR, rplos, rbhl (biodiversity);
-# - tools: diffr, LDAShiny;
+# - sources: pubmed.mineR, rplos, rbhl (biodiversity), rcoreoa;
+# - tools: diffr, cheatR,
+#   LDAShiny, corporaexplorer, tokenizers.bpe, text;
+# - output: ..., grobblR, REPLesentR, rdoc;
+# - other search words:
+#   mining, language, NLP, LDA, phrase, content, corpora,
+#   wordcloud, bibliometric;
+
+
+###############
+
+### Dendrograms
+x = searchCran("dendro")
+
+scroll.pkg(x, start=20, len=21)
+
+
+### PDB
+x = searchCran("pdb")
+
+scroll.pkg(x, start=20, len=21)
+
+
+### Img Processing
+x = searchCran("texture")
+
+scroll.pkg(x, start=20, len=21)
+
+
+### ...
+# invasion/invasive, intruder, speciation
+x = searchCran("intruder")
+
+scroll.pkg(x, start=20, len=21)
+
