@@ -5,7 +5,7 @@
 ###
 ### Tools: Packages & CRAN
 ###
-### draft v.0.1l-fix
+### draft v.0.1m
 
 
 ###############
@@ -13,6 +13,8 @@
 ###############
 
 
+### draft v.0.1m:
+# - better word wrap;
 ### draft v.0.1l - v.0.1l-fix:
 # - more examples;
 # - [fixed] crash with only 1 record;
@@ -145,7 +147,7 @@ format.lines = function(x, w=80, justify="left", NL.rm=TRUE, indent=c("   ", "")
 		for(nr in seq(nrow(x))) {
 			nL0 = nL[nr, nc];
 			txt[seq(csm[nr], length.out=nL0), nc] =
-				split.line(x[nr, nc], w=w[nc], nL=nL0, indent=indent0);
+				split.N.line(x[nr, nc], w=w[nc], nL=nL0, indent=indent0);
 		}
 	}
 	# Better formatting: 2nd pass;
@@ -191,7 +193,7 @@ split.some.lines = function(txt, idL, w=80, indent="") {
 			}
 			nL0 = nL[idr, nc];
 			tmp[seq(nr_tmp, length.out = nL0), nc] =
-				split.line(txt[nr, nc], w=w[nc], nL=nL0, indent=indent[[nc]]);
+				split.N.line(txt[nr, nc], w=w[nc], nL=nL0, indent=indent[[nc]]);
 			nr0 = nr + 1; nr0_tmp = idE[idr];
 		}
 		if(nrow(tmp) >= nr0_tmp) {
@@ -204,7 +206,8 @@ split.some.lines = function(txt, idL, w=80, indent="") {
 # TODO:
 # - explore also package gridtext;
 #   src: https://github.com/wilkelab/gridtext
-split.line = function(s, w=80, nL=NULL, indent = c("   ", "")) {
+split.N.line = function(s, w=80, nL=NULL, indent = c("   ", "")) {
+	# splits into nL lines!
 	if(is.null(nL)) nL = 1 + ((nchar(s) - 1) %/% w);
 	if(is.na(nL) || nL == 0) return(s);
 	if(nL == 1) return(paste0(indent[1], s));
@@ -213,8 +216,15 @@ split.line = function(s, w=80, nL=NULL, indent = c("   ", "")) {
 	#
 	s2 = character(nL);
 	for(id in seq(nL - 1)) {
-		DO_NEXT = FALSE;
 		indent0 = if(id == 1) indent[1] else indent[2];
+		# can split directly?
+		if(n < nMax && substr(s, n+1, n+1) == " ") {
+			s2[id] = paste0(indent0, substr(s, n0, n));
+			n0 = n + 2; n = min(nMax, n0 + w); # skip next space;
+			next;
+		}
+		# search a suitable split position:
+		DO_NEXT = FALSE;
 		for(npos in seq(n, n - dn)) {
 			if(substr(s, npos, npos) %in% c(" ", "\n", ",", "-", ")")) {
 				s2[id] = paste0(indent0, substr(s, n0, npos));
