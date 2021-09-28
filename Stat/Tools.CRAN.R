@@ -5,7 +5,7 @@
 ###
 ### Tools: Packages & CRAN
 ###
-### draft v.0.1l
+### draft v.0.1l-fix
 
 
 ###############
@@ -13,8 +13,9 @@
 ###############
 
 
-### draft v.0.1l:
+### draft v.0.1l - v.0.1l-fix:
 # - more examples;
+# - [fixed] crash with only 1 record;
 ### draft v.0.1k:
 # - [minor] bug fix;
 # - added more examples & comments;
@@ -134,6 +135,7 @@ format.lines = function(x, w=80, justify="left", NL.rm=TRUE, indent=c("   ", "")
 	} else {
 		nL = sapply(seq(ncol(x)), function(nc) 1 + ((nL[,nc] - 1) %/% w[nc]));
 	}
+	if(is.null(dim(nL))) nL = matrix(nL, ncol=ncol(x));
 	maxL = apply(nL, 1, max, na.rm=TRUE);
 	nL[is.na(nL)] = 1;
 	csm = cumsum(c(1, maxL));
@@ -485,6 +487,13 @@ scroll.pkg(x, start=20, len=21)
 ### ...
 # invasion/invasive, intruder, speciation
 x = searchCran("intruder")
+
+scroll.pkg(x, start=20, len=21)
+
+
+### Percolation
+# percol, pore, poros/porou, adsorb
+x = searchCran("pore")
 
 scroll.pkg(x, start=20, len=21)
 
