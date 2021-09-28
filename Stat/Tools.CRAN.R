@@ -5,7 +5,7 @@
 ###
 ### Tools: Packages & CRAN
 ###
-### draft v.0.1m
+### draft v.0.1n
 
 
 ###############
@@ -13,8 +13,9 @@
 ###############
 
 
-### draft v.0.1m:
+### draft v.0.1m - v.0.1n:
 # - better word wrap;
+# - more formatting options: cut(sep.h="-");
 ### draft v.0.1l - v.0.1l-fix:
 # - more examples;
 # - [fixed] crash with only 1 record;
@@ -156,12 +157,19 @@ format.lines = function(x, w=80, justify="left", NL.rm=TRUE, indent=c("   ", "")
 		while(iter > 1) {
 			iter = iter - 1;
 			# re-format only last lines
-			idLast = tail(csm, -1) - 1;
-			idLast = idLast[maxL > 1]; # multiple lines
-			txt = split.some.lines(txt, idLast, w=w, indent=indent0);
+			idLast  = tail(csm, -1) - 1; # ERR: fails for iter > 2
+			idLast1 = idLast[maxL > 1]; # multiple lines
+			txt = split.some.lines(txt, idLast1, w=w, indent=indent0);
+			nL.new = attr(txt, "nLines");
+			if( ! is.null(nL.new)) {
+				id = match(nL.new[[1]], idLast);
+				maxL[id] = maxL[id] + nL.new[[2]] - 1; # avoid double count;
+			}
 		}
 	}
-	return(apply(txt, 2, format, justify=justify));
+	txt = apply(txt, 2, format, justify=justify);
+	attr(txt, "nLines") = maxL;
+	return(txt);
 }
 # split only some of the lines: idL;
 split.some.lines = function(txt, idL, w=80, indent="") {
@@ -200,6 +208,7 @@ split.some.lines = function(txt, idL, w=80, indent="") {
 			tmp[seq(nr0_tmp, nrow(tmp)), nc] = txt[seq(nr0, nrow(txt)), nc];
 		}
 	}
+	attr(tmp, "nLines") = list(idL, maxL);
 	return(tmp);
 }
 
@@ -300,9 +309,25 @@ rep.indent = function(s, len, other=3, default="") {
 
 ### Other / UI / Display
 
-cat.mlines = function(m, sep=" ") {
+cat.mlines = function(m, sep=" ", sep.h="-") {
 	nc = ncol(m); m = t(m);
-	cat(m, sep=c(rep(sep, nc - 1), "\n"));
+	sep = c(rep(sep, nc - 1), "\n");
+	if(is.null(sep.h)) {
+		cat(m, sep=sep);
+	} else {
+		# Note: m is transposed!
+		len  = sum(nchar(m[,1]), na.rm=TRUE);
+		len  = len + (nrow(m) - 1)*length(sep.h);
+		part = if(length(sep.h) == 1) 0 else len %% length(sep.h);
+		len  = len %/% length(sep.h);
+		sep0 = paste0(rep(sep.h, len), collapse="");
+		nL   = attr(m, "nLines"); npos = cumsum(c(1, nL));
+		sapply(seq(length(npos) - 1), function(nr) {
+			cat(m[, seq(npos[nr], npos[nr+1] - 1), drop=F], sep=sep);
+			cat(sep0, sep="\n");
+		})
+	}
+	invisible()
 }
 
 scroll.pkg = function(pkg, start=1, len=15, w = c(12, 80, 16), iter=2, print=TRUE) {
@@ -320,7 +345,7 @@ scroll.pkg = function(pkg, start=1, len=15, w = c(12, 80, 16), iter=2, print=TRU
 	len.col = ncol(pkg); len.other = len.col - 2;
 	w = if(len.other == 0) w[1:2]
 		else if(length(w) == len.col) w
-		else w[c(1,2, rep(w[3], len.other))];
+		else w[c(1,2, rep(w[3], len.other))]; # TODO: if(w[4])
 	# Indent
 	indent = c(list(c(" ", "   "), c("   ", "")), rep(list(""), len.other));
 	# Entries
