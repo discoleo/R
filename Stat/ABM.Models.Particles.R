@@ -3,14 +3,14 @@
 ### ABM
 ### Turtle Dynamics
 ###
-### UVT Group Project 2021
+### UVT Team Project 2021
 ### Simulations in Epidemiology
 ###
 ### supervised by:
 ### Leonard Mada
 ### [the one and only]
 ###
-### draft v.0.1d
+### draft v.0.1e
 
 # - based on:
 #   https://onlinelibrary.wiley.com/doi/full/10.1111/ecog.04516
@@ -25,6 +25,8 @@
 ### History ###
 ###############
 
+### draft v.0.1e:
+# - exploring custom defined methods;
 ### draft v.0.1b - v.0.1d:
 # - added lines.turtles();
 # - improved colors;
@@ -54,7 +56,7 @@ rWorld.gen = function(size, ntypes) {
 }
 run.model = function(turtles, land, distRate, iter=10, plot=FALSE, pch=16) {
 	# t.df = data.frame(xcor=numeric(), ycor=numeric(), who=numeric());
-	t.df = data.frame(turtles@.Data[,c("xcor", "ycor", "who")]);
+	t.df = data.frame(turtles@.Data[ , c("xcor", "ycor", "who")]);
 	for(i in seq(iter)) {
 		# Identify the cells the turtles are on
 		cellTurtle = patchHere(world=land, turtles=turtles)
@@ -79,13 +81,26 @@ run.model = function(turtles, land, distRate, iter=10, plot=FALSE, pch=16) {
 		t.df = rbind(t.df, turtles@.Data[,c("xcor", "ycor", "who")]);
 	}
 	attr(t.df, "col") = of(agents=turtles, var="color");
-	invisible(list(t=turtles, path=t.df));
+	rez = list(t=turtles, path=t.df);
+	class(rez) = c("agentsWithPath", class(rez));
+	invisible(rez);
 }
 plot.turtles = function(turtles, pch=16, col, ...) {
 	if(missing(col)) col = of(agents=turtles, var="color");
 	points(turtles@.Data, pch=pch, col=col, ...);
 }
+# overwriting the default function:
+plot.agentMatrix = function(x, pch=16, col, ...) {
+	plot.turtles(x, pch=pch, col=col, ...);
+}
+setClass("agentsWithPath", contains = c(t="agentMatrix"))
+setMethod("plot", signature(x="agentsWithPath", y="missing"),
+	function(x, pch=16, col, ...) {
+		plot.turtles(x$t, pch=pch, col=col, ...);
+	} )
+# plot the Path
 lines.turtles = function(path, col) {
+	if(inherits(path, "agentsWithPath")) path = t.all$path;
 	if(missing(col)) col = attr(path, "col");
 	who = unique(path$who);
 	sapply(seq(length(who)),
@@ -103,25 +118,27 @@ distRate = 0.5
 
 ### Grid
 # create raster-grid
-land = createWorld(minPxcor=1, maxPxcor = size, minPycor=1, maxPycor = size,
-	sample(c(1, 2), size*size, replace = TRUE))
+land = rWorld.gen(size, ntypes=2)
 
 ### Agents
 t1 = createTurtles(n=agents, world=land)
 
 # Visualize the turtles on the landscape with their respective color
 plot(land, c(1,2), col=c("#FFFFFF", "#00FF0064"))
-points(t1, pch=16, col=of(agents=t1, var="color"))
+plot(t1)
+# points(t1, pch=16, col=of(agents=t1, var="color"))
 
 
 ### MODEL
 
 # plot(land)
 
-# the code below can be repeated a few times;
+# Note:
+# - the code below can be repeated a few times,
+#   allowing the turtles to move a larger distance;
 
 t.all = run.model(t1, land, distRate);
 t1 = t.all$t;
-plot.turtles(t1)
-lines.turtles(t.all$path)
+plot(t.all)
+lines.turtles(t.all)
 
