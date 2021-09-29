@@ -5,7 +5,7 @@
 ###
 ### Tools: Packages & CRAN
 ###
-### draft v.0.1n
+### draft v.0.1n-fix
 
 
 ###############
@@ -13,9 +13,10 @@
 ###############
 
 
-### draft v.0.1m - v.0.1n:
+### draft v.0.1m - v.0.1n-fix:
 # - better word wrap;
 # - more formatting options: cut(sep.h="-");
+# - [fixed] length => nchar; [v.0.1n-fix]
 ### draft v.0.1l - v.0.1l-fix:
 # - more examples;
 # - [fixed] crash with only 1 record;
@@ -317,9 +318,10 @@ cat.mlines = function(m, sep=" ", sep.h="-") {
 	} else {
 		# Note: m is transposed!
 		len  = sum(nchar(m[,1]), na.rm=TRUE);
-		len  = len + (nrow(m) - 1)*length(sep.h);
-		part = if(length(sep.h) == 1) 0 else len %% length(sep.h);
-		len  = len %/% length(sep.h);
+		len  = len + (nrow(m) - 1)*nchar(sep[[1]]);
+		# TODO
+		part = if(nchar(sep.h) == 1) 0 else (len %% nchar(sep.h));
+		len  = len %/% nchar(sep.h);
 		sep0 = paste0(rep(sep.h, len), collapse="");
 		nL   = attr(m, "nLines"); npos = cumsum(c(1, nL));
 		sapply(seq(length(npos) - 1), function(nr) {
@@ -330,7 +332,8 @@ cat.mlines = function(m, sep=" ", sep.h="-") {
 	invisible()
 }
 
-scroll.pkg = function(pkg, start=1, len=15, w = c(12, 80, 16), iter=2, print=TRUE) {
+scroll.pkg = function(pkg, start=1, len=15, w = c(12, 80, 16), iter=2,
+		sep=" ", sep.h="-", print=TRUE) {
 	if(len < 1) return();
 	len  = len - 1;
 	id = match(c("Package", "Description"), names(pkg));
@@ -352,7 +355,8 @@ scroll.pkg = function(pkg, start=1, len=15, w = c(12, 80, 16), iter=2, print=TRU
 	if(start > nrow(pkg)) stop("No more entries!");
 	nend = min(nrow(pkg), start + len);
 	if(print) cat(c("Showing packages ", start, " to ", nend, "."), sep=c(rep("", 4), "\n"))
-	cat.mlines(format.lines(pkg[seq(start, nend), ], w=w, indent=indent, iter=iter));
+	cat.mlines(format.lines(pkg[seq(start, nend), ], w=w, indent=indent, iter=iter),
+		sep=sep, sep.h=sep.h);
 }
 
 extract.pkg = function(x, type="Basic", print=TRUE) {
@@ -468,13 +472,14 @@ library(pkgsearch)
 
 
 # only simple expressions are possible:
-searchCran = function(s, from=1, len=60, len.print=20, extend="*") {
+searchCran = function(s, from=1, len=60, len.print=20, extend="*",
+		sep=" ", sep.h="-") {
 	if( ! is.null(extend)) s = paste0(s, extend);
 	x = advanced_search(s, size=len, from=from);
 	if(length(x$package_data) == 0) {
 		cat("No packages found!", sep="\n");
 	} else {
-		scroll.pkg(x, len=len.print);
+		scroll.pkg(x, len=len.print, sep=sep, sep.h=sep.h);
 	}
 	invisible(x)
 }
@@ -483,17 +488,18 @@ searchCran = function(s, from=1, len=60, len.print=20, extend="*") {
 
 ### Text-Processing
 
-x = searchCran("text", from=60)
+x = searchCran("text", from=60, sep.h="-")
 
 scroll.pkg(x, start=20, len=21)
 
 
 ### Other packages
 # TODO: explore;
-# - sources: pubmed.mineR, rplos, rbhl (biodiversity), rcoreoa;
-# - tools: diffr, cheatR,
-#   LDAShiny, corporaexplorer, tokenizers.bpe, text;
-# - output: ..., grobblR, REPLesentR, rdoc;
+# - sources: pubmed.mineR, rplos, rbhl (biodiversity), rcoreoa, biorxivr;
+# - tools: diffr, cheatR, similr (?), stringdist;
+# - NLP: LDAShiny, corporaexplorer, tokenizers.bpe, wordpiece, text, phm, textmineR;
+# - output: ..., grobblR, REPLesentR, rdoc, GIFTr, formattable, textutils;
+# - other: quanteda.textplots (wordcloud);
 # - other search words:
 #   mining, language, NLP, LDA, phrase, content, corpora,
 #   wordcloud, bibliometric;
