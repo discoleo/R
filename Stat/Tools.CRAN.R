@@ -5,7 +5,7 @@
 ###
 ### Tools: Packages & CRAN
 ###
-### draft v.0.1n-fix
+### draft v.0.1n-fix2
 
 
 ###############
@@ -13,10 +13,11 @@
 ###############
 
 
-### draft v.0.1m - v.0.1n-fix:
+### draft v.0.1m - v.0.1n-fix2:
 # - better word wrap;
 # - more formatting options: cut(sep.h="-");
 # - [fixed] length => nchar; [v.0.1n-fix]
+# - full handling of multi-char sep.h; [v.0.1n-fix2]
 ### draft v.0.1l - v.0.1l-fix:
 # - more examples;
 # - [fixed] crash with only 1 record;
@@ -319,10 +320,11 @@ cat.mlines = function(m, sep=" ", sep.h="-") {
 		# Note: m is transposed!
 		len  = sum(nchar(m[,1]), na.rm=TRUE);
 		len  = len + (nrow(m) - 1)*nchar(sep[[1]]);
-		# TODO
+		# Row-Separator
 		part = if(nchar(sep.h) == 1) 0 else (len %% nchar(sep.h));
+		chE  = if(part > 0) substr(sep.h, 1, part) else "";
 		len  = len %/% nchar(sep.h);
-		sep0 = paste0(rep(sep.h, len), collapse="");
+		sep0 = paste0(c(rep(sep.h, len), chE), collapse="");
 		nL   = attr(m, "nLines"); npos = cumsum(c(1, nL));
 		sapply(seq(length(npos) - 1), function(nr) {
 			cat(m[, seq(npos[nr], npos[nr+1] - 1), drop=F], sep=sep);
@@ -495,8 +497,8 @@ scroll.pkg(x, start=20, len=21)
 
 ### Other packages
 # TODO: explore;
-# - sources: pubmed.mineR, rplos, rbhl (biodiversity), rcoreoa, biorxivr;
-# - tools: diffr, cheatR, similr (?), stringdist;
+# - sources: pubmed.mineR, rplos, rbhl (biodiversity), rcoreoa, biorxivr, pubchunks;
+# - tools: diffr, cheatR, similr (?), stringdist, sourcetools;
 # - NLP: LDAShiny, corporaexplorer, tokenizers.bpe, wordpiece, text, phm, textmineR;
 # - output: ..., grobblR, REPLesentR, rdoc, GIFTr, formattable, textutils;
 # - other: quanteda.textplots (wordcloud);
