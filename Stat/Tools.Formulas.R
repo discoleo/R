@@ -165,7 +165,10 @@ summary.args = function(e) {
 summary.all.args = function(nm) {
 	f = ls(getNamespace(nm))
 	r = lapply(seq_along(f), function(id) {
-		e = parse(text=paste0("formals(", nm, ":::", f[id], ")"));
+		fn = f[id];
+		if(substr(fn,1,1) %in% c("[", "_")) fn = paste0("\"", fn, "\"");
+		# TODO: "<-"
+		e = parse(text=paste0("formals(", nm, ":::", fn, ")"));
 		e = eval(e);
 		if(is.null(e)) return(data.frame(Name=NA, type=NA, FUN=f[id]));
 		a = summary.args(e);
