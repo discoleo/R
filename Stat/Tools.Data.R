@@ -5,7 +5,7 @@
 ###
 ### Data Tools
 ###
-### draft v.0.1o
+### draft v.0.1o-fix
 
 
 ### Tools to Process/Transform Data
@@ -16,8 +16,9 @@
 ###############
 
 
-### draft v.0.1o:
+### draft v.0.1o - v.0.1o-fix:
 # - basic implementation of a rename() function;
+# - sequential renaming; [v.0.1o-fix]
 ### draft v.0.1n:
 # - major refactoring of function ftable2;
 ### draft v.0.1l - v.0.1m:
@@ -67,6 +68,10 @@ rename2 = function(x, ...) {
 	nms.old = character(len);
 	for(id in seq(len)) {
 		tmp.e = e[[id]];
+		if( ! nzchar(nms[[id]])) {
+			if(is.call(tmp.e)) nms[[id]] = as.character(eval(tmp.e[[2]]))
+			else stop("Error: Missing name!")
+		}
 		if(is.call(tmp.e)) {
 			tmp.e = eval(tmp.e);
 			if(length(tmp.e) > 1) {
@@ -76,11 +81,19 @@ rename2 = function(x, ...) {
 		print(tmp.e)
 		nms.old[id] = as.character(tmp.e);
 	}
-	id = match(nms.old, names(x));
-	if(any(is.na(id))) stop("Some of the names were NOT found!");
-	tmp = x;
-	names(x)[id] = nms;
-	return(x);
+	tmp = x; tmp.nms = names(tmp);
+	# Sequential processing: as in sequential renaming;
+	for(id in seq(length(nms))) {
+		idn = match(nms.old[id], tmp.nms);
+		if(is.na(idn)) stop(paste0("Error: Some of the names were NOT found!\n  Name: ",
+			nms.old[id], " (possibly twice renamed)"));
+		if(tmp.nms[idn] == nms[id]) next;
+		if(any(tmp.nms == nms[id]))
+			stop(paste0("Error: New names clash with the old names!\n  Names: ", nms[id]));
+		tmp.nms[idn] = nms[id];
+	}
+	names(tmp) = tmp.nms;
+	return(tmp);
 }
 
 ### Row DF
