@@ -5,7 +5,7 @@
 ###
 ### Data Tools
 ###
-### draft v.0.1n
+### draft v.0.1o
 
 
 ### Tools to Process/Transform Data
@@ -16,6 +16,8 @@
 ###############
 
 
+### draft v.0.1o:
+# - basic implementation of a rename() function;
 ### draft v.0.1n:
 # - major refactoring of function ftable2;
 ### draft v.0.1l - v.0.1m:
@@ -40,6 +42,46 @@
 ### Groups / Aggregates
 
 # TODO
+
+
+### DF
+# - rename columns: simple implementation;
+# - dplyr::rename: behaves differently during name clashes!
+# Note:
+# - implementations of the form (new.name = old.name):
+#   do NOT permit the use of formulas to generate dynamically the new names;
+rename2 = function(x, ...) {
+	e = substitute(c(...));
+	len = length(e);
+	if(len <= 1) {
+		print("No names were renamed!");
+		return(x);
+	}
+	len = len - 1;
+	e = e[-1];
+	nms = names(e);
+	isDuplicated = duplicated(nms);
+	if(any(isDuplicated))
+		stop(paste0("Duplicated names: ", paste0(nms[isDuplicated], collapse=", ")));
+	# Old Names
+	nms.old = character(len);
+	for(id in seq(len)) {
+		tmp.e = e[[id]];
+		if(is.call(tmp.e)) {
+			tmp.e = eval(tmp.e);
+			if(length(tmp.e) > 1) {
+				stop("Multiple names mapped to same name!")
+			}
+		}
+		print(tmp.e)
+		nms.old[id] = as.character(tmp.e);
+	}
+	id = match(nms.old, names(x));
+	if(any(is.na(id))) stop("Some of the names were NOT found!");
+	tmp = x;
+	names(x)[id] = nms;
+	return(x);
+}
 
 ### Row DF
 # Matrix => Row DF
