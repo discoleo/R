@@ -5,7 +5,7 @@
 ###
 ### Tools: Descriptive Statistics
 ###
-### draft v.0.1a
+### draft v.0.1b
 
 
 ################
@@ -27,16 +27,27 @@
 ##################
 ##################
 
+#############
+### Tools ###
+#############
+
+# source("Tools.DescriptiveStatistics.R")
+
 ### Hack to split long statistics:
 # - in gt: e.g. used by gtsummary;
 # - functions which require overriding:
 #   as.tags.gt_tbl & render_as_html;
+# - the problem is in function: gt:::process_text;
 
 ### Usage:
 # as.tags.gt_tbl(as_gt(tbl));
 
-split.stat = function(x, len=10, sep="<br/>", reg = "\\([0-9 ,]++\\)") {
-	BLOCK = "_body"; # "table_body"
+
+view.gtsummary = function(x, len=10) {
+	as.tags.gt_tbl(as_gt(tbl), len=len);
+}
+split.stat = function(x, len=10, sep="<br/>", reg = "\\([0-9 ,]++\\)", BLOCK="_body") {
+	# BLOCK = "_body"; # "table_body"
 	nms = names(x[[BLOCK]]);
 	id  = grepl("^stat_", nms);
 	nms = nms[id];
@@ -60,7 +71,7 @@ render_as_html = function (data, ...)
 	# various results may contain characters that need escaping;
 	data <- gt:::build_data(data = data, context = "html")
 	# splitting the lines after the escaping;
-	data = split.stat(data, ...); # 
+	data = split.stat(data, ...);
 	data <- gt:::add_css_styles(data = data)
     caption_component <- gt:::create_caption_component_h(data = data)
     heading_component <- gt:::create_heading_component_h(data = data)
@@ -75,7 +86,7 @@ render_as_html = function (data, ...)
         source_notes_component, footnotes_component));
 	invisible(html_tbl);
 }
-as.tags.gt_tbl = function (x, ..., view = interactive()) 
+as.tags.gt_tbl = function (x, len=10, ..., view = interactive()) 
 {
     table_id <- gt:::dt_options_get_value(x, option = "table_id")
     if (is.na(table_id)) {
@@ -84,7 +95,7 @@ as.tags.gt_tbl = function (x, ..., view = interactive())
     else {
         id <- table_id
     }
-    html_table <- render_as_html(data = x)
+    html_table = render_as_html(data = x, len=len); # override original function;
     css <- gt:::compile_scss(data = x, id = id)
     container_overflow_x <- gt:::dt_options_get_value(x, option = "container_overflow_x")
     container_overflow_y <- gt:::dt_options_get_value(x, option = "container_overflow_y")
@@ -110,12 +121,15 @@ header0 = list(
 	stat_0 ~ "**Overall**<br/> N = {style_number(N)}"
 )
 
+
 ### Usage:
-data %>%
+if(FALSE) {
+# NOT run
+some.data %>%
 	rename("Full name" = "abbreviated.name") %>%
 	tbl_summary(by = Dx) %>%
 	modify_header(update = header) %>%
 	add_p() %>%
 	add_overall() %>%
 	modify_header(update = header0);
-
+}
