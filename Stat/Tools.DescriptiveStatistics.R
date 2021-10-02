@@ -5,7 +5,7 @@
 ###
 ### Tools: Descriptive Statistics
 ###
-### draft v.0.1b
+### draft v.0.1c
 
 
 ################
@@ -43,8 +43,9 @@
 # as.tags.gt_tbl(as_gt(tbl));
 
 
-view.gtsummary = function(x, len=10) {
-	as.tags.gt_tbl(as_gt(tbl), len=len);
+view.gtsummary = function(x, len=10, view=TRUE) {
+	view = if(view) interactive() else NULL;
+	as.tags.gt_tbl(as_gt(tbl), len=len, view = view);
 }
 split.stat = function(x, len=10, sep="<br/>", reg = "\\([0-9 ,]++\\)", BLOCK="_body") {
 	# BLOCK = "_body"; # "table_body"
@@ -104,8 +105,9 @@ as.tags.gt_tbl = function (x, len=10, ..., view = interactive())
     html_tbl <- htmltools::tags$div(id = id, htmltools::tags$style(htmltools::HTML(css)), 
         style = htmltools::css(`overflow-x` = container_overflow_x, 
             `overflow-y` = container_overflow_y, width = container_width, 
-            height = container_height), htmltools::HTML(html_table))
-	print(html_tbl, browse = view, ...);
+            height = container_height), htmltools::HTML(html_table));
+	if( ! is.null(view))
+		print(html_tbl, browse = view, ...);
     invisible(html_tbl);
 }
 
