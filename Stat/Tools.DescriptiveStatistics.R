@@ -5,7 +5,7 @@
 ###
 ### Tools: Descriptive Statistics
 ###
-### draft v.0.1c
+### draft v.0.1d
 
 
 ################
@@ -109,6 +109,42 @@ as.tags.gt_tbl = function (x, len=10, ..., view = interactive())
 	if( ! is.null(view))
 		print(html_tbl, browse = view, ...);
     invisible(html_tbl);
+}
+
+### Add Abbreviations:
+
+add.abbrev = function(x, abbr, label, view=TRUE) {
+	if(inherits(x, "shiny.tag")) {
+		html = x;
+	} else if(inherits(x, "gtsummary")) {
+		html = view.gtsummary(tbl, view=FALSE);
+	}
+	# XML
+	h2 = read_html(html$children[[2]])
+	# Footer
+	nFoot = as.integer(xml_text(xml_find_all(h2, "//tfoot/tr/td/p/sup"), trim=TRUE));
+	nFoot = max(nFoot) + 1;
+	# Add new Footnote:
+	foot.html = read_xml(paste0(
+		"<p class=\"gt_footnote\"><sup class=\"gt_footnote_marks\"><em>",
+		nFoot, "</em></sup>", abbr, " = ", label, "</p>"));
+	xml_find_first(h2, "//tfoot/tr/td") %>%
+		xml_add_child(foot.html);
+	# write temp xml:
+	out.html = tempfile("_out.tmp.html");
+	write_xml(h2, out.html, options = c("no_declaration", "format"));
+	# read new xml:
+	h2 = readLines(out.html);
+	# TODO: robust method
+	h2 = h2[-1]; h2[length(h2)] = "</table>";
+	s.tmp = h2[1]; h2[1] = substr(s.tmp, 13, nchar(s.tmp));
+	# shiny html:
+	h2 = paste0(h2, collapse="");
+	attr(h2, "html") = TRUE; class(h2) = c("html", "character");
+	html$children[[2]] = h2;
+	unlink(out.html); rm(out.html);
+	if(view) print(html, browse = interactive());
+	invisible(html);
 }
 
 
