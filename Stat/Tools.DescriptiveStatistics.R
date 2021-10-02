@@ -5,7 +5,7 @@
 ###
 ### Tools: Descriptive Statistics
 ###
-### draft v.0.1f-ref
+### draft v.0.1g
 
 
 ###############
@@ -13,6 +13,8 @@
 ###############
 
 
+### draft v.0.1g:
+# - some fixes & better example;
 ### draft v.0.1f - v.0.1f-ref:
 # - support differences in abbreviations in
 #   table body and table footer;
@@ -58,9 +60,9 @@
 
 view.gtsummary = function(x, len=10, view=TRUE) {
 	view = if(view) interactive() else NULL;
-	as.tags.gt_tbl(as_gt(tbl), len=len, view = view);
+	as.tags.gt_tbl(as_gt(x), len=len, view = view);
 }
-split.stat = function(x, len=10, sep="<br/>", reg = "\\([0-9 ,]++\\)", BLOCK="_body") {
+split.stat = function(x, len=10, sep="<br/>", reg = "\\([0-9 ,.]++\\)", BLOCK="_body") {
 	# BLOCK = "_body"; # "table_body"
 	nms = names(x[[BLOCK]]);
 	id  = grepl("^stat_", nms);
@@ -132,7 +134,7 @@ add.abbrev = function(x, abbr, label, view=TRUE) {
 	if(inherits(x, "shiny.tag")) {
 		html = x;
 	} else if(inherits(x, "gtsummary")) {
-		html = view.gtsummary(tbl, view=FALSE);
+		html = view.gtsummary(x, view=FALSE);
 	}
 	# XML
 	h2 = read_html(html$children[[2]])
@@ -167,6 +169,7 @@ add.abbrev = function(x, abbr, label, view=TRUE) {
 	}
 	# write temp xml:
 	out.html = tempfile("_out.tmp.html");
+	# "no_declaration": seems to have no effect?
 	write_xml(h2, out.html, options = c("no_declaration", "format"));
 	# read new xml:
 	html$children[[2]] = read.shiny(out.html, strip=TRUE);
@@ -174,11 +177,13 @@ add.abbrev = function(x, abbr, label, view=TRUE) {
 	if(view) print(html, browse = interactive());
 	invisible(html);
 }
-read.shiny = function(file.html, strip=TRUE, rm.file=FALSE) {
+read.shiny = function(file.html, strip=TRUE) {
 	h2 = readLines(file.html);
 	# TODO: robust method
-	h2 = h2[-1]; h2[length(h2)] = "</table>";
-	s.tmp = h2[1]; h2[1] = substr(s.tmp, 13, nchar(s.tmp));
+	if(strip) {
+		h2 = h2[-1]; h2[length(h2)] = "</table>";
+		s.tmp = h2[1]; h2[1] = substr(s.tmp, 13, nchar(s.tmp));
+	}
 	# shiny html:
 	h2 = paste0(h2, collapse="");
 	attr(h2, "html") = TRUE; class(h2) = c("html", "character");
@@ -197,15 +202,37 @@ header0 = list(
 	stat_0 ~ "**Overall**<br/> N = {style_number(N)}"
 )
 
+##########
 
 ### Usage:
 if(FALSE) {
 # NOT run
 some.data %>%
-	rename("Full name" = "abbreviated.name") %>%
+	# rename2(): see file Tools.Data.R;
+	# - behaves almost the same to dplyr::rename();
+	rename2("Full name" = "abbreviated.name") %>%
 	tbl_summary(by = Dx) %>%
 	modify_header(update = header) %>%
 	add_p() %>%
 	add_overall() %>%
 	modify_header(update = header0);
+}
+
+
+if(FALSE) {
+# NOT run
+mtcars %>%
+	# rename2(): see file Tools.Data.R;
+	# - behaves almost the same to dplyr::rename();
+	rename2("HP" = "hp", "Displ" = disp, "Wt (klbs)" = "wt", "Rar" = drat) %>%
+	tbl_summary(by = cyl) %>%
+	modify_header(update = header) %>%
+	add_p() %>%
+	add_overall() %>%
+	modify_header(update = header0) %>%
+	view.gtsummary(view=FALSE, len=8) %>% # Hack: split long statistics
+	add.abbrev(
+		c("Displ", "HP", "Rar", "Wt (klbs)" = "Wt"),
+		c("Displacement (in^3)", "Gross horsepower", "Rear axle ratio",
+		"Weight (1000 lbs)"));
 }
