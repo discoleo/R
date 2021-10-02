@@ -5,7 +5,7 @@
 ###
 ### Tools: Descriptive Statistics
 ###
-### draft v.0.1g-ex
+### draft v.0.1h
 
 
 ###############
@@ -13,9 +13,10 @@
 ###############
 
 
-### draft v.0.1g - v.0.1g-ex:
+### draft v.0.1g - v.0.1h:
 # - some fixes & better example;
 # - improved example; [v.0.1g-ex]
+# - convert xml directly to string; [v.0.1h]
 ### draft v.0.1f - v.0.1f-ref:
 # - support differences in abbreviations in
 #   table body and table footer;
@@ -169,24 +170,37 @@ add.abbrev = function(x, abbr, label, view=TRUE) {
 		}
 	}
 	# write temp xml:
-	out.html = tempfile("_out.tmp.html");
-	# "no_declaration": seems to have no effect?
-	write_xml(h2, out.html, options = c("no_declaration", "format"));
-	# read new xml:
-	html$children[[2]] = read.shiny(out.html, strip=TRUE);
-	unlink(out.html); rm(out.html);
+	if(FALSE) {
+		out.html = tempfile("_out.tmp.html");
+		# "no_declaration": seems to have no effect?
+		write_xml(h2, out.html, options = c("no_declaration", "format"));
+		# read new xml:
+		html$children[[2]] = read.shiny(out.html, strip=TRUE);
+		unlink(out.html); rm(out.html);
+	} else {
+		# convert directly to text
+		html$children[[2]] = read.shiny(text=as.character(h2), strip=TRUE);
+	}
 	if(view) print(html, browse = interactive());
 	invisible(html);
 }
-read.shiny = function(file.html, strip=TRUE) {
-	h2 = readLines(file.html);
+read.shiny = function(file.html, text=NULL, strip=TRUE) {
+	isFile = is.null(text);
+	h2 = if(isFile) readLines(file.html) else text;
 	# TODO: robust method
-	if(strip) {
+	if(strip && isFile) {
 		h2 = h2[-1]; h2[length(h2)] = "</table>";
 		s.tmp = h2[1]; h2[1] = substr(s.tmp, 13, nchar(s.tmp));
+		h2 = paste0(h2, collapse="");
+	} else if(strip) {
+		h2 = sub("(?i)\\<\\!DOC[^<>]++\\>[ \n\r\t]*+", "", h2, perl=TRUE);
+		h2 = sub("(?i)\\<html[^<>]*+\\>[ \n\r\t]*+", "", h2, perl=TRUE);
+		h2 = sub("(?i)\\<body[^<>]*+\\>[ \n\r\t]*+", "", h2, perl=TRUE);
+		# END Tag
+		h2 = sub("(?i)\\</html[^<>]*+\\>[ \n\r\t]*+$", "", h2, perl=TRUE);
+		h2 = sub("(?i)\\</body[^<>]*+\\>[ \n\r\t]*+$", "", h2, perl=TRUE);
 	}
 	# shiny html:
-	h2 = paste0(h2, collapse="");
 	attr(h2, "html") = TRUE; class(h2) = c("html", "character");
 	return(h2);
 }
