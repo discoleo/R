@@ -5,7 +5,7 @@
 ###
 ### Tools: Descriptive Statistics
 ###
-### draft v.0.1d
+### draft v.0.1e
 
 
 ################
@@ -114,6 +114,8 @@ as.tags.gt_tbl = function (x, len=10, ..., view = interactive())
 ### Add Abbreviations:
 
 add.abbrev = function(x, abbr, label, view=TRUE) {
+	if(length(abbr) != length(label))
+		stop("Error: Abbreviations must match labels!")
 	if(inherits(x, "shiny.tag")) {
 		html = x;
 	} else if(inherits(x, "gtsummary")) {
@@ -123,13 +125,28 @@ add.abbrev = function(x, abbr, label, view=TRUE) {
 	h2 = read_html(html$children[[2]])
 	# Footer
 	nFoot = as.integer(xml_text(xml_find_all(h2, "//tfoot/tr/td/p/sup"), trim=TRUE));
-	nFoot = max(nFoot) + 1;
+	nFoot0 = max(nFoot); nFoot = nFoot0 + 1;
 	# Add new Footnote:
-	foot.html = read_xml(paste0(
-		"<p class=\"gt_footnote\"><sup class=\"gt_footnote_marks\"><em>",
-		nFoot, "</em></sup>", abbr, " = ", label, "</p>"));
-	xml_find_first(h2, "//tfoot/tr/td") %>%
-		xml_add_child(foot.html);
+	xml.foot = xml_find_first(h2, "//tfoot/tr/td");
+	for(id in seq(length(abbr))) {
+		foot.html = read_xml(paste0(
+			"<p class=\"gt_footnote\"><sup class=\"gt_footnote_marks\"><em>",
+			nFoot, "</em></sup>", abbr[id], " = ", label[id], "</p>"));
+		xml.foot %>%
+			xml_add_child(foot.html);
+		nFoot = nFoot + 1;
+	}
+	# Add Ref in table:
+	xml.ref = xml_find_all(h2, "//tbody/tr/td[contains(@class,'gt_left')]");
+	for(node in xml.ref) {
+		id = which(xml_text(node, trim=TRUE) == abbr);
+		if(length(id) > 0) {
+			foot.html = read_xml(paste0(
+				"<sup class=\"gt_footnote_marks\"><em>", nFoot0 + id, "</em></sup>"));
+			node %>%
+				xml_add_child(foot.html);
+		}
+	}
 	# write temp xml:
 	out.html = tempfile("_out.tmp.html");
 	write_xml(h2, out.html, options = c("no_declaration", "format"));
@@ -149,7 +166,7 @@ add.abbrev = function(x, abbr, label, view=TRUE) {
 
 
 ### Split Header
-# - in gtsummary;
+# - in package: gtsummary;
 
 header = list(
 	all_stat_cols(FALSE) ~ "**{level}**<br/> N = {style_number(n)}",
