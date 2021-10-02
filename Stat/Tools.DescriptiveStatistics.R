@@ -5,7 +5,7 @@
 ###
 ### Tools: Descriptive Statistics
 ###
-### draft v.0.1g
+### draft v.0.1g-ex
 
 
 ###############
@@ -13,8 +13,9 @@
 ###############
 
 
-### draft v.0.1g:
+### draft v.0.1g - v.0.1g-ex:
 # - some fixes & better example;
+# - improved example; [v.0.1g-ex]
 ### draft v.0.1f - v.0.1f-ref:
 # - support differences in abbreviations in
 #   table body and table footer;
@@ -221,10 +222,19 @@ some.data %>%
 
 if(FALSE) {
 # NOT run
+library(gtsummary)
+library(xml2)
+# Data
 mtcars %>%
-	# rename2(): see file Tools.Data.R;
-	# - behaves almost the same to dplyr::rename();
-	rename2("HP" = "hp", "Displ" = disp, "Wt (klbs)" = "wt", "Rar" = drat) %>%
+	# rename2():
+	# - see file Tools.Data.R;
+	# - behaves in most cases the same as dplyr::rename();
+	rename2("HP" = "hp", "Displ" = disp, "Wt (klb)" = "wt", "Rar" = drat) %>%
+	# as.factor.df():
+	# - see file Tools.Data.R;
+	# - encode as (ordered) factor;
+	as.factor.df("cyl", "Cyl ") %>%
+	# the Descriptive Statistics:
 	tbl_summary(by = cyl) %>%
 	modify_header(update = header) %>%
 	add_p() %>%
@@ -232,7 +242,7 @@ mtcars %>%
 	modify_header(update = header0) %>%
 	view.gtsummary(view=FALSE, len=8) %>% # Hack: split long statistics
 	add.abbrev(
-		c("Displ", "HP", "Rar", "Wt (klbs)" = "Wt"),
+		c("Displ", "HP", "Rar", "Wt (klb)" = "Wt"),
 		c("Displacement (in^3)", "Gross horsepower", "Rear axle ratio",
 		"Weight (1000 lbs)"));
 }
