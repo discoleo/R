@@ -5,7 +5,7 @@
 ###
 ### Data Tools
 ###
-### draft v.0.1o-fix
+### draft v.0.1p
 
 
 ### Tools to Process/Transform Data
@@ -16,6 +16,9 @@
 ###############
 
 
+### draft v.0.1p:
+# - basic implementation of a function to encode
+#   numeric values as a factor: as.factor.df();
 ### draft v.0.1o - v.0.1o-fix:
 # - basic implementation of a rename() function;
 # - sequential renaming; [v.0.1o-fix]
@@ -95,6 +98,26 @@ rename2 = function(x, ...) {
 	names(tmp) = tmp.nms;
 	return(tmp);
 }
+
+# Encode: Numeric => Factor
+as.factor.df = function(x, vars, name = c("Lvl ", ""), ordered=TRUE) {
+	if( ! inherits(x, "data.frame"))
+		stop("Error: x must be a data frame!");
+	idc = match(vars, names(x));
+	if(any(is.na(idc))) stop(
+		paste0("Error: column ", vars[is.na(idc)][1], " does not exist!"));
+	if(is.null(dim(name))) {
+		if(length(name) == 1) name = c(name, "");
+	}
+	for(id in idc) {
+		x[, id] = factor(x[, id], ordered=ordered);
+		# TODO: matrix with names;
+		levels(x[, id]) = paste0(name[1], levels(x[, id]), name[2]);
+	}
+	return(x);
+}
+
+##########
 
 ### Row DF
 # Matrix => Row DF
@@ -433,7 +456,11 @@ ftable2 = function(ftbl, print=TRUE, quote=FALSE, sep="|",
 	invisible(ftbl2);
 }
 
-ftable2(ftbl, sep=" | ", zero.print="-", j="l", pos="Top", split.ch="\n", me="auto")
+
+if(FALSE) {
+	# not run
+	ftable2(ftbl, sep=" | ", zero.print="-", j="l", pos="Top", split.ch="\n", me="auto")
+}
 
 
 ###############
