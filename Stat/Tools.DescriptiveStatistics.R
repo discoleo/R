@@ -5,7 +5,7 @@
 ###
 ### Tools: Descriptive Statistics
 ###
-### draft v.0.1f
+### draft v.0.1f-ref
 
 
 ###############
@@ -13,9 +13,10 @@
 ###############
 
 
-### draft v.0.1f:
+### draft v.0.1f - v.0.1f-ref:
 # - support differences in abbreviations in
 #   table body and table footer;
+# - [refactor] split into separate functions; [v.0.1f-ref]
 ### draft v.0.1e:
 # - insert Reference in table body;
 
@@ -168,17 +169,20 @@ add.abbrev = function(x, abbr, label, view=TRUE) {
 	out.html = tempfile("_out.tmp.html");
 	write_xml(h2, out.html, options = c("no_declaration", "format"));
 	# read new xml:
-	h2 = readLines(out.html);
+	html$children[[2]] = read.shiny(out.html, strip=TRUE);
+	unlink(out.html); rm(out.html);
+	if(view) print(html, browse = interactive());
+	invisible(html);
+}
+read.shiny = function(file.html, strip=TRUE, rm.file=FALSE) {
+	h2 = readLines(file.html);
 	# TODO: robust method
 	h2 = h2[-1]; h2[length(h2)] = "</table>";
 	s.tmp = h2[1]; h2[1] = substr(s.tmp, 13, nchar(s.tmp));
 	# shiny html:
 	h2 = paste0(h2, collapse="");
 	attr(h2, "html") = TRUE; class(h2) = c("html", "character");
-	html$children[[2]] = h2;
-	unlink(out.html); rm(out.html);
-	if(view) print(html, browse = interactive());
-	invisible(html);
+	return(h2);
 }
 
 
