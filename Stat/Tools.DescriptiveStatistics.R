@@ -5,7 +5,19 @@
 ###
 ### Tools: Descriptive Statistics
 ###
-### draft v.0.1e
+### draft v.0.1f
+
+
+###############
+### History ###
+###############
+
+
+### draft v.0.1f:
+# - support differences in abbreviations in
+#   table body and table footer;
+### draft v.0.1e:
+# - insert Reference in table body;
 
 
 ################
@@ -123,7 +135,7 @@ add.abbrev = function(x, abbr, label, view=TRUE) {
 	}
 	# XML
 	h2 = read_html(html$children[[2]])
-	# Footer
+	### Footer
 	nFoot = as.integer(xml_text(xml_find_all(h2, "//tfoot/tr/td/p/sup"), trim=TRUE));
 	nFoot0 = max(nFoot); nFoot = nFoot0 + 1;
 	# Add new Footnote:
@@ -136,10 +148,15 @@ add.abbrev = function(x, abbr, label, view=TRUE) {
 			xml_add_child(foot.html);
 		nFoot = nFoot + 1;
 	}
-	# Add Ref in table:
+	### Add Ref in table:
 	xml.ref = xml_find_all(h2, "//tbody/tr/td[contains(@class,'gt_left')]");
+	# Names that are abbreviated:
+	abbr = abbr[ ! is.na(abbr)];
+	nms = if(is.null(names(abbr))) abbr else names(abbr);
+	isEmpty = ! nzchar(nms); nms[isEmpty] = abbr[isEmpty];
+	# update table:
 	for(node in xml.ref) {
-		id = which(xml_text(node, trim=TRUE) == abbr);
+		id = which(xml_text(node, trim=TRUE) == nms);
 		if(length(id) > 0) {
 			foot.html = read_xml(paste0(
 				"<sup class=\"gt_footnote_marks\"><em>", nFoot0 + id, "</em></sup>"));
