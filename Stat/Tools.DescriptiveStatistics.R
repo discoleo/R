@@ -5,7 +5,7 @@
 ###
 ### Tools: Descriptive Statistics
 ###
-### draft v.0.1j
+### draft v.0.1j-ref1
 
 
 ###############
@@ -13,9 +13,10 @@
 ###############
 
 
-### draft v.0.1j:
+### draft v.0.1j - v.0.1j-ref1:
 # - preparation for redesign:
 #   moved *Hack* to bottom of file;
+# - [refactor] split.stat() independent of data container;
 ### draft v.0.1g - v.0.1i:
 # - some fixes & better example;
 # - improved example; [v.0.1g-ex]
@@ -62,19 +63,20 @@
 
 ### Usage:
 # as.tags.gt_tbl(as_gt(tbl));
+# - see section Examples;
 
 
 view.gtsummary = function(x, len=10, view=TRUE) {
 	view = if(view) interactive() else NULL;
 	as.tags.gt_tbl(as_gt(x), len=len, view = view);
 }
-split.stat = function(x, len=10, sep="<br/>", reg = "\\([0-9 ,.]++\\)", BLOCK="_body") {
+split.stat = function(x, len=10, sep="<br/>", reg = "\\([0-9 ,.]++\\)") {
 	# BLOCK = "_body"; # "table_body"
-	nms = names(x[[BLOCK]]);
+	nms = names(x);
 	id  = grepl("^stat_", nms);
 	nms = nms[id];
 	for(nm in nms) {
-		stat = x[[BLOCK]][[nm]];
+		stat = x[[nm]];
 		npos = regexpr(reg, stat, perl=TRUE);
 		isMatch = (! is.na(stat)) & (npos >= 0);
 		LEN = attr(npos, "match.length");
@@ -84,7 +86,7 @@ split.stat = function(x, len=10, sep="<br/>", reg = "\\([0-9 ,.]++\\)", BLOCK="_
 		s1 = substr(sMatch, 1, npos[isMatch] - 1);
 		s2 = substr(sMatch, npos[isMatch], npos[isMatch] + LEN[isMatch]);
 		stat[isMatch] = paste0(s1, sep, s2);
-		x[[BLOCK]][nm] = stat;
+		x[nm] = stat;
 	}
 	return(x);
 }
@@ -194,7 +196,12 @@ header0 = list(
 	stat_0 ~ "**Overall**<br/> N = {style_number(N)}"
 )
 
-##########
+################
+################
+
+################
+### Examples ###
+################
 
 ### Usage:
 if(FALSE) {
@@ -231,7 +238,8 @@ mtcars %>%
 	add_p() %>%
 	add_overall() %>%
 	modify_header(update = header0) %>%
-	view.gtsummary(view=FALSE, len=8) %>% # Hack: split long statistics
+	# Hack: split long statistics
+	view.gtsummary(view=FALSE, len=8) %>%
 	add.abbrev(
 		c("Displ", "HP", "Rar", "Wt (klb)" = "Wt"),
 		c("Displacement (in^3)", "Gross horsepower", "Rear axle ratio",
@@ -246,12 +254,16 @@ mtcars %>%
 ### [will be: old]
 # Code from the old Hack
 
+# - a lot of code from the package gt is duplicated;
 render_as_html = function (data, ...) 
 {
 	# various results may contain characters that need escaping;
 	data <- gt:::build_data(data = data, context = "html")
+	# --- HACK ---
 	# splitting the lines after the escaping;
-	data = split.stat(data, ...);
+	BLOCK = "_body";
+	data[[BLOCK]] = split.stat(data[[BLOCK]], ...);
+	# --- END HACK ---
 	data <- gt:::add_css_styles(data = data)
     caption_component <- gt:::create_caption_component_h(data = data)
     heading_component <- gt:::create_heading_component_h(data = data)
