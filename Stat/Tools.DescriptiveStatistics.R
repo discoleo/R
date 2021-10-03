@@ -5,7 +5,7 @@
 ###
 ### Tools: Descriptive Statistics
 ###
-### draft v.0.1h
+### draft v.0.1i
 
 
 ###############
@@ -13,10 +13,11 @@
 ###############
 
 
-### draft v.0.1g - v.0.1h:
+### draft v.0.1g - v.0.1i:
 # - some fixes & better example;
 # - improved example; [v.0.1g-ex]
 # - convert xml directly to string; [v.0.1h]
+# - as.html: preparation for redesign/refactoring;
 ### draft v.0.1f - v.0.1f-ref:
 # - support differences in abbreviations in
 #   table body and table footer;
@@ -130,14 +131,10 @@ as.tags.gt_tbl = function (x, len=10, ..., view = interactive())
 
 ### Add Abbreviations:
 
-add.abbrev = function(x, abbr, label, view=TRUE) {
+add.abbrev = function(x, abbr, label, view=TRUE, sep.eq = " = ") {
 	if(length(abbr) != length(label))
-		stop("Error: Abbreviations must match labels!")
-	if(inherits(x, "shiny.tag")) {
-		html = x;
-	} else if(inherits(x, "gtsummary")) {
-		html = view.gtsummary(x, view=FALSE);
-	}
+		stop("Error: Abbreviations must match labels!");
+	html = as.html(x);
 	# XML
 	h2 = read_html(html$children[[2]])
 	### Footer
@@ -146,9 +143,12 @@ add.abbrev = function(x, abbr, label, view=TRUE) {
 	# Add new Footnote:
 	xml.foot = xml_find_first(h2, "//tfoot/tr/td");
 	for(id in seq(length(abbr))) {
+		# Case: Abbreviation = NA
+		if(is.na(abbr[id])) { abbr.txt = ""; eq.txt = ""; }
+		else { abbr.txt = abbr[id]; eq.txt = sep.eq; }
 		foot.html = read_xml(paste0(
 			"<p class=\"gt_footnote\"><sup class=\"gt_footnote_marks\"><em>",
-			nFoot, "</em></sup>", abbr[id], " = ", label[id], "</p>"));
+			nFoot, "</em></sup>", abbr.txt, eq.txt, label[id], "</p>"));
 		xml.foot %>%
 			xml_add_child(foot.html);
 		nFoot = nFoot + 1;
@@ -183,6 +183,16 @@ add.abbrev = function(x, abbr, label, view=TRUE) {
 	}
 	if(view) print(html, browse = interactive());
 	invisible(html);
+}
+as.html = function(x) {
+	if(inherits(x, "shiny.tag")) {
+		html = x;
+	} else if(inherits(x, "gtsummary")) {
+		html = view.gtsummary(x, view=FALSE);
+	} else {
+		stop("HTML: Not yet implemented!")
+	}
+	return(html);
 }
 read.shiny = function(file.html, text=NULL, strip=TRUE) {
 	isFile = is.null(text);
