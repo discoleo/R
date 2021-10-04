@@ -5,7 +5,7 @@
 ###
 ### Data Tools
 ###
-### draft v.0.1q
+### draft v.0.1q-reorder
 
 
 ### Tools to Process/Transform Data
@@ -16,8 +16,9 @@
 ###############
 
 
-### draft v.0.1q:
+### draft v.0.1q - v.0.1q-reorder:
 # - recode factor levels: with fail-safe provisions;
+# - reordered sections;
 ### draft v.0.1p:
 # - basic implementation of a function to encode
 #   numeric values as a factor: as.factor.df();
@@ -46,57 +47,6 @@
 ######################
 
 ### DF Data Transforms
-
-### Rename
-# - rename columns: simple implementation;
-# - dplyr::rename: behaves differently during name clashes!
-# Note:
-# - implementations of the form (new.name = old.name):
-#   do NOT permit the use of formulas to generate dynamically the new names;
-rename2 = function(x, ...) {
-	e = substitute(c(...));
-	len = length(e);
-	if(len <= 1) {
-		print("No names were renamed!");
-		return(x);
-	}
-	len = len - 1;
-	e = e[-1];
-	nms = names(e);
-	isDuplicated = duplicated(nms);
-	if(any(isDuplicated))
-		stop(paste0("Duplicated names: ", paste0(nms[isDuplicated], collapse=", ")));
-	# Old Names
-	nms.old = character(len);
-	for(id in seq(len)) {
-		tmp.e = e[[id]];
-		if( ! nzchar(nms[[id]])) {
-			if(is.call(tmp.e)) nms[[id]] = as.character(eval(tmp.e[[2]]))
-			else stop("Error: Missing name!")
-		}
-		if(is.call(tmp.e)) {
-			tmp.e = eval(tmp.e);
-			if(length(tmp.e) > 1) {
-				stop("Multiple names mapped to same name!")
-			}
-		}
-		print(tmp.e)
-		nms.old[id] = as.character(tmp.e);
-	}
-	tmp = x; tmp.nms = names(tmp);
-	# Sequential processing: as in sequential renaming;
-	for(id in seq(length(nms))) {
-		idn = match(nms.old[id], tmp.nms);
-		if(is.na(idn)) stop(paste0("Error: Some of the names were NOT found!\n  Name: ",
-			nms.old[id], " (possibly twice renamed)"));
-		if(tmp.nms[idn] == nms[id]) next;
-		if(any(tmp.nms == nms[id]))
-			stop(paste0("Error: New names clash with the old names!\n  Names: ", nms[id]));
-		tmp.nms[idn] = nms[id];
-	}
-	names(tmp) = tmp.nms;
-	return(tmp);
-}
 
 ### Encode: Numeric => Factor
 as.factor.df = function(x, vars, name = c("Lvl ", ""), ordered=TRUE) {
@@ -164,6 +114,57 @@ recode.df.factor = function(x, var.name, ..., more.lvl = "Stop") {
 ##################
 
 ### DF Transforms
+
+### Rename
+# - rename columns: simple implementation;
+# - dplyr::rename: behaves differently during name clashes!
+# Note:
+# - implementations of the form (new.name = old.name):
+#   do NOT permit the use of formulas to generate dynamically the new names;
+rename2 = function(x, ...) {
+	e = substitute(c(...));
+	len = length(e);
+	if(len <= 1) {
+		print("No names were renamed!");
+		return(x);
+	}
+	len = len - 1;
+	e = e[-1];
+	nms = names(e);
+	isDuplicated = duplicated(nms);
+	if(any(isDuplicated))
+		stop(paste0("Duplicated names: ", paste0(nms[isDuplicated], collapse=", ")));
+	# Old Names
+	nms.old = character(len);
+	for(id in seq(len)) {
+		tmp.e = e[[id]];
+		if( ! nzchar(nms[[id]])) {
+			if(is.call(tmp.e)) nms[[id]] = as.character(eval(tmp.e[[2]]))
+			else stop("Error: Missing name!")
+		}
+		if(is.call(tmp.e)) {
+			tmp.e = eval(tmp.e);
+			if(length(tmp.e) > 1) {
+				stop("Multiple names mapped to same name!")
+			}
+		}
+		print(tmp.e)
+		nms.old[id] = as.character(tmp.e);
+	}
+	tmp = x; tmp.nms = names(tmp);
+	# Sequential processing: as in sequential renaming;
+	for(id in seq(length(nms))) {
+		idn = match(nms.old[id], tmp.nms);
+		if(is.na(idn)) stop(paste0("Error: Some of the names were NOT found!\n  Name: ",
+			nms.old[id], " (possibly twice renamed)"));
+		if(tmp.nms[idn] == nms[id]) next;
+		if(any(tmp.nms == nms[id]))
+			stop(paste0("Error: New names clash with the old names!\n  Names: ", nms[id]));
+		tmp.nms[idn] = nms[id];
+	}
+	names(tmp) = tmp.nms;
+	return(tmp);
+}
 
 ### Row DF
 # Matrix => Row DF
