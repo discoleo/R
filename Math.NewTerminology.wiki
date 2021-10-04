@@ -1,7 +1,7 @@
 
 = New Terminology in Mathematics =
 
-Various researchers working in a famous area of science have proposed to replace the rise to power operator '''^''' with 2 multiplication operators: '''**'''. This change would streamline the mathematical terminology with that used in parts of the IT industry.
+Various researchers working in a famous area of science have proposed to replace the power operator '''^''' with 2 multiplication operators: '''**'''. This change would streamline the mathematical terminology with that used in parts of the IT industry.
 
 The ''International Association of Publishers of Lengthy Proofs in Mathematics'' (1) was caught by surprise by this proposal. After analysing the effects on the published literature, they noted that this new terminology would increase significantly the size of various proofs, as the new operator requires now 2 characters, while the old one could be even omitted by printing the exponent slightly elevated.
 
@@ -11,5 +11,5 @@ One stubborn scientist noted however that this new terminology would increase th
 
 We do not know if this opinion is shared by any of the other scientists and could not yet contact this stubborn scientist for additional comments on this topic.
 
-''1.'' Errata: We regret the use of a shortened name in a previous version of this document.
-''2.'' Stubborn Scientist. '''x**10 = x*10''' - A lengthy proof of the paucity of roots over rational numbers.
+**1.** Errata: We regret the use of a shortened name in a previous version of this document.\
+**2.** Stubborn Scientist. '''x**10 = x*10''' - A lengthy proof of the paucity of roots over rational numbers.
