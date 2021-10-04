@@ -5,7 +5,7 @@
 ###
 ### Tools: Descriptive Statistics
 ###
-### draft v.0.1j-ref1
+### draft v.0.1j-ref2
 
 
 ###############
@@ -13,10 +13,11 @@
 ###############
 
 
-### draft v.0.1j - v.0.1j-ref1:
+### draft v.0.1j - v.0.1j-ref2:
 # - preparation for redesign:
 #   moved *Hack* to bottom of file;
 # - [refactor] split.stat() independent of data container;
+# - [refactor] format.html.table() replaces initial hack;
 ### draft v.0.1g - v.0.1i:
 # - some fixes & better example;
 # - improved example; [v.0.1g-ex]
@@ -68,10 +69,13 @@
 
 view.gtsummary = function(x, len=10, view=TRUE) {
 	view = if(view) interactive() else NULL;
-	as.tags.gt_tbl(as_gt(x), len=len, view = view);
+	### Old Hack
+	# as.tags.gt_tbl(as_gt(x), len=len, view = view);
+	format.html.table(x, len=len, view=view);
 }
-split.stat = function(x, len=10, sep="<br/>", reg = "\\([0-9 ,.]++\\)") {
-	# BLOCK = "_body"; # "table_body"
+split.stat = function(x, len=10, sep="<br/>", reg = "\\([-0-9 ,.]++\\)") {
+	# Regex: cover also negative numbers;
+	# [old]: BLOCK = "_body"; # "table_body"
 	nms = names(x);
 	id  = grepl("^stat_", nms);
 	nms = nms[id];
@@ -90,11 +94,50 @@ split.stat = function(x, len=10, sep="<br/>", reg = "\\([0-9 ,.]++\\)") {
 	}
 	return(x);
 }
+split.stat.node = function(node, len=10, sep="<br/>", reg = "\\([-0-9 ,.]++\\)") {
+	x = xml_text(node, trim=TRUE);
+	npos = regexpr(reg, x, perl=TRUE);
+	isMatch = (! is.na(x)) & (npos >= 0);
+	LEN = attr(npos, "match.length");
+	isLong  = (LEN >= len);
+	isMatch = isMatch & isLong;
+	if( ! isMatch) return(node);
+	# Match:
+	sMatch  = x[isMatch]; # ? only 1 Node ?
+	s1 = substr(sMatch, 1, npos[isMatch] - 1);
+	s2 = substr(sMatch, npos[isMatch], npos[isMatch] + LEN[isMatch]);
+	x[isMatch] = paste0(s1, sep, s2);
+	# <r> = a root is needed;
+	new.line = read_xml(paste0("<r>", s1, sep, s2, "</r>"));
+	# delete previous text
+	xml_text(node) = "";
+	for(nn in xml_contents(new.line)) {
+		xml_add_child(node, nn);
+	}
+	return(node);
+}
 
 ### Note:
+### [OLD HACK]
 # - functions render_as_html() & as.tags.gt_tbl():
 #   moved to the bottom of this file;
 
+
+format.html.table = function(x, len=10, sep="<br/>", ..., view=FALSE) {
+	html = as.html(x); print("Started")
+	# XML
+	h2 = read_html(html$children[[2]])
+	### Format table
+	cells = xml_find_all(h2, "//tbody/tr/td[contains(@class,'gt_center')]");
+	# update table:
+	for(node in cells) {
+		split.stat.node(node, len=len, sep=sep, ...);
+	}
+	# convert directly to text
+	html$children[[2]] = read.shiny(text=as.character(h2), strip=TRUE);
+	if(view) print(html, browse = interactive());
+	invisible(html);
+}
 
 ######################
 
@@ -110,6 +153,7 @@ add.abbrev = function(x, abbr, label, view=TRUE, sep.eq = " = ") {
 	nFoot = as.integer(xml_text(xml_find_all(h2, "//tfoot/tr/td/p/sup"), trim=TRUE));
 	nFoot0 = max(nFoot); nFoot = nFoot0 + 1;
 	# Add new Footnote:
+	# - assumes only 1 table!
 	xml.foot = xml_find_first(h2, "//tfoot/tr/td");
 	for(id in seq(length(abbr))) {
 		# Case: Abbreviation = NA
@@ -157,9 +201,9 @@ as.html = function(x) {
 	if(inherits(x, "shiny.tag")) {
 		html = x;
 	} else if(inherits(x, "gtsummary")) {
-		html = view.gtsummary(x, view=FALSE);
+		html = gt:::as.tags.gt_tbl(as_gt(x)); # view.gtsummary(x, view=FALSE);
 	} else {
-		stop("HTML: Not yet implemented!")
+		stop("Other HTML formats: Not yet implemented!")
 	}
 	return(html);
 }
@@ -214,14 +258,22 @@ some.data %>%
 	modify_header(update = header) %>%
 	add_p() %>%
 	add_overall() %>%
-	modify_header(update = header0);
+	modify_header(update = header0) %>%
+	# Split long results
+	format.html.table(len=10) %>%
+	# Add abbreviations
+	add.abbrev(c("Abbr"), c("Full Name"));
 }
 
 
 if(FALSE) {
-# NOT run
+# NOT run / can be run
 library(gtsummary)
 library(xml2)
+# Statistic
+stats = list(all_continuous() ~ "{median} ({p25}, {p75})");
+# variant:
+stats = list(all_continuous() ~ "{median} ({min} - {max})");
 # Data
 mtcars %>%
 	# rename2():
@@ -233,13 +285,13 @@ mtcars %>%
 	# - encode as (ordered) factor;
 	as.factor.df("cyl", "Cyl ") %>%
 	# the Descriptive Statistics:
-	tbl_summary(by = cyl) %>%
+	tbl_summary(by = cyl, statistic = stats) %>%
 	modify_header(update = header) %>%
 	add_p() %>%
 	add_overall() %>%
 	modify_header(update = header0) %>%
 	# Hack: split long statistics
-	view.gtsummary(view=FALSE, len=8) %>%
+	format.html.table(len=8) %>%
 	add.abbrev(
 		c("Displ", "HP", "Rar", "Wt (klb)" = "Wt"),
 		c("Displacement (in^3)", "Gross horsepower", "Rear axle ratio",
@@ -255,7 +307,7 @@ mtcars %>%
 # Code from the old Hack
 
 # - a lot of code from the package gt is duplicated;
-render_as_html = function (data, ...) 
+render_as_html.hack = function (data, ...) 
 {
 	# various results may contain characters that need escaping;
 	data <- gt:::build_data(data = data, context = "html")
@@ -278,7 +330,7 @@ render_as_html = function (data, ...)
         source_notes_component, footnotes_component));
 	invisible(html_tbl);
 }
-as.tags.gt_tbl = function (x, len=10, ..., view = interactive()) 
+as.tags.gt_tbl.hack = function (x, len=10, ..., view = interactive()) 
 {
     table_id <- gt:::dt_options_get_value(x, option = "table_id")
     if (is.na(table_id)) {
@@ -287,7 +339,7 @@ as.tags.gt_tbl = function (x, len=10, ..., view = interactive())
     else {
         id <- table_id
     }
-    html_table = render_as_html(data = x, len=len); # override original function;
+    html_table = render_as_html.hack(data = x, len=len); # override original function;
     css <- gt:::compile_scss(data = x, id = id)
     container_overflow_x <- gt:::dt_options_get_value(x, option = "container_overflow_x")
     container_overflow_y <- gt:::dt_options_get_value(x, option = "container_overflow_y")
