@@ -5,7 +5,7 @@
 ###
 ### Tools: Descriptive Statistics
 ###
-### draft v.0.1j-ref3
+### draft v.0.1j-ref4
 
 
 ###############
@@ -13,11 +13,12 @@
 ###############
 
 
-### draft v.0.1j - v.0.1j-ref3:
+### draft v.0.1j - v.0.1j-ref4:
 # - preparation for redesign:
 #   moved *Hack* to bottom of file;
 # - [refactor] split.stat() independent of data container;
 # - [refactor] format.html.table() replaces initial hack;
+# - [refactor] re-organized sections of code; [ref3 & ref4]
 ### draft v.0.1g - v.0.1i:
 # - some fixes & better example;
 # - improved example; [v.0.1g-ex]
@@ -77,7 +78,7 @@ as.html = function(x) {
 	if(inherits(x, "shiny.tag")) {
 		html = x;
 	} else if(inherits(x, "gtsummary")) {
-		html = gt:::as.tags.gt_tbl(as_gt(x)); # view.gtsummary(x, view=FALSE);
+		html = gt:::as.tags.gt_tbl(as_gt(x));
 	} else {
 		stop("Other HTML formats: Not yet implemented!")
 	}
@@ -85,27 +86,6 @@ as.html = function(x) {
 }
 
 ### Split Long Results
-split.stat = function(x, len=10, sep="<br/>", reg = "\\([-0-9 ,.]++\\)") {
-	# Regex: cover also negative numbers;
-	# [old]: BLOCK = "_body"; # "table_body"
-	nms = names(x);
-	id  = grepl("^stat_", nms);
-	nms = nms[id];
-	for(nm in nms) {
-		stat = x[[nm]];
-		npos = regexpr(reg, stat, perl=TRUE);
-		isMatch = (! is.na(stat)) & (npos >= 0);
-		LEN = attr(npos, "match.length");
-		isLong  = (LEN >= len);
-		isMatch = isMatch & isLong;
-		sMatch  = stat[isMatch];
-		s1 = substr(sMatch, 1, npos[isMatch] - 1);
-		s2 = substr(sMatch, npos[isMatch], npos[isMatch] + LEN[isMatch]);
-		stat[isMatch] = paste0(s1, sep, s2);
-		x[nm] = stat;
-	}
-	return(x);
-}
 split.stat.node = function(node, len=10, sep="<br/>", reg = "\\([-0-9 ,.]++\\)") {
 	x = xml_text(node, trim=TRUE);
 	npos = regexpr(reg, x, perl=TRUE);
@@ -130,6 +110,27 @@ split.stat.node = function(node, len=10, sep="<br/>", reg = "\\([-0-9 ,.]++\\)")
 		xml_add_child(node, nn);
 	}
 	return(node);
+}
+# [old] modifies the raw data in the gt data-structure;
+split.stat.gt = function(x, len=10, sep="<br/>", reg = "\\([-0-9 ,.]++\\)") {
+	# Regex: cover also negative numbers;
+	nms = names(x);
+	id  = grepl("^stat_", nms);
+	nms = nms[id];
+	for(nm in nms) {
+		stat = x[[nm]];
+		npos = regexpr(reg, stat, perl=TRUE);
+		isMatch = (! is.na(stat)) & (npos >= 0);
+		LEN = attr(npos, "match.length");
+		isLong  = (LEN >= len);
+		isMatch = isMatch & isLong;
+		sMatch  = stat[isMatch];
+		s1 = substr(sMatch, 1, npos[isMatch] - 1);
+		s2 = substr(sMatch, npos[isMatch], npos[isMatch] + LEN[isMatch]);
+		stat[isMatch] = paste0(s1, sep, s2);
+		x[nm] = stat;
+	}
+	return(x);
 }
 
 ### Note:
@@ -319,7 +320,7 @@ render_as_html.hack = function (data, ...)
 	# --- HACK ---
 	# splitting the lines after the escaping;
 	BLOCK = "_body";
-	data[[BLOCK]] = split.stat(data[[BLOCK]], ...);
+	data[[BLOCK]] = split.stat.gt(data[[BLOCK]], ...);
 	# --- END HACK ---
 	data <- gt:::add_css_styles(data = data)
     caption_component <- gt:::create_caption_component_h(data = data)
