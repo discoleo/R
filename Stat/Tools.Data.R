@@ -5,7 +5,7 @@
 ###
 ### Data Tools
 ###
-### draft v.0.1p
+### draft v.0.1q
 
 
 ### Tools to Process/Transform Data
@@ -16,6 +16,8 @@
 ###############
 
 
+### draft v.0.1q:
+# - recode factor levels: with fail-safe provisions;
 ### draft v.0.1p:
 # - basic implementation of a function to encode
 #   numeric values as a factor: as.factor.df();
@@ -40,15 +42,12 @@
 #   Tools.Formulas.R;
 
 
-#######################
-#######################
+######################
+######################
 
-### Groups / Aggregates
+### DF Data Transforms
 
-# TODO
-
-
-### DF
+### Rename
 # - rename columns: simple implementation;
 # - dplyr::rename: behaves differently during name clashes!
 # Note:
@@ -99,7 +98,7 @@ rename2 = function(x, ...) {
 	return(tmp);
 }
 
-# Encode: Numeric => Factor
+### Encode: Numeric => Factor
 as.factor.df = function(x, vars, name = c("Lvl ", ""), ordered=TRUE) {
 	if( ! inherits(x, "data.frame"))
 		stop("Error: x must be a data frame!");
@@ -117,7 +116,54 @@ as.factor.df = function(x, vars, name = c("Lvl ", ""), ordered=TRUE) {
 	return(x);
 }
 
-##########
+### Recode factors
+recode.df.factor = function(x, var.name, ..., more.lvl = "Stop") {
+	x.f = x[ , var.name, drop=FALSE];
+	if(ncol(x.f) != 1) stop("Error: can process only 1 column!");
+	x.f = x.f[ , 1, drop=TRUE];
+	if( ! is.factor(x.f)) stop("Error: can process only factors!")
+	lvl.old = levels(x.f);
+	### Levels
+	e = substitute(c(...));
+	len = length(e);
+	ech = as.character(e)[-1]; # new levels
+	lvl.nms.old = names(e)[-1]; # old levels
+	len = len - 1; idDot = -1;
+	hasDot = FALSE;
+	for(id in seq(len)) {
+		if(ech[[id]] == ".") {
+			if(hasDot) stop("Error: duplicate dot!");
+			idDot  = id;
+			hasDot = TRUE;
+		}
+	}
+	if(hasDot) {
+		len = len - 1;
+		# ">=" vs ">": What is best for c(same.levels, .) ?
+		if(len >= length(lvl.old)) {
+			more.lvl = pmatch(more.lvl, c("Stop", "Warn", "Ignore"));
+			if(is.na(more.lvl)) stop("Error: option for more.lvl not supported!");
+			if(more.lvl == 1) stop("Error: too many levels!");
+			if(more.lvl == 2) warning("Too many levels!");
+		}
+		ech = ech[-idDot]; lvl.nms.old = lvl.nms.old[-idDot];
+	} else if(len != length(lvl.old))
+		stop("Error: mismatch in number of levels!");
+	idl = match(lvl.nms.old, lvl.old);
+	isNA = is.na(idl);
+	if(any(isNA))
+		stop(paste0("Error: levels", paste0(lvl.nms.old[isNA], collapse=", "), " do NOT exist!"));
+	lvl.new = lvl.old;
+	lvl.new[idl] = ech;
+	levels(x.f) = lvl.new;
+	x[ , var.name] = x.f;
+	return(x);
+}
+
+##################
+##################
+
+### DF Transforms
 
 ### Row DF
 # Matrix => Row DF
@@ -143,6 +189,12 @@ order.df = function(x, decreasing=TRUE, lim=c(1E+5, 10)) {
 	id = do.call(order.s, x);
 	return(id);
 }
+
+#######################
+
+### Groups / Aggregates
+
+# TODO
 
 ### Duplicates
 countDuplicates = function(m, onlyDuplicates=FALSE) {
