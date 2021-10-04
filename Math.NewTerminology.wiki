@@ -11,5 +11,5 @@ One stubborn scientist noted however that this new terminology would increase th
 
 We do not know if this opinion is shared by any of the other scientists and could not yet contact this stubborn scientist for additional comments on this topic.
 
-**1.** Errata: We regret the use of a shortened name in a previous version of this document.\
-**2.** Stubborn Scientist. '''x**10 = x*10''' - A lengthy proof of the paucity of roots over rational numbers.
+- 1. Errata: We regret the use of a shortened name in a previous version of this document.
+- 2. Stubborn Scientist. '''x**10 = x*10''' - A lengthy proof of the paucity of roots over rational numbers.
