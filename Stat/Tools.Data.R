@@ -5,7 +5,7 @@
 ###
 ### Data Tools
 ###
-### draft v.0.1q-reorder
+### draft v.0.1q-ref
 
 
 ### Tools to Process/Transform Data
@@ -16,9 +16,10 @@
 ###############
 
 
-### draft v.0.1q - v.0.1q-reorder:
+### draft v.0.1q - v.0.1q-ref:
 # - recode factor levels: with fail-safe provisions;
-# - reordered sections;
+# - reordered sections; [v.0.1q-reorder]
+# - [refactor] argument name: more.warn; [v.0.1q-ref]
 ### draft v.0.1p:
 # - basic implementation of a function to encode
 #   numeric values as a factor: as.factor.df();
@@ -67,7 +68,7 @@ as.factor.df = function(x, vars, name = c("Lvl ", ""), ordered=TRUE) {
 }
 
 ### Recode factors
-recode.df.factor = function(x, var.name, ..., more.lvl = "Stop") {
+recode.df.factor = function(x, var.name, ..., more.warn = "Stop") {
 	x.f = x[ , var.name, drop=FALSE];
 	if(ncol(x.f) != 1) stop("Error: can process only 1 column!");
 	x.f = x.f[ , 1, drop=TRUE];
@@ -91,18 +92,21 @@ recode.df.factor = function(x, var.name, ..., more.lvl = "Stop") {
 		len = len - 1;
 		# ">=" vs ">": What is best for c(same.levels, .) ?
 		if(len >= length(lvl.old)) {
-			more.lvl = pmatch(more.lvl, c("Stop", "Warn", "Ignore"));
-			if(is.na(more.lvl)) stop("Error: option for more.lvl not supported!");
-			if(more.lvl == 1) stop("Error: too many levels!");
-			if(more.lvl == 2) warning("Too many levels!");
+			more.warn = pmatch(more.warn, c("Stop", "Warn", "Ignore"));
+			if(is.na(more.warn)) stop("Error: option for more.warn not supported!");
+			if(more.warn == 1) stop("Error: too many levels!");
+			if(more.warn == 2) warning("Too many levels!");
 		}
 		ech = ech[-idDot]; lvl.nms.old = lvl.nms.old[-idDot];
 	} else if(len != length(lvl.old))
 		stop("Error: mismatch in number of levels!");
 	idl = match(lvl.nms.old, lvl.old);
 	isNA = is.na(idl);
-	if(any(isNA))
+	# TODO: handle new levels
+	# could use: . = "New Level";
+	if(any(isNA)) {
 		stop(paste0("Error: levels", paste0(lvl.nms.old[isNA], collapse=", "), " do NOT exist!"));
+	}
 	lvl.new = lvl.old;
 	lvl.new[idl] = ech;
 	levels(x.f) = lvl.new;
