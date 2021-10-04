@@ -5,7 +5,7 @@
 ###
 ### Tools: Descriptive Statistics
 ###
-### draft v.0.1j-ref2
+### draft v.0.1j-ref3
 
 
 ###############
@@ -13,7 +13,7 @@
 ###############
 
 
-### draft v.0.1j - v.0.1j-ref2:
+### draft v.0.1j - v.0.1j-ref3:
 # - preparation for redesign:
 #   moved *Hack* to bottom of file;
 # - [refactor] split.stat() independent of data container;
@@ -63,16 +63,28 @@
 # - the problem is in function: gt:::process_text;
 
 ### Usage:
-# as.tags.gt_tbl(as_gt(tbl));
 # - see section Examples;
 
 
+### Basic helper functions:
 view.gtsummary = function(x, len=10, view=TRUE) {
 	view = if(view) interactive() else NULL;
 	### Old Hack
 	# as.tags.gt_tbl(as_gt(x), len=len, view = view);
 	format.html.table(x, len=len, view=view);
 }
+as.html = function(x) {
+	if(inherits(x, "shiny.tag")) {
+		html = x;
+	} else if(inherits(x, "gtsummary")) {
+		html = gt:::as.tags.gt_tbl(as_gt(x)); # view.gtsummary(x, view=FALSE);
+	} else {
+		stop("Other HTML formats: Not yet implemented!")
+	}
+	return(html);
+}
+
+### Split Long Results
 split.stat = function(x, len=10, sep="<br/>", reg = "\\([-0-9 ,.]++\\)") {
 	# Regex: cover also negative numbers;
 	# [old]: BLOCK = "_body"; # "table_body"
@@ -103,12 +115,15 @@ split.stat.node = function(node, len=10, sep="<br/>", reg = "\\([-0-9 ,.]++\\)")
 	isMatch = isMatch & isLong;
 	if( ! isMatch) return(node);
 	# Match:
-	sMatch  = x[isMatch]; # ? only 1 Node ?
+	# TODO: only 1 Node vs Nodeset ?
+	sMatch  = x[isMatch];
 	s1 = substr(sMatch, 1, npos[isMatch] - 1);
 	s2 = substr(sMatch, npos[isMatch], npos[isMatch] + LEN[isMatch]);
-	x[isMatch] = paste0(s1, sep, s2);
+	# x[isMatch] = paste0(s1, sep, s2);
 	# <r> = a root is needed;
-	new.line = read_xml(paste0("<r>", s1, sep, s2, "</r>"));
+	# new.line = read_xml(paste0("<r>", s1, sep, s2, "</r>"));
+	# - with some effects ;-)
+	new.line = read_xml(paste0("<r>", s1, sep, "<span style=\"color:#D03232\">", s2, "</span></r>"));
 	# delete previous text
 	xml_text(node) = "";
 	for(nn in xml_contents(new.line)) {
@@ -124,7 +139,7 @@ split.stat.node = function(node, len=10, sep="<br/>", reg = "\\([-0-9 ,.]++\\)")
 
 
 format.html.table = function(x, len=10, sep="<br/>", ..., view=FALSE) {
-	html = as.html(x); print("Started")
+	html = as.html(x);
 	# XML
 	h2 = read_html(html$children[[2]])
 	### Format table
@@ -196,16 +211,6 @@ add.abbrev = function(x, abbr, label, view=TRUE, sep.eq = " = ") {
 	}
 	if(view) print(html, browse = interactive());
 	invisible(html);
-}
-as.html = function(x) {
-	if(inherits(x, "shiny.tag")) {
-		html = x;
-	} else if(inherits(x, "gtsummary")) {
-		html = gt:::as.tags.gt_tbl(as_gt(x)); # view.gtsummary(x, view=FALSE);
-	} else {
-		stop("Other HTML formats: Not yet implemented!")
-	}
-	return(html);
 }
 read.shiny = function(file.html, text=NULL, strip=TRUE) {
 	isFile = is.null(text);
@@ -303,7 +308,7 @@ mtcars %>%
 #########################
 
 
-### [will be: old]
+### [OLD]
 # Code from the old Hack
 
 # - a lot of code from the package gt is duplicated;
