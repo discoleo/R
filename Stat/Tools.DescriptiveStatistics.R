@@ -5,7 +5,7 @@
 ###
 ### Tools: Descriptive Statistics
 ###
-### draft v.0.1j-ref4
+### draft v.0.1k
 
 
 ###############
@@ -13,6 +13,8 @@
 ###############
 
 
+### draft v.0.1k:
+# - apply.html() function;
 ### draft v.0.1j - v.0.1j-ref4:
 # - preparation for redesign:
 #   moved *Hack* to bottom of file;
@@ -38,15 +40,25 @@
 
 ### Review started:
 
+### Formula based:
 # 1.) atable
-# 2.) gtsummary # Formula-based
-# 3.) qwraps2 # Formula-based
+# 2.) gtsummary
+# 3.) qwraps2
+
+### TODO
 # 4.) vtable
 # 5.) DescTools
 
 ### TODO:
-# tables, tangram, rtables, dashPivottable, carpenter, ...
+# stargazer, tables, tangram, rtables, dashPivottable, carpenter,
+# huxtable, jtools, ...
 
+### Output engines:
+# Hmisc::latex
+# officer::body_add_table
+# flextable::regulartable
+# rmarkdown
+# ...
 
 ##################
 ##################
@@ -213,6 +225,12 @@ add.abbrev = function(x, abbr, label, view=TRUE, sep.eq = " = ") {
 	if(view) print(html, browse = interactive());
 	invisible(html);
 }
+
+#####################
+
+### HTML/XML
+### Helper functions
+
 read.shiny = function(file.html, text=NULL, strip=TRUE) {
 	isFile = is.null(text);
 	h2 = if(isFile) readLines(file.html) else text;
@@ -234,6 +252,72 @@ read.shiny = function(file.html, text=NULL, strip=TRUE) {
 	return(h2);
 }
 
+
+#####################
+
+# Note:
+# - does NOT function properly if the selected nodes contain children;
+apply.html = function(x, XPATH="//tbody/tr/td", FUN, ..., view=FALSE) {
+	html = as.html(x);
+	# XML
+	h2 = read_html(html$children[[2]])
+	### Format table
+	cells = xml_find_all(h2, XPATH);
+	if(length(cells) <= 0) {
+		print("No cells were updated!")
+		invisible(html);
+	}
+	txt = xml_text(cells);
+	txt = FUN(txt, ...);
+	### Update table:
+	if(is.list(txt)) {
+		# nodes which were updated
+		cells = cells[txt$isUpdated];
+		txt = txt$txt;
+	}
+	# proper update
+	for(id in seq_along(cells)) {
+		node = cells[id];
+		new.line = read_xml(paste0("<r>", txt[id], "</r>"));
+		# delete previous text
+		xml_text(node) = "";
+		for(nn in xml_contents(new.line)) {
+			xml_add_child(node, nn);
+		}
+	}
+	# convert directly to text
+	html$children[[2]] = read.shiny(text=as.character(h2), strip=TRUE);
+	if(view) print(html, browse = interactive());
+	invisible(html);
+}
+
+llamma.FUN = function(s, escape=TRUE) {
+	### Note:
+	# - incomplete: still misses the full visual effects
+	#   & some relevant information is not yet printed:
+	#   Was implemented at great expense and at the last minute using
+	#   40 specially trained Ecuadorian mountain llamas,
+	#   6 Venezuelan red llamas,
+	#   142 Mexican whooping llamas,
+	#   14 north Chilean guanacos (closely related to the llama);
+	len = length(s);
+	rgb = sample(seq(0, 255), 3*len, replace=TRUE);
+	rgb = rgb / 255; len = len - 1;
+	rgb = sapply(seq(0, len), function(id) {
+		id0 = 3*id + 1;
+		rgb(rgb[id0], rgb[id0 + 1], rgb[id0 + 2]);
+	});
+	# Note: htmltools::htmlEscape may be required;
+	s = if(escape) htmltools::htmlEscape(s) else s;
+	s = paste0("<span style=\"color:", rgb, "\">", s, "</span>");
+	return(s);
+}
+
+
+#####################
+#####################
+
+### Package gtsummary
 
 ### Split Header
 # - in package: gtsummary;
@@ -302,6 +386,9 @@ mtcars %>%
 		c("Displ", "HP", "Rar", "Wt (klb)" = "Wt"),
 		c("Displacement (in^3)", "Gross horsepower", "Rear axle ratio",
 		"Weight (1000 lbs)"));
+
+	# experimental: add above before format.html.table:
+	# apply.html(FUN=llamma.FUN) %>%
 }
 
 
