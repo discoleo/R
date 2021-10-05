@@ -5,7 +5,7 @@
 ###
 ### Tools: Descriptive Statistics
 ###
-### draft v.0.1k
+### draft v.0.1k-impr
 
 
 ###############
@@ -13,8 +13,9 @@
 ###############
 
 
-### draft v.0.1k:
+### draft v.0.1k - v.0.1k-imp:
 # - apply.html() function;
+# - [improvement] xml_text vs xml_contents; [v.0.1k-impr]
 ### draft v.0.1j - v.0.1j-ref4:
 # - preparation for redesign:
 #   moved *Hack* to bottom of file;
@@ -257,7 +258,7 @@ read.shiny = function(file.html, text=NULL, strip=TRUE) {
 
 # Note:
 # - does NOT function properly if the selected nodes contain children;
-apply.html = function(x, XPATH="//tbody/tr/td", FUN, ..., view=FALSE) {
+apply.html = function(x, XPATH="//tbody/tr/td", FUN, ..., view=FALSE, with.tags=FALSE) {
 	html = as.html(x);
 	# XML
 	h2 = read_html(html$children[[2]])
@@ -267,8 +268,8 @@ apply.html = function(x, XPATH="//tbody/tr/td", FUN, ..., view=FALSE) {
 		print("No cells were updated!")
 		invisible(html);
 	}
-	txt = xml_text(cells);
-	txt = FUN(txt, ...);
+	txt = if(with.tags) xml_contents(cells) else xml_text(cells);
+	txt = FUN(txt, ..., hasTags=with.tags);
 	### Update table:
 	if(is.list(txt)) {
 		# nodes which were updated
@@ -281,6 +282,12 @@ apply.html = function(x, XPATH="//tbody/tr/td", FUN, ..., view=FALSE) {
 		new.line = read_xml(paste0("<r>", txt[id], "</r>"));
 		# delete previous text
 		xml_text(node) = "";
+		if(with.tags) {
+			# remove all children;
+			for(child in xml_children(node)) {
+				xml_remove(child);
+			}
+		}
 		for(nn in xml_contents(new.line)) {
 			xml_add_child(node, nn);
 		}
@@ -291,7 +298,7 @@ apply.html = function(x, XPATH="//tbody/tr/td", FUN, ..., view=FALSE) {
 	invisible(html);
 }
 
-llamma.FUN = function(s, escape=TRUE) {
+llammas.FUN = function(s, hasTags=FAlSE, escape=TRUE) {
 	### Note:
 	# - incomplete: still misses the full visual effects
 	#   & some relevant information is not yet printed:
@@ -307,6 +314,7 @@ llamma.FUN = function(s, escape=TRUE) {
 		id0 = 3*id + 1;
 		rgb(rgb[id0], rgb[id0 + 1], rgb[id0 + 2]);
 	});
+	# TODO: skip html tags;
 	# Note: htmltools::htmlEscape may be required;
 	s = if(escape) htmltools::htmlEscape(s) else s;
 	s = paste0("<span style=\"color:", rgb, "\">", s, "</span>");
@@ -388,7 +396,7 @@ mtcars %>%
 		"Weight (1000 lbs)"));
 
 	# experimental: add above before format.html.table:
-	# apply.html(FUN=llamma.FUN) %>%
+	# apply.html(FUN=llammas.FUN) %>%
 }
 
 
