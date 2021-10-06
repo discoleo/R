@@ -5,7 +5,7 @@
 ###
 ### Tools: Descriptive Statistics
 ###
-### draft v.0.1k-impr
+### draft v.0.1k-ref
 
 
 ###############
@@ -13,9 +13,10 @@
 ###############
 
 
-### draft v.0.1k - v.0.1k-imp:
+### draft v.0.1k - v.0.1k-ref:
 # - apply.html() function;
 # - [improvement] xml_text vs xml_contents; [v.0.1k-impr]
+# - what.types: better concept for text vs content; [v.0.1k-ref]
 ### draft v.0.1j - v.0.1j-ref4:
 # - preparation for redesign:
 #   moved *Hack* to bottom of file;
@@ -258,7 +259,7 @@ read.shiny = function(file.html, text=NULL, strip=TRUE) {
 
 # Note:
 # - does NOT function properly if the selected nodes contain children;
-apply.html = function(x, XPATH="//tbody/tr/td", FUN, ..., view=FALSE, with.tags=FALSE) {
+apply.html = function(x, XPATH="//tbody/tr/td", FUN, ..., view=FALSE, what.type="Text") {
 	html = as.html(x);
 	# XML
 	h2 = read_html(html$children[[2]])
@@ -268,21 +269,29 @@ apply.html = function(x, XPATH="//tbody/tr/td", FUN, ..., view=FALSE, with.tags=
 		print("No cells were updated!")
 		invisible(html);
 	}
-	txt = if(with.tags) xml_contents(cells) else xml_text(cells);
-	txt = FUN(txt, ..., hasTags=with.tags);
+	# "Nodes" = "Elements"
+	what.type = pmatch(what.type, c("Text", "Nodes", "AsText"));
+	if(is.na(what.type)) stop("Error: Processing type not supported!")
+	txt = if(what.type == 1) xml_text(cells)
+		else if(what.type == 2) xml_contents(cells)
+		else lapply(cells, function(cell) as.character(xml_contents(cell)));
+	txt = FUN(txt, ..., hasTags = (what.type > 1));
 	### Update table:
 	if(is.list(txt)) {
 		# nodes which were updated
 		cells = cells[txt$isUpdated];
 		txt = txt$txt;
 	}
-	# proper update
+	# proper update:
+	# Note:
+	# if(what.type == 2) assumes the nodes were updated by FUN;
+	if(what.type != 2) {
 	for(id in seq_along(cells)) {
 		node = cells[id];
-		new.line = read_xml(paste0("<r>", txt[id], "</r>"));
+		new.line = read_xml(paste0("<r>", txt[[id]], "</r>", collapse=""));
 		# delete previous text
 		xml_text(node) = "";
-		if(with.tags) {
+		if(what.type > 1) {
 			# remove all children;
 			for(child in xml_children(node)) {
 				xml_remove(child);
@@ -292,13 +301,14 @@ apply.html = function(x, XPATH="//tbody/tr/td", FUN, ..., view=FALSE, with.tags=
 			xml_add_child(node, nn);
 		}
 	}
+	}
 	# convert directly to text
 	html$children[[2]] = read.shiny(text=as.character(h2), strip=TRUE);
 	if(view) print(html, browse = interactive());
 	invisible(html);
 }
 
-llammas.FUN = function(s, hasTags=FAlSE, escape=TRUE) {
+llammas.FUN = function(s, hasTags=FALSE, escape=TRUE) {
 	### Note:
 	# - incomplete: still misses the full visual effects
 	#   & some relevant information is not yet printed:
@@ -398,6 +408,14 @@ mtcars %>%
 	# experimental: add above before format.html.table:
 	# apply.html(FUN=llammas.FUN) %>%
 }
+
+### Note: XPATH
+# - any table: relative path => "//"
+# - only tbody => "//tbody"
+# - table cells, not rows => "//tbody/tr/td"
+# - exclude left column: in package gt class is "gt_left"
+#   => "//tbody/tr/td[not(contains(@class, 'gt_left'))]"
+#   => or "//tbody/tr/td[contains(@class, 'gt_center')]"
 
 
 #########################
