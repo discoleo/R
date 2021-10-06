@@ -5,7 +5,7 @@
 ###
 ### Tools: Descriptive Statistics
 ###
-### draft v.0.1k-ref
+### draft v.0.1k-fix
 
 
 ###############
@@ -13,10 +13,11 @@
 ###############
 
 
-### draft v.0.1k - v.0.1k-ref:
+### draft v.0.1k - v.0.1k-fix:
 # - apply.html() function;
 # - [improvement] xml_text vs xml_contents; [v.0.1k-impr]
 # - what.types: better concept for text vs content; [v.0.1k-ref]
+# - [fix] preserve tree structure; [v.0.1k-fix]
 ### draft v.0.1j - v.0.1j-ref4:
 # - preparation for redesign:
 #   moved *Hack* to bottom of file;
@@ -273,7 +274,7 @@ apply.html = function(x, XPATH="//tbody/tr/td", FUN, ..., view=FALSE, what.type=
 	what.type = pmatch(what.type, c("Text", "Nodes", "AsText"));
 	if(is.na(what.type)) stop("Error: Processing type not supported!")
 	txt = if(what.type == 1) xml_text(cells)
-		else if(what.type == 2) xml_contents(cells)
+		else if(what.type == 2) lapply(cells, xml_contents) # preserve tree structure
 		else lapply(cells, function(cell) as.character(xml_contents(cell)));
 	txt = FUN(txt, ..., hasTags = (what.type > 1));
 	### Update table:
