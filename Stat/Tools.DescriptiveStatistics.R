@@ -5,7 +5,7 @@
 ###
 ### Tools: Descriptive Statistics
 ###
-### draft v.0.1k-fix
+### draft v.0.1l
 
 
 ###############
@@ -13,6 +13,9 @@
 ###############
 
 
+### draft v.0.1l:
+# - allow ("Name" = NA) in add.abbrev():
+#   add abbreviations for a group;
 ### draft v.0.1k - v.0.1k-fix:
 # - apply.html() function;
 # - [improvement] xml_text vs xml_contents; [v.0.1k-impr]
@@ -200,7 +203,6 @@ add.abbrev = function(x, abbr, label, view=TRUE, sep.eq = " = ") {
 	### Add Ref in table:
 	xml.ref = xml_find_all(h2, "//tbody/tr/td[contains(@class,'gt_left')]");
 	# Names that are abbreviated:
-	abbr = abbr[ ! is.na(abbr)];
 	nms = if(is.null(names(abbr))) abbr else names(abbr);
 	isEmpty = ! nzchar(nms); nms[isEmpty] = abbr[isEmpty];
 	# update table:
@@ -402,9 +404,9 @@ mtcars %>%
 	# Hack: split long statistics
 	format.html.table(len=8) %>%
 	add.abbrev(
-		c("Displ", "HP", "Rar", "Wt (klb)" = "Wt"),
+		c("Displ", "HP", "Rar", "Wt (klb)" = "Wt", gear = NA),
 		c("Displacement (in^3)", "Gross horsepower", "Rear axle ratio",
-		"Weight (1000 lbs)"));
+		"Weight (1000 lbs)", paste(3:5, "=", 3:5, "G", collapse="; ")));
 
 	# experimental: add above before format.html.table:
 	# apply.html(FUN=llammas.FUN) %>%
