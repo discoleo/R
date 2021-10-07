@@ -5,7 +5,7 @@
 ###
 ### Formula Tools
 ###
-### draft v.0.1c-fix
+### draft v.0.1c-fix2
 
 
 ### Tools to Process Formulas & Expressions
@@ -269,7 +269,7 @@ extract.str.fun = function(fn, pkg, type=1) {
 }
 extract.str.pkg = function(pkg, type=1, exclude.z = TRUE) {
 	nms = ls(getNamespace(pkg));
-	l = lapply(nms, function(fn) extract.str.fun(fn, pkg));
+	l = lapply(nms, function(fn) extract.str.fun(fn, pkg, type=type));
 	if(exclude.z) {
 		hasStr = sapply(l, function(s) length(s) >= 1);
 		nms = nms[hasStr];
@@ -286,6 +286,10 @@ ls(getNamespace(pkg))
 
 ###
 extract.str.pkg(pkg)
+
+
+### All strings in "base"
+extract.str.pkg("base")
 
 ###
 fn = "restrictedparts"
