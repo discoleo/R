@@ -5,7 +5,7 @@
 ###
 ### Formula Tools
 ###
-### draft v.0.1a
+### draft v.0.1b
 
 
 ### Tools to Process Formulas & Expressions
@@ -135,6 +135,9 @@ ef[[2]]
 ####################
 ####################
 
+### TODO
+# - Explore: remindR;
+
 ### Extract/Summary Args
 
 summary.args = function(e) {
@@ -162,11 +165,13 @@ summary.args = function(e) {
 	return(rs);
 }
 
+# Arguments for all functions in a package:
 summary.all.args = function(nm) {
 	f = ls(getNamespace(nm))
 	r = lapply(seq_along(f), function(id) {
 		fn = f[id];
-		if(substr(fn,1,1) %in% c("[", "_")) fn = paste0("\"", fn, "\"");
+		# if(substr(fn,1,1) %in% c("[", "_"))
+		fn = paste0("\"", fn, "\"");
 		# TODO: "<-"
 		e = parse(text=paste0("formals(", nm, ":::", fn, ")"));
 		e = eval(e);
@@ -195,4 +200,82 @@ aggregate(rep(1, nrow(a)) ~ type, a, FUN=length)
 summary.all.args("partitions")
 
 
+#####################
+#####################
 
+
+# minimalistic parser:
+parse.simple = function(x, eol="\n") {
+	len = nchar(x);
+	n.comm = list(integer(0), integer(0));
+	n.str  = list(integer(0), integer(0));
+	is.hex = function(ch) {
+		# Note: only for 1 character!
+		return((ch >= "0" && ch <= "9") ||
+			(ch >= "A" && ch <= "F") ||
+			(ch >= "a" && ch <= "f"));
+	}
+	npos = 1;
+	while(npos <= len) {
+		s = substr(x, npos, npos);
+		if(s == "#") {
+			n.comm[[1]] = c(n.comm[[1]], npos);
+			while(npos < len) {
+				npos = npos + 1;
+				if(substr(x, npos, npos) == eol) break;
+			}
+			n.comm[[2]] = c(n.comm[[2]], npos);
+			npos = npos + 1; next;
+		}
+		if(s == "\"" || s == "'") {
+			n.str[[1]] = c(n.str[[1]], npos);
+			while(npos < len) {
+				npos = npos + 1;
+				se = substr(x, npos, npos);
+				if(se == "\\") {
+					len.end = min(len, npos + 4);
+					npos = npos + 1;
+					isAllHex = TRUE;
+					while(npos <= len.end) {
+						se = substr(x, npos, npos);
+						if( ! is.hex(se)) { isAllHex = FALSE; break; }
+						npos = npos + 1;
+					}
+					if(isAllHex) next;
+				}
+				if(se == s) break;
+			}
+			n.str[[2]] = c(n.str[[2]], npos);
+			npos = npos + 1; next;
+		}
+		npos = npos + 1;
+	}
+	return(list(str = n.str, comm = n.comm));
+}
+extract.str = function(s, npos) {
+	if(length(npos[[1]]) == 0) return(character(0));
+	sapply(seq(length(npos[[1]])), function(id) substr(s, npos[[1]][[id]], npos[[2]][[id]]));
+}
+extract.str.pkg = function(fn, pkg, type=1) {
+	fn = as.symbol(fn); pkg = as.symbol(pkg);
+	fn = list(substitute(pkg ::: fn));
+	# deparse
+	s = paste0(do.call(deparse, fn), collapse="");
+	npos = parse.simple(s);
+	extract.str(s, npos[[type]])
+}
+
+### Example
+
+pkg = "partitions"
+ls(getNamespace(pkg))
+
+fn = "restrictedparts"
+extract.str.pkg(fn, pkg)
+
+###
+lapply(ls(getNamespace(pkg)), function(fn) extract.str.pkg(fn, pkg))
+
+
+###
+paste0(deparse(partitions::restrictedparts), collapse=" ");
