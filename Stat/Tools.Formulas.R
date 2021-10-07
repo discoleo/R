@@ -5,7 +5,7 @@
 ###
 ### Formula Tools
 ###
-### draft v.0.1c
+### draft v.0.1c-fix
 
 
 ### Tools to Process Formulas & Expressions
@@ -233,6 +233,9 @@ parse.simple = function(x, eol="\n") {
 				npos = npos + 1;
 				se = substr(x, npos, npos);
 				if(se == "\\") {
+					npos = npos + 1;
+					# simple escape vs Unicode:
+					if(substr(x, npos, npos) != "u") next;
 					len.end = min(len, npos + 4);
 					npos = npos + 1;
 					isAllHex = TRUE;
