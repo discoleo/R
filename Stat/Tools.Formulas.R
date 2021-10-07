@@ -5,7 +5,7 @@
 ###
 ### Formula Tools
 ###
-### draft v.0.1b
+### draft v.0.1c
 
 
 ### Tools to Process Formulas & Expressions
@@ -171,8 +171,8 @@ summary.all.args = function(nm) {
 	r = lapply(seq_along(f), function(id) {
 		fn = f[id];
 		# if(substr(fn,1,1) %in% c("[", "_"))
+		# DONE also: "<-"
 		fn = paste0("\"", fn, "\"");
-		# TODO: "<-"
 		e = parse(text=paste0("formals(", nm, ":::", fn, ")"));
 		e = eval(e);
 		if(is.null(e)) return(data.frame(Name=NA, type=NA, FUN=f[id]));
@@ -256,7 +256,7 @@ extract.str = function(s, npos) {
 	if(length(npos[[1]]) == 0) return(character(0));
 	sapply(seq(length(npos[[1]])), function(id) substr(s, npos[[1]][[id]], npos[[2]][[id]]));
 }
-extract.str.pkg = function(fn, pkg, type=1) {
+extract.str.fun = function(fn, pkg, type=1) {
 	fn = as.symbol(fn); pkg = as.symbol(pkg);
 	fn = list(substitute(pkg ::: fn));
 	# deparse
@@ -264,17 +264,30 @@ extract.str.pkg = function(fn, pkg, type=1) {
 	npos = parse.simple(s);
 	extract.str(s, npos[[type]])
 }
+extract.str.pkg = function(pkg, type=1, exclude.z = TRUE) {
+	nms = ls(getNamespace(pkg));
+	l = lapply(nms, function(fn) extract.str.fun(fn, pkg));
+	if(exclude.z) {
+		hasStr = sapply(l, function(s) length(s) >= 1);
+		nms = nms[hasStr];
+		l = l[hasStr];
+	}
+	names(l) = nms;
+	return(l);
+}
 
 ### Example
 
 pkg = "partitions"
 ls(getNamespace(pkg))
 
-fn = "restrictedparts"
-extract.str.pkg(fn, pkg)
+###
+extract.str.pkg(pkg)
 
 ###
-lapply(ls(getNamespace(pkg)), function(fn) extract.str.pkg(fn, pkg))
+fn = "restrictedparts"
+extract.str.fun(fn, pkg)
+
 
 
 ###
