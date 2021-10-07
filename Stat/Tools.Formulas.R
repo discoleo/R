@@ -5,7 +5,7 @@
 ###
 ### Formula Tools
 ###
-### draft v.0.1c-fix2
+### draft v.0.1d
 
 
 ### Tools to Process Formulas & Expressions
@@ -129,7 +129,7 @@ ef[[1]]
 if(is.name(ef[[1]]) && length(ef) > 1) print("Function!");
 ### Argument:
 ef[[2]]
-# is.function(eval(e[[1]][[2]][[2]][[1]])) # but error on "x";
+# is.function(eval(ef[[1]]));
 
 
 ####################
@@ -218,6 +218,7 @@ parse.simple = function(x, eol="\n") {
 	npos = 1;
 	while(npos <= len) {
 		s = substr(x, npos, npos);
+		# State: COMMENT
 		if(s == "#") {
 			n.comm[[1]] = c(n.comm[[1]], npos);
 			while(npos < len) {
@@ -227,6 +228,7 @@ parse.simple = function(x, eol="\n") {
 			n.comm[[2]] = c(n.comm[[2]], npos);
 			npos = npos + 1; next;
 		}
+		# State: STRING
 		if(s == "\"" || s == "'") {
 			n.str[[1]] = c(n.str[[1]], npos);
 			while(npos < len) {
@@ -255,21 +257,32 @@ parse.simple = function(x, eol="\n") {
 	}
 	return(list(str = n.str, comm = n.comm));
 }
-extract.str = function(s, npos) {
+extract.str = function(s, npos, strip=FALSE) {
 	if(length(npos[[1]]) == 0) return(character(0));
-	sapply(seq(length(npos[[1]])), function(id) substr(s, npos[[1]][[id]], npos[[2]][[id]]));
+	strip.FUN = if(strip) {
+			function(id) {
+				if(npos[[1]][[id]] + 1 < npos[[2]][[id]]) {
+					nStart = npos[[1]][[id]] + 1;
+					nEnd = npos[[2]][[id]] - 1; # TODO: Error with malformed string
+					return(substr(s, nStart, nEnd));
+				} else {
+					return("");
+				}
+			}
+		} else function(id) substr(s, npos[[1]][[id]], npos[[2]][[id]]);
+	sapply(seq(length(npos[[1]])), strip.FUN);
 }
-extract.str.fun = function(fn, pkg, type=1) {
+extract.str.fun = function(fn, pkg, type=1, strip=TRUE) {
 	fn = as.symbol(fn); pkg = as.symbol(pkg);
 	fn = list(substitute(pkg ::: fn));
 	# deparse
 	s = paste0(do.call(deparse, fn), collapse="");
 	npos = parse.simple(s);
-	extract.str(s, npos[[type]])
+	extract.str(s, npos[[type]], strip=strip)
 }
-extract.str.pkg = function(pkg, type=1, exclude.z = TRUE) {
+extract.str.pkg = function(pkg, type=1, exclude.z = TRUE, strip=TRUE) {
 	nms = ls(getNamespace(pkg));
-	l = lapply(nms, function(fn) extract.str.fun(fn, pkg, type=type));
+	l = lapply(nms, function(fn) extract.str.fun(fn, pkg, type=type, strip=strip));
 	if(exclude.z) {
 		hasStr = sapply(l, function(s) length(s) >= 1);
 		nms = nms[hasStr];
@@ -287,6 +300,10 @@ ls(getNamespace(pkg))
 ###
 extract.str.pkg(pkg)
 
+###
+extract.str.pkg("sp") # relatively fast
+# 1st run: ages! afterwards: 0.2 s;
+extract.str.pkg("NetLogoR")
 
 ### All strings in "base"
 extract.str.pkg("base")
