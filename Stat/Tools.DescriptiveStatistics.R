@@ -5,7 +5,7 @@
 ###
 ### Tools: Descriptive Statistics
 ###
-### draft v.0.1l
+### draft v.0.1m
 
 
 ###############
@@ -13,6 +13,9 @@
 ###############
 
 
+### draft v.0.1m:
+# - consistent return values inside apply.html();
+# - experimental framework to test concepts;
 ### draft v.0.1l:
 # - allow ("Name" = NA) in add.abbrev():
 #   add abbreviations for a group;
@@ -261,7 +264,7 @@ read.shiny = function(file.html, text=NULL, strip=TRUE) {
 #####################
 
 # Note:
-# - does NOT function properly if the selected nodes contain children;
+# - TODO: solve issues when the selected nodes contain children;
 apply.html = function(x, XPATH="//tbody/tr/td", FUN, ..., view=FALSE, what.type="Text") {
 	html = as.html(x);
 	# XML
@@ -278,12 +281,14 @@ apply.html = function(x, XPATH="//tbody/tr/td", FUN, ..., view=FALSE, what.type=
 	txt = if(what.type == 1) xml_text(cells)
 		else if(what.type == 2) lapply(cells, xml_contents) # preserve tree structure
 		else lapply(cells, function(cell) as.character(xml_contents(cell)));
-	txt = FUN(txt, ..., hasTags = (what.type > 1));
-	### Update table:
-	if(is.list(txt)) {
+	txt = FUN(txt, ..., type = what.type);
+	### Update table
+	# - use attribute:
+	#   ensures consistent return value for FUN;
+	isProcessed = attr(txt, "filter");
+	if( ! is.null(isProcessed)) {
 		# nodes which were updated
-		cells = cells[txt$isUpdated];
-		txt = txt$txt;
+		cells = cells[isProcessed];
 	}
 	# proper update:
 	# Note:
@@ -291,10 +296,10 @@ apply.html = function(x, XPATH="//tbody/tr/td", FUN, ..., view=FALSE, what.type=
 	if(what.type != 2) {
 	for(id in seq_along(cells)) {
 		node = cells[id];
-		new.line = read_xml(paste0("<r>", txt[[id]], "</r>", collapse=""));
+		new.line = read_xml(paste0("<r>", paste0(txt[[id]], collapse=""), "</r>"));
 		# delete previous text
 		xml_text(node) = "";
-		if(what.type > 1) {
+		if(what.type > 2) {
 			# remove all children;
 			for(child in xml_children(node)) {
 				xml_remove(child);
@@ -311,15 +316,15 @@ apply.html = function(x, XPATH="//tbody/tr/td", FUN, ..., view=FALSE, what.type=
 	invisible(html);
 }
 
-llammas.FUN = function(s, hasTags=FALSE, escape=TRUE) {
+llamas.FUN = function(s, escape=TRUE, type=1) {
 	### Note:
 	# - incomplete: still misses the full visual effects
 	#   & some relevant information is not yet printed:
-	#   Was implemented at great expense and at the last minute using
-	#   40 specially trained Ecuadorian mountain llamas,
-	#   6 Venezuelan red llamas,
-	#   142 Mexican whooping llamas,
-	#   14 north Chilean guanacos (closely related to the llama);
+	#   "Was implemented at great expense and at the last minute using
+	#      40 specially trained Ecuadorian mountain llamas,
+	#       6 Venezuelan red llamas,
+	#     142 Mexican whooping llamas,
+	#      14 north Chilean guanacos (closely related to the llama)."
 	len = length(s);
 	rgb = sample(seq(0, 255), 3*len, replace=TRUE);
 	rgb = rgb / 255; len = len - 1;
@@ -327,10 +332,30 @@ llammas.FUN = function(s, hasTags=FALSE, escape=TRUE) {
 		id0 = 3*id + 1;
 		rgb(rgb[id0], rgb[id0 + 1], rgb[id0 + 2]);
 	});
-	# TODO: skip html tags;
-	# Note: htmltools::htmlEscape may be required;
-	s = if(escape) htmltools::htmlEscape(s) else s;
-	s = paste0("<span style=\"color:", rgb, "\">", s, "</span>");
+	# Note: htmltools::htmlEscape may be required for the text part!
+	if(type == 1) {
+		s = if(escape) htmltools::htmlEscape(s) else s;
+		s = paste0("<span style=\"color:", rgb, "\">", s, "</span>");
+	} else if(type == 3) {
+		s = lapply(seq_along(s), function(idl) {
+			lst = s[[idl]];
+			for(id in seq_along(lst)) {
+				if(nzchar(sub("^[ \t\r\n]++", "", lst[[id]], perl=TRUE)) == 0) next;
+				# Skip html tags;
+				if(lst[[id]] == "<br>") { lst[[id]] = "<br/>"; next; }
+				# TODO: Concept?
+				isTag = ! is.na(pmatch(c("<span>", "<span ", "<sup>", "<sup "), lst[[id]]));
+				if(any(isTag)) next;
+				#
+				s1 = lst[[id]];
+				# NOT necessary
+				# if(escape) htmltools::htmlEscape(lst[[id]]) else lst[[id]];
+				lst[[id]] = paste0("<span style=\"color:", rgb[[idl]], "\">", s1, "</span>");
+			}
+			return(lst);
+		})
+		names(s) = NULL;
+	}
 	return(s);
 }
 
@@ -406,10 +431,10 @@ mtcars %>%
 	add.abbrev(
 		c("Displ", "HP", "Rar", "Wt (klb)" = "Wt", gear = NA),
 		c("Displacement (in^3)", "Gross horsepower", "Rear axle ratio",
-		"Weight (1000 lbs)", paste(3:5, "=", 3:5, "G", collapse="; ")));
-
-	# experimental: add above before format.html.table:
-	# apply.html(FUN=llammas.FUN) %>%
+		# "Weight (1000 lbs)", paste(3:5, "=", 3:5, "G", collapse="; ")));
+		"Weight (1000 lbs)", paste(3:5, "=", 3:5, "G", collapse="; ")), view=F) %>%
+	# experimental:
+	apply.html(FUN=llamas.FUN, what.type="AsText", view=TRUE);
 }
 
 ### Note: XPATH
