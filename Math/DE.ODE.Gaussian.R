@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs - Gaussian
 ###
-### draft v.0.3m-gen
+### draft v.0.3m-check
 
 #############
 ### Types ###
@@ -30,9 +30,9 @@
 
 ### Liniar / Non-Liniar Gaussian-type
 
-### draft v.0.3m - v.0.3m-gen:
+### draft v.0.3m - v.0.3m-check:
 # - derived from: y = f(x) / (k + I(exp(x^n) dx)):
-#   dy + y^2 - n*x^(n-1)*y = 0;
+#   dy + y^2 - n*x^(n-1)*y = 0; [+ check]
 # - more variants & partial generalization; [v.0.3m-bis & v.0.3m-gen]
 ### draft v.0.3j - v.0.3k:
 # - derived from:
@@ -344,7 +344,7 @@ dy + y^2 - n*x^(n-1)*y # = 0
 ### D2 =>
 d2y + 2*y*dy - n*x^(n-1)*dy - n*(n-1)*x^(n-2)*y # = 0
 # variant 1:
-x*d2y + 2*x*y*dy - n*x^n*dy - (n-1)*dy  - (n-1)*y^2 # = 0
+x*d2y + 2*x*y*dy - n*x^n*dy - (n-1)*dy - (n-1)*y^2 # = 0
 # variant 2:
 y*d2y + y^2*dy - dy^2 - n*(n-1)*x^(n-2)*y^2 # = 0
 # variant 3:
@@ -357,7 +357,37 @@ x*d2y + 2*x*y*dy - 2*x^2*dy - dy  - y^2 # = 0
 ### V3:
 x*y^2*dy + x*dy^2 - 2*x^2*y*dy - y*dy  - y^3 + 2*x*y^2 # = 0
 
-# TODO: check;
+### Solution:
+y = function(x, n=2, k=1, from=0) {
+	y = exp(x^n);
+	div = sapply(x, function(xu)
+		integrate(function(x) exp(x^n), lower=from, upper=xu)$value);
+	y = y / (k + div);
+	return(y);
+}
+dy = function(x, n=2, k=1, from=0, y=NULL) {
+	yx = if( ! is.null(y)) y else yx = y(x, n=n, k=k, from=from);
+	xn = if(n != 1) x^(n-1) else 1;
+	dy = - yx^2 + n*xn*yx;
+	return(dy);
+}
+d2y = function(x, n=2, k=1, from=0) {
+	yx  = y(x, n=n, k=k, from=from);
+	dyx = dy(x, n=n, k=k, from=from, y=yx);
+	d2y = (2*x*yx - n*x^n - (n-1))*dyx  - (n-1)*yx^2;
+	d2y = - d2y / x;
+	d2y[x == 0] = 0; # TODO
+	return(d2y);
+}
+### Plot:
+n = 2
+px = c(-0.92, -0.875, -0.75, -0.65, -0.35);
+curve(y(x, n=n), from= -1.25, to = 0.75, ylim=c(-150, 75))
+sapply(px, line.tan, dx=3, p=y, dp=dy, n=n)
+# sigmoidal
+curve(dy(x, n=n), add=T, col="green")
+sapply(px, line.tan, dx=3, p=dy, dp=d2y, n=n, col="orange")
+
 
 
 ### Generalisation
@@ -371,7 +401,7 @@ x*y^2*dy + x*dy^2 - 2*x^2*y*dy - y*dy  - y^3 + 2*x*y^2 # = 0
 	- n*x^(n-1)*(2*y + b1)*dy - n*(n-1)*x^(n-2)*(y^2 + b1*y + b0) # = 0
 # Variant 1:
 x*(2*y + b1)*d2y + 2*x*dy^2 + 2*x*(y^2 + b1*y + b0)*(2*y + b1)*dy +
-	- n*x^n*(2*y + b1)*dy - (n-1)*(2*y + b1)*dy + - (n-1)*(y^2 + b1*y + b0)^2 # = 0
+	- n*x^n*(2*y + b1)*dy - (n-1)*(2*y + b1)*dy - (n-1)*(y^2 + b1*y + b0)^2 # = 0
 
 # TODO
 
