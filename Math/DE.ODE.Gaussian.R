@@ -247,6 +247,7 @@ sapply(c(-3:3 * 3/4), line.tan, dx=3, p=dy, dp=d2y, k=k, col="orange")
 d2z + 2*x*dz - 4*z # = 0
 # Level 4:
 d2z + 2*x*dz - 6*z # = 0
+
 ### Solution:
 dny = function(x, n=2) {
 	dp = exp(-x^n)
@@ -273,22 +274,24 @@ integrate.y = function(x, FUN=dny, n=2, lower=-Inf) {
 	dp = sapply(x, function(x) integrate(FUN, lower=lower, upper=x, n=n)$value)
 	return(dp)
 }
+### Plot:
+
 ### Levels: +3, +2, +1;
 curve(y(x), from= -3, to = 2.2)
-sapply(c(-3:3 * 3/4), line.tan, dx=3, p=y, dp=dp2y)
+line.tan(c(-3:3 * 3/4), dx=3, p=y, dp=dp2y)
 # *NON*-sigmoidal / seems increasing
 curve(dp2y(x), add=T, col="green")
-sapply(c(-3:3 * 3/4), line.tan, dx=3, p=dp2y, dp=dp1y, col="orange")
+line.tan(c(-3:3 * 3/4), dx=3, p=dp2y, dp=dp1y, col="orange")
 
 
 ### Levels: +4, +3, +2;
 # Note: takes very long !!!
 # - should be implemented using the compact/derived formulas!
 curve(y(x, level=4), from= -3, to = 2.2)
-sapply(c(-3:3 * 3/4), line.tan, dx=3, p=y, dp=dp3y, level=4)
+line.tan(c(-3:3 * 3/4), dx=3, p=y, dp=dp3y, level=4)
 # *NON*-sigmoidal / seems increasing
 curve(dp3y(x), add=T, col="green")
-sapply(c(-3:3 * 3/4), line.tan, dx=3, p=dp3y, dp=dp2y, col="orange")
+line.tan(c(-3:3 * 3/4), dx=3, p=dp3y, dp=dp2y, col="orange")
 
 
 #####################
@@ -328,10 +331,10 @@ d3y = function(x) {
 }
 ### Plot:
 curve(y(x), from= -0.01, to = 3)
-sapply(c(0:3 * 3/4), line.tan, dx=3, p=y, dp=dy)
+line.tan(c(0:3 * 3/4), dx=3, p=y, dp=dy)
 # sigmoidal
 curve(dy(x), add=T, col="green")
-sapply(c(0:3 * 3/4), line.tan, dx=3, p=dy, dp=d2y, col="orange")
+line.tan(c(0:3 * 3/4), dx=3, p=dy, dp=d2y, col="orange")
 
 
 ##############
@@ -383,10 +386,10 @@ d2y = function(x, n=2, k=1, from=0) {
 n = 2
 px = c(-0.92, -0.875, -0.75, -0.65, -0.35);
 curve(y(x, n=n), from= -1.25, to = 0.75, ylim=c(-150, 75))
-sapply(px, line.tan, dx=3, p=y, dp=dy, n=n)
+line.tan(px, dx=3, p=y, dp=dy, n=n)
 # sigmoidal
 curve(dy(x, n=n), add=T, col="green")
-sapply(px, line.tan, dx=3, p=dy, dp=d2y, n=n, col="orange")
+line.tan(px, dx=3, p=dy, dp=d2y, n=n, col="orange")
 
 
 
