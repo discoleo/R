@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs - Gaussian
 ###
-### draft v.0.3m-check
+### draft v.0.3n
 
 #############
 ### Types ###
@@ -30,6 +30,9 @@
 
 ### Liniar / Non-Liniar Gaussian-type
 
+### draft v.0.3n:
+# - derived from: I(exp(y^n)) = P1(x) * P2(y);
+#   x*d2y - n*x*y^(n-1)*dy^2 - n*y^n*dy + 2*dy = 0;
 ### draft v.0.3m - v.0.3m-check:
 # - derived from: y = f(x) / (k + I(exp(x^n) dx)):
 #   dy + y^2 - n*x^(n-1)*y = 0; [+ check]
@@ -1485,8 +1488,33 @@ d2y = function(x, b=2, FUN=base.I, n=2, k=1, low=0) {
 n = 2; k = 1; b = 3;
 px = c(-2:2 * 4/7);
 curve(y(x, b=b, n=n, k=k), from= -2, to = 2, ylim=c(-0.3, 1))
-sapply(px, line.tan, dx=3, p=y, dp=dy, b=b, n=n, k=k)
+line.tan(px, dx=3, p=y, dp=dy, b=b, n=n, k=k)
 # gaussian
 curve(dy(x, n=n, k=k), add=T, col="green")
-sapply(px, line.tan, dx=3, p=dy, dp=d2y, n=n, k=k, col="orange")
+line.tan(px, dx=3, p=dy, dp=d2y, n=n, k=k, col="orange")
+
+
+##################
+##################
+
+### I(exp(y^n) dy) = P1(x) * P2(y)
+
+### Example:
+### I(exp(y^n) dy) = x*y
+
+### D =>
+exp(y^n) - x*dy - y # = 0
+
+### D2 =>
+n*y^(n-1)*exp(y^n)*dy - x*d2y - 2*dy # = 0
+n*y^(n-1)*(x*dy + y)*dy - x*d2y - 2*dy # = 0
+# =>
+x*d2y - n*x*y^(n-1)*dy^2 - n*y^n*dy + 2*dy # = 0
+
+### Example:
+# n = 2
+x*d2y - 2*x*y*dy^2 - 2*y^2*dy + 2*dy # = 0
+
+
+# TODO: check
 
