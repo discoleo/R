@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs - Gaussian
 ###
-### draft v.0.3k
+### draft v.0.3m
 
 #############
 ### Types ###
@@ -30,6 +30,9 @@
 
 ### Liniar / Non-Liniar Gaussian-type
 ###
+### draft v.0.3m:
+# - derived from: y = f(x) / (k + I(exp(x^n) dx)):
+#   dy + y^2 - n*x^(n-1)*y = 0;
 ### draft v.0.3j - v.0.3k:
 # - derived from:
 #   y = x^2*e^(x^3) + x^3*e^(x^2) + F0(x);
@@ -124,16 +127,16 @@ source("DE.ODE.Helper.R")
 
 ### Section B: Mixt
 
-### B.1. Mixt Liniar
+### B.1. Mixt Linear
 ### y = e^(F1(x)) + e^(F2(x))
 
 ### B.2. Mixt Exponential-Trigonometric
 ### y = sin(F1(x)) * exp(-F1(x))
 
-### B.3. Mixt Non-Liniar
+### B.3. Mixt Non-Linear
 ### y = Integral(exp(F1(x))) * Integral(exp(-F1(x)))
 
-### B.4. Non-Liniar Double Exp
+### B.4. Non-Linear Double Exp
 ### y = e^I, where I = I(e^P(x)) dx;
 
 
@@ -149,6 +152,7 @@ source("DE.ODE.Helper.R")
 ### I(D1) by parts =>
 d2z + 2*x*dz - 2*z # = 0
 # where dz = sqrt(pi)/2 * erf(x); d2z = e^(-x^2);
+
 ### Solution:
 y = function(x, b0=0, lower = if(b0 == 0) -Inf else 0) {
 	dy.x = dy(x, b0=b0, lower=lower)
@@ -327,6 +331,19 @@ sapply(c(0:3 * 3/4), line.tan, dx=3, p=y, dp=dy)
 # sigmoidal
 curve(dy(x), add=T, col="green")
 sapply(c(0:3 * 3/4), line.tan, dx=3, p=dy, dp=d2y, col="orange")
+
+
+##############
+
+### y = e^(x^n) / (k + I(e^(x^n)dx));
+
+# D =>
+dy + y^2 - n*x^(n-1)*y # = 0
+# D2 =>
+d2y + 2*y*dy - n*x^(n-1)*dy - n*(n-1)*x^(n-2)*y # = 0
+x*d2y + 2*x*y*dy - n*x^n*dy - (n-1)*dy  - (n-1)*y^2 # = 0
+
+# TODO: check;
 
 
 #######################
