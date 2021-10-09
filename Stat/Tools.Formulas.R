@@ -5,7 +5,7 @@
 ###
 ### Formula Tools
 ###
-### draft v.0.1d
+### draft v.0.1e
 
 
 ### Tools to Process Formulas & Expressions
@@ -94,6 +94,63 @@ filter.vars = function(vars, signs, simplify="First", FUN=sum, debug=TRUE) {
 		id = sort(id); id = match(vars[id], tmp$vars); tmp = tmp[id, ];
 		return(tmp);
 	}
+}
+
+# tokenizes a formula in its parts delimited by "~"
+# Note:
+# - tokenization is automatic for ",";
+# - but call MUST then use FUN(expression(_conditions_), other_args, ...);
+split.formula = function(e) {
+	tok = list();
+	while(length(e) > 0) {
+		if(e[[1]] == "~") {
+			if(length(e) == 2) { tok = c(NA, e[[2]], tok); break; }
+			tok = c(e[[3]], tok);
+			e = e[[2]];
+		} else {
+			tok = c(e, tok); break;
+		}
+	}
+	return(tok);
+}
+### Better ifelse()
+# TODO: enable constant values in FUN.list;
+eval.by.formula = function(e, FUN.list, ..., default=NA) {
+	tok = split.formula(e);
+	if(length(tok) == 0) return();
+	FUN = FUN.list;
+	# Argument List
+	clst = substitute(as.list(...))[-1];
+	len  = length(clst);
+	clst.all = lapply(clst, eval);
+	eval.f = function(idCond) {
+		sapply(seq(length(isEval)), function(id) {
+			if(isEval[[id]] == FALSE) return(default);
+			args.l = lapply(clst.all, function(a) a[[id]]);
+			do.call(FUN[[idCond]], args.l);
+		});
+	}
+	# eval 1st condition:
+	isEval = eval(tok[[1]]);
+	rez = eval.f(1);
+	if(length(tok) == 1) return(rez);
+	# eval remaining conditions
+	isEvalAll = isEval;
+	for(id in seq(2, length(tok))) {
+		if(tok[[id]] == ".") {
+			# Remaining conditions: tok == ".";
+			# makes sens only on the last position
+			if(id < length(tok)) warning("\".\" is not last!");
+			isEval = ! isEvalAll;
+			rez[isEval] = eval.f(id)[isEval];
+			next;
+		}
+		isEval = rep(FALSE, length(isEval));
+		isEval[ ! isEvalAll] = eval(tok[[id]])[ ! isEvalAll];
+		isEvalAll[isEval] = isEval[isEval];
+		rez[isEval] = eval.f(id)[isEval];
+	}
+	return(rez);
 }
 
 
