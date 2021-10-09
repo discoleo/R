@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs - Gaussian
 ###
-### draft v.0.3m-bis
+### draft v.0.3m-gen
 
 #############
 ### Types ###
@@ -30,10 +30,10 @@
 
 ### Liniar / Non-Liniar Gaussian-type
 
-### draft v.0.3m - v.0.3m-bis:
+### draft v.0.3m - v.0.3m-gen:
 # - derived from: y = f(x) / (k + I(exp(x^n) dx)):
 #   dy + y^2 - n*x^(n-1)*y = 0;
-# - more variants;
+# - more variants & partial generalization; [v.0.3m-bis & v.0.3m-gen]
 ### draft v.0.3j - v.0.3k:
 # - derived from:
 #   y = x^2*e^(x^3) + x^3*e^(x^2) + F0(x);
@@ -336,11 +336,12 @@ sapply(c(0:3 * 3/4), line.tan, dx=3, p=dy, dp=d2y, col="orange")
 
 ##############
 
-### y = e^(x^n) / (k + I(e^(x^n)dx));
+### y = e^(x^n) / (k + I(e^(x^n) dx));
 
-# D =>
+### D =>
 dy + y^2 - n*x^(n-1)*y # = 0
-# D2 =>
+
+### D2 =>
 d2y + 2*y*dy - n*x^(n-1)*dy - n*(n-1)*x^(n-2)*y # = 0
 # variant 1:
 x*d2y + 2*x*y*dy - n*x^n*dy - (n-1)*dy  - (n-1)*y^2 # = 0
@@ -357,6 +358,22 @@ x*d2y + 2*x*y*dy - 2*x^2*dy - dy  - y^2 # = 0
 x*y^2*dy + x*dy^2 - 2*x^2*y*dy - y*dy  - y^3 + 2*x*y^2 # = 0
 
 # TODO: check;
+
+
+### Generalisation
+### (y^2 + b1*y + b0) * (k + I(e^(x^n) dx)) = e^(x^n);
+
+### D =>
+(2*y + b1)*dy + (y^2 + b1*y + b0)^2 - n*x^(n-1)*(y^2 + b1*y + b0) # = 0
+
+### D2 =>
+(2*y + b1)*d2y + 2*dy^2 + 2*(y^2 + b1*y + b0)*(2*y + b1)*dy +
+	- n*x^(n-1)*(2*y + b1)*dy - n*(n-1)*x^(n-2)*(y^2 + b1*y + b0) # = 0
+# Variant 1:
+x*(2*y + b1)*d2y + 2*x*dy^2 + 2*x*(y^2 + b1*y + b0)*(2*y + b1)*dy +
+	- n*x^n*(2*y + b1)*dy - (n-1)*(2*y + b1)*dy + - (n-1)*(y^2 + b1*y + b0)^2 # = 0
+
+# TODO
 
 
 #######################
