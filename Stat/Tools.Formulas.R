@@ -5,7 +5,7 @@
 ###
 ### Formula Tools
 ###
-### draft v.0.1e-fix
+### draft v.0.1e-fix2
 
 
 ### Tools to Process Formulas & Expressions
@@ -115,7 +115,6 @@ split.formula = function(e) {
 }
 ### Improved: ifelse()
 # TODO:
-# - enable constant values in FUN.list;
 # - enable named arguments;
 eval.by.formula = function(e, FUN.list, ..., default=NA) {
 	tok = split.formula(e);
@@ -128,6 +127,8 @@ eval.by.formula = function(e, FUN.list, ..., default=NA) {
 	eval.f = function(idCond) {
 		sapply(seq(length(isEval)), function(id) {
 			if(isEval[[id]] == FALSE) return(default);
+			if( ! is.function(FUN[[idCond]])) return(FUN[[idCond]]);
+			# apply FUN
 			args.l = lapply(clst.all, function(a) if(length(a) == 1) a else a[[id]]);
 			do.call(FUN[[idCond]], args.l);
 		});
