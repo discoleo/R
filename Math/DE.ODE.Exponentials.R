@@ -7,7 +7,7 @@
 ### Differential Equations
 ### ODEs - Exponentials
 ###
-### draft v.0.1c
+### draft v.0.1d
 
 
 ### ODEs Derived from Exponentials
@@ -212,7 +212,7 @@ y.int = function(lower, upper=0) {
 lim = c(-7, 1/4)
 # interesting integral
 # D ( 1/2*(1-sqrt(1-4*x))*exp(sqrt(1-4*x))) = exp(sqrt(1-4*x));
-# Note: switched signs;
+# Note: switched signs; [TODO]
 curve(Ip.f(x), from=lim[1], to=lim[2])
 curve(Ip.int(x, upper=1/4, diff=3/4), add=T, col="green")
 # TODO:
@@ -266,4 +266,25 @@ log(y - x) = ... /2 / (y^2*d2y - x^2*d2y - x*dy^3 + y*dy^2 + x*dy - y)
 
 ### TODO: check!
 
+
+#########################
+#########################
+
+### I(f1(y) dy) = f2(y, x)
+
+### I( exp(y) / y dy) = P1(x)*P2(y)
+
+### Example:
+# I( exp(y) / y dy) = x*y
+
+### D =>
+exp(y) / y - x*dy - y # = 0
+exp(y) - x*y*dy - y^2 # = 0
+
+### D2 =>
+exp(y)*dy - x*y*d2y - x*dy^2 - y*dy - 2*y*dy # = 0
+(x*y*dy + y^2)*dy - x*y*d2y - x*dy^2 - 3*y*dy # = 0
+x*y*d2y - x*y*dy^2 + x*dy^2 - y^2*dy + 3*y*dy # = 0
+
+# TODO: check!
 
