@@ -7,7 +7,7 @@
 ### Differential Equations
 ### ODEs - Exponentials
 ###
-### draft v.0.1e
+### draft v.0.1e-var
 
 
 ### ODEs Derived from Exponentials
@@ -23,9 +23,10 @@
 ###############
 
 
-### v.0.1e:
+### v.0.1e - v.0.1e-var:
 # - derived from: dy - G(x)*y = F(x)
 #   y*d2y - dy^2 + f*dy - dg*y^2 - df*y = 0;
+# - more variants; [v.0.1e-var]
 ### v.0.1d:
 # - [started] derived from another ODE;
 
@@ -294,12 +295,30 @@ d2y - (g^2 + dg)*y - g*f - df # = 0
 y*d2y - (dy - f)*dy - dg*y^2 - df*y # = 0
 y*d2y - dy^2 + f*dy - dg*y^2 - df*y # = 0
 
+### Variant 3:
+g*d2y - g^2*(g*y + f) - dg*(dy - f) - g*df # = 0
+g*d2y - dg*dy - g^3*y - g^2*f + dg*f - g*df # = 0
+
+
 ### Examples:
 # G(x) = exp(x^2) =>
 y*d2y - dy^2 + f*dy - 2*x*exp(x^2)*y^2 - df*y # = 0
 ### Extra-Variant:
 y*d2y - dy^2 + f*dy - 2*x*(dy - f)*y - df*y # = 0
 y*d2y - dy^2 - 2*x*y*dy + f*dy + 2*x*f*y - df*y # = 0
+
+
+### Example 1:
+# F(x) = exp(x^3) + b0
+# G(x) = -3*x^2
+d2y - (9*x^4 - 6*x)*y + 3*b0*x^2 # = 0
+
+### Example 2:
+# G(x) = -1/x;
+x^2*d2y + x*dy + y - x^2*df # = 0
+# F(x) = ln(x^n + b0);
+x^2*d2y + x*dy + y - n*x^(n+1)/(x^n + b0) # = 0
+
 
 
 #########################
