@@ -24,7 +24,7 @@
 # - Example based on P[5]:
 #   y^3*dy - 2*b0*y*dy + 5*x*dy - y = 0;
 ### draft v.0.4c:
-# - improved formatting;
+# - improved formatting; [v.0.4c & v.0.4d-bis]
 ### draft v.0.4a - v.0.4b:
 # - derived from:
 #   y = x * I(1 / (x^n + k) dx) + F0(x); [fixed: v.0.4a-fix]
@@ -162,34 +162,8 @@ n*P*dy - y*D(P) # = 0;
 ### helper functions
 
 # include: DE.ODE.Helper.R;
+source("DE.ODE.Helper.R")
 
-line.tan = function(x, col="red", dx=5, p=p, dp=dp, ...) {
-	slope = dp(x, ...)
-	x.max = ifelse( (abs(x) >= 1), dx*x, 10);
-	isInf = abs(slope) == Inf
-	x.max[isInf] = x[isInf]
-	p.x = p(x, ...)
-	lines(c(x, x.max), c(p.x, p.x + (x.max-x)*slope), col=col)
-	return(slope)
-}
-###
-rootn = function(r, n) {
-	ifelse( (Im(r) == 0 & Re(r) >= 0), r^(1/n), - (-r)^(1/n) )
-}
-### round()
-round0 = function(m, tol=1E-7) {
-	m[abs(Re(m)) < tol & abs(Im(m)) < tol] = 0
-	isNotNA =  ! is.na(m)
-	isZero = (Re(m) != 0) & (abs(Re(m)) < tol)
-	if(any(isZero[isNotNA])) {
-		m[isZero] = complex(re=0, im=Im(m[isZero]))
-	}
-	isZero = (Im(m) != 0) & (abs(Im(m)) < tol)
-	if(any(isZero[isNotNA])) {
-		m[isZero] = Re(m[isZero])
-	}
-	return(m)
-}
 
 ##########################
 
@@ -199,9 +173,9 @@ round0 = function(m, tol=1E-7) {
 ########################
 
 
-##########################
+###########################
 ### Cardano-Polynomials ###
-##########################
+###########################
 
 ### Cardano-Polynomials:
 ### Full Root
@@ -938,7 +912,8 @@ y^2*dy - 2*s*y*dy + (s^2 - c)*dy - y^2*ds + (2*s*ds - dc)*y = 1/3*dr - 2*c*ds - 
 # c = x
 # r = x^3
 y^2*dy - 2*y*dy - (x-1)*dy - y = x^2 - 2
-###
+
+### Solution & Plot:
 y = function(x, n=3) {
 	s = 1
 	d = 1/2 * (x^3 - 3*x + 1)
@@ -957,7 +932,7 @@ dy = function(x) {
 	return(dp)
 }
 curve(y, from=-2, to=2)
-sapply(c(-(4:1)/5, (1:6)/5), line.tan, dx=3, p=y, dp=dy)
+line.tan(c(-(4:1)/5, (1:6)/5), dx=3, p=y, dp=dy)
 
 ###########
 
@@ -993,7 +968,8 @@ y^2*dy - 2*(s1+s2)*y*dy - (ds1+ds2)*y^2 + (s1^2 + s2^2 + 2*s1*s2 + b1 - c)*dy +
 # c = x
 # r = x^3
 y^2*dy + (x^2 - x)*dy + (2*x-1)*y = 9*x^2 - 4*x
-###
+
+### Solution & Plot:
 y = function(x, n=3) {
 	s1 = x; s2 = -x;
 	b1 = x^2; c = x; r = x^3;
@@ -1014,7 +990,7 @@ dy = function(x) {
 }
 curve(y, from=-3, to=3)
 # a nice local minimum
-sapply(c(-(4:1)/5, (1:6)/5), line.tan, dx=3, p=y, dp=dy)
+line.tan(c(-(4:1)/5, (1:6)/5), dx=3, p=y, dp=dy)
 
 
 ####################
@@ -1090,7 +1066,7 @@ y = (x^2+x)*k^4 - (x^2+2*x+1)*k^3 + x^2*k^2 + (x^2+x)*k
  - 80*x^12 - 40*x^13 - 20*x^14) * y * dy +
 (15*x + 30*x^2 + 15*x^4 + 75*x^5 + 45*x^6 + 30*x^7 + 45*x^8 + 45*x^9 + 30*x^10) * y^2 * dy # = 0
 
-### Solution
+### Solution & Plot:
 y = function(x, n=5) {
 	# root
 	k = rootn(x^2-x+1, n)
@@ -1119,7 +1095,7 @@ dy = function(x) {
 }
 curve(y, from=-2, to=2)
 # a nice ?global/local? minimum
-sapply(c(-(4:1)/5, (1:6)/5), line.tan, dx=3, p=y, dp=dy)
+line.tan(c(-(4:1)/5, (1:6)/5), dx=3, p=y, dp=dy)
 
 
 #############
@@ -1138,7 +1114,8 @@ y = k^4 - k^3 + k^2 + k
  + (110 - 240*x + 150*x^2 - 25*x^3 + 5*x^4) * dy +
  + (- 60 + 80*x - 20*x^3) * y * dy +
  + (30 - 60*x + 30*x^2) * y^2 * dy
-### Solution
+
+### Solution & Plot:
 y = function(x, n=5) {
 	# root
 	k = rootn(x - 1, n)
@@ -1159,9 +1136,10 @@ dy = function(x) {
 	dp = if(div != 0) dp / div else Inf;
 	return(dp)
 }
+### Plot:
 curve(y, from=-2, to=3)
 # a nice global minimum
-sapply(c(-(4:1)/3, (1:6)/3), line.tan, dx=3, p=y, dp=dy)
+line.tan(c(-(4:1)/3, (1:6)/3), dx=3, p=y, dp=dy)
 
 
 #############
@@ -1184,7 +1162,8 @@ y = k^4 - k^3 + k^2 + k
 	+ 5*a^4 + 5*x + 105*x^2 - 5*x^3 + 5*x^4) * dy +
  + (- 20*a + 120*a*x + 60*a*x^2 - 60*a^2 - 60*a^2*x + 20*a^3 + 20*x - 60*x^2 - 20*x^3) * y * dy +
  + (- 60*a*x + 30*a^2 + 30*x^2) * y^2 * dy # = 0
-### Solution
+ 
+### Solution & Plot:
 y = function(x, a, n=5) {
 	# root
 	k = rootn(x - a, n)
@@ -1207,9 +1186,10 @@ dy = function(x, a) {
 	dp = if(div != 0) dp / div else Inf;
 	return(dp)
 }
+### Plot:
 curve(y(x, a=a), from=a-2, to=a+3)
 # a nice global minimum
-sapply(c(a-(4:1)/3, a+(1:6)/3), line.tan, dx=3, p=y, dp=dy, a=a)
+line.tan(c(a-(4:1)/3, a+(1:6)/3), dx=3, p=y, dp=dy, a=a)
 
 
 ##########################
@@ -1431,7 +1411,8 @@ c*y*d2y + f*d2y + c*dy^2 + 2/3*df*dy - 1/2*d2c*y^2 - 1/3*d2f*y # = 0
 x^2*(x^3-1)*d2y - c^2*dy^3 - c*x^2*dy^2 + 2*x*dy # = 0
 # z = dy; dz = d2y;
 x^2*(x^3-1)*dz - c^2*z^3 - c*x^2*z^2 + 2*x*z # = 0
-### Solution:
+
+### Solution & Plot:
 # y = (f + sqrt(f^2 - c^3))^(1/3) + (f - sqrt(f^2 - c^3))^(1/3)
 y = function(x, h, n=3) {
 	f.x = x^3 - 1
@@ -1454,25 +1435,27 @@ d2y = function(x, h) {
 	dp = ifelse(div != 0, dp / div, Inf); # TODO
 	return(dp)
 }
-#
+### Plot:
 c = 1;
 # a small local minimum
 curve(y(x, c), from=-3, to=3)
-sapply(c(-2, c(-(2:1), 1:2)/1.7, 2), line.tan, dx=3, p=y, dp=dy, h=c)
+line.tan(c(-2, c(-(2:1), 1:2)/1.7, 2), dx=3, p=y, dp=dy, h=c)
 # D(y)
 curve(dy(x, c), from=-3, to=3, add=T, col="green")
-sapply(c(-2, c(-(2:1), 1:2)/1.7, 2), line.tan, dx=3, p=dy, dp=d2y, h=c, col="orange")
+line.tan(c(-2, c(-(2:1), 1:2)/1.7, 2), dx=3, p=dy, dp=d2y, h=c, col="orange")
 
 
 #######################
 
 ### (x^n - 1)*dy = f(x);
+# [simple Model]
 # x*(x^n - 1)*d2y + n*dy = x*df - n*f;
 x*(x^n - 1)*d2y + b*(x^n - 1)*y*dy + n*dy - b*f*y - x*df + n*f # = 0
 # where b = a constant or a function;
 # e.g. b = x; f = b0 (constant);
 x*(x^n - 1)*d2y + x*(x^n - 1)*y*dy + n*dy - b0*x*y + n*b0 # = 0
-### Solution:
+
+### Solution & Plot:
 y = function(x, n=3, b0=1) {
 	f.x = x^n - 1
 	y.f = function(x) b0/(x^n - 1)
@@ -1506,11 +1489,11 @@ d2ymixt = function(x, n, b0=1) {
 c = 1; n = 5;
 #
 curve(y(x, n, c), from=1 + 1E-5, to=3)
-sapply(c(1.1, 2:5/1.7), line.tan, dx=3, p=y, dp=dy, n=n, b0=c)
+line.tan(c(1.1, 2:5/1.7), dx=3, p=y, dp=dy, n=n, b0=c)
 # D(y)
 curve(dy(x, n, c), add=T, col="green")
-# sapply(c(1.1, 2:5/1.7), line.tan, dx=3, p=dy, dp=d2y, n=n, b0=c, col="orange")
-sapply(c(1.1, 2:5/1.7), line.tan, dx=3, p=dy, dp=d2ymixt, n=n, b0=c, col="orange")
+# line.tan(c(1.1, 2:5/1.7), dx=3, p=dy, dp=d2y, n=n, b0=c, col="orange")
+line.tan(c(1.1, 2:5/1.7), dx=3, p=dy, dp=d2ymixt, n=n, b0=c, col="orange")
 
 
 #########################
@@ -1561,35 +1544,35 @@ dI2 = function(x, b, h, n=3) {
 b = c(3, 1); h = 1;
 #
 curve(Iy(x, b=b, h=h), from=-3, to=3)
-sapply(c(-2:2), line.tan, dx=3, p=Iy, dp=y, b=b, h=h)
+line.tan(c(-2:2), dx=3, p=Iy, dp=y, b=b, h=h)
 
 #
 curve(Iy2(x, b=b, h=h), from=-3, to=3)
-sapply(c(-2:2), line.tan, dx=3, p=Iy2, dp=dI2, b=b, h=h)
+line.tan(c(-2:2), dx=3, p=Iy2, dp=dI2, b=b, h=h)
 
 ###
 b = c(3, -1/3); h = 1;
 #
 curve(Iy(x, b=b, h=h), from=-3, to=3)
-sapply(c(-2:2), line.tan, dx=3, p=Iy, dp=y, b=b, h=h)
+line.tan(c(-2:2), dx=3, p=Iy, dp=y, b=b, h=h)
 
 ###
 b = c(3, -2); h = 2;
 #
 curve(Iy(x, b=b, h=h), from=-3, to=3)
-sapply(c(-2:2), line.tan, dx=3, p=Iy, dp=y, b=b, h=h)
+line.tan(c(-2:2), dx=3, p=Iy, dp=y, b=b, h=h)
 
 ###
 b = c(2, 2); h = -3;
 #
 curve(Iy(x, b=b, h=h), from=-3, to=3)
-sapply(c(-2:2), line.tan, dx=3, p=Iy, dp=y, b=b, h=h)
+line.tan(c(-2:2), dx=3, p=Iy, dp=y, b=b, h=h)
 
 ###
 b = c(-2, 2); h = -3;
 #
 curve(Iy(x, b=b, h=h), from=-3, to=3)
-sapply(c(-2:2), line.tan, dx=3, p=Iy, dp=y, b=b, h=h)
+line.tan(c(-2:2), dx=3, p=Iy, dp=y, b=b, h=h)
 
 
 ########################
