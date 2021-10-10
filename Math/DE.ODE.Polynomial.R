@@ -7,12 +7,21 @@
 ### Differential Equations
 ### ODEs: Polynomial types
 ###
-### draft v.0.4b
+### draft v.0.4c
 
 
-### History
+### TODO:
+# - clean-up/reorder sections;
 
-### Order 1 Non-Liniar
+
+###############
+### History ###
+###############
+
+### Order 1 Non-Linear
+
+### draft v.0.4c:
+# - improved formatting;
 ### draft v.0.4a - v.0.4b:
 # - derived from:
 #   y = x * I(1 / (x^n + k) dx) + F0(x); [fixed: v.0.4a-fix]
@@ -111,8 +120,10 @@
 # Note: q(x) is an intermediary function used for various derivations;
 
 
-######################
-### (brief) Theory ###
+#################
+###  Theory   ###
+###  (brief)  ###
+#################
 
 # y^n + P(y) = 0
 # where:
@@ -124,19 +135,19 @@
 # n*y^(n-1)*dy + D(P) = 0
 
 # - unfortunately, the coefficients of D(P) are correlated;
-# - we will decorelate these coefficients by combining/entangling
+# - we will de-correlate these coefficients by combining/entangling
 #   with the original polynomial;
 
 ### Multiply with y =>
-# n*y^n*dy + y*D(P) = 0
+n*y^n*dy + y*D(P) # = 0
 ### Substitute: y^n = - P(y)
-# n*P*dy - y*D(P) = 0;
+n*P*dy - y*D(P) # = 0;
 
 ### Note:
 # - the coefficients of n*P*dy will combine with
 #   the corresponding coefficients of y*D(P);
-# - this will decorelate the coefficients;
-# - although the coefficients of D(P) are still corelated,
+# - this will de-correlate the coefficients;
+# - although the coefficients of D(P) are still correlated,
 #   the term n*P*dy introduces 1 degree of freedom;
 # - the numeric coefficient n from n*P*dy
 #   introduces 1 degree of freedom in the equation;
@@ -186,10 +197,10 @@ round0 = function(m, tol=1E-7) {
 
 
 ##########################
-### Cardan-Polynomials ###
+### Cardano-Polynomials ###
 ##########################
 
-### Cardan-Polynomials:
+### Cardano-Polynomials:
 ### Full Root
 
 ### System:
@@ -215,28 +226,35 @@ round0 = function(m, tol=1E-7) {
 ###  Examples  ###
 ##################
 
-#########
-### n = 3
-# y^3 - 3*h*y - 2*f = 0
-# 3*y^2*dy - 3*h*dy - 3*y*dh - 2*df = 0
-# y^2*dy - h*dy - y*dh - 2/3*df = 0
-
 ### Polynomial:
 # Simple P3:
+# n = 3
 # y^3 - 3*h*y - 2*f = 0
-### Primary ODE:
-# y^2*dy - h*dy - y*dh - 2/3*df = 0
 
-### Transformations
+### D =>
+3*y^2*dy - 3*h*dy - 3*y*dh - 2*df # = 0
+
+### Primary ODE: correlated
+y^2*dy - h*dy - dh*y - 2/3*df # = 0
+# - see Transformations for de-correlation;
+
+#######################
+### Transformations ###
+#######################
 
 ### T.A.) ODE-Transformations:
+
 ### T.A.1: Substitute y^3
 # [not run]
 y^2*dy - h*dy - y*dh - 2/3*df = 0 # * y
 y^3*dy - h*y*dy - y^2*dh - 2/3*df*y = 0
 (3*h*y + 2*f)*dy - h*y*dy - dh*y^2 - 2/3*df*y = 0
 2*h*y*dy + 2*f*dy - dh*y^2 - 2/3*df*y = 0
+
+### ODE:
 h*y*dy + f*dy - 1/2*dh*y^2 - 1/3*df*y = 0
+
+### variant form: (but not reducible)
 # 1/2*D(y^2/h) + (f*dy - 1/3*df*y)/h^2 = 0
 
 ### T.A.2: Substitute y
@@ -260,6 +278,8 @@ h^2*y*dy + f*h*dy - 1/9*df*y^3 - 1/2*h*dh*y^2 + 2/9*f*df = 0
 
 
 ### T.B.) Poly-Transformations:
+# - yield similar/equivalent equations;
+
 ### T.B.1: * 1/y
 # y^3 - 3*h*y - 2*f = 0 # / * 1/y
 # y^2 - 3*h - 2*f/y = 0 # D() =>
@@ -272,7 +292,7 @@ y^3*dy + f*dy - 3/2*dh*y^2 - df*y = 0
 h*y*dy + f*dy - 1/2*dh*y^2 - 1/3*df*y = 0 # same as [T.A.1]
 
 ### T.B.1 + T.A.2: y
-# - can replace one occurence or multiple occurances;
+# - can replace one occurrence or multiple occurrences;
 y^3*dy + f*dy - 3/2*dh*y*(y^3 - 2*f)/(3*h) - df*y = 0
 y^3*dy + f*dy - 1/2*dh/h*y^4 + f*dh/h*y - df*y = 0 # * h
 h*y^3*dy + f*h*dy - 1/2*dh*y^4 + f*dh*y - h*df*y = 0
@@ -314,6 +334,7 @@ y^3*dy - 3*h*y*dy + 2*(3*y^2*dy^2 + y^3*d2y - 3*dh*y*dy - 3/2*d2h*y^2 - d2f*y) =
 
 ################
 ### Examples ###
+################
 
 ### Example 1;
 # h(x) = x
@@ -346,9 +367,12 @@ sapply(c(-(4:1)/5, (1:4)/5, 1.01), line.tan, dx=3, p=y, dp=dy)
 y^2*dy - x*dy - y - 2*x^2 = 0 # *y
 y^3*dy - x*y*dy - y^2 - 2*x^2*y = 0
 (3*x*y + 2*x^3)*dy - x*y*dy - y^2 - 2*x^2*y = 0
-2*x*y*dy + 2*x^3*dy - y^2 - 2*x^2*y = 0
+### ODE:
+2*x*y*dy + 2*x^3*dy - y^2 - 2*x^2*y # = 0
+### variant forms:
 # D(y^2/x) + 2*x^2 * D(y/x) = 0 # simple example
 # (y(2)^2 + 2*2^2*y(2)) - integrate(function(x) Re(y(x)), lower=0, upper=2)$value * 4*2
+
 ### Solution & Plot:
 # y = is the same as above;
 dy = function(x) {
@@ -371,7 +395,9 @@ h*y^2*dy - h^2*dy - 1/3*y^3*dh + 2/3*f*dh - 2/3*h*df +
 x*y^2*dy - x^2*dy - 1/3*y^3 + 2/3*x^3 - 2*x^3 +
  + b*(2*x*y*dy + 2*x^3*dy - y^2 - 2*x^2*y) = 0
 x*y^2*dy + y*dy - 1/3*y^3 - 1/2/x*y^2 - x*y - 4/3*x^3 = 0
-x^2*y^2*dy + x*y*dy - 1/3*x*y^3 - 1/2*y^2 - x^2*y - 4/3*x^4 = 0
+### ODE:
+x^2*y^2*dy + x*y*dy - 1/3*x*y^3 - 1/2*y^2 - x^2*y - 4/3*x^4 # = 0
+
 ### Solution & Plot:
 # y = is the same as above;
 dy = function(x) {
@@ -393,9 +419,11 @@ x^2*y*dy + x^4*dy - 1/3*x^2*y^3 - 1/2*x*y^2 + 2/3*x^5 = 0
 x*y*dy + x^3*dy - 1/3*x*y^3 - 1/2*y^2 + 2/3*x^4 = 0
 # V.A.3 - V.A.4: [initial Derivative / trivial]
 x^2*y^2*dy - x^3*dy - x^2*y - 2*x^4 = 0 # /x^2
-y^2*dy - x*dy - y - 2*x^2 = 0
+### ODE:
+y^2*dy - x*dy - y - 2*x^2 # = 0
+
 ### Solution & Plot:
-# y = is the same as above;
+# y = is the same as above (previous section);
 dy = function(x, alt=FALSE) {
 	y.x = y(x)
 	if(alt) {
@@ -416,9 +444,11 @@ sapply(c(-(4:1)/5, (1:4)/5, 1.01), line.tan, dx=3, p=y, dp=dy)
 # h(x) = x # as above
 # f(x) = x^3
 # [not run]
-h*y^3*dy + f*h*dy - 1/2*dh*y^4 + f*dh*y - h*df*y = 0
-x*y^3*dy + x^4*dy - 1/2*y^4 + x^3*y - 3*x^3*y = 0
-x*y^3*dy + x^4*dy - 1/2*y^4 - 2*x^3*y = 0
+h*y^3*dy + f*h*dy - 1/2*dh*y^4 + f*dh*y - h*df*y # = 0
+x*y^3*dy + x^4*dy - 1/2*y^4 + x^3*y - 3*x^3*y # = 0
+### ODE:
+x*y^3*dy + x^4*dy - 1/2*y^4 - 2*x^3*y # = 0
+
 ### Solution & Plot:
 # y = is the same as above;
 dy = function(x) {
@@ -452,9 +482,10 @@ sapply(c(-(4:1)/5, (1:4)/5, 1.01), line.tan, dx=3, p=y, dp=dy)
 ### D2y / Dx2: Basic
 # y^2*dy - h*dy - y*dh - 2/3*df = 0 # =>
 # y^2*d2y - h*d2y + 2*y*dy^2 - 2*dh*dy - y*d2h - 2/3*d2f = 0
-y^2*d2y - x*d2y + 2*y*dy^2 - 2*dy - 4*x = 0
+y^2*d2y - x*d2y + 2*y*dy^2 - 2*dy - 4*x # = 0
 # Sum with one of the other ODEs:
-y^2*d2y - x*d2y + 2*y*dy^2 + 2*x*y*dy + 2*x^3*dy - 2*dy - y^2 - 2*x^2*y - 4*x = 0
+y^2*d2y - x*d2y + 2*y*dy^2 + 2*x*y*dy + 2*x^3*dy - 2*dy - y^2 - 2*x^2*y - 4*x # = 0
+
 ### Solution & Plot:
 # y = is the same as above;
 dy = function(x) {
@@ -484,6 +515,7 @@ y^2*d2y - x*d2y + 2*y*dy^2 - dy - dy - 4*x = 0
 2*x*y*dy + 2*x^3*dy - y^2 - 2*x^2*y = 0 # =>
 dy = (y^2 + 2*x^2*y) / (2*x*y + 2*x^3) # =>
 (y^2 - x)*d2y + 2*y*((y^2 + 2*x^2*y) / (2*x*y + 2*x^3))^2 - 2*(y^2 + 2*x^2*y) / (2*x*y + 2*x^3) - 4*x = 0
+
 ### Solution & Plot:
 # y = is the same as above;
 dy = function(x) {
@@ -516,7 +548,10 @@ sapply(c(-1.5, -0.5, 0.06 + (0:5)/3.9), line.tan, dx=3, p=dy, dp=d2y)
 # f(x) = 3*log(x)
 y^2*dy - h*dy - y*dh - 2/3*df = 0
 y^2*dy - x^2*dy - 2*x*y - 2/x = 0
+### ODE:
 x*y^2*dy - x^3*dy - 2*x^2*y - 2 = 0
+
+### Test & Plot:
 # y = (f + sqrt(f^2 - h^3))^(1/3) + (f - sqrt(f^2 - h^3))^(1/3)
 y = function(x, n=3) {
 	r1 = (3*log(x + 0i) + sqrt(9*log(x + 0i)^2 - x^(2*n) + 0i))
