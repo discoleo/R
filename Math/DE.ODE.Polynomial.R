@@ -7,7 +7,7 @@
 ### Differential Equations
 ### ODEs: Polynomial types
 ###
-### draft v.0.4c
+### draft v.0.4d
 
 
 ### TODO:
@@ -20,6 +20,9 @@
 
 ### Order 1 Non-Linear
 
+### draft v.0.4d:
+# - Example based on P[5]:
+#   y^3*dy - 2*b0*y*dy + 5*x*dy - y = 0;
 ### draft v.0.4c:
 # - improved formatting;
 ### draft v.0.4a - v.0.4b:
@@ -886,13 +889,34 @@ sapply(c(-(4:1)/5, (1:6)/5), line.tan, dx=3, p=y, dp=dy)
 #############
 ### n = 5 ###
 
-# y^5 - 5*h*y^3 + 5*h^2*y - 2*f = 0
+### Cardano-Polynomial:
+y^5 - 5*h*y^3 + 5*h^2*y - 2*f # = 0
+
+### D =>
 # 5*y^4*dy - 15*h*y^2*dy - 5*y^3*dh + 5*h^2*dy + 10*h*y*dh - 2*df = 0
-# y^4*dy - 3*h*y^2*dy + h^2*dy - y^3*dh + 2*h*y*dh - 2/5 * df = 0
+### Primary ODE:
+y^4*dy - 3*h*y^2*dy + h^2*dy - y^3*dh + 2*h*y*dh - 2/5 * df # = 0
+
+### Entanglement:
+y^5*dy - 3*h*y^3*dy + h^2*y*dy - y^4*dh + 2*h*y^2*dh - 2/5 * df*y # = 0
+(5*h*y^3 - 5*h^2*y + 2*f)*dy - 3*h*y^3*dy + h^2*y*dy - y^4*dh + 2*h*y^2*dh - 2/5 * df*y # = 0
+### ODE:
+2*h*y^3*dy - 4*h^2*y*dy + 2*f*dy - y^4*dh + 2*h*y^2*dh - 2/5 * df*y # = 0
+
+### D2 =>
+2*h*y^3*d2y + 6*y^2*dy^2 - 4*h^2*y*d2y - 4*h^2*dy^2 - 8*h*dh*y*dy +
+	+ 2*f*d2y + 2*df*dy - 4*dh*y^3*dy - d2h*y^4 +
+	+ 4*h*dh*y*dy + 2*(dh^2 + h*d2h)*y^2 - 2/5 * df*dy - 2/5 * d2f*y # = 0
+# TODO: can substitute y^4 using D1;
 
 ### TODO:
 # - concrete examples;
 
+### Example 1:
+# h(x) = b0; # constant
+# f(x) = 5*b0*x;
+### ODE:
+y^3*dy - 2*b0*y*dy + 5*x*dy - y # = 0
 
 
 ######################
