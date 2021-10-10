@@ -7,7 +7,7 @@
 ### Differential Equations
 ### ODEs - Exponentials
 ###
-### draft v.0.1f-P1Var4
+### draft v.0.1f-Gen
 
 
 ### ODEs Derived from Exponentials
@@ -23,9 +23,11 @@
 ###############
 
 
-### v.0.1f:
+### v.0.1f - v.0.1f-Gen:
 # - derived from ODEs of Higher Power:
 #   dy - G(x)*y^2 = F(x);
+# - slight generalization:
+#   dy - G2(x)*y^2 - G1(x)*y = F(x);
 ### v.0.1e - v.0.1e-var + v.0.1f-P1Var4:
 # - derived from: dy - G(x)*y = F(x)
 #   y*d2y - dy^2 + f*dy - dg*y^2 - df*y = 0;
@@ -343,6 +345,20 @@ d2y - 2*g*y*dy - dg*y^2 - df # = 0
 ### Variant 1:
 g*d2y - 2*g^2*y*dy - dg*(dy - f) - g*df # = 0
 g*d2y - 2*g^2*y*dy - dg*dy + dg*f - g*df # = 0
+
+
+##################
+### Higher Powers:
+### Generalization
+
+### dy - G2(x)*y^2 - G1(x)*y = F(x)
+
+### D =>
+d2y - 2*g2*y*dy - dg2*y^2 - g1*dy - dg1*y - df # = 0
+
+### Variant 1:
+g2*d2y - 2*g2^2*y*dy - dg2*(dy - g1*y - f) - g1*g2*dy - dg1*g2*y - g2*df # = 0
+g2*d2y - 2*g2^2*y*dy - (dg2 + g1*g2)*dy + (dg2*g1 - dg1*g2)*y + dg2*f - g2*df # = 0
 
 
 
