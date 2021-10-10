@@ -7,7 +7,7 @@
 ### Differential Equations
 ### ODEs - Exponentials
 ###
-### draft v.0.1d
+### draft v.0.1e
 
 
 ### ODEs Derived from Exponentials
@@ -17,6 +17,17 @@
 #   DE.ODE.Fractions.Lambert.R
 #   & DE.ODE.Gaussian.R to this file;
 
+
+###############
+### History ###
+###############
+
+
+### v.0.1e:
+# - derived from: dy - G(x)*y = F(x)
+#   y*d2y - dy^2 + f*dy - dg*y^2 - df*y = 0;
+### v.0.1d:
+# - [started] derived from another ODE;
 
 
 #########################
@@ -265,6 +276,30 @@ log(y - x) = ... /2 / (y^2*d2y - x^2*d2y - x*dy^3 + y*dy^2 + x*dy - y)
 	- 4*x*(y^2*d2y - x^2*d2y - x*dy^3 + y*dy^2 + x*dy - y)^2 # = 0
 
 ### TODO: check!
+
+
+#########################
+#########################
+
+### dy - G(x)*y = F(x)
+
+### D =>
+d2y - g*dy - dg*y - df # = 0
+
+### Variant 1:
+d2y - g*(g*y + f) - dg*y - df # = 0
+d2y - (g^2 + dg)*y - g*f - df # = 0
+
+### Variant 2:
+y*d2y - (dy - f)*dy - dg*y^2 - df*y # = 0
+y*d2y - dy^2 + f*dy - dg*y^2 - df*y # = 0
+
+### Examples:
+# G(x) = exp(x^2) =>
+y*d2y - dy^2 + f*dy - 2*x*exp(x^2)*y^2 - df*y # = 0
+### Extra-Variant:
+y*d2y - dy^2 + f*dy - 2*x*(dy - f)*y - df*y # = 0
+y*d2y - dy^2 - 2*x*y*dy + f*dy + 2*x*f*y - df*y # = 0
 
 
 #########################
