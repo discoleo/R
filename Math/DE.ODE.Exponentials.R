@@ -7,7 +7,7 @@
 ### Differential Equations
 ### ODEs - Exponentials
 ###
-### draft v.0.1f
+### draft v.0.1f-P1Var4
 
 
 ### ODEs Derived from Exponentials
@@ -26,10 +26,10 @@
 ### v.0.1f:
 # - derived from ODEs of Higher Power:
 #   dy - G(x)*y^2 = F(x);
-### v.0.1e - v.0.1e-var:
+### v.0.1e - v.0.1e-var + v.0.1f-P1Var4:
 # - derived from: dy - G(x)*y = F(x)
 #   y*d2y - dy^2 + f*dy - dg*y^2 - df*y = 0;
-# - more variants; [v.0.1e-var]
+# - more variants; [v.0.1e-var & v.0.1f-P1Var4]
 ### v.0.1d:
 # - [started] derived from another ODE;
 
@@ -306,6 +306,10 @@ y*d2y - dy^2 + f*dy - dg*y^2 - df*y # = 0
 ### Variant 3:
 g*d2y - g^2*(g*y + f) - dg*(dy - f) - g*df # = 0
 g*d2y - dg*dy - g^3*y - g^2*f + dg*f - g*df # = 0
+
+### Variant 4:
+y*d2y - (dy - f)*(g*y + f) - dg*y^2 - df*y # = 0
+y*d2y - g*y*dy - f*dy - dg*y^2 + (g*f - df)*y + f^2 # = 0
 
 
 ### Examples:
