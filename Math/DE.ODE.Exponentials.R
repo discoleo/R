@@ -7,7 +7,7 @@
 ### Differential Equations
 ### ODEs - Exponentials
 ###
-### draft v.0.1e-var
+### draft v.0.1f
 
 
 ### ODEs Derived from Exponentials
@@ -23,6 +23,9 @@
 ###############
 
 
+### v.0.1f:
+# - derived from ODEs of Higher Power:
+#   dy - G(x)*y^2 = F(x);
 ### v.0.1e - v.0.1e-var:
 # - derived from: dy - G(x)*y = F(x)
 #   y*d2y - dy^2 + f*dy - dg*y^2 - df*y = 0;
@@ -282,6 +285,11 @@ log(y - x) = ... /2 / (y^2*d2y - x^2*d2y - x*dy^3 + y*dy^2 + x*dy - y)
 #########################
 #########################
 
+####################
+### Derived from ###
+###  other ODEs  ###
+####################
+
 ### dy - G(x)*y = F(x)
 
 ### D =>
@@ -318,6 +326,19 @@ d2y - (9*x^4 - 6*x)*y + 3*b0*x^2 # = 0
 x^2*d2y + x*dy + y - x^2*df # = 0
 # F(x) = ln(x^n + b0);
 x^2*d2y + x*dy + y - n*x^(n+1)/(x^n + b0) # = 0
+
+
+########################
+
+### Higher Powers:
+### dy - G(x)*y^2 = F(x)
+
+### D =>
+d2y - 2*g*y*dy - dg*y^2 - df # = 0
+
+### Variant 1:
+g*d2y - 2*g^2*y*dy - dg*(dy - f) - g*df # = 0
+g*d2y - 2*g^2*y*dy - dg*dy + dg*f - g*df # = 0
 
 
 
