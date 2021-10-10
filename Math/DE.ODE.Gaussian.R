@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs - Gaussian
 ###
-### draft v.0.3n
+### draft v.0.3n-chk0
 
 #############
 ### Types ###
@@ -30,9 +30,10 @@
 
 ### Liniar / Non-Liniar Gaussian-type
 
-### draft v.0.3n:
+### draft v.0.3n - v.0.3n-chk0:
 # - derived from: I(exp(y^n)) = P1(x) * P2(y);
 #   x*d2y - n*x*y^(n-1)*dy^2 - n*y^n*dy + 2*dy = 0;
+# - pseudo-check based on pre-defined y;
 ### draft v.0.3m - v.0.3m-check:
 # - derived from: y = f(x) / (k + I(exp(x^n) dx)):
 #   dy + y^2 - n*x^(n-1)*y = 0; [+ check]
@@ -1515,6 +1516,38 @@ x*d2y - n*x*y^(n-1)*dy^2 - n*y^n*dy + 2*dy # = 0
 # n = 2
 x*d2y - 2*x*y*dy^2 - 2*y^2*dy + 2*dy # = 0
 
+### Variant:
+### Integration by parts =>
+x*dy - 2*I(x*dy*y*dy) - 2/3*y^3 + 2*y - y # = 0
+x*dy - x*y^2*dy + I((x*d2y + dy) * y^2) - 2/3*y^3 + y # = 0
+x*dy - x*y^2*dy + I(x*y^2*d2y) - 1/3*y^3 + y # = 0
+# [...]
 
 # TODO: check
+# Q: How ???
+
+
+### Special Example:
+# - based on a particular case:
+#   n = 2; y = sqrt(x);
+# => I(exp(y^n) dy) = exp(x) / sqrt(x) * y;
+
+### D =>
+x*sqrt(x)*exp(y^n) - x*exp(x)*dy - (x - 1/2)*exp(x)*y # = 0
+
+### Solution:
+y  = function(x, n=2) rootn(x, n=n);
+dy = function(x, n=2) {
+	yx = y(x, n=n);
+	xn = rootn(x, n=n); ex = exp(x);
+	dy = x*xn*exp(yx^n) - (x - 1/n)*ex*yx;
+	div = x*ex;
+	dy = dy / div;
+	return(dy);
+}
+### Plot:
+n = 2;
+px = c(1E-2, (1:5) / 5);
+curve(y(x, n=n), from = 0, to = 2)
+line.tan(px, dx=3, p=y, dp=dy, n=n)
 
