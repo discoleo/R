@@ -7,7 +7,7 @@
 ### Differential Equations
 ### ODEs: Polynomial types
 ###
-### draft v.0.4d
+### draft v.0.4e
 
 
 ### TODO:
@@ -20,6 +20,9 @@
 
 ### Order 1 Non-Linear
 
+### draft v.0.5e:
+# - Example based on radicals of y:
+#   x*y*dy - 2*y^2 - 1/n*x*y + 1/n*x^3 = 0;
 ### draft v.0.4d:
 # - Example based on P[5]:
 #   y^3*dy - 2*b0*y*dy + 5*x*dy - y = 0;
@@ -1858,4 +1861,26 @@ curve(dy(x, b0=b0, n=n, k=k), add=T, col="green")
 line.tan(px, dx=2.5, p=dy, dp=d2y, b0=b0, n=n, k=k, col="orange")
 
 
+############################
+############################
+
+##################
+### y-Radicals ###
+##################
+
+### Initial "Polynomial"
+# y - G(x)*y^(1/n) = F(x)
+
+### D =>
+dy - 1/n*g*y^(1/n-1) - dg*y^(1/n) - df # = 0
+g*y*dy - 1/n*g*(y - f) - dg*y*(y - f) - g*df*y # = 0
+### ODE:
+g*y*dy - dg*y^2 + (dg*f - g*df - 1/n*g)*y + 1/n*g*f # = 0
+
+### Example:
+# g = x^2;
+# f = x^2;
+x*y*dy - 2*y^2 - 1/n*x*y + 1/n*x^3 # = 0
+
+# TODO: check;
 
