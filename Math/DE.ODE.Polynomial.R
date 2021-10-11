@@ -1915,7 +1915,7 @@ line.tan(px, p=y, dp=dy, n=n)
 ####################
 
 ####################
-### higher Order ###
+### Higher Order ###
 ####################
 
 ### Derived from ODE
@@ -1929,8 +1929,14 @@ d2y - 1/n*g*y^(1/n-1)*dy - dg*y^(1/n) - df # = 0
 g*y*d2y - 1/n*g*(dy - f)*dy - dg*y*(dy - f) - g*df*y # = 0
 g*y*d2y - 1/n*g*dy^2 - dg*y*dy + 1/n*g*f*dy + (dg*f - g*df)*y # = 0
 
-### Example:
+### Example 1:
 # f = x; g = x;
 x*y*d2y - 1/n*x*dy^2 - y*dy + 1/n*x^2*dy # = 0
 
+### Example 2:
+# f = x; g = n;
+n*y*d2y - dy^2 + x*dy - n*y # = 0
+
 # TODO: check;
+# + concept to check;
+
