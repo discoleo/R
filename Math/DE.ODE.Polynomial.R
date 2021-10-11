@@ -7,7 +7,7 @@
 ### Differential Equations
 ### ODEs: Polynomial types
 ###
-### draft v.0.4e
+### draft v.0.4e-fix
 
 
 ### TODO:
@@ -20,9 +20,9 @@
 
 ### Order 1 Non-Linear
 
-### draft v.0.5e:
+### draft v.0.5e - v.0.5e-fix:
 # - Example based on radicals of y:
-#   x*y*dy - 2*y^2 - 1/n*x*y + 1/n*x^3 = 0;
+#   (n-1)*x*y*dy + x^3*dy - 2*n*y^2 + x^3 = 0;
 ### draft v.0.4d:
 # - Example based on P[5]:
 #   y^3*dy - 2*b0*y*dy + 5*x*dy - y = 0;
@@ -1872,15 +1872,15 @@ line.tan(px, dx=2.5, p=dy, dp=d2y, b0=b0, n=n, k=k, col="orange")
 # y - G(x)*y^(1/n) = F(x)
 
 ### D =>
-dy - 1/n*g*y^(1/n-1) - dg*y^(1/n) - df # = 0
-g*y*dy - 1/n*g*(y - f) - dg*y*(y - f) - g*df*y # = 0
+dy - 1/n*g*y^(1/n-1)*dy - dg*y^(1/n) - df # = 0
+g*y*dy - 1/n*g*(y - f)*dy - dg*y*(y - f) - g*df*y # = 0
 ### ODE:
-g*y*dy - dg*y^2 + (dg*f - g*df - 1/n*g)*y + 1/n*g*f # = 0
+(n-1)*g*y*dy + g*f*dy - n*dg*y^2 + n*(dg*f - g*df)*y + g*f # = 0
 
 ### Example:
 # g = x^2;
 # f = x^2;
-x*y*dy - 2*y^2 - 1/n*x*y + 1/n*x^3 # = 0
+(n-1)*x*y*dy + x^3*dy - 2*n*y^2 + x^3 # = 0
 
 # TODO: check;
 
