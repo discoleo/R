@@ -7,7 +7,7 @@
 ### Differential Equations
 ### ODEs: Polynomial types
 ###
-### draft v.0.4e-fix2
+### draft v.0.4f
 
 
 ### TODO:
@@ -20,6 +20,9 @@
 
 ### Order 1 Non-Linear
 
+### draft v.0.5f:
+# - derived from other ODEs:
+#   x*y*d2y - 1/n*x*dy^2 - y*dy + 1/n*x^2*dy = 0;
 ### draft v.0.5e - v.0.5e-fix2:
 # - Example based on radicals of y:
 #   (n-1)*x*y*dy + x^3*dy - 2*n*y^2 = 0;
@@ -1908,3 +1911,26 @@ px = -3:3 * 3/5;
 curve(y(x, n=n), from=-2, to=2)
 line.tan(px, p=y, dp=dy, n=n)
 
+
+####################
+
+####################
+### higher Order ###
+####################
+
+### Derived from ODE
+
+### dy - G(x)*y^(1/n) = F(x)
+
+### D =>
+d2y - 1/n*g*y^(1/n-1)*dy - dg*y^(1/n) - df # = 0
+
+### Variant 1:
+g*y*d2y - 1/n*g*(dy - f)*dy - dg*y*(dy - f) - g*df*y # = 0
+g*y*d2y - 1/n*g*dy^2 - dg*y*dy + 1/n*g*f*dy + (dg*f - g*df)*y # = 0
+
+### Example:
+# f = x; g = x;
+x*y*d2y - 1/n*x*dy^2 - y*dy + 1/n*x^2*dy # = 0
+
+# TODO: check;
