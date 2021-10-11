@@ -7,7 +7,7 @@
 ### Differential Equations
 ### ODEs: Polynomial types
 ###
-### draft v.0.4f
+### draft v.0.4f-exp
 
 
 ### TODO:
@@ -20,9 +20,10 @@
 
 ### Order 1 Non-Linear
 
-### draft v.0.5f:
+### draft v.0.5f - v.0.5f-exp:
 # - derived from other ODEs:
 #   x*y*d2y - 1/n*x*dy^2 - y*dy + 1/n*x^2*dy = 0;
+# - some experiments with simple base-ODE;
 ### draft v.0.5e - v.0.5e-fix2:
 # - Example based on radicals of y:
 #   (n-1)*x*y*dy + x^3*dy - 2*n*y^2 = 0;
@@ -1939,4 +1940,46 @@ n*y*d2y - dy^2 + x*dy - n*y # = 0
 
 # TODO: check;
 # + concept to check;
+
+
+########################
+
+### y*dy - G(x)*y = F(x)
+# [very simple eq]
+
+### D =>
+y*d2y + dy^2 - g*dy - dg*y - df # = 0
+
+### Variant 1: * y =>
+y^2*d2y + y*dy^2 - g*y*dy - dg*y^2 - df*y # = 0
+y^2*d2y + (g*y + f)*dy - g*(g*y + f) - dg*y^2 - df*y # = 0
+### ODE:
+y^2*d2y + g*y*dy + f*dy - dg*y^2 - df*y - g^2*y - g*f # = 0
+
+# Subst 2 =>
+y^2*d2y + g*(g*y + f) + f*dy - dg*y^2 - df*y - g^2*y - g*f # = 0
+### ODE:
+y^2*d2y + f*dy - dg*y^2 - df*y # = 0
+# => original Eq:
+# d2y - dg - D(f/y) # = 0
+
+### Check:
+x = sqrt(3)
+y  = x + log(x^2 + 1);
+dy = 2*x/(x^2+1) + 1;
+g  = 2*x/(x^2+1);
+f  = x + log(x^2 + 1);
+d2y = - 2*(x^2-1)/(x^2+1)^2;
+dg  = d2y;
+df  = 1 + 2*x/(x^2+1);
+
+
+### [redundant]
+### Polynomial Transformations
+
+# * g =>
+(y*dy - f)*dy - g^2*y - g*f # = 0
+### Derived variant:
+y*dy^2 - f*dy - g^2*y - g*f # = 0
+(dy + g)*(y*dy - g*y - f) # = 0
 
