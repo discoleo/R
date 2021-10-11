@@ -7,7 +7,7 @@
 ### Differential Equations
 ### ODEs: Polynomial types
 ###
-### draft v.0.4e-fix
+### draft v.0.4e-fix2
 
 
 ### TODO:
@@ -20,9 +20,9 @@
 
 ### Order 1 Non-Linear
 
-### draft v.0.5e - v.0.5e-fix:
+### draft v.0.5e - v.0.5e-fix2:
 # - Example based on radicals of y:
-#   (n-1)*x*y*dy + x^3*dy - 2*n*y^2 + x^3 = 0;
+#   (n-1)*x*y*dy + x^3*dy - 2*n*y^2 = 0;
 ### draft v.0.4d:
 # - Example based on P[5]:
 #   y^3*dy - 2*b0*y*dy + 5*x*dy - y = 0;
@@ -1875,12 +1875,36 @@ line.tan(px, dx=2.5, p=dy, dp=d2y, b0=b0, n=n, k=k, col="orange")
 dy - 1/n*g*y^(1/n-1)*dy - dg*y^(1/n) - df # = 0
 g*y*dy - 1/n*g*(y - f)*dy - dg*y*(y - f) - g*df*y # = 0
 ### ODE:
-(n-1)*g*y*dy + g*f*dy - n*dg*y^2 + n*(dg*f - g*df)*y + g*f # = 0
+(n-1)*g*y*dy + g*f*dy - n*dg*y^2 + n*(dg*f - g*df)*y # = 0
 
 ### Example:
 # g = x^2;
 # f = x^2;
-(n-1)*x*y*dy + x^3*dy - 2*n*y^2 + x^3 # = 0
+(n-1)*x*y*dy + x^3*dy - 2*n*y^2 # = 0
 
-# TODO: check;
+### Solution & Plot:
+y = function(x, n=3) {
+	coeff0 = c(1, rep(0, n-2));
+	r = sapply(x, function(x) {
+		coeff = c(coeff0, -x^2, -x^2);
+		r = roots(coeff);
+		r = r[Im(r) == 0][1];
+		return(r);
+	})
+	r = r^n;
+	return(r)
+}
+dy = function(x, n=3) {
+	# (n-1)*x*y*dy + x^3*dy - 2*n*y^2 # = 0
+	yx = y(x, n=n); x3 = x^3;
+	dy = 2*n*yx^2;
+	div = (n-1)*x*yx + x3;
+	dy = dy / div;
+	return(dy)
+}
+### Plot
+n = 3;
+px = -3:3 * 3/5;
+curve(y(x, n=n), from=-2, to=2)
+line.tan(px, p=y, dp=dy, n=n)
 
