@@ -5,7 +5,7 @@
 ###
 ### Formula Tools
 ###
-### draft v.0.1e-fix2
+### draft v.0.1e-optim
 
 
 ### Tools to Process Formulas & Expressions
@@ -114,8 +114,8 @@ split.formula = function(e) {
 	return(tok);
 }
 ### Improved: ifelse()
-# TODO:
-# - enable named arguments;
+# - multiple conditions;
+# - evaluates strictly only the values for each condition;
 eval.by.formula = function(e, FUN.list, ..., default=NA) {
 	tok = split.formula(e);
 	if(length(tok) == 0) return();
@@ -127,7 +127,6 @@ eval.by.formula = function(e, FUN.list, ..., default=NA) {
 	eval.f = function(idCond) {
 		sapply(seq(length(isEval)), function(id) {
 			if(isEval[[id]] == FALSE) return(default);
-			if( ! is.function(FUN[[idCond]])) return(FUN[[idCond]]);
 			# apply FUN
 			args.l = lapply(clst.all, function(a) if(length(a) == 1) a else a[[id]]);
 			do.call(FUN[[idCond]], args.l);
@@ -145,17 +144,38 @@ eval.by.formula = function(e, FUN.list, ..., default=NA) {
 			# makes sens only on the last position
 			if(id < length(tok)) warning("\".\" is not last!");
 			isEval = ! isEvalAll;
-			rez[isEval] = eval.f(id)[isEval];
+			if( ! is.function(FUN[[id]])) rez[isEval] = FUN[[id]]
+			else rez[isEval] = eval.f(id)[isEval];
 			next;
 		}
 		isEval = rep(FALSE, length(isEval));
 		isEval[ ! isEvalAll] = eval(tok[[id]])[ ! isEvalAll];
 		isEvalAll[isEval] = isEval[isEval];
-		rez[isEval] = eval.f(id)[isEval];
+		if( ! is.function(FUN[[id]])) rez[isEval] = FUN[[id]]
+		else rez[isEval] = eval.f(id)[isEval];
 	}
 	return(rez);
 }
 
+##################
+
+#############
+### Tests ###
+#############
+
+### Ifelse variant
+
+x = 1:10
+FUN = list(function(x, y) { x*y; }, function(x, y) { x^2; }, 0);
+eval.by.formula((x > 5 & x %% 2) ~ (x <= 5) ~ ., FUN, y=2, x)
+eval.by.formula((x > 5 & x %% 2) ~ (x <= 5) ~ ., FUN, x=2, x)
+eval.by.formula((x > 5 & x %% 2) ~ (x <= 5) ~ ., FUN, x, y=x-1)
+FUN = list(FUN[[1]], 1, 0);
+eval.by.formula((x > 5 & x %% 2) ~ (x <= 5) ~ ., FUN, y=2, x)
+
+
+################
+### Extract Sign
 
 ### Test
 e = parse(text="x+y+z+2+e")
