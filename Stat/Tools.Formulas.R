@@ -5,10 +5,20 @@
 ###
 ### Formula Tools
 ###
-### draft v.0.1e-optim
+### draft v.0.1e-fix2
 
 
 ### Tools to Process Formulas & Expressions
+
+
+###############
+### History ###
+###############
+
+
+### draft v.0.1e - v.0.1e-fix2:
+# - improved version of ifelse();
+# - [fixed] constant value for 1st FUN; [v.0.1e-fix2]
 
 
 ##########################
@@ -134,7 +144,10 @@ eval.by.formula = function(e, FUN.list, ..., default=NA) {
 	}
 	# eval 1st condition:
 	isEval = eval(tok[[1]]);
-	rez = eval.f(1);
+	if( ! is.function(FUN[[1]])) {
+		rez = rep(default, length(isEval));
+		rez[isEval] = FUN[[1]];
+	} else rez = eval.f(1);
 	if(length(tok) == 1) return(rez);
 	# eval remaining conditions
 	isEvalAll = isEval;
@@ -172,6 +185,8 @@ eval.by.formula((x > 5 & x %% 2) ~ (x <= 5) ~ ., FUN, x=2, x)
 eval.by.formula((x > 5 & x %% 2) ~ (x <= 5) ~ ., FUN, x, y=x-1)
 FUN = list(FUN[[1]], 1, 0);
 eval.by.formula((x > 5 & x %% 2) ~ (x <= 5) ~ ., FUN, y=2, x)
+FUN = list(0, FUN[[1]], -1);
+eval.by.formula((x > 5 & x %% 2) ~ (x <= 5) ~ ., FUN, x, y=x+1)
 
 
 ################
