@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs: From other ODEs
 ###
-### draft v.0.1b
+### draft v.0.1c
 
 
 
@@ -15,8 +15,10 @@
 ###############
 
 
+### draft v.0.1c:
+# - derived from: dy^2 - G(x)*y = F(x);
 ### draft v.0.1b:
-# - derived from ODEs with higher powers;
+# - derived from ODEs with higher order polynomials;
 ### draft v.0.1a:
 # - [started] move relevant sections from
 #   other files: DE.ODE.Polynomial.R;
@@ -47,6 +49,7 @@ source("DE.ODE.Helper.R")
 d2y - n*g*y^(n-1)*dy - dg*y^n - df # = 0 # * y =>
 y*d2y - n*g*y^(n)*dy - dg*y^(n+1) - df*y # = 0
 g*y*d2y - n*g*(dy - f)*dy - dg*(dy - f)*y - g*df*y # = 0
+### ODE:
 g*y*d2y - n*g*dy^2 - dg*y*dy + n*g*f*dy + (dg*f - g*df)*y # = 0
 
 
@@ -120,4 +123,20 @@ df  = 1 + 2*x/(x^2+1);
 y*dy^2 - f*dy - g^2*y - g*f # = 0
 (dy + g)*(y*dy - g*y - f) # = 0
 
+
+#########################
+#########################
+
+### D of Higher Power
+
+### dy^2 - G(x)*y = F(x)
+
+### D =>
+2*dy*d2y - g*dy - dg*y - df # = 0 # * dy =>
+2*dy^2*d2y - g*dy^2 - dg*y*dy - df*dy # = 0
+2*(g*y + f)*d2y - g*(g*y + f) - dg*y*dy - df*dy # = 0
+### ODE:
+2*g*y*d2y + 2*f*d2y - dg*y*dy - df*dy - g^2*y - g*f # = 0
+
+# TODO: check;
 
