@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs: From other ODEs
 ###
-### draft v.0.1c
+### draft v.0.1d
 
 
 
@@ -15,8 +15,10 @@
 ###############
 
 
-### draft v.0.1c:
-# - derived from: dy^2 - G(x)*y = F(x);
+### draft v.0.1c - v.0.1d:
+# - derived from:
+#   dy^2 - G(x)*y = F(x);
+#   dy - G(x)*log(y) = F(x); [v.0.1d]
 ### draft v.0.1b:
 # - derived from ODEs with higher order polynomials;
 ### draft v.0.1a:
@@ -137,6 +139,23 @@ y*dy^2 - f*dy - g^2*y - g*f # = 0
 2*(g*y + f)*d2y - g*(g*y + f) - dg*y*dy - df*dy # = 0
 ### ODE:
 2*g*y*d2y + 2*f*d2y - dg*y*dy - df*dy - g^2*y - g*f # = 0
+
+# TODO: check;
+
+
+#########################
+#########################
+
+### D of Logarithm
+
+### dy - G(x)*log(y) = F(x)
+
+### D =>
+d2y - g/y * dy - dg*log(y) - df # = 0
+g*y*d2y - g^2*dy - dg*g*log(y)*y - g*df*y # = 0
+g*y*d2y - g^2*dy - dg*(dy - f)*y - g*df*y # = 0
+### ODE:
+g*y*d2y - dg*y*dy - g^2*dy + (dg*f - g*df)*y # = 0
 
 # TODO: check;
 
