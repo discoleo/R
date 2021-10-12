@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs: From other ODEs
 ###
-### draft v.0.1a
+### draft v.0.1b
 
 
 
@@ -15,6 +15,8 @@
 ###############
 
 
+### draft v.0.1b:
+# - derived from ODEs with higher powers;
 ### draft v.0.1a:
 # - [started] move relevant sections from
 #   other files: DE.ODE.Polynomial.R;
@@ -39,8 +41,16 @@ source("DE.ODE.Helper.R")
 ### Higher Order ###
 ####################
 
-# TODO
+### dy - G(x)*y^n = F(x)
 
+### D =>
+d2y - n*g*y^(n-1)*dy - dg*y^n - df # = 0 # * y =>
+y*d2y - n*g*y^(n)*dy - dg*y^(n+1) - df*y # = 0
+g*y*d2y - n*g*(dy - f)*dy - dg*(dy - f)*y - g*df*y # = 0
+g*y*d2y - n*g*dy^2 - dg*y*dy + n*g*f*dy + (dg*f - g*df)*y # = 0
+
+
+####################
 
 ####################
 ### Radicals:    ###
@@ -48,6 +58,7 @@ source("DE.ODE.Helper.R")
 ####################
 
 ### dy - G(x)*y^(1/n) = F(x)
+# - similar to the Example with higher powers;
 
 ### D =>
 d2y - 1/n*g*y^(1/n-1)*dy - dg*y^(1/n) - df # = 0
