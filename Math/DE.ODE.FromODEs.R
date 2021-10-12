@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs: From other ODEs
 ###
-### draft v.0.1d
+### draft v.0.1e
 
 
 
@@ -15,6 +15,9 @@
 ###############
 
 
+### draft v.0.1e:
+# - more variants for:
+#   y*dy - G(x)*y = F(x);
 ### draft v.0.1c - v.0.1d:
 # - derived from:
 #   dy^2 - G(x)*y = F(x);
@@ -85,6 +88,9 @@ n*y*d2y - dy^2 + x*dy - n*y # = 0
 
 
 ########################
+########################
+
+### y*dy Types:
 
 ### y*dy - G(x)*y = F(x)
 # [very simple eq]
@@ -92,20 +98,30 @@ n*y*d2y - dy^2 + x*dy - n*y # = 0
 ### D =>
 y*d2y + dy^2 - g*dy - dg*y - df # = 0
 
-### Variant 1: * y =>
+### Variant 1:
+# D * y =>
 y^2*d2y + y*dy^2 - g*y*dy - dg*y^2 - df*y # = 0
 y^2*d2y + (g*y + f)*dy - g*(g*y + f) - dg*y^2 - df*y # = 0
 ### ODE:
 y^2*d2y + g*y*dy + f*dy - dg*y^2 - df*y - g^2*y - g*f # = 0
 
 # Subst 2 =>
+# [reducible/redundant]
 y^2*d2y + g*(g*y + f) + f*dy - dg*y^2 - df*y - g^2*y - g*f # = 0
 ### ODE:
 y^2*d2y + f*dy - dg*y^2 - df*y # = 0
 # => original Eq:
 # d2y - dg - D(f/y) # = 0
 
-### Check:
+
+### Variant 2:
+# D * dy =>
+y*dy*d2y + dy^3 - g*dy^2 - dg*y*dy - df*dy # = 0
+(g*y + f)*d2y + dy^3 - g*dy^2 - dg*(g*y + f) - df*dy # = 0
+### ODE:
+g*y*d2y + f*d2y + dy^3 - g*dy^2 - df*dy - dg*g*y - dg*f # = 0
+
+### Debug/Check:
 x = sqrt(3)
 y  = x + log(x^2 + 1);
 dy = 2*x/(x^2+1) + 1;
@@ -139,6 +155,20 @@ y*dy^2 - f*dy - g^2*y - g*f # = 0
 2*(g*y + f)*d2y - g*(g*y + f) - dg*y*dy - df*dy # = 0
 ### ODE:
 2*g*y*d2y + 2*f*d2y - dg*y*dy - df*dy - g^2*y - g*f # = 0
+
+# TODO: check;
+
+###################
+
+### Generalization:
+### dy^n - G(x)*y = F(x)
+
+### D =>
+n*dy^(n-1)*d2y - g*dy - dg*y - df # = 0 # * dy =>
+n*dy^n*d2y - g*dy^2 - dg*y*dy - df*dy # = 0
+n*(g*y + f)*d2y - g*dy^2 - dg*y*dy - df*dy # = 0
+### ODE:
+n*g*y*d2y + n*f*d2y - g*dy^2 - dg*y*dy - df*dy # = 0
 
 # TODO: check;
 
