@@ -7,7 +7,7 @@
 ### Asymmetric S2:
 ### Conjugated Types
 ###
-### draft v.0.1b
+### draft v.0.1b-fix
 
 
 ### Asymmetric Polynomial Systems: 2 Variables
@@ -156,6 +156,7 @@ solve.S2Conj3 = function(R, b) {
 	# x = Re(z); y = Im(z);
 	# sol1 = cbind(x=x, y=y);
 	# All solutions:
+	b1 = b[1]; b2 = b[2]; R1 = R[1]; R2 = R[2];
 	y = sapply(z, function(z) {
 		coeff = c(4*z, 2i*(3*z^2 + b2*z), - (2*z^3 + b2*z^2 + 2i*R2*z - b1), R2*z^2);
 		roots(coeff);
@@ -179,7 +180,7 @@ test.S2Conj3 = function(sol, R, b) {
 R = c(1,2)
 b = c(-2,3);
 #
-sol = solve.S2Conj2(R, b);
+sol = solve.S2Conj3(R, b);
 x = sol[,1]; y = sol[,2];
 
 ### Test:
