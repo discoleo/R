@@ -242,7 +242,7 @@ line.tan(c((0:4)/2), dx=3, p=y, dp=dy, b=1/2, n=n)
 ### Ex 2:
 n = 3
 curve(y(x, b=1/2, n=n), from=-1, to=3)
-# a nice global minimum
+# a nice minimum (pseudo-global)
 line.tan(c((0:4)/2), dx=3, p=y, dp=dy, b=1/2, n=n)
 
 
@@ -301,9 +301,10 @@ dy = function(x, n, b) {
 	return(dp)
 }
 ### Plot:
-curve(y(x, n=3, b=1), from=-1/5, to=3)
-# a nice global minimum
-line.tan(c((0:4)/2), dx=3, p=y, dp=dy, n=3, b=1)
+px = c(-0.42, (0:2)/2, 1.8)
+curve(y(x, n=3, b=1), from=-1/2, to=3)
+# possible inflexion
+line.tan(px, dx=3, p=y, dp=dy, n=3, b=1)
 
 
 ### Generalisations
