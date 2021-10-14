@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs: From other ODEs
 ###
-### draft v.0.2a
+### draft v.0.2b
 
 
 
@@ -15,6 +15,9 @@
 ###############
 
 
+### draft v.0.2b:
+# - various examples based on y-Exponentials, eg:
+#   x*d2y - x*dy^2 + n*dy = 0;
 ### draft v.0.2a:
 # - moved to this file Section with Exponentials:
 #   from DE.ODE.Exponentials.R;
@@ -293,11 +296,36 @@ g2*d2y - 2*g2^2*y*dy - (dg2 + g1*g2)*dy + (dg2*g1 - dg1*g2)*y + dg2*f - g2*df # 
 ######################
 
 ### Example 1:
+x*y*dy - exp(y) # = 0
 
-### TODO
+### D =>
+x*y*d2y + x*dy^2 + y*dy - exp(y)*dy # = 0
+x*y*d2y - x*y*dy^2 + x*dy^2 + y*dy # = 0
 
 
-### Example 2:
+###############
+### Example 2a:
+x^n*dy - exp(y) # = 0
+
+### D =>
+x^n*d2y + n*x^(n-1)*dy - exp(y)*dy # = 0
+x^n*d2y + n*x^(n-1)*dy - x^n*dy^2 # = 0
+x*d2y - x*dy^2 + n*dy # = 0
+
+
+###############
+### Example 2b:
+x^n*dy - exp(x^2*y) # = 0
+
+### D =>
+x^n*d2y + n*x^(n-1)*dy - (x^2*dy + 2*x*y)*exp(x^2*y) # = 0
+x^n*d2y + n*x^(n-1)*dy - (x^2*dy + 2*x*y)*x^n*dy # = 0
+x*d2y + n*dy - (x^2*dy + 2*x*y)*x*dy # = 0
+x*d2y - x^3*dy^2 - 2*x^2*y*dy + n*dy # = 0
+
+
+##############
+### Example 3:
 x*y*dy + y^2 - exp(y) # = 0
 
 ### D =>
