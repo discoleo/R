@@ -7,7 +7,7 @@
 ### Differential Equations
 ### ODEs - Exponentials
 ###
-### draft v.0.1f-PowFr
+### draft v.0.2a
 
 
 ### ODEs Derived from Exponentials
@@ -23,6 +23,9 @@
 ###############
 
 
+### v.0.2a:
+# - moved Section with ODEs based on another ODE
+#   to file: DE.ODE.FromODEs.R;
 ### v.0.1f - v.0.1f-PowFr:
 # - derived from ODEs of Higher Power:
 #   dy - G(x)*y^2 = F(x);
@@ -292,6 +295,9 @@ log(y - x) = ... /2 / (y^2*d2y - x^2*d2y - x*dy^3 + y*dy^2 + x*dy - y)
 ###  other ODEs  ###
 ####################
 
+# - moved to file: DE.ODE.FromODEs.R;
+
+### Basic Example:
 ### dy - G(x)*y = F(x)
 
 ### D =>
@@ -335,62 +341,15 @@ x^2*d2y + x*dy + y - n*x^(n+1)/(x^n + b0) # = 0
 
 
 ########################
+########################
 
-### Higher Powers:
-### dy - G(x)*y^2 = F(x)
+### Higher Powers & y-Exponentials:
+# 1.) dy - G(x)*y^2 = F(x)
+# 2.) dy - G2(x)*y^2 - G1(x)*y = F(x)
+# 3.) x*y*dy + y^2 - exp(y) # = 0
 
-### D =>
-d2y - 2*g*y*dy - dg*y^2 - df # = 0
-
-### Variant 1:
-g*d2y - 2*g^2*y*dy - dg*(dy - f) - g*df # = 0
-g*d2y - 2*g^2*y*dy - dg*dy + dg*f - g*df # = 0
-
-
-### Other Powers:
-### dy - G(x)*y^(1/n) = F(x)
-
-### D =>
-d2y - 1/n*g*y^(1/n - 1)*dy - dg*y^(1/n) - df # = 0
-
-### Variant 1:
-g*y*d2y - 1/n*g*(dy - f)*dy - dg*y*(dy - f) - g*df*y # = 0
-g*y*d2y - 1/n*g*dy^2 - dg*y*dy + 1/n*g*f*dy + dg*f*y - g*df*y # = 0
-
-
-##################
-### Higher Powers:
-### Generalization
-
-### dy - G2(x)*y^2 - G1(x)*y = F(x)
-
-### D =>
-d2y - 2*g2*y*dy - dg2*y^2 - g1*dy - dg1*y - df # = 0
-
-### Variant 1:
-g2*d2y - 2*g2^2*y*dy - dg2*(dy - g1*y - f) - g1*g2*dy - dg1*g2*y - g2*df # = 0
-g2*d2y - 2*g2^2*y*dy - (dg2 + g1*g2)*dy + (dg2*g1 - dg1*g2)*y + dg2*f - g2*df # = 0
-
+# - moved to file: DE.ODE.FromODEs.R;
 
 
 #########################
 #########################
-
-### I(f1(y) dy) = f2(y, x)
-
-### I( exp(y) / y dy) = P1(x)*P2(y)
-
-### Example:
-# I( exp(y) / y dy) = x*y
-
-### D =>
-exp(y) / y - x*dy - y # = 0
-exp(y) - x*y*dy - y^2 # = 0
-
-### D2 =>
-exp(y)*dy - x*y*d2y - x*dy^2 - y*dy - 2*y*dy # = 0
-(x*y*dy + y^2)*dy - x*y*d2y - x*dy^2 - 3*y*dy # = 0
-x*y*d2y - x*y*dy^2 + x*dy^2 - y^2*dy + 3*y*dy # = 0
-
-# TODO: check!
-
