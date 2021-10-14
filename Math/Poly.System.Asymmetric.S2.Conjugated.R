@@ -7,7 +7,7 @@
 ### Asymmetric S2:
 ### Conjugated Types
 ###
-### draft v.0.1c
+### draft v.0.1d
 
 
 ### Asymmetric Polynomial Systems: 2 Variables
@@ -19,6 +19,8 @@
 ###############
 
 
+### draft v.0.1d:
+# - based on Unity: w^3 = 1;
 ### draft v.0.1a - v.0.1c:
 # - [solved] Simple Order z=2;
 # - [solved] Simple Order z=3;
@@ -281,4 +283,79 @@ p2 = toPoly.pm("2i*y - z")
 # TODO: fix print.p!
 print.p(mult.pm(p1, p2), "y")
 
+
+#########################
+#########################
+
+######################
+### Unity: w^3 = 1 ###
+######################
+
+### Simple Variant:
+x*(x^3 + y^3) + R1*(x^3 + y^3) + b1*(x^2 + x*y) # = 0
+y*(x^3 + y^3) + R2*(x^3 + y^3) + b1*(y^2 + x*y) # = 0
+
+### Solutions:
+
+### Trivial Solution:
+# t1.) x = y = 0
+# t2.) x + y = 0
+
+### Non-Trivial Solutions:
+
+### Method 1:
+# Sum & Diff;
+
+### Method 2:
+# let w^3 = 1;
+w = unity(3, FALSE);
+
+### Sum(Eq 1 + w * Eq 2) =>
+(x+w*y)^2*(x+y)*(x+w^2*y) + (R1+w*R2)*(x+y)*(x+w*y)*(x+w^2*y) + b1*(x+y)*(x+w*y) # = 0
+(x+w*y)*(x+w^2*y) + (R1+w*R2)*(x+w^2*y) + b1 # = 0
+
+### Sum(Eq 1 + w^2 * Eq 2) =>
+(x+w^2*y)^2*(x+y)*(x+w*y) + (R1+w*R2)*(x+y)*(x+w*y)*(x+w^2*y) + b1*(x+y)*(x+w^2*y) # = 0
+(x+w*y)*(x+w^2*y) + (R1+w^2*R2)*(x+w*y) + b1 # = 0
+
+### Diff =>
+(w-w^2)*R2*x + (w^2-w)*R1*y # = 0
+R2*x - R1*y # = 0
+
+### =>
+(R1^3 + R2^3)*x^4 + R1*(R1^3 + R2^3)*x^3 + b1*R1^2*(R1 + R2)*x^2 # = 0
+(R1^3 + R2^3)*x^2 + R1*(R1^3 + R2^3)*x + b1*R1^2*(R1 + R2) # = 0
+
+### Solver:
+solve.S2ConjW3P1 = function(R, b) {
+	R3 = R[1]^3 + R[2]^3;
+	coeff = c(R3, R[1]*R3, b[1]*R[1]^2*(R[1] + R[2]));
+	x = roots(coeff);
+	y = R[2]*x / R[1];
+	sol = cbind(x=x, y=y);
+	return(sol);
+}
+test.S2ConjW3P1 = function(sol, R, b) {
+	x = sol[,1]; y = sol[,2];
+	R1 = R[1]; R2 = R[2]; b1 = b[1];
+	s3 = x^3 + y^3; xy = x*y;
+	err1 = x*s3 + R1*s3 + b1*(x^2 + xy);
+	err2 = y*s3 + R2*s3 + b1*(y^2 + xy);
+	err = round0(rbind(err1, err2));
+	return(err)
+}
+
+### Example:
+
+R = c(2,3)
+b = -1
+#
+sol = solve.S2ConjW3P1(R, b);
+x = sol[,1]; y = sol[,2];
+
+### Test
+test.S2ConjW3P1(sol, R, b)
+
+### Debug:
+R1 = R[1]; R2 = R[2]; b1 = b[1];
 
