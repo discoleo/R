@@ -7,13 +7,16 @@
 ### Differential Equations
 ### ODEs - Fractions: Lambert
 ###
-### draft v.0.4d-test
+### draft v.0.4e
 
 
 ### History
 
 ### Order 1 Non-Liniar
 ###
+### draft v.0.4e:
+# - based on: y^m * exp(y^n) = F(x);
+#   e.g.: (m*y^m + n)*dy - (k+1)*x^k * y = 0;
 ### draft v.0.4d: pre & test:
 # - generalization:
 #   (y + F1(x)) * (W(x+k) + F2(x)) = F0(x);
@@ -132,12 +135,16 @@ g^2*e^g*Dg + g*e^g*Dg - df*g # = 0
 # g*e^g = f =>
 f*g*Dg + f*Dg - df*g # = 0
 
+#############
 ### Examples:
+
 # g = y:
 f*y*dy + f*dy - df*y # = 0
+
 # g = y^2
 2*f*y^3*dy + 2*f*y*dy - df*y^2 # = 0
 2*f*y^2*dy + 2*f*dy - df*y # = 0
+
 # g = y^n
 n*f*y^(2*n-1)*dy + n*f*y^(n-1)*dy - df*y^n # = 0
 n*f*y^n*dy + n*f*dy - df*y # = 0
@@ -146,7 +153,7 @@ n*f*y^n*dy + n*f*dy - df*y # = 0
 f*(y + a*x)*(dy + a) + f*(dy + a) - df*(y + a*x) # = 0
 f*y*dy + f*(a*x + 1)*dy + (a*f - df)*y + a^2*f*x - a*x*df + a*f # = 0
 # for f = x^2 * e^(a*x):
-# e^(a*x) can be factored both from f & df, as df = (a*x^2 + 2*x)*e^(ax):
+# e^(a*x) can be factored both from f & df, as df = (a*x^2 + 2*x)*e^(a*x):
 x^2*y*dy + x^2*(a*x + 1)*dy + (a*x^2 - a*x^2 - 2*x)*y + a^2*x^3 - a*x*(a*x^2 + 2*x) + a*x^2 # = 0
 x*y*dy + x*(a*x + 1)*dy - 2*y - a*x # = 0
 
@@ -157,6 +164,7 @@ x*y*dy + x*(a*x + 1)*dy - 2*y - a*x # = 0
 ### (x + y)*e^y = x^2
 x*y*dy + x*(x+1)*dy - 2*y - x # = 0
 y*dy + (x+1)*dy - 2/x * y - 1 # = 0
+
 ### Solution:
 y = function(x, a=1) {
 	# root
@@ -173,27 +181,28 @@ dy = function(x, a=1) {
 	dp = ifelse(div != 0, dp / div, -a);
 	return(dp)
 }
-###
+### Plot:
+px = c(0, 1, 2, 4.5) / 2;
 curve(y(x), from=-1/5, to=3)
 # a nice global minimum
-sapply(c((0:4)/2), line.tan, dx=3, p=y, dp=dy)
+line.tan(px, dx=3, p=y, dp=dy)
 
 ###
 curve(y(x), from=-1/5, to=5)
 # a nice global minimum
-sapply(c((0:3)*4/3), line.tan, dx=3, p=y, dp=dy)
+line.tan(c((0:3)*4/3), dx=3, p=y, dp=dy)
 
 ### a == 2
 a = 2;
 curve(y(x, a=a), from=-1/5, to=3)
 # a nice global minimum
-sapply(c(0:4, 7.5, 10)/5, line.tan, dx=3, p=y, dp=dy, a=a)
+line.tan(c(0:4, 7.5, 10)/5, dx=3, p=y, dp=dy, a=a)
 
 ### a == 1/2
 a = 1/2;
 curve(y(x, a=a), from=-1/5, to=3)
 # a nice global minimum
-sapply(c(0:4, 10)/5, line.tan, dx=3, p=y, dp=dy, a=a)
+line.tan(c(0:4, 10)/5, dx=3, p=y, dp=dy, a=a)
 
 
 
@@ -201,6 +210,7 @@ sapply(c(0:4, 10)/5, line.tan, dx=3, p=y, dp=dy, a=a)
 ### (x + y)*e^y = x^2 + b
 # [not run]
 (x^2+b)*y*dy + (x^2+b)*(x+1)*dy - 2*x*y - x^2 + b # = 0
+
 ### Solution:
 y = function(x, b) {
 	# root
@@ -216,9 +226,10 @@ dy = function(x, b) {
 	dp = ifelse(div != 0, dp / div, -1);
 	return(dp)
 }
+### Plot:
 curve(y(x, b=1/2), from=-1, to=3)
 # a nice global minimum
-sapply(c((0:4)/2), line.tan, dx=3, p=y, dp=dy, b=1/2)
+line.tan(c((0:4)/2), dx=3, p=y, dp=dy, b=1/2)
 
 
 #####################
@@ -228,8 +239,9 @@ sapply(c((0:4)/2), line.tan, dx=3, p=y, dp=dy, b=1/2)
 (1 + dy)*(x^2 + b)/(y + x + a) + (x^2 + b)*dy - 2*x # = 0
 (1 + dy)*(x^2 + b) + (x^2 + b)*(y + x + a)*dy - 2*x*(y + x + a) # = 0
 (x^2 + b)*y*dy + (x + a + 1)*(x^2 + b)*dy - 2*x*y - x^2 - 2*a*x + b # = 0
-###
+### ODE:
 (x^2 + b)*y*dy + (x + a + 1)*(x^2 + b)*dy - 2*x*y - x^2 - 2*a*x + b # = 0
+
 ### Solution:
 y = function(x, a, b) {
 	# root
@@ -245,9 +257,10 @@ dy = function(x, a, b) {
 	dp = ifelse(div != 0, dp / div, -1); # may need correction
 	return(dp)
 }
+### Plot:
 curve(y(x, a=-1, b=1/2), from=-2, to=3)
 # a nice global minimum
-sapply(c(-1, (0:4)/3), line.tan, dx=3, p=y, dp=dy, a=-1, b=1/2)
+line.tan(c(-1, (0:4)/3), dx=3, p=y, dp=dy, a=-1, b=1/2)
 
 
 ###################
@@ -256,6 +269,7 @@ sapply(c(-1, (0:4)/3), line.tan, dx=3, p=y, dp=dy, a=-1, b=1/2)
 ### (x + y)*e^y = x^n + b*x
 (x^n+b*x)*y*dy + (x^n+b*x)*(x+1)*dy - (n*x^(n-1) + b)*y - (n-1)*x^n # = 0
 (x^3+x)*y*dy + (x^3+x)*(x+1)*dy - (3*x^2 + 1)*y - 2*x^3 # for: n = 3; b = 1;
+
 ### Solution:
 y = function(x, n, b) {
 	# root
@@ -272,9 +286,10 @@ dy = function(x, n, b) {
 	dp = ifelse(div != 0, dp / div, 0);
 	return(dp)
 }
+### Plot:
 curve(y(x, n=3, b=1), from=-1/5, to=3)
 # a nice global minimum
-sapply(c((0:4)/2), line.tan, dx=3, p=y, dp=dy, n=3, b=1)
+line.tan(c((0:4)/2), dx=3, p=y, dp=dy, n=3, b=1)
 
 
 ### Generalisations
@@ -292,6 +307,7 @@ fx*y*dy + fx*(ax + 1)*dy + (fx*dex - dfx)*y + ax*(fx*dex - dfx) + fx*dax # = 0
 # ex = -2*x
 x^2*y*dy + x^2*(x^2 + x)*dy - 2*(x^2 + x)*y - 2*(x^2 + x - 1)*(x^2 + x) + x^2*(2*x+1) # = 0
 y*dy + (x^2 + x)*dy - 2*(x + 1)/x * y - 2*(x^2 + x - 1)*(x + 1)/x + 2*x+1 # = 0
+
 ### Solution:
 y = function(x) {
 	# root
@@ -309,15 +325,73 @@ dy = function(x) {
 	dp = ifelse(div != 0, dp / div, 0);
 	return(dp)
 }
+### Plot:
 curve(y(x), from=-1, to=1)
 # a nice global minimum
-sapply(c((-4:4)/5), line.tan, dx=3, p=y, dp=dy)
+line.tan(c((-4:4)/5), dx=3, p=y, dp=dy)
 
 
 #######################
 
 #######################
 ### Different Power ###
+#######################
+
+### y^n * exp(y^m) = F(x)
+
+### D =>
+(m*y^(m+n-1) + n*y^(n-1)) * exp(y^m)*dy - df # = 0 # * y =>
+### ODE:
+f*(m*y^m + n)*dy - df*y # = 0
+
+### Example:
+# m = 1:
+f*(y + n)*dy - df*y # = 0
+# m = n:
+n*f*(y + 1)*dy - df*y # = 0
+# f = exp(x^(k+1))
+(m*y^m + n)*dy - (k+1)*x^k * y # = 0
+
+### Solution & Plot:
+y = function(x, m=c(2,2), FUN, DFUN=NULL, useNeg=FALSE) {
+	# m = m[1]; n = m[2];
+	fr = m[1] / m[2];
+	# root
+	fx = fr * FUN(x)^fr;
+	y = lambertWp(fx);
+	if(useNeg) {
+		isNeg = (fx < 0)
+		if(any(isNeg)) {
+			y[isNeg] = lambertWn(fx);
+		}
+	}
+	y = rootn(y, m[1]);
+	y = sapply(y, round0)
+	return(y)
+}
+dy = function(x, m=c(2,2), FUN, DFUN, useNeg=FALSE) {
+	y.x = y(x, m=m, FUN=FUN, useNeg=useNeg)
+	# f*(m*y^m + n)*dy - df*y
+	div = FUN(x) * (m[1]*y.x^m[1] + m[2]);
+	dp = DFUN(x) * y.x;
+	dp = ifelse(div != 0, dp / div, 0); # TODO: check;
+	return(dp)
+}
+### Plot:
+b = 3;
+FUN  = function(x) x^2 + b[1];
+DFUN = function(x) 2*x;
+#
+curve(y(x, FUN=FUN), from= -1, to=3)
+# global minimum
+line.tan(c(-1/2, -1/5, 0:4 / 3), dx=3, p=y, dp=dy, FUN=FUN, DFUN=DFUN)
+
+
+################
+
+################
+### Radicals ###
+################
 
 ### sqrt(y)*e^(sqrt(y)) = f(x)
 # [not run]
@@ -328,6 +402,7 @@ f*y^(1/2)*dy + f*dy - 2*df*y # = 0
 ### Example:
 # f = x;
 x*y^(1/2)*dy + x*dy - 2*y # = 0
+
 ### Solution:
 y = function(x, useNeg=FALSE) {
 	# root
@@ -355,7 +430,7 @@ dy = function(x, useNeg=FALSE) {
 }
 curve(y(x), from= -0.5, to=3)
 # a nice global minimum
-sapply(c(-1/3, -1/5, (0:4)/3), line.tan, dx=3, p=y, dp=dy)
+line.tan(c(-1/3, -1/5, (0:4)/3), dx=3, p=y, dp=dy)
 
 
 ##################
