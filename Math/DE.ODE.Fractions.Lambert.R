@@ -7,16 +7,17 @@
 ### Differential Equations
 ### ODEs - Fractions: Lambert
 ###
-### draft v.0.4e
+### draft v.0.4e-clean
 
 
 ### History
 
-### Order 1 Non-Liniar
+### Order 1 Non-Linear
 ###
-### draft v.0.4e:
+### draft v.0.4e - v.0.4e-clean:
 # - based on: y^m * exp(y^n) = F(x);
 #   e.g.: (m*y^m + n)*dy - (k+1)*x^k * y = 0;
+# - more cleanup; [v.0.4e-clean]
 ### draft v.0.4d: pre & test:
 # - generalization:
 #   (y + F1(x)) * (W(x+k) + F2(x)) = F0(x);
@@ -338,6 +339,9 @@ line.tan(c((-4:4)/5), dx=3, p=y, dp=dy)
 #######################
 
 ### y^n * exp(y^m) = F(x)
+# - the simple cases are trivially solvable;
+# - see other sections for variants of type:
+#   G1(y, x) * exp(G2(y, x)) = F(x);
 
 ### D =>
 (m*y^(m+n-1) + n*y^(n-1)) * exp(y^m)*dy - df # = 0 # * y =>
@@ -446,6 +450,7 @@ f*(dy + dg)*sqrt(y + g) + f*dy - 2*df*y + f*dg - 2*df*g # = 0
 # f = x;
 # g = x + 1
 x*sqrt(y + x + 1)*dy + x*dy - 2*y + x*sqrt(y + x + 1) - x - 2 # = 0
+
 ### Solution:
 y = function(x, useNeg=FALSE) {
 	# root
@@ -471,8 +476,9 @@ dy = function(x, useNeg=FALSE) {
 	dp = ifelse(div != 0, dp / div, -1); # TODO: correct limit!
 	return(dp)
 }
+### Plot:
 curve(y(x), from= -0.5, to=3)
-sapply(c(-1/3, -1/5, (0:4)/3), line.tan, dx=3, p=y, dp=dy)
+line.tan(c(-1/3, -1/5, (0:4)/3), dx=3, p=y, dp=dy)
 
 
 ##################
@@ -485,6 +491,7 @@ y^2*dy + c*y*dy - c*f*dy - df*y^2 # = 0
 ### Example:
 # f = x^2
 y^2*dy + c*y*dy - c*x^2*dy - 2*x*y^2 # = 0
+
 ### Solution
 y = function(x, b) {
 	# root
@@ -501,16 +508,18 @@ dy = function(x, b) {
 	dp = ifelse(div != 0, dp / div, -1); # TODO: correct limit!
 	return(dp)
 }
-###
+### Plot:
 c = 1;
 curve(y(x, b=c), from= 1.9, to=4)
-sapply(c(1.9, (4:6)/2), line.tan, dx=3, p=y, dp=dy, b=c)
+line.tan(c(1.9, (4:6)/2), dx=3, p=y, dp=dy, b=c)
+
 
 ##############
 ### Simple ###
 
 ### e^(x/y) = x^n
 x^2*dy + n*y^2 - x*y # = 0
+
 ### Solution:
 y = function(x, n) {
 	# root
@@ -527,11 +536,10 @@ dy = function(x, n) {
 	dp = ifelse(div != 0, dp / div, 0); # TODO: correct limit!
 	return(dp)
 }
-###
+### Plot:
 n = 4L;
 curve(y(x, n=n), from= -2, to=2)
-sapply(c((-5:5)/2.8), line.tan, dx=3, p=y, dp=dy, n=n)
-
+line.tan(c((-5:5)/2.8), dx=3, p=y, dp=dy, n=n)
 
 
 ##################################
@@ -546,8 +554,9 @@ sapply(c((-5:5)/2.8), line.tan, dx=3, p=y, dp=dy, n=n)
 (1 + dy)*(sin(x)^2 + b)/(y + x + a) + (sin(x)^2 + b)*dy - sin(2*x) # = 0
 (1 + dy)*(sin(x)^2 + b) + (sin(x)^2 + b)*(y + x + a)*dy - sin(2*x)*(y + x + a) # = 0
 (sin(x)^2 + b)*y*dy + (x + a + 1)*(sin(x)^2 + b)*dy - sin(2*x)*y - x*sin(2*x) + sin(x)^2 - a*sin(2*x) + b # = 0
-###
+### ODE:
 (sin(x)^2 + b)*y*dy + (x + a + 1)*(sin(x)^2 + b)*dy - sin(2*x)*y - x*sin(2*x) - a*sin(2*x) + sin(x)^2 + b # = 0
+
 ### Solution:
 y = function(x, a, b) {
 	# root
@@ -568,29 +577,29 @@ dy = function(x, a, b) {
 	dp = ifelse(div != 0, dp / div, -1); # may need correction
 	return(dp)
 }
-###
+### Plot:
 a = -1; b = 1;
 curve(y(x, a=a, b=b), from=-2, to=3)
 # NO minimum: only inflexion;
-sapply(c(-1, (0:3)), line.tan, dx=3, p=y, dp=dy, a=a, b=b)
+line.tan(c(-1, (0:3)), dx=3, p=y, dp=dy, a=a, b=b)
 
 ### y*dy + x*dy + 2*tan(x)*y + 2*x*tan(x) - 2*tan(x) + 1 = 0
 a = -1; b = -1;
 curve(y(x, a=a, b=b), from=-3, to=2)
 # a "virtual" minimum
-sapply(c(-1, 1+(0:3)/3), line.tan, dx=3, p=y, dp=dy, a=a, b=b)
+line.tan(c(-1, 1+(0:3)/3), dx=3, p=y, dp=dy, a=a, b=b)
 
 ###
 a = -1; b = -1/4;
 curve(y(x, a=a, b=b), from=-3, to=2)
 # NO minimum: only inflexion;
-sapply(c(-1, (0:3)/2), line.tan, dx=3, p=y, dp=dy, a=a, b=b)
+line.tan(c(-1, (0:3)/2), dx=3, p=y, dp=dy, a=a, b=b)
 
 
 #########################
 
 ###################
-### Logarythmic ###
+### Logarithmic ###
 ###################
 
 ### y * log(y) = x + b
