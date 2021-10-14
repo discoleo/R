@@ -5,7 +5,7 @@
 ###
 ### Tools: Descriptive Statistics
 ###
-### draft v.0.1m
+### draft v.0.1n
 
 
 ###############
@@ -13,6 +13,8 @@
 ###############
 
 
+### draft v.0.1n:
+# - [minor] set colour;
 ### draft v.0.1m:
 # - consistent return values inside apply.html();
 # - experimental framework to test concepts;
@@ -107,7 +109,7 @@ as.html = function(x) {
 }
 
 ### Split Long Results
-split.stat.node = function(node, len=10, sep="<br/>", reg = "\\([-0-9 ,.]++\\)") {
+split.stat.node = function(node, len=10, sep="<br/>", reg = "\\([-0-9 ,.]++\\)", col="#D03232") {
 	x = xml_text(node, trim=TRUE);
 	npos = regexpr(reg, x, perl=TRUE);
 	isMatch = (! is.na(x)) & (npos >= 0);
@@ -122,9 +124,13 @@ split.stat.node = function(node, len=10, sep="<br/>", reg = "\\([-0-9 ,.]++\\)")
 	s2 = substr(sMatch, npos[isMatch], npos[isMatch] + LEN[isMatch]);
 	# x[isMatch] = paste0(s1, sep, s2);
 	# <r> = a root is needed;
-	# new.line = read_xml(paste0("<r>", s1, sep, s2, "</r>"));
-	# - with some effects ;-)
-	new.line = read_xml(paste0("<r>", s1, sep, "<span style=\"color:#D03232\">", s2, "</span></r>"));
+	if(is.null(col)) {
+		new.line = read_xml(paste0("<r>", s1, sep, s2, "</r>"));
+	} else {
+		# - with some effects ;-)
+		new.line = read_xml(paste0("<r>", s1, sep,
+			"<span style=\"color:", col, "\">", s2, "</span></r>"));
+	}
 	# delete previous text
 	xml_text(node) = "";
 	for(nn in xml_contents(new.line)) {
