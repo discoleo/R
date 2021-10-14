@@ -7,13 +7,16 @@
 ### Differential Equations
 ### ODEs - Fractions: Lambert
 ###
-### draft v.0.4e-various
+### draft v.0.4f
 
 
 ### History
 
 ### Order 1 Non-Linear
 ###
+### draft v.0.4f:
+# - trivial Lambert example:
+#   W(y+x) = F(x);
 ### draft v.0.4e - v.0.4e-various:
 # - based on: y^m * exp(y^n) = F(x);
 #   e.g.: (m*y^m + n)*dy - (k+1)*x^k * y = 0;
@@ -943,6 +946,7 @@ y*W*dy + W/(x*W + x) * y^2 - df0*y # = 0
 f0*dy + f0/(x*y*W + x*y) * y^2 - df0*y # = 0
 f0*dy + f0/(x*f0 + x*y) * y^2 - df0*y # = 0
 f0*(x*f0 + x*y)*dy + f0*y^2 - df0*(x*f0 + x*y)*y # = 0
+### ODE:
 x*f0*y*dy + x*f0^2*dy - x*df0*y^2 + f0*y^2 - x*f0*df0*y # = 0
 
 ### Extensions:
@@ -1164,4 +1168,25 @@ curve(y(x, b=b, k=k), from = 1E-3, to = 1.5, ylim=c(-5, 2.5))
 #
 line.tan(px, dx=c(1,1,1.5, 2,2), p=y, dp=dy, b=b, k=k)
 curve(dy(x, b=b, k=k), add=T, col="green")
+
+
+#####################
+#####################
+
+### W(y+x) = F0(x)
+# - trivial example;
+
+### D =>
+dW = W*(dy + 1) / ((W + 1)*(y + x)); # !! dW(y+x) !!
+dW = f0 * (dy + 1) / ((f0 + 1)*(y + x))
+# =>
+f0 * (dy + 1) - df0*(f0 + 1)*(y + x) # = 0
+### ODE:
+f0*dy - df0*(f0 + 1)*y + f0 - x*df0*(f0 + 1) # = 0
+
+### Check:
+# f0 = x - 1
+(x-1)*dy - x*y - x^2 + x - 1 # = 0
+# (x-1)*exp(x-1) = y + x
+# D => (x-1)*dy - x*y - x^2 + x - 1 = 0;
 
