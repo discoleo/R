@@ -7,14 +7,14 @@
 ### Differential Equations
 ### ODEs - Fractions: Lambert
 ###
-### draft v.0.4e-clean
+### draft v.0.4e-various
 
 
 ### History
 
 ### Order 1 Non-Linear
 ###
-### draft v.0.4e - v.0.4e-clean:
+### draft v.0.4e - v.0.4e-various:
 # - based on: y^m * exp(y^n) = F(x);
 #   e.g.: (m*y^m + n)*dy - (k+1)*x^k * y = 0;
 # - more cleanup; [v.0.4e-clean]
@@ -139,6 +139,7 @@ f*g*Dg + f*Dg - df*g # = 0
 #############
 ### Examples:
 
+### Trivial:
 # g = y:
 f*y*dy + f*dy - df*y # = 0
 
@@ -149,7 +150,10 @@ f*y*dy + f*dy - df*y # = 0
 # g = y^n
 n*f*y^(2*n-1)*dy + n*f*y^(n-1)*dy - df*y^n # = 0
 n*f*y^n*dy + n*f*dy - df*y # = 0
+n*y^n*dy + n*dy - df/f*y # = 0
 
+
+### Non-Trivial:
 # g = y + a*x; a = constant;
 f*(y + a*x)*(dy + a) + f*(dy + a) - df*(y + a*x) # = 0
 f*y*dy + f*(a*x + 1)*dy + (a*f - df)*y + a^2*f*x - a*x*df + a*f # = 0
@@ -206,31 +210,40 @@ curve(y(x, a=a), from=-1/5, to=3)
 line.tan(c(0:4, 10)/5, dx=3, p=y, dp=dy, a=a)
 
 
-
 #####################
+
 ### (x + y)*e^y = x^2 + b
-# [not run]
+# ODE:
 (x^2+b)*y*dy + (x^2+b)*(x+1)*dy - 2*x*y - x^2 + b # = 0
+(x^n+b)*y*dy + (x^n+b)*(x+1)*dy - n*x^(n-1)*y - (n-1)*x^n + b # = 0
 
 ### Solution:
-y = function(x, b) {
+y = function(x, b, n=2) {
 	# root
-	y = lambertWp((x^2+b) * exp(x)) - x
+	y = lambertWp((x^n+b) * exp(x)) - x
 	y = sapply(y, round0)
 	return(y)
 }
-dy = function(x, b) {
-	y.x = y(x, b)
-	x2 = x^2 + b
-	div = x2*(y.x + x + 1)
-	dp = 2*x*y.x + x2 - 2*b # using x2 instead of x^2
+dy = function(x, b, n=2) {
+	y.x = y(x, b, n=n)
+	xn = x^n; xnb = xn + b;
+	div = xnb*(y.x + x + 1)
+	xn1 = if(n == 2) x else x^(n-1);
+	dp = n * xn1 * y.x + (n-1)*xn - b;
 	dp = ifelse(div != 0, dp / div, -1);
 	return(dp)
 }
 ### Plot:
-curve(y(x, b=1/2), from=-1, to=3)
+n = 2;
+curve(y(x, b=1/2, n=n), from=-1, to=3)
 # a nice global minimum
-line.tan(c((0:4)/2), dx=3, p=y, dp=dy, b=1/2)
+line.tan(c((0:4)/2), dx=3, p=y, dp=dy, b=1/2, n=n)
+
+### Ex 2:
+n = 3
+curve(y(x, b=1/2, n=n), from=-1, to=3)
+# a nice global minimum
+line.tan(c((0:4)/2), dx=3, p=y, dp=dy, b=1/2, n=n)
 
 
 #####################
