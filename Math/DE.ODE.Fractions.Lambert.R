@@ -7,7 +7,7 @@
 ### Differential Equations
 ### ODEs - Fractions: Lambert
 ###
-### draft v.0.4f
+### draft v.0.4f-ex2
 
 
 ### History
@@ -17,6 +17,8 @@
 ### draft v.0.4f:
 # - trivial Lambert example:
 #   W(y+x) = F(x);
+# - more examples for:
+#   W(y+x) = y + b*x;
 ### draft v.0.4e - v.0.4e-various:
 # - based on: y^m * exp(y^n) = F(x);
 #   e.g.: (m*y^m + n)*dy - (k+1)*x^k * y = 0;
@@ -1189,4 +1191,28 @@ f0*dy - df0*(f0 + 1)*y + f0 - x*df0*(f0 + 1) # = 0
 (x-1)*dy - x*y - x^2 + x - 1 # = 0
 # (x-1)*exp(x-1) = y + x
 # D => (x-1)*dy - x*y - x^2 + x - 1 = 0;
+
+
+####################
+
+### W(y+x) = y + b*x
+
+### D =>
+dW = W*(dy + 1) / ((W + 1)*(y + x)); # !! dW(y+x) !!
+(y + b*x)*(dy + 1) - (y + b*x + 1)*(y + x)*(dy + b) # = 0
+(y + b*x)*dy - (y^2 + b*x*y + y + x*y + b*x^2 + x)*dy +
+	- b*(y^2 + b*x*y + y + x*y + b*x^2 + x) + (y + b*x) # = 0
+(y^2 + (b+1)*x*y + b*x^2 - (b-1)*x)*dy +
+	+ b*y^2 + b*(b+1)*x*y + (b-1)*y + b^2*x^2 # = 0
+
+### Special Cases:
+# b = 0
+(y^2 + x*y + x)*dy - y # = 0
+# b = -1
+(y^2 - x^2 + 2*x)*dy - y^2 - 2*y + x^2 # = 0
+
+
+### Check
+# b = 1 =>
+(y + x)^2*(dy + 1) # = 0 # OK
 
