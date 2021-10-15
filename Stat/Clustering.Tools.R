@@ -5,7 +5,7 @@
 ###
 ### Clustering: Tools & Simulations
 ###
-### draft v.0.1a
+### draft v.0.1b
 
 
 
@@ -14,8 +14,9 @@
 ###############
 
 
-### draft v.0.1a:
+### draft v.0.1a - v.0.1b:
 # - generate random clusters;
+# - parameter: set variance;
 
 
 ####################
@@ -74,13 +75,13 @@ rcluster = function(n, cl, mu=NULL, dim=2, sigma=NULL, add.id=TRUE, seed=NULL) {
 
 ### Matrix Operations
 # Generate Covariance Matrix
-matrix.sigma = function(triang) {
+matrix.sigma = function(triang, diag=1) {
 	len = length(triang);
 	n = (-1 + sqrt(1 + 8*len))/2;
 	n = round(n);
 	n = n + 1;
 	### Matrix
-	m = diag(n);
+	m = diag(diag, n);
 	m[lower.tri(m)] = triang;
 	m[upper.tri(m)] = t(m)[upper.tri(m)];
 	return(m)
@@ -117,6 +118,18 @@ ggplot(x, aes(x=v1, y=v2, fill=ID, col=ID)) +
 ### Ex 3:
 cl = 5
 sigma = lapply(seq(cl), function(id) matrix.sigma(runif(1, 0, 0.9)))
+x = rcluster(100, cl=cl, sigma=sigma)
+x$ID = as.factor(x$ID)
+
+ggplot(x, aes(x=v1, y=v2, fill=ID, col=ID)) +
+	geom_point()
+
+
+### Ex 4:
+cl = 5
+sdsq = 2;
+set.seed(35);
+sigma = lapply(seq(cl), function(id) matrix.sigma(runif(1, 0, 1.9), diag=sdsq))
 x = rcluster(100, cl=cl, sigma=sigma)
 x$ID = as.factor(x$ID)
 
