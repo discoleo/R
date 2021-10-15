@@ -5,7 +5,7 @@
 ###
 ### Clustering: Tools & Simulations
 ###
-### draft v.0.1b
+### draft v.0.1b-ex
 
 
 
@@ -14,9 +14,10 @@
 ###############
 
 
-### draft v.0.1a - v.0.1b:
+### draft v.0.1a - v.0.1b-ex:
 # - generate random clusters;
 # - parameter: set variance;
+# - more examples; [v.0.1b-ex]
 
 
 ####################
@@ -87,6 +88,12 @@ matrix.sigma = function(triang, diag=1) {
 	return(m)
 }
 
+### Graphic
+plot.cluster.2D = function(x) {
+	ggplot(x, aes(x=v1, y=v2, fill=ID, col=ID)) +
+		geom_point();
+}
+
 ####################
 ####################
 
@@ -117,24 +124,34 @@ ggplot(x, aes(x=v1, y=v2, fill=ID, col=ID)) +
 
 ### Ex 3:
 cl = 5
-sigma = lapply(seq(cl), function(id) matrix.sigma(runif(1, 0, 0.9)))
+sigma = lapply(seq(cl), function(id) matrix.sigma(runif(1, -0.5, 0.9)))
 x = rcluster(100, cl=cl, sigma=sigma)
 x$ID = as.factor(x$ID)
 
-ggplot(x, aes(x=v1, y=v2, fill=ID, col=ID)) +
-	geom_point()
+
+plot.cluster.2D(x)
 
 
 ### Ex 4:
 cl = 5
 sdsq = 2;
-set.seed(35);
+set.seed(31); # 31, 35
 sigma = lapply(seq(cl), function(id) matrix.sigma(runif(1, 0, 1.9), diag=sdsq))
 x = rcluster(100, cl=cl, sigma=sigma)
 x$ID = as.factor(x$ID)
 
-ggplot(x, aes(x=v1, y=v2, fill=ID, col=ID)) +
-	geom_point()
+plot.cluster.2D(x)
+
+
+### Ex 4:
+cl = 5
+sdsq = 2;
+set.seed(31); # 31, 35
+sigma = lapply(seq(cl), function(id) matrix.sigma(runif(1, -1.9, 1.9), diag=sdsq))
+x = rcluster(100, cl=cl, sigma=sigma)
+x$ID = as.factor(x$ID)
+
+plot.cluster.2D(x)
 
 
 ################
