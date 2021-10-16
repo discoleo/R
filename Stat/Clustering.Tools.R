@@ -5,7 +5,7 @@
 ###
 ### Clustering: Tools & Simulations
 ###
-### draft v.0.1d
+### draft v.0.1e
 
 
 
@@ -14,8 +14,10 @@
 ###############
 
 
+### draft v.0.1e:
+# - cluster around a polygon;
 ### draft v.0.1d:
-# - rmatrix.sigma(): generate random sigma matrices;
+# - rmatrix.sigma(): generate random cov (sigma) matrices;
 ### draft v.0.1c:
 # - plot.cluster.3D();
 ### draft v.0.1a - v.0.1b-ex2:
@@ -129,6 +131,20 @@ plot.cluster.3D = function(x, radius=0.2, col=NULL, add=FALSE) {
 	plot3d(x[, 1:3], type="s", radius=radius, col=col, add=add);
 }
 
+### Shapes / Geometry
+
+polygon.reg = function(n, r=1, a.offset = 0, clockwise=FALSE, closed=FALSE) {
+	p = 2*pi / n;
+	p = if(clockwise) p * c(0, seq(1, n-1)) else p * seq(0, n-1);
+	if(closed) p = c(p, 0);
+	p = p + a.offset;
+	px = cos(p); py = sin(p);
+	px = r * px; py = r * py;
+	pxy = cbind(x=px, y=py);
+	# TODO: round0();
+	return(pxy);
+}
+
 ####################
 ####################
 
@@ -190,8 +206,24 @@ x = rcluster(100, cl=cl, sigma=sigma)
 
 plot.cluster.2D(x)
 
+################
+
+### Polygons
+
+### Ex 7:
+cl = 6
+mu = t(polygon.reg(cl, r=3.5));
+sdsq  = rep(1, cl)
+sigma = rmatrix.sigma(d=sdsq, sc=0, dim=2)
+x = rcluster(100, cl=cl, mu=mu, sigma=sigma)
+
+plot.cluster.2D(x)
+
 
 ################
+################
+
+### 3D
 
 cl = 8
 sdsq = seq(0.25, by=0.25, length.out=cl)
