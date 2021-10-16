@@ -5,7 +5,7 @@
 ###
 ### Clustering: Tools & Simulations
 ###
-### draft v.0.1b-ex
+### draft v.0.1b-ex2
 
 
 
@@ -14,10 +14,10 @@
 ###############
 
 
-### draft v.0.1a - v.0.1b-ex:
+### draft v.0.1a - v.0.1b-ex2:
 # - generate random clusters;
 # - parameter: set variance;
-# - more examples; [v.0.1b-ex]
+# - more examples; [v.0.1b-ex & v.0.1b-ex2]
 
 
 ####################
@@ -59,6 +59,7 @@ rcluster = function(n, cl, mu=NULL, dim=2, sigma=NULL, add.id=TRUE, seed=NULL) {
 	}
 	### Samples
 	# TODO: seed;
+	if( ! is.null(seed)) print("Warning: seed not yet implemented!")
 	x = rmvn(n[[1]], mu[,1], sigma[[1]]);
 	if(add.id) x = cbind(x, ID = rep(1, n[[1]]));
 	if(ncl == 1) return(names.f(as.data.frame(x)));
@@ -114,12 +115,12 @@ ggplot(x, aes(x=v1, y=v2, fill=ID, col=ID)) +
 
 
 ### Ex 2:
-sigma = matrix(c(1, 0.7, 0.7, 1), nrow=2, ncol=2)
+sigma = matrix.sigma(0.7, diag=1)
 x = rcluster(100, cl=5, sigma=sigma)
 x$ID = as.factor(x$ID)
 
-ggplot(x, aes(x=v1, y=v2, fill=ID, col=ID)) +
-	geom_point()
+
+plot.cluster.2D(x)
 
 
 ### Ex 3:
@@ -143,11 +144,22 @@ x$ID = as.factor(x$ID)
 plot.cluster.2D(x)
 
 
-### Ex 4:
+### Ex 5:
 cl = 5
 sdsq = 2;
 set.seed(31); # 31, 35
 sigma = lapply(seq(cl), function(id) matrix.sigma(runif(1, -1.9, 1.9), diag=sdsq))
+x = rcluster(100, cl=cl, sigma=sigma)
+x$ID = as.factor(x$ID)
+
+plot.cluster.2D(x)
+
+
+### Ex 6:
+cl = 10
+sdsq = seq(0.25, by=0.25, length.out=cl)
+set.seed(35); # 35, 7
+sigma = lapply(seq(cl), function(id) matrix.sigma(runif(1, -0.9*sdsq[id], 0.9*sdsq[id]), diag=sdsq[id]))
 x = rcluster(100, cl=cl, sigma=sigma)
 x$ID = as.factor(x$ID)
 
