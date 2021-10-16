@@ -5,7 +5,7 @@
 ###
 ### Clustering: Tools & Simulations
 ###
-### draft v.0.1c
+### draft v.0.1d
 
 
 
@@ -14,6 +14,8 @@
 ###############
 
 
+### draft v.0.1d:
+# - rmatrix.sigma(): generate random sigma matrices;
 ### draft v.0.1c:
 # - plot.cluster.3D();
 ### draft v.0.1a - v.0.1b-ex2:
@@ -93,6 +95,24 @@ matrix.sigma = function(triang, diag=1) {
 	m[upper.tri(m)] = t(m)[upper.tri(m)];
 	return(m)
 }
+rmatrix.sigma = function(d=c(1), dim=2, sc=0.9) {
+	if(is.list(sc)) {
+		# assumes correct dimensions
+	} else {
+		len.up = (dim-1)*dim/2;
+		if(length(sc) == 1) {
+			sc = rep(list(c(-sc, sc)), len.up);
+		} else if(length(sc) == len.up) {
+			sc = lapply(sc, function(sc) c(-sc, sc));
+		} else stop("Length of scaling-parameter NOT supported!")
+	}
+	# Matrix Sigma:
+	rcov.f = function(sc, id) runif(1, sc[1]*d[[id]], sc[2]*d[[id]]);
+	lapply(seq_along(d), function(id) {
+		rndcov = sapply(sc, rcov.f, id=id);
+		matrix.sigma(rndcov, diag=d[[id]]);
+	})
+}
 
 ### Graphic
 plot.cluster.2D = function(x) {
@@ -165,7 +185,7 @@ plot.cluster.2D(x)
 cl = 10
 sdsq = seq(0.25, by=0.25, length.out=cl)
 set.seed(35); # 35, 7
-sigma = lapply(seq(cl), function(id) matrix.sigma(runif(1, -0.9*sdsq[id], 0.9*sdsq[id]), diag=sdsq[id]))
+sigma = rmatrix.sigma(d=sdsq, sc=0.9, dim=2)
 x = rcluster(100, cl=cl, sigma=sigma)
 
 plot.cluster.2D(x)
@@ -176,11 +196,7 @@ plot.cluster.2D(x)
 cl = 8
 sdsq = seq(0.25, by=0.25, length.out=cl)
 set.seed(7);
-sigma.fid = function(id) {
-	rcov = function(sc=0.9) runif(1, -sc*sdsq[id], sc*sdsq[id]);
-	matrix.sigma(c(rcov(0.9), rcov(0.5), rcov(0.5)), diag=sdsq[id]);
-}
-sigma = lapply(seq(cl), sigma.fid)
+sigma = rmatrix.sigma(d=sdsq, sc=c(0.9, 0.5, 0.5), dim=3)
 x = rcluster(100, cl=cl, dim=3, sigma=sigma)
 
 plot.cluster.3D(x)
