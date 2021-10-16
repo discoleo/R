@@ -5,7 +5,7 @@
 ###
 ### Clustering: Tools & Simulations
 ###
-### draft v.0.1b-ex2
+### draft v.0.1c
 
 
 
@@ -14,6 +14,8 @@
 ###############
 
 
+### draft v.0.1c:
+# - plot.cluster.3D();
 ### draft v.0.1a - v.0.1b-ex2:
 # - generate random clusters;
 # - parameter: set variance;
@@ -27,6 +29,8 @@
 
 library(LaplacesDemon)
 library(ggplot2)
+# 3D scatterplot
+library(rgl)
 
 ### Other:
 
@@ -35,7 +39,8 @@ rmeans = function(n, dim=2, lim=c(0, 10)) {
 	m = runif(len, lim[1], lim[2]);
 	matrix(m, nrow=dim, ncol=n);
 }
-rcluster = function(n, cl, mu=NULL, dim=2, sigma=NULL, add.id=TRUE, seed=NULL) {
+rcluster = function(n, cl, mu=NULL, dim=2, sigma=NULL, add.id=TRUE,
+		seed=NULL, id.offset=0) {
 	len = length(n);
 	ncl = if(len > 1) len else cl;
 	if( ! missing(cl) && ncl != cl) stop("Number of clusters must match!");
@@ -61,13 +66,13 @@ rcluster = function(n, cl, mu=NULL, dim=2, sigma=NULL, add.id=TRUE, seed=NULL) {
 	# TODO: seed;
 	if( ! is.null(seed)) print("Warning: seed not yet implemented!")
 	x = rmvn(n[[1]], mu[,1], sigma[[1]]);
-	if(add.id) x = cbind(x, ID = rep(1, n[[1]]));
+	if(add.id) x = cbind(x, ID = rep(1 + id.offset, n[[1]]));
 	if(ncl == 1) return(names.f(as.data.frame(x)));
 	# many clusters:
 	x = list(x);
 	for(id in seq(2, ncl)) {
 		x0 = rmvn(n[[id]], mu[,id], sigma[[id]]);
-		if(add.id) x0 = cbind(x0, ID = rep(id, n[[id]]));
+		if(add.id) x0 = cbind(x0, ID = rep(id + id.offset, n[[id]]));
 		x[[id]] = x0;
 	}
 	x = do.call(rbind, x);
@@ -91,8 +96,17 @@ matrix.sigma = function(triang, diag=1) {
 
 ### Graphic
 plot.cluster.2D = function(x) {
+	x$ID = as.factor(x$ID);
 	ggplot(x, aes(x=v1, y=v2, fill=ID, col=ID)) +
 		geom_point();
+}
+plot.cluster.3D = function(x, radius=0.2, col=NULL, add=FALSE) {
+	if(is.null(col)) {
+		col = length(unique(x$ID));
+		col = colorRampPalette(c("#F0F020", "#F080F0", "#20F0F0"), space = "rgb")(col);
+	}
+	col = col[x$ID];
+	plot3d(x[, 1:3], type="s", radius=radius, col=col, add=add);
 }
 
 ####################
@@ -108,17 +122,13 @@ plot.cluster.2D = function(x) {
 
 ### Ex 1:
 x = rcluster(100, cl=5)
-x$ID = as.factor(x$ID)
 
-ggplot(x, aes(x=v1, y=v2, fill=ID, col=ID)) +
-	geom_point()
+plot.cluster.2D(x)
 
 
 ### Ex 2:
 sigma = matrix.sigma(0.7, diag=1)
 x = rcluster(100, cl=5, sigma=sigma)
-x$ID = as.factor(x$ID)
-
 
 plot.cluster.2D(x)
 
@@ -127,8 +137,6 @@ plot.cluster.2D(x)
 cl = 5
 sigma = lapply(seq(cl), function(id) matrix.sigma(runif(1, -0.5, 0.9)))
 x = rcluster(100, cl=cl, sigma=sigma)
-x$ID = as.factor(x$ID)
-
 
 plot.cluster.2D(x)
 
@@ -139,7 +147,6 @@ sdsq = 2;
 set.seed(31); # 31, 35
 sigma = lapply(seq(cl), function(id) matrix.sigma(runif(1, 0, 1.9), diag=sdsq))
 x = rcluster(100, cl=cl, sigma=sigma)
-x$ID = as.factor(x$ID)
 
 plot.cluster.2D(x)
 
@@ -150,7 +157,6 @@ sdsq = 2;
 set.seed(31); # 31, 35
 sigma = lapply(seq(cl), function(id) matrix.sigma(runif(1, -1.9, 1.9), diag=sdsq))
 x = rcluster(100, cl=cl, sigma=sigma)
-x$ID = as.factor(x$ID)
 
 plot.cluster.2D(x)
 
@@ -161,9 +167,23 @@ sdsq = seq(0.25, by=0.25, length.out=cl)
 set.seed(35); # 35, 7
 sigma = lapply(seq(cl), function(id) matrix.sigma(runif(1, -0.9*sdsq[id], 0.9*sdsq[id]), diag=sdsq[id]))
 x = rcluster(100, cl=cl, sigma=sigma)
-x$ID = as.factor(x$ID)
 
 plot.cluster.2D(x)
+
+
+################
+
+cl = 8
+sdsq = seq(0.25, by=0.25, length.out=cl)
+set.seed(7);
+sigma.fid = function(id) {
+	rcov = function(sc=0.9) runif(1, -sc*sdsq[id], sc*sdsq[id]);
+	matrix.sigma(c(rcov(0.9), rcov(0.5), rcov(0.5)), diag=sdsq[id]);
+}
+sigma = lapply(seq(cl), sigma.fid)
+x = rcluster(100, cl=cl, dim=3, sigma=sigma)
+
+plot.cluster.3D(x)
 
 
 ################
