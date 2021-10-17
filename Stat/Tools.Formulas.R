@@ -5,7 +5,7 @@
 ###
 ### Formula Tools
 ###
-### draft v.0.1e-fix2
+### draft v.0.1f
 
 
 ### Tools to Process Formulas & Expressions
@@ -16,6 +16,8 @@
 ###############
 
 
+### draft v.0.1f:
+# - extract code tokens from R code;
 ### draft v.0.1e - v.0.1e-fix2:
 # - improved version of ifelse();
 # - [fixed] constant value for 1st FUN; [v.0.1e-fix2]
@@ -300,10 +302,16 @@ summary.all.args("partitions")
 
 
 # minimalistic parser:
-parse.simple = function(x, eol="\n") {
+parse.simple = function(x, eol="\n", all.tokens=FALSE) {
 	len = nchar(x);
 	n.comm = list(integer(0), integer(0));
 	n.str  = list(integer(0), integer(0));
+	if(all.tokens) {
+		# Type: 1 = "{", 2 = "(", 3 = "[";
+		tk.df = data.frame(nS=integer(0), nE=integer(0), id=integer(0),
+			Type=integer(0), Nested=logical(0));
+	} else tk.df = NULL;
+	#
 	is.hex = function(ch) {
 		# Note: only for 1 character!
 		return((ch >= "0" && ch <= "9") ||
@@ -348,9 +356,42 @@ parse.simple = function(x, eol="\n") {
 			n.str[[2]] = c(n.str[[2]], npos);
 			npos = npos + 1; next;
 		}
+		# brackets
+		if(all.tokens) {
+			type = 0;
+			if(s == "{") {
+				type = 1;
+			} else if(s == "(") {
+				type = 2;
+			} else if(s == "[") {
+				type = 3;
+				# Note: "[[";
+			}
+			if(type > 0) {
+				nr = nrow(tk.df);
+				tk.df[nr + 1, ] = data.frame(npos, NA, nr + 1, type, FALSE);
+				if(nr > 1 && is.na(tk.df$nE[nr])) tk.df$Nested[nr] = TRUE;
+				npos = npos + 1; next;
+			}
+			#
+			type = 0;
+			if(s == "}") {
+				type = 1;
+			} else if(s == ")") {
+				type = 2;
+			} else if(s == "]") {
+				type = 3;
+				# Note: "]]";
+			}
+			if(type > 0) {
+				id = tail(tk.df$id[is.na(tk.df$nE) & tk.df$Type == type], 1);
+				tk.df$nE[id] = npos;
+				npos = npos + 1; next;
+			}
+		}
 		npos = npos + 1;
 	}
-	return(list(str = n.str, comm = n.comm));
+	return(list(str = n.str, comm = n.comm, tokens=tk.df));
 }
 extract.str = function(s, npos, strip=FALSE) {
 	if(length(npos[[1]]) == 0) return(character(0));
@@ -372,7 +413,7 @@ extract.str.fun = function(fn, pkg, type=1, strip=TRUE) {
 	fn = list(substitute(pkg ::: fn));
 	# deparse
 	s = paste0(do.call(deparse, fn), collapse="");
-	npos = parse.simple(s);
+	npos = parse.simple(s, all.tokens = (type > 2));
 	extract.str(s, npos[[type]], strip=strip)
 }
 extract.str.pkg = function(pkg, type=1, exclude.z = TRUE, strip=TRUE) {
@@ -386,6 +427,8 @@ extract.str.pkg = function(pkg, type=1, exclude.z = TRUE, strip=TRUE) {
 	names(l) = nms;
 	return(l);
 }
+
+###########
 
 ### Example
 
@@ -408,6 +451,27 @@ fn = "restrictedparts"
 extract.str.fun(fn, pkg)
 
 
+###################
 
-###
+### All code tokens
+
+### Ex 1:
+extract.str.fun("compositions", "partitions", type=3)
+
+### Ex 2:
+extract.str.fun("summary.Spatial", "sp", type=3)
+
+### Ex 3:
+extract.str.fun("StrSpell", "DescTools", type=3)
+extract.str.fun("StrTrim", "DescTools", type=3)
+
+### TODO:
+# - functions to filter the tokens:
+#   e.g. simple calls "()", etc;
+# - functions to extract the names of the called functions;
+
+
+####################
+
+### Other
 paste0(deparse(partitions::restrictedparts), collapse=" ");
