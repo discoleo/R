@@ -5,7 +5,7 @@
 ###
 ### Clustering: Tools & Simulations
 ###
-### draft v.0.1e
+### draft v.0.1f
 
 
 
@@ -14,8 +14,9 @@
 ###############
 
 
-### draft v.0.1e:
+### draft v.0.1e - v.0.1f:
 # - cluster around a polygon;
+# - more complicated example;
 ### draft v.0.1d:
 # - rmatrix.sigma(): generate random cov (sigma) matrices;
 ### draft v.0.1c:
@@ -98,19 +99,28 @@ matrix.sigma = function(triang, diag=1) {
 	return(m)
 }
 rmatrix.sigma = function(d=c(1), dim=2, sc=0.9) {
+	if(is.matrix(d)) d = lapply(seq(ncol(d)), function(nc) d[,nc]);
+	isList = FALSE; # big list with scalings per d;
 	if(is.list(sc)) {
 		# assumes correct dimensions
+		isList = TRUE;
 	} else {
 		len.up = (dim-1)*dim/2;
+		len = length(d);
 		if(length(sc) == 1) {
 			sc = rep(list(c(-sc, sc)), len.up);
 		} else if(length(sc) == len.up) {
 			sc = lapply(sc, function(sc) c(-sc, sc));
+		} else if(length(sc) == len.up*len) {
+			# TODO: requires another lapply; or different concept ???
+			sc = lapply(seq(len), function(id) sort(c(-sc[id], sc[id])));
+			isList = TRUE;
 		} else stop("Length of scaling-parameter NOT supported!")
 	}
 	# Matrix Sigma:
-	rcov.f = function(sc, id) runif(1, sc[1]*d[[id]], sc[2]*d[[id]]);
+	rcov.f = function(sc, id) runif(1, sc[1]*d[[id]][1], sc[2]*d[[id]][1]);
 	lapply(seq_along(d), function(id) {
+		sc = if(isList) sc[id] else sc;
 		rndcov = sapply(sc, rcov.f, id=id);
 		matrix.sigma(rndcov, diag=d[[id]]);
 	})
@@ -212,10 +222,32 @@ plot.cluster.2D(x)
 
 ### Ex 7:
 cl = 6
-mu = t(polygon.reg(cl, r=3.5));
+r = 3.5
+mu = t(polygon.reg(cl, r=r));
 sdsq  = rep(1, cl)
 sigma = rmatrix.sigma(d=sdsq, sc=0, dim=2)
 x = rcluster(100, cl=cl, mu=mu, sigma=sigma)
+
+plot.cluster.2D(x)
+
+
+### Ex 8:
+cl = 6
+r = 3.5
+# Set 1:
+mu = t(polygon.reg(cl, r=r, a.offset = pi/cl));
+sdsq  = rep(1, cl)
+sigma = rmatrix.sigma(d=sdsq, sc=0, dim=2)
+x = rcluster(100, cl=cl, mu=mu, sigma=sigma)
+# Set 2:
+mu = t(polygon.reg(cl, r=2*r));
+# TODO: scale 1 & 4 by sqrt(2)
+sdsq = rbind(c(1,1,1,1,1,1), c(0.1,1,1,0.1,1,1))
+sc = c(0,0.9,-0.9,0,0.9,-0.9)
+sigma = lapply(seq(cl), function(id) matrix.sigma(sc[id], d=sdsq[,id]))
+x2 = rcluster(100, cl=cl, mu=mu, sigma=sigma, id.offset=6)
+#
+x = rbind(x, x2);
 
 plot.cluster.2D(x)
 
