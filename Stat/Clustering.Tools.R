@@ -5,7 +5,7 @@
 ###
 ### Clustering: Tools & Simulations
 ###
-### draft v.0.1f-ex2
+### draft v.0.1f-fix
 
 
 
@@ -14,7 +14,7 @@
 ###############
 
 
-### draft v.0.1e - v.0.1f-ex2:
+### draft v.0.1e - v.0.1f-fix:
 # - cluster around a polygon;
 # - more complicated examples; [v.0.1f & v.0.1f-ex2]
 ### draft v.0.1d:
@@ -145,7 +145,7 @@ plot.cluster.3D = function(x, radius=0.2, col=NULL, add=FALSE) {
 
 polygon.reg = function(n, r=1, a.offset = 0, clockwise=FALSE, closed=FALSE) {
 	p = 2*pi / n;
-	p = if(clockwise) p * c(0, seq(1, n-1)) else p * seq(0, n-1);
+	p = if(clockwise) p * c(0, seq(n-1, 1, by=-1)) else p * seq(0, n-1);
 	if(closed) p = c(p, 0);
 	p = p + a.offset;
 	px = cos(p); py = sin(p);
@@ -235,7 +235,7 @@ rspikes = function(n, cl, r=1, id.offset=0) {
 	mu = t(polygon.reg(cl, r=r));
 	# only regular Hexagon;
 	# TODO: generalize;
-	scale.h = exp(sqrt(2))
+	scale.h = exp((1+1)/2); # exp(sqrt(2))
 	sdsq = rbind(
 		c(scale.h,1,1,scale.h,1,1),
 		c(0.075,1,1,0.075,1,1));
