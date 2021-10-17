@@ -5,7 +5,7 @@
 ###
 ### Clustering: Tools & Simulations
 ###
-### draft v.0.1f-fix
+### draft v.0.1f-3D
 
 
 
@@ -14,9 +14,10 @@
 ###############
 
 
-### draft v.0.1e - v.0.1f-fix:
+### draft v.0.1e - v.0.1f-3D:
 # - cluster around a polygon;
 # - more complicated examples; [v.0.1f & v.0.1f-ex2]
+# - 3D example; [v.0.1f-3D]
 ### draft v.0.1d:
 # - rmatrix.sigma(): generate random cov (sigma) matrices;
 ### draft v.0.1c:
@@ -231,17 +232,22 @@ x = rcluster(100, cl=cl, mu=mu, sigma=sigma)
 plot.cluster.2D(x)
 
 
-rspikes = function(n, cl, r=1, id.offset=0) {
+rspikes = function(n, cl, r=1, id.offset=0, dim=2) {
 	mu = t(polygon.reg(cl, r=r));
+	if(dim == 3) mu = rbind(mu, rep(0, cl));
 	# only regular Hexagon;
 	# TODO: generalize;
 	scale.h = exp((1+1)/2); # exp(sqrt(2))
 	sdsq = rbind(
-		c(scale.h,1,1,scale.h,1,1),
-		c(0.075,1,1,0.075,1,1));
-	sc = c(0,0.9,-0.9,0,0.9,-0.9);
-	sigma = lapply(seq(cl), function(id) matrix.sigma(sc[id], d=sdsq[,id]))
-	x = rcluster(n, cl=cl, mu=mu, sigma=sigma, id.offset=id.offset);
+		c(scale.h,1/2,1/2,scale.h,1/2,1/2),
+		c(0.075,3/2,3/2,0.075,3/2,3/2));
+	sc = c(0,0.7,-0.7, 0,0.7,-0.7);
+	if(dim == 3) {
+		sdsq = rbind(sdsq, rep(0.1, cl));
+		sc   = lapply(sc, function(sc) c(sc, 0, 0));
+	}
+	sigma = lapply(seq(cl), function(id) matrix.sigma(sc[[id]], d=sdsq[,id]))
+	x = rcluster(n, cl=cl, mu=mu, sigma=sigma, dim=dim, id.offset=id.offset);
 	return(x);
 }
 ### Ex 8:
@@ -286,6 +292,15 @@ sdsq = seq(0.25, by=0.25, length.out=cl)
 set.seed(7);
 sigma = rmatrix.sigma(d=sdsq, sc=c(0.9, 0.5, 0.5), dim=3)
 x = rcluster(100, cl=cl, dim=3, sigma=sigma)
+
+plot.cluster.3D(x)
+
+
+### Ex 2:
+cl = 6
+r = 4.25
+# Set 1:
+x = rspikes(100, cl=cl, r=r, dim=3, id.offset=0)
 
 plot.cluster.3D(x)
 
