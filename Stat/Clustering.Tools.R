@@ -5,7 +5,7 @@
 ###
 ### Clustering: Tools & Simulations
 ###
-### draft v.0.1f
+### draft v.0.1f-ex2
 
 
 
@@ -14,9 +14,9 @@
 ###############
 
 
-### draft v.0.1e - v.0.1f:
+### draft v.0.1e - v.0.1f-ex2:
 # - cluster around a polygon;
-# - more complicated example;
+# - more complicated examples; [v.0.1f & v.0.1f-ex2]
 ### draft v.0.1d:
 # - rmatrix.sigma(): generate random cov (sigma) matrices;
 ### draft v.0.1c:
@@ -231,6 +231,19 @@ x = rcluster(100, cl=cl, mu=mu, sigma=sigma)
 plot.cluster.2D(x)
 
 
+rspikes = function(n, cl, r=1, id.offset=0) {
+	mu = t(polygon.reg(cl, r=r));
+	# only regular Hexagon;
+	# TODO: generalize;
+	scale.h = exp(sqrt(2))
+	sdsq = rbind(
+		c(scale.h,1,1,scale.h,1,1),
+		c(0.075,1,1,0.075,1,1));
+	sc = c(0,0.9,-0.9,0,0.9,-0.9);
+	sigma = lapply(seq(cl), function(id) matrix.sigma(sc[id], d=sdsq[,id]))
+	x = rcluster(n, cl=cl, mu=mu, sigma=sigma, id.offset=id.offset);
+	return(x);
+}
 ### Ex 8:
 cl = 6
 r = 3.5
@@ -240,12 +253,23 @@ sdsq  = rep(1, cl)
 sigma = rmatrix.sigma(d=sdsq, sc=0, dim=2)
 x = rcluster(100, cl=cl, mu=mu, sigma=sigma)
 # Set 2:
-mu = t(polygon.reg(cl, r=2*r));
-# TODO: scale 1 & 4 by sqrt(2)
-sdsq = rbind(c(1,1,1,1,1,1), c(0.1,1,1,0.1,1,1))
-sc = c(0,0.9,-0.9,0,0.9,-0.9)
-sigma = lapply(seq(cl), function(id) matrix.sigma(sc[id], d=sdsq[,id]))
-x2 = rcluster(100, cl=cl, mu=mu, sigma=sigma, id.offset=6)
+x2 = rspikes(100, cl=cl, r=2*r, id.offset=cl)
+#
+x = rbind(x, x2);
+
+plot.cluster.2D(x)
+
+
+### Ex 9:
+cl = 6
+r = 4.25
+# Set 1:
+x = rspikes(100, cl=cl, r=r, id.offset=cl)
+# Set 2:
+mu = t(polygon.reg(cl, r=1.5*r, a.offset = pi/cl));
+sdsq  = rep(1, cl)
+sigma = rmatrix.sigma(d=sdsq, sc=0, dim=2)
+x2 = rcluster(100, cl=cl, mu=mu, sigma=sigma)
 #
 x = rbind(x, x2);
 
