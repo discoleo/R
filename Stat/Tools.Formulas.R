@@ -5,7 +5,7 @@
 ###
 ### Formula Tools
 ###
-### draft v.0.1f-refactor
+### draft v.0.1g
 
 
 ### Tools to Process Formulas & Expressions
@@ -16,6 +16,8 @@
 ###############
 
 
+### draft v.0.1g:
+# - cut.code() into code blocks;
 ### draft v.0.1f - v.0.1f-refactor:
 # - extract code tokens from R code;
 # - [refactored] uniform result;
@@ -402,9 +404,46 @@ parse.simple = function(x, eol="\n", all.tokens=FALSE) {
 		}
 		npos = npos + 1;
 	}
+	class(tk.df) = c("code", class(tk.df));
 	return(tk.df);
 }
-extract.str = function(s, npos, strip=FALSE, trim.regex=NULL) {
+parse.fun = function(fn, pkg, type=99) {
+	# deparse
+	s = deparse.fun(fn, pkg);
+	npos = parse.simple(s, all.tokens = (type > 2));
+	return(npos);
+}
+deparse.fun = function(fn, pkg) {
+	fn = as.symbol(fn); pkg = as.symbol(pkg);
+	fn = list(substitute(pkg ::: fn));
+	# deparse
+	s = paste0(do.call(deparse, fn), collapse="\n");
+	return(s)
+}
+# cut code into disjoint code blocks
+cut.code = function(npos) {
+	# Start
+	nS = npos$nS;
+	nSNext = npos$nE;
+	nSNext = nSNext[nSNext != max(nSNext)];
+	nS = sort(unique(c(nS, nSNext + 1)));
+	# End
+	nE = npos$nE;
+	nENext = npos$nS;
+	nENext = nENext[nENext != min(nENext)];
+	nE = sort(unique(c(nE, nENext - 1)));
+	# print(length(nS)); print(length(nE));
+	#
+	tk.df = data.frame(nS = nS, nE = nE);
+	# tk.df$Type = 0;
+	# TODO: classify all tokens;
+	tk.df = merge(tk.df, npos[, c("nS", "Type")], by="nS", all.x=TRUE);
+	#
+	class(tk.df) = c("code", class(tk.df));
+	return(tk.df);
+}
+# extract strings delimited by npos[, 1:2]
+extract.str = function(s, npos, strip=FALSE, trim.regex=NULL, format.sp=TRUE) {
 	if(nrow(npos) == 0) return(character(0));
 	strip.FUN = if(strip) {
 			function(nr) {
@@ -419,13 +458,16 @@ extract.str = function(s, npos, strip=FALSE, trim.regex=NULL) {
 		} else function(nr) substr(s, npos$nS[[nr]], npos$nE[[nr]]);
 	sR = sapply(seq(nrow(npos)), strip.FUN);
 	if( ! is.null(trim.regex)) sR = gsub(trim.regex, "", sR, perl=TRUE);
+	if(format.sp) sR = gsub("(?<=,|<-)(?=[^ \t\n\r])", " ", sR, perl=TRUE);
 	return(sR);
 }
 extract.str.fun = function(fn, pkg, type=1, strip=TRUE, trim.regex=NULL) {
-	fn = as.symbol(fn); pkg = as.symbol(pkg);
-	fn = list(substitute(pkg ::: fn));
+	# fn = as.symbol(fn); pkg = as.symbol(pkg);
+	# fn = list(substitute(pkg ::: fn));
 	# deparse
-	s = paste0(do.call(deparse, fn), collapse="");
+	# s = paste0(do.call(deparse, fn), collapse="");
+	# npos = parse.simple(s, all.tokens = (type > 2));
+	s = deparse.fun(fn, pkg);
 	npos = parse.simple(s, all.tokens = (type > 2));
 	isType = if(type == 99) (npos$Type > 2) else (npos$Type == type);
 	extract.str(s, npos[isType ,], strip=strip, trim.regex=trim.regex);
@@ -440,6 +482,11 @@ extract.str.pkg = function(pkg, type=1, exclude.z = TRUE, strip=TRUE) {
 	}
 	names(l) = nms;
 	return(l);
+}
+# preserve "relevant" NLs;
+regex.trim = function() {
+	paste0("(?<=^|\n)[ \n\t\r]++|[ \t]++(?=\n)|(?<=[ \t])[ \t]++",
+		"|[ \t\n\r]++$|(?<=[+*-/] )[ \t\n\r]++");
 }
 
 ###########
@@ -479,8 +526,18 @@ extract.str.fun("summary.Spatial", "sp", type=99)
 ### Ex 3:
 extract.str.fun("StrSpell", "DescTools", type=99)
 #
-cat(extract.str.fun("StrTrim", "DescTools", type=99, trim.regex=" [ \n\t\r]++"), sep="\n")
-cat(extract.str.fun("StrTrim", "DescTools", type=4, trim.regex=" [ \n\t\r]++"), sep="\n")
+cat(extract.str.fun("StrTrim", "DescTools", type=99, trim.regex=regex.trim()), sep="\n")
+cat(extract.str.fun("StrTrim", "DescTools", type=4, trim.regex=regex.trim()), sep="\n")
+
+### Ex 4:
+s = deparse.fun("PlotMosaic", "DescTools")
+npos = parse.fun("PlotMosaic", "DescTools")
+head(npos)
+npos = cut.code(npos)
+head(npos)
+# preserve NL;
+cat(extract.str(s, npos, trim.regex=regex.trim()), sep="\n")
+
 
 ### TODO:
 # - functions to filter the tokens:
