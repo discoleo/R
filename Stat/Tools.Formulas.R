@@ -5,7 +5,7 @@
 ###
 ### Formula Tools
 ###
-### draft v.0.1g
+### draft v.0.1g-improve
 
 
 ### Tools to Process Formulas & Expressions
@@ -16,8 +16,9 @@
 ###############
 
 
-### draft v.0.1g:
+### draft v.0.1g - v.0.1g-improve:
 # - cut.code() into code blocks;
+# - small improvements; [v.0.1g-improve]
 ### draft v.0.1f - v.0.1f-refactor:
 # - extract code tokens from R code;
 # - [refactored] uniform result;
@@ -413,11 +414,11 @@ parse.fun = function(fn, pkg, type=99) {
 	npos = parse.simple(s, all.tokens = (type > 2));
 	return(npos);
 }
-deparse.fun = function(fn, pkg) {
+deparse.fun = function(fn, pkg, collapse="\n", width.cutoff=150) {
 	fn = as.symbol(fn); pkg = as.symbol(pkg);
-	fn = list(substitute(pkg ::: fn));
+	fn = list(substitute(pkg ::: fn), width.cutoff=width.cutoff);
 	# deparse
-	s = paste0(do.call(deparse, fn), collapse="\n");
+	s = paste0(do.call(deparse, fn), collapse=collapse);
 	return(s)
 }
 # cut code into disjoint code blocks
@@ -432,7 +433,6 @@ cut.code = function(npos) {
 	nENext = npos$nS;
 	nENext = nENext[nENext != min(nENext)];
 	nE = sort(unique(c(nE, nENext - 1)));
-	# print(length(nS)); print(length(nE));
 	#
 	tk.df = data.frame(nS = nS, nE = nE);
 	# tk.df$Type = 0;
@@ -462,11 +462,6 @@ extract.str = function(s, npos, strip=FALSE, trim.regex=NULL, format.sp=TRUE) {
 	return(sR);
 }
 extract.str.fun = function(fn, pkg, type=1, strip=TRUE, trim.regex=NULL) {
-	# fn = as.symbol(fn); pkg = as.symbol(pkg);
-	# fn = list(substitute(pkg ::: fn));
-	# deparse
-	# s = paste0(do.call(deparse, fn), collapse="");
-	# npos = parse.simple(s, all.tokens = (type > 2));
 	s = deparse.fun(fn, pkg);
 	npos = parse.simple(s, all.tokens = (type > 2));
 	isType = if(type == 99) (npos$Type > 2) else (npos$Type == type);
@@ -486,7 +481,8 @@ extract.str.pkg = function(pkg, type=1, exclude.z = TRUE, strip=TRUE) {
 # preserve "relevant" NLs;
 regex.trim = function() {
 	paste0("(?<=^|\n)[ \n\t\r]++|[ \t]++(?=\n)|(?<=[ \t])[ \t]++",
-		"|[ \t\n\r]++$|(?<=[+*-/] )[ \t\n\r]++");
+		"|[ \t\n\r]++$|(?<=[+*-/] )[ \t\n\r]++",
+		"|(?<=,)[\n\r]++|[\n\r]++(?=,| ,)");
 }
 
 ###########
