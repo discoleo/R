@@ -5,7 +5,7 @@
 ###
 ### Formula Tools
 ###
-### draft v.0.1f
+### draft v.0.1f-refactor
 
 
 ### Tools to Process Formulas & Expressions
@@ -16,8 +16,9 @@
 ###############
 
 
-### draft v.0.1f:
+### draft v.0.1f - v.0.1f-refactor:
 # - extract code tokens from R code;
+# - [refactored] uniform result;
 ### draft v.0.1e - v.0.1e-fix2:
 # - improved version of ifelse();
 # - [fixed] constant value for 1st FUN; [v.0.1e-fix2]
@@ -304,13 +305,11 @@ summary.all.args("partitions")
 # minimalistic parser:
 parse.simple = function(x, eol="\n", all.tokens=FALSE) {
 	len = nchar(x);
-	n.comm = list(integer(0), integer(0));
-	n.str  = list(integer(0), integer(0));
-	if(all.tokens) {
-		# Type: 1 = "{", 2 = "(", 3 = "[";
-		tk.df = data.frame(nS=integer(0), nE=integer(0), id=integer(0),
+	# n.comm = list(integer(0), integer(0));
+	# n.str  = list(integer(0), integer(0));
+	# Type: 1 = "string", 2 = "#", 3 = "{", 4 = "(", 5 = "[";
+	tk.df = data.frame(nS=integer(0), nE=integer(0), id=integer(0),
 			Type=integer(0), Nested=logical(0));
-	} else tk.df = NULL;
 	#
 	is.hex = function(ch) {
 		# Note: only for 1 character!
@@ -323,17 +322,21 @@ parse.simple = function(x, eol="\n", all.tokens=FALSE) {
 		s = substr(x, npos, npos);
 		# State: COMMENT
 		if(s == "#") {
-			n.comm[[1]] = c(n.comm[[1]], npos);
+			# n.comm[[1]] = c(n.comm[[1]], npos);
+			nS = npos;
 			while(npos < len) {
 				npos = npos + 1;
 				if(substr(x, npos, npos) == eol) break;
 			}
-			n.comm[[2]] = c(n.comm[[2]], npos);
+			# n.comm[[2]] = c(n.comm[[2]], npos);
+			nr = nrow(tk.df) + 1; nE = npos;
+			tk.df[nr,] = data.frame(nS, nE, nr, 2, FALSE);
 			npos = npos + 1; next;
 		}
 		# State: STRING
 		if(s == "\"" || s == "'") {
-			n.str[[1]] = c(n.str[[1]], npos);
+			# n.str[[1]] = c(n.str[[1]], npos);
+			nS = npos;
 			while(npos < len) {
 				npos = npos + 1;
 				se = substr(x, npos, npos);
@@ -341,7 +344,7 @@ parse.simple = function(x, eol="\n", all.tokens=FALSE) {
 					npos = npos + 1;
 					# simple escape vs Unicode:
 					if(substr(x, npos, npos) != "u") next;
-					len.end = min(len, npos + 4);
+					len.end = min(len, npos + 4); # max length of HEX = 4;
 					npos = npos + 1;
 					isAllHex = TRUE;
 					while(npos <= len.end) {
@@ -353,34 +356,42 @@ parse.simple = function(x, eol="\n", all.tokens=FALSE) {
 				}
 				if(se == s) break;
 			}
-			n.str[[2]] = c(n.str[[2]], npos);
+			# n.str[[2]] = c(n.str[[2]], npos);
+			nr = nrow(tk.df) + 1; nE = npos;
+			tk.df[nr,] = data.frame(nS, nE, nr, 1, FALSE);
 			npos = npos + 1; next;
 		}
 		# brackets
 		if(all.tokens) {
 			type = 0;
 			if(s == "{") {
-				type = 1;
-			} else if(s == "(") {
-				type = 2;
-			} else if(s == "[") {
 				type = 3;
+			} else if(s == "(") {
+				type = 4;
+			} else if(s == "[") {
+				type = 5;
 				# Note: "[[";
 			}
 			if(type > 0) {
 				nr = nrow(tk.df);
 				tk.df[nr + 1, ] = data.frame(npos, NA, nr + 1, type, FALSE);
-				if(nr > 1 && is.na(tk.df$nE[nr])) tk.df$Nested[nr] = TRUE;
+				if(nr > 1) {
+					for(nr.prev in seq(nr, 1, by=-1)) {
+						if(tk.df$Type[nr.prev] <= 2) next;
+						if(is.na(tk.df$nE[nr.prev])) tk.df$Nested[nr.prev] = TRUE;
+						break;
+					}
+				}
 				npos = npos + 1; next;
 			}
 			#
 			type = 0;
 			if(s == "}") {
-				type = 1;
-			} else if(s == ")") {
-				type = 2;
-			} else if(s == "]") {
 				type = 3;
+			} else if(s == ")") {
+				type = 4;
+			} else if(s == "]") {
+				type = 5;
 				# Note: "]]";
 			}
 			if(type > 0) {
@@ -391,30 +402,33 @@ parse.simple = function(x, eol="\n", all.tokens=FALSE) {
 		}
 		npos = npos + 1;
 	}
-	return(list(str = n.str, comm = n.comm, tokens=tk.df));
+	return(tk.df);
 }
-extract.str = function(s, npos, strip=FALSE) {
-	if(length(npos[[1]]) == 0) return(character(0));
+extract.str = function(s, npos, strip=FALSE, trim.regex=NULL) {
+	if(nrow(npos) == 0) return(character(0));
 	strip.FUN = if(strip) {
-			function(id) {
-				if(npos[[1]][[id]] + 1 < npos[[2]][[id]]) {
-					nStart = npos[[1]][[id]] + 1;
-					nEnd = npos[[2]][[id]] - 1; # TODO: Error with malformed string
+			function(nr) {
+				if(npos$nS[[nr]] + 1 < npos$nE[[nr]]) {
+					nStart = npos$nS[[nr]] + 1;
+					nEnd = npos$nE[[nr]] - 1; # TODO: Error with malformed string
 					return(substr(s, nStart, nEnd));
 				} else {
 					return("");
 				}
 			}
-		} else function(id) substr(s, npos[[1]][[id]], npos[[2]][[id]]);
-	sapply(seq(length(npos[[1]])), strip.FUN);
+		} else function(nr) substr(s, npos$nS[[nr]], npos$nE[[nr]]);
+	sR = sapply(seq(nrow(npos)), strip.FUN);
+	if( ! is.null(trim.regex)) sR = gsub(trim.regex, "", sR, perl=TRUE);
+	return(sR);
 }
-extract.str.fun = function(fn, pkg, type=1, strip=TRUE) {
+extract.str.fun = function(fn, pkg, type=1, strip=TRUE, trim.regex=NULL) {
 	fn = as.symbol(fn); pkg = as.symbol(pkg);
 	fn = list(substitute(pkg ::: fn));
 	# deparse
 	s = paste0(do.call(deparse, fn), collapse="");
 	npos = parse.simple(s, all.tokens = (type > 2));
-	extract.str(s, npos[[type]], strip=strip)
+	isType = if(type == 99) (npos$Type > 2) else (npos$Type == type);
+	extract.str(s, npos[isType ,], strip=strip, trim.regex=trim.regex);
 }
 extract.str.pkg = function(pkg, type=1, exclude.z = TRUE, strip=TRUE) {
 	nms = ls(getNamespace(pkg));
@@ -447,6 +461,7 @@ extract.str.pkg("NetLogoR")
 extract.str.pkg("base")
 
 ###
+pkg = "partitions"
 fn = "restrictedparts"
 extract.str.fun(fn, pkg)
 
@@ -456,14 +471,16 @@ extract.str.fun(fn, pkg)
 ### All code tokens
 
 ### Ex 1:
-extract.str.fun("compositions", "partitions", type=3)
+extract.str.fun("compositions", "partitions", type=99)
 
 ### Ex 2:
-extract.str.fun("summary.Spatial", "sp", type=3)
+extract.str.fun("summary.Spatial", "sp", type=99)
 
 ### Ex 3:
-extract.str.fun("StrSpell", "DescTools", type=3)
-extract.str.fun("StrTrim", "DescTools", type=3)
+extract.str.fun("StrSpell", "DescTools", type=99)
+#
+cat(extract.str.fun("StrTrim", "DescTools", type=99, trim.regex=" [ \n\t\r]++"), sep="\n")
+cat(extract.str.fun("StrTrim", "DescTools", type=4, trim.regex=" [ \n\t\r]++"), sep="\n")
 
 ### TODO:
 # - functions to filter the tokens:
