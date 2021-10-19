@@ -905,10 +905,18 @@ factorize.p = function(p, xn="x", f.all=FALSE, asBigNum=TRUE, file="_R.Temp.") {
 	}
 	return(rez);
 }
+# D( p(x) )
 dp.pm = function(p, xn="x") {
 	p = p[(p[,xn] != 0),];
 	p$coeff = p$coeff * p[,xn];
 	p[,xn] = p[,xn] - 1;
+	return(p);
+}
+# D( p1 * exp(p2) )
+dp.exp.pm = function(p, xn="x") {
+	pr = mult.pm(dp.pm(p$Exp, xn), p$Poly);
+	pr = sum.pm(pr, dp.pm(p$Poly, xn));
+	p$Poly = pr;
 	return(p);
 }
 
@@ -964,6 +972,9 @@ print.monome = function(name, p) {
 	v.r[v > 1] = paste0(name, "^", v[v > 1]);
 	v.r[v == 1] = name;
 	return(v.r);
+}
+print.pm = function(...) {
+	print.p(...);
 }
 print.p = function(p, leading=1, do.sort=TRUE, do.rev=FALSE, sort.order=TRUE) {
 	### Var order

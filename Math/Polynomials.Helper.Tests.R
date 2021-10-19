@@ -8,7 +8,7 @@
 
 
 ### fast load:
-# source("Polynomials.Helper.R")
+source("Polynomials.Helper.R")
 
 
 ### this file:
@@ -78,3 +78,16 @@ n = 3
 m = 2 # "m" clashes with an internal variable;
 p = toPoly.pm("x^(n+m) + b*x - R")
 p
+
+########################
+########################
+
+### D
+n = 3
+p1 = toPoly.pm("x^n + b1*x + b0")
+p2 = toPoly.pm("x^n + c2*x^2 + c1*x")
+p = dp.exp.pm(list(Poly=p1, Exp=p2))
+print.pm(p$Poly)
+
+# 3*x^5 + 2*c2*x^4 + c1*x^3 + 3*b1*x^3 + 3*x^2 + 3*b0*x^2 + 2*c2*b1*x^2 +
+#	+ 2*c2*b0*x + c1*b1*x + c1*b0 + b1
