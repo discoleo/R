@@ -7,7 +7,7 @@
 ### Differential Equations
 ### ODEs - Logarithms
 ###
-### draft v.0.3b
+### draft v.0.3c
 
 
 ### ODEs Derived from Logarithms
@@ -22,6 +22,9 @@
 ### History ###
 ###############
 
+### draft v.0.3c:
+# - Mixed Log-Exp:
+#   y = log(P1(x)) * exp(P2(x)) + F(x);
 ### draft v.0.3a - v.0.3b:
 # - from:
 #   y = (x + k1)^(x + k2) + F0(x);
@@ -174,10 +177,10 @@ a = 1; b = -a;
 ct = 2;
 px = 6/7 + (1:4)*2/7
 curve(y(x, a=a, b=b, ct=ct, n=n, m=m), from= 1, to = 2.5, ylim=c(-2,20))
-sapply(px, line.tan, dx=3, p=y, dp=dy, a=a, b=b, ct=ct, n=n, m=m)
+line.tan(px, dx=3, p=y, dp=dy, a=a, b=b, ct=ct, n=n, m=m)
 # x*log(x)-like:
 curve(dy(x, a=a, b=b, ct=ct, n=n, m=m), add=T, col="green")
-sapply(px, line.tan, dx=3, p=dy, dp=d2y, a=a, b=b, ct=ct, n=n, m=m, col="orange")
+line.tan(px, dx=3, p=dy, dp=d2y, a=a, b=b, ct=ct, n=n, m=m, col="orange")
 
 
 ### Ex 2:
@@ -186,10 +189,10 @@ a = 1; b = 3/2;
 ct = 2;
 px = 6/7 + c(1, 4)*2/7
 curve(y(x, a=a, b=b, ct=ct, n=n, m=m), from= 1, to = 2.5, ylim=c(1/2,7))
-sapply(px, line.tan, dx=3, p=y, dp=dy, a=a, b=b, ct=ct, n=n, m=m)
+line.tan(px, dx=3, p=y, dp=dy, a=a, b=b, ct=ct, n=n, m=m)
 #
 curve(dy(x, a=a, b=b, ct=ct, n=n, m=m), add=T, col="green")
-sapply(px, line.tan, dx=3, p=dy, dp=d2y, a=a, b=b, ct=ct, n=n, m=m, col="orange")
+line.tan(px, dx=3, p=dy, dp=d2y, a=a, b=b, ct=ct, n=n, m=m, col="orange")
 
 
 ############
@@ -242,6 +245,65 @@ cos(x)*log(p1) - sin(x)*log(p2) + sin(x) / p1 * dp1 + cos(x) / p2 * dp2
 - y +
 	+ cos(x) / p1 * dp1 - sin(x) / p2 * dp2 +
 	D( sin(x) / p1 * dp1 + cos(x) / p2 * dp2 )
+
+
+#########################
+
+###############
+### Mixed:  ###
+### Log-Exp ###
+###############
+
+### y = log(P1(x)) * exp(P2(x)) + F(x);
+
+### y = log(x^2 + b0) * exp(x^2)
+### D =>
+dy - 2*x*y - 2*x*exp(x^2)/(x^2 + b0) # = 0
+(x^2 + b0)*dy - 2*x*(x^2 + b0)*y - 2*x*exp(x^2) # = 0
+
+### D2 =>
+(x^2 + b0)*d2y - 2*x*(x^2 + b0 - 1)*dy - (6*x^2 + 2*b0)*y +
+	- 2*(2*x^2 + 1)*exp(x^2) # = 0
+x*(x^2 + b0)*d2y - 2*x^2*(x^2 + b0 - 1)*dy - x*(6*x^2 + 2*b0)*y +
+	- (2*x^2 + 1)*((x^2 + b0)*dy - 2*x*(x^2 + b0)*y) # = 0
+### ODE:
+x*(x^2 + b0)*d2y - (4*x^4 + (4*b0 - 1)*x^2 + b0)*dy +
+	+ 4*x^3*(x^2 + (b0 - 1))*y # = 0
+
+
+### Solution & Plot:
+y = function(x, b=1) {
+	x2 = x^2;
+	val = log(x2 + b[1]) * exp(x2);
+	return(val)
+}
+dy = function(x, b=1) {
+	yx = y(x, b=b);
+	x2 = x^2; x2b = x2 + b[1];
+	dyx = 2*x*(x2b*yx + exp(x2));
+	div = x2b;
+	dyx = ifelse(div != 0, dyx/div, 1); # TODO: check;
+	return(dyx)
+}
+d2y = function(x, b=1) {
+	yx  =  y(x, b=b);
+	dyx = dy(x, b=b);
+	#
+	x2 = x^2; x2b = x2 + b[1];
+	d2p = (4*x2*x2b - x2 + b[1])*dyx - 4*x2*x*(x2b - 1)*yx;
+	div = x*x2b;
+	d2p = ifelse(div != 0, d2p/div, 1); # TODO: check;
+	return(d2p);
+}
+### Plot:
+b = 1
+px = (1:3)*2/7 + 1; px = c(0, -px, px);
+curve(y(x, b=b), from = -2, to = 2, ylim=c(-30, 80))
+line.tan(px, dx=3, p=y, dp=dy, b=b)
+# global minimum:
+curve(dy(x, b=b), add=T, col="green")
+line.tan(px, dx=3, p=dy, dp=d2y, b=b, col="orange")
+
 
 
 #########################
@@ -587,20 +649,20 @@ d2y = function(x, k=2) {
 k = 2;
 px = (-4:2)*3/7
 curve(y(x, k=k), from= -2.5, to = 2, ylim=c(-1,10))
-sapply(px, line.tan, dx=3, p=y, dp=dy, k=k)
+line.tan(px, dx=3, p=y, dp=dy, k=k)
 #
 curve(dy(x, k=k), add=T, col="green")
-sapply(px, line.tan, dx=3, p=dy, dp=d2y, k=k, col="orange")
+line.tan(px, dx=3, p=dy, dp=d2y, k=k, col="orange")
 
 
 ### Ex 2:
 k = -1/2;
 px = (-1:3)*3/7
 curve(y(x, k=k), from= -1/2, to = 2, ylim=c(-2,10))
-sapply(px, line.tan, dx=3, p=y, dp=dy, k=k)
+line.tan(px, dx=3, p=y, dp=dy, k=k)
 #
 curve(dy(x, k=k), add=T, col="green")
-sapply(px, line.tan, dx=3, p=dy, dp=d2y, k=k, col="orange")
+line.tan(px, dx=3, p=dy, dp=d2y, k=k, col="orange")
 
 
 ##################
@@ -683,30 +745,30 @@ d2y = function(x, k=c(0,0), b=1) {
 k = c(0,0); b = c(0, 1)
 px = (0:4)*4/7 + 0.1;
 curve(y(x, k=k, b=b), from = 1E-3, to = 3, ylim=c(-2,8))
-sapply(px, line.tan, dx=3, p=y, dp=dy, k=k, b=b)
+line.tan(px, dx=3, p=y, dp=dy, k=k, b=b)
 #
 curve(dy(x, k=k, b=b), add=T, col="green")
-sapply(px, line.tan, dx=3, p=dy, dp=d2y, k=k, b=b, col="orange")
+line.tan(px, dx=3, p=dy, dp=d2y, k=k, b=b, col="orange")
 
 
 ### Ex 2:
 k = c(0,0); b = c(-1, 1)
 px = (0:4)*4/7 + 0.1;
 curve(y(x, k=k, b=b), from = 1E-3, to = 3, ylim=c(-2,8))
-sapply(px, line.tan, dx=3, p=y, dp=dy, k=k, b=b)
+line.tan(px, dx=3, p=y, dp=dy, k=k, b=b)
 #
 curve(dy(x, k=k, b=b), add=T, col="green")
-sapply(px, line.tan, dx=3, p=dy, dp=d2y, k=k, b=b, col="orange")
+line.tan(px, dx=3, p=dy, dp=d2y, k=k, b=b, col="orange")
 
 
 ### Ex 3:
 k = c(1,-1); b = c(-1, 1)
 px = (0:4)*4/7 + 0.1; dx = c(1.5, 2, 2, 3, 3)
 curve(y(x, k=k, b=b), from = 1E-3, to = 3, ylim=c(-0.5,8))
-sapply(px, line.tan, dx=dx, p=y, dp=dy, k=k, b=b)
+line.tan(px, dx=dx, p=y, dp=dy, k=k, b=b)
 #
 curve(dy(x, k=k, b=b), add=T, col="green")
-sapply(px, line.tan, dx=dx, p=dy, dp=d2y, k=k, b=b, col="orange")
+line.tan(px, dx=dx, p=dy, dp=d2y, k=k, b=b, col="orange")
 
 
 #######################
