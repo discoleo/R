@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs - Gaussian
 ###
-### draft v.0.4a
+### draft v.0.4a-ext0
 
 #############
 ### Types ###
@@ -30,8 +30,9 @@
 
 ### Linear / Non-Linear Gaussian-type
 
-### draft v.0.4a:
+### draft v.0.4a - v.0.4a-ext0:
 # - automatic generation of exponential type ODEs;
+# - preparation for extension; [v.0.4a-ext0]
 ### draft v.0.3n - v.0.3n-chk0:
 # - derived from: I(exp(y^n)) = P1(x) * P2(y);
 #   x*d2y - n*x*y^(n-1)*dy^2 - n*y^n*dy + 2*dy = 0;
@@ -1612,20 +1613,26 @@ print.pm(pR, do.sort=FALSE)
 
 
 ### Solution:
-eval.dexp = function(x, pl1, pl2) {
+eval.dexp = function(x, pl1, pl2, p0=NULL) {
 	y1  = sapply(x, function(x) eval.pm(pl1$Poly, x));
 	y2  = sapply(x, function(x) eval.pm(pl2$Poly, x));
 	yE1 = sapply(x, function(x) eval.pm(pl1$Exp, x));
 	yE2 = sapply(x, function(x) eval.pm(pl2$Exp, x));
 	y = y1 * exp(yE1) + y2 * exp(yE2);
+	if( ! is.null(p0)) {
+		y0 = sapply(x, function(x) eval.pm(p0, x));
+		y  = y + y0;
+	}
+	return(y);
 }
 y = function(x) {
-	return(eval.dexp(x, pl1, pl2));
+	return(eval.dexp(x, pl1, pl2, p0));
 }
 dy = function(x) {
 	dp1 = dp.exp.pm(pl1)
 	dp2 = dp.exp.pm(pl2)
-	return(eval.dexp(x, dp1, dp2));
+	dp0 = if(is.null(p0)) NULL else dp.pm(p0);
+	return(eval.dexp(x, dp1, dp2, p0=p0));
 }
 d2y = function(x) {
 	yx = y(x);
@@ -1633,10 +1640,11 @@ d2y = function(x) {
 	div = (4*x^4 + 4*x^3 - 5*x^2 + 12*x + 51);
 	d2y = (16*x^5 + 16*x^4 - 4*x^3 + 60*x^2 + 194*x + 12)*dyx +
 		- (16*x^6 + 16*x^5 - 12*x^4 + 48*x^3 + 278*x^2 - 36*x - 508)*yx;
-	d2y = ifelse(div != 0, d2y/div, 0);
+	d2y = ifelse(div != 0, d2y/div, 0); # TODO: check!
 	return(d2y)
 }
 ### Plot:
+p0 = NULL;
 px = c((-5:5) / 5);
 curve(y(x), from = -1, to = 1, ylim=c(-60, 150))
 line.tan(px, dx=3, p=y, dp=dy)
