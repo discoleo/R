@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs - Gaussian
 ###
-### draft v.0.4b
+### draft v.0.4b-fix
 
 #############
 ### Types ###
@@ -30,10 +30,10 @@
 
 ### Linear / Non-Linear Gaussian-type
 
-### draft v.0.4a - v.0.4b:
+### draft v.0.4a - v.0.4b-fix:
 # - automatic generation of exponential type ODEs;
 # - preparation for extension; [v.0.4a-ext0/ext1]
-# - extension & more examples; [v.0.4b]
+# - extension & more examples; [v.0.4b & v.0.4b-fix]
 ### draft v.0.3n - v.0.3n-chk0:
 # - derived from: I(exp(y^n)) = P1(x) * P2(y);
 #   x*d2y - n*x*y^(n-1)*dy^2 - n*y^n*dy + 2*dy = 0;
@@ -1700,7 +1700,7 @@ pl2 = list(Exp=pE2, Poly=p2)
 solveP.Dexp(pl1, pl2, p0=p0)
 
 ### ODE:
-x^2*d2y - 2*(2*x^3 + x)*dy + 2*(2*x^4 - x^2 + 1)*y # = 0
+x^2*d2y - 2*x*(2*x^2 + 1)*dy + 2*(2*x^4 - x^2 + 1)*y # = 0
 
 ### Plot:
 # pl1, pl2, p0: see above;
@@ -1736,7 +1736,7 @@ pl2 = list(Exp=pE2, Poly=p2)
 solveP.Dexp(pl1, pl2, p0=p0)
 
 ### ODE:
-x^2*d2y - 2*(2*x^3 + x)*dy + 2*(2*x^4 - x^2 + 1)*y - 4*x^6 + 10*x^4 # = 0
+x^2*d2y - 2*x*(2*x^2 + 1)*dy + 2*(2*x^4 - x^2 + 1)*y - 4*x^6 + 10*x^4 # = 0
 
 ### Plot:
 # pl1, pl2, p0: see above;
@@ -1746,11 +1746,10 @@ d2y = function(x) {
 	x2 = x^2;
 	div = x2;
 	d2y = 2*x*(2*x2 + 1)*dyx - 2*(2*x2^2 - x2 + 1)*yx + 4*x2^3 - 10*x2^2;
-	d2y = ifelse(div != 0, d2y/div, 0); # TODO: check!
+	d2y = ifelse(div != 0, d2y/div, 3.5); # TODO: correct!
 	return(d2y)
 }
 ### Plot:
-p0 = NULL;
 px = c((-3:3) * 3/9);
 curve(y(x), from = -1, to = 1, ylim=c(-20, 30))
 line.tan(px, dx=3, p=y, dp=dy)
@@ -1788,11 +1787,59 @@ d2y = function(x) {
 	return(d2y)
 }
 ### Plot:
-p0 = NULL;
 px = c((-3:3) * 2/9);
 curve(y(x), from = -0.8, to = 0.8, ylim=c(-20, 30))
 line.tan(px, dx=3, p=y, dp=dy)
 # Inflexion
+curve(dy(x), add=T, col="green")
+line.tan(px, dx=3, p=dy, dp=d2y, col="orange")
+
+
+
+#########
+### Ex 5:
+p0 = toPoly.pm("x^3 - 1")
+p1 = toPoly.pm("x")
+p2 = toPoly.pm("x^2")
+pE1 = toPoly.pm("x^2 + 2*x")
+pE2 = toPoly.pm("x^2 - 2*x")
+pl1 = list(Exp=pE1, Poly=p1)
+pl2 = list(Exp=pE2, Poly=p2)
+#
+solveP.Dexp(pl1, pl2, p0=p0)
+
+### ODE:
+x^2*(4*x - 1)*d2y - 2*(8*x^4 - 2*x^3 + 6*x^2 - x)*dy +
+	+ 2*(8*x^5 - 2*x^4 + 5*x^2 + 6*x - 1)*y +
+	- (16*x^8 - 4*x^7 - 48*x^6 + 6*x^5 + 4*x^4 - 2*x^3 - 10*x^2 - 12*x + 2) # = 0
+
+
+### Plot:
+# pl1, pl2, p0: see above;
+d2y = function(x) {
+	yx = y(x);
+	dyx = dy(x);
+	x2 = x^2;
+	div = x2*(4*x - 1);
+	d2y = 2*(8*x2^2 + 6*x2 - x*(2*x2 + 1))*dyx +
+		- 2*(x*(8*x2^2 + 6) - 2*x2^2 + 5*x2 - 1)*yx +
+		+ (16*x^8 - 4*x^7 - 48*x^6 + 6*x^5 + 4*x^4 - 2*x^3 - 10*x^2 - 12*x + 2)
+	d2y = ifelse(div != 0, d2y/div, 6); # TODO: correct!
+	return(d2y)
+}
+### Plot:
+px = c((-3:3) * 2/9);
+curve(y(x), from = -0.8, to = 0.8, ylim=c(-20, 30))
+line.tan(px, dx=3, p=y, dp=dy)
+# Inflexion
+curve(dy(x), add=T, col="green")
+line.tan(px, dx=3, p=dy, dp=d2y, col="orange")
+
+###
+px = 1 + (1:5)/13;
+curve(y(x), from = 1, to = 1.5, ylim=c(30, 500))
+line.tan(px, dx=3, p=y, dp=dy)
+# exponential sub-domain
 curve(dy(x), add=T, col="green")
 line.tan(px, dx=3, p=dy, dp=d2y, col="orange")
 
