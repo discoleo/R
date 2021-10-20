@@ -7,7 +7,7 @@
 ### Differential Equations
 ### ODEs - Logarithms
 ###
-### draft v.0.3c
+### draft v.0.3c-ex2
 
 
 ### ODEs Derived from Logarithms
@@ -22,9 +22,10 @@
 ### History ###
 ###############
 
-### draft v.0.3c:
+### draft v.0.3c - v.0.3c-ex2:
 # - Mixed Log-Exp:
 #   y = log(P1(x)) * exp(P2(x)) + F(x);
+# - more examples; [v.0.3c-ex2]
 ### draft v.0.3a - v.0.3b:
 # - from:
 #   y = (x + k1)^(x + k2) + F0(x);
@@ -304,6 +305,14 @@ line.tan(px, dx=3, p=y, dp=dy, b=b)
 curve(dy(x, b=b), add=T, col="green")
 line.tan(px, dx=3, p=dy, dp=d2y, b=b, col="orange")
 
+### Ex 2:
+b = -1
+px = (1:4)*2/7 + 1;
+curve(y(x, b=b), from = 1, to = 2.5, ylim=c(-10, 200))
+line.tan(px, dx=3, p=y, dp=dy, b=b)
+# global minimum:
+curve(dy(x, b=b), add=T, col="green")
+line.tan(px, dx=3, p=dy, dp=d2y, b=b, col="orange")
 
 
 #########################
