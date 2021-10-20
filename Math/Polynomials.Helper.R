@@ -909,7 +909,8 @@ factorize.p = function(p, xn="x", f.all=FALSE, asBigNum=TRUE, file="_R.Temp.") {
 }
 # D( p(x) )
 dp.pm = function(p, xn="x") {
-	p = p[(p[,xn] != 0),];
+	p = p[(p[,xn] != 0), , drop=FALSE];
+	if(nrow(p) == 0) return(0);
 	p$coeff = p$coeff * p[,xn];
 	p[,xn] = p[,xn] - 1;
 	return(p);

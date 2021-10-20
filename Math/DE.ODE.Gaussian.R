@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs - Gaussian
 ###
-### draft v.0.4a-ext0
+### draft v.0.4a-ext1
 
 #############
 ### Types ###
@@ -30,9 +30,9 @@
 
 ### Linear / Non-Linear Gaussian-type
 
-### draft v.0.4a - v.0.4a-ext0:
+### draft v.0.4a - v.0.4a-ext1:
 # - automatic generation of exponential type ODEs;
-# - preparation for extension; [v.0.4a-ext0]
+# - preparation for extension; [v.0.4a-ext0/ext1]
 ### draft v.0.3n - v.0.3n-chk0:
 # - derived from: I(exp(y^n)) = P1(x) * P2(y);
 #   x*d2y - n*x*y^(n-1)*dy^2 - n*y^n*dy + 2*dy = 0;
@@ -1563,9 +1563,9 @@ line.tan(px, dx=3, p=y, dp=dy, n=n)
 ######################
 ######################
 
-solve.Dexp = function(pl1, pl2) {
-	dp1 = dp.exp.pm(pl1);
-	dp2 = dp.exp.pm(pl2);
+solve.Dexp = function(pl1, pl2, p0=NULL) {
+	dp1 = dp.exp.pm(pl1, xn="x");
+	dp2 = dp.exp.pm(pl2, xn="x");
 	### Substitution
 	pE1  = dp2$Poly; pE1$y = 1;
 	pE1b = pl2$Poly; pE1b$dy = 1;
@@ -1577,6 +1577,19 @@ solve.Dexp = function(pl1, pl2) {
 	div  = diff.pm(
 		mult.pm(pl1$Poly, dp2$Poly),
 		mult.pm(pl2$Poly, dp1$Poly));
+	if( ! is.null(p0)) {
+		pE1 = diff.pm(pE1, mult.pm(p0, dp2$Poly));
+		pE2 = diff.pm(pE2, mult.pm(p0, dp1$Poly));
+		# dp0
+		dp0 = dp.pm(p0, xn="x");
+		pE1 = sum.pm(pE1, mult.pm(dp0, pl2$Poly));
+		pE2 = sum.pm(pE2, mult.pm(dp0, pl1$Poly));
+		# d2p0
+		d2p0 = dp.pm(dp0, xn="x");
+		if(is.data.frame(d2p0)) {
+			d2p0 = mult.pm(div, d2p0);
+		} else d2p0 = NULL;
+	} else d2p0 = NULL;
 	### D2
 	d2p1 = dp.exp.pm(dp1);
 	d2p2 = dp.exp.pm(dp2);
@@ -1586,7 +1599,18 @@ solve.Dexp = function(pl1, pl2) {
 	pE2 = mult.pm(d2p2$Poly, pE2);
 	pR = diff.pm(pE1, pE2);
 	pR = diff.pm(div, pR);
+	if( ! is.null(d2p0)) {
+		pR = diff.pm(pR, d2p0);
+	}
 	return(pR)
+}
+solveP.Dexp = function(pl1, pl2, p0=NULL) {
+	pR = solve.Dexp(pl1, pl2, p0);
+	pR = sort.pm(pR, xn=c("d2y", "dy", "y", "x"), 10:13)
+	if(pR$coeff[1] < 0) pR$coeff = - pR$coeff;
+	pp = print.pm(pR, leading=c("y", "dy", "d2y"), do.sort=FALSE);
+	print(pp);
+	invisible(pR);
 }
 
 n = 2
@@ -1594,6 +1618,7 @@ m = 2
 # too long!
 # p1 = toPoly.pm("x^n + b11*x + b10")
 # p2 = toPoly.pm("x^n + b21*x + b20")
+p0 = NULL
 p1 = toPoly.pm("x^n + 3*x + 3")
 p2 = toPoly.pm("x^n - 2*x + 3")
 pE1 = toPoly.pm("x^m + 2*x")
@@ -1601,10 +1626,7 @@ pE2 = toPoly.pm("x^m - 2*x")
 pl1 = list(Exp=pE1, Poly=p1)
 pl2 = list(Exp=pE2, Poly=p2)
 #
-pR = solve.Dexp(pl1, pl2);
-pR = sort.pm(pR, xn=c("d2y", "dy", "y", "x"), 10:13)
-pR$coeff = - pR$coeff;
-print.pm(pR, do.sort=FALSE)
+solveP.Dexp(pl1, pl2, p0=p0)
 
 ### ODE:
 (4*x^4 + 4*x^3 - 5*x^2 + 12*x + 51)*d2y +
@@ -1632,7 +1654,7 @@ dy = function(x) {
 	dp1 = dp.exp.pm(pl1)
 	dp2 = dp.exp.pm(pl2)
 	dp0 = if(is.null(p0)) NULL else dp.pm(p0);
-	return(eval.dexp(x, dp1, dp2, p0=p0));
+	return(eval.dexp(x, dp1, dp2, p0=dp0));
 }
 d2y = function(x) {
 	yx = y(x);
