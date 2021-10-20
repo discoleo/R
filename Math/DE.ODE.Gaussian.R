@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs - Gaussian
 ###
-### draft v.0.4a-ext1
+### draft v.0.4b
 
 #############
 ### Types ###
@@ -21,7 +21,7 @@
 # Level 1: d3z + 3*x^2*d2z - 6*x*dz + 6*z = 0
 # Level n: TODO;
 ### Others:
-# - and many more: non-homogenous variants;
+# - and many more: non-homogeneous variants;
 
 
 ###############
@@ -30,9 +30,10 @@
 
 ### Linear / Non-Linear Gaussian-type
 
-### draft v.0.4a - v.0.4a-ext1:
+### draft v.0.4a - v.0.4b:
 # - automatic generation of exponential type ODEs;
 # - preparation for extension; [v.0.4a-ext0/ext1]
+# - extension & more examples; [v.0.4b]
 ### draft v.0.3n - v.0.3n-chk0:
 # - derived from: I(exp(y^n)) = P1(x) * P2(y);
 #   x*d2y - n*x*y^(n-1)*dy^2 - n*y^n*dy + 2*dy = 0;
@@ -112,6 +113,8 @@ library(pracma)
 
 # include: DE.ODE.Helper.R;
 source("DE.ODE.Helper.R")
+source("Polynomials.Helper.R")
+
 
 #########################
 #########################
@@ -1613,6 +1616,34 @@ solveP.Dexp = function(pl1, pl2, p0=NULL) {
 	invisible(pR);
 }
 
+### Generic Solution:
+eval.dexp = function(x, pl1, pl2, p0=NULL) {
+	y1  = sapply(x, function(x) eval.pm(pl1$Poly, x));
+	y2  = sapply(x, function(x) eval.pm(pl2$Poly, x));
+	yE1 = sapply(x, function(x) eval.pm(pl1$Exp, x));
+	yE2 = sapply(x, function(x) eval.pm(pl2$Exp, x));
+	y = y1 * exp(yE1) + y2 * exp(yE2);
+	if( ! is.null(p0)) {
+		y0 = sapply(x, function(x) eval.pm(p0, x));
+		y  = y + y0;
+	}
+	return(y);
+}
+y = function(x) {
+	return(eval.dexp(x, pl1, pl2, p0));
+}
+dy = function(x) {
+	dp1 = dp.exp.pm(pl1)
+	dp2 = dp.exp.pm(pl2)
+	dp0 = if(is.null(p0)) NULL else dp.pm(p0);
+	return(eval.dexp(x, dp1, dp2, p0=dp0));
+}
+# d2y = is specific;
+
+
+### Examples:
+
+### Ex 1:
 n = 2
 m = 2
 # too long!
@@ -1635,27 +1666,7 @@ solveP.Dexp(pl1, pl2, p0=p0)
 
 
 ### Solution:
-eval.dexp = function(x, pl1, pl2, p0=NULL) {
-	y1  = sapply(x, function(x) eval.pm(pl1$Poly, x));
-	y2  = sapply(x, function(x) eval.pm(pl2$Poly, x));
-	yE1 = sapply(x, function(x) eval.pm(pl1$Exp, x));
-	yE2 = sapply(x, function(x) eval.pm(pl2$Exp, x));
-	y = y1 * exp(yE1) + y2 * exp(yE2);
-	if( ! is.null(p0)) {
-		y0 = sapply(x, function(x) eval.pm(p0, x));
-		y  = y + y0;
-	}
-	return(y);
-}
-y = function(x) {
-	return(eval.dexp(x, pl1, pl2, p0));
-}
-dy = function(x) {
-	dp1 = dp.exp.pm(pl1)
-	dp2 = dp.exp.pm(pl2)
-	dp0 = if(is.null(p0)) NULL else dp.pm(p0);
-	return(eval.dexp(x, dp1, dp2, p0=dp0));
-}
+# pl1, pl2, p0: see above;
 d2y = function(x) {
 	yx = y(x);
 	dyx = dy(x);
@@ -1675,4 +1686,113 @@ curve(dy(x), add=T, col="green")
 line.tan(px, dx=3, p=dy, dp=d2y, col="orange")
 
 # TODO: more checks;
+
+#########
+### Ex 2:
+p0 = NULL
+p1 = toPoly.pm("x")
+p2 = toPoly.pm("x")
+pE1 = toPoly.pm("x^2 + 2*x")
+pE2 = toPoly.pm("x^2 - 2*x")
+pl1 = list(Exp=pE1, Poly=p1)
+pl2 = list(Exp=pE2, Poly=p2)
+#
+solveP.Dexp(pl1, pl2, p0=p0)
+
+### ODE:
+x^2*d2y - 2*(2*x^3 + x)*dy + 2*(2*x^4 - x^2 + 1)*y # = 0
+
+### Plot:
+# pl1, pl2, p0: see above;
+d2y = function(x) {
+	yx = y(x);
+	dyx = dy(x);
+	x2 = x^2;
+	div = x2;
+	d2y = 2*x*(2*x2 + 1)*dyx - 2*(2*x2^2 - x2 + 1)*yx;
+	d2y = ifelse(div != 0, d2y/div, 0); # TODO: check!
+	return(d2y)
+}
+### Plot:
+p0 = NULL;
+px = c((-3:3) * 3/9);
+curve(y(x), from = -1, to = 1, ylim=c(-30, 30))
+line.tan(px, dx=3, p=y, dp=dy)
+# Inflexion
+curve(dy(x), add=T, col="green")
+line.tan(px, dx=3, p=dy, dp=d2y, col="orange")
+
+
+#########
+### Ex 3:
+p0 = toPoly.pm("x^2")
+p1 = toPoly.pm("x")
+p2 = toPoly.pm("x")
+pE1 = toPoly.pm("x^2 + 2*x")
+pE2 = toPoly.pm("x^2 - 2*x")
+pl1 = list(Exp=pE1, Poly=p1)
+pl2 = list(Exp=pE2, Poly=p2)
+#
+solveP.Dexp(pl1, pl2, p0=p0)
+
+### ODE:
+x^2*d2y - 2*(2*x^3 + x)*dy + 2*(2*x^4 - x^2 + 1)*y - 4*x^6 + 10*x^4 # = 0
+
+### Plot:
+# pl1, pl2, p0: see above;
+d2y = function(x) {
+	yx = y(x);
+	dyx = dy(x);
+	x2 = x^2;
+	div = x2;
+	d2y = 2*x*(2*x2 + 1)*dyx - 2*(2*x2^2 - x2 + 1)*yx + 4*x2^3 - 10*x2^2;
+	d2y = ifelse(div != 0, d2y/div, 0); # TODO: check!
+	return(d2y)
+}
+### Plot:
+p0 = NULL;
+px = c((-3:3) * 3/9);
+curve(y(x), from = -1, to = 1, ylim=c(-20, 30))
+line.tan(px, dx=3, p=y, dp=dy)
+# Inflexion
+curve(dy(x), add=T, col="green")
+line.tan(px, dx=3, p=dy, dp=d2y, col="orange")
+
+
+#########
+### Ex 4:
+p0 = toPoly.pm("x^2")
+p1 = toPoly.pm("x + 1")
+p2 = toPoly.pm("x - 1")
+pE1 = toPoly.pm("x^2 + 2*x")
+pE2 = toPoly.pm("x^2 - 2*x")
+pl1 = list(Exp=pE1, Poly=p1)
+pl2 = list(Exp=pE2, Poly=p2)
+#
+solveP.Dexp(pl1, pl2, p0=p0)
+
+### ODE:
+(2*x^2 - 3)*d2y - 8*x*(x^2 - 1)*dy + 2*(4*x^4 - 8*x^2 + 15)*y +
+	- 8*x^6 + 32*x^4 - 50*x^2 + 6 # = 0
+
+### Plot:
+# pl1, pl2, p0: see above;
+d2y = function(x) {
+	yx = y(x);
+	dyx = dy(x);
+	x2 = x^2;
+	div = 2*x2 - 3;
+	d2y = 8*x*(x2 - 1)*dyx - 2*(4*x2^2 - 8*x2 + 15)*yx +
+		+ 8*x2^3 - 32*x2^2 + 50*x2 - 6;
+	d2y = ifelse(div != 0, d2y/div, 0); # TODO: check!
+	return(d2y)
+}
+### Plot:
+p0 = NULL;
+px = c((-3:3) * 2/9);
+curve(y(x), from = -0.8, to = 0.8, ylim=c(-20, 30))
+line.tan(px, dx=3, p=y, dp=dy)
+# Inflexion
+curve(dy(x), add=T, col="green")
+line.tan(px, dx=3, p=dy, dp=d2y, col="orange")
 
