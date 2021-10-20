@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs - Gaussian
 ###
-### draft v.0.4c
+### draft v.0.4c-ex
 
 #############
 ### Types ###
@@ -30,9 +30,10 @@
 
 ### Linear / Non-Linear Gaussian-type
 
-### draft v.0.4c:
+### draft v.0.4c - v.0.4c-ex:
 # - derived from:
 #   y = k * exp(x^n) * I(exp(-x^n)) + F0(x);
+# - more examples;
 ### draft v.0.4a - v.0.4b-fix:
 # - automatic generation of exponential type ODEs;
 # - preparation for extension; [v.0.4a-ext0/ext1]
@@ -374,7 +375,8 @@ d2y - n^2*x^(2*n-2)*y - n*(n-1)*x^(n-2)*y +
 
 ### Special Cases:
 ### n = 2
-d2y - (4*x^2 + 2)*y + 4*x^2*f + 2*f - 2*k*x - d2f# = 0
+d2y - (4*x^2 + 2)*y + (4*x^2 + 2)*f - 2*k*x - d2f # = 0
+# d2y - (4*x^2 + 2)*y = d2f - (4*x^2 + 2)*f + 2*k*x
 
 ### Solution & Plot:
 y = function(x, n=2, k=1, f=NULL) {
@@ -431,6 +433,17 @@ n = 2; k = -2;
 f = toPoly.pm("x^2 - 3*x - 3")
 px = c(0, rep(1,5)) +  (0:5)*1/5;
 curve(y(x, n=n, k=k, f=f), from= 0, to = 2)
+line.tan(px, dx=3, p=y, dp=dy, n=n, k=k, f=f)
+#
+curve(dy(x, n=n, k=k, f=f), add=T, col="green")
+line.tan(px, dx=3, p=dy, dp=d2y, n=n, k=k, f=f, col="orange")
+
+
+### Ex 3:
+n = 0.4; k = -2;
+f = toPoly.pm("x^1.5 - 4*x^0.5 + 5")
+px = c(rep(0.125, 5)) +  (0:4)*2/5;
+curve(y(x, n=n, k=k, f=f), from= 0, to = 2, ylim=c(-8, 4))
 line.tan(px, dx=3, p=y, dp=dy, n=n, k=k, f=f)
 #
 curve(dy(x, n=n, k=k, f=f), add=T, col="green")
