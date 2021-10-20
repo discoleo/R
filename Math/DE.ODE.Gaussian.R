@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs - Gaussian
 ###
-### draft v.0.4b-fix
+### draft v.0.4c
 
 #############
 ### Types ###
@@ -30,6 +30,9 @@
 
 ### Linear / Non-Linear Gaussian-type
 
+### draft v.0.4c:
+# - derived from:
+#   y = k * exp(x^n) * I(exp(-x^n)) + F0(x);
 ### draft v.0.4a - v.0.4b-fix:
 # - automatic generation of exponential type ODEs;
 # - preparation for extension; [v.0.4a-ext0/ext1]
@@ -323,7 +326,8 @@ line.tan(c(-3:3 * 3/4), dx=3, p=dp3y, dp=dp2y, col="orange")
 # d2y = -3*x^2*dy;
 d3z + 3*x^2*d2z - 6*x*dz + 6*z # = 0
 # where d3z = e^(-x^3);
-### Solution:
+
+### Solution & Plot:
 y = function(x) {
 	dz = dy(x)
 	d2z = d2y(x)
@@ -352,7 +356,89 @@ curve(dy(x), add=T, col="green")
 line.tan(c(0:3 * 3/4), dx=3, p=dy, dp=d2y, col="orange")
 
 
-##############
+################
+
+### y = k * exp(x^n) * I(exp(-x^n)) + F0(x)
+
+### D =>
+dy - n*x^(n-1)*y + n*x^(n-1)*f - k - df # = 0
+
+### D2 =>
+d2y - n*x^(n-1)*dy - n*(n-1)*x^(n-2)*y +
+	+ n*(n-1)*x^(n-2)*f + n*x^(n-1)*df - d2f # = 0
+# Variant 1:
+d2y - n*x^(n-1)*(n*x^(n-1)*y - n*x^(n-1)*f + df + k) - n*(n-1)*x^(n-2)*y +
+	+ n*(n-1)*x^(n-2)*f + n*x^(n-1)*df - d2f # = 0
+d2y - n^2*x^(2*n-2)*y - n*(n-1)*x^(n-2)*y +
+	+ n^2*x^(2*n-2)*f + n*(n-1)*x^(n-2)*f - k*n*x^(n-1) - d2f # = 0
+
+### Special Cases:
+### n = 2
+d2y - (4*x^2 + 2)*y + 4*x^2*f + 2*f - 2*k*x - d2f# = 0
+
+### Solution & Plot:
+y = function(x, n=2, k=1, f=NULL) {
+	fy = function(x) exp(-x^n);
+	y = sapply(x, function(up) integrate(fy, lower=0, upper=up)$value);
+	y = k * exp(x^n) * y;
+	if( ! is.null(f)) {
+		fx = sapply(x, function(x) eval.pm(f, x));
+		y  = y + fx;
+	}
+	return(y)
+}
+dy = function(x, n=2, k=1, f=NULL, y=NULL) {
+	yx = if( ! is.null(y)) y else y(x, n=n, k=k, f=f);
+	xn1 = n*x^(n-1);
+	dp  = xn1*yx + k; # + df;
+	if( ! is.null(f)) {
+		fx = sapply(x, function(x) eval.pm(f, x));
+		dp = dp - xn1*fx;
+		df = dp.pm(f);
+		dfx = sapply(x, function(x) eval.pm(df, x));
+		dp = dp + dfx;
+	}
+	return(dp)
+}
+d2y = function(x, n=2, k=1, f=NULL) {
+	yx = y(x, n=n, k=k, f=f);
+	# dyx = dy(x, n=n, k=k, f=f, y=yx);
+	xn2 = x^(n-2); xn1 = x*xn2;
+	d2p = n^2*xn1^2*yx + n*(n-1)*xn2*yx;
+	if( ! is.null(f)) {
+		fx = sapply(x, function(x) eval.pm(f, x));
+		d2p = d2p - n*(n-1)*xn2*fx - n^2*xn1^2*fx + k*n*xn1;
+		df  = dp.pm(f);
+		d2f = dp.pm(df);
+		d2fx = sapply(x, function(x) eval.pm(d2f, x));
+		d2p = d2p + d2fx;
+	}
+	return(d2p)
+}
+### Plot:
+n = 2; k = 2;
+f = toPoly.pm("x^2 - 3*x - 3")
+px = c(0, rep(1,5)) +  (0:5)*1/5;
+curve(y(x, n=n, k=k, f=f), from= 0, to = 2, ylim=c(0, 100))
+line.tan(px, dx=3, p=y, dp=dy, n=n, k=k, f=f)
+#
+curve(dy(x, n=n, k=k, f=f), add=T, col="green")
+line.tan(px, dx=3, p=dy, dp=d2y, n=n, k=k, f=f, col="orange")
+
+
+### Ex 2:
+n = 2; k = -2;
+f = toPoly.pm("x^2 - 3*x - 3")
+px = c(0, rep(1,5)) +  (0:5)*1/5;
+curve(y(x, n=n, k=k, f=f), from= 0, to = 2)
+line.tan(px, dx=3, p=y, dp=dy, n=n, k=k, f=f)
+#
+curve(dy(x, n=n, k=k, f=f), add=T, col="green")
+line.tan(px, dx=3, p=dy, dp=d2y, n=n, k=k, f=f, col="orange")
+
+
+################
+################
 
 ### y = e^(x^n) / (k + I(e^(x^n) dx));
 
@@ -427,14 +513,14 @@ x*(2*y + b1)*d2y + 2*x*dy^2 + 2*x*(y^2 + b1*y + b0)*(2*y + b1)*dy +
 #######################
 #######################
 
-#######################
-### Section B: Mixt ###
-#######################
+########################
+### Section B: Mixed ###
+########################
 
 ################
 ### Section B.1:
 
-### Liniar Combinations
+### Linear Combinations
 
 ### y = a2*e^(-x^2) + a3*e^(-x^3)
 # [not run]
