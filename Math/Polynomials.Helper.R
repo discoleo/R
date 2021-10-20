@@ -546,6 +546,8 @@ replace.fr.pm = function(p1, p2, p2fr, x, pow=1) {
 	return(reduce.var.pm(pR));
 }
 eval.pm = function(p, x, progress=FALSE) {
+	# x = c(values of variables)
+	# TODO: list!
 	pP = p[, - which(names(p) == "coeff"), drop=FALSE];
 	eval.p = function(id) {
 		idx = which(pP[id,] != 0);

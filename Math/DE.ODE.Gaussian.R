@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs - Gaussian
 ###
-### draft v.0.3n-chk0
+### draft v.0.4a
 
 #############
 ### Types ###
@@ -28,8 +28,10 @@
 ### History ###
 ###############
 
-### Liniar / Non-Liniar Gaussian-type
+### Linear / Non-Linear Gaussian-type
 
+### draft v.0.4a:
+# - automatic generation of exponential type ODEs;
 ### draft v.0.3n - v.0.3n-chk0:
 # - derived from: I(exp(y^n)) = P1(x) * P2(y);
 #   x*d2y - n*x*y^(n-1)*dy^2 - n*y^n*dy + 2*dy = 0;
@@ -130,15 +132,15 @@ source("DE.ODE.Helper.R")
 # dz = df*z - I(d2f * z) + b - I(df*b);
 
 
-### Section B: Mixt
+### Section B: Mixed
 
-### B.1. Mixt Linear
+### B.1. Mixed Linear
 ### y = e^(F1(x)) + e^(F2(x))
 
-### B.2. Mixt Exponential-Trigonometric
+### B.2. Mixed Exponential-Trigonometric
 ### y = sin(F1(x)) * exp(-F1(x))
 
-### B.3. Mixt Non-Linear
+### B.3. Mixed Non-Linear
 ### y = Integral(exp(F1(x))) * Integral(exp(-F1(x)))
 
 ### B.4. Non-Linear Double Exp
@@ -153,8 +155,10 @@ source("DE.ODE.Helper.R")
 ### y = e^(-x^2)
 # [not run]
 # dy = -2*x*y;
-# d2y + 2*x*dy + 2*y = 0
+### ODE:
+d2y + 2*x*dy + 2*y # = 0
 ### I(D1) by parts =>
+# y + 2*x*I(y) - 2*I(I(y)) = 0
 d2z + 2*x*dz - 2*z # = 0
 # where dz = sqrt(pi)/2 * erf(x); d2z = e^(-x^2);
 
@@ -178,12 +182,13 @@ d2y = function(x, b0=0) {
 	dp = exp(-x^2) + b0;
 	return(dp)
 }
+### Plot:
 # b0 == 0;
 curve(y(x), from= -3, to = 3, ylim=c(-1/3, 4))
-sapply(c(-3:3 * 3/4), line.tan, dx=3, p=y, dp=dy)
+line.tan(c(-3:3 * 3/4), dx=3, p=y, dp=dy)
 # sigmoidal
 curve(dy(x), add=T, col="green")
-sapply(c(-3:3 * 3/4), line.tan, dx=3, p=dy, dp=d2y, col="orange")
+line.tan(c(-3:3 * 3/4), dx=3, p=dy, dp=d2y, col="orange")
 
 
 ### y = e^(-x^2) + b0
@@ -195,10 +200,10 @@ d2z + 2*x*dz - 2*z - b0*x^2 # = 0
 # using functions defined above;
 b0 = -1;
 curve(y(x, b0=b0), from= -3, to = 3, ylim=c(-3, 2))
-sapply(c(-3:3 * 3/4), line.tan, dx=3, p=y, dp=dy, b0=b0)
+line.tan(c(-3:3 * 3/4), dx=3, p=y, dp=dy, b0=b0)
 # sigmoidal
 curve(dy(x, b0=b0), add=T, col="green")
-sapply(c(-3:3 * 3/4), line.tan, dx=3, p=dy, dp=d2y, b0=b0, col="orange")
+line.tan(c(-3:3 * 3/4), dx=3, p=dy, dp=d2y, b0=b0, col="orange")
 
 
 ##################
@@ -208,7 +213,8 @@ sapply(c(-3:3 * 3/4), line.tan, dx=3, p=dy, dp=d2y, b0=b0, col="orange")
 # dy = - (2*k2*x + k1)*y
 ### Integration by parts =>
 # y = -(2*k2*x + k1)*I(y) + 2*k2*I(I(y));
-# [not run]
+
+### ODE:
 d2z + (2*k2*x + k1)*dz - 2*k2*z # = 0
 
 ### Solution & Plot:
@@ -230,13 +236,14 @@ d2y = function(x, k) {
 	dp = sapply(x, function(x) exp(-sum(x^rev(seq(len)) * k)));
 	return(dp)
 }
+### Plot:
 # d2z + (4*x + 1)*dz - 4*z = 0
 k = c(2, 1)
 curve(y(x, k), from= -3, to = 3)
-sapply(c(-3:3 * 3/4), line.tan, dx=3, p=y, dp=dy, k=k)
+line.tan(c(-3:3 * 3/4), dx=3, p=y, dp=dy, k=k)
 # sigmoidal
 curve(dy(x, k), add=T, col="green")
-sapply(c(-3:3 * 3/4), line.tan, dx=3, p=dy, dp=d2y, k=k, col="orange")
+line.tan(c(-3:3 * 3/4), dx=3, p=dy, dp=d2y, k=k, col="orange")
 
 
 
@@ -1550,4 +1557,92 @@ n = 2;
 px = c(1E-2, (1:5) / 5);
 curve(y(x, n=n), from = 0, to = 2)
 line.tan(px, dx=3, p=y, dp=dy, n=n)
+
+
+######################
+######################
+
+solve.Dexp = function(pl1, pl2) {
+	dp1 = dp.exp.pm(pl1);
+	dp2 = dp.exp.pm(pl2);
+	### Substitution
+	pE1  = dp2$Poly; pE1$y = 1;
+	pE1b = pl2$Poly; pE1b$dy = 1;
+	pE1  = diff.pm(pE1, pE1b);
+	pE2  = dp1$Poly; pE2$y = 1;
+	pE2b = pl1$Poly; pE2b$dy = 1;
+	pE2  = diff.pm(pE2, pE2b);
+	#
+	div  = diff.pm(
+		mult.pm(pl1$Poly, dp2$Poly),
+		mult.pm(pl2$Poly, dp1$Poly));
+	### D2
+	d2p1 = dp.exp.pm(dp1);
+	d2p2 = dp.exp.pm(dp2);
+	# Subst =>
+	div$d2y = 1;
+	pE1 = mult.pm(d2p1$Poly, pE1);
+	pE2 = mult.pm(d2p2$Poly, pE2);
+	pR = diff.pm(pE1, pE2);
+	pR = diff.pm(div, pR);
+	return(pR)
+}
+
+n = 2
+m = 2
+# too long!
+# p1 = toPoly.pm("x^n + b11*x + b10")
+# p2 = toPoly.pm("x^n + b21*x + b20")
+p1 = toPoly.pm("x^n + 3*x + 3")
+p2 = toPoly.pm("x^n - 2*x + 3")
+pE1 = toPoly.pm("x^m + 2*x")
+pE2 = toPoly.pm("x^m - 2*x")
+pl1 = list(Exp=pE1, Poly=p1)
+pl2 = list(Exp=pE2, Poly=p2)
+#
+pR = solve.Dexp(pl1, pl2);
+pR = sort.pm(pR, xn=c("d2y", "dy", "y", "x"), 10:13)
+pR$coeff = - pR$coeff;
+print.pm(pR, do.sort=FALSE)
+
+### ODE:
+(4*x^4 + 4*x^3 - 5*x^2 + 12*x + 51)*d2y +
+	- (16*x^5 + 16*x^4 - 4*x^3 + 60*x^2 + 194*x + 12)*dy +
+	+ (16*x^6 + 16*x^5 - 12*x^4 + 48*x^3 + 278*x^2 - 36*x - 508)*y
+
+
+### Solution:
+eval.dexp = function(x, pl1, pl2) {
+	y1  = sapply(x, function(x) eval.pm(pl1$Poly, x));
+	y2  = sapply(x, function(x) eval.pm(pl2$Poly, x));
+	yE1 = sapply(x, function(x) eval.pm(pl1$Exp, x));
+	yE2 = sapply(x, function(x) eval.pm(pl2$Exp, x));
+	y = y1 * exp(yE1) + y2 * exp(yE2);
+}
+y = function(x) {
+	return(eval.dexp(x, pl1, pl2));
+}
+dy = function(x) {
+	dp1 = dp.exp.pm(pl1)
+	dp2 = dp.exp.pm(pl2)
+	return(eval.dexp(x, dp1, dp2));
+}
+d2y = function(x) {
+	yx = y(x);
+	dyx = dy(x);
+	div = (4*x^4 + 4*x^3 - 5*x^2 + 12*x + 51);
+	d2y = (16*x^5 + 16*x^4 - 4*x^3 + 60*x^2 + 194*x + 12)*dyx +
+		- (16*x^6 + 16*x^5 - 12*x^4 + 48*x^3 + 278*x^2 - 36*x - 508)*yx;
+	d2y = ifelse(div != 0, d2y/div, 0);
+	return(d2y)
+}
+### Plot:
+px = c((-5:5) / 5);
+curve(y(x), from = -1, to = 1, ylim=c(-60, 150))
+line.tan(px, dx=3, p=y, dp=dy)
+# global minimum
+curve(dy(x), add=T, col="green")
+line.tan(px, dx=3, p=dy, dp=d2y, col="orange")
+
+# TODO: more checks;
 
