@@ -7,7 +7,7 @@
 ### Differential Equations
 ### ODEs - Logarithms
 ###
-### draft v.0.3d
+### draft v.0.3e
 
 
 ### ODEs Derived from Logarithms
@@ -22,6 +22,9 @@
 ### History ###
 ###############
 
+### draft v.0.3e:
+# - derived from:
+#   y*log(x+k) = I(log(x+k) / x) + F0(x);
 ### draft v.0.3d:
 # - cleanup;
 ### draft v.0.3c - v.0.3c-ex2:
@@ -64,6 +67,7 @@ library(pracma)
 # - may be needed to solve various equations;
 
 # include: DE.ODE.Helper.R;
+source("Polynomials.Helper.R")
 source("DE.ODE.Helper.R")
 
 
@@ -1054,4 +1058,98 @@ line.tan(x.px, dx=1.6, p=y, dp=dy, b=b, k=k)
 #
 curve(dy(x, b=b, k=k), add=T, col="green")
 line.tan(x.px, dx=0.75, p=dy, dp=d2y, b=b, k=k, col="orange")
+
+
+#####################
+#####################
+
+### y*log(x+k) = I(log(x+k) / x) + F0(x)
+
+### D =>
+x*(x+k)*log(x+k)*dy + x*y - (x+k)*log(x+k) - x*(x+k)*df # = 0
+# (x+k)*log(x+k)*(x*dy - 1) = - x*y + x*(x+k)*df;
+
+### D2 =>
+x*(x+k)*log(x+k)*d2y + 2*x*dy + ((2*x+k)*log(x+k))*dy + y +
+	- log(x+k) - 1 - (2*x+k)*df - x*(x+k)*d2f # = 0
+(x*(x+k)*d2y + (2*x+k)*dy - 1)*log(x+k) +
+	+ 2*x*dy + y - (2*x+k)*df - x*(x+k)*d2f - 1 # = 0
+(x^2*(x+k)*d2y + x*(2*x+k)*dy - x)*(y - (x+k)*df) +
+	- (x+k)*(x*dy - 1)*(2*x*dy + y - (2*x+k)*df - x*(x+k)*d2f - 1) # = 0
+### ODE:
+x^2*(x+k)*y*d2y - x^2*(x+k)^2*df*d2y +
+	- 2*x^2*(x+k)*dy^2 + x^2*y*dy +
+	+ x^2*(x+k)^2*d2f*dy + 3*x*(x+k)*dy + k*y +
+	- (x+k)*((x+k)*df + x*(x+k)*d2f + 1) # = 0
+
+
+### Solution & Plot:
+y.I = function(x, k=1, n=1, lower=1) {
+	sapply(x, function(upper)
+		integrate(function(x) log(x^n + k) / x, lower=lower, upper=upper)$value)
+}
+y = function(x, k=1, n=1, f=NULL, lower=1) {
+	yx = y.I(x, k=k, n=n, lower=lower);
+	if( ! is.null(f)) {
+		f0 = sapply(x, function(x) eval.pm(f, x));
+		yx = yx + f0;
+	}
+	div = log(x^n + k);
+	r = ifelse(div != 0, yx / div, Inf); # TODO
+	return(r)
+}
+dy = function(x, k=1, n=1, f=NULL, lower=1) {
+	# x*(x+k)*log(x+k)*dy + x*y - (x+k)*log(x+k) - x*(x+k)*df
+	yx = y(x, k=k, n=n, f=f, lower=lower);
+	xk = x+k; logxk = xk*log(xk);
+	r  = logxk - x*yx;
+	if( ! is.null(f)) {
+		df = dp.pm(f, xn="x");
+		dfx = sapply(x, function(x) eval.pm(df, x));
+		r = r + x*(x+k)*dfx;
+	}
+	div = x*logxk;
+	r = ifelse(div != 0, r / div, 0) # TODO
+	return(r)
+}
+d2y = function(x, k=1, n=1, f=NULL, lower=1) {
+	yx = y(x, k=k, n=n, f=f, lower=lower);
+	dyx = dy(x, k=k, n=n, f=f, lower=lower);
+	xk = x + k; x2 = x^2;
+	dp = 2*x2*xk*dyx^2 - x2*yx*dyx +
+		- 3*x*xk*dyx + xk - k*yx;
+	div = x2*xk*yx;
+	if( ! is.null(f)) {
+		df = dp.pm(f, xn="x");
+		dfx = sapply(x, function(x) eval.pm(df, x));
+		d2f = dp.pm(df, xn="x");
+		d2fx = sapply(x, function(x) eval.pm(d2f, x));
+		dp = dp + xk*(xk*dfx + x*xk*d2fx) - x2*xk^2*d2fx*dyx;
+		div = div - x2*xk^2*dfx;
+	}
+	dp = ifelse(div != 0, dp / div, 0); # TODO
+	return(dp)
+}
+### Plot:
+k = 1;
+f = toPoly.pm("x^2 - 3*x + 4")
+x.px = c(0.1, 1:3 * 5/13) + 1; xlim = c(1, 3);
+#
+curve(y(x, k=k, f=f), from= xlim[1], to = xlim[2], ylim=c(-1, 3.6))
+line.tan(x.px, dx=1.6, p=y, dp=dy, k=k, f=f)
+# global minimum
+curve(dy(x, k=k, f=f), add=T, col="green")
+line.tan(x.px, dx=1.5, p=dy, dp=d2y, k=k, f=f, col="orange")
+
+
+### Example 2:
+k = 3;
+f = toPoly.pm("x^3 - 3*x - 4")
+x.px = c(0.1, 1:3 * 5/13) + 1; xlim = c(1, 3);
+#
+curve(y(x, k=k, f=f), from= xlim[1], to = xlim[2], ylim=c(-5, 10))
+line.tan(x.px, dx=1.6, p=y, dp=dy, k=k, f=f)
+#
+curve(dy(x, k=k, f=f), add=T, col="green")
+line.tan(x.px, dx=1.5, p=dy, dp=d2y, k=k, f=f, col="orange")
 
