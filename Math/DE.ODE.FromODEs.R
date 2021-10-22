@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs: From other ODEs
 ###
-### draft v.0.2b
+### draft v.0.2c
 
 
 
@@ -15,9 +15,13 @@
 ###############
 
 
+### draft v.0.2c:
+# - derived from:
+#   dy - G(x)*log(y + k) = F(x);
 ### draft v.0.2b:
 # - various examples based on y-Exponentials, eg:
 #   x*d2y - x*dy^2 + n*dy = 0;
+#   x*d2y - x*dy^2 + (b0*x + n)*dy - n*b0 = 0; [Non-Hom/v.0.2c]
 ### draft v.0.2a:
 # - moved to this file Section with Exponentials:
 #   from DE.ODE.Exponentials.R;
@@ -151,6 +155,10 @@ y*dy^2 - f*dy - g^2*y - g*f # = 0
 #########################
 #########################
 
+######################
+### y*d2y Variants ###
+######################
+
 ### D of Higher Power
 
 ### dy^2 - G(x)*y = F(x)
@@ -163,6 +171,22 @@ y*dy^2 - f*dy - g^2*y - g*f # = 0
 2*g*y*d2y + 2*f*d2y - dg*y*dy - df*dy - g^2*y - g*f # = 0
 
 # TODO: check;
+
+
+########################
+########################
+
+### dy^n = y + F(x)
+
+### D =>
+n*dy^(n-1)*d2y - dy - df # = 0 # * dy
+n*dy^n*d2y - (dy)^2 - df*dy # = 0
+n*(y + f)*d2y - (dy)^2 - df*dy # = 0
+### ODE:
+n*y*d2y + n*f*d2y - (dy)^2 - df*dy # = 0
+
+# TODO: check;
+
 
 ###################
 
@@ -190,10 +214,29 @@ n*g*y*d2y + n*f*d2y - g*dy^2 - dg*y*dy - df*dy # = 0
 d2y - g/y * dy - dg*log(y) - df # = 0
 g*y*d2y - g^2*dy - dg*g*log(y)*y - g*df*y # = 0
 g*y*d2y - g^2*dy - dg*(dy - f)*y - g*df*y # = 0
+
 ### ODE:
 g*y*d2y - dg*y*dy - g^2*dy + (dg*f - g*df)*y # = 0
 
 # TODO: check;
+
+
+#########################
+### Slight Generalization
+### dy - G(x)*log(y + k) = F(x)
+
+### D =>
+d2y - g/(y + k) * dy - dg*log(y + k) - df # = 0
+g*(y+k)*d2y - g^2*dy - dg*g*log(y+k)*(y+k) - g*df*(y+k) # = 0
+g*(y+k)*d2y - g^2*dy - dg*(dy - f)*(y+k) - g*df*(y+k) # = 0
+g*(y+k)*d2y - g^2*dy - dg*(y*dy + k*dy - f*y - k*f) - g*df*(y+k) # = 0
+
+### ODE:
+g*(y+k)*d2y - dg*y*dy - (g^2 + k*dg)*dy + (dg*f - g*df)*y - k*(g*df - dg*f) # = 0
+
+### Special Case:
+# g = x + a; f = x + b;
+(x+a)*(y+k)*d2y - y*dy - ((x+a)^2 + k)*dy + (b-a)*y + k*(b-a) # = 0
 
 
 #########################
@@ -306,12 +349,29 @@ x*y*d2y - x*y*dy^2 + x*dy^2 + y*dy # = 0
 ###############
 ### Example 2a:
 x^n*dy - exp(y) # = 0
+# trivial: just for check;
 
 ### D =>
 x^n*d2y + n*x^(n-1)*dy - exp(y)*dy # = 0
 x^n*d2y + n*x^(n-1)*dy - x^n*dy^2 # = 0
 x*d2y - x*dy^2 + n*dy # = 0
 
+
+### Example 2a-2:
+### Non-Homogeneous:
+x^n*dy - exp(y) - x^n*f # = 0
+
+### D =>
+x^n*d2y + n*x^(n-1)*dy - exp(y)*dy - x^n*df - n*x^(n-1)*f # = 0
+x^n*d2y + n*x^(n-1)*dy - x^n*dy^2 + x^n*f*dy - x^n*df - n*x^(n-1)*f # = 0
+x*d2y - x*dy^2 + x*f*dy + n*dy - x*df - n*f # = 0
+
+### Special Case:
+# f = b0
+x*d2y - x*dy^2 + (b0*x + n)*dy - n*b0 # = 0
+
+### y = ln(z) =>
+x^n*dz - z^2 - x^n*f*z # = 0
 
 ###############
 ### Example 2b:
