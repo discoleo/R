@@ -7,7 +7,7 @@
 ### Differential Equations
 ### ODEs - Logarithms
 ###
-### draft v.0.3f
+### draft v.0.3f-bis
 
 
 ### ODEs Derived from Logarithms
@@ -22,10 +22,11 @@
 ### History ###
 ###############
 
-### draft v.0.3f:
+### draft v.0.3f - v.0.3f-bis:
 # - derived from: [TODO full derivation]
 #   y = log(exp(P1(x)) + P2(x)) + F0(x);
 #   y = log(log(P(x))) + F0(x);
+#   y = log(P(x)) * log(log(P(x))) + F0(x); [v.0.3f-bis]
 ### draft v.0.3e:
 # - derived from:
 #   y*log(x+k) = I(log(x+k) / x) + F0(x);
@@ -907,6 +908,22 @@ line.tan(px, dx=3, p=dy, dp=d2y, k=k, b=b, col="orange")
 ### D =>
 (x^2+k)*log(x^2 + k)*dy - (x^2+k)*df*log(x^2 + k) - 2*x # = 0
 # (x^2+k)*log(x^2 + k) = 2*x / (dy - df);
+
+### D2 =>
+
+# TODO
+
+
+#######################
+#######################
+
+### y = log(P(x)) * log(log(P(x))) + F0(x)
+
+### y = log(x^2 + k) * log(log(x^2 + k)) + f
+
+### D =>
+(x^2+k)*log(x^2 + k)*dy - 2*x*(y - f) - 2*x*log(x^2 + k) - (x^2+k)*df*log(x^2 + k) # = 0
+# log(x^2 + k) = 2*x*(y - f) / ((x^2+k)*(dy - df) - 2*x);
 
 ### D2 =>
 
