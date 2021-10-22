@@ -7,7 +7,7 @@
 ### Differential Equations
 ### ODEs - Logarithms
 ###
-### draft v.0.3e
+### draft v.0.3f
 
 
 ### ODEs Derived from Logarithms
@@ -22,6 +22,10 @@
 ### History ###
 ###############
 
+### draft v.0.3f:
+# - derived from: [TODO full derivation]
+#   y = log(exp(P1(x)) + P2(x)) + F0(x);
+#   y = log(log(P(x))) + F0(x);
 ### draft v.0.3e:
 # - derived from:
 #   y*log(x+k) = I(log(x+k) / x) + F0(x);
@@ -344,7 +348,7 @@ n*f*g*y^(n-1)*dy = g*df * log(g) + f*dg * log(f)
 ### D2 =>
 n*f*g*y^(n-1)*d2y + n*(n-1)*f*g*y^(n-2)*dy^2 + n*df*g*y^(n-1)*dy + n*f*dg*y^(n-1)*dy =
 	(g*d2f + df*dg) * log(g) + (f*d2g + df*dg) * log(f) + df + dg
-### Solve Liniar =>
+### Solve Linear =>
 # log(f) = ...
 # log(g) = ...
 
@@ -628,6 +632,8 @@ p / y * (dy)^2 + 2*(dp)^2 / p * y + p*d2p/dp * dy
 dp*p^2*y*d2y - dp*p^2*(dy)^2 + dp^2*p*y*dy - d2p*p^2*y*dy - 2*(dp)^3*y^2
 
 ### Examples:
+### Check: p = x + k; dp = 1;
+(x+k)^2*y*d2y - (x+k)^2*(dy)^2 + (x+k)*y*dy - 2*y^2 # = 0
 ### p = exp(x) + k; dp = exp(x)
 (e^x+k)^2*y*d2y - (e^x+k)^2*(dy)^2 + e^x*(e^x+k)*y*dy - (e^x+k)^2*y*dy - 2*e^(2*x)*y^2
 ### p = ln(k*x); dp = 1/x
@@ -875,6 +881,37 @@ curve(dy(x, k=k, b=b), add=T, col="green")
 line.tan(px, dx=3, p=dy, dp=d2y, k=k, b=b, col="orange")
 
 
+#######################
+#######################
+
+### y = log(exp(P1(x)) + P2(x)) + F0(x)
+
+### y = log(exp(x^n) + k) + f
+
+### D =>
+(exp(x^n)+k)*dy - n*x^(n-1)*exp(x^n) - df*(exp(x^n)+k) # = 0
+# exp(x^n) = - k*(dy - df) / (dy - n*x^(n-1) - df);
+
+### D2 =>
+
+# TODO
+
+
+#######################
+#######################
+
+### y = log(log(P(x))) + F0(x)
+
+### y = log(log(x^2 + k)) + f
+
+### D =>
+(x^2+k)*log(x^2 + k)*dy - (x^2+k)*df*log(x^2 + k) - 2*x # = 0
+# (x^2+k)*log(x^2 + k) = 2*x / (dy - df);
+
+### D2 =>
+
+# TODO
+
 
 #######################
 #######################
@@ -1081,6 +1118,11 @@ x^2*(x+k)*y*d2y - x^2*(x+k)^2*df*d2y +
 	- 2*x^2*(x+k)*dy^2 + x^2*y*dy +
 	+ x^2*(x+k)^2*d2f*dy + 3*x*(x+k)*dy + k*y +
 	- (x+k)*((x+k)*df + x*(x+k)*d2f + 1) # = 0
+
+### Special Case:
+# f = ct
+x^2*(x+k)*y*d2y - 2*x^2*(x+k)*dy^2 + x^2*y*dy +
+	+ 3*x*(x+k)*dy + k*y - (x+k) # = 0
 
 
 ### Solution & Plot:
