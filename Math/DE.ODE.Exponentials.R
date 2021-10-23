@@ -7,7 +7,7 @@
 ### Differential Equations
 ### ODEs - Exponentials
 ###
-### draft v.0.2b-gen
+### draft v.0.2b-check
 
 
 ### ODEs Derived from Exponentials
@@ -23,10 +23,10 @@
 ###############
 
 
-### draft v.0.2b - v.0.2b-gen:
+### draft v.0.2b - v.0.2b-check:
 # - from Mixed Exp-Trig:
 #   y*d2y - dy^2 - y*dy - y^2 + 1 = 0;
-#   y*d2y - dy^2 - y*dy - y^2 + k^2 = 0;
+#   y*d2y - dy^2 - y*dy - y^2 + k^2 = 0; [v.0.2b-gen & v.0.2b-check]
 ### draft v.0.2a:
 # - moved Section with ODEs based on another ODE
 #   to file: DE.ODE.FromODEs.R;
@@ -144,21 +144,23 @@ d2y = function(x, PFUN, posRoot=TRUE) {
 	return(dp)
 }
 ### Plot:
-curve(y(x, PFUN=y1.lst), from= 1, to = 3)
-sapply(c(3/5 + (1:3)*3/5), line.tan, dx=3, p=y, dp=dy, PFUN=y1.lst)
+px = c(3/5 + (1:3)*3/5);
+curve(y(x, PFUN=y1.lst), from = 1, to = 3)
+line.tan(px, dx=3, p=y, dp=dy, PFUN=y1.lst)
 # inverse-exp-like:
 curve(dy(x, PFUN=y1.lst), add=T, col="green")
-sapply(c(3/5 + (1:3)*3/5), line.tan, dx=3, p=dy, dp=d2y, PFUN=y1.lst, col="orange")
+line.tan(px, dx=3, p=dy, dp=d2y, PFUN=y1.lst, col="orange")
 
 
 ### Ex 2:
 n = 3/2;
+px = c(3/5 + (1:3)*3/5);
 y1.lst = y.gen(n=n)
 curve(y(x, PFUN=y1.lst), from= 1, to = 3)
-sapply(c(3/5 + (1:3)*3/5), line.tan, dx=3, p=y, dp=dy, PFUN=y1.lst)
+line.tan(px, dx=3, p=y, dp=dy, PFUN=y1.lst)
 # inverse-exp-like:
 curve(dy(x, PFUN=y1.lst), add=T, col="green")
-sapply(c(3/5 + (1:3)*3/5), line.tan, dx=3, p=dy, dp=d2y, PFUN=y1.lst, col="orange")
+line.tan(px, dx=3, p=dy, dp=d2y, PFUN=y1.lst, col="orange")
 
 
 ########################
@@ -170,7 +172,7 @@ sapply(c(3/5 + (1:3)*3/5), line.tan, dx=3, p=dy, dp=d2y, PFUN=y1.lst, col="orang
 ### Trigonometric-Type
 ########################
 
-### P(x)*exp(x)*y = sin(P(x)*exp(x))
+### P1(x)*exp(x)*y = sin(P2(x)*exp(x))
 
 ### Simple Homogeneous:
 ### exp(x)*y = sin(exp(x))
@@ -186,8 +188,6 @@ y*d2y + y*dy - (dy + y)^2 + 1 # = 0
 
 ### ODE:
 y*d2y - dy^2 - y*dy - y^2 + 1 # = 0
-
-# TODO: check;
 
 
 ### Extended Homogeneous:
@@ -220,6 +220,61 @@ y*d2y - dy^2 - y*dy - y^2 + k^2 # = 0
 (x+k)*y*d2y - (x+k)*dy^2 - (x+k+1)*y*dy - (x+k+1)*y^2 + (x+k)^3 # = 0
 
 
+### Solution & Plot:
+eval.FUN = function(x, F, ...) {
+	xl = c(...);
+	r = sapply(x, function(x) eval.pm(F, c(x, xl)));
+	return(r);
+}
+y = function(x, PFUN, n=1) {
+	xe = exp(x^n);
+	fx = eval.FUN(x, PFUN);
+	val = sin(fx*xe) / xe;
+	return(val)
+}
+dy = function(x, PFUN, n=1) {
+	yx = y(x, PFUN=PFUN, n=n);
+	xe = exp(x^n);
+	fx = eval.FUN(x, PFUN);
+	df  = dp.pm(PFUN, xn="x");
+	dfx = eval.FUN(x, df);
+	dp =  - yx + (fx+dfx)*cos(fx*exp(x));
+	return(dp)
+}
+d2y = function(x, PFUN, n=1) {
+	px  = eval.FUN(x, PFUN);
+	dp  = dp.pm(PFUN, xn="x");
+	dpx = eval.FUN(x, dp); ps = px + dpx;
+	d2p = dp.pm(dp, xn="x");
+	d2px = eval.FUN(x, d2p);
+	dps = dpx + d2px; sall = ps + dps;
+	yx  = y(x, PFUN=PFUN, n=n);
+	dyx = dy(x, PFUN=PFUN, n=n);
+	d2y = ps*dyx^2 + sall*yx*dyx + sall*yx^2 - ps^3;
+	div = ps*yx;
+	d2y = ifelse(div != 0, d2y / div, 1) # TODO
+	return(d2y)
+}
+### Plot:
+f = toPoly.pm("x^2 - 3*x + 5")
+px = c(0.2, 0.55, 0.7, (5:10)*3/17) + 1/13;
+curve(y(x, PFUN=f), from = 0, to = 2.5, n=512)
+line.tan(px, dx=3, p=y, dp=dy, PFUN=f)
+# damped sinusoidal
+curve(dy(x, PFUN=f), add=T, col="green")
+line.tan(px, dx=1.6, p=dy, dp=d2y, PFUN=f, col="orange")
+
+###
+px = c(0.2, 0.55, 0.7, (5:6)*3/17) + 1/13; px = c(px, 1.5 + (1:10)/13);
+xlim = c(0, 2.5); # xlim = c(1, 2.5)
+curve(y(x, PFUN=f), from = xlim[1], to = xlim[2], n=512, ylim=c(-2, 4))
+line.tan(px, dx=1.3, p=y, dp=dy, PFUN=f)
+# damped sinusoidal
+curve(dy(x, PFUN=f), add=T, col="green")
+line.tan(px, dx=1.6, p=dy, dp=d2y, PFUN=f, col="orange")
+
+
+##################
 ### Fully-Extended Homogeneous:
 ### p1*exp(x)*y = sin(p2*exp(x))
 
