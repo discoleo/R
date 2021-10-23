@@ -7,7 +7,7 @@
 ### Differential Equations
 ### ODEs - Exponentials
 ###
-### draft v.0.2a
+### draft v.0.2b
 
 
 ### ODEs Derived from Exponentials
@@ -23,7 +23,10 @@
 ###############
 
 
-### v.0.2a:
+### draft v.0.2b:
+# - from Mixed Exp-Trig:
+#   y*d2y - dy^2 - y*dy - y^2 + 1 = 0;
+### draft v.0.2a:
 # - moved Section with ODEs based on another ODE
 #   to file: DE.ODE.FromODEs.R;
 ### v.0.1f - v.0.1f-PowFr:
@@ -159,6 +162,31 @@ sapply(c(3/5 + (1:3)*3/5), line.tan, dx=3, p=dy, dp=d2y, PFUN=y1.lst, col="orang
 
 ########################
 ########################
+
+########################
+### Section D:
+### Non-Linear ODEs
+### Trigonometric-Type
+########################
+
+### exp(x)*y = sin(exp(x)) + F0(x)*exp(x)
+
+### exp(x)*y = sin(exp(x))
+
+### D =>
+dy + y - cos(exp(x)) # = 0
+
+### D2 =>
+d2y + dy + exp(x)*sin(exp(x)) # = 0
+y*d2y + y*dy + sin(exp(x))^2 # = 0
+y*d2y + y*dy + (1 - cos(exp(x))^2) # = 0
+y*d2y + y*dy - (dy + y)^2 + 1 # = 0
+
+### ODE:
+y*d2y - dy^2 - y*dy - y^2 + 1 # = 0
+
+# TODO: check;
+
 
 ########################
 ### Section D:
