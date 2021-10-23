@@ -7,7 +7,7 @@
 ### Differential Equations
 ### ODEs - Exponentials
 ###
-### draft v.0.2b
+### draft v.0.2b-gen
 
 
 ### ODEs Derived from Exponentials
@@ -23,9 +23,10 @@
 ###############
 
 
-### draft v.0.2b:
+### draft v.0.2b - v.0.2b-gen:
 # - from Mixed Exp-Trig:
 #   y*d2y - dy^2 - y*dy - y^2 + 1 = 0;
+#   y*d2y - dy^2 - y*dy - y^2 + k^2 = 0;
 ### draft v.0.2a:
 # - moved Section with ODEs based on another ODE
 #   to file: DE.ODE.FromODEs.R;
@@ -169,8 +170,9 @@ sapply(c(3/5 + (1:3)*3/5), line.tan, dx=3, p=dy, dp=d2y, PFUN=y1.lst, col="orang
 ### Trigonometric-Type
 ########################
 
-### exp(x)*y = sin(exp(x)) + F0(x)*exp(x)
+### P(x)*exp(x)*y = sin(P(x)*exp(x))
 
+### Simple Homogeneous:
 ### exp(x)*y = sin(exp(x))
 
 ### D =>
@@ -186,6 +188,47 @@ y*d2y + y*dy - (dy + y)^2 + 1 # = 0
 y*d2y - dy^2 - y*dy - y^2 + 1 # = 0
 
 # TODO: check;
+
+
+### Extended Homogeneous:
+### exp(x)*y = sin(p*exp(x))
+
+### D =>
+dy + y - (p+dp)*cos(p*exp(x)) # = 0
+
+### D2 =>
+d2y + dy + (p+dp)^2*exp(x)*sin(p*exp(x)) +
+	- (dp+d2p)*cos(p*exp(x)) # = 0
+(p+dp)*d2y + (p+dp)*dy + (p+dp)^3*exp(x)*sin(p*exp(x)) +
+	- (dp+d2p)*(dy + y) # = 0
+(p+dp)*d2y + (p-d2p)*dy - (dp+d2p)*y +
+	+ (p+dp)^3*exp(x)*sin(p*exp(x)) # = 0
+(p+dp)*y*d2y + (p-d2p)*y*dy - (dp+d2p)*y^2 +
+	+ (p+dp)^3*sin(p*exp(x))^2 # = 0
+(p+dp)*y*d2y + (p-d2p)*y*dy - (dp+d2p)*y^2 +
+	+ (p+dp)^3*(1 - cos(p*exp(x))^2) # = 0
+(p+dp)*y*d2y + (p-d2p)*y*dy - (dp+d2p)*y^2 +
+	- (p+dp)*(dy + y)^2 + (p+dp)^3 # = 0
+### ODE:
+(p+dp)*y*d2y - (p+dp)*dy^2 - (p + 2*dp + d2p)*y*dy +
+	- (p + 2*dp + d2p)*y^2 + (p+dp)^3 # = 0
+
+### Special Case:
+# p = k; dp = 0;
+y*d2y - dy^2 - y*dy - y^2 + k^2 # = 0
+# p = x + k - 1; dp = 1; p + dp = x + k;
+(x+k)*y*d2y - (x+k)*dy^2 - (x+k+1)*y*dy - (x+k+1)*y^2 + (x+k)^3 # = 0
+
+
+### Fully-Extended Homogeneous:
+### p1*exp(x)*y = sin(p2*exp(x))
+
+### D =>
+p1*dy + (p1+dp1)*y - (p2+dp2)*cos(p2*exp(x)) # = 0
+
+### D2 =>
+# TODO
+
 
 
 ########################
