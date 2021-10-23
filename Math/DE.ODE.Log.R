@@ -7,7 +7,7 @@
 ### Differential Equations
 ### ODEs - Logarithms
 ###
-### draft v.0.3f-bis
+### draft v.0.3f-st1
 
 
 ### ODEs Derived from Logarithms
@@ -22,9 +22,9 @@
 ### History ###
 ###############
 
-### draft v.0.3f - v.0.3f-bis:
+### draft v.0.3f - v.0.3f-st1:
 # - derived from: [TODO full derivation]
-#   y = log(exp(P1(x)) + P2(x)) + F0(x);
+#   y = log(exp(P1(x)) + P2(x)) + F0(x); [started]
 #   y = log(log(P(x))) + F0(x);
 #   y = log(P(x)) * log(log(P(x))) + F0(x); [v.0.3f-bis]
 ### draft v.0.3e:
@@ -71,6 +71,7 @@
 library(pracma)
 # - may be needed to solve various equations;
 
+# include: Polynomials.Helper.R;
 # include: DE.ODE.Helper.R;
 source("Polynomials.Helper.R")
 source("DE.ODE.Helper.R")
@@ -894,8 +895,24 @@ line.tan(px, dx=3, p=dy, dp=d2y, k=k, b=b, col="orange")
 # exp(x^n) = - k*(dy - df) / (dy - n*x^(n-1) - df);
 
 ### D2 =>
+(exp(x^n)+k)*d2y + n*x^(n-1)*exp(x^n)*dy +
+	- n*(n-1)*x^(n-2)*exp(x^n) - n^2*x^(2*n-2)*exp(x^n) +
+	- d2f*(exp(x^n)+k) - n*x^(n-1)*df*exp(x^n) # = 0
+(d2y + n*x^(n-1)*dy +
+		- n*(n-1)*x^(n-2) - n^2*x^(2*n-2) - n*x^(n-1)*df - d2f) * exp(x^n) +
+	+ k*d2y - d2f*k # = 0
+# Subst =>
+k*(d2y + n*x^(n-1)*dy +
+		- n*(n-1)*x^(n-2) - n^2*x^(2*n-2) - n*x^(n-1)*df - d2f) * (dy - df) +
+	- (k*d2y - k*d2f)*(dy - n*x^(n-1) - df) # = 0
+k*n*x^(n-1)*d2y + k*n*x^(n-1)*dy^2 - 2*k*n*x^(n-1)*df*dy +
+	- k*(n*(n-1)*x^(n-2) + n^2*x^(2*n-2)) * (dy - df) +
+	+ k*n*x^(n-1)*df^2 - k*n*x^(n-1)*d2f # = 0
+### ODE:
+x*d2y + x*dy^2 - (2*x*df + n*x^n + (n-1))*dy +
+	+ (n*x^n + (n-1))*df + x*df^2 - x*d2f # = 0
 
-# TODO
+# TODO: check!
 
 
 #######################
