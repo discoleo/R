@@ -408,6 +408,7 @@ parse.simple = function(x, eol="\n", all.tokens=FALSE) {
 	class(tk.df) = c("code", class(tk.df));
 	return(tk.df);
 }
+# Parse code of specific function
 parse.fun = function(fn, pkg, type=99) {
 	# deparse
 	s = deparse.fun(fn, pkg);
@@ -422,17 +423,25 @@ deparse.fun = function(fn, pkg, collapse="\n", width.cutoff=150) {
 	return(s)
 }
 # cut code into disjoint code blocks
-cut.code = function(npos) {
+cut.code = function(npos, last=0) {
 	# Start
 	nS = npos$nS;
 	nSNext = npos$nE;
 	nSNext = nSNext[nSNext != max(nSNext)];
-	nS = sort(unique(c(nS, nSNext + 1)));
+	nS = sort(unique(c(1, nS, nSNext + 1))); # 1 = 1st Token;
 	# End
 	nE = npos$nE;
 	nENext = npos$nS;
 	nENext = nENext[nENext != min(nENext)];
 	nE = sort(unique(c(nE, nENext - 1)));
+	# 1st Token of code
+	npos1 = npos$nS[[1]] - 1;
+	if(npos1 > 0) nE = c(npos1, nE);
+	# last Token of code
+	if(last > 0 & (maxE <- max(nE)) < last) {
+		nS = c(nS, maxE + 1);
+		nE = c(nE, last);
+	}
 	#
 	tk.df = data.frame(nS = nS, nE = nE);
 	# tk.df$Type = 0;
@@ -478,11 +487,33 @@ extract.str.pkg = function(pkg, type=1, exclude.z = TRUE, strip=TRUE) {
 	names(l) = nms;
 	return(l);
 }
+# Read from file
+read.code = function(file, all.tokens=FALSE) {
+	s = readLines(file);
+	s = paste0(s, collapse="\n");
+	npos = parse.simple(s, all.tokens = all.tokens);
+	npos = cut.code(npos, last=nchar(s));
+	s = extract.str(s, npos, strip=FALSE);
+	attr(s, "type") = npos$Type;
+	return(s);
+}
 # preserve "relevant" NLs;
 regex.trim = function() {
 	paste0("(?<=^|\n)[ \n\t\r]++|[ \t]++(?=\n)|(?<=[ \t])[ \t]++",
 		"|[ \t\n\r]++$|(?<=[+*-/] )[ \t\n\r]++",
 		"|(?<=,)[\n\r]++|[\n\r]++(?=,| ,)");
+}
+format.code = function(s, check.code=TRUE) {
+	type = attr(s, "type");
+	if(check.code && is.null(type)) stop("Input is NOT code!");
+	# ",..." => ", ..."
+	isCode = is.na(type);
+	s[isCode] = gsub(",(?![ \t\n\r])", ", ", s[isCode], perl=TRUE);
+	s[isCode] = gsub("[ \t]+\n", "\n", s[isCode]);
+	# Comments:
+	isComment = ( ! is.na(type)) & (type == 2);
+	s[isComment] = gsub("^#(?![# ])", "# ", s[isComment], perl=TRUE);
+	return(s);
 }
 
 ###########
@@ -540,6 +571,18 @@ cat(extract.str(s, npos, trim.regex=regex.trim()), sep="\n")
 #   e.g. simple calls "()", etc;
 # - functions to extract the names of the called functions;
 
+
+####################
+
+# setwd(r'(...)')
+
+file = "mixregEngine.R"
+s = read.code(file=file)
+s = format.code(s)
+#
+file.out = file(sub("\\.R$", ".tmp.R", file))
+writeLines(paste0(s, collapse=""), file.out)
+close(file.out)
 
 ####################
 
