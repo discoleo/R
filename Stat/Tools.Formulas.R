@@ -308,9 +308,10 @@ summary.all.args("partitions")
 # minimalistic parser:
 parse.simple = function(x, eol="\n", all.tokens=FALSE) {
 	len = nchar(x);
-	# n.comm = list(integer(0), integer(0));
-	# n.str  = list(integer(0), integer(0));
-	# Type: 1 = "string", 2 = "#", 3 = "{", 4 = "(", 5 = "[";
+	# Type:
+	#  1 = "string", 2 = r"raw string", 8/9 = unmatched string (raw string),
+	#  11 = "#", 12 = "#" with missing EOL,
+	#  23 = "{", 24 = "(", 25 = "[";
 	tk.df = data.frame(nS=integer(0), nE=integer(0), id=integer(0),
 			Type=integer(0), Nested=logical(0));
 	#
@@ -325,24 +326,53 @@ parse.simple = function(x, eol="\n", all.tokens=FALSE) {
 		s = substr(x, npos, npos);
 		# State: COMMENT
 		if(s == "#") {
-			# n.comm[[1]] = c(n.comm[[1]], npos);
 			nS = npos;
+			isEOL = FALSE;
 			while(npos < len) {
 				npos = npos + 1;
-				if(substr(x, npos, npos) == eol) break;
+				if(substr(x, npos, npos) == eol) { isEOL = TRUE; break; }
 			}
-			# n.comm[[2]] = c(n.comm[[2]], npos);
-			nr = nrow(tk.df) + 1; nE = npos;
-			tk.df[nr,] = data.frame(nS, nE, nr, 2, FALSE);
+			nr = nrow(tk.df) + 1;
+			nE = if(isEOL) npos else npos + 1;
+			TYPE = if(isEOL) 11 else 12;
+			tk.df[nr,] = data.frame(nS, nE, nr, TYPE, FALSE);
 			npos = npos + 1; next;
 		}
 		# State: STRING
 		if(s == "\"" || s == "'") {
-			# n.str[[1]] = c(n.str[[1]], npos);
 			nS = npos;
+			if(npos > 1 && substr(x, npos-1, npos-1) == "r") {
+				# Raw String: r"(...)";
+				nS = nS - 1;
+				nr = nrow(tk.df) + 1;
+				if(npos + 3 > len) {
+					nE = len + 1;
+					TYPE = 9; # type = 8 vs 9!
+					tk.df[nr,] = data.frame(nS, nE, nr, TYPE, FALSE);
+					warning("Unmatched String!");
+					break;
+				}
+				npos = npos + 1;
+				ch1 = substr(x, npos, npos);
+				isMatched = FALSE;
+				while(npos < len - 2) {
+					npos = npos + 1;
+					if(substr(x, npos, npos) == ch1 && substr(x, npos+1, npos+1) == s) {
+						isMatched = TRUE; break;
+					}
+				}
+				if( ! isMatched) warning("Unmatched String!");
+				TYPE = if(isMatched) 2 else 9;
+				nE = if(isMatched) npos else npos + 1;
+				tk.df[nr,] = data.frame(nS, nE, nr, TYPE, FALSE);
+				npos = npos + 1; next;
+			}
+			# ELSE:
 			while(npos < len) {
+				# Standard String
 				npos = npos + 1;
 				se = substr(x, npos, npos);
+				# Escape:
 				if(se == "\\") {
 					npos = npos + 1;
 					# simple escape vs Unicode:
@@ -361,26 +391,27 @@ parse.simple = function(x, eol="\n", all.tokens=FALSE) {
 			}
 			# n.str[[2]] = c(n.str[[2]], npos);
 			nr = nrow(tk.df) + 1; nE = npos;
-			tk.df[nr,] = data.frame(nS, nE, nr, 1, FALSE);
+			TYPE = 1;
+			tk.df[nr,] = data.frame(nS, nE, nr, TYPE, FALSE);
 			npos = npos + 1; next;
 		}
-		# brackets
+		# Brackets
 		if(all.tokens) {
 			type = 0;
 			if(s == "{") {
-				type = 3;
+				type = 23;
 			} else if(s == "(") {
-				type = 4;
+				type = 24;
 			} else if(s == "[") {
-				type = 5;
-				# Note: "[[";
+				type = 25;
+				# Note: not yet "[[";
 			}
 			if(type > 0) {
 				nr = nrow(tk.df);
 				tk.df[nr + 1, ] = data.frame(npos, NA, nr + 1, type, FALSE);
 				if(nr > 1) {
 					for(nr.prev in seq(nr, 1, by=-1)) {
-						if(tk.df$Type[nr.prev] <= 2) next;
+						if(tk.df$Type[nr.prev] < 20) next; # TYPE < 20
 						if(is.na(tk.df$nE[nr.prev])) tk.df$Nested[nr.prev] = TRUE;
 						break;
 					}
@@ -390,14 +421,15 @@ parse.simple = function(x, eol="\n", all.tokens=FALSE) {
 			#
 			type = 0;
 			if(s == "}") {
-				type = 3;
+				type = 23;
 			} else if(s == ")") {
-				type = 4;
+				type = 24;
 			} else if(s == "]") {
-				type = 5;
-				# Note: "]]";
+				type = 25;
+				# Note: not yet "]]";
 			}
 			if(type > 0) {
+				# TODO: check for un-matched token!
 				id = tail(tk.df$id[is.na(tk.df$nE) & tk.df$Type == type], 1);
 				tk.df$nE[id] = npos;
 				npos = npos + 1; next;
@@ -415,7 +447,7 @@ parse.fun = function(fn, pkg, type=99) {
 	npos = parse.simple(s, all.tokens = (type > 2));
 	return(npos);
 }
-deparse.fun = function(fn, pkg, collapse="\n", width.cutoff=150) {
+deparse.fun = function(fn, pkg, collapse="\n", width.cutoff=160) {
 	fn = as.symbol(fn); pkg = as.symbol(pkg);
 	fn = list(substitute(pkg ::: fn), width.cutoff=width.cutoff);
 	# deparse
@@ -471,10 +503,13 @@ extract.str = function(s, npos, strip=FALSE, trim.regex=NULL, format.sp=TRUE) {
 	return(sR);
 }
 extract.str.fun = function(fn, pkg, type=1, strip=TRUE, trim.regex=NULL) {
+	# TYPE: 1 = all strings; 11 = Comments; 90 = All code tokens; 99 = All tokens
 	s = deparse.fun(fn, pkg);
 	npos = parse.simple(s, all.tokens = (type > 2));
-	isType = if(type == 99) (npos$Type > 2) else (npos$Type == type);
-	extract.str(s, npos[isType ,], strip=strip, trim.regex=trim.regex);
+	# TODO: more advanced filtering;
+	isType = if(type == 90) (npos$Type > 20)
+		else if(type == 99) rep(TRUE, nrow(npos)) else (npos$Type == type);
+	extract.str(s, npos[isType, ], strip=strip, trim.regex=trim.regex);
 }
 extract.str.pkg = function(pkg, type=1, exclude.z = TRUE, strip=TRUE) {
 	nms = ls(getNamespace(pkg));
@@ -516,75 +551,7 @@ format.code = function(s, check.code=TRUE) {
 	return(s);
 }
 
-###########
+################
 
-### Example
-
-pkg = "partitions"
-ls(getNamespace(pkg))
-
-###
-extract.str.pkg(pkg)
-
-###
-extract.str.pkg("sp") # relatively fast
-# 1st run: ages! afterwards: 0.2 s;
-extract.str.pkg("NetLogoR")
-
-### All strings in "base"
-extract.str.pkg("base")
-
-###
-pkg = "partitions"
-fn = "restrictedparts"
-extract.str.fun(fn, pkg)
-
-
-###################
-
-### All code tokens
-
-### Ex 1:
-extract.str.fun("compositions", "partitions", type=99)
-
-### Ex 2:
-extract.str.fun("summary.Spatial", "sp", type=99)
-
-### Ex 3:
-extract.str.fun("StrSpell", "DescTools", type=99)
-#
-cat(extract.str.fun("StrTrim", "DescTools", type=99, trim.regex=regex.trim()), sep="\n")
-cat(extract.str.fun("StrTrim", "DescTools", type=4, trim.regex=regex.trim()), sep="\n")
-
-### Ex 4:
-s = deparse.fun("PlotMosaic", "DescTools")
-npos = parse.fun("PlotMosaic", "DescTools")
-head(npos)
-npos = cut.code(npos)
-head(npos)
-# preserve NL;
-cat(extract.str(s, npos, trim.regex=regex.trim()), sep="\n")
-
-
-### TODO:
-# - functions to filter the tokens:
-#   e.g. simple calls "()", etc;
-# - functions to extract the names of the called functions;
-
-
-####################
-
-# setwd(r'(...)')
-
-file = "mixregEngine.R"
-s = read.code(file=file)
-s = format.code(s)
-#
-file.out = file(sub("\\.R$", ".tmp.R", file))
-writeLines(paste0(s, collapse=""), file.out)
-close(file.out)
-
-####################
-
-### Other
-paste0(deparse(partitions::restrictedparts), collapse=" ");
+### Examples:
+# - moved to file: Tools.Code.Tests.R;
