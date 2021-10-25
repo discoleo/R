@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs: From other ODEs
 ###
-### draft v.0.2e
+### draft v.0.2f
 
 
 
@@ -15,9 +15,10 @@
 ###############
 
 
-### draft v.0.2e:
+### draft v.0.2e - v.0.2f:
 # - derived from:
 #   dy = exp(G(x)) * (P2(x)*y^2 + P1(x)*y + P0(x));
+#   dy = P2(x)*y^2 + P1(x)*y + P0(x)*exp(G(x)); [v.0.2f]
 ### draft v.0.2d:
 # - derived from a Riccati equation;
 # - various variants, e.g.:
@@ -388,6 +389,8 @@ g2*d2y - 2*g2^2*y*dy - (dg2 + g1*g2)*dy + (dg2*g1 - dg1*g2)*y + dg2*f - g2*df # 
 ### Exponential-Variants
 ### of Riccati Equation
 
+###########
+### Type A3
 ### dy = exp(G(x)) * (P2(x)*y^2 + P1(x)*y + P0(x))
 
 ### D =>
@@ -397,6 +400,36 @@ d2y - dg*dy - exp(g)*(2*p2*y*dy + p1*dy + dp2*y^2 + dp1*y + dp0) # = 0
 ### ODE:
 (p2*y^2 + p1*y + p0)*d2y - 2*p2*y*dy^2 - p1*dy^2 +
 	- (dp2*y^2 + dg*p2*y^2 + dp1*y + dg*p1*y + dp0 + dg*p0)*dy # = 0
+
+###########
+### Type A0
+### dy = P2(x)*y^2 + P1(x)*y + P0(x)*exp(G(x))
+
+### D =>
+d2y - 2*p2*y*dy - p1*dy - dp2*y^2 - dp1*y - (p0*dg + dp0)*exp(g)  # = 0
+p0*d2y - 2*p2*p0*y*dy - p1*p0*dy - dp2*p0*y^2 - dp1*p0*y +
+	- (dg*p0 + dp0)*(dy - p2*y^2 - p1*y)  # = 0
+### ODE:
+p0*d2y - 2*p2*p0*y*dy - (p1*p0 + dg*p0 + dp0)*dy +
+	+ (p2*dp0 + p2*p0*dg - dp2*p0)*y^2 + (p1*dp0 + p1*p0*dg - dp1*p0)*y # = 0
+
+### Special Cases:
+# p0 = k; dp0 = 0;
+d2y - 2*p2*y*dy - (p1 + dg)*dy + (p2*dg - dp2)*y^2 + (p1*dg - dp1)*y # = 0
+# p1 = p0 = x + k; dp1 = dp0 = 1;
+(x+k)*d2y - 2*(x+k)*p2*y*dy - ((x+k)^2 + (x+k)*dg + 1)*dy +
+	+ (p2 + (x+k)*p2*dg - (x+k)*dp2)*y^2 + (x+k)^2*dg*y # = 0
+# p0 = x^n
+x*d2y - 2*x*p2*y*dy - (x*p1 + x*dg + n)*dy +
+	+ (n*p2 + x*p2*dg - x*dp2)*y^2 + (n*p1 + x*p1*dg - x*dp1)*y # = 0
+
+### Solution:
+# A2*d2y - 2*A11*y*dy - A10*dy + B2*y^2 + ... = 0
+p2 = A11/A2;
+# p0 = A2*h;
+# p2*(h*dA2 + A2*dh) + ((p2-dp2)*A2 - B2)*h = 0; =>
+# p2*A2*dh + (p2*dA2 + (p2-dp2)*A2 - B2)*h = 0;
+# TODO: see also special Case p0 = x^n;
 
 
 #########################
