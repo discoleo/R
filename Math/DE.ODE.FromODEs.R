@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs: From other ODEs
 ###
-### draft v.0.2f
+### draft v.0.2f-fix
 
 
 
@@ -424,11 +424,17 @@ x*d2y - 2*x*p2*y*dy - (x*p1 + x*dg + n)*dy +
 	+ (n*p2 + x*p2*dg - x*dp2)*y^2 + (n*p1 + x*p1*dg - x*dp1)*y # = 0
 
 ### Solution:
-# A2*d2y - 2*A11*y*dy - A10*dy + B2*y^2 + ... = 0
+# A2*d2y - 2*A11*y*dy - A10*dy + B2*y^2 + B1*y = 0
 p2 = A11/A2;
-# p0 = A2*h;
-# p2*(h*dA2 + A2*dh) + ((p2-dp2)*A2 - B2)*h = 0; =>
-# p2*A2*dh + (p2*dA2 + (p2-dp2)*A2 - B2)*h = 0;
+# p0 = A2*h; =>
+### Eq 1:
+p2*(h*dA2 + A2*dh) + ((p2*dg-dp2)*A2 - B2)*h # = 0; =>
+p2*A2*dh + (p2*dA2 + (p2*dg-dp2)*A2 - B2)*h # = 0;
+### Eq 2:
+A2*dh + A2*p1*h + A2*dg*h + (dA2-A10)*h # = 0
+### Eq 3:
+p1*(A2*dh + dA2*h) + A2*h*p1*dg - A2*h*dp1 - B1*h # = 0
+
 # TODO: see also special Case p0 = x^n;
 
 
