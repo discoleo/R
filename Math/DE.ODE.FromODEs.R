@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs: From other ODEs
 ###
-### draft v.0.2d
+### draft v.0.2e
 
 
 
@@ -15,6 +15,9 @@
 ###############
 
 
+### draft v.0.2e:
+# - derived from:
+#   dy = exp(G(x)) * (P2(x)*y^2 + P1(x)*y + P0(x));
 ### draft v.0.2d:
 # - derived from a Riccati equation;
 # - various variants, e.g.:
@@ -131,6 +134,17 @@ p2*d2y - 2*p2^2*y*dy - (p1*p2 + dp2)*dy + (dp2*p1 - dp1*p2)*y + dp2*p0 - dp0*p2 
 x*d2y - 2*x^3*y*dy - (p1*x + 2)*dy + (2*p1 - dp1*x)*y + 2*k # = 0
 # p1 = x^2 =>
 x*d2y - 2*x^3*y*dy - (x^3 + 2)*dy + 2*k # = 0
+
+
+### Generalized Riccati Eq:
+### dy = p2*y^n + p1*y + p0
+
+### D =>
+d2y - n*p2*y^(n-1)*dy - p1*dy - dp2*y^n - dp1*y - dp0 # = 0 # * y =>
+y*d2y - n*p2*y^n*dy - p1*y*dy - dp2*y^(n+1) - dp1*y^2 - dp0*y # = 0
+
+### Variant 3:
+p2*y*d2y - n*p2*(dy - p1*y - p0)*dy - p1*p2*y*dy - dp2*y*(dy - p1*y - p0) - dp1*p2*y^2 - dp0*p2*y # = 0
 
 
 ########################
@@ -333,6 +347,7 @@ x^2*d2y + x*dy + y - n*x^(n+1)/(x^n + b0) # = 0
 
 ### Higher Powers:
 ### dy - G(x)*y^2 = F(x)
+### see also Section: Riccati Eq;
 
 ### D =>
 d2y - 2*g*y*dy - dg*y^2 - df # = 0
@@ -358,6 +373,7 @@ g*y*d2y - 1/n*g*dy^2 - dg*y*dy + 1/n*g*f*dy + dg*f*y - g*df*y # = 0
 ### Generalization
 
 ### dy - G2(x)*y^2 - G1(x)*y = F(x)
+### see also Section: Riccati Eq;
 
 ### D =>
 d2y - 2*g2*y*dy - dg2*y^2 - g1*dy - dg1*y - df # = 0
@@ -365,6 +381,22 @@ d2y - 2*g2*y*dy - dg2*y^2 - g1*dy - dg1*y - df # = 0
 ### Variant 1:
 g2*d2y - 2*g2^2*y*dy - dg2*(dy - g1*y - f) - g1*g2*dy - dg1*g2*y - g2*df # = 0
 g2*d2y - 2*g2^2*y*dy - (dg2 + g1*g2)*dy + (dg2*g1 - dg1*g2)*y + dg2*f - g2*df # = 0
+
+
+#########################
+
+### Exponential-Variants
+### of Riccati Equation
+
+### dy = exp(G(x)) * (P2(x)*y^2 + P1(x)*y + P0(x))
+
+### D =>
+d2y - dg*dy - exp(g)*(2*p2*y*dy + p1*dy + dp2*y^2 + dp1*y + dp0) # = 0
+(p2*y^2 + p1*y + p0)*d2y - dg*(p2*y^2 + p1*y + p0)*dy +
+	- (2*p2*y*dy + p1*dy + dp2*y^2 + dp1*y + dp0)*dy # = 0
+### ODE:
+(p2*y^2 + p1*y + p0)*d2y - 2*p2*y*dy^2 - p1*dy^2 +
+	- (dp2*y^2 + dg*p2*y^2 + dp1*y + dg*p1*y + dp0 + dg*p0)*dy # = 0
 
 
 #########################
