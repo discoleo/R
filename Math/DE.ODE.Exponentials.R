@@ -1,4 +1,3 @@
-
 ########################
 ###
 ### Leonard Mada
@@ -7,7 +6,7 @@
 ### Differential Equations
 ### ODEs - Exponentials
 ###
-### draft v.0.2b-check
+### draft v.0.2c
 
 
 ### ODEs Derived from Exponentials
@@ -23,6 +22,9 @@
 ###############
 
 
+### draft v.0.2c:
+# - from I( exp(exp(x)) ):
+#   k*y*d2y - k*dy^2 + y^2*dy - k*y*dy - y^3  = 0;
 ### draft v.0.2b - v.0.2b-check:
 # - from Mixed Exp-Trig:
 #   y*d2y - dy^2 - y*dy - y^2 + 1 = 0;
@@ -47,13 +49,28 @@
 
 ### Helper functions
 
-library(pracma)
+# library(pracma)
 # - may be needed to solve various equations;
 #   (e.g. Lambert W)
 
 
 # include: DE.ODE.Helper.R;
+# include: Polynomials.Helper.R;
+source("Polynomials.Helper.R")
 source("DE.ODE.Helper.R")
+
+### Other
+eval.FUN = function(x, F, ...) {
+	xl = c(...);
+	r = sapply(x, function(x) eval.pm(F, c(x, xl)));
+	return(r);
+}
+eval.d2y = function(F, vals) {
+	sapply(seq(nrow(vals)), function(nr) eval.pm(F, vals[nr,]));
+}
+I.FUN = function(x, F, lower=0, ...) {
+	sapply(x, function(up) integrate(F, lower=lower, upper=up, ...)$value);
+}
 
 #########################
 #########################
@@ -292,6 +309,79 @@ p1*dy + (p1+dp1)*y - (p2+dp2)*cos(p2*exp(x)) # = 0
 ### Product-Type
 ########################
 
+######################
+### Integral-Based ###
+######################
+
+### y * I( exp(exp(x)) ) = exp(exp(x)) * F(x)
+
+### D =>
+I*dy + exp(exp(x))*y - (df + f*exp(x))*exp(exp(x)) # = 0
+exp(exp(x))*f*dy + exp(exp(x))*y^2 - (df + f*exp(x))*exp(exp(x))*y # = 0
+f*dy + y^2 - (df + f*exp(x))*y # = 0
+# f*exp(x)*y = f*dy + y^2 - df*y;
+
+### D2 =>
+f*d2y + df*dy + 2*y*dy - (df + f*exp(x))*dy - (d2f + (f+df)*exp(x))*y # = 0
+f*d2y + 2*y*dy - f*exp(x)*dy - d2f*y - (f+df)*exp(x)*y # = 0 # * f*y =>
+f^2*y*d2y + 2*f*y^2*dy - f*(f*dy + y^2 - df*y)*dy - f*d2f*y^2 - (f+df)*(f*dy + y^2 - df*y)*y # = 0
+### ODE:
+f^2*y*d2y - f^2*dy^2 + f*y^2*dy - f^2*y*dy - (f+df)*y^3 - f*d2f*y^2 + (f+df)*df*y^2 # = 0
+
+### Special Cases:
+# f = k;
+k*y*d2y - k*dy^2 + y^2*dy - k*y*dy - y^3 # = 0
+# f = x;
+x^2*y*d2y - x^2*dy^2 + x*y^2*dy - x^2*y*dy - (x+1)*y^3 + (x+1)*y^2 # = 0
+
+### Solution & Plot:
+y = function(x, PFUN, n=1, lower=0) {
+	xe = exp(x^n); xee = exp(xe);
+	fx = eval.FUN(x, PFUN);
+	val = fx * xee;
+	I = I.FUN(x, function(x) exp(exp(x^n)), lower=lower);
+	return(val / I);
+}
+dy = function(x, PFUN, n=1, lower=0) {
+	yx = y(x, PFUN=PFUN, n=n, lower=lower);
+	# f*dy + y^2 - (df + f*exp(x))*y = 0;
+	xe = exp(x^n);
+	fx = eval.FUN(x, PFUN);
+	df  = dp.pm(PFUN, xn="x");
+	dfx = eval.FUN(x, df);
+	dp  = - yx^2 + (dfx + fx*xe)*yx;
+	div = fx;
+	dp  = ifelse(div != 0, dp/div, 1) # TODO;
+	return(dp)
+}
+d2y = function(x, PFUN, n=1, lower=0) {
+	# F(x):
+	fx  = eval.FUN(x, PFUN);
+	dp  = dp.pm(PFUN, xn="x");
+	dfx = eval.FUN(x, dp);
+	d2p = dp.pm(dp, xn="x");
+	d2fx = eval.FUN(x, d2p);
+	# y & dy:
+	yx  = y(x, PFUN=PFUN, n=n, lower=lower);
+	dyx = dy(x, PFUN=PFUN, n=n, lower=lower);
+	F = toPoly.pm("- f^2*dy^2 + f*y^2*dy - f^2*y*dy +
+		- f*y^3 - df*y^3 - f*d2f*y^2 + f*df*y^2 + df^2*y^2");
+	F = F[, c("dy", "y", "f", "df", "d2f", "coeff")];
+	vals = data.frame("dy"=dyx, "y"=yx, "f"=fx, "df"=dfx, "d2f"=d2fx);
+	d2y = eval.d2y(F, vals);
+	div = - fx^2*yx;
+	d2y = ifelse(div != 0, d2y / div, 1) # TODO
+	return(d2y)
+}
+### Plot:
+f = toPoly.pm("x^2 - 3*x + 5")
+px = c(0.4, 0.65, 0.75, -0.35 - (1:5)*5/17);
+curve(y(x, PFUN=f), from = -3, to = 1, n=512, ylim=c(-15, 15))
+line.tan(px, dx=3, p=y, dp=dy, PFUN=f)
+# discontinuous
+curve(dy(x, PFUN=f), add=T, col="green")
+line.tan(px, dx=1.6, p=dy, dp=d2y, PFUN=f, col="orange")
+
 
 ########################
 ### Integral-Product ###
@@ -354,7 +444,7 @@ y.int = function(lower, upper=0) {
 		integrate(y.exp, lower=lower, upper=upper, posInt=FALSE)$value # - upper
 	} )
 }
-###
+### Plot:
 lim = c(-7, 1/4)
 # interesting integral
 # D ( 1/2*(1-sqrt(1-4*x))*exp(sqrt(1-4*x))) = exp(sqrt(1-4*x));
