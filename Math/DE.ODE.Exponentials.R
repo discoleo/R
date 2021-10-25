@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs - Exponentials
 ###
-### draft v.0.2c
+### draft v.0.2d
 
 
 ### ODEs Derived from Exponentials
@@ -22,6 +22,9 @@
 ###############
 
 
+### draft v.0.2d:
+# - Exponential extensions:
+#   exp(k*x)*y^n = n*p1*y + n*f0;
 ### draft v.0.2c:
 # - from I( exp(exp(x)) ):
 #   k*y*d2y - k*dy^2 + y^2*dy - k*y*dy - y^3  = 0;
@@ -65,11 +68,29 @@ eval.FUN = function(x, F, ...) {
 	r = sapply(x, function(x) eval.pm(F, c(x, xl)));
 	return(r);
 }
+eval.DFUN = function(x, F, ...) {
+	xl = c(...);
+	r = sapply(x, function(x) eval.pm(F, c(x, xl)));
+	DF = dp.pm(F, xn="x");
+	nms = c("x", names(xl), "coeff");
+	DF  = DF[, nms];
+	r1 = sapply(x, function(x) eval.pm(DF, c(x, xl)));
+	return(data.frame(f=r, df=r1));
+}
 eval.d2y = function(F, vals) {
 	sapply(seq(nrow(vals)), function(nr) eval.pm(F, vals[nr,]));
 }
 I.FUN = function(x, F, lower=0, ...) {
 	sapply(x, function(up) integrate(F, lower=lower, upper=up, ...)$value);
+}
+
+### Roots
+filter.root = function(r, n=1, tol=1E-8) {
+	# only real roots
+	r = round0(r, tol=tol);
+	r = r[Im(r) == 0];
+	r = head(r, n);
+	return(r);
 }
 
 #########################
@@ -183,6 +204,57 @@ line.tan(px, dx=3, p=dy, dp=d2y, PFUN=y1.lst, col="orange")
 ########################
 ########################
 
+### Mixed Exp(x) & y^n
+
+### exp(k*x)*y^n = n*p1*y + n*f0
+
+### D =>
+(k*y^n + n*y^(n-1)*dy)*exp(k*x) - n*p1*dy - n*dp1*y - n*df0 # = 0 # * y =>
+(k*y + n*dy)*(p1*y + f0) - p1*y*dy - dp1*y^2 - df0*y # = 0
+
+### ODE:
+(n-1)*p1*y*dy + n*f0*dy + (k*p1 - dp1)*y^2 + (k*f0 - df0)*y # = 0
+
+### Solution & Plot:
+y = function(x, n=3, k=1, FF0, FP1) {
+	f0 = if(inherits(FF0, "pm")) eval.FUN(x, FF0) else FF0;
+	p1 = if(inherits(FP1, "pm")) eval.FUN(x, FP1) else FP1;
+	xe = exp(k*x);
+	if(n == 1) {
+		yx = f0 / (xe - p1);
+	} else {
+		coeff0 = rep(0, n-2);
+		yx = sapply(seq_along(x), function(id) {
+			coeff = c(xe[id], coeff0, - n*p1[id], - n*f0[id]);
+			yx = roots(coeff);
+			yx = filter.root(yx, n=1);
+			return(yx);
+		})
+	}
+	return(yx);
+}
+dy = function(x, n=3, k=1, FF0, FP1) {
+	f.l = eval.DFUN(x, FF0);
+	p.l = eval.DFUN(x, FP1);
+	yx  = y(x, n=n, k=k, FF0=f.l$f, FP1=p.l$f);
+	#
+	dp  = (k*p.l$f - p.l$df)*yx^2 + (k*f.l$f - f.l$df)*yx;
+	div = (n-1)*p.l$f*yx + n*f.l$f;
+	dp  = ifelse(div != 0, - dp/div, 0); # TODO: check;
+	return(dp)
+}
+### Plot:
+F0 = toPoly.pm("x^2 + 3*x + 3");
+P1 = toPoly.pm("x^3 - 3*x + 5");
+n = 3; k = 2;
+px = c(-2.25, -2.05, (0:4)*3/5 - 1.5);
+curve(y(x, n=n, k=k, FF0=F0, FP1=P1), from = -3, to = 3, n=256)
+line.tan(px, dx=2, p=y, dp=dy, n=n, k=k, FF0=F0, FP1=P1)
+
+
+########################
+########################
+
 ########################
 ### Section D:
 ### Non-Linear ODEs
@@ -238,11 +310,6 @@ y*d2y - dy^2 - y*dy - y^2 + k^2 # = 0
 
 
 ### Solution & Plot:
-eval.FUN = function(x, F, ...) {
-	xl = c(...);
-	r = sapply(x, function(x) eval.pm(F, c(x, xl)));
-	return(r);
-}
 y = function(x, PFUN, n=1) {
 	xe = exp(x^n);
 	fx = eval.FUN(x, PFUN);
