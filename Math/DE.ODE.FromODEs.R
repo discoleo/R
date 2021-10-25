@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs: From other ODEs
 ###
-### draft v.0.2c
+### draft v.0.2d
 
 
 
@@ -15,6 +15,10 @@
 ###############
 
 
+### draft v.0.2d:
+# - derived from a Riccati equation;
+# - various variants, e.g.:
+#   x*d2y - 2*x^3*y*dy - (x^3 + 2)*dy + 2*k = 0;
 ### draft v.0.2c:
 # - derived from:
 #   dy - G(x)*log(y + k) = F(x);
@@ -95,6 +99,38 @@ n*y*d2y - dy^2 + x*dy - n*y # = 0
 
 # TODO: check;
 # + concept to check;
+
+
+########################
+########################\
+
+### Riccati Eq:
+### dy = p2*y^2 + p1*y + p0
+
+### D =>
+d2y - 2*p2*y*dy - p1*dy - dp2*y^2 - dp1*y - dp0 # = 0
+
+### Variant 1:
+d2y - 2*p2*y*(p2*y^2 + p1*y + p0) - p1*(p2*y^2 + p1*y + p0) - dp2*y^2 - dp1*y - dp0 # = 0
+### ODE:
+d2y - 2*p2^2*y^3 - (3*p1*p2 + dp2)*y^2 - (p1^2 + 2*p0*p2 + dp1)*y - p0*p1 - dp0 # = 0
+
+### Variant 2:
+p2*d2y - 2*p2^2*y*dy - p1*p2*dy - dp2*(dy - p1*y - p0) - dp1*p2*y - dp0*p2 # = 0
+### ODE:
+p2*d2y - 2*p2^2*y*dy - (p1*p2 + dp2)*dy + (dp2*p1 - dp1*p2)*y + dp2*p0 - dp0*p2 # = 0
+
+### Solution:
+# C2*d2y - C11*y*dy - C10*dy + B1*y + B0 = 0
+# 2*(H*C2)^2 = H*C11 => H = C11 / (2*C2^2);
+
+# TODO
+
+### Special Cases:
+# p2 = x^2; p0 = k; dp2 = 2*x;
+x*d2y - 2*x^3*y*dy - (p1*x + 2)*dy + (2*p1 - dp1*x)*y + 2*k # = 0
+# p1 = x^2 =>
+x*d2y - 2*x^3*y*dy - (x^3 + 2)*dy + 2*k # = 0
 
 
 ########################
@@ -372,6 +408,7 @@ x*d2y - x*dy^2 + (b0*x + n)*dy - n*b0 # = 0
 
 ### y = ln(z) =>
 x^n*dz - z^2 - x^n*f*z # = 0
+
 
 ###############
 ### Example 2b:
