@@ -1169,6 +1169,7 @@ toPoly.pm = function(e) {
 			break;
 		} else break;
 	}
+	class(p) = c("pm", class(p));
 	return(p);
 }
 ### Parse expression
