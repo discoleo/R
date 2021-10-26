@@ -7,14 +7,19 @@
 ### Differential Equations
 ### ODEs - Fractions: Lambert
 ###
-### draft v.0.4f-ex2
+### draft v.0.4g
 
 
 ### History
 
 ### Order 1 Non-Linear
 ###
-### draft v.0.4f:
+### draft v.0.4g:
+# - derived from:
+#   y^n * exp(y^m) = P1(x)*y + F(x);
+# - e.g. for m = -1:
+#   f*dy + dp1*y^3 + df*y^2 = 0;
+### draft v.0.4f - v.0.4f-ex2:
 # - trivial Lambert example:
 #   W(y+x) = F(x);
 # - more examples for:
@@ -127,9 +132,10 @@ source("DE.ODE.Helper.R")
 
 #########################
 
-#########################
-### W Exponentials =>
-### Fractions & Lambert W
+#####################
+### G(y) = W(...) ###
+### W = Lambert W ###
+#####################
 
 ### Theory
 
@@ -216,6 +222,10 @@ line.tan(c(0:4, 10)/5, dx=3, p=y, dp=dy, a=a)
 
 
 #####################
+
+##################
+### Asymmetric ###
+##################
 
 ### (x + y)*e^y = x^2 + b
 # ODE:
@@ -371,7 +381,7 @@ f*(m*y^m + n)*dy - df*y # = 0
 # m = 1:
 f*(y + n)*dy - df*y # = 0
 # m = n:
-n*f*(y + 1)*dy - df*y # = 0
+n*f*(y^n + 1)*dy - df*y # = 0
 # f = exp(x^(k+1))
 (m*y^m + n)*dy - (k+1)*x^k * y # = 0
 
@@ -408,6 +418,42 @@ DFUN = function(x) 2*x;
 curve(y(x, FUN=FUN), from= -1, to=3)
 # global minimum
 line.tan(c(-1/2, -1/5, 0:4 / 3), dx=3, p=y, dp=dy, FUN=FUN, DFUN=DFUN)
+
+
+##################
+### Polynomial ###
+### Terms      ###
+##################
+
+### y^n * exp(y^m) = P1(x)*y + F(x)
+
+### D =>
+(m*y^(m+n-1) + n*y^(n-1)) * exp(y^m)*dy - p1*dy - dp1*y - df # = 0 # * y =>
+(m*y^m + n)*(p1*y + f)*dy - p1*y*dy - dp1*y^2 - df*y # = 0
+
+### Special Cases:
+# m = 1
+(y + n)*(p1*y + f)*dy - p1*y*dy - dp1*y^2 - df*y # = 0
+(p1*y^2 + ((n-1)*p1+f)*y + n*f)*dy - dp1*y^2 - df*y # = 0
+# p1 = f = exp(k*x)
+(m*y^m + n)*(y + 1)*dy - y*dy - k*y^2 - k*y # = 0
+(m*y^(m+1) + m*y^m + (n-1)*y + n)*dy - k*y^2 - k*y # = 0
+# & m = -1:
+((n-1)*y^2 + (n-1)*y - 1)*dy - k*y^3 - k*y^2 # = 0
+# & m = -1, n = 1:
+dy + k*y^3 + k*y^2 # = 0
+
+### Special Case: [check]
+### y * exp(1/y) = p1*y + f
+
+### D =>
+(1 - 1/y)*exp(1/y)*dy - p1*dy - dp1*y - df # = 0 # * y^2
+(y - 1)*(p1*y + f)*dy - p1*y^2*dy - dp1*y^3 - df*y^2 # = 0
+((f-p1)*y - f)*dy - dp1*y^3 - df*y^2 # = 0
+### Case p1 = f
+f*dy + dp1*y^3 + df*y^2 # = 0
+
+# TODO: check;
 
 
 ################
