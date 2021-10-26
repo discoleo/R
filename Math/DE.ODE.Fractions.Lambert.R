@@ -7,7 +7,7 @@
 ### Differential Equations
 ### ODEs - Fractions: Lambert
 ###
-### draft v.0.4g
+### draft v.0.4g-fix
 
 
 ### History
@@ -18,7 +18,7 @@
 # - derived from:
 #   y^n * exp(y^m) = P1(x)*y + F(x);
 # - e.g. for m = -1:
-#   f*dy + dp1*y^3 + df*y^2 = 0;
+#   f*dy + df*y^3 + df*y^2 = 0;
 ### draft v.0.4f - v.0.4f-ex2:
 # - trivial Lambert example:
 #   W(y+x) = F(x);
@@ -451,9 +451,15 @@ dy + k*y^3 + k*y^2 # = 0
 (y - 1)*(p1*y + f)*dy - p1*y^2*dy - dp1*y^3 - df*y^2 # = 0
 ((f-p1)*y - f)*dy - dp1*y^3 - df*y^2 # = 0
 ### Case p1 = f
-f*dy + dp1*y^3 + df*y^2 # = 0
+f*dy + df*y^3 + df*y^2 # = 0
 
 # TODO: check;
+
+### Solution:
+# A*dy + B*y^3 + B*y^2 = 0
+# D(A*h) = B*h =>
+A*dh + (dA - B)*h # = 0
+# log(h) = I( (B-dA) / A ) dx;
 
 
 ################
