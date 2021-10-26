@@ -1032,7 +1032,8 @@ sort.pm = function(p, xn=NULL, sort.coeff) {
 print.monome = function(name, p) {
 	v = p[,name];
 	v.r = rep("", length(v));
-	v.r[v > 1] = paste0(name, "^", v[v > 1]);
+	isCoeff = v != 1 & v != 0;
+	v.r[isCoeff] = paste0(name, "^", v[isCoeff]);
 	v.r[v == 1] = name;
 	return(v.r);
 }
