@@ -69,3 +69,11 @@ y^2*exp(y)*dy - exp(1/y)*dy - df*y^2 # = 0
 ### D2 =>
 # TODO;
 
+
+#########################
+
+### Generalization: Coefficients
+### P1(x)*exp(G1(x)*y) + P2(x)*exp(G2(x)/y) = F(x)
+
+# TODO;
+
