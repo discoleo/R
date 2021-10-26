@@ -7,18 +7,20 @@
 ### Differential Equations
 ### ODEs - Fractions: Lambert
 ###
-### draft v.0.4g-fix
+### draft v.0.4h
 
 
 ### History
 
 ### Order 1 Non-Linear
 ###
-### draft v.0.4g:
+### draft v.0.4g - v.0.4h:
 # - derived from:
 #   y^n * exp(y^m) = P1(x)*y + F(x);
-# - e.g. for m = -1:
+#   y^n * exp(G(x)/y^m) = P1(x)*y + F(x); [v.0.4h]
+# - e.g. for m = -1 & p1 = f:
 #   f*dy + df*y^3 + df*y^2 = 0;
+#   p1*g^2*dy + dp1*y^3 + dp1*g*y^2 - p1*g*dg*y = 0; [v.0.4h]
 ### draft v.0.4f - v.0.4f-ex2:
 # - trivial Lambert example:
 #   W(y+x) = F(x);
@@ -456,10 +458,27 @@ f*dy + df*y^3 + df*y^2 # = 0
 # TODO: check;
 
 ### Solution:
+### Step 1:
 # A*dy + B*y^3 + B*y^2 = 0
 # D(A*h) = B*h =>
 A*dh + (dA - B)*h # = 0
 # log(h) = I( (B-dA) / A ) dx;
+
+
+### Slight Generalization
+### y * exp(G(x)/y) = P1(x)*y + F(x)
+
+### D =>
+((1 - g/y)*dy + dg)*exp(g/y) - p1*dy - dp1*y - df # = 0 # * y^2 =>
+((y - g)*dy + dg*y)*(p1*y + f) - p1*y^2*dy - dp1*y^3 - df*y^2 # = 0
+(y - g)*(p1*y + f)*dy + dg*(p1*y + f)*y - p1*y^2*dy - dp1*y^3 - df*y^2 # = 0
+(f*y - p1*g*y - f*g)*dy - dp1*y^3 - df*y^2 + dg*(p1*y + f)*y # = 0
+
+### Special Cases:
+# f = p1*g =>
+p1*g^2*dy + dp1*y^3 + dp1*g*y^2 - p1*g*dg*y # = 0
+# p1 = x^2;
+x*g^2*dy + 2*y^3 + 2*g*y^2 - x*g*dg*y # = 0
 
 
 ################
