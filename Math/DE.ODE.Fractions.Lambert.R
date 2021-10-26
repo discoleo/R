@@ -1,4 +1,3 @@
-
 ########################
 ###
 ### Leonard Mada
@@ -7,19 +6,21 @@
 ### Differential Equations
 ### ODEs - Fractions: Lambert
 ###
-### draft v.0.4h
+### draft v.0.4i
 
 
-### History
+###############
+### History ###
+###############
 
 ### Order 1 Non-Linear
 ###
-### draft v.0.4g - v.0.4h:
+### draft v.0.4g - v.0.4i:
 # - derived from:
 #   y^n * exp(y^m) = P1(x)*y + F(x);
 #   y^n * exp(G(x)/y^m) = P1(x)*y + F(x); [v.0.4h]
 # - e.g. for m = -1 & p1 = f:
-#   f*dy + df*y^3 + df*y^2 = 0;
+#   f*dy + df*y^3 + df*y^2 = 0; [& solution in v.0.4i]
 #   p1*g^2*dy + dp1*y^3 + dp1*g*y^2 - p1*g*dg*y = 0; [v.0.4h]
 ### draft v.0.4f - v.0.4f-ex2:
 # - trivial Lambert example:
@@ -125,11 +126,13 @@
 
 ### Helper functions
 
-library(pracma)
+# library(pracma)
 # needed for Lambert W;
 
 
+# include: Polynomials.Helper.R;
 # include: DE.ODE.Helper.R;
+source("Polynomials.Helper.R")
 source("DE.ODE.Helper.R")
 
 #########################
@@ -163,7 +166,7 @@ f*y*dy + f*dy - df*y # = 0
 # g = y^n
 n*f*y^(2*n-1)*dy + n*f*y^(n-1)*dy - df*y^n # = 0
 n*f*y^n*dy + n*f*dy - df*y # = 0
-n*y^n*dy + n*dy - df/f*y # = 0
+n*y^n*dy + n*dy - (df/f)*y # = 0
 
 
 ### Non-Trivial:
@@ -326,7 +329,8 @@ line.tan(px, dx=3, p=y, dp=dy, n=3, b=1)
 
 ### Generalisations
 
-### (y + ax)*e^(y + ex) = fx
+### (y + Ax)*e^(y + Ex) = Fx
+# Ax, Ex, Fx = f(x);
 (dy + dax)*e^(y + ex) + (dy + dex)*(y + ax)*e^(y + ex) - dfx # = 0
 (dy + dax)*fx/(y + ax) + (dy + dex)*fx - dfx # = 0 # * (y + ax)
 (y + ax)*(dy + dex)*fx + (dy + dax)*fx - dfx*(y + ax) # = 0
@@ -338,7 +342,8 @@ fx*y*dy + fx*(ax + 1)*dy + (fx*dex - dfx)*y + ax*(fx*dex - dfx) + fx*dax # = 0
 # ax = x^2 + x - 1
 # ex = -2*x
 x^2*y*dy + x^2*(x^2 + x)*dy - 2*(x^2 + x)*y - 2*(x^2 + x - 1)*(x^2 + x) + x^2*(2*x+1) # = 0
-y*dy + (x^2 + x)*dy - 2*(x + 1)/x * y - 2*(x^2 + x - 1)*(x + 1)/x + 2*x+1 # = 0
+x*y*dy + x*(x^2 + x)*dy - 2*(x + 1)*y - (2*x^3 + 2*x^2 - x - 2) # = 0
+y*dy + (x^2 + x)*dy - 2*(x + 1)/x * y - (2*x^3 + 2*x^2 - x - 2)/x # = 0
 
 ### Solution:
 y = function(x) {
@@ -455,16 +460,80 @@ dy + k*y^3 + k*y^2 # = 0
 ### Case p1 = f
 f*dy + df*y^3 + df*y^2 # = 0
 
-# TODO: check;
 
 ### Solution:
+
 ### Step 1:
 # A*dy + B*y^3 + B*y^2 = 0
 # D(A*h) = B*h =>
 A*dh + (dA - B)*h # = 0
 # log(h) = I( (B-dA) / A ) dx;
+### Step 1: [short]
+# h = exp(I(B/A)); # where p1 = h!
+
+### Step 2:
+# y * exp(1/y) = h*y + h
+# y = 1/z =>
+# exp(z) = h*z + h # EXP() =>
+# exp(exp(z)) = exp(h*z) * exp(h) # POW(1/h) =>
+# exp(exp(z) / h) = exp(z) * exp(1) =>
+# - exp(z)/h * exp( - exp(z)/h) = - exp(-1)/h;
+# - exp(z)/h = W(- exp(-1)/h);
+# exp(z) = - h * W(- exp(-1)/h);
+z = log(- h * W(- exp(-1)/h));
+
+### Solution & Plot:
+eval.H = function(x, FA, FB, lower=0) {
+	f = if(is.null(FA)) {
+		function(x) eval.FUN(x, FB);
+	} else {
+		function(x) eval.FUN(x, FB) / eval.FUN(x, FA);
+	}
+	# H(x)
+	h = I.FUN(x, F=f, lower=lower);
+	h = exp(h);
+	return(h);
+}
+y = function(x, FB, FA=NULL, lower=0, valH=FALSE) {
+	# H(x)
+	h = eval.H(x, FA=FA, FB=FB, lower=lower)
+	#
+	z = lambertWn(- exp(-1)/h);
+	z = log(-h * z);
+	y = 1 / z;
+	y = round0(y);
+	if(valH) attr(y, "H") = h;
+	return(y)
+}
+dy = function(x, FB, FA=NULL, lower=0) {
+	y.x = y(x, FA=FA, FB=FB, lower=lower);
+	dfx = eval.FUN(x, FB);
+	fx  = if(is.null(FA)) 1 else eval.FUN(x, FA);
+	# f*dy + df*y^3 + df*y^2 = 0
+	dp  = dfx*y.x^3 + dfx*y.x^2;
+	div = - fx;
+	dp = ifelse(div != 0, dp / div, 0); # TODO: check;
+	return(dp)
+}
+### Plot:
+FA  = toPoly.pm("x^3 - 2*x + 5")
+FB = toPoly.pm("x^2 + 5*x + 1")
+px = 1 + (1:6) * 1/3
+#
+curve(y(x, FB=FB, FA=FA), from = 1, to = 3)
+line.tan(px, dx=3, p=y, dp=dy, FA=FA, FB=FB)
 
 
+### Ex 2:
+FA  = toPoly.pm("5 - x^-1")
+FB = toPoly.pm("x^2 + 5*x + 1")
+px = 1 + (1:6) * 1/3
+#
+curve(y(x, FB=FB, FA=FA, lower=1), from = 1, to = 3)
+line.tan(px, dx=3, p=y, dp=dy, FA=FA, FB=FB, lower=1)
+
+
+##########
 ### Slight Generalization
 ### y * exp(G(x)/y) = P1(x)*y + F(x)
 
