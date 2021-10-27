@@ -602,3 +602,12 @@ print.p(p)
 apply(perm3(4, p=c(3,2,1)), 1, sum)
 table(duplicated(perm3(4, p=c(3,2,1))))
 
+#############
+
+### Test Diff
+
+x = sqrt(2:3)
+
+n = 8
+diff(x^n)
+eval.pm(diff.E2.pm(n), c(sum(x), prod(x), diff(x)))
