@@ -10,7 +10,13 @@
 #######################
 
 
-### helper Functions
+### Helper Functions
+
+### Polynomial Tools
+source("Polynomials.Helper.R")
+
+### this file:
+# source("Polynomials.Helper.EP.R")
 
 ### Processing Symmetric Polynomials
 
@@ -121,6 +127,30 @@ sym.poly = function(p, var="x") {
 	names(pP) = paste0(var, seq(n));
 	pP$coeff = 1;
 	return(pP);
+}
+
+### E2
+### Diff: x^n - y^n
+diff.E2.pm = function(n, epow=NULL) {
+	if(n == 1) return(data.frame(S=0, D=1, coeff=1));
+	if(n == 2) return(data.frame(S=1, D=1, coeff=1));
+	if(n == 0) return(0); # as.data.frame?
+	# n >= 3
+	np = (n-1) %/% 2;
+	if(is.null(epow)) {
+		epow = powAll.pm(toPoly.pm("S^2 - 4*E2"), np, asList=TRUE);
+	}
+	SF = function(n, c) data.frame(S=n, E2=0, coeff=c);
+	# Result:
+	r = SF(n-1, n);
+	for(id in seq(1, np)) {
+		tmp = epow[[id]];
+		tmp = mult.pm(tmp, SF(n - 1 - 2*id, choose(n, 2*id+1)));
+		r = sum.pm(r, tmp);
+	}
+	r$D = 1;
+	r$coeff = r$coeff / 2^(n-1);
+	return(r);
 }
 
 ### Permutations

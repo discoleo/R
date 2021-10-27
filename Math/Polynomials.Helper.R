@@ -246,8 +246,8 @@ pow.pm = function(p, n=2, do.order=TRUE, debug=TRUE) {
 	}
 	return(p.r);
 }
-powAll.pm = function(p, n=2) {
-	if(n == 1) return(p);
+powAll.pm = function(p, n=2, asList=TRUE) {
+	if(n == 1) return(if(asList) list(p) else p);
 	if(is.double(n) && (n == round(n))) n = as.integer(n);
 	if( ! is.integer(n)) stop("n must be integer!")
 	# Multiply
