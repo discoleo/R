@@ -922,6 +922,18 @@ dp.exp.pm = function(p, xn="x") {
 	p$Poly = pr;
 	return(p);
 }
+dp.div.pm = function(p1, pdiv, xn="x") {
+	if(is.numeric(p1) || is.complex(p1)) {
+		r = mult.pm(dp.pm(pdiv, xn=xn), - p1);
+		div = mult.pm(pdiv, pdiv);
+		return(list(p = r, div = div));
+	}
+	r  = mult.pm(pdiv, dp.pm(p1, xn=xn));
+	r2 = mult.pm(p1, dp.pm(pdiv, xn=xn));
+	r = diff.pm(r, r2);
+	r = list(p=r, div = mult.pm(pdiv, pdiv));
+	return(r)
+}
 # D( dny ) => d(n+1)y;
 dy.pm = function(p, yn="y", xn="x", starts.with=FALSE) {
 	regEnd = if(starts.with) "" else "$";
@@ -1040,7 +1052,8 @@ print.monome = function(name, p) {
 print.pm = function(...) {
 	print.p(...);
 }
-print.p = function(p, leading=1, do.sort=TRUE, do.rev=FALSE, sort.order=TRUE) {
+# TODO: format.complex();
+print.p = function(p, leading=1, do.sort=TRUE, do.rev=FALSE, sort.order=TRUE, simplify.complex=TRUE) {
 	### Var order
 	isNA = all(is.na(leading));
 	if( ! isNA && ! is.numeric(leading)) leading = match(leading, names(p));
@@ -1074,10 +1087,20 @@ print.p = function(p, leading=1, do.sort=TRUE, do.rev=FALSE, sort.order=TRUE) {
 	}
 	if( ! is.null(dim(p.str))) p.str = apply(p.str, 1, paste.nonempty)
 	else p.str = paste.nonempty(p.str);
-	sign.str = ifelse(Re(coeff) > 0, " + ", " - ");
-	sign.str[1] = if(Re(coeff[1]) > 0) "" else "- "; # TODO: Re() == 0;
-	coeff.str = as.character(abs(coeff));
-	hasCoeff = (abs(coeff) != 1 & nchar(p.str) > 0);
+	# Sign: 0 treated as "+"
+	isPlus = (Re(coeff) > 0) | (Re(coeff) == 0 & Im(coeff) >= 0);
+	sign.str = ifelse(isPlus, " + ", " - ");
+	sign.str[1] = if(isPlus[1]) "" else "- ";
+	# Complex numbers
+	hasNegativ = (Re(coeff) < 0) | (Re(coeff) == 0 & Im(coeff) < 0);
+	coeffPlus = coeff; coeffPlus[hasNegativ] = - coeffPlus[hasNegativ];
+	coeff.str = as.character(coeffPlus);
+	if(simplify.complex) {
+		isPureImaginary = (Re(coeff) == 0) & (Im(coeff) != 0);
+		coeff.str[isPureImaginary] = paste0(as.character(Im(coeffPlus[isPureImaginary])), "i");
+	}
+	# Coeff == 1
+	hasCoeff = (coeffPlus != 1 & nchar(p.str) > 0); # TODO: verify if fixed!
 	isB0 = (nchar(p.str) == 0);
 	p.str[hasCoeff] = paste(coeff.str[hasCoeff], p.str[hasCoeff], sep = "*");
 	p.str[isB0] = coeff.str[isB0]; # [should be fixed]: ERROR "+ b0*";
