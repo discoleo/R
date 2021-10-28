@@ -152,6 +152,26 @@ diff.E2.pm = function(n, epow=NULL) {
 	r$coeff = r$coeff / 2^(n-1);
 	return(r);
 }
+sum.E2.pm = function(n, epow=NULL) {
+	if(n == 1) return(data.frame(S=1, coeff=1));
+	if(n == 2) return(data.frame(S=c(2,0), E2=c(0,1), coeff=c(1,-2)));
+	if(n == 0) return(2); # as.data.frame?
+	# n >= 3
+	np = n %/% 2;
+	if(is.null(epow)) {
+		epow = powAll.pm(toPoly.pm("S^2 - 4*E2"), np, asList=TRUE);
+	}
+	SF = function(n, c) data.frame(S=n, E2=0, coeff=c);
+	# Result:
+	r = SF(n, 1);
+	for(id in seq(1, np)) {
+		tmp = epow[[id]];
+		tmp = mult.pm(tmp, SF(n - 2*id, choose(n, 2*id)));
+		r = sum.pm(r, tmp);
+	}
+	r$coeff = r$coeff / 2^(n-1);
+	return(r);
+}
 
 ### Permutations
 
@@ -259,7 +279,7 @@ prod.perm.poly = function(n, pow=c(1,1)) {
 	xn = paste0("x", seq(n));
 	toPoly = function(mr) {
 		id = which(mr != 0);
-		pP = list(c(pow[1],0), c(0,pow[2]));
+		pP = data.frame(c(pow[1],0), c(0,pow[2]));
 		names(pP) = xn[id];
 		pP$coeff = c(1,1);
 		return(pP);
@@ -549,6 +569,10 @@ Epoly.distinct = function(pow, v=3, E=NULL, full=FALSE) {
 ### Tests ###
 #############
 
+### TODO:
+# - convert lists to data.frames where applicable;
+
+
 ### E Polynomials:
 ### TODO:
 # - thoroughly check!
@@ -597,17 +621,24 @@ p = prod.perm.poly(n)
 p = sort.pm(p);
 p
 
-print.p(p)
+print.pm(p)
 
 apply(perm3(4, p=c(3,2,1)), 1, sum)
 table(duplicated(perm3(4, p=c(3,2,1))))
 
 #############
 
-### Test Diff
+### Test Sum & Diff
+# Decomposition of:
+# x^n + y^n, x^n - y^n
 
 x = sqrt(2:3)
 
 n = 8
 diff(x^n)
 eval.pm(diff.E2.pm(n), c(sum(x), prod(x), diff(x)))
+
+n = 7
+sum(x^n)
+eval.pm(sum.E2.pm(n), c(sum(x), prod(x)))
+
