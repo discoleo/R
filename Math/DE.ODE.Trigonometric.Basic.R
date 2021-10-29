@@ -61,7 +61,7 @@ genODE.Trig.pm = function(p1, p2, pT, f0=NULL, print=FALSE, pDiv=NULL, div.by=NU
 		if(hasD) {
 			pR[[2]] = diff.pm(pR[[2]], df0);
 			d2f = dp.pm(df0, xn="x");
-			if( ! isNZ(d2f)) d2f = NULL;
+			if( ! isNZ.pm(d2f)) d2f = NULL;
 		}
 	}
 	# lapply(pR, print.pm);
@@ -130,6 +130,23 @@ print.pm(pR, do.sort=FALSE, leading=NA)
 
 
 ### Ex 3:
+pT = toPoly.pm("x^2 + b*x")
+p1 = toPoly.pm("a1*x");
+p2 = toPoly.pm("a2"); p2$x = 0;
+p0 = toPoly.pm("a3*x");
+#
+pR = genODE.Trig.pm(p1, p2, pT, f0=p0, pDiv=NULL, div.by="a1");
+print.pm(pR, do.sort=FALSE, leading=NA)
+### ODE:
+(2*a1^2*x^3 + a1^2*b*x^2 + 2*a2^2*x - a1*a2 + b*a2^2)*d2y +
+	- 2*(3*a1^2*x^2 + a1^2*b*x + a2^2)*dy +
+	+ (8*a1^2*x^5 + 12*a1^2*b*x^4 + 6*a1^2*b^2*x^3 + 8*a2^2*x^3 + a1^2*b^3*x^2 - 12*a1*a2*x^2 +
+		+ 12*b*a2^2*x^2 + 6*a1^2*x - 12*a1*b*a2*x + 6*b^2*a2^2*x + 2*a1^2*b - 3*a1*b^2*a2 + b^3*a2^2)*y +
+	- 8*a1^2*a3*x^6 - 12*a1^2*b*a3*x^5 - 6*a1^2*b^2*a3*x^4 - 8*a2^2*a3*x^4 - a1^2*b^3*a3*x^3 + 12*a1*a2*a3*x^3 +
+		- 12*b*a2^2*a3*x^3 + 12*a1*b*a2*a3*x^2 - 6*b^2*a2^2*a3*x^2 + 3*a1*b^2*a2*a3*x - b^3*a2^2*a3*x + 2*a2^2*a3
+
+
+### Ex 4:
 pT = toPoly.pm("x^3 - 2*x - 1")
 p1 = toPoly.pm("x + 2")
 p2 = toPoly.pm("x^2")
