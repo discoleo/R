@@ -6,18 +6,18 @@
 ### Differential Equations
 ### ODEs - Trigonometric
 ###
-### draft v.0.4b
+### draft v.0.4b-clean2
+
+
+### Non-Linear & Linear:
+### Trigonometric Variants
 
 
 ###############
 ### History ###
 ###############
 
-### Order 1 Non-Liniar & Linear:
-### Trigonometric Variants
-
-
-### draft v.0.4b:
+### draft v.0.4b - v.0.4b-clean2:
 # - moved Section on Automatic generation
 #   to a new file:
 #   DE.ODE.Trigonometric.Basic.R;
@@ -125,76 +125,12 @@ source("DE.ODE.Helper.R")
 #########################
 
 ### Trigonometric Functions:
-### Simple: P(y) = P1(x) * sin(T(x)) + F(x)
+### G(y) = P1(x) * sin(T(x)) + F(x)
 
-
-#########################
-### Section A: Non-Linear
-### Higher Power
-
-### y^2 = x^p * sin(x^m)
-
-### D =>
-# 2*x*y*dy = p*y^2 + m*x^(p+m)*cos(x^m)
-
-### D2 =>
-2*x^2*y*d2y + 2*x^2*dy^2 - 2*(2*p + m - 1)*x*y*dy +
-	+ m^2*x^(2*m)*y^2 + p*(p+m)*y^2 # = 0
-
-### Special cases:
-
-### m = 1
-2*x^2*y*d2y + 2*x^2*dy^2 - 4*p*x*y*dy + x^2*y^2 + p*(p+1)*y^2 # = 0
-
-### p = - m
-2*x^2*y*d2y + 2*x^2*dy^2 + 2*(m + 1)*x*y*dy + m^2*x^(2*m)*y^2 # = 0
-### p = - 1; m = 1;
-2*x*y*d2y + 2*x*dy^2 + 4*y*dy + x*y^2 # = 0
-### p = 1; m = -1;
-2*x^4*y*d2y + 2*x^4*dy^2 + y^2 # = 0
-
-### Plot:
-y = function(x, pp=1, m=1, posRoot=TRUE) {
-	# root
-	y = x^pp * sin(x^m)
-	y = sqrt(y)
-	if( ! posRoot) y = -y;
-	return(y)
-}
-dy = function(x, pp=1, m=1, posRoot=TRUE, y.x) {
-	if(missing(y.x)) y.x = y(x, pp=pp, m=m, posRoot=posRoot);
-	dp = pp*y.x^2 + m*x^(pp+m)*cos(x^m)
-	div = 2*x*y.x;
-	dp = ifelse(div != 0, dp / div, 0); # TODO: may need correction
-	return(dp)
-}
-d2y = function(x, pp=1, m=1, posRoot=TRUE) {
-	y.x  = y(x, pp=pp, m=m, posRoot=posRoot);
-	dy.x = dy(x, pp=pp, m=m, posRoot=posRoot, y.x=y.x);
-	dp = 2*x^2*dy.x^2 - 2*(2*pp + m - 1)*x*y.x*dy.x + m^2*x^(2*m)*y.x^2 + pp*(pp+m)*y.x^2;
-	div = - 2*x^2*y.x;
-	dp = ifelse(div != 0, dp / div, (2*pp + m - 1) / m); # TODO: needs correction!
-	return(dp)
-}
-### Test
-
-pp = 2; m = 1;
-curve(y(x, pp=pp, m=m), from= 0, to = 2)
-# global minimum;
-sapply(c((0:4)/2.2), line.tan, dx=1.5, p=y, dp=dy, pp=pp, m=m)
-# pseudo-sigmoidal
-curve(dy(x, pp=pp, m=m), add=T, col="green")
-sapply(c((0:4)/2.2), line.tan, dx=1/5, p=dy, dp=d2y, pp=pp, m=m, col="orange")
-
-
-### m = 2
-pp = 2; m = 2;
-curve(y(x, pp=pp, m=m), from= -5/3, to = 5/3, ylim=c(-2, 2))
-# global minimum;
-sapply(c((-3:3)/2.2), line.tan, dx=1.5, p=y, dp=dy, pp=pp, m=m)
-# pseudo-sigmoidal
-curve(dy(x, pp=pp, m=m), add=T, col="green")
-sapply(c((-3:3)/2.2), line.tan, dx=1/5, p=dy, dp=d2y, pp=pp, m=m, col="orange")
+### Section A: Simple variants
+### G(y) = polynomial(y)
+# - moved to file:
+#   DE.ODE.Trigonometric.Basic.R;
 
 
 #########################
@@ -343,8 +279,11 @@ sapply(c(0:4/5, 0.9), line.tan, dx=1/5, p=dy, dp=d2y, col="orange")
 
 ### D =>
 y*dy*cos(y) - df # = 0
-# D2 =>
+
+### D2 =>
+### ODE:
 df*y*d2y - f*y*(dy)^3 + 2*df*(dy)^2 - d2f*y*dy # = 0
+
 ### Alternative Eq:
 # y*dy = df / cos(y)
 # needs also D3;
