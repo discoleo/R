@@ -60,16 +60,25 @@ dp.div.pm = function(p1, pdiv, xn="x") {
 }
 # D( p1*sin(T(x)) + p2*cos(T(x)) )
 dp.trig.pm = function(plst, pT, xn="x", trig.order="sin") {
-	trig.order.id = match(trig.order, c("sin", "cos"));
-	if(is.null(trig.order.id)) stop("Invalid order: p[[1]]*sin(T) + p[[2]]*cos(T);");
-	#
 	if(is.data.frame(plst)) {
 		p1 = plst;
 		p2 = NULL;
 	} else if(is.list(plst)) {
-		p1 = plst[[1]];
-		p2 = if(length(plst) >= 2) plst[[2]] else NULL;
+		isD = ! is.null(attr(plst, "D"));
+		if(isD) {
+			p1 = plst$C1; p2 = plst$C2;
+			if( ! missing(pT)) warning("Using pT included in the list!")
+			pT = plst$Trig;
+			trig.order = attr(plst, "trig.order");
+		} else {
+			p1 = plst[[1]];
+			p2 = if(length(plst) >= 2) plst[[2]] else NULL;
+			if(length(plst) > 2) warning("Only the first 2 polynomials of plst processed!")
+		}
 	}
+	# Order: p1 * sin, then p2 * cos;
+	trig.order.id = match(trig.order, c("sin", "cos"));
+	if(is.null(trig.order.id)) stop("Invalid order: p[[1]]*sin(T) + p[[2]]*cos(T);");
 	# Result
 	dT = function(p, pT, type) {
 		r = dp.pm(pT, xn=xn);
@@ -86,6 +95,7 @@ dp.trig.pm = function(plst, pT, xn="x", trig.order="sin") {
 	}
 	rlst = list(C1=C1, C2=C2, Trig=pT);
 	attr(rlst, "trig.order") = trig.order;
+	attr(rlst, "D") = "Trig";
 	return(rlst);
 }
 
@@ -155,3 +165,23 @@ Dy.names = function(nms) {
 	return(nms)
 }
 
+
+#######################
+#######################
+
+### Solve Linear System
+
+solve.LD.pm = function(pM, pR) {
+	if(length(pM) > 4) stop("Not yet implemented!");
+	pDiv = diff.pm(
+		mult.pm(pM[[1]], pM[[4]]),
+		mult.pm(pM[[2]], pM[[3]]));
+	pC1 = diff.pm(
+		mult.pm(pR[[1]], pM[[4]]),
+		mult.pm(pM[[2]], pR[[2]]));
+	pC2 = diff.pm(
+		mult.pm(pM[[1]], pR[[2]]),
+		mult.pm(pR[[1]], pM[[3]]));
+	pR = list(C1=pC1, C2=pC2, div=pDiv);
+	return(pR);
+}
