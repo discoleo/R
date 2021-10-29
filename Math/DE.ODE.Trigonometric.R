@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs - Trigonometric
 ###
-### draft v.0.4b-clean2
+### draft v.0.4b-clean3
 
 
 ### Non-Linear & Linear:
@@ -17,7 +17,7 @@
 ### History ###
 ###############
 
-### draft v.0.4b - v.0.4b-clean2:
+### draft v.0.4b - v.0.4b-clean3:
 # - moved Section on Automatic generation
 #   to a new file:
 #   DE.ODE.Trigonometric.Basic.R;
@@ -357,6 +357,7 @@ sapply(c(-1, 1.3, 1.6, 1.8, 1.95), line.tan, dx=3, p=dy, dp=d2y, b=b, col="orang
 # P(y) = y^2
 # f = x + b, where b = constant;
 y*d2y - 4*(x+b)*y^3*dy^3 + 5*dy^2 # = 0
+
 ### Solution:
 y = function(x, b, n=2) {
 	# root
@@ -399,10 +400,10 @@ d2y = function(x, b, n=2) {
 b = -1/2
 curve(y(x, b=b), from= -3, to = 3, ylim=c(-2,7))
 # oscillating/spikes (ECG-like) function with local minima;
-sapply(c(seq(1.4, 2.2, by=0.2) - 0.05), line.tan, dx=1.5, p=y, dp=dy, b=b)
+line.tan(c(seq(1.4, 2.2, by=0.2) - 0.05), dx=1.5, p=y, dp=dy, b=b)
 # spikes
 curve(dy(x, b=b), from= -3, to = 3, add=T, col="green")
-sapply(c(seq(1.4, 2.2, by=0.2) - 0.05), line.tan, dx=1.4, p=dy, dp=d2y, b=b, col="orange")
+line.tan(c(seq(1.4, 2.2, by=0.2) - 0.05), dx=1.4, p=dy, dp=d2y, b=b, col="orange")
 
 
 #####################
@@ -467,9 +468,10 @@ curve(y(x, n=3), from=-1, to=1, col="grey", add=T)
 div = 23
 sapply(c(-1 + (1:4)/div, 1 - (1:4)/div), line.tan, dx=0.5, p=dy, dp=d2y, n=3)
 
+### ODE:
 ### Combinations:
-# [not run]
 x*(1 - x^6)*d2y - (5*x^6 - 2)*dy - 3*x^2*y*sin(x*y + a) - 6*x*sqrt(1 - x^6) # = 0
+
 ### Solution & Plot:
 y = function(x, n=2, a=1/3) {
 	r = (asin(x^n) - a)/x
@@ -495,14 +497,15 @@ d2y = function(x, n=2, a=1/3) {
 	return(dp)
 }
 ### Plot
+div = 4.55
+px  = c(-1 + (1:4)/div, 1 - (1:4)/div);
+#
 curve(y, from=-1, to=1)
-div = 4.5
-sapply(c(-1 + (1:4)/div, 1 - (1:4)/div), line.tan, dx=0.5, p=y, dp=dy)
+line.tan(px, dx=1.2, p=y, dp=dy)
 ### D2(y):
 curve(dy, from=-1, to=1, col="green", ylim=c(-1, 8))
 curve(y, from=-1, to=1, col="grey", add=T)
-div = 4.5
-sapply(c(-1 + (1:4)/div, 1 - (1:4)/div), line.tan, dx=0.5, p=dy, dp=d2y)
+line.tan(px, dx=0.5, p=dy, dp=d2y)
 
 
 ### TODO: tan, ln;
@@ -701,145 +704,6 @@ sapply(c(1/3, 1/2, 1, 2.2), line.tan, dx=3, p=dy, dp=d2y, k=k, col="orange")
 ############################
 ############################
 ############################
-
-#####################
-### Linear Simple ###
-###   (Basics)    ###
-#####################
-
-### Simple / Power
-# - generalization in the next sections;
-
-### y = sin(a*x^n)
-dy = n*a*x^(n-1)*cos(a*x^n)
-x*d2y - (n-1)*dy + n^2*a^2*x^(2*n-1)*y # = 0
-
-### Test & Plot:
-y = function(x, a=1, n=2) {
-	r = sin(a*x^n)
-	return(r)
-}
-dy = function(x, a=1, n=2) {
-	xn1 = if(n == 2) x else x^(n-1);
-	xn  = xn1 * x;
-	dp = n*a*xn1*cos(a*xn)
-	return(dp)
-}
-d2y = function(x, a=1, n=2) {
-	y.x = y(x, a=a, n=n)
-	dy.x = dy(x, a=a, n=n)
-	div = x;
-	dp = (n-1)*dy.x - n^2*a^2*x^(2*n-1)*y.x;
-	dp = ifelse(div != 0, dp / div, n*(n-1)*a); # TODO: needs correction!
-	return(dp)
-}
-### Plot
-a = 1; n = 2;
-curve(y(x, a=a, n=n), from= -3, to= 3, ylim=c(-2, 1.5))
-# sinus wave;
-sapply(c((-5:5)/2.2), line.tan, dx=3, p=y, dp=dy, a=a, n=n)
-# wave
-curve(dy(x, a=a, n=n), add=T, col="green")
-sapply(c((-5:5)/2.2), line.tan, dx=1/5, p=dy, dp=d2y, a=a, n=n, col="orange")
-
-### Test wave
-curve(dy(x, a=a, n=n), from=-3, to=3, col="green")
-sapply(c((-5:5)/2.2), line.tan, dx=1/5, p=dy, dp=d2y, a=a, n=n, col="orange")
-
-
-### Example 2:
-a = 1/3; n = 2;
-curve(y(x, a=a, n=n), from= -3, to= 3, ylim=c(-1, 1.5))
-# sinus wave;
-sapply(c((-5:5)/2.2), line.tan, dx=3, p=y, dp=dy, a=a, n=n)
-# wave
-curve(dy(x, a=a, n=n), add=T, col="green")
-sapply(c((-5:5)/2.2), line.tan, dx=1/5, p=dy, dp=d2y, a=a, n=n, col="orange")
-
-#####################
-
-##################
-### Non-Linear ###
-###   Simple   ###
-##################
-
-### Generalization:
-
-### y = sin(f(x))
-# [but still basics: 1 trigonometric term]
-# [not run]
-dy = df * cos(f)
-dy^2 = df^2 * cos(f)^2
-dy^2 = df^2 * (1 - y^2)
-### Non-linear ODE:
-dy^2 + df^2 * y^2 - df^2 # = 0
-
-
-### Alternative Linear ODE:
-dP*d2y - d2P*dy + dP^3 * y # = 0
-# [see next Section]
-
-### Examples:
-
-### f = x + ln(x)
-dy^2 + ((x+1)/x)^2 * y^2 - ((x+1)/x)^2 # = 0
-x^2 * dy^2 + (x+1)^2 * y^2 - (x+1)^2 # = 0
-### Solution & Plot:
-y = function(x) {
-	f = x + log(x)
-	r = sin(f)
-	return(r)
-}
-dy = function(x) {
-	# Test formula
-	y.x = y(x)
-	x1 = (x+1)^2
-	dp = x1 * (1 - y.x^2)
-	div = x^2
-	dp = ifelse(div != 0, dp / div, 1E+3); # TODO: check!
-	f.sign = ifelse(x + log(x) <= pi/2, FALSE, TRUE)
-	dp = sqrt(dp); dp[f.sign] = - dp[f.sign];
-	return(dp)
-}
-### Plot:
-curve(y(x), from= 0+1E-3, to=3, ylim=c(-1.5, 2))
-sapply(c((1:8)/3.2), line.tan, dx=3, p=y, dp=dy)
-
-
-### D2:
-# dy^2 + df^2 * y^2 - df^2 # = 0
-2*dy*d2y + 2*df^2 * y*dy + 2*df*d2f * y^2 - 2*df*d2f # = 0
-dy*d2y + df^2 * y*dy + df*d2f * y^2 - df*d2f # = 0
-# alternative:
-dy*d2y + df^2 * y*dy + d2f * (df^2 - dy^2)/df - df*d2f # = 0
-dy*d2y - d2f/df * dy^2 + df^2 * y*dy # = 0
-
-### Examples:
-
-### f = x + ln(x)
-dy*d2y + (1/x^2)/((x+1)/x) * dy^2 + ((x+1)/x)^2 * y*dy # = 0
-dy*d2y + 1/((x+1)*x) * dy^2 + ((x+1)/x)^2 * y*dy # = 0 # * x^2
-x^2*dy*d2y + x/(x+1) * dy^2 + (x+1)^2 * y*dy # = 0
-### Solution & Plot:
-# reuses functions y(x) & dy(x) from above;
-d2y = function(x) {
-	y.x = y(x)
-	dy.x = dy(x)
-	dp = - (x/(x+1) * dy.x^2 + (x+1)^2 * y.x*dy.x);
-	div = x^2 * dy.x;
-	dp = ifelse(div != 0, dp / div, 1E+3); # TODO: check!
-	return(dp)
-}
-### Plot:
-curve(y(x), from= 0+1E-3, to=3, ylim=c(-1.5, 3))
-sapply(c((1:5)/2.2), line.tan, dx=3, p=y, dp=dy)
-# wave
-curve(dy(x), add=T, col="green")
-sapply(c((1:5)/2.2), line.tan, dx=1/5, p=dy, dp=d2y, col="orange")
-
-
-#####################
-#####################
 
 #####################
 ### Linear Simple ###

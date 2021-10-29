@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs - Trigonometric: Basic
 ###
-### draft v.0.1b
+### draft v.0.1c
 
 
 ### Trigonometric ODEs
@@ -18,7 +18,7 @@
 ### History ###
 ###############
 
-### draft v.0.1a - v.0.1b:
+### draft v.0.1a - v.0.1c:
 # - moved Section with Basic Variants
 #   from file: DE.ODE.Trigonometric.R;
 
@@ -151,7 +151,7 @@ d2y = - n*(n-1)*x^(n-2) * (a2*sin(x^n + b*x) - a1*cos(x^n + b*x)) +
 ### Example: n = 3
 (3*x^2 + b) * d2y(x, n=3) - 6*x*dy(x, n=3) + (3*x^2 + b)^3 * y(x, n=3) # = 0
 
-### Solution:
+### Solution & Plot:
 y = function(x, a=c(1, 1), b=1, n=2) {
 	xn = x^n + b*x
 	r = a[1]*sin(xn) + a[2]*cos(xn)
@@ -181,10 +181,10 @@ curve(y(x, b=b, n=n), from= -3, to = 3, ylim=c(-3, 3))
 # oscillating function with local minima;
 # slightly shifted: + 1/2;
 # dy == 0 also for: x^2 + b*x - pi/4 = 0;
-sapply(c(-5:7 * 3/7 - 1/2), line.tan, dx=1.5, p=y, dp=dy, b=b, n=n)
+line.tan(c(-5:7 * 3/7 - 1/2), dx=1.5, p=y, dp=dy, b=b, n=n)
 # also sinusoidal:
 curve(dy(x, b=b, n=n), add=T, col="green")
-sapply(c(-5:7 * 3/7 - 1/2), line.tan, dx=1.5, p=dy, dp=d2y, b=b, n=n, col="orange")
+line.tan(c(-5:7 * 3/7 - 1/2), dx=1.5, p=dy, dp=d2y, b=b, n=n, col="orange")
 
 
 ### Ex 2:
@@ -192,10 +192,141 @@ n = 2; b = -2;
 curve(y(x, b=b, n=n), from= -3, to = 3, ylim=c(-4, 4))
 # oscillating function with local minima;
 # slightly shifted: + 1/2
-sapply(c(-5:7 * 3/7 - 1/2), line.tan, dx=1.5, p=y, dp=dy, b=b, n=n)
+line.tan(c(-5:7 * 3/7 - 1/2), dx=1.5, p=y, dp=dy, b=b, n=n)
 # also sinusoidal:
 curve(dy(x, b=b, n=n), add=T, col="green")
-sapply(c(-5:7 * 3/7 - 1/2), line.tan, dx=1.5, p=dy, dp=d2y, b=b, n=n, col="orange")
+line.tan(c(-5:7 * 3/7 - 1/2), dx=1.5, p=dy, dp=d2y, b=b, n=n, col="orange")
+
+
+#####################
+
+### Basic Example: Simple / Power
+# - generalization in the next sections;
+
+### y = sin(a*x^n)
+dy = n*a*x^(n-1)*cos(a*x^n)
+
+### ODE:
+x*d2y - (n-1)*dy + n^2*a^2*x^(2*n-1)*y # = 0
+
+### Test & Plot:
+y = function(x, a=1, n=2) {
+	r = sin(a*x^n)
+	return(r)
+}
+dy = function(x, a=1, n=2) {
+	xn1 = if(n == 2) x else x^(n-1);
+	xn  = xn1 * x;
+	dp = n*a*xn1*cos(a*xn)
+	return(dp)
+}
+d2y = function(x, a=1, n=2) {
+	y.x = y(x, a=a, n=n)
+	dy.x = dy(x, a=a, n=n)
+	div = x;
+	dp = (n-1)*dy.x - n^2*a^2*x^(2*n-1)*y.x;
+	dp = ifelse(div != 0, dp / div, n*(n-1)*a); # TODO: needs correction!
+	return(dp)
+}
+### Plot
+a = 1; n = 2;
+curve(y(x, a=a, n=n), from= -3, to= 3, ylim=c(-2, 1.5))
+# sinus wave;
+line.tan(c((-5:5)/2.2), dx=3, p=y, dp=dy, a=a, n=n)
+# wave
+curve(dy(x, a=a, n=n), add=T, col="green")
+line.tan(c((-5:5)/2.2), dx=1/5, p=dy, dp=d2y, a=a, n=n, col="orange")
+
+### Test wave
+curve(dy(x, a=a, n=n), from=-3, to=3, col="green")
+line.tan(c((-5:5)/2.2), dx=1/5, p=dy, dp=d2y, a=a, n=n, col="orange")
+
+
+### Example 2:
+a = 1/3; n = 2;
+curve(y(x, a=a, n=n), from= -3, to= 3, ylim=c(-1, 1.5))
+# sinus wave;
+line.tan(c((-5:5)/2.2), dx=3, p=y, dp=dy, a=a, n=n)
+# wave
+curve(dy(x, a=a, n=n), add=T, col="green")
+line.tan(c((-5:5)/2.2), dx=1/5, p=dy, dp=d2y, a=a, n=n, col="orange")
+
+
+#########################
+
+### Simple Generalization
+
+### y = sin(f(x))
+# [but still basics: 1 trigonometric term]
+# [not run]
+dy = df * cos(f)
+dy^2 = df^2 * cos(f)^2
+dy^2 = df^2 * (1 - y^2)
+
+### Variant 1: Non-linear ODE
+dy^2 + df^2 * y^2 - df^2 # = 0
+
+### Alternative: Linear ODE
+dP*d2y - d2P*dy + dP^3 * y # = 0
+# [see next Section]
+
+### Examples:
+
+### f = x + ln(x)
+dy^2 + ((x+1)/x)^2 * y^2 - ((x+1)/x)^2 # = 0
+x^2 * dy^2 + (x+1)^2 * y^2 - (x+1)^2 # = 0
+### Solution & Plot:
+y = function(x) {
+	f = x + log(x)
+	r = sin(f)
+	return(r)
+}
+dy = function(x) {
+	# Test formula
+	y.x = y(x)
+	x1 = (x+1)^2
+	dp = x1 * (1 - y.x^2)
+	div = x^2
+	dp = ifelse(div != 0, dp / div, 1E+3); # TODO: check!
+	f.sign = ifelse(x + log(x) <= pi/2, FALSE, TRUE)
+	dp = sqrt(dp); dp[f.sign] = - dp[f.sign];
+	return(dp)
+}
+### Plot:
+curve(y(x), from= 0+1E-3, to=3, ylim=c(-1.5, 2))
+line.tan(c((1:8)/3.2), dx=3, p=y, dp=dy)
+
+
+### D2:
+# dy^2 + df^2 * y^2 - df^2 # = 0
+2*dy*d2y + 2*df^2 * y*dy + 2*df*d2f * y^2 - 2*df*d2f # = 0
+dy*d2y + df^2 * y*dy + df*d2f * y^2 - df*d2f # = 0
+# alternative:
+dy*d2y + df^2 * y*dy + d2f * (df^2 - dy^2)/df - df*d2f # = 0
+dy*d2y - d2f/df * dy^2 + df^2 * y*dy # = 0
+
+### Examples:
+
+### f = x + ln(x)
+dy*d2y + (1/x^2)/((x+1)/x) * dy^2 + ((x+1)/x)^2 * y*dy # = 0
+dy*d2y + 1/((x+1)*x) * dy^2 + ((x+1)/x)^2 * y*dy # = 0 # * x^2
+x^2*dy*d2y + x/(x+1) * dy^2 + (x+1)^2 * y*dy # = 0
+### Solution & Plot:
+# reuses functions y(x) & dy(x) from above;
+d2y = function(x) {
+	y.x = y(x)
+	dy.x = dy(x)
+	dp = - (x/(x+1) * dy.x^2 + (x+1)^2 * y.x*dy.x);
+	div = x^2 * dy.x;
+	dp = ifelse(div != 0, dp / div, 1E+3); # TODO: check!
+	return(dp)
+}
+### Plot:
+curve(y(x), from= 0+1E-3, to=3, ylim=c(-1.5, 3))
+line.tan(c((1:5)/2.2), dx=3, p=y, dp=dy)
+# wave
+curve(dy(x), add=T, col="green")
+line.tan(c((1:5)/2.2), dx=1/5, p=dy, dp=d2y, col="orange")
 
 
 ######################
