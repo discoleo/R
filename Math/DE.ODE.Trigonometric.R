@@ -103,12 +103,41 @@
 
 ### Helper functions
 
-library(pracma)
+# library(pracma)
 # needed for Lambert W;
 
 
+# include: Polynomials.Helper.R;
 # include: DE.ODE.Helper.R;
+source("Polynomials.Helper.R")
 source("DE.ODE.Helper.R")
+
+### Other
+
+# p1*sin(pT) + p2*cos(pT)
+genODE.Trig.pm = function(p1, p2, pT, print=FALSE, pDiv=NULL, div.by=NULL) {
+	pC = list(p1, p2);
+	pD = dp.trig.pm(pC, pT);
+	# Linear System
+	pR = list(toPoly.pm("y"), toPoly.pm("dy"));
+	# lapply(pR, print.pm);
+	pR = solve.LD.pm(c(pC, pD[c("C1", "C2")]), pR);
+	# D2 =>
+	pD2 = dp.trig.pm(pD);
+	pD2R = mult.pm(pD2$C1, pR$C1);
+	pD2R = sum.pm(pD2R, mult.pm(pD2$C2, pR$C2));
+	pD2d2y = pR$div; pD2d2y$d2y = 1;
+	pD2R = diff.pm(pD2d2y, pD2R);
+	if( ! is.null(pDiv)) pD2R = div.pm(pD2R, pDiv, by=div.by)$Rez;
+	nms = c("d2y", "dy", "y", "x");
+	idSort = nms %in% names(pD2R);
+	nms  = nms[idSort];
+	pD2R = sort.pm(pD2R, nms, sort.coeff=seq(10, length.out=length(nms)));
+	nms = c(names(pD2R)[ ! names(pD2R) %in% nms], rev(nms));
+	pD2R = pD2R[, nms];
+	if(print) print.pm(pD2R, do.sort=FALSE, leading=NA);
+	return(pD2R);
+}
 
 #########################
 #########################
@@ -908,6 +937,8 @@ sapply(c((1:5)/2.2), line.tan, dx=1/5, p=dy, dp=d2y, col="orange")
 # dP * cos(P(x)) = ( a1*dy + a2*dP*y) / (a1^2 + a2^2)
 ### =>
 # (a1^2 + a2^2)*dP*d2y = d2P*(a1*(a1*dy + a2*dP*y) + a2*(a2*dy - a1*dP*y)) - (a1^2 + a2^2)*dP^3 * y
+
+### ODE:
 dP*d2y - d2P*dy + dP^3 * y # = 0
 
 ### Examples:
@@ -984,6 +1015,32 @@ sapply(c(-5:7 * 3/7 - 1/2), line.tan, dx=1.5, p=y, dp=dy, b=b, n=n)
 # also sinusoidal:
 curve(dy(x, b=b, n=n), add=T, col="green")
 sapply(c(-5:7 * 3/7 - 1/2), line.tan, dx=1.5, p=dy, dp=d2y, b=b, n=n, col="orange")
+
+
+#################
+### Automatic ###
+#################
+
+
+### Ex 1:
+pT = toPoly.pm("x^3 + b*x")
+p1 = toPoly.pm("a1"); p1$x = 0;
+p2 = toPoly.pm("a2"); p2$x = 0;
+pDiv = toPoly.pm("a1^2 + a2^2");
+#
+pR = genODE.Trig.pm(p1, p2, pT, pDiv=pDiv, div.by="a1");
+print.pm(pR, do.sort=FALSE, leading=NA)
+
+
+### Ex 2:
+pT = toPoly.pm("x^3 - 2*x - 1")
+p1 = toPoly.pm("x + 2")
+p2 = toPoly.pm("x^2")
+#
+pR = genODE.Trig.pm(p1, p2, pT);
+print.pm(pR, do.sort=FALSE, leading=NA)
+
+# TODO: check;
 
 
 ########################
@@ -1178,8 +1235,8 @@ dy = function(x, n=2, lower=0) {
 	return(r)
 }
 d2y = function(x, n=2, lower=0) {
-	y.x = y(x, n=n, lower=0)
-	dy.x = dy(x, n=n, lower=0)
+	y.x = y(x, n=n, lower=lower)
+	dy.x = dy(x, n=n, lower=lower)
 	xn = x^n;
 	#
 	dp  = (n-1)*dy.x - n^2*x^(2*n-1)*y.x + n*xn;
@@ -1267,8 +1324,8 @@ dy = function(x, n=2, k=0, lower=0) {
 	return(r)
 }
 d2y = function(x, n=2, k=0, lower=0) {
-	y.x = y(x, n=n, k=k, lower=0)
-	dy.x = dy(x, n=n, k=k, lower=0)
+	y.x = y(x, n=n, k=k, lower=lower)
+	dy.x = dy(x, n=n, k=k, lower=lower)
 	xn = x^n; xnk = xn + k*x; nxn = n*xn + k*x;
 	#
 	dp  = n*(n-1)*x*xn*dy.x - nxn^3*y.x + x*nxn^2
@@ -1359,8 +1416,8 @@ dy = function(x, b=0, k=1, n=2, lower=0) {
 	return(r)
 }
 d2y = function(x, b=0, k=1, n=2, lower=0) {
-	y.x = y(x, b=b, k=k, n=n, lower=0)
-	dy.x = dy(x, b=b, k=k, n=n, lower=0)
+	y.x = y(x, b=b, k=k, n=n, lower=lower)
+	dy.x = dy(x, b=b, k=k, n=n, lower=lower)
 	# (x^2*(k^2*x^2+1)*d2y - 2*(k^2*x^2+1)*(x*dy - y + f0 - x*df0) - x^2*(k^2*x^2+1)*d2f0)^2 +
 	#  - 4*k^2*x^4*(x*dy - y + f0 - x*df0) # = 0
 	x2 = x^2; x21 = k^2 * x2 + 1;
@@ -1446,8 +1503,8 @@ dy = function(x, b=0, k=1, n=2, lower=0) {
 	return(r)
 }
 d2y = function(x, b=0, k=1, n=2, lower=0) {
-	y.x = y(x, b=b, k=k, n=n, lower=0)
-	dy.x = dy(x, b=b, k=k, n=n, lower=0)
+	y.x = y(x, b=b, k=k, n=n, lower=lower)
+	dy.x = dy(x, b=b, k=k, n=n, lower=lower)
 	# 2*(x*dy - y + f0 - x*df0) + 2*k*(x*dy - y + f0 - x*df0)^2 + 2*k*x^4 + x^2*d2f0
 	f0 = eval.pol(x, b); xdf0 = deriv.pol(x, b, dn=1, x.mult=1);
 	d2f0 = deriv.pol(x, b, dn=2, x.mult=0);
