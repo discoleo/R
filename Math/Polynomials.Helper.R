@@ -404,8 +404,10 @@ align.pm = function(p1, p2, align.names=TRUE, doReduce=TRUE) {
 	}
 }
 sum.pm = function(p1, p2, doReduce=FALSE) {
-	if(is.data.frame(p1) && nrow(p1) == 0) return(reduce.pm(p2));
-	if(is.data.frame(p2) && nrow(p2) == 0) return(reduce.pm(p1));
+	isScalar = if(is.data.frame(p1)) (nrow(p1) == 0) else is.numeric(p1) || is.complex(p1);
+	if(isScalar) return(reduce.pm(p2));
+	isScalar = if(is.data.frame(p2)) (nrow(p2) == 0) else is.numeric(p2) || is.complex(p2);
+	if(isScalar) return(reduce.pm(p1));
 	l = align.pm(p1, p2, doReduce=doReduce); # no need to pre-reduce;
 	p1 = l[[1]]; p2 = l[[2]];
 	n1 = names(p1); n2 = names(p2);
