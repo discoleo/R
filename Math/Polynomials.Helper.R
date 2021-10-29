@@ -403,11 +403,38 @@ align.pm = function(p1, p2, align.names=TRUE, doReduce=TRUE) {
 		list(p1=p1, p2=p2);
 	}
 }
+sum.sc.pm = function(p, sc) {
+	if(sc == 0) return(p);
+	idCoeff = match("coeff", names(p));
+	B0.pm = function() {
+		sapply(seq(nrow(p)), function(nr) all(p[nr, - idCoeff] == 0));
+	}
+	isB0 = B0.pm();
+	if(any(isB0)) {
+		p$coeff[isB0][1] = p$coeff[isB0][1] + sc;
+	} else {
+		nr = nrow(p) + 1;
+		p[nr, ] = rep(0, ncol(p));
+		p[nr, "coeff"] = sc;
+	}
+	return(p);
+}
 sum.pm = function(p1, p2, doReduce=FALSE) {
-	isScalar = if(is.data.frame(p1)) (nrow(p1) == 0) else is.numeric(p1) || is.complex(p1);
-	if(isScalar) return(reduce.pm(p2));
-	isScalar = if(is.data.frame(p2)) (nrow(p2) == 0) else is.numeric(p2) || is.complex(p2);
-	if(isScalar) return(reduce.pm(p1));
+	isDF1 = is.data.frame(p1); isDF2 = is.data.frame(p2);
+	if(isDF1 && nrow(p1) == 0) {
+		# TODO: if(doReduce);
+		p2 = if(isDF2) reduce.pm(p2) else p2;
+		return(p2);
+	} else if(isDF2 && nrow(p2) == 0) {
+		p1 = if(isDF1) reduce.pm(p1) else p1;
+		return(p1);
+	}
+	if(is.numeric(p1) || is.complex(p1)) {
+		if(isDF2) return(sum.sc.pm(p2, p1)) else return(p1 + p2);
+	} else if(is.numeric(p2) || is.complex(p2)) {
+		return(sum.sc.pm(p1, p2))
+	}
+	#
 	l = align.pm(p1, p2, doReduce=doReduce); # no need to pre-reduce;
 	p1 = l[[1]]; p2 = l[[2]];
 	n1 = names(p1); n2 = names(p2);
