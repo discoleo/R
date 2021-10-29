@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs - Trigonometric: Basic
 ###
-### draft v.0.1c
+### draft v.0.1d
 
 
 ### Trigonometric ODEs
@@ -18,6 +18,9 @@
 ### History ###
 ###############
 
+### draft v.0.1d:
+# - slight generalization:
+#   y = ... + F0(x);
 ### draft v.0.1a - v.0.1c:
 # - moved Section with Basic Variants
 #   from file: DE.ODE.Trigonometric.R;
@@ -39,20 +42,38 @@ source("DE.ODE.Helper.R")
 
 ### Other
 
+isNZ.pm = function(p) {
+	is.data.frame(p) && (nrow(p) > 0);
+}
+
 # p1*sin(pT) + p2*cos(pT)
-genODE.Trig.pm = function(p1, p2, pT, print=FALSE, pDiv=NULL, div.by=NULL) {
+genODE.Trig.pm = function(p1, p2, pT, f0=NULL, print=FALSE, pDiv=NULL, div.by=NULL) {
 	pC = list(p1, p2);
 	pD = dp.trig.pm(pC, pT);
 	# Linear System
-	pR = list(toPoly.pm("y"), toPoly.pm("dy"));
+	pR  = list(toPoly.pm("y"), toPoly.pm("dy"));
+	d2f = NULL;
+	if( ! is.null(f0)) {
+		pR[[1]] = diff.pm(pR[[1]], f0);
+		df0 = dp.pm(f0, xn="x");
+		hasD = isNZ.pm(df0);
+		if(hasD) {
+			pR[[2]] = diff.pm(pR[[2]], df0);
+			d2f = dp.pm(df0, xn="x");
+			if( ! isNZ(d2f)) d2f = NULL;
+		}
+	}
 	# lapply(pR, print.pm);
 	pR = solve.LD.pm(c(pC, pD[c("C1", "C2")]), pR);
 	# D2 =>
 	pD2 = dp.trig.pm(pD);
 	pD2R = mult.pm(pD2$C1, pR$C1);
 	pD2R = sum.pm(pD2R, mult.pm(pD2$C2, pR$C2));
-	pD2d2y = pR$div; pD2d2y$d2y = 1;
-	pD2R = diff.pm(pD2d2y, pD2R);
+	pD2y = pR$div; pD2y$d2y = 1;
+	if(! is.null(d2f)) {
+		pD2y = diff.pm(pD2y, mult.pm(pR$div, d2f));
+	}
+	pD2R = diff.pm(pD2y, pD2R);
 	if( ! is.null(pDiv)) pD2R = div.pm(pD2R, pDiv, by=div.by)$Rez;
 	nms = c("d2y", "dy", "y", "x");
 	idSort = nms %in% names(pD2R);
@@ -86,12 +107,27 @@ pT = toPoly.pm("x^3 + b*x")
 p1 = toPoly.pm("a1"); p1$x = 0;
 p2 = toPoly.pm("a2"); p2$x = 0;
 pDiv = toPoly.pm("a1^2 + a2^2");
-#
+# Note: a1 & a2 do NOT contribute;
 pR = genODE.Trig.pm(p1, p2, pT, pDiv=pDiv, div.by="a1");
 print.pm(pR, do.sort=FALSE, leading=NA)
-
+### ODE:
+(3*x^2 + b)*d2y - 6*x*dy + (27*x^6 + 27*b*x^4 + 9*b^2*x^2 + b^3)*y # = 0
 
 ### Ex 2:
+pT = toPoly.pm("x^3 + b*x")
+p1 = toPoly.pm("a1"); p1$x = 0;
+p2 = toPoly.pm("a2"); p2$x = 0;
+p0 = toPoly.pm("a3"); p0$x = 0;
+pDiv = toPoly.pm("a1^2 + a2^2");
+# Note: a1 & a2 do NOT contribute;
+pR = genODE.Trig.pm(p1, p2, pT, f0=p0, pDiv=pDiv, div.by="a1");
+print.pm(pR, do.sort=FALSE, leading=NA)
+### ODE:
+(3*x^2 + b)*d2y - 6*x*dy + (27*x^6 + 27*b*x^4 + 9*b^2*x^2 + b^3)*y +
+	- 27*a3*x^6 - 27*b*a3*x^4 - 9*b^2*a3*x^2 - b^3*a3 # = 0
+
+
+### Ex 3:
 pT = toPoly.pm("x^3 - 2*x - 1")
 p1 = toPoly.pm("x + 2")
 p2 = toPoly.pm("x^2")
