@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs - Trigonometric: Basic
 ###
-### draft v.0.1d
+### draft v.0.1d-check
 
 
 ### Trigonometric ODEs
@@ -18,7 +18,8 @@
 ### History ###
 ###############
 
-### draft v.0.1d:
+
+### draft v.0.1d - v.0.1d-check:
 # - slight generalization:
 #   y = ... + F0(x);
 ### draft v.0.1a - v.0.1c:
@@ -113,6 +114,7 @@ print.pm(pR, do.sort=FALSE, leading=NA)
 ### ODE:
 (3*x^2 + b)*d2y - 6*x*dy + (27*x^6 + 27*b*x^4 + 9*b^2*x^2 + b^3)*y # = 0
 
+
 ### Ex 2:
 pT = toPoly.pm("x^3 + b*x")
 p1 = toPoly.pm("a1"); p1$x = 0;
@@ -188,26 +190,26 @@ d2y = - n*(n-1)*x^(n-2) * (a2*sin(x^n + b*x) - a1*cos(x^n + b*x)) +
 (3*x^2 + b) * d2y(x, n=3) - 6*x*dy(x, n=3) + (3*x^2 + b)^3 * y(x, n=3) # = 0
 
 ### Solution & Plot:
-y = function(x, a=c(1, 1), b=1, n=2) {
+y = function(x, b=1, n=2, a=c(1, 1), a0=0) {
 	xn = x^n + b*x
-	r = a[1]*sin(xn) + a[2]*cos(xn)
+	r = a[1]*sin(xn) + a[2]*cos(xn) + a0;
 	return(r)
 }
-dy = function(x, a=c(1, 1), b=1, n=2) {
+dy = function(x, b=1, n=2, a=c(1, 1), a0=0) {
 	xn1 = x^(n-1)
 	xn = (xn1 + b)*x
 	r = - (n*xn1 + b) * (a[2]*sin(xn) - a[1]*cos(xn))
 	r = round0(r)
 	return(r)
 }
-d2y = function(x, a=c(1, 1), b=1, n=2) {
-	y.x = y(x, a=a, b=b, n=n)
-	dy.x = dy(x, a=a, b=b, n=n)
+d2y = function(x, b=1, n=2, a=c(1, 1), a0=0) {
+	y.x = y(x, b=b, n=n, a=a, a0=a0)
+	dy.x = dy(x, b=b, n=n, a=a, a0=a0)
 	xn2 = n * x^(n-2)
 	xnb = xn2 * x + b
 	#
-	div = xnb;
-	dp  = (n-1)*xn2*dy.x - xnb^3*y.x
+	div = xnb; xnb3 = xnb^3;
+	dp  = (n-1)*xn2*dy.x - xnb3*y.x + xnb3*a0;
 	dp = ifelse(div != 0, dp / div, n*(n-1)); # TODO: needs correction!
 	return(dp)
 }
@@ -234,10 +236,22 @@ curve(dy(x, b=b, n=n), add=T, col="green")
 line.tan(c(-5:7 * 3/7 - 1/2), dx=1.5, p=dy, dp=d2y, b=b, n=n, col="orange")
 
 
+### Ex 3:
+n = 2; b = 1.5; a0=3; # a0 = -4;
+px = c(-5:7 * 3/7 - 1/2);
+curve(y(x, b=b, n=n, a0=a0), from= -3, to = 3, ylim=c(-4, 6))
+# oscillating function with local minima;
+# slightly shifted: + 1/2
+line.tan(px, dx=1.5, p=y, dp=dy, b=b, n=n, a0=a0)
+# also sinusoidal:
+curve(dy(x, b=b, n=n, a0=a0), add=T, col="green")
+line.tan(px, dx=1.4, p=dy, dp=d2y, b=b, n=n, a0=a0, col="orange")
+
+
 #####################
 
 ### Basic Example: Simple / Power
-# - generalization in the next sections;
+# - generalization in the (next)/previous sections;
 
 ### y = sin(a*x^n)
 dy = n*a*x^(n-1)*cos(a*x^n)
