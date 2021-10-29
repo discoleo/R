@@ -58,8 +58,41 @@ dp.div.pm = function(p1, pdiv, xn="x") {
 	r = list(p=r, div = mult.pm(pdiv, pdiv));
 	return(r)
 }
+# D( p1*sin(T(x)) + p2*cos(T(x)) )
+dp.trig.pm = function(plst, pT, xn="x", trig.order="sin") {
+	trig.order.id = match(trig.order, c("sin", "cos"));
+	if(is.null(trig.order.id)) stop("Invalid order: p[[1]]*sin(T) + p[[2]]*cos(T);");
+	#
+	if(is.data.frame(plst)) {
+		p1 = plst;
+		p2 = NULL;
+	} else if(is.list(plst)) {
+		p1 = plst[[1]];
+		p2 = if(length(plst) >= 2) plst[[2]] else NULL;
+	}
+	# Result
+	dT = function(p, pT, type) {
+		r = dp.pm(pT, xn=xn);
+		if(type == 2) r$coeff = - r$coeff;
+		r = mult.pm(r, p);
+		return(r);
+	}
+	next.type = function(id) if(id == 1) 2 else 1;
+	C1 = dp.pm(p1, xn=xn);
+	C2 = dT(p1, pT, type=trig.order.id);
+	if( ! is.null(p2)) {
+		C1 = sum.pm(C1, dT(p2, pT, type = next.type(trig.order.id)));
+		C2 = sum.pm(C2, dp.pm(p2, xn=xn));
+	}
+	rlst = list(C1=C1, C2=C2, Trig=pT);
+	attr(rlst, "trig.order") = trig.order;
+	return(rlst);
+}
 
-### D( ODE )
+
+################
+### D( ODE ) ###
+################
 
 # D( dny ) => d(n+1)y;
 dy.pm = function(p, yn="y", xn="x", starts.with=FALSE) {
