@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs - Trigonometric: Basic
 ###
-### draft v.0.1f-ex2
+### draft v.0.1g
 
 
 ### Trigonometric ODEs
@@ -19,6 +19,8 @@
 ###############
 
 
+### draft v.0.1g:
+# - [refactoring] use sort.dpm();
 ### draft v.0.1f - v.0.1f-ex2:
 # - automatic generation of mixed Trig-Log ODEs:
 #   y = P1(x) * sin(T0(x) + log(T1(x)));
@@ -78,19 +80,15 @@ genODE.Trig.pm = function(p1, p2, pT, f0=NULL, print=FALSE, pDiv=NULL, div.by=NU
 	pD2 = dp.trig.pm(pD);
 	pD2R = mult.pm(pD2$C1, pR$C1);
 	pD2R = sum.pm(pD2R, mult.pm(pD2$C2, pR$C2));
-	pD2y = pR$div; pD2y$d2y = 1;
+	pD2y = pR$Div; pD2y$d2y = 1;
 	if(! is.null(d2f)) {
 		pD2y = diff.pm(pD2y, mult.pm(pR$Div, d2f));
 	}
 	pD2R = diff.pm(pD2y, pD2R);
 	if( ! is.null(pDiv)) pD2R = div.pm(pD2R, pDiv, by=div.by)$Rez;
-	nms = c("d2y", "dy", "y", "x");
-	idSort = nms %in% names(pD2R);
-	nms  = nms[idSort];
-	pD2R = sort.pm(pD2R, nms, sort.coeff=seq(10, length.out=length(nms)));
-	nms = c(names(pD2R)[ ! names(pD2R) %in% nms], rev(nms));
-	pD2R = pD2R[, nms];
-	if(print) print.pm(pD2R, do.sort=FALSE, leading=NA);
+	#
+	pD2R = sort.dpm(pD2R, y="y");
+	if(print) print(print.dpm(pD2R, do.sort=FALSE));
 	return(pD2R);
 }
 
@@ -130,13 +128,9 @@ genODE.TrigLog.pm = function(p1, p2, pT, f0=NULL, print=FALSE, pDiv=NULL, div.by
 	pD2y = mult.pm(pD2y, mult.pm(pD2$Div, pR$Div));
 	pD2R = diff.pm(pD2y, pD2R);
 	if( ! is.null(pDiv)) pD2R = div.pm(pD2R, pDiv, by=div.by)$Rez;
-	nms = c("d2y", "dy", "y", "x");
-	idSort = nms %in% names(pD2R);
-	nms  = nms[idSort];
-	pD2R = sort.pm(pD2R, nms, sort.coeff=seq(10, length.out=length(nms)));
-	nms = c(names(pD2R)[ ! names(pD2R) %in% nms], rev(nms));
-	pD2R = pD2R[, nms];
-	if(print) print.pm(pD2R, do.sort=FALSE, leading=NA);
+	#
+	pD2R = sort.dpm(pD2R, y="y");
+	if(print) print(print.dpm(pD2R, do.sort=FALSE));
 	return(pD2R);
 }
 
@@ -164,7 +158,7 @@ p2 = toPoly.pm("a2");
 pDiv = toPoly.pm("a1^2 + a2^2");
 # Note: a1 & a2 do NOT contribute;
 pR = genODE.Trig.pm(p1, p2, pT, pDiv=pDiv, div.by="a1");
-print.pm(pR, do.sort=FALSE, leading=NA)
+print.dpm(pR, do.sort=FALSE)
 ### ODE:
 (3*x^2 + b)*d2y - 6*x*dy + (27*x^6 + 27*b*x^4 + 9*b^2*x^2 + b^3)*y # = 0
 
@@ -177,7 +171,7 @@ p0 = toPoly.pm("a3");
 pDiv = toPoly.pm("a1^2 + a2^2");
 # Note: a1 & a2 do NOT contribute;
 pR = genODE.Trig.pm(p1, p2, pT, f0=p0, pDiv=pDiv, div.by="a1");
-print.pm(pR, do.sort=FALSE, leading=NA)
+print.dpm(pR, do.sort=FALSE)
 ### ODE:
 (3*x^2 + b)*d2y - 6*x*dy + (27*x^6 + 27*b*x^4 + 9*b^2*x^2 + b^3)*y +
 	- 27*a3*x^6 - 27*b*a3*x^4 - 9*b^2*a3*x^2 - b^3*a3 # = 0
@@ -190,7 +184,7 @@ p2 = toPoly.pm("a2");
 p0 = toPoly.pm("a3*x");
 #
 pR = genODE.Trig.pm(p1, p2, pT, f0=p0, pDiv=NULL, div.by="a1");
-print.pm(pR, do.sort=FALSE, leading=NA)
+print.dpm(pR, do.sort=FALSE)
 ### ODE:
 (2*a1^2*x^3 + a1^2*b*x^2 + 2*a2^2*x - a1*a2 + b*a2^2)*d2y +
 	- 2*(3*a1^2*x^2 + a1^2*b*x + a2^2)*dy +
@@ -206,7 +200,7 @@ p1 = toPoly.pm("x + 2")
 p2 = toPoly.pm("x^2")
 #
 pR = genODE.Trig.pm(p1, p2, pT);
-print.pm(pR, do.sort=FALSE, leading=NA)
+print.dpm(pR, do.sort=FALSE)
 
 # TODO: check;
 
@@ -549,7 +543,7 @@ p2 = toPoly.pm("a2");
 pDiv = toPoly.pm("a1^2 + a2^2");
 # Note: a1 & a2 do NOT contribute;
 pR = genODE.TrigLog.pm(p1, p2, pT, pDiv=pDiv, div.by="a1");
-print.pm(pR, do.sort=FALSE, leading=NA)
+print.dpm(pR, do.sort=FALSE)
 ### ODE:
 (x^2 + 2*b*x + b^2)*d2y + (x + b)*dy + y # = 0
 
@@ -562,7 +556,7 @@ p2 = toPoly.pm("a2");
 pDiv = toPoly.pm("a1^2 + a2^2");
 # Note: a1 & a2 do NOT contribute;
 pR = genODE.TrigLog.pm(p1, p2, list(pT1, pT0), pDiv=pDiv, div.by="a1");
-print.pm(pR, do.sort=FALSE, leading=NA)
+print.dpm(pR, do.sort=FALSE)
 ### ODE:
 (x + b)*(k*x^2 + 2*k*b*x + x + k*b^2 + b)*d2y + (x + b)*dy +
 	+ (k^3*x^3 + 3*k^2*x^2 + 3*b*k^3*x^2 + 3*k*x + 6*b*k^2*x + 3*b^2*k^3*x + 1 + 3*b*k + 3*b^2*k^2 + b^3*k^3)*y # = 0
@@ -576,7 +570,7 @@ p0 = toPoly.pm("a3");
 pDiv = toPoly.pm("a1^2 + a2^2");
 # Note: a1 & a2 do NOT contribute;
 pR = genODE.TrigLog.pm(p1, p2, pT1, f0=p0, pDiv=pDiv, div.by="a1");
-print.pm(pR, do.sort=FALSE, leading=NA)
+print.dpm(pR, do.sort=FALSE)
 ### ODE:
 (x + b)^2*d2y + (x + b)*dy + y - a3 # = 0
 
@@ -589,7 +583,7 @@ p0 = toPoly.pm("a3");
 pDiv = toPoly.pm("a1^2 + a2^2");
 # Note: a1 & a2 do NOT contribute;
 pR = genODE.TrigLog.pm(p1, p2, pT1, f0=p0, pDiv=pDiv, div.by="a1");
-print.pm(pR, do.sort=FALSE, leading=NA)
+print.dpm(pR, do.sort=FALSE)
 ### ODE:
 (2*x^5 + 5*b1*x^4 + 4*b0*x^3 + 4*b1^2*x^3 + 6*b0*b1*x^2 + b1^3*x^2 + 2*b0^2*x + 2*b0*b1^2*x + b0^2*b1)*d2y +
 	+ (2*x^4 + 4*b1*x^3 + 3*b1^2*x^2 + b1^3*x - 2*b0^2 + b0*b1^2)*dy +
