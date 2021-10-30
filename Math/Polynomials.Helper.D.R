@@ -248,6 +248,6 @@ solve.LD.pm = function(pM, pR) {
 	pC2 = diff.pm(
 		mult.pm(pM[[1]], pR[[2]]),
 		mult.pm(pR[[1]], pM[[3]]));
-	pR = list(C1=pC1, C2=pC2, div=pDiv);
+	pR = list(C1=pC1, C2=pC2, Div=pDiv);
 	return(pR);
 }
