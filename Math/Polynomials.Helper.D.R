@@ -5,6 +5,8 @@
 ###
 ### Helper Functions
 ### Derivation
+###
+### draft v.0.1c-fx
 
 
 ### fast load:
@@ -12,7 +14,7 @@
 
 ### requires:
 # - but is already loaded inside;
-# source("Polynomials.Helper.R")
+#   source("Polynomials.Helper.R")
 
 ######################
 
@@ -21,6 +23,8 @@
 ###############
 
 
+### draft v.0.1c - v.0.1c-fix:
+# - [fix] absent variable name;
 ### draft v.0.1a:
 # - moved Section on Derivation
 #   from Polynomials.Helper.R;
@@ -32,10 +36,12 @@
 
 # D( p(x) )
 dp.pm = function(p, xn="x") {
-	p = p[(p[,xn] != 0), , drop=FALSE];
+	nc = match(xn, names(p));
+	if(is.na(nc)) return(0);
+	p = p[(p[, nc] != 0), , drop=FALSE];
 	if(nrow(p) == 0) return(0);
-	p$coeff = p$coeff * p[,xn];
-	p[,xn] = p[,xn] - 1;
+	p$coeff = p$coeff * p[, nc];
+	p[, nc] = p[, nc] - 1;
 	return(p);
 }
 # D( p1 * exp(p2) )
