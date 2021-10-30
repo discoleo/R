@@ -6,7 +6,7 @@
 ### Helper Functions
 ### Derivation
 ###
-### draft v.0.1c-fx
+### draft v.0.1c-fix
 
 
 ### fast load:
@@ -116,7 +116,7 @@ dp.trigLog.pm = function(plst, pT, xn="x", trig.order="sin") {
 		if(isD) {
 			p1 = plst$C1; p2 = plst$C2;
 			if( ! missing(pT)) warning("Using pT included in the list!");
-			pT  = plst$TrigLog;
+			pT1 = plst$TrigLog;
 			pT0 = plst$Trig0;
 			trig.order = attr(plst, "trig.order");
 		} else {
