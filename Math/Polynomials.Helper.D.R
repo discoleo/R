@@ -33,6 +33,28 @@
 #####################
 #####################
 
+### General Methods
+
+sort.dpm = function(p, y="y", x="x") {
+	# TODO: "dny"
+	nms = if(length(y) > 1) y else paste0(c("d2", "d"), y);
+	nms = c(nms, y, x);
+	# Valid names:
+	idSort = nms %in% names(p);
+	nms = nms[idSort];
+	if(length(nms) == 0) warning("No valid names!");
+	# hard-coded: start.id = 10
+	p = sort.pm(p, nms, sort.coeff=seq(10, length.out=length(nms)));
+	nms = c(names(p)[ ! names(p) %in% nms], rev(nms));
+	p = p[, nms];
+	return(p);
+}
+print.dpm = function(p, y="y", x="x", do.sort=TRUE) {
+	if(do.sort) p = sort.dpm(p, y=y, x=x);
+	print.pm(p, do.sort=FALSE, leading=NA);
+}
+
+### D
 
 # D( p(x) )
 dp.pm = function(p, xn="x") {
