@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs - Trigonometric: Basic
 ###
-### draft v.0.1d-check
+### draft v.0.1e
 
 
 ### Trigonometric ODEs
@@ -19,6 +19,10 @@
 ###############
 
 
+### draft v.0.1e:
+# - moved another Section with Basic Variants
+#   from file: DE.ODE.Trigonometric.R;
+# - type: y = P1(x)*sin(log(T(x)));
 ### draft v.0.1d - v.0.1d-check:
 # - slight generalization:
 #   y = ... + F0(x);
@@ -455,18 +459,111 @@ d2y = function(x, pp=1, m=1, posRoot=TRUE) {
 pp = 2; m = 1;
 curve(y(x, pp=pp, m=m), from= 0, to = 2)
 # global minimum;
-sapply(c((0:4)/2.2), line.tan, dx=1.5, p=y, dp=dy, pp=pp, m=m)
+line.tan(c((0:4)/2.2), dx=1.5, p=y, dp=dy, pp=pp, m=m)
 # pseudo-sigmoidal
 curve(dy(x, pp=pp, m=m), add=T, col="green")
-sapply(c((0:4)/2.2), line.tan, dx=1/5, p=dy, dp=d2y, pp=pp, m=m, col="orange")
+line.tan(c((0:4)/2.2), dx=1/5, p=dy, dp=d2y, pp=pp, m=m, col="orange")
 
 
 ### m = 2
 pp = 2; m = 2;
 curve(y(x, pp=pp, m=m), from= -5/3, to = 5/3, ylim=c(-2, 2))
 # global minimum;
-sapply(c((-3:3)/2.2), line.tan, dx=1.5, p=y, dp=dy, pp=pp, m=m)
+line.tan(c((-3:3)/2.2), dx=1.5, p=y, dp=dy, pp=pp, m=m)
 # pseudo-sigmoidal
 curve(dy(x, pp=pp, m=m), add=T, col="green")
-sapply(c((-3:3)/2.2), line.tan, dx=1/5, p=dy, dp=d2y, pp=pp, m=m, col="orange")
+line.tan(c((-3:3)/2.2), dx=1/5, p=dy, dp=d2y, pp=pp, m=m, col="orange")
+
+
+########################
+
+########################
+###  Linear Complex  ###
+### (Non-Polynomial) ###
+########################
+
+###########
+### LOG ###
+
+### y = a1*sin(log(P(x))) + a2*cos(log(P(x)))
+
+### D =>
+# P(x) * dy = dP * (a1*cos(log(P(x))) - a2*sin(log(P(x))))
+### D2 * P(x) =>
+# P(x)^2 * d2y + P(x) * dP*dy = P(x)*d2P(x)*(a1*cos(log(P(x))) - a2*sin(log(P(x)))) - dP(x)^2 * y
+### Solve for sin(log(P(x))), cos(log(P(x))) using y & dy;
+# sin(log(P(x))) = (-a2*P*dy + a1*dP*y) / ((a1^2 + a2^2)*dP)
+# cos(log(P(x))) = ( a1*P*dy + a2*dP*y) / ((a1^2 + a2^2)*dP)
+(a1^2 + a2^2)*dP*(P(x)^2 * d2y + P(x)*dP*dy) =
+	P(x)*d2P(x)*(a[1]*(a[1]*P(x)*dy + a[2]*dP(x)*y) + a[2]*(a[2]*P(x)*dy - a[1]*dP(x)*y)) - (a1^2 + a2^2)*dP(x)^3 * y
+### Eq:
+dP*P(x)^2 * d2y + P(x)*dP^2*dy - P(x)^2*d2P*dy + dP^3*y # = 0
+
+### Examples:
+### P(x) = x + b
+(x+b)^2 * d2y + (x+b)*dy + y # = 0
+### P(x) = x^2 + b1*x + b0
+(2*x+b1)*(x^2+b1*x+b0)^2 * d2y + (x^2+b1*x+b0)*(2*x+b1)^2*dy - 2*(x^2+b1*x+b0)^2*dy + (2*x+b1)^3*y # = 0
+### P(x) = x^n + b0
+n*x^(n-1)*(x^n+b0)^2 * d2y + n^2*(x^n+b0)*x^(2*n-2)*dy - n*(n-1)*(x^n+b0)^2*x^(n-2)*dy + n^3*x^(3*n-3)*y # = 0 # * x^(2-n) / n
+x*(x^n+b0)^2 * d2y + n*x^n*(x^n+b0)*dy - (n-1)*(x^n+b0)^2*dy + n^2*x^(2*n-1)*y # = 0
+x*(x^n+b0)^2 * d2y + (x^(2*n) - (n-2)*b0*x^n - (n-1)*b0^2)*dy + n^2*x^(2*n-1)*y # = 0
+
+
+### Solution:
+y = function(x, a=c(1, 1), FUN.list, ...) {
+	xlog = log(FUN.list[[1]](x, ...));
+	r = a[1]*sin(xlog) + a[2]*cos(xlog)
+	return(r)
+}
+dy = function(x, a=c(1, 1), FUN.list, ...) {
+	div = FUN.list[[1]](x, ...)
+	xlog = log(div);
+	dp = (a[1]*cos(xlog) - a[2]*sin(xlog)) * FUN.list[[2]](x, ...)
+	dp = ifelse(div != 0, dp / div, 0); # TODO: check;
+	dp = round0(dp)
+	return(dp)
+}
+d2y = function(x, a=c(1, 1), FUN.list, ...) {
+	y.x  =  y(x, a=a, FUN.list=FUN.list, ...)
+	dy.x = dy(x, a=a, FUN.list=FUN.list, ...)
+	Px = FUN.list[[1]](x, ...)
+	dP = FUN.list[[2]](x, ...); dPsq = dP^2;
+	d2P = FUN.list[[3]](x, ...)
+	#
+	div = - dP * Px^2;
+	dp  = Px*(dPsq - Px*d2P)*dy.x + dPsq*dP*y.x
+	dp = ifelse(div != 0, dp / div, d2P/Px*(a[1]*cos(log(Px)) - a[2]*sin(log(Px)))); # TODO: check!
+	return(dp)
+}
+P = function(x, b=c(1, 1)) {
+	x^2 + b[2]*x + b[1]
+}
+dP = function(x, b=c(1, 1)) {
+	2*x + b[2]
+}
+d2P = function(x, b=c(1, 1)) {
+	2
+}
+p.list = list(P, dP, d2P)
+
+### Plot:
+b = c(1, 1);
+curve(y(x, b=b, FUN.list=p.list), from= -3, to = 3, ylim=c(-2, 2))
+# oscillating function with local minima;
+# slightly shifted: + 1/2
+line.tan(c(-5:7 * 3/7 - 1/2), dx=2, p=y, dp=dy, FUN.list=p.list, b=b)
+# also sinusoidal:
+curve(dy(x, b=b, FUN.list=p.list), add=T, col="green")
+line.tan(c(-5:7 * 3/7 - 1/2), dx=1.5, p=dy, dp=d2y, FUN.list=p.list, b=b, col="orange")
+
+###
+b = c(3, -1);
+curve(y(x, b=b, FUN.list=p.list), from= -3, to = 3, ylim=c(-1, 1.5))
+# possible local maximum;
+# slightly shifted: ???
+line.tan(c(-5:7 * 3/7 - 1/2), dx=2, p=y, dp=dy, FUN.list=p.list, b=b)
+#
+curve(dy(x, b=b, FUN.list=p.list), add=T, col="green")
+line.tan(c(-5:7 * 3/7 - 1/2), dx=1.5, p=dy, dp=d2y, FUN.list=p.list, b=b, col="orange")
 

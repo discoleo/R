@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs - Trigonometric
 ###
-### draft v.0.4b-clean3
+### draft v.0.4b-clean4
 
 
 ### Non-Linear & Linear:
@@ -17,9 +17,9 @@
 ### History ###
 ###############
 
-### draft v.0.4b - v.0.4b-clean3:
+### draft v.0.4b - v.0.4b-clean4:
 # - moved Section on Automatic generation
-#   to a new file:
+#   & Basic types to a new file:
 #   DE.ODE.Trigonometric.Basic.R;
 
 ### Order 1 & 2 Linear:
@@ -705,113 +705,32 @@ sapply(c(1/3, 1/2, 1, 2.2), line.tan, dx=3, p=dy, dp=d2y, k=k, col="orange")
 ############################
 ############################
 
-#####################
-### Linear Simple ###
-###  (Polynomial) ###
-#####################
+##############
+### Basics ###
+##############
+
+### Linear Simple
+### (Polynomial)
+###       &
+### Linear Complex
+### (Non-Polynomial)
+
+# y = P(x)*sin(T(x))
+# where T(x) = Polynomial or Non-Polynomial;
 
 # - moved to file:
 #   DE.ODE.Trigonometric.Basic.R;
 
 
-########################
-
-########################
-###  Linear Complex  ###
-### (Non-Polynomial) ###
-########################
-
-###########
-### LOG ###
-
-### y = a1*sin(log(P(x))) + a2*cos(log(P(x)))
-
-### D =>
-# P(x) * dy = dP * (a1*cos(log(P(x))) - a2*sin(log(P(x))))
-### D2 * P(x) =>
-# P(x)^2 * d2y + P(x) * dP*dy = P(x)*d2P(x)*(a1*cos(log(P(x))) - a2*sin(log(P(x)))) - dP(x)^2 * y
-### Solve for sin(log(P(x))), cos(log(P(x))) using y & dy;
-# sin(log(P(x))) = (-a2*P*dy + a1*dP*y) / ((a1^2 + a2^2)*dP)
-# cos(log(P(x))) = ( a1*P*dy + a2*dP*y) / ((a1^2 + a2^2)*dP)
-(a1^2 + a2^2)*dP*(P(x)^2 * d2y + P(x)*dP*dy) =
-	P(x)*d2P(x)*(a[1]*(a[1]*P(x)*dy + a[2]*dP(x)*y) + a[2]*(a[2]*P(x)*dy - a[1]*dP(x)*y)) - (a1^2 + a2^2)*dP(x)^3 * y
-### Eq:
-dP*P(x)^2 * d2y + P(x)*dP^2*dy - P(x)^2*d2P*dy + dP^3*y # = 0
-
-### Examples:
-### P(x) = x + b
-(x+b)^2 * d2y + (x+b)*dy + y # = 0
-### P(x) = x^2 + b1*x + b0
-(2*x+b1)*(x^2+b1*x+b0)^2 * d2y + (x^2+b1*x+b0)*(2*x+b1)^2*dy - 2*(x^2+b1*x+b0)^2*dy + (2*x+b1)^3*y # = 0
-### P(x) = x^n + b0
-n*x^(n-1)*(x^n+b0)^2 * d2y + n^2*(x^n+b0)*x^(2*n-2)*dy - n*(n-1)*(x^n+b0)^2*x^(n-2)*dy + n^3*x^(3*n-3)*y # = 0 # * x^(2-n) / n
-x*(x^n+b0)^2 * d2y + n*x^n*(x^n+b0)*dy - (n-1)*(x^n+b0)^2*dy + n^2*x^(2*n-1)*y # = 0
-x*(x^n+b0)^2 * d2y + (x^(2*n) - (n-2)*b0*x^n - (n-1)*b0^2)*dy + n^2*x^(2*n-1)*y # = 0
-
-
-### Solution:
-y = function(x, a=c(1, 1), FUN.list, ...) {
-	xlog = log(FUN.list[[1]](x, ...));
-	r = a[1]*sin(xlog) + a[2]*cos(xlog)
-	return(r)
-}
-dy = function(x, a=c(1, 1), FUN.list, ...) {
-	div = FUN.list[[1]](x, ...)
-	xlog = log(div);
-	dp = (a[1]*cos(xlog) - a[2]*sin(xlog)) * FUN.list[[2]](x, ...)
-	dp = ifelse(div != 0, dp / div, 0); # TODO: check;
-	dp = round0(dp)
-	return(dp)
-}
-d2y = function(x, a=c(1, 1), FUN.list, ...) {
-	y.x  =  y(x, a=a, FUN.list=FUN.list, ...)
-	dy.x = dy(x, a=a, FUN.list=FUN.list, ...)
-	Px = FUN.list[[1]](x, ...)
-	dP = FUN.list[[2]](x, ...); dPsq = dP^2;
-	d2P = FUN.list[[3]](x, ...)
-	#
-	div = - dP * Px^2;
-	dp  = Px*(dPsq - Px*d2P)*dy.x + dPsq*dP*y.x
-	dp = ifelse(div != 0, dp / div, d2P/Px*(a[1]*cos(log(Px)) - a[2]*sin(log(Px)))); # TODO: check!
-	return(dp)
-}
-P = function(x, b=c(1, 1)) {
-	x^2 + b[2]*x + b[1]
-}
-dP = function(x, b=c(1, 1)) {
-	2*x + b[2]
-}
-d2P = function(x, b=c(1, 1)) {
-	2
-}
-p.list = list(P, dP, d2P)
-### Plot:
-b = c(1, 1);
-curve(y(x, b=b, FUN.list=p.list), from= -3, to = 3, ylim=c(-2, 2))
-# oscillating function with local minima;
-# slightly shifted: + 1/2
-sapply(c(-5:7 * 3/7 - 1/2), FUN=line.tan, dx=2, p=y, dp=dy, FUN.list=p.list, b=b)
-# also sinusoidal:
-curve(dy(x, b=b, FUN.list=p.list), add=T, col="green")
-sapply(c(-5:7 * 3/7 - 1/2), line.tan, dx=1.5, p=dy, dp=d2y, FUN.list=p.list, b=b, col="orange")
-
-###
-b = c(3, -1);
-curve(y(x, b=b, FUN.list=p.list), from= -3, to = 3, ylim=c(-1, 1.5))
-# possible local maximum;
-# slightly shifted: ???
-sapply(c(-5:7 * 3/7 - 1/2), FUN=line.tan, dx=2, p=y, dp=dy, FUN.list=p.list, b=b)
-#
-curve(dy(x, b=b, FUN.list=p.list), add=T, col="green")
-sapply(c(-5:7 * 3/7 - 1/2), line.tan, dx=1.5, p=dy, dp=d2y, FUN.list=p.list, b=b, col="orange")
-
-
 ############################
 ############################
+
+###############
+### Trig(y) ###
+###############
 
 ### Combined Functions:
 ### Linearly combined
-
 
 ### f1(x)*sin(y) + f2(x)*cos(y) = P(x)
 
@@ -1008,10 +927,10 @@ d2y = function(x, n=2, k=0, lower=0) {
 n = 2; k = 1; lim=3.5;
 x.px = c(-5:7 * 3/7)
 curve(y(x, n=n, k=k), from= -3, to = 3, ylim=c(-lim, lim))
-sapply(x.px, line.tan, dx=1.5, p=y, dp=dy, n=n, k=k)
+line.tan(x.px, dx=1.5, p=y, dp=dy, n=n, k=k)
 #
 curve(dy(x, n=n, k=k), add=T, col="green")
-sapply(x.px, line.tan, dx=1.5, p=dy, dp=d2y, n=n, k=k, col="orange")
+line.tan(x.px, dx=1.5, p=dy, dp=d2y, n=n, k=k, col="orange")
 
 
 #########
@@ -1019,10 +938,10 @@ sapply(x.px, line.tan, dx=1.5, p=dy, dp=d2y, n=n, k=k, col="orange")
 n = 1/2; k = 3; lim=2;
 x.px = c(0:7 * 3/7)
 curve(y(x, n=n, k=k), from= 0, to = 3, ylim=c(-1, lim))
-sapply(x.px, line.tan, dx=1.5, p=y, dp=dy, n=n, k=k)
+line.tan(x.px, dx=1.5, p=y, dp=dy, n=n, k=k)
 # x.px = 0: needs correction;
 curve(dy(x, n=n, k=k), add=T, col="green")
-sapply(x.px, line.tan, dx=1.5, p=dy, dp=d2y, n=n, k=k, col="orange")
+line.tan(x.px, dx=1.5, p=dy, dp=d2y, n=n, k=k, col="orange")
 
 
 ############################
@@ -1106,20 +1025,20 @@ d2y = function(x, b=0, k=1, n=2, lower=0) {
 b = c(0, 1);
 x.px = c(-5:7 * 3/7)
 curve(y(x, b=b), from= -3, to = 2, ylim=c(-2, 3.5))
-sapply(x.px, line.tan, dx=1.6, p=y, dp=dy, b=b)
+line.tan(x.px, dx=1.6, p=y, dp=dy, b=b)
 #
 curve(dy(x, b=b), add=T, col="green")
-sapply(x.px, line.tan, dx=1.5, p=dy, dp=d2y, b=b, col="orange")
+line.tan(x.px, dx=1.5, p=dy, dp=d2y, b=b, col="orange")
 
 
 ### Ex 2:
 b = c(0, -2, 1);
 x.px = c(-5:7 * 3/7)
 curve(y(x, b=b), from= -1.5, to = 2.5, ylim=c(-3, 4))
-sapply(x.px, line.tan, dx=1.6, p=y, dp=dy, b=b)
+line.tan(x.px, dx=1.6, p=y, dp=dy, b=b)
 #
 curve(dy(x, b=b), add=T, col="green")
-sapply(x.px, line.tan, dx=1.5, p=dy, dp=d2y, b=b, col="orange")
+line.tan(x.px, dx=1.5, p=dy, dp=d2y, b=b, col="orange")
 
 
 ### Ex 3:
@@ -1127,10 +1046,10 @@ b = c(0, -2, 1); k =1/3;
 x.scale = 1; xlim = c(-1.5, 2.5) * x.scale;
 x.px = c(-5:7 * 3/7) * x.scale;
 curve(y(x, b=b, k=k), from= xlim[1], to = xlim[2], ylim=c(-3, 4))
-sapply(x.px, line.tan, dx=1.6, p=y, dp=dy, b=b, k=k)
+line.tan(x.px, dx=1.6, p=y, dp=dy, b=b, k=k)
 #
 curve(dy(x, b=b, k=k), add=T, col="green")
-sapply(x.px, line.tan, dx=1.5, p=dy, dp=d2y, b=b, k=k, col="orange")
+line.tan(x.px, dx=1.5, p=dy, dp=d2y, b=b, k=k, col="orange")
 
 
 ############################
@@ -1190,20 +1109,20 @@ d2y = function(x, b=0, k=1, n=2, lower=0) {
 b = c(0, 1); k = 1;
 x.px = c(-2:2 * 2/7); xlim = sqrt(pi/2)/k - 1E-2;
 curve(y(x, b=b, k=k), from= -xlim, to = xlim, ylim=c(-2, 3.5))
-sapply(x.px*2.08, line.tan, dx=1.6, p=y, dp=dy, b=b, k=k)
+line.tan(x.px*2.08, dx=1.6, p=y, dp=dy, b=b, k=k)
 #
 curve(dy(x, b=b, k=k), add=T, col="green")
-sapply(x.px*1.6, line.tan, dx=1.5, p=dy, dp=d2y, b=b, k=k, col="orange")
+line.tan(x.px*1.6, dx=1.5, p=dy, dp=d2y, b=b, k=k, col="orange")
 
 
 ### Ex 2:
 b = c(0, 1); k = 2;
 x.px = c(-2:2 * 1/7); xlim = sqrt(pi/2)/k - 1E-2;
 curve(y(x, b=b, k=k), from= -xlim, to = xlim, ylim=c(-1, 2))
-sapply(x.px*2.08, line.tan, dx=1.6, p=y, dp=dy, b=b, k=k)
+line.tan(x.px*2.08, dx=1.6, p=y, dp=dy, b=b, k=k)
 #
 curve(dy(x, b=b, k=k), add=T, col="green")
-sapply(x.px*1.7, line.tan, dx=1.5, p=dy, dp=d2y, b=b, k=k, col="orange")
+line.tan(x.px*1.7, dx=1.5, p=dy, dp=d2y, b=b, k=k, col="orange")
 
 
 #########################
@@ -1216,7 +1135,7 @@ sapply(x.px*1.7, line.tan, dx=1.5, p=dy, dp=d2y, b=b, k=k, col="orange")
 ### y * I(sin(x^n)) = F0(x)
 
 ### D(y)
-I*dy + y*sin(x^n) - df0 # = 0
+I*dy + y*sin(x^n) - df0 # = 0 # * y =>
 f0*dy + sin(x^n)*y^2 - y*df0 # = 0
 
 ### D2(y)
