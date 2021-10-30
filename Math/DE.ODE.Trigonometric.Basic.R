@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs - Trigonometric: Basic
 ###
-### draft v.0.1f
+### draft v.0.1f-ex2
 
 
 ### Trigonometric ODEs
@@ -19,9 +19,10 @@
 ###############
 
 
-### draft v.0.1f:
+### draft v.0.1f - v.0.1f-ex2:
 # - automatic generation of mixed Trig-Log ODEs:
 #   y = P1(x) * sin(T0(x) + log(T1(x)));
+# - more examples & checks; [v.0.1f-ex2]
 ### draft v.0.1e:
 # - moved another Section with Basic Variants
 #   from file: DE.ODE.Trigonometric.R;
@@ -158,7 +159,7 @@ genODE.TrigLog.pm = function(p1, p2, pT, f0=NULL, print=FALSE, pDiv=NULL, div.by
 
 ### Ex 1:
 pT = toPoly.pm("x^3 + b*x")
-p1 = toPoly.pm("a1"); # TODO: fix;
+p1 = toPoly.pm("a1");
 p2 = toPoly.pm("a2");
 pDiv = toPoly.pm("a1^2 + a2^2");
 # Note: a1 & a2 do NOT contribute;
@@ -567,6 +568,34 @@ print.pm(pR, do.sort=FALSE, leading=NA)
 	+ (k^3*x^3 + 3*k^2*x^2 + 3*b*k^3*x^2 + 3*k*x + 6*b*k^2*x + 3*b^2*k^3*x + 1 + 3*b*k + 3*b^2*k^2 + b^3*k^3)*y # = 0
 
 
+### Ex 3:
+pT1 = toPoly.pm("x + b")
+p1 = toPoly.pm("a1");
+p2 = toPoly.pm("a2");
+p0 = toPoly.pm("a3");
+pDiv = toPoly.pm("a1^2 + a2^2");
+# Note: a1 & a2 do NOT contribute;
+pR = genODE.TrigLog.pm(p1, p2, pT1, f0=p0, pDiv=pDiv, div.by="a1");
+print.pm(pR, do.sort=FALSE, leading=NA)
+### ODE:
+(x + b)^2*d2y + (x + b)*dy + y - a3 # = 0
+
+
+### Ex 4:
+pT1 = toPoly.pm("x^2 + b1*x + b0")
+p1 = toPoly.pm("a1");
+p2 = toPoly.pm("a2");
+p0 = toPoly.pm("a3");
+pDiv = toPoly.pm("a1^2 + a2^2");
+# Note: a1 & a2 do NOT contribute;
+pR = genODE.TrigLog.pm(p1, p2, pT1, f0=p0, pDiv=pDiv, div.by="a1");
+print.pm(pR, do.sort=FALSE, leading=NA)
+### ODE:
+(2*x^5 + 5*b1*x^4 + 4*b0*x^3 + 4*b1^2*x^3 + 6*b0*b1*x^2 + b1^3*x^2 + 2*b0^2*x + 2*b0*b1^2*x + b0^2*b1)*d2y +
+	+ (2*x^4 + 4*b1*x^3 + 3*b1^2*x^2 + b1^3*x - 2*b0^2 + b0*b1^2)*dy +
+	+ (2*x + b1)^3*y - a3*(2*x + b1)^3 # = 0
+
+
 #############
 ### Explicit:
 
@@ -593,13 +622,14 @@ x*(x^n+b0)^2 * d2y + n*x^n*(x^n+b0)*dy - (n-1)*(x^n+b0)^2*dy + n^2*x^(2*n-1)*y #
 x*(x^n+b0)^2 * d2y + (x^(2*n) - (n-2)*b0*x^n - (n-1)*b0^2)*dy + n^2*x^(2*n-1)*y # = 0
 
 
-### Solution:
-y = function(x, a=c(1, 1), FUN.list, ...) {
+### Solution & Plot:
+y = function(x, a=c(1, 1, 0), FUN.list, ...) {
+	if(length(a) < 3) a = c(a, 0);
 	xlog = log(FUN.list[[1]](x, ...));
-	r = a[1]*sin(xlog) + a[2]*cos(xlog)
+	r = a[1]*sin(xlog) + a[2]*cos(xlog) + a[3];
 	return(r)
 }
-dy = function(x, a=c(1, 1), FUN.list, ...) {
+dy = function(x, a=c(1, 1, 0), FUN.list, ...) {
 	div = FUN.list[[1]](x, ...)
 	xlog = log(div);
 	dp = (a[1]*cos(xlog) - a[2]*sin(xlog)) * FUN.list[[2]](x, ...)
@@ -607,16 +637,18 @@ dy = function(x, a=c(1, 1), FUN.list, ...) {
 	dp = round0(dp)
 	return(dp)
 }
-d2y = function(x, a=c(1, 1), FUN.list, ...) {
+d2y = function(x, a=c(1, 1, 0), FUN.list, ...) {
+	if(length(a) < 3) a = c(a, 0);
 	y.x  =  y(x, a=a, FUN.list=FUN.list, ...)
 	dy.x = dy(x, a=a, FUN.list=FUN.list, ...)
 	Px = FUN.list[[1]](x, ...)
 	dP = FUN.list[[2]](x, ...); dPsq = dP^2;
 	d2P = FUN.list[[3]](x, ...)
 	#
-	div = - dP * Px^2;
-	dp  = Px*(dPsq - Px*d2P)*dy.x + dPsq*dP*y.x
-	dp = ifelse(div != 0, dp / div, d2P/Px*(a[1]*cos(log(Px)) - a[2]*sin(log(Px)))); # TODO: check!
+	div = - dP * Px^2; # this is "-";
+	dp  = Px*(dPsq - Px*d2P)*dy.x + dPsq*dP*y.x - a[3]*dP*dPsq;
+	dp = ifelse(div != 0, dp / div,
+		d2P/Px*(a[1]*cos(log(Px)) - a[2]*sin(log(Px)))); # TODO: check & a[3]!
 	return(dp)
 }
 P = function(x, b=c(1, 1)) {
@@ -632,21 +664,35 @@ p.list = list(P, dP, d2P)
 
 ### Plot:
 b = c(1, 1);
-curve(y(x, b=b, FUN.list=p.list), from= -3, to = 3, ylim=c(-2, 2))
-# oscillating function with local minima;
 # slightly shifted: + 1/2
-line.tan(c(-5:7 * 3/7 - 1/2), dx=2, p=y, dp=dy, FUN.list=p.list, b=b)
+px = c(-5:7 * 3/7 - 1/2);
+# oscillating function with local minima;
+curve(y(x, b=b, FUN.list=p.list), from= -3, to = 3, ylim=c(-1.5, 2))
+line.tan(px, dx=2, p=y, dp=dy, FUN.list=p.list, b=b)
 # also sinusoidal:
 curve(dy(x, b=b, FUN.list=p.list), add=T, col="green")
-line.tan(c(-5:7 * 3/7 - 1/2), dx=1.5, p=dy, dp=d2y, FUN.list=p.list, b=b, col="orange")
+line.tan(px, dx=1.5, p=dy, dp=d2y, FUN.list=p.list, b=b, col="orange")
 
-###
+
+### Ex 2:
 b = c(3, -1);
-curve(y(x, b=b, FUN.list=p.list), from= -3, to = 3, ylim=c(-1, 1.5))
-# possible local maximum;
 # slightly shifted: ???
-line.tan(c(-5:7 * 3/7 - 1/2), dx=2, p=y, dp=dy, FUN.list=p.list, b=b)
+px = c(-5:7 * 3/7 - 1/2);
+# possible local/global maximum;
+curve(y(x, b=b, FUN.list=p.list), from= -3, to = 3, ylim=c(-1, 1.5))
+line.tan(px, dx=2, p=y, dp=dy, FUN.list=p.list, b=b)
 #
 curve(dy(x, b=b, FUN.list=p.list), add=T, col="green")
-line.tan(c(-5:7 * 3/7 - 1/2), dx=1.5, p=dy, dp=d2y, FUN.list=p.list, b=b, col="orange")
+line.tan(px, dx=1.5, p=dy, dp=d2y, FUN.list=p.list, b=b, col="orange")
+
+
+### Ex 3:
+b = c(3, -1); a = c(1,1,3);
+px = c(-5:7 * 3/7 - 1/2);
+# possible local/global maximum;
+curve(y(x, b=b, FUN.list=p.list, a=a), from= -3, to = 3, ylim=c(-1, 4))
+line.tan(px, dx=2, p=y, dp=dy, FUN.list=p.list, b=b, a=a)
+#
+curve(dy(x, b=b, FUN.list=p.list, a=a), add=T, col="green")
+line.tan(px, dx=1.5, p=dy, dp=d2y, FUN.list=p.list, b=b, a=a, col="orange")
 
