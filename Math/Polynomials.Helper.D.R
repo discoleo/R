@@ -37,8 +37,8 @@
 
 sort.dpm = function(p, y="y", x="x") {
 	# TODO: "dny"
-	nms = if(length(y) > 1) y else paste0(c("d2", "d"), y);
-	nms = c(nms, y, x);
+	nms = if(length(y) > 1) y else paste0(c("d2", "d", ""), y);
+	nms = c(nms, x);
 	# Valid names:
 	idSort = nms %in% names(p);
 	nms = nms[idSort];
@@ -64,6 +64,13 @@ dp.pm = function(p, xn="x") {
 	if(nrow(p) == 0) return(0);
 	p$coeff = p$coeff * p[, nc];
 	p[, nc] = p[, nc] - 1;
+	return(p);
+}
+dnp.pm = function(p, n=2, xn="x") {
+	for(id in seq(n)) {
+		p = dp.pm(p, xn=xn);
+		if(is.numeric(p)) break;
+	}
 	return(p);
 }
 # D( p1 * exp(p2) )
