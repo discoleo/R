@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs - Trigonometric: Basic
 ###
-### draft v.0.1h
+### draft v.0.1h-fix
 
 
 ### Trigonometric ODEs
@@ -62,9 +62,11 @@ isNZ.pm = function(p) {
 }
 
 # p1*sin(pT) + p2*cos(pT)
-genODE.Trig.pm = function(p1, p2, pT, f0=NULL, print=FALSE, pDiv=NULL, div.by=NULL) {
+genODE.Trig.pm = function(p1, p2, pT, f0=NULL, pDiv=NULL, div.by=NULL,
+		trig.order="sin", do.gcd=TRUE, print=FALSE) {
+	if(is.null(p2)) p2 = data.frame(coeff=0);
 	pC = list(p1, p2);
-	pD = dp.trig.pm(pC, pT);
+	pD = dp.trig.pm(pC, pT, trig.order=trig.order);
 	# Linear System
 	pR  = list(toPoly.pm("y"), toPoly.pm("dy"));
 	d2f = NULL;
@@ -91,7 +93,12 @@ genODE.Trig.pm = function(p1, p2, pT, f0=NULL, print=FALSE, pDiv=NULL, div.by=NU
 	pD2R = diff.pm(pD2y, pD2R);
 	if( ! is.null(pDiv)) pD2R = div.pm(pD2R, pDiv, by=div.by)$Rez;
 	#
+	if(do.gcd) {
+		xgcd = gcd.vpm(pD2R);
+		if(xgcd > 1) pD2R$coeff = pD2R$coeff / xgcd;
+	}
 	pD2R = sort.dpm(pD2R, y="y");
+	if(pD2R$coeff[1] < 0) pD2R$coeff = - pD2R$coeff;
 	if(print) print(print.dpm(pD2R, do.sort=FALSE));
 	return(pD2R);
 }
@@ -706,21 +713,21 @@ line.tan(px, dx=1.5, p=dy, dp=d2y, FUN.list=p.list, b=b, a=a, col="orange")
 
 ### D =>
 dy - dp*sin(t1)^2 - 2*p*dt1*sin(t1)*cos(t1) - df0 # = 0 # * p =>
-p*dy - dp*y - p^2*dt1*sin(2*t1) - p*df0 # = 0
+p*dy - dp*y - p^2*dt1*sin(2*t1) + dp*f0 - p*df0 # = 0
 
 ### D2 =>
-p*d2y - d2p*y - (2*p*dp*dt1 + p^2*d2t1)*sin(2*t1) +
-	- 2*p^2*dt1^2*cos(2*t1) - dp*df0 - p*d2f0 # = 0 # * p^2 =>
-p^3*d2y - p^2*d2p*y - (2*p*dp*dt1 + p^2*d2t1)/dt1 * (p*dy - dp*y - p*df0) +
-	- 2*p^4*dt1^2*(1 - 2*sin(t1)^2) - p^2*dp*df0 - p^3*d2f0 # = 0
-p^3*dt1*d2y - p^2*d2p*dt1*y - (2*p*dp*dt1 + p^2*d2t1)*(p*dy - dp*y - p*df0) +
-	- 2*p^3*dt1^3*(p - 2*y + 2*f0) - p^2*dp*dt1*df0 - p^3*dt1*d2f0 # = 0
+p*d2y - d2p*y - (2*dp*dt1 + p*d2t1)*p*sin(2*t1) +
+	- 2*p^2*dt1^2*cos(2*t1) - d2p*f0 - p*d2f0 # = 0 # * p =>
+p^2*d2y - p*d2p*y - (2*dp*dt1 + p*d2t1)/dt1 * (p*dy - dp*y - dp*f0 - p*df0) +
+	- 2*p^3*dt1^2*(1 - 2*sin(t1)^2) - p*d2p*f0 - p^2*d2f0 # = 0
+p^2*dt1*d2y - p*d2p*dt1*y - (2*dp*dt1 + p*d2t1)*(p*dy - dp*y - dp*f0 - p*df0) +
+	- 2*p^2*dt1^3*(p - 2*y + 2*f0) - p*d2p*dt1*f0 - p^2*dt1*d2f0 # = 0
 
 ### ODE:
 p^2*dt1*d2y - p*(2*dp*dt1 + p*d2t1)*dy +
 	+ 4*p^2*dt1^3*y - p*d2p*dt1*y + dp*(2*dp*dt1 + p*d2t1)*y +
-	- 2*p^2*dt1^3*(p + 2*f0) + p*df0*(dp*dt1 + p*d2t1) +
-	- p^2*dt1*d2f0	# = 0
+	+ (2*dp*dt1 + p*d2t1)*dp*f0 +
+	- 2*p^2*dt1^3*(p + 2*f0) - p*d2p*dt1*f0 + p^2*d2t1*df0 - p^2*dt1*d2f0 # = 0
 
 ### Examples:
 ### p = x; dp = 1; f0 = 0;
@@ -729,6 +736,7 @@ x^2*dt1*d2y - x*(2*dt1 + x*d2t1)*dy +
 # t1 = x^2; dt1 = 2*x;
 x^2*d2y - 3*x*dy + (16*x^4 + 3)*y - 8*x^5 # = 0
 
+# TODO: correct formulas;
 
 ### Solution & Plot:
 y = function(x, p1, pT1, f0=NULL) {
@@ -805,4 +813,13 @@ dyx = dy(x, p1, pT1)
 d2yx = d2y(x, p1, pT1)
 err = x^2*d2yx - 3*x*dyx + (16*x^4 + 3)*yx - 8*x^5;
 round0(err)
+
+pT1dbl = pT1; pT1dbl$coeff = 2*pT1dbl$coeff;
+p1$coeff = - 1/2; # affects only f0!
+f0 = p1; f0$coeff = - f0$coeff;
+pDiv = toPoly.pm("x")
+pR = genODE.Trig.pm(p1, NULL, pT1dbl, f0=f0, pDiv=pDiv, div.by="x", trig.order="cos")
+print.dpm(pR, do.sort=FALSE)
+### ODE:
+x^2*d2y - 3*x*dy + 16*x^4*y + 3*y - 8*x^5 # = 0
 
