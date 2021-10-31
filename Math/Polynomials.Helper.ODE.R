@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs - Generators
 ###
-### draft v.0.1a
+### draft v.0.1b
 
 
 ### ODE: Generators
@@ -68,19 +68,15 @@ genODE.Trig.pm = function(p1, p2, pT, f0=NULL, pDiv=NULL, div.by=NULL,
 	pD2R = diff.pm(pD2y, pD2R);
 	if( ! is.null(pDiv)) pD2R = div.pm(pD2R, pDiv, by=div.by)$Rez;
 	#
-	if(do.gcd) {
-		xgcd = gcd.vpm(pD2R);
-		if(xgcd > 1) pD2R$coeff = pD2R$coeff / xgcd;
-	}
-	pD2R = sort.dpm(pD2R, y="y");
-	if(pD2R$coeff[1] < 0) pD2R$coeff = - pD2R$coeff;
+	pD2R = format.dpm(pD2R, y="y", do.gcd=do.gcd);
 	if(print) print(print.dpm(pD2R, do.sort=FALSE));
 	return(pD2R);
 }
 
 # p1*sin(pT) + p2*cos(pT)
 # where pT = pT0 + log(pT1)
-genODE.TrigLog.pm = function(p1, p2, pT, f0=NULL, print=FALSE, pDiv=NULL, div.by=NULL) {
+genODE.TrigLog.pm = function(p1, p2, pT, f0=NULL, pDiv=NULL, div.by=NULL,
+		do.gcd=TRUE, print=FALSE) {
 	pC = list(p1, p2);
 	pD = dp.trigLog.pm(pC, pT);
 	# Linear System
@@ -115,8 +111,102 @@ genODE.TrigLog.pm = function(p1, p2, pT, f0=NULL, print=FALSE, pDiv=NULL, div.by
 	pD2R = diff.pm(pD2y, pD2R);
 	if( ! is.null(pDiv)) pD2R = div.pm(pD2R, pDiv, by=div.by)$Rez;
 	#
-	pD2R = sort.dpm(pD2R, y="y");
+	pD2R = format.dpm(pD2R, y="y", do.gcd=do.gcd);
 	if(print) print(print.dpm(pD2R, do.sort=FALSE));
 	return(pD2R);
 }
 
+# p1*log(pL1) + p2*log(pL2)
+genODE.Log.pm = function(p1, p2, pL1, pL2, f0=NULL, pDiv=NULL, div.by=NULL,
+		do.gcd=TRUE, print=FALSE) {
+	pC  = list(p1, p2);
+	pC1 = list(C = p1, Log = pL1);
+	pD1 = dp.log.pm(pC1);
+	pC2 = list(C = p2, Log = pL2);
+	pD2 = dp.log.pm(pC2);
+	# convert Fractions from: D(log(...))
+	pD  = expand.fr.pm(pD1, pD2);
+	pDy = pD$Div; pDy$dy = 1;
+	pDy = diff.pm(pDy, pD$B0);
+	### Linear System
+	py  = toPoly.pm("y");
+	d2f = NULL;
+	if( ! is.null(f0)) {
+		py = diff.pm(py, f0);
+		df0 = dp.pm(f0, xn="x");
+		hasD = isNZ.pm(df0);
+		if(hasD) {
+			pDy = diff.pm(pDy, mult.pm(pD$Div, df0));
+			d2f = dp.pm(df0, xn="x");
+			if( ! isNZ.pm(d2f)) d2f = NULL;
+		}
+	}
+	pR = list(py, pDy);
+	pR = solve.LD.pm(c(pC, pD[c("C1", "C2")]), pR);
+	# lapply(pR, print.data.frame);
+	### D2 =>
+	pD$Div = NULL; # reset DIV; (could be useful in the future)
+	rename.f = function(l) { names(l) = c("C", "Log"); return(l); }
+	pC1 = dp.log.pm(rename.f(pD[c("C1", "Log1")]));
+	pC2 = dp.log.pm(rename.f(pD[c("C2", "Log2")]));
+	pD2 = expand.fr.pm(pC1, pC2);
+	# pD2 = (B0 + C1*Log1 + C2*Log2)/pD2$Div;
+	pD2R = mult.pm(pD2$C1, pR$C1); # pD2RC1
+	pD2R = sum.pm(pD2R, mult.pm(pD2$C2, pR$C2)); # pD2RC2
+	pD2R = sum.pm(pD2R, mult.pm(pD2$B0, pR$Div));
+	# d2y: d2f0 is already in pD2y;
+	pD2y = dy.pm(pDy, yn="y", xn="x");
+	pD2y = mult.pm(pD2y, mult.pm(pD2$Div, pR$Div));
+	pD2R = diff.pm(pD2y, pD2R);
+	if( ! is.null(pDiv)) pD2R = div.pm(pD2R, pDiv, by=div.by)$Rez;
+	#
+	pD2R = format.dpm(pD2R, y="y", do.gcd=do.gcd);
+	if(print) print(print.dpm(pD2R, do.sort=FALSE));
+	return(pD2R);
+}
+
+#################
+
+### Helper Tools
+
+format.dpm = function(p, y="y", do.gcd=TRUE) {
+	if(do.gcd) {
+		xgcd = gcd.vpm(p);
+		if(xgcd > 1) p$coeff = p$coeff / xgcd;
+	}
+	p = sort.dpm(p, y=y);
+	if(p$coeff[1] < 0) p$coeff = - p$coeff;
+	return(p)
+}
+
+filter.names = function(l, exclude=NULL) {
+	nms = names(l);
+	if( ! is.null(exclude)) {
+		isExcl = nms %in% exclude;
+		nms = nms[ ! isExcl];
+	}
+	return(nms);
+}
+
+### Fractions
+expand.fr.pm = function(p1, p2, add.names=TRUE) {
+	# p[i] = (B0[i] + C[i]*FUN[i])/Div[i];
+	pF1 = p1$Div; pF2 = p2$Div;
+	# Free Polynomial:
+	pS = mult.pm(pF2, p1$B0);
+	pS = sum.pm(pS, mult.pm(pF1, p2$B0));
+	# C * SomeFUN(...)
+	pC1 = mult.pm(pF2, p1$C);
+	pC2 = mult.pm(pF1, p2$C);
+	pM  = mult.pm(p1$Div, p2$Div);
+	pR  = list(B0=pS, C1=pC1, C2=pC2, Div=pM);
+	# add _original_functions_;
+	extract.other = function(p, id) {
+		nms = filter.names(p, exclude=c("B0", "C", "Div"));
+		lst = p[nms];
+		names(lst) = paste0(names(lst), id);
+		return(lst);
+	}
+	if(add.names) pR = c(pR, extract.other(p1, 1), extract.other(p2, 2));
+	return(pR);
+}
