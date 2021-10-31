@@ -73,11 +73,19 @@ dnp.pm = function(p, n=2, xn="x") {
 	}
 	return(p);
 }
-# D( p1 * exp(p2) )
+### Specific Derivatives
+# D( p$Poly * exp(p$Exp) )
 dp.exp.pm = function(p, xn="x") {
 	pr = mult.pm(dp.pm(p$Exp, xn), p$Poly);
 	pr = sum.pm(pr, dp.pm(p$Poly, xn));
 	p$Poly = pr;
+	return(p);
+}
+# D( p$C * log(p$Log) )
+dp.log.pm = function(p, xn="x") {
+	pPFr = mult.pm(dp.pm(p$Log, xn), p$C);
+	pPP  = mult.pm(p$Log, dp.pm(p$C, xn));
+	p$C  = pPP; p$PFr = pPFr; p$Div = p$Log;
 	return(p);
 }
 # D( p1 / pdiv ])
