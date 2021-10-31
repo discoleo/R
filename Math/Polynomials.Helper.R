@@ -106,7 +106,13 @@ isConj.f = function(x, y, tol=1E-3) {
 ### Polynomials ###
 ###################
 
-### Multiplication
+# isNonZero:
+isNZ.pm = function(p) {
+	is.data.frame(p) && (nrow(p) > 0);
+}
+
+### Simple Multiplication
+# p1, p2 = simple vectors of coefficients;
 mult.p = function(p1, p2) {
 	p.m = outer(p1, p2)
     p = as.vector(tapply(p.m, row(p.m) + col(p.m), sum))
@@ -128,13 +134,15 @@ poly.calc.mpfr = function(x, bits=120, tol=1E-7) {
 	return(p);
 }
 
+##################
+
 ### Multi-variable Polynomials:
 # p = multi-variable polynomial;
 #  => data.frame with exponents of variables;
 #  => coeff = column with the coefficients;
 # Note:
 # - initial idea was to allow also basic lists,
-#   but most functions work only with data frames!
+#   but most functions would work only with data frames!
 aggregate0.pm = function(p) {
 	p.r = aggregate(coeff~., p, sum);
 	return(p.r);
@@ -1008,10 +1016,17 @@ print.monome = function(name, p) {
 	return(v.r);
 }
 print.pm = function(...) {
-	print.p(...);
+	ch = as.charatcer.pm(...);
+	print(ch);
+	invisible(ch);
+}
+print.p = function(...) {
+	ch = as.charatcer.pm(...);
+	print(ch);
+	invisible(ch);
 }
 # TODO: format.complex();
-print.p = function(p, leading=1, do.sort=TRUE, do.rev=FALSE, sort.order=TRUE, simplify.complex=TRUE) {
+as.charatcer.pm = function(p, leading=1, do.sort=TRUE, do.rev=FALSE, sort.order=TRUE, simplify.complex=TRUE) {
 	### Var order
 	isNA = all(is.na(leading));
 	if( ! isNA && ! is.numeric(leading)) leading = match(leading, names(p));
