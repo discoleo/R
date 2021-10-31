@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs - Trigonometric: Basic
 ###
-### draft v.0.1h-fix
+### draft v.0.1h-fix2
 
 
 ### Trigonometric ODEs
@@ -19,7 +19,7 @@
 ###############
 
 
-### draft v.0.1h:
+### draft v.0.1h - v.0.1h-fix2:
 # - derived from:
 #   y = P(x) * sin(T1(x))^2 + F0(x);
 #   x^2*d2y - 3*x*dy + (16*x^4 + 3)*y - 8*x^5 = 0;
@@ -717,17 +717,17 @@ p*dy - dp*y - p^2*dt1*sin(2*t1) + dp*f0 - p*df0 # = 0
 
 ### D2 =>
 p*d2y - d2p*y - (2*dp*dt1 + p*d2t1)*p*sin(2*t1) +
-	- 2*p^2*dt1^2*cos(2*t1) - d2p*f0 - p*d2f0 # = 0 # * p =>
-p^2*d2y - p*d2p*y - (2*dp*dt1 + p*d2t1)/dt1 * (p*dy - dp*y - dp*f0 - p*df0) +
-	- 2*p^3*dt1^2*(1 - 2*sin(t1)^2) - p*d2p*f0 - p^2*d2f0 # = 0
-p^2*dt1*d2y - p*d2p*dt1*y - (2*dp*dt1 + p*d2t1)*(p*dy - dp*y - dp*f0 - p*df0) +
-	- 2*p^2*dt1^3*(p - 2*y + 2*f0) - p*d2p*dt1*f0 - p^2*dt1*d2f0 # = 0
+	- 2*p^2*dt1^2*cos(2*t1) + d2p*f0 - p*d2f0 # = 0 # * p =>
+p^2*d2y - p*d2p*y - (2*dp*dt1 + p*d2t1)*(p*dy - dp*y + dp*f0 - p*df0)/dt1 +
+	- 2*p^3*dt1^2*(1 - 2*sin(t1)^2) + p*d2p*f0 - p^2*d2f0 # = 0
+p^2*dt1*d2y - p*d2p*dt1*y - (2*dp*dt1 + p*d2t1)*(p*dy - dp*y + dp*f0 - p*df0) +
+	- 2*p^2*dt1^3*(p - 2*y + 2*f0) + p*d2p*dt1*f0 - p^2*dt1*d2f0 # = 0
 
 ### ODE:
 p^2*dt1*d2y - p*(2*dp*dt1 + p*d2t1)*dy +
 	+ 4*p^2*dt1^3*y - p*d2p*dt1*y + dp*(2*dp*dt1 + p*d2t1)*y +
-	+ (2*dp*dt1 + p*d2t1)*dp*f0 +
-	- 2*p^2*dt1^3*(p + 2*f0) - p*d2p*dt1*f0 + p^2*d2t1*df0 - p^2*dt1*d2f0 # = 0
+	- (2*dp*dt1 + p*d2t1)*(dp*f0 - p*df0) +
+	- 2*p^2*dt1^3*(p + 2*f0) + p*d2p*dt1*f0 - p^2*dt1*d2f0 # = 0
 
 ### Examples:
 ### p = x; dp = 1; f0 = 0;
@@ -755,7 +755,12 @@ dy = function(x, p1, pT1, f0=NULL) {
 	# y(x):
 	yx  = p1x * sin(t1x)^2;
 	if( ! is.null(f0)) yx = yx + eval.FUN(x, f0);
-	dp  = dp1*yx + p1x^2*dt1*sin(2*t1x); # TODO: + p1x*df0
+	dp  = dp1*yx + p1x^2*dt1*sin(2*t1x);
+	if( ! is.null(f0)) {
+		f0.all = eval.DFUN(x, f0);
+		f0x = f0.all$f; df0 = f0.all$df;
+		dp = dp - dp1*f0x + p1x*df0;
+	}
 	div = p1x;
 	dp = ifelse(div != 0, dp / div, 0); # TODO: check;
 	dp = round0(dp)
@@ -771,16 +776,17 @@ d2y = function(x, p1, pT1, f0=NULL) {
 	yx  = y(x, p1=p1, pT1=pT1, f0=f0);
 	dyx = dy(x, p1=p1, pT1=pT1, f0=f0);
 	#
-	div = - p^3 * dt1; # this is "-";
-	ppr = (2*p*dp*dt1 + p^2*d2t1);
+	div = - p^2 * dt1; # this is "-";
+	ppr = (2*dp*dt1 + p*d2t1);
 	dpR = - p*ppr*dyx +
-		+ (4*p^3*dt1^3 - p^2*d2p*dt1 + dp*ppr)*yx +
-		- 2*p^4*dt1^3;
+		+ (4*p^2*dt1^3 - p*d2p*dt1 + dp*ppr)*yx +
+		- 2*p^3*dt1^3;
 	if( ! is.null(f0)) {
-		# TODO:
-		dpR = dpR - 4*p^3*dt1^3*f0 - p^3*dt1*d2f0 +
-			+ p^2*dp*dt1*df0*2 +
-			+ p*df0*(ppr - p*dp*dt1);
+		f0.all = eval.DFUN(x, f0);
+		d2f0   = eval.FUN(x, dnp.pm(f0, n=2, xn="x"));
+		f0 = f0.all$f; df0 = f0.all$df;
+		dpR = dpR - ppr*(dp*f0 - p*df0) +
+			- 4*p^2*dt1^3*f0 + p*d2p*dt1*f0 - p^2*dt1*d2f0;
 	}
 	dpR = ifelse(div != 0, dpR / div, 0); # TODO: correct;
 	return(dpR)
@@ -822,4 +828,23 @@ pR = genODE.Trig.pm(p1, NULL, pT1dbl, f0=f0, pDiv=pDiv, div.by="x", trig.order="
 print.dpm(pR, do.sort=FALSE)
 ### ODE:
 x^2*d2y - 3*x*dy + 16*x^4*y + 3*y - 8*x^5 # = 0
+
+
+### Ex 2:
+p1  = toPoly.pm("x");
+pT1 = toPoly.pm("x^2 - 3*x - 1");
+f0  = toPoly.pm("x^3 + 1")
+# slightly shifted:
+px = c(-2.56, c(-5:0, 2, 4:7) * 3/7 - 0.95/1.5);
+# oscillating function;
+curve(y(x, p1=p1, pT1=pT1, f0=f0), from = -3, to = 3)
+line.tan(px, dx=1.5, p=y, dp=dy, p1=p1, pT1=pT1, f0=f0)
+# also sinusoidal:
+curve(dy(x, p1=p1, pT1=pT1, f0=f0), add=T, col="green")
+line.tan(px + 0.1, dx=1.4, p=dy, dp=d2y, p1=p1, pT1=pT1, f0=f0, col="orange")
+
+# only D2:
+curve(dy(x, p1=p1, pT1=pT1, f0=f0), from = -3, to = 3, col="green")
+curve(y(x, p1=p1, pT1=pT1, f0=f0), add=T, col="grey")
+line.tan(px + 0.1, dx=1.4, p=dy, dp=d2y, p1=p1, pT1=pT1, f0=f0, col="orange")
 
