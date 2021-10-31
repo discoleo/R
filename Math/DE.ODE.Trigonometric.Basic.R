@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs - Trigonometric: Basic
 ###
-### draft v.0.1g
+### draft v.0.1h
 
 
 ### Trigonometric ODEs
@@ -19,6 +19,10 @@
 ###############
 
 
+### draft v.0.1h:
+# - derived from:
+#   y = P(x) * sin(T1(x))^2 + F0(x);
+#   x^2*d2y - 3*x*dy + (16*x^4 + 3)*y - 8*x^5 = 0;
 ### draft v.0.1g:
 # - [refactoring] use sort.dpm();
 ### draft v.0.1f - v.0.1f-ex2:
@@ -689,4 +693,116 @@ line.tan(px, dx=2, p=y, dp=dy, FUN.list=p.list, b=b, a=a)
 #
 curve(dy(x, b=b, FUN.list=p.list, a=a), add=T, col="green")
 line.tan(px, dx=1.5, p=dy, dp=d2y, FUN.list=p.list, b=b, a=a, col="orange")
+
+
+#####################
+#####################
+
+#####################
+### Higher Powers ###
+#####################
+
+### y = P(x) * sin(T1(x))^2 + F0(x);
+
+### D =>
+dy - dp*sin(t1)^2 - 2*p*dt1*sin(t1)*cos(t1) - df0 # = 0 # * p =>
+p*dy - dp*y - p^2*dt1*sin(2*t1) - p*df0 # = 0
+
+### D2 =>
+p*d2y - d2p*y - (2*p*dp*dt1 + p^2*d2t1)*sin(2*t1) +
+	- 2*p^2*dt1^2*cos(2*t1) - dp*df0 - p*d2f0 # = 0 # * p^2 =>
+p^3*d2y - p^2*d2p*y - (2*p*dp*dt1 + p^2*d2t1)/dt1 * (p*dy - dp*y - p*df0) +
+	- 2*p^4*dt1^2*(1 - 2*sin(t1)^2) - p^2*dp*df0 - p^3*d2f0 # = 0
+p^3*dt1*d2y - p^2*d2p*dt1*y - (2*p*dp*dt1 + p^2*d2t1)*(p*dy - dp*y - p*df0) +
+	- 2*p^3*dt1^3*(p - 2*y + 2*f0) - p^2*dp*dt1*df0 - p^3*dt1*d2f0 # = 0
+
+### ODE:
+p^2*dt1*d2y - p*(2*dp*dt1 + p*d2t1)*dy +
+	+ 4*p^2*dt1^3*y - p*d2p*dt1*y + dp*(2*dp*dt1 + p*d2t1)*y +
+	- 2*p^2*dt1^3*(p + 2*f0) + p*df0*(dp*dt1 + p*d2t1) +
+	- p^2*dt1*d2f0	# = 0
+
+### Examples:
+### p = x; dp = 1; f0 = 0;
+x^2*dt1*d2y - x*(2*dt1 + x*d2t1)*dy +
+	 + 4*x^2*dt1^3*y + (2*dt1 + x*d2t1)*y - 2*x^3*dt1^3 # = 0
+# t1 = x^2; dt1 = 2*x;
+x^2*d2y - 3*x*dy + (16*x^4 + 3)*y - 8*x^5 # = 0
+
+
+### Solution & Plot:
+y = function(x, p1, pT1, f0=NULL) {
+	T1 = eval.FUN(x, pT1);
+	p1 = eval.FUN(x, p1);
+	yx = p1 * sin(T1)^2;
+	if( ! is.null(f0)) yx = yx + eval.FUN(x, f0);
+	return(yx)
+}
+dy = function(x, p1, pT1, f0=NULL) {
+	# p*dy - dp*y - p^2*dt1*sin(2*t1) - p*df0
+	t1.all = eval.DFUN(x, pT1);
+	p1.all = eval.DFUN(x, p1);
+	t1x = t1.all$f; dt1 = t1.all$df;
+	p1x = p1.all$f; dp1 = p1.all$df;
+	# y(x):
+	yx  = p1x * sin(t1x)^2;
+	if( ! is.null(f0)) yx = yx + eval.FUN(x, f0);
+	dp  = dp1*yx + p1x^2*dt1*sin(2*t1x); # TODO: + p1x*df0
+	div = p1x;
+	dp = ifelse(div != 0, dp / div, 0); # TODO: check;
+	dp = round0(dp)
+	return(dp)
+}
+d2y = function(x, p1, pT1, f0=NULL) {
+	t1.all = eval.DFUN(x, dp.pm(pT1, xn="x"));
+	p1.all = eval.DFUN(x, p1);
+	dt1  = t1.all$f; d2t1 = t1.all$df;
+	p    = p1.all$f; dp = p1.all$df;
+	d2pf = dnp.pm(p1, n=2, xn="x");
+	d2p = if(is.numeric(d2pf)) d2pf else eval.FUN(x, d2pf);
+	yx  = y(x, p1=p1, pT1=pT1, f0=f0);
+	dyx = dy(x, p1=p1, pT1=pT1, f0=f0);
+	#
+	div = - p^3 * dt1; # this is "-";
+	ppr = (2*p*dp*dt1 + p^2*d2t1);
+	dpR = - p*ppr*dyx +
+		+ (4*p^3*dt1^3 - p^2*d2p*dt1 + dp*ppr)*yx +
+		- 2*p^4*dt1^3;
+	if( ! is.null(f0)) {
+		# TODO:
+		dpR = dpR - 4*p^3*dt1^3*f0 - p^3*dt1*d2f0 +
+			+ p^2*dp*dt1*df0*2 +
+			+ p*df0*(ppr - p*dp*dt1);
+	}
+	dpR = ifelse(div != 0, dpR / div, 0); # TODO: correct;
+	return(dpR)
+}
+
+### Plot:
+p1  = toPoly.pm("x");
+pT1 = toPoly.pm("x^2 - 3*x - 3")
+# slightly shifted:
+px = c(-2.8, -2.65, -5:7 * 3/7 - 0.95/1.5);
+# oscillating function;
+curve(y(x, p1=p1, pT1=pT1), from= -3, to = 3)
+line.tan(px, dx=1.5, p=y, dp=dy, p1=p1, pT1=pT1)
+# also sinusoidal:
+curve(dy(x, p1=p1, pT1=pT1), add=T, col="green")
+line.tan(px, dx=1.5, p=dy, dp=d2y, p1=p1, pT1=pT1, col="orange")
+
+### only D2:
+curve(dy(x, p1=p1, pT1=pT1), from= -3, to = 3, n=256, col="green")
+curve(y(x, p1=p1, pT1=pT1), add=T, col="gray")
+line.tan(px, dx=1.4, p=dy, dp=d2y, p1=p1, pT1=pT1, col="orange")
+
+
+# Test:
+p1  = toPoly.pm("x")
+pT1 = toPoly.pm("x^2")
+x = seq(-3, 3, by=0.5)
+yx = y(x, p1, pT1)
+dyx = dy(x, p1, pT1)
+d2yx = d2y(x, p1, pT1)
+err = x^2*d2yx - 3*x*dyx + (16*x^4 + 3)*yx - 8*x^5;
+round0(err)
 
