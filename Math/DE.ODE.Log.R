@@ -7,7 +7,7 @@
 ### Differential Equations
 ### ODEs - Logarithms
 ###
-### draft v.0.3f-st1
+### draft v.0.3g
 
 
 ### ODEs Derived from Logarithms
@@ -22,6 +22,8 @@
 ### History ###
 ###############
 
+### draft v.0.3g:
+# - Automatic generation of simple types of ODEs;
 ### draft v.0.3f - v.0.3f-st1:
 # - derived from: [TODO full derivation]
 #   y = log(exp(P1(x)) + P2(x)) + F0(x); [started]
@@ -68,12 +70,13 @@
 
 ### Helper functions
 
-library(pracma)
+# library(pracma)
 # - may be needed to solve various equations;
 
-# include: Polynomials.Helper.R;
+# include: Polynomials.Helper.ODE.R;
+# include: Polynomials.Helper.R; [automatically]
 # include: DE.ODE.Helper.R;
-source("Polynomials.Helper.R")
+source("Polynomials.Helper.ODE.R")
 source("DE.ODE.Helper.R")
 
 
@@ -86,10 +89,73 @@ source("DE.ODE.Helper.R")
 ### Derived from:
 ### y = F1(x)*log(P1(x)) + F2(x)*log(P2(x))
 
+### Automatic:
+
+### Simple Example:
+p1 = toPoly.pm("x^2 + c")
+p2 = toPoly.pm("x^2 - c")
+pL1 = toPoly.pm("x^2 + c")
+pL2 = toPoly.pm("x^2 - c")
+pDiv = toPoly.pm("c*x^8 - 2*x^4*c^3 + c^5")
+pR = genODE.Log.pm(p1, p2, pL1, pL2, pDiv=pDiv, div.by="x");
+print.dpm(pR, do.sort=FALSE)
+
+### ODE:
+x*(x^4 - c^2)*d2y - (x^4 - c^2)*dy - 8*x^5 # = 0
+
+
+### Simple Example 2:
+n = 3
+p1 = toPoly.pm("x^n + c")
+p2 = toPoly.pm("x^n - c")
+pL1 = toPoly.pm("x^n + c")
+pL2 = toPoly.pm("x^n - c")
+pDiv = toPoly.pm("c*x^(4*n) - 2*x^(2*n)*c^3 + c^5");
+pR = genODE.Log.pm(p1, p2, pL1, pL2, pDiv=pDiv, div.by="x");
+print.dpm(pR, do.sort=FALSE)
+
+### ODE:
+x^2*(x^6 - c^2)*d2y - 2*x*(x^6 - c^2)*dy - 18*x^9 # = 0
+
+
+### Example 3:
+n = 2
+p1 = toPoly.pm("x^n + c")
+p2 = toPoly.pm("x^n - c")
+pL1 = toPoly.pm("x^n - c")
+pL2 = toPoly.pm("x^n + c")
+pDiv = toPoly.pm("c*x^(2*n) - c^3")
+pR = genODE.Log.pm(p1, p2, pL1, pL2, pDiv=pDiv, div.by="x");
+print.dpm(pR, do.sort=FALSE)
+
+### ODE:
+x*(x^4 - c^2)^2*d2y - (x^4 - c^2)^2*dy - 8*x^5*(x^4 - 5*c^2) # = 0
+
+
+### Example 4:
+p1 = toPoly.pm("x^2 + c")
+p2 = toPoly.pm("x^2 - c")
+pL1 = toPoly.pm("x^2 + a")
+pL2 = toPoly.pm("x^2 - a")
+pDiv = toPoly.pm("c*x^4 - c*a^2")
+pR = genODE.Log.pm(p1, p2, pL1, pL2, pDiv=pDiv, div.by="x");
+print.dpm(pR, do.sort=FALSE)
+
+### ODE:
+(x^9 - 2*a^2*x^5 + a^4*x)*d2y - (x^8 - 2*a^2*x^4 + a^4)*dy +
+	- 8*x^9 + 24*a^2*x^5 - 16*a*c*x^5 # = 0
+
+
+################
+### Explicit ###
+################
+
 ### Examples:
 ### y = (x^m + c)*log(x^n + a) + (x^m - c)*log(x^n + b)
-# - simplifies massively & eliminates y from D2(y);
+# - when b = -a: simplifies massively & eliminates y from D2(y);
 # - does NOT simplify when: F1 - F2 != constant;
+
+# TODO: check computations;
 
 ### D(y)
 # [not run]
@@ -927,6 +993,10 @@ x*d2y + x*dy^2 - (2*x*df + n*x^n + (n-1))*dy +
 # (x^2+k)*log(x^2 + k) = 2*x / (dy - df);
 
 ### D2 =>
+(x^2+k)*log(x^2 + k)*d2y + 2*x*dy + 2*x*log(x^2 + k)*dy +
+	- 2*x*(x^2+k)*df - 2*x*df*log(x^2 + k) - (x^2+k)*d2f*log(x^2 + k) - 2 # = 0
+2*x*(x^2+k)/(dy - df) * d2y + 2*x*(x^2+k)*dy + 4*x^2*/(dy - df) * dy +
+	- 2*x*(x^2+k)^2*df - 4*x^2*df/(dy - df) - 2*x*(x^2+k)*d2f/(dy - df) - 2*(x^2+k) # = 0
 
 # TODO
 
@@ -945,6 +1015,30 @@ x*d2y + x*dy^2 - (2*x*df + n*x^n + (n-1))*dy +
 ### D2 =>
 
 # TODO
+
+
+#######################
+#######################
+
+##############
+### Log(y) ###
+##############
+
+### y*log(k1*y + f) = f - k2*y
+
+### Note:
+# y*log(exp(k2)*(k1*y + f)) = f
+
+### D =>
+log(k1*y + f)*dy + (k1*y/(k1*y+f))*dy + k2*dy - df # = 0 # * y =>
+(f - k2*y)*dy + (k1*y^2/(k1*y+f))*dy + k2*y*dy - df*y # = 0
+(f^2 + (k1-k2)*f*y - k1*k2*y^2)*dy + k1*y^2*dy + k2*(k1*y+f)*y*dy - df*y*(k1*y+f) # = 0
+### ODE:
+k1*y^2*dy + k1*f*y*dy + f^2*dy - k1*df*y^2 - f*df*y # = 0
+
+### Special Cases:
+# f = x; df = 1;
+k1*y^2*dy + k1*x*y*dy + x^2*dy - k1*y^2 - x*y # = 0
 
 
 #######################
