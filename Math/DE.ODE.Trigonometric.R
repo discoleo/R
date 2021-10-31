@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs - Trigonometric
 ###
-### draft v.0.4b-clean4
+### draft v.0.4b-clean5
 
 
 ### Non-Linear & Linear:
@@ -124,11 +124,11 @@ source("DE.ODE.Helper.R")
 #########################
 #########################
 
-### Trigonometric Functions:
-### G(y) = P1(x) * sin(T(x)) + F(x)
+### Trigonometric Functions
 
 ### Section A: Simple variants
-### G(y) = polynomial(y)
+#   G(y) = P1(x) * sin(T(x)) + F(x)
+#   where G(y) = polynomial(y);
 # - moved to file:
 #   DE.ODE.Trigonometric.Basic.R;
 
@@ -136,14 +136,17 @@ source("DE.ODE.Helper.R")
 #########################
 ### Section B: Non-Linear
 ### Inverse Trigonometric
+### [Trig(y)]
 
 ### sin(y^2) = f(x);
 (1 - f^2)*df*y^3*d2y + (d2f*f^2 - df^2*f - d2f)*y^3*dy + 1/4 * df^3 # = 0
 
 ### Generalization:
 ### sin(y^n) = f(x)
+
 ### D =>
 # n*y^(n-1)*cos(y^n)*dy = df;
+
 ### D2 =>
 n*y^(n-1)*cos(y^n)*d2y - n^2*y^(2*n-2)*sin(y^n)*dy^2 + n*(n-1)*y^(n-2)*cos(y^n)*dy^2 - d2f # = 0
 df/dy * d2y - n^2*y^(2*n-2)*f*dy^2 + (n-1)*df/y * dy - d2f # = 0
@@ -196,14 +199,14 @@ d2y = function(x, b=0) {
 ### b = 0;
 curve(y(x), from= -1, to = 1)
 # global minimum;
-sapply(c((-2:2)/2.2), line.tan, dx=3, p=y, dp=dy)
+line.tan(c((-2:2)/2.2), dx=3, p=y, dp=dy)
 # pseudo-sigmoidal
 curve(dy(x), add=T, col="green")
-sapply(c(-2, -1.5, 1.5, 2)/2.1, line.tan, dx=1/5, p=dy, dp=d2y, col="orange")
+line.tan(c(-2, -1.5, 1.5, 2)/2.1, dx=1/5, p=dy, dp=d2y, col="orange")
 
 # check full pseudo-sigmoidal
 curve(dy(x), from= -1, to = 1, col="green")
-sapply(c(-2, -1.5, 1.5, 2)/2.1, line.tan, dx=1/5, p=dy, dp=d2y, col="orange")
+line.tan(c(-2, -1.5, 1.5, 2)/2.1, dx=1/5, p=dy, dp=d2y, col="orange")
 
 
 ### b = -1;
@@ -213,20 +216,20 @@ b = -1;
 #
 curve(y(x, b=b), from= -sqrt(2) + 1E-10, to = sqrt(2) - 1E-10)
 # global minimum;
-sapply(c((-2:2)/2.2), line.tan, dx=3, p=y, dp=dy, b=b)
+line.tan(c((-2:2)/2.2), dx=3, p=y, dp=dy, b=b)
 # pseudo-sigmoidal
 curve(dy(x, b=b), add=T, col="green")
-sapply(c(-2, -1.5, 1.5, 2)/2.1, line.tan, dx=1/5, p=dy, dp=d2y, b=b, col="orange")
+line.tan(c(-2, -1.5, 1.5, 2)/2.1, dx=1/5, p=dy, dp=d2y, b=b, col="orange")
 
 # check full pseudo-sigmoidal
 curve(dy(x, b=b), from= -sqrt(2) + 1E-10, to = sqrt(2) - 1E-10, col="green", ylim=c(-4,4))
-sapply(c(-2.8, -2.4, -2, -1.5, 1.5, 2, 2.4, 2.8)/2.1, line.tan, dx=1/5, p=dy, dp=d2y, b=b, col="orange")
+line.tan(c(-2.8, -2.4, -2, -1.5, 1.5, 2, 2.4, 2.8)/2.1, dx=1/5, p=dy, dp=d2y, b=b, col="orange")
 
 
 ### b = -1/2;
 b = -1/2
 curve(dy(x, b=b), from= -sqrt(5/4), to = sqrt(5/4), col="green", ylim=c(-4,4))
-sapply(c(-2.4, -2, -1.5, 1.5, 2, 2.4)/2.1, line.tan, dx=1/5, p=dy, dp=d2y, b=b, col="orange")
+line.tan(c(-2.4, -2, -1.5, 1.5, 2, 2.4)/2.1, dx=1/5, p=dy, dp=d2y, b=b, col="orange")
 
 
 ### f = sqrt(x);
@@ -258,18 +261,20 @@ d2y = function(x, b=0) {
 	dp = ifelse(div != 0, dp / div, 1E+3); # may need correction
 	return(dp)
 }
+### Plot:
+
 ### b = 0;
 curve(y(x), from= 0, to= 1, ylim=c(0, 1.5))
 # quasi/inverted sigmoidal;
-sapply(c(0, 1/5, 2/3, 0.94), line.tan, dx=3, p=y, dp=dy)
+line.tan(c(0, 1/5, 2/3, 0.94), dx=3, p=y, dp=dy)
 # global minimum
 curve(dy(x), add=T, col="green")
-sapply(c(0:4/5, 0.9), line.tan, dx=1/5, p=dy, dp=d2y, col="orange")
+line.tan(c(0:4/5, 0.9), dx=1/5, p=dy, dp=d2y, col="orange")
 
 
 # check full D(y) curve:
 curve(dy(x), from= 0, to = 1, col="green", ylim=c(0, 2))
-sapply(c(0:4/5, 0.9), line.tan, dx=1/5, p=dy, dp=d2y, col="orange")
+line.tan(c(0:4/5, 0.9), dx=1/5, p=dy, dp=d2y, col="orange")
 
 
 ############################
@@ -313,7 +318,8 @@ y*d2y - 4*(x+b)*y^3*dy^3 + 5*dy^2 # = 0
 ### Simple Case:
 # f = x + b, where b = constant;
 y*d2y - (x+b)*y*(dy)^3 + 2*(dy)^2 # = 0
-### Solution:
+
+### Solution & Plot:
 y = function(x, b) {
 	# root
 	y.f = function(x, v) x*sin(x) + cos(x) - v - b;
@@ -342,14 +348,14 @@ d2y = function(x, b) {
 	dp = ifelse(div != 0, dp / div, -1); # TODO: needs correction!
 	return(dp)
 }
-###
+### Plot:
 b = -1/2
 curve(y(x, b=b), from= -3, to = 3, ylim=c(-2,7))
 # oscillating function with local minimum;
-sapply(c(-1, 1.3, 1.6, 1.8, 1.95), line.tan, dx=3, p=y, dp=dy, b=b)
+line.tan(c(-1, 1.3, 1.6, 1.8, 1.95), dx=3, p=y, dp=dy, b=b)
 # spikes
 curve(dy(x, b=b), from= -3, to = 3, add=T, col="green")
-sapply(c(-1, 1.3, 1.6, 1.8, 1.95), line.tan, dx=3, p=dy, dp=d2y, b=b, col="orange")
+line.tan(c(-1, 1.3, 1.6, 1.8, 1.95), dx=3, p=dy, dp=d2y, b=b, col="orange")
 
 
 #####################
@@ -511,8 +517,12 @@ line.tan(px, dx=0.5, p=dy, dp=d2y)
 ### TODO: tan, ln;
 
 ########################
-
 ########################
+
+#################
+### Section C ###
+#################
+
 ### Integration by parts
 
 # based on Linear simple (Basics);
@@ -566,14 +576,14 @@ d2y = function(x, a=1, n=1) {
 a = 1; n = 1;
 curve(y(x, a=a, n=n), from= -3, to= 3, ylim=c(-2, 1.5))
 # sinus wave;
-sapply(c((-5:5)/2.2), line.tan, dx=3, p=y, dp=dy, a=a, n=n)
+line.tan(c((-5:5)/2.2), dx=3, p=y, dp=dy, a=a, n=n)
 # wave
 curve(dy(x, a=a, n=n), add=T, col="green")
-sapply(c((-5:5)/2.2), line.tan, dx=1/5, p=dy, dp=d2y, a=a, n=n, col="orange")
+line.tan(c((-5:5)/2.2), dx=1/5, p=dy, dp=d2y, a=a, n=n, col="orange")
 
 ### Test separately:
 curve(dy(x, a=a, n=n), from= -3, to= 3, col="green")
-sapply(c((-5:5)/2.2), line.tan, dx=1/5, p=dy, dp=d2y, a=a, n=n, col="orange")
+line.tan(c((-5:5)/2.2), dx=1/5, p=dy, dp=d2y, a=a, n=n, col="orange")
 
 
 ### Test
@@ -609,15 +619,15 @@ dy = function(x, a=1, n=3/2, lower=0) {
 a = 1; n = 3/2;
 # quasi-exponential;
 curve(y(x, a=a, n=n), from= 0, to= 3)
-sapply(c((0:5)/2.2), line.tan, dx=3, p=y, dp=dy, a=a, n=n)
+line.tan(c((0:5)/2.2), dx=3, p=y, dp=dy, a=a, n=n)
 # wave
 curve(dy(x, a=a, n=n), add=T, col="green")
-sapply(c((0:5)/2.2), line.tan, dx=1/5, p=dy, dp=d2y, a=a, n=n, col="orange")
+line.tan(c((0:5)/2.2), dx=1/5, p=dy, dp=d2y, a=a, n=n, col="orange")
 
 
 ### Test separately:
 curve(dy(x, a=a, n=n), from= 0, to= 3, col="green")
-sapply(c((0:5)*2/3.2), line.tan, dx=1/5, p=dy, dp=d2y, a=a, n=n, col="orange")
+line.tan(c((0:5)*2/3.2), dx=1/5, p=dy, dp=d2y, a=a, n=n, col="orange")
 
 
 ############################
@@ -675,14 +685,14 @@ d2y = function(x, k) {
 k = 1;
 curve(y(x, k=k), from= 0+1E-3, to = sqrt(7))
 # oscillating function with local minimum;
-sapply(c(1/3, 1.1, 1.6, 1.8, 1.95), line.tan, dx=3, p=y, dp=dy, k=k)
+line.tan(c(1/3, 1.1, 1.6, 1.8, 1.95), dx=3, p=y, dp=dy, k=k)
 # log-like
 curve(dy(x, k=k), add=T, col="green")
-sapply(c(1/3, 1.1, 1.7, 2, 2.5), line.tan, dx=3, p=dy, dp=d2y, k=k, col="orange")
+line.tan(c(1/3, 1.1, 1.7, 2, 2.5), dx=3, p=dy, dp=d2y, k=k, col="orange")
 
 # separately D2:
 curve(dy(x, k=k), from= 0+1E-3, to = sqrt(7), col="green")
-sapply(c(1/3, 1.1, 1.7, 2, 2.5), line.tan, dx=3, p=dy, dp=d2y, k=k, col="orange")
+line.tan(c(1/3, 1.1, 1.7, 2, 2.5), dx=3, p=dy, dp=d2y, k=k, col="orange")
 
 
 ### k == 1/2; # TODO: may need correcting y0();
@@ -690,10 +700,10 @@ k = 1/2;
 curve(y(x, k=k), from= 0+1E-3, to = 2.7)
 # for x > 2.7 up to 9.5: needs start=500;
 # oscillating function with local minimum;
-sapply(c(1/3, 1.1, 1.6, 1.8, 1.95), line.tan, dx=3, p=y, dp=dy, k=k)
+line.tan(c(1/3, 1.1, 1.6, 1.8, 1.95), dx=3, p=y, dp=dy, k=k)
 # log-like
 curve(dy(x, k=k), add=T, col="green")
-sapply(c(1/3, 1/2, 1, 2.2), line.tan, dx=3, p=dy, dp=d2y, k=k, col="orange")
+line.tan(c(1/3, 1/2, 1, 2.2), dx=3, p=dy, dp=d2y, k=k, col="orange")
 
 
 # separately D2:
@@ -766,6 +776,10 @@ cos(y) = ((f2*dy - df1)*p + f1*dp) / ((f2*dy - df1)*f2 + (f1*dy + df2)*f1)
 
 #########################
 #########################
+
+#################
+### Integrals ###
+#################
 
 ### y = I(sin(x^n)) * I(cos(x^n))
 
