@@ -83,12 +83,13 @@ dp.exp.pm = function(p, xn="x") {
 }
 # D( p$C * log(p$Log) )
 dp.log.pm = function(p, xn="x") {
-	pPFr = mult.pm(dp.pm(p$Log, xn), p$C);
-	pPP  = mult.pm(p$Log, dp.pm(p$C, xn));
-	p$C  = pPP; p$PFr = pPFr; p$Div = p$Log;
+	pB0 = mult.pm(dp.pm(p$Log, xn), p$C);
+	pPP = mult.pm(p$Log, dp.pm(p$C, xn));
+	p$C = pPP; p$B0 = pB0; p$Div = p$Log;
 	return(p);
 }
 # D( p1 / pdiv ])
+# TODO: consistent output-names;
 dp.div.pm = function(p1, pdiv, xn="x") {
 	if(is.numeric(p1) || is.complex(p1)) {
 		r = mult.pm(dp.pm(pdiv, xn=xn), - p1);
