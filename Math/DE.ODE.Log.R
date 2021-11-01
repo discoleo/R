@@ -7,7 +7,7 @@
 ### Differential Equations
 ### ODEs - Logarithms
 ###
-### draft v.0.3g
+### draft v.0.3g-ex
 
 
 ### ODEs Derived from Logarithms
@@ -22,8 +22,9 @@
 ### History ###
 ###############
 
-### draft v.0.3g:
+### draft v.0.3g - v.0.3g-ex:
 # - Automatic generation of simple types of ODEs;
+# - more examples; [v.0.3g-ex]
 ### draft v.0.3f - v.0.3f-st1:
 # - derived from: [TODO full derivation]
 #   y = log(exp(P1(x)) + P2(x)) + F0(x); [started]
@@ -133,6 +134,22 @@ x*(x^4 - c^2)^2*d2y - (x^4 - c^2)^2*dy - 8*x^5*(x^4 - 5*c^2) # = 0
 
 
 ### Example 4:
+n = 2; m = 4; k = 4;
+p1 = toPoly.pm("x^n + c")
+p2 = toPoly.pm("x^n - c")
+f0 = toPoly.pm("k()*x^m") # evaluate k();
+pL1 = toPoly.pm("x^n + c")
+pL2 = toPoly.pm("x^n - c")
+pDiv = toPoly.pm("c*x^(4*n) - 2*c^3*x^(2*n) + c^5")
+pR = genODE.Log.pm(p1, p2, pL1, pL2, f0=f0, pDiv=pDiv, div.by="x");
+print.dpm(pR, do.sort=FALSE)
+
+### ODE:
+x*(x^4 - c^2)*d2y - (x^4 - c^2)*dy - 8*x^5 + k*m*(m-2)*(x^4 - c^2)*x^(m-1) # = 0
+
+
+### Example 5:
+# - non-correlated: a & c;
 p1 = toPoly.pm("x^2 + c")
 p2 = toPoly.pm("x^2 - c")
 pL1 = toPoly.pm("x^2 + a")
