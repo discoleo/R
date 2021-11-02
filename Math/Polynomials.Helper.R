@@ -979,18 +979,19 @@ order.df = function(x, decreasing=TRUE) {
 	return(id);
 }
 ### TODO: update use of sort.pm() everywhere!
-sort.pm = function(p, xn=NULL, sort.coeff) {
+sort.pm = function(p, xn=NULL, sort.coeff, xn2=NULL) {
 	### Special Cols:
 	# TODO: different approach;
 	# - over xn: c(1,2,3,4) = Sum, Max, Min, MinNZ; (IF length(xn) > 1)
 	# - over all: c(5,6,7,8,9) = SumAll, MaxAll, MinAll, MinNZAll, Coeff;
 	isM = ( ! is.null(xn) && length(xn) > 1); # isMultiple
+	if( ! is.null(xn2)) xn = c(xn, xn2);
 	if(missing(sort.coeff)) {
 		sort.coeff = if(isM) c(1,2, seq(10, length.out=length(xn)), 5,6)
-			else if(is.null(xn)) c(1,2) else c(6,1,2);
+			else if(is.null(xn)) c(1,2) else c(seq(6, length.out=length(xn)), 1,2);
 	}
 	pP = p[, - which(names(p) == "coeff"), drop=FALSE];
-	summary.sort = function(p, FUN=sum) sapply(seq(nrow(p)), function(id) FUN(p[id, ]));
+	summary.sort = function(p, FUN=sum) sapply(seq(nrow(p)), function(id) FUN(unlist(p[id, , drop=TRUE])));
 	to.df = function(i, p, FUN) if(any(sort.coeff == i)) summary.sort(p, FUN) else rep(0, nrow(p));
 	if(isM) {
 		pP.pp = pP[, xn, drop=FALSE];
@@ -1048,7 +1049,7 @@ sort.simple.pm = function(p, leading=1, do.rev=FALSE, sort.order=TRUE) {
 	p = cbind(p[,-leading, drop=FALSE], p[,leading, drop=FALSE]);
 	return(p)
 }
-as.charatcer.pm = function(p, leading=1, do.sort=TRUE, do.rev=FALSE, sort.order=TRUE, simplify.complex=TRUE) {
+as.charatcer.pm = function(p, leading=NA, do.sort=TRUE, do.rev=FALSE, sort.order=TRUE, simplify.complex=TRUE) {
 	### Var order
 	isNA = all(is.na(leading));
 	if( ! isNA && ! is.numeric(leading)) leading = match(leading, names(p));
