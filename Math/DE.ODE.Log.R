@@ -7,7 +7,7 @@
 ### Differential Equations
 ### ODEs - Logarithms
 ###
-### draft v.0.3g-ex
+### draft v.0.3g-ex2
 
 
 ### ODEs Derived from Logarithms
@@ -22,9 +22,9 @@
 ### History ###
 ###############
 
-### draft v.0.3g - v.0.3g-ex:
+### draft v.0.3g - v.0.3g-ex2:
 # - Automatic generation of simple types of ODEs;
-# - more examples; [v.0.3g-ex]
+# - more examples & checks; [v.0.3g-ex2]
 ### draft v.0.3f - v.0.3f-st1:
 # - derived from: [TODO full derivation]
 #   y = log(exp(P1(x)) + P2(x)) + F0(x); [started]
@@ -161,6 +161,38 @@ print.dpm(pR, do.sort=FALSE)
 ### ODE:
 (x^9 - 2*a^2*x^5 + a^4*x)*d2y - (x^8 - 2*a^2*x^4 + a^4)*dy +
 	- 8*x^9 + 24*a^2*x^5 - 16*a*c*x^5 # = 0
+
+
+### Example 6:
+Log.ODE.gen = function(n, m, k, print=TRUE) {
+	p1 = toPoly.pm("x^n")
+	p2 = toPoly.pm("1")
+	f0 = toPoly.pm("k()*x^m") # evaluate k();
+	pL1 = toPoly.pm("x + b")
+	pL2 = toPoly.pm("x + c")
+	pDiv = toPoly.pm("x^2 + b*x + c*x + b*c")
+	pR = genODE.Log.pm(p1, p2, pL1, pL2, f0=f0, pDiv=pDiv, div.by="x");
+	if(print) print.dpm(pR, do.sort=FALSE)
+	invisible(pR);
+}
+### Ex 6a:
+n = 1; m = 0; k = 4;
+Log.ODE.gen(n, m, k)
+
+### ODE:
+(x + b)^2*(x + c)^2*d2y +
+	- x^3 + x^2 - 2*b*x^2 - 2*c*x^2 + 2*b*x - 4*b*c*x - c^2*x + b^2 - 2*b*c^2
+
+### Ex 6b:
+n = 1; m = 0; k = 3;
+pR0 = Log.ODE.gen(n, m=m, k, print=FALSE); # TODO: parent.frame;
+n = 1; m = 2; k = 3;
+pR = diff.pm(pR0, Log.ODE.gen(n, m, k, print=FALSE))
+print.dpm(pR)
+# Diff(ODE)
+# k*n*(n-1)*(x+b)^2*(x+c)^2*x^(m-2)
+# Check:
+div.pm(pR, pow.pm(toPoly.pm("x^2 + b*x + c*x + b*c"), 2), by="x")
 
 
 ################
