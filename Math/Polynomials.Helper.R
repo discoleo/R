@@ -1025,12 +1025,12 @@ print.monome = function(name, p) {
 	return(v.r);
 }
 print.pm = function(...) {
-	ch = as.charatcer.pm(...);
+	ch = as.character.pm(...);
 	print(ch);
 	invisible(ch);
 }
 print.p = function(...) {
-	ch = as.charatcer.pm(...);
+	ch = as.character.pm(...);
 	print(ch);
 	invisible(ch);
 }
@@ -1049,7 +1049,7 @@ sort.simple.pm = function(p, leading=1, do.rev=FALSE, sort.order=TRUE) {
 	p = cbind(p[,-leading, drop=FALSE], p[,leading, drop=FALSE]);
 	return(p)
 }
-as.charatcer.pm = function(p, leading=NA, do.sort=TRUE, do.rev=FALSE, sort.order=TRUE, simplify.complex=TRUE) {
+as.character.pm = function(p, leading=NA, do.sort=TRUE, do.rev=FALSE, sort.order=TRUE, simplify.complex=TRUE) {
 	### Var order
 	isNA = all(is.na(leading));
 	if( ! isNA && ! is.numeric(leading)) leading = match(leading, names(p));
