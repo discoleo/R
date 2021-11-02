@@ -5,6 +5,8 @@
 ###
 ### Helper Functions
 ### Parse Polynomials
+###
+### draft v.0.2b-ref
 
 ### Parser for Multi-variable Polynomials
 
@@ -15,6 +17,21 @@
 # Note:
 # - is automatically loaded by: Polynomials.Helper.R;
 # source("Polynomials.Helper.Parser.R")
+
+###############
+
+###############
+### History ###
+###############
+
+
+### draft v.0.2a - v.0.2a-ref:
+# - moved from Polynomials.Helper.R;
+# - plan for refactoring;
+### draft v.0.1 [branch]
+# - developed during:
+#   Polynomials.Helper.R;
+
 
 ##########################
 ##########################
@@ -78,36 +95,6 @@ toPoly.pm = function(e) {
 	}
 	class(p) = c("pm", class(p));
 	return(p);
-}
-
-### Simple Parser for expressions
-# - Splits expression into (text) Monomials:
-parse.pm = function(e) {
-	if( ! is.expression(e)) stop("Input must be an expression!")
-	if( ! is.language(e[[1]])) return(NULL);
-	e = e[[1]];
-	e.txt = character(0);
-	c.e = function(e, x.sign) {
-		xi = if(nchar(x.sign) == 0) format(e[[3]]) else paste(x.sign, format(e[[3]]));
-		c(e.txt, xi);
-	}
-	while(TRUE) {
-		if(is.symbol(e[[1]])) {
-			x.sign = paste0(e[[1]]);
-			if(x.sign == "+") x.sign = ""
-			else if(x.sign != "-") {
-				e.txt = c(e.txt, format(e));
-				break;
-			}
-		} else {
-			print(e); break;
-		}
-		e.txt = c.e(e, x.sign);
-		if(is.language(e[[2]])) e = e[[2]]
-		else break;
-		
-	}
-	return(e.txt);
 }
 
 toMonom.pm = function(e, xsign = 1) {
@@ -221,3 +208,33 @@ parse.parenth.pm = function(e) {
 	return(p);
 }
 
+
+### Very Simple Parser for expressions
+# - Splits expression into (text) Monomials:
+parse.pm = function(e) {
+	if( ! is.expression(e)) stop("Input must be an expression!")
+	if( ! is.language(e[[1]])) return(NULL);
+	e = e[[1]];
+	e.txt = character(0);
+	c.e = function(e, x.sign) {
+		xi = if(nchar(x.sign) == 0) format(e[[3]]) else paste(x.sign, format(e[[3]]));
+		c(e.txt, xi);
+	}
+	while(TRUE) {
+		if(is.symbol(e[[1]])) {
+			x.sign = paste0(e[[1]]);
+			if(x.sign == "+") x.sign = ""
+			else if(x.sign != "-") {
+				e.txt = c(e.txt, format(e));
+				break;
+			}
+		} else {
+			print(e); break;
+		}
+		e.txt = c.e(e, x.sign);
+		if(is.language(e[[2]])) e = e[[2]]
+		else break;
+		
+	}
+	return(e.txt);
+}
