@@ -1,0 +1,223 @@
+########################
+###
+### Leonard Mada
+### [the one and only]
+###
+### Helper Functions
+### Parse Polynomials
+
+### Parser for Multi-variable Polynomials
+
+
+##############
+
+### fast load:
+# Note:
+# - is automatically loaded by: Polynomials.Helper.R;
+# source("Polynomials.Helper.Parser.R")
+
+##########################
+##########################
+
+##############
+### Parser ###
+##############
+
+### Parse expressions / polynomials
+toPoly.pm = function(e) {
+	if(is.character(e)) {
+		if(length(e) > 1) {
+			pl = lapply(e, function(e) toPoly.pm(e));
+			return(pl);
+		}
+		e = parse(text=e);
+	} else if(is.numeric(e) || is.complex(e)) {
+		p = if(length(e) == 1) data.frame(coeff=e)
+			else stop("Not yet implemented!");
+		class(p) = c("pm", class(p));
+		return(p);
+	} else if(inherits(e, "data.frame")) {
+		if(inherits(e, "pm")) return(e);
+		class(e) = c("pm", class(e));
+		return(e);
+	}
+	if(is.expression(e)) {
+		e = e[[1]];
+	} else if( ! (is.language(e) || is.numeric(e) || is.complex(e)) ) {
+		stop("Input must be an expression!");
+	}
+	p = data.frame();
+	while(TRUE) {
+		isSymbol = is.symbol(e);
+		if(isSymbol || is.symbol(e[[1]])) {
+			op = if(isSymbol) e else e[[1]];
+			if(op == "+") {
+				m = toMonom.pm(e[[3]]);
+				p = if(nrow(p) == 0) m else sum.pm(p, m);
+				e = e[[2]];
+			} else if(op == "-") {
+				if(length(e) > 2) {
+					m = toMonom.pm(e[[3]], xsign=-1);
+					p = if(nrow(p) == 0) m else sum.pm(p, m);
+					e = e[[2]];
+				} else {
+					m = toMonom.pm(e[[2]], xsign=-1);
+					p = if(nrow(p) == 0) m else sum.pm(p, m);
+					break;
+				}
+			} else {
+				m = toMonom.pm(e);
+				p = if(nrow(p) == 0) m else sum.pm(p, m);
+				break;
+			}
+		} else if(is.numeric(e) || is.complex(e)) {
+			m = toMonom.pm(e);
+			p = if(nrow(p) == 0) m else sum.pm(p, m);
+			break;
+		} else break;
+	}
+	class(p) = c("pm", class(p));
+	return(p);
+}
+
+### Simple Parser for expressions
+# - Splits expression into (text) Monomials:
+parse.pm = function(e) {
+	if( ! is.expression(e)) stop("Input must be an expression!")
+	if( ! is.language(e[[1]])) return(NULL);
+	e = e[[1]];
+	e.txt = character(0);
+	c.e = function(e, x.sign) {
+		xi = if(nchar(x.sign) == 0) format(e[[3]]) else paste(x.sign, format(e[[3]]));
+		c(e.txt, xi);
+	}
+	while(TRUE) {
+		if(is.symbol(e[[1]])) {
+			x.sign = paste0(e[[1]]);
+			if(x.sign == "+") x.sign = ""
+			else if(x.sign != "-") {
+				e.txt = c(e.txt, format(e));
+				break;
+			}
+		} else {
+			print(e); break;
+		}
+		e.txt = c.e(e, x.sign);
+		if(is.language(e[[2]])) e = e[[2]]
+		else break;
+		
+	}
+	return(e.txt);
+}
+
+toMonom.pm = function(e, xsign = 1) {
+	m = data.frame(coeff=xsign);
+	acc = list();
+	while(TRUE) {
+		if(length(e) == 1) {
+			if(is.symbol(e)) {
+				if(e == "-") {
+					m$coeff = - m$coeff; # NO effect?
+				} else if(e == "+") {
+					# an extra "+"; # NO effect?
+				} else {
+					vn1 = as.character(e); # a variable name;
+					m[, vn1] = 1;
+				}
+			} else if(is.language(e)) {
+				pp = parse.epm(e); # another polynomial
+				m  = mult.pm(pp, m);
+			} else if(is.numeric(e) || is.complex(e)) {
+				m[, "coeff"] = m[, "coeff"] * e;
+			} else print(paste0("Error: ", e));
+		} else {
+			op = e[[1]];
+			if(is.symbol(op)) {
+				if(op == "*") {
+					acc = c(acc, e[[2]]);
+					e = e[[3]];
+					if(is.call(e)) {
+						pp = toMonom.pm(e);
+						nLast = length(acc);
+						pp2 = toMonom.pm(acc[[nLast]])
+						pp = mult.pm(pp, pp2);
+						# TODO: enforce multiplication;
+						m  = mult.pm(pp, m);
+						acc = acc[ - nLast];
+						if(length(acc) == 0) break;
+						e = acc[[length(acc)]];
+					}
+					next;
+				}
+				if(op == "(") {
+					if(length(e) > 2) stop("Arrays NOT yet supported!");
+					pp = parse.parenth.pm(e[[2]]);
+					m  = mult.pm(pp, m);
+				} else if(op == "^") {
+					pow = e[[3]];
+					if( ! is.numeric(pow)) {
+						pow = eval(pow, envir=.GlobalEnv);
+						if( ! is.numeric(pow)) {
+							warning(paste0("Power = ", pow, " is NOT numeric!"));
+							pow = NA;
+						}
+					}
+					if(is.numeric(e[[2]])) {
+						m[, "coeff"] = m[, "coeff"] * e[[2]]^pow;
+					} else if(is.language(e[[2]]) && ! is.symbol(e[[2]])) {
+						e = e[[2]];
+						if(e[[1]] == "(") {
+							pp = parse.parenth.pm(e[[2]]);
+							pp = pow.pm(pp, pow);
+							m  = mult.pm(pp, m);
+						} else {
+							print("Power of px!");
+							pp = parse.epm(e);
+							pp = pow.pm(pp, pow);
+							m  = mult.pm(pp, m);
+						}
+					} else {
+						vn1 = as.character(e[[2]]);
+						m[, vn1] = pow;
+					}
+				} else if(op == "-") {
+					m$coeff = - m$coeff;
+					e = e[[2]]; next;
+				} else if(op == "+") {
+					e = e[[2]]; next;
+				} else if(op == "/") {
+					m[, "coeff"] = m[, "coeff"] / e[[3]];
+					e = e[[2]]; next;
+				} else if(is.call(e)) {
+					pp = parse.epm(e); # another polynomial;
+					m  = mult.pm(pp, m); break;
+				} else {
+					vn1 = as.character(op); # a variable name;
+					m[, vn1] = 1;
+				}
+			} else if(is.numeric(op) || is.complex(op)) {
+				m[, "coeff"] = m[, "coeff"] * op;
+			}
+		}
+		if(length(acc) == 0) break;
+		e = acc[[length(acc)]];
+		acc = head(acc, -1);
+	}
+	return(m);
+}
+parse.epm = function(e) {
+	p = eval(e[[1]]);
+	pnames = names(e); len = length(pnames);
+	if(len > 1) {
+		for(i in seq(2, len)) {
+			tmp = toPoly.pm(e[[i]]);
+			p = replace.pm(p, tmp, pnames[i]);
+		}
+	}
+	return(p)
+}
+parse.parenth.pm = function(e) {
+	p = toPoly.pm(e);
+	return(p);
+}
+
