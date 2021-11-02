@@ -290,7 +290,7 @@ mult.sc.pm = function(p, s, div=1, coeff.name="coeff") {
 	} else stop("p must be a polynomial!")
 	return(p);
 }
-simplify.spm = function(p1) {
+simplify.spm = function(p1, do.gcd=FALSE) {
 	nms = names(p1);
 	nms = nms[ ! nms %in% "coeff"];
 	for(nm in nms) {
@@ -299,6 +299,7 @@ simplify.spm = function(p1) {
 			p1[,nm] = p1[,nm] - v.pow;
 		}
 	}
+	if(do.gcd && (xgcd <- gcd.vpm(p1)) > 1) p1$coeff = p1$coeff / xgcd;
 	return(p1);
 }
 simplify.pm = function(p1, p2) {
@@ -778,6 +779,7 @@ gcd.vpm = function(p, xgcd=0) {
 	return(xgcd);
 }
 gcd.pm = function(p1, p2, by="x", div.sc=1) {
+	if(missing(p2)) return(gcd.vpm(p1)); # scalar gcd on coeff;
 	# basic implementation without much thought!
 	if(max(p2[,by]) > max(p1[,by])) { tmp = p1; p1 = p2; p2 = tmp; }
 	pR = div.pm(p1, p2, by=by);
@@ -1026,6 +1028,20 @@ print.p = function(...) {
 	invisible(ch);
 }
 # TODO: format.complex();
+sort.simple.pm = function(p, leading=1, do.rev=FALSE, sort.order=TRUE) {
+	if(length(leading) == 1) {
+		p = p[order(p[, leading], decreasing=sort.order), , drop=FALSE];
+	} else {
+		coeff.df = data.frame(vs=apply(p[, leading, drop=FALSE], 1, sum));
+		coeff.df = cbind(coeff.df, (p[, leading]));
+		order.s = function(...) order(..., decreasing=sort.order);
+		id = do.call(order.s, coeff.df);
+		p = p[id,];
+		if(do.rev) leading = rev(leading);
+	}
+	p = cbind(p[,-leading, drop=FALSE], p[,leading, drop=FALSE]);
+	return(p)
+}
 as.charatcer.pm = function(p, leading=1, do.sort=TRUE, do.rev=FALSE, sort.order=TRUE, simplify.complex=TRUE) {
 	### Var order
 	isNA = all(is.na(leading));
@@ -1036,18 +1052,11 @@ as.charatcer.pm = function(p, leading=1, do.sort=TRUE, do.rev=FALSE, sort.order=
 	}
 	if(length(leading) > 0) {
 		if(do.sort) {
-			if(length(leading) == 1) {
-				p = p[order(p[, leading], decreasing=sort.order), ];
-			} else {
-				coeff.df = data.frame(vs=apply(p[, leading, drop=FALSE], 1, sum));
-				coeff.df = cbind(coeff.df, (p[, leading]));
-				order.s = function(...) order(..., decreasing=sort.order);
-				id = do.call(order.s, coeff.df);
-				p = p[id,];
-				if(do.rev) leading = rev(leading);
-			}
+			p = sort.simple.pm(p, leading=leading, do.rev=do.rev);
+		} else {
+			if(do.rev) leading = rev(leading);
+			p = cbind(p[,-leading, drop=FALSE], p[,leading, drop=FALSE]);
 		}
-		p = cbind(p[,-leading, drop=FALSE], p[,leading, drop=FALSE]);
 	}
 	###
 	id.coeff = match("coeff", colnames(p));
@@ -1130,6 +1139,11 @@ toPoly.pm = function(e) {
 			return(pl);
 		}
 		e = parse(text=e);
+	} else if(is.numeric(e) || is.complex(e)) {
+		p = if(length(e) == 1) data.frame(coeff=e)
+			else stop("Not yet implemented!");
+		class(p) = c("pm", class(p));
+		return(p);
 	}
 	if(is.expression(e)) {
 		e = e[[1]];
