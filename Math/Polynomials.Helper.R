@@ -976,6 +976,7 @@ order.df = function(x, decreasing=TRUE) {
 ### TODO: update use of sort.pm() everywhere!
 sort.pm = function(p, xn=NULL, sort.coeff) {
 	### Special Cols:
+	# TODO: different approach;
 	# - over xn: c(1,2,3,4) = Sum, Max, Min, MinNZ; (IF length(xn) > 1)
 	# - over all: c(5,6,7,8,9) = SumAll, MaxAll, MinAll, MinNZAll, Coeff;
 	isM = ( ! is.null(xn) && length(xn) > 1); # isMultiple
@@ -1144,6 +1145,10 @@ toPoly.pm = function(e) {
 			else stop("Not yet implemented!");
 		class(p) = c("pm", class(p));
 		return(p);
+	} else if(inherits(e, "data.frame")) {
+		if(inherits(e, "pm")) return(e);
+		class(e) = c("pm", class(e));
+		return(e);
 	}
 	if(is.expression(e)) {
 		e = e[[1]];
