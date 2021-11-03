@@ -155,6 +155,17 @@ aggregate0.pm = function(p) {
 	p.r = aggregate(coeff~., p, sum);
 	return(p.r);
 }
+
+### Utils
+dimnames.pm = function(p) {
+	nms = names(p);
+	# excludes the Coefficients:
+	id = match("coeff", nms);
+	return(nms[ - id]);
+}
+
+### Basic Operations
+
 ### Multiplication
 mult.all.pm = function(p) return(mult.lpm(p));
 mult.lpm = function(p) {
@@ -304,6 +315,8 @@ mult.sc.pm = function(p, s, div=1, coeff.name="coeff") {
 	} else stop("p must be a polynomial!")
 	return(p);
 }
+
+### Simplify functions
 simplify.spm = function(p1, do.gcd=FALSE) {
 	nms = names(p1);
 	nms = nms[ ! nms %in% "coeff"];
@@ -358,6 +371,8 @@ reduce.cpm = function(p, asBigNum=FALSE) {
 	}
 	return(p);
 }
+
+### Convert Coefficients
 toDouble.pm = function(p, scale=1) {
 	# convert Big Integers to some sensible Double;
 	isZero = (p$coeff == 0);
@@ -387,6 +402,8 @@ as.numeric.pm = function(p) {
 	p$coeff = as.numeric(p$coeff);
 	return(p);
 }
+
+### Sum
 ### Helper functions
 align.pm = function(p1, p2, align.names=TRUE, doReduce=TRUE) {
 	# align columns of 2 data.frames for sum.pm();
@@ -504,6 +521,7 @@ shift.pm = function(p, val, x="x", tol=1E-10) {
 		return(p);
 	}
 	# 1 Variable:
+	if(val == 0) return(p);
 	x.new = data.frame(x=1:0, coeff = c(1, val));
 	names(x.new)[1] = x;
 	p = replace.pm(p, x.new, x=x, pow=1);
@@ -545,6 +563,7 @@ replace.withVal.pm = function(p, x, pow=1, val, simplify=TRUE) {
 }
 replace.pm = function(p1, p2, x, pow=1) {
 	# replace x^pow by p2;
+	if(length(x) > 1 || length(pow) > 1) stop("Only 1 value supported!")
 	idx = match(x, names(p1));
 	if(any(is.na(idx))) {
 		warning(paste0("Polynomial does NOT contain variable: ", x));
@@ -555,6 +574,7 @@ replace.pm = function(p1, p2, x, pow=1) {
 	rpow = if(pow == 1) p1[,idx] else p1[,idx] %/% pow;
 	p1[,idx] = if(pow == 1) 0 else p1[,idx] %% pow;
 	max.pow = max(rpow);
+	# Powers of p2:
 	p2.pows = list(p2);
 	if(max.pow > 1) {
 		if(ncol(p2) > 1) {
@@ -565,6 +585,7 @@ replace.pm = function(p1, p2, x, pow=1) {
 			p2.pows = sum(p2$coeff)^seq(max.pow);
 		}
 	}
+	# Result:
 	pR = data.frame();
 	for(nr in seq(nrow(p1))) {
 		pR = if(rpow[nr] == 0) add.pm(pR, p1[nr,])
@@ -580,7 +601,8 @@ replace.fr.pm = function(p1, p2, p2fr, x, pow=1) {
 	rpow = if(pow == 1) p1[,idx] else p1[,idx] %/% pow;
 	p1[,idx] = if(pow == 1) 0 else p1[,idx] %% pow;
 	max.pow = max(rpow);
-	p2.pows = list(p2); # powers of p2
+	# powers of p2 & p2fr:
+	p2.pows = list(p2);
 	p2fr.pows = list(p2fr); # powers of p2fr
 	if(max.pow > 1) {
 		for(ipow in seq(2, max.pow)) {
@@ -611,14 +633,28 @@ replace.fr.pm = function(p1, p2, p2fr, x, pow=1) {
 	};
 	return(reduce.var.pm(pR));
 }
+
+### Eval:
 eval.pm = function(p, x, progress=FALSE) {
-	# x = c(values of variables)
-	# TODO: list!
+	# x = c(values of variables) OR
+	# x = list(values of variables);
 	pP = p[, - which(names(p) == "coeff"), drop=FALSE];
+	if(is.list(x)) {
+		len = sapply(x, length);
+		if(any(len != 1)) stop("Each list element must have 1 entry!")
+		nms = names(x);
+		if( ! is.null(nms)) {
+			nmsP = names(pP);
+			id = pmatch(nmsP, nms);
+			if(any(is.na(id))) stop(paste0("Variables missing: ", nmsP[is.na(id)]));
+			x = x[id];
+		}
+		x = unlist(x);
+	}
 	eval.p = function(id) {
 		idx = which(pP[id,] != 0);
 		if(length(idx) == 0) return(p$coeff[id]);
-		prod(x[idx]^pP[id, idx], p$coeff[id]);
+		prod(x[idx]^unlist(pP[id, idx]), p$coeff[id]);
 	}
 	sum(sapply(seq(nrow(p)), eval.p))
 }

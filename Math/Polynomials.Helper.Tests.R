@@ -68,6 +68,8 @@ eval.pm(pR, -6)
 p2 = toPoly.pm("(x+a+b)^3")
 p2 = sort.pm(p2, "x", xn2= c("a", "b"))
 p2
+#
+eval.pm(p2, c(2,4,-3))
 
 ### x^3
 toPoly.pm("p1(x = x-1)")
@@ -100,6 +102,21 @@ m = -1
 f(0)
 f(2)
 f(3)
+
+###############
+
+### Eval:
+
+# (x+1)*(x+2)*...*(x+5)
+sP = paste("(x+", seq(1,5), ")", collapse="*");
+pR = mult.pm(toPoly.pm(sP), toPoly.pm("a+b"));
+pR
+eval.pm(pR, c(-2, 1,1)) # 0
+eval.pm(pR, c(0, -2,-3)) # != 0
+eval.pm(pR, list(a=-6, b=6, x=2)) # 0
+eval.pm(pR, list(a=-6, b=5, x=-5)) # 0
+eval.pm(pR, list(a=-6, b=5, x=-6)) # != 0
+
 
 ###############
 
