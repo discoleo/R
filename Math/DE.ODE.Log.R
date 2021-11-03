@@ -187,13 +187,12 @@ Log.ODE.gen(n, m, k)
 	- x^3 + x^2 - 2*b*x^2 - 2*c*x^2 + 2*b*x - 4*b*c*x - c^2*x + b^2 - 2*b*c^2
 
 ### Ex 6b:
-n = 1; m = 0; k = 3;
-pR0 = Log.ODE.gen(n, m=m, k, print=FALSE); # TODO: parent.frame;
 n = 1; m = 2; k = 3;
-pR = diff.pm(pR0, Log.ODE.gen(n, m, k, print=FALSE))
+pR0 = Log.ODE.gen(n, m=0, k=k, print=FALSE);
+pR  = diff.pm(pR0, Log.ODE.gen(n, m=m, k=k, print=FALSE))
 print.dpm(pR)
 # Diff(ODE)
-# k*n*(n-1)*(x+b)^2*(x+c)^2*x^(m-2)
+# k*m*(m-1)*(x+b)^2*(x+c)^2*x^(m-2)
 # Check:
 div.pm(pR, pow.pm(toPoly.pm("x^2 + b*x + c*x + b*c"), 2), by="x")
 
@@ -217,16 +216,19 @@ m*x^(m-1)*log(x^n + a) + m*x^(m-1)*log(x^n + b) +
 m*x^(m-1)*log(x^n + a) + m*x^(m-1)*log(x^n + b) +
 	+ n*x^(n-1)*(2*x^(m+n) + (a+b)*x^m - c*(a-b)) / ((x^n + a) * (x^n + b))
 # let: T(x) = x^(n-1)*(2*x^(m+n) + (a+b)*x^m - c*(a-b)) / ((x^n + a) * (x^n + b))
-# Note: + n * T(x);
-m*x^(m-1)*log(x^n + a) + m*x^(m-1)*log(x^n + b) + n*T
+# Note: dy = ... + n * T(x); =>
+m*x^(m-1)*log(x^n + a) + m*x^(m-1)*log(x^n + b) + n*T;
+
 ### Solve linearly for log(P(x))
+# Check:
+# m = 4; toPoly.pm("m*x^(m-1)*(x^m - c) - m*x^(m-1)*(x^m + c)");
 log(x^n + a) =
 	((x^m - c)*dy - m*x^(m-1)*y - n*T*(x^m - c)) / - (2*c*m*x^(m-1));
 log(x^n + b) =
 	((x^m + c)*dy - m*x^(m-1)*y - n*T*(x^m + c)) /   (2*c*m*x^(m-1));
 log(x^n + a) + log(x^n + b) = (dy - n*T) / (m*x^(m-1));
 
-###
+### D(y):
 (x^n + a)*(x^n + b) * dy +
 	- m*x^(m-1)*(x^n + a)*(x^n + b)*(log(x^n + a) + log(x^n + b)) +
 	- n*x^(n-1)*(2*x^(m+n) + (a+b)*x^m - c*(a-b));
@@ -261,6 +263,18 @@ x*(x^n + a)*(x^n + b) * d2y +
 	+ n^2*x^n*(2*x^n + a + b) * T
 # D(D(y) / x^(m-1)) = ... * x^(m-1) / (x*(x^n + a)*(x^n + b));
 
+n = 3; m = 4;
+p = toPoly.pm("(x^n + a)*(x^n + b) * dy +
+	- m*x^(m-1)*(x^n + a)*(x^n + b)*(L1 + L2) +
+	- n*x^(n-1)*(2*x^(m+n) + (a+b)*x^m - c*(a-b))");
+dy = lapply(c("y", "L1", "L2"), function(y) dy.pm(p, y, x=NULL));
+dx = dp.pm(p, "x");
+pR = sum.lpm(c(dy, list(dx)));
+dL = toPoly.pm("n*x^(n-1)");
+pLa = toPoly.pm("x^n + a"); pLb = toPoly.pm("x^n + b");
+pR = replace.fr.pm(pR, dL, pLa, "dL1");
+pR = replace.fr.pm(pR, dL, pLb, "dL2");
+# TODO
 
 ### Special Case 1:
 m = 2;
@@ -1062,6 +1076,7 @@ x*d2y + x*dy^2 - (2*x*df + n*x^n + (n-1))*dy +
 
 ### y = log(P(x)) * log(log(P(x))) + F0(x)
 
+### Example:
 ### y = log(x^2 + k) * log(log(x^2 + k)) + f
 
 ### D =>
@@ -1085,10 +1100,12 @@ x*d2y + x*dy^2 - (2*x*df + n*x^n + (n-1))*dy +
 (x^5 + 2*k*x^3 + k^2*x)*y*d2y - f*(x^5 + 2*k*x^3 + k^2*x)*d2y +
 	- (x^4 - 2*x^2 + 2*k*x^2 + k^2)*y*dy +
 	- (2*x^4 - f*x^4 + 2*k*x^2 + 2*f*x^2 - 2*k*f*x^2 - k^2*f)*dy + 4*x^3 # = 0
+# f = 2; k = -2;
+x*(x^2-2)^2*y*d2y - 2*x*(x^2-2)^2*d2y - (x^2-2)^2*y*dy + 8*(x^2 - 1)*dy + 4*x^3 # = 0
 
 # TODO: check;
 
-### Derrivation:
+### Derivation:
 pxk = toPoly.pm("x^2 + k")
 pD = toPoly.pm("pxk*L*d2y + 2*x*dy + 2*x*pxk.inv * L*dy +
 	- 2*x*dy + 2*x*df - 2*y + 2*f - 4*x^2*pxk.inv - 2*L +
