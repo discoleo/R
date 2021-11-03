@@ -6,7 +6,7 @@
 ### Helper Functions
 ### Parse Polynomials
 ###
-### draft v.0.2b-ref
+### draft v.0.2c
 
 ### Parser for Multi-variable Polynomials
 
@@ -25,6 +25,8 @@
 ###############
 
 
+### draft v.0.2c:
+# - better handling of environments;
 ### draft v.0.2a - v.0.2a-ref:
 # - moved from Polynomials.Helper.R;
 # - plan for refactoring;
@@ -41,10 +43,11 @@
 ##############
 
 ### Parse expressions / polynomials
-toPoly.pm = function(e) {
+toPoly.pm = function(e, env=NULL) {
+	if(is.null(env)) env = parent.frame();
 	if(is.character(e)) {
 		if(length(e) > 1) {
-			pl = lapply(e, function(e) toPoly.pm(e));
+			pl = lapply(e, function(e) toPoly.pm(e, env=env));
 			return(pl);
 		}
 		e = parse(text=e);
@@ -69,26 +72,26 @@ toPoly.pm = function(e) {
 		if(isSymbol || is.symbol(e[[1]])) {
 			op = if(isSymbol) e else e[[1]];
 			if(op == "+") {
-				m = toMonom.pm(e[[3]]);
+				m = toMonom.pm(e[[3]], env=env);
 				p = if(nrow(p) == 0) m else sum.pm(p, m);
 				e = e[[2]];
 			} else if(op == "-") {
 				if(length(e) > 2) {
-					m = toMonom.pm(e[[3]], xsign=-1);
+					m = toMonom.pm(e[[3]], xsign=-1, env=env);
 					p = if(nrow(p) == 0) m else sum.pm(p, m);
 					e = e[[2]];
 				} else {
-					m = toMonom.pm(e[[2]], xsign=-1);
+					m = toMonom.pm(e[[2]], xsign=-1, env=env);
 					p = if(nrow(p) == 0) m else sum.pm(p, m);
 					break;
 				}
 			} else {
-				m = toMonom.pm(e);
+				m = toMonom.pm(e, env=env);
 				p = if(nrow(p) == 0) m else sum.pm(p, m);
 				break;
 			}
 		} else if(is.numeric(e) || is.complex(e)) {
-			m = toMonom.pm(e);
+			m = toMonom.pm(e, env=env);
 			p = if(nrow(p) == 0) m else sum.pm(p, m);
 			break;
 		} else break;
@@ -97,7 +100,8 @@ toPoly.pm = function(e) {
 	return(p);
 }
 
-toMonom.pm = function(e, xsign = 1) {
+toMonom.pm = function(e, xsign = 1, env=NULL) {
+	if(is.null(env)) env = .GlobalEnv;
 	m = data.frame(coeff=xsign);
 	acc = list();
 	while(TRUE) {
@@ -112,7 +116,7 @@ toMonom.pm = function(e, xsign = 1) {
 					m[, vn1] = 1;
 				}
 			} else if(is.language(e)) {
-				pp = parse.epm(e); # another polynomial
+				pp = parse.epm(e, env=env); # another polynomial
 				m  = mult.pm(pp, m);
 			} else if(is.numeric(e) || is.complex(e)) {
 				m[, "coeff"] = m[, "coeff"] * e;
@@ -124,9 +128,9 @@ toMonom.pm = function(e, xsign = 1) {
 					acc = c(acc, e[[2]]);
 					e = e[[3]];
 					if(is.call(e)) {
-						pp = toMonom.pm(e);
+						pp = toMonom.pm(e, env=env);
 						nLast = length(acc);
-						pp2 = toMonom.pm(acc[[nLast]])
+						pp2 = toMonom.pm(acc[[nLast]], env=env)
 						pp = mult.pm(pp, pp2);
 						# TODO: enforce multiplication;
 						m  = mult.pm(pp, m);
@@ -138,12 +142,13 @@ toMonom.pm = function(e, xsign = 1) {
 				}
 				if(op == "(") {
 					if(length(e) > 2) stop("Arrays NOT yet supported!");
-					pp = parse.parenth.pm(e[[2]]);
+					pp = parse.parenth.pm(e[[2]], env=env);
 					m  = mult.pm(pp, m);
 				} else if(op == "^") {
 					pow = e[[3]];
 					if( ! is.numeric(pow)) {
-						pow = eval(pow, envir=.GlobalEnv);
+						pow = eval(substitute(pow, list(pow=pow)), envir=env);
+						# pow = local(pow, envir=env);
 						if( ! is.numeric(pow)) {
 							warning(paste0("Power = ", pow, " is NOT numeric!"));
 							pow = NA;
@@ -154,12 +159,12 @@ toMonom.pm = function(e, xsign = 1) {
 					} else if(is.language(e[[2]]) && ! is.symbol(e[[2]])) {
 						e = e[[2]];
 						if(e[[1]] == "(") {
-							pp = parse.parenth.pm(e[[2]]);
+							pp = parse.parenth.pm(e[[2]], env=env);
 							pp = pow.pm(pp, pow);
 							m  = mult.pm(pp, m);
 						} else {
 							print("Power of px!");
-							pp = parse.epm(e);
+							pp = parse.epm(e, env=env);
 							pp = pow.pm(pp, pow);
 							m  = mult.pm(pp, m);
 						}
@@ -176,7 +181,7 @@ toMonom.pm = function(e, xsign = 1) {
 					m[, "coeff"] = m[, "coeff"] / e[[3]];
 					e = e[[2]]; next;
 				} else if(is.call(e)) {
-					pp = parse.epm(e); # another polynomial;
+					pp = parse.epm(e, env=env); # another polynomial;
 					m  = mult.pm(pp, m); break;
 				} else {
 					vn1 = as.character(op); # a variable name;
@@ -192,19 +197,20 @@ toMonom.pm = function(e, xsign = 1) {
 	}
 	return(m);
 }
-parse.epm = function(e) {
-	p = eval(e[[1]]);
+parse.epm = function(e, env) {
+	p = eval(substitute(e, list(e=e[[1]])), env);
+	# p = local(e[[1]], list(e=e, env));
 	pnames = names(e); len = length(pnames);
 	if(len > 1) {
 		for(i in seq(2, len)) {
-			tmp = toPoly.pm(e[[i]]);
+			tmp = toPoly.pm(e[[i]], env=env);
 			p = replace.pm(p, tmp, pnames[i]);
 		}
 	}
 	return(p)
 }
-parse.parenth.pm = function(e) {
-	p = toPoly.pm(e);
+parse.parenth.pm = function(e, env) {
+	p = toPoly.pm(e, env=env);
 	return(p);
 }
 
