@@ -295,6 +295,7 @@ mult.sc.pm = function(p, s, div=1, coeff.name="coeff") {
 		p[ , coeff.name] = p[ , coeff.name] * s;
 		if(div != 1) p[ , coeff.name] = p[ , coeff.name] / div;
 	} else if(is.list(p)) {
+		# TODO: remove support for simple lists & reuse list;
 		p[[coeff.name]] = p[[coeff.name]] * s;
 		if(div != 1) p[[coeff.name]] = p[[coeff.name]] / div;
 	} else stop("p must be a polynomial!")
@@ -484,15 +485,21 @@ diff.lpm = function(p1, lp) {
 	}
 	return(p1);
 }
+
+### Shift variables:
 shift.pm = function(p, val, x="x", tol=1E-10) {
 	len = length(val);
 	if(len > 1) {
-		if(length(x) == 1) {x = rep(x, len); warning("Same variable used!");}
+		if(length(x) == 1) {
+			warning("Same variable used!");
+			return(shift.pm(p, round0(sum(val), tol=tol), x=x, tol=tol))
+		}
 		for(i in seq(len)) {
 			p = shift.pm(p, val = val[i], x=x[i], tol=tol);
 		}
 		return(p);
 	}
+	# TODO: efficient algorithm;
 	x.new = paste0(x, "__sh");
 	new.x = function(x)	{
 		x.df = data.frame(x=1:0, x.new=0:1, coeff=1);
@@ -501,6 +508,8 @@ shift.pm = function(p, val, x="x", tol=1E-10) {
 	}
 	p = replace.pm(p, new.x(x), x, pow=1);
 	p = replace.pm(p, val, x=x.new, pow=1);
+	idv = match(x.new, names(p));
+	if( ! is.na(idv) && all(p[, idv] == 0)) p = p[, - idv];
 	if( ! is.null(tol)) p$coeff = round0(p$coeff, tol=tol);
 	return(p);
 }

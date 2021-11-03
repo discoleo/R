@@ -101,6 +101,24 @@ f(0)
 f(2)
 f(3)
 
+###############
+
+### Shift vars
+p1 = toPoly.pm("a*x^3 + b*x^3 + 1")
+
+### Test 1:
+pR = shift.pm(p1, -1, "x")
+diff.pm(pR, toPoly.pm("(a+b)*(x-1)^3 + 1"))
+
+### Test 2:
+pR = shift.pm(p1, c(-1,1), "x")
+diff.pm(p1, pR)
+
+### Test 3:
+shift.pm(p1, c(-1,1), c("a", "b"))
+diff.pm(p1, pR)
+
+
 ########################
 ########################
 
