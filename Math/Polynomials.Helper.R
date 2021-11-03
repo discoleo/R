@@ -246,6 +246,11 @@ mult.pm = function(p1, p2, sc=1) {
 	if(sc != 1) p.r$coeff = p.r$coeff * sc;
 	return(p.r);
 }
+
+### Power:
+'^.pm' = function(p, n) {
+	pow.pm(p, n=n);
+}
 pow.pm = function(p, n=2, do.order=TRUE, debug=TRUE) {
 	if(n == 1) return(p);
 	if(is.double(n) && (n == round(n))) n = as.integer(n);
