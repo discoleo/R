@@ -474,6 +474,7 @@ sum.lpm = function(lp) {
 }
 add.pm = function(p1, p2) return(sum.pm(p1, p2));
 add.lpm = function(lp) return(sum.lpm(lp));
+
 ### Diff
 diff.pm = function(p1, p2) {
 	p2$coeff = - p2$coeff;
@@ -499,20 +500,14 @@ shift.pm = function(p, val, x="x", tol=1E-10) {
 		}
 		return(p);
 	}
-	# TODO: efficient algorithm;
-	x.new = paste0(x, "__sh");
-	new.x = function(x)	{
-		x.df = data.frame(x=1:0, x.new=0:1, coeff=1);
-		names(x.df)[1:2] = c(x, x.new);
-		return(x.df);
-	}
-	p = replace.pm(p, new.x(x), x, pow=1);
-	p = replace.pm(p, val, x=x.new, pow=1);
-	idv = match(x.new, names(p));
-	if( ! is.na(idv) && all(p[, idv] == 0)) p = p[, - idv];
+	# 1 Variable:
+	x.new = data.frame(x=1:0, coeff = c(1, val));
+	names(x.new)[1] = x;
+	p = replace.pm(p, x.new, x=x, pow=1);
 	if( ! is.null(tol)) p$coeff = round0(p$coeff, tol=tol);
 	return(p);
 }
+### Replace variables:
 replace.withVal.pm = function(p, x, pow=1, val, simplify=TRUE) {
 	if(length(val) > 1) {
 		len = length(val);

@@ -115,8 +115,17 @@ pR = shift.pm(p1, c(-1,1), "x")
 diff.pm(p1, pR)
 
 ### Test 3:
-shift.pm(p1, c(-1,1), c("a", "b"))
+pR = shift.pm(p1, c(-1,1), c("a", "b"))
 diff.pm(p1, pR)
+
+### Test 4:
+pR = shift.pm(p1, c(-1,2), c("a", "b"))
+diff.pm(pR, toPoly.pm("(a-1)*x^3 + (b+2)*x^3 + 1"))
+
+### Test 5:
+p1 = toPoly.pm("x^3 - 1/27")
+pR = shift.pm(p1, 1/3, "x")
+pR
 
 
 ########################
