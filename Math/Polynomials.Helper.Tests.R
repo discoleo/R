@@ -24,7 +24,7 @@ source("Polynomials.Helper.R")
 
 ### Multi-variable Multiplication
 
-# (x^3 + b1*x - R)^3
+### x^3 + b1*x - R
 pTest = data.frame(
 	x = c(3,1,0),
 	b1 = c(0,1,0),
@@ -44,9 +44,15 @@ p.v
 
 print.pm(p.v[,c(2,3,4,1)])
 
-### eval
+### eval 1:
+x = 2; R = 2; b1 = -3;
+# == 0 !
+eval.pm(p.v, c(R, x, b1))
+(x^3 + b1*x - R)^3
+
+### eval 2:
 R = 2; b1 = 3; x = -5;
-#
+# != 0!
 eval.pm(p.v, c(R, x, b1))
 (x^3 + b1*x - R)^3
 
@@ -68,7 +74,7 @@ eval.pm(pR, -6)
 p2 = toPoly.pm("(x+a+b)^3")
 p2 = sort.pm(p2, "x", xn2= c("a", "b"))
 p2
-#
+# == 3^3
 eval.pm(p2, c(2,4,-3))
 
 ### x^3
