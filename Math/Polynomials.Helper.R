@@ -290,7 +290,7 @@ pow.pm = function(p, n=2, do.order=TRUE, debug=TRUE) {
 	p.r = NULL;
 	p.pow = p;
 	while (n > 0) {
-		if(debug) print(n);
+		if(debug) print(paste0("Pow = ", n));
 		if (n %% 2 == 1) {
 			if(is.null(p.r)) p.r = p.pow else p.r = mult.pm(p.r, p.pow);
 		}
@@ -547,34 +547,36 @@ shift.pm = function(p, val, xn="x", tol=1E-10) {
 	return(p);
 }
 ### Replace variables:
-replace.withVal.pm = function(p, x, pow=1, val, simplify=TRUE) {
+replace.withVal.pm = function(p, xn, pow=1, val, simplify=TRUE, tol=1E-10) {
 	if(length(val) > 1) {
 		len = length(val);
 		if(length(pow) == 1) pow = rep(pow, len);
-		if(length(x) == 1) {x = rep(x, len); warning("Same variable used!");}
+		if(length(xn) == 1) {xn = rep(xn, len); warning("Same variable used!");}
 		for(i in seq(len)) {
-			p = replace.withVal.pm(p, x=x[i], pow=pow[i], val=val[i], simplify=simplify);
+			p = replace.withVal.pm(p, xn=xn[i], pow=pow[i], val=val[i], simplify=simplify);
 		}
 		return(p);
 	}
 	if(val == 0) {
 		if(pow != 1) {
 			warning("Only some terms will be replaced with 0!");
-			isZero = p[,x] >= pow;
+			isZero = p[,xn] >= pow; # every x^pow == 0;
 			p = p[ ! isZero, , drop=FALSE];
-		} else p = p[p[,x] == 0, , drop=FALSE];
+		} else p = p[p[,xn] == 0, , drop=FALSE];
 		return(p);
 	}
-	xpow = p[,x];
-	p[,x] = if(pow == 1) 0 else xpow %% pow;
+	xpow = p[,xn];
+	p[,xn] = if(pow == 1) 0 else xpow %% pow;
 	hasX  = xpow >= pow; xpow = xpow[hasX];
 	# Replace with value:
 	x.pow = if(pow == 1) xpow else xpow %/% pow;
+	# Optimized
 	xpow.unq = sort(unique(x.pow));
 	id = match(x.pow, xpow.unq);
 	xval = val^xpow.unq;
 	p[hasX, "coeff"] = p[hasX, "coeff"] * xval[id];
 	p = aggregate0.pm(p);
+	if(tol > 0) p$coeff = round0(p$coeff, tol=tol);
 	p = reduce.pm(p);
 	if(simplify) p = reduce.var.pm(p);
 	return(p)
@@ -587,7 +589,7 @@ replace.pm = function(p1, p2, x, pow=1) {
 		warning(paste0("Polynomial does NOT contain variable: ", x));
 		return(p1);
 	}
-	if(is.numeric(p2) || is.complex(p2)) return(replace.withVal.pm(p1, x=x, pow=pow, val=p2));
+	if(is.numeric(p2) || is.complex(p2)) return(replace.withVal.pm(p1, xn=x, pow=pow, val=p2));
 	# xPow
 	rpow = if(pow == 1) p1[,idx] else p1[,idx] %/% pow;
 	p1[,idx] = if(pow == 1) 0 else p1[,idx] %% pow;

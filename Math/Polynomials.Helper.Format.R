@@ -158,6 +158,8 @@ as.abs.complex = function(x, rm.zero=TRUE, coupled=TRUE) {
 	}
 	return(x);
 }
+# format.complex
+# TODO: breaks format.default!
 format.complex = function(x, sign.invert=FALSE, rm.zero=TRUE, brackets=TRUE, i.ch="i") {
 	if(sign.invert) {
 		x = as.abs.complex(x, rm.zero = rm.zero, coupled = ! is.null(brackets));
