@@ -191,7 +191,7 @@ mult.lpm = function(p) {
 		p2 = p[[id]];
 		if(is.numeric(p2) || is.complex(p2)) {
 			if(isNum) { pR = pR * p2; }
-			else { isNum = FALSE; pR = mult.sc.pm(pR, p2); }
+			else pR = mult.sc.pm(pR, p2);
 		} else {
 			if(isNum) { isNum = FALSE; pR = mult.sc.pm(p2, pR); }
 			else pR = mult.pm(pR, p2);

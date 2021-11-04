@@ -98,8 +98,9 @@ print.p = function(...) {
 	print(ch);
 	invisible(ch);
 }
-# TODO: format.complex();
-as.character.pm = function(p, leading=NA, do.sort=TRUE, do.rev=FALSE, sort.order=TRUE, simplify.complex=TRUE) {
+
+as.character.pm = function(p, leading=NA, do.sort=TRUE, do.rev=FALSE, sort.order=TRUE,
+		simplify.complex=TRUE, brackets.complex=TRUE) {
 	### Var order
 	isNA = all(is.na(leading));
 	if( ! isNA && ! is.numeric(leading)) leading = match(leading, names(p));
@@ -131,19 +132,45 @@ as.character.pm = function(p, leading=NA, do.sort=TRUE, do.rev=FALSE, sort.order
 	sign.str = ifelse(isPlus, " + ", " - ");
 	sign.str[1] = if(isPlus[1]) "" else "- ";
 	# Complex numbers
-	hasNegativ = (Re(coeff) < 0) | (Re(coeff) == 0 & Im(coeff) < 0);
-	coeffPlus = coeff; coeffPlus[hasNegativ] = - coeffPlus[hasNegativ];
-	coeff.str = as.character(coeffPlus);
-	if(simplify.complex) {
-		isPureImaginary = (Re(coeff) == 0) & (Im(coeff) != 0);
-		coeff.str[isPureImaginary] = paste0(as.character(Im(coeffPlus[isPureImaginary])), "i");
-	}
+	coeffPlus = as.abs.complex(coeff, rm.zero = simplify.complex, coupled = brackets.complex);
+	coeff.str = format.complex(coeffPlus, rm.zero = simplify.complex, brackets = brackets.complex);
 	# Coeff == 1
 	hasCoeff = (coeffPlus != 1 & nchar(p.str) > 0); # TODO: verify if fixed!
 	isB0 = (nchar(p.str) == 0);
 	p.str[hasCoeff] = paste(coeff.str[hasCoeff], p.str[hasCoeff], sep = "*");
 	p.str[isB0] = coeff.str[isB0]; # [should be fixed]: ERROR "+ b0*";
 	return(paste(sign.str, p.str, sep="", collapse=""));
+}
+# coupled: "-2 + 3i" => - "(2 - 3i)";
+# de-coupled: "-2 + 3i" => - "2 + 3i";
+as.abs.complex = function(x, rm.zero=TRUE, coupled=TRUE) {
+	isNegativ = Re(x) < 0;
+	if(is.numeric(x)) {
+		x[isNegativ] = - x[isNegativ];
+		return(x);
+	}
+	# Complex
+	x[isNegativ] = if(coupled) { - x[isNegativ]; }
+		else complex(re = - Re(x[isNegativ]), im = Im(x[isNegativ]));
+	if(rm.zero) {
+		isImNegativ = (Re(x) == 0 & Im(x) < 0);
+		x[isImNegativ] = complex(0, im = - Im(x[isImNegativ]));
+	}
+	return(x);
+}
+format.complex = function(x, sign.invert=FALSE, rm.zero=TRUE, brackets=TRUE, i.ch="i") {
+	if(sign.invert) {
+		x = as.abs.complex(x, rm.zero = rm.zero, coupled = ! is.null(brackets));
+	}
+	coeff.str = as.character(x);
+	if(rm.zero) {
+		isReZero = (Re(x) == 0);
+		coeff.str[isReZero] = paste0(Im(x[isReZero]), i.ch);
+	}
+	if(brackets && is.complex(x)) {
+		coeff.str = paste0("(", coeff.str, ")");
+	}
+	return(coeff.str);
 }
 
 ### Other
