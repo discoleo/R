@@ -36,7 +36,9 @@ diff.pm(p, pTest)
 
 
 ### p^2
-mult.pm(p)
+pR = mult.pm(p)
+pR
+diff.pm(pR, toPoly.pm("R^2 - 2*R*x^3 + x^6 - 2*R*x*b1 + 2*x^4*b1 + x^2*b1^2"))
 
 ### p^3
 p.v = pow.pm(p, 3)
@@ -55,6 +57,20 @@ R = 2; b1 = 3; x = -5;
 # != 0!
 eval.pm(p.v, c(R, x, b1))
 (x^3 + b1*x - R)^3
+
+
+###################
+
+### Reduce
+
+p = toPoly.pm("x^3 + 0*b1*x^2 + b2*0*x + y*0 + 3*b + 2")
+p
+
+p = data.frame(x=3:0, y=0:3, coeff=c(1,0,0,1))
+p = toPoly.pm(p)
+print.pm(p)
+reduce0.pm(p)
+toPoly.pm(p, reduce=TRUE)
 
 
 ###################

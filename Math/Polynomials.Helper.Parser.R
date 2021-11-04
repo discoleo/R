@@ -43,7 +43,7 @@
 ##############
 
 ### Parse expressions / polynomials
-toPoly.pm = function(e, env=NULL) {
+toPoly.pm = function(e, env=NULL, reduce=FALSE) {
 	if(is.null(env)) env = parent.frame();
 	if(is.character(e)) {
 		if(length(e) > 1) {
@@ -57,9 +57,11 @@ toPoly.pm = function(e, env=NULL) {
 		class(p) = c("pm", class(p));
 		return(p);
 	} else if(inherits(e, "data.frame")) {
-		if(inherits(e, "pm")) return(e);
-		class(e) = c("pm", class(e));
-		return(e);
+		p = e;
+		if(reduce) p = reduce0.pm(p);
+		if(inherits(p, "pm")) return(p);
+		class(p) = c("pm", class(p));
+		return(p);
 	}
 	if(is.expression(e)) {
 		e = e[[1]];
@@ -96,6 +98,7 @@ toPoly.pm = function(e, env=NULL) {
 			break;
 		} else break;
 	}
+	if(reduce) p = reduce0.pm(p); # is actually automatic
 	class(p) = c("pm", class(p));
 	return(p);
 }

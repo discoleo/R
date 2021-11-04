@@ -164,7 +164,7 @@ format.complex = function(x, sign.invert=FALSE, rm.zero=TRUE, brackets=TRUE, i.c
 	}
 	coeff.str = as.character(x);
 	if(rm.zero) {
-		isReZero = (Re(x) == 0);
+		isReZero = ((Re(x) == 0) & (Im(x) != 0));
 		coeff.str[isReZero] = paste0(Im(x[isReZero]), i.ch);
 	}
 	if(brackets && is.complex(x)) {
