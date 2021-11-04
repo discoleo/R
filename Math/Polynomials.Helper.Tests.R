@@ -130,6 +130,7 @@ diff.pm(pR, toPoly.pm("(a+b)*(x-1)^3 + 1"))
 ### Test 2:
 pR = shift.pm(p1, c(-1,1), "x")
 diff.pm(p1, pR)
+# nrow == 0 & Warning!
 
 ### Test 3:
 pR = shift.pm(p1, c(-1,1), c("a", "b"))
@@ -142,7 +143,24 @@ diff.pm(pR, toPoly.pm("(a-1)*x^3 + (b+2)*x^3 + 1"))
 ### Test 5:
 p1 = toPoly.pm("x^3 - 1/27")
 pR = shift.pm(p1, 1/3, "x")
+# b0 == 0 !
 pR
+
+
+########################
+########################
+
+### Multiply List of Polynomials
+
+p = lapply(seq(5), function(n) toPoly.pm("x^n - 1"))
+pR = mult.lpm(p)
+print.pm(pR)
+
+sapply(seq(1, 5), function(n) {
+	m = unity(n, all=FALSE);
+	err = eval.pm(pR, list(x=m));
+	round0(err);
+})
 
 
 ########################

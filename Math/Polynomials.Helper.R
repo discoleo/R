@@ -181,16 +181,19 @@ dimnames.pm = function(p) {
 ### Multiplication
 mult.all.pm = function(p) return(mult.lpm(p));
 mult.lpm = function(p) {
-	if( ! is.list(p)) stop("p must be a list of polynomials");
+	if( ! is.list(p) || inherits(p, "pm"))
+		stop("p must be a list of polynomials");
 	len = length(p);
+	if(len == 1) return(p[[1]]);
 	pR = p[[1]];
+	isNum = is.numeric(pR) || is.complex(pR);
 	for(id in seq(2, len)) {
 		p2 = p[[id]];
-		if(is.numeric(p2)) {
-			if(is.numeric(pR)) pR = pR * p2
-			else pR = mult.sc.pm(pR, p2);
+		if(is.numeric(p2) || is.complex(p2)) {
+			if(isNum) { pR = pR * p2; }
+			else { isNum = FALSE; pR = mult.sc.pm(pR, p2); }
 		} else {
-			if(is.numeric(pR)) pR = mult.sc.pm(p2, pR)
+			if(isNum) { isNum = FALSE; pR = mult.sc.pm(p2, pR); }
 			else pR = mult.pm(pR, p2);
 		}
 	}
@@ -270,6 +273,7 @@ mult.pm = function(p1, p2, sc=1) {
 	p.r = aggregate0.pm(p.v);
 	colnames(p.r) = c(vars, "coeff");
 	if(sc != 1) p.r$coeff = p.r$coeff * sc;
+	p.r = p.r[round0(p.r$coeff) != 0, ];
 	return(p.r);
 }
 
