@@ -547,7 +547,7 @@ shift.pm = function(p, val, xn="x", tol=1E-10) {
 	if(val == 0) return(p);
 	x.new = data.frame(x=1:0, coeff = c(1, val));
 	names(x.new)[1] = xn;
-	p = replace.pm(p, x.new, x=xn, pow=1);
+	p = replace.pm(p, x.new, xn=xn, pow=1);
 	if( ! is.null(tol)) p$coeff = round0(p$coeff, tol=tol);
 	return(p);
 }
@@ -586,15 +586,15 @@ replace.withVal.pm = function(p, xn, pow=1, val, simplify=TRUE, tol=1E-10) {
 	if(simplify) p = reduce.var.pm(p);
 	return(p)
 }
-replace.pm = function(p1, p2, x, pow=1) {
+replace.pm = function(p1, p2, xn, pow=1) {
 	# replace x^pow by p2;
-	if(length(x) > 1 || length(pow) > 1) stop("Only 1 value supported!")
-	idx = match(x, names(p1));
+	if(length(xn) > 1 || length(pow) > 1) stop("Only 1 value supported!")
+	idx = match(xn, names(p1));
 	if(any(is.na(idx))) {
-		warning(paste0("Polynomial does NOT contain variable: ", x));
+		warning(paste0("Polynomial does NOT contain variable: ", xn));
 		return(p1);
 	}
-	if(is.numeric(p2) || is.complex(p2)) return(replace.withVal.pm(p1, xn=x, pow=pow, val=p2));
+	if(is.numeric(p2) || is.complex(p2)) return(replace.withVal.pm(p1, xn=xn, pow=pow, val=p2));
 	# xPow
 	rpow = if(pow == 1) p1[,idx] else p1[,idx] %/% pow;
 	p1[,idx] = if(pow == 1) 0 else p1[,idx] %% pow;
@@ -990,7 +990,7 @@ solve.pm = function(p1, p2, xn, stop.at=NULL, simplify=TRUE, asBigNum=FALSE) {
 #######################
 #######################
 
-### Derivatives:
+### Differentiation:
 # - moved to file:
 #   Polynomials.Helper.D.R;
 
