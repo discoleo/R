@@ -182,7 +182,7 @@ dimnames.pm = function(p) {
 mult.all.pm = function(p) return(mult.lpm(p));
 mult.lpm = function(p) {
 	if( ! is.list(p) || inherits(p, "pm"))
-		stop("p must be a list of polynomials");
+		stop("p must be a list of polynomials!");
 	len = length(p);
 	if(len == 1) return(p[[1]]);
 	pR = p[[1]];
@@ -333,6 +333,9 @@ mult.sc.pm = function(p, s, div=1, coeff.name="coeff") {
 }
 
 ### Simplify functions
+
+### Simplify p: Powers & Coefficients
+# - useful when solving: p = 0;
 simplify.spm = function(p1, do.gcd=FALSE) {
 	nms = names(p1);
 	nms = nms[ ! nms %in% "coeff"];
@@ -362,13 +365,12 @@ simplify.pm = function(p1, p2) {
 ### Simplify functions
 reduce.pm = function(p) {
 	# remove Monomials with coeff == 0;
-	id = which(p$coeff != 0)
-	if(is.data.frame(p)) {
-		return(p[id, , drop=FALSE]);
-	}
-	# old list code: but still assumes equal length;
-	p = lapply(p, function(m) m[id]);
-	return(p);
+	if( ! inherits(p, "data.frame")) stop("p must be a Polynomial!")
+	id = which(p$coeff != 0);
+	return(p[id, , drop=FALSE]);
+}
+reduce0.pm = function(p) {
+	return(p[p$coeff != 0, , drop=FALSE]);
 }
 reduce.var.pm = function(p) {
 	# remove Vars with power == 0;
@@ -499,7 +501,7 @@ sum.pm = function(p1, p2, doReduce=FALSE) {
 	p = rbind(as.data.frame(p1), as.data.frame(p2)[,id]);
 	### Sum
 	p.r = aggregate0.pm(p);
-	return(reduce.pm(p.r));
+	return(reduce0.pm(p.r));
 }
 sum.lpm = function(lp) {
 	pR = data.frame();
@@ -524,23 +526,23 @@ diff.lpm = function(p1, lp) {
 }
 
 ### Shift variables:
-shift.pm = function(p, val, x="x", tol=1E-10) {
+shift.pm = function(p, val, xn="x", tol=1E-10) {
 	len = length(val);
 	if(len > 1) {
-		if(length(x) == 1) {
+		if(length(xn) == 1) {
 			warning("Same variable used!");
-			return(shift.pm(p, round0(sum(val), tol=tol), x=x, tol=tol))
+			return(shift.pm(p, round0(sum(val), tol=tol), xn=xn, tol=tol))
 		}
 		for(i in seq(len)) {
-			p = shift.pm(p, val = val[i], x=x[i], tol=tol);
+			p = shift.pm(p, val = val[i], xn=xn[i], tol=tol);
 		}
 		return(p);
 	}
 	# 1 Variable:
 	if(val == 0) return(p);
 	x.new = data.frame(x=1:0, coeff = c(1, val));
-	names(x.new)[1] = x;
-	p = replace.pm(p, x.new, x=x, pow=1);
+	names(x.new)[1] = xn;
+	p = replace.pm(p, x.new, x=xn, pow=1);
 	if( ! is.null(tol)) p$coeff = round0(p$coeff, tol=tol);
 	return(p);
 }
