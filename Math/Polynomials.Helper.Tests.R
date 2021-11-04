@@ -152,7 +152,12 @@ pR
 
 ### Multiply List of Polynomials
 
+###
 p = lapply(seq(5), function(n) toPoly.pm("x^n - 1"))
+pR = mult.lpm(p)
+print.pm(pR)
+
+p[[6]] = 2 - 1i;
 pR = mult.lpm(p)
 print.pm(pR)
 
@@ -161,6 +166,11 @@ sapply(seq(1, 5), function(n) {
 	err = eval.pm(pR, list(x=m));
 	round0(err);
 })
+
+
+pR = mult.pm(pR, toPoly.pm("x^2 - (1 + 1i)*x - 2 - 1i"))
+print.pm(pR)
+print.pm(pR, brackets.complex=FALSE)
 
 
 ########################
