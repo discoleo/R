@@ -36,14 +36,17 @@
 ### helper functions
 
 ### fast load:
-# source("Polynomials.Helper.R")
+# source("Polynomials.Helper.Generators.R")
 
-library(polynom)
-library(pracma)
+# library(polynom)
+# library(pracma)
 
-# the functions are in the file:
+# the basic functions are in the file:
 # Polynomials.Helper.R;
 # e.g. round0(), round0.p;
+source("Polynomials.Helper.R")
+
+################
 
 ### shift values
 shift = function(x, by=1) {
@@ -87,6 +90,29 @@ polypart.Class2.pm = function(n, s.id=NULL, sn="s", xn="x", mn="m") {
 		ddf = reduce.var.pm(ddf);
 	}
 	return(ddf);
+}
+
+### Permute Variables
+permute.pm = function(p, vars=c("x", "y"), by=1, warn=TRUE) {
+	id = match(names(p), vars);
+	if(all(is.na(id))) {
+		if(warn) warning("None of the variables is present!");
+		return(p);
+	}
+	isVar = ! is.na(id);
+	idp = id[ ! is.na(id)];
+	# Polynomial:
+	newNames = permute(vars, by)[idp];
+	names(p)[isVar] = newNames;
+	return(p)
+}
+permute = function(s, by=1) {
+	if(by >= length(s)) {
+		warning("Permutation is recycled!");
+		len = length(s);
+		by = if(len == 1) 1 else (by %% length(s));
+	}
+	c(tail(s, -by), head(s, by));
 }
 
 ########################
@@ -367,4 +393,15 @@ print.p(p2, "x")
 
 x = sum(s[1], s[-1] * m[-3])
 round0(eval.pm(p2, x))
+
+##################
+
+p1 = toPoly.pm("x^4 + c2*x^2*y^2 + c1*x*y + b2*y^2+b1*y+b0")
+p2 = permute.pm(p1)
+#
+pR = solve.pm(p1, p2, xn="y")
+str(pR)
+# pR$Rez contains 376 monomials
+max(pR$Rez$x)
+# Order 22: slightly above the correct Order 16!
 
