@@ -133,7 +133,7 @@ as.character.pm = function(p, leading=NA, do.sort=TRUE, do.rev=FALSE, sort.order
 	sign.str[1] = if(isPlus[1]) "" else "- ";
 	# Complex numbers
 	coeffPlus = as.abs.complex(coeff, rm.zero = simplify.complex, coupled = brackets.complex);
-	coeff.str = format.complex(coeffPlus, rm.zero = simplify.complex, brackets = brackets.complex);
+	coeff.str = format.complex.pm(coeffPlus, rm.zero = simplify.complex, brackets = brackets.complex);
 	# Coeff == 1
 	hasCoeff = (coeffPlus != 1 & nchar(p.str) > 0); # TODO: verify if fixed!
 	isB0 = (nchar(p.str) == 0);
@@ -158,9 +158,9 @@ as.abs.complex = function(x, rm.zero=TRUE, coupled=TRUE) {
 	}
 	return(x);
 }
-# format.complex
-# TODO: breaks format.default!
-format.complex = function(x, sign.invert=FALSE, rm.zero=TRUE, brackets=TRUE, i.ch="i") {
+# Note:
+# format.complex: breaks format.default!
+format.complex.pm = function(x, sign.invert=FALSE, rm.zero=TRUE, brackets=TRUE, i.ch="i") {
 	if(sign.invert) {
 		x = as.abs.complex(x, rm.zero = rm.zero, coupled = ! is.null(brackets));
 	}
