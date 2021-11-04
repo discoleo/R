@@ -11,6 +11,8 @@
 # source("Polynomials.Helper.R")
 
 ### Note:
+# - Factorization moved to new file:
+#   Polynomials.Helper.Factorize.R;
 # - Format & Print moved to new file:
 #   Polynomials.Helper.Format.R;
 # - Parser moved to new file:
@@ -32,7 +34,10 @@ library(pracma)
 source("Polynomials.Helper.Parser.R")
 source("Polynomials.Helper.Format.R")
 source("Polynomials.Helper.D.R")
-# D: required in factorize.p();
+source("Polynomials.Helper.Factorize.R")
+
+### Note:
+# D-Functions: required in factorize.p();
 
 
 ### Basic Algebra
@@ -981,61 +986,11 @@ solve.pm = function(p1, p2, xn, stop.at=NULL, simplify=TRUE, asBigNum=FALSE) {
 	return(solve.pm(p1, p2, xn=xn, stop.at=stop.at, simplify=simplify, asBigNum=asBigNum));
 }
 
-### Factorize
-factorize.p = function(p, xn="x", f.all=FALSE, asBigNum=TRUE, file="_R.Temp.") {
-	# factorize.all = FALSE
-	# - p1 is usually sufficient;
-	# - dos NOT handle: p1 * p2^3*p3^4 or p1^2*p2^3;
-	id = match(xn, names(p));
-	if(is.na(id)) stop("Variable NOT present!");
-	lvl = 1; # level of factorization;
-	doSave = ! (is.null(file) || is.na(file));
-	rez = list();
-	dp = dp.pm(p, xn);
-	if(nrow(dp) == 0 || ncol(dp) < 2) return(list(list(GCD=NULL, p1=p)));
-	while(TRUE) {
-		# Step 1: GCD
-		cat("\n"); print(paste0("Level = ", lvl));
-		pGCD = gcd.exact.p(p, dp, xn, asBigNum=asBigNum);
-		pGCD = reduce.var.pm(pGCD);
-		if(nrow(pGCD) < 1 || ncol(pGCD) < 2) break;
-		id = match(xn, names(pGCD));
-		if(is.na(id)) break;
-		# Leading Sign:
-		isMaxPow = (pGCD[,id] == max(pGCD[,id]));
-		if(pGCD$coeff[isMaxPow][[1]] < 0) pGCD$coeff = - pGCD$coeff;
-		if(doSave) write.csv(pGCD, file=paste0(file, "GCD.", lvl, ".csv"), row.names=FALSE);
-		# Step 2:
-		p.all = div.pm(p, pGCD, xn)$Rez;
-		if(asBigNum) {
-			if(all(denominator(p.all$coeff) == 1)) p.all$coeff = as.bigz(p.all$coeff)
-			else print("Warning: some Denominators != 1!")
-		}
-		if(doSave) write.csv(p.all, file=paste0(file, "ALL.", lvl, ".csv"), row.names=FALSE);
-		p.minus1 = gcd.exact.p(pGCD, p.all, xn, asBigNum=asBigNum);
-		# TODO: IF(p.minus1 == p.all) => multiplicity!
-		p1 = div.pm(p.all, p.minus1, xn)$Rez;
-		if(doSave) write.csv(p1, file=paste0(file, "p1.", lvl, ".csv"), row.names=FALSE);
-		#
-		rez[[lvl]] = list();
-		rez[[lvl]][["GCD"]] = pGCD;
-		rez[[lvl]][["p1"]]  = p1;
-		rez[[lvl]][["All"]] = p.all;
-		if( ! f.all) break;
-		lvl = lvl + 1;
-		p = pGCD;
-		dp = dp.pm(pGCD, xn)
-		if(nrow(dp) < 1 || ncol(dp) < 2) break;
-		if(is.na(match(xn, names(dp)))) break;
-	}
-	return(rez);
-}
-
 
 #######################
 #######################
 
-### Derivation:
+### Derivatives:
 # - moved to file:
 #   Polynomials.Helper.D.R;
 
