@@ -164,6 +164,18 @@ dimnames.pm = function(p) {
 	return(nms[ - id]);
 }
 
+### names.pm():
+# - interferes with 'names<-';
+# - would require an explicit setter as well:
+#   possible using explicit attr(p, "names") = ...;
+#
+# names.pm = function(p) {
+#	nms = NextMethod();
+#	# excludes the Coefficients:
+#	id = match("coeff", nms);
+#	return(nms[ - id]);
+# }
+
 ### Basic Operations
 
 ### Multiplication
