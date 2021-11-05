@@ -157,7 +157,7 @@ toMonom.pm = function(e, xsign = 1, env=NULL) {
 							pow = NA;
 						}
 					}
-					if(is.numeric(e[[2]])) {
+					if(is.numeric(e[[2]]) || is.complex(e[[2]])) {
 						m[, "coeff"] = m[, "coeff"] * e[[2]]^pow;
 					} else if(is.language(e[[2]]) && ! is.symbol(e[[2]])) {
 						e = e[[2]];
@@ -168,8 +168,12 @@ toMonom.pm = function(e, xsign = 1, env=NULL) {
 						} else {
 							print("Power of px!");
 							pp = parse.epm(e, env=env);
-							pp = pow.pm(pp, pow);
-							m  = mult.pm(pp, m);
+							if(inherits(pp, "data.frame")) {
+								pp = pow.pm(pp, pow);
+								m  = mult.pm(pp, m);
+							} else {
+								m[, "coeff"] = m[, "coeff"] * pp^pow;
+							}
 						}
 					} else {
 						vn1 = as.character(e[[2]]);
@@ -205,6 +209,7 @@ parse.epm = function(e, env) {
 	# p = local(e[[1]], list(e=e, env));
 	pnames = names(e); len = length(pnames);
 	if(len > 1) {
+		# sequential substitution:
 		for(i in seq(2, len)) {
 			tmp = toPoly.pm(e[[i]], env=env);
 			p = replace.pm(p, tmp, pnames[i]);
