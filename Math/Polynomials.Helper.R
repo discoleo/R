@@ -618,6 +618,76 @@ replace.pm = function(p1, p2, xn, pow=1) {
 	}
 	return(reduce.var.pm(pR));
 }
+# Replace variable with another Variable
+replace.pm.character = function(p1, p2, xn, pow=1, sequential=TRUE, na.stop=TRUE) {
+	len = length(p2);
+	lenpow = length(pow); lenx = length(xn);
+	if(len > 1) {
+		if(lenx == 1 && lenpow > 1) {
+			# x^seq() => replaced with c(...);
+			# may be an issue with sequential processing!
+			xn = rep(xn, lenpow); lenx = lenpow;
+		}
+		if(lenx == 1 && ! sequential) {
+			stop("The same variable name!");
+		} else if(lenx == 1 && sequential) {
+			warning("The same variable name!");
+			p2 = p2[p2 != xn];
+			p2 = if(length(p2) >= 1) p2[[1]] else {
+				warning("No replacement!");
+				return(p2);
+			}
+		}
+	} else if(lenx > 1) {
+		p2 = rep(p2, lenx);
+	}
+	# Replacement:
+	if(any(pow > 1))
+		return(replaceByPow.pm.character(p1, p2, xn=xn, pow=pow, sequential=sequential));
+	# same Power:
+	return(replaceNames.pm(p1, p2, xn=xn, sequential=sequential));
+}
+replaceNames.pm = function(p1, p2, xn, sequential=FALSE, debug=TRUE) {
+	len = length(xn);
+	nms = dimnames.pm(p1);
+	if(sequential) {
+		for(id in seq(len)) {
+			nms[nms == xn[id]] = p2[id];
+		}
+	} else {
+		id = match(xn, nms);
+		if(any(is.na(id))) {
+			if(na.stop)
+				stop(paste0("Variable names not found: ", xn[is.na(id)]));
+			isVar = ! is.na(id);
+			id = id[isVar];
+			xn = xn[isVar]
+		}
+		nms[id] = p2;
+	}
+	if(debug) print(paste0("New names: ", paste0(nms, collapse=", ")));
+	# set new names:
+	idCoeff = which(names(p1) == "coeff");
+	names(p1)[ - idCoeff] = nms;
+	### Duplicate names:
+	isDuplic = duplicated(nms);
+	if( ! any(isDuplic)) return(p1);
+	# merge duplicates:
+	duplNms = nms[isDuplic];
+	ids = seq(ncol(p1)); ids = ids[ - idCoeff];
+	id0 = ids; ids = ids[isDuplic];
+	id0 = id0[match(duplNms, nms)];
+	for(nc in seq_along(ids)) {
+		p1[, id0[nc]] = p1[, id0[nc]] + p1[, ids[nc]];
+	}
+	p1 = p1[, ! isDuplic, drop=FALSE];
+	p1 = aggregate0.pm(p1);
+	p1 = reduce.pm(p1);
+	return(p1);
+}
+replaceByPow.pm.character = function(p1, p2, xn, pow=1, sequential=TRUE) {
+	# TODO
+}
 replace.fr.pm = function(p1, p2, p2fr, x, pow=1) {
 	# replace x^pow by p2/p2fr;
 	idx = match(x, names(p1));

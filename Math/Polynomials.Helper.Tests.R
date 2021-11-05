@@ -197,6 +197,22 @@ p = replace.withVal.pm(p, xn="x", val=unity(5, all=FALSE))
 print.pm(p)
 
 
+### Replace with character (new name)
+
+p1 = toPoly.pm("(x+y+z)^3")
+#
+p2 = replaceNames.pm(p1, "y", "z")
+diff.pm(p2, toPoly.pm("(x+2*y)^3"))
+#
+p2 = replaceNames.pm(p1, c("y","x"), xn=c("x", "y"))
+diff.pm(p1, p2)
+#
+p2 = replaceNames.pm(p1, c("y","x"), xn=c("x", "y"), seq=TRUE)
+diff.pm(p2, toPoly.pm("(2*x + z)^3"))
+p2 = replaceNames.pm(p1, c("x", "y","x"), xn=c("z", "x", "y"), seq=TRUE)
+diff.pm(p2, data.frame(x=3, coeff=3^3))
+
+
 ########################
 ########################
 
