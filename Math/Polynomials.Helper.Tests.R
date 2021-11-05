@@ -243,6 +243,14 @@ n = 5
 # - we just found ALL 5 roots!
 lapply(seq(0, 4), replaceRoot.pm)
 
+# more formal
+r = toPoly.pm("k^4*m^4 + k^3*m^3 + k*m")
+pR = p1;
+pR = replace.pm(pR, r, xn="x")
+pR = replace.pm(pR, "K", xn="k", pow=5)
+pR = replace.pm(pR, 1, xn="m", pow=5)
+pR
+
 
 ########################
 ########################
