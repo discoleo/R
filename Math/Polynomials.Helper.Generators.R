@@ -53,6 +53,16 @@ shift = function(x, by=1) {
 	x = c(tail(x, by), head(x, -by));
 	return(x);
 }
+# TODO:
+# - almost same functionality;
+permute = function(x, by=1) {
+	if(by >= length(x)) {
+		warning("Permutation is recycled!");
+		len = length(x);
+		by = if(len == 1) 1 else (by %% len);
+	}
+	c(tail(x, -by), head(x, by));
+}
 
 reduce.unity.pm = function(p, n, mn="m") {
 	# reduce sum of unity;
@@ -105,14 +115,6 @@ permute.pm = function(p, vars=c("x", "y"), by=1, warn=TRUE) {
 	newNames = permute(vars, by)[idp];
 	names(p)[isVar] = newNames;
 	return(p)
-}
-permute = function(s, by=1) {
-	if(by >= length(s)) {
-		warning("Permutation is recycled!");
-		len = length(s);
-		by = if(len == 1) 1 else (by %% length(s));
-	}
-	c(tail(s, -by), head(s, by));
 }
 
 ########################
@@ -404,4 +406,7 @@ str(pR)
 # pR$Rez contains 376 monomials
 max(pR$Rez$x)
 # Order 22: slightly above the correct Order 16!
+top.pm(pR$Rez, "x")
+# ugly factorization: 3 monomials with leading power of x;
+# c2^3*(c2^2 - 1)^2 * x^22;
 
