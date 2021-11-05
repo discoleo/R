@@ -181,6 +181,22 @@ dimnames.pm = function(p) {
 #	return(nms[ - id]);
 # }
 
+### Leading Monomials
+top.pm = function(p, xn="x", exclude=FALSE) {
+	idn = if(is.numeric(xn)) xn else match(xn, names(p));
+	if(all(is.na(idn))) return(data.frame(coeff=numeric(0)));
+	idn = idn[ ! is.na(idn)];
+	if(length(idn) == 1) {
+		pow.max = max(p[, idn]);
+		p = if(exclude) { p[p[,idn] == pow.max, -idn, drop=FALSE]; }
+			else p[p[,idn] == pow.max, , drop=FALSE];
+		return(p);
+	} else {
+		stop("Not yet implemented!")
+	}
+	
+}
+
 ### Basic Operations
 
 ### Multiplication
@@ -530,7 +546,10 @@ diff.lpm = function(p1, lp) {
 	return(p1);
 }
 
+### Transforms
+
 ### Shift variables:
+# x => (x + val)
 shift.pm = function(p, val, xn="x", tol=1E-10) {
 	len = length(val);
 	if(len > 1) {
@@ -551,6 +570,7 @@ shift.pm = function(p, val, xn="x", tol=1E-10) {
 	if( ! is.null(tol)) p$coeff = round0(p$coeff, tol=tol);
 	return(p);
 }
+
 ### Replace variables:
 replace.withVal.pm = function(p, xn, pow=1, val, simplify=TRUE, tol=1E-10) {
 	if(length(val) > 1) {
@@ -625,7 +645,8 @@ replace.pm.character = function(p1, p2, xn, pow=1, sequential=TRUE, na.stop=TRUE
 	if(len > 1) {
 		if(lenx == 1 && lenpow > 1) {
 			# x^seq() => replaced with c(...);
-			# may be an issue with sequential processing!
+			# - may be an issue with sequential processing!
+			# - unknown use cases;
 			xn = rep(xn, lenpow); lenx = lenpow;
 		}
 		if(lenx == 1 && ! sequential) {
@@ -633,9 +654,11 @@ replace.pm.character = function(p1, p2, xn, pow=1, sequential=TRUE, na.stop=TRUE
 		} else if(lenx == 1 && sequential) {
 			warning("The same variable name!");
 			p2 = p2[p2 != xn];
-			p2 = if(length(p2) >= 1) p2[[1]] else {
+			if(length(p2) >= 1) {
+				p2 = p2[[1]]; len = 1;
+			} else {
 				warning("No replacement!");
-				return(p2);
+				return(p1);
 			}
 		}
 	} else if(lenx > 1) {
