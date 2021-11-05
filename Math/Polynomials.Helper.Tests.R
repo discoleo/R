@@ -203,14 +203,45 @@ p1 = toPoly.pm("(x+y+z)^3")
 #
 p2 = replaceNames.pm(p1, "y", "z")
 diff.pm(p2, toPoly.pm("(x+2*y)^3"))
-#
+# Cyclic permutation:  # sequential = FALSE!
 p2 = replaceNames.pm(p1, c("y","x"), xn=c("x", "y"))
-diff.pm(p1, p2)
-#
+diff.pm(p1, p2) # SAME!
+# x => y; then y => x;
 p2 = replaceNames.pm(p1, c("y","x"), xn=c("x", "y"), seq=TRUE)
 diff.pm(p2, toPoly.pm("(2*x + z)^3"))
 p2 = replaceNames.pm(p1, c("x", "y","x"), xn=c("z", "x", "y"), seq=TRUE)
 diff.pm(p2, data.frame(x=3, coeff=3^3))
+
+
+### Replace with Character / Higher Power
+
+p1 = toPoly.pm("x^5 + c*x^3 + b0")
+replace.pm(p1, "Big", "x", pow=5)
+
+
+p1 = toPoly.pm("x^5 - 5*K*x^3 - 5*(K^2 + K)*x^2 - 5*K^3*x - K^4 - 6*K^3 + 5*K^2 - K")
+r = toPoly.pm("K^(4/5) + K^(3/5) + K^(1/5)")
+# - we just found a root of a non-trivial quintic!
+replace.pm(p1, r, "x", pow=1)
+
+### All roots
+rootTest.pm = function(id, n=5) {
+	m = unity(n, all=FALSE);
+	mj = m^id;
+	r = toPoly.pm("K^(4/5)*mj()^4 + K^(3/5)*mj()^3 + K^(1/5)*mj()");
+	return(r)
+}
+replaceRoot.pm = function(id) {
+	p = replace.pm(p1, rootTest.pm(id, n=n), "x", pow=1);
+	p = round0.pm(p);
+	p = reduce.pm(p);
+	cat("\n")
+	return(p)
+}
+#
+n = 5
+# - we just found ALL 5 roots!
+lapply(seq(0, 4), replaceRoot.pm)
 
 
 ########################
