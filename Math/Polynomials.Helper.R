@@ -734,7 +734,41 @@ replaceByPow.pm.character = function(p1, p2, xn, pow=1, sequential=TRUE, reduce=
 			}
 		}
 	} else {
-		# TODO
+		isDuplic = duplicated(xn);
+		if(any(isDuplic)) stop(paste0("Variable names cannot be duplicated!", xn[isDuplic]));
+		# Change vars:
+		newDF = data.frame();
+		for(id in seq(length(xn))) {
+			# Initial Columns:
+			xold = xn[[id]];
+			idx = match(xold, names(p1));
+			if(is.na(idx)) {
+				if(debug) print(paste0("Var name ", xold, " not found!"));
+				next;
+			}
+			# Values:
+			isPow1 = (pow[[id]] == 1);
+			tmp = if(isPow1) p1[, idx] else p1[, idx] %/% pow[[id]];
+			p1[, idx] = if(isPow1) 0 else p1[, idx] %% pow[[id]];
+			# New Var
+			xnew = p2[[id]];
+			idnew = match(xnew, names(newDF));
+			if(is.na(idnew)) {
+				newDF[, xnew] = tmp;
+			} else {
+				newDF[, idnew] = newDF[, idnew] + tmp;
+			}
+		}
+		# merge newDF back into p1:
+		xnew  = names(newDF); # should be unique
+		idnew = match(xnew, names(p1));
+		isName = ! is.na(idnew);
+		# existing Vars:
+		prevNames = idnew[isName];
+		p1[, prevNames] = p1[, prevNames] + newDF[, prevNames];
+		# new Vars:
+		newNames = idnew[ ! isName];
+		p1[, newNames] = newDF[, newNames];
 	}
 	if(reduce) p1 = reduce.pm(p1);
 	return(p1);

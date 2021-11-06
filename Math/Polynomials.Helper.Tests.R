@@ -175,6 +175,7 @@ pR
 
 ### Replace vars
 
+### with specific Value
 p = toPoly.pm("(x+3)^4")
 replace.withVal.pm(p, xn="x", val=-3)
 replace.withVal.pm(p, xn="x", val=-2)
@@ -183,12 +184,14 @@ replace.withVal.pm(p, xn="x", val=-2)
 p = toPoly.pm("(x+1)^3*(x-a)^3")
 pR = replace.withVal.pm(p, xn="a", val=1)
 diff.pm(pR, toPoly.pm("(x^2-1)^3"))
-# x^3 * (x+1)^3
+# x^3 * (x+1)^3 => x^3
 pR = replace.withVal.pm(p, xn="a", val=0)
+pR = div.pm(pR, toPoly.pm("(x+1)^3"), "x")$Rez
 print.pm(pR)
-# x^3
+# (x+a)^3 => x^3
 pR = div.pm(p, toPoly.pm("(x+1)^3"), "x")$Rez
-print.pm(replace.withVal.pm(pR, xn="a", val=0))
+pR = replace.withVal.pm(pR, xn="a", val=0)
+print.pm(pR)
 
 
 p = toPoly.pm(data.frame(x=4:0, coeff=1))
@@ -218,8 +221,9 @@ diff.pm(p2, data.frame(x=3, coeff=3^3))
 p1 = toPoly.pm("x^5 + c*x^3 + b0")
 replace.pm(p1, "Big", "x", pow=5)
 
-
+### Quintic
 p1 = toPoly.pm("x^5 - 5*K*x^3 - 5*(K^2 + K)*x^2 - 5*K^3*x - K^4 - 6*K^3 + 5*K^2 - K")
+# fractional powers:
 r = toPoly.pm("K^(4/5) + K^(3/5) + K^(1/5)")
 # - we just found a root of a non-trivial quintic!
 replace.pm(p1, r, "x", pow=1)
@@ -231,7 +235,7 @@ rootTest.pm = function(id, n=5) {
 	r = toPoly.pm("K^(4/5)*mj()^4 + K^(3/5)*mj()^3 + K^(1/5)*mj()");
 	return(r)
 }
-replaceRoot.pm = function(id) {
+replaceRoot.pm = function(id, n=5) {
 	p = replace.pm(p1, rootTest.pm(id, n=n), "x", pow=1);
 	p = round0.pm(p);
 	p = reduce.pm(p);
@@ -239,17 +243,67 @@ replaceRoot.pm = function(id) {
 	return(p)
 }
 #
-n = 5
+n = 5; # fixed!
 # - we just found ALL 5 roots!
-lapply(seq(0, 4), replaceRoot.pm)
+lapply(seq(0, 4), replaceRoot.pm, n=n)
 
 # more formal
 r = toPoly.pm("k^4*m^4 + k^3*m^3 + k*m")
+# m^5 = 1; # m = roots of unity;
 pR = p1;
 pR = replace.pm(pR, r, xn="x")
 pR = replace.pm(pR, "K", xn="k", pow=5)
 pR = replace.pm(pR, 1, xn="m", pow=5)
-pR
+pR # the roots worked!
+
+### multiple Powers
+Class1Root = function(n, s=NULL) {
+	sn = paste0("s", seq(n-1,1));
+	r.str = paste0(sn,
+		"*k^", seq(n-1, 1),
+		"*m^", seq(n-1, 1), collapse="+");
+	r = toPoly.pm(r.str);
+	if( ! is.null(s))
+		r = replace.pm(r, s, sn, pow=1);
+	return(r)
+}
+Class1Poly = function(s, n=5) {
+	# Note: non-efficient algorithm!
+	pFactor = toPoly.pm("x - r");
+	r = Class1Root(n);
+	sn = paste0("s", seq(n-1,1));
+	plst = lapply(seq(0, n-1), function(id) {
+		pF = replace.pm(pFactor, r, "r", pow=1);
+		# c(s4, s3, s2, s1)
+		pF = replace.pm(pF, s, sn, pow=1);
+		pF$m = (pF$m * id) %% n;
+		return(pF);
+	})
+	p = mult.lpm(plst);
+	p = reduce.radicals(p, n=n);
+	return(p)
+}
+reduce.radicals = function(p, n=5) {
+	# check 2 Vars:
+	p = replace.pm(p, c("K", "M"), c("k", "m"), pow=c(n,n));
+	p = replace.pm(p, 1, "M", pow=1);
+	if("m" %in% names(p))
+		p = replace.pm(p, data.frame(m=seq(0, n-2), coeff=-1), "m", pow=n-1);
+	if(nrow(p) == 0) return(p); # Coeffs canceled!
+	p = toPoly.pm(p); p = sort.pm(p, "x", xn2="K");
+	return(p);
+}
+
+n = 5;
+s = c(1, 0,-2,1)
+p = Class1Poly(s, n=n)
+print.pm(p, lead="x")
+# Check:
+pT = replace.pm(p, Class1Root(n, s), "x")
+pT = reduce.radicals(pT, n=n)
+pT
+#
+print.pm(replace.pm(p, 2, "K"), lead="x")
 
 
 ########################
