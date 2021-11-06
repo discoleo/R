@@ -269,13 +269,15 @@ Class1Root = function(n, s=NULL) {
 }
 Class1Poly = function(s, n=5) {
 	# Note: non-efficient algorithm!
+	if(length(s) >= n) stop("s0 not yet implemented!")
 	pFactor = toPoly.pm("x - r");
 	r = Class1Root(n);
+	# c(s4, s3, s2, s1)
 	sn = paste0("s", seq(n-1,1));
 	plst = lapply(seq(0, n-1), function(id) {
 		pF = replace.pm(pFactor, r, "r", pow=1);
-		# c(s4, s3, s2, s1)
-		pF = replace.pm(pF, s, sn, pow=1);
+		isValue = ! is.na(s);
+		pF = replace.pm(pF, s[isValue], sn[isValue], pow=1);
 		pF$m = (pF$m * id) %% n;
 		return(pF);
 	})
@@ -304,6 +306,18 @@ pT = reduce.radicals(pT, n=n)
 pT
 #
 print.pm(replace.pm(p, 2, "K"), lead="x")
+
+
+###
+n = 5
+s = c(1,0,NA,1)
+p = Class1Poly(s, n=n)
+print.pm(p, lead="x")
+K = 3
+pR = replace.pm(p, c(K,-K), c("K","s2"))
+print.pm(pR, lead="x")
+eval.pm(pR, sum(c(1,0,-K,1)*rootn(K^(4:1), n)))
+
 
 
 ########################
