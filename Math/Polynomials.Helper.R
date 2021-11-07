@@ -28,6 +28,9 @@
 library(polynom)
 library(pracma)
 
+# for mpfr-functions:
+# library(Rmpfr)
+
 ### helper Functions
 
 # required:
@@ -137,8 +140,14 @@ poly.calc.mpfr = function(x, bits=120, tol=1E-7) {
 	zero = mpfr(0, precBits=bits);
 	p  = mpfr2array(c(Re=one, Im=zero), c(1,2));
 	p0 = mpfr2array(c(Re=zero, Im=zero), c(1,2));
-	xRe = Re(x); xIm = Im(x);
-	for (i in seq(length(x))) {
+	if(inherits(x, "mpfrMatrix")) {
+		len = nrow(x);
+		xRe = mpfr2array(x[,1], nrow(x));
+		xIm = mpfr2array(x[,2], nrow(x));
+	} else {
+		xRe = Re(x); xIm = Im(x); len = length(x);
+	}
+	for (i in seq(len)) {
 		px = mult.mpfr(p[,1], p[,2], xRe[i], xIm[i]);
 		p = rbind(p0, p);
 		p  = p - rbind(px, p0);
@@ -838,10 +847,23 @@ eval.pm = function(p, x, progress=FALSE) {
 	}
 	sum(sapply(seq(nrow(p)), eval.p))
 }
-toPolar.mpfr = function(x, len=1, bits=120, tol=1E-10) {
-	re = mpfr(Re(x), bits); im = mpfr(Im(x), bits);
-	r = sqrt(re^2 + im^2);
-	pib = Const("pi", bits); pih = pib / 2;
+toPolar.lmpfr = function(x, bits=120) {
+	pib = Const("pi", bits);
+	xpol = sapply(seq(nrow(x)), function(nr) toPolar.mpfr(as.list(x[nr,]), bits=bits, piConst=pib));
+	xpol = mpfr2array(xpol, c(2, nrow(x)));
+	return(t(xpol));
+}
+toPolar.mpfr = function(x, bits=120, piConst=NULL) {
+	if(is.list(x)) {
+		# already mpfr:
+		re = x[[1]]; im = x[[2]];
+	} else {
+		re = mpfr(Re(x), bits); im = mpfr(Im(x), bits);
+	}
+	r = sqrt(re^2 + im^2); # TODO: use function;
+	pib = if( ! is.null(piConst)) piConst
+		else Const("pi", bits);
+	pih = pib / 2;
 	# seems NO difference between asin & atan versions;
 	th  = asin(abs(im/r));
 	if(re == 0) {th = pih; if(im < 0) th = - th;}
@@ -850,9 +872,17 @@ toPolar.mpfr = function(x, len=1, bits=120, tol=1E-10) {
 	} else if(im < 0) {
 		th = -th;
 	}
-	if(len > 1) {
-		r  = r^seq(len);
-		th = th * seq(len);
+	return(cbind(M=r, Theta=th));
+}
+pow.pmfr = function(x, len=1, bits=120) {
+	x = toPolar(x, bits=bits);
+	r = x$M; th = x$Theta;
+	doPow = FALSE;
+	if(length(len) > 1) { pow = len; doPow = TRUE; }
+	else if(len > 1) { pow = seq(len); doPow = TRUE; }
+	if(doPow) {
+		r  = r^pow;
+		th = th * pow;
 	}
 	re = r * cos(th); im = r * sin(th);
 	return(cbind(Re=re, Im=im));
