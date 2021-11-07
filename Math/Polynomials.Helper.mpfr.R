@@ -6,7 +6,7 @@
 ### Polynomials: Helper Functions
 ### mpfr Functions
 ###
-### draft v.0.1a
+### draft v.0.1b
 
 
 ### fast load:
@@ -29,10 +29,11 @@ library(Rmpfr)
 ###############
 
 
-### draft v.0.1a:
+### draft v.0.1a - v.0.1b:
 # - moved mpfr-specific functions
-#   to this file, from file:
+#   to this file, from files:
 #   Polynomials.Helper.R;
+#   Polynomials.Class1.R;
 
 
 ########################
@@ -93,15 +94,68 @@ roots.Class1.mpfr = function(K, s, n=5, bits=120) {
 
 ### Evaluate Polynomials
 
+eval.pm.mpfr = function(p, x, bits=120, tol=10^(10 - bits %/% 3)) {
+}
 eval.cpm = function(p, x, bits=120, tol=1E-10, doPolar=TRUE, progress=FALSE) {
 	# uses the Rmpfr package;
 	# currently assumes that only coeffs are big and
 	# have an impact on numeric stability;
 	pP = p[, - which(names(p) == "coeff"), drop=FALSE];
-	# pow = lapply(seq(ncol(pP)), function(nc) sort(unique(pP[,nc])));
+	### Powers:
 	# currently only max:
-	pow = lapply(seq(ncol(pP)), function(nc) max(pP[,nc]));
-	xpows = lapply(seq(length(x)), function(id) {
+	pow  = lapply(seq(ncol(pP)), function(nc) max(pP[,nc]));
+	# pow = lapply(seq(ncol(pP)), function(nc) sort(unique(pP[,nc])));
+	#
+	xpows = pow.cpm.mpfr(x, pow=pow, bits=bits, tol=tol, doPolar=doPolar);
+	#
+	if(progress) cat("Processing row:\n");
+	eval.p = function(id) {
+		# Progress bar:
+		if(progress && id %% 16 == 1) cat(paste0(id, if(id %% 96 == 1) "\n" else ", "));
+		#
+		idx = which(pP[id,] != 0);
+		xpows = xpows[idx]; lenv = length(idx);
+		### Free Term:
+		if(lenv == 0) {
+			re = mpfr(Re(p$coeff[id]), precBits=bits);
+			im = mpfr(Im(p$coeff[id]), precBits=bits);
+			return(mpfr2array(c(Re=re, Im=im, Div=1), c(3)));
+		}
+		#
+		re = mpfr2array(sapply(seq(lenv), function(id2) xpows[[id2]][pP[id, idx[id2]], 1]), lenv);
+		im = mpfr2array(sapply(seq(lenv), function(id2) xpows[[id2]][pP[id, idx[id2]], 2]), lenv);
+		if(length(re) > 0) {
+		while(TRUE) {
+			len = length(re);
+			if(len == 1) break;
+			iend = (len %% 2);
+			i  = seq(1, len - iend, by=2);
+			re1 = re[i] * re[i+1] - im[i] * im[i+1];
+			im1 = re[i] * im[i+1] + im[i] * re[i+1];
+			if(iend > 0) {
+				re.last = re[len]; im.last = im[len];
+				re2 = re1[1] * re.last - im1[1] * im.last;
+				im2 = re1[1] * im.last + im1[1] * re.last;
+				re1[1] = re2; im1[1] = im2;
+			}
+			re = re1; im = im1;
+		}
+		} else {re = 1; im = 0;}
+		re = re * p$coeff[id]; im = im * p$coeff[id];
+		sol = mpfr2array(c(Re=re, Im=im, Div=1), c(3));
+		return(sol);
+	}
+	if(progress) cat("\n");
+	sol = sapply(seq(nrow(p)), eval.p);
+	sdim = attr(sol, "dim"); sol = mpfr2array(t(sol), rev(sdim));
+	sol = apply(sol, 2, sum);
+	return(sol);
+}
+
+pow.cpm.mpfr = function(x, pow, bits=120, tol=1E-10, doPolar=TRUE) {
+	# TODO:
+	lenx = if(inherits(x, "mpfr")) 1 else seq(length(x));
+	xpows = lapply(lenx, function(id) {
 		x0 = round0(x[id], tol=tol);
 		len = tail(pow[[id]], 1);
 		if(is.complex(x0) && Im(x0) != 0) {
@@ -142,39 +196,7 @@ eval.cpm = function(p, x, bits=120, tol=1E-10, doPolar=TRUE, progress=FALSE) {
 			}
 		}
 	})
-	if(progress) cat("Processing row:\n");
-	eval.p = function(id) {
-		if(progress && id %% 16 == 1) cat(paste0(id, if(id %% 96 == 1) "\n" else ", "));
-		idx = which(pP[id,] != 0);
-		xpows = xpows[idx]; lenv = length(idx);
-		re = mpfr2array(sapply(seq(lenv), function(id2) xpows[[id2]][pP[id, idx[id2]], 1]), lenv);
-		im = mpfr2array(sapply(seq(lenv), function(id2) xpows[[id2]][pP[id, idx[id2]], 2]), lenv);
-		if(length(re) > 0) {
-		while(TRUE) {
-			len = length(re);
-			if(len == 1) break;
-			iend = (len %% 2);
-			i  = seq(1, len - iend, by=2);
-			re1 = re[i] * re[i+1] - im[i] * im[i+1];
-			im1 = re[i] * im[i+1] + im[i] * re[i+1];
-			if(iend > 0) {
-				re.last = re[len]; im.last = im[len];
-				re2 = re1[1] * re.last - im1[1] * im.last;
-				im2 = re1[1] * im.last + im1[1] * re.last;
-				re1[1] = re2; im1[1] = im2;
-			}
-			re = re1; im = im1;
-		}
-		} else {re = 1; im = 0;}
-		re = re * p$coeff[id]; im = im * p$coeff[id];
-		sol = mpfr2array(c(Re=re, Im=im, Div=1), c(3));
-		return(sol);
-	}
-	if(progress) cat("\n");
-	sol = sapply(seq(nrow(p)), eval.p);
-	sdim = attr(sol, "dim"); sol = mpfr2array(t(sol), rev(sdim));
-	sol = apply(sol, 2, sum);
-	return(sol);
+	return(xpows);
 }
 
 
@@ -197,7 +219,15 @@ unity.mpfr = function(n=5, all=TRUE, bits=120, include1=FALSE) {
 	return(m);
 }
 
-### Math
+### Conversions
+
+as.double.cmpfr = function(x) {
+	len = nrow(x);
+	x = sapply(seq(len), function(nr) {
+		complex(re=as.double(x[nr,1]), im=as.double(x[nr,2]));
+	})
+	return(x);
+}
 
 toPolar.lmpfr = function(x, bits=120) {
 	pib = Const("pi", bits);
@@ -227,6 +257,8 @@ toPolar.mpfr = function(x, bits=120, piConst=NULL) {
 	return(cbind(M=r, Theta=th));
 }
 
+### Math: Complex Numbers
+
 ### Multiplication
 mult.mpfr = function(re1, im1, re2, im2) {
 	reN = re1 * re2 - im1 * im2;
@@ -235,7 +267,7 @@ mult.mpfr = function(re1, im1, re2, im2) {
 }
 
 ### Power
-pow.pmfr = function(x, len=1, bits=120) {
+pow.mpfr = function(x, len=1, bits=120) {
 	x = toPolar(x, bits=bits);
 	r = x$M; th = x$Theta;
 	doPow = FALSE;
@@ -285,10 +317,4 @@ rootn.mpfr = function(x, n) {
 }
 
 #################
-
-### Tests
-
-x = roots.Class1.mpfr(3, c(1,-3,0,1))
-poly.calc.mpfr(x)
-# x^5 - 15*x^3 + 1305*x + 1293
 
