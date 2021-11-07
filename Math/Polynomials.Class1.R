@@ -54,6 +54,7 @@
 
 ### helper functions
 
+### Roots of unity
 unity = function(n=3, all=TRUE) {
 	m = complex(re=cos(2*pi/n), im=sin(2*pi/n))
 	if(all) {
@@ -61,6 +62,89 @@ unity = function(n=3, all=TRUE) {
 	}
 	return(m)
 }
+### mpfr:
+# requires:
+# library(Rmpfr)
+# source("Polynomials.Helper.R")
+unity.mpfr = function(n=5, all=TRUE, bits=120, include1=FALSE) {
+	pib = Const("pi", bits); pin = 2*pib / n;
+	if( ! all) {
+		m = c(cos(pin), sin(pin));
+		m = mpfr2array(m, c(2));
+	} else {
+		from = if(include1) 0 else 1;
+		m = sapply(seq(from, n-1), function(id) {
+				c(cos(id*pin), sin(id*pin)) });
+		m = t(mpfr2array(m, c(2, n - from)));
+	}
+	return(m);
+}
+
+### Roots
+
+roots.Class1.mpfr = function(K, s, n=5, bits=120) {
+	if( ! inherits(K, "mpfr")) K = mpfr(K, precBits=bits)
+	k = rootn.mpfr(K, n=n);
+	m = unity.mpfr(n=n, all=TRUE, bits=bits);
+	len = length(s);
+	if(len > n) stop("Sequence too long!");
+	s0 = 0; # TODO
+	pows = seq(len);
+	# TODO: complex k;
+	k = mpfr2array(k[1]^pows, c(len));
+	r = sapply(seq(n), function(id) {
+		# TODO
+		mp = if(id == 1) m
+			else if(id == n) matrix(c(1,0), nrow=len, nc=2, byrow=TRUE)
+			else m[ ((id*pows) %% n), ]; # TODO: non-primes + 1;
+		re = sum(s*k*mp[,1]) + s0;
+		im = sum(s*k*mp[,2]);
+		return(c(re, im));
+	})
+	r = t(mpfr2array(r, c(2, n)));
+}
+rootn.mpfr = function(x, n) {
+	if(n %% 2 == 0) {
+		# TODO:
+		stop("Not yet implemented!")
+		if(is.list(x) || any(x < 0)) {
+		} else {
+		}
+	} else {
+		ninv = 1/mpfr(n, precBits=120);
+		if(is.matrix(x) && dim(x)[2] >= 2) {
+			# Complex numbers:
+			bits = getPrec(x[1,1]);
+			xpol = toPolar.lmpfr(x, bits=bits);
+			r = sapply(seq(nrow(x)), function(id) {
+				x = x[id, ];
+				if(x[[2]] == 0) {
+					r = if(x[[1]] >=0) x[[1]]^(1/n)
+						else - (-x[[1]])^(1/n);
+					return(c(r, 0));
+				}
+				r = xpol[id, 1]; th = xpol[id, 2];
+				re = r^ninv; th = th*ninv;
+				im = re * sin(th); re = re * cos(th);
+				return(c(re, im));
+			})
+			r = t(mpfr2array(r, c(2, nrow(x))));
+		} else {
+			r = ifelse(x >= 0, x^ninv, - (-x)^ninv);
+			r = mpfr2array(r, c(length(r)));
+		}
+	}
+	return(r);
+}
+
+x = roots.Class1.mpfr(3, c(1,-3,0,1))
+poly.calc.mpfr(x)
+# x^5 - 15*x^3 + 1305*x + 1293
+
+
+###############
+
+### Other
 mult.p = function(p1, p2) {
 	p.m = outer(p1, p2)
     p = as.vector(tapply(p.m, row(p.m) + col(p.m), sum))
@@ -70,11 +154,11 @@ mult.p = function(p1, p2) {
 round0 = function(m, tol=1E-7) {
 	m[abs(Re(m)) < tol & abs(Im(m)) < tol] = 0
 	isZero = (Re(m) != 0) & (abs(Re(m)) < tol)
-	if(sum(isZero) > 0) {
+	if(any(isZero)) {
 		m[isZero] = complex(re=0, im=Im(m[isZero]))
 	}
 	isZero = (Im(m) != 0) & (abs(Im(m)) < tol)
-	if(sum(isZero) > 0) {
+	if(any(isZero)) {
 		m[isZero] = Re(m[isZero])
 	}
 	return(m)
@@ -394,6 +478,7 @@ x = sapply(k, function(k) sum(s3*k^id3))
 ### Polynomial
 round0.p(poly.calc(x))
 
+# TODO: check if correct [using a robust approach]
 err = -3410 - 31050*x - 129600*x^2 - 311076*x^3 - 453222*x^4 - 402894*x^5 - 270270*x^6 - 250614*x^7 +
 - 90882*x^8 + 509070*x^9 + 992844*x^10 + 732240*x^11 + 141462*x^12 - 56754*x^13 + 66582*x^14 +
 + 108162*x^15 + 32238*x^16 - 9234*x^17 - 1464*x^18 + 4752*x^19 + 1620*x^20 - 252*x^21 - 108*x^22 + x^27
