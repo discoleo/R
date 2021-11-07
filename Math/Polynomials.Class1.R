@@ -6,7 +6,7 @@
 ###
 ### Leonard Mada
 ###
-### draft v.0.1c
+### draft v.0.1d
 
 ### based on work during:
 ### 2018 - 2020
@@ -16,14 +16,17 @@
 ### History ###
 ###############
 
-# v.0.1c:
+### v.0.1d:
+# - moved mpfr-functions to new file:
+#   Polynomials.Helper.mpfr.R;
+### v.0.1c:
 # - added example with triple nested radicals;
 #   [but overflows very easily!]
-# v.0.1b:
+### v.0.1b:
 # - added examples for entanglements
 #   with multiple radicals;
 #   [both nested & non-nested]
-# v.0.1a:
+### v.0.1a:
 # - initial draft posted on Github;
 # - based largely on work during 2018-2020;
 
@@ -50,9 +53,9 @@
 # and index id goes from 0 to n-1;
 
 
-#################
+####################
 
-### helper functions
+### Helper Functions
 
 ### Roots of unity
 unity = function(n=3, all=TRUE) {
@@ -62,85 +65,6 @@ unity = function(n=3, all=TRUE) {
 	}
 	return(m)
 }
-### mpfr:
-# requires:
-# library(Rmpfr)
-# source("Polynomials.Helper.R")
-unity.mpfr = function(n=5, all=TRUE, bits=120, include1=FALSE) {
-	pib = Const("pi", bits); pin = 2*pib / n;
-	if( ! all) {
-		m = c(cos(pin), sin(pin));
-		m = mpfr2array(m, c(2));
-	} else {
-		from = if(include1) 0 else 1;
-		m = sapply(seq(from, n-1), function(id) {
-				c(cos(id*pin), sin(id*pin)) });
-		m = t(mpfr2array(m, c(2, n - from)));
-	}
-	return(m);
-}
-
-### Roots
-
-roots.Class1.mpfr = function(K, s, n=5, bits=120) {
-	if( ! inherits(K, "mpfr")) K = mpfr(K, precBits=bits)
-	k = rootn.mpfr(K, n=n);
-	m = unity.mpfr(n=n, all=TRUE, bits=bits);
-	len = length(s);
-	if(len > n) stop("Sequence too long!");
-	s0 = 0; # TODO
-	pows = seq(len);
-	# TODO: complex k;
-	k = mpfr2array(k[1]^pows, c(len));
-	r = sapply(seq(n), function(id) {
-		# TODO
-		mp = if(id == 1) m
-			else if(id == n) matrix(c(1,0), nrow=len, nc=2, byrow=TRUE)
-			else m[ ((id*pows) %% n), ]; # TODO: non-primes + 1;
-		re = sum(s*k*mp[,1]) + s0;
-		im = sum(s*k*mp[,2]);
-		return(c(re, im));
-	})
-	r = t(mpfr2array(r, c(2, n)));
-}
-rootn.mpfr = function(x, n) {
-	if(n %% 2 == 0) {
-		# TODO:
-		stop("Not yet implemented!")
-		if(is.list(x) || any(x < 0)) {
-		} else {
-		}
-	} else {
-		ninv = 1/mpfr(n, precBits=120);
-		if(is.matrix(x) && dim(x)[2] >= 2) {
-			# Complex numbers:
-			bits = getPrec(x[1,1]);
-			xpol = toPolar.lmpfr(x, bits=bits);
-			r = sapply(seq(nrow(x)), function(id) {
-				x = x[id, ];
-				if(x[[2]] == 0) {
-					r = if(x[[1]] >=0) x[[1]]^(1/n)
-						else - (-x[[1]])^(1/n);
-					return(c(r, 0));
-				}
-				r = xpol[id, 1]; th = xpol[id, 2];
-				re = r^ninv; th = th*ninv;
-				im = re * sin(th); re = re * cos(th);
-				return(c(re, im));
-			})
-			r = t(mpfr2array(r, c(2, nrow(x))));
-		} else {
-			r = ifelse(x >= 0, x^ninv, - (-x)^ninv);
-			r = mpfr2array(r, c(length(r)));
-		}
-	}
-	return(r);
-}
-
-x = roots.Class1.mpfr(3, c(1,-3,0,1))
-poly.calc.mpfr(x)
-# x^5 - 15*x^3 + 1305*x + 1293
-
 
 ###############
 
@@ -239,8 +163,6 @@ x^5 - 5*K*(K*s^2 + K*s^3 - s + 1)*x^2 + 5*K*(K^2*s^4 + K*s^3 + 3*K*s^2 - K*s - 1
 - K - K^2 - 10*K^2*s - 10*K^2*s^2 + 10*K^3*s^3 - 10*K^3*s^4 + K^3*s^5 - K^4*s^5
 # for K = 2, s = 1/2
 # x^5 - 25/2 * x^2 - 125/4
-
-
 
 
 
@@ -479,6 +401,7 @@ x = sapply(k, function(k) sum(s3*k^id3))
 round0.p(poly.calc(x))
 
 # TODO: check if correct [using a robust approach]
+# - coefficients overflow easily!
 err = -3410 - 31050*x - 129600*x^2 - 311076*x^3 - 453222*x^4 - 402894*x^5 - 270270*x^6 - 250614*x^7 +
 - 90882*x^8 + 509070*x^9 + 992844*x^10 + 732240*x^11 + 141462*x^12 - 56754*x^13 + 66582*x^14 +
 + 108162*x^15 + 32238*x^16 - 9234*x^17 - 1464*x^18 + 4752*x^19 + 1620*x^20 - 252*x^21 - 108*x^22 + x^27
