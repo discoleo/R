@@ -45,7 +45,8 @@ source("Polynomials.Helper.Factorize.R")
 ### Basic Algebra
 
 ### Round to 0
-round0 = function(m, tol=1E-7) {
+round0 = function(x, ...) UseMethod("round0")
+round0.default = function(m, tol=1E-7) {
 	m[abs(Re(m)) < tol & abs(Im(m)) < tol] = 0
 	isZero = (Re(m) != 0) & (abs(Re(m)) < tol)
 	if(any(isZero)) {
@@ -57,7 +58,8 @@ round0 = function(m, tol=1E-7) {
 	}
 	return(m)
 }
-round0.p = function(p, tol=1E-7) {
+round0.p = function(p, tol=1E-7) round0.polynomial(p, tol=tol)
+round0.polynomial = function(p, tol=1E-7) {
 	p = round0(as.vector(p), tol=tol)
 	class(p) = "polynomial"
 	return(p)
@@ -66,6 +68,7 @@ round0.pm = function(p, tol=1E-7) {
 	p$coeff = round0(p$coeff, tol=tol);
 	return(p);
 }
+### Round:
 round.pm = function(p, digits=4) {
 	p$coeff = round(p$coeff, digits=digits);
 	return(p);
@@ -559,6 +562,13 @@ shift.pm = function(p, val, xn="x", tol=1E-10) {
 }
 
 ### Replace variables:
+
+# TODO:
+# - explore:
+#   methods::setGeneric("replace")
+#   methods::setMethod("replace", signature = c(p1 = "pm", p2 = "numeric"), definition = replace.pm.numeric)
+#   methods::setMethod("replace", signature = c(p1 = "pm", p2 = "character"), definition = replace.pm.character)
+# - replace.pm.numeric()
 replace.withVal.pm = function(p, xn, pow=1, val, simplify=TRUE, tol=1E-10) {
 	if(length(val) > 1) {
 		len = length(val);
