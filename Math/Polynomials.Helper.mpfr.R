@@ -254,25 +254,31 @@ toPolar.lmpfr = function(x, bits=120) {
 	return(t(xpol));
 }
 toPolar.mpfr = function(x, bits=120, piConst=NULL) {
-	if(is.list(x)) {
+	if(inherits(x, "mpfrMatrix")) {
+		re = x[,1]; im = x[,2];
+	} else if(inherits(x, "mpfr")) {
 		# already mpfr:
 		re = x[[1]]; im = x[[2]];
 	} else {
 		re = mpfr(Re(x), bits); im = mpfr(Im(x), bits);
 	}
+	### Polar coordinates:
 	r = sqrt(re^2 + im^2); # TODO: use function;
 	pib = if( ! is.null(piConst)) piConst
 		else Const("pi", bits);
 	pih = pib / 2;
 	# seems NO difference between asin & atan versions;
-	th  = asin(abs(im/r));
-	if(re == 0) {th = pih; if(im < 0) th = - th;}
-	else if(re < 0) {
-		th = pib + if(im > 0) - th else th;
-	} else if(im < 0) {
-		th = -th;
-	}
-	return(cbind(M=r, Theta=th));
+	th  = mpfr2array(asin(abs(im/r)), length(re));
+	# Correct quadrant:
+	isZero = (re == 0);
+	th[isZero] = ifelse(im[isZero] < 0, pih, - pih);
+	isQ23 = (re < 0);
+	th[isQ23] = ifelse(im[isQ23] > 0, pib - th[isQ23], pib + th[isQ23]);
+	isQ34 = ( ! isQ23) & (im < 0);
+	th[isQ34] = -th[isQ34];
+	rez = mpfr2array(c(r, th), c(length(th), 2));
+	colnames(rez) = c("M", "Theta");
+	return(rez);
 }
 
 ### Math: Complex Numbers

@@ -38,6 +38,9 @@ x = roots.Class1.mpfr(K, c(1,-K,0,1))
 poly.calc.mpfr(x)
 # x^5 - 15*x^3 + 1305*x + 1293
 
+### Polar coordinates:
+toPolar.mpfr(x)
+
 ###
 K = 2
 x = roots.Class1.mpfr(K, c(1,-K,0,1))
