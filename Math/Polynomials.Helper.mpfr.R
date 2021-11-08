@@ -172,9 +172,9 @@ pow.cpm.mpfr = function(x, pow, bits=120, tol=1E-10, doPolar=TRUE) {
 		len = tail(pow[[id]], 1);
 		#
 		isComplex = (is.complex(x0) && Im(x0) != 0) ||
-			(isMpfr && length(x) >= 2);
+			(isMpfr && length(x) >= 2 && x[2] != 0);
 		if(isComplex) {
-			div = 1;
+			div = 1; # defunct
 			# polar coordinates:
 			# - but less accuracy with certain complex numbers;
 			# - needed when r^max.pow overflows;
@@ -198,21 +198,20 @@ pow.cpm.mpfr = function(x, pow, bits=120, tol=1E-10, doPolar=TRUE) {
 				th = th * seq(len);
 				re = r * cos(th); im = r * sin(th);
 			} else {
+				if(isMpfr) {
+					# TODO
+					stop("Not yet implemented!")
+				}
 				x = x0^seq(len);
 				re = Re(x); im = Im(x);
-				re = mpfr(re * div, bits);
-				im = mpfr(im * div, bits);
+				re = mpfr(re, bits);
+				im = mpfr(im, bits);
 			}
 			return(cbind(Re=re, Im=im, Div=div));
 		} else {
-			x0 = mpfr(Re(x0), bits);
+			x0 = if(isMpfr) x0[1] else mpfr(Re(x0), bits);
 			x = x0^seq(len); # power 0 NOT needed;
-			if(x0 == 0) {
-				return(cbind(Re=x, Im=0, Div=1));
-			} else {
-				div = 1; # 12 - round(log(abs(x)) / log(10));
-				return(cbind(Re=x, Im=0, Div=div));
-			}
+			return(cbind(Re=x, Im=0, Div=1));
 		}
 	})
 	return(xpows);

@@ -46,4 +46,5 @@ poly.calc.mpfr(x)
 p = toPoly.pm("x^5 - 10*x^3 + 200*x - 50")
 eval.cpm(p, as.double.cmpfr(x)[1])
 eval.cpm(p, x[1, ]) # better accuracy
+eval.cpm(p, x[x[,2] == 0, ]) # better accuracy
 
