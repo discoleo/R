@@ -6,7 +6,7 @@
 ### Polynomials: Helper Functions
 ### mpfr Functions
 ###
-### draft v.0.1b
+### draft v.0.1c
 
 
 ### fast load:
@@ -29,6 +29,8 @@ library(Rmpfr)
 ###############
 
 
+### draft v.0.1c:
+# - various fixes;
 ### draft v.0.1a - v.0.1b:
 # - moved mpfr-specific functions
 #   to this file, from files:
@@ -95,6 +97,7 @@ roots.Class1.mpfr = function(K, s, n=5, bits=120) {
 ### Evaluate Polynomials
 
 eval.pm.mpfr = function(p, x, bits=120, tol=10^(10 - bits %/% 3)) {
+	# TODO
 }
 eval.cpm = function(p, x, bits=120, tol=1E-10, doPolar=TRUE, progress=FALSE) {
 	# uses the Rmpfr package;
@@ -153,18 +156,34 @@ eval.cpm = function(p, x, bits=120, tol=1E-10, doPolar=TRUE, progress=FALSE) {
 }
 
 pow.cpm.mpfr = function(x, pow, bits=120, tol=1E-10, doPolar=TRUE) {
-	# TODO:
-	lenx = if(inherits(x, "mpfr")) 1 else seq(length(x));
+	# x = c(v1, v2, ..., vn); # multi-variable polynomials: n variables!
+	# pow = list(pow.v1, pow.v2, ..., pow.vn);
+	# - mpfr-quirk: vector is actually list!
+	isList = ( ! inherits(x, "mpfr")) && inherits(x, "list");
+	lenx = if(isList) seq(length(x)) else 1;
+	# pow = is always list;
+	if( ! inherits(pow, "list")) stop("pow must be a list!")
+	#
 	xpows = lapply(lenx, function(id) {
-		x0 = round0(x[id], tol=tol);
+		x = if(isList) x[[id]] else x;
+		isMpfr = inherits(x, "mpfr");
+		# round small values to 0:
+		x0 = if( ! isMpfr && tol > 0) round0(x, tol=tol) else x;
 		len = tail(pow[[id]], 1);
-		if(is.complex(x0) && Im(x0) != 0) {
+		#
+		isComplex = (is.complex(x0) && Im(x0) != 0) ||
+			(isMpfr && length(x) >= 2);
+		if(isComplex) {
 			div = 1;
 			# polar coordinates:
 			# - but less accuracy with certain complex numbers;
 			# - needed when r^max.pow overflows;
 			if(doPolar) {
-				re = mpfr(Re(x0), bits); im = mpfr(Im(x0), bits);
+				if(isMpfr) {
+					re = x0[1]; im = x0[2];
+				} else {
+					re = mpfr(Re(x0), bits); im = mpfr(Im(x0), bits);
+				}
 				r = sqrt(re^2 + im^2);
 				pib = Const("pi", bits); pih = pib / 2;
 				# seems NO difference between asin & atan versions;
