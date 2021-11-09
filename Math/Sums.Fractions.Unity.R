@@ -6,7 +6,7 @@
 ### Infinite Sums: Fractions
 ### Roots of Unity
 ###
-### draft v.0.1c-simple
+### draft v.0.1c-odd
 
 
 ### Infinite Sums
@@ -72,6 +72,9 @@ coeffs.frn = function(n=5) {
 ### Examples:
 
 n = 5;
+# - any odd n!
+# - formula is slightly different for even n;
+
 # Roots of unity
 cf = coeffs.frn(n=n)
 a = cf$a; b0 = cf$b0; b = cf$b; D = cf$D;
@@ -93,7 +96,12 @@ b0*log(2) + sum( a/2 * log(1 + 1 + m.sum) ) +
 #################
 
 ### Sum( (-1)^n / (5*n + k0) )
-n = 5
+# k0 = 2
+n = 9
+cf = coeffs.frn(n=n)
+a = cf$a; b0 = cf$b0; b = cf$b; D = cf$D;
+m.sum = cf$m.sum; m.shift = cf$m.shift; m.sq = cf$m.sq;
+
 k0 = 2
 #
 integrate(sum.frn, lower=1E-8, upper=1, n=n, k0=k0)
@@ -110,8 +118,8 @@ b0 + sum(a) - b0*log(2) +
 ###
 k0 = 3
 #
-integrate(sum.frn, lower=1E-8, upper=1, n=5, k0=k0)
-sum.basicFr(5, k0=k0)
+integrate(sum.frn, lower=1E-8, upper=1, n=n, k0=k0)
+sum.basicFr(n, k0=k0)
 
 # TODO
 
