@@ -6,7 +6,7 @@
 ### Infinite Sums: Fractions
 ### Roots of Unity
 ###
-### draft v.0.1c-fix
+### draft v.0.1c-simple
 
 
 ### Infinite Sums
@@ -44,17 +44,15 @@ sum.basicFr = function(n, iter=8000, k0=1) {
 }
 coeffs.frn = function(n=5) {
 	# Roots of unity
-	m = unity(n, all=TRUE)
-	m = m[-1] # all roots of unity (without 1)
 	len = (n-1)/2; # only half the roots of unity
-	m.conj = m[1:len];
-	m.conj = cbind(m.conj, 1/m.conj);
-	m.sum = (m.conj[,1] + m.conj[,2]);
+	# Simplification:
+	m.sum = 2*cos(2*pi*seq(len) / n);
+	m.shift = m.sum/2;
 	# Coefficients
 	b0 = 1/n; b = -2*b0;
 	a = b0 * m.sum;
-	m.shift = m.sum/2; m.sq = sqrt(1 - m.shift^2);
 	D = b + a*m.shift;
+	m.sq = sqrt(1 - m.shift^2);
 	coeffs = list(a=a, b0=b0, b=b, D=D, m.sum=m.sum, m.shift=m.shift, m.sq=m.sq);
 	return(coeffs)
 }
