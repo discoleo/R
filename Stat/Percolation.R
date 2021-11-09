@@ -5,7 +5,7 @@
 ###
 ### Percolation
 ###
-### draft v.0.4a-cleanup
+### draft v.0.4b
 
 ### Percolation
 
@@ -24,6 +24,8 @@
 ###############
 
 
+### draft v.0.4b:
+# - added REV: Representative Elementary Volume;
 ### draft v.0.4a-cleanup:
 # - examples have been moved to file:
 #   Percolation.Examples.R;
@@ -97,7 +99,9 @@ norm.flux = function(m, add=0) {
 	invisible(m)
 }
 
-### Generators
+##################
+### Generators ###
+##################
 
 rugrid.gen = function(dims, p) {
 	m = sample(c(-1, 0), prod(dims), replace=T, prob=c(p, 1-p))
@@ -370,8 +374,24 @@ if(TEST) {
 	plot.rs(m.fl)
 }
 
-#########################
-### Percolation Functions
+#############################
+### Percolation Functions ###
+#############################
+
+### REV = Representative Elementary Volume
+REV = function(m, w, h=w, base=0) {
+	isPore = (m >= base);
+	msc = apply(isPore, 1, cumsum);
+	#
+	r = matrix(0, nrow=nrow(m) - h , ncol=ncol(m) - w)
+	for(nc in seq(ncol(m) - w)) {
+		for(nr in seq(nrow(m) - h)) {
+			r[nr, nc] = sum(msc[nr + h, seq(nc, nc+w-1)]) +
+				- sum(msc[nr, seq(nc, nc+w-1)]);
+		}
+	}
+	return(r);
+}
 
 flood = function(m, pyx, val=1, val0=0) {
 	vals = pyx; pos = 1;

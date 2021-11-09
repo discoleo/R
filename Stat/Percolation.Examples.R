@@ -5,7 +5,7 @@
 ###
 ### Percolation: Examples
 ###
-### draft v.0.1a
+### draft v.0.1b
 
 ### Percolation
 
@@ -38,6 +38,12 @@ m = sample(c(-1, 0), prod(dims), replace=T, prob=c(p, 1-p))
 m = matrix(m, nrow=dims[1])
 m[1:10, 1:10]
 plot.rs(m, "Percolation")
+
+### REV
+# Representative Elementary Volume
+m.rev = REV(m, w=10)
+plot.rs(m.rev - min(m.rev), "REV")
+quantile(m.rev, c(0.1, 0.25, 0.5, 0.75, 0.9))
 
 
 ### Flood Fill
