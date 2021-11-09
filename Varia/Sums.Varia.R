@@ -11,12 +11,22 @@
 
 
 ### Sums of Fractions
-# based on:
-# Michael Penn: a nice double sum.
-# https://www.youtube.com/watch?v=5KpGSMyUANU
+# 1) based on:
+#    Michael Penn: a nice double sum.
+#    https://www.youtube.com/watch?v=5KpGSMyUANU
+# 2) Others: based on I(1/(x^n + 1))
+#    see file: Sums.Fractions.Unity.R
 
 ### TODO:
 # - explore relationships to zeta function;
+
+### TODO:
+# - remove file:
+#   https://github.com/discoleo/R/tree/master/Varia/Sums.Varia.R
+#   [the initial file got somehow in the wrong folder!]
+# - keep file:
+#   https://github.com/discoleo/R/blob/master/Math/Sums.Varia.R
+
 
 ##################
 
@@ -340,4 +350,21 @@ sum.1D(c(0, 0, 0, 0, -1/3, 1), iter=10000)
 sum.1D(c(0, 0, 0, 0, +1/3, 1), iter=10000)
 9*(27/2*(log(3) - 1) - zeta(3)) - part2
 
+### 2/3-Series
+### 1 / ((x + 1) * (x + 1/3))
+sum.1D(c(1/3, 4/3, 1), iter=iter)
+3/2 - 1/2*(sum.1D.exact(-1/9, 0) + 9/2*(1 - log(3)))
+### 1 / ((x + 1/3) * (x + 2/3))
+sum.1D(c(2/9, 1, 1), iter=iter)
+9/2 - (sum.1D.exact(-1/9, 0) - 9/2*(1 - log(3))) +
+	- (sum.1D.exact(-1/9, 0) + 9/2*(1 - log(3)))
+9/2 - 2*sum.1D.exact(-1/9, 0)
+### 1 / ((x - 1/3) * (x - 2/3))
+sum.1D(c(2/9, -1, 1), iter=iter)
+9 - 2*sum.1D.exact(-1/9, 0)
+### 1 / (x * (x + 2/3)) = 9/4 - 1/2 * 1 / (x * (x - 1/3))
+sum.1D(c(0, 2/3, 1), iter=iter)
+(1/2 + 1/3)*9/2 - sum.1D.exact(-1/9, 0) +
+	- (3/2 - 1/2*(sum.1D.exact(-1/9, 0) + 9/2*(1 - log(3))))
+9/4 - 1/2*sum.1D.exact(-1/9, 0) + 9/4*(1 - log(3))
 
