@@ -20,6 +20,14 @@
 ### TODO:
 # - explore relationships to zeta function;
 
+### TODO:
+# - remove file:
+#   https://github.com/discoleo/R/tree/master/Varia/Sums.Varia.R
+#   [the initial file got somehow in the wrong folder!]
+# - keep file:
+#   https://github.com/discoleo/R/blob/master/Math/Sums.Varia.R
+
+
 ##################
 
 library(pracma)
