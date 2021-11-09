@@ -6,7 +6,7 @@
 ### Infinite Sums: Fractions
 ### Roots of Unity
 ###
-### draft v.0.1c
+### draft v.0.1c-fix
 
 
 ### Infinite Sums
@@ -80,8 +80,8 @@ a = cf$a; b0 = cf$b0; b = cf$b; D = cf$D;
 m.sum = cf$m.sum; m.shift = cf$m.shift; m.sq = cf$m.sq;
 
 ### Sum vs Integral:
-integrate(sum.frn, lower=0, upper=1, n=5)
-sum.basicFr(5)
+integrate(sum.frn, lower=0, upper=1, n=n)
+sum.basicFr(n)
 
 ### Exact formula:
 b0*log(2) + sum( a/2 * log(1 + 1 + m.sum) ) +
@@ -95,10 +95,11 @@ b0*log(2) + sum( a/2 * log(1 + 1 + m.sum) ) +
 #################
 
 ### Sum( (-1)^n / (5*n + k0) )
+n = 5
 k0 = 2
 #
-integrate(sum.frn, lower=1E-8, upper=1, n=5, k0=k0)
-sum.basicFr(5, k0=k0)
+integrate(sum.frn, lower=1E-8, upper=1, n=n, k0=k0)
+sum.basicFr(n, k0=k0)
 
 ### Exact formula:
 b0 + sum(a) - b0*log(2) +
