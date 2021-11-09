@@ -5,6 +5,8 @@
 ###
 ### Infinite Sums: Fractions
 ### Roots of Unity
+###
+### draft v.0.1a-gen
 
 
 ### Infinite Sums
@@ -23,8 +25,9 @@
 source("Polynomials.Helper.R")
 
 
-sum.frn = function(x, n) {
-	1 / (x^n + 1)
+sum.frn = function(x, n, k0=1) {
+	x0 = if(k0 == 1) 1 else x^(k0-1);
+	x0 / (x^n + 1)
 }
 # converges slowly:
 sum.basicFr = function(n, iter=8000, k0=1) {
@@ -78,4 +81,11 @@ b0/(x + 1) + sum( (a*x - b) / ((x + m.conj[,1]) * (x + m.conj[,2])) )
 b0/(x + 1) + sum( a/2*(2*x + m.sum) / ((x + m.conj[,1]) * (x + m.conj[,2])) ) +
 	- sum( D / ((x + m.shift)^2 + m.sq^2))
 
+
+#####################
+
+k0 = 2
+#
+integrate(sum.frn, lower=1E-8, upper=1, n=5, k0=k0)
+sum.basicFr(5, k0=k0)
 
