@@ -6,11 +6,16 @@
 ### Infinite Sums: Fractions
 ### Roots of Unity
 ###
-### draft v.0.1a-gen
+### draft v.0.1b
 
 
 ### Infinite Sums
-### Sum( 1 / (k1*n + k0))
+### Sum( (-1)^n / (k1*n + k0))
+
+### Theory:
+# - can be transformed to:
+#   Integral( 1 / (x^n + 1) );
+
 
 ### Integral( 1 / (x^n + 1) ):
 # - see file:
@@ -24,6 +29,8 @@
 # required:
 source("Polynomials.Helper.R")
 
+
+### Other
 
 sum.frn = function(x, n, k0=1) {
 	x0 = if(k0 == 1) 1 else x^(k0-1);
@@ -71,15 +78,6 @@ b0*log(2) + sum( a/2 * log((1 + m.conj[,1]) * (1 + m.conj[,2])) ) +
 
 ### Note:
 # sum( a/2 * log(m.conj[,1] * m.conj[,2]) ) == 0 !
-	
-
-### Test decomposition:
-x = 3; # only a test value
-1/(x^n + 1) # ==
-b0/(x + 1) + sum( (a*x - b) / ((x + m.conj[,1]) * (x + m.conj[,2])) )
-# decomposed into: LOG + ATAN components
-b0/(x + 1) + sum( a/2*(2*x + m.sum) / ((x + m.conj[,1]) * (x + m.conj[,2])) ) +
-	- sum( D / ((x + m.shift)^2 + m.sq^2))
 
 
 #####################
@@ -88,4 +86,22 @@ k0 = 2
 #
 integrate(sum.frn, lower=1E-8, upper=1, n=5, k0=k0)
 sum.basicFr(5, k0=k0)
+
+# TODO
+
+
+### Test: Fraction decomposition:
+# only a test value
+x = 3;
+### k0 = 1;
+1/(x^n + 1) # ==
+b0/(x + 1) + sum( (a*x - b) / ((x + m.conj[,1]) * (x + m.conj[,2])) )
+# decomposed into: LOG + ATAN components
+b0/(x + 1) + sum( a/2*(2*x + m.sum) / ((x + m.conj[,1]) * (x + m.conj[,2])) ) +
+	- sum( D / ((x + m.shift)^2 + m.sq^2))
+
+### k0 = 2;
+x/(x^n + 1) # ==
+b0 + sum(a) - b0/(x + 1) +
+	- sum( (a*m.sum*x + b*x + a*m.conj[,1]*m.conj[,2]) / ((x + m.conj[,1]) * (x + m.conj[,2])) )
 
