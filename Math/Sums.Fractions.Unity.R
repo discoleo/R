@@ -6,7 +6,7 @@
 ### Infinite Sums: Fractions
 ### Roots of Unity
 ###
-### draft v.0.1f
+### draft v.0.1g
 
 
 ### Infinite Sums
@@ -112,8 +112,7 @@ sum.basicFr(n)
 sumExact.frn(n)
 
 
-#################
-
+##############
 ### Larger k0:
 # Sum( (-1)^j / (k1*j + k0) )
 
@@ -122,10 +121,12 @@ cf = coeffs.frn(n=n)
 a = cf$a; b0 = cf$b0; b = cf$b;
 m.sum = cf$m.sum; m.shift = cf$m.shift; m.sq = cf$m.sq;
 
-###
+
+###########
+### k0 == 2
 k0 = 2 # fixed
 # Formula differs based on k0
-integrate(sum.frn, lower=1E-8, upper=1, n=n, k0=k0)
+integrate(sum.frn, lower=0, upper=1, n=n, k0=k0)
 sum.basicFr(n, k0=k0)
 
 ### Exact formula:
@@ -135,14 +136,37 @@ b0 + sum(a) - b0*log(2) +
 	- sum( ((a*m.sum + b)*m.sum/2 - a) / m.sq * atan((0 + m.shift)/m.sq) )
 
 
+###########
+### k0 == 4
+n = 5
+cf = coeffs.frn(n=n)
+a = cf$a; b0 = cf$b0; b = cf$b;
+m.sum = cf$m.sum; m.shift = cf$m.shift; m.sq = cf$m.sq;
 
-###
-k0 = 3
+k0 = 4
+cP0 = a/3 - (b + a*m.sum)/2 + (a*m.sum^2 - a + b*m.sum);
+cP1 = (b + 2*a*m.sum - b*m.sum^2 - a*m.sum^3) / 2;
+cP2 = (2*a - 3*b*m.sum - 4*a*m.sum^2 + b*m.sum^3 + a*m.sum^4) / 2;
 #
-integrate(sum.frn, lower=1E-8, upper=1, n=n, k0=k0)
+integrate(sum.frn, lower=0, upper=1, n=n, k0=k0)
 sum.basicFr(n, k0=k0)
+# Exact formula:
+5/6 * b0 - b0*log(2) + sum(cP0) +
+	+ sum(cP1 * log(1 + 1 + m.sum)) +
+	+ sum( cP2 / m.sq * atan((1 + m.shift)/m.sq) ) +
+	- sum( cP2 / m.sq * atan((0 + m.shift)/m.sq) )
 
-# TODO
+
+### Derivation:
+k0 = 3
+p1 = toPoly.pm("x^k0 * (a*x - b)")
+p2 = toPoly.pm("x^2 + m.sum*x + 1")
+pR = split.pm.fraction(p1, p2, by="x")
+pR$D$coeff = 2* pR$D$coeff # Div by 2!
+pR$Ct$coeff = 2* pR$Ct$coeff # Div by 2!
+
+cP0 = x^2*a - (b + a*m.sum)*x + (a*m.sum^2 - a + b*m.sum);
+
 
 ##################
 
