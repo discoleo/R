@@ -148,3 +148,44 @@ b0 + sum(a) - b0/(x + 1) +
 	- sum( ((a*m.sum + b)/2*(2*x + m.sum)) / (x^2 + m.sum*x + 1) ) +
 	+ sum( ((a*m.sum + b)*m.sum/2 - a) / (x^2 + m.sum*x + 1) )
 
+
+####################
+####################
+
+### I(log(x^n + 1))
+
+# sum(1/(n+1) - 1/(2*(2*n+1)) + 1/(3*(3*n+1)) - 1/(4*(4*n+1)) + ...)
+
+### Integration by parts:
+# x*log(x^n + 1) - n*x + n*I( 1 / (x^n + 1) )
+# - for exact formula of the integral, see file:
+#   Integrals.Fractions.Unity;
+
+intLog = function(n, lower=0, upper=1) {
+	integrate(function(x) log(x^n + 1), lower=lower, upper=upper);
+}
+intFr = function(n, lower=0, upper=1) {
+	f = function(x) x*log(x^n + 1) - n*x;
+	r = f(upper) - f(lower) +
+		+ n * integrate(function(x) 1 / (x^n + 1), lower=lower, upper=upper)$value;
+	return(r)
+}
+sumLogExp = function(n, x=1, iter=1000) {
+	sign = rep(c(1,-1), iter %/% 2);
+	if(iter %% 2 == 1) sign = c(sign, 1);
+	x = x^n;
+	sum( sign * x^seq(iter) / (seq(iter)*(n*seq(iter) + 1)) ) 
+}
+
+###
+n = 2
+intLog(n=n)
+intFr(n=n)
+sumLogExp(n)
+
+###
+n = 5
+intLog(n=n)
+intFr(n=n)
+sumLogExp(n)
+
