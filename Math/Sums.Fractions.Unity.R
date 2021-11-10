@@ -6,7 +6,7 @@
 ### Infinite Sums: Fractions
 ### Roots of Unity
 ###
-### draft v.0.1e
+### draft v.0.1f
 
 
 ### Infinite Sums
@@ -58,16 +58,36 @@ coeffs.frn = function(n=5) {
 	return(coeffs)
 }
 
+### Exact formula: k0 = 1
+sumExact.frn = function(n, lower=0, upper=1) {
+	# only odd n;
+	# for even n: see Integrals.Fractions.Unity;
+	cf = coeffs.frn(n=n)
+	a = cf$a; b0 = cf$b0; b = cf$b; # D = cf$D;
+	m.sum = cf$m.sum; m.shift = cf$m.shift; m.sq = cf$m.sq;
+	D = b + a*m.shift;
+	r = b0*log(2) + sum( a/2 * log(upper^2 + 1 + m.sum*upper) ) +
+		- sum(D / m.sq * atan((upper + m.shift)/m.sq)) +
+		+ sum(D / m.sq * atan((lower + m.shift)/m.sq));
+	### Note:
+	# sum( a/2 * log(lower^2 + 1 + m.sum*lower) ) == 0 for lower = 0!
+	if(lower != 0) r = r - sum( a/2 * log(lower^2 + 1 + m.sum*lower) );
+	return(r);
+}
+
 
 ########################
 ########################
 
+### Section A:
+### Simple Sums
 
 ### Sum( (-1)^n / (5*n + k0) )
 
 ### Integral:
-# k0 = 1 =>
-# I[0, 1] sum( x^(5*n) ) dx
+# I = I[from=0, to=1] (-1)^n * x^(k0 - 1) * sum( x^(5*n) ) dx
+# for k0 = 1 =>
+# I = Sum( (-1)^n / (5*n + k0) )
 
 
 ### Examples:
@@ -76,34 +96,33 @@ n = 5;
 # - any odd n!
 # - formula is slightly different for even n;
 
-# Roots of unity
-cf = coeffs.frn(n=n)
-a = cf$a; b0 = cf$b0; b = cf$b; D = cf$D;
-m.sum = cf$m.sum; m.shift = cf$m.shift; m.sq = cf$m.sq;
-
 ### Sum vs Integral:
 integrate(sum.frn, lower=0, upper=1, n=n)
 sum.basicFr(n)
-
 ### Exact formula:
-b0*log(2) + sum( a/2 * log(1 + 1 + m.sum) ) +
-	- sum(D / m.sq * atan((1 + m.shift)/m.sq)) +
-	+ sum(D / m.sq * atan((0 + m.shift)/m.sq));
+sumExact.frn(n)
 
-### Note:
-# sum( a/2 * log(m.conj[,1] * m.conj[,2]) ) == 0 !
+
+### Ex 2:
+n = 9
+integrate(sum.frn, lower=0, upper=1, n=n)
+sum.basicFr(n)
+### Exact formula:
+sumExact.frn(n)
 
 
 #################
 
-### Sum( (-1)^n / (5*n + k0) )
-# k0 = 2
+### Larger k0:
+# Sum( (-1)^n / (5*n + k0) )
+# where k0 = 2
 n = 9
 cf = coeffs.frn(n=n)
-a = cf$a; b0 = cf$b0; b = cf$b; D = cf$D;
+a = cf$a; b0 = cf$b0; b = cf$b;
 m.sum = cf$m.sum; m.shift = cf$m.shift; m.sq = cf$m.sq;
 
-k0 = 2
+# Formula differs based on k0
+k0 = 2 # fixed
 #
 integrate(sum.frn, lower=1E-8, upper=1, n=n, k0=k0)
 sum.basicFr(n, k0=k0)
@@ -129,9 +148,15 @@ sum.basicFr(n, k0=k0)
 ### Test
 ### Fraction decompositions:
 
+n = 5;
+cf = coeffs.frn(n=n)
+a = cf$a; b0 = cf$b0; b = cf$b; D = cf$D;
+m.sum = cf$m.sum; m.shift = cf$m.shift; m.sq = cf$m.sq;
+
 # only a test value
 x = 3;
 
+###########
 ### k0 = 1:
 1/(x^n + 1) # ==
 b0/(x + 1) + sum( (a*x - b) / (x^2 + m.sum*x + 1) )
