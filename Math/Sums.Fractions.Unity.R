@@ -6,7 +6,7 @@
 ### Infinite Sums: Fractions
 ### Roots of Unity
 ###
-### draft v.0.1d-generalization
+### draft v.0.1d-fix
 
 
 ### Infinite Sums
@@ -187,8 +187,9 @@ intFr = function(n, k=0, lower=0, upper=1) {
 sumLogExp = function(n, k=0, x=1, iter=1000) {
 	sign = rep(c(1,-1), iter %/% 2);
 	if(iter %% 2 == 1) sign = c(sign, 1);
-	x = x^n;
-	sum( sign * x^(k + seq(iter)) / (seq(iter)*(n*seq(iter) + k + 1)) ) 
+	xn = x^n;
+	sign = if(k == 0) sign * x else sign * x^(k+1);
+	sum( sign * xn^(seq(iter)) / (seq(iter)*(n*seq(iter) + k + 1)) ) 
 }
 
 ###
@@ -208,4 +209,10 @@ n = 5; k = 2;
 intLog(n=n, k=k)
 intFr(n=n, k=k)
 sumLogExp(n, k=k)
+
+###
+n = 5; k = 2; x0 = 0.75
+intLog(n=n, k=k, upper=x0)
+intFr(n=n, k=k, upper=x0)
+sumLogExp(n, k=k, x=x0)
 
