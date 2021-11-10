@@ -6,7 +6,7 @@
 ### Infinite Sums: Fractions
 ### Roots of Unity
 ###
-### draft v.0.1g
+### draft v.0.1g-all
 
 
 ### Infinite Sums
@@ -116,32 +116,52 @@ sumExact.frn(n)
 ### Larger k0:
 # Sum( (-1)^j / (k1*j + k0) )
 
+# any odd integer
 n = 9
 cf = coeffs.frn(n=n)
 a = cf$a; b0 = cf$b0; b = cf$b;
 m.sum = cf$m.sum; m.shift = cf$m.shift; m.sq = cf$m.sq;
 
+# Formula differs based on k0
 
 ###########
 ### k0 == 2
+
 k0 = 2 # fixed
-# Formula differs based on k0
+cP0 = a;
+cP1 = (a*m.sum + b) / 2;
+cP2 = ((a*m.sum + b)*m.sum/2 - a);
+#
 integrate(sum.frn, lower=0, upper=1, n=n, k0=k0)
 sum.basicFr(n, k0=k0)
 
 ### Exact formula:
-b0 + sum(a) - b0*log(2) +
-	- sum( (a*m.sum + b)/2 * log(1 + 1 + m.sum) ) +
-	+ sum( ((a*m.sum + b)*m.sum/2 - a) / m.sq * atan((1 + m.shift)/m.sq) ) +
-	- sum( ((a*m.sum + b)*m.sum/2 - a) / m.sq * atan((0 + m.shift)/m.sq) )
+b0 - b0*log(2) + sum(cP0) +
+	- sum( cP1 * log(1 + 1 + m.sum) ) +
+	+ sum( cP2 / m.sq * atan((1 + m.shift)/m.sq) ) +
+	- sum( cP2 / m.sq * atan((0 + m.shift)/m.sq) )
+
+
+###########
+### k0 == 3
+
+k0 = 3
+cP0 = a/2 - b - a*m.sum;
+cP1 = (- a + b*m.sum + a*m.sum^2) / 2;
+cP2 = (2*b + 3*a*m.sum - b*m.sum^2 - a*m.sum^3) / 2;
+#
+integrate(sum.frn, lower=0, upper=1, n=n, k0=k0)
+sum.basicFr(n, k0=k0)
+
+### Exact formula:
+-1/2 * b0 + b0*log(2) + sum(cP0) +
+	+ sum(cP1 * log(1 + 1 + m.sum)) +
+	+ sum( cP2 / m.sq * atan((1 + m.shift)/m.sq) ) +
+	- sum( cP2 / m.sq * atan((0 + m.shift)/m.sq) )
 
 
 ###########
 ### k0 == 4
-n = 5
-cf = coeffs.frn(n=n)
-a = cf$a; b0 = cf$b0; b = cf$b;
-m.sum = cf$m.sum; m.shift = cf$m.shift; m.sq = cf$m.sq;
 
 k0 = 4
 cP0 = a/3 - (b + a*m.sum)/2 + (a*m.sum^2 - a + b*m.sum);
@@ -150,7 +170,8 @@ cP2 = (2*a - 3*b*m.sum - 4*a*m.sum^2 + b*m.sum^3 + a*m.sum^4) / 2;
 #
 integrate(sum.frn, lower=0, upper=1, n=n, k0=k0)
 sum.basicFr(n, k0=k0)
-# Exact formula:
+
+### Exact formula:
 5/6 * b0 - b0*log(2) + sum(cP0) +
 	+ sum(cP1 * log(1 + 1 + m.sum)) +
 	+ sum( cP2 / m.sq * atan((1 + m.shift)/m.sq) ) +
@@ -158,7 +179,7 @@ sum.basicFr(n, k0=k0)
 
 
 ### Derivation:
-k0 = 3
+k0 = -1 + 4
 p1 = toPoly.pm("x^k0 * (a*x - b)")
 p2 = toPoly.pm("x^2 + m.sum*x + 1")
 pR = split.pm.fraction(p1, p2, by="x")
