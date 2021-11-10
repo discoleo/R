@@ -838,7 +838,7 @@ eval.pm = function(p, x, progress=FALSE) {
 }
 
 ## === Div ===
-div.pm = function(p1, p2, by="x", NF.stop=FALSE, debug=TRUE) {
+div.pm = function(p1, p2, by="x", NF.stop=TRUE, debug=TRUE) {
 	# very simple division
 	xn = by[1];
 	idx2 = match(xn, names(p2));
@@ -859,7 +859,10 @@ div.pm = function(p1, p2, by="x", NF.stop=FALSE, debug=TRUE) {
 	idn = match(names(pDx)[-idcDx], names(p1));
 	print(idn);
 	if(any(is.na(idn))) {
-		if(NF.stop) stop(paste0("No matching variables: ", names(pDx)[is.na(idn)]));
+		if(NF.stop) {
+			msg = "No matching variables for Leading Divisor:\n";
+			stop(paste0(msg, names(pDx)[is.na(idn)]));
+		} else stop("Not yet implemented: NF-option!")
 	}
 	if(nrow(pDx) == 1) {
 		while(TRUE) {
