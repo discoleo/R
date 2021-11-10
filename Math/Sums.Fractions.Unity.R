@@ -6,7 +6,7 @@
 ### Infinite Sums: Fractions
 ### Roots of Unity
 ###
-### draft v.0.1d-fix
+### draft v.0.1e
 
 
 ### Infinite Sums
@@ -215,4 +215,40 @@ n = 5; k = 2; x0 = 0.75
 intLog(n=n, k=k, upper=x0)
 intFr(n=n, k=k, upper=x0)
 sumLogExp(n, k=k, x=x0)
+
+
+#################
+#################
+
+
+# library(pracma)
+
+source("Polynomials.Helper.R")
+
+### Cancellation using Roots of Unity:
+### I[0, 1] + I[0, m] + I[0, m^2]
+lineI = function(n, lower=0, upper=1) {
+	line_integral(function(x)  log(x^n + 1), c(lower, upper));
+}
+
+sumLogExpM = function(n, m, k=0, x=1, iter=1000) {
+	sign = rep(c(1,-1), iter %/% 2);
+	if(iter %% 2 == 1) sign = c(sign, 1);
+	xn = x^n;
+	sign = if(k == 0) sign * x else sign * x^(k+1);
+	sign[(seq(iter) %% m) != 1] = 0; # TODO: with k;
+	sum( sign * xn^(seq(iter)) / (seq(iter)*(n*seq(iter) + k + 1)) ) 
+}
+
+### Examples:
+
+
+n = 5
+intLog(n=n)
+lineI(n=n)
+
+nm = 3 # != n;
+m = unity(nm, all=F)
+lineI(n=n) + lineI(n=n, upper=m) + lineI(n=n, upper=m^2)
+sumLogExpM(n, m=nm) * 3
 
