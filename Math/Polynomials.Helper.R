@@ -838,7 +838,7 @@ eval.pm = function(p, x, progress=FALSE) {
 }
 
 ## === Div ===
-div.pm = function(p1, p2, by="x", debug=TRUE) {
+div.pm = function(p1, p2, by="x", NF.stop=FALSE, debug=TRUE) {
 	# very simple division
 	xn = by[1];
 	idx2 = match(xn, names(p2));
@@ -848,22 +848,27 @@ div.pm = function(p1, p2, by="x", debug=TRUE) {
 	if( ! is.data.frame(p2)) p2 = as.data.frame(p2);
 	#
 	xpow2 = max(p2[,idx2]);
-	pDx = p2[p2[,idx2] == xpow2, ];
-	idc2 = match("coeff", names(p2));
-	idc1 = match("coeff", names(p1));
-	c2 = pDx[,idc2];
+	pDx = p2[p2[,idx2] == xpow2, , drop=FALSE];
+	pDx = drop.pm(pDx); # only vars from Leading monomial;
+	idcDx = match("coeff", names(pDx));
+	idc1  = match("coeff", names(p1));
+	c2 = pDx[, idcDx];
 	pRez = as.data.frame(array(0, c(0,2)));
 	names(pRez) = c(xn, "coeff");
 	#
-	idn = match(names(pDx)[-idc2], names(p1));
+	idn = match(names(pDx)[-idcDx], names(p1));
 	print(idn);
-	if(any(is.na(idn))) stop(paste0("No matching variables: ", names(pDx)[is.na(idn)]));
+	if(any(is.na(idn))) {
+		if(NF.stop) stop(paste0("No matching variables: ", names(pDx)[is.na(idn)]));
+	}
 	if(nrow(pDx) == 1) {
 		while(TRUE) {
 			if(nrow(p1) == 0) break;
+			# Leading Monomials:
 			xpow1 = max(p1[,xn]);
 			if(xpow1 < xpow2) break;
 			px1 = p1[p1[,xn] == xpow1, ];
+			# Diff Powers:
 			for(nc in seq_along(idn)) {
 				px1[, idn[nc]] = px1[, idn[nc]] - pDx[, nc];
 			}
