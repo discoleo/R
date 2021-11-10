@@ -11,7 +11,7 @@
 
 ### Infinite Sums
 ### A.) Sum( (-1)^n / (k1*n + k0))
-### B.) Based on I(x^k * log(x^n + 1))
+### B.) Based on I(x^k0 * log(x^n + 1))
 
 ### Theory:
 # - can be transformed into:
@@ -82,12 +82,13 @@ sumExact.frn = function(n, lower=0, upper=1) {
 ### Section A:
 ### Simple Sums
 
-### Sum( (-1)^n / (5*n + k0) )
+### Sum( (-1)^j / (k1*j + k0) )
 
 ### Integral:
-# I = I[from=0, to=1] (-1)^n * x^(k0 - 1) * sum( x^(5*n) ) dx
-# for k0 = 1 =>
-# I = Sum( (-1)^n / (5*n + k0) )
+# I = I[from=0, to=1] x^(k0 - 1) * sum( (-1)^j * x^(k1*j) ) dx
+# Expansion =>
+# I = Sum( (-1)^j / (k1*j + k0) )
+# j = from 1 to Inf;
 
 
 ### Examples:
@@ -114,16 +115,16 @@ sumExact.frn(n)
 #################
 
 ### Larger k0:
-# Sum( (-1)^n / (5*n + k0) )
-# where k0 = 2
+# Sum( (-1)^j / (k1*j + k0) )
+
 n = 9
 cf = coeffs.frn(n=n)
 a = cf$a; b0 = cf$b0; b = cf$b;
 m.sum = cf$m.sum; m.shift = cf$m.shift; m.sq = cf$m.sq;
 
-# Formula differs based on k0
+###
 k0 = 2 # fixed
-#
+# Formula differs based on k0
 integrate(sum.frn, lower=1E-8, upper=1, n=n, k0=k0)
 sum.basicFr(n, k0=k0)
 
