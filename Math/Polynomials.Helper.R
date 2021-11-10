@@ -383,7 +383,8 @@ reduce.pm = function(p) {
 reduce0.pm = function(p) {
 	return(p[p$coeff != 0, , drop=FALSE]);
 }
-reduce.var.pm = function(p) {
+reduce.var.pm  = function(p) drop.pm(p);
+drop.pm = function(p) {
 	# remove Vars with power == 0;
 	id = match("coeff", names(p));
 	nc = rep(TRUE, ncol(p));

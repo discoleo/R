@@ -273,6 +273,46 @@ Dy.names = function(nms) {
 #######################
 #######################
 
+# Split p1/p2 = p0 + D(p2)/p2 + ct/p2;
+split.pm.fraction = function(p1, p2, by="x", drop=TRUE) {
+	xn = by[1];
+	idx  = match(xn, names(p1));
+	idx2 = match(xn, names(p2));
+	drop.f = function(p) if( ! drop) p else drop.pm(p);
+	if(is.na(idx2) || (pow.max2 <- max(p2[, idx2])) == 0) {
+		warning(paste0("p2 does NOT contain variable ", xn));
+		return(list(P0=p1, D=0, Ct=0, Div.P0=p2));
+	}
+	pow.max = if(is.na(idx)) 0 else max(p1[, idx]);
+	if(pow.max == 0) return(list(P0=0, D=0, Ct=p1, Div=p2));
+	### Div
+	pR = list(Div = p2);
+	if(pow.max >= pow.max2) {
+		tmp = div.pm(p1, p2, by=by); # may contain additional vars;
+		if(nrow(tmp$Rem) == 0) {
+			return(list(P0=tmp$Rez, D=0, Ct=0, Div=p2));
+		}
+		p1 = tmp$Rem; pR$P0 = drop.f(tmp$Rez);
+	} else {
+		pR$P0 = 0;
+	}
+	### D
+	dp2 = dp.pm(p2, xn=xn);
+	pow.Dmax = max(dp2[, xn]);
+	if(pow.Dmax == 0) {
+		pR$D = 0; pR$Ct = drop.f(p1); 
+		return(pR);
+	}
+	tmp = div.pm(p1, dp2, by=by); # may contain additional vars;
+	pR$D = drop.f(tmp$Rez);
+	if(nrow(tmp$Rem) == 0) {
+		pR$Ct = 0;
+		return(pR);
+	}
+	pR$Ct = drop.f(tmp$Rem);
+	return(pR);
+}
+
 ### Solve Linear System
 
 solve.LD.pm = function(pM, pR) {
