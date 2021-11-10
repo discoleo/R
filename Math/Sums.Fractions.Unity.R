@@ -6,11 +6,12 @@
 ### Infinite Sums: Fractions
 ### Roots of Unity
 ###
-### draft v.0.1c-odd
+### draft v.0.1d-generalization
 
 
 ### Infinite Sums
-### Sum( (-1)^n / (k1*n + k0))
+### A.) Sum( (-1)^n / (k1*n + k0))
+### B.) Based on I(x^k * log(x^n + 1))
 
 ### Theory:
 # - can be transformed into:
@@ -161,20 +162,33 @@ b0 + sum(a) - b0/(x + 1) +
 # - for exact formula of the integral, see file:
 #   Integrals.Fractions.Unity;
 
-intLog = function(n, lower=0, upper=1) {
-	integrate(function(x) log(x^n + 1), lower=lower, upper=upper);
+
+### Generalization:
+### I(x^k * log(x^n + 1))
+
+# sum(1/(n+1) - 1/(2*(2*n + k + 1)) + 1/(3*(3*n + k + 1)) - 1/(4*(4*n + k + 1)) + ...)
+
+### Integration by parts:
+# (k+1) * I(...) =>
+# x^(k+1)*log(x^n + 1) - n*x^(k+1) / (k+1) + n*I( x^k / (x^n + 1) )
+# - for exact formula of the integral, see file:
+#   Integrals.Fractions.Unity;
+
+intLog = function(n, k=0, lower=0, upper=1) {
+	integrate(function(x) log(x^n + 1) * (if(k == 0) 1 else x^k), lower=lower, upper=upper);
 }
-intFr = function(n, lower=0, upper=1) {
-	f = function(x) x*log(x^n + 1) - n*x;
+intFr = function(n, k=0, lower=0, upper=1) {
+	f = function(x) x^(k+1) * log(x^n + 1) - n*x^(k+1) / (k+1);
 	r = f(upper) - f(lower) +
-		+ n * integrate(function(x) 1 / (x^n + 1), lower=lower, upper=upper)$value;
+		+ n * integrate(function(x) (if(k==0) 1 else x^k) / (x^n + 1), lower=lower, upper=upper)$value;
+	r = r / (k+1);
 	return(r)
 }
-sumLogExp = function(n, x=1, iter=1000) {
+sumLogExp = function(n, k=0, x=1, iter=1000) {
 	sign = rep(c(1,-1), iter %/% 2);
 	if(iter %% 2 == 1) sign = c(sign, 1);
 	x = x^n;
-	sum( sign * x^seq(iter) / (seq(iter)*(n*seq(iter) + 1)) ) 
+	sum( sign * x^(k + seq(iter)) / (seq(iter)*(n*seq(iter) + k + 1)) ) 
 }
 
 ###
@@ -188,4 +202,10 @@ n = 5
 intLog(n=n)
 intFr(n=n)
 sumLogExp(n)
+
+###
+n = 5; k = 2;
+intLog(n=n, k=k)
+intFr(n=n, k=k)
+sumLogExp(n, k=k)
 
