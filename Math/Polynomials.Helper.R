@@ -190,6 +190,15 @@ top.pm = function(p, xn="x", exclude=FALSE) {
 ### Basic Operations
 
 ### Multiplication
+# TODO:
+# - check consequences!
+Ops.pm = function(e1, e2) {
+	r = switch(.Generic,
+		'*' = { mult.pm(e1, e2); }
+	)
+	return(r);
+}
+
 mult.all.pm = function(p) return(mult.lpm(p));
 mult.lpm = function(p) {
 	if( ! is.list(p) || inherits(p, "pm"))
@@ -714,6 +723,7 @@ replaceNames.pm = function(p1, p2, xn, sequential=FALSE, debug=TRUE) {
 	p1 = reduce.pm(p1);
 	return(p1);
 }
+# Replace: some powers != 1;
 replaceByPow.pm.character = function(p1, p2, xn, pow=1, sequential=TRUE, reduce=TRUE, debug=TRUE) {
 	if(sequential) {
 		for(id in seq(length(xn))) {
@@ -776,6 +786,7 @@ replaceByPow.pm.character = function(p1, p2, xn, pow=1, sequential=TRUE, reduce=
 	if(reduce) p1 = reduce.pm(p1);
 	return(p1);
 }
+# Replace: with fraction p2/p2fr
 replace.fr.pm = function(p1, p2, p2fr, x, pow=1) {
 	# replace x^pow by p2/p2fr;
 	idx = match(x, names(p1));
