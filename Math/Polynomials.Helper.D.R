@@ -6,7 +6,7 @@
 ### Helper Functions
 ### Derivation
 ###
-### draft v.0.1c-fix
+### draft v.0.1d
 
 
 ### fast load:
@@ -23,8 +23,15 @@
 ###############
 
 
+### draft v.0.1d:
+# - basic Integration;
 ### draft v.0.1c - v.0.1c-fix:
+# - split.pm: prepare polynomial fractions for Integration;
 # - [fix] absent variable name;
+### draft v.0.1b:
+# - various new methods:
+#   generate various types of ODEs, e.g.
+#   dp.log.pm, etc;
 ### draft v.0.1a:
 # - moved Section on Derivation
 #   from Polynomials.Helper.R;
