@@ -329,3 +329,31 @@ solve.LD.pm = function(pM, pR) {
 	pR = list(C1=pC1, C2=pC2, Div=pDiv);
 	return(pR);
 }
+
+####################
+####################
+
+### Integrate
+I.pm = function(p, xn="x") {
+	if( ! inherits(p, "data.frame")) stop("p must be a Polynomial!");
+	idc = match("coeff", names(p));
+	if(is.na(idc)) stop("p must be a Polynomial with coefficients!");
+	# Variable:
+	idx = match(xn, names(p));
+	if(is.na(idx)) {
+		warning(paste0("p does not contain the variable: ", xn));
+		p[, xn] = 0;
+		idx = match(xn, names(p));
+	}
+	# I
+	p[, idx] = p[, idx] + 1;
+	isLog = (p[, idx] == 0);
+	p[ ! isLog, idc] = p[ ! isLog, idc] / p[ ! isLog, idx];
+	if(any(isLog)) {
+		warning("Logarithms generated!");
+		nmLog = paste0("Log.", xn);
+		p[, nmLog] = 0;
+		p[isLog, nmLog] = 1;
+	}
+	return(p);
+}

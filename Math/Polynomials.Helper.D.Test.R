@@ -48,3 +48,26 @@ pR = split.pm.fraction(p1, p2)
 pR
 diff.pm(pR$P0, toPoly.pm("x + a1 + 1"))
 
+
+######################
+######################
+
+###
+p = toPoly.pm(data.frame(x=5:0, coeff=1));
+#
+I.pm(p, xn="x") * 6
+
+
+###
+p1 = mult.pm(p, toPoly.pm("x^2 + b1*x + b0"))
+p1 = toPoly.pm(p1)
+#
+pR = I.pm(p1, xn="x")
+pR = sort.pm(pR, "x")
+pR * 7
+
+###
+p1 = toPoly.pm("x^2 + b1*x + b0 + blog*x^-1")
+pR = I.pm(p1, xn="x")
+pR = sort.pm(pR, "x")
+pR * 3
