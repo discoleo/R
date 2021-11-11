@@ -569,14 +569,19 @@ shift.pm = function(p, val, xn="x", tol=1E-10) {
 #   methods::setGeneric("replace")
 #   methods::setMethod("replace", signature = c(p1 = "pm", p2 = "numeric"), definition = replace.pm.numeric)
 #   methods::setMethod("replace", signature = c(p1 = "pm", p2 = "character"), definition = replace.pm.character)
-# - replace.pm.numeric()
-replace.withVal.pm = function(p, xn, pow=1, val, simplify=TRUE, tol=1E-10) {
+replace.withVal.pm = function(p, ...) stop("Defunct function: replace.withVal!");
+replace.pm.numeric = function(p1, p2, xn, pow=1, simplify=TRUE, tol=1E-10) {
+	p = p1; val = p2;
+	if(missing(xn)) {
+		xn = names(val);
+		if(is.null(xn)) stop("Missing variable name!");
+	}
 	if(length(val) > 1) {
 		len = length(val);
 		if(length(pow) == 1) pow = rep(pow, len);
 		if(length(xn) == 1) {xn = rep(xn, len); warning("Same variable used!");}
 		for(i in seq(len)) {
-			p = replace.withVal.pm(p, xn=xn[i], pow=pow[i], val=val[i], simplify=simplify);
+			p = replace.pm.numeric(p, val[i], xn=xn[i], pow=pow[i], simplify=simplify, tol=tol);
 		}
 		return(p);
 	}
@@ -606,7 +611,7 @@ replace.withVal.pm = function(p, xn, pow=1, val, simplify=TRUE, tol=1E-10) {
 }
 replace.pm = function(p1, p2, xn, pow=1, sequential=TRUE) {
 	# replace x^pow by p2;
-	if(is.numeric(p2) || is.complex(p2)) return(replace.withVal.pm(p1, xn=xn, pow=pow, val=p2));
+	if(is.numeric(p2) || is.complex(p2)) return(replace.pm.numeric(p1, p2=p2, xn=xn, pow=pow));
 	if(is.character(p2)) return(replace.pm.character(p1, p2=p2, xn=xn, pow=pow, sequential=sequential));
 	# Checks
 	if(length(xn) > 1 || length(pow) > 1) stop("Only 1 value supported!")

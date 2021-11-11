@@ -68,8 +68,8 @@ p = toPoly.pm("x^3 + 0*b1*x^2 + b2*0*x + y*0 + 3*b + 2")
 p
 
 p = data.frame(x=3:0, y=0:3, coeff=c(1,0,0,1))
-# automatic mechanism is bypassed:
-p = toPoly.pm(p)
+# automatic mechanism is bypassed: ?? what default ??
+p = toPoly.pm(p, reduce=FALSE)
 print.pm(p)
 reduce0.pm(p)
 toPoly.pm(p, reduce=TRUE)
@@ -177,27 +177,31 @@ pR
 
 ### with specific Value
 p = toPoly.pm("(x+3)^4")
-replace.withVal.pm(p, xn="x", val=-3)
-replace.withVal.pm(p, xn="x", val=-2)
+replace.pm(p, -3, xn="x")
+replace.pm.numeric(p, -3, xn="x")
+replace.pm.numeric(p, -2, xn="x")
 
 
 p = toPoly.pm("(x+1)^3*(x-a)^3")
-pR = replace.withVal.pm(p, xn="a", val=1)
+pR = replace.pm(p, 1, xn="a")
 diff.pm(pR, toPoly.pm("(x^2-1)^3"))
 # x^3 * (x+1)^3 => x^3
-pR = replace.withVal.pm(p, xn="a", val=0)
+pR = replace.pm(p, 0, xn="a")
 pR = div.pm(pR, toPoly.pm("(x+1)^3"), "x")$Rez
 print.pm(pR)
 # (x+a)^3 => x^3
 pR = div.pm(p, toPoly.pm("(x+1)^3"), "x")$Rez
-pR = replace.withVal.pm(pR, xn="a", val=0)
+pR = replace.pm(pR, 0, xn="a")
 print.pm(pR)
 
 
+# x^4 + x^3 + x^2 + x + 1
 p = toPoly.pm(data.frame(x=4:0, coeff=1))
 p = sum.pm(p, toPoly.pm("y^2"))
-p = replace.withVal.pm(p, xn="x", val=unity(5, all=FALSE))
-print.pm(p)
+p1 = replace.pm(p, unity(5, all=FALSE), xn="x")
+p2 = replace.pm(p, c("x"=unity(5, all=FALSE)))
+print.pm(p1)
+print.pm(p2)
 
 
 ### Replace with character (new name)
@@ -316,7 +320,11 @@ print.pm(p, lead="x")
 K = 3
 pR = replace.pm(p, c(K,-K), c("K","s2"))
 print.pm(pR, lead="x")
-eval.pm(pR, sum(c(1,0,-K,1)*rootn(K^(4:1), n)))
+err = eval.pm(pR, sum(c(1,0,-K,1)*rootn(K^(4:1), n)))
+round0(err)
+#
+pR = replace.pm(p, c(K=K, s2=-K))
+print.pm(pR, lead="x")
 
 
 
