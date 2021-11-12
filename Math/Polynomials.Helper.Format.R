@@ -57,6 +57,13 @@ sort.pm = function(p, xn=NULL, sort.coeff, xn2=NULL) {
 	p = p[id,]; rownames(p) = seq(nrow(p));
 	return(p)
 }
+# set Coeff Column as last column;
+# TODO: more;
+sortColumns.pm = function(p) {
+	idc = match("coeff", names(p));
+	p = cbind(p[ , - idc, drop=F], coeff=p[, idc]);
+	return(p)
+}
 # used by: as.character.pm()
 sort.simple.pm = function(p, leading=1, do.rev=FALSE, sort.order=TRUE) {
 	if(length(leading) == 1) {
