@@ -187,6 +187,10 @@ top.pm = function(p, xn="x", exclude=FALSE) {
 	
 }
 
+maxPow.pm = function(p, xn) {
+	max(p[, xn]);
+}
+
 ### Basic Operations
 
 ### Multiplication
