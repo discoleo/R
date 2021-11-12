@@ -334,10 +334,19 @@ p = toPoly.pm("(x*y + 2)^4 + b3*(x*y + 1)^3")
 pR = replace.pm.character.pm(p, "xy", toPoly.pm("x*y"))
 pR = sortColumns.pm(pR)
 pR
-replace.pm(pR, c(xy=-2))
-replace.pm(pR, c(xy=-1))
+replace.pm(pR, c(xy=-2)) # -b3
+replace.pm(pR, c(xy=-1)) # 1
 replace.pm(pR, toPoly.pm("b3 - 1"), "xy") # 2*b3^4 + ...
 replace.pm(pR, toPoly.pm("-b3 - 2"), "xy") # 0*b3^4 - 3*b3^3 - ...
+
+
+### Monomial: 2*x*y => "xy"
+p = toPoly.pm("(2*x*y + 2)^4 + b3*(6*x*y + 5)^3")
+pR = replace.pm.character.pm(p, "xy", toPoly.pm("2*x*y"))
+pR = sortColumns.pm(pR)
+pR
+replace.pm(pR, c(xy=-1)) # 2*x*y = -1
+replace.pm(pR, c(xy=-2))
 
 
 ###
@@ -351,9 +360,6 @@ pR
 p = toPoly.pm("(x+y)^4 + b3*(x+y)^3")
 pR = replace.pm.character.pm(p, "xy", toPoly.pm("x*y"))
 pR
-
-
-
 
 
 ########################

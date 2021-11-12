@@ -839,7 +839,7 @@ replace.pm.character.pm = function(p1, pn, pv, ..., drop=TRUE) {
 	p1 = cbind(p1, px);
 	# Adjust coefficients:
 	if(coeff != 1) {
-		p1$coeff = p1$coeff * coeff^min.pow;
+		p1$coeff = p1$coeff / coeff^min.pow;
 	}
 	# Clean-up:
 	if(drop) p1 = drop.pm(p1);
