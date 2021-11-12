@@ -327,6 +327,34 @@ pR = replace.pm(p, c(K=K, s2=-K))
 print.pm(pR, lead="x")
 
 
+########################
+
+###
+p = toPoly.pm("(x*y + 2)^4 + b3*(x*y + 1)^3")
+pR = replace.pm.character.pm(p, "xy", toPoly.pm("x*y"))
+pR = sortColumns.pm(pR)
+pR
+replace.pm(pR, c(xy=-2))
+replace.pm(pR, c(xy=-1))
+replace.pm(pR, toPoly.pm("b3 - 1"), "xy") # 2*b3^4 + ...
+replace.pm(pR, toPoly.pm("-b3 - 2"), "xy") # 0*b3^4 - 3*b3^3 - ...
+
+
+###
+p = toPoly.pm("(x + y + b0)^3")
+pR = replace.pm.character.pm(p, "xy2", toPoly.pm("x*y^2"))
+pR = replace.pm.character.pm(pR, "x2y", toPoly.pm("x^2*y"))
+pR
+
+
+###
+p = toPoly.pm("(x+y)^4 + b3*(x+y)^3")
+pR = replace.pm.character.pm(p, "xy", toPoly.pm("x*y"))
+pR
+
+
+
+
 
 ########################
 ########################

@@ -786,6 +786,65 @@ replaceByPow.pm.character = function(p1, p2, xn, pow=1, sequential=TRUE, reduce=
 	if(reduce) p1 = reduce.pm(p1);
 	return(p1);
 }
+# Replace: monomial pv with the variable pn;
+replace.pm.character.pm = function(p1, pn, pv, ..., drop=TRUE) {
+	if( ! inherits(pv, "data.frame")) stop("The replaced monomial must be a polynomial!");
+	if(nrow(pv) != 1) stop("Only monomials can be replaced!");
+	# Names of pv:
+	pv = drop.pm(pv);
+	nms = names(pv);
+	idc = match("coeff", nms);
+	nms = nms[ - idc]; coeff = pv[, idc]; pv = pv[, - idc, drop=F];
+	if(length(nms) == 0) {
+		warning("Nothing to replace!");
+		return(p1); # TODO: replace numeric values;
+	}
+	### Names in p1
+	id.nms = match(nms, names(p1));
+	isNA = is.na(id.nms);
+	if(any(isNA)) {
+		warning(paste0("Not all variables present:\n", nms[isNA]));
+		return(p1);
+	}
+	px = p1[, id.nms, drop=F];
+	p1 = p1[, - id.nms, drop=F];
+	### Powers:
+	class(pv) = "data.frame"; # TODO: hack;
+	isPow1 = (pv[1, ] == 1);
+	hasPowGt1 = any( ! isPow1);
+	if(hasPowGt1) {
+		pP = sapply(seq(length(id.nms))[ ! isPow1], function(nc) {
+			px[, nc] %/% pv[, nc];
+		})
+		min.pow = sapply(seq(nrow(px)), function(nr) {
+			min(px[nr, isPow1], pP[nr, ]);
+		})
+	} else {
+		min.pow = sapply(seq(nrow(px)), function(nr) {
+			min(px[nr, ]);
+		})
+	}
+	# New variable:
+	id.new = match(pn, names(p1));
+	if(is.na(id.new)) {
+		p1[, pn] = min.pow;
+	} else {
+		p1[, id.new] = p1[, id.new] + min.pow;
+	}
+	# Adjust remaining Powers:
+	for(nc in seq(length(id.nms))) {
+		px[, nc] = px[, nc] - min.pow * pv[, nc];
+	}
+	# TODO: check name overlap between px & pn;
+	p1 = cbind(p1, px);
+	# Adjust coefficients:
+	if(coeff != 1) {
+		p1$coeff = p1$coeff * coeff^min.pow;
+	}
+	# Clean-up:
+	if(drop) p1 = drop.pm(p1);
+	return(p1)
+}
 # Replace: with fraction p2/p2fr
 replace.fr.pm = function(p1, p2, p2fr, x, pow=1) {
 	# replace x^pow by p2/p2fr;
