@@ -6,12 +6,13 @@
 ### Infinite Sums: Fractions
 ### Roots of Unity
 ###
-### draft v.0.1g-all
+### draft v.0.1h
 
 
 ### Infinite Sums
 ### A.) Sum( (-1)^n / (k1*n + k0))
 ### B.) Based on I(x^k0 * log(x^n + 1))
+### C.) Term-cancellation using Roots of unity
 
 ### Theory:
 # - can be transformed into:
@@ -194,6 +195,8 @@ cP0 = x^2*a - (b + a*m.sum)*x + (a*m.sum^2 - a + b*m.sum);
 ### Test
 ### Fraction decompositions:
 
+### Odd n:
+
 n = 5;
 cf = coeffs.frn(n=n)
 a = cf$a; b0 = cf$b0; b = cf$b; D = cf$D;
@@ -204,11 +207,13 @@ x = 3;
 
 ###########
 ### k0 = 1:
+
 1/(x^n + 1) # ==
 b0/(x + 1) + sum( (a*x - b) / (x^2 + m.sum*x + 1) )
 # decomposed into: LOG + ATAN components
 b0/(x + 1) + sum( a/2 * (2*x + m.sum) / (x^2 + m.sum*x + 1) ) +
 	- sum( D / ((x + m.shift)^2 + m.sq^2))
+
 
 ###########
 ### k0 = 2:
@@ -221,9 +226,34 @@ b0 + sum(a) - b0/(x + 1) +
 	+ sum( ((a*m.sum + b)*m.sum/2 - a) / (x^2 + m.sum*x + 1) )
 
 
+###########
+### Even n:
+
+# TODO:
+# - resolve issues for n = 4*k;
+# - the "i"-trick works only for n = 2*(2*k+1);
+# TODO: full root of "-1" of order n;
+
+n = 6; # 10, 14, 18
+cf = coeffs.frn(n=n)
+a = cf$a; b0 = cf$b0; b = cf$b; ai = 1i * a;
+m.sum = cf$m.sum; m.shift = 1i*m.sum/2;
+D = b + a/2*m.sum; m.sq = sqrt(1 + m.shift^2);
+
+# only a test value
+x = 2.1
+
+1/(x^n + 1) # ==
+2*b0/(x^2 + 1) + sum( (ai*x + b) / (x^2 + 1i*m.sum*x - 1) )
+# decomposed into: LOG + "ATAN" components
+2*b0/(x^2 + 1) + sum( ai/2 * (2*x + 1i*m.sum) / (x^2 + 1i*m.sum*x - 1) ) +
+	+ sum( D / ((x + m.shift)^2 - m.sq^2))
+
+
 ####################
 ####################
 
+###################
 ### I(log(x^n + 1))
 
 # sum(1/(n+1) - 1/(2*(2*n+1)) + 1/(3*(3*n+1)) - 1/(4*(4*n+1)) + ...)
