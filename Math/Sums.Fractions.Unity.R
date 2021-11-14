@@ -6,7 +6,7 @@
 ### Infinite Sums: Fractions
 ### Roots of Unity
 ###
-### draft v.0.1h
+### draft v.0.1i
 
 
 ### Infinite Sums
@@ -250,11 +250,12 @@ x = 2.1
 	+ sum( D / ((x + m.shift)^2 - m.sq^2))
 
 
-####################
-####################
+#######################
+#######################
 
-###################
-### I(log(x^n + 1))
+#######################
+### I(log(x^n + 1)) ###
+#######################
 
 # sum(1/(n+1) - 1/(2*(2*n+1)) + 1/(3*(3*n+1)) - 1/(4*(4*n+1)) + ...)
 
@@ -267,7 +268,9 @@ x = 2.1
 ### Generalization:
 ### I(x^k * log(x^n + 1))
 
-# sum(1/(n+1) - 1/(2*(2*n + k + 1)) + 1/(3*(3*n + k + 1)) - 1/(4*(4*n + k + 1)) + ...)
+# both Harmonic & non-Harmonic:
+# sum(1/(n+k+1) - 1/(2*(2*n + k + 1)) + 1/(3*(3*n + k + 1)) - 1/(4*(4*n + k + 1)) + ...)
+# sum(1/(n+k+1) + 1/(2*(2*n + k + 1)) + 1/(3*(3*n + k + 1)) + 1/(4*(4*n + k + 1)) + ...)
 
 ### Integration by parts:
 # (k+1) * I(...) =>
@@ -275,35 +278,69 @@ x = 2.1
 # - for exact formula of the integral, see file:
 #   Integrals.Fractions.Unity;
 
-intLog = function(n, k=0, lower=0, upper=1) {
-	integrate(function(x) log(x^n + 1) * (if(k == 0) 1 else x^k), lower=lower, upper=upper);
+intLog = function(n, k=0, lower=0, upper=1, harmonic=TRUE) {
+	f = if(harmonic) function(x) log(x^n + 1) * (if(k == 0) 1 else x^k)
+		else function(x) - log(-x^n + 1) * (if(k == 0) 1 else x^k)
+	integrate(f, lower=lower, upper=upper);
 }
-intFr = function(n, k=0, lower=0, upper=1) {
-	f = function(x) x^(k+1) * log(x^n + 1) - n*x^(k+1) / (k+1);
+intFr = function(n, k=0, lower=0, upper=1, harmonic=TRUE) {
+	sign = if(harmonic) 1 else -1;
+	f = function(x) x^(k+1) * log(sign * x^n + 1) - n*x^(k+1) / (k+1);
+	fdf = function(x) (if(k==0) 1 else x^k) / (sign * x^n + 1);
 	r = f(upper) - f(lower) +
-		+ n * integrate(function(x) (if(k==0) 1 else x^k) / (x^n + 1), lower=lower, upper=upper)$value;
-	r = r / (k+1);
+		+ n * integrate(fdf, lower=lower, upper=upper)$value;
+	r = sign * r / (k+1);
 	return(r)
 }
-sumLogExp = function(n, k=0, x=1, iter=1000) {
-	sign = rep(c(1,-1), iter %/% 2);
-	if(iter %% 2 == 1) sign = c(sign, 1);
+sumLogExp = function(n, k=0, x=1, harmonic=TRUE, iter=1000) {
+	sign = if( ! harmonic) 1 else rep(c(1,-1), iter %/% 2);
+	if(harmonic && iter %% 2 == 1) sign = c(sign, 1);
 	xn = x^n;
 	sign = if(k == 0) sign * x else sign * x^(k+1);
 	sum( sign * xn^(seq(iter)) / (seq(iter)*(n*seq(iter) + k + 1)) ) 
 }
+terms.sum = function(k1, k0=0, n=20, harmonic=TRUE) {
+	sign = if( ! harmonic) "+" else rep(c("+","-"), n %/% 2);
+	if(harmonic && n %% 2 == 1) sign = c(sign, "+");
+	m1 = seq(n); m2 = k1*m1 + k0 + 1;
+	m = data.frame(sign, m1, m2);
+	return(m)
+}
+cat.sum = function(x, nr.split=6, sep.add=" + ") {
+	isSplit = FALSE;
+	if(nrow(x) > nr.split) {
+		len = nrow(x); isSplit = TRUE;
+		lenHalf = len %/% 2;
+		lenH1 = lenHalf; x.tmp = x[seq(lenH1 + 1, len), ];
+		if(len %% 2 == 1) {
+			lenH1 = lenH1 + 1;
+			x.tmp = rbind(x.tmp, c("", 0, 0));
+		}
+		x = cbind(x[seq(lenH1), ], x.tmp);
+	}
+	x = sapply(x, function(x) format(x));
+	sep = c(" 1 / (", " * ");
+	sep.add = paste0(")", sep.add, "\n")
+	sep = if(isSplit) c(sep, ")   ", sep, sep.add) else c(sep, sep.add);
+	cat(t(x), sep=sep); cat(")\n");
+	invisible()
+}
+
+### Examples:
 
 ###
 n = 2
 intLog(n=n)
 intFr(n=n)
 sumLogExp(n)
+cat.sum(terms.sum(n, k0=0))
 
 ###
 n = 5
 intLog(n=n)
 intFr(n=n)
 sumLogExp(n)
+cat.sum(terms.sum(n, k0=0))
 
 ###
 n = 5; k = 2;
@@ -311,7 +348,13 @@ intLog(n=n, k=k)
 intFr(n=n, k=k)
 sumLogExp(n, k=k)
 
-###
+### Non-Harmonic
+n = 5; k = 2;
+intLog(n=n, k=k, harmonic=FALSE)
+intFr(n=n, k=k, upper = 1 - 1E-7, harmonic=FALSE)
+sumLogExp(n, k=k, harmonic=FALSE)
+
+### Test formulas:
 n = 5; k = 2; x0 = 0.75
 intLog(n=n, k=k, upper=x0)
 intFr(n=n, k=k, upper=x0)
@@ -343,7 +386,6 @@ sumLogExpM = function(n, m, k=0, x=1, iter=1000) {
 
 ### Examples:
 
-
 n = 5
 intLog(n=n)
 lineI(n=n)
@@ -352,4 +394,8 @@ nm = 3 # != n;
 m = unity(nm, all=F)
 lineI(n=n) + lineI(n=n, upper=m) + lineI(n=n, upper=m^2)
 sumLogExpM(n, m=nm) * 3
+
+
+#########################
+#########################
 
