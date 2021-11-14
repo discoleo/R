@@ -54,6 +54,13 @@ r4 = line_integral(function(x)  sqrt(exp(5i*x) + 1) * exp(1i*x), c(0, -4*pi/5))
 
 integrate(function(x) sqrt(x^5 + 1), lower=0, upper=1)
 
+r = line_integral(function(x)  sqrt(cos(10*x)) * sin(9*x), c(0, pi/20)) +
+line_integral(function(x) - sqrt(-cos(10*x)) * cos(9*x), c(pi/20, pi/10)) + # overlap with [3]
+line_integral(function(x)  sqrt(cos(10*x)) * sin(9*x), c(0, pi/20)) + # same as [1]
+line_integral(function(x) - sqrt(-cos(10*x)) * cos(9*x), c(pi/20, 3*pi/20)) +
+line_integral(function(x) - sqrt(cos(10*x)) * sin(9*x), c(3*pi/20, pi/5));
+r * sqrt(2) * 8/5
+
 
 #######################
 #######################
