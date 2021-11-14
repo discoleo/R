@@ -6,7 +6,7 @@
 ### Infinite Sums: Fractions
 ### Roots of Unity
 ###
-### draft v.0.1i
+### draft v.0.1j
 
 
 ### Infinite Sums
@@ -17,6 +17,8 @@
 ### Theory:
 # - can be transformed into:
 #   Integral( x^(k0 - 1) / (x^n + 1) );
+# - exact formulas based on exact formula
+#   for this integral;
 
 
 ### Integral( P(x) / (x^n + 1) ):
@@ -34,16 +36,18 @@ source("Polynomials.Helper.R")
 
 ### Other
 
+# Fraction: used for integration
 sum.frn = function(x, n, k0=1) {
 	x0 = if(k0 == 1) 1 else x^(k0-1);
 	x0 / (x^n + 1)
 }
-# converges slowly:
+# Sum: converges slowly:
 sum.basicFr = function(n, iter=8000, k0=1) {
 	sign.fr = rep(c(1,-1), iter %/% 2);
 	if(iter %% 2 == 1) sign.fr = c(sign.fr, 1)
 	1/k0 - sum(sign.fr / (n*seq(iter) + k0))
 }
+# Exact Integral: Fraction decomposition
 coeffs.frn = function(n=5) {
 	# Roots of unity
 	len = (n-1)/2; # only half the roots of unity
@@ -190,6 +194,29 @@ pR$Ct$coeff = 2* pR$Ct$coeff # Div by 2!
 cP0 = x^2*a - (b + a*m.sum)*x + (a*m.sum^2 - a + b*m.sum);
 
 
+##################
+
+### Even n:
+# n = 2*(2*m + 1);
+n = 6; # 10, 14, 18, ...;
+cf = coeffs.frn(n=n)
+a = cf$a; b0 = cf$b0; b = cf$b; ai = 1i * a;
+m.sum = cf$m.sum; m.shift = 1i*m.sum/2;
+D = b + a/2*m.sum; m.sq = sqrt(1 + m.shift^2);
+
+###########
+### k0 == 1
+# [fixed]
+
+integrate(sum.frn, lower=0, upper=1, n=n)
+sum.basicFr(n)
+# Exact formula:
+2*b0*pi/4 + sum( ai/2 * log(-1i*m.sum) ) +
+	+ sum( D / (2*m.sq) * log((1 + m.shift - m.sq)/(1 + m.shift + m.sq)) ) +
+	+ sum( D / (2*m.sq) * log((0 + m.shift + m.sq)/(0 + m.shift - m.sq)) );
+
+
+##################
 ##################
 
 ### Test
