@@ -6,11 +6,16 @@
 ### Infinite Sums: Fractions
 ### Radicals
 ###
-### draft v.0.1a-fix
+### draft v.0.1b
 
 
-######################
+###########################
 
+###########################
+### I ( sqrt(x^n + 1) ) ###
+###########################
+
+### n = 3
 ### I( sqrt(x^3 + 1) )
 
 r1 = line_integral(function(x)  sqrt(exp(3i*x) + 1) * exp(1i*x), c(0,  2*pi/3))
@@ -30,3 +35,33 @@ line_integral(function(x)   2* sqrt(2) * sqrt(cos(3*x/2)) * sin(7*x/4), c(0, pi/
 line_integral(function(x) - 2* sqrt(2) * sqrt(-cos(3*x/2)) * cos(7*x/4), c(pi/3, 4*pi/7)) +
 line_integral(function(x) - 2* sqrt(2) * sqrt(-cos(3*x/2)) * cos(7*x/4), c(4*pi/7, 2*pi/3))
 - (rh1 + rh2) * 1i
+
+
+#######################
+#######################
+
+### n = 5
+
+r1 = line_integral(function(x)  sqrt(exp(5i*x) + 1) * exp(1i*x), c(0,  2*pi/5))
+r2 = line_integral(function(x)  sqrt(exp(5i*x) + 1) * exp(1i*x), c(0, -2*pi/5))
+r3 = line_integral(function(x)  sqrt(exp(5i*x) + 1) * exp(1i*x), c(0,  4*pi/5))
+r4 = line_integral(function(x)  sqrt(exp(5i*x) + 1) * exp(1i*x), c(0, -4*pi/5))
+- (r1 + r2 + r3 + r4) * 1i/5
+
+integrate(function(x) sqrt(x^5 + 1), lower=0, upper=1)
+
+
+#######################
+#######################
+
+### n = 7
+n = 7
+
+id = seq(n %/% 2); id = c(-id, id);
+r = sapply(id, function(id) {
+	line_integral(function(x)  sqrt(exp(n * 1i*x) + 1) * exp(1i*x), c(0,  2*id*pi/n))
+})
+sum(r) * -1i/n
+
+integrate(function(x) sqrt(x^n + 1), lower=0, upper=1)
+
