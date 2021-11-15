@@ -6,7 +6,7 @@
 ### Infinite Sums: Fractions
 ### Radicals
 ###
-### draft v.0.1c
+### draft v.0.1d
 
 
 ###########################
@@ -75,4 +75,48 @@ r = sapply(id, function(id) {
 sum(r) * -1i/n
 
 integrate(function(x) sqrt(x^n + 1), lower=0, upper=1)
+
+
+##########################
+##########################
+
+####################
+### Fresnel-type ###
+####################
+
+### I( sin(x^n) )
+### I( cos(x^n) )
+
+r = line_integral(function(x) sin(exp(3i*x)) * exp(1i*x), c(0, 2*pi/3)) +
+	line_integral(function(x) sin(exp(3i*x)) * exp(1i*x), c(0, -2*pi/3));
+r * -1i/3
+
+r = line_integral(function(x) sin(exp(3i*x)) * exp(1i*x), c(0, 2*pi/3)) +
+	- line_integral(function(x) sin(exp(-3i*x)) * exp(-1i*x), c(0, 2*pi/3));
+r * -1i/3
+
+r = line_integral(function(x) {
+	cos(x)*(sin(exp(3i*x)) - sin(exp(-3i*x))) + 1i*sin(x)*(sin(exp(3i*x)) + sin(exp(-3i*x)))
+	}, c(0, 2*pi/3));
+r * -1i/3
+
+r = line_integral(function(x) {
+	cos(x)*sin(1i*sin(3*x)) * cos(cos(3*x)) + 1i*sin(x)*sin(cos(3*x)) * cos(1i*sin(3*x))
+	}, c(0, 2*pi/3));
+r * -2i/3
+
+r = line_integral(function(x) {
+	- cos(x)*cos(cos(3*x)) * (exp(-sin(3*x)) - exp(sin(3*x))) +
+	+ sin(x)*sin(cos(3*x)) * (exp(-sin(3*x)) + exp(sin(3*x)))
+	}, c(0, 2*pi/3));
+r * 1/3
+
+r = line_integral(function(x) {
+	- cos(x + cos(3*x)) * exp(-sin(3*x)) +
+	+ cos(x - cos(3*x)) * exp(sin(3*x))
+	}, c(0, 2*pi/3));
+r * 1/3
+
+integrate(function(x) sin(x^3), lower=0, upper=1)$value
+
 
