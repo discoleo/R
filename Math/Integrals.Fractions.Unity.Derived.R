@@ -8,7 +8,7 @@
 ### of Polynomial Fractions
 ### derived from Roots of Unity
 ###
-### draft v.0.1g
+### draft v.0.2a:
 
 
 
@@ -26,7 +26,10 @@
 
 ###############
 ### History ###
+###############
 
+### draft v.0.2a:
+# - basic Complex analysis;
 ### draft v.0.1g:
 # - Integral: cos(x)^n / (sin(x)*cos(x) * (sin(x)^n + cos(x)^n)) dx;
 ### draft v.0.1f:
@@ -714,4 +717,49 @@ lim = c(pi/7, pi/3)
 n = 5
 integrate(function(x) cos(x)^n / (sin(x)*cos(x)*(sin(x)^n + cos(x)^n)), lower=lim[1], upper=lim[2])
 int.exp(log(tan(lim)), n=n, diff=-1)
+
+
+####################
+####################
+
+### Derived using Complex Analysis
+
+### n = 3
+n = 3;
+id = c(1,-1)
+m = complex(re=cos(pi*id/n), im=sin(pi*id/n));
+k = 2;
+
+r = line_integral(function(x) exp(1i*x) / (exp(1i*n*x) + k), c(0, 2*pi/n)) +
+	line_integral(function(x) - exp(-1i*x) / (exp(-1i*n*x) + k), c(0, 2*pi/n));
+r * -1i / n
+
+r = line_integral(function(x) (sin(2*x) - k*sin(x)) / (2*k*cos(n*x) + k^2 + 1), c(0, 2*pi/n));
+r * -2 / n
+
+integrate(function(x) 1/(x^n + k), lower=0, upper=1)
+
+
+#########
+### n = 5
+n = 5;
+id = c(1,-1)
+m = complex(re=cos(pi*id/n), im=sin(pi*id/n));
+k = 2;
+
+r = line_integral(function(x) exp(1i*x) / (exp(1i*n*x) + k), c(0, 2*pi/n)) +
+	line_integral(function(x) - exp(-1i*x) / (exp(-1i*n*x) + k), c(0, 2*pi/n)) +
+	line_integral(function(x) exp(1i*x) / (exp(1i*n*x) + k), c(0, 4*pi/n)) +
+	line_integral(function(x) - exp(-1i*x) / (exp(-1i*n*x) + k), c(0, 4*pi/n));
+r * -1i / n
+
+r = line_integral(function(x) (sin((n-1)*x) - k*sin(x)) / (2*k*cos(n*x) + k^2 + 1), c(0, 2*pi/n)) +
+	line_integral(function(x) (sin((n-1)*x) - k*sin(x)) / (2*k*cos(n*x) + k^2 + 1), c(0, 4*pi/n));
+r * -2 / n
+
+r = line_integral(function(x) (2*sin((n-1)*x) - 2*k*sin(x) + sin((n-1)*x - 2*pi/n) - k*sin(x + 2*pi/n)) /
+		(2*k*cos(n*x) + k^2 + 1), c(0, 2*pi/n));
+r * -2 / n
+
+integrate(function(x) 1/(x^n + k), lower=0, upper=1)
 
