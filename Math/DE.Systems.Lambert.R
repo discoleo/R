@@ -72,7 +72,7 @@ exp(y2)*dy2 - b2*dy1 - db2*y1 - dR2 # = 0
 # Note:
 # - "slightly easier" to solve when:
 #   b1 = b2, R1 = R2;
-#   => trivial solution: y1 = y2;
+#   => trivial solution: y2 = 0;
 
 ### D =>
 exp(y1+y2)*(dy1 + dy2) - b1*dy1 - db1*y1 + b1*dy2 + db1*y2 - dR1 # = 0
@@ -99,4 +99,51 @@ exp(y1-y2)*(dy1 - dy2) - b2*dy1 - db2*y1 - b2*dy2 - db2*y2 - dR2 # = 0
 # b1 = b2 = ct; bd = 0; dbs = dbd = 0;
   (bs*y1 + Rs - bs)*dy1 - (bs*y2 - Rd)*dy2 - dRs # = 0
 - (bs*y2 - Rd)*dy1 + (bs*y1 + Rs + bs)*dy2 - dRd # = 0
+
+
+#######################
+#######################
+
+### Supplementary Info:
+
+### Solver:
+# exp(y1) = b*y2 + R;
+# exp(y2) = b*y1 + R;
+
+### Case 1:
+# - Trivial solution: y1 = y2;
+
+### Case 2:
+# - non-Trivial: y1 != y2;
+
+source("Polynomials.Helper.ODE.R")
+source("Polynomials.Helper.Solvers.S2.R")
+
+decompose.S2Exp = function(n, pLinear, xn=c("y1", "y2")) {
+	pExp = expand.Exp(n = n, xn=xn[[1]], asDiv = TRUE)
+	pLin = mult.pm(pLinear, pExp$Div);
+	pExp = diff.pm(pExp$P, pLin);
+	#
+	pR = decompose.S2Ht(pExp, vars=xn);
+	pR$pDiff$D = NULL;
+	return(pR);
+}
+
+### Test
+
+n = 5 # Number of Terms
+pLin = toPoly.pm("b*y2 + R")
+pR0  = decompose.S2Exp(n=n, pLin)
+str(pR0)
+
+### b = ...
+b = 1; R = 1
+p1 = replace.pm(pR0$pDiff, c(b=b))
+p2 = replace.pm(pR0$pSum, c(b=b, R=R))
+pR = solve.pm(p1, p2, xn="E2")
+str(pR)
+# NO overflow yet!
+max(abs(pR$Rez$coeff))
+
+# TODO
 
