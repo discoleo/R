@@ -210,3 +210,17 @@ expand.fr.pm = function(p1, p2, add.names=TRUE) {
 	if(add.names) pR = c(pR, extract.other(p1, 1), extract.other(p2, 2));
 	return(pR);
 }
+
+### Exponential Series
+# exp(x) = sum( x^n / n! )
+expand.Exp = function(n, asDiv=TRUE, xn="x") {
+	div = factorial(n);
+	p = data.frame(x = seq(n, 0));
+	names(p) = xn;
+	coeff = cumprod(c(1, rev(seq(n))));
+	p$coeff = coeff;
+	if( ! asDiv) { p$coeff = p$coeff / div; div = 1; }
+	class(p) = c("pm", class(p));
+	return(list(P=p, Div=div));
+}
+
