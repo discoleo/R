@@ -1069,19 +1069,20 @@ solve.pm = function(p1, p2, xn, stop.at=NULL, simplify=TRUE, asBigNum=FALSE) {
 	} else if(max1 == max2 && nrow(p1) < nrow(p2)) {
 		tmp = p1; p1 = p2; p2 = tmp;
 	}
+	# for debugging:
 	if( ! is.null(stop.at) && max2 == stop.at) return(list(p1, p2));
 	split.pm = function(p, pow) {
 		px = p[,xn];
 		p2 = p[, - match(xn, names(p)), drop=FALSE];
-		p2x = p2[px == pow,];
-		p20 = p2[px != pow,]; # changed to (- coeff) in max2-section;
+		p2x = p2[px == pow, , drop=FALSE];
+		p20 = p2[px != pow, , drop=FALSE]; # changed to (- coeff) in max2-section;
 		return(list(p20, p2x));
 	}
 	if(max2 == 1) {
 		lp2 = split.pm(p2, max2);
 		if(nrow(lp2[[1]]) == 0) {
 			print("Warning: x == 0!");
-			p1 = p1[p1[,xn] == 0,];
+			p1 = p1[p1[,xn] == 0, , drop=FALSE];
 			return(p1);
 		}
 		print(paste0("Substituting: Len = ", nrow(p1),
@@ -1099,13 +1100,13 @@ solve.pm = function(p1, p2, xn, stop.at=NULL, simplify=TRUE, asBigNum=FALSE) {
 			}
 		}
 		p1 = replace.fr.pm(p1, lp2[[1]], lp2[[2]], x=xn, pow=1);
-		if(simplify) p1 = simplify.spm(p1);
+		if(simplify) p1 = simplify.spm(p1, do.gcd=TRUE);
 		return(list(Rez=p1, x0=lp2[[1]], div=lp2[[2]], xn=xn));
 	}
 	leading.pm = function(p, pow) {
 		px = p[,xn];
 		p2 = p[, - match(xn, names(p)), drop=FALSE];
-		p2x = p2[px == pow,];
+		p2x = p2[px == pow,]; # TODO: drop = FALSE;
 		return(p2x);
 	};
 	p1cf = leading.pm(p1, max1);
