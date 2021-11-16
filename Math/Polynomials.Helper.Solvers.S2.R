@@ -87,7 +87,3 @@ decompose.S2Ht = function(p, vars=c("x", "y"), drop=TRUE) {
 	return(list(pDiff=pDiff, pSum=pSum));
 }
 
-### Tests:
-decompose.S2Ht(toPoly.pm("x^3 + b1*y - R"))
-
-decompose.S2Ht(toPoly.pm("x^3 + b2*x*y + b1*y - R"))
