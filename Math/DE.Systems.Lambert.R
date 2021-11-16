@@ -119,8 +119,8 @@ exp(y1-y2)*(dy1 - dy2) - b2*dy1 - db2*y1 - b2*dy2 - db2*y2 - dR2 # = 0
 source("Polynomials.Helper.ODE.R")
 source("Polynomials.Helper.Solvers.S2.R")
 
-decompose.S2Exp = function(n, pLinear, xn=c("y1", "y2")) {
-	pExp = expand.Exp(n = n, xn=xn[[1]], asDiv = TRUE)
+decompose.S2Exp = function(n, pLinear, xn=c("y1", "y2"), asDiv=TRUE) {
+	pExp = expand.Exp(n = n, xn=xn[[1]], asDiv = asDiv);
 	pLin = mult.pm(pLinear, pExp$Div);
 	pExp = diff.pm(pExp$P, pLin);
 	#
@@ -152,6 +152,7 @@ str(pR0)
 b = 1; R = 1/2
 p1 = replace.pm(pR0$pDiff, c(b=b))
 p2 = replace.pm(pR0$pSum, c(b=b, R=R))
+# p1 = pR0$pDiff; p2 = pR0$pSum;
 pR = solve.pm(p1, p2, xn="E2")
 pR$Rez$coeff = - pR$Rez$coeff;
 if(n == 6) {
@@ -179,4 +180,18 @@ eval.pm(p2, c(S=sum(sol[id,]), E2=prod(sol[id,])))
 ### Debug:
 # for n = 6:
 poly.calc(sapply(14:15, function(id) sum(sol[id, ])))
+
+b = 1; R = 1/2;
+x1 = 1.9398591713 + 1.3497579982i;
+x2 = 1.0254412580 + 6.7884907688i;
+exp(x1) - b*x2; exp(x2) - b*x1;
+
+eval.pm(pR0$pDiff, c(S=x1+x2, b=1, E2=x1*x2))
+eval.pm(expand.Exp(n = 6, xn="x1", asDiv = FALSE), c(x1=x1))
+
+eval.pm(expand.Exp(n = 6, xn="x1", asDiv = FALSE)$P, c(x1=x1))
+exp(x1)
+# necessitates > 15 terms in the expansion:
+eval.pm(expand.Exp(n = 15, xn="x1", asDiv = FALSE)$P, c(x1=x2))
+exp(x2)
 
