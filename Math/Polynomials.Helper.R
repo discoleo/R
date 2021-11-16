@@ -896,7 +896,7 @@ eval.pm = function(p, x, progress=FALSE) {
 	# x = c(values of variables) OR
 	# x = list(values of variables);
 	pP = p[, - which(names(p) == "coeff"), drop=FALSE];
-	if(is.list(x)) {
+	if(is.list(x) || ! is.null(names(x))) {
 		len = sapply(x, length);
 		if(any(len != 1)) stop("Each list element must have 1 entry!")
 		nms = names(x);
@@ -909,7 +909,7 @@ eval.pm = function(p, x, progress=FALSE) {
 		x = unlist(x);
 	}
 	eval.p = function(id) {
-		idx = which(pP[id,] != 0);
+		idx = which(unlist(pP[id,]) != 0);
 		if(length(idx) == 0) return(p$coeff[id]);
 		prod(x[idx]^unlist(pP[id, idx]), p$coeff[id]);
 	}
