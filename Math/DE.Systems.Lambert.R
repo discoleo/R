@@ -195,3 +195,11 @@ exp(x1)
 eval.pm(expand.Exp(n = 15, xn="x1", asDiv = FALSE)$P, c(x1=x2))
 exp(x2)
 
+### Diff =>
+exp(x1) + b*x1 - (exp(x2) + b*x2) # = 0
+exp(1/b*exp(x1)) * exp(x1) - exp(1/b*exp(x2)) * exp(x2) # = 0
+# Lambert W: Wp or Wn =>
+exp(x1) - exp(x2) # = 0 *OR*
+lambertWp(exp(1/b*exp(x1)) * 1/b*exp(x1))
+# [but pracma-implementation does NOT accept complex numbers]
+
