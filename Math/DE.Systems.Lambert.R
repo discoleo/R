@@ -6,7 +6,7 @@
 ### Differential Equations
 ### DE Systems: Lambert-type
 ###
-### draft v.0.1b
+### draft v.0.1c
 
 
 #############
@@ -128,22 +128,55 @@ decompose.S2Exp = function(n, pLinear, xn=c("y1", "y2")) {
 	pR$pDiff$D = NULL;
 	return(pR);
 }
+solve.pm.S2Basic = function(sol, debug=TRUE) {
+	S   = roots(sol$Rez$coeff);
+	if(debug) print(S);
+	xy  = sapply(S, function(S) eval.pm(sol$x0, c(S=S)));
+	div = sapply(S, function(S) eval.pm(sol$div, c(S=S))); print(xy)
+	xy = xy / div;
+	xy.diff = sqrt(S^2 - 4*xy + 0i);
+	x = (S + xy.diff) / 2;
+	y = (S - xy.diff) / 2;
+	sol = cbind(x=x, y=y);
+	return(sol);
+}
 
 ### Test
 
-n = 5 # Number of Terms
+n = 6 # Number of Terms
 pLin = toPoly.pm("b*y2 + R")
 pR0  = decompose.S2Exp(n=n, pLin)
 str(pR0)
 
 ### b = ...
-b = 1; R = 1
+b = 1; R = 1/2
 p1 = replace.pm(pR0$pDiff, c(b=b))
 p2 = replace.pm(pR0$pSum, c(b=b, R=R))
 pR = solve.pm(p1, p2, xn="E2")
+pR$Rez$coeff = - pR$Rez$coeff;
+if(n == 6) {
+	pR$Rez = div.pm(pR$Rez, toPoly.pm("S^2 + 4*S + 4"), "S")$Rez
+}
+pR$Rez = sort.pm(pR$Rez, "S")
 str(pR)
 # NO overflow yet!
 max(abs(pR$Rez$coeff))
 
-# TODO
+### Solve: explicitly
+sol = solve.pm.S2Basic(pR)
+
+# TODO: debug!
+# - no valid solutions;
+
+### Test
+exp(sol[,1]) - b*sol[,2]
+exp(sol[,2]) - b*sol[,1]
+
+id = 5
+eval.pm(p1, c(S=sum(sol[id,]), E2=prod(sol[id,])))
+eval.pm(p2, c(S=sum(sol[id,]), E2=prod(sol[id,])))
+
+### Debug:
+# for n = 6:
+poly.calc(sapply(14:15, function(id) sum(sol[id, ])))
 
