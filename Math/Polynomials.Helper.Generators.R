@@ -6,7 +6,7 @@
 ### Helper Functions
 ### Polynomial Generators
 ###
-### draft v.0.1d - v.0.1d-pow
+### draft v.0.1e
 
 
 ### Polynomial Generators
@@ -18,6 +18,9 @@
 ###############
 
 
+### draft v.0.1e:
+# - refactor: move function E2.pm() to file:
+#   Polynomials.Helper.EP.R;
 ### draft v.0.1d - v.0.1d-pow:
 # - Generator for Class 3 polynomials;
 # - including variant based on Powers; [v.0.1d-pow]
@@ -120,12 +123,6 @@ permute.pm = function(p, vars=c("x", "y"), by=1, warn=TRUE) {
 }
 
 ### Decompose into Symmetric Polynomials
-E2.pm = function(n) {
-	epow = powAll.pm(toPoly.pm("S^2 - 4*E2"), n %/% 2, asList=TRUE);
-	pEDiff = lapply(seq(n), function(n) diff.E2.pm(n, epow=epow));
-	pESum  = lapply(seq(n), function(n) sum.E2.pm(n, epow=epow));
-	return(list(pEDiff=pEDiff, pESum=pESum));
-}
 decompose.S2Ht = function(p, vars=c("x", "y"), drop=TRUE) {
 	if(length(vars) != 2) stop("Only S2 can be solved!");
 	id = match(vars, names(p));

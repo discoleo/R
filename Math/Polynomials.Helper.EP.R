@@ -5,6 +5,8 @@
 ###
 ### Helper Functions
 ### Elementary Polynomials
+###
+### draft v.0.2a
 
 
 #######################
@@ -133,7 +135,17 @@ sym.poly = function(p, var="x") {
 	return(pP);
 }
 
-### E2
+########################
+
+### E2: Hetero-Symmetric
+
+### Sum & Diff:
+E2.pm = function(n) {
+	epow = powAll.pm(toPoly.pm("S^2 - 4*E2"), n %/% 2, asList=TRUE);
+	pEDiff = lapply(seq(n), function(n) diff.E2.pm(n, epow=epow));
+	pESum  = lapply(seq(n), function(n) sum.E2.pm(n, epow=epow));
+	return(list(pEDiff=pEDiff, pESum=pESum));
+}
 ### Diff: x^n - y^n
 diff.E2.pm = function(n, epow=NULL) {
 	if(n == 1) return(data.frame(S=0, D=1, coeff=1));
@@ -156,6 +168,7 @@ diff.E2.pm = function(n, epow=NULL) {
 	r$coeff = r$coeff / 2^(n-1);
 	return(r);
 }
+### Sum: x^n + y^n
 sum.E2.pm = function(n, epow=NULL) {
 	if(n == 1) return(data.frame(S=1, coeff=1));
 	if(n == 2) return(data.frame(S=c(2,0), E2=c(0,1), coeff=c(1,-2)));
