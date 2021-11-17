@@ -7,7 +7,7 @@
 ### of Polynomial Fractions
 ### derived from Roots of Unity
 ###
-### draft v.0.2c
+### draft v.0.2d
 
 
 
@@ -852,4 +852,39 @@ integrate(function(x) x^n/log(x^n + 1), lower=1E-6, upper=1)
 integrate(function(x) x^n/log(x^n + 1), lower=1E-4, upper=1)
 integrate(function(x) x^n/log(x^n + 1), lower=1E-5, upper=1) # BUG
 integrate(function(x) x^n/log(x^n + 1), lower=1E-6, upper=1)
+
+
+#################
+
+### Log() / Log()
+
+### n = 3
+n = 3;
+k = 1/2; # k < 1!
+
+r = line_integral(function(x) exp(1i*x) * log(k*exp(1i*n*x) + 1) /
+		log(exp(1i*n*x) + 1), c(0, 2*pi/n)) +
+	line_integral(function(x) - exp(-1i*x) * log(k*exp(-1i*n*x) + 1) /
+		log(exp(-1i*n*x) + 1), c(0, 2*pi/n));
+r * -1i / n
+
+# Baseline:
+integrate(function(x) log(k*x^n + 1)/log(x^n + 1), lower=1E-6, upper=1)
+
+
+##################
+
+### sqrt() * Log()
+
+### n = 3
+n = 3;
+
+r = line_integral(function(x) exp(1i*x) * sqrt(exp(1i*n*x) + 1) *
+		log(exp(1i*n*x) + 1), c(0, 2*pi/n)) +
+	line_integral(function(x) - exp(-1i*x) * sqrt(exp(-1i*n*x) + 1) *
+		log(exp(-1i*n*x) + 1), c(0, 2*pi/n));
+r * -1i / n
+
+# Baseline:
+integrate(function(x) sqrt(x^n + 1) * log(x^n + 1), lower=0, upper=1)
 
