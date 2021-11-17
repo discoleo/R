@@ -8,7 +8,7 @@
 ### of Polynomial Fractions
 ### derived from Roots of Unity
 ###
-### draft v.0.2a:
+### draft v.0.2b
 
 
 
@@ -719,10 +719,16 @@ integrate(function(x) cos(x)^n / (sin(x)*cos(x)*(sin(x)^n + cos(x)^n)), lower=li
 int.exp(log(tan(lim)), n=n, diff=-1)
 
 
-####################
-####################
+########################
+########################
 
-### Derived using Complex Analysis
+########################
+### Derived using    ###
+### Complex Analysis ###
+########################
+
+### Baseline:
+### I( 1 / (x^n + k) )
 
 ### n = 3
 n = 3;
@@ -743,7 +749,7 @@ integrate(function(x) 1/(x^n + k), lower=0, upper=1)
 #########
 ### n = 5
 n = 5;
-id = c(1,-1)
+id = c(1,3); id = c(id, -id);
 m = complex(re=cos(pi*id/n), im=sin(pi*id/n));
 k = 2;
 
@@ -762,4 +768,35 @@ r = line_integral(function(x) (2*sin((n-1)*x) - 2*k*sin(x) + sin((n-1)*x - 2*pi/
 r * -2 / n
 
 integrate(function(x) 1/(x^n + k), lower=0, upper=1)
+
+
+#########################
+
+#########################
+### Radical Fractions ###
+#########################
+
+### n = 3
+n = 3;
+id = c(1,-1)
+m = complex(re=cos(pi*id/n), im=sin(pi*id/n));
+k = 2;
+
+r = line_integral(function(x) exp(1i*x) / sqrt(exp(1i*n*x) + k), c(0, 2*pi/n)) +
+	line_integral(function(x) - exp(-1i*x) / sqrt(exp(-1i*n*x) + k), c(0, 2*pi/n));
+r * -1i / n
+
+# TODO
+
+integrate(function(x) 1/sqrt(x^n + k), lower=0, upper=1)
+
+
+###########
+upper = 1/2 # < 1;
+
+r = line_integral(function(x) exp(1i*x) / sqrt(upper^n * exp(1i*n*x) + 1), c(0, 2*pi/n)) +
+	line_integral(function(x) - exp(-1i*x) / sqrt(upper^n * exp(-1i*n*x) + 1), c(0, 2*pi/n));
+r * -1i * upper / n
+
+integrate(function(x) 1/sqrt(x^n + 1), lower=0, upper=upper)
 
