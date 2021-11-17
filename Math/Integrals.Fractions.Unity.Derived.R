@@ -1,4 +1,3 @@
-
 ########################
 ###
 ### Leonard Mada
@@ -8,7 +7,7 @@
 ### of Polynomial Fractions
 ### derived from Roots of Unity
 ###
-### draft v.0.2b
+### draft v.0.2c
 
 
 
@@ -743,6 +742,7 @@ r * -1i / n
 r = line_integral(function(x) (sin(2*x) - k*sin(x)) / (2*k*cos(n*x) + k^2 + 1), c(0, 2*pi/n));
 r * -2 / n
 
+# Baseline:
 integrate(function(x) 1/(x^n + k), lower=0, upper=1)
 
 
@@ -788,7 +788,16 @@ r * -1i / n
 
 # TODO
 
+# Baseline:
 integrate(function(x) 1/sqrt(x^n + k), lower=0, upper=1)
+
+
+### Variant:
+# exp(1i*x) => x; exp(-1i*x) => x;
+# odd n => x => -x;
+r = line_integral(function(x) 1 / sqrt(x^n + k), c(1, exp(2i*pi/n))) +
+	line_integral(function(x) 1 / sqrt(x^n + k), c(1, exp(-2i*pi/n)));
+r * -1 / n
 
 
 ###########
@@ -799,4 +808,48 @@ r = line_integral(function(x) exp(1i*x) / sqrt(upper^n * exp(1i*n*x) + 1), c(0, 
 r * -1i * upper / n
 
 integrate(function(x) 1/sqrt(x^n + 1), lower=0, upper=upper)
+
+
+#####################
+#####################
+
+#############
+###  Log  ###
+#############
+
+### n = 3
+n = 3;
+
+r = line_integral(function(x) exp(1i*(n+1)*x) / log(exp(1i*n*x) + 1), c(0, 2*pi/n)) +
+	line_integral(function(x) - exp(-1i*(n+1)*x) / log(exp(-1i*n*x) + 1), c(0, 2*pi/n));
+r * -1i / n
+
+r = line_integral(function(x)   exp(1i*(n+1)*x) / (log(2*cos(n/2*x) + 0i) + 1i*n/2*x), c(0, pi/n)) +
+	line_integral(function(x)   exp(1i*(n+1)*x) / (log(2*cos(n/2*x) + 0i) + 1i*n/2*x - 2i*pi), c(pi/n, 2*pi/n)) +
+	line_integral(function(x) - exp(-1i*(n+1)*x) / (log(2*cos(n/2*x) + 0i) - 1i*n/2*x), c(0, 2*pi/n));
+r * -1i / n
+
+# TODO: transform to trig-functions;
+
+# Baseline:
+integrate(function(x) x^n/log(x^n + 1), lower=0, upper=1)
+
+
+#########
+### n = 5
+n = 5;
+
+r = line_integral(function(x) exp(1i*(n+1)*x) / log(exp(1i*n*x) + 1), c(0, 2*pi/n)) +
+	line_integral(function(x) - exp(-1i*(n+1)*x) / log(exp(-1i*n*x) + 1), c(0, 2*pi/n)) +
+	line_integral(function(x) exp(1i*(n+1)*x) / log(exp(1i*n*x) + 1), c(0, 4*pi/n)) +
+	line_integral(function(x) - exp(-1i*(n+1)*x) / log(exp(-1i*n*x) + 1), c(0, 4*pi/n));
+r * -1i / n
+
+# Baseline:
+integrate(function(x) x^n/log(x^n + 1), lower=1E-6, upper=1)
+
+### BUG:
+integrate(function(x) x^n/log(x^n + 1), lower=1E-4, upper=1)
+integrate(function(x) x^n/log(x^n + 1), lower=1E-5, upper=1) # BUG
+integrate(function(x) x^n/log(x^n + 1), lower=1E-6, upper=1)
 
