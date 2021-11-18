@@ -1018,7 +1018,7 @@ gcd.pm = function(p1, p2, by="x", div.sc=1) {
 	}
 	return(pR);
 }
-gcd.exact.p = function(p1, p2, xn="x", asBigNum=TRUE, doGCD=TRUE) {
+gcd.exact.p = function(p1, p2, xn="x", asBigNum=TRUE, doGCD=TRUE, debug=FALSE) {
 	# exact implementation: only univariate polynomials;
 	if( ! doGCD) fact = if(asBigNum) as.bigz(1) else 1;
 	while(TRUE) {
@@ -1038,10 +1038,11 @@ gcd.exact.p = function(p1, p2, xn="x", asBigNum=TRUE, doGCD=TRUE) {
 		p1m = p1; p1m$coeff = p1m$coeff * c2;
 		p2m = p2; p2m$coeff = p2m$coeff * c1;
 		dn = n1 - n2;
-		if(dn > 0) p2m[,xn] = p2m[,xn] + dn
+		if(dn > 0) { p2m[,xn] = p2m[,xn] + dn; }
 		else if(dn < 0) p1m[,xn] = p1m[,xn] - dn;
 		#
 		dp = diff.pm(p1m, p2m);
+		if(debug) print(toPoly.pm(dp)); # e.g. overflows massively;
 		if(nrow(dp) == 0) {
 			print("Factor found!");
 			if(doGCD) return(p2) else return(list(p=0, f=0));
@@ -1053,6 +1054,8 @@ gcd.exact.p = function(p1, p2, xn="x", asBigNum=TRUE, doGCD=TRUE) {
 			if(asBigNum) dp$coeff = as.bigz(dp$coeff);
 		}
 		if( ! doGCD) fact = fact * c2 / xgcd;
+		if(debug) print(toPoly.pm(dp)); # e.g. overflows massively;
+		# Remaining x:
 		n0 = max(dp[, xn, drop=TRUE]);
 		print(paste0("Pow = ", n0, ", Len = ", nrow(dp)));
 		if(n0 == 0) {
