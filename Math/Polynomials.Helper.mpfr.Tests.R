@@ -51,3 +51,20 @@ eval.cpm(p, as.double.cmpfr(x)[1])
 eval.cpm(p, x[1, ]) # better accuracy
 eval.cpm(p, x[x[,2] == 0, ]) # better accuracy
 
+
+####################
+
+### m^3 = -1
+n = 3
+m = unity.mpfr(2*n, all=F)
+toPolar.mpfr(m)
+pow.mpfr(m, 3)
+log.cmpfr(pow.mpfr(m, 3))
+
+###
+m1 = mpfr(1, 120) / 10^35;
+m1 = mpfr2array(c(m1, mpfr(0, 120)), 2)
+m1 = m + m1;
+m1;
+# TODO:
+log.cmpfr(pow.mpfr(m1, 3)[3,] + c(1,0))

@@ -256,6 +256,9 @@ toPolar.lmpfr = function(x, bits=120) {
 toPolar.mpfr = function(x, bits=120, piConst=NULL) {
 	if(inherits(x, "mpfrMatrix")) {
 		re = x[,1]; im = x[,2];
+	} else if(inherits(x, "mpfrArray")) {
+		# already mpfr:
+		re = x[1]; im = x[2];
 	} else if(inherits(x, "mpfr")) {
 		# already mpfr:
 		re = x[[1]]; im = x[[2]];
@@ -292,8 +295,8 @@ mult.mpfr = function(re1, im1, re2, im2) {
 
 ### Power
 pow.mpfr = function(x, len=1, bits=120) {
-	x = toPolar(x, bits=bits);
-	r = x$M; th = x$Theta;
+	x = toPolar.mpfr(x, bits=bits);
+	r = x[,1]; th = x[,2]; # TODO: Bug in mpfr selectors;
 	doPow = FALSE;
 	if(length(len) > 1) { pow = len; doPow = TRUE; }
 	else if(len > 1) { pow = seq(len); doPow = TRUE; }
@@ -337,6 +340,16 @@ rootn.mpfr = function(x, n) {
 			r = mpfr2array(r, c(length(r)));
 		}
 	}
+	return(r);
+}
+
+log.cmpfr = function(x, bits=120) {
+	x = toPolar.mpfr(x, bits=bits);
+	r1 = log(x[,1]);
+	r2 = x[,2];
+	r = cbind(r1, r2);
+	len = if(inherits(x, "mpfrMatrix")) c(nrow(x), 2) else c(2); print(len)
+	r = mpfr2array(r, len);
 	return(r);
 }
 
