@@ -10,7 +10,7 @@
 ### Leonard Mada
 ### [the one and only]
 ###
-### draft v.0.2a
+### draft v.0.2b
 
 # - based on:
 #   https://onlinelibrary.wiley.com/doi/full/10.1111/ecog.04516
@@ -25,8 +25,9 @@
 ### History ###
 ###############
 
-### draft v.0.2a:
+### draft v.0.2a - v.0.2b:
 # - [refactoring] S4 classes;
+# - additional parameters passed to lines();
 ### draft v.0.1e:
 # - exploring custom defined methods;
 ### draft v.0.1b - v.0.1d:
@@ -96,9 +97,10 @@ plot.agentMatrix = function(x, pch=16, col, ...) {
 lines.agentsWithPath = function(x, col, ...) {
 	if(missing(col)) col = of(agents=x@Agents, var="color");
 	path = x@Path;
-	who = unique(path$who);
-	sapply(seq(length(who)),
-		function(id) lines(path[path$who == (id-1), 1:2], col=col[id]))
+	who  = unique(path$who); len = length(who);
+	if(length(col) < len) col = rep(col, len);
+	sapply(seq(len),
+		function(id) lines(path[path$who == (id-1), 1:2], col=col[id], ...))
 	invisible();
 }
 
@@ -178,7 +180,7 @@ plot(t.all)
 
 t.all = run.model(t.all, land, distRate);
 plot(t.all)
-lines(t.all)
+lines(t.all, lty=3)
 
 
 ##############
