@@ -7,7 +7,7 @@
 ### Multi-Variable Polynomials
 ### Factorize
 ###
-### draft v.0.1a
+### draft v.0.1b
 
 
 ### Factorize Multi-Variable Polynomials
@@ -81,3 +81,25 @@ factorize.p = function(p, xn="x", f.all=FALSE, asBigNum=TRUE, file="_R.Temp.") {
 
 # TODO:
 # - change sign in Result: if (x^max) < 0;
+
+
+#######################
+
+rPoly = function(n, coeff=c(0,1,-1), p=NULL, b0 = TRUE) {
+	coeffs = sample(coeff, n, replace=TRUE, prob=p);
+	if(b0 && coeffs[n] == 0) {
+		coeffs[n] = sample(coeff[coeff != 0], 1);
+	}
+	coeffs = c(1, coeffs);
+	isNZero = (coeffs != 0);
+	pR = data.frame(x=seq(n, 0)[isNZero], coeff=coeffs[isNZero]);
+	return(toPoly.pm(pR));
+}
+
+### Rules:
+
+# if(b0 == 1)
+#  => (... + 1) * (... + 1) OR
+#  => (... - 1) * (... - 1);
+#  => NOT: P[1] * P[n-1];
+
