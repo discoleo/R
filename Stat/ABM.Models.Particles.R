@@ -10,7 +10,7 @@
 ### Leonard Mada
 ### [the one and only]
 ###
-### draft v.0.1e
+### draft v.0.2a
 
 # - based on:
 #   https://onlinelibrary.wiley.com/doi/full/10.1111/ecog.04516
@@ -25,6 +25,8 @@
 ### History ###
 ###############
 
+### draft v.0.2a:
+# - [refactoring] S4 classes;
 ### draft v.0.1e:
 # - exploring custom defined methods;
 ### draft v.0.1b - v.0.1d:
@@ -48,15 +50,78 @@ library(LaplacesDemon) # multivariate distributions
 ######################
 ######################
 
-### helper Functions
+### S4 Class: agentsWithPath
+
+.agentsWithPath = setClass("agentsWithPath",
+	slots = c(Agents="agentMatrix", Path="data.frame"))
+
+setMethod(
+	"show",
+	signature(object = "agentsWithPath"),
+	definition = function(object) {
+		tmp = object@Agents;
+		print(class(tmp))
+		show(tmp)
+})
+
+setGeneric("agentsWithPath",
+	function(agents, path, ...) {
+		standardGeneric("agentsWithPath")
+	}
+)
+setMethod("agentsWithPath",
+	signature = c(agents = "agentMatrix"),
+	definition = function(agents, path, ...) {
+		obj = new("agentsWithPath", Agents = agents, ...);
+		if( ! is.null(path)) obj@Path = path;
+		return(obj);
+	}
+)
+
+### Methods
+
+### Plot:
+plot.agentsWithPath = function(x, pch=16, col, ...) {
+	x = x@Agents;
+	if(missing(col)) col = of(agents=x, var="color");
+	points(x@.Data, pch=pch, col=col, ...);
+}
+# overwriting the default function:
+plot.agentMatrix = function(x, pch=16, col, ...) {
+	if(missing(col)) col = of(agents=x, var="color");
+	points(x@.Data, pch=pch, col=col, ...);
+}
+
+### Lines:
+lines.agentsWithPath = function(x, col, ...) {
+	if(missing(col)) col = of(agents=x@Agents, var="color");
+	path = x@Path;
+	who = unique(path$who);
+	sapply(seq(length(who)),
+		function(id) lines(path[path$who == (id-1), 1:2], col=col[id]))
+	invisible();
+}
+
+#####################
+
+### Helper Functions:
 
 rWorld.gen = function(size, ntypes) {
 	createWorld(minPxcor=1, maxPxcor=size, minPycor=1, maxPycor=size,
 		sample(seq(ntypes), size*size, replace = TRUE));
 }
-run.model = function(turtles, land, distRate, iter=10, plot=FALSE, pch=16) {
+run.model = function(turtles, land, distRate, iter=10, add=FALSE, plot=FALSE, pch=16) {
 	# t.df = data.frame(xcor=numeric(), ycor=numeric(), who=numeric());
-	t.df = data.frame(turtles@.Data[ , c("xcor", "ycor", "who")]);
+	if(inherits(turtles, "agentsWithPath")) {
+		t.df = if(add) turtles@Path
+			else {
+				data.frame(turtles@Agents@.Data[ , c("xcor", "ycor", "who")]);
+			}
+		turtles = turtles@Agents;
+	} else if(inherits(turtles, "agentMatrix")) {
+		t.df = data.frame(turtles@.Data[ , c("xcor", "ycor", "who")]);
+	} else stop("Agents NOT supported!")
+	#
 	for(i in seq(iter)) {
 		# Identify the cells the turtles are on
 		cellTurtle = patchHere(world=land, turtles=turtles)
@@ -77,35 +142,12 @@ run.model = function(turtles, land, distRate, iter=10, plot=FALSE, pch=16) {
 		angleInd = rmvn(n=1, mu=rep(meanHeading, ntrt), Sigma=Sigma)
 		# set Direction
 		turtles = right(turtles=turtles, angle=as.vector(angleInd))
+		# Plot:
 		if(plot) points(turtles, pch=pch, col= of(agents=turtles, var="color"))
 		t.df = rbind(t.df, turtles@.Data[,c("xcor", "ycor", "who")]);
 	}
-	attr(t.df, "col") = of(agents=turtles, var="color");
-	rez = list(t=turtles, path=t.df);
-	class(rez) = c("agentsWithPath", class(rez));
+	rez = agentsWithPath(turtles, t.df);
 	invisible(rez);
-}
-plot.turtles = function(turtles, pch=16, col, ...) {
-	if(missing(col)) col = of(agents=turtles, var="color");
-	points(turtles@.Data, pch=pch, col=col, ...);
-}
-# overwriting the default function:
-plot.agentMatrix = function(x, pch=16, col, ...) {
-	plot.turtles(x, pch=pch, col=col, ...);
-}
-setClass("agentsWithPath", contains = c(t="agentMatrix"))
-setMethod("plot", signature(x="agentsWithPath", y="missing"),
-	function(x, pch=16, col, ...) {
-		plot.turtles(x$t, pch=pch, col=col, ...);
-	} )
-# plot the Path
-lines.turtles = function(path, col) {
-	if(inherits(path, "agentsWithPath")) path = t.all$path;
-	if(missing(col)) col = attr(path, "col");
-	who = unique(path$who);
-	sapply(seq(length(who)),
-		function(id) lines(path[path$who == (id-1), 1:2], col=col[id]))
-	invisible();
 }
 
 ######################
@@ -121,24 +163,22 @@ distRate = 0.5
 land = rWorld.gen(size, ntypes=2)
 
 ### Agents
-t1 = createTurtles(n=agents, world=land)
+t.all = createTurtles(n=agents, world=land)
 
 # Visualize the turtles on the landscape with their respective color
 plot(land, c(1,2), col=c("#FFFFFF", "#00FF0064"))
-plot(t1)
-# points(t1, pch=16, col=of(agents=t1, var="color"))
+plot(t.all)
 
 
 ### MODEL
-
-# plot(land)
 
 # Note:
 # - the code below can be repeated a few times,
 #   allowing the turtles to move a larger distance;
 
-t.all = run.model(t1, land, distRate);
-t1 = t.all$t;
+t.all = run.model(t.all, land, distRate);
 plot(t.all)
-lines.turtles(t.all)
+lines(t.all)
 
+
+##############
