@@ -7,7 +7,7 @@
 ### of Polynomial Fractions
 ### derived from Roots of Unity
 ###
-### draft v.0.2d
+### draft v.0.2e
 
 
 
@@ -27,7 +27,7 @@
 ### History ###
 ###############
 
-### draft v.0.2a:
+### draft v.0.2a - v.0.2e:
 # - basic Complex analysis;
 ### draft v.0.1g:
 # - Integral: cos(x)^n / (sin(x)*cos(x) * (sin(x)^n + cos(x)^n)) dx;
@@ -852,6 +852,36 @@ integrate(function(x) x^n/log(x^n + 1), lower=1E-6, upper=1)
 integrate(function(x) x^n/log(x^n + 1), lower=1E-4, upper=1)
 integrate(function(x) x^n/log(x^n + 1), lower=1E-5, upper=1) # BUG
 integrate(function(x) x^n/log(x^n + 1), lower=1E-6, upper=1)
+
+
+#################
+#################
+
+### (x^n + 1) * log(x^n + 1) / x
+
+### n = 3
+n = 3;
+id = c(1,-1);
+m = complex(re=cos(pi*id/n), im=sin(pi*id/n));
+
+r = line_integral(function(x) (exp(1i*n*x) + 1) *
+		log(exp(1i*n*x) + 1), c(0, 2*pi/n)) +
+	line_integral(function(x) (exp(1i*n*x) + 1) *
+		log(exp(1i*n*x) + 1), c(0, -2*pi/n));
+r * -1i / n; # == 0!
+
+# TODO:
+# - probably contour around m^3 = -1;
+
+# Baseline:
+integrate(function(x) (x^n + 1) * log(x^n + 1) / x, lower=0, upper=1)
+integrate(function(x) 1/3 * (x + 1) * log(x + 1) / x, lower=0, upper=1)
+
+
+### Zero
+n = 5; # 1.2, pi, exp(1)/5 # any n;
+line_integral(function(x) (exp(1i*n*x) + 1) *
+	log(exp(1i*n*x) + 1), c(0, 2*pi/n));
 
 
 #################
