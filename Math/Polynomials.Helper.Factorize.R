@@ -31,16 +31,27 @@
 ### Factorize
 # - only univariate Polynomial;
 factorize.p = function(p, xn="x", f.all=FALSE, asBigNum=TRUE, file="_R.Temp.") {
-	# factorize.all = FALSE
-	# - p1 is usually sufficient;
-	# - dos NOT handle: p1 * p2^3*p3^4 or p1^2*p2^3;
 	id = match(xn, names(p));
 	if(is.na(id)) stop("Variable NOT present!");
-	lvl = 1; # level of factorization;
-	doSave = ! (is.null(file) || is.na(file));
-	rez = list();
+	# gcd(p, D(p))
 	dp = dp.pm(p, xn);
 	if(nrow(dp) == 0 || ncol(dp) < 2) return(list(list(GCD=NULL, p1=p)));
+	pRez = factorize0.p(p, dp, xn=xn, f.all=f.all, asBigNum=asBigNum, file=file);
+	return(pRez)
+}
+factorize0.p = function(p, dp, xn="x", f.all=FALSE, asBigNum=TRUE, file="_R.Temp.") {
+	# factorize.all = FALSE
+	# - p1 is usually sufficient;
+	# - dos NOT fully handle:
+	#   p1 * p2^3*p3^4 or p1^2*p2^3 => p1*p2^2 * (...);
+	### Checks:
+	id = match(xn, names(p));
+	if(is.na(id)) stop("Variable NOT present!");
+	if(nrow(dp) == 0 || ncol(dp) < 2) return(list(list(GCD=NULL, p1=p)));
+	### Factorization:
+	lvl = 1; # level of factorization; (TODO)
+	doSave = ! (is.null(file) || is.na(file));
+	rez = list();
 	while(TRUE) {
 		# Step 1: GCD
 		cat("\n"); print(paste0("Level = ", lvl));
