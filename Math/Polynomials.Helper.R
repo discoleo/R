@@ -1051,11 +1051,13 @@ gcd.exact.p = function(p1, p2, xn="x", asBigNum=TRUE, doGCD=TRUE, debug=FALSE) {
 		}
 		# simplify the coefficients: robust for BigNumbers;
 		xgcd = gcd.vpm(dp, xgcd=dp$coeff[1]);
-		if(xgcd != 1) {
-			dp$coeff = dp$coeff / xgcd;
-			if(asBigNum) dp$coeff = as.bigz(dp$coeff);
+		if( ! is.na(xgcd)) {
+			if(xgcd != 1) {
+				dp$coeff = dp$coeff / xgcd;
+				if(asBigNum) dp$coeff = as.bigz(dp$coeff);
+			}
+			if( ! doGCD) fact = fact * c2 / xgcd;
 		}
-		if( ! doGCD) fact = fact * c2 / xgcd;
 		if(debug) print(toPoly.pm(dp)); # e.g. overflows massively;
 		# Remaining x:
 		n0 = max(dp[, xn, drop=TRUE]);
