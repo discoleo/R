@@ -101,5 +101,45 @@ rPoly = function(n, coeff=c(0,1,-1), p=NULL, b0 = TRUE) {
 # if(b0 == 1)
 #  => (... + 1) * (... + 1) OR
 #  => (... - 1) * (... - 1);
-#  => NOT: P[1] * P[n-1];
+#  => Test: P(1), P(-1);
+
+factorSimple.pm = function(p) {
+	if(ncol(p) > 2) stop("Only univariate polynomials!");
+	xn = "x"; # TODO
+	p = sort.pm(p, xn);
+	len = nrow(p);
+	if(p[len, xn] != 0) stop("Divisible by x!"); # TODO
+	#
+	b0 = p$coeff[len];
+	if(abs(b0) != 1) warning("Not yet implemented!");
+	# Trivial Factors:
+	pval1 = c(eval.pm(p, 1), eval.pm(p, -1));
+	isP1  = (pval1 == 0);
+	if(any(isP1)) {
+		pval1 = pval1[isP1];
+		if(length(pval1) == 1) {
+			pDiv = data.frame(x=1:0, coeff=c(1, pval1));
+		} else {
+			pDiv = data.frame(x=2:0, coeff=c(1, sum(pval1), prod(pval1)));
+			pDiv = reduce.pm(pDiv);
+		}
+		names(pDiv)[1] = xn;
+		pR = div.pm(p, pDiv, by=xn);
+		return(pR$Rez);
+	}
+	### Primes:
+	pp = c(3,5,7)
+	for(pr in pp) {
+		print(paste0("mod ", pr, ": ", pval1 %% pr));
+	}
+	pp = c(2,3,5)
+	b1 = p$coeff[p[, xn] == 1];
+	if(length(b1) == 0) b1 = 0;
+	print("P^2:")
+	for(pr in pp) {
+		p2 = pr*pr;
+		print(paste0("mod ", p2, ": ", (pval1*pr + b0) %% p2));
+	}
+	# TODO
+}
 
