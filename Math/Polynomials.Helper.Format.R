@@ -108,6 +108,7 @@ print.p = function(...) {
 
 as.character.pm = function(p, leading=NA, do.sort=TRUE, do.rev=FALSE, sort.order=TRUE,
 		simplify.complex=TRUE, brackets.complex=TRUE) {
+	if(nrow(p) == 0) return("");
 	### Var order
 	isNA = all(is.na(leading));
 	if( ! isNA && ! is.numeric(leading)) leading = match(leading, names(p));
