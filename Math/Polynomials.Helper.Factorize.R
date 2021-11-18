@@ -30,16 +30,32 @@
 
 ### Factorize
 # - only univariate Polynomial;
-factorize.p = function(p, xn="x", f.all=FALSE, asBigNum=TRUE, file="_R.Temp.") {
+factorizeExt.p = function(p, xn="x", asBigNum=FALSE, file=NULL, debug=FALSE) {
+	pR = factorize.p(p, xn=xn, asBigNum=asBigNum, file=file, f.all=FALSE, debug=debug);
+	if(length(pR) > 0 && ! is.null(pR[[1]]$GCD)) return(pR);
+	### Level 2: P(1/x)
+	pinv = rev.pm(p, xn=xn);
+	pR = factorize0.p(p, pinv, xn=xn, asBigNum=asBigNum, file=file, f.all=FALSE, debug=debug);
+	if(length(pR) > 0 && ! is.null(pR[[1]]$GCD)) return(pR);
+	### Level 2: P( - 1/x)
+	isOdd = (pinv[,xn] %% 2 == 1);
+	pinv$coeff[isOdd] = - pinv$coeff[isOdd];
+	pR = factorize0.p(p, pinv, xn=xn, asBigNum=asBigNum, file=file, f.all=FALSE, debug=debug);
+	#
+	return(pR);
+}
+factorize.p = function(p, xn="x", f.all=FALSE, asBigNum=TRUE,
+		file="_R.Temp.", debug=FALSE) {
 	id = match(xn, names(p));
 	if(is.na(id)) stop("Variable NOT present!");
 	# gcd(p, D(p))
 	dp = dp.pm(p, xn);
 	if(nrow(dp) == 0 || ncol(dp) < 2) return(list(list(GCD=NULL, p1=p)));
-	pRez = factorize0.p(p, dp, xn=xn, f.all=f.all, asBigNum=asBigNum, file=file);
+	pRez = factorize0.p(p, dp, xn=xn, f.all=f.all, asBigNum=asBigNum, file=file, debug=debug);
 	return(pRez)
 }
-factorize0.p = function(p, dp, xn="x", f.all=FALSE, asBigNum=TRUE, file="_R.Temp.") {
+factorize0.p = function(p, dp, xn="x", f.all=FALSE, asBigNum=TRUE,
+		file="_R.Temp.", debug=FALSE) {
 	# factorize.all = FALSE
 	# - p1 is usually sufficient;
 	# - dos NOT fully handle:
@@ -55,7 +71,7 @@ factorize0.p = function(p, dp, xn="x", f.all=FALSE, asBigNum=TRUE, file="_R.Temp
 	while(TRUE) {
 		# Step 1: GCD
 		cat("\n"); print(paste0("Level = ", lvl));
-		pGCD = gcd.exact.p(p, dp, xn, asBigNum=asBigNum);
+		pGCD = gcd.exact.p(p, dp, xn, asBigNum=asBigNum, debug=debug);
 		pGCD = reduce.var.pm(pGCD);
 		if(nrow(pGCD) < 1 || ncol(pGCD) < 2) break;
 		id = match(xn, names(pGCD));

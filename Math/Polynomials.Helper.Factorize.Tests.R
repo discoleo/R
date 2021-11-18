@@ -56,10 +56,29 @@ str(pR)
 pR[[1]]$GCD
 
 ### faster version
-gcd.exact.p(p2, rev(p2), "x", asBigNum=FALSE, debug=TRUE)
+gcd.exact.p(p2, rev(p2), xn="x", asBigNum=FALSE, debug=TRUE)
 
 
-##########
+### Multiple Techniques:
+factorizeExt.p(p2, xn="x", asBigNum=FALSE, debug=T)
+
+### Anti-Symmetric:
+b1 = 3;
+p0 = toPoly.pm("x^2 + b1()*x - 1")
+p1 = toPoly.pm("x^3 - 4*x^2 - x + 1")
+p2 = toPoly.pm("p0()*p1()")
+#
+factorizeExt.p(p2, xn="x", asBigNum=FALSE, debug=F)
+
+### TODO
+b1 = 3;
+p0 = toPoly.pm("x^2 + b1()*x + 1")
+p3 = toPoly.pm("p0() * (x^4 + 5*x^3 + 5*x + 1)")
+factorizeExt.p(p3, xn="x", asBigNum=FALSE, debug=F)
+
+
+################
+################
 
 eval.pm(p2, 4) %% 35
 eval.pm(p2, 9) %% 35
