@@ -46,13 +46,18 @@ div.pm(rev(p2), rev(p1), "x")
 ###
 pX = mult.pm(p2, rev(p2))
 
+# Note: overflows massively;
 gcd.exact.p(pX, dp.pm(pX, "x"), "x", asBigNum=FALSE, debug=TRUE)
 
-###
+### using BigNumbers
 source("Polynomials.Helper.BigNumbers.R")
 pR = factorize.p(toBigz.pm(pX), xn="x", f.all=FALSE, asBigNum=TRUE, file=NULL)
 str(pR)
 pR[[1]]$GCD
+
+### faster version
+gcd.exact.p(p2, rev(p2), "x", asBigNum=FALSE, debug=TRUE)
+
 
 ##########
 
