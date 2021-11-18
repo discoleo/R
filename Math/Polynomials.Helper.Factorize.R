@@ -54,12 +54,14 @@ factorize.p = function(p, xn="x", f.all=FALSE, asBigNum=TRUE, file="_R.Temp.") {
 		if(pGCD$coeff[isMaxPow][[1]] < 0) pGCD$coeff = - pGCD$coeff;
 		if(doSave) write.csv(pGCD, file=paste0(file, "GCD.", lvl, ".csv"), row.names=FALSE);
 		# Step 2:
+		cat("\n"); print("Starting division:");
 		p.all = div.pm(p, pGCD, xn)$Rez;
 		if(asBigNum) {
 			if(all(denominator(p.all$coeff) == 1)) p.all$coeff = as.bigz(p.all$coeff)
 			else print("Warning: some Denominators != 1!")
 		}
 		if(doSave) write.csv(p.all, file=paste0(file, "ALL.", lvl, ".csv"), row.names=FALSE);
+		cat("\n"); print("Starting Step 3:");
 		p.minus1 = gcd.exact.p(pGCD, p.all, xn, asBigNum=asBigNum);
 		# TODO: IF(p.minus1 == p.all) => multiplicity!
 		p1 = div.pm(p.all, p.minus1, xn)$Rez;
@@ -84,6 +86,17 @@ factorize.p = function(p, xn="x", f.all=FALSE, asBigNum=TRUE, file="_R.Temp.") {
 
 
 #######################
+
+rev.pm = function(p, xn="x", sort=TRUE) {
+	idx = match(xn, names(p));
+	if(is.na(idx)) {
+		warning("Variable name not found!");
+		return(p);
+	}
+	p[ , xn] = max(p[ , xn]) - p[ , xn];
+	if(sort) p = sort.pm(p, xn);
+	return(p);
+}
 
 rPoly = function(n, coeff=c(0,1,-1), p=NULL, b0 = TRUE) {
 	coeffs = sample(coeff, n, replace=TRUE, prob=p);
