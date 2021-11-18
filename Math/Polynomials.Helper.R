@@ -302,7 +302,9 @@ mult.pm = function(p1, p2, sc=1) {
 	p.r = aggregate0.pm(p.v);
 	colnames(p.r) = c(vars, "coeff");
 	if(sc != 1) p.r$coeff = p.r$coeff * sc;
-	p.r = p.r[round0(p.r$coeff) != 0, ];
+	if( ! inherits(p.r$coeff, c("bigz", "bigq"))) {
+		p.r = p.r[round0(p.r$coeff) != 0, ];
+	}
 	return(p.r);
 }
 
@@ -546,7 +548,7 @@ add.lpm = function(lp) return(sum.lpm(lp));
 ### Diff
 diff.pm = function(p1, p2) {
 	p2$coeff = - p2$coeff;
-	return(add.pm(p1, p2));
+	return(sum.pm(p1, p2));
 }
 diff.lpm = function(p1, lp) {
 	for(pd in lp) {
@@ -941,7 +943,7 @@ div.pm = function(p1, p2, by="x", NF.stop=TRUE, debug=TRUE) {
 	names(pRez) = c(xn, "coeff");
 	#
 	idn = match(names(pDx)[-idcDx], names(p1));
-	print(idn);
+	print(paste0("Leading Variables: matches = ", idn));
 	if(any(is.na(idn))) {
 		if(NF.stop) {
 			msg = "No matching variables for Leading Divisor:\n";
@@ -954,7 +956,7 @@ div.pm = function(p1, p2, by="x", NF.stop=TRUE, debug=TRUE) {
 			# Leading Monomials:
 			xpow1 = max(p1[,xn]);
 			if(xpow1 < xpow2) break;
-			px1 = p1[p1[,xn] == xpow1, ];
+			px1 = p1[p1[,xn] == xpow1, , drop=FALSE]; # TODO: check;
 			# Diff Powers:
 			for(nc in seq_along(idn)) {
 				px1[, idn[nc]] = px1[, idn[nc]] - pDx[, nc];
