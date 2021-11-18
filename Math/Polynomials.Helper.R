@@ -89,6 +89,7 @@ unity = function(n=3, all=TRUE) {
 	}
 	return(m)
 }
+# Specific Roots:
 roots.f = function(K, s, n=length(s)) {
 	# roots for Class 1 polynomials;
 	# s = includes s0;
@@ -103,6 +104,10 @@ roots.cl2.f = function(s, n = length(s)) {
 	m = unity(n+1, all=T)[-1]; # exclude 1;
 	r = sapply(seq(n), function(id) sum(s * m[id]^(0:n)))
 	r = round0(r)
+}
+# Compute the roots:
+roots.pm = function(p, ..., xn="x") {
+	roots(evalCoeff(p, xn=xn, ...));
 }
 
 sort.sol = function(sol, useRe=TRUE, ncol=1, digits=5) {

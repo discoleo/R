@@ -196,11 +196,14 @@ toCoeff = function(p, x="x") {
 	p.all[1 + sort(unique(px))] = str;
 	return(p.all)
 }
-evalCoeff = function(p, x="x", ...) {
-	idx = match(x, names(p));
-	if(idx < 0) stop(paste0("No variable ", x));
-	px = p[,x]; p = p[, - idx, drop=FALSE];
-	coeff = tapply(seq(nrow(p)), px, function(nr) eval.pm(p[nr,, drop=FALSE], ...));
+# Evaluate the coefficients using "..."
+evalCoeff = function(p, xn="x", ...) {
+	idx = match(xn, names(p));
+	if(idx < 0) stop(paste0("No variable ", xn));
+	px = p[,xn]; p = p[, - idx, drop=FALSE];
+	if(ncol(p) > 1) {
+		coeff = tapply(seq(nrow(p)), px, function(nr) eval.pm(p[nr,, drop=FALSE], ...));
+	} else coeff = p$coeff;
 	# missing powers
 	x.all = seq(0, max(px));
 	p.all = rep(0, length(x.all));
@@ -208,6 +211,17 @@ evalCoeff = function(p, x="x", ...) {
 	p.all = rev(p.all);
 	return(p.all);
 }
+coef.pm = function(p, xn="x", descending=TRUE) {
+	if(ncol(p) > 2) warning("Multi-variable polynomial!");
+	p = aggregate0.pm(p[, c(xn, "coeff"), drop=FALSE]);
+	p = reduce.pm(p);
+	# missing powers
+	p.all = rep(0, max(p[, xn]) + 1);
+	p.all[p[, xn] + 1] = p$coeff;
+	if(descending) p.all = rev(p.all);
+	return(p.all);
+}
+### Print
 print.coeff = function(p, x="x") {
 	p = rev(toCoeff(p, x));
 	last = tail(p, 1);
