@@ -1066,7 +1066,7 @@ gcd.exact.p = function(p1, p2, xn="x", asBigNum=TRUE, doGCD=TRUE, debug=FALSE) {
 				if(asBigNum) dp$coeff = as.bigz(dp$coeff);
 			}
 			if( ! doGCD) fact = fact * c2 / xgcd;
-		} else fact = fact * c2;
+		} else if( ! doGCD) fact = fact * c2;
 		if(debug) print(toPoly.pm(dp)); # e.g. overflows massively;
 		# Remaining x:
 		n0 = max(dp[, xn, drop=TRUE]);
