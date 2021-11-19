@@ -22,6 +22,7 @@
 # source("Polynomials.Helper.Factorize.Tests.R")
 
 
+source("Polynomials.Helper.R")
 # - is automatically loaded in: Polynomials.Helper.R;
 # source("Polynomials.Helper.Factorize.R")
 
@@ -75,6 +76,25 @@ b1 = 3;
 p0 = toPoly.pm("x^2 + b1()*x + 1")
 p3 = toPoly.pm("p0() * (x^4 + 5*x^3 + 5*x + 1)")
 factorizeExt.p(p3, xn="x", asBigNum=FALSE, debug=F)
+
+
+################
+################
+
+genPoly = function(b01, b02) {
+	p0 = toPoly.pm("x^2 + b1()*x + b01()");
+	p1 = toPoly.pm("p0() * (x^3 + 2*x^2 - 5*x + b02())");
+	return(p1);
+}
+### Ex 1:
+b1 = 3; b01 = 4; b02 = 1;
+p1 = genPoly(b01, b02);
+factorizeByB0.p(p1, xn="x")
+
+### Ex 2:
+b1 = 3; b01 = -9; b02 = 4;
+p1 = genPoly(b01, b02);
+factorizeByB0.p(p1, xn="x")
 
 
 ################

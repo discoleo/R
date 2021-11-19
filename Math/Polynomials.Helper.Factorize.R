@@ -7,7 +7,7 @@
 ### Multi-Variable Polynomials
 ### Factorize
 ###
-### draft v.0.1b
+### draft v.0.1c
 
 
 ### Factorize Multi-Variable Polynomials
@@ -30,14 +30,17 @@
 
 ### Factorize
 # - only univariate Polynomial;
-factorizeExt.p = function(p, xn="x", asBigNum=FALSE, file=NULL, debug=FALSE) {
-	pR = factorize.p(p, xn=xn, asBigNum=asBigNum, file=file, f.all=FALSE, debug=debug);
-	if(length(pR) > 0 && ! is.null(pR[[1]]$GCD)) return(pR);
+factorizeExt.p = function(p, xn="x", asBigNum=FALSE, file=NULL, skip.L1=FAlsE, debug=FALSE) {
+	# Level 1:
+	if( ! skip.L1) {
+		pR = factorize.p(p, xn=xn, asBigNum=asBigNum, file=file, f.all=FALSE, debug=debug);
+		if(length(pR) > 0 && ! is.null(pR[[1]]$GCD)) return(pR);
+	}
 	### Level 2: P(1/x)
 	pinv = rev.pm(p, xn=xn);
 	pR = factorize0.p(p, pinv, xn=xn, asBigNum=asBigNum, file=file, f.all=FALSE, debug=debug);
 	if(length(pR) > 0 && ! is.null(pR[[1]]$GCD)) return(pR);
-	### Level 2: P( - 1/x)
+	### Level 3: P( - 1/x)
 	isOdd = (pinv[,xn] %% 2 == 1);
 	pinv$coeff[isOdd] = - pinv$coeff[isOdd];
 	pR = factorize0.p(p, pinv, xn=xn, asBigNum=asBigNum, file=file, f.all=FALSE, debug=debug);
@@ -111,6 +114,34 @@ factorize0.p = function(p, dp, xn="x", f.all=FALSE, asBigNum=TRUE,
 # TODO:
 # - change sign in Result: if (x^max) < 0;
 
+# proof of concept:
+factorizeByB0.p = function(p, xn="x", pow=2, max.rows=100, digits=6, debug=TRUE) {
+	b0 = B0.pm(p, xn=xn);
+	if(nrow(b0) == 0) return(p); # TODO
+	if(nrow(b0) > 1 || ncol(b0) > 2) stop("Only univariate polynomials supported!");
+	scaleBack = function(pF, sc) {
+		pF$coeff = pF$coeff / sc^pF[, xn];
+		pF$coeff = pF$coeff * sc^pow;
+		if(digits > 0) pF$coeff = round(pF$coeff, digits=digits);
+		pF = reduce.cpm(pF);
+		pF = toPoly.pm(pF);
+		return(pF);
+	}
+	f.grid = expand.primes(b0$coeff, pow=pow, max.rows=max.rows);
+	for(nr in seq(nrow(f.grid))) {
+		### Scale x:
+		ptmp = p;
+		sc   = prod(f.grid[nr,]);
+		if(debug) cat(paste0("\nScaling = ", sc));
+		ptmp$coeff = ptmp$coeff * sc^ptmp[, xn];
+		pR = factorizeExt.p(ptmp, xn=xn, skip.L1=TRUE, file=NULL);
+		if(length(pR) > 0 && ! is.null(pR[[1]]$GCD)) {
+			return(scaleBack(pR[[1]]$GCD, sc));
+		}
+	}
+	print("No factors found!");
+	invisible();
+}
 
 #######################
 
@@ -123,6 +154,27 @@ rev.pm = function(p, xn="x", sort=TRUE) {
 	p[ , xn] = max(p[ , xn]) - p[ , xn];
 	if(sort) p = sort.pm(p, xn);
 	return(p);
+}
+
+### Factorize x:
+# - expand factors with power >= pow;
+expand.primes = function(x, pow=2, max.rows=100, one.rm=TRUE) {
+	# requires: library(pracma)
+	x = abs(x);
+	f = data.frame(F=factors(x), len=1);
+	f = aggregate(len ~ F, f, length);
+	if(pow > 1) {
+		f$len = f$len %/% pow; # multiple of pow;
+		f = f[f$len > 0, , drop=FALSE];
+	}
+	f = lapply(seq(nrow(f)), function(id) f$F[id]^seq(0, f$len[id]));
+	f.grid = expand.grid(f);
+	if(one.rm) f.grid = f.grid[-1, , drop=FALSE];
+	if( ! is.null(max.rows) && nrow(f.grid) > max.rows) {
+		f.grid = f.grid[seq(max.rows), , drop=FALSE];
+		warning("There are more factors than max.rows!\nThe additional factors have been removed.")
+	}
+	return(f.grid)
 }
 
 rPoly = function(n, coeff=c(0,1,-1), p=NULL, b0 = TRUE) {
