@@ -110,5 +110,26 @@ factorizeExt.p(p, xn="x", asBigNum=TRUE, debug=T)
 ################
 ################
 
+### Generation of Squares
+b = 3
+p = toPoly.pm("(x^4 + b()*x^2 + 2)*(x^3 - 2*x +3)");
+#
+p1 = replace.pm(p, toPoly.pm("1i*x"), xn="x")
+p2 = replace.pm(p, toPoly.pm("-1i*x"), xn="x")
+#
+p3 = mult.pm(p1, p2);
+p3 = as.bigz.pm(p3);
+pR = factorize.p(p3, "x", asBigNum=TRUE, file=NULL)
+pR[[1]]$GCD # TODO: scale back by i^2;
+
+# alternative:
+# - but ugly algorithm, due to complex numbers;
+# - fails in gcd(a, b);
+# gcd.exact.p(p1, p2, asBigNum=FALSE)
+
+
+################
+################
+
 eval.pm(p2, 4) %% 35
 eval.pm(p2, 9) %% 35

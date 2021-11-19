@@ -71,6 +71,8 @@ factorize0.p = function(p, dp, xn="x", f.all=FALSE, asBigNum=TRUE, asSquares=TRU
 	id = match(xn, names(p));
 	if(is.na(id)) stop("Variable NOT present!");
 	if(nrow(dp) == 0 || ncol(dp) < 2) return(list(list(GCD=NULL, p1=p)));
+	if(asBigNum && ! inherits(p$coeff, c("bigz", "bigq")))
+		warning("Polynomial is NOT of type BigNumber!");
 	### Factorization:
 	lvl = 1; # level of factorization; (TODO)
 	doSave = ! (is.null(file) || is.na(file));
