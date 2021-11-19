@@ -191,6 +191,15 @@ top.pm = function(p, xn="x", exclude=FALSE) {
 	}
 	
 }
+B0.pm = function(p, xn="x", warn=TRUE) {
+	idx = match(xn, names(p));
+	if(is.na(idx)) {
+		if(warn) warning("Variable not found!");
+		return(p);
+	}
+	b0 = p[p[, xn] == 0, , drop=FALSE];
+	return(b0);
+}
 
 maxPow.pm = function(p, xn) {
 	max(p[, xn]);
@@ -1057,7 +1066,7 @@ gcd.exact.p = function(p1, p2, xn="x", asBigNum=TRUE, doGCD=TRUE, debug=FALSE) {
 				if(asBigNum) dp$coeff = as.bigz(dp$coeff);
 			}
 			if( ! doGCD) fact = fact * c2 / xgcd;
-		}
+		} else fact = fact * c2;
 		if(debug) print(toPoly.pm(dp)); # e.g. overflows massively;
 		# Remaining x:
 		n0 = max(dp[, xn, drop=TRUE]);
