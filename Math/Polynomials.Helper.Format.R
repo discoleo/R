@@ -136,7 +136,8 @@ as.character.pm = function(p, leading=NA, do.sort=TRUE, do.rev=FALSE, sort.order
 	if( ! is.null(dim(p.str))) p.str = apply(p.str, 1, paste.nonempty)
 	else p.str = paste.nonempty(p.str);
 	# Sign: 0 treated as "+"
-	isPlus = (Re(coeff) > 0) | (Re(coeff) == 0 & Im(coeff) >= 0);
+	isPlus = if(inherits(coeff, c("bigz", "bigq"))) (coeff > 0)
+		else (Re(coeff) > 0) | (Re(coeff) == 0 & Im(coeff) >= 0);
 	sign.str = ifelse(isPlus, " + ", " - ");
 	sign.str[1] = if(isPlus[1]) "" else "- ";
 	# Complex numbers
@@ -152,6 +153,7 @@ as.character.pm = function(p, leading=NA, do.sort=TRUE, do.rev=FALSE, sort.order
 # coupled: "-2 + 3i" => - "(2 - 3i)";
 # de-coupled: "-2 + 3i" => - "2 + 3i";
 as.abs.complex = function(x, rm.zero=TRUE, coupled=TRUE) {
+	if(inherits(x, c("bigz", "bigq"))) return(abs(x));
 	isNegativ = Re(x) < 0;
 	if(is.numeric(x)) {
 		x[isNegativ] = - x[isNegativ];
@@ -173,6 +175,7 @@ format.complex.pm = function(x, sign.invert=FALSE, rm.zero=TRUE, brackets=TRUE, 
 		x = as.abs.complex(x, rm.zero = rm.zero, coupled = ! is.null(brackets));
 	}
 	coeff.str = as.character(x);
+	if(inherits(x, c("bigz", "bigq"))) return(coeff.str);
 	if(rm.zero) {
 		isReZero = ((Re(x) == 0) & (Im(x) != 0));
 		coeff.str[isReZero] = paste0(Im(x[isReZero]), i.ch);
