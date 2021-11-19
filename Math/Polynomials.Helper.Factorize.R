@@ -7,7 +7,7 @@
 ### Multi-Variable Polynomials
 ### Factorize
 ###
-### draft v.0.1c
+### draft v.0.1e
 
 
 ### Factorize Multi-Variable Polynomials
@@ -30,23 +30,26 @@
 
 ### Factorize
 # - only univariate Polynomial;
-factorizeExt.p = function(p, xn="x", asBigNum=FALSE, file=NULL, skip.L1=FAlsE, debug=FALSE) {
+factorizeExt.p = function(p, xn="x", asBigNum=FALSE, file=NULL, skip.squares=FALSE, debug=FALSE) {
 	# Level 1:
-	if( ! skip.L1) {
+	if( ! skip.squares) {
 		pR = factorize.p(p, xn=xn, asBigNum=asBigNum, file=file, f.all=FALSE, debug=debug);
 		if(length(pR) > 0 && ! is.null(pR[[1]]$GCD)) return(pR);
 	}
 	### Level 2: P(1/x)
 	pinv = rev.pm(p, xn=xn);
-	pR = factorize0.p(p, pinv, xn=xn, asBigNum=asBigNum, file=file, f.all=FALSE, debug=debug);
+	pR = factorize0.p(p, pinv, xn=xn, asBigNum=asBigNum, file=file, asSquares=FALSE,
+		f.all=FALSE, debug=debug);
 	if(length(pR) > 0 && ! is.null(pR[[1]]$GCD)) return(pR);
 	### Level 3: P( - 1/x)
 	isOdd = (pinv[,xn] %% 2 == 1);
 	pinv$coeff[isOdd] = - pinv$coeff[isOdd];
-	pR = factorize0.p(p, pinv, xn=xn, asBigNum=asBigNum, file=file, f.all=FALSE, debug=debug);
+	pR = factorize0.p(p, pinv, xn=xn, asBigNum=asBigNum, file=file, asSquares=FALSE,
+		f.all=FALSE, debug=debug);
 	#
 	return(pR);
 }
+### Factorizing Squares
 factorize.p = function(p, xn="x", f.all=FALSE, asBigNum=TRUE,
 		file="_R.Temp.", debug=FALSE) {
 	id = match(xn, names(p));
@@ -57,7 +60,8 @@ factorize.p = function(p, xn="x", f.all=FALSE, asBigNum=TRUE,
 	pRez = factorize0.p(p, dp, xn=xn, f.all=f.all, asBigNum=asBigNum, file=file, debug=debug);
 	return(pRez)
 }
-factorize0.p = function(p, dp, xn="x", f.all=FALSE, asBigNum=TRUE,
+### Factorizes using: GCD(p, dp)
+factorize0.p = function(p, dp, xn="x", f.all=FALSE, asBigNum=TRUE, asSquares=TRUE,
 		file="_R.Temp.", debug=FALSE) {
 	# factorize.all = FALSE
 	# - p1 is usually sufficient;
@@ -91,16 +95,20 @@ factorize0.p = function(p, dp, xn="x", f.all=FALSE, asBigNum=TRUE,
 			else print("Warning: some Denominators != 1!")
 		}
 		if(doSave) write.csv(p.all, file=paste0(file, "ALL.", lvl, ".csv"), row.names=FALSE);
-		cat("\n"); print("Starting Step 3:");
-		p.minus1 = gcd.exact.p(pGCD, p.all, xn, asBigNum=asBigNum);
-		# TODO: IF(p.minus1 == p.all) => multiplicity!
-		p1 = div.pm(p.all, p.minus1, xn)$Rez;
-		if(doSave) write.csv(p1, file=paste0(file, "p1.", lvl, ".csv"), row.names=FALSE);
-		#
+		# Data
 		rez[[lvl]] = list();
 		rez[[lvl]][["GCD"]] = pGCD;
-		rez[[lvl]][["p1"]]  = p1;
 		rez[[lvl]][["All"]] = p.all;
+		# Step 3: additional Step useful for factorizing Squares
+		if(asSquares) {
+			cat("\n"); print("Starting Step 3:");
+			p.minus1 = gcd.exact.p(pGCD, p.all, xn, asBigNum=asBigNum);
+			# TODO: IF(p.minus1 == p.all) => multiplicity!
+			p1 = div.pm(p.all, p.minus1, xn)$Rez;
+			if(doSave) write.csv(p1, file=paste0(file, "p1.", lvl, ".csv"), row.names=FALSE);
+			rez[[lvl]][["p1"]]  = p1;
+		}
+		#
 		if( ! f.all) break;
 		lvl = lvl + 1;
 		p = pGCD;
@@ -132,9 +140,9 @@ factorizeByB0.p = function(p, xn="x", pow=2, max.rows=100, digits=6, debug=TRUE)
 		### Scale x:
 		ptmp = p;
 		sc   = prod(f.grid[nr,]);
-		if(debug) cat(paste0("\nScaling = ", sc));
+		if(debug) cat(paste0("\nScaling = ", sc, "^", pow));
 		ptmp$coeff = ptmp$coeff * sc^ptmp[, xn];
-		pR = factorizeExt.p(ptmp, xn=xn, skip.L1=TRUE, file=NULL);
+		pR = factorizeExt.p(ptmp, xn=xn, skip.squares=TRUE, file=NULL);
 		if(length(pR) > 0 && ! is.null(pR[[1]]$GCD)) {
 			return(scaleBack(pR[[1]]$GCD, sc));
 		}
@@ -157,17 +165,21 @@ rev.pm = function(p, xn="x", sort=TRUE) {
 }
 
 ### Factorize x:
-# - expand factors with power >= pow;
-expand.primes = function(x, pow=2, max.rows=100, one.rm=TRUE) {
+factors.numeric = function(x) {
 	# requires: library(pracma)
 	x = abs(x);
-	f = data.frame(F=factors(x), len=1);
-	f = aggregate(len ~ F, f, length);
+	f = data.frame(F = pracma::factors(x), count=1);
+	f = aggregate(count ~ F, f, length);
+	return(f)
+}
+# - expand factors with power >= pow;
+expand.primes = function(x, pow=2, max.rows=100, one.rm=TRUE) {
+	f = factors.numeric(x);
 	if(pow > 1) {
-		f$len = f$len %/% pow; # multiple of pow;
-		f = f[f$len > 0, , drop=FALSE];
+		f$count = f$count %/% pow; # multiple of pow;
+		f = f[f$count > 0, , drop=FALSE];
 	}
-	f = lapply(seq(nrow(f)), function(id) f$F[id]^seq(0, f$len[id]));
+	f = lapply(seq(nrow(f)), function(id) f$F[id]^seq(0, f$count[id]));
 	f.grid = expand.grid(f);
 	if(one.rm) f.grid = f.grid[-1, , drop=FALSE];
 	if( ! is.null(max.rows) && nrow(f.grid) > max.rows) {
@@ -195,6 +207,7 @@ rPoly = function(n, coeff=c(0,1,-1), p=NULL, b0 = TRUE) {
 #  => (... - 1) * (... - 1);
 #  => Test: P(1), P(-1);
 
+# Analysis for Factoring Algorithms
 factorSimple.pm = function(p) {
 	if(ncol(p) > 2) stop("Only univariate polynomials!");
 	xn = "x"; # TODO
