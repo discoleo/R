@@ -454,9 +454,14 @@ toDouble.lpm = function(lp) {
 	return(lp);
 }
 toBigz.pm = function(p) {
+	if(is.complex(p$coeff)) {
+		if(any(Im(p$coeff) != 0)) stop("Complex coefficients!");
+		p$coeff = Re(p$coeff);
+	}
 	p$coeff = as.bigz(p$coeff);
 	return(p);
 }
+as.bigz.pm = function(p) toBigz.pm(p);
 as.numeric.pm = function(p) {
 	p$coeff = as.numeric(p$coeff);
 	return(p);
