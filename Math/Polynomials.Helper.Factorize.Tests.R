@@ -97,6 +97,16 @@ p1 = genPoly(b01, b02);
 factorizeByB0.p(p1, xn="x")
 
 
+###
+p = rPoly(10)
+
+### using BigNumbers
+source("Polynomials.Helper.BigNumbers.R")
+# Note: the code becomes usually incompatible after switching to Bigz; 
+p = toBigz.pm(p);
+factorizeExt.p(p, xn="x", asBigNum=TRUE, debug=T)
+
+
 ################
 ################
 
