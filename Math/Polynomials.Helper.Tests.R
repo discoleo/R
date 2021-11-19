@@ -320,11 +320,11 @@ print.pm(p, lead="x")
 K = 3
 pR = replace.pm(p, c(K,-K), c("K","s2"))
 print.pm(pR, lead="x")
-err = eval.pm(pR, sum(c(1,0,-K,1)*rootn(K^(4:1), n)))
-round0(err)
-#
 pR = replace.pm(p, c(K=K, s2=-K))
 print.pm(pR, lead="x")
+#
+err = eval.pm(pR, sum(c(1,0,-K,1)*rootn(K^(4:1), n)))
+round0(err)
 
 
 ########################
@@ -345,8 +345,8 @@ p = toPoly.pm("(2*x*y + 2)^4 + b3*(6*x*y + 5)^3")
 pR = replace.pm.character.pm(p, "xy", toPoly.pm("2*x*y"))
 pR = sortColumns.pm(pR)
 pR
-replace.pm(pR, c(xy=-1)) # 2*x*y = -1
-replace.pm(pR, c(xy=-2))
+replace.pm(pR, c(xy=-1)) # 2*x*y = -1 => 8*b3 + 1;
+replace.pm(pR, c(xy=-2)) # => - b3;
 
 
 ###
@@ -386,6 +386,7 @@ sapply(seq(1, 5), function(n) {
 pR = mult.pm(pR, toPoly.pm("x^2 - (1 + 1i)*x - 2 - 1i"))
 print.pm(pR)
 print.pm(pR, brackets.complex=FALSE)
+B0.pm(pR) # B0 = 5;
 
 
 ########################

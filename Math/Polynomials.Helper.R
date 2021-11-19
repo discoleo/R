@@ -129,6 +129,12 @@ isConj.f = function(x, y, tol=1E-3) {
 ### Polynomials ###
 ###################
 
+# Is polynomial:
+is.pm = function(p, strict=FALSE) {
+	if(strict) {
+		inherits(p, "pm");
+	} else inherits(p, "data.frame");
+}
 # isNonZero:
 isNZ.pm = function(p) {
 	is.data.frame(p) && (nrow(p) > 0);
@@ -219,7 +225,7 @@ Ops.pm = function(e1, e2) {
 
 mult.all.pm = function(p) return(mult.lpm(p));
 mult.lpm = function(p) {
-	if( ! is.list(p) || inherits(p, "pm"))
+	if( ! is.list(p) || is.pm(p, strict=TRUE))
 		stop("p must be a list of polynomials!");
 	len = length(p);
 	if(len == 1) return(p[[1]]);
@@ -405,7 +411,7 @@ simplify.pm = function(p1, p2) {
 ### Simplify functions
 reduce.pm = function(p) {
 	# remove Monomials with coeff == 0;
-	if( ! inherits(p, "data.frame")) stop("p must be a Polynomial!")
+	if( ! is.pm(p)) stop("p must be a Polynomial!")
 	id = which(p$coeff != 0);
 	return(p[id, , drop=FALSE]);
 }
@@ -813,7 +819,7 @@ replaceByPow.pm.character = function(p1, p2, xn, pow=1, sequential=TRUE, reduce=
 }
 # Replace: monomial pv with the variable pn;
 replace.pm.character.pm = function(p1, pn, pv, ..., drop=TRUE) {
-	if( ! inherits(pv, "data.frame")) stop("The replaced monomial must be a polynomial!");
+	if( ! is.pm(pv)) stop("The replaced monomial must be a polynomial!");
 	if(nrow(pv) != 1) stop("Only monomials can be replaced!");
 	# Names of pv:
 	pv = drop.pm(pv);
