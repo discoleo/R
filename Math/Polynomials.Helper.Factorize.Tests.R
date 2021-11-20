@@ -127,6 +127,12 @@ pR[[1]]$GCD # TODO: scale back by i^2;
 # - fails in gcd(a, b);
 # gcd.exact.p(p1, p2, asBigNum=FALSE)
 
+# alternative 2:
+p1 = rescale.pm(p, -1, "x")
+pR = gcd.exact.p(p, p1, asBigNum=FALSE)
+pR
+div.pm(p, pR, by="x")
+
 
 ################
 ################
