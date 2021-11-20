@@ -602,6 +602,35 @@ shift.pm = function(p, val, xn="x", tol=1E-10) {
 	return(p);
 }
 
+# Note: scale (Generic) behaves badly;
+rescale.pm = function(p, val, xn="x", div=FALSE) {
+	idx = match(xn, names(p));
+	if(is.na(idx)) stop("Variable not found!");
+	hasX = (p[, idx] != 0);
+	if(div) {
+		p$coeff[hasX] = p$coeff[hasX] / val^p[hasX, idx];
+	} else {
+		p$coeff[hasX] = p$coeff[hasX] * val^p[hasX, idx];
+	}
+	return(p);
+}
+rescale.pm.unity = function(p, pow, mn="m", xn="x", div=FALSE) {
+	idx = match(xn, names(p));
+	if(is.na(idx)) stop("Variable not found!");
+	hasX = (p[, idx] != 0);
+	x.pow = p[hasX, idx] %% pow;
+	if(div) x.pow[x.pow != 0] = pow - x.pow[x.pow != 0];
+	#
+	idm = match(mn, names(p));
+	if(is.na(idm)) {
+		p[, mn] = 0;
+		p[hasX, mn] = x.pow;
+	} else {
+		p[hasX, idm] = p[hasX, idm] + x.pow;
+	}
+	return(p);
+}
+
 ### Replace variables:
 
 # TODO:
