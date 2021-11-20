@@ -7,7 +7,7 @@
 ### Multi-Variable Polynomials
 ### Factorize: Tests
 ###
-### draft v.0.1a
+### draft v.0.1d
 
 
 ### Tests:
@@ -31,11 +31,13 @@ source("Polynomials.Helper.R")
 ########################
 
 b1 = 3;
-p0 = toPoly.pm("x^2 + b1()*x + 1")
+p0 = toPoly.pm("x^2 + b1[1]*x + 1")
 p1 = toPoly.pm("x^3 - 4*x^2 - x + 1")
 p2 = toPoly.pm("p0()*p1()")
 
-eval.pm(p2, roots.pm(p1)[1])
+err = eval.pm(p2, roots.pm(p1)[1])
+err
+stopifnot(round0(err) == 0)
 p2
 
 ### Factors: "strictly" Symmetric Polynomials
@@ -65,35 +67,40 @@ factorizeExt.p(p2, xn="x", asBigNum=FALSE, debug=T)
 
 ### Anti-Symmetric:
 b1 = 3;
-p0 = toPoly.pm("x^2 + b1()*x - 1")
+p0 = toPoly.pm("x^2 + b1[1]*x - 1")
 p1 = toPoly.pm("x^3 - 4*x^2 - x + 1")
 p2 = toPoly.pm("p0()*p1()")
 #
-factorizeExt.p(p2, xn="x", asBigNum=FALSE, debug=F)
+pR = factorizeExt.p(p2, xn="x", asBigNum=FALSE, debug=F)
+stopifnot( ! is.null(pR[[1]]$GCD))
+print(pR[[1]]$GCD)
 
 ### TODO
 b1 = 3;
-p0 = toPoly.pm("x^2 + b1()*x + 1")
+p0 = toPoly.pm("x^2 + b1[1]*x + 1")
 p3 = toPoly.pm("p0() * (x^4 + 5*x^3 + 5*x + 1)")
-factorizeExt.p(p3, xn="x", asBigNum=FALSE, debug=F)
+pR = factorizeExt.p(p3, xn="x", asBigNum=FALSE, debug=F)
+stopifnot( ! is.null(pR[[1]]$GCD))
+stopifnot( max(pR[[1]]$GCD$x) == 6)
+print(pR[[1]]$GCD)
 
 
 ################
 ################
 
-genPoly = function(b01, b02) {
-	p0 = toPoly.pm("x^2 + b1()*x + b01()");
-	p1 = toPoly.pm("p0() * (x^3 + 2*x^2 - 5*x + b02())");
+genPoly = function(b) {
+	p0 = toPoly.pm("x^2 + b[1]*x + b[2]");
+	p1 = toPoly.pm("p0() * (x^3 + 2*x^2 - 5*x + b[3])");
 	return(p1);
 }
 ### Ex 1:
-b1 = 3; b01 = 4; b02 = 1;
-p1 = genPoly(b01, b02);
+b  = c(3, 4, 1);
+p1 = genPoly(b);
 factorizeByB0.p(p1, xn="x")
 
 ### Ex 2:
-b1 = 3; b01 = -9; b02 = 4;
-p1 = genPoly(b01, b02);
+b  = c(3, -9, 4);
+p1 = genPoly(b);
 factorizeByB0.p(p1, xn="x")
 
 
@@ -112,11 +119,11 @@ factorizeExt.p(p, xn="x", asBigNum=TRUE, debug=T)
 
 ### Generation of Squares
 b = 3
-p = toPoly.pm("(x^4 + b()*x^2 + 2)*(x^3 - 2*x +3)");
+p = toPoly.pm("(x^4 + b[1]*x^2 + 2)*(x^3 - 2*x +3)");
 #
 p1 = replace.pm(p, toPoly.pm("1i*x"), xn="x")
 p2 = replace.pm(p, toPoly.pm("-1i*x"), xn="x")
-#
+# with BIGZ:
 p3 = mult.pm(p1, p2);
 p3 = as.bigz.pm(p3);
 pR = factorize.p(p3, "x", asBigNum=TRUE, file=NULL)
@@ -132,6 +139,15 @@ p1 = rescale.pm(p, -1, "x")
 pR = gcd.exact.p(p, p1, asBigNum=FALSE)
 pR
 div.pm(p, pR, by="x")
+
+
+################
+################
+
+b = c(2,3,5)
+plst = lapply(b, function(b) toPoly.pm("x^2 + b[1]*x + 1"))
+# a symmetric Polynomial:
+p = mult.lpm(plst)
 
 
 ################
