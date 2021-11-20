@@ -205,6 +205,10 @@ toMonom.pm = function(e, xsign = 1, env=NULL) {
 	return(m);
 }
 parse.epm = function(e, env) {
+	if(e[[1]] == "[") {
+		p = eval(substitute(e, list(e=e)), env);
+		return(p);
+	}
 	p = eval(substitute(e, list(e=e[[1]])), env);
 	# p = local(e[[1]], list(e=e, env));
 	pnames = names(e); len = length(pnames);

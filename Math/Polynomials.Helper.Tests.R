@@ -15,6 +15,16 @@ source("Polynomials.Helper.R")
 # source("Polynomials.Helper.Tests.R")
 
 
+# Check value of a specific coefficient
+checkCoeff.pm = function(p, val, pow=1, xn="x") {
+	coeff = p$coeff[p[, xn] == pow];
+	if(length(coeff) != 1) stop("Wrong number of Monoms!");
+	if(coeff != val) stop("Wrong value!");
+	print("Success!");
+	invisible(TRUE);
+}
+
+
 #######################
 #######################
 
@@ -32,13 +42,16 @@ pTest = data.frame(
 	coeff = c(1,1,-1)
 )
 p = toPoly.pm("x^3 + b1*x - R")
-diff.pm(p, pTest)
+pDiff = diff.pm(p, pTest)
+pDiff
+stopifnot(nrow(pDiff) == 0)
 
 
-### p^2
+### TODO: p^2 - deprecate
 pR = mult.pm(p)
 pR
-diff.pm(pR, toPoly.pm("R^2 - 2*R*x^3 + x^6 - 2*R*x*b1 + 2*x^4*b1 + x^2*b1^2"))
+pDiff = diff.pm(pR, toPoly.pm("R^2 - 2*R*x^3 + x^6 - 2*R*x*b1 + 2*x^4*b1 + x^2*b1^2"))
+stopifnot(nrow(pDiff) == 0)
 
 ### p^3
 p.v = pow.pm(p, 3)
@@ -49,8 +62,11 @@ print.pm(p.v[,c(2,3,4,1)])
 ### eval 1:
 x = 2; R = 2; b1 = -3;
 # == 0 !
-eval.pm(p.v, c(R, x, b1))
 (x^3 + b1*x - R)^3
+v = eval.pm(p.v, c(R, x, b1))
+v
+stopifnot(v == 0)
+
 
 ### eval 2:
 R = 2; b1 = 3; x = -5;
@@ -66,6 +82,7 @@ eval.pm(p.v, c(R, x, b1))
 # automatic:
 p = toPoly.pm("x^3 + 0*b1*x^2 + b2*0*x + y*0 + 3*b + 2")
 p
+stopifnot(nrow(p) == 3)
 
 p = data.frame(x=3:0, y=0:3, coeff=c(1,0,0,1))
 # automatic mechanism is bypassed: ?? what default ??
@@ -106,6 +123,21 @@ f = function(p1) toPoly.pm("p1(x = x-1)")
 f(p1)
 # (x-1)^3
 f(toPoly.pm("x^3"))
+
+
+### Specified Parameters
+b = c(2, 5, 3)
+polyGenTest = function(b, id) {
+	p = toPoly.pm("x^2 + b[id]*x + 1");
+	checkCoeff.pm(p, b[id], pow=1);
+	print(p)
+}
+polyGenTest(b, 1)
+polyGenTest(b, 2)
+polyGenTest(b, 3)
+
+p = toPoly.pm("x^2 + (b^2 - b + 1)[1]*x + 1")
+p # ... + 3*x
 
 
 ### Power n
