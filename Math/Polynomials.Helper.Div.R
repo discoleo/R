@@ -23,10 +23,8 @@
 div.pm = function(p1, p2, by="x", NF.stop=TRUE, debug=TRUE) {
 	# very simple division
 	xn = by[1];
-	idx2 = match(xn, names(p2));
-	if(is.na(idx2)) stop(paste0("P2 must contain the variable: ", xn));
-	idx1 = match(xn, names(p1));
-	if(is.na(idx1)) stop(paste0("P1 must contain the variable: ", xn));
+	idx = checkDiv.pm(p1, p2, xn=xn);
+	idx1 = idx[[1]]; idx2 = idx[[2]];
 	if( ! is.data.frame(p2)) p2 = as.data.frame(p2);
 	#
 	xpow2 = max(p2[,idx2]);
@@ -39,14 +37,16 @@ div.pm = function(p1, p2, by="x", NF.stop=TRUE, debug=TRUE) {
 	names(pRez) = c(xn, "coeff");
 	#
 	idn = match(names(pDx)[-idcDx], names(p1));
-	print(paste0("Leading Variables: matches = ", idn));
-	if(any(is.na(idn))) {
+	allMatched = ! any(is.na(idn));
+	# print(paste0("Leading Variables: all matched = ", allMatched));
+	if( ! allMatched) {
 		if(NF.stop) {
 			msg = "No matching variables for Leading Divisor:\n";
 			stop(paste0(msg, names(pDx)[is.na(idn)]));
-		} else stop("Not yet implemented: NF-option!")
+		}
 	}
 	if(nrow(pDx) == 1) {
+		if(allMatched) {
 		while(TRUE) {
 			if(nrow(p1) == 0) break;
 			# Leading Monomials:
@@ -60,6 +60,44 @@ div.pm = function(p1, p2, by="x", NF.stop=TRUE, debug=TRUE) {
 			px1[, idc1] = px1[, idc1] / c2;
 			pRez = add.pm(pRez, px1);
 			p1 = diff.pm(p1, mult.pm(px1, p2));
+		}
+		} else {
+			# NOT all Leading variables matched
+			# stop("Not yet implemented: NF-option!");
+			# only Monomial:
+			mDx = pDx[1, - idcDx, drop=FALSE];
+			pDivL = NULL;
+			while(TRUE) {
+				if(nrow(p1) == 0) break;
+				# Leading Monomials:
+				xpow1 = max(p1[, xn]);
+				if(xpow1 < xpow2) break;
+				# check leading variables:
+				pLead = p1[p1[, xn] == xpow1, , drop=FALSE];
+				pLead = drop.pm(pLead);
+				print(pLead); # DEBUG
+				# TODO: may be > 1 Leading rows;
+				idn = match(names(mDx), names(pLead));
+				isNot = is.na(idn);
+				if(any(isNot)) {
+					# Add missing variables
+					m0 = mDx[, isNot, drop=FALSE];
+					p1 = mult.m(p1, m0);
+					if(nrow(pRez) > 0) pRez = mult.m(pRez, m0);
+					idn = match(names(mDx), names(p1));
+					pDivL = if(is.null(pDivL)) {
+							m0$coeff = 1; m0;
+						} else mult.m(pDivL, m0);
+				}
+				px1 = p1[p1[,xn] == xpow1, , drop=FALSE]; # TODO: check;
+				# Diff Powers:
+				for(nc in seq_along(idn)) {
+					px1[, idn[nc]] = px1[, idn[nc]] - pDx[, nc];
+				}
+				px1[, idc1] = px1[, idc1] / c2;
+				pRez = add.pm(pRez, px1);
+				p1 = diff.pm(p1, mult.pm(px1, p2));
+			}
 		}
 	} else {
 		if(length(by) == 1) stop("Not yet implemented!")
@@ -77,8 +115,11 @@ div.pm = function(p1, p2, by="x", NF.stop=TRUE, debug=TRUE) {
 		if(nrow(p1) > 0) print("Not divisible!")
 		else print("Divisible!");
 	}
-	return(list(Rez=pRez, Rem=p1));
+	pRez = list(Rez=pRez, Rem=p1);
+	if( ! allMatched) pRez$pDiv = pDivL;
+	return(pRez);
 }
+# only Remainder:
 divByZero.pm = function(p1, pDiv, xn="x", asBigNum=TRUE) {
 	return(gcd.exact.p(p1, pDiv, xn=xn, asBigNum=asBigNum, doGCD=FALSE))
 }
@@ -88,6 +129,15 @@ divOK.pm = function(p, div, xn="x", warn=TRUE) {
 		return(list(Rez=pR$Rez, isDiv=TRUE));
 	} else if(warn) warning("Division went wrong!");
 	return(list(Rez=p, isDiv=FALSE));
+}
+
+### Helper Functions:
+checkDiv.pm = function(p1, pDiv, xn="x") {
+	idx2 = match(xn, names(pDiv));
+	if(is.na(idx2)) stop(paste0("P2 must contain the variable: ", xn));
+	idx1 = match(xn, names(p1));
+	if(is.na(idx1)) stop(paste0("P1 must contain the variable: ", xn));
+	return(c(idx1, idx2));
 }
 
 ###########
