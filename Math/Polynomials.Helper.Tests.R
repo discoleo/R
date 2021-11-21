@@ -20,7 +20,18 @@ checkCoeff.pm = function(p, val, pow=1, xn="x") {
 	coeff = p$coeff[p[, xn] == pow];
 	if(length(coeff) != 1) stop("Wrong number of Monoms!");
 	if(coeff != val) stop("Wrong value!");
-	print("Success!");
+	print("Coeff: Success!");
+	invisible(TRUE);
+}
+checkVal.pm = function(pval, val) {
+	print(pval);
+	stopifnot(pval == val);
+	print("Value: Success!");
+	invisible(TRUE);
+}
+checkEmpty.pm = function(p) {
+	stopifnot(nrow(p) == 0);
+	print("Empty: Success!");
 	invisible(TRUE);
 }
 
@@ -103,14 +114,15 @@ p1
 # (x+1)*(x+2)*...*(x+6)
 pR = toPoly.pm(paste("(x+", seq(1,6), ")", collapse="*"))
 pR
-eval.pm(pR, -1)
-eval.pm(pR, -6)
+checkVal.pm(eval.pm(pR, -1), 0)
+checkVal.pm(eval.pm(pR, -6), 0)
 
 p2 = toPoly.pm("(x+a+b)^3")
 p2 = sort.pm(p2, "x", xn2= c("a", "b"))
 p2
 # == 3^3
-eval.pm(p2, c(2,4,-3))
+r = eval.pm(p2, c(2,4,-3))
+checkVal.pm(r, 3^3)
 
 ### x^3
 toPoly.pm("p1(x = x-1)")
@@ -181,12 +193,16 @@ p1 = toPoly.pm("a*x^3 + b*x^3 + 1")
 
 ### Test 1:
 pR = shift.pm(p1, -1, "x")
-diff.pm(pR, toPoly.pm("(a+b)*(x-1)^3 + 1"))
+pDiff = diff.pm(pR, toPoly.pm("(a+b)*(x-1)^3 + 1"))
+pDiff
+checkEmpty.pm(pDiff)
 
 ### Test 2:
 pR = shift.pm(p1, c(-1,1), "x")
-diff.pm(p1, pR)
+pDiff = diff.pm(p1, pR)
 # nrow == 0 & Warning!
+pDiff
+checkEmpty.pm(pDiff)
 
 ### Test 3:
 pR = shift.pm(p1, c(-1,1), c("a", "b"))
@@ -419,6 +435,19 @@ pR = mult.pm(pR, toPoly.pm("x^2 - (1 + 1i)*x - 2 - 1i"))
 print.pm(pR)
 print.pm(pR, brackets.complex=FALSE)
 B0.pm(pR) # B0 = 5;
+
+
+########################
+########################
+
+### Symmetric Polynomials
+n = 3
+b = paste0("b", seq(n))
+plst = lapply(b, function(b) toPoly.pm("x^2 + b[1]*x + 1"))
+p = mult.lpm(plst)
+p = sort.pm(p, xn="x")
+# p
+checkEmpty.pm(diff.pm(p, rev.pm(p, xn="x")))
 
 
 ########################

@@ -6,7 +6,7 @@
 ### Helper Functions
 ### Parse Polynomials
 ###
-### draft v.0.2c
+### draft v.0.2d
 
 ### Parser for Multi-variable Polynomials
 
@@ -133,7 +133,7 @@ toMonom.pm = function(e, xsign = 1, env=NULL) {
 					if(is.call(e)) {
 						pp = toMonom.pm(e, env=env);
 						nLast = length(acc);
-						pp2 = toMonom.pm(acc[[nLast]], env=env)
+						pp2 = toMonom.pm(acc[[nLast]], env=env);
 						pp = mult.pm(pp, pp2);
 						# TODO: enforce multiplication;
 						m  = mult.pm(pp, m);
@@ -189,7 +189,15 @@ toMonom.pm = function(e, xsign = 1, env=NULL) {
 					e = e[[2]]; next;
 				} else if(is.call(e)) {
 					pp = parse.epm(e, env=env); # another polynomial;
-					m  = mult.pm(pp, m); break;
+					if(is.character(pp)) {
+						idv = match(pp, names(m));
+						if(is.na(idv)) m[, pp] = 1
+						else 
+							m[, idv] = m[, idv] + 1;
+					} else {
+						m  = mult.pm(pp, m);
+					}
+					break;
 				} else {
 					vn1 = as.character(op); # a variable name;
 					m[, vn1] = 1;
