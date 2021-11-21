@@ -12,26 +12,48 @@ source("Polynomials.Helper.R")
 
 
 ### this file:
-# source("Polynomials.Helper.Tests.R")
+# options(warn=1); source("Polynomials.Helper.Tests.R")
 
+
+####################
+
+### Helper Functions
 
 # Check value of a specific coefficient
 checkCoeff.pm = function(p, val, pow=1, xn="x") {
-	coeff = p$coeff[p[, xn] == pow];
+	if(is.null(xn)) {
+		coeff = p$coeff;
+	} else {
+		coeff = p$coeff[p[, xn] == pow];
+	}
 	if(length(coeff) != 1) stop("Wrong number of Monoms!");
 	if(coeff != val) stop("Wrong value!");
-	print("Coeff: Success!");
+	cat("Coeff: Success!\n");
 	invisible(TRUE);
 }
 checkVal.pm = function(pval, val) {
 	print(pval);
 	stopifnot(pval == val);
-	print("Value: Success!");
+	cat("Value: Success!\n");
 	invisible(TRUE);
 }
 checkEmpty.pm = function(p) {
 	stopifnot(nrow(p) == 0);
-	print("Empty: Success!");
+	cat("Empty: Success!\n");
+	invisible(TRUE);
+}
+checkLength.pm = function(p, nr) {
+	stopifnot(nrow(p) == nr);
+	cat("Length: Success!\n");
+	invisible(TRUE);
+}
+checkWarning.pm = function(wrn, len=1, txt=NULL) {
+	stopifnot( ! is.null(wrn) && length(wrn) == len);
+	if( ! is.null(txt)) {
+		len = length(txt);
+		stopifnot(names(wrn)[seq(len)] == txt);
+	}
+	cat("Warning: Success!\n");
 	invisible(TRUE);
 }
 
@@ -43,7 +65,35 @@ checkEmpty.pm = function(p) {
 ### Tests ###
 #############
 
+### Section: Parser
+
+cat("\n### Section: Parser\n\n")
+
+### Parse:
+### B0
+p = toPoly.pm("1")
+checkLength.pm(p, 1)
+checkCoeff.pm(p, 1, x=NULL)
+
+###
+p = toPoly.pm("3")
+checkLength.pm(p, 1)
+checkCoeff.pm(p, 3, x=NULL)
+
+###
+p = toPoly.pm("-5")
+checkLength.pm(p, 1)
+checkCoeff.pm(p, -5, x=NULL)
+
+
+cat("\nSection: Parse B0\n\tSuccess!\n")
+
+##################
+##################
+
 ### Multi-variable Multiplication
+
+cat("\n### Section: Multiplication\n\n")
 
 ### x^3 + b1*x - R
 pTest = data.frame(
@@ -55,20 +105,30 @@ pTest = data.frame(
 p = toPoly.pm("x^3 + b1*x - R")
 pDiff = diff.pm(p, pTest)
 pDiff
-stopifnot(nrow(pDiff) == 0)
+checkEmpty.pm(pDiff)
 
 
 ### TODO: p^2 - deprecate
 pR = mult.pm(p)
 pR
 pDiff = diff.pm(pR, toPoly.pm("R^2 - 2*R*x^3 + x^6 - 2*R*x*b1 + 2*x^4*b1 + x^2*b1^2"))
-stopifnot(nrow(pDiff) == 0)
+checkEmpty.pm(pDiff)
+
 
 ### p^3
+pp3 = data.frame(
+	x  = c(0, 3, 1, 6, 4, 2, 9, 7, 5, 3),
+	R  = c(3, 2, 2, 1, 1, 1, 0, 0, 0, 0),
+	b1 = c(0, 0, 1, 0, 1, 2, 0, 1, 2, 3),
+	coeff = c(-1, 3, 3, -3, -6, -3, 1, 3, 3, 1)
+)
 p.v = pow.pm(p, 3)
 p.v
+checkEmpty.pm(diff.pm(p.v, pp3))
 
+# TODO
 print.pm(p.v[,c(2,3,4,1)])
+
 
 ### eval 1:
 x = 2; R = 2; b1 = -3;
@@ -76,31 +136,54 @@ x = 2; R = 2; b1 = -3;
 (x^3 + b1*x - R)^3
 v = eval.pm(p.v, c(R, x, b1))
 v
-stopifnot(v == 0)
+checkVal.pm(v, 0)
 
 
 ### eval 2:
 R = 2; b1 = 3; x = -5;
 # != 0!
-eval.pm(p.v, c(R, x, b1))
 (x^3 + b1*x - R)^3
+v = eval.pm(p.v, c(R, x, b1))
+v
+checkVal.pm(v, -2863288)
 
 
+### eval 2:
+R = -2; b1 = -5; x = 2;
+# != 0!
+(x^3 + b1*x - R)^3
+v = eval.pm(p.v, c(R, x, b1))
+v
+checkVal.pm(v, 0)
+
+cat("\nSection: Multiplication\n\tSuccess!\n\n")
+
+
+###################
 ###################
 
 ### Reduce
 
+cat("\n### Section: Reduce\n\n")
+
 # automatic:
 p = toPoly.pm("x^3 + 0*b1*x^2 + b2*0*x + y*0 + 3*b + 2")
 p
-stopifnot(nrow(p) == 3)
+checkLength.pm(p, 3)
 
 p = data.frame(x=3:0, y=0:3, coeff=c(1,0,0,1))
 # automatic mechanism is bypassed: ?? what default ??
 p = toPoly.pm(p, reduce=FALSE)
 print.pm(p)
 reduce0.pm(p)
-toPoly.pm(p, reduce=TRUE)
+checkLength.pm(p, 4)
+checkLength.pm(reduce0.pm(p), 2)
+
+pr = toPoly.pm(p, reduce=TRUE)
+pr
+checkLength.pm(pr, 2)
+
+cat("\nSection: Reduce\n\tSuccess!\n\n")
 
 
 ###################
@@ -171,6 +254,8 @@ f(0)
 f(2)
 f(3)
 
+cat("\nSection: Advanced Parser\n\tSuccess!\n\n")
+
 ###############
 
 ### Eval:
@@ -185,6 +270,7 @@ eval.pm(pR, list(a=-6, b=6, x=2)) # 0
 eval.pm(pR, list(a=-6, b=5, x=-5)) # 0
 eval.pm(pR, list(a=-6, b=5, x=-6)) # != 0
 
+cat("\nSection: Eval\n\tSuccess!\n\n")
 
 ###############
 
@@ -197,12 +283,20 @@ pDiff = diff.pm(pR, toPoly.pm("(a+b)*(x-1)^3 + 1"))
 pDiff
 checkEmpty.pm(pDiff)
 
+
 ### Test 2:
 pR = shift.pm(p1, c(-1,1), "x")
+# TODO: ERROR: all possible environments tested!
+# wrn = parent.frame()[["last.warning"]]; print(wrn);
+# flush(stderr()); flush(stdout()); # update Warnings;
+wrn = warnings(); print(wrn)
+# checkWarning.pm(wrn, 1, "Same variable used!")
+
 pDiff = diff.pm(p1, pR)
 # nrow == 0 & Warning!
 pDiff
 checkEmpty.pm(pDiff)
+
 
 ### Test 3:
 pR = shift.pm(p1, c(-1,1), c("a", "b"))
@@ -217,6 +311,8 @@ p1 = toPoly.pm("x^3 - 1/27")
 pR = shift.pm(p1, 1/3, "x")
 # b0 == 0 !
 pR
+
+cat("\nSection: Shift\n\tSuccess!\n\n")
 
 
 ####################
@@ -377,6 +473,8 @@ round0(err)
 
 ########################
 
+cat("\n### Section: Replace Vars\n\n")
+
 ###
 p = toPoly.pm("(x*y + 2)^4 + b3*(x*y + 1)^3")
 pR = replace.pm.character.pm(p, "xy", toPoly.pm("x*y"))
@@ -415,10 +513,15 @@ pR
 
 ### Multiply List of Polynomials
 
+cat("\n### Section: Poly List\n\n")
+
 ###
 p = lapply(seq(5), function(n) toPoly.pm("x^n - 1"))
 pR = mult.lpm(p)
 print.pm(pR)
+
+
+cat("\n### Section: Complex Numbers\n\n")
 
 p[[6]] = 2 - 1i;
 pR = mult.lpm(p)
@@ -440,6 +543,8 @@ B0.pm(pR) # B0 = 5;
 ########################
 ########################
 
+cat("\n### Section: Parse Characters as Vars\n\n")
+
 ### Symmetric Polynomials
 n = 3
 b = paste0("b", seq(n))
@@ -453,6 +558,8 @@ checkEmpty.pm(diff.pm(p, rev.pm(p, xn="x")))
 ########################
 ########################
 
+cat("\n### Section: Differentiation\n\n")
+
 ### D
 n = 3
 p1 = toPoly.pm("x^n + b1*x + b0")
@@ -463,3 +570,8 @@ print.pm(p$Poly, leading="x")
 
 # 3*x^5 + 2*c2*x^4 + c1*x^3 + 3*b1*x^3 + 3*x^2 + 3*b0*x^2 + 2*c2*b1*x^2 +
 #	+ 2*c2*b0*x + c1*b1*x + c1*b0 + b1
+
+
+###
+cat("\n\n All Tests: Success!\n\n")
+
