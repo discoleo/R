@@ -7,7 +7,7 @@
 ### of Polynomial Fractions
 ### derived from Roots of Unity
 ###
-### draft v.0.2g
+### draft v.0.2g-clean2
 
 
 
@@ -27,7 +27,7 @@
 ### History ###
 ###############
 
-### draft v.0.2h:
+### draft v.0.2h - v.0.2h-clean2:
 # - rearranging sections;
 ### draft v.0.2f:
 # - various derived Integrals:
@@ -855,50 +855,9 @@ integrate(function(x) log(x^n + 1), lower=0, upper=1)
 
 
 
+
 ####################
 ####################
-
-### x^n/log(x^n + 1)
-
-### n = 3
-n = 3;
-
-r = line_integral(function(x) exp(1i*(n+1)*x) / log(exp(1i*n*x) + 1), c(0, 2*pi/n)) +
-	line_integral(function(x) - exp(-1i*(n+1)*x) / log(exp(-1i*n*x) + 1), c(0, 2*pi/n));
-r * -1i / n
-
-r = line_integral(function(x)   exp(1i*(n+1)*x) / (log(2*cos(n/2*x) + 0i) + 1i*n/2*x), c(0, pi/n)) +
-	line_integral(function(x)   exp(1i*(n+1)*x) / (log(2*cos(n/2*x) + 0i) + 1i*n/2*x - 2i*pi), c(pi/n, 2*pi/n)) +
-	line_integral(function(x) - exp(-1i*(n+1)*x) / (log(2*cos(n/2*x) + 0i) - 1i*n/2*x), c(0, 2*pi/n));
-r * -1i / n
-
-# TODO: transform to trig-functions;
-
-# Baseline:
-integrate(function(x) x^n/log(x^n + 1), lower=0, upper=1)
-
-
-#########
-### n = 5
-n = 5;
-
-r = line_integral(function(x) exp(1i*(n+1)*x) / log(exp(1i*n*x) + 1), c(0, 2*pi/n)) +
-	line_integral(function(x) - exp(-1i*(n+1)*x) / log(exp(-1i*n*x) + 1), c(0, 2*pi/n)) +
-	line_integral(function(x) exp(1i*(n+1)*x) / log(exp(1i*n*x) + 1), c(0, 4*pi/n)) +
-	line_integral(function(x) - exp(-1i*(n+1)*x) / log(exp(-1i*n*x) + 1), c(0, 4*pi/n));
-r * -1i / n
-
-# Baseline:
-integrate(function(x) x^n/log(x^n + 1), lower=1E-6, upper=1)
-
-### BUG:
-integrate(function(x) x^n/log(x^n + 1), lower=1E-4, upper=1)
-integrate(function(x) x^n/log(x^n + 1), lower=1E-5, upper=1) # BUG
-integrate(function(x) x^n/log(x^n + 1), lower=1E-6, upper=1)
-
-
-#################
-#################
 
 ### (x^n + 1) * log(x^n + 1)
 ### (x^n + 1) * log(x^n + 1) / x  # == 0;
@@ -961,6 +920,52 @@ r * -1i / n
 
 # Baseline:
 integrate(function(x) sqrt(x^n + 1) * log(x^n + 1), lower=0, upper=1)
+
+
+#####################
+#####################
+
+#####################
+### Log-Fractions ###
+#####################
+
+### x^n/log(x^n + 1)
+
+### n = 3
+n = 3;
+
+r = line_integral(function(x) exp(1i*(n+1)*x) / log(exp(1i*n*x) + 1), c(0, 2*pi/n)) +
+	line_integral(function(x) - exp(-1i*(n+1)*x) / log(exp(-1i*n*x) + 1), c(0, 2*pi/n));
+r * -1i / n
+
+r = line_integral(function(x)   exp(1i*(n+1)*x) / (log(2*cos(n/2*x) + 0i) + 1i*n/2*x), c(0, pi/n)) +
+	line_integral(function(x)   exp(1i*(n+1)*x) / (log(2*cos(n/2*x) + 0i) + 1i*n/2*x - 2i*pi), c(pi/n, 2*pi/n)) +
+	line_integral(function(x) - exp(-1i*(n+1)*x) / (log(2*cos(n/2*x) + 0i) - 1i*n/2*x), c(0, 2*pi/n));
+r * -1i / n
+
+# TODO: transform to trig-functions;
+
+# Baseline:
+integrate(function(x) x^n/log(x^n + 1), lower=0, upper=1)
+
+
+#########
+### n = 5
+n = 5;
+
+r = line_integral(function(x) exp(1i*(n+1)*x) / log(exp(1i*n*x) + 1), c(0, 2*pi/n)) +
+	line_integral(function(x) - exp(-1i*(n+1)*x) / log(exp(-1i*n*x) + 1), c(0, 2*pi/n)) +
+	line_integral(function(x) exp(1i*(n+1)*x) / log(exp(1i*n*x) + 1), c(0, 4*pi/n)) +
+	line_integral(function(x) - exp(-1i*(n+1)*x) / log(exp(-1i*n*x) + 1), c(0, 4*pi/n));
+r * -1i / n
+
+# Baseline:
+integrate(function(x) x^n/log(x^n + 1), lower=1E-6, upper=1)
+
+### BUG:
+integrate(function(x) x^n/log(x^n + 1), lower=1E-4, upper=1)
+integrate(function(x) x^n/log(x^n + 1), lower=1E-5, upper=1) # BUG
+integrate(function(x) x^n/log(x^n + 1), lower=1E-6, upper=1)
 
 
 #################
