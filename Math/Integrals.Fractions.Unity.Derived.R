@@ -7,7 +7,7 @@
 ### of Polynomial Fractions
 ### derived from Roots of Unity
 ###
-### draft v.0.2e-fix
+### draft v.0.2f
 
 
 
@@ -739,7 +739,7 @@ r = line_integral(function(x) exp(1i*x) / (exp(1i*n*x) + k), c(0, 2*pi/n)) +
 	line_integral(function(x) - exp(-1i*x) / (exp(-1i*n*x) + k), c(0, 2*pi/n));
 r * -1i / n
 
-r = line_integral(function(x) (sin(2*x) - k*sin(x)) / (2*k*cos(n*x) + k^2 + 1), c(0, 2*pi/n));
+r = line_integral(function(x) (sin((n-1)*x) - k*sin(x)) / (2*k*cos(n*x) + k^2 + 1), c(0, 2*pi/n));
 r * -2 / n
 
 # Baseline:
@@ -775,6 +775,8 @@ integrate(function(x) 1/(x^n + k), lower=0, upper=1)
 #########################
 ### Radical Fractions ###
 #########################
+
+### 1/sqrt(x^n + k)
 
 ### n = 3
 n = 3;
@@ -816,6 +818,36 @@ integrate(function(x) 1/sqrt(x^n + 1), lower=0, upper=upper)
 #############
 ###  Log  ###
 #############
+
+### log(x^n + 1)
+
+### n = 3
+n = 3;
+
+# Pole at 1i*pi/3 is 0!
+r = line_integral(function(x) log(exp(1i*n*x) + 1) * exp(1i*x), c(0, 2*pi/n)) +
+	line_integral(function(x) - log(exp(-1i*n*x) + 1) * exp(-1i*x), c(0, 2*pi/n));
+r * -1i / n
+
+r = line_integral(function(x) log(2*cos(n*x/2) + 0i) * exp(1i*x) + 1i*n*x/2*exp(1i*x), c(0, 2*pi/n)) + 2*pi +
+	line_integral(function(x) - log(2*cos(n*x/2) + 0i) * exp(-1i*x) + 1i*n*x/2*exp(-1i*x), c(0, 2*pi/n));
+r * -1i / n
+
+r = line_integral(function(x) log(2*cos(n*x/2) + 0i) * exp(1i*x), c(0, 2*pi/n)) +
+	line_integral(function(x) - log(2*cos(n*x/2) + 0i) * exp(-1i*x), c(0, 2*pi/n));
+(r + 2*pi) * -1i / n + (2*pi/n*sin(2*pi/n) + cos(2*pi/n) - 1)
+
+# formula is partly redundant
+# (as baseline integral can also be computed exactly)
+r = line_integral(function(x) log(cos(n*x/2) + 0i) * sin(x), c(0, 2*pi/n));
+(2*r - 2i*pi - 2*log(2)*cos(2*pi/n) + 2*log(2)) / n + (2*pi/n*sin(2*pi/n) + cos(2*pi/n) - 1)
+
+integrate(function(x) log(x^n + 1), lower=0, upper=1)
+
+
+####################
+
+### x^n/log(x^n + 1)
 
 ### n = 3
 n = 3;
