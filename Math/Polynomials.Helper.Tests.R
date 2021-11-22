@@ -31,6 +31,18 @@ checkCoeff.pm = function(p, val, pow=1, xn="x") {
 	cat("Coeff: Success!\n");
 	invisible(TRUE);
 }
+checkMaxPow.pm = function(p, val, xn="x") {
+	idx = match(xn, names(p));
+	if(is.na(idx)) {
+		stopifnot(val == 0);
+		cat("Power == 0: Success!\n");
+		return(invisible());
+	}
+	pow = max(p[, xn]);
+	if(pow != val) stop("Wrong power!");
+	cat("Power: Success!\n");
+	invisible(TRUE);
+}
 checkVal.pm = function(pval, val) {
 	print(pval);
 	stopifnot(pval == val);
@@ -128,6 +140,7 @@ checkEmpty.pm(diff.pm(p.v, pp3))
 
 # TODO
 print.pm(p.v[,c(2,3,4,1)])
+print("TODO")
 
 
 ### eval 1:
@@ -148,7 +161,7 @@ v
 checkVal.pm(v, -2863288)
 
 
-### eval 2:
+### eval 3:
 R = -2; b1 = -5; x = 2;
 # != 0!
 (x^3 + b1*x - R)^3
@@ -179,66 +192,106 @@ reduce0.pm(p)
 checkLength.pm(p, 4)
 checkLength.pm(reduce0.pm(p), 2)
 
-pr = toPoly.pm(p, reduce=TRUE)
-pr
-checkLength.pm(pr, 2)
+pR = toPoly.pm(p, reduce=TRUE)
+pR
+checkLength.pm(pR, 2)
 
 cat("\nSection: Reduce\n\tSuccess!\n\n")
 
 
-###################
-###################
+#######################
+#######################
 
-### Advanced Parser
+#######################
+### Advanced Parser ###
+#######################
+
+cat("\n### Section: Advanced Parser\n\n")
 
 p1 = toPoly.pm("(x+1)^3")
 p1
+checkVal.pm(eval.pm(p1, -1), 0)
+checkVal.pm(eval.pm(p1, -3), -8)
 
-# (x+1)*(x+2)*...*(x+6)
+
+### (x+1)*(x+2)*...*(x+6)
 pR = toPoly.pm(paste("(x+", seq(1,6), ")", collapse="*"))
 pR
 checkVal.pm(eval.pm(pR, -1), 0)
 checkVal.pm(eval.pm(pR, -6), 0)
+checkVal.pm(eval.pm(pR, -7), 720)
 
+### Power in Parser
 p2 = toPoly.pm("(x+a+b)^3")
 p2 = sort.pm(p2, "x", xn2= c("a", "b"))
 p2
+checkCoeff.pm(p2, 1, "a", pow=3)
+checkCoeff.pm(p2, 1, "b", pow=3)
+checkMaxPow.pm(p2, 3, "a")
+checkMaxPow.pm(p2, 3, "b")
 # == 3^3
 r = eval.pm(p2, c(2,4,-3))
 checkVal.pm(r, 3^3)
 
+
+### Replace in Parser
+cat("\n### sub-Section: Parser - p(x = ...)\n\n")
+
 ### x^3
-toPoly.pm("p1(x = x-1)")
+pR = toPoly.pm("p1(x = x-1)")
+pR
+checkLength.pm(pR, 1)
+checkCoeff.pm(pR, 1, "x", pow=3)
 
 ### x^3 * (x+b)^3
-toPoly.pm("p1(x = x-1) * p2(x = x-a)")
+pR = toPoly.pm("p1(x = x-1) * p2(x = x-a)")
+pR
+checkLength.pm(pR, 4)
+checkCoeff.pm(pR, 1, "x", pow=3)
+pDiff = diff.pm(pR, toPoly.pm("x^6 + 3*x^5*b + 3*x^4*b^2 + x^3*b^3"))
+checkEmpty.pm(pDiff)
 
-###
+### Replace in Parser
+# - with Environment
 f = function(p1) toPoly.pm("p1(x = x-1)")
-f(p1)
-# (x-1)^3
-f(toPoly.pm("x^3"))
+### x^3
+pR = f(p1)
+pR
+checkLength.pm(pR, 1)
+### (x-1)^3
+pR = f(toPoly.pm("x^3"))
+pR
+checkLength.pm(pR, 4)
+checkCoeff.pm(pR, -1, "x", pow=0)
 
 
 ### Specified Parameters
+cat("\n### sub-Section: Parser - b[id]\n\n")
+
 b = c(2, 5, 3)
 polyGenTest = function(b, id) {
 	p = toPoly.pm("x^2 + b[id]*x + 1");
-	checkCoeff.pm(p, b[id], pow=1);
 	print(p)
+	checkCoeff.pm(p, b[id], pow=1);
+	invisible(p);
 }
 polyGenTest(b, 1)
 polyGenTest(b, 2)
 polyGenTest(b, 3)
 
+###
 p = toPoly.pm("x^2 + (b^2 - b + 1)[1]*x + 1")
 p # ... + 3*x
+checkCoeff.pm(p, (b^2 - b + 1)[1], pow=1);
+checkCoeff.pm(p, 1, pow=0);
 
 
 ### Power n
 n = 3
 p = toPoly.pm("x^n + b*x - R")
 p
+checkMaxPow.pm(p, n, "x")
+checkMaxPow.pm(p, 0, "n")
 
 
 ###
@@ -247,12 +300,16 @@ n = 3
 m = 2
 p = toPoly.pm("x^(n+m) + b*x - R")
 p
+checkMaxPow.pm(p, n+m, "x")
+checkMaxPow.pm(p, 0, "n")
+checkMaxPow.pm(p, 0, "m")
 
+###
 f = function(m) toPoly.pm("x^(n+m) + b*x - R")
-m = -1
-f(0)
-f(2)
-f(3)
+m = -1; # should NOT interfere;
+pR = f(0); pR; checkMaxPow.pm(pR, n+0, "x");
+pR = f(2); pR; checkMaxPow.pm(pR, n+2, "x");
+pR = f(3); pR; checkMaxPow.pm(pR, n+3, "x");
 
 cat("\nSection: Advanced Parser\n\tSuccess!\n\n")
 
