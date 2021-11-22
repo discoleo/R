@@ -7,7 +7,7 @@
 ### of Polynomial Fractions
 ### derived from Roots of Unity
 ###
-### draft v.0.2f
+### draft v.0.2g
 
 
 
@@ -27,6 +27,11 @@
 ### History ###
 ###############
 
+### draft v.0.2h:
+# - rearranging sections;
+### draft v.0.2f:
+# - various derived Integrals:
+#   from, e.g.: I( log(x^n + 1) );
 ### draft v.0.2a - v.0.2e-fix:
 # - basic Complex analysis;
 ### draft v.0.1g:
@@ -824,7 +829,7 @@ integrate(function(x) 1/sqrt(x^n + 1), lower=0, upper=upper)
 ### n = 3
 n = 3;
 
-# Pole at 1i*pi/3 is 0!
+# Residue of Pole at 1i*pi/3 is 0!
 r = line_integral(function(x) log(exp(1i*n*x) + 1) * exp(1i*x), c(0, 2*pi/n)) +
 	line_integral(function(x) - log(exp(-1i*n*x) + 1) * exp(-1i*x), c(0, 2*pi/n));
 r * -1i / n
@@ -845,6 +850,12 @@ r = line_integral(function(x) log(cos(n*x/2) + 0i) * sin(x), c(0, 2*pi/n));
 integrate(function(x) log(x^n + 1), lower=0, upper=1)
 
 
+####################
+####################
+
+
+
+####################
 ####################
 
 ### x^n/log(x^n + 1)
@@ -890,7 +901,7 @@ integrate(function(x) x^n/log(x^n + 1), lower=1E-6, upper=1)
 #################
 
 ### (x^n + 1) * log(x^n + 1)
-### (x^n + 1) * log(x^n + 1) / x
+### (x^n + 1) * log(x^n + 1) / x  # == 0;
 
 ###################
 ### Proper variant:
@@ -901,9 +912,13 @@ r = line_integral(function(x) (exp(1i*n*x) + 1) * exp(1i*x) *
 		log(exp(1i*n*x) + 1), c(0, -2*pi/n));
 r * -1i / n;
 
+# TODO
+
 integrate(function(x) (x^n + 1) * log(x^n + 1), lower=0, upper=1)
 
-### Note:
+
+### Variant: ... / x;
+# Note:
 # - div by x removes the exp(1i*x) factor,
 #   but, unfortunately, the integrals cancel out;
 
@@ -930,6 +945,25 @@ line_integral(function(x) (exp(1i*n*x) + 1) *
 	log(exp(1i*n*x) + 1), c(0, 2*pi/n));
 
 
+##################
+##################
+
+### sqrt() * Log()
+
+### n = 3
+n = 3;
+
+r = line_integral(function(x) exp(1i*x) * sqrt(exp(1i*n*x) + 1) *
+		log(exp(1i*n*x) + 1), c(0, 2*pi/n)) +
+	line_integral(function(x) - exp(-1i*x) * sqrt(exp(-1i*n*x) + 1) *
+		log(exp(-1i*n*x) + 1), c(0, 2*pi/n));
+r * -1i / n
+
+# Baseline:
+integrate(function(x) sqrt(x^n + 1) * log(x^n + 1), lower=0, upper=1)
+
+
+#################
 #################
 
 ### Log() / Log()
@@ -946,21 +980,4 @@ r * -1i / n
 
 # Baseline:
 integrate(function(x) log(k*x^n + 1)/log(x^n + 1), lower=1E-6, upper=1)
-
-
-##################
-
-### sqrt() * Log()
-
-### n = 3
-n = 3;
-
-r = line_integral(function(x) exp(1i*x) * sqrt(exp(1i*n*x) + 1) *
-		log(exp(1i*n*x) + 1), c(0, 2*pi/n)) +
-	line_integral(function(x) - exp(-1i*x) * sqrt(exp(-1i*n*x) + 1) *
-		log(exp(-1i*n*x) + 1), c(0, 2*pi/n));
-r * -1i / n
-
-# Baseline:
-integrate(function(x) sqrt(x^n + 1) * log(x^n + 1), lower=0, upper=1)
 
