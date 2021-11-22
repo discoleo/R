@@ -7,7 +7,7 @@
 ### of Polynomial Fractions
 ### derived from Roots of Unity
 ###
-### draft v.0.2i
+### draft v.0.2i-ext
 
 
 
@@ -876,12 +876,16 @@ r = line_integral(function(x) log(2*cos(n*x/2) + 0i) * sin(x/2) / cos(x/2), c(0,
 r * - 1/n - (pi/n)^2
 
 r = line_integral(function(x) log(2*cos(n*x/2) + 0i) * sin(x/2) / cos(x/2), c(0, 2*pi/n));
-r * - 1/n - 2i*pi/n * log(cos(pi/n) / cos(pi/(2*n)))
+- r/n - 2i*pi/n * log(cos(pi/n) / cos(pi/(2*n)))
+
+r = line_integral(function(x) log(cos(n*x/2) + 0i) * sin(x/2) / cos(x/2), c(0, 2*pi/n));
+- r/n - 2i*pi/n * log(cos(pi/n) / cos(pi/(2*n))) + 2*log(2)*log(cos(pi/n))/n
 
 integrate(function(x) log(x^n + 1) * (x-1) / (x^3+1), lower=0, upper=1)
 
-# unfortunately, not (directly):
+# unfortunately, not directly (but still indirectly):
 integrate(function(x) log(x^n + 1) / (x+1), lower=0, upper=1)
+1/6*log(2)^2 + r/n + 2i*pi/n * log(cos(pi/n) / cos(pi/(2*n)))
 
 
 ####################
