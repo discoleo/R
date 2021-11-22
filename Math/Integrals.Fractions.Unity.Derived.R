@@ -7,11 +7,11 @@
 ### of Polynomial Fractions
 ### derived from Roots of Unity
 ###
-### draft v.0.2g-clean2
+### draft v.0.2i
 
 
 
-### Pre-Requisits
+### Pre-Requisites
 
 ### Roots of Unity:
 # - Base-Integrals:
@@ -27,6 +27,9 @@
 ### History ###
 ###############
 
+### draft v.0.2i:
+# - derived from:
+#   Log(x^n + 1) / (x+1);
 ### draft v.0.2h - v.0.2h-clean2:
 # - rearranging sections;
 ### draft v.0.2f:
@@ -853,7 +856,32 @@ integrate(function(x) log(x^n + 1), lower=0, upper=1)
 ####################
 ####################
 
+### Log(x^n + 1) / (x+1)
 
+### n = 3
+n = 3
+
+# Residue of Pole at 1i*pi/3 is 0!
+r = line_integral(function(x) log(exp(1i*n*x) + 1) * exp(1i*x/2) / cos(x/2), c(0, 2*pi/n)) +
+	line_integral(function(x) -log(exp(-1i*n*x) + 1) * exp(-1i*x/2) / cos(x/2), c(0, 2*pi/n));
+r * 1i / (2*n)
+
+r = line_integral(function(x) (log(2*cos(n*x/2) + 0i) + 1i*n*x/2) * exp(1i*x/2) / cos(x/2), c(0, 2*pi/n)) +
+	line_integral(function(x) -(log(2*cos(n*x/2) + 0i) - 1i*n*x/2) * exp(-1i*x/2) / cos(x/2), c(0, 2*pi/n)) +
+	- 2i*pi * line_integral(function(x) exp(1i*x/2) / cos(x/2), c(pi/n, 2*pi/n));
+r * 1i / (2*n)
+
+r = line_integral(function(x) log(2*cos(n*x/2) + 0i) * sin(x/2) / cos(x/2), c(0, 2*pi/n)) +
+	- pi * line_integral(function(x) exp(1i*x/2) / cos(x/2), c(pi/n, 2*pi/n));
+r * - 1/n - (pi/n)^2
+
+r = line_integral(function(x) log(2*cos(n*x/2) + 0i) * sin(x/2) / cos(x/2), c(0, 2*pi/n));
+r * - 1/n - 2i*pi/n * log(cos(pi/n) / cos(pi/(2*n)))
+
+integrate(function(x) log(x^n + 1) * (x-1) / (x^3+1), lower=0, upper=1)
+
+# unfortunately, not (directly):
+integrate(function(x) log(x^n + 1) / (x+1), lower=0, upper=1)
 
 
 ####################
