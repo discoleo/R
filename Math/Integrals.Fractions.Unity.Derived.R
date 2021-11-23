@@ -7,7 +7,7 @@
 ### of Polynomial Fractions
 ### derived from Roots of Unity
 ###
-### draft v.0.2i-ext
+### draft v.0.2i-ext2
 
 
 
@@ -949,6 +949,33 @@ r = line_integral(function(x) exp(1i*x) * sqrt(exp(1i*n*x) + 1) *
 	line_integral(function(x) - exp(-1i*x) * sqrt(exp(-1i*n*x) + 1) *
 		log(exp(-1i*n*x) + 1), c(0, 2*pi/n));
 r * -1i / n
+
+r = line_integral(function(x) exp(1i*x) * sqrt(exp(1i*n*x) + 1) *
+		(log(2*cos(n*x/2) + 0i) + 1i*n*x/2), c(0, 2*pi/n)) +
+	line_integral(function(x) - 2i*pi * exp(1i*x) * sqrt(exp(1i*n*x) + 1), c(pi/n, 2*pi/n)) +
+	line_integral(function(x) - exp(-1i*x) * sqrt(exp(-1i*n*x) + 1) *
+		(log(2*cos(n*x/2) + 0i) - 1i*n*x/2), c(0, 2*pi/n));
+r * -1i / n
+
+r = line_integral(function(x) exp(1i*(n/4+1)*x) * sqrt(2*cos(n*x/2)) *
+		(log(2*cos(n*x/2) + 0i) + 1i*n*x/2), c(0, pi/n)) +
+	line_integral(function(x) - exp(1i*(n/4+1)*x) * sqrt(2*cos(n*x/2) + 0i) *
+		(log(2*cos(n*x/2) + 0i) + 1i*n*x/2), c(pi/n, 2*pi/n)) +
+	line_integral(function(x) - exp(-1i*(n/4+1)*x) * sqrt(2*cos(n*x/2) + 0i) *
+		(log(2*cos(n*x/2) + 0i) - 1i*n*x/2), c(0, 2*pi/n)) +
+	line_integral(function(x) -2*pi * exp(1i*(n/4+1)*x) * sqrt(-2*cos(n*x/2)), c(pi/n, 2*pi/n));
+r * -1i / n
+
+r = line_integral(function(x) 2i*sin((n/4+1)*x) * sqrt(2*cos(n*x/2)) *
+		log(2*cos(n*x/2)), c(0, pi/n)) +
+	line_integral(function(x) 1i*n*x * cos((n/4+1)*x) * sqrt(2*cos(n*x/2)), c(0, pi/n)) +
+	line_integral(function(x) - 2*cos((n/4+1)*x) * sqrt(2*cos(n*x/2) + 0i) *
+		log(2*cos(n*x/2) + 0i), c(pi/n, 2*pi/n)) +
+	line_integral(function(x) n*x * sin((n/4+1)*x) * sqrt(2*cos(n*x/2) + 0i), c(pi/n, 2*pi/n)) +
+	line_integral(function(x) -2*pi * exp(1i*(n/4+1)*x) * sqrt(-2*cos(n*x/2)), c(pi/n, 2*pi/n));
+r * -1i / n
+
+# TODO: simplify further;
 
 # Baseline:
 integrate(function(x) sqrt(x^n + 1) * log(x^n + 1), lower=0, upper=1)
