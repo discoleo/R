@@ -30,8 +30,8 @@ source("Polynomials.Helper.R")
 ########################
 ########################
 
-b1 = 3;
-p0 = toPoly.pm("x^2 + b1[1]*x + 1")
+b  = 3;
+p0 = toPoly.pm("x^2 + b[1]*x + 1")
 p1 = toPoly.pm("x^3 - 4*x^2 - x + 1")
 p2 = toPoly.pm("p0()*p1()")
 
@@ -66,8 +66,8 @@ gcd.exact.p(p2, rev(p2), xn="x", asBigNum=FALSE, debug=TRUE)
 factorizeExt.p(p2, xn="x", asBigNum=FALSE, debug=T)
 
 ### Anti-Symmetric:
-b1 = 3;
-p0 = toPoly.pm("x^2 + b1[1]*x - 1")
+b  = 3;
+p0 = toPoly.pm("x^2 + b[1]*x - 1")
 p1 = toPoly.pm("x^3 - 4*x^2 - x + 1")
 p2 = toPoly.pm("p0()*p1()")
 #
@@ -76,8 +76,8 @@ stopifnot( ! is.null(pR[[1]]$GCD))
 print(pR[[1]]$GCD)
 
 ### TODO
-b1 = 3;
-p0 = toPoly.pm("x^2 + b1[1]*x + 1")
+b  = 3;
+p0 = toPoly.pm("x^2 + b[1]*x + 1")
 p3 = toPoly.pm("p0() * (x^4 + 5*x^3 + 5*x + 1)")
 pR = factorizeExt.p(p3, xn="x", asBigNum=FALSE, debug=F)
 stopifnot( ! is.null(pR[[1]]$GCD))
@@ -148,6 +148,31 @@ b = c(2,3,5)
 plst = lapply(b, function(b) toPoly.pm("x^2 + b[1]*x + 1"))
 # a symmetric Polynomial:
 p = mult.lpm(plst)
+
+
+################
+################
+
+b = c(8, 2)
+p1 = toPoly.pm("x^2 + b[1]*x + b[2]")
+p2 = toPoly.pm("x^3 - x^2 + 2*x + 1")
+p = toPoly.pm(p1 * p2)
+
+# 3^2 = 2 (mod 7)
+pM = rescale.pm(p, 3, mod=7)
+pMinv = rev.pm(pM)
+#
+pGCD1 = toPoly.pm(diff.pm(2*pM, 5*pMinv)) %% 7
+pGCD2 = toPoly.pm(diff.pm(2*pM, 5*pGCD1 * "x")) %% 7
+pGCD2
+pGCD1 = toPoly.pm(diff.pm(3*pGCD1, 2*pGCD2)) %% 7
+pGCD2 = toPoly.pm(diff.pm(2*pGCD2, pGCD1 * toPoly.pm("x^2 + x"))) %% 7
+pGCD1; pGCD2
+# "6 + 2*x + 6*x^2"
+# "1 + 5*x + x^2" # 6*5 = 30 = 2 (mod 7)
+
+# TODO: gcd.pm.mod(p1, p2, mod)
+# gcd.exact.p(pM, pMinv, asBigNum=F)
 
 
 ################
