@@ -222,7 +222,12 @@ maxPow.pm = function(p, xn) {
 # - check consequences!
 Ops.pm = function(e1, e2) {
 	r = switch(.Generic,
-		'*' = { mult.pm(e1, e2); }
+		'*' = { mult.pm(e1, e2); },
+		'%%' = {
+			if(e2 < 2) stop("Modulus must be >= 2!");
+			e1$coeff = e1$coeff %% e2;
+			reduce.pm(e1);
+		}
 	)
 	return(r);
 }
@@ -267,6 +272,15 @@ mult.m = function(p, m) {
 	return(p);
 }
 mult.pm = function(p1, p2, sc=1) {
+	if(is.character(p2)) {
+		idx = match(p2, names(p1));
+		if(is.na(idx)) {
+			p1[, p2] = 1;
+		} else {
+			p1[, idx] = p1[, idx] + 1;
+		}
+		return(p1);
+	}
 	# P1
 	split.df = function(p.df) {
 		p.l = lapply(colnames(p.df), function(name) p.df[,name]);
@@ -607,14 +621,20 @@ shift.pm = function(p, val, xn="x", tol=1E-10) {
 }
 
 # Note: scale (Generic) behaves badly;
-rescale.pm = function(p, val, xn="x", div=FALSE) {
+rescale.pm = function(p, val, xn="x", mod=NULL, div=FALSE) {
 	idx = match(xn, names(p));
 	if(is.na(idx)) stop("Variable not found!");
 	hasX = (p[, idx] != 0);
 	if(div) {
 		p$coeff[hasX] = p$coeff[hasX] / val^p[hasX, idx];
+		if( ! is.null(mod)) stop("Mod NOT yet implemented!");
 	} else {
 		p$coeff[hasX] = p$coeff[hasX] * val^p[hasX, idx];
+		if( ! is.null(mod)) {
+			if(mod < 2) stop("Modulus must be >= 2!");
+			p$coeff = p$coeff %% mod;
+			p = reduce.pm(p);
+		}
 	}
 	return(p);
 }
