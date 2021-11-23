@@ -144,15 +144,6 @@ div.pm(p, pR, by="x")
 ################
 ################
 
-b = c(2,3,5)
-plst = lapply(b, function(b) toPoly.pm("x^2 + b[1]*x + 1"))
-# a symmetric Polynomial:
-p = mult.lpm(plst)
-
-
-################
-################
-
 b = c(8, 2)
 p1 = toPoly.pm("x^2 + b[1]*x + b[2]")
 p2 = toPoly.pm("x^3 - x^2 + 2*x + 1")
@@ -167,12 +158,33 @@ pGCD2 = toPoly.pm(diff.pm(2*pM, 5*pGCD1 * "x")) %% 7
 pGCD2
 pGCD1 = toPoly.pm(diff.pm(3*pGCD1, 2*pGCD2)) %% 7
 pGCD2 = toPoly.pm(diff.pm(2*pGCD2, pGCD1 * toPoly.pm("x^2 + x"))) %% 7
-pGCD1; pGCD2
+pGCD1; pGCD2;
+toPoly.pm((6*pGCD2) %% 7)
 # "6 + 2*x + 6*x^2"
 # "1 + 5*x + x^2" # 6*5 = 30 = 2 (mod 7)
+# "6 + 2*x + 6*x^2" # pGCD1 == pGCD2;
+
+# Scaling back to original Polynomial:
+# 3*5 = 1 (mod 7)
+pM = toPoly.pm(rescale.pm(pGCD2, 5, mod=7))
+# 4*2 = 1 (mod 7)
+pM = toPoly.pm(2*pM) %% 7
+pM
+# "x^2 + x + 2" # == (x^2 + 8*x + 2) (mod 7)
 
 # TODO: gcd.pm.mod(p1, p2, mod)
 # gcd.exact.p(pM, pMinv, asBigNum=F)
+
+
+################
+################
+
+b = c(2,3,5)
+plst = lapply(b, function(b) toPoly.pm("x^2 + b[1]*x + 1"))
+# a symmetric Polynomial:
+p = mult.lpm(plst)
+
+# TODO
 
 
 ################
