@@ -120,8 +120,8 @@ pDiff
 checkEmpty.pm(pDiff)
 
 
-### TODO: p^2 - deprecate
-pR = mult.pm(p)
+### TODO: p^2 - fully deprecate
+pR = mult.pm(p, p)
 pR
 pDiff = diff.pm(pR, toPoly.pm("R^2 - 2*R*x^3 + x^6 - 2*R*x*b1 + 2*x^4*b1 + x^2*b1^2"))
 checkEmpty.pm(pDiff)
@@ -210,6 +210,7 @@ cat("\n### Section: Advanced Parser\n\n")
 
 p1 = toPoly.pm("(x+1)^3")
 p1
+checkMaxPow.pm(p1, 3, "x")
 checkVal.pm(eval.pm(p1, -1), 0)
 checkVal.pm(eval.pm(p1, -3), -8)
 
@@ -313,23 +314,33 @@ pR = f(3); pR; checkMaxPow.pm(pR, n+3, "x");
 
 cat("\nSection: Advanced Parser\n\tSuccess!\n\n")
 
-###############
+
+##################
+##################
 
 ### Eval:
+
+cat("\n### Section: Eval\n\n")
 
 # (x+1)*(x+2)*...*(x+5)
 sP = paste("(x+", seq(1,5), ")", collapse="*");
 pR = mult.pm(toPoly.pm(sP), toPoly.pm("a+b"));
 pR
-eval.pm(pR, c(-2, 1,1)) # 0
-eval.pm(pR, c(0, -2,-3)) # != 0
-eval.pm(pR, list(a=-6, b=6, x=2)) # 0
-eval.pm(pR, list(a=-6, b=5, x=-5)) # 0
-eval.pm(pR, list(a=-6, b=5, x=-6)) # != 0
+checkMaxPow.pm(pR, 5, "x");
+checkMaxPow.pm(pR, 1, "a");
+
+### Eval:
+checkVal.pm(eval.pm(pR, c(-2, 1,1)), 0) # 0
+checkVal.pm(eval.pm(pR, c(0, -2,-3)), -600) # != 0
+checkVal.pm(eval.pm(pR, list(a=-6, b=6, x=2)), 0) # 0
+checkVal.pm(eval.pm(pR, list(a=-6, b=5, x=-5)), 0) # 0
+checkVal.pm(eval.pm(pR, list(a=-6, b=5, x=-6)), 120) # != 0
 
 cat("\nSection: Eval\n\tSuccess!\n\n")
 
-###############
+
+###################
+###################
 
 ### Shift vars
 p1 = toPoly.pm("a*x^3 + b*x^3 + 1")

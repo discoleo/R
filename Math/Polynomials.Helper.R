@@ -359,12 +359,12 @@ pow.pm = function(p, n=2, do.order=TRUE, debug=TRUE) {
 			if(is.null(p.r)) p.r = p.pow else p.r = mult.pm(p.r, p.pow);
 		}
 		if(n == 1) break;
-        p.pow = mult.pm(p.pow);
+        p.pow = mult.pm(p.pow, p.pow);
         n = n %/% 2;
     }
 	if(do.order) {
 		x.name = names(p)[1];
-		id = order(p.r[,x.name], decreasing=TRUE);
+		id = order(p.r[, x.name], decreasing=TRUE);
 		p.r = p.r[id,];
 	}
 	return(p.r);
