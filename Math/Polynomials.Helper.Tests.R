@@ -26,8 +26,12 @@ checkCoeff.pm = function(p, val, pow=1, xn="x") {
 	} else {
 		coeff = p$coeff[p[, xn] == pow];
 	}
-	if(length(coeff) != 1) stop("Wrong number of Monoms!");
-	if(coeff != val) stop("Wrong value!");
+	if(is.na(val)) {
+		if(length(coeff) >= 1) stop("Wrong number of Monoms!");
+	} else {
+		if(length(coeff) != 1) stop("Wrong number of Monoms!");
+		if(coeff != val) stop("Wrong value!");
+	}
 	cat("Coeff: Success!\n");
 	invisible(TRUE);
 }
@@ -45,6 +49,10 @@ checkMaxPow.pm = function(p, val, xn="x") {
 }
 checkVal.pm = function(pval, val) {
 	print(pval);
+	if(inherits(pval, "data.frame")) {
+		if(nrow(pval) > 1 || ncol(pval) > 1) stop("Value is a Data frame!");
+		pval = pval$coeff;
+	}
 	stopifnot(pval == val);
 	cat("Value: Success!\n");
 	invisible(TRUE);
@@ -120,7 +128,7 @@ pDiff
 checkEmpty.pm(pDiff)
 
 
-### TODO: p^2 - fully deprecate
+### TODO: p^2 - fully deprecate mult.pm(p);
 pR = mult.pm(p, p)
 pR
 pDiff = diff.pm(pR, toPoly.pm("R^2 - 2*R*x^3 + x^6 - 2*R*x*b1 + 2*x^4*b1 + x^2*b1^2"))
@@ -196,7 +204,7 @@ pR = toPoly.pm(p, reduce=TRUE)
 pR
 checkLength.pm(pR, 2)
 
-cat("\nSection: Reduce\n\tSuccess!\n\n")
+cat("\nSection: Reduce\n ===> Success!\n\n")
 
 
 #######################
@@ -236,7 +244,7 @@ checkVal.pm(r, 3^3)
 
 
 ### Replace in Parser
-cat("\n### sub-Section: Parser - p(x = ...)\n\n")
+cat("\n### sub-Section: Parser: p(x = ...)\n\n")
 
 ### x^3
 pR = toPoly.pm("p1(x = x-1)")
@@ -267,7 +275,7 @@ checkCoeff.pm(pR, -1, "x", pow=0)
 
 
 ### Specified Parameters
-cat("\n### sub-Section: Parser - b[id]\n\n")
+cat("\n### sub-Section: Parser: b[id]\n\n")
 
 b = c(2, 5, 3)
 polyGenTest = function(b, id) {
@@ -276,6 +284,7 @@ polyGenTest = function(b, id) {
 	checkCoeff.pm(p, b[id], pow=1);
 	invisible(p);
 }
+print(b);
 polyGenTest(b, 1)
 polyGenTest(b, 2)
 polyGenTest(b, 3)
@@ -312,7 +321,7 @@ pR = f(0); pR; checkMaxPow.pm(pR, n+0, "x");
 pR = f(2); pR; checkMaxPow.pm(pR, n+2, "x");
 pR = f(3); pR; checkMaxPow.pm(pR, n+3, "x");
 
-cat("\nSection: Advanced Parser\n\tSuccess!\n\n")
+cat("\nSection: Advanced Parser\n ===> Success!\n\n")
 
 
 ##################
@@ -328,6 +337,7 @@ pR = mult.pm(toPoly.pm(sP), toPoly.pm("a+b"));
 pR
 checkMaxPow.pm(pR, 5, "x");
 checkMaxPow.pm(pR, 1, "a");
+checkMaxPow.pm(pR, 1, "b");
 
 ### Eval:
 checkVal.pm(eval.pm(pR, c(-2, 1,1)), 0) # 0
@@ -336,13 +346,16 @@ checkVal.pm(eval.pm(pR, list(a=-6, b=6, x=2)), 0) # 0
 checkVal.pm(eval.pm(pR, list(a=-6, b=5, x=-5)), 0) # 0
 checkVal.pm(eval.pm(pR, list(a=-6, b=5, x=-6)), 120) # != 0
 
-cat("\nSection: Eval\n\tSuccess!\n\n")
+cat("\nSection: Eval\n ===> Success!\n\n")
 
 
 ###################
 ###################
 
 ### Shift vars
+
+cat("\n### Section: Shift Vars\n\n")
+
 p1 = toPoly.pm("a*x^3 + b*x^3 + 1")
 
 ### Test 1:
@@ -354,7 +367,8 @@ checkEmpty.pm(pDiff)
 
 ### Test 2:
 pR = shift.pm(p1, c(-1,1), "x")
-# TODO: ERROR: all possible environments tested!
+# TODO: ERROR: How to get the warning?
+# - all possible environments tested!
 # wrn = parent.frame()[["last.warning"]]; print(wrn);
 # flush(stderr()); flush(stdout()); # update Warnings;
 wrn = warnings(); print(wrn)
@@ -367,33 +381,47 @@ checkEmpty.pm(pDiff)
 
 
 ### Test 3:
+# invariance: ... + (a-1)*x^3 + (b+1)*x^3;
 pR = shift.pm(p1, c(-1,1), c("a", "b"))
-diff.pm(p1, pR)
+pDiff = diff.pm(p1, pR)
+pDiff
+checkEmpty.pm(pDiff)
+checkLength.pm(pR, 3)
+checkMaxPow.pm(pR, 3, "x")
 
 ### Test 4:
 pR = shift.pm(p1, c(-1,2), c("a", "b"))
-diff.pm(pR, toPoly.pm("(a-1)*x^3 + (b+2)*x^3 + 1"))
+pDiff = diff.pm(pR, toPoly.pm("(a-1)*x^3 + (b+2)*x^3 + 1"))
+pDiff
+checkEmpty.pm(pDiff)
+checkCoeff.pm(pR[pR$a == 0 & pR$b == 0,], 1, pow=3, xn="x")
 
 ### Test 5:
 p1 = toPoly.pm("x^3 - 1/27")
 pR = shift.pm(p1, 1/3, "x")
 # b0 == 0 !
 pR
+checkCoeff.pm(pR, NA, pow=0, xn="x")
+checkLength.pm(pR, 3)
 
-cat("\nSection: Shift\n\tSuccess!\n\n")
+cat("\nSection: Shift\n ===> Success!\n\n")
 
 
+####################
 ####################
 
 ### Replace vars
 
+cat("\n### Section: Replace Vars\n\n")
+
 ### with specific Value
 p = toPoly.pm("(x+3)^4")
-replace.pm(p, -3, xn="x")
-replace.pm.numeric(p, -3, xn="x")
-replace.pm.numeric(p, -2, xn="x")
+pR = replace.pm(p, -3, xn="x"); checkVal.pm(pR, 0)
+pR = replace.pm.numeric(p, -3, xn="x"); checkVal.pm(pR, 0)
+pR = replace.pm.numeric(p, -2, xn="x"); checkVal.pm(pR, 1)
+pR = replace.pm.numeric(p, -1, xn="x"); checkVal.pm(pR, 2^4)
 
-
+# TODO: =>
 p = toPoly.pm("(x+1)^3*(x-a)^3")
 pR = replace.pm(p, 1, xn="a")
 diff.pm(pR, toPoly.pm("(x^2-1)^3"))
