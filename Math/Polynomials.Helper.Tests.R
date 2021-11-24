@@ -421,27 +421,48 @@ pR = replace.pm.numeric(p, -3, xn="x"); checkVal.pm(pR, 0)
 pR = replace.pm.numeric(p, -2, xn="x"); checkVal.pm(pR, 1)
 pR = replace.pm.numeric(p, -1, xn="x"); checkVal.pm(pR, 2^4)
 
-# TODO: =>
+###
 p = toPoly.pm("(x+1)^3*(x-a)^3")
+# (x^2-1)^3
 pR = replace.pm(p, 1, xn="a")
-diff.pm(pR, toPoly.pm("(x^2-1)^3"))
+pDiff = diff.pm(pR, toPoly.pm("(x^2-1)^3"))
+checkEmpty.pm(pDiff)
+checkMaxPow.pm(pR, 0, "a")
 # x^3 * (x+1)^3 => x^3
 pR = replace.pm(p, 0, xn="a")
 pR = div.pm(pR, toPoly.pm("(x+1)^3"), "x")$Rez
 print.pm(pR)
-# (x+a)^3 => x^3
+checkLength.pm(pR, 1)
+checkMaxPow.pm(pR, 3, "x")
+# (x-a)^3 => x^3
 pR = div.pm(p, toPoly.pm("(x+1)^3"), "x")$Rez
+checkMaxPow.pm(pR, 3, "a")
+checkCoeff.pm(pR, -1, pow=3, "a")
+checkLength.pm(pR, 4)
 pR = replace.pm(pR, 0, xn="a")
 print.pm(pR)
+checkLength.pm(pR, 1)
+checkMaxPow.pm(pR, 3, "x")
+checkMaxPow.pm(pR, 0, "a")
 
 
-# x^4 + x^3 + x^2 + x + 1
+# x^4 + x^3 + x^2 + x + 1 => 0
 p = toPoly.pm(data.frame(x=4:0, coeff=1))
 p = sum.pm(p, toPoly.pm("y^2"))
 p1 = replace.pm(p, unity(5, all=FALSE), xn="x")
 p2 = replace.pm(p, c("x"=unity(5, all=FALSE)))
+p3 = replace.pm(p, list(x = toPoly.pm("-1-x-x^2-x^3")), pow=4)
 print.pm(p1)
 print.pm(p2)
+print.pm(p3)
+checkEmpty.pm(diff.pm(p1, p2))
+checkEmpty.pm(diff.pm(p1, p3))
+checkLength.pm(p1, 1)
+checkLength.pm(p2, 1)
+checkLength.pm(p3, 1)
+checkMaxPow.pm(p1, 2, "y")
+checkMaxPow.pm(p2, 2, "y")
+checkMaxPow.pm(p3, 2, "y")
 
 
 ### Replace with character (new name)
@@ -449,15 +470,24 @@ print.pm(p2)
 p1 = toPoly.pm("(x+y+z)^3")
 #
 p2 = replaceNames.pm(p1, "y", "z")
-diff.pm(p2, toPoly.pm("(x+2*y)^3"))
+pR = diff.pm(p2, toPoly.pm("(x+2*y)^3"))
+pR
+checkEmpty.pm(pR)
 # Cyclic permutation:  # sequential = FALSE!
 p2 = replaceNames.pm(p1, c("y","x"), xn=c("x", "y"))
-diff.pm(p1, p2) # SAME!
+pR = diff.pm(p1, p2) # SAME!
+pR
+checkEmpty.pm(pR)
 # x => y; then y => x;
 p2 = replaceNames.pm(p1, c("y","x"), xn=c("x", "y"), seq=TRUE)
-diff.pm(p2, toPoly.pm("(2*x + z)^3"))
-p2 = replaceNames.pm(p1, c("x", "y","x"), xn=c("z", "x", "y"), seq=TRUE)
-diff.pm(p2, data.frame(x=3, coeff=3^3))
+pR = diff.pm(p2, toPoly.pm("(2*x + z)^3"))
+pR
+checkEmpty.pm(pR)
+#
+p2 = replaceNames.pm(p1, c("x", "y", "x"), xn=c("z", "x", "y"), seq=TRUE)
+pR = diff.pm(p2, data.frame(x=3, coeff=3^3))
+pR
+checkEmpty.pm(pR)
 
 
 ### Replace with Character / Higher Power

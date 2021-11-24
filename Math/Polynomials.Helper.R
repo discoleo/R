@@ -707,11 +707,22 @@ replace.pm = function(p1, p2, xn, pow=1, sequential=TRUE) {
 	if(is.numeric(p2) || is.complex(p2)) return(replace.pm.numeric(p1, p2=p2, xn=xn, pow=pow));
 	if(is.character(p2)) return(replace.pm.character(p1, p2=p2, xn=xn, pow=pow, sequential=sequential));
 	# Checks
+	stop.f = function() stop("Missing variable name!");
+	if(missing(xn)) {
+		if(is.pm(p2)) stop.f();
+		if(is.list(p2)) {
+			xn = names(p2);
+			if(is.null(xn)) stop.f();
+			if(length(p2) > 1) stop("Only 1 value supported!")
+			p2 = p2[[1]];
+		} else stop("Replacement type: not supported!");
+	}
 	if(length(xn) > 1 || length(pow) > 1) stop("Only 1 value supported!")
 	idx = match(xn, names(p1));
 	if(any(is.na(idx))) {
 		warning(paste0("Polynomial does NOT contain variable: ", xn));
-		return(p1);
+		idx = idx[ ! is.na(idx)];
+		if(length(idx) == 0) return(p1);
 	}
 	# xPow
 	rpow = if(pow == 1) p1[,idx] else p1[,idx] %/% pow;
