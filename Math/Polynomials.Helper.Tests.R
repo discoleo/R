@@ -503,11 +503,17 @@ checkMaxPow.pm(pR, 3, "x")
 checkMaxPow.pm(pR, 1, "Big")
 checkCoeff.pm(pR, 2, xn="Big")
 
+
+### Applications to Roots
+
+cat("\n### sub-Section: Quintic\n\n")
+
 ### Quintic
 p1 = toPoly.pm("x^5 - 5*K*x^3 - 5*(K^2 + K)*x^2 - 5*K^3*x - K^4 - 6*K^3 + 5*K^2 - K")
 # fractional powers:
 r = toPoly.pm("K^(4/5) + K^(3/5) + K^(1/5)")
 # - we just found a root of a non-trivial quintic!
+print(p1)
 pR = replace.pm(p1, r, "x", pow=1)
 pR
 checkEmpty.pm(pR)
@@ -516,22 +522,27 @@ checkEmpty.pm(pR)
 rootTest.pm = function(id, n=5) {
 	m = unity(n, all=FALSE);
 	mj = m^id;
-	r = toPoly.pm("K^(4/5)*mj()^4 + K^(3/5)*mj()^3 + K^(1/5)*mj()");
+	r  = toPoly.pm("K^(4/5)*mj[1]^4 + K^(3/5)*mj[1]^3 + K^(1/5)*mj[1]");
 	return(r)
 }
 replaceRoot.pm = function(id, n=5) {
 	p = replace.pm(p1, rootTest.pm(id, n=n), "x", pow=1);
 	p = round0.pm(p);
 	p = reduce.pm(p);
+	print(p)
+	checkEmpty.pm(p);
 	cat("\n")
-	return(p)
+	return(TRUE)
 }
 #
 n = 5; # fixed!
 # - we just found ALL 5 roots!
-lapply(seq(0, 4), replaceRoot.pm, n=n)
+cat("\nAll roots:\n")
+isSuccess = sapply(seq(0, 4), replaceRoot.pm, n=n)
+print(isSuccess)
 
 # more formal
+cat("\nFormal roots:\n")
 r = toPoly.pm("k^4*m^4 + k^3*m^3 + k*m")
 # m^5 = 1; # m = roots of unity;
 pR = p1;
@@ -539,7 +550,10 @@ pR = replace.pm(pR, r, xn="x")
 pR = replace.pm(pR, "K", xn="k", pow=5)
 pR = replace.pm(pR, 1, xn="m", pow=5)
 pR # the roots worked!
+checkEmpty.pm(pR);
 
+
+### Constructing Class 1 Polynomials:
 ### multiple Powers
 Class1Root = function(n, s=NULL) {
 	sn = paste0("s", seq(n-1,1));
@@ -579,6 +593,8 @@ reduce.radicals = function(p, n=5) {
 	p = toPoly.pm(p); p = sort.pm(p, "x", xn2="K");
 	return(p);
 }
+
+cat("\nConstructing Polynomials:\n")
 
 n = 5;
 s = c(1, 0,-2,1)
