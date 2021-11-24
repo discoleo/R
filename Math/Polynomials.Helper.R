@@ -222,6 +222,7 @@ maxPow.pm = function(p, xn) {
 # - check consequences!
 Ops.pm = function(e1, e2) {
 	r = switch(.Generic,
+		'-' = { diff.pm(e1, e2); },
 		'*' = { mult.pm(e1, e2); },
 		'%%' = {
 			if(e2 < 2) stop("Modulus must be >= 2!");
@@ -585,7 +586,8 @@ add.lpm = function(lp) return(sum.lpm(lp));
 
 ### Diff
 diff.pm = function(p1, p2) {
-	p2$coeff = - p2$coeff;
+	if(is.pm(p2)) { p2$coeff = - p2$coeff; }
+	else p2 = - p2;
 	return(sum.pm(p1, p2));
 }
 diff.lpm = function(p1, lp) {
@@ -816,7 +818,7 @@ replaceNames.pm = function(p1, p2, xn, sequential=FALSE, debug=TRUE) {
 	p1 = p1[, ! isDuplic, drop=FALSE];
 	p1 = aggregate0.pm(p1);
 	p1 = reduce.pm(p1);
-	return(p1);
+	return(toPoly.pm(p1));
 }
 # Replace: some powers != 1;
 replaceByPow.pm.character = function(p1, p2, xn, pow=1, sequential=TRUE, reduce=TRUE, debug=TRUE) {

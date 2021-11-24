@@ -467,40 +467,50 @@ checkMaxPow.pm(p3, 2, "y")
 
 ### Replace with character (new name)
 
+cat("\n### sub-Section: Replace Names\n\n")
+
 p1 = toPoly.pm("(x+y+z)^3")
 #
 p2 = replaceNames.pm(p1, "y", "z")
-pR = diff.pm(p2, toPoly.pm("(x+2*y)^3"))
+pR = p2 - toPoly.pm("(x+2*y)^3")
 pR
 checkEmpty.pm(pR)
 # Cyclic permutation:  # sequential = FALSE!
 p2 = replaceNames.pm(p1, c("y","x"), xn=c("x", "y"))
-pR = diff.pm(p1, p2) # SAME!
+pR = p1 - p2 # SAME!
 pR
 checkEmpty.pm(pR)
 # x => y; then y => x;
 p2 = replaceNames.pm(p1, c("y","x"), xn=c("x", "y"), seq=TRUE)
-pR = diff.pm(p2, toPoly.pm("(2*x + z)^3"))
+pR = p2 - toPoly.pm("(2*x + z)^3")
 pR
 checkEmpty.pm(pR)
 #
 p2 = replaceNames.pm(p1, c("x", "y", "x"), xn=c("z", "x", "y"), seq=TRUE)
-pR = diff.pm(p2, data.frame(x=3, coeff=3^3))
+pR = p2 - toPoly.pm(data.frame(x=3, coeff=3^3))
 pR
 checkEmpty.pm(pR)
 
 
 ### Replace with Character / Higher Power
 
-p1 = toPoly.pm("x^5 + c*x^3 + b0")
-replace.pm(p1, "Big", "x", pow=5)
+cat("\n### sub-Section: Replace higher Powers\n\n")
+
+p1 = toPoly.pm("2*x^5 + c*x^3 + b0")
+pR = replace.pm(p1, "Big", "x", pow=5)
+pR
+checkMaxPow.pm(pR, 3, "x")
+checkMaxPow.pm(pR, 1, "Big")
+checkCoeff.pm(pR, 2, xn="Big")
 
 ### Quintic
 p1 = toPoly.pm("x^5 - 5*K*x^3 - 5*(K^2 + K)*x^2 - 5*K^3*x - K^4 - 6*K^3 + 5*K^2 - K")
 # fractional powers:
 r = toPoly.pm("K^(4/5) + K^(3/5) + K^(1/5)")
 # - we just found a root of a non-trivial quintic!
-replace.pm(p1, r, "x", pow=1)
+pR = replace.pm(p1, r, "x", pow=1)
+pR
+checkEmpty.pm(pR)
 
 ### All roots
 rootTest.pm = function(id, n=5) {
