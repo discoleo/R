@@ -6,8 +6,10 @@
 ### Infinite Sums: Fractions
 ### Roots of Unity
 ###
-### draft v.0.1j
+### draft v.0.1k
 
+
+### Exact Formulas for various Infinite sums
 
 ### Infinite Sums
 ### A.) Sum( (-1)^n / (k1*n + k0))
@@ -284,7 +286,11 @@ x = 2.1
 ### I(log(x^n + 1)) ###
 #######################
 
-# sum(1/(n+1) - 1/(2*(2*n+1)) + 1/(3*(3*n+1)) - 1/(4*(4*n+1)) + ...)
+### sum( (-1)^(j+1) / (k1*j^2 + k0*j) )
+
+### Example:
+# sum(1/(1*n+1) - 1/(2*(2*n+1)) + 1/(3*(3*n+1)) - 1/(4*(4*n+1)) + ...)
+# with k1 = n, k0 = 1;
 
 ### Integration by parts:
 # x*log(x^n + 1) - n*x + n*I( 1 / (x^n + 1) )
@@ -375,6 +381,7 @@ intLog(n=n, k=k)
 intFr(n=n, k=k)
 sumLogExp(n, k=k)
 
+
 ### Non-Harmonic
 n = 5; k = 2;
 intLog(n=n, k=k, harmonic=FALSE)
@@ -388,6 +395,23 @@ intFr(n=n, k=k, upper=x0)
 sumLogExp(n, k=k, x=x0)
 
 
+######################
+
+### sum( 1/(n^2 + k) )
+# - derived using Digamma Function;
+# - in pracma: psi(z);
+
+x = seq(65536)
+
+k = 2
+(1i/sqrt(k) + pi*cot(pi*1i*sqrt(k))) * 1i / 2 /sqrt(k)
+sum(1/(x^2 + k))
+
+k = -3
+(1i/sqrt(k+0i) + pi*cot(pi*1i*sqrt(k+0i))) * 1i / 2 /sqrt(k+0i)
+sum(1/(x^2 + k))
+
+
 #################
 #################
 
@@ -398,6 +422,7 @@ source("Polynomials.Helper.R")
 
 ### Cancellation using Roots of Unity:
 ### I[0, 1] + I[0, m] + I[0, m^2]
+
 lineI = function(n, lower=0, upper=1) {
 	line_integral(function(x)  log(x^n + 1), c(lower, upper));
 }
