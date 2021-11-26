@@ -404,7 +404,7 @@ sumLogExp(n, k=k, x=x0)
 # exact formula:
 exact.nsq = function(k) {
 	ksqr = if(k >= 0) sqrt(k) else (sqrt(k + 0i));
-	(1i/ksqr + pi*cot(pi*1i*ksqr)) * 1i / 2 /ksqr;
+	(1i/ksqr + pi / tan(pi*1i*ksqr)) * 1i / 2 /ksqr;
 }
 
 x = seq(65536)
@@ -427,6 +427,16 @@ sum(1/((2*x-1)^2 + 1))
 # sum: 1/(1^2 + 2) + 1/(3^2 + 2) + 1/(5^2 + 2) + ...
 exact.nsq(2) - 1/4*exact.nsq(1/2)
 sum(1/((2*x-1)^2 + 2))
+
+# sum: 1/(1^2 + k) + 1/(3^2 + k) + 1/(5^2 + k) + ...
+k = 3
+exact.nsq(k) - 1/4*exact.nsq(k/4)
+sum(1/((2*x-1)^2 + k))
+
+# sum( 1 / (odds^2 + sqrt(3)) )
+k = sqrt(3)
+exact.nsq(k) - 1/4*exact.nsq(k/4)
+sum(1/((2*x-1)^2 + k))
 
 
 #################
