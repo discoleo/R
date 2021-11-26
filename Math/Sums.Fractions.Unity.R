@@ -6,7 +6,7 @@
 ### Infinite Sums: Fractions
 ### Roots of Unity
 ###
-### draft v.0.1k
+### draft v.0.1j
 
 
 ### Exact Formulas for various Infinite sums
@@ -401,15 +401,32 @@ sumLogExp(n, k=k, x=x0)
 # - derived using Digamma Function;
 # - in pracma: psi(z);
 
+# exact formula:
+exact.nsq = function(k) {
+	ksqr = if(k >= 0) sqrt(k) else (sqrt(k + 0i));
+	(1i/ksqr + pi*cot(pi*1i*ksqr)) * 1i / 2 /ksqr;
+}
+
 x = seq(65536)
 
 k = 2
-(1i/sqrt(k) + pi*cot(pi*1i*sqrt(k))) * 1i / 2 /sqrt(k)
+exact.nsq(k)
 sum(1/(x^2 + k))
 
 k = -3
-(1i/sqrt(k+0i) + pi*cot(pi*1i*sqrt(k+0i))) * 1i / 2 /sqrt(k+0i)
+exact.nsq(k)
 sum(1/(x^2 + k))
+
+
+### Derived sums:
+
+# sum: 1/(1^2 + 1) + 1/(3^2 + 1) + 1/(5^2 + 1) + ...
+exact.nsq(1) - 1/4*exact.nsq(1/4)
+sum(1/((2*x-1)^2 + 1))
+
+# sum: 1/(1^2 + 2) + 1/(3^2 + 2) + 1/(5^2 + 2) + ...
+exact.nsq(2) - 1/4*exact.nsq(1/2)
+sum(1/((2*x-1)^2 + 2))
 
 
 #################
