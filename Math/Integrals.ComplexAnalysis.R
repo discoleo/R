@@ -3,12 +3,14 @@
 ### Leonard Mada
 ###
 ### Integrals: Complex Analysis
-### draft 0.1c
+### draft 0.1d
 
 
 ### Integrals:
 # 1) I( (1 - cos(x^n)) / x^(n+1) )
 # 2) I( x*sin(x)/(x^n + 1) )
+# 3) I( x^k / (x^2+1) ), where -1 < k < 0;
+#    Note: from [0, Inf];
 
 ########################
 ########################
@@ -106,4 +108,42 @@ n = 10;
 
 integrate(function(x) x*sin(x)/(x^n+1), lower=-Inf, upper=Inf)
 divUnityMinus(n)
+
+
+#####################
+#####################
+
+### I[0, Inf]( x^k / (x+1) )
+# where -1 < k < 0;
+# I = - pi / sin(k*pi)
+
+# Ref: Complex Analysis: Integral of (x^n)/(x+1) using Contour Integration
+# https://www.youtube.com/watch?v=zgLNBdtQT5Q
+
+
+###
+k = - sqrt(2) / 2;
+integrate(function(x) x^k /(x+1), lower=0, upper=Inf)
+- pi / sin(k*pi)
+
+
+### Extension:
+# I[0, Inf]( x^k / (x^2+1) )
+
+### Ex 1:
+k = - sqrt(2) / 2;
+integrate(function(x) x^k /(x^2+1), lower=0, upper=Inf)
+pi*cos((k-1)/2*pi) / sin(k*pi)
+
+
+### Ex 2:
+k = sqrt(2) - 2;
+integrate(function(x) x^k /(x^2+1), lower=0, upper=Inf)
+pi*cos((k-1)/2*pi) / sin(k*pi)
+
+
+### Ex 3:
+k = sqrt(3) - 2;
+integrate(function(x) x^k /(x^2+1), lower=0, upper=Inf)
+pi*cos((k-1)/2*pi) / sin(k*pi)
 
