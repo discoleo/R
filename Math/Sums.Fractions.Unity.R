@@ -6,7 +6,7 @@
 ### Infinite Sums: Fractions
 ### Roots of Unity
 ###
-### draft v.0.1j
+### draft v.0.1k
 
 
 ### Exact Formulas for various Infinite sums
@@ -437,6 +437,12 @@ sum(1/((2*x-1)^2 + k))
 k = sqrt(3)
 exact.nsq(k) - 1/4*exact.nsq(k/4)
 sum(1/((2*x-1)^2 + k))
+
+
+### Excluded: 2*k, 3*k
+# sum: 1/(1^2 + 1) + 1/(5^2 + 1) + 1/(7^2 + 1) + 1/(11^2 + 1) + ...
+exact.nsq(1) - 1/4*exact.nsq(1/4) - 1/9*exact.nsq(1/9) + 1/36*exact.nsq(1/36)
+sum(1/c((6*x-5)^2 + 1, (6*x-1)^2 + 1))
 
 
 #################
