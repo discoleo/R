@@ -3,7 +3,7 @@
 ### Leonard Mada
 ###
 ### Integrals: Complex Analysis
-### draft 0.1e
+### draft 0.1e-domain
 
 
 ### Integrals:
@@ -135,6 +135,7 @@ integrate(function(x) x^k /(x+1), lower=0, upper=Inf)
 ### Extensions:
 
 ### I( x^k / (x^2+1) )
+# with -1 < k < 1;
 
 ### Ex 1:
 k = - sqrt(2) / 2;
@@ -154,16 +155,30 @@ integrate(function(x) x^k /(x^2+1), lower=0, upper=Inf)
 pi*cos((k-1)/2*pi) / sin(k*pi)
 
 
+### Ex 4:
+k = sqrt(2)/2;
+integrate(function(x) x^k /(x^2+1), lower=0, upper=Inf)
+pi*cos((k-1)/2*pi) / sin(k*pi)
+
+
 ###################
 
 ### Generalization:
 ### x^k /(x^n+1)
 
 ### Ext: n = 3
+# with -1 < k < 2
+
+### Ex 1:
 k = - sqrt(3)/3;
 integrate(function(x) x^k /(x^3+1), lower=0, upper=Inf)
 pi/3 * sum(exp(1i*(k+1)*pi/3 * c(1,3,5))) / sin(k*pi) / exp(k*pi*1i)
 pi/3 * sum(-1, exp(1i*pi/3*(c(1,5)*(k+1) - 3*k))) / sin(k*pi)
+- pi/3 * sum(1, 2*cos(2*(k+1)*pi/3)) / sin(k*pi)
+
+### Ex 2:
+k = sqrt(2)
+integrate(function(x) x^k /(x^3+1), lower=0, upper=Inf)
 - pi/3 * sum(1, 2*cos(2*(k+1)*pi/3)) / sin(k*pi)
 
 
