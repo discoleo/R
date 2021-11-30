@@ -3,7 +3,7 @@
 ### Leonard Mada
 ###
 ### Integrals: Complex Analysis
-### draft 0.1d
+### draft 0.1e
 
 
 ### Integrals:
@@ -11,6 +11,10 @@
 # 2) I( x*sin(x)/(x^n + 1) )
 # 3) I( x^k / (x^2+1) ), where -1 < k < 0;
 #    Note: from [0, Inf];
+# 3.b.) Generalization
+#  - various (integer) powers of n:
+#    I( x^k / (x^n+1) ), where -1 < k < 0;
+
 
 ########################
 ########################
@@ -121,14 +125,16 @@ divUnityMinus(n)
 # https://www.youtube.com/watch?v=zgLNBdtQT5Q
 
 
-###
+### Test: Base-Case
 k = - sqrt(2) / 2;
 integrate(function(x) x^k /(x+1), lower=0, upper=Inf)
 - pi / sin(k*pi)
 
 
-### Extension:
-# I[0, Inf]( x^k / (x^2+1) )
+###############
+### Extensions:
+
+### I( x^k / (x^2+1) )
 
 ### Ex 1:
 k = - sqrt(2) / 2;
@@ -146,4 +152,25 @@ pi*cos((k-1)/2*pi) / sin(k*pi)
 k = sqrt(3) - 2;
 integrate(function(x) x^k /(x^2+1), lower=0, upper=Inf)
 pi*cos((k-1)/2*pi) / sin(k*pi)
+
+
+###################
+
+### Generalization:
+### x^k /(x^n+1)
+
+### Ext: n = 3
+k = - sqrt(3)/3;
+integrate(function(x) x^k /(x^3+1), lower=0, upper=Inf)
+pi/3 * sum(exp(1i*(k+1)*pi/3 * c(1,3,5))) / sin(k*pi) / exp(k*pi*1i)
+pi/3 * sum(-1, exp(1i*pi/3*(c(1,5)*(k+1) - 3*k))) / sin(k*pi)
+- pi/3 * sum(1, 2*cos(2*(k+1)*pi/3)) / sin(k*pi)
+
+
+### Ext: n = 5
+k = - sqrt(3)/3;
+integrate(function(x) x^k /(x^5+1), lower=0, upper=Inf)
+pi/5 * sum(exp(1i*(k+1)*pi/5 * c(1,3,5,7,9))) / sin(k*pi) / exp(k*pi*1i)
+pi/5 * sum(-1, exp(1i*pi/5*(c(1,3,7,9)*(k+1) - 5*k))) / sin(k*pi)
+# TODO: simplify;
 
