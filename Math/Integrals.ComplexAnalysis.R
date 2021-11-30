@@ -3,7 +3,7 @@
 ### Leonard Mada
 ###
 ### Integrals: Complex Analysis
-### draft 0.1e-domain
+### draft 0.1e-cosh
 
 
 ### Integrals:
@@ -158,6 +158,13 @@ pi*cos((k-1)/2*pi) / sin(k*pi)
 ### Ex 4:
 k = sqrt(2)/2;
 integrate(function(x) x^k /(x^2+1), lower=0, upper=Inf)
+pi*cos((k-1)/2*pi) / sin(k*pi)
+
+
+### Variant:
+k = sqrt(2)/2;
+integrate(function(x) cosh(k*log(x)) /(x*cosh(log(x))), lower=0, upper=1)
+integrate(function(y) cosh(k*y) / cosh(y), lower=0, upper=1000) # BUG: upper=Inf;
 pi*cos((k-1)/2*pi) / sin(k*pi)
 
 
