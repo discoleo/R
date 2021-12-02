@@ -1,10 +1,15 @@
 
+= Applications of the Gamma(1/n) Function =
+; Leonard Mada
 
-== Relations between the G(1/n) functions ==
-== Leonard Mada ==
+This material will present some useful applications of Gamma(1/n). It will also describe some relationships between various Gamma(1/n) values - as they may be used to transform/simplify specific expressions.
 
-Wiki code
-draft 0.2
+
+== Relations between the G(1/n) values ==
+; Leonard Mada
+
+: Wiki code
+: draft 0.2b
 
 Original:
 https://github.com/discoleo/R/blob/master/Math/Integrals.Gamma.R
@@ -13,7 +18,7 @@ https://github.com/discoleo/R/blob/master/Math/Integrals.Gamma.R
 --
 
 == Wikipedia ==
-* unfortunately they keep deleting this code from the "Gamma function" page;
+* unfortunately they keep deleting this material from the "Gamma function" page;
 * however: the file Integrals.Gamma.R on Github represents the original material: any other derivative will need to reference this original;
 
 
@@ -33,5 +38,19 @@ Relations derived using the multiplication theorem (Ref <ref>
 See the reference for additional formulas.
 
 [Comment]
-(great care has been taken to copy correctly the formulas; the above formulas shoud be checked against the formulas in the reference;).
+* great care has been taken to copy correctly the formulas; the above formulas should be checked against the formulas in the reference;
+* Note: the R code in the reference is much easier to check;
 
+
+== Real Uses of the G(1/n) values ==
+; Leonard Mada
+
+G(1/n) appears in the exact formula for the following integral:
+:<math>\int\limits_{0}^{\infty}\frac {1}{(x^n + 1)^(1/k)}\, dx.</math>
+
+; Exact solution:
+gamma(1/n)*gamma(1/k - 1/n) / gamma(1/k) / n
+
+: Reference:
+https://github.com/discoleo/R/blob/master/Math/Integrals.ComplexAnalysis.R
+* Section with the Fractions of Radicals;
