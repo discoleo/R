@@ -3,7 +3,7 @@
 ### Leonard Mada
 ###
 ### Integrals: Complex Analysis
-### draft 0.1g
+### draft 0.1g-bis
 
 
 ### Integrals:
@@ -305,6 +305,20 @@ gamma(1/n)*gamma(1/3 - 1/n) / gamma(1/3) / n
 #####
 n = 7
 k = 6
+integrate(function(x) 1 / (x^n+1)^(1/k), lower=0, upper=Inf)
+gamma(1/n)*gamma(1/k - 1/n) / gamma(1/k) / n
+
+
+#####
+n = sqrt(7)
+k = sqrt(5)
+integrate(function(x) 1 / (x^n+1)^(1/k), lower=0, upper=Inf)
+gamma(1/n)*gamma(1/k - 1/n) / gamma(1/k) / n
+
+
+#####
+n = sqrt(7)
+k = 1/sqrt(5)
 integrate(function(x) 1 / (x^n+1)^(1/k), lower=0, upper=Inf)
 gamma(1/n)*gamma(1/k - 1/n) / gamma(1/k) / n
 
