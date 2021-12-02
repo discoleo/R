@@ -3,7 +3,7 @@
 ### Leonard Mada
 ###
 ### Integrals: Complex Analysis
-### draft 0.1e-cosh
+### draft 0.1f
 
 
 ### Integrals:
@@ -195,4 +195,80 @@ integrate(function(x) x^k /(x^5+1), lower=0, upper=Inf)
 pi/5 * sum(exp(1i*(k+1)*pi/5 * c(1,3,5,7,9))) / sin(k*pi) / exp(k*pi*1i)
 pi/5 * sum(-1, exp(1i*pi/5*(c(1,3,7,9)*(k+1) - 5*k))) / sin(k*pi)
 # TODO: simplify;
+
+
+#####################
+#####################
+
+### I[0, Inf]( log(x) / (x^n + 1) )
+# I = - (pi/n)^2 * cos(pi/n) / sin(pi/n)^2
+
+# Ref: Complex Analysis: Integral of ln(x)/(x^n+1) using Contour Integration
+# https://www.youtube.com/watch?v=Sj8IJOBK33w
+
+### Note:
+# I( 1 / (x^n + 1) ), on (0, Inf)
+# = pi/n / sin(pi/n);
+# - for the exact formula on an arbitrary domain, see:
+#   Integrals.Fractions.Unity.R; (n = only integers)
+
+
+### Test: Base-Case
+n = sqrt(2);
+integrate(function(x) log(x) /(x^n + 1), lower=0, upper=Inf)
+- (pi/n)^2 * cos(pi/n) / sin(pi/n)^2
+
+###
+n = sqrt(2);
+n = 3
+m  = complex(re=cos(2*pi/n), im=sin(2*pi/n))
+m1 = complex(re=cos(pi/n), im=sin(pi/n))
+integrate(function(x) log(x^n + 1) / (x^n + 1), lower=0, upper=Inf)
+# TODO: wrong
+-2i*(pi/n) * exp(pi*1i/n) / (1-m)
+m1/((m1+1)*(m1^2-1))
+
+
+##########################
+##########################
+
+### I( 1 / sqrt(x^n + 1) )
+
+# TODO:
+# - proper derivation;
+
+n = 3
+integrate(function(x) 1 /sqrt(x^n+1), lower=0, upper=Inf)
+gamma(1/n)*gamma(1/2 - 1/n)/n / sqrt(pi)
+
+
+# does NOT work!
+m  = complex(re=cos(2*pi/n), im=sin(2*pi/n))
+mn = complex(re=cos(pi/n), im=sin(pi/n))
+# 2i*pi / sqrt((mn+1)*(mn-1/mn)) / (1-m)
+
+
+###
+n = 5
+integrate(function(x) 1 /sqrt(x^n+1), lower=0, upper=Inf)
+gamma(1/n)*gamma(1/2 - 1/n) / n / sqrt(pi)
+
+
+###
+n = 7
+integrate(function(x) 1 /sqrt(x^n+1), lower=0, upper=Inf)
+gamma(1/n)*gamma(1/2 - 1/n) / n / sqrt(pi)
+
+
+###
+n = 9
+integrate(function(x) 1 /sqrt(x^n+1), lower=0, upper=Inf)
+gamma(1/n)*gamma(1/2 - 1/n) / n / sqrt(pi)
+
+
+### sqrt(N)
+# N > 4;
+n = sqrt(5)
+integrate(function(x) 1 /sqrt(x^n+1), lower=0, upper=Inf)
+gamma(1/n)*gamma(1/2 - 1/n) / n / sqrt(pi)
 
