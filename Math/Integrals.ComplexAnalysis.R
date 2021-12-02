@@ -3,7 +3,7 @@
 ### Leonard Mada
 ###
 ### Integrals: Complex Analysis
-### draft 0.1f
+### draft 0.1g
 
 
 ### Integrals:
@@ -271,4 +271,40 @@ gamma(1/n)*gamma(1/2 - 1/n) / n / sqrt(pi)
 n = sqrt(5)
 integrate(function(x) 1 /sqrt(x^n+1), lower=0, upper=Inf)
 gamma(1/n)*gamma(1/2 - 1/n) / n / sqrt(pi)
+
+
+###############
+###############
+
+### Higher Order Radicals
+
+# TODO:
+# - proper derivation;
+
+###
+n = 5
+integrate(function(x) 1 / (x^n+1)^(1/3), lower=0, upper=Inf)
+gamma(1/n)*gamma(1/3 - 1/n) / gamma(1/3) / n
+
+###
+n = 6
+integrate(function(x) 1 / (x^n+1)^(1/3), lower=0, upper=Inf)
+gamma(1/n)*gamma(1/3 - 1/n) / gamma(1/3) / n
+
+###
+n = 7
+integrate(function(x) 1 / (x^n+1)^(1/3), lower=0, upper=Inf)
+gamma(1/n)*gamma(1/3 - 1/n) / gamma(1/3) / n
+
+###
+n = sqrt(11)
+integrate(function(x) 1 / (x^n+1)^(1/3), lower=0, upper=Inf)
+gamma(1/n)*gamma(1/3 - 1/n) / gamma(1/3) / n
+
+
+#####
+n = 7
+k = 6
+integrate(function(x) 1 / (x^n+1)^(1/k), lower=0, upper=Inf)
+gamma(1/n)*gamma(1/k - 1/n) / gamma(1/k) / n
 
