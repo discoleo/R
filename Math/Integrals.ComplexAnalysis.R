@@ -3,7 +3,7 @@
 ### Leonard Mada
 ###
 ### Integrals: Complex Analysis
-### draft 0.1h
+### draft 0.1h-Cases
 
 
 ### Integrals:
@@ -242,10 +242,9 @@ integrate(function(x) 1 /sqrt(x^n+1), lower=0, upper=Inf)
 gamma(1/n)*gamma(1/2 - 1/n)/n / sqrt(pi)
 
 
-# does NOT work!
+# Simple Contour: does NOT work!
 m  = complex(re=cos(2*pi/n), im=sin(2*pi/n))
 mn = complex(re=cos(pi/n), im=sin(pi/n))
-# 2i*pi / sqrt((mn+1)*(mn-1/mn)) / (1-m)
 
 
 ###
@@ -322,6 +321,23 @@ k = 1/sqrt(5)
 integrate(function(x) 1 / (x^n+1)^(1/k), lower=0, upper=Inf)
 gamma(1/n)*gamma(1/k - 1/n) / gamma(1/k) / n
 
+
+### Selected Cases:
+
+###
+n = 3/2; k = 1/2; # 1/k = 2;
+integrate(function(x) 1 / (x^n+1)^(1/k), lower=0, upper=Inf)
+gamma(1/n)*gamma(1/k - 1/n) / gamma(1/k) / n
+pi / sin(pi/3) * 2/9
+
+###
+n = 3/2; k = 2/3; # 1/k = 3/2;
+integrate(function(x) 1 / (x^n+1)^(1/k), lower=0, upper=Inf)
+gamma(1/n)*gamma(1/k - 1/n) / gamma(1/k) / n
+gamma(2/3)*gamma(5/6) / gamma(1/2) * 4/3
+
+
+#############
 ### Variants:
 n = sqrt(7)
 k = sqrt(5)
