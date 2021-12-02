@@ -3,7 +3,7 @@
 ### Leonard Mada
 ###
 ### Integrals: Complex Analysis
-### draft 0.1g-bis
+### draft 0.1h
 
 
 ### Integrals:
@@ -321,4 +321,17 @@ n = sqrt(7)
 k = 1/sqrt(5)
 integrate(function(x) 1 / (x^n+1)^(1/k), lower=0, upper=Inf)
 gamma(1/n)*gamma(1/k - 1/n) / gamma(1/k) / n
+
+### Variants:
+n = sqrt(7)
+k = sqrt(5)
+integrate(function(x) 1 / (x^n+1)^(1/k), lower=0, upper=Inf)
+integrate(function(x) (x^(n/k-2) + 1) / (x^n+1)^(1/k), lower=0, upper=1)
+integrate(function(x) 2^(1-1/k)*cosh((n/(2*k) - 1)*log(x)) / x / cosh(n/2*log(x))^(1/k), lower=0, upper=1)
+integrate(function(x) 2^(1-1/k)*cosh((n/(2*k) - 1)*x) / cosh(n*x/2)^(1/k), lower=0, upper=100) # BUG: upper = Inf
+gamma(1/n)*gamma(1/k - 1/n) / gamma(1/k) / n
+
+### =>
+integrate(function(x) cosh((n/(2*k) - 1)*x) / cosh(n*x/2)^(1/k), lower=0, upper=100) # BUG: upper = Inf
+gamma(1/n)*gamma(1/k - 1/n) / gamma(1/k) * 2^(1/k - 1) / n
 
