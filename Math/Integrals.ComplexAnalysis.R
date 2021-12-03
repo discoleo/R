@@ -3,7 +3,7 @@
 ### Leonard Mada
 ###
 ### Integrals: Complex Analysis
-### draft 0.1h-Cases
+### draft 0.1h-Derivation
 
 
 ### Integrals:
@@ -232,19 +232,30 @@ m1/((m1+1)*(m1^2-1))
 ##########################
 ##########################
 
-### I( 1 / sqrt(x^n + 1) )
-
-# TODO:
-# - proper derivation;
-
-n = 3
-integrate(function(x) 1 /sqrt(x^n+1), lower=0, upper=Inf)
-gamma(1/n)*gamma(1/2 - 1/n)/n / sqrt(pi)
+### I( x^p / sqrt(x^n + 1) )
+### I( x^p / (x^n + 1)^(1/k) )
 
 
+### Derivation:
+
+n = 4; k = 3; p = 1/5;
+integrate(function(x) x^p / (x^n+1)^(1/k), lower=0, upper=Inf) # y = x^n =>
+integrate(function(x) 1/n * x^((p+1)/n - 1) / (x+1)^(1/k), lower=0, upper=Inf)
+# y = x / (x+1) => y = 1 - 1/(x+1)=>
+integrate(function(x) 1/n * x^((p+1)/n - 1) * (1-x)^(1/k - (p+1)/n - 1), lower=0, upper=1)
+beta((p+1)/n, 1/k - (p+1)/n) / n
+gamma((p+1)/n) * gamma(1/k - (p+1)/n) / gamma(1/k) / n
+
+# Note:
 # Simple Contour: does NOT work!
 m  = complex(re=cos(2*pi/n), im=sin(2*pi/n))
 mn = complex(re=cos(pi/n), im=sin(pi/n))
+
+
+###
+n = 3
+integrate(function(x) 1 /sqrt(x^n+1), lower=0, upper=Inf)
+gamma(1/n)*gamma(1/2 - 1/n)/n / sqrt(pi)
 
 
 ###
@@ -276,9 +287,6 @@ gamma(1/n)*gamma(1/2 - 1/n) / n / sqrt(pi)
 ###############
 
 ### Higher Order Radicals
-
-# TODO:
-# - proper derivation;
 
 ###
 n = 5
@@ -335,6 +343,14 @@ n = 3/2; k = 2/3; # 1/k = 3/2;
 integrate(function(x) 1 / (x^n+1)^(1/k), lower=0, upper=Inf)
 gamma(1/n)*gamma(1/k - 1/n) / gamma(1/k) / n
 gamma(2/3)*gamma(5/6) / gamma(1/2) * 4/3
+
+
+###
+n = 3/4;
+p = n-1; k = 2/3;
+integrate(function(x) x^p / (x^n+1)^(1/k), lower=0, upper=Inf)
+gamma((p+1)/n) * gamma(1/k - (p+1)/n) / gamma(1/k) / n;
+2/n;
 
 
 #############
