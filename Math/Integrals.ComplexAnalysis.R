@@ -3,7 +3,7 @@
 ### Leonard Mada
 ###
 ### Integrals: Complex Analysis
-### draft 0.1h-Derivation
+### draft 0.1h-cosh-Param
 
 
 ### Integrals:
@@ -366,4 +366,23 @@ gamma(1/n)*gamma(1/k - 1/n) / gamma(1/k) / n
 ### =>
 integrate(function(x) cosh((n/(2*k) - 1)*x) / cosh(n*x/2)^(1/k), lower=0, upper=100) # BUG: upper = Inf
 gamma(1/n)*gamma(1/k - 1/n) / gamma(1/k) * 2^(1/k - 1) / n
+
+
+### full variant:
+n = sqrt(19)
+k = sqrt(3); p = sqrt(2)
+integrate(function(x) x^p / (x^n+1)^(1/k), lower=0, upper=Inf)
+integrate(function(x) (x^(n/k - p - 2) + x^p) / (x^n+1)^(1/k), lower=0, upper=1)
+integrate(function(x) 2^(1-1/k)*cosh((n/(2*k) - p - 1)*log(x)) / x / cosh(n/2*log(x))^(1/k), lower=0, upper=1)
+integrate(function(x) 2^(1-1/k)*cosh((n/(2*k) - p - 1)*x) / cosh(n*x/2)^(1/k), lower=0, upper=100) # BUG: upper = Inf
+gamma((p+1)/n) * gamma(1/k - (p+1)/n) / gamma(1/k) / n
+
+### =>
+integrate(function(x) cosh((n/(2*k) - p - 1)*x) / cosh(n*x/2)^(1/k), lower=0, upper=100) # BUG: upper = Inf
+gamma((p+1)/n) * gamma(1/k - (p+1)/n) / gamma(1/k) * 2^(1/k - 1) / n
+
+### =>
+n = sqrt(19); k = sqrt(3); p = sqrt(2);
+integrate(function(x) cosh(p*x) / cosh(n*x)^(1/k), lower=0, upper=100) # BUG: upper = Inf
+gamma(1/(2*k) - p/(2*n)) * gamma(1/(2*k) + p/(2*n)) / gamma(1/k) * 2^(1/k - 2) / n
 
