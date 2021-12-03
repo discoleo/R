@@ -3,7 +3,7 @@
 ### Leonard Mada
 ###
 ### Integrals: Complex Analysis
-### draft 0.1h-cosh-Param
+### draft 0.1i
 
 
 ### Integrals:
@@ -215,8 +215,16 @@ pi/5 * sum(-1, exp(1i*pi/5*(c(1,3,7,9)*(k+1) - 5*k))) / sin(k*pi)
 
 ### Test: Base-Case
 n = sqrt(2);
-integrate(function(x) log(x) /(x^n + 1), lower=0, upper=Inf)
+integrate(function(x) log(x) / (x^n + 1), lower=0, upper=Inf)
 - (pi/n)^2 * cos(pi/n) / sin(pi/n)^2
+
+
+### Power = 2
+# Integration by parts =>
+n = sqrt(2);
+integrate(function(x) log(x) / (x^n + 1)^2, lower=0, upper=Inf)
+- pi/n^2 / sin(pi/n) - pi^2*(n-1)/n^3 * cos(pi/n) / sin(pi/n)^2
+
 
 ###
 n = sqrt(2);
