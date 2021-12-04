@@ -3,7 +3,7 @@
 ### Leonard Mada
 ###
 ### Integrals: Complex Analysis
-### draft 0.1j
+### draft 0.1k
 
 
 ### Integrals:
@@ -229,8 +229,26 @@ integrate(function(x) log(x) / (x^n + 1)^2, lower=0, upper=Inf)
 ### log(x) / (x^n - 1)
 # I[0, 1] == I[1, Inf];
 n = 2
-integrate(function(x) 2 * log(x) / (x^n - 1), 0, 1)
-pi^2 / 4
+integrate(function(x) log(x) / (x^n - 1), 0, 1)
+pi^2 / 8
+
+###
+n = 3
+integrate(function(x) log(x) / (x^n - 1), 0, 1)$value +
+	integrate(function(x) log(x) / (x^n - 1), 1, Inf)$value
+pi^2 / n^3 * 4
+
+###
+n = 4
+integrate(function(x) log(x) / (x^n - 1), 0, 1)$value +
+	integrate(function(x) log(x) / (x^n - 1), 1, Inf)$value
+pi^2 / n^3 * 8
+
+###
+n = 6
+integrate(function(x) log(x) / (x^n - 1), 0, 1)$value +
+	integrate(function(x) log(x) / (x^n - 1), 1, Inf)$value
+pi^2 / n^3 * 24
 
 
 ###
