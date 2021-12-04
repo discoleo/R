@@ -3,7 +3,7 @@
 ### Leonard Mada
 ###
 ### Integrals: Complex Analysis
-### draft 0.1k
+### draft 0.1l
 
 
 ### Integrals:
@@ -207,18 +207,31 @@ pi/5 * sum(-1, exp(1i*pi/5*(c(1,3,7,9)*(k+1) - 5*k))) / sin(k*pi)
 # https://www.youtube.com/watch?v=Sj8IJOBK33w
 
 ### Note:
-# I( 1 / (x^n + 1) ), on (0, Inf)
+# - simplified formulas are available for these integrals:
+
+### I( 1 / (x^n + 1) ), on (0, Inf)
 # = pi/n / sin(pi/n);
-# - for the exact formula on an arbitrary domain, see:
+### I( (x-1) / (x^n - 1) ), on (0, Inf)
+# = ???
+# (?) = pi/n / tan(pi/n);
+# - for the exact formulas on an arbitrary domain, see:
 #   Integrals.Fractions.Unity.R; (n = only integers)
 
 
-### Test: Base-Case
+### Base-Case
 n = sqrt(2);
 integrate(function(x) log(x) / (x^n + 1), lower=0, upper=Inf)
 - (pi/n)^2 * cos(pi/n) / sin(pi/n)^2
 
+### Test: (x-1) / (x^n - 1)
+# TODO:
+n = 3; # sqrt(5);
+integrate(function(x) (x-1) / (x^n - 1), lower=0, upper=1)$value +
+	integrate(function(x) (x-1) / (x^n - 1), lower=1, upper=Inf)$value
+pi/n / tan(pi/n) * 2
 
+
+#############
 ### Power = 2
 # Integration by parts =>
 n = sqrt(2);
@@ -226,32 +239,48 @@ integrate(function(x) log(x) / (x^n + 1)^2, lower=0, upper=Inf)
 - pi/n^2 / sin(pi/n) - pi^2*(n-1)/n^3 * cos(pi/n) / sin(pi/n)^2
 
 
+############
 ### log(x) / (x^n - 1)
+n = sqrt(7) - sqrt(2); # n > 1
+integrate(function(x) log(x) / (x^n - 1), 0, 1)$value +
+	integrate(function(x) log(x) / (x^n - 1), 1, Inf)$value
+pi^2 / n^2 / sin(pi/n)^2
+
+### n = 2
 # I[0, 1] == I[1, Inf];
 n = 2
-integrate(function(x) log(x) / (x^n - 1), 0, 1)
-pi^2 / 8
+integrate(function(x) 2*log(x) / (x^n - 1), 0, 1)
+pi^2 / n^2
 
 ###
 n = 3
 integrate(function(x) log(x) / (x^n - 1), 0, 1)$value +
 	integrate(function(x) log(x) / (x^n - 1), 1, Inf)$value
-pi^2 / n^3 * 4
+pi^2 / n^2 / sin(pi/n)^2
+pi^2 / n^2 * 4/3
 
 ###
 n = 4
 integrate(function(x) log(x) / (x^n - 1), 0, 1)$value +
 	integrate(function(x) log(x) / (x^n - 1), 1, Inf)$value
-pi^2 / n^3 * 8
+pi^2 / n^2 / sin(pi/n)^2
+pi^2 / n^2 * 2
+
+###
+n = 5
+integrate(function(x) log(x) / (x^n - 1), 0, 1)$value +
+	integrate(function(x) log(x) / (x^n - 1), 1, Inf)$value
+pi^2 / n^2 / sin(pi/n)^2
 
 ###
 n = 6
 integrate(function(x) log(x) / (x^n - 1), 0, 1)$value +
 	integrate(function(x) log(x) / (x^n - 1), 1, Inf)$value
-pi^2 / n^3 * 24
+pi^2 / n^2 / sin(pi/n)^2
+pi^2 / n^2 * 4
 
 
-###
+### TODO
 n = sqrt(2);
 n = 3
 m  = complex(re=cos(2*pi/n), im=sin(2*pi/n))
