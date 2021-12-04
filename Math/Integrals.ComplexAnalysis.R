@@ -3,7 +3,7 @@
 ### Leonard Mada
 ###
 ### Integrals: Complex Analysis
-### draft 0.1i
+### draft 0.1j
 
 
 ### Integrals:
@@ -164,7 +164,7 @@ pi*cos((k-1)/2*pi) / sin(k*pi)
 ### Variant:
 k = sqrt(2)/2;
 integrate(function(x) cosh(k*log(x)) /(x*cosh(log(x))), lower=0, upper=1)
-integrate(function(y) cosh(k*y) / cosh(y), lower=0, upper=1000) # BUG: upper=Inf;
+integrate(function(x) cosh(k*x) / cosh(x), lower=0, upper=1000) # BUG: upper=Inf;
 pi*cos((k-1)/2*pi) / sin(k*pi)
 
 
@@ -224,6 +224,13 @@ integrate(function(x) log(x) / (x^n + 1), lower=0, upper=Inf)
 n = sqrt(2);
 integrate(function(x) log(x) / (x^n + 1)^2, lower=0, upper=Inf)
 - pi/n^2 / sin(pi/n) - pi^2*(n-1)/n^3 * cos(pi/n) / sin(pi/n)^2
+
+
+### log(x) / (x^n - 1)
+# I[0, 1] == I[1, Inf];
+n = 2
+integrate(function(x) 2 * log(x) / (x^n - 1), 0, 1)
+pi^2 / 4
 
 
 ###
@@ -377,6 +384,7 @@ gamma(1/n)*gamma(1/k - 1/n) / gamma(1/k) * 2^(1/k - 1) / n
 
 
 ### full variant:
+### cosh(p*x) / cosh(n*x)^(1/k)
 n = sqrt(19)
 k = sqrt(3); p = sqrt(2)
 integrate(function(x) x^p / (x^n+1)^(1/k), lower=0, upper=Inf)
