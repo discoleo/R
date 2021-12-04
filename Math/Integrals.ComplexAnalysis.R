@@ -3,7 +3,7 @@
 ### Leonard Mada
 ###
 ### Integrals: Complex Analysis
-### draft 0.1l
+### draft 0.1l-fix-epsilon
 
 
 ### Integrals:
@@ -211,9 +211,8 @@ pi/5 * sum(-1, exp(1i*pi/5*(c(1,3,7,9)*(k+1) - 5*k))) / sin(k*pi)
 
 ### I( 1 / (x^n + 1) ), on (0, Inf)
 # = pi/n / sin(pi/n);
-### I( (x-1) / (x^n - 1) ), on (0, Inf)
-# = ???
-# (?) = pi/n / tan(pi/n);
+### I( 1 / (x^n - 1) ), on (0, Inf)
+# = - pi/n / tan(pi/n);
 # - for the exact formulas on an arbitrary domain, see:
 #   Integrals.Fractions.Unity.R; (n = only integers)
 
@@ -223,12 +222,13 @@ n = sqrt(2);
 integrate(function(x) log(x) / (x^n + 1), lower=0, upper=Inf)
 - (pi/n)^2 * cos(pi/n) / sin(pi/n)^2
 
-### Test: (x-1) / (x^n - 1)
-# TODO:
-n = 3; # sqrt(5);
-integrate(function(x) (x-1) / (x^n - 1), lower=0, upper=1)$value +
-	integrate(function(x) (x-1) / (x^n - 1), lower=1, upper=Inf)$value
-pi/n / tan(pi/n) * 2
+### Test: 1 / (x^n - 1)
+# - use +/- episoln;
+epsilon = 1E-5;
+n = sqrt(5);
+integrate(function(x) 1 / (x^n - 1), lower=0, upper=1-epsilon)$value +
+	integrate(function(x) 1 / (x^n - 1), lower=1+epsilon, upper=Inf)$value
+- pi/n / tan(pi/n)
 
 
 #############
