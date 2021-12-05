@@ -4,7 +4,7 @@
 ### Integrals: Polynomial Fractions
 ### Cardano-Type Polynomials
 ###
-### draft v.0.2f-Residue
+### draft v.0.2f-Residue2
 
 
 ############
@@ -166,11 +166,14 @@ qdiv.f = function(x, c, d, k=0, n=3) {
 	}
 	xk / div;
 }
+### log(Q(x))
 lnfr.f = function(lim, c, d, k=0, n=3) {
-	# Note: log(Q(x)) = log(1/Fr_Q(x))
+	# Note: log(Q(x)) = I( D(Q(x)) / Q(x) );
 	# => lim[1] / lim[2];
+	# - NO coefficient!
 	log(qdiv.f(lim[1], c=c, d=d, k=k, n=n) / qdiv.f(lim[2], c=c, d=d, k=k, n=n))
 }
+### log(x - r)
 ln.fr = function(lim, r) {
 	# log(x - r)
 	log( (lim[2] - r) / (lim[1] - r))
@@ -310,13 +313,14 @@ atan.f = function(lim, b0sqrt) {
 	atan((lim[2] + sh)/b0sqrt) - atan((lim[1] + sh)/b0sqrt);
 }
 r # print the roots
-epsilon = 1E-6;
+epsilon = 1E-6; # <- divergent;
 lim = c(2, 5)
+# Warning: does NOT converge !!
 integrate(qdiv.f, lower=lim[1], upper=r[1] - epsilon, c=c, d=d, k=0, n=3)$value +
 	integrate(qdiv.f, lower=lim[2] + epsilon, upper=lim[2], c=c, d=d, k=0, n=3)$value
 # exact:
 a = q.dc$a; sh = q.dc$r / 2; b0sqrt = sqrt(3/4*q.dc$r^2 - 3*c);
-a*log((lim[2] - q.dc$r)/(lim[1] - q.dc$r)) +
+a*ln.fr(lim, r) +
 	- a/2*log.f(lim) - (q.dc$b - a/2*q.dc$r) / b0sqrt * atan.f(lim, b0sqrt);
 # Residue:
 1i*pi / (3*r^2 - 3*c)
@@ -331,13 +335,10 @@ a*log((lim[2] - q.dc$r)/(lim[1] - q.dc$r)) +
 
 unity.sum.f = function(n) {
 	m = complex(re=cos(2*pi/n), im=sin(2*pi/n))
-	n.half = (n-1)/2
-	# m.m = matrix(m^(1:n.half), ncol=1)
-	# m.m = cbind(m.m, 1/m.m)
-	# m.sum = apply(m.m, 1, sum)
+	n.half = round((n-1)/2);
 	m.all = m^(0:(n-1))
-	m.half = m^(1:n.half)
-	m.sum = m.half + 1/m.half
+	# m.half = m^(1:n.half); m.half + 1/m.half;
+	m.sum = 2*cos(2*seq(n.half)*pi/n);
 	return(list(m=m.all, m.sum=m.sum))
 }
 decompose.fr = function(coeff, n) {
