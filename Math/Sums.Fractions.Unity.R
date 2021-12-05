@@ -6,13 +6,14 @@
 ### Infinite Sums: Fractions
 ### Roots of Unity
 ###
-### draft v.0.1k
+### draft v.0.1l
 
 
 ### Exact Formulas for various Infinite sums
 
 ### Infinite Sums
 ### A.) Sum( (-1)^n / (k1*n + k0))
+###     Sum( (-1)^n / (n + k)), any real k;
 ### B.) Based on I(x^k0 * log(x^n + 1))
 ### C.) Term-cancellation using Roots of unity
 
@@ -81,6 +82,10 @@ sumExact.frn = function(n, lower=0, upper=1) {
 	if(lower != 0) r = r - sum( a/2 * log(lower^2 + 1 + m.sum*lower) );
 	return(r);
 }
+sumExact.dgm = function(n, k) {
+	if(missing(k)) k = 1/n;
+	(digamma((k+1)/2) - digamma(k/2)) / (2*n);
+}
 
 
 ########################
@@ -97,6 +102,10 @@ sumExact.frn = function(n, lower=0, upper=1) {
 # I = Sum( (-1)^j / (k1*j + k0) )
 # j = from 1 to Inf;
 
+### Digamma
+# - using the Digamma function;
+#   digamma(x) or psi(z) (in package pracma);
+#  (digamma((k+1)/2) - digamma(k/2)) / 2
 
 ### Examples:
 
@@ -109,6 +118,7 @@ integrate(sum.frn, lower=0, upper=1, n=n)
 sum.basicFr(n)
 ### Exact formula:
 sumExact.frn(n)
+sumExact.dgm(n)
 
 
 ### Ex 2:
@@ -117,6 +127,7 @@ integrate(sum.frn, lower=0, upper=1, n=n)
 sum.basicFr(n)
 ### Exact formula:
 sumExact.frn(n)
+sumExact.dgm(n)
 
 
 ##############
@@ -147,6 +158,8 @@ b0 - b0*log(2) + sum(cP0) +
 	- sum( cP1 * log(1 + 1 + m.sum) ) +
 	+ sum( cP2 / m.sq * atan((1 + m.shift)/m.sq) ) +
 	- sum( cP2 / m.sq * atan((0 + m.shift)/m.sq) )
+# using digamma:
+sumExact.dgm(n, k0/n)
 
 
 ###########
@@ -165,6 +178,8 @@ sum.basicFr(n, k0=k0)
 	+ sum(cP1 * log(1 + 1 + m.sum)) +
 	+ sum( cP2 / m.sq * atan((1 + m.shift)/m.sq) ) +
 	- sum( cP2 / m.sq * atan((0 + m.shift)/m.sq) )
+# using digamma:
+sumExact.dgm(n, k0/n)
 
 
 ###########
@@ -183,11 +198,13 @@ sum.basicFr(n, k0=k0)
 	+ sum(cP1 * log(1 + 1 + m.sum)) +
 	+ sum( cP2 / m.sq * atan((1 + m.shift)/m.sq) ) +
 	- sum( cP2 / m.sq * atan((0 + m.shift)/m.sq) )
+# using digamma:
+sumExact.dgm(n, k0/n)
 
 
 ### Derivation:
-k0 = -1 + 4
-p1 = toPoly.pm("x^k0 * (a*x - b)")
+k0pow = -1 + 4
+p1 = toPoly.pm("x^k0pow * (a*x - b)")
 p2 = toPoly.pm("x^2 + m.sum*x + 1")
 pR = split.pm.fraction(p1, p2, by="x")
 pR$D$coeff = 2* pR$D$coeff # Div by 2!
