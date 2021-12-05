@@ -1,10 +1,10 @@
-
+###
 ### Leonard Mada
 ###
 ### Integrals: Polynomial Fractions
-### Cardan-Type Polynomials
+### Cardano-Type Polynomials
 ###
-### draft v.0.2e-D
+### draft v.0.2f-Residue
 
 
 ############
@@ -70,6 +70,7 @@
 # [see Polynomials.CardanGeneralisation.R]
 # base-root = r0 = p + q
 # all roots: r[j] = p*m^j + q*m^(-j);
+# [where m^n = 1]
 
 ### Coefficients
 b0 = 1/n * (p-q)/(p^n - q^n)
@@ -78,6 +79,7 @@ a = b0 * (m^j + m^(-j))
 msq = m^(2*j) + m^(-2*j) - 2
 # where m = root of unity of order n, m^n = 1;
 # j = index from 1 to floor((n-1)/2);
+# n = order of the Cardan-type polynomial;
 
 ### Decomposition
 ### Odd Powers:
@@ -296,6 +298,28 @@ integrate(qdiv.f, lower=lim[1], upper=lim[2], c=c, d=d, k=2, n=3)
 integrate(qdiv.f, lower=lim[1], upper=lim[2], c=c, d=d, k=1, n=3)
 (ln.fr(lim, r) - I.f(lim, c,d, k=2, n=3) - (r^2 - 3*c)*I.f(lim, c,d, k=0, n=3)) / r
 
+
+### Singularity & Residue:
+# - integrating across the root/singularity
+#   does NOT cancel to 0!
+log.f = function(lim) {
+	p.f = function(x) (x^2 + x * q.dc$r + q.dc$r^2 - 3*c);
+	log(p.f(lim[2]) / p.f(lim[1]));
+}
+atan.f = function(lim, b0sqrt) {
+	atan((lim[2] + sh)/b0sqrt) - atan((lim[1] + sh)/b0sqrt);
+}
+r # print the roots
+epsilon = 1E-6;
+lim = c(2, 5)
+integrate(qdiv.f, lower=lim[1], upper=r[1] - epsilon, c=c, d=d, k=0, n=3)$value +
+	integrate(qdiv.f, lower=lim[2] + epsilon, upper=lim[2], c=c, d=d, k=0, n=3)$value
+# exact:
+a = q.dc$a; sh = q.dc$r / 2; b0sqrt = sqrt(3/4*q.dc$r^2 - 3*c);
+a*log((lim[2] - q.dc$r)/(lim[1] - q.dc$r)) +
+	- a/2*log.f(lim) - (q.dc$b - a/2*q.dc$r) / b0sqrt * atan.f(lim, b0sqrt);
+# Residue:
+1i*pi / (3*r^2 - 3*c)
 
 
 ##################
