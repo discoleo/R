@@ -5,7 +5,7 @@
 ###
 ### Sums: Factorials
 ###
-### draft v.0.1a
+### draft v.0.1b
 
 
 ### Sums: Based on Factorials
@@ -48,6 +48,13 @@ sum.exp = function(n, type, x=1) {
 	return(r);
 }
 
+sum.GammaExt = function(n, x=1, iter=20) {
+	i = seq(0, iter);
+	x = if(x == 1) x else x^i;
+	i = i + n;
+	sum(x/gamma(i))
+}
+
 
 ########################
 
@@ -68,4 +75,25 @@ n = 3
 (sum.exp(n, type="Sum") + sum.exp(n, type="Harm")) / 2
 (sum.fact(n, type="Sum") + sum.fact(n, type="Harm")) / 2
 sum0.fact(c(1,4,7,10))
+
+
+######################
+######################
+
+### Extensions:
+### over Gamma
+
+###
+n = 1/2
+sum.GammaExt(n)
+
+###
+n = 1/3
+sum.GammaExt(n)
+
+###
+n = 2/3
+sum.GammaExt(n)
+
+# TODO: explore these extensions;
 
