@@ -26,6 +26,8 @@ source("Polynomials.Helper.R")
 # - is automatically loaded in: Polynomials.Helper.R;
 # source("Polynomials.Helper.Factorize.R")
 
+### GMP:
+# source("Polynomials.Helper.BigNumbers.R")
 
 ########################
 ########################
@@ -189,6 +191,38 @@ p = mult.lpm(plst)
 
 ################
 ################
+
+### Transform Order 3:
+p = toPoly.pm("(x^3 - 3*x + 5)*(x^3 + 4*x + 3)")
+r = roots.pm(p)
+r
+
+# Note:
+# - can be computed directly from the coefficients;
+p2 = round0(poly.calc(r^3))
+p2 = data.frame(coeff=unclass(p2), x=seq(0, length(p2)-1))
+p2
+
+# r^3 => {3*r - 5, -4*r - 3};
+# TODO: explore methods which can benefit from the transformation;
+# - still NO factors!
+p2 = as.bigz.pm(p2)
+factorize.p(p2, "x", asBigNum=TRUE, file=NULL, debug=TRUE)
+
+### only test
+p2 = round(poly.calc(r^3 + 5))
+p2 = as.pm.polynom(p2)
+p2
+
+p2 = as.bigz.pm(p2)
+# Note: scaling of "3" is NOT known;
+gcd.exact.p(rescale.pm(p, 3, div=TRUE), p2, "x")
+
+
+################
+################
+
+### Experimental
 
 eval.pm(p2, 4) %% 35
 eval.pm(p2, 9) %% 35
