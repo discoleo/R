@@ -42,6 +42,18 @@
 ### Parser ###
 ##############
 
+### Class polynom => "pm"
+as.pm.polynom = function(p, xn="x", tol=1E-8) {
+	if(length(xn) != 1) stop("Only univariate polynomials are supported!");
+	p = unclass(p);
+	if(tol != 0) p = round0(p);
+	len = length(p);
+	pR  = data.frame(x = seq(0, len-1), coeff = p);
+	names(pR)[1] = xn;
+	class(pR) = c("pm", class(pR));
+	return(pR);
+}
+
 ### Parse expressions / polynomials
 toPoly.pm = function(e, env=NULL, reduce=FALSE) {
 	if(is.null(env)) env = parent.frame();
