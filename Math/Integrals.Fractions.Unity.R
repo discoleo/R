@@ -1,4 +1,3 @@
-
 ########################
 ###
 ### Leonard Mada
@@ -13,19 +12,28 @@
 ###   Integral( P(x) / (x^n - 1) )dx
 ### - Polynomial fractions:
 ###   Integral( P(x) / (x^n - 1)^2 )dx
-###
+
+
+###########################
+
+###############
+### History ###
+###############
+
 ### version 1 [RC1] [draft]
-###
+#
+### 2021-12-08:
+# - cleanup: simplification of showcases;
 ### 2020-09-13:
-### - cleanup: moved derived examples to:
-###   Integrals.Fractions.Unity.Derived.R;
+# - cleanup: moved derived examples to:
+#   Integrals.Fractions.Unity.Derived.R;
 ### 2020-05-20, 2020-06-03, 2020-06-04:
-### - a new type of fractions: TODO: move to separate file;
-### - shortcut for even powers (example);
-### - only minor edit (unfortunately no time for more work);
+# - a new type of fractions: TODO: move to separate file;
+# - shortcut for even powers (example);
+# - only minor edit (unfortunately no time for more work);
 ### 2020-03-01
-### - polynomial fractions: P(x) / (x^n - 1)^2
-###   Cases: n=3, n=5, n=7;
+# - polynomial fractions: P(x) / (x^n - 1)^2
+#   Cases: n=3, n=5, n=7;
 ### 2020-02-29
 ### 2020-02-28
 ### - polynomial fractions: P(x) / (x^n - 1)
@@ -68,44 +76,39 @@
 ### Examples
 
 ### ODD Powers:
-# - only ODD in this example!
 n = 7 # e.g. 7, 9, 11;
-# Roots of unity
-m = complex(re=cos(2*pi/n), im=sin(2*pi/n))
-m = m^(1:(n-1)) # all roots of unity (without 1)
-len = (n-1)/2
-m.conj = m[1:len]
-m.conj = cbind(m.conj, 1/m.conj)
-# Coefficients
+### Roots of unity
+# m = complex(re=cos(2*pi/n), im=sin(2*pi/n))
+len = (n-1)/2;
+c1 = 2*cos(2*seq(len)*pi/n);
+### Coefficients
 b0 = 1/n
-b = -2*b0
-a = b0 * (m.conj[,1] + m.conj[,2])
+b = -2*b0; a = b0 * c1;
 ### Tests
 x = 3 # e.g. 2, 3, pi, 4 # some arbitrary value for testing
 # Partial Fractions
 1/(x^n - 1) # ==
-b0/(x - 1) + sum( (a*x + b) / ((x - m.conj[,1]) * (x - m.conj[,2])) )
+b0/(x - 1) + sum( (a*x + b) / (x^2 - c1*x + 1) )
 
 
 1/(x^n + 1) # ==
-b0/(x + 1) + sum( (a*x - b) / ((x + m.conj[,1]) * (x + m.conj[,2])) )
+b0/(x + 1) + sum( (a*x - b) / (x^2 + c1*x + 1) )
 
 
 ### EVEN Powers:
 # shortcut for even powers
-# [was computed previousy using the difference of the 2 lower powers]
-# TODO: improve also code; 
+# [was computed previously using the difference of the 2 lower powers]
+# TODO: improve also code;
 n = 10
-n.2 = n/2
-m = complex(re=cos(2*pi/n), im=sin(2*pi/n))
-m = m^(c(0:n.2, (n-1):(n.2+1)))
-m = matrix(m, ncol=2)
-b = -2/n
-a = 1/n
+n.2 = n/2 - 1;
+# m = complex(re=cos(2*pi/n), im=sin(2*pi/n))
+c1 = 2*cos(2*seq(n.2)*pi/n)
+b = -2/n; a = 1/n;
 ### Test
-x = 2 # any value; used to test the fraction decomposition;
-sum((a*x*(m[,1]+m[,2]) + b) / (x-m[,1])/(x-m[,2])) - 2*b/(x^2-1)
-1/(x^n - 1)
+x = 2 # any value;
+# used to test the fraction decomposition;
+1/(x^n - 1) # ==
+sum((a*c1*x + b) / (x^2 - c1*x + 1)) - b/(x^2-1)
 
 
 ########################
@@ -115,7 +118,7 @@ sum((a*x*(m[,1]+m[,2]) + b) / (x-m[,1])/(x-m[,2])) - 2*b/(x^2-1)
 ### Part A ###
 ##############
 
-### helper functions ###
+### Helper Functions ###
 
 # Fraction Decomposition: 1/(x^n - 1)
 decompose.fr = function(n, type=c("U+", "U-")) {
