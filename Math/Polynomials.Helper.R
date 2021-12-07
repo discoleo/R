@@ -187,9 +187,12 @@ dimnames.pm = function(p) {
 
 ### Leading Monomials
 top.pm = function(p, xn="x", exclude=FALSE) {
+	if(nrow(p) == 0) return(data.frame(coeff=numeric(0)));
+	# check names:
 	idn = if(is.numeric(xn)) xn else match(xn, names(p));
 	if(all(is.na(idn))) return(data.frame(coeff=numeric(0)));
 	idn = idn[ ! is.na(idn)];
+	#
 	if(length(idn) == 1) {
 		pow.max = max(p[, idn]);
 		p = if(exclude) { p[p[,idn] == pow.max, -idn, drop=FALSE]; }
@@ -198,7 +201,6 @@ top.pm = function(p, xn="x", exclude=FALSE) {
 	} else {
 		stop("Not yet implemented!")
 	}
-	
 }
 ### Free Term
 B0.pm = function(p, xn="x", warn=TRUE) {
@@ -628,7 +630,8 @@ rescale.pm = function(p, val, xn="x", mod=NULL, div=FALSE) {
 	if(is.na(idx)) stop("Variable not found!");
 	hasX = (p[, idx] != 0);
 	if(div) {
-		p$coeff[hasX] = p$coeff[hasX] / val^p[hasX, idx];
+		pow.max = maxPow.pm(p, xn);
+		p$coeff = p$coeff * val^(pow.max - p[, idx]);
 		if( ! is.null(mod)) stop("Mod NOT yet implemented!");
 	} else {
 		p$coeff[hasX] = p$coeff[hasX] * val^p[hasX, idx];
