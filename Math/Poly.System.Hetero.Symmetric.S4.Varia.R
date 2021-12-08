@@ -6,7 +6,7 @@
 ### Polynomial Systems: S4
 ### Heterogeneous Symmetric: Various
 ###
-### draft v.0.1a
+### draft v.0.1b
 
 
 ### Various Hetero-Symmetric Systems
@@ -78,6 +78,27 @@ x1*x2*x3*x4 # = R4
 
 ### G.1.) x1 + x2 + x3 + x4 = R1
 # x3 = - x1; x2 + x4 = R1;
+# - NO solutions;
+
+### G.2.) (x1 + x3)*(x2 + x4) = R2
+# (x1 + x3)^2 = - R2;
+
+
+### Derivation:
+
+### G.1.) x1 + x2 + x3 + x4 = R1
+
+### Eq 2 =>
+x3 = - x1;
+# Eq 1 =>
+x2 + x4 - R1 # = 0
+
+### Eq 3:
+x2*x3*x4 + x4*x1*x2 # = 0 =>
+x1*x2*x3 + x3*x4*x1 # = 0 =>
+x2 + x4 # = 0 # Contradiction!
+# => NO solutions!
+
 
 ### G.2.) (x1 + x3)*(x2 + x4) = R2
 # (x1 + x3)^2 = - R2;
