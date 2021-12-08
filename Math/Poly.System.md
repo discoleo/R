@@ -10,9 +10,11 @@
 * if (x,y,z) is a solution, so is every permutation;
 
 ***Examples***\
+~~~
 x^n + y^n + z^n = R1\
 x*y + x*z + y*z = R2\
 x*y*z = R3\
+~~~
 
 
 ## B.) Hetero-Symmetric Systems
