@@ -243,8 +243,57 @@ roots1.conj = function(n, computeRotation=FALSE) {
 }
 
 ### Separate functions
+intNumeric = function(n, range, type="positive", poles=NULL, eps=1E-5) {
+	type = pmatch(type, c("positive", "negative"));
+	if(is.na(type)) stop("Type not supported!");
+	k0 = if(type == 1) 1 else -1;
+	if(is.null(poles) ||
+			range[1] > poles[1] || range[2] < poles[1]) {
+		r = integrate(function(x) 1/(x^n + k0), lower=range[1], upper=range[2]);
+	} else {
+		# TODO: multiple poles;
+		r = integrate(function(x) 1/(x^n + k0), lower=range[1], upper=poles[1] - eps)$value;
+		r = r + integrate(function(x) 1/(x^n + k0), lower=poles[1] + eps, upper=range[2])$value;
+	}
+	return(r)
+}
+intExact = function(n, range, type="positive") {
+	type = pmatch(type, c("positive", "negative"));
+	if(is.na(type)) stop("Type not supported!");
+	len = if(n %% 2 == 1) (n-1)/2 else (n/2) - 1;
+	c1  = 2*cos(2*seq(len)*pi/n);
+	b0  = 1/n; b = -2*b0; a = b0 * c1;
+	sh = c1/2; Dsq = sqrt(1 - sh^2);
+	#
+	if(n %% 2 == 1) {
+		if(type == 1) {
+			# 1 / (x^n + 1)
+			lfr = (range[2]+1) / (range[1]+1);
+			if(lfr < 0) lfr = lfr + 0i;
+			r = b0 * log(lfr);
+			r = sum(r, a/2*log((range[2]^2 + c1*range[2] + 1) /
+				(range[1]^2 + c1*range[1] + 1)) );
+			r = sum(r, -(a/2*c1 + b) / Dsq * atan((range[2] + sh)/Dsq),
+					(a/2*c1 + b) / Dsq * atan((range[1] + sh)/Dsq));
+		} else {
+			# 1 / (x^n - 1)
+			lfr = (range[2]-1) / (range[1]-1);
+			if(lfr < 0) lfr = lfr + 0i;
+			r = b0 * log(lfr);
+			r = sum(r, a/2*log((range[2]^2 - c1*range[2] + 1) /
+				(range[1]^2 - c1*range[1] + 1)) );
+			r = sum(r, (a/2*c1 + b) / Dsq * atan((range[2] - sh)/Dsq),
+					-(a/2*c1 + b) / Dsq * atan((range[1] - sh)/Dsq));
+		}
+	} else {
+		# TODO
+	}
+	return(r)
+}
 ### Exact Integral
+# [old]
 rez.f = function(x, a, b, b0, m.conj) {
+	# [old]
 	m.sum = m.conj[,1] + m.conj[,2]
 	m.shift = m.sum/2
 	D = b + a*m.shift
@@ -272,13 +321,39 @@ eval.fr = function(x, n) {
 
 f = decompose.fr(5)
 
+
+### [new]
+n = 5
+rng = c(1.5, 3)
+intNumeric(n, rng)
+intExact(n, rng)
+
+n = 5
+rng = c(1.5, 3)
+intNumeric(n, rng, type="neg")
+intExact(n, rng, type="neg")
+
+### Poles
+n = 5
+rng = c(-1.5, 3)
+intNumeric(n, rng, poles=-1)
+intExact(n, rng) - 1i*pi/n # half Residue?
+
+n = 5
+rng = c(0, 3)
+intNumeric(n, rng, type="neg", poles=1)
+intExact(n, rng, type="neg") - 1i*pi/n # half Residue?
+
+
+#########
+### [old]
 lower = 1.001
 upper = 1024
 f$integrate.all(lower, upper)
 # 1.137622+0i
 # 1.137622 with absolute error < 2e-14
 
-
+###
 lower = 1 + 1E-8
 upper = 1024
 f$integrate.all(lower, upper)
