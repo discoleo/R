@@ -6,7 +6,7 @@
 ### Polynomial Systems: S4
 ### Heterogeneous Symmetric: Various
 ###
-### draft v.0.1b
+### draft v.0.1c
 
 
 ### Various Hetero-Symmetric Systems
@@ -18,6 +18,18 @@
 
 source("Polynomials.Helper.R")
 
+test.S4Ht.Simple = function(sol, R) {
+	x1 = sol[,1]; x2 = sol[,2];
+	x3 = sol[,3]; x4 = sol[,4];
+	#
+	err1 = x1 + x2 + x3 + x4;
+	err2 = x1*x2 + x2*x3 + x3*x4 + x4*x1;
+	err3 = x1*x2*x3 + x2*x3*x4 + x3*x4*x1 + x4*x1*x2;
+	err4 = x1*x2*x3*x4;
+	err = rbind(err1, err2, err3, err4);
+	err = round0(err);
+	return(err);
+}
 
 ####################
 ####################
@@ -96,12 +108,61 @@ x2 + x4 - R1 # = 0
 ### Eq 3:
 x2*x3*x4 + x4*x1*x2 # = 0 =>
 x1*x2*x3 + x3*x4*x1 # = 0 =>
-x2 + x4 # = 0 # Contradiction!
+x1*x3*(x2 + x4) # = 0
+# R1, R4 != 0 => Contradiction!
 # => NO solutions!
 
 
 ### G.2.) (x1 + x3)*(x2 + x4) = R2
 # (x1 + x3)^2 = - R2;
 
-# TODO
+### Eq 1 =>
+# x2 + x4 = - (x1 + x3);
+
+### Eq 3 =>
+x1*x3*(x2 + x4) + x2*x4*(x1 + x3) # = 0
+# & Eq 1 =>
+(x1 + x3)*(x1*x3 - x2*x4) # = 0
+# Eq 2: (x1 + x3) != 0 =>
+# x1*x3 = x2*x4
+
+### Eq 4 =>
+(x1*x3)^2 - R4 # = 0
+
+### Derived System:
+# (x1*x3)^2 = R4
+# (x1 + x3)^2 = -R2
+
+### Solver:
+solve.S4Ht.P1Simple = function(R) {
+	R2 = R[1]; R4 = R[2];
+	x13 = rootn(R4, 2);
+	xs  = rootn(-R2, 2);
+	# all variants:
+	x13 = c(x13, - x13); xs = c(xs, -xs);
+	x13 = c(x13, x13); xs = rep(xs, each=2);
+	xd  = rootn(xs^2 - 4*x13, 2);
+	# Sol: x1 & x3
+	x1 = (xs + xd)/2; x3 = xs - x1;
+	# x2 & x4:
+	xs  = R2 / xs;
+	x24 = R4 / x13;
+	xd  = rootn(xs^2 - 4*x24, 2);
+	# Sol: x2 & x4
+	x2 = (xs + xd)/2; x4 = xs - x2;
+	sol = cbind(x1=x1, x2=x2, x3=x3, x4=x4);
+	# TODO: all valid permutations;
+	return(sol);
+}
+
+### Examples:
+
+R = c(-2, 3)
+sol = solve.S4Ht.P1Simple(R);
+test.S4Ht.Simple(sol);
+
+###
+R = c(-2, -1)
+sol = solve.S4Ht.P1Simple(R);
+test.S4Ht.Simple(sol);
 
