@@ -9,7 +9,7 @@
 
 * if (x,y,z) is a solution, so is every permutation;
 * see files:
-  * Math.Poly.SystemP3_Full.R;
+  * Poly.System.Symmetric.P3_Full.R;
   * Poly.System.Symmetric.S3.Multiple.R;
 
 ***Examples***
