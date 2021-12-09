@@ -8,6 +8,9 @@
 ## A.) Symmetric Systems
 
 * if (x,y,z) is a solution, so is every permutation;
+* see files:
+** Math.Poly.SystemP3_Full.R;
+** Poly.System.Symmetric.S3.Multiple.R;
 
 ***Examples***
 ~~~
@@ -16,6 +19,7 @@ x*y + x*z + y*z = R2
 x*y*z = R3
 ~~~
 
+---
 
 ## B.) Hetero-Symmetric Systems
 
