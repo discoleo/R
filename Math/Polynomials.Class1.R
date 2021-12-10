@@ -6,7 +6,7 @@
 ###
 ### Leonard Mada
 ###
-### draft v.0.1d
+### draft v.0.1e
 
 ### based on work during:
 ### 2018 - 2020
@@ -16,6 +16,8 @@
 ### History ###
 ###############
 
+### v.0.1e: [2021-12-10]
+# - re-started to explore techniques to solve the quintic of Class 1;
 ### v.0.1d:
 # - moved mpfr-functions to new file:
 #   Polynomials.Helper.mpfr.R;
@@ -165,8 +167,41 @@ x^5 - 5*K*(K*s^2 + K*s^3 - s + 1)*x^2 + 5*K*(K^2*s^4 + K*s^3 + 3*K*s^2 - K*s - 1
 # x^5 - 25/2 * x^2 - 125/4
 
 
-
 #################
+#################
+
+### Solution to Quintic of Class 1:
+
+# for arbitrary K:
+# (but polynomials need to be updated)
+K = 3
+s = c(1,0,2,1)
+#
+k = m * K^(1/5)
+x = sapply(k, function(k) sum(s*k^seq(4)));
+round0.p(poly.calc(x))
+-1398 - 585*x - 210*x^2 - 15*x^3 + x^5
+# P[*] = P[r^2 - 2*...]
+round0.p(poly.calc(x^2 - 2*(s[1]*s[4] + s[2]*s[3])*K))
+-4615038 - 685035*x - 47880*x^2 - 1305*x^3 + x^5
+# We can construct an overdetermined polynomial system:
+(s[1]*s[4] + s[2]*s[3])*K # = - b3/5
+s1^3*s2*K + (s1*s3^3 + s2^3*s4 + 3*prod(s))*K^2 +
+	+ s3*s4^3*K^3 # = (b3[*] - b2^2/5)/5
+(1305 - 15^2/5) / 5 / 2
+
+# TODO: ???
+# - but very hard to crack!
+
+s1 = s[1]; s2 = s[2]; s3 = s[3]; s4 = s[4];
+# - b3
+((s1*s2^2+s1^2*s3)*K + (s3^2*s4+s2*s4^2)*K^2) * 5
+# - b3[*]
+(2*s1^3*s2*K + ((s1*s4 + s2*s3)^2 + 2*s1*s3^3 + 2*s2^3*s4 + 6*prod(s))*K^2 +
+	+ 2*s3*s4^3*K^3) * 5
+
+
+####################
 
 ### TODO:
 # - clean;
