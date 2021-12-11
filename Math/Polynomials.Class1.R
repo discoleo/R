@@ -6,7 +6,7 @@
 ###
 ### Leonard Mada
 ###
-### draft v.0.1e
+### draft v.0.1e-expl2
 
 ### based on work during:
 ### 2018 - 2020
@@ -59,14 +59,8 @@
 
 ### Helper Functions
 
-### Roots of unity
-unity = function(n=3, all=TRUE) {
-	m = complex(re=cos(2*pi/n), im=sin(2*pi/n))
-	if(all) {
-		m = m^(0:(n-1))
-	}
-	return(m)
-}
+source("Polynomials.Helper.R")
+
 
 ###############
 
@@ -175,20 +169,31 @@ x^5 - 5*K*(K*s^2 + K*s^3 - s + 1)*x^2 + 5*K*(K^2*s^4 + K*s^3 + 3*K*s^2 - K*s - 1
 # for arbitrary K:
 # (but polynomials need to be updated)
 K = 3
-s = c(1,0,2,1)
+s = c(1,-2,0,1)
 #
 k = m * K^(1/5)
 x = sapply(k, function(k) sum(s*k^seq(4)));
 round0.p(poly.calc(x))
--1398 - 585*x - 210*x^2 - 15*x^3 + x^5
-# P[*] = P[r^2 - 2*...]
+-246 + 435*x + 30*x^2 - 15*x^3 + x^5
+# P[^2, reduced] = P[r^2 - 2*...]
 round0.p(poly.calc(x^2 - 2*(s[1]*s[4] + s[2]*s[3])*K))
--4615038 - 685035*x - 47880*x^2 - 1305*x^3 + x^5
+866610 + 135405*x + 1440*x^2 + 735*x^3 + x^5
+# P[^3, reduced] = P[r^3 - 3*...]
+round0.p(poly.calc(x^3 - 3*((s3^2*s4 + s2*s4^2)*K^2 + (s1*s2^2 + s1^2*s3)*K)))
+-1474293000 + 78324440*x - 134730*x^2 + 15660*x^3 + x^5
+
 # We can construct an overdetermined polynomial system:
-(s[1]*s[4] + s[2]*s[3])*K # = - b3/5
+s1 = s[1]; s2 = s[2]; s3 = s[3]; s4 = s[4];
+# Primary coefficients:
+# b3/5 == b4[P[^2]] / 10
+(s[1]*s[4] + s[2]*s[3])*K
+# - b2/5 == b4[P[^3]] / 15
+(s3^2*s4 + s2*s4^2)*K^2 + (s1*s2^2 + s1^2*s3)*K
+# ...
+# Higher coefficients of P[^n]:
 s1^3*s2*K + (s1*s3^3 + s2^3*s4 + 3*prod(s))*K^2 +
 	+ s3*s4^3*K^3 # = (b3[*] - b2^2/5)/5
-(1305 - 15^2/5) / 5 / 2
+(-735 - 15^2/5) / 5 / 2
 
 # TODO: ???
 # - but very hard to crack!
@@ -199,6 +204,21 @@ s1 = s[1]; s2 = s[2]; s3 = s[3]; s4 = s[4];
 # - b3[*]
 (2*s1^3*s2*K + ((s1*s4 + s2*s3)^2 + 2*s1*s3^3 + 2*s2^3*s4 + 6*prod(s))*K^2 +
 	+ 2*s3*s4^3*K^3) * 5
+
+###
+r = toPoly.pm("s4*k^4 + s3*k^3 + s2*k^2 + s1*k")
+# P[r]
+p = diff.pm(r*r, toPoly.pm("5*(s[1]*s[4] + s[2]*s[3])*k^5"))
+p = mult.pm(p, r)
+p3 = p[p$k %% 5 == 0, ]
+p3$coeff = p3$coeff / 3;
+p3$k = p3$k / 5; names(p3)[1] = "K";
+print.pm(p3)
+# P[r^3]
+p = pow.pm(r, 3)
+p3 = p[p$k %% 5 == 0, ]
+p3$k = p3$k / 5; names(p3)[1] = "K";
+eval.pm(p3, c(K, s)) * -5
 
 
 ####################
