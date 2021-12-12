@@ -29,8 +29,9 @@
 ### History ###
 ###############
 
-### draft v.0.2i:
+### draft v.0.2j - v.0.2k-hyper:
 # - I( tan(x)^(k/n) );
+# - [ideas] easy extension to hyperbolic functions;
 ### draft v.0.2i:
 # - derived from:
 #   Log(x^n + 1) / (x+1);
@@ -82,6 +83,7 @@
 ### A.) Fractional Powers
 ### B.) Trigonometric Derivations
 ### C.) Derived Polynomials
+### D.) Complex Analysis
 
 ### Terminology
 
@@ -114,7 +116,7 @@
 ### Trigonometric Derivations ###
 #################################
 
-### I( 1/(sin(x)^n + cos(x)^n) )
+### I( 1 / (sin(x)^n + cos(x)^n) )
 ### I( tan(x)^(k/n) )
 ### Others
 # - TODO: document + expand;
@@ -170,15 +172,18 @@ integrate(function(x) x^(n - 2)/(x^n - (1-x)^n), lower=1-1/(lim[1]^2+1), upper=1
 source("Polynomials.Helper.R")
 
 
+# Simple Integral
 I.f = function(f, lim) {
 	integrate(f, lower=lim[1], upper=lim[2])$value
 }
+# Integrate simple Polynomial: b*x^n
+# - coeffs = b;
 I.pf = function(b, n, lim) {
 	if(length(b) > 1 && length(n) > 1 && length(b) != length(n)) {
 		stop("Differing lengths!")
 	}
-	pow = n + 1
-	coeff = b / pow
+	pow = n + 1;
+	coeff = b / pow;
 	sum(coeff * lim[2]^pow) - sum(coeff * lim[1]^pow)
 }
 ###
@@ -261,31 +266,39 @@ x = 3
 n = 5
 # Test
 r = decompose.fr(n)
-#
+### Variant -:
 1 / (x^n - 1)
 r$b0/(x - 1) + sum( (r$a*x + r$b) / (x^2 - r$m.sum * x + 1) )
-#
+### Variant +:
 1 / (x^n + 1)
 r$b0/(x + 1) + sum( (r$a*x - r$b) / (x^2 + r$m.sum * x + 1) )
 
 
-### Derived Polynomials
+###########################
+### Derived Polynomials ###
+###########################
 
 ### Fraction: 1 / ( (x^2 + s)^n - 1 )
-x = 2
+
+x = 2 # Test value
 s = 1.5
 n = 5
 # Test
 r = decompose.fr(n)
-#
+# Test decomposition:
 1 / ((x^2 + s)^n - 1)
 r$b0/(x^2 + s - 1) + sum( (r$a*(x^2+s) + r$b) / ((x^2 + s)^2 - r$m.sum * (x^2 + s) + 1) )
 r$b0/(x^2 + s - 1) + sum( (r$a*(x^2+s) + r$b) * (1/(x^2 + s - r$m.half[,1]) - 1/(x^2 + s - r$m.half[,2])) / (r$m.half[,1] - r$m.half[,2]) )
-r$b0/(x^2 + s - 1) + sum( ((r$a*r$m.half[,1] + r$b)/(x^2 + s - r$m.half[,1]) -
-	(r$a*r$m.half[,2] + r$b)/(x^2 + s - r$m.half[,2])) / (r$m.half[,1] - r$m.half[,2]) )
+r$b0/(x^2 + s - 1) + sum( (
+	(r$a*r$m.half[,1] + r$b) / (x^2 + s - r$m.half[,1]) -
+	(r$a*r$m.half[,2] + r$b) / (x^2 + s - r$m.half[,2]) ) / (r$m.half[,1] - r$m.half[,2]) )
+
+# Note:
+# (r$m.half[,1] - r$m.half[,2]) = 2i * sin(2*seq((n-1)/2)*pi/n);
 
 
 ### Fraction: 1 / ( (x^p + s)^n - 1 )
+
 x = 1.3
 s = -1.1
 n = 5
