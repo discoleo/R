@@ -7,7 +7,7 @@
 ###   Polynomial Fractions
 ###   derived from Roots of Unity
 ###
-### draft v.0.2k
+### draft v.0.2k-hyper
 
 
 
@@ -22,6 +22,8 @@
 #   x^k / (x^n - 1)^p dx, x^k / (x^n + 1)^p dx
 #   see file: Integrals.Fractions.Unity.Powers.R;
 
+
+####################
 
 ###############
 ### History ###
@@ -164,6 +166,9 @@ integrate(function(x) x^(n - 2)/(x^n - (1-x)^n), lower=1-1/(lim[1]^2+1), upper=1
 ######################
 
 ### Helper Functions
+
+source("Polynomials.Helper.R")
+
 
 I.f = function(f, lim) {
 	integrate(f, lower=lim[1], upper=lim[2])$value
@@ -393,6 +398,7 @@ integrate(function(x) p * x^p / ((x^p-s)^n + 1), lower=(lim[1] + s)^(1/p), upper
 # tan(x) = u^n
 
 toLim = function(lim) rootn(tan(lim), n);
+toLimLog = function(lim) log(tan(lim));
 
 
 lim = c(pi/17, pi/3)
@@ -400,6 +406,12 @@ lim = c(pi/17, pi/3)
 n = 5
 integrate(function(x) tan(x)^(1/n), lower=lim[1], upper=lim[2])
 integrate(function(x) n*x^n / (x^(2*n) + 1), lower=toLim(lim[1]), upper=toLim(lim[2]))
+# - exact formula available when n = integer or rational;
+
+# Derived:
+integrate(function(x) exp(x/n) / (exp(-x) + exp(x)), lower=toLimLog(lim[1]), upper=toLimLog(lim[2]))
+integrate(function(x) - exp(-x/n) / (exp(-x) + exp(x)), lower=toLimLog(pi/2-lim[1]), upper=toLimLog(pi/2-lim[2]))
+# TODO: Hyperbolic-Series of Integrals;
 
 
 ### I( tan(x)^(k/n) )
