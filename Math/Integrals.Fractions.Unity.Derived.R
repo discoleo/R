@@ -3,11 +3,11 @@
 ### Leonard Mada
 ### [the one and only]
 ###
-### Exact Integration
-### of Polynomial Fractions
-### derived from Roots of Unity
+### Exact Integration:
+###   Polynomial Fractions
+###   derived from Roots of Unity
 ###
-### draft v.0.2j
+### draft v.0.2k
 
 
 
@@ -28,10 +28,12 @@
 ###############
 
 ### draft v.0.2i:
+# - I( tan(x)^(k/n) );
+### draft v.0.2i:
 # - derived from:
 #   Log(x^n + 1) / (x+1);
 ### draft v.0.2h - v.0.2h-clean2:
-# - rearranging sections;
+# - rearranged sections;
 ### draft v.0.2f:
 # - various derived Integrals:
 #   from, e.g.: I( log(x^n + 1) );
@@ -111,7 +113,7 @@
 #################################
 
 ### I( 1/(sin(x)^n + cos(x)^n) )
-### I( tan(x)^(1/n) )
+### I( tan(x)^(k/n) )
 ### Others
 # - TODO: document + expand;
 # - see also file:
@@ -383,12 +385,36 @@ integrate(function(x) p * x^p / ((x^p-s)^n + 1), lower=(lim[1] + s)^(1/p), upper
 ######################
 ######################
 
-### Trigonometric
+#####################
+### Trigonometric ###
+#####################
+
+### I( tan(x)^(1/n) )
+# tan(x) = u^n
+
+toLim = function(lim) rootn(tan(lim), n);
+
+
+lim = c(pi/17, pi/3)
+
+n = 5
+integrate(function(x) tan(x)^(1/n), lower=lim[1], upper=lim[2])
+integrate(function(x) n*x^n / (x^(2*n) + 1), lower=toLim(lim[1]), upper=toLim(lim[2]))
+
+
+### I( tan(x)^(k/n) )
+
+n = 5; k = 3;
+integrate(function(x) tan(x)^(k/n), lower=lim[1], upper=lim[2])
+integrate(function(x) n*x^(n+k-1) / (x^(2*n) + 1), lower=toLim(lim[1]), upper=toLim(lim[2]))
+
+
+####################
 
 ### cos(x)^(2*n-2) / (1 - cos(x)^(2*n))
 ### (1 + cos(x)^(2*n) * sin(x)^2) / (1 - cos(x)^(2*n))
 #
-# from Int 1 / ( (x^2 + 1)^n - 1 )
+# based on: Int 1 / ( (x^2 + 1)^n - 1 )
 # x = tan(y)
 # dx = 1/cos(y)^2 dy
 # =>
