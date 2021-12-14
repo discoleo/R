@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs - Gaussian
 ###
-### draft v.0.4c-ex
+### draft v.0.4d-ex2
 
 #############
 ### Types ###
@@ -30,9 +30,11 @@
 
 ### Linear / Non-Linear Gaussian-type
 
-### draft v.0.4c - v.0.4c-ex:
+### draft v.0.4c - v.0.4d:
 # - derived from:
-#   y = k * exp(x^n) * I(exp(-x^n)) + F0(x);
+#   y = k * exp(x^n) * I(exp(-x^n)) + F0(x); [v.0.4c, v.0.4c-ex]
+#   y = k1 * exp(p1) * I(exp(-p1)) +
+#       k2 * exp(p2) * I(exp(-p2)) + F0(x); [v.0.4d]
 # - more examples;
 ### draft v.0.4a - v.0.4b-fix:
 # - automatic generation of exponential type ODEs;
@@ -501,6 +503,32 @@ x^4*(2*x^3 + 1)*d2y + 2*x^3*(2*x^3 + 1)*dy +
 x^4*(2*x^3 + 1)*d2y + (4*x^8 - 2*x^6 + 2*x^3 - x^2)*dy - (4*x^6 - 6*x^4 + 2*x^3)*y +
 	- 4*x^8*df0 - 4*x^8 - 2*x^7*d2f0 + 2*x^6*df0 + 4*x^6*f0 + 4*x^6 - x^4*d2f0 +
 	- 6*x^4*f0 - 2*x^3*df0 + 2*x^3*f0 - 4*x^3 + x^2*df0 + x^2 # = 0
+
+# TODO: check;
+
+
+### Ex 2:
+### y = k*exp(-1/x) * I(exp(1/x)) + k*exp(1/x) * I(exp(-1/x)) + F0(x)
+
+### D =>
+dy - k/x^2*exp(-1/x) * I(exp(1/x)) + k/x^2*exp(1/x) * I(exp(-1/x)) - df0 - 2*k # = 0
+x^2*dy - k*exp(-1/x) * I(exp(1/x)) + k*exp(1/x) * I(exp(-1/x)) - x^2*df0 - 2*k*x^2 # = 0
+
+### Solve Linear System:
+### exp(-1/x) * I(exp(1/x)) =
+(x^2*dy + y - f0 - x^2*df0 - 2*k*x^2) / (2*k);
+### exp(1/x) * I(exp(-1/x)) =
+(x^2*dy - y + f0 - x^2*df0 - 2*k*x^2) / (-2*k);
+
+### D2 =>
+x^4*d2y + 2*x^3*dy - k*exp(-1/x) * I(exp(1/x)) - k*exp(1/x) * I(exp(-1/x)) +
+	- x^4*d2f0 - 2*x^3*df0 - 4*k*x^2 # = 0
+2*x^4*d2y + 4*x^3*dy - (x^2*dy + y - f0 - x^2*df0 - 2*k*x^2) - (x^2*dy - y + f0 - x^2*df0 - 2*k*x^2) +
+	- 2*x^4*d2f0 - 4*x^3*df0 - 8*k*x^2 # = 0
+
+### ODE:
+# - simplifies significantly: only d2y, dy;
+x^2*d2y + (2*x - 1)*dy - x^2*d2f0 - 2*x*df0 + df0 - 2*k # = 0
 
 # TODO: check;
 
