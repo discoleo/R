@@ -109,15 +109,15 @@
 
 #########################
 
-### Helper functions
+### Helper Functions
 
-library(pracma)
+# library(pracma)
 # needed for Lambert W;
 
 
 # include: DE.ODE.Helper.R;
-source("DE.ODE.Helper.R")
 source("Polynomials.Helper.R")
+source("DE.ODE.Helper.R")
 
 
 #########################
@@ -128,7 +128,8 @@ source("Polynomials.Helper.R")
 ### Theory ###
 ##############
 
-### Section A: by Integration
+### Section A: y = I[n]( exp(f(x)) )
+# - where I[n] = n-th Integral;
 
 ### Base:
 # y = e^f(x) + b(x);
@@ -155,14 +156,19 @@ source("Polynomials.Helper.R")
 ### y = e^I, where I = I(e^P(x)) dx;
 
 
-####################
-####################
+#########################
+#########################
+
+### Section A:
+### y = I[n]( exp(f(x)) )
 
 ### Examples:
 
-### y = e^(-x^2)
+### y[0] = e^(-x^2)
+
 # [not run]
 # dy = -2*x*y;
+
 ### ODE:
 d2y + 2*x*dy + 2*y # = 0
 ### I(D1) by parts =>
@@ -190,6 +196,7 @@ d2y = function(x, b0=0) {
 	dp = exp(-x^2) + b0;
 	return(dp)
 }
+
 ### Plot:
 # b0 == 0;
 curve(y(x), from= -3, to = 3, ylim=c(-1/3, 4))
@@ -199,7 +206,9 @@ curve(dy(x), add=T, col="green")
 line.tan(c(-3:3 * 3/4), dx=3, p=dy, dp=d2y, col="orange")
 
 
-### y = e^(-x^2) + b0
+### Ex 2:
+### y[0] = e^(-x^2) + b0
+
 # [not run]
 # dy = -2*x*y + 2*b0*x;
 # d2z = y;
@@ -357,9 +366,17 @@ curve(dy(x), add=T, col="green")
 line.tan(c(0:3 * 3/4), dx=3, p=dy, dp=d2y, col="orange")
 
 
-################
+#################
+#################
+
+#################
+### Section B ###
+#################
 
 ### y = k * exp(x^n) * I(exp(-x^n)) + F0(x)
+
+### Variant:
+### y = k * exp(-x^n) * I(exp(x^n)) + F0(x)
 
 ### D =>
 dy - n*x^(n-1)*y + n*x^(n-1)*f - k - df # = 0
@@ -450,8 +467,48 @@ curve(dy(x, n=n, k=k, f=f), add=T, col="green")
 line.tan(px, dx=3, p=dy, dp=d2y, n=n, k=k, f=f, col="orange")
 
 
+######################
+### Generalization ###
+######################
+
+### y = exp(p1) * I(exp(-p1)) + exp(p2) * I(exp(-p2)) + F0(x)
+
+### Examples:
+
+### y = exp(-x^2) * I(exp(x^2)) + exp(-1/x) * I(exp(1/x)) + F0(x)
+
+### D =>
+dy + 2*x*exp(-x^2)*I(exp(x^2)) - 1/x^2*exp(-1/x)*I(exp(1/x)) - df0 - 2 # = 0
+x^2*dy + 2*x^3*exp(-x^2)*I(exp(x^2)) - exp(-1/x)*I(exp(1/x)) - x^2*df0 - 2*x^2 # = 0
+
+### Solve Linear system:
+### exp(-x^2)*I(exp(x^2)) =
+(- x^2*dy + y - f0 + x^2*df0 + 2*x^2) / (2*x^3 + 1);
+### exp(-1/x) * I(exp(1/x)) =
+(x^2*dy + 2*x^3*y - 2*x^3*f0 - x^2*df0 - 2*x^2) / (2*x^3 + 1);
+
+### D2 =>
+x^2*d2y + 2*x*dy + (6*x^2 - 4*x^4)*exp(-x^2)*I(exp(x^2)) +
+	- 1/x^2*exp(-1/x)*I(exp(1/x)) + 2*x^3 - 1 - x^2*d2f0 - 2*x*df0 - 4*x # = 0
+x^4*d2y + 2*x^3*dy + 2*x^4*(3 - 2*x^2)*exp(-x^2)*I(exp(x^2)) +
+	- exp(-1/x)*I(exp(1/x)) - x^4*d2f0 - 2*x^3*df0 + 2*x^5 - 4*x^3 - x^2 # = 0
+x^4*(2*x^3 + 1)*d2y + 2*x^3*(2*x^3 + 1)*dy +
+	+ 2*x^4*(3 - 2*x^2)*(- x^2*dy + y - f0 + x^2*df0 + 2*x^2) +
+	- (x^2*dy + 2*x^3*y - 2*x^3*f0 - x^2*df0 - 2*x^2) +
+	- (2*x^3 + 1)*(x^4*d2f0 + 2*x^3*df0 - 2*x^5 + 4*x^3 + x^2) # = 0
+
+### ODE:
+x^4*(2*x^3 + 1)*d2y + (4*x^8 - 2*x^6 + 2*x^3 - x^2)*dy - (4*x^6 - 6*x^4 + 2*x^3)*y +
+	- 4*x^8*df0 - 4*x^8 - 2*x^7*d2f0 + 2*x^6*df0 + 4*x^6*f0 + 4*x^6 - x^4*d2f0 +
+	- 6*x^4*f0 - 2*x^3*df0 + 2*x^3*f0 - 4*x^3 + x^2*df0 + x^2 # = 0
+
+# TODO: check;
+
+
 ################
 ################
+
+### Non-Linear:
 
 ### y = e^(x^n) / (k + I(e^(x^n) dx));
 
