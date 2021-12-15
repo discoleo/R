@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs - Gaussian
 ###
-### draft v.0.4d-fix
+### draft v.0.4d-test
 
 #############
 ### Types ###
@@ -35,6 +35,7 @@
 #   y = k * exp(x^n) * I(exp(-x^n)) + F0(x); [v.0.4c, v.0.4c-ex]
 #   y = k1 * exp(p1) * I(exp(-p1)) +
 #       k2 * exp(p2) * I(exp(-p2)) + F0(x); [v.0.4d]
+# - Example: x^4*d2y + 2*x^3*dy - y - 4*k*x^3 = 0;
 # - more examples;
 ### draft v.0.4a - v.0.4b-fix:
 # - automatic generation of exponential type ODEs;
@@ -523,16 +524,79 @@ x^2*dy - k*exp(-1/x) * I(exp(1/x)) + k*exp(1/x) * I(exp(-1/x)) - x^2*df0 - 2*k*x
 
 ### D2 =>
 x^4*d2y + 2*x^3*dy - k*exp(-1/x) * I(exp(1/x)) - k*exp(1/x) * I(exp(-1/x)) +
-	- x^4*d2f0 - 2*x^3*df0 - 4*k*x^2 # = 0
+	- x^4*d2f0 - 2*x^3*df0 - 4*k*x^3 # = 0
 2*x^4*d2y + 4*x^3*dy - (x^2*dy + y - f0 - x^2*df0 - 2*k*x^2) +
 	+ (x^2*dy - y + f0 - x^2*df0 - 2*k*x^2) +
-	- 2*x^4*d2f0 - 4*x^3*df0 - 8*k*x^2 # = 0
+	- 2*x^4*d2f0 - 4*x^3*df0 - 8*k*x^3 # = 0
 
 ### ODE:
 # - simplifies significantly: y & f0 are anti-symmetric;
-x^4*d2y + 2*x^3*dy - y - x^4*d2f0 - 2*x^3*df0 + f0 - 4*k*x^2 # = 0
+x^4*d2y + 2*x^3*dy - y - x^4*d2f0 - 2*x^3*df0 + f0 - 4*k*x^3 # = 0
 
-# TODO: check;
+### Special Cases:
+f0 = c1*cosh(1/x) + c2*1i*sinh(1/x);
+x^4*d2y + 2*x^3*dy - y - 4*k*x^3 # = 0
+
+### Solution & Plot:
+intp = function(upper, lower=0.25, n=1, b0=1) {
+	sapply(upper, function(u) {
+		integrate(function(x) exp(b0/x^n), lower=lower, upper=u)$value;
+	})
+}
+#
+y = function(x, k=1, n=1, b0=1, f=NULL, all=FALSE) {
+	yp = intp(x, n=n, b0=b0);
+	yn = intp(x, n=n, b0=-b0);
+	xn = b0 / x^n;
+	yp = exp(-xn) * yp; yn = exp(xn) * yn;
+	y  = k * (yn + yp);
+	if( ! is.null(f)) {
+		fx = sapply(x, function(x) eval.pm(f, x));
+		y  = y + fx;
+	}
+	if(all) return(list(y=y, yp=yp, yn=yn));
+	return(y)
+}
+dy = function(x, k=1, n=1, b0=1, f=NULL, y=NULL) {
+	yx = if( ! is.null(y)) y else y(x, k=k, n=n, b0=b0, f=f, all=TRUE);
+	yp = yx$yp; yn = yx$yn;
+	# x^2*dy - k*exp(-1/x) * I(exp(1/x)) + k*exp(1/x) * I(exp(-1/x)) - x^2*df0 - 2*k*x^2 # = 0
+	div = x^2;
+	dp = k*(yp - yn) + 2*k*x^2;
+	if( ! is.null(f)) {
+		df = dp.pm(f);
+		dfx = sapply(x, function(x) eval.pm(df, x));
+		dp = dp + x^2*dfx;
+	}
+	dp = ifelse(div != 0, dp/div, 0); # TODO
+	return(dp)
+}
+d2y = function(x, k=1, n=1, b0=1, f=NULL) {
+	yx  =  y(x=x, k=k, n=n, b0=b0, f=f, all=TRUE);
+	dyx = dy(x=x, k=k, n=n, b0=b0, f=f, y=yx);
+	# x^4*d2y + 2*x^3*dy - y - x^4*d2f0 - 2*x^3*df0 + f0 - 4*k*x^3 # = 0
+	div = - x^4;
+	d2p = 2*x^3*dyx - yx$y - 4*k*x^3;
+	if( ! is.null(f)) {
+		fx = sapply(x, function(x) eval.pm(f, x));
+		df = dp.pm(f); d2f = dp.pm(df);
+		dfx  = sapply(x, function(x) eval.pm(df, x));
+		d2fx = sapply(x, function(x) eval.pm(d2f, x));
+		d2p  = d2p - x^4*d2fx - 2*x^3*dfx + fx;
+	}
+	d2p = ifelse(div != 0, d2p/div, 0); # TODO
+	return(d2p)
+}
+### Plot:
+k = 2;
+f = toPoly.pm("x^2 - 3*x - 3")
+px = c(0.275, rep(1,2)) +  c(0,0.5,4)*1/5;
+curve(y(x, k=k, f=f), from = 0.20, to = 2, ylim=c(-6, 10))
+line.tan(px, dx=3, p=y, dp=dy, k=k, f=f)
+#
+px = c(0.2125, 0.265, 0.5, 0.75, 1.25);
+curve(dy(x, k=k, f=f), add=T, col="green")
+line.tan(px, dx=3, p=dy, dp=d2y, k=k, f=f, col="orange")
 
 
 #########
