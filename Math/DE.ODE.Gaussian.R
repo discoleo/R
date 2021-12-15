@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs - Gaussian
 ###
-### draft v.0.4d-test
+### draft v.0.4d-test-gen1
 
 #############
 ### Types ###
@@ -30,13 +30,12 @@
 
 ### Linear / Non-Linear Gaussian-type
 
-### draft v.0.4c - v.0.4d:
+### draft v.0.4c - v.0.4d-gen1:
 # - derived from:
 #   y = k * exp(x^n) * I(exp(-x^n)) + F0(x); [v.0.4c, v.0.4c-ex]
 #   y = k1 * exp(p1) * I(exp(-p1)) +
 #       k2 * exp(p2) * I(exp(-p2)) + F0(x); [v.0.4d]
-# - Example: x^4*d2y + 2*x^3*dy - y - 4*k*x^3 = 0;
-# - more examples;
+# - Example: x^4*d2y + 2*x^3*dy - b0^2*y - 4*k*x^3 = 0;
 ### draft v.0.4a - v.0.4b-fix:
 # - automatic generation of exponential type ODEs;
 # - preparation for extension; [v.0.4a-ext0/ext1]
@@ -510,20 +509,20 @@ x^4*(2*x^3 + 1)*d2y + (4*x^8 - 2*x^6 + 2*x^3 - x^2)*dy - (4*x^6 - 6*x^4 + 2*x^3)
 
 #########
 ### Ex 2:
-### y = k*exp(-1/x) * I(exp(1/x)) + k*exp(1/x) * I(exp(-1/x)) + F0(x)
+### y = k*exp(-b0/x) * I(exp(b0/x)) + k*exp(b0/x) * I(exp(-b0/x)) + F0(x)
 
 ### D =>
-dy - k/x^2*exp(-1/x) * I(exp(1/x)) + k/x^2*exp(1/x) * I(exp(-1/x)) - df0 - 2*k # = 0
-x^2*dy - k*exp(-1/x) * I(exp(1/x)) + k*exp(1/x) * I(exp(-1/x)) - x^2*df0 - 2*k*x^2 # = 0
+dy - k*b0/x^2*exp(-b0/x) * I(exp(b0/x)) + k*b0/x^2*exp(b0/x) * I(exp(-b0/x)) - df0 - 2*k # = 0
+x^2*dy - k*b0*exp(-b0/x) * I(exp(b0/x)) + k*b0*exp(b0/x) * I(exp(-b0/x)) - x^2*df0 - 2*k*x^2 # = 0
 
 ### Solve Linear System:
 ### exp(-1/x) * I(exp(1/x)) =
-(x^2*dy + y - f0 - x^2*df0 - 2*k*x^2) / (2*k);
+(x^2*dy + b0*y - b0*f0 - x^2*df0 - 2*k*x^2) / (2*k*b0);
 ### exp(1/x) * I(exp(-1/x)) =
-(x^2*dy - y + f0 - x^2*df0 - 2*k*x^2) / (-2*k);
+(x^2*dy - b0*y + b0*f0 - x^2*df0 - 2*k*x^2) / (-2*k*b0);
 
 ### D2 =>
-x^4*d2y + 2*x^3*dy - k*exp(-1/x) * I(exp(1/x)) - k*exp(1/x) * I(exp(-1/x)) +
+x^4*d2y + 2*x^3*dy - k*b0^2*exp(-b0/x) * I(exp(b0/x)) - k*b0^2*exp(b0/x) * I(exp(-b0/x)) +
 	- x^4*d2f0 - 2*x^3*df0 - 4*k*x^3 # = 0
 2*x^4*d2y + 4*x^3*dy - (x^2*dy + y - f0 - x^2*df0 - 2*k*x^2) +
 	+ (x^2*dy - y + f0 - x^2*df0 - 2*k*x^2) +
@@ -531,11 +530,11 @@ x^4*d2y + 2*x^3*dy - k*exp(-1/x) * I(exp(1/x)) - k*exp(1/x) * I(exp(-1/x)) +
 
 ### ODE:
 # - simplifies significantly: y & f0 are anti-symmetric;
-x^4*d2y + 2*x^3*dy - y - x^4*d2f0 - 2*x^3*df0 + f0 - 4*k*x^3 # = 0
+x^4*d2y + 2*x^3*dy - b0^2*y - x^4*d2f0 - 2*x^3*df0 + b0^2*f0 - 4*k*x^3 # = 0
 
 ### Special Cases:
-f0 = c1*cosh(1/x) + c2*1i*sinh(1/x);
-x^4*d2y + 2*x^3*dy - y - 4*k*x^3 # = 0
+f0 = c1*cosh(1/x) + c2*sinh(1/x);
+x^4*d2y + 2*x^3*dy - b0^2*y - 4*k*x^3 # = 0
 
 ### Solution & Plot:
 intp = function(upper, lower=0.25, n=1, b0=1) {
@@ -562,7 +561,7 @@ dy = function(x, k=1, n=1, b0=1, f=NULL, y=NULL) {
 	yp = yx$yp; yn = yx$yn;
 	# x^2*dy - k*exp(-1/x) * I(exp(1/x)) + k*exp(1/x) * I(exp(-1/x)) - x^2*df0 - 2*k*x^2 # = 0
 	div = x^2;
-	dp = k*(yp - yn) + 2*k*x^2;
+	dp = k*b0*(yp - yn) + 2*k*x^2;
 	if( ! is.null(f)) {
 		df = dp.pm(f);
 		dfx = sapply(x, function(x) eval.pm(df, x));
@@ -576,13 +575,13 @@ d2y = function(x, k=1, n=1, b0=1, f=NULL) {
 	dyx = dy(x=x, k=k, n=n, b0=b0, f=f, y=yx);
 	# x^4*d2y + 2*x^3*dy - y - x^4*d2f0 - 2*x^3*df0 + f0 - 4*k*x^3 # = 0
 	div = - x^4;
-	d2p = 2*x^3*dyx - yx$y - 4*k*x^3;
+	d2p = 2*x^3*dyx - b0^2*yx$y - 4*k*x^3;
 	if( ! is.null(f)) {
 		fx = sapply(x, function(x) eval.pm(f, x));
 		df = dp.pm(f); d2f = dp.pm(df);
 		dfx  = sapply(x, function(x) eval.pm(df, x));
 		d2fx = sapply(x, function(x) eval.pm(d2f, x));
-		d2p  = d2p - x^4*d2fx - 2*x^3*dfx + fx;
+		d2p  = d2p - x^4*d2fx - 2*x^3*dfx + b0^2*fx;
 	}
 	d2p = ifelse(div != 0, d2p/div, 0); # TODO
 	return(d2p)
@@ -597,6 +596,23 @@ line.tan(px, dx=3, p=y, dp=dy, k=k, f=f)
 px = c(0.2125, 0.265, 0.5, 0.75, 1.25);
 curve(dy(x, k=k, f=f), add=T, col="green")
 line.tan(px, dx=3, p=dy, dp=d2y, k=k, f=f, col="orange")
+
+
+### Ex 2:
+k = 2; b0 = 3;
+f = toPoly.pm("x^2 - 3*x - 3")
+px = c(0.18, 0.25,0.35, 0.4);
+curve(y(x, k=k, b0=b0, f=f), from = 0.10, to = 0.5, ylim=c(-10, 20))
+line.tan(px, dx=3, p=y, dp=dy, k=k, b0=b0, f=f)
+#
+# px = c(0.2125, 0.265, 0.5, 0.75, 1.25);
+curve(dy(x, k=k, b0=b0, f=f), add=T, col="green")
+line.tan(px, dx=3, p=dy, dp=d2y, k=k, b0=b0, f=f, col="orange")
+
+# "detail" / zoomed out:
+px = c(0.2, 0.25,0.275, 0.3125);
+curve(dy(x, k=k, b0=b0, f=f), from = 0.15, to = 0.5, ylim=c(0, 80), col="green")
+line.tan(px, dx=3, p=dy, dp=d2y, k=k, b0=b0, f=f, col="orange")
 
 
 #########
