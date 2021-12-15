@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs - Gaussian
 ###
-### draft v.0.4d-test-gen1
+### draft v.0.4e
 
 #############
 ### Types ###
@@ -30,12 +30,14 @@
 
 ### Linear / Non-Linear Gaussian-type
 
-### draft v.0.4c - v.0.4d-gen1:
+### draft v.0.4c - v.0.4e:
 # - derived from:
 #   y = k * exp(x^n) * I(exp(-x^n)) + F0(x); [v.0.4c, v.0.4c-ex]
 #   y = k1 * exp(p1) * I(exp(-p1)) +
 #       k2 * exp(p2) * I(exp(-p2)) + F0(x); [v.0.4d]
-# - Example: x^4*d2y + 2*x^3*dy - b0^2*y - 4*k*x^3 = 0;
+# - Examples:
+#   x^4*d2y + 2*x^3*dy - b0^2*y - 4*k*x^3 = 0;
+#   x^4*d2y + 2*x^3*dy - b0^2*y - 2*k*(m+2)*x^(m+3) = 0; [v.0.4e]
 ### draft v.0.4a - v.0.4b-fix:
 # - automatic generation of exponential type ODEs;
 # - preparation for extension; [v.0.4a-ext0/ext1]
@@ -536,16 +538,43 @@ x^4*d2y + 2*x^3*dy - b0^2*y - x^4*d2f0 - 2*x^3*df0 + b0^2*f0 - 4*k*x^3 # = 0
 f0 = c1*cosh(1/x) + c2*sinh(1/x);
 x^4*d2y + 2*x^3*dy - b0^2*y - 4*k*x^3 # = 0
 
+
+### Extension: Ex 2b:
+### y = k*exp(-b0/x) * I(x^m * exp(b0/x)) + k*exp(b0/x) * I(x^m * exp(-b0/x)) + F0(x)
+
+### D =>
+dy - k*b0/x^2*exp(-b0/x) * I(x^m*exp(b0/x)) + k*b0/x^2*exp(b0/x) * I(x^m*exp(-b0/x)) - df0 - 2*k*x^m # = 0
+x^2*dy - k*b0*exp(-b0/x) * I(x^m*exp(b0/x)) + k*b0*exp(b0/x) * I(x^m*exp(-b0/x)) - x^2*df0 - 2*k*x^(m+2) # = 0
+
+### Solve Linear System:
+### exp(-1/x) * I(x^m*exp(1/x)) =
+(x^2*dy + b0*y - b0*f0 - x^2*df0 - 2*k*x^(m+2)) / (2*k*b0);
+### exp(1/x) * I(x^m*exp(-1/x)) =
+(x^2*dy - b0*y + b0*f0 - x^2*df0 - 2*k*x^(m+2)) / (-2*k*b0);
+
+### D2 =>
+x^4*d2y + 2*x^3*dy - k*b0^2*exp(-b0/x) * I(x^m*exp(b0/x)) - k*b0^2*exp(b0/x) * I(x^m*exp(-b0/x)) +
+	- x^4*d2f0 - 2*x^3*df0 - 2*k*(m+2)*x^(m+3) # = 0
+
+### [Variant] ODE:
+x^4*d2y + 2*x^3*dy - b0^2*y +
+	- x^4*d2f0 - 2*x^3*df0 + b0^2*f0 - 2*k*(m+2)*x^(m+3) # = 0
+
+### Special Cases:
+f0 = c1*cosh(1/x) + c2*sinh(1/x);
+m = -3;
+x^4*d2y + 2*x^3*dy - b0^2*y + 2*k # = 0
+
 ### Solution & Plot:
-intp = function(upper, lower=0.25, n=1, b0=1) {
+intp = function(upper, lower=0.25, n=1, m=0, b0=1) {
 	sapply(upper, function(u) {
-		integrate(function(x) exp(b0/x^n), lower=lower, upper=u)$value;
+		integrate(function(x) x^m * exp(b0/x^n), lower=lower, upper=u)$value;
 	})
 }
 #
-y = function(x, k=1, n=1, b0=1, f=NULL, all=FALSE) {
-	yp = intp(x, n=n, b0=b0);
-	yn = intp(x, n=n, b0=-b0);
+y = function(x, k=1, n=1, m=0, b0=1, f=NULL, all=FALSE) {
+	yp = intp(x, n=n, m=m, b0=b0);
+	yn = intp(x, n=n, m=m, b0=-b0);
 	xn = b0 / x^n;
 	yp = exp(-xn) * yp; yn = exp(xn) * yn;
 	y  = k * (yn + yp);
@@ -556,12 +585,12 @@ y = function(x, k=1, n=1, b0=1, f=NULL, all=FALSE) {
 	if(all) return(list(y=y, yp=yp, yn=yn));
 	return(y)
 }
-dy = function(x, k=1, n=1, b0=1, f=NULL, y=NULL) {
-	yx = if( ! is.null(y)) y else y(x, k=k, n=n, b0=b0, f=f, all=TRUE);
+dy = function(x, k=1, n=1, m=0, b0=1, f=NULL, y=NULL) {
+	yx = if( ! is.null(y)) y else y(x, k=k, n=n, m=m, b0=b0, f=f, all=TRUE);
 	yp = yx$yp; yn = yx$yn;
 	# x^2*dy - k*exp(-1/x) * I(exp(1/x)) + k*exp(1/x) * I(exp(-1/x)) - x^2*df0 - 2*k*x^2 # = 0
 	div = x^2;
-	dp = k*b0*(yp - yn) + 2*k*x^2;
+	dp = k*b0*(yp - yn) + 2*k*x^(m+2);
 	if( ! is.null(f)) {
 		df = dp.pm(f);
 		dfx = sapply(x, function(x) eval.pm(df, x));
@@ -570,12 +599,12 @@ dy = function(x, k=1, n=1, b0=1, f=NULL, y=NULL) {
 	dp = ifelse(div != 0, dp/div, 0); # TODO
 	return(dp)
 }
-d2y = function(x, k=1, n=1, b0=1, f=NULL) {
-	yx  =  y(x=x, k=k, n=n, b0=b0, f=f, all=TRUE);
-	dyx = dy(x=x, k=k, n=n, b0=b0, f=f, y=yx);
+d2y = function(x, k=1, n=1, m=0, b0=1, f=NULL) {
+	yx  =  y(x=x, k=k, n=n, m=m, b0=b0, f=f, all=TRUE);
+	dyx = dy(x=x, k=k, n=n, m=m, b0=b0, f=f, y=yx);
 	# x^4*d2y + 2*x^3*dy - y - x^4*d2f0 - 2*x^3*df0 + f0 - 4*k*x^3 # = 0
 	div = - x^4;
-	d2p = 2*x^3*dyx - b0^2*yx$y - 4*k*x^3;
+	d2p = 2*x^3*dyx - b0^2*yx$y - 2*k*(m+2)*x^(m+3);
 	if( ! is.null(f)) {
 		fx = sapply(x, function(x) eval.pm(f, x));
 		df = dp.pm(f); d2f = dp.pm(df);
@@ -615,6 +644,27 @@ curve(dy(x, k=k, b0=b0, f=f), from = 0.15, to = 0.5, ylim=c(0, 80), col="green")
 line.tan(px, dx=3, p=dy, dp=d2y, k=k, b0=b0, f=f, col="orange")
 
 
+### Ex 3: Variant
+k = 2; b0 = 3; m = -1/2;
+f = toPoly.pm("x^2 - 3*x - 3")
+px = c(0.18, 0.275,0.35, 0.4);
+curve(y(x, k=k, m=m, b0=b0, f=f), from = 0.10, to = 0.5, ylim=c(-10, 20))
+line.tan(px, dx=1.2, p=y, dp=dy, k=k, m=m, b0=b0, f=f)
+#
+curve(dy(x, k=k, m=m, b0=b0, f=f), add=T, col="green")
+line.tan(px, dx=3, p=dy, dp=d2y, k=k, m=m, b0=b0, f=f, col="orange")
+
+# "detail" / zoomed out:
+px = c(0.2, 0.23,0.275, 0.3125);
+curve(dy(x, k=k, m=m, b0=b0, f=f), from = 0.15, to = 0.5, ylim=c(0, 80), col="green")
+line.tan(px, dx=3, p=dy, dp=d2y, k=k, m=m, b0=b0, f=f, col="orange")
+
+# Ex 3b: Variant
+m = -3; px = seq(0.24, 0.27, length.out=6);
+curve(dy(x, k=k, m=m, b0=b0, f=f), from = 0.24, to = 0.27, col="green")
+line.tan(px, dx=3, p=dy, dp=d2y, k=k, m=m, b0=b0, f=f, col="orange")
+
+
 #########
 ### Ex 3:
 ### y = k*exp(-2/x) * I(exp(2/x)) + k*exp(1/x) * I(exp(-1/x)) + F0(x)
@@ -637,7 +687,7 @@ x^4*d2y + 2*x^3*dy - 2*k*exp(-2/x) * I(exp(2/x)) - k*exp(1/x) * I(exp(-1/x)) +
 	- 3*x^4*d2f0 - 6*x^3*df0 - 12*k*x^2 # = 0
 
 ### ODE:
-3*x^4*d2y + x^2*(6*x*dy - 1)*dy - 4*y +
+3*x^4*d2y + x^2*(6*x - 1)*dy - 4*y +
 	- 3*x^4*d2f0 - 6*x^3*df0 + x^2*df0 + 4*f0 - 10*k*x^2 # = 0
 
 # TODO: check;
