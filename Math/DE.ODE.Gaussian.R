@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs - Gaussian
 ###
-### draft v.0.4d-ex2
+### draft v.0.4d-fix
 
 #############
 ### Types ###
@@ -507,6 +507,7 @@ x^4*(2*x^3 + 1)*d2y + (4*x^8 - 2*x^6 + 2*x^3 - x^2)*dy - (4*x^6 - 6*x^4 + 2*x^3)
 # TODO: check;
 
 
+#########
 ### Ex 2:
 ### y = k*exp(-1/x) * I(exp(1/x)) + k*exp(1/x) * I(exp(-1/x)) + F0(x)
 
@@ -523,12 +524,41 @@ x^2*dy - k*exp(-1/x) * I(exp(1/x)) + k*exp(1/x) * I(exp(-1/x)) - x^2*df0 - 2*k*x
 ### D2 =>
 x^4*d2y + 2*x^3*dy - k*exp(-1/x) * I(exp(1/x)) - k*exp(1/x) * I(exp(-1/x)) +
 	- x^4*d2f0 - 2*x^3*df0 - 4*k*x^2 # = 0
-2*x^4*d2y + 4*x^3*dy - (x^2*dy + y - f0 - x^2*df0 - 2*k*x^2) - (x^2*dy - y + f0 - x^2*df0 - 2*k*x^2) +
+2*x^4*d2y + 4*x^3*dy - (x^2*dy + y - f0 - x^2*df0 - 2*k*x^2) +
+	+ (x^2*dy - y + f0 - x^2*df0 - 2*k*x^2) +
 	- 2*x^4*d2f0 - 4*x^3*df0 - 8*k*x^2 # = 0
 
 ### ODE:
-# - simplifies significantly: only d2y, dy;
-x^2*d2y + (2*x - 1)*dy - x^2*d2f0 - 2*x*df0 + df0 - 2*k # = 0
+# - simplifies significantly: y & f0 are anti-symmetric;
+x^4*d2y + 2*x^3*dy - y - x^4*d2f0 - 2*x^3*df0 + f0 - 4*k*x^2 # = 0
+
+# TODO: check;
+
+
+#########
+### Ex 3:
+### y = k*exp(-2/x) * I(exp(2/x)) + k*exp(1/x) * I(exp(-1/x)) + F0(x)
+
+### D =>
+dy - 2*k/x^2*exp(-2/x) * I(exp(2/x)) + k/x^2*exp(1/x) * I(exp(-1/x)) - df0 - 2*k # = 0
+x^2*dy - 2*k*exp(-2/x) * I(exp(2/x)) + k*exp(1/x) * I(exp(-1/x)) - x^2*df0 - 2*k*x^2 # = 0
+
+### Solve Linear System:
+### exp(-2/x) * I(exp(2/x)) =
+(x^2*dy + y - f0 - x^2*df0 - 2*k*x^2) / (3*k);
+### exp(1/x) * I(exp(-1/x)) =
+(x^2*dy - 2*y + 2*f0 - x^2*df0 - 2*k*x^2) / (-3*k);
+
+### D2 =>
+x^4*d2y + 2*x^3*dy - 2*k*exp(-2/x) * I(exp(2/x)) - k*exp(1/x) * I(exp(-1/x)) +
+	- x^4*d2f0 - 2*x^3*df0 - 4*k*x^2 # = 0
+3*x^4*d2y + 6*x^3*dy - 2*(x^2*dy + y - f0 - x^2*df0 - 2*k*x^2) +
+	+ (x^2*dy - 2*y + 2*f0 - x^2*df0 - 2*k*x^2) +
+	- 3*x^4*d2f0 - 6*x^3*df0 - 12*k*x^2 # = 0
+
+### ODE:
+3*x^4*d2y + x^2*(6*x*dy - 1)*dy - 4*y +
+	- 3*x^4*d2f0 - 6*x^3*df0 + x^2*df0 + 4*f0 - 10*k*x^2 # = 0
 
 # TODO: check;
 
@@ -655,19 +685,19 @@ d2y = function(x, a=c(1, 1)) {
 ### Plot:
 a = c(1, 1) # has NO effect on eq of D2;
 curve(y(x, a=a), from= -1, to = 3, ylim=c(-2, 3))
-sapply(c(-3:2 * 2/5, 3/2, 2), line.tan, dx=3, p=y, dp=dy, a=a)
+line.tan(c(-3:2 * 2/5, 3/2, 2), dx=3, p=y, dp=dy, a=a)
 # non-sigmoidal
 curve(dy(x, a=a), add=T, col="green")
-sapply(c(-3:2 * 2/5, 3/2, 2), line.tan, dx=3, p=dy, dp=d2y, a=a, col="orange")
+line.tan(c(-3:2 * 2/5, 3/2, 2), dx=3, p=dy, dp=d2y, a=a, col="orange")
 
 ###
 a = c(1, -1) # a = c(2, -1/2)
 # although has NO effect on eq. of D2, d2y depends indirectly;
 curve(y(x, a=a), from= -1, to = 3, a=a, ylim=c(-2, 3))
-sapply(c(-3:2 * 2/5, 3/2, 2), line.tan, dx=3, p=y, dp=dy, a=a)
+line.tan(c(-3:2 * 2/5, 3/2, 2), dx=3, p=y, dp=dy, a=a)
 # non-sigmoidal
 curve(dy(x, a=a), add=T, col="green")
-sapply(c(0.05 + -3:3 /5, 3/2, 2), line.tan, dx=3, p=dy, dp=d2y, a=a, col="orange")
+line.tan(c(0.05 + -3:3 /5, 3/2, 2), dx=3, p=dy, dp=d2y, a=a, col="orange")
 
 
 ######################
