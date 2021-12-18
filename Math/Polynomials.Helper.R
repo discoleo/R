@@ -113,11 +113,19 @@ roots.pm = function(p, ..., xn="x") {
 	roots(evalCoeff(p, xn=xn, ...));
 }
 
-sort.sol = function(sol, useRe=TRUE, ncol=1, digits=5) {
+### Sort
+sort.sol = function(sol, useRe=TRUE, mod.first=TRUE, ncol=1, digits=5) {
 	if(useRe) {
-		id = order(
-			abs(round(sol[,ncol], digits)),
-			round(Re(sol[,ncol]), digits) );
+		if(length(digits) == 1) digits = rep(digits, 3);
+		re = round(Re(sol[,ncol]), digits[2]);
+		mod = round(abs(sol[,ncol]), digits[1]);
+		re = round(Re(sol[,ncol]), digits[2]);
+		im = round(Im(sol[,ncol]), digits[3]);
+		if(mod.first) {
+			id = order(mod, re, im);
+		} else {
+			id = order(re, mod, im);
+		}
 	} else {
 		id = order(abs(round(sol[,ncol], digits)) );
 	}
