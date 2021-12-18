@@ -5,6 +5,8 @@
 ###
 ### Polynomial Systems
 ### Symmetric S4
+###
+### draft v.0.1b
 
 
 
@@ -74,6 +76,45 @@ round0(poly.calc(sol[,1]))
 R = c(0,-1,1,2)
 sol = solve.S4Symm.P2(R);
 test.S4Symm(sol, n=2);
+
+### Classic Poly:
+round0(poly.calc(sol[,1]))
+
+
+####################
+####################
+
+###############
+### Order 2 ###
+###############
+
+x1^3 + x2^3 + x3^3 + x4^3 - R1 # = 0
+x1*x2 + x1*x3 + x1*x4 + x2*x3 + x2*x4 + x3*x4 - R2 # = 0
+x1*x2*x3 + x1*x2*x4 + x1*x3*x4 + x2*x3*x4 - R3 # = 0
+x1*x2*x3*x4 - R4 # = 0
+
+### Solution:
+
+### Solver:
+solve.S4Symm.P3 = function(R, sort=TRUE) {
+	S = roots(c(1, 0, -3*R[2], - R[1] + 3*R[3]));
+	x = sapply(S, function(S) roots(c(1, -S, R[2], -R[3], R[4])));
+	# All permutations possible:
+	# - only 1 variant generated!
+	perm.f = function(id) {
+		id = c(seq(id+1, 4), seq(1, id));
+		as.vector(x[id, ]);
+	}
+	sol = cbind(x1=as.vector(x), x2 = perm.f(1), x3 = perm.f(2), x4 = perm.f(3));
+	if(sort) sol = sort.sol(sol, ncol=1, useRe=TRUE, mod.first=FALSE);
+	return(sol);
+}
+
+### Examples:
+
+R = c(1,-1,2,3)
+sol = solve.S4Symm.P3(R);
+test.S4Symm(sol, n=3);
 
 ### Classic Poly:
 round0(poly.calc(sol[,1]))
