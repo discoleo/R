@@ -63,8 +63,9 @@ R2*(x1*x3)^2 + R4*(x1+x3)^2 - R3*x1*x3*(x1+x3) # = 0
 x1*x3*(x1+x3)^2 + x1*x3*(x2+x4)^2 - R1*x1*x3 - 2*((x1*x3)^2 + R4) # = 0
 x1*x3*(x1+x3)^4 + x1*x3*R2^2 - R1*x1*x3*(x1+x3)^2 - 2*((x1*x3)^2 + R4)*(x1+x3)^2 # = 0
 
-# TODO: proper solution (S^4);
+# TODO: proper solution (based on S^4);
 
+### Derivation:
 R2*y^2 + R4*x^2 - R3*x*y # = 0
 y*x^4 + y*R2^2 - R1*y*x^2 - 2*(y^2 + R4)*x^2 # = 0
 
@@ -74,6 +75,8 @@ pR = solve.pm(p1, p2, "y")
 pR$Rez = sort.pm(pR$Rez, "x")
 print.pm(pR$Rez, lead="x")
 
+### P[8]
+# - is NOT the minimal polynomial!
 R2*x^8 - 2*R3*x^7 - 2*R2*R1*x^6 + 4*R4*x^6 - 2*R3*R2*x^5 + 2*R3*R1*x^5 +
 	+ 2*R2^3*x^4 + R2*R1^2*x^4 + 4*R3^2*x^4 - 8*R4*R2*x^4 - 2*R3*R2^2*x^3 + 2*R3*R2*R1*x^3 +
 	- 2*R2^3*R1*x^2 + 4*R4*R2^2*x^2 - 2*R3*R2^3*x + R2^5
@@ -96,19 +99,35 @@ x13.S4 = function(x, R) {
 	return( x0 / div);
 }
 
+
+### Solution: based on P[8]
+solve.S4Ht = function(R) {
+	coeff = coeffs.S4(R)
+	xs = roots(coeff);
+	x13 = x13.S4(xs, R);
+	xd = sqrt(xs^2 - 4*x13 + 0i);
+	x1 = (xs + xd)/2; x3 = (xs - xd)/2;
+	xs = R[2] / xs; x24 = R[4] / x13;
+	xd = sqrt(xs^2 - 4*x24 + 0i);
+	x2 = (xs + xd)/2; x4 = (xs - xd)/2;
+	sol = cbind(x1, x2, x3, x4)
+	return(sol)
+}
+
 ###
 R = c(1,-1,2,3)
-coeff = coeffs.S4(R)
-xs = roots(coeff);
-x13 = x13.S4(xs, R);
-xd = sqrt(xs^2 - 4*x13 + 0i);
-x1 = (xs + xd)/2; x3 = (xs - xd)/2;
-xs = R[2] / xs; x24 = R[4] / x13;
-xd = sqrt(xs^2 - 4*x24 + 0i);
-x2 = (xs + xd)/2; x4 = (xs - xd)/2;
-sol = cbind(x1, x2, x3, x4)
-sol
-apply(sol, 1, sum) # TODO;
+sol = solve.S4Ht(R)
+s = apply(sol, 1, sum) # TODO: proper solution;
+s = sort.sol(matrix(s, ncol=1), mod.first=FALSE)
+s
+round0(poly.calc(s[c(1,3,5,7)]))
 
+sol
 test.S4HtMixed(sol)
+
+-3 + 6*x - 2*x^2 - 2*x^3 + x^4 # R = c(1,1,1,1)
+-12 + 4*x^2 - 2*x^3 + x^4 # R = c(-2,1,1,1)
+-11 - 2*x + 6*x^2 - 2*x^3 + x^4 # R = c(-3,1,1,1)
+-9 + 3*x + 4*x^2 + x^3 + x^4 # R = c(1,-2,1,1)
+-63 + 4*x - 10*x^2 + 4*x^3 + x^4 # R = c(1,-1,2,3)
 
