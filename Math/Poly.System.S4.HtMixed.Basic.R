@@ -136,6 +136,17 @@ test.S4HtMixed(sol)
 45 + 6*x - 14*x^2 - 2*x^3 + x^4 # R = c(1,1,1,-2)
 -63 + 4*x - 10*x^2 + 4*x^3 + x^4 # R = c(1,-1,2,3)
 
-R2*x^4 - 2*R3*x^3 + 2*(2*R4 - 2*R2^2 - R1*R2)*x^2
+R2*x^4 - 2*R3*x^3 + 2*(2*R4 - 2*R2^2 - R1*R2)*x^2 +
+	+ 2*R[3]*(R[1]+2*R[2])*x
 
+R = c(1,1,1,1)
+coeffs()
+
+coeffs = function() sapply(c(-3,-2,-1,1,2,3), function(Rv) {
+	Rm = R; Rm[1] = Rv;
+	sol = solve.S4Ht(Rm);
+	s = apply(sol, 1, sum)
+	s = sort.sol(matrix(s, ncol=1), mod.first=FALSE)
+	(round0(poly.calc(s[c(1,3,5,7)])) * Rm[2])[2]
+})
 
