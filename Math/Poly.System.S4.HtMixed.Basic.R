@@ -63,7 +63,51 @@ R2*(x1*x3)^2 + R4*(x1+x3)^2 - R3*x1*x3*(x1+x3) # = 0
 x1*x3*(x1+x3)^2 + x1*x3*(x2+x4)^2 - R1*x1*x3 - 2*((x1*x3)^2 + R4) # = 0
 x1*x3*(x1+x3)^4 + x1*x3*R2^2 - R1*x1*x3*(x1+x3)^2 - 2*((x1*x3)^2 + R4)*(x1+x3)^2 # = 0
 
-# TODO: proper solution (based on S^4);
+# TODO: proper solution (derive solution based on S^4);
+
+
+### Solver:
+solve.S4Ht.P2 = function(R, sort=TRUE, debug=TRUE) {
+	R1 = R[1]; R2 = R[2]; R3 = R[3]; R4 = R[4];
+	# S^4:
+	coeff = c(R2, - 2*R3, 2*(2*R4 - 2*R2^2 - R1*R2),
+		2*R3*(R1+2*R2), - 16*R2*R4 + (4*R2^3 + 4*R1*R2^2 + R1^2*R2) + 4*R3^2);
+	S = roots(coeff);
+	if(debug) print(S);
+	#
+	E2 = (S^2 - R1) / 2;
+	len = length(S);
+	x1 = sapply(seq(len), function(id) roots(c(1, -S[id], E2[id], -R3, R4)));
+	S = rep(S, each=4); E2 = rep(E2, each=4);
+	x1 = as.vector(x1);
+	# robust:
+	div = (x1^2*(2*x1-S) + (E2-R2)*x1);
+	x3 = (R4 - x1^4 + x1^3*S - R2*x1^2) / div;
+	# x1 = rep(x1, each=2); S = rep(S, each = 2);
+	xs = S - x1 - x3; x24 = R4 / (x1*x3);
+	xd = sqrt(xs^2 - 4*x24);
+	x2 = (xs + xd)/2; x4 = (xs - xd)/2;
+	sol = cbind(x1=x1, x2=as.vector(x2), x3=as.vector(x3), x4=as.vector(x4))
+	if(sort) sol = sort.sol(sol, ncol=1, useRe=TRUE, mod.first=FALSE);
+	return(sol);
+}
+
+### Examples:
+
+R = c(1,-1,2,3)
+sol = solve.S4Ht.P2(R)
+
+test.S4HtMixed(sol)
+
+
+### Ex 2:
+R = c(0,-2,2,1)
+sol = solve.S4Ht.P2(R)
+
+test.S4HtMixed(sol)
+
+
+###############
 
 ### Derivation:
 R2*y^2 + R4*x^2 - R3*x*y # = 0
@@ -101,7 +145,7 @@ x13.S4 = function(x, R) {
 
 
 ### Solution: based on P[8]
-solve.S4Ht = function(R, debug=FALSE) {
+solve.S4Ht.P2old = function(R, debug=FALSE) {
 	coeff = coeffs.S4(R)
 	xs = roots(coeff);
 	x13 = x13.S4(xs, R);
@@ -137,16 +181,18 @@ test.S4HtMixed(sol)
 -63 + 4*x - 10*x^2 + 4*x^3 + x^4 # R = c(1,-1,2,3)
 
 R2*x^4 - 2*R3*x^3 + 2*(2*R4 - 2*R2^2 - R1*R2)*x^2 +
-	+ 2*R[3]*(R[1]+2*R[2])*x
+	+ 2*R[3]*(R[1]+2*R[2])*x - 16*R[2]*R[4] + (4*R[2]^3 + 4*R[1]*R[2]^2 + R[1]^2*R[2]) + 4*R[3]^2;
 
 R = c(1,1,1,1)
-coeffs()
+coeffs(1, R)
 
-coeffs = function() sapply(c(-3,-2,-1,1,2,3), function(Rv) {
-	Rm = R; Rm[1] = Rv;
+coeffs = function(r.id=1, R, c0=c(-3,-2,-1,1,2,3,4,5)) {
+	sapply(c0, function(Rv) {
+	Rm = R; Rm[r.id] = Rv;
 	sol = solve.S4Ht(Rm);
 	s = apply(sol, 1, sum)
 	s = sort.sol(matrix(s, ncol=1), mod.first=FALSE)
-	(round0(poly.calc(s[c(1,3,5,7)])) * Rm[2])[2]
+	(round0(poly.calc(s[c(1,3,5,7)])) * Rm[2])[1] # ID
 })
+}
 
