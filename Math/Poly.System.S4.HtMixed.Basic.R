@@ -101,7 +101,7 @@ x13.S4 = function(x, R) {
 
 
 ### Solution: based on P[8]
-solve.S4Ht = function(R) {
+solve.S4Ht = function(R, debug=FALSE) {
 	coeff = coeffs.S4(R)
 	xs = roots(coeff);
 	x13 = x13.S4(xs, R);
@@ -113,6 +113,8 @@ solve.S4Ht = function(R) {
 	sol = cbind(x1, x2, x3, x4)
 	return(sol)
 }
+### Explore Coefficient of x^2
+coeffx2 = function(R) 2*(2*R[4] - 2*R[2]^2 - R[1]*R[2]);
 
 ###
 R = c(1,-1,2,3)
@@ -120,14 +122,20 @@ sol = solve.S4Ht(R)
 s = apply(sol, 1, sum) # TODO: proper solution;
 s = sort.sol(matrix(s, ncol=1), mod.first=FALSE)
 s
-round0(poly.calc(s[c(1,3,5,7)]))
+round0(poly.calc(s[c(1,3,5,7)])) * R[2]
+coeffx2(R)
 
 sol
 test.S4HtMixed(sol)
 
--3 + 6*x - 2*x^2 - 2*x^3 + x^4 # R = c(1,1,1,1)
--12 + 4*x^2 - 2*x^3 + x^4 # R = c(-2,1,1,1)
+-3  + 6*x - 2*x^2 - 2*x^3 + x^4 # R = c(1,1,1,1)
+-12       + 4*x^2 - 2*x^3 + x^4 # R = c(-2,1,1,1)
 -11 - 2*x + 6*x^2 - 2*x^3 + x^4 # R = c(-3,1,1,1)
--9 + 3*x + 4*x^2 + x^3 + x^4 # R = c(1,-2,1,1)
+-9 +  3*x + 4*x^2 +   x^3 + x^4 # R = c(1,-2,1,1)
+ 9 - 12*x - 2*x^2 + 4*x^3 + x^4 # R = c(1,1,-2,1)
+45 + 6*x - 14*x^2 - 2*x^3 + x^4 # R = c(1,1,1,-2)
 -63 + 4*x - 10*x^2 + 4*x^3 + x^4 # R = c(1,-1,2,3)
+
+R2*x^4 - 2*R3*x^3 + 2*(2*R4 - 2*R2^2 - R1*R2)*x^2
+
 
