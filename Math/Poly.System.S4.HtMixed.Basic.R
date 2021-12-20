@@ -6,6 +6,8 @@
 ### Polynomial Systems
 ### Hetero-Symmetric S4: Mixed
 ### Basic Types
+###
+### draft v.0.1c
 
 
 
@@ -36,6 +38,101 @@ test.S4HtMixed = function(sol, n=2, R = NULL) {
 ###############
 
 ###############
+### Order 1 ###
+###############
+
+x1 + x2 + x3 + x4 - R1 # = 0
+x1*x2 + x2*x3 + x3*x4 + x4*x1 - R2 # = 0
+x1*x2*x3 + x1*x2*x4 + x1*x3*x4 + x2*x3*x4 - R3 # = 0
+x1*x2*x3*x4 - R4 # = 0
+
+
+### Solution:
+
+### P[2] for E2:
+S = R[1]; E2a = R[2]; E3 = R[3]; E4 = R[4];
+E2a*E2^2 - (S*E3 + 2*E2a^2)*E2 +
+	+ S^2*E4 + S*E2a*E3 + E2a^3 - 4*E2a*E4 + E3^2 # = 0
+
+### Solver:
+solve.S4Ht.P1 = function(R, sort=TRUE, debug=TRUE) {
+	S = R[1]; E2a = R[2]; E3 = R[3]; E4 = R[4];
+	coeff = c(E2a, - (S*E3 + 2*E2a^2),
+		S^2*E4 + S*E2a*E3 + E2a^3 - 4*E2a*E4 + E3^2);
+	E2 = roots(coeff);
+	# Note:
+	# - classic approach needs only P[2] o P[2];
+	x1 = sapply(E2, function(e2) roots(c(1, -S, e2, -E3, E4)));
+	x1 = as.vector(x1); E2 = rep(E2, each=4);
+	# robust:
+	div = (x1^2*(2*x1-S) + (E2-E2a)*x1);
+	x3 = (E4 - x1^4 + x1^3*S - E2a*x1^2) / div;
+	# x2, x4:
+	xs = S - x1 - x3; x24 = E4 / (x1*x3);
+	xd = sqrt(xs^2 - 4*x24);
+	x2 = (xs + xd)/2; x4 = (xs - xd)/2;
+	sol = cbind(x1=x1, x2=as.vector(x2), x3=as.vector(x3), x4=as.vector(x4))
+	if(sort) sol = sort.sol(sol, ncol=1, useRe=TRUE, mod.first=FALSE);
+	return(sol);
+}
+
+### Examples:
+
+R = c(-1,-2,3,1)
+sol = solve.S4Ht.P1(R)
+
+test.S4HtMixed(sol, n=1)
+
+### Classic Poly:
+round0(poly.calc(sol[,1]) * abs(R[2]))
+
+
+### Derivation:
+
+# - classic approach: P[2] o P[2];
+
+### E2a:
+(x1+x3)*(S - x1 - x3) - R2 # = 0
+x13^2 - S*x13 + R2 # = 0
+
+### E3 =>
+x1*x3*(S - x1 - x3) + x2*x4*(x1+x3) - R3 # = 0
+(x1*x3)^2*(S - x1 - x3) - R3*x1*x3 + R4*(x1+x3) # = 0
+
+
+### Solution: based on "classic" approach
+solve.S4Ht.P1old = function(R, debug=FALSE) {
+	xs  = roots(c(1, -R[1], R[2]));
+	x13 = sapply(seq(length(xs)), function(id) roots(c(R[1] - xs[id], -R[3], R[4]*xs[id])));
+	xs = rep(xs, each=2); x13 = as.vector(x13);
+	xd = sqrt(xs^2 - 4*x13 + 0i);
+	x1 = (xs + xd)/2; x3 = (xs - xd)/2;
+	# x2, x4:
+	xs = R[1] - xs; x24 = R[4] / x13;
+	xd = sqrt(xs^2 - 4*x24 + 0i);
+	x2 = (xs + xd)/2; x4 = (xs - xd)/2;
+	sol = cbind(x1, x2, x3, x4)
+	return(sol)
+}
+e2.f = function(x) x[1]*sum(x, -x[1]) + x[2]*(x[3]+x[4]) + x[3]*x[4]
+
+###
+R = c(1,-1,2,3)
+sol = solve.S4Ht.P1old(R)
+round0(poly.calc(apply(sol, 1, e2.f)[1:2]) * R[2])
+R[1]^2*R[4] + R[1]*R[2]*R[3] + R[2]^3 - 4*R[2]*R[4] + R[3]^2
+
+
+R[2]*x^2 - (R[1]*R[3] + 2*R[2]^2)*x +
+	+ R[1]^2*R[4] + R[1]*R[2]*R[3] + R[2]^3 - 4*R[2]*R[4] + R[3]^2
+
+test.S4HtMixed(sol, n=1)
+
+
+########################
+########################
+
+###############
 ### Order 2 ###
 ###############
 
@@ -63,7 +160,11 @@ R2*(x1*x3)^2 + R4*(x1+x3)^2 - R3*x1*x3*(x1+x3) # = 0
 x1*x3*(x1+x3)^2 + x1*x3*(x2+x4)^2 - R1*x1*x3 - 2*((x1*x3)^2 + R4) # = 0
 x1*x3*(x1+x3)^4 + x1*x3*R2^2 - R1*x1*x3*(x1+x3)^2 - 2*((x1*x3)^2 + R4)*(x1+x3)^2 # = 0
 
-# TODO: proper solution (derive solution based on S^4);
+# TODO: derive properly the solution based on S^4;
+
+### P[4]
+R2*S^4 - 2*R3*S^3 + 2*(2*R4 - 2*R2^2 - R1*R2)*S^2 +
+	+ 2*R3*(R1+2*R2)*S - 16*R2*R4 + (4*R2^3 + 4*R1*R2^2 + R1^2*R2) + 4*R3^2 # = 0
 
 
 ### Solver:
