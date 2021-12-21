@@ -192,7 +192,7 @@ toCoeff = function(p, x="x") {
 	idx = match(x, names(p));
 	if(idx < 0) stop(paste0("No variable ", x));
 	px = p[,x]; p = p[, - idx, drop=FALSE];
-	str = tapply(seq(nrow(p)), px, function(nr) print.p(p[nr,, drop=FALSE], leading=NA))
+	str = tapply(seq(nrow(p)), px, function(nr) as.character.pm(p[nr,, drop=FALSE], leading=NA))
 	str[nchar(str) == 0] = "1";
 	# missing powers
 	x.all = seq(0, max(px));
@@ -229,7 +229,7 @@ coef.pm = function(p, xn="x", descending=TRUE) {
 print.coeff = function(p, x="x") {
 	p = rev(toCoeff(p, x));
 	last = tail(p, 1);
-	sapply(head(p, -1), function(p) cat(paste(p, ",\n", sep="")));
+	err = sapply(head(p, -1), function(p) cat(paste(p, ",\n", sep="")));
 	cat(paste(last, "\n", sep=""));
 	invisible(p);
 }
