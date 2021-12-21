@@ -7,7 +7,7 @@
 ### Hetero-Symmetric S4: Mixed
 ### Basic Types
 ###
-### draft v.0.1c
+### draft v.0.1d-fix
 
 
 
@@ -302,7 +302,7 @@ coeffs = function(r.id=1, R, c0=c(-3,-2,-1,1,2,3,4,5)) {
 ########################
 
 ###############
-### Order 2 ###
+### Order 3 ###
 ###############
 
 n = 3
@@ -317,8 +317,8 @@ x1*x2*x3*x4 - R4 # = 0
 S^3 - 3*E2*S + 3*E3 - R1 # = 0
 
 ### P[6]
-R2*S^6 - 3*E3*S^5 + (9*E4 - 6*R2^2)*S^4 + (15*E3*R2 - 2*R1*R2)*S^3 +
-	- 36*E4*R2*S^2 + 3*R1*E3*S^2 + 9*R2^3*S^2 - 18*E3*R2^2*S + 6*R1*R2^2*S + 9*E3^2*R2 - 6*R1*E3*R2 + R1^2*R2
+R2*S^6 - 3*E3*S^5 + (9*E4 - 6*R2^2)*S^4 + R2*(15*E3 - 2*R1)*S^3 +
+	- (36*E4*R2 - 3*R1*E3 - 9*R2^3)*S^2 - 6*R2^2*(3*E3 - R1)*S + 9*E3^2*R2 - 6*R1*E3*R2 + R1^2*R2
 
 
 ### Solver:
@@ -334,6 +334,9 @@ solve.S4Ht.P3 = function(R, sort=TRUE, debug=TRUE) {
 	coeff = coeff.S4Ht.P3(R);
 	S = roots(coeff);
 	if(debug) print(S);
+	hasZero = (round0(S) == 0);
+	if(any(hasZero)) S = S[ ! hasZero];
+	# TODO: S = 0;
 	len = length(S);
 	#
 	R1 = R[1]; R2 = R[2]; R3 = R[3]; R4 = R[4];
@@ -356,6 +359,13 @@ solve.S4Ht.P3 = function(R, sort=TRUE, debug=TRUE) {
 ### Examples:
 
 R = c(-2,-1,2,3)
+sol = solve.S4Ht.P3(R);
+
+test.S4HtMixed(sol, n=3)
+
+
+### Ex 2:
+R = c(-2,0,3,1)
 sol = solve.S4Ht.P3(R);
 
 test.S4HtMixed(sol, n=3)
