@@ -93,7 +93,7 @@ round0(poly.calc(sol[,1]) * abs(R[2]))
 
 ### E2a:
 (x1+x3)*(S - x1 - x3) - R2 # = 0
-x13^2 - S*x13 + R2 # = 0
+x13s^2 - S*x13s + R2 # = 0
 
 ### E3 =>
 x1*x3*(S - x1 - x3) + x2*x4*(x1+x3) - R3 # = 0
@@ -296,4 +296,80 @@ coeffs = function(r.id=1, R, c0=c(-3,-2,-1,1,2,3,4,5)) {
 	(round0(poly.calc(s[c(1,3,5,7)])) * Rm[2])[1] # ID
 })
 }
+
+
+########################
+########################
+
+###############
+### Order 2 ###
+###############
+
+n = 3
+x1^n + x2^n + x3^n + x4^n - R1 # = 0
+x1*x2 + x2*x3 + x3*x4 + x4*x1 - R2 # = 0
+x1*x2*x3 + x1*x2*x4 + x1*x3*x4 + x2*x3*x4 - R3 # = 0
+x1*x2*x3*x4 - R4 # = 0
+
+### Solution:
+
+### Eq 1 =>
+S^3 - 3*E2*S + 3*E3 - R1 # = 0
+
+### P[6]
+R2*S^6 - 3*E3*S^5 + (9*E4 - 6*R2^2)*S^4 + (15*E3*R2 - 2*R1*R2)*S^3 +
+	- 36*E4*R2*S^2 + 3*R1*E3*S^2 + 9*R2^3*S^2 - 18*E3*R2^2*S + 6*R1*R2^2*S + 9*E3^2*R2 - 6*R1*E3*R2 + R1^2*R2
+
+
+### Solver:
+coeff.S4Ht.P3 = function(R) {
+	R1 = R[1]; R2 = R[2]; E3 = R[3]; E4 = R[4];
+	coeff = c(R2, - 3*E3, 9*E4 - 6*R2^2, 15*E3*R2 - 2*R1*R2,
+		- 36*E4*R2 + 3*R1*E3 + 9*R2^3,
+		- 18*E3*R2^2 + 6*R1*R2^2,
+		9*E3^2*R2 - 6*R1*E3*R2 + R1^2*R2);
+	return(coeff);
+}
+solve.S4Ht.P3 = function(R, sort=TRUE, debug=TRUE) {
+	coeff = coeff.S4Ht.P3(R);
+	S = roots(coeff);
+	if(debug) print(S);
+	len = length(S);
+	#
+	R1 = R[1]; R2 = R[2]; R3 = R[3]; R4 = R[4];
+	E2 = (S^3 + 3*R3 - R1) / (3*S);
+	#
+	x1 = sapply(seq(len), function(id) roots(c(1, -S[id], E2[id], -R3, R4)));
+	x1 = as.vector(x1);
+	S  = rep(S, each=4); E2 = rep(E2, each=4);
+	# robust:
+	div = (x1^2*(2*x1-S) + (E2-R2)*x1);
+	x3 = (R4 - x1^4 + x1^3*S - R2*x1^2) / div;
+	xs = S - x1 - x3; x24 = R4 / (x1*x3);
+	xd = sqrt(xs^2 - 4*x24);
+	x2 = (xs + xd)/2; x4 = (xs - xd)/2;
+	sol = cbind(x1=x1, x2=as.vector(x2), x3=as.vector(x3), x4=as.vector(x4))
+	if(sort) sol = sort.sol(sol, ncol=1, useRe=TRUE, mod.first=FALSE);
+	return(sol);
+}
+
+### Examples:
+
+R = c(-2,-1,2,3)
+sol = solve.S4Ht.P3(R);
+
+test.S4HtMixed(sol, n=3)
+
+
+### Derivation:
+
+p1 = toPoly.pm("S^3 - 3*E2*S + 3*E3 - R1")
+p2 = toPoly.pm("R2*E2^2 - (S*E3 + 2*R2^2)*E2 +
+	+ S^2*E4 + S*R2*E3 + R2^3 - 4*R2*E4 + E3^2")
+#
+pR = solve.pm(p1, p2, "E2")
+str(pR)
+pR$Rez = sort.pm(pR$Rez, "S", xn2=c("E4", "E3", "R1"))
+print.pm(pR$Rez, lead="S")
+print.coeff(pR$Rez, "S")
 
