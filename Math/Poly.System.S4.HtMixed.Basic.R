@@ -7,10 +7,37 @@
 ### Hetero-Symmetric S4: Mixed
 ### Basic Types
 ###
-### draft v.0.1e
+### draft v.0.1f
 
 
+##############
+### Theory ###
+##############
 
+### System:
+# x1^n + x2^n + x3^n + x4^n = R1
+# x1*x2 + x2*x3 + x3*x4 + x4*x1 = R2
+# x1*x2*x3 + x1*x2*x4 + x1*x3*x4 + x2*x3*x4 = R3
+# x1*x2*x3*x4 = R4
+
+### Symmetries:
+# - if (x1, x2, x3, x4) is a solution,
+#   so is every cyclic permutation, e.g. (x2, x3, x4, x1);
+# Note:
+# - Eq. 2 is NOT fully symmetric: it is not the full E2!
+
+### Solution:
+
+### Step 1:
+# - solve a P[2*n] in S = x1 + x2 + x3 + x4;
+
+### Step 2:
+# - solve for x1: either using a P[2] o {P[2], P[2]} approach,
+#   or using a P[4] (the lazy approach);
+# - solve the remaining variables;
+
+
+####################
 ####################
 
 ### Helper Functions
