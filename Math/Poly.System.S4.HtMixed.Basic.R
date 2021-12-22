@@ -7,7 +7,7 @@
 ### Hetero-Symmetric S4: Mixed
 ### Basic Types
 ###
-### draft v.0.1d-fix
+### draft v.0.1e
 
 
 
@@ -374,6 +374,101 @@ test.S4HtMixed(sol, n=3)
 ### Derivation:
 
 p1 = toPoly.pm("S^3 - 3*E2*S + 3*E3 - R1")
+p2 = toPoly.pm("R2*E2^2 - (S*E3 + 2*R2^2)*E2 +
+	+ S^2*E4 + S*R2*E3 + R2^3 - 4*R2*E4 + E3^2")
+#
+pR = solve.pm(p1, p2, "E2")
+str(pR)
+pR$Rez = sort.pm(pR$Rez, "S", xn2=c("E4", "E3", "R1"))
+print.pm(pR$Rez, lead="S")
+print.coeff(pR$Rez, "S")
+
+
+########################
+########################
+
+###############
+### Order 4 ###
+###############
+
+n = 4
+x1^n + x2^n + x3^n + x4^n - R1 # = 0
+x1*x2 + x2*x3 + x3*x4 + x4*x1 - R2 # = 0
+x1*x2*x3 + x1*x2*x4 + x1*x3*x4 + x2*x3*x4 - R3 # = 0
+x1*x2*x3*x4 - R4 # = 0
+
+### Solution:
+
+### Eq 1 =>
+S^4 - 4*E2*S^2 + 4*E3*S + 2*E2^2 - 4*E4 - R1 # = 0
+
+### P[8]
+R2^2*S^8 - 4*E3*R2*S^7 + (12*E4*R2 + 2*E3^2 - 8*R2^3)*S^6 - E3*(8*E4 - 28*R2^2)*S^5 +
+	+ 4*E4^2*S^4 - 72*E4*R2^2*S^4 - 12*E3^2*R2*S^4 - 2*R2^2*R1*S^4 + 20*R2^4*S^4 +
+	+ 40*E3*E4*R2*S^3 + 4*E3*R2*R1*S^3 - 56*E3*R2^3*S^3 +
+	- 16*E4^2*R2*S^2 + 4*E4*R2*R1*S^2 + 104*E4*R2^3*S^2 - 2*E3^2*R1*S^2 + 20*E3^2*R2^2*S^2 + 8*R2^3*R1*S^2 - 16*R2^5*S^2 +
+	- 16*E3*E4*R2^2*S - 8*E3^3*R2*S - 12*E3*R2^2*R1*S + 24*E3*R2^4*S +
+	+ 16*E4^2*R2^2 - 16*E3^2*E4*R2 - 8*E4*R2^2*R1 - 48*E4*R2^4 + 4*E3^4 + 4*E3^2*R2*R1 + 8*E3^2*R2^3 + R2^2*R1^2 - 4*R2^4*R1 + 4*R2^6
+
+
+### Solver:
+coeff.S4Ht.P4 = function(R) {
+	R1 = R[1]; R2 = R[2]; E3 = R[3]; E4 = R[4];
+	coeff = c(R2^2, - 4*E3*R2, 12*E4*R2 + 2*E3^2 - 8*R2^3,
+		- 8*E3*E4 + 28*E3*R2^2,
+		4*E4^2 - 72*E4*R2^2 - 12*E3^2*R2 - 2*R2^2*R1 + 20*R2^4,
+		40*E3*E4*R2 + 4*E3*R2*R1 - 56*E3*R2^3,
+		- 16*E4^2*R2 + 4*E4*R2*R1 + 104*E4*R2^3 - 2*E3^2*R1 + 20*E3^2*R2^2 + 8*R2^3*R1 - 16*R2^5,
+		- 16*E3*E4*R2^2 - 8*E3^3*R2 - 12*E3*R2^2*R1 + 24*E3*R2^4,
+		16*E4^2*R2^2 - 16*E3^2*E4*R2 - 8*E4*R2^2*R1 - 48*E4*R2^4 + 4*E3^4 + 4*E3^2*R2*R1 + 8*E3^2*R2^3 +
+			+ R2^2*R1^2 - 4*R2^4*R1 + 4*R2^6);
+	return(coeff);
+}
+solve.S4Ht.P4 = function(R, sort=TRUE, debug=TRUE) {
+	coeff = coeff.S4Ht.P4(R);
+	S = roots(coeff);
+	if(debug) print(S);
+	hasZero = (round0(S) == 0);
+	if(any(hasZero)) S = S[ ! hasZero];
+	# TODO: S = 0;
+	len = length(S);
+	#
+	R1 = R[1]; R2 = R[2]; E3 = R[3]; E4 = R[4]; R3 = R[3]; R4 = R[4];
+	E2 = (2*E3^2 - 4*E4*R2 + 2*R2^3 - 2*E3*R2*S + 2*E4*S^2 - R2*S^4 + R2*R1);
+	E2 = E2 / (4*R2^2 + 2*E3*S - 4*R2*S^2);
+	#
+	x1 = sapply(seq(len), function(id) roots(c(1, -S[id], E2[id], -R3, R4)));
+	x1 = as.vector(x1);
+	S  = rep(S, each=4); E2 = rep(E2, each=4);
+	# robust:
+	div = (x1^2*(2*x1-S) + (E2-R2)*x1);
+	x3 = (R4 - x1^4 + x1^3*S - R2*x1^2) / div;
+	xs = S - x1 - x3; x24 = R4 / (x1*x3);
+	xd = sqrt(xs^2 - 4*x24);
+	x2 = (xs + xd)/2; x4 = (xs - xd)/2;
+	sol = cbind(x1=x1, x2=as.vector(x2), x3=as.vector(x3), x4=as.vector(x4))
+	if(sort) sol = sort.sol(sol, ncol=1, useRe=TRUE, mod.first=FALSE);
+	return(sol);
+}
+
+### Examples:
+
+R = c(-2,-1,2,3)
+sol = solve.S4Ht.P4(R);
+
+test.S4HtMixed(sol, n=4)
+
+
+### Derivation:
+
+### EP:
+source("Polynomials.Helper.EP.R")
+p = Epoly.base(n=4, v=4)[[4]]
+p = sort.pm(p, "S")
+print.pm(p, lead="S")
+
+### S4:
+p1 = toPoly.pm("S^4 - 4*E2*S^2 + 4*E3*S + 2*E2^2 - 4*E4 - R1")
 p2 = toPoly.pm("R2*E2^2 - (S*E3 + 2*R2^2)*E2 +
 	+ S^2*E4 + S*R2*E3 + R2^3 - 4*R2*E4 + E3^2")
 #
