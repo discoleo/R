@@ -530,7 +530,15 @@ x1 + x2 + x3 + x4 - R1 # = 0
 x1*x2*x3 + x1*x2*x4 + x1*x3*x4 + x2*x3*x4 - R3 # = 0
 x1*x2*x3*x4 - R4 # = 0
 
+### Solution:
 
+E2a  = (x1*x2) + (x2*x3) + (x3*x4) + (x4*x1);
+E22a = (x1*x2)^2 + (x2*x3)^2 + (x3*x4)^2 + (x4*x1)^2;
+
+### E2a: P[4]
+(4*E4 - E22a)*E2a^4 - 2*(E3^2 + S^2*E4)*E2a^3 +
+	+ (4*(S*E3 - 2*E4)*E22a - 8*S*E3*E4 + S^2*E3^2 + 2*E22a^2)*E2a^2 +
+	+ ...;
 
 ### Derivation:
 
@@ -596,9 +604,77 @@ R = c(1,  2,  1,  3,  10)
 R = c(1,  2,  1,  4,  14)
 R = c(1, -7,  1,  9,  43)
 R = c(2, -3,  3, -5,  17)
+R = c(2, -3,  3, sqrt(2)) # - 24
+R = c(2, -3,  3, 2^(1/3)) # - 24
+R = c(2, -3,  3, sqrt(3)) # - 24
+R = c(2, -3,  3, 3^(1/3)) # - 24
+R = c(2, -3,  3, sqrt(5)) # - 24
+R = c(1, sqrt(2),  1, 1) # -4
+R = c(2, sqrt(2),  1, 1) # 0
+R = c(3, sqrt(2),  1, 1) # 4
+R = c(4, sqrt(2),  1, 1) # 8
+R = c(2, sqrt(3),  1, 1) # 0
+R = c(-2, sqrt(5),  1, 1) # -16
+R = c(sqrt(5), sqrt(5),  1, 1) # -16
+R = c(sqrt(3), sqrt(3),  1, 1) # -16
+R = c(sqrt(2), sqrt(2),  1, 1) # -16
+R = c(sqrt(2), - sqrt(2),  1, 1) # 0
+R = c(sqrt(2), 2*sqrt(2),  1, 1) # -24
+R = c(sqrt(2), -2*sqrt(2),  1, 1) # 8
+R = c(sqrt(2), -2*sqrt(2),  1, 3) # 24
+R = c(1, sqrt(2),   sqrt(2), 1) # -16
+R = c(2, sqrt(2),   sqrt(2), 1) # -24
+R = c(2, sqrt(2), 2*sqrt(2), 1) # -40
+R = c(2, sqrt(2), 2*sqrt(2), 2) # -80
+#
+R = c(1, sqrt(2), 1, sqrt(2)) # -4
+R = c(1, sqrt(2), 1, -sqrt(2)) # 12
+R = c(1, -sqrt(2), 1, sqrt(2)) # -12
+R = c(1, -sqrt(2), 3, sqrt(2)) # -36
+R = c(1, -sqrt(3), 3, sqrt(3)) # -36
+R = c(1, -sqrt(3), 5, sqrt(3)) # -60
+#
+R = c(1, 2*sqrt(3), 5, 1) # 24
+which.coeff(R, sq=3)
+#
+which.coeff(R <- c(1, 2*sqrt(3), 5, 1), sq=3)
+which.coeff(R <- c(1, 2*2^(1/3), 5, 1), sq=2^2, pow=3, DIFF=DIFF)
+
 sol = solve.S4HtM.Ord2.P1old(R)
 round0(poly.calc(e2.f(sol)[c(1,3,5,7)])) * (4*R[4] - R[2])
 
+
+
+(4*R[4] - R[2])*x^4 - 2*(R[3]^2 + R[1]^2*R[4])*x^3 +
+	+ (4*(R[1]*R[3] - 2*R[4])*R[2] - 8*R[1]*R[3]*R[4] + R[1]^2*R[3]^2 + 2*R[2]^2)*x^2
+
+
+### Solve Coefficient
+which.sq = function(x, sq=2, iter=1000, digits=6, pow=2) {
+	if(round(x) == round(x, digits)) return(0);
+	i = seq(iter);
+	sq = if(pow == 2) sqrt(sq) else rootn(sq, n=pow);
+	d = round(i * sq - x, digits);
+	id = which(d == round(d));
+	if(length(id) > 0) return(id);
+	d = round(i * sq + x, digits);
+	id = which(d == round(d));
+	if(length(id) == 0) return(NA);
+	return(- id);
+}
+which.coeff = function(R, sq=2, id=3, pow=2, DIFF=NULL, print=TRUE, iter=1000) {
+	sol = solve.S4HtM.Ord2.P1old(R, debug=FALSE)
+	p = round0(poly.calc(e2.f(sol)[c(1,3,5,7)])) * (4*R[4] - R[2]);
+	if(print) print(p);
+	x = p[id];
+	if( ! is.null(DIFF)) {
+		x = x - DIFF(R);
+	}
+	return(which.sq(x, sq=sq, pow=pow, iter=iter))
+}
+
+# S^2:
+DIFF = function(R) 4*(R[1]*R[3] - 2*R[4])*R[2] - 8*R[1]*R[3]*R[4];
 
 ###
 p1 = toPoly.pm("(xs^2 - 2*x13)*(x13*(S - xs)^2 - 2*R4) - R2*x13")
