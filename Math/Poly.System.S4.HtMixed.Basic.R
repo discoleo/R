@@ -7,7 +7,7 @@
 ### Hetero-Symmetric S4: Mixed
 ### Basic Types
 ###
-### draft v.0.1f
+### draft v.0.1g
 
 
 ##############
@@ -47,10 +47,13 @@ source("Polynomials.Helper.R")
 
 ### Other
 
-test.S4HtMixed = function(sol, n=2, R = NULL) {
+test.S4HtMixed = function(sol, n=2, nE2 = 1, R = NULL) {
 	x1 = sol[,1]; x2 = sol[,2]; x3 = sol[,3]; x4 = sol[,4];
 	err1 = x1^n + x2^n + x3^n + x4^n;
-	err2 = x1*x2 + x2*x3 + x3*x4 + x4*x1; # Ht!
+	# Ht
+	ht = cbind(x1*x2, x2*x3, x3*x4, x4*x1);
+	ht = if(nE2 == 1) ht else ht^nE2;
+	err2 = apply(ht, 1, sum);
 	err3 = x1*x2*x3 + x1*x2*x4 + x1*x3*x4 + x2*x3*x4;
 	err4 = x1*x2*x3*x4;
 	err = rbind(err1, err2, err3, err4);
@@ -59,6 +62,11 @@ test.S4HtMixed = function(sol, n=2, R = NULL) {
 	}
 	err = round0(err);
 	return(err);
+}
+
+e2.f = function(x) {
+	e2.f0 = function(x) x[1]*sum(x, -x[1]) + x[2]*(x[3]+x[4]) + x[3]*x[4];
+	sort.sol(matrix(apply(x, 1, e2.f0), ncol=1), useRe=TRUE);
 }
 
 ###############
@@ -504,4 +512,102 @@ str(pR)
 pR$Rez = sort.pm(pR$Rez, "S", xn2=c("E4", "E3", "R1"))
 print.pm(pR$Rez, lead="S")
 print.coeff(pR$Rez, "S")
+
+
+########################
+########################
+
+####################
+### E2a: Order 2 ###
+####################
+
+###############
+### Order 1 ###
+###############
+
+x1 + x2 + x3 + x4 - R1 # = 0
+(x1*x2)^2 + (x2*x3)^2 + (x3*x4)^2 + (x4*x1)^2 - R2 # = 0
+x1*x2*x3 + x1*x2*x4 + x1*x3*x4 + x2*x3*x4 - R3 # = 0
+x1*x2*x3*x4 - R4 # = 0
+
+
+
+### Derivation:
+
+# - classic approach: P[2] o P[2];
+
+### E2a:
+# let: xs = x1 + x3 => x2 + x4 = S - xs;
+(x1^2 + x3^2)*((S - xs)^2 - 2*x2*x4) - R2 # = 0
+(xs^2 - 2*x1*x3)*(x1*x3*(S - xs)^2 - 2*R4) - R2*x1*x3 # = 0
+
+
+### E3 =>
+x1*x3*(S - x1 - x3) + x2*x4*(x1+x3) - R3 # = 0
+(x1*x3)^2*(S - xs) - R3*x1*x3 + R4*xs # = 0
+
+
+### Solution: based on "classic" approach
+coeff.S4HtM.Ord2.P1 = function(R) {
+	S = R[1]; R2 = R[2]; R3 = R[3]; R4 = R[4];
+	coeff = c(1, - 4*S, 6*S^2, - 4*S^3, S^4 - 2*S*R3 - 8*R4 - 2*R2,
+		4*S^2*R3 + 16*R4*S + 4*R2*S,
+		- 2*S^3*R3 - 12*R4*S^2 - 2*R2*S^2 - 4*R3^2,
+		4*R4*S^3 + 4*S*R3^2,
+		- 8*R4*S*R3 + 2*R2*S*R3 + 16*R4^2 - 8*R2*R4 + R2^2);
+	return(coeff);
+}
+solve.S4HtM.Ord2.P1old = function(R, debug=TRUE) {
+	coeff = coeff.S4HtM.Ord2.P1(R);
+	xs  = roots(coeff);
+	if(debug) print(xs);
+	#
+	S = R[1]; R2 = R[2]; R3 = R[3]; R4 = R[4];
+	x13 = 4*R4*xs^3 - 6*R4*xs^2*S + 2*R4*xs*S^2;
+	div = - R2*xs + 4*R4*xs + xs^5 + R2*S - 4*R4*S - 3*xs^4*S + 3*xs^3*S^2 - xs^2*S^3 +
+		+ 2*xs^2*R3 - 4*xs*S*R3 + 2*S^2*R3;
+	x13 = x13 / div;
+	#
+	xd = sqrt(xs^2 - 4*x13 + 0i);
+	x1 = (xs + xd)/2; x3 = (xs - xd)/2;
+	# x2, x4:
+	xs = R[1] - xs; x24 = R[4] / x13;
+	xd = sqrt(xs^2 - 4*x24 + 0i);
+	x2 = (xs + xd)/2; x4 = (xs - xd)/2;
+	sol = cbind(x1, x2, x3, x4)
+	return(sol)
+}
+
+###
+R = c(1,-1,2,3)
+sol = solve.S4HtM.Ord2.P1old(R)
+
+test.S4HtMixed(sol, n=1, nE2=2)
+
+
+round0(poly.calc(e2.f(sol)[c(1,3,5,7)])) * (4*R[4] - R[2])
+
+
+R = c(1,  1,  1,  2,   7)
+R = c(1,  1,  1,  3,  11)
+R = c(1,  1,  1,  4,  15)
+R = c(1,  2,  1,  2,   6)
+R = c(1,  2,  1,  3,  10)
+R = c(1,  2,  1,  4,  14)
+R = c(1, -7,  1,  9,  43)
+R = c(2, -3,  3, -5,  17)
+sol = solve.S4HtM.Ord2.P1old(R)
+round0(poly.calc(e2.f(sol)[c(1,3,5,7)])) * (4*R[4] - R[2])
+
+
+###
+p1 = toPoly.pm("(xs^2 - 2*x13)*(x13*(S - xs)^2 - 2*R4) - R2*x13")
+p2 = toPoly.pm("x13^2*(S - xs) - R3*x13 + R4*xs")
+#
+pR = solve.pm(p2, p1, "x13")
+str(pR)
+pR = div.pm(pR$Rez, toPoly.pm("xs^2 - 2*S*xs + S^2"), "xs")
+pR$Rez = sort.pm(pR$Rez, "xs", xn2=c("S", "R4", "R3"))
+print.pm(pR$Rez, lead="xs")
+print.coeff(pR$Rez, "xs")
 
