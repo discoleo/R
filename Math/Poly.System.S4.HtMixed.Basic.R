@@ -7,7 +7,7 @@
 ### Hetero-Symmetric S4: Mixed
 ### Basic Types
 ###
-### draft v.0.1g
+### draft v.0.1g-S^1
 
 
 ##############
@@ -67,6 +67,22 @@ test.S4HtMixed = function(sol, n=2, nE2 = 1, R = NULL) {
 e2.f = function(x) {
 	e2.f0 = function(x) x[1]*sum(x, -x[1]) + x[2]*(x[3]+x[4]) + x[3]*x[4];
 	sort.sol(matrix(apply(x, 1, e2.f0), ncol=1), useRe=TRUE);
+}
+
+### Solve Coefficients:
+# - hack the formulas;
+which.sq = function(x, sq=2, iter=1000, digits=6, pow=2) {
+	if(is.na(x)) return(NA);
+	if(round(x) == round(x, digits)) return(0);
+	i = seq(iter);
+	sq = if(pow == 2) sqrt(sq) else rootn(sq, n=pow);
+	d = round(i * sq - x, digits);
+	id = which(d == round(d));
+	if(length(id) > 0) return(id);
+	d = round(i * sq + x, digits);
+	id = which(d == round(d));
+	if(length(id) == 0) return(NA);
+	return(- id);
 }
 
 ###############
@@ -538,6 +554,7 @@ E22a = (x1*x2)^2 + (x2*x3)^2 + (x3*x4)^2 + (x4*x1)^2;
 ### E2a: P[4]
 (4*E4 - E22a)*E2a^4 - 2*(E3^2 + S^2*E4)*E2a^3 +
 	+ (4*(S*E3 - 2*E4)*E22a - 8*S*E3*E4 + S^2*E3^2 + 2*E22a^2)*E2a^2 +
+	+ (4*S^3*E3*E4 + 4*S*E3^3 + 2*(S^2*E4 + E3^2)*E22a)*E2a +
 	+ ...;
 
 ### Derivation:
@@ -609,23 +626,6 @@ R = c(2, -3,  3, 2^(1/3)) # - 24
 R = c(2, -3,  3, sqrt(3)) # - 24
 R = c(2, -3,  3, 3^(1/3)) # - 24
 R = c(2, -3,  3, sqrt(5)) # - 24
-R = c(1, sqrt(2),  1, 1) # -4
-R = c(2, sqrt(2),  1, 1) # 0
-R = c(3, sqrt(2),  1, 1) # 4
-R = c(4, sqrt(2),  1, 1) # 8
-R = c(2, sqrt(3),  1, 1) # 0
-R = c(-2, sqrt(5),  1, 1) # -16
-R = c(sqrt(5), sqrt(5),  1, 1) # -16
-R = c(sqrt(3), sqrt(3),  1, 1) # -16
-R = c(sqrt(2), sqrt(2),  1, 1) # -16
-R = c(sqrt(2), - sqrt(2),  1, 1) # 0
-R = c(sqrt(2), 2*sqrt(2),  1, 1) # -24
-R = c(sqrt(2), -2*sqrt(2),  1, 1) # 8
-R = c(sqrt(2), -2*sqrt(2),  1, 3) # 24
-R = c(1, sqrt(2),   sqrt(2), 1) # -16
-R = c(2, sqrt(2),   sqrt(2), 1) # -24
-R = c(2, sqrt(2), 2*sqrt(2), 1) # -40
-R = c(2, sqrt(2), 2*sqrt(2), 2) # -80
 #
 R = c(1, sqrt(2), 1, sqrt(2)) # -4
 R = c(1, sqrt(2), 1, -sqrt(2)) # 12
@@ -646,23 +646,59 @@ round0(poly.calc(e2.f(sol)[c(1,3,5,7)])) * (4*R[4] - R[2])
 
 
 (4*R[4] - R[2])*x^4 - 2*(R[3]^2 + R[1]^2*R[4])*x^3 +
-	+ (4*(R[1]*R[3] - 2*R[4])*R[2] - 8*R[1]*R[3]*R[4] + R[1]^2*R[3]^2 + 2*R[2]^2)*x^2
+	+ (4*(R[1]*R[3] - 2*R[4])*R[2] - 8*R[1]*R[3]*R[4] + R[1]^2*R[3]^2 + 2*R[2]^2)*x^2 +
+	+ (4*R[1]^3*R[3]*R[4] + 4*R[1]*R[3]^3 + 2*(R[1]^2*R[4] + R[3]^2)*R[2])*x +
+	+ ...;
+
+whichHasPower(4, id=2, type=2)
+whichHasPower(R <- c(1,1,-2,-3), id=2, type=2)
+polyR(R)
+which.sq(DIFF(R), sq=2)
+
+4*R[1]^3*R[3]*R[4] + 4*R[1]*R[3]^3 + 2*(R[1]^2*R[4] + R[3]^2)*R[2]
+# OK: + 2*R[2]*R[3]^2
+# R2, R4: NO powers > 2 ==> (4*R[3] + 2*R[2])*R[4] # OK
 
 
 ### Solve Coefficient
-which.sq = function(x, sq=2, iter=1000, digits=6, pow=2) {
-	if(round(x) == round(x, digits)) return(0);
-	i = seq(iter);
-	sq = if(pow == 2) sqrt(sq) else rootn(sq, n=pow);
-	d = round(i * sq - x, digits);
-	id = which(d == round(d));
-	if(length(id) > 0) return(id);
-	d = round(i * sq + x, digits);
-	id = which(d == round(d));
-	if(length(id) == 0) return(NA);
-	return(- id);
+whichHasPower = function(R, id=2, type=1, FUN=NULL, print=FALSE, digits=5, iter=1000) {
+	if(length(R) == 1) {len = R; R0 = rep(1, len); }
+	else {len = length(R); R0 = R; }
+	vals = c(2,3,5); vsqrt = sqrt(vals);
+	if(type == 1) {
+		vsqrt = c(vsqrt, - vsqrt); vals = c(vals, vals);
+	} else if(type == 2) {
+		vsqrt = c(vsqrt, 2*vsqrt); vals = c(vals, vals);
+	} else if(type == 3) {
+		vsqrt = c(vsqrt, - vsqrt) + 1; vals = c(vals, vals);
+	} else if(type == 4) {
+		vsqrt = c(vsqrt, 2*vsqrt) - 1; vals = c(vals, vals);
+	}
+	VLEN = length(vals);
+	m = array(NA, c(len, VLEN));
+	f0 = if( ! is.null(FUN)) {
+		function(vid, nr) {
+			R = R0;
+			R[nr] = vsqrt[vid];
+			which.sq(FUN(R), sq=vals[vid], pow=2, digits=digits, iter=iter)
+		}
+	} else function(vid, nr) {
+		R = R0;
+		R[nr] = vsqrt[vid];
+		which.coeff(R, sq=vals[vid], id=id, pow=2, digits=digits, iter=iter, print=print)
+	}
+	for(nr in seq(len)) {
+		tmp = sapply(seq(VLEN), f0, nr);
+		m[nr, ] = tmp;
+	}
+	return(m);
 }
-which.coeff = function(R, sq=2, id=3, pow=2, DIFF=NULL, print=TRUE, iter=1000) {
+polyR = function(R) {
+	sol = solve.S4HtM.Ord2.P1old(R, debug=FALSE)
+	p = round0(poly.calc(e2.f(sol)[c(1,3,5,7)])) * (4*R[4] - R[2]);
+	return(p);
+}
+which.coeff = function(R, sq=2, id=3, pow=2, DIFF=NULL, print=TRUE, digits=6, iter=1000) {
 	sol = solve.S4HtM.Ord2.P1old(R, debug=FALSE)
 	p = round0(poly.calc(e2.f(sol)[c(1,3,5,7)])) * (4*R[4] - R[2]);
 	if(print) print(p);
@@ -670,11 +706,13 @@ which.coeff = function(R, sq=2, id=3, pow=2, DIFF=NULL, print=TRUE, iter=1000) {
 	if( ! is.null(DIFF)) {
 		x = x - DIFF(R);
 	}
-	return(which.sq(x, sq=sq, pow=pow, iter=iter))
+	return(which.sq(x, sq=sq, pow=pow, digits=digits, iter=iter))
 }
 
 # S^2:
 DIFF = function(R) 4*(R[1]*R[3] - 2*R[4])*R[2] - 8*R[1]*R[3]*R[4];
+# S^1:
+DIFF = function(R) 4*R[1]^3*R[3]*R[4] + 4*R[1]*R[3]^3 + 2*(R[1]^2*R[4] + R[3]^2)*R[2];
 
 ###
 p1 = toPoly.pm("(xs^2 - 2*x13)*(x13*(S - xs)^2 - 2*R4) - R2*x13")
