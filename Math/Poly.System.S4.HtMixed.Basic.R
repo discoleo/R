@@ -7,7 +7,7 @@
 ### Hetero-Symmetric S4: Mixed
 ### Basic Types
 ###
-### draft v.0.1g-S^1
+### draft v.0.1h
 
 
 ##############
@@ -66,7 +66,16 @@ test.S4HtMixed = function(sol, n=2, nE2 = 1, R = NULL) {
 
 e2.f = function(x) {
 	e2.f0 = function(x) x[1]*sum(x, -x[1]) + x[2]*(x[3]+x[4]) + x[3]*x[4];
-	sort.sol(matrix(apply(x, 1, e2.f0), ncol=1), useRe=TRUE);
+	e2 = if(is.matrix(x)) apply(x, 1, e2.f0) else e2.f0(x);
+	sort.sol(matrix(e2, ncol=1), useRe=TRUE);
+}
+e3.f = function(x) {
+	e3.f0 = function(x) {
+		x34 = x[3]*x[4];
+		x[1]*(x[2]*(x[3] + x[4]) + x34) + x[2]*x34;
+	}
+	e3 = if(is.matrix(x)) apply(x, 1, e3.f0) else e3.f0(x);
+	sort.sol(matrix(e3, ncol=1), useRe=TRUE);
 }
 
 ### Solve Coefficients:
@@ -551,12 +560,58 @@ x1*x2*x3*x4 - R4 # = 0
 E2a  = (x1*x2) + (x2*x3) + (x3*x4) + (x4*x1);
 E22a = (x1*x2)^2 + (x2*x3)^2 + (x3*x4)^2 + (x4*x1)^2;
 
-### E2a: P[4]
-(4*E4 - E22a)*E2a^4 - 2*(E3^2 + S^2*E4)*E2a^3 +
-	+ (4*(S*E3 - 2*E4)*E22a - 8*S*E3*E4 + S^2*E3^2 + 2*E22a^2)*E2a^2 +
-	+ (4*S^3*E3*E4 + 4*S*E3^3 + 2*(S^2*E4 + E3^2)*E22a)*E2a +
-	+ ...;
+### E2: P[4]
+(4*E4 - E22a)*E2^4 - 2*(E3^2 + S^2*E4)*E2^3 +
+	+ (4*(S*E3 - 2*E4)*E22a - 8*S*E3*E4 + S^2*E3^2 + 2*E22a^2)*E2^2 +
+	+ (4*S^3*E3*E4 + 4*S*E3^3 + 2*(S^2*E4 + E3^2)*E22a)*E2 +
+	- S^4*E4^2 - 2*S^3*E3^3 - E22a^3 - E3^4 + 4*E22a^2*E4 + 2*S^2*E3^2*E4 +
+		+ 8*S*E22a*E3*E4 - 4*S*E22a^2*E3 - 5*S^2*E22a*E3^2; # = 0
 
+
+### Solver:
+solve.S4HtM.Ord2.P1 = function(R, sort=TRUE, debug=TRUE) {
+	S = R[1]; E22a = R[2]; E3 = R[3]; E4 = R[4];
+	coeff = c((4*E4 - E22a),   - 2*(E3^2 + S^2*E4),
+		(4*(S*E3 - 2*E4)*E22a - 8*S*E3*E4 + S^2*E3^2 + 2*E22a^2),
+		(4*S^3*E3*E4 + 4*S*E3^3 + 2*(S^2*E4 + E3^2)*E22a),
+		- S^4*E4^2 - 2*S^3*E3^3 - E22a^3 - E3^4 + 4*E22a^2*E4 + 2*S^2*E3^2*E4 +
+			+ 8*S*E22a*E3*E4 - 4*S*E22a^2*E3 - 5*S^2*E22a*E3^2);
+	E2 = roots(coeff);
+	if(debug) print(E2);
+	#
+	len = length(E2);
+	x1 = sapply(seq(len), function(id) roots(c(1, -S, E2[id], -E3, E4)));
+	x1 = as.vector(x1);
+	E2 = rep(E2, each=4);
+	len = length(x1);
+	# robust:
+	x13T1 = x1^2*(E2^2 - E22a - 2*S*E3 + 2*E4);
+	# TODO: still too many (only half are correct);
+	x3 = sapply(seq(len), function(id)
+		roots(c(x1[id]^4*(2*x1[id]^2 + 2*E2[id] - S^2) + x13T1[id], 0,
+			x1[id]^6*(x1[id]^2 + 2*E2[id] - S^2) + x1[id]^4*E22a - E4^2) ));
+	x1 = rep(x1, each=2); E2 = rep(E2, each=2);
+	x3 = as.vector(x3);
+	# x2, x4:
+	xs = S - x1 - x3; x24 = E4 / (x1*x3);
+	# Note: both sqrt() values are valid;
+	xd = sqrt(xs^2 - 4*x24 + 0i);
+	x2 = (xs + xd)/2; x4 = (xs - xd)/2;
+	sol = cbind(x1=x1, x2=x2, x3=x3, x4=x4);
+	#
+	if(sort) sol = sort.sol(sol, ncol=1, useRe=TRUE, mod.first=FALSE);
+	return(sol);
+}
+
+### Examples:
+
+R = c(1,-1,2,1)
+sol = solve.S4HtM.Ord2.P1(R)
+
+test.S4HtMixed(sol, n=1, nE2=2)
+
+
+###############
 ### Derivation:
 
 # - classic approach: P[2] o P[2];
@@ -644,20 +699,16 @@ sol = solve.S4HtM.Ord2.P1old(R)
 round0(poly.calc(e2.f(sol)[c(1,3,5,7)])) * (4*R[4] - R[2])
 
 
-
 (4*R[4] - R[2])*x^4 - 2*(R[3]^2 + R[1]^2*R[4])*x^3 +
 	+ (4*(R[1]*R[3] - 2*R[4])*R[2] - 8*R[1]*R[3]*R[4] + R[1]^2*R[3]^2 + 2*R[2]^2)*x^2 +
 	+ (4*R[1]^3*R[3]*R[4] + 4*R[1]*R[3]^3 + 2*(R[1]^2*R[4] + R[3]^2)*R[2])*x +
-	+ ...;
+	- R[1]^4*R[4]^2 - 2*R[1]^3*R[3]^3 - R[2]^3 - R[3]^4 + 4*R[2]^2*R[4] + 2*R[1]^2*R[3]^2*R[4] +
+		+ 8*R[1]*R[2]*R[3]*R[4] - 4*R[1]*R[2]^2*R[3] - 5*R[1]^2*R[2]*R[3]^2;
 
 whichHasPower(4, id=2, type=2)
 whichHasPower(R <- c(1,1,-2,-3), id=2, type=2)
 polyR(R)
 which.sq(DIFF(R), sq=2)
-
-4*R[1]^3*R[3]*R[4] + 4*R[1]*R[3]^3 + 2*(R[1]^2*R[4] + R[3]^2)*R[2]
-# OK: + 2*R[2]*R[3]^2
-# R2, R4: NO powers > 2 ==> (4*R[3] + 2*R[2])*R[4] # OK
 
 
 ### Solve Coefficient
@@ -713,6 +764,10 @@ which.coeff = function(R, sq=2, id=3, pow=2, DIFF=NULL, print=TRUE, digits=6, it
 DIFF = function(R) 4*(R[1]*R[3] - 2*R[4])*R[2] - 8*R[1]*R[3]*R[4];
 # S^1:
 DIFF = function(R) 4*R[1]^3*R[3]*R[4] + 4*R[1]*R[3]^3 + 2*(R[1]^2*R[4] + R[3]^2)*R[2];
+# S^0:
+DIFF = function(R) - R[2]^3 + 4*R[2]^2*R[4] - 2*R[1]^3*R[3]^3 +
+	+ 2*R[1]^2*R[3]^2*R[4] - R[1]^4*R[4]^2 - R[3]^4 + 8*R[1]*R[2]*R[3]*R[4] +
+	- 4*R[1]*R[2]^2*R[3] - 5*R[1]^2*R[2]*R[3]^2;
 
 ###
 p1 = toPoly.pm("(xs^2 - 2*x13)*(x13*(S - xs)^2 - 2*R4) - R2*x13")
