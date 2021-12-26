@@ -7,7 +7,7 @@
 ### Hetero-Symmetric S4: Mixed
 ### Basic Types
 ###
-### draft v.0.1h-robust
+### draft v.0.1i
 
 
 ##############
@@ -77,6 +77,11 @@ e3.f = function(x) {
 	e3 = if(is.matrix(x)) apply(x, 1, e3.f0) else e3.f0(x);
 	sort.sol(matrix(e3, ncol=1), useRe=TRUE);
 }
+e2a.f = function(x) {
+	e2.f0 = function(x) sum(x * x[c(2,3,4,1)]);
+	e2 = if(is.matrix(x)) apply(x, 1, e2.f0) else e2.f0(x);
+	sort.sol(matrix(e2, ncol=1), useRe=TRUE);
+}
 
 ### Solve Coefficients:
 # - hack the formulas;
@@ -92,6 +97,17 @@ which.sq = function(x, sq=2, iter=1000, digits=6, pow=2) {
 	id = which(d == round(d));
 	if(length(id) == 0) return(NA);
 	return(- id);
+}
+
+### Formulas
+
+polyE2Ord2 = function() {
+	p = toPoly.pm("(4*E4 - E22a)*E2^4 - 2*(E3^2 + S^2*E4)*E2^3 +
+	+ (4*(S*E3 - 2*E4)*E22a - 8*S*E3*E4 + S^2*E3^2 + 2*E22a^2)*E2^2 +
+	+ (4*S^3*E3*E4 + 4*S*E3^3 + 2*(S^2*E4 + E3^2)*E22a)*E2 +
+	- S^4*E4^2 - 2*S^3*E3^3 - E22a^3 - E3^4 + 4*E22a^2*E4 + 2*S^2*E3^2*E4 +
+		+ 8*S*E22a*E3*E4 - 4*S*E22a^2*E3 - 5*S^2*E22a*E3^2");
+	return(p);
 }
 
 ###############
@@ -578,6 +594,11 @@ solve.S4HtM.Ord2.P1 = function(R, sort=TRUE, all.sol=TRUE, debug=TRUE) {
 			+ 8*S*E22a*E3*E4 - 4*S*E22a^2*E3 - 5*S^2*E22a*E3^2);
 	E2 = roots(coeff);
 	if(debug) print(E2);
+	return(solve.S4HtM.Ord2Base(R, E2, sort=sort, all.sol=all.sol));
+}
+
+solve.S4HtM.Ord2Base = function(R, E2, sort=TRUE, all.sol=TRUE) {
+	S = R[1]; E22a = R[2]; E3 = R[3]; E4 = R[4];
 	#
 	len = length(E2);
 	x1 = sapply(seq(len), function(id) roots(c(1, -S, E2[id], -E3, E4)));
@@ -786,4 +807,92 @@ pR = div.pm(pR$Rez, toPoly.pm("xs^2 - 2*S*xs + S^2"), "xs")
 pR$Rez = sort.pm(pR$Rez, "xs", xn2=c("S", "R4", "R3"))
 print.pm(pR$Rez, lead="xs")
 print.coeff(pR$Rez, "xs")
+
+
+########################
+########################
+
+################
+### E22a:    ###
+### Order 2  ###
+################
+
+x1^2 + x2^2 + x3^2 + x4^2 - R1 # = 0
+(x1*x2)^2 + (x2*x3)^2 + (x3*x4)^2 + (x4*x1)^2 - R2 # = 0
+x1*x2*x3 + x1*x2*x4 + x1*x3*x4 + x2*x3*x4 - R3 # = 0
+x1*x2*x3*x4 - R4 # = 0
+
+### Solution:
+
+E2a  = (x1*x2) + (x2*x3) + (x3*x4) + (x4*x1);
+E22a = (x1*x2)^2 + (x2*x3)^2 + (x3*x4)^2 + (x4*x1)^2;
+
+### E2: P[8]
+# - see coeff();
+
+
+### Solver
+coeff.S4Ht.Ord2P2 = function(R) {
+	R1 = R[1]; E22a = R[2]; E3 = R[3]; E4 = R[4];
+	coeff = c(E22a, 0, 4*R1*E4 - 4*R1*E22a, - 16*E3*E22a,
+		16*E4^2 - 12*R1^2*E4 + 16*E22a*E4 - 4*R1*E3^2 + 6*R1^2*E22a - 8*E22a^2,
+		- 32*R1*E3*E4 + 32*R1*E3*E22a,
+		- 32*E3^2*E4 + 12*R1^3*E4 - 48*R1*E22a*E4 + 8*R1^2*E3^2 + 64*E3^2*E22a - 4*R1^3*E22a + 16*R1*E22a^2,
+		32*R1^2*E3*E4 - 128*E3*E22a*E4 + 32*R1*E3^3 - 16*R1^2*E3*E22a + 64*E3*E22a^2,
+		- 4*R1^4*E4 + 32*R1^2*E22a*E4 - 64*E22a^2*E4 + 16*E3^4 - 4*R1^3*E3^2 + 16*R1*E3^2*E22a +
+			+ R1^4*E22a - 8*R1^2*E22a^2 + 16*E22a^3);
+	return(coeff);
+}
+solve.S4HtM.Ord2P2 = function(R, sort=TRUE, all.sol=FALSE, debug=TRUE) {
+	coeff = coeff.S4Ht.Ord2P2(R);
+	S = roots(coeff);
+	if(debug) print(S);
+	len = length(S);
+	E2 = (S^2 - R[1])/2;
+	#
+	sol = lapply(seq(len), function(id) {
+		RS = R;
+		RS[1] = S[id];
+		solve.S4HtM.Ord2Base(RS, E2[id], sort=sort, all.sol=all.sol)
+	})
+	sol = do.call(rbind, sol);
+	if(sort) sol = sort.sol(sol, ncol=1, useRe=TRUE, mod.first=FALSE);
+	return(sol);
+}
+
+### Examples:
+
+### Ex 1:
+R = c(3,-1,2,1)
+sol = solve.S4HtM.Ord2P2(R)
+
+test.S4HtMixed(sol, n=2, nE2=2)
+
+
+### Ex 2:
+R = c(-3,2,2,-1)
+sol = solve.S4HtM.Ord2P2(R)
+
+test.S4HtMixed(sol, n=2, nE2=2)
+
+
+### Ex 3:
+# E22a = 0: only 6*4 = 24 solutions;
+R = c(-3,0,1,2)
+sol = solve.S4HtM.Ord2P2(R)
+
+test.S4HtMixed(sol, n=2, nE2=2)
+
+
+### Derivation:
+
+pE2 = polyE2Ord2();
+p1  = toPoly.pm("S^2 - 2*E2 - R1")
+
+pR = solve.pm(p1, pE2, "E2")
+pR$Rez$coeff = - pR$Rez$coeff;
+pR$Rez = sort.pm(pR$Rez, xn="S", xn2=c("E4", "E3"))
+print.pm(pR$Rez, lead="S")
+print.coeff(pR$Rez, "S")
+
 
