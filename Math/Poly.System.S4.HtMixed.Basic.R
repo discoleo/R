@@ -7,7 +7,7 @@
 ### Hetero-Symmetric S4: Mixed
 ### Basic Types
 ###
-### draft v.0.1j
+### draft v.0.1k
 
 
 ##############
@@ -82,6 +82,11 @@ e2a.f = function(x) {
 	e2 = if(is.matrix(x)) apply(x, 1, e2.f0) else e2.f0(x);
 	sort.sol(matrix(e2, ncol=1), useRe=TRUE);
 }
+e3a.f = function(x, pow=c(1,2,1)) {
+	e2.f0 = function(x) sum(x^pow[1] * x[c(2,3,4,1)]^pow[2] * x[c(3,4,1,2)]^pow[3]);
+	e2 = if(is.matrix(x)) apply(x, 1, e2.f0) else e2.f0(x);
+	sort.sol(matrix(e2, ncol=1), useRe=TRUE);
+}
 
 ### Solve Coefficients:
 # - hack the formulas;
@@ -101,6 +106,11 @@ which.sq = function(x, sq=2, iter=1000, digits=6, pow=2) {
 
 ### Formulas
 
+polyE2Ord1 = function() {
+	p = toPoly.pm("E2a*E2^2 - (S*E3 + 2*E2a^2)*E2 +
+		+ S^2*E4 + S*E2a*E3 + E2a^3 - 4*E2a*E4 + E3^2");
+	return(p);
+}
 polyE2Ord2 = function() {
 	p = toPoly.pm("(4*E4 - E22a)*E2^4 - 2*(E3^2 + S^2*E4)*E2^3 +
 	+ (4*(S*E3 - 2*E4)*E22a - 8*S*E3*E4 + S^2*E3^2 + 2*E22a^2)*E2^2 +
@@ -986,4 +996,44 @@ pR$Rez$coeff = - pR$Rez$coeff;
 pR$Rez = sort.pm(pR$Rez, xn="S", xn2=c("E4", "E3"))
 print.pm(pR$Rez, lead="S")
 print.coeff(pR$Rez, "S")
+
+
+########################
+########################
+
+################
+### E121a:   ###
+### Order 1  ###
+################
+
+x1 + x2 + x3 + x4 - R1 # = 0
+x1*x2^2*x3 + x2*x3^2*x4 + x3*x4^2*x1 + x4*x1^2*x2 - R2 # = 0
+x1*x2*x3 + x1*x2*x4 + x1*x3*x4 + x2*x3*x4 - R3 # = 0
+x1*x2*x3*x4 - R4 # = 0
+
+### Solution:
+
+### Abbreviations:
+E121a = x1*x2^2*x3 + x2*x3^2*x4 + x3*x4^2*x1 + x4*x1^2*x2;
+
+
+### Derivation:
+
+pE121a = toPoly.pm("E2a^2 - E22a - 2*E121a - 4*E4")
+pE21 = polyE2Ord1(); # E2, E2a
+pE22 = polyE2Ord2(); # E2, E22a
+
+pR1 = solve.pm(pE121a, pE21, "E2a");
+pR = solve.pm(pR1$Rez, pE22, "E22a");
+
+# pR$Rez$coeff = - pR$Rez$coeff;
+pR$Rez = sort.pm(pR$Rez, xn="E2", xn2=c("E4", "E3", "S"))
+
+# TODO:
+# Note:
+# - 1200 Monomials;
+# - E2^12, S^14;
+# print.pm(pR$Rez, lead="E2")
+# print.coeff(pR$Rez, "E2")
+
 
