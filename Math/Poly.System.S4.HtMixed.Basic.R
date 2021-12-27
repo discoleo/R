@@ -7,7 +7,7 @@
 ### Hetero-Symmetric S4: Mixed
 ### Basic Types
 ###
-### draft v.0.1k-test
+### draft v.0.1k-fact1
 
 
 ##############
@@ -1096,15 +1096,53 @@ pE22 = polyE2Ord2(); # E2, E22a
 pR1 = solve.pm(pE121a, pE21, "E2a");
 pR = solve.pm(pR1$Rez, pE22, "E22a");
 
+div = toPoly.pm("E3^2*S^2 - 8*E3*E4*S - 6*E3*E121a*S + 16*E4^2 + 24*E4*E121a + 9*E121a^2");
+pR$Rez = div.pm(pR$Rez, div, "S")$Rez
 # pR$Rez$coeff = - pR$Rez$coeff;
 pR$Rez = sort.pm(pR$Rez, xn="E2", xn2=c("E4", "E3", "S"))
 
 # TODO:
 # Note:
-# - 1200 Monomials;
+# - div: from 1200 Monomials => 598 Monomials;
 # - E2^12, S^14;
-# - correct roots: should be only E2^{1 or 2}?
+# - correct roots: should be only E2^2;
 # print.pm(pR$Rez, lead="E2")
 # print.coeff(pR$Rez, "E2")
+pLead = pR$Rez[pR$Rez$E2 == 12, ]
+pLead$E2 = NULL
+xgcd = gcd.pm(pLead); pLead$coeff = pLead$coeff / xgcd;
+pLead = sort.pm(pLead, xn="S", xn2=c("E4", "E3"))
+pLead$E4 = pLead$E4 - min(pLead$E4)
+print.pm(pLead, lead="S")
 
+
+### Lead: E2^12
+S = R[1]; E121a = R[2]; E3 = R[3]; E4 = R[4];
+E4^2 * (4*E4 + E121a) * (E3^2*S^2 - 8*E3*E4*S - 6*E3*E121a*S + 16*E4^2 + 24*E4*E121a + 9*E121a^2)
+
+
+###
+R = c(7,-1,2,1)
+sol = solve.S4HtM.E121aP1(R)
+test.S4HtMixed.En3(sol, n=1, nE=c(1,2,1))
+
+apply(sol[c(17:20, 36,37, 38,39), ], 1, e2.f)
+poly.calc(apply(sol[c(36,39), ], 1, e2.f)) * 4 * (4*R[4] + R[2]) * R[4]
+
+
+###
+R = c(7,-1,2,1)
+e2 = roots(coeff.S4Ht.E121aP1(R))
+pr = poly.calc(e2[c(1,2)]);
+(pr[2] - round(pr[2])) * 4 * (4*R[4] + R[2]) * R[4]
+
+
+####
+p1 = toPoly.pm("x13^2*(S-xs) + R4*xs - R3*x13")
+p2 = toPoly.pm("x13^2*(S-xs)^2 - 2*R4*x13 + R4*(xs^2 - 2*x13) - R2*x13")
+#
+pR2 = solve.pm(p1, p2, "xs")
+str(pR2)
+pR2$Rez = sort.pm(pR2$Rez, xn="x13", xn2 = c("S", "R4", "R3"))
+print.pm(pR2$Rez, lead="x13")
 
