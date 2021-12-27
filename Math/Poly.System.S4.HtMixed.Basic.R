@@ -7,7 +7,7 @@
 ### Hetero-Symmetric S4: Mixed
 ### Basic Types
 ###
-### draft v.0.1k
+### draft v.0.1k-test
 
 
 ##############
@@ -54,6 +54,25 @@ test.S4HtMixed = function(sol, n=2, nE2 = 1, R = NULL) {
 	ht = cbind(x1*x2, x2*x3, x3*x4, x4*x1);
 	ht = if(nE2 == 1) ht else ht^nE2;
 	err2 = apply(ht, 1, sum);
+	err3 = x1*x2*x3 + x1*x2*x4 + x1*x3*x4 + x2*x3*x4;
+	err4 = x1*x2*x3*x4;
+	err = rbind(err1, err2, err3, err4);
+	if( ! is.null(R)) {
+		for(id in 1:4) err[id,] = err[id,] - R[id];
+	}
+	err = round0(err);
+	return(err);
+}
+
+test.S4HtMixed.En3 = function(sol, R=NULL, n=2, nE=c(1,2,1)) {
+	# Ht
+	ht.f = function(x) {
+		sum(x^nE[1] * (x^nE[2])[c(2,3,4,1)] * (x^nE[3])[c(3,4,1,2)]);
+	}
+	err2 = apply(sol, 1, ht.f);
+	#
+	x1 = sol[,1]; x2 = sol[,2]; x3 = sol[,3]; x4 = sol[,4];
+	err1 = x1^n + x2^n + x3^n + x4^n;
 	err3 = x1*x2*x3 + x1*x2*x4 + x1*x3*x4 + x2*x3*x4;
 	err4 = x1*x2*x3*x4;
 	err = rbind(err1, err2, err3, err4);
@@ -1017,6 +1036,57 @@ x1*x2*x3*x4 - R4 # = 0
 E121a = x1*x2^2*x3 + x2*x3^2*x4 + x3*x4^2*x1 + x4*x1^2*x2;
 
 
+### Solver
+coeff.S4Ht.E121aP1 = function(R) {
+	p = replace.pm(pR$Rez, c(S = R[1], E121a = R[2], E3 = R[3], E4 = R[4]));
+	coeff = coef.pm(p, "E2");
+	return(coeff);
+}
+E22a.E121aP1 = function(R, E2) {
+	len = length(E2);
+	# c(E3, S, E4, E2, E121a)
+	e22a = sapply(seq(len),
+		function(id) eval.pm(pR$x0, list(E3=R[3], S=R[1], E4=R[4], E2=E2[id], E121a=R[2])));
+	eDiv = sapply(seq(len),
+		function(id) eval.pm(pR$div, list(E3=R[3], S=R[1], E4=R[4], E2=E2[id], E121a=R[2])));
+	return( e22a / eDiv);
+}
+solve.S4HtM.E121aP1 = function(R, sort=TRUE, all.sol=FALSE, debug=TRUE) {
+	coeff = coeff.S4Ht.E121aP1(R);
+	E2 = roots(coeff);
+	if(debug) print(E2);
+	E22a = E22a.E121aP1(R, E2);
+	len  = length(E2);
+	#
+	sol = lapply(seq(len), function(id) {
+		RS = R; RS[2] = E22a[id];
+		solve.S4HtM.Ord2Base(RS, E2[id], sort=sort, all.sol=all.sol)
+	})
+	sol = do.call(rbind, sol);
+	if(sort) sol = sort.sol(sol, ncol=1, useRe=TRUE, mod.first=FALSE);
+	return(sol);
+}
+
+### Examples:
+
+### Ex 1:
+R = c(3,-1,2,1)
+sol = solve.S4HtM.E121aP1(R)
+
+test.S4HtMixed.En3(sol, n=1, nE=c(1,2,1))
+
+apply(sol[c(19:22, 34:37), ], 1, e2.f) * 9*4
+
+
+### Ex 2:
+R = c(-1,-3,2,2)
+sol = solve.S4HtM.E121aP1(R)
+
+test.S4HtMixed.En3(sol, n=1, nE=c(1,2,1))
+
+apply(sol[c(8,9, 16,17, 28,29, 42,43), ], 1, e2.f) * 20
+
+
 ### Derivation:
 
 pE121a = toPoly.pm("E2a^2 - E22a - 2*E121a - 4*E4")
@@ -1033,6 +1103,7 @@ pR$Rez = sort.pm(pR$Rez, xn="E2", xn2=c("E4", "E3", "S"))
 # Note:
 # - 1200 Monomials;
 # - E2^12, S^14;
+# - correct roots: should be only E2^{1 or 2}?
 # print.pm(pR$Rez, lead="E2")
 # print.coeff(pR$Rez, "E2")
 
