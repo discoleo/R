@@ -637,7 +637,7 @@ solve.S4HtM.Ord2Base = function(R, E2, sort=TRUE, all.sol=TRUE) {
 	# fully robust:
 	x13T1 = x1^2*(E2^2 - E22a - 2*S*E3 + 2*E4);
 	x3sq = x1^6*(x1^2 + 2*E2 - S^2) + x1^4*E22a - E4^2;
-	div =  x1^4*(2*x1^2 + 2*E2 - S^2) + x13T1;
+	div  = x1^4*(2*x1^2 + 2*E2 - S^2) + x13T1;
 	x3sq = - x3sq / div;
 	x3 = (x3sq*(S - x1) + E4/x1) / (x3sq + E2 - x1*(S - x1));
 	x3 = as.vector(x3);
@@ -1067,6 +1067,27 @@ solve.S4HtM.E121aP1 = function(R, sort=TRUE, all.sol=FALSE, debug=TRUE) {
 	return(sol);
 }
 
+### Simple version:
+# - computes only E2 (via x13);
+coeff.X13.E121aP1 = function(R) {
+	S = R[1]; R2 = R[2]; R3 = R[3]; R4 = R[4];
+	coeff = c((4*R4 + R2), - (R4*S^2 + R3^2), 4*R3*R4*S - 8*R4^2 - 2*R4*R2,
+		- R4*(R4*S^2 + R3^2), R4^2*(4*R4 + R2) );
+	return(coeff);
+}
+e2.old = function(R, debug=TRUE) {
+	coeff = coeff.X13.E121aP1(R);
+	x13 = roots(coeff);
+	if(debug) print(x13);
+	x24 = R[4] / x13;
+	S = R[1]; R3 = R[3];
+	xs = - x13*R3 + x13^2*S;
+	xs = xs / (x13^2 - R[4]);
+	E2a = xs * (S - xs);
+	E2  = E2a + x13 + x24;
+	return(E2);
+}
+
 ### Examples:
 
 ### Ex 1:
@@ -1136,6 +1157,8 @@ e2 = roots(coeff.S4Ht.E121aP1(R))
 pr = poly.calc(e2[c(1,2)]);
 (pr[2] - round(pr[2])) * 4 * (4*R[4] + R[2]) * R[4]
 
+poly.calc(e2.old(R, debug=F)[c(1,2)]) * 4 * (4*R[4] + R[2]) * R[4]
+
 
 ####
 p1 = toPoly.pm("x13^2*(S-xs) + R4*xs - R3*x13")
@@ -1145,4 +1168,6 @@ pR2 = solve.pm(p1, p2, "xs")
 str(pR2)
 pR2$Rez = sort.pm(pR2$Rez, xn="x13", xn2 = c("S", "R4", "R3"))
 print.pm(pR2$Rez, lead="x13")
+print.coeff(pR2$Rez, "x13")
+
 
