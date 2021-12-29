@@ -55,10 +55,14 @@ as.pm.polynom = function(p, xn="x", tol=1E-8) {
 }
 
 ### Parse expressions / polynomials
+as.pm = function(p) {
+	return(toPoly.pm(p));
+}
 toPoly.pm = function(e, env=NULL, reduce=FALSE) {
 	if(is.null(env)) env = parent.frame();
 	if(is.character(e)) {
 		if(length(e) > 1) {
+			# List of polynomials
 			pl = lapply(e, function(e) toPoly.pm(e, env=env));
 			return(pl);
 		}

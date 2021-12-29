@@ -80,6 +80,27 @@ sort.simple.pm = function(p, leading=1, do.rev=FALSE, sort.order=TRUE) {
 	return(p)
 }
 
+as.pm.lead = function(p, xn, warn=TRUE) {
+	# is moved as last column;
+	id = match(xn, names(p));
+	if(is.na(id)) {
+		if(warn) warning("Variable not found!");
+		return(p);
+	}
+	p = cbind(p[, -id, drop=FALSE], p[ , id, drop=FALSE]);
+	return(as.pm(p));
+}
+as.pm.first = function(p, xn, warn=TRUE) {
+	# is moved as last column;
+	id = match(xn, names(p));
+	if(is.na(id)) {
+		if(warn) warning("Variable not found!");
+		return(p);
+	}
+	p = cbind(p[ , id, drop=FALSE], p[, -id, drop=FALSE]);
+	return(as.pm(p));
+}
+
 #############
 
 #############
