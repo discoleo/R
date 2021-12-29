@@ -7,7 +7,7 @@
 ### Differential Equations
 ### ODEs - Logarithms
 ###
-### draft v.0.3i
+### draft v.0.3j
 
 
 ### ODEs Derived from Logarithms
@@ -22,9 +22,11 @@
 ### History ###
 ###############
 
-### draft v.0.3i:
+### draft v.0.3i - v.0.3j:
 # - Mixed variants: Sum(LOG, EXP)
 #   y = B1(x)*log(P1(x)) + B2(x)*exp(P2(x)) + F0(x);
+# - Sum(LOG, I( EXP )):
+#   y = B1(x)*log(P1(x)) + B2(x)*exp(P2(x))*I( exp(-P2(x)) ) + F0(x); [v.0.3j]
 ### draft v.0.3h:
 # - workout of case:
 #   y = log(P) * log(log(P));
@@ -553,6 +555,53 @@ line.tan(px1, dx=3, p=y, dp=dy, k=k, f=f)
 #
 curve(dy(x, k=k, f=f), add=TRUE, col="green")
 line.tan(px2, dx=3, p=dy, dp=d2y, k=k, f=f, col="orange")
+
+##################
+
+##################
+### Mixed Sum  ###
+### LOG + I()  ###
+##################
+
+### y = B1(x) * log(P1(x)) + B2(x) * exp(P2(x)) * I( exp( - P2(x)) ) + F0(x)
+
+### Example:
+# y = x*log(x) + x^2 * exp(k/x) * I( exp(-k/x) ) + f0
+
+### D =>
+# x^2 * dy = x^2 * log(x) + (2*x - k)*(y - x*log(x) - f0) + x^2*df0 + x^4 + x^2;
+# x^2 * dy = - (x^2 - k*x)*log(x) + (2*x - k)*(y - f0) + x^2*df0 + x^4 + x^2;
+
+### Linear system:
+# - x*(x - k) * log(x) =
+x^2*dy - (2*x - k)*(y - f0) - x^2*df0 - x^4 - x^2;
+
+### D2 =>
+x^2*d2y + 2*x*dy # =
+- (x^2 - k*x)/x - (2*x - k)*log(x) + (2*x - k)*(dy - df0) + 2*(y - f0) +
+	+ x^2*d2f0 + 2*x*df0 + 4*x^3 + 2*x;
+# =>
+x^3*d2y + 2*x^2*dy + x*(2*x - k)*log(x) - x*(2*x - k)*(dy - df0) - 2*x*(y - f0) +
+	- x^3*d2f0 - 2*x^2*df0 - 4*x^4 - x^2 - k*x # = 0
+x^3*(x - k)*d2y + 2*x^2*(x - k)*dy +
+	- (2*x - k)*(x^2*dy - (2*x - k)*(y - f0) - x^2*df0 - x^4 - x^2) +
+	- x*(x - k)*(2*x - k)*(dy - df0) - 2*x*(x - k)*(y - f0) +
+	- (x - k)*(x^3*d2f0 + 2*x^2*df0 + 4*x^4 + x^2 + k*x) # = 0
+
+### ODE:
+# P(d2y, dy, y) = P(d2f, df, f) + someTrP(x);
+x^3*(x - k)*d2y - x*(2*x^2 - 2*k*x + k^2)*dy + (2*x^2 - 2*k*x + k^2)*y +
+	- 2*x^5 + 3*k*x^4 + x^3 - k*x^2 + k^2*x +
+	- x^3*(x - k)*d2f0 + x*(2*x^2 - 2*k*x + k^2)*df0 - (2*x^2 - 2*k*x + k^2)*f0 # = 0
+
+# TODO: check;
+
+
+###
+# p = toPoly.pm("")
+p = sort.pm(p, xn=c("d2y", "dy", "y"), xn2 = c("x", "d2f0", "df0", "f0"), sort.coeff=c(10:12,13:16))
+p = as.pm.first(p, "k")
+print.pm(p, lead="d2y", do.sort=FALSE)
 
 
 #########################
