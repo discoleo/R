@@ -22,12 +22,18 @@ source("Polynomials.Helper.R")
 
 
 ### Test ODEs
-# include: DE.ODE.Helper.R;
 # source("DE.ODE.Helper.R")
 
 
 #######################
 #######################
+
+### Varia
+
+eval.vpm = function(f, x) {
+	sapply(x, function(x) eval.pm(f, x));
+}
+
 
 ##################
 ### Generators ###
