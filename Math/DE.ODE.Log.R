@@ -7,7 +7,7 @@
 ### Differential Equations
 ### ODEs - Logarithms
 ###
-### draft v.0.3h
+### draft v.0.3i
 
 
 ### ODEs Derived from Logarithms
@@ -22,6 +22,9 @@
 ### History ###
 ###############
 
+### draft v.0.3i:
+# - Mixed variants: Sum(LOG, EXP)
+#   y = B1(x)*log(P1(x)) + B2(x)*exp(P2(x)) + F0(x);
 ### draft v.0.3h:
 # - workout of case:
 #   y = log(P) * log(log(P));
@@ -401,6 +404,7 @@ cos(x)*log(p1) - sin(x)*log(p2) + sin(x) / p1 * dp1 + cos(x) / p2 * dp2
 ### Log-Exp ###
 ###############
 
+### Product:
 ### y = log(P1(x)) * exp(P2(x)) + F(x);
 
 ### y = log(x^2 + b0) * exp(x^2)
@@ -459,6 +463,96 @@ line.tan(px, dx=3, p=y, dp=dy, b=b)
 # global minimum:
 curve(dy(x, b=b), add=T, col="green")
 line.tan(px, dx=3, p=dy, dp=d2y, b=b, col="orange")
+
+
+#################
+#################
+
+#################
+### Mixed Sum ###
+#################
+
+### y = B1(x) * log(P1(x)) + B2(x) * exp(P2(x)) + F0(x)
+
+### Example:
+# y = x*log(x) + x^2*exp(k/x) + f0
+
+### D =>
+# dy = log(x) + (2*x - k)*exp(k/x) + df0 + 1;
+dy - log(x) - (2*x - k)*exp(k/x) - df0 - 1 # = 0
+
+### Linear System =>
+# log(x) =
+(x^2*dy - (2*x-k)*y - x^2*df0 - x^2 + (2*x-k)*f0) / - (x^2 - k*x);
+# exp(k/x) =
+(x*dy - y + f0 - x*df0 - x) / (x^2 - k*x);
+
+### D2 =>
+x^2*d2y - 2*x^2*exp(x/k) + k*(2*x - k) * exp(k/x) - x^2*d2f0 - x # = 0
+x^2*(x^2 - k*x)*d2y - (2*x^2 - 2*x*k + k^2)*(x*dy - y + f0 - x*df0 - x) +
+	- x^2*(x^2 - k*x)*d2f0 - x*(x^2 - k*x) # = 0
+
+### ODE:
+x^2*(x^2 - k*x)*d2y - (2*x^2 - 2*x*k + k^2)*(x*dy - y) +
+	- (2*x^2 - 2*x*k + k^2)*(f0 - x*df0 - x) - x^2*(x^2 - k*x)*d2f0 - x*(x^2 - k*x) # = 0
+
+
+### Solution & Plot:
+y = function(x, k=1, f=NULL) {
+	val = x*log(x) + x^2*exp(k/x);
+	if( ! is.null(f)) {
+		fx = eval.vpm(f, x);
+		val = val + fx;
+	}
+	return(val)
+}
+dy = function(x, k=1, f=NULL) {
+	dyx = log(x) + (2*x - k)*exp(k/x) + 1;
+	if( ! is.null(f)) {
+		df0 = dp.pm(f, xn="x");
+		dyx = dyx + eval.vpm(df0, x);
+	}
+	return(dyx)
+}
+d2y = function(x, k=1, f=NULL) {
+	yx  =  y(x, k=k, f=f);
+	dyx = dy(x, k=k, f=f);
+	#
+	px  = (2*x^2 - 2*x*k + k^2);
+	x2k = (x^2 - k*x);
+	d2p = px*(x*dyx - yx - x) + x*x2k;
+	if( ! is.null(f)) {
+		fx0  = eval.vpm(f, x);
+		df0  = dp.pm(f, xn="x");
+		d2f0 = dp.pm(df0, xn="x");
+		dfx0 = eval.vpm(df0, x);
+		d2fx = eval.vpm(d2f0, x);
+		d2p = d2p + px*(fx0 - x*dfx0) + x^2*x2k*d2fx;
+	}
+	div = x^2*x2k;
+	d2p = ifelse(div != 0, d2p/div, 1); # TODO: check;
+	return(d2p);
+}
+### Plot:
+k = 3
+px = (1:3)*2/7; px = c(px + 0.25, px + 1);
+curve(y(x, k=k), from = 0.5, to = 2, ylim = c(10, 40))
+line.tan(px, dx=3, p=y, dp=dy, k=k)
+
+#
+curve(dy(x, k=k), from = 0.5, to = 2, ylim=c(-50, 10), col="green")
+line.tan(px, dx=3, p=dy, dp=d2y, k=k, col="orange")
+
+
+### Ex 2:
+k = -2;
+f = toPoly.pm("x^2 + 3*x")
+px = (1:3)*1/7; px1 = c(2*px, 2*px + 1); px2 = c(px, 2*px + 1);
+curve(y(x, k=k, f=f), from = 0, to = 2, ylim = c(0, 12))
+line.tan(px1, dx=3, p=y, dp=dy, k=k, f=f)
+#
+curve(dy(x, k=k, f=f), add=TRUE, col="green")
+line.tan(px2, dx=3, p=dy, dp=d2y, k=k, f=f, col="orange")
 
 
 #########################
@@ -1015,8 +1109,8 @@ curve(dy(x, k=k, b=b), add=T, col="green")
 line.tan(px, dx=3, p=dy, dp=d2y, k=k, b=b, col="orange")
 
 
-#######################
-#######################
+###########################
+###########################
 
 ###########################
 ### Compositions of Log ###
@@ -1065,7 +1159,7 @@ x*d2y + x*dy^2 - (2*x*df + n*x^n + (n-1))*dy +
 ### D2 =>
 (x^2+k)*log(x^2 + k)*d2y + 2*x*dy + 2*x*log(x^2 + k)*dy +
 	- 2*x*(x^2+k)*df - 2*x*df*log(x^2 + k) - (x^2+k)*d2f*log(x^2 + k) - 2 # = 0
-2*x*(x^2+k)/(dy - df) * d2y + 2*x*(x^2+k)*dy + 4*x^2*/(dy - df) * dy +
+2*x*(x^2+k)/(dy - df) * d2y + 2*x*(x^2+k)*dy + 4*x^2/(dy - df) * dy +
 	- 2*x*(x^2+k)^2*df - 4*x^2*df/(dy - df) - 2*x*(x^2+k)*d2f/(dy - df) - 2*(x^2+k) # = 0
 
 # TODO
