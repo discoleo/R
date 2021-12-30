@@ -117,7 +117,6 @@ roots.pm = function(p, ..., xn="x") {
 sort.sol = function(sol, useRe=TRUE, mod.first=TRUE, ncol=1, digits=5) {
 	if(useRe) {
 		if(length(digits) == 1) digits = rep(digits, 3);
-		re = round(Re(sol[,ncol]), digits[2]);
 		mod = round(abs(sol[,ncol]), digits[1]);
 		re = round(Re(sol[,ncol]), digits[2]);
 		im = round(Im(sol[,ncol]), digits[3]);
@@ -243,6 +242,21 @@ Ops.pm = function(e1, e2) {
 	return(r);
 }
 
+prod.pm = function(...) {
+	p = list(...);
+	len = length(p);
+	if(len < 1) return(data.frame()); # TODO
+	isList = function(x) is.list(x) && ! is.pm(x);
+	r = if(isList(p[[1]])) mult.lpm(p[[1]]) else p[[1]];
+	if(len == 1) return(r);
+	# len > 1
+	for(id in seq(2, length(p))) {
+		p0 = p[[id]];
+		p0 = if(isList(p0)) mult.lpm(p0) else p0;
+		r = mult.pm(r, p0);
+	}
+	return(r);
+}
 mult.all.pm = function(p) return(mult.lpm(p));
 mult.lpm = function(p) {
 	if( ! is.list(p) || is.pm(p, strict=TRUE))
