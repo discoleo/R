@@ -1,11 +1,10 @@
-
-
+###
 ### Fraction Rationalisation
 ###
 ### Leonard Mada
 ### 2018-2020
 ###
-### draft v.0.1
+### draft v.0.2
 
 
 ### Rationalizing polynomial Fractions
@@ -23,10 +22,15 @@ k = 3^(1/5) # this is here a fixed value!
 # for other examples: see below;
 
 
+#####################
+
 ###############
 ### History ###
+###############
 
-# draft v.0.1.
+### draft v.0.2:
+# - major simplification;
+### draft v.0.1:
 # - minor edits & bug-fixes;
 # draft pre-v.0.1.
 # - initial upload to Github;
@@ -35,7 +39,7 @@ k = 3^(1/5) # this is here a fixed value!
 ##############
 ### Theory ###
 
-# Let:
+### Terminology:
 # K, s[j] = parameters, e.g. integers;
 # k = K^(1/n);
 # x = sum(s[j] * k^j), with j = 0 to (n-1);
@@ -43,8 +47,8 @@ k = 3^(1/5) # this is here a fixed value!
 # 1/x = sum(b[j] * k^j) / N,
 # with j = 0 to (n-1);
 # if K and s[j] are integers,
-# then b[j] and N are also integers;
-# (N is choosen so that coefficients b[j] are integers)
+# => then b[j] and N are also integers;
+# (N is chosen so that coefficients b[j] are integers)
 
 # - various Examples are provided below;
 # - the function inverse() computes the rational decomposition of 1/x;
@@ -52,9 +56,63 @@ k = 3^(1/5) # this is here a fixed value!
 #   then the computed coefficients are also integers;
 
 
+### Major Simplification:
+# - skips solving the Vandermond matrix;
+
+# 1.) 1/x can be rationalized;
+# 2.) 1/x = prod(x[j]) / N;
+# where:
+#   x[j] = sum(s[i] * k[j]^i),
+#   k[j] = k * m^j, j = seq(1, n-1), i = seq over s;
+#   m^n  = 1, m is a root of unity of order n;
+#   N = prod(x[j]), for j = seq(0, n-1);
+
+### "Cyclic paradox"
+# Note: the definition/computation should *NOT* be viewed as cyclic;
+# - N is an integer, when s[i] and K are integers;
+# - N can be actually computed efficiently (both parametrically and non-parametrically);
+# - the actual computation of prod(r[j]) requires the symbolic multiplication of the (n-1) roots;
+
+
+####################
 ####################
 
-### helper functions
+### Helper Functions
+
+### Symbolic computations
+source("Polynomials.Helper.R")
+
+
+### Symbolic
+
+# explicit roots
+roots.Class1 = function(s, n, type="Complex") {
+	# K = parameter
+	len = length(s);
+	if(len > n) stop("Too many parameters!");
+	# TODO: All;
+	type = pmatch(type, c("Complex", "Real", "All"));
+	if(is.na(type)) stop("Unsupported type!");
+	#
+	isK = (s != 0);
+	id = seq(0, len-1)[isK];
+	if(type == 2) {
+		r0 = data.frame(k = id, coeff=s[isK]);
+		return(toPoly.pm(r0));
+	}
+	r0 = data.frame(k = id, m = id, coeff=s[isK])
+	r0 = toPoly.pm(r0);
+	#
+	r = lapply(seq(n-1), function(id) {
+		r = r0;
+		r$m = (r$m * id) %% n;
+		return(r);
+	})
+	return(r)
+}
+
+
+### Old (explicit) approach
 inverse = function(p.coeffs, K, n=length(p.coeffs), tol=1E-10) {
 	# p.coeffs = in ascending power order;
 	# Base-Root & All Roots
@@ -86,23 +144,38 @@ inverse = function(p.coeffs, K, n=length(p.coeffs), tol=1E-10) {
 	test = sapply(1:n, function(id) sum(sol * k[id]^pow) / N * x[id]) # == 1
 	return(list(sol=sol, N=N, r.coeffs=p.coeffs, x=x, test=test))
 }
-### complex/matrix round
-round0 = function(m, tol=1E-10) {
-	isZero = abs(Im(m)) < tol
-	m[isZero] = Re(m[isZero])
-	m[isZero & abs(Re(m)) < tol] = 0
-	
-	isZero = ( ! isZero ) & (abs(Re(m)) < tol)
-	if(sum(isZero) > 0) {
-		m[isZero] = complex(re=0, im=Im(m[isZero]))
-	}
-	return(m)
-}
 
 ################
 
 ################
 ### Examples ###
+
+
+### Symbolic computation
+n = 5;
+s = c(1,1,-3,0,1); # c(s0, s1, s2, s3, ...)
+r = roots.Class1(s, n=n)
+# Prod:
+p = prod.pm(r)
+# Reduce K & m:
+p = replace.pm(p, "K", "k", pow=n)
+p = replace.pm(p, 1, "m", pow=n)
+mZeroSum = data.frame(m=seq(0, n-2), coeff=-1);
+p = replace.pm(p, mZeroSum, "m", pow=n-1);
+# Note: *not* all k have canceled out,
+# as the product skipped r[0];
+print.pm(p, lead="k")
+# Test
+K = 3
+rinv = eval.pm(p, c(K=K, k = K^(1/n)))
+r0 = roots.Class1(s, n=n, type="Real")
+r0 = eval.pm(r0, c(k = K^(1/n)));
+# Test:
+rinv / round(rinv * r0) # TODO: symbolic;
+1 / r0;
+
+
+### [old]
 
 ### n = 5
 n = 5
