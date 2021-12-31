@@ -968,10 +968,10 @@ replace.pm.character.pm = function(p1, pn, pv, ..., drop=TRUE) {
 	return(p1)
 }
 # Replace: with fraction p2/p2fr
-replace.fr.pm = function(p1, p2, p2fr, x, pow=1) {
-	# replace x^pow by p2/p2fr;
-	idx = match(x, names(p1));
-	if(is.na(idx)) stop(paste0("Polynomial does NOT contain variable: ", x));
+replace.fr.pm = function(p1, p2, p2fr, xn, pow=1) {
+	# replace xn^pow by p2/p2fr;
+	idx = match(xn, names(p1));
+	if(is.na(idx)) stop(paste0("Polynomial does NOT contain variable: ", xn));
 	# xPow
 	rpow = if(pow == 1) p1[,idx] else p1[,idx] %/% pow;
 	p1[,idx] = if(pow == 1) 0 else p1[,idx] %% pow;
@@ -1037,6 +1037,25 @@ eval.pm = function(p, x, progress=FALSE) {
 ##################
 
 ### Solve Variable
+solve.lpm = function(..., xn) {
+	pL  = list(...);
+	len = length(pL);
+	if(len < 2) return(pL);
+	#
+	pR = list();
+	for(id in seq(len - 1)) {
+		print(paste0("Starting step: ", id));
+		tmp = solve.pm(pL[[id]], pL[[id+1]], xn=xn[[id]]);
+		pR[[id]] = tmp;
+		pL[[id+1]] = tmp$Rez;
+		idS = id + 2;
+		if(idS > len) next;
+		for(id2 in seq(idS, len)) {
+			pL[[id2]] = replace.fr.pm(pL[[id2]], tmp$x0, tmp$div, xn=xn[[id2-2]]);
+		}
+	}
+	return(pR);
+}
 solve.pm = function(p1, p2, xn, stop.at=NULL, simplify=TRUE, asBigNum=FALSE) {
 	max1 = max(p1[,xn]); max2 = max(p2[,xn]);
 	if(max1 == 0) stop("No variable!")
