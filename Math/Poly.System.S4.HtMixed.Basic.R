@@ -1071,33 +1071,45 @@ coeff.S4Ht.E121aP1 = function(R) {
 		S^4*E4^2 + S*E121a^2*E3 - E121a^3 + E3^4 - 4*E121a^2*E4 + 2*S^2*E3^2*E4);
 	return(coeff);
 }
+solve.S4HtM.E121aP1 = function(R, sort=TRUE, all.sol=FALSE, debug=TRUE) {
+	coeff = coeff.S4Ht.E121aP1(R);
+	E2 = roots(coeff);
+	if(debug) print(E2);
+	len = length(E2);
+	# robust:
+	S = R[1]; E121a = R[2]; E3 = R[3]; E4 = R[4];
+	x1 = sapply(seq(len), function(id) roots(c(1, -S, E2[id], -E3, E4)));
+	E2 = rep(E2, each=4); x1 = as.vector(x1);
+	len = length(x1);
+	#
+	x3 = sapply(seq(len), function(id) solve.x3.S4HtM.E121P1(R, E2[id], x1[id]));
+	#
+	xs = S - x1 - x3; x24 = E4 / (x1*x3);
+	xd = sqrt(xs^2 - 4*x24 + 0i);
+	x2 = (xs + xd)/2;
+	x4 = (xs - xd)/2;
+	sol = cbind(x1=x1, x2=x2, x3=x3, x4=x4);
+	if(all.sol) sol = rbind(sol, sol[, c(1,4,3,2)]);
+	if(sort) sol = sort.sol(sol, ncol=1, useRe=TRUE, mod.first=FALSE);
+	return(sol);
+}
+solve.x3.S4HtM.E121P1 = function(R, E2, x1) {
+	# pR needs to be computed!
+	# [see below]
+	S = R[1]; E121 = R[2]; E3 = R[3]; R4 = R[4]; # E4
+	E2d = E2 - x1*(S-x1);
+	x0 = eval.pm(pR[[2]]$x0, list(x1=x1, S=S, E121=E121, E2d=E2d, E3=E3, R4=R4));
+	div = eval.pm(pR[[2]]$div, list(x1=x1, S=S, E121=E121, E2d=E2d, E3=E3, R4=R4));
+	return(x0 / div);
+}
 solve.S4Ht.E2aE2 = function(id, R, E2) {
+	# [old] [not used anymore]
 	S = R[1]; E3 = R[3]; E4 = R[4]; E2 = E2[id];
 	# E2a*E2^2 - (S*E3 + 2*E2a^2)*E2 +
 	#	+ S^2*E4 + S*E2a*E3 + E2a^3 - 4*E2a*E4 + E3^2
 	coeff = c(1, - 2*E2, E2^2 + E3*S - 4*E4,
 		- S*E3*E2 + S^2*E4 + E3^2);
 	return(roots(coeff));
-}
-solve.S4HtM.E121aP1 = function(R, sort=TRUE, all.sol=FALSE, debug=TRUE) {
-	coeff = coeff.S4Ht.E121aP1(R);
-	E2 = roots(coeff);
-	if(debug) print(E2);
-	len = length(E2);
-	# TODO: robust; [only half of roots are true roots]
-	E2a = sapply(seq(len), solve.S4Ht.E2aE2, R=R, E2=E2);
-	E2  = rep(E2, each=3); E2a = as.vector(E2a);
-	len = length(E2a);
-	E121a = R[2]; E4 = R[4];
-	E22a = E2a^2 - 2*E121a - 4*E4;
-	#
-	sol = lapply(seq(len), function(id) {
-		RS = R; RS[2] = E22a[id];
-		solve.S4HtM.Ord2Base(RS, E2[id], sort=sort, all.sol=all.sol)
-	})
-	sol = do.call(rbind, sol);
-	if(sort) sol = sort.sol(sol, ncol=1, useRe=TRUE, mod.first=FALSE);
-	return(sol);
 }
 
 ### Examples:
@@ -1255,4 +1267,17 @@ pR2$Rez = sort.pm(pR2$Rez, xn="x13", xn2 = c("S", "R4", "R3"))
 print.pm(pR2$Rez, lead="x13")
 print.coeff(pR2$Rez, "x13")
 
+
+### Robust:
+# - pR needed for the robust computation of the solutions;
+pE2d = toPoly.pm("E2 - x1*(S - x1)");
+pE2  = toPoly.pm("x1*x3^2*(S-xs) + R4 - E2d*x1*x3");
+pE3  = toPoly.pm("(x1*x3)^2*(S - xs) + R4*xs - E3*x1*x3");
+# TODO: short/compact expression for x3;
+pE121old = toPoly.pm("(x1*x3)^2 * (S^2 + xs^2 - 2*S*xs) - 2*R4*x1*x3 + R4*xs^2 - 2*R4*x1*x3 - x1*x3*E121");
+pE121 = toPoly.pm("(E3*x1*x3 - R4*xs) * (S-xs) - 2*R4*x1*x3 + R4*xs^2 - 2*R4*x1*x3 - x1*x3*E121");
+
+pR = solve.lpm(pE2, pE3, pE121, xn=c("xs", "x3"))
+pR[[2]]$x0$coeff = - pR[[2]]$x0$coeff; pR[[2]]$div$coeff = - pR[[2]]$div$coeff;
+# print.pm(pR[[2]]$x0, lead="S") # 134 Monomials;
 
