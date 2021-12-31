@@ -7,7 +7,7 @@
 ### Hetero-Symmetric S4: Mixed
 ### Basic Types
 ###
-### draft v.0.1l
+### draft v.0.1m
 
 
 ##############
@@ -1094,22 +1094,15 @@ solve.S4HtM.E121aP1 = function(R, sort=TRUE, all.sol=FALSE, debug=TRUE) {
 	return(sol);
 }
 solve.x3.S4HtM.E121P1 = function(R, E2, x1) {
-	# pR needs to be computed!
-	# [see below]
 	S = R[1]; E121 = R[2]; E3 = R[3]; R4 = R[4]; # E4
 	E2d = E2 - x1*(S-x1);
-	x0 = eval.pm(pR[[2]]$x0, list(x1=x1, S=S, E121=E121, E2d=E2d, E3=E3, R4=R4));
-	div = eval.pm(pR[[2]]$div, list(x1=x1, S=S, E121=E121, E2d=E2d, E3=E3, R4=R4));
+	x0 = x1^2*R4^2*S^2 - 4*x1^3*R4^2*S - x1^3*R4*E121*S + 4*x1^4*R4^2 + 4*R4^3 +
+		+ 2*x1^4*R4*E121 - 4*x1*R4^2*E3 + x1^2*R4*E3^2;
+	div = - x1*R4^2*S^2 + x1^2*R4*E3*S^2 + 4*x1^2*R4^2*S - 4*x1^3*R4*E3*S - x1^3*E121*E3*S - 4*x1^3*R4^2 +
+		+ 4*x1*E2d*R4^2 + 2*x1^3*R4*E121 + x1^3*E121^2 + 4*x1^4*R4*E3 - 4*x1^2*E2d*R4*E3 + x1^4*E121*E3 + x1^3*E2d*E3^2;
+	# TODO
+	if(round0(div) == 0) warning("Div by 0!");
 	return(x0 / div);
-}
-solve.S4Ht.E2aE2 = function(id, R, E2) {
-	# [old] [not used anymore]
-	S = R[1]; E3 = R[3]; E4 = R[4]; E2 = E2[id];
-	# E2a*E2^2 - (S*E3 + 2*E2a^2)*E2 +
-	#	+ S^2*E4 + S*E2a*E3 + E2a^3 - 4*E2a*E4 + E3^2
-	coeff = c(1, - 2*E2, E2^2 + E3*S - 4*E4,
-		- S*E3*E2 + S^2*E4 + E3^2);
-	return(roots(coeff));
 }
 
 ### Examples:
@@ -1123,6 +1116,20 @@ test.S4HtMixed.En3(sol, n=1, nE=c(1,2,1))
 
 ### Ex 2:
 R = c(-1,-3,2,2)
+sol = solve.S4HtM.E121aP1(R)
+
+test.S4HtMixed.En3(sol, n=1, nE=c(1,2,1))
+
+
+### Ex 3:
+R = c(1,-1,3,-1)
+sol = solve.S4HtM.E121aP1(R)
+
+test.S4HtMixed.En3(sol, n=1, nE=c(1,2,1))
+
+
+### Ex 4:
+R = c(1,4,3,-1)
 sol = solve.S4HtM.E121aP1(R)
 
 test.S4HtMixed.En3(sol, n=1, nE=c(1,2,1))
@@ -1182,6 +1189,25 @@ solve.S4HtM.E121aP1.old = function(R, sort=TRUE, all.sol=FALSE, debug=TRUE) {
 	sol = do.call(rbind, sol);
 	if(sort) sol = sort.sol(sol, ncol=1, useRe=TRUE, mod.first=FALSE);
 	return(sol);
+}
+### [other older solvers]
+solve.x3.S4HtM.E121P1.old = function(R, E2, x1) {
+	# pR needs to be computed!
+	# [see below]
+	S = R[1]; E121 = R[2]; E3 = R[3]; R4 = R[4]; # E4
+	E2d = E2 - x1*(S-x1);
+	x0 = eval.pm(pR[[2]]$x0, list(x1=x1, S=S, E121=E121, E2d=E2d, E3=E3, R4=R4));
+	div = eval.pm(pR[[2]]$div, list(x1=x1, S=S, E121=E121, E2d=E2d, E3=E3, R4=R4));
+	return(x0 / div);
+}
+solve.S4Ht.E2aE2 = function(id, R, E2) {
+	# [old] [not used anymore]
+	S = R[1]; E3 = R[3]; E4 = R[4]; E2 = E2[id];
+	# E2a*E2^2 - (S*E3 + 2*E2a^2)*E2 +
+	#	+ S^2*E4 + S*E2a*E3 + E2a^3 - 4*E2a*E4 + E3^2
+	coeff = c(1, - 2*E2, E2^2 + E3*S - 4*E4,
+		- S*E3*E2 + S^2*E4 + E3^2);
+	return(roots(coeff));
 }
 
 
@@ -1273,11 +1299,17 @@ print.coeff(pR2$Rez, "x13")
 pE2d = toPoly.pm("E2 - x1*(S - x1)");
 pE2  = toPoly.pm("x1*x3^2*(S-xs) + R4 - E2d*x1*x3");
 pE3  = toPoly.pm("(x1*x3)^2*(S - xs) + R4*xs - E3*x1*x3");
+pxs  = toPoly.pm("x1 + x3");
+pE2x = replace.pm(pE2, pxs, "xs");
+pE3x = replace.pm(pE3, pxs, "xs"); # redundant;
 # TODO: short/compact expression for x3;
 pE121old = toPoly.pm("(x1*x3)^2 * (S^2 + xs^2 - 2*S*xs) - 2*R4*x1*x3 + R4*xs^2 - 2*R4*x1*x3 - x1*x3*E121");
 pE121 = toPoly.pm("(E3*x1*x3 - R4*xs) * (S-xs) - 2*R4*x1*x3 + R4*xs^2 - 2*R4*x1*x3 - x1*x3*E121");
+pE121x = replace.pm(pE121, pxs, "xs");
+pR = solve.pm(pE2x, pE121x, "x3")
 
-pR = solve.lpm(pE2, pE3, pE121, xn=c("xs", "x3"))
-pR[[2]]$x0$coeff = - pR[[2]]$x0$coeff; pR[[2]]$div$coeff = - pR[[2]]$div$coeff;
+### [old] complicated
+# pR = solve.lpm(pE2, pE3, pE121, xn=c("xs", "x3"))
+# pR[[2]]$x0$coeff = - pR[[2]]$x0$coeff; pR[[2]]$div$coeff = - pR[[2]]$div$coeff;
 # print.pm(pR[[2]]$x0, lead="S") # 134 Monomials;
 
