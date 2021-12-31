@@ -7,7 +7,7 @@
 ### Hetero-Symmetric S4: Mixed
 ### Basic Types
 ###
-### draft v.0.1k-more
+### draft v.0.1l
 
 
 ##############
@@ -109,6 +109,7 @@ e3a.f = function(x, pow=c(1,2,1)) {
 
 ### Solve Coefficients:
 # - hack the formulas;
+
 which.sq = function(x, sq=2, iter=1000, digits=6, pow=2) {
 	if(is.na(x)) return(NA);
 	if(round(x) == round(x, digits)) return(0);
@@ -121,6 +122,60 @@ which.sq = function(x, sq=2, iter=1000, digits=6, pow=2) {
 	id = which(d == round(d));
 	if(length(id) == 0) return(NA);
 	return(- id);
+}
+
+# - hack higher powers;
+whichHasPower = function(R, id=2, type=1, FUN=NULL, print=FALSE, digits=5, iter=1000) {
+	if(length(R) == 1) {len = R; R0 = rep(1, len); }
+	else {len = length(R); R0 = R; }
+	vals = c(2,3,5); vsqrt = sqrt(vals);
+	if(type == 1) {
+		vsqrt = c(vsqrt, - vsqrt); vals = c(vals, vals);
+	} else if(type == 2) {
+		vsqrt = c(vsqrt, 2*vsqrt); vals = c(vals, vals);
+	} else if(type == 3) {
+		vsqrt = c(vsqrt, - vsqrt) + 1; vals = c(vals, vals);
+	} else if(type == 4) {
+		vsqrt = c(vsqrt, 2*vsqrt) - 1; vals = c(vals, vals);
+	}
+	VLEN = length(vals);
+	m = array(NA, c(len, VLEN));
+	f0 = if( ! is.null(FUN)) {
+		function(vid, nr) {
+			R = R0;
+			R[nr] = vsqrt[vid];
+			which.sq(FUN(R), sq=vals[vid], pow=2, digits=digits, iter=iter)
+		}
+	} else function(vid, nr) {
+		R = R0;
+		R[nr] = vsqrt[vid];
+		which.coeff(R, sq=vals[vid], id=id, pow=2, digits=digits, iter=iter, print=print)
+	}
+	for(nr in seq(len)) {
+		tmp = sapply(seq(VLEN), f0, nr);
+		m[nr, ] = tmp;
+	}
+	return(m);
+}
+which.coeff = function(R, FUN, sq=2, id=3, pow=2, DIFF=NULL, print=TRUE, digits=6, iter=1000) {
+	p = FUN(R);
+	if(print) print(p);
+	x = p[id]; # which coefficient;
+	if( ! is.null(DIFF)) {
+		x = x - DIFF(R);
+	}
+	return(which.sq(x, sq=sq, pow=pow, digits=digits, iter=iter))
+}
+which.coeff.gen = function(FUN) {
+	f = function(R, sq=2, id=3, pow=2, DIFF=NULL, print=TRUE, digits=6, iter=1000, debug=FALSE) {
+		p = FUN(R, debug=debug);
+		if(print) print(p);
+		x = p[id]; # which coefficient;
+		if( ! is.null(DIFF)) {
+			x = x - DIFF(R);
+		}
+		return(which.sq(x, sq=sq, pow=pow, digits=digits, iter=iter))
+	}
 }
 
 ### Formulas
@@ -769,39 +824,7 @@ polyR(R)
 which.sq(DIFF(R), sq=2)
 
 
-### Solve Coefficient
-whichHasPower = function(R, id=2, type=1, FUN=NULL, print=FALSE, digits=5, iter=1000) {
-	if(length(R) == 1) {len = R; R0 = rep(1, len); }
-	else {len = length(R); R0 = R; }
-	vals = c(2,3,5); vsqrt = sqrt(vals);
-	if(type == 1) {
-		vsqrt = c(vsqrt, - vsqrt); vals = c(vals, vals);
-	} else if(type == 2) {
-		vsqrt = c(vsqrt, 2*vsqrt); vals = c(vals, vals);
-	} else if(type == 3) {
-		vsqrt = c(vsqrt, - vsqrt) + 1; vals = c(vals, vals);
-	} else if(type == 4) {
-		vsqrt = c(vsqrt, 2*vsqrt) - 1; vals = c(vals, vals);
-	}
-	VLEN = length(vals);
-	m = array(NA, c(len, VLEN));
-	f0 = if( ! is.null(FUN)) {
-		function(vid, nr) {
-			R = R0;
-			R[nr] = vsqrt[vid];
-			which.sq(FUN(R), sq=vals[vid], pow=2, digits=digits, iter=iter)
-		}
-	} else function(vid, nr) {
-		R = R0;
-		R[nr] = vsqrt[vid];
-		which.coeff(R, sq=vals[vid], id=id, pow=2, digits=digits, iter=iter, print=print)
-	}
-	for(nr in seq(len)) {
-		tmp = sapply(seq(VLEN), f0, nr);
-		m[nr, ] = tmp;
-	}
-	return(m);
-}
+### Hack Coefficients
 polyR = function(R) {
 	sol = solve.S4HtM.Ord2.P1old(R, debug=FALSE)
 	p = round0(poly.calc(e2.f(sol)[c(1,3,5,7)])) * (4*R[4] - R[2]);
@@ -1036,28 +1059,37 @@ x1*x2*x3*x4 - R4 # = 0
 ### Abbreviations:
 E121a = x1*x2^2*x3 + x2*x3^2*x4 + x3*x4^2*x1 + x4*x1^2*x2;
 
+### E2 vs E121a:
+4*(4*E4 + E121a)*E4*E2^2 - (E121a + 8*E4)*(S^2*E4 + E3^2)*E2 +
+	+ S^4*E4^2 + S*E121a^2*E3 - E121a^3 + E3^4 - 4*E121a^2*E4 + 2*S^2*E3^2*E4;
+
 
 ### Solver
 coeff.S4Ht.E121aP1 = function(R) {
-	p = replace.pm(pR$Rez, c(S = R[1], E121a = R[2], E3 = R[3], E4 = R[4]));
-	coeff = coef.pm(p, "E2");
+	S = R[1]; E121a = R[2]; E3 = R[3]; E4 = R[4];
+	coeff = c(4*(4*E4 + E121a)*E4,  - (E121a + 8*E4)*(S^2*E4 + E3^2),
+		S^4*E4^2 + S*E121a^2*E3 - E121a^3 + E3^4 - 4*E121a^2*E4 + 2*S^2*E3^2*E4);
 	return(coeff);
 }
-E22a.E121aP1 = function(R, E2) {
-	len = length(E2);
-	# c(E3, S, E4, E2, E121a)
-	e22a = sapply(seq(len),
-		function(id) eval.pm(pR$x0, list(E3=R[3], S=R[1], E4=R[4], E2=E2[id], E121a=R[2])));
-	eDiv = sapply(seq(len),
-		function(id) eval.pm(pR$div, list(E3=R[3], S=R[1], E4=R[4], E2=E2[id], E121a=R[2])));
-	return( e22a / eDiv);
+solve.S4Ht.E2aE2 = function(id, R, E2) {
+	S = R[1]; E3 = R[3]; E4 = R[4]; E2 = E2[id];
+	# E2a*E2^2 - (S*E3 + 2*E2a^2)*E2 +
+	#	+ S^2*E4 + S*E2a*E3 + E2a^3 - 4*E2a*E4 + E3^2
+	coeff = c(1, - 2*E2, E2^2 + E3*S - 4*E4,
+		- S*E3*E2 + S^2*E4 + E3^2);
+	return(roots(coeff));
 }
 solve.S4HtM.E121aP1 = function(R, sort=TRUE, all.sol=FALSE, debug=TRUE) {
 	coeff = coeff.S4Ht.E121aP1(R);
 	E2 = roots(coeff);
 	if(debug) print(E2);
-	E22a = E22a.E121aP1(R, E2);
-	len  = length(E2);
+	len = length(E2);
+	# TODO: robust; [only half of roots are true roots]
+	E2a = sapply(seq(len), solve.S4Ht.E2aE2, R=R, E2=E2);
+	E2  = rep(E2, each=3); E2a = as.vector(E2a);
+	len = length(E2a);
+	E121a = R[2]; E4 = R[4];
+	E22a = E2a^2 - 2*E121a - 4*E4;
 	#
 	sol = lapply(seq(len), function(id) {
 		RS = R; RS[2] = E22a[id];
@@ -1067,6 +1099,26 @@ solve.S4HtM.E121aP1 = function(R, sort=TRUE, all.sol=FALSE, debug=TRUE) {
 	if(sort) sol = sort.sol(sol, ncol=1, useRe=TRUE, mod.first=FALSE);
 	return(sol);
 }
+
+### Examples:
+
+### Ex 1:
+R = c(3,-1,2,1)
+sol = solve.S4HtM.E121aP1(R)
+
+test.S4HtMixed.En3(sol, n=1, nE=c(1,2,1))
+
+
+### Ex 2:
+R = c(-1,-3,2,2)
+sol = solve.S4HtM.E121aP1(R)
+
+test.S4HtMixed.En3(sol, n=1, nE=c(1,2,1))
+
+
+###################
+
+### [old]
 
 ### Simple version:
 # - computes only E2 (via x13);
@@ -1089,28 +1141,41 @@ e2.old = function(R, debug=TRUE) {
 	return(E2);
 }
 
-### Examples:
-
-### Ex 1:
-R = c(3,-1,2,1)
-sol = solve.S4HtM.E121aP1(R)
-
-test.S4HtMixed.En3(sol, n=1, nE=c(1,2,1))
-
-apply(sol[c(19:22, 34:37), ], 1, e2.f) * 9*4
-
-
-### Ex 2:
-R = c(-1,-3,2,2)
-sol = solve.S4HtM.E121aP1(R)
-
-test.S4HtMixed.En3(sol, n=1, nE=c(1,2,1))
-
-apply(sol[c(8,9, 16,17, 28,29, 42,43), ], 1, e2.f) * 20
+### Solver [old]
+coeff.S4Ht.E121aP1.old = function(R) {
+	p = replace.pm(pR$Rez, c(S = R[1], E121a = R[2], E3 = R[3], E4 = R[4]));
+	coeff = coef.pm(p, "E2");
+	return(coeff);
+}
+E22a.E121aP1.old = function(R, E2) {
+	len = length(E2);
+	# c(E3, S, E4, E2, E121a)
+	e22a = sapply(seq(len),
+		function(id) eval.pm(pR$x0, list(E3=R[3], S=R[1], E4=R[4], E2=E2[id], E121a=R[2])));
+	eDiv = sapply(seq(len),
+		function(id) eval.pm(pR$div, list(E3=R[3], S=R[1], E4=R[4], E2=E2[id], E121a=R[2])));
+	return( e22a / eDiv);
+}
+solve.S4HtM.E121aP1.old = function(R, sort=TRUE, all.sol=FALSE, debug=TRUE) {
+	coeff = coeff.S4Ht.E121aP1.old(R);
+	E2 = roots(coeff);
+	if(debug) print(E2);
+	E22a = E22a.E121aP1(R, E2);
+	len  = length(E2);
+	#
+	sol = lapply(seq(len), function(id) {
+		RS = R; RS[2] = E22a[id];
+		solve.S4HtM.Ord2Base(RS, E2[id], sort=sort, all.sol=all.sol)
+	})
+	sol = do.call(rbind, sol);
+	if(sort) sol = sort.sol(sol, ncol=1, useRe=TRUE, mod.first=FALSE);
+	return(sol);
+}
 
 
 ### Derivation:
 
+# non-efficient!
 pE121a = toPoly.pm("E2a^2 - E22a - 2*E121a - 4*E4")
 pE21 = polyE2Ord1(); # E2, E2a
 pE22 = polyE2Ord2(); # E2, E22a
@@ -1152,20 +1217,30 @@ apply(sol[c(17:20, 36,37, 38,39), ], 1, e2.f)
 poly.calc(apply(sol[c(36,39), ], 1, e2.f)) * 4 * (4*R[4] + R[2]) * R[4]
 
 
-###
+### [old]
 R = c(7,-1,2,1)
 e2 = roots(coeff.S4Ht.E121aP1(R))
 pr = poly.calc(e2[c(1,2)]);
 (pr[2] - round(pr[2])) * 4 * (4*R[4] + R[2]) * R[4]
 
-poly.calc(e2.old(R, debug=F)[c(1,2)]) * 4 * (4*R[4] + R[2]) * R[4]
+###
+R = c(1,1,1,1) # (1,1,1,1) is different;
+poly.calc(sort(e2.old(R, debug=F))[c(1,4)]) * 4 * (4*R[4] + R[2]) * R[4]
 
--16*(R[2]*R[4]^2 + 4*R[4]^3) +
-R[1]^4*R[4]^2
+which.coeff(R <- c(1, sqrt(2),1,1), id=1, sq=2)
 
-# TODO:
+### E2:
 4*(4*R[4] + R[2])*R[4]*E2^2 - (R[2] + 8*R[4])*(R[1]^2*R[4] + R[3]^2)*E2 +
-	+ ...;
+	+ R[1]^4*R[4]^2 + R[1]*R[2]^2*R[3] - R[2]^3 + R[3]^4 - 4*R[2]^2*R[4] + 2*R[1]^2*R[3]^2*R[4];
+
+
+solveBase = function(R, debug=FALSE) {
+	mult = 4 * (4*R[4] + R[2]) * R[4];
+	r = sort(e2.old(R, debug=debug));
+	if(debug) print(r);
+	round0(poly.calc(r[c(1,4)])) * mult;
+}
+which.coeff = which.coeff.gen(FUN=solveBase);
 
 
 eval.pm(pR$Rez[pR$Rez$E2 == 0, ], c(S=R[1], E121a=R[2], E3=R[3], E4=R[4], E2=1))
