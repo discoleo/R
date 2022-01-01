@@ -7,7 +7,7 @@
 ### Hetero-Symmetric S4: Mixed
 ### Basic Types
 ###
-### draft v.0.1m
+### draft v.0.1n
 
 
 ##############
@@ -180,6 +180,7 @@ which.coeff.gen = function(FUN) {
 
 ### Formulas
 
+### Simple: E2a
 polyE2Ord1 = function() {
 	p = toPoly.pm("E2a*E2^2 - (S*E3 + 2*E2a^2)*E2 +
 		+ S^2*E4 + S*E2a*E3 + E2a^3 - 4*E2a*E4 + E3^2");
@@ -191,6 +192,13 @@ polyE2Ord2 = function() {
 	+ (4*S^3*E3*E4 + 4*S*E3^3 + 2*(S^2*E4 + E3^2)*E22a)*E2 +
 	- S^4*E4^2 - 2*S^3*E3^3 - E22a^3 - E3^4 + 4*E22a^2*E4 + 2*S^2*E3^2*E4 +
 		+ 8*S*E22a*E3*E4 - 4*S*E22a^2*E3 - 5*S^2*E22a*E3^2");
+	return(p);
+}
+### Type: E121a
+### Order 1:
+polyE2_E121P1 = function() {
+	p = toPoly.pm("4*(4*E4 + E121a)*E4*E2^2 - (E121a + 8*E4)*(S^2*E4 + E3^2)*E2 +
+		+ S^4*E4^2 + S*E121a^2*E3 - E121a^3 + E3^4 - 4*E121a^2*E4 + 2*S^2*E3^2*E4");
 	return(p);
 }
 
@@ -1044,10 +1052,10 @@ print.coeff(pR$Rez, "S")
 ########################
 ########################
 
-################
-### E121a:   ###
-### Order 1  ###
-################
+####################
+### Type: E121a  ###
+### Order 1      ###
+####################
 
 x1 + x2 + x3 + x4 - R1 # = 0
 x1*x2^2*x3 + x2*x3^2*x4 + x3*x4^2*x1 + x4*x1^2*x2 - R2 # = 0
@@ -1065,16 +1073,20 @@ E121a = x1*x2^2*x3 + x2*x3^2*x4 + x3*x4^2*x1 + x4*x1^2*x2;
 
 
 ### Solver
-coeff.S4Ht.E121aP1 = function(R) {
+coeff.S4Ht.E121P1 = function(R) {
 	S = R[1]; E121a = R[2]; E3 = R[3]; E4 = R[4];
 	coeff = c(4*(4*E4 + E121a)*E4,  - (E121a + 8*E4)*(S^2*E4 + E3^2),
 		S^4*E4^2 + S*E121a^2*E3 - E121a^3 + E3^4 - 4*E121a^2*E4 + 2*S^2*E3^2*E4);
 	return(coeff);
 }
-solve.S4HtM.E121aP1 = function(R, sort=TRUE, all.sol=FALSE, debug=TRUE) {
-	coeff = coeff.S4Ht.E121aP1(R);
+solve.S4HtM.E121P1 = function(R, sort=TRUE, all.sol=FALSE, debug=TRUE) {
+	coeff = coeff.S4Ht.E121P1(R);
 	E2 = roots(coeff);
 	if(debug) print(E2);
+	sol = solve.S4HtM.E121Base(R, E2=E2, sort=sort, all.sol=all.sol);
+	return(sol)
+}
+solve.S4HtM.E121Base = function(R, E2, sort=TRUE, all.sol=FALSE) {
 	len = length(E2);
 	# robust:
 	S = R[1]; E121a = R[2]; E3 = R[3]; E4 = R[4];
@@ -1109,28 +1121,28 @@ solve.x3.S4HtM.E121P1 = function(R, E2, x1) {
 
 ### Ex 1:
 R = c(3,-1,2,1)
-sol = solve.S4HtM.E121aP1(R)
+sol = solve.S4HtM.E121P1(R)
 
 test.S4HtMixed.En3(sol, n=1, nE=c(1,2,1))
 
 
 ### Ex 2:
 R = c(-1,-3,2,2)
-sol = solve.S4HtM.E121aP1(R)
+sol = solve.S4HtM.E121P1(R)
 
 test.S4HtMixed.En3(sol, n=1, nE=c(1,2,1))
 
 
 ### Ex 3:
 R = c(1,-1,3,-1)
-sol = solve.S4HtM.E121aP1(R)
+sol = solve.S4HtM.E121P1(R)
 
 test.S4HtMixed.En3(sol, n=1, nE=c(1,2,1))
 
 
 ### Ex 4:
 R = c(1,4,3,-1)
-sol = solve.S4HtM.E121aP1(R)
+sol = solve.S4HtM.E121P1(R)
 
 test.S4HtMixed.En3(sol, n=1, nE=c(1,2,1))
 
@@ -1312,4 +1324,80 @@ pR = solve.pm(pE2x, pE121x, "x3")
 # pR = solve.lpm(pE2, pE3, pE121, xn=c("xs", "x3"))
 # pR[[2]]$x0$coeff = - pR[[2]]$x0$coeff; pR[[2]]$div$coeff = - pR[[2]]$div$coeff;
 # print.pm(pR[[2]]$x0, lead="S") # 134 Monomials;
+
+
+########################
+########################
+
+####################
+### Type: E121a  ###
+### Order 2      ###
+####################
+
+x1^2 + x2^2 + x3^2 + x4^2 - R1 # = 0
+x1*x2^2*x3 + x2*x3^2*x4 + x3*x4^2*x1 + x4*x1^2*x2 - R2 # = 0
+x1*x2*x3 + x1*x2*x4 + x1*x3*x4 + x2*x3*x4 - R3 # = 0
+x1*x2*x3*x4 - R4 # = 0
+
+### Solution:
+
+
+### Eq S:
+E4*(E121a + 2*E4)*S^4 - (E3^2*E121a + 3*R1*E4*E121a + 4*E3^2*E4 + 8*R1*E4^2)*S^2 +
+	+ 2*E3*E121a^2*S + R1*E3^2*E121a + 2*R1^2*E4*E121a + 2*E3^4 - 2*E121a^3 + 8*R1^2*E4^2 + 8*R1*E3^2*E4 - 8*E4*E121a^2 # = 0
+
+
+### Solver:
+coeff.S4HtM.E121P2 = function(R) {
+	R1 = R[1]; E121a = R[2]; E3 = R[3]; E4 = R[4];
+	coeff = c(E4*(E121a + 2*E4),  0,  - (E3^2*E121a + 3*R1*E4*E121a + 4*E3^2*E4 + 8*R1*E4^2),
+		2*E3*E121a^2,
+		R1*E3^2*E121a + 2*R1^2*E4*E121a + 2*E3^4 - 2*E121a^3 +
+			+ 8*R1^2*E4^2 + 8*R1*E3^2*E4 - 8*E4*E121a^2);
+	return(coeff);
+}
+solve.S4HtM.E121P2 = function(R, sort=TRUE, all.sol=FALSE, debug=TRUE) {
+	coeff = coeff.S4HtM.E121P2(R);
+	S = roots(coeff);
+	if(debug) print(S);
+	#
+	len = length(S);
+	E2  = (S^2 - R[1]) / 2;
+	sol = lapply(seq(len), function(id) {
+			RS = R; RS[1] = S[id];
+			solve.S4HtM.E121Base(RS, E2[id], sort=sort, all.sol=all.sol);
+		});
+	sol = do.call(rbind, sol);
+	if(sort) sol = sort.sol(sol, ncol=1, useRe=TRUE, mod.first=FALSE);
+	return(sol);
+}
+
+### Examples:
+
+### Ex 1:
+R = c(3,-1,2,1)
+sol = solve.S4HtM.E121P2(R)
+
+test.S4HtMixed.En3(sol, n=2, nE=c(1,2,1))
+
+
+### Ex 2:
+R = c(-1,-3,2,2)
+sol = solve.S4HtM.E121P2(R)
+
+test.S4HtMixed.En3(sol, n=2, nE=c(1,2,1))
+
+
+round0(poly.calc(sol[,1]))
+
+
+### Derivation:
+
+p1 = toPoly.pm("S^2 - 2*E2 - R1");
+p2 = polyE2_E121P1();
+
+pR = solve.pm(p1, p2, "E2");
+pR = sort.pm(pR$Rez, "S", xn2=c("E4", "E3", "R1"), sort.coeff=c(5, 6:8))
+print.pm(pR, lead="S")
+
 
