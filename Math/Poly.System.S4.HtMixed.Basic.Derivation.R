@@ -7,7 +7,7 @@
 ### Hetero-Symmetric S4: Mixed
 ### Basic Types: Derivation
 ###
-### draft v.0.1a
+### draft v.0.1b
 
 
 ### Derivation of the Formulas
@@ -173,4 +173,196 @@ pR = div.pm(pR$Rez, toPoly.pm("xs^2 - 2*S*xs + S^2"), "xs")
 pR$Rez = sort.pm(pR$Rez, "xs", xn2=c("S", "R4", "R3"))
 print.pm(pR$Rez, lead="xs")
 print.coeff(pR$Rez, "xs")
+
+
+########################
+########################
+
+####################
+### Type: E121a  ###
+### Order 1      ###
+####################
+
+x1 + x2 + x3 + x4 - R1 # = 0
+x1*x2^2*x3 + x2*x3^2*x4 + x3*x4^2*x1 + x4*x1^2*x2 - R2 # = 0
+x1*x2*x3 + x1*x2*x4 + x1*x3*x4 + x2*x3*x4 - R3 # = 0
+x1*x2*x3*x4 - R4 # = 0
+
+
+### [old]
+
+### Simple version:
+# - computes only E2 (via x13);
+# - used to derive the proper Formula;
+coeff.X13.E121aP1 = function(R) {
+	S = R[1]; R2 = R[2]; R3 = R[3]; R4 = R[4];
+	coeff = c((4*R4 + R2), - (R4*S^2 + R3^2), 4*R3*R4*S - 8*R4^2 - 2*R4*R2,
+		- R4*(R4*S^2 + R3^2), R4^2*(4*R4 + R2) );
+	return(coeff);
+}
+e2.old = function(R, debug=TRUE) {
+	coeff = coeff.X13.E121aP1(R);
+	x13 = roots(coeff);
+	if(debug) print(x13);
+	x24 = R[4] / x13;
+	S = R[1]; R3 = R[3];
+	xs = - x13*R3 + x13^2*S;
+	xs = xs / (x13^2 - R[4]);
+	E2a = xs * (S - xs);
+	E2  = E2a + x13 + x24;
+	return(E2);
+}
+
+### Solver [old]
+coeff.S4Ht.E121aP1.old = function(R) {
+	p = replace.pm(pR$Rez, c(S = R[1], E121a = R[2], E3 = R[3], E4 = R[4]));
+	coeff = coef.pm(p, "E2");
+	return(coeff);
+}
+E22a.E121aP1.old = function(R, E2) {
+	len = length(E2);
+	# c(E3, S, E4, E2, E121a)
+	e22a = sapply(seq(len),
+		function(id) eval.pm(pR$x0, list(E3=R[3], S=R[1], E4=R[4], E2=E2[id], E121a=R[2])));
+	eDiv = sapply(seq(len),
+		function(id) eval.pm(pR$div, list(E3=R[3], S=R[1], E4=R[4], E2=E2[id], E121a=R[2])));
+	return( e22a / eDiv);
+}
+solve.S4HtM.E121aP1.old = function(R, sort=TRUE, all.sol=FALSE, debug=TRUE) {
+	coeff = coeff.S4Ht.E121aP1.old(R);
+	E2 = roots(coeff);
+	if(debug) print(E2);
+	E22a = E22a.E121aP1(R, E2);
+	len  = length(E2);
+	#
+	sol = lapply(seq(len), function(id) {
+		RS = R; RS[2] = E22a[id];
+		solve.S4HtM.Ord2Base(RS, E2[id], sort=sort, all.sol=all.sol)
+	})
+	sol = do.call(rbind, sol);
+	if(sort) sol = sort.sol(sol, ncol=1, useRe=TRUE, mod.first=FALSE);
+	return(sol);
+}
+### [other older solvers]
+solve.x3.S4HtM.E121P1.old = function(R, E2, x1) {
+	# pR needs to be computed!
+	# [see below]
+	S = R[1]; E121 = R[2]; E3 = R[3]; R4 = R[4]; # E4
+	E2d = E2 - x1*(S-x1);
+	x0 = eval.pm(pR[[2]]$x0, list(x1=x1, S=S, E121=E121, E2d=E2d, E3=E3, R4=R4));
+	div = eval.pm(pR[[2]]$div, list(x1=x1, S=S, E121=E121, E2d=E2d, E3=E3, R4=R4));
+	return(x0 / div);
+}
+solve.S4Ht.E2aE2 = function(id, R, E2) {
+	# [old] [not used anymore]
+	S = R[1]; E3 = R[3]; E4 = R[4]; E2 = E2[id];
+	# E2a*E2^2 - (S*E3 + 2*E2a^2)*E2 +
+	#	+ S^2*E4 + S*E2a*E3 + E2a^3 - 4*E2a*E4 + E3^2
+	coeff = c(1, - 2*E2, E2^2 + E3*S - 4*E4,
+		- S*E3*E2 + S^2*E4 + E3^2);
+	return(roots(coeff));
+}
+
+
+### Derivation:
+
+# non-efficient!
+pE121a = toPoly.pm("E2a^2 - E22a - 2*E121a - 4*E4")
+pE21 = polyE2Ord1(); # E2, E2a
+pE22 = polyE2Ord2(); # E2, E22a
+
+pR1 = solve.pm(pE121a, pE21, "E2a");
+pR = solve.pm(pR1$Rez, pE22, "E22a");
+
+div = toPoly.pm("E3^2*S^2 - 8*E3*E4*S - 6*E3*E121a*S + 16*E4^2 + 24*E4*E121a + 9*E121a^2");
+pR$Rez = div.pm(pR$Rez, div, "S")$Rez
+# pR$Rez$coeff = - pR$Rez$coeff;
+pR$Rez = sort.pm(pR$Rez, xn="E2", xn2=c("E4", "E3", "S"))
+
+# TODO:
+# Note:
+# - div: from 1200 Monomials => 598 Monomials;
+# - E2^12, S^14;
+# - correct roots: should be only E2^2;
+# print.pm(pR$Rez, lead="E2")
+# print.coeff(pR$Rez, "E2")
+pLead = pR$Rez[pR$Rez$E2 == 12, ]
+pLead$E2 = NULL
+xgcd = gcd.pm(pLead); pLead$coeff = pLead$coeff / xgcd;
+pLead = sort.pm(pLead, xn="S", xn2=c("E4", "E3"))
+pLead$E4 = pLead$E4 - min(pLead$E4)
+print.pm(pLead, lead="S")
+
+
+### Lead: E2^12
+S = R[1]; E121a = R[2]; E3 = R[3]; E4 = R[4];
+E4^2 * (4*E4 + E121a) * (E3^2*S^2 - 8*E3*E4*S - 6*E3*E121a*S + 16*E4^2 + 24*E4*E121a + 9*E121a^2)
+
+
+###
+R = c(7,-1,2,1)
+sol = solve.S4HtM.E121aP1(R)
+test.S4HtMixed.En3(sol, n=1, nE=c(1,2,1))
+
+apply(sol[c(17:20, 36,37, 38,39), ], 1, e2.f)
+poly.calc(apply(sol[c(36,39), ], 1, e2.f)) * 4 * (4*R[4] + R[2]) * R[4]
+
+
+### [old]
+R = c(7,-1,2,1)
+e2 = roots(coeff.S4Ht.E121aP1(R))
+pr = poly.calc(e2[c(1,2)]);
+(pr[2] - round(pr[2])) * 4 * (4*R[4] + R[2]) * R[4]
+
+###
+R = c(1,1,1,1) # (1,1,1,1) is different;
+poly.calc(sort(e2.old(R, debug=F))[c(1,4)]) * 4 * (4*R[4] + R[2]) * R[4]
+
+which.coeff(R <- c(1, sqrt(2),1,1), id=1, sq=2)
+
+### E2:
+4*(4*R[4] + R[2])*R[4]*E2^2 - (R[2] + 8*R[4])*(R[1]^2*R[4] + R[3]^2)*E2 +
+	+ R[1]^4*R[4]^2 + R[1]*R[2]^2*R[3] - R[2]^3 + R[3]^4 - 4*R[2]^2*R[4] + 2*R[1]^2*R[3]^2*R[4];
+
+
+solveBase = function(R, debug=FALSE) {
+	mult = 4 * (4*R[4] + R[2]) * R[4];
+	r = sort(e2.old(R, debug=debug));
+	if(debug) print(r);
+	round0(poly.calc(r[c(1,4)])) * mult;
+}
+which.coeff = which.coeff.gen(FUN=solveBase);
+
+
+eval.pm(pR$Rez[pR$Rez$E2 == 0, ], c(S=R[1], E121a=R[2], E3=R[3], E4=R[4], E2=1))
+
+####
+p1 = toPoly.pm("x13^2*(S-xs) + R4*xs - R3*x13")
+p2 = toPoly.pm("x13^2*(S-xs)^2 - 2*R4*x13 + R4*(xs^2 - 2*x13) - R2*x13")
+#
+pR2 = solve.pm(p1, p2, "xs")
+str(pR2)
+pR2$Rez = sort.pm(pR2$Rez, xn="x13", xn2 = c("S", "R4", "R3"))
+print.pm(pR2$Rez, lead="x13")
+print.coeff(pR2$Rez, "x13")
+
+
+### Robust:
+# - pR needed for the robust computation of the solutions;
+pE2d = toPoly.pm("E2 - x1*(S - x1)");
+pE2  = toPoly.pm("x1*x3^2*(S-xs) + R4 - E2d*x1*x3");
+pE3  = toPoly.pm("(x1*x3)^2*(S - xs) + R4*xs - E3*x1*x3");
+pxs  = toPoly.pm("x1 + x3");
+pE2x = replace.pm(pE2, pxs, "xs");
+pE3x = replace.pm(pE3, pxs, "xs"); # redundant;
+# TODO: short/compact expression for x3;
+pE121old = toPoly.pm("(x1*x3)^2 * (S^2 + xs^2 - 2*S*xs) - 2*R4*x1*x3 + R4*xs^2 - 2*R4*x1*x3 - x1*x3*E121");
+pE121 = toPoly.pm("(E3*x1*x3 - R4*xs) * (S-xs) - 2*R4*x1*x3 + R4*xs^2 - 2*R4*x1*x3 - x1*x3*E121");
+pE121x = replace.pm(pE121, pxs, "xs");
+pR = solve.pm(pE2x, pE121x, "x3")
+
+### [old] complicated
+# pR = solve.lpm(pE2, pE3, pE121, xn=c("xs", "x3"))
+# pR[[2]]$x0$coeff = - pR[[2]]$x0$coeff; pR[[2]]$div$coeff = - pR[[2]]$div$coeff;
+# print.pm(pR[[2]]$x0, lead="S") # 134 Monomials;
 
