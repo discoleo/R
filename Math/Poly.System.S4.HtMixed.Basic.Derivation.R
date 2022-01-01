@@ -17,10 +17,63 @@
 
 ### Helper Functions
 
-# ...
+source("Poly.System.S4.HtMixed.Basic.Helper.R")
+
 
 ########################
 ########################
+
+###############
+### Order 1 ###
+###############
+
+x1 + x2 + x3 + x4 - R1 # = 0
+x1*x2 + x2*x3 + x3*x4 + x4*x1 - R2 # = 0
+x1*x2*x3 + x1*x2*x4 + x1*x3*x4 + x2*x3*x4 - R3 # = 0
+x1*x2*x3*x4 - R4 # = 0
+
+
+### Derivation:
+
+# - classic approach: P[2] o P[2];
+
+### E2a:
+(x1+x3)*(S - x1 - x3) - R2 # = 0
+# x13s = x1 + x3;
+x13s^2 - S*x13s + R2 # = 0
+
+### E3 =>
+x1*x3*(S - x1 - x3) + x2*x4*(x1+x3) - R3 # = 0
+(x1*x3)^2*(S - x1 - x3) - R3*x1*x3 + R4*(x1+x3) # = 0
+
+
+### Solution: based on "classic" approach
+solve.S4Ht.P1old = function(R, debug=FALSE) {
+	xs  = roots(c(1, -R[1], R[2]));
+	x13 = sapply(seq(length(xs)), function(id) roots(c(R[1] - xs[id], -R[3], R[4]*xs[id])));
+	xs = rep(xs, each=2); x13 = as.vector(x13);
+	xd = sqrt(xs^2 - 4*x13 + 0i);
+	x1 = (xs + xd)/2; x3 = (xs - xd)/2;
+	# x2, x4:
+	xs = R[1] - xs; x24 = R[4] / x13;
+	xd = sqrt(xs^2 - 4*x24 + 0i);
+	x2 = (xs + xd)/2; x4 = (xs - xd)/2;
+	sol = cbind(x1, x2, x3, x4)
+	return(sol)
+}
+
+### Eq for E2:
+R = c(1,-1,2,3)
+sol = solve.S4Ht.P1old(R)
+round0(poly.calc(apply(sol, 1, e2.f)[1:2]) * R[2])
+
+
+### Eq:
+R[2]*E2^2 - (R[1]*R[3] + 2*R[2]^2)*E2 +
+	+ R[1]^2*R[4] + R[1]*R[2]*R[3] + R[2]^3 - 4*R[2]*R[4] + R[3]^2
+
+test.S4HtMixed(sol, n=1)
+
 
 ####################
 ### E2a: Order 2 ###
@@ -355,7 +408,9 @@ pE3  = toPoly.pm("(x1*x3)^2*(S - xs) + R4*xs - E3*x1*x3");
 pxs  = toPoly.pm("x1 + x3");
 pE2x = replace.pm(pE2, pxs, "xs");
 pE3x = replace.pm(pE3, pxs, "xs"); # redundant;
-# TODO: short/compact expression for x3;
+# How to derive short/compact expression for x3?
+# [DONE: differently]
+# [old & complicated] =>
 pE121old = toPoly.pm("(x1*x3)^2 * (S^2 + xs^2 - 2*S*xs) - 2*R4*x1*x3 + R4*xs^2 - 2*R4*x1*x3 - x1*x3*E121");
 pE121 = toPoly.pm("(E3*x1*x3 - R4*xs) * (S-xs) - 2*R4*x1*x3 + R4*xs^2 - 2*R4*x1*x3 - x1*x3*E121");
 pE121x = replace.pm(pE121, pxs, "xs");

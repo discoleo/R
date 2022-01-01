@@ -7,7 +7,7 @@
 ### Hetero-Symmetric S4: Mixed
 ### Basic Types
 ###
-### draft v.0.1p-clean3
+### draft v.0.1p-clean4
 
 
 ##############
@@ -35,6 +35,11 @@
 # - solve for x1: either using a P[2] o {P[2], P[2]} approach,
 #   or using a P[4] (the lazy approach);
 # - solve the remaining variables;
+
+
+### Basic Derivations:
+# - moved to file:
+#   Poly.System.S4.HtMixed.Basic.Derivation.R;
 
 
 ####################
@@ -69,6 +74,7 @@ S = R[1]; E2a = R[2]; E3 = R[3]; E4 = R[4];
 E2a*E2^2 - (S*E3 + 2*E2a^2)*E2 +
 	+ S^2*E4 + S*E2a*E3 + E2a^3 - 4*E2a*E4 + E3^2 # = 0
 
+
 ### Solver:
 solve.S4Ht.P1 = function(R, sort=TRUE, debug=TRUE) {
 	S = R[1]; E2a = R[2]; E3 = R[3]; E4 = R[4];
@@ -98,49 +104,20 @@ sol = solve.S4Ht.P1(R)
 
 test.S4HtMixed(sol, n=1)
 
+
+### Ex 2:
+R = c(-1,-5,3,2)
+sol = solve.S4Ht.P1(R)
+
+test.S4HtMixed(sol, n=1)
+
 ### Classic Poly:
 round0(poly.calc(sol[,1]) * abs(R[2]))
 
 
 ### Derivation:
-
-# - classic approach: P[2] o P[2];
-
-### E2a:
-(x1+x3)*(S - x1 - x3) - R2 # = 0
-x13s^2 - S*x13s + R2 # = 0
-
-### E3 =>
-x1*x3*(S - x1 - x3) + x2*x4*(x1+x3) - R3 # = 0
-(x1*x3)^2*(S - x1 - x3) - R3*x1*x3 + R4*(x1+x3) # = 0
-
-
-### Solution: based on "classic" approach
-solve.S4Ht.P1old = function(R, debug=FALSE) {
-	xs  = roots(c(1, -R[1], R[2]));
-	x13 = sapply(seq(length(xs)), function(id) roots(c(R[1] - xs[id], -R[3], R[4]*xs[id])));
-	xs = rep(xs, each=2); x13 = as.vector(x13);
-	xd = sqrt(xs^2 - 4*x13 + 0i);
-	x1 = (xs + xd)/2; x3 = (xs - xd)/2;
-	# x2, x4:
-	xs = R[1] - xs; x24 = R[4] / x13;
-	xd = sqrt(xs^2 - 4*x24 + 0i);
-	x2 = (xs + xd)/2; x4 = (xs - xd)/2;
-	sol = cbind(x1, x2, x3, x4)
-	return(sol)
-}
-e2.f = function(x) x[1]*sum(x, -x[1]) + x[2]*(x[3]+x[4]) + x[3]*x[4]
-
-### Eq for E2:
-R = c(1,-1,2,3)
-sol = solve.S4Ht.P1old(R)
-round0(poly.calc(apply(sol, 1, e2.f)[1:2]) * R[2])
-
-
-R[2]*E2^2 - (R[1]*R[3] + 2*R[2]^2)*E2 +
-	+ R[1]^2*R[4] + R[1]*R[2]*R[3] + R[2]^3 - 4*R[2]*R[4] + R[3]^2
-
-test.S4HtMixed(sol, n=1)
+# - moved to file:
+#   Poly.System.S4.HtMixed.Basic.Derivation.R;
 
 
 ########################
