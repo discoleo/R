@@ -7,7 +7,7 @@
 ### Hetero-Symmetric S4: Mixed
 ### Basic Types
 ###
-### draft v.0.1p-clean9
+### draft v.0.1p-clean10
 
 
 ##############
@@ -552,7 +552,7 @@ E22a = (x1*x2)^2 + (x2*x3)^2 + (x3*x4)^2 + (x4*x1)^2;
 
 
 ### Solver
-coeff.S4Ht.Ord2P3 = function(R) {
+coeff.S4Ht.E22P3 = function(R) {
 	R1 = R[1]; E22a = R[2]; E3 = R[3]; E4 = R[4];
 	coeff = c(2*E4 + E22a, 0, - 3*E3^2,  - 30*E3*E4 - 2*R1*E4 - 24*E3*E22a - 4*R1*E22a,
 		81*E4^2 + 18*E22a*E4 - 18*E22a^2,
@@ -566,8 +566,8 @@ coeff.S4Ht.Ord2P3 = function(R) {
 			- 108*R1*E3^3*E22a + 54*R1^2*E3^2*E22a - 12*R1^3*E3*E22a + R1^4*E22a);
 	return(coeff);
 }
-solve.S4HtM.Ord2P3 = function(R, sort=TRUE, all.sol=FALSE, debug=TRUE) {
-	coeff = coeff.S4Ht.Ord2P3(R);
+solve.S4HtM.E22P3 = function(R, sort=TRUE, all.sol=FALSE, debug=TRUE) {
+	coeff = coeff.S4Ht.E22P3(R);
 	S = roots(coeff);
 	if(debug) print(S);
 	len = length(S);
@@ -576,7 +576,7 @@ solve.S4HtM.Ord2P3 = function(R, sort=TRUE, all.sol=FALSE, debug=TRUE) {
 	sol = lapply(seq(len), function(id) {
 		RS = R;
 		RS[1] = S[id];
-		solve.S4HtM.Ord2Base(RS, E2[id], sort=sort, all.sol=all.sol)
+		solve.S4HtM.E22Base(RS, E2[id], sort=sort, all.sol=all.sol)
 	})
 	sol = do.call(rbind, sol);
 	if(sort) sol = sort.sol(sol, ncol=1, useRe=TRUE, mod.first=FALSE);
@@ -587,14 +587,16 @@ solve.S4HtM.Ord2P3 = function(R, sort=TRUE, all.sol=FALSE, debug=TRUE) {
 
 ### Ex 1:
 R = c(3,-1,2,1)
-sol = solve.S4HtM.Ord2P3(R)
+sol = solve.S4HtM.E22P3(R)
 
 test.S4HtMixed(sol, n=3, nE2=2)
 
 
 ### Ex 2:
+# 2*E4 + E22a = 0: only 10*4 = 40 solutions;
+# (*2 with all=T);
 R = c(-3,2,2,-1)
-sol = solve.S4HtM.Ord2P3(R)
+sol = solve.S4HtM.E22P3(R)
 
 test.S4HtMixed(sol, n=3, nE2=2)
 
@@ -603,7 +605,7 @@ test.S4HtMixed(sol, n=3, nE2=2)
 # 2*E4 + E22a = 0: only 10*4 = 40 solutions;
 # (*2 with all=T);
 R = c(-3,2,1,-1)
-sol = solve.S4HtM.Ord2P3(R)
+sol = solve.S4HtM.E22P3(R)
 
 test.S4HtMixed(sol, n=3, nE2=2)
 
@@ -620,6 +622,7 @@ print.pm(pR$Rez, lead="S")
 print.coeff(pR$Rez, "S")
 
 
+########################
 ########################
 ########################
 
