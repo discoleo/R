@@ -7,7 +7,7 @@
 ### Hetero-Symmetric S4: Mixed
 ### Basic Types
 ###
-### draft v.0.1q-std
+### draft v.0.1r
 
 
 ##############
@@ -45,6 +45,17 @@
 ### Q:
 # Naming of Functions:
 # Use: E2 vs E2a, E22 vs E22a, etc ?
+
+
+### Equations:
+
+### Other:
+E3^2 - E121a*(E2 - E2a) + E4*S^2 - 4*E2*E4 # = 0
+#
+E222 - E121a*(E2 - E2a) + E4*(S^2 - 2*E2) # = 0
+# Epoly.gen(2, v=4, e=3)
+E222 - E3^2 + 2*E2*E4 # = 0
+
 
 
 ####################
@@ -874,5 +885,10 @@ p2 = polyE2_E121P1();
 pR = solve.pm(p1, p2, "E2");
 pR = sort.pm(pR$Rez, "S", xn2=c("E4", "E3", "R1"), sort.coeff=c(5, 6:8))
 print.pm(pR, lead="S")
+
+
+########################
+########################
+########################
 
 

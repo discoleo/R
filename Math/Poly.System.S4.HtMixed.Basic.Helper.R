@@ -7,7 +7,7 @@
 ### Hetero-Symmetric S4: Mixed
 ### Basic Types: Helper Functions
 ###
-### draft v.0.1a
+### draft v.0.1b
 
 
 ### this file
@@ -125,10 +125,17 @@ solve.x3.S4HtM.E121P1 = function(R, E2, x1) {
 
 ### Compute E2
 
-e2.f = function(x) {
-	e2.f0 = function(x) x[1]*sum(x, -x[1]) + x[2]*(x[3]+x[4]) + x[3]*x[4];
-	e2 = if(is.matrix(x)) apply(x, 1, e2.f0) else e2.f0(x);
-	sort.sol(matrix(e2, ncol=1), useRe=TRUE);
+e1.f = function(x, pow=1, sort=TRUE) {
+	e.f0 = function(x) sum(x^pow);
+	e = if(is.matrix(x)) apply(x, 1, e.f0) else e.f0(x);
+	if(sort) e = sort.sol(matrix(e, ncol=1), useRe=TRUE);
+	return(e);
+}
+e2.f = function(x, sort=TRUE) {
+	e.f0 = function(x) x[1]*sum(x, -x[1]) + x[2]*(x[3]+x[4]) + x[3]*x[4];
+	e = if(is.matrix(x)) apply(x, 1, e.f0) else e.f0(x);
+	if(sort) e = sort.sol(matrix(e, ncol=1), useRe=TRUE);
+	return(e);
 }
 e3.f = function(x) {
 	e3.f0 = function(x) {
@@ -138,15 +145,23 @@ e3.f = function(x) {
 	e3 = if(is.matrix(x)) apply(x, 1, e3.f0) else e3.f0(x);
 	sort.sol(matrix(e3, ncol=1), useRe=TRUE);
 }
-e2a.f = function(x) {
-	e2.f0 = function(x) sum(x * x[c(2,3,4,1)]);
-	e2 = if(is.matrix(x)) apply(x, 1, e2.f0) else e2.f0(x);
-	sort.sol(matrix(e2, ncol=1), useRe=TRUE);
+e2a.f = function(x, sort=TRUE) {
+	e.f0 = function(x) sum(x * x[c(2,3,4,1)]);
+	e = if(is.matrix(x)) apply(x, 1, e.f0) else e.f0(x);
+	if(sort) e = sort.sol(matrix(e, ncol=1), useRe=TRUE);
+	return(e);
 }
-e3a.f = function(x, pow=c(1,2,1)) {
-	e2.f0 = function(x) sum(x^pow[1] * x[c(2,3,4,1)]^pow[2] * x[c(3,4,1,2)]^pow[3]);
-	e2 = if(is.matrix(x)) apply(x, 1, e2.f0) else e2.f0(x);
-	sort.sol(matrix(e2, ncol=1), useRe=TRUE);
+e3a.f = function(x, pow=c(1,2,1), sort=TRUE) {
+	e.f0 = function(x) sum(x^pow[1] * x[c(2,3,4,1)]^pow[2] * x[c(3,4,1,2)]^pow[3]);
+	e = if(is.matrix(x)) apply(x, 1, e.f0) else e.f0(x);
+	if(sort) e = sort.sol(matrix(e, ncol=1), useRe=TRUE);
+	return(e);
+}
+e4.f = function(x, sort=TRUE) {
+	e.f0 = function(x) prod(x);
+	e = if(is.matrix(x)) apply(x, 1, e.f0) else e.f0(x);
+	if(sort) e = sort.sol(matrix(e, ncol=1), useRe=TRUE);
+	return(e);
 }
 
 ### Solve Coefficients:
