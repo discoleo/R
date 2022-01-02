@@ -7,7 +7,7 @@
 ### Hetero-Symmetric S4: Mixed
 ### Basic Types
 ###
-### draft v.0.1p-clean6
+### draft v.0.1p-clean7
 
 
 ##############
@@ -217,6 +217,7 @@ R2*S^6 - 3*E3*S^5 + (9*E4 - 6*R2^2)*S^4 + R2*(15*E3 - 2*R1)*S^3 +
 
 ### Solver:
 coeff.S4Ht.P3 = function(R) {
+	# R2 = E2a;
 	R1 = R[1]; R2 = R[2]; E3 = R[3]; E4 = R[4];
 	coeff = c(R2, - 3*E3, 9*E4 - 6*R2^2, 15*E3*R2 - 2*R1*R2,
 		- 36*E4*R2 + 3*R1*E3 + 9*R2^3,
@@ -224,7 +225,7 @@ coeff.S4Ht.P3 = function(R) {
 		9*E3^2*R2 - 6*R1*E3*R2 + R1^2*R2);
 	return(coeff);
 }
-solve.S4Ht.P3 = function(R, sort=TRUE, debug=TRUE) {
+solve.S4HtM.P3 = function(R, sort=TRUE, debug=TRUE) {
 	coeff = coeff.S4Ht.P3(R);
 	S = roots(coeff);
 	if(debug) print(S);
@@ -253,14 +254,14 @@ solve.S4Ht.P3 = function(R, sort=TRUE, debug=TRUE) {
 ### Examples:
 
 R = c(-2,-1,2,3)
-sol = solve.S4Ht.P3(R);
+sol = solve.S4HtM.P3(R);
 
 test.S4HtMixed(sol, n=3)
 
 
 ### Ex 2:
 R = c(-2,0,3,1)
-sol = solve.S4Ht.P3(R);
+sol = solve.S4HtM.P3(R);
 
 test.S4HtMixed(sol, n=3)
 
@@ -307,6 +308,7 @@ R2^2*S^8 - 4*E3*R2*S^7 + (12*E4*R2 + 2*E3^2 - 8*R2^3)*S^6 - E3*(8*E4 - 28*R2^2)*
 
 ### Solver:
 coeff.S4Ht.P4 = function(R) {
+	# R2 = E2a;
 	R1 = R[1]; R2 = R[2]; E3 = R[3]; E4 = R[4];
 	coeff = c(R2^2, - 4*E3*R2, 12*E4*R2 + 2*E3^2 - 8*R2^3,
 		- 8*E3*E4 + 28*E3*R2^2,
@@ -318,7 +320,7 @@ coeff.S4Ht.P4 = function(R) {
 			+ R2^2*R1^2 - 4*R2^4*R1 + 4*R2^6);
 	return(coeff);
 }
-solve.S4Ht.P4 = function(R, sort=TRUE, debug=TRUE) {
+solve.S4HtM.P4 = function(R, sort=TRUE, debug=TRUE) {
 	coeff = coeff.S4Ht.P4(R);
 	S = roots(coeff);
 	if(debug) print(S);
@@ -348,7 +350,14 @@ solve.S4Ht.P4 = function(R, sort=TRUE, debug=TRUE) {
 ### Examples:
 
 R = c(-2,-1,2,3)
-sol = solve.S4Ht.P4(R);
+sol = solve.S4HtM.P4(R);
+
+test.S4HtMixed(sol, n=4)
+
+
+### Ex 2:
+R = c(-1,-1,0,3)
+sol = solve.S4HtM.P4(R);
 
 test.S4HtMixed(sol, n=4)
 
