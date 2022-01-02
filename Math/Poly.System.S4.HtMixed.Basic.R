@@ -7,7 +7,7 @@
 ### Hetero-Symmetric S4: Mixed
 ### Basic Types
 ###
-### draft v.0.1p-clean7
+### draft v.0.1p-clean8
 
 
 ##############
@@ -422,33 +422,6 @@ solve.S4HtM.Ord2.P1 = function(R, sort=TRUE, all.sol=TRUE, debug=TRUE) {
 	E2 = roots(coeff);
 	if(debug) print(E2);
 	return(solve.S4HtM.Ord2Base(R, E2, sort=sort, all.sol=all.sol));
-}
-
-solve.S4HtM.Ord2Base = function(R, E2, sort=TRUE, all.sol=TRUE) {
-	S = R[1]; E22a = R[2]; E3 = R[3]; E4 = R[4];
-	#
-	len = length(E2);
-	x1 = sapply(seq(len), function(id) roots(c(1, -S, E2[id], -E3, E4)));
-	x1 = as.vector(x1);
-	E2 = rep(E2, each=4);
-	len = length(x1);
-	# fully robust:
-	x13T1 = x1^2*(E2^2 - E22a - 2*S*E3 + 2*E4);
-	x3sq = x1^6*(x1^2 + 2*E2 - S^2) + x1^4*E22a - E4^2;
-	div  = x1^4*(2*x1^2 + 2*E2 - S^2) + x13T1;
-	x3sq = - x3sq / div;
-	x3 = (x3sq*(S - x1) + E4/x1) / (x3sq + E2 - x1*(S - x1));
-	x3 = as.vector(x3);
-	# x2, x4:
-	xs = S - x1 - x3; x24 = E4 / (x1*x3);
-	# Note: both sqrt() values are valid; (option: all.sol)
-	xd = sqrt(xs^2 - 4*x24 + 0i);
-	x2 = (xs + xd)/2; x4 = (xs - xd)/2;
-	sol = cbind(x1=x1, x2=x2, x3=x3, x4=x4);
-	if(all.sol) sol = rbind(sol, sol[, c(1,4,3,2)]); # all roots
-	#
-	if(sort) sol = sort.sol(sol, ncol=1, useRe=TRUE, mod.first=FALSE);
-	return(sol);
 }
 
 ### Examples:
