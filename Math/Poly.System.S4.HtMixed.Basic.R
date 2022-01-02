@@ -7,7 +7,7 @@
 ### Hetero-Symmetric S4: Mixed
 ### Basic Types
 ###
-### draft v.0.1q-fix
+### draft v.0.1q-std
 
 
 ##############
@@ -40,6 +40,11 @@
 ### Basic Derivations:
 # - moved to file:
 #   Poly.System.S4.HtMixed.Basic.Derivation.R;
+
+
+### Q:
+# Naming of Functions:
+# Use: E2 vs E2a, E22 vs E22a, etc ?
 
 
 ####################
@@ -76,10 +81,16 @@ E2a*E2^2 - (S*E3 + 2*E2a^2)*E2 +
 
 
 ### Solver:
-solve.S4HtM.P1 = function(R, sort=TRUE, debug=TRUE) {
+coeff.S4Ht.E2P1 = function(R) {
+	# - coefficients for E2, based on E2a;
 	S = R[1]; E2a = R[2]; E3 = R[3]; E4 = R[4];
 	coeff = c(E2a, - (S*E3 + 2*E2a^2),
 		S^2*E4 + S*E2a*E3 + E2a^3 - 4*E2a*E4 + E3^2);
+	return(coeff);
+}
+solve.S4HtM.E2P1 = function(R, sort=TRUE, debug=TRUE) {
+	S = R[1]; E2a = R[2]; E3 = R[3]; E4 = R[4];
+	coeff = coeff.S4Ht.E2P1(R);
 	E2 = roots(coeff);
 	# Note:
 	# - classic approach needs only P[2] o P[2];
@@ -100,14 +111,14 @@ solve.S4HtM.P1 = function(R, sort=TRUE, debug=TRUE) {
 ### Examples:
 
 R = c(-1,-2,3,1)
-sol = solve.S4HtM.P1(R)
+sol = solve.S4HtM.E2P1(R)
 
 test.S4HtMixed(sol, n=1)
 
 
 ### Ex 2:
 R = c(-1,-5,3,2)
-sol = solve.S4HtM.P1(R)
+sol = solve.S4HtM.E2P1(R)
 
 test.S4HtMixed(sol, n=1)
 
@@ -140,16 +151,23 @@ E2b = x1*x3 + x2*x4;
 # x1*x3*E2b - (x1*x3)^2 - R4 = 0;
 
 ### P[4]
-R2*S^4 - 2*R3*S^3 + 2*(2*R4 - 2*R2^2 - R1*R2)*S^2 +
-	+ 2*R3*(R1+2*R2)*S - 16*R2*R4 + (4*R2^3 + 4*R1*R2^2 + R1^2*R2) + 4*R3^2 # = 0
+R2*S^4 - 2*E3*S^3 + 2*(2*E4 - 2*R2^2 - R1*R2)*S^2 +
+	+ 2*E3*(R1+2*R2)*S - 16*R2*E4 + (4*R2^3 + 4*R1*R2^2 + R1^2*R2) + 4*E3^2 # = 0
 
 
 ### Solver:
-solve.S4HtM.P2 = function(R, sort=TRUE, debug=TRUE) {
+coeff.S4Ht.E2P2 = function(R) {
+	# - technically are coeffs for S^4, not for E2;
+	# - but are computed using E2a:
+	#   R2 = E2a;
+	R1 = R[1]; R2 = R[2]; E3 = R[3]; E4 = R[4];
+	coeff = c(R2, - 2*E3, 2*(2*E4 - 2*R2^2 - R1*R2),
+		2*E3*(R1+2*R2), - 16*R2*E4 + (4*R2^3 + 4*R1*R2^2 + R1^2*R2) + 4*E3^2);
+	return(coeff);
+}
+solve.S4HtM.E2P2 = function(R, sort=TRUE, debug=TRUE) {
 	R1 = R[1]; R2 = R[2]; R3 = R[3]; R4 = R[4];
-	# S^4:
-	coeff = c(R2, - 2*R3, 2*(2*R4 - 2*R2^2 - R1*R2),
-		2*R3*(R1+2*R2), - 16*R2*R4 + (4*R2^3 + 4*R1*R2^2 + R1^2*R2) + 4*R3^2);
+	coeff = coeff.S4Ht.E2P2(R);
 	S = roots(coeff);
 	if(debug) print(S);
 	#
@@ -172,22 +190,31 @@ solve.S4HtM.P2 = function(R, sort=TRUE, debug=TRUE) {
 
 ### Examples:
 
+### Ex 1:
 R = c(1,-1,2,3)
-sol = solve.S4HtM.P2(R)
+sol = solve.S4HtM.E2P2(R)
 
 test.S4HtMixed(sol)
 
 
 ### Ex 2:
 R = c(0,-2,2,1)
-sol = solve.S4HtM.P2(R)
+sol = solve.S4HtM.E2P2(R)
 
 test.S4HtMixed(sol)
 
 
 ### Ex 3:
 R = c(-1,-2,0,3)
-sol = solve.S4HtM.P2(R)
+sol = solve.S4HtM.E2P2(R)
+
+test.S4HtMixed(sol)
+
+
+### Ex 4:
+# R2 = 0;
+R = c(-1,0,5,3)
+sol = solve.S4HtM.E2P2(R)
 
 test.S4HtMixed(sol)
 
@@ -216,7 +243,7 @@ R2*S^6 - 3*E3*S^5 + (9*E4 - 6*R2^2)*S^4 + R2*(15*E3 - 2*R1)*S^3 +
 
 
 ### Solver:
-coeff.S4Ht.P3 = function(R) {
+coeff.S4Ht.E2P3 = function(R) {
 	# R2 = E2a;
 	R1 = R[1]; R2 = R[2]; E3 = R[3]; E4 = R[4];
 	coeff = c(R2, - 3*E3, 9*E4 - 6*R2^2, 15*E3*R2 - 2*R1*R2,
@@ -225,8 +252,8 @@ coeff.S4Ht.P3 = function(R) {
 		9*E3^2*R2 - 6*R1*E3*R2 + R1^2*R2);
 	return(coeff);
 }
-solve.S4HtM.P3 = function(R, sort=TRUE, debug=TRUE) {
-	coeff = coeff.S4Ht.P3(R);
+solve.S4HtM.E2P3 = function(R, sort=TRUE, debug=TRUE) {
+	coeff = coeff.S4Ht.E2P3(R);
 	S = roots(coeff);
 	if(debug) print(S);
 	hasZero = (round0(S) == 0);
@@ -254,7 +281,7 @@ solve.S4HtM.P3 = function(R, sort=TRUE, debug=TRUE) {
 ### Examples:
 
 R = c(-2,-1,2,3)
-sol = solve.S4HtM.P3(R);
+sol = solve.S4HtM.E2P3(R);
 
 test.S4HtMixed(sol, n=3)
 
@@ -262,7 +289,7 @@ test.S4HtMixed(sol, n=3)
 ### Ex 2:
 # b0 = 0
 R = c(-2,0,3,1)
-sol = solve.S4HtM.P3(R);
+sol = solve.S4HtM.E2P3(R);
 
 test.S4HtMixed(sol, n=3)
 
@@ -308,7 +335,7 @@ R2^2*S^8 - 4*E3*R2*S^7 + (12*E4*R2 + 2*E3^2 - 8*R2^3)*S^6 - E3*(8*E4 - 28*R2^2)*
 
 
 ### Solver:
-coeff.S4Ht.P4 = function(R) {
+coeff.S4Ht.E2P4 = function(R) {
 	# R2 = E2a;
 	R1 = R[1]; R2 = R[2]; E3 = R[3]; E4 = R[4];
 	coeff = c(R2^2, - 4*E3*R2, 12*E4*R2 + 2*E3^2 - 8*R2^3,
@@ -321,8 +348,8 @@ coeff.S4Ht.P4 = function(R) {
 			+ R2^2*R1^2 - 4*R2^4*R1 + 4*R2^6);
 	return(coeff);
 }
-solve.S4HtM.P4 = function(R, sort=TRUE, debug=TRUE) {
-	coeff = coeff.S4Ht.P4(R);
+solve.S4HtM.E2P4 = function(R, sort=TRUE, debug=TRUE) {
+	coeff = coeff.S4Ht.E2P4(R);
 	S = roots(coeff);
 	if(debug) print(S);
 	hasZero = (round0(S) == 0);
@@ -351,14 +378,14 @@ solve.S4HtM.P4 = function(R, sort=TRUE, debug=TRUE) {
 ### Examples:
 
 R = c(-2,-1,2,3)
-sol = solve.S4HtM.P4(R);
+sol = solve.S4HtM.E2P4(R);
 
 test.S4HtMixed(sol, n=4)
 
 
 ### Ex 2:
 R = c(-1,-1,0,3)
-sol = solve.S4HtM.P4(R);
+sol = solve.S4HtM.E2P4(R);
 
 test.S4HtMixed(sol, n=4)
 
