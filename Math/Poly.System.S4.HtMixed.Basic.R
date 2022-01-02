@@ -7,7 +7,7 @@
 ### Hetero-Symmetric S4: Mixed
 ### Basic Types
 ###
-### draft v.0.1p-clean4
+### draft v.0.1p-clean5
 
 
 ##############
@@ -76,7 +76,7 @@ E2a*E2^2 - (S*E3 + 2*E2a^2)*E2 +
 
 
 ### Solver:
-solve.S4Ht.P1 = function(R, sort=TRUE, debug=TRUE) {
+solve.S4HtM.P1 = function(R, sort=TRUE, debug=TRUE) {
 	S = R[1]; E2a = R[2]; E3 = R[3]; E4 = R[4];
 	coeff = c(E2a, - (S*E3 + 2*E2a^2),
 		S^2*E4 + S*E2a*E3 + E2a^3 - 4*E2a*E4 + E3^2);
@@ -100,14 +100,14 @@ solve.S4Ht.P1 = function(R, sort=TRUE, debug=TRUE) {
 ### Examples:
 
 R = c(-1,-2,3,1)
-sol = solve.S4Ht.P1(R)
+sol = solve.S4HtM.P1(R)
 
 test.S4HtMixed(sol, n=1)
 
 
 ### Ex 2:
 R = c(-1,-5,3,2)
-sol = solve.S4Ht.P1(R)
+sol = solve.S4HtM.P1(R)
 
 test.S4HtMixed(sol, n=1)
 
@@ -139,27 +139,13 @@ E2a = x1*x2 + x2*x3 + x3*x4 + x4*x1;
 E2b = x1*x3 + x2*x4;
 # x1*x3*E2b - (x1*x3)^2 - R4 = 0;
 
-### E3 =>
-x1*x3*(x2 + x4) + x2*x4*(x1 + x3) - R3 # = 0
-# * (x1 + x3) =>
-R2*x1*x3 + x2*x4*(x1+x3)^2 - R3*(x1+x3) # = 0
-# * x1*x3 =>
-R2*(x1*x3)^2 + R4*(x1+x3)^2 - R3*x1*x3*(x1+x3) # = 0
-
-### S2 + 2*E2b =>
-(x1+x3)^2 + (x2+x4)^2 - R1 - 2*E2b # = 0
-x1*x3*(x1+x3)^2 + x1*x3*(x2+x4)^2 - R1*x1*x3 - 2*((x1*x3)^2 + R4) # = 0
-x1*x3*(x1+x3)^4 + x1*x3*R2^2 - R1*x1*x3*(x1+x3)^2 - 2*((x1*x3)^2 + R4)*(x1+x3)^2 # = 0
-
-# TODO: derive properly the solution based on S^4;
-
 ### P[4]
 R2*S^4 - 2*R3*S^3 + 2*(2*R4 - 2*R2^2 - R1*R2)*S^2 +
 	+ 2*R3*(R1+2*R2)*S - 16*R2*R4 + (4*R2^3 + 4*R1*R2^2 + R1^2*R2) + 4*R3^2 # = 0
 
 
 ### Solver:
-solve.S4Ht.P2 = function(R, sort=TRUE, debug=TRUE) {
+solve.S4HtM.P2 = function(R, sort=TRUE, debug=TRUE) {
 	R1 = R[1]; R2 = R[2]; R3 = R[3]; R4 = R[4];
 	# S^4:
 	coeff = c(R2, - 2*R3, 2*(2*R4 - 2*R2^2 - R1*R2),
@@ -187,16 +173,40 @@ solve.S4Ht.P2 = function(R, sort=TRUE, debug=TRUE) {
 ### Examples:
 
 R = c(1,-1,2,3)
-sol = solve.S4Ht.P2(R)
+sol = solve.S4HtM.P2(R)
 
 test.S4HtMixed(sol)
 
 
 ### Ex 2:
 R = c(0,-2,2,1)
-sol = solve.S4Ht.P2(R)
+sol = solve.S4HtM.P2(R)
 
 test.S4HtMixed(sol)
+
+
+### Ex 3:
+R = c(-1,-2,0,3)
+sol = solve.S4HtM.P2(R)
+
+test.S4HtMixed(sol)
+
+
+### Derivation:
+# TODO: derive properly the solution for S^4;
+
+### [based on intermediate (x1 + x3)]
+### E3 =>
+x1*x3*(x2 + x4) + x2*x4*(x1 + x3) - R3 # = 0
+# * (x1 + x3) =>
+R2*x1*x3 + x2*x4*(x1+x3)^2 - R3*(x1+x3) # = 0
+# * x1*x3 =>
+R2*(x1*x3)^2 + R4*(x1+x3)^2 - R3*x1*x3*(x1+x3) # = 0
+
+### S2 + 2*E2b =>
+(x1+x3)^2 + (x2+x4)^2 - R1 - 2*E2b # = 0
+x1*x3*(x1+x3)^2 + x1*x3*(x2+x4)^2 - R1*x1*x3 - 2*((x1*x3)^2 + R4) # = 0
+x1*x3*(x1+x3)^4 + x1*x3*R2^2 - R1*x1*x3*(x1+x3)^2 - 2*((x1*x3)^2 + R4)*(x1+x3)^2 # = 0
 
 
 ###############
