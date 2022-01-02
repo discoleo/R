@@ -7,7 +7,7 @@
 ### Hetero-Symmetric S4: Mixed
 ### Basic Types
 ###
-### draft v.0.1p-clean10
+### draft v.0.1q-fix
 
 
 ##############
@@ -685,6 +685,7 @@ test.S4HtMixed.En3(sol, n=1, nE=c(1,2,1))
 
 
 ### Ex 4:
+# 4*E4 + E121a = 0;
 R = c(1,4,3,-1)
 sol = solve.S4HtM.E121P1(R)
 
@@ -807,6 +808,7 @@ solve.S4HtM.E121P3 = function(R, sort=TRUE, all.sol=FALSE, debug=TRUE) {
 	if(debug) print(S);
 	#
 	len = length(S);
+	E3 = R[3];
 	E2  = (S^3 + 3*E3 - R[1]) / (3*S);
 	sol = lapply(seq(len), function(id) {
 			RS = R; RS[1] = S[id];
@@ -828,7 +830,7 @@ test.S4HtMixed.En3(sol, n=3, nE=c(1,2,1))
 
 
 ### Ex 2:
-R = c(-1,-3,2,2)
+R = c(-1,-3,-2,2)
 sol = solve.S4HtM.E121P3(R)
 
 test.S4HtMixed.En3(sol, n=3, nE=c(1,2,1))
