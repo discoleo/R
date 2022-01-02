@@ -64,7 +64,7 @@ test.S4HtMixed.En3 = function(sol, R=NULL, n=2, nE=c(1,2,1)) {
 ### Solvers: Base Cases
 
 ### E22a:
-solve.S4HtM.Ord2Base = function(R, E2, sort=TRUE, all.sol=TRUE) {
+solve.S4HtM.E22Base = function(R, E2, sort=TRUE, all.sol=TRUE) {
 	S = R[1]; E22a = R[2]; E3 = R[3]; E4 = R[4];
 	#
 	len = length(E2);

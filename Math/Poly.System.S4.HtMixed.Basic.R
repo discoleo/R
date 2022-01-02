@@ -7,7 +7,7 @@
 ### Hetero-Symmetric S4: Mixed
 ### Basic Types
 ###
-### draft v.0.1p-clean8
+### draft v.0.1p-clean9
 
 
 ##############
@@ -260,6 +260,7 @@ test.S4HtMixed(sol, n=3)
 
 
 ### Ex 2:
+# b0 = 0
 R = c(-2,0,3,1)
 sol = solve.S4HtM.P3(R);
 
@@ -386,6 +387,7 @@ print.coeff(pR$Rez, "S")
 ########################
 
 ####################
+### E22a:        ###
 ### E2a: Order 2 ###
 ####################
 
@@ -412,7 +414,7 @@ E22a = (x1*x2)^2 + (x2*x3)^2 + (x3*x4)^2 + (x4*x1)^2;
 
 
 ### Solver:
-solve.S4HtM.Ord2.P1 = function(R, sort=TRUE, all.sol=TRUE, debug=TRUE) {
+solve.S4HtM.E22P1 = function(R, sort=TRUE, all.sol=TRUE, debug=TRUE) {
 	S = R[1]; E22a = R[2]; E3 = R[3]; E4 = R[4];
 	coeff = c((4*E4 - E22a),   - 2*(E3^2 + S^2*E4),
 		(4*(S*E3 - 2*E4)*E22a - 8*S*E3*E4 + S^2*E3^2 + 2*E22a^2),
@@ -421,20 +423,20 @@ solve.S4HtM.Ord2.P1 = function(R, sort=TRUE, all.sol=TRUE, debug=TRUE) {
 			+ 8*S*E22a*E3*E4 - 4*S*E22a^2*E3 - 5*S^2*E22a*E3^2);
 	E2 = roots(coeff);
 	if(debug) print(E2);
-	return(solve.S4HtM.Ord2Base(R, E2, sort=sort, all.sol=all.sol));
+	return(solve.S4HtM.E22Base(R, E2, sort=sort, all.sol=all.sol));
 }
 
 ### Examples:
 
 R = c(1,-1,2,1)
-sol = solve.S4HtM.Ord2.P1(R)
+sol = solve.S4HtM.E22P1(R)
 
 test.S4HtMixed(sol, n=1, nE2=2)
 
 
 ### Ex 2:
 R = c(-2,-3,2,-1)
-sol = solve.S4HtM.Ord2.P1(R)
+sol = solve.S4HtM.E22P1(R)
 
 test.S4HtMixed(sol, n=1, nE2=2)
 
@@ -462,7 +464,7 @@ E22a = (x1*x2)^2 + (x2*x3)^2 + (x3*x4)^2 + (x4*x1)^2;
 
 
 ### Solver
-coeff.S4Ht.Ord2P2 = function(R) {
+coeff.S4Ht.E22P2 = function(R) {
 	R1 = R[1]; E22a = R[2]; E3 = R[3]; E4 = R[4];
 	coeff = c(E22a, 0, 4*R1*E4 - 4*R1*E22a, - 16*E3*E22a,
 		16*E4^2 - 12*R1^2*E4 + 16*E22a*E4 - 4*R1*E3^2 + 6*R1^2*E22a - 8*E22a^2,
@@ -473,8 +475,8 @@ coeff.S4Ht.Ord2P2 = function(R) {
 			+ R1^4*E22a - 8*R1^2*E22a^2 + 16*E22a^3);
 	return(coeff);
 }
-solve.S4HtM.Ord2P2 = function(R, sort=TRUE, all.sol=FALSE, debug=TRUE) {
-	coeff = coeff.S4Ht.Ord2P2(R);
+solve.S4HtM.E22P2 = function(R, sort=TRUE, all.sol=FALSE, debug=TRUE) {
+	coeff = coeff.S4Ht.E22P2(R);
 	S = roots(coeff);
 	if(debug) print(S);
 	len = length(S);
@@ -483,7 +485,7 @@ solve.S4HtM.Ord2P2 = function(R, sort=TRUE, all.sol=FALSE, debug=TRUE) {
 	sol = lapply(seq(len), function(id) {
 		RS = R;
 		RS[1] = S[id];
-		solve.S4HtM.Ord2Base(RS, E2[id], sort=sort, all.sol=all.sol)
+		solve.S4HtM.E22Base(RS, E2[id], sort=sort, all.sol=all.sol)
 	})
 	sol = do.call(rbind, sol);
 	if(sort) sol = sort.sol(sol, ncol=1, useRe=TRUE, mod.first=FALSE);
@@ -494,14 +496,14 @@ solve.S4HtM.Ord2P2 = function(R, sort=TRUE, all.sol=FALSE, debug=TRUE) {
 
 ### Ex 1:
 R = c(3,-1,2,1)
-sol = solve.S4HtM.Ord2P2(R)
+sol = solve.S4HtM.E22P2(R)
 
 test.S4HtMixed(sol, n=2, nE2=2)
 
 
 ### Ex 2:
 R = c(-3,2,2,-1)
-sol = solve.S4HtM.Ord2P2(R)
+sol = solve.S4HtM.E22P2(R)
 
 test.S4HtMixed(sol, n=2, nE2=2)
 
@@ -510,7 +512,7 @@ test.S4HtMixed(sol, n=2, nE2=2)
 # E22a = 0: only 6*4 = 24 solutions;
 # (*2 with all=T);
 R = c(-3,0,1,2)
-sol = solve.S4HtM.Ord2P2(R)
+sol = solve.S4HtM.E22P2(R)
 
 test.S4HtMixed(sol, n=2, nE2=2)
 
