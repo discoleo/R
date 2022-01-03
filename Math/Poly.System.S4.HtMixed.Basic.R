@@ -7,7 +7,7 @@
 ### Hetero-Symmetric S4: Mixed
 ### Basic Types
 ###
-### draft v.0.1r
+### draft v.0.2a
 
 
 ##############
@@ -47,23 +47,15 @@
 # Use: E2 vs E2a, E22 vs E22a, etc ?
 
 
-### Equations:
-
-### Other:
-E3^2 - E121a*(E2 - E2a) + E4*S^2 - 4*E2*E4 # = 0
-#
-E222 - E121a*(E2 - E2a) + E4*(S^2 - 2*E2) # = 0
-# Epoly.gen(2, v=4, e=3)
-E222 - E3^2 + 2*E2*E4 # = 0
-
-
-
 ####################
 ####################
 
 ### Helper Functions
 
 source("Poly.System.S4.HtMixed.Basic.Helper.R")
+
+### Elementary Polynomials:
+# source("Polynomials.Helper.EP.R")
 
 # - Helper functions & Base-Solvers:
 #   moved to file:
@@ -72,6 +64,18 @@ source("Poly.System.S4.HtMixed.Basic.Helper.R")
 
 ###############
 ###############
+
+### Equations:
+
+### Other:
+E3^2 - E121a*(E2 - E2a) + E4*S^2 - 4*E2*E4 # = 0
+# Derivation:
+E222 - E121a*(E2 - E2a) + E4*(S^2 - 2*E2) # = 0
+# Epoly.gen(2, v=4, e=3)
+E222 - E3^2 + 2*E2*E4 # = 0
+
+#####################
+#####################
 
 ###############
 ### Order 1 ###
@@ -891,4 +895,114 @@ print.pm(pR, lead="S")
 ########################
 ########################
 
+####################
+### Type: E212a  ###
+####################
 
+###############
+### Order 1 ###
+###############
+
+x1 + x2 + x3 + x4 - R1 # = 0
+x1^2*x2*x3^2 + x2^2*x3*x4^2 + x3^2*x4*x1^2 + x4^2*x1*x2^2 - R2 # = 0
+x1*x2*x3 + x1*x2*x4 + x1*x3*x4 + x2*x3*x4 - R3 # = 0
+x1*x2*x3*x4 - R4 # = 0
+
+### Solution:
+
+### Eq: for E2
+E3*((E4*S + E212a)^2 - 4*E4*E3^2)*E2 +
+	- S^3*E4^3 + E3^5 - S*E3^3*E212a + 4*S*E4^2*E3^2 - 3*S^2*E4^2*E212a +
+		+ 4*E4*E3^2*E212a - 3*S*E4*E212a^2 - E212a^3 # = 0
+
+### Solver:
+coeff.S4HtM.E212P1 = function(R) {
+	# coefficients for E2;
+	S = R[1]; E212a = R[2]; E3 = R[3]; E4 = R[4];
+	coeff = c(E3*((E4*S + E212a)^2 - 4*E4*E3^2),
+		- S^3*E4^3 + E3^5 - S*E3^3*E212a + 4*S*E4^2*E3^2 - 3*S^2*E4^2*E212a +
+			+ 4*E4*E3^2*E212a - 3*S*E4*E212a^2 - E212a^3);
+	return(coeff);
+}
+solve.S4HtM.E212P1 = function(R, sort=TRUE, all.sol=FALSE, debug=TRUE) {
+	coeff = coeff.S4HtM.E212P1(R);
+	if(coeff[1] == 0) stop("No solution!");
+	E2 = - coeff[2] / coeff[1];
+	if(debug) print(E2);
+	#
+	S = R[1]; E212a = R[2]; E3 = R[3]; E4 = R[4];
+	E2b = (E212a + E4*S) / E3;
+	E2a = E2 - E2b;
+	# robust based on (x1 + x3):
+	xs  = roots(c(1, -S, E2a));
+	x13 = (E3 - E2b*xs) / (S - 2*xs);
+	xd = sqrt(xs^2 - 4*x13 + 0i);
+	x1 = (xs + xd)/2; x3 = (xs - xd)/2;
+	x24 = E2b - x13; xs = S - xs;
+	xd = sqrt(xs^2 - 4*x24 + 0i);
+	x2 = (xs + xd)/2; x4 = (xs - xd)/2;
+	sol = cbind(x1=x1, x2=x2, x3=x3, x4=x4);
+	# TODO: all.sol + permutations;
+	return(sol)
+}
+
+### Examples:
+
+### Ex 1:
+R = c(3,-1,2,1)
+sol = solve.S4HtM.E212P1(R)
+
+test.S4HtMixed.En3(sol, n=1, nE=c(2,1,2))
+
+
+### Ex 2:
+R = c(5,2,3,-1)
+sol = solve.S4HtM.E212P1(R)
+
+test.S4HtMixed.En3(sol, n=1, nE=c(2,1,2))
+
+
+###############
+### Derivation:
+E212a - E3*E2b + E4*S # = 0
+# =>
+E212a - E3*E2 + E3*E2a + E4*S # = 0
+
+p1 = polyE2a()
+p2 = toPoly.pm("E212a - E3*E2 + E3*E2a + E4*S")
+pR = solve.pm(p2, p1, "E2a")
+str(pR)
+pR = pR$Rez; pR$coeff = - pR$coeff;
+pR = sort.pm(pR, "E2")
+print.pm(pR, lead="E2")
+
+
+########################
+########################
+########################
+
+###################
+### Type: E21a  ###
+###################
+
+###############
+### Order 1 ###
+###############
+
+x1 + x2 + x3 + x4 - R1 # = 0
+x1^2*x2 + x2^2*x3 + x3^2*x4 + x4^2*x1 - R2 # = 0
+x1*x2*x3 + x1*x2*x4 + x1*x3*x4 + x2*x3*x4 - R3 # = 0
+x1*x2*x3*x4 - R4 # = 0
+
+### Solution:
+
+# TODO: complicated;
+
+
+### Derivation:
+
+E21b - (E2 - E2a)*S + E3 # = 0
+# ???
+# Epoly.distinct(c(2,1), v=4)
+E21 - S*E2 + 3*E3 = 0
+ 

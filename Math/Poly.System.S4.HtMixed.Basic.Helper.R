@@ -145,8 +145,8 @@ e3.f = function(x) {
 	e3 = if(is.matrix(x)) apply(x, 1, e3.f0) else e3.f0(x);
 	sort.sol(matrix(e3, ncol=1), useRe=TRUE);
 }
-e2a.f = function(x, sort=TRUE) {
-	e.f0 = function(x) sum(x * x[c(2,3,4,1)]);
+e2a.f = function(x, pow=c(1,1), sort=TRUE) {
+	e.f0 = function(x) sum(x^pow[[1]] * x[c(2,3,4,1)]^pow[[2]]);
 	e = if(is.matrix(x)) apply(x, 1, e.f0) else e.f0(x);
 	if(sort) e = sort.sol(matrix(e, ncol=1), useRe=TRUE);
 	return(e);
@@ -238,11 +238,12 @@ which.coeff.gen = function(FUN) {
 ### Formulas
 
 ### Simple: E2a
-polyE2Ord1 = function() {
+polyE2a = function() {
 	p = toPoly.pm("E2a*E2^2 - (S*E3 + 2*E2a^2)*E2 +
 		+ S^2*E4 + S*E2a*E3 + E2a^3 - 4*E2a*E4 + E3^2");
 	return(p);
 }
+polyE2Ord1 = polyE2a;
 polyE2Ord2 = function() {
 	p = toPoly.pm("(4*E4 - E22a)*E2^4 - 2*(E3^2 + S^2*E4)*E2^3 +
 	+ (4*(S*E3 - 2*E4)*E22a - 8*S*E3*E4 + S^2*E3^2 + 2*E22a^2)*E2^2 +
