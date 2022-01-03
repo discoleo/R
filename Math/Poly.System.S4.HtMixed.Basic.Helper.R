@@ -259,3 +259,11 @@ polyE2_E121P1 = function() {
 		+ S^4*E4^2 + S*E121a^2*E3 - E121a^3 + E3^4 - 4*E121a^2*E4 + 2*S^2*E3^2*E4");
 	return(p);
 }
+
+### Type: E212a
+polyE2_E212P1 = function() {
+	p = toPoly.pm("E3*((E4*S + E212a)^2 - 4*E4*E3^2)*E2 +
+		+ E3^5 - E3^3*E212a*S + 4*E4*E3^2*(E4*S + E212a) - (E4*S + E212a)^3");
+	return(p);
+}
+
