@@ -7,7 +7,7 @@
 ### Hetero-Symmetric S4: Mixed
 ### Basic Types
 ###
-### draft v.0.2a
+### draft v.0.2a-opt
 
 
 ##############
@@ -942,7 +942,9 @@ solve.S4HtM.E212P1 = function(R, sort=TRUE, all.sol=FALSE, debug=TRUE) {
 	xd = sqrt(xs^2 - 4*x24 + 0i);
 	x2 = (xs + xd)/2; x4 = (xs - xd)/2;
 	sol = cbind(x1=x1, x2=x2, x3=x3, x4=x4);
-	# TODO: all.sol + permutations;
+	# TODO: cyclic permutations;
+	if(all.sol) sol = rbind(sol, sol[, c(1,4,3,2)]);
+	if(sort) sol = sort.sol(sol, ncol=1, useRe=TRUE, mod.first=FALSE);
 	return(sol)
 }
 
@@ -1001,7 +1003,7 @@ x1*x2*x3*x4 - R4 # = 0
 
 ### Derivation:
 
-E21b - (E2 - E2a)*S + E3 # = 0
+E21b + E12b - (E2 - E2a)*S + E3 # = 0
 # ???
 # Epoly.distinct(c(2,1), v=4)
 E21 - S*E2 + 3*E3 = 0
