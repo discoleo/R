@@ -1051,7 +1051,11 @@ solve.lpm = function(..., xn) {
 		idS = id + 2;
 		if(idS > len) next;
 		for(id2 in seq(idS, len)) {
-			pL[[id2]] = replace.fr.pm(pL[[id2]], tmp$x0, tmp$div, xn=xn[[id2-2]]);
+			if(is.na(match(xn[[id2 - 2]], names(pL[[id2]])))) {
+				warning(paste0("Missing Variable: ", xn[[id2 - 2]]));
+				next;
+			}
+			pL[[id2]] = replace.fr.pm(pL[[id2]], tmp$x0, tmp$div, xn=xn[[id2 - 2]]);
 		}
 	}
 	return(pR);
