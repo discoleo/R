@@ -6,7 +6,7 @@
 ### Polynomial Systems: S4
 ### Mixed Heterogeneous Symmetric
 ###
-### draft v.0.1b-Eq3comp
+### draft v.0.1c
 
 
 ###############
@@ -57,7 +57,11 @@ library(pracma)
 
 ### Solution:
 
-### Special Case:
+### Symmetries:
+# - if (x1, x2, y1, y2) is a solution,
+#   then (x2, x1, y2, y1) is also a solution;
+
+### Special Cases:
 # x1 = x2; y1 = y2;
 x^2 + y^2 - R1 # = 0
 (a2 + a3 + 1)*x*y - R2 # = 0
@@ -104,6 +108,20 @@ x1^2 + y1^2 # - R[1]
 x2^2 + y2^2 # - R[1]
 x1*y1 + a[1]*x1*y2 + a[2]*x2*y1 # - R[2]
 x2*y2 + a[1]*x2*y1 + a[2]*x1*y2 # - R[2]
+
+
+### Derivation:
+p1 = toPoly.pm("x1^2 + y1^2 - R1")
+p2 = toPoly.pm("x2^2 + y2^2 - R1")
+p3 = toPoly.pm("x1*y1 + a2*x1*y2 + a3*x2*y1 - R2")
+p4 = toPoly.pm("x2*y2 + a2*x2*y1 + a3*x1*y2 - R2")
+pDiv = toPoly.pm("(a2+a3+1)^2*x1^4 - R1*(a2+a3+1)^2*x1^2 + R2^2")
+# TODO: (overflows, size = ???)
+pR = solve.lpm(p3, p4, p1, p2, xn=c("y1", "y2", "x2"))
+length(pR)
+str(pR[[3]])
+# TODO:
+pR2 = div.pm(pR[[3]]$Rez, pDiv, by="R2")
 
 
 ######################
