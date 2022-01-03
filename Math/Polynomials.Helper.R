@@ -194,6 +194,7 @@ dimnames.pm = function(p) {
 
 ### Leading Monomials
 top.pm = function(p, xn="x", exclude=FALSE) {
+	# exclude = exclude variable xn;
 	if(nrow(p) == 0) return(data.frame(coeff=numeric(0)));
 	# check names:
 	idn = if(is.numeric(xn)) xn else match(xn, names(p));
@@ -1044,23 +1045,25 @@ solve.lpm = function(..., xn) {
 	#
 	pR = list();
 	for(id in seq(len - 1)) {
-		print(paste0("Starting step: ", id));
+		cat(paste0("\nStarting step: ", id, "\n"));
 		tmp = solve.pm(pL[[id]], pL[[id+1]], xn=xn[[id]]);
 		pR[[id]] = tmp;
 		pL[[id+1]] = tmp$Rez;
 		idS = id + 2;
 		if(idS > len) next;
 		for(id2 in seq(idS, len)) {
-			if(is.na(match(xn[[id2 - 2]], names(pL[[id2]])))) {
-				warning(paste0("Missing Variable: ", xn[[id2 - 2]]));
+			if(is.na(match(xn[[id]], names(pL[[id2]])))) {
+				warning(paste0("Missing Variable: ", xn[[id]], "; step = ", id));
 				next;
 			}
-			pL[[id2]] = replace.fr.pm(pL[[id2]], tmp$x0, tmp$div, xn=xn[[id2 - 2]]);
+			pL[[id2]] = replace.fr.pm(pL[[id2]], tmp$x0, tmp$div, xn=xn[[id]]);
 		}
 	}
 	return(pR);
 }
 solve.pm = function(p1, p2, xn, stop.at=NULL, simplify=TRUE, asBigNum=FALSE) {
+	if(missing(xn)) stop("Missing variable name!");
+	if(is.pm(xn)) stop("Invalid variables: Did you mean to use solve.lpm()?");
 	max1 = max(p1[,xn]); max2 = max(p2[,xn]);
 	if(max1 == 0) stop("No variable!")
 	if(max2 == 0) stop("No variable!")
