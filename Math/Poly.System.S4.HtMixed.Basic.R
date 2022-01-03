@@ -912,8 +912,8 @@ x1*x2*x3*x4 - R4 # = 0
 
 ### Eq: for E2
 E3*((E4*S + E212a)^2 - 4*E4*E3^2)*E2 +
-	- S^3*E4^3 + E3^5 - S*E3^3*E212a + 4*S*E4^2*E3^2 - 3*S^2*E4^2*E212a +
-		+ 4*E4*E3^2*E212a - 3*S*E4*E212a^2 - E212a^3 # = 0
+	+ E3^5 - E3^3*E212a*S + 4*E4*E3^2*(E4*S + E212a) +
+	- (E4*S + E212a)^3 # = 0
 
 ### Solver:
 coeff.S4HtM.E212P1 = function(R) {
@@ -929,13 +929,18 @@ solve.S4HtM.E212P1 = function(R, sort=TRUE, all.sol=FALSE, debug=TRUE) {
 	if(coeff[1] == 0) stop("No solution!");
 	E2 = - coeff[2] / coeff[1];
 	if(debug) print(E2);
-	#
-	S = R[1]; E212a = R[2]; E3 = R[3]; E4 = R[4];
+	S = R[1];
+	return(solve.S4HtM.E212Base(R, S, E2, sort=sort, all.sol=all.sol))
+}
+solve.S4HtM.E212Base = function(R, S, E2, sort=TRUE, all.sol=FALSE) {
+	E212a = R[2]; E3 = R[3]; E4 = R[4];
 	E2b = (E212a + E4*S) / E3;
 	E2a = E2 - E2b;
 	# robust based on (x1 + x3):
 	xs  = roots(c(1, -S, E2a));
 	x13 = (E3 - E2b*xs) / (S - 2*xs);
+	# Note: xd = - sqrt() is automatically included
+	# in the cyclic permutation (x3, x4, x1, x2);
 	xd = sqrt(xs^2 - 4*x13 + 0i);
 	x1 = (xs + xd)/2; x3 = (xs - xd)/2;
 	x24 = E2b - x13; xs = S - xs;
@@ -977,6 +982,77 @@ str(pR)
 pR = pR$Rez; pR$coeff = - pR$coeff;
 pR = sort.pm(pR, "E2")
 print.pm(pR, lead="E2")
+
+
+###############
+###############
+
+###############
+### Order 2 ###
+###############
+
+x1^2 + x2^2 + x3^2 + x4^2 - R1 # = 0
+x1^2*x2*x3^2 + x2^2*x3*x4^2 + x3^2*x4*x1^2 + x4^2*x1*x2^2 - R2 # = 0
+x1*x2*x3 + x1*x2*x4 + x1*x3*x4 + x2*x3*x4 - R3 # = 0
+x1*x2*x3*x4 - R4 # = 0
+
+### Solution:
+
+### Eq S:
+E4^2*E3*S^4 + 2*E4*(E212a*E3 - E4^2)*S^3 - (4*E4*E3^3 + R1*E4^2*E3 - E212a^2*E3 + 6*E212a*E4^2)*S^2 +
+	- 2*(E212a*E3^3 - 4*E4^2*E3^2 + R1*E212a*E4*E3 + 3*E212a^2*E4)*S +
+	+ 2*E3^5 + 4*R1*E4*E3^3 + 8*E212a*E4*E3^2 - R1*E212a^2*E3 - 2*E212a^3 # = 0
+
+
+### Solver:
+coeff.S4HtM.E212P2 = function(R) {
+	# coefficients for S;
+	R1 = R[1]; E212a = R[2]; E3 = R[3]; E4 = R[4];
+	coeff = c(E4^2*E3, 2*E4*(E212a*E3 - E4^2),
+		- (4*E4*E3^3 + R1*E4^2*E3 - E212a^2*E3 + 6*E212a*E4^2),
+		- 2*(E212a*E3^3 - 4*E4^2*E3^2 + R1*E212a*E4*E3 + 3*E212a^2*E4),
+		2*E3^5 + 4*R1*E4*E3^3 + 8*E212a*E4*E3^2 - R1*E212a^2*E3 - 2*E212a^3);
+	return(coeff);
+}
+solve.S4HtM.E212P2 = function(R, sort=TRUE, all.sol=FALSE, debug=TRUE) {
+	coeff = coeff.S4HtM.E212P2(R);
+	S = roots(coeff);
+	if(debug) print(S);
+	#
+	len = length(S);
+	E2 = (S^2 - R[1]) / 2;
+	sol = lapply(seq(len), function(id) {
+		solve.S4HtM.E212Base(R, S[id], E2[id], sort=sort, all.sol=all.sol)
+	})
+	sol = do.call(rbind, sol);
+	if(sort) sol = sort.sol(sol, ncol=1, useRe=TRUE, mod.first=FALSE);
+	return(sol)
+}
+
+### Examples:
+
+### Ex 1:
+R = c(3,-1,2,1)
+sol = solve.S4HtM.E212P2(R)
+
+test.S4HtMixed.En3(sol, n=2, nE=c(2,1,2))
+
+
+### Ex 2:
+R = c(5,2,3,-1)
+sol = solve.S4HtM.E212P2(R)
+
+test.S4HtMixed.En3(sol, n=2, nE=c(2,1,2))
+
+
+### Derivation:
+
+p1 = toPoly.pm("S^2 - 2*E2 - R1");
+p2 = polyE2_E212P1();
+pR = solve.pm(p1, p2, "E2")
+pR = pR$Rez;
+pR = sort.pm(pR, c("S", "E3", "E4"), sort.coeff=10:12)
+print.pm(pR, lead="S")
 
 
 ########################
