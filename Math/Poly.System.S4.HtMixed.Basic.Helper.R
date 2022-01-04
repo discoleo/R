@@ -89,6 +89,8 @@ permCyclic = function(sol) {
 	return(m);
 }
 
+#########
+
 ### E22a:
 solve.S4HtM.E22Base = function(R, E2, sort=TRUE, all.sol=TRUE) {
 	S = R[1]; E22a = R[2]; E3 = R[3]; E4 = R[4];
@@ -138,6 +140,7 @@ solve.S4HtM.E121Base = function(R, E2, sort=TRUE, all.sol=FALSE) {
 	return(sol);
 }
 solve.x3.S4HtM.E121P1 = function(R, E2, x1) {
+	# used to compute x3 in the Base-solver;
 	S = R[1]; E121 = R[2]; E3 = R[3]; R4 = R[4]; # E4
 	E2d = E2 - x1*(S-x1);
 	x0 = x1^2*R4^2*S^2 - 4*x1^3*R4^2*S - x1^3*R4*E121*S + 4*x1^4*R4^2 + 4*R4^3 +
@@ -148,6 +151,33 @@ solve.x3.S4HtM.E121P1 = function(R, E2, x1) {
 	if(round0(div) == 0) warning("Div by 0!");
 	return(x0 / div);
 }
+
+### E212a:
+solve.S4HtM.E212Base = function(R, S, E2, sort=TRUE, all.sol=FALSE) {
+	E212a = R[2]; E3 = R[3]; E4 = R[4];
+	E2b = (E212a + E4*S) / E3;
+	E2a = E2 - E2b;
+	# robust based on (x1 + x3):
+	xs  = roots(c(1, -S, E2a));
+	x13 = (E3 - E2b*xs) / (S - 2*xs);
+	# Note: xd = - sqrt() is automatically included
+	# in the cyclic permutation (x3, x4, x1, x2);
+	xd = sqrt(xs^2 - 4*x13 + 0i);
+	x1 = (xs + xd)/2; x3 = (xs - xd)/2;
+	x24 = E2b - x13; xs = S - xs;
+	xd = sqrt(xs^2 - 4*x24 + 0i);
+	x2 = (xs + xd)/2; x4 = (xs - xd)/2;
+	sol = cbind(x1=x1, x2=x2, x3=x3, x4=x4);
+	# cyclic permutations: explicit for this method;
+	sol = permCyclic(sol);
+	# Base case: already contains all solutions;
+	# TODO: Remove the (x1, x4, x3, x2) set?
+	# if(all.sol) sol = rbind(sol, sol[, c(1,4,3,2)]);
+	if(sort) sol = sort.sol(sol, ncol=1, useRe=TRUE, mod.first=FALSE);
+	return(sol)
+}
+
+##############
 
 ### Compute E2
 
