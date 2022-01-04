@@ -155,6 +155,10 @@ solve.x3.S4HtM.E121P1 = function(R, E2, x1) {
 ### E212a:
 solve.S4HtM.E212Base = function(R, S, E2, sort=TRUE, all.sol=FALSE) {
 	E212a = R[2]; E3 = R[3]; E4 = R[4];
+	if(E3 == 0) {
+		stop("Not yet implemented: E3 = 0!");
+		# TODO
+	}
 	E2b = (E212a + E4*S) / E3;
 	E2a = E2 - E2b;
 	# robust based on (x1 + x3):

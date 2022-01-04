@@ -1038,6 +1038,93 @@ pR = sort.pm(pR, c("S", "E3", "E4"), sort.coeff=10:12)
 print.pm(pR, lead="S")
 
 
+###############
+###############
+
+###############
+### Order 3 ###
+###############
+
+n = 3
+x1^n + x2^n + x3^n + x4^n - R1 # = 0
+x1^2*x2*x3^2 + x2^2*x3*x4^2 + x3^2*x4*x1^2 + x4^2*x1*x2^2 - R2 # = 0
+x1*x2*x3 + x1*x2*x4 + x1*x3*x4 + x2*x3*x4 - R3 # = 0
+x1*x2*x3*x4 - R4 # = 0
+
+### Solution:
+
+### Eq S: P[5]
+# - see coeffs;
+
+
+### Solver:
+coeff.S4HtM.E212P3 = function(R) {
+	# coefficients for S;
+	R1 = R[1]; E212a = R[2]; E3 = R[3]; E4 = R[4];
+	coeff = c(E3*E4^2,  2*E3*E212a*E4 - 3*E4^3,
+		- 4*E3^3*E4 + E3*E212a^2 - 9*E212a*E4^2,
+		- 3*E3^3*E212a + 15*E3^2*E4^2 - R1*E3*E4^2 - 9*E212a^2*E4,
+		3*E3^5 + 18*E3^2*E212a*E4 - 2*R1*E3*E212a*E4 - 3*E212a^3,
+		- 12*E3^4*E4 + 4*R1*E3^3*E4 + 3*E3^2*E212a^2 - R1*E3*E212a^2);
+	return(coeff);
+}
+solve.S4HtM.E212P3 = function(R, sort=TRUE, all.sol=FALSE, debug=TRUE) {
+	coeff = coeff.S4HtM.E212P3(R);
+	S = roots(coeff);
+	if(debug) print(S);
+	#
+	len = length(S);
+	E3 = R[3];
+	isZero = (round0(S) == 0);
+	if(any(isZero)) {
+		warning("Excluding S = 0"); # TODO
+		S = S[ ! isZero];
+	}
+	E2 = (S^3 + 3*E3 - R[1]) / (3*S);
+	sol = lapply(seq(len), function(id) {
+		solve.S4HtM.E212Base(R, S[id], E2[id], sort=sort, all.sol=all.sol)
+	})
+	sol = do.call(rbind, sol);
+	if(sort) sol = sort.sol(sol, ncol=1, useRe=TRUE, mod.first=FALSE);
+	return(sol)
+}
+
+### Examples:
+
+### Ex 1:
+R = c(3,-1,2,1)
+sol = solve.S4HtM.E212P3(R)
+
+test.S4HtMixed.En3(sol, n=3, nE=c(2,1,2))
+
+
+### Ex 2:
+R = c(5,2,3,-1)
+sol = solve.S4HtM.E212P3(R)
+
+test.S4HtMixed.En3(sol, n=3, nE=c(2,1,2))
+
+
+### Ex 3:
+# E3 = 0 => S^4
+# TODO:
+R = c(2,3,0,-4)
+sol = solve.S4HtM.E212P3(R)
+
+test.S4HtMixed.En3(sol, n=3, nE=c(2,1,2))
+
+
+### Derivation:
+
+p1 = toPoly.pm("S^3 - 3*E2*S + 3*E3 - R1");
+p2 = polyE2_E212P1();
+pR = solve.pm(p1, p2, "E2")
+pR = pR$Rez;
+pR = sort.pm(pR, c("S", "E3", "E4"), sort.coeff=10:12)
+print.pm(pR, lead="S")
+print.coeff(pR, "S")
+
+
 ########################
 ########################
 ########################
