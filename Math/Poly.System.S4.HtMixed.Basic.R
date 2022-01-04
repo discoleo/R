@@ -7,7 +7,7 @@
 ### Hetero-Symmetric S4: Mixed
 ### Basic Types
 ###
-### draft v.0.2c
+### draft v.0.2c-Cases
 
 
 ##############
@@ -1073,13 +1073,14 @@ solve.S4HtM.E212P3 = function(R, sort=TRUE, all.sol=FALSE, debug=TRUE) {
 	S = roots(coeff);
 	if(debug) print(S);
 	#
-	len = length(S);
 	E3 = R[3];
 	isZero = (round0(S) == 0);
 	if(any(isZero)) {
-		warning("Excluding S = 0"); # TODO
+		warning("Some values S = 0");
 		S = S[ ! isZero];
+		# TODO
 	}
+	len = length(S);
 	E2 = (S^3 + 3*E3 - R[1]) / (3*S);
 	sol = lapply(seq(len), function(id) {
 		solve.S4HtM.E212Base(R, S[id], E2[id], sort=sort, all.sol=all.sol)
@@ -1109,6 +1110,16 @@ test.S4HtMixed.En3(sol, n=3, nE=c(2,1,2))
 # E3 = 0 => S^4
 # TODO:
 R = c(2,3,0,-4)
+sol = solve.S4HtM.E212P3(R)
+
+test.S4HtMixed.En3(sol, n=3, nE=c(2,1,2))
+
+
+### Ex 4:
+# S == 0
+# E4 = E212a^2 / (4*E3^2);
+R = c(3,4,-1, NA)
+R[4] = R[2]^2 / (4*R[3]^2);
 sol = solve.S4HtM.E212P3(R)
 
 test.S4HtMixed.En3(sol, n=3, nE=c(2,1,2))
