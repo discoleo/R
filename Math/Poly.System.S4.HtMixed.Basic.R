@@ -7,7 +7,7 @@
 ### Hetero-Symmetric S4: Mixed
 ### Basic Types
 ###
-### draft v.0.2a-opt
+### draft v.0.2b-full
 
 
 ##############
@@ -947,8 +947,11 @@ solve.S4HtM.E212Base = function(R, S, E2, sort=TRUE, all.sol=FALSE) {
 	xd = sqrt(xs^2 - 4*x24 + 0i);
 	x2 = (xs + xd)/2; x4 = (xs - xd)/2;
 	sol = cbind(x1=x1, x2=x2, x3=x3, x4=x4);
-	# TODO: cyclic permutations;
-	if(all.sol) sol = rbind(sol, sol[, c(1,4,3,2)]);
+	# cyclic permutations: explicit for this method;
+	sol = permCyclic(sol);
+	# Base case: already contains all solutions;
+	# TODO: Remove the (x1, x4, x3, x2) set?
+	# if(all.sol) sol = rbind(sol, sol[, c(1,4,3,2)]);
 	if(sort) sol = sort.sol(sol, ncol=1, useRe=TRUE, mod.first=FALSE);
 	return(sol)
 }
@@ -1043,6 +1046,9 @@ R = c(5,2,3,-1)
 sol = solve.S4HtM.E212P2(R)
 
 test.S4HtMixed.En3(sol, n=2, nE=c(2,1,2))
+
+### [filter: all 32 solutions]
+round0(poly.calc(sol[seq(1, 32, by=2), 1]) * 9)
 
 
 ### Derivation:

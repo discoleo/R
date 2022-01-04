@@ -63,6 +63,32 @@ test.S4HtMixed.En3 = function(sol, R=NULL, n=2, nE=c(1,2,1)) {
 
 ### Solvers: Base Cases
 
+permCyclic = function(sol) {
+	if(is.matrix(sol)) {
+		len = ncol(sol);
+		if(len == 1) return(sol);
+		nms = colnames(sol);
+		nr  = nrow(sol);
+		m   = matrix(0, ncol=len, nrow=len*nr);
+		m[, 1] = as.vector(sol);
+		for(nc in seq(2, len)) {
+			sol = cbind(sol[, -1], sol[, 1]);
+			m[, nc] = as.vector(sol);
+		}
+	} else {
+		len = length(sol);
+		nms = names(sol);
+		if(len == 1) return(matrix(sol, dimnames=list(NULL, nms)));
+		m = matrix(0, ncol=len, nrow=len);
+		m[, 1] = sol;
+		for(nc in seq(2, len)) {
+			m[, nc] = c(tail(sol, 1 - nc), head(sol, nc - 1));
+		}
+	}
+	if( ! is.null(nms)) colnames(m) = nms;
+	return(m);
+}
+
 ### E22a:
 solve.S4HtM.E22Base = function(R, E2, sort=TRUE, all.sol=TRUE) {
 	S = R[1]; E22a = R[2]; E3 = R[3]; E4 = R[4];
