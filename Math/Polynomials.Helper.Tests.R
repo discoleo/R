@@ -29,8 +29,10 @@ checkCoeff.pm = function(p, val, pow=1, xn="x") {
 	if(is.na(val)) {
 		if(length(coeff) >= 1) stop("Wrong number of Monoms!");
 	} else {
-		if(length(coeff) != 1) stop("Wrong number of Monoms!");
-		if(coeff != val) stop("Wrong value!");
+		if(length(coeff) == 0) {
+			if(val != 0) stop("Missing Monom!");
+		} else if(length(coeff) > 1) { stop("Wrong number of Monoms!"); }
+		else if(coeff != val) stop("Wrong value!");
 	}
 	cat("Coeff: Success!\n");
 	invisible(TRUE);
@@ -416,6 +418,7 @@ cat("\n### Section: Replace Vars\n\n")
 
 ### with specific Value
 p = toPoly.pm("(x+3)^4")
+checkMaxPow.pm(p, 4, "x")
 pR = replace.pm(p, -3, xn="x"); checkVal.pm(pR, 0)
 pR = replace.pm.numeric(p, -3, xn="x"); checkVal.pm(pR, 0)
 pR = replace.pm.numeric(p, -2, xn="x"); checkVal.pm(pR, 1)
@@ -613,14 +616,18 @@ n = 5
 s = c(1,0,NA,1)
 p = Class1Poly(s, n=n)
 print.pm(p, lead="x")
+checkMaxPow.pm(p, 0, xn="m") # Roots of unity
 K = 3
 pR = replace.pm(p, c(K,-K), c("K","s2"))
 print.pm(pR, lead="x")
+checkCoeff.pm(pR, 1305, pow=1)
 pR = replace.pm(p, c(K=K, s2=-K))
 print.pm(pR, lead="x")
+checkCoeff.pm(pR, 1305, pow=1)
 #
 err = eval.pm(pR, sum(c(1,0,-K,1)*rootn(K^(4:1), n)))
-round0(err)
+checkVal.pm(round0(err), 0)
+
 
 
 ########################
@@ -632,8 +639,18 @@ p = toPoly.pm("(x*y + 2)^4 + b3*(x*y + 1)^3")
 pR = replace.pm.character.pm(p, "xy", toPoly.pm("x*y"))
 pR = sortColumns.pm(pR)
 pR
-replace.pm(pR, c(xy=-2)) # -b3
-replace.pm(pR, c(xy=-1)) # 1
+checkMaxPow.pm(pR, 0, "x")
+checkMaxPow.pm(pR, 0, "y")
+checkMaxPow.pm(pR, 4, "xy")
+checkCoeff.pm(pR[pR$b3 == 0, ], 8, pow=3, "xy")
+checkCoeff.pm(pR[pR$b3 == 1, ], 1, pow=3, "xy")
+
+pR2 = replace.pm(pR, c(xy=-2)) # -b3
+checkCoeff.pm(pR2, -1, pow=1, "b3")
+checkCoeff.pm(pR2,  0, pow=0, "b3")
+pR2 = replace.pm(pR, c(xy=-1)) # 1
+checkCoeff.pm(pR2, 1, xn=NULL)
+
 replace.pm(pR, toPoly.pm("b3 - 1"), "xy") # 2*b3^4 + ...
 replace.pm(pR, toPoly.pm("-b3 - 2"), "xy") # 0*b3^4 - 3*b3^3 - ...
 
