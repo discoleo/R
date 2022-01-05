@@ -738,10 +738,19 @@ replace.pm = function(p1, p2, xn, pow=1, sequential=TRUE) {
 	stop.f = function() stop("Missing variable name!");
 	if(missing(xn)) {
 		if(is.pm(p2)) stop.f();
+		# Named List:
 		if(is.list(p2)) {
 			xn = names(p2);
 			if(is.null(xn)) stop.f();
-			if(length(p2) > 1) stop("Only 1 value supported!")
+			len = length(p2);
+			if(len > 1) {
+				warning("More than 1 value: replacing sequentially!");
+				if(length(pow) == 1) pow = rep(pow, len);
+				for(id in seq(len)) {
+					p1 = replace.pm(p1, p2[[id]], xn=xn[[id]], pow=pow[[id]]);
+				}
+				return(p1);
+			}
 			p2 = p2[[1]];
 		} else stop("Replacement type: not supported!");
 	}
