@@ -1034,14 +1034,24 @@ eval.pm = function(p, x, progress=FALSE) {
 			if(any(is.na(id))) stop(paste0("Variables missing: ", nmsP[is.na(id)]));
 			x = x[id];
 		}
-		x = unlist(x);
+		if(is.list(x)) {
+			isBigz = sapply(x, function(x) inherits(x, "bigz"));
+			if(any(isBigz)) {
+				x = do.call(c, x);
+			} else
+				x = unlist(x, recursive=FALSE);
+		}
 	}
 	eval.p = function(id) {
 		idx = which(unlist(pP[id,]) != 0);
 		if(length(idx) == 0) return(p$coeff[id]);
-		prod(x[idx]^unlist(pP[id, idx]), p$coeff[id]);
+		prod(p$coeff[id], x[idx]^unlist(pP[id, idx]));
 	}
-	sum(sapply(seq(nrow(p)), eval.p))
+	tmp = sapply(seq(nrow(p)), eval.p);
+	if(inherits(p$coeff, "bigz")) {
+		tmp = do.call(c, tmp);
+	}
+	sum(tmp);
 }
 
 ##################
