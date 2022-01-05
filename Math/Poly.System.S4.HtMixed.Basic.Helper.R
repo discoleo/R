@@ -89,7 +89,7 @@ permCyclic = function(sol) {
 	return(m);
 }
 
-#########
+############
 
 ### E22a:
 solve.S4HtM.E22Base = function(R, E2, sort=TRUE, all.sol=TRUE) {

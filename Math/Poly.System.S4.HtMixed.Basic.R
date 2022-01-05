@@ -7,7 +7,7 @@
 ### Hetero-Symmetric S4: Mixed
 ### Basic Types
 ###
-### draft v.0.2c-Cases
+### draft v.0.2d
 
 
 ##############
@@ -1068,17 +1068,17 @@ coeff.S4HtM.E212P3 = function(R) {
 		- 12*E3^4*E4 + 4*R1*E3^3*E4 + 3*E3^2*E212a^2 - R1*E3*E212a^2);
 	return(coeff);
 }
-solve.S4HtM.E212P3 = function(R, sort=TRUE, all.sol=FALSE, debug=TRUE) {
+solve.S4HtM.E212P3 = function(R, sort=TRUE, all.sol=FALSE, debug=TRUE, tol=1E-8) {
 	coeff = coeff.S4HtM.E212P3(R);
 	S = roots(coeff);
 	if(debug) print(S);
 	#
 	E3 = R[3];
-	isZero = (round0(S) == 0);
-	if(any(isZero)) {
+	isZero = (round0(S, tol=tol) == 0);
+	isAnyZero = any(isZero);
+	if(isAnyZero) {
 		warning("Some values S = 0");
 		S = S[ ! isZero];
-		# TODO
 	}
 	len = length(S);
 	E2 = (S^3 + 3*E3 - R[1]) / (3*S);
@@ -1120,9 +1120,11 @@ test.S4HtMixed.En3(sol, n=3, nE=c(2,1,2))
 # E4 = E212a^2 / (4*E3^2);
 R = c(3,4,-1, NA)
 R[4] = R[2]^2 / (4*R[3]^2);
+# R[4] = R[2]^2 / (4*R[3]^2) + 1E-5;
 sol = solve.S4HtM.E212P3(R)
 
 test.S4HtMixed.En3(sol, n=3, nE=c(2,1,2))
+# isZ = apply(sol, 1, function(x) any(abs(x) > 10))
 
 
 ### Derivation:
@@ -1134,6 +1136,129 @@ pR = pR$Rez;
 pR = sort.pm(pR, c("S", "E3", "E4"), sort.coeff=10:12)
 print.pm(pR, lead="S")
 print.coeff(pR, "S")
+
+
+### Case: S = 0
+x13 = roots(c(1, - E212a/E3, E4));
+x24 = E4 / x13;
+# xs = E3 / (x24 - x13);
+# however: (x24 - x13) == 0!
+# => xs = Inf! => NO solution;
+
+
+########################
+########################
+########################
+
+####################
+### Type: E313a  ###
+####################
+
+###############
+### Order 1 ###
+###############
+
+x1 + x2 + x3 + x4 - R1 # = 0
+x1^3*x2*x3^3 + x2^3*x3*x4^3 + x3^3*x4*x1^3 + x4^3*x1*x2^3 - R2 # = 0
+x1*x2*x3 + x1*x2*x4 + x1*x3*x4 + x2*x3*x4 - R3 # = 0
+x1*x2*x3*x4 - R4 # = 0
+
+### Solution:
+
+
+### Solver:
+coeff.S4HtM.E313P1 = function(R) {
+	# coefficients for E2;
+	S = R[1]; E313a = R[2]; E3 = R[3]; E4 = R[4];
+	vals = list(S=S, E313a=E313a, E3=E3, E4=E4);
+	p = replace.pm(pR, vals);
+	coeff = coef.pm(p, "E2");
+	return(coeff);
+}
+solve.S4HtM.E313P1 = function(R, sort=FALSE, all.sol=FALSE, debug=TRUE) {
+	coeff = coeff.S4HtM.E313P1(R);
+	E2 = roots(coeff);
+	if(debug) print(E2);
+	#
+	len = length(E2);
+	S = R[1];
+	x1 = sapply(seq(len), function(id) {
+		roots(c(1, -S, E2[id], -R[3], R[4]));
+	});
+	E2 = rep(E2, each=4);
+	x1 = as.vector(x1); len = length(x1);
+	x3 = sapply(seq(len), function(id) {
+			lst = list(x1=x1[id], E2=E2[id], S=S, E313a=R[2], E4=R[4]);
+			eval.pm(pX3$x0, lst) / eval.pm(pX3$div, lst)
+		});
+	xs = S - x1 - x3; x24 = R[4] / (x1*x3);
+	xd = sqrt(xs^2 - 4*x24 + 0i);
+	x2 = (xs + xd)/2; x4 = (xs - xd)/2;
+	#
+	sol = cbind(x1=x1, x2=x2, x3=x3, x4=x4);
+	if(sort) sol = sort.sol(sol, ncol=1, useRe=TRUE, mod.first=FALSE);
+	return(sol)
+}
+
+### Examples:
+
+### Ex 1:
+R = c(3,-1,2,3)
+sol = solve.S4HtM.E313P1(R)
+
+sol = sol[c(15, 40), ];
+test.S4HtMixed.En3(sol, n=1, nE=c(3,1,3))
+E2  = Re(apply(sol, 1, e2.f))
+poly.calc(E2) * 611 * 2 # pD2
+# Errors due to inaccuracies;
+
+
+###
+R = c(-2,3,1,2)
+sol = solve.S4HtM.E313P1(R)
+
+sol = sol[c(14, 20), ];
+test.S4HtMixed.En3(sol, n=1, nE=c(3,1,3))
+E2  = apply(sol, 1, e2.f)
+poly.calc(E2) * 119 # pD2
+
+
+### Derivation:
+
+p1 = polyE2a();
+p2 = polyE2_E212P1();
+pE313 = toPoly.pm("E212a*(E2 - E2a) - E4*E3 - E313a");
+# pR = solve.pm(p2, pE313, "E212a")
+# pR = solve.pm(pR$Rez, p1, "E2a") # 2.800 Monomials;
+pR = solve.pm(p1, pE313, "E2a")
+pR = solve.pm(pR$Rez, p2, "E212a") # 2.400 Monomials;
+pR = pR$Rez;
+pR = sort.pm(pR, c("S", "E3", "E4"), sort.coeff=10:12)
+str(pR)
+top.pm(pR, "E2")
+# > 2000 Monomials!
+# correct solutions: probably only E2^2;
+# print.pm(pR, lead="S")
+# print.coeff(pR, "S")
+pLead = simplify.spm(top.pm(pR, "E2"), TRUE);
+rownames(pLead) = NULL; pLead = drop.pm(pLead);
+pLead = div.pm(pLead, toPoly.pm("S^2*E4 - 4*E3^2"), "S")$Rez;
+lst = list(S=R[1], E313a=R[2], E3=R[3], E4=R[4]);
+eval.pm(pLead, lst)
+# roots(coef.pm(replace.pm(pLead, list(S=1, E3=2, E4=-1)), "E313a"))
+# toPoly.pm("E4^4*(4*S^2*E4 - 9*E3^2)*(4*S^2*E4 - 25*E3^2)*(S^2*E4 - 4*E3^2)")
+div.pm(pLead, toPoly.pm("S^2*E4 - 4*E3^2"), "S")
+pD2 = toPoly.pm("4*S^2*E4^3 - E313a^2 - 9*E3^2*E4^2 + 6*E313a*E3*E4")
+pD3 = toPoly.pm("4*S^2*E4^3 - E313a^2 - 25*E3^2*E4^2 - 10*E313a*E3*E4")
+
+
+
+###
+p1 = toPoly.pm("(x1*x3)^6*(S - x1 - x3) + E4^3*(x1 + x3) - E313a*(x1*x3)^3")
+p2 = toPoly.pm("x1^2*x3*(S - x1) + x1*x3^2*(S - x1 - x3) + E4 - E2*x1*x3")
+p3 = toPoly.pm("(x1*x3)^2*(S - x1 - x3) + E4*(x1 + x3) - E3*x1*x3") # redundant;
+pX3 = solve.pm(p2, p1, "x3")
+str(pX3)
 
 
 ########################
