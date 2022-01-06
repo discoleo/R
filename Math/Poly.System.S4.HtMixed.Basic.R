@@ -7,7 +7,7 @@
 ### Hetero-Symmetric S4: Mixed
 ### Basic Types
 ###
-### draft v.0.2d-explore
+### draft v.0.2d-explore2
 
 
 ##############
@@ -1294,8 +1294,51 @@ pT = B0.pm(pR, "E2")
 pT$coeff = as.bigz(pT$coeff)
 eval.pm(pT, list(S=R[1], E2=1, E313a=R[2], E3=R[3], E4=R[4]))
 
-# Note:
-# - has E3^7;
+simple = function(p, vals, sort.by=NULL) {
+	p = replace.pm(p, vals);
+	p = drop.pm(p);
+	xgcd = gcd.vpm(p);
+	if(xgcd > 1) {
+		p$coeff = p$coeff / xgcd;
+		print(paste0("GCD = ", xgcd));
+	}
+	print(nrow(p));
+	if( ! is.null(sort.by)) {
+		p = sort.pm(p, xn=sort.by);
+	}
+	return(p)
+}
+
+pT2 = simple(B0.pm(pR, "E2"), c(S=0), sort.by="E313a")
+
+cmp = function(p1, p2) {
+	#
+	pR = merge(p1, p2, by=c("E313a", "E3", "E4"), all=TRUE);
+	nms = names(pR);
+	names(pR)[grepl("^coeff\\.x", nms)] = "coeff";
+	# pR$E313a = as.numeric(pR$E313a);
+	pR = sort.pm(pR, c("E313a", "E3"), sort.coeff=c(10,11));
+	return(pR);
+}
+pT3.f = function() {
+	pT3 = toPoly.pm("25*E3^6*E4^6 - 10*E3^10*E4^3 + E3^14 + E313a^6 + 14*E3*E4*E313a^5 + 71*E3^2*E4^2*E313a^4 +
+			+ 164*E3^3*E4^3*E313a^3 + 191*E3^4*E4^4*E313a^2 + 110*E3^5*E4^5*E313a - 2*E3^7*E313a^3 - 14*E3^8*E4*E313a^2 +
+			- 22*E3^9*E4^2*E313a") *
+		toPoly.pm("E4^2*(9*E3^5*E4^5 - E3^9*E4^2 + E313a^5 - 3*E3*E4*E313a^4 - 6*E3^2*E4^2*E313a^3 + 10*E3^3*E4^3*E313a^2 +
+			+ 21*E3^4*E4^4*E313a - E3^7*E313a^2 - 2*E3^8*E4*E313a)");
+}
+pT3 = pT3.f(); cmp(pT2, pT3)
+
+pT3 = simple(B0.pm(pR, "E2"), c(S=0, E3=1, E4=-1), sort.by="E313a")
+r = roots(pT3$coeff); r;
+poly.calc(r[-c(3,4,9, 7,8)])
+
+toPoly.pm("E4^2*(E313a + E3*E4)^2*(E4^2*E313a^3 - 5*E3*E4^3*E313a^2 + 3*E3^2*E4^4*E313a - E3^7*E4^2 + 9*E3^3*E4^5)")
+
+###
+pT2 = simple(B0.pm(pR, "E2"), c(S=1, E3=1, E4=1), sort.by="E313a")
+div.pm(pT2, toPoly.pm("(E313a - 1)^7"), "E313a")
+
 
 
 ########################
