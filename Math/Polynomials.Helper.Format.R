@@ -32,7 +32,10 @@ sort.pm = function(p, xn=NULL, sort.coeff, xn2=NULL) {
 		sort.coeff = if(isM) c(1,2, seq(10, length.out=length(xn)), 5,6)
 			else if(is.null(xn)) c(1,2) else c(seq(6, length.out=length(xn)), 1,2);
 	}
-	pP = p[, - which(names(p) == "coeff"), drop=FALSE];
+	#
+	idCoeff = which(names(p) == "coeff");
+	if(length(idCoeff) != 1) stop("Missing Coefficients!");
+	pP = p[, - idCoeff, drop=FALSE];
 	summary.sort = function(p, FUN=sum) sapply(seq(nrow(p)), function(id) FUN(unlist(p[id, , drop=TRUE])));
 	to.df = function(i, p, FUN) if(any(sort.coeff == i)) summary.sort(p, FUN) else rep(0, nrow(p));
 	if(isM) {
@@ -91,7 +94,7 @@ as.pm.lead = function(p, xn, warn=TRUE) {
 	return(as.pm(p));
 }
 as.pm.first = function(p, xn, warn=TRUE) {
-	# is moved as last column;
+	# is moved as first column;
 	id = match(xn, names(p));
 	if(is.na(id)) {
 		if(warn) warning("Variable not found!");
@@ -228,11 +231,13 @@ evalCoeff = function(p, xn="x", ...) {
 	px = p[,xn]; p = p[, - idx, drop=FALSE];
 	if(ncol(p) > 1) {
 		coeff = tapply(seq(nrow(p)), px, function(nr) eval.pm(p[nr,, drop=FALSE], ...));
+		px = sort(unique(px));
 	} else coeff = p$coeff;
+	if(any(duplicated(px))) stop("TODO: Duplicated powers!");
 	# missing powers
 	x.all = seq(0, max(px));
 	p.all = rep(0, length(x.all));
-	p.all[1 + sort(unique(px))] = coeff;
+	p.all[1 + px] = coeff;
 	p.all = rev(p.all);
 	return(p.all);
 }
