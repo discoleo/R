@@ -7,7 +7,7 @@
 ### Hetero-Symmetric S4: Mixed
 ### Basic Types
 ###
-### draft v.0.2d
+### draft v.0.2d-explore
 
 
 ##############
@@ -1168,6 +1168,16 @@ x1*x2*x3*x4 - R4 # = 0
 
 ### Solver:
 coeff.S4HtM.E313P1 = function(R) {
+	S = R[1]; E313a = R[2]; E3 = R[3]; E4 = R[4];
+	b2 = 4*S^2*E4^3 - E313a^2 - 9*E3^2*E4^2 + 6*E313a*E3*E4;
+	coeffLead = c(b2 * E3);
+	# Special cases:
+	coeff = c(coeffLead, - 8941, 14400); # R = c(3,-1,2,3)
+	# coeff = c(coeffLead, 282, -1512); # R = c(-2,3,1,2)
+	# coeff = c(coeffLead, -21942, -73392); # R = c(-1,3,5,-1)
+	return(coeff);
+}
+coeff.S4HtM.E313P1 = function(R) {
 	# coefficients for E2;
 	S = R[1]; E313a = R[2]; E3 = R[3]; E4 = R[4];
 	vals = list(S=S, E313a=E313a, E3=E3, E4=E4);
@@ -1199,6 +1209,11 @@ solve.S4HtM.E313P1 = function(R, sort=FALSE, all.sol=FALSE, debug=TRUE) {
 	if(sort) sol = sort.sol(sol, ncol=1, useRe=TRUE, mod.first=FALSE);
 	return(sol)
 }
+coeffLead.S4HtM.E313 = function(R) {
+	S = R[1]; E313a = R[2]; E3 = R[3]; E4 = R[4];
+	b2 = 4*S^2*E4^3 - E313a^2 - 9*E3^2*E4^2 + 6*E313a*E3*E4;
+	return(b2);
+}
 
 ### Examples:
 
@@ -1211,9 +1226,10 @@ test.S4HtMixed.En3(sol, n=1, nE=c(3,1,3))
 E2  = Re(apply(sol, 1, e2.f))
 poly.calc(E2) * 611 * 2 # pD2
 # Errors due to inaccuracies;
+# 14400 - 8941*E2 + 1222*E2^2
 
 
-###
+### Ex 2:
 R = c(-2,3,1,2)
 sol = solve.S4HtM.E313P1(R)
 
@@ -1221,6 +1237,18 @@ sol = sol[c(14, 20), ];
 test.S4HtMixed.En3(sol, n=1, nE=c(3,1,3))
 E2  = apply(sol, 1, e2.f)
 poly.calc(E2) * 119 # pD2
+# -1512 + 282*E2 + 119*E2^2
+
+
+### Ex 3:
+R = c(-1,3,5,-1)
+sol = solve.S4HtM.E313P1(R)
+test.S4HtMixed.En3(sol, n=1, nE=c(3,1,3))
+
+sol2 = sol[c(1,6), ];
+E2  = apply(sol2, 1, e2.f)
+poly.calc(E2) * coeffLead.S4HtM.E313(R) * R[3];
+# -73392 - 21942*E2 - 1640*E2^2
 
 
 ### Derivation:
@@ -1259,6 +1287,15 @@ p2 = toPoly.pm("x1^2*x3*(S - x1) + x1*x3^2*(S - x1 - x3) + E4 - E2*x1*x3")
 p3 = toPoly.pm("(x1*x3)^2*(S - x1 - x3) + E4*(x1 + x3) - E3*x1*x3") # redundant;
 pX3 = solve.pm(p2, p1, "x3")
 str(pX3)
+
+### Factorize B0 Coeff
+# library(gmp)
+pT = B0.pm(pR, "E2")
+pT$coeff = as.bigz(pT$coeff)
+eval.pm(pT, list(S=R[1], E2=1, E313a=R[2], E3=R[3], E4=R[4]))
+
+# Note:
+# - has E3^7;
 
 
 ########################
