@@ -21,30 +21,36 @@ order.df = function(x, decreasing=TRUE) {
 	return(id);
 }
 ### TODO: update use of sort.pm() everywhere!
-sort.pm = function(p, xn=NULL, sort.coeff, xn2=NULL) {
+sort.pm = function(p, xn=NULL, xn2=NULL, sort.coeff) {
 	### Special Cols:
 	# TODO: different approach;
 	# - over xn: c(1,2,3,4) = Sum, Max, Min, MinNZ; (IF length(xn) > 1)
 	# - over all: c(5,6,7,8,9) = SumAll, MaxAll, MinAll, MinNZAll, Coeff;
-	isM = ( ! is.null(xn) && length(xn) > 1); # isMultiple
+	len = if(is.null(xn)) 0 else length(xn);
+	isM = (len > 1); # isMultiple
+	xnM = xn; # Order: (Sum, Max) => x^2, y^2, x*y;
 	if( ! is.null(xn2)) xn = c(xn, xn2);
 	if(missing(sort.coeff)) {
 		sort.coeff = if(isM) c(1,2, seq(10, length.out=length(xn)), 5,6)
-			else if(is.null(xn)) c(1,2) else c(seq(6, length.out=length(xn)), 1,2);
+			else if(is.null(xn)) c(1,2)
+			else c(seq(6, length.out=length(xn)), 1,2);
 	}
-	#
+	# Check if Polynomial:
 	idCoeff = which(names(p) == "coeff");
 	if(length(idCoeff) != 1) stop("Missing Coefficients!");
 	pP = p[, - idCoeff, drop=FALSE];
-	summary.sort = function(p, FUN=sum) sapply(seq(nrow(p)), function(id) FUN(unlist(p[id, , drop=TRUE])));
+	#
+	summary.sort = function(p, FUN=sum) sapply(seq(nrow(p)), function(id) FUN(unlist(p[id, , drop=TRUE], recursive=FALSE)));
 	to.df = function(i, p, FUN) if(any(sort.coeff == i)) summary.sort(p, FUN) else rep(0, nrow(p));
 	if(isM) {
-		pP.pp = pP[, xn, drop=FALSE];
+		# sum only over xnM:
+		pP.pp = pP[, xnM, drop=FALSE];
 		s.df = to.df(1, pP.pp, sum);
 		s.df = cbind(s.df, to.df(2, pP.pp, max));
 		s.df = cbind(s.df, to.df(3, pP.pp, min));
 		s.df = cbind(s.df, to.df(4, pP.pp, function(x) min(x[x != 0])));
 		id0 = 4;
+		# sum over all variables:
 		s.df = cbind(s.df, to.df(1 + id0, pP, sum));
 	} else {
 		id0 = 0;
