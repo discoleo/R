@@ -233,25 +233,34 @@ toCoeff = function(p, x="x") {
 # Evaluate the coefficients using "..."
 evalCoeff = function(p, xn="x", ...) {
 	idx = match(xn, names(p));
-	if(idx < 0) stop(paste0("No variable ", xn));
+	if(is.na(idx)) stop(paste0("No variable ", xn));
 	px = p[,xn]; p = p[, - idx, drop=FALSE];
 	if(ncol(p) > 1) {
 		coeff = tapply(seq(nrow(p)), px, function(nr) eval.pm(p[nr,, drop=FALSE], ...));
 		px = sort(unique(px));
-	} else coeff = p$coeff;
-	if(any(duplicated(px))) stop("TODO: Duplicated powers!");
-	# missing powers
+	} else {
+		coeff = p$coeff;
+		if(any(duplicated(px))) stop("TODO: Duplicated powers!");
+	}
+	# Missing powers
 	x.all = seq(0, max(px));
 	p.all = rep(0, length(x.all));
 	p.all[1 + px] = coeff;
+	# Ascending order:
 	p.all = rev(p.all);
 	return(p.all);
 }
-coef.pm = function(p, xn="x", descending=TRUE) {
-	if(ncol(p) > 2) warning("Multi-variable polynomial!");
+# returns only the numeric coefficients
+coef.pm = function(p, xn=NULL, descending=TRUE) {
+	if(is.null(xn)) {
+		if(ncol(p) > 2) stop("Missing variable name!");
+		idc = match("coeff", names(p));
+		if(is.na(idc)) stop("Missing coefficients!");
+		xn = names(p)[ - idc];
+	} else if(ncol(p) > 2) warning("Multi-variable polynomial!");
 	p = aggregate0.pm(p[, c(xn, "coeff"), drop=FALSE]);
 	p = reduce.pm(p);
-	# missing powers
+	# Missing powers
 	p.all = rep(0, max(p[, xn]) + 1);
 	p.all[p[, xn] + 1] = p$coeff;
 	if(descending) p.all = rev(p.all);
