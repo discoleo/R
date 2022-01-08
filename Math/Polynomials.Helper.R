@@ -114,6 +114,17 @@ roots.pm = function(p, ..., xn="x", sort=TRUE) {
 	if(sort) r = sort(r);
 	return(r);
 }
+split.complex = function(x, as.list=FALSE, tol=1E-8, f=NULL, ...) {
+	if( ! is.null(f)) {
+		return(split.default(x, f=f, ...));
+	}
+	# move real values at the end of the vector;
+	isIm = (round0(Im(x), tol=tol) == 0);
+	x = split.default(x, f = isIm, ...);
+	names(x) = NULL;
+	if( ! as.list) x = unlist(x, recursive=FALSE);
+	return(x);
+}
 
 ### Sort
 sort.sol = function(sol, useRe=TRUE, mod.first=TRUE, ncol=1, digits=5) {
