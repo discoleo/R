@@ -73,10 +73,11 @@ applyChoose = function(x, seq.lst, n, FUN=prod, print.id=NULL) {
 		m = seq.lst[[id]][m];
 		m = matrix(m, nrow=n[[id]]);
 		# print relevant values: but not trivial;
-		if(! is.null(print.id)) print(x[m[ , print.id[[id]] ]]);
+		if(! is.null(print.id) && length(print.id) > 1) print(x[m[ , print.id[[id]] ]]);
 		apply(m, 2, function(m) FUN(x[m]));
 	})
 	r = expand.grid(r);
+	if(! is.null(print.id) && length(print.id) == 1) print(r[print.id, ]);
 	r = apply(r, 1, FUN);
 	return(r);
 }
@@ -1284,6 +1285,9 @@ E3^7 - 10*E3^4 + 12*E3^3 + 8*E3^2 - 29*E3 - 38
 R = c(-1,3, E3, -2)
 E3^7 - 31*E3^4 + 78*E3^3 - 26*E3^2 + 22*E3 - 107
 #
+R = c(-1,3, E3, 2)
+E3^7 - 31*E3^4 - 78*E3^3 - 10*E3^2 + 202*E3 + 85
+#
 R = c(-1,3, E3, 3)
 E3^7 - 66*E3^4 - 252*E3^3 - 36*E3^2 + 567*E3 + 378
 #
@@ -1291,10 +1295,18 @@ R = c(-1,3, E3, -3)
 E3^7 - 66*E3^4 + 252*E3^3 - 90*E3^2 + 297*E3 - 270
 #
 E3^7 - (7*E4^2 + 3)*E3^4 - (9*E4^3 + 3*E4)*E3^3 +
-	+ (E4^3 - 3*E313a*E4^2 + 18)*E3^2 + (...)*E3 + (...)
+	+ (E4^3 - 3*E313a*E4^2 + 18)*E3^2 +
+	+ (4*E4^4 + 12*E4^2 + 5*E4*E313a^2)*E3 +
+	+ (E4^4 + 12*E4^3 - E313a^3)
 solve.vandermond(c(-1,-2,3,-3), c(12,78,-252,252))
 solve.vandermond(c(-1,-2,3,-3), c(8,-26,-36,-90) + 3*(3)*c(-1,-2,3,-3)^2)
-
+solve.vandermond(c(-1,-2,2,3,-3), c(-29,22,202,567,297) - 5*(3^2)*c(-1,-2,2,3,-3))
+solve.vandermond(c(-1,-2,2,3,-3), c(-38,-107,85,378,-270) + (3^3))
+# TODO: S!
+E3^7 - (7*E4^2 + E313a)*E3^4 - (9*E4^3 + E313a*E4)*E3^3 +
+	+ (E4^3 - 3*E313a*E4^2 + 2*E313a^2)*E3^2 +
+	+ (4*E4^4 + 4*E4^2*E313a + 5*E4*E313a^2)*E3 +
+	+ (E4^4 + 4*E4^3*E313a - E313a^3)
 
 ### Derivation:
 
