@@ -108,21 +108,29 @@ roots.cl2.f = function(s, n = length(s)) {
 	r = sapply(seq(n), function(id) sum(s * m[id]^(0:n)))
 	r = round0(r)
 }
-# Compute the roots:
-roots.pm = function(p, ..., xn="x", sort=TRUE) {
+### Compute the roots:
+roots.pm = function(p, ..., xn="x", sort=TRUE, split=TRUE, tol=1E-8) {
 	r = roots(evalCoeff(p, xn=xn, ...));
 	if(sort) r = sort(r);
+	# move real roots at the end;
+	if(split) r = split.complex(r, as.list=FALSE, tol=tol)
 	return(r);
 }
+### Split into complex and pure real values:
+# - move real roots at the end of the vector;
+# - useful for automatic access to conjugated roots;
 split.complex = function(x, as.list=FALSE, tol=1E-8, f=NULL, ...) {
 	if( ! is.null(f)) {
 		return(split.default(x, f=f, ...));
 	}
+	len = length(x);
 	# move real values at the end of the vector;
-	isIm = (round0(Im(x), tol=tol) == 0);
-	x = split.default(x, f = isIm, ...);
+	isRe = (round0(Im(x), tol=tol) == 0);
+	x = split.default(x, f = isRe, ...);
 	names(x) = NULL;
 	if( ! as.list) x = unlist(x, recursive=FALSE);
+	lenRe = sum(isRe);
+	attr(x, "dim.z") = c(len - lenRe, lenRe);
 	return(x);
 }
 
