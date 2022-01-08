@@ -54,6 +54,33 @@
 
 source("Poly.System.S4.HtMixed.Basic.Helper.R")
 
+solve.vandermond = function(A, R) {
+	if(is.matrix(A)) {
+		m = A;
+	} else {
+		len = length(A);
+		m = matrix(1, nrow=len, ncol=len);
+		for(nc in seq(2, len)) {
+			m[,nc] = A^(nc - 1);
+		}
+	}
+	solve(m, R);
+}
+applyChoose = function(x, seq.lst, n, FUN=prod, print.id=NULL) {
+	r = sapply(seq(length(n)), function(id) {
+		len = length(seq.lst[[id]]);
+		m = combn(seq(len), n[[id]]);
+		m = seq.lst[[id]][m];
+		m = matrix(m, nrow=n[[id]]);
+		# print relevant values: but not trivial;
+		if(! is.null(print.id)) print(x[m[ , print.id[[id]] ]]);
+		apply(m, 2, function(m) FUN(x[m]));
+	})
+	r = expand.grid(r);
+	r = apply(r, 1, FUN);
+	return(r);
+}
+
 ### Elementary Polynomials:
 # source("Polynomials.Helper.EP.R")
 
@@ -1249,6 +1276,22 @@ sol2 = sol[c(1,6), ];
 E2  = apply(sol2, 1, e2.f)
 poly.calc(E2) * coeffLead.S4HtM.E313(R) * R[3];
 # -73392 - 21942*E2 - 1640*E2^2
+E3 = 5; # =>
+(E3^6 + 2*E3^5 + 4*E3^4 - 2*E3^3 + 8*E3^2 + 24*E3 + 19)*(E3 - 2)
+E3^7 - 10*E3^4 + 12*E3^3 + 8*E3^2 - 29*E3 - 38
+
+#
+R = c(-1,3, E3, -2)
+E3^7 - 31*E3^4 + 78*E3^3 - 26*E3^2 + 22*E3 - 107
+#
+R = c(-1,3, E3, 3)
+E3^7 - 66*E3^4 - 252*E3^3 - 36*E3^2 + 567*E3 + 378
+#
+R = c(-1,3, E3, -3)
+E3^7 - 66*E3^4 + 252*E3^3 - 90*E3^2 + 297*E3 - 270
+#
+E3^7 - (7*E4^2 + 3)*E3^4 - 252*E3^3 - 36*E3^2 + 567*E3 + 378
+solve.vandermond(c(-1,-2,-3,3), c(12,78,-252,252)) # probably 1 more power
 
 
 ### Derivation:
@@ -1316,8 +1359,7 @@ cmp = function(p1, p2) {
 	pR = merge(p1, p2, by=c("E313a", "E3", "E4"), all=TRUE);
 	nms = names(pR);
 	names(pR)[grepl("^coeff\\.x", nms)] = "coeff";
-	# pR$E313a = as.numeric(pR$E313a);
-	pR = sort.pm(pR, c("E313a", "E3"), sort.coeff=c(10,11));
+	pR = sort.pm(pR, "E313a", "E3");
 	return(pR);
 }
 pT3.f = function() {
@@ -1333,7 +1375,7 @@ pT3 = simple(B0.pm(pR, "E2"), c(S=0, E3=1, E4=-1), sort.by="E313a")
 r = roots(pT3$coeff); r;
 poly.calc(r[-c(3,4,9, 7,8)])
 
-toPoly.pm("E4^2*(E313a + E3*E4)^2*(E4^2*E313a^3 - 5*E3*E4^3*E313a^2 + 3*E3^2*E4^4*E313a - E3^7*E4^2 + 9*E3^3*E4^5)")
+toPoly.pm("E4^2*(E313a + E3*E4)^2*(E313a^3 - 5*E3*E4*E313a^2 + 3*E3^2*E4^2*E313a - E3^7 + 9*E3^3*E4^3)")
 
 ###
 pT2 = simple(B0.pm(pR, "E2"), c(S=1, E3=1, E4=1), sort.by="E313a")
