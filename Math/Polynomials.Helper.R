@@ -109,8 +109,10 @@ roots.cl2.f = function(s, n = length(s)) {
 	r = round0(r)
 }
 # Compute the roots:
-roots.pm = function(p, ..., xn="x") {
-	roots(evalCoeff(p, xn=xn, ...));
+roots.pm = function(p, ..., xn="x", sort=TRUE) {
+	r = roots(evalCoeff(p, xn=xn, ...));
+	if(sort) r = sort(r);
+	return(r);
 }
 
 ### Sort
