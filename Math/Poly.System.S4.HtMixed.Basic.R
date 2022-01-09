@@ -81,6 +81,39 @@ applyChoose = function(x, seq.lst, n, FUN=prod, print.id=NULL) {
 	r = apply(r, 1, FUN);
 	return(r);
 }
+# "Extract" a simplified polynomial:
+simple = function(p, vals, sort.by=NULL) {
+	p = replace.pm(p, vals);
+	p = drop.pm(p);
+	xgcd = gcd.vpm(p);
+	if(xgcd > 1) {
+		p$coeff = p$coeff / xgcd;
+		print(paste0("GCD = ", xgcd));
+	}
+	print(paste0("Monomials = ", nrow(p)));
+	if( ! is.null(sort.by)) {
+		p = sort.pm(p, xn=sort.by);
+	}
+	return(p)
+}
+cmp.pm = function(p1, p2, by=NULL, all=TRUE) {
+	#
+	if(is.null(by)) {
+		by = intersect(names(p1), names(p2));
+		idc = match("coeff", by);
+		if(is.na(idc)) stop("Not a polynomial!");
+		by = by[ - idc];
+	}
+	pR = merge(p1, p2, by=by, all=all);
+	nms = names(pR);
+	names(pR)[grepl("^coeff\\.x", nms)] = "coeff";
+	xn2 = if(length(by) < 2) NULL else by[2];
+	pR = sort.pm(pR, by[1], xn2=xn2);
+	return(pR);
+}
+cmp = function(p1, p2, by=c("E313a", "E3", "E4")) {
+	cmp.pm(p1, p2, by=by);
+}
 
 ### Elementary Polynomials:
 # source("Polynomials.Helper.EP.R")
@@ -1302,11 +1335,12 @@ solve.vandermond(c(-1,-2,3,-3), c(12,78,-252,252))
 solve.vandermond(c(-1,-2,3,-3), c(8,-26,-36,-90) + 3*(3)*c(-1,-2,3,-3)^2)
 solve.vandermond(c(-1,-2,2,3,-3), c(-29,22,202,567,297) - 5*(3^2)*c(-1,-2,2,3,-3))
 solve.vandermond(c(-1,-2,2,3,-3), c(-38,-107,85,378,-270) + (3^3))
-# TODO: S!
-E3^7 - (7*E4^2 + E313a)*E3^4 - (9*E4^3 + E313a*E4)*E3^3 +
-	+ (E4^3 - 3*E313a*E4^2 + 2*E313a^2)*E3^2 +
-	+ (4*E4^4 + 4*E4^2*E313a + 5*E4*E313a^2)*E3 +
-	+ (E4^4 + 4*E4^3*E313a - E313a^3)
+# TODO: real powers of S!
+E3^7 + (7*E4^2*S^1 - E313a*S^2)*E3^4 - (9*E4^3 - E313a*E4*S^1)*E3^3 +
+	- (E4^3*S^1 + 3*E313a*E4^2 + 2*E313a^2*S^1)*E3^2 +
+	+ (4*E4^4*S^2 - 4*E4^2*E313a*S^2 + 5*E4*E313a^2)*E3 +
+	- (E4^4*S^1 - 4*E4^3*E313a*S^1 + E313a^3)
+
 
 ### Derivation:
 
@@ -1351,31 +1385,10 @@ pT = B0.pm(pR, "E2")
 pT$coeff = as.bigz(pT$coeff)
 eval.pm(pT, list(S=R[1], E2=1, E313a=R[2], E3=R[3], E4=R[4]))
 
-simple = function(p, vals, sort.by=NULL) {
-	p = replace.pm(p, vals);
-	p = drop.pm(p);
-	xgcd = gcd.vpm(p);
-	if(xgcd > 1) {
-		p$coeff = p$coeff / xgcd;
-		print(paste0("GCD = ", xgcd));
-	}
-	print(nrow(p));
-	if( ! is.null(sort.by)) {
-		p = sort.pm(p, xn=sort.by);
-	}
-	return(p)
-}
 
 pT2 = simple(B0.pm(pR, "E2"), c(S=0), sort.by="E313a")
 
-cmp = function(p1, p2) {
-	#
-	pR = merge(p1, p2, by=c("E313a", "E3", "E4"), all=TRUE);
-	nms = names(pR);
-	names(pR)[grepl("^coeff\\.x", nms)] = "coeff";
-	pR = sort.pm(pR, "E313a", "E3");
-	return(pR);
-}
+
 pT3.f = function() {
 	pT3 = toPoly.pm("25*E3^6*E4^6 - 10*E3^10*E4^3 + E3^14 + E313a^6 + 14*E3*E4*E313a^5 + 71*E3^2*E4^2*E313a^4 +
 			+ 164*E3^3*E4^3*E313a^3 + 191*E3^4*E4^4*E313a^2 + 110*E3^5*E4^5*E313a - 2*E3^7*E313a^3 - 14*E3^8*E4*E313a^2 +
