@@ -113,17 +113,17 @@ roots.pm = function(p, ..., xn="x", sort=TRUE, split=TRUE, tol=1E-8) {
 	r = roots(evalCoeff(p, xn=xn, ...));
 	if(sort) r = sort(r);
 	# move real roots at the end;
-	if(split) r = split.complex(r, as.list=FALSE, tol=tol)
+	if(split) r = split.roots.complex(r, as.list=FALSE, tol=tol)
 	return(r);
 }
 ### Split into complex and pure real values:
 # - move real roots at the end of the vector;
 # - useful for automatic access to conjugated roots;
-split.complex = function(x, as.list=FALSE, tol=1E-8, f=NULL, ...) {
+split.roots.complex = function(x, as.list=FALSE, tol=1E-8, f=NULL, ...) {
 	if( ! is.null(f)) {
 		return(split.default(x, f=f, ...));
 	}
-	len = length(x);
+	len = length(x); print(class(x))
 	# move real values at the end of the vector;
 	isRe = (round0(Im(x), tol=tol) == 0);
 	x = split.default(x, f = isRe, ...);
@@ -132,6 +132,24 @@ split.complex = function(x, as.list=FALSE, tol=1E-8, f=NULL, ...) {
 	lenRe = sum(isRe);
 	attr(x, "dim.z") = c(len - lenRe, lenRe);
 	return(x);
+}
+multiplicty.pm = function(p, val, tol=1E-10) {
+	if( ! is.pm(p)) stop("Not a polynomial!");
+	nc = ncol(p);
+	if(nc > 2) stop("p must be a Uni-variate polynomial!");
+	idx = which( ! names(p) %in% "coeff");
+	if(length(idx) != 1) stop("Not a polynomial!");
+	xn = names(p)[idx];
+	len = maxPow.pm(p, xn=xn);
+	if(len == 0) return(0);
+	#
+	if(round0(eval.pm(p, val), tol=tol) != 0) return(0);
+	dp = p;
+	for(id in seq(len)) {
+		dp = dp.pm(dp, xn=xn);
+		if(round0(eval.pm(dp, val), tol=tol) != 0) return(id);
+	}
+	return(len);
 }
 
 ### Sort
