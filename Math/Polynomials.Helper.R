@@ -123,7 +123,7 @@ split.roots.complex = function(x, as.list=FALSE, tol=1E-8, f=NULL, ...) {
 	if( ! is.null(f)) {
 		return(split.default(x, f=f, ...));
 	}
-	len = length(x); print(class(x))
+	len = length(x);
 	# move real values at the end of the vector;
 	isRe = (round0(Im(x), tol=tol) == 0);
 	x = split.default(x, f = isRe, ...);
@@ -251,6 +251,14 @@ top.pm = function(p, xn="x", exclude=FALSE) {
 }
 ### Free Term
 B0.pm = function(p, xn="x", warn=TRUE) {
+	# Global B0:
+	if(is.null(xn)) {	
+		idc = match("coeff", names(p));
+		px  = p[, - idc, drop=FALSE]; class(px) = "data.frame";
+		isB0 = sapply(seq(nrow(px)), function(nr) all(px[nr,] == 0));
+		return(p[isB0, , drop=FALSE]);
+	}
+	#
 	idx = match(xn, names(p));
 	if(is.na(idx)) {
 		if(warn) warning("Variable not found!");
