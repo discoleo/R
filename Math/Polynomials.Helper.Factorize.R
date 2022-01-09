@@ -250,3 +250,91 @@ factorSimple.pm = function(p) {
 	# TODO
 }
 
+###################
+###################
+
+### Special Cases
+
+### V1 P9: Almost-Symmetric
+
+factorize.V1P9.QuasiSym = function(p, digits=8) {
+	if( ! is.pm(p)) stop("Not a polynomial!");
+	len = ncol(p);
+	if(len > 2) stop("p must be a Univariate polynomial!");
+	idc = match("coeff", names(p));
+	if(is.na(idc)) stop("Not a polynomial: Missing coefficients!");
+	idx = seq(2)[ - idc];
+	xn  = names(p)[idx];
+	# P[9]
+	pow = max(p[, idx]);
+	if(pow != 9) {
+		warning("Polynomial must be of Order 9!");
+		return(list(p=p, Factor=NULL));
+	}
+	# Symmetric Polynomial:
+	msg = "Not an Almost Symmetric Polynomial!";
+	wf = function(msg) {
+		warning(msg);
+		return(list(p, Factor=NULL));
+	}
+	isErr.bx = function(b1, b2) {
+		if( (length(b1) > 1) || (length(b2) > 1) ||
+			(length(b1) != length(b2)) ||
+			(length(b1) == 1 && (b1 != b2)) ) return(TRUE);
+		return(FALSE);
+	}
+	bx  = p$coeff[p[,idx] == 0];
+	if(length(bx) != 1 && bx != 1) return(wf(msg));
+	# B1:
+	bx1 = p$coeff[p[,idx] == 1];
+	bx2 = p$coeff[p[,idx] == 8];
+	if(isErr.bx(bx1, bx2)) return(wf(msg));
+	S = if(length(bx1) == 0) 0 else bx1;
+	# B2:
+	bx1 = p$coeff[p[,idx] == 2];
+	bx2 = p$coeff[p[,idx] == 7];
+	if(isErr.bx(bx1, bx2)) return(wf(msg));
+	E2 = (if(length(bx1) == 0) 0 else bx1) - S;
+	# B3:
+	bx1 = p$coeff[p[,idx] == 3];
+	bx2 = p$coeff[p[,idx] == 6];
+	if(isErr.bx(bx1, bx2)) return(wf(msg));
+	E3 = (if(length(bx1) == 0) 0 else bx1) - S^2 + E2 - 3;
+	# B4 & B5:
+	bx1 = p$coeff[p[,idx] == 4];
+	bx2 = p$coeff[p[,idx] == 5];
+	if((length(bx1) > 1) || (length(bx2) > 1)) { return(wf("Polynomial is unreduced!")); }
+	b4 = if(length(bx1) == 0) 0 else bx1;
+	b5 = if(length(bx2) == 0) 0 else bx2;
+	if(b4 == b5) {
+		# Fully Symmetric:
+		m = multiplicity.pm(p, -1);
+		if(m > 0) {
+			pDiv = toPoly.pm(paste0(xn, "+ 1"));
+			# TODO: "n" => "pow";
+			pRez = div.pm(p, pow.pm(pDiv, n=m, debug = FALSE), by=xn)$Rez;
+			pRez = toPoly.pm(pRez);
+			return( list(p=pRez, Factor=pDiv, Multiple=m) );
+		}
+	}
+	# Checks:
+	chk1 = b4 + b5 - 4*S - 2*E2 - E2*S + 3*E3;
+	if(round0(chk1) != 0) return(wf(msg));
+	chk2 = (b4 - 2*S - E2)*(b5 - 2*S - E2) - (E2^3 + 3*E3^2 - 3*E3*E2*S) +
+		- E3*(S^3 - 3*E2*S + 3*E3) - 3*E3^2;
+	if(round0(chk2) != 0) return(wf(msg));
+	# Factors
+	b = roots(c(1, -S, E2, -E3));
+	# Round to Integer:
+	b = sapply(b, function(b) {
+		if(round(b) == round(b, digits=digits)) round(b) else b;
+	})
+	asP = function(b) {
+		pR = data.frame(x=2:0, coeff=c(1, b, 1));
+		names(pR)[1] = xn;
+		return(toPoly.pm(pR));
+	}
+	pR = list(p = asP(b[1]), Factor = asP(b[2]), Factor2 = asP(b[3]));
+	return(pR);
+}
+
