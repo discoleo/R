@@ -133,7 +133,7 @@ split.roots.complex = function(x, as.list=FALSE, tol=1E-8, f=NULL, ...) {
 	attr(x, "dim.z") = c(len - lenRe, lenRe);
 	return(x);
 }
-multiplicty.pm = function(p, val, tol=1E-10) {
+multiplicity.pm = function(p, val, tol=1E-10) {
 	if( ! is.pm(p)) stop("Not a polynomial!");
 	nc = ncol(p);
 	if(nc > 2) stop("p must be a Uni-variate polynomial!");
