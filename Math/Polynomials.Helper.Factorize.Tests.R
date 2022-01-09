@@ -7,7 +7,7 @@
 ### Multi-Variable Polynomials
 ### Factorize: Tests
 ###
-### draft v.0.1e
+### draft v.0.1f
 
 
 ### Tests:
@@ -252,6 +252,25 @@ m = multiplicity.pm(p, -1)
 print.pm(p)
 checkVal.pm(m, 0)
 # TODO: factorize
+
+
+################
+################
+
+### Partially-Symmetric
+
+p = toPoly.pm("(x^3+b1*x^2+b2*x+1)*(x^3+b2*x^2+b3*x+1)*(x^3+b3*x^2+b1*x+1)")
+print.coeff(p, "x")
+
+### Solution:
+# S = B[1]
+# E2 = B[2] - B[1]
+# E3 = B[3] - S^2 + E2 - 3;
+### Consistency Check:
+# - Check 1: B[4] + B[5];
+#   B[4] + B[5] - 4*S - 2*E2 - E2*S + 3*E3; # == 0!
+# - Check 2:
+#   (B[4] - 2*S - E2)*(B[5] - 2*S - E2) - (E2^3 + 3*E3^2 - 3*E3*E2*S) - E3*(S^3 - 3*E2*S + 3*E3) - 3*E3^2;
 
 
 ################
