@@ -7,7 +7,7 @@
 ### Multi-Variable Polynomials
 ### Factorize
 ###
-### draft v.0.1e
+### draft v.0.1f-fix
 
 
 ### Factorize Multi-Variable Polynomials
@@ -330,11 +330,13 @@ factorize.V1P9.QuasiSym = function(p, digits=8) {
 		if(round(b) == round(b, digits=digits)) round(b) else b;
 	})
 	asP = function(b) {
-		pR = data.frame(x=2:0, coeff=c(1, b, 1));
+		pR = data.frame(x=3:0, coeff=c(1, b[1], b[2], 1));
 		names(pR)[1] = xn;
 		return(toPoly.pm(pR));
 	}
-	pR = list(p = asP(b[1]), Factor = asP(b[2]), Factor2 = asP(b[3]));
+	# TODO: E21a => order of roots matters!
+	b = b[c(1,3,2)];
+	pR = list(p = asP(b[1:2]), Factor = asP(b[2:3]), Factor2 = asP(b[c(3,1)]));
 	return(pR);
 }
 
