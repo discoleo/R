@@ -7,7 +7,7 @@
 ### Multi-Variable Polynomials
 ### Factorize: Tests
 ###
-### draft v.0.1f
+### draft v.0.1g
 
 
 ### Tests:
@@ -271,6 +271,38 @@ print.coeff(p, "x")
 #   B[4] + B[5] - 4*S - 2*E2 - E2*S + 3*E3; # == 0!
 # - Check 2:
 #   (B[4] - 2*S - E2)*(B[5] - 2*S - E2) - (E2^3 + 3*E3^2 - 3*E3*E2*S) - E3*(S^3 - 3*E2*S + 3*E3) - 3*E3^2;
+
+### Ex 1:
+pR = replace.pm(p, list(b1=-1, b2=3, b3=4));
+factorize.V1P9.QuasiSym(pR)
+
+### Ex 2:
+pR = replace.pm(p, list(b1=-1, b2=-3, b3=5));
+factorize.V1P9.QuasiSym(pR)
+
+### Ex 3:
+pR = replace.pm(p, list(b1=1/2, b2=4, b3=5/2));
+factorize.V1P9.QuasiSym(pR)
+
+### Ex 4: Fully Symmetric
+pR = toPoly.pm("x^9 + 3*x^5 + 3*x^4 + 1");
+factorize.V1P9.QuasiSym(pR)
+
+
+
+################
+################
+
+### P[3] * P[3]
+
+# (x^3 + b2*x^2 + b1*x + 1) * (x^3 + c2*x^2 + c1*x + 1)
+p = toPoly.pm("(x^3 + b2*x^2 + b1*x + 1) * (x^3 + c2*x^2 + c1*x + 1)");
+
+b = c(3, -4); c = c(2, 5);
+b1 = b[1]; b2 = b[2]; c1 = c[1]; c2 = c[2];
+P = function(x) eval.pm(p, list(x=x, b1=b1, b2=b2, c1=c1, c2=c2));
+
+# TODO
 
 
 ################
