@@ -7,7 +7,7 @@
 ### Multi-Variable Polynomials
 ### Factorize: Tests
 ###
-### draft v.0.1d
+### draft v.0.1e
 
 
 ### Tests:
@@ -22,7 +22,8 @@
 # source("Polynomials.Helper.Factorize.Tests.R")
 
 
-source("Polynomials.Helper.R")
+source("Polynomials.Helper.Tests.Helper.R")
+# source("Polynomials.Helper.R")
 # - is automatically loaded in: Polynomials.Helper.R;
 # source("Polynomials.Helper.Factorize.R")
 
@@ -199,8 +200,8 @@ r
 
 # Note:
 # - can be computed directly from the coefficients;
-p2 = round0(poly.calc(r^3))
-p2 = data.frame(coeff=unclass(p2), x=seq(0, length(p2)-1))
+p2 = round(poly.calc(r^3))
+p2 = as.pm.polynom(p2)
 p2
 
 # r^3 => {3*r - 5, -4*r - 3};
@@ -215,8 +216,42 @@ p2 = as.pm.polynom(p2)
 p2
 
 p2 = as.bigz.pm(p2)
-# Note: scaling of "3" is NOT known;
+# Note: scaling of "3" is NOT known a priori;
 gcd.exact.p(rescale.pm(p, 3, div=TRUE), p2, "x")
+
+
+################
+################
+
+### Symmetric Polynomials
+
+# Subtypes of Symmetric Polynomials:
+
+b = c(3,4,-5)
+###
+p = toPoly.pm("(x^3 + b[1]*x^2 + b[1]*x + 1) * (x^3 + b[2]*x^2 + b[2]*x + 1)")
+m = multiplicity.pm(p, -1)
+print.pm(p)
+checkVal.pm(m, 4)
+div.pm(p, toPoly.pm("(x+1)^4"), "x")
+
+###
+p = toPoly.pm("(x^3 + b[2]*x^2 + b[1]*x + 1) * (x^3 + b[1]*x^2 + b[2]*x + 1)")
+m = multiplicity.pm(p, -1)
+print.pm(p)
+checkVal.pm(m, 0)
+# TODO: factorize
+# b1 + b2 = B[1]
+# b1*b2 = B[2] - B[1]
+# where: B[id] = coefficient of P[6] polynomial;
+# B[3] confirms / rejects sub-type;
+
+###
+p = toPoly.pm("(x^2 + b[1]*x + 1)*(x^2 + b[2]*x + 1)*(x^2 + b[3]*x + 1)")
+m = multiplicity.pm(p, -1)
+print.pm(p)
+checkVal.pm(m, 0)
+# TODO: factorize
 
 
 ################
