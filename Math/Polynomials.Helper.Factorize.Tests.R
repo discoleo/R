@@ -274,7 +274,11 @@ print.coeff(p, "x")
 
 ### Ex 1:
 pR = replace.pm(p, list(b1=-1, b2=3, b3=4));
-factorize.V1P9.QuasiSym(pR)
+pL = factorize.V1P9.QuasiSym(pR)
+pL
+print.pm(pR)
+print.pm(prod.pm(pL))
+
 
 ### Ex 2:
 pR = replace.pm(p, list(b1=-1, b2=-3, b3=5));
@@ -284,7 +288,14 @@ factorize.V1P9.QuasiSym(pR)
 pR = replace.pm(p, list(b1=1/2, b2=4, b3=5/2));
 factorize.V1P9.QuasiSym(pR)
 
-### Ex 4: Fully Symmetric
+### Ex 4: S = 0
+pR = replace.pm(p, list(b1=2, b2=5, b3=-7));
+pL = factorize.V1P9.QuasiSym(pR)
+pL
+print.pm(pR)
+print.pm(prod.pm(pL))
+
+### Ex 5: Fully Symmetric
 pR = toPoly.pm("x^9 + 3*x^5 + 3*x^4 + 1");
 factorize.V1P9.QuasiSym(pR)
 
