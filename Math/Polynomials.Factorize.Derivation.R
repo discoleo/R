@@ -6,7 +6,7 @@
 ### Multi-Variable Polynomials
 ### Factorize: Derivations
 ###
-### draft v.0.1b-fix
+### draft v.0.1b-fix2
 
 
 ### Factorize Multi-Variable Polynomials
@@ -117,17 +117,19 @@ b1*c1 + 0 # = 0
 b2*c2 + 2 # = 0
 # =>
 (b1 - 1)*(c1 - 4) + 2 # = 0
-b1*c1 - 4*b1 - c1 + 2 # = 0
-4*b1 + c1 - 2 # = 0
+b1*c1 - 4*b1 - c1 + 6 # = 0
+4*b1 + c1 - 6 # = 0
 # =>
-4*b1^2 - 2*b1 # = 0
-b1*(b1 - 4) # = 0
-# b1 = 0 OR b1 = 4;
-# b2 = 1 OR b2 = 4;
-# c1 = 2 OR c1 = 0;
-# c2 = 2 OR c2 = 4;
-# BUT: b2*c2 + 2 != 0 (Mod 7)
+4*b1^2 - 6*b1 # = 0
+b1*(b1 + 2) # = 0
+#
+b1 = c(0, 5);
+b2 = c(1, 3);
+c1 = c(6, 0);
+c2 = c(5, 4);
 
+### Aux:
+((2*b2 + b1 + 1)*(2*c2 + c1 + 1) - 2*P2(2)) %% 7 == 0
 # => NOT Factorisable!
 
 
