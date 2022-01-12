@@ -7,7 +7,7 @@
 ### Multi-Variable Polynomials
 ### Factorize: Tests
 ###
-### draft v.0.1g
+### draft v.0.1h-comments
 
 
 ### Tests:
@@ -220,10 +220,15 @@ p2 = as.bigz.pm(p2)
 gcd.exact.p(rescale.pm(p, 3, div=TRUE), p2, "x")
 
 
-################
-################
+#########################
+#########################
 
 ### Symmetric Polynomials
+
+# Note;
+# - all these polynomials are easily decomposable/solvable, see:
+#   Polynomials.Derived.P6.Symmetric.R;
+
 
 ### Subtypes of Symmetric Polynomials:
 
@@ -249,6 +254,9 @@ factorize.V1P6.F3F3 = function(p) {
 p = toPoly.pm("(x^3 + b1*x^2 + b2*x + 1) * (x^3 + b2*x^2 + b1*x + 1)")
 print.coeff(p)
 
+p = toPoly.pm("(x^2 + b1*x + 1) * (x^2 + b2*x + 1) * (x^2 + b3*x + 1)")
+print.coeff(p)
+
 # not symmetric:
 # (but easy factorizable)
 p = toPoly.pm("(x^3 + b1^2*x^2 + b2*x + 1) * (x^3 + b2^2*x^2 + b1*x + 1)")
@@ -258,6 +266,12 @@ print.coeff(p)
 p = toPoly.pm("(x^3 + b1*x + b2) * (x^3 + b2*x + b1)")
 print.coeff(p)
 
+# not symmetric:
+p = toPoly.pm("(x^2 + b1*x + b2) * (x^2 + b2*x + b3) * (x^2 + b3*x + b1)")
+print.coeff(p)
+
+
+#############
 
 b = c(3,4,-5)
 ### Fully Symmetric
