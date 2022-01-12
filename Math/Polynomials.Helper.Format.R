@@ -264,13 +264,15 @@ coef.pm = function(p, xn=NULL, pow=NULL, descending=TRUE) {
 	if(is.null(pow)) {
 		p.all = rep(0, max(p[, xn]) + 1);
 		p.all[p[, xn] + 1] = p$coeff;
+		if(descending) p.all = rev(p.all);
 	} else {
 		p.all = rep(0, length(pow));
 		id = match(pow, p[, xn]);
-		id = id[ ! is.na(id)];
-		p.all = p$coeff[id];
+		isNotNA = ! is.na(id);
+		id = id[isNotNA];
+		p.all[isNotNA] = p$coeff[id];
+		# Descending: ???
 	}
-	if(descending) p.all = rev(p.all);
 	return(p.all);
 }
 ### Print
