@@ -225,28 +225,58 @@ gcd.exact.p(rescale.pm(p, 3, div=TRUE), p2, "x")
 
 ### Symmetric Polynomials
 
-# Subtypes of Symmetric Polynomials:
+### Subtypes of Symmetric Polynomials:
+
+### Subtype Ht:
+# b1 + b2 = B[1]
+# b1*b2 = B[2] - B[1]
+# where: B[id] = coefficient of P[6] polynomial;
+# B[3] confirms / rejects sub-type;
+factorize.V1P6.F3F3 = function(p) {
+	# TODO: check (Partial) Symmetry;
+	S  = coef.pm(p, pow=1);
+	E2 = coef.pm(p, pow=2) - S;
+	# Check:
+	b3 = coef.pm(p, pow=3);
+	if((b3 - S^2 + 2*E2 - 2) != 0) return(list(isF=FALSE));
+	# Solve:
+	bd = sqrt(S^2 - 4*E2 + 0i);
+	b1 = (S + bd)/2; b2 = (S - bd)/2;
+	sol = c(b1=b1, b2=b2);
+	return(list(isF=TRUE, F=sol));
+}
+
+p = toPoly.pm("(x^3 + b1*x^2 + b2*x + 1) * (x^3 + b2*x^2 + b1*x + 1)")
+print.coeff(p)
+
+# not symmetric:
+# (but easy factorizable)
+p = toPoly.pm("(x^3 + b1^2*x^2 + b2*x + 1) * (x^3 + b2^2*x^2 + b1*x + 1)")
+print.coeff(p)
+
+# not symmetric:
+p = toPoly.pm("(x^3 + b1*x + b2) * (x^3 + b2*x + b1)")
+print.coeff(p)
+
 
 b = c(3,4,-5)
-###
+### Fully Symmetric
 p = toPoly.pm("(x^3 + b[1]*x^2 + b[1]*x + 1) * (x^3 + b[2]*x^2 + b[2]*x + 1)")
 m = multiplicity.pm(p, -1)
 print.pm(p)
 checkVal.pm(m, 4)
 div.pm(p, toPoly.pm("(x+1)^4"), "x")
 
-###
+### Hidden Ht:
 p = toPoly.pm("(x^3 + b[2]*x^2 + b[1]*x + 1) * (x^3 + b[1]*x^2 + b[2]*x + 1)")
 m = multiplicity.pm(p, -1)
 print.pm(p)
 checkVal.pm(m, 0)
-# TODO: factorize
-# b1 + b2 = B[1]
-# b1*b2 = B[2] - B[1]
-# where: B[id] = coefficient of P[6] polynomial;
-# B[3] confirms / rejects sub-type;
+# Factorize:
+factorize.V1P6.F3F3(p)
 
-###
+
+### P2-Based:
 p = toPoly.pm("(x^2 + b[1]*x + 1)*(x^2 + b[2]*x + 1)*(x^2 + b[3]*x + 1)")
 m = multiplicity.pm(p, -1)
 print.pm(p)
