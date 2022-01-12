@@ -251,7 +251,7 @@ evalCoeff = function(p, xn="x", ...) {
 	return(p.all);
 }
 # returns only the numeric coefficients
-coef.pm = function(p, xn=NULL, descending=TRUE) {
+coef.pm = function(p, xn=NULL, pow=NULL, descending=TRUE) {
 	if(is.null(xn)) {
 		if(ncol(p) > 2) stop("Missing variable name!");
 		idc = match("coeff", names(p));
@@ -261,8 +261,15 @@ coef.pm = function(p, xn=NULL, descending=TRUE) {
 	p = aggregate0.pm(p[, c(xn, "coeff"), drop=FALSE]);
 	p = reduce.pm(p);
 	# Missing powers
-	p.all = rep(0, max(p[, xn]) + 1);
-	p.all[p[, xn] + 1] = p$coeff;
+	if(is.null(pow)) {
+		p.all = rep(0, max(p[, xn]) + 1);
+		p.all[p[, xn] + 1] = p$coeff;
+	} else {
+		p.all = rep(0, length(pow));
+		id = match(pow, p[, xn]);
+		id = id[ ! is.na(id)];
+		p.all = p$coeff[id];
+	}
 	if(descending) p.all = rev(p.all);
 	return(p.all);
 }
