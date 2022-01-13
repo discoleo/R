@@ -7,7 +7,7 @@
 ### Multi-Variable Polynomials
 ### Factorize
 ###
-### draft v.0.1h
+### draft v.0.1h-refactor
 
 
 ### Factorize Multi-Variable Polynomials
@@ -275,20 +275,6 @@ checkE21_S3 = function(e, e21) {
 	return(TRUE);
 }
 
-# TODO: isSymmetric();
-isSymmetric.numeric = function(x, len=NULL) {
-	if(len < 0) stop("Invalid length parameter!");
-	len.half = length(x) %/% 2;
-	isOdd    = (length(x) %% 2) == 1;
-	posStart = if(isOdd) len.half + 2 else len.half + 1;
-	if(is.null(len) || len >= length(x)) {
-		posOff = 0;
-	} else {
-		posOff = if(len >= len.half) 0 else len.half - len;
-	}
-	isEq = (x[seq(len.half - posOff)] == x[seq(length(x), posStart + posOff)]);
-	return(all(isEq));
-}
 factorize.V1P9.QuasiSym = function(p, digits=8) {
 	if( ! is.pm(p)) stop("Not a polynomial!");
 	len = ncol(p);
@@ -310,7 +296,7 @@ factorize.V1P9.QuasiSym = function(p, digits=8) {
 		return(list(p, Factor=NULL));
 	}
 	bx = coef.pm(p, xn=xn, pow=0:9);
-	isSymm = isSymmetric(bx, len=4);
+	isSymm = isSymmetric.numeric(bx, len=4);
 	if( ! isSymm) return(wf(msg));
 	#
 	if(bx[1] != 1) bx = bx / bx[1];

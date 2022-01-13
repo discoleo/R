@@ -7,7 +7,7 @@
 ### Multi-Variable Polynomials
 ### Factorize: Tests
 ###
-### draft v.0.1h-comments
+### draft v.0.1h-comments2
 
 
 ### Tests:
@@ -23,9 +23,10 @@
 
 
 source("Polynomials.Helper.Tests.Helper.R")
-# source("Polynomials.Helper.R")
+# - are automatically loaded:
+#   source("Polynomials.Helper.R");
 # - is automatically loaded in: Polynomials.Helper.R;
-# source("Polynomials.Helper.Factorize.R")
+#   source("Polynomials.Helper.Factorize.R");
 
 ### GMP:
 # source("Polynomials.Helper.BigNumbers.R")

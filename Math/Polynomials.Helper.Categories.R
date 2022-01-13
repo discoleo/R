@@ -30,6 +30,20 @@
 ####################
 
 
+isSymmetric.numeric = function(x, len=NULL) {
+	if(len < 0) stop("Invalid length parameter!");
+	len.half = length(x) %/% 2;
+	isOdd    = (length(x) %% 2) == 1;
+	posStart = if(isOdd) len.half + 2 else len.half + 1;
+	if(is.null(len) || len >= length(x)) {
+		posOff = 0;
+	} else {
+		posOff = if(len >= len.half) 0 else len.half - len;
+	}
+	isEq = (x[seq(len.half - posOff)] == x[seq(length(x), posStart + posOff)]);
+	return(all(isEq));
+}
+
 isSymmetric.pm = function(p, pow.max=NULL) {
 	# Strictly Symmetric: b0 == bn;
 	# Assumes: reduced polynomial;
