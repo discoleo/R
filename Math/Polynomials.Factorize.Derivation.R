@@ -6,7 +6,7 @@
 ### Multi-Variable Polynomials
 ### Factorize: Derivations
 ###
-### draft v.0.1c
+### draft v.0.1d
 
 
 ### Factorize Multi-Variable Polynomials
@@ -21,7 +21,7 @@
 
 source("Polynomials.Helper.R")
 # - is automatically loaded in: Polynomials.Helper.R;
-# source("Polynomials.Helper.Factorize.R")
+#   source("Polynomials.Helper.Factorize.R")
 
 
 #######################
@@ -134,6 +134,7 @@ c2 = c(5, 4);
 (b1*c1 + 4*b2*c2 + 2*(b1*c2+b2*c1) + (b1+c1) + 2*(b2+c2) + 1 - 2*P2(2)) %% 7
 # => NOT Factorisable!
 
+### Mod:
 solve.ModP2 = function(b, mod) {
 	b0 = b[1]; b1 = b[2]; b2 = b[3];
 	x.f = function(x) (b2*x^2 + b1*x + b0) %% mod;
@@ -173,6 +174,29 @@ printVars.V4 = function() {
 	});
 }
 factorize.S1P6.F3F3 = function(p, debug=FALSE) {
+	nms = names(p);
+	idc = match("coeff", nms);
+	if(is.na(idc)) stop("Not a polynomial!");
+	xn = nms[ - idc];
+	if(length(xn) != 1) stop("Not a univariate polynomial!");
+	# TODO: check Order 6;
+	#
+	mod = 7;
+	r = factorize.S1P6.F3F3Mod7(p, debug=debug);
+	if( ! r$isF) {
+		isOdd = (p[, xn] %% 2 == 1);
+		p$coeff[isOdd] = - p$coeff[isOdd];
+		r = factorize.S1P6.F3F3Mod7(p, debug=debug);
+		# NO Factors:
+		if( ! r$isF) return(r);
+		# Sign changes in the Factors:
+		r$F[, c("b2", "c2")] = (mod - r$F[, c("b2", "c2")]);
+		r$B0 = -1;
+	}
+	# TODO: Mod 13;
+	return(r);
+}
+factorize.S1P6.F3F3Mod7 = function(p, debug=FALSE) {
 	mod = 7;
 	p1x = eval.pm(p, 1); p3x = eval.pm(p, 3);
 	p5x = eval.pm(p, 5); p6x = eval.pm(p, 6);
@@ -282,7 +306,27 @@ p = toPoly.pm("(x^3 + b2*x^2 + b1*x - 1) * (x^3 + c2*x^2 + c1*x - 1)");
 
 b = c(3, -4); c = c(2, 1);
 b1 = b[1]; b2 = b[2]; c1 = c[1]; c2 = c[2];
-P = function(x) eval.pm(p, list(x=x, b1=b1, b2=b2, c1=c1, c2=c2));
+p2 = replace.pm(p, list(b1=b1, b2=b2, c1=c1, c2=c2))
+P = function(x) eval.pm(p2, x);
+factorize.S1P6.F3F3(p2)
+
+###
+b = c(3, -1); c = c(3, 1);
+b1 = b[1]; b2 = b[2]; c1 = c[1]; c2 = c[2];
+p2 = replace.pm(p, list(b1=b1, b2=b2, c1=c1, c2=c2))
+P = function(x) eval.pm(p2, x);
+factorize.S1P6.F3F3(p2)
+
+# NO False-Positives:
+sapply(1:20, function(b) factorize.S1P6.F3F3(toPoly.pm("x^6 + b[1]*x + 1"))$isF)
+# ~ 1/4 False-Positives:
+sapply(1:20, function(b) factorize.S1P6.F3F3(toPoly.pm("x^6 + x^2 + b[1]*x + 1"))$isF)
+
+
+# Note:
+# - can be solve using the same code as for:
+#   (x^3 + ... + 1)*(x^3 + ... + 1);
+# - Transform: P(-x);
 
 #########
 ### Mod 7
@@ -310,7 +354,7 @@ P = function(x) eval.pm(p, list(x=x, b1=b1, b2=b2, c1=c1, c2=c2));
 (b2*c2 + 2*P(1) - 6*P(2) + 4*P(4)) %% 7
 ((b1*c2 + b2*c1) - 5*P(1) + 2*P(2) - 5*P(4)) %% 7
 
-### TODO
+# - solution using P(-x);
 
 
 #################
