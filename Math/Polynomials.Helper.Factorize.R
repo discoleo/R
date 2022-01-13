@@ -7,7 +7,7 @@
 ### Multi-Variable Polynomials
 ### Factorize
 ###
-### draft v.0.1f-fix
+### draft v.0.1g
 
 
 ### Factorize Multi-Variable Polynomials
@@ -15,10 +15,14 @@
 
 ### fast load:
 # - is automatically loaded in: Polynomials.Helper.R;
+# source("Polynomials.Helper.R")
 # source("Polynomials.Helper.Factorize.R")
 
 ### may need BigNumbers
 # library(gmp)
+
+# needed to Factorize Symmetric Polynomials;
+source("Polynomials.Helper.Categories.R");
 
 ######################
 
@@ -257,6 +261,21 @@ factorSimple.pm = function(p) {
 
 ### V1 P9: Almost-Symmetric
 
+
+checkE21_S3 = function(e, e21) {
+	S = e[1]; E2 = e[2]; E3 = e[3];
+	E21 = e21[1]; E12 = e21[2];
+	# Checks:
+	chk1 = E21 + E12 - E2*S + 3*E3;
+	if(round0(chk1) != 0) return(FALSE);
+	chk2 = E21*E12 - (E2^3 + 3*E3^2 - 3*E3*E2*S) +
+		- E3*(S^3 - 3*E2*S + 3*E3) - 3*E3^2;
+	if(round0(chk2) != 0) return(FALSE);
+	#
+	return(TRUE);
+}
+
+# TODO: use isSymmetric.pm();
 factorize.V1P9.QuasiSym = function(p, digits=8) {
 	if( ! is.pm(p)) stop("Not a polynomial!");
 	len = ncol(p);
@@ -318,11 +337,7 @@ factorize.V1P9.QuasiSym = function(p, digits=8) {
 		}
 	}
 	# Checks:
-	chk1 = b4 + b5 - 4*S - 2*E2 - E2*S + 3*E3;
-	if(round0(chk1) != 0) return(wf(msg));
-	chk2 = (b4 - 2*S - E2)*(b5 - 2*S - E2) - (E2^3 + 3*E3^2 - 3*E3*E2*S) +
-		- E3*(S^3 - 3*E2*S + 3*E3) - 3*E3^2;
-	if(round0(chk2) != 0) return(wf(msg));
+	if( ! checkE21_S3(c(S,E2,E3), c(b4 - 2*S - E2, b5 - 2*S - E2))) return(wf(msg));
 	# Factors
 	b = roots(c(1, -S, E2, -E3));
 	# Round to Integer:
