@@ -7,7 +7,7 @@
 ### Multi-Variable Polynomials
 ### Factorize
 ###
-### draft v.0.1g
+### draft v.0.1h
 
 
 ### Factorize Multi-Variable Polynomials
@@ -275,7 +275,20 @@ checkE21_S3 = function(e, e21) {
 	return(TRUE);
 }
 
-# TODO: use isSymmetric.pm();
+# TODO: isSymmetric();
+isSymmetric.numeric = function(x, len=NULL) {
+	if(len < 0) stop("Invalid length parameter!");
+	len.half = length(x) %/% 2;
+	isOdd    = (length(x) %% 2) == 1;
+	posStart = if(isOdd) len.half + 2 else len.half + 1;
+	if(is.null(len) || len >= length(x)) {
+		posOff = 0;
+	} else {
+		posOff = if(len >= len.half) 0 else len.half - len;
+	}
+	isEq = (x[seq(len.half - posOff)] == x[seq(length(x), posStart + posOff)]);
+	return(all(isEq));
+}
 factorize.V1P9.QuasiSym = function(p, digits=8) {
 	if( ! is.pm(p)) stop("Not a polynomial!");
 	len = ncol(p);
@@ -296,48 +309,26 @@ factorize.V1P9.QuasiSym = function(p, digits=8) {
 		warning(msg);
 		return(list(p, Factor=NULL));
 	}
-	isErr.bx = function(b1, b2) {
-		if( (length(b1) > 1) || (length(b2) > 1) ||
-			(length(b1) != length(b2)) ||
-			(length(b1) == 1 && (b1 != b2)) ) return(TRUE);
-		return(FALSE);
-	}
-	bx  = p$coeff[p[,idx] == 0];
-	if(length(bx) != 1 && bx != 1) return(wf(msg));
-	# B1:
-	bx1 = p$coeff[p[,idx] == 1];
-	bx2 = p$coeff[p[,idx] == 8];
-	if(isErr.bx(bx1, bx2)) return(wf(msg));
-	S = if(length(bx1) == 0) 0 else bx1;
-	# B2:
-	bx1 = p$coeff[p[,idx] == 2];
-	bx2 = p$coeff[p[,idx] == 7];
-	if(isErr.bx(bx1, bx2)) return(wf(msg));
-	E2 = (if(length(bx1) == 0) 0 else bx1) - S;
-	# B3:
-	bx1 = p$coeff[p[,idx] == 3];
-	bx2 = p$coeff[p[,idx] == 6];
-	if(isErr.bx(bx1, bx2)) return(wf(msg));
-	E3 = (if(length(bx1) == 0) 0 else bx1) - S^2 + E2 - 3;
-	# B4 & B5:
-	bx1 = p$coeff[p[,idx] == 4];
-	bx2 = p$coeff[p[,idx] == 5];
-	if((length(bx1) > 1) || (length(bx2) > 1)) { return(wf("Polynomial is unreduced!")); }
-	b4 = if(length(bx1) == 0) 0 else bx1;
-	b5 = if(length(bx2) == 0) 0 else bx2;
+	bx = coef.pm(p, xn=xn, pow=0:9);
+	isSymm = isSymmetric(bx, len=4);
+	if( ! isSymm) return(wf(msg));
+	#
+	if(bx[1] != 1) bx = bx / bx[1];
+	S = bx[2]; E2 = bx[3] - S; E3 = bx[4] - S^2 + E2 - 3;
+	b4 = bx[5]; b5 = bx[6];
 	if(b4 == b5) {
 		# Fully Symmetric:
 		m = multiplicity.pm(p, -1);
 		if(m > 0) {
 			pDiv = toPoly.pm(paste0(xn, "+ 1"));
-			# TODO: "n" => "pow";
+			# TODO: arg "n" => "pow";
 			pRez = div.pm(p, pow.pm(pDiv, n=m, debug = FALSE), by=xn)$Rez;
 			pRez = toPoly.pm(pRez);
 			return( list(p=pRez, Factor=pDiv, Multiple=m) );
 		}
 	}
 	# Checks:
-	if( ! checkE21_S3(c(S,E2,E3), c(b4 - 2*S - E2, b5 - 2*S - E2))) return(wf(msg));
+	if( ! checkE21_S3(c(S,E2,E3), c(b4, b5) - (2*S + E2))) return(wf(msg));
 	# Factors
 	b = roots(c(1, -S, E2, -E3));
 	# Round to Integer:
