@@ -6,7 +6,7 @@
 ### Multi-Variable Polynomials
 ### Factorize: Derivations
 ###
-### draft v.0.1b-fix3
+### draft v.0.1c
 
 
 ### Factorize Multi-Variable Polynomials
@@ -68,10 +68,11 @@ P = function(x) eval.pm(p, list(x=x, b1=b1, b2=b2, c1=c1, c2=c2));
 # =>
 (b1*c1 + 3*b2*c2 - P(3) + P(6)) %% 7
 (b1*c1 - 2*b2*c2 + 2*P(5) + 5*P(6)) %% 7
-# Eqs:
+### Eqs:
 (b1*c1 + P(3) - 3*P(5) + 2*P(6)) %% 7
 (b2*c2 - 3*P(3) + P(5) + 2*P(6)) %% 7
 ((b1*c2 + b2*c1) - 2*P(3) - 2*P(5) + 5*P(6)) %% 7
+
 # Aux =>
 (b1*c1 + b2*c2 + (b1*c2 + b2*c1) + 2*(b1+b2+c1+c2) + 4 - P(1)) %% 7
 (2*(b1+b2+c1+c2) + 4 - P(1) + 4*P(3) + 4*P(5) - 2*P(6)) %% 7
@@ -160,6 +161,17 @@ inv.mod = function(x, mod) {
 	}
 	sapply(x, f);
 }
+printVars.V4 = function() {
+	# debug various functions;
+	l = parent.frame();
+	with(l, {
+	cat(c("\nEq 1: ", c(b1x, b0x)));
+	cat(c("\nb1 + b2 = ", b12s));
+	cat(c("\nc1 + c2 = ", c12s));
+	cat(c("\nb1 * c1 = ", b1c1));
+	cat(c("\nb2 * c2 = ", b2c2, "\n"));
+	});
+}
 factorize.S1P6.F3F3 = function(p, debug=FALSE) {
 	mod = 7;
 	p1x = eval.pm(p, 1); p3x = eval.pm(p, 3);
@@ -178,11 +190,7 @@ factorize.S1P6.F3F3 = function(p, debug=FALSE) {
 	len  = length(b12s);
 	b1c1 = rep(b1c1, len); b2c2 = rep(b2c2, len);
 	if(debug) {
-		cat(c("\nEq 1: ", c(b1x, b0x)));
-		cat(c("\nb1 + b2 = ", b12s));
-		cat(c("\nc1 + c2 = ", c12s));
-		cat(c("\nb1 * c1 = ", b1c1));
-		cat(c("\nb2 * c2 = ", b2c2, "\n"));
+		printVars.V4();
 	}
 	# (b1 - b12s)*(c1 - c12s) - b2c2 = 0
 	# c12s*b1^2 - (b1c1 - b2c2 + b12s*c12s)*b1 + b1c1*b12s = 0
@@ -201,8 +209,9 @@ factorize.S1P6.F3F3 = function(p, debug=FALSE) {
 	b1c1 = b1c1[nSols]; b2c2 = b2c2[nSols];
 	b2 = (b12s - b1) %% mod;
 	# c1 & c2:
-	len = length(b1)
+	len = length(b1);
 	c1 = rep(NA, len); c2 = rep(NA, len);
+	# fails when both b1 = 0 & b2 = 0;
 	for(id in seq(len)) {
 		if(b1[id] != 0) {
 			c1[id] = (b1c1[id] * inv.mod(b1[id], mod=mod)) %% mod;
@@ -271,7 +280,7 @@ sapply(1:7, function(x) factorize.S1P6.F3F3(toPoly.pm("x^6 + x^2 + x[1]*x + 1"))
 # (x^3 + b2*x^2 + b1*x - 1) * (x^3 + c2*x^2 + c1*x - 1)
 p = toPoly.pm("(x^3 + b2*x^2 + b1*x - 1) * (x^3 + c2*x^2 + c1*x - 1)");
 
-b = c(3, -4); c = c(2, 5);
+b = c(3, -4); c = c(2, 1);
 b1 = b[1]; b2 = b[2]; c1 = c[1]; c2 = c[2];
 P = function(x) eval.pm(p, list(x=x, b1=b1, b2=b2, c1=c1, c2=c2));
 
@@ -280,10 +289,26 @@ P = function(x) eval.pm(p, list(x=x, b1=b1, b2=b2, c1=c1, c2=c2));
 
 ### P(1) (mod 7)
 ((b2 + b1)*(c2 + c1) - P(1)) %% 7
+(b1*c1 + b2*c2 + (b1*c2 + b2*c1) - P(1)) %% 7
 
 ### P(2) (mod 7)
-(9*(3*b2 + b1)*(3*c2 + c1) - P(2)) %% 7
-((3*b2 + b1)*(3*c2 + c1) + 3*P(2)) %% 7
+(4*(2*b2 + b1)*(2*c2 + c1) - P(2)) %% 7
+((2*b2 + b1)*(2*c2 + c1) - 2*P(2)) %% 7
+(b1*c1 + 4*b2*c2 + 2*(b1*c2 + b2*c1) - 2*P(2)) %% 7
+
+### P(4) (mod 7)
+(2*(4*b2 + b1)*(4*c2 + c1) - P(4)) %% 7
+((4*b2 + b1)*(4*c2 + c1) - 4*P(4)) %% 7
+(b1*c1 + 2*b2*c2 + 4*(b1*c2 + b2*c1) - 4*P(4)) %% 7
+
+# System =>
+(b1*c1 - 2*b2*c2 - 2*P(1) + 2*P(2)) %% 7
+(3*b1*c1 + 2*b2*c2 - 4*P(1) + 4*P(4)) %% 7
+
+### Eqs:
+(b1*c1 + 2*P(1) + 4*P(2) + P(4)) %% 7
+(b2*c2 + 2*P(1) - 6*P(2) + 4*P(4)) %% 7
+((b1*c2 + b2*c1) - 5*P(1) + 2*P(2) - 5*P(4)) %% 7
 
 ### TODO
 
