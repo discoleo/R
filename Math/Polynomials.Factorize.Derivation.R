@@ -6,7 +6,7 @@
 ### Multi-Variable Polynomials
 ### Factorize: Derivations
 ###
-### draft v.0.1e
+### draft v.0.1f
 
 
 ### Factorize Multi-Variable Polynomials
@@ -133,45 +133,8 @@ c2 = c(5, 4);
 (b1*c1 + 4*b2*c2 + 2*(b1*c2+b2*c1) + (b1+c1) + 2*(b2+c2) + 1 - 2*P2(2)) %% 7
 # => NOT Factorisable!
 
-### Mod:
-solve.ModP2 = function(b, mod) {
-	b0 = b[1]; b1 = b[2]; b2 = b[3];
-	x.f = function(x) (b2*x^2 + b1*x + b0) %% mod;
-	if(b0 == 0) {
-		if(b2 == 1) {
-			x = c(0, (mod - b1));
-		} else if(b2 == 0) {
-			x = 0;
-		} else {
-			b2inv = inv.mod(b2, mod=mod);
-			x = c(0, (- b1*b2inv) %% mod);
-		}
-	} else {
-		err = sapply(seq(mod), x.f);
-		x   = which(err == 0);
-		if(length(x) == 0) return(list(hasSol = FALSE, Mod = mod));
-	}
-	return(list(hasSol = TRUE, Sol = x, Mod = mod));
-}
-inv.mod = function(x, mod) {
-	if(mod == 1 || mod == 0) stop("Invalid mod!");
-	f = function(x) {
-		id = which((x * seq(mod - 1) - 1) %% mod == 0);
-		if(length(id) == 0) NA else id;
-	}
-	sapply(x, f);
-}
-printVars.V4 = function() {
-	# debug various functions;
-	l = parent.frame();
-	with(l, {
-	cat(c("\nEq 1: ", c(b1x, b0x)));
-	cat(c("\nb1 + b2 = ", b12s));
-	cat(c("\nc1 + c2 = ", c12s));
-	cat(c("\nb1 * c1 = ", b1c1));
-	cat(c("\nb2 * c2 = ", b2c2, "\n"));
-	});
-}
+
+### Factorize F3F3:
 factorize.S1P6.F3F3 = function(p, debug=FALSE) {
 	nms = names(p);
 	idc = match("coeff", nms);
@@ -271,6 +234,19 @@ solve.F3.Coeffs = function(b1c1, b2c2, b12s, c12s, mod) {
 	sol  = sol[ ! isNA, , drop=FALSE];
 	return(list(isF=TRUE, sol=sol));
 }
+### Debug:
+printVars.V4 = function() {
+	# debug various functions;
+	l = parent.frame();
+	with(l, {
+	cat(c("\nEq 1: ", c(b1x, b0x)));
+	cat(c("\nb1 + b2 = ", b12s));
+	cat(c("\nc1 + c2 = ", c12s));
+	cat(c("\nb1 * c1 = ", b1c1));
+	cat(c("\nb2 * c2 = ", b2c2, "\n"));
+	});
+}
+
 
 ###
 p = toPoly.pm("(x^3 + b2*x^2 + b1*x + 1) * (x^3 + c2*x^2 + c1*x + 1)");

@@ -21,8 +21,11 @@
 ### may need BigNumbers
 # library(gmp)
 
-# needed to Factorize Symmetric Polynomials;
+# needed to Factorize Symmetric Polynomials:
 source("Polynomials.Helper.Categories.R");
+
+# needed to Factorize other Polynomials:
+source("Polynomials.Helper.Mod.R");
 
 ######################
 
