@@ -6,7 +6,7 @@
 ### Multi-Variable Polynomials
 ### Factorize: Derivations
 ###
-### draft v.0.1d
+### draft v.0.1e
 
 
 ### Factorize Multi-Variable Polynomials
@@ -38,10 +38,9 @@ b = c(2, 4); c = c(3, -3);
 b1 = b[1]; b2 = b[2]; c1 = c[1]; c2 = c[2];
 P = function(x) eval.pm(p, list(x=x, b1=b1, b2=b2, c1=c1, c2=c2));
 
-# TODO: recheck calculations;
-
-#########
-### Mod 7
+#############
+### Mod 7 ###
+#############
 
 ### P(3) (mod 7)
 (9*(3*b2 + b1)*(3*c2 + c1) - P(3)) %% 7
@@ -216,6 +215,28 @@ factorize.S1P6.F3F3Mod7 = function(p, debug=FALSE) {
 	if(debug) {
 		printVars.V4();
 	}
+	### Solve Sub-System:
+	sol = solve.F3.Coeffs(b1c1, b2c2, b12s, c12s, mod=mod);
+	if(sol$isF == FALSE || nrow(sol$sol) == 0) return(list(isF = FALSE, Mod=mod));
+	sol = sol$sol;
+	### Aux Eqs:
+	if(debug) {
+		print(paste0("Starting Aux eqs: sol = ", nrow(sol)));
+		print(sol);
+	}
+	p2 = eval.pm(p, 2) %% mod;
+	p4 = eval.pm(p, 4) %% mod;
+	b1 = sol[,1]; b2 = sol[,2]; c1 = sol[,3]; c2 = sol[,4];
+	# P(2)
+	err1 = ((2*b2 + b1 + 1)*(2*c2 + c1 + 1) - 2*p2) %% mod;
+	# P(4)
+	err2 = ((b2 + 2*b1 + 1)*(c2 + 2*c1 + 1) - 2*p4) %% mod;
+	isOK = (err1 == 0) & (err2 == 0);
+	sol = sol[isOK, , drop=FALSE];
+	if(nrow(sol) == 0) return(list(isF = FALSE, Mod=mod));
+	return(list(isF = TRUE, F=sol, Mod=mod));
+}
+solve.F3.Coeffs = function(b1c1, b2c2, b12s, c12s, mod) {
 	# (b1 - b12s)*(c1 - c12s) - b2c2 = 0
 	# c12s*b1^2 - (b1c1 - b2c2 + b12s*c12s)*b1 + b1c1*b12s = 0
 	b1y = (- (b1c1 - b2c2 + b12s*c12s)) %% mod;
@@ -235,7 +256,7 @@ factorize.S1P6.F3F3Mod7 = function(p, debug=FALSE) {
 	# c1 & c2:
 	len = length(b1);
 	c1 = rep(NA, len); c2 = rep(NA, len);
-	# fails when both b1 = 0 & b2 = 0;
+	# TODO: fails when both b1 = 0 & b2 = 0;
 	for(id in seq(len)) {
 		if(b1[id] != 0) {
 			c1[id] = (b1c1[id] * inv.mod(b1[id], mod=mod)) %% mod;
@@ -248,23 +269,7 @@ factorize.S1P6.F3F3Mod7 = function(p, debug=FALSE) {
 	sol = cbind(b1=b1, b2=b2, c1=c1, c2=c2);
 	isNA = apply(sol, 1, function(x) any(is.na(x)));
 	sol  = sol[ ! isNA, , drop=FALSE];
-	if(nrow(sol) == 0) return(list(isF = FALSE, Mod=mod));
-	### Aux Eqs:
-	if(debug) {
-		print(paste0("Starting Aux eqs: sol = ", nrow(sol)));
-		print(sol);
-	}
-	p2 = eval.pm(p, 2) %% mod;
-	p4 = eval.pm(p, 4) %% mod;
-	b1 = sol[,1]; b2 = sol[,2]; c1 = sol[,3]; c2 = sol[,4];
-	# P(2)
-	err1 = ((2*b2 + b1 + 1)*(2*c2 + c1 + 1) - 2*p2) %% mod;
-	# P(4)
-	err2 = ((b2 + 2*b1 + 1)*(c2 + 2*c1 + 1) - 2*p4) %% mod;
-	isOK = (err1 == 0) & (err2 == 0);
-	sol = sol[isOK, , drop=FALSE];
-	if(nrow(sol) == 0) return(list(isF = FALSE, Mod=mod));
-	return(list(isF = TRUE, F=sol, Mod=mod));
+	return(list(isF=TRUE, sol=sol));
 }
 
 ###
@@ -319,12 +324,12 @@ factorize.S1P6.F3F3(p2)
 
 # NO False-Positives:
 sapply(1:20, function(b) factorize.S1P6.F3F3(toPoly.pm("x^6 + b[1]*x + 1"))$isF)
-# ~ 1/4 False-Positives:
+# False-Positives: ~ 1/4 of tests;
 sapply(1:20, function(b) factorize.S1P6.F3F3(toPoly.pm("x^6 + x^2 + b[1]*x + 1"))$isF)
 
 
 # Note:
-# - can be solve using the same code as for:
+# - can be solved using the same code as for:
 #   (x^3 + ... + 1)*(x^3 + ... + 1);
 # - Transform: P(-x);
 
@@ -355,6 +360,56 @@ sapply(1:20, function(b) factorize.S1P6.F3F3(toPoly.pm("x^6 + x^2 + b[1]*x + 1")
 ((b1*c2 + b2*c1) - 5*P(1) + 2*P(2) - 5*P(4)) %% 7
 
 # - solution using P(-x);
+
+
+#################
+#################
+
+##############
+### Mod 13 ###
+##############
+
+### Factors: (x^3 + ... + 1)
+# (x^3 + b2*x^2 + b1*x + 1) * (x^3 + c2*x^2 + c1*x + 1)
+p = toPoly.pm("(x^3 + b2*x^2 + b1*x + 1) * (x^3 + c2*x^2 + c1*x + 1)");
+
+b = c(3, -4); c = c(2, 1);
+b1 = b[1]; b2 = b[2]; c1 = c[1]; c2 = c[2];
+p2 = replace.pm(p, list(b1=b1, b2=b2, c1=c1, c2=c2))
+P = function(x) eval.pm(p2, x);
+
+### P(12) or P(-1) (mod 13)
+((b2 - b1)*(c2 - c1) - P(-1)) %% 13
+(b1*c1 + b2*c2 - (b1*c2 + b2*c1) - P(-1)) %% 13
+
+### P(4) (mod 13)
+(3*(4*b2 + b1)*(4*c2 + c1) - P(4)) %% 13
+((4*b2 + b1)*(4*c2 + c1) + 4*P(4)) %% 13
+(b1*c1 + 3*b2*c2 + 4*(b1*c2 + b2*c1) + 4*P(4)) %% 13
+
+### P(10) (mod 13)
+(9*(10*b2 + b1)*(10*c2 + c1) - P(10)) %% 13
+((10*b2 + b1)*(10*c2 + c1) - 3*P(10)) %% 13
+(b1*c1 + 9*b2*c2 - 3*(b1*c2 + b2*c1) - 3*P(10)) %% 13
+
+# System =>
+(5*b1*c1 + 7*b2*c2 - 4*P(-1) + 4*P(4)) %% 13
+(b1*c1 - 3*b2*c2 + 5*P(-1) - 5*P(10)) %% 13
+
+### Eqs:
+(b1*c1 + 4*P(-1) - 3*P(4) - P(10)) %% 13
+(b2*c2 - 9*P(-1) - P(4) - 3*P(10)) %% 13
+((b1*c2 + b2*c1) - 4*P(-1) - 4*P(4) - 4*P(10)) %% 13
+
+### Aux: P(1) (mod 13)
+((b2 + b1 + 2)*(c2 + c1 + 2) - P(1)) %% 13
+((b1+b2)*(c1+c2) + 2*(b1+b2+c1+c2) + 4 - P(1)) %% 13
+# =>
+((b1+b2)*(c1+c2) - 9*P(-1) - 8*P(4) - 8*P(10)) %% 13
+((b1+b2+c1+c2) + 2 - 7*P(1) - 2*P(-1) + 4*P(4) + 4*P(10)) %% 13
+# =>
+x = (b1 + b2)
+(x^2 + (2 - 7*P(1) - 2*P(-1) + 4*P(4) + 4*P(10))*x + (9*P(-1) + 8*P(4) + 8*P(10))) %% 13
 
 
 #################
