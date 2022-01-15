@@ -6,7 +6,7 @@
 ### Multi-Variable Polynomials
 ### Factorize: Derivations
 ###
-### draft v.0.1g
+### draft v.0.1h
 
 
 ### Factorize Multi-Variable Polynomials
@@ -141,7 +141,7 @@ factorize.S1P6.F3F3 = function(p, debug=FALSE) {
 	if(is.na(idc)) stop("Not a polynomial!");
 	xn = nms[ - idc];
 	if(length(xn) != 1) stop("Not a univariate polynomial!");
-	# TODO: check Order 6;
+	# TODO: p: check Order 6;
 	#
 	mod = 7;
 	r = factorize.S1P6.F3F3Mod7(p, debug=debug);
@@ -154,18 +154,33 @@ factorize.S1P6.F3F3 = function(p, debug=FALSE) {
 		# Sign changes in the Factors:
 		r$F[, c("b2", "c2")] = (mod - r$F[, c("b2", "c2")]);
 		r$B0 = -1;
+	} else {
+		r$B0 = 1;
+		# TODO: check also existence with B0 = -1?
 	}
-	# TODO: Mod 13;
+	if( ! r$isF) return(r);
+	### Mod 13;
+	mod = 13;
+	r2 = factorize.S1P6.F3F3Mod13(p, debug=debug);
+	if( ! r2$isF) return(r2);
+	if(r2$isF) {
+		if(r$B0 == -1) {
+			# revert Sign changes in the Factors:
+			r2$F[, c("b2", "c2")] = (mod - r2$F[, c("b2", "c2")]);
+		}
+		r$F2 = r2$F; # TODO ???
+		r$Mod = c(r$Mod, r2$Mod);
+	}
 	return(r);
 }
 factorize.S1P6.F3F3Mod7 = function(p, debug=FALSE) {
 	mod = 7;
 	p1x = eval.pm(p, 1); p3x = eval.pm(p, 3);
 	p5x = eval.pm(p, 5); p6x = eval.pm(p, 6);
-	p1 = p1x %% 7; p3 = p3x %% 7;
-	p5 = p5x %% 7; p6 = p6x %% 7;
-	b1x = (2 - 4*p1 + 2*p3 + 2*p5 - p6) %% 7;
-	b0x = (4*p3 + 4*p5 - 2*p6) %% 7;
+	p1 = p1x %% mod; p3 = p3x %% mod;
+	p5 = p5x %% mod; p6 = p6x %% mod;
+	b1x = (2 - 4*p1 + 2*p3 + 2*p5 - p6) %% mod;
+	b0x = (4*p3 + 4*p5 - 2*p6) %% mod;
 	#
 	sol = solve.ModP2(c(b0x, b1x, 1), mod=mod);
 	if( ! sol$hasSol) return(list(isF = FALSE, Mod = mod));
@@ -178,12 +193,41 @@ factorize.S1P6.F3F3Mod7 = function(p, debug=FALSE) {
 	if(debug) {
 		printVars.V4();
 	}
-	### Solve Sub-System:
-	### & Aux Eqs:
+	### Solve Sub-System
+	### & Test Aux Eqs:
 	p2 = eval.pm(p, 2) %% mod;
 	p4 = eval.pm(p, 4) %% mod;
 	sol = solve.F3.Coeffs(b1c1, b2c2, b12s, c12s, mod=mod,
 		test=list(x=c(2, 4), p=c(p2, p4)), debug=debug);
+	return(sol);
+}
+factorize.S1P6.F3F3Mod13 = function(p, debug=FALSE) {
+	mod = 13;
+	p1x = eval.pm(p, 1); p12x = eval.pm(p, -1);
+	p4x = eval.pm(p, 4); p10x = eval.pm(p, 10);
+	p1 = p1x %% mod; p12 = p12x %% mod;
+	p4 = p4x %% mod; p10 = p10x %% mod;
+	# b1x = - (b12s + c12s);
+	b1x = (2 - 7*p1 - 2*p12 + 4*p4 + 4*p10) %% mod;
+	b0x = ((9*p12 + 8*p4 + 8*p10)) %% mod;
+	#
+	sol = solve.ModP2(c(b0x, b1x, 1), mod=mod);
+	if( ! sol$hasSol) return(list(isF = FALSE, Mod = mod));
+	b12s = sol$Sol;
+	c12s = (- b1x - b12s) %% mod;
+	b1c1 = (- 4*p12 + 3*p4 + p10) %% mod;
+	b2c2 = (9*p12 + p4 + 3*p10) %% mod;
+	len  = length(b12s);
+	b1c1 = rep(b1c1, len); b2c2 = rep(b2c2, len);
+	if(debug) {
+		printVars.V4();
+	}
+	### Solve Sub-System
+	### & Test Aux Eqs:
+	vals = c(2,3);
+	px = sapply(vals, function(x) eval.pm(p, x)) %% mod;
+	sol = solve.F3.Coeffs(b1c1, b2c2, b12s, c12s, mod=mod,
+		test=list(x=vals, p=px), debug=debug);
 	return(sol);
 }
 solve.F3.Coeffs = function(b1c1, b2c2, b12s, c12s, mod, testVals=NULL, debug=FALSE) {
@@ -279,11 +323,12 @@ p2 = replace.pm(p, list(b1=b1, b2=b2, c1=c1, c2=c2))
 P = function(x) eval.pm(p2, x);
 factorize.S1P6.F3F3(p2)
 
-### False-Positives:
+### False-Positives: with (mod 7)
 # What is the meaning?
+# - much less frequent with both (mod 7) & (mod 13);
 factorize.S1P6.F3F3(toPoly.pm("x^6 + x^2 + 1*x + 1"))
 factorize.S1P6.F3F3(toPoly.pm("x^6 + x^2 + 8*x + 1"))
-sapply(1:7, function(x) factorize.S1P6.F3F3(toPoly.pm("x^6 + x^2 + x[1]*x + 1"))$isF)
+sapply(1:22, function(x) factorize.S1P6.F3F3(toPoly.pm("x^6 + x^2 + x[1]*x + 1"))$isF)
 
 
 ############
@@ -306,9 +351,9 @@ P = function(x) eval.pm(p2, x);
 factorize.S1P6.F3F3(p2)
 
 # NO False-Positives:
-sapply(1:20, function(b) factorize.S1P6.F3F3(toPoly.pm("x^6 + b[1]*x + 1"))$isF)
-# False-Positives: ~ 1/4 of tests;
-sapply(1:20, function(b) factorize.S1P6.F3F3(toPoly.pm("x^6 + x^2 + b[1]*x + 1"))$isF)
+sapply(1:7, function(b) factorize.S1P6.F3F3(toPoly.pm("x^6 + b[1]*x + 1"))$isF)
+# False-Positives: ~ 1/4 of tests with (mod 7);
+sapply(1:100, function(b) factorize.S1P6.F3F3(toPoly.pm("x^6 + x^2 + b[1]*x + 1"))$isF)
 
 
 # Note:
