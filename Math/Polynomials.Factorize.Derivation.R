@@ -6,7 +6,7 @@
 ### Multi-Variable Polynomials
 ### Factorize: Derivations
 ###
-### draft v.0.1f
+### draft v.0.1g
 
 
 ### Factorize Multi-Variable Polynomials
@@ -179,27 +179,14 @@ factorize.S1P6.F3F3Mod7 = function(p, debug=FALSE) {
 		printVars.V4();
 	}
 	### Solve Sub-System:
-	sol = solve.F3.Coeffs(b1c1, b2c2, b12s, c12s, mod=mod);
-	if(sol$isF == FALSE || nrow(sol$sol) == 0) return(list(isF = FALSE, Mod=mod));
-	sol = sol$sol;
-	### Aux Eqs:
-	if(debug) {
-		print(paste0("Starting Aux eqs: sol = ", nrow(sol)));
-		print(sol);
-	}
+	### & Aux Eqs:
 	p2 = eval.pm(p, 2) %% mod;
 	p4 = eval.pm(p, 4) %% mod;
-	b1 = sol[,1]; b2 = sol[,2]; c1 = sol[,3]; c2 = sol[,4];
-	# P(2)
-	err1 = ((2*b2 + b1 + 1)*(2*c2 + c1 + 1) - 2*p2) %% mod;
-	# P(4)
-	err2 = ((b2 + 2*b1 + 1)*(c2 + 2*c1 + 1) - 2*p4) %% mod;
-	isOK = (err1 == 0) & (err2 == 0);
-	sol = sol[isOK, , drop=FALSE];
-	if(nrow(sol) == 0) return(list(isF = FALSE, Mod=mod));
-	return(list(isF = TRUE, F=sol, Mod=mod));
+	sol = solve.F3.Coeffs(b1c1, b2c2, b12s, c12s, mod=mod,
+		test=list(x=c(2, 4), p=c(p2, p4)), debug=debug);
+	return(sol);
 }
-solve.F3.Coeffs = function(b1c1, b2c2, b12s, c12s, mod) {
+solve.F3.Coeffs = function(b1c1, b2c2, b12s, c12s, mod, testVals=NULL, debug=FALSE) {
 	# (b1 - b12s)*(c1 - c12s) - b2c2 = 0
 	# c12s*b1^2 - (b1c1 - b2c2 + b12s*c12s)*b1 + b1c1*b12s = 0
 	b1y = (- (b1c1 - b2c2 + b12s*c12s)) %% mod;
@@ -209,9 +196,10 @@ solve.F3.Coeffs = function(b1c1, b2c2, b12s, c12s, mod) {
 	# Filter Solutions:
 	len = length(sol);
 	b1  = unlist(lapply(sol, function(sol) if(sol$hasSol) sol$Sol else NULL));
-	if(length(b1) == 0) return(list(isF = FALSE, mod = mod));
+	if(length(b1) == 0) return(list(isF = FALSE, Mod = mod));
 	#
-	nSols = unlist(lapply(seq(len), function(id) if(sol[[id]]$hasSol) rep(id, length(sol[[id]]$Sol)) else c()));
+	nSols = unlist(lapply(seq(len),
+		function(id) if(sol[[id]]$hasSol) rep(id, length(sol[[id]]$Sol)) else c()));
 	# print(nSols); print(b1);
 	b12s = b12s[nSols]; c12s = c12s[nSols];
 	b1c1 = b1c1[nSols]; b2c2 = b2c2[nSols];
@@ -232,7 +220,26 @@ solve.F3.Coeffs = function(b1c1, b2c2, b12s, c12s, mod) {
 	sol = cbind(b1=b1, b2=b2, c1=c1, c2=c2);
 	isNA = apply(sol, 1, function(x) any(is.na(x)));
 	sol  = sol[ ! isNA, , drop=FALSE];
-	return(list(isF=TRUE, sol=sol));
+	### Aux Eqs:
+	if( ! is.null(testVals) && nrow(sol) > 0) {
+		if(debug) {
+			print(paste0("Starting Aux eqs: sol = ", nrow(sol)));
+			print(sol);
+		}
+		x = testVals$x; p = testVals$p;
+		b1 = sol[,1]; b2 = sol[,2]; c1 = sol[,3]; c2 = sol[,4];
+		isSol = TRUE;
+		for(id in seq_along(x)) {
+			xi = x[id];
+			x3 = (xi^3 + 1) %% mod;
+			x2 = xi^2;
+			err = ((b2*x2 + b1*xi + x3)*(c2*x2 + c1*xi + x3) - p[id]) %% mod;
+			isSol = isSol & (err == 0);
+		}
+		sol  = sol[ isSol, , drop=FALSE];
+	}
+	if(nrow(sol) == 0) return(list(isF=FALSE, Mod=mod));
+	return(list(isF=TRUE, F=sol, Mod=mod));
 }
 ### Debug:
 printVars.V4 = function() {
