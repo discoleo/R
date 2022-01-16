@@ -6,7 +6,7 @@
 ### Polynomials:
 ### Factorization
 ###
-### draft v.0.1a
+### draft v.0.1b
 
 
 ### Factorization of Polynomials
@@ -97,4 +97,42 @@ p = factorize.P4(b)
 p
 
 polymul(p$p1[,1], p$p2[,1])
+
+
+##########################
+##########################
+
+###############
+### Order 6 ###
+###############
+
+### Study of P[6]
+
+### P = x^6 + b1*x + 1
+# where b1 = integer;
+
+### Trivial Case:
+# b1 = 0
+# (x^2 + 1)*(x^4 - x^2 + 1)
+
+
+### Case: b != 0
+
+### P[1] * P[5]
+# only solutions:
+b = c(-2, + 2);
+# (x+1)*P[5] or (x-1)*P[5]
+
+### P[2] * P[4]
+# pG = GCD(P(x), P(1/x)) =>
+# pG | (x^4 + 1) =>
+# NO solution over integers;
+
+# pG = GCD(P(x), P(-1/x)) =>
+# pG | (x^4 - 1) =>
+# a.) Trivial solutions: x = c(-1, 1);
+# b.) NO solution: x = c(-1i, 1i);
+
+### P[3]*P[3]
+# NO solution (mod 7);
 
