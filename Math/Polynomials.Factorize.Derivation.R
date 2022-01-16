@@ -6,7 +6,7 @@
 ### Multi-Variable Polynomials
 ### Factorize: Derivations
 ###
-### draft v.0.1h
+### draft v.0.1h-ext
 
 
 ### Factorize Multi-Variable Polynomials
@@ -141,13 +141,17 @@ factorize.S1P6.F3F3 = function(p, debug=FALSE) {
 	if(is.na(idc)) stop("Not a polynomial!");
 	xn = nms[ - idc];
 	if(length(xn) != 1) stop("Not a univariate polynomial!");
-	# TODO: p: check Order 6;
+	if(max(p[, xn]) != 6) stop("Not a polynomial of Order 6!");
 	#
+	negP = function(p) {
+		isOdd = (p[, xn] %% 2 == 1);
+		p$coeff[isOdd] = - p$coeff[isOdd];
+		return(p);
+	}
 	mod = 7;
 	r = factorize.S1P6.F3F3Mod7(p, debug=debug);
 	if( ! r$isF) {
-		isOdd = (p[, xn] %% 2 == 1);
-		p$coeff[isOdd] = - p$coeff[isOdd];
+		p = negP(p);
 		r = factorize.S1P6.F3F3Mod7(p, debug=debug);
 		# NO Factors:
 		if( ! r$isF) return(r);
@@ -156,13 +160,20 @@ factorize.S1P6.F3F3 = function(p, debug=FALSE) {
 		r$B0 = -1;
 	} else {
 		r$B0 = 1;
-		# TODO: check also existence with B0 = -1?
 	}
 	if( ! r$isF) return(r);
 	### Mod 13;
 	mod = 13;
 	r2 = factorize.S1P6.F3F3Mod13(p, debug=debug);
-	if( ! r2$isF) return(r2);
+	if( ! r2$isF) {
+		if(r$B0 == -1) return(r2);
+		# TODO: check also existence with B0 = -1?
+		p = negP(p);
+		r = factorize.S1P6.F3F3Mod7(p, debug=debug);
+		if( ! r$isF) return(r2);
+		print("TODO: Factor may still be possible!");
+		return(r2);
+	}
 	if(r2$isF) {
 		if(r$B0 == -1) {
 			# revert Sign changes in the Factors:
