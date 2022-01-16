@@ -6,7 +6,7 @@
 ### Polynomials:
 ### Factorization
 ###
-### draft v.0.1b
+### draft v.0.1b-fix
 
 
 ### Factorization of Polynomials
@@ -124,11 +124,11 @@ b = c(-2, + 2);
 # (x+1)*P[5] or (x-1)*P[5]
 
 ### P[2] * P[4]
-# pG = GCD(P(x), P(1/x)) =>
+# pG = GCD(P(x), P(-1/x)) =>
 # pG | (x^4 + 1) =>
 # NO solution over integers;
 
-# pG = GCD(P(x), P(-1/x)) =>
+# pG = GCD(P(x), P(1/x)) =>
 # pG | (x^4 - 1) =>
 # a.) Trivial solutions: x = c(-1, 1);
 # b.) NO solution: x = c(-1i, 1i);
