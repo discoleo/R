@@ -6,7 +6,7 @@
 ### Multi-Variable Polynomials
 ### Modular Arithmetic
 ###
-### draft v.0.1a
+### draft v.0.1b
 
 
 # - minimal Modular Arithmetic;
@@ -29,6 +29,33 @@ inv.mod = function(x, mod) {
 		if(length(id) == 0) NA else id;
 	}
 	sapply(x, f);
+}
+
+### Solve P2:
+solve.ModP1 = function(r, mod) {
+	# TODO: check gcd == 1;
+	return(solve.ModP1Base(r, mod=mod));
+}
+solve.ModP1Base = function(r, mod) {
+	len = length(r);
+	if(len == 2) {
+		rsol = ((r[1] - r[2]) * inv.mod(mod[2], mod[1])) %% mod[1];
+		prM  = mod[1] * mod[2];
+		rsol = (mod[2]*rsol + r[2]) %% prM;
+		return(list(r=rsol, Mod=prM));
+	} else if(len == 1) {
+		r = r %% mod;
+		return(list(r=r, Mod=mod));
+	} else if(len > 2) {
+		prM = mod[1]; rsol = r[1];
+		for(id in seq(2, len)) {
+			rsol = ((rsol - r[id]) * inv.mod(mod[id], prM)) %% prM;
+			prM  = prM * mod[id];
+			rsol = (mod[id]*rsol + r[id]) %% prM;
+		}
+		return(list(r=rsol, Mod=prM));
+	}
+	return(list(r=0, Mod=NA));
 }
 
 ### Solve P2:
