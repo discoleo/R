@@ -6,7 +6,7 @@
 ### Multi-Variable Polynomials
 ### Modular Arithmetic
 ###
-### draft v.0.1b
+### draft v.0.1c
 
 
 # - minimal Modular Arithmetic;
@@ -79,3 +79,9 @@ solve.ModP2 = function(b, mod) {
 	return(list(hasSol = TRUE, Sol = x, Mod = mod));
 }
 
+
+####################
+
+whichZero.mod = function(n, pow, b0=1) {
+	which( (seq(n)^pow + b0) %% n == 0);
+}
