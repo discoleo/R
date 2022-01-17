@@ -5,7 +5,7 @@
 ###
 ### Clustering: Tools & Simulations
 ###
-### draft v.0.1g
+### draft v.0.1g-comm
 
 
 
@@ -14,7 +14,7 @@
 ###############
 
 
-### draft v.0.1g:
+### draft v.0.1g - v.0.1g-comm:
 # - density contours;
 ### draft v.0.1e - v.0.1f-3D:
 # - cluster around a polygon;
@@ -131,12 +131,20 @@ rmatrix.sigma = function(d=c(1), dim=2, sc=0.9) {
 }
 
 ### Graphic
-plot.cluster.2D = function(x, contour.add=TRUE) {
+plot.cluster.2D = function(x, levels.contour=NULL) {
 	x$ID = as.factor(x$ID);
 	g = ggplot(x, aes(x=v1, y=v2, fill=ID, col=ID)) +
 		geom_point();
 	# TODO: Gaussian-contours;
-	if(contour.add) g = g + geom_density_2d();
+	if( ! is.null(levels.contour)) {
+		# 2D Kernel Density:
+		if(is.logical(levels.contour)) {
+			if(levels.contour)
+				g = g + geom_density_2d();
+		} else {
+			g = g + geom_density_2d(breaks = levels.contour);
+		}
+	}
 	return(g);
 }
 plot.cluster.3D = function(x, radius=0.2, col=NULL, add=FALSE) {
@@ -178,7 +186,8 @@ polygon.reg = function(n, r=1, a.offset = 0, clockwise=FALSE, closed=FALSE) {
 ### Ex 1:
 x = rcluster(100, cl=5)
 
-plot.cluster.2D(x)
+# NOT Gaussian Densities:
+plot.cluster.2D(x, levels.contour=c(0.1, 0.05))
 
 
 ### Density-Contours:
@@ -188,22 +197,31 @@ library(cluster)
 library(ellipse)
 
 # Note: cannot be mixed with ggplot!
+# [Base-R Graphics]
 
 ### car-package:
-# [Base-R Graphics]
 dataEllipse(x$v1, x$v2, as.factor(x$ID), levels=c(0.5, 0.75, 0.95))
 
 cov.m = cov.wt(data.frame(x$v1, x$v2)[x$ID == 1, ]);
+# robust covariance:
 # MASS::cov.rob(data.frame(x$v1, x$v2)[x$ID == 1, ]);
+
 
 ### cluster-package:
 n.obs = sum(x$ID == 1);
-qVal = qchisq(0.99, df=2); # qf(0.99, 2, n.obs - 1)
+# - depending on Distribution:
+qVal = qchisq(0.99, df=2);
+# qVal = qf(0.99, 2, n.obs - 1)
 lines(ellipsoidPoints(cov.m$cov, qVal, loc=cov.m$center), col="green")
 
-### ellipse-package
-sc = diag(cov.m$cov); # sc = c(1,1);
+
+### ellipse-package:
+# variance computed based on the data:
+sc = diag(cov.m$cov);
 lines(ellipse(cov.m$cov, scale=sc, centre=cov.m$center, level=c(0.90)), col="red")
+# with known population variance:
+sc = c(1, 1)
+lines(ellipse(cov.m$cov, scale=sc, centre=cov.m$center, level=c(0.90)), col="green")
 
 
 # explicitly construct the Ellipse:
