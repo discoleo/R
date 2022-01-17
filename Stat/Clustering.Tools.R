@@ -5,7 +5,7 @@
 ###
 ### Clustering: Tools & Simulations
 ###
-### draft v.0.1f-3D
+### draft v.0.1g
 
 
 
@@ -14,6 +14,8 @@
 ###############
 
 
+### draft v.0.1g:
+# - density contours;
 ### draft v.0.1e - v.0.1f-3D:
 # - cluster around a polygon;
 # - more complicated examples; [v.0.1f & v.0.1f-ex2]
@@ -64,6 +66,7 @@ rcluster = function(n, cl, mu=NULL, dim=2, sigma=NULL, add.id=TRUE,
 	### Names
 	names.f = function(x) {
 		nms = paste0("v", seq(dim));
+		# Group ID:
 		if(add.id) nms = c(nms, "ID");
 		names(x) = nms;
 		return(x);
@@ -128,10 +131,13 @@ rmatrix.sigma = function(d=c(1), dim=2, sc=0.9) {
 }
 
 ### Graphic
-plot.cluster.2D = function(x) {
+plot.cluster.2D = function(x, contour.add=TRUE) {
 	x$ID = as.factor(x$ID);
-	ggplot(x, aes(x=v1, y=v2, fill=ID, col=ID)) +
+	g = ggplot(x, aes(x=v1, y=v2, fill=ID, col=ID)) +
 		geom_point();
+	# TODO: Gaussian-contours;
+	if(contour.add) g = g + geom_density_2d();
+	return(g);
 }
 plot.cluster.3D = function(x, radius=0.2, col=NULL, add=FALSE) {
 	if(is.null(col)) {
@@ -160,9 +166,11 @@ polygon.reg = function(n, r=1, a.offset = 0, clockwise=FALSE, closed=FALSE) {
 ####################
 
 ### Ref:
-# 1.) Yudong Chen. Structures Of Local Minima In K-Means And Mixture Models.
-#     Simons Institute.
-#     https://www.youtube.com/watch?v=4Smq8JX12-8
+# 1) Yudong Chen. Structures Of Local Minima In K-Means And Mixture Models.
+#    Simons Institute. https://www.youtube.com/watch?v=4Smq8JX12-8
+# 2) Braxton Osting. Archetypal Analysis.
+#    Simons Institute. https://www.youtube.com/watch?v=FbP568yWp7U
+#  - regularization; image clustering;
 
 
 ### Examples
@@ -172,6 +180,39 @@ x = rcluster(100, cl=5)
 
 plot.cluster.2D(x)
 
+
+### Density-Contours:
+
+library(car)
+library(cluster)
+library(ellipse)
+
+# Note: cannot be mixed with ggplot!
+
+### car-package:
+# [Base-R Graphics]
+dataEllipse(x$v1, x$v2, as.factor(x$ID), levels=c(0.5, 0.75, 0.95))
+
+cov.m = cov.wt(data.frame(x$v1, x$v2)[x$ID == 1, ]);
+# MASS::cov.rob(data.frame(x$v1, x$v2)[x$ID == 1, ]);
+
+### cluster-package:
+n.obs = sum(x$ID == 1);
+qVal = qchisq(0.99, df=2); # qf(0.99, 2, n.obs - 1)
+lines(ellipsoidPoints(cov.m$cov, qVal, loc=cov.m$center), col="green")
+
+### ellipse-package
+sc = diag(cov.m$cov); # sc = c(1,1);
+lines(ellipse(cov.m$cov, scale=sc, centre=cov.m$center, level=c(0.90)), col="red")
+
+
+# explicitly construct the Ellipse:
+Q = chol(cov.m$cov, pivot=TRUE);
+id = order(attr(Q, "pivot"));
+Q[, id]
+# TODO
+
+#########
 
 ### Ex 2:
 sigma = matrix.sigma(0.7, diag=1)
@@ -239,8 +280,8 @@ rspikes = function(n, cl, r=1, id.offset=0, dim=2) {
 	# TODO: generalize;
 	scale.h = exp((1+1)/2); # exp(sqrt(2))
 	sdsq = rbind(
-		c(scale.h,1/2,1/2,scale.h,1/2,1/2),
-		c(0.075,3/2,3/2,0.075,3/2,3/2));
+		c(scale.h,1/2,1/2, scale.h,1/2,1/2),
+		c(0.075,3/2,3/2, 0.075,3/2,3/2));
 	sc = c(0,0.7,-0.7, 0,0.7,-0.7);
 	if(dim == 3) {
 		sdsq = rbind(sdsq, rep(0.1, cl));
@@ -310,4 +351,8 @@ plot.cluster.3D(x)
 
 ### TODO:
 # - Clustering;
+# - Mixture Models;
+
+### packages:
+# - mixreg, mixdist;
 
