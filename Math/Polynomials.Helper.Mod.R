@@ -6,7 +6,7 @@
 ### Multi-Variable Polynomials
 ### Modular Arithmetic
 ###
-### draft v.0.1c
+### draft v.0.1c-robust
 
 
 # - minimal Modular Arithmetic;
@@ -82,6 +82,31 @@ solve.ModP2 = function(b, mod) {
 
 ####################
 
-whichZero.mod = function(n, pow, b0=1) {
-	which( (seq(n)^pow + b0) %% n == 0);
+whichZero.mod = function(n, pow, b0=1, mod=n) {
+	if(n > 1000) {
+		x = seq(n);
+		x = sapply(x, function(x) pow.mod(x, n=pow, mod=mod));
+		x = (x + b0) %% mod;
+	} else {
+		x = (seq(n)^pow + b0) %% mod;
+	}
+	which(x == 0);
 }
+pow.mod = function(x, n, mod) {
+	if(n == 1) return(x %% mod);
+	if(is.double(n) && (n == round(n))) n = as.integer(n);
+	if( ! is.integer(n)) stop("n must be integer!")
+	# Multiply
+	p.r   = 1;
+	p.pow = x %% mod;
+	while (n > 0) {
+		if (n %% 2 == 1) {
+			p.r = (p.r * p.pow) %% mod;
+		}
+		if(n == 1) break;
+		p.pow = (p.pow * p.pow) %% mod;
+		n = n %/% 2;
+    }
+	return(p.r);
+}
+
