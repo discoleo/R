@@ -92,10 +92,18 @@ whichZero.mod = function(n, pow, b0=1, mod=n) {
 	}
 	which(x == 0);
 }
+whichZero.bigz = function(n, pow, b0=1, mod=n) {
+	# very slow for large numbers!
+	x = gmp::as.bigz(seq(n), mod);
+	x = lapply(x, function(x) pow.bigz(x, n=pow, mod=mod));
+	x = do.call(c, x);
+	x = x + b0;
+	which(x == 0);
+}
 pow.mod = function(x, n, mod) {
 	if(n == 1) return(x %% mod);
 	if(is.double(n) && (n == round(n))) n = as.integer(n);
-	if( ! is.integer(n)) stop("n must be integer!")
+	if( ! is.integer(n)) stop("n must be integer!");
 	# Multiply
 	p.r   = 1;
 	p.pow = x %% mod;
@@ -108,5 +116,15 @@ pow.mod = function(x, n, mod) {
 		n = n %/% 2;
     }
 	return(p.r);
+}
+pow.bigz = function(x, n, mod=NULL) {
+	if( ! gmp::is.bigz(x)) {
+		if(is.null(mod)) {
+			x = gmp::as.bigz(x);
+		} else {
+			x = gmp::as.bigz(x, mod);
+		}
+	}
+	gmp::pow.bigz(x, n);
 }
 
