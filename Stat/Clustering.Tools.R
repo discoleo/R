@@ -5,7 +5,7 @@
 ###
 ### Clustering: Tools & Simulations
 ###
-### draft v.0.1g-comm
+### draft v.0.1h
 
 
 
@@ -14,6 +14,9 @@
 ###############
 
 
+### draft v.0.1h:
+# - Gaussian densities in ggplot;
+#   [using car::dataEllipse]
 ### draft v.0.1g - v.0.1g-comm:
 # - density contours;
 ### draft v.0.1e - v.0.1f-3D:
@@ -131,14 +134,28 @@ rmatrix.sigma = function(d=c(1), dim=2, sc=0.9) {
 }
 
 ### Graphic
-plot.cluster.2D = function(x, levels.contour=NULL) {
+plot.cluster.2D = function(x, levels.contour=NULL, type="Gaussian", contour.col="blue", alpha=0.9) {
 	x$ID = as.factor(x$ID);
 	g = ggplot(x, aes(x=v1, y=v2, fill=ID, col=ID)) +
-		geom_point();
-	# TODO: Gaussian-contours;
+		geom_point(alpha = alpha);
 	if( ! is.null(levels.contour)) {
+		type = pmatch(type, c("Gaussian", "Kernel Density"));
+		if(type == 1) {
+			# Gaussian-contours;
+			lvls = levels.contour;
+			if(length(lvls) == 1 && is.na(lvls)) lvls = c(0.5, 0.95);
+			lns = car::dataEllipse(x$v1, x$v2, as.factor(x$ID),
+				levels=lvls, draw=FALSE);
+			xy = as.data.frame(as.matrix.list(lns, id.name="ID"));
+			xy$ID = as.factor(xy$ID);
+			xy$group = paste(xy$ID, xy$group);
+			g = g + geom_path(data = xy,
+				aes(x = x, y = y, group = group, col=ID));
+				# ??? colour = contour.col);
+			
+		}
 		# 2D Kernel Density:
-		if(is.logical(levels.contour)) {
+		else if(is.logical(levels.contour)) {
 			if(levels.contour)
 				g = g + geom_density_2d();
 		} else {
@@ -154,6 +171,20 @@ plot.cluster.3D = function(x, radius=0.2, col=NULL, add=FALSE) {
 	}
 	col = col[x$ID];
 	plot3d(x[, 1:3], type="s", radius=radius, col=col, add=add);
+}
+as.matrix.list = function(x, id.name="id") {
+	FUN = function(id, lst, idGr) {
+		x = cbind(lst[[id]], group=as.numeric(names(lst)[[id]]), id=idGr);
+		nms = colnames(x);
+		colnames(x)[match("id", nms)] = id.name;
+		return(x);
+	}
+	m = lapply(seq(along=x), function(id) {
+		lst = x[[id]];
+		tmp = lapply(seq(along=lst), FUN, lst, id);
+		do.call(rbind, tmp);
+	})
+	do.call(rbind, m);
 }
 
 ### Shapes / Geometry
@@ -186,8 +217,11 @@ polygon.reg = function(n, r=1, a.offset = 0, clockwise=FALSE, closed=FALSE) {
 ### Ex 1:
 x = rcluster(100, cl=5)
 
-# NOT Gaussian Densities:
-plot.cluster.2D(x, levels.contour=c(0.1, 0.05))
+plot.cluster.2D(x, levels.contour=c(0.1, 0.05), type="Kernel")
+# Gaussian Densities:
+# [but needs an open Graphic Device!]
+plot.new();
+plot.cluster.2D(x, levels.contour=c(0.5, 0.95), type="Gaussian")
 
 
 ### Density-Contours:
@@ -211,7 +245,7 @@ cov.m = cov.wt(data.frame(x$v1, x$v2)[x$ID == 1, ]);
 n.obs = sum(x$ID == 1);
 # - depending on Distribution:
 qVal = qchisq(0.99, df=2);
-# qVal = qf(0.99, 2, n.obs - 1)
+# qVal = (2*qf(0.99, 2, n.obs - 1));
 lines(ellipsoidPoints(cov.m$cov, qVal, loc=cov.m$center), col="green")
 
 
