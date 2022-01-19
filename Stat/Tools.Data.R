@@ -5,7 +5,7 @@
 ###
 ### Data Tools
 ###
-### draft v.0.2a
+### draft v.0.2b
 
 
 ### Tools to Process/Transform Data
@@ -15,12 +15,16 @@
 # - the Formatting helper functions were moved
 #   to file Tools.Format.R;
 
+### fast load:
+# source("Tools.Data.R");
 
 ###############
 ### History ###
 ###############
 
 
+### draft v.0.2b:
+# - mid.factor: compute mid-points of an interval;
 ### draft v.0.2a:
 # - moved section with Formatting functions
 #   to new file: Tools.Format.R;
@@ -120,6 +124,29 @@ recode.df.factor = function(x, var.name, ..., more.warn = "Stop") {
 	levels(x.f) = lvl.new;
 	x[ , var.name] = x.f;
 	return(x);
+}
+
+### Middle of an Interval
+mid.factor = function(x, inf.to = NULL, split.str=",") {
+	lvl0 = levels(x); lvl = lvl0;
+	lvl = sub("^[(\\[]", "", lvl);
+	lvl = sub("[])]$", "", lvl); # tricky;
+	lvl = strsplit(lvl, split.str);
+	lvl = lapply(lvl, function(x) as.numeric(x));
+	if( ! is.null(inf.to)) {
+		FUN = function(x) {
+			if(any(x == Inf)) 1
+			else if(any(x == - Inf)) -1
+			else 0;
+		}
+		whatInf = sapply(lvl, FUN);
+		# TODO: more advanced;
+		lvl[whatInf == -1] = inf.to[1];
+		lvl[whatInf ==  1] = inf.to[2];
+	}
+	mid = sapply(lvl, mean);
+	lvl = data.frame(lvl=lvl0, mid=mid);
+	merge(data.frame(lvl=x), lvl, by="lvl");
 }
 
 ##################
