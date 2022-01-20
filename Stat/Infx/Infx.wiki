@@ -8,6 +8,14 @@
 ; TODO: ...
 
 
+== Packages ==
+
+; Covid / Coronavirus:
+- covidcast, covid19.analytics, covid19dbcand, canadacovid, covid19us, covid19india, covid19france, covid19swiss, coronavirus, COVIDIBGE (Brazil), covid19sf (San Francisco), oxcgrt;
+; Literature: pubmed.mineR;
+; Simulations/Modeling: PandemicLP, babsim.hospital, cif (for ICU), niaidMI;
+; Genetics/Mutations: CovidMutations;
+
 
 == Literature ==
 
