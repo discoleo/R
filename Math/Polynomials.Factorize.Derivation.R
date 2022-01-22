@@ -6,7 +6,7 @@
 ### Multi-Variable Polynomials
 ### Factorize: Derivations
 ###
-### draft v.0.1h-ext
+### draft v.0.1i
 
 
 ### Factorize Multi-Variable Polynomials
@@ -179,8 +179,11 @@ factorize.S1P6.F3F3 = function(p, debug=FALSE) {
 			# revert Sign changes in the Factors:
 			r2$F[, c("b2", "c2")] = (mod - r2$F[, c("b2", "c2")]);
 		}
+		r$F1 = r$F;
 		r$F2 = r2$F; # TODO ???
 		r$Mod = c(r$Mod, r2$Mod);
+		r$F = solve.mod.S2P1.F3F3(r$F1, r$F2, mod=r$Mod);
+		r$Mod = c(prod(r$Mod), r$Mod);
 	}
 	return(r);
 }
@@ -295,6 +298,50 @@ solve.F3.Coeffs = function(b1c1, b2c2, b12s, c12s, mod, testVals=NULL, debug=FAL
 	}
 	if(nrow(sol) == 0) return(list(isF=FALSE, Mod=mod));
 	return(list(isF=TRUE, F=sol, Mod=mod));
+}
+### Other:
+solve.mod.S2P1.F3F3 = function(x, x2, mod) {
+	if(length(mod) != 2) stop("Both primes are needed!");
+	if(ncol(x) != ncol(x2)) stop("Number of variables must match!");
+	if(nrow(x) > 1) x = unique.matrix.perm(x, c(2,2));
+	#
+	gr = expand.grid(lapply(c(nrow(x), nrow(x2), ncol(x2)), seq));
+	sol = sapply(seq(nrow(gr)), function(id) {
+		nc = gr[id, 3];
+		vals = c(x[gr[id, 1], nc], x2[gr[id, 2], nc]);
+		solve.ModP1Base(vals, mod=mod);
+	});
+	sol = matrix(sol, ncol=ncol(x2));
+	# Filter 0-solution:
+	pr = prod(mod);
+	isZero = apply(sol, 1, function(x) all(x == pr));
+	sol = sol[ ! isZero, ];
+	return(sol);
+}
+seq.tokens.perm = function(tokens) {
+	if(length(tokens) == 1) return(seq(tokens));
+	tkStart = cumsum(c(1, head(tokens, -1)));
+	tkEnd   = cumsum(tokens);
+	idTk = seq(length(tokens));
+	idTk = c(idTk[-1], idTk[1]);
+	tkStart = tkStart[idTk]; tkEnd = tkEnd[idTk];
+	tk = unlist(lapply(seq(along=tkStart), function(id) seq(tkStart[id], tkEnd[id])));
+	return(tk);
+}
+unique.matrix.perm = function(x, tokens=NULL) {
+	nr = nrow(x);
+	if(nr == 1) return(x);
+	if(nr == 2) {
+		if(all(x[1,] == x[2,])) return(x[1, , drop=FALSE]);
+		if(is.null(tokens)) return(x);
+		# Permutation:
+		# TODO: more than 2 tokens to permute;
+		id  = seq.tokens.perm(tokens);
+		tmp = rbind(x, x[ , id]);
+		isDuplicated = duplicated(tmp);
+		if(any(isDuplicated)) return(x[1, , drop=FALSE]);
+		return(x);
+	}
 }
 ### Debug:
 printVars.V4 = function() {
