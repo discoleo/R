@@ -6,7 +6,7 @@
 ### Multi-Variable Polynomials
 ### Factorize: Derivations
 ###
-### draft v.0.1i
+### draft v.0.1i-ext
 
 
 ### Factorize Multi-Variable Polynomials
@@ -300,10 +300,10 @@ solve.F3.Coeffs = function(b1c1, b2c2, b12s, c12s, mod, testVals=NULL, debug=FAL
 	return(list(isF=TRUE, F=sol, Mod=mod));
 }
 ### Other:
-solve.mod.S2P1.F3F3 = function(x, x2, mod) {
+solve.mod.S2P1.F3F3 = function(x, x2, mod, simplify=TRUE) {
 	if(length(mod) != 2) stop("Both primes are needed!");
 	if(ncol(x) != ncol(x2)) stop("Number of variables must match!");
-	if(nrow(x) > 1) x = unique.matrix.perm(x, c(2,2));
+	if(nrow(x) > 1 && simplify) x = unique.matrix.perm(x, c(2,2));
 	#
 	gr = expand.grid(lapply(c(nrow(x), nrow(x2), ncol(x2)), seq));
 	sol = sapply(seq(nrow(gr)), function(id) {
@@ -311,10 +311,10 @@ solve.mod.S2P1.F3F3 = function(x, x2, mod) {
 		vals = c(x[gr[id, 1], nc], x2[gr[id, 2], nc]);
 		solve.ModP1Base(vals, mod=mod);
 	});
-	sol = matrix(sol, ncol=ncol(x2));
+	sol = matrix(unlist(sol), ncol=ncol(x2));
 	# Filter 0-solution:
 	pr = prod(mod);
-	isZero = apply(sol, 1, function(x) all(x == pr));
+	isZero = apply(sol, 1, function(x) all((x %% pr) == 0));
 	sol = sol[ ! isZero, ];
 	return(sol);
 }
