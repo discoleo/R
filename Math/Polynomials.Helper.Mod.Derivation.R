@@ -7,7 +7,7 @@
 ### Modular Arithmetic
 ### Derivation & Experiments
 ###
-### draft v.0.1e
+### draft v.0.1f
 
 
 
@@ -88,6 +88,24 @@ r = test.sqrt(sqrt.mod.Experimental(p=p, sc))
 (r$xsq * inv.mod(sc*sc, p)) %% p # x^2
 
 
+### Type: Classic Squares
+p = 101
+sort(unique( (seq(p-1)^2) %% p) )
+x0 = seq(2, floor(sqrt(p)));
+x0 = x0*x0; xinv = sapply(x0, inv.mod, mod=p);
+x = c(1, x0, xinv);
+sort(unique(x))
+# "Other Squares"
+len = length(x0)
+for(id in seq(len)) {
+	id2 = seq(len)[-id];
+	# NOT unique due to reducible fractions:
+	# like (36/81);
+	x = c(x, (x0[id] * xinv[id2]) %% p );
+}
+sort(unique(x))
+
+
 ### 2^2 => sqrt(10) = 1/2 (mod 13)
 
 # 1 (mod 13)
@@ -166,5 +184,43 @@ x = c(x, p - x)
 (x*x - x2) %% p
 print(x2); print(x);
 
+
+####################
+####################
+
+#############
+### Cubes ###
+#############
+
+
+### Types of Primes:
+sapply(primes(101), function(p) length(unique( (seq(p-1)^3) %% p )))
+# Primes: 5 (mod 6)
+sapply(c(53, 59, 71, 83, 89, 101), function(p) length(unique( (seq(p-1)^3) %% p )))
+
+### All:
+p = primes(1000)
+p = p[p %% 6 == 5]
+sapply(p, function(p) p - length(unique( (seq(p-1)^3) %% p )))
+
+
+### Type: Classic Cubes
+# - does NOT work well;
+# top = 1/3: even worse;
+p = 101
+top = 1/2;
+sort(unique( (seq(p-1)^3) %% p ))
+x0 = seq(2, floor(p^top));
+x0 = (x0*x0*x0) %% p; xinv = sapply(x0, inv.mod, mod=p);
+x = c(1, x0, xinv);
+sort(unique(x))
+# "Other Cubes"
+len = length(x0)
+for(id in seq(len)) {
+	id2 = seq(len)[-id];
+	# NOT unique due to reducible fractions;
+	x = c(x, (x0[id] * xinv[id2]) %% p );
+}
+sort(unique(x))
 
 
