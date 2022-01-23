@@ -7,7 +7,7 @@
 ### Modular Arithmetic
 ### Derivation & Experiments
 ###
-### draft v.0.1a
+### draft v.0.1b
 
 
 
@@ -23,6 +23,32 @@ source("Polynomials.Helper.R")
 
 #######################
 #######################
+
+
+### Inv
+
+###
+inv.mod(5, 13)
+r = 13 %% 5
+13 - (13 * inv.mod(r, 5) - 1) / 5
+
+###
+inv.mod(5, 17)
+r = 17 %% 5
+17 - (17 * inv.mod(r, 5) - 1) / 5
+
+###
+inv.mod(5, 19)
+r = 19 %% 5
+19 - (19 * inv.mod(r, 5) - 1) / 5
+
+###
+x = 7
+p = 19; # gcd(x, p) == 1;
+inv.mod(x, p)
+r = p %% x
+p - (p * inv.mod(r, x) - 1) / x
+
 
 
 ### SQRT
