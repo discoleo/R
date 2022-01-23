@@ -6,7 +6,7 @@
 ### Multi-Variable Polynomials
 ### Factorize: Derivations
 ###
-### draft v.0.1i-ext
+### draft v.0.1j
 
 
 ### Factorize Multi-Variable Polynomials
@@ -342,6 +342,20 @@ unique.matrix.perm = function(x, tokens=NULL) {
 		if(any(isDuplicated)) return(x[1, , drop=FALSE]);
 		return(x);
 	}
+	# Case: nr > 2
+	x   = unique(x);
+	nr0 = nrow(x);
+	if(nr0 == 1) return(x);
+	# Check permutations:
+	idc = seq.tokens.perm(tokens);
+	isSol = rep(TRUE, nr0);
+	for(nr in seq(nr0, 2)) {
+		tmp  = x[nr, idc];
+		isEq = sapply(seq(nr - 1), function(nr2) all(x[nr2,] == tmp));
+		if(any(isEq)) isSol[nr] = FALSE;
+	}
+	x = x[isSol, , drop=FALSE];
+	return(x)
 }
 ### Debug:
 printVars.V4 = function() {
