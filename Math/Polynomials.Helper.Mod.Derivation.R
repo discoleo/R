@@ -7,7 +7,7 @@
 ### Modular Arithmetic
 ### Derivation & Experiments
 ###
-### draft v.0.1d
+### draft v.0.1e
 
 
 
@@ -50,8 +50,43 @@ r = p %% x
 p - (p * inv.mod(r, x) - 1) / x
 
 
+###################
+###################
+
+# sc = some arbitrary "scale";
+sqrt.mod.Experimental = function(p, sc = 2) {
+	sc2 = sc^2;
+	r =  p %% sc2;
+	scl = if(r == 1 || r == p-1) 1 else inv.mod(r, sc2);
+	r  = if(r == 1) 1 else if(r == p-1) -1 else 1;
+	x2 = (p*scl - r) / sc2;
+	if(r > 0) x2 = p - x2;
+	(x2 - inv.mod(sc2, p))
+	# x = sqrt(x2) (mod p)
+	x = inv.mod(sc, p)
+	x = c(x, p - x)
+	return(list(x=x, xsq=x2, Mod=p));
+}
+test.sqrt = function(x, xsq, p) {
+	if(is.list(x)) {
+		xsq = x$xsq; p = x$Mod; x = x$x;
+	}
+	err = (x*x - xsq) %% p;
+	cat(paste0("Error: ", paste0(err, collapse=", "), "\n"));
+	print(xsq); print(x);
+	invisible(list(x=x, xsq=xsq, Mod=p));
+}
+
 
 ### SQRT
+
+###
+p = 101;
+sc = 2;
+r = test.sqrt(sqrt.mod.Experimental(p=p, sc))
+(r$x * inv.mod(sc, p)) %% p # sqrt();
+(r$xsq * inv.mod(sc*sc, p)) %% p # x^2
+
 
 ### 2^2 => sqrt(10) = 1/2 (mod 13)
 
@@ -112,4 +147,24 @@ x = inv.mod(2, p)
 x = c(x, p - x)
 (x*x - x2) %% p
 print(x2); print(x);
+
+
+###
+p = 37
+#
+scm = 3;
+sc2 = scm^2;
+r =  p %% sc2;
+sc = if(r == 1 || r == p-1) 1 else inv.mod(r, sc2);
+r = if(r == 1) 1 else if(r == p-1) -1 else 1;
+x2 = (p*sc - r) / sc2;
+if(r > 0) x2 = p - x2;
+(x2 - inv.mod(sc2, p))
+# x = sqrt(x2) (mod p)
+x = inv.mod(scm, p)
+x = c(x, p - x)
+(x*x - x2) %% p
+print(x2); print(x);
+
+
 
