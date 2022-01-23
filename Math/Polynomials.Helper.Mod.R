@@ -6,7 +6,7 @@
 ### Multi-Variable Polynomials
 ### Modular Arithmetic
 ###
-### draft v.0.1e
+### draft v.0.1e-fix
 
 
 # - minimal Modular Arithmetic;
@@ -93,14 +93,15 @@ solve.ModP2 = function(b, mod) {
 		x = x %% mod;
 	} else {
 		# Optimized version:
+		if(b2 != 1) {
+			b2inv = inv.mod(b2, mod=mod);
+			b1 = (b1 * b2inv) %% mod;
+			b0 = (b0 * b2inv) %% mod;
+		}
+		# Shift:
 		if(b1 == 0) {
 			sh = 0;
 		} else {
-			if(b2 != 1) {
-				b2inv = inv.mod(b2, mod=mod);
-				b1 = (b1 * b2inv) %% mod;
-				b0 = (b0 * b2inv) %% mod;
-			}
 			inv2 = inv2.mod(mod, pow=1);
 			sh = (- b1 * inv2) %% mod;
 			b0 = (b0 - sh*sh) %% mod;
