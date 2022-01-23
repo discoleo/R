@@ -7,7 +7,7 @@
 ### Modular Arithmetic
 ### Derivation & Experiments
 ###
-### draft v.0.1b
+### draft v.0.1d
 
 
 
@@ -81,4 +81,35 @@ print(x2);
 x2 = (7 * x) %% 13
 (x2*x2 - 9) %% 13
 print(x2);
+
+
+##########
+
+### 2^2 => sqrt(8) = 1/2 (mod 31)
+# 2^4 also possible (mod 31);
+
+p = 31
+# 1 (mod p)
+(4 * 8) %% p
+(8 - inv.mod(4, p))
+# x = sqrt(8) (mod p)
+x = inv.mod(2, p)
+x = c(x, p - x)
+(x*x - 8) %% p
+print(x);
+
+
+###
+p = 67
+#
+r =  p %% 4;
+r = if(r == 1) 1 else -1;
+x2 = (p - r) / 4;
+if(r > 0) x2 = p - x2;
+(x2 - inv.mod(4, p))
+# x = sqrt(x2) (mod p)
+x = inv.mod(2, p)
+x = c(x, p - x)
+(x*x - x2) %% p
+print(x2); print(x);
 
