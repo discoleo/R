@@ -6,7 +6,7 @@
 ### Multi-Variable Polynomials
 ### Modular Arithmetic
 ###
-### draft v.0.1c-robust
+### draft v.0.1d
 
 
 # - minimal Modular Arithmetic;
@@ -29,6 +29,21 @@ inv.mod = function(x, mod) {
 		if(length(id) == 0) NA else id;
 	}
 	sapply(x, f);
+}
+inv2.mod = function(mod, pow=1) {
+	if(mod %% 2 == 0) return(NA);
+	xinv = (mod + 1) %/% 2;
+	if(pow > 1) xinv = pow.mod(xinv, n=pow, mod=mod);
+	return(xinv);
+}
+inv3.mod = function(mod, pow=1) {
+	r = (mod %% 3);
+	if(r == 0) return(NA);
+	if(r == 2) {
+		xinv = (mod + 1) %/% 3;
+	} else xinv = mod - ((mod - 1) %/% 3);
+	if(pow > 1) xinv = pow.mod(xinv, n=pow, mod=mod);
+	return(xinv);
 }
 
 ### Solve P2:
