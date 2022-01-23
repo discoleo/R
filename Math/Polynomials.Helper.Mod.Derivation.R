@@ -7,7 +7,7 @@
 ### Modular Arithmetic
 ### Derivation & Experiments
 ###
-### draft v.0.1f
+### draft v.0.1g
 
 
 
@@ -223,4 +223,17 @@ for(id in seq(len)) {
 }
 sort(unique(x))
 
+
+###############
+###############
+
+###############
+### Power 5 ###
+###############
+
+pow = 5
+p = primes(500)
+p = p[p %% 10 == (2*pow - 1)]
+sapply(p, function(p) p - length(unique( sapply(seq(p-1), pow.mod, pow, mod=p) )))
+sort(unique( sapply(seq(498), pow.mod, pow, mod=499) ))
 
