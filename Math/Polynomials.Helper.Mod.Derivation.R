@@ -7,7 +7,7 @@
 ### Modular Arithmetic
 ### Derivation & Experiments
 ###
-### draft v.0.1g-fix
+### draft v.0.1h
 
 
 
@@ -235,7 +235,8 @@ sort(unique(x))
 ### Power 5 ###
 ###############
 
-pow = 5; # pow = 7;
+pow = 5;
+# pow = 7; # pow = 11; # pow = 13;
 p = primes(500)
 p = p[p %% (2*pow) != 1]
 sapply(p, function(p) p - length(unique( sapply(seq(p-1), pow.mod, pow, mod=p) )))
@@ -245,4 +246,21 @@ p = p[p %% (2*pow) == 1]
 sapply(p, function(p) p - length(unique( sapply(seq(p-1), pow.mod, pow, mod=p) )))
 #
 sort(unique( sapply(seq(498), pow.mod, pow, mod=499) ))
+
+
+###############
+### Power 9 ###
+###############
+
+pow = 9;
+# simple: (p %% 3 != 1) seems sufficient;
+p = primes(500)
+p = p[p %% (3) != 1]
+sapply(p, function(p) p - length(unique( sapply(seq(p-1), pow.mod, pow, mod=p) )))
+#
+p = primes(500)
+p = p[p %% (3) == 1]
+sapply(p, function(p) p - length(unique( sapply(seq(p-1), pow.mod, pow, mod=p) )))
+#
+sort(unique( sapply(seq(460), pow.mod, pow, mod=461) ))
 
