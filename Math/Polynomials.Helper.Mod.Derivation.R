@@ -7,7 +7,7 @@
 ### Modular Arithmetic
 ### Derivation & Experiments
 ###
-### draft v.0.1g
+### draft v.0.1g-fix
 
 
 
@@ -202,6 +202,10 @@ sapply(c(53, 59, 71, 83, 89, 101), function(p) length(unique( (seq(p-1)^3) %% p 
 p = primes(1000)
 p = p[p %% 6 == 5]
 sapply(p, function(p) p - length(unique( (seq(p-1)^3) %% p )))
+#
+p = primes(1000)
+p = p[p %% 6 != 5]
+sapply(p, function(p) p - length(unique( (seq(p-1)^3) %% p )))
 
 
 ### Type: Classic Cubes
@@ -231,9 +235,14 @@ sort(unique(x))
 ### Power 5 ###
 ###############
 
-pow = 5
+pow = 5; # pow = 7;
 p = primes(500)
-p = p[p %% 10 == (2*pow - 1)]
+p = p[p %% (2*pow) != 1]
 sapply(p, function(p) p - length(unique( sapply(seq(p-1), pow.mod, pow, mod=p) )))
+#
+p = primes(500)
+p = p[p %% (2*pow) == 1]
+sapply(p, function(p) p - length(unique( sapply(seq(p-1), pow.mod, pow, mod=p) )))
+#
 sort(unique( sapply(seq(498), pow.mod, pow, mod=499) ))
 
