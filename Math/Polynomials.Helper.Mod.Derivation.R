@@ -7,7 +7,7 @@
 ### Modular Arithmetic
 ### Derivation & Experiments
 ###
-### draft v.0.1h-lowCount
+### draft v.0.1i
 
 
 
@@ -255,18 +255,37 @@ sort(unique( sapply(seq(498), pow.mod, pow, mod=499) ))
 pow = 9;
 # simple: (p %% 3 != 1) seems sufficient;
 p = primes(500)
-p = p[p %% (3) != 1]
-sapply(p, function(p) p - length(unique( sapply(seq(p-1), pow.mod, pow, mod=p) )))
+isSol = (p %% 3 != 1)
+sapply(p[isSol], function(p) p - length(unique( sapply(seq(p-1), pow.mod, pow, mod=p) )))
 #
-p = primes(500)
-p = p[p %% (3) == 1]
-sapply(p, function(p) p - length(unique( sapply(seq(p-1), pow.mod, pow, mod=p) )))
+isSol = (p %% 3 == 1)
+sapply(p[isSol], function(p) p - length(unique( sapply(seq(p-1), pow.mod, pow, mod=p) )))
 # very low number of solutions:
-p = primes(500)
-p = p[p %% 9 == 1]
-print(rbind(p,
-	sapply(p, function(p) length(unique( sapply(seq(p-1), pow.mod, pow, mod=p) )))
+isSol = (p %% pow == 1)
+print(rbind(p[isSol],
+	sapply(p[isSol], function(p) length(unique( sapply(seq(p-1), pow.mod, pow, mod=p) )))
 ))
 #
 sort(unique( sapply(seq(460), pow.mod, pow, mod=461) ))
+
+
+################
+### Power 15 ###
+################
+
+pow = 15;
+# simple: (p %% 3 != 1) seems sufficient;
+p = primes(500)
+isSol = (p %% 3 != 1) & (p %% 5 != 1)
+sapply(p[isSol], function(p) p - length(unique( sapply(seq(p-1), pow.mod, pow, mod=p) )))
+#
+isSol = (p %% 3 == 1) | (p %% 5 == 1)
+sapply(p[isSol], function(p) p - length(unique( sapply(seq(p-1), pow.mod, pow, mod=p) )))
+# very low number of solutions:
+isSol = (p %% pow == 1)
+print(rbind(p[isSol],
+	sapply(p[isSol], function(p) length(unique( sapply(seq(p-1), pow.mod, pow, mod=p) )))
+))
+# Ex All:
+sort(unique( sapply(seq(442), pow.mod, pow, mod=443) ))
 
