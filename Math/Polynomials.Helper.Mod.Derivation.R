@@ -7,7 +7,7 @@
 ### Modular Arithmetic
 ### Derivation & Experiments
 ###
-### draft v.0.1h
+### draft v.0.1h-lowCount
 
 
 
@@ -261,6 +261,12 @@ sapply(p, function(p) p - length(unique( sapply(seq(p-1), pow.mod, pow, mod=p) )
 p = primes(500)
 p = p[p %% (3) == 1]
 sapply(p, function(p) p - length(unique( sapply(seq(p-1), pow.mod, pow, mod=p) )))
+# very low number of solutions:
+p = primes(500)
+p = p[p %% 9 == 1]
+print(rbind(p,
+	sapply(p, function(p) length(unique( sapply(seq(p-1), pow.mod, pow, mod=p) )))
+))
 #
 sort(unique( sapply(seq(460), pow.mod, pow, mod=461) ))
 
