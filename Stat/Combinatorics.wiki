@@ -4,7 +4,7 @@
 
 : Leonard Mada
 : (the one and only)
-: draft v.0.1b
+: draft v.0.1b-Ref
 
 == Introduction ==
 
@@ -13,6 +13,16 @@ A nice collection of combinatorics problems. Best attacked before sleep, ... at 
 ; Sections:
 * Problem 1: Counting Intersections;
 * Problem 2: Permutations on Graphs => Hypergraphs;
+
+== Courses ==
+
+* Monica Vazirani: Representation Theory & Combinatorics of the Symmetry Group and Related Structures.
+Institute for Advanced Study.
+https://www.youtube.com/watch?v=fnavpBcaHPI
+
+* Hugh Thomas: A System of Equations Associated to a Surface.
+Fields Institute.
+https://www.youtube.com/watch?v=lp7L35nSoBg
 
 
 == Problem 1: Counting Intersections ==
