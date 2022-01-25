@@ -7,7 +7,7 @@
 ### Modular Arithmetic
 ### Derivation & Experiments
 ###
-### draft v.0.1j
+### draft v.0.1k
 
 
 
@@ -294,4 +294,34 @@ print(rbind(p[isSol],
 ))
 # Ex All:
 sort(unique( sapply(seq(442), pow.mod, pow, mod=443) ))
+
+
+###############
+
+### Even Powers
+
+###############
+### Power 6 ###
+###############
+
+pow = 6;
+# pow = 10; # pow = 14;
+p = primes(500)
+# - NOT all solutions, but still 2 Categories:
+# - many: ~ 1/2 of values;
+# - few: each (x^pow) repeats (pow) times;
+isSol = (p %% (pow) != 1);
+sapply(p[isSol], function(p) p - length(unique( sapply(seq(p-1), pow.mod, pow, mod=p) )))
+#
+isSol = (p %% (pow) == 1);
+sapply(p[isSol], function(p) p - length(unique( sapply(seq(p-1), pow.mod, pow, mod=p) )))
+# low number of solutions:
+isSol = (p %% (pow) == 1);
+print(rbind(p[isSol],
+	sapply(p[isSol], function(p) length(unique( sapply(seq(p-1), pow.mod, pow, mod=p) )))
+))
+# Ex many:
+sort(unique( sapply(seq(346), pow.mod, pow, mod=347) ))
+# Ex few:
+table( sapply(seq(60), pow.mod, pow, mod=61) )
 
