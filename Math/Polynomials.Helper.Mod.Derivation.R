@@ -7,7 +7,7 @@
 ### Modular Arithmetic
 ### Derivation & Experiments
 ###
-### draft v.0.1i
+### draft v.0.1j
 
 
 
@@ -238,14 +238,20 @@ sort(unique(x))
 pow = 5;
 # pow = 7; # pow = 11; # pow = 13;
 p = primes(500)
-p = p[p %% (2*pow) != 1]
-sapply(p, function(p) p - length(unique( sapply(seq(p-1), pow.mod, pow, mod=p) )))
+isSol = (p %% (2*pow) != 1);
+sapply(p[isSol], function(p) p - length(unique( sapply(seq(p-1), pow.mod, pow, mod=p) )))
 #
-p = primes(500)
-p = p[p %% (2*pow) == 1]
-sapply(p, function(p) p - length(unique( sapply(seq(p-1), pow.mod, pow, mod=p) )))
-#
+isSol = (p %% (2*pow) == 1);
+sapply(p[isSol], function(p) p - length(unique( sapply(seq(p-1), pow.mod, pow, mod=p) )))
+# low number of solutions:
+isSol = (p %% (2*pow) == 1);
+print(rbind(p[isSol],
+	sapply(p[isSol], function(p) length(unique( sapply(seq(p-1), pow.mod, pow, mod=p) )))
+))
+# Ex All:
 sort(unique( sapply(seq(498), pow.mod, pow, mod=499) ))
+# Ex few:
+table( sapply(seq(30), pow.mod, pow, mod=31) )
 
 
 ###############
@@ -265,7 +271,7 @@ isSol = (p %% pow == 1)
 print(rbind(p[isSol],
 	sapply(p[isSol], function(p) length(unique( sapply(seq(p-1), pow.mod, pow, mod=p) )))
 ))
-#
+# Ex All:
 sort(unique( sapply(seq(460), pow.mod, pow, mod=461) ))
 
 
@@ -274,7 +280,7 @@ sort(unique( sapply(seq(460), pow.mod, pow, mod=461) ))
 ################
 
 pow = 15;
-# simple: (p %% 3 != 1) seems sufficient;
+# simple: (p %% c(3, 5) != 1) seems sufficient;
 p = primes(500)
 isSol = (p %% 3 != 1) & (p %% 5 != 1)
 sapply(p[isSol], function(p) p - length(unique( sapply(seq(p-1), pow.mod, pow, mod=p) )))
