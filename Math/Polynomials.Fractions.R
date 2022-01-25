@@ -129,3 +129,113 @@ sum( apply(xF2, 2, function(tx) prod(x - tx) / prod(tx)) )
 choose(n, 2) + (1/2*x^2*eval.pm(dp2, x) - 4*x*eval.pm(dp1, x)) / eval.pm(p, x)
 
 
+####################
+####################
+
+### [old Derivations]
+# - from file:
+#   Integrals.Fractions.CardanPoly.R;
+
+
+# TODO: verify alternating signs;
+
+### T1
+### sum( r[i] / (x - r[i]) )
+# = (E1*x^(n-1) - 2*E2*x^(n-2) + 3*E3*x^(n-3) - 4*E4*x^(n-4) + ... + (-1)^n * (n-1)*E[n-1]*x + (-1)^(n+1) * n*E[n]) / Q(x)
+
+### T2
+### sum( (r[i1] + r[i2]) / ((x - r[i1])*(x - r[i2])) )
+# = (1*(n-1)*E1*x^(n-2) - 2*(n-2)*E2*x^(n-3) + 3*(n-3)*E3*x^(n-4) + ... + (-1)^(n-1) * (n-2)*2*E[n-2]*x + (-1)^n * (n-1)*1*E[n-1]) / Q(x)
+# = sum( (-1)^(i+1) * (n-i)*i*E[i]*x^(n-i-1) ) / Q(x);
+# where i = 1:(n-1);
+
+### sum( (r[i1] * r[i2]) / ((x - r[i1])*(x - r[i2])) )
+# = (1*E1*x^(n-2) - 3*E2*x^(n-3) + 6*E3*x^(n-4) + ... + (-1)^(n-1) * ...*E[n-2]*x + (-1)^n * ...*E[n-1]) / Q(x)
+# = sum( (-1)^(i+1) * i*(i+1)/2 * E[i]*x^(n-i-1) ) / Q(x);
+# where i = 1:(n-1);
+
+### T3
+### sum( (r[i1] + r[i2] + r[i3]) / ((x - r[i1])*(x - r[i2])*(x - r[i3])) )
+# = ( choose(n-1, 2)*1* E1*x^(n-3) - ... - 10*(n-5)*E[n-5]*x^3 + 6*(n-4)*E[n-4]*x^2 - 3*(n-3)*E[n-3]*x + 1*(n-2)*E[n-2]) / Q(x)
+# = sum( (-1)^(n-i-1) * choose(i, 2)*(n-i)*E[n-i]*x^(i-2) ) / Q(x);
+# where i = 2:(n-1); ### Note: [i] starts at 2 & is in reverse order (vs T2)!
+sapply(5:10, function(n) {r = roots(c(rep(c(1,-1), n-2),-1)); mult.pfr(r=r, k=3);})
+
+### [...] many more;
+
+
+###################
+
+# [old approach]
+expand.idgrid = function(n, k) {
+	# expand grid to compute various root combinations
+	id.l = rep(list(1:n), k)
+	id.gr = expand.grid(id.l)
+	for(i in 1:(k-1)) {
+	for(j in (i+1):k) {
+		id.gr = id.gr[id.gr[,i] < id.gr[,j],]
+	}
+	}
+	return(id.gr)
+}
+mult.pfr = function(r, k=2, type=1, pow=1) {
+	# type: 0 => 1/..., 1 => sum(r[i])/...,
+	#       k => prod(r[i])/...;
+	n = length(r); id.all = 1:n
+	gr = if(k == 1) matrix(id.all, ncol=1) else expand.idgrid(n, k=k);
+	p = rep(0, n)
+	rows = 1:nrow(gr);
+	for(id in rows) {
+		is.id = id.all %in% gr[id,]
+		r.inv = r[ ! is.id]
+		# print(r[is.id])
+		p.m = rev(Poly(r.inv))
+		if(type == 0) {
+		} else if(type == 1) {
+			p.m = p.m * sum(r[is.id]^pow) # Sum
+		} else if(type == k) {
+			p.m = p.m * prod(r[is.id]^pow) # Product
+		}
+		p.m = c(p.m, rep(0, n - length(p.m)))
+		p = p + p.m
+	}
+	round0.p(p)
+}
+
+######################
+
+### Root Combinatorics
+
+### TODO: move to separate file;
+
+coeff = c(1,2,3,4,5,6)
+coeff = c(1,0,0,0,1,1)
+coeff = c(1,0,0,0,0,1,1)
+coeff = c(1,0,0,0,1,1,1)
+r = roots(coeff)
+
+### Test
+poly.calc(r)
+
+p = sapply(0:4, function(pow) print(mult.pfr(r, k=1, type=1, pow=pow)) )
+p = sapply(0:4, function(pow) print(mult.pfr(r, k=2, type=1, pow=pow)) ) # Coeffs = 1 * D([k = 1])
+p = sapply(0:4, function(pow) print(mult.pfr(r, k=3, type=1, pow=pow)) ) # Coeffs = 1/2 * D([k = 2])
+
+### sum (r[i]^pow / (x - r[i]))
+mult.pfr(r, k=1, type=1, pow=0) # D[1]
+mult.pfr(r, k=1, type=1)
+mult.pfr(r, k=1, type=1, pow=2)
+mult.pfr(r, k=1, type=1, pow=3)
+
+
+### sum ( (r[i]^pow + r[j]^pow) / ((x - r[i])*(x-r[j]) )
+mult.pfr(r, k=2, type=1)
+mult.pfr(r, k=2, type=1, pow=2)
+mult.pfr(r, k=2, type=1, pow=3)
+
+
+### sum ( (r[i] * r[j])^pow) / ((x - r[i])*(x-r[j]) )
+mult.pfr(r, k=2, type=2)
+mult.pfr(r, k=2, type=2, pow=2)
+mult.pfr(r, k=2, type=2, pow=3)
+
