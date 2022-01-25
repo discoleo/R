@@ -64,7 +64,7 @@ print.dpm = function(p, y="y", x="x", do.sort=TRUE) {
 ### D
 
 # D( p(x) )
-dp.pm = function(p, xn="x") {
+dp.pm = function(p, by="x", xn=by) {
 	nc = match(xn, names(p));
 	if(is.na(nc)) return(0);
 	p = p[(p[, nc] != 0), , drop=FALSE];
@@ -73,7 +73,7 @@ dp.pm = function(p, xn="x") {
 	p[, nc] = p[, nc] - 1;
 	return(p);
 }
-dnp.pm = function(p, n=2, xn="x") {
+dnp.pm = function(p, n=2, by="x", xn=by) {
 	for(id in seq(n)) {
 		p = dp.pm(p, xn=xn);
 		if(is.numeric(p)) break;
