@@ -6,7 +6,7 @@
 ### Polynomials: Fractions
 ### Derivations
 ###
-### draft v.0.1d
+### draft v.0.1d-alt
 
 
 ### Polynomial Fractions
@@ -165,6 +165,32 @@ xF2 = combn(xd, 2);
 #
 sum( apply(xF2, 2, function(tx) prod(x - tx) / prod(tx)) )
 choose(n, 2) + (1/2*x^2*eval.pm(dp2, x) - 4*x*eval.pm(dp1, x)) / eval.pm(p, x)
+
+
+#####################
+
+### Decomposition of:
+### x^2 * d2(Q(x))/Q(x)
+# - Alternative using (r[i]^2 + r[j]^2);
+
+### sum( (r[i]^2 + r[j]^2) / ((x - r[i])*(x - r[j])) )
+# = (x^2*d2(Q(x)) - (3*x+S)*d(Q(x))) / Q(x) - n;
+
+# sum( (r[i]^2 + r[j]^2 - 2*x^2 + 2*x^2) / ((x - r[i])*(x - r[j])) ) # =
+# - sum( (4*x + S - r[i]) / (x - r[i]) ) + 2*x^2*sum( 1/((x - r[i])*(x - r[j])) ) # =
+# - (3*x+S)*sum(1/(x - r[i])) - n + x^2*d2(Q(x)) / Q(x) # =
+# - (3*x+S)*d(Q(x)) / Q(x) + x^2*d2(Q(x)) / Q(x) - n # =
+# (x^2*d2(Q(x)) - (3*x+S)*d(Q(x))) / Q(x) - n;
+
+### Ex 1:
+x  = 3
+n  = length(r)
+S  = - b[5];
+xd = (x - r);
+idF2 = combn(seq(n), 2);
+#
+sum( apply(idF2, 2, function(id) sum(r[id]^2) / prod(xd[id])) )
+(x^2*eval.pm(dp2, x) - (3*x+S)*eval.pm(dp1, x)) / eval.pm(p, x) - n;
 
 
 ####################
