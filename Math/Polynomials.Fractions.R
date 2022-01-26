@@ -6,7 +6,7 @@
 ### Polynomials: Fractions
 ### Derivations
 ###
-### draft v.0.1c
+### draft v.0.1d
 
 
 ### Polynomial Fractions
@@ -80,6 +80,28 @@ S = round(sum(r), 5);
 sum( (r^2 - x^2) / (x - r) ) + sum( x^2 / (x - r) ) # =
 - n*x - S + x^2*sum( 1 / (x - r) ) # =
 # x^2 * d(Q(x)) / Q(x) - n*x - S;
+
+####################
+
+### Decomposition of:
+### x^3 * d(Q(x))/Q(x)
+
+### sum( r[i]^3 / (x - r[i]) )
+# = x^3 * d(Q(x)) / Q(x) - n*x^2 - S*x - S^2 + 2*E2*S;
+
+x = 3
+n = length(r)
+S = round(sum(r), 5); # b[n]
+E2 = b[n-1]; # sum(apply(combn(r, 2), 2, prod))
+#
+sum( (r^3 - x^3) / (x - r) ) + sum( x^3 / (x - r) ) # =
+- n*x^2 - S*x - (S^2 - 2*E2) + x^3*sum( 1 / (x - r) ) # =
+# x^3 * d(Q(x)) / Q(x) - n*x^2 - S*x - S^2 + 2*E2*S;
+
+# Note:
+# - Higher powers: sum( r^k / (x-r) )
+#   are useful for decomposition into fractions of Order 1;
+#   ["pure" decompositions]
 
 
 ###############
