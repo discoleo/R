@@ -6,7 +6,7 @@
 ### Polynomials: Fractions
 ### Derivations
 ###
-### draft v.0.1b
+### draft v.0.1c
 
 
 ### Polynomial Fractions
@@ -64,6 +64,22 @@ x = 3
 n = length(r)
 sum( r / (x - r) )
 x * eval.pm(dp1, x) / eval.pm(p, x) - n;
+
+####################
+
+### Decomposition of:
+### x^2 * d(Q(x))/Q(x)
+
+### sum( r[i]^2 / (x - r[i]) )
+# = x^2 * d(Q(x)) / Q(x) - n*x - S;
+
+x = 3
+n = length(r)
+S = round(sum(r), 5);
+#
+sum( (r^2 - x^2) / (x - r) ) + sum( x^2 / (x - r) ) # =
+- n*x - S + x^2*sum( 1 / (x - r) ) # =
+# x^2 * d(Q(x)) / Q(x) - n*x - S;
 
 
 ###############
@@ -142,7 +158,15 @@ n = length(r);
 idF2 = combn(seq(n), 2);
 
 x = 3
+# Helper:
 xF2 = matrix(r[idF2], nrow=2); xdF2 = matrix((x - r)[idF2], nrow=2);
+S   = round(sum(r), 5);
+T1  = sum( 1 / (x - r) );
+T1s = sum( r / (x - r) ) + n;
+T1s2 = sum( r^2 / (x - r) );
+T2s = sum( sapply(seq(ncol(idF2)), function(id) sum(xF2[ , id]) / prod(xdF2[ , id])) )
+T2  = sum( sapply(seq(ncol(idF2)), function(id) 1 / prod(xdF2[ , id])) )
+
 
 ### x*dp / P[5]
 x * dp(x) / px(x);
@@ -152,11 +176,11 @@ sum( r / (x - r) ) + n;
 
 ### x*d2p / P[5]
 # 20*x^4
-T2s = sum( sapply(seq(ncol(idF2)), function(id) sum(xF2[ , id]) / prod(xdF2[ , id])) )
-T1  = sum( 1 / (x - r) );
 x * d2p(x) / px(x);
 20*x^4 / px(x)
 T2s + 4*T1
+
+### Full Decomposition:
 
 ### 1 / P[5]
 # [for this particular polynomial]
@@ -165,6 +189,35 @@ T2s + 4*T1
 1 / (x^5 - x -1)
 (T2s + 4*T1)/4 - T1
 T2s/4
+
+### x / P[5]
+# [for this particular polynomial]
+x / px(x);
+x / (x^5 - x -1)
+(T1s - 5/4*T2s - 5)/4
+
+### x^2 / P[5]
+# [for this particular polynomial]
+# x^2 * d(Q(x)) / Q(x)
+x^2 * dp(x) / px(x)
+x^2 * (5*x^4 - 1) / (x^5 - x - 1)
+T1s2 + n*x + S
+#
+# div.pm(toPoly.pm("x^2*(5*x^4-1)"), toPoly.pm("x^5 - x - 1"), "x")$Rem
+(4*x^2 + 5*x) / px(x)
+T1s2; # S = 0;
+# x^2 / Q(x)
+print("x^2 / Q(x)")
+x^2 / px(x)
+(T1s2 - 5/4*(T1s - 5/4*T2s - 5))/4
+(4*T1s2 - 5*T1s + 25/4*T2s + 25)/16
+
+### x^3 / P[5]
+# [for this particular polynomial]
+T2 = sum( sapply(seq(ncol(idF2)), function(id) 1 / prod(xdF2[ , id])) )
+x^3 / px(x);
+x^3 / (x^5 - x -1)
+T2 / 10
 
 
 ####################
