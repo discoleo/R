@@ -6,7 +6,7 @@
 ### Polynomials: Fractions
 ### Derivations
 ###
-### draft v.0.1a
+### draft v.0.1b
 
 
 ### Polynomial Fractions
@@ -127,6 +127,44 @@ xF2 = combn(xd, 2);
 #
 sum( apply(xF2, 2, function(tx) prod(x - tx) / prod(tx)) )
 choose(n, 2) + (1/2*x^2*eval.pm(dp2, x) - 4*x*eval.pm(dp1, x)) / eval.pm(p, x)
+
+
+####################
+####################
+
+### Fraction Decomposition of P[5]
+
+px = function(x) x^5 - x - 1;
+dp = function(x) 5*x^4 - 1;
+d2p = function(x) 20*x^3;
+r = roots(c(1,0,0,0,-1,-1));
+n = length(r);
+idF2 = combn(seq(n), 2);
+
+x = 3
+xF2 = matrix(r[idF2], nrow=2); xdF2 = matrix((x - r)[idF2], nrow=2);
+
+### x*dp / P[5]
+x * dp(x) / px(x);
+(5*x^5 - x) / px(x)
+(4*x + 5) / px(x) + 5;
+sum( r / (x - r) ) + n;
+
+### x*d2p / P[5]
+# 20*x^4
+T2s = sum( sapply(seq(ncol(idF2)), function(id) sum(xF2[ , id]) / prod(xdF2[ , id])) )
+T1  = sum( 1 / (x - r) );
+x * d2p(x) / px(x);
+20*x^4 / px(x)
+T2s + 4*T1
+
+### 1 / P[5]
+# [for this particular polynomial]
+# = sum( (r[i] + r[j]) / ((x - r[i])*(x - r[j])) ) / 4;
+1 / px(x);
+1 / (x^5 - x -1)
+(T2s + 4*T1)/4 - T1
+T2s/4
 
 
 ####################
