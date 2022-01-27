@@ -7,7 +7,7 @@
 ### Modular Arithmetic
 ### Derivation & Experiments
 ###
-### draft v.0.2a
+### draft v.0.2a-fix
 
 
 
@@ -365,7 +365,7 @@ sort(validValsP2.mod(193, 8, e=16))
 
 ###
 validVals.mod(233, 8)
-sort(validValsP2.mod(233, 8, e=16))
+sort(validValsP2.mod(233, 8, e=2))
 
 
 
