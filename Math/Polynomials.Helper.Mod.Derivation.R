@@ -7,7 +7,7 @@
 ### Modular Arithmetic
 ### Derivation & Experiments
 ###
-### draft v.0.2a-fix
+### draft v.0.2b
 
 
 
@@ -340,6 +340,33 @@ validValsP2.mod = function(p, pow, e=2) {
 
 ###########
 
+### Pow = 4
+p = primes.mod(4, "Most")
+countSol.mod(p)
+
+###
+validVals.mod(37, 4)
+sort(validValsP2.mod(37, 4, e=7))
+
+###
+validVals.mod(41, 4)
+sort(validValsP2.mod(41, 4, e=4))
+
+###
+validVals.mod(53, 4)
+sort(validValsP2.mod(53, 4, e=13))
+
+###
+validVals.mod(61, 4)
+sort(validValsP2.mod(61, 4, e=12))
+
+###
+validVals.mod(73, 4)
+sort(validValsP2.mod(73, 4, e=18))
+
+
+###########
+### Pow = 8
 p = primes.mod(8, "Most")
 countSol.mod(p)
 
