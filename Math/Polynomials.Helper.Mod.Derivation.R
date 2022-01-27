@@ -7,7 +7,7 @@
 ### Modular Arithmetic
 ### Derivation & Experiments
 ###
-### draft v.0.1k
+### draft v.0.2a
 
 
 
@@ -324,4 +324,48 @@ print(rbind(p[isSol],
 sort(unique( sapply(seq(346), pow.mod, pow, mod=347) ))
 # Ex few:
 table( sapply(seq(60), pow.mod, pow, mod=61) )
+
+
+########################
+########################
+
+### Valid Solutions:
+
+validVals.mod = function(p, pow) {
+	table(sapply(seq(p-1), pow.mod, n=pow, mod=p))
+}
+validValsP2.mod = function(p, pow, e=2) {
+	sapply(seq(0, (p-1)/pow - 1), function(pow) pow.mod(e, pow, mod=p));
+}
+
+###########
+
+p = primes.mod(8, "Most")
+countSol.mod(p)
+
+###
+validVals.mod(89, 8)
+sort(validValsP2.mod(89, 8, e=2))
+
+###
+validVals.mod(97, 8)
+sort(validValsP2.mod(97, 8, e=6))
+
+###
+validVals.mod(113, 8)
+sort(validValsP2.mod(113, 8, e=7))
+
+###
+validVals.mod(137, 8)
+sort(validValsP2.mod(137, 8, e=16))
+
+###
+validVals.mod(193, 8)
+sort(validValsP2.mod(193, 8, e=16))
+
+###
+validVals.mod(233, 8)
+sort(validValsP2.mod(233, 8, e=16))
+
+
 
