@@ -7,7 +7,7 @@
 ### Modular Arithmetic
 ### Derivation & Experiments
 ###
-### draft v.0.2b
+### draft v.0.2c
 
 
 
@@ -340,9 +340,38 @@ validValsP2.mod = function(p, pow, e=2) {
 
 ###########
 
+### Pow = 3
+p = primes.mod(3, "Multiple")
+# - only "Multiple" have multiple solutions;
+countSol.mod(p)
+
+###
+validVals.mod(43, 3)
+sort(validValsP2.mod(43, 3, e=2))
+
+###
+validVals.mod(61, 3)
+sort(validValsP2.mod(61, 3, e=8))
+
+###
+validVals.mod(67, 3)
+sort(validValsP2.mod(67, 3, e=5))
+
+###
+validVals.mod(73, 3)
+sort(validValsP2.mod(73, 3, e=7))
+
+###
+validVals.mod(79, 3)
+sort(validValsP2.mod(79, 3, e=12))
+
+
+###########
 ### Pow = 4
 p = primes.mod(4, "Most")
 countSol.mod(p)
+
+# TODO: "Multiple"
 
 ###
 validVals.mod(37, 4)
