@@ -6,7 +6,7 @@
 ### Multi-Variable Polynomials
 ### Modular Arithmetic
 ###
-### draft v.0.1e-fix
+### draft v.0.1f
 
 
 # - minimal Modular Arithmetic;
@@ -17,9 +17,101 @@
 #   source("Polynomials.Helper.Mod.R");
 # - is automatically loaded in:
 #   Polynomials.Helper.Factorize.R;
+# - top file:
+#   source("Polynomials.Helper.R");
 
 ##########################
 ##########################
+
+
+filter.mod = function(x, r, mod) {
+	len = length(mod);
+	if(len == 1) {
+		r0 = x %% mod;
+		if(length(r) == 1) {
+			isMod = (r0 == r);
+		} else {
+			isMod = (r0 %in% r);
+		}
+		return(x[isMod]);
+	}
+	# multiple Congruences
+	# TODO
+}
+primes.mod = function(pow, type="Multiple", to=1000) {
+	# Multiple = multiple solutions for each x^pow = valid solution;
+	# All values: x^pow = r, solvable for any r;
+	type = pmatch(type, c("Any", "Multiple", "Strict All", "Most/All values"));
+	if(is.na(type)) stop("Type is not supported!");
+	p = primes(to); # library pracma;
+	#
+	if(type == 1) return(p);
+	if(pow == 3) {
+		isMod = (p %% 6) != 5;
+	} else if(pow %% 2 == 0) {
+		pFact = factors(pow);
+		p2    = (pFact == 2);
+		pFact = pFact[ ! p2];
+		p2 = sum(p2);
+		if(length(pFact) == 0) {
+			isMod = (p %% (2^p2) != 1);
+		} else {
+			# TODO
+			stop("Not yet implemented!");
+		}
+	} else {
+		pFact = factors(pow);
+		pFact = unique(pFact); # TODO
+		len   = length(pFact);
+		if(len == 1) {
+			isMod = (p %% (2*pow)) == 1;
+		} else if(type == 3) {
+			# Strict: All values solvable;
+			isMod = (p %% pFact[1]) != 1;
+			for(id in seq(2, len)) {
+				isMod = isMod & (p %% pFact[id] != 1);
+			}
+		} else if(type == 2) {
+			# Strict: few values solvable;
+			isMod = (p %% pFact[1]) == 1;
+			for(id in seq(2, len)) {
+				isMod = isMod & (p %% pFact[id] == 1);
+			}
+		} else {
+			# Few/In-between values solvable;
+			isMod = (p %% pFact[1]) == 1;
+			for(id in seq(2, len)) {
+				isMod = isMod | (p %% pFact[id] == 1);
+			}
+		}
+		p = p[isMod];
+		attr(p, "pow") = pow;
+		return(p);
+	}
+	if(type == 2) { p = p[isMod]; }
+	else if(type == 3 || type == 4) { p = p[ ! isMod]; }
+	else { return(numeric()); }
+	attr(p, "pow") = pow;
+	return(p);
+}
+countSol.mod = function(p, pow, type="Values") {
+	type = pmatch(type, c("Count", "Diff", "Values"));
+	if(is.na(type)) stop("Type NOT supported!");
+	if(missing(pow)) {
+		pow = attr(p, "pow");
+		if(is.null(pow)) stop("pow is missing!")
+	}
+	#
+	if(type == 1) {
+		sapply(p, function(p) length(unique( sapply(seq(p-1), pow.mod, pow, mod=p) )));
+	} else if(type == 2) {
+		sapply(p, function(p) p - length(unique( sapply(seq(p-1), pow.mod, pow, mod=p) )));
+	} else {
+		rbind(p,
+			sapply(p, function(p) length(unique( sapply(seq(p-1), pow.mod, pow, mod=p) )))
+		)
+	}
+}
 
 ### Inverse (mod p)
 inv.mod = function(x, mod) {
