@@ -7,7 +7,7 @@
 ### Modular Arithmetic
 ### Derivation & Experiments
 ###
-### draft v.0.2e
+### draft v.0.2f
 
 
 
@@ -400,26 +400,29 @@ p = primes.mod(4, "Most")
 countSol.mod(p)
 
 # TODO: "Multiple"
+# - Note:
+#   "Most" = 4 roots;
+#   "Multiple" = 2 roots;
 
 ###
 validVals.mod(37, 4)
-sort(validValsP2.mod(37, 4, e=7))
+validValsS.mod(37, 4, e=7)
 
 ###
 validVals.mod(41, 4)
-sort(validValsP2.mod(41, 4, e=4))
+validValsS.mod(41, 4, e=4)
 
 ###
 validVals.mod(53, 4)
-sort(validValsP2.mod(53, 4, e=13))
+validValsS.mod(53, 4, e=13)
 
 ###
 validVals.mod(61, 4)
-sort(validValsP2.mod(61, 4, e=12))
+validValsS.mod(61, 4, e=12)
 
 ###
 validVals.mod(73, 4)
-sort(validValsP2.mod(73, 4, e=18))
+validValsS.mod(73, 4, e=18)
 
 
 ###########
@@ -514,4 +517,37 @@ r = 3
 r = (r * mu) %% p;
 print(r)
 (r^3) %% p
+
+
+##################
+
+### Pow = 4
+
+pp = primes.mod(4, "Most")
+countSol.mod(pp)
+
+###
+p = 41
+validVals.mod(p, 4)
+validValsS.mod(p, 4, e=4)
+
+### Roots of Unity
+# (x+1)*(x-1)*(x^2 + 1)
+mu = solve.ModP2(c(1,0,1), mod=p);
+mu = c(1, -1 %% p, mu$Sol)
+mu = sort(mu);
+print(mu)
+(mu^4) %% p
+
+### Other Roots
+r = 2
+r = (r * mu) %% p;
+print(r)
+(r^4) %% p
+
+###
+r = 3
+r = (r * mu) %% p;
+print(r)
+(r^4) %% p
 
