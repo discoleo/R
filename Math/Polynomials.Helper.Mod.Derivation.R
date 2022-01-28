@@ -7,7 +7,7 @@
 ### Modular Arithmetic
 ### Derivation & Experiments
 ###
-### draft v.0.2g
+### draft v.0.2g-clean
 
 
 
@@ -432,23 +432,23 @@ countSol.mod(p)
 
 ###
 validVals.mod(41, 5)
-sort(validValsP2.mod(41, 5, e=3))
+validValsS.mod(41, 5, e=3)
 
 ###
 validVals.mod(61, 5)
-sort(validValsP2.mod(61, 5, e=21))
+validValsS.mod(61, 5, e=21)
 
 ###
 validVals.mod(71, 5)
-sort(validValsP2.mod(71, 5, e=23))
+validValsS.mod(71, 5, e=23)
 
 ###
 validVals.mod(101, 5)
-sort(validValsP2.mod(101, 5, e=32))
+validValsS.mod(101, 5, e=32)
 
 ###
 validVals.mod(131, 5)
-sort(validValsP2.mod(131, 5, e=18))
+validValsS.mod(131, 5, e=18)
 
 
 ###########
@@ -491,32 +491,39 @@ sort(validValsP2.mod(233, 8, e=2))
 ###########
 ### Pow = 3
 
-pp = primes.mod(3, "Multiple")
+pow = 3
+pp = primes.mod(pow, "Multiple")
 countSol.mod(pp)
 
 ###
 p = 43;
-validVals.mod(p, 3)
-validValsS.mod(p, 3, e=2)
+validVals.mod(p, pow)
+validValsS.mod(p, pow, e=2)
 
 ### Roots of Unity
 mu = solve.ModP2(c(1,1,1), mod=p);
 mu = c(1, mu$Sol)
 mu = sort(mu);
 print(mu)
-(mu^3) %% p
+(mu^pow) %% p
 
 ### Other Roots
 r = 2
 r = (r * mu) %% p;
 print(r)
-(r^3) %% p
+(r^pow) %% p
 
 ###
 r = 3
 r = (r * mu) %% p;
 print(r)
-(r^3) %% p
+(r^pow) %% p
+
+###
+r = 4
+r = (r * mu) %% p;
+print(r)
+(r^pow) %% p
 
 
 ##################
