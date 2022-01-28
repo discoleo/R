@@ -6,7 +6,7 @@
 ### Multi-Variable Polynomials
 ### Modular Arithmetic
 ###
-### draft v.0.1f
+### draft v.0.1f-fix
 
 
 # - minimal Modular Arithmetic;
@@ -199,7 +199,7 @@ solve.ModP2 = function(b, mod) {
 			b0 = (b0 - sh*sh) %% mod;
 		}
 		if((b0 + 1) %% mod == 0) {
-			x = (1 + sh) %% mod;
+			x = c(sh + 1, sh - 1) %% mod;
 		} else {
 			err = sapply(seq(mod), x.f);
 			x   = which(err == 0);
