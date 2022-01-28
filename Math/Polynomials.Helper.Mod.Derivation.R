@@ -7,7 +7,7 @@
 ### Modular Arithmetic
 ### Derivation & Experiments
 ###
-### draft v.0.2d
+### draft v.0.2d-print
 
 
 
@@ -28,6 +28,28 @@ validVals.mod = function(p, pow) {
 }
 validValsP2.mod = function(p, pow, e=2) {
 	sapply(seq(0, (p-1)/pow - 1), function(pow) pow.mod(e, pow, mod=p));
+}
+validValsS.mod = function(p, pow, e=2, len=80 + 3*16) {
+	v = sort(validValsP2.mod(p, pow=pow, e=e));
+	print.asMatrix(v, len=len);
+	return(invisible(v));
+}
+print.asMatrix = function(v, len=80) {
+	v = format(v);
+	nch = nchar(v[[1]]);
+	nc  = len %/% (nch + 1);
+	nr  = length(v) %/% nc;
+	nM  = nr*nc;
+	id  = seq(1, nM);
+	m = matrix(v[id], nrow=nc, ncol=nr); # T(m)
+	m = apply(m, 2, paste0, collapse=" ");
+	cat(m, sep="\n");
+	if(nM < length(v)) {
+		m = v[seq(nM+1, length(v))];
+		m = paste0(m, collapse=" ");
+		cat(m, sep="\n");
+	}
+	invisible();
 }
 
 
@@ -349,23 +371,27 @@ countSol.mod(p)
 
 ###
 validVals.mod(43, 3)
-sort(validValsP2.mod(43, 3, e=2))
+validValsS.mod(43, 3, e=2)
 
 ###
 validVals.mod(61, 3)
-sort(validValsP2.mod(61, 3, e=8))
+validValsS.mod(61, 3, e=8)
 
 ###
 validVals.mod(67, 3)
-sort(validValsP2.mod(67, 3, e=5))
+validValsS.mod(67, 3, e=5)
 
 ###
 validVals.mod(73, 3)
-sort(validValsP2.mod(73, 3, e=7))
+validValsS.mod(73, 3, e=7)
 
 ###
 validVals.mod(79, 3)
-sort(validValsP2.mod(79, 3, e=12))
+validValsS.mod(79, 3, e=12)
+
+###
+validVals.mod(97, 3)
+validValsS.mod(97, 3, e=19)
 
 
 ###########
