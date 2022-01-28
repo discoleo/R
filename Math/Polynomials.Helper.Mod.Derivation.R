@@ -7,7 +7,7 @@
 ### Modular Arithmetic
 ### Derivation & Experiments
 ###
-### draft v.0.2c
+### draft v.0.2d
 
 
 
@@ -19,6 +19,16 @@
 source("Polynomials.Helper.R")
 # - is automatically loaded in: Polynomials.Helper.R;
 #   source("Polynomials.Helper.Factorize.R")
+
+
+### Valid Solutions:
+
+validVals.mod = function(p, pow) {
+	table(sapply(seq(p-1), pow.mod, n=pow, mod=p))
+}
+validValsP2.mod = function(p, pow, e=2) {
+	sapply(seq(0, (p-1)/pow - 1), function(pow) pow.mod(e, pow, mod=p));
+}
 
 
 #######################
@@ -329,17 +339,9 @@ table( sapply(seq(60), pow.mod, pow, mod=61) )
 ########################
 ########################
 
-### Valid Solutions:
-
-validVals.mod = function(p, pow) {
-	table(sapply(seq(p-1), pow.mod, n=pow, mod=p))
-}
-validValsP2.mod = function(p, pow, e=2) {
-	sapply(seq(0, (p-1)/pow - 1), function(pow) pow.mod(e, pow, mod=p));
-}
+### Valid Values ###
 
 ###########
-
 ### Pow = 3
 p = primes.mod(3, "Multiple")
 # - only "Multiple" have multiple solutions;
@@ -392,6 +394,32 @@ sort(validValsP2.mod(61, 4, e=12))
 ###
 validVals.mod(73, 4)
 sort(validValsP2.mod(73, 4, e=18))
+
+
+###########
+### Pow = 5
+p = primes.mod(5, "Multiple")
+countSol.mod(p)
+
+###
+validVals.mod(41, 5)
+sort(validValsP2.mod(41, 5, e=3))
+
+###
+validVals.mod(61, 5)
+sort(validValsP2.mod(61, 5, e=21))
+
+###
+validVals.mod(71, 5)
+sort(validValsP2.mod(71, 5, e=23))
+
+###
+validVals.mod(101, 5)
+sort(validValsP2.mod(101, 5, e=32))
+
+###
+validVals.mod(131, 5)
+sort(validValsP2.mod(131, 5, e=18))
 
 
 ###########
