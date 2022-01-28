@@ -7,7 +7,7 @@
 ### Modular Arithmetic
 ### Derivation & Experiments
 ###
-### draft v.0.2d-print
+### draft v.0.2e
 
 
 
@@ -478,4 +478,40 @@ validVals.mod(233, 8)
 sort(validValsP2.mod(233, 8, e=2))
 
 
+#####################
+#####################
+
+#####################
+### Roots Order n ###
+#####################
+
+###########
+### Pow = 3
+
+pp = primes.mod(3, "Multiple")
+countSol.mod(pp)
+
+###
+p = 43;
+validVals.mod(p, 3)
+validValsS.mod(p, 3, e=2)
+
+### Roots of Unity
+mu = solve.ModP2(c(1,1,1), mod=p);
+mu = c(1, mu$Sol)
+mu = sort(mu);
+print(mu)
+(mu^3) %% p
+
+### Other Roots
+r = 2
+r = (r * mu) %% p;
+print(r)
+(r^3) %% p
+
+###
+r = 3
+r = (r * mu) %% p;
+print(r)
+(r^3) %% p
 
