@@ -7,7 +7,7 @@
 ### Modular Arithmetic
 ### Derivation & Experiments
 ###
-### draft v.0.2f
+### draft v.0.2g
 
 
 
@@ -523,13 +523,14 @@ print(r)
 
 ### Pow = 4
 
-pp = primes.mod(4, "Most")
+pow = 4
+pp = primes.mod(pow, "Most")
 countSol.mod(pp)
 
 ###
 p = 41
-validVals.mod(p, 4)
-validValsS.mod(p, 4, e=4)
+validVals.mod(p, pow)
+validValsS.mod(p, pow, e=4)
 
 ### Roots of Unity
 # (x+1)*(x-1)*(x^2 + 1)
@@ -537,17 +538,54 @@ mu = solve.ModP2(c(1,0,1), mod=p);
 mu = c(1, -1 %% p, mu$Sol)
 mu = sort(mu);
 print(mu)
-(mu^4) %% p
+(mu^pow) %% p
 
 ### Other Roots
 r = 2
 r = (r * mu) %% p;
 print(r)
-(r^4) %% p
+(r^pow) %% p
 
 ###
 r = 3
 r = (r * mu) %% p;
 print(r)
-(r^4) %% p
+(r^pow) %% p
+
+
+##################
+
+### Pow = 5
+
+pow = 5
+pp = primes.mod(pow, "Multiple")
+countSol.mod(pp)
+
+###
+p = 41;
+validVals.mod(p, pow)
+validValsS.mod(p, pow, e=3)
+
+### Roots of Unity
+# (x-1)*(x^4 + x^3 + x^2 + x + 1)
+# - P[4] is a strictly symmetric polynomial:
+#   (S^2 + S - 1)
+mu = solve.ModP2(c(-1,1,1), mod=p);
+mu = unlist(lapply(mu$Sol, function(S) solve.ModP2(c(1,-S,1), mod=p)$Sol));
+mu = c(1, mu)
+mu = sort(mu);
+print(mu)
+(mu^pow) %% p
+
+### Other Roots
+r = 2
+r = (r * mu) %% p;
+print(r)
+(r^pow) %% p
+
+###
+r = 3
+r = (r * mu) %% p;
+print(r)
+(r^pow) %% p
 
