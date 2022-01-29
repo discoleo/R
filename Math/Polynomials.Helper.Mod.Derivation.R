@@ -7,7 +7,7 @@
 ### Modular Arithmetic
 ### Derivation & Experiments
 ###
-### draft v.0.2h
+### draft v.0.2h-exp
 
 
 
@@ -595,7 +595,12 @@ countSol.mod(pp)
 ### p = 41
 p = 41;
 validVals.mod(p, pow)
-validValsS.mod(p, pow, e=3)
+validValsS.mod(p, pow, e=3) # probably not the ideal;
+validValsS.mod(p, pow, e=27)
+validValsS.mod(p, pow, e=38)
+# e = unity((p-1)/pow, mod=p)
+# e = pow.mod(3^pow, (p-1)/pow - 1, mod=p)
+# e = the 2nd formula works only with (3, 6)^5;
 
 ### Roots of Unity
 # (x-1)*(x^4 + x^3 + x^2 + x + 1)
@@ -621,8 +626,34 @@ print(r)
 ##########
 ### p = 61
 p = 61;
+e = pow.mod(2^pow, (p-1)/pow - 1, mod=p)
+print(e)
 validVals.mod(p, pow)
 validValsS.mod(p, pow, e=21)
+
+### Roots of Unity
+mu = unity.mod(pow, p);
+print(mu)
+(mu^pow) %% p
+
+### Other Roots
+r = 2
+r = (r * mu) %% p;
+print(r)
+(r^pow) %% p
+
+###
+r = 3
+r = (r * mu) %% p;
+print(r)
+(r^pow) %% p
+
+
+##########
+### p = 71
+p = 71;
+validVals.mod(p, pow)
+validValsS.mod(p, pow, e=23)
 
 ### Roots of Unity
 mu = unity.mod(pow, p);
