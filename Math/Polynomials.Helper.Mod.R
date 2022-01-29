@@ -6,7 +6,7 @@
 ### Multi-Variable Polynomials
 ### Modular Arithmetic
 ###
-### draft v.0.1f-fix
+### draft v.0.1f-fix2
 
 
 # - minimal Modular Arithmetic;
@@ -65,6 +65,7 @@ primes.mod = function(pow, type="Multiple", to=1000) {
 		len   = length(pFact);
 		if(len == 1) {
 			isMod = (p %% (2*pow)) == 1;
+			if(type > 2) isMod = ! isMod;
 		} else if(type == 3) {
 			# Strict: All values solvable;
 			isMod = (p %% pFact[1]) != 1;
@@ -200,6 +201,7 @@ solve.ModP2 = function(b, mod) {
 		}
 		if((b0 + 1) %% mod == 0) {
 			x = c(sh + 1, sh - 1) %% mod;
+			x = unique(x); # relevant for mod = c(2);
 		} else {
 			err = sapply(seq(mod), x.f);
 			x   = which(err == 0);
