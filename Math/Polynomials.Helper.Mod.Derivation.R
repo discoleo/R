@@ -7,7 +7,7 @@
 ### Modular Arithmetic
 ### Derivation & Experiments
 ###
-### draft v.0.2i
+### draft v.0.2i-sign
 
 
 
@@ -689,24 +689,33 @@ countSol.mod(pp)
 # x^3 = y^5 %% p
 # x^24 = y^40 %% p =>
 # x^2 = y^40 %% p =>
-# x = y^20 %% p *OR* x = - y^20;
+# with correct sign:
+# x^(3-2) = y^(5-40) %% p =>
+# x = y^(-35) %% p
+# x = y^9 %% p
+# [old]
+# x = y^20 %% p *OR* x = - y^20 %% p;
 # Note: exponent 20 is only for p = 23!
-# TODO: compute correct sign;
 
 p = 23
 #
 y = 9
-x = pow.mod(y, 20, mod=p);
-x = c(x, p - x);
+x = pow.mod(y, 9, mod=p);
 print(x)
 # Test:
-pow.mod(x, 5, mod=p)
+pow.mod(x, 5, mod=p); y;
 
 ###
 y = 5
-x = pow.mod(y, 20, mod=p);
-x = c(x, p - x);
+x = pow.mod(y, 9, mod=p);
 print(x)
 # Test:
-pow.mod(x, 5, mod=p)
+pow.mod(x, 5, mod=p); y;
+
+###
+y = 6
+x = pow.mod(y, 9, mod=p);
+print(x)
+# Test:
+pow.mod(x, 5, mod=p); y;
 
