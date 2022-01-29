@@ -7,7 +7,7 @@
 ### Modular Arithmetic
 ### Derivation & Experiments
 ###
-### draft v.0.2h-exp
+### draft v.0.2i
 
 
 
@@ -671,4 +671,42 @@ r = 3
 r = (r * mu) %% p;
 print(r)
 (r^pow) %% p
+
+##################
+##################
+
+### All Values
+### Pow = 5
+
+pow = 5
+pp = primes.mod(pow, "Strict All")
+countSol.mod(pp)
+
+
+### p = 23
+# x^5 = y %% p
+# x^25 = y^5 %% p =>
+# x^3 = y^5 %% p
+# x^24 = y^40 %% p =>
+# x^2 = y^40 %% p =>
+# x = y^20 %% p *OR* x = - y^20;
+# Note: exponent 20 is only for p = 23!
+# TODO: compute correct sign;
+
+p = 23
+#
+y = 9
+x = pow.mod(y, 20, mod=p);
+x = c(x, p - x);
+print(x)
+# Test:
+pow.mod(x, 5, mod=p)
+
+###
+y = 5
+x = pow.mod(y, 20, mod=p);
+x = c(x, p - x);
+print(x)
+# Test:
+pow.mod(x, 5, mod=p)
 
