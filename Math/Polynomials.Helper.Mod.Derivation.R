@@ -7,7 +7,7 @@
 ### Modular Arithmetic
 ### Derivation & Experiments
 ###
-### draft v.0.2g-clean
+### draft v.0.2h
 
 
 
@@ -50,6 +50,34 @@ print.asMatrix = function(v, len=80) {
 		cat(m, sep="\n");
 	}
 	invisible();
+}
+
+### Roots of Unity
+unity.mod = function(n, mod, debug=FALSE) {
+	if(n == 2) {
+		# Nothing;
+	} else if(n == 3) {
+		mu = solve.ModP2(c(1,1,1), mod=mod);
+		if(debug) print(mu);
+		mu = mu$Sol;
+	} else if(n == 4) {
+		mu = solve.ModP2(c(1,0,1), mod=mod);
+		if(debug) print(mu);
+		mu = mu$Sol;
+	} else if(n == 5) {
+		mu = solve.ModP2(c(-1,1,1), mod=mod);
+		if(debug) print(mu);
+		mu = unlist(lapply(mu$Sol,
+			function(S) solve.ModP2(c(1,-S,1), mod=mod)$Sol));
+	} else {
+		stop("Not yet implemented!");
+	}
+	#
+	if(n %% 2 == 0) {
+		mu = c(1, mod - 1, mu);
+	} else mu = c(1, mu);
+	mu = sort(mu);
+	return(mu);
 }
 
 
@@ -501,9 +529,7 @@ validVals.mod(p, pow)
 validValsS.mod(p, pow, e=2)
 
 ### Roots of Unity
-mu = solve.ModP2(c(1,1,1), mod=p);
-mu = c(1, mu$Sol)
-mu = sort(mu);
+mu = unity.mod(pow, p);
 print(mu)
 (mu^pow) %% p
 
@@ -541,9 +567,7 @@ validValsS.mod(p, pow, e=4)
 
 ### Roots of Unity
 # (x+1)*(x-1)*(x^2 + 1)
-mu = solve.ModP2(c(1,0,1), mod=p);
-mu = c(1, -1 %% p, mu$Sol)
-mu = sort(mu);
+mu = unity.mod(pow, p);
 print(mu)
 (mu^pow) %% p
 
@@ -568,7 +592,7 @@ pow = 5
 pp = primes.mod(pow, "Multiple")
 countSol.mod(pp)
 
-###
+### p = 41
 p = 41;
 validVals.mod(p, pow)
 validValsS.mod(p, pow, e=3)
@@ -577,10 +601,31 @@ validValsS.mod(p, pow, e=3)
 # (x-1)*(x^4 + x^3 + x^2 + x + 1)
 # - P[4] is a strictly symmetric polynomial:
 #   (S^2 + S - 1)
-mu = solve.ModP2(c(-1,1,1), mod=p);
-mu = unlist(lapply(mu$Sol, function(S) solve.ModP2(c(1,-S,1), mod=p)$Sol));
-mu = c(1, mu)
-mu = sort(mu);
+mu = unity.mod(pow, p);
+print(mu)
+(mu^pow) %% p
+
+### Other Roots
+r = 2
+r = (r * mu) %% p;
+print(r)
+(r^pow) %% p
+
+###
+r = 3
+r = (r * mu) %% p;
+print(r)
+(r^pow) %% p
+
+
+##########
+### p = 61
+p = 61;
+validVals.mod(p, pow)
+validValsS.mod(p, pow, e=21)
+
+### Roots of Unity
+mu = unity.mod(pow, p);
 print(mu)
 (mu^pow) %% p
 
