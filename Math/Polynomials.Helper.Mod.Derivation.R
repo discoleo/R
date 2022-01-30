@@ -7,7 +7,7 @@
 ### Modular Arithmetic
 ### Derivation & Experiments
 ###
-### draft v.0.2i-sign
+### draft v.0.2j-refactor
 
 
 
@@ -424,13 +424,12 @@ validValsS.mod(97, 3, e=19)
 
 ###########
 ### Pow = 4
-p = primes.mod(4, "Most")
+p = primes.mod(4, "Multiple")
 countSol.mod(p)
 
-# TODO: "Multiple"
-# - Note:
-#   "Most" = 4 roots;
-#   "Multiple" = 2 roots;
+# "Multiple" = 4 roots;
+# "Mixed" = 2 roots;
+# "Strict" = NO primes (except 2);
 
 ###
 validVals.mod(37, 4)
@@ -481,32 +480,32 @@ validValsS.mod(131, 5, e=18)
 
 ###########
 ### Pow = 8
-p = primes.mod(8, "Most")
+p = primes.mod(8, "Multiple")
 countSol.mod(p)
 
 ###
 validVals.mod(89, 8)
-sort(validValsP2.mod(89, 8, e=2))
+validValsS.mod(89, 8, e=2)
 
 ###
 validVals.mod(97, 8)
-sort(validValsP2.mod(97, 8, e=6))
+validValsS.mod(97, 8, e=6)
 
 ###
 validVals.mod(113, 8)
-sort(validValsP2.mod(113, 8, e=7))
+validValsS.mod(113, 8, e=7)
 
 ###
 validVals.mod(137, 8)
-sort(validValsP2.mod(137, 8, e=16))
+validValsS.mod(137, 8, e=16)
 
 ###
 validVals.mod(193, 8)
-sort(validValsP2.mod(193, 8, e=16))
+validValsS.mod(193, 8, e=16)
 
 ###
 validVals.mod(233, 8)
-sort(validValsP2.mod(233, 8, e=2))
+validValsS.mod(233, 8, e=2)
 
 
 #####################
@@ -557,7 +556,7 @@ print(r)
 ### Pow = 4
 
 pow = 4
-pp = primes.mod(pow, "Most")
+pp = primes.mod(pow, "Multiple")
 countSol.mod(pp)
 
 ###

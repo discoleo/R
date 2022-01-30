@@ -6,7 +6,7 @@
 ### Multi-Variable Polynomials
 ### Modular Arithmetic
 ###
-### draft v.0.1f-fix2
+### draft v.0.1f-refactor
 
 
 # - minimal Modular Arithmetic;
@@ -38,23 +38,39 @@ filter.mod = function(x, r, mod) {
 	# multiple Congruences
 	# TODO
 }
+
+# Multiple:
+# - each equation x^pow = valid y,
+#   has multiple solutions;
+# Strict All: x^pow = r, solvable for any r;
+# Mixed: type All in one factor and type Multiple in another factor;
 primes.mod = function(pow, type="Multiple", to=1000) {
-	# Multiple = multiple solutions for each x^pow = valid solution;
-	# All values: x^pow = r, solvable for any r;
-	type = pmatch(type, c("Any", "Multiple", "Strict All", "Most/All values"));
+	type = pmatch(type, c("Any", "Multiple", "Strict All", "Mixed"));
 	if(is.na(type)) stop("Type is not supported!");
 	p = primes(to); # library pracma;
 	#
 	if(type == 1) return(p);
+	#
+	warn.f = function(p) {
+		warning("Mixed: not valid for power = strict prime!");
+		# TODO: return "Multiple" or return c();
+		p = numeric(0);
+		attr(p, "pow") = pow;
+		return(p);
+	}
 	if(pow == 3) {
 		isMod = (p %% 6) != 5;
+		if(type == 4) return(warn.f(p[isMod]));
 	} else if(pow %% 2 == 0) {
 		pFact = factors(pow);
 		p2    = (pFact == 2);
 		pFact = pFact[ ! p2];
 		p2 = sum(p2);
 		if(length(pFact) == 0) {
-			isMod = (p %% (2^p2) != 1);
+			isMod = (p %% (2^p2) == 1); # Multiple
+			# Mixed:
+			if(type == 4) { isMod = (p > 2) & ( ! isMod); }
+			else if(type == 3) { p = 2; isMod = FALSE; }
 		} else {
 			# TODO
 			stop("Not yet implemented!");
@@ -65,6 +81,7 @@ primes.mod = function(pow, type="Multiple", to=1000) {
 		len   = length(pFact);
 		if(len == 1) {
 			isMod = (p %% (2*pow)) == 1;
+			if(type == 4) return(warn.f(p[isMod]));
 			if(type > 2) isMod = ! isMod;
 		} else if(type == 3) {
 			# Strict: All values solvable;
@@ -79,18 +96,22 @@ primes.mod = function(pow, type="Multiple", to=1000) {
 				isMod = isMod & (p %% pFact[id] == 1);
 			}
 		} else {
-			# Few/In-between values solvable;
+			# Mixed: between All & Multiple values solvable;
 			isMod = (p %% pFact[1]) == 1;
+			isModM = isMod;
 			for(id in seq(2, len)) {
-				isMod = isMod | (p %% pFact[id] == 1);
+				tmp = (p %% pFact[id] == 1);
+				isMod = isMod | tmp;
+				isModM = isModM & tmp;
 			}
+			isMod = isMod & ( ! isModM);
 		}
 		p = p[isMod];
 		attr(p, "pow") = pow;
 		return(p);
 	}
-	if(type == 2) { p = p[isMod]; }
-	else if(type == 3 || type == 4) { p = p[ ! isMod]; }
+	if(type == 2 || type == 4) { p = p[isMod]; }
+	else if(type == 3) { p = p[ ! isMod]; }
 	else { return(numeric()); }
 	attr(p, "pow") = pow;
 	return(p);
