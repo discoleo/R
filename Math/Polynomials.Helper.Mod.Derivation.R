@@ -7,7 +7,7 @@
 ### Modular Arithmetic
 ### Derivation & Experiments
 ###
-### draft v.0.2k
+### draft v.0.2l
 
 
 
@@ -69,6 +69,13 @@ unity.mod = function(n, mod, debug=FALSE) {
 		if(debug) print(mu);
 		mu = unlist(lapply(mu$Sol,
 			function(S) solve.ModP2(c(1,-S,1), mod=mod)$Sol));
+	} else if(n == 8) {
+		mu = solve.ModP2(c(1,0,1), mod=mod);
+		# TODO: (x^4 + 1);
+		mu4 = lapply(mu$Sol, function(r) solve.ModP2(c(mod - r,0,1), mod=mod)$Sol);
+		mu$Sol  = c(mu$Sol, unlist(mu4));
+		if(debug) print(mu);
+		mu = mu$Sol;
 	} else {
 		stop("Not yet implemented!");
 	}
@@ -625,10 +632,10 @@ print(r)
 ##########
 ### p = 61
 p = 61;
-e = pow.mod(2^pow, (p-1)/pow - 1, mod=p)
-print(e)
 validVals.mod(p, pow)
 validValsS.mod(p, pow, e=21)
+e = pow.mod(2^pow, (p-1)/pow - 1, mod=p)
+print(e)
 
 ### Roots of Unity
 mu = unity.mod(pow, p);
@@ -653,6 +660,10 @@ print(r)
 p = 71;
 validVals.mod(p, pow)
 validValsS.mod(p, pow, e=23)
+validValsS.mod(p, pow, e=34)
+# only with base = 11;
+e = pow.mod(11^pow, (p-1)/pow - 1, mod=p)
+print(e)
 
 ### Roots of Unity
 mu = unity.mod(pow, p);
@@ -743,4 +754,45 @@ x = pow.mod(y, powS, mod=p);
 print(x)
 # Test:
 pow.mod(x, 5, mod=p); y;
+
+
+###################
+###################
+
+### Pow = 8
+
+pow = 8
+pp = primes.mod(pow, "Multiple")
+countSol.mod(pp)
+
+###
+p = 41
+validVals.mod(p, pow)
+validValsS.mod(p, pow, e=10)
+# all bases seem to work;
+
+### Roots of Unity
+# (x+1)*(x-1)*(x^2 + 1)*(x^4 + 1)
+mu = unity.mod(pow, p);
+print(mu)
+(mu^pow) %% p
+
+### Other Roots
+r = 2
+r = (r * mu) %% p;
+print(r)
+pow.mod(r, pow, mod=p)
+
+###
+r = 3 # is a root of unity
+r = (r * mu) %% p;
+print(r)
+pow.mod(r, pow, mod=p)
+
+###
+r = 5
+r = (r * mu) %% p;
+print(r)
+pow.mod(r, pow, mod=p)
+
 
