@@ -7,7 +7,7 @@
 ### Modular Arithmetic
 ### Derivation & Experiments
 ###
-### draft v.0.2j-refactor
+### draft v.0.2k
 
 
 
@@ -714,6 +714,32 @@ pow.mod(x, 5, mod=p); y;
 ###
 y = 6
 x = pow.mod(y, 9, mod=p);
+print(x)
+# Test:
+pow.mod(x, 5, mod=p); y;
+
+
+##########
+### p = 29
+# x^5 = y
+# x^30 = y^6 =>
+# x^2 = y^6
+# x^4 = y^12
+# x = y^(-11) =>
+# x = y^17
+
+p = 29
+powS = 17
+#
+y = 9
+x = pow.mod(y, powS, mod=p);
+print(x)
+# Test:
+pow.mod(x, 5, mod=p); y;
+
+###
+y = 10
+x = pow.mod(y, powS, mod=p);
 print(x)
 # Test:
 pow.mod(x, 5, mod=p); y;
