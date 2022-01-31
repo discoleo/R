@@ -6,7 +6,7 @@
 ### Multi-Variable Polynomials
 ### Modular Arithmetic
 ###
-### draft v.0.1g
+### draft v.0.1g-root2
 
 
 # - minimal Modular Arithmetic;
@@ -235,6 +235,45 @@ solve.ModP2 = function(b, mod) {
 
 ### Roots
 
+### Order 2
+root2.mod = function(x, mod) {
+	# assumes: mod = prime;
+	if(mod == 2) return(x);
+	if(mod == 3) {
+		r = (x %% mod);
+		# TODO: vector;
+		if(r == 2) return(NA);
+		if(r == 1) return(c(1,2));
+		return(0);
+	}
+	# Type of prime:
+	r4 = mod %% 4;
+	if(r4 == 1) {
+		stop("Not yet implemented!");
+		# TODO
+	}
+	#
+	return(root2ModBase(x, mod=mod));
+}
+root2ModBase = function(x, mod) {
+	# assumes x is a quadratic residue!
+	k = (mod + 1) / 4;
+	if(length(x) == 1) {
+		r = pow.mod(x, k, mod=mod);
+		r = c(r, mod - r);
+		if(r[2] < r[1]) r = c(r[2], r[1]);
+	} else {
+		r = lapply(x, function(x) {
+			r = pow.mod(x, k, mod=mod);
+			r = c(r, mod - r);
+			if(r[2] < r[1]) r = c(r[2], r[1]);
+			return(r)
+		});
+		r = do.call(rbind, r);
+	}
+	return(r);
+}
+### Order 3
 root3.mod = function(x, mod) {
 	# assumes: mod = prime;
 	if(mod == 2 || mod == 3) return(x);
