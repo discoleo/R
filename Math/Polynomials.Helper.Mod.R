@@ -6,7 +6,7 @@
 ### Multi-Variable Polynomials
 ### Modular Arithmetic
 ###
-### draft v.0.1f-refactor
+### draft v.0.1g
 
 
 # - minimal Modular Arithmetic;
@@ -161,7 +161,7 @@ inv3.mod = function(mod, pow=1) {
 	return(xinv);
 }
 
-### Solve P2:
+### Solve S2P1:
 solve.ModP1 = function(r, mod) {
 	# TODO: check gcd == 1;
 	return(solve.ModP1Base(r, mod=mod));
@@ -231,6 +231,28 @@ solve.ModP2 = function(b, mod) {
 		}
 	}
 	return(list(hasSol = TRUE, Sol = x, Mod = mod));
+}
+
+### Roots
+
+root3.mod = function(x, mod) {
+	# assumes: mod = prime;
+	if(mod == 2 || mod == 3) return(x);
+	# Type of prime:
+	r6 = mod %% 6;
+	if(r6 != 5) {
+		stop("Not yet implemented!");
+		# TODO
+	}
+	#
+	return(root3ModBase(x, mod=mod));
+}
+root3ModBase = function(x, mod) {
+	k   = (mod + 1) / 3;
+	pow = mod - k;
+	if(length(x) == 1) return(pow.mod(x, pow, mod=mod));
+	r = sapply(x, pow.mod, pow, mod=mod);
+	return(r);
 }
 
 
