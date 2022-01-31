@@ -7,7 +7,7 @@
 ### Modular Arithmetic
 ### Derivation & Experiments
 ###
-### draft v.0.2n-fix1
+### draft v.0.2n-fix2
 
 
 
@@ -822,6 +822,7 @@ unityMinus = function(mod) {
 	}
 	rn = (mod %% 16);
 	if(rn == 9) {
+		# TODO: solve failures;
 		r = pow.mod(2, (mod-1)/8,  mod=mod);
 		return(r);
 	}
@@ -829,8 +830,12 @@ unityMinus = function(mod) {
 	if(rn == 17) {
 		if(mod == 17) return(4);
 		pow = (mod - 1) / 16;
-		# TODO: sometimes pow = 2 * pow;
-		r = pow.mod(2, (mod-1)/16,  mod=mod);
+		p.sqrt = sqrt(pow);
+		# TODO: there are more pow = 2 * pow;
+		if(p.sqrt == round(p.sqrt, 8)) {
+			pow = 2 * pow;
+		}
+		r = pow.mod(2, pow,  mod=mod);
 		return(r);
 	}
 	# fortunately, there are not many Fermat primes;
@@ -838,9 +843,34 @@ unityMinus = function(mod) {
 }
 
 
-###
-pp = filter.mod(primes(1000), 17, mod=32)
+### MOD 16
+pp = filter.mod(primes(1200), 9, mod=16)
 print(pp)
+# Failures:
+pp[c(2,3,5,6,12,13,17,19,20,21,23)]
+
+# sometimes needs different base, e.g:
+# 12, or 20 or 28, or 17 (for 1097);
+id = 4
+p = pp[id]
+i = unityMinus(p)
+(i^2 %% p); pp[id];
+sapply(seq(1, (p-1)/8), function(pow) pow.mod(12, 2*pow, mod=p))
+
+
+##########
+### MOD 32
+pp = filter.mod(primes(1500), 17, mod=32)
+print(pp)
+# Simple failure:
+pp[c(3,5,6,9,10,12,13,14)]
+
+###
+id = 4
+p = pp[id]
+i = unityMinus(p)
+(i^2 %% p); pp[id];
+
 
 ###
 p = 17
@@ -857,10 +887,12 @@ p = 241
 i = unityMinus(p)
 (i^2 %% p)
 
-###
+### FAILS
 p = 337
 i = unityMinus(p)
 (i^2 %% p)
+# pow = 14 is sufficient;
+sapply(seq(1, (p-1)/8), function(pow) pow.mod(6, 2*pow, mod=p))
 
 ### => 2^(2*...)
 p = 401
@@ -877,13 +909,20 @@ p = 593
 i = unityMinus(p)
 (i^2 %% p)
 
-###
+### FAILS
 p = 881
+i = unityMinus(p)
+(i^2 %% p)
+# pow = 22 is sufficient;
+sapply(seq(1, (p-1)/8), function(pow) pow.mod(22, 2*pow, mod=p))
+
+### => 2^(2*...)
+p = 977
 i = unityMinus(p)
 (i^2 %% p)
 
 ### => 2^(2*...)
-p = 977
+p = 1009
 i = unityMinus(p)
 (i^2 %% p)
 
