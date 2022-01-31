@@ -7,7 +7,7 @@
 ### Modular Arithmetic
 ### Derivation & Experiments
 ###
-### draft v.0.2n-fix2
+### draft v.0.2n-fix3
 
 
 
@@ -830,12 +830,12 @@ unityMinus = function(mod) {
 	if(rn == 17) {
 		if(mod == 17) return(4);
 		pow = (mod - 1) / 16;
-		p.sqrt = sqrt(pow);
-		# TODO: there are more pow = 2 * pow;
-		if(p.sqrt == round(p.sqrt, 8)) {
-			pow = 2 * pow;
-		}
 		r = pow.mod(2, pow,  mod=mod);
+		# TODO: there are some pow = 2 * pow;
+		r2 = (r^2 %% mod);
+		if((r2 %% pow) != 0) {
+			r = (r*r) %% mod;
+		}
 		return(r);
 	}
 	# fortunately, there are not many Fermat primes;
@@ -864,12 +864,17 @@ pp = filter.mod(primes(1500), 17, mod=32)
 print(pp)
 # Simple failure:
 pp[c(3,5,6,9,10,12,13,14)]
+# Other failure:
+pp[c(4,8)]
+
+for(p in pp) { i = unityMinus(p); print(c((i^2 + 1) %% p, p)); }
+
 
 ###
 id = 4
 p = pp[id]
 i = unityMinus(p)
-(i^2 %% p); pp[id];
+print(i^2 %% p); print(p);
 
 
 ###
