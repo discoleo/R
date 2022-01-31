@@ -7,7 +7,7 @@
 ### Modular Arithmetic
 ### Derivation & Experiments
 ###
-### draft v.0.2m
+### draft v.0.2n
 
 
 
@@ -813,9 +813,37 @@ pow.mod(r, pow, mod=p)
 # sqrt(2i)  = c(1 + i, -1 - i);
 # sqrt(-2i) = c(1 - i, -1 + i);
 
+unityMinus = function(mod) {
+	if(mod %% 4 == 3) return(NA);
+	rn = (mod %% 8);
+	if(rn == 5) {
+		r = pow.mod(2, (p-1)/4,  mod=p);
+		return(r);
+	}
+	rn = (mod %% 16);
+	if(rn == 9) {
+		r = pow.mod(2, (p-1)/8,  mod=p);
+		return(r);
+	}
+	rn = (mod %% 32);
+	if(rn == 17) {
+		r = pow.mod(2, (p-1)/16,  mod=p);
+		return(r);
+	}
+	# fortunately, there are not many Fermat primes;
+	stop("Not yet implemented!");
+}
+
 p = 29
 i = 12; (2 * inv.mod(5, p)) %% p;
 i^2 %% p
 x = c(1 + i, -1 - i); c(x^2, 2*i) %% p;
 x = c(1 - i, -1 + i); c(x^2,-2*i) %% p;
+
+y = 5
+k = (p+3)/8
+x = pow.mod(y, k, mod=p)
+((x)^2 %% p); y;
+((x * 2^(2*k-1))^2 %% p); y;
+((x * i)^2 %% p); y;
 
