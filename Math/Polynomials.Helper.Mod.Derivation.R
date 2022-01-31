@@ -7,7 +7,7 @@
 ### Modular Arithmetic
 ### Derivation & Experiments
 ###
-### draft v.0.2n
+### draft v.0.2n-fix1
 
 
 
@@ -817,23 +817,78 @@ unityMinus = function(mod) {
 	if(mod %% 4 == 3) return(NA);
 	rn = (mod %% 8);
 	if(rn == 5) {
-		r = pow.mod(2, (p-1)/4,  mod=p);
+		r = pow.mod(2, (mod-1)/4,  mod=mod);
 		return(r);
 	}
 	rn = (mod %% 16);
 	if(rn == 9) {
-		r = pow.mod(2, (p-1)/8,  mod=p);
+		r = pow.mod(2, (mod-1)/8,  mod=mod);
 		return(r);
 	}
 	rn = (mod %% 32);
 	if(rn == 17) {
-		r = pow.mod(2, (p-1)/16,  mod=p);
+		if(mod == 17) return(4);
+		pow = (mod - 1) / 16;
+		# TODO: sometimes pow = 2 * pow;
+		r = pow.mod(2, (mod-1)/16,  mod=mod);
 		return(r);
 	}
 	# fortunately, there are not many Fermat primes;
 	stop("Not yet implemented!");
 }
 
+
+###
+pp = filter.mod(primes(1000), 17, mod=32)
+print(pp)
+
+###
+p = 17
+i = unityMinus(p)
+(i^2 %% p)
+
+###
+p = 113
+i = unityMinus(p)
+(i^2 %% p)
+
+### => 2^(2*...)
+p = 241
+i = unityMinus(p)
+(i^2 %% p)
+
+###
+p = 337
+i = unityMinus(p)
+(i^2 %% p)
+
+### => 2^(2*...)
+p = 401
+i = unityMinus(p)
+(i^2 %% p)
+
+### => 2^(2*...)
+p = 433
+i = unityMinus(p)
+(i^2 %% p)
+
+###
+p = 593
+i = unityMinus(p)
+(i^2 %% p)
+
+###
+p = 881
+i = unityMinus(p)
+(i^2 %% p)
+
+### => 2^(2*...)
+p = 977
+i = unityMinus(p)
+(i^2 %% p)
+
+
+### [old]
 p = 29
 i = 12; (2 * inv.mod(5, p)) %% p;
 i^2 %% p
@@ -846,4 +901,3 @@ x = pow.mod(y, k, mod=p)
 ((x)^2 %% p); y;
 ((x * 2^(2*k-1))^2 %% p); y;
 ((x * i)^2 %% p); y;
-
