@@ -7,7 +7,7 @@
 ### Modular Arithmetic
 ### Derivation & Experiments
 ###
-### draft v.0.2l
+### draft v.0.2m
 
 
 
@@ -71,7 +71,8 @@ unity.mod = function(n, mod, debug=FALSE) {
 			function(S) solve.ModP2(c(1,-S,1), mod=mod)$Sol));
 	} else if(n == 8) {
 		mu = solve.ModP2(c(1,0,1), mod=mod);
-		# TODO: (x^4 + 1);
+		# (x^4 + 1);
+		# TODO: more efficient way?
 		mu4 = lapply(mu$Sol, function(r) solve.ModP2(c(mod - r,0,1), mod=mod)$Sol);
 		mu$Sol  = c(mu$Sol, unlist(mu4));
 		if(debug) print(mu);
@@ -795,4 +796,26 @@ r = (r * mu) %% p;
 print(r)
 pow.mod(r, pow, mod=p)
 
+
+##############
+##############
+
+### Complex 1i
+
+### p = 1 (mod p)
+# by Fermat's sum of 2 squares =>
+# p = a^2 + b^2
+# a^2 = - b^2 (mod p)
+# =>
+# sqrt(-1) = c(a/b, -a/b);
+
+### Note:
+# sqrt(2i)  = c(1 + i, -1 - i);
+# sqrt(-2i) = c(1 - i, -1 + i);
+
+p = 29
+i = 12; (2 * inv.mod(5, p)) %% p;
+i^2 %% p
+x = c(1 + i, -1 - i); c(x^2, 2*i) %% p;
+x = c(1 - i, -1 + i); c(x^2,-2*i) %% p;
 
