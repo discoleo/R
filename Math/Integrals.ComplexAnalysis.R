@@ -3,7 +3,7 @@
 ### Leonard Mada
 ###
 ### Integrals: Complex Analysis
-### draft 0.1l-fix-epsilon
+### draft 0.1m
 
 
 ### Integrals:
@@ -223,7 +223,7 @@ integrate(function(x) log(x) / (x^n + 1), lower=0, upper=Inf)
 - (pi/n)^2 * cos(pi/n) / sin(pi/n)^2
 
 ### Test: 1 / (x^n - 1)
-# - use +/- episoln;
+# - use +/- epsilon;
 epsilon = 1E-5;
 n = sqrt(5);
 integrate(function(x) 1 / (x^n - 1), lower=0, upper=1-epsilon)$value +
@@ -448,4 +448,23 @@ gamma((p+1)/n) * gamma(1/k - (p+1)/n) / gamma(1/k) * 2^(1/k - 1) / n
 n = sqrt(19); k = sqrt(3); p = sqrt(2);
 integrate(function(x) cosh(p*x) / cosh(n*x)^(1/k), lower=0, upper=100) # BUG: upper = Inf
 gamma(1/(2*k) - p/(2*n)) * gamma(1/(2*k) + p/(2*n)) / gamma(1/k) * 2^(1/k - 2) / n
+
+
+#########################
+#########################
+
+
+### I( sqrt(1 - x^2) / (x^2 + a^2) )
+
+#  qncubed3: Complex Analysis: Dogbone Contour Example #3
+# https://www.youtube.com/watch?v=-HWcFun7e4k
+
+a = 3
+integrate(function(x) sqrt(1-x^2) / (x^2 + a^2), lower=-1, upper=1)
+pi*sqrt(a^2+1)/a - pi
+
+
+a = exp(1)
+integrate(function(x) sqrt(1-x^2) / (x^2 + a^2), lower=-1, upper=1)
+pi*sqrt(a^2+1)/a - pi
 
