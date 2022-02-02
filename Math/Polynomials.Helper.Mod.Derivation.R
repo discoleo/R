@@ -7,7 +7,7 @@
 ### Modular Arithmetic
 ### Derivation & Experiments
 ###
-### draft v.0.2o
+### draft v.0.2o-sol
 
 
 
@@ -836,14 +836,16 @@ unityMinus = function(mod) {
 		# TODO: there are some pow = 2 * pow;
 		r2 = (r^2 %% mod);
 		if(r + 1 == mod) {
-			# TODO: pow/2, but pow is odd;
-			r = pow.mod(3, pow*4, mod=mod);
-			# TODO: solve these cases;
-			if(r == 1) {
-				r = 3;
-			} else if(r + 1 == mod) {
-				r = -3;
-			}
+			# pow/2, but pow is odd;
+			r = pow.mod(3, pow, mod=mod);
+			r2 = (r*r) %% mod; r4 = (r2*r2) %% mod;
+			# TODO: find these cases;
+			if(r4 == 1) {
+				# - there are still a few extreme cases;
+				r = if(r == 1 || r + 1 == mod) 3 else r;
+			} else if(r4 + 1 == mod) {
+				r = r2;
+			} else { r = r4; }
 		} else if((r2 %% pow) != 0) {
 			r = (r*r) %% mod;
 		}
