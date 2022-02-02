@@ -6,7 +6,7 @@
 ### Multi-Variable Polynomials
 ### Modular Arithmetic
 ###
-### draft v.0.1g-root2-enh
+### draft v.0.1g-root2-enh2
 
 
 # - minimal Modular Arithmetic;
@@ -249,29 +249,33 @@ root2.mod = function(x, mod) {
 	}
 	# Type of prime:
 	rr = mod %% 4;
-	if(rr == 1) {
-		rr = mod %% 8;
-		if(rr == 5) {
-			k = (mod+3)/8;
-			r = pow.mod(x, k, mod=mod);
-			r2 = (r*r) %% mod;
-			if(r2 == x) {
-				# OK
-			} else if(r2 + x == mod) {
-				# TODO: sqrt(-1);
-				rn = pow.mod(2, 2*k-1, mod=mod);
-				r  = (r*rn) %% mod;
-			} else {
-				return(NA); # NOT a quadratic residue!
-			}
-			r  = c(r, mod-r);
-			return(r);
-		}
-		stop("Not yet implemented!");
-		# TODO
+	if(rr == 3) {
+		r = root2ModBase(x, mod=mod);
+		r2 = (r*r) %% mod;
+		if(r2[1] == x) return(r);
+		return(NA);
 	}
-	#
-	return(root2ModBase(x, mod=mod));
+	### 1 (mod 4)
+	rr = mod %% 8;
+	if(rr == 5) {
+		k = (mod + 3)/8;
+		r = pow.mod(x, k, mod=mod);
+		r2 = (r*r) %% mod;
+		if(r2 == x) {
+			# OK
+		} else if(r2 + x == mod) {
+			# TODO: use sqrt(-1);
+			rn = pow.mod(2, 2*k-1, mod=mod);
+			r  = (r*rn) %% mod;
+		} else {
+			return(NA); # NOT a quadratic residue!
+		}
+		r  = c(r, mod-r);
+		return(r);
+	}
+	### 1 (mod 8)
+	stop("Not yet implemented!");
+	# TODO
 }
 root2ModBase = function(x, mod) {
 	# assumes x is a quadratic residue!
