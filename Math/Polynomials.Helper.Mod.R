@@ -6,7 +6,7 @@
 ### Multi-Variable Polynomials
 ### Modular Arithmetic
 ###
-### draft v.0.1g-root2
+### draft v.0.1g-root2-enh
 
 
 # - minimal Modular Arithmetic;
@@ -24,7 +24,7 @@
 ##########################
 
 
-filter.mod = function(x, r, mod) {
+filter.mod = function(x, r, mod, exclude=FALSE) {
 	len = length(mod);
 	if(len == 1) {
 		r0 = x %% mod;
@@ -33,6 +33,7 @@ filter.mod = function(x, r, mod) {
 		} else {
 			isMod = (r0 %in% r);
 		}
+		if(exclude) isMod = ! isMod;
 		return(x[isMod]);
 	}
 	# multiple Congruences
@@ -247,8 +248,25 @@ root2.mod = function(x, mod) {
 		return(0);
 	}
 	# Type of prime:
-	r4 = mod %% 4;
-	if(r4 == 1) {
+	rr = mod %% 4;
+	if(rr == 1) {
+		rr = mod %% 8;
+		if(rr == 5) {
+			k = (mod+3)/8;
+			r = pow.mod(x, k, mod=mod);
+			r2 = (r*r) %% mod;
+			if(r2 == x) {
+				# OK
+			} else if(r2 + x == mod) {
+				# TODO: sqrt(-1);
+				rn = pow.mod(2, 2*k-1, mod=mod);
+				r  = (r*rn) %% mod;
+			} else {
+				return(NA); # NOT a quadratic residue!
+			}
+			r  = c(r, mod-r);
+			return(r);
+		}
 		stop("Not yet implemented!");
 		# TODO
 	}
@@ -342,4 +360,7 @@ pow.bigz = function(x, n, mod=NULL) {
 	}
 	gmp::pow.bigz(x, n);
 }
+
+####################
+####################
 
