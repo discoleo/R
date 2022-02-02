@@ -7,7 +7,7 @@
 ### Modular Arithmetic
 ### Derivation & Experiments
 ###
-### draft v.0.2o-sol
+### draft v.0.2o-sol2
 
 
 
@@ -824,8 +824,27 @@ unityMinus = function(mod) {
 	}
 	rn = (mod %% 16);
 	if(rn == 9) {
-		# TODO: solve failures;
 		r = pow.mod(2, (mod-1)/8,  mod=mod);
+		# TODO: solve failures;
+		if(r + 1 == mod) {
+			r = pow.mod(3, (mod-1)/8,  mod=mod);
+			# still a few failures!
+			if(r == 1 || r + 1 == mod) { r = 3; }
+			else {
+				r2 = (r*r) %% mod; r4 = (r2*r2) %% mod;
+				if(r4 + 1 == mod) r = r2;
+			}
+		}
+		if(r == 1) {
+			# apply same hack:
+			r = pow.mod(3, (mod-1)/8,  mod=mod);
+			# still a few failures!
+			if(r == 1 || r + 1 == mod) { r = 3; }
+			else {
+				r2 = (r*r) %% mod; r4 = (r2*r2) %% mod;
+				if(r4 + 1 == mod) r = r2;
+			}
+		}
 		return(r);
 	}
 	rn = (mod %% 32);
@@ -838,14 +857,18 @@ unityMinus = function(mod) {
 		if(r + 1 == mod) {
 			# pow/2, but pow is odd;
 			r = pow.mod(3, pow, mod=mod);
-			r2 = (r*r) %% mod; r4 = (r2*r2) %% mod;
-			# TODO: find these cases;
-			if(r4 == 1) {
+			if(r == 1 || r + 1 == mod) {
 				# - there are still a few extreme cases;
-				r = if(r == 1 || r + 1 == mod) 3 else r;
-			} else if(r4 + 1 == mod) {
-				r = r2;
-			} else { r = r4; }
+				r = 3;
+			} else {
+				r2 = (r*r) %% mod; r4 = (r2*r2) %% mod;
+				# TODO: find these cases;
+				if(r4 == 1) {
+					r = r;
+				} else if(r4 + 1 == mod) {
+					r = r2;
+				} else { r = r4; }
+			}
 		} else if((r2 %% pow) != 0) {
 			r = (r*r) %% mod;
 		}
@@ -859,11 +882,19 @@ unityMinus = function(mod) {
 ### MOD 16
 pp = filter.mod(primes(1200), 9, mod=16)
 print(pp)
+
+i = sapply(pp, unityMinus);
+r = sapply(seq(along=pp), function(id) (i[id]^2 + 1) %% pp[id]);
+table(r)
+
+tail(cbind(pp, i, r), n=10)
+
 # Failures:
 pp[c(2,3,5,6,12,13,17,19,20,21,23)]
 
 # sometimes needs different base, e.g:
 # 12, or 20 or 28, or 17 (for 1097);
+
 id = 4
 p = pp[id]
 i = unityMinus(p)
