@@ -7,7 +7,7 @@
 ### Modular Arithmetic
 ### Derivation & Experiments
 ###
-### draft v.0.2n-fix3
+### draft v.0.2o
 
 
 
@@ -94,6 +94,8 @@ unity.mod = function(n, mod, debug=FALSE) {
 
 
 ### Inv
+
+# TODO
 
 ###
 inv.mod(5, 13)
@@ -833,7 +835,16 @@ unityMinus = function(mod) {
 		r = pow.mod(2, pow,  mod=mod);
 		# TODO: there are some pow = 2 * pow;
 		r2 = (r^2 %% mod);
-		if((r2 %% pow) != 0) {
+		if(r + 1 == mod) {
+			# TODO: pow/2, but pow is odd;
+			r = pow.mod(3, pow*4, mod=mod);
+			# TODO: solve these cases;
+			if(r == 1) {
+				r = 3;
+			} else if(r + 1 == mod) {
+				r = -3;
+			}
+		} else if((r2 %% pow) != 0) {
 			r = (r*r) %% mod;
 		}
 		return(r);
@@ -867,7 +878,13 @@ pp[c(3,5,6,9,10,12,13,14)]
 # Other failure:
 pp[c(4,8)]
 
-for(p in pp) { i = unityMinus(p); print(c((i^2 + 1) %% p, p)); }
+i = sapply(pp, unityMinus);
+r = sapply(seq(along=pp), function(id) (i[id]^2 + 1) %% pp[id]);
+table(r)
+
+cbind(pp, i, r)
+
+unlist(sapply(((pp[r == 2] - 1) / 16), function(x) c(factors(x), NA)))
 
 
 ###
