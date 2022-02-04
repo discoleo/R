@@ -7,7 +7,7 @@
 ### Modular Arithmetic
 ### Derivation & Experiments
 ###
-### draft v.0.2o-sol2
+### draft v.0.2p
 
 
 
@@ -815,38 +815,43 @@ pow.mod(r, pow, mod=p)
 # sqrt(2i)  = c(1 + i, -1 - i);
 # sqrt(-2i) = c(1 - i, -1 + i);
 
-unityMinus = function(mod) {
+unityMinus = function(mod, detailed=FALSE) {
+	# detailed: return base & (-1)^(1/4) where available;
 	if(mod %% 4 == 3) return(NA);
 	rn = (mod %% 8);
 	if(rn == 5) {
 		r = pow.mod(2, (mod-1)/4,  mod=mod);
+		if(detailed) attr(r, "Mod") = list(Type=8, e=2);
 		return(r);
 	}
+	### 9 Mod 16:
 	rn = (mod %% 16);
 	if(rn == 9) {
 		r = pow.mod(2, (mod-1)/8,  mod=mod);
 		# TODO: solve failures;
-		if(r + 1 == mod) {
+		if(r == 1 || r + 1 == mod) {
 			r = pow.mod(3, (mod-1)/8,  mod=mod);
 			# still a few failures!
 			if(r == 1 || r + 1 == mod) { r = 3; }
 			else {
 				r2 = (r*r) %% mod; r4 = (r2*r2) %% mod;
-				if(r4 + 1 == mod) r = r2;
+				if(r4 + 1 == mod) {
+					mneg = r; r = r2;
+					if(detailed)
+						attr(r, "Mod") = list(Type=16, Subtype = if(r == 1) 1 else -1,
+							e=3, hasUnits=TRUE, m=mneg, Pow=4);
+				} else {
+					if(detailed)
+						attr(r, "Mod") = list(Type=16, Subtype = if(r == 1) 1 else -1,
+							e=3, hasUnits=FALSE);
+				}
 			}
-		}
-		if(r == 1) {
-			# apply same hack:
-			r = pow.mod(3, (mod-1)/8,  mod=mod);
-			# still a few failures!
-			if(r == 1 || r + 1 == mod) { r = 3; }
-			else {
-				r2 = (r*r) %% mod; r4 = (r2*r2) %% mod;
-				if(r4 + 1 == mod) r = r2;
-			}
-		}
+		} else if(detailed)
+			attr(r, "Mod") = list(Type=16, Subtype = 0,
+				e=2, hasUnits=FALSE);
 		return(r);
 	}
+	### 17 Mod 32:
 	rn = (mod %% 32);
 	if(rn == 17) {
 		if(mod == 17) return(4);
@@ -880,7 +885,7 @@ unityMinus = function(mod) {
 
 
 ### MOD 16
-pp = filter.mod(primes(1200), 9, mod=16)
+pp = filter.mod(primes(15000), 9, mod=16)
 print(pp)
 
 i = sapply(pp, unityMinus);
@@ -889,7 +894,40 @@ table(r)
 
 tail(cbind(pp, i, r), n=10)
 
+# SQRT(x)
+p = pp[202]
+i = unityMinus(p, detailed=T)
+mn = attr(i, "Mod")$m; attr(i, "Mod") = NULL;
+print(p)
+c(mn^2 %% p, i, p-i);
+### Case: sqrt(-1)
+x = 30
+r = pow.mod(x, (p+7)/16, mod=p)
+r = (r*i) %% p; r = c(r, p - r);
+r^2 %% p;
+# Ex 2:
+x = 2203
+r = pow.mod(x, (p+7)/16, mod=p)
+r = (r*i) %% p; r = c(r, p - r);
+r^2 %% p;
+
+### Case: (-1)^(1/4)
+x = 25
+r = pow.mod(x, (p+7)/16, mod=p)
+r^2 %% p # NOT the root!
+r = (r*mn) %% p; r = c(r, p - r);
+r^2 %% p;
+# Ex 2: (-1)^(3/4)
+x = 125^2 %% p
+r = pow.mod(x, (p+7)/16, mod=p)
+r^2 %% p # NOT the root!
+r = (r*mn*i) %% p; r = c(r, p - r);
+c(x, r^2 %% p); # Squares
+c(125, r); # Roots
+
+
 # Failures:
+# [old]
 pp[c(2,3,5,6,12,13,17,19,20,21,23)]
 
 # sometimes needs different base, e.g:
