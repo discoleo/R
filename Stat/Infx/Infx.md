@@ -42,7 +42,9 @@ Nature, vol. 427, no. 6972, 22 Jan. 2004, pp. 344-347.
 3. Huang, N. E. et al. The empirical mode decomposition and the Hilbert spectrum for nonlinear and non-stationary time series analysis.
 Proc. R. Soc. Lond. A 454, 903–995 (1998).
 
-4. Balabdaoui, Fadoua & Mohr, Dirk. Age-stratified discrete compartment model of the COVID 19 epidemic with application to Switzerland. Nature (2020).
+4. Balabdaoui, Fadoua & Mohr, Dirk. Age-stratified discrete compartment model of the COVID 19 epidemic with application to Switzerland.
+Nature (2020).
 
-5. TODO
+5. Romano, S, Fierro, A, Liccardo, A. Beyond the peak: A deterministic compartment model for exploring the Covid-19 evolution in Italy.
+Plos One (2020).
 
