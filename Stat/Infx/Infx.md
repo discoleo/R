@@ -1,37 +1,37 @@
 
 
-= Modeling Infectious Diseases =
+# Modeling Infectious Diseases
 
 
-== Introduction ==
+## Introduction
 
 ; TODO: ...
 
-== Work ==
+## Work
 
 ; Bachelor Thesis: Anamaria Bica (co-supervisor: L. Mada);
-- based on an initial group-project for students (initiated/supervised by L. Mada);
-- GitHub: https://github.com/BicaAnamaria/EpidemicSimulator
+* based on an initial group-project for students (initiated/supervised by L. Mada);
+* GitHub: https://github.com/BicaAnamaria/EpidemicSimulator
 
-== Packages ==
+## Packages
 
 ; Covid / Coronavirus:
-- COVID19, covidcast, covid19.analytics, covidregionaldata, coronavirus, nCov2019, covid19dbcand, canadacovid, covid19us, covid19india, covid19srilanka, covid19br, COVIDIBGE (Brazil), covid19sf (San Francisco), oxcgrt (Gov responses);
+* COVID19, covidcast, covid19.analytics, covidregionaldata, coronavirus, nCov2019, covid19dbcand, canadacovid, covid19us, covid19india, covid19srilanka, covid19br, COVIDIBGE (Brazil), covid19sf (San Francisco), oxcgrt (Gov responses);
 
-- Europe: covid19france, covid19swiss, UKB.COVID19, covid19italy, covidsymptom (Sweden);
+* Europe: covid19france, covid19swiss, UKB.COVID19, covid19italy, covidsymptom (Sweden);
 
 ; Literature:
-- pubmed.mineR;
+* pubmed.mineR;
 ; Simulations/Modeling:
-- EpiModel, PandemicLP, babsim.hospital, cif (for ICU), niaidMI, weibull4, covidprobability, bets.covid19;
+* EpiModel, PandemicLP, babsim.hospital, cif (for ICU), niaidMI, weibull4, covidprobability, bets.covid19;
 ; Genetics/Mutations:
-- CovidMutations, UKB.COVID19, VERSO (phylo, Bioconductor);
+* CovidMutations, UKB.COVID19, VERSO (phylo, Bioconductor);
 ; Other:
-- opitools (opinions on Twitter/YT), SIPDIBGE (Brazil microdata);
+* opitools (opinions on Twitter/YT), SIPDIBGE (Brazil microdata);
 
 Note: Bioconductor packages not yet searched;
 
-== Literature ==
+## Literature
 
 ;1.) Package deBInfer
 Vignette: Bayesian inference for a population growth model of the chytrid fungus.
