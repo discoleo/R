@@ -5,28 +5,27 @@
 
 ## Introduction
 
-; TODO: ...
+**TODO: ...**
 
 ## Work
 
-; Bachelor Thesis: Anamaria Bica (co-supervisor: L. Mada);
+### Bachelor Thesis: Anamaria Bica (co-supervisor: L. Mada);
 * based on an initial group-project for students (initiated/supervised by L. Mada);
 * GitHub: https://github.com/BicaAnamaria/EpidemicSimulator
 
 ## Packages
 
-; Covid / Coronavirus:
+#### Covid / Coronavirus:
 * COVID19, covidcast, covid19.analytics, covidregionaldata, coronavirus, nCov2019, covid19dbcand, canadacovid, covid19us, covid19india, covid19srilanka, covid19br, COVIDIBGE (Brazil), covid19sf (San Francisco), oxcgrt (Gov responses);
-
 * Europe: covid19france, covid19swiss, UKB.COVID19, covid19italy, covidsymptom (Sweden);
 
-; Literature:
+#### Literature:
 * pubmed.mineR;
-; Simulations/Modeling:
+#### Simulations/Modeling:
 * EpiModel, PandemicLP, babsim.hospital, cif (for ICU), niaidMI, weibull4, covidprobability, bets.covid19;
-; Genetics/Mutations:
+#### Genetics/Mutations:
 * CovidMutations, UKB.COVID19, VERSO (phylo, Bioconductor);
-; Other:
+#### Other:
 * opitools (opinions on Twitter/YT), SIPDIBGE (Brazil microdata);
 
 Note: Bioconductor packages not yet searched;
@@ -43,7 +42,7 @@ Nature, vol. 427, no. 6972, 22 Jan. 2004, pp. 344-347.
 3. Huang, N. E. et al. The empirical mode decomposition and the Hilbert spectrum for nonlinear and non-stationary time series analysis.
 Proc. R. Soc. Lond. A 454, 903–995 (1998).
 
-4. Balabdaoui1, Fadoua & Mohr, Dirk. Age-stratified discrete compartment model of the COVID 19 epidemic with application to Switzerland. Nature (2020).
+4. Balabdaoui, Fadoua & Mohr, Dirk. Age-stratified discrete compartment model of the COVID 19 epidemic with application to Switzerland. Nature (2020).
 
 5. TODO
 
