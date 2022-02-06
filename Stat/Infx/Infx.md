@@ -33,17 +33,17 @@ Note: Bioconductor packages not yet searched;
 
 ## Literature
 
-;1.) Package deBInfer
+1. Package deBInfer
 Vignette: Bayesian inference for a population growth model of the chytrid fungus.
 https://cran.r-project.org/web/packages/deBInfer/vignettes/chytrid_dede_example.pdf
 
-;2.) Cummings, Derek A.T., et al. Traveling waves in the occurrence of dengue haemorrhagic fever in Thailand.
+2. Cummings, Derek A.T., et al. Traveling waves in the occurrence of dengue haemorrhagic fever in Thailand.
 Nature, vol. 427, no. 6972, 22 Jan. 2004, pp. 344-347.
 
-;3.) Huang, N. E. et al. The empirical mode decomposition and the Hilbert spectrum for nonlinear and non-stationary time series analysis.
+3. Huang, N. E. et al. The empirical mode decomposition and the Hilbert spectrum for nonlinear and non-stationary time series analysis.
 Proc. R. Soc. Lond. A 454, 903–995 (1998).
 
-;4.) Balabdaoui1, Fadoua & Mohr, Dirk. Age-stratified discrete compartment model of the COVID 19 epidemic with application to Switzerland. Nature (2020).
+4. Balabdaoui1, Fadoua & Mohr, Dirk. Age-stratified discrete compartment model of the COVID 19 epidemic with application to Switzerland. Nature (2020).
 
-;5.) TODO
+5. TODO
 
