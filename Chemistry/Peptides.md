@@ -6,6 +6,10 @@ Some interesting Trp-containing peptides & cyclopeptides:
 #### Marine Toxins (cyclopeptides):
 * Jasplakinolide: contains a bromo-Trp & a beta-NH2-Tyr;
 * Pipestelide A & B: cotain bromo-Trp & bromo-Tyr (respectively simple Tyr);
+* Calyxamide: Trp-Oh + a tiazol;
+* Microsclerodermins (various);
+* Chondramides: Trp or Trp-Cl;
+* Argyrins: 2 Trp;
 
 
 #### Vertebrate Peptides:
@@ -16,4 +20,4 @@ Some interesting Trp-containing peptides & cyclopeptides:
 ## Functions:
 
 #### Vertebrates:
-* GI & Metabolism regulation?
+* GI & Metabolism regulation: relation to 5-HT3?
