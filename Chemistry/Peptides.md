@@ -23,5 +23,5 @@ Some interesting Trp-containing peptides & cyclopeptides:
 
 #### Vertebrates:
 * GI & Metabolism regulation:
-** Relation to 5-HT3?
-** Serotonin reuptake: Does it hint to food uptake?
+ * Relation to 5-HT3?
+ * Serotonin reuptake: Does it hint to food uptake?
