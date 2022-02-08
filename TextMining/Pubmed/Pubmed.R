@@ -6,7 +6,7 @@
 ### Pubmed
 ### Tools: Search Engine
 ###
-### draft v.0.1b
+### draft v.0.1d
 
 
 ### Pubmed Tools
@@ -109,6 +109,11 @@ search.entrez.fetch = function(key, nStart=0, type="Abstract", options=NULL) {
 	return(doc)
 }
 
+
+###########
+### XML ###
+###########
+
 ### Parse
 
 # Parse the Search Results:
@@ -153,5 +158,47 @@ count.entrez.abstract = function(x) {
 	return(n);
 }
 
+# Extract Titles & Year:
+extractTitles = function(x) {
+	isXML = inherits(x, "xml_document");
+	xml = if(isXML) x else read_xml(x);
+	# assumes: only 1 Title:
+	pred  = "count(./MedlineCitation/Article/ArticleDate/Year)";
+	as.XP = function(path)
+		paste0("/PubmedArticleSet/PubmedArticle[", pred, " > 0]/MedlineCitation/", path);
+	PMID   = xml_find_all(xml, as.XP("PMID"));
+	sTitle = xml_find_all(xml, as.XP("Article/ArticleTitle"));
+	year   = xml_find_all(xml, as.XP("Article/ArticleDate/Year[1]"));
+	r = data.frame(PMID = xml_text(PMID), Year = as.numeric(xml_text(year)), Title = xml_text(sTitle));
+	#
+	as.XP = function(path)
+		paste0("/PubmedArticleSet/PubmedArticle[", pred, " = 0]/MedlineCitation/", path);
+	PMID   = xml_find_all(xml, as.XP("PMID"));
+	sTitle = xml_find_all(xml, as.XP("Article/ArticleTitle"));
+	r2 = data.frame(PMID = xml_text(PMID), Year = NA, Title = xml_text(sTitle));
+	r  = rbind(r, r2);
+	return(r);
+}
 
+# DISASTER:
+extractTitles.slowBeyondAnyHope = function(x) {
+	# Note: libxml2 does NOT implement XPATH 2 !!!
+	# [while XPATH 1.0 has massive shortcomings!]
+	isXML = inherits(x, "xml_document");
+	xml = if(isXML) x else read_xml(x);
+	nodes = xml_find_all(xml, "/PubmedArticleSet/PubmedArticle");
+	# only first 100:
+	r = lapply(nodes[1:100], function(r) {
+		PMID   = xml_find_first(r, "./MedlineCitation/PMID");
+		PMID   = xml_text(PMID)[1];
+		sTitle = xml_find_all(r, "./MedlineCitation/Article/ArticleTitle");
+		sTitle = paste(xml_text(sTitle), collapse="\n");
+		year   = xml_find_first(r, "./MedlineCitation/Article/ArticleDate/Year");
+		year   = as.numeric(xml_text(year)[1]);
+		#
+		data.frame(PMID=PMID, Title=sTitle, Year=year);
+	});
+	r = do.call(rbind, r);
+	return(r);
+}
 
