@@ -32,7 +32,7 @@ library(xml2)
 
 ### eMail:
 GetEMail = function() {
-	eMail = "leo.mada@syonic.eu";
+	eMail = "...";
 	if(eMail == "...")
 		stop("Please provide a valid eMail address,
 		so that I do not get blamed when the Pubmed server crashes!")
