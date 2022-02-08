@@ -6,7 +6,7 @@
 ### Pubmed
 ### Tools: Search Engine
 ###
-### draft v.0.1a
+### draft v.0.1b
 
 
 ### Pubmed Tools
@@ -32,7 +32,7 @@ library(xml2)
 
 ### eMail:
 GetEMail = function() {
-	eMail = "...";
+	eMail = "leo.mada@syonic.eu";
 	if(eMail == "...")
 		stop("Please provide a valid eMail address,
 		so that I do not get blamed when the Pubmed server crashes!")
@@ -139,6 +139,20 @@ parse.entrez.ids = function(x, nStart=0) {
 	}
 	return(sID);
 }
+# Count
+count.entrez.ids = function(x) {
+	isXML = inherits(x, "xml_document");
+	xml = if(isXML) x else read_xml(x);
+	n   = xml_find_num(xml, "count(/IdList/Id)");
+	return(n);
+}
+count.entrez.abstract = function(x) {
+	isXML = inherits(x, "xml_document");
+	xml = if(isXML) x else read_xml(x);
+	n   = xml_find_num(xml, "count(/PubmedArticleSet/PubmedArticle)");
+	return(n);
+}
+
 
 #####################
 #####################
@@ -152,6 +166,7 @@ print(r)
 nStart = 40;
 doc2 = search.entrez.fetch(r, nStart, type="id")
 ids  = parse.entrez.ids(doc2, nStart=nStart)
+count.entrez.ids(doc2)
 length(ids);
 print(ids)
 
