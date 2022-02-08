@@ -1,7 +1,9 @@
 
 # Biologically Active Peptides
 
+## Trp-Containing Peptides
 Some interesting Trp-containing peptides & cyclopeptides:
+
 
 #### Marine Toxins (cyclopeptides):
 * Jasplakinolide: contains a bromo-Trp & a beta-NH2-Tyr;
@@ -17,7 +19,9 @@ Some interesting Trp-containing peptides & cyclopeptides:
 * Cholecystokinin: usually contains also a Tyr-SO4;
 
 
-## Functions:
+### Functions:
 
 #### Vertebrates:
-* GI & Metabolism regulation: relation to 5-HT3?
+* GI & Metabolism regulation:
+** Relation to 5-HT3?
+** Serotonin reuptake: Does it hint to food uptake?
