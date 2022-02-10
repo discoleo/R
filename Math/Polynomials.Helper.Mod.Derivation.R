@@ -7,7 +7,7 @@
 ### Modular Arithmetic
 ### Derivation & Experiments
 ###
-### draft v.0.2p
+### draft v.0.2p-ex2
 
 
 
@@ -838,11 +838,11 @@ unityMinus = function(mod, detailed=FALSE) {
 				if(r4 + 1 == mod) {
 					mneg = r; r = r2;
 					if(detailed)
-						attr(r, "Mod") = list(Type=16, Subtype = if(r == 1) 1 else -1,
+						attr(r, "Mod") = list(Type=16, Subtype = -1,
 							e=3, hasUnits=TRUE, m=mneg, Pow=4);
 				} else {
 					if(detailed)
-						attr(r, "Mod") = list(Type=16, Subtype = if(r == 1) 1 else -1,
+						attr(r, "Mod") = list(Type=16, Subtype = 0,
 							e=3, hasUnits=FALSE);
 				}
 			}
@@ -879,8 +879,10 @@ unityMinus = function(mod, detailed=FALSE) {
 		}
 		return(r);
 	}
-	# fortunately, there are not many Fermat primes;
+	# TODO: mod 64, 128, ...;
 	stop("Not yet implemented!");
+	# - fortunately, there are not many Fermat primes,
+	#   even though these primes are easily solvable;
 }
 
 
@@ -894,7 +896,7 @@ table(r)
 
 tail(cbind(pp, i, r), n=10)
 
-# SQRT(x)
+### SQRT(x)
 p = pp[202]
 i = unityMinus(p, detailed=T)
 mn = attr(i, "Mod")$m; attr(i, "Mod") = NULL;
@@ -926,12 +928,38 @@ c(x, r^2 %% p); # Squares
 c(125, r); # Roots
 
 
-# Failures:
+### SQRT(x) (mod 281)
+p = 281;
+i = unityMinus(p)
+### Ex 1:
+x = 2
+r = pow.mod(x, (p+7)/16, mod=p)
+r^2 %% p # == - x;
+r = (r * i) %% p; r = c(r, p-r);
+c(x, r^2 %% p)
+### Ex 2: (-1)^(1/4)
+x = i;
+# slightly different approach:
+r = pow.mod(3, (p-1)/8, mod=p);
+r = c(r, p-r); m4 = r[1];
+c(x, r^2 %% p)
+### Ex 3:
+x = 5
+r = pow.mod(x, (p+7)/16, mod=p)
+r^2 %% p # NOT sqrt;
+r = (r * m4 * i) %% p; r = c(r, p-r);
+c(x, r^2 %% p)
+
+
+### Failures:
 # [old]
-pp[c(2,3,5,6,12,13,17,19,20,21,23)]
+# still unsolved:
+pp[c(12, 17)]
+# already solved:
+pp[c(2,3,5,6,13,19,20,21,23)]
 
 # sometimes needs different base, e.g:
-# 12, or 20 or 28, or 17 (for 1097);
+# 3, 12, or 20 or 28, or 17 (for 1097);
 
 id = 4
 p = pp[id]
