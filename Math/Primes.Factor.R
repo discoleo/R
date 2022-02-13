@@ -5,7 +5,7 @@
 ###
 ### Prime Factorizations
 ###
-### draft v.0.1e
+### draft v.0.1f
 
 # - some experiments with Prime factorizations;
 
@@ -17,6 +17,13 @@ library(gmp)
 
 ### Helper Functions
 
+simplify.mod = function(x, f=c(2,3)) {
+	x = x - 1;
+	for(p in f) {
+		while(x %% p == 0) x = x %/% p;
+	}
+	return(x);
+}
 seq.mod = function(N, p) {
 	x = seq(N-1);
 	for(px in p) {
@@ -53,10 +60,35 @@ pollard = function(x0, N, iter=14, pow=4) {
 	}
 	print("NO factors found!")
 }
+factorizePow.mod = function(base, mod, iter=1000) {
+	x = base;
+	g = gcd(x, mod);
+	if(g > 1) return(g);
+	for(i in seq(iter)) {
+		x2 = (x*x);
+		x2 = (x2*x2);
+		if(x2 == base) {print(i); return(x);}
+		x = x2;
+		g = gcd(x-1, mod);
+		if(g > 1) {print(paste0("Simple: i = ", i)); return(g);}
+		g = gcd(x-base, mod);
+		if(g > 1) {print(paste0("Enhanced: i = ", i)); return(g);}
+	}
+	return(NA)
+}
 
 # N = as.bigz(1002583) * as.bigz(3001073)
 N = as.bigz("50003491") * as.bigz("84300971")
 
+# the enhanced version functions better:
+# - it requires an even number of primes: possibly pairs of similar size;
+# the simple version did NOT really function on this example;
+base = (((((as.bigz(2*3*5*7*11*13, mod=N) * 17*19*23*29)*31*37*41*43)
+	*47*53*59*61)*67*71*73*79)*83*89*97)*101*103*107
+	# again slower: *109 # and recovers again: *113
+factorizePow.mod(base, N, iter=60000)
+
+# Pollard is reasonably efficient with some specific starting values:
 x = as.bigz(1024*4, mod=N);
 # x = 5 * as.bigz(2, mod=N)^8 - 1
 # x = as.bigz(2, mod=N); x = x + 1/x;
