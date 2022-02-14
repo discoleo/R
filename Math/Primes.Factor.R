@@ -5,7 +5,7 @@
 ###
 ### Prime Factorizations
 ###
-### draft v.0.1f-explore
+### draft v.0.1f-explore2
 
 # - some experiments with Prime factorizations;
 
@@ -112,9 +112,11 @@ factorizePow.mod(base, N, iter=60000)
 # very efficient:
 base = prod.mod.pp(69, N)
 factorizePow.mod(base, N, iter=60000)
+base = prod.mod.pp(171, N)
+factorizePow.mod(base, N, iter=60000)
 
 table(sapply(seq(50, 70), function(n)
-	is.na(factorizePow.mod(prod.mod.pp(n, N, verbose=FALSE), N, iter=20000))))
+	is.na(factorizePow.mod(prod.mod.pp(n, N, verbose=TRUE), N, iter=20000))))
 
 
 # Pollard is reasonably efficient with some specific starting values:
