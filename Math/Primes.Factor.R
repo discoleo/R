@@ -5,7 +5,7 @@
 ###
 ### Prime Factorizations
 ###
-### draft v.0.1f
+### draft v.0.1f-explore
 
 # - some experiments with Prime factorizations;
 
@@ -76,17 +76,46 @@ factorizePow.mod = function(base, mod, iter=1000) {
 	}
 	return(NA)
 }
+prod.mod.pp = function(n, mod, exclude=c(), verbose=TRUE) {
+	n0 = n; len = n + length(exclude);
+	while(TRUE) {
+		p = pracma::primes(10*n0);
+		if(length(p) >= len) break;
+		n0 = 2*n0;
+	}
+	if(length(exclude) > 0) {
+		p = setdiff(p, exclude);
+	}
+	if(length(p) == 0) return(NA);
+	pp = as.bigz(p[1], mod=mod);
+	if(n == 1) return(pp);
+	p = p[seq(2, n)];
+	for(px in p) {
+		pp = pp * px;
+	}
+	if(verbose) {
+		cat(paste0("# Primes: ", n, ", Max = ", tail(p, 1), "\n"))
+	}
+	return(pp);
+}
 
 # N = as.bigz(1002583) * as.bigz(3001073)
 N = as.bigz("50003491") * as.bigz("84300971")
 
 # the enhanced version functions better:
-# - it requires an even number of primes: possibly pairs of similar size;
-# the simple version did NOT really function on this example;
-base = (((((as.bigz(2*3*5*7*11*13, mod=N) * 17*19*23*29)*31*37*41*43)
-	*47*53*59*61)*67*71*73*79)*83*89*97)*101*103*107
-	# again slower: *109 # and recovers again: *113
+# - it requires usually an "even" number of primes: possibly pairs of similar size;
+# - but there are a few anomalies, e.g. above the first 50 primes;
+# - the simple version did NOT really function on this example;
+base = prod.mod.pp(100, N)
 factorizePow.mod(base, N, iter=60000)
+
+# very efficient:
+base = prod.mod.pp(69, N)
+factorizePow.mod(base, N, iter=60000)
+
+table(sapply(seq(50, 70), function(n)
+	is.na(factorizePow.mod(prod.mod.pp(n, N, verbose=FALSE), N, iter=20000))))
+
 
 # Pollard is reasonably efficient with some specific starting values:
 x = as.bigz(1024*4, mod=N);
