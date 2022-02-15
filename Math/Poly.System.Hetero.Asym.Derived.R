@@ -1,0 +1,60 @@
+########################
+###
+### Leonard Mada
+### [the one and only]
+###
+### Polynomial Systems:
+### Quasi-Asymmetric S2:
+### Derived Polynomials
+###
+### draft v.0.1a
+
+
+####################
+####################
+
+### Helper Functions
+
+# the functions are in the file:
+# Polynomials.Helper.R;
+# e.g. round0(), round0.p;
+
+source("Polynomials.Helper.R")
+
+
+##############################
+
+### Derived Polynomials
+# - from Quasi-Asymmetric S2Ht
+
+### P9:
+# b, k = parameters;
+(x^3 + 4*b1*x + 8*b0)*(x^3 + b1*x - b0)^2 + 27*k^2*x^3 # = 0
+x^9 + 6*b1*x^7 + 6*b0*x^6 + 9*b1^2*x^5 + 6*b0*b1*x^4 + 4*b1^3*x^3 + 27*k^2*x^3 - 15*b0^2*x^3 - 12*b0^2*b1*x + 8*b0^3
+
+
+### P9
+solve.P9.S2sp = function(k, b, debug=TRUE) {
+	bE1 = c(1, 0, rev(b)); bE1[4] = bE1[4] + k;
+	x = roots(bE1);
+	#
+	bE2 = c(1, 0, rev(b)); bE2[4] = bE2[4] - k;
+	y = roots(bE2);
+	if(debug) {print(x); print(y); }
+	#
+	s = expand.grid(x, y);
+	S = apply(s, 1, sum);
+	sol = list(x=x, y=y, S=S);
+	return(sol);
+}
+
+### Examples:
+k = 3
+b = c(2, -1)
+sol = solve.P9.S2sp(k, b); S = sol$S;
+
+### Test
+b0 = b[1]; b1 = b[2];
+(S^3 + 4*b1*S + 8*b0)*(S^3 + b1*S - b0)^2 + 27*k^2*S^3
+
+
