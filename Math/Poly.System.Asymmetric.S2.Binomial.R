@@ -7,7 +7,7 @@
 ### Asymmetric S2:
 ### Binomial Expansions
 ###
-### draft v.0.2j
+### draft v.0.2k
 
 
 ### Asymmetric Polynomial Systems: 2 Variables
@@ -25,6 +25,9 @@
 ###############
 
 
+### draft v.0.2k:
+# - Simple composition of Class 1 polynomials;
+# - Example: Order 5;
 ### draft v.0.2j:
 # - Base: symmetric system;
 ### draft v.0.2i:
@@ -607,6 +610,51 @@ x = k^2 + b[1]*k;
 y = k^2 + b[2]*k;
 test.SP3M(c(x, y), K, b)
 
+
+#########################
+### Modified Approach ###
+#########################
+
+###############
+### Order 5 ###
+###############
+
+### Base:
+# x = b14*k^4 + b13*k^3 + b12*k^2 + b11*k
+# y = b24*k^4 + b23*k^3 + b22*k^2 + b21*k
+# where k^5 = K;
+
+### Example:
+expand.sol = function(K, b1, b2, n) {
+	m  = unity(n, all=TRUE);
+	mm = expand.grid(m, m);
+	k  = rootn(K, n);
+	s = sapply(seq(nrow(mm)), function(id) {
+		x1 = sum((b1+b2)*(k*mm[id,1])^seq(n-1, 0));
+		x2 = sum((b1-b2)*(k*mm[id,2])^seq(n-1, 0));
+		c(x = (x1+x2)/2, y= (x1-x2)/2);
+	})
+	s = data.frame(t(s))
+	return(s)
+}
+
+K = 2
+# Basic solution:
+k = K^(1/5)
+x = k^4 + k
+y = - k^3 + k^2
+# All solutions:
+sol = expand.sol(K, c(1,0,0,1,0), c(0,-1,1,0,0), n=5)
+x = sol$x; y = sol$y;
+# Note: Eq are only for the given b's;
+(x+y)^5 - 40*(x+y)^2 + 90*(x+y) - 94
+(x-y)^5 - 20*(x-y)^2 + 30*(x-y) - 182
+#
+x^5 + 10*x^3*y^2 + 5*x*y^4 - 30*x^2 - 30*y^2 - 20*x*y + 60*x + 30*y - 138
+y^5 + 10*x^2*y^3 + 5*x^4*y - 10*x^2 - 10*y^2 - 60*x*y + 30*x + 60*y + 44
+
+
+#########################
 
 #############
 ### Variants:
