@@ -7,7 +7,7 @@
 ### Quasi-Asymmetric S2:
 ### Derived Polynomials
 ###
-### draft v.0.1b
+### draft v.0.1b-ext1
 
 
 ####################
@@ -30,15 +30,19 @@ source("Polynomials.Helper.R")
 ### P9:
 # b, k = parameters;
 (x^3 + 4*b1*x + 8*b0)*(x^3 + b1*x - b0)^2 + 27*k^2*x^3 # = 0
-x^9 + 6*b1*x^7 + 6*b0*x^6 + 9*b1^2*x^5 + 6*b0*b1*x^4 + 4*b1^3*x^3 + 27*k^2*x^3 - 15*b0^2*x^3 - 12*b0^2*b1*x + 8*b0^3
+x^9 + 6*b1*x^7 + 6*b0*x^6 + 9*b1^2*x^5 + 6*b0*b1*x^4 + (27*k^2 + 4*b1^3 - 15*b0^2)*x^3 - 12*b0^2*b1*x + 8*b0^3
 
 
 ### P9
 solve.P9.S2sp = function(k, b, debug=TRUE) {
-	bE1 = c(1, 0, rev(b)); bE1[4] = bE1[4] + k;
+	len = length(b);
+	bL  = if(len == 2) c(1, 0) else if(len == 3) 1
+		else if(len == 1) c(1,0,0) else stop("Only P3 => P9 supported!");
+	b = c(bL, rev(b));
+	bE1 = b; bE1[4] = bE1[4] + k;
 	x = roots(bE1);
 	#
-	bE2 = c(1, 0, rev(b)); bE2[4] = bE2[4] - k;
+	bE2 = b; bE2[4] = bE2[4] - k;
 	y = roots(bE2);
 	if(debug) {print(x); print(y); }
 	#
@@ -48,6 +52,7 @@ solve.P9.S2sp = function(k, b, debug=TRUE) {
 	return(sol);
 }
 test.P9.S2sp = function(S, b, k) {
+	if(length(b) != 2) warning("Not yet implemented!")
 	b0 = b[1]; b1 = b[2];
 	if(is.list(S)) S = S$S;
 	err = (S^3 + 4*b1*S + 8*b0)*(S^3 + b1*S - b0)^2 + 27*k^2*S^3
