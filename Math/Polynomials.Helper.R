@@ -171,7 +171,7 @@ sort.sol = function(sol, useRe=TRUE, mod.first=TRUE, ncol=1, digits=5) {
 	} else {
 		id = order(abs(round(sol[,ncol], digits)) );
 	}
-	return(sol[id,]);
+	return(sol[id,, drop=FALSE]);
 }
 isConj.f = function(x, y, tol=1E-3) {
 	isConj = (abs(Re(x) - Re(y)) < tol) & (abs(Im(x) + Im(y)) < tol);
