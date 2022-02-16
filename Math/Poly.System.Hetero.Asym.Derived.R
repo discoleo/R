@@ -7,7 +7,7 @@
 ### Quasi-Asymmetric S2:
 ### Derived Polynomials
 ###
-### draft v.0.1b-ext1
+### draft v.0.1b-ex3
 
 
 ####################
@@ -26,6 +26,8 @@ source("Polynomials.Helper.R")
 
 ### Derived Polynomials
 # - from Quasi-Asymmetric S2Ht;
+# - see also Polynomials.Derived.P6.R
+#   for another/similar approach (for P6);
 
 ### P9:
 # b, k = parameters;
@@ -75,6 +77,30 @@ round0(poly.calc(S))
 ### Ex 2:
 k = sqrt(2)*1i
 b = c(2, -2)
+sol = solve.P9.S2sp(k, b); S = sol$S;
+
+### Test
+test.P9.S2sp(S, b, k)
+
+round0(poly.calc(S))
+
+
+#########
+### Ex 3:
+k = sqrt(1/27)*1i/2
+b = c(1/2, -2)
+sol = solve.P9.S2sp(k, b); S = sol$S;
+
+### Test
+test.P9.S2sp(S, b, k)
+
+round0(poly.calc(S))
+
+
+#########
+### Ex 4:
+k = sqrt(1/3)*1i/2
+b = c(1/2, -2)
 sol = solve.P9.S2sp(k, b); S = sol$S;
 
 ### Test
