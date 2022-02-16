@@ -7,7 +7,7 @@
 ### Quasi-Asymmetric S2:
 ### Derived Polynomials
 ###
-### draft v.0.1b-ex3
+### draft v.0.1b-ex5
 
 
 ####################
@@ -50,6 +50,7 @@ solve.P9.S2sp = function(k, b, debug=TRUE) {
 	#
 	s = expand.grid(x, y);
 	S = apply(s, 1, sum);
+	S = sort.sol(matrix(S, ncol=1), ncol=1)[,1];
 	sol = list(x=x, y=y, S=S);
 	return(sol);
 }
@@ -101,6 +102,18 @@ round0(poly.calc(S))
 ### Ex 4:
 k = sqrt(1/3)*1i/2
 b = c(1/2, -2)
+sol = solve.P9.S2sp(k, b); S = sol$S;
+
+### Test
+test.P9.S2sp(S, b, k)
+
+round0(poly.calc(S))
+
+
+#########
+### Ex 5:
+b = c(1/2, -1/3)
+k = sqrt(-(4*b[2]^3 - 15*b[1]^2)/27)
 sol = solve.P9.S2sp(k, b); S = sol$S;
 
 ### Test
