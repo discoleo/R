@@ -7,7 +7,7 @@
 ### Quasi-Asymmetric S2:
 ### Derived Polynomials
 ###
-### draft v.0.1c
+### draft v.0.1c-comment
 
 
 ####################
@@ -41,12 +41,13 @@ source("Polynomials.Helper.R")
 x^9 + 6*b1*x^7 + 6*b0*x^6 + 9*b1^2*x^5 + 6*b0*b1*x^4 + (27*k^2 + 4*b1^3 - 15*b0^2)*x^3 - 12*b0^2*b1*x + 8*b0^3
 
 ### P[9] Variant:
-S^9 - 2*k2^2*S^7 + 6*b1*S^7 + 6*b0*S^6 + (k2^2 - 3*b1)^2*S^5 - 2*b0*(k2^2 - 3*b1)*S^4 +
-	- 4*k1*k2^3*S^3 - k2^2*b1^2*S^3 + 18*k1*k2*b1*S^3 + 4*b1^3*S^3 + 27*k1^2*S^3 - 15*b0^2*S^3 +
-	+ (4*k2^2*b0^2 - 12*b1*b0^2)*S + 8*b0^3
+# - only a scaling of b1 (when b2 == 0);
+S^9 - 2*(k2^2 - 3*b1)*S^7 + 6*b0*S^6 + (k2^2 - 3*b1)^2*S^5 - 2*b0*(k2^2 - 3*b1)*S^4 +
+	+ (27*k1^2 - (4*k2^3 - 18*k2*b1)*k1 - k2^2*b1^2 + 4*b1^3 - 15*b0^2)*S^3 +
+	+ 4*b0^2*(k2^2 - 3*b1)*S + 8*b0^3
 
 
-### Soler:
+### Solver:
 solve.P9.S2sp = function(k, b, sort=TRUE, debug=TRUE) {
 	len = length(b);
 	bL  = if(len == 2) c(1, 0) else if(len == 3) 1
@@ -76,9 +77,9 @@ test.P9.S2sp = function(S, b, k) {
 		err = (S^3 + 4*b1*S + 8*b0)*(S^3 + b1*S - b0)^2 + 27*k^2*S^3;
 	} else {
 		k1 = k[1]; k2 = k[2];
-		err = S^9 - 2*k2^2*S^7 + 6*b1*S^7 + 6*b0*S^6 + (k2^4 - 6*k2^2*b1 + 9*b1^2)*S^5 - 2*b0*(k2^2 - 3*b1)*S^4 +
-			- 4*k1*k2^3*S^3 - k2^2*b1^2*S^3 + 18*k1*k2*b1*S^3 + 4*b1^3*S^3 + 27*k1^2*S^3 - 15*b0^2*S^3 +
-			+ (4*k2^2*b0^2 - 12*b1*b0^2)*S + 8*b0^3
+		err = S^9 - 2*(k2^2 - 3*b1)*S^7 + 6*b0*S^6 + (k2^2 - 3*b1)^2*S^5 - 2*b0*(k2^2 - 3*b1)*S^4 +
+			+ (27*k1^2 - (4*k2^3 - 18*k2*b1)*k1 - k2^2*b1^2 + 4*b1^3 - 15*b0^2)*S^3 +
+			+ 4*b0^2*(k2^2 - 3*b1)*S + 8*b0^3
 	}
 	err = round0(err);
 	return(err);
@@ -146,7 +147,7 @@ x = S
 
 
 #########
-### Ex 6:
+### Ex 6: Variant
 b = c(-2, 3)
 k = c(2, 1)
 sol = solve.P9.S2sp(k, b); S = sol$S;
