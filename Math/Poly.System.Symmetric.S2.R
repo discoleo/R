@@ -4,9 +4,9 @@
 ### Leonard Mada
 ### [the one and only]
 ###
-### Polynomial Systems: P2
+### Polynomial Systems: S2
 ### Decompositions of Symmetric Systems
-### v.0.3h
+### v.0.3i
 
 
 ####################
@@ -46,6 +46,9 @@
 ### History ###
 ###############
 
+### draft v.0.3i:
+# - renamed file:
+#   Poly.System.P2 => Poly.System.Symmetric.S2.R;
 ### draft v.0.3g - v.0.3h:
 # - multiplicative & div entanglements for order 2;
 #   [was skipped in v.0.2f - v.0.3a]
@@ -114,7 +117,7 @@ solve.ps = function(shift, R, n=3) {
 		coeff = c(2*shift^4 - 12*shift^2*R[2] - R[1] + 2*R[2]^2,
 			4*shift*(shift^2-3*R[2]), (6*shift^2-4*R[2]), 4*shift, 1)
 	} else {
-		print("NOT yet implemented!")
+		stop("NOT yet implemented!")
 	}
 	X = solve(polynomial(coeff))
 	# X = roots(rev(coeff)) # pracma
@@ -126,6 +129,8 @@ solve.ps = function(shift, R, n=3) {
 	sol.df = data.frame(x=c(x, y), y=c(y, x))
 	return(sol.df)
 }
+
+### helper functions
 # round to 0
 round0 = function(m, tol=1E-7) {
 	m[abs(Re(m)) < tol & abs(Im(m)) < tol] = 0
@@ -211,7 +216,7 @@ round0(err)
 ###
 c3 = 2*cos(2*pi/7 * (1:3))
 R = c(1,1)
-x = vapply(c3, solve.ps, R=R, n=2)
+x = sapply(c3, solve.ps, R=R, n=2)
 
 
 ####################
@@ -251,6 +256,7 @@ round0(err)
 
 # some special cases
 ### NO x^3
+# - a generalized symmetric P[6];
 a = 1
 c = 1
 #
