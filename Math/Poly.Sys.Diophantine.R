@@ -6,7 +6,7 @@
 ### Polynomial Systems:
 ### Diophantine Equations
 ###
-### draft v.0.1b-2nd
+### draft v.0.1b-Sol1
 
 
 ####################
@@ -64,6 +64,20 @@ y^2 - x^3 + 54*82^2*x^2 - 27^2*82^4*x
 x = (as.bigq(9*x0^2 - 3*164)/82)^2; y = (as.bigq(27*y0^2)^2 - 54*82^3)/82^3;
 y^2 - x^3 + 54*x^2 - 27^2*x
 y^2 - x*(x - 27)^2
+
+
+### Sol
+p = 82;
+x = (as.bigq(9*x0^2)/p - 6)^2; y = (as.bigq(27*y0^2)^2/p^3 - 54);
+y^2 - x*(x - 27)^2
+
+### p = p0^2 + 1;
+p = 37
+# TODO: Factor *9;
+k = p*9 - 6;
+x = sqrt((k + 6)*p) / 3;
+y = sqrt((k-3)*p*sqrt((k+6)*p)/3) / 3
+y^2 - x^3 + p*x
 
 
 ####################
