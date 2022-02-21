@@ -6,7 +6,7 @@
 ### Polynomial Systems:
 ### Diophantine Equations
 ###
-### draft v.0.1g
+### draft v.0.1h
 
 
 ####################
@@ -165,6 +165,23 @@ y^2 - x^3 + 14*x - 1
 # Swap: y^2 => z^2 - x^2
 x = c(0, 4); y = c(1, 5)
 y^2 - x^3 - x^2 + 14*x - 1
+
+
+### Multiplicative Generator
+
+# Base
+x1 = c(0, 3, 1); y1 = c(0, 6, 2);
+x = x1; y = y1;
+y^2 - x*(x^2 + 3)
+x2 = c(0, 3, 13); y2 = c(0, 12, 52);
+x = x2; y = y2;
+y^2 - x*(x^2 + 39)
+# Prod =>
+x = x1[1:2]; y = (y1*y2)[1:2];
+y^2 - x^2*(x^2 + 3)*(x^2 + 39)
+x = x^2; x = c(x, 13); y = c(y, 104);
+y^2 - x*(x + 3)*(x + 39)
+y^2 - x*(x^2 + 42*x + 117)
 
 
 #######################
