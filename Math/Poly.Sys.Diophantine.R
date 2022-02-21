@@ -6,7 +6,7 @@
 ### Polynomial Systems:
 ### Diophantine Equations
 ###
-### draft v.0.1d
+### draft v.0.1d-sol
 
 
 ####################
@@ -101,11 +101,12 @@ y^2 - x^3 - p*x
 ### Case 3:
 ### Particular p
 ### x^3 - 7*x
-x = 4; y = 6;
+x = c(4, -7/4); y = c(6, -21/8);
 y^2 - x^3 + 7*x
 # Self-Shift =>
 x = 0; y = 0; # trivial solution
-# TODO: does it have any other solution?
+x = -4; y = -6; # initially trivial, now shifted
+x = c(-4, -23/4); y = c(-6, -69/8);
 (y + 6)^2 - (x + 4)^3 + 7*(x + 4)
 y^2 + 12*y - x^3 - 12*x^2 - 41*x
 
