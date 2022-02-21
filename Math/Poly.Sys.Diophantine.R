@@ -6,7 +6,7 @@
 ### Polynomial Systems:
 ### Diophantine Equations
 ###
-### draft v.0.1f
+### draft v.0.1g
 
 
 ####################
@@ -24,8 +24,13 @@ source("Polynomials.Helper.R")
 ### Elliptic Curves: Roots
 roots.elliptic = function(xy, b, scale=1) {
 	# b = c(b3, b2, b1, b0);
-	if(length(xy) > 2) stop("Only through Origin!");
-	slope = xy[2] / xy[1];
+	if(length(xy) > 2) {
+		slope = (xy[4] - xy[3]) / (xy[2] - xy[1]);
+		y0 = xy[3] - slope*xy[1];
+		# TODO
+		stop("Only through Origin!");
+	} else
+		slope = xy[2] / xy[1];
 	bc = b; bc[2] = bc[2] - slope^2;
 	r = roots(bc);
 	if(length(b) == 3) b = c(b, 0);
@@ -148,6 +153,18 @@ y^2 - x^3 + 9*x + 10
 
 
 roots.elliptic(c(12, 30), c(1,-6,3))
+
+
+### Generator Techniques
+
+### Swap with Pythagorean Triple
+
+# Base
+x = c(0, 4, -15/4); y = c(1, 3, 7/8);
+y^2 - x^3 + 14*x - 1
+# Swap: y^2 => z^2 - x^2
+x = c(0, 4); y = c(1, 5)
+y^2 - x^3 - x^2 + 14*x - 1
 
 
 #######################
