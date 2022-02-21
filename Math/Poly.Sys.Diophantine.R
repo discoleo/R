@@ -6,7 +6,7 @@
 ### Polynomial Systems:
 ### Diophantine Equations
 ###
-### draft v.0.1d-sol
+### draft v.0.1e
 
 
 ####################
@@ -98,8 +98,20 @@ x = p; y = p*p0;
 y^2 - x^3 - p*x
 
 
-### Case 3:
-### Particular p
+### Case 3: Squares
+p = 11
+x0 = 6; y0 = sqrt(x^3 - p*x);
+x = x0; y = y0;
+y^2 - x^3 + p*x
+# Squaring =>
+x = x0^2; y = y0^2;
+print(c(x, y))
+y^2 - x^3 + 2*p*x^2 - p^2*x
+
+
+### Particular Examples:
+
+### Ex 1:
 ### x^3 - 7*x
 x = c(4, -7/4); y = c(6, -21/8);
 y^2 - x^3 + 7*x
@@ -111,15 +123,9 @@ x = c(-4, -23/4); y = c(-6, -69/8);
 y^2 + 12*y - x^3 - 12*x^2 - 41*x
 
 
-### Case 4: Squares
-p = 11
-x0 = 6; y0 = sqrt(x^3 - p*x);
-x = x0; y = y0;
-y^2 - x^3 + p*x
-# Squaring =>
-x = x0^2; y = y0^2;
-print(c(x, y))
-y^2 - x^3 + 2*p*x^2 - p^2*x
+### Ex 2:
+x = 12; y = 30;
+y^2 - x^3 + 6*x^2 - 3*x
 
 
 #######################
