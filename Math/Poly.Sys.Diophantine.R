@@ -6,7 +6,7 @@
 ### Polynomial Systems:
 ### Diophantine Equations
 ###
-### draft v.0.1i
+### draft v.0.1j
 
 
 ####################
@@ -24,16 +24,21 @@ source("Polynomials.Helper.R")
 ### Elliptic Curves: Roots
 roots.elliptic = function(xy, b, scale=1) {
 	# b = c(b3, b2, b1, b0);
+	if(length(b) == 3) b = c(b, 0);
 	if(length(xy) > 2) {
 		slope = (xy[4] - xy[3]) / (xy[2] - xy[1]);
 		y0 = xy[3] - slope*xy[1];
-		# TODO
-		stop("Only through Origin!");
-	} else
+		isNotOrigin = TRUE;
+	} else {
 		slope = xy[2] / xy[1];
+		isNotOrigin = TRUE;
+	}
 	bc = b; bc[2] = bc[2] - slope^2;
+	if(isNotOrigin) {
+		bc[3] = bc[3] - 2*slope*y0;
+		bc[4] = bc[4] - y0^2;
+	}
 	r = roots(bc);
-	if(length(b) == 3) b = c(b, 0);
 	y = sapply(r, function(r) {
 		sqrt(sum(b * r^seq(3, 0)));
 	})
@@ -194,32 +199,33 @@ y^2 - x^3 + 3*157*x - 14*275
 ### Ex 2:
 # Note: xb & yb are the same;
 xb = 3; yb = 7;
-x = c(xb, 0); y = c(yb, 4);
+x = c(xb, 0, -2); y = c(yb, 4, 2);
 y^2 - x*(x^2 + 2) - 16
 #
-x = c(xb, -1); y = c(yb, 1);
+x = c(xb, -1, 1/4); y = c(yb, 1, 23/8);
 y^2 - x*(x^2 + 5) - 7
 # Prod =>
 (y^2 - 16)*(y^2 - 7) - x^2*(x^2 + 2)*(x^2 + 5)
-x = xb^2; y = yb^2;
+x = c(xb^2, 0); y = c(yb^2, 16);
 (y - 16)*(y - 7) - x*(x + 2)*(x + 5)
 y^2 - 23*y - x*(x^2 + 7*x + 10) + 7*16
 y^2 - 23*y - x^3 - 7*x^2 - 10*x + 112
 ### Variants:
 x0 = x; y0 = y;
 # V1: Shifts
-x = x0; y = y0 - 23/2; x = c(x, 0); y = c(y, 9/2);
+x = x0; y = y0 - 23/2;
 (y + 23/2)^2 - 23*(y + 23/2) - x^3 - 7*x^2 - 10*x + 112
 y^2 - x^3 - 7*x^2 - 10*x - 81/4
 # V2: Self-Shift
-x = c(x0, 0) - x0; y = c(y0, 16) - y0;
-(y+y0)^2 - 23*(y+y0) - (x+x0)^3 - 7*(x+x0)^2 - 10*(x+x0) + 112
+x0s = x0[1]; y0s = y0[1];
+x = x0 - x0s; y = y0 - y0s;
+(y+y0s)^2 - 23*(y+y0s) - (x+x0s)^3 - 7*(x+x0s)^2 - 10*(x+x0s) + 112
 y^2 + 2*49*y - 23*y - x^3 - 27*x^2 - 3*81*x - 7*x^2 - 7*18*x - 10*x
 y^2 + 75*y - x^3 - 34*x^2 - 379*x
 
 
-# TODO:
 roots.elliptic(c(0, 3, 4, 7), c(1, 0, 2, 16))
+roots.elliptic(c(-1, 3, 1, 7), c(1, 0, 5, 7))
 
 
 #######################
