@@ -6,7 +6,7 @@
 ### Polynomial Systems:
 ### Diophantine Equations
 ###
-### draft v.0.1h
+### draft v.0.1i
 
 
 ####################
@@ -169,7 +169,8 @@ y^2 - x^3 - x^2 + 14*x - 1
 
 ### Multiplicative Generator
 
-# Base
+### Base
+# Note: x[1:2] are the same;
 x1 = c(0, 3, 1); y1 = c(0, 6, 2);
 x = x1; y = y1;
 y^2 - x*(x^2 + 3)
@@ -182,6 +183,43 @@ y^2 - x^2*(x^2 + 3)*(x^2 + 39)
 x = x^2; x = c(x, 13); y = c(y, 104);
 y^2 - x*(x + 3)*(x + 39)
 y^2 - x*(x^2 + 42*x + 117)
+### Variants:
+x0 = x; y0 = y;
+### V1: Shift
+x = x0 + 14; y = y0;
+y^2 - x^3 + 3*14^2*x - 117*x + 14*117 - 2*14^3
+y^2 - x^3 + 3*157*x - 14*275
+
+
+### Ex 2:
+# Note: xb & yb are the same;
+xb = 3; yb = 7;
+x = c(xb, 0); y = c(yb, 4);
+y^2 - x*(x^2 + 2) - 16
+#
+x = c(xb, -1); y = c(yb, 1);
+y^2 - x*(x^2 + 5) - 7
+# Prod =>
+(y^2 - 16)*(y^2 - 7) - x^2*(x^2 + 2)*(x^2 + 5)
+x = xb^2; y = yb^2;
+(y - 16)*(y - 7) - x*(x + 2)*(x + 5)
+y^2 - 23*y - x*(x^2 + 7*x + 10) + 7*16
+y^2 - 23*y - x^3 - 7*x^2 - 10*x + 112
+### Variants:
+x0 = x; y0 = y;
+# V1: Shifts
+x = x0; y = y0 - 23/2; x = c(x, 0); y = c(y, 9/2);
+(y + 23/2)^2 - 23*(y + 23/2) - x^3 - 7*x^2 - 10*x + 112
+y^2 - x^3 - 7*x^2 - 10*x - 81/4
+# V2: Self-Shift
+x = c(x0, 0) - x0; y = c(y0, 16) - y0;
+(y+y0)^2 - 23*(y+y0) - (x+x0)^3 - 7*(x+x0)^2 - 10*(x+x0) + 112
+y^2 + 2*49*y - 23*y - x^3 - 27*x^2 - 3*81*x - 7*x^2 - 7*18*x - 10*x
+y^2 + 75*y - x^3 - 34*x^2 - 379*x
+
+
+# TODO:
+roots.elliptic(c(0, 3, 4, 7), c(1, 0, 2, 16))
 
 
 #######################
