@@ -6,7 +6,7 @@
 ### Polynomial Systems:
 ### Diophantine Equations
 ###
-### draft v.0.1c
+### draft v.0.1d
 
 
 ####################
@@ -103,6 +103,11 @@ y^2 - x^3 - p*x
 ### x^3 - 7*x
 x = 4; y = 6;
 y^2 - x^3 + 7*x
+# Self-Shift =>
+x = 0; y = 0; # trivial solution
+# TODO: does it have any other solution?
+(y + 6)^2 - (x + 4)^3 + 7*(x + 4)
+y^2 + 12*y - x^3 - 12*x^2 - 41*x
 
 
 ### Case 4: Squares
