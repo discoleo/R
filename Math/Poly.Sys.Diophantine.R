@@ -6,7 +6,7 @@
 ### Polynomial Systems:
 ### Diophantine Equations
 ###
-### draft v.0.1b-Sol1
+### draft v.0.1c
 
 
 ####################
@@ -79,8 +79,49 @@ x = sqrt((k + 6)*p) / 3;
 y = sqrt((k-3)*p*sqrt((k+6)*p)/3) / 3
 y^2 - x^3 + p*x
 
+#################
+### Special Cases
 
-####################
+### Case 1:
+### x^3 - (p0^2 + 1)*x
+p0 = 6
+p = p0^2 + 1;
+x = p; y = p*p0;
+y^2 - x^3 + p*x
+
+
+### Case 2:
+### x^3 + (p0^2 - 1)*x
+p0 = 6
+p = p0^2 - 1;
+x = p; y = p*p0;
+y^2 - x^3 - p*x
+
+
+### Case 3:
+### Particular p
+### x^3 - 7*x
+x = 4; y = 6;
+y^2 - x^3 + 7*x
+
+
+### Case 4: Squares
+p = 11
+x0 = 6; y0 = sqrt(x^3 - p*x);
+x = x0; y = y0;
+y^2 - x^3 + p*x
+# Squaring =>
+x = x0^2; y = y0^2;
+print(c(x, y))
+y^2 - x^3 + 2*p*x^2 - p^2*x
+
+
+#######################
+#######################
+
+#######################
+### Diophantine Eqs ###
+#######################
 
 ### x^3 + y^3 + z^3 = 3*x*y*z
 
