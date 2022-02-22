@@ -6,7 +6,7 @@
 ### Polynomial Systems:
 ### Diophantine Equations
 ###
-### draft v.0.1k
+### draft v.0.1l
 
 
 ####################
@@ -22,7 +22,7 @@ source("Polynomials.Helper.R")
 
 
 ### Elliptic Curves: Roots
-roots.elliptic = function(xy, b, scale=1) {
+roots.elliptic = function(xy, b, yb=0, scale=1) {
 	# b = c(b3, b2, b1, b0);
 	if(length(b) == 3) b = c(b, 0);
 	if(length(xy) > 2) {
@@ -31,17 +31,25 @@ roots.elliptic = function(xy, b, scale=1) {
 		isNotOrigin = TRUE;
 	} else {
 		slope = xy[2] / xy[1];
-		isNotOrigin = TRUE;
+		isNotOrigin = FALSE;
 	}
 	bc = b; bc[2] = bc[2] - slope^2;
+	if(yb != 0) bc[3] = bc[3] - yb*slope;
 	if(isNotOrigin) {
 		bc[3] = bc[3] - 2*slope*y0;
 		bc[4] = bc[4] - y0^2;
+		if(yb != 0) bc[4] = bc[4] - yb*y0;
 	}
 	r = roots(bc);
 	y = sapply(r, function(r) {
-		sqrt(sum(b * r^seq(3, 0)));
+		xp = sum(b * r^seq(3, 0));
+		if(yb == 0) { sqrt(xp); }
+		else roots(c(1, yb, - xp));
 	})
+	if(yb != 0) {
+		y = as.vector(y);
+		r = rep(r, each=2);
+	}
 	sol = cbind(x=r, y=y);
 	sol * scale;
 }
@@ -243,6 +251,18 @@ y^2 + (2*a^3 + 3*a^2 - 2*b^2)*y - x^3 - 3*a*x^2 - 2*a^2*x + a^6 + 3*a^5 - 2*a^3*
 # the Example:
 y^2 + 317*y - x^3 - 15*x^2 - 50*x + 24966
 # TODO: shifts;
+
+
+### from SQRT
+a  = 1
+b2 = 2
+x = a^2; y = b2;
+y^2 + (2*a^3 + 3*a^2 - 2*b2)*y - x^3 - 3*a*x^2 - 2*a^2*x + a^6 + 3*a^5 - 2*a^3*b2 + 2*a^4 + b2^2 - 3*a^2*b2
+x = c(0, a^2, -1, -2); y = c(0, b2, -1, -1)
+y^2 + y - x^3 - 3*x^2 - 2*x
+
+
+roots.elliptic(c(1,2), c(1,3,2), yb=1)
 
 
 #######################
