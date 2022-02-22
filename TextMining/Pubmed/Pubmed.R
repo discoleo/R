@@ -6,7 +6,7 @@
 ### Pubmed
 ### Tools: Search Engine
 ###
-### draft v.0.1d
+### draft v.0.1e
 
 
 ### Pubmed Tools
@@ -40,10 +40,12 @@ GetEMail = function() {
 }
 
 ### App data:
-sAppName = "etoolR";
-sUser  = "test";
-sEMail = GetEMail();
-sTool  = paste0(sAppName, "/", sUser);
+opt.Pubmed = list(
+	AppName = "etoolR",
+	User  = "test",
+	EMail = GetEMail()
+);
+opt.Pubmed$Tool = paste0(opt.Pubmed$AppName, "/", opt.Pubmed$User);
 
 ########################
 
@@ -51,8 +53,8 @@ dataBaseName = "pubmed";
 baseUrl = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/";
 
 GetCredentials = function() {
-	s = paste0("email=", curl_escape(sEMail),
-		"&tool=", curl_escape(sTool));
+	s = paste0("email=", curl_escape(opt.Pubmed$EMail),
+		"&tool=", curl_escape(opt.Pubmed$Tool));
 	return(s);
 }
 
@@ -63,12 +65,18 @@ GetSearchOptions = function(options=NULL) {
 		return(paste0("&", options));
 }
 
+##############
+### Search ###
+##############
+
 ### Pubmed Search
-search.entrez = function(query, options=NULL) {
+search.entrez = function(query, options=NULL, debug=TRUE) {
 	if(missing(query)) {
 		stop("Missing query!");
 	}
+	query = encodeQuery(query);
 	query = paste0("term=", query);
+	if(debug) print(query);
 	url = paste0(baseUrl, "esearch.fcgi?db=", dataBaseName,
 		"&usehistory=y", "&", query,
 		GetSearchOptions(options), "&", GetCredentials());
@@ -79,6 +87,27 @@ search.entrez = function(query, options=NULL) {
 	close(con)
 	return(lns)
 }
+encodeQuery = function(query) {
+	fields = names(query);
+	query  = sapply(query, function(s) {
+		s = strsplit(s, "\\s++", perl=TRUE);
+		s = sapply(s, curl_escape);
+		s = paste(s, collapse="+");
+		return(s);
+	})
+	if(is.null(fields)) {
+		fld_SEARCH = fieldsPubmed("SEARCH")$Field;
+		query = sapply(query, function(s) {
+			paste0(s, fld_SEARCH);
+		})
+	}
+	if(length(query) > 1) {
+		query = paste0(query, collapse="+AND+");
+	}
+	return(query);
+}
+
+### Fetch Results
 search.entrez.fetch = function(key, nStart=0, type="Abstract", options=NULL) {
 	if(missing(key)) stop("Key must be provided!");
 	isKey = inherits(key, "Entrez");
@@ -107,6 +136,27 @@ search.entrez.fetch = function(key, nStart=0, type="Abstract", options=NULL) {
 	doc = paste(doc, collapse="\n")
 	close(con)
 	return(doc)
+}
+
+################
+### Advanced ###
+################
+
+fieldsPubmed = function(opt = NULL) {
+	fl = list(
+		SEARCH 		= list(Name="Abstract/Title", Field="[TIAB]"),
+		TITLE 		= list(Name="Title", Field="[TI]"),
+		ABSTRACT 	= list(Name="Abstract", Field="[AB]"),
+		AUTHOR 		= list(Name="Author", Field="[author]"),
+		JOURNAL 	= list(Name="Journal", Field="[jour]"),
+		DATE 		= list(Name="Date", Field="[pdat]"),
+		COI 		= list(Name="Conflict", Field="[COI]") # Conflict of Interest
+	);
+	if(is.null(opt)) return(fl);
+	#
+	idOpt = pmatch(opt, names(fl));
+	if(idOpt == -1) stop("Invalid Field!");
+	return(fl[[idOpt]]);
 }
 
 
@@ -200,5 +250,23 @@ extractTitles.slowBeyondAnyHope = function(x) {
 	});
 	r = do.call(rbind, r);
 	return(r);
+}
+
+# Extract Authors
+extractAuthors = function(x, max=3, collapse=";") {
+	isXML = inherits(x, "xml_document");
+	xml = if(isXML) x else read_xml(x);
+	#
+	base = "/PubmedArticleSet/PubmedArticle";
+	pred = "count(./MedlineCitation/Article/AuthorList/Author)";
+	PMID = xml_find_all(xml, paste0(base, "[", pred, "> 0]/MedlineCitation/PMID"));
+	# PMID = xml_find_all(xml, paste0(base, "/MedlineCitation/PMID"));
+	PMID  = xml_text(PMID);
+	nodes = xml_find_all(xml, paste0(base, "[", pred, "> 0]"));
+	nA    = sapply(nodes, function(nd) {
+		xml_find_num(nd, "count(/MedlineCitation/Article/AuthorList/Author)")
+	});
+	r = data.frame(PMID=PMID, nA=nA);
+	return(r)
 }
 
