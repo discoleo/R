@@ -6,7 +6,7 @@
 ### Pubmed
 ### XML Tools
 ###
-### draft v.0.1a
+### draft v.0.1b
 
 
 ### XML Tools
@@ -85,25 +85,31 @@ extractTitles = function(x) {
 	return(r);
 }
 
-# DISASTER:
-extractTitles.slowBeyondAnyHope = function(x) {
+extractTitles.hack = function(x, max=0, debug=TRUE) {
+	# DISASTER:
+	# - lapply on actual nodes: slow Beyond Any Hope !!!
 	# Note: libxml2 does NOT implement XPATH 2 !!!
 	# [while XPATH 1.0 has massive shortcomings!]
 	isXML = inherits(x, "xml_document");
 	xml = if(isXML) x else read_xml(x);
 	nodes = xml_find_all(xml, "/PubmedArticleSet/PubmedArticle");
-	# only first 100:
-	r = lapply(nodes[1:100], function(r) {
-		PMID   = xml_find_first(r, "./MedlineCitation/PMID");
+	len = length(nodes);
+	# only first max-nodes:
+	if(max > 0) len = min(max, len);
+	r = data.frame(PMID = numeric(len), Year = numeric(len), Title = character(len));
+	for(id in seq(len)) {
+		nd = read_xml(as.character(nodes[[id]]));
+		PMID   = xml_find_first(nd, "./MedlineCitation/PMID");
 		PMID   = xml_text(PMID)[1];
-		sTitle = xml_find_all(r, "./MedlineCitation/Article/ArticleTitle");
+		sTitle = xml_find_all(nd, "./MedlineCitation/Article/ArticleTitle");
 		sTitle = paste(xml_text(sTitle), collapse="\n");
-		year   = xml_find_first(r, "./MedlineCitation/Article/ArticleDate/Year");
+		year   = xml_find_first(nd, "./MedlineCitation/Article/ArticleDate/Year");
 		year   = as.numeric(xml_text(year)[1]);
 		#
-		data.frame(PMID=PMID, Title=sTitle, Year=year);
-	});
-	r = do.call(rbind, r);
+		r[id, ] = data.frame(PMID=PMID, Title=sTitle, Year=year);
+		if(debug && id %% 100 == 1) print(id);
+	}
+	# r = do.call(rbind, r);
 	return(r);
 }
 
