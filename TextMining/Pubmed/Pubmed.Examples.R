@@ -35,6 +35,10 @@ doc = search.entrez("serotonin syndrome")
 r = parse.entrez(doc)
 print(r)
 
+nStart = 0; nMax = 30;
+doc2 = search.entrez.fetch(r, nStart, max=nMax)
+writeLines(doc2, con="_Pubmed_Test.xml")
+
 
 ### Test 3:
 doc = search.entrez(c("serotonin syndrome", "MAO"))

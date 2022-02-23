@@ -6,7 +6,7 @@
 ### Pubmed
 ### Tools: Search Engine
 ###
-### draft v.0.1e
+### draft v.0.1f
 
 
 ### Pubmed Tools
@@ -23,6 +23,8 @@ library(xml2)
 #   the Entrez documentation at:
 #   https://www.ncbi.nlm.nih.gov/books/NBK25500/
 #   and to provide help with the development of this Search Tool;
+# - other packages: rentrez
+#   https://cran.r-project.org/web/packages/rentrez/vignettes/rentrez_tutorial.html
 
 
 ########################
@@ -108,7 +110,8 @@ encodeQuery = function(query) {
 }
 
 ### Fetch Results
-search.entrez.fetch = function(key, nStart=0, type="Abstract", options=NULL) {
+search.entrez.fetch = function(key, nStart=0, type="Abstract", max=0,
+		options=NULL, debug=TRUE) {
 	if(missing(key)) stop("Key must be provided!");
 	isKey = inherits(key, "Entrez");
 	if(isKey) {
@@ -126,9 +129,13 @@ search.entrez.fetch = function(key, nStart=0, type="Abstract", options=NULL) {
 	url = paste0(baseUrl, "efetch.fcgi?db=", dataBaseName,
 		"&usehistory=y&", query, "&rettype=", retType, "&retmode=xml",
 		GetSearchOptions(options), "&", GetCredentials());
-	print(url)
+	if(debug) print(url);
+	### Limits
 	if(nStart > 0) {
 		url = paste0(url, "&retstart=", nStart);
+	}
+	if(max > 0) {
+		url = paste0(url, "&retmax=", max);
 	}
 	#
 	con = curl(url)
@@ -145,12 +152,13 @@ search.entrez.fetch = function(key, nStart=0, type="Abstract", options=NULL) {
 fieldsPubmed = function(opt = NULL) {
 	fl = list(
 		SEARCH 		= list(Name="Abstract/Title", Field="[TIAB]"),
-		TITLE 		= list(Name="Title", Field="[TI]"),
+		TITLE 		= list(Name="Title", Field="[TITL]"),
 		ABSTRACT 	= list(Name="Abstract", Field="[AB]"),
-		AUTHOR 		= list(Name="Author", Field="[author]"),
+		AUTHOR 		= list(Name="Author", Field="[AUTH]"),
 		JOURNAL 	= list(Name="Journal", Field="[jour]"),
-		DATE 		= list(Name="Date", Field="[pdat]"),
-		COI 		= list(Name="Conflict", Field="[COI]") # Conflict of Interest
+		DATE 		= list(Name="Date", Field="[PDAT]"),
+		TYPE		= list(Name="Article Type", Field="[PTYP]"),
+		COI 		= list(Name="Conflict", Field="[COI]") # Conflict of Interest: COIS ?
 	);
 	if(is.null(opt)) return(fl);
 	#
