@@ -343,6 +343,7 @@ cat.mlines = function(m, sep=" ", sep.h="-") {
 	invisible()
 }
 
+### Packages
 scroll.pkg = function(pkg, start=1, len=15, w = c(12, 80, 16), iter=2,
 		sep=" ", sep.h="-", print=TRUE) {
 	if(len < 1) return();
@@ -391,6 +392,25 @@ find.pkg = function(s, pkg=NULL, print=TRUE, perl=TRUE) {
 	return(pkg);
 }
 
+### Text
+scroll.txt = function(x, start=1, len=15, w = c(12, 6, 80, 16), iter=2,
+		sep=" ", sep.h="-", print=TRUE) {
+	if(len < 1) return();
+	len  = len - 1;
+	# Column Lengths
+	len.col = ncol(x); len.other = len.col - 3;
+	w = if(len.other == 0) w[1:3]
+		else if(length(w) == len.col) w
+		else w[c(1,2, rep(w[3], len.other))]; # TODO: if(w[4])
+	# Indent
+	indent = c(list(c(" ", "   "), c("   ", "")), rep(list(""), len.other));
+	# Entries
+	if(start > nrow(x)) stop("No more entries!");
+	nend = min(nrow(x), start + len);
+	if(print) cat(c("Showing packages ", start, " to ", nend, "."), sep=c(rep("", 4), "\n"))
+	cat.mlines(format.lines(x[seq(start, nend), ], w=w, indent=indent, iter=iter),
+		sep=sep, sep.h=sep.h);
+}
 
 ###################
 ###################
@@ -400,7 +420,7 @@ find.pkg = function(s, pkg=NULL, print=TRUE, perl=TRUE) {
 ###################
 
 # only simple expressions are possible:
-# sep.h = horizontal separator;
+# sep.h = row / horizontal separator;
 searchCran = function(s, from=1, len=60, len.print=20, extend="*",
 		sep=" ", sep.h="-") {
 	if( ! is.null(extend)) s = paste0(s, extend);
