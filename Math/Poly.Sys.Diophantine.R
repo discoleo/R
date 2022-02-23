@@ -6,7 +6,7 @@
 ### Polynomial Systems:
 ### Diophantine Equations
 ###
-### draft v.0.1l
+### draft v.0.1m
 
 
 ####################
@@ -258,11 +258,98 @@ a  = 1
 b2 = 2
 x = a^2; y = b2;
 y^2 + (2*a^3 + 3*a^2 - 2*b2)*y - x^3 - 3*a*x^2 - 2*a^2*x + a^6 + 3*a^5 - 2*a^3*b2 + 2*a^4 + b2^2 - 3*a^2*b2
+y^2 + (5 - 2*b2)*y - x^3 - 3*x^2 - 2*x + b2^2 - 5*b2 + 6
 x = c(0, a^2, -1, -2); y = c(0, b2, -1, -1)
 y^2 + y - x^3 - 3*x^2 - 2*x
 
 
 roots.elliptic(c(1,2), c(1,3,2), yb=1)
+
+
+### Generator: Inversion
+
+### Cyclic:
+p = 10
+x0 = c(2, 5); y0 = c(6, 15);
+x = x0; y = y0
+y^2 - x*(x^2 + 2*x + p)
+# Inversion =>
+x = 1/x; y = y*x^2;
+y^2/x^4 - (1 + 2*x + p*x^2)/x^3
+y^2 - (1 + 2*x + p*x^2)*x
+# same Eqs, but different "roots":
+# (2, 6) => (5, 15) => (2, 6)
+y = y*p; x = x*p;
+y^2 - x*(p + 2*x + x^2)
+rbind(cbind(x0, y0), cbind(x, y))
+
+roots.elliptic(c(2,6), c(1,2,p))
+
+
+### Test: Symmetric P[2]
+b1 = 2
+x = c(4); y = c(10);
+y^2 - x*(x^2 + b1*x + 1)
+# Note:
+# - either: x = 1 => x = 1/x;
+# - or: b1 = c(-2, 2);
+# => trivial cases!
+
+### Real Inversion:
+
+### Ex 1:
+# - only useful if (reduced(x) == square);
+# - some shared/derived roots: other properties?
+x = c(0, -1, 2, 1/4, 33/4, 10, 272);
+y = c(2, 1, 4, 17/8, 193/8, 32, 4486);
+y^2 - x^3 - 2*x - 4
+# =>
+x = x/2; y = y/2;
+4*y^2 - 8*x^3 - 4*x - 4
+y^2 - 2*x^3 - x - 1
+# Inversion =>
+isZero = (x == 0)
+x = x[ ! isZero]; y = y[ ! isZero]
+x = 1/x;
+y^2*x^3 - 2 - x^2 - x^3;
+# if (2*x == square):
+x = c(2) / 2; y = c(4) / 2;
+x = 1/x; y = y * sqrt(x^3);
+y^2 - 2 - x^2 - x^3;
+print(c(x, y))
+
+
+# check if any additional points?
+roots.elliptic(c(-1,0,1,2), c(1,0,2,4))
+roots.elliptic(c(1/4,0, -17/8,2), c(1,0,2,4))
+
+
+### Ex 2:
+x = c(1, 2, 8);
+y = c(1, 2, 22);
+y^2 - x^3 + 4*x - 4
+# =>
+x = x/2; y = y/2;
+4*y^2 - 8*x^3 + 8*x - 4
+y^2 - 2*x^3 + 2*x - 1
+# Inversion =>
+x = 1/x;
+y^2*x^3 - 2 + 2*x^2 - x^3;
+# if (2*x == square):
+x = c(2, 8) / 2; y = c(2, 22) / 2;
+x = 1/x; y = y * sqrt(x^3);
+y^2 - 2 + 2*x^2 - x^3;
+print(cbind(x, y)) # c(1/4, 11/8)
+
+# =>
+x = c(1/4, 1, 97/9); y = c(11/8, 1, 863/27);
+y^2 - x^3 + 2*x^2 - 2;
+#
+x = x[1:2]; y = y[1:2]; y = y / sqrt(x^3);
+x = 2/x; y = 2*y;
+y^2 - x^3 + 4*x - 4
+
+roots.elliptic(c(1/4,1, 11/8, 1), c(1,-2,0,2))
 
 
 #######################
