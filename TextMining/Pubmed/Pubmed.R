@@ -6,7 +6,7 @@
 ### Pubmed
 ### Tools: Search Engine
 ###
-### draft v.0.2a
+### draft v.0.2b
 
 
 ### Pubmed Tools
@@ -64,13 +64,6 @@ GetCredentials = function() {
 	return(s);
 }
 
-GetSearchOptions = function(options=NULL) {
-		if(is.null(options) || nchar(options) == 0) {
-			return("");
-		}
-		return(paste0("&", options));
-}
-
 ##############
 ### Search ###
 ##############
@@ -114,8 +107,8 @@ encodeQuery = function(query) {
 }
 
 ### Fetch Results
-search.entrez.fetch = function(key, nStart=0, type="Abstract", max=0,
-		options=NULL, debug=TRUE) {
+search.entrez.fetch = function(key, nStart=0, max=0, type="Abstract",
+		file=NULL, options=NULL, debug=TRUE) {
 	if(missing(key)) stop("Key must be provided!");
 	isKey = inherits(key, "Entrez");
 	if(isKey) {
@@ -145,6 +138,9 @@ search.entrez.fetch = function(key, nStart=0, type="Abstract", max=0,
 	con = curl(url)
 	doc = readLines(con)
 	doc = paste(doc, collapse="\n")
+	if( ! is.null(file)) {
+		writeLines(doc, con=file);
+	}
 	close(con)
 	return(doc)
 }
@@ -169,5 +165,12 @@ fieldsPubmed = function(opt = NULL) {
 	idOpt = pmatch(opt, names(fl));
 	if(idOpt == -1) stop("Invalid Field!");
 	return(fl[[idOpt]]);
+}
+
+GetSearchOptions = function(options=NULL) {
+		if(is.null(options) || nchar(options) == 0) {
+			return("");
+		}
+		return(paste0("&", options));
 }
 
