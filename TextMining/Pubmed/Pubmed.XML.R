@@ -6,7 +6,7 @@
 ### Pubmed
 ### XML Tools
 ###
-### draft v.0.1b
+### draft v.0.1c
 
 
 ### XML Tools
@@ -106,12 +106,14 @@ extractTitles.hack = function(x, max=0, debug=TRUE) {
 		year   = xml_find_first(nd, "./MedlineCitation/Article/ArticleDate/Year");
 		year   = as.numeric(xml_text(year)[1]);
 		#
-		r[id, ] = data.frame(PMID=PMID, Title=sTitle, Year=year);
+		r[id, ] = data.frame(PMID=PMID, Year=year, Title=sTitle);
 		if(debug && id %% 100 == 1) print(id);
 	}
 	# r = do.call(rbind, r);
 	return(r);
 }
+
+### Authors
 
 # Extract Authors
 extractAuthors = function(x, max=3, collapse=";") {
@@ -120,14 +122,38 @@ extractAuthors = function(x, max=3, collapse=";") {
 	#
 	base = "/PubmedArticleSet/PubmedArticle";
 	pred = "count(./MedlineCitation/Article/AuthorList/Author)";
-	PMID = xml_find_all(xml, paste0(base, "[", pred, "> 0]/MedlineCitation/PMID"));
+	# PMID = xml_find_all(xml, paste0(base, "[", pred, "> 0]/MedlineCitation/PMID"));
 	# PMID = xml_find_all(xml, paste0(base, "/MedlineCitation/PMID"));
-	PMID  = xml_text(PMID);
-	nodes = xml_find_all(xml, paste0(base, "[", pred, "> 0]"));
-	nA    = sapply(nodes, function(nd) {
-		xml_find_num(nd, "count(/MedlineCitation/Article/AuthorList/Author)")
+	# PMID  = xml_text(PMID);
+	# nodes = xml_find_all(xml, paste0(base, "[", pred, "> 0]"));
+	nodes = xml_find_all(xml, base);
+	len = length(nodes);
+	nA  = lapply(seq(nodes), function(id) {
+		nd = read_xml(as.character(nodes[[id]]));
+		PMID  = xml_find_first(nd, "./MedlineCitation/PMID");
+		PMID  = xml_text(PMID);
+		count = xml_find_num(nd, "count(./MedlineCitation/Article/AuthorList/Author)");
+		data.frame(PMID = PMID, Count = count);
 	});
-	r = data.frame(PMID=PMID, nA=nA);
+	r = do.call(rbind, nA);
+	return(r)
+}
+# Extract Authors
+countAuthors = function(x) {
+	isXML = inherits(x, "xml_document");
+	xml = if(isXML) x else read_xml(x);
+	#
+	base = "/PubmedArticleSet/PubmedArticle";
+	nodes = xml_find_all(xml, base);
+	len = length(nodes);
+	nA  = lapply(seq(nodes), function(id) {
+		nd = read_xml(as.character(nodes[[id]]));
+		PMID  = xml_find_first(nd, "./MedlineCitation/PMID");
+		PMID  = xml_text(PMID);
+		count = xml_find_num(nd, "count(./MedlineCitation/Article/AuthorList/Author)");
+		data.frame(PMID = PMID, Count = count);
+	});
+	r = do.call(rbind, nA);
 	return(r)
 }
 
