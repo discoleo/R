@@ -6,7 +6,7 @@
 ### Pubmed
 ### XML Tools
 ###
-### draft v.0.1c
+### draft v.0.1d
 
 
 ### XML Tools
@@ -116,16 +116,21 @@ extractTitles.hack = function(x, max=0, debug=TRUE) {
 ### Authors
 
 # Extract Authors
-extractAuthors = function(x, max=3, collapse=";") {
+extractAuthors = function(x, max=3, collapse=";", filter=NULL) {
 	isXML = inherits(x, "xml_document");
 	xml = if(isXML) x else read_xml(x);
 	#
 	base = "/PubmedArticleSet/PubmedArticle";
-	pred = "count(./MedlineCitation/Article/AuthorList/Author)";
-	# PMID = xml_find_all(xml, paste0(base, "[", pred, "> 0]/MedlineCitation/PMID"));
-	# PMID = xml_find_all(xml, paste0(base, "/MedlineCitation/PMID"));
-	# PMID  = xml_text(PMID);
-	# nodes = xml_find_all(xml, paste0(base, "[", pred, "> 0]"));
+	if( ! is.null(filter)) {
+		pred = "count(./MedlineCitation/Article/AuthorList/Author)";
+		if(is.logical(filter)) {
+			base = if(filter) paste0(base, "[", pred, "> 0]") else base;
+		} else if(is.numeric(filter)) {
+			base = paste0(base, "[", pred, ">= ", filter, "]");
+		} else {
+			stop("Filter Option NOT supported!");
+		}
+	}
 	nodes = xml_find_all(xml, base);
 	len = length(nodes);
 	nA  = lapply(seq(nodes), function(id) {
@@ -133,7 +138,11 @@ extractAuthors = function(x, max=3, collapse=";") {
 		PMID  = xml_find_first(nd, "./MedlineCitation/PMID");
 		PMID  = xml_text(PMID);
 		count = xml_find_num(nd, "count(./MedlineCitation/Article/AuthorList/Author)");
-		data.frame(PMID = PMID, Count = count);
+		ndAuthors = xml_find_all(nd, "./MedlineCitation/Article/AuthorList/Author");
+		if(max > 0) ndAuthors = ndAuthors[min(max, length(ndAuthors))];
+		# TODO: separator;
+		sAuth = paste0(xml_text(ndAuthors), collapse = collapse);
+		data.frame(PMID = PMID, Count = count, Authors = sAuth);
 	});
 	r = do.call(rbind, nA);
 	return(r)

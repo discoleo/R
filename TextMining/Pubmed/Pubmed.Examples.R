@@ -41,7 +41,7 @@ doc = search.entrez("serotonin syndrome")
 r = parse.entrez(doc)
 print(r)
 
-# Retrieve Abtracts
+# Retrieve Abstracts
 nStart = 0; nMax = 30;
 doc2 = search.entrez.fetch(r, nStart, max=nMax)
 writeLines(doc2, con="_Pubmed_Test.xml")
@@ -49,6 +49,11 @@ writeLines(doc2, con="_Pubmed_Test.xml")
 # Titles
 titles = extractTitles(doc2)
 scroll.txt(titles)
+scroll.txt(titles, start=15, len=20)
+
+# Authors
+countAuthors(doc2)
+scroll.txt(extractAuthors(doc2, filter=FALSE))
 
 
 ###########
