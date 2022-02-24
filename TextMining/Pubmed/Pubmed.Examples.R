@@ -5,7 +5,7 @@
 ###
 ### Pubmed: Examples
 ###
-### draft v.0.1c
+### draft v.0.1d
 
 
 ##################
@@ -57,6 +57,12 @@ scroll.txt(extractAuthors(doc2, filter=FALSE))
 
 # Journals
 scroll.txt(extractJournal(doc2, type="Full"))
+
+# Abstracts
+x = extractAbstract(doc2)
+table(nchar(x$Abstract) == 0)
+# TODO: Abstract Sections are not yet merged;
+scroll.txt(x)
 
 
 ###########

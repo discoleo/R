@@ -6,7 +6,7 @@
 ### Pubmed
 ### XML Tools
 ###
-### draft v.0.1e
+### draft v.0.1f
 
 
 ### XML Tools
@@ -113,6 +113,41 @@ extractTitles.hack = function(x, max=0, debug=TRUE) {
 	return(r);
 }
 
+### Abstract
+extractAbstract = function(x, sep = ": ") {
+	isXML = inherits(x, "xml_document");
+	xml = if(isXML) x else read_xml(x);
+	#
+	xpBase = "/PubmedArticleSet/PubmedArticle/MedlineCitation";
+	xpText = "./Article/Abstract/AbstractText";
+	xpAbst = "./Article/Abstract";
+	nodes = xml_find_all(xml, xpBase);
+	len = length(nodes);
+	nA  = lapply(seq(len), function(id) {
+		nd = read_xml(as.character(nodes[[id]]));
+		PMID  = xml_find_first(nd, "./PMID");
+		PMID  = xml_text(PMID);
+		ndTxt = xml_find_all(nd, xpText);
+		if(length(ndTxt) == 0) {
+			sTxt = "";
+			nd = xml_find_all(nd, xpAbst);
+			if(length(nd) > 0) sTxt = xml_text(nd);
+		} else {
+			sTxt = xml_text(ndTxt);
+			# Labels
+			lbl = sapply(ndTxt, xml_attr, attr="Label");
+			hasLbl = ! is.na(lbl);
+			if(sum(hasLbl) > 0) {
+				sTxt[hasLbl] = paste(lbl[hasLbl], sTxt[hasLbl], sep=sep);
+			}
+		}
+		data.frame(PMID = PMID, Abstract = sTxt);
+	});
+	r = do.call(rbind, nA);
+	return(r)
+}
+
+
 ### Authors
 
 # Extract Authors
@@ -171,7 +206,8 @@ countAuthors = function(x) {
 
 ### Journal
 extractJournal = function(x, type="Abbreviated") {
-	type = pmatch(type, c("Abbreviated", "Full"))
+	type = pmatch(type, c("Abbreviated", "Full"));
+	if(is.na(type)) stop("Invalid type!");
 	isXML = inherits(x, "xml_document");
 	xml = if(isXML) x else read_xml(x);
 	#
@@ -180,7 +216,7 @@ extractJournal = function(x, type="Abbreviated") {
 		else "./Article/Journal/Title";
 	nodes = xml_find_all(xml, xpBase);
 	len = length(nodes);
-	nA  = lapply(seq(nodes), function(id) {
+	nA  = lapply(seq(len), function(id) {
 		nd = read_xml(as.character(nodes[[id]]));
 		PMID  = xml_find_first(nd, "./PMID");
 		PMID  = xml_text(PMID);
