@@ -6,7 +6,7 @@
 ### Pubmed
 ### XML Tools
 ###
-### draft v.0.1d-fix
+### draft v.0.1e
 
 
 ### XML Tools
@@ -150,7 +150,7 @@ extractAuthors = function(x, max=3, collapse=";\n", filter=NULL) {
 	r = do.call(rbind, nA);
 	return(r)
 }
-# Extract Authors
+# Count Authors
 countAuthors = function(x) {
 	isXML = inherits(x, "xml_document");
 	xml = if(isXML) x else read_xml(x);
@@ -164,6 +164,28 @@ countAuthors = function(x) {
 		PMID  = xml_text(PMID);
 		count = xml_find_num(nd, "count(./MedlineCitation/Article/AuthorList/Author)");
 		data.frame(PMID = PMID, Count = count);
+	});
+	r = do.call(rbind, nA);
+	return(r)
+}
+
+### Journal
+extractJournal = function(x, type="Abbreviated") {
+	type = pmatch(type, c("Abbreviated", "Full"))
+	isXML = inherits(x, "xml_document");
+	xml = if(isXML) x else read_xml(x);
+	#
+	xpBase = "/PubmedArticleSet/PubmedArticle/MedlineCitation";
+	xpJrnl = if(type == 1) "./Article/Journal/ISOAbbreviation"
+		else "./Article/Journal/Title";
+	nodes = xml_find_all(xml, xpBase);
+	len = length(nodes);
+	nA  = lapply(seq(nodes), function(id) {
+		nd = read_xml(as.character(nodes[[id]]));
+		PMID  = xml_find_first(nd, "./PMID");
+		PMID  = xml_text(PMID);
+		sJrnl = xml_text(xml_find_first(nd, xpJrnl));
+		data.frame(PMID = PMID, Journal = sJrnl);
 	});
 	r = do.call(rbind, nA);
 	return(r)

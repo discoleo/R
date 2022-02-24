@@ -5,7 +5,7 @@
 ###
 ### Pubmed: Examples
 ###
-### draft v.0.1b
+### draft v.0.1c
 
 
 ##################
@@ -54,6 +54,9 @@ scroll.txt(titles, start=15, len=20)
 # Authors
 countAuthors(doc2)
 scroll.txt(extractAuthors(doc2, filter=FALSE))
+
+# Journals
+scroll.txt(extractJournal(doc2, type="Full"))
 
 
 ###########
