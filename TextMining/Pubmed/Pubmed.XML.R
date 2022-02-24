@@ -6,7 +6,7 @@
 ### Pubmed
 ### XML Tools
 ###
-### draft v.0.1d
+### draft v.0.1d-fix
 
 
 ### XML Tools
@@ -116,7 +116,7 @@ extractTitles.hack = function(x, max=0, debug=TRUE) {
 ### Authors
 
 # Extract Authors
-extractAuthors = function(x, max=3, collapse=";", filter=NULL) {
+extractAuthors = function(x, max=3, collapse=";\n", filter=NULL) {
 	isXML = inherits(x, "xml_document");
 	xml = if(isXML) x else read_xml(x);
 	#
@@ -139,9 +139,12 @@ extractAuthors = function(x, max=3, collapse=";", filter=NULL) {
 		PMID  = xml_text(PMID);
 		count = xml_find_num(nd, "count(./MedlineCitation/Article/AuthorList/Author)");
 		ndAuthors = xml_find_all(nd, "./MedlineCitation/Article/AuthorList/Author");
-		if(max > 0) ndAuthors = ndAuthors[min(max, length(ndAuthors))];
-		# TODO: separator;
-		sAuth = paste0(xml_text(ndAuthors), collapse = collapse);
+		if(max > 0) ndAuthors = ndAuthors[seq(min(max, length(ndAuthors)))];
+		# TODO: improve separator;
+		sAuth = sapply(ndAuthors, function(ndAuthors) {
+			paste0(xml_text(xml_children(ndAuthors)), collapse = ". ");
+		});
+		sAuth = paste0(sAuth, collapse = collapse);
 		data.frame(PMID = PMID, Count = count, Authors = sAuth);
 	});
 	r = do.call(rbind, nA);
