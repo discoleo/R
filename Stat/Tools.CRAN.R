@@ -5,7 +5,7 @@
 ###
 ### Tools: Packages & CRAN
 ###
-### draft v.0.2a
+### draft v.0.2b-fix
 
 
 # this file:
@@ -16,6 +16,8 @@
 ### History ###
 ###############
 
+### draft v.0.2b - v.0.2b-fix:
+# - scroll arbitrary text;
 ### draft v.0.2a:
 # - moved examples to separate file:
 #   Tools.CRAN.Examples.R;
@@ -170,6 +172,7 @@ format.lines = function(x, w=80, justify="left", NL.rm=TRUE, indent=c("   ", "")
 			# re-format only last lines
 			idLast  = tail(csm, -1) - 1; # ERR: fails for iter > 2
 			idLast1 = idLast[maxL > 1]; # multiple lines
+			if(length(idLast1) == 0) next;
 			txt = split.some.lines(txt, idLast1, w=w, indent=indent0);
 			nL.new = attr(txt, "nLines");
 			if( ! is.null(nL.new)) {
@@ -184,6 +187,10 @@ format.lines = function(x, w=80, justify="left", NL.rm=TRUE, indent=c("   ", "")
 }
 # split only some of the lines: idL;
 split.some.lines = function(txt, idL, w=80, indent="") {
+	if(length(idL) == 0) {
+		attr(txt, "nLines") = NULL;
+		return(txt);
+	}
 	n = sapply(seq(ncol(txt)), function(nc) nchar(txt[idL, nc]));
 	nL = matrix(n, ncol=ncol(txt));
 	nL = sapply(seq(ncol(txt)), function(nc) 1 + ((nL[,nc] - 1) %/% w[nc]));
@@ -398,16 +405,18 @@ scroll.txt = function(x, start=1, len=15, w = c(12, 6, 80, 16), iter=2,
 	if(len < 1) return();
 	len  = len - 1;
 	# Column Lengths
-	len.col = ncol(x); len.other = len.col - 3;
-	w = if(len.other == 0) w[1:3]
+	len.col   = ncol(x);
+	len.other = if(len.col <= 3) 0 else len.col - 3;
+	w = if(len.col == 2) w[c(1,3)]
+		else if(len.other == 0) w[1:3]
 		else if(length(w) == len.col) w
-		else w[c(1,2, rep(w[3], len.other))]; # TODO: if(w[4])
+		else w[c(1,2, rep(w[3], len.other))];
 	# Indent
 	indent = c(list(c(" ", "   "), c("   ", "")), rep(list(""), len.other));
 	# Entries
 	if(start > nrow(x)) stop("No more entries!");
 	nend = min(nrow(x), start + len);
-	if(print) cat(c("Showing packages ", start, " to ", nend, "."), sep=c(rep("", 4), "\n"))
+	if(print) cat(c("Showing items ", start, " to ", nend, "."), sep=c(rep("", 4), "\n"))
 	cat.mlines(format.lines(x[seq(start, nend), ], w=w, indent=indent, iter=iter),
 		sep=sep, sep.h=sep.h);
 }
