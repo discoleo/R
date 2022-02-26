@@ -5,7 +5,7 @@
 
 Can be done in 3 steps:
 - Step 1: Backbone
- - rotations around the backbone bonds subject to some constraints;
+  - rotations around the backbone bonds subject to some constraints;
 - Step 2: minimize surface exposure of non-polar AA;
 - Step 3: maximize H-bonds, van der Waals bonds and other ionic interactions between AAs;
 
@@ -25,12 +25,12 @@ Backbone: ... - N(H) - C(HR) - C(=O) - ...;
 
 ### Constraints:
 - non-overlapping atoms, considering the Lennard-Jones potential;
- - can be done initially with a discrete set of precomputed distances for each atom-pair;
+  - can be done initially with a discrete set of precomputed distances for each atom-pair;
 - non-polar AA: forbidden on the surface;
- - e.g. Ala, Val, Leu, Ile, Phe, Tyr (with the exception of the - OH), Trp (parts of it);
+  - e.g. Ala, Val, Leu, Ile, Phe, Tyr (with the exception of the - OH), Trp (parts of it);
 - polar AA: maintain on the surface (including around pockets);
- - Asp, Glu, Arg, Lys, His;
- - OH: Ser, Tre, -OH of Tyr;
+  - Asp, Glu, Arg, Lys, His;
+  - OH: Ser, Tre, -OH of Tyr;
 
 ### Precomputed Structures:
 - His, Trp, Phy, Tyr;
