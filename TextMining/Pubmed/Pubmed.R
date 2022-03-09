@@ -37,7 +37,7 @@ source("Pubmed.XML.R")
 ### Credentials
 
 ### eMail:
-GetEMail = function() {
+GetEMail2 = function() {
 	eMail = "...";
 	if(eMail == "...")
 		stop("Please provide a valid eMail address,
@@ -69,8 +69,9 @@ GetCredentials = function() {
 ##############
 
 ### Pubmed Search
-search.entrez = function(query, options=NULL, debug=TRUE) {
-	if(missing(query)) {
+search.entrez = function(..., options=NULL, debug=TRUE) {
+	query = list(...);
+	if(length(query) == 0) {
 		stop("Missing query!");
 	}
 	query = encodeQuery(query);
@@ -86,17 +87,22 @@ search.entrez = function(query, options=NULL, debug=TRUE) {
 	close(con)
 	return(lns)
 }
-encodeQuery = function(query) {
+encodeQuery = function(...) {
+	query  = list(...);
+	if(length(query) == 1) query = query[[1]];
 	fields = names(query);
-	query  = sapply(query, function(s) {
-		s = strsplit(s, "\\s++", perl=TRUE);
+	query  = lapply(query, function(s) {
+		# lapply: needed to preserve inheritance for later;
+		if(inherits(s, "QPubmed")) return(s);
+		# s = strsplit(s, "\\s++", perl=TRUE);
 		s = sapply(s, curl_escape);
-		s = paste(s, collapse="+");
+		# s = paste(s, collapse="+");
 		return(s);
 	})
 	if(is.null(fields)) {
 		fld_SEARCH = fieldsPubmed("SEARCH")$Field;
 		query = sapply(query, function(s) {
+			if(inherits(s, "QPubmed")) return(s);
 			paste0(s, fld_SEARCH);
 		})
 	}
@@ -104,6 +110,9 @@ encodeQuery = function(query) {
 		query = paste0(query, collapse="+AND+");
 	}
 	return(query);
+}
+escapeHTML = function(s) {
+	curl_escape(s);
 }
 
 ### Fetch Results
@@ -143,6 +152,27 @@ search.entrez.fetch = function(key, nStart=0, max=0, type="Abstract",
 	}
 	close(con)
 	return(doc)
+}
+
+queryOr = function(...) {
+	query = list(...);
+	nms   = names(query);
+	# TODO: encode query
+	if(is.null(nms)) {
+		fld_SEARCH = fieldsPubmed("SEARCH")$Field;
+		query = sapply(query, function(s) {
+			paste0(escapeHTML(s), fld_SEARCH);
+		})
+	} else {
+		stop("Not yet implemented!");
+	}
+	#
+	if(length(query) > 1) {
+		query = paste0("(", query, ")", collapse="+OR+");
+		query = paste0("(", query, ")")
+	}
+	class(query) = c("QPubmed", class(query));
+	return(query);
 }
 
 ################

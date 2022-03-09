@@ -71,3 +71,22 @@ doc = search.entrez(c("serotonin syndrome", "MAO"))
 r = parse.entrez(doc)
 print(r)
 
+
+###########
+### Test 4:
+doc = search.entrez(
+	queryOr("Jasplakinolide", "Pipestelide", "Calyxamide",
+		"Microsclerodermin", "Chondramides", "Argyrin") )
+r = parse.entrez(doc)
+print(r)
+
+# Retrieve Abstracts
+nStart = 0; nMax = 120;
+doc2 = search.entrez.fetch(r, nStart, max=nMax)
+writeLines(doc2, con="_Pubmed_Test_Cyclo.xml")
+
+# Titles
+titles = extractTitles(doc2)
+scroll.txt(titles, len=20)
+scroll.txt(titles, start=20, len=20)
+
