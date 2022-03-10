@@ -6,7 +6,7 @@
 ### Pubmed
 ### XML Tools
 ###
-### draft v.0.1f
+### draft v.0.1g
 
 
 ### XML Tools
@@ -114,14 +114,22 @@ extractTitles.hack = function(x, max=0, debug=TRUE) {
 }
 
 ### Abstract
-extractAbstract = function(x, sep = ": ") {
+extractAbstract = function(x, query=NULL, sep = ": ") {
 	isXML = inherits(x, "xml_document");
 	xml = if(isXML) x else read_xml(x);
 	#
 	xpBase = "/PubmedArticleSet/PubmedArticle/MedlineCitation";
 	xpText = "./Article/Abstract/AbstractText";
 	xpAbst = "./Article/Abstract";
-	nodes = xml_find_all(xml, xpBase);
+	if(is.null(query)) {
+		nodes = xml_find_all(xml, xpBase);
+	} else {
+		nodes = lapply(query, function(query) {
+			xpBase = paste0(xpBase, "[./PMID/text() = '", query, "']");
+			nodes  = xml_find_all(xml, xpBase);
+		})
+		nodes = unlist(nodes, recursive = FALSE);
+	}
 	len = length(nodes);
 	nA  = lapply(seq(len), function(id) {
 		nd = read_xml(as.character(nodes[[id]]));

@@ -6,7 +6,7 @@
 ### Pubmed
 ### Tools: Search Engine
 ###
-### draft v.0.2b
+### draft v.0.2c
 
 
 ### Pubmed Tools
@@ -37,7 +37,7 @@ source("Pubmed.XML.R")
 ### Credentials
 
 ### eMail:
-GetEMail2 = function() {
+GetEMail = function() {
 	eMail = "...";
 	if(eMail == "...")
 		stop("Please provide a valid eMail address,
@@ -157,7 +157,6 @@ search.entrez.fetch = function(key, nStart=0, max=0, type="Abstract",
 queryOr = function(...) {
 	query = list(...);
 	nms   = names(query);
-	# TODO: encode query
 	if(is.null(nms)) {
 		fld_SEARCH = fieldsPubmed("SEARCH")$Field;
 		query = sapply(query, function(s) {
