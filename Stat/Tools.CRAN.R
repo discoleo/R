@@ -5,7 +5,7 @@
 ###
 ### Tools: Packages & CRAN
 ###
-### draft v.0.2b-fix
+### draft v.0.2b-fix2
 
 
 # this file:
@@ -401,7 +401,7 @@ find.pkg = function(s, pkg=NULL, print=TRUE, perl=TRUE) {
 
 ### Text
 scroll.txt = function(x, start=1, len=15, w = c(12, 6, 80, 16), iter=2,
-		sep=" ", sep.h="-", print=TRUE) {
+		sep=" ", sep.h="-", print=TRUE, w.txt = c("   ", "")) {
 	if(len < 1) return();
 	len  = len - 1;
 	# Column Lengths
@@ -412,7 +412,9 @@ scroll.txt = function(x, start=1, len=15, w = c(12, 6, 80, 16), iter=2,
 		else if(length(w) == len.col) w
 		else w[c(1,2, rep(w[3], len.other))];
 	# Indent
-	indent = c(list(c(" ", "   "), c("   ", "")), rep(list(""), len.other));
+	indent = list(c(" ", "   "));
+	if(len.col >= 3) indent = c(indent, list(" "));
+	indent = c(indent, list(w.txt), rep(list(""), len.other));
 	# Entries
 	if(start > nrow(x)) stop("No more entries!");
 	nend = min(nrow(x), start + len);
