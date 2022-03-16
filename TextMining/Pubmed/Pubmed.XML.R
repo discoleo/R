@@ -6,7 +6,7 @@
 ### Pubmed
 ### XML Tools
 ###
-### draft v.0.1g
+### draft v.0.1h
 
 
 ### XML Tools
@@ -224,14 +224,34 @@ extractJournal = function(x, type="Abbreviated") {
 		else "./Article/Journal/Title";
 	nodes = xml_find_all(xml, xpBase);
 	len = length(nodes);
-	nA  = lapply(seq(len), function(id) {
+	lA  = lapply(seq(len), function(id) {
 		nd = read_xml(as.character(nodes[[id]]));
 		PMID  = xml_find_first(nd, "./PMID");
 		PMID  = xml_text(PMID);
 		sJrnl = xml_text(xml_find_first(nd, xpJrnl));
 		data.frame(PMID = PMID, Journal = sJrnl);
 	});
-	r = do.call(rbind, nA);
+	r = do.call(rbind, lA);
+	return(r)
+}
+
+### Language
+extractLanguage = function(x) {
+	isXML = inherits(x, "xml_document");
+	xml = if(isXML) x else read_xml(x);
+	#
+	xpBase = "/PubmedArticleSet/PubmedArticle/MedlineCitation";
+	xpLang = "./Article/Language";
+	nodes = xml_find_all(xml, xpBase);
+	len = length(nodes);
+	lA  = lapply(seq(len), function(id) {
+		nd = read_xml(as.character(nodes[[id]]));
+		PMID  = xml_find_first(nd, "./PMID");
+		PMID  = xml_text(PMID);
+		sLang = xml_text(xml_find_first(nd, xpLang));
+		data.frame(PMID = PMID, Language = sLang);
+	});
+	r = do.call(rbind, lA);
 	return(r)
 }
 
