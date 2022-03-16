@@ -90,3 +90,22 @@ titles = extractTitles(doc2)
 scroll.txt(titles, len=20)
 scroll.txt(titles, start=20, len=20)
 
+
+####################
+
+###########
+### Test 5:
+# doc = search.entrez("COVID", type="Review")
+doc = search.entrez("COVID", type="Systematic Review")
+r = parse.entrez(doc)
+print(r)
+
+# Retrieve Abstracts
+nStart = 0; nMax = 1200; # only !!!
+doc2 = search.entrez.fetch(r, nStart, max=nMax)
+writeLines(doc2, con="_Pubmed_Covid_Review_part.xml")
+
+# Titles
+titles = extractTitles(doc2)
+scroll.txt(titles, len=20)
+scroll.txt(titles, start=20, len=20)

@@ -100,12 +100,28 @@ encodeQuery = function(...) {
 		return(s);
 	})
 	if(is.null(fields)) {
+		isSearch = rep(TRUE, length(query));
+	} else {
+		isSearch = (nchar(fields) == 0);
+	}
+	if(sum(isSearch) > 0) {
 		fld_SEARCH = fieldsPubmed("SEARCH")$Field;
-		query = sapply(query, function(s) {
+		query[isSearch] = sapply(query[isSearch], function(s) {
 			if(inherits(s, "QPubmed")) return(s);
 			paste0(s, fld_SEARCH);
 		})
 	}
+	#
+	isOther = ! isSearch;
+	if(sum(isOther) > 0) {
+		query[isOther] = sapply(which(isOther), function(id) {
+			s = query[[id]];
+			if(inherits(s, "QPubmed")) return(s);
+			fld_SEARCH = fieldsPubmed(fields[id])$Field;
+			paste0(s, fld_SEARCH);
+		})
+	}
+	#
 	if(length(query) > 1) {
 		query = paste0(query, collapse="+AND+");
 	}
@@ -191,6 +207,7 @@ fieldsPubmed = function(opt = NULL) {
 	);
 	if(is.null(opt)) return(fl);
 	#
+	opt = toupper(opt);
 	idOpt = pmatch(opt, names(fl));
 	if(idOpt == -1) stop("Invalid Field!");
 	return(fl[[idOpt]]);
@@ -201,5 +218,98 @@ GetSearchOptions = function(options=NULL) {
 			return("");
 		}
 		return(paste0("&", options));
+}
+
+PublicationType = function(type, caseInsensitive=TRUE) {
+	pT = c("Adaptive Clinical Trial",
+	"Address",
+	"Autobiography",
+	"Bibliography",
+	"Biography",
+	"Case Reports",
+	"Classical Article",
+	"Clinical Conference",
+	"Clinical Study",
+	"Clinical Trial",
+	"Clinical Trial, Phase I",
+	"Clinical Trial, Phase II",
+	"Clinical Trial, Phase III",
+	"Clinical Trial, Phase IV",
+	"Clinical Trial Protocol",
+	"Clinical Trial, Veterinary",
+	"Collected Work",
+	"Comment",
+	"Comparative Study",
+	"Congress",
+	"Consensus Development Conference",
+	"Consensus Development Conference, NIH",
+	"Controlled Clinical Trial",
+	"Corrected and Republished Article",
+	"Dataset",
+	"Dictionary",
+	"Directory",
+	"Duplicate Publication",
+	"Editorial",
+	"Electronic Supplementary Materials",
+	"English Abstract",
+	"Equivalence Trial",
+	"Evaluation Study",
+	"Expression of Concern",
+	"Festschrift",
+	"Government Publication",
+	"Guideline",
+	"Historical Article",
+	"Interactive Tutorial",
+	"Interview",
+	"Introductory Journal Article",
+	"Journal Article",
+	"Lecture",
+	"Legal Case",
+	"Legislation",
+	"Letter",
+	"Meta-Analysis",
+	"Multicenter Study",
+	"News",
+	"Newspaper Article",
+	"Observational Study",
+	"Observational Study, Veterinary",
+	"Overall",
+	"Patient Education Handout",
+	"Periodical Index",
+	"Personal Narrative",
+	"Portrait",
+	"Practice Guideline",
+	"Preprint",
+	"Pragmatic Clinical Trial",
+	"Published Erratum",
+	"Randomized Controlled Trial",
+	"Randomized Controlled Trial, Veterinary",
+	"Research Support, American Recovery and Reinvestment Act",
+	"Research Support, N.I.H., Extramural",
+	"Research Support, N.I.H., Intramural",
+	"Research Support, Non-U.S. Gov't",
+	"Research Support, U.S. Gov't, Non-P.H.S.",
+	"Research Support, U.S. Gov't, P.H.S.",
+	"Retracted Publication",
+	"Retraction of Publication",
+	"Review",
+	"Scientific Integrity Review",
+	"Systematic Review",
+	"Technical Report",
+	"Twin Study",
+	"Validation Study",
+	"Video-Audio Media",
+	"Webcast");
+	#
+	if(caseInsensitive) type = paste0("(?i)", type);
+	sT = lapply(type, function(type) {
+		isType = grepl(type, pT, perl=TRUE);
+		pT[isType];
+	})
+	sT = unique(unlist(sT));
+	if(length(sT) == 0) {
+		stop("Wrong Publication Type!");
+	}
+	return(sT);
 }
 
