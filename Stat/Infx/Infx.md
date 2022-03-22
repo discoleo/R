@@ -44,7 +44,7 @@ https://cran.r-project.org/web/packages/deSolve/vignettes/deSolve.pdf
 Vignette: Bayesian inference for a population growth model of the chytrid fungus.
 https://cran.r-project.org/web/packages/deBInfer/vignettes/chytrid_dede_example.pdf
 
-3. Package rodea
+3. Package rodeo
 Vignette: Basic Use and Sample Applications.
 https://cran.r-project.org/web/packages/rodeo/vignettes/rodeoVignette.pdf
 
