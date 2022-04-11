@@ -15,6 +15,7 @@ Sensors and technologies have evolved massively over the years. It may be possib
 
 3. Imaging the nuclear blast
   - may be challenging due to the proximity of the camera to the actual blast (when the blast is conducted in a tunnel);
+  - possibly useful technologies: microscope/telescope and optic fibers (fiber-optic endoscopy) can transmit the light to a high speed camera further away (e.g. in a 2nd chamber away from the bomb);
 
 4. Magnetic impulse
   - various studies on strong magnetic impulses; but may be incompatible with points 1-3.
