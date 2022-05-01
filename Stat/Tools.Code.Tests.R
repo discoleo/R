@@ -113,3 +113,23 @@ cat(extract.str(s, npos), sep="\n")
 
 gsub("[\\s]++", "", "s  \t\nsbc\nbb\uA0UU", perl=T)
 
+
+######################
+######################
+
+### Function Arguments
+
+e = formals(stats:::plot.lm)
+a = summary.args(e)
+aggregate(rep(1, nrow(a)) ~ type, a, FUN=length)
+
+
+f = ls(getNamespace("partitions"))
+e = parse(text=paste0("formals(partitions:::", f[39], ")"))
+e = eval(e)
+a = summary.args(e)
+aggregate(rep(1, nrow(a)) ~ type, a, FUN=length)
+
+
+summary.all.args("partitions")
+

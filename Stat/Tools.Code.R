@@ -5,7 +5,7 @@
 ###
 ### Code Tools
 ###
-### draft v.0.2a
+### draft v.0.2b
 
 
 ### Tools to Process Formulas & Expressions
@@ -15,14 +15,18 @@
 ### History ###
 ###############
 
-### draft v.0.2a:
-# - moved to new file: Tools.Code.R;
+### draft v.0.2a - v.0.2b:
+# - moved Code tools to this file: Tools.Code.R;
 ### draft v.0.1g - v.0.1g-improve:
 # - cut.code() into code blocks;
 # - small improvements; [v.0.1g-improve]
 ### draft v.0.1f - v.0.1f-refactor:
 # - extract code tokens from R code;
 # - [refactored] uniform result;
+
+
+### TODO
+# - Explore: remindR;
 
 
 ########################
@@ -274,6 +278,57 @@ format.code = function(s, check.code=TRUE) {
 	s[isComment] = gsub("^#(?![# ])", "# ", s[isComment], perl=TRUE);
 	return(s);
 }
+
+
+####################
+####################
+
+### Extract/Summary Args
+
+summary.args = function(e) {
+	rs = lapply(e, function(e) {
+		if(length(e) == 0) return(data.frame(type="NULL"));
+		if(length(e) == 1) {
+			if(is.symbol(e)) {
+				return(data.frame(type="No Default"));
+			}
+		}
+		if(is.call(e)) {
+			if(e[[1]] == "c") return(data.frame(type="Default val"));
+			if(e[[1]] == "list") return(data.frame(type="Default val"));
+			if(class(e) == "if") return(data.frame(type="Code"));
+			return(data.frame(type="Call"));
+		}
+		if(is.character(e) && e == "") return(data.frame(type="Default val: Empty"));
+		return(data.frame(type="Default val"));
+	});
+	nm = names(e);
+	rs = do.call(rbind, rs);
+	rs$Name = nm; rs = rs[, c(2,1)];
+	rs$type[rs$Name == "..."] = "hasDot";
+	rownames(rs) = NULL;
+	return(rs);
+}
+
+# Arguments for all functions in a package:
+summary.all.args = function(nm) {
+	f = ls(getNamespace(nm))
+	r = lapply(seq_along(f), function(id) {
+		fn = f[id];
+		# if(substr(fn,1,1) %in% c("[", "_"))
+		# DONE also: "<-"
+		fn = paste0("\"", fn, "\"");
+		e = parse(text=paste0("formals(", nm, ":::", fn, ")"));
+		e = eval(e);
+		if(is.null(e)) return(data.frame(Name=NA, type=NA, FUN=f[id]));
+		a = summary.args(e);
+		a$FUN = f[id];
+		return(a);
+	})
+	
+	do.call(rbind, r);
+}
+
 
 ################
 
