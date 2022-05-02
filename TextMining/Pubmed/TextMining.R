@@ -6,7 +6,7 @@
 ### Pubmed
 ### Text Mining Tools
 ###
-### draft v.0.1a
+### draft v.0.1c
 
 
 ### Text Mining Tools
@@ -21,6 +21,9 @@
 
 # Parser for Parenthesis:
 parseParenth = function(x, sub.tokens=TRUE, warn=FALSE) {
+	if(length(x) > 1) {
+		return(lapply(x, parseParenth, warn=warn));
+	}
 	len = nchar(x);
 	### Type:
 	# 23 = "{", 24 = "(", 25 = "[";
@@ -43,6 +46,9 @@ parseParenth = function(x, sub.tokens=TRUE, warn=FALSE) {
 			type = 24;
 		} else if(s == "[") {
 			type = 25;
+		} else if(s == "\uFF08") {
+			# Special Parenthesis
+			type = 24;
 		}
 		if(type > 0) {
 			nr = nrow(tk.df) + 1;
@@ -60,6 +66,9 @@ parseParenth = function(x, sub.tokens=TRUE, warn=FALSE) {
 			type = 24;
 		} else if(s == "]") {
 			type = 25;
+		} else if(s == "\uFF09") {
+			# Special Parenthesis
+			type = 24;
 		}
 		if(type > 0) {
 			# check unmatched Token
@@ -116,6 +125,12 @@ extractParenth = function(x, pos = NULL, nested=FALSE, warn=NULL) {
 		substr(x, pos$nS[id], pos$nE[id]);
 	}
 	sapply(seq(nrow(pos)), FUN);
+}
+
+isErrParenth = function(x) {
+	sapply(seq(length(x)), function(id) {
+		any(x[[id]]$Err != 0);
+	})
 }
 
 ######################
