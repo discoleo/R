@@ -6,7 +6,7 @@
 ### Pubmed
 ### Text Mining Tools
 ###
-### draft v.0.1c
+### draft v.0.1d
 
 
 ### Text Mining Tools
@@ -30,8 +30,8 @@ parseParenth = function(x, sub.tokens=TRUE, warn=FALSE) {
 	### Error:
 	# 1 = No open tag;
 	# 23, 24, 25 = wrong match;
-	tk.df = data.frame(nS=integer(0), nE=integer(0), id=integer(0),
-			Type=integer(0), Nested=logical(0), Err=numeric(0));
+	tk.df = data.frame(nS=integer(0), nE=integer(0), id=integer(0), Type=integer(0),
+			Nested=logical(0), hasNested=logical(0), Err=numeric(0));
 	stackType = integer(0);
 	stackPos  = integer(0);
 	#
@@ -53,9 +53,13 @@ parseParenth = function(x, sub.tokens=TRUE, warn=FALSE) {
 		if(type > 0) {
 			nr = nrow(tk.df) + 1;
 			isNested = if(length(stackType) > 0) TRUE else FALSE;
+			if(isNested) {
+				prevStack = length(stackPos);
+				tk.df$hasNested[stackPos[prevStack]] = TRUE;
+			}
 			stackType = c(stackType, type);
 			stackPos  = c(stackPos, nr);
-			tk.df[nr, ] = data.frame(npos, NA, nr, type, isNested, 0);
+			tk.df[nr, ] = data.frame(npos, NA, nr, type, isNested, FALSE, 0);
 			npos = npos + 1;
 			next;
 		}
@@ -75,7 +79,7 @@ parseParenth = function(x, sub.tokens=TRUE, warn=FALSE) {
 			idPrev = length(stackPos);
 			if(idPrev == 0) {
 				nr = nrow(tk.df) + 1;
-				tk.df[nr, ] = data.frame(npos, npos, nr, type, FALSE, 1);
+				tk.df[nr, ] = data.frame(npos, npos, nr, type, FALSE, FALSE, 1);
 			} else {
 				posPrev = stackPos[idPrev];
 				if(stackType[idPrev] != type) {
@@ -112,6 +116,8 @@ parseParenth = function(x, sub.tokens=TRUE, warn=FALSE) {
 	return(tk.df);
 }
 
+### Extract Content
+# - between parenthesis;
 extractParenth = function(x, pos = NULL, nested=FALSE, warn=NULL) {
 	if(is.null(pos)) {
 		pos = parseParenth(x);
@@ -131,6 +137,23 @@ isErrParenth = function(x) {
 	sapply(seq(length(x)), function(id) {
 		any(x[[id]]$Err != 0);
 	})
+}
+
+### Nested
+# - extract content between parenthesis with nested parenthesis;
+extractNested = function(x, pos, simplify=TRUE) {
+	len = length(x);
+	if(len > 1) {
+		sContent = lapply(seq(len), function(id) {
+			extractNested(x[[id]], pos=pos[[id]]);
+		})
+		if(simplify) sContent = unlist(sContent);
+		return(sContent);
+	}
+	posNested = pos[pos$hasNested, ];
+	if(nrow(posNested) == 0) return(character(0));
+	sContent = extractParenth(x, pos=posNested);
+	return(sContent);
 }
 
 ######################

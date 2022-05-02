@@ -42,9 +42,16 @@ id = 87
 allParenth[id]
 scroll.txt(abstracts, start=id, len=1)
 
-###
+### Errors
 allParenth = parseParenth(abstracts$Abstract);
 isErr = isErrParenth(allParenth)
 sum(isErr)
 abstractsErr = abstracts[isErr,]
 scroll.txt(abstractsErr, len=10)
+
+
+### Nested
+strNested = extractNested(abstracts$Abstract, pos=allParenth)
+length(strNested)
+strNested[1:20]
+
