@@ -5,7 +5,7 @@
 ###
 ### Pubmed: Examples
 ###
-### draft v.0.1d
+### draft v.0.1e
 
 
 ##################
@@ -44,7 +44,7 @@ print(r)
 # Retrieve Abstracts
 nStart = 0; nMax = 30;
 doc2 = search.entrez.fetch(r, nStart, max=nMax)
-writeLines(doc2, con="_Pubmed_Test.xml")
+writeLines(doc2, con="_Pubmed_Test.xml", useBytes = TRUE)
 
 # Titles
 titles = extractTitles(doc2)
@@ -71,6 +71,8 @@ doc = search.entrez(c("serotonin syndrome", "MAO"))
 r = parse.entrez(doc)
 print(r)
 
+# TODO: debug;
+
 
 ###########
 ### Test 4:
@@ -83,7 +85,7 @@ print(r)
 # Retrieve Abstracts
 nStart = 0; nMax = 120;
 doc2 = search.entrez.fetch(r, nStart, max=nMax)
-writeLines(doc2, con="_Pubmed_Test_Cyclo.xml")
+writeLines(doc2, con="_Pubmed_Test_Cyclo.xml", useBytes = TRUE)
 
 # Titles
 titles = extractTitles(doc2)
@@ -103,9 +105,12 @@ print(r)
 # Retrieve Abstracts
 nStart = 0; nMax = 1200; # only !!!
 doc2 = search.entrez.fetch(r, nStart, max=nMax)
-writeLines(doc2, con="_Pubmed_Covid_Review_part.xml")
+writeLines(doc2, con="_Pubmed_Covid_Review_part.xml", useBytes = TRUE)
 
 # Titles
 titles = extractTitles(doc2)
 scroll.txt(titles, len=20)
 scroll.txt(titles, start=20, len=20)
+
+table(extractLanguage(doc2)$Language)
+
