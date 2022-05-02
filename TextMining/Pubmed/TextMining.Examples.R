@@ -3,6 +3,7 @@
 library(xml2)
 
 source("Pubmed.XML.R")
+source("TextMining.R")
 
 # source("Tools.CRAN.R")
 # - needed for formatting;
@@ -32,7 +33,12 @@ extractParenth(abstracts$Abstract[id])
 
 # may take some time!
 allParenth = lapply(seq(nrow(abstracts)), function(id) {
-	extractParenth(abstracts$Abstract[id]);
+	extractParenth(abstracts$Abstract[id], warn=id);
 })
 allParenth[(1:10) + 40]
+
+# Errors
+id = 87
+allParenth[id]
+scroll.txt(abstracts, start=id, len=1)
 

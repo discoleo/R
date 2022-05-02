@@ -20,7 +20,7 @@
 ### Sentence / Parenthesis Parser
 
 # Parser for Parenthesis:
-parseParenth = function(x, sub.tokens=TRUE) {
+parseParenth = function(x, sub.tokens=TRUE, warn=FALSE) {
 	len = nchar(x);
 	### Type:
 	# 23 = "{", 24 = "(", 25 = "[";
@@ -96,16 +96,22 @@ parseParenth = function(x, sub.tokens=TRUE) {
 		tk.df[nr, "Err"] = stackType[idPrev];
 		tk.df[nr, "nE"]  = npos;
 	}
+	if(warn && any(tk.df$Err != 0)) {
+		warning("Mismatched parenthesis!");
+	}
 	class(tk.df) = c("code", class(tk.df));
 	return(tk.df);
 }
 
-extractParenth = function(x, pos = NULL, nested=FALSE) {
+extractParenth = function(x, pos = NULL, nested=FALSE, warn=NULL) {
 	if(is.null(pos)) {
 		pos = parseParenth(x);
 	}
 	if(nrow(pos) == 0) return(character(0));
 	if( ! nested) pos = pos[ pos$Nested == FALSE, ];
+	if( ! is.null(warn) && any(pos$Err != 0)) {
+		warning("Mismatched parenthesis in: ", warn);
+	}
 	FUN = function(id) {
 		substr(x, pos$nS[id], pos$nE[id]);
 	}
