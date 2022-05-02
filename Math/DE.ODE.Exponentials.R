@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs - Exponentials
 ###
-### draft v.0.2d
+### draft v.0.2e
 
 
 ### ODEs Derived from Exponentials
@@ -63,6 +63,7 @@ source("Polynomials.Helper.R")
 source("DE.ODE.Helper.R")
 
 ### Other
+# moved to DE.ODE.Helper.R;
 eval.FUN = function(x, F, ...) {
 	xl = c(...);
 	r = sapply(x, function(x) eval.pm(F, c(x, xl)));
@@ -199,6 +200,23 @@ line.tan(px, dx=3, p=y, dp=dy, PFUN=y1.lst)
 # inverse-exp-like:
 curve(dy(x, PFUN=y1.lst), add=T, col="green")
 line.tan(px, dx=3, p=dy, dp=d2y, PFUN=y1.lst, col="orange")
+
+
+#####################
+
+### Section D: Higher-Exponentials
+### Non-Linear ODEs
+
+######################
+### e^(e^y) - y = P(x)
+
+### D =>
+exp(y)*exp(exp(y))*dy - dy - dp # = 0
+# =>
+exp(y)*(y + p)*dy - dy - dp # = 0
+
+# D2 =>
+# TODO
 
 
 ########################
