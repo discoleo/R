@@ -26,7 +26,10 @@ scroll.txt(keys, len=10)
 
 w = tableWords(keys$Content)
 length(w)
-head(w, 40)
+head(w, 20)
+
+w2 = splitDF(as.data.frame(w, stringsAsFactors = FALSE), ncol=4)
+scroll.txt(w2, w=rep(c(18,8), 4), len=20)
 
 
 ### Abstracts
