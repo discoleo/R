@@ -20,7 +20,16 @@ source("TextMining.R")
 xn = "_Pubmed_Covid_Review_part.xml"
 x = read_xml(xn)
 
-###
+### Keywords
+keys = extractKeywords(x)
+scroll.txt(keys, len=10)
+
+w = tableWords(keys$Content)
+length(w)
+head(w, 40)
+
+
+### Abstracts
 abstracts = extractAbstract(x)
 scroll.txt(abstracts, len=10)
 scroll.txt(abstracts, start=30, len=10)

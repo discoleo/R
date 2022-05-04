@@ -6,7 +6,7 @@
 ### Pubmed
 ### Text Mining Tools
 ###
-### draft v.0.1d
+### draft v.0.1e
 
 
 ### Text Mining Tools
@@ -157,4 +157,21 @@ extractNested = function(x, pos, simplify=TRUE) {
 }
 
 ######################
+
+### Word Frequency
+# - e.g. frequency table for keywords;
+tableWords = function(x, sep=", *+", case.lower=TRUE, doSort=TRUE) {
+	words = strsplit(x, split=sep, perl=TRUE);
+	words = unlist(words);
+	if(case.lower) {
+		words = tolower(words);
+	}
+	wfreq = table(words);
+	if(doSort) {
+		id = order(wfreq, decreasing=TRUE);
+		wfreq = wfreq[id];
+	}
+	return(wfreq);
+}
+
 
