@@ -5,7 +5,7 @@
 ###
 ### Tools: Packages & CRAN
 ###
-### draft v.0.2b-fix2
+### draft v.0.2c
 
 
 # this file:
@@ -16,6 +16,8 @@
 ### History ###
 ###############
 
+### draft v.0.2c:
+# - splitDF: split long df into multiple columns;
 ### draft v.0.2b - v.0.2b-fix:
 # - scroll arbitrary text;
 ### draft v.0.2a:
@@ -128,6 +130,29 @@ match.imports = function(pkg, x=NULL, quote=FALSE) {
 
 ##################
 ### Formatting ###
+
+### Split into columns
+splitDF = function(x, ncol=2) {
+	if(ncol <= 0) stop("Invalid number of columns!");
+	if(ncol == 1) return(x);
+	#
+	len = nrow(x);
+	if(len < 2) return(x);
+	nr = len %/% ncol;
+	#
+	xr  = x[seq(1, len, by=ncol), ];
+	idC = seq(2, ncol);
+	for(id0 in idC) {
+		tmp = x[seq(id0, len, by=ncol), ];
+		nr0 = nrow(tmp);
+		if(nr0 < nr) {
+			if(nr0 == 0) { tmp = xr[nr, , drop=FALSE]; }
+			else tmp = rbind(tmp, tmp[nr0, , drop=FALSE]);
+		}
+		xr = cbind(xr, tmp);
+	}
+	return(xr);
+}
 
 # Note:
 # - a 1-pass exact algorithm is possible (and not too complicated),
