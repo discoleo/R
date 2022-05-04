@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs - Trigonometric
 ###
-### draft v.0.4b-clean5
+### draft v.0.4c
 
 
 ### Non-Linear & Linear:
@@ -17,6 +17,8 @@
 ### History ###
 ###############
 
+### draft v.0.4c:
+# - concept: sin(exp(y)) - y = F(x);
 ### draft v.0.4b - v.0.4b-clean4:
 # - moved Section on Automatic generation
 #   & Basic types to a new file:
@@ -1161,4 +1163,24 @@ f0*y*d2y - 2*(f0*dy - y*df0)*dy - y^2*d2f0 + n*x^(n-1)*sqrt(y^4 - (f0*dy - y*df0
 
 ### TODO: check;
 
+
+#########################
+#########################
+
+### sin(exp(y)) - y = F(x)
+
+### D(y)
+exp(y)*cos(exp(y))*dy - dy - df # = 0
+
+### D2(y)
+exp(y)*cos(exp(y))*d2y + exp(y)*cos(exp(y))*dy^2 +
+	- exp(2*y)*sin(exp(y))*dy^2 - d2y - d2f # = 0
+# =>
+(dy + df)*d2y + (dy + df)*dy^2 +
+	- (y + f)*exp(2*y)*dy^3 - dy*d2y - d2f*dy # = 0
+
+### ODE:
+df*d2y + dy^3 + df*dy^2 - d2f*dy - (y + f)*exp(2*y)*dy^3 # = 0
+
+# TODO: check;
 
