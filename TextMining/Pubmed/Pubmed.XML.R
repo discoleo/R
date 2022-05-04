@@ -6,7 +6,7 @@
 ### Pubmed
 ### XML Tools
 ###
-### draft v.0.1h
+### draft v.0.1i
 
 
 ### XML Tools
@@ -18,6 +18,9 @@
 ###########
 ### XML ###
 ###########
+
+# library(xml2)
+
 
 ### Parse
 
@@ -253,5 +256,36 @@ extractLanguage = function(x) {
 	});
 	r = do.call(rbind, lA);
 	return(r)
+}
+
+### Specified Node
+extractGeneric = function(x, type="KeywordList/Keyword", collapse=", ") {
+	isXML = inherits(x, "xml_document");
+	xml = if(isXML) x else read_xml(x);
+	#
+	xpBase = "/PubmedArticleSet/PubmedArticle/MedlineCitation";
+	xpNode = paste0("./", type);
+	nodes  = xml_find_all(xml, xpBase);
+	len = length(nodes);
+	lA  = lapply(seq(len), function(id) {
+		nd = read_xml(as.character(nodes[[id]]));
+		PMID  = xml_find_first(nd, "./PMID");
+		PMID  = xml_text(PMID);
+		sNode = xml_text(xml_find_all(nd, xpNode));
+		sNode = paste(sNode, collapse=collapse);
+		data.frame(PMID = PMID, Content = sNode);
+	});
+	r = do.call(rbind, lA);
+	return(r)
+}
+
+extractKeywords = function(x, collapse=", ") {
+	keys = extractGeneric(x, type="KeywordList/Keyword", collapse=collapse);
+	hasNoKey = (nchar(keys$Content) == 0);
+	xp2 = "MeshHeadingList/MeshHeading/DescriptorName";
+	# - does NOT extract additional descriptors;
+	keys$Content[hasNoKey] =
+		extractGeneric(x, type=xp2, collapse=collapse)$Content[hasNoKey];
+	return(keys)
 }
 

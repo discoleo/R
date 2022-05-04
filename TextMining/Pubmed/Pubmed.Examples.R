@@ -5,7 +5,7 @@
 ###
 ### Pubmed: Examples
 ###
-### draft v.0.1e
+### draft v.0.1f
 
 
 ##################
@@ -113,4 +113,9 @@ scroll.txt(titles, len=20)
 scroll.txt(titles, start=20, len=20)
 
 table(extractLanguage(doc2)$Language)
+
+# Keywords
+# - takes a few seconds;
+keys = extractKeywords(doc2)
+scroll.txt(keys, len=20)
 
