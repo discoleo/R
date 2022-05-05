@@ -6,7 +6,7 @@
 ### Pubmed
 ### Text Mining Tools
 ###
-### draft v.0.1f
+### draft v.0.1f-fix
 
 
 ### Text Mining Tools
@@ -104,10 +104,18 @@ parseParenth = function(x, sub.tokens=TRUE, warn=FALSE) {
 	# ERROR
 	idPrev = length(stackPos);
 	if(idPrev > 0) {
-		# TODO: all non-closed tags;
-		nr = stackPos[idPrev];
-		tk.df[nr, "Err"] = stackType[idPrev];
-		tk.df[nr, "nE"]  = npos;
+		# process all non-closed tags;
+		if(idPrev == 1) {
+			nr = stackPos[idPrev];
+			tk.df[nr, "Err"] = stackType[idPrev];
+			tk.df[nr, "nE"]  = npos;
+		} else {
+			for(id in seq(idPrev, 1, by=-1)) {
+				nr = stackPos[id];
+				tk.df[nr, "Err"] = stackType[id];
+				tk.df[nr, "nE"]  = npos;
+			}
+		}
 	}
 	if(warn && any(tk.df$Err != 0)) {
 		warning("Mismatched parenthesis!");
@@ -136,6 +144,15 @@ extractParenth = function(x, pos = NULL, nested=FALSE, warn=NULL) {
 isErrParenth = function(x) {
 	sapply(seq(length(x)), function(id) {
 		any(x[[id]]$Err != 0);
+	})
+}
+
+countErrParenth = function(x, isErr=NULL) {
+	if(is.null(isErr)) {
+		isErr = isErrParenth(x);
+	}
+	sapply(x[isErr], function(x) {
+		sum(x$Err != 0);
 	})
 }
 
