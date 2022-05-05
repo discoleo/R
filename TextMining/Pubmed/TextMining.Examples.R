@@ -16,11 +16,16 @@ source("TextMining.R")
 # - using the previously saved xml search results;
 
 
-###
+### Data Set
+# - see Pubmed.Examples.R;
 xn = "_Pubmed_Covid_Review_part.xml"
 x = read_xml(xn)
 
-### Keywords
+
+################
+### Keywords ###
+################
+
 keys = extractKeywords(x)
 scroll.txt(keys, len=10)
 
@@ -32,13 +37,22 @@ w2 = splitDF(as.data.frame(w, stringsAsFactors = FALSE), ncol=4)
 scroll.txt(w2, w=rep(c(18,8), 4), len=20)
 
 
-### Abstracts
+#################
+### Abstracts ###
+#################
+
 abstracts = extractAbstract(x)
+
 scroll.txt(abstracts, len=10)
+
 scroll.txt(abstracts, start=30, len=10)
 
 ### Abstracts: Parenthesis
-parenth = parseParenth(abstracts$Abstract[3])
+
+### Examples:
+# - for 1 particular abstract;
+id = 3
+parenth = parseParenth(abstracts$Abstract[id])
 parenth
 
 # - for 1 particular abstract;
@@ -53,17 +67,19 @@ allParenth = lapply(seq(nrow(abstracts)), function(id) {
 allParenth[(1:10) + 40]
 
 ### Errors
-
-# - particular Error;
+# - particular Error in abstract with id = ...;
 id = 87
 allParenth[id]
 scroll.txt(abstracts, start=id, len=1)
 
-# All Parenthesis & Errors
-# - list with npos;
+
+### All Parenthesis & Errors
+# - output: list with npos;
 allParenth = parseParenth(abstracts$Abstract);
 isErr = isErrParenth(allParenth)
 sum(isErr)
+
+# only abstracts with errors:
 abstractsErr = abstracts[isErr,]
 scroll.txt(abstractsErr, len=10)
 
