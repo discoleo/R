@@ -78,13 +78,24 @@ scroll.txt(abstracts, start=id, len=1)
 allParenth = parseParenth(abstracts$Abstract);
 isErr = isErrParenth(allParenth)
 sum(isErr)
+countErrParenth(allParenth, isErr)
 
 # only abstracts with errors:
 abstractsErr = abstracts[isErr,]
 scroll.txt(abstractsErr, len=10)
 
+sapply(allParenth[isErr], function(x) {
+	sum(x$Err != 0);
+})
+
 # hasP = hasParenth(allParenth);
 summary.AbstractParenth(abstracts, allParenth)
+
+# Section Methods: contains an error;
+scroll.txt(abstracts[abstracts$PMID == 34558742, ], len=10)
+
+absErr = cbind(abstractsErr, countErrParenth(allParenth, isErr))
+scroll.txt(absErr, len=10, w=c(8,76,4), start=20)
 
 
 ### Nested
