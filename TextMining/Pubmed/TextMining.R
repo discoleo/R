@@ -6,7 +6,7 @@
 ### Pubmed
 ### Text Mining Tools
 ###
-### draft v.0.1e
+### draft v.0.1f
 
 
 ### Text Mining Tools
@@ -137,6 +137,39 @@ isErrParenth = function(x) {
 	sapply(seq(length(x)), function(id) {
 		any(x[[id]]$Err != 0);
 	})
+}
+
+hasParenth = function(x) {
+	isP = sapply(x, function(x) {
+		return(nrow(x) > 0);
+	})
+	return(isP);
+}
+
+summary.AbstractParenth = function(x, npos=NULL) {
+	if(is.null(npos)) {
+		npos = parseParenth(x$Abstract);
+	}
+	count.f = function(pred) length(unique(abstracts$PMID[pred]));
+	# Abstracts with Parenthesis:
+	hasP = hasParenth(npos);
+	nP = count.f(hasP);
+	# Abstracts with Errors:
+	isErr = isErrParenth(npos);
+	nErr = count.f(isErr);
+	# Top-Level Parenthesis:
+	nonNested = sapply(npos, function(x) {
+		if(nrow(x) == 0) return(0);
+		isTop = ( ! x$Nested) & (x$Err == 0);
+		return(length(isTop));
+	})
+	nNN = sum(nonNested);
+	#
+	str = paste(
+		c("Total Abstracts", "Non-Nested", "Errors"),
+		c(nP, nNN, nErr), sep=": ");
+	cat(str, sep="\n");
+	invisible(str);
 }
 
 ### Nested

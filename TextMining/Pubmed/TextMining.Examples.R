@@ -37,29 +37,38 @@ abstracts = extractAbstract(x)
 scroll.txt(abstracts, len=10)
 scroll.txt(abstracts, start=30, len=10)
 
+### Abstracts: Parenthesis
 parenth = parseParenth(abstracts$Abstract[3])
 parenth
 
+# - for 1 particular abstract;
 id = 37
 extractParenth(abstracts$Abstract[id])
 
-# may take some time!
+# Extract strings:
+# - may take some time!
 allParenth = lapply(seq(nrow(abstracts)), function(id) {
 	extractParenth(abstracts$Abstract[id], warn=id);
 })
 allParenth[(1:10) + 40]
 
-# Errors
+### Errors
+
+# - particular Error;
 id = 87
 allParenth[id]
 scroll.txt(abstracts, start=id, len=1)
 
-### Errors
+# All Parenthesis & Errors
+# - list with npos;
 allParenth = parseParenth(abstracts$Abstract);
 isErr = isErrParenth(allParenth)
 sum(isErr)
 abstractsErr = abstracts[isErr,]
 scroll.txt(abstractsErr, len=10)
+
+# hasP = hasParenth(allParenth);
+summary.AbstractParenth(abstracts, allParenth)
 
 
 ### Nested
