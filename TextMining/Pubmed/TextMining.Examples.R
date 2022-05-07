@@ -84,6 +84,8 @@ countErrParenth(allParenth, isErr)
 abstractsErr = abstracts[isErr,]
 scroll.txt(abstractsErr, len=10)
 
+# count(errors in abstract)
+# same as countErrParenth(...)
 sapply(allParenth[isErr], function(x) {
 	sum(x$Err != 0);
 })
@@ -96,6 +98,11 @@ scroll.txt(abstracts[abstracts$PMID == 34558742, ], len=10)
 
 absErr = cbind(abstractsErr, countErrParenth(allParenth, isErr))
 scroll.txt(absErr, len=10, w=c(8,76,4), start=20)
+
+# code to count the 22 true mismatches
+# (based on the example above)
+tmp = read.csv("Pubmed.Abstracts.Corrections.Parenthesis.csv")
+length(unique(tmp$PMID))
 
 
 ### Nested
