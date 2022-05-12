@@ -7,7 +7,7 @@
 ### Asymmetric S2:
 ### Conjugated Types
 ###
-### draft v.0.1e
+### draft v.0.1f
 
 
 ### Asymmetric Polynomial Systems: 2 Variables
@@ -367,6 +367,18 @@ R1 = R[1]; R2 = R[2]; b1 = b[1];
 # x^5 - 10*x^3*y^2 + 5*x*y^4 - b*(x^2 - y^2) = 0
 # y^5 - 10*x^2*y^3 + 5*x^4*y + 2*b*x*y = 0
 
+### Case 1:
+y = 0
+# =>
+x = 0 # OR
+x^3 - b # = 0
+
+### Case 2:
+# y != 0
+
+
+### Examples:
+
 b = 2
 #
 b3 = b^(1/3)
@@ -377,4 +389,20 @@ y = b3 * sin(2*(0:6)*pi/7)
 err1 = x^5 - 10*x^3*y^2 + 5*x*y^4 - b*(x^2 - y^2)
 err2 = y^5 - 10*x^2*y^3 + 5*x^4*y + 2*b*x*y
 round0(rbind(err1, err2))
+
+
+### Classic
+p1 = toPoly.pm("x^5 - 10*x^3*y2 + 5*x*y2^2 - b*(x^2 - y2)")
+p2 = toPoly.pm("y2^2 - 10*x^2*y2 + 5*x^4 + 2*b*x")
+
+pR = solve.pm(p1, p2, "y2")
+pR$Rez$coeff = - pR$Rez$coeff;
+str(pR)
+print.pm(pR$Rez)
+
+err = 512*x^9 + 256*x^6*b - 88*x^3*b^2 - b^3
+round0(err)
+# Note:
+# - solution y = 0 is not included in this eq;
+# - the solutions is very nice using trigonometric functions;
 
