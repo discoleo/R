@@ -7,7 +7,7 @@
 ### Asymmetric S2:
 ### Conjugated Types
 ###
-### draft v.0.1d
+### draft v.0.1e
 
 
 ### Asymmetric Polynomial Systems: 2 Variables
@@ -30,15 +30,16 @@
 ####################
 ####################
 
-### helper functions
-
-library(polynom)
-library(pracma)
+### Helper Functions
 
 # the functions are in the file:
 # Polynomials.Helper.R;
 # e.g. round0(), round0.p;
 source("Polynomials.Helper.R")
+
+
+# library(polynom)
+# library(pracma)
 
 ### Other
 # [...]
@@ -358,4 +359,22 @@ test.S2ConjW3P1(sol, R, b)
 
 ### Debug:
 R1 = R[1]; R2 = R[2]; b1 = b[1];
+
+
+##################
+##################
+
+# x^5 - 10*x^3*y^2 + 5*x*y^4 - b*(x^2 - y^2) = 0
+# y^5 - 10*x^2*y^3 + 5*x^4*y + 2*b*x*y = 0
+
+b = 2
+#
+b3 = b^(1/3)
+x = b3 * cos(2*(0:6)*pi/7)
+y = b3 * sin(2*(0:6)*pi/7)
+
+### Test
+err1 = x^5 - 10*x^3*y^2 + 5*x*y^4 - b*(x^2 - y^2)
+err2 = y^5 - 10*x^2*y^3 + 5*x^4*y + 2*b*x*y
+round0(rbind(err1, err2))
 
