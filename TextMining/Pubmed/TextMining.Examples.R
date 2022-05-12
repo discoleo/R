@@ -1,6 +1,7 @@
 
 
 library(xml2)
+library(corporaexplorer)
 
 source("Pubmed.XML.R")
 source("TextMining.R")
@@ -110,3 +111,19 @@ strNested = extractNested(abstracts$Abstract, pos=allParenth)
 length(strNested)
 strNested[1:20]
 
+
+##################
+
+### Visualization
+### using corporaexlorer
+
+id = grep("^Abstract", names(abstracts));
+if(length(id) == 1) {
+	names(abstracts)[id] = "Text"
+}
+
+xc = prepare_data(abstracts,
+	grouping_variable="PMID",
+	date_based_corpus=FALSE)
+
+explore(xc)
