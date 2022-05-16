@@ -113,16 +113,62 @@ strNested[1:20]
 
 
 ##################
+##################
+
+### Tokenization & Dependency Parsing
+
+library(udpipe)
+library(textplot)
+
+# udmodel = udpipe_download_model(language = "english-ewt")
+# udmodel = udpipe_load_model(file = udmodel$file_model)
+model.file = paste0(getwd(), "/english-ewt-ud-2.5-191206.udpipe")
+udmodel = udpipe_load_model(file = model.file)
+
+# text = uses the abstracts object;
+# abstracts = extractAbstract(x)
+
+txtSection = "(?i)^(?:Objectives|Results|Conclusions)\\:"
+
+id = 100
+tmp = sub(txtSection, "", abstracts$Abstract[[id]])
+ann = udpipe_annotate(udmodel, x = tmp)
+ann = as.data.frame(ann, detailed = TRUE)
+str(ann)
+
+# Sentence
+idS = 2
+textplot_dependencyparser(ann[ann$sentence_id == idS,])
+scroll.txt(abstracts, start=id, len=1)
+
+
+##################
 
 ### Visualization
 ### using corporaexlorer
 
+# text = uses the abstracts object;
+# abstracts = extractAbstract(x)
+
+# convert col-name to "Text"
 id = grep("^Abstract", names(abstracts));
 if(length(id) == 1) {
 	names(abstracts)[id] = "Text"
 }
 
 xc = prepare_data(abstracts,
+	grouping_variable="PMID",
+	date_based_corpus=FALSE)
+
+explore(xc)
+
+
+### CSV-File
+x = read.csv("Example_Abstracts_Title_Pubmed.csv")
+
+x = x[ -3]; # remove Year column
+names(x)[2] = "Text"
+xc = prepare_data(x,
 	grouping_variable="PMID",
 	date_based_corpus=FALSE)
 
