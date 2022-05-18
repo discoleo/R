@@ -143,7 +143,7 @@ textplot_dependencyparser(txtS)
 scroll.txt(abstracts, start=id, len=1)
 
 
-layoutSplit = function(x, y=NULL, nr=1, scale=c(1,20)) {
+layoutSplit = function(x, y=NULL, nr=2, scale=c(1,20)) {
 	len = nchar(x);
 	if( ! is.null(y)) len = pmax(len, nchar(y));
 	if(nr > 1) {
@@ -151,8 +151,10 @@ layoutSplit = function(x, y=NULL, nr=1, scale=c(1,20)) {
 		if(nm != 0) len = c(len, rep(0, nr - nm));
 	} else nm = 0;
 	nc  = length(len) %/% nr;
-	len = matrix(len, nrow=nr);
-	len = apply(len, 1, cumsum);
+	len = matrix(len, ncol=nr);
+	# x-Start = 1;
+	# len = rbind(1, len[ - nc, ]);
+	len = apply(len, 2, cumsum);
 	dim(len) = NULL;
 	len = len * scale[1];
 	xdf = data.frame(
