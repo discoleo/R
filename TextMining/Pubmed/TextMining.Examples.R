@@ -137,10 +137,39 @@ ann = as.data.frame(ann, detailed = TRUE)
 str(ann)
 
 # Sentence
-idS = 2
-textplot_dependencyparser(ann[ann$sentence_id == idS,])
+idS  = 2
+txtS = ann[ann$sentence_id == idS,]
+textplot_dependencyparser(txtS)
 scroll.txt(abstracts, start=id, len=1)
 
+
+layoutSplit = function(x, y=NULL, nr=1, scale=c(1,20)) {
+	len = nchar(x);
+	if( ! is.null(y)) len = pmax(len, nchar(y));
+	if(nr > 1) {
+		nm = length(len) %% nr;
+		if(nm != 0) len = c(len, rep(0, nr - nm));
+	} else nm = 0;
+	nc  = length(len) %/% nr;
+	len = matrix(len, nrow=nr);
+	len = apply(len, 1, cumsum);
+	dim(len) = NULL;
+	len = len * scale[1];
+	xdf = data.frame(
+		x = len,
+		y = rep(seq(nr, 1, by=-1) * scale[2], each=nc));
+	if(nm > 0) {
+		xdf = xdf[ seq(nr - nm) - 1 - nrow(xdf), ];
+	}
+	return(xdf)
+}
+
+# using a hacked version of textplot_dependencyparser.default
+textplot_dependencyparser(txtS, layout = layoutSplit(txtS$token, txtS$upos, nr=2), nudge_y = -5)
+
+# => layout = layout;
+# ggraph::ggraph(g, layout = "linear") +
+# ...
 
 ##################
 
