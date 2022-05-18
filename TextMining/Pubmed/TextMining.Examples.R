@@ -143,9 +143,10 @@ textplot_dependencyparser(txtS)
 scroll.txt(abstracts, start=id, len=1)
 
 
-layoutSplit = function(x, y=NULL, nr=2, scale=c(1,20)) {
+layoutSplit = function(x, y=NULL, nr=2, scale=c(1,20), dx=3) {
 	len = nchar(x);
 	if( ! is.null(y)) len = pmax(len, nchar(y));
+	len = len + dx;
 	if(nr > 1) {
 		nm = length(len) %% nr;
 		if(nm != 0) len = c(len, rep(0, nr - nm));
@@ -172,6 +173,11 @@ textplot_dependencyparser(txtS, layout = layoutSplit(txtS$token, txtS$upos, nr=2
 # => layout = layout;
 # ggraph::ggraph(g, layout = "linear") +
 # ...
+
+
+txtSection = extract.regex(abstracts$Abstract, "(?i)^([^:]{1,25}+)\\:", gr=1)
+table(txtSection)
+
 
 ##################
 

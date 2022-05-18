@@ -6,7 +6,7 @@
 ### Pubmed
 ### Text Mining Tools
 ###
-### draft v.0.1f-fix
+### draft v.0.1g
 
 
 ### Text Mining Tools
@@ -16,6 +16,21 @@
 
 
 ######################
+
+### Basic Tools
+
+extract.regex = function(x, pattern, gr=0, perl=TRUE, simplify=TRUE) {
+	r = regexec(pattern, x, perl=perl);
+	gr = gr + 1;
+	s = lapply(seq(length(x)), function(id) {
+		tmp = r[[id]];
+		if(tmp[1] == -1) return("");
+		substr(x[id], tmp[gr], attr(tmp, "match.length")[gr]);
+	});
+	if(simplify) s = unlist(s);
+	return(s)
+}
+
 
 ### Sentence / Parenthesis Parser
 
