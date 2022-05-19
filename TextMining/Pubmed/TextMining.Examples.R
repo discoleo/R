@@ -130,28 +130,8 @@ scroll.txt(cbind(abstracts$PMID[id], txt), len=10)
 library(udpipe)
 library(textplot)
 
-# udmodel = udpipe_download_model(language = "english-ewt")
-# udmodel = udpipe_load_model(file = udmodel$file_model)
-model.file = paste0(getwd(), "/english-ewt-ud-2.5-191206.udpipe")
-udmodel = udpipe_load_model(file = model.file)
-
-# text = uses the abstracts object;
-# abstracts = extractAbstract(x)
-
-txtSection = "(?i)^(?:Objectives?|Results|Conclusions?|Introduction)\\:"
-
-id = 100
-tmp = sub(txtSection, "", abstracts$Abstract[[id]])
-ann = udpipe_annotate(udmodel, x = tmp)
-ann = as.data.frame(ann, detailed = TRUE)
-str(ann)
-
-# Sentence
-idS  = 2
-txtAnn = ann[ann$sentence_id == idS,]
-textplot_dependencyparser(txtAnn)
-scroll.txt(abstracts, start=id, len=1)
-
+# hacked function:
+# source("textplot.Hack.R")
 
 layoutSplit = function(x, y=NULL, nr=2, scale=c(1, 25), dx=3) {
 	len = nchar(x);
@@ -176,6 +156,30 @@ layoutSplit = function(x, y=NULL, nr=2, scale=c(1, 25), dx=3) {
 	}
 	return(xdf)
 }
+
+# udmodel = udpipe_download_model(language = "english-ewt")
+# udmodel = udpipe_load_model(file = udmodel$file_model)
+model.file = paste0(getwd(), "/english-ewt-ud-2.5-191206.udpipe")
+udmodel = udpipe_load_model(file = model.file)
+
+txtSection = "(?i)^(?:Objectives?|Results|Conclusions?|Introduction)\\:"
+
+### Examples:
+# text = uses the abstracts object;
+# abstracts = extractAbstract(x)
+
+id = 100
+tmp = sub(txtSection, "", abstracts$Abstract[[id]])
+ann = udpipe_annotate(udmodel, x = tmp)
+ann = as.data.frame(ann, detailed = TRUE)
+str(ann)
+
+# Sentence
+idS  = 2
+txtAnn = ann[ann$sentence_id == idS,]
+textplot_dependencyparser(txtAnn)
+scroll.txt(abstracts, start=id, len=1)
+
 
 # using a hacked version of textplot_dependencyparser.default
 textplot_dependencyparser(txtAnn, layout = layoutSplit(txtAnn$token, txtAnn$upos, nr=2), nudge_y = -5)
