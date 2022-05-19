@@ -8,6 +8,7 @@ source("TextMining.R")
 
 # source("Tools.CRAN.R")
 # - needed for formatting;
+# - see files in the "/R/Stat" folder;
 
 
 #####################
@@ -76,6 +77,8 @@ scroll.txt(abstracts, start=id, len=1)
 
 ### All Parenthesis & Errors
 # - output: list with npos;
+# - data.frame(nS, nE, ..., Err = 0);
+
 allParenth = parseParenth(abstracts$Abstract);
 isErr = isErrParenth(allParenth)
 sum(isErr)
@@ -112,6 +115,13 @@ length(strNested)
 strNested[1:20]
 
 
+### Strip Parenthesis
+id = c(3,4)
+txt = stripParenth(abstracts$Abstract[id], pos=allParenth[id])
+
+scroll.txt(cbind(abstracts$PMID[id], txt), len=10)
+
+
 ##################
 ##################
 
@@ -138,12 +148,12 @@ str(ann)
 
 # Sentence
 idS  = 2
-txtS = ann[ann$sentence_id == idS,]
-textplot_dependencyparser(txtS)
+txtAnn = ann[ann$sentence_id == idS,]
+textplot_dependencyparser(txtAnn)
 scroll.txt(abstracts, start=id, len=1)
 
 
-layoutSplit = function(x, y=NULL, nr=2, scale=c(1,20), dx=3) {
+layoutSplit = function(x, y=NULL, nr=2, scale=c(1, 25), dx=3) {
 	len = nchar(x);
 	if( ! is.null(y)) len = pmax(len, nchar(y));
 	len = len + dx;
@@ -168,7 +178,7 @@ layoutSplit = function(x, y=NULL, nr=2, scale=c(1,20), dx=3) {
 }
 
 # using a hacked version of textplot_dependencyparser.default
-textplot_dependencyparser(txtS, layout = layoutSplit(txtS$token, txtS$upos, nr=2), nudge_y = -5)
+textplot_dependencyparser(txtAnn, layout = layoutSplit(txtAnn$token, txtAnn$upos, nr=2), nudge_y = -5)
 
 # => layout = layout;
 # ggraph::ggraph(g, layout = "linear") +

@@ -6,7 +6,7 @@
 ### Pubmed
 ### Text Mining Tools
 ###
-### draft v.0.1h
+### draft v.0.1i
 
 
 ### Text Mining Tools
@@ -186,6 +186,49 @@ hasParenth = function(x) {
 		return(nrow(x) > 0);
 	})
 	return(isP);
+}
+
+stripParenth = function(x, pos = NULL, warn = FALSE) {
+	if(is.null(pos)) pos = parseParenth(x, warn=warn);
+	hasP = hasParenth(pos);
+	sumP = sum(hasP);
+	if(sumP == 0) return(x);
+	#
+	tmpStr = x[hasP]; tmpPos = pos[hasP];
+	strip = function(id) {
+		tmpStr = tmpStr[[id]];
+		pos = tmpPos[[id]];
+		pos = pos[pos$Nested == FALSE & pos$Err == 0, ];
+		if(nrow(pos) == 0) return(tmpStr);
+		# Note: assumes ordered positions;
+		sz = nchar(tmpStr);
+		nr = nrow(pos);
+		nS = pos$nE + 1;
+		# Head
+		if(pos$nS[1] == 1) {
+			if(nr >= 2) {
+				nE = pos$nS[seq(2, nr)] - 1;
+			} else nE = sz;
+		} else {
+			nS = c(1, nS);
+			nE = c(pos$nS - 1, sz);
+		}
+		# Tail
+		if(pos$nE[nr] + 1 >= sz) {
+			len = length(nS);
+			nS = nS[ - len];
+			nE = nE[ - len];
+		}
+		len = length(nS);
+		if(len == 0) return("");
+		# does NOT function:
+		# txt = substr(tmpStr, nS, nE);
+		txt = sapply(seq(len), function(id) substr(tmpStr, nS[id], nE[id]));
+		txt = paste0(txt, collapse="");
+		return(txt);
+	}
+	x[hasP] = sapply(seq(sumP), strip);
+	return(x);
 }
 
 summary.AbstractParenth = function(x, npos=NULL) {
