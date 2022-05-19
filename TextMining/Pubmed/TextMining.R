@@ -6,7 +6,7 @@
 ### Pubmed
 ### Text Mining Tools
 ###
-### draft v.0.1g
+### draft v.0.1h
 
 
 ### Text Mining Tools
@@ -29,6 +29,16 @@ extract.regex = function(x, pattern, gr=0, perl=TRUE, simplify=TRUE) {
 	});
 	if(simplify) s = unlist(s);
 	return(s)
+}
+
+# strips the Section Title
+stripSection = function(x, len=25) {
+	patt = paste0("(?i)^[^:]{1,", len, "}+\\:\\s*+");
+	npos = regexpr(patt, x, perl=TRUE);
+	npos = attr(npos, "match.length");
+	hasSection = (npos > 0);
+	x[hasSection] = substring(x[hasSection], 1 + npos[hasSection]);
+	return(x);
 }
 
 

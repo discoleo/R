@@ -128,7 +128,7 @@ udmodel = udpipe_load_model(file = model.file)
 # text = uses the abstracts object;
 # abstracts = extractAbstract(x)
 
-txtSection = "(?i)^(?:Objectives|Results|Conclusions)\\:"
+txtSection = "(?i)^(?:Objectives?|Results|Conclusions?|Introduction)\\:"
 
 id = 100
 tmp = sub(txtSection, "", abstracts$Abstract[[id]])
@@ -175,8 +175,14 @@ textplot_dependencyparser(txtS, layout = layoutSplit(txtS$token, txtS$upos, nr=2
 # ...
 
 
+### Section Titles
 txtSection = extract.regex(abstracts$Abstract, "(?i)^([^:]{1,25}+)\\:", gr=1)
 table(txtSection)
+
+
+# Strip Section title:
+tmp = stripSection(abstracts$Abstract)
+scroll.txt(cbind(abstracts$PMID, tmp), len=10, start=300)
 
 
 ##################
