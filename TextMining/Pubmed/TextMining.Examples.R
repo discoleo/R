@@ -133,7 +133,7 @@ library(textplot)
 # hacked function:
 # source("textplot.Hack.R")
 
-layoutSplit = function(x, y=NULL, nr=2, scale=c(1, 25), dx=3) {
+layoutSplit = function(x, y=NULL, nr=2, scale=c(1, 30), dx=3) {
 	len = nchar(x);
 	if( ! is.null(y)) len = pmax(len, nchar(y));
 	len = len + dx;
@@ -143,13 +143,14 @@ layoutSplit = function(x, y=NULL, nr=2, scale=c(1, 25), dx=3) {
 	} else nm = 0;
 	nc  = length(len) %/% nr;
 	len = matrix(len, ncol=nr);
-	# x-Start = 1;
-	# len = rbind(1, len[ - nc, ]);
-	len = apply(len, 2, cumsum);
-	dim(len) = NULL;
-	len = len * scale[1];
+	# x-Coord = cumsum() + mid;
+	pos = apply(len, 2, cumsum);
+	pos = rbind(0, pos[ - nrow(pos), ]);
+	pos = pos + len / 2; # midpoint
+	dim(pos) = NULL;
+	pos = pos * scale[1];
 	xdf = data.frame(
-		x = len,
+		x = pos,
 		y = rep(seq(nr, 1, by=-1) * scale[2], each=nc));
 	if(nm > 0) {
 		xdf = xdf[ seq(nr - nm) - 1 - nrow(xdf), ];
@@ -175,16 +176,17 @@ ann = as.data.frame(ann, detailed = TRUE)
 str(ann)
 
 # Sentence
-idS  = 2
+idS = 1
 txtAnn = ann[ann$sentence_id == idS,]
 textplot_dependencyparser(txtAnn)
 scroll.txt(abstracts, start=id, len=1)
 
 
 # using a hacked version of textplot_dependencyparser.default
-textplot_dependencyparser(txtAnn, layout = layoutSplit(txtAnn$token, txtAnn$upos, nr=2), nudge_y = -5)
+nrows = 3;
+textplot_dependencyparser(txtAnn, layout = layoutSplit(txtAnn$token, txtAnn$upos, nr=nrows), nudge_y = -5)
 
-# => layout = layout;
+# Hack => layout = layout;
 # ggraph::ggraph(g, layout = "linear") +
 # ...
 
