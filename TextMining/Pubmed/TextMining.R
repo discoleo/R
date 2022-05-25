@@ -6,7 +6,7 @@
 ### Pubmed
 ### Text Mining Tools
 ###
-### draft v.0.1i
+### draft v.0.1j
 
 
 ### Text Mining Tools
@@ -151,7 +151,28 @@ parseParenth = function(x, sub.tokens=TRUE, warn=FALSE) {
 
 ### Extract Content
 # - between parenthesis;
-extractParenth = function(x, pos = NULL, nested=FALSE, warn=NULL) {
+extractParenthV = function(x, pos = NULL, nested = FALSE, warn = FALSE,
+		exclude.Parenth = TRUE) {
+	if(is.null(pos)) {
+		pos = parseParenth(x);
+	}
+	len = length(x);
+	if(len == 0) return(character(0));
+	if(warn) {
+		r = lapply(seq(len), function(id) {
+			extractParenth(x[[id]], pos[[id]], nested=nested, warn = id,
+				exclude.Parenth=exclude.Parenth);
+		})
+	} else {
+		r = lapply(seq(len), function(id) {
+			extractParenth(x[[id]], pos[[id]], nested=nested, warn = NULL,
+				exclude.Parenth=exclude.Parenth);
+		})
+	}
+	return(r);
+}
+extractParenth = function(x, pos = NULL, nested=FALSE, warn=NULL,
+		exclude.Parenth = TRUE) {
 	if(is.null(pos)) {
 		pos = parseParenth(x);
 	}
@@ -160,8 +181,17 @@ extractParenth = function(x, pos = NULL, nested=FALSE, warn=NULL) {
 	if( ! is.null(warn) && any(pos$Err != 0)) {
 		warning("Mismatched parenthesis in: ", warn);
 	}
-	FUN = function(id) {
-		substr(x, pos$nS[id], pos$nE[id]);
+	if(exclude.Parenth) {
+		FUN = function(id) {
+			nnS = pos$nS[id]; nnE = pos$nE[id];
+			if(nnE > nnS + 1) { nnS = nnS + 1; nnE = nnE - 1; }
+			else return(character(0));
+			substr(x, nnS, nnE);
+		}
+	} else {
+		FUN = function(id) {
+			substr(x, pos$nS[id], pos$nE[id]);
+		}
 	}
 	sapply(seq(nrow(pos)), FUN);
 }
@@ -232,6 +262,7 @@ stripParenth = function(x, pos = NULL, warn = FALSE) {
 }
 
 summary.AbstractParenth = function(x, npos=NULL) {
+	# npos = position of parenthesis;
 	if(is.null(npos)) {
 		npos = parseParenth(x$Abstract);
 	}
@@ -272,6 +303,36 @@ extractNested = function(x, pos, simplify=TRUE) {
 	if(nrow(posNested) == 0) return(character(0));
 	sContent = extractParenth(x, pos=posNested);
 	return(sContent);
+}
+
+######################
+
+# "\d[-. %\d]*+"
+is.string.numExt = function(x) {
+	len = length(x);
+	if(len == 1) return(is.string.numExt1(x));
+	#
+	rez = sapply(x, is.string.numExt1, USE.NAMES = FALSE);
+	return(rez);
+}
+is.string.numExt1 = function(x) {
+	if( ! nzchar(x)) return(FALSE);
+	if(is.na(x)) return(FALSE);
+	#
+	x = utf8ToInt(x);
+	len = length(x);
+	isNum = FALSE;
+	for(npos in seq(len)) {
+		ch = x[npos];
+		# 0 <= ch <= 9
+		if(ch <= 57 && ch >= 48) {
+			isNum = TRUE; next;
+		}
+		# " .-=<>%"
+		if(ch %in% c(32, 46, 45, 61, 60, 62, 37)) next;
+		return(FALSE);
+	}
+	return(isNum);
 }
 
 ######################

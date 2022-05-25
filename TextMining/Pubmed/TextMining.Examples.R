@@ -45,6 +45,7 @@ scroll.txt(w2, w=rep(c(18,8), 4), len=20)
 
 abstracts = extractAbstract(x)
 
+# Visualize
 scroll.txt(abstracts, len=10)
 
 scroll.txt(abstracts, start=30, len=10)
@@ -74,6 +75,8 @@ id = 87
 allParenth[id]
 scroll.txt(abstracts, start=id, len=1)
 
+
+###################
 
 ### All Parenthesis & Errors
 # - output: list with npos;
@@ -120,6 +123,19 @@ id = c(3,4)
 txt = stripParenth(abstracts$Abstract[id], pos=allParenth[id])
 
 scroll.txt(cbind(abstracts$PMID[id], txt), len=10)
+
+
+### Contents of Parenthesis
+isErr = isErrParenth(allParenth)
+tmp = extractParenthV(abstracts$Abstract[! isErr], allParenth[ ! isErr])
+head(tmp)
+
+tmp = unlist(tmp);
+isNum = is.string.numExt(tmp)
+table(isNum)
+
+head(tmp[isNum], n=20)
+# unique(tmp[isNum])
 
 
 ##################
