@@ -136,6 +136,8 @@ table(isNum)
 
 head(tmp[isNum], n=20)
 # unique(tmp[isNum])
+# table(gsub("\\d", "n", tmp[isNum]))
+table(encode.num(tmp[isNum]))
 
 
 ##################

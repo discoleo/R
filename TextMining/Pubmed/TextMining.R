@@ -6,7 +6,7 @@
 ### Pubmed
 ### Text Mining Tools
 ###
-### draft v.0.1j
+### draft v.0.1k
 
 
 ### Text Mining Tools
@@ -333,6 +333,16 @@ is.string.numExt1 = function(x) {
 		return(FALSE);
 	}
 	return(isNum);
+}
+
+# Encode numbers => "n";
+encode.num = function(x, ch="n") {
+	# keep years;
+	reg = paste0(
+		"\\d++(?=\\.\\d)|",
+		"(?<=\\.)\\d++|",
+		"(?<!\\d)\\d{1,3}(?!\\d)");
+	gsub(reg, ch, tmp[isNum], perl=TRUE);
 }
 
 ######################
