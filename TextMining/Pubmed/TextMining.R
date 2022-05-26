@@ -6,7 +6,7 @@
 ### Pubmed
 ### Text Mining Tools
 ###
-### draft v.0.1l
+### draft v.0.1m
 
 
 ### Text Mining Tools
@@ -344,8 +344,8 @@ is.string.numExt = function(x) {
 	return(rez);
 }
 is.string.numExt1 = function(x) {
-	if( ! nzchar(x)) return(FALSE);
 	if(is.na(x)) return(FALSE);
+	if( ! nzchar(x)) return(FALSE);
 	#
 	x = utf8ToInt(x);
 	len = length(x);
@@ -362,6 +362,62 @@ is.string.numExt1 = function(x) {
 		return(FALSE);
 	}
 	return(isNum);
+}
+
+# "p = 0.n", "p <= 0.n"
+is.string.pVal = function(x) {
+	len = length(x);
+	if(len == 1) return(is.string.pVal1(x));
+	#
+	rez = sapply(x, is.string.pVal1, USE.NAMES = FALSE);
+	return(rez);
+}
+is.string.pVal1 = function(x) {
+	if(is.na(x)) return(FALSE);
+	if( ! nzchar(x)) return(FALSE);
+	#
+	x = utf8ToInt(x);
+	len = length(x);
+	npos = 1;
+	while(npos < len) {
+		if(x[npos] == 32 || x[npos] == 160) {
+			npos = npos + 1;
+		} else break;
+	}
+	# "p"
+	if((x[npos] != 112) && (x[npos] != 80)) return(FALSE);
+	npos = npos + 1;
+	# " = "
+	# Space:
+	while(npos < len) {
+		# "\u820n" = ?? used ?? as space;
+		if(x[npos] == 32 || x[npos] == 160 ||
+				x[npos] == 8201 || x[npos] == 8202 || x[npos] == 8203) {
+			npos = npos + 1;
+		} else break;
+	}
+	if(x[npos] != 61 && x[npos] != 60 && x[npos] != 8804) return(FALSE);
+	npos = npos + 1;
+	if(x[npos] == 60) npos = npos + 1; # "p <= "
+	# Space:
+	while(npos < len) {
+		# "\u820n" = ?? used ?? as space;
+		if(x[npos] == 32 || x[npos] == 160 ||
+				x[npos] == 8201 || x[npos] == 8202 || x[npos] == 8203) {
+			npos = npos + 1;
+		} else break;
+	}
+	# "0.n"
+	if(x[npos] == 48) npos = npos + 1;
+	if(x[npos] == 46 || x[npos] == 183) {
+		npos = npos + 1;
+	} else return(FALSE);
+	while(npos <= len) {
+		if(x[npos] >= 48 && x[npos] <= 57) {
+			npos = npos + 1;
+		} else return(FALSE); # TODO: trailing space;
+	}
+	return(TRUE);
 }
 
 # Encode numbers => "n";
