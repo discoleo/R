@@ -6,7 +6,7 @@
 ### Pubmed
 ### Text Mining Tools
 ###
-### draft v.0.1k
+### draft v.0.1l
 
 
 ### Text Mining Tools
@@ -307,6 +307,34 @@ extractNested = function(x, pos, simplify=TRUE) {
 
 ######################
 
+strsplitTokens = function(x, sep=";\\s*+", simplify=TRUE, perl=TRUE) {
+	FUN = function(x) strsplit(x, sep, perl=perl);
+	cleanFUN = function(x) {
+		if(length(x) == 0) return(character(0));
+		x[nzchar(x)];
+	}
+	#
+	if(is.list(x)) {
+		r = lapply(x, FUN);
+		r = lapply(r, cleanFUN);
+		if(simplify) {
+			r = lapply(r, unlist);
+		}
+	} else {
+		r = FUN(x);
+		r = lapply(r, cleanFUN);
+		if(simplify) {
+			r = unlist(r);
+		}
+	}
+	return(r);
+}
+
+# TODO:
+# - split ", respectively", "ie, ";
+
+######################
+
 # "\d[-. %\d]*+"
 is.string.numExt = function(x) {
 	len = length(x);
@@ -329,7 +357,8 @@ is.string.numExt1 = function(x) {
 			isNum = TRUE; next;
 		}
 		# " .-=<>%"
-		if(ch %in% c(32, 46, 45, 61, 60, 62, 37)) next;
+		if(ch %in% c(32, 46, 45, 61, 60, 62, 37, 160,
+			183, 177, 8804, 8805)) next;
 		return(FALSE);
 	}
 	return(isNum);

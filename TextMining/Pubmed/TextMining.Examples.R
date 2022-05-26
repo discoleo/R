@@ -126,6 +126,8 @@ scroll.txt(cbind(abstracts$PMID[id], txt), len=10)
 
 
 ### Contents of Parenthesis
+
+allParenth = parseParenth(abstracts$Abstract);
 isErr = isErrParenth(allParenth)
 tmp = extractParenthV(abstracts$Abstract[! isErr], allParenth[ ! isErr])
 head(tmp)
