@@ -6,7 +6,7 @@
 ### Differential Equations
 ### DE Systems: Polynomial
 ###
-### draft v.0.1h
+### draft v.0.1i
 
 
 #############
@@ -18,8 +18,8 @@
 #   y1^n + y2^n = R1;
 ### Hetero-Symmetric:
 # - Simple, derived from:
-#   S.1.) y1^n + c1*y2 = R;
-#   S.2.) (y1*y2)^n + c1*y2 = R;
+#   HS.1.) y1^n + c1*y2 = R;
+#   HS.2.) (y1*y2)^n + c1*y2 = R;
 ### Others:
 # TODO
 
@@ -29,6 +29,8 @@
 ###############
 
 
+### draft v.0.1i:
+# - Variants for [HS.1] & [Simple];
 ### draft v.0.1h:
 # - Extensions to baseline Polynomial System:
 #   y1*y2 + c1*y1 + c2*y2 = cx;
@@ -108,6 +110,15 @@ range.c = function(x, isRe=NULL) {
 ### D & Mult(y1*...) =>
 n*(R1 - c1*y2)*dy1 + c1*y1*dy2 - y1*dR1 # = 0
 n*(R2 - c1*y1)*dy2 + c1*y2*dy1 - y2*dR2 # = 0
+
+### Variant:
+# Sum & Diff:
+(n-1)*c1*(y2*dy1 + y1*dy2) - n*R1*dy1 - n*R2*dy2 + y1*dR1 + y2*dR2 # = 0
+(n+1)*c1*(y2*dy1 - y1*dy2) - n*R1*dy1 + n*R2*dy2 + y1*dR1 - y2*dR2 # = 0
+# Case: R1 = R2 = R
+(n-1)*c1*(y2*dy1 + y1*dy2) - n*R*(dy1 + dy2) + dR*(y1 + y2) # = 0
+(n+1)*c1*(y2*dy1 - y1*dy2) - n*R*(dy1 - dy2) + dR*(y1 - y2) # = 0
+
 
 ### Examples:
 
@@ -342,6 +353,13 @@ y1*dy2 + y2*dy1 - dcx # = 0
 	- dcx*y1*(y1 + y2)^2 - y1*(y1 + y2)*dR1/3 + 2*cx*dcx*(y1 + y2) + R1*dcx # = 0
 2*cx*(y2^2 - y1^2)*dy2 + R1*(y2 - y1)*dy2 +
 	- dcx*y2*(y1 + y2)^2 - y2*(y1 + y2)*dR1/3 + 2*cx*dcx*(y1 + y2) + R1*dcx # = 0
+
+### Variant
+# D(Eq 1) - 2*cx*(y1*dy2 + y2*dy1) + 2*dcx*y1*y2 =>
+2*cx*(y1*dy1 + y2*dy2) + R1*(dy1 + dy2) - dcx*(y1^2 + y2^2) - 2*dcx*y1*y2 +
+	- (y1 + y2)*dR1/3 + 2*cx*dcx # = 0
+# Eq 2 variant:
+3*y1^3*dy1 + 3*y2^3*dy2 + 3*cx*(y1*dy1 + y2*dy2) - dR1*(y1 + y2) # = 0
 
 
 ### Example:
