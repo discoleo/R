@@ -6,7 +6,7 @@
 ### Pubmed
 ### Text Mining Tools
 ###
-### draft v.0.1m
+### draft v.0.1n
 
 
 ### Text Mining Tools
@@ -419,6 +419,69 @@ is.string.pVal1 = function(x) {
 	}
 	return(TRUE);
 }
+
+
+# "N = n"
+is.string.nVal = function(x) {
+	len = length(x);
+	if(len == 1) return(is.string.nVal1(x));
+	#
+	rez = sapply(x, is.string.nVal1, USE.NAMES = FALSE);
+	return(rez);
+}
+is.string.nVal1 = function(x) {
+	if(is.na(x)) return(FALSE);
+	if( ! nzchar(x)) return(FALSE);
+	#
+	x = utf8ToInt(x);
+	len = length(x);
+	npos = 1;
+	while(npos < len) {
+		if(x[npos] == 32 || x[npos] == 160) {
+			npos = npos + 1;
+		} else break;
+	}
+	# "N"
+	if((x[npos] != 110) && (x[npos] != 78)) return(FALSE);
+	npos = npos + 1;
+	if(npos > len) return(FALSE);
+	# " = "
+	# Space:
+	while(npos < len) {
+		# "\u820n" = ?? used ?? as space;
+		if(x[npos] == 32 || x[npos] == 160 ||
+				x[npos] == 8201 || x[npos] == 8202 || x[npos] == 8203 ||
+				x[npos] == 8239) {
+			npos = npos + 1;
+		} else break;
+	}
+	if(x[npos] != 61) return(FALSE);
+	npos = npos + 1;
+	# Space:
+	while(npos < len) {
+		# "\u820n" = ?? used ?? as space;
+		if(x[npos] == 32 || x[npos] == 160 ||
+				x[npos] == 8201 || x[npos] == 8202 || x[npos] == 8203 ||
+				x[npos] == 8239) {
+			npos = npos + 1;
+		} else break;
+	}
+	# "n,n"
+	hasNum = FALSE;
+	while(npos <= len) {
+		if(x[npos] >= 48 && x[npos] <= 57) {
+			npos = npos + 1;
+			hasNum = TRUE;
+		} else if(hasNum && x[npos] == 44) {
+			npos = npos + 1; # TODO: check "(?=\d)";
+		} else {
+			return(FALSE); # TODO: trailing space;
+		}
+	}
+	return(TRUE);
+}
+
+################
 
 # Encode numbers => "n";
 encode.num = function(x, ch="n") {

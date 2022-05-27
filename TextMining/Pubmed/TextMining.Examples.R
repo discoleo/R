@@ -133,6 +133,8 @@ tmp = extractParenthV(abstracts$Abstract[! isErr], allParenth[ ! isErr])
 head(tmp)
 
 tmp = unlist(tmp);
+
+# Numeric
 isNum = is.string.numExt(tmp)
 table(isNum)
 
@@ -140,6 +142,37 @@ head(tmp[isNum], n=20)
 # unique(tmp[isNum])
 # table(gsub("\\d", "n", tmp[isNum]))
 table(encode.num(tmp[isNum]))
+
+# Specific Types
+tmp = unlist(tmp);
+tmp = unique(tmp);
+hasNum = grepl("\\d", tmp);
+tmp = tmp[hasNum];
+length(tmp)
+# Numeric
+isNum = is.string.numExt(tmp)
+table(isNum)
+tmp = tmp[ ! isNum]
+# P-Values
+isPVal = is.string.pVal(tmp)
+table(isPVal)
+tmp = tmp[ ! isPVal]
+# N-Values
+isNVal = is.string.nVal(tmp)
+table(isNVal)
+tmp = tmp[ ! isNVal]
+
+tmp[1:100]
+
+# also "95 % OR"
+regCI = paste0(
+	"^95\\%[ ]*+CI", "[\\:, =]++",
+	"\\d++(?:[.\uB7]\\d++)?+", "\\%?+", "[- ,;\u2009]++",
+	"\\d++(?:[.\uB7]\\d++)?+", "\\%?+$")
+isCI = grepl(regCI, tmp, perl=TRUE)
+table(isCI)
+
+tmp = tmp[ ! isCI]
 
 
 ##################
