@@ -6,7 +6,7 @@
 ### Differential Equations
 ### DE Systems: Lambert-type
 ###
-### draft v.0.1c
+### draft v.0.1d
 
 
 #############
@@ -112,9 +112,11 @@ exp(y1-y2)*(dy1 - dy2) - b2*dy1 - db2*y1 - b2*dy2 - db2*y2 - dR2 # = 0
 
 ### Case 1:
 # - Trivial solution: y1 = y2;
+y = log(- b * lambertWp( - exp(-R/b) / b));
 
 ### Case 2:
 # - non-Trivial: y1 != y2;
+
 
 source("Polynomials.Helper.ODE.R")
 source("Polynomials.Helper.Solvers.S2.R")
@@ -200,6 +202,20 @@ exp(x1) + b*x1 - (exp(x2) + b*x2) # = 0
 exp(1/b*exp(x1)) * exp(x1) - exp(1/b*exp(x2)) * exp(x2) # = 0
 # Lambert W: Wp or Wn =>
 exp(x1) - exp(x2) # = 0 *OR*
+# different branches of W:
 lambertWp(exp(1/b*exp(x1)) * 1/b*exp(x1))
 # [but pracma-implementation does NOT accept complex numbers]
+# print(exp(1/b*exp(x1)) * 1/b*exp(x1), 12)
+
+
+### Case 1:
+# - Trivial solution: y1 = y2;
+# Note: R is actually a function of x;
+
+R = 3
+b = 1.2
+y = log(- b * lambertWp( - exp(-R/b) / b));
+
+### Test
+exp(y) - b*y - R;
 
