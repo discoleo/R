@@ -6,7 +6,7 @@
 ### Pubmed
 ### Text Mining Tools
 ###
-### draft v.0.1n
+### draft v.0.1o
 
 
 ### Text Mining Tools
@@ -396,7 +396,10 @@ is.string.pVal1 = function(x) {
 			npos = npos + 1;
 		} else break;
 	}
-	if(x[npos] != 61 && x[npos] != 60 && x[npos] != 8804) return(FALSE);
+	if(x[npos] != 61 && x[npos] != 60 && x[npos] != 8804 && x[npos] != 62) {
+		# 62: "P > ";
+		return(FALSE);
+	}
 	npos = npos + 1;
 	if(x[npos] == 60) npos = npos + 1; # "p <= "
 	# Space:
@@ -480,6 +483,56 @@ is.string.nVal1 = function(x) {
 	}
 	return(TRUE);
 }
+
+
+# TODO:
+# - OR, RR, SMD/WMD (may have units);
+# - also "95 % OR";
+# - "pooled OR";
+# - range;
+
+# 95% CI
+is.string.CI95 = function(x) {
+	regCI = paste0(
+		"^95\\%[ ]*+CI", "[\\:, =\u2009\uA0]++",
+		"\\d++(?:[.\uB7]\\d++)?+", "\\%?+", "[- ,;\u2009\uA0]++",
+		"\\d++(?:[.\uB7]\\d++)?+", "\\%?+$")
+	isCI = grepl(regCI, x, perl=TRUE);
+	return(isCI);
+}
+
+# "n.n, 95% CI n-n"
+is.string.ValCI95 = function(x) {
+	regCI = paste0(
+		"^\\d++(?:[.\uB7]\\d++)?+",
+		"(?:;|,[ \uA0])[ \uA0]*+", "95\\%[ ]*+CI", "[\\:, =\u2009\uA0]++",
+		"\\d++(?:[.\uB7]\\d++)?+", "\\%?+", "[- ,;\u2009\uA0]++",
+		"\\d++(?:[.\uB7]\\d++)?+", "\\%?+$")
+	isCI = grepl(regCI, x, perl=TRUE);
+	return(isCI);
+}
+
+# "OR/RR/HR n.n, 95% CI n-n"
+is.string.XR_CI95 = function(x) {
+	regCI = paste0(
+		"^[ORH]R", "[\\: =\u2009\uA0]++",
+		"\\d++(?:[.\uB7]\\d++)?+",
+		"(?:;|,[ \uA0])[ \uA0]*+", "95\\%[ \u2009\uA0]*+CI",
+		"[\\:, =\u2009\uA0]++",
+		"\\d++(?:[.\uB7]\\d++)?+", "\\%?+", "[- ,;\u2009\uA0]++",
+		"\\d++(?:[.\uB7]\\d++)?+", "\\%?+$")
+	isCI = grepl(regCI, x, perl=TRUE);
+	return(isCI);
+}
+
+# CRD Number
+is.string.CRD = function(x) {
+	regCRD = paste0(
+		"^CRD", "[ \uA0]?+", "\\d++$")
+	isCRD = grepl(regCRD, x, perl=TRUE);
+	return(isCRD);
+}
+
 
 ################
 

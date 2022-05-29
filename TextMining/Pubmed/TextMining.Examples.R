@@ -161,18 +161,26 @@ tmp = tmp[ ! isPVal]
 isNVal = is.string.nVal(tmp)
 table(isNVal)
 tmp = tmp[ ! isNVal]
+# 95% CI
+isCI = is.string.CI95(tmp)
+table(isCI)
+tmp = tmp[ ! isCI]
+# Val + 95% CI
+isCI = is.string.ValCI95(tmp)
+table(isCI)
+tmp = tmp[ ! isCI]
+# OR/RR/HR + 95% CI
+isCI = is.string.XR_CI95(tmp)
+table(isCI)
+tmp = tmp[ ! isCI]
+# CRD Number
+isCRD = is.string.CRD(tmp)
+table(isCRD)
+tmp = tmp[ ! isCRD]
+
+tmp = sort(tmp)
 
 tmp[1:100]
-
-# also "95 % OR"
-regCI = paste0(
-	"^95\\%[ ]*+CI", "[\\:, =]++",
-	"\\d++(?:[.\uB7]\\d++)?+", "\\%?+", "[- ,;\u2009]++",
-	"\\d++(?:[.\uB7]\\d++)?+", "\\%?+$")
-isCI = grepl(regCI, tmp, perl=TRUE)
-table(isCI)
-
-tmp = tmp[ ! isCI]
 
 
 ##################
