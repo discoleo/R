@@ -6,7 +6,7 @@
 ### Differential Equations
 ### DE Systems: Lambert-type
 ###
-### draft v.0.1f
+### draft v.0.1g
 
 
 #############
@@ -45,6 +45,7 @@ source("DE.ODE.Helper.R")
 # - "slightly easier" to solve when:
 #   b1 = b2, R1 = R2;
 #   => trivial solution: y1 = y2;
+#   => Non-trivial solution: ???
 
 ### D =>
 exp(y1)*dy1 - b1*dy2 - db1*y2 - dR1 # = 0
@@ -118,6 +119,7 @@ y = log(- b * lambertWp( - exp(-R/b) / b));
 ### Case 2:
 # - non-Trivial: y1 != y2;
 
+### Non-Trivial: "Brute-Force"
 
 source("Polynomials.Helper.ODE.R")
 source("Polynomials.Helper.Solvers.S2.R")
@@ -221,11 +223,44 @@ y = log(- b * lambertWp( - exp(-R/b) / b));
 exp(y) - b*y - R;
 
 
-##########################
-##########################
+#######################
+
+### Extension
+
+# exp(x*y1) = b1*y2 + R1
+# exp(x*y2) = b2*y1 + R2
+
+# Note:
+# - "slightly easier" to solve when:
+#   b1 = b2, R1 = R2;
+#   => trivial solution: y1 = y2;
+#   => Non-trivial solution: ???
+
+### D =>
+exp(x*y1)*(x*dy1 + y1) - b1*dy2 - db1*y2 - dR1 # = 0
+exp(x*y2)*(x*dy2 + y2) - b2*dy1 - db2*y1 - dR2 # = 0
+# =>
+(b1*y2 + R1)*(x*dy1 + y1) - b1*dy2 - db1*y2 - dR1 # = 0
+(b2*y1 + R2)*(x*dy2 + y2) - b2*dy1 - db2*y1 - dR2 # = 0
+
+### Special Cases:
+
+### b1 = b2; R1 = R2;
+b*x*y2*dy1 + x*R*dy1 - b*dy2 + b*y1*y2 + R*y1 - db*y2 - dR # = 0
+b*x*y1*dy2 + x*R*dy2 - b*dy1 + b*y1*y2 + R*y2 - db*y1 - dR # = 0
+### b = const;
+b*x*y2*dy1 + x*R*dy1 - b*dy2 + b*y1*y2 + R*y1 - dR # = 0
+b*x*y1*dy2 + x*R*dy2 - b*dy1 + b*y1*y2 + R*y2 - dR # = 0
+
+### TODO: check;
+
+
+#########################
+#########################
+
+### S2: Both Exponentials
 
 ### Initial Exp-System
-
 # exp(y1) + exp(y2) = R1
 # y1*exp(y1) + y2*exp(y2) = R2
 
@@ -235,7 +270,6 @@ exp(y) - b*y - R;
 ######################
 
 ### Initial Exp-System
-
 # y1*exp(y1) + y2*exp(y2) = R1
 # y2*exp(y1) + y1*exp(y2) = R2
 
