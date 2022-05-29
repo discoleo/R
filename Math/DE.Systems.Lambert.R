@@ -6,7 +6,7 @@
 ### Differential Equations
 ### DE Systems: Lambert-type
 ###
-### draft v.0.1e
+### draft v.0.1f
 
 
 #############
@@ -223,6 +223,16 @@ exp(y) - b*y - R;
 
 ##########################
 ##########################
+
+### Initial Exp-System
+
+# exp(y1) + exp(y2) = R1
+# y1*exp(y1) + y2*exp(y2) = R2
+
+# TODO
+
+
+######################
 
 ### Initial Exp-System
 
