@@ -6,7 +6,7 @@
 ### Differential Equations
 ### DE Systems: Lambert-type
 ###
-### draft v.0.1d
+### draft v.0.1e
 
 
 #############
@@ -66,6 +66,7 @@ exp(y2)*dy2 - b2*dy1 - db2*y1 - dR2 # = 0
 
 ### Variants:
 
+### Initial system:
 # exp(y1+y2) = b1*(y1 - y2) + R1
 # exp(y1-y2) = b2*(y1 + y2) + R2
 
@@ -218,4 +219,50 @@ y = log(- b * lambertWp( - exp(-R/b) / b));
 
 ### Test
 exp(y) - b*y - R;
+
+
+##########################
+##########################
+
+### Initial Exp-System
+
+# y1*exp(y1) + y2*exp(y2) = R1
+# y2*exp(y1) + y1*exp(y2) = R2
+
+# Note:
+# - easier to solve when:
+#   R1 = R2;
+#   => trivial solution: y1 = y2;
+
+### ODE System:
+
+### Solve Linear System:
+# exp(y1) = (R1*y1 - R2*y2) / (y1^2 - y2^2)
+# exp(y2) = (R2*y1 - R1*y2) / (y1^2 - y2^2)
+
+### D =>
+(y1 + 1)*exp(y1)*dy1 + (y2 + 1)*exp(y2)*dy2 - dR1 # = 0
+(y2*dy1 + dy2)*exp(y1) + (y1*dy2 + dy1)*exp(y2) - dR2 # = 0
+# =>
+(y1 + 1)*(R1*y1 - R2*y2)*dy1 + (y2 + 1)*(R2*y1 - R1*y2)*dy2 - dR1*(y1^2 - y2^2) # = 0
+(y2*dy1 + dy2)*(R1*y1 - R2*y2) + (y1*dy2 + dy1)*(R2*y1 - R1*y2) - dR2*(y1^2 - y2^2) # = 0
+
+### System:
+(y1 + 1)*(R1*y1 - R2*y2)*dy1 + (y2 + 1)*(R2*y1 - R1*y2)*dy2 - dR1*(y1^2 - y2^2) # = 0
+(R1*y1*y2 - R2*y2^2 + R2*y1 - R1*y2)*dy1 +
+	+ (R2*y1^2 - R1*y1*y2 + R1*y1 - R2*y2)*dy2 - dR2*(y1^2 - y2^2) # = 0
+
+
+### Special Cases:
+# R1 = R2 = R
+R*(y1 + 1)*(y1 - y2)*dy1 + R*(y2 + 1)*(y1 - y2)*dy2 - dR*(y1^2 - y2^2) # = 0
+R*(y1*y2 - y2^2 + y1 - y2)*dy1 + R*(y1^2 - y1*y2 + y1 - y2)*dy2 - dR*(y1^2 - y2^2) # = 0
+# Diff (Eq 2 - Eq 1) =>
+- R*(y1 - y2)^2*dy1 + R*(y1 - y2)^2*dy2 # = 0
+# =>
+dy1 - dy2 # = 0
+# [only solution]
+
+
+# TODO: check;
 
