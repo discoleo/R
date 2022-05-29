@@ -6,7 +6,7 @@
 ### Differential Equations
 ### DE Systems: Lambert-type
 ###
-### draft v.0.1g
+### draft v.0.1h
 
 
 #############
@@ -309,4 +309,44 @@ dy1 - dy2 # = 0
 
 
 # TODO: check;
+
+
+###################
+###################
+
+### Inv-Trig
+
+# x*atan(y1) = b1*y2 + R1
+# x*atan(y2) = b2*y1 + R2
+
+### D =>
+(y1^2 + 1)*atan(y1) + x*dy1 - (y1^2 + 1)*(b1*dy2 + db1*y2 + dR1) # = 0
+(y2^2 + 1)*atan(y2) + x*dy2 - (y2^2 + 1)*(b2*dy1 + db2*y1 + dR2) # = 0
+# Subst =>
+(y1^2 + 1)*(b1*y2 + R1) + x^2*dy1 - x*(y1^2 + 1)*(b1*dy2 + db1*y2 + dR1) # = 0
+(y2^2 + 1)*(b2*y1 + R2) + x^2*dy2 - x*(y2^2 + 1)*(b2*dy1 + db2*y1 + dR2) # = 0
+# =>
+x^2*dy1 - x*b1*(y1^2 + 1)*dy2 + (y1^2 + 1)*(b1*y2 - x*db1*y2 + R1 - x*dR1) # = 0
+x^2*dy2 - x*b2*(y2^2 + 1)*dy1 + (y2^2 + 1)*(b2*y1 - x*db2*y1 + R2 - x*dR2) # = 0
+
+
+### Special Cases:
+
+# 1.) b1 = b2 = b; R1 = R2 = R;
+x^2*dy1 - x*b*(y1^2 + 1)*dy2 + (y1^2 + 1)*(b*y2 - x*db*y2 + R - x*dR) # = 0
+x^2*dy2 - x*b*(y2^2 + 1)*dy1 + (y2^2 + 1)*(b*y1 - x*db*y1 + R - x*dR) # = 0
+# b = ct =>
+x^2*dy1 - b*x*(y1^2 + 1)*dy2 + (y1^2 + 1)*(b*y2 + R - x*dR) # = 0
+x^2*dy2 - b*x*(y2^2 + 1)*dy1 + (y2^2 + 1)*(b*y1 + R - x*dR) # = 0
+
+# 2.) b1 = b2 = x^n; R1 = R2 = x^m;
+x^2*dy1 - x^(n+1)*(y1^2 + 1)*dy2 - (y1^2 + 1)*((n-1)*x^n*y2 + (m-1)*x^m) # = 0
+x^2*dy2 - x^(n+1)*(y2^2 + 1)*dy1 - (y2^2 + 1)*((n-1)*x^n*y1 + (m-1)*x^m) # = 0
+
+### Example:
+# Special case [2] with n = m = 2;
+dy1 - x*(y1^2 + 1)*dy2 - (y1^2 + 1)*(y2 + 1) # = 0
+dy2 - x*(y2^2 + 1)*dy1 - (y2^2 + 1)*(y1 + 1) # = 0
+
+### TODO: check;
 
