@@ -173,6 +173,10 @@ tmp = tmp[ ! isCI]
 isCI = is.string.XR_CI95(tmp)
 table(isCI)
 tmp = tmp[ ! isCI]
+# OR/RR/HR + 95% CI + p
+isCI = is.string.XR_CI95_p(tmp)
+table(isCI)
+tmp = tmp[ ! isCI]
 # CRD Number
 isCRD = is.string.CRD(tmp)
 table(isCRD)
