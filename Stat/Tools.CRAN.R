@@ -425,14 +425,16 @@ find.pkg = function(s, pkg=NULL, print=TRUE, perl=TRUE) {
 }
 
 ### Text
-scroll.txt = function(x, start=1, len=15, w = c(12, 6, 80, 16), iter=2,
+scroll.txt = function(x, start=1, len=20, w = c(12, 6, 80, 16), iter=2,
 		sep=" ", sep.h="-", print=TRUE, w.txt = c("   ", "")) {
 	if(len < 1) return();
 	len  = len - 1;
 	# Column Lengths
-	len.col   = ncol(x);
+	isMatrix  = ! is.null(dim(x));
+	len.col   = if(isMatrix) ncol(x) else 1;
 	len.other = if(len.col <= 3) 0 else len.col - 3;
 	w = if(len.col == 2) w[c(1,3)]
+		else if(len.col == 1) w[3]
 		else if(len.other == 0) w[1:3]
 		else if(length(w) == len.col) w
 		else w[c(1,2, rep(w[3], len.other))];
@@ -441,10 +443,12 @@ scroll.txt = function(x, start=1, len=15, w = c(12, 6, 80, 16), iter=2,
 	if(len.col >= 3) indent = c(indent, list(" "));
 	indent = c(indent, list(w.txt), rep(list(""), len.other));
 	# Entries
-	if(start > nrow(x)) stop("No more entries!");
-	nend = min(nrow(x), start + len);
-	if(print) cat(c("Showing items ", start, " to ", nend, "."), sep=c(rep("", 4), "\n"))
-	cat.mlines(format.lines(x[seq(start, nend), ], w=w, indent=indent, iter=iter),
+	nr = if(isMatrix) nrow(x) else length(x);
+	if(start > nr) stop("No more entries!");
+	nend = min(nr, start + len);
+	if(print) cat(c("Showing items ", start, " to ", nend, "."), sep=c(rep("", 4), "\n"));
+	tmp.txt = if(isMatrix) x[seq(start, nend), ] else matrix(x[seq(start, nend)], ncol=1);
+	cat.mlines(format.lines(tmp.txt, w=w, indent=indent, iter=iter),
 		sep=sep, sep.h=sep.h);
 }
 
