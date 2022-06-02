@@ -6,7 +6,7 @@
 ### Pubmed
 ### Text Mining Tools
 ###
-### draft v.0.1p
+### draft v.0.1q
 
 
 ### Text Mining Tools
@@ -45,6 +45,7 @@ stripSection = function(x, len=25) {
 ### Sentence / Parenthesis Parser
 
 # Parser for Parenthesis:
+# sub.tokens: all tokens are currently identified/extracted;
 parseParenth = function(x, sub.tokens=TRUE, warn=FALSE) {
 	if(length(x) > 1) {
 		return(lapply(x, parseParenth, warn=warn));
@@ -110,6 +111,8 @@ parseParenth = function(x, sub.tokens=TRUE, warn=FALSE) {
 				if(stackType[idPrev] != type) {
 					# Token mismatch
 					tk.df[posPrev, "Err"] = type;
+					# save also position of closing parenth;
+					tk.df[posPrev, "nE"]  = npos;
 				} else {
 					tk.df[posPrev, "nE"] = npos;
 				}
@@ -151,7 +154,7 @@ parseParenth = function(x, sub.tokens=TRUE, warn=FALSE) {
 
 ### Extract Content
 # - between parenthesis;
-extractParenthV = function(x, pos = NULL, nested = FALSE, warn = FALSE,
+extractParenth = function(x, pos = NULL, nested = FALSE, warn = FALSE,
 		exclude.Parenth = TRUE) {
 	if(is.null(pos)) {
 		pos = parseParenth(x);
@@ -160,22 +163,23 @@ extractParenthV = function(x, pos = NULL, nested = FALSE, warn = FALSE,
 	if(len == 0) return(character(0));
 	if(warn) {
 		r = lapply(seq(len), function(id) {
-			extractParenth(x[[id]], pos[[id]], nested=nested, warn = id,
+			extractParenth1(x[[id]], pos[[id]], nested=nested, warn = id,
 				exclude.Parenth=exclude.Parenth);
 		})
 	} else {
 		r = lapply(seq(len), function(id) {
-			extractParenth(x[[id]], pos[[id]], nested=nested, warn = NULL,
+			extractParenth1(x[[id]], pos[[id]], nested=nested, warn = NULL,
 				exclude.Parenth=exclude.Parenth);
 		})
 	}
 	return(r);
 }
-extractParenth = function(x, pos = NULL, nested=FALSE, warn=NULL,
+extractParenth1 = function(x, pos = NULL, nested=FALSE, warn=NULL,
 		exclude.Parenth = TRUE) {
 	if(is.null(pos)) {
 		pos = parseParenth(x);
 	}
+	# NO parenthesis:
 	if(nrow(pos) == 0) return(character(0));
 	if( ! nested) pos = pos[ pos$Nested == FALSE, ];
 	if( ! is.null(warn) && any(pos$Err != 0)) {
@@ -185,7 +189,7 @@ extractParenth = function(x, pos = NULL, nested=FALSE, warn=NULL,
 		FUN = function(id) {
 			nnS = pos$nS[id]; nnE = pos$nE[id];
 			if(nnE > nnS + 1) { nnS = nnS + 1; nnE = nnE - 1; }
-			else return(character(0));
+			else return("");
 			substr(x, nnS, nnE);
 		}
 	} else {

@@ -62,17 +62,18 @@ parenth
 id = 37
 extractParenth(abstracts$Abstract[id])
 
+### All Parenthesis
+allParenth = parseParenth(abstracts$Abstract);
 # Extract strings:
 # - may take some time!
-allParenth = lapply(seq(nrow(abstracts)), function(id) {
-	extractParenth(abstracts$Abstract[id], warn=id);
-})
-allParenth[(1:10) + 40]
+sParenth = extractParenth(abstracts$Abstract, pos = allParenth, warn=TRUE);
+
+sParenth[(1:10) + 40]
 
 ### Errors
 # - particular Error in abstract with id = ...;
 id = 87
-allParenth[id]
+sParenth[[id]]
 scroll.txt(abstracts, start=id, len=1)
 
 
@@ -129,7 +130,7 @@ scroll.txt(cbind(abstracts$PMID[id], txt), len=10)
 
 allParenth = parseParenth(abstracts$Abstract);
 isErr = isErrParenth(allParenth)
-tmp = extractParenthV(abstracts$Abstract[! isErr], allParenth[ ! isErr])
+tmp = extractParenth(abstracts$Abstract[! isErr], allParenth[ ! isErr])
 head(tmp)
 
 tmp = unlist(tmp);
