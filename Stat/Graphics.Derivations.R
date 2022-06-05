@@ -102,7 +102,7 @@ points(p$x, p$y, col="green")
 ### Eq:
 # th = angle of rotation;
 x^2*(cos(th)^2/a^2 + sin(th)^2/b^2) + y^2*(sin(th)^2/a^2 + cos(th)^2/b^2) +
-	+ (1/a^2 - 1/^2)*x*y*sin(2*th) - r^2 # = 0
+	+ (1/a^2 - 1/b^2)*x*y*sin(2*th) - r^2 # = 0
 
 
 # naive (mathematical) plot:
@@ -125,6 +125,7 @@ plotEllipse = function(a, b, theta=0, r=1, N=128, ...) {
 }
 
 ### Test
+# plot.base = open a new plot window;
 plot.base(xlim=c(-10,10), ylim=c(-10,10))
 theta = pi/4
 shape::plotellipse(rx=3, ry=1, angle= theta*180 / pi, col="red")
