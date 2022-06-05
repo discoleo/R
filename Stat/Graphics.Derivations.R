@@ -114,7 +114,9 @@ plotEllipse = function(a, b, theta=0, r=1, N=128, ...) {
 	x0 = 2*r*sqrt(B2 / (4*B2*B0 - B1sq));
 	x = seq(-x0, x0, length.out = N);
 	y = lapply(x, function(x) {
-		d = sqrt(B1sq*x^2 - 4*B2*(B0*x^2 - r^2));
+		# numerical stability:
+		d = B1sq*x^2 - 4*B2*(B0*x^2 - r^2);
+		d = if(d <= 0) 0 else sqrt(d);
 		y = c(- B1*x + d, -B1*x - d) / (2*B2);
 		return(y);
 	})
@@ -126,9 +128,14 @@ plotEllipse = function(a, b, theta=0, r=1, N=128, ...) {
 
 ### Test
 # plot.base = open a new plot window;
-plot.base(xlim=c(-10,10), ylim=c(-10,10))
 theta = pi/4
+plot.base(xlim=c(-10,10), ylim=c(-10,10))
 shape::plotellipse(rx=3, ry=1, angle= theta*180 / pi, col="red")
 plotEllipse(3, 1, theta=theta, col="green")
 
+
+theta = pi/7
+plot.base(xlim=c(-10,10), ylim=c(-10,10))
+shape::plotellipse(rx=3, ry=1, angle= theta*180 / pi, col="red")
+plotEllipse(3, 1, theta=theta, col="green")
 
