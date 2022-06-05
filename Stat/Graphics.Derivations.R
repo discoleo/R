@@ -94,3 +94,40 @@ lines(xA, yA); lines(xB, yB, col="blue");
 p = intersect.lines(xA, yA, xB, yB)
 points(p$x, p$y, col="green")
 
+
+############################
+
+### Ellipse
+
+### Eq:
+# th = angle of rotation;
+x^2*(cos(th)^2/a^2 + sin(th)^2/b^2) + y^2*(sin(th)^2/a^2 + cos(th)^2/b^2) +
+	+ (1/a^2 - 1/^2)*x*y*sin(2*th) - r^2 # = 0
+
+
+# naive (mathematical) plot:
+plotEllipse = function(a, b, theta=0, r=1, N=128, ...) {
+	B0 = cos(theta)^2/a^2 + sin(theta)^2/b^2;
+	B1 = (1/a^2 - 1/b^2)*sin(2*theta);
+	B2 = sin(theta)^2/a^2 + cos(theta)^2/b^2;
+	B1sq = B1^2;
+	x0 = 2*r*sqrt(B2 / (4*B2*B0 - B1sq));
+	x = seq(-x0, x0, length.out = N);
+	y = lapply(x, function(x) {
+		d = sqrt(B1sq*x^2 - 4*B2*(B0*x^2 - r^2));
+		y = c(- B1*x + d, -B1*x - d) / (2*B2);
+		return(y);
+	})
+	y = do.call(rbind, y);
+	y = c(y[,1], rev(y[,2]));
+	x = c(x, rev(x));
+	lines(x, y, ...);
+}
+
+### Test
+plot.base(xlim=c(-10,10), ylim=c(-10,10))
+theta = pi/4
+shape::plotellipse(rx=3, ry=1, angle= theta*180 / pi, col="red")
+plotEllipse(3, 1, theta=theta, col="green")
+
+
