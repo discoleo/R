@@ -106,7 +106,7 @@ x^2*(cos(th)^2/a^2 + sin(th)^2/b^2) + y^2*(sin(th)^2/a^2 + cos(th)^2/b^2) +
 
 
 # naive (mathematical) plot:
-plotEllipse = function(a, b, theta=0, r=1, N=128, ...) {
+plotEllipse = function(a, b, theta=0, center=c(0,0), r=1, N=128, ...) {
 	B0 = cos(theta)^2/a^2 + sin(theta)^2/b^2;
 	B1 = (1/a^2 - 1/b^2)*sin(2*theta);
 	B2 = sin(theta)^2/a^2 + cos(theta)^2/b^2;
@@ -123,8 +123,19 @@ plotEllipse = function(a, b, theta=0, r=1, N=128, ...) {
 	y = do.call(rbind, y);
 	y = c(y[,1], rev(y[,2]));
 	x = c(x, rev(x));
-	lines(x, y, ...);
+	lines(center[1] + x, center[2] + y, ...);
 }
+
+solveEllipse = function(p1, p2, slope=0, r=1) {
+	if(slope == 0) {
+		div = (p2[2]^2 - p1[2]^2) / (p1[1]^2 - p2[1]^2);
+		a = sqrt(p1[1]^2 + p1[2]^2 / div) / r;
+		b = a * sqrt(div);
+		return(list(a=a, b=b));
+	}
+	# TODO
+}
+
 
 ### Test
 # plot.base = open a new plot window;
@@ -134,8 +145,43 @@ shape::plotellipse(rx=3, ry=1, angle= theta*180 / pi, col="red")
 plotEllipse(3, 1, theta=theta, col="green")
 
 
+###
 theta = pi/7
 plot.base(xlim=c(-10,10), ylim=c(-10,10))
 shape::plotellipse(rx=3, ry=1, angle= theta*180 / pi, col="red")
 plotEllipse(3, 1, theta=theta, col="green")
+
+
+###
+theta = pi/7
+center = c(1,2)
+plot.base(xlim=c(-10,10), ylim=c(-10,10))
+shape::plotellipse(rx=3, ry=1, angle= theta*180 / pi, mid=center, col="red")
+plotEllipse(3, 1, theta=theta, center=center, col="green")
+
+
+### Solve
+
+### Ex 1:
+p1 = c(0,3)
+p2 = c(1, 3/2)
+sol = solveEllipse(p1, p2)
+#
+plot.base(xlim=c(-10,10), ylim=c(-10,10))
+shape::plotellipse(rx=sol$a, ry=sol$b, angle=0, lcol="red")
+plotEllipse(sol$a, sol$b, theta=0, col="green")
+px = t(cbind(p1, p2))
+points(px, col="blue")
+
+
+### Ex 2:
+p1 = c(-2,-1)
+p2 = c(1, 3/2)
+sol = solveEllipse(p1, p2)
+#
+plot.base(xlim=c(-10,10), ylim=c(-10,10))
+shape::plotellipse(rx=sol$a, ry=sol$b, angle=0, lcol="red")
+plotEllipse(sol$a, sol$b, theta=0, col="green")
+px = t(cbind(p1, p2))
+points(px, col="blue")
 
