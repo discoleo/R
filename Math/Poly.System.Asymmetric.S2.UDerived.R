@@ -7,7 +7,7 @@
 ### Asymmetric Derived from Symmetric
 ###   Based on Roots of Unity
 ###
-### draft v.0.1c
+### draft v.0.1c-Eq-y
 
 
 #######################
@@ -243,6 +243,14 @@ print.pm(pR, sort=FALSE, lead="x")
 
 27*x^6 - 27*b*x^4 + 27*R*x^3 - 9*b^2*x^2 + b^3
 # only "resembles" (3*x^2 +/- b)^3 + 27*R*x^3
+# b => 3*b =>
+x^6 - 3*b*x^4 + R*x^3 - 3*b^2*x^2 + b^3
+(x^2 + b)*(x^4 - 4*b*x^2 + b^2) + R*x^3
+
+### y: [trivial]
+27*y^6 - 36*b^2*y^2 + 16*b^3 - 27*R^2
+# b => 3*b =>
+y^6 - 12*b^2*y^2 + 16*b^3 - R^2
 
 
 ###################
@@ -273,4 +281,7 @@ pR = sort.pm(pR, "x")
 print.pm(pR, sort=FALSE, lead="x")
 
 27*x^6 - 27*b2*x^5 - 27*b1*x^4 + 9*b1*b2*x^3 + 27*R*x^3 - 9*b1^2*x^2 - 3*b1^2*b2*x + b1^3
+
+### y:
+27*y^6 - 27*b2^2*y^4 - 18*b1*b2^2*y^2 - 36*b1^2*y^2 + 54*R*b2*y^2 - 3*b1^2*b2^2 + 16*b1^3 + 18*R*b1*b2 - 27*R^2
 
