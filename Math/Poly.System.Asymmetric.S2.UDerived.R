@@ -7,7 +7,7 @@
 ### Asymmetric Derived from Symmetric
 ###   Based on Roots of Unity
 ###
-### draft v.0.1c-Eq-y
+### draft v.0.1c-Var1
 
 
 #######################
@@ -84,6 +84,33 @@ round0.p(poly.calc(x) * 27)
 x^2 + y^2 - x*y - R2 # = 0
 
 
+##############
+
+### Variant 1:
+
+### Derived:
+# x => x + i*y
+# y => x - i*y
+
+### Derived System
+x^3 - 3*x*y^2 + b*x - R1/2 # = 0
+x^2 + y^2 - R2 # = 0
+# [trivial]
+
+### Derivation:
+
+### Eq 1:
+(x + 1i*y)^3 + (x - 1i*y)^3 + 2*b*x - R1 # = 0
+2*x^3 - 6*x*y^2 + 2*b*x - R1 # = 0
+
+### Eq 2:
+x^2 + y^2 - R2 # = 0
+
+### Poly:
+4*x^3 + (b - 3*R2)*x - R1/2 # = 0
+
+
+#######################
 #######################
 
 ### Base System: P[5]
