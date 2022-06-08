@@ -7,7 +7,7 @@
 ### Asymmetric Derived from Symmetric
 ###   Based on Roots of Unity
 ###
-### draft v.0.1d
+### draft v.0.1d-alt2
 
 
 #######################
@@ -144,7 +144,7 @@ x^3 + K*y^3 + K^2*z^3 - 3*K*x*y*z
 ###################
 ### Alternative ###
 
-### Transform:
+### A.1.) Transform:
 # x => x - y + z
 # y => y + m*z
 # z => y + m^2*z
@@ -156,11 +156,28 @@ y^2 - 2*x*y + x*z - 2*y*z # = R[2]
 y^3 - z^3 - x*y^2 - x*z^2 - 2*y^2*z + 2*y*z^2 + x*y*z # = R[3]
 
 
+### A.2.) Transform:
+# x => - x + y + z
+# y => y + m*z
+# z => y + m^2*z
+# where m^3 = 1;
+
+### Derived System
+x^2 + 3*y^2 - 2*x*y - 2*x*z # = R[1]
+3*y^2 - 2*x*y + x*z # = R[2]
+y^3 + z^3 - x*y^2 - x*z^2 + x*y*z # = R[3]
+# =>
+x^2 - 3*x*z # = R[1] - R[2]
+3*y^2 - 2*x*y + x*z # = R[2]
+y^3 + z^3 - x*y^2 - x*z^2 + x*y*z # = R[3]
+
+
 ### Derivation
 
 ### Eq 1:
 n = 2
-p1 = toPoly.pm("(x - y + z)^n + (y + m*z)^n + (y + m^2*z)^n")
+x.str = "x - y + z"
+p1 = toPoly.pm(paste("(", x.str, ")^n + (y + m*z)^n + (y + m^2*z)^n"))
 p1 = replace.pm(p1, 1, "m", pow=3)
 p1 = replace.pm(p1, toPoly.pm("-m-1"), "m", pow=2)
 
@@ -168,7 +185,7 @@ x^2 + 3*y^2 - 2*x*y + 2*x*z - 4*y*z
 
 ### Eq 2:
 p2 = toPoly.pm(paste0(
-	"(x - y + z)*((y + m*z) + (y + m^2*z)) +",
+	"(", x.str, ")*((y + m*z) + (y + m^2*z)) +",
 	"(y + m*z)*(y + m^2*z)"))
 p2 = replace.pm(p2, 1, "m", pow=3)
 p2 = replace.pm(p2, toPoly.pm("-m-1"), "m", pow=2)
@@ -176,7 +193,7 @@ p2 = replace.pm(p2, toPoly.pm("-m-1"), "m", pow=2)
 y^2 - 2*x*y + x*z - 2*y*z
 
 ### Eq 3:
-p3 = toPoly.pm("(x - y + z)*(y + m*z)*(y + m^2*z)")
+p3 = toPoly.pm(paste("(", x.str, ")*(y + m*z)*(y + m^2*z)"))
 p3 = replace.pm(p3, 1, "m", pow=3)
 p3 = replace.pm(p3, toPoly.pm("-m-1"), "m", pow=2)
 p3$coeff = - p3$coeff
