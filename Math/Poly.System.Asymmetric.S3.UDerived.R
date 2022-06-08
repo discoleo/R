@@ -7,7 +7,7 @@
 ### Asymmetric Derived from Symmetric
 ###   Based on Roots of Unity
 ###
-### draft v.0.1d-alt2
+### draft v.0.1d-sol/fix
 
 
 #######################
@@ -51,13 +51,15 @@ solve.S3.AsDer.P2 = function(R, b=0, K=1, all=FALSE, debug=TRUE) {
 		S = c(S, -S);
 		E2 = c(R[2], R[2]);
 	} else {
+		if(length(b) < 3) b = c(b, 0);
 		S = roots(c(1, b[1] + 2*b[2], -2*R[2] - R[1]))
 		E2 = R[2] - b[2]*S;
+		E3 = R[3] - b[3]*S;
 	}
 	if(debug) print(S);
 	# Step 2:
 	x3 = sapply(seq(2), function(id) {
-		roots(c(1, -S[id], E2[id], -R[3]));
+		roots(c(1, -S[id], E2[id], -E3[id]));
 	})
 	S = rep(S, each=3); E2 = rep(E2, each=3);
 	x3 = as.vector(x3);
@@ -151,9 +153,9 @@ x^3 + K*y^3 + K^2*z^3 - 3*K*x*y*z
 # where m^3 = 1;
 
 ### Derived System
-x^2 + 3*y^2 - 2*x*y + 2*x*z - 4*y*z # = R[1]
-y^2 - 2*x*y + x*z - 2*y*z # = R[2]
-y^3 - z^3 - x*y^2 - x*z^2 - 2*y^2*z + 2*y*z^2 + x*y*z # = R[3]
+x^2 + 3*y^2 - 2*x*y + 2*x*z - 4*y*z + b[1]*(x + y) # = R[1]
+y^2 - 2*x*y + x*z - 2*y*z - b[2]*(x + y) # = R[2]
+y^3 - z^3 - x*y^2 - x*z^2 - 2*y^2*z + 2*y*z^2 + x*y*z - b[3]*(x + y) # = R[3]
 
 
 ### A.2.) Transform:
@@ -163,13 +165,62 @@ y^3 - z^3 - x*y^2 - x*z^2 - 2*y^2*z + 2*y*z^2 + x*y*z # = R[3]
 # where m^3 = 1;
 
 ### Derived System
-x^2 + 3*y^2 - 2*x*y - 2*x*z # = R[1]
-3*y^2 - 2*x*y + x*z # = R[2]
-y^3 + z^3 - x*y^2 - x*z^2 + x*y*z # = R[3]
+x^2 + 3*y^2 - 2*x*y - 2*x*z - b[1]*(x - 3*y) # = R[1]
+3*y^2 - 2*x*y + x*z - b[2]*(x - 3*y) # = R[2]
+y^3 + z^3 - x*y^2 - x*z^2 + x*y*z - b[3]*(x - 3*y) # = R[3]
 # =>
-x^2 - 3*x*z # = R[1] - R[2]
-3*y^2 - 2*x*y + x*z # = R[2]
-y^3 + z^3 - x*y^2 - x*z^2 + x*y*z # = R[3]
+x^2 - 3*x*z + (b[2] - b[1])*(x - 3*y) # = R[1] - R[2]
+3*y^2 - 2*x*y + x*z - b[2]*(x - 3*y) # = R[2]
+y^3 + z^3 - x*y^2 - x*z^2 + x*y*z - b[3]*(x - 3*y) # = R[3]
+
+### Solver:
+solve.S3.AsDer.P2Alt = function(R, b=0, M=NULL, all=FALSE, debug=TRUE) {
+	# Step 1:
+	if(all(b == 0)) {
+		S = sqrt(R[1] + 2*R[2] + 0i);
+		S = c(S, -S);
+		E2 = c(R[2], R[2]);
+		E3 = c(R[3], R[3]);
+	} else {
+		if(length(b) < 3) b = c(b, 0);
+		S = roots(c(1, b[1] + 2*b[2], -2*R[2] - R[1]))
+		E2 = R[2] - b[2]*S;
+		E3 = R[3] - b[3]*S;
+	}
+	if(debug) print(S);
+	# Step 2:
+	x3 = sapply(seq(2), function(id) {
+		roots(c(1, -S[id], E2[id], -E3[id]));
+	})
+	S = rep(S, each=3); E2 = rep(E2, each=3);
+	x3 = as.vector(x3);
+	yz.s = S - x3;
+	yz = E2 - x3*yz.s;
+	d3 = sqrt(yz.s^2 - 4*yz);
+	y3 = (yz.s + d3)/2;
+	z3 = (yz.s - d3)/2;
+	# Step 3:
+	m = unity(3, all=FALSE);
+	if(is.null(M)) {
+		M = matrix(c(1,-1,1, 0,1,m, 0,1,m^2), ncol=3, nrow=3, byrow=TRUE)
+	}
+	mms = rbind(x3, y3, z3);
+	# all roots: for computing Classic Poly in (y) or in (z);
+	if(all) mms = cbind(mms, mms[c(1,3,2), ]);
+	sol = solve(M, mms);
+	return(sol);
+}
+
+### Examples:
+R = c(-5,2,3)
+b = c(1, -2, -1)
+sol = solve.S3.AsDer.P2Alt(R, b=b)
+x = sol[1,]; y = sol[2,]; z = sol[3,];
+
+### Test
+x^2 + 3*y^2 - 2*x*y + 2*x*z - 4*y*z + b[1]*(x + y) # = R[1]
+y^2 - 2*x*y + x*z - 2*y*z - b[2]*(x + y) # = - R[2]
+y^3 - z^3 - x*y^2 - x*z^2 - 2*y^2*z + 2*y*z^2 + x*y*z - b[3]*(x + y) # = - R[3]
 
 
 ### Derivation
@@ -189,6 +240,7 @@ p2 = toPoly.pm(paste0(
 	"(y + m*z)*(y + m^2*z)"))
 p2 = replace.pm(p2, 1, "m", pow=3)
 p2 = replace.pm(p2, toPoly.pm("-m-1"), "m", pow=2)
+p2$coeff = - p2$coeff
 
 y^2 - 2*x*y + x*z - 2*y*z
 
