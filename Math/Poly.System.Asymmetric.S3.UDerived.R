@@ -7,7 +7,7 @@
 ### Asymmetric Derived from Symmetric
 ###   Based on Roots of Unity
 ###
-### draft v.0.1a
+### draft v.0.1a-ext1
 
 
 #######################
@@ -24,6 +24,10 @@ source("Polynomials.Helper.R")
 # x*y + x*z + y*z = R2
 # x*y*z = R3
 
+### Extension:
+# x^2 + y^2 + z^2 + b1*(x+y+z) = R1
+
+
 ### Derived:
 # x => x + y + z
 # y => x + m*y + m^2*z
@@ -31,14 +35,20 @@ source("Polynomials.Helper.R")
 # where m^3 = 1
 
 ### Derived System
-# TODO
+x^2 + 2*y*z + b1*x # = R1 / 3
+x^2 - y*z # = R2 / 3
+x^3 + y^3 + z^3 - 3*x*y*z # = R3
 
 
 ### Solver:
 solve.S3.AsDer.P2 = function(R, b=0, debug=TRUE) {
 	# Step 1:
-	S = sqrt(R[1] + 2*R[2] + 0i);
-	S = c(S, -S);
+	if(b == 0) {
+		S = sqrt(R[1] + 2*R[2] + 0i);
+		S = c(S, -S);
+	} else {
+		S = roots(c(1, b[1], -2*R[2] - R[1]))
+	}
 	if(debug) print(S);
 	# Step 2:
 	x3 = sapply(seq(2), function(id) {
@@ -60,15 +70,43 @@ solve.S3.AsDer.P2 = function(R, b=0, debug=TRUE) {
 }
 
 ### Examples:
-R = c(-1,2,3)
-sol = solve.S3.AsDer.P2(R)
+R = c(-3,2,3)
+b = -2
+sol = solve.S3.AsDer.P2(R, b=b)
 m = unity(3, all=FALSE)
 x = sol[1,]; y = sol[2,]; z = sol[3,];
 
 ### Test
-(x + y + z)^2 + (x + m*y + m^2*z)^2 + (x + m^2*y + m*z)^2
+3*(x^2 + 2*y*z + b[1]*x) # = R[1]
 (x + y + z)*(x + m*y + m^2*z) + (x + y + z)*(x + m^2*y + m*z) + (x + m*y + m^2*z)*(x + m^2*y + m*z)
 (x + y + z)*(x + m*y + m^2*z)*(x + m^2*y + m*z)
 
 ### Classic Poly
-round0.p(poly.calc(x) * 27)
+round0.p(poly.calc(x) * 27 * 27)
+
+
+### Derivation
+
+### Eq 1:
+p1 = toPoly.pm("(x + y + z)^2 + (x + m*y + m^2*z)^2 + (x + m^2*y + m*z)^2")
+p1 = replace.pm(p1, 1, "m", pow=3)
+p1 = replace.pm(p1, toPoly.pm("-m-1"), "m", pow=2)
+
+3*(x^2 + 2*y*z)
+
+### Eq 2:
+p2 = toPoly.pm(paste0(
+	"(x + y + z)*(x + m*y + m^2*z) + (x + y + z)*(x + m^2*y + m*z) +",
+	"(x + m*y + m^2*z)*(x + m^2*y + m*z)"))
+p2 = replace.pm(p2, 1, "m", pow=3)
+p2 = replace.pm(p2, toPoly.pm("-m-1"), "m", pow=2)
+
+3*(x^2 - y*z)
+
+### Eq 3:
+p3 = toPoly.pm("(x + y + z)*(x + m*y + m^2*z)*(x + m^2*y + m*z)")
+p3 = replace.pm(p3, 1, "m", pow=3)
+p3 = replace.pm(p3, toPoly.pm("-m-1"), "m", pow=2)
+
+x^3 + y^3 + z^3 - 3*x*y*z
+
