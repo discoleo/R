@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs: Lambert - Other
 ###
-### draft v.0.1b-ext
+### draft v.0.1b-ext2
 
 
 ### Lambert W-Like Equations
@@ -16,7 +16,7 @@
 ###############
 
 
-### draft v.0.1b - v.0.1b-ext:
+### draft v.0.1b - v.0.1b-ext2:
 # - ODE:
 #   y*dy - dy - y = 0;
 #   x*y*dy - x*dy - x*y + n*y = 0;
@@ -54,7 +54,7 @@ y*dy - (dy + y) # = 0
 # TODO: check;
 
 
-### Solution; y
+### Solution: y
 x = 3
 y = - lambertWp(- exp(-x))
 
@@ -62,8 +62,8 @@ y = - lambertWp(- exp(-x))
 exp(y) - exp(x)*y
 
 
-#############
-### Variants:
+###############
+### Extensions:
 
 ### x^n * exp(y) = exp(x)*y
 
@@ -75,6 +75,34 @@ exp(x)*y*(x*dy + n) - exp(x)*x*(dy + y) # = 0
 
 ### ODE:
 x*y*dy - x*dy - x*y + n*y # = 0
+
+# TODO: check;
+
+### Solution: y
+
+n = sqrt(2)
+x = 3
+y = - lambertWp( - x^n * exp(-x) )
+# Test
+x^n * exp(y) - exp(x)*y
+
+
+################
+### Extension 2:
+
+### x^n * exp(y) = exp(x)*y + x^m*exp(x)
+
+### D =>
+exp(y)*(x^n*dy + n*x^(n-1)) - exp(x)*(dy + y) - exp(x)*(x^m + m*x^(m-1)) # = 0
+# * x =>
+x^n * exp(y)*(x*dy + n) - exp(x)*x*(dy + y) - x^m * exp(x)*(x + m) # = 0
+# Subst =>
+exp(x)*(y + x^m)*(x*dy + n) - exp(x)*x*(dy + y) - x^m * exp(x)*(x + m) # = 0
+
+### ODE:
+x*y*dy + x*(x^m - 1)*dy - x*y + n*y - x^(m+1) + (n-m)*x^m # = 0
+
+# TODO: check;
 
 
 ###########################
