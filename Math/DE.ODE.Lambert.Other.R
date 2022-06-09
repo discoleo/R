@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs: Lambert - Other
 ###
-### draft v.0.1b-ext2
+### draft v.0.1b-ext3
 
 
 ### Lambert W-Like Equations
@@ -16,10 +16,11 @@
 ###############
 
 
-### draft v.0.1b - v.0.1b-ext2:
+### draft v.0.1b - v.0.1b-ext3:
 # - ODE:
 #   y*dy - dy - y = 0;
 #   x*y*dy - x*dy - x*y + n*y = 0;
+#   y*dy - dy - n*x^(n-1)*y = 0;
 ### draft v.0.1a:
 # - derived from:
 #   exp(y) + exp(y^2) = F(x);
@@ -101,6 +102,22 @@ exp(x)*(y + x^m)*(x*dy + n) - exp(x)*x*(dy + y) - x^m * exp(x)*(x + m) # = 0
 
 ### ODE:
 x*y*dy + x*(x^m - 1)*dy - x*y + n*y - x^(m+1) + (n-m)*x^m # = 0
+
+# TODO: check;
+
+
+################
+### Extension 2:
+
+### exp(y) = exp(x^n)*y
+
+### D =>
+exp(y)*dy - exp(x^n)*(dy + n*x^(n-1)*y) # = 0
+# Subst =>
+exp(x^n)*y*dy - exp(x^n)*(dy + n*x^(n-1)*y) # = 0
+
+### ODE:
+y*dy - (dy + n*x^(n-1)*y) # = 0
 
 # TODO: check;
 
