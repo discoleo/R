@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs: Lambert - Other
 ###
-### draft v.0.1a
+### draft v.0.1b
 
 
 ### Lambert W-Like Equations
@@ -16,6 +16,8 @@
 ###############
 
 
+### draft v.0.1b:
+# - ODE: y*dy - dy - y = 0;
 ### draft v.0.1a:
 # - derived from:
 #   exp(y) + exp(y^2) = F(x);
@@ -29,11 +31,26 @@ library(pracma)
 # needed for Lambert W;
 
 
+# include: Polynomials.Helper.R;
 # include: DE.ODE.Helper.R;
+source("Polynomials.Helper.R")
 source("DE.ODE.Helper.R")
 
 
 #########################
+
+### exp(y) = exp(x)*y
+
+### D =>
+exp(y)*dy - exp(x)*(dy + y) # = 0
+# Subst =>
+exp(x)*y*dy - exp(x)*(dy + y) # = 0
+y*dy - (dy + y) # = 0
+
+# TODO: check;
+
+
+###########################
 
 ### exp(y) + exp(y^2) = F(x)
 
