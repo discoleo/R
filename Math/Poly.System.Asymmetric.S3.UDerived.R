@@ -7,7 +7,7 @@
 ### Asymmetric Derived from Symmetric
 ###   Based on Roots of Unity
 ###
-### draft v.0.1d-sol/fix
+### draft v.0.1e
 
 
 #######################
@@ -50,6 +50,7 @@ solve.S3.AsDer.P2 = function(R, b=0, K=1, all=FALSE, debug=TRUE) {
 		S = sqrt(R[1] + 2*R[2] + 0i);
 		S = c(S, -S);
 		E2 = c(R[2], R[2]);
+		E3 = c(R[3], R[3]);
 	} else {
 		if(length(b) < 3) b = c(b, 0);
 		S = roots(c(1, b[1] + 2*b[2], -2*R[2] - R[1]))
@@ -154,8 +155,8 @@ x^3 + K*y^3 + K^2*z^3 - 3*K*x*y*z
 
 ### Derived System
 x^2 + 3*y^2 - 2*x*y + 2*x*z - 4*y*z + b[1]*(x + y) # = R[1]
-y^2 - 2*x*y + x*z - 2*y*z - b[2]*(x + y) # = R[2]
-y^3 - z^3 - x*y^2 - x*z^2 - 2*y^2*z + 2*y*z^2 + x*y*z - b[3]*(x + y) # = R[3]
+y^2 - 2*x*y + x*z - 2*y*z - b[2]*(x + y) # = - R[2]
+y^3 - z^3 - x*y^2 - x*z^2 - 2*y^2*z + 2*y*z^2 + x*y*z - b[3]*(x + y) # = - R[3]
 
 
 ### A.2.) Transform:
@@ -172,6 +173,21 @@ y^3 + z^3 - x*y^2 - x*z^2 + x*y*z - b[3]*(x - 3*y) # = R[3]
 x^2 - 3*x*z + (b[2] - b[1])*(x - 3*y) # = R[1] - R[2]
 3*y^2 - 2*x*y + x*z - b[2]*(x - 3*y) # = R[2]
 y^3 + z^3 - x*y^2 - x*z^2 + x*y*z - b[3]*(x - 3*y) # = R[3]
+
+
+### A.3.) Transform: Trigonometric
+# x => c1*x + c2*y + c3*z
+# y => c2*x + c3*y + c1*z
+# z => c3*x + c1*y + c2*z
+# where c[j] = 2*cos(2*j*pi/n), where n = 7;
+
+### Derived System
+5*(x^2 + y^2 + z^2) - 4*(x*y + x*z + y*z) # = R[1]
+2*(x^2 + y^2 + z^2) - 3*(x*y + x*z + y*z) # = - R[2]
+2*(x^3 + y^3 + z^3) - 3*(x*y + x*z + y*z)*(x+y+z) + 21*x*y*z # = R[3]
+
+
+### === ###
 
 ### Solver:
 solve.S3.AsDer.P2Alt = function(R, b=0, M=NULL, all=FALSE, debug=TRUE) {
@@ -251,6 +267,49 @@ p3 = replace.pm(p3, toPoly.pm("-m-1"), "m", pow=2)
 p3$coeff = - p3$coeff
 
 y^3 - z^3 - x*y^2 - x*z^2 - 2*y^2*z + 2*y*z^2 + x*y*z
+
+
+### Derivation Trig
+# [rather trivial]
+
+### Eq 1:
+n = 2
+x.str = "(r1*x + r2*y + r3*z)"
+y.str = "(r2*x + r3*y + r1*z)"
+z.str = "(r3*x + r1*y + r2*z)"
+p1 = toPoly.pm(paste(x.str, "^n + ", y.str, "^n + ", z.str, "^n"))
+p1 = replace.pm(p1, toPoly.pm("m^1 + m^6"), "r1");
+p1 = replace.pm(p1, toPoly.pm("m^2 + m^5"), "r2");
+p1 = replace.pm(p1, toPoly.pm("m^3 + m^4"), "r3");
+p1 = replace.pm(p1, 1, "m", pow=7)
+p1 = replace.pm(p1, toPoly.pm("-m^5-m^4-m^3-m^2-m-1"), "m", pow=6)
+
+5*(x^2 + y^2 + z^2) - 4*(x*y + x*z + y*z)
+
+### Eq 2:
+p2 = toPoly.pm(paste(
+	x.str, "*(", y.str, "+", z.str, ") +",
+	y.str, "*", z.str))
+p2 = replace.pm(p2, toPoly.pm("m^1 + m^6"), "r1");
+p2 = replace.pm(p2, toPoly.pm("m^2 + m^5"), "r2");
+p2 = replace.pm(p2, toPoly.pm("m^3 + m^4"), "r3");
+p2 = replace.pm(p2, 1, "m", pow=7)
+p2 = replace.pm(p2, toPoly.pm("-m^5-m^4-m^3-m^2-m-1"), "m", pow=6)
+p2$coeff = - p2$coeff
+
+2*(x^2 + y^2 + z^2) - 3*(x*y + x*z + y*z)
+
+
+### Eq 3:
+p3 = toPoly.pm(paste(x.str, y.str, z.str, sep="*"))
+p3 = replace.pm(p3, toPoly.pm("m^1 + m^6"), "r1");
+p3 = replace.pm(p3, toPoly.pm("m^2 + m^5"), "r2");
+p3 = replace.pm(p3, toPoly.pm("m^3 + m^4"), "r3");
+p3 = replace.pm(p3, 1, "m", pow=3)
+p3 = replace.pm(p3, toPoly.pm("-m-1"), "m", pow=2)
+
+2*(x^3 + y^3 + z^3) - 3*(x^2*y + x*y^2 + x^2*z + x*z^2 + y^2*z + y*z^2) + 12*x*y*z
+2*(x^3 + y^3 + z^3) - 3*(x*y + x*z + y*z)*(x+y+z) + 21*x*y*z
 
 
 #######################
