@@ -5,7 +5,7 @@
 ###
 ### Data Tools
 ###
-### draft v.0.2b
+### draft v.0.2c
 
 
 ### Tools to Process/Transform Data
@@ -23,6 +23,8 @@
 ###############
 
 
+### draft v.0.2c:
+# - [new] Function: as.na;
 ### draft v.0.2b:
 # - mid.factor: compute mid-points of an interval;
 ### draft v.0.2a:
@@ -60,6 +62,17 @@
 ######################
 
 ### DF Data Transforms
+
+### NA
+as.na = function(x, cols, code=99) {
+	if(inherits(x, "data.frame")) {
+		for(nm in cols) {
+			x[x[, nm] == code, nm] = NA;
+		}
+		return(x);
+	}
+	stop("Not yet implemented!");
+}
 
 ### Encode: Numeric => Factor
 as.factor.df = function(x, vars, name = c("Lvl ", ""), ordered=TRUE) {
@@ -130,7 +143,7 @@ recode.df.factor = function(x, var.name, ..., more.warn = "Stop") {
 mid.factor = function(x, inf.to = NULL, split.str=",") {
 	lvl0 = levels(x); lvl = lvl0;
 	lvl = sub("^[(\\[]", "", lvl);
-	lvl = sub("[])]$", "", lvl); # tricky;
+	lvl = sub("[])]$", "", lvl); # tricky Regex;
 	lvl = strsplit(lvl, split.str);
 	lvl = lapply(lvl, function(x) as.numeric(x));
 	if( ! is.null(inf.to)) {
