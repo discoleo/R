@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs: Lambert - Other
 ###
-### draft v.0.1b-ext4
+### draft v.0.1c
 
 
 ### Lambert W-Like Equations
@@ -16,6 +16,9 @@
 ###############
 
 
+### draft v.0.1c:
+# - ODE:
+#   x*d2y + x^2*dy^3 + x*dy^2 + dy = 0;
 ### draft v.0.1b - v.0.1b-ext4:
 # - ODE:
 #   y*dy - dy - y = 0; (Base)
@@ -50,7 +53,7 @@ source("DE.ODE.Helper.R")
 # - for non-trivial ODEs, see Extensions 2 & 4;
 # - it is much easier to analyse the various components
 #   of the model using simple equations;
-# - all these extensions can be integrated to build a more complex model;
+# - all these extensions can be combined to build a more complex model;
 
 ### D =>
 exp(y)*dy - exp(x)*(dy + y) # = 0
@@ -173,6 +176,7 @@ df*(2*y - 1)*d2y - 4*f*y^2*dy^3 + 4*df*y^2*dy^2 + df*dy^2 - 2*d2f*y*dy + d2f*dy 
 
 
 #########################
+#########################
 
 ### exp(y) + exp(1/y) = F(x)
 
@@ -193,4 +197,30 @@ y^2*exp(y)*dy - exp(1/y)*dy - df*y^2 # = 0
 ### P1(x)*exp(G1(x)*y) + P2(x)*exp(G2(x)/y) = F(x)
 
 # TODO;
+
+
+#########################
+#########################
+
+### exp(exp(y)) = x*exp(y)
+
+### D =>
+exp(exp(y))*exp(y)*dy - exp(y)*(x*dy + 1) # = 0
+exp(exp(y))*dy - (x*dy + 1) # = 0
+# Subst =>
+x*exp(y)*dy - (x*dy + 1) # = 0
+
+### D2 =>
+exp(y)*(x*d2y + x*dy^2 + dy) - x*d2y - dy # = 0
+# * x*dy =>
+(x*dy + 1)*(x*d2y + x*dy^2 + dy) - x^2*dy*d2y - x*dy^2 # = 0
+x*d2y + x^2*dy^3 + x*dy^2 + dy # = 0
+
+# TODO: check;
+
+### Solution: y
+x = 3
+y = log(- lambertWn( - 1/x))
+# Test
+exp(exp(y)) - x*exp(y) # = 0
 
