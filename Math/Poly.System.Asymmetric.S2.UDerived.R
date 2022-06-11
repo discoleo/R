@@ -7,7 +7,7 @@
 ### Asymmetric Derived from Symmetric
 ###   Based on Roots of Unity
 ###
-### draft v.0.1c-Var1
+### draft v.0.1d
 
 
 #######################
@@ -186,10 +186,12 @@ round0.p(poly.calc(x) * 3^5)
 x^2 + y^2 - x*y - R2 # = 0
 
 
-#######################
-#######################
+########################
+########################
 
-### Hetero-Symmetric
+########################
+### Hetero-Symmetric ###
+########################
 
 ### Base System: P[3]
 # x^3 + b*y = R
@@ -210,7 +212,12 @@ x^2 + y^2 - x*y - R2 # = 0
 # - for exact solution of Ht-System, see:
 #   Poly.System.Hetero.Symmetric.R;
 solve.Ht.P3 = function(R, b, debug=TRUE) {
-	S = roots(c(1, 0, -2*b[1], R));
+	if(length(b) == 1) {
+		coeff = c(1, 0, -2*b[1], R);
+	} else {
+		coeff = c(1, - b[2], -2*b[1], R + b1[1]*b[2]);
+	}
+	S = roots(coeff);
 	if(debug) print(S);
 	xy = S^2 - b[1];
 	d  = sqrt(S^2 - 4*xy + 0i);
@@ -227,10 +234,32 @@ solve.DerHt.P3 = function(R, b, debug=TRUE) {
 	x = (sol[,1] + sol[,2] + y) / 2;
 	return(cbind(x=x, y=y));
 }
+solve.DerHtTrig.P3 = function(R, b, debug=TRUE) {
+	sol = solve.Ht.P3(R, b, debug=debug);
+	r = 2*cos(1:2 * 2*pi/5);
+	y = (sol[,1] - sol[,2]) / (r[1] - r[2]);
+	x = sol[,1] - r[1]*y;
+	return(cbind(x=x, y=y));
+}
 test.DerHt.P3 = function(sol, R = NULL, b) {
 	x = sol[,1]; y = sol[,2];
+	if(length(b) > 1) stop("Not yet implemented!");
 	err1 = 2*x^3 + 2*y^3 - 3*x*y*(x+y) + b*(2*x - y);
-	err2 = 3*x*(x - y) - b;
+	err2 = 3*x*(x - y) - b[1];
+	err = rbind(err1, err2);
+	if( ! is.null(R)) {
+		err[1,] = err[1,] - 2*R;
+	}
+	err = round0(err);
+	return(err);
+}
+test.DerHtTrig.P3 = function(sol, R = NULL, b) {
+	x = sol[,1]; y = sol[,2];
+	b1 = b[1];
+	b2 = if(length(b) < 2) 0 else b[2];
+	xy = x*y;
+	err1 = 2*x^3 - 4*y^3 - 3*xy*(x - 3*y) + 2*b2*(x^2 - xy - y^2) + 2*b1*x - b1*y;
+	err2 = 3*x^2 - 3*xy + 2*y^2 - b1;
 	err = rbind(err1, err2);
 	if( ! is.null(R)) {
 		err[1,] = err[1,] - 2*R;
@@ -311,4 +340,72 @@ print.pm(pR, sort=FALSE, lead="x")
 
 ### y:
 27*y^6 - 27*b2^2*y^4 - 18*b1*b2^2*y^2 - 36*b1^2*y^2 + 54*R*b2*y^2 - 3*b1^2*b2^2 + 16*b1^3 + 18*R*b1*b2 - 27*R^2
+
+
+#############
+
+### Variants:
+### V.1.) Trigonometric
+
+### Derived:
+# x => x + r1*y
+# y => x + r2*y
+# where r[j] = 2*cos(2*j*pi/5);
+
+### System
+2*x^3 - 3*x^2*y + 9*x*y^2 - 4*y^3 + 2*b2*x^2 - 2*b2*x*y - 2*b2*y^2 + 2*b1*x - b1*y - 2*R # = 0
+3*x^2 - 3*x*y + 2*y^2 - b1 # = 0
+
+### Solver
+# see above (base-system);
+
+### Examples
+
+R = 5
+b = c(-10, 15)
+sol = solve.DerHtTrig.P3(R, b)
+x = sol[,1]; y = sol[,2];
+
+### Test
+test.DerHtTrig.P3(sol, R=R, b=b)
+
+round0.p(poly.calc(x)) * 5
+
+
+### Derivation:
+
+r = 2*cos(1:2 * 2*pi/5)
+# sum(r) = -1
+# prod(r) = -1
+
+### Sum =>
+S^3 - 3*xy*S + 2*b2*xy + b1*S - 2*R # = 0
+(2*x - y)^3 - 3*(x^2 - y^2 - x*y)*(2*x - y) + 2*b2*(x^2 - y^2 - x*y) + b1*(2*x - y) - 2*R # = 0
+#
+pS = toPoly.pm("2*x - y")
+pXY = toPoly.pm("x^2 - y^2 - x*y")
+p1 = toPoly.pm("pS()^3 - 3*pXY()*pS() + 2*b2*pXY() + b1*pS() - 2*R")
+p1 = sort.pm(p1, c("x", "y"))
+print.pm(p1, sort=F, lead=c("x", "y"))
+
+### Diff =>
+S^2 - xy - b1 # = 0
+#
+p2 = toPoly.pm("pS()^2 - pXY() - b1")
+p2 = sort.pm(p2, c("x", "y"))
+print.pm(p2, sort=F, lead=c("x", "y"))
+
+
+### Classic Poly
+pR = solve.pm(p1, p2, "y")
+pR = pR$Rez
+pR = sort.pm(pR, "x", xn2=c("R"))
+print.pm(pR, sort=F, lead=c("x"))
+
+125*x^6 - 125*b2*x^5 + 25*(2*b2^2 - 5*b1)*x^4 - 25*(R - 5*b1*b2)*x^3 +
+	- 5*(2*R*b2 + 6*b1*b2^2 - 13*b1^2)*x^2 +
+	- 5*b1*(2*R + 7*b1*b2)*x +
+	+ 8*R^2 + 8*R*b1*b2 + 2*b1^2*b2^2 - 9*b1^3
+
+
 
