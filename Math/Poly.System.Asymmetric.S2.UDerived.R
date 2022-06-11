@@ -7,7 +7,7 @@
 ### Asymmetric Derived from Symmetric
 ###   Based on Roots of Unity
 ###
-### draft v.0.1d
+### draft v.0.1d-clPoly
 
 
 #######################
@@ -72,6 +72,19 @@ test.S2As.P3(sol, R, b)
 round0.p(poly.calc(x) * 27)
 
 
+### Ex 2:
+R = c(1,-2)
+b = 6*R[2]
+sol = solve.S2As.P3(R, b);
+x = sol[,1]; y = sol[,2];
+
+### Test
+test.S2As.P3(sol, R, b)
+
+### Classic Poly:
+round0.p(poly.calc(x) * 27)
+
+
 ### Derivation:
 
 ### Eq 1:
@@ -82,6 +95,11 @@ round0.p(poly.calc(x) * 27)
 ### Eq 2:
 (x + m*y)*(x + m^2*y) - R2 # = 0
 x^2 + y^2 - x*y - R2 # = 0
+
+### Classic Poly
+R1 = R[1]; R2 = R[2];
+27*x^6 - 9*(6*R2 - b)*x^4 + 3*(9*R2^2 - 5*b*R2 + b^2)*x^2 - 3*R1*b*x +
+	+ R1^2 - 4*R2^3 + 4*b*R2^2 - b^2*R2
 
 
 ##############
