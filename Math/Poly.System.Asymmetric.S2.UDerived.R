@@ -5,9 +5,9 @@
 ###
 ### Polynomial Systems: S2
 ### Asymmetric Derived from Symmetric
-###   Based on Roots of Unity
+### Transform: Based on Roots of Unity
 ###
-### draft v.0.1d-Ex3
+### draft v.0.1e
 
 
 #######################
@@ -23,34 +23,59 @@ source("Polynomials.Helper.R")
 # x^3 + y^3 + b*(x+y) = R1
 # x*y = R2
 
-### Derived:
+### Extension:
+# x*y + b2*(x+y) = R2
+
+### Transform:
 # x => x + m*y
 # y => x + m^2*y
 # where m^3 = 1
 
 ### Derived System
-2*x^3 + 2*y^3 - 3*x*y*(x + y) + b*(2*x - y) - R[1] # = 0
+2*x^3 + 2*y^3 - 3*x*y*(x + y) + b1*(2*x - y) - R[1] # = 0
 x^2 + y^2 - x*y - R[2] # = 0
+# Extension:
+x^2 + y^2 - x*y + b2*(2*x - y) - R[2] # = 0
 
 
 ### Solver
-solve.S2As.P3 = function(R, b, debug=TRUE) {
-	m = unity(3, all=FALSE);
+# Symmetric System:
+solve.S2Symm.P3 = function(R, b, all=TRUE, debug=TRUE) {
 	# Step 1:
 	# S^3 - (3*R2 - b)*S - R1 = 0
-	S = roots(c(1,0, - 3*R[2] + b, -R[1]));
+	if(length(b) == 1) {
+		S = roots(c(1,0, - 3*R[2] + b[1], -R[1]));
+		R2 = R[2];
+	} else {
+		S = roots(c(1, 3*b[2]*R[2], - 3*R[2] + b[1], -R[1]));
+		R2 = R[2] - b[2]*S;
+	}
 	if(debug) print(S);
 	# Step 2:
-	d = rootn(S^2 - 4*R[2], 2);
-	d = c(d, -d); S = c(S, S);
+	d = rootn(S^2 - 4*R2, 2);
+	x = (S + d)/2;
+	y = S - x;
+	# Solution:
+	sol = cbind(x=x, y=y);
+	if(all) sol = rbind(sol, sol[, c(2,1)]);
+	return(sol);
+}
+# Asymmetric System:
+solve.S2As.P3 = function(R, b, debug=TRUE) {
+	# Step 1 & 2:
+	sol = solve.S2Symm.P3(R, b=b, debug=debug, all=TRUE);
+	d = sol[,1] - sol[,2];
+	S = sol[,1] + sol[,2];
 	# Step 3:
+	m = unity(3, all=FALSE);
 	y = d / (m - m^2);
 	x = (S + y) / 2;
 	cbind(x=x, y=y);
 }
 test.S2As.P3 = function(sol, R=NULL, b) {
-	err1 = 2*x^3 + 2*y^3 - 3*x*y*(x + y) + b*(2*x - y);
-	err2 = x^2 + y^2 - x*y;
+	if(length(b) < 2) b = c(b, 0);
+	err1 = 2*x^3 + 2*y^3 - 3*x*y*(x + y) + b[1]*(2*x - y);
+	err2 = x^2 + y^2 - x*y + b[2]*(2*x - y);
 	err = rbind(err1, err2);
 	if( ! is.null(R)) {
 		err = err - R;
@@ -97,6 +122,19 @@ test.S2As.P3(sol, R, b)
 ### Classic Poly:
 round0.p(poly.calc(x) * 3)
 1 - 10*x + 5*x^2 + 3*x^6
+
+
+### Ex 4:
+R = c(5, 1)
+b = c(6*R[2], -1)
+sol = solve.S2As.P3(R, b);
+x = sol[,1]; y = sol[,2];
+
+### Test
+test.S2As.P3(sol, R, b)
+
+### Classic Poly:
+round0.p(poly.calc(x) * 27)
 
 
 ### Derivation:
