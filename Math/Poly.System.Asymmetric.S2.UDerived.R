@@ -7,7 +7,7 @@
 ### Asymmetric Derived from Symmetric
 ### Transform: Based on Roots of Unity
 ###
-### draft v.0.1e
+### draft v.0.2a
 
 
 #######################
@@ -72,11 +72,36 @@ solve.S2As.P3 = function(R, b, debug=TRUE) {
 	x = (S + y) / 2;
 	cbind(x=x, y=y);
 }
-test.S2As.P3 = function(sol, R=NULL, b) {
+# Generalized Asymmetric:
+solve.S2AsGen.P3 = function(R, b, k, debug=TRUE) {
+	# Step 1 & 2:
+	sol = solve.S2Symm.P3(R, b=b, debug=debug, all=TRUE);
+	# Step 3a:
+	r = roots(c(1, -k[1], k[2]));
+	# Step 3b:
+	y = (sol[,1] - sol[,2]) / (r[1] - r[2]);
+	x = sol[,1] - r[1]*y;
+	sol = cbind(x=x, y=y);
+	return(sol);
+}
+test.S2As.P3 = function(sol, b, R=NULL) {
 	if(length(b) < 2) b = c(b, 0);
 	err1 = 2*x^3 + 2*y^3 - 3*x*y*(x + y) + b[1]*(2*x - y);
 	err2 = x^2 + y^2 - x*y + b[2]*(2*x - y);
 	err = rbind(err1, err2);
+	if( ! is.null(R)) {
+		err = err - R;
+	}
+	err = round0(err);
+	return(err);
+}
+test.S2AsGen.P3 = function(sol, b, k, R=NULL) {
+	if(length(b) < 2) b = c(b, 0);
+	k1 = k[1]; k2 = k[2];
+	err1 = 2*x^3 + k1*(k1^2 - 3*k2)*y^3 + 3*k1*x^2*y + 3*(k1^2 - 2*k2)*x*y^2 +
+		+ b[1]*(2*x + k1*y);
+	err2 = x^2 + k2*y^2 + k1*x*y + b[2]*(2*x + k1*y);
+	err  = rbind(err1, err2);
 	if( ! is.null(R)) {
 		err = err - R;
 	}
@@ -91,7 +116,7 @@ sol = solve.S2As.P3(R, b);
 x = sol[,1]; y = sol[,2];
 
 ### Test
-test.S2As.P3(sol, R, b)
+test.S2As.P3(sol, b=b, R=R)
 
 ### Classic Poly:
 round0.p(poly.calc(x) * 27)
@@ -104,7 +129,7 @@ sol = solve.S2As.P3(R, b);
 x = sol[,1]; y = sol[,2];
 
 ### Test
-test.S2As.P3(sol, R, b)
+test.S2As.P3(sol, b=b, R=R)
 
 ### Classic Poly:
 round0.p(poly.calc(x) * 27)
@@ -117,7 +142,7 @@ sol = solve.S2As.P3(R, b);
 x = sol[,1]; y = sol[,2];
 
 ### Test
-test.S2As.P3(sol, R, b)
+test.S2As.P3(sol, b=b, R=R)
 
 ### Classic Poly:
 round0.p(poly.calc(x) * 3)
@@ -131,7 +156,7 @@ sol = solve.S2As.P3(R, b);
 x = sol[,1]; y = sol[,2];
 
 ### Test
-test.S2As.P3(sol, R, b)
+test.S2As.P3(sol, b=b, R=R)
 
 ### Classic Poly:
 round0.p(poly.calc(x) * 27)
@@ -158,7 +183,7 @@ R1 = R[1]; R2 = R[2];
 
 ### Variant 1:
 
-### Derived:
+### Transform:
 # x => x + i*y
 # y => x - i*y
 
@@ -180,6 +205,99 @@ x^2 + y^2 - R2 # = 0
 4*x^3 + (b - 3*R2)*x - R1/2 # = 0
 
 
+##############
+
+### Variant 2:
+### Generalized
+
+### Transform:
+# x => x + r1*y
+# y => x + r2*y
+# where: r1 + r2 = k1, r1*r2 = k2;
+
+### Derived System
+k1 = k[1]; k2 = k[2]; b1 = b[1]; b2 = b[2];
+2*x^3 + k1*(k1^2 - 3*k2)*y^3 + 3*k1*x^2*y + 3*(k1^2 - 2*k2)*x*y^2 +
+	+ b1*(2*x + k1*y) - R[1] # = 0
+x^2 + k2*y^2 + k1*x*y + b2*(2*x + k1*y) - R[2] # = 0
+
+### Examples:
+
+###
+k = c(-2, 2)
+# =>
+x^3 + 2*y^3 - 3*x^2*y + b[1]*(x - y) - R[1]/2 # = 0
+x^2 + 2*y^2 - 2*x*y + 2*b[2]*(x - y) - R[2] # = 0
+
+### Ex 1:
+R = c(-2, 1)
+b = c(-1, -1)
+k = c(-2, 2)
+#
+sol = solve.S2AsGen.P3(R, b, k=k)
+x = sol[,1]; y = sol[,2];
+
+# Test
+test.S2AsGen.P3(sol, b=b, k=k, R=R)
+
+### Classic Poly
+round0.p(poly.calc(x))
+round0.p(poly.calc(y)) # trivial
+
+R1h = R[1] / 2; R2 = R[2];
+b1 = b[1]; b2d = 2*b[2];
+k1 = -2; k2 = 2; # fixed values / only special Case!
+8*x^6 + 12*b2d*x^5 - 3*(8*R2 - b2d^2)*x^4 + 2*(4*R1h - 9*R2*b2d - b1*b2d)*x^3 +
+	+ (12*b2d*R1h + 18*R2^2 - 3*b2d^2*R2 - 4*b1*R2 - b1*b2d^2 + 2*b1^2)*x^2 +
+	- 2*(6*R1h*R2 + 2*b1*R1h - 3*b2d*R2^2 - b1*b2d*R2)*x +
+	+ 4*R1h^2 - 6*b2d*R1h*R2 - b2d^3*R1h + 2*b1*b2d*R1h +
+	- 2*R2^3 + 4*b1*R2^2 + b1*b2d^2*R2 - 2*b1^2*R2
+
+
+### Ex 2:
+R = c(-2, 1)
+b = c(-1, -1)
+k = c(1, 3)
+#
+sol = solve.S2AsGen.P3(R, b, k=k)
+x = sol[,1]; y = sol[,2];
+
+# Test
+test.S2AsGen.P3(sol, b=b, k=k, R=R)
+
+round0.p(poly.calc(x) * 11^3)
+
+
+### Ex 3:
+R = c(-2, 1)
+b = c(-1, 0)
+k = c(1, 3)
+#
+sol = solve.S2AsGen.P3(R, b, k=k)
+x = sol[,1]; y = sol[,2];
+
+# Test
+test.S2AsGen.P3(sol, b=b, k=k, R=R)
+
+round0.p(poly.calc(x) * 11^3)
+
+
+### only for Ex 1:
+# k = c(-2, 2)!
+p1 = toPoly.pm("x^3 + 2*y^3 - 3*x^2*y + b1*(x - y) - R1h")
+p2 = toPoly.pm("x^2 + 2*y^2 - 2*x*y + b2d*(x - y) - R2")
+pR = solve.pm(p1, p2, "y")
+pR = pR$Rez;
+pR = sort.pm(pR, "x", c("R1h", "R2"))
+print.pm(pR, sort=F, lead="x")
+
+pR = toPoly.pm("p2()*(x+y) - p1()")
+pR = sort.pm(pR, c("x", "y"), c("R1h", "R2"))
+print.pm(pR, sort=F, lead=NA)
+# alternative Eq:
+2*x^2*y + b2d*x^2 - b2d*y^2 - (R2 + b1)*x - (R2 - b1)*y + R1h # = 0
+
+
 #######################
 #######################
 
@@ -187,7 +305,7 @@ x^2 + y^2 - R2 # = 0
 # x^5 + y^5 + b*(x+y) = R1
 # x*y = R2
 
-### Derived:
+### Transform:
 # x => x + m*y
 # y => x + m^2*y
 # where m^3 = 1
