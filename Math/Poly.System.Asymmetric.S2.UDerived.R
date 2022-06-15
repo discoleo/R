@@ -7,7 +7,7 @@
 ### Asymmetric Derived from Symmetric
 ### Transform: Based on Roots of Unity
 ###
-### draft v.0.2a
+### draft v.0.2b
 
 
 #######################
@@ -296,6 +296,39 @@ pR = sort.pm(pR, c("x", "y"), c("R1h", "R2"))
 print.pm(pR, sort=F, lead=NA)
 # alternative Eq:
 2*x^2*y + b2d*x^2 - b2d*y^2 - (R2 + b1)*x - (R2 - b1)*y + R1h # = 0
+
+
+##############
+
+### Variant 3:
+### Generalized / with radicals
+
+### Transform:
+# x => (s10 + k)*x + (s20 - 2*k)*y
+# y => (s10 - k)*x + (s20 + 2*k)*y
+# where:
+#   k^2 = K,
+#   s = c(s10, s20) given parameters,
+#   while (s11, s21) = c(1, -2) (parameters omitted);
+
+# TODO
+
+
+### Derivation:
+# x + y => 2*(s10*x + s20*y);
+# x*y => (s10^2 - K)*x^2 + (s20^2 - 4*K)*y^2 + 2*(s10*s20 + 2*K)*x*y
+
+### Eq 1:
+8*(s10*x + s20*y)^3 +
+	- 6*((s10^2 - K)*x^2 + (s20^2 - 4*K)*y^2 + 2*(s10*s20 + 2*K)*x*y)*(s10*x + s20*y) +
+	+ 2*b1*(s10*x + s20*y) - R1
+# =>
+s10*(s10^2 + 3*K)*x^3 + s20*(s20^2 + 12*K)*y^3 +
+	+ 3*(s10^2*s20 + s20*K - 4*s10*K)*x^2*y +
+	+ 3*(s10*s20^2 - 4*s20*K + 4*s10*K)*x*y^2 + s10*b1*x + s20*b1*y - R1/2 # = 0
+
+### Eq 2:
+(s10^2 - K)*x^2 + (s20^2 - 4*K)*y^2 + 2*(s10*s20 + 2*K)*x*y + 2*b2*(s10*x + s20*y) - R2 # = 0
 
 
 #######################
