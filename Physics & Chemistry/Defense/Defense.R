@@ -105,3 +105,26 @@ plot.window(xlim=c(-1,12), ylim=c(-1,12))
 kineticMissile()
 
 # dev.off()
+
+
+####################
+####################
+
+library(rgl)
+
+m = matrix(c(3,0,0,0,2,0,0,0,1/2), ncol=3)
+col0 = "#326432"
+dy = 2
+
+close3d()
+open3d()
+# Set 1
+shade3d(cube3d(m, col=col0))
+shade3d(translate3d(cube3d(m, col=col0), 0, 0, 2))
+shade3d(translate3d(cube3d(m, col=col0), 0, 0, 4))
+shade3d(translate3d(cube3d(m, col=col0), 0, 0, 6))
+# Set 2
+shade3d(translate3d(cube3d(m, col=col0), 0, dy, 1))
+shade3d(translate3d(cube3d(m, col=col0), 0, dy, 3))
+shade3d(translate3d(cube3d(m, col=col0), 0, dy, 5))
+
