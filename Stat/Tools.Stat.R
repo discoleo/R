@@ -86,3 +86,23 @@ median.wt = function(x, wt, q=0.5, isSorted=FALSE) {
 	return(x[id]);
 }
 
+
+### Dist between 2 Curves
+# - Normalized by length of interval;
+distCurves = function(f1, f2, x, ..., N=1024, type=1) {
+	if(length(x) <= 1) stop("x must be an interval!");
+	# Integral
+	if(type == 2) {
+		d.f = function(x, ...) abs(f1(x, ...) - f2(x, ...));
+		d = integrate(d.f, lower=x[1], upper=x[2], ...);
+		print(paste0("Absolute error = ", d$abs.error));
+		return(d$value / (x[2] - x[1]));
+	}
+	# Naive Dist
+	if(length(x) == 2) {
+		x = seq(x[1], x[2], length.out = N);
+	} else N = length(x);
+	d = sum(abs(f1(x, ...) - f2(x, ...)));
+	d = d / N;
+	return(d);
+}
