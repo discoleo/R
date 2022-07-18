@@ -47,6 +47,11 @@ extract = function(id, pos, data, ...) {
 	UseMethod("extract");
 }
 extract.default = function(id, pos, data, align=TRUE, as.matrix=TRUE, debug=TRUE) {
+	r  = extract.id(id, pos, data=data,
+		align=align, as.matrix=as.matrix, debug=debug);
+	return(r);
+}
+extract.row = function(id, pos, data, align=TRUE, as.matrix=TRUE, debug=TRUE) {
 	id = pos$id1[[id]];
 	r  = extract.id(id, pos, data=data,
 		align=align, as.matrix=as.matrix, debug=debug);
