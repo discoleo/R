@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs - Gaussian
 ###
-### draft v.0.4e
+### draft v.0.4f
 
 #############
 ### Types ###
@@ -30,11 +30,12 @@
 
 ### Linear / Non-Linear Gaussian-type
 
-### draft v.0.4c - v.0.4e:
+### draft v.0.4c - v.0.4f:
 # - derived from:
 #   y = k * exp(x^n) * I(exp(-x^n)) + F0(x); [v.0.4c, v.0.4c-ex]
 #   y = k1 * exp(p1) * I(exp(-p1)) +
 #       k2 * exp(p2) * I(exp(-p2)) + F0(x); [v.0.4d]
+#   y = x^n * I(exp(x^m)) + F0(x); [v.0.4f]
 # - Examples:
 #   x^4*d2y + 2*x^3*dy - b0^2*y - 4*k*x^3 = 0;
 #   x^4*d2y + 2*x^3*dy - b0^2*y - 2*k*(m+2)*x^(m+3) = 0; [v.0.4e]
@@ -368,6 +369,29 @@ line.tan(c(0:3 * 3/4), dx=3, p=y, dp=dy)
 # sigmoidal
 curve(dy(x), add=T, col="green")
 line.tan(c(0:3 * 3/4), dx=3, p=dy, dp=d2y, col="orange")
+
+
+########################
+########################
+
+### from Gaussian-Integrals
+
+### y = x^n * I(exp(x^m)) + F0(x)
+
+### D =>
+dy - n*x^(n-1)*I - x^n*exp(x^m) - df0 # = 0 # * x =>
+x*dy - n*(y - f0) - x^(n+1)*exp(x^m) - x*df0 # = 0
+x*dy - n*y - x^(n+1)*exp(x^m) + n*f0 - x*df0 # = 0
+# x^(n+1)*exp(x^m) = x*dy - n*y + n*f0 - x*df0;
+
+### D2 =>
+x*d2y + dy - n*dy - ((n+1)*x^n + m*x^(n+m))*exp(x^m) + n*df0 - x*d2f0 - df0 # = 0
+x^2*d2y - (n-1)*x*dy - x^(n+1)*(m*x^m + n + 1)*exp(x^m) - x^2*d2f0 + (n-1)*x*df0 # = 0
+x^2*d2y - (n-1)*x*dy - (m*x^m + n + 1)*(x*dy - n*y + n*f0 - x*df0) - x^2*d2f0 + (n-1)*x*df0 # = 0
+x^2*d2y - (m*x^(m+1) + 2*n*x)*dy + n*(m*x^m + n + 1)*y +
+	- x^2*d2f0 + (m*x^m + 2*n)*x*df0 - n*(m*x^m + n + 1)*f0 # = 0
+
+# TODO: check;
 
 
 #################
