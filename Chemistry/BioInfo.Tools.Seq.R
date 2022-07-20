@@ -23,7 +23,7 @@ overlap = function(v1, v2, strip=4) {
 	}
 	return(-1);
 }
-overlapAll = function(x, strip=4) {
+overlapAll = function(x, strip=4, all=TRUE) {
 	len = length(x);
 	n0 = data.frame(id1 = numeric(0), id2 = numeric(0), offset = numeric(0));
 	for(i in seq(len - 1)) {
@@ -37,7 +37,13 @@ overlapAll = function(x, strip=4) {
 			n0 = rbind(n0, data.frame(i, j, posOverlap));
 		}
 	}
-	names(n0) = c("id1", "id2", "offset")
+	names(n0) = c("id1", "id2", "offset");
+	if(all) {
+		tmp = n0[ , c(2,1,3)];
+		names(tmp) = c("id1", "id2", "offset");
+		tmp$offset = - tmp$offset;
+		n0 = rbind(n0, tmp);
+	}
 	return(n0);
 }
 
