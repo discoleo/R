@@ -55,3 +55,10 @@ The samples can be dissolved in various acids and the tracer quantified using ch
 '''Design of a Submersible Vehicle'''
 
 '''TODO'''
+
+=== Technologies for a Submersible Vehicle ===
+
+==== Silicon Carbide Circuits ====
+
+1. Mantooth A, et al. Venus Calling Silicon Carbide Radio Circuits Can Take The Heat Needed To Phone Home From Our Hellish Sister Planet. IEEE Spectrum 58 (2021). DOI:  http://dx.doi.org/10.1109/MSPEC.2021.9423815
+2. Anthony S. We finally have a computer that can survive the surface of Venus. AIP Advances (2017). DOI: http://dx.doi.org/10.1063/1.4973429
