@@ -6,7 +6,7 @@
 ### Differential Equations
 ### DE Systems: Polynomial
 ###
-### draft v.0.1c
+### draft v.0.1d
 
 
 #############
@@ -24,17 +24,7 @@
 
 # include: DE.ODE.Helper.R;
 source("DE.ODE.Helper.R")
-
-# TODO:
-# see also helper functions in DE.Systems.Polynomial.R;
-
-unity = function(n=3, all=TRUE) {
-	m = complex(re=cos(2*pi/n), im=sin(2*pi/n))
-	if(all) {
-		m = m^(0:(n-1))
-	}
-	return(m)
-}
+source("DE.ODE.Helper.Math.R")
 
 
 #################
