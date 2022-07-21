@@ -6,7 +6,7 @@
 ### Differential Equations
 ### DE Systems: Polynomial
 ###
-### draft v.0.1a
+### draft v.0.1b
 
 
 #############
@@ -38,14 +38,110 @@ source("DE.ODE.Helper.R")
 # where (y1, y2) = functions in x;
 # R, c are given parameters / functions;
 
+
+### D(Eq 1) =>
+y1^(n-1)*dy1 + y2^(n-1)*dy2 - dR1 / n # = 0
+# * y1 or * y2 =>
+y1^n*dy1 + cx*y2^(n-2)*dy2 - dR1*y1 / n # = 0
+y2^n*dy2 + cx*y1^(n-2)*dy1 - dR1*y2 / n # = 0
+
+### Variant:
+# - substituting y[i]^n:
+(R1 - y2^n)*dy1 + cx*y2^(n-2)*dy2 - dR1*y1 / n # = 0
+(R1 - y1^n)*dy2 + cx*y1^(n-2)*dy1 - dR1*y2 / n # = 0
+# =>
+y2^n*dy1 - cx*y2^(n-2)*dy2 - R1*dy1 + dR1*y1 / n # = 0
+y1^n*dy2 - cx*y1^(n-2)*dy1 - R1*dy2 + dR1*y2 / n # = 0
+
 ### Note:
-# - resulting system is NOT symmetric;
+# - resulting system is NOT symmetric, but Hetero-Symmetric;
+
 
 ###############
 ### Order 3 ###
 ###############
 
-# y1^3 + y2^3 = R1
+### y1^3 + y2^3 = R1
+
+### D =>
+y1^2*dy1 + y2^2*dy2 - dR1/3 # = 0
+### *y1 OR *y2 =>
+y1^3*dy1 + cx*y2*dy2 - y1*dR1/3 # = 0
+cx*y1*dy1 + y2^3*dy2 - y2*dR1/3 # = 0
+# =>
+# System variant:
+y2^3*dy1 - R1*dy1 - cx*y2*dy2 + y1*dR1/3 # = 0
+y1^3*dy2 - R1*dy2 - cx*y1*dy1 + y2*dR1/3 # = 0
+# Another variant:
+y2^2*(dcx - y1*dy2) - R1*dy1 - cx*y2*dy2 + y1*dR1/3 # = 0
+y1^2*(dcx - y2*dy1) - R1*dy2 - cx*y1*dy1 + y2*dR1/3 # = 0
+# =>
+2*cx*y2*dy2 + R1*dy1 - y2^2*dcx - y1*dR1/3 # = 0
+2*cx*y1*dy1 + R1*dy2 - y1^2*dcx - y2*dR1/3 # = 0
+
+### D2 =>
+3*y2^2*dy1*dy2 + y2^3*d2y1 - R1*d2y1 - dR1*dy1 +
+	- cx*y2*d2y2 - cx*(dy2)^2 - dcx*y2*dy2 + dy1*dR1/3 + y1*d2R1/3 # = 0
+# TODO
+
+
+### Example:
+# R1 = b01; cx = x + b02;
+2*(x + b02)*y2*dy2 + b01*dy1 - y2^2 # = 0
+2*(x + b02)*y1*dy1 + b01*dy2 - y1^2 # = 0
+
+
+### Solution:
+# y.f(): see in previous section;
+# dy.f():
+dy.f = function(x, b0=c(1,1), n=3) {
+	y.all = y.f(x, b0=b0, n=n);
+	y1 = y.all[[1]]; y2 = y.all[[2]];
+	x = rep(x, each=n);
+	xb = x + b0[2]; b01 = b0[1];
+	ypr = (y1*y2); yprn2 = ypr^(n-2);
+	div = b01^2 - 4*xb^2*yprn2;
+	#
+	dy1 = (b01*y2^(n-1) - 2*xb*yprn2*y1) / div;
+	dy2 = (b01*y1^(n-1) - 2*xb*yprn2*y2) / div;
+	dy1[div == 0] = 0; dy2[div == 0] = 0; # TODO
+	#
+	return(list(dy1=dy1, dy2=dy2, y=list(y1=y1, y2=y2)));
+}
+
+### Test
+b0 = c(1, 2)
+x = seq(-4, -1, by=0.025)
+y = y.f(x, b0=b0)
+### Plot
+xr = rep(x, each=3);
+ylim = range.c(y); isRe = ylim$isRe;
+plot(xr[isRe[[1]]], y[[1]][isRe[[1]]], type="l", ylim=ylim$rg);
+lines(xr[isRe[[2]]], y[[2]][isRe[[2]]], col="darkgreen");
+
+### dy
+x = c(-3.5, -3, -1.75, -1.5)
+xr = rep(x, each=3)
+dy = dy.f(x, b0=b0);
+y = dy$y; dy = dy[-3];
+isRe = isRe.f(dy);
+dy = Re.f(dy, isRe);
+y  = Re.f(y, isRe);
+xr = Re.f(xr, isRe);
+line.tan(xr[[1]], dx=1.5, p=y[[1]], dp=dy[[1]], col="green")
+line.tan(xr[[2]], dx=1.5, p=y[[2]], dp=dy[[2]], col="red")
+
+### old code:
+# plot(xr[isRe[[1]]][c(T,F)], y[[1]][isRe[[1]]][c(T,F)], type="l", ylim=ylim$rg);
+# lines(xr[isRe[[1]]][c(F,T)], y[[1]][isRe[[1]]][c(F,T)], type="l", ylim=ylim$rg);
+# lines(xr[isRe[[2]]][c(T,F)], y[[2]][isRe[[2]]][c(T,F)], col="darkgreen");
+# lines(xr[isRe[[2]]][c(F,T)], y[[2]][isRe[[2]]][c(F,T)], col="darkgreen");
+
+
+###################
+### Other Variants:
+
+# [old]
 
 ### Eq =>
 (y1 + y2)^3 - 3*cx*(y1 + y2) - R1 # = 0
@@ -202,85 +298,6 @@ line.tan(xr[[1]], dx=1.5, p=y[[1]], dp=dy[[1]], col="green")
 line.tan(xr[[2]], dx=1.5, p=y[[2]], dp=dy[[2]], col="red")
 
 ### with old code:
-# plot(xr[isRe[[1]]][c(T,F)], y[[1]][isRe[[1]]][c(T,F)], type="l", ylim=ylim$rg);
-# lines(xr[isRe[[1]]][c(F,T)], y[[1]][isRe[[1]]][c(F,T)], type="l", ylim=ylim$rg);
-# lines(xr[isRe[[2]]][c(T,F)], y[[2]][isRe[[2]]][c(T,F)], col="darkgreen");
-# lines(xr[isRe[[2]]][c(F,T)], y[[2]][isRe[[2]]][c(F,T)], col="darkgreen");
-
-################
-
-### Variant
-
-
-### D =>
-y1^2*dy1 + y2^2*dy2 - dR1/3 # = 0
-### *y1 OR *y2 =>
-y1^3*dy1 + cx*y2*dy2 - y1*dR1/3 # = 0
-cx*y1*dy1 + y2^3*dy2 - y2*dR1/3 # = 0
-# =>
-# System variant:
-y2^3*dy1 - R1*dy1 - cx*y2*dy2 + y1*dR1/3 # = 0
-y1^3*dy2 - R1*dy2 - cx*y1*dy1 + y2*dR1/3 # = 0
-# Another variant:
-y2^2*(dcx - y1*dy2) - R1*dy1 - cx*y2*dy2 + y1*dR1/3 # = 0
-y1^2*(dcx - y2*dy1) - R1*dy2 - cx*y1*dy1 + y2*dR1/3 # = 0
-# =>
-2*cx*y2*dy2 + R1*dy1 - y2^2*dcx - y1*dR1/3 # = 0
-2*cx*y1*dy1 + R1*dy2 - y1^2*dcx - y2*dR1/3 # = 0
-
-### D2 =>
-3*y2^2*dy1*dy2 + y2^3*d2y1 - R1*d2y1 - dR1*dy1 +
-	- cx*y2*d2y2 - cx*(dy2)^2 - dcx*y2*dy2 + dy1*dR1/3 + y1*d2R1/3 # = 0
-# TODO
-
-
-### Example:
-# R1 = b01; cx = x + b02;
-2*(x + b02)*y2*dy2 + b01*dy1 - y2^2 # = 0
-2*(x + b02)*y1*dy1 + b01*dy2 - y1^2 # = 0
-
-
-### Solution:
-# y.f(): see in previous section;
-# dy.f():
-dy.f = function(x, b0=c(1,1), n=3) {
-	y.all = y.f(x, b0=b0, n=n);
-	y1 = y.all[[1]]; y2 = y.all[[2]];
-	x = rep(x, each=n);
-	xb = x + b0[2]; b01 = b0[1];
-	ypr = (y1*y2); yprn2 = ypr^(n-2);
-	div = b01^2 - 4*xb^2*yprn2;
-	#
-	dy1 = (b01*y2^(n-1) - 2*xb*yprn2*y1) / div;
-	dy2 = (b01*y1^(n-1) - 2*xb*yprn2*y2) / div;
-	dy1[div == 0] = 0; dy2[div == 0] = 0; # TODO
-	#
-	return(list(dy1=dy1, dy2=dy2, y=list(y1=y1, y2=y2)));
-}
-
-### Test
-b0 = c(1, 2)
-x = seq(-4, -1, by=0.025)
-y = y.f(x, b0=b0)
-### Plot
-xr = rep(x, each=3);
-ylim = range.c(y); isRe = ylim$isRe;
-plot(xr[isRe[[1]]], y[[1]][isRe[[1]]], type="l", ylim=ylim$rg);
-lines(xr[isRe[[2]]], y[[2]][isRe[[2]]], col="darkgreen");
-
-### dy
-x = c(-3.5, -3, -1.75, -1.5)
-xr = rep(x, each=3)
-dy = dy.f(x, b0=b0);
-y = dy$y; dy = dy[-3];
-isRe = isRe.f(dy);
-dy = Re.f(dy, isRe);
-y  = Re.f(y, isRe);
-xr = Re.f(xr, isRe);
-line.tan(xr[[1]], dx=1.5, p=y[[1]], dp=dy[[1]], col="green")
-line.tan(xr[[2]], dx=1.5, p=y[[2]], dp=dy[[2]], col="red")
-
-### old code:
 # plot(xr[isRe[[1]]][c(T,F)], y[[1]][isRe[[1]]][c(T,F)], type="l", ylim=ylim$rg);
 # lines(xr[isRe[[1]]][c(F,T)], y[[1]][isRe[[1]]][c(F,T)], type="l", ylim=ylim$rg);
 # lines(xr[isRe[[2]]][c(T,F)], y[[2]][isRe[[2]]][c(T,F)], col="darkgreen");
