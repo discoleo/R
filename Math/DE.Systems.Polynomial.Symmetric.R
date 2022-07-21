@@ -6,7 +6,7 @@
 ### Differential Equations
 ### DE Systems: Polynomial
 ###
-### draft v.0.1b
+### draft v.0.1c
 
 
 #############
@@ -24,6 +24,17 @@
 
 # include: DE.ODE.Helper.R;
 source("DE.ODE.Helper.R")
+
+# TODO:
+# see also helper functions in DE.Systems.Polynomial.R;
+
+unity = function(n=3, all=TRUE) {
+	m = complex(re=cos(2*pi/n), im=sin(2*pi/n))
+	if(all) {
+		m = m^(0:(n-1))
+	}
+	return(m)
+}
 
 
 #################
@@ -92,7 +103,31 @@ y1^2*(dcx - y2*dy1) - R1*dy2 - cx*y1*dy1 + y2*dR1/3 # = 0
 
 
 ### Solution:
-# y.f(): see in previous section;
+# y.f():
+y.f = function(x, b0=c(1,1), n=3, asMatrix=FALSE) {
+	if(length(b0) == 1) b0 = rep(b0, 2);
+	m = unity(n, all=TRUE);
+	d = b0[1]/2;
+	solve.exact = function(x) {
+		cx = x + b0[2];
+		det = d^2 - cx^n;
+		det = if(det >= 0) sqrt(det) else complex(re=0, im=sqrt(-det));
+		y1 = rootn(d + det, n);
+		y1 = y1 * m;
+		y2 = rootn(d - det, n);
+		y2 = y2 / m;
+		if(n %% 2 == 0 && cx < 0) y2 = -y2;
+		return(cbind(y1, y2));
+	}
+	sol = round0(sapply(x, solve.exact));
+	y1 = sol[1:n,]; y2 = sol[seq(n+1, 2*n),];
+	if( ! asMatrix) {
+		sol = list(y1=as.vector(y1), y2=as.vector(y2));
+	} else {
+		sol = list(y1=y1, y2=y2); # ??? also Matrix ???
+	}
+	return(sol);
+}
 # dy.f():
 dy.f = function(x, b0=c(1,1), n=3) {
 	y.all = y.f(x, b0=b0, n=n);
@@ -185,30 +220,8 @@ y1*dy2 + y2*dy1 - dcx # = 0
 
 
 ### Solution:
-y.f = function(x, b0=c(1,1), n=3, asMatrix=FALSE) {
-	if(length(b0) == 1) b0 = rep(b0, 2);
-	m = unity(n, all=TRUE);
-	d = b0[1]/2;
-	solve.exact = function(x) {
-		cx = x + b0[2];
-		det = d^2 - cx^n;
-		det = if(det >= 0) sqrt(det) else complex(re=0, im=sqrt(-det));
-		y1 = rootn(d + det, n);
-		y1 = y1 * m;
-		y2 = rootn(d - det, n);
-		y2 = y2 / m;
-		if(n %% 2 == 0 && cx < 0) y2 = -y2;
-		return(cbind(y1, y2));
-	}
-	sol = round0(sapply(x, solve.exact));
-	y1 = sol[1:n,]; y2 = sol[seq(n+1, 2*n),];
-	if( ! asMatrix) {
-		sol = list(y1=as.vector(y1), y2=as.vector(y2));
-	} else {
-		sol = list(y1=y1, y2=y2); # ??? also Matrix ???
-	}
-	return(sol);
-}
+
+# y.f(): see in previous section;
 y.f.old = function(x, b0=c(1,1), asMatrix=FALSE) {
 	if(length(b0) == 1) b0 = rep(b0, 2);
 	solve.ypr = function(x) {
