@@ -7,7 +7,7 @@
 ### DE Systems: Non-Polynomial
 ### Base: Hetero-Symmetric
 ###
-### draft v.0.1a
+### draft v.0.1b
 
 
 ####################
@@ -26,6 +26,40 @@ source("DE.ODE.Helper.Math.R")
 ########################
 ### Hetero-Symmetric ###
 ########################
+
+
+#############
+###  LOG  ###
+#############
+
+### Base-System:
+# y1*log(y1) = b1*y2 + R1
+# y2*log(y2) = b2*y1 + R2
+
+### Note:
+# - the original polynomial system is easier to solve when:
+#   R1 = R2 = R(x), and
+#   b1 = b2 = b(x);
+
+
+### D =>
+(log(y1) + 1)*dy1 - b1*dy2 - db1*y2 - dR1 # = 0
+# * y1 =>
+(b1*y2 + R1)*dy1 + y1*dy1 - b1*y1*dy2 - db1*y1*y2 - dR1*y1 # = 0
+
+### ODE System:
+y1*dy1 + b1*y2*dy1 - b1*y1*dy2 + R1*dy1 - db1*y1*y2 - dR1*y1 # = 0
+y2*dy2 + b2*y1*dy2 - b2*y2*dy1 + R2*dy2 - db2*y1*y2 - dR2*y2 # = 0
+
+# TODO: check;
+
+
+##############
+##############
+
+##############
+###  ATAN  ###
+##############
 
 ### Basic ###
 
@@ -74,4 +108,13 @@ b2*x*y2^2*dy1 - x^2*dy2 + b2*x*dy1 +
 #   b1 = b2 = b(x);
 
 # TODO
+
+
+###############
+
+### Variant:
+
+### Base-System:
+# y1*atan(y1) = b1*y2 + R1
+# y2*atan(y2) = b2*y1 + R2
 
