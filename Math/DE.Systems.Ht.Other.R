@@ -7,7 +7,7 @@
 ### DE Systems: Non-Polynomial
 ### Base: Hetero-Symmetric
 ###
-### draft v.0.1b
+### draft v.0.1c
 
 
 ####################
@@ -117,4 +117,36 @@ b2*x*y2^2*dy1 - x^2*dy2 + b2*x*dy1 +
 ### Base-System:
 # y1*atan(y1) = b1*y2 + R1
 # y2*atan(y2) = b2*y1 + R2
+
+
+#####################
+#####################
+
+#####################
+### Mixed Systems ###
+#####################
+
+### Base-System:
+# y1*log(y1) = b1*y2 + R1
+# y2*exp(y2) = b2*y1 + R2
+
+### Variant:
+# y2*log(y1) = b1*y1 + R1
+# y1*exp(y2) = b2*y2 + R2
+
+### D(Eq 1) =>
+(log(y1) + 1)*dy1 - b1*dy2 - db1*y2 - dR1 # = 0
+# * y1 =>
+(b1*y2 + y1 + R1)*dy1 - b1*y1*dy2 - db1*y1*y2 - dR1*y1 # = 0
+
+### D(Eq 12) =>
+(y2 + 1)*exp(y2)*dy2 - b2*dy1 - db2*y1 - dR2 # = 0
+# * y2 =>
+(y2 + 1)*(b2*y1 + R2)*dy2 - b2*y2*dy1 - db2*y1*y2 - dR2*y2 # = 0
+
+### ODE System:
+(b1*y2 + y1 + R1)*dy1 - b1*y1*dy2 - db1*y1*y2 - dR1*y1 # = 0
+(y2 + 1)*(b2*y1 + R2)*dy2 - b2*y2*dy1 - db2*y1*y2 - dR2*y2 # = 0
+
+# TODO: check;
 
