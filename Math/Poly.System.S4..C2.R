@@ -6,7 +6,7 @@
 ### Polynomial Systems
 ### S4: C2-Hetero-Symmetric
 ###
-### draft v.0.1b
+### draft v.0.1c
 
 
 ##############
@@ -68,11 +68,21 @@ s1^2 + s2^2 - 2*(x1*y1) - 2*(x2*y2) - R1 # = 0
 (x2*y2)*s1 + (x1*y1)*s2 - R3 # = 0
 # - solve for: s1 & s2;
 # Note:
-# - Eq s2 is NOT symmetric;
+# - Eq s (2) is NOT symmetric;
+### Substitution =>
+(x1*y1)^2*s1^2 + ((x2*y2)*s1 - R3)^2 - 2*(x1*y1)^3 - R1*(x1*y1)^2 - 2*R4*(x1*y1) # = 0
+((x1*y1 + x2*y2)^2 - 2*R4)*s1^2 - 2*R3*(x2*y2)*s1 +
+	+ R3^2 - 2*(x1*y1)^3 - R1*(x1*y1)^2 - 2*R4*(x1*y1) # = 0
 
 
 ### Case: n1 > 2
 # - similar, but more complicated;
+### Ex: n1 = 3
+(x1^3 + y1^3) + (x2^3 + y2^3) - R1 # = 0
+(x2*y2)*(x1 + y1) + (x1*y1)*(x2 + y2) - R3 # = 0
+# =>
+s1^3 + s2^3 - 3*(x1*y1)*s1 - 3*(x2*y2)*s2 - R1 # = 0
+(x2*y2)*s1 + (x1*y1)*s2 - R3 # = 0
 
 # TODO: implement & check;
 
