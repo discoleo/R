@@ -6,7 +6,7 @@
 ### Polynomial Systems
 ### S4: C2-Hetero-Symmetric
 ###
-### draft v.0.1a
+### draft v.0.1b
 
 
 ##############
@@ -57,6 +57,22 @@
 # TODO: implement & check;
 
 
-### Case 2: n1 > 1;
-# TODO
+### Case 2: n1 > 1
+
+### Case: n1 = 2
+(x1^2 + y1^2) + (x2^2 + y2^2) - R1 # = 0
+(x2*y2)*(x1 + y1) + (x1*y1)*(x2 + y2) - R3 # = 0
+
+### Eq s:
+s1^2 + s2^2 - 2*(x1*y1) - 2*(x2*y2) - R1 # = 0
+(x2*y2)*s1 + (x1*y1)*s2 - R3 # = 0
+# - solve for: s1 & s2;
+# Note:
+# - Eq s2 is NOT symmetric;
+
+
+### Case: n1 > 2
+# - similar, but more complicated;
+
+# TODO: implement & check;
 
