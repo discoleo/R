@@ -6,7 +6,7 @@
 ### Polynomial Systems
 ### S4: C2-Hetero-Symmetric
 ###
-### draft v.0.1d
+### draft v.0.1e
 
 
 ####################
@@ -157,7 +157,7 @@ sol = solve.S4C2(R, n=n)
 test.S4C2(sol, n=n)
 
 
-### Rx 2:
+### Ex 2:
 R = c(3,-1,2,3)
 n = c(1, 2)
 sol = solve.S4C2(R, n=n)
@@ -165,3 +165,43 @@ sol = solve.S4C2(R, n=n)
 test.S4C2(sol, n=n)
 
 
+###############
+###############
+
+###############
+### Ht Type ###
+###############
+
+### Non-Symmetric Eq 2
+# x1^n2*y1^n3 + x2^n2*y2^n3 = R2
+
+### Case: n2 = 2
+# x1^2*y1 + x2^2*y2 = R2
+
+### Solution:
+
+# Translate system to new variables:
+# s1 = x1 + x2; s2 = y1 + y2;
+# p1 = x1 * x2; p2 = y1 * y2;
+
+# let:
+A = x1^2*y1 + x2^2*y2; # = R2
+B = x1^2*y2 + x2^2*y1;
+# =>
+A + B - s2*(s1^2 - 2*p1) # = 0
+A * B - p2*(s1^4 - 4*p1*s1^2 + 2*p1^2) - p1^2*(s2^2 - 2*p2) # = 0
+# A = R2 =>
+R2*(s2*(s1^2 - 2*p1) - R2) - p2*(s1^4 - 4*p1*s1^2 + 2*p1^2) - p1^2*(s2^2 - 2*p2) # = 0
+
+### Transformed System:
+s1 + s2 - R1 # = 0
+R2*s2*(s1^2 - 2*p1) - p2*(s1^4 - 4*p1*s1^2 + 2*p1^2) - p1^2*(s2^2 - 2*p2) - R2^2 # = 0
+p2*s1 + p1*s2 - R3 # = 0
+p1*p2 # = 0
+
+# TODO: solve system;
+
+
+### Derivation: A*B
+A*B - p2*(x1^4 + x2^4) - p1^2*(s2^2 - 2*p2) # = 0
+A * B - p2*(s1^4 - 4*p1*s1^2 + 2*p1^2) - p1^2*(s2^2 - 2*p2) # = 0
