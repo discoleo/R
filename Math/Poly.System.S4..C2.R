@@ -6,7 +6,7 @@
 ### Polynomial Systems
 ### S4: C2-Hetero-Symmetric
 ###
-### draft v.0.1f
+### draft v.0.1f-robust
 
 
 ####################
@@ -200,10 +200,11 @@ p2*s1 + p1*s2 - R3 # = 0
 p1*p2 - R4 # = 0
 
 # TODO:
-# debug false roots & variable number of roots;
+# debug special cases;
 
 ### Solver:
 solve.S4C2.HtP21 = function(R, debug=TRUE, all=FALSE) {
+	# TODO: check/solve when s1 = R1;
 	coeff = coeff.S4C2.HtP21(R);
 	s1 = roots(coeff);
 	s2 = R[1] - s1;
@@ -216,12 +217,15 @@ solve.S4C2.HtP21 = function(R, debug=TRUE, all=FALSE) {
 		r = roots(c(1, -s[id], p[id]));
 	}
 	len = length(s1);
-	xy1 = lapply(seq(len), solve2, s1, p1);
-	xy1 = matrix(unlist(xy1), nrow=2);
-	xy2 = lapply(seq(len), solve2, s2, p2);
-	xy2 = matrix(unlist(xy2), nrow=2);
-	sol = rbind(xy1, xy2);
-	sol = t(sol);
+	x12 = lapply(seq(len), solve2, s1, p1);
+	x12 = matrix(unlist(x12), nrow=2);
+	x12 = t(x12);
+	# y12 = lapply(seq(len), solve2, s2, p2);
+	# y12 = matrix(unlist(y12), nrow=2);
+	# robust:
+	y1 = (x12[,2]^2*s2 - R[2]) / (s1 * (x12[,2] - x12[,1]));
+	y2 = s2 - y1;
+	sol = cbind(x12, y1, y2);
 	if(all) sol = rbind(sol, sol[ , c(2,1,4,3)]);
 	colnames(sol) = c("x1", "x2", "y1", "y2");
 	return(sol);
@@ -258,10 +262,17 @@ x1 = sol[,1]; x2 = sol[,2]; y1 = sol[,3]; y2 = sol[,4];
 test.S4C2(sol, n=c(1,2,1))
 
 
-### Ex 2:
+### Ex 2: Special
 R = c(-1,3,2,5)
 sol = solve.S4C2.Ht21(R)
 x1 = sol[,1]; x2 = sol[,2]; y1 = sol[,3]; y2 = sol[,4];
+
+test.S4C2(sol, n=c(1,2,1))
+
+
+### Ex 3: Special
+R = c(3,1,-1,3)
+sol = solve.S4C2.Ht21(R)
 
 test.S4C2(sol, n=c(1,2,1))
 
