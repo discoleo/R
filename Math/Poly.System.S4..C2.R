@@ -6,7 +6,7 @@
 ### Polynomial Systems
 ### S4: C2-Hetero-Symmetric
 ###
-### draft v.0.1f-robust
+### draft v.0.1g
 
 
 ####################
@@ -14,6 +14,21 @@
 ### Helper Functions
 
 source("Polynomials.Helper.R")
+
+
+# Test
+test.S4C2 = function(sol, n, R=NULL) {
+	if(length(n) == 2) n = c(n, n[2]);
+	#
+	err1 = apply(sol^n[1], 1, sum);
+	err4 = apply(sol, 1, prod);
+	x1 = sol[,1]; x2 = sol[,2]; y1 = sol[,3]; y2 = sol[,4];
+	err2 = x1^n[2]*y1^n[3] + x2^n[2]*y2^n[3];
+	err3 = x1*x2*(y1 + y2) + y1*y2*(x1 + x2);
+	err = cbind(err1, err2, err3, err4);
+	if( ! is.null(R)) err = round0(err - rep(R, each=4));
+	return(err)
+}
 
 
 ####################
@@ -134,19 +149,6 @@ solve.S4C2 = function(R, n, debug=TRUE) {
 	colnames(sol) = c("x1", "x2", "y1", "y2");
 	return(sol);
 }
-# Test
-test.S4C2 = function(sol, n, R=NULL) {
-	if(length(n) == 2) n = c(n, n[2]);
-	#
-	err1 = apply(sol^n[1], 1, sum);
-	err4 = apply(sol, 1, prod);
-	x1 = sol[,1]; x2 = sol[,2]; y1 = sol[,3]; y2 = sol[,4];
-	err2 = x1^n[2]*y1^n[3] + x2^n[2]*y2^n[3];
-	err3 = x1*x2*(y1 + y2) + y1*y2*(x1 + x2);
-	err = cbind(err1, err2, err3, err4);
-	if( ! is.null(R)) err = round0(err - rep(R, each=4));
-	return(err)
-}
 
 ### Examples:
 
@@ -205,13 +207,16 @@ p1*p2 - R4 # = 0
 ### Solver:
 solve.S4C2.HtP21 = function(R, debug=TRUE, all=FALSE) {
 	# TODO: check/solve when s1 = R1;
+	sol = solve.S4C2.HtP21Cases(R, debug=debug, all=all);
+	if(sol$isSpecial) return(sol$sol);
+	#
 	coeff = coeff.S4C2.HtP21(R);
 	s1 = roots(coeff);
 	s2 = R[1] - s1;
 	if(debug) print(s1);
 	p1 = solveP.S4C2.HtP21(s1, R);
 	p2 = (R[3] - p1*s2) / s1;
-	# TODO: s1 == 0;
+	# Special Case: s1 == 0 is handled above;
 	# Step 3:
 	solve2 = function(id, s, p) {
 		r = roots(c(1, -s[id], p[id]));
@@ -229,6 +234,37 @@ solve.S4C2.HtP21 = function(R, debug=TRUE, all=FALSE) {
 	if(all) sol = rbind(sol, sol[ , c(2,1,4,3)]);
 	colnames(sol) = c("x1", "x2", "y1", "y2");
 	return(sol);
+}
+solve.S4C2.HtP21Cases = function(R, debug=TRUE, all=FALSE) {
+	tol = 1E-12;
+	R1 = R[1]; R2 = R[2]; R3 = R[3]; R4 = R[4];
+	### Case: s1 == 0
+	# R2 + R3 = 0
+	if(abs(R2 + R3) < tol) {
+		x1 = rootn(R2 / R1, n=2);
+		x2 = - x1;
+		if(debug) print(paste("Special:", x1));
+		# Case: R2 = R3 = 0, R4 != 0;
+		if(R3 == 0) {
+			if(R4 != 0) {
+				# NO solution
+				sol = cbind(x1=NA, x2=NA, y1=NA, y2=NA);
+				warning("No solutions!");
+				return(list(isSpecial=TRUE, sol=sol));
+			} else {
+				sol = cbind(x1=0, x2=0, y1=R1, y2=0);
+				warning("Indeterminate solution!");
+				return(list(isSpecial=TRUE, sol=sol));
+			}
+		}
+		p2 = R1 * R4 / R3;
+		y1 = roots(c(1, -R1, p2));
+		y2 = R1 - y1;
+		sol = cbind(x1, x2, y1, y2);
+		if(all) sol = rbind(sol, sol[ , c(2,1,4,3)]);
+		return(list(isSpecial = TRUE, sol=sol));
+	}
+	return(list(isSpecial=FALSE));
 }
 coeff.S4C2.HtP21 = function(R) {
 	R1 = R[1]; R2 = R[2]; R3 = R[3]; R4 = R[4];
@@ -262,9 +298,9 @@ x1 = sol[,1]; x2 = sol[,2]; y1 = sol[,3]; y2 = sol[,4];
 test.S4C2(sol, n=c(1,2,1))
 
 
-### Ex 2: Special
+### Ex 2:
 R = c(-1,3,2,5)
-sol = solve.S4C2.Ht21(R)
+sol = solve.S4C2.HtP21(R)
 x1 = sol[,1]; x2 = sol[,2]; y1 = sol[,3]; y2 = sol[,4];
 
 test.S4C2(sol, n=c(1,2,1))
@@ -272,7 +308,7 @@ test.S4C2(sol, n=c(1,2,1))
 
 ### Ex 3: Special
 R = c(3,1,-1,3)
-sol = solve.S4C2.Ht21(R)
+sol = solve.S4C2.HtP21(R)
 
 test.S4C2(sol, n=c(1,2,1))
 
