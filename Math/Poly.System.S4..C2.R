@@ -6,7 +6,7 @@
 ### Polynomial Systems
 ### S4: C2-Hetero-Symmetric
 ###
-### draft v.0.1e
+### draft v.0.1f
 
 
 ####################
@@ -181,27 +181,131 @@ test.S4C2(sol, n=n)
 ### Solution:
 
 # Translate system to new variables:
-# s1 = x1 + x2; s2 = y1 + y2;
-# p1 = x1 * x2; p2 = y1 * y2;
+s1 = x1 + x2; s2 = y1 + y2;
+p1 = x1 * x2; p2 = y1 * y2;
 
 # let:
 A = x1^2*y1 + x2^2*y2; # = R2
 B = x1^2*y2 + x2^2*y1;
 # =>
 A + B - s2*(s1^2 - 2*p1) # = 0
-A * B - p2*(s1^4 - 4*p1*s1^2 + 2*p1^2) - p1^2*(s2^2 - 2*p2) # = 0
+A * B - p2*(s1^4 - 4*p1*s1^2) - p1^2*s2^2 # = 0
 # A = R2 =>
-R2*(s2*(s1^2 - 2*p1) - R2) - p2*(s1^4 - 4*p1*s1^2 + 2*p1^2) - p1^2*(s2^2 - 2*p2) # = 0
+R2*(s2*(s1^2 - 2*p1) - R2) - p2*(s1^4 - 4*p1*s1^2) - p1^2*s2^2 # = 0
 
 ### Transformed System:
 s1 + s2 - R1 # = 0
-R2*s2*(s1^2 - 2*p1) - p2*(s1^4 - 4*p1*s1^2 + 2*p1^2) - p1^2*(s2^2 - 2*p2) - R2^2 # = 0
+R2*s2*(s1^2 - 2*p1) - p2*(s1^4 - 4*p1*s1^2) - p1^2*s2^2 - R2^2 # = 0
 p2*s1 + p1*s2 - R3 # = 0
-p1*p2 # = 0
+p1*p2 - R4 # = 0
 
-# TODO: solve system;
+# TODO:
+# debug false roots & variable number of roots;
+
+### Solver:
+solve.S4C2.HtP21 = function(R, debug=TRUE, all=FALSE) {
+	coeff = coeff.S4C2.HtP21(R);
+	s1 = roots(coeff);
+	s2 = R[1] - s1;
+	if(debug) print(s1);
+	p1 = solveP.S4C2.HtP21(s1, R);
+	p2 = (R[3] - p1*s2) / s1;
+	# TODO: s1 == 0;
+	# Step 3:
+	solve2 = function(id, s, p) {
+		r = roots(c(1, -s[id], p[id]));
+	}
+	len = length(s1);
+	xy1 = lapply(seq(len), solve2, s1, p1);
+	xy1 = matrix(unlist(xy1), nrow=2);
+	xy2 = lapply(seq(len), solve2, s2, p2);
+	xy2 = matrix(unlist(xy2), nrow=2);
+	sol = rbind(xy1, xy2);
+	sol = t(sol);
+	if(all) sol = rbind(sol, sol[ , c(2,1,4,3)]);
+	colnames(sol) = c("x1", "x2", "y1", "y2");
+	return(sol);
+}
+coeff.S4C2.HtP21 = function(R) {
+	R1 = R[1]; R2 = R[2]; R3 = R[3]; R4 = R[4];
+	coeff = c(R4, - R1*R4, - (R2^2 + R2*R3),
+		(R3*R1*R2 + 2*R1*R2^2 + R3*R4 + 2*R4*R2),
+		(- R1^2*R2^2 + 3*R3*R1*R4 - 9*R4^2),
+		(- 2*R1^2*R4*R2 - R3^3 - 6*R1*R4^2 - 3*R3^2*R2 - 3*R3*R2^2 - 2*R2^3),
+		(2*R1*R2^3 - R1^2*R4^2 + R3^2*R1*R2 + 2*R3*R1*R2^2 + 4*R3^2*R4 + 10*R3*R4*R2 + 10*R4*R2^2),
+		(- 2*R1*R4*R2^2 - 2*R3*R1*R4*R2),
+		- R2^2 * (R2^2 + 2*R3*R2 + R3^2));
+	return(coeff);
+}
+solveP.S4C2.HtP21 = function(s1, R) {
+	R1 = R[1]; R2 = R[2]; R3 = R[3]; R4 = R[4];
+	p1 = - R4*s1^6 + 2*R1*R4*s1^5 - R1^2*R4*s1^4 + 2*R2*R4*s1^3 + R4*R3*s1^3 +
+		- 4*R2*R1*R4*s1^2 - 2*R1*R4*R3*s1^2 + 2*R2*R1^2*R4*s1 + R1^2*R4*R3*s1;
+	div = R2*s1^5 - 3*R2*R1*s1^4 - 3*R4*s1^4 + 3*R2*R1^2*s1^3 + 5*R1*R4*s1^3 + R2^2*s1^2 +
+		- R2*R1^3*s1^2 - R1^2*R4*s1^2 + 2*R2*R3*s1^2 + R3^2*s1^2 - 2*R2^2*R1*s1 - R1^3*R4*s1 +
+		- 4*R2*R1*R3*s1 - 2*R1*R3^2*s1 + R2^2*R1^2 + 2*R2*R1^2*R3 + R1^2*R3^2;
+	p1 = p1 / div;
+	return(p1);
+}
+
+### Examples
+
+### Ex 1:
+R = c(2,3,-2,5)
+sol = solve.S4C2.HtP21(R)
+x1 = sol[,1]; x2 = sol[,2]; y1 = sol[,3]; y2 = sol[,4];
+
+test.S4C2(sol, n=c(1,2,1))
+
+
+### Ex 2:
+R = c(-1,3,2,5)
+sol = solve.S4C2.Ht21(R)
+x1 = sol[,1]; x2 = sol[,2]; y1 = sol[,3]; y2 = sol[,4];
+
+test.S4C2(sol, n=c(1,2,1))
 
 
 ### Derivation: A*B
 A*B - p2*(x1^4 + x2^4) - p1^2*(s2^2 - 2*p2) # = 0
-A * B - p2*(s1^4 - 4*p1*s1^2 + 2*p1^2) - p1^2*(s2^2 - 2*p2) # = 0
+A*B - p2*(s1^4 - 4*p1*s1^2 + 2*p1^2) - p1^2*(s2^2 - 2*p2) # = 0
+A*B - p2*(s1^4 - 4*p1*s1^2) - p1^2*s2^2 # = 0
+
+### Solution:
+
+### Eq 3:
+p2*s1 + p1*s2 - R3 # = 0
+p1*p2*s1 + p1^2*s2 - R3*p1 # = 0
+R4*s1 + p1^2*(R1 - s1) - R3*p1 # = 0
+
+### Eq 2:
+R2*s2*(s1^2 - 2*p1) - p2*(s1^4 - 4*p1*s1^2) - p1^2*s2^2 - R2^2 # = 0
+R2*s2*p1*(s1^2 - 2*p1) - R4*(s1^4 - 4*p1*s1^2) - p1^3*s2^2 - R2^2*p1 # = 0
+
+### Debug
+R = c(2,3,-2,5)
+x1 =  1.0279315562 + 0.0000000000i;
+x2 = -1.1340431142 + 0.0000000000i;
+y1 = -1.2703309529 + -0.0000000000i;
+y2 =  3.3764425109 + -0.0000000000i;
+
+###
+p1 = toPoly.pm("R4*s1 + p1^2*(R1 - s1) - R3*p1")
+p2 = toPoly.pm("R2*(R1 - s1)*p1*(s1^2 - 2*p1) - R4*(s1^4 - 4*p1*s1^2) - p1^3*(R1 - s1)^2 - R2^2*p1")
+pR = solve.pm(p1, p2, "p1")
+pMAX = max(pR$Rez$s1)
+pR$Rez$coeff = sign(pR$Rez$coeff[pR$Rez$s1 == pMAX]) * pR$Rez$coeff;
+#
+pR$Rez = div.pm(pR$Rez, toPoly.pm("(s1-R1)^4"), "s1")$Rez
+pR$Rez = sort.pm(pR$Rez, "s1")
+str(pR$Rez)
+
+p = sapply(unique(pR$Rez$s1), function(id) {
+	p = pR$Rez[pR$Rez$s1 == id, , drop=FALSE];
+	p$s1 = NULL;
+	# paste0("(", as.character.pm(p), ")*", "s1", "^", id, " +");
+	paste0("(", as.character.pm(p), "),");
+})
+cat(p, sep = rep("\n", length(p)))
+
+
