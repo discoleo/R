@@ -6,7 +6,7 @@
 ### Polynomial Systems
 ### S4: C2-Hetero-Symmetric
 ###
-### draft v.0.1g-special
+### draft v.0.1g-special2
 
 
 ####################
@@ -206,13 +206,17 @@ p1*p2 - R4 # = 0
 solve.S4C2.HtP21 = function(R, debug=TRUE, all=FALSE) {
 	### Special cases:
 	# check/solve when s1 = 0 or s2 = 0;
-	sol0 = solve.S4C2.HtP21Cases(R, debug=debug, all=all);
-	if(sol0$isSpecial) {
-		if(sol0$type == 1) return(sol0$sol);
-	}
+	tol = 1E-12;
+	sol0 = solve.S4C2.HtP21Cases(R, debug=debug, all=all, tol=tol);
 	#
 	coeff = coeff.S4C2.HtP21(R);
 	s1 = roots(coeff);
+	if(sol0$isSpecial) {
+		if(sol0$type == 1) {
+			isZ = abs(s1) < tol;
+			s1  = s1[ ! isZ];
+		}
+	}
 	s2 = R[1] - s1;
 	if(debug) print(s1);
 	p1 = solveP.S4C2.HtP21(s1, R);
@@ -238,8 +242,7 @@ solve.S4C2.HtP21 = function(R, debug=TRUE, all=FALSE) {
 	colnames(sol) = c("x1", "x2", "y1", "y2");
 	return(sol);
 }
-solve.S4C2.HtP21Cases = function(R, debug=TRUE, all=FALSE) {
-	tol = 1E-12;
+solve.S4C2.HtP21Cases = function(R, debug=TRUE, all=FALSE, tol=1E-12) {
 	R1 = R[1]; R2 = R[2]; R3 = R[3]; R4 = R[4];
 	### Case: s1 == 0
 	# R2 + R3 = 0
