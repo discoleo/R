@@ -6,7 +6,7 @@
 ### Polynomial Systems
 ### S4: C2-Hetero-Symmetric
 ###
-### draft v.0.1h
+### draft v.0.1h-eq4
 
 
 ####################
@@ -410,6 +410,10 @@ x1*y1 + x2*y2 - R4 # = 0
 s1 + s2 - R1 # = 0
 R2*s2*(s1^2 - 2*p1) - p2*(s1^4 - 4*p1*s1^2) - p1^2*s2^2 - R2^2 # = 0
 p2*s1 + p1*s2 - R3 # = 0
+### Eq 4:
+# - simple version: works only with Ht21;
+R4*s1 - p1*s2 - R2 # = 0
+# - complex version:
 R4*s1*s2 - p2*s1^2 - p1*s2^2 + 4*p1*p2 - R4^2 # = 0
 
 ### Derivation:
