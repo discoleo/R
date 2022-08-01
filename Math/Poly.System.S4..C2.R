@@ -6,7 +6,7 @@
 ### Polynomial Systems
 ### S4: C2-Hetero-Symmetric
 ###
-### draft v.0.1g
+### draft v.0.1g-special
 
 
 ####################
@@ -201,14 +201,15 @@ R2*s2*(s1^2 - 2*p1) - p2*(s1^4 - 4*p1*s1^2) - p1^2*s2^2 - R2^2 # = 0
 p2*s1 + p1*s2 - R3 # = 0
 p1*p2 - R4 # = 0
 
-# TODO:
-# debug special cases;
 
 ### Solver:
 solve.S4C2.HtP21 = function(R, debug=TRUE, all=FALSE) {
-	# TODO: check/solve when s1 = R1;
-	sol = solve.S4C2.HtP21Cases(R, debug=debug, all=all);
-	if(sol$isSpecial) return(sol$sol);
+	### Special cases:
+	# check/solve when s1 = 0 or s2 = 0;
+	sol0 = solve.S4C2.HtP21Cases(R, debug=debug, all=all);
+	if(sol0$isSpecial) {
+		if(sol0$type == 1) return(sol0$sol);
+	}
 	#
 	coeff = coeff.S4C2.HtP21(R);
 	s1 = roots(coeff);
@@ -232,6 +233,8 @@ solve.S4C2.HtP21 = function(R, debug=TRUE, all=FALSE) {
 	y2 = s2 - y1;
 	sol = cbind(x12, y1, y2);
 	if(all) sol = rbind(sol, sol[ , c(2,1,4,3)]);
+	# add back the correct root;
+	if(sol0$isSpecial) sol = rbind(sol, sol0$sol);
 	colnames(sol) = c("x1", "x2", "y1", "y2");
 	return(sol);
 }
@@ -243,18 +246,18 @@ solve.S4C2.HtP21Cases = function(R, debug=TRUE, all=FALSE) {
 	if(abs(R2 + R3) < tol) {
 		x1 = rootn(R2 / R1, n=2);
 		x2 = - x1;
-		if(debug) print(paste("Special:", x1));
+		if(debug) print(paste("Special: s1 = 0; x1 = ", x1));
 		# Case: R2 = R3 = 0, R4 != 0;
 		if(R3 == 0) {
 			if(R4 != 0) {
 				# NO solution
 				sol = cbind(x1=NA, x2=NA, y1=NA, y2=NA);
 				warning("No solutions!");
-				return(list(isSpecial=TRUE, sol=sol));
+				return(list(isSpecial=TRUE, sol=sol, type=1));
 			} else {
 				sol = cbind(x1=0, x2=0, y1=R1, y2=0);
 				warning("Indeterminate solution!");
-				return(list(isSpecial=TRUE, sol=sol));
+				return(list(isSpecial=TRUE, sol=sol, type=1));
 			}
 		}
 		p2 = R1 * R4 / R3;
@@ -262,7 +265,19 @@ solve.S4C2.HtP21Cases = function(R, debug=TRUE, all=FALSE) {
 		y2 = R1 - y1;
 		sol = cbind(x1, x2, y1, y2);
 		if(all) sol = rbind(sol, sol[ , c(2,1,4,3)]);
-		return(list(isSpecial = TRUE, sol=sol));
+		return(list(isSpecial = TRUE, sol=sol, type=1));
+	}
+	### Case: s2 == 0
+	if(abs(R1^2*(4*R4 - R1*R3) - R2^2) < tol) {
+		y1 = rootn( - R3/R1, n=2);
+		y2 = - y1;
+		if(debug) print(paste("Special: s2 = 0; y1 = ", y1));
+		dx = R2 / (R1 * y1);
+		x1 = (R1 + dx) / 2;
+		x2 = R1 - x1;
+		sol = cbind(x1, x2, y1, y2);
+		if(all) sol = rbind(sol, sol[ , c(2,1,4,3)]);
+		return(list(isSpecial = TRUE, sol=sol, type=2));
 	}
 	return(list(isSpecial=FALSE));
 }
@@ -313,6 +328,15 @@ sol = solve.S4C2.HtP21(R)
 test.S4C2(sol, n=c(1,2,1))
 
 
+### Ex 4: Special
+# TODO: remove false root;
+R = c(-1,3,5,1)
+sol = solve.S4C2.HtP21(R)
+
+test.S4C2(sol, n=c(1,2,1))
+
+
+###################
 ### Derivation: A*B
 A*B - p2*(x1^4 + x2^4) - p1^2*(s2^2 - 2*p2) # = 0
 A*B - p2*(s1^4 - 4*p1*s1^2 + 2*p1^2) - p1^2*(s2^2 - 2*p2) # = 0
