@@ -218,16 +218,21 @@ format.complex.pm = function(x, sign.invert=FALSE, rm.zero=TRUE, brackets=TRUE, 
 
 ### Other
 
-toCoeff = function(p, x="x") {
-	idx = match(x, names(p));
-	if(idx < 0) stop(paste0("No variable ", x));
-	px = p[,x]; p = p[, - idx, drop=FALSE];
+# TODO: check everywhere that x is replaced with xn;
+toCoeff = function(p, xn="x", decreasing=TRUE, print=FALSE, sep=",\n") {
+	idx = match(xn, names(p));
+	if(idx < 0) stop(paste0("No variable ", xn));
+	px = p[,xn]; p = p[, - idx, drop=FALSE];
 	str = tapply(seq(nrow(p)), px, function(nr) as.character.pm(p[nr,, drop=FALSE], leading=NA))
 	str[nchar(str) == 0] = "1";
 	# missing powers
 	x.all = seq(0, max(px));
 	p.all = rep("0", length(x.all));
 	p.all[1 + sort(unique(px))] = str;
+	if(decreasing) p.all = rev(p.all);
+	if(print) {
+		cat(p.all, sep = rep(sep, length(p.all)));
+	}
 	return(p.all)
 }
 # Evaluate the coefficients using "..."
