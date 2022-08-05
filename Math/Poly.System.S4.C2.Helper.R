@@ -41,8 +41,12 @@ test.S4C2.Var = function(sol, n, type="x1x2", R=NULL) {
 	#
 	type = pmatch(type, c("x1x2", "x1y2"));
 	if(is.na(type)) stop("Invalid type!");
-	FUN = if(type == 1) function(x) { x[1]*x[2] + x[3]*x[4]; }
-		else if(type == 2) function(x) { x[1]*x[4] + x[2]*x[3]; }
+	len = length(n);
+	nV  = if(len == 3) c(1,1)
+		else if(len == 4) c(n[4], 1)
+		else n[c(4, 5)];
+	FUN = if(type == 1) function(x) { x[1]^nV[1] * x[2]^nV[2] + x[3]^nV[1] * x[4]^nV[2]; }
+		else if(type == 2) function(x) { x[1]^nV[1] * x[4]^nV[2] + x[2]^nV[1] * x[3]^nV[2]; }
 	#
 	err1 = apply(sol^n[1], 1, sum);
 	err4 = apply(sol, 1, FUN);

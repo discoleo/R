@@ -7,7 +7,7 @@
 ### S4: C2-Hetero-Symmetric
 ### with Additional Symmetry
 ###
-### draft v.0.1c
+### draft v.0.1d
 
 
 ####################
@@ -278,6 +278,142 @@ p2^n*(x1^(2*n) + x2^(2*n)) + p1^n*(y1^(2*n) + y2^(2*n)) - R2*R4 # = 0
 ### A * B =>
 p2^2*(x1^4 + x2^4) + p1^2*(y1^4 + y2^4) - R2*R4 # = 0
 p2^2*(s1^4 - 4*p1*s1^2 + 2*p1^2) + p1^2*(s2^4 - 4*p2*s2^2 + 2*p2^2) - R2*R4 # = 0
+p2^2*(s1^4 - 4*p1*s1^2) + p1^2*(s2^4 - 4*p2*s2^2) + 4*p1^2*p2^2 - R2*R4 # = 0
 
-# TODO
+
+### Transformed System
+# (Case: n1 = 1)
+s1 + s2 - R1 # = 0
+(s1^2 - 2*p1)*(s2^2 - 2*p2) - R2 - R4 # = 0
+s1*p2 + s2*p1 - R3 # = 0
+p2^2*(s1^4 - 4*p1*s1^2) + p1^2*(s2^4 - 4*p2*s2^2) + 4*p1^2*p2^2 - R2*R4 # = 0
+
+
+### Solver:
+
+solve.S4C2.Var_x1y1P2 = function(R, debug=TRUE, all=FALSE) {
+	coeff = coeff.S4C2.Var_x1y1P2(R);
+	s1 = roots(coeff);
+	if(debug) print(s1);
+	s2 = R[1] - s1;
+	p1 = solveP.S4C2.Var_x1y1P2.x0(R, s1);
+	p2 = (R[3] - s2*p1) / s1;
+	# Step 3
+	solve2 = function(id, s, p) {
+		r = roots(c(1, -s[id], p[id]));
+	}
+	len = length(s1);
+	x12 = lapply(seq(len), solve2, s1, p1);
+	x12 = matrix(unlist(x12), nrow=2);
+	x12 = t(x12);
+	#
+	x12sq = x12^2; x12q = x12sq^2;
+	y1sq = (R[2]*x12sq[,1] - R[4]*x12sq[,2]) / (x12q[,1] - x12q[,2]);
+	y2sq = (R[2] - x12sq[,1]*y1sq) / x12sq[,2];
+	yd = (y1sq - y2sq) / s2;
+	y1 = (s2 + yd) / 2;
+	y2 = (s2 - yd) / 2;
+	#
+	sol = cbind(x12, y1, y2);
+	if(all) sol = rbind(sol, sol[ , c(2,1,4,3)]);
+	colnames(sol) = c("x1", "x2", "y1", "y2");
+	return(sol);
+}
+coeff.S4C2.Var_x1y1P2 = function(R) {
+	R1 = R[1]; R2 = R[2]; R3 = R[3]; R4 = R[4];
+	coeff = c(1, - 8*R1, 26*R1^2, - 42*R1^3,
+		- 12*R3*R1 + 28*R1^4 - 8*R4 - 8*R2,
+		72*R3*R1^2 + 14*R1^5 + 48*R1*R4 + 48*R1*R2,
+		- 16*R3^2 - 180*R3*R1^3 - 42*R1^6 - 116*R1^2*R4 - 116*R1^2*R2,
+		80*R3^2*R1 + 240*R3*R1^4 + 34*R1^7 + 140*R1^3*R4 + 140*R1^3*R2,
+		- 160*R3^2*R1^2 - 180*R3*R1^5 - 13*R1^8 + 16*R3*R1*R4 - 80*R1^4*R4 + 14*R4^2 +
+			+ 16*R3*R1*R2 - 80*R1^4*R2 + 36*R4*R2 + 14*R2^2,
+		160*R3^2*R1^3 + 72*R3*R1^6 + 2*R1^9 - 64*R3*R1^2*R4 + 8*R1^5*R4 - 56*R1*R4^2 +
+			- 64*R3*R1^2*R2 + 8*R1^5*R2 - 144*R1*R4*R2 - 56*R1*R2^2,
+		- 80*R3^2*R1^4 - 12*R3*R1^7 + 96*R3*R1^3*R4 + 12*R1^6*R4 + 82*R1^2*R4^2 +
+			+ 96*R3*R1^3*R2 + 12*R1^6*R2 + 220*R1^2*R4*R2 + 82*R1^2*R2^2,
+		16*R3^2*R1^5 - 64*R3*R1^4*R4 - 4*R1^7*R4 - 50*R1^3*R4^2 - 64*R3*R1^4*R2 +
+			- 4*R1^7*R2 - 156*R1^3*R4*R2 - 50*R1^3*R2^2,
+		16*R3*R1^5*R4 - 4*R3*R1*R4^2 + 8*R1^4*R4^2 - 8*R4^3 + 16*R3*R1^5*R2 + 8*R3*R1*R4*R2 +
+			+ 48*R1^4*R4*R2 + 8*R4^2*R2 - 4*R3*R1*R2^2 + 8*R1^4*R2^2 + 8*R4*R2^2 - 8*R2^3,
+		8*R3*R1^2*R4^2 + 2*R1^5*R4^2 + 16*R1*R4^3 - 16*R3*R1^2*R4*R2 - 4*R1^5*R4*R2 +
+			- 16*R1*R4^2*R2 + 8*R3*R1^2*R2^2 + 2*R1^5*R2^2 - 16*R1*R4*R2^2 + 16*R1*R2^3,
+		- 4*R3*R1^3*R4^2 - 8*R1^2*R4^3 + 8*R3*R1^3*R4*R2 + 8*R1^2*R4^2*R2 - 4*R3*R1^3*R2^2 +
+			+ 8*R1^2*R4*R2^2 - 8*R1^2*R2^3,
+		0,
+		R4^4 - 4*R4^3*R2 + 6*R4^2*R2^2 - 4*R4*R2^3 + R2^4
+	);
+	return(coeff);
+}
+solveP.S4C2.Var_x1y1P2.x0 = function(R, s1) {
+	p1 = coeff.S4C2.Var_x1y1P2.x0(R);
+	p1 = sapply(s1, function(s1) {
+		sum(p1 * s1^seq(11, 0, by=-1));
+	})
+	R1 = R[1]; R2 = R[2]; R3 = R[3]; R4 = R[4];
+	div = 2*s1^9 - 13*s1^8*R1 + 36*s1^7*R1^2 - 55*s1^6*R1^3 + 50*s1^5*R1^4 - 27*s1^4*R1^5 +
+		+ 8*s1^3*R1^6 - s1^2*R1^7;
+	p1 = p1 / (64 * div);
+	return(p1);
+}
+coeff.S4C2.Var_x1y1P2.x0 = function(R) {
+	R1 = R[1]; R2 = R[2]; R3 = R[3]; R4 = R[4];
+	coeff = c(48, - 336*R1, 1008*R1^2, - 64*R3 - 1680*R1^3,
+		320*R3*R1 + 1680*R1^4 - 64*R4 - 64*R2,
+		- 640*R3*R1^2 - 1008*R1^5 + 320*R1*R4 + 320*R1*R2,
+		640*R3*R1^3 + 336*R1^6 - 640*R1^2*R4 - 640*R1^2*R2,
+		- 320*R3*R1^4 - 48*R1^7 + 640*R1^3*R4 + 640*R1^3*R2,
+		64*R3*R1^5 - 320*R1^4*R4 + 16*R4^2 - 320*R1^4*R2 - 32*R4*R2 + 16*R2^2,
+		64*R1^5*R4 - 48*R1*R4^2 + 64*R1^5*R2 + 96*R1*R4*R2 - 48*R1*R2^2,
+		48*R1^2*R4^2 - 96*R1^2*R4*R2 + 48*R1^2*R2^2,
+		- 16*R1^3*R4^2 + 32*R1^3*R4*R2 - 16*R1^3*R2^2
+	);
+	return(coeff);
+}
+
+# TODO:
+# Case: s2 = 0; s1 = R1;
+
+### Examples:
+
+R = c(2,3,-1,5)
+sol = solve.S4C2.Var_x1y1P2(R)
+
+test.S4C2.Var(sol, n=c(1,2,2,2,2), type="x1y2")
+
+
+### Ex 2:
+R = c(2,3,-1,-1)
+sol = solve.S4C2.Var_x1y1P2(R)
+
+test.S4C2.Var(sol, n=c(1,2,2,2,2), type="x1y2")
+
+
+##########
+
+### Debug:
+x1 =  1.1725398503 + -1.4433080165i;
+x2 = -0.7162047206 + -0.2205315378i;
+y1 =  0.7158321338 + 0.7331960503i;
+y2 =  0.8278327365 + 0.9306435040i;
+sol = cbind(x1,x2,y1,y2);
+
+
+R1 = R[1]; R2 = R[2]; R3 = R[3]; R4 = R[4];
+s1 = x1 + x2; s2 = y1 + y2;
+p1 = x1 * x2; p2 = y1 * y2;
+
+
+### Derivation
+p1 = toPoly.pm("s1 + s2 - R1")
+p2 = toPoly.pm("s1*p2 + s2*p1 - R3")
+p3 = toPoly.pm("(s1^2 - 2*p1)*(s2^2 - 2*p2) - R2 - R4")
+p4 = toPoly.pm("p2^2*(s1^4 - 4*p1*s1^2) + p1^2*(s2^4 - 4*p2*s2^2) + 4*p1^2*p2^2 - R2*R4")
+
+pR = solve.lpm(p1, p2, p3, p4, xn=c("s2", "p2", "p1"))
+sort(unique(pR[[3]]$Rez$s1))
+
+pD = div.pm(pR[[3]]$Rez, toPoly.pm("(s1 - R1)^7"), "s1")
+p = toCoeff(pD$Rez, xn="s1", print=TRUE)
+
 
