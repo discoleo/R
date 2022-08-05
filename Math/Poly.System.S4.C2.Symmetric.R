@@ -7,7 +7,7 @@
 ### S4: C2-Hetero-Symmetric
 ### with Additional Symmetry
 ###
-### draft v.0.1d
+### draft v.0.1d-tasks
 
 
 ####################
@@ -372,7 +372,9 @@ coeff.S4C2.Var_x1y1P2.x0 = function(R) {
 }
 
 # TODO:
-# Case: s2 = 0; s1 = R1;
+# Special Cases:
+# s2 = 0; s1 = R1;
+# s1 = 0; s2 = R1;
 
 ### Examples:
 
@@ -380,6 +382,12 @@ R = c(2,3,-1,5)
 sol = solve.S4C2.Var_x1y1P2(R)
 
 test.S4C2.Var(sol, n=c(1,2,2,2,2), type="x1y2")
+
+# TODO:
+# E4 actually satisfies a P[8]
+E4 = apply(sol, 1, prod);
+x  = 2 * E4;
+26269 - 52740*x + 37652*x^2 - 12296*x^3 + 2670*x^4 - 884*x^5 + 260*x^6 - 32*x^7 + x^8
 
 
 ### Ex 2:
