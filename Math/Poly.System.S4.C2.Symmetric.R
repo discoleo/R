@@ -7,7 +7,7 @@
 ### S4: C2-Hetero-Symmetric
 ### with Additional Symmetry
 ###
-### draft v.0.1d-tasks
+### draft v.0.1e
 
 
 ####################
@@ -292,6 +292,12 @@ p2^2*(s1^4 - 4*p1*s1^2) + p1^2*(s2^4 - 4*p2*s2^2) + 4*p1^2*p2^2 - R2*R4 # = 0
 ### Solver:
 
 solve.S4C2.Var_x1y1P2 = function(R, debug=TRUE, all=FALSE) {
+	# Special cases
+	sol0 = solve.S4C2.Var_x1y1P2Special(R, debug=debug, all=all);
+	if(sol0$isSpecial) {
+		return(sol0$sol);
+	}
+	#
 	coeff = coeff.S4C2.Var_x1y1P2(R);
 	s1 = roots(coeff);
 	if(debug) print(s1);
@@ -370,9 +376,49 @@ coeff.S4C2.Var_x1y1P2.x0 = function(R) {
 	);
 	return(coeff);
 }
+solve.S4C2.Var_x1y1P2Special = function(R, debug=TRUE, all=FALSE) {
+	if(R[2] != R[4]) return(list(isSpecial = FALSE));
+	R1 = R[1]; R2 = R[2]; R3 = R[3]; R4 = R[4];
+	solve2 = function() {
+		len = length(x1);
+		y12 = sapply(seq(len), function(id) {
+			roots(c(1, -s2[id], p2[id]));
+		});
+		y12 = t(y12);
+		sol = cbind(x1, x2, y12);
+		return(sol)
+	}
+	### Case: x1 == x2
+	# 2*x1^4 - 3*R1*x1^3 + R1^2*x1^2 - R3*x1 - R2
+	coeff = c(2, - 3*R1, R1^2, - R3, - R2);
+	x1 = roots(coeff);
+	x2 = x1;
+	if(debug) print(x1);
+	s2 = R1 - 2*x1;
+	p2 = (s2^2 - R2/x1^2) / 2;
+	sol = solve2();
+	sol = rbind(sol, sol[ , c(1,2,4,3)]);
+	### Case: x1 == -x2
+	# s1 = 0;
+	x1 = rootn( - R3 / R1, 2);
+	x1 = c(x1, -x1);
+	if(debug) print(x1);
+	x2 = - x1;
+	p2 = (R1^2 - R2/x1^2) / 2;
+	s2 = rep(R1, length(x1));
+	sol2 = solve2();
+	# NO rbind(): overlaps with all = TRUE;
+	#
+	sol  = rbind(sol, sol2);
+	#
+	if(all) sol = rbind(sol, sol[ , c(2,1,4,3)]);
+	colnames(sol) = c("x1", "x2", "y1", "y2");
+	return(list(isSpecial=TRUE, sol=sol));
+}
 
 # TODO:
 # Special Cases:
+# R2 = R4;
 # s2 = 0; s1 = R1;
 # s1 = 0; s2 = R1;
 
@@ -392,6 +438,20 @@ x  = 2 * E4;
 
 ### Ex 2:
 R = c(2,3,-1,-1)
+sol = solve.S4C2.Var_x1y1P2(R)
+
+test.S4C2.Var(sol, n=c(1,2,2,2,2), type="x1y2")
+
+
+### Ex 3: Special
+R = c(2,3,-1,3)
+sol = solve.S4C2.Var_x1y1P2(R)
+
+test.S4C2.Var(sol, n=c(1,2,2,2,2), type="x1y2")
+
+
+### Ex 4: Special
+R = c(-1,3,2,3)
 sol = solve.S4C2.Var_x1y1P2(R)
 
 test.S4C2.Var(sol, n=c(1,2,2,2,2), type="x1y2")
