@@ -7,7 +7,7 @@
 ### S4: C2-Hetero-Symmetric
 ### with Additional Symmetry
 ###
-### draft v.0.1e
+### draft v.0.1f
 
 
 ####################
@@ -460,6 +460,7 @@ test.S4C2.Var(sol, n=c(1,2,2,2,2), type="x1y2")
 ##########
 
 ### Debug:
+R = c(2,3,-1,5)
 x1 =  1.1725398503 + -1.4433080165i;
 x2 = -0.7162047206 + -0.2205315378i;
 y1 =  0.7158321338 + 0.7331960503i;
@@ -470,6 +471,9 @@ sol = cbind(x1,x2,y1,y2);
 R1 = R[1]; R2 = R[2]; R3 = R[3]; R4 = R[4];
 s1 = x1 + x2; s2 = y1 + y2;
 p1 = x1 * x2; p2 = y1 * y2;
+sp = p1 + p2; ps = s1 * s2;
+S  = s1 + s2; # = R1;
+E4 = p1 * p2;
 
 
 ### Derivation
@@ -484,4 +488,29 @@ sort(unique(pR[[3]]$Rez$s1))
 pD = div.pm(pR[[3]]$Rez, toPoly.pm("(s1 - R1)^7"), "s1")
 p = toCoeff(pD$Rez, xn="s1", print=TRUE)
 
+
+### Derivation E4: P[8]
+# - overflows!
+# p2 = replace.fr.pm(p2, data.frame(E4=1, coeff=1), data.frame(p1=1, coeff=1), xn="p2")
+# ...
+
+### Eq 1:
+E4*(S^2 - 2*ps) + ps*(sp^2 - 2*E4) - R3*S*sp + R3^2 # = 0
+### Eq 2:
+ps^2 - 2*R3*S + 2*ps*sp + 4*E4 - R2 - R4 # = 0
+### Eq 3:
+# based on:
+p2^2*(s1^4 - 4*p1*s1^2) + p1^2*(s2^4 - 4*p2*s2^2) + 4*p1^2*p2^2 - R2*R4 # = 0
+p2^2*s1^4 + p1^2*s2^4 - 4*E4*(p2*s1^2 + p1*s2^2) + 4*E4^2 - R2*R4 # = 0
+# p2*s1^2 + p1*s2^2 = R3*S - ps*sp =>
+(R3*S - ps*sp)^2 - 2*E4*ps^2 - 4*E4*(R3*S - ps*sp) + 4*E4^2 - R2*R4 # = 0
+
+
+p1 = toPoly.pm("E4*(S^2 - 2*ps) + ps*(sp^2 - 2*E4) - R3*S*sp + R3^2")
+p2 = toPoly.pm("ps^2 - 2*R3*S + 2*ps*sp + 4*E4 - R2 - R4")
+p3 = toPoly.pm("(R3*S - ps*sp)^2 - 2*E4*ps^2 - 4*E4*(R3*S - ps*sp) + 4*E4^2 - R2*R4")
+
+# TODO: still huge!
+pR = solve.lpm(p1, p2, p3, xn = c("ps", "sp"))
+str(pR)
 
