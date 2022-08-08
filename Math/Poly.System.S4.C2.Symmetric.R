@@ -7,7 +7,7 @@
 ### S4: C2-Hetero-Symmetric
 ### with Additional Symmetry
 ###
-### draft v.0.1g
+### draft v.0.1h
 
 
 ####################
@@ -297,9 +297,22 @@ solve.S4C2.Var_x1y1P2 = function(R, debug=TRUE, all=FALSE) {
 	if(sol0$isSpecial) {
 		return(sol0$sol);
 	}
-	#
-	coeff = coeff.S4C2.Var_x1y1P2(R);
-	s1 = roots(coeff);
+	### [old] based on P[16]
+	# coeff = coeff.S4C2.Var_x1y1P2(R);
+	# s1 = roots(coeff);
+	### P[8]
+	R24 = R[2] + R[4]; R24dsq = (R[2] - R[4])^2;
+	R1 = R[1]; R2 = R[2]; R3 = R[3]; R4 = R[4];
+	coeff = c(1, 2*R1^2, - 4*(3*R1*R3 + 2*R24),
+		- 4*(R1^2*R24 - 4*R3^2), 2*(8*R1*R3*R24 + 7*R24^2 + 4*R2*R4),
+		2*R1^2*R24dsq,
+		- 4*(R1*R3*R24dsq + 2*R24^3 - 8*R2*R4*R24), 0, R24dsq^2);
+	ps  = roots(coeff);
+	len = length(ps);
+	s1  = sapply(seq(len), function(id) {
+		roots(c(1, -R[1], ps[id]));
+	})
+	s1 = as.vector(s1);
 	if(debug) print(s1);
 	s2 = R[1] - s1;
 	p1 = solveP.S4C2.Var_x1y1P2.x0(R, s1);
@@ -325,6 +338,7 @@ solve.S4C2.Var_x1y1P2 = function(R, debug=TRUE, all=FALSE) {
 	colnames(sol) = c("x1", "x2", "y1", "y2");
 	return(sol);
 }
+### [old] P[16]
 coeff.S4C2.Var_x1y1P2 = function(R) {
 	R1 = R[1]; R2 = R[2]; R3 = R[3]; R4 = R[4];
 	coeff = c(1, - 8*R1, 26*R1^2, - 42*R1^3,
@@ -386,6 +400,8 @@ solve.S4C2.Var_x1y1P2Special = function(R, debug=TRUE, all=FALSE) {
 		});
 		y12 = t(y12);
 		sol = cbind(x1, x2, y12);
+		# NO rbind( , y2, y1): overlaps with all = TRUE;
+		sol = rbind(sol, sol[ , c(3,4,1,2)]);
 		return(sol)
 	}
 	### Case: x1 == x2
@@ -397,7 +413,7 @@ solve.S4C2.Var_x1y1P2Special = function(R, debug=TRUE, all=FALSE) {
 	s2 = R1 - 2*x1;
 	p2 = (s2^2 - R2/x1^2) / 2;
 	sol = solve2();
-	sol = rbind(sol, sol[ , c(1,2,4,3)]);
+	# sol = rbind(sol, sol[ , c(3,4,1,2)]);
 	### Case: x1 == -x2
 	# s1 = 0;
 	x1 = rootn( - R3 / R1, 2);
@@ -407,7 +423,6 @@ solve.S4C2.Var_x1y1P2Special = function(R, debug=TRUE, all=FALSE) {
 	p2 = (R1^2 - R2/x1^2) / 2;
 	s2 = rep(R1, length(x1));
 	sol2 = solve2();
-	# NO rbind(): overlaps with all = TRUE;
 	#
 	sol  = rbind(sol, sol2);
 	#
@@ -429,8 +444,8 @@ sol = solve.S4C2.Var_x1y1P2(R)
 
 test.S4C2.Var(sol, n=c(1,2,2,2,2), type="x1y2")
 
-# TODO:
 # E4 actually satisfies a P[8]
+# - implemented using ps = s1*s2: satisfies also a P[8];
 E4 = apply(sol, 1, prod);
 x  = 2 * E4;
 26269 - 52740*x + 37652*x^2 - 12296*x^3 + 2670*x^4 - 884*x^5 + 260*x^6 - 32*x^7 + x^8
