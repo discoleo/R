@@ -1195,6 +1195,29 @@ solve.pm = function(p1, p2, xn, stop.at=NULL, simplify=TRUE, asBigNum=FALSE) {
 	return(solve.pm(p1, p2, xn=xn, stop.at=stop.at, simplify=simplify, asBigNum=asBigNum));
 }
 
+# p(r) => p(r^2), where r = root of p(x)
+square.pm = function(p, xn) {
+	xp = p[, xn];
+	xp2 = xp %% 2;
+	xp0 = (xp2 == 0);
+	xp1 = ! xp0;
+	if(all(xp0) || all(xp1)) {
+		pR = mult.pm(p, p);
+	} else {
+		p1 = p[xp0, , drop=FALSE];
+		p1 = mult.pm(p1, p1);
+		p2 = p[xp1, , drop=FALSE];
+		p2 = mult.pm(p2, p2);
+		pR = diff.pm(p1, p2);
+	}
+	pR[, xn] = pR[, xn] / 2;
+	maxPow = max(pR[, xn]);
+	isMax  = which(pR[, xn] == maxPow)
+	if(length(isMax) == 1) {
+		if(pR$coeff[isMax] < 0) pR$coeff = - pR$coeff;
+	}
+	return(pR);
+}
 
 #######################
 #######################
