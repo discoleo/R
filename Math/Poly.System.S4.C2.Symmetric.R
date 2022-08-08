@@ -7,7 +7,7 @@
 ### S4: C2-Hetero-Symmetric
 ### with Additional Symmetry
 ###
-### draft v.0.1f
+### draft v.0.1g
 
 
 ####################
@@ -467,7 +467,7 @@ y1 =  0.7158321338 + 0.7331960503i;
 y2 =  0.8278327365 + 0.9306435040i;
 sol = cbind(x1,x2,y1,y2);
 
-
+# x1 = sol[1,1]; x2 = sol[1,2]; y1 = sol[1,3]; y2 = sol[1,4];
 R1 = R[1]; R2 = R[2]; R3 = R[3]; R4 = R[4];
 s1 = x1 + x2; s2 = y1 + y2;
 p1 = x1 * x2; p2 = y1 * y2;
@@ -487,6 +487,34 @@ sort(unique(pR[[3]]$Rez$s1))
 
 pD = div.pm(pR[[3]]$Rez, toPoly.pm("(s1 - R1)^7"), "s1")
 p = toCoeff(pD$Rez, xn="s1", print=TRUE)
+
+###
+source("Polynomials.Helper.BigNumbers.R")
+pD = pD$Rez
+pD$coeff = pD$coeff * 2^16
+pD = replace.pm(pD, data.frame(s1=c(1,0), R1=c(0,1), coeff=c(1,1/2)), xn="s1")
+eval.pm(pD, list(R1=R1, R2=R2, R3=R3, R4=R4, s1 = s1 - R1/2))
+#
+pD$coeff = as.bigz(pD$coeff)
+pD = square.pm(pD, xn="s1")
+# eval.pm(pD, list(R1=R1, R2=R2, R3=R3, R4=R4, s1 = (s1 - R1/2)^2))
+pX = data.frame(s1=c(1,0), R1=c(0,2), coeff=c(4,1))
+pX$coeff = as.bigz(pX$coeff) / 4;
+# TODO: fix bug with bigq;
+pD = replace.pm(pD, pX, xn="s1")
+
+### P[8] in ps
+pSq = toPoly.pm("ps^8 + 2*R1^2*ps^7 - 4*(3*R1*R3 + 2*R2 + 2*R4)*ps^6 +
+	- 4*(R1^2*(R2 + R4) - 4*R3^2)*ps^5 + 2*(8*R1*R3*(R2+R4) + 7*R2^2 + 7*R4^2 + 18*R2*R4)*ps^4 +
+	+ 2*R1^2*(R2 - R4)^2*ps^3 +
+	- 4*(R1*R3*(R2 - R4)^2 + 2*(R2^3 + R4^3) - 2*R2*R4*(R2 + R4))*ps^2 + (R2-R4)^4")
+
+eval.pm(pSq, list(ps=ps[1], R1=R1, R2=R2, R3=R3, R4=R4))
+
+# Test
+pSq$coeff = as.bigz(pSq$coeff)
+mult.pm(pSq, pSq)
+
 
 
 ### Derivation E4: P[8]
