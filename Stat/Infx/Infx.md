@@ -9,12 +9,19 @@
 
 ## Work
 
+### Epidemic Simulator
+* based on the code developed for the BSc thesis (Anamaria Bica);
+* improved code and redesigned as R package;
+* GitHub: https://github.com/discoleo/EpidemicSimulator
+
 ### Bachelor Thesis: Anamaria Bica (co-supervisor: L. Mada);
-* based on an initial group-project for students (initiated/supervised by L. Mada);
-* GitHub: https://github.com/BicaAnamaria/EpidemicSimulator
+* partly based on an initial group-project for students (initiated/supervised by L. Mada);
+* the initial code was redesigned, standardized and extended with various new compartment models;
+* GitHub: [old] https://github.com/BicaAnamaria/EpidemicSimulator
 
 
-## Packages
+
+## R Packages
 
 ### Epidemiology
 
