@@ -7,7 +7,7 @@
 ### S4: C2-Hetero-Symmetric
 ### with Additional Symmetry
 ###
-### draft v.0.1h
+### draft v.0.1i
 
 
 ####################
@@ -257,6 +257,146 @@ test.S4C2.Var(sol, n = c(1,1), type="x1y2")
 ####################
 ### Higher Power ###
 ####################
+
+### Power: only Eq 2
+
+### System: Eq 2 & Eq 4
+# (x1*y1)^n + (x2*y2)^n = R2
+# x1*y2 + x2*y1 = R4
+
+
+#############
+### n = 2 ###
+#############
+
+### Solution:
+
+### Transform 1:
+
+### (Eq 4)^2 =>
+(x1*y2)^2 + (x2*y1)^2 + 2*E4 - R4^2 # = 0
+# Eq 2 + (Eq 4)^2 =>
+(x1^2 + x2^2)*(y1^2 + y2^2) + 2*E4 - R2 - R4^2 # = 0
+(s1^2 - 2*p1)*(s2^2 - 2*p2) + 2*E4 - R2 - R4^2 # = 0
+### Eq 2-bis:
+s1^2*s2^2 - 2*(p1*s2^2 + p2*s1^2) + 6*E4 - R2 - R4^2 # = 0
+
+###
+A = x1*y1 + x2*y2;
+B = x1*y2 + x2*y1; # = R[4]
+#
+A*B - p1*(s2^2 - 2*p2) - p2*(s1^2 - 2*p1) # = 0
+A + B - s1*s2 # = 0
+# =>
+R4*(s1*s2 - R4) - p1*(s2^2 - 2*p2) - p2*(s1^2 - 2*p1) # = 0
+p1*(s2^2 - 2*p2) + p2*(s1^2 - 2*p1) - R4*s1*s2 + R4^2 # = 0
+### Eq 4-bis:
+p1*s2^2+ p2*s1^2 - 4*E4 - R4*s1*s2 + R4^2 # = 0
+
+### Eq 2-bis & Eq 4-bis =>
+s1^2*s2^2 - 2*R4*s1*s2 - 2*E4 - R2 + R4^2 # = 0
+
+### Transformed System [1]:
+s1 + s2 - R1 # = 0
+s1^2*s2^2 - 2*R4*s1*s2 - 2*p1*p2 - R2 + R4^2 # = 0
+s1*p2 + s2*p1 - R3 # = 0
+p1*s2^2+ p2*s1^2 - 4*p1*p2 - R4*s1*s2 + R4^2 # = 0
+
+### Transform 2:
+
+### Eq 3:
+A2 = s1*p2 + s2*p1; # = R3
+B2 = s1*p1 + s2*p2;
+# =>
+A2 + B2 - (p1 + p2)*(s1 + s2) # = 0
+A2 * B2 - s1*s2*(p1^2+p2^2) - p1*p2*(s1^2+s2^2) # = 0
+# =>
+A2 + B2 - sp*S # = 0
+A2 * B2 - ps*(sp^2 - 2*E4) - E4*(S^2 - 2*ps) # = 0
+# =>
+R3*(sp*S - R3) - ps*(sp^2 - 2*E4) - E4*(S^2 - 2*ps) # = 0
+ps*(sp^2 - 2*E4) + E4*(S^2 - 2*ps) - R3*sp*S + R3^2 # = 0
+ps*sp^2 + E4*S^2 - 4*E4*ps - R3*sp*S + R3^2 # = 0
+
+### [for Eq 4]
+A2 = p2*s2^2+ p1*s1^2;
+B2 = p1*s2^2+ p2*s1^2;
+# =>
+A2 + B2 - (p1+p2)*(s1^2 + s2^2) # = 0
+A2 * B2 - p1*p2*(s1^4 + s2^4) - (s1*s2)^2*(p1^2 + p2^2) # = 0
+# =>
+A2 + B2 - sp*(S^2 - 2*ps) # = 0
+A2 * B2 - E4*(S^4 - 4*ps*S^2 + 2*ps^2) - ps^2*(sp^2 - 2*E4) # = 0
+# =>
+B2*(B2 - sp*(S^2 - 2*ps)) + E4*(S^4 - 4*ps*S^2 + 2*ps^2) + ps^2*(sp^2 - 2*E4) # = 0
+B2^2 - B2*sp*(S^2 - 2*ps) + E4*(S^4 - 4*ps*S^2) + ps^2*sp^2 # = 0
+# B2 = 4*E4 + R4*ps - R4^2 # = 0
+# =>
+(4*E4 + R4*ps - R4^2)^2 - (4*E4 + R4*ps - R4^2)*sp*(S^2 - 2*ps) +
+	+ E4*(S^4 - 4*ps*S^2) + ps^2*sp^2 # = 0
+
+
+### Transformed System [2]:
+S - R1 # = 0
+ps^2 - 2*R4*ps - 2*E4 - R2 + R4^2 # = 0
+ps*sp^2 + E4*S^2 - 4*E4*ps - R3*sp*S + R3^2 # = 0
+(4*E4 + R4*ps - R4^2)^2 - (4*E4 + R4*ps - R4^2)*sp*(S^2 - 2*ps) +
+	+ E4*(S^4 - 4*ps*S^2) + ps^2*sp^2 # = 0
+
+# TODO: solve;
+
+### Debug
+# x1 = sol[1,1]; x2 = sol[1,2]; y1 = sol[1,3]; y2 = sol[1,4];
+R1 = R[1]; R2 = R[2]; R3 = R[3]; R4 = R[4];
+s1 = x1 + x2; s2 = y1 + y2;
+p1 = x1 * x2; p2 = y1 * y2;
+sp = p1 + p2; ps = s1 * s2;
+S  = s1 + s2; # = R1;
+E4 = p1 * p2;
+
+###
+library(nleqslv)
+
+# NO complex roots!
+psys = function(x) {
+	y = numeric(4);
+	y[1] = sum(x) - R[1];
+	y[2] = (x[1]*x[3])^2 + (x[2]*x[4])^2 - R[2];
+	y[3] = x[1]*x[2]*(x[3] + x[4]) + x[3]*x[4]*(x[1] + x[2]) - R[3];
+	y[4] = x[1]*x[4] + x[2]*x[3] - R[4];
+	return(y);
+}
+jac = function(x) {
+	m = matrix(1, 4, 4);
+	f3 = function(x) x[1]*x[2] + x[1]*x[3] + x[2]*x[3];
+	m[2,] = 2*c(x[1]*x[3]^2, x[1]^2*x[2], x[3]*x[4]^2, x[3]^2*x[4]);
+	m[3,] = c(f3(x[-1]), f3(x[-2]), f3(x[-3]), f3(x[-4]));
+	m[4,] = x[c(4, 3, 2, 1)];
+	return(m)
+}
+
+R  = c(4,1,1,3)
+x0 = c(1,1/2,-1/3,2);
+sol = nleqslv(x0, psys, jac=jac, method="Newton")
+sol = matrix(sol$x, nrow=1);
+
+###
+p1 = toPoly.pm("ps^2 - 2*R4*ps - 2*E4 - R2 + R4^2")
+p2 = toPoly.pm("ps*sp^2 + E4*S^2 - 4*E4*ps - R3*sp*S + R3^2")
+p3 = toPoly.pm("(4*E4 + R4*ps - R4^2)^2 - (4*E4 + R4*ps - R4^2)*sp*(S^2 - 2*ps) +
+	+ E4*(S^4 - 4*ps*S^2) + ps^2*sp^2")
+#
+pR = solve.lpm(p1, p2, p3, xn = c("E4", "sp"))
+str(pR) # 392 monomes
+max(pR[[2]]$Rez$ps)
+
+pR[[2]]$Rez[pR[[2]]$Rez$ps == 0, ]
+
+
+####################
+####################
+
+### Power: Both Eqs
 
 ### Eq 2 & Eq 4: Equal Power
 # - slightly easier;
