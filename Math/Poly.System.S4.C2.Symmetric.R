@@ -7,7 +7,7 @@
 ### S4: C2-Hetero-Symmetric
 ### with Additional Symmetry
 ###
-### draft v.0.1i
+### draft v.0.1j
 
 
 ####################
@@ -269,7 +269,108 @@ test.S4C2.Var(sol, n = c(1,1), type="x1y2")
 ### n = 2 ###
 #############
 
+### System:
+# x1 + x2 + y1 + y2 = R1
+# (x1*y1)^2 + (x2*y2)^2 = R2
+# x1*x2*(y1 + y2) + y1*y2*(x1 + x2) = R3
+# x1*y2 + x2*y1 = R4
+
 ### Solution:
+
+### Transform 1:
+s1 + s2 - R1 # = 0
+s1^2*s2^2 - 2*R4*s1*s2 - 2*p1*p2 - R2 + R4^2 # = 0
+s1*p2 + s2*p1 - R3 # = 0
+p1*s2^2+ p2*s1^2 - 4*p1*p2 - R4*s1*s2 + R4^2 # = 0
+
+### Transform 2:
+S - R1 # = 0
+ps^2 - 2*R4*ps - 2*E4 - R2 + R4^2 # = 0
+ps*sp^2 + E4*S^2 - 4*E4*ps - R3*sp*S + R3^2 # = 0
+(4*E4 + R4*ps - R4^2)^2 - (4*E4 + R4*ps - R4^2)*sp*(S^2 - 2*ps) +
+	+ E4*(S^4 - 4*ps*S^2) + ps^2*sp^2 # = 0
+
+### Solver:
+
+solve.S4C2.SymVar1.P2P1 = function(R, debug = TRUE, all = FALSE) {
+	coeff = coeff.S4C2.SymVar1.P2P1(R);
+	ps = roots(coeff);
+	if(debug) print(ps);
+	### Step 2:
+	s1 = sapply(ps, function(ps) {
+		roots(c(1, - R[1], ps));
+	});
+	s1 = as.vector(s1);
+	if(debug) print(s1);
+	s2 = R[1] - s1;
+	ps = rep(ps, each=2);
+	# p:
+	sp = solve.S4C2.SymVar1.P2P1sp(ps, R);
+	p1 = (s1*sp - R[3]) / (s1 - s2);
+	p2 = sp - p1;
+	### Step 3:
+	len = length(s1);
+	x12 = sapply(seq(len), function(id) {
+		roots(c(1, - s1[id], p1[id]));
+	});
+	x12 = t(x12);
+	# y:
+	y1 = (x12[,1] * s2 - R[4]) / (x12[,1] - x12[,2]);
+	y2 = s2 - y1;
+	#
+	sol = cbind(x12, y1, y2);
+	if(all) sol = rbind(sol, sol[, c(2,1,4,3)]);
+	colnames(sol) = c("x1", "x2", "y1", "y2");
+	return(sol)
+}
+coeff.S4C2.SymVar1.P2P1 = function(R) {
+	R1 = R[1]; R2 = R[2]; R3 = R[3]; R4 = R[4];
+	# TODO
+	if(all( (R - c(4,1,1,3)) == 0)) {
+		return(c(2, -16, 37, -25, 21));
+		# return(c(2, 0, -1750, 41838, -500633.5, 3740243, -18855918.5, 66206555,
+		#	-163251243.5, 280811256, -331792336, 265353856, -141470592, 42835968));
+	}
+	stop("TODO");
+}
+solve.S4C2.SymVar1.P2P1sp = function(ps, R) {
+	R1 = R[1]; R2 = R[2]; R3 = R[3]; R4 = R[4];
+	S  = R1;
+	# x0
+	x0_coeff = c(- 192, 176*S^2 + 512*R4,
+		- 68*S^4 - 416*S^2*R4 - 480*R4^2 + 320*R2,
+		32*R3^2 + 13*S^6 + 144*S^4*R4 + 320*S^2*R4^2 + 192*R4^3 - 240*S^2*R2 - 384*R4*R2,
+		- 16*R3^2*S^2 - S^8 - 26*S^6*R4 - 86*S^4*R4^2 - 96*S^2*R4^3 - 32*R4^4 + 76*S^4*R2 +
+			+ 192*S^2*R4*R2 + 128*R4^2*R2 - 128*R2^2,
+		2*R3^2*S^4 + 2*S^8*R4 + 13*S^6*R4^2 + 12*S^4*R4^3 + 16*S^2*R4^4 - 13*S^6*R2 +
+			- 24*S^4*R4*R2 - 64*S^2*R4^2*R2 + 64*S^2*R2^2,
+		- S^8*(R4^2 - R2) - 2*S^4*(R4^2 - 2*R2)^2);
+	x0 = sapply(ps, function(ps) {
+		sum(x0_coeff * ps^seq(6, 0, by=-1));
+	});
+	# div
+	div_coeff = c(128, - 128*S^2 - 192*R4,
+		32*R3*S + 40*S^4 + 192*S^2*R4 + 64*R4^2 - 128*R2,
+		- 16*R3*S^3 - 4*S^6 - 60*S^4*R4 - 64*S^2*R4^2 + 128*S^2*R2,
+		2*R3*S^5 + 6*S^6*R4 + 20*S^4*R4^2 - 40*S^4*R2,
+		- 2*S^6*R4^2 + 4*S^6*R2);
+	div = sapply(ps, function(ps) {
+		sum(div_coeff * ps^seq(5, 0, by=-1));
+	});
+	ps = x0 / div;
+	return(ps);
+}
+
+### Examples:
+
+R = c(4,1,1,3)
+sol = solve.S4C2.SymVar1.P2P1(R)
+
+test.S4C2.Var(sol, n=c(1,2,2,1,1), type="x1y2")
+
+
+##############
+### Derivation
 
 ### Transform 1:
 
@@ -346,7 +447,7 @@ ps*sp^2 + E4*S^2 - 4*E4*ps - R3*sp*S + R3^2 # = 0
 # TODO: solve;
 
 ### Debug
-# x1 = sol[1,1]; x2 = sol[1,2]; y1 = sol[1,3]; y2 = sol[1,4];
+# id = 1; x1 = sol[id,1]; x2 = sol[id,2]; y1 = sol[id,3]; y2 = sol[id,4];
 R1 = R[1]; R2 = R[2]; R3 = R[3]; R4 = R[4];
 s1 = x1 + x2; s2 = y1 + y2;
 p1 = x1 * x2; p2 = y1 * y2;
@@ -390,7 +491,11 @@ pR = solve.lpm(p1, p2, p3, xn = c("E4", "sp"))
 str(pR) # 392 monomes
 max(pR[[2]]$Rez$ps)
 
-pR[[2]]$Rez[pR[[2]]$Rez$ps == 0, ]
+p0 = pR[[2]]$Rez[pR[[2]]$Rez$ps == 0, ]
+p0$coeff = p0$coeff / 2;
+p0 = drop.pm(p0)
+p0 = div.pm(p0, toPoly.pm("R4^2 - 2*R2"), "R4")$Rez
+p0 = sort.pm(p0, "R4")
 
 
 ####################
