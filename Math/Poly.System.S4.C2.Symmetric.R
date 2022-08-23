@@ -7,7 +7,7 @@
 ### S4: C2-Hetero-Symmetric
 ### with Additional Symmetry
 ###
-### draft v.0.1j
+### draft v.0.1j-work
 
 
 ####################
@@ -328,9 +328,20 @@ coeff.S4C2.SymVar1.P2P1 = function(R) {
 	# TODO
 	if(all( (R - c(4,1,1,3)) == 0)) {
 		return(c(2, -16, 37, -25, 21));
-		# return(c(2, 0, -1750, 41838, -500633.5, 3740243, -18855918.5, 66206555,
-		#	-163251243.5, 280811256, -331792336, 265353856, -141470592, 42835968));
+		# return(c());
 	}
+	# R = c(2,1,-1,3)
+	if(all( (R - c(2,1,-1,3)) == 0)) {
+		return(c(2, -22, 85, -127, 63));
+	}
+	# R = c(2,1,1,3)
+	if(all( (R - c(2,1,1,3)) == 0)) {
+		return(c(2, -22, 77, -91, 35));
+		# return(c(4, -72, 432, -72, -12787, 80154, -265195, 561274, -805612, 796498,
+		#	-535987, 235018, -60655, 7000));
+	}
+	#
+	# return(c(2, - R1^2 , ))
 	stop("TODO");
 }
 solve.S4C2.SymVar1.P2P1sp = function(ps, R) {
@@ -363,10 +374,24 @@ solve.S4C2.SymVar1.P2P1sp = function(ps, R) {
 
 ### Examples:
 
+###
 R = c(4,1,1,3)
 sol = solve.S4C2.SymVar1.P2P1(R)
 
 test.S4C2.Var(sol, n=c(1,2,2,1,1), type="x1y2")
+
+### Ex 2:
+R = c(2,1,-1,3)
+sol = solve.S4C2.SymVar1.P2P1(R)
+
+test.S4C2.Var(sol, n=c(1,2,2,1,1), type="x1y2")
+
+### Ex 3:
+R = c(2,1,1,3)
+sol = solve.S4C2.SymVar1.P2P1(R)
+
+test.S4C2.Var(sol, n=c(1,2,2,1,1), type="x1y2")
+
 
 
 ##############
@@ -496,6 +521,12 @@ p0$coeff = p0$coeff / 2;
 p0 = drop.pm(p0)
 p0 = div.pm(p0, toPoly.pm("R4^2 - 2*R2"), "R4")$Rez
 p0 = sort.pm(p0, "R4")
+
+pR = pR[[2]]$Rez;
+
+R = c(2,1,-1,3)
+cp = tapply(seq(nrow(pR)), pR$ps, function(id) eval.pm(pR[id,], list(S=R[1], R2=R[2], R3=R[3], R4=R[4], ps=1)))
+paste0(rev(cp) / 1024, ", ", collapse="")
 
 
 ####################
