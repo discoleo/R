@@ -7,7 +7,7 @@
 ### S4: C2-Hetero-Symmetric
 ### with Additional Symmetry
 ###
-### draft v.0.1j-work2
+### draft v.0.1j-work3
 
 
 ####################
@@ -326,6 +326,7 @@ solve.S4C2.SymVar1.P2P1 = function(R, debug = TRUE, all = FALSE) {
 coeff.S4C2.SymVar1.P2P1 = function(R) {
 	R1 = R[1]; R2 = R[2]; R3 = R[3]; R4 = R[4];
 	# TODO
+	# R = c(4,1,1,3)
 	if(all( (R - c(4,1,1,3)) == 0)) {
 		return(c(2, -16, 37, -25, 21));
 	}
@@ -340,11 +341,21 @@ coeff.S4C2.SymVar1.P2P1 = function(R) {
 	# R = c(2,1,1,-3)
 	if(all( (R - c(2,1,1,-3)) == 0)) {
 		return(c(2, 26, 101, 125, 35));
-		# return(c(4, 120, 1104, 3192, -3331, -21750, 10901, 56842, -52396, -43358, 84077,
-		#	-33350, -9055, 7000));
+	}
+	# R = c(-2,1,1,-3)
+	if(all( (R - c(-2,1,1,-3)) == 0)) {
+		return(c(2, 26, 109, 161, 63));
+	}
+	# R = c(2,-1,1,-3)
+	if(all( (R - c(2,-1,1,-3)) == 0)) {
+		return(c(2, 26, 113, 201, 99));
+		# return(c(4, 120, 1152, 4184, 1685, -22150, -22939, 65426, 35084, -142334, 91997,
+		#	27170, -62367, 22968));
 	}
 	#
-	# return(c(4, R1^2 - 16*R4, ))
+	# return(c(4, R1^2 - 16*R4, - 2*R1^2*R4 - 4*R1*R3 + 16*R4^2 + 42*R2,
+	#	...,
+	#	2*(R4^2 - 2*R2)*(R4^2 - 2*R2 - R1*R3)));
 	stop("TODO");
 }
 solve.S4C2.SymVar1.P2P1sp = function(ps, R) {
@@ -400,6 +411,20 @@ test.S4C2.Var(sol, n=c(1,2,2,1,1), type="x1y2")
 
 ### Ex 4:
 R = c(2,1,1,-3)
+sol = solve.S4C2.SymVar1.P2P1(R)
+
+test.S4C2.Var(sol, n=c(1,2,2,1,1), type="x1y2")
+
+
+### Ex 5:
+R = c(-2,1,1,-3)
+sol = solve.S4C2.SymVar1.P2P1(R)
+
+test.S4C2.Var(sol, n=c(1,2,2,1,1), type="x1y2")
+
+
+### Ex 6:
+R = c(2,-1,1,-3)
 sol = solve.S4C2.SymVar1.P2P1(R)
 
 test.S4C2.Var(sol, n=c(1,2,2,1,1), type="x1y2")
@@ -531,7 +556,7 @@ max(pR[[2]]$Rez$ps)
 p0 = pR[[2]]$Rez[pR[[2]]$Rez$ps == 0, ]
 p0$coeff = p0$coeff / 2;
 p0 = drop.pm(p0)
-p0 = div.pm(p0, toPoly.pm("R4^2 - 2*R2"), "R4")$Rez
+p0 = div.pm(p0, toPoly.pm("(R4^2 - 2*R2)*(R4^2 - 2*R2 - R3*S)"), "R4")$Rez
 p0 = sort.pm(p0, "R4")
 
 pR = pR[[2]]$Rez;
