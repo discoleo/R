@@ -7,7 +7,7 @@
 ### S4: C2-Hetero-Symmetric
 ### with Additional Symmetry
 ###
-### draft v.0.1j-work4
+### draft v.0.1k
 
 
 ####################
@@ -325,7 +325,14 @@ solve.S4C2.SymVar1.P2P1 = function(R, debug = TRUE, all = FALSE) {
 }
 coeff.S4C2.SymVar1.P2P1 = function(R) {
 	R1 = R[1]; R2 = R[2]; R3 = R[3]; R4 = R[4];
-	# TODO
+	#
+	return(c(4, R1^2 - 16*R4, - 2*R1^2*R4 - 4*R1*R3 + 22*R4^2 - 12*R2,
+		2*R3^2 - 12*R4^3 + 24*R2*R4 + R1^2*R4^2 - R1^2*R2 + 6*R1*R3*R4, # + 6*R1*R3*R4*(...)
+		2*(R4^2 - 2*R2)*(R4^2 - 2*R2 - R1*R3)));
+}
+# [old]
+coeff.S4C2.SymVar1.P2P1.old = function(R) {
+	R1 = R[1]; R2 = R[2]; R3 = R[3]; R4 = R[4];
 	# R = c(4,1,1,3)
 	if(all( (R - c(4,1,1,3)) == 0)) {
 		return(c(2, -16, 37, -25, 21));
@@ -361,13 +368,8 @@ coeff.S4C2.SymVar1.P2P1 = function(R) {
 	# R = c(0,0,1,4)
 	if(all( (R - c(0,0,1,4)) == 0)) {
 		return(c(2, -32, 176, -383, 256));
-		# return(c(4, -128, 1728, -12796, 56512, -151200, 236801, -196096, 65536));
 	}
-	#
-	# stop("TODO"); # TODO: R1 != 0
-	return(c(4, R1^2 - 16*R4, - 2*R1^2*R4 - 4*R1*R3 + 22*R4^2 - 12*R2,
-		2*R3^2 - 12*R4^3 + 24*R2*R4, # + R1*(...)
-		2*(R4^2 - 2*R2)*(R4^2 - 2*R2 - R1*R3)));
+	stop("TODO");
 }
 solve.S4C2.SymVar1.P2P1sp = function(ps, R) {
 	R1 = R[1]; R2 = R[2]; R3 = R[3]; R4 = R[4];
@@ -450,6 +452,13 @@ test.S4C2.Var(sol, n=c(1,2,2,1,1), type="x1y2")
 
 ### Ex 8:
 R = c(0,-1,-2,-3)
+sol = solve.S4C2.SymVar1.P2P1(R)
+
+test.S4C2.Var(sol, n=c(1,2,2,1,1), type="x1y2")
+
+
+### Ex 9:
+R = c(4,-1,-3,5)
 sol = solve.S4C2.SymVar1.P2P1(R)
 
 test.S4C2.Var(sol, n=c(1,2,2,1,1), type="x1y2")
@@ -589,6 +598,17 @@ pR = pR[[2]]$Rez;
 R = c(2,1,-1,3)
 cp = tapply(seq(nrow(pR)), pR$ps, function(id) eval.pm(pR[id,], list(S=R[1], R2=R[2], R3=R[3], R4=R[4], ps=1)))
 paste0(rev(cp) / 1024, ", ", collapse="")
+
+
+### R3 = 0
+g1 = toPoly.pm("ps^2 - 2*R4*ps - 2*E4 - R2 + R4^2")
+g2 = toPoly.pm("(4*E4 + R4*ps - R4^2)^2 + ps*E4*(S^2 - 4*ps)")
+
+gR = solve.pm(g1, g2, xn=c("E4"))
+str(gR)
+gR = gR$Rez
+gR = sort.pm(gR, "ps")
+print.pm(gR, lead="ps")
 
 
 ####################
