@@ -7,7 +7,7 @@
 ### S4: C2-Hetero-Symmetric
 ### with Additional Symmetry
 ###
-### draft v.0.1j-work3
+### draft v.0.1j-work4
 
 
 ####################
@@ -349,14 +349,25 @@ coeff.S4C2.SymVar1.P2P1 = function(R) {
 	# R = c(2,-1,1,-3)
 	if(all( (R - c(2,-1,1,-3)) == 0)) {
 		return(c(2, 26, 113, 201, 99));
-		# return(c(4, 120, 1152, 4184, 1685, -22150, -22939, 65426, 35084, -142334, 91997,
-		#	27170, -62367, 22968));
+	}
+	# R = c(0,1,-2,-3)
+	if(all( (R - c(0,1,-2,-3)) == 0)) {
+		return(c(2, 24, 93, 130, 49));
+	}
+	# R = c(0,-1,-2,-3)
+	if(all( (R - c(0,-1,-2,-3)) == 0)) {
+		return(c(2, 24, 105, 202, 121));
+	}
+	# R = c(0,0,1,4)
+	if(all( (R - c(0,0,1,4)) == 0)) {
+		return(c(2, -32, 176, -383, 256));
+		# return(c(4, -128, 1728, -12796, 56512, -151200, 236801, -196096, 65536));
 	}
 	#
-	# return(c(4, R1^2 - 16*R4, - 2*R1^2*R4 - 4*R1*R3 + 16*R4^2 + 42*R2,
-	#	...,
-	#	2*(R4^2 - 2*R2)*(R4^2 - 2*R2 - R1*R3)));
-	stop("TODO");
+	# stop("TODO"); # TODO: R1 != 0
+	return(c(4, R1^2 - 16*R4, - 2*R1^2*R4 - 4*R1*R3 + 22*R4^2 - 12*R2,
+		2*R3^2 - 12*R4^3 + 24*R2*R4, # + R1*(...)
+		2*(R4^2 - 2*R2)*(R4^2 - 2*R2 - R1*R3)));
 }
 solve.S4C2.SymVar1.P2P1sp = function(ps, R) {
 	R1 = R[1]; R2 = R[2]; R3 = R[3]; R4 = R[4];
@@ -425,6 +436,20 @@ test.S4C2.Var(sol, n=c(1,2,2,1,1), type="x1y2")
 
 ### Ex 6:
 R = c(2,-1,1,-3)
+sol = solve.S4C2.SymVar1.P2P1(R)
+
+test.S4C2.Var(sol, n=c(1,2,2,1,1), type="x1y2")
+
+
+### Ex 7:
+R = c(0,1,-2,-3)
+sol = solve.S4C2.SymVar1.P2P1(R)
+
+test.S4C2.Var(sol, n=c(1,2,2,1,1), type="x1y2")
+
+
+### Ex 8:
+R = c(0,-1,-2,-3)
 sol = solve.S4C2.SymVar1.P2P1(R)
 
 test.S4C2.Var(sol, n=c(1,2,2,1,1), type="x1y2")
