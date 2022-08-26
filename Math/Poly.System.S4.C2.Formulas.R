@@ -7,7 +7,7 @@
 ### S4: Hetero-Symmetric
 ### Useful Formulas
 ###
-### draft v.0.1b
+### draft v.0.1c
 
 
 ### Formulas:
@@ -95,6 +95,39 @@ A*(sp*S - A) - ps*(sp^2 - 2*E4) - E4*(S^2 - 2*ps) # = 0
 A^2 - sp*S*A + ps*sp^2 + E4*S^2 - 4*ps*E4 # = 0
 
 
+##############
+
+##############
+### Helper ###
+##############
+
+### p1*s2 + p2*s1
+A = p1*s2 + p2*s1;
+# =>
+A^2 - sp*S*A + ps*sp^2 + E4*S^2 - 4*ps*E4 # = 0
+
+#####################
+
+### p1*s2^2 + p2*s1^2
+A = p1*s2^2 + p2*s1^2;
+B = p1*s1^2 + p2*s2^2;
+# =>
+A^2 - sp*(S^2 - 2*ps)*A + E4*(S^4 - 4*ps*S^2) + ps^2*sp^2 # = 0
+
+### A + B =>
+A + B - (p1 + p2)*(s1^2 + s2^2) # = 0
+A + B - sp*(S^2 - 2*ps) # = 0
+
+### A * B =>
+A * B - E4*(s1^4 + s2^4) - ps^2*(p1^2 + p2^2) # = 0
+A * B - E4*(S^4 - 4*ps*S^2 + 2*ps^2) - ps^2*(sp^2 - 2*E4) # = 0
+A * B - E4*(S^4 - 4*ps*S^2) - ps^2*sp^2 # = 0
+
+### =>
+A*(A - sp*(S^2 - 2*ps)) + E4*(S^4 - 4*ps*S^2) + ps^2*sp^2 # = 0
+A^2 - sp*(S^2 - 2*ps)*A + E4*(S^4 - 4*ps*S^2) + ps^2*sp^2 # = 0
+
+
 #################
 #################
 
@@ -156,4 +189,71 @@ p3 = toPoly.pm("A2^2 - A2*(s2^2 - 2*p2)*s1 + p1*s2^4 - 4*E4*s2^2 + p2^2*s1^2")
 pR = solve.lpm(p1, p2, p3, xn=c("A1", "A2"))
 str(pR)
 # 99 Monomials: seems a lot!
+
+
+#################
+#################
+
+################
+### E3-Types ###
+################
+
+#############
+### E211a ###
+#############
+
+### Formula:
+E211a = x1^2*x2*x3 + x2^2*x3*x4 + x3^2*x4*x1 + x4^2*x1*x2;
+# TODO
+
+### Derivation:
+p1*(x1*x2 + x3*x4) + p2*(x3*x2 + x1*x4) - E211a # = 0
+
+### Method 1:
+A = x1*x2 + x3*x4;
+B = x1*x4 + x3*x2;
+
+### A + B =>
+A + B - (x1+x3)*(x2+x4) # = 0
+A + B - s1*s2 # = 0
+A + B - ps # = 0
+
+### A * B =>
+A * B - p1*(x2^2 + x4^2) - p2*(x1^2 + x3^2) # = 0
+A * B - p1*(s2^2 - 2*p2) - p2*(s1^2 - 2*p1) # = 0
+A * B - p1*s2^2 - p2*s1^2 + 4*E4 # = 0
+
+A1 = p1*s2^2 + p2*s1^2;
+# System =>
+A * B - A1 + 4*E4 # = 0
+A1^2 - sp*(S^2 - 2*ps)*A1 + E4*(S^4 - 4*ps*S^2) + ps^2*sp^2 # = 0
+# =>
+A^2*B^2 - sp*S^2*A*B + 2*sp*ps*A*B + 8*E4*A*B + E4*S^4 + sp^2*ps^2 +
+	- 4*E4*sp*S^2 - 4*E4*ps*S^2 + 8*E4*sp*ps + 16*E4^2 # = 0
+# =>
+A^2*(ps - A)^2 + (2*sp*ps + 8*E4 - sp*S^2)*A*(ps - A) + E4*S^4 + sp^2*ps^2 +
+	- 4*E4*sp*S^2 - 4*E4*ps*S^2 + 8*E4*sp*ps + 16*E4^2 # = 0
+
+A^4 - 2*ps*A^3 - (2*sp*ps + 8*E4 - sp*S^2 - ps^2)*A^2 +
+	+ (2*sp*ps^2 + 8*E4*ps - ps*sp*S^2)*A +
+	+ E4*S^4 + sp^2*ps^2 +
+	- 4*E4*sp*S^2 - 4*E4*ps*S^2 + 8*E4*sp*ps + 16*E4^2 # = 0
+# similarly:
+B^4 - 2*ps*B^3 - (2*sp*ps + 8*E4 - sp*S^2 - ps^2)*B^2 +
+	+ (2*sp*ps^2 + 8*E4*ps - ps*sp*S^2)*B +
+	+ E4*S^4 + sp^2*ps^2 +
+	- 4*E4*sp*S^2 - 4*E4*ps*S^2 + 8*E4*sp*ps + 16*E4^2 # = 0
+
+### System:
+p1*A + p2*B - E211a # = 0
+A^4 - 2*ps*A^3 - (2*sp*ps + 8*E4 - sp*S^2 - ps^2)*A^2 +
+	+ (2*sp*ps^2 + 8*E4*ps - ps*sp*S^2)*A +
+	+ E4*S^4 + sp^2*ps^2 +
+	- 4*E4*sp*S^2 - 4*E4*ps*S^2 + 8*E4*sp*ps + 16*E4^2 # = 0
+B^4 - 2*ps*B^3 - (2*sp*ps + 8*E4 - sp*S^2 - ps^2)*B^2 +
+	+ (2*sp*ps^2 + 8*E4*ps - ps*sp*S^2)*B +
+	+ E4*S^4 + sp^2*ps^2 +
+	- 4*E4*sp*S^2 - 4*E4*ps*S^2 + 8*E4*sp*ps + 16*E4^2 # = 0
+
+# TODO: solve or find simpler alternative;
 
