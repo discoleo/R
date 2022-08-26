@@ -7,7 +7,7 @@
 ### S4: Hetero-Symmetric
 ### Useful Formulas
 ###
-### draft v.0.1c
+### draft v.0.1e
 
 
 ### Formulas:
@@ -32,8 +32,23 @@ source("Poly.System.S4.C2.Helper.R")
 ####################
 ####################
 
+### Motivation:
+
+# - Characteristic polynomial of Polynomial systems
+#   with special types of Symmetries (2xC2 or Ht-4)
+#   can be transformed to a polynomial of lower Order;
+# - Order poly(S, E4, sp, ps) = 1/4 * Order(x1, x2, x3, x4);
+# - Order poly(s1, s2, p1, p2) = 1/2 * Order(x1, x2, x3, x4);
+
+### Aim:
+# - compute poly(S, E4, sp, ps);
+
+
+### Debug
+x = sqrt(c(2,3,5,7))
+x1 = x[1]; x2 = x[2]; x3 = x[3]; x4 = x[4];
+
 ### Notation:
-# x1 = x[1]; x2 = x[2]; x3 = x[3]; x4 = x[4];
 s1 = x1 + x3; s2 = x2 + x4;
 p1 = x1 * x3; p2 = x2 * x4;
 sp = p1 + p2; ps = s1 * s2;
@@ -204,14 +219,26 @@ str(pR)
 
 ### Formula:
 E211a = x1^2*x2*x3 + x2^2*x3*x4 + x3^2*x4*x1 + x4^2*x1*x2;
-# TODO
+### Eq E211a: (the Monster)
+# - see Method 2;
+E211a^4 - 2*ps*sp*E211a^3 +
+	+ (sp^3*S^2 - 2*ps*sp^3 + ps^2*sp^2 - 4*sp*E4*S^2 + 2*ps^2*E4 + 8*ps*sp*E4 +
+		- 8*sp^2*E4 + 32*E4^2)*E211a^2 +
+	+ (2*ps^2*sp^4 + 4*ps*sp^2*E4*S^2- ps*sp^4*S^2 - 2*ps^3*sp*E4 + 8*ps*sp^3*E4 +
+		- 8*ps^2*sp^2*E4 - 32*ps*sp*E4^2)*E211a +
+	+ sp^4*E4*S^4 - 8*sp^2*E4^2*S^4 + ps^2*sp^6 - 4*sp^5*E4*S^2 - 4*ps*sp^4*E4*S^2 +
+		+ ps^2*sp^3*E4*S^2 + 8*ps*sp^5*E4 - 8*ps^2*sp^4*E4 + 16*E4^3*S^4 - 2*ps^3*sp^3*E4 +
+		+ 32*sp^3*E4^2*S^2 - 4*ps^2*sp*E4^2*S^2 + 32*ps*sp^2*E4^2*S^2 + ps^4*E4^2 +
+		+ 16*sp^4*E4^2 + 8*ps^3*sp*E4^2 - 64*ps*sp^3*E4^2 - 64*ps*E4^3*S^2 - 64*sp*E4^3*S^2 +
+		+ 8*ps^2*sp^2*E4^2 + 32*ps^2*E4^3 + 128*ps*sp*E4^3 - 128*sp^2*E4^3 + 256*E4^4;
 
 ### Derivation:
 p1*(x1*x2 + x3*x4) + p2*(x3*x2 + x1*x4) - E211a # = 0
 
-### Method 1:
 A = x1*x2 + x3*x4;
 B = x1*x4 + x3*x2;
+
+### Method 1:
 
 ### A + B =>
 A + B - (x1+x3)*(x2+x4) # = 0
@@ -238,7 +265,7 @@ A^4 - 2*ps*A^3 - (2*sp*ps + 8*E4 - sp*S^2 - ps^2)*A^2 +
 	+ (2*sp*ps^2 + 8*E4*ps - ps*sp*S^2)*A +
 	+ E4*S^4 + sp^2*ps^2 +
 	- 4*E4*sp*S^2 - 4*E4*ps*S^2 + 8*E4*sp*ps + 16*E4^2 # = 0
-# similarly:
+# similarly: (same formula)
 B^4 - 2*ps*B^3 - (2*sp*ps + 8*E4 - sp*S^2 - ps^2)*B^2 +
 	+ (2*sp*ps^2 + 8*E4*ps - ps*sp*S^2)*B +
 	+ E4*S^4 + sp^2*ps^2 +
@@ -255,5 +282,35 @@ B^4 - 2*ps*B^3 - (2*sp*ps + 8*E4 - sp*S^2 - ps^2)*B^2 +
 	+ E4*S^4 + sp^2*ps^2 +
 	- 4*E4*sp*S^2 - 4*E4*ps*S^2 + 8*E4*sp*ps + 16*E4^2 # = 0
 
-# TODO: solve or find simpler alternative;
+# see Method 2: simpler alternative;
+
+
+#############
+### Method 2:
+A1 = p1*A + p2*B; # = E211a
+B1 = p1*B + p2*A;
+
+### A1 + B1 =>
+A1 + B1 - (p1 + p2)*(A + B) # = 0
+A1 + B1 - sp*ps # = 0
+
+### A1 * B1
+A1 * B1 - p1*p2*(A^2 + B^2) - A*B*(p1^2 + p2^2) # = 0
+A1 * B1 - E4*(ps^2 - 2*A*B) - A*B*(sp^2 - 2*E4) # = 0
+# =>
+A1 * B1 - E4*(ps^2 - 2*p1*s2^2 - 2*p2*s1^2 + 8*E4) +
+	- (p1*s2^2 + p2*s1^2 - 4*E4)*(sp^2 - 2*E4) # = 0
+A1 * B1 - E4*(ps^2 - 2*p1*s2^2 - 2*p2*s1^2 - 4*sp^2) +
+	- (p1*s2^2 + p2*s1^2)*(sp^2 - 2*E4) - 16*E4^2 # = 0
+A1 * B1 - E4*(ps^2 - 4*sp^2) +
+	- (p1*s2^2 + p2*s1^2)*(sp^2 - 4*E4) - 16*E4^2 # = 0
+
+### Transform 2:
+A2 = p1*s2^2 + p2*s1^2
+# System: =>
+A2^2 - sp*(S^2 - 2*ps)*A2 + E4*(S^4 - 4*ps*S^2) + ps^2*sp^2 # = 0
+A1 * B1 - E4*(ps^2 - 4*sp^2) - A2*(sp^2 - 4*E4) - 16*E4^2 # = 0
+
+### Eq E211a:
+# - Formula: see at the beginning of the section;
 
