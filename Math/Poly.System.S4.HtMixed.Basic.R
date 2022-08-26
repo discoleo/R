@@ -7,7 +7,7 @@
 ### Hetero-Symmetric S4: Mixed
 ### Basic Types
 ###
-### draft v.0.2d-explore2
+### draft v.0.2e
 
 
 ##############
@@ -1228,24 +1228,8 @@ x1*x2*x3*x4 - R4 # = 0
 
 
 ### Solver:
-coeff.S4HtM.E313P1 = function(R) {
-	S = R[1]; E313a = R[2]; E3 = R[3]; E4 = R[4];
-	b2 = 4*S^2*E4^3 - E313a^2 - 9*E3^2*E4^2 + 6*E313a*E3*E4;
-	coeffLead = c(b2 * E3);
-	# Special cases:
-	coeff = c(coeffLead, - 8941, 14400); # R = c(3,-1,2,3)
-	# coeff = c(coeffLead, 282, -1512); # R = c(-2,3,1,2)
-	# coeff = c(coeffLead, -21942, -73392); # R = c(-1,3,5,-1)
-	return(coeff);
-}
-coeff.S4HtM.E313P1 = function(R) {
-	# coefficients for E2;
-	S = R[1]; E313a = R[2]; E3 = R[3]; E4 = R[4];
-	vals = list(S=S, E313a=E313a, E3=E3, E4=E4);
-	p = replace.pm(pR, vals);
-	coeff = coef.pm(p, "E2");
-	return(coeff);
-}
+# TODO!
+# - requires also the polynomial: pX3;
 solve.S4HtM.E313P1 = function(R, sort=FALSE, all.sol=FALSE, debug=TRUE) {
 	coeff = coeff.S4HtM.E313P1(R);
 	E2 = roots(coeff);
@@ -1269,6 +1253,26 @@ solve.S4HtM.E313P1 = function(R, sort=FALSE, all.sol=FALSE, debug=TRUE) {
 	sol = cbind(x1=x1, x2=x2, x3=x3, x4=x4);
 	if(sort) sol = sort.sol(sol, ncol=1, useRe=TRUE, mod.first=FALSE);
 	return(sol)
+}
+# Note: only some special cases;
+coeff.S4HtM.E313P1 = function(R) {
+	S = R[1]; E313a = R[2]; E3 = R[3]; E4 = R[4];
+	b2 = 4*S^2*E4^3 - E313a^2 - 9*E3^2*E4^2 + 6*E313a*E3*E4;
+	coeffLead = c(b2 * E3);
+	# Special cases:
+	coeff = c(coeffLead, - 8941, 14400); # R = c(3,-1,2,3)
+	# coeff = c(coeffLead, 282, -1512); # R = c(-2,3,1,2)
+	# coeff = c(coeffLead, -21942, -73392); # R = c(-1,3,5,-1)
+	return(coeff);
+}
+# Note: requires the computed polynomial: pR;
+coeff.S4HtM.E313P1 = function(R) {
+	# coefficients for E2;
+	S = R[1]; E313a = R[2]; E3 = R[3]; E4 = R[4];
+	vals = list(S=S, E313a=E313a, E3=E3, E4=E4);
+	p = replace.pm(pR, vals);
+	coeff = coef.pm(p, "E2");
+	return(coeff);
 }
 coeffLead.S4HtM.E313 = function(R) {
 	S = R[1]; E313a = R[2]; E3 = R[3]; E4 = R[4];
