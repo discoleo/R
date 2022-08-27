@@ -40,7 +40,9 @@ test.S4HtMixed = function(sol, n=2, nE2 = 1, R = NULL) {
 	return(err);
 }
 
-test.S4HtMixed.En3 = function(sol, R=NULL, n=2, nE=c(1,2,1)) {
+test.S4HtMixed.En3 = function(sol, R=NULL, n=2, nE=c(1,2,1), type = "E3") {
+	type = match(type, c("E2", "E3"));
+	if(is.na(type)) stop("Wrong type!");
 	# Ht
 	ht.f = function(x) {
 		sum(x^nE[1] * (x^nE[2])[c(2,3,4,1)] * (x^nE[3])[c(3,4,1,2)]);
@@ -48,9 +50,11 @@ test.S4HtMixed.En3 = function(sol, R=NULL, n=2, nE=c(1,2,1)) {
 	err2 = apply(sol, 1, ht.f);
 	#
 	x1 = sol[,1]; x2 = sol[,2]; x3 = sol[,3]; x4 = sol[,4];
+	p1 = x1*x3; p2 = x2*x4;
 	err1 = x1^n + x2^n + x3^n + x4^n;
-	err3 = x1*x2*x3 + x1*x2*x4 + x1*x3*x4 + x2*x3*x4;
-	err4 = x1*x2*x3*x4;
+	err3 = if(type == 2) { p1*(x2+x4) + p2*(x1+x3); }
+		else { p1 + p2 + (x1+x3)*(x2+x4); }
+	err4 = p1*p2;
 	err = rbind(err1, err2, err3, err4);
 	if( ! is.null(R)) {
 		for(id in 1:4) err[id,] = err[id,] - R[id];
