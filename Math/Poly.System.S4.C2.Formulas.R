@@ -7,7 +7,7 @@
 ### S4: Hetero-Symmetric
 ### Useful Formulas
 ###
-### draft v.0.1e
+### draft v.0.1f
 
 
 ### Formulas:
@@ -116,13 +116,23 @@ A^2 - sp*S*A + ps*sp^2 + E4*S^2 - 4*ps*E4 # = 0
 ### Helper ###
 ##############
 
+### Note:
+# - Eqs: A & B always satisfy the same equation;
+
+
+##################
+
+### Ea: p*s
 ### p1*s2 + p2*s1
 A = p1*s2 + p2*s1;
+B = p1*s1 + p2*s2;
 # =>
 A^2 - sp*S*A + ps*sp^2 + E4*S^2 - 4*ps*E4 # = 0
 
+
 #####################
 
+### Ea: p*s^2
 ### p1*s2^2 + p2*s1^2
 A = p1*s2^2 + p2*s1^2;
 B = p1*s1^2 + p2*s2^2;
@@ -143,6 +153,28 @@ A*(A - sp*(S^2 - 2*ps)) + E4*(S^4 - 4*ps*S^2) + ps^2*sp^2 # = 0
 A^2 - sp*(S^2 - 2*ps)*A + E4*(S^4 - 4*ps*S^2) + ps^2*sp^2 # = 0
 
 
+#####################
+
+### Ea: p^2*s^2
+### p1^2*s2^2 + p2^2*s1^2
+A = p1^2*s2^2 + p2^2*s1^2;
+B = p1^2*s1^2 + p2^2*s2^2;
+# =>
+
+### A + B =>
+A + B - (p1^2 + p2^2)*(s1^2 + s2^2) # = 0
+A + B - (sp^2 - 2*E4)*(S^2 - 2*ps) # = 0
+
+### A * B =>
+A * B - ps^2*(p1^4 + p2^4) - E4^2*(s1^4 + s2^4) # = 0
+A * B - ps^2*(sp^4 - 4*E4*sp^2 + 2*E4^2) - E4^2*(S^4 - 4*ps*S^2 + 2*ps^2) # = 0
+A * B - ps^2*(sp^4 - 4*E4*sp^2) - E4^2*(S^4 - 4*ps*S^2) - 4*E4^2*ps^2 # = 0
+
+# =>
+A^2 - A*(sp^2 - 2*E4)*(S^2 - 2*ps) +
+	+ ps^2*(sp^4 - 4*E4*sp^2) + E4^2*(S^4 - 4*ps*S^2) + 4*E4^2*ps^2 # = 0
+
+
 #################
 #################
 
@@ -151,7 +183,7 @@ A^2 - sp*(S^2 - 2*ps)*A + E4*(S^4 - 4*ps*S^2) + ps^2*sp^2 # = 0
 #################
 
 ### Formula for:
-### x1^2*x2 + x2^2*x3 + x3^2*x4 + x4^2*x1 = R
+E21a = x1^2*x2 + x2^2*x3 + x3^2*x4 + x4^2*x1
 
 ### Derivation:
 
@@ -166,10 +198,11 @@ A1 + B1 - (s1^2 - 2*p1)*s2 # = 0;
 ### A1 * B1 =>
 A1 * B1 - x2*x4*(x1^4 + x3^4) - (x1*x3)^2*(x2^2 + x4^2) # = 0
 A1 * B1 - p2*(s1^4 - 4*p1*s1^2 + 2*p1^2) - p1^2*(s2^2 - 2*p2) # = 0
+A1 * B1 - p2*(s1^4 - 4*p1*s1^2) - p1^2*s2^2 # = 0
 
 ### Eq 1 =>
-A1*((s1^2 - 2*p1)*s2 - A1) - p2*(s1^4 - 4*p1*s1^2 + 2*p1^2) - p1^2*(s2^2 - 2*p2) # = 0
-A1^2 - A1*(s1^2 - 2*p1)*s2 + p2*(s1^4 - 4*p1*s1^2 + 2*p1^2) + p1^2*(s2^2 - 2*p2) # = 0
+A1*((s1^2 - 2*p1)*s2 - A1) - p2*(s1^4 - 4*p1*s1^2) - p1^2*s2^2 # = 0
+A1^2 - A1*(s1^2 - 2*p1)*s2 + p2*(s1^4 - 4*p1*s1^2) + p1^2*s2^2 # = 0
 A1^2 - A1*(s1^2 - 2*p1)*s2 + p2*s1^4 - 4*p1*p2*s1^2 + p1^2*s2^2 # = 0
 # =>
 A1^2 - A1*(s1^2 - 2*p1)*s2 + p2*s1^4 - 4*E4*s1^2 + p1^2*s2^2 # = 0
@@ -181,15 +214,15 @@ A2 = x2^2*x3 + x4^2*x1;
 B2 = x2^2*x3 + x4^2*x1;
 
 # =>
-A2^2 - A2*(s2^2 - 2*p2)*s1 + p1*(s2^4 - 4*p2*s2^2 + 2*p2^2) + p2^2*(s1^2 - 2*p1) # = 0
+A2^2 - A2*(s2^2 - 2*p2)*s1 + p1*(s2^4 - 4*p2*s2^2) + p2^2*s1^2 # = 0
 # =>
 A2^2 - A2*(s2^2 - 2*p2)*s1 + p1*s2^4 - 4*E4*s2^2 + p2^2*s1^2 # = 0
 
 
 ### Initial Eq:
-# A1 + A2 = R;
+# A1 + A2 = E21a;
 
-A1 + A2 - R # = 0
+A1 + A2 - E21a # = 0
 A1^2 - A1*(s1^2 - 2*p1)*s2 + p2*s1^4 - 4*E4*s1^2 + p1^2*s2^2 # = 0
 A2^2 - A2*(s2^2 - 2*p2)*s1 + p1*s2^4 - 4*E4*s2^2 + p2^2*s1^2 # = 0
 
@@ -197,13 +230,37 @@ A2^2 - A2*(s2^2 - 2*p2)*s1 + p1*s2^4 - 4*E4*s2^2 + p2^2*s1^2 # = 0
 # - check & derive final equation;
 
 ###
-p1 = toPoly.pm("A1 + A2 - R")
+p1 = toPoly.pm("A1 + A2 - E21a")
 p2 = toPoly.pm("A1^2 - A1*(s1^2 - 2*p1)*s2 + p2*s1^4 - 4*E4*s1^2 + p1^2*s2^2")
 p3 = toPoly.pm("A2^2 - A2*(s2^2 - 2*p2)*s1 + p1*s2^4 - 4*E4*s2^2 + p2^2*s1^2")
 
 pR = solve.lpm(p1, p2, p3, xn=c("A1", "A2"))
 str(pR)
 # 99 Monomials: seems a lot!
+
+pR = pR[[2]]$Rez;
+pR$ps = 0;
+pR = pR[ , c("E21a", "s1", "s2", "ps", "p1", "p2", "E4", "coeff")];
+
+### E4:
+powE4 = sapply(seq(nrow(pR)), function(id) {
+	min(pR[id, c("p1", "p2")]);
+})
+# isE4 = powE4 > 0;
+pR$E4 = pR$E4 + powE4;
+pR$p1 = pR$p1 - powE4;
+pR$p2 = pR$p2 - powE4;
+
+### ps:
+powPs = sapply(seq(nrow(pR)), function(id) {
+	min(pR[id, c("s1", "s2")]);
+})
+pR$ps = pR$ps + powPs;
+pR$s1 = pR$s1 - powPs;
+pR$s2 = pR$s2 - powPs;
+
+# TODO:
+# - absolute monster;
 
 
 #################
