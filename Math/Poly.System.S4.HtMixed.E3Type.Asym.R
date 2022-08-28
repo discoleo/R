@@ -7,7 +7,7 @@
 ### Hetero-Symmetric S4: Mixed
 ### E3-Type: Asymmetric
 ###
-### draft v.0.1a
+### draft v.0.1b
 
 
 ### E3-Type:
@@ -65,15 +65,9 @@ solve.S4Ht.E211a = function(R, debug=TRUE, all=FALSE) {
 	s1 = as.vector(s1);
 	s2 = R[1] - s1;
 	sp = rep(sp, each = 2);
-	# Step 3:
-	# TODO: robust;
-	len = length(sp);
-	p1 = sapply(seq(len), function(id) {
-		roots(c(1, -sp[id], R[4]));
-	})
-	s1 = rep(s1, each=2); s2 = rep(s2, each=2);
-	sp = rep(sp, each=2);
-	p1 = as.vector(p1);
+	ps = rep(ps, each = 2);
+	# Step 3: robust;
+	p1 = solve.S4Ht.E211a.p1(list(ps=ps, sp=sp, s1=s1, s2=s2), R=R);
 	p2 = sp - p1;
 	# Step 4:
 	len = length(s1);
@@ -114,16 +108,44 @@ coeff.S4Ht.E211a = function(R) {
 			+ 32*E4^2*S^2*R2^3 - 64*E4^3*S^2*R2 + 16*E4^2*R2^4 - 128*E4^3*R2^2 + 256*E4^4);
 	return(coeff);
 }
+solve.S4Ht.E211a.p1 = function(s, R) {
+	ps = s$ps; sp = s$sp; s1 = s$s1; s2 = s$s2;
+	E211a = R[3]; E4 = R[4];
+	p1 = - ps^2*E4^2*sp + E211a*ps*E4*sp^2 - E4*s2^2*sp^4 - E4^2*s1^2*sp^2 + 5*E4^2*s2^2*sp^2 +
+		+ 4*E4^3*s1^2 - 4*E4^3*s2^2 + 4*E4^2*sp^3 - 16*E4^3*sp - E211a^2*E4*sp;
+	div = ps^2*E4*sp^2 - ps^2*E4^2 - E211a*ps*sp^3 + E211a*ps*E4*sp + s2^2*sp^5 +
+		+ E4*s1^2*sp^3 - 6*E4*s2^2*sp^3 - 4*E4*sp^4 - 4*E4^2*s1^2*sp + 8*E4^2*s2^2*sp +
+		+ E211a^2*sp^2 + 20*E4^2*sp^2 - 16*E4^3 - E211a^2*E4;
+	p1 = - p1 / div;
+	return(p1);
+}
 
 ### Examples:
 
+###
 R = c(-1,2,3,-2)
 sol = solve.S4Ht.E211a(R);
 
-# TODO: robust;
+# TODO: correct E2 order;
 test.S4HtMixed.En3(sol, n=1, nE=c(2,1,1), type="E2")
 
 
+### Ex 2:
+R = c(-5,2,3,-2)
+sol = solve.S4Ht.E211a(R);
+
+test.S4HtMixed.En3(sol, n=1, nE=c(2,1,1), type="E2")
+
+
+### Ex 3:
+# - small accuracy error;
+R = c(-5,2,-3,1)
+sol = solve.S4Ht.E211a(R);
+
+test.S4HtMixed.En3(sol, n=1, nE=c(2,1,1), type="E2")
+
+
+###############
 ### Derivation:
 p1 = toPoly.pm(...) # copy polynomial for E211a;
 pSp = toPoly.pm("R2 - ps")

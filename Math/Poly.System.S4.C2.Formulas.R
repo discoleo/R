@@ -314,3 +314,19 @@ A1 * B1 - E4*(ps^2 - 4*sp^2) - A2*(sp^2 - 4*E4) - 16*E4^2 # = 0
 ### Eq E211a:
 # - Formula: see at the beginning of the section;
 
+
+### Additional Formulas
+# - necessary for robust computations linked to E211a;
+
+p1 = toPoly.pm("p1*A - p2*A + ps*p2 - E211a");
+p2 = toPoly.pm("A*(A - ps) + p1*s2^2 + p2*s1^2 - 4*E4");
+pR = solve.pm(p1, p2, "A");
+pR = pR$Rez;
+
+pR = replace.fr.pm(pR, data.frame(E4=1, coeff=1), data.frame(p1=1, coeff=1), xn="p2")
+pDiv = toPoly.pm("p1^2 - sp*p1 + E4");
+pR = div.pm(pR, pDiv, "p1");
+pR = pR$Rem; # Remainder
+pR = sort.pm(pR, "p1", xn2 = c("ps"))
+tmp = toCoeff(pR, "p1", print=TRUE)
+
