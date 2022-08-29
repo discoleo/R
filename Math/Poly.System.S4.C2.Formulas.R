@@ -7,7 +7,7 @@
 ### S4: Hetero-Symmetric
 ### Useful Formulas
 ###
-### draft v.0.1g
+### draft v.0.1h
 
 
 ### Formulas:
@@ -283,6 +283,36 @@ pR$s2 = pR$s2 - powPs;
 
 # TODO:
 # - absolute monster;
+
+### Method 2:
+
+pA1 = toPoly.pm("A1^2 - A1*Q1 - R1")
+pA2 = toPoly.pm("A2^2 - A2*Q2 - R2")
+pE = toPoly.pm("(E21a^2 - A1*Q1 - A2*Q2 - SR)^2 - 4*A1*A2*Q1*Q2 - 4*A1*Q1*R2 - 4*A2*Q2*R1 - 4*PR")
+
+pR = pE;
+pR = solve.pm(pR, pA1, "A1")$Rez
+pR = solve.pm(pR, pA2, "A2")$Rez
+str(pR)
+# 1009 monomials!
+
+pTmpR = pR[pR$R1 > 0 & pR$R2 == 0, ];
+nrow(pTmpR)
+# 2*242 monomials;
+# but non-trivially R-symmetric;
+
+### R:
+R1 = p2*s1^4 - 4*E4*s1^2 + p1^2*s2^2;
+R2 = p1*s2^4 - 4*E4*s2^2 + p2^2*s1^2;
+SR = R1 + R2;
+
+A14 = p2*s1^4 + p1*s2^4;
+A22 = p1^2*s2^2 + p2^2*s1^2;
+SR + 4*E4*(S^2 - 2*ps) - A14 - A22
+
+# A14:
+A14^2 - A14*sp*(S^4 - 4*ps*S^2 + 2*ps^2) +
+	+ ps^4*sp^2 + E4*(S^8 - 8*ps*S^6 + 20*ps^2*S^4 - 16*ps^3*S^2) # = 0
 
 
 #################
