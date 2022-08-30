@@ -7,7 +7,7 @@
 ### Hetero-Symmetric S4: Mixed
 ### E3-Type: Asymmetric
 ###
-### draft v.0.1b
+### draft v.0.1c
 
 
 ### E3-Type:
@@ -22,12 +22,22 @@
 
 source("Poly.System.S4.HtMixed.Basic.Helper.R")
 
+test.S4HtMixed.E211a = function(sol, R = NULL, n=1) {
+	err = test.S4HtMixed.En3(sol, R=R, n=1, nE=c(2,1,1), type="E2");
+	# Correct E2 order;
+	# TODO: move correction to test.S4HtMixed.En3 ???
+	tmp = err[2,]; err[2,] = err[3,]; err[3,] = tmp;
+	return(err);
+}
+
 
 ####################
 
 ####################
 ### Type: E211a  ###
 ####################
+
+E211a = x1^2*x2*x3 + x2^2*x3*x4 + x3^2*x4*x1 + x4^2*x1*x2;
 
 ###############
 ### Order 1 ###
@@ -48,7 +58,7 @@ x1*x2*x3*x4 - R4 # = 0
 ### Transformed System:
 S - R1 # = 0
 sp + ps - R2 # = 0
-# Eq E211a - R3 = 0
+E211a - R3 # = 0
 E4 - R4 # = 0
 
 ### Solver:
@@ -122,27 +132,26 @@ solve.S4Ht.E211a.p1 = function(s, R) {
 
 ### Examples:
 
-###
+### Ex 1:
 R = c(-1,2,3,-2)
 sol = solve.S4Ht.E211a(R);
 
-# TODO: correct E2 order;
-test.S4HtMixed.En3(sol, n=1, nE=c(2,1,1), type="E2")
+test.S4HtMixed.E211a(sol)
 
 
 ### Ex 2:
 R = c(-5,2,3,-2)
 sol = solve.S4Ht.E211a(R);
 
-test.S4HtMixed.En3(sol, n=1, nE=c(2,1,1), type="E2")
+test.S4HtMixed.E211a(sol)
 
 
 ### Ex 3:
-# - small accuracy error;
+# - small precision error in one of the roots;
 R = c(-5,2,-3,1)
 sol = solve.S4Ht.E211a(R);
 
-test.S4HtMixed.En3(sol, n=1, nE=c(2,1,1), type="E2")
+test.S4HtMixed.E211a(sol)
 
 
 ###############
@@ -154,4 +163,43 @@ pR = replace.pm(p1, pSp, "sp")
 pR = sort.pm(pR, c("ps", "E211a", "S"))
 
 toCoeff(pR, "ps", print=TRUE)
+
+
+#####################
+
+#####################
+### Type: 2 Eqs   ###
+### E211a + E112a ###
+#####################
+
+E211a = x1^2*x2*x3 + x2^2*x3*x4 + x3^2*x4*x1 + x4^2*x1*x2;
+E112a = x1*x2*x3^2 + x2*x3*x4^2 + x3*x4*x1^2 + x4*x1*x2^2;
+
+###############
+### Order 1 ###
+###############
+
+x1 + x2 + x3 + x4 - R1 # = 0
+x1*x2 + x1*x3 + x1*x4 + x2*x3 + x2*x4 + x3*x4 - R2 # = 0
+E211a - R3 # = 0
+E112a - R4 # = 0
+
+
+### Solution:
+
+### Eqs 3 & 4:
+# - see formula for E211a &
+#   for the sum (E211a + E112a) in file:
+#   Poly.System.S4.C2.Formulas.R;
+
+
+### Transformed System:
+S - R1 # = 0
+sp + ps - R2 # = 0
+E211a - R3 # = 0
+sp*ps - R3 - R4 # = 0
+
+### Solver:
+
+# TODO
 
