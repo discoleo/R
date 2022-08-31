@@ -7,7 +7,7 @@
 ### S4: Hetero-Symmetric
 ### Useful Formulas
 ###
-### draft v.0.1j
+### draft v.0.1k
 
 
 ### Formulas:
@@ -221,11 +221,27 @@ B1 = x1^2*x4 + x3^2*x2;
 ### A1 + B1 =>
 A1 + B1 - (x1^2 + x3^2)*(x2 + x4) # = 0;
 A1 + B1 - (s1^2 - 2*p1)*s2 # = 0;
+# alternative:
+A1 + B1 - (S*s1 - ps - 2*p1)*s2 # = 0;
+A1 + B1 + 2*p1*s2 + ps*s2 - ps*S # = 0;
 
 ### A1 * B1 =>
 A1 * B1 - x2*x4*(x1^4 + x3^4) - (x1*x3)^2*(x2^2 + x4^2) # = 0
 A1 * B1 - p2*(s1^4 - 4*p1*s1^2 + 2*p1^2) - p1^2*(s2^2 - 2*p2) # = 0
 A1 * B1 - p2*(s1^4 - 4*p1*s1^2) - p1^2*s2^2 # = 0
+# alternative:
+A1 * B1 - p2*((S*s1 - ps)^2 - 4*p1*s1^2) - (sp*p1 - E4)*(S*s2 - ps) # = 0
+A1 * B1 - p2*(S*s1 - ps)^2 + 4*E4*s1^2 - (sp*p1 - E4)*(S*s2 - ps) # = 0
+A1 * B1 - p2*(S^2*(S*s1 - ps) + ps^2 - 2*ps*S*s1) + 4*E4*s1^2 - (sp*p1 - E4)*(S*s2 - ps) # = 0
+A1 * B1 - p2*(s1*S^3 - 2*s1*ps*S - ps*S^2 + ps^2) + 4*E4*(S*s1 - ps) +
+	- p1*s2*sp*S + p1*sp*ps + s2*E4*S - ps*E4 # = 0
+A1 * B1 - p1*s2*sp*S - p2*s1*(S^3 - 2*ps*S) +
+	+ p2*(ps*S^2 - ps^2) + p1*sp*ps + 4*s1*E4*S + s2*E4*S - 5*ps*E4 # = 0
+A1 * B1 - p1*s2*sp*S - p2*s1*(S^3 - 2*ps*S) +
+	+ p2*(ps*S^2 - ps^2 - sp*ps) + 3*s1*E4*S + sp^2*ps + E4*S^2 - 5*ps*E4 # = 0
+
+# TODO: use alternative Eqs;
+
 
 ### Eq 1 =>
 A1*((s1^2 - 2*p1)*s2 - A1) - p2*(s1^4 - 4*p1*s1^2) - p1^2*s2^2 # = 0
