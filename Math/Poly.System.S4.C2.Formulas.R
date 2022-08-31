@@ -7,7 +7,7 @@
 ### S4: Hetero-Symmetric
 ### Useful Formulas
 ###
-### draft v.0.1k
+### draft v.0.1l
 
 
 ### Formulas:
@@ -214,9 +214,13 @@ E21a = x1^2*x2 + x2^2*x3 + x3^2*x4 + x4^2*x1
 
 ### Derivation:
 
-### Part Eq 1:
 A1 = x1^2*x2 + x3^2*x4;
 B1 = x1^2*x4 + x3^2*x2;
+#
+A2 = x2^2*x3 + x4^2*x1;
+B2 = x2^2*x3 + x4^2*x1;
+
+### Part Eq 1:
 
 ### A1 + B1 =>
 A1 + B1 - (x1^2 + x3^2)*(x2 + x4) # = 0;
@@ -240,9 +244,23 @@ A1 * B1 - p1*s2*sp*S - p2*s1*(S^3 - 2*ps*S) +
 A1 * B1 - p1*s2*sp*S - p2*s1*(S^3 - 2*ps*S) +
 	+ p2*(ps*S^2 - ps^2 - sp*ps) + 3*s1*E4*S + sp^2*ps + E4*S^2 - 5*ps*E4 # = 0
 
+# =>
+A1^2 + A1*(2*p1*s2 + ps*s2 - ps*S) + p1*s2*sp*S + p2*s1*(S^3 - 2*ps*S) +
+	- p2*(ps*S^2 - ps^2 - sp*ps) - 3*s1*E4*S - sp^2*ps - E4*S^2 + 5*ps*E4 # = 0
+# similarly:
+A2^2 + A2*(2*p2*s1 + ps*s1 - ps*S) + p2*s1*sp*S + p1*s2*(S^3 - 2*ps*S) +
+	- p1*(ps*S^2 - ps^2 - sp*ps) - 3*s2*E4*S - sp^2*ps - E4*S^2 + 5*ps*E4 # = 0
+
+### E21a:
+A1 + A2 - E21a # = 0
+# OR ?
+E21a^2 - 2*E21a*A1 + A1^2 - A2^2 # = 0
+
+
 # TODO: use alternative Eqs;
 
 
+### [old]
 ### Eq 1 =>
 A1*((s1^2 - 2*p1)*s2 - A1) - p2*(s1^4 - 4*p1*s1^2) - p1^2*s2^2 # = 0
 A1^2 - A1*(s1^2 - 2*p1)*s2 + p2*(s1^4 - 4*p1*s1^2) + p1^2*s2^2 # = 0
