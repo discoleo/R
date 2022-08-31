@@ -7,7 +7,7 @@
 ### S4: Hetero-Symmetric
 ### Useful Formulas
 ###
-### draft v.0.1i
+### draft v.0.1j
 
 
 ### Formulas:
@@ -151,6 +151,11 @@ A * B - E4*(S^4 - 4*ps*S^2) - ps^2*sp^2 # = 0
 ### =>
 A*(A - sp*(S^2 - 2*ps)) + E4*(S^4 - 4*ps*S^2) + ps^2*sp^2 # = 0
 A^2 - sp*(S^2 - 2*ps)*A + E4*(S^4 - 4*ps*S^2) + ps^2*sp^2 # = 0
+
+### Alternatives:
+# - may be useful for reductions;
+A - S*(p1*s2 + p2*s1) + sp*ps # = 0
+B - S*(p1*s1 + p2*s2) + sp*ps # = 0
 
 
 #####################
@@ -346,6 +351,7 @@ p1*(x1*x2 + x3*x4) + p2*(x3*x2 + x1*x4) - E211a # = 0
 
 A = x1*x2 + x3*x4;
 B = x1*x4 + x3*x2;
+p1*A + p2*B - E211a # = 0
 
 ### Method 1:
 
@@ -406,6 +412,7 @@ A1 + B1 - sp*ps # = 0
 ### A1 * B1
 A1 * B1 - p1*p2*(A^2 + B^2) - A*B*(p1^2 + p2^2) # = 0
 A1 * B1 - E4*(ps^2 - 2*A*B) - A*B*(sp^2 - 2*E4) # = 0
+A1 * B1 - E4*ps^2 - A*B*sp^2 + 4*A*B*E4 # = 0
 # =>
 A1 * B1 - E4*(ps^2 - 2*p1*s2^2 - 2*p2*s1^2 + 8*E4) +
 	- (p1*s2^2 + p2*s1^2 - 4*E4)*(sp^2 - 2*E4) # = 0
@@ -450,7 +457,28 @@ tmp = toCoeff(pR, "p1", print=TRUE)
 E211a = x1^2*x2*x3 + x2^2*x3*x4 + x3^2*x4*x1 + x4^2*x1*x2;
 E112a = x1*x2*x3^2 + x2*x3*x4^2 + x3*x4*x1^2 + x4*x1*x2^2;
 
+### Sum
 E211a + E112a - sp*ps # = 0
+
+### Diff
+E211a - E112a - (p1 - p2)*(x1 - x3)*(x2 - x4) # = 0
+(E211a - E112a)^2 - (sp^2 - 4*E4)*(s1^2 - 4*p1)*(s2^2 - 4*p2) # = 0
+# =>
+(E211a - E112a)^2 - (sp^2 - 4*E4)*(ps^2 - 4*(p1*s2^2 + p2*s1^2) + 16*E4) # = 0
+
+### Prod
+A = x1*x2 + x3*x4;
+B = x1*x4 + x3*x2;
+pAB = A*B;
+pAB - p1*s2^2 - p2*s1^2 + 4*E4 # = 0
+
+E211a * E112a - E4*ps^2 - A*B*sp^2 + 4*A*B*E4 # = 0
+E211a * E112a - E4*ps^2 - pAB*(sp^2 - 4*E4) # = 0
+# =>
+(E211a - E112a)^2 - (sp^2 - 4*E4)*(ps^2 - 4*pAB) # = 0
+(E211a - E112a)^2 - (sp^2 - 4*E4)*ps^2 + 4*(E211a * E112a - E4*ps^2) # = 0
+# redundant
+(E211a - E112a)^2 - sp^2*ps^2 + 4*E211a * E112a # = 0
 
 
 #####################
