@@ -867,6 +867,45 @@ replace.pm.character = function(p1, p2, xn, pow=1, sequential=TRUE, na.stop=TRUE
 	# same Power:
 	return(replaceNames.pm(p1, p2, xn=xn, sequential=sequential));
 }
+### Replace simple monomial m with xn;
+# m = character vector with the names of the variables;
+# - similar to replace.pm.character, but pow=1;
+# - TODO: handle overlap between m & xn;
+replace.pm.m = function(p, m, xn, warn=TRUE, simplify=TRUE) {
+	if(length(xn) != 1) stop("Replacement must be exactly 1 variable!");
+	nms = names(p);
+	idV = match(m, nms);
+	if(any(is.na(idV))) {
+		if(warn) warning("Missing variables ", m[is.na(idV)], "!");
+		return(p);
+	}
+	#
+	nr = nrow(p);
+	minPow = sapply(seq(nr), function(nr) {
+		min(p[nr, idV]);
+	})
+	hasM = (minPow != 0);
+	if( ! any(hasM)) return(p);
+	# Add new variable:
+	if(is.na(match(xn, nms))) {
+		p[ , xn] = 0;
+	}
+	p[ , xn] = p[ , xn] + minPow;
+	# Update var-names:
+	idV = match(m, names(p));
+	for(id in idV) {
+		p[ , id] = p[ , id] - minPow;
+	}
+	#
+	if(simplify) {
+		p = drop.pm(p);
+		p = aggregate0.pm(p);
+	}
+	return(p);
+}
+
+### Rename vars in p1 with those in p2
+# xn = old names;
 replaceNames.pm = function(p1, p2, xn, sequential=FALSE, debug=TRUE) {
 	len = length(xn);
 	nms = dimnames.pm(p1);
