@@ -7,7 +7,7 @@
 ### S4: Hetero-Symmetric
 ### Useful Formulas
 ###
-### draft v.0.1m
+### draft v.0.1n
 
 
 ### Formulas:
@@ -255,60 +255,71 @@ pA2 = toPoly.pm("A2^2 + A2*(2*p2*s1 + ps*s1 - ps*S) + p2*s1*sp*S + p1*s2*(S^3 - 
 pR = solve.pm(pE, pA1, "A1")
 pR = solve.pm(pR$Rez, pA2, "A2")
 pR = pR$Rez;
+pR = orderVars.pm(pR, c("s1","s2","p1","p2","coeff"));
 str(pR)
 
 
+replaceSym = function(p, pow=1, xn=c("s1", "s2"), xr=c("S", "ps"), xflt=c("p1", "p2")) {
+	isNot = TRUE;
+	if( ! is.null(xflt)) {
+		isNot = (p[, xflt[1]] == 0) & (p[, xflt[2]] == 0);
+	}
+	isS1 = (p[, xn[1]] == pow) & isNot;
+	isS2 = (p[, xn[2]] == pow) & isNot;
+	pTmp = p[isS2, ];
+	# Check existence:
+	if(nrow(pTmp) == 0) return(p);
+	# Check symmetry:
+	pTmp[, xn[1]] = pTmp[, xn[2]];
+	pTmp[, xn[2]] = 0;
+	pTmp0 = diff.pm(pTmp, p[isS1, ]);
+	if(nrow(pTmp0) > 0) {
+		warning("Error: ",  xn[1], " & ", xn[2], " do NOT cancel out!");
+	} else if(pow == 1) {
+		p[isS1, xr[1]] = p[isS1, xr[1]] + p[isS1, xn[1]];
+		p[isS1, xn[1]] = 0;
+		#
+		p = p[ ! isS2, ];
+		p = aggregate0.pm(p);
+	} else {
+		if(pow == 2) {
+			pRepl = data.frame(S=c(2,0), p=c(0,1), coeff=c(1,-2));
+		} else if(pow == 3) {
+			pRepl = data.frame(S=c(3,1), p=c(0,1), coeff=c(1,-3));
+		} else {
+			warning("Not yet implemented!");
+			return(p);
+		}
+		names(pRepl) = c(xr, "coeff");
+		p = p[ ! (isS1 | isS2), ];
+		pTmp = replace.pm(pTmp, pRepl, xn[1], pow=pow);
+		p = sum.pm(p, pTmp);
+	}
+	return(p);
+}
 simplifyPS = function(p) {
 	p = replace.pm.m(p, c("s1", "s2"), "ps");
 	p = replace.pm.m(p, c("p1", "p2"), "E4");
 	#
-	isNotP = (p$p1 == 0) & (p$p2 == 0);
-	isS1 = (p$s1 > 0) & isNotP;
-	isS2 = (p$s2 > 0) & isNotP;
-	pTmp = p[isS2, ];
-	pTmp$s1 = pTmp$s2;
-	pTmp$s2 = 0;
-	pTmp = diff.pm(pTmp, p[isS1, ]);
-	if(nrow(pTmp) > 0) {
-		warning("Error: s1 & s2 do NOT cancel out!");
-	} else {
-		isS1P1 = isS1 & (p$s1 == 1);
-		p$S[isS1P1] = p$S[isS1P1] + p$s1[isS1P1];
-		p$s1[isS1P1] = 0;
-		#
-		isS2P1 = isS2 & (p$s2 == 1);
-		p = p[ ! isS2P1, ];
-		p = aggregate0.pm(p);
-	}
+	p = replaceSym(p, pow=1);
+	p = replaceSym(p, pow=2);
+	p = replaceSym(p, pow=3);
 	#
-	isNotS = (p$s1 == 0) & (p$s2 == 0);
-	isP1 = (p$p1 > 0) & isNotS;
-	isP2 = (p$p2 > 0) & isNotS;
-	pTmp = p[isP2, ];
-	pTmp$p1 = pTmp$p2;
-	pTmp$p2 = 0;
-	pTmp = diff.pm(pTmp, p[isP1, ]);
-	if(nrow(pTmp) > 0) {
-		warning("Error: p1 & p2 do NOT cancel out!");
-	} else {
-		isP1P1 = isP1 & (p$p1 == 1);
-		p$sp[isP1P1] = p$sp[isP1P1] + p$p1[isP1P1];
-		p$p1[isP1P1] = 0;
-		#
-		isP2P1 = isP2 & (p$p2 == 1);
-		p = p[ ! isP2P1, ];
-		p = aggregate0.pm(p);
+	replaceSymP = function(p, pow) {
+		replaceSym(p, pow=pow, xn=c("p1", "p2"), xr=c("sp", "E4"), xflt=c("s1", "s2"));
 	}
-	#
-	invisible(p);
+	p = replaceSymP(p, pow=1);
+	p = replaceSymP(p, pow=2);
+	p = replaceSymP(p, pow=3);
+	return(invisible(p));
 }
-
-pR = orderVars.pm(pR, c("s1","s2","p1","p2","coeff"));
 
 pT = simplifyPS(pR)
 str(pT)
 
-# TODO: use alternative Eqs;
+eval.pm(pT, list(E21a=E21a, S=S, E4=E4, s1=s1, s2=s2, p1=p1, p2=p2, sp=sp, ps=ps))
+
+# TODO;
 
 
 #################
