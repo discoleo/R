@@ -15,6 +15,7 @@
 
 ######################
 
+# Basic function to order a df;
 order.df = function(x, decreasing=TRUE) {
 	order.s = function(...) order(..., decreasing=decreasing);
 	id = do.call(order.s, x);
@@ -72,6 +73,23 @@ sortColumns.pm = function(p) {
 	idc = match("coeff", names(p));
 	p = cbind(p[ , - idc, drop=F], coeff=p[, idc]);
 	return(p)
+}
+# order Variables;
+orderVars.pm = function(p, xn, last=TRUE, warn=TRUE) {
+	ids = match(xn, names(p));
+	isNA = is.na(ids);
+	if(any(isNA)) {
+		if(warn) warning("Variables: ", xn[isNA], " are NOT present!");
+		xn = xn[ ! isNA];
+	}
+	id0 = match(names(p)[ids], xn);
+	#
+	if(last) {
+		p = cbind(p[ , -ids, drop=FALSE], p[ , ids[id0], drop=FALSE]);
+	} else {
+		p = cbind(p[ , ids[id0], drop=FALSE], p[ , -ids, drop=FALSE]);
+	}
+	return(p);
 }
 # used by: as.character.pm()
 sort.simple.pm = function(p, leading=1, do.rev=FALSE, sort.order=TRUE) {
