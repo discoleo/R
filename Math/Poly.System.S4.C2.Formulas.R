@@ -7,7 +7,7 @@
 ### S4: Hetero-Symmetric
 ### Useful Formulas
 ###
-### draft v.0.1l-clean
+### draft v.0.1m
 
 
 ### Formulas:
@@ -256,6 +256,57 @@ pR = solve.pm(pE, pA1, "A1")
 pR = solve.pm(pR$Rez, pA2, "A2")
 pR = pR$Rez;
 str(pR)
+
+
+simplifyPS = function(p) {
+	p = replace.pm.m(p, c("s1", "s2"), "ps");
+	p = replace.pm.m(p, c("p1", "p2"), "E4");
+	#
+	isNotP = (p$p1 == 0) & (p$p2 == 0);
+	isS1 = (p$s1 > 0) & isNotP;
+	isS2 = (p$s2 > 0) & isNotP;
+	pTmp = p[isS2, ];
+	pTmp$s1 = pTmp$s2;
+	pTmp$s2 = 0;
+	pTmp = diff.pm(pTmp, p[isS1, ]);
+	if(nrow(pTmp) > 0) {
+		warning("Error: s1 & s2 do NOT cancel out!");
+	} else {
+		isS1P1 = isS1 & (p$s1 == 1);
+		p$S[isS1P1] = p$S[isS1P1] + p$s1[isS1P1];
+		p$s1[isS1P1] = 0;
+		#
+		isS2P1 = isS2 & (p$s2 == 1);
+		p = p[ ! isS2P1, ];
+		p = aggregate0.pm(p);
+	}
+	#
+	isNotS = (p$s1 == 0) & (p$s2 == 0);
+	isP1 = (p$p1 > 0) & isNotS;
+	isP2 = (p$p2 > 0) & isNotS;
+	pTmp = p[isP2, ];
+	pTmp$p1 = pTmp$p2;
+	pTmp$p2 = 0;
+	pTmp = diff.pm(pTmp, p[isP1, ]);
+	if(nrow(pTmp) > 0) {
+		warning("Error: p1 & p2 do NOT cancel out!");
+	} else {
+		isP1P1 = isP1 & (p$p1 == 1);
+		p$sp[isP1P1] = p$sp[isP1P1] + p$p1[isP1P1];
+		p$p1[isP1P1] = 0;
+		#
+		isP2P1 = isP2 & (p$p2 == 1);
+		p = p[ ! isP2P1, ];
+		p = aggregate0.pm(p);
+	}
+	#
+	invisible(p);
+}
+
+pR = orderVars.pm(pR, c("s1","s2","p1","p2","coeff"));
+
+pT = simplifyPS(pR)
+str(pT)
 
 # TODO: use alternative Eqs;
 
