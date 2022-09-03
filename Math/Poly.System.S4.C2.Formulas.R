@@ -7,7 +7,7 @@
 ### S4: Hetero-Symmetric
 ### Useful Formulas
 ###
-### draft v.0.1o
+### draft v.0.1p
 
 
 ### Formulas:
@@ -45,7 +45,8 @@ source("Poly.System.S4.C2.Helper.R")
 
 
 ### Debug
-x = sqrt(c(2,3,5,7))
+x = sqrt(c(2,3,5,7));
+x[3] = - x[3];
 x1 = x[1]; x2 = x[2]; x3 = x[3]; x4 = x[4];
 
 ### Notation:
@@ -353,11 +354,13 @@ pC00 = pT[pT$s1 == 0 & pT$s2 == 0 & pT$p1 == 0 & pT$p2 == 0, ];
 pC00 = drop.pm(pC00);
 # print.pm(pC00, lead=NA)
 
-#
+### [old]
 pSP12Pow2 = toPoly.pm("(p1*s2 + p2*s1)^2");
 pSP12Pow2 = simplifyPS(pSP12Pow2, iter=1);
 pSP12Pow2 = orderVars.pm(pSP12Pow2, c("s1","s2","p1","p2","coeff"));
 
+### Formula for E21a:
+# - computable, but result is probably too big (364 monomials);
 pC11 = toPoly.pm("4*E21a*ps^3 - ps^4*S - 2*E21a*ps^2*S^2 - 6*E4*ps*S^3 + ps^3*S^3 +
 	+ 2*E21a*ps^2*sp + 6*E4*ps*S*sp");
 pC12 = toPoly.pm("4*E21a^3 + 48*E21a*E4*ps + 6*E21a*ps^3 - 10*E21a^2*ps*S - 40*E4*ps^2*S +
@@ -371,24 +374,33 @@ pSP11 = toPoly.pm("sp11^2 - sp*S*sp11 + ps*sp^2 + E4*S^2 - 4*ps*E4");
 pSP12 = toPoly.pm("sp12^2 - sp*S*sp12 + ps*sp^2 + E4*S^2 - 4*ps*E4");
 
 ###
-pSP12Pow = toPoly.pm("sp*S*sp12 + 4*E4*ps - E4*S^2 - sp^2*ps");
-pRR = toPoly.pm("C11*sp11 + C12*sp12 + C00");
+# pRR = toPoly.pm("C11*sp11 + C12*sp12 + C00");
+# alternative: better;
+pRR = toPoly.pm("C11*sp11 + C12*(sp*S - sp11) + C00");
+#
 pRR = solve.pm(pRR, pSP11, "sp11")
 pRR = pRR$Rez;
-
-# TODO:
-# - use pSP12Pow2: sill huge final result;
-pRR = replace.pm(pRR, pSP12Pow, "sp12", pow=2);
-pRR = solve.pm(pRR, pSP12, "sp12");
-pRR = pRR$Rez;
-table(pRR$C12)
 
 pRR = replace.pm(pRR, pC12, "C12")
 table(pRR$C00)
 table(pRR$C11)
+pRR = replace.pm(pRR, pC11, "C11")
+pRR = replace.pm(pRR, pC00, "C00") # requires pC00!
 
 str(pRR)
+# but 364 monomials;
 
+# acceptable precision with the smaller E21a;
+eval.pm(pRR, list(S=S, E4=E4, ps=ps, sp=sp, E21a=E21a))
+
+
+### [old]
+# - use of pSP12Pow2: sill huge final result;
+pSP12Pow2 = toPoly.pm("sp*S*sp12 + 4*E4*ps - E4*S^2 - sp^2*ps");
+pRR = replace.pm(pRR, pSP12Pow2, "sp12", pow=2);
+pRR = solve.pm(pRR, pSP12, "sp12");
+pRR = pRR$Rez;
+table(pRR$C12)
 
 
 #################
