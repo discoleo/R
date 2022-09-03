@@ -7,7 +7,7 @@
 ### S4: Hetero-Symmetric
 ### Useful Formulas
 ###
-### draft v.0.1n
+### draft v.0.1o
 
 
 ### Formulas:
@@ -297,7 +297,7 @@ replaceSym = function(p, pow=1, xn=c("s1", "s2"), xr=c("S", "ps"), xflt=c("p1", 
 	}
 	return(p);
 }
-simplifyPS = function(p) {
+simplifyPS0 = function(p) {
 	p = replace.pm.m(p, c("s1", "s2"), "ps");
 	p = replace.pm.m(p, c("p1", "p2"), "E4");
 	#
@@ -313,13 +313,82 @@ simplifyPS = function(p) {
 	p = replaceSymP(p, pow=3);
 	return(invisible(p));
 }
+simplifyPS = function(p, iter=1) {
+	p = simplifyPS0(p);
+	for(i in seq(iter)) {
+		p = replace.pm(p, pS1, "s1", pow=2)
+		p = replace.pm(p, pS2, "s2", pow=2)
+		p = replace.pm(p, pP1, "p1", pow=2)
+		p = replace.pm(p, pP2, "p2", pow=2)
+		p = simplifyPS0(p)
+	}
+	return(invisible(p));
+}
 
-pT = simplifyPS(pR)
+pS1 = toPoly.pm("S*s1 - ps")
+pS2 = toPoly.pm("S*s2 - ps")
+pP1 = toPoly.pm("sp*p1 - E4")
+pP2 = toPoly.pm("sp*p2 - E4")
+
+pT = simplifyPS(pR, iter=2)
 str(pT)
 
 eval.pm(pT, list(E21a=E21a, S=S, E4=E4, s1=s1, s2=s2, p1=p1, p2=p2, sp=sp, ps=ps))
 
-# TODO;
+
+### pC11 * (s1*p1 + s2*p2)
+pC11 = pT[pT$s1 == 1 & pT$p1 == 1, ];
+pC11$s1 = 0; pC11$p1 = 0;
+pC11 = drop.pm(pC11);
+print.pm(pC11, lead=NA)
+
+### pC12 * (s1*p2 + s2*p1)
+pC12 = pT[pT$s1 == 1 & pT$p2 == 1, ];
+pC12$s1 = 0; pC12$p2 = 0;
+pC12 = drop.pm(pC12);
+print.pm(pC12, lead=NA)
+
+### pC00
+pC00 = pT[pT$s1 == 0 & pT$s2 == 0 & pT$p1 == 0 & pT$p2 == 0, ];
+pC00 = drop.pm(pC00);
+# print.pm(pC00, lead=NA)
+
+#
+pSP12Pow2 = toPoly.pm("(p1*s2 + p2*s1)^2");
+pSP12Pow2 = simplifyPS(pSP12Pow2, iter=1);
+pSP12Pow2 = orderVars.pm(pSP12Pow2, c("s1","s2","p1","p2","coeff"));
+
+pC11 = toPoly.pm("4*E21a*ps^3 - ps^4*S - 2*E21a*ps^2*S^2 - 6*E4*ps*S^3 + ps^3*S^3 +
+	+ 2*E21a*ps^2*sp + 6*E4*ps*S*sp");
+pC12 = toPoly.pm("4*E21a^3 + 48*E21a*E4*ps + 6*E21a*ps^3 - 10*E21a^2*ps*S - 40*E4*ps^2*S +
+	- 2*ps^4*S - 20*E21a*E4*S^2 + 4*E21a*ps^2*S^2 + 2*E21a^2*S^3 + 48*E4*ps*S^3 +
+	+ 2*ps^3*S^3 - 2*E21a*ps*S^4 - 10*E4*S^5 + 10*E21a*ps^2*sp + 6*E21a^2*S*sp +
+	+ 30*E4*ps*S*sp - 3*ps^3*S*sp - 18*E21a*ps*S^2*sp - 10*E4*S^3*sp + 15*ps^2*S^3*sp +
+	+ 4*E21a*S^4*sp - 8*ps*S^5*sp + S^7*sp - 4*E21a*ps*sp^2 + 10*ps^2*S*sp^2 +
+	+ 4*E21a*S^2*sp^2 - 10*ps*S^3*sp^2 + 2*S^5*sp^2 - 2*ps*S*sp^3 + S^3*sp^3");
+#
+pSP11 = toPoly.pm("sp11^2 - sp*S*sp11 + ps*sp^2 + E4*S^2 - 4*ps*E4");
+pSP12 = toPoly.pm("sp12^2 - sp*S*sp12 + ps*sp^2 + E4*S^2 - 4*ps*E4");
+
+###
+pSP12Pow = toPoly.pm("sp*S*sp12 + 4*E4*ps - E4*S^2 - sp^2*ps");
+pRR = toPoly.pm("C11*sp11 + C12*sp12 + C00");
+pRR = solve.pm(pRR, pSP11, "sp11")
+pRR = pRR$Rez;
+
+# TODO:
+# - use pSP12Pow2: sill huge final result;
+pRR = replace.pm(pRR, pSP12Pow, "sp12", pow=2);
+pRR = solve.pm(pRR, pSP12, "sp12");
+pRR = pRR$Rez;
+table(pRR$C12)
+
+pRR = replace.pm(pRR, pC12, "C12")
+table(pRR$C00)
+table(pRR$C11)
+
+str(pRR)
+
 
 
 #################
