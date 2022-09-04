@@ -7,7 +7,7 @@
 ### S4: Hetero-Symmetric
 ### Useful Formulas
 ###
-### draft v.0.1r
+### draft v.0.1s
 
 
 ### Formulas:
@@ -156,6 +156,8 @@ A^2 - sp*(S^2 - 2*ps)*A + E4*(S^4 - 4*ps*S^2) + ps^2*sp^2 # = 0
 
 ### Alternatives:
 # - may be useful for reductions;
+#   A = S*(p1*s2 + p2*s1) - sp*ps;
+#   B = S*(p1*s1 + p2*s2) - sp*ps;
 A - S*(p1*s2 + p2*s1) + sp*ps # = 0
 B - S*(p1*s1 + p2*s2) + sp*ps # = 0
 
@@ -170,7 +172,13 @@ sp*B - (p1*s1 + p2*s2)^2 - E4*S^2 + 4*ps*E4 # = 0
 ### p1^2*s2^2 + p2^2*s1^2
 A = p1^2*s2^2 + p2^2*s1^2;
 B = p1^2*s1^2 + p2^2*s2^2;
-# =>
+
+### Alternatives:
+# A = sp*S*(p1*s2 + p2*s1) - ps*sp^2 - E4*S^2 + 2*ps*E4;
+A - (p1*s2 + p2*s1)^2 + 2*E4*ps # = 0
+A - sp*S*(p1*s2 + p2*s1) + ps*sp^2 + E4*S^2 - 2*ps*E4 # = 0
+
+### Derivation:
 
 ### A + B =>
 A + B - (p1^2 + p2^2)*(s1^2 + s2^2) # = 0
@@ -206,6 +214,38 @@ A * B - ps^4*sp^2 - E4*(S^8 - 8*ps*S^6 + 20*ps^2*S^4 - 16*ps^3*S^2) # = 0
 # =>
 A^2 - A*sp*(S^4 - 4*ps*S^2 + 2*ps^2) +
 	+ ps^4*sp^2 + E4*(S^8 - 8*ps*S^6 + 20*ps^2*S^4 - 16*ps^3*S^2) # = 0
+
+
+#########################
+
+### Ea: p^3*s^2
+### p1^3*s2^2 + p2^3*s1^2
+A = p1^3*s2^2 + p2^3*s1^2;
+B = p1^3*s1^2 + p2^3*s2^2;
+# =>
+
+### A + B =>
+A + B - (p1^3 + p2^3)*(s1^2 + s2^2) # = 0
+A + B - (sp^3 - 3*sp*E4)*(S^2 - 2*ps) # = 0
+A + B - (sp^3*S^2 - 3*sp*E4*S^2 - 2*sp^3*ps + 6*sp*ps*E4) # = 0
+
+### A * B =>
+A * B - E4^3*(s1^4 + s2^4) - ps^2*(p1^6 + p2^6) # = 0
+A * B - E4^3*(S^4 - 4*ps*S^2 + 2*ps^2) +
+	- ps^2*(sp^6 - 6*E4*sp^4 + 9*E4^2*sp^2 - 2*E4^3) # = 0
+
+### Alternatives:
+A # =
+(sp*sp*S - E4*S)*(p1*s2 + p2*s1) - ps*sp^3 - sp*E4*S^2 + 3*sp*ps*E4;
+# as p1*s1:
+- (sp*sp*S - E4*S)*(p1*s1 + p2*s2)+ sp*sp^2*S^2 - ps*sp^3 - 2*sp*E4*S^2 + 3*sp*ps*E4;
+
+### Derivation:
+A - sp*(p1^2*s2^2 + p2^2*s1^2) + E4*(p1*s2^2 + p2*s1^2) # = 0
+A - sp*(p1^2*s2^2 + p2^2*s1^2) + E4*S*(p1*s2 + p2*s1) - sp*ps*E4 # = 0
+A - sp*(sp*S*(p1*s2 + p2*s1) - ps*sp^2 - E4*S^2 + 2*ps*E4) +
+	+ E4*S*(p1*s2 + p2*s1) - sp*ps*E4 # = 0
+A + (E4*S - sp*sp*S)*(p1*s2 + p2*s1) + ps*sp^3 + sp*E4*S^2 - 3*sp*ps*E4 # = 0
 
 
 #################
@@ -439,6 +479,7 @@ p1*(x1*x2 + x3*x4) + p2*(x3*x2 + x1*x4) - E211a # = 0
 
 A = x1*x2 + x3*x4;
 B = x1*x4 + x3*x2;
+#
 p1*A + p2*B - E211a # = 0
 p1*A + p2*(ps - A) - E211a # = 0
 
@@ -536,6 +577,32 @@ pR = sort.pm(pR, "p1", xn2 = c("ps"))
 tmp = toCoeff(pR, "p1", print=TRUE)
 
 
+#############
+### Method 3:
+
+# - based on:
+#   (p1*s1 + p2*s2);
+
+A = x1*x2 + x3*x4;
+#
+p1*A + p2*(ps - A) - E211a # = 0
+A^2 - ps*A + p1*s2^2 + p2*s1^2 - 4*E4 # = 0
+# =>
+E211a^2 - ps*sp*E211a + p1^3*s2^2 + p2^3*s1^2 - 2*E4*(p2*s1^2 + p1*s2^2) +
+	+ E4*(p1*s1^2 + p2*s2^2) + ps^2*E4 - 4*sp^2*E4 + 16*E4^2 # = 0
+E211a^2 - ps*sp*E211a + p1^3*s2^2 + p2^3*s1^2 - 2*E4*(sp*(S^2 - 2*ps)) +
+	+ 3*E4*(p1*s1^2 + p2*s2^2) + ps^2*E4 - 4*sp^2*E4 + 16*E4^2 # = 0
+E211a^2 - ps*sp*E211a + p1^3*s2^2 + p2^3*s1^2 + 3*E4*(p1*s1^2 + p2*s2^2) +
+	+ ps^2*E4 - 4*sp^2*E4 - 2*sp*E4*S^2 + 16*E4^2 + 4*sp*ps*E4 # = 0
+E211a^2 - ps*sp*E211a + p1^3*s2^2 + p2^3*s1^2 + 3*E4*S*(p1*s1 + p2*s2) +
+	+ ps^2*E4 - 4*sp^2*E4 - 2*sp*E4*S^2 + 16*E4^2 + sp*ps*E4 # = 0
+# p1^3*s2^2 + p2^3*s1^2 =
+# - (sp^2*S - E4*S)*(p1*s1 + p2*s2) + sp^3*S^2 - ps*sp^3 - 2*sp*E4*S^2 + 3*sp*ps*E4;
+# =>
+E211a^2 - ps*sp*E211a + (4*E4*S - sp^2*S)*(p1*s1 + p2*s2) +
+	+ sp^3*S^2 + ps^2*E4 - 4*sp^2*E4 - 4*sp*E4*S^2 + 16*E4^2 + 4*sp*ps*E4 - ps*sp^3 # = 0
+
+
 #####################
 #####################
 
@@ -578,10 +645,16 @@ E301a = x1^3*x3 + x2^3*x4 + x3^3*x1 + x4^3*x2;
 E323a = x1^3*x2^2*x3^3 + x2^3*x3^2*x4^3 + x3^3*x4^2*x1^3 + x4^3*x1^2*x2^3;
 p1s1  = p1*s1 + p2*s2;
 
-# Prod:
+### Prod:
 E211a * E112a - E323a - 4*E4^2 - E301a*E4 - E22a*E4 # = 0
-E211a * E112a - E323a +
-	- (3*S*p1s1 - 2*sp*S^2 + ps^2 + sp*ps - 2*sp^2)*E4 - 12*E4^2 # = 0
+E211a * E112a - (4*E4*S - sp^2*S)*p1s1 +
+	- 4*sp*ps*E4 + 4*sp^2*E4 - ps^2*E4 + 4*sp*E4*S^2 + ps*sp^3 - sp^3*S^2 - 16*E4^2 # = 0
+
+# from E211a:
+E211a^2 - ps*sp*E211a + (4*E4*S - sp^2*S)*p1s1 +
+	+ sp^3*S^2 + ps^2*E4 - 4*sp^2*E4 - 4*sp*E4*S^2 + 16*E4^2 + 4*sp*ps*E4 - ps*sp^3 # = 0
+# => unfortunately redundant!
+E211a * E112a + E211a^2 - ps*sp*E211a # = 0
 
 
 #####################
@@ -665,4 +738,45 @@ E301a - (p1*s1^2 + p2*s2^2) + 2*(sp^2 - 2*E4) # = 0
 E301a - S*(p1*s1 + p2*s2) + sp*ps + 2*sp^2 - 4*E4 # = 0
 
 # TODO
+
+
+#####################
+#####################
+
+#####################
+### Type E3a sym  ###
+### E[k,n,k]      ###
+#####################
+
+#############
+### E323a ###
+#############
+
+### Formula for:
+E323a = x1^3*x2^2*x3^3 + x2^3*x3^2*x4^3 + x3^3*x4^2*x1^3 + x4^3*x1^2*x2^3;
+
+### Helper:
+p1s1 = p1*s1 + p2*s2;
+
+###
+E323a # =
+(E4*S - sp^2*S)*p1s1 +
+	+ 3*sp*ps*E4 - 2*E4*sp^2 + 4*E4^2 - 2*sp*E4*S^2 - ps*sp^3 + sp^3*S^2;
+
+### Derivation:
+E323a - p1^3*(x2^2 + x4^2) - p2^3*(x1^2 + x3^2) # = 0
+E323a - p1^3*(s2^2 - 2*p2) - p2^3*(s1^2 - 2*p1) # = 0
+E323a - p1^3*s2^2 - p2^3*s1^2 + 2*E4*(p1^2 + p2^2) # = 0
+E323a - p1^3*s2^2 - p2^3*s1^2 + 2*E4*(sp^2 - 2*E4) # = 0
+# Reduction =>
+E323a - p1*(sp*p1 - E4)*s2^2 - p2*(sp*p2 - E4)*s1^2 + 2*E4*sp^2 - 4*E4^2 # = 0
+E323a - sp*p1^2*s2^2 - sp*p2^2*s1^2 + E4*(p1*s2^2 + p2*s1^2) + 2*E4*sp^2 - 4*E4^2 # = 0
+E323a - sp*(p1^2*s2^2 + p2^2*s1^2) + E4*(S*(p1*s2 + p2*s1) - sp*ps) + 2*E4*sp^2 - 4*E4^2 # = 0
+E323a - sp*(sp*S*(p1*s2 + p2*s1) - ps*sp^2 - E4*S^2 + 2*ps*E4) +
+	+ E4*S*(sp*S - p1s1) - sp*ps*E4 + 2*E4*sp^2 - 4*E4^2 # = 0
+E323a - sp^2*S*(p1*s2 + p2*s1) - E4*S*p1s1 +
+	- 3*sp*ps*E4 + 2*E4*sp^2 - 4*E4^2 + 2*sp*E4*S^2 + ps*sp^3 # = 0
+E323a + (sp^2*S - E4*S)*p1s1 +
+	- 3*sp*ps*E4 + 2*E4*sp^2 - 4*E4^2 + 2*sp*E4*S^2 + ps*sp^3 - sp^3*S^2 # = 0
+
 
