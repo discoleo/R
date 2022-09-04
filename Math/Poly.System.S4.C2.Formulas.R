@@ -7,7 +7,7 @@
 ### S4: Hetero-Symmetric
 ### Useful Formulas
 ###
-### draft v.0.1q-com
+### draft v.0.1r
 
 
 ### Formulas:
@@ -419,7 +419,7 @@ table(pRR$C12)
 ### E211a ###
 #############
 
-### Formula:
+### Formula for:
 E211a = x1^2*x2*x3 + x2^2*x3*x4 + x3^2*x4*x1 + x4^2*x1*x2;
 ### Eq E211a: (the Monster)
 # - see Method 2;
@@ -440,6 +440,7 @@ p1*(x1*x2 + x3*x4) + p2*(x3*x2 + x1*x4) - E211a # = 0
 A = x1*x2 + x3*x4;
 B = x1*x4 + x3*x2;
 p1*A + p2*B - E211a # = 0
+p1*A + p2*(ps - A) - E211a # = 0
 
 ### Method 1:
 
@@ -569,6 +570,20 @@ E211a * E112a - E4*ps^2 - pAB*(sp^2 - 4*E4) # = 0
 (E211a - E112a)^2 - sp^2*ps^2 + 4*E211a * E112a # = 0
 
 
+### Prod: E211a * E112a
+
+# Helper:
+E22a = (x1*x2)^2 + (x2*x3)^2 + (x3*x4)^2 + (x4*x1)^2;
+E301a = x1^3*x3 + x2^3*x4 + x3^3*x1 + x4^3*x2;
+E323a = x1^3*x2^2*x3^3 + x2^3*x3^2*x4^3 + x3^3*x4^2*x1^3 + x4^3*x1^2*x2^3;
+p1s1  = p1*s1 + p2*s2;
+
+# Prod:
+E211a * E112a - E323a - 4*E4^2 - E301a*E4 - E22a*E4 # = 0
+E211a * E112a - E323a +
+	- (3*S*p1s1 - 2*sp*S^2 + ps^2 + sp*ps - 2*sp^2)*E4 - 12*E4^2 # = 0
+
+
 #####################
 #####################
 
@@ -647,7 +662,7 @@ E301a - p1*(s1^2 - 2*p1) - p2*(s2^2 - 2*p2) # = 0
 E301a - (p1*s1^2 + p2*s2^2) + 2*(p1^2 + p2^2) # = 0
 E301a - (p1*s1^2 + p2*s2^2) + 2*(sp^2 - 2*E4) # = 0
 # reduction =>
-E301a - S*(p1*s1 + p2*s2) + sp*ps + 2*(sp^2 - 2*E4) # = 0
+E301a - S*(p1*s1 + p2*s2) + sp*ps + 2*sp^2 - 4*E4 # = 0
 
 # TODO
 
