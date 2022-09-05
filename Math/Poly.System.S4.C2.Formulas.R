@@ -7,7 +7,7 @@
 ### S4: Hetero-Symmetric
 ### Useful Formulas
 ###
-### draft v.0.2a-std2
+### draft v.0.2b
 
 
 ### Formulas:
@@ -19,6 +19,17 @@
 #   Poly.System.S4.C2.Symmetric.R;
 #   Poly.System.S4.C2.R;
 #   Poly.System.Hetero.Symmetric.S4.R;
+
+
+### Sections
+
+### Basic:
+# A.) Elementary Polynomials: E2, E3
+# B.) Helper: p1^k*s2^m + p2^k*s1^m
+### Composite:
+# C.) Type E2a
+# D.) Type E3a
+# E.) Symmetric Types
 
 
 ####################
@@ -197,6 +208,7 @@ A + sp*S*p1s1 - sp^2*S^2 + ps*sp^2 + E4*S^2 - 2*ps*E4 # = 0
 # B:
 B - sp*S*p1s1 + ps*sp^2 + E4*S^2 - 2*ps*E4 # = 0
 
+
 ### Derivation:
 
 ### A + B =>
@@ -211,6 +223,46 @@ A * B - ps^2*(sp^4 - 4*E4*sp^2) - E4^2*(S^4 - 4*ps*S^2) - 4*E4^2*ps^2 # = 0
 # =>
 A^2 - A*(sp^2 - 2*E4)*(S^2 - 2*ps) +
 	+ ps^2*(sp^4 - 4*E4*sp^2) + E4^2*(S^4 - 4*ps*S^2) + 4*E4^2*ps^2 # = 0
+
+
+#####################
+
+### Ea: p*s^3
+### p1*s2^3 + p2*s1^3
+A = p1*s2^3 + p2*s1^3;
+B = p1*s1^3 + p2*s2^3;
+
+### Formula:
+A^2 - sp*(S^3 - 3*ps*S)*A +
+	+ E4*(S^6 - 6*ps*S^4 + 9*ps^2*S^2 - 4*ps^3) + ps^3*sp^2 # = 0
+
+### Alternatives:
+# A = (p1*s2 + p2*s1)*(S^2 - ps) - ps*sp*S;
+# A = (ps - S^2)*p1s1 + sp*S^3 - 2*ps*sp*S;
+# B = (S^2 - ps)*p1s1 - ps*sp*S;
+A - (p1*s2 + p2*s1)*(S^2 - ps) + ps*sp*S # = 0
+B + (ps - S^2)*p1s1 + ps*sp*S # = 0
+
+
+### Derivation:
+
+### A + B
+A + B - (p1 + p2)*(s1^3 + s2^3) # = 0
+A + B - sp*(S^3 - 3*ps*S) # = 0
+
+### A * B
+A * B - E4*(s1^6 + s2^6) - ps^3*(p1^2 + p2^2) # = 0
+A * B - E4*(S^6 - 6*ps*S^4 + 9*ps^2*S^2 - 2*ps^3) - ps^3*(sp^2 - 2*E4) # = 0
+A * B - E4*(S^6 - 6*ps*S^4 + 9*ps^2*S^2 - 4*ps^3) - ps^3*sp^2 # = 0
+
+### Alternatives:
+A - (p1*s2 + p2*s1)*(s1^2 + s2^2) + ps*(p1*s1 + p2*s2) # = 0
+A - (p1*s2 + p2*s1)*(S^2 - 2*ps) + ps*p1s1 # = 0
+# based on: p1*s2 + p2*s1;
+A - (p1*s2 + p2*s1)*(S^2 - ps) + ps*sp*S # = 0
+# based on: p1*s1 + p2*s2;
+A - (S^2 - ps)*(S*sp - p1s1) + ps*sp*S # = 0
+A + (S^2 - ps)*p1s1 - sp*S^3 + 2*ps*sp*S # = 0
 
 
 #####################
@@ -297,6 +349,14 @@ B - (sp^2*S - E4*S)*p1s1 + sp*E4*S^2 + ps*sp^3 - 3*sp*ps*E4 # = 0
 #################
 ### Composite ###
 #################
+
+#################
+### Type: E2a ###
+#################
+
+##############
+###  E21a  ###
+##############
 
 ### Formula for:
 E21a = x1^2*x2 + x2^2*x3 + x3^2*x4 + x4^2*x1
