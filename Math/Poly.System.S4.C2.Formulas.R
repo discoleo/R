@@ -7,7 +7,7 @@
 ### S4: Hetero-Symmetric
 ### Useful Formulas
 ###
-### draft v.0.2a-std
+### draft v.0.2a-std2
 
 
 ### Formulas:
@@ -257,12 +257,21 @@ A + (S^3 - 2*ps*S)*p1s1 - sp*S^4 + 3*sp*ps*S^2 - sp*ps^2 # = 0
 ### p1^3*s2^2 + p2^3*s1^2
 A = p1^3*s2^2 + p2^3*s1^2;
 B = p1^3*s1^2 + p2^3*s2^2;
-# =>
+
+### Alternatives:
+A # =
+(sp^2*S - E4*S)*(p1*s2 + p2*s1) - ps*sp^3 - sp*E4*S^2 + 3*sp*ps*E4;
+# based on: (p1*s1 + p2*s2):
+- (sp^2*S - E4*S)*p1s1 + sp^3*S^2 - ps*sp^3 - 2*sp*E4*S^2 + 3*sp*ps*E4;
+# B = (sp^2*S - E4*S)*p1s1 - sp*E4*S^2 - ps*sp^3 + 3*sp*ps*E4;
+
+
+### Derivation:
 
 ### A + B =>
 A + B - (p1^3 + p2^3)*(s1^2 + s2^2) # = 0
 A + B - (sp^3 - 3*sp*E4)*(S^2 - 2*ps) # = 0
-A + B - (sp^3*S^2 - 3*sp*E4*S^2 - 2*sp^3*ps + 6*sp*ps*E4) # = 0
+A + B - (sp^3*S^2 - 3*sp*E4*S^2 - 2*ps*sp^3 + 6*sp*ps*E4) # = 0
 
 ### A * B =>
 A * B - E4^3*(s1^4 + s2^4) - ps^2*(p1^6 + p2^6) # = 0
@@ -270,10 +279,6 @@ A * B - E4^3*(S^4 - 4*ps*S^2 + 2*ps^2) +
 	- ps^2*(sp^6 - 6*E4*sp^4 + 9*E4^2*sp^2 - 2*E4^3) # = 0
 
 ### Alternatives:
-A # =
-(sp^2*S - E4*S)*(p1*s2 + p2*s1) - ps*sp^3 - sp*E4*S^2 + 3*sp*ps*E4;
-# based on: (p1*s1 + p2*s2):
-- (sp^2*S - E4*S)*p1s1 + sp^3*S^2 - ps*sp^3 - 2*sp*E4*S^2 + 3*sp*ps*E4;
 
 ### Derivation:
 A - sp*(p1^2*s2^2 + p2^2*s1^2) + E4*(p1*s2^2 + p2*s1^2) # = 0
@@ -281,6 +286,9 @@ A - sp*(p1^2*s2^2 + p2^2*s1^2) + E4*S*(p1*s2 + p2*s1) - sp*ps*E4 # = 0
 A - sp*(sp*S*(p1*s2 + p2*s1) - ps*sp^2 - E4*S^2 + 2*ps*E4) +
 	+ E4*S*(p1*s2 + p2*s1) - sp*ps*E4 # = 0
 A + (E4*S - sp^2*S)*(p1*s2 + p2*s1) + ps*sp^3 + sp*E4*S^2 - 3*sp*ps*E4 # = 0
+
+### B:
+B - (sp^2*S - E4*S)*p1s1 + sp*E4*S^2 + ps*sp^3 - 3*sp*ps*E4 # = 0
 
 
 #################
