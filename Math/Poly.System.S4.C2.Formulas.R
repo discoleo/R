@@ -7,7 +7,7 @@
 ### S4: Hetero-Symmetric
 ### Useful Formulas
 ###
-### draft v.0.2a
+### draft v.0.2a-std
 
 
 ### Formulas:
@@ -93,8 +93,8 @@ sp + ps - E2 # = 0
 E3^2 - sp*S*E3 + ps*sp^2 + E4*S^2 - 4*ps*E4 # = 0
 
 ### Alternatives:
-E3 # =
-sp*S - p1s1;
+# E3 = sp*S - p1s1
+E3 - sp*S + p1s1;
 
 ### Derivation:
 E3 = x1*x2*x3 + x1*x2*x4 + x1*x3*x4 + x2*x3*x4;
@@ -138,8 +138,9 @@ A^2 - sp*S*A + ps*sp^2 + E4*S^2 - 4*ps*E4 # = 0
 B^2 - sp*S*B + ps*sp^2 + E4*S^2 - 4*ps*E4 # = 0
 
 ### Alternatives:
-A # = sp*S - p1s1;
-sp*S - p1s1;
+# A = sp*S - p1s1;
+A - sp*S + p1s1;
+# B = p1s1;
 
 
 #####################
@@ -150,6 +151,18 @@ A = p1*s2^2 + p2*s1^2;
 B = p1*s1^2 + p2*s2^2;
 # =>
 A^2 - sp*(S^2 - 2*ps)*A + E4*(S^4 - 4*ps*S^2) + ps^2*sp^2 # = 0
+
+### Alternatives:
+# - may be useful for reductions;
+#   A = S*(p1*s2 + p2*s1) - sp*ps;
+#   B = S*(p1*s1 + p2*s2) - sp*ps;
+A - S*(p1*s2 + p2*s1) + sp*ps # = 0
+B - S*(p1*s1 + p2*s2) + sp*ps # = 0
+
+# other:
+sp*B - (p1*s1 + p2*s2)^2 - E4*S^2 + 4*ps*E4 # = 0
+# - can be reduced to the alternative;
+
 
 ### Derivation:
 
@@ -166,17 +179,6 @@ A * B - E4*(S^4 - 4*ps*S^2) - ps^2*sp^2 # = 0
 A*(A - sp*(S^2 - 2*ps)) + E4*(S^4 - 4*ps*S^2) + ps^2*sp^2 # = 0
 A^2 - sp*(S^2 - 2*ps)*A + E4*(S^4 - 4*ps*S^2) + ps^2*sp^2 # = 0
 
-### Alternatives:
-# - may be useful for reductions;
-#   A = S*(p1*s2 + p2*s1) - sp*ps;
-#   B = S*(p1*s1 + p2*s2) - sp*ps;
-A - S*(p1*s2 + p2*s1) + sp*ps # = 0
-B - S*(p1*s1 + p2*s2) + sp*ps # = 0
-
-# other:
-sp*B - (p1*s1 + p2*s2)^2 - E4*S^2 + 4*ps*E4 # = 0
-# - can be reduced to the alternative;
-
 
 #####################
 
@@ -187,8 +189,13 @@ B = p1^2*s1^2 + p2^2*s2^2;
 
 ### Alternatives:
 # A = sp*S*(p1*s2 + p2*s1) - ps*sp^2 - E4*S^2 + 2*ps*E4;
+# A = - sp*S*p1s1 + sp^2*S^2 - ps*sp^2 - E4*S^2 + 2*ps*E4;
+# B = sp*S*p1s1 - ps*sp^2 - E4*S^2 + 2*ps*E4;
 A - (p1*s2 + p2*s1)^2 + 2*E4*ps # = 0
 A - sp*S*(p1*s2 + p2*s1) + ps*sp^2 + E4*S^2 - 2*ps*E4 # = 0
+A + sp*S*p1s1 - sp^2*S^2 + ps*sp^2 + E4*S^2 - 2*ps*E4 # = 0
+# B:
+B - sp*S*p1s1 + ps*sp^2 + E4*S^2 - 2*ps*E4 # = 0
 
 ### Derivation:
 
