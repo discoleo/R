@@ -7,7 +7,7 @@
 ### S4: Hetero-Symmetric
 ### Useful Formulas
 ###
-### draft v.0.2b
+### draft v.0.2c
 
 
 ### Formulas:
@@ -167,6 +167,7 @@ A^2 - sp*(S^2 - 2*ps)*A + E4*(S^4 - 4*ps*S^2) + ps^2*sp^2 # = 0
 # - may be useful for reductions;
 #   A = S*(p1*s2 + p2*s1) - sp*ps;
 #   B = S*(p1*s1 + p2*s2) - sp*ps;
+#   A = - S*p1s1 + sp*S^2 - sp*ps;
 A - S*(p1*s2 + p2*s1) + sp*ps # = 0
 B - S*(p1*s1 + p2*s2) + sp*ps # = 0
 
@@ -852,16 +853,35 @@ E301a - S*(p1*s1 + p2*s2) + sp*ps + 2*sp^2 - 4*E4 # = 0
 #####################
 
 #############
+### E121a ###
+#############
+
+### Formula for:
+E121a = x1*x2^2*x3 + x2*x3^2*x4 + x3*x4^2*x1 + x4*x1^2*x2;
+
+### Alternatives:
+E121a # =
+- S*p1s1 + sp*S^2 - sp*ps - 4*E4;
+
+
+### Derivation:
+E121a - p1*(x2^2 + x4^2) - p2*(x1^2 + x3^2) # = 0
+E121a - p1*(s2^2 - 2*p2) - p2*(s1^2 - 2*p1) # = 0
+E121a - (p1*s2^2 + p2*s1^2) + 4*E4 # = 0
+# Reduction =>
+E121a + S*p1s1 - sp*S^2 + sp*ps + 4*E4 # = 0
+
+
+#############
+
+#############
 ### E323a ###
 #############
 
 ### Formula for:
 E323a = x1^3*x2^2*x3^3 + x2^3*x3^2*x4^3 + x3^3*x4^2*x1^3 + x4^3*x1^2*x2^3;
 
-### Helper:
-p1s1 = p1*s1 + p2*s2;
-
-###
+### Alternatives:
 E323a # =
 (E4*S - sp^2*S)*p1s1 +
 	+ 3*sp*ps*E4 - 2*E4*sp^2 + 4*E4^2 - 2*sp*E4*S^2 - ps*sp^3 + sp^3*S^2;
