@@ -7,7 +7,7 @@
 ### S4: Hetero-Symmetric
 ### Useful Formulas
 ###
-### draft v.0.2c
+### draft v.0.2d
 
 
 ### Formulas:
@@ -166,7 +166,7 @@ A^2 - sp*(S^2 - 2*ps)*A + E4*(S^4 - 4*ps*S^2) + ps^2*sp^2 # = 0
 ### Alternatives:
 # - may be useful for reductions;
 #   A = S*(p1*s2 + p2*s1) - sp*ps;
-#   B = S*(p1*s1 + p2*s2) - sp*ps;
+#   B = S*p1s1 - sp*ps;
 #   A = - S*p1s1 + sp*S^2 - sp*ps;
 A - S*(p1*s2 + p2*s1) + sp*ps # = 0
 B - S*(p1*s1 + p2*s2) + sp*ps # = 0
@@ -369,6 +369,27 @@ B1 = x1^2*x4 + x3^2*x2;
 #
 A2 = x2^2*x3 + x4^2*x1;
 B2 = x2^2*x3 + x4^2*x1;
+
+
+### s2*A1 + s1*A2
+
+### s2*A1 =>
+s2*A1 - (x1^2*x2^2 + x3^2*x4^2) - p2*(x1^2 + x3^2) # = 0
+s2*A1 - (x1^2*x2^2 + x3^2*x4^2) - p2*(s1^2 - 2*p1) # = 0
+s2*A1 - (x1^2*x2^2 + x3^2*x4^2) - p2*s1^2 + 2*E4 # = 0
+
+### s1*A2 =>
+s1*A2 - (x2^2*x3^2 + x4^2*x1^2) - p1*(x2^2 + x4^2) # = 0
+s1*A2 - (x2^2*x3^2 + x4^2*x1^2) - p1*(s2^2 - 2*p2) # = 0
+s1*A2 - (x2^2*x3^2 + x4^2*x1^2) - p1*s2^2 + 2*E4 # = 0
+
+# =>
+s2*A1 + s1*A2 - (x1^2+x3^2)*(x2^2+x4^2) - (p1*s2^2 + p2*s1^2) + 4*E4 # = 0
+s2*A1 + s1*A2 - (s1^2 - 2*p1)*(s2^2 - 2*p2) - (p1*s2^2 + p2*s1^2) + 4*E4 # = 0
+s2*A1 + s1*A2 + (p1*s2^2 + p2*s1^2) - ps^2 # = 0
+# Reduction =>
+s2*A1 + s1*A2 - S*p1s1 + sp*S^2 - sp*ps - ps^2 # = 0
+
 
 ### Part Eq 1:
 
