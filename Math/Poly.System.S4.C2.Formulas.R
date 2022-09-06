@@ -7,7 +7,7 @@
 ### S4: Hetero-Symmetric
 ### Useful Formulas
 ###
-### draft v.0.2e
+### draft v.0.2f
 
 
 ### Formulas:
@@ -147,6 +147,7 @@ B = p1*s1 + p2*s2;
 # =>
 A^2 - sp*S*A + ps*sp^2 + E4*S^2 - 4*ps*E4 # = 0
 B^2 - sp*S*B + ps*sp^2 + E4*S^2 - 4*ps*E4 # = 0
+p1s1^2 - sp*S*p1s1 + ps*sp^2 + E4*S^2 - 4*ps*E4 # = 0
 
 ### Alternatives:
 # A = sp*S - p1s1;
@@ -849,6 +850,39 @@ E321a - ps*dp*A1 - ps^2*p2 - sp*S*p1s1 + sp^2*S^2 - sp^2*ps - 2*sp*E4 # = 0
 ##############
 ###  Sums  ###
 ##############
+
+###################
+### E21a + E12a ###
+###################
+
+E21a = x1^2*x2 + x2^2*x3 + x3^2*x4 + x4^2*x1;
+E12a = x1*x2^2 + x2*x3^2 + x3*x4^2 + x4*x1^2;
+
+### Formula for:
+### E21a + E12a
+(E21a + E12a)^2 + 2*S*(sp - ps)*(E21a + E12a) +
+	- 2*sp*ps*S^2 + ps^2*S^2 + 4*sp^2*ps + 4*S^2*E4 - 16*ps*E4 # = 0
+
+### Alternatives:
+E21a + E12a - 2*p1s1 - ps*S + 2*sp*S # = 0
+
+### Derivation:
+E21a + E12a - s1*(x2^2 + x4^2) - s2*(x1^2 + x3^2) # = 0
+E21a + E12a - s1*(s2^2 - 2*p2) - s2*(s1^2 - 2*p1) # = 0
+E21a + E12a - ps*S + 2*(p1*s2 + p2*s1) # = 0
+# =>
+E21a + E12a - 2*p1s1 - ps*S + 2*sp*S # = 0
+
+#
+pEs = toPoly.pm("E21a + E12a - 2*p1s1 - ps*S + 2*sp*S")
+pP1S1 = toPoly.pm("p1s1^2 - sp*S*p1s1 + ps*sp^2 + E4*S^2 - 4*ps*E4")
+pR = solve.pm(pEs, pP1S1, "p1s1")
+pR = pR$Rez;
+pR = sort.pm(pR, c("E21a", "E12a"))
+print.pm(pR, lead=NA)
+
+
+#####################
 
 #####################
 ### E211a + E112a ###
