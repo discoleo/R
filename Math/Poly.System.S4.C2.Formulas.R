@@ -7,7 +7,7 @@
 ### S4: Hetero-Symmetric
 ### Useful Formulas
 ###
-### draft v.0.2f
+### draft v.0.2g
 
 
 ### Formulas:
@@ -842,6 +842,95 @@ E321a - ps*(p1*A1 - p2*A1 + ps*p2) - sp*S*p1s1 + sp^2*S^2 - sp^2*ps - 2*sp*E4 # 
 #
 dp = p1 - p2;
 E321a - ps*dp*A1 - ps^2*p2 - sp*S*p1s1 + sp^2*S^2 - sp^2*ps - 2*sp*E4 # = 0
+
+
+#####################
+
+#############
+### E312a ###
+#############
+
+### Formula for:
+E312a = x1^3*x2*x3^2 + x2^3*x3*x4^2 + x3^3*x4*x1^2 + x4^3*x1*x2^2;
+
+
+### Derivation:
+
+E312a - p1^2*(x1*x2 + x3*x4) - p2^2*(x2*x3 + x4*x1) # = 0
+
+###
+A1 = x1*x2 + x3*x4;
+A2 = x2*x3 + x4*x1;
+
+E312a - p1^2*A1 - p2^2*A2 # = 0
+
+### Sum:
+A1 + A2 - ps # = 0
+
+### Prod:
+A1 * A2 - p1*(x2^2 + x4^2) - p2*(x1^2 + x3^2) # = 0
+A1 * A2 - p1*(s2^2 - 2*p2) - p2*(s1^2 - 2*p1) # = 0
+A1 * A2 - (p1*s2^2 + p2*s1^2) + 4*E4 # = 0
+# Reduction =>
+A1 * A2 + S*p1s1 - sp*S^2 + sp*ps + 4*E4 # = 0
+
+### Eqs:
+A1^2 - ps*A1 - S*p1s1 + sp*S^2 - sp*ps - 4*E4 # = 0
+A2^2 - ps*A2 - S*p1s1 + sp*S^2 - sp*ps - 4*E4 # = 0
+
+############
+### Part. 2:
+B1 = p1^2*A1 + p2^2*A2;
+B2 = p2^2*A1 + p1^2*A2;
+
+### Sum:
+B1 + B2 - ps*(p1^2 + p2^2) # = 0
+B1 + B2 - ps*(sp^2 - 2*E4) # = 0
+
+### Prod:
+B1 * B2 - E4^2*(A1^2 + A2^2) - A1*A2*(p1^4 + p2^4) # = 0
+B1 * B2 - E4^2*(ps^2 - 2*A1*A2) - A1*A2*(sp^4 - 4*sp^2*E4 + 2*E4^2) # = 0
+B1 * B2 - E4^2*(ps^2 + 2*(S*p1s1 - sp*S^2 + sp*ps + 4*E4)) +
+	+ (S*p1s1 - sp*S^2 + sp*ps + 4*E4)*(sp^4 - 4*sp^2*E4 + 2*E4^2) # = 0
+B1 * B2 + (sp^4*S - 4*sp^2*E4*S)*p1s1 - E4^2*(ps^2 + 16*sp^2) +
+	+ 4*sp^2*E4*(sp*S^2 + sp^2 - sp*ps) - S^2*sp^5 + ps*sp^5 # = 0
+
+### Eq:
+B1^2 - ps*(sp^2 - 2*E4)*B1 - (sp^4*S - 4*sp^2*E4*S)*p1s1 +
+	+ E4^2*(ps^2 + 16*sp^2) +
+	- 4*sp^2*E4*(sp*S^2 + sp^2 - sp*ps) + S^2*sp^5 - ps*sp^5 # = 0
+
+
+### Step 3:
+pE = toPoly.pm("E312a - B1")
+pB1 = toPoly.pm("B1^2 - ps*(sp^2 - 2*E4)*B1 - (sp^4*S - 4*sp^2*E4*S)*p1s1 +
+	+ E4^2*(ps^2 + 16*sp^2) +
+	- 4*sp^2*E4*(sp*S^2 + sp^2 - sp*ps) + S^2*sp^5 - ps*sp^5")
+pP1S1 = toPoly.pm("p1s1^2 - sp*S*p1s1 + ps*sp^2 + E4*S^2 - 4*ps*E4")
+
+pR = solve.pm(pE, pB1, "B1")
+pR = pR$Rez
+pR = solve.pm(pR, pP1S1, "p1s1")
+pR = pR$Rez
+str(pR)
+# 48 Monomials
+
+pR = sort.pm(pR, "E4", xn2="E312a")
+invisible(toCoeff(pR, "E312a", print=TRUE))
+
+### Eq:
+E312a^4 + (4*ps*E4 - 2*sp^2*ps)*E312a^3 +
+	(32*sp^2*E4^2 + 6*ps^2*E4^2 - 4*sp^3*S^2*E4 - 8*sp^4*E4 + 8*sp^3*ps*E4 +
+		- 4*sp^2*ps^2*E4 + sp^5*S^2 - 2*sp^5*ps + sp^4*ps^2)*E312a^2 +
+	(64*sp^2*ps*E4^3 + 4*ps^3*E4^3 - 8*sp^3*ps*S^2*E4^2 - 48*sp^4*ps*E4^2 +
+		+ 16*sp^3*ps^2*E4^2 - 2*sp^2*ps^3*E4^2 + 6*sp^5*ps*S^2*E4 + 8*sp^6*ps*E4 +
+		- 12*sp^5*ps^2*E4 - sp^7*ps*S^2 + 2*sp^7*ps^2)*E312a +
+	256*sp^4*E4^4 + 32*sp^2*ps^2*E4^4 + ps^4*E4^4 + 16*sp^4*S^4*E4^3 - 64*sp^5*S^2*E4^3 +
+		- 64*sp^4*ps*S^2*E4^3 - 4*sp^3*ps^2*S^2*E4^3 - 128*sp^6*E4^3 + 128*sp^5*ps*E4^3 +
+		- 8*sp^4*ps^2*E4^3 + 8*sp^3*ps^3*E4^3 - 8*sp^6*S^4*E4^2 + 32*sp^7*S^2*E4^2 +
+		+ 32*sp^6*ps*S^2*E4^2 + sp^5*ps^2*S^2*E4^2 + 16*sp^8*E4^2 - 64*sp^7*ps*E4^2 +
+		+ 16*sp^6*ps^2*E4^2 - 2*sp^5*ps^3*E4^2 + sp^8*S^4*E4 - 4*sp^9*S^2*E4 +
+		- 4*sp^8*ps*S^2*E4 + 8*sp^9*ps*E4 - 8*sp^8*ps^2*E4 + sp^10*ps^2 # = 0
 
 
 #####################
