@@ -7,7 +7,7 @@
 ### S4: C2-Hetero-Symmetric
 ### with Additional Symmetry
 ###
-### draft v.0.1k-edit
+### draft v.0.1k-reductions
 
 
 ####################
@@ -182,10 +182,16 @@ x1*y2 + x2*y1 - R4 # = 0
 ### Solution:
 
 # let:
+x1 = sol[,1]; x2 = sol[,2]; y1 = sol[,3]; y2 = sol[,4];
+R1 = R[1]; R2 = R[2]; R3 = R[3]; R4 = R[4];
+#
 s1 = x1 + x2; s2 = y1 + y2;
 p1 = x1 * x2; p2 = y1 * y2;
+ps = s1 * s2; sp = p1 + p2;
 S  = s1 + s2;
 E4 = p1 * p2;
+# for advanced reductions:
+p1s1 = p1*s1 + p2*s2;
 
 ### Eq 2 + Eq 3 =>
 s1*s2 - R2 - R4 # = 0
@@ -193,6 +199,10 @@ s1*s2 - R2 - R4 # = 0
 ### Eq 2 * Eq 3 =>
 p2*(s1^2 - 2*p1) + p1*(s2^2 - 2*p2) - R2*R4 # = 0
 p2*s1^2 + p1*s2^2 - 4*p1*p2 - R2*R4 # = 0
+# Reduction =>
+- S*p1s1 + sp*S^2 - sp*ps - 4*p1*p2 - R2*R4 # = 0
+# *OR*
+S*(p1*s2 + p2*s1) - sp*ps - 4*p1*p2 - R2*R4 # = 0
 
 ### Transformed System:
 # Eq 1: n1 = 1 vs n1 > 1;
@@ -200,6 +210,9 @@ s1 + s2 - R1 # = 0
 s1*s2 - R2 - R4 # = 0
 p2*s1 + p1*s2 - R3 # = 0
 p2*s1^2 + p1*s2^2 - 4*p1*p2 - R2*R4 # = 0
+
+# Alternative Eq 4:
+R3*S - sp*(R2 + R4) - 4*p1*p2 - R2*R4 # = 0
 
 
 ### Solver:
