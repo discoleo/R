@@ -237,7 +237,7 @@ format.complex.pm = function(x, sign.invert=FALSE, rm.zero=TRUE, brackets=TRUE, 
 ### Other
 
 # TODO: check everywhere that x is replaced with xn;
-toCoeff = function(p, xn="x", decreasing=TRUE, print=FALSE, sep=",\n") {
+toCoeff = function(p, xn="x", decreasing=TRUE, print=TRUE, sep=",\n") {
 	idx = match(xn, names(p));
 	if(idx < 0) stop(paste0("No variable ", xn));
 	px = p[,xn]; p = p[, - idx, drop=FALSE];
@@ -250,6 +250,8 @@ toCoeff = function(p, xn="x", decreasing=TRUE, print=FALSE, sep=",\n") {
 	if(decreasing) p.all = rev(p.all);
 	if(print) {
 		cat(p.all, sep = rep(sep, length(p.all)));
+		# return invisibly: coefficients are already printed;
+		return(invisible(p.all));
 	}
 	return(p.all)
 }
