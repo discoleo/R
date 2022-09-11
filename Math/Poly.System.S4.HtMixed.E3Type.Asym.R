@@ -7,7 +7,7 @@
 ### Hetero-Symmetric S4: Mixed
 ### E3-Type: Asymmetric
 ###
-### draft v.0.1e
+### draft v.0.1e-robust
 
 
 ### E3-Type:
@@ -237,15 +237,9 @@ solverFactory = function() {
 		s2 = S - s1;
 		sp = rep(sp, each=2);
 		ps = rep(ps, each=2);
-		# Step 3:
-		# TODO: robust
-		p1 = sapply(sp, function(sp) {
-			roots(c(1, - sp, R[4]));
-		})
-		p1 = as.vector(p1);
-		sp = rep(sp, each=2);
+		# Step 3: robust
+		p1 = solve.S4Ht.E422a.p1(R, list(sp=sp, ps=ps, s1=s1, s2=s2));
 		p2 = sp - p1;
-		s1 = rep(s1, each=2); s2 = rep(s2, each=2);
 		# Step 4:
 		len = length(s1);
 		x13 = sapply(seq(len), function(id) {
@@ -267,15 +261,41 @@ solverFactory = function() {
 	}
 	return(FUN);
 }
+solve.S4Ht.E422a.p1 = function(R, s) {
+	sp = s$sp; ps = s$ps; s1 = s$s1; s2 = s$s2;
+	S = R[1]; E422a = R[3]; E4 = R[4];
+	#
+	c1 = 2*(sp^2*S - 2*E4*S);
+	c2 = (sp^2 - 2*E4)*(- 2*sp*S^2 + 2*sp*ps + ps^2 + 4*E4);
+	c3 = - 2*sp*S^2 + 2*sp*ps + ps^2 + 4*E4;
+	c4 = (sp^4 - 4*E4*sp^2 + 2*E4^2);
+	c5 = (4*E4*S + 2*sp*ps*S - sp*S^3);
+	c6 = - E4*(S^4 + 4*sp*S^2 - 4*ps*S^2 + 2*ps^2 - 4*sp*ps) + 4*E4^2 +
+		+ sp^2*S^4 + sp^2*ps^2 - 3*ps*sp^2*S^2;
+	#
+	ds = s1 - s2;
+	p1  = 2*E4^3*c6 - E4*c6*c4 - E4^3*c3^2 - E4*E422a^2 + E4*E422a*c2 + 4*E4^4*S^2*s2^2 +
+		- 8*E4^4*S^2*s2*s1 + 4*E4^4*S^2*s1^2 + 2*E4^3*c5*s1*sp - E4*c5*c4*s1*sp +
+		- 4*E4^3*c3*S*s1*sp + E4*E422a*c1*s1*sp - 4*E4^3*S^2*s1^2*sp^2;
+	div = (8*S^2*s1*ds*sp + 4*c3*S*ds - 2*c5*ds)*E4^3 +
+		(- 4*S^2*s1^2*sp^3 - 4*c3*S*s1*sp^2 + 2*c5*s1*sp^2 - c3^2*sp + 2*c6*sp)*E4^2 +
+		(c5*c4 - E422a*c1)*ds*E4 +
+		- c5*c4*s1*sp^2 + E422a*c1*s1*sp^2 - E422a^2*sp - c6*c4*sp + E422a*c2*sp;
+	return(p1/div);
+}
 solver.S4Ht.E422a = solverFactory();
 
 ### Examples:
 
-# TODO:
-# robust: only 1/2 are TRUE roots;
-
 ###
 R = c(-1, 2, -3, 3)
+sol = solver.S4Ht.E422a(R)
+
+test.S4HtMixed.E422a(sol)
+
+
+### Ex 2:
+R = c(2, -1, -2, 3)
 sol = solver.S4Ht.E422a(R)
 
 test.S4HtMixed.E422a(sol)
