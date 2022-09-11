@@ -236,6 +236,32 @@ format.complex.pm = function(x, sign.invert=FALSE, rm.zero=TRUE, brackets=TRUE, 
 
 ### Other
 
+### Convert to Coefficients
+# - as list of polynomials or of numeric values;
+# - the list is in descending order;
+as.coeff.pm = function(p, xn) {
+	idv = match(xn, names(p));
+	# b0:
+	if(is.na(idv)) {
+		warning("Variable ", xn, " not found!");
+		return(list(p));
+	}
+	#
+	if(ncol(p) == 2) {
+		coeff = coef.pm(p, xn=xn, descending=TRUE);
+		return(as.list(coeff));
+	}
+	#
+	pows = seq(max(p[ , idv]), 0, by=-1);
+	rez  = lapply(pows, function(pow) {
+		pb = p[p[, idv] == pow, - idv, drop=FALSE];
+		if(nrow(pb) == 0) return(0);
+		return(pb);
+	})
+	return(rez);
+}
+
+### Convert to Coefficients: as string;
 # TODO: check everywhere that x is replaced with xn;
 toCoeff = function(p, xn="x", decreasing=TRUE, print=TRUE, sep=",\n") {
 	idx = match(xn, names(p));
