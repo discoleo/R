@@ -1144,6 +1144,19 @@ eval.pm = function(p, x, progress=FALSE) {
 	sum(tmp);
 }
 
+### Evaluate a list of polynomials
+# - numeric values in the list are interpreted as the corresponding value;
+eval.lpm = function(p, vals) {
+	len = length(p);
+	rez = sapply(seq(len), function(id) {
+		p1 = p[[id]];
+		if(is.numeric(p1)) return(p1);
+		rez = eval.pm(p1, vals);
+		return(rez);
+	});
+	return(rez);
+}
+
 ##################
 
 ### Solve Variable
