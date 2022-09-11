@@ -7,7 +7,7 @@
 ### Hetero-Symmetric S4: Mixed
 ### E3-Type: Asymmetric
 ###
-### draft v.0.1e-robust
+### draft v.0.1e-xcom
 
 
 ### E3-Type:
@@ -181,6 +181,23 @@ toCoeff(pR, "ps", print=TRUE)
 
 E422a = x1^4*x2^2*x3^2 + x2^4*x3^2*x4^2 + x3^4*x4^2*x1^2 + x4^4*x1^2*x2^2;
 
+### System:
+# S  = R1
+# E2 = R2
+# E422a = R3
+# E4 = R4
+
+### Transformed System:
+# S - R1 # = 0
+# sp + ps - R2 # = 0
+# P[E422a](E422a, S, E4, sp, ps) - R3 # = 0
+# E4 - R4 # = 0
+
+### Characteristic Polynomial:
+# - Order 64 for original system;
+# - Order 16 for transformed system;
+
+### Solver:
 
 coeffFactory = function() {
 	pE = toPoly.pm("E422a^2 - SA2B2*E422a + A2B2")
@@ -210,16 +227,6 @@ coeffFactory = function() {
 	#
 	coeff = as.coeff.pm(pR, "ps");
 	return(invisible(coeff));
-}
-eval.lpm = function(p, vals) {
-	len = length(p);
-	rez = sapply(seq(len), function(id) {
-		p1 = p[[id]];
-		if(is.numeric(p1)) return(p1);
-		rez = eval.pm(p1, vals);
-		return(rez);
-	});
-	return(rez);
 }
 solverFactory = function() {
 	coeff.p = coeffFactory();
@@ -261,6 +268,9 @@ solverFactory = function() {
 	}
 	return(FUN);
 }
+
+solver.S4Ht.E422a = solverFactory();
+
 solve.S4Ht.E422a.p1 = function(R, s) {
 	sp = s$sp; ps = s$ps; s1 = s$s1; s2 = s$s2;
 	S = R[1]; E422a = R[3]; E4 = R[4];
@@ -274,16 +284,16 @@ solve.S4Ht.E422a.p1 = function(R, s) {
 		+ sp^2*S^4 + sp^2*ps^2 - 3*ps*sp^2*S^2;
 	#
 	ds = s1 - s2;
-	p1  = 2*E4^3*c6 - E4*c6*c4 - E4^3*c3^2 - E4*E422a^2 + E4*E422a*c2 + 4*E4^4*S^2*s2^2 +
-		- 8*E4^4*S^2*s2*s1 + 4*E4^4*S^2*s1^2 + 2*E4^3*c5*s1*sp - E4*c5*c4*s1*sp +
-		- 4*E4^3*c3*S*s1*sp + E4*E422a*c1*s1*sp - 4*E4^3*S^2*s1^2*sp^2;
-	div = (8*S^2*s1*ds*sp + 4*c3*S*ds - 2*c5*ds)*E4^3 +
+	p1  = 4*E4^4*S^2*ds^2 +
+		+ (2*c6 - c3^2 + 2*c5*s1*sp - 4*c3*S*s1*sp - 4*S^2*s1^2*sp^2)*E4^3 +
+		- (E422a^2 - E422a*c2 - E422a*c1*s1*sp + c5*c4*s1*sp + c6*c4)*E4;
+	#
+	div = (8*S^2*s1*sp + 4*c3*S - 2*c5)*ds*E4^3 +
 		(- 4*S^2*s1^2*sp^3 - 4*c3*S*s1*sp^2 + 2*c5*s1*sp^2 - c3^2*sp + 2*c6*sp)*E4^2 +
 		(c5*c4 - E422a*c1)*ds*E4 +
-		- c5*c4*s1*sp^2 + E422a*c1*s1*sp^2 - E422a^2*sp - c6*c4*sp + E422a*c2*sp;
+		+ E422a*c1*s1*sp^2 - c5*c4*s1*sp^2 - E422a^2*sp + E422a*c2*sp - c6*c4*sp;
 	return(p1/div);
 }
-solver.S4Ht.E422a = solverFactory();
 
 ### Examples:
 
