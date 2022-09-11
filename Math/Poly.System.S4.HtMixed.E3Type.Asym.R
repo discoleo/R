@@ -7,7 +7,7 @@
 ### Hetero-Symmetric S4: Mixed
 ### E3-Type: Asymmetric
 ###
-### draft v.0.1d
+### draft v.0.1e
 
 
 ### E3-Type:
@@ -24,6 +24,13 @@ source("Poly.System.S4.HtMixed.Basic.Helper.R")
 
 test.S4HtMixed.E211a = function(sol, R = NULL, n=1) {
 	err = test.S4HtMixed.En3(sol, R=R, n=1, nE=c(2,1,1), type="E2");
+	# Correct E2 order;
+	# TODO: move correction to test.S4HtMixed.En3 ???
+	err = err[ c(1,3,2,4), ];
+	return(err);
+}
+test.S4HtMixed.E422a = function(sol, R = NULL, n=1) {
+	err = test.S4HtMixed.En3(sol, R=R, n=1, nE=c(4,2,2), type="E2");
 	# Correct E2 order;
 	# TODO: move correction to test.S4HtMixed.En3 ???
 	err = err[ c(1,3,2,4), ];
@@ -165,6 +172,116 @@ pR = sort.pm(pR, c("ps", "E211a", "S"))
 toCoeff(pR, "ps", print=TRUE)
 
 
+#####################
+#####################
+
+###################
+### Type: E422a ###
+###################
+
+E422a = x1^4*x2^2*x3^2 + x2^4*x3^2*x4^2 + x3^4*x4^2*x1^2 + x4^4*x1^2*x2^2;
+
+
+coeffFactory = function() {
+	pE = toPoly.pm("E422a^2 - SA2B2*E422a + A2B2")
+	pSA2B2 = toPoly.pm("- 2*(sp^2*S - 2*E4*S)*p1s1 +
+		- (sp^2 - 2*E4)*(- 2*sp*S^2 + 2*sp*ps + ps^2 + 4*E4)"); # actually: - (A2 + B2);
+	pSA2B2$coeff = - pSA2B2$coeff;
+	pA2B2 = toPoly.pm("- E4^2*((2*S*p1s1 - 2*sp*S^2 + 2*sp*ps + ps^2 + 4*E4)^2 - 2*A1B1) +
+		- A1B1*(sp^4 - 4*E4*sp^2 + 2*E4^2)"); # actually: - (A2 * B2);
+	pA2B2$coeff = - pA2B2$coeff;
+	pA1B1 = toPoly.pm("(4*E4*S + 2*sp*ps*S - sp*S^3)*p1s1 +
+		- E4*(S^4 + 4*sp*S^2 - 4*ps*S^2 + 2*ps^2 - 4*sp*ps) + 4*E4^2 +
+		+ sp^2*S^4 + sp^2*ps^2 - 3*ps*sp^2*S^2");
+	pR = replace.pm(pA2B2, pA1B1, "A1B1")
+	#
+	pE = replace.pm(pE, pSA2B2, "SA2B2");
+	pE = replace.pm(pE, pR, "A2B2");
+	#
+	pP1S1 = toPoly.pm("p1s1^2 - sp*S*p1s1 + ps*sp^2 + E4*S^2 - 4*ps*E4")
+	pR = solve.pm(pE, pP1S1, "p1s1")
+	# 213 Monomials;
+	pR = pR$Rez
+	#
+	pE2 = toPoly.pm("ps + sp - E2");
+	pR = solve.pm(pE2, pR, "sp");
+	pR = pR$Rez
+	pR = sort.pm(pR, "ps", xn2="E422a");
+	#
+	coeff = as.coeff.pm(pR, "ps");
+	return(invisible(coeff));
+}
+eval.lpm = function(p, vals) {
+	len = length(p);
+	rez = sapply(seq(len), function(id) {
+		p1 = p[[id]];
+		if(is.numeric(p1)) return(p1);
+		rez = eval.pm(p1, vals);
+		return(rez);
+	});
+	return(rez);
+}
+solverFactory = function() {
+	coeff.p = coeffFactory();
+	FUN = function(R, debug=TRUE, all=FALSE) {
+		coeff = eval.lpm(coeff.p, list(S=R[1], E2=R[2], E422a=R[3], E4=R[4]));
+		ps = roots(coeff);
+		sp = R[2] - ps;
+		if(debug) { print(coeff); print(sp); }
+		# Step 2:
+		S = R[1];
+		s1 = sapply(ps, function(ps) {
+			roots(c(1, - S, ps));
+		})
+		s1 = as.vector(s1);
+		s2 = S - s1;
+		sp = rep(sp, each=2);
+		ps = rep(ps, each=2);
+		# Step 3:
+		# TODO: robust
+		p1 = sapply(sp, function(sp) {
+			roots(c(1, - sp, R[4]));
+		})
+		p1 = as.vector(p1);
+		sp = rep(sp, each=2);
+		p2 = sp - p1;
+		s1 = rep(s1, each=2); s2 = rep(s2, each=2);
+		# Step 4:
+		len = length(s1);
+		x13 = sapply(seq(len), function(id) {
+			roots(c(1, - s1[id], p1[id]));
+		});
+		x13 = t(x13);
+		x1 = x13[,1]; x3 = x13[,2];
+		#
+		R24 = R[3] + p2*(x1^2 + x3^2)*(p1^2 + p2^2);
+		c1  = s2*((x1*p1)^2 + (x3*p2)^2);
+		c2  = s2*((x3*p1)^2 + (x1*p2)^2);
+		div = c2 - c1;
+		x2 = (c2*s2 - R24) / div;
+		x4 = s2 - x2;
+		#
+		sol = cbind(x1=x1, x2=x2, x3=x3, x4=x4);
+		if(all) sol = rbind(sol, sol[ , c(2,1,4,3)]);
+		return(sol);
+	}
+	return(FUN);
+}
+solver.S4Ht.E422a = solverFactory();
+
+### Examples:
+
+# TODO:
+# robust: only 1/2 are TRUE roots;
+
+###
+R = c(-1, 2, -3, 3)
+sol = solver.S4Ht.E422a(R)
+
+test.S4HtMixed.E422a(sol)
+
+
+#####################
 #####################
 
 #####################
