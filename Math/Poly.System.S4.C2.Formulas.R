@@ -7,7 +7,7 @@
 ### S4: Hetero-Symmetric
 ### Useful Formulas
 ###
-### draft v.0.2i
+### draft v.0.2j
 
 
 ### Formulas:
@@ -709,7 +709,7 @@ str(pR)
 # 41 Monomials
 
 pR = sort.pm(pR, "E4", xn2="E211a")
-invisible(toCoeff(pR, "E211a", print=TRUE))
+toCoeff(pR, "E211a")
 
 
 #####################
@@ -1005,7 +1005,7 @@ str(pR)
 # 213 Monomials: is probably the Minimal polynomial;
 
 pR = sort.pm(pR, "E422a", xn2="E4")
-# invisible(toCoeff(pR, "E422a", print=TRUE))
+# toCoeff(pR, "E422a")
 
 eval.pm(pR, list(E4=E4, sp=sp, ps=ps, S=S, E422a=E422a))
 
@@ -1079,6 +1079,66 @@ E211a * E112a - E4*ps^2 - pAB*(sp^2 - 4*E4) # = 0
 (E211a - E112a)^2 - (sp^2 - 4*E4)*ps^2 + 4*(E211a * E112a - E4*ps^2) # = 0
 # redundant
 (E211a - E112a)^2 - sp^2*ps^2 + 4*E211a * E112a # = 0
+
+
+### Other
+A1 = x1*x2 + x3*x4;
+B1 = x2*x3 + x4*x1;
+
+p1*A1 + p2*B1 - E211a # = 0
+p2*A1 + p1*B1 - E112a # = 0
+# Prod(E211a * E112a) =>
+A1*B1*(sp^2 - 4*E4) + ps^2*E4 - E211a*E112a # = 0
+# also:
+A1*B1 - S*(p1*s2 + p2*s1) + ps*sp + 4*E4 # = 0
+# =>
+S*(sp^2 - 4*E4)*(p1*s2 + p2*s1) - (E211a*E112a - ps^2*E4 + (ps*sp + 4*E4)*(sp^2 - 4*E4)) # = 0
+# Formula for p1s2:
+S*(sp^2 - 4*E4)*(p1*s2 + p2*s1) +
+	- E211a*E112a + 16*E4^2 - (4*sp^2 - ps^2 - 4*ps*sp)*E4 - ps*sp^3 # = 0
+
+###
+PE = E211a * E112a; PEE = E211a*(ps*sp - E211a);
+c1 = 4*sp^2 - ps^2 - 4*ps*sp + 2*sp*S^2;
+c20 = (S^2 - 4*ps); c24 = 4*c20;
+c3 = PE - ps*sp^3;
+c4 =  - 3*c24*sp^2*S^2 + 4*c24*sp^3 + c1^2;
+c5 = (3*c20*sp*S^2 - c1*c20 - 2*c1*ps)*sp^3;
+
+# based on PE:
+256*E4^4 + 16*(c20*S^2 - 2*c1)*E4^3 +
+	+ (c4 + 32*ps*sp^3 - 32*PE)*E4^2 +
+	+ (2*c1*PE + c5)*E4 +
+	+ (PE - ps*sp^3)^2 - c20*sp^3*PE # = 0
+
+# based on E211a:
+256*E4^4 + 16*(c20*S^2 - 2*c1)*E4^3 +
+	+ (c4 + 32*ps*sp^3 - 32*PEE)*E4^2 +
+	+ (2*c1*PEE + c5)*E4 +
+	+ (PEE - ps*sp^3)^2 - c20*sp^3*PEE # = 0
+
+
+# Diff =>
+E211a^2 - ps*sp*E211a + PE # = 0
+# - unfortunately redundant!
+
+
+# Derivation:
+pE = toPoly.pm("S*(sp^2 - 4*E4)*p1s2 + 16*E4^2 - (c1 - 2*sp*S^2)*E4 - PE - ps*sp^3");
+pP1S2 = toPoly.pm("p1s2^2 - sp*S*p1s2 + ps*sp^2 + E4*S^2 - 4*E4*ps");
+pR = solve.pm(pE, pP1S2, "p1s2");
+pR = pR$Rez;
+toCoeff(pR, "E4")
+
+###
+div = S*(sp^2 - 4*E4); divS = div * S;
+PE = E211a * E112a;
+c1 = 4*sp^2 - ps^2 - 4*ps*sp;
+c2 = ps*sp^3 - 16*E4^2 + E4*c1 + PE;
+c3 = (divS^2 - 2*ps*div^2)*E4 + c2^2;
+
+ps*div^2*p1^2 - c2*divS*p1 + ps*div^2*p2^2 - divS*c2*p2 + c3 # = 0
+
 
 
 ### Prod: E211a * E112a
