@@ -7,7 +7,7 @@
 ### S4: Hetero-Symmetric
 ### Useful Formulas
 ###
-### draft v.0.2k
+### draft v.0.2l
 
 
 ### Formulas:
@@ -1358,10 +1358,55 @@ E131a # =
 E131a - p1*(x2^3 + x4^3) - p2*(x1^3 + x3^3) # = 0
 
 ### Method 1:
-# - using decomposition;
+# - using decomposition of sum(x^3);
 E131a - p1*(s2^3 - 3*p2*s2) - p2*(s1^3 - 3*p1*s1) # = 0
 E131a - (p1*s2^3 + p2*s1^3) + 3*E4*S # = 0
 E131a - (ps - S^2)*p1s1 - sp*S^3 + 3*E4*S + 2*ps*sp*S # = 0
+
+
+#############
+
+#############
+### E141a ###
+#############
+
+### Formula for:
+E141a = x1*x2^4*x3 + x2*x3^4*x4 + x3*x4^4*x1 + x4*x1^4*x2;
+
+### Alternatives:
+E141a # =
+(2*ps*S - S^3)*p1s1 +
+	+ sp*S^4 - 3*sp*ps*S^2 + sp*ps^2 - 2*E4*(2*S^2 - 4*ps - sp);
+
+### Derivation:
+E141a - p1*(x2^4 + x4^4) - p2*(x1^4 + x3^4) # = 0
+
+### Method 1:
+# - using decomposition of sum(x^4);
+E141a - p1*(s2^4 - 4*p2*s2^2 + 2*p2^2) - p2*(s1^4 - 4*p1*s1^2 + 2*p1^2) # = 0
+E141a - (p1*s2^4 + p2*s1^4) + 4*E4*(s1^2 + s2^2) - 2*E4*(p1 + p2) # = 0
+E141a - (p1*s2^4 + p2*s1^4) + 4*E4*(S^2 - 2*ps) - 2*sp*E4 # = 0
+E141a + (S^3 - 2*ps*S)*p1s1 +
+	- sp*S^4 + 3*sp*ps*S^2 - sp*ps^2 + 2*E4*(2*S^2 - 4*ps - sp) # = 0
+
+###
+pE = toPoly.pm("E141a - c2*p1s1 + 2*c1*E4 - c0*sp")
+pR = solve.pm(pE, pP1S1, "p1s1")
+pR = pR$Rez;
+pR = sort.pm(pR, "E141a", "E4")
+toCoeff(pR, "E141a")
+
+# simple Test:
+cs = S^2 - 2*ps;
+c2 = - S*cs;
+c1 = (2*cs - sp);
+# c0 = (S^4 - 3*ps*S^2 + ps^2);
+c0 = (cs*S^2 - ps*cs - ps^2);
+c3 = 2*c1*E4 - c2*S*sp - 2*c0*sp;
+
+E141a^2 + (2*c1*E4 + c3)*E141a +
+	+ (c2^2*S^2 - 4*c2^2*ps + 2*c1*c3)*E4 +
+	+ (c2^2*ps + c0*c2*S + c0^2)*sp^2 # = 0
 
 
 #############
