@@ -7,7 +7,7 @@
 ### S4: Hetero-Symmetric
 ### Useful Formulas
 ###
-### draft v.0.2j
+### draft v.0.2k
 
 
 ### Formulas:
@@ -71,6 +71,10 @@ p1s1 = p1*s1 + p2*s2;
 
 E2 = x1*x2 + x1*x3 + x1*x4 + x2*x3 + x2*x4 + x3*x4;
 E3 = x1*x2*x3 + x1*x2*x4 + x1*x3*x4 + x2*x3*x4;
+
+
+### Poly:
+pP1S1 = toPoly.pm("p1s1^2 - sp*S*p1s1 + ps*sp^2 + E4*S^2 - 4*ps*E4")
 
 
 ###################
@@ -711,6 +715,44 @@ str(pR)
 pR = sort.pm(pR, "E4", xn2="E211a")
 toCoeff(pR, "E211a")
 
+### Partial: in s, p;
+pE  = toPoly.pm("A2 - E211a")
+pA2 = toPoly.pm("A2^2 - sp*ps*A2 - (sp^2*S - 4*E4*S)*p1s1 + 16*E4^2 + c1*E4 + c2");
+pR = solve.pm(pE, pA2, "A2")
+pR = pR$Rez
+pR = replace.pm(pR, data.frame(p1=1, p2=1, coeff=1), "E4")
+pR = replace.pm(pR, toPoly.pm("p1*s1 + p2*s2"), "p1s1")
+pR = replace.pm(pR, toPoly.pm("sp - p1"), "p2")
+pR = sort.pm(pR, "p1", xn2="E211a")
+str(pR)
+toCoeff(pR, "p1")
+
+ds = s1 - s2;
+c0 = ps^2 - 4*sp^2 - 2*sp*S^2 + 4*sp*ps;
+c1 = ps^2 - 4*sp^2 - 4*sp*S^2 + 4*sp*ps;
+c2 = (S^2 - ps)*sp^3;
+
+16*p1^4 - (4*ds*S + 32*sp)*p1^3 +
+	+ (16*sp^2 + 6*sp*ds*S - c0)*p1^2 +
+	- (3*sp*ds*S - c0)*sp*p1 +
+	+ E211a*(E211a - sp*ps) + sp^3*s1*S - ps*sp^3 # = 0
+
+### [redundant]
+pE = toPoly.pm("p1*A + p2*(ps - A) - E211a")
+pE = toPoly.pm("p2*A + p1*(ps - A) - E112a")
+pA = toPoly.pm("A^2 - ps*A + S*p1s1 - c1 + 4*E4");
+pR = solve.pm(pE, pA, "A")
+pR = pR$Rez
+pR = replace.pm(pR, data.frame(p1=1, p2=1, coeff=1), "E4")
+pR = replace.pm(pR, toPoly.pm("p1*s1 + p2*s2"), "p1s1")
+pR = replace.pm(pR, toPoly.pm("sp - p1"), "p2")
+pR = sort.pm(pR, "p1", xn2="E211a")
+pR$coeff = - pR$coeff;
+str(pR)
+toCoeff(pR, "p1")
+
+c1 = sp*S^2 - sp*ps;
+
 
 #####################
 #####################
@@ -1102,7 +1144,7 @@ PE = E211a * E112a; PEE = E211a*(ps*sp - E211a);
 c1 = 4*sp^2 - ps^2 - 4*ps*sp + 2*sp*S^2;
 c20 = (S^2 - 4*ps); c24 = 4*c20;
 c3 = PE - ps*sp^3;
-c4 =  - 3*c24*sp^2*S^2 + 4*c24*sp^3 + c1^2;
+c4 = - 3*c24*sp^2*S^2 + 4*c24*sp^3 + c1^2;
 c5 = (3*c20*sp*S^2 - c1*c20 - 2*c1*ps)*sp^3;
 
 # based on PE:
@@ -1139,6 +1181,24 @@ c3 = (divS^2 - 2*ps*div^2)*E4 + c2^2;
 
 ps*div^2*p1^2 - c2*divS*p1 + ps*div^2*p2^2 - divS*c2*p2 + c3 # = 0
 
+###
+pAB = toPoly.pm("S*(p1*s2 + p2*s1) - ps*sp - 4*E4")
+pE = toPoly.pm("dp*(A^2 - AB) - dE*A");
+pA = toPoly.pm("A^2 - ps*A + (p1*s2^2 + p2*s1^2) - 4*E4")
+pE = replace.pm(pE, pAB, "AB")
+pR = solve.pm(pE, pA, "A")
+pR = pR$Rez
+pR = replace.pm(pR, toPoly.pm("sp*p1 - E4"), "p1", pow=2)
+pR = replace.pm(pR, toPoly.pm("sp*p2 - E4"), "p2", pow=2)
+pR = sort.pm(pR, c("p1", "p2"), xn2="E4")
+pR = orderVars.pm(pR, c("p1", "p2", "coeff"))
+
+pR = replace.pm(pR, data.frame(p1=1, p2=1, coeff=1), "E4")
+pR = replace.pm(pR, toPoly.pm("sp - p1"), "p2")
+pR = replace.pm(pR, toPoly.pm("sp^2 - 4*p1*(sp-p1)"), "dp", pow=2)
+str(pR)
+
+dE = E211a - E112a; dp = p1 - p2;
 
 
 ### Prod: E211a * E112a
@@ -1233,6 +1293,9 @@ E22a - 2*S*(p1*s1 + p2*s2) + 2*sp*S^2 - 2*sp*ps - ps^2 - 4*E4 # = 0
 ### Formula for:
 E301a = x1^3*x3 + x2^3*x4 + x3^3*x1 + x4^3*x2;
 
+### Alternatives:
+# E301a = S*p1s1 - sp*ps - 2*sp^2 + 4*E4;
+
 ### Derivation:
 E301a - p1*(x1^2 + x3^2) - p2*(x2^2 + x4^2) # = 0
 E301a - p1*(s1^2 - 2*p1) - p2*(s2^2 - 2*p2) # = 0
@@ -1258,6 +1321,8 @@ E301a - S*(p1*s1 + p2*s2) + sp*ps + 2*sp^2 - 4*E4 # = 0
 
 ### Formula for:
 E121a = x1*x2^2*x3 + x2*x3^2*x4 + x3*x4^2*x1 + x4*x1^2*x2;
+#
+
 
 ### Alternatives:
 E121a # =
@@ -1270,6 +1335,33 @@ E121a - p1*(s2^2 - 2*p2) - p2*(s1^2 - 2*p1) # = 0
 E121a - (p1*s2^2 + p2*s1^2) + 4*E4 # = 0
 # Reduction =>
 E121a + S*p1s1 - sp*S^2 + sp*ps + 4*E4 # = 0
+
+
+#############
+
+#############
+### E131a ###
+#############
+
+### Formula for:
+E131a = x1*x2^3*x3 + x2*x3^3*x4 + x3*x4^3*x1 + x4*x1^3*x2;
+#
+9*S^2*E4^2 +
+	+ (6*S*E131a + S^6 - 3*S^4*sp - 6*S^4*ps + 9*S^2*sp*ps + 9*S^2*ps^2 - 4*ps^3)*E4 +
+	+ E131a^2 - S^3*sp*E131a + 3*S*sp*ps*E131a + sp^2*ps^3 # = 0
+
+### Alternatives:
+E131a # =
+(ps - S^2)*p1s1 + sp*S^3 - 3*E4*S - 2*ps*sp*S;
+
+### Derivation:
+E131a - p1*(x2^3 + x4^3) - p2*(x1^3 + x3^3) # = 0
+
+### Method 1:
+# - using decomposition;
+E131a - p1*(s2^3 - 3*p2*s2) - p2*(s1^3 - 3*p1*s1) # = 0
+E131a - (p1*s2^3 + p2*s1^3) + 3*E4*S # = 0
+E131a - (ps - S^2)*p1s1 - sp*S^3 + 3*E4*S + 2*ps*sp*S # = 0
 
 
 #############
