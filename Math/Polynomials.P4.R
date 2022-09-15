@@ -4,7 +4,7 @@
 ### [the one and only]
 ###
 ### Polynomials: P[4]
-### v.0.1b
+### v.0.1b-all
 
 
 ### Solve Method for P[4]
@@ -72,6 +72,9 @@ ps^3 - 2*E2*ps^2 + (E2^2 + E3*S - 4*E4)*ps + E4*S^2 - E2*E3*S + E3^2 # = 0
 
 
 ### Solver:
+# - solves actually the polynomial system;
+# - all = all solutions of the initial system;
+# - P[4] roots: one tuple (x1, x2, x3, x4) is actually sufficient;
 solve.P4 = function(R, debug=TRUE, all=FALSE) {
 	S = R[1]; E2 = R[2]; E3 = R[3]; E4 = R[4];
 	coeff = c(1, - 2*E2, (E2^2 + E3*S - 4*E4), E4*S^2 - E2*E3*S + E3^2);
@@ -100,7 +103,10 @@ solve.P4 = function(R, debug=TRUE, all=FALSE) {
 	#
 	sol = cbind(x1, x2, x3, x4);
 	if(all) {
-		# TODO: all proper permutations;
+		# Note: the initial system is fully symmetric;
+		# - all proper permutations;
+		sol = rbind(sol, sol[, c(3,2,1,4)]);
+		sol = rbind(sol, sol[, c(3,4,1,2)]);
 	}
 	invisible(sol);
 }
