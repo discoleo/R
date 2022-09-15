@@ -4,13 +4,13 @@
 ### [the one and only]
 ###
 ### Polynomials: P[4]
-### v.0.1a
+### v.0.1b
 
 
 ### Solve Method for P[4]
 
-### Experimental Approaches:
-# - evaluating solutions for P[4];
+# - proper way to solve a P[4]:
+#   based on a C2-decomposition;
 
 
 ####################
@@ -85,7 +85,7 @@ solve.P4 = function(R, debug=TRUE, all=FALSE) {
 	s1 = as.vector(s1);
 	s2 = S - s1;
 	sp = rep(sp, each=2);
-	# Step 3:
+	# Step 3: robust;
 	p1 = (s1*sp - E3) / (s1 - s2);
 	p2 = sp - p1;
 	# Step 4:
@@ -125,6 +125,9 @@ test.P4(sol)
 ######################
 
 ### [old]
+
+### Experimental Approaches:
+# - evaluating solutions for P[4];
 
 ### Method 2:
 ### Old Experiments
