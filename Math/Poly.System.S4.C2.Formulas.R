@@ -7,7 +7,7 @@
 ### S4: Hetero-Symmetric
 ### Useful Formulas
 ###
-### draft v.0.2m
+### draft v.0.2n
 
 
 ### Formulas:
@@ -408,6 +408,76 @@ B - (sp^2*S - E4*S)*p1s1 + sp*E4*S^2 + ps*sp^3 - 3*sp*ps*E4 # = 0
 E21a = x1^2*x2 + x2^2*x3 + x3^2*x4 + x4^2*x1
 
 ### Derivation:
+
+### Step 1:
+A1 = x1*x2 + x3*x4;
+B1 = x2*x3 + x4*x1;
+
+### A1 + B1 =>
+A1 + B1 - ps # = 0
+
+### A1 * B1 =>
+A1 * B1 - p1*(x2^2 + x4^2) - p2*(x1^2 + x3^2) # = 0
+A1 * B1 - p1*(s2^2 - 2*p2) - p2*(s1^2 - 2*p1) # = 0
+A1 * B1 - (p1*s2^2 + p2*s1^2) + 4*E4 # = 0
+# Reduction =>
+A1 * B1 + S*p1s1 - sp*S^2 + sp*ps + 4*E4 # = 0
+
+
+### Other:
+s1*A1 - (x1^2*x2 + x3^2*x4) - p1*s2 # = 0
+s2*B1 - (x2^2*x3 + x4^2*x1) - p2*s1 # = 0
+
+### Sum =>
+E21a - (s1*A1 + s2*B1) + (p1*s2 + p2*s1) # = 0
+E21a - (s1*A1 + s2*B1) - p1s1 + sp*S # = 0
+
+### Step 2:
+A2 = s1*A1 + s2*B1;
+B2 = s2*A1 + s1*B1;
+
+### A2 + B2 =>
+A2 + B2 - S*(A1 + B1) # = 0
+A2 + B2 - ps*S # = 0
+
+### A2 * B2 =>
+A2 * B2 - ps*(A1^2 + B1^2) - A1*B1*(s1^2 + s2^2) # = 0
+A2 * B2 - ps*(ps^2 - 2*A1*B1) - A1*B1*(S^2 - 2*ps) # = 0
+A2 * B2 - A1*B1*(S^2 - 4*ps) - ps^3 # = 0
+# =>
+A2 * B2 + (S*p1s1 - sp*S^2 + sp*ps + 4*E4)*(S^2 - 4*ps) - ps^3 # = 0
+A2 * B2 + S*(S^2 - 4*ps)*p1s1 - (sp*S^2 - sp*ps - 4*E4)*(S^2 - 4*ps) - ps^3 # = 0
+
+###
+pE = toPoly.pm("E21a - A2 - p1s1 + sp*S");
+pA2 = toPoly.pm("A2^2 - ps*S*A2 - A2B2"); # Note: - A2*B2;
+pA2B2 = toPoly.pm("S*(S^2 - 4*ps)*p1s1 - (sp*S^2 - sp*ps - 4*E4)*(S^2 - 4*ps) - ps^3")
+
+pR = solve.pm(pE, pA2, "A2")
+pR = pR$Rez;
+pR = replace.pm(pR, pA2B2, "A2B2")
+pR = solve.pm(pR, pP1S1, "p1s1")
+pR = pR$Rez
+pR = orderVars.pm(pR, c("sp", "E4", "S", "E21a", "coeff"))
+pR = sort.pm(pR, "S", "E4")
+str(pR) # 48 Monomials;
+
+# simple Test:
+toCoeff(pR, "E21a")
+
+E21a^4 + 2*(sp - ps)*S*E21a^3 +
+	+ (sp*S^4 - 6*E4*S^2 + sp^2*S^2 - 9*ps*sp*S^2 + ps^2*S^2 + 24*ps*E4 +
+		+ 2*ps^3 + 2*ps*sp^2 + 8*ps^2*sp)*E21a^2 +
+	+ ((4*E4 - ps*sp)*S^5 - (6*sp*E4 + 26*ps*E4 - ps*sp^2 - 7*ps^2*sp)*S^3 +
+		+ 8*ps*(5*ps + 3*sp)*E4*S - 2*(ps^4 - ps*sp^3 + 3*ps^3*sp + 5*ps^2*sp^2)*S)*E21a +
+	+ E4*S^8 - (3*sp + 14*ps)*E4*S^6 + (25*E4^2 + (65*ps^2 - 4*sp^2 + 37*ps*sp)*E4 + ps^3*sp)*S^4 +
+	- 200*ps*E4^2*S^2 - (110*ps^3 - 26*ps*sp^2 + 140*ps^2*sp)*E4*S^2 +
+	- ps^2*sp*(7*ps^2 - sp^2 + 2*ps*sp)*S^2 +
+	+ 400*ps^2*E4^2 + ps^2*(40*ps^2 + 160*ps*sp - 40*sp^2)*E4 +
+	+ ps^6 + 8*ps^5*sp + 14*ps^4*sp^2 - 8*ps^3*sp^3 + ps^2*sp^4 # = 0
+
+
+### [old]
 
 A1 = x1^2*x2 + x3^2*x4;
 B1 = x1^2*x4 + x3^2*x2;
