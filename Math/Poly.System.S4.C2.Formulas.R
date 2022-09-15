@@ -7,7 +7,7 @@
 ### S4: Hetero-Symmetric
 ### Useful Formulas
 ###
-### draft v.0.2l
+### draft v.0.2m
 
 
 ### Formulas:
@@ -40,21 +40,6 @@
 source("Poly.System.S4.C2.Helper.R")
 
 
-####################
-####################
-
-### Motivation:
-
-# - Characteristic polynomial of Polynomial systems
-#   with special types of Symmetries (2xC2 or Ht-4)
-#   can be transformed to a polynomial of lower Order;
-# - Order poly(S, E4, sp, ps) = 1/4 * Order(x1, x2, x3, x4);
-# - Order poly(s1, s2, p1, p2) = 1/2 * Order(x1, x2, x3, x4);
-
-### Aim:
-# - compute poly(S, E4, sp, ps);
-
-
 ### Debug
 x = sqrt(c(2,3,5,7));
 x[3] = - x[3];
@@ -75,6 +60,24 @@ E3 = x1*x2*x3 + x1*x2*x4 + x1*x3*x4 + x2*x3*x4;
 
 ### Poly:
 pP1S1 = toPoly.pm("p1s1^2 - sp*S*p1s1 + ps*sp^2 + E4*S^2 - 4*ps*E4")
+
+# alternative: based only on ps & on E2;
+pP1S1E2 = toPoly.pm("p1s1^2 - (E2 - ps)*S*p1s1 + ps^3 - 2*ps^2*E2 + ps*(E2^2 - 4*E4) + E4*S^2")
+
+
+####################
+####################
+
+### Motivation:
+
+# - Characteristic polynomial of Polynomial systems
+#   with special types of Symmetries (2xC2 or Ht-4)
+#   can be transformed to a polynomial of lower Order;
+# - Order poly(S, E4, sp, ps) = 1/4 * Order(x1, x2, x3, x4);
+# - Order poly(s1, s2, p1, p2) = 1/2 * Order(x1, x2, x3, x4);
+
+### Aim:
+# - compute poly(S, E4, sp, ps);
 
 
 ###################
