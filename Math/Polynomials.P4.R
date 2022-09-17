@@ -4,13 +4,28 @@
 ### [the one and only]
 ###
 ### Polynomials: P[4]
-### v.0.1b-all
+### v.0.1c
 
 
 ### Solve Method for P[4]
 
 # - proper way to solve a P[4]:
 #   based on a C2-decomposition;
+
+
+### Theory
+
+### C2 Symmetry:
+# - let (x1, x2, x3, x4) be a root tuple;
+# - the following permutations remain invariant under
+#   the C2-decomposition:
+#   (x1, _, x3, _), (x3, _, x1, _) = 4 permutations;
+#   (x2, _, x4, _), (x4, _, x2, _) = 4 permutations;
+# => Total = 8 permutations;
+# - Count solutions of initial S4 system = 4! = 24;
+# => Transformed system:
+#    Invariant = 4! / 8 = 3 distinct values;
+# => Characteristic polynomial = Order 3 (e.g. in ps);
 
 
 ####################
