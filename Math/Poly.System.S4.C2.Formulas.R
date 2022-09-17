@@ -7,7 +7,7 @@
 ### S4: Hetero-Symmetric
 ### Useful Formulas
 ###
-### draft v.0.2o
+### draft v.0.2o-edit
 
 
 ### Formulas:
@@ -19,8 +19,9 @@
 #   Poly.System.S4.C2.Symmetric.R;
 #   Poly.System.S4.C2.R;
 #   Poly.System.Hetero.Symmetric.S4.R;
-# - Proper solution of polynomials of order 4:
+# - Proper way to solve polynomials of Order 4:
 #   see Polynomials.P4.R;
+#   (includes solution for all 4 roots)
 
 
 ### Sections
@@ -134,9 +135,9 @@ A + B - sp*S # = 0
 ### A * B =>
 A * B - s1*s2*(p1^2 + p2^2) - p1*p2*(s1^2 + s2^2) # = 0
 A * B - ps*(sp^2 - 2*E4) - E4*(S^2 - 2*ps) # = 0
+A * B - ps*sp^2 - E4*S^2 + 4*ps*E4 # = 0
 
 ### =>
-A*(sp*S - A) - ps*(sp^2 - 2*E4) - E4*(S^2 - 2*ps) # = 0
 A^2 - sp*S*A + ps*sp^2 + E4*S^2 - 4*ps*E4 # = 0
 
 
@@ -154,6 +155,7 @@ A^2 - sp*S*A + ps*sp^2 + E4*S^2 - 4*ps*E4 # = 0
 
 ### Ea: p*s
 ### p1*s2 + p2*s1
+# - same as E3;
 A = p1*s2 + p2*s1;
 B = p1*s1 + p2*s2;
 # =>
