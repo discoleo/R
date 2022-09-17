@@ -7,7 +7,7 @@
 ### S4: Hetero-Symmetric
 ### Useful Formulas
 ###
-### draft v.0.2n-clean
+### draft v.0.2o
 
 
 ### Formulas:
@@ -19,6 +19,8 @@
 #   Poly.System.S4.C2.Symmetric.R;
 #   Poly.System.S4.C2.R;
 #   Poly.System.Hetero.Symmetric.S4.R;
+# - Proper solution of polynomials of order 4:
+#   see Polynomials.P4.R;
 
 
 ### Sections
@@ -53,6 +55,8 @@ S  = s1 + s2;
 E4 = p1 * p2;
 # used for Reductions:
 p1s1 = p1*s1 + p2*s2;
+# Other:
+cp1s1 = ps*sp^2 + E4*S^2 - 4*ps*E4;
 
 E2 = x1*x2 + x1*x3 + x1*x4 + x2*x3 + x2*x4 + x3*x4;
 E3 = x1*x2*x3 + x1*x2*x4 + x1*x3*x4 + x2*x3*x4;
@@ -60,6 +64,7 @@ E3 = x1*x2*x3 + x1*x2*x4 + x1*x3*x4 + x2*x3*x4;
 
 ### Poly:
 pP1S1 = toPoly.pm("p1s1^2 - sp*S*p1s1 + ps*sp^2 + E4*S^2 - 4*ps*E4")
+pP1S1c = toPoly.pm("p1s1^2 - sp*S*p1s1 + cp1s1")
 
 # alternative: based only on ps & on E2;
 pP1S1E2 = toPoly.pm("p1s1^2 - (E2 - ps)*S*p1s1 + ps^3 - 2*ps^2*E2 + ps*(E2^2 - 4*E4) + E4*S^2")
@@ -478,8 +483,111 @@ E21a^4 + 2*(sp - ps)*S*E21a^3 +
 	+ ps^6 + 8*ps^5*sp + 14*ps^4*sp^2 - 8*ps^3*sp^3 + ps^2*sp^4 # = 0
 
 
-#################
-#################
+##############
+##############
+
+##############
+###  E31a  ###
+##############
+
+### Formula for:
+E31a = x1^3*x2 + x2^3*x3 + x3^3*x4 + x4^3*x1
+
+### Derivation:
+
+### Step 1:
+A1 = x1*x2 + x3*x4;
+B1 = x2*x3 + x4*x1;
+
+### A1 + B1 =>
+A1 + B1 - ps # = 0
+
+### A1 * B1 =>
+# Reduction =>
+A1 * B1 + S*p1s1 - sp*S^2 + sp*ps + 4*E4 # = 0
+
+### Other:
+(s1^2 - 2*p1)*A1 - (x1^3*x2 + x3^3*x4) - p1*B1 # = 0
+(s2^2 - 2*p2)*B1 - (x2^3*x3 + x4^3*x1) - p2*A1 # = 0
+# =>
+(s1^2 - p1)*A1 - (x1^3*x2 + x3^3*x4) - p1*ps # = 0
+(s2^2 - p2)*B1 - (x2^3*x3 + x4^3*x1) - p2*ps # = 0
+
+### Sum (Eqs Other) =>
+E31a - (s1^2*A1 + s2^2*B1) + (p1*A1 + p2*B1) + ps*sp # = 0
+
+
+### Steps 2 & 3:
+A2 = (s1^2 - p1)*A1 + (s2^2 - p2)*B1;
+B2 = (s2^2 - p2)*A1 + (s1^2 - p1)*B1;
+
+### Eq E31a:
+E31a - A2 + ps*sp # = 0
+
+
+### A2 + B2 =>
+A2 + B2 - (S^2 - 2*ps - sp)*(A1 + B1) # = 0
+A2 + B2 - ps*(S^2 - 2*ps - sp) # = 0
+
+### A2 * B2 =>
+A2 * B2 - (s1^2 - p1)*(s2^2 - p2)*(A1^2 + B1^2) - A1*B1*((s1^2 - p1)^2 + (s2^2 - p2)^2) # = 0
+A2 * B2 - (ps^2 - (p1*s2^2 + p2*s1^2) + E4)*(ps^2 - 2*A1*B1) +
+	- A1*B1*(S^4 - 4*ps*S^2 + 2*ps^2 - 2*(p1*s1^2 + p2*s2^2) + p1^2 + p2^2) # = 0
+# Reduction =>
+A2 * B2 - ps^2*S*p1s1 +
+	+ A1*B1*(4*S*p1s1 - S^4 + 4*ps*S^2 - 2*sp*S^2 - sp^2 + 4*E4) +
+	+ (sp*S^2 - sp*ps - ps^2 - E4)*ps^2 # = 0
+
+
+###
+pE = toPoly.pm("E31a + ps*sp"); # A2 = pE;
+pA2 = toPoly.pm("A2^2 + c1*ps*A2 + A2B2");
+pA2B2 = toPoly.pm("ps^2*S*p1s1 - A1B1*(4*S*p1s1 + c2) - c3*ps^2");
+pA1B1 = toPoly.pm("c4 - S*p1s1");
+#
+pR = replace.pm(pA2, pE, "A2");
+pR = replace.pm(pR, pA2B2, "A2B2");
+pR = replace.pm(pR, pA1B1, "A1B1");
+pR = solve.pm(pR, pP1S1c, "p1s1");
+pR = pR$Rez;
+str(pR)
+# = 68 monomials;
+# - but this compact version:
+#   NOT directly usable to solve polynomial systems;
+
+c0 = S^2 + E2; # used internally;
+y  = ps - c0;
+c1 = - S^2 + 2*ps + sp; # = y + 2*E2;
+c2 = - S^4 + 4*ps*S^2 - 2*sp*S^2 - sp^2 + 4*E4;
+# c2 = - y^2 + 4*S^2*y + 4*c0*S^2 + 4*E4;
+c3 = sp*S^2 - sp*ps - ps^2 - E4; # = - c0*y - c0^2 + E2*S^2 - E4;
+c4 = sp*S^2 - sp*ps - 4*E4; # = y^2 + c0*y + E2*S^2 - 4*E4;
+
+vars = list(S=S, E4=E4, sp=sp, ps=ps, E31a=E31a, c1=c1, c2=c2, c3=c3, c4=c4, cp1s1=cp1s1);
+eval.pm(pR, vars)
+
+
+### additional substitution: A1*B1 =>
+A2 * B2 - 4*S^2*p1s1^2 +
+	+ (S^4 + 6*sp*S^2 - 4*ps*S^2 + sp^2 - ps^2 - 4*sp*ps - 20*E4)*S*p1s1 +
+	- (sp*S^2 - sp*ps - 4*E4)*(S^4 - 4*ps*S^2 + 2*sp*S^2 - ps^2 + sp^2 - 4*E4) +
+	+ 3*ps^2*E4 - ps^4 # = 0
+# Reduction =>
+A2 * B2 + 
+	+ (S^4 + 2*sp*S^2 - 4*ps*S^2 + sp^2 - ps^2 - 4*sp*ps - 20*E4)*S*p1s1 +
+	- (sp*S^2 - sp*ps - 4*E4)*(S^4 - 4*ps*S^2 + 2*sp*S^2 - ps^2 + sp^2 - 4*E4) +
+	+ 4*S^2*(E4*S^2 - 4*ps*E4 + ps*sp^2) + 3*ps^2*E4 - ps^4 # = 0
+#
+A2 * B2 + 
+	+ (4*ps^2 - 6*c0*ps + c0^2 - 20*E4)*S*p1s1 +
+	- 4*c0*ps^2*S^2 + 6*c0*ps*S^2*E2 + 4*c0*E4*S^2 - c0^2*S^2*E2 +
+	+ 8*ps^3*S^2 - 8*ps^2*S^2*E2 - 32*ps*E4*S^2 +
+	- ps^4 + 2*c0*ps^3 - 3*c0^2*ps^2 + c0^3*ps +
+	+ 7*ps^2*E4 - 16*E4^2 - 12*c0*ps*E4 + 4*c0^2*E4 # = 0
+
+
+####################
+####################
 
 ################
 ### E3-Types ###
