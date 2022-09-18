@@ -6,7 +6,7 @@
 ### Polynomial Systems
 ### S4: C2-Hetero-Symmetric
 ###
-### draft v.0.2b
+### draft v.0.2b-fix
 
 
 ####################
@@ -571,7 +571,7 @@ A1^2 + (2*s2*p1 - s1^2*s2)*A1 + p1^2*s2^2 + p2*s1^4 - 4*s1^2*p1*p2 # = 0
 A2^2 + (2*s1*p2 - s2^2*s1)*A2 + p2^2*s1^2 + p1*s2^4 - 4*s2^2*p1*p2 # = 0
 
 ### Solution Tr. System:
-s2^2*p1^3 + 2*s2*A*p1^2 + (A^2 - 4*s1^2*E4 - s1^2*s2*A)*p1 + E4*s1^4 # = 0
+3*s2^2*p1^2 - (s1^2*s2^2 - 2*s2*A1 + 4*s1*A2)*p1 - A1^2 + s1^3*A2 # = 0
 
 ### Debug:
 x = sqrt(c(2,3,5,7));
