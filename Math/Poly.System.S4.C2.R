@@ -6,7 +6,7 @@
 ### Polynomial Systems
 ### S4: C2-Hetero-Symmetric
 ###
-### draft v.0.1i-refactor2
+### draft v.0.2a
 
 
 ####################
@@ -261,6 +261,7 @@ cat(p, sep = rep("\n", length(p)))
 
 
 ######################
+######################
 
 ######################
 ### Eq 4: Variants ###
@@ -333,4 +334,165 @@ p2*s1 + p1*s2 - R3 # = 0
 p1*p2 - R4 # = 0
 
 # TODO: solve;
+
+
+############################
+############################
+
+### System:
+# x1^n1 + x2^n1 = R1
+# y1^n2 + y2^n2 = R2
+# x1^n3 * y1^n4 + x2^n3 * y2^n4 = R3
+# x1*x2*y1*y2 = R4
+
+### Symmetries:
+# - if (x1, x2, y1, y2) is a solution,
+#   so is also the C2 permutation: (x2, x1, y2, y1);
+
+### Case:
+# n1 = n2 = 1;
+# n3 = 2; n4 = 1;
+
+### Solution:
+
+### Transform:
+s1 = x1 + x2; s2 = y1 + y2;
+p1 = x1 * x2; p2 = y1 * y2;
+
+A = x1^2*y1 + x2^2*y2;
+B = x1^2*y2 + x2^2*y1;
+
+### A + B =>
+A + B - (y1 + y2)*(x1^2 + x2^2) # = 0
+A + B - s2*(s1^2 - 2*p1) # = 0
+A + B + 2*s2*p1 - s1^2*s2 # = 0
+
+### A * B =>
+A * B - p1^2*(y1^2 + y2^2) - p2*(x1^4 + x2^4) # = 0
+A * B - p1^2*(s2^2 - 2*p2) - p2*(s1^4 - 4*p1*s1^2 + 2*p1^2) # = 0
+A * B - p1^2*s2^2 - p2*(s1^4 - 4*p1*s1^2) # = 0
+A * B - p1^2*s2^2 - p2*s1^4 + 4*s1^2*E4 # = 0
+
+# =>
+A^2 + (2*s2*p1 - s1^2*s2)*A + p1^2*s2^2 + p2*s1^4 - 4*s1^2*E4 # = 0
+
+### Transformed System:
+s1 - R1 # = 0
+s2 - R2 # = 0
+A - R3 # = 0
+A^2 + (2*s2*p1 - s1^2*s2)*A + p1^2*s2^2 + p2*s1^4 - 4*s1^2*E4 # = 0
+p1*p2 - R4 # = 0
+
+### Solution Tr. System:
+s2^2*p1^3 + 2*s2*A*p1^2 + (A^2 - 4*s1^2*E4 - s1^2*s2*A)*p1 + E4*s1^4 # = 0
+
+### Debug:
+x1 = x[1]; x2 = x[3]; y1 = x[2]; y2 = x[4];
+R1 = x1 + x2; R2 = y1 + y2;
+R3 = x1^2*y1 + x2^2*y2;
+R4 = x1*x2*y1*y2;
+
+### Solver:
+
+solve.S4C2.E21a = function(R, debug=TRUE, all=FALSE) {
+	s1 = R[1]; s2 = R[2]; E21a = R[3]; E4 = R[4];
+	coeff = c(s2^2, 2*s2*E21a, (E21a^2 - s1^2*s2*E21a - 4*s1^2*E4), E4*s1^4);
+	p1 = roots(coeff);
+	if(debug) print(p1);
+	# Step 2:
+	x1 = sapply(p1, function(p) roots(c(1, -s1, p)));
+	x1 = as.vector(x1);
+	x2 = s1 - x1;
+	# Step 3: robust
+	# p1, p2 = NOT needed;
+	y1 = (x2^2*s2 - E21a) / (x2^2 - x1^2);
+	y2 = s2 - y1;
+	#
+	sol = cbind(x1, x2, y1, y2);
+	if(all) sol = rbind(sol, sol[ , c(2,1,4,3)]);
+	return(sol);
+}
+test.S4C2.E21a = function(sol, R = NULL, n=c(2,1)) {
+	x1 = sol[,1]; x2 = sol[,2];
+	y1 = sol[,3]; y2 = sol[,4];
+	err1 = x1 + x2; err2 = y1 + y2;
+	err3 = x1^n[1]*y1^n[2] + x2^n[1]*y2^n[2];
+	err4 = x1*x2*y1*y2;
+	err = rbind(err1, err2, err3, err4);
+	if( ! is.null(R)) {
+		err = err - R;
+	}
+	err = round0(err);
+	return(err);
+}
+
+### Examples:
+
+### Ex 1:
+R = c(-2,-3,5,-1)
+sol = solve.S4C2.E21a(R)
+
+test.S4C2.E21a(sol)
+
+poly.calc(sol[,1]) * 9
+
+
+### Ex 2:
+R = c(1,-2,3,-1)
+sol = solve.S4C2.E21a(R)
+
+test.S4C2.E21a(sol)
+
+
+### Ex 3: b4 = 0
+s1 = 2;
+R = c(s1,1,3*s1^2/2, -2)
+sol = solve.S4C2.E21a(R)
+
+test.S4C2.E21a(sol)
+
+poly.calc(sol[,1])
+
+x = sol[,1];
+32 - 88*x - 4*x^2 + 40*x^3 - 6*x^5 + x^6
+
+
+### Ex 4: b4 = 0
+s1 = 2;
+R = c(s1,1,3*s1^2/2, 1/4)
+sol = solve.S4C2.E21a(R)
+
+test.S4C2.E21a(sol)
+
+x = sol[,1];
+-4 - 16*x - 40*x^2 + 40*x^3 - 6*x^5 + x^6
+
+
+### Classic Poly:
+
+s1 = R[1]; s2 = R[2]; R3 = R[3]; E4 = R[4];
+x1 = sol[,1];
+
+s2^2*x1^6 - 3*s1*s2^2*x1^5 + (3*s1^2*s2^2 - 2*R3*s2)*x1^4 +
+	- s1*s2*(s1^2*s2 - 4*R3)*x1^3 - (3*R3*s1^2*s2 + 4*s1^2*E4 - R3^2)*x1^2 +
+	+ (R3*s1^3*s2 + 4*s1^3*E4 - R3^2*s1)*x1 - s1^4*E4 # = 0
+
+### Derivation:
+
+nx = 2; ny = 1;
+pX = toPoly.pm("s1 - x1");
+pY = toPoly.pm("s2 - y1");
+pE = toPoly.pm("x1^nx*y1^ny + x2^nx*y2^ny - R3");
+pE = replace.pm(pE, pX, "x2");
+pE = replace.pm(pE, pY, "y2");
+pE4 = toPoly.pm("x1*x2*y1*y2 - E4")
+pE4 = replace.pm(pE4, pX, "x2");
+pE4 = replace.pm(pE4, pY, "y2");
+#
+pR = solve.pm(pE, pE4, "y1");
+pR = pR$Rez;
+pR = sort.pm(pR, "x1", xn2 = c("s1", "s2", "E4"))
+str(pR);
+
+print.pm(pR, lead="x1", sort=F)
 
