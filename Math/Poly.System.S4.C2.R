@@ -6,7 +6,7 @@
 ### Polynomial Systems
 ### S4: C2-Hetero-Symmetric
 ###
-### draft v.0.2a
+### draft v.0.2a-special
 
 
 ####################
@@ -396,7 +396,27 @@ R4 = x1*x2*y1*y2;
 
 solve.S4C2.E21a = function(R, debug=TRUE, all=FALSE) {
 	s1 = R[1]; s2 = R[2]; E21a = R[3]; E4 = R[4];
-	coeff = c(s2^2, 2*s2*E21a, (E21a^2 - s1^2*s2*E21a - 4*s1^2*E4), E4*s1^4);
+	# Special Cases:
+	isSpecial = FALSE;
+	if(round0(s1^2*s2 - 4*E21a) == 0) {
+		isSpecial = TRUE;
+		warning("Special case!");
+		x = s1/2;
+		y = roots(c(1, -s2, E4 / x^2));
+		sol0 = cbind(x1=x, x2=x, y1=y[1], y2=y[2]);
+		# 2nd Set:
+		if(round0(s1^2 - 16*E4) == 0) {
+			# another set: x1 == x3;
+			coeff = c(1, s1^2);
+		} else {
+			coeff = c(4, 3*s1^2, -16*s1^2*E4);
+		}
+		# Note: includes also the permutation;
+		# - but useful for generating the Classic polynomial;
+	} else {
+		coeff = c(s2^2, 2*s2*E21a, (E21a^2 - s1^2*s2*E21a - 4*s1^2*E4), E4*s1^4);
+	}
+	#
 	p1 = roots(coeff);
 	if(debug) print(p1);
 	# Step 2:
@@ -409,7 +429,8 @@ solve.S4C2.E21a = function(R, debug=TRUE, all=FALSE) {
 	y2 = s2 - y1;
 	#
 	sol = cbind(x1, x2, y1, y2);
-	if(all) sol = rbind(sol, sol[ , c(2,1,4,3)]);
+	if(isSpecial) sol = rbind(sol, sol0);
+	if(all && ! isSpecial) sol = rbind(sol, sol[ , c(2,1,4,3)]);
 	return(sol);
 }
 test.S4C2.E21a = function(sol, R = NULL, n=c(2,1)) {
@@ -468,6 +489,21 @@ x = sol[,1];
 -4 - 16*x - 40*x^2 + 40*x^3 - 6*x^5 + x^6
 
 
+### Ex 5: Special Case
+R = c(-2,1,1, 1/4)
+sol = solve.S4C2.E21a(R)
+
+test.S4C2.E21a(sol)
+
+
+### Ex 6: Special Case
+R = c(-2,1,1, 3/4)
+sol = solve.S4C2.E21a(R)
+
+test.S4C2.E21a(sol)
+
+
+#################
 ### Classic Poly:
 
 s1 = R[1]; s2 = R[2]; R3 = R[3]; E4 = R[4];
