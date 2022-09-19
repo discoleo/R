@@ -6,7 +6,7 @@
 ### Polynomial Systems
 ### S4: C2-Hetero-Symmetric
 ###
-### draft v.0.2c
+### draft v.0.2c-clean
 
 
 ####################
@@ -34,6 +34,8 @@ test.S4C2.E2aP1 = function(sol, R = NULL, n=c(2,1)) {
 	err = round0(err);
 	return(err);
 }
+
+# Generate Classic Polynomial
 classicPoly.E2a = function(nx, ny, print=TRUE) {
 	pX = toPoly.pm("s1 - x1");
 	pY = toPoly.pm("s2 - y1");
@@ -51,6 +53,25 @@ classicPoly.E2a = function(nx, ny, print=TRUE) {
 	if(print) print.pm(pR, lead="x1");
 	invisible(pR);
 }
+classicPoly.E2ax2 = function(nx, ny, print=FALSE) {
+	pX = toPoly.pm("s1 - x1");
+	pY = toPoly.pm("s2 - y1");
+	pE1 = toPoly.pm("x1^nx*y1^ny + x2^nx*y2^ny - R3");
+	pE1 = replace.pm(pE1, pX, "x2");
+	pE1 = replace.pm(pE1, pY, "y2");
+	pE2 = toPoly.pm("x1^ny*y1^nx + x2^ny*y2^nx - R4");
+	pE2 = replace.pm(pE2, pX, "x2");
+	pE2 = replace.pm(pE2, pY, "y2");
+	
+	pR = solve.pm(pE1, pE2, "y1");
+	pR = pR$Rez;
+	pR = orderVars.pm(pR, c("R3", "R4"), last=FALSE);
+	pR = sort.pm(pR, "x1", c("s1", "s2"));
+	# pR$coeff = - pR$coeff;
+	if(print) print.pm(pR, lead="x1");
+	invisible(pR);
+}
+
 
 ####################
 ####################
@@ -544,21 +565,9 @@ s2^2*x1^6 - 3*s1*s2^2*x1^5 + (3*s1^2*s2^2 - 2*R3*s2)*x1^4 +
 ### Derivation:
 
 nx = 2; ny = 1;
-pX = toPoly.pm("s1 - x1");
-pY = toPoly.pm("s2 - y1");
-pE = toPoly.pm("x1^nx*y1^ny + x2^nx*y2^ny - R3");
-pE = replace.pm(pE, pX, "x2");
-pE = replace.pm(pE, pY, "y2");
-pE4 = toPoly.pm("x1*x2*y1*y2 - E4")
-pE4 = replace.pm(pE4, pX, "x2");
-pE4 = replace.pm(pE4, pY, "y2");
-#
-pR = solve.pm(pE, pE4, "y1");
-pR = pR$Rez;
+pR = classicPoly.E2a(nx, ny);
 pR = sort.pm(pR, "x1", xn2 = c("s1", "s2", "E4"))
 str(pR);
-
-print.pm(pR, lead="x1", sort=F)
 
 
 ############################
@@ -828,9 +837,9 @@ pDiv = toPoly.pm("3*s2^2*p1^2 - (s1^2*s2^2 - 2*s2*A1 + 4*s1*A2)*p1 - A1^2 + s1^3
 div.pm(pR, pDiv, "s1")
 toCoeff(pDiv, "p1")
 
-
+### Factorization (workout)
 # Coefficient b1:
-# pR = full P[4];
+# pR = full P[4]; # before div;
 tmp = pR[pR$p1 == 1, ]
 tmp$coeff = tmp$coeff * 3;
 tmp$p1 = 0; tmp = drop.pm(tmp);
