@@ -6,7 +6,7 @@
 ### Polynomial Systems
 ### S4: C2-Hetero-Symmetric
 ###
-### draft v.0.2c-clean
+### draft v.0.2c-special
 
 
 ####################
@@ -625,6 +625,9 @@ s2^2*p1^4 - 4*E4*p1^3 + 3*s1*(3*s1*E4 + s2*A)*p1^2 +
 64*s2^2*p1^4 - 256*E4*p1^3 + 24*s1^2*(24*E4 + s1^2*s2^2)*p1^2 +
 	- s1^4*(6*64*E4 + 7*s1^2*s2^2)*p1 + 64*s1^6*E4 # = 0
 
+s1^2*s2^2 - 16*E4
+
+
 solve.S4C2.E31a = function(R, debug=TRUE, all=FALSE) {
 	s1 = R[1]; s2 = R[2]; E31a = R[3]; E4 = R[4];
 	# Special Cases:
@@ -635,11 +638,11 @@ solve.S4C2.E31a = function(R, debug=TRUE, all=FALSE) {
 		x = s1/2;
 		y = roots(c(1, -s2, E4 / x^2));
 		sol0 = cbind(x1=x, x2=x, y1=y[1], y2=y[2]);
+		if(all) sol0 = rbind(sol0, sol0[, c(2,1,4,3)]);
 		# 2nd Set:
-		if(round0(1) == 0) {
-			# TODO:
+		if(round0((s1*s2)^2 - 16*E4) == 0) {
 			# another set: x1 == x3;
-			coeff = c();
+			coeff = c(4, s1^2, 4*s1^4);
 		} else {
 			coeff = c(16*s2^2, 4*s1^2*s2^2 - 64*E4, 7*s1^4*s2^2 + 128*s1^2*E4, - 64*s1^4*E4);
 		}
@@ -681,13 +684,22 @@ test.S4C2.E31a(sol)
 
 ### Ex 2: Special Case
 s1 = 2
-R = c(s1,-3, -3*s1^3/8, -1)
+R = c(s1, -3, -3*s1^3/8, -1)
 sol = solve.S4C2.E31a(R)
 
 test.S4C2.E31a(sol)
 
 
-### Ex 3:
+### Ex 3: Special Case
+s1 = 2; s2 = -3;
+R = c(s1, s2, s1^3*s2/8, (s1*s2)^2 / 16);
+sol = solve.S4C2.E31a(R)
+print(R)
+
+test.S4C2.E31a(sol)
+
+
+### Ex 4:
 R = c(1,-2,5, -6)
 sol = solve.S4C2.E31a(R)
 
