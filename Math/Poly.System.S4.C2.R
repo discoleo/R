@@ -6,7 +6,7 @@
 ### Polynomial Systems
 ### S4: C2-Hetero-Symmetric
 ###
-### draft v.0.2c-special
+### draft v.0.2d
 
 
 ####################
@@ -21,12 +21,14 @@ source("Poly.System.S4.C2.Helper.R")
 #   Poly.System.S4.C2.Helper.R;
 
 
-test.S4C2.E2aP1 = function(sol, R = NULL, n=c(2,1)) {
+test.S4C2.E2aP1 = function(sol, R = NULL, n=c(2,1), type=0) {
 	x1 = sol[,1]; x2 = sol[,2];
 	y1 = sol[,3]; y2 = sol[,4];
 	err1 = x1 + x2; err2 = y1 + y2;
 	err3 = x1^n[1]*y1^n[2] + x2^n[1]*y2^n[2];
-	err4 = x1*x2*y1*y2;
+	err4 = if(type == 0) { x1*x2*y1*y2; }
+		else if(type == 1) { x1*x2 + y1*y2; }
+		else NA;
 	err = rbind(err1, err2, err3, err4);
 	if( ! is.null(R)) {
 		err = err - R;
@@ -622,12 +624,6 @@ s2^2*p1^4 - 4*E4*p1^3 + 3*s1*(3*s1*E4 + s2*A)*p1^2 +
 
 ### Solver:
 
-64*s2^2*p1^4 - 256*E4*p1^3 + 24*s1^2*(24*E4 + s1^2*s2^2)*p1^2 +
-	- s1^4*(6*64*E4 + 7*s1^2*s2^2)*p1 + 64*s1^6*E4 # = 0
-
-s1^2*s2^2 - 16*E4
-
-
 solve.S4C2.E31a = function(R, debug=TRUE, all=FALSE) {
 	s1 = R[1]; s2 = R[2]; E31a = R[3]; E4 = R[4];
 	# Special Cases:
@@ -687,6 +683,7 @@ s1 = 2
 R = c(s1, -3, -3*s1^3/8, -1)
 sol = solve.S4C2.E31a(R)
 
+print(R)
 test.S4C2.E31a(sol)
 
 
@@ -694,8 +691,8 @@ test.S4C2.E31a(sol)
 s1 = 2; s2 = -3;
 R = c(s1, s2, s1^3*s2/8, (s1*s2)^2 / 16);
 sol = solve.S4C2.E31a(R)
-print(R)
 
+print(R)
 test.S4C2.E31a(sol)
 
 
@@ -716,6 +713,111 @@ s2^2*x1^8 - 4*s1*s2^2*x1^7 + (6*s1^2*s2^2 + 4*E4)*x1^6 - 4*s1*(s1^2*s2^2 + 3*E4)
 	+ (s1^4*s2^2 + 21*s1^2*E4 + 3*R3*s1*s2)*x1^4 - s1^2*(22*s1*E4 + 6*R3*s2)*x1^3 +
 	+ (15*s1^4*E4 + 4*R3*s1^3*s2 - R3^2)*x1^2 +
 	- (6*s1^5*E4 + R3*s1^4*s2 - R3^2*s1)*x1 + s1^6*E4 # = 0
+
+############
+### Variant:
+
+### System:
+# x1 + x2 = R1
+# y1 + y2 = R2
+# x1^3*y1 + x2^3*y2 = R3
+# x1*x2 + y1*y2 = R4
+
+### Transformed System:
+s1 - R1 # = 0
+s2 - R2 # = 0
+A - R3 # = 0
+s2^2*p1^3 - 4*p1^3*p2 + 3*s1*(3*s1*p1*p2 + s2*A)*p1 + s1^6*p2 - 6*s1^4*p1*p2 + A^2 - s1^3*s2*A # = 0
+p1 + p2 - R4 # = 0
+
+### Solution Tr. System:
+4*p1^4 - (9*s1^2 - s2^2 + 4*R4)*p1^3 + (6*s1^4 + 9*s1^2*R4)*p1^2 +
+	- (s1^6 + 6*s1^4*R4 - 3*s1*s2*E31a)*p1 +
+	+ s1^6*R4 - s2*s1^3*E31a + E31a^2 # = 0
+
+
+### Solver:
+
+solve.S4C2.E31aVar = function(R, debug=TRUE, all=FALSE) {
+	s1 = R[1]; s2 = R[2]; E31a = R[3]; R4 = R[4];
+	# Special Cases:
+	isSpecial = FALSE;
+	if(round0(s1^3*s2 - 8*E31a) == 0) {
+		isSpecial = TRUE;
+		warning("Special case!");
+		x = s1/2;
+		y = roots(c(1, -s2, R4 - x^2));
+		sol0 = cbind(x1=x, x2=x, y1=y[1], y2=y[2]);
+		if(all) sol0 = rbind(sol0, sol0[, c(2,1,4,3)]);
+		# 2nd Set:
+		if(round0(s1^2 + s2^2 - 4*R4) == 0) {
+			# another set: x1 == x3;
+			s1sq = s1^2;
+			coeff = c(16, -32*s1sq, s1sq*(16*s1sq + 9*s2^2));
+		} else {
+			coeff = c(64, - 128*s1^2 + 16*s2^2 - 64*R4,
+				4*s1^2*(16*s1^2 + s2^2 + 32*R4), s1^4*(7*s2^2 - 64*R4) );
+		}
+		# Note: includes also the permutation;
+		# - but useful for generating the Classic polynomial;
+	} else {
+		coeff = c(4, - (9*s1^2 - s2^2 + 4*R4), (6*s1^4 + 9*s1^2*R4),
+			- (s1^6 + 6*s1^4*R4 - 3*s1*s2*E31a),
+			s1^6*R4 - s2*s1^3*E31a + E31a^2);
+	}
+	#
+	p1 = roots(coeff);
+	if(debug) print(p1);
+	# Step 2:
+	x1 = sapply(p1, function(p) roots(c(1, -s1, p)));
+	x1 = as.vector(x1);
+	x2 = s1 - x1;
+	# Step 3: robust
+	# p1, p2 = NOT needed;
+	y1 = (x2^3*s2 - E31a) / (x2^3 - x1^3);
+	y2 = s2 - y1;
+	#
+	sol = cbind(x1, x2, y1, y2);
+	if(isSpecial) sol = rbind(sol, sol0);
+	if(all && ! isSpecial) sol = rbind(sol, sol[ , c(2,1,4,3)]);
+	return(sol);
+}
+test.S4C2.E31aVar = function(sol, R=NULL) {
+	test.S4C2.E2aP1(sol=sol, R=R, n=c(3,1), type=1);
+}
+
+### Examples:
+
+### Ex 1:
+R = c(-2,-3,5,-1)
+sol = solve.S4C2.E31aVar(R)
+
+test.S4C2.E31aVar(sol)
+
+
+### Ex 2: Special Case
+s1 = 2
+R = c(s1, -3, -3*s1^3/8, -1)
+sol = solve.S4C2.E31aVar(R)
+
+print(R)
+test.S4C2.E31aVar(sol)
+
+
+### Ex 3: Special Case
+s1 = 2; s2 = -3;
+R = c(s1, s2, s1^3*s2/8, (s1^2 + s2^2) / 4);
+sol = solve.S4C2.E31aVar(R)
+
+print(R)
+test.S4C2.E31aVar(sol)
+
+
+### Ex 4:
+R = c(1,-3,1,-2)
+sol = solve.S4C2.E31aVar(R)
+
+test.S4C2.E31aVar(sol)
 
 
 ############################
