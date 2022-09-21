@@ -6,7 +6,7 @@
 ### Polynomial Systems
 ### S4: C2-Hetero-Symmetric
 ###
-### draft v.0.2d
+### draft v.0.2e
 
 
 ####################
@@ -570,6 +570,100 @@ nx = 2; ny = 1;
 pR = classicPoly.E2a(nx, ny);
 pR = sort.pm(pR, "x1", xn2 = c("s1", "s2", "E4"))
 str(pR);
+
+
+############
+### Variant:
+
+### System:
+# x1 + x2 = R1
+# y1 + y2 = R2
+# x1^2*y1 + x2^2*y2 = R3
+# x1*x2 + y1*y2 = R4
+
+### Transformed System:
+s1 - R1 # = 0
+s2 - R2 # = 0
+A - R3 # = 0
+A^2 + (2*s2*p1 - s1^2*s2)*A + p1^2*s2^2 + p2*s1^4 - 4*s1^2*p1*p2 # = 0
+p1 + p2 - R4 # = 0
+
+### Solution Tr. System:
+(4*s1^2 + s2^2)*p1^2 + (2*s2*A - s1^4 - 4*R4*s1^2)*p1 + R4*s1^4 + A^2 - s1^2*s2*A # = 0
+
+
+### Solver:
+
+solve.S4C2.E21aVar = function(R, debug=TRUE, all=FALSE) {
+	s1 = R[1]; s2 = R[2]; E21a = R[3]; R4 = R[4];
+	# Special Cases:
+	isSpecial = FALSE;
+	if(round0(s1^2*s2 - 4*E21a) == 0) {
+		isSpecial = TRUE;
+		warning("Special case!");
+		x = s1/2;
+		y = roots(c(1, -s2, R4 - x^2));
+		sol0 = cbind(x1=x, x2=x, y1=y[1], y2=y[2]);
+		# 2nd Set:
+		if(round0(s1^2 + s2^2 - 4*R4) == 0) {
+			# another set: x1 == x3;
+			# coeff = c();
+			# Note: redundant; y = s2/2;
+			if(all) sol0 = rbind(sol0, sol0[ , c(2,1,4,3)]);
+			return(sol0);
+		} else {
+			coeff = c(16*s1^2 + 4*s2^2, s1^2*(3*s2^2 - 16*R4));
+		}
+	} else {
+		coeff = c((4*s1^2 + s2^2), (2*s2*E21a - s1^4 - 4*R4*s1^2),
+			R4*s1^4 + E21a^2 - s1^2*s2*E21a);
+	}
+	#
+	p1 = roots(coeff);
+	if(debug) print(p1);
+	# Step 2:
+	x1 = sapply(p1, function(p) roots(c(1, -s1, p)));
+	x1 = as.vector(x1);
+	x2 = s1 - x1;
+	# Step 3: robust
+	# p1, p2 = NOT needed;
+	y1 = (x2^2*s2 - E21a) / (x2^2 - x1^2);
+	y2 = s2 - y1;
+	#
+	sol = cbind(x1, x2, y1, y2);
+	if(isSpecial) sol = rbind(sol, sol0);
+	if(all) sol = rbind(sol, sol[ , c(2,1,4,3)]);
+	return(sol);
+}
+test.S4C2.E21aVar = function(sol, R=NULL) {
+	test.S4C2.E2aP1(sol=sol, R=R, n=c(2,1), type=1);
+}
+
+### Examples:
+
+### Ex 1:
+R = c(-2,-3,5,-1)
+sol = solve.S4C2.E21aVar(R)
+
+test.S4C2.E21aVar(sol)
+
+
+### Ex 2: Special Case
+s1 = 2; s2 = -3;
+R = c(s1, s2, s2*s1^2/4, -1)
+sol = solve.S4C2.E21aVar(R)
+
+print(R)
+test.S4C2.E21aVar(sol)
+
+
+### Ex 3: Special Case
+s1 = 2; s2 = -3;
+R = c(s1, s2, s1^2*s2/4, (s1^2 + s2^2) / 4);
+sol = solve.S4C2.E21aVar(R)
+
+print(R)
+test.S4C2.E21aVar(sol)
 
 
 ############################
