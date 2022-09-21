@@ -7,7 +7,7 @@
 ### S5: Hetero-Symmetric
 ### Useful Formulas
 ###
-### draft v.0.1a-fix
+### draft v.0.1a-test
 
 
 ### Formulas:
@@ -91,4 +91,18 @@ pE5 = toPoly.pm("p1*p2*x5 - 1"); # E5 = 1;
 pR = solve.lpm(pE1, pE5, pE2, pE3, pE4, xn=c("x5", "s2", "s1", "p2"))
 max(pR[[4]]$Rez$p1)
 
+
+###
+# spp = sp + ps; pp4 = p1*p2;
+# - Solvable, but just ordinary P[5];
+pE2 = toPoly.pm("spp + x5*(S - x5) - E2");
+pE3 = toPoly.pm("A + x5*spp - E3");
+pE4 = toPoly.pm("pp4 + x5*A - E4");
+pE5 = toPoly.pm("pp4*x5 - E5");
+
+pE4 = toPoly.pm("x5^2*(E3 - x5*spp) + E5 - E4*x5")
+
+pR = solve.pm(pE2, pE4, xn=c("spp"))
+pR = pR$Rez;
+print.pm(pR, lead="x5") # trivial: ordinary P[5];
 
