@@ -6,7 +6,7 @@
 ### Polynomial Systems: S4
 ### Heterogeneous Symmetric
 ###
-### draft v.0.3d-Eq3-part
+### draft v.0.3d-Eq3-part2
 
 
 
@@ -40,8 +40,10 @@
 
 ### helper functions
 
-library(polynom)
-library(pracma)
+source("Polynomials.Helper.R")
+
+# library(polynom)
+# library(pracma)
 
 # the functions are in the file:
 # Polynomials.Helper.R
@@ -464,12 +466,46 @@ S^6 - 6*E2*S^4 + 6*E3*S^3 - R*S^3 + 9*E2^2*S^2 - 6*E4*S^2 - b^2*S^2 +
 ### Eq 3:
 ### Sum(x1*...) =>
 S4 + b*E11a - R*S # = 0
+### Sum(x2^3*...) =>
+E33a + b*S4 - R*S3 # = 0
+E33 - E33b + b*S4 - R*(S^3 - 3*E2*S + 3*E3) # = 0
+E2^3 + 3*E3^2 - 3*E2*E3*S + 3*E4*S^2 - 3*E2*E4 - E11b^3 + 3*E4*E11b +
+	+ b*S4 - R*(S^3 - 3*E2*S + 3*E3) # = 0
+b^3*E2^3 + 3*b^3*E3^2 - 3*b^3*E2*E3*S - (b*E2 + S4 - R*S)^3 + 3*b^2*E4*(S4 - R*S) +
+	+ 3*b^3*E4*S^2 + b^4*(S^4 - 4*S^2*E2 + 2*E2^2 + 4*S*E3 - 4*E4) +
+	- b^3*R*(S^3 - 3*E2*S + 3*E3) # = 0
+# 92 monomials
+
+# [with some reductions]
+54*E3*E2*S^7 + 27*E2^3*S^6 + 24*E2^2*b*S^6 + 10*E2*b^2*S^6 + b^3*S^6 - 33*E3^2*S^6 +
+	- 9*E3*R*S^6 + 17*R^2*S^6 - 84*E2*E4*S^6 - 159*E3*E2^2*S^5 - 21*E2^2*R*S^5 +
+	+ 21*E3*E2*b*S^5 - 60*E2*R*b*S^5 - 3*E3*b^2*S^5 + 3*R*b^2*S^5 + 96*E3*E4*S^5 +
+	- 24*R*E4*S^5 - 108*E2^4*S^4 - 60*E2^3*b*S^4 - 3*E2^2*b^2*S^4 + b^4*S^4 +
+	+ 192*E3^2*E2*S^4 - 123*E3*E2*R*S^4 + 48*E2*R^2*S^4 - 18*E3^2*b*S^4 +
+	+ 45*E3*R*b*S^4 - 28*R^2*b*S^4 + 240*E2^2*E4*S^4 + 24*E2*b*E4*S^4 + 3*b^2*E4*S^4 +
+	+ 192*E3*E2^3*S^3 - 48*E2^3*R*S^3 + 96*E3*E2^2*b*S^3 - 24*E2^2*R*b*S^3 - R*b^3*S^3 +
+	- 64*E3^3*S^3 + 48*E3^2*R*S^3 - 12*E3*R^2*S^3 + R^3*S^3 - 432*E3*E2*E4*S^3 +
+	+ 96*E2*R*E4*S^3 + 48*R*b*E4*S^3 + 48*E2^5*S^2 + 48*E2^4*b*S^2 - 4*E2*b^4*S^2 +
+	+ 12*E2^3*b^2*S^2 - 176*E2^3*E4*S^2 + 3*b^3*E4*S^2 - 96*E3^2*E2^2*S^2 +
+	+ 48*E3*E2^2*R*S^2 - 6*E2^2*R^2*S^2 - 48*E3^2*E2*b*S^2 + 24*E3*E2*R*b*S^2 +
+	- 3*E2*R^2*b*S^2 - 96*E2^2*b*E4*S^2 - 28*E2*b^2*E4*S^2 + 240*E3^2*E4*S^2 +
+	- 96*E3*R*E4*S^2 - 84*R^2*E4*S^2 + 144*E2*E4^2*S^2 - 48*E3*E2^4*S + 12*E2^4*R*S +
+	+ 4*E3*b^4*S - 48*E3*E2^3*b*S + 12*E2^3*R*b*S - 3*E3*E2*b^3*S + 3*E2*R*b^3*S +
+	- 12*E3*E2^2*b^2*S + 3*E2^2*R*b^2*S + 192*E3*E2^2*E4*S - 48*E2^2*R*E4*S +
+	+ 12*E3*b^2*E4*S - 3*R*b^2*E4*S + 96*E3*E2*b*E4*S - 24*E2*R*b*E4*S - 192*E3*E4^2*S +
+	+ 48*R*E4^2*S - 8*E2^6 - 12*E2^5*b - 6*E2^4*b^2 + 2*E2^2*b^4 + 48*E2^4*E4 - 4*b^4*E4 +
+	+ 3*E3^2*b^3 - 3*E3*R*b^3 + 48*E2^3*b*E4 + 18*E2^2*b^2*E4 - 96*E2^2*E4^2 +
+	- 48*E2*b*E4^2 - 12*b^2*E4^2 + 64*E4^3 # = 0
+
+### Eq 4:
+### Sum(x1*...) =>
+S4 + b*E11a - R*S # = 0
 ### Sum(x3^3*...) =>
 2*E33b + b*E13a - R*S3 # = 0
 ### Sum(x4*...) =>
 E13a + 2*b*E11b - R*S # = 0
 
-# Eq 3d: Eq 3b - b*Eq 3c =>
+# Eq 4d: Eq 4b - b*Eq 4c =>
 2*E33b - R*(S^3 - 3*E2*S + 3*E3) - 2*b^2*E11b + b*R*S # = 0
 2*((E2 - E11a)^3 - 3*E4*(E2 - E11a)) - R*(S^3 - 3*E2*S + 3*E3) - 2*b^2*(E2 - E11a) + b*R*S # = 0
 2*(b*E2 + S4 - R*S)^3 - 6*b^2*E4*(b*E2 + S4 - R*S) +
