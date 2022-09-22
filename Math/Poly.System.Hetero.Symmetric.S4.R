@@ -6,7 +6,7 @@
 ### Polynomial Systems: S4
 ### Heterogeneous Symmetric
 ###
-### draft v.0.3c
+### draft v.0.3d
 
 
 
@@ -26,6 +26,14 @@
 ### TODO:
 # - some proper classification;
 
+
+### Note: C2-Decomposition
+# - it is possible to use the C2-Decomposition
+#   (see Poly.System.S4.C2.Formulas.R),
+#   but it tends to inflate the formulas;
+# - E3 = has a quadratic formula in C2,
+#   and all derived formulas include this additional
+#   quadratic step;
 
 ####################
 ####################
@@ -435,6 +443,28 @@ x4^2 + b*x1 # - R
 # Classic Poly: P[81 - 9] = P[72];
 # S: P[18];
 
+### Eq 1:
+### Sum =>
+S^3 - 3*E2*S + 3*E3 + b*S - 4*R # = 0
+
+### Eq 2:
+### Sum(x2*...) =>
+E31a + b*(S^2 - 2*E2) - R*S # = 0
+### Sum(x1^3*...) =>
+S6 + b*E31a - R*S3 # = 0
+### Diff: Eq2b - b*Eq2a =>
+S6 - R*S3 - b^2*(S^2 - 2*E2) + b*R*S # = 0
+# =>
+S^6 - 6*E2*S^4 + 6*E3*S^3 - R*S^3 + 9*E2^2*S^2 - 6*E4*S^2 - b^2*S^2 +
+	- 12*E2*E3*S + 3*R*E2*S - 2*E2^3 + 3*E3^2 + 6*E2*E4 +
+	- 3*R*E3 + 2*b^2*E2 + b*R*S # = 0
+# alternative: div by Eq 1 =>
+3*E4*S^2 + 3*R*b*S - 3*E2*E3*S - 6*R^2 - b^2*E2 + E2^3 + 3*E3^2 - 3*E2*E4 # = 0
+
+### Eq 3:
+# TODO
+
+
 ### Eq S:
 S^18 - 15*R*S^15 + 48*b^2*S^14 - 126*R*b*S^13 + (222*R^2 - 256*b^3)*S^12 + 609*R*b^2*S^11 +
 	- (1764*R^2*b + 540*b^4)*S^10 + (2158*R^3 + 5061*R*b^3)*S^9 +
@@ -463,6 +493,24 @@ coeff.S4P3.Simple = function(R, b) {
 }
 
 ### TODO;
+
+### Debug:
+b = -2; R = 3;
+x1 = -0.4111558165 - 1.4630834100i;
+x2 = -0.2145644927 + 1.1949483185i;
+x3 = -1.0453736160 - 0.7706148327i;
+x4 = -1.1400069541 - 1.0343850276i;
+x = c(x1, x2, x3, x4);
+#
+s1 = x1 + x3; s2 = x2 + x4;
+p1 = x1 * x3; p2 = x2 * x4;
+ps = s1 * s2; sp = p1 + p2;
+E11a = ps; E11b = sp;
+#
+S  = s1 + s2; E4 = p1 * p2;
+E2 = sp + ps;
+E3 = p1*s2 + p2*s1;
+
 
 
 #############################
@@ -613,6 +661,10 @@ x4^2 + b*x4*x1 + ext # - R
 #####################
 #####################
 #####################
+
+
+### Asymmetric Types
+# TODO: move to separate file;
 
 # and now for the many variants
 # and roots of the asymmetric types!
