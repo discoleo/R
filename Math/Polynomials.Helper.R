@@ -1160,7 +1160,7 @@ eval.lpm = function(p, vals) {
 ##################
 
 ### Solve Variable
-solve.lpm = function(..., xn) {
+solve.lpm = function(..., xn, stop.at=NULL, asBigNum=FALSE) {
 	pL  = list(...);
 	len = length(pL);
 	if(len < 2) return(pL);
@@ -1168,7 +1168,12 @@ solve.lpm = function(..., xn) {
 	pR = list();
 	for(id in seq(len - 1)) {
 		cat(paste0("\nStarting step: ", id, "\n"));
-		tmp = solve.pm(pL[[id]], pL[[id+1]], xn=xn[[id]]);
+		if( ! is.null(stop.at) && id == (len - 1)) {
+			# Stop only during the last elimination;
+			tmp = solve.pm(pL[[id]], pL[[id+1]], xn=xn[[id]], stop.at=stop.at, asBigNum=asBigNum);
+		} else {
+			tmp = solve.pm(pL[[id]], pL[[id+1]], xn=xn[[id]], asBigNum=asBigNum);
+		}
 		pR[[id]] = tmp;
 		pL[[id+1]] = tmp$Rez;
 		idS = id + 2;
@@ -1178,6 +1183,7 @@ solve.lpm = function(..., xn) {
 				warning(paste0("Missing Variable: ", xn[[id]], "; step = ", id));
 				next;
 			}
+			# TODO: reuse powers of tmp$x0, tmp$div;
 			pL[[id2]] = replace.fr.pm(pL[[id2]], tmp$x0, tmp$div, xn=xn[[id]]);
 		}
 	}
@@ -1186,6 +1192,7 @@ solve.lpm = function(..., xn) {
 solve.pm = function(p1, p2, xn, stop.at=NULL, simplify=TRUE, asBigNum=FALSE) {
 	if(missing(xn)) stop("Missing variable name!");
 	if(is.pm(xn)) stop("Invalid variables: Did you mean to use solve.lpm()?");
+	#
 	max1 = max(p1[,xn]); max2 = max(p2[,xn]);
 	if(max1 == 0) stop("No variable!")
 	if(max2 == 0) stop("No variable!")
