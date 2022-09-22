@@ -6,7 +6,7 @@
 ### Polynomial Systems: S4
 ### Heterogeneous Symmetric
 ###
-### draft v.0.3d-Eq3-part2
+### draft v.0.3d-Eq3-part3
 
 
 
@@ -512,6 +512,23 @@ E13a + 2*b*E11b - R*S # = 0
 	+ 2*b^4*(R*S - S4) - b^3*R*(S^3 - 3*E2*S + 3*E3) - 2*b^5*E2 + b^4*R*S # = 0
 
 # TODO
+
+### Alternative Eq:
+# - works only with the Simple system;
+#  (with no additional terms)
+### Diff: (Eq 1 - Eq 3) & (Eq 2 - Eq 4) =>
+(x1 - x3)*(s1^2 - p1) + b*(x2 - x4) # = 0
+(x2 - x4)*(s2^2 - p2) + b*(x3 - x1) # = 0
+# Case: x[i] distinct
+# Prod =>
+(s1^2 - p1)*(s2^2 - p2) + b^2 # = 0
+ps^2 - (p1*s2^2 + p2*s1^2) + E4 + b^2 # = 0
+ps^2 - (S*(p1*s2 + p2*s1) - ps*sp) + E4 + b^2 # = 0
+ps^2 + ps*sp - E3*S + E4 + b^2 # = 0
+E11a*E2 - E3*S + E4 + b^2 # = 0
+(R*S - S4)*E2 - b*E3*S + b*E4 + b^3 # = 0
+# =>
+E2*S^4 - 4*E2^2*S^2 + 2*E2^3 + 4*E2*E3*S - 4*E2*E4 - R*E2*S + b*E3*S - b*E4 - b^3 # = 0
 
 
 ### Eq S:
