@@ -6,7 +6,7 @@
 ### Polynomial Systems: S4
 ### Heterogeneous Symmetric
 ###
-### draft v.0.3d-Eq3-part3
+### draft v.0.3e
 
 
 
@@ -50,14 +50,14 @@ source("Polynomials.Helper.R")
 # - e.g. round0(), round0.p(),
 #   solve.EnAll(), solveEn();
 
-test.S4.Simple = function(sol, R, b, n=2) {
+test.S4.Simple = function(sol, R=NULL, b, n=2) {
 	x1 = sol[,1]; x2 = sol[,2]; x3 = sol[,3]; x4 = sol[,4];
 	err1 = x1^n + b*x2 # - R
 	err2 = x2^n + b*x3 # - R
 	err3 = x3^n + b*x4 # - R
 	err4 = x4^n + b*x1 # - R
 	err = rbind(err1, err2, err3, err4);
-	if( ! missing(R)) err = err - R;
+	if( ! is.null(R)) err = err - R;
 	err = round0(err);
 	return(err);
 }
@@ -529,7 +529,12 @@ E11a*E2 - E3*S + E4 + b^2 # = 0
 (R*S - S4)*E2 - b*E3*S + b*E4 + b^3 # = 0
 # =>
 E2*S^4 - 4*E2^2*S^2 + 2*E2^3 + 4*E2*E3*S - 4*E2*E4 - R*E2*S + b*E3*S - b*E4 - b^3 # = 0
+# Reduction =>
+E2^2*S^2 + b*E2*S^2 - 2*E2^3 - E2*E3*S + 4*E2*E4 - 3*R*E2*S - b*E3*S + b*E4 + b^3 # = 0
 
+### S4:
+# S4 = - E2*S^2 - b*S^2 + 2*E2^2 + E3*S - 4*E4 + 4*R*S;
+# partly "reduced" version; but has 6 monomials!
 
 ### Eq S:
 S^18 - 15*R*S^15 + 48*b^2*S^14 - 126*R*b*S^13 + (222*R^2 - 256*b^3)*S^12 + 609*R*b^2*S^11 +
@@ -544,6 +549,28 @@ S^18 - 15*R*S^15 + 48*b^2*S^14 - 126*R*b*S^13 + (222*R^2 - 256*b^3)*S^12 + 609*R
 
 ###########
 ### Solver:
+
+solve.S4P3.Simple = function(R, b, debug=TRUE) {
+	coeff = coeff.S4P3.Simple(R, b=b);
+	S = roots(coeff);
+	if(debug) print(S);
+	#
+	Ex = Ex.S4P3.Simple(S, R, b);
+	E2 = Ex$E2; E3 = Ex$E3; E4 = Ex$E4;
+	#
+	len = length(S);
+	x1 = sapply(seq(len), function(id) {
+		roots(c(1, -S[id], E2[id], -E3[id], E4[id]));
+	})
+	x1 = as.vector(x1);
+	#
+	x2 = (R - x1^3) / b;
+	x3 = (R - x2^3) / b;
+	x4 = (R - x3^3) / b;
+	#
+	sol = cbind(x1, x2, x3, x4);
+	return(sol);
+}
 coeff.S4P3.Simple = function(R, b) {
 	coeffs = c(
 		1, 0, 0, - 15*R, 48*b^2, - 126*R*b, (222*R^2 - 256*b^3), 609*R*b^2, # S^11
@@ -557,8 +584,93 @@ coeff.S4P3.Simple = function(R, b) {
 	);
 	return(coeffs);
 }
+Ex.S4P3.Simple = function(S, R, b) {
+	### Coefficients
+	c1 = S^3 + b*S - 4*R;
+	c20 = 3*R*b*S - 6*R^2;
+	c2 = c1^2 + 3*c20;
+	c3 = - 3*b^3 - S*b*c1;
+	c4 = (R*c1^3 + 9*R^2*c1^2 + 27*R^3*c1 - 27*S^3*R^3 + 27*R^4) / 9;
+	c5 = - b*c2 - 3*S^2*c3;
+	c33 = 18*S^2 + 3*b;
+	c32 = 27*S*R + 12*b^2 + 9*S*c1;
+	c31 = - 9*b^3 - 27*S^3*R - 4*c2 + 3*b^3 + 3*S^3*c1;
+	#
+	c410 = 3*(3*R^2*S^2 - b^4);
+	c411 = 3*(c1*R + 3*R^2);
+	c412 = 9*R*S;
+	c403 = R^2 - R*S^3;
+	c401 = 3*R^2*S*c1 + R*S*c1^2;
+	#
+	c57 = - 324*R*S - 108*S*c1 + 288*c412;
+	c56 = - 324*R*S*b + 108*c3 + 1728*c403 - 288*c411 + 144*b*c412;
+	c55 = - 2430*R^2*S^2 + 1836*R*S^2*c1 + 18*S^2*c1^2 + 1296*b*c403 + 288*c410 - 144*b*c411 +
+		+ 432*R*S*c412 + 18*b^2*c412 - 48*S*c1*c412;
+	c54 = - 972*R^2*S^2*b + 1404*R*S^2*b*c1 - 108*R*S*c3 - 36*S*c1*c3 - 576*c401 +
+		+ 324*b^2*c403 + 144*b*c410 - 432*R*S*c411 - 18*b^2*c411 + 48*S*c1*c411 +
+		+ 216*R*S*b*c412 - 24*S*b*c1*c412 + 48*c3*c412;
+	c53 = - 2187*R^3*S^3 + 405*R^2*S^3*c1 + 324*R*S^2*b^2*c1 - 9*R*S^3*c1^2 - S^3*c1^3 +
+		- 108*R*S*b*c3 + 18*c3^2 + 576*c4 - 432*b*c401 + 27*b^3*c403 + 432*R*S*c410 +
+		+ 18*b^2*c410 - 48*S*c1*c410 - 216*R*S*b*c411 + 24*S*b*c1*c411 - 48*c3*c411 +
+		+ 27*R*S*b^2*c412 - 3*S*b^2*c1*c412 + 24*b*c3*c412;
+	c52 = - 729*R^3*S^3*b + 162*R^2*S^3*b*c1 + 27*R*S^2*b^3*c1 - 9*R*S^3*b*c1^2 - 405*R^2*S^2*c3 +
+		+ 18*R*S^2*c1*c3 + 3*S^2*c1^2*c3 + 432*b*c4 - 108*b^2*c401 + 216*R*S*b*c410 +
+		- 24*S*b*c1*c410 + 48*c3*c410 - 27*R*S*b^2*c411 + 3*S*b^2*c1*c411 - 24*b*c3*c411 + 3*b^2*c3*c412;
+	c51 = - 162*R^2*S^2*b*c3 + 18*R*S^2*b*c1*c3 - 9*R*S*c3^2 - 3*S*c1*c3^2 + 108*b^2*c4 +
+		- 9*b^3*c401 + 27*R*S*b^2*c410 - 3*S*b^2*c1*c410 + 24*b*c3*c410 - 3*b^2*c3*c411;
+	c50 = - 9*R*S*b*c3^2 + c3^3 + 9*b^3*c4 + 3*b^2*c3*c410;
+	#
+	c57 = c57 - 36*c32 + 6*c33^2;
+	c56 = c56 - 36*c31 - 6*c33*c32 + c57*c33/6;
+	c55 = c55 - 36*c5 - 6*c33*c31 - c57*c32/6 + c56*c33/6;
+	c54 = c54 - 6*c33*c5 - c57*c31/6 - c56*c32/6 + c55*c33/6;
+	c53 = c53 - c57*c5/6 - c56*c31/6 - c55*c32/6 + c54*c33/6;
+	c52 = c52 - c56*c5/6 - c55*c31/6 - c54*c32/6;
+	c51 = c51 - c55*c5/6 - c54*c31/6;
+	c50 = c50 - c54*c5/6;
+	### E2:
+	E2div = 36*c51^3 - 72*c50*c51*c52 + 36*c50^2*c53 - 6*c52^2*c53*c5 + 6*c51*c53^2*c5 +
+		- 6*c52^3*c31 + 18*c51*c52*c53*c31 - 12*c50*c53^2*c31 + c53^3*c31^2 + 6*c51*c52^2*c32 +
+		- 12*c51^2*c53*c32 - c53^3*c5*c32 - c52*c53^2*c31*c32 + c51*c53^2*c32^2 +
+		+ 6*c51^2*c52*c33 - 6*c50*c52^2*c33 - 6*c50*c51*c53*c33 - c52*c53^2*c5*c33 +
+		- c52^2*c53*c31*c33 + 2*c51*c53^2*c31*c33 + c51*c52*c53*c32*c33 - c50*c53^2*c32*c33 +
+		+ c51^2*c53*c33^2 - c50*c52*c53*c33^2;
+	#
+	E2x0 = 36*c50*c51^2 - 36*c50^2*c52 - 6*c52^3*c5 + 12*c51*c52*c53*c5 - 6*c50*c53^2*c5 +
+		+ 6*c50*c52*c53*c31 + c53^3*c5*c31 + 6*c50*c52^2*c32 - 12*c50*c51*c53*c32 +
+		- c52*c53^2*c5*c32 + c50*c53^2*c32^2 + 6*c50*c51*c52*c33 - 6*c50^2*c53*c33 +
+		- c52^2*c53*c5*c33 + c51*c53^2*c5*c33 + c50*c53^2*c31*c33 + c50*c52*c53*c32*c33 +
+		+ c50*c51*c53*c33^2;
+	E2 = -E2x0 / E2div;
+	### E4
+	E4 = (- 3*E2^3 + 3*(c1*S + b^2)*E2 - c2) / (9*(S^2 - E2));
+	E3 = E2*S - c1/3;
+	#
+	return(list(E2=E2, E3=E3, E4=E4));
+}
+test.S4P3.Simple = function(sol, b, R=NULL) {
+	test.S4.Simple(sol, R=R, b=b, n=3);
+}
 
-### TODO;
+# TODO:
+# - debug wrong/FALSE roots: 24 pairs?
+# - Diff eqs: some of the roots may be wrong:
+#   Case: x1 == x3 or x2 == x4; may need a separate solver;
+
+### Examples:
+
+### Ex 1:
+R = -2; b = 3;
+sol = solve.S4P3.Simple(R, b)
+
+test.S4P3.Simple(sol, b=b)
+
+### Ex 2:
+R = 3; b = 1;
+sol = solve.S4P3.Simple(R, b)
+
+test.S4P3.Simple(sol, b=b)
+
 
 ### Debug:
 b = -2; R = 3;
