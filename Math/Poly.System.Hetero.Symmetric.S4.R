@@ -6,7 +6,7 @@
 ### Polynomial Systems: S4
 ### Heterogeneous Symmetric
 ###
-### draft v.0.3d
+### draft v.0.3d-Eq3-part
 
 
 
@@ -462,6 +462,19 @@ S^6 - 6*E2*S^4 + 6*E3*S^3 - R*S^3 + 9*E2^2*S^2 - 6*E4*S^2 - b^2*S^2 +
 3*E4*S^2 + 3*R*b*S - 3*E2*E3*S - 6*R^2 - b^2*E2 + E2^3 + 3*E3^2 - 3*E2*E4 # = 0
 
 ### Eq 3:
+### Sum(x1*...) =>
+S4 + b*E11a - R*S # = 0
+### Sum(x3^3*...) =>
+2*E33b + b*E13a - R*S3 # = 0
+### Sum(x4*...) =>
+E13a + 2*b*E11b - R*S # = 0
+
+# Eq 3d: Eq 3b - b*Eq 3c =>
+2*E33b - R*(S^3 - 3*E2*S + 3*E3) - 2*b^2*E11b + b*R*S # = 0
+2*((E2 - E11a)^3 - 3*E4*(E2 - E11a)) - R*(S^3 - 3*E2*S + 3*E3) - 2*b^2*(E2 - E11a) + b*R*S # = 0
+2*(b*E2 + S4 - R*S)^3 - 6*b^2*E4*(b*E2 + S4 - R*S) +
+	+ 2*b^4*(R*S - S4) - b^3*R*(S^3 - 3*E2*S + 3*E3) - 2*b^5*E2 + b^4*R*S # = 0
+
 # TODO
 
 
@@ -510,6 +523,8 @@ E11a = ps; E11b = sp;
 S  = s1 + s2; E4 = p1 * p2;
 E2 = sp + ps;
 E3 = p1*s2 + p2*s1;
+#
+S4 = sum(x^4);
 
 
 
