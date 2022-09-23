@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric
 ### Leading 1, NL Mixed: V3
 ###
-### draft v.0.1a
+### draft v.0.1a-theory
 
 
 ### Type L1 NLm V3
@@ -17,6 +17,7 @@
 ### Subtypes:
 # V3a: x1^n + b*x1*x2*x3 = R
 # V3b: x1^n + b*x2*x3*x4 = R
+# V3c: x1^n + b*x1*x2*x4 = R
 
 
 ####################
@@ -38,6 +39,24 @@ source("Polynomials.Helper.R")
 
 #############################
 #############################
+
+### Theory
+
+### Type V3a:
+# TODO: Theory
+
+
+### Type V3c
+# - is trivially decomposable:
+(x1^n - x3^n) + b*x2*x4*(x1 - x3) # = 0
+(x2^n - x4^n) + b*x1*x3*(x2 - x4) # = 0
+(x1^n + x3^n) + b*x2*x4*(x1 + x3) - 2*R # = 0
+(x2^n + x4^n) + b*x1*x3*(x2 + x4) - 2*R # = 0
+# TODO: Theory & C2-Decomposition;
+
+
+###############################
+###############################
 
 ##################
 ### Type: V3a  ###
