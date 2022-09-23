@@ -7,7 +7,7 @@
 ### S5: Hetero-Symmetric
 ### Useful Formulas
 ###
-### draft v.0.1a-test
+### draft v.0.1a-E3
 
 
 ### Formulas:
@@ -53,13 +53,20 @@ E3 = p1*s2 + p2*s1 + x5*(sp + ps);
 # E4 = x1*x2*x3*x4 + x1*x2*x3*x5 + x1*x2*x4*x5 + x1*x3*x4*x5 + x2*x3*x4*x5;
 E4 = p1*p2 + x5*(p1*s2 + p2*s1);
 
+### E2:
 E11a = x1*x2 + x2*x3 + x3*x4 + x4*x5 + x5*x1;
 E11b = x1*x3 + x2*x4 + x3*x5 + x4*x1 + x5*x2;
 
 E11a + E11b - E2 # = 0
 
+### E3:
+E111a = x1*x2*x3 + x2*x3*x4 + x3*x4*x5 + x4*x5*x1 + x5*x1*x2;
+E111b = x1*x2*x4 + x2*x3*x5 + x3*x4*x1 + x4*x5*x2 + x5*x1*x3;
+
+E111a + E111b - E3 # = 0
+
 ### Note:
-# - the remaining cyclic permutations equal E11b & E11a;
+# - the remaining cyclic permutations (E2) equal E11b & E11a;
 #   Perm(S5, by = 3) = rev(E11b) = E11b;
 #   Perm(S5, by = 4) = rev(E11a) = E11a;
 
