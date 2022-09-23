@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric
 ### Leading 1, NL Mixed: V3
 ###
-### draft v.0.1a-theory
+### draft v.0.1a-theory2
 
 
 ### Type L1 NLm V3
@@ -42,11 +42,37 @@ source("Polynomials.Helper.R")
 
 ### Theory
 
+#############
 ### Type V3a:
-# TODO: Theory
+# TODO
 
 
-### Type V3c
+#############
+### Type V3b:
+
+# - System is easily transformed to a system in {S, E2, E3, E4};
+#  -- the full Diff simplifies tremendously the system;
+#     (but works only if NO additional terms)
+# - alternative: C2-Decomposition;
+
+### Eq 1: Sum =>
+# S[n] + b*E3 - 4*R = 0
+
+### Eq 2: Sum(x1*...) =>
+# S[n+1] + 4*b*E4 - 4*S = 0
+
+### Eq 3: Diff(Eq 1 - Eq 3) =>
+(x1^n - x3^n) - b*x2*x4*(x1 - x3) # = 0
+(x2^n - x4^n) - b*x1*x3*(x2 - x4) # = 0
+
+### Eq 4: full Diff =>
+(x1^n - x2^n) - b*x3*x4*(x1 - x2) # = 0
+# ...
+# TODO: more work;
+
+
+#############
+### Type V3c:
 # - is trivially decomposable:
 (x1^n - x3^n) + b*x2*x4*(x1 - x3) # = 0
 (x2^n - x4^n) + b*x1*x3*(x2 - x4) # = 0
@@ -59,7 +85,7 @@ source("Polynomials.Helper.R")
 ###############################
 
 ##################
-### Type: V3a  ###
+### Type: V3b  ###
 ##################
 
 ###############
