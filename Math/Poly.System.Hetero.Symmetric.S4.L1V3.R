@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric
 ### Leading 1, NL Mixed: V3
 ###
-### draft v.0.1a-theory2
+### draft v.0.1b
 
 
 ### Type L1 NLm V3
@@ -59,7 +59,7 @@ source("Polynomials.Helper.R")
 # S[n] + b*E3 - 4*R = 0
 
 ### Eq 2: Sum(x1*...) =>
-# S[n+1] + 4*b*E4 - 4*S = 0
+# S[n+1] + 4*b*E4 - R*S = 0
 
 ### Eq 3: Diff(Eq 1 - Eq 3) =>
 (x1^n - x3^n) - b*x2*x4*(x1 - x3) # = 0
@@ -92,7 +92,7 @@ source("Polynomials.Helper.R")
 ### Order 2 ###
 ###############
 
-### V3a:
+### V3b:
 ### x1^2 + b*x2*x3*x4 = R
 
 ### Solution:
@@ -324,4 +324,73 @@ S = sol$S; # ...
 # P[6]: 9*b^4 * S^6 + ...; # TODO: check: is NOT part of solution!
 # P[10]: can be factored itself in P[3]*P[7];
 # P[10] = P[3]*P[1]*P[2]*P[4];
+
+
+###################
+###################
+
+###############
+### Order 3 ###
+###############
+
+### V3b:
+### x1^3 + b*x2*x3*x4 = R
+
+### Solution:
+
+### Eq 1: Sum =>
+S^3 - 3*E2*S + (b+3)*E3 - 4*R # = 0
+
+
+### Eq 2: Sum(x1*...) =>
+(x1^4 + x2^4 + x3^4 + x4^4) + 4*b*E4 - R*S # = 0
+S^4 - 4*S^2*E2 + 2*E2^2 + 4*S*E3 - 4*E4 + 4*b*E4 - R*S # = 0
+# Reduction =>
+E2*S^2 - 2*E2^2 + (b-1)*E3*S - 4*(b-1)*E4 - 3*R*S # = 0
+E2*S^2 - 2*E2^2 + bd*E3*S - 4*bd*E4 - 3*R*S # = 0
+
+
+### Eq 3: Diff(Eq 1 - Eq 3) =>
+x1^3 - x3^3 - b*x2*x4*(x1 - x3) # = 0
+x2^3 - x4^3 - b*x1*x3*(x2 - x4) # = 0
+# Case: x1 != x3; x2 ! = x4;
+s1^2 - p1 - b*p2 # = 0
+s2^2 - p2 - b*p1 # = 0
+# Sum =>
+S^2 - 2*ps - (b+1)*sp # = 0
+S^2 - 2*E2 - (b-1)*sp # = 0
+S^2 - 2*E2 - bd*sp # = 0
+# =>
+S^6 - (bd + 6)*E2*S^4 + bd^2*E3*S^3 + 4*(bd + 3)*E2^2*S^2 - bd^2*(bd + 4)*E4*S^2 +
+	- 2*bd^2*E2*E3*S - 4*(bd + 2)*E2^3 + 4*(2*bd^2 + bd^3)*E2*E4 - bd^3*E3^2 # = 0
+# Reduction =>
+bd^2*(bd + 4)*E4*S^2 +
+	- bd*(bd + 1)*E2*E3*S + (bd - 9)*R*E2*S +
+	+ 2*(bd + 1)*E2^3 - 4*bd*(bd^2 + 3*bd + 3)*E2*E4 +
+	+ (2*bd^3 + 3*bd^2 - 8*bd - 16)*E3^2 - 4*(bd^2 - 2*bd - 8)*R*E3 - 16*R^2 # = 0
+
+
+### Eq 4:
+# TODO
+
+
+### Debug:
+R = 4; b = -3; bd = b - 1;
+# Note: x2 == x4, which breaks Eq 3 above (temporarily);
+x1 =  1.5329574364 - 0.2097804173i;
+x2 =  0.2924017738 + 0.5064547285i;
+x3 = -0.9481538887 + 1.2226898741i;
+x4 =  0.2924017738 + 0.5064547285i;
+x = c(x1,x2,x3,x4)
+s1 = x1 + x3; s2 = x2 + x4;
+p1 = x1 * x3; p2 = x2 * x4;
+sp = p1 + p2; ps = s1 * s2;
+S = s1 + s2; E4 = p1 * p2;
+E2 = sp + ps;
+E3 = p1*s2 + p2*s1;
+
+# Eq for (sp, ps):
+E3^2 - sp*E3*S + E4*S^2 + ps*sp^2 - 4*ps*E4 # = 0
+# =>
+sp^3 - E2*sp^2 + sp*E3*S - 4*sp*E4 - E3^2 - E4*S^2 + 4*E2*E4 # = 0
 
