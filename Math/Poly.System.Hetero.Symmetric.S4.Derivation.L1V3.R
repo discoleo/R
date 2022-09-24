@@ -8,7 +8,7 @@
 ###  == Derivation ==
 ###  Type: L1 V3
 ###
-### draft v.0.1c
+### draft v.0.1d
 
 
 ####################
@@ -17,6 +17,7 @@
 ### Helper Functions
 
 source("Polynomials.Helper.R")
+source("Polynomials.Helper.EP.R")
 
 
 ####################
@@ -59,12 +60,14 @@ x4^2 + b*x1*x2*x3 # - R
 # Case: x[i] != x[j]: Sum =>
 3*S - b*E2 # = 0
 
-### Sum =>
+### Eq 1: Sum =>
 S^2 - 2*E2 + b*E3 - 4*R # = 0
 
-### Sum(x1*...) =>
+### Eq 2: Sum(x1*...) =>
 (x1^3 + x2^3 + x3^3 + x4^3) + 4*b*E4 - R*S # = 0
 S^3 - 3*E2*S + 3*E3 + 4*b*E4 - R*S # = 0
+# Reduction =>
+E2*S + b*E3*S - 4*b*E4 - 3*E3 - 3*R*S # = 0
 
 ### Diff(x[i]*Eq[i] - x[i+1]*Eq[i+1]) =>
 (x1 - x2)*(x1^2 + x2^2 + x1*x2 - R) # = 0
@@ -93,9 +96,53 @@ E2 - b^2*(E2^2 - 2*S*E3 + 2*E4) + 6*R = 0
 (x1^4 + x2^4 + x3^4 + x4^4) + b*E4*S - R*(S^2 - 2*E2) # = 0
 S^4 - 4*E2*S^2 + 4*E3*S + 2*E2^2 - 4*E4 + b*E4*S - R*(S^2 - 2*E2) # = 0
 S^4 - R*S^2 + 2*E2^2 - 4*E2*S^2 + 2*R*E2 + 4*E3*S + b*E4*S - 4*E4 # = 0
-#
-3*b^3*S^4 - 48*b^2*S^3 - 3*b^3*R*S^2 + 102*b*S^2 + 72*b^2*R*S + 72*S + 48*b*R # = 0
+# Reduction =>
+b*E2*E3 - 2*R*E2 + E3*S - 3*b*E4*S - 4*E4 # = 0
 
+### Sum(x1^3*...) =>
+(x1^5 + x2^5 + x3^5 + x4^5) + b*E4*(S^2 - 2*E2) - R*(S^3 - 3*E2*S + 3*E3) # = 0
+S^5 - 5*S^3*E2 + 5*S*E2^2 + 5*S^2*E3 - 5*E2*E3 - 5*S*E4 +
+	+ b*E4*(S^2 - 2*E2) - R*(S^3 - 3*E2*S + 3*E3) # = 0
+5*E3*S^2 + b*E4*S^2 - E2^2*S - 3*R*E2*S + 12*R^2*S - 5*E4*S + b*E3*E2*S - 7*b*R*E3*S +
+	+ b^2*E3^2*S - 5*E3*E2 - 3*R*E3 - 2*b*E2*E4 # = 0
+
+
+### Stable Eqs:
+S^2 - 2*E2 + b*E3 - 4*R # = 0
+E2*S + b*E3*S - 4*b*E4 - 3*E3 - 3*R*S # = 0
+b*E2*E3 - 2*R*E2 + E3*S - 3*b*E4*S - 4*E4 # = 0
+5*E3*S^2 + b*E4*S^2 - E2^2*S - 3*R*E2*S + 12*R^2*S - 5*E4*S + b*E3*E2*S - 7*b*R*E3*S +
+	+ b^2*E3^2*S - 5*E3*E2 - 3*R*E3 - 2*b*E2*E4 # = 0
+
+### Eq S:
+(b*S^3 + 4*S^2 - 64*R) * (b*S^2 - 2*S - 4*b*R) *
+(b^3*S^5 + 6*b*S^3 - 2*b^3*R*S^3 + 7*S^2 - 26*b^2*R*S^2 - 52*b*R*S + b^3*R^2*S - 28*R + b^2*R^2) # = 0
+
+### [old]
+# FALSE ?
+3*b^3*S^4 - 48*b^2*S^3 - 3*b^3*R*S^2 + 102*b*S^2 + 72*b^2*R*S + 72*S + 48*b*R # = 0
+b^3*S^4 - 16*b^2*S^3 - b^3*R*S^2 + 34*b*S^2 + 24*b^2*R*S + 24*S + 16*b*R # = 0
+
+###
+pP1 = toPoly.pm("S^2 - 2*E2 + b*E3 - 4*R");
+pP2 = toPoly.pm("E2*S + b*E3*S - 4*b*E4 - 3*E3 - 3*R*S");
+pP3 = toPoly.pm("b*E2*E3 - 2*R*E2 + E3*S - 3*b*E4*S - 4*E4");
+pP4 = toPoly.pm("5*E3*S^2 + b*E4*S^2 - E2^2*S - 3*R*E2*S + 12*R^2*S - 5*E4*S + b*E3*E2*S - 7*b*R*E3*S +
+	+ b^2*E3^2*S - 5*E3*E2 - 3*R*E3 - 2*b*E2*E4");
+
+pR = solve.lpm(pP1, pP2, pP3, pP4, xn=c("E3", "E4", "E2"))
+pR = pR[[3]];
+pR$Rez$coeff = - pR$Rez$coeff;
+pR$Rez = sort.pm(pR$Rez, "S")
+pR$Rez = orderVars.pm(pR$Rez, c("b", "R"), last=FALSE)
+
+pR$Rez = div.pm(pR$Rez, toPoly.pm("b*S^3 + 4*S^2 - 64*R"), "S")$Rez;
+pR$Rez = div.pm(pR$Rez, toPoly.pm("b*S^2 - 2*S - 4*b*R"), "S")$Rez;
+
+# print.pm(pR$Rez, lead="S")
+
+str(pR)
+toCoeff(pR$Rez, "S")
 
 #########
 ### [old] [probably cyclic redundancy]
@@ -284,7 +331,7 @@ toCoeff(pR[[2]], "x3")
 
 
 solve.S4Ht.L1V3aP3 = function(R, b, debug=TRUE) {
-	S3 = (50 - 30*b - 18*b^2 + 2*b^3)*R;
+	S3 = (50 - 30*b - 18*b^2 - 2*b^3)*R;
 	S3 = - S3 / ((b + 5)*(b^2 - 2*b - 1));
 	S = rootn(S3, 3);
 	m = unity(3, all=TRUE);
@@ -292,8 +339,9 @@ solve.S4Ht.L1V3aP3 = function(R, b, debug=TRUE) {
 	if(debug) print(S);
 	#
 	E2 = 3*S^2 / (b + 5);
-	E3 = (E2*S + 6*R) / (3*(b + 1));
-	E4 = (E2*S^2 - 2*E2^2 + (b-1)*E3*S - 3*R*S) / (4*(b-1));
+	# E3 = (E2*S + 6*R) / (3*(b + 1));
+	E3 = - (S^3 - 3*E2*S - 4*R) / (b + 3); print(E3)
+	E4 = (E2*S^2 - 2*E2^2 + (b-1)*E3*S - 3*R*S) / (4*(b-1)); print(E4)
 	#
 	len = length(S);
 	x1 = sapply(seq(len), function(id) {
@@ -321,7 +369,7 @@ solve.S4Ht.L1V3aP3 = function(R, b, debug=TRUE) {
 	return(sol);
 }
 # Special Case: x1 == x3;
-solve.S4Ht.L1V3aP3.Case13 = function(R, b, debug=TRUE) {
+solve.S4Ht.L1V3aP3.Case13 = function(R, b, debug=TRUE, all=FALSE) {
 	coeff = c((b^6 + b^4 - b^2 - 1), - (b^4 - 2*b^2 - 3)*R, - (b^3 + b^2 + 3)*R^2, R^3);
 	x1_3 = roots(coeff);
 	x1 = rootn(x1_3, 3);
@@ -341,6 +389,10 @@ solve.S4Ht.L1V3aP3.Case13 = function(R, b, debug=TRUE) {
 	x2 = x24[,1]; x4 = x24[,2];
 	#
 	sol = cbind(x1, x2, x3=x1, x4);
+	if(all) {
+		sol = rbind(sol, sol[ , c(2,4,1,3)]);
+		sol = rbind(sol, sol[ , c(3,1,4,2)]);
+	}
 	return(sol);
 }
 
@@ -348,6 +400,7 @@ solve.S4Ht.L1V3aP3.Case13 = function(R, b, debug=TRUE) {
 R = 3
 b = -7
 sol = solve.S4Ht.L1V3aP3.Case13(R, b)
+sol = solve.S4Ht.L1V3aP3(R, b)
 x1 = sol[,1]; x2 = sol[,2]; x3 = sol[,3]; x4 = sol[,4];
 
 ###
