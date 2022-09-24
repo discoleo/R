@@ -7,16 +7,15 @@
 ### Heterogeneous Symmetric
 ###  == Derivation ==
 ###
-### draft v.0.3b-EqS
+### draft v.0.3c
 
 
 ####################
 ####################
 
-### helper functions
+### Helper Functions
 
-library(polynom)
-library(pracma)
+source("Polynomials.Helper.R")
 
 # the functions are in the file:
 # Polynomials.Helper.R
@@ -56,6 +55,40 @@ isConj = function(x, y, tol=1E-3) {
 	isConj = (abs(Re(x) - Re(y)) < tol) & (abs(Im(x) + Im(y)) < tol);
 	return(isConj);
 }
+### generate Classic Polynomial:
+bR.gen = function(pb, pR=1) data.frame(b = pb, R = pR, coeff = 1)
+bx.gen = function(pb, px=1) data.frame(b = pb, x = px, coeff = 1)
+classic.BaseSimple.gen = function(n) data.frame(x=c(n, 1, 0), b=c(0,1,0), R=c(0,0,1), coeff=c(1,1,-1));
+classic.S2Simple.gen = function(n=3) {
+	p1 = data.frame(
+		x = c(n,0), b = c(0,0), R = c(0,1),
+		coeff = c(-1, 1)
+	)
+	p1 = pow.pm(p1, n);
+	p1 = diff.pm(p1, bR.gen(n, pR=1));
+	p1 = add.pm(p1, bx.gen(n+1, px=1));
+	if(n %% 2 == 1) p1$coeff = - p1$coeff;
+	p1 = sort.pm(p1, sort.coeff=c(4,2,3,1), xn="x")
+	rownames(p1) = seq(nrow(p1))
+	return(p1);
+}
+classic.S4Simple.gen = function(n = 3) {
+	p1 = data.frame(
+		x = c(n,0), b = c(0,0), R = c(0,1),
+		coeff = c(-1, 1)
+	)
+	p1 = pow.pm(p1, n)
+	p1 = diff.pm(bR.gen(n, pR=1), p1)
+	p1 = pow.pm(p1, n)
+	p1 = diff.pm(bR.gen(n^2+n, pR=1), p1)
+	p1 = pow.pm(p1, n)
+	p1 = diff.pm(p1, bR.gen((n^4-1)/(n-1) - 1, pR=1))
+	p1 = add.pm(p1, bx.gen((n^4-1)/(n-1), px=1))
+	if(n %% 2 == 1) p1$coeff = - p1$coeff;
+	p1 = sort.pm(p1, sort.coeff=c(4,2,3,1), xn="x")
+	rownames(p1) = seq(nrow(p1))
+	return(p1);
+}
 
 ########################
 
@@ -63,7 +96,7 @@ isConj = function(x, y, tol=1E-3) {
 ### Order 2 ###
 ###############
 
-### V3:
+### V3b:
 ### x1^2 + b*x2*x3*x4 = R
 x1^2 + b*x2*x3*x4 # - R
 x2^2 + b*x1*x3*x4 # - R
@@ -642,8 +675,7 @@ b^(n^2+n+1)*x4 = b^(n^2+n)*R - (b^n*R - (R - x1^n)^n)^n
 ### generate Classic Polynomial:
 bR.gen = function(pb, pR=1) list(b = pb, R = pR, coeff = 1)
 bx.gen = function(pb, px=1) list(b = pb, x = px, coeff = 1)
-S4P3.gen.Classic.P81 = function() {
-	n = 3
+classic.S4Simple.gen = function(n = 3) {
 	p1 = list(
 		x = c(n,0),
 		b = c(0,0),
@@ -662,7 +694,8 @@ S4P3.gen.Classic.P81 = function() {
 	p1 = mult.sc.pm(p1, -1)
 	return(p1);
 }
-p1 = S4P3.gen.Classic.P81();
+### P[81]
+p1 = classic.S4Simple.gen();
 
 # print with line breaks:
 pprint.m = matrix(c(
@@ -736,6 +769,102 @@ diff.lpm(pow.pm(perm.poly(4, c(1,1,1)), 3), # E3^3
 		mult.pm(Eprod.pm(4, 2), Esum.pm(4), sc=-3), # + 3*E4^2*S
 		mult.all.pm( # - 3*E4*E3*E2
 			list(Eprod.pm(4, 1), perm.poly(4, c(1,1,1)), perm.poly(4, c(1,1)), sc=3))))
+
+###
+pP1 = toPoly.pm("S^3 - 3*E2*S + 3*E3 + b*S - 4*R")
+pP2 = toPoly.pm("3*E4*S^2 + 3*R*b*S - 3*E2*E3*S - 6*R^2 - b^2*E2 + E2^3 + 3*E3^2 - 3*E2*E4")
+pP3 = toPoly.pm("E2^2*S^2 + b*E2*S^2 - 2*E2^3 - E2*E3*S + 4*E2*E4 - 3*R*E2*S - b*E3*S + b*E4 + b^3")
+pP4 = toPoly.pm("b^4*E4 + R^3*(S^3 - 3*E2*S + 3*E3) +
+	- R^2*(E2^3 + 3*E3^2 - 3*E3*E2*S + 3*E4*S^2 - 3*E2*E4) +
+	+ R*(E3^3 - 3*E4*E3*E2 + 3*E4^2*S) - E4^3 - R^4") # the Mult (from Derivation) variant;
+
+pR = solve.lpm(pP1, pP3, pP2, pP4, xn=c("E3", "E4", "E2"), stop.at=1, asBigNum = TRUE)
+#
+pP1 = toPoly.pm("c1 - 3*E2*S + 3*E3")
+pP2 = toPoly.pm("c20 + 3*E4*S^2 - 3*E2*E3*S - b^2*E2 + E2^3 + 3*E3^2 - 3*E2*E4")
+#
+pP2 = toPoly.pm("c2 - 3*S*E2*c1 + 3*E2^3 + 9*S^2*E4 - 9*E2*E4 - 3*E2*b^2")
+pP3 = toPoly.pm("c3 - S*E2*c1 + 6*E2^3 - 12*E2*E4 - 3*b*E4 + 9*S*E2*R")
+pP4 = toPoly.pm("c4 - 9*S*E2*R*c1^2 + 27*S^2*E2^2*R*c1 - 27*S*E2*R^2*c1 +
+	- 27*E2*R*E4*c1 - 27*S^3*E2^3*R + 27*E2^3*R^2 +
+	+ 81*S*E2^2*R*E4 + 81*S^2*R^2*E4 - 81*E2*R^2*E4 - 81*S*R*E4^2 + 27*E4^3 - 27*E4*b^4")
+pP4 = toPoly.pm("3*E4^3 - 9*R*S*E4^2 + (c412*E2^2 - c411*E2 + c410)*E4 +
+	+ 3*c403*E2^3 + 3*c1*R*S^2*E2^2 - c401*E2 + c4")
+#
+pP2 = toPoly.pm("6*E2^4 - c33*E2^3 + c32*E2^2 + c31*E2 + c5")
+pP4 = toPoly.pm("216*E2^9 + c57*E2^7 + c56*E2^6 + c55*E2^5 + c54*E2^4 +
+	+ c53*E2^3 + c52*E2^2 + c51*E2 + c50")
+#
+# * (36*E2^5 + 6*c33*E2^4 + c57/6*E2^3 + c56/6*E2^2 + c55/6*E2 + c54/6)
+pP2 = toPoly.pm("6*E2^4 - c33*E2^3 + c32*E2^2 + c31*E2 + c5")
+pP4 = toPoly.pm("c53*E2^3 + c52*E2^2 + c51*E2 + c50")
+
+# Overflows!
+library(gmp)
+source("Polynomials.Helper.BigNumbers.R")
+pP1$coeff = as.bigz(pP1$coeff); pP2$coeff = as.bigz(pP2$coeff);
+pP3$coeff = as.bigz(pP3$coeff); pP4$coeff = as.bigz(pP4$coeff);
+pR = solve.lpm(pP2, pP4, xn=c("E2"), stop.at=1, asBigNum = TRUE)
+str(pR)
+toCoeff(pR[[1]][[2]], "E2")
+
+
+c1 = S^3 + b*S - 4*R;
+c20 = 3*R*b*S - 6*R^2;
+c2 = c1^2 + 3*c20;
+c3 = - 3*b^3 - S*b*c1;
+c4 = (R*c1^3 + 9*R^2*c1^2 + 27*R^3*c1 - 27*S^3*R^3 + 27*R^4) / 9;
+c5 = - b*c2 - 3*S^2*c3;
+c33 = 18*S^2 + 3*b;
+c32 = 27*S*R + 12*b^2 + 9*S*c1;
+# c31 = 3*c3 - 27*S^3*R - 4*c2 + 3*b^3 + 3*S^3*c1 + 3*S*b*c1;
+c31 = - 9*b^3 - 27*S^3*R - 4*c2 + 3*b^3 + 3*S^3*c1;
+#
+c410 = 27*(3*R^2*S^2 - b^4)/9;
+c411 = 27*(c1*R + 3*R^2)/9;
+c412 = 81*R*S/9;
+c403 = R^2 - R*S^3;
+c401 = 3*R^2*S*c1 + R*S*c1^2;
+#
+c57 = - 324*R*S - 108*S*c1 + 288*c412;
+c56 = - 324*R*S*b + 108*c3 + 1728*c403 - 288*c411 + 144*b*c412;
+c55 = - 2430*R^2*S^2 + 1836*R*S^2*c1 + 18*S^2*c1^2 + 1296*b*c403 + 288*c410 - 144*b*c411 +
+	+ 432*R*S*c412 + 18*b^2*c412 - 48*S*c1*c412;
+c54 = - 972*R^2*S^2*b + 1404*R*S^2*b*c1 - 108*R*S*c3 - 36*S*c1*c3 - 576*c401 +
+	+ 324*b^2*c403 + 144*b*c410 - 432*R*S*c411 - 18*b^2*c411 + 48*S*c1*c411 +
+	+ 216*R*S*b*c412 - 24*S*b*c1*c412 + 48*c3*c412;
+c53 = - 2187*R^3*S^3 + 405*R^2*S^3*c1 + 324*R*S^2*b^2*c1 - 9*R*S^3*c1^2 - S^3*c1^3 +
+	- 108*R*S*b*c3 + 18*c3^2 + 576*c4 - 432*b*c401 + 27*b^3*c403 + 432*R*S*c410 + 18*b^2*c410 +
+	- 48*S*c1*c410 - 216*R*S*b*c411 + 24*S*b*c1*c411 - 48*c3*c411 + 27*R*S*b^2*c412 +
+	- 3*S*b^2*c1*c412 + 24*b*c3*c412;
+c52 = - 729*R^3*S^3*b + 162*R^2*S^3*b*c1 + 27*R*S^2*b^3*c1 - 9*R*S^3*b*c1^2 - 405*R^2*S^2*c3 +
+	+ 18*R*S^2*c1*c3 + 3*S^2*c1^2*c3 + 432*b*c4 - 108*b^2*c401 + 216*R*S*b*c410 +
+	- 24*S*b*c1*c410 + 48*c3*c410 - 27*R*S*b^2*c411 + 3*S*b^2*c1*c411 - 24*b*c3*c411 + 3*b^2*c3*c412;
+c51 = - 162*R^2*S^2*b*c3 + 18*R*S^2*b*c1*c3 - 9*R*S*c3^2 - 3*S*c1*c3^2 + 108*b^2*c4 +
+	- 9*b^3*c401 + 27*R*S*b^2*c410 - 3*S*b^2*c1*c410 + 24*b*c3*c410 - 3*b^2*c3*c411;
+c50 = - 9*R*S*b*c3^2 + c3^3 + 9*b^3*c4 + 3*b^2*c3*c410;
+#
+c57 = c57 - 36*c32 + 6*c33^2;
+c56 = c56 - 36*c31 - 6*c33*c32 + c57*c33/6;
+c55 = c55 - 36*c5 - 6*c33*c31 - c57*c32/6 + c56*c33/6;
+c54 = c54 - 6*c33*c5 - c57*c31/6 - c56*c32/6 + c55*c33/6;
+c53 = c53 - c57*c5/6 - c56*c31/6 - c55*c32/6 + c54*c33/6;
+c52 = c52 - c56*c5/6 - c55*c31/6 - c54*c32/6;
+c51 = c51 - c55*c5/6 - c54*c31/6;
+c50 = c50 - c54*c5/6;
+
+E2div = 36*c51^3 - 72*c50*c51*c52 + 36*c50^2*c53 - 6*c52^2*c53*c5 + 6*c51*c53^2*c5 +
+	- 6*c52^3*c31 + 18*c51*c52*c53*c31 - 12*c50*c53^2*c31 + c53^3*c31^2 + 6*c51*c52^2*c32 +
+	- 12*c51^2*c53*c32 - c53^3*c5*c32 - c52*c53^2*c31*c32 + c51*c53^2*c32^2 +
+	+ 6*c51^2*c52*c33 - 6*c50*c52^2*c33 - 6*c50*c51*c53*c33 - c52*c53^2*c5*c33 +
+	- c52^2*c53*c31*c33 + 2*c51*c53^2*c31*c33 + c51*c52*c53*c32*c33 - c50*c53^2*c32*c33 +
+	+ c51^2*c53*c33^2 - c50*c52*c53*c33^2;
+
+E2x0 = 36*c50*c51^2 - 36*c50^2*c52 - 6*c52^3*c5 + 12*c51*c52*c53*c5 - 6*c50*c53^2*c5 +
+	+ 6*c50*c52*c53*c31 + c53^3*c5*c31 + 6*c50*c52^2*c32 - 12*c50*c51*c53*c32 +
+	- c52*c53^2*c5*c32 + c50*c53^2*c32^2 + 6*c50*c51*c52*c33 - 6*c50^2*c53*c33 +
+	- c52^2*c53*c5*c33 + c51*c53^2*c5*c33 + c50*c53^2*c31*c33 + c50*c52*c53*c32*c33 +
+	+ c50*c51*c53*c33^2;
 
 
 #############################
@@ -1190,6 +1319,8 @@ getE3.old = function(S, E2, R, b) {
 # x3^2*x4^2 + b*x1 = R
 # x4^2*x1^2 + b*x2 = R
 
+# "Llamas are much bigger than frogs!"
+
 ### Solution:
 
 ### Case: all x[i] different;
@@ -1364,3 +1495,27 @@ print.p(p4r, leading="x4")
 	- b^3*R^2*x1^3*x4^2 + 3*b^2*R^3*x1^2*x4^2 - 3*b*R^4*x1*x4^2 + R^5*x4^2 - b^6*x1^4 + 4*b^5*R*x1^3 +
 	- 6*b^4*R^2*x1^2 + 4*b^3*R^3*x1 - b^2*R^4
 
+
+ct1 = data.frame(coeff=1);
+p4_1  = replace.pm(replace.pm(p4, ct1, "R", 1), ct1, "b", 1);
+p4r_1 = replace.pm(replace.pm(p4r, ct1, "R", 1), ct1, "b", 1);
+solve.pm(p4_1, p4r_1, "x4", stop.at=1)
+
+
+library(gmp)
+p4_1  = p4; p4_1$coeff = as.bigz(p4_1$coeff);
+p4r_1 = p4r; p4r_1$coeff = as.bigz(p4r_1$coeff);
+l = solve.pm(p4_1, p4r_1, "x4", stop.at=NULL)
+
+l = read.csv("P.S2l22.x1.csv", colClasses=c(rep("numeric", 4), "character"))
+l$coeff = as.bigz(l$coeff)
+head(l)
+
+p4x = l[l$x4 == 1, -4]
+head(p4x)
+
+p40 = l[l$x4 == 0, -4]
+p40$coeff = - p40$coeff
+head(p40)
+
+pr = replace.fr.bigpm(p4_1, p40, p4x, "x4", 1)
