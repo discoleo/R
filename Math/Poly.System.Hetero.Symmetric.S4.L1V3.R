@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric
 ### Leading 1, NL Mixed: V3
 ###
-### draft v.0.1b
+### draft v.0.1c
 
 
 ### Type L1 NLm V3
@@ -119,19 +119,22 @@ x4^2 + b*x1^2*x3 - R # = 0
 
 ### Case 5: x[1:4] all distinct;
 
+
+### Eq 1: Sum =>
+S^2 - 2*E2 + b*E3 - 4*R # = 0
+
+### Eq 2: Sum(x1*...) =>
+(x1^3 + x2^3 + x3^3 + x4^3) + 4*b*E4 - R*S # = 0
+S^3 - 3*E2*S + 3*E3 + 4*b*E4 - R*S # = 0
+
+### [old]
 ### Diff Eq[i] - Eq[i+1] =>
+# - non-robust for powers < ???;
 (x1 - x2)*(x1 + x2 - b*x3*x4) # = 0
 (x2 - x3)*(x2 + x3 - b*x1*x4) # = 0
 # ...
 # Case: x[i] != x[j]: Sum =>
 3*S - b*E2 # = 0
-
-### Sum =>
-S^2 - 2*E2 + b*E3 - 4*R # = 0
-
-### Sum(x1*...) =>
-(x1^3 + x2^3 + x3^3 + x4^3) + 4*b*E4 - R*S # = 0
-S^3 - 3*E2*S + 3*E3 + 4*b*E4 - R*S # = 0
 
 ### =>
 #   b*E2 = 3*S
@@ -139,7 +142,10 @@ S^3 - 3*E2*S + 3*E3 + 4*b*E4 - R*S # = 0
 # - 4*b^3*E4 = b^2*S^3 - 12*b*S^2 - b^2*R*S + 18*S + 12*b*R
 
 ### Sum(x1^2*...) =>
-b^3*S^4 - 16*b^2*S^3 - b^3*R*S^2 + 34*b*S^2 + 24*b^2*R*S + 24*S + 16*b*R # = 0
+
+### Eq S:
+(b*S + 1) *
+(b^2*S^4 - b*S^3 + 7*S^2 - 2*b^2*R*S^2 - 24*b*R*S + b^2*R^2 - 28*R) # = 0
 
 ### TODO:
 # - may still be a false root!
@@ -148,7 +154,7 @@ b^3*S^4 - 16*b^2*S^3 - b^3*R*S^2 + 34*b*S^2 + 24*b^2*R*S + 24*S + 16*b*R # = 0
 ###########
 ### Solver:
 
-solve.S4 = function(R, b, max.perm=0, tol=1E-3, debug=TRUE, old=FALSE) {
+solve.S4 = function(R, b, debug=TRUE, max.perm=0, tol=1E-3) {
 	# tol = was used for debugging;
 	b1 = b[1];
 	### Case: x1 == x2 == x3, but != x4;
@@ -180,24 +186,35 @@ solve.S4 = function(R, b, max.perm=0, tol=1E-3, debug=TRUE, old=FALSE) {
 	sol22 = rbind(sol22, cbind(x1=x1, x2=x1, x3=x3, x4=x4));
 	
 	### Case: x[i] != x[j]
-	# TODO !!!
-	# b^3*S^4 - 16*b^2*S^3 - b^3*R*S^2 + 34*b*S^2 + 24*b^2*R*S + 24*S + 16*b*R
-	coeff = c(b1^3, - 16*b1^2, - b1^3*R + 34*b1, 24*b1^2*R + 24, 16*b1*R);
+	# actually: x2 = x3 = x4;
+	coeff = c(b^2, - b, 7 - 2*b^2*R, - 24*b*R, b^2*R^2 - 28*R);
 	S = roots(coeff);
 	if(debug) print(S);
-	E2 = 3*S / b1;
-	E3 = - (S^2 - 2*E2 - 4*R) / b1;
-	E4 = - (S^3 - 3*E2*S + 3*E3 - R*S) / (4*b1);
-
-	x = sapply(seq(length(S)), function(id) roots(c(1, -S[id], E2[id], -E3[id], E4[id])));
-	# debugging: true roots
-	if(FALSE) {
-		E = list(S=S, E2=E2, E3=E3, E4=E4)
-		return(debug.old(R, b, x, E, tol=tol))
-	}
 	#
-	sol = if(old) solve.old(as.vector(x), E=list(S=S, E2=E2, E3=E3, E4=E4))
-		else solve.EnAll(x, max.perm=max.perm); # generates 5*24 = 120 roots!
+	E2 = 18*b1^3*S^5 - 114*b1^2*S^4 + 204*b1*S^3 - 18*R*b1^3*S^3 + 336*S^2 +
+		+ 156*R*b1^2*S^2 - 1152*R*b1*S - 1344*R + 384*R^2*b1^2;
+	div = 62*b1^3*S^3 - 296*b1^2*S^2 + 296*b1*S - 32*R*b1^3*S + 672 - 416*R*b1^2;
+	E2 = E2 / div;
+	E3 = - (S^2 - 2*E2 - 4*R) / b1;
+	E4 = (E2*S + b*E3*S - 3*E3 - 3*R*S) / (4*b1);
+	### Robust: x1 is actually linear!
+	x1 = - 3*b*S^5 - b*R*S^3 + 81*R*S^2 + 6*b^2*E4*S^2 + 162*b*E4*S +
+		+ 27*R^2 + 729*E4 - b^2*R*E4;
+	div = - 6*b*S^4 + 27*S^3 + 3*b*R*S^2 + 81*R*S + 3*b^2*E4*S - b*R^2 + 27*b*E4;
+	x1 = x1 / div;
+	# x2:
+	s3 = S - x1;
+	p3 = (R - x1^2) / b1;
+	e2 = (E3 - p3) / x1;
+	x2 = (- R*b*E4 - b*e2*E4 + b*s3^2*E4 - R*p3 - p3*e2);
+	x2 = x2 / (b*s3*E4 - R^2 - 2*R*e2 - e2^2 + p3*s3 + R*s3^2);
+	# x3:
+	s2 = s3 - x2;
+	p2 = p3 / x2;
+	x3 = (b*E4 - p2*s2) / (R + p2 - s2^2);
+	x4 = s2 - x3;
+	#
+	sol = cbind(x1, x2, x3, x4);
 	return(list(sol=sol, sol3=sol3, sol22=sol22))
 }
 
@@ -206,7 +223,7 @@ solve.S4 = function(R, b, max.perm=0, tol=1E-3, debug=TRUE, old=FALSE) {
 R = -5;
 b = 3
 sol = solve.S4(R=R, b=b, max.perm=1)
-sol.sol = sol$sol22; # sol$sol22; # sol$sol; #
+sol.sol = sol$sol; # sol$sol22; # sol$sol; #
 x1 = sol.sol[,1]; x2 = sol.sol[,2];
 x3 = sol.sol[,3]; x4 = sol.sol[,4];
 
@@ -370,8 +387,8 @@ bd^2*(bd + 4)*E4*S^2 +
 	+ (2*bd^3 + 3*bd^2 - 8*bd - 16)*E3^2 - 4*(bd^2 - 2*bd - 8)*R*E3 - 16*R^2 # = 0
 
 
-### Eq 4:
-# TODO
+### Eq 4: Diff all
+3*S^2 - 5*E2 - b*E2 # = 0
 
 
 ### Debug:
