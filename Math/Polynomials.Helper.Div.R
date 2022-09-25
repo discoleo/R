@@ -119,7 +119,7 @@ div.pm = function(p1, p2, by="x", NF.stop=TRUE, debug=TRUE) {
 	if( ! allMatched) pRez$pDiv = pDivL;
 	return(pRez);
 }
-# only Remainder:
+# only Remainder & eval(pDiv) == 0;
 divByZero.pm = function(p1, pDiv, xn="x", asBigNum=TRUE) {
 	return(gcd.exact.p(p1, pDiv, xn=xn, asBigNum=asBigNum, doGCD=FALSE))
 }
@@ -147,6 +147,11 @@ checkDiv.pm = function(p1, pDiv, xn="x") {
 ###########
 
 gcd.vpm = function(p, xgcd=0) {
+	### [Hack] mpfr
+	# - skip the gcd;
+	# - Note: coefficients may grow larger than they should be!
+	if(inherits(p$coeff, "mpfr")) return(1);
+	#
 	for(i in seq(nrow(p))) xgcd = gcd(xgcd, p$coeff[i]);
 	return(xgcd);
 }
