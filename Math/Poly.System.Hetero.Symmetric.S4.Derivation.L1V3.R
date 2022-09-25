@@ -8,7 +8,7 @@
 ###  == Derivation ==
 ###  Type: L1 V3
 ###
-### draft v.0.1d
+### draft v.0.1e
 
 
 ####################
@@ -115,13 +115,9 @@ b*E2*E3 - 2*R*E2 + E3*S - 3*b*E4*S - 4*E4 # = 0
 	+ b^2*E3^2*S - 5*E3*E2 - 3*R*E3 - 2*b*E2*E4 # = 0
 
 ### Eq S:
-(b*S^3 + 4*S^2 - 64*R) * (b*S^2 - 2*S - 4*b*R) *
-(b^3*S^5 + 6*b*S^3 - 2*b^3*R*S^3 + 7*S^2 - 26*b^2*R*S^2 - 52*b*R*S + b^3*R^2*S - 28*R + b^2*R^2) # = 0
+(b*S^3 + 4*S^2 - 64*R) * (b*S^2 - 2*S - 4*b*R) * (b*S + 1) *
+(b^2*S^4 - b*S^3 + 7*S^2 - 2*b^2*R*S^2 - 24*b*R*S + b^2*R^2 - 28*R) # = 0
 
-### [old]
-# FALSE ?
-3*b^3*S^4 - 48*b^2*S^3 - 3*b^3*R*S^2 + 102*b*S^2 + 72*b^2*R*S + 72*S + 48*b*R # = 0
-b^3*S^4 - 16*b^2*S^3 - b^3*R*S^2 + 34*b*S^2 + 24*b^2*R*S + 24*S + 16*b*R # = 0
 
 ###
 pP1 = toPoly.pm("S^2 - 2*E2 + b*E3 - 4*R");
@@ -193,6 +189,17 @@ b^5*S^10 +
 (- b)*S^3 +
 (b^2)*S^4
 
+### [old]
+### full Polynomial:
+# - overinflated P[16];
+# - P[10] is the correct polynomial;
+# - P[16]: [checked] coefficients are correct,
+#   but has been deleted as it is redundant (and overinflated);
+# - P[16] can be factored into: P[10] * P[6]
+# - P[6]: 9*b^4*S^6 + ...; # is NOT part of solution!
+# - P[10]: can be factored itself;
+#   P[10] = P[3]*P[1]*P[2]*P[4];
+
 ##################
 
 ### Debug:
@@ -209,6 +216,74 @@ x1^2 + b*x2*x3*x4 # - R
 x2^2 + b*x1*x3*x4 # - R
 x3^2 + b*x1*x2*x4 # - R
 x4^2 + b*x1*x2*x3 # - R
+
+
+### Case: x2 = x3 = x4
+x1^2 + b*x2^3 - R # = 0
+x2^2 + b*x1*x2^2 - R # = 0
+
+### Classic Poly:
+b^2*x1^2*x2^4 + b^3*x2^7 - b^2*R*x2^4 # = 0
+(R - x2^2)^2 + b^3*x2^7 - b^2*R*x2^4 # = 0
+# =>
+b^3*x2^7 - (b^2*R - 1)*x2^4 - 2*R*x2^2 + R^2 # = 0
+(x2^2 + b*x2^3 - R) * (b^2*x2^4 - b*x2^3 + x2^2 - R)
+
+### x1:
+(x1^2 + b*x1^3 - R) * (b^2*x1^4 + 2*b*x1^3 + x1^2 - 2*R*b^2*x1^2 - 3*R*b*x1 + R^2*b^2 - R) # = 0
+
+
+############
+### Workout:
+
+### [old]
+# - not used anymore;
+
+debug.old = function(R, b, x, E, tol) {
+	len = length(E$S)
+	S1 = E$S; # 1 copy;
+	S = matrix(E$S, ncol=len, nrow=4, byrow=T)
+	E2 = matrix(E$E2, ncol=len, nrow=4, byrow=T)
+	E3 = matrix(E$E3, ncol=len, nrow=4, byrow=T)
+	E4 = matrix(E$E4, ncol=len, nrow=4, byrow=T)
+	isZero = round0(E4/x - (R - x^2)/b[1], tol=tol) == 0
+	isZ = apply(isZero, 2, all)
+	return(list(sol=cbind(x=as.vector(x)), S=S1, isZ=isZ, isZero=isZero))
+}
+solve.old = function(x, E) {
+	len = length(E$S);
+	S = matrix(E$S, ncol=len, nrow=4, byrow=T)
+	E2 = matrix(E$E2, ncol=len, nrow=4, byrow=T)
+	E3 = matrix(E$E3, ncol=len, nrow=4, byrow=T)
+	E4 = matrix(E$E4, ncol=len, nrow=4, byrow=T)
+	SS3  = S - x; E2S3 = E2 - x*SS3; E3S3 = E4 / x;
+	# x2
+	x2 = sapply(seq_along(x), function(id) roots(c(1, -SS3[id], E2S3[id], -E3S3[id])))
+	#
+	x2 = as.vector(x2);
+	x = rep(as.vector(x), each=3);
+	SS2 = rep(as.vector(SS3), each=3) - x2;
+	E2S2 = rep(as.vector(E3S3), each=3) / x2;
+	# TODO: root[2]
+	x3 = sapply(seq_along(x2), function(id) roots(c(1, -SS2[id], E2S2[id]))[1])
+	x4 = rep(SS2, each=1) - x3; sol=cbind(x1=x, x2=x2, x3=x3, x4=x4);
+}
+
+b = -4:4
+b = b[b != 0]
+R = 2;
+
+sapply(b, function(b) {
+	sol = solve.S4(R=R, b, tol=5E-2); # tol=5E-2
+	table(sol$isZ)[1]
+	} )
+
+R = 2
+b = 3
+sol = solve.S4(R=R, b=b, tol=5E-2)
+poly.calc(sol$S[ ! sol$isZ]) * 9 *b^4
+
+S = sol$S; # ...
 
 
 #######################
