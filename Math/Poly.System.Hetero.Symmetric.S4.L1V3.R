@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric
 ### Leading 1, NL Mixed: V3
 ###
-### draft v.0.1c-ref
+### draft v.0.1c-Cases
 
 
 ### Type L1 NLm V3
@@ -27,6 +27,22 @@
 
 source("Polynomials.Helper.R")
 
+
+test.S4Ht.V3b = function(sol, b, R=NULL, n=2) {
+	x1 = sol[,1]; x2 = sol[,2];
+	x3 = sol[,3]; x4 = sol[,4];
+	err1 = x1^n + b*x2*x3*x4;
+	err2 = x2^n + b*x1*x3*x4;
+	err3 = x3^n + b*x1*x2*x4;
+	err4 = x4^n + b*x1*x2*x3;
+	err = rbind(err1, err2, err3, err4);
+	if( ! is.null(R)) {
+		err = err - R;
+	}
+	notNAN = apply(err, 2, function(x) ! any(is.nan(x)));
+	err[ , notNAN] = round0(err[ , notNAN]);
+	return(err);
+}
 
 ####################
 
@@ -60,6 +76,13 @@ source("Polynomials.Helper.R")
 
 ### Eq 2: Sum(x1*...) =>
 # S[n+1] + 4*b*E4 - R*S = 0
+
+### Eq 3: Sum(x1^2*...) =>
+# S[n+2] + b*E4*S - R*(S^2 - 2*E2) = 0
+
+### Alternative: Diff Eqs
+# - simplify tremendously the solution;
+# - but do NOT work with small powers / certain powers (?);
 
 ### Eq 3: Diff(Eq 1 - Eq 3) =>
 (x1^n - x3^n) - b*x2*x4*(x1 - x3) # = 0
@@ -152,7 +175,12 @@ S^3 - 3*E2*S + 3*E3 + 4*b*E4 - R*S # = 0
 ### Solver:
 
 solve.S4Ht.V3bP2 = function(R, b, debug=TRUE, all=FALSE) {
-	b1 = b[1];
+	### Special Cases: x = 0
+	solSp = NULL;
+	if(round0(b[1]^2*R - 1) == 0) {
+		warning("Special Case: x1 = 0;");
+		solSp = solve.S4Ht.V3bP2.Sp0(R, b, all=all);
+	}
 	### Case: x1 == x2 == x3, but != x4;
 	sol3 = solve.S4Ht.V3bP2.CaseX3(R, b);
 	
@@ -166,6 +194,7 @@ solve.S4Ht.V3bP2 = function(R, b, debug=TRUE, all=FALSE) {
 	
 	### Case: x[1] != x[j]
 	# actually: x2 = x3 = x4;
+	b1 = b[1];
 	coeff = c(b^2, - b, 7 - 2*b^2*R, - 24*b*R, b^2*R^2 - 28*R);
 	S = roots(coeff);
 	if(debug) print(S);
@@ -177,9 +206,11 @@ solve.S4Ht.V3bP2 = function(R, b, debug=TRUE, all=FALSE) {
 	E3 = - (S^2 - 2*E2 - 4*R) / b1;
 	E4 = (E2*S + b*E3*S - 3*E3 - 3*R*S) / (4*b1);
 	### Robust: x1 is actually linear!
-	# - valid only for Case: x2 = x3 = x4!
+	# - formula valid only for Case: x2 = x3 = x4!
+	# - without this simplifying assumption, the formula will become
+	#   probably humongous; (e.g. to work also for the (b*S + 1) case)
 	# - but there are NO distinct solutions anyway (for Power = 2);
-	# - the (b*S + 1) does NOT work with this formula;
+	# - the (b*S + 1) case does NOT work with this formula;
 	x1 = - 3*b*S^5 - b*R*S^3 + 81*R*S^2 + 6*b^2*E4*S^2 + 162*b*E4*S +
 		+ 27*R^2 + 729*E4 - b^2*R*E4;
 	div = - 6*b*S^4 + 27*S^3 + 3*b*R*S^2 + 81*R*S + 3*b^2*E4*S - b*R^2 + 27*b*E4;
@@ -199,6 +230,7 @@ solve.S4Ht.V3bP2 = function(R, b, debug=TRUE, all=FALSE) {
 	x4 = s2 - x3;
 	#
 	sol = cbind(x1, x2, x3, x4);
+	if( ! is.null(solSp)) sol = rbind(sol, solSp);
 	return(list(sol=sol, sol3=sol3, sol22=sol22))
 }
 solve.S4Ht.V3bP2.CaseX3 = function(R, b) {
@@ -240,6 +272,24 @@ solve.S4Ht.V3bP2.CaseX2 = function(R, b, debug=TRUE) {
 	sol = cbind(x1=x1, x2=x1, x3=x3, x4=x4)
 	return(sol);
 }
+solve.S4Ht.V3bP2.Sp0 = function(R, b, all=FALSE) {
+	# Check: round0(b[1]^2*R - 1) == 0;
+	x2 = rootn(R, 2);
+	if(sign(b) != sign(R)) x2 = - x2;
+	# Case: x2 = x3 = x4;
+	sol = cbind(0, x2, x2, x2);
+	# Case: 2 of x[i] distinct;
+	sol = rbind(sol, cbind(0, x2, - x2, - x2));
+	sol = rbind(sol, cbind(0, - x2, x2, - x2));
+	sol = rbind(sol, cbind(0, - x2, - x2, x2));
+	# C2-permutations work as well;
+	# - all permutations = actually + all cyclic permutations;
+	if(all) sol = rbind(sol, sol[ , c(3,1,4,2)]);
+	return(sol);
+}
+test.S4Ht.V3bP2 = function(sol, b, R=NULL) {
+	test.S4Ht.V3b(sol, b=b, R=R, n=2);
+}
 
 ### Examples:
 
@@ -251,10 +301,17 @@ x1 = sol[,1]; x2 = sol[,2];
 x3 = sol[,3]; x4 = sol[,4];
 
 ### Test
-x1^2 + b*x2*x3*x4 # - R
-x2^2 + b*x1*x3*x4 # - R
-x3^2 + b*x1*x2*x4 # - R
-x4^2 + b*x1*x2*x3 # - R
+test.S4Ht.V3bP2(sol, b=b)
+test.S4Ht.V3bP2(sol.all$sol22, b=b)
+
+
+### Ex 2:
+R = 2; b = - sqrt(1/R);
+sol.all = solve.S4Ht.V3bP2(R=R, b=b)
+sol = sol.all$sol;
+
+test.S4Ht.V3bP2(sol, b=b)
+
 
 ### Test: Case 3 equal
 x1=x2=x3 = sol.all$sol3$sol[,1];
