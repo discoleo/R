@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric
 ### Leading 1, NL Mixed: V3
 ###
-### draft v.0.1c
+### draft v.0.1c-ref
 
 
 ### Type L1 NLm V3
@@ -147,45 +147,24 @@ S^3 - 3*E2*S + 3*E3 + 4*b*E4 - R*S # = 0
 (b*S + 1) *
 (b^2*S^4 - b*S^3 + 7*S^2 - 2*b^2*R*S^2 - 24*b*R*S + b^2*R^2 - 28*R) # = 0
 
-### TODO:
-# - may still be a false root!
-
 
 ###########
 ### Solver:
 
-solve.S4 = function(R, b, debug=TRUE, max.perm=0, tol=1E-3) {
-	# tol = was used for debugging;
+solve.S4Ht.V3bP2 = function(R, b, debug=TRUE, all=FALSE) {
 	b1 = b[1];
 	### Case: x1 == x2 == x3, but != x4;
-	coeff.3eq = c(b1^2, - b1, 1, 0, - R);
-	x3 = roots(coeff.3eq);
-	y = (R - x3^2) / b1 / x3^2;
-	S.3eq = 3*x3 + y;
-	sol3 = list(sol=cbind(x123=x3, x4=y), S=S.3eq);
+	sol3 = solve.S4Ht.V3bP2.CaseX3(R, b);
 	
 	### Case: x1 == x2, x3 == x4, but x1 != x3;
-	S2 = roots(c(b1, -1, - b1*R))
-	xy2 = S2 / b1;
-	x2 = sapply(seq_along(S2), function(id) roots(c(1, -S2[id], xy2[id])))
-	y2 = x2[2:1, ];
-	x2 = as.vector(x2); y2 = as.vector(y2);
-	sol22 = cbind(x1=x2, x2=x2, x3=y2, x4=y2); # + many permutations;
+	sol22 = solve.S4Ht.V3bP2.CaseX22(R, b);
 	
 	### Case: x1 = x2, x3 != x4; [only 1 real case]
-	coeff = c(b1^2, b1, 1 - 2*b1^2*R, -2*b1*R, b1^2*R^2);
-	S34 = roots(coeff);
-	S34 = c(1/b1, S34); # the real case: (b*S - 1) * P[4]
-	if(debug) print(S34);
-	p = S34^2 - R;
-	x34.d = sqrt(S34^2 - 4*p + 0i); # TODO: +/-;
-	x3 = (S34 + x34.d) / 2; x4 = (S34 - x34.d) / 2;
-	# robust
-	x1 = ((b1*x4-1)*R + x3^2) / (b1^2*p*x4);
 	# contains also the variants: x1 == x2 == x3 != x4;
-	sol22 = rbind(sol22, cbind(x1=x1, x2=x1, x3=x3, x4=x4));
+	sol2x = solve.S4Ht.V3bP2.CaseX2(R, b, debug=debug);
+	sol22 = rbind(sol22, sol2x);
 	
-	### Case: x[i] != x[j]
+	### Case: x[1] != x[j]
 	# actually: x2 = x3 = x4;
 	coeff = c(b^2, - b, 7 - 2*b^2*R, - 24*b*R, b^2*R^2 - 28*R);
 	S = roots(coeff);
@@ -198,11 +177,16 @@ solve.S4 = function(R, b, debug=TRUE, max.perm=0, tol=1E-3) {
 	E3 = - (S^2 - 2*E2 - 4*R) / b1;
 	E4 = (E2*S + b*E3*S - 3*E3 - 3*R*S) / (4*b1);
 	### Robust: x1 is actually linear!
+	# - valid only for Case: x2 = x3 = x4!
+	# - but there are NO distinct solutions anyway (for Power = 2);
+	# - the (b*S + 1) does NOT work with this formula;
 	x1 = - 3*b*S^5 - b*R*S^3 + 81*R*S^2 + 6*b^2*E4*S^2 + 162*b*E4*S +
 		+ 27*R^2 + 729*E4 - b^2*R*E4;
 	div = - 6*b*S^4 + 27*S^3 + 3*b*R*S^2 + 81*R*S + 3*b^2*E4*S - b*R^2 + 27*b*E4;
 	x1 = x1 / div;
-	# x2:
+	### x2: robust;
+	# - Note: x2 = x3 = x4 =>
+	#   shortcut possible: x2 = (S - x1) / 3;
 	s3 = S - x1;
 	p3 = (R - x1^2) / b1;
 	e2 = (E3 - p3) / x1;
@@ -217,15 +201,54 @@ solve.S4 = function(R, b, debug=TRUE, max.perm=0, tol=1E-3) {
 	sol = cbind(x1, x2, x3, x4);
 	return(list(sol=sol, sol3=sol3, sol22=sol22))
 }
+solve.S4Ht.V3bP2.CaseX3 = function(R, b) {
+	### Case: x1 == x2 == x3, but != x4;
+	# - solved using: x & y (not S);
+	coeff.3eq = c(b^2, - b, 1, 0, - R);
+	x3 = roots(coeff.3eq);
+	y = (R - x3^2) / b / x3^2;
+	S.3eq = 3*x3 + y;
+	sol = list(sol=cbind(x123=x3, x4=y), S=S.3eq);
+	return(sol);
+}
+solve.S4Ht.V3bP2.CaseX22 = function(R, b) {
+	### Case: x1 == x3, x2 == x4, x1 != x2;
+	# - solved using: S2 = x + y;
+	b1 = b[1];
+	S2 = roots(c(b1, -1, - b1*R))
+	xy2 = S2 / b1;
+	x2 = sapply(seq_along(S2), function(id) roots(c(1, -S2[id], xy2[id])))
+	y2 = x2[2:1, ];
+	x2 = as.vector(x2); y2 = as.vector(y2);
+	sol = cbind(x1=x2, x2=x2, x3=y2, x4=y2); # + many permutations;
+	return(sol);
+}
+solve.S4Ht.V3bP2.CaseX2 = function(R, b, debug=TRUE) {
+	### Case: x1 == x2, x3 != x4; [only 1 real case]
+	# - solved using: S2 = x + y;
+	b1 = b[1];
+	coeff = c(b1^2, b1, 1 - 2*b1^2*R, -2*b1*R, b1^2*R^2);
+	S34 = roots(coeff);
+	S34 = c(1/b1, S34); # the real case: (b*S - 1) * P[4]
+	if(debug) print(S34);
+	p = S34^2 - R;
+	x34.d = sqrt(S34^2 - 4*p + 0i); # TODO: +/-;
+	x3 = (S34 + x34.d) / 2; x4 = (S34 - x34.d) / 2;
+	# robust
+	x1 = ((b1*x4-1)*R + x3^2) / (b1^2*p*x4);
+	#
+	sol = cbind(x1=x1, x2=x1, x3=x3, x4=x4)
+	return(sol);
+}
 
 ### Examples:
 
 R = -5;
 b = 3
-sol = solve.S4(R=R, b=b, max.perm=1)
-sol.sol = sol$sol; # sol$sol22; # sol$sol; #
-x1 = sol.sol[,1]; x2 = sol.sol[,2];
-x3 = sol.sol[,3]; x4 = sol.sol[,4];
+sol.all = solve.S4Ht.V3bP2(R=R, b=b)
+sol = sol.all$sol;
+x1 = sol[,1]; x2 = sol[,2];
+x3 = sol[,3]; x4 = sol[,4];
 
 ### Test
 x1^2 + b*x2*x3*x4 # - R
@@ -234,8 +257,8 @@ x3^2 + b*x1*x2*x4 # - R
 x4^2 + b*x1*x2*x3 # - R
 
 ### Test: Case 3 equal
-x1=x2=x3=sol$sol3$sol[,1];
-x4 = sol$sol3$sol[,2];
+x1=x2=x3 = sol.all$sol3$sol[,1];
+x4 = sol.all$sol3$sol[,2];
 x1^2 + b*x2*x3*x4 # - R
 x4^2 + b*x1*x2*x3 # - R
 
