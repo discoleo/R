@@ -20,9 +20,10 @@
 
 library(gmp) # BigNumbers
 
-### helper Functions
 
-# - hack to work with BigNumbers;
+### Helper Functions
+
+# - hack to work with BigNumbers (gmp and mpfr);
 # - workaround for: aggregate();
 
 aggregate0.pm = function(p) {
