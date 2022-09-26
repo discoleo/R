@@ -1138,8 +1138,10 @@ eval.pm = function(p, x, progress=FALSE) {
 		prod(p$coeff[id], x[idx]^unlist(pP[id, idx]));
 	}
 	tmp = sapply(seq(nrow(p)), eval.p);
-	if(inherits(p$coeff, "bigz")) {
+	if(inherits(p$coeff, c("bigz", "bigq"))) {
 		tmp = do.call(c, tmp);
+		# tmp = as.vector.bigz(tmp);
+		print(tmp)
 	}
 	sum(tmp);
 }
