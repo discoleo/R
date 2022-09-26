@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric
 ### Leading 1, NL Mixed: V3
 ###
-### draft v.0.1d
+### draft v.0.1e
 
 
 ### Type L1 NLm V3
@@ -384,8 +384,26 @@ S^3 - 3*E2*S + (b+3)*E3 - 4*R # = 0
 S^4 - 4*S^2*E2 + 2*E2^2 + 4*S*E3 - 4*E4 + 4*b*E4 - R*S # = 0
 # Reduction =>
 E2*S^2 - 2*E2^2 + (b-1)*E3*S - 4*(b-1)*E4 - 3*R*S # = 0
-E2*S^2 - 2*E2^2 + bd*E3*S - 4*bd*E4 - 3*R*S # = 0
 
+
+### Eq 3: Sum(x1^2*...) =>
+(x1^5 + x2^5 + x3^5 + x4^5) + b*E4*S - R*(S^2 - 2*E2) # = 0
+S^5 - 5*E2*S^3 + 5*E3*S^2 - R*S^2 + 5*E2^2*S + b*E4*S - 5*E4*S - 5*E2*E3 + 2*R*E2 # = 0
+# Reduction =>
+2*E2*S^3 - 3*R*S^2 - 2*E3*S^2 + b*E3*S^2 - 5*E2^2*S + 5*E4*S - E4*b*S - 2*E2*R + 5*E2*E3 # = 0
+b*E3*S^2 - 3*R*S^2 + E2^2*S - (7*b - 3)*E4*S + 2*R*E2 - 5*E2*E3 # = 0
+
+
+### Eq 4: Sum(x1^3*...) =>
+(x1^6 + x2^6 + x3^6 + x4^6) + b*E4*(S^2 - 2*E2) - R*(S^3 - 3*E2*S + 3*E3) # = 0
+(S^6 - 6*E2*S^4 + 6*E3*S^3 + 9*E2^2*S^2 - 6*E4*S^2 - 12*E2*E3*S - 2*E2^3 + 3*E3^2 + 6*E2*E4) +
+	+ b*E4*(S^2 - 2*E2) - R*(S^3 - 3*E2*S + 3*E3) # = 0
+# Reduction =>
+3*b*E4*S^2 - (b + 1)*E2*E3*S + 3*E3^2 +
+	+ (2*b + 2)*E2*E4 + 2*R*E2*S - 3*R*E3 # = 0
+
+
+### Alternatives:
 
 ### Eq 3: Diff(Eq 1 - Eq 3) =>
 x1^3 - x3^3 - b*x2*x4*(x1 - x3) # = 0
