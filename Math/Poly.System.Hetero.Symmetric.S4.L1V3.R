@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric
 ### Leading 1, NL Mixed: V3
 ###
-### draft v.0.1e
+### draft v.0.1f
 
 
 ### Type L1 NLm V3
@@ -403,6 +403,177 @@ b*E3*S^2 - 3*R*S^2 + E2^2*S - (7*b - 3)*E4*S + 2*R*E2 - 5*E2*E3 # = 0
 	+ (2*b + 2)*E2*E4 + 2*R*E2*S - 3*R*E3 # = 0
 
 
+### Solver:
+
+# Standard solver:
+solve.S4Ht.L1V3bP3 = function(R, b, debug=TRUE) {
+	if(any(round0(b[1] - c(-3, 1)) == 0)) {
+		stop("Special case: not yet implemented!");
+	}
+	coeff = coeff.S4Ht.L1V3bP3(R, b=b);
+	S = roots(coeff);
+	S = rootn(S, 3);
+	m = unity(3, all=TRUE);
+	S = sapply(S, function(S) S * m);
+	if(debug) print(S);
+	S = as.vector(S);
+	#
+	cc.all = coeff0.S4Ht.L1V3bP3(R, b=b);
+	E2 = with(cc.all, {
+		S3 = S^3;
+		E2 = (d0*c1 - d7*c2 + (d4*c1 - d7*c4)*S3 + S3^2*d6*c1)*S^2;
+		E2div = - d5*c1*S3^2 + (d7*c3 - d2*c1)*S3 + d7*c0;
+		E2 = E2 / E2div;
+	});
+	E4 = (b - 1)*S^4 - 4*b*E2*S^2 - b*R*S + 13*R*S + 2*b*E2^2 + 6*E2^2;
+	E4 = - E4 / (4*(b + 3)*(b - 1));
+	E3 = S^3 - 3*E2*S - 4*R;
+	E3 = - E3 / (b + 3);
+	# TODO: robust;
+	len = length(S);
+	x1 = sapply(seq(len), function(id) {
+		coeff = c(1, -S[id], E2[id], -E3[id], E4[id]);
+		roots(coeff);
+	})
+	x1 = as.vector(x1);
+	S  = rep(S, each=4);
+	E3 = rep(E3, each=4);
+	E4 = rep(E4, each=4);
+	#
+	s3 = S - x1;
+	p3 = (R - x1^3) / b;
+	e2 = (E3 - p3) / x1;
+	#
+	div = p3^2 + e2^3 - 2*p3*e2*s3 + e2*E4*b - s3^2*E4*b - 2*p3*R + 3*e2*s3*R - s3^3*R + R^2;
+	x2 = - p3*e2^2 + p3^2*s3 + p3*E4*b - 2*e2*s3*E4*b + s3^3*E4*b - p3*s3*R - E4*b*R;
+	x2 = - x2 / div;
+	#
+	s2 = s3 - x2;
+	p2 = p3 / x2;
+	x3 = (E4*b + p2^2 - p2*s2^2) / (R + 2*p2*s2 - s2^3);
+	x4 = s2 - x3;
+	#
+	sol = cbind(x1, x2, x3, x4);
+	return(sol);
+}
+coeff.S4Ht.L1V3bP3 = function(R, b) {
+	# does NOT include solutions: (x1 = x3, x2 = x4);
+	coeff = c(- 1 + 2*b - 2*b^2 + 2*b^3 - 2*b^5 + 2*b^6 - 2*b^7 + b^8,
+		(21 + 6*b - 58*b^2 + 14*b^3 + 12*b^4 - 38*b^5 + 90*b^6 - 46*b^7 - b^8)*R,
+		(- 363 + 558*b - 166*b^2 - 306*b^3 + 972*b^4 - 1030*b^5 +
+			+ 390*b^6 - 54*b^7 - b^8)*R^2,
+		(343 - 1862*b + 4186*b^2 - 5006*b^3 + 3400*b^4 - 1298*b^5 +
+			+ 262*b^6 - 26*b^7 + b^8)*R^3
+		);
+	return(coeff);
+}
+# needed for E2:
+coeff0.S4Ht.L1V3bP3 = function(R, b) {
+	c0 = 8*(b + 3)*(b - 1)*(b - 7)*R; # (168 - 136*b - 40*b^2 + 8*b^3)*R;
+	c1 = (90 - 18*b + 38*b^2 + 18*b^3);
+	c2 = - (9 - 159*b - 45*b^2 + 3*b^3)*R;
+	c3 = - (60 - 40*b + 28*b^2 + 16*b^3);
+	c4 = 9 - 15*b + 3*b^2 + 3*b^3;
+	#
+	d0 = 144*R^2 - 240*b*R^2 + 48*b^2*R^2 + 48*b^3*R^2;
+	d1 = 108 + 216*b + 144*b^2 + 40*b^3 + 4*b^4;
+	d2 = (846 - 192*b + 28*b^2 + 80*b^3 + 6*b^4)*R;
+	d3 = 216 - 198*b + 30*b^2 + 70*b^3 + 10*b^4;
+	d4 = (- 180 + 507*b + 243*b^2 + 9*b^3 - 3*b^4)*R;
+	d5 = - 198 + 156*b - 52*b^2 - 84*b^3 - 14*b^4;
+	d6 = 36 - 51*b - 3*b^2 + 15*b^3 + 3*b^4;
+	### Reduction:
+	d6 = c1*d6; d5 = c1*d5 - c4*d1;
+	d4 = c1*d4; d3 = c1*d3 - c3*d1;
+	d2 = c1*d2 - c2*d1;
+	d0 = c1*d0; d7 = - c0*d1;
+	d1 = c1*d1; # Last!
+	#
+	d7 = c1*d7; d0 = c1*d0;
+	d5 = c1*d5 - d3*c3; d2 = c1*d2 - d3*c0;
+	d6 = c1*d6 - d3*c4; d4 = c1*d4 - d3*c2;
+	c.l = list(c0=c0, c1=c1, c2=c2, c3=c3, c4=c4);
+	d.l = list(d0=d0, d2=d2, d4=d4, d5=d5, d6=d6, d7=d7);
+	return(c(c.l, d.l));
+}
+
+### Special Cases:
+solve.S4Ht.L1V3bP3.Y3 = function(R, b, debug=TRUE, all=FALSE) {
+	if(any(round0(b[1] - c(-3)) == 0)) {
+		stop("Special case for b: Not yet implemented!");
+	}
+	coeff = coeff.S4Ht.L1V3bP3.Y3(R, b=b);
+	S = roots(coeff);
+	S = rootn(S, 3);
+	m = unity(3, all=TRUE);
+	S = sapply(S, function(S) S * m);
+	if(debug) print(S);
+	S = as.vector(S);
+	#
+	y = (- 9 + 54*b - 108*b^2 + 82*b^3 - 3*b^4)*S^4 +
+		+ (- 477 + 2124*b - 1998*b^2 - 244*b^3 + 3*b^4)*R*S;
+	ydiv = (- 54 + 270*b - 406*b^2 + 258*b^3 - 36*b^4)*S^3 +
+		+ (- 756 + 3888*b - 5048*b^2 + 560*b^3 + 12*b^4)*R;
+	y = y / ydiv;
+	x = S - 3*y;
+	#
+	sol = cbind(x1=x, x2=y, x3=y, x4=y);
+	# just one permutation;
+	if(all) sol = rbind(sol, sol(, c(4,1,2,3)));
+	return(sol);
+}
+coeff.S4Ht.L1V3bP3.Y3 = function(R, b) {
+	# Excluded: solutions of type (x1 = x3, x2 = x4);
+	# (i.e. all 4 equal)
+	coeff = c(- (b - 1)*(b^2 + 1),
+		2*(b^3 + 21*b^2 - 16*b - 10)*R,
+		- (b - 7)^3*R^2
+	);
+	return(coeff);
+}
+### Test:
+test.S4Ht.L1V3bP3 = function(sol, b, R=NULL) {
+	err = test.S4Ht.V3b(sol, b=b, R=R, n=3);
+	return(err);
+}
+
+### Examples:
+
+###
+R = -5
+b = 4
+sol = solve.S4Ht.L1V3bP3(R, b)
+x1 = sol[,1]; x2 = sol[,2]; x3 = sol[,3]; x4 = sol[,4];
+
+### [many FALSE solutions]
+err = test.S4Ht.L1V3bP3(sol, b=b)
+
+err = x4^3 + b*x1*x2*x3;
+isR = round(err - R, 3) == 0
+err[isR]
+sol = sol[isR, ]; sol;
+
+
+### [Case 3*y] Same set:
+sol3 = solve.S4Ht.L1V3bP3.Y3(R, b)
+test.S4Ht.L1V3bP3(sol3, b=b)
+
+
+### Ex 2: Special Case
+R = -5
+b = -3
+# TODO
+sol3 = solve.S4Ht.L1V3bP3.Y3(R, b)
+test.S4Ht.L1V3bP3(sol3, b=b)
+
+
+### Ex 3: Special Case
+R = 4
+b = 7
+sol3 = solve.S4Ht.L1V3bP3.Y3(R, b)
+test.S4Ht.L1V3bP3(sol3, b=b)
+
+
 ### Alternatives:
 
 ### Eq 3: Diff(Eq 1 - Eq 3) =>
@@ -436,6 +607,14 @@ x1 =  1.5329574364 - 0.2097804173i;
 x2 =  0.2924017738 + 0.5064547285i;
 x3 = -0.9481538887 + 1.2226898741i;
 x4 =  0.2924017738 + 0.5064547285i;
+
+#
+R = -5; b = 4; bd = b - 1;
+x1 = 0.9722777968 - 1.4936414930i;
+x2 = -0.3889111187 + 0i;
+x3 = 0.9722777968 + 1.4936414930i;
+x4 = -0.3889111187 + 0i;
+
 x = c(x1,x2,x3,x4)
 s1 = x1 + x3; s2 = x2 + x4;
 p1 = x1 * x3; p2 = x2 * x4;
