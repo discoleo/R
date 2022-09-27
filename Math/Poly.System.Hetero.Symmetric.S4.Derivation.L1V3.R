@@ -319,6 +319,17 @@ S^4 - 4*E2*S^2 + 4*E3*S + 2*E2^2 - 4*E4 + 4*b*E4 - R*S # = 0
 # Reduction =>
 E2*S^2 - 2*E2^2 + (b-1)*E3*S - 4*(b-1)*E4 - 3*R*S # = 0
 
+
+### Eq 3: Sum(x1^2*...) =>
+(x1^5 + x2^5 + x3^5 + x4^5) + b*E4*S - R*(S^2 - 2*E2) # = 0
+S^5 - 5*E2*S^3 + 5*E3*S^2 - R*S^2 + 5*E2^2*S + b*E4*S - 5*E4*S - 5*E2*E3 + 2*R*E2 # = 0
+# Reduction =>
+2*E2*S^3 - 3*R*S^2 - 2*E3*S^2 + b*E3*S^2 - 5*E2^2*S + 5*E4*S - E4*b*S - 2*E2*R + 5*E2*E3 # = 0
+(bd + 1)*E3*S^2 - 3*R*S^2 + E2^2*S - (7*bd + 4)*E4*S + 2*R*E2 - 5*E2*E3 # = 0
+
+
+### Alternatives: Diff
+
 ### Eq 3: Diff Eq[i] - Eq[i+1] =>
 (x1 - x2)*(x1^2 + x2^2 + x1*x2 - b*x3*x4) # = 0
 # ...
@@ -337,7 +348,7 @@ E2*S^2 - 2*E2^2 + (b-1)*E3*S - 4*(b-1)*E4 - 3*R*S # = 0
 # Reduction =>
 3*(b + 1)*E3 - E2*S - 6*R # = 0
 
-### Alternatives:
+### Alternatives: more Diff
 
 ### Diff(Eq 1 - Eq 3) =>
 x1^3 - x3^3 - b*x2*x4*(x1 - x3) # = 0
@@ -371,15 +382,225 @@ bd^2*(bd + 4)*E4*S^2 +
 # 4*(b-1)*E4 = E2*S^2 - 2*E2^2 + (b-1)*E3*S - 3*R*S;
 
 
+pP1 = toPoly.pm("S^3 - 3*E2*S + 3*E3 + b*E3 - 4*R")
+pP2 = toPoly.pm("E2*S^2 - 2*E2^2 + (b-1)*E3*S - 4*(b-1)*E4 - 3*R*S")
+pP3 = toPoly.pm("b*E3*S^2 - 3*R*S^2 + E2^2*S - (7*b - 3)*E4*S + 2*R*E2 - 5*E2*E3")
+pP4 = toPoly.pm("3*b*E4*S^2 - (b + 1)*E2*E3*S + 3*E3^2 +
+	+ (2*b + 2)*E2*E4 + 2*R*E2*S - 3*R*E3")
+
+pE3 = toPoly.pm("S^3 - 3*E2*S - 4*R")
+pE3div = toPoly.pm("- b - 3")
+
+pP2 = replace.fr.pm(pP2, pE3, pE3div, "E3")
+pP3 = replace.fr.pm(pP3, pE3, pE3div, "E3")
+pP4 = replace.fr.pm(pP4, pE3, pE3div, "E3")
+
 ###
+pE4 = toPoly.pm("(b - 1)*S^4 - 4*b*E2*S^2 - b*R*S + 13*R*S + 2*b*E2^2 + 6*E2^2")
+pE4div = toPoly.pm("- (4*b^2 + 8*b - 12)")
+
+pP3 = replace.fr.pm(pP3, pE4, pE4div, "E4")
+pP4 = replace.fr.pm(pP4, pE4, pE4div, "E4")
+
+c0 = 8*(b + 3)*(b - 1)*(b - 7)*R; # (168 - 136*b - 40*b^2 + 8*b^3)*R;
+c1 = (90 - 18*b + 38*b^2 + 18*b^3);
+c2 = - (9 - 159*b - 45*b^2 + 3*b^3)*R;
+c3 = - (60 - 40*b + 28*b^2 + 16*b^3);
+c4 = 9 - 15*b + 3*b^2 + 3*b^3;
+#
+d0 = 144*R^2 - 240*b*R^2 + 48*b^2*R^2 + 48*b^3*R^2;
+d1 = 108 + 216*b + 144*b^2 + 40*b^3 + 4*b^4;
+d2 = (846 - 192*b + 28*b^2 + 80*b^3 + 6*b^4)*R;
+d3 = 216 - 198*b + 30*b^2 + 70*b^3 + 10*b^4;
+d4 = (- 180 + 507*b + 243*b^2 + 9*b^3 - 3*b^4)*R;
+d5 = - 198 + 156*b - 52*b^2 - 84*b^3 - 14*b^4;
+d6 = 36 - 51*b - 3*b^2 + 15*b^3 + 3*b^4;
+
+c1*E2^2*S + c3*E2*S^3 + c0*E2 + c4*S^5 + c2*S^2 # = 0
+d1*E2^3 + d6*S^6 + d5*E2*S^4 + d4*S^3 + d3*E2^2*S^2 + d2*E2*S + d0 # = 0
+
+### Reduction:
+d6 = c1*d6;
+d5 = c1*d5 - c4*d1;
+d4 = c1*d4;
+d3 = c1*d3 - c3*d1;
+d2 = c1*d2 - c2*d1;
+d0 = c1*d0;
+d7 = - c0*d1;
+d1 = c1*d1; # Last!
+#
+d7 = c1*d7;
+d5 = c1*d5 - d3*c3;
+d2 = c1*d2 - d3*c0;
+d6 = c1*d6 - d3*c4;
+d4 = c1*d4 - d3*c2;
+d0 = c1*d0;
+
+d7*E2^2 + d5*E2*S^5 + d2*E2*S^2 + d6*S^7 + d4*S^4 + d0*S # = 0
+
+###
+pP3 = toPoly.pm("c4*S^5 + c3*E2*S^3 + c2*S^2 + c1*E2^2*S + c0*E2")
+pP4 = toPoly.pm("d7*E2^2 + d5*E2*S^5 + d2*E2*S^2 + d6*S^7 + d4*S^4 + d0*S")
+
+pR = solve.pm(pP3, pP4, "E2")
+str(pR)
+
+# P[15] = P[3] * P[12];
+# P[12] = ((b+1)*S^3 - 64*R) * ((b-1)*S^3 - 8*(b+1)*R) * P[6];
+# P[3]: NO solutions;
+# P[6]: probably Case: x2 = x3 = x4;
+# TODO: Method to factor the compact P[15] (?);
+# - done on the expanded P[15] (not that big after reductions);
+
+coeff.S4Ht.L1V3bP3.old = function(R, b) {
+	# [old] NOT needed anymore;
+	cc.all = coeff0.S4Ht.L1V3bP3(R, b=b);
+	with(cc.all, {
+		coeff = c(c1^2*d6^2 - c1*c3*d6*d5 + c1*c4*d5^2,
+			2*c1^2*d4*d6 - c1*c3*d6*d2 - c1*c3*d4*d5 - c0*c1*d6*d5 + 2*c1*c4*d2*d5 +
+				+ c1*c2*d5^2 + c3^2*d6*d7 - 2*c1*c4*d6*d7 - c3*c4*d5*d7,
+			c1^2*d4^2 + 2*c1^2*d0*d6 - c1*c3*d4*d2 - c0*c1*d6*d2 + c1*c4*d2^2 - c1*c3*d0*d5 +
+				- c0*c1*d4*d5 + 2*c1*c2*d2*d5 + c3^2*d4*d7 - 2*c1*c4*d4*d7 - 2*c1*c2*d6*d7 +
+				+ 2*c0*c3*d6*d7 - c3*c4*d2*d7 - c2*c3*d5*d7 - c0*c4*d5*d7 + c4^2*d7^2,
+			2*c1^2*d0*d4 - c1*c3*d0*d2 - c0*c1*d4*d2 + c1*c2*d2^2 - c0*c1*d0*d5 + c3^2*d0*d7 +
+				- 2*c1*c4*d0*d7 - 2*c1*c2*d4*d7 + 2*c0*c3*d4*d7 + c0^2*d6*d7 - c2*c3*d2*d7 +
+				- c0*c4*d2*d7 - c0*c2*d5*d7 + 2*c2*c4*d7^2,
+			c1^2*d0^2 - c0*c1*d0*d2 - 2*c1*c2*d0*d7 + 2*c0*c3*d0*d7 + c0^2*d4*d7 +
+				- c0*c2*d2*d7 + c2^2*d7^2,
+			c0^2*d0*d7);
+		return(coeff);
+	})
+}
+coeff0.S4Ht.L1V3bP3 = function(R, b) {
+	c0 = 8*(b + 3)*(b - 1)*(b - 7)*R; # (168 - 136*b - 40*b^2 + 8*b^3)*R;
+	c1 = (90 - 18*b + 38*b^2 + 18*b^3);
+	c2 = - (9 - 159*b - 45*b^2 + 3*b^3)*R;
+	c3 = - (60 - 40*b + 28*b^2 + 16*b^3);
+	c4 = 9 - 15*b + 3*b^2 + 3*b^3;
+	#
+	d0 = 144*R^2 - 240*b*R^2 + 48*b^2*R^2 + 48*b^3*R^2;
+	d1 = 108 + 216*b + 144*b^2 + 40*b^3 + 4*b^4;
+	d2 = (846 - 192*b + 28*b^2 + 80*b^3 + 6*b^4)*R;
+	d3 = 216 - 198*b + 30*b^2 + 70*b^3 + 10*b^4;
+	d4 = (- 180 + 507*b + 243*b^2 + 9*b^3 - 3*b^4)*R;
+	d5 = - 198 + 156*b - 52*b^2 - 84*b^3 - 14*b^4;
+	d6 = 36 - 51*b - 3*b^2 + 15*b^3 + 3*b^4;
+	### Reduction:
+	d6 = c1*d6; d5 = c1*d5 - c4*d1;
+	d4 = c1*d4; d3 = c1*d3 - c3*d1;
+	d2 = c1*d2 - c2*d1;
+	d0 = c1*d0; d7 = - c0*d1;
+	d1 = c1*d1; # Last!
+	#
+	d7 = c1*d7; d0 = c1*d0;
+	d5 = c1*d5 - d3*c3; d2 = c1*d2 - d3*c0;
+	d6 = c1*d6 - d3*c4; d4 = c1*d4 - d3*c2;
+	c.l = list(c0=c0, c1=c1, c2=c2, c3=c3, c4=c4);
+	d.l = list(d0=d0, d2=d2, d4=d4, d5=d5, d6=d6, d7=d7);
+	return(c(c.l, d.l));
+}
+
+##################
+
+### [NOT working!]
 pP1 = toPoly.pm("S^3 - 3*E2*S + 3*E3 + b*E3 - 4*R")
 pP2 = toPoly.pm("E2*S^2 - 2*E2^2 + (b-1)*E3*S - 4*(b-1)*E4 - 3*R*S")
 pP3 = toPoly.pm("3*S^2 - 5*E2 - b*E2")
 pP4 = toPoly.pm("3*(b + 1)*E3 - E2*S - 6*R")
 
+### [NOT working] Redundancy (?)
+pP1 = toPoly.pm("S^3 - 3*E2*S + 3*E3 + b*E3 - 4*R")
+pP2 = toPoly.pm("E2*S^2 - 2*E2^2 + (b-1)*E3*S - 4*(b-1)*E4 - 3*R*S")
+pP3 = toPoly.pm("b*E3*S^2 - 3*R*S^2 + E2^2*S - (7*b - 3)*E4*S + 2*R*E2 - 5*E2*E3")
+pP4 = toPoly.pm("bd^2*(bd + 4)*E4*S^2 +
+	- bd*(bd + 1)*E2*E3*S + (bd - 9)*R*E2*S +
+	+ 2*(bd + 1)*E2^3 - 4*bd*(bd^2 + 3*bd + 3)*E2*E4 +
+	+ (2*bd^3 + 3*bd^2 - 8*bd - 16)*E3^2 - 4*(bd^2 - 2*bd - 8)*R*E3 - 16*R^2")
 
-pR = solve.lpm(pP3, pP4, pP1, xn=c("E2", "E3"))
-pR = pR[[2]]
+pE3 = toPoly.pm("S^3 - 3*E2*S - 4*R")
+pE3div = toPoly.pm("- b - 3")
+
+pP2 = replace.fr.pm(pP2, pE3, pE3div, "E3")
+pP3 = replace.fr.pm(pP3, pE3, pE3div, "E3")
+pP4 = replace.fr.pm(pP4, pE3, pE3div, "E3")
+
+
+bd = b - 1;
+dd = 4*b^2 + 8*b - 12;
+c0 = 32*bd^3*R^2 - 16*b*bd^2*R^2 - 16*b^2*R^2 + 32*b*bd*R^2 + 32*b*R^2 - 32*bd*R^2 - 16*R^2;
+c1 = - 4*b^2*bd^3 - 24*b*bd^3 - 12*b^2*bd^2 - 36*bd^3 - 12*b^2*bd - 72*b*bd^2 - 108*bd^2 +
+	- 72*b*bd - 108*bd;
+c2 = 2*b^2*bd + 2*b^2 + 12*b*bd + 12*b + 18*bd + 18;
+c3 = (48*bd^3 + b^2*bd - 16*b*bd^2 - 9*b^2 + 24*bd^2 + 26*b*bd + 42*b - 123*bd - 177)*R;
+c4 = b^2*bd^3 + 6*b*bd^3 + 4*b^2*bd^2 + 9*bd^3 + 24*b*bd^2 + 36*bd^2;
+c5 = 18*bd^3 - 3*b*bd^2 - 3*b*bd + 18*bd^2 - 81*bd - 144;
+c6 = (4*b*bd^2 - 16*bd^3 - 8*b*bd - 12*bd^2 - 32*b + 40*bd + 32)*R;
+c7 = b*bd^2 - 12*bd^3 + b*bd - 15*bd^2 + 51*bd + 96;
+c8 = 2*bd^3 + 3*bd^2 - 8*bd - 16;
+#
+c7 = bd*c7 + 4*b*c8;
+c6 = bd*c6 + (b - 13)*R*c8;
+c5 = bd*c5 - (2*b + 6)*c8;
+c4 = bd*c4 - (4*b^2 + 8*b - 12)*c8;
+c3 = bd*c3;
+c2 = bd*c2;
+c1 = bd*c1;
+c0 = bd*c0;
+
+c7*E2*S^4 + c6*S^3 + c5*E2^2*S^2 +
+	+ c4*E4*S^2 + c3*E2*S + c2*E2^3 + c1*E4*E2 + c0 # = 0
+
+pP2 = toPoly.pm("(b - 1)*S^4 - 4*b*E2*S^2 - b*R*S + 13*R*S + (4*b^2 + 8*b - 12)*E4 +
+	+ (2*b + 6)*E2^2")
+pP3 = toPoly.pm("b*S^5 - (3*b + 5)*E2*S^3 - (b - 9)*R*S^2 - (b - 12)*E2^2*S +
+	+ (7*b^2 + 18*b - 9)*E4*S - (2*b - 14)*R*E2")
+pP4 = toPoly.pm("c7*E2*S^4 + c6*S^3 + c5*E2^2*S^2 +
+	+ c4*E4*S^2 + c3*E2*S + c2*E2^3 + c1*E4*E2 + c0")
+
+
+pE4 = toPoly.pm("bd*S^4 - 4*b*E2*S^2 - b*R*S + 13*R*S + (2*b + 6)*E2^2")
+pE4div = toPoly.pm("- (4*b^2 + 8*b - 12)")
+pE4div = toPoly.pm("- dd")
+
+pP3 = replace.fr.pm(pP3, pE4, pE4div, "E4")
+pP4 = replace.fr.pm(pP4, pE4, pE4div, "E4")
+
+### Eq 3: Redundancy (?)
+# - E4 does NOT appear in pP4 anymore;
+d0 = (168 - 136*b - 40*b^2 + 8*b^3)*R;
+d1 = 90 - 18*b + 38*b^2 + 18*b^3;
+d2 = (- 9 + 159*b + 45*b^2 - 3*b^3)*R;
+d3 = - 60 + 40*b - 28*b^2 - 16*b^3;
+d4 = 9 - 15*b + 3*b^2 + 3*b^3;
+#
+e0 = - dd*c0;
+e1 = 6*c1*E2^3 - dd*c2*E2^3 + 2*b*c1;
+e2 = - dd*c3 + 13*c1*R - b*c1*R;
+e3 = 6*c4 - dd*c5 - 4*b*c1 + 2*b*c4;
+e4 = - dd*c6 + 13*c4*R - b*c4*R;
+e5 = - dd*c7 - 4*b*c4 + c1*bd;
+e6 = c4*bd;
+
+d4*S^5 + d3*E2*S^3 + d2*R*S^2 + d1*E2^2*S + d0*E2 # = 0
+e6*S^6 + e5*E2*S^4 + e4*S^3 + e3*E2^2*S^2 + e2*E2*S + e1*E2^3 + e0 # = 0
+
+# d1*pP4*S - e1*pP3*E2
+e6 = d1*e6;
+e5 = d1*e5 - e1*d4;
+e4 = d1*e4;
+e3 = d1*e3 - e1*d3;
+e2 = d1*e2;
+e0 = d1*e0;
+
+d1*E2^2*S + d3*E2*S^3 + d0*E2 + d4*S^5 + d2*R*S^2 # = 0
+e3*E2^2*S^3 - e1*d0*E2^2 + e2*E2*S^2 + e6*S^7 + e5*E2*S^5 - e1*d2*R*E2*S^2 + e4*S^4 + e0*S # = 0
+
+
+pP3 = toPoly.pm("d4*S^5 + d3*E2*S^3 + d2*R*S^2 + d1*E2^2*S + d0*E2")
+pP4 = toPoly.pm("e6*S^6 + e5*E2*S^4 + e4*S^3 + e3*E2^2*S^2 + e2*E2*S + e1*E2^3 + e0")
+	
+pR = solve.lpm(pP3, pP4, xn=c("E2"))
+pR = pR[[1]]
 str(pR)
 
 print.pm(pR$Rez, lead="S")
@@ -405,7 +626,7 @@ pR = solve.pm(pP1, pP2, "x3", stop.at=1)
 toCoeff(pR[[2]], "x3")
 
 
-solve.S4Ht.L1V3aP3 = function(R, b, debug=TRUE) {
+solve.S4Ht.L1V3bP3 = function(R, b, debug=TRUE) {
 	S3 = (50 - 30*b - 18*b^2 - 2*b^3)*R;
 	S3 = - S3 / ((b + 5)*(b^2 - 2*b - 1));
 	S = rootn(S3, 3);
@@ -444,7 +665,7 @@ solve.S4Ht.L1V3aP3 = function(R, b, debug=TRUE) {
 	return(sol);
 }
 # Special Case: x1 == x3;
-solve.S4Ht.L1V3aP3.Case13 = function(R, b, debug=TRUE, all=FALSE) {
+solve.S4Ht.L1V3bP3.Case13 = function(R, b, debug=TRUE, all=FALSE) {
 	coeff = c((b^6 + b^4 - b^2 - 1), - (b^4 - 2*b^2 - 3)*R, - (b^3 + b^2 + 3)*R^2, R^3);
 	x1_3 = roots(coeff);
 	x1 = rootn(x1_3, 3);
@@ -474,8 +695,8 @@ solve.S4Ht.L1V3aP3.Case13 = function(R, b, debug=TRUE, all=FALSE) {
 ###
 R = 3
 b = -7
-sol = solve.S4Ht.L1V3aP3.Case13(R, b)
-sol = solve.S4Ht.L1V3aP3(R, b)
+sol = solve.S4Ht.L1V3bP3.Case13(R, b)
+sol = solve.S4Ht.L1V3bP3(R, b)
 x1 = sol[,1]; x2 = sol[,2]; x3 = sol[,3]; x4 = sol[,4];
 
 ###
@@ -515,4 +736,32 @@ str(pR)
 
 (b^6 + b^4 - b^2 - 1)*x1^9 - (b^4 - 2*b^2 - 3)*R*x1^6 +
 	- (b^3 + b^2 + 3)*R^2*x1^3 + R^3 # = 0
+
+###########
+
+source("Polynomials.Helper.BigNumbers.R")
+
+pP1 = toPoly.pm("S^3 - 3*E2*S + 3*E3 + b*E3 - 4*R")
+pP2 = toPoly.pm("E2*S^2 - 2*E2^2 + (b-1)*E3*S - 4*(b-1)*E4 - 3*R*S")
+pP3 = toPoly.pm("b*E3*S^2 - 3*R*S^2 + E2^2*S - (7*b - 3)*E4*S + 2*R*E2 - 5*E2*E3")
+pP4 = toPoly.pm("3*b*E4*S^2 - (b + 1)*E2*E3*S + 3*E3^2 +
+	+ (2*b + 2)*E2*E4 + 2*R*E2*S - 3*R*E3")
+
+pP1$coeff = as.bigz(pP1$coeff);
+pP2$coeff = as.bigz(pP2$coeff);
+pP3$coeff = as.bigz(pP3$coeff);
+pP4$coeff = as.bigz(pP4$coeff);
+
+pR = solve.lpm(pP1, pP2, pP3, pP4, xn=c("E3", "E4", "E2"), asBigNum=TRUE)
+
+pR = pR[[3]]$Rez
+
+tmp = div.pm(pR, toPoly.pm("((b+1)*S^3 - 64*R) * ((b-1)*S^3 - 8*(b+1)*R)"), c("S", "b"))
+tmp = tmp$Rez;
+
+tmp2 = tmp[tmp$S == 9, c("b", "coeff")]
+pDiv = div.pm(tmp2, toPoly.pm("(b^2+1)^2*(b^2-1)*(b-1)^2"), "b")$Rez
+tmp = div.pm(tmp, pDiv, "b")
+tmp = tmp$Rez;
+toCoeff(tmp, "S")
 
