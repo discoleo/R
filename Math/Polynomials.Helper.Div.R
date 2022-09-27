@@ -152,6 +152,9 @@ gcd.vpm = function(p, xgcd=0) {
 	# - Note: coefficients may grow larger than they should be!
 	if(inherits(p$coeff, "mpfr")) return(1);
 	#
+	if(xgcd == 0 && inherits(p$coeff, c("bigz", "bigq"))) {
+		xgcd = as.bigz(0);
+	}
 	for(i in seq(nrow(p))) xgcd = gcd(xgcd, p$coeff[i]);
 	return(xgcd);
 }
