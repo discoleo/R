@@ -8,7 +8,7 @@
 ###  == Derivation ==
 ###  Type: L1 V2
 ###
-### draft v.0.1a-edit
+### draft v.0.1b
 
 
 ####################
@@ -33,6 +33,21 @@ E2af = function(x, n=2) {
 		E2a = x1^n*x2^p + x2^n*x3^p + x3^n*x4^p + x4^n*x1^p;
 	}
 	return(E2a);
+}
+E3af = function(x, n=2) {
+	if(is.null(dim(x))) {
+		x1 = x[1]; x2 = x[2]; x3 = x[3]; x4 = x[4];
+	} else {
+		stop("TODO");
+	}
+	if(length(n) == 1) {
+		E3a = x1^n*x2*x3 + x2^n*x3*x4 + x3^n*x4*x1 + x4^n*x1*x2;
+	} else {
+		p1 = n[2]; p2 = n[3];
+		n  = n[1];
+		E3a = x1^n*x2^p1*x3^p2 + x2^n*x3^p1*x4^p2 + x3^n*x4^p1*x1^p2 + x4^n*x1^p1*x2^p2;
+	}
+	return(E3a);
 }
 
 
@@ -69,6 +84,16 @@ b*E21a + S^3 - 2*E2*S + (b - 4)*R*S - (b^2 - 2*b)*E3 # = 0
 # Reduction =>
 (b + 1)*E2*S - (b + 1)*(b^2 - b + 3)*E3 + (b^2 - b - 3)*R*S # = 0
 
+### Eq 3: Eq H5 + Eq H6
+E211a + E112a - ps*sp # = 0
+E211a + E112a - E11a*(E2 - E11a) # = 0
+b^3*E211a + b^3*E112a + b*(S^2 - 2*E2 - 4*R)*(S^2 + (b - 2)*E2 - 4*R) # = 0
+2*b^2*E3*S + (5*b^2 - 4*b - 4)*E2^2 +
+	- (5*b^2 - 4*b - 4)*E2*S^2 + 2*(4*b^2 - 8*b - 8)*R*E2 +
+	(b^2 - b - 1)*S^4 - (2*b^2 - 8*b - 8)*R*S^2 - 16*b*R^2 - 16*R^2 # = 0
+# Reduction =>
+# TODO
+
 
 ### Helper Eqs:
 
@@ -92,10 +117,25 @@ b^3*E31a + b^2*E2^2 + 2*R*b^2*E2 - 2*b^2*S*E3 + 4*b^2*E4 +
 b^3*E31a + (b^2 - 4)*E2^2 + 2*R*(b^2 - 8)*E2 + 4*E2*S^2 - 2*b^2*S*E3 + 4*b^2*E4 +
 	- S^4 - (b^2 - 8)*R*S^2 - 16*R^2 # = 0
 
-### Eq H4:
-# Sum(x4*...) => E12a
+### Eq H4: E12a
+# Sum(x4*...) =>
 E12a + b*E3 - R*S # = 0
 # E12a = - b*E3 + R*S;
+
+### Eq H5: E211a
+# Sum(x1^2*...) =>
+S4 + b*E211a - R*(S^2 - 2*E2) # = 0
+b*E211a + S^4 - R*S^2 + 2*E2^2 - 4*E2*S^2 + 2*R*E2 + 4*E3*S - 4*E4 # = 0
+
+### Eq H6: E112a
+# Sum(x4^2*...) =>
+E22a + b*E112a - R*(S^2 - 2*E2) # = 0
+E22 - (E11a^2 - 2*E4) + b*E112a - R*(S^2 - 2*E2) # = 0
+E2^2 - 2*E3*S - E11a^2 + b*E112a - R*S^2 + 2*R*E2 + 4*E4 # = 0
+b^3*E112a + b^2*E2^2 - 2*b^2*E3*S +
+	- (S^2 - 2*E2 - 4*R)^2 - b^2*R*S^2 + 2*b^2*R*E2 + 4*b^2*E4 # = 0
+b^3*E112a + (b^2 - 4)*E2^2 + 4*E2*S^2 - 2*b^2*E3*S - S^4 +
+	- (b^2 - 8)*R*S^2 + 2*(b^2 - 8)*R*E2 + 4*b^2*E4 - 16*R^2 # = 0
 
 
 ### Alternatives:
@@ -117,6 +157,7 @@ sp = p1 + p2; ps = s1 * s2;
 S = s1 + s2; E4 = p1 * p2;
 E2 = sp + ps;
 E3 = p1*s2 + p2*s1;
+#
 E11a = ps;
 E21  = S*E2 - 3*E3;
 E21a = E2af(x, n=2);
@@ -127,4 +168,8 @@ E22  = E2^2 - 2*S*E3 + 2*E4;
 E22a = E2af(x, n=c(2,2));
 E22b = (x1*x3)^2 + (x2*x4)^2;
 E33a = E2af(x, n=c(3,3));
+#
+S4 = sum(x^4);
+E211a = E3af(x, n=2);
+E112a = E3af(x, n=c(1,1,2));
 
