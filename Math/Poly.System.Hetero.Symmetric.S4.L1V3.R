@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric
 ### Leading 1, NL Mixed: V3
 ###
-### draft v.0.1f
+### draft v.0.1f-Special
 
 
 ### Type L1 NLm V3
@@ -407,7 +407,12 @@ b*E3*S^2 - 3*R*S^2 + E2^2*S - (7*b - 3)*E4*S + 2*R*E2 - 5*E2*E3 # = 0
 
 # Standard solver:
 solve.S4Ht.L1V3bP3 = function(R, b, debug=TRUE) {
-	if(any(round0(b[1] - c(-3, 1)) == 0)) {
+	isSpecial = round0(b[1] - c(-3, 1)) == 0;
+	if(any(isSpecial)) {
+		if(isSpecial[2]) {
+			# b = 1;
+			return(solve.S4Ht.L1V3bP3.B1(R, b=1));
+		}
 		stop("Special case: not yet implemented!");
 	}
 	coeff = coeff.S4Ht.L1V3bP3(R, b=b);
@@ -531,6 +536,48 @@ coeff.S4Ht.L1V3bP3.Y3 = function(R, b) {
 	);
 	return(coeff);
 }
+### b == 1
+solve.S4Ht.L1V3bP3.B1 = function(R, b=1, debug=TRUE, all=FALSE) {
+	if(round0(b - 1) != 0) stop("Only Special case: b == 1!");
+	### Case: x2=x3=x4 = y;
+	x1 = 0;
+	y = rootn(R, n=3);
+	m = unity(3, all=TRUE);
+	y = y*m;
+	if(debug) print(y);
+	sol = cbind(x1=x1, x2=y, x3=y, x4=y);
+	### Case: S2Ht
+	# TODO;
+	### All:
+	# - only 1 cyclic permutation added;
+	if(all) sol = rbind(sol, sol[ , c(4,1,2,3)]);
+	return(sol);
+}
+solve.S4Ht.L1V3bP3.B1.FALSE = function(R, b=1, debug=TRUE, all=FALSE) {
+	# ONLY FALSE solutions!
+	warning("False solutions!");
+	if(round0(b - 1) != 0) stop("Only Special case: b == 1!");
+	# 3*s1^6 - s1^5 + 2*R*s1^3 - 4*R^2;
+	s1 = roots(c(3, -1, 0, 2*R,0,0, -4*R^2));
+	if(debug) print(s1);
+	p1 = (s1^3 + s1^2 - 2*R) / (4*s1);
+	#
+	y = R / s1^2;
+	#
+	len = length(s1);
+	x1 = sapply(seq(len), function(id) {
+		roots(c(1, -s1[id], p1[id]));
+	})
+	x1 = as.vector(x1);
+	x2 = s1 - x1;
+	y  = rep(y, each=2);
+	#
+	sol = cbind(x1=x1, x2=x2, x3=y, x4=y);
+	# only the C2-permutation is added;
+	if(all) sol = rbind(sol, sol[, c(2,1,4,3)]);
+	return(sol);
+}
+
 ### Test:
 test.S4Ht.L1V3bP3 = function(sol, b, R=NULL) {
 	err = test.S4Ht.V3b(sol, b=b, R=R, n=3);
@@ -574,7 +621,18 @@ sol3 = solve.S4Ht.L1V3bP3.Y3(R, b)
 test.S4Ht.L1V3bP3(sol3, b=b)
 
 
+### Ex 4: Special Case
+R = 3
+b = 1
+sol = solve.S4Ht.L1V3bP3(R, b)
+test.S4Ht.L1V3bP3(sol, b=b)
+
+
+#################
 ### Alternatives:
+
+# - NOT possible for power = 3;
+# - create only FALSE solutions;
 
 ### Eq 3: Diff(Eq 1 - Eq 3) =>
 x1^3 - x3^3 - b*x2*x4*(x1 - x3) # = 0
@@ -627,4 +685,57 @@ E3 = p1*s2 + p2*s1;
 E3^2 - sp*E3*S + E4*S^2 + ps*sp^2 - 4*ps*E4 # = 0
 # =>
 sp^3 - E2*sp^2 + sp*E3*S - 4*sp*E4 - E3^2 - E4*S^2 + 4*E2*E4 # = 0
+
+
+### Special Cases:
+
+### Case: b = 1
+x1^3 + x2*x3*x4 - R # = 0
+
+### Sub-Case: x2=x3=x4 = y;
+x^3 + y^3 - R # = 0
+y^3 + x*y^2 - R # = 0
+
+### Diff =>
+x*(x^2 - y^2) # = 0
+
+### Solutions:
+# Sol 1: x == y;
+# - all 4 roots equal;
+
+# Sol 2: x = 0;
+# y^3 = R;
+
+# Sol 3: y = -x; (NO)
+# - NO solution (except when R = 0);
+
+
+### Sub-Case: x3=x4 = y;
+# - but distinct from x1 & x2;
+x1^3 + x2*y^2 - R # = 0
+x2^3 + x1*y^2 - R # = 0
+y^3 + x1*x2*y - R # = 0
+
+### Diff: Eq 1 - Eq 2 =>
+(x1 - x2)*(x1^2 + x2^2 + x1*x2 - y^2) # = 0
+
+### Sol 1: x1 == x2;
+# - S2Ht system, same as: x1 = x3, x2 = x4;
+x^3 + x*y^2 - R # = 0
+y^3 + y*x^2 - R # = 0
+
+### Sol 2: x1 != x2;
+# - all are FALSE solutions!
+# s1 = x1 + x2;
+s1^2 - x1*x2 - y^2 # = 0
+s1^2 - 3*x1*x2*s1 + s1*y^2 - 2*R # = 0
+y^3 + x1*x2*y - R # = 0
+# Sum: y*Eq 1 + Eq 3 =>
+s1^2*y - R # = 0
+# =>
+s1^6 - x1*x2*s1^4 - R^2 # = 0
+s1^3 + s1^2 - 4*x1*x2*s1 - 2*R # = 0
+# =>
+3*s1^6 - s1^5 + 2*R*s1^3 - 4*R^2 # = 0
+# - but FALSE solutions;
 
