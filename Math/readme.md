@@ -14,6 +14,10 @@
 - e.g. with result = Gamma(1/n)^2
 - relations of the Gamma function: G(1/2n) = f(G(1/n))
 
+4.) ODEs
+- Linear ODEs with Polynomial coefficients;
+- Non-linear ODEs;
+
 ## Polynomials
 
 ### A. Class 1 Polynomials
@@ -39,7 +43,7 @@ B.2 Based on Roots of Unity
 - Special case of Class 2: P[n] based on roots of unity of order (n+1), see: Polynomials.Class2.Formulas.R;
 
 B.3. Special Compositions
-- Hetero-Symmetric Polynomial Systems (cyclic permutations);
+- based on Hetero-Symmetric Polynomial Systems (cyclic permutations);
 - see e.g. Poly.System.Hetero.Symmetric.R, Poly.System.Hetero.Symmetric.S3.R, Poly.System.Hetero.Symmetric.S4.R;
 
 ### C. Class 3 Polynomials
