@@ -57,11 +57,11 @@ B.3. Special Compositions
 
 ## ODEs
 
-> **A. Linear ODEs
-> B. Non-Linear ODEs
-> C. Systems of ODEs**
+> **A. Linear ODEs**\
+> **B. Non-Linear ODEs**\
+> **C. Systems of ODEs**
 
-### Linear ODEs
+### A. Linear ODEs
 
 Linear ODEs with Polynomial Coefficients are constructed starting from the following functions:
 - y = B1*exp(P1) + B2*exp(P2) + B0;
