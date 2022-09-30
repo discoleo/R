@@ -35,7 +35,7 @@ A.2 Complete Class 1
 
 ### B. Class 2 Polynomials
 - Polynomial compositions, e.g. P[6] = P[2] o P[3] or P[6] = P[3] o P[2];
- - for simple examples of basic compositions, see Polynomials.Derived.P6.R;
+  - for simple examples of basic compositions, see Polynomials.Derived.P6.R;
 - the coefficients of the components can show complex entanglements (see B.3);
 
 B.1. Polynomial of Order 4
@@ -48,7 +48,7 @@ B.2 Based on Roots of Unity
 
 B.3. Special Compositions
 - based on Hetero-Symmetric Polynomial Systems (cyclic permutations);
-  - see e.g. Poly.System.Hetero.Symmetric.R, Poly.System.Hetero.Symmetric.S3.R, Poly.System.Hetero.Symmetric.S4.R;
+  > see e.g. Poly.System.Hetero.Symmetric.R, Poly.System.Hetero.Symmetric.S3.R, Poly.System.Hetero.Symmetric.S4.R;
 
 
 ### C. Class 3 Polynomials
@@ -57,9 +57,9 @@ B.3. Special Compositions
 
 ## ODEs
 
-A. Linear ODEs
-B. Non-Linear ODEs
-C. Systems of ODEs
+> **A. Linear ODEs
+> B. Non-Linear ODEs
+> C. Systems of ODEs**
 
 ### Linear ODEs
 
@@ -72,4 +72,4 @@ Linear ODEs with Polynomial Coefficients are constructed starting from the follo
 
 Note:
 - B2(x), B1(x), B0(x), P1(x), P2(x) are polynomials or polynomial fractions of x;
- - the examples are usually based on simple polynomials, as the fractions are much uglier to work with;
+  > Note: the examples are usually based on simple polynomials, as the fractions are much uglier to work with;
