@@ -28,9 +28,10 @@ A.1 Generalization of Cardano's formula:
 - proper way of Cardano's formula: based on roots of unity & independent of coefficients;
 - these polynomials are a very special case of Class 1 polynomials;
 
-
 A.2 Complete Class 1
 - see files: Polynomials.Class1.Formulas.R, Polynomials.Class1.R;
+- Rationalization of Fractions with radicals, see file: Fractions.Rationalisation.R;
+
 
 ### B. Class 2 Polynomials
 - Polynomial compositions;
