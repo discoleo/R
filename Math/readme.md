@@ -25,7 +25,7 @@
 
 A.1 Generalization of Cardano's formula:
 - see file: Polynomials.CardanGeneralisation.R;
-- proper way of Cardano's formula: based on roots of unity & independent of coefficients;
+- proper way of Cardano's formula: based on roots of unity & quasi-independent of coefficients;
 - these polynomials are a very special case of Class 1 polynomials;
 
 A.2 Complete Class 1
@@ -34,11 +34,12 @@ A.2 Complete Class 1
 
 
 ### B. Class 2 Polynomials
-- Polynomial compositions;
+- Polynomial compositions, e.g. P[6] = P[2] o P[3] or P[6] = P[3] o P[2];
+- the coefficients of the components can show complex entanglements (see B.3);
 
 B.1. Polynomial of Order 4
 - proper & complete way to solve polynomials of Order 4 (with all 4 roots), see file: Polynomials.P4.R;
-- based on the C2-Decomposition, see: Poly.System.S4.C2.R and related files;
+- based on the C2-Decomposition (P[2] o P[2] o P[3]), see: Poly.System.S4.C2.R and related files;
 
 B.2 Based on Roots of Unity
 - Special case of Class 2: P[n] based on roots of unity of order (n+1), see: Polynomials.Class2.Formulas.R;
@@ -47,7 +48,7 @@ B.2 Based on Roots of Unity
 B.3. Special Compositions
 - based on Hetero-Symmetric Polynomial Systems (cyclic permutations);
   - see e.g. Poly.System.Hetero.Symmetric.R, Poly.System.Hetero.Symmetric.S3.R, Poly.System.Hetero.Symmetric.S4.R;
-  - 
+
 
 ### C. Class 3 Polynomials
 - Roots based on cos(2*pi/n);
