@@ -42,10 +42,12 @@ B.1. Polynomial of Order 4
 
 B.2 Based on Roots of Unity
 - Special case of Class 2: P[n] based on roots of unity of order (n+1), see: Polynomials.Class2.Formulas.R;
+- Symmetric polynomials are a generalization of the roots of unity sub-class, see: Polynomials.Derived.P6.Symmetric.R;
 
 B.3. Special Compositions
 - based on Hetero-Symmetric Polynomial Systems (cyclic permutations);
-- see e.g. Poly.System.Hetero.Symmetric.R, Poly.System.Hetero.Symmetric.S3.R, Poly.System.Hetero.Symmetric.S4.R;
+  - see e.g. Poly.System.Hetero.Symmetric.R, Poly.System.Hetero.Symmetric.S3.R, Poly.System.Hetero.Symmetric.S4.R;
+  - 
 
 ### C. Class 3 Polynomials
 - Roots based on cos(2*pi/n);
