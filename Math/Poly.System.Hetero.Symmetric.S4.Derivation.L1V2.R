@@ -8,7 +8,7 @@
 ###  == Derivation ==
 ###  Type: L1 V2
 ###
-### draft v.0.1d-Helper2
+### draft v.0.1d-clPoly
 
 
 ### Types:
@@ -58,6 +58,28 @@ E3af = function(x, n=2) {
 		E3a = x1^n*x2^p1*x3^p2 + x2^n*x3^p1*x4^p2 + x3^n*x4^p1*x1^p2 + x4^n*x1^p1*x2^p2;
 	}
 	return(E3a);
+}
+
+### Classic Polynomial
+polyGen.S4Ht.V2a = function(n, factorize=TRUE) {
+	pR = toPoly.pm("x4^n + b*x4*x1 - R");
+	pSub = data.frame(x3=c(n, 0), R=c(0,1), coeff=c(1,-1));
+	pDiv = data.frame(x3=1, b=1, coeff = -1);
+	for(i in 4:2) {
+		xn = paste0("x", i);
+		pR = replace.fr.pm(pR, pSub, pDiv, xn);
+		if(i > 1) {
+			xn = paste0("x", i - 2);
+			names(pSub)[1] = xn;
+			names(pDiv)[1] = xn;
+		}
+	}
+	if(factorize) {
+		pDiv = toPoly.pm("(R - x1^n)^n + b^n*x1^n*(R - x1^n) - b^n*R*x1^n");
+		pR = div.pm(pR, pDiv, c("x1", "b"));
+		pR = pR$Rez;
+	}
+	return(pR);
 }
 
 ### Helper Equations:
@@ -172,6 +194,19 @@ E13a = E2af(x, n=c(1,3));
 E22  = E2^2 - 2*S*E3 + 2*E4;
 E22a = E2af(x, n=c(2,2));
 S4 = sum(x^4);
+
+### Classic Poly:
+pR = polyGen.S4Ht.V2a(2)
+toCoeff(pR, "x1")
+
+(b^2 + 1)*x1^12 - (6 + 8*b^2 + 3*b^4 + b^6)*R*x1^10 +
+	+ (15 + 22*b^2 + 13*b^4 + 6*b^6 + b^8)*R^2*x1^8 +
+	- (20 + 28*b^2 + 18*b^4 + 10*b^6 + 3*b^8)*R^3*x1^6 +
+	+ (15 + 17*b^2 + 9*b^4 + 5*b^6 + 2*b^8)*R^4*x1^4 +
+	- (6 + 4*b^2 + b^4 + b^6)*R^5*x1^2 + R^6 # = 0
+
+### Case: b = 1i
+x1^8 - 3*R*x1^6 + 4*R^2*x1^4 - 2*R^3*x1^2 + R^4 # = 0
 
 
 ####################
