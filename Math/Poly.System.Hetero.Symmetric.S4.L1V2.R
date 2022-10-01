@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric
 ### Leading 1, NL Mixed: V2
 ###
-### draft v.0.1a-ext
+### draft v.0.1a-Types
 
 
 ### Type L1 V2
@@ -27,9 +27,15 @@
 
 ### Extended Types:
 # - behave still like V2-types;
-# x1^n + b1*x1*x2 + b2*x1*x3 = R
-# x1^n + b1*x1*x2 + b2*x2*x3 = R
-# x1^n + b1*x1*x2 + b2*x3*x4 = R
+# - Side-Chain x1: 2 times;
+#   x1^n + b1*x1*x2 + b2*x1*x3 = R
+#   x1^n + b1*x1*x2 + b2*x1*x4 = R
+# - Side-Chain x1: 1 time;
+#   x1^n + b1*x1*x2 + b2*x2*x3 = R
+#   x1^n + b1*x1*x2 + b2*x3*x4 = R
+# - Side-Chain x1: 0 times;
+#   x1^n + b1*x2*x3 + b2*x2*x4 = R
+#   x1^n + b1*x2*x3 + b2*x3*x4 = R
 # ...
 
 
