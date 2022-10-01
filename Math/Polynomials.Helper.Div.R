@@ -21,6 +21,8 @@
 ################
 
 div.pm = function(p1, p2, by="x", NF.stop=TRUE, debug=TRUE) {
+	if(is.character(p2)) p2 = toPoly.pm(p2);
+	if(is.character(p1)) p1 = toPoly.pm(p1);
 	# very simple division
 	xn = by[1];
 	idx = checkDiv.pm(p1, p2, xn=xn);
