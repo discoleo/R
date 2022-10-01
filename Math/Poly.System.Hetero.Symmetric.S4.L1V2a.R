@@ -7,16 +7,16 @@
 ### Heterogeneous Symmetric
 ### Leading 1, NL Mixed
 ###
-### draft v.0.1a
+### draft v.0.1b
 
 
-### Type L1 NLm
-# - Leading: 1
-# - Non-Leading: Mixed / Multiple
+### Type L1 V2a
+# - Leading: 1 var;
+# - Non-Leading: Mixed / Multiple vars - V2a
 
-### Subtypes:
+
+### Subtype:
 # V2a: x1^n + b*x1*x2 = R
-# V2b: x1^n + b*x2*x3 = R
 
 
 ####################
@@ -31,8 +31,15 @@ source("Polynomials.Helper.R")
 
 ### History
 
+# TODO:
+# - keep separate or merge into:
+#   Poly.System.Hetero.Symmetric.S4.L1V2.R ?
+
+### v.0.1b
+# - renamed file to:
+#   Poly.System.Hetero.Symmetric.S4.L1V2a.R
 ### v.0.1a
-# - moved specific code from file:
+# - moved specific V2a code from file:
 #   Poly.System.Hetero.Symmetric.S4.R
 
 
