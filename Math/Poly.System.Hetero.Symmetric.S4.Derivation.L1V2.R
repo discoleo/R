@@ -8,7 +8,7 @@
 ###  == Derivation ==
 ###  Type: L1 V2
 ###
-### draft v.0.1f-clean
+### draft v.0.1f-clean2
 
 
 ### Types:
@@ -370,36 +370,28 @@ E2 = -b*R*(b^2 - b + 2);
 ### [old]
 # TODO: clean;
 
-pEq3 = data.frame(
-	E4 = c(2, 2, 1, 1, 0, 0, 0, 0, 0, 0),
-	E3 = c(0, 0, 0, 0, 2, 1, 0, 0, 0, 0),
-	E2 = c(0, 0, 0, 1, 0, 0, 1, 2, 0, 0),
-	S  = c(0, 0, 0, 0, 0, 1, 0, 0, 2, 0),
-	b  = c(0, 4, 0, 0, 0, 0, 0, 0, 0, 0),
-	R  = c(0, 0, 2, 1, 1, 2, 3, 2, 3, 4),
-	coeff = c(1,-1, 2, 2, -1, -2, 2, 1, -1, 1)
-)
-pEq1   = data.frame(E3=1, R=1, coeff=1); # E4 vs E3
-pEq1fr = data.frame(S=c(1,1), b=c(1,0), coeff=c(1,1));
-pDiv = data.frame(
-	S = c(2, 0, 0, 0, 0, 0),
-	b = c(0, 4, 3, 2, 1, 0),
-	R = c(0, 1, 1, 1, 1, 1),
-	coeff = c(1,-1, 2, -4, 4, -4)
-)
+### Eq 3:
+pEq3 = toPoly.pm("E4^2 - b^4*E4^2 + 2*R^2*E4 + 2*R*E2*E4 - R*E3^2 - 2*R^2*E3*S +
+	+ 2*R^3*E2 + R^2*E2^2 - R^3*S^2 + R^4");
+pEq1   = data.frame(E3=1, R=1, coeff=1); # E4 = R*E3 / pEq1fr;
+pEq1fr = data.frame(S=c(1,1), b=c(1,0), coeff=c(1,1)); # = (b+1)*S;
+# [Eq S] used for Reductions: (but only the Case: S != 0)
+pDiv = toPoly.pm("S^2 - (b^4 - 2*b^3 + 4*b^2 - 4*b + 4)*R");
 pEq3Coeff = data.frame(b=5:0, coeff=c(1,-1,3,-1,1,3));
 #
 pEq3r = replace.fr.pm(pEq3, pEq1, pEq1fr, "E4", pow=1)
+# Reduce Eq 3:
 lP3 = div.pm(pEq3r, pDiv, by="S")
 # lP3$Rem
 lP3 = div.pm(lP3$Rem, data.frame(b=c(1,0), coeff=c(1,1)), by="b")
 lP3 = lP3$Rez; lP3$R = lP3$R - 2; lP3$coeff = - lP3$coeff;
 id = order( - lP3$E3, - lP3$E2, - lP3$b); lP3 = lP3[id,];
-print.p(lP3, "E3")
+print.pm(lP3, "E3")
 lP3
 
 # Debug:
-eval.pm(pEq3, c(E4[10], E3[10], E2[10], S[10], b, R))
+id = 10;
+eval.pm(pEq3, list(E4=E4[id], E3=E3[id], E2=E2[id], S=S[id], b=b, R=R))
 
 (3 + b - b^2 + 3*b^3 - b^4 + b^5)*E3^2 +
 	- 2*(E2 - 3*R - 2*R*b^3 + R*b^4 - R*b^5)*S*E3 +
@@ -408,37 +400,30 @@ eval.pm(pEq3, c(E4[10], E3[10], E2[10], S[10], b, R))
 
 
 ### Eq 4:
-(b^2 + 2)*E3^2 - (b^2 + 2)*E4*S^2 + 8*(b^2 + 1)*R*E4 +
+pEq4 = toPoly.pm("(b^2 + 2)*E3^2 - (b^2 + 2)*E4*S^2 + 8*(b^2 + 1)*R*E4 +
 	- 4*R*E2^2 + 4*R*E2*S^2 - 8*R^2*E2 +
-	- R*S^4 + 4*R^2*S^2 - 8*R^3 # = 0
-
-pEq4 = data.frame(
-	E4 = c(0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0),
-	E3 = c(2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-	E2 = c(0, 0, 0, 0, 0, 0, 2, 1, 1, 0, 0, 0),
-	S  = c(0, 0, 2, 2, 0, 0, 0, 2, 0, 4, 2, 0),
-	b  = c(2, 0, 2, 0, 2, 0, 0, 0, 0, 0, 0, 0),
-	R  = c(0, 0, 0, 0, 1, 1, 1, 1, 2, 1, 2, 3),
-	coeff = c(1, 2,-1,-2, 8, 8,-4, 4,-8,-1, 4,-8)
-)
-pEq4Coeff = data.frame(S=1, b=c(3,2,1,0), coeff=c(1,1,2,2));
+	- R*S^4 + 4*R^2*S^2 - 8*R^3");
+pEq4Coeff = toPoly.pm("S*(b^3 + b^2 + 2*b + 2)");
+# pEq4Coeff = data.frame(S=1, b=c(3,2,1,0), coeff=c(1,1,2,2));
 #
 pEq4r = replace.fr.pm(pEq4, pEq1, pEq1fr, "E4", pow=1)
+# Reduce Eq 4:
 lP4 = div.pm(pEq4r, pDiv, by="S")
 lP4 = lP4$Rem;
 id = order( - lP4$E3, - lP4$E2, -lP4$b); lP4 = lP4[id,];
-print.p(lP4, "E3")
-# lP4
+print.pm(lP4, "E3")
+str(lP4)
 
 pR = diff.pm(mult.pm(lP3, pEq4Coeff), mult.pm(lP4, pEq3Coeff))
 lP2r = div.pm(pR, pDiv, by="S")
 lP2r = lP2r$Rem;
 id = order( - lP2r$E3, - lP2r$E2, -lP2r$b); lP2r = lP2r[id,];
-print.p(lP2r, "E3")
+print.pm(lP2r, "E3")
 
 
 # Debug:
-eval.pm(pEq4, c(E4[10], E3[10], E2[10], S[10], b, R))
+id = 10;
+eval.pm(pEq4, list(E4=E4[id], E3=E3[id], E2=E2[id], S=S[id], b=b, R=R))
 
 (b+1)*(b^2 + 2)*E3^2*S +
 	+ R^2 * (- b^6 + 2*b^5 - 6*b^4 + 8*b^3 - 4*b^2 + 8*b)*E3 +
@@ -454,6 +439,7 @@ eval.pm(pEq4, c(E4[10], E3[10], E2[10], S[10], b, R))
 	- (4*b^10 - 8*b^9 + 26*b^8 - 24*b^7 + 30*b^6 + 20*b^5 - 32*b^4 + 72*b^3 - 8*b^2 + 40)*R*E2*S +
 	+ (b^14 - 4*b^13 + 15*b^12 - 32*b^11 + 59*b^10 - 68*b^9 + 56*b^8 + 12*b^7 - 71*b^6 + 134*b^5 - 86*b^4 +
 		+ 48*b^3 + 44*b^2 - 24*b + 48)*R^2*S
+
 
 ### Eq 2:
 (b^4 - 1)*(b^2 + 2)*E4^2 - 2*b^2*(b^2 + 4)*R^2*E4 +
