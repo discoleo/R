@@ -8,7 +8,7 @@
 ###  == Derivation ==
 ###  Type: L1 V2
 ###
-### draft v.0.1e-fix
+### draft v.0.1f-clean
 
 
 ### Types:
@@ -67,6 +67,21 @@ E3af = function(x, n=2) {
 		E3a = x1^n*x2^p1*x3^p2 + x2^n*x3^p1*x4^p2 + x3^n*x4^p1*x1^p2 + x4^n*x1^p1*x2^p2;
 	}
 	return(E3a);
+}
+### Debug:
+debug.E = function(x) {
+	if(is.matrix(x)) {
+		x1 = x[,1]; x2 = x[,2]; x3 = x[,3]; x4 = x[,4];
+	} else {
+		x1 = x[1]; x2 = x[2]; x3 = x[3]; x4 = x[4];
+	}
+	s1 = x1 + x3; s2 = x2 + x4;
+	p1 = x1 * x3; p2 = x2 * x4;
+	sp = p1 + p2; ps = s1 * s2;
+	S = s1 + s2; E4 = p1 * p2;
+	E2 = sp + ps;
+	E3 = p1*s2 + p2*s1;
+	data.frame(S=S, E2=E2, E3=E3, E4=E4, E11a = ps);
 }
 
 ### Classic Polynomial
@@ -185,6 +200,14 @@ b^3*E13a + 2*E2^2 - 4*E2*S^2 + 2*R*E2 + 4*E3*S - 4*E4 + S^4 - R*S^2 +
 b^3*E13a - 4*E4 + 4*E3*S + 2*E2^2 - 4*E2*S^2 + 2*(b^2 + 2)*R*E2 +
 	+ S^4 - (b^2 + 2)*R*S^2 + 4*R^2 # = 0
 
+### Eq H8: E211a
+# Sum(x2^2*x3*x4*...) =>
+E4*E11a + b*E4*(S^2 - 2*E2) - R*E211a # = 0
+
+### Eq H9: E112a
+# Sum(x3*x4*...) =>
+E112a + 4*b*E4 - R*E11a # = 0
+
 
 #######
 ### Eq:
@@ -216,6 +239,10 @@ E13a = E2af(x, n=c(1,3));
 E22  = E2^2 - 2*S*E3 + 2*E4;
 E22a = E2af(x, n=c(2,2));
 S4 = sum(x^4);
+E121a = E3af(x, n=c(1,2,1));
+E112a = E3af(x, n=c(1,1,2));
+E211a = E3af(x, n=c(2,1,1));
+
 
 ### Classic Poly:
 pR = polyGen.S4Ht.V2a(2)
@@ -242,10 +269,9 @@ E4*S + b*E4*S - R*E3 # = 0
 ### Eq 2:
 ### Sum =>
 S^2 - 2*E2 + b*E11a - 4*R # = 0
-P2a = E11a;
 
 ### x1^2 = R - b*x1*x2 => Prod =>
-E4^2 - R^4 + b*R^3*P2a - b^2*R^2*(P3a + 2*E4) + b^3*R*E4*P2a - b^4*E4^2 # = 0
+E4^2 - R^4 + b*R^3*E11a - b^2*R^2*(E121a + 2*E4) + b^3*R*E4*E11a - b^4*E4^2 # = 0
 # Eq 2:
 (b^4 - 1)*(b^2 + 2)*E4^2 - 2*b^2*(b^2 + 4)*R^2*E4 +
 	- 2*b^2*(b^2 + 2)*R*E4*E2 + b^2*(b^2 + 2)*R*E4*S^2 +
@@ -261,10 +287,10 @@ E4^2 - b^4*E4^2 + 2*R^2*E4 + 2*R*E2*E4 - R*E3^2 - 2*R^2*E3*S +
 ### Eq 4:
 ### Alternative 1:
 ### Sum(x3^2*x4^2*...) =>
-(E3^2 - 2*E4*E2) + b*E4*P2a - R*(P2a^2 - 2*P3a - 4*E4) # = 0
-b^2*E3^2 - b^2*E4*S^2 + 8*b^2*R*E4 - R*(2*E2 - S^2 + 4*R)^2 + 2*b^2*R*P3a # = 0
+(E3^2 - 2*E4*E2) + b*E4*E11a - R*(E11a^2 - 2*E121a - 4*E4) # = 0
+b^2*E3^2 - b^2*E4*S^2 + 8*b^2*R*E4 - R*(2*E2 - S^2 + 4*R)^2 + 2*b^2*R*E121a # = 0
 b^2*E3^2 - b^2*E4*S^2 + 8*b^2*R*E4 - 4*R*E2^2 + 4*R*E2*S^2 - 16*R^2*E2 +
-	- R*(S^4 - 8*R*S^2 + 16*R^2) + 2*b^2*R*P3a # = 0
+	- R*(S^4 - 8*R*S^2 + 16*R^2) + 2*b^2*R*E121a # = 0
 (b^2 + 2)*E3^2 - (b^2 + 2)*E4*S^2 + 8*(b^2 + 1)*R*E4 +
 	- 4*R*E2^2 + 4*R*E2*S^2 - 8*R^2*E2 +
 	- R*S^4 + 4*R^2*S^2 - 8*R^3 # = 0
@@ -281,42 +307,25 @@ E3 = 0; E2 = -2*R; E4 = R^2 / (b^2 + 1);
 ### Case: S != 0
 E2 = -b*R*(b^2 - b + 2);
 E3 = - (b+1) * R * S;
-E4 = R*E3 / ((b+1)*S); # - R^2;
+E4 = R*E3 / ((b+1)*S); # = - R^2;
 
-
-### [Eq 4] Alternative 2:
-### Sum(x4*...) =>
-(x1^2*x4 + x2^2*x1 + x3^2*x2 + x4^2*x3) + b*E3 - R*S # = 0
-### Sum(x3*x4*...) =>
-P3b = x1^2*x3*x4 + x2^2*x1*x4 + x3^2*x1*x2 + x4^2*x2*x3;
-P3b + 4*b*E4 - R*P2a # = 0
-# [...]
 
 ### [old approach]
 ### Workout:
 ### Half-Elementary Polynomials
-P3a = x1*x2^2*x3 + x1^2*x2*x4 + x2*x3^2*x4 + x1*x3*x4^2
-p2a = perm.poly(4, c(1,1))[c(1,3,4,6),]
-pR = data.frame(x1=0, coeff=1);
-for(nr in seq(nrow(p2a))) {
-	p1 = p2a[nr,];
-	p1 = rbind(p1, 0); p1$coeff[2] = -1;
-	p1$R = c(0, 1);
-	pR = mult.pm(pR, p1);
-}
-pR = sort.pm(pR, c(4,2,3,1), xn="R")
-pR
 
-### P3a:
+### E121a:
 ### x1^2 = R - b*x1*x2 => Sum(Prod(2 eqs)) =>
-b^2*P3a - 2*b*R*P2a + 4*R^2 - (P2a^2 - 2*P3a - 4*E4) # = 0
-(b^2 + 2)*P3a - 2*R*(2*E2 - S^2 + 4*R) - P2a^2 + 4*E4 + 4*R^2
-b^2*(b^2 + 2)*P3a - 2*b^2*R*(2*E2 - S^2 + 4*R) - (2*E2 - S^2 + 4*R)^2 + 4*b^2*E4 + 4*b^2*R^2
-b^2*(b^2 + 2)*P3a - 4*E2^2 + 4*E2*S^2 - 4*(b^2+4)*R*E2 +
+b^2*E121a - 2*b*R*E11a + 4*R^2 - (E11a^2 - 2*E121a - 4*E4) # = 0
+(b^2 + 2)*E121a - 2*R*(2*E2 - S^2 + 4*R) - E11a^2 + 4*E4 + 4*R^2
+b^2*(b^2 + 2)*E121a - 2*b^2*R*(2*E2 - S^2 + 4*R) - (2*E2 - S^2 + 4*R)^2 + 4*b^2*E4 + 4*b^2*R^2
+b^2*(b^2 + 2)*E121a - 4*E2^2 + 4*E2*S^2 - 4*(b^2+4)*R*E2 +
 	+ 4*b^2*E4 - S^4 + 2*(b^2+4)*R*S^2 - 4*(b^2+4)*R^2 # = 0
 
 
 ### Debug:
+
+### Classic solver:
 solve.S4P2V2a.classic = function(R, b, debug=FALSE) {
 	x1 = roots(coeff.S4P2V2a(R, b)); # see below for coeff.S4P2V2();
 	x2 = xip.f(x1, R, b, p=1);
@@ -325,8 +334,6 @@ solve.S4P2V2a.classic = function(R, b, debug=FALSE) {
 	sol = cbind(x1, x2, x3, x4);
 	return(sol);
 }
-
-### Classic solver:
 coeff.S4P2V2a = function(R, b) {
 	# P[12]
 	coeff = c(b^2 + 1, 0,
@@ -352,10 +359,11 @@ coeff.S4P2V2a_P16 = function(R, b) {
 }
 #
 R = -1; b = 2;
-sol = solve.S4P2V2.classic(R, b);
+sol = solve.S4P2V2a.classic(R, b);
 x1 = sol[,1]; x2 = sol[,2]; x3 = sol[,3]; x4 = sol[,4];
-E = do.call(rbind, lapply(seq(nrow(sol)), function(id) debug.E(sol[id,])));
-E$S = round0(E$S);
+
+E = debug.E(sol);
+E = sapply(E, round0);
 S = E$S; E2 = E$E2; E3 = E$E3; E4 = E$E4;
 E2 = -b*R*(b^2 - b + 2);
 
