@@ -8,7 +8,7 @@
 ###  == Derivation ==
 ###  Type: L1 V2
 ###
-### draft v.0.1f-clean2
+### draft v.0.1f-clean3
 
 
 ### Types:
@@ -120,6 +120,10 @@ E31a + E13a - s2*(s1^3 - 3*p1*s1) - s1*(s2^3 - 3*p2*s2) # = 0
 E31a + E13a - s1*s2*(s1^2 + s2^2) + 3*s1*s2*(p1 + p2) # = 0
 E31a + E13a - E11a*(S^2 - 2*E11a) + 3*E11a*(E2 - E11a) # = 0
 E31a + E13a - E11a^2 + 3*E11a*E2 - E11a*S^2 # = 0
+
+### E211a + E112a
+E211a + E112a - ps*sp # = 0
+E211a + E112a - E11a*(E2 - E11a) # = 0
 
 
 ####################
@@ -370,6 +374,12 @@ E2 = -b*R*(b^2 - b + 2);
 ### [old]
 # TODO: clean;
 
+### Case: S != 0
+# - computation of reduced Eqs for E2 & E3;
+# - Result:
+#   E2 = - b*R*(b^2 - b + 2);
+#   E3 = - (b+1) * R * S;
+
 ### Eq 3:
 pEq3 = toPoly.pm("E4^2 - b^4*E4^2 + 2*R^2*E4 + 2*R*E2*E4 - R*E3^2 - 2*R^2*E3*S +
 	+ 2*R^3*E2 + R^2*E2^2 - R^3*S^2 + R^4");
@@ -442,27 +452,20 @@ eval.pm(pEq4, list(E4=E4[id], E3=E3[id], E2=E2[id], S=S[id], b=b, R=R))
 
 
 ### Eq 2:
-(b^4 - 1)*(b^2 + 2)*E4^2 - 2*b^2*(b^2 + 4)*R^2*E4 +
+pEq2 = toPoly.pm("(b^4 - 1)*(b^2 + 2)*E4^2 - 2*b^2*(b^2 + 4)*R^2*E4 +
 	- 2*b^2*(b^2 + 2)*R*E4*E2 + b^2*(b^2 + 2)*R*E4*S^2 +
 	+ 4*R^2*E2^2 + 2*(b^2 + 6)*R^3*E2 - 4*R^2*E2*S^2 +
-	+ (b^2+10)*R^4 - (b^2+6)*R^3*S^2 + R^2*S^4 # = 0
-
-pEq2 = data.frame(
-	E4 = c(2, 2, 2, 2, 1, 1,   1, 1, 1, 1,   0, 0, 0, 0,   0, 0, 0, 0, 0),
-	E2 = c(0, 0, 0, 0, 0, 0,   1, 1, 0 ,0,   2, 1, 1, 1,   0, 0, 0, 0, 0),
-	S  = c(0 ,0, 0, 0, 0, 0,   0, 0, 2, 2,   0, 0, 0, 2,   0, 0, 2, 2, 4),
-	b  = c(6, 4, 2, 0, 4, 2,   4, 2, 4, 2,   0, 2, 0, 0,   2, 0, 2, 0, 0),
-	R  = c(0, 0, 0, 0, 2, 2,   1, 1, 1, 1,   2, 3, 3, 2,   4, 4, 3, 3, 2),
-	coeff = c(1, 2,-1,-2,-2,-8,  -2,-4,1, 2,  4, 2,12,-4,  1,10,-1,-6, 1)
-)
+	+ (b^2+10)*R^4 - (b^2+6)*R^3*S^2 + R^2*S^4");
+#
 bDiv4 = data.frame(b=0:9, coeff=c(8,16,12,12,10,4,5,3,1,1))
 bDiv3 = data.frame(b=0:8, coeff=c(8,8,4,8,2,2,3,0,1))
 
 pEq2r = replace.fr.pm(pEq2, pEq1, pEq1fr, "E4", pow=1)
+# Reduce Eq 2:
 lP2 = div.pm(pEq2r, pDiv, by="S")
 id = order( - lP2$Rem$E3, - lP2$Rem$E2, -lP2$Rem$b); lP2$Rem = lP2$Rem[id,];
 print.p(lP2$Rem, "E3")
-# lP$Rem
+str(lP2$Rem)
 
 # lP2r: E3 vs E2
 ncE3 = match("E3", names(lP2r))
@@ -480,7 +483,7 @@ lP2 = div.pm(lP2, bDiv3, by="b");
 lP2 = lP2$Rez;
 id = order( - lP2$E2, -lP2$b); lP2 = lP2[id,];
 rownames(lP2) = seq(nrow(lP2));
-lP2
+str(lP2)
 
 # lP2 & lP4b are similar: redundancy or simplification method?
 pEq4r = replace.fr.pm(lP4, E3p, E3fr, "E3", pow=1)
@@ -493,35 +496,39 @@ lP4b = div.pm(lP4b, bDiv3, by="b");
 lP4b = lP4b$Rez;
 id = order( - lP4b$E2, -lP4b$b); lP4b = lP4b[id,];
 rownames(lP4b) = seq(nrow(lP4b));
-lP4b
-# print.p(lP4, "E2")
+str(lP4b)
+# print.pm(lP4, "E2")
 
-### simplification of E3:
+### Simplification of E3:
 # -b*(b^2 - b + 2)
 pRepl = data.frame(b=c(3,2,1), coeff=c(-1,1,-2));
 pDiv = add.pm(mult.pm(E3fr[E3fr$E2 == 1, c("b", "coeff")], pRepl),
 	E3fr[E3fr$E2 == 0, c("b", "coeff")])
-print.p(pDiv, "b")
+print.pm(pDiv, "b")
 
 pE3p = add.lpm(
 	list(mult.pm(E3p[E3p$E2 == 2, c("b", "coeff")], pow.pm(pRepl, 2)),
 	mult.pm(E3p[E3p$E2 == 1, c("b", "coeff")], pRepl),
 	E3p[E3p$E2 == 0, c("b", "coeff")]))
 pE3p$coeff = - pE3p$coeff; # use: - E3 !!!
-print.p(pE3p, "b")
+print.pm(pE3p, "b")
 
 gcd.pm(pE3p, pDiv, by="b");
-# (b+1) !!!
+# Result: (b+1) !!!
 
 # Debug:
 eval.pm(pEq2, c(E4[10],E2[10],S[10],b,R))
 eval.pm(E3p, c(R,E2[10],S[10],b))
 
-gcd.pm(lP2[lP2$E2 == 4, c("b", "coeff")], lP4b[lP4b$E2 == 4, c("b", "coeff")], by="b", div.sc=5974.576)
+coeffs = c("b", "coeff");
+# gcd.pm(lP2[lP2$E2 == 4, coeffs], lP4b[lP4b$E2 == 4, coeffs], by="b", div.sc=5974.576)
+
 div.pm(lP2[lP2$E2 == 4, c("b", "coeff")], bDiv4, "b")
 div.pm(lP4b[lP4b$E2 == 4, c("b", "coeff")], bDiv4, "b")
 
-diff.pm(mult.pm(lP2, lP4b[lP4b$E2 == 4, c("b", "coeff")]), mult.pm(lP4b, lP2[lP2$E2 == 4, c("b", "coeff")]))
+tmp = diff.pm(mult.pm(lP2, lP4b[lP4b$E2 == 4, c("b", "coeff")]),
+	mult.pm(lP4b, lP2[lP2$E2 == 4, c("b", "coeff")]));
+str(tmp)
 
 ### [old]
 getE3.old = function(S, E2, R, b) {
@@ -539,8 +546,9 @@ getE3.old = function(S, E2, R, b) {
 }
 
 
-####################
-####################
+###########################
+###########################
+###########################
 
 ################
 ### Type V2b ###
