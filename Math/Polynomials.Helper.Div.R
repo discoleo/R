@@ -77,7 +77,7 @@ div.pm = function(p1, p2, by="x", NF.stop=TRUE, debug=TRUE) {
 				# check leading variables:
 				pLead = p1[p1[, xn] == xpow1, , drop=FALSE];
 				pLead = drop.pm(pLead);
-				print(pLead); # DEBUG
+				cat("Lead:\n"); print(pLead); # DEBUG
 				# TODO: may be > 1 Leading rows;
 				idn = match(names(mDx), names(pLead));
 				isNot = is.na(idn);
@@ -119,6 +119,7 @@ div.pm = function(p1, p2, by="x", NF.stop=TRUE, debug=TRUE) {
 	}
 	pRez = list(Rez=pRez, Rem=p1);
 	if( ! allMatched) pRez$pDiv = pDivL;
+	class(pRez) = c("pm.div", "list");
 	return(pRez);
 }
 # only Remainder & eval(pDiv) == 0;

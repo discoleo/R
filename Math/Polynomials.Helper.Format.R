@@ -156,6 +156,10 @@ print.p = function(...) {
 
 as.character.pm = function(p, leading=NA, do.sort=TRUE, do.rev=FALSE, sort.order=TRUE,
 		simplify.complex=TRUE, brackets.complex=TRUE) {
+	if(inherits(p, "pm.div")) {
+		if(nrow(p$Rem) > 0) warning("The Remainder of division is NOT printed!");
+		p = p$Rez;
+	}
 	if(nrow(p) == 0) return("");
 	### Var order
 	isNA = all(is.na(leading));
