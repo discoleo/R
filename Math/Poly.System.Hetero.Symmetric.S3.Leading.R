@@ -7,12 +7,12 @@
 ### Heterogeneous Symmetric
 ### with Composite Leading Term
 ###
-### draft v.0.2h-clPoly
+### draft v.0.2i-fix
 
 
 ### Hetero-Symmetric
-### Polynomial Systems: 3 Variables
-### Composite Leading Term
+### Polynomial Systems: 3 Variables (S3)
+### Composite Leading Term (L[n,m])
 
 ### Example:
 x^n*y^m + P(x, y, z) = R
@@ -842,7 +842,7 @@ sol = solve.CompositeL.S3P21(R, b)
 x = sol[,1]; y = sol[,2]; z = sol[,3];
 
 ### Classic Polynomial:
-round0.p(poly.calc(x)) * 9 # * (R^2 + b[1]^3)
+round0.p(poly.calc(x)) * 3 # * (R^2 + b[1]^3)
 
 
 (2*R^2*b^3 + R^4 + b^6) +
@@ -959,6 +959,7 @@ round0.p(poly.calc(x))
 
 
 #######################
+#######################
 
 ### Variant 2:
 ### Mixed-Order: 2+1
@@ -970,18 +971,21 @@ round0.p(poly.calc(x))
 # z^2*x + b*y = R
 
 ### Solution:
-# - only trivial solution: x == y == z;
-# - shortcut: using eq. from the HtSymmetric Mixed system;
+# - P[12] & Trivial solution: x == y == z;
+# - Shortcut: using Eq. E21a from the HtSymmetric Mixed system;
 
-### Sum + Rotation =>
+### Eq 1:
+# Sum + Rotation =>
 E3*S^3 - 3*b*E3*S + 9*E3^2 + 9*R*E3 - 6*E3*E2*S +
 	+ E2^3 + b*E2*S^2 - 3*R*E2*S + b^2*S^2 - 6*b*R*S + 9*R^2 # = 0
 
-### Sum(z*...) =>
+### Eq 2:
+# Sum(z*...) =>
 x*y*z*(x+y+z) + b*(x^2 + y^2 + z^2) - R*S # = 0
 E3*S + b*S^2 - 2*b*E2 - R*S # = 0
 
-### Sum(y*...) =>
+### Eq 3:
+# Sum(y*...) =>
 (x^2*y^2 + y^2*z^2 + z^2*x^2) + b*E2 - R*S # = 0
 E2^2 - 2*E3*S + b*E2 - R*S # = 0
 
@@ -990,71 +994,101 @@ E3Subst = 108*R*b^3 - 3*R*S^2*b^2 - 11*R*S^4*b + 6*R^2*S^3 - 36*S*b^4 - 7*S^3*b^
 E3Div   = 7*S^4*b - 6*R*S^3 - 69*S^2*b^2 + 54*R*S*b + 108*b^3;
 # E3 = - E3Subst / E3Div;
 
-### Eq:
-(S^3 + 9*b*S - 27*R)^2 * S^3 * P[12]
-# P[12]: is a false solution
-(15552*b^9) +
-(15552*R*b^7)*S^1 +
-(7776*R^2*b^5 - 25488*b^8)*S^2 +
-(- 23760*R*b^6 + 1944*R^3*b^3)*S^3 +
-(- 9072*R^2*b^4 + 18036*b^7)*S^4 +
-(13644*R*b^5 - 864*R^3*b^2)*S^5 +
-(2880*R^2*b^3 - 27*R^4 - 6667*b^6)*S^6 +
-(- 3243*R*b^4 + 171*R^3*b)*S^7 +
-(- 357*R^2*b^2 + 1231*b^5)*S^8 +
-(310*R*b^3 - R^3)*S^9 +
-(3*R^2*b - 97*b^4)*S^10 +
-(- 3*R*b^2)*S^11 +
-(b^3)*S^12
+### Eq S: P[4]
+(b^2*S^4 - 2*b*R*S^3 + (R^2 - 3*b^3)*S^2 + 2*b^2*R*S + 4*b^4)
+# * (S^3 + 9*b*S - 27*R)^2 * S^3 * P[8];
+
+# P[8]: is a FALSE solution
+b*S^8 - R*S^7 - 94*b^2*S^6 + 117*b*R*S^5 + 945*b^3*S^4 - 27*R^2*S^4 - 810*b^2*R*S^3 +
+	- 3456*b^4*S^2 + 1944*b^3*R*S + 3888*b^5 # FALSE
 
 
 ### Solver:
-solve.CompositeLvz.S3P21 = function(R, b, b.ext=0, debug=TRUE) {
-	if(length(b.ext) < 2) b.ext = c(b.ext, 0)
-	if(R[1] == 0) {
-		if(b.ext[2] == 0) {
-			x = sqrt(-b[1] - 3*b.ext[1] + 0i); x = c(x, -x);
-			# the (0, 0, 0) solution is not included;
-			# return(solve.En(c(x, -x), n=3, duplicates=TRUE))
-		} else {
-			x = roots(c(1, 9*b.ext[2], 3*b.ext[1] + b[1]));
-		}
-		return(cbind(x=x, y=x, z=x, S=3*x));
-	}
-	coeff = c(1, 0, 9*b[1], - 27*R[1])
-	if(any(b.ext != 0)) {
-		coeff = coeff + c(0, 27*b.ext[2], 27*b.ext[1], 0);
-	}
-	S = roots(coeff)
+solve.S3Ht.L21z = function(R, b, b.ext=0, debug=TRUE) {
+	if(length(b.ext) < 2) b.ext = c(b.ext, 0);
+	# if(R[1] == 0) {}
+	coeff = coeff.S3Ht.L21z(R, b, b.ext);
+	S = roots(coeff);
 	if(debug) print(S);
-	### Note: numerically unstable
-	# - result is inaccurate as x == y == z;
-	x = S / 3;
-	return(cbind(x=x, y=x, z=x, S=S));
-	# [unstable]
-	R1 = R - b.ext[1]*S - b.ext[2]*S^2;
+	# Step 2:
+	R = R - b.ext[1]*S - b.ext[2]*S^2;
 	E3Subst = 108*R*b^3 - 3*R*S^2*b^2 - 11*R*S^4*b + 6*R^2*S^3 - 36*S*b^4 - 7*S^3*b^3 + 5*S^5*b^2;
-	E3Div   = 7*S^4*b - 6*R*S^3 - 69*S^2*b^2 + 54*R*S*b + 108*b^3;
+	E3Div   = 7*b*S^4 - 6*R*S^3 - 69*b^2*S^2 + 54*b*R*S + 108*b^3;
 	E3 = - E3Subst / E3Div;
-	E2 = (R1 - E3)*S / b
+	E3*S + b*S^2 - 2*b*E2 - R*S
+	E2 = (E3 + b*S - R)*S / (2*b);
 	#
-	len = length(S)
-	x = sapply(seq(len), function(id) roots(c(1, -S[id], E2[id], -E3[id])))
-	rep.m = function(x) matrix(x, ncol=len, nrow=3, byrow=TRUE)
-	S = rep.m(S); E3 = rep.m(E3); R1 = rep.m(R1);
+	len = length(S);
+	x = sapply(seq(len), function(id) roots(c(1, -S[id], E2[id], -E3[id])));
+	x = as.vector(x);
+	S = rep(S, each=3); E3 = rep(E3, each=3); R = rep(R, each=3);
 	yz.s = S - x;
-	y = (R1 - b*x)*x / E3;
+	y = (R - b*x)*x / E3;
 	z = yz.s - y;
-	sol = cbind(x=as.vector(x), y=as.vector(y), z=as.vector(z), S=as.vector(S));
+	sol = cbind(x=x, y=y, z=z, S=S);
 	return(sol);
+}
+coeff.S3Ht.L21z = function(R, b, b.ext=0) {
+	coeff = c(b^2, - 2*b*R, (R^2 - 3*b^3), 2*b^2*R, 4*b^4);
+	# Extensions:
+	if(any(b.ext != 0)) {
+		coeff = coeff + c(b.ext[1]^2 + 2*b*b.ext[1], -2*R*b.ext[1], - 2*b^2*b.ext[1],0,0);
+		# TODO: b.ext[2];
+	}
+	return(coeff);
+}
+### Test:
+test.S3Ht.L21z = function(sol, b, b.ext=0, R=NULL) {
+	if(length(b.ext) < 2) b.ext = c(b.ext, 0);
+	x = sol[,1]; y = sol[,2]; z = sol[,3];
+	S = x+y+z; ext1 = b.ext[1]*S; ext2 = b.ext[2]*S^2;
+	err1 = x^2*y + b*z + ext1 + ext2;
+	err2 = y^2*z + b*x + ext1 + ext2;
+	err3 = z^2*x + b*y + ext1 + ext2;
+	err  = cbind(err1, err2, err3);
+	if( ! is.null(R)) {
+		err = err - R;
+	}
+	err = round0(err);
+	return(err);
 }
 
 ### Examples:
+
+### Ex 1:
 R = 2
 b = -1
-b.ext = c(0, 0)
-sol = solve.CompositeLvz.S3P21(R, b, b.ext)
+b.ext = 0
+sol = solve.S3Ht.L21z(R, b, b.ext)
 x = sol[,1]; y = sol[,2]; z = sol[,3];
+
+test.S3Ht.L21z(sol, b, b.ext=b.ext)
+
+
+### Ex 2:
+R = 5
+b = -2
+sol = solve.S3Ht.L21z(R, b)
+
+test.S3Ht.L21z(sol, b)
+
+
+### Ex 3:
+R = 3
+b = -2
+b.ext = -5
+sol = solve.S3Ht.L21z(R, b, b.ext)
+
+test.S3Ht.L21z(sol, b, b.ext=b.ext)
+
+
+### Ex 4: R = 0
+R = 0
+b = 5
+b.ext = -1
+sol = solve.S3Ht.L21z(R, b, b.ext)
+
+test.S3Ht.L21z(sol, b, b.ext=b.ext)
 
 
 ### Test
@@ -1065,6 +1099,13 @@ z^2*x + b*y + ext1 + ext2 # - R
 
 ### Classic Polynomial:
 round0.p(poly.calc(x))
+
+### (x^3 + b*x - R) * P[12]
+b^2*x^12 - 2*b*R*x^11 + (R^2 - b^3)*x^10 + 3*R*b^2*x^9 - b*(3*R^2 - b^3)*x^8 +
+	+ R*(R^2 - 4*b^3)*x^7 + (2*R^2*b^2 - b^5)*x^6 + 5*b^4*R*x^5 +
+	+ (R^4 - b^3*R^2 + b^6)*x^4 - b^2*R*(3*R^2 + 3*b^3)*x^3 +
+	- b*(R^4 - 3*R^2*b^3 + b^6)*x^2 + (2*R^3*b^3 - R*b^6)*x +
+	- R^2*b^5 + b^8 # = 0
 
 
 #######################
