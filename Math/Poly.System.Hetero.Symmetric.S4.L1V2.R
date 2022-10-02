@@ -30,13 +30,20 @@
 # - Side-Chain x1: 2 times;
 #   x1^n + b1*x1*x2 + b2*x1*x3 = R
 #   x1^n + b1*x1*x2 + b2*x1*x4 = R
+#   x1^n + b1*x1*x3 + b2*x1*x4 = R
 # - Side-Chain x1: 1 time;
 #   x1^n + b1*x1*x2 + b2*x2*x3 = R
+#   x1^n + b1*x1*x2 + b2*x2*x4 = R
 #   x1^n + b1*x1*x2 + b2*x3*x4 = R
+#   x1^n + b1*x1*x3 + b2*x2*x4 = R
 # - Side-Chain x1: 0 times;
 #   x1^n + b1*x2*x3 + b2*x2*x4 = R
 #   x1^n + b1*x2*x3 + b2*x3*x4 = R
 # ...
+
+### Note:
+# - Systems V2a & the Extended types based on V2a
+#   are in file: Poly.System.Hetero.Symmetric.S4.L1V2a.R;
 
 
 ####################
