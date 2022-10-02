@@ -8,7 +8,7 @@
 ###  == Derivation ==
 ###  Type: L1 V2
 ###
-### draft v.0.1f-clean3
+### draft v.0.1g
 
 
 ### Types:
@@ -108,6 +108,9 @@ polyGen.S4Ht.V2a = function(n, factorize=TRUE) {
 
 ### Helper Equations:
 
+### ps*sp
+ps*sp - E11a*(E2 - E11a) # = 0
+
 ### E21a + E12a
 E21a + E12a - s2*(x1^2 + x3^2) - s1*(x2^2 + x4^2) # = 0
 E21a + E12a - s2*(s1^2 - 2*p1) - s1*(s2^2 - 2*p2) # = 0
@@ -124,6 +127,12 @@ E31a + E13a - E11a^2 + 3*E11a*E2 - E11a*S^2 # = 0
 ### E211a + E112a
 E211a + E112a - ps*sp # = 0
 E211a + E112a - E11a*(E2 - E11a) # = 0
+
+### E121a
+E121a - p1*(s2^2 - 2*p2) - p2*(s1^2 - 2*p1) # = 0
+E121a - (p1*s2^2 + p2*s1^2) + 4*E4 # = 0
+E121a - (p1*s2 + p2*s1)*S + s1*s2*(p1 + p2) + 4*E4 # = 0
+E121a - E3*S + E11a*(E2 - E11a) + 4*E4 # = 0
 
 
 ####################
