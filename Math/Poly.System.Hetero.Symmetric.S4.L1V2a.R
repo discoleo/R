@@ -18,6 +18,21 @@
 ### Subtype:
 # V2a: x1^n + b*x1*x2 = R
 
+### Extended Sub-Types:
+# - behave still like V2-types;
+# - Side-Chain x1: 3 times;
+#   x1^n + b1*x1*x2 + b2*x1*x3 + b3*x1*x4 = R
+# - Side-Chain x1: 2 times;
+#   x1^n + b1*x1*x2 + b2*x1*x3 = R
+#   x1^n + b1*x1*x2 + b2*x1*x4 = R
+#   x1^n + b1*x1*x3 + b2*x1*x4 = R [not V2a]
+# - Side-Chain x1: 1 time;
+#   x1^n + b1*x1*x2 + b2*x2*x3 = R
+#   x1^n + b1*x1*x2 + b2*x2*x4 = R
+#   x1^n + b1*x1*x2 + b2*x3*x4 = R
+#   x1^n + b1*x1*x3 + b2*x2*x4 = R [not V2a]
+#   ...
+
 
 ####################
 ####################
