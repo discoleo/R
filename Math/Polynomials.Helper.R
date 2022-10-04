@@ -103,7 +103,7 @@ roots.f = function(K, s, n=length(s)) {
 	return(r)
 }
 roots.cl2.f = function(s, n = length(s)) {
-	# roots for Class 2 polynomials;
+	# roots for basic Class 2 polynomials;
 	m = unity(n+1, all=T)[-1]; # exclude 1;
 	r = sapply(seq(n), function(id) sum(s * m[id]^(0:n)))
 	r = round0(r)
@@ -210,6 +210,9 @@ mult.p = function(p1, p2) {
 # Note:
 # - initial idea was to allow also basic lists,
 #   but most functions would work only with data frames!
+
+### Workhorse for SUM & Multiplication:
+# - a hacked version is needed for Big Numbers (gmp, mpfr);
 aggregate0.pm = function(p) {
 	p.r = aggregate(coeff~., p, sum);
 	return(p.r);
@@ -1113,6 +1116,7 @@ replace.fr.pm = function(p1, p2, p2fr, xn, pow=1) {
 eval.pm = function(p, x, progress=FALSE) {
 	# x = c(values of variables) OR
 	# x = list(values of variables);
+	# progress = currently not used;
 	pP = p[, - which(names(p) == "coeff"), drop=FALSE];
 	if(is.list(x) || ! is.null(names(x))) {
 		len = sapply(x, length);
@@ -1125,7 +1129,7 @@ eval.pm = function(p, x, progress=FALSE) {
 			x = x[id];
 		}
 		if(is.list(x)) {
-			isBigz = sapply(x, function(x) inherits(x, "bigz"));
+			isBigz = sapply(x, function(x) inherits(x, c("bigz", "bigq")));
 			if(any(isBigz)) {
 				x = do.call(c, x);
 			} else
@@ -1156,6 +1160,24 @@ eval.lpm = function(p, vals) {
 		rez = eval.pm(p1, vals);
 		return(rez);
 	});
+	return(rez);
+}
+### Evaluate with a set of solutions
+eval.pm.sol = function(p, sol, ..., round0=TRUE, tol=1E-7) {
+	vals = list(...);
+	if(is.null(dim(sol)) || nrow(sol) == 1) {
+		vals = c(as.list(sol), vals);
+		rez  = eval.pm(p, vals);
+		if(round0) rez = round0(rez, tol=tol);
+		return(rez);
+	}
+	#
+	len = nrow(sol);
+	rez = sapply(seq(len), function(id) {
+		iVal = c(as.list(sol[id,]), vals);
+		eval.pm(p, iVal);
+	})
+	if(round0) rez = round0(rez, tol=tol);
 	return(rez);
 }
 
