@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric
 ### with Composite Leading Term
 ###
-### draft v.0.2i-fix
+### draft v.0.2i-fix2
 
 
 ### Hetero-Symmetric
@@ -97,6 +97,26 @@ test.CHP.S3.Symmetric = function(sol, R, b, b.ext=0, a=0, n=1) {
 	err2 = (y*z)^n + b[1]*z + ext # - R
 	err3 = (z*x)^n + b[1]*x + ext # - R
 	round0(rbind(err1, err2, err3))
+}
+
+### Classic Polynomial
+
+classicPoly.Ln1z = function(n, stats=TRUE) {
+	p1 = toPoly.pm("x^n*y + b*z - R");
+	p2 = toPoly.pm("y^n*z + b*x - R");
+	p3 = toPoly.pm("z^n*x + b*y - R");
+	
+	# inefficient:
+	# pR = solve.lpm(p1, p2, p3, xn=c("z", "y"))
+	pR = solve.lpm(p1, p2, p3, xn=c("y", "z"));
+	if(stats) {
+		print(str(pR[[2]]));
+		print(table(pR[[2]]$Rez$x))
+	}
+	#
+	n = n + 1;
+	pR2 = div.pm(pR[[2]]$Rez, "x^n + b*x - R", "x");
+	invisible(pR2$Rez);
 }
 
 ################################
@@ -236,6 +256,50 @@ sol = solve.CHP.S3P1(R, b, b.ext=b.ext, a=a)
 ### Test
 test.CHP.S3.Symmetric(sol, R, b, b.ext, a=a)
 round0.p(poly.calc(sol[1:6, 1]))
+
+
+### Classic Poly:
+# - without extensions;
+(x^2 + b*x - R)
+
+### FALSE roots:
+# - but distinct solutions possible under very special conditions;
+(x - b)^2 * (b^2*x^2 - 2*b*R*x + b^3*x + R^2 - b^2*R)
+
+### Classic Solver:
+# - roots possible only under very special conditions;
+solve.S3.L11y.FALSE = function(R, b) {
+	coeff = c(b^2, - 2*b*R + b^3, R^2 - b^2*R);
+	x = roots(coeff);
+	x = c(x, b);
+	z = (R - b*x) / x;
+	y = R / (x+b);
+	sol = cbind(x, y, z);
+	return(sol);
+}
+### Special Cases:
+solve.S3L11y.Special = function(R, b) {
+	# R = 2*b^2; # Case: x=y=z = b, all equal!
+	spec = round0(c(R + b^2, R - 2*b^2));
+	if( ! any(spec == 0)) {
+		return(NA);
+	}
+	x = b; y = R / (2*b); z = (R - b^2) / b;
+	sol = cbind(x, y, z);
+	return(sol);
+}
+
+### Ex 1: distinct;
+b = -1; R = -b^2;
+sol = solve.S3L11y.Special(R, b=b);
+
+test.CHP.S3.Symmetric(sol, R, b)
+
+### Ex 2: distinct;
+b = 3; R = -b^2;
+sol = solve.S3L11y.Special(R, b=b);
+
+test.CHP.S3.Symmetric(sol, R, b)
 
 
 ########################
@@ -1015,7 +1079,6 @@ solve.S3Ht.L21z = function(R, b, b.ext=0, debug=TRUE) {
 	E3Subst = 108*R*b^3 - 3*R*S^2*b^2 - 11*R*S^4*b + 6*R^2*S^3 - 36*S*b^4 - 7*S^3*b^3 + 5*S^5*b^2;
 	E3Div   = 7*b*S^4 - 6*R*S^3 - 69*b^2*S^2 + 54*b*R*S + 108*b^3;
 	E3 = - E3Subst / E3Div;
-	E3*S + b*S^2 - 2*b*E2 - R*S
 	E2 = (E3 + b*S - R)*S / (2*b);
 	#
 	len = length(S);
