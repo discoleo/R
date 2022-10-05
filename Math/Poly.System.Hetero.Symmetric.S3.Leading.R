@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric
 ### with Composite Leading Term
 ###
-### draft v.0.2k
+### draft v.0.2k-clean
 
 
 ### Hetero-Symmetric
@@ -448,11 +448,13 @@ E2*S - 3*E3 - 3*b # = 0
 
 
 ### Eq S:
-# Case: S = 0; # seems to have NO solutions;
 b^2*S^6 - 2*b*R*S^5 + R^2*S^4 - 9*b^3*S^3 + 9*b^2*R*S^2 - 3*b*R^2*S + 27*b^4 - R^3
 # alternatively: solve directly for x
 x^6 - b*x^3 - R*x^2 + b^2;
 # S = 2*x + (R - x^4)/b;
+
+### Note: Case S = 0
+# - seems to have NO solutions (except in special cases);
 
 
 ### Solver:
@@ -488,41 +490,6 @@ solve.S3L22.Simple = function(R, b, be=0, debug=TRUE) {
 test.S3Ht.L22z = function(sol, b, be=0, R=NULL) {
 	err = test.S3Ht.LSymmetricChz(sol, b=b, b.ext=be, R=R, n=2);
 	return(err)
-}
-
-# [old] TODO: clean;
-solve.S3L22.Simple.old = function(R, b, be=0, debug=TRUE) {
-	coeff = coeff.S3L22.Simple(R, b, be=be);
-	S = roots(coeff);
-	if(debug) print(S);
-	R1 = R - be[1]*S; # Extension
-	E2x0 = 2*b*R1*S^5 - 2*R1^2*S^4 - 9*b^3*S^3 + 27*b^2*R1*S^2 + 36*b*R1^2*S - 243*b^4 - 18*R1^3;
-	E2Div = 30*b^2*S^4 - 48*b*R1*S^3 + 20*R1^2*S^2 - 189*b^3*S + 81*b^2*R1;
-	E2 = E2x0 / E2Div;
-	# E2*E3 + b*(S^2 - 2*E2) - R*S
-	E3 = - (b*S^2 - 2*b*E2 - R1*S) / E2;
-	#
-	len = length(S);
-	x = sapply(seq(len), function(id) roots(c(1, -S[id], E2[id], -E3[id])));
-	S = rep(S, each=3); E3 = rep(E3, each=3);
-	yz.s = S - x;
-	yz = E3 / x;
-	# yz.d = sqrt(yz.s^2 - 4*yz)
-	# robust
-	isEq = round0(x^2*yz.s - b, tol=1E-3) != 0;
-	y = z = as.vector(yz.s[isEq]/2);
-	sol = cbind(x=as.vector(x[isEq]), y=y, z=z);
-	# TODO: each sol2 is duplicated
-	# y = x[ ! isEq]; z = yz.s[ ! isEq] - y;
-	# sol2 = cbind(x=as.vector(x[ ! isEq]), y=as.vector(y), z=as.vector(z))
-	sol2 = sol[, c(2,1,3)];
-	sol = rbind(sol, sol2, sol2[, c(1,3,2)]);
-	### Case: S == 0
-	# does NOT seem to be a valid solution!
-	# S = 0; E3 = 2*b; E2 = - (27*b^4 + 2*R^3) / (9*b^2*R);
-	# x = roots(c(1, 0, E2, -E3));
-	# sol = rbind(sol, x[c(1,2,3)], x[c(1,3,2)]);
-	return(sol);
 }
 coeff.S3L22.Simple = function(R, b, be=0) {
 	coeff = c(b^2, - 2*b*R, R^2, - 9*b^3, 9*b^2*R, - 3*b*R^2, 27*b^4 - R^3);

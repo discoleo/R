@@ -8,7 +8,7 @@
 ###  Mixed Leading Term
 ###  == Derivation ==
 ###
-### draft v.0.2c
+### draft v.0.2d
 
 
 ###############
@@ -16,6 +16,8 @@
 ###############
 
 
+### draft v.0.2d:
+# - cleanup of S3Ht L22;
 ### draft v.0.2c:
 # - solved S3L33M:
 #   x^3*y^3 + b*x*y = R;
@@ -37,10 +39,15 @@
 ####################
 ####################
 
-### helper functions
+### Helper Functions
 
-library(polynom)
-library(pracma)
+
+source("Polynomials.Helper.R")
+source("Polynomials.Helper.EP.R")
+
+
+# library(polynom)
+# library(pracma)
 
 # the functions are in the file:
 # Polynomials.Helper.R
@@ -49,8 +56,12 @@ library(pracma)
 
 ### other
 
-library(gmp)
+if(FALSE) {
+	library(gmp)
+	source("Polynomials.Helper.BigNumbers.R")
+}
 
+# TODO: use solve.lpm();
 solve.3pm = function(p, v, bigz=FALSE, xn=NULL, val=1, stop.at=NULL) {
 	if( ! is.null(xn)) {
 		if(length(xn) > length(val)) val = rep(val, length(xn));
@@ -187,22 +198,8 @@ b^2*S^6 - 2*b*R*S^5 + R^2*S^4 - 9*b^3*S^3 + 9*b^2*R*S^2 - 3*b*R^2*S + 27*b^4 - R
 ###
 pE3x0 = data.frame(E2=c(2,0,0), S=c(0,1,0), b=c(0,1,0), R=c(0,0,1), coeff=c(1,1,-3))
 pE3Div = data.frame(S=1, coeff=2)
-pz2 = data.frame(
-	E3 = c(2, 1, 0, 0, 0, 0),
-	E2 = c(0, 0, 1, 1, 0, 0),
-	S  = c(0, 0, 1, 0, 3, 2),
-	b  = c(0, 1, 1, 0, 1, 0),
-	R  = c(0, 0, 0, 1, 0, 1),
-	coeff = c(3, 3, -3, 2, 1, -1)
-)
-p3 = data.frame(
-	E3 = c(1, 0, 0, 0),
-	E2 = c(1, 0, 1, 0),
-	S  = c(0, 2, 0, 1),
-	b  = c(0, 1, 1, 0),
-	R  = c(0, 0, 0, 1),
-	coeff = c(1, 1, -2, -1)
-)
+pz2 = toPoly.pm("3*E3^2 + 3*b*E3 - 3*b*E2*S + 2*R*E2 + b*S^3 - R*S^2");
+p3 = toPoly.pm("E2*E3 + b*(S^2 - 2*E2) - R*S");
 pTriv = data.frame(S=c(4, 1, 0), b=c(0,1,0), R=c(0,0,1), coeff=c(1,27,-81))
 # 7*9*b^3*S^3 - 139*b^2*R*S^2 + 97*b*R^2*S - 21*R^3
 pDiv = data.frame(S=3:0, b=3:0, R=0:3, coeff=c(7*9,-139,97,-21))
@@ -212,13 +209,15 @@ p3r = replace.fr.pm(p3, pE3x0, pE3Div, "E3", 1)
 #
 pE3r = solve.pm(p2r, p3r, "E2");
 pS = pE3r[[1]]
-pS$coeff = pS$coeff / 384;
-pS$S = pS$S - min(pS$S); # S^6!
+str(pS);
+# pS$coeff = pS$coeff / 384;
+pS$S = pS$S - min(pS$S); # was S^6!
 pS = div.pm(pS, pTriv, "S")$Rez;
 pS = div.pm(pS, pDiv, "S")$Rez;
-pS = sort.pm(pS, c(4,2), xn="S");
+pS = sort.pm(pS, xn="S");
 pS
 print.p(pS, "S")
+
 ### Aux:
 pE3r$x0$coeff = pE3r$x0$coeff / 8;
 pE3r$div$coeff = pE3r$div$coeff / 8;
@@ -256,6 +255,53 @@ pSf
 print.p(pSf, "S")
 print.p(pE3rf$x0, "S")
 
+
+### [old] Solver:
+# TODO: clean;
+# - robust version is in file:
+#   Poly.System.Hetero.Symmetric.S3.Leading.R;
+solve.S3Ht.L22.Simple.old = function(R, b, be=0, debug=TRUE) {
+	coeff = coeff.S3L22.Simple(R, b, be=be);
+	S = roots(coeff);
+	if(debug) print(S);
+	R1 = R - be[1]*S; # Extension
+	E2x0 = 2*b*R1*S^5 - 2*R1^2*S^4 - 9*b^3*S^3 + 27*b^2*R1*S^2 + 36*b*R1^2*S - 243*b^4 - 18*R1^3;
+	E2Div = 30*b^2*S^4 - 48*b*R1*S^3 + 20*R1^2*S^2 - 189*b^3*S + 81*b^2*R1;
+	E2 = E2x0 / E2Div;
+	# E2*E3 + b*(S^2 - 2*E2) - R*S
+	E3 = - (b*S^2 - 2*b*E2 - R1*S) / E2;
+	#
+	len = length(S);
+	x = sapply(seq(len), function(id) roots(c(1, -S[id], E2[id], -E3[id])));
+	S = rep(S, each=3); E3 = rep(E3, each=3);
+	yz.s = S - x;
+	yz = E3 / x;
+	# yz.d = sqrt(yz.s^2 - 4*yz)
+	# robust
+	isEq = round0(x^2*yz.s - b, tol=1E-3) != 0;
+	y = z = as.vector(yz.s[isEq]/2);
+	sol = cbind(x=as.vector(x[isEq]), y=y, z=z);
+	# TODO: each sol2 is duplicated
+	# y = x[ ! isEq]; z = yz.s[ ! isEq] - y;
+	# sol2 = cbind(x=as.vector(x[ ! isEq]), y=as.vector(y), z=as.vector(z))
+	sol2 = sol[, c(2,1,3)];
+	sol = rbind(sol, sol2, sol2[, c(1,3,2)]);
+	### Case: S == 0
+	# does NOT seem to be a valid solution!
+	# S = 0; E3 = 2*b; E2 = - (27*b^4 + 2*R^3) / (9*b^2*R);
+	# x = roots(c(1, 0, E2, -E3));
+	# sol = rbind(sol, x[c(1,2,3)], x[c(1,3,2)]);
+	return(sol);
+}
+coeff.S3Ht.L22.Simple = function(R, b, be=0) {
+	coeff = c(b^2, - 2*b*R, R^2, - 9*b^3, 9*b^2*R, - 3*b*R^2, 27*b^4 - R^3);
+	if(any(be != 0)) {
+		coeff = coeff +
+			c(2*b*be[1] + be[1]^2, -2*R*be[1], 0, be[1]^3 - 3*b*be[1]^2 - 9*b^2*be[1],
+				-3*R*be[1]^2 + 6*b*R*be[1], 3*R^2*be[1], 0);
+	}
+	return(coeff);
+}
 
 ### Test
 x^2*y^2 + b*z # - R
@@ -941,6 +987,11 @@ R*S^2 - b^2 # = 0
 ### Structural Extension:
 ### + b2*x*y*z
 
+# x^3*y^3 + b2*x*y*z + b1*x*y = R
+# y^3*z^3 + b2*x*y*z + b1*y*z = R
+# z^3*x^3 + b2*x*y*z + b1*z*x = R
+
+### Solution:
 
 ### Sum(z^3*...) with R => R - b2*E3 =>
 3*E3^3 + b1*E3*S^2 - 3*(R - b2*E3)*E3 - (R - b2*E3)*S^3 # = 0
@@ -950,14 +1001,14 @@ R*S^2 - b^2 # = 0
 b2*E3*S^3 + b1*E3*S^2 - R*S^3 # = 0
 
 ### Auxiliary Eqs:
-# (b2*S^3 + b1*S^2)*E3 = R*S^3
+# (b2*S + b1)*E3 = R*S;
 
 ### Eq S:
 # R => R - b2*E3
 (R - b2*E3)*S^2 - b1^2 # = 0
-# (b2*S^3 + b1*S^2)*E3 = R*S^3;
-(R*(b2*S^3 + b1*S^2) - b2*R*S^3)*S^2 - b1^2*(b2*S^3 + b1*S^2) # = 0
-b1*R*S^4 - b1^2*b2*S^3 - b1^3*S^2 # = 0
+# (b2*S + b1)*E3 = R*S;
+(R*(b2*S + b1) - b2*R*S)*S^2 - b1^2*(b2*S + b1) # = 0
+b1*R*S^2 - b1^2*b2*S - b1^3 # = 0
 R*S^2 - b1*b2*S - b1^2 # = 0
 
 ### Debug:
