@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric
 ### with Composite Leading Term
 ###
-### draft v.0.2i-fix3
+### draft v.0.2j
 
 
 ### Hetero-Symmetric
@@ -97,6 +97,16 @@ test.CHP.S3.Symmetric = function(sol, R, b, b.ext=0, a=0, n=1) {
 	err2 = (y*z)^n + b[1]*z + ext # - R
 	err3 = (z*x)^n + b[1]*x + ext # - R
 	round0(rbind(err1, err2, err3))
+}
+test.S3Ht.LSymmetricChz = function(sol, b, R=NULL, b.ext=0, n=1) {
+	if(length(b.ext) < 2) b.ext = c(b.ext, 0);
+	x = sol[,1]; y = sol[,2]; z = sol[,3];
+	S = (x+y+z); s.ext = b.ext[1]*S + b.ext[2]*S^2;
+	ext = s.ext;
+	err1 = (x*y)^n + b[1]*z + ext # - R
+	err2 = (y*z)^n + b[1]*x + ext # - R
+	err3 = (z*x)^n + b[1]*y + ext # - R
+	round0(rbind(err1, err2, err3));
 }
 
 ### Classic Polynomial
@@ -285,12 +295,14 @@ solve.S3L11y.Special = function(R, b) {
 b = -1; R = -b^2;
 sol = solve.S3L11y.Special(R, b=b);
 
+print(R);
 test.CHP.S3.Symmetric(sol, R, b)
 
 ### Ex 2: distinct;
 b = 3; R = -b^2;
 sol = solve.S3L11y.Special(R, b=b);
 
+print(R);
 test.CHP.S3.Symmetric(sol, R, b)
 
 
@@ -303,17 +315,82 @@ x*y + b*z # = R
 y*z + b*x # = R
 z*x + b*y # = R
 
+### Solution:
+
+##E Eq 1:
+# Sum =>
+E2 + b*S - 3*R # = 0
+
+### Eq 2:
+# Sum(z*...) =>
+3*E3 + b*(S^2 - 2*E2) - R*S # = 0
+
+### Eq 3:
+# Sum(z^2*...) =>
+E3*S + b*(S^3 - 3*E2*S + 3*E3) - R*(S^2 - 2*E2) # = 0
+
+### Eq S:
+(S^2 + 3*b*S - 9*R) * (b*S - R - b^2)
+
+### Solver:
+
+solve.S3Ht.L11z = function(R, b, debug=TRUE) {
+	S = (R + b^2) / b;
+	if(debug) print(S);
+	#
+	E2 = 3*R - b*S; # = 2*R - b^2;
+	E3 = (2*b*E2 - b*S^2 + R*S) / 3; # = b*(R - b^2);
+	# Robust:
+	# x = roots(c(1, -S, E2, -E3)); # non-robust;
+	# x = roots(c(b, -R, E3));
+	# - the Quadratic has 2 roots,
+	#   but x = b is unstable!
+	x = (R - b^2) / b;
+	y = (x - b)*R / (x^2 - b^2);
+	z = (R - x*y) / b;
+	sol = cbind(x, y, z);
+	### x = b
+	# - are only rotations of the previous root;
+	x = b;
+	s = R / b; e2 = R - b^2;
+	y = roots(c(1, -s, e2));
+	z = s - y;
+	#
+	sol = rbind(sol, cbind(x, y, z));
+	return(sol);
+}
+test.S3Ht.L11z = function(sol, b, R=NULL) {
+	err = test.S3Ht.LSymmetricChz(sol, b=b, R=R, n=1);
+	return(err)
+}
+
+### Examples:
+
+### Ex 1:
+R = -1; b = 3;
+sol = solve.S3Ht.L11z(R, b=b)
+
+test.S3Ht.L11z(sol, b)
+
+
+### Ex 2:
+R = -3; b = -4;
+sol = solve.S3Ht.L11z(R, b=b)
+
+test.S3Ht.L11z(sol, b)
+
+
 ### Classic Poly:
 # - without extensions;
-# - (b*x - R) is a FALSE solution;
+# - Note: (b*x - R) is a FALSE solution;
 (x^2 + b*x - R) *
 (x - b)^2 * (b*x - R + b^2) * (b*x - R)
 
 ### Classic Solver:
-solve.S3.L11z = function(R, b) {
+solve.S3.L11z.cl = function(R, b) {
 	coeff = c(b, - R + b^2);
 	x = roots(coeff);
-	# x = b: Error during division;
+	### x != b; avoid Error during division;
 	y = (x - b)*R / (x^2 - b^2);
 	z = (R - x*y) / b;
 	sol = cbind(x, y, z);
@@ -328,8 +405,9 @@ solve.S3.L11z = function(R, b) {
 
 ###
 R = -1; b = 3;
-sol = solve.S3.L11z(R, b=b)
-x = sol[,1]; y = sol[,2]; z = sol[,3];
+sol = solve.S3.L11z.cl(R, b=b)
+
+test.S3Ht.L11z(sol, b)
 
 
 ########################
