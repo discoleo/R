@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric
 ### with Composite Leading Term
 ###
-### draft v.0.2j
+### draft v.0.2k
 
 
 ### Hetero-Symmetric
@@ -317,7 +317,7 @@ z*x + b*y # = R
 
 ### Solution:
 
-##E Eq 1:
+### Eq 1:
 # Sum =>
 E2 + b*S - 3*R # = 0
 
@@ -438,6 +438,9 @@ E2*E3 + b*(S^2 - 2*E2) - R*S # = 0
 
 ### Sum(z^2*...) =>
 3*E3^2 + 3*b*E3 - 3*b*E2*S + 2*R*E2 + b*S^3 - R*S^2 # = 0
+# Reduction =>
+3*E3^2 - E2*E3*S + 3*b*E3 - b*E2*S + 2*R*E2 # = 0
+
 
 ### Note:
 # Invalid Solution: Diff & Sum =>
@@ -453,8 +456,43 @@ x^6 - b*x^3 - R*x^2 + b^2;
 
 
 ### Solver:
+
+# Robust:
 solve.S3L22.Simple = function(R, b, be=0, debug=TRUE) {
-	coeff = coeff.S3L22Simple(R, b, be=be);
+	coeff = coeff.S3L22.Simple(R, b, be=be);
+	S = roots(coeff);
+	if(debug) print(S);
+	#
+	R  = R - be[1]*S; # Extension
+	#
+	E2x0 = 2*b*R*S^5 - 2*R^2*S^4 - 9*b^3*S^3 + 27*b^2*R*S^2 + 36*b*R^2*S - 243*b^4 - 18*R^3;
+	E2Div = 30*b^2*S^4 - 48*b*R*S^3 + 20*R^2*S^2 - 189*b^3*S + 81*b^2*R;
+	E2 = E2x0 / E2Div;
+	E3 = - (b*S^2 - 2*b*E2 - R*S) / E2;
+	# [alternative]
+	# E3 = ...;
+	# but: S = 0 => E3 = 2*b;
+	# E2 = (b*S^2 - R*S) / (2*b - E3);
+	### Case: y != z
+	x = (E3 + b) / E2;
+	s = S - x; e2 = E2 - x*s;
+	len = length(s);
+	yz  = sapply(seq(len), function(id) {
+		roots(c(1, -s[id], e2[id]));
+	});
+	yz = t(yz);
+	y = yz[,1]; z = yz[,2];
+	sol = cbind(x, y, z);
+	return(sol);
+}
+test.S3Ht.L22z = function(sol, b, be=0, R=NULL) {
+	err = test.S3Ht.LSymmetricChz(sol, b=b, b.ext=be, R=R, n=2);
+	return(err)
+}
+
+# [old] TODO: clean;
+solve.S3L22.Simple.old = function(R, b, be=0, debug=TRUE) {
+	coeff = coeff.S3L22.Simple(R, b, be=be);
 	S = roots(coeff);
 	if(debug) print(S);
 	R1 = R - be[1]*S; # Extension
@@ -463,6 +501,7 @@ solve.S3L22.Simple = function(R, b, be=0, debug=TRUE) {
 	E2 = E2x0 / E2Div;
 	# E2*E3 + b*(S^2 - 2*E2) - R*S
 	E3 = - (b*S^2 - 2*b*E2 - R1*S) / E2;
+	#
 	len = length(S);
 	x = sapply(seq(len), function(id) roots(c(1, -S[id], E2[id], -E3[id])));
 	S = rep(S, each=3); E3 = rep(E3, each=3);
@@ -485,7 +524,7 @@ solve.S3L22.Simple = function(R, b, be=0, debug=TRUE) {
 	# sol = rbind(sol, x[c(1,2,3)], x[c(1,3,2)]);
 	return(sol);
 }
-coeff.S3L22Simple = function(R, b, be=0) {
+coeff.S3L22.Simple = function(R, b, be=0) {
 	coeff = c(b^2, - 2*b*R, R^2, - 9*b^3, 9*b^2*R, - 3*b*R^2, 27*b^4 - R^3);
 	if(any(be != 0)) {
 		coeff = coeff +
@@ -501,12 +540,10 @@ b = 3;
 be = 0;
 sol = solve.S3L22.Simple(R, b, be=be);
 x = sol[,1]; y = sol[,2]; z = sol[,3];
+S = (x+y+z);
 
 ### Test:
-S = (x+y+z);
-x^2*y^2 + b*z + be*S # - R
-y^2*z^2 + b*x + be*S # - R
-z^2*x^2 + b*y + be*S # - R
+test.S3Ht.L22z(sol, b=b)
 
 
 ### Extensions:
@@ -515,13 +552,19 @@ R = -1;
 b = 3;
 be = 2;
 sol = solve.S3L22.Simple(R, b, be=be);
-x = sol[,1]; y = sol[,2]; z = sol[,3];
 
-### Test:
-S = (x+y+z);
-x^2*y^2 + b*z + be*S # - R
-y^2*z^2 + b*x + be*S # - R
-z^2*x^2 + b*y + be*S # - R
+test.S3Ht.L22z(sol, b=b, be=be)
+
+
+### Ex 3: S = 0
+b = 8;
+R = 3*b^(4/3);
+be = 0;
+sol = solve.S3L22.Simple(R, b, be=be);
+
+print(R)
+test.S3Ht.L22z(sol, b=b, be=be)
+
 
 ### Classic Polynomial:
 # - for case x == y:
