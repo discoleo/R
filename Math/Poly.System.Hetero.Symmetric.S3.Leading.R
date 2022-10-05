@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric
 ### with Composite Leading Term
 ###
-### draft v.0.2k-clean
+### draft v.0.2k-clean2
 
 
 ### Hetero-Symmetric
@@ -25,6 +25,8 @@ z^n*x^m + P(z, x, y) = R
 ###############
 
 
+### draft v.0.2k:
+# - cleaned & updated L11 & L22;
 ### draft v.0.2h - v.0.2h-clPoly:
 # - solved structural extension to S3L33M:
 #   x^3*y^3 + b2*x*y*z + b1*x*y = R;
@@ -76,17 +78,21 @@ z^n*x^m + P(z, x, y) = R
 ####################
 ####################
 
-### helper functions
+### Helper Functions
 
-library(polynom)
-library(pracma)
+
+source("Polynomials.Helper.R")
+
+
+# library(polynom)
+# library(pracma)
 
 # the functions are in the file:
 # Polynomials.Helper.R
 
 ### other functions
 
-test.CHP.S3.Symmetric = function(sol, R, b, b.ext=0, a=0, n=1) {
+test.CHP.S3.Symmetric = function(sol, b, b.ext=0, R=NULL, a=0, n=1) {
 	if(length(b.ext) < 2) b.ext = c(b.ext, 0);
 	if(length(a) < 2) a = c(a, 0)
 	x = sol[,1]; y = sol[,2]; z = sol[,3];
@@ -182,7 +188,7 @@ E2 + b1*S - 3*R # = 0
 
 
 ### Solver:
-solve.CHP.S3P1 = function(R, b, b.ext=0, a=0, debug=TRUE) {
+solve.S3Ht.L11 = function(R, b, b.ext=0, a=0, debug=TRUE) {
 	be1 = b.ext[1];
 	be2 = if(length(b.ext) > 1) b.ext[2] else 0;
 	a1 = a[1];
@@ -210,38 +216,41 @@ solve.CHP.S3P1 = function(R, b, b.ext=0, a=0, debug=TRUE) {
 	sol = cbind(x=as.vector(x), y=as.vector(y), z=as.vector(z))
 	return(sol)
 }
+test.S3Ht.L11 = function(sol, b, b.ext=0, R=NULL, a=0) {
+	test.CHP.S3.Symmetric(sol, b=b, b.ext=b.ext, R=R, a=a, n=1);
+}
 
 ### Examples:
 R = -1
 b = 3
 b.ext = c(1, 0)
-sol = solve.CHP.S3P1(R, b, b.ext=b.ext)
+sol = solve.S3Ht.L11(R, b, b.ext=b.ext)
 
 ### Test
-test.CHP.S3.Symmetric(sol, R, b, b.ext=b.ext, n=1)
+test.S3Ht.L11(sol, b, b.ext=b.ext)
 
 
 ### Ex 2:
 R = -1
 b = 3
 b.ext = c(1, 3)
-sol = solve.CHP.S3P1(R, b, b.ext=b.ext)
+sol = solve.S3Ht.L11(R, b, b.ext=b.ext)
 
 ### Test
-test.CHP.S3.Symmetric(sol, R, b, b.ext=b.ext, n=1)
-round0.p(poly.calc(sol[1:6, 1]))
+test.S3Ht.L11(sol, b, b.ext=b.ext)
+round0.p(poly.calc(sol[ , 1]))
 
 
 ############
 ### Str Ext: Ex 1
 R = -1
 b = 3
-b.ext = c(1, 3); a = 2
-sol = solve.CHP.S3P1(R, b, b.ext=b.ext, a=a)
+b.ext = c(1, 3); a = 2;
+sol = solve.S3Ht.L11(R, b, b.ext=b.ext, a=a)
 
 ### Test
-test.CHP.S3.Symmetric(sol, R, b, b.ext=b.ext, a=a, n=1)
-round0.p(poly.calc(sol[1:6, 1]))
+test.S3Ht.L11(sol, b, b.ext=b.ext, a=a)
+round0.p(poly.calc(sol[ , 1]))
 
 
 ############
@@ -249,11 +258,11 @@ round0.p(poly.calc(sol[1:6, 1]))
 R = -1
 b = 3
 b.ext = c(1, 3); a = c(-1, 1)
-sol = solve.CHP.S3P1(R, b, b.ext=b.ext, a=a)
+sol = solve.S3Ht.L11(R, b, b.ext=b.ext, a=a)
 
 ### Test
-test.CHP.S3.Symmetric(sol, R, b, b.ext=b.ext, a=a, n=1)
-round0.p(poly.calc(sol[1:6, 1]))
+test.S3Ht.L11(sol, b, b.ext=b.ext, a=a)
+round0.p(poly.calc(sol[ , 1]))
 
 
 ############
@@ -261,12 +270,14 @@ round0.p(poly.calc(sol[1:6, 1]))
 R = -1
 b = 3
 b.ext = c(0, -1); a = c(2, -1)
-sol = solve.CHP.S3P1(R, b, b.ext=b.ext, a=a)
+sol = solve.S3Ht.L11(R, b, b.ext=b.ext, a=a)
 
 ### Test
-test.CHP.S3.Symmetric(sol, R, b, b.ext, a=a)
-round0.p(poly.calc(sol[1:6, 1]))
+test.S3Ht.L11(sol, b, b.ext=b.ext, a=a)
+round0.p(poly.calc(sol[ , 1]))
 
+
+#################
 
 ### Classic Poly:
 # - without extensions;
