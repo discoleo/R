@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric
 ### with Composite Leading Term
 ###
-### draft v.0.2i-fix2
+### draft v.0.2i-fix3
 
 
 ### Hetero-Symmetric
@@ -264,19 +264,11 @@ round0.p(poly.calc(sol[1:6, 1]))
 
 ### FALSE roots:
 # - but distinct solutions possible under very special conditions;
-(x - b)^2 * (b^2*x^2 - 2*b*R*x + b^3*x + R^2 - b^2*R)
+(R + b^2)
 
 ### Classic Solver:
 # - roots possible only under very special conditions;
-solve.S3.L11y.FALSE = function(R, b) {
-	coeff = c(b^2, - 2*b*R + b^3, R^2 - b^2*R);
-	x = roots(coeff);
-	x = c(x, b);
-	z = (R - b*x) / x;
-	y = R / (x+b);
-	sol = cbind(x, y, z);
-	return(sol);
-}
+
 ### Special Cases:
 solve.S3L11y.Special = function(R, b) {
 	# R = 2*b^2; # Case: x=y=z = b, all equal!
@@ -300,6 +292,44 @@ b = 3; R = -b^2;
 sol = solve.S3L11y.Special(R, b=b);
 
 test.CHP.S3.Symmetric(sol, R, b)
+
+
+##############
+##############
+
+### Variant z:
+
+x*y + b*z # = R
+y*z + b*x # = R
+z*x + b*y # = R
+
+### Classic Poly:
+# - without extensions;
+# - (b*x - R) is a FALSE solution;
+(x^2 + b*x - R) *
+(x - b)^2 * (b*x - R + b^2) * (b*x - R)
+
+### Classic Solver:
+solve.S3.L11z = function(R, b) {
+	coeff = c(b, - R + b^2);
+	x = roots(coeff);
+	# x = b: Error during division;
+	y = (x - b)*R / (x^2 - b^2);
+	z = (R - x*y) / b;
+	sol = cbind(x, y, z);
+	### x = b
+	x = b;
+	s = R / b; e2 = R - b^2;
+	y = roots(c(1, -s, e2));
+	z = s - y;
+	sol = rbind(sol, cbind(x, y, z));
+	return(sol);
+}
+
+###
+R = -1; b = 3;
+sol = solve.S3.L11z(R, b=b)
+x = sol[,1]; y = sol[,2]; z = sol[,3];
 
 
 ########################
