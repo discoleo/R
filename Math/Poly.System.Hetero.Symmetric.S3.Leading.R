@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric
 ### with Composite Leading Term
 ###
-### draft v.0.2k-clean3
+### draft v.0.2L
 
 
 ### Hetero-Symmetric
@@ -687,13 +687,18 @@ b^3*x^15 - 3*b^2*R*x^14 + 3*b*R^2*x^13 - R^3*x^12 + b^4*x^10 - b^3*R*x^9 +
 ### Case: (x,y,z) all distinct
 
 ### Sum =>
-4*E2*E3^2 + 2*E3^2*S^2 - 4*E2^2*E3*S + E2^4 + b*S - 3*R
+4*E2*E3^2 + 2*E3^2*S^2 - 4*E2^2*E3*S + E2^4 + b*S - 3*R # = 0
+# Reduction (Diff-based!) =>
+3*E2*E3^2 + 2*E3^2*S^2 - 2*E2^2*E3*S + b*S - 3*R # = 0
 
 ### Sum(z*...) =>
-3*E3^3 - 3*E3^2*E2*S + E2^3*E3 - 2*b*E2 + b*S^2 - R*S # = 0
+3*E3^3 - 3*E2*E3^2*S + E2^3*E3 - 2*b*E2 + b*S^2 - R*S # = 0
+# Reduction (Diff-based!) =>
+3*E2*E3^2*S - 2*E2^3*E3 - 2*b*E2 + b*S^2 - R*S # = 0
+2*E3^2*S^3 - 2*E2^2*E3*S^2 + 2*E2^3*E3 + 2*b*E2 - 2*R*S # = 0
 
 ### Diff =>
-E3^2 - 2*E3*E2*S + E2^3 # = 0
+E3^2 - 2*E2*E3*S + E2^3 # = 0
 
 
 ### Eq S:
@@ -708,7 +713,108 @@ E3^2 - 2*E3*E2*S + E2^3 # = 0
 
 
 ### Solver:
-# TODO
+
+solve.S3Ht.L44ChZ = function(R, b, be=0, debug=TRUE) {
+	coeff = coeff.S3Ht.L44ChZ(R, b, be=be);
+	S = roots(coeff);
+	if(debug) print(S);
+	len = length(S);
+	E2 = sapply(seq(len), function(id) {
+		E2 = Ex.S3Ht.L44ChZ(S[id], R, b);
+		E2 = - E2[1];
+		return(E2);
+	});
+	E3 = (3*E2^4 + 2*E2^3*S^2 - b*S + 3*R) / (4*E2*S*(S^2 + E2));
+	if(debug) { cat("E2:\n"); print(E2); cat("E3:\n"); print(E3); }
+	# Step 2:
+	x = sapply(seq(len), function(id) roots(c(1, -S[id], E2[id], -E3[id])));
+	x = as.vector(x);
+	S = rep(S, each=3); E3 = rep(E3, each=3);
+	s = S - x; yz = E3 / x;
+	# robust:
+	len = length(x);
+	y = sapply(seq(len), function(id) {
+		roots(c(1, -s[id], yz[id]));
+	})
+	y = as.vector(y);
+	x = rep(x, each=2); s = rep(s, each=2);
+	z = s - y;
+	sol = cbind(x=x, y=y, z=z);
+	# TODO:
+	# add also the roots with pairwise equal variables;
+	return(sol);
+}
+coeff.S3Ht.L44ChZ = function(R, b, be=0) {
+	coeff = c(b^6, - 6*b^5*R, 15*b^4*R^2, - 20*b^3*R^3, 15*b^2*R^4,
+		- 6*b*R^5, R^6, 29*b^7, - 113*b^6*R, 187*b^5*R^2, - 175*b^4*R^3,
+		103*b^3*R^4, - 39*b^2*R^5,	9*b*R^6, - b^8 - R^7);
+	return(coeff);
+}
+Ex.S3Ht.L44ChZ = function(S, R, b) {
+	cc = c((18*R^2*S^2 - 12*R*S^3*b + 2*S^4*b^2) / 27,
+		(27*R^2 - 18*R*S*b + 3*S^2*b^2) / 27,
+		(- 48*R + 16*b*S)*S^6 / 27,
+		(- 96*R + 32*b*S)*S^4 / 27, 0,
+		(54*R - 18*S*b) / 27,
+		- 8*S^6 / 27, - 4*S^4 / 27, 30*S^2 / 27, 1);
+	# [excluded] Case: S = 0
+	dd = c((27*R^2 - 18*b*R*S + 3*b^2*S^2) / 3,
+		16*(S*b - R)*S^6 / 3,
+		- 32*R*S^4 / 3, - (4*R*S^2 + 52*b*S^3) / 3,
+		(30*R - 42*b*S) / 3, 0, - 4*S^4 / 3, - 4*S^2 / 3, 1);
+	cc = cc - c(0, dd);
+	cc = round0(cc); dd = round0(dd);
+	len = length(cc);
+	strip = function(x) {
+		pos = 0;
+		for(i in seq(length(x), 1, by=-1)) {
+			if(x[i] == 0) { pos = i; }
+			else break;
+		}
+		if(pos > 0) x = x[seq(pos - 1)];
+		x = x / x[length(x)];
+		return(x);
+	}
+	for(i in seq(len - 1)) {
+		# if(debug) print(paste0("Step: ", i)); # Debug
+		cc = strip(cc);
+		dd = strip(dd);
+		len1 = length(cc); len2 = length(dd);
+		if(len2 <= 2) return(dd);
+		while(len1 >= len2) {
+			cc = cc - c(rep(0, len1 - len2), dd);
+			cc = cc[ - len1];
+			cc = strip(cc); len1 = length(cc);
+		}
+		if(len1 <= 2) return(cc);
+		while(len2 >= len1) {
+			dd = dd - c(rep(0, len2 - len1), cc);
+			dd = dd[ - len2];
+			dd = strip(dd); len2 = length(dd);
+		}
+		if(len2 <= 2) return(dd);
+	}
+	warning("Some error!");
+	return(NA);
+}
+test.S3Ht.L44 = function(sol, b, be=0, R=NULL) {
+	test.S3Ht.LnnChZ(sol, b=b, b.ext=be, R=R, n=4)
+}
+
+### Examples:
+R = -1;
+b = 3;
+sol = solve.S3Ht.L44ChZ(R, b);
+
+test.S3Ht.L44(sol, b)
+
+
+### Ex:
+R = 2;
+b = -3;
+sol = solve.S3Ht.L44ChZ(R, b);
+
+test.S3Ht.L44(sol, b)
 
 
 ### Classic Polynomial:
