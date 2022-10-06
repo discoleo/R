@@ -7,10 +7,11 @@
 ### Heterogeneous Symmetric
 ### with Mixed Leading Term
 ###
-### draft v.0.1a
+### draft v.0.1b
 
 
 ### Heterogeneous Symmetric Polynomial Systems
+# - cyclic permutation of roots;
 
 ### 2 Variables:
 ### Simple System:
@@ -36,6 +37,7 @@
 # M43.1) x^4*y^3 + b3*x*y + b2*x^2 + b1*x = R; (trivial P2; base P7)
 # M43.2) x^4*y^3 + b3*(x*y)^2 + b2*x*y + b1*y = R; (TODO: P3 => P6)
 # M43.3) x^4*y^3 + b5*x^2*y + b4*x*y^2 + b3*(x*y)^2 + b2*x*y + b1*y = R; (TODO: P3 => P6)
+# M53.1) x^5*y^3 + b*y = R;
 
 
 ###############
@@ -685,4 +687,76 @@ round0(err)
 
 ### Classic Polynomial
 # TODO
+
+
+##########################
+##########################
+##########################
+
+######################
+### x^5*y^3 Series ###
+######################
+
+### Simple Side-Chain
+### x^5*y^3 + b*y
+
+### Solution:
+# - Case: distinct roots;
+
+### Diff =>
+(x*y)^3*S - b # = 0
+
+### Diff:
+# y^2*Eq 1 - x^2*Eq 2 =>
+b*(y^3 - x^3) - R*(y^2 - x^2) # = 0
+b*(S^2 - x*y) - R*S # = 0
+b*x*y - b*S^2 + R*S # = 0
+
+### Eq S:
+b^3*S^7 - 3*R*b^2*S^6 + 3*R^2*b*S^5 - R^3*S^4 - b^4 # = 0
+
+
+### Solver:
+
+solve.S2Ht.L53ChY = function(R, b, debug=TRUE, all=TRUE) {
+	coeff = c(b^3, - 3*R*b^2, 3*R^2*b, - R^3,
+		0, 0, 0, - b^4);
+	S = roots(coeff);
+	if(debug) print(S);
+	xy = (b*S^2 - R*S) / b;
+	len = length(S);
+	x12 = sapply(seq(len), function(id) {
+		roots(c(1, -S[id], xy[id]));
+	})
+	x12 = t(x12);
+	x = x12[,1]; y = x12[,2];
+	sol = cbind(x, y);
+	if(all) sol = rbind(sol, sol[, c(2,1)]);
+	return(sol);
+}
+test.S2Ht.L53ChY = function(sol, b, R = NULL) {
+	x = sol[,1]; y = sol[,2];
+	err1 = x^5*y^3 + b*y;
+	err2 = y^5*x^3 + b*x;
+	err = rbind(err1, err2);
+	err = round0(err);
+	return(err);
+}
+
+### Examples:
+
+### Ex 1:
+R = 2
+b = -3
+sol = solve.S2Ht.L53ChY(R, b)
+
+test.S2Ht.L53ChY(sol, b=b)
+
+
+### Ex 2:
+R = 5
+b = -3
+sol = solve.S2Ht.L53ChY(R, b)
+
+test.S2Ht.L53ChY(sol, b=b)
 
