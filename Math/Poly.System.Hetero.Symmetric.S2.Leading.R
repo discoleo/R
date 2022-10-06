@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric
 ### with Mixed Leading Term
 ###
-### draft v.0.1e
+### draft v.0.1f
 
 
 ### Heterogeneous Symmetric Polynomial Systems
@@ -39,7 +39,7 @@
 ### Mixed: Order n+3:
 # M43.1) x^4*y^3 + b3*x*y + b2*x^2 + b1*x = R; (trivial P2; base P7)
 # M43.2) x^4*y^3 + b3*(x*y)^2 + b2*x*y + b1*y = R; (TODO: P3 => P6)
-# M43.3) x^4*y^3 + b5*x^2*y + b4*x*y^2 + b3*(x*y)^2 + b2*x*y + b1*y = R; (TODO: P3 => P6)
+# M43.3) x^4*y^3 + b5*x^2*y + b4*x*y^2 + b3*(x*y)^2 + b2*x*y + b1*y = R; (P[3] => P[6])
 # M53.1) x^5*y^3 + b*y = R; (P[7] => P[14])
 
 
@@ -580,6 +580,9 @@ x = c(x, x2); y = c(y, x2)
 # 2*b1*S = 2*R - 2*b3*(x*y)^2 - 2*b2*x*y
 # b1*S = R - b3*(x*y)^2 - b2*x*y
 
+
+### Solver:
+
 solve.htMixt = function(b, R) {
 	if(length(b) == 3) {
 		xy = roots(c(1,0,0, -b[1]))
@@ -654,21 +657,27 @@ round0.p(poly.calc(sol[,1]))
 ### x^4*y^3 + b5*x^2*y + b4*x*y^2 + b3*(x*y)^2 + b2*x*y + b1*y
 
 # x^4*y^3 + b5*x^2*y + b4*x*y^2 + b3*(x*y)^2 + b2*x*y + b1*y = R
-# y^3*x^4 + b5*x^2*y + b4*x*y^2 + b3*(x*y)^2 + b2*x*y + b1*x = R
+# y^4*x^3 + b5*x*y^2 + b4*x^2*y + b3*(x*y)^2 + b2*x*y + b1*x = R
 
 ### Solution:
 
 # "Trivial" solution: x = y
-# x^7 + b3*x^4 + (b4+b5)*x^3 + b2*x^2 + b1*x - R = 0
+x^7 + b3*x^4 + (b4+b5)*x^3 + b2*x^2 + b1*x - R # = 0
 
 ### Diff =>
 # (x*y)^3*(x - y) + (b5-b4)*x*y*(x-y) - b1*(x-y) = 0
-# (x - y)*((x*y)^3 + (b5-b4)*x*y - b1) = 0
+(x - y)*((x*y)^3 + (b5-b4)*x*y - b1) # = 0
 # Case: x != y
-# (x*y)^3 + (b5-b4)*x*y - b1 = 0;
+(x*y)^3 + (b5-b4)*x*y - b1 # = 0;
+(x*y)^3 + db54*x*y - b1 # = 0;
+
+### Diff:
+# y*Eq 1 - x*Eq 2 =>
+b4*x*y*(y^2 - x^2) + b3*(x*y)^2*(y - x) + b2*x*y*(y - x) + b1*(y^2 - x^2) - R*(y - x) # = 0
+b4*x*y*S + b3*(x*y)^2 + b2*x*y + b1*S - R # = 0
 
 ### Sum =>
-# (x*y)^3*(x+y) + (b4+b5)*x*y*(x+y) + 2*b3*(x*y)^2 + 2*b2*x*y + b1*(x+y) = 2*R
+(x*y)^3*(x+y) + (b4+b5)*x*y*(x+y) + 2*b3*(x*y)^2 + 2*b2*x*y + b1*(x+y) - 2*R # = 0
 # ((x*y)^3 + (b4+b5)*x*y + b1)*S = 2*R - 2*b3*(x*y)^2 - 2*b2*x*y
 # (b4*x*y + b1)*S = R - b3*(x*y)^2 - b2*x*y
 
@@ -677,7 +686,7 @@ round0.p(poly.calc(sol[,1]))
 b = c(1, 2, 3, -1, -2)
 R = 1
 #
-sol =solve.htMixt(b, R)
+sol = solve.htMixt(b, R)
 x = sol$sol[,1]; y = sol$sol[,2]
 sol
 
@@ -690,7 +699,7 @@ x^3*y^4 + b[5]*x*y^2 + b[4]*x^2*y + b[3]*(x*y)^2 + b[2]*x*y + b[1]*x
 b = c(1, 0, -1, -1, 1)
 R = 1
 #
-sol =solve.htMixt(b, R)
+sol = solve.htMixt(b, R)
 x = sol$sol[,1]; y = sol$sol[,2]
 sol
 
@@ -706,9 +715,9 @@ round0(err)
 b = c(1,1,1,0,-1)
 R = 1
 #
-sol =solve.htMixt(b, R)
+sol = solve.htMixt(b, R)
 x = sol$sol[,1]; y = sol$sol[,2]
-sol
+sol$p
 
 ### Test
 err = 1 + 4*x + 6*x^2 - 4*x^4 - x^5 + x^6
@@ -716,7 +725,23 @@ round0(err)
 
 
 ### Classic Polynomial
-# TODO
+b1 = b[1]; b2 = b[2]; b3 = b[3]; b4 = b[4]; b5 = b[5]; db54 = b5 - b4;
+b1*(b1^2 + db54*b4^2 + b4^3)*x^6 +
+	- (3*b1^2*R + db54*b4^2*R + 2*b1^2*db54*b3 - 2*b1*db54*b2*b4 + 3*b1^2*b3*b4 - 3*b1*b2*b4^2)*x^5 +
+	+ (3*b1*R^2 + b1*db54*b2^2 + 4*b1*db54*R*b3 - 3*b1^2*b2*b3 + b1*db54^2*b3^2 +
+		- 2*db54*R*b2*b4 + 3*b1*b2^2*b4 + 3*b1*R*b3*b4 + b1*db54*b3^2*b4)*x^4 +
+	+ (- R^3 + 2*b1^2*db54*b2 - db54*R*b2^2 + b1*b2^3 - 3*b1^3*b3 - 2*db54*R^2*b3 +
+		+ 3*b1*R*b2*b3 - db54^2*R*b3^2 + b1*db54*b2*b3^2 + b1^2*b3^3 + 2*b1*db54*R*b4 +
+		+ 3*b1^2*b2*b4 + 2*b1*db54^2*b3*b4 + 3*b1*R*b4^2 + 2*b1*db54*b3*b4^2)*x^3 +
+	+ (b1^3*db54 - 2*b1*db54*R*b2 + 3*b1^2*b2^2 + 3*b1^2*R*b3 + b1^2*db54*b3^2 - 2*db54*R^2*b4 +
+		+ 3*b1*R*b2*b4 - 2*db54^2*R*b3*b4 + 2*b1*db54*b2*b3*b4 + 3*b1^2*b3^2*b4 +
+		+ b1*db54^2*b4^2 + b1*db54*b4^3)*x^2 +
+	+ (3*b1^2*b4*R - b1^2*db54*R - db54^2*b4^2*R + 3*b1^3*b2 + 2*b1^2*db54*b3*b4 +
+		+ b1*db54*b2*b4^2 + 3*b1^2*b3*b4^2)*x +
+	+ b1^2*(b1^2 + db54*b4^2 + b4^3) # = 0
+
+# P[8] => P[6]
+pR = div.pm(pR, toPoly.pm("(b3*x + b4)^2"), "x")
 
 
 ##########################
