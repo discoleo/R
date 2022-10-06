@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric
 ### with Mixed Leading Term
 ###
-### draft v.0.1d
+### draft v.0.1e
 
 
 ### Heterogeneous Symmetric Polynomial Systems
@@ -34,7 +34,8 @@
 # M31.2) x^3*y + b3*(x*y)^2 + b2*x*y + b1*y = R; (P3 => P6; some nice)
 # M41.1) x^4*y + b*x; (P5 => P10)
 ### Mixed: Order n+2:
-# M53.1) x^5*y^2 + b*y = R; (P[9] => P[18])
+# M42.1) x^4*y^2 + b*y = R; (P[5] => P[10])
+# M52.1) x^5*y^2 + b*y = R; (P[9] => P[18])
 ### Mixed: Order n+3:
 # M43.1) x^4*y^3 + b3*x*y + b2*x^2 + b1*x = R; (trivial P2; base P7)
 # M43.2) x^4*y^3 + b3*(x*y)^2 + b2*x*y + b1*y = R; (TODO: P3 => P6)
@@ -492,6 +493,7 @@ round0(err)
 -b[1] + x^3*(x - sqrt(R/b[2]))^3
 # - degenerate P[12] without sqrt;
 b2^3*x^12 - 3*R*b2^2*x^10 + 3*R^2*b2*x^8 - (R^3 + 2*b1*b2^3)*x^6 - 6*b1*b2^2*R*x^4 + b1^2*b2^3 # = 0
+# - although does NOT factorize;
 (b2*x^4 - R*x^2)^3 - b1*b2^2*(2*b2*x^6 + 6*R*x^4 - b1*b2) # = 0
 
 
@@ -503,7 +505,7 @@ b2^3*x^12 - 3*R*b2^2*x^10 + 3*R^2*b2*x^8 - (R^3 + 2*b1*b2^3)*x^6 - 6*b1*b2^2*R*x
 ### x^4*y^3 + b3*x*y + b2*x^2 + b1*x
 
 # x^4*y^3 + b3*x*y + b2*x^2 + b1*x = R
-# y^3*x^4 + b3*x*y + b2*y^2 + b1*y = R
+# y^4*x^3 + b3*x*y + b2*y^2 + b1*y = R
 
 ### Solution:
 
@@ -559,7 +561,7 @@ x = c(x, x2); y = c(y, x2)
 ### x^4*y^3 + b3*(x*y)^2 + b2*x*y + b1*y
 
 # x^4*y^3 + b3*(x*y)^2 + b2*x*y + b1*y = R
-# y^3*x^4 + b3*(x*y)^2 + b2*x*y + b1*x = R
+# y^4*x^3 + b3*(x*y)^2 + b2*x*y + b1*x = R
 
 ### Solution:
 
@@ -605,7 +607,7 @@ solve.htMixt = function(b, R) {
 b = c(1, 2, 3)
 R = 1
 #
-sol =solve.htMixt(b, R)
+sol = solve.htMixt(b, R)
 x = sol$sol[,1]; y = sol$sol[,2]
 sol
 
@@ -618,7 +620,7 @@ x^3*y^4 + b[3]*(x*y)^2 + b[2]*x*y + b[1]*x
 b = c(1/2, 2, -3)
 R = 1
 #
-sol =solve.htMixt(b, R)
+sol = solve.htMixt(b, R)
 x = sol$sol[,1]; y = sol$sol[,2]
 sol
 
@@ -631,7 +633,7 @@ x^3*y^4 + b[3]*(x*y)^2 + b[2]*x*y + b[1]*x
 b = c(2,2,-2)
 R = 2
 #
-sol =solve.htMixt(b, R)
+sol = solve.htMixt(b, R)
 x = sol$sol[,1]; y = sol$sol[,2]
 sol
 
@@ -715,6 +717,80 @@ round0(err)
 
 ### Classic Polynomial
 # TODO
+
+
+##########################
+##########################
+
+######################
+### x^4*y^2 Series ###
+######################
+
+### Simple Side-Chain
+### x^4*y^2 + b*y
+
+### Solution:
+# - Case: distinct roots;
+
+### Diff =>
+(x*y)^2*S - b # = 0
+
+### Diff:
+# y^2*Eq 1 - x^2*Eq 2 =>
+b*(y^3 - x^3) - R*(y^2 - x^2) # = 0
+b*(S^2 - x*y) - R*S # = 0
+
+### Eq S:
+b^2*S^5 - 2*R*b*S^4 + R^2*S^3 - b^3 # = 0
+
+
+### Solver:
+
+solve.S2Ht.L42ChY = function(R, b, debug=TRUE, all=TRUE) {
+	coeff = c(b^2, - 2*R*b, R^2, 0, 0, - b^3);
+	S = roots(coeff);
+	if(debug) print(S);
+	xy = (b*S^2 - R*S) / b;
+	len = length(S);
+	x12 = sapply(seq(len), function(id) {
+		roots(c(1, -S[id], xy[id]));
+	})
+	x12 = t(x12);
+	x = x12[,1]; y = x12[,2];
+	sol = cbind(x, y);
+	if(all) sol = rbind(sol, sol[, c(2,1)]);
+	return(sol);
+}
+test.S2Ht.L42ChY = function(sol, b, R = NULL) {
+	x = sol[,1]; y = sol[,2];
+	err1 = x^4*y^2 + b*y;
+	err2 = y^4*x^2 + b*x;
+	err = rbind(err1, err2);
+	err = round0(err);
+	return(err);
+}
+
+### Examples:
+
+### Ex 1:
+R = 2
+b = -3
+sol = solve.S2Ht.L42ChY(R, b)
+
+test.S2Ht.L42ChY(sol, b=b)
+
+
+### Ex 2:
+R = 5
+b = -3
+sol = solve.S2Ht.L42ChY(R, b)
+
+test.S2Ht.L42ChY(sol, b=b)
+
+
+### Classic Polynomial:
+x = sol[,1];
+b^2*x^10 - 2*b*R*x^9 + R^2*x^8 - b^3*x^5 + 3*b^2*R*x^4 - b*R^2*x^3 - R^3*x^2 + b^4 # = 0
 
 
 ##########################
