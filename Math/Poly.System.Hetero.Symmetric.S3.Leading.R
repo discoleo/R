@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric
 ### with Composite Leading Term
 ###
-### draft v.0.2k-clean2
+### draft v.0.2k-clean3
 
 
 ### Hetero-Symmetric
@@ -93,6 +93,9 @@ source("Polynomials.Helper.R")
 ### other functions
 
 test.CHP.S3.Symmetric = function(sol, b, b.ext=0, R=NULL, a=0, n=1) {
+	test.S3Ht.LnnChY(sol, b=b, b.ext=b.ext, R=R, a=a, n=n);
+}
+test.S3Ht.LnnChY = function(sol, b, b.ext=0, R=NULL, a=0, n=1) {
 	if(length(b.ext) < 2) b.ext = c(b.ext, 0);
 	if(length(a) < 2) a = c(a, 0)
 	x = sol[,1]; y = sol[,2]; z = sol[,3];
@@ -104,7 +107,10 @@ test.CHP.S3.Symmetric = function(sol, b, b.ext=0, R=NULL, a=0, n=1) {
 	err3 = (z*x)^n + b[1]*x + ext # - R
 	round0(rbind(err1, err2, err3))
 }
-test.S3Ht.LSymmetricChz = function(sol, b, R=NULL, b.ext=0, n=1) {
+test.S3Ht.LSymmetricChz = function(sol, b, b.ext=0, R=NULL, n=1) {
+	test.S3Ht.LnnChZ(sol, b=b, b.ext=b.ext, R=R, n=n)
+}
+test.S3Ht.LnnChZ = function(sol, b, b.ext=0, R=NULL, n=1) {
 	if(length(b.ext) < 2) b.ext = c(b.ext, 0);
 	x = sol[,1]; y = sol[,2]; z = sol[,3];
 	S = (x+y+z); s.ext = b.ext[1]*S + b.ext[2]*S^2;
@@ -217,7 +223,7 @@ solve.S3Ht.L11 = function(R, b, b.ext=0, a=0, debug=TRUE) {
 	return(sol)
 }
 test.S3Ht.L11 = function(sol, b, b.ext=0, R=NULL, a=0) {
-	test.CHP.S3.Symmetric(sol, b=b, b.ext=b.ext, R=R, a=a, n=1);
+	test.S3Ht.LnnChY(sol, b=b, b.ext=b.ext, R=R, a=a, n=1);
 }
 
 ### Examples:
@@ -307,14 +313,14 @@ b = -1; R = -b^2;
 sol = solve.S3L11y.Special(R, b=b);
 
 print(R);
-test.CHP.S3.Symmetric(sol, R, b)
+test.S3Ht.L11(sol, b)
 
 ### Ex 2: distinct;
 b = 3; R = -b^2;
 sol = solve.S3L11y.Special(R, b=b);
 
 print(R);
-test.CHP.S3.Symmetric(sol, R, b)
+test.S3Ht.L11(sol, b)
 
 
 ##############
@@ -371,7 +377,7 @@ solve.S3Ht.L11z = function(R, b, debug=TRUE) {
 	return(sol);
 }
 test.S3Ht.L11z = function(sol, b, R=NULL) {
-	err = test.S3Ht.LSymmetricChz(sol, b=b, R=R, n=1);
+	err = test.S3Ht.LnnChZ(sol, b=b, R=R, n=1);
 	return(err)
 }
 
@@ -498,10 +504,6 @@ solve.S3L22.Simple = function(R, b, be=0, debug=TRUE) {
 	sol = cbind(x, y, z);
 	return(sol);
 }
-test.S3Ht.L22z = function(sol, b, be=0, R=NULL) {
-	err = test.S3Ht.LSymmetricChz(sol, b=b, b.ext=be, R=R, n=2);
-	return(err)
-}
 coeff.S3L22.Simple = function(R, b, be=0) {
 	coeff = c(b^2, - 2*b*R, R^2, - 9*b^3, 9*b^2*R, - 3*b*R^2, 27*b^4 - R^3);
 	if(any(be != 0)) {
@@ -510,6 +512,10 @@ coeff.S3L22.Simple = function(R, b, be=0) {
 				-3*R*be[1]^2 + 6*b*R*be[1], 3*R^2*be[1], 0);
 	}
 	return(coeff);
+}
+test.S3Ht.L22z = function(sol, b, be=0, R=NULL) {
+	err = test.S3Ht.LnnChZ(sol, b=b, b.ext=be, R=R, n=2);
+	return(err)
 }
 
 ### Examples;
@@ -585,8 +591,8 @@ E2^2 - E3*S # = 0
 b^3*S^5 - 3*b^2*R*S^4 + 3*b*R^2*S^3 - R^3*S^2 + b^4
 
 ### Solver:
-solve.S3L33Simple = function(R, b, be=0, debug=TRUE) {
-	coeff = coeff.S3L33Simple(R, b, be=be);
+solve.S3Ht.L33ChZ = function(R, b, be=0, debug=TRUE) {
+	coeff = coeff.S3Ht.L33ChZ(R, b, be=be);
 	S = roots(coeff);
 	if(debug) print(S);
 	len = length(S);
@@ -594,6 +600,7 @@ solve.S3L33Simple = function(R, b, be=0, debug=TRUE) {
 	E2Div = (104*b^2*S^5 - 168*b*R*S^4 + 72*R^2*S^3 + 216*b^3);
 	E2 = E2x0 / E2Div;
 	E3 = E2^2 / S;
+	# Step 2:
 	x = sapply(seq(len), function(id) roots(c(1, -S[id], E2[id], -E3[id])));
 	S = rep(S, each=3); E3 = rep(E3, each=3);
 	yz.s = S - x; yz = E3 / x;
@@ -601,8 +608,9 @@ solve.S3L33Simple = function(R, b, be=0, debug=TRUE) {
 	# x^3*yz*y^2 + b*z^2 - R*z = 0
 	# x^3*yz*y^2 + b*(yz.s - y)^2 - R*(yz.s - y) = 0
 	x = as.vector(x); yz.s = as.vector(yz.s);
-	y = sapply(seq_along(x), function(id)
-		roots(c(x[id]^3*yz[id] +b, -2*b*yz.s[id] + R, b*yz.s[id]^2 - R*yz.s[id])));
+	y = sapply(seq_along(x), function(id) {
+		roots(c(x[id]^3*yz[id] + b, -2*b*yz.s[id] + R, b*yz.s[id]^2 - R*yz.s[id]));
+	});
 	x = rep(x, each=2); yz.s = rep(yz.s, each=2);
 	y = as.vector(y);
 	z = yz.s - y;
@@ -611,25 +619,39 @@ solve.S3L33Simple = function(R, b, be=0, debug=TRUE) {
 	# add also the roots with pairwise equal variables;
 	return(sol);
 }
-coeff.S3L33Simple = function(R, b, be=0) {
+coeff.S3Ht.L33ChZ = function(R, b, be=0) {
 	coeff = c(b^3, - 3*b^2*R, 3*b*R^2, - R^3, 0, b^4);
 	return(coeff);
+}
+test.S3Ht.L33 = function(sol, b, be=0, R=NULL) {
+	test.S3Ht.LnnChZ(sol, b=b, b.ext=be, R=R, n=3)
 }
 
 ### Examples:
 R = -1;
 b = 3;
-sol = solve.S3L33Simple(R, b);
-x = sol[,1]; y = sol[,2]; z = sol[,3];
+sol = solve.S3Ht.L33ChZ(R, b);
+
+test.S3Ht.L33(sol, b)
+
+
+### Ex 2:
+R = 2;
+b = -3;
+sol = solve.S3Ht.L33ChZ(R, b);
+
+test.S3Ht.L33(sol, b)
 
 
 ### Test
+x = sol[,1]; y = sol[,2]; z = sol[,3];
 x^3*y^3 + b*z # - R
 y^3*z^3 + b*x # - R
 z^3*x^3 + b*y # - R
 
 
 ### Classic Polynomial:
+# P[51] = P[6] * P[15] * P[15] * P[15];
 ### Case x == y:
 x^21 - 3*R*x^15 + 3*R^2*x^9 - R^3*x^3 - b^4*x + b^3*R
 ### Case y == z:
