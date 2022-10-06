@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric
 ### with Mixed Leading Term
 ###
-### draft v.0.1c
+### draft v.0.1d
 
 
 ### Heterogeneous Symmetric Polynomial Systems
@@ -31,7 +31,7 @@
 # M21.4) x^2*y + b3*x*y + b2*x^2 + b1*x: trivial (trivial P2);
 ### Mixed: Order n+1:
 # M31.1) x^3*y + b*x: trivial P4;
-# M31.2) x^3*y + b3*(x*y)^2 + b2*x*y + b1*y = R; (TODO: P3 => P6; some nice)
+# M31.2) x^3*y + b3*(x*y)^2 + b2*x*y + b1*y = R; (P3 => P6; some nice)
 # M41.1) x^4*y + b*x; (P5 => P10)
 ### Mixed: Order n+2:
 # M53.1) x^5*y^2 + b*y = R; (P[9] => P[18])
@@ -244,11 +244,14 @@ b[2]*(b[2] - b[3])*x^2 + (b[1]*(b[2] - b[3]) - R)*x - R*b[2]
 b1*S^3 - R*S^2 + b1*b2*S + b1^2*b3 - b1^2 # = 0
 
 
-solve.htx3y = function(R, b) {
+### Solver:
+
+solve.htx3y = function(R, b, debug=TRUE) {
 	if(R == 0 && b[1] == 0) return(list(sol=NA, p=NA))
-	r.sum = roots(c(b[1], - R, b[1]*b[2], b[1]^2*b[3] - b[1]^2))
+	r.sum = roots(c(b[1], - R, b[1]*b[2], b[1]^2*b[3] - b[1]^2));
 	r.sum = round0(r.sum)
 	r.sum = r.sum[ r.sum != 0 ] # avoid division by 0
+	if(debug) print(r.sum);
 	xy = b[1] / r.sum
 	r.diff = sqrt(r.sum^2 - 4*xy + 0i)
 	x = (r.sum + r.diff)/2
@@ -262,17 +265,16 @@ solve.htx3y = function(R, b) {
 test.p = function(R, b) {
 	b1 = b[1]; b2 = b[2]; b3 = b[3];
 	#
-	err = b1^3*(1 - b3^2) +
-	(1 - b3^2)*(- R^2 + 2*b1^2*b2)*x +
-	b1*(1 - b3^2)*(- R + 2*R*b3 + b2^2)*x^2 +
-	(1 - b3^2)*(- R*b2 + 2*b1^2 - b1^2*b3 - b1^2*b3^2)*x^3 +
-	b1*b2*(b3^2 - 1)*(b3 - 2)*x^4 +
-	- R*(b3 - 1)*(b3^2 - 1)*x^5 +
-	b1*(b3 - 1)*(b3^2 - 1)*x^6
+	err = - b1^3 - (2*b1^2*b2 - R^2)*x +
+		- b1*(2*R*b3 + b2^2 - R)*x^2 +
+		- (- R*b2 + 2*b1^2 - b1^2*b3 - b1^2*b3^2)*x^3 +
+		+ b1*b2*(b3 - 2)*x^4 - R*(b3 - 1)*x^5 +
+		+ b1*(b3 - 1)*x^6;
 	return(round0(err))
 }
 
 ### Classic Polynomial:
+# - for P[6]: see at the end of this section;
 ((1 + b[3])*x^4 + b[2]*x^2 + b[1]*x - R) * P6
 
 
@@ -355,6 +357,19 @@ round0(err)
 test.p(R, b)
 
 
+### Example 6:
+R = -2
+b = c(1, 2, 2)
+# - but trivial solution;
+sol = solve.htx3y(R, b)
+x = sol$sol[,1]; y = sol$sol[,2];
+sol
+
+### Test
+x^3*y + b[3]*(x*y)^2 + b[2]*x*y + b[1]*y
+y^3*x + b[3]*(x*y)^2 + b[2]*x*y + b[1]*x
+
+
 ### Examples:
 R = 1
 p = sapply(-6:6, function(r) print(solve.htx3y(R, c(1, r, 2))$p))
@@ -370,6 +385,14 @@ p = sapply(-6:6, function(r) print(solve.htx3y(r, c(r, -3, 2))$p))
 #
 r = -3; sol = solve.htx3y(r, c(r, -3, 2)); x = sol$sol[,1]
 -9 - 21*x - 15*x^3 - x^5 + x^6
+
+
+### Classic Polynomial:
+b1 = b[1]; b2 = b[2]; b3 = b[3];
+b1*(b3 - 1)*x^6 - R*(b3 - 1)*x^5 + b1*b2*(b3 - 2)*x^4 +
+	+ (b1^2*(b3^2 + b3 - 2) + b2*R)*x^3 +
+	- (b1*b2^2 + 2*b1*b3*R - b1*R)*x^2 +
+	+ (R^2 - 2*b1^2*b2)*x - b1^3 # = 0
 
 
 ###################
@@ -428,7 +451,7 @@ y^3*x + b[1]*y
 ### x^4*y^3 + b2*(x+y)^2 + b1*x
 
 # x^4*y^3 + b2*(x+y)^2 + b1*x = R
-# y^3*x^4 + b2*(x+y)^2 + b1*y = R
+# y^4*x^3 + b2*(x+y)^2 + b1*y = R
 
 # trivial polynomial;
 
@@ -465,8 +488,11 @@ round0.p(poly.calc(sol[,1]))
 err = -3 - x^3 + 3*x^4 - 3*x^5 + x^6
 round0(err)
 
-# trivial:
+# - trivial:
 -b[1] + x^3*(x - sqrt(R/b[2]))^3
+# - degenerate P[12] without sqrt;
+b2^3*x^12 - 3*R*b2^2*x^10 + 3*R^2*b2*x^8 - (R^3 + 2*b1*b2^3)*x^6 - 6*b1*b2^2*R*x^4 + b1^2*b2^3 # = 0
+(b2*x^4 - R*x^2)^3 - b1*b2^2*(2*b2*x^6 + 6*R*x^4 - b1*b2) # = 0
 
 
 ##################
