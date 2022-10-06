@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric
 ### with Mixed Leading Term
 ###
-### draft v.0.1f
+### draft v.0.1g
 
 
 ### Heterogeneous Symmetric Polynomial Systems
@@ -59,10 +59,12 @@
 ######################
 ######################
 
-library(polynom)
-library(pracma)
+### Helper Functions
 
-### helper Functions
+# library(polynom)
+# library(pracma)
+
+source("Polynomials.Helper.R")
 
 # the functions are in the file:
 # Polynomials.Helper.R;
@@ -224,6 +226,7 @@ y^2*x + b[3]*x*y + b[2]*y^2 + b[1]*y
 b[2]*(b[2] - b[3])*x^2 + (b[1]*(b[2] - b[3]) - R)*x - R*b[2]
 
 
+############################
 ############################
 ############################
 
@@ -440,12 +443,17 @@ y^3*x + b[1]*y
 
 ##########################
 ##########################
+##########################
 
 ######################
 ### x^4*y^3 Series ###
 ######################
 
-### Simple Side-Chain
+### Sections:
+# 1. Chain: X
+# 2. Chain: Y
+
+### 1. Simple Side-Chain
 ### x^4*y^3 + b*x
 
 ### Variants:
@@ -515,13 +523,13 @@ b2^3*x^12 - 3*R*b2^2*x^10 + 3*R^2*b2*x^8 - (R^3 + 2*b1*b2^3)*x^6 - 6*b1*b2^2*R*x
 # Trivial remaining P2;
 
 ### Diff =>
-# (x*y)^3*(x - y) + b2*(x-y)*(x+y) + b1*(x-y) = 0
-# (x - y)*((x*y)^3 + b2*(x+y) + b1) = 0
+(x*y)^3*(x - y) + b2*(x-y)*(x+y) + b1*(x-y) # = 0
+(x - y)*((x*y)^3 + b2*(x+y) + b1) # = 0
 # Case: x != y
 # (x*y)^3 = - (b2*S + b1);
 
 ### Sum =>
-# (x*y)^3*(x+y) + 2*b3*x*y + b2*(x^2 + y^2) + b1*(x+y) = 2*R
+(x*y)^3*(x+y) + 2*b3*x*y + b2*(x^2 + y^2) + b1*(x+y) - 2*R # = 0
 # - (b2*S + b1)*S + 2*b3*x*y + b2*(S^2 - 2*x*y) + b1*S - 2*R = 0
 # 2*b3*x*y - 2*b2*x*y - 2*R = 0
 # (b3-b2)*x*y = R
@@ -555,9 +563,10 @@ x2 = roots(c(1, 0,0,0,0, (b[2]+b[3]), b[1], - R))
 x = c(x, x2); y = c(y, x2)
 
 
-###############
-### Extension 2
+###################
+### 2. Chain: Y ###
 
+### Extension 2
 ### x^4*y^3 + b3*(x*y)^2 + b2*x*y + b1*y
 
 # x^4*y^3 + b3*(x*y)^2 + b2*x*y + b1*y = R
@@ -566,16 +575,16 @@ x = c(x, x2); y = c(y, x2)
 ### Solution:
 
 # "Trivial" solution: x = y
-# x^7 + b3*x^4 + b2*x^2 + b1*x - R = 0
+x^7 + b3*x^4 + b2*x^2 + b1*x - R # = 0
 
 ### Diff =>
-# (x*y)^3*(x - y) - b1*(x-y) = 0
-# (x - y)*((x*y)^3 - b1) = 0
+(x*y)^3*(x - y) - b1*(x-y) # = 0
+(x - y)*((x*y)^3 - b1) # = 0
 # Case: x != y
 # (x*y)^3 = b1;
 
 ### Sum =>
-# (x*y)^3*(x+y) + 2*b3*(x*y)^2 + 2*b2*x*y + b1*(x+y) = 2*R
+(x*y)^3*(x+y) + 2*b3*(x*y)^2 + 2*b2*x*y + b1*(x+y) - 2*R # = 0
 # ((x*y)^3 + b1)*S = 2*R - 2*b3*(x*y)^2 - 2*b2*x*y
 # 2*b1*S = 2*R - 2*b3*(x*y)^2 - 2*b2*x*y
 # b1*S = R - b3*(x*y)^2 - b2*x*y
@@ -585,7 +594,7 @@ x = c(x, x2); y = c(y, x2)
 
 solve.htMixt = function(b, R) {
 	if(length(b) == 3) {
-		xy = roots(c(1,0,0, -b[1]))
+		xy = roots(c(1,0,0, -b[1]));
 		r.sum = (R - b[3]*xy^2 - b[2]*xy) / b[1]
 	} else {
 		if(length(b) == 4) b = c(b, 0);
@@ -665,7 +674,7 @@ round0.p(poly.calc(sol[,1]))
 x^7 + b3*x^4 + (b4+b5)*x^3 + b2*x^2 + b1*x - R # = 0
 
 ### Diff =>
-# (x*y)^3*(x - y) + (b5-b4)*x*y*(x-y) - b1*(x-y) = 0
+(x*y)^3*(x - y) + (b5-b4)*x*y*(x-y) - b1*(x-y) # = 0
 (x - y)*((x*y)^3 + (b5-b4)*x*y - b1) # = 0
 # Case: x != y
 (x*y)^3 + (b5-b4)*x*y - b1 # = 0;
@@ -816,6 +825,91 @@ test.S2Ht.L42ChY(sol, b=b)
 ### Classic Polynomial:
 x = sol[,1];
 b^2*x^10 - 2*b*R*x^9 + R^2*x^8 - b^3*x^5 + 3*b^2*R*x^4 - b*R^2*x^3 - R^3*x^2 + b^4 # = 0
+
+
+##############
+### Extension:
+
+### Side-Chain: y^2
+### x^4*y^2 + b2*y^2 + b1*y
+
+### Solution:
+# - Case: distinct roots;
+
+### Diff =>
+(x*y)^2*S - b2*S - b1 # = 0
+
+### Diff:
+# y^2*Eq 1 - x^2*Eq 2 =>
+b2*(y^4 - x^4) + b1*(y^3 - x^3) - R*(y^2 - x^2) # = 0
+b2*(S^3 - 2*x*y*S) + b1*(S^2 - x*y) - R*S # = 0
+
+### Eq S:
+b2^2*S^7 + 2*b1*b2*S^6 + (b1^2 - 2*R*b2)*S^5 - 2*R*b1*S^4 + (R^2 - 4*b2^3)*S^3 +
+	- 8*b1*b2^2*S^2 - 5*b1^2*b2*S - b1^3 # = 0
+
+
+### Solver:
+
+solve.S2Ht.L42ChY2 = function(R, b, debug=TRUE, all=TRUE) {
+	b1 = b[1]; b2 = b[2];
+	coeff = c(b2^2, 2*b1*b2, b1^2 - 2*b2*R, - 2*b1*R, R^2 - 4*b2^3,
+		- 8*b1*b2^2, - 5*b1^2*b2, - b1^3);
+	S = roots(coeff);
+	if(debug) print(S);
+	xy = (b2*S^3 + b1*S^2 - R*S) / (2*b2*S + b1);
+	len = length(S);
+	x12 = sapply(seq(len), function(id) {
+		roots(c(1, -S[id], xy[id]));
+	})
+	x12 = t(x12);
+	x = x12[,1]; y = x12[,2];
+	sol = cbind(x, y);
+	if(all) sol = rbind(sol, sol[, c(2,1)]);
+	return(sol);
+}
+test.S2Ht.L42ChY2 = function(sol, b, R = NULL) {
+	x = sol[,1]; y = sol[,2];
+	err1 = x^4*y^2 + b[2]*y^2 + b[1]*y;
+	err2 = y^4*x^2 + b[2]*x^2 + b[1]*x;
+	err = rbind(err1, err2);
+	err = round0(err);
+	return(err);
+}
+
+### Examples:
+
+### Ex 1:
+R = 2
+b = c(-1, 3)
+sol = solve.S2Ht.L42ChY2(R, b)
+
+test.S2Ht.L42ChY2(sol, b=b)
+
+
+### Ex 2:
+R = 5
+b = c(-3, -1)
+sol = solve.S2Ht.L42ChY2(R, b)
+
+test.S2Ht.L42ChY2(sol, b=b)
+
+
+### Ex 3:
+R = 2
+b = c(-1, -1)
+sol = solve.S2Ht.L42ChY2(R, b)
+
+test.S2Ht.L42ChY2(sol, b=b)
+
+
+### Classic Polynomial:
+x = sol[,1]; b1 = b[1]; b2 = b[2];
+b2^2*x^14 + 2*b1*b2*x^13 + (b1^2 - 2*b2*R)*x^12 - 2*b1*R*x^11 + (3*b2^3 + R^2)*x^10 +
+	+ 5*b1*b2^2*x^9 + (b1^2*b2 - 5*b2^2*R)*x^8 - b1*(b1^2 + 2*b2*R)*x^7 +
+	+ 3*(b2^4 + b1^2*R + b2*R^2)*x^6 + b1*(4*b2^3 - R^2)*x^5 +
+	- (4*b2^3*R + R^3)*x^4 + (b1^4 + b2^5 + 4*b1^2*b2*R + 2*b2^2*R^2)*x^2 +
+	+ b1*b2^4*x - b2^4*R # = 0
 
 
 ##########################
