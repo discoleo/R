@@ -6,7 +6,7 @@
 ### Polynomial Systems: S2
 ### Heterogeneous Symmetric
 ###
-### draft v.0.4b
+### draft v.0.4b-clP
 
 
 ### Heterogeneous Symmetric Polynomial Systems
@@ -1738,7 +1738,8 @@ test.S2Ht.P5ChShift = function(sol, b, R=NULL) {
 	err1 = x^5 + b3*x^3*y^2 + b2*x^2*y;
 	err2 = y^5 + b3*y^3*x^2 + b2*y^2*x;
 	err = rbind(err1, err2);
-	err = round0(err);
+	isNum = ! is.nan(err)
+	err[isNum] = round0(err[isNum]);
 	return(err);
 }
 
@@ -1757,6 +1758,26 @@ b = c(-1, 3);
 sol = solve.S2Ht.P5ChShift(R, b)
 
 test.S2Ht.P5ChShift(sol, b=b)
+
+
+### Ex 3: Special Case
+# TODO
+R = 3;
+b = c(-2, -1);
+sol = solve.S2Ht.P5ChShift(R, b)
+
+test.S2Ht.P5ChShift(sol, b=b)
+
+
+### Classic Polynomial:
+b2 = b[1]; b3 = b[2]; x = sol[,1];
+(b3^3 - b3^2 - b3 + 1)*x^20 - b2*(b3 - 1)^2*x^18 + b2^2*(b3 + 1)*x^16 +
+	- (3*b3^3 - 4*b3^2 - 3*b3 + 4)*R*x^15 - b2^3*x^14 +
+	- b2*(b3^3 - 4*b3^2 + 4*b3 - 3)*R*x^13 + b2^2*(b3^2 - 5*b3 - 2)*R*x^11 +
+	+ (6 - 3*b3 - 5*b3^2 + 2*b3^3 + b3^4)*R^2*x^10 - b2^3*(b3 - 1)*R*x^9 +
+	- b2*(3 - 2*b3 + 3*b3^2)*R^2*x^8 + b2^4*R*x^7 + b2^2*(4*b3 + 1)*R^2*x^6 +
+	- 4*R^3*x^5 + b3*R^3*x^5 + 2*b3^2*R^3*x^5 +
+	+ b2*R^3*x^3 + R^4 # = 0
 
 
 ###################################
