@@ -6,7 +6,7 @@
 ### Polynomial Systems: S2
 ### Heterogeneous Symmetric
 ###
-### draft v.0.4a
+### draft v.0.4b
 
 
 ### Heterogeneous Symmetric Polynomial Systems
@@ -53,6 +53,8 @@
 # P5.2.) x^5 + b2*x*y + b1*(x+y) = 0; (TODO: based on (P16)^2)
 # P5.3.) x^5 + b*y = R; (P10 => P20)
 # P5.4.) x^5 + b*y^4 = R; (P10 => P20)
+# P5.5.) x^5 + b3*x^3*y^2 + b2*x^2*y = R; (TODO: P10 => P20)
+
 
 ### Complex Leading Term/Terms:
 # - moved to other files;
@@ -1686,6 +1688,75 @@ x^20 - b*x^19 + b^2*x^18 - b^3*x^17 + b^4*x^16 - (b^5 + 4*R)*x^15 + b*(b^5 + 3*R
 	- b^7*x^13 - 2*b^2*R*x^13 + b^8*x^12 + b^3*R*x^12 - b^5*R*x^10 + 6*R^2*x^10 +
 	+ 2*b^6*R*x^9 - 3*b*R^2*x^9 - 3*b^7*R*x^8 + b^2*R^2*x^8 - b^5*R^2*x^5 - 4*R^3*x^5 +
 	+ 3*b^6*R^2*x^4 + b*R^3*x^4 - b^5*R^3 + R^4 # = 0
+
+
+#######################
+#######################
+
+### Shifted Side-Chains
+### x^5 + b3*x^3*y^2 + b2*x^2*y
+
+# x^5 + b3*x^3*y^2 + b2*x^2*y = R
+# y^5 + b3*y^3*x^2 + b2*y^2*x = R
+
+### Solution
+
+### Diff =>
+S^4 - 3*x*y*S^2 + (b3 + 1)*(x*y)^2 + b2*x*y # = 0
+
+### Diff 2:
+# y*Eq 1 - x*Eq 2 =>
+x*y*(x^4 - y^4) + R*(x - y) # = 0
+x*y*S*(S^2 - 2*x*y) + R # = 0
+
+
+### Eq S:
+(b3 - 1)*S^10 + 2*b2*S^8 + (7*b3 - 11)*R*S^5 - b2*(b3 - 11)*R*S^3 +
+	- 2*b2^2*R*S + (b3 + 1)^2*R^2 # = 0
+
+
+### Solver:
+
+solve.S2Ht.P5ChShift = function(R, b, debug=TRUE, all=TRUE) {
+	if(length(b) < 2) stop("Wrong parameter b!");
+	b2 = b[1]; b3 = b[2];
+	coeff = c(b3 - 1, 0, 2*b2, 0, 0, (7*b3 - 11)*R, 0,
+		- b2*(b3 - 11)*R, 0, - 2*b2^2*R, (b3 + 1)^2*R^2);
+	S = roots(coeff);
+	if(debug) print(S);
+	xy = (2*S^5 + (b3 + 1)*R) / (5*S^3 - b3*S^3 - 2*b2*S);
+	d = sqrt(S^2 - 4*xy + 0i);
+	x = (S + d)/2;
+	y = S - x;
+	sol = cbind(x, y);
+	if(all) sol = rbind(sol, sol[, c(2,1)]);
+	return(sol);
+}
+test.S2Ht.P5ChShift = function(sol, b, R=NULL) {
+	x = sol[,1]; y = sol[,2];
+	b2 = b[1]; b3 = b[2];
+	err1 = x^5 + b3*x^3*y^2 + b2*x^2*y;
+	err2 = y^5 + b3*y^3*x^2 + b2*y^2*x;
+	err = rbind(err1, err2);
+	err = round0(err);
+	return(err);
+}
+
+### Examples:
+
+R = 2;
+b = c(-2, -3);
+sol = solve.S2Ht.P5ChShift(R, b)
+
+test.S2Ht.P5ChShift(sol, b=b)
+
+
+### Ex 2:
+R = 3;
+b = c(-1, 3);
+sol = solve.S2Ht.P5ChShift(R, b)
+
+test.S2Ht.P5ChShift(sol, b=b)
 
 
 ###################################
