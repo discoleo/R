@@ -6,7 +6,7 @@
 ### Polynomial Systems: S2
 ### Heterogeneous Symmetric
 ###
-### draft v.0.3g
+### draft v.0.4a
 
 
 ### Heterogeneous Symmetric Polynomial Systems
@@ -52,6 +52,7 @@
 # P5.1.) x^5 + b*(x+y) = 0; (TODO: based on (P4[x^4])^2)
 # P5.2.) x^5 + b2*x*y + b1*(x+y) = 0; (TODO: based on (P16)^2)
 # P5.3.) x^5 + b*y = R; (P10 => P20)
+# P5.4.) x^5 + b*y^4 = R; (P10 => P20)
 
 ### Complex Leading Term/Terms:
 # - moved to other files;
@@ -143,6 +144,17 @@ source("Polynomials.Helper.R")
 # Polynomials.Helper.R;
 # e.g. round0(), round0.p;
 
+
+### Other
+
+polyGen.Simple = function(n, m, div=TRUE) {
+	p = toPoly.pm("(R - x^n)^n - b^n*(R - b*x^m)^m");
+	p$coeff = - p$coeff;
+	if(div) p = div.pm(p, toPoly.pm("x^n + b*x^m - R"))$Rez;
+	p = orderVars.pm(p, c("b", "R", "x"));
+	p = sort.pm(p, "x");
+	return(p);
+}
 
 ##########################
 ##########################
@@ -1305,6 +1317,7 @@ round0.p(poly.calc(sol[,1]))
 
 ###################################
 ###################################
+###################################
 
 ###############
 ### Order 5 ###
@@ -1329,20 +1342,21 @@ S*(S^4 - 5*x*y*S^2 + 5*(x*y)^2 + b) - 2*R # = 0
 ### Auxiliary Eq:
 # 5*x*y*S^3 = 2*S^5 - 3*b*S + R
 
-### Eq:
+### Eq S:
 S^10 - 8*b*S^6 + 11*R*S^5 - 9*b^2*S^2 + 6*b*R*S - R^2 # = 0
 
 
 ### Solver:
-solve.ht5Basic = function(R, b) {
+solve.S2Ht.P5Basic = function(R, b, doPoly=TRUE) {
 	x.sum = roots(c(1, 0,0,0, -8*b[1], 11*R, 0,0, - 9*b[1]^2, 6*b[1]*R, - R^2))
 	xy = (2*x.sum^5 - 3*b[1]*x.sum + R) / x.sum^3 / 5
 	x.diff = sqrt(x.sum^2 - 4*xy + 0i)
 	x = (x.sum + x.diff)/2
 	y = (x.sum - x.diff)/2
 	sol = cbind(round0(x), round0(y))
-	sol = rbind(sol, sol[,2:1])
-	p = round0.p(poly.calc(sol[,1]))
+	sol = rbind(sol, sol[,2:1]);
+	p = NULL;
+	if(doPoly) p = round0.p(poly.calc(sol[,1]));
 	return(list(sol=sol, p=p))
 }
 
@@ -1350,26 +1364,40 @@ solve.ht5Basic = function(R, b) {
 R = 1
 b = 3
 #
-sol = solve.ht5Basic(R, b)
+sol = solve.S2Ht.P5Basic(R, b)
 x = sol$sol[,1]; y = sol$sol[,2]
-sol
+sol$p
 
 ### Test
 x^5 + b[1]*y
 y^5 + b[1]*x
 
 
-### Example 2:
+### Ex 2:
 R = 1
 b = -1
 #
-sol = solve.ht5Basic(R, b)
+sol = solve.S2Ht.P5Basic(R, b)
 x = sol$sol[,1]; y = sol$sol[,2]
-sol
+sol$p
 
 ### Test
 x^5 + b[1]*y
 y^5 + b[1]*x
+
+
+### Ex 3:
+R = -2
+b = -3
+#
+sol = solve.S2Ht.P5Basic(R, b)
+x = sol$sol[,1]; y = sol$sol[,2]
+sol$p
+
+### Test
+x^5 + b[1]*y
+y^5 + b[1]*x
+
 
 ### Classic Polynomial
 # P[5] * P[20]
@@ -1384,7 +1412,7 @@ x^20 - b[1]*x^16 - 4*R*x^15 + b[1]^2*x^12 + 3*R*b[1]*x^11 + 6*R^2*x^10 - b[1]^3*
 R = -1
 b = 1
 #
-sol = solve.ht5Basic(R, b)
+sol = solve.S2Ht.P5Basic(R, b)
 x = sol$sol[,1]; y = sol$sol[,2];
 sol
 
@@ -1402,7 +1430,7 @@ round0(err)
 R = -1
 b = 1
 #
-sol = solve.ht5Basic(R, b)$sol;
+sol = solve.S2Ht.P5Basic(R, b)$sol;
 sol = sol[isConj.f(sol[,1], sol[,2]),];
 # 4 of the roots:
 x = Re(sol[,1]); y = Im(sol[,1]);
@@ -1581,6 +1609,83 @@ round0.p(poly.calc(sol[,1]))
 
 err = (1 - 4*x + 16*x^2 - 24*x^3 + 14*x^4 - 4*x^5 + 4*x^6 - 8*x^7 + 4*x^8 + 2*x^9 + 4*x^10 - 3*x^12 - 2*x^13 + x^16)^2
 round0(err)
+
+
+####################
+####################
+
+### x^5 + b*y^4
+
+# x^5 + b*y^4 = R
+# y^5 + b*x^4 = R
+
+### Solution
+
+### Diff =>
+S^4 - 3*x*y*S^2 + (x*y)^2 - b*S*(S^2 - 2*x*y) # = 0
+S^4 - b*S^3 + (x*y)^2 - 3*x*y*S^2 + 2*b*x*y*S # = 0
+
+### Diff 2:
+# y*Eq 1 - x*Eq 2 =>
+x*y*(x^4 - y^4) - b*(x^5 - y^5) + R*(x - y) # = 0
+(x*y - b^2)*(x^4 - y^4) + R*(x - y) # = 0
+(x*y - b^2)*S*(S^2 - 2*x*y) + R # = 0
+
+### Sum =>
+S*(S^4 - 5*x*y*S^2 + 5*(x*y)^2) + b*(S^4 - 4*x*y*S^2 + 2*(x*y)^2) - 2*R # = 0
+
+### Eq S:
+S^10 - b*S^9 - 3*b^2*S^8 + 2*b^3*S^7 + b^4*S^6 + 11*R*S^5 - 18*b*R*S^4 + 4*b^2*R*S^3 +
+	+ 4*b^3*R*S^2 - R^2 # = 0
+
+
+### Solver:
+
+solve.S2Ht.P5Y4 = function(R, b, debug=TRUE, all=TRUE) {
+	coeff = c(1, - b, - 3*b^2, 2*b^3, b^4, 11*R, - 18*b*R,
+		4*b^2*R, 4*b^3*R, 0, - R^2);
+	S = roots(coeff);
+	if(debug) print(S);
+	xy = (2*S^5 - 2*b*S^4 - b^2*S^3 + R) / (5*S^3 - 4*b*S^2 - 2*b^2*S);
+	d = sqrt(S^2 - 4*xy + 0i);
+	x = (S + d)/2;
+	y = S - x;
+	sol = cbind(x, y);
+	if(all) sol = rbind(sol, sol[, c(2,1)]);
+	return(sol);
+}
+test.S2Ht.P5Y4 = function(sol, b, R=NULL) {
+	x = sol[,1]; y = sol[,2];
+	err1 = x^5 + b*y^4;
+	err2 = y^5 + b*x^4;
+	err = rbind(err1, err2);
+	err = round0(err);
+	return(err);
+}
+
+### Examples:
+
+R = 2;
+b = -3;
+sol = solve.S2Ht.P5Y4(R, b)
+
+test.S2Ht.P5Y4(sol, b=b)
+
+
+### Ex 2:
+R = -3;
+b = -1;
+sol = solve.S2Ht.P5Y4(R, b)
+
+test.S2Ht.P5Y4(sol, b=b)
+
+
+### Classic Polynomial:
+x = sol[,1];
+x^20 - b*x^19 + b^2*x^18 - b^3*x^17 + b^4*x^16 - (b^5 + 4*R)*x^15 + b*(b^5 + 3*R)*x^14 +
+	- b^7*x^13 - 2*b^2*R*x^13 + b^8*x^12 + b^3*R*x^12 - b^5*R*x^10 + 6*R^2*x^10 +
+	+ 2*b^6*R*x^9 - 3*b*R^2*x^9 - 3*b^7*R*x^8 + b^2*R^2*x^8 - b^5*R^2*x^5 - 4*R^3*x^5 +
+	+ 3*b^6*R^2*x^4 + b*R^3*x^4 - b^5*R^3 + R^4 # = 0
 
 
 ###################################
