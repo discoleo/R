@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric
 ### with Mixed Leading Term
 ###
-### draft v.0.1g
+### draft v.0.1h
 
 
 ### Heterogeneous Symmetric Polynomial Systems
@@ -35,12 +35,14 @@
 # M41.1) x^4*y + b*x; (P5 => P10)
 ### Mixed: Order n+2:
 # M42.1) x^4*y^2 + b*y = R; (P[5] => P[10])
+# M42.2) x^4*y^2 + b2*y^2 + b1*y = R; (P[7] => P[14])
 # M52.1) x^5*y^2 + b*y = R; (P[9] => P[18])
 ### Mixed: Order n+3:
 # M43.1) x^4*y^3 + b3*x*y + b2*x^2 + b1*x = R; (trivial P2; base P7)
 # M43.2) x^4*y^3 + b3*(x*y)^2 + b2*x*y + b1*y = R; (TODO: P3 => P6)
 # M43.3) x^4*y^3 + b5*x^2*y + b4*x*y^2 + b3*(x*y)^2 + b2*x*y + b1*y = R; (P[3] => P[6])
 # M53.1) x^5*y^3 + b*y = R; (P[7] => P[14])
+# M53.2) x^5*y^3 + b2*y^2 + b1*y = R; (P[10] => P[20])
 
 
 ###############
@@ -987,6 +989,101 @@ test.S2Ht.L53ChY(sol, b=b)
 ### Classic Polynomial:
 b^3*x^14 - 3*R*b^2*x^13 + 3*R^2*b*x^12 - R^3*x^11 - b^4*x^7 - R*b^3*x^6 +
 	+ 4*R^2*b^2*x^5 - R^3*b*x^4 - R^4*x^3 + b^5 # = 0
+
+
+##############
+### Extension:
+
+### Side-Chain: y^2
+### x^5*y^3 + b2*y^2 + b1*y
+
+### Solution:
+# - Case: distinct roots;
+
+### Diff =>
+(x*y)^3*S - b2*S - b1 # = 0
+
+### Diff:
+# y^2*Eq 1 - x^2*Eq 2 =>
+b2*(y^4 - x^4) + b1*(y^3 - x^3) - R*(y^2 - x^2) # = 0
+b2*(S^2 - 2*x*y)*S + b1*(S^2 - x*y) - R*S # = 0
+(2*b2*S + b1)*x*y - b2*S^3 - b1*S^2 + R*S # = 0
+
+### Eq S:
+b2^3*S^10 + 3*b1*b2^2*S^9 + (3*b1^2*b2 - 3*b2^2*R)*S^8 + (b1^3 - 6*b1*b2*R)*S^7 +
+	- 3*b1^2*R*S^6 + 3*b2*R^2*S^6 + 3*b1*R^2*S^5 - R^3*S^4 - 8*b2^4*S^4 - 20*b1*b2^3*S^3 +
+	- 18*b1^2*b2^2*S^2 - 7*b1^3*b2*S - b1^4 # = 0
+
+
+### Solver:
+
+solve.S2Ht.L53ChY2 = function(R, b, debug=TRUE, all=TRUE) {
+	b1 = b[1]; b2 = b[2];
+	coeff = c(b2^3, 3*b1*b2^2, 3*b1^2*b2 - 3*b2^2*R, b1^3 - 6*b1*b2*R,
+		- 3*b1^2*R + 3*b2*R^2, 3*b1*R^2, - (R^3 + 8*b2^4), - 20*b1*b2^3,
+		- 18*b1^2*b2^2, - 7*b1^3*b2, - b1^4);
+	S = roots(coeff);
+	if(debug) print(S);
+	xy  = (b2*S^3 + b1*S^2 - R*S) / (2*b2*S + b1);
+	len = length(S);
+	x12 = sapply(seq(len), function(id) {
+		roots(c(1, -S[id], xy[id]));
+	})
+	x12 = t(x12);
+	x = x12[,1]; y = x12[,2];
+	sol = cbind(x, y);
+	if(all) sol = rbind(sol, sol[, c(2,1)]);
+	return(sol);
+}
+test.S2Ht.L53ChY2 = function(sol, b, R = NULL) {
+	x = sol[,1]; y = sol[,2];
+	err1 = x^5*y^3 + b[2]*y^2 + b[1]*y;
+	err2 = y^5*x^3 + b[2]*x^2 + b[1]*x;
+	err = rbind(err1, err2);
+	err = round0(err);
+	return(err);
+}
+
+### Examples:
+
+### Ex 1:
+R = 2
+b = c(-1, -3)
+sol = solve.S2Ht.L53ChY2(R, b)
+
+test.S2Ht.L53ChY2(sol, b=b)
+
+poly.calc(sol[,1])
+
+
+### Ex 2:
+R = 5
+b = c(-3, 1)
+sol = solve.S2Ht.L53ChY2(R, b)
+
+test.S2Ht.L53ChY2(sol, b=b)
+
+
+### Ex 3:
+R = 4
+b = c(-2, 1)
+sol = solve.S2Ht.L53ChY2(R, b)
+
+test.S2Ht.L53ChY2(sol, b=b)
+
+
+### Classic Polynomial:
+x = sol[,1]; b1 = b[1]; b2 = b[2];
+b2^3*x^20 + 3*b1*b2^2*x^19 + 3*b2*(b1^2 - b2*R)*x^18 + (b1^3 - 6*b1*b2*R)*x^17 +
+	- 3*(b1^2*R - b2*R^2)*x^16 + 3*b1*R^2*x^15 - (b2^4 + R^3)*x^14 - 4*b1*b2^3*x^13 +
+	- b2^2*(6*b1^2 - 4*b2*R)*x^12 - b1*b2*(4*b1^2 - 7*b2*R)*x^11 +
+	- (b1^4 - 2*b1^2*b2*R + 6*b2^2*R^2)*x^10 - (b1^3*R + 2*b1*b2*R^2)*x^9 +
+	+ (b2^5 + 4*b1^2*R^2 + 4*b2*R^3)*x^8 + b1*(5*b2^4 - R^3)*x^7 +
+	+ (5*b1^2*b2^3 - R^4)*x^6 - 5*b1*b2^3*R*x^5 + (b1^5 + 5*b1^3*b2*R + 5*b1*b2^2*R^2)*x^3 +
+	- b2^6*x^2 - b1*b2^5*x + b2^5*R # = 0
+
+# P[24] => P[20]
+pR = div.pm(pR, "(b2^2*x^2 - b1^2 - b2*R)^2", "x")
 
 
 ##########################
