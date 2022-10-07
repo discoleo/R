@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric
 ### with Mixed Leading Term
 ###
-### draft v.0.1h
+### draft v.0.1i
 
 
 ### Heterogeneous Symmetric Polynomial Systems
@@ -912,6 +912,110 @@ b2^2*x^14 + 2*b1*b2*x^13 + (b1^2 - 2*b2*R)*x^12 - 2*b1*R*x^11 + (3*b2^3 + R^2)*x
 	+ 3*(b2^4 + b1^2*R + b2*R^2)*x^6 + b1*(4*b2^3 - R^2)*x^5 +
 	- (4*b2^3*R + R^3)*x^4 + (b1^4 + b2^5 + 4*b1^2*b2*R + 2*b2^2*R^2)*x^2 +
 	+ b1*b2^4*x - b2^4*R # = 0
+
+
+##########################
+##########################
+
+####################
+### x^4*y Series ###
+####################
+
+# x^4*y + b1*x = R
+# y^4*x + b1*y = R
+
+### Solution:
+
+### Diff =>
+x*y*(x^3 - y^3) + b1*(x-y) # = 0
+(x - y)*(x*y*(x^2 + y^2 + x*y) + b1) # = 0
+(x - y)*(x*y*(x+y)^2 - (x*y)^2 + b1) # = 0
+# Case: x != y
+x*y*(x+y)^2 - (x*y)^2 + b1 # = 0
+# (x*y)^2 - x*y*S^2 = b1
+
+### Sum =>
+x*y*(x^3 + y^3) + b1*(x+y) - 2*R # = 0
+(x+y)*x*y*(x^2 + y^2 - x*y) + b1*(x+y) - 2*R # = 0
+S*x*y*(S^2 - 3*x*y) + b1*S - 2*R # = 0
+S^3*x*y - 3*S*(x*y)^2 + b1*S - 2*R
+S^3*x*y - 3*S*(x*y*S^2 + b1) + b1*S - 2*R
+-2*S^3*x*y - 2*b1*S - 2*R
+S^3*x*y + b1*S + R
+# x*y = -(b1*S + R) / S^3;
+# =>
+(b1*S + R)^2 / S^6 + (b1*S + R) / S^3 * S^2 - b1 # = 0
+(b1*S + R)^2 + (b1*S + R)*S^5 - b1*S^6 # = 0
+(b1*S + R)^2 + R*S^5
+R*S^5 + b1^2*S^2 + 2*b1*R*S + R^2 # = 0
+
+
+### Solver:
+
+solve.S2Ht.L41ChX = function(R, b, debug=TRUE, all=TRUE) {
+	S = roots(c(R, 0, 0, b[1]^2, 2*b[1]*R, R^2));
+	if(debug) print(S);
+	#
+	xy = -(b[1]*S + R) / S^3;
+	x.diff = sqrt(S^2 - 4*xy + 0i);
+	x = (S + x.diff)/2;
+	y = (S - x.diff)/2;
+	sol = cbind(x, y);
+	if(all) sol = rbind(sol, sol[,2:1]);
+	return(sol);
+}
+test.S2Ht.L41ChX = function(sol, b, R=NULL) {
+	x = sol[,1]; y = sol[,2];
+	err1 = x^4*y + b[1]*x;
+	err2 = y^4*x + b[1]*y;
+	err = rbind(err1, err2);
+	err = round0(err);
+	return(err);
+}
+
+### Examples:
+
+### Ex 1:
+b = 3
+R = 1
+#
+sol = solve.S2Ht.L41ChX(R, b)
+
+test.S2Ht.L41ChX(sol, b=b)
+
+
+### Ex 2:
+b = 3
+R = -2
+#
+sol = solve.S2Ht.L41ChX(R, b)
+
+test.S2Ht.L41ChX(sol, b=b)
+
+
+### Test
+x = sol[,1]; y = sol[,2];
+x^4*y + b[1]*x
+y^4*x + b[1]*y
+
+### Classical Polynomial: P10
+round0.p(poly.calc(sol[,1]))
+
+b = b[1];
+err = R*x^10 + b^2*x^7 - 2*R*b*x^6 + R^2*x^5 - b^3*x^3 + 3*R*b^2*x^2 - 3*R^2*b*x + R^3
+round0(err)
+
+
+### Derivation:
+# y = (R - b[1]*x)/x^4
+(R - b[1]*x)^4/x^16 * x + b[1]*(R - b[1]*x)/x^4 - R # = 0
+(R - b[1]*x)^4/x^15 + b[1]*(R - b[1]*x)/x^4 - R
+(R - b[1]*x)^4 + b[1]*(R - b[1]*x)*x^11 - R*x^15
+R*x^15 - b[1]*(R - b[1]*x)*x^11 - (R - b[1]*x)^4
+R*x^15 + b[1]^2*x^12 - b[1]*R*x^11 - (R - b[1]*x)^4
+
+R*x^15 + b[1]^2*x^12 - R*b[1]*x^11 - b[1]^4*x^4 + 4*R*b[1]^3*x^3 - 6*R^2*b[1]^2*x^2 + 4*R^3*b[1]*x^1 - R^4
+(x^5 + b[1]*x - R)*(R*x^10 + b[1]^2*x^7 - 2*R*b[1]*x^6 + R^2*x^5 - b[1]^3*x^3 + 3*R*b[1]^2*x^2 - 3*R^2*b[1]*x + R^3)
 
 
 ##########################
