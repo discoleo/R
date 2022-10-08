@@ -61,6 +61,47 @@ if(FALSE) {
 	source("Polynomials.Helper.BigNumbers.R")
 }
 
+### Dynamic Computation of En:
+# - performs elimination of the variable from 2 polynomials;
+# - cc, dd = coefficients of the 2 polynomials (univariate);
+# - Result: Val + X = 0 => X = - Val of fraction;
+ExDynamic = function(cc, dd, debug=TRUE) {
+	cc = round0(cc); dd = round0(dd);
+	len = length(cc);
+	strip = function(x) {
+		pos = 0;
+		for(i in seq(length(x), 1, by=-1)) {
+			if(x[i] == 0) { pos = i; }
+			else break;
+		}
+		if(pos > 0) x = x[seq(pos - 1)];
+		x = x / x[length(x)];
+		return(x);
+	}
+	for(i in seq(len - 1)) {
+		# Debug
+		if(debug) print(paste0("Step: ", i));
+		cc = strip(cc);
+		dd = strip(dd);
+		len1 = length(cc); len2 = length(dd);
+		if(len2 <= 2) return(dd);
+		while(len1 >= len2) {
+			cc = cc - c(rep(0, len1 - len2), dd);
+			cc = cc[ - len1];
+			cc = strip(cc); len1 = length(cc);
+		}
+		if(len1 <= 2) return(cc);
+		while(len2 >= len1) {
+			dd = dd - c(rep(0, len2 - len1), cc);
+			dd = dd[ - len2];
+			dd = strip(dd); len2 = length(dd);
+		}
+		if(len2 <= 2) return(dd);
+	}
+	warning("Some error!");
+	return(NA);
+}
+
 # TODO: use solve.lpm();
 solve.3pm = function(p, v, bigz=FALSE, xn=NULL, val=1, stop.at=NULL) {
 	if( ! is.null(xn)) {
@@ -511,11 +552,20 @@ S = x+y+z; E2 = x*y+x*z+y*z; E3 = x*y*z;
 ### Sum =>
 (x^4*y^4 + y^4*z^4 + z^4*x^4) + b*S - 3*R # = 0
 4*E2*E3^2 + 2*E3^2*S^2 - 4*E2^2*E3*S + E2^4 + b*S - 3*R
+# Reduction (Diff-based) =>
+4*E2^2*E3*S + 4*E2*E3*S^3 - 2*E2^3*S^2 - 3*E2^4 + b*S - 3*R # = 0
+
 
 ### Sum(z*...) =>
 E3*(x^3*y^3 + y^3*z^3 + z^3*x^3) + b*(S^2 - 2*E2) - R*S # = 0
 E3*(3*E3^2 - 3*E3*E2*S + E2^3) + b*(S^2 - 2*E2) - R*S # = 0
 3*E3^3 - 3*E3^2*E2*S + E2^3*E3 - 2*b*E2 + b*S^2 - R*S # = 0
+# Reduction =>
+E2^3*E3 - E2^3*S^3 - E2^2*E3*S^2 + 2*E2*E3*S^4 + b*E2 - R*S # = 0
+E3^2*S^3 - E2^2*E3*S^2 + E2^3*E3 + b*E2 - R*S # = 0
+E2^3*E3 - E2^3*S^3 - E2^2*E3*S^2 + 2*E2*E3*S^4 + b*E2 - R*S # = 0
+4*E2^3*E3 - 3*E2^4*S - 6*E2^3*S^3 + 12*E2*E3*S^4 + 4*b*E2 + b*S^2 - 7*R*S # = 0
+
 
 ### Diff =>
 y^4*(x^4-z^4) - b*(x-z) # = 0
@@ -528,6 +578,18 @@ x^3*(y^4-z^4) + y^3*z^3*(y-z) + E3*(x*(y^2+z^2+y*z)*(y-z) + y*z*(y+z)*(y-z)) # =
 (x^3*y^3 + x^3*z^3 + y^3*z^3) + E3*(x^2*y + x^2*z + x*y^2 + x*z^2 + y^2*z + y*z^2 + E3) # = 0
 (3*E3^2 - 3*E3*E2*S + E2^3) + E3*(E2*S - 2*E3) # = 0
 E3^2 - 2*E3*E2*S + E2^3 # = 0
+
+
+### Alternatives:
+# Diff(z^3*...) =>
+E3^3*y - b*(x^3 + z^3 + x*z*(x+z)) + R*(x^2 + z^2 + x*z) # = 0
+# Sum(...) =>
+E3^3*S - b*(2*(S^3 - 3*E2*S + 3*E3) + E21) + R*(2*S^2 - 3*E2) # = 0
+E3^3*S - 2*b*S^3 + 5*b*E2*S - 3*b*E3 + 2*R*S^2 - 3*R*E2 # = 0
+# Reduction =>
+2*E2*E3^2*S^2 - E2^3*E3*S - 2*b*S^3 + 5*b*E2*S - 3*b*E3 + 2*R*S^2 - 3*R*E2 # = 0
+E2^3*E3*S + 19*b*E2*S - 9*b*E3 - 9*R*E2 - 8*b*S^3 + 8*R*S^2 # = 0
+E2^3*S^4 + E2^2*E3*S^3- 2*E2*E3*S^5 + 18*b*E2*S - 9*b*E3 - 9*R*E2 - 8*b*S^3 + 9*R*S^2 # = 0
 
 
 ### Eq S:
@@ -562,6 +624,7 @@ x =  0.566502800447 + 0.839944522063i;
 y = -0.753061286566 + 0.876745266246i;
 z = -1.226727559580 - 0.281064956040i;
 S = x+y+z; E2 = x*y+x*z+y*z; E3 = x*y*z;
+E21 = x*y*(x+y) + x*z*(x+z) + y*z*(y+z);
 
 R = 1; b = 2;
 x =  0.3802393865 - 1.0711999097i;
@@ -584,28 +647,25 @@ E3^2 - 2*E2*E3*S + E2^3 # = 0
 (2*E2^3*S^2 + 4*E2^2*S^4 - 3*E2^4 + b*S - 3*R)^2 - (4*E2^2*S + 4*E2*S^3)^2*(E2^2*S^2 - E2^3)
 (5*E2^4*S - 6*E2^3*S^3 + 2*b*E2 - b*S^2 + R*S)^2 - (2*E2^3 - 6*E2^2*S^2)^2*(E2^2*S^2 - E2^3)
 #
-p1 = data.frame(
-	E3 = c(2, 2, 1, 0, 0, 0),
-	E2 = c(1, 0, 2, 4, 0, 0),
-	S  = c(0, 2, 1, 0, 1, 0),
-	b  = c(0, 0, 0, 0, 1, 0),
-	R  = c(0, 0, 0, 0, 0, 1),
-	coeff = c(4, 2, -4, 1, 1, -3)
-)
-p2 = data.frame(
-	E3 = c(3, 2, 1, 0, 0, 0),
-	E2 = c(0, 1, 3, 1, 0, 0),
-	S  = c(0, 1, 0, 0, 2, 1),
-	b  = c(0, 0, 0, 1, 1, 0),
-	R  = c(0, 0, 0, 0, 0, 1),
-	coeff = c(3,-3, 1,-2, 1,-1)
-)
-p3 = data.frame(
-	E3 = c(2, 1, 0),
-	E2 = c(0, 1, 3),
-	S  = c(0, 1, 0),
-	coeff = c(1,-2,1)
-)
+p1 = toPoly.pm("4*E2*E3^2 + 2*E3^2*S^2 - 4*E2^2*E3*S + E2^4 + b*S - 3*R");
+p2 = toPoly.pm("3*E3^3 - 3*E2*E3^2*S + E2^3*E3 - 2*b*E2 + b*S^2 - R*S");
+p3 = toPoly.pm("E3^2 - 2*E2*E3*S + E2^3");
+# Alternatives:
+p1 = toPoly.pm("4*E2^2*E3*S + 4*E2*E3*S^3 - 2*E2^3*S^2 - 3*E2^4 + b*S - 3*R");
+p2 = toPoly.pm("E2^3*E3 - E2^3*S^3 - E2^2*E3*S^2 + 2*E2*E3*S^4 + b*E2 - R*S");
+p4 = toPoly.pm("E2^3*S^4 + E2^2*E3*S^3- 2*E2*E3*S^5 + 18*b*E2*S - 9*b*E3 - 9*R*E2 - 8*b*S^3 + 9*R*S^2");
+
+p1$coeff = as.bigz(p1$coeff)
+p2$coeff = as.bigz(p2$coeff)
+p4$coeff = as.bigz(p4$coeff)
+# relatively fast (seconds), but still ugly!
+pR = solve.lpm(p1, p2, p4, xn=c("E3", "E2"), stop.at=1, asBigNum=TRUE)
+pR = pR[[2]]
+str(pR)
+table(pR[[2]]$E2)
+# Fraction: 264 monomials / 274 monomials with ugly coefficients;
+
+# [old]
 p11 = diff.pm(p1, mult.pm(p3, data.frame(E2=c(1,0), S=c(0,2), coeff=c(4,2))))
 p21 = diff.pm(p2, mult.pm(p3, data.frame(E3=c(1,0), E2=c(0,1), S=c(0,1), coeff=c(3,3))))
 #
@@ -661,6 +721,7 @@ E2.S3L44 = function(S, R=1, b=1, type=E2.type) {
 		}); print(E2);
 	return(E2);
 }
+### [OLD]
 init.E2.S3L44 = function(b=1, type=13, toDouble=TRUE) {
 	strS = if(type == 13) { strS = "S13"; } else strS = c("S199", "S197");
 	fn = c("E2x0.", "E2div.");
@@ -684,6 +745,7 @@ init.E2.S3L44 = function(b=1, type=13, toDouble=TRUE) {
 	else r = list(pE2x0 = pE2x0, pE2div = pE2div);
 	return(r)
 }
+
 
 library(gmp);
 
@@ -861,6 +923,90 @@ pyz3 = data.frame(
 	coeff = c(1,-1, -1,  1,-1, 1,-2)
 )
 solve.pm(pyz4, pyz3, "yz")
+
+
+### Derivation of E2:
+# - functional;
+p1 = toPoly.pm("E3^2 - 2*E2*E3*S + E2^3")
+p2 = toPoly.pm("3*E2*E3^2 + 2*E3^2*S^2 - 2*E2^2*E3*S + b*S - 3*R")
+p3 = toPoly.pm("3*E2*E3^2*S - 2*E2^3*E3 - 2*b*E2 + b*S^2 - R*S")
+
+pR = solve.pm(p1, p2, "E3")
+p2 = replace.fr.pm(p2, pR$x0, pR$div, "E3")
+p3 = replace.fr.pm(p3, pR$x0, pR$div, "E3")
+
+toCoeff(p2, "E2")
+toCoeff(p3, "E2")
+
+c8 = 30*S^2 / 27;
+c7 = - 4*S^4 / 27;
+c6 = - 8*S^6 / 27;
+c5 = (54*R - 18*S*b) / 27;
+c4 = 0;
+c3 = (- 96*R*S^4 + 32*S^5*b) / 27;
+c2 = (- 48*R*S^6 + 16*S^7*b) / 27;
+c1 = (27*R^2 - 18*R*S*b + 3*S^2*b^2) / 27;
+c0 = (18*R^2*S^2 - 12*R*S^3*b + 2*S^4*b^2) / 27;
+
+# [excluded] Case: S = 0
+d7 = - 4*S^2 / 3;
+d6 = - 4*S^4 / 3;
+d5 = 0;
+d4 = (30*R - 42*b*S) / 3;
+d3 = - (4*R*S^2 + 52*b*S^3) / 3;
+d2 = - 32*R*S^4 / 3;
+d1 = 16*(S*b - R)*S^6 / 3;
+d0 = (27*R^2 - 18*b*R*S + 3*b^2*S^2) / 3;
+
+#
+c8 = c8 - d7;
+c7 = c7 - d6 - c8*d7;
+c6 = c6 - d5 - c8*d6;
+c5 = c5 - d4 - c8*d5;
+c4 = c4 - d3 - c8*d4;
+c3 = c3 - d2 - c8*d3;
+c2 = c2 - d1 - c8*d2;
+c1 = c1 - d0 - c8*d1;
+c0 = c0 - c8*d0;
+
+#
+d7 = c7*d7 - c6;
+d6 = c7*d6 - c5;
+d5 = c7*d5 - c4;
+d4 = c7*d4 - c3;
+d3 = c7*d3 - c2;
+d2 = c7*d2 - c1;
+d1 = c7*d1 - c0;
+d0 = c7*d0;
+
+p2 = toPoly.pm("c7*E2^7 + c6*E2^6 + c5*E2^5 + c4*E2^4 +
+	+ c3*E2^3 + c2*E2^2 + c1*E2 + c0");
+p3 = toPoly.pm("d7*E2^7 + d6*E2^6 + d5*E2^5 + d4*E2^4 +
+	+ d3*E2^3 + d2*E2^2 + d1*E2 + d0");
+p2$coeff = as.bigz(p2$coeff);
+p3$coeff = as.bigz(p3$coeff);
+
+# still NO chance;
+pR = solve.pm(p2, p3, "E2", stop.at=1)
+
+# alternative:
+Ex.S3Ht.L44ChZ = function(S, R, b) {
+	cc = c((18*R^2*S^2 - 12*R*S^3*b + 2*S^4*b^2) / 27,
+		(27*R^2 - 18*R*S*b + 3*S^2*b^2) / 27,
+		(- 48*R + 16*b*S)*S^6 / 27,
+		(- 96*R + 32*b*S)*S^4 / 27, 0,
+		(54*R - 18*S*b) / 27,
+		- 8*S^6 / 27, - 4*S^4 / 27, 30*S^2 / 27, 1);
+	# [excluded] Case: S = 0
+	dd = c((27*R^2 - 18*b*R*S + 3*b^2*S^2) / 3,
+		16*(S*b - R)*S^6 / 3,
+		- 32*R*S^4 / 3, - (4*R*S^2 + 52*b*S^3) / 3,
+		(30*R - 42*b*S) / 3, 0, - 4*S^4 / 3, - 4*S^2 / 3, 1);
+	cc = cc - c(0, dd);
+	return(ExDynamic(cc, dd));
+}
+
+Ex.S3Ht.L44ChZ(S, R, b)
 
 
 ### Classic Solver:
