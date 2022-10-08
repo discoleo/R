@@ -6,7 +6,7 @@
 ### Polynomial Systems: S2
 ### Heterogeneous Symmetric
 ###
-### draft v.0.4b-ext
+### draft v.0.4b-ext2
 
 
 ### Heterogeneous Symmetric Polynomial Systems
@@ -55,6 +55,7 @@
 # P5.4.) x^5 + b*y^4 = R; (P10 => P20)
 # P5.5.) x^5 + b3*x^3*y^2 + b2*x^2*y = R; (P10 => P20)
 # P5.6.) x^5 + b3*x^3*y^2 + b2*x^2*y + b1*x = R; (also P10)
+# P5.7.) x^5 + b3*x^3*y^2 + b2*x^2*y + b1*y = R; (also P10)
 
 
 ### Complex Leading Term/Terms:
@@ -1809,8 +1810,9 @@ b2 = b[1]; b3 = b[2]; x = sol[,1];
 
 
 ##############
-### Extension:
-### x^5 + b3*x^3*y^2 + b2*x^2*y + b1*x = R
+### Extension: + b1*x
+
+# x^5 + b3*x^3*y^2 + b2*x^2*y + b1*x = R
 
 ### Diff =>
 S^4 - 3*x*y*S^2 + (b3 + 1)*(x*y)^2 + b2*x*y + b1 # = 0
@@ -1819,6 +1821,76 @@ S^4 - 3*x*y*S^2 + (b3 + 1)*(x*y)^2 + b2*x*y + b1 # = 0
 (b3 - 1)*S^10 + 2*b2*S^8 + b1*(b3 + 3)*S^6 + (7*b3 - 11)*R*S^5 + 2*b1*b2*S^4 +
 	- b2*(b3 - 11)*R*S^3 + 4*b1^2*S^2 + (4*b1*(b3 + 1) - 2*b2^2)*R*S +
 	+ (b3 + 1)^2*R^2 # = 0
+
+##############
+
+##############
+### Extension: + b1*y
+
+# x^5 + b3*x^3*y^2 + b2*x^2*y + b1*y = R
+
+### System Transform:
+# b1 => - b1; (Step 1)
+# R  => R - b1*S; (Step 2)
+
+### Eq S:
+(b3 - 1)*S^10 + 2*b2*S^8 - b1*(b3 + 3)*S^6 + (7*b3 - 11)*(R - b1*S)*S^5 - 2*b1*b2*S^4 +
+	- b2*(b3 - 11)*(R - b1*S)*S^3 + 4*b1^2*S^2 - (4*b1*(b3 + 1) + 2*b2^2)*(R - b1*S)*S +
+	+ (b3 + 1)^2*(R - b1*S)^2 # = 0
+# =>
+(b3 - 1)*S^10 + 2*b2*S^8 - 8*b1*(b3 - 1)*S^6 + (7*b3 - 11)*R*S^5 + b1*b2*(b3 - 13)*S^4 +
+	- b2*(b3 - 11)*R*S^3 + (b1^2*(b3 + 3)^2 + 2*b1*b2^2)*S^2 +
+	- 2*(b1*(b3+1)*(b3 + 3) + b2^2)*R*S + (b3 + 1)^2*R^2 # = 0
+
+### Solver:
+
+solve.S2Ht.P5ChShiftY = function(R, b, debug=TRUE, all=TRUE) {
+	if(length(b) < 3) stop("Wrong parameter b!");
+	coeff = coeff.S2Ht.P5ChShiftY(R, b=b);
+	S = roots(coeff);
+	if(debug) print(S);
+	b1 = b[1]; b2 = b[2]; b3 = b[3];
+	xy = (2*S^5 - b1*(b3 + 3)*S + (b3 + 1)*R) / (5*S^3 - b3*S^3 - 2*b2*S);
+	d = sqrt(S^2 - 4*xy + 0i);
+	x = (S + d)/2;
+	y = S - x;
+	sol = cbind(x, y);
+	if(all) sol = rbind(sol, sol[, c(2,1)]);
+	return(sol);
+}
+coeff.S2Ht.P5ChShiftY = function(R, b) {
+	b1 = b[1]; b2 = b[2]; b3 = b[3];
+	coeff = c(b3 - 1, 0, 2*b2, 0, -8*b1*(b3 - 1), (7*b3 - 11)*R, b1*b2*(b3 - 13),
+		- b2*(b3 - 11)*R, (b1^2*(b3 + 3)^2 + 2*b1*b2^2),
+		- 2*(b1*(b3+1)*(b3 + 3) + b2^2)*R, (b3 + 1)^2*R^2);
+	return(coeff);
+}
+test.S2Ht.P5ChShiftY = function(sol, b, R=NULL) {
+	x = sol[,1]; y = sol[,2];
+	b1 = b[1]; b2 = b[2]; b3 = b[3];
+	err1 = x^5 + b3*x^3*y^2 + b2*x^2*y + b1*y;
+	err2 = y^5 + b3*y^3*x^2 + b2*y^2*x + b1*x;
+	err = rbind(err1, err2);
+	isNum = ! is.nan(err)
+	err[isNum] = round0(err[isNum]);
+	return(err);
+}
+
+### Examples:
+
+R = 2;
+b = c(-1, -3, 2);
+sol = solve.S2Ht.P5ChShiftY(R, b)
+
+test.S2Ht.P5ChShiftY(sol, b=b)
+
+
+### Ex 2:
+R = 3;
+b = c(-5, 3, -2);
+sol = solve.S2Ht.P5ChShiftY(R, b)
+
+test.S2Ht.P5ChShiftY(sol, b=b)
 
 
 ###################################
