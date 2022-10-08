@@ -6,7 +6,7 @@
 ### Polynomial Systems: S2
 ### Heterogeneous Symmetric
 ###
-### draft v.0.4b-clP
+### draft v.0.4b-ext
 
 
 ### Heterogeneous Symmetric Polynomial Systems
@@ -53,7 +53,8 @@
 # P5.2.) x^5 + b2*x*y + b1*(x+y) = 0; (TODO: based on (P16)^2)
 # P5.3.) x^5 + b*y = R; (P10 => P20)
 # P5.4.) x^5 + b*y^4 = R; (P10 => P20)
-# P5.5.) x^5 + b3*x^3*y^2 + b2*x^2*y = R; (TODO: P10 => P20)
+# P5.5.) x^5 + b3*x^3*y^2 + b2*x^2*y = R; (P10 => P20)
+# P5.6.) x^5 + b3*x^3*y^2 + b2*x^2*y + b1*x = R; (also P10)
 
 
 ### Complex Leading Term/Terms:
@@ -1719,12 +1720,15 @@ x*y*S*(S^2 - 2*x*y) + R # = 0
 
 solve.S2Ht.P5ChShift = function(R, b, debug=TRUE, all=TRUE) {
 	if(length(b) < 2) stop("Wrong parameter b!");
-	b2 = b[1]; b3 = b[2];
-	coeff = c(b3 - 1, 0, 2*b2, 0, 0, (7*b3 - 11)*R, 0,
-		- b2*(b3 - 11)*R, 0, - 2*b2^2*R, (b3 + 1)^2*R^2);
+	coeff = coeff.S2Ht.P5ChShift(R, b=b);
 	S = roots(coeff);
 	if(debug) print(S);
-	xy = (2*S^5 + (b3 + 1)*R) / (5*S^3 - b3*S^3 - 2*b2*S);
+	if(length(b) >= 3) {
+		b1 = b[1]; b2 = b[2]; b3 = b[3];
+	} else {
+		b1 = 0; b2 = b[1]; b3 = b[2];
+	}
+	xy = (2*S^5 + 2*b1*S + (b3 + 1)*R) / (5*S^3 - b3*S^3 - 2*b2*S);
 	d = sqrt(S^2 - 4*xy + 0i);
 	x = (S + d)/2;
 	y = S - x;
@@ -1732,11 +1736,27 @@ solve.S2Ht.P5ChShift = function(R, b, debug=TRUE, all=TRUE) {
 	if(all) sol = rbind(sol, sol[, c(2,1)]);
 	return(sol);
 }
+coeff.S2Ht.P5ChShift = function(R, b) {
+	if(length(b) == 2) {
+		b2 = b[1]; b3 = b[2];
+		coeff = c(b3 - 1, 0, 2*b2, 0, 0, (7*b3 - 11)*R, 0,
+			- b2*(b3 - 11)*R, 0, - 2*b2^2*R, (b3 + 1)^2*R^2);
+		return(coeff);
+	}
+	b1 = b[1]; b2 = b[2]; b3 = b[3];
+	coeff = c(b3 - 1, 0, 2*b2, 0, b1*(b3 + 3), (7*b3 - 11)*R, 2*b1*b2,
+		- b2*(b3 - 11)*R, 4*b1^2, (4*b1*(b3 + 1) - 2*b2^2)*R, (b3 + 1)^2*R^2);
+	return(coeff);
+}
 test.S2Ht.P5ChShift = function(sol, b, R=NULL) {
 	x = sol[,1]; y = sol[,2];
-	b2 = b[1]; b3 = b[2];
-	err1 = x^5 + b3*x^3*y^2 + b2*x^2*y;
-	err2 = y^5 + b3*y^3*x^2 + b2*y^2*x;
+	if(length(b) >= 3) {
+		b1 = b[1]; b2 = b[2]; b3 = b[3];
+	} else {
+		b1 = 0; b2 = b[1]; b3 = b[2];
+	}
+	err1 = x^5 + b3*x^3*y^2 + b2*x^2*y + b1*x;
+	err2 = y^5 + b3*y^3*x^2 + b2*y^2*x + b1*y;
 	err = rbind(err1, err2);
 	isNum = ! is.nan(err)
 	err[isNum] = round0(err[isNum]);
@@ -1769,6 +1789,14 @@ sol = solve.S2Ht.P5ChShift(R, b)
 test.S2Ht.P5ChShift(sol, b=b)
 
 
+### Ex 4:
+R = -5;
+b = c(-1, 2, -2);
+sol = solve.S2Ht.P5ChShift(R, b)
+
+test.S2Ht.P5ChShift(sol, b=b)
+
+
 ### Classic Polynomial:
 b2 = b[1]; b3 = b[2]; x = sol[,1];
 (b3^3 - b3^2 - b3 + 1)*x^20 - b2*(b3 - 1)^2*x^18 + b2^2*(b3 + 1)*x^16 +
@@ -1778,6 +1806,19 @@ b2 = b[1]; b3 = b[2]; x = sol[,1];
 	- b2*(3 - 2*b3 + 3*b3^2)*R^2*x^8 + b2^4*R*x^7 + b2^2*(4*b3 + 1)*R^2*x^6 +
 	- 4*R^3*x^5 + b3*R^3*x^5 + 2*b3^2*R^3*x^5 +
 	+ b2*R^3*x^3 + R^4 # = 0
+
+
+##############
+### Extension:
+### x^5 + b3*x^3*y^2 + b2*x^2*y + b1*x = R
+
+### Diff =>
+S^4 - 3*x*y*S^2 + (b3 + 1)*(x*y)^2 + b2*x*y + b1 # = 0
+
+### Eq S:
+(b3 - 1)*S^10 + 2*b2*S^8 + b1*(b3 + 3)*S^6 + (7*b3 - 11)*R*S^5 + 2*b1*b2*S^4 +
+	- b2*(b3 - 11)*R*S^3 + 4*b1^2*S^2 + (4*b1*(b3 + 1) - 2*b2^2)*R*S +
+	+ (b3 + 1)^2*R^2 # = 0
 
 
 ###################################
