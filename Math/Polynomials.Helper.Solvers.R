@@ -7,26 +7,37 @@
 ### Generic Solvers
 
 
-### fast load:
-# source("Polynomials.Helper.R")
-# source("Polynomials.Helper.Solvers.R")
-
 
 #######################
 
-library(polynom)
-library(pracma)
+# library(polynom)
+# library(pracma)
 
-### helper Functions
-# source("Polynomials.Helper.R")
+### Helper Functions
+source("Polynomials.Helper.R")
+
+
+### fast load:
+# source("Polynomials.Helper.Solvers.R")
 
 
 #######################
 
 ### Solvers:
 
+# TODO:
+# - the code that uses these functions needs a lot of refactoring & cleanup!
+
+
 ### Simple systems:
+# - creates a full set of permutations of x;
+# - valid only for totally symmetric systems!
+# - TODO: rename to permute.sol();
 solve.En = function(x, max.perm=0, n=4, duplicates=FALSE) {
+	warning("Deprecated! Use permute.sol instead!");
+	return(permute.sol(x, max.perm=max.perm, n=n, duplicates=duplicates));
+}
+permute.sol = function(x, max.perm=0, n=4, duplicates=FALSE) {
 	id = 1:length(x)
 	if(max.perm == 1) {
 		id.gr = matrix(id, nrow=1)
@@ -56,7 +67,7 @@ solve.EnAll = function(m, max.perm=0, n=4) {
 	do.call(rbind, l)
 }
 
-### decomposed polynomial systems
+### S3: decomposed polynomial systems
 solve.S = function(S, R, b=0) {
 	# generic solver (based on existing S = x+y+z)
 	b2 = if(length(b) > 1) b[2] else 0; # Ext A2;
@@ -74,6 +85,8 @@ solve.S = function(S, R, b=0) {
 	cbind(as.vector(x), as.vector(y), as.vector(z))
 }
 
+### S3: Solve Step 2
+# - but uses old/non-robust approach;
 solve.mS = function(S, b=0) {
 	# generic solver (based on existing S = x+y+z)
 	# S = cbind(S, E2, E3)
