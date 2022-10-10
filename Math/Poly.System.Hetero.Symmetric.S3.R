@@ -6,7 +6,7 @@
 ### Polynomial Systems: S3
 ### Heterogeneous Symmetric
 ###
-### draft v.0.4g-clean2
+### draft v.0.4g-improved
 
 
 ### Hetero-Symmetric
@@ -561,7 +561,7 @@ z^2 + b[1]*(x+y)
 ####################
 
 ### Shifted Variant:
-### (x[i] - s)^2 + b*(x[j] + x[k])
+### (x[i] - s)^2 + b * sum(x[-i])
 
 # (x-s)^2 + b1*(y+z) = R
 # (y-s)^2 + b1*(x+z) = R
@@ -707,7 +707,7 @@ test.S3Ht.P2ChpYZ(sol, b=b, b.ext=b.ext)
 ######################
 
 ### Prod-Type: Order 3
-### x[i]^3 + b*x[-i]
+### x[i]^3 + b * prod(x[-i])
 
 # x^3 + b1*y*z = R
 # y^3 + b1*x*z = R
@@ -754,53 +754,84 @@ E2 = (S^3 + 3*E3 - 3*R) / (3*S - b1)
 
 ### Solver:
 
-solve.htyz.S3P3 = function(R, b, do2Eq = FALSE, tol=1E-8) {
+solve.S3Ht.P3ChpYZ = function(R, b, debug=TRUE, all=FALSE, tol=1E-8) {
 	b1 = b[1]; R = R[1];
+	### Case: 2 equal
 	coeff = c(1, - 3*b1, 7*b1^2, -5*b1^3, - 27*R*b1, 18*R*b1^2, (5*R*b1^3 + 27*R^2))
 	S = roots(coeff)
 	# Case: x != y != z
-	S = c(S, -b1);
+	# S = c(S, -b1);
+	if(debug) print(S);
 	#
-	E2.part = 27*R*S*b1 - 72*R*S^2 + 45*R*b1^2 - 15*S^3*b1^2 + S^4*b1 + 12*S^5;
-	divE2 = (54*R + 31*S*b1^2 + 12*S^2*b1 - 30*S^3 - 15*b1^3);
-	E2 = - E2.part / divE2
-	E3 = - (S^3 - 3*E2*S + b1*E2 - 3*R) / 3
-	# robust complex solutions for x;
+	E2.x0  = 27*R*S*b1 - 72*R*S^2 + 45*R*b1^2 - 15*S^3*b1^2 + S^4*b1 + 12*S^5;
+	E2.div = (54*R + 31*S*b1^2 + 12*S^2*b1 - 30*S^3 - 15*b1^3);
+	E2 = - E2.x0 / E2.div;
+	E3 = - (S^3 - 3*E2*S + b1*E2 - 3*R) / 3;
+	# Robust complex solutions for x:
+	# - but still some numerical instability!
 	E2 = round0(E2, tol=tol); E3 = round0(E3, tol=tol);
-	#
-	x = sapply(seq_along(S), function(id) roots(c(1, -S[id], E2[id], -E3[id])))
-	len = length(S)
-	S = matrix(S, ncol=len, nrow=3, byrow=T)
-	E3 = matrix(E3, ncol=len, nrow=3, byrow=T)
-	# yz = E3 / x;
-	yz = (R - x^3)/b1; # robust ???
-	yz.s = S - x;
-	#
-	yz.d = sqrt(yz.s^2 - 4*yz)
-	y = (yz.s + yz.d)/2;
-	z = (yz.s - yz.d)/2;
-	sol = cbind(x=as.vector(x), y=as.vector(y), z=as.vector(z))
-	# all permutations: x != y != z
-	sol2 = sol[nrow(sol) - 0:2, c(1,3,2)]
-	sol = rbind(sol, sol2)
-	### y == z: ??? more robust ???
-	if(do2Eq) {
-		isEq = round0((yz.s)^2 - 4*yz, tol=1E-7) == 0
-		sol = sol[ ! as.vector(isEq) , ]
-		y = z = as.vector(yz.s [isEq]) / 2;
-		sol2 = cbind(x=as.vector(x[isEq]), y=y, z=z)
-		sol = rbind(sol, sol2)
+	# Robust: P[2] instead of P[3];
+	# x = sapply(seq_along(S), function(id) roots(c(1, -S[id], E2[id], -E3[id])));
+	len = length(S);
+	x = sapply(seq(len), function(id) {
+		S = S[id]; E2 = E2[id]; E3 = E3[id];
+		roots(c(S^2 - E2, E3 - E2*S - R, E3*b1 + E3*S));
+	})
+	len = if(is.matrix(x)) nrow(x) else 1;
+	x  = as.vector(x);
+	solve.x = function(len) {
+		S  = rep(S, each=len);
+		E3 = rep(E3, each=len);
+		# yz = E3 / x;
+		yz = (R - x^3)/b1; # robust ???
+		yz.s = S - x;
+		#
+		yz.d = sqrt(yz.s^2 - 4*yz)
+		y = (yz.s + yz.d)/2;
+		z = (yz.s - yz.d)/2;
+		sol = cbind(x, y, z);
 	}
+	sol = solve.x(len);
+	if(all) {
+		# only one permutation is missing;
+		sol = rbind(sol, sol[, c(2,3,1)]);
+	}
+	### Case: all distinct
+	S = - b1; E2 = b1^2; E3 = (R - b1^3);
+	x = roots(c(1, -S, E2, -E3));
+	sol2 = solve.x(len=3);
+	# All permutations: x != y != z;
+	# - actually only (z, y) is missing (which is actually valid);
+	if(all) sol2 = rbind(sol2, sol2[, c(1,3,2)]);
+	sol = rbind(sol, sol2);
 	return(sol)
+}
+test.S3Ht.P3ChpYZ = function(sol, b, b.ext = 0, R=NULL) {
+	err = test.S3Ht.Product(sol, b=b, b.ext=b.ext, R=R, n=3);
+	return(err)
 }
 
 ### Examples:
 
+# - still some numerical instability!
+
 R = 1;
 b = 2;
 #
-sol = solve.htyz.S3P3(R, b)
+sol = solve.S3Ht.P3ChpYZ(R, b)
 x = sol[,1]; y = sol[,2]; z = sol[,3];
+
+test.S3Ht.P3ChpYZ(sol, b)
+
+
+### Ex 2:
+R = -5;
+b = 3;
+#
+sol = solve.S3Ht.P3ChpYZ(R, b)
+
+test.S3Ht.P3ChpYZ(sol, b)
+
 
 ### Test
 x^3 + b*y*z # - R
@@ -809,6 +840,7 @@ z^3 + b*x*y # - R
 
 
 ### Debug
+R = 2; b = 3;
 x = -0.5886981678 + 1.2138678310i
 y = -0.2089400966 - 0.4200165444i
 z = -0.2089400966 - 0.4200165444i
