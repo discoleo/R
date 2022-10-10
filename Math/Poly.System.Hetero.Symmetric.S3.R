@@ -6,7 +6,7 @@
 ### Polynomial Systems: S3
 ### Heterogeneous Symmetric
 ###
-### draft v.0.4g-clean
+### draft v.0.4g-clean2
 
 
 ### Hetero-Symmetric
@@ -170,7 +170,7 @@ E21a * E12a - E2^3 + 6*E2*E3*S - E3*S^3 - 9*E3^2 # = 0
 E21a^2 - (E2*S - 3*E3)*E21a + E2^3 - 6*E2*E3*S + E3*S^3 + 9*E3^2 # = 0
 
 ### Eq 3: [alternative]
-# - can be based on: En1a;
+# - can be based on: E[n,1]a;
 En1a + b*(S^2 - 2*E2) - R*S # = 0
 E1na + b*E2 - R*S # = 0
 # =>
@@ -184,7 +184,7 @@ Sn*S - S(n+1) + b*S^2 - b*E2 - 2*R*S # = 0
 
 
 # Note:
-# (x^n + y^n + z^n) as well as the (n+1) variant:
+# Sn = (x^n + y^n + z^n) as well as the (n+1) variant:
 # - can be decomposed as polynomials of: S, E2, E3;,
 #   where S = x + y + z;
 # - S, E2, E3 = elementary polynomials; 
@@ -241,6 +241,20 @@ test.S3Ht.Simple = function(sol, b, R=NULL, n) {
 	err1 = x^n + b[1]*y + ext;
 	err2 = y^n + b[1]*z + ext;
 	err3 = z^n + b[1]*x + ext;
+	err = rbind(err1, err2, err3);
+	err = round0(err);
+	return(err);
+}
+test.S3Ht.Product = function(sol, b, b.ext = 0, R=NULL, n) {
+	x = sol[,1]; y = sol[,2]; z = sol[,3];
+	# Extensions:
+	b2 = b.ext[1];
+	b3 = if(length(b.ext) >= 2) b.ext[2] else 0; # Ext A1: power 2;
+	S  = (x+y+z); ext1 = b2*S; ext2 = b3*S^2;
+	ext  = ext1 + ext2;
+	err1 = x^n + b[1]*y*z + ext;
+	err2 = y^n + b[1]*z*x + ext;
+	err3 = z^n + b[1]*x*y + ext;
 	err = rbind(err1, err2, err3);
 	err = round0(err);
 	return(err);
@@ -448,9 +462,10 @@ round0(err)
 
 
 ### Solver:
-solve.htShX.S3P2 = function(R, b, s) {
+solve.S3Ht.P2Shift = function(R, b, s, debug=TRUE, all=FALSE) {
 	coeff = c(1, - (b[1] - 3*s), (- R[1] - 2*b[1]*s + 2*b[1]^2 + 2*s^2))
-	x.sum = roots(coeff)
+	x.sum = roots(coeff);
+	if(debug) print(x.sum);
 	E3 = (x.sum^3 + (3*s + 2*b[1])*x.sum^2 +
 		(2*s-b[1])*(s+b[1])*x.sum - 7*R*x.sum - 6*s*R + 3*b[1]*R) / 6;
 	E2 = (x.sum^2 + (s+b[1])*x.sum - 3*R)/2
@@ -458,7 +473,9 @@ solve.htShX.S3P2 = function(R, b, s) {
 	y = (R - x^2 - s*x)/b[1]
 	z = (R - y^2 - s*y)/b[1]
 	sol = cbind(x, y, z)
-	sol = rbind(sol, sol[,c(2,3,1)], sol[,c(3,1,2)])
+	if(all) {
+		sol = rbind(sol, sol[,c(2,3,1)], sol[,c(3,1,2)]);
+	}
 	return(sol);
 }
 
@@ -467,7 +484,7 @@ R = 1
 b = 3
 s = 1
 #
-sol = solve.htShX.S3P2(R, b, s)
+sol = solve.S3Ht.P2Shift(R, b, s)
 x = sol[,1]; y = sol[,2]; z = sol[,3]
 sol
 
@@ -512,24 +529,34 @@ round0.p(poly.calc(x[1:6]))
 # z^2 + 2*b1*x = R
 
 # Case x != z
-# x + z = b1
+# x + z = b1 # => (Eq 1) =>
 # x^2 + b1^2 = R
 
+### Solver:
+
+solve.S3Ht.P2ChsYZ = function(R, b, debug=TRUE, all=FALSE) {
+	x = sqrt(R - b[1]^2 + 0i);
+	x = c(x, -x);
+	if(debug) print(x);
+	y = x;
+	z = b[1] - x;
+	sol = cbind(x, y, z);
+	if(all) sol = rbind(sol, sol[, c(2,3,1)], sol[, c(3,1,2)]);
+	return(sol);
+}
+
 ### Example:
-b = 3
 R = 1
+b = 3
 #
-x = sqrt(R - b[1]^2 + 0i)
-x = c(x, -x)
-y = x
-z = b[1] - x
-sol = cbind(x, y, z)
-sol
+sol = solve.S3Ht.P2ChsYZ(R, b=b)
+x = sol[,1]; y = sol[,2]; z = sol[,3];
 
 ### Test
 x^2 + b[1]*(y+z)
 y^2 + b[1]*(x+z)
 z^2 + b[1]*(x+y)
+
 
 ####################
 
@@ -562,9 +589,9 @@ z^2 + b[1]*(x+y)
 # x^2 - 2*s*x + b1^2 + 2*b1*s + s^2 - R
 
 ### Example
+R = 1
 b = 3
 s = -1
-R = 1
 #
 x = roots(c(1, - 2*s, b[1]^2 + 2*b[1]*s + s^2 - R))
 y = x
@@ -586,7 +613,7 @@ sol
 ### Product-type ###
 ####################
 
-### x[i]^2 + b*x[-i]
+### x[i]^2 + b * prod(x[-i])
 
 # x^2 + b1*y*z = R
 # y^2 + b1*x*z = R
@@ -604,14 +631,16 @@ sol
 # x^2 - z^2 = b1*y*(x-z)
 # y^2 - z^2 = b1*x*(y-z)
 # => if x != y != z
-#   x + y - b1*z = 0
-#   x - b1*y + z = 0
-# - b1*x + y + z = 0
-### in both cases: (b1 != 2) & (b1 == 2):
+  x + y - b1*z # = 0
+  x - b1*y + z # = 0
+- b1*x + y + z # = 0
 # => x = y = z = 0; # Contradiction !!!
+# - applies in both cases: (b1 != 2) & (b1 == 2);
+
 ### Case: x == y & x != z =>
-# x + z = b1*y;
-# z = (b1 - 1)*x;
+# x + z = b1*x; # =>
+# z = (b1 - 1)*x; # =>
+(b1^2 - b1 + 1)*x^2 - R # = 0
 
 ### Case: x = y
 # x^2 + b1*x*z = R
@@ -619,7 +648,7 @@ sol
 # =>
 # b1*z = R/x - x
 # b1^2*z^2 + b1^3*x^2 = b1^2*R
-# x^2 - 2*R + R^2/x^2 + b1^3*x^2 - b1^2*R = 0
+x^2 - 2*R + R^2/x^2 + b1^3*x^2 - b1^2*R # = 0
 ### Eq:
 (b1^3+1)*x^4 - R*(b1^2 + 2)*x^2 + R^2 # = 0
 ((b1^2 - b1 + 1)*x^2 - R) * ((b1+1)*x^2 - R)
@@ -627,7 +656,7 @@ sol
 
 ### Solver:
 
-solve.htYZ.S3P2 = function(R, b, b.ext=0) {
+solve.S3Ht.P2ChpYZ = function(R, b, b.ext=0, debug=TRUE, all=TRUE) {
 	coeff1 = c((b[1]^2 - b[1] + 1), 0, -R[1]); # x == y;
 	coeff2 = c((b[1] + 1), 0, -R[1]); # x == y == z;
 	# computes x, NOT S;
@@ -636,26 +665,31 @@ solve.htYZ.S3P2 = function(R, b, b.ext=0) {
 		coeff1 = coeff1 + c(0, b.ext[1] * (b[1]+1), 0); # x == y
 		coeff2 = coeff2 + c(0, 3*b.ext[1], 0);
 	}
-	sol1 = roots(coeff1)
-	sol2 = roots(coeff2)
-	x = c(sol1, sol2);
-	y = x
+	sol1 = roots(coeff1);
+	if(debug) print(sol1);
+	if(all) {
+		sol2 = roots(coeff2);
+		x = c(sol1, sol2);
+	}
+	y = x;
 	# z = (b[1] - 1)*x; # assumes x == y & x != z;
 	z = (R[1] - x^2 - 2*x*b.ext[1]) / (b[1]*x + b.ext[1]);
 	sol = round0(cbind(x=x, y=y, z=z))
+}
+test.S3Ht.P2ChpYZ = function(sol, b, b.ext = 0, R=NULL) {
+	err = test.S3Ht.Product(sol, b=b, b.ext=b.ext, R=R, n=2);
+	return(err)
 }
 
 ### Example:
 R = 2
 b = 1
 #
-sol = solve.htYZ.S3P2(R, b)
+sol = solve.S3Ht.P2ChpYZ(R, b)
 x = sol[,1]; y = sol[,2]; z = sol[,3];
 
 ### Test
-x^2 + b[1]*y*z
-y^2 + b[1]*x*z
-z^2 + b[1]*x*y
+test.S3Ht.P2ChpYZ(sol, b=b)
 
 
 ### Extension A1:
@@ -663,13 +697,10 @@ R = 2
 b = 1
 b.ext = c(1)
 #
-sol = solve.htYZ.S3P2(R, b, b.ext)
-x = sol[,1]; y = sol[,2]; z = sol[,3];
+sol = solve.S3Ht.P2ChpYZ(R, b, b.ext)
 
 ### Test
-x^2 + b[1]*y*z + b.ext[1]*(x+y+z)
-y^2 + b[1]*x*z + b.ext[1]*(x+y+z)
-z^2 + b[1]*x*y + b.ext[1]*(x+y+z)
+test.S3Ht.P2ChpYZ(sol, b=b, b.ext=b.ext)
 
 
 ######################
