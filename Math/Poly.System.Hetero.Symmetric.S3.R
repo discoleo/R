@@ -6,7 +6,7 @@
 ### Polynomial Systems: S3
 ### Heterogeneous Symmetric
 ###
-### draft v.0.4g
+### draft v.0.4g-clean
 
 
 ### Hetero-Symmetric
@@ -160,12 +160,31 @@ z^n + P(z, x, y) = R
 # (x^(n+1) + y^(n+1) + z^(n+1)) + b*E2 = R*S
 
 ###  Eq 3:
+# - can be based on:
+#   E21a = x^2*y + y^2*z + z^2*x;
+
+### Eq 3: [alternative]
 # x^n = R - b*y
 # x^(2*n) = R^2 + b^2*y^2 - 2*b*R*y
 ### [3a] Sum =>
 # x^(2*n) + y^(2*n) + z^(2*n) = 3*R^2 + b^2*S^2 - 2*b^2*E2 - 2*b*R*S;
 
-### Eq 3-variant:
+
+# Note:
+# (x^n + y^n + z^n) as well as the (n+1) variant:
+# - can be decomposed as polynomials of: S, E2, E3;,
+#   where S = x + y + z;
+# - S, E2, E3 = elementary polynomials; 
+# n:   (x^n + y^n + z^n) = Decomp1(S^n, E2, E3);
+# n+1: (x^m + y^m + z^m) = Decomp2(S^(n+1), E2, E3), where m = n+1;
+
+# Alternative to Eq3: for very low orders;
+### Diff =>
+# x^n - y^n = b*(z - y)
+### Prod =>
+# (x^n - y^n)*(y^n - z^n)*(z^n - x^n) = b^3*(z-y)*(x-z)*(y-x)
+
+### Eq 3-variant: [but NO benefit]
 # x^n - b*x = R - b*y - b*x
 # x^(2*n) - 2*b*x^(n+1) + b^2*x^2 = R^2 + b^2*y^2 + b^2*x^2 - 2*b*R*y - 2*b*R*x + 2*b^2*x*y
 ### [3b] Sum =>
@@ -176,24 +195,10 @@ z^n + P(z, x, y) = R
 # 0 == 0; # [equations are correlated]
 
 
-# Note:
-# (x^n + y^n + z^n) as well as the (n+1) variant:
-# - can be decomposed as polynomials of: S, E2, E3;,
-#   where S = x + y + z;
-# - S, E2, E3 = elementary polynomials; 
-# n:   (x^n + y^n + z^n) = D1(S^n, E2, E3);
-# n+1: (x^n + y^n + z^n) = D2(S^(n+1), E2, E3);
-
-# Alternative to Eq3: for very low orders;
-### Diff =>
-# x^n - y^n = b*(z - y)
-### Prod =>
-# (x^n - y^n)*(y^n - z^n)*(z^n - x^n) = b^3*(z-y)*(x-z)*(y-x)
-
 ### Complexity:
 # - initial System: => order P[n^3];
 #  -- polynomial can be decomposed = P[n]*P[n^3 - n];
-# - decomposed system:
+# - Decomposed System:
 #  -- P[3] o P[(n^3 - n)/3];
 #  -- D(S, E2, E3): orders of E2 & E3 are usually much lower;
 
@@ -201,13 +206,32 @@ z^n + P(z, x, y) = R
 ####################
 ####################
 
-### helper functions
+### Helper Functions
 
-library(polynom)
-library(pracma)
+# library(polynom)
+# library(pracma)
 
 # the functions are in the file:
 # Polynomials.Helper.R
+
+source("Polynomials.Helper.R")
+
+### Other
+
+test.S3Ht.Simple = function(sol, b, R=NULL, n) {
+	x = sol[,1]; y = sol[,2]; z = sol[,3];
+	# Extensions:
+	b2 = if(length(b) > 1) b[2] else 0; # Ext A1: power 1;
+	b3 = if(length(b) > 2) b[3] else 0; # Ext A1: power 2;
+	S  = (x+y+z); ext1 = b2*S; ext2 = b3*S^2;
+	ext  = ext1 + ext2;
+	err1 = x^n + b[1]*y + ext;
+	err2 = y^n + b[1]*z + ext;
+	err3 = z^n + b[1]*x + ext;
+	err = rbind(err1, err2, err3);
+	err = round0(err);
+	return(err);
+}
 
 
 ################################
@@ -261,14 +285,14 @@ S^4 + 2*b1*S^3 - (10*R + b1^2)*S^2 + 6*(b1*R + b1^3)*S - 18*b1^2*R + 9*R^2
 # E3 = - (S^3 - 3*E2*S + b[1]*E2 - R1*S) / 3;
 
 ### Solver:
-solve.sysHt32 = function(R, b, debug=TRUE) {
+solve.S3Ht.P2 = function(R, b, debug=TRUE) {
 	b2 = if(length(b) > 1) b[2] else 0; # Ext A1: power 1;
 	b3 = if(length(b) > 2) b[3] else 0; # Ext A1: power 2;
 	# coeff = c(1, 2*b[1], - (10*R[1] + b[1]^2), 6*(b[1]*R[1] + b[1]^3), - 18*b[1]^2*R[1] + 9*R[1]^2)
 	# if(b2 != 0) coeff = coeff + c(0, 10*b2, -6*b[1]*b2 + 9*b2^2, 18*b[1]^2*b2 - 18*R[1]*b2, 0)
 	coeff = c(1 + b3, b2 - b[1], - R[1] + 2*b[1]^2)
 	S = roots(coeff)
-	if(debug) print(S)
+	if(debug) print(S);
 	len = length(S);
 	if(len == 0) stop("NO solutions!")
 	R1 = R[1] - b2*S - b3*S^2;
@@ -278,27 +302,32 @@ solve.sysHt32 = function(R, b, debug=TRUE) {
 	# if(any(isZero)) print("Warning: f(S) == 0!")
 	# S = S[ ! isEq]; R1 = R1[ ! isEq];
 	E2 = round0(S^2 + b[1]*S - 3*R1) / 2;
-	E3 = - (S^3 - 3*E2*S + b[1]*E2 - R1*S) / 3
+	E3 = - (S^3 - 3*E2*S + b[1]*E2 - R1*S) / 3;
 	E3 = round0(E3, tol=1E-10); # improve numerics when E3 == 0;
-	x = sapply(1:length(S), function(id) roots(c(1, -S[id], E2[id], -E3[id])))
-	R1 = matrix(R1, ncol=len, nrow=3, byrow=TRUE)
-	y = (R1 - x^2)/b[1]
-	z = (R1 - y^2)/b[1]
-	sol = cbind(x=as.vector(x), y=as.vector(y), z=as.vector(z))
-	sol
+	#
+	len = length(S);
+	x = sapply(seq(len), function(id) roots(c(1, -S[id], E2[id], -E3[id])))
+	x = as.vector(x);
+	R1 = rep(R1, each=3);
+	y = (R1 - x^2)/b[1];
+	z = (R1 - y^2)/b[1];
+	sol = cbind(x, y, z);
+	return(sol);
+}
+test.S3Ht.P2 = function(sol, b, R=NULL) {
+	err = test.S3Ht.Simple(sol, b=b, R=R, n=2);
+	return(err);
 }
 
 ### Examples:
 R = 3
 b = -1
 #
-sol = solve.sysHt32(R, b=b)
+sol = solve.S3Ht.P2(R, b=b)
 x = sol[,1]; y = sol[,2]; z = sol[,3]
 
 ### Test
-x^2 + b[1]*y
-y^2 + b[1]*z
-z^2 + b[1]*x
+test.S3Ht.P2(sol, b=b)
 
 ### Classic Polynomial: P8 or P6 (when S == 0)
 round0.p(poly.calc(sol[,1]))
@@ -320,13 +349,10 @@ round0.p(poly.calc(sol[,1]))
 R = 3
 b = 3
 #
-sol = solve.sysHt32(R, b=b)
-x = sol[,1]; y = sol[,2]; z = sol[,3]
+sol = solve.S3Ht.P2(R, b=b)
 
 ### Test
-x^2 + b[1]*y 
-y^2 + b[1]*z
-z^2 + b[1]*x
+test.S3Ht.P2(sol, b=b)
 
 round0.p(poly.calc(sol[,1]))
 
@@ -338,13 +364,11 @@ round0.p(poly.calc(sol[,1]))
 R = 1
 b = c(1, 1)
 #
-sol = solve.sysHt32(R, b=b)
+sol = solve.S3Ht.P2(R, b=b)
 x = sol[,1]; y = sol[,2]; z = sol[,3]
 
 ### Test
-x^2 + b[1]*y + b[2]*(x+y+z)
-y^2 + b[1]*z + b[2]*(x+y+z)
-z^2 + b[1]*x + b[2]*(x+y+z)
+test.S3Ht.P2(sol, b=b)
 
 round0.p(poly.calc(sol[,1]))
 
@@ -353,15 +377,12 @@ round0.p(poly.calc(sol[,1]))
 R = -1
 b = c(1, 1)
 #
-sol = solve.sysHt32(R, b=b)
-x = sol[,1]; y = sol[,2]; z = sol[,3]
+sol = solve.S3Ht.P2(R, b=b)
 
 ### Test
-S = (x+y+z);
-x^2 + b[1]*y + b[2]*S
-y^2 + b[1]*z + b[2]*S
-z^2 + b[1]*x + b[2]*S
+test.S3Ht.P2(sol, b=b)
 
+x = sol[,1]
 round0.p(poly.calc(sol[,1]))
 err = 25 + 12*x^2 - 2*x^3 + 3*x^4 + x^6
 round0(err)
@@ -371,15 +392,12 @@ round0(err)
 R = 2
 b = c(2, 0, 1)
 #
-sol = solve.sysHt32(R, b=b)
-x = sol[,1]; y = sol[,2]; z = sol[,3]
+sol = solve.S3Ht.P2(R, b=b)
 
 ### Test
-S = (x+y+z);
-x^2 + b[1]*y + b[2]*S + b[3]*S^2
-y^2 + b[1]*z + b[2]*S + b[3]*S^2
-z^2 + b[1]*x + b[2]*S + b[3]*S^2
+test.S3Ht.P2(sol, b=b)
 
+x = sol[,1]
 round0.p(poly.calc(sol[,1]))
 err = 115 + 39*x + 44*x^2 - x^3 - 12*x^4 - x^5 + x^6
 round0(err)
@@ -471,8 +489,8 @@ round0.p(poly.calc(x[1:6]))
 # y + z = b1
 # => x = y = z, which violates assumption;
 
-# =>
-# x = y
+
+# Case: x = y
 # x^2 + b1*(x+z) = R
 # z^2 + 2*b1*x = R
 
@@ -562,7 +580,7 @@ sol
 # - degenerate P4;
 
 ### Special Case: b1 = 2
-# Z^2 = 3*R
+# S^2 = 3*R
 
 ### Diff =>
 # x^2 - y^2 = b1*z*(x-y)
@@ -572,8 +590,9 @@ sol
 #   x + y - b1*z = 0
 #   x - b1*y + z = 0
 # - b1*x + y + z = 0
+### in both cases: (b1 != 2) & (b1 == 2):
 # => x = y = z = 0; # Contradiction !!!
-# x == y & x != z =>
+### Case: x == y & x != z =>
 # x + z = b1*y;
 # z = (b1 - 1)*x;
 
