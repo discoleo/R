@@ -161,7 +161,20 @@ z^n + P(z, x, y) = R
 
 ###  Eq 3:
 # - can be based on:
-#   E21a = x^2*y + y^2*z + z^2*x;
+E21a = x^2*y + y^2*z + z^2*x;
+E12a = x*y^2 + y*z^2 + z*x^2;
+#
+E21a + E12a - E2*S + 3*E3 # = 0
+E21a * E12a - E2^3 + 6*E2*E3*S - E3*S^3 - 9*E3^2 # = 0
+# =>
+E21a^2 - (E2*S - 3*E3)*E21a + E2^3 - 6*E2*E3*S + E3*S^3 + 9*E3^2 # = 0
+
+### Eq 3: [alternative]
+# - can be based on: En1a;
+En1a + b*(S^2 - 2*E2) - R*S # = 0
+E1na + b*E2 - R*S # = 0
+# =>
+Sn*S - S(n+1) + b*S^2 - b*E2 - 2*R*S # = 0
 
 ### Eq 3: [alternative]
 # x^n = R - b*y
@@ -276,6 +289,10 @@ S^2 - 2*E2 + b1*S - 3*R # = 0
 
 ### Eq 3: Sum(x[i+1]^2*...) =>
 S^4 + 2*b1*S^3 - (10*R + b1^2)*S^2 + 6*(b1*R + b1^3)*S - 18*b1^2*R + 9*R^2
+
+### Eq 3: [alternative]
+# - based on E[n,1]a;
+E2*S - 3*E3 + b1*S^2 - b1*E2 - 2*R*S # = 0
 
 ### Eq:
 (S^2 + 3*b1*S - 9*R)*(S^2 - b1*S - R + 2*b1^2)
