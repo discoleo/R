@@ -6,7 +6,7 @@
 ### Polynomial Systems: S3
 ### Heterogeneous Symmetric
 ###
-### draft v.0.4g-improved
+### draft v.0.4g-improved2
 
 
 ### Hetero-Symmetric
@@ -25,7 +25,7 @@ z^n + P(z, x, y) = R
 
 
 ### draft v.0.4g:
-# - robust solution for S3P3 Simple;
+# - robust solutions for S3P3 Simple & S3P2-Asymmetric Sum;
 ### draft v.0.4f-clean 1 & 2 & 3:
 # - more cleaning;
 # - S3P3 MixedSideChain: factorized P[12] => P[8]
@@ -241,6 +241,21 @@ test.S3Ht.Simple = function(sol, b, R=NULL, n) {
 	err1 = x^n + b[1]*y + ext;
 	err2 = y^n + b[1]*z + ext;
 	err3 = z^n + b[1]*x + ext;
+	err = rbind(err1, err2, err3);
+	err = round0(err);
+	return(err);
+}
+### Asymmetric Sum:
+test.S3Ht.SumYZ = function(sol, b, b.ext=0, R=NULL, n) {
+	x = sol[,1]; y = sol[,2]; z = sol[,3];
+	# Extensions:
+	b2 = b.ext[1];
+	b3 = if(length(b.ext) > 1) b.ext[2] else 0; # Ext A1: power 2;
+	S  = (x+y+z); ext1 = b2*S; ext2 = b3*S^2;
+	ext  = ext1 + ext2;
+	err1 = x^n + b[1]*y + b[2]*z + ext;
+	err2 = y^n + b[1]*z + b[2]*x + ext;
+	err3 = z^n + b[1]*x + b[2]*y + ext;
 	err = rbind(err1, err2, err3);
 	err = round0(err);
 	return(err);
@@ -865,26 +880,45 @@ S^2 - 2*E2 + (b1+b2)*S - 3*R # = 0
 # E2 = (S^2 + (b1+b2)*S - 3*R)/2;
 
 ### Sum(x[i]*P[i]) =>
-# (x^3+y^3+z^3) + (b1 + b2)*E2 = R*S
-# S^3 - 3*E2*S + 3*E3 - R*S + (b1 + b2)*E2 = 0
-# 2*S^3 - 2*3*E2*S + 6*E3 - 2*R*S + 2*(b1 + b2)*E2 = 0
-# 2*S^3 - 3*(S^2 + (b1+b2)*S - 3*R)*S + 6*E3 - 2*R*S + (b1 + b2)*(S^2 + (b1+b2)*S - 3*R) = 0
-# -S^3 - 2*(b1+b2)*S^2 + 6*E3 + 7*R*S + (b1+b2)*((b1+b2)*S - 3*R) = 0
+(x^3+y^3+z^3) + (b1 + b2)*E2 - R*S # = 0
+S^3 - 3*E2*S + 3*E3 - R*S + (b1 + b2)*E2 # = 0
+# =>
+2*S^3 - 2*3*E2*S + 6*E3 - 2*R*S + 2*(b1 + b2)*E2 # = 0
+2*S^3 - 3*(S^2 + (b1+b2)*S - 3*R)*S + 6*E3 - 2*R*S + (b1 + b2)*(S^2 + (b1+b2)*S - 3*R) # = 0
+-S^3 - 2*(b1+b2)*S^2 + 6*E3 + 7*R*S + (b1+b2)*((b1+b2)*S - 3*R) # = 0
 # 6*E3 = S^3 + 2*(b1+b2)*S^2 - (b1+b2)^2*S - 7*R*S + 3*(b1+b2)*R
 
-### Eq3:
+### Eq 3:
 # x^2 + b1*y + b1*z = R - (b2-b1)*z
 # x^4 + b1^2*(y+z)^2 + 2*b1*x^2*(y+z) = R^2 + (b2-b1)^2*z^2 - 2*(b2-b1)*R*z
 ### Sum =>
 # (x^4+y^4+z^4) + 2*b1^2*(x^2+y^2+z^2 + E2) + 2*b1*(E2*S - 3*E3) = 3*R^2 + (b2-b1)^2*(S^2 - 2*E2) - 2*(b2-b1)*R*S
 # (x^4+y^4+z^4) + 2*b1^2*(S^2 - E2) + 2*b1*E2*S - 6*b1*E3 = 3*R^2 + (b2-b1)^2*S^2 - 2*(b2-b1)^2*E2 - 2*(b2-b1)*R*S
 # (x^4+y^4+z^4) = 3*R^2 + (-b1^2 + b2^2 - 2*b1*b2)*S^2 - 2*b1*E2*S - 2*(b2^2 - 2*b1*b2)*E2 + 6*b1*E3 - 2*(b2-b1)*R*S
-# S^4 - 4*E2*S^2 + 4*E3*S + 2*E2^2 =
-#  = b1*b2*S^2 - (b1^2 + b2^2 - b1*b2)*(b1+b2)*S - 2*b2*R*S - 2*b1*R*S + 3*R^2 + 3*(b1^2 + b2^2 - b1*b2)*R
+S^4 - 4*E2*S^2 + 4*E3*S + 2*E2^2 # =
+	b1*b2*S^2 - (b1^2 + b2^2 - b1*b2)*(b1+b2)*S - 2*b2*R*S - 2*b1*R*S + 3*R^2 + 3*(b1^2 + b2^2 - b1*b2)*R;
 # - 2*S^4 - 4*(b1+b2)*S^3 + 8*R*S^2 - 4*(b1^2 + b2^2)*S^2 - 14*b1*b2*S^2 + 3*(S^2 + (b1+b2)*S - 3*R)^2 + 24*(b1+b2)*R*S =
 #  = - 6*(b1^2 + b2^2 - b1*b2)*(b1+b2)*S + 18*R^2 + 18*(b1^2 + b2^2 - b1*b2)*R
-# S^4 + 2*(b1+b2)*S^3 - 10*R*S^2 - (b1^2 + b2^2 + 8*b1*b2)*S^2 + 6*(b1+b2)*R*S +
-#  + 6*(b1^2 + b2^2 - b1*b2)*(b1+b2)*S + 9*R^2 - 18*(b1^2 + b2^2 - b1*b2)*R  =  0;
+
+### Eq S:
+S^4 + 2*(b1+b2)*S^3 - (b1^2 + b2^2 + 8*b1*b2 + 10*R)*S^2 + 6*(b1+b2)*R*S +
+	+ 6*(b1^2 + b2^2 - b1*b2)*(b1+b2)*S + 9*R^2 - 18*(b1^2 + b2^2 - b1*b2)*R  # =  0
+(S^2 + 3*(b1+b2)*S - 9*R) * (S^2 - (b1 + b2)*S + 2*(b1 + b2)^2 - 6*b2*b1 - R)
+
+### Eq 3: Alternative
+# [but redundant with Eq 3]
+# Sum(y*...) =>
+E21a + b1*(S^2 - 2*E2) + b2*E2 - R*S # = 0
+# Sum(x^2*...) =>
+S4 + b1*E21a + b2*E12a - R*(S^2 - 2*E2) # = 0
+S^4 - 4*E2*S^2 + 4*E3*S + 2*E2^2 + b1*E21a + b2*E12a - R*(S^2 - 2*E2) # = 0
+# =>
+S^4 - 4*E2*S^2 + 4*E3*S + 2*E2^2 + (b1 - b2)*E21a + b2*(E2*S - 3*E3) - R*(S^2 - 2*E2) # = 0
+S^4 - 4*E2*S^2 + 4*E3*S + 2*E2^2 - R*S^2 - (b1 - b2)*(b1*S^2 - 2*b1*E2 + b2*E2 - R*S) +
+	+ b2*E2*S - 3*b2*E3 + 2*R*E2 # = 0
+# Diff: Eq 3 (alt) - Eq 3 =>
+R*S^2 + (b1 - 2*b2)*b1*S^2 - (b1 - b2)*(2*b1 - b2)*E2 - b2*E2*S + 3*b2*E3 - 2*R*E2 +
+	+ (b1^2 + b2^2 - b1*b2)*(b1+b2)*S + (b1 + 3*b2)*R*S - 3*R^2 - 3*(b1^2 + b2^2 - b1*b2)*R # = 0
 
 
 ### Diff =>
@@ -894,19 +928,23 @@ S^2 - 2*E2 + (b1+b2)*S - 3*R # = 0
 # y^2 - z^2 = b2*(y - x) - b1*(z - x)
 
 
-solve.htS3L2 = function(b, R) {
-	b.sum = b[1] + b[2]
-	coeff = c(1, 2*b.sum, - 10*R - (b.sum^2 + 6*b[1]*b[2]), 6*b.sum*R + 6*(b.sum^2 - 3*b[1]*b[2])*b.sum,
-		9*R^2 - 18*(b.sum^2 - 3*b[1]*b[2])*R)
-	x.sum = roots(coeff)
-	E2 = (x.sum^2 + b.sum*x.sum - 3*R)/2
-	E3 = - (x.sum^3 - 3*E2*x.sum - R*x.sum + b.sum*E2)/3
+### Solver:
+
+solve.S3Ht.P2Ch2s = function(b, R, debug=TRUE) {
+	b.sum = b[1] + b[2];
+	# Excluded: Equal roots;
+	coeff = c(1, - b.sum, 2*b.sum^2 - 6*b[1]*b[2] - R);
+	S = roots(coeff);
+	if(debug) print(S);
+	E2 = (S^2 + b.sum*S - 3*R)/2;
+	E3 = - (S^3 - 3*E2*S - R*S + b.sum*E2)/3;
 	# E3 = (x.sum^3 + 2*b.sum*x.sum^2 - b.sum^2*x.sum - 7*R*x.sum + 3*b.sum*R) / 6
-	# solve (x, y, z)
-	x = as.vector(sapply(1:length(x.sum), function(id) roots(c(1, -x.sum[id], E2[id], -E3[id]))) )
-	x.sum = rep(x.sum, each=3)
-	yz.sum = x.sum - x
-	yz.b.sum = R - x^2
+	# Robust: solve (x, y, z)
+	x = sapply(1:length(S), function(id) roots(c(1, -S[id], E2[id], -E3[id])) );
+	x = as.vector(x);
+	S = rep(S, each=3);
+	yz.sum = S - x;
+	yz.b.sum = R - x^2;
 	if(b[1] == b[2]) {
 		E3 = rep(E3, each=3)
 		yz = E3 / x
@@ -921,29 +959,41 @@ solve.htS3L2 = function(b, R) {
 	sol = cbind(x, y, z)
 	return(sol)
 }
+test.S3Ht.P2SumYZ = function(sol, b, b.ext=0, R=NULL) {
+	test.S3Ht.SumYZ(sol, b=b, b.ext=b.ext, R=R, n=2);
+}
 
 ### Example:
 b = c(1,-2)
 R = 1
 #
-sol = solve.htS3L2(b, R)
-x = sol[,1]; y = sol[,2]; z = sol[,3]
-sol
-# TODO:
-# - find and correct bugs;
+sol = solve.S3Ht.P2Ch2s(b, R)
+
+test.S3Ht.P2SumYZ(sol, b)
+
+### Classic Polynomial
+round0.p(poly.calc(x))
+#
+171 + 36*x - 15*x^2 + 3*x^3 - 2*x^4 + x^5 + x^6
+# Trivial solution:
+# -1 - 3*x + 5*x^3 - 3*x^5 + x^6
+
+
+### Ex 2:
+b = c(2,-5)
+R = -3
+#
+sol = solve.S3Ht.P2Ch2s(b, R)
+
+test.S3Ht.P2SumYZ(sol, b)
+
 
 ### Test
+x = sol[,1]; y = sol[,2]; z = sol[,3]
 x^2 + b[1]*y + b[2]*z
 y^2 + b[1]*z + b[2]*x
 z^2 + b[1]*x + b[2]*y
 
-### Classic Polynomial
-# Note: set of valid roots may change!
-round0.p(poly.calc(x[c(4:9)]))
-round0.p(poly.calc(x[-c(4:9)]))
-#
-171 + 36*x - 15*x^2 + 3*x^3 - 2*x^4 + x^5 + x^6
--1 - 3*x + 5*x^3 - 3*x^5 + x^6
 
 ### Derivation:
 
