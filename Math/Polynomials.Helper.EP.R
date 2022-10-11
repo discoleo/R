@@ -24,6 +24,21 @@ source("Polynomials.Helper.R")
 ########################
 ########################
 
+### Shortcut commands
+
+# Epoly.gen(n, v)
+# Epoly.adv(n, v, e=2)
+
+help.EP = function(...) {
+	cat("Epoly.gen(n = Power, v = Vars)\n");
+	cat("  e.g. Epoly.gen(4, v=3) = x^4 + y^4 + z^4;\n");
+	cat("Epoly.adv(n = Power, v = Vars, e = Elements)\n");
+	cat("  e.g. Epoly.adv(4, v=3, e=2) = x^4*y^4 + x^4*z^4 + y^4*z^4;\n");
+}
+
+
+########################
+
 ### Processing Symmetric Polynomials
 
 ### Extract Base-Terms of Symmetric Polynomials:
@@ -123,16 +138,6 @@ rotate = function(p, n, val0=0, asPoly=TRUE) {
 		m$coeff = 1;
 	}
 	return(m)
-}
-### ???
-sym.poly = function(p, var="x") {
-	n = length(p)
-	l = list(p);
-	l = rep(l, n);
-	pP = 0; # TODO!
-	names(pP) = paste0(var, seq(n));
-	pP$coeff = 1;
-	return(pP);
 }
 
 ########################
