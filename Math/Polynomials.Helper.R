@@ -792,8 +792,13 @@ solve.pm = function(p1, p2, xn, stop.at=NULL, simplify=TRUE, asBigNum=FALSE) {
 	if(is.pm(xn)) stop("Invalid variables: Did you mean to use solve.lpm()?");
 	#
 	max1 = max(p1[,xn]); max2 = max(p2[,xn]);
-	if(max1 == 0) stop("No variable!")
-	if(max2 == 0) stop("No variable!")
+	if(max2 == 0) stop("No variable!");
+	if(max1 == 0) {
+		# stop("No variable!");
+		warning("No variable!");
+		# Result may still be useful!
+		return(list(Rez = p1, x0 = p2, div=NULL, xn=xn));
+	}
 	if(max1 < max2) {
 		tmp = p1; p1 = p2; p2 = tmp;
 		tmp = max1; max1 = max2; max2 = tmp;
