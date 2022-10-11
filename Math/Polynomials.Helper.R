@@ -484,6 +484,7 @@ mult.sc.pm = function(p, s, div=1, coeff.name="coeff") {
 ### Simplify p: Powers & Coefficients
 # - useful when solving: p = 0;
 simplify.spm = function(p1, do.gcd=FALSE) {
+	if(nrow(p1) == 0) return(p1);
 	nms = names(p1);
 	nms = nms[ ! nms %in% "coeff"];
 	for(nm in nms) {
@@ -523,6 +524,7 @@ reduce.var.pm  = function(p) drop.pm(p);
 drop.pm = function(p) {
 	# remove Vars with power == 0;
 	id = match("coeff", names(p));
+	if(ncol(p) <= 1) return(p);
 	nc = rep(TRUE, ncol(p));
 	nc[-id] = sapply(seq(ncol(p))[-id], function(id) any(p[,id] != 0));
 	return(p[, nc, drop=FALSE]);
@@ -755,6 +757,7 @@ eval.pm.sol = function(p, sol, ..., round0=TRUE, tol=1E-7) {
 ##################
 
 ### Solve Variable
+# - list of polynomials is usually in ascending order of powers of substituted variables;
 solve.lpm = function(..., xn, stop.at=NULL, asBigNum=FALSE) {
 	pL  = list(...);
 	len = length(pL);
@@ -765,9 +768,9 @@ solve.lpm = function(..., xn, stop.at=NULL, asBigNum=FALSE) {
 		cat(paste0("\nStarting step: ", id, "\n"));
 		if( ! is.null(stop.at) && id == (len - 1)) {
 			# Stop only during the last elimination;
-			tmp = solve.pm(pL[[id]], pL[[id+1]], xn=xn[[id]], stop.at=stop.at, asBigNum=asBigNum);
+			tmp = solve.pm(pL[[id+1]], pL[[id]], xn=xn[[id]], stop.at=stop.at, asBigNum=asBigNum);
 		} else {
-			tmp = solve.pm(pL[[id]], pL[[id+1]], xn=xn[[id]], asBigNum=asBigNum);
+			tmp = solve.pm(pL[[id+1]], pL[[id]], xn=xn[[id]], asBigNum=asBigNum);
 		}
 		pR[[id]] = tmp;
 		pL[[id+1]] = tmp$Rez;
