@@ -21,19 +21,26 @@
 ################
 
 div.pm = function(p1, p2, by="x", NF.stop=TRUE, debug=TRUE) {
-	if(is.character(p2)) p2 = toPoly.pm(p2);
-	if(is.character(p1)) p1 = toPoly.pm(p1);
+	if(is.character(p2)) p2 = toPoly.pm(p2, env=parent.frame());
+	if(is.character(p1)) p1 = toPoly.pm(p1, env=parent.frame());
+	# move Coeffs to last column:
+	idc1 = match("coeff", names(p1));
+	if(idc1 < ncol(p1)) {
+		p1 = cbind(p1[ , -idc1, drop=FALSE], p1[ , idc1, drop=FALSE]);
+		idc1 = ncol(p1);
+	}
 	# very simple division
 	xn = by[1];
-	idx = checkDiv.pm(p1, p2, xn=xn);
+	idx  = checkDiv.pm(p1, p2, xn=xn);
 	idx1 = idx[[1]]; idx2 = idx[[2]];
-	if( ! is.data.frame(p2)) p2 = as.data.frame(p2);
+	# should NOT be necessary anymore; [DEPRECATED]
+	# if( ! is.data.frame(p2)) p2 = as.data.frame(p2);
 	#
 	xpow2 = max(p2[,idx2]);
 	pDx = p2[p2[,idx2] == xpow2, , drop=FALSE];
 	pDx = drop.pm(pDx); # only vars from Leading monomial;
 	idcDx = match("coeff", names(pDx));
-	idc1  = match("coeff", names(p1));
+	# idc1  = match("coeff", names(p1));
 	c2 = pDx[, idcDx];
 	pRez = as.data.frame(array(0, c(0,2)));
 	names(pRez) = c(xn, "coeff");
