@@ -7,7 +7,7 @@
 ### Asymmetric Derived from Symmetric
 ### Transform: Based on Roots of Unity
 ###
-### draft v.0.2b
+### draft v.0.2c
 
 
 #######################
@@ -15,6 +15,16 @@
 ### Helper Functions
 
 source("Polynomials.Helper.R")
+
+
+#######################
+
+### Theory
+
+### Base-System:
+# - is the starting system;
+# - various transformations are applied to the base system,
+#   e.g. specific substitutions;
 
 
 #######################
@@ -407,23 +417,20 @@ round0.p(poly.calc(x) * 3^5)
 x^2 + y^2 - x*y - R2 # = 0
 
 
-########################
-########################
-
-########################
-### Hetero-Symmetric ###
-########################
+#####################
+#####################
 
 ### Base System: P[3]
 # x^3 + b*y = R
 # y^3 + b*x = R
 
-### Derived:
+### Transform:
 # x => x + m*y
 # y => x + m^2*y
 # where m^3 = 1
 
-### Derived System
+### Derived System:
+# Sum & Diff:
 2*x^3 + 2*y^3 - 3*x*y*(x+y) + b*(2*x - y) - 2*R # = 0
 3*x*(x - y) - b # = 0
 
@@ -528,6 +535,27 @@ x^6 - 3*b*x^4 + R*x^3 - 3*b^2*x^2 + b^3
 27*y^6 - 36*b^2*y^2 + 16*b^3 - 27*R^2
 # b => 3*b =>
 y^6 - 12*b^2*y^2 + 16*b^3 - R^2
+
+
+####################
+
+### Variant: Product
+
+# Sum =>
+2*x^3 + 2*y^3 - 3*x*y*(x+y) + b*(2*x - y) - 2*R # = 0
+
+# Original =>
+(x + m*y)^3 - R + b*(x + m^2*y) # = 0
+x^3 + y^3 + b*x - R + 3*m*x*y*(x + m*y) + b*m^2*y # = 0
+# Prod
+(x^3 + y^3 + b*x - R)^2 - m^2*(3*x*y*(x + m*y) + b*m*y)*(3*m*x*y*(x + m^2*y) + b*y) # = 0
+x^6 - 9*x^4*y^2 + 11*x^3*y^3 - 9*x^2*y^4 + y^6 + 2*b*x^4 + 3*b*x^2*y^2 - 4*b*x*y^3 +
+	- 2*R*x^3 - 2*R*y^3 + b^2*x^2 - b^2*y^2 - 2*b*R*x + R^2 # = 0
+
+### Tr. System:
+2*x^3 + 2*y^3 - 3*x*y*(x+y) + b*(2*x - y) - 2*R # = 0
+x^6 - 9*x^4*y^2 + 11*x^3*y^3 - 9*x^2*y^4 + y^6 + 2*b*x^4 + 3*b*x^2*y^2 - 4*b*x*y^3 +
+	- 2*R*x^3 - 2*R*y^3 + b^2*x^2 - b^2*y^2 - 2*b*R*x + R^2 # = 0
 
 
 ###################
