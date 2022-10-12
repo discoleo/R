@@ -6,7 +6,7 @@
 ### Polynomial Systems: S3
 ### Heterogeneous Symmetric
 ###
-### draft v.0.4g-clean4
+### draft v.0.4g-clean5
 
 
 ### Hetero-Symmetric
@@ -270,6 +270,18 @@ test.S3Ht.Product = function(sol, b, b.ext = 0, R=NULL, n) {
 	err1 = x^n + b[1]*y*z + ext;
 	err2 = y^n + b[1]*z*x + ext;
 	err3 = z^n + b[1]*x*y + ext;
+	err = rbind(err1, err2, err3);
+	err = round0(err);
+	return(err);
+}
+test.S3Ht.Asym3ExtE3 = function(sol, b, s, b3, R=NULL, n) {
+	x = sol[,1]; y = sol[,2]; z = sol[,3];
+	b1 = b[1]; b2 = b[2];
+	# Quasi-Extension:
+	ext  = b3 * x*y*z;
+	err1 = x^n + s*x + b2*y + b1*z + ext;
+	err2 = y^n + s*y + b2*z + b1*x + ext;
+	err3 = z^n + s*z + b2*x + b1*y + ext;
 	err = rbind(err1, err2, err3);
 	err = round0(err);
 	return(err);
@@ -1000,7 +1012,10 @@ S^3 + s*S^2 - 3*E2*S + 3*E3 + b3*E3*S - 2*s*E2 - R*S + (b1 + b2)*E2 # = 0
 
 ### Eq 3:
 # Squaring =>
-# ...
+S^4 + 2*s*S^3 + (s^2 + b1^2 + 2*b1*b2 - b2^2 + 2*b3*E3 - 4*E2)*S^2 +
+	+ (2*s*b3*E3 - 6*s*E2 + 4*b1*b3*E3 - 2*b1*R + 2*b1*E2 + 2*b2*R + 4*E3)*S +
+	+ 2*E2^2 - 2*s^2*E2 + 4*s*b1*E2 - 4*b1*b2*E2 + 2*b2^2*E2 +
+	+ 3*b3^2*E3^2 - 4*b3*E2*E3 + 6*s*E3 - 6*b1*E3 - 3*R^2 # = 0
 
 
 ### Eq S:
@@ -1014,7 +1029,7 @@ b3*S^3 + (4*s*b3 - 2*(b1 + b2)*b3 - 1)*S^2 +
 
 ### Solver:
 
-solve.S3Ht.P2Asym3ExtE3 = function(b, R, s, debug=TRUE) {
+solve.S3Ht.P2Asym3ExtE3 = function(R, b, s, debug=TRUE) {
 	b1 = b[1]; b2 = b[2]; b3 = b[3];
 	bs = b1 + b2; bd = bs - s;
 	coeff = c(b3, (4*s*b3 - 2*bs*b3 - 1),
@@ -1052,14 +1067,19 @@ solve.S3Ht.P2Asym3ExtE3 = function(b, R, s, debug=TRUE) {
 	sol = cbind(x, y, z)
 	return(sol)
 }
+test.S3Ht.P2Asym3ExtE3 = function(sol, b, s, R=NULL) {
+	b3 = b[3]; b = b[c(1,2)];
+	test.S3Ht.Asym3ExtE3(sol, b=b, s=s, b3=b3, R=R, n=2);
+}
 
 ### Example
 R = 1
 s = 1
 b = c(-2,2,3)
 #
-sol = solve.S3Ht.P2Asym3ExtE3(b, R, s)
-x = sol[,1]; y = sol[,2]; z = sol[,3];
+sol = solve.S3Ht.P2Asym3ExtE3(R, b, s)
+
+test.S3Ht.P2Asym3ExtE3(sol, b=b, s=s)
 
 
 ### Ex 2:
@@ -1067,10 +1087,14 @@ R = -5
 s = 1
 b = c(-2,2,3)
 #
-sol = solve.S3Ht.P2Asym3ExtE3(b, R, s)
-x = sol[,1]; y = sol[,2]; z = sol[,3];
+sol = solve.S3Ht.P2Asym3ExtE3(R, b, s)
+
+test.S3Ht.P2Asym3ExtE3(sol, b=b, s=s)
+
 
 ### Test
+b1 = b[1]; b2 = b[2]; b3 = b[3];
+x = sol[,1]; y = sol[,2]; z = sol[,3];
 x^2 + s*x + b[3]*x*y*z + b[2]*y + b[1]*z
 y^2 + s*y + b[3]*x*y*z + b[2]*z + b[1]*x
 z^2 + s*z + b[3]*x*y*z + b[2]*x + b[1]*y
