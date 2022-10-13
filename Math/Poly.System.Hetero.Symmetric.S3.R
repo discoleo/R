@@ -6,7 +6,7 @@
 ### Polynomial Systems: S3
 ### Heterogeneous Symmetric
 ###
-### draft v.0.4g-clean5
+### draft v.0.4h
 
 
 ### Hetero-Symmetric
@@ -24,6 +24,8 @@ z^n + P(z, x, y) = R
 ###############
 
 
+### draft v.0.4h:
+# - [solved] S3Ht P3 Asymmetric Sum; (P[8])
 ### draft v.0.4g:
 # - robust solutions for S3P3 Simple & S3P2-Asymmetric Sum;
 # - various cleanup;
@@ -817,7 +819,7 @@ S^4 - 4*E2*S^2 + 4*E3*S + 2*E2^2 - R*S^2 - (b1 - b2)*(b1*S^2 - 2*b1*E2 + b2*E2 -
 
 
 ### Eq S:
-(S^2 + 3*(b1+b2)*S - 9*R) * (S^2 - (b1 + b2)*S + 2*(b1 + b2)^2 - 6*b2*b1 - R)
+(S^2 + 3*(b1+b2)*S - 9*R) * (S^2 - (b1 + b2)*S + 2*(b1 + b2)^2 - 6*b1*b2 - R)
 
 
 ### Solver:
@@ -1007,6 +1009,7 @@ z^2 + s*z + b[3]*x*y*z + b[2]*x + b[1]*y
 
 
 #########################
+#########################
 
 #########################
 ### "Asymmetric" Variant:
@@ -1025,18 +1028,131 @@ S^3 - 3*E2*S + 3*E3 + (b1+b2)*S - 3*R # = 0
 # 3*E3 = -(S^3 - 3*E2*S + (b1+b2)*S - 3*R)
 
 ### Sum(x[i]*P(x)) =>
-# (x^4 + y^4 + z^4) + (b1+b2)*E2 - R*S = 0
-# S^4 - 4*E2*S^2 + 4*E3*S + 2*E2^2 + (b1+b2)*E2 - R*S = 0
+(x^4 + y^4 + z^4) + (b1+b2)*E2 - R*S # = 0
+S^4 - 4*E2*S^2 + 4*E3*S + 2*E2^2 + (b1+b2)*E2 - R*S # = 0
 
 ### Eq 3:
-# (x^3 + b1*y + b1*z)^2 = (R + b1*z - b2*z)^2
+# Sum(y*...) + Sum(x^3*...) =>
+3*E3^2 - 2*E2^3 + 9*E2^2*S^2 - 2*b2*E2^2 + 6*E3*S^3 - b2*E3*S - 3*R*E3 +
+	- 12*E2*E3*S - 6*E2*S^4 + b2*E2*S^2 + 3*R*E2*S + 2*b1^2*E2 + b2^2*E2 - 3*b1*b2*E2 + 
+	+ S^6 - R*S^3 - b1^2*S^2 + b1*b2*S^2 + (b1 - b2)*R*S # = 0
+# Reduction =>
+3*E3^2 + 5*E2^2*S^2 + (b1 - b2)*E2^2 + 6*E3*S^3 - b2*E3*S - 3*R*E3 +
+	- 8*E2*E3*S - 5*E2*S^4 + b2*E2*S^2 + 2*R*E2*S + 2*b1^2*E2 + b2^2*E2 - 3*b1*b2*E2 + 
+	+ S^6 - R*S^3 - b1^2*S^2 + b1*b2*S^2 + (b1 - b2)*R*S # = 0
 
-### TODO
+### Eq S: P[11] = P[3] * P[8]
+S^8 - 3*(b1 + b2)*S^6 + 18*((b1 + b2)^2 - 2*b1*b2)*S^4 +
+	- 27*(b1 + b2)*R*S^3 +
+	+ (4*(b1 + b2)^3 - 18*b1*b2*(b1 + b2) + 27*R^2)*S^2 +
+	- 27*((b1 + b2)^2 - 4*b1*b2)*R*S +
+	+ 9*((b1 + b2)^4 - 7*b1*b2*(b1 + b2)^2 + 12*b1^2*b2^2) # = 0
+
+
+### Solver:
+
+solve.S3Ht.P3Asymm = function(R, b, debug=TRUE, all=FALSE) {
+	coeff = coeff.S3Ht.P3Asymm(R, b);
+	S = roots(coeff);
+	if(debug) print(S);
+	#
+	b1 = b[1]; b2 = b[2]; bs = b1 + b2;
+	E2x0  = 4*S^6 + 7*bs*S^4 - 24*R*S^3 - 12*b1*b2*S^2 + 9*bs*R*S;
+	E2div = 10*S^4 + 4*bs*S^2 - 18*R*S + 9*bs^2 - 36*b2*b1;
+	E2 = E2x0 / E2div;
+	E3 = - (S^3 - 3*E2*S + bs*S - 3*R) / 3;
+	#
+	len = length(S);
+	x = sapply(seq(len), function(id) {
+		roots(c(1, -S[id], E2[id], -E3[id]));
+	})
+	x = as.vector(x);
+	S = rep(S, each=3); E2 = rep(E2, each=3);
+	s = S - x; e2 = E2 - s*x;
+	se = R - x^3;
+	# TODO: b1 == b2
+	if(round0(b1 - b2) == 0) {
+		len = length(x);
+		y12 = sapply(seq(len), function(id) {
+			roots(c(1, -s[id], e2[id]));
+		})
+		y12 = t(y12);
+		y = y12[,1]; z = y12[,2];
+	} else {
+		y = (b2*s - se) / (b2 - b1);
+		z = s - y;
+	}
+	#
+	sol = cbind(x, y, z);
+	if(all) sol = rbind(sol, sol[ , c(3,1,2)]);
+	return(sol);
+}
+coeff.S3Ht.P3Asymm = function(R, b) {
+	b1 = b[1]; b2 = b[2];
+	bs = b1 + b2; bp = b1 * b2;
+	coeff = c(1, 0, - 3*bs, 0, 18*(bs^2 - 2*bp), - 27*bs*R,
+		4*bs^3 - 18*bp*bs + 27*R^2, - 27*(bs^2 - 4*bp)*R,
+		9*(bs^2 - 3*bp)*(bs^2 - 4*bp) );
+	isEq = (round0(b1 - b2) == 0);
+	if(isEq) {
+		coeff = coeff[ - c(8, 9)];
+	}
+	return(coeff);
+}
+### Test:
+test.S3Ht.P3SumYZ = function(sol, b, b.ext=0, R=NULL) {
+	test.S3Ht.SumYZ(sol, b=b, b.ext=b.ext, R=R, n=3);
+}
+
+# TODO:
+# - fix numeric instability;
+
+### Examples:
+R = 3
+b = c(-2, 5)
+sol = solve.S3Ht.P3Asymm(R, b)
+
+test.S3Ht.P3SumYZ(sol, b=b)
+
+
+### Ex 2:
+R = -5
+b = c(-2, 1)
+sol = solve.S3Ht.P3Asymm(R, b)
+
+test.S3Ht.P3SumYZ(sol, b=b)
+
+
+### Ex 3: Special
+R = -5
+b = c(1, 1)
+sol = solve.S3Ht.P3Asymm(R, b)
+
+test.S3Ht.P3SumYZ(sol, b=b)
+
+
+### Ex 4: Special
+R = -5
+b = c(1 + 1i*sqrt(3), 2)
+sol = solve.S3Ht.P3Asymm(R, b)
+
+test.S3Ht.P3SumYZ(sol, b=b)
+
 
 ### Test
+x = sol[,1]; y = sol[,2]; z = sol[,3];
 x^3 + b[1]*y + b[2]*z
 y^3 + b[1]*z + b[2]*x
 z^3 + b[1]*x + b[2]*y
+
+
+### Debug:
+R = 3; b = c(-1, 2);
+x = -0.8579960017 + 1.7438930516i;
+y =  1.6071830232  -0.3891005096i;
+z = -1.2945570580 + 0.5315122573i;
+b1 = b[1]; b2 = b[2];
+S = x+y+z; E2 = (x+y)*z + x*y; E3 = x*y*z;
 
 
 #########################
