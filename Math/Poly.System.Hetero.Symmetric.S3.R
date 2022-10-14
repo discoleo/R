@@ -6,7 +6,7 @@
 ### Polynomial Systems: S3
 ### Heterogeneous Symmetric
 ###
-### draft v.0.4h
+### draft v.0.4i
 
 
 ### Hetero-Symmetric
@@ -1149,13 +1149,60 @@ z^3 + b[1]*x + b[2]*y
 ### Debug:
 R = 3; b = c(-1, 2);
 x = -0.8579960017 + 1.7438930516i;
-y =  1.6071830232  -0.3891005096i;
+y =  1.6071830232 - 0.3891005096i;
 z = -1.2945570580 + 0.5315122573i;
 b1 = b[1]; b2 = b[2];
 S = x+y+z; E2 = (x+y)*z + x*y; E3 = x*y*z;
 
 
-#########################
+###################
+
+################
+### Extension E3
+
+### Solver
+
+### Special Cases:
+solve.S3Ht.P3ExtE3.Special = function(R, b, debug=TRUE) {
+	b1 = b[1]; b2 = b[2]; bs = b1 + b2; bp = b1 * b2;
+	coeff = c(1, 0, - 4*bs, 3*R, 13*bs^2 - 27*b1*b2, - 15*bs*R, 9*R^2);
+	S = roots(coeff);
+	if(debug) print(S);
+	E2 = (S^3 + bs*S - 3*R) / (3*S);
+	E3 = - (S^4 + 2*E2^2 - 4*E2*S^2 + bs*E2 - R*S) / (3*S);
+	#
+	len = length(S);
+	x = sapply(seq(len), function(id) {
+		roots(c(1, -S[id], E2[id], -E3[id]));
+	})
+	x = as.vector(x);
+	S = rep(S, each=3); E2 = rep(E2, each=3); E3 = rep(E3, each=3);
+	s = S - x; e2 = E2 - s*x;
+	R = R + E3;
+	# TODO: b1 == b2;
+	y = (b2*s - R + x^3) / (b2 - b1);
+	z = s - y;
+	#
+	sol = cbind(x, y, z);
+	return(sol)
+}
+
+### Examples:
+
+### Special Case:
+# b3 = -1
+R = -4
+b = c(5, 3); b3 = -1;
+sol = solve.S3Ht.P3ExtE3.Special(R, b)
+x = sol[,1]; y = sol[,2]; z = sol[,3];
+
+
+### Test
+ext3 = b3 * x*y*z;
+x^3 + b[1]*y + b[2]*z + ext3
+y^3 + b[1]*z + b[2]*x + ext3
+z^3 + b[1]*x + b[2]*y + ext3
+
 
 #########################
 #########################
