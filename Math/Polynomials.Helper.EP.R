@@ -34,6 +34,8 @@ help.EP = function(...) {
 	cat("  e.g. Epoly.gen(4, v=3) = x^4 + y^4 + z^4;\n");
 	cat("Epoly.adv(n = Power, v = Vars, e = Elements)\n");
 	cat("  e.g. Epoly.adv(4, v=3, e=2) = x^4*y^4 + x^4*z^4 + y^4*z^4;\n");
+	cat("Epoly.distinct(n = Power, v = Vars)\n");
+	cat("  e.g. Epoly.distinct(c(4,1), v=3) = x^4*y + x^4*z + y^4*x + y^4*z + ...;\n")
 }
 
 
@@ -455,7 +457,9 @@ Epoly.gen = function(n, v=4, e=1, E=NULL, full=FALSE) {
 			E = Epoly.base(n, v, E=E);
 		}
 		if(full) return(E); # TODO: list;
-		return(E[[n]]);
+		E = E[[n]];
+		class(E) = c("pm", class(E));
+		return(E);
 	}
 	if(e == 2) {
 		if(is.null(E) || length(E) < 2*n) {
