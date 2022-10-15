@@ -34,6 +34,58 @@ source("Polynomials.Helper.R")
 source("Polynomials.Helper.EP.R")
 
 
+### Asymmetric Sum + E3
+# - experimental;
+solve.eq.S3Ht = function(n, reduce=TRUE, debug=TRUE) {
+	E = Epoly.gen(2*n, v=3, full=TRUE);
+	proper = function(p) sort.pm.proper(p, xn=c("b", "R", "E", "S"));
+	# Sum(...)
+	p1 = toPoly.pm("3*b3*E3 + bs*S - 3*R");
+	p1 = add.pm(E[[n]], p1);
+	p1 = proper(p1);
+	# Sum(x*...)
+	p2 = toPoly.pm("b3*E3*S + bs*E2 - R*S");
+	p2 = add.pm(E[[n + 1]], p2);
+	p2 = proper(p2);
+	### Eq 3:
+	# En1a + En1b:
+	pEn1b = Epoly.distinct(c(n,1), v=3, E=E);
+	pEn1b = add.pm(pEn1b, toPoly.pm(" - En1a"));
+	# Sum(x^n*...)
+	p31 = toPoly.pm("b1*En1a + b2*En1b");
+	p31 = add.pm(p31, mult.m(E[[n]], data.frame(b3=1, E3=1, coeff=1)));
+	p31 = diff.pm(p31, mult.m(E[[n]], data.frame(R=1, coeff=1)));
+	p31 = replace.pm(p31, pEn1b, "En1b");
+	p31 = add.pm(E[[2*n]], p31);
+	p32 = toPoly.pm("b3*E3*S + b1*(S^2 - 2*E2) + b2*E2 - R*S");
+	p32$coeff = - p32$coeff;
+	p31 = replace.pm(p31, p32, "En1a");
+	p3 = proper(p31);
+	while(reduce) {
+		# E2^power
+		maxE2 = max(p2$E2);
+		div = p2[p2$E2 == maxE2, , drop=FALSE];
+		if(nrow(div) != 1) break;
+		# Coeff:
+		c2 = div$coeff;
+		div$coeff = 1;
+		while((pow <- max(p3$E2)) >= maxE2) {
+			tmp = p3[p3$E2 == max(p3$E2), , drop=FALSE][1, , drop=FALSE];
+			if(debug) print(tmp);
+			c1 = tmp$coeff; tmp$coeff = 1;
+			tmp = div.pm(tmp, div, by="E2");
+			tmp = tmp$Rez;
+			xgcd = gcd(c1, c2);
+			p3 = diff.pm(mult.pm(p3, c2/xgcd), mult.lpm(list(p2, tmp, c1/xgcd)));
+		}
+		p3 = proper(p3);
+		break;
+	}
+	#
+	eqs = list(p1, p2, p3);
+	return(eqs);
+}
+
 # library(polynom)
 # library(pracma)
 
@@ -788,6 +840,7 @@ S^3 - 3*E2*S + 3*(b3 + 1)*E3 + bs*S - 3*R # = 0
 ### Sum(x*...) =>
 (x^4 + y^4 + z^4) + b3*E3*S + bs*E2 - R*S # = 0
 S^4 - 4*E2*S^2 + 4*E3*S + 2*E2^2 + b3*E3*S + bs*E2 - R*S # = 0
+# Subst: E3
 (2*b3 - 1)*S^4 + 6*(b3 + 1)*E2^2 - 9*b3*E2*S^2 + 3*bs*(b3 + 1)*E2 +
 	- bs*(b3 + 4)*S^2 + 9*R*S # = 0
 
@@ -837,6 +890,19 @@ E2x0 / E2div;
 
 ### Derivation:
 
+### Full Derivation
+tmp = solve.eq.S3Ht(3);
+pR = solve.lpm(tmp, xn=c("E2", "E3"));
+
+str(pR)
+# 580 monomials;
+# - contains mixture of bs, b1 b2;
+table(pR[[2]]$Rez$S)
+
+# TODO: convert (b1 + b2) => bs;
+tmp = div.pm(pR[[2]]$Rez, "(b3+1)*S^3 + 9*bs*S - 27*R", c("S", "b3"))
+
+
 # Note: E3-coeffs are divided by 3!
 p = toPoly.pm("4*S^6 + 7*bs*S^4 - 24*R*S^3 - 12*b1*b2*S^2 + 9*bs*R*S +
 	+ 8*b3*E3*S^3 - 3*bs*b3*E3*S - 6*b3*E3*E2*S +
@@ -878,6 +944,8 @@ S^6 - 4*bs*S^4 + 3*R*S^3 + 13*bs^2*S^2 - 27*b1*b2*S^2 - 15*bs*R*S + 9*R^2 # = 0
 
 
 ### Debug:
+R = -4
+b = c(5, 3); b3 = -1;
 x = 1.7530912130 + 1.5539176757i;
 y = 1.4177093016 - 1.6129537466i;
 z = 1.3666542097 + 1.6888640991i;
@@ -911,6 +979,13 @@ S^6 + 5*E3*S^3 + (b1 - 2*b2)*E3*S - 3*R*E3 - 9*E2*E3*S - 2*E2^3 + 9*E2^2*S^2 - 2
 bs*S^7 - 3*R*S^6 - 4*bs^2*S^5 + 15*bs*R*S^4 +
 	+ (13*bs^3 - 9*(3*b1*b2*bs + R^2))*S^3 +
 	- 27*(2*bs^2 - 3*b1*b2)*R*S^2 + 54*bs*R^2*S - 27*R^3 # = 0
+
+### Sub-Case:
+b3 = -1; b2 = b1;
+x^3 - b1*x - (E3 - b1*S + R) # = 0
+x^3 - S*x^2 + E2*x - E3 # = 0
+# =>
+S*x^2 - (E2 + b1)*x + (b1*S - R) # = 0
 
 
 #############################
