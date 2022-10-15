@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric
 ###  == Derivation ==
 ###
-### draft v.0.2d
+### draft v.0.2d-EqS
 
 
 ###############
@@ -901,6 +901,38 @@ table(pR[[2]]$Rez$S)
 
 # TODO: convert (b1 + b2) => bs;
 tmp = div.pm(pR[[2]]$Rez, "(b3+1)*S^3 + 9*bs*S - 27*R", c("S", "b3"))
+
+### work-around:
+tmp = pR[[2]]$Rez;
+# replace takes a few good seconds;
+tmp = replace.pm(tmp, toPoly.pm("b1+b2"), "bs")
+tmp = div.pm(tmp, "(b3+1)*S^3 + 9*(b1+b2)*S - 27*R", c("S", "b3"))
+str(tmp)
+# 122 monomials;
+
+tmp = tmp$Rez;
+tmp = sort.pm.proper(tmp)
+tmp$coeff = - tmp$coeff;
+tmp = div.pm(tmp, "(b3+1)^3", "b3")$Rez
+tmp = sort.pm(tmp, "b3", xn2=c("b1", "b2"))
+toCoeff(tmp, "S")
+
+### Eq S:
+
+coeff = c(
+(b3^2 - b3 + 1),
+0,
+- 3*bs*(b3^2 - 2*b3 + 1),
+- 9*b3*R,
+3*bs^2*(3*b3^2 - 4*b3 + 6) - 9*b1*b2*(3*b3^2 - 2*b3 + 4),
+9*(2*b3 - 3)*bs*R,
+- (5*b3^2 + b3 - 4)*bs^3 + 18*b1*b2*bs*(b3^2 - 1) + 27*R^2,
+- 27*(b3 + 1)*(bs^2 - 4*b1*b2)*R,
+9*(bs^2 - 4*b1*b2)*(bs^2 - 3*b1*b2)*(b3^2 + 2*b3 + 1)
+);
+
+sum(coeff * S^seq(8, 0, by=-1))
+
 
 
 # Note: E3-coeffs are divided by 3!
