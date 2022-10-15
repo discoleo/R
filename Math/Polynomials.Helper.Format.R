@@ -74,8 +74,22 @@ sortColumns.pm = function(p) {
 	p = cbind(p[ , - idc, drop=F], coeff=p[, idc]);
 	return(p)
 }
-# order Variables;
+### Order Variables
+# - sorts variables in specified order;
+# - returns the actual polynomial;
 orderVars.pm = function(p, xn, last=TRUE, warn=TRUE) {
+	stop("Deprecated! Use: orderVars (non-generic).")
+}
+orderVars = function(p, xn, last=TRUE, warn=TRUE, coeff.last=TRUE) {
+	sort.pm.vars(p, xn=xn, last=last, warn=warn, coeff.last=coeff.last);
+}
+sort.pm.vars = function(p, xn, last=TRUE, warn=TRUE, coeff.last=TRUE) {
+	if(last && coeff.last) {
+		hasCoeff = match("coeff", xn);
+		if(is.na(hasCoeff)) {
+			xn = c(xn, "coeff");
+		}
+	}
 	ids = match(xn, names(p));
 	isNA = is.na(ids);
 	if(any(isNA)) {
