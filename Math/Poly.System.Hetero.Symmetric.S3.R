@@ -6,7 +6,7 @@
 ### Polynomial Systems: S3
 ### Heterogeneous Symmetric
 ###
-### draft v.0.4i-CaseEq
+### draft v.0.4j
 
 
 ### Hetero-Symmetric
@@ -1162,6 +1162,81 @@ S = x+y+z; E2 = (x+y)*z + x*y; E3 = x*y*z;
 
 ### Solver
 
+solve.S3Ht.P3ExtE3 = function(R, b, debug=TRUE, all=FALSE) {
+	# Special cases:
+	if(round0(b[3] + 1) == 0) {
+		return(solve.S3Ht.P3ExtE3.Special(R, b=b, debug=debug));
+	}
+	coeff = coeff.S3Ht.P3ExtE3(R, b, b3=b[3]);
+	S = roots(coeff);
+	if(debug) print(S);
+	#
+	b1 = b[1]; b2 = b[2]; b3 = b[3];
+	bs = b1 + b2; bp = b1 * b2;
+	E2x0 = (2*b3^2 - 3*b3 + 4)*S^6 - bs*(b3^2 + 3*b3 - 7)*S^4 + 3*(b3 - 8)*R*S^3 +
+		+ 3*bs^2*(b3^2 + b3)*S^2 - 12*bp*(b3^2 + 2*b3 + 1)*S^2 + 9*bs*(b3 + 1)*R*S;
+	E2div = (7*b3^2 - 10*b3 + 10)*S^4 - bs*(2*b3^2 - 2*b3 - 4)*S^2 - 18*(b3 + 1)*R*S +
+		+ 9*(bs^2 - 4*bp)*(b3^2 + 2*b3 + 1);
+	E2 = E2x0 / E2div;
+	E3 = - (S^3 - 3*E2*S + bs*S - 3*R) / (3*(b3 + 1));
+	#
+	len = length(S);
+	if(round0(b1 - b2) == 0) {
+		# Special Case
+		x = sapply(seq(len), function(id) {
+			roots(c(S[id], - b1 - E2[id], (b3 + 1)*E3[id] + b1*S[id] - R));
+		})
+		x = as.vector(x);
+		S = rep(S, each=2); E2 = rep(E2, each=2); E3 = rep(E3, each=2);
+		s = S - x; e2 = E2 - s*x;
+		len = length(x);
+		y12 = sapply(seq(len), function(id) {
+			roots(c(1, - s[id], e2[id]));
+		})
+		y12 = t(y12);
+		y = y12[,1]; z = y12[,2];
+		sol = cbind(x, y, z);
+		if(all) {
+			# TODO
+		}
+		return(sol);
+	}
+	x = sapply(seq(len), function(id) {
+		roots(c(1, -S[id], E2[id], -E3[id]));
+	})
+	x = as.vector(x);
+	S = rep(S, each=3); E2 = rep(E2, each=3); E3 = rep(E3, each=3);
+	s = S - x; e2 = E2 - s*x;
+	y = (b2*s - R + x^3 + b3*E3) / (b2 - b1);
+	z = s - y;
+	#
+	sol = cbind(x, y, z);
+	if(all) {
+		# TODO
+	}
+	return(sol);
+}
+coeff.S3Ht.P3ExtE3 = function(R, b, b3) {
+	b1 = b[1]; b2 = b[2]; bs = b1 + b2; bp = b1 * b2;
+	if(round0(b1 - b2) == 0) {
+		coeff = c((b3^2 - b3 + 1), 0,
+			- 3*bs*(b3^2 - 2*b3 + 1), - 9*b3*R,
+			3*bp*(3*b3^2 - 10*b3 + 12), 9*(2*b3 - 3)*bs*R,
+			- 2*(b3^2 + 2*b3 + 1)*bp*bs + 27*R^2
+		);
+		return(coeff);
+	}
+	coeff = c((b3^2 - b3 + 1), 0,
+		- 3*bs*(b3^2 - 2*b3 + 1), - 9*b3*R,
+		3*bs^2*(3*b3^2 - 4*b3 + 6) - 9*bp*(3*b3^2 - 2*b3 + 4),
+		9*(2*b3 - 3)*bs*R,
+		- (5*b3^2 + b3 - 4)*bs^3 + 18*bp*bs*(b3^2 - 1) + 27*R^2,
+		- 27*(b3 + 1)*(bs^2 - 4*bp)*R,
+		9*(bs^2 - 4*bp)*(bs^2 - 3*bp)*(b3^2 + 2*b3 + 1)
+	);
+	return(coeff);
+}
+
 ### Special Cases:
 solve.S3Ht.P3ExtE3.Special = function(R, b, debug=TRUE) {
 	b1 = b[1]; b2 = b[2]; bs = b1 + b2; bp = b1 * b2;
@@ -1205,19 +1280,56 @@ solve.S3Ht.P3ExtE3.Special = function(R, b, debug=TRUE) {
 	return(sol)
 }
 
+### Test
+test.S3Ht.P3Asym3ExtE3 = function(sol, b, s=0, R=NULL) {
+	# TODO: consistent order;
+	b3 = b[3]; b = b[c(2,1)];
+	test.S3Ht.Asym3ExtE3(sol, b=b, b3=b3, s=s, R=R, n=3);
+}
+
 ### Examples:
 
-### Special Case:
+### Ex 1:
+R = 3
+b = c(5,-1, 2)
+sol = solve.S3Ht.P3ExtE3(R, b)
+
+test.S3Ht.P3Asym3ExtE3(sol, b=b)
+
+
+### Ex 2:
+R = -3
+b = c(5,-2, -4)
+b3 = b[3];
+sol = solve.S3Ht.P3ExtE3(R, b)
+
+test.S3Ht.P3Asym3ExtE3(sol, b=b)
+
+
+### Ex 3: Special
+R = -3
+b = c(-2,-2, 4)
+b3 = b[3];
+sol = solve.S3Ht.P3ExtE3(R, b)
+
+test.S3Ht.P3Asym3ExtE3(sol, b=b)
+
+
+### Special Cases:
 # b3 = -1
 R = -4
-b = c(5, 3); b3 = -1;
-sol = solve.S3Ht.P3ExtE3.Special(R, b)
+b = c(5, 3, -1)
+sol = solve.S3Ht.P3ExtE3(R, b)
+
+test.S3Ht.P3Asym3ExtE3(sol, b=b)
 
 
 ### Ex 2: b1 == b2;
 R = -4
-b = c(3, 3); b3 = -1;
-sol = solve.S3Ht.P3ExtE3.Special(R, b)
+b = c(3, 3, -1)
+sol = solve.S3Ht.P3ExtE3(R, b)
+
+test.S3Ht.P3Asym3ExtE3(sol, b=b)
 
 
 ### Test
