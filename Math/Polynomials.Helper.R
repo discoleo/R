@@ -761,7 +761,15 @@ eval.pm.sol = function(p, sol, ..., round0=TRUE, tol=1E-7) {
 solve.lpm = function(..., xn, stop.at=NULL, asBigNum=FALSE) {
 	pL  = list(...);
 	len = length(pL);
-	if(len < 2) return(pL);
+	if(len < 2) {
+		if(inherits(pL[[1]], c("pm", "data.frame"))) {
+			return(pL);
+		}
+		if(inherits(pL[[1]], c("list"))) {
+			pL  = pL[[1]];
+			len = length(pL);
+		} else stop("Not supported!");
+	}
 	#
 	pR = list();
 	for(id in seq(len - 1)) {
