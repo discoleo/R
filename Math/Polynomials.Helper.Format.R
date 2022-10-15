@@ -105,6 +105,34 @@ sort.pm.vars = function(p, xn, last=TRUE, warn=TRUE, coeff.last=TRUE) {
 	}
 	return(p);
 }
+
+### proper Order of variables
+sort.pm.proper = function(p, xn = c("b", "R", "E", "S"), warn=TRUE, do.grep=TRUE) {
+	xnr = if(do.grep) paste0("^", xn) else xn;
+	nms = names(p);
+	# IDs of variables
+	ids = integer(0);
+	for(nm in xnr) {
+		# TODO: do.grep = FALSE;
+		id = grep(nm, nms);
+		if(length(id) == 0) {
+			if(warn) warning("Variable: ", nm, " not found!");
+			next;
+		}
+		id  = id[order(nms[id])];
+		ids = c(ids, id);
+	}
+	idc = match("coeff", nms);
+	if( ! idc %in% ids) ids = c(ids, idc);
+	if(length(ids) == ncol(p)) {
+		p = p[, ids, drop=FALSE];
+		return(p);
+	}
+	tmp = p[, - ids, drop=FALSE];
+	p = cbind(tmp, p[, ids, drop=FALSE]);
+	return(p)
+}
+
 # used by: as.character.pm()
 sort.simple.pm = function(p, leading=1, do.rev=FALSE, sort.order=TRUE) {
 	if(length(leading) == 1) {
