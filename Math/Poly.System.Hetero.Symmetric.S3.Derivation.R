@@ -36,6 +36,7 @@ source("Polynomials.Helper.EP.R")
 
 ### Asymmetric Sum + E3
 # - experimental;
+# - TODO: fix bugs in reduce;
 solve.eq.S3Ht = function(n, reduce=TRUE, debug=TRUE) {
 	E = Epoly.gen(2*n, v=3, full=TRUE);
 	proper = function(p) sort.pm.proper(p, xn=c("b", "R", "E", "S"));
@@ -516,7 +517,7 @@ S^3 - 3*E2*S + 3*E3 + b*S - 3*R # = 0;
 
 ### Sum(x[i]*...) =>
 x^4 + y^4 + z^4 + b*E2 - R*S # = 0
-S^4 - 4*E2*S^2 + 4*E3 * S + 2*E2^2 + b*E2 - R*S # = 0;
+S^4 + 2*E2^2 - 4*E2*S^2 + b*E2 + 4*E3*S - R*S # = 0;
 
 ### Solve E2 & E3:
 S^4 - 4*E2*S^2 + 4*E3*S + 2*E2^2 + b*E2 - R*S # = 0
@@ -554,32 +555,18 @@ E2^3 - E2^2*S^2 + E3*S^3 - b^3 # = 0
 E2^3 + 2*b*E2^2 + 3*E3^2 + b*S^4 - R*S^3 - 4*b*E2*S^2 + 3*R*E2*S + 4*b*E3*S - 3*E3*E2*S - 3*R*E3 # = 0
 E2^3 - E2^2*S^2 + E3*S^3 - b^3 # = 0
 
-pE30 = data.frame(
-	E2 = c(1, 0,0,0), S = c(1, 3,1,0),
-	b  = c(0, 0,1,0), R = c(0, 0,0,1), coeff = c(3,-1,-1,3)
-)
+# 3*E3:
+pE30 = toPoly.pm("3*E2*S - S^3 - b*S + 3*R")
 pE3Div = data.frame(coeff=3)
-pE21 = data.frame(
-	E2 = c(2, 1, 0, 0, 0),
-	S  = c(0, 0, 4, 2, 1),
-	b  = c(0, 1, 0, 1, 0),
-	R  = c(0, 0, 0, 0, 1),
-	coeff = c(6, 3,-1,-4, 9)
-)
-pE23 = data.frame(
-	E3 = c(0, 0, 1, 0),
-	E2 = c(3, 2, 0, 0),
-	S  = c(0, 2, 3, 0),
-	b  = c(0, 0, 0, 3),
-	R  = c(0, 0, 0, 0),
-	coeff = c(1,-1,1,-1)
-)
+pE21 = toPoly.pm("6*E2^2 + 3*b*E2 - (S^4 + 4*b*S^2 - 9*R*S)")
+pE23 = toPoly.pm("E2^3 - E2^2*S^2 + E3*S^3 - b^3")
+#
 pE23r = replace.fr.pm(pE23, pE30, pE3Div, x="E3")
 pE2 = solve.pm(pE21, pE23r, x="E2")
 pE2x0 = pE2$x0; pE2x0$coeff = pE2x0$coeff / -9;
-print.p(pE2x0, "S")
+print.pm(pE2x0, "S")
 pE2Div = pE2$div; pE2Div$coeff = pE2Div$coeff / -9;
-print.p(pE2Div, "S")
+print.pm(pE2Div, "S")
 
 E2x0 = 6*S^6 + 13*b*S^4 - 30*R*S^3 + 4*b^2*S^2 - 9*b*R*S + 12*b^3;
 E2div = 14*S^4 + 14*b*S^2 - 18*R*S + 3*b^2;
@@ -696,11 +683,40 @@ x = roots(coeff)
 
 ### Sum =>
 (x^4 + y^4 + z^4) + b*S - 3*R # = 0
-S^4 - 4*E2*S^2 + 4*E3*S + 2*E2^2 + b*S - 3*R # = 0
+S^4 + 2*E2^2 - 4*E2*S^2 + 4*E3*S + b*S - 3*R # = 0
 
 ### Sum(x*...) =>
 (x^5 + y^5 + z^5) + b*E2 - R*S # = 0
-S^5 - 5*E2*S^3 + 5*E3*S^2 + 5*E2^2*S - 5*E2*E3 + b*E2 - R*S # = 0
+S^5 + 5*E2^2*S - 5*E2*S^3 + b*E2 + 5*E3*S^2 - 5*E2*E3 - R*S # = 0
+# Reduction:
+3*S^5 - 10*E2*S^3 - 2*b*E2 + 10*E2*E3 + 10*E3*S^2 + 5*b*S^2 - 13*R*S # = 0
+
+
+### Eq 3:
+# Sum(x^3*...) & Sum(y*...) =>
+2*E2^4 - 16*E2^3*S^2 + 24*E2^2*E3*S - 8*E2*E3^2 + 20*E2^2*S^4 - 2*R*E2^2 + 12*E3^2*S^2 +
+	- 32*E2*E3*S^3 - 8*E2*S^6 + 4*R*E2*S^2 + 2*b^2*E2 + 8*E3*S^5 - 4*R*E3*S +
+	+ S^8 - R*S^4 - b^2*S^2 + b*R*S # = 0
+# Reduction:
+16*E2*E3^2 + 56*E3^2*S^2 - 64*E2*E3*S^3 - 16*E3*S^5 + 16*b*E3*S^2 - 48*R*E3*S +
+	+ 24*E2*S^6 - 8*b*E2*S^3 + 24*R*E2*S^2 - 4*b^2*E2 +
+	- 7*S^8 - 6*b*S^5 + 18*R*S^4 + b^2*S^2 + 2*b*R*S - 3*R^2 # = 0
+200*E3^2*S^2 + 16*b*E2*E3 + 136*E3*S^5 + 40*b*E3*S^2 - 136*R*E3*S +
+	- 120*E2*S^6 - 88*b*E2*S^3 + 120*R*E2*S^2 - 20*b^2*E2 +
+	+ 37*S^8 + 90*b*S^5 - 222*R*S^4 + 5*b^2*S^2 + 10*b*R*S - 15*R^2 # = 0
+
+
+p = solve.eq.S3Ht(4, reduce=FALSE)
+p = p[[3]]
+p = replace.pm.zero(p, c("b3", "b2"))
+p = replace.pm(p, "b1", "bs")
+p = replace.pm(p, "b", "b1")
+p = sort.pm(p, c("E2", "E3"))
+str(p)
+table(p$E2)
+
+
+### Alternatives:
 
 ### Sum(y^4*...) =>
 ((x*y)^4 + (y*z)^4 + (x*z)^4) + b*(x^5 + y^5 + z^5) - R*(x^4 + y^4 + z^4) # = 0
@@ -711,7 +727,6 @@ S^5 - 5*E2*S^3 + 5*E3*S^2 + 5*E2^2*S - 5*E2*E3 + b*E2 - R*S # = 0
 4*E2*E3^2 + 2*E3^2*S^2 - 4*E2^2*E3*S - 5*b*E2*E3 + 5*b*E3*S^2 - 4*R*E3*S +
 	+ E2^4 + 5*b*E2^2*S - 2*R*E2^2 - 5*b*E2*S^3 + 4*R*E2*S^2 +
 	+ b*S^5 - R*S^4 # = 0
-
 
 ### Sum(z*...) =>
 # [exploring alternative formulas]
@@ -726,6 +741,32 @@ E3*(x^7 + y^7 + z^7) + E3^2*(x^2*y^2 + y^2*z^2 + z^2*x^2) + (x^5*y^5 + y^5*z^5 +
 	+ (b*E2 - R*S)^2 + (b*E2 - R*S)*((3*R - b*S)*S - (R*S - b*E2)) # = 0
 
 
+### Derivation:
+p1 = toPoly.pm("S^4 + 2*E2^2 - 4*E2*S^2 + 4*E3*S + b*S - 3*R")
+p2 = toPoly.pm("3*S^5 - 10*E2*S^3 - 2*b*E2 + 10*E2*E3 + 10*E3*S^2 + 5*b*S^2 - 13*R*S")
+p3 = toPoly.pm(...)
+
+pR = solve.lpm(p2, p1, p3, xn=c("E3", "E2"))
+str(pR)
+
+tmp = pR[[2]]$Rez;
+tmp$coeff = - tmp$coeff;
+tmp = div.pm(tmp, "S^4 + 27*b*S - 81*R", "S")$Rez
+table(tmp$S)
+
+### Eq S:
+# TODO: factorize;
+# - should be P[15];
+S^28 - 11*b*S^25 + 9*R*S^24 + 181*b^2*S^22 - 510*R*b*S^21 + 565*R^2*S^20 + 185*b^3*S^19 - 1337*R*b^2*S^18 +
+	+ 2075*R^2*b*S^17 - 2995*R^3*S^16 - 1189*b^4*S^16 + 3612*R*b^3*S^15 + 2258*R^2*b^2*S^14 +
+	- 2980*R^3*b*S^13 - 1057*b^5*S^13 + 6115*R^4*S^12 + 7*R*b^4*S^12 - 10666*R^2*b^3*S^11 +
+	- 562*R^3*b^2*S^10 + 6839*b^6*S^10 + 1755*R^4*b*S^9 - 1662*R*b^5*S^9 - 6181*R^5*S^8 +
+	+ 5369*R^2*b^4*S^8 + 9756*R^3*b^3*S^7 - 7693*b^7*S^7 - 1207*R^4*b^2*S^6 - 3255*R*b^6*S^6 +
+	- 254*R^5*b*S^5 + 2079*R^2*b^5*S^5 + 3111*R^6*S^4 - 5363*R^3*b^4*S^4 + 2744*b^8*S^4 +
+	- 2887*R^4*b^3*S^3 + 3136*R*b^7*S^3 + 667*R^5*b^2*S^2 - 784*R^2*b^6*S^2 - 75*R^6*b*S +
+	- 625*R^7 + 1176*R^4*b^4
+
+
 ### Test
 x^4 + b*y # - R
 y^4 + b*z # - R
@@ -733,7 +774,7 @@ z^4 + b*x # - R
 
 ### Debug:
 R = 2; b = -1;
-x = 0.0166744490 +  1.3427742695i;
+x = 0.0166744490 + 1.3427742695i;
 y = 1.2479553174 - 0.1614557583i;
 z = 0.1825626110 - 1.2341836974i;
 S = x+y+z; E2 = x*y+x*z+y*z; E3 = x*y*z;
@@ -833,6 +874,7 @@ S = x+y+z; E2 = (x+y)*z + x*y; E3 = x*y*z;
 ################
 ### Extension E3
 
+# x^3 + b3*x*y*z + b1*y + b2*z = R
 
 ### Sum =>
 S^3 - 3*E2*S + 3*(b3 + 1)*E3 + bs*S - 3*R # = 0
@@ -887,6 +929,17 @@ E2x0 / E2div;
 		+ 9*bs^3*(b3 + 1)*S - 36*bs*b1*b2*(b3 + 1)*S +
 		- 27*bs^2*(b3 + 1)*R + 108*b1*b2*(b3 + 1)*R # = 0
 
+### Eq S:
+b1 = b[1]; b2 = b[2]; b3 = b[3]; bs = b1 + b2;
+(b3^2 - b3 + 1)*S^8 - 3*bs*(b3^2 - 2*b3 + 1)*S^6 - 9*b3*R*S^5 +
+	+ (3*bs^2*(3*b3^2 - 4*b3 + 6) - 9*b1*b2*(3*b3^2 - 2*b3 + 4))*S^4 +
+	+ 9*(2*b3 - 3)*bs*R*S^3 +
+	- ((5*b3^2 + b3 - 4)*bs^3 - 18*b1*b2*bs*(b3^2 - 1) - 27*R^2)*S^2 +
+	- 27*(b3 + 1)*(bs^2 - 4*b1*b2)*R*S +
+	+ 9*(bs^2 - 4*b1*b2)*(bs^2 - 3*b1*b2)*(b3^2 + 2*b3 + 1) # = 0
+
+# sum(coeff * S^seq(8, 0, by=-1))
+
 
 ### Derivation:
 
@@ -916,22 +969,6 @@ tmp$coeff = - tmp$coeff;
 tmp = div.pm(tmp, "(b3+1)^3", "b3")$Rez
 tmp = sort.pm(tmp, "b3", xn2=c("b1", "b2"))
 toCoeff(tmp, "S")
-
-### Eq S:
-
-coeff = c(
-(b3^2 - b3 + 1),
-0,
-- 3*bs*(b3^2 - 2*b3 + 1),
-- 9*b3*R,
-3*bs^2*(3*b3^2 - 4*b3 + 6) - 9*b1*b2*(3*b3^2 - 2*b3 + 4),
-9*(2*b3 - 3)*bs*R,
-- (5*b3^2 + b3 - 4)*bs^3 + 18*b1*b2*bs*(b3^2 - 1) + 27*R^2,
-- 27*(b3 + 1)*(bs^2 - 4*b1*b2)*R,
-9*(bs^2 - 4*b1*b2)*(bs^2 - 3*b1*b2)*(b3^2 + 2*b3 + 1)
-);
-
-sum(coeff * S^seq(8, 0, by=-1))
 
 
 
