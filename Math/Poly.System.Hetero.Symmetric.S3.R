@@ -6,7 +6,7 @@
 ### Polynomial Systems: S3
 ### Heterogeneous Symmetric
 ###
-### draft v.0.4j
+### draft v.0.4j-info
 
 
 ### Hetero-Symmetric
@@ -24,8 +24,9 @@ z^n + P(z, x, y) = R
 ###############
 
 
-### draft v.0.4h:
+### draft v.0.4h - .0.4j:
 # - [solved] S3Ht P3 Asymmetric Sum; (P[8])
+# - [solved] S3Ht P3 Asymmetric Sum + Ext E3; (P[8])
 ### draft v.0.4g:
 # - robust solutions for S3P3 Simple & S3P2-Asymmetric Sum;
 # - various cleanup;
@@ -904,7 +905,7 @@ x^6 - (b1 + b2)*x^5 + ((b1 + b2)^2 - 3*R)*x^4 +
 ### Extensions
 
 # x^2 + s*x + b2*y + b1*z = R;
-# s = shift of main variable;
+# where s = shift of main variable;
 # x^2 + s*x + b3*x*y*z + b2*y + b1*z = R;
 
 ##############
@@ -1058,7 +1059,7 @@ solve.S3Ht.P3Asymm = function(R, b, debug=TRUE, all=FALSE) {
 	#
 	b1 = b[1]; b2 = b[2]; bs = b1 + b2;
 	E2x0  = 4*S^6 + 7*bs*S^4 - 24*R*S^3 - 12*b1*b2*S^2 + 9*bs*R*S;
-	E2div = 10*S^4 + 4*bs*S^2 - 18*R*S + 9*bs^2 - 36*b2*b1;
+	E2div = 10*S^4 + 4*bs*S^2 - 18*R*S + 9*bs^2 - 36*b1*b2;
 	E2 = E2x0 / E2div;
 	E3 = - (S^3 - 3*E2*S + bs*S - 3*R) / 3;
 	#
@@ -1160,6 +1161,36 @@ S = x+y+z; E2 = (x+y)*z + x*y; E3 = x*y*z;
 ################
 ### Extension E3
 
+# x^3 + b3*x*y*z + b1*y + b2*z = R
+
+### 1. Special Cases
+# 1.1) b3 = -1; b1 == b2;
+# 1.2) b3 = -1; b1 != b2;
+# 1.3) b3 != -1; b1 == b2;
+### 2. General Case
+# 2.1) b1 != b2 & b3 != -1;
+### 3. Trivial Solution
+# => x = y = z;
+
+
+### Eqs:
+# - see the derivation in file:
+#   Poly.System.Hetero.Symmetric.S3.Derivation.R;
+# Eq 1: Sum(...);
+# Eq 2: Sum(x*...);
+# Eq 3: Sum(x^3*...) & Sum(y*...);
+
+
+### Eq S:
+b1 = b[1]; b2 = b[2]; b3 = b[3]; bs = b1 + b2;
+(b3^2 - b3 + 1)*S^8 - 3*bs*(b3^2 - 2*b3 + 1)*S^6 - 9*b3*R*S^5 +
+	+ (3*bs^2*(3*b3^2 - 4*b3 + 6) - 9*b1*b2*(3*b3^2 - 2*b3 + 4))*S^4 +
+	+ 9*(2*b3 - 3)*bs*R*S^3 +
+	- ((5*b3^2 + b3 - 4)*bs^3 - 18*b1*b2*bs*(b3^2 - 1) - 27*R^2)*S^2 +
+	- 27*(b3 + 1)*(bs^2 - 4*b1*b2)*R*S +
+	+ 9*(bs^2 - 4*b1*b2)*(bs^2 - 3*b1*b2)*(b3^2 + 2*b3 + 1) # = 0
+
+
 ### Solver
 
 solve.S3Ht.P3ExtE3 = function(R, b, debug=TRUE, all=FALSE) {
@@ -1216,7 +1247,7 @@ solve.S3Ht.P3ExtE3 = function(R, b, debug=TRUE, all=FALSE) {
 	}
 	return(sol);
 }
-coeff.S3Ht.P3ExtE3 = function(R, b, b3) {
+coeff.S3Ht.P3ExtE3 = function(R, b, b3, s=0) {
 	b1 = b[1]; b2 = b[2]; bs = b1 + b2; bp = b1 * b2;
 	if(round0(b1 - b2) == 0) {
 		coeff = c((b3^2 - b3 + 1), 0,
