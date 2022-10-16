@@ -195,6 +195,13 @@ print.p = function(...) {
 	print(ch);
 	invisible(ch);
 }
+print.pm.df = function(p, n=100) {
+	if(is.null(n) || is.na(n)) {
+		print.data.frame(p);
+		return(invisible());
+	}
+	head(as.data.frame(p), n=n);
+}
 
 as.character.pm = function(p, leading=NA, do.sort=TRUE, do.rev=FALSE, sort.order=TRUE,
 		simplify.complex=TRUE, brackets.complex=TRUE) {
