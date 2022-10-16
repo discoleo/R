@@ -101,6 +101,29 @@ rescale.pm.unity = function(p, pow, mn="m", xn="x", div=FALSE) {
 #   methods::setGeneric("replace")
 #   methods::setMethod("replace", signature = c(p1 = "pm", p2 = "numeric"), definition = replace.pm.numeric)
 #   methods::setMethod("replace", signature = c(p1 = "pm", p2 = "character"), definition = replace.pm.character)
+
+# - relatively efficient replacement of xn with 0;
+# - quasi: removing monomials containing xn;
+replace.pm.zero = function(p, xn, pow=1, warn=TRUE) {
+	if(length(xn) > 1) {
+		len = length(xn);
+		if(length(pow) == 1) pow = rep(pow, len);
+		for(id in seq(len)) {
+			p = replace.pm.zero(p, xn[[id]], pow=pow[[id]], warn=warn);
+		}
+		return(p);
+	}
+	idx = match(xn, names(p));
+	if(is.na(idx)) {
+		if(warn) warning("variable not found!");
+		return(p);
+	}
+	doKeep = ! (p[ , idx] >= pow);
+	p = p[doKeep, , drop=FALSE];
+	p = drop.pm(p);
+	return(p);
+}
+
 replace.withVal.pm = function(p, ...) stop("Defunct function: replace.withVal!");
 replace.pm.numeric = function(p1, p2, xn, pow=1, simplify=TRUE, tol=1E-10) {
 	p = p1; val = p2;
