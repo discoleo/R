@@ -6,7 +6,7 @@
 ### Polynomial Systems: S3
 ### Heterogeneous Symmetric
 ###
-### draft v.0.4j-info
+### draft v.0.4k
 
 
 ### Hetero-Symmetric
@@ -24,9 +24,10 @@ z^n + P(z, x, y) = R
 ###############
 
 
-### draft v.0.4h - .0.4j:
+### draft v.0.4h - v.0.4k:
 # - [solved] S3Ht P3 Asymmetric Sum; (P[8])
 # - [solved] S3Ht P3 Asymmetric Sum + Ext E3; (P[8])
+# - [solved] S3Ht P4 Simple; (P[20])
 ### draft v.0.4g:
 # - robust solutions for S3P3 Simple & S3P2-Asymmetric Sum;
 # - various cleanup;
@@ -1373,6 +1374,97 @@ z^3 + b[1]*x + b[2]*y + ext3
 
 #########################
 #########################
+#########################
+
+###############
+### Order 4 ###
+###############
+
+### x^4 + b1*y = R
+
+
+### Eq S:
+S^20 - 9*b*S^17 + 11*R*S^16 + 162*b^2*S^14 - 508*b*R*S^13 + 586*R^2*S^12 + 518*b^3*S^11 - 2022*b^2*R*S^10 +
+	+ 2218*b*R^2*S^9 - 7*(45*b^4 + 262*R^3)*S^8 + 788*b^3*R*S^7 + 2918*b^2*R^2*S^6 +
+	- b*(2205*b^4 + 2876*R^3)*S^5 + 1939*b^4*R*S^4 + 1861*R^4*S^4 - 1946*b^3*R^2*S^3 +
+	+ b^2*(2744*b^4 - 1058*R^3)*S^2 - 2352*b^5*R*S + 1175*b*R^4*S + 1176*b^4*R^2 - 625*R^5 # = 0
+
+
+### Solver:
+
+solve.S3Ht.P4 = function(R, b, debug=TRUE, all=FALSE) {
+	coeff = coeff.S3Ht.P4(R, b=b);
+	S = roots(coeff);
+	if(debug) print(S);
+	E2x0 = 85*S^14 + 665*b*S^11 - 1855*R*S^10 - 555*b^2*S^8 + 270*R*b*S^7 + 3455*R^2*S^6 - 1841*b^3*S^5 +
+		+ 845*R*b^2*S^4 - 935*R^2*b*S^3 - 1685*R^3*S^2 + 1470*b^4*S^2 + 3276*R*b^3*S - 1890*R^2*b^2;
+	E2div = 225*S^12 + 1205*b*S^9 - 3075*R*S^8 - 1125*b^2*S^6 + 790*R*b*S^5 + 5475*R^2*S^4 +
+		- 5425*b^3*S^3 + 1925*R*b^2*S^2 - 1995*R^2*b*S - 2625*R^3 + 7056*b^4;
+	E2 = E2x0 / E2div;
+	E3 = - (S^4 + 2*E2^2 - 4*E2*S^2 + b*S - 3*R) / (4*S);
+	#
+	len = length(S);
+	x = sapply(seq(len), function(id) {
+		roots(c(1, -S[id], E2[id], -E3[id]));
+	})
+	x = as.vector(x);
+	S = rep(S, each=3);
+	y = (R - x^4) / b[1];
+	z = S - x - y;
+	#
+	sol = cbind(x, y, z);
+	return(sol);
+}
+coeff.S3Ht.P4 = function(R, b) {
+	coeff = c(1, 0, 0, - 9*b, 11*R, 0, 162*b^2, - 508*b*R, 586*R^2, 518*b^3,
+		- 2022*b^2*R, 2218*b*R^2, - 315*b^4 - 1834*R^3, 788*b^3*R,
+		2918*b^2*R^2, - 2205*b^5 - 2876*b*R^3, 1939*b^4*R + 1861*R^4,
+		- 1946*b^3*R^2, 2744*b^6 - 1058*b^2*R^3,
+		- 2352*b^5*R + 1175*b*R^4, 1176*b^4*R^2 - 625*R^5
+
+	);
+	return(coeff);
+}
+### Test
+test.S3Ht.P4 = function(sol, b, R = NULL) {
+	test.S3Ht.Simple(sol, b=b, R=R, n=4);
+}
+
+### Examples:
+
+### Ex 1:
+R = -2
+b = 3
+sol = solve.S3Ht.P4(R, b)
+
+test.S3Ht.P4(sol, b)
+
+
+### Ex 2:
+R = 4
+b = 3
+sol = solve.S3Ht.P4(R, b)
+
+test.S3Ht.P4(sol, b)
+
+
+### Ex 3:
+R = 1
+b = -4
+sol = solve.S3Ht.P4(R, b)
+
+test.S3Ht.P4(sol, b)
+
+
+### Test
+x = sol[,1]; y = sol[,2]; z = sol[,3];
+x^4 + b*y # - R
+y^4 + b*z # - R
+z^4 + b*x # - R
+
+
+##########################
+##########################
 
 #######################
 ### 2 Leading Terms ###
