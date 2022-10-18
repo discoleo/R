@@ -7,10 +7,17 @@
 ### Heterogeneous Symmetric
 ### Type: 2 & 3 Leading Terms
 ###
-### draft v.0.1a
+### draft v.0.1a-clean
 
 ### Leading Terms: 2 or more;
 # - simple/univariate monomials;
+
+# Note:
+# - Special Cases (Diff) are in file:
+#   Poly.System.Hetero.Symmetric.S3.Diff.R;
+# - Mixed Leading Terms are in files:
+#   Poly.System.Hetero.Symmetric.S2.Lnn.R;
+#   Poly.System.Hetero.Symmetric.S3.Leading.R;
 
 
 ####################
@@ -93,21 +100,25 @@ E2*S - 3*E3 + b1*E2 - R*S # = 0
 8*E2*S - 4*b1*E2 + 4*R*S - 12*b1^3 # = 0
 2*(2*S^2 + b1*S - 3*R)*S - b1*(2*S^2 + b1*S - 3*R) + 4*R*S - 12*b1^3 # = 0
 4*S^3 - (2*R + b1^2)*S - 12*b1^3 + 3*b1*R # = 0
-### Eq:
+
+### Eq S:
 (2*S - 3*b1)*(2*S^2 + 3*b1*S + 4*b1^2 - R)
 
 ### Alternatives:
 ### Redundant:
 # Sum((x+y)*...), Sum(x*y*...);
 
-### Alternative Eq:
+### Alternative:
+### Eq 3:
 # Sum(y^2*...) =>
 (x^2*y^2+y^2*z^2+z^2*x^2) + (x^4+y^4+z^4) + b1*(x^3+y^3+z^3) - R*(x^2+y^2+z^2) # = 0
+3*E2^2 - 4*E2*S^2 + 2*E3*S +
+	+ S^4 + b1*(S^3 - 3*E2*S + 3*E3) - R*(S^2 - 2*E2) # = 0
 
 
 ### Solver:
 
-solve.2H.S3P2 = function(R, b, b.ext=0, debug=TRUE) {
+solve.S3Ht.L2sP2 = function(R, b, b.ext=0, debug=TRUE) {
 	be1 = b.ext[1];
 	be2 = if(length(b.ext) < 2) 0 else b.ext[2];
 	# coeff = c(4, 0, - (2*R[1] + b[1]^2), -12*b[1]^3 + 3*b[1]*R[1])
@@ -121,35 +132,39 @@ solve.2H.S3P2 = function(R, b, b.ext=0, debug=TRUE) {
 	#
 	len = length(S)
 	x = sapply(seq(len), function(id) roots(c(1, -S[id], E2[id], -E3[id])))
-	### fast prototype
-	# max.perm=0; sol = solve.EnAll(x, max.perm=max.perm, n=3)
+	x = as.vector(x);
+	### fast prototype: was based on permutations;
 	### robust
-	S  = matrix(S, ncol=len, nrow=3, byrow=T)
-	E3 = matrix(E3, ncol=len, nrow=3, byrow=T)
-	R1 = matrix(R1, ncol=len, nrow=3, byrow=T)
-	yz.s = S - x; yz = E3 / x;
+	S  = rep(S, each=3);
+	E2 = rep(E2, each=3);
+	R1 = rep(R1, each=3);
+	#
+	yz.s = S - x; yz = E2 - x*yz.s;
 	y = 2*(R1 - x^2) - b[1]*x - yz.s^2 + 2*yz;
 	y = y / b[1];
 	z = yz.s - y;
 	sol = cbind(x=as.vector(x), y=as.vector(y), z=as.vector(z))
 	return(sol)
 }
-poly.2H.S3P2 = function(R, b, b.ext=0, max.leading=FALSE) {
+poly.S3Ht.L2sP2 = function(R, b, b.ext=0, max.leading=FALSE) {
 	b1 = b[1]; b2 = b.ext[1];
 	b3 = if(length(b.ext) > 1) b.ext[2] else 0;
-	coeff = c((2+b3)^3, (2+b3)^2*(3*b1 + b2),
-		(2+b3)*(-6*R + 3*b1^2 - 2*b1*b2 - b2^2 - 3*b3*R - 6*b1^2*b3 + 2*b1*b2*b3 - 6*b1^2*b3^2),
-		(-12*b1*R + b1^3 - 4*b2*R - 11*b1^2*b2 - 5*b1*b2^2 - b2^3 - 6*b1*b3*R - 6*b1^3*b3 - 2*b2*b3*R +
-			- 4*b1^2*b2*b3 + 2*b1*b2^2*b3 - 6*b1^3*b3^2 - 6*b1^2*b2*b3^2 + 2*b1^3*b3^3),
+	# ext: + b2*S + b3*S^2;
+	coeff = c((b3 + 2)^3, (b3 + 2)^2*(3*b1 + b2),
+		(b3 + 2)*(- 3*(b3 + 2)*R - 3*b1^2*(2*b3^2 + 2*b3 - 1) + 2*b1*b2*(b3 - 1) - b2^2),
+		(- 2*(3*b1 + b2)*(b3 + 2)*R + b1^3*(2*b3^3 - 6*b3^2 - 6*b3 + 1) +
+			- (6*b3^2 + 4*b3 + 11)*b1^2*b2 + b1*b2^2*(2*b3 - 5) - b2^3),
 		(6*R^2 - 7*b1^2*R - 2*b1^4 + 6*b1*b2*R - 8*b1^3*b2 + b2^2*R + 2*b1^2*b2^2 + 3*b3*R^2 +
 			8*b1^2*b3*R - 5*b1^4*b3 - 2*b1^3*b2*b3 + 3*b1^2*b2^2*b3 + 8*b1^2*b3^2*R + 7*b1^4*b3^2 +
 			- 5*b1^3*b2*b3^2 + 9*b1^4*b3^3),
 		(3*b1*R^2 - 2*b1^3*R - b1^5 + b2*R^2 + 8*b1^2*b2*R - 7*b1^4*b2 + 2*b1*b2^2*R + 5*b1^3*b2^2 + 3*b1^2*b2^3 +
 			- 2*b1^3*b3*R + 5*b1^5*b3 + 2*b1^2*b2*b3*R - 6*b1^4*b2*b3 - 7*b1^3*b2^2*b3 - 2*b1^3*b3^2*R +
 			5*b1^5*b3^2 + 11*b1^4*b2*b3^2 - 6*b1^5*b3^3),
-		(-R^3 + 2*b1^2*R^2 + 3*b1^4*R + b1^6 - 2*b1*b2*R^2 + 4*b1^3*b2*R + b1^5*b2 - 3*b1^2*b2^2*R + 7*b1^4*b2^2 +
-			- b1^3*b2^3 - 2*b1^2*b3*R^2 + 5*b1^4*b3*R + 6*b1^6*b3 + 3*b1^3*b2*b3*R - 12*b1^5*b2*b3 +
-			2*b1^4*b2^2*b3 - 5*b1^4*b3^2*R + 17*b1^6*b3^2 - 3*b1^5*b2*b3^2 + b1^6*b3^3))
+		(-R^3 + 2*b1^2*R^2 - 2*b1*b2*R^2 - 2*b1^2*b3*R^2 +
+			+ 3*b1^4*R + 4*b1^3*b2*R - 3*b1^2*b2^2*R + 5*b1^4*b3*R + 3*b1^3*b2*b3*R +
+			+ b1^6*b3^3 + b1^6 - 12*b1^5*b2*b3 + b1^5*b2 + 7*b1^4*b2^2 - b1^3*b2^3 + 6*b1^6*b3 +
+			+ 2*b1^4*b2^2*b3 - 5*b1^4*b3^2*R + 17*b1^6*b3^2 - 3*b1^5*b2*b3^2)
+	);
 	if(max.leading) coeff else rev(coeff);
 }
 
@@ -157,7 +172,7 @@ poly.2H.S3P2 = function(R, b, b.ext=0, max.leading=FALSE) {
 
 R = -2
 b = 4
-sol = solve.2H.S3P2(R, b)
+sol = solve.S3Ht.L2sP2(R, b)
 x = sol[,1]; y = sol[,2]; z = sol[,3];
 
 ### Test
@@ -167,7 +182,7 @@ z^2 + x^2 + b[1]*x # - R
 
 ### Classic Polynomial
 round0.p(poly.calc(x))
-poly.2H.S3P2(R, b)
+poly.S3Ht.L2sP2(R, b) / 8;
 
 
 ### Extensions:
@@ -176,7 +191,7 @@ R = -2;
 b = 1;
 b.ext = c(1)
 #
-sol = solve.2H.S3P2(R, b, b.ext=b.ext)
+sol = solve.S3Ht.L2sP2(R, b, b.ext=b.ext)
 x = sol[,1]; y = sol[,2]; z = sol[,3];
 
 ### Test
@@ -186,7 +201,7 @@ z^2 + x^2 + b[1]*x + b.ext[1]*(x+y+z) # - R
 
 ### Classic Polynomial
 round0.p(poly.calc(x))
-poly.2H.S3P2(R, b, b.ext)
+poly.S3Ht.L2sP2(R, b, b.ext) / 8
 err = 1 + 2*x^2 + 2*x^3 + 3*x^4 + 2*x^5 + x^6
 round0(err)
 
@@ -196,17 +211,18 @@ R = 1;
 b = 1;
 b.ext = c(0, 1)
 #
-sol = solve.2H.S3P2(R, b, b.ext=b.ext)
+sol = solve.S3Ht.L2sP2(R, b, b.ext=b.ext)
 x = sol[,1]; y = sol[,2]; z = sol[,3];
 
 ### Test
-x^2 + y^2 + b[1]*y + b.ext[1]*(x+y+z) + b.ext[2]*(x+y+z)^2 # - R
-y^2 + z^2 + b[1]*z + b.ext[1]*(x+y+z) + b.ext[2]*(x+y+z)^2 # - R
-z^2 + x^2 + b[1]*x + b.ext[1]*(x+y+z) + b.ext[2]*(x+y+z)^2 # - R
+S = x+y+z; ext = b.ext[1]*S + b.ext[2]*S^2;
+x^2 + y^2 + b[1]*y + ext # - R
+y^2 + z^2 + b[1]*z + ext # - R
+z^2 + x^2 + b[1]*x + ext # - R
 
 ### Classic Polynomial
 round0.p(poly.calc(x))
-poly.2H.S3P2(R, b, b.ext)
+poly.S3Ht.L2sP2(R, b, b.ext) / 27
 err = 1 + x^2 - x^3 - 2*x^4 + x^5 + x^6
 round0(err)
 
@@ -216,17 +232,18 @@ R = 1;
 b = 2;
 b.ext = c(1, -1)
 #
-sol = solve.2H.S3P2(R, b, b.ext=b.ext)
+sol = solve.S3Ht.L2sP2(R, b, b.ext=b.ext)
 x = sol[,1]; y = sol[,2]; z = sol[,3];
 
 ### Test
-x^2 + y^2 + b[1]*y + b.ext[1]*(x+y+z) + b.ext[2]*(x+y+z)^2 # - R
-y^2 + z^2 + b[1]*z + b.ext[1]*(x+y+z) + b.ext[2]*(x+y+z)^2 # - R
-z^2 + x^2 + b[1]*x + b.ext[1]*(x+y+z) + b.ext[2]*(x+y+z)^2 # - R
+S = x+y+z; ext = b.ext[1]*S + b.ext[2]*S^2;
+x^2 + y^2 + b[1]*y + ext # - R
+y^2 + z^2 + b[1]*z + ext # - R
+z^2 + x^2 + b[1]*x + ext # - R
 
 ### Classic Polynomial
 round0.p(poly.calc(x))
-poly.2H.S3P2(R, b, b.ext)
+poly.S3Ht.L2sP2(R, b, b.ext)
 err = 991 + 447*x - 88*x^2 - 89*x^3 + 7*x^5 + x^6
 round0(err)
 
@@ -236,17 +253,18 @@ R = 6;
 b = -1;
 b.ext = c(3, -3)
 #
-sol = solve.2H.S3P2(R, b, b.ext=b.ext)
+sol = solve.S3Ht.L2sP2(R, b, b.ext=b.ext)
 x = sol[,1]; y = sol[,2]; z = sol[,3];
 
 ### Test
-x^2 + y^2 + b[1]*y + b.ext[1]*(x+y+z) + b.ext[2]*(x+y+z)^2 # - R
-y^2 + z^2 + b[1]*z + b.ext[1]*(x+y+z) + b.ext[2]*(x+y+z)^2 # - R
-z^2 + x^2 + b[1]*x + b.ext[1]*(x+y+z) + b.ext[2]*(x+y+z)^2 # - R
+S = x+y+z; ext = b.ext[1]*S + b.ext[2]*S^2;
+x^2 + y^2 + b[1]*y + ext # - R
+y^2 + z^2 + b[1]*z + ext # - R
+z^2 + x^2 + b[1]*x + ext # - R
 
 ### Classic Polynomial
 round0.p(poly.calc(x))
-poly.2H.S3P2(R, b, b.ext)
+poly.S3Ht.L2sP2(R, b, b.ext)
 err = 11 + 2*x + 5*x^2 - 2*x^3 + x^6
 round0(err)
 
@@ -432,11 +450,12 @@ a2*(S^3 - 3*E2*S + 3*E3) + (E2*S - 3*E3) + (a1 - 1)*(y^2*z + z^2*x + x^2*y) - R*
 
 
 
-### Eq:
+### Eq S:
 ((a1 + a2 + 1)*S^2 - 9*R)^2 * ((a1 + a2 + 1)*S^2 - R)^2 # * P0;
+
 ### P[0]
-(4 - 8*a1 - 8*a2 + 6*a1*a2 - 3*a1^2*a2 - 3*a1*a2^2 + a1*a2^3 + a1^3*a2 +
-	+ 9*a1^2 + 9*a2^2 - 5*a1^3 - 5*a2^3 + a1^4 + a2^4) 
+(4 - 8*(a1 + a2) + 6*a1*a2 - 3*a1*a2*(a1 + a2) + a1*a2*(a1^2 + a2^2) +
+	+ 9*(a1^2 + a2^2) - 5*(a1^3 + a2^3) + a1^4 + a2^4) 
 
 
 ### Q:
