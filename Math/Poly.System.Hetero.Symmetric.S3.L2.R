@@ -16,7 +16,6 @@
 # - Special Cases (Diff) are in file:
 #   Poly.System.Hetero.Symmetric.S3.Diff.R;
 # - Mixed Leading Terms are in files:
-#   Poly.System.Hetero.Symmetric.S2.Lnn.R;
 #   Poly.System.Hetero.Symmetric.S3.Leading.R;
 
 
@@ -133,8 +132,8 @@ solve.S3Ht.L2sP2 = function(R, b, b.ext=0, debug=TRUE) {
 	len = length(S)
 	x = sapply(seq(len), function(id) roots(c(1, -S[id], E2[id], -E3[id])))
 	x = as.vector(x);
-	### fast prototype: was based on permutations;
 	### robust
+	# [removed] fast prototype: was based on permutations;
 	S  = rep(S, each=3);
 	E2 = rep(E2, each=3);
 	R1 = rep(R1, each=3);
