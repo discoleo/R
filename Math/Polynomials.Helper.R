@@ -34,7 +34,7 @@
 library(polynom)
 library(pracma)
 
-### helper Functions
+### Helper Functions
 
 # required:
 source("Polynomials.Helper.Parser.R")
@@ -46,6 +46,14 @@ source("Polynomials.Helper.Factorize.R")
 
 ### Note:
 # D-Functions: required in factorize.p();
+
+
+### Big Numbers
+startBigNumbers = function() {
+	# is loaded automatically
+	# library(gmp)
+	source("Polynomials.Helper.BigNumbers.R");
+}
 
 
 ### Basic Algebra
