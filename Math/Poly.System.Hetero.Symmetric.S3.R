@@ -6,7 +6,7 @@
 ### Polynomial Systems: S3
 ### Heterogeneous Symmetric
 ###
-### draft v.0.4l
+### draft v.0.4l-spCase
 
 
 ### Hetero-Symmetric
@@ -1586,9 +1586,26 @@ test.S3Ht.P3(sol, b)
 
 
 ### Ex 2: Special Case
+# - Note: b^3 scales with R^2;
 # TODO
-R = -3
+R = -3; # R = +/- 3;
 b = 2
+#
+sol = solve.S3Ht.P3(R, b)
+
+test.S3Ht.P3(sol, b)
+
+### Ex 2b:
+R = 3i;
+b = -2
+#
+sol = solve.S3Ht.P3(R, b)
+
+test.S3Ht.P3(sol, b)
+
+### Ex 2c:
+R = 3;
+b = 2 * unity(3, all=FALSE);
 #
 sol = solve.S3Ht.P3(R, b)
 
