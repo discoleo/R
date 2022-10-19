@@ -201,6 +201,23 @@ test.S3Ht.Asym3ExtE3 = function(sol, b, s, b3, R=NULL, n) {
 }
 
 
+##########################
+##########################
+
+##########################
+### Difference Types   ###
+
+# quasi-[Negative Correlations]
+
+# x^2 - y^2 + b*x*y = R
+# y^2 - z^2 + b*y*z = R
+# z^2 - x^2 + b*x*z = R
+
+### Solution:
+# - moved to file:
+#   Poly.System.Hetero.Symmetric.S3.Diff.R;
+
+
 ################################
 ################################
 
@@ -1018,6 +1035,10 @@ z^2 + s*z + b[3]*x*y*z + b[2]*x + b[1]*y
 #########################
 #########################
 
+###############
+### Order 3 ###
+###############
+
 #########################
 ### "Asymmetric" Variant:
 ### Order 3
@@ -1521,8 +1542,8 @@ E2x0 = 6*S^6 + 13*b*S^4 - 30*R*S^3 + 4*b^2*S^2 - 9*b*R*S + 12*b^3;
 E2Div = 14*S^4 + 14*b*S^2 - 18*R*S + 3*b^2;
 E2 = E2x0 / E2Div;
 
-#######
-### Eq:
+
+### Eq S:
 # "P12" = S * P[3] * P[8]
 # S * (S^3 + 9*b*x - 27*R) * P[8]
 ### P[8]
@@ -1530,36 +1551,52 @@ S^8 - 3*b*S^6 + 18*b^2*S^4 - 27*R*b*S^3 + (27*R^2 + 4*b^3)*S^2 - 27*R*b^2*S + 9*
 
 
 ### Solver:
-solve.sysHt33 = function(R, b, debug=TRUE, do.S=FALSE) {
+solve.S3Ht.P3 = function(R, b, debug=TRUE, do.S=FALSE) {
 	# only S8 used to compute the roots:
 	coeff = c(1, 0, - 3*b[1], 0, 18*b[1]^2, - 27*R[1]*b[1], (27*R[1]^2 + 4*b[1]^3), - 27*R[1]*b[1]^2, 9*b[1]^4)
 	S = roots(coeff);
-	isEq = round0(S^3 + 9*b[1]*S - 27*R) == 0
-	S = S[ ! isEq]
+	# isEq = round0(S^3 + 9*b[1]*S - 27*R) == 0
+	# S = S[ ! isEq]
 	if(debug) print(S);
 	E2x0 = 6*S^6 + 13*b*S^4 - 30*R*S^3 + 4*b^2*S^2 - 9*b*R*S + 12*b^3;
 	E2Div = 14*S^4 + 14*b*S^2 - 18*R*S + 3*b^2;
 	E2 = E2x0 / E2Div;
 	E3 = (6*E2*S - 2*S^3 - 2*b[1]*S + 6*R[1]) / 6;
 	x = sapply(1:length(S), function(id) roots(c(1, -S[id], E2[id], -E3[id])))
-	len = length(S)
-	S = matrix(S, ncol=len, nrow=3, byrow=T)
+	x = as.vector(x);
+	S = rep(S, each=3);
 	y = (R - x^3) / b[1]
 	z = (R - y^3) / b[1]
-	sol = cbind(x=as.vector(x), y=as.vector(y), z=as.vector(z));
-	if(do.S) sol = cbind(sol, S=as.vector(S));
+	sol = cbind(x, y, z);
+	if(do.S) sol = cbind(sol, S=S);
 	return(sol);
 }
+test.S3Ht.P3 = function(sol, b, R=NULL) {
+	test.S3Ht.Simple(sol, b=b, R=R, n=3)
+}
 
-###########
-### Example
+### Examples:
+
 R = 1
 b = 2
 #
-sol = solve.sysHt33(R, b)
-x = sol[,1]; y = sol[,2]; z = sol[,3];
+sol = solve.S3Ht.P3(R, b)
+
+test.S3Ht.P3(sol, b)
+
+
+### Ex 2: Special Case
+# TODO
+R = -3
+b = 2
+#
+sol = solve.S3Ht.P3(R, b)
+
+test.S3Ht.P3(sol, b)
+
 
 ### Test
+x = sol[,1]; y = sol[,2]; z = sol[,3];
 x^3 + b[1]*y
 y^3 + b[1]*z
 z^3 + b[1]*x
@@ -1742,7 +1779,7 @@ round0(err)
 ###############
 ### Order 3 ###
 
-### x^3 + b3*x*y*z + b[j]*Sum[j]
+### x^3 + b3*x*y*z + b[j]*Sum[all^j]
 
 # x^3 + b3*x*y*z + b2*(x^2+y^2+z^2) + b1*(x+y+z) = R
 # y^3 + b3*x*y*z + b2*(x^2+y^2+z^2) + b1*(x+y+z) = R
@@ -2046,23 +2083,6 @@ x = sol[,1]; y = sol[,2]; z= sol[,3];
 x^3 + b[2]*y^2 + b[1]*z # - R
 y^3 + b[2]*z^2 + b[1]*x # - R
 z^3 + b[2]*x^2 + b[1]*y # - R
-
-
-##########################
-##########################
-
-##########################
-### Difference Types   ###
-
-# quasi-[Negative Correlations]
-
-# x^2 - y^2 + b*x*y = R
-# y^2 - z^2 + b*y*z = R
-# z^2 - x^2 + b*x*z = R
-
-### Solution:
-# - moved to file:
-#   Poly.System.Hetero.Symmetric.S3.Diff.R;
 
 
 ########################
