@@ -159,7 +159,9 @@ replace.pm.numeric = function(p1, p2, xn, pow=1, simplify=TRUE, tol=1E-10) {
 	xval = val^xpow.unq;
 	p[hasX, "coeff"] = p[hasX, "coeff"] * xval[id];
 	p = aggregate0.pm(p);
-	if(tol > 0) p$coeff = round0(p$coeff, tol=tol);
+	# Rounding:
+	isRoundable = ! inherits(p2, c("bigz", "bigq"));
+	if(isRoundable && tol > 0) p$coeff = round0(p$coeff, tol=tol);
 	p = reduce.pm(p);
 	if(simplify) p = reduce.var.pm(p);
 	return(p)
@@ -168,6 +170,7 @@ replace.pm = function(p1, p2, xn, pow=1, sequential=TRUE) {
 	# replace x^pow by p2;
 	if(is.numeric(p2) || is.complex(p2)) return(replace.pm.numeric(p1, p2=p2, xn=xn, pow=pow));
 	if(is.character(p2)) return(replace.pm.character(p1, p2=p2, xn=xn, pow=pow, sequential=sequential));
+	if(inherits(p2, c("bigz", "bigq"))) return(replace.pm.numeric(p1, p2=p2, xn=xn, pow=pow));
 	# Checks
 	stop.f = function() stop("Missing variable name!");
 	if(missing(xn)) {
