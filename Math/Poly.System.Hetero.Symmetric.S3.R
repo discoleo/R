@@ -1552,11 +1552,16 @@ S^8 - 3*b*S^6 + 18*b^2*S^4 - 27*R*b*S^3 + (27*R^2 + 4*b^3)*S^2 - 27*R*b^2*S + 9*
 
 ### Solver:
 solve.S3Ht.P3 = function(R, b, debug=TRUE, do.S=FALSE) {
-	# only S8 used to compute the roots:
-	coeff = c(1, 0, - 3*b[1], 0, 18*b[1]^2, - 27*R[1]*b[1], (27*R[1]^2 + 4*b[1]^3), - 27*R[1]*b[1]^2, 9*b[1]^4)
+	isSpecial = round0(8*R^2 - 9*b^3) == 0;
+	if(isSpecial) {
+		sol2  = solve.S3Ht.P3.Special(R, b, debug=debug);
+		coeff = coeff.S3Ht.P3.Special(R, b);
+	} else {
+		# only S8 used to compute the roots:
+		coeff = c(1, 0, - 3*b[1], 0, 18*b[1]^2, - 27*R[1]*b[1], (27*R[1]^2 + 4*b[1]^3),
+			- 27*R[1]*b[1]^2, 9*b[1]^4);
+	}
 	S = roots(coeff);
-	# isEq = round0(S^3 + 9*b[1]*S - 27*R) == 0
-	# S = S[ ! isEq]
 	if(debug) print(S);
 	E2x0 = 6*S^6 + 13*b*S^4 - 30*R*S^3 + 4*b^2*S^2 - 9*b*R*S + 12*b^3;
 	E2Div = 14*S^4 + 14*b*S^2 - 18*R*S + 3*b^2;
@@ -1568,9 +1573,38 @@ solve.S3Ht.P3 = function(R, b, debug=TRUE, do.S=FALSE) {
 	y = (R - x^3) / b[1]
 	z = (R - y^3) / b[1]
 	sol = cbind(x, y, z);
-	if(do.S) sol = cbind(sol, S=S);
+	if(isSpecial) {
+		sol = rbind(sol, sol2);
+	}
+	if(do.S) {
+		sol = cbind(sol, S=S);
+		S = c(S, rep(3/2 * R/b, 2));
+	}
 	return(sol);
 }
+### Special Cases
+solve.S3Ht.P3.Special = function(R, b, debug=TRUE) {
+	S = 2/3 * (R/b);
+	E2 = roots(c(1, S^2, 3*S^4));
+	E3 = E2*S + 2*S^3;
+	if(debug) print(E2);
+	len = length(E2);
+	S = rep(S, each=len);
+	x = sapply(seq(len), function(id) {
+		roots(c(1, -S[id], E2[id], -E3[id]));
+	})
+	x = as.vector(x);
+	y = (R - x^3)/b;
+	z = (R - y^3)/b;
+	sol = cbind(x,y,z);
+	return(sol);
+}
+coeff.S3Ht.P3.Special = function(R, b) {
+	k = 2/3 * (R/b);
+	coeff = c(1, 2*k, - 3*k^2, - 8*k^3, 59*k^4, - 36*k^5, 144*k^6);
+	return(coeff);
+}
+### Test
 test.S3Ht.P3 = function(sol, b, R=NULL) {
 	test.S3Ht.Simple(sol, b=b, R=R, n=3)
 }
@@ -1587,7 +1621,6 @@ test.S3Ht.P3(sol, b)
 
 ### Ex 2: Special Case
 # - Note: b^3 scales with R^2;
-# TODO
 R = -3; # R = +/- 3;
 b = 2
 #
@@ -1610,6 +1643,22 @@ b = 2 * unity(3, all=FALSE);
 sol = solve.S3Ht.P3(R, b)
 
 test.S3Ht.P3(sol, b)
+
+### Ex 2d: 8*R^2 == 9*b^3
+R = 5;
+b = 2 * (R^2/9)^(1/3);
+#
+sol = solve.S3Ht.P3(R, b)
+
+test.S3Ht.P3(sol, b)
+
+### Derivation:
+# 8*R^2 = 9*b^3 = 72*k^6;
+# k = 2/3 * (R/b);
+S^8 - 6*k^2*S^6 + 72*k^4*S^4 - 2*81*k^5*S^3 + (3*81*k^6 + 32*k^6)*S^2 - 4*81*k^7*S + 16*9*k^8 # = 0
+(S - k)^2 * (S^6 + 2*k*S^5 - 3*k^2*S^4 - 8*k^3*S^3 + 59*k^4*S^2 - 36*k^5*S + 144*k^6) # = 0
+E2*k - E3 + 2*k^3 # = 0;
+E2^2 + E2*k^2 + 3*k^4 # = 0;
 
 
 ### Test
