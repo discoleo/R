@@ -91,6 +91,8 @@ div.pm = function(p1, p2, by="x", NF.stop=TRUE, debug=TRUE) {
 				# TODO: may be > 1 Leading rows;
 				idn = match(names(mDx), names(pLead));
 				isNot = is.na(idn);
+				idn = idn[ ! isNot];
+				isNot = isNot | sapply(idn, function(nc) any(pLead[ , nc] == 0));
 				if(any(isNot)) {
 					# Add missing variables
 					m0 = mDx[, isNot, drop=FALSE];
