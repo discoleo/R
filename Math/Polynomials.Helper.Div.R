@@ -21,8 +21,8 @@
 ################
 
 div.pm = function(p1, p2, by="x", NF.stop=TRUE, debug=TRUE) {
-	if(is.character(p2)) p2 = toPoly.pm(p2, env=parent.frame());
-	if(is.character(p1)) p1 = toPoly.pm(p1, env=parent.frame());
+	if(is.character(p2) || inherits(p2, "formula")) p2 = toPoly.pm(p2, env=parent.frame());
+	if(is.character(p1) || inherits(p1, "formula")) p1 = toPoly.pm(p1, env=parent.frame());
 	# move Coeffs to last column:
 	idc1 = match("coeff", names(p1));
 	if(idc1 < ncol(p1)) {
@@ -51,7 +51,10 @@ div.pm = function(p1, p2, by="x", NF.stop=TRUE, debug=TRUE) {
 	if( ! allMatched) {
 		if(NF.stop) {
 			msg = "No matching variables for Leading Divisor:\n";
-			stop(paste0(msg, names(pDx)[is.na(idn)]));
+			nms = names(pDx)[-idcDx][is.na(idn)];
+			if(length(nms) > 1) nms = paste0(nms, collapse=", ");
+			nms[1] = paste0("  ", nms[1]); # nicer formatting
+			stop(msg, nms);
 		}
 	}
 	if(nrow(pDx) == 1) {
