@@ -6,7 +6,7 @@
 ### Polynomial Systems: S3
 ### Heterogeneous Symmetric
 ###
-### draft v.0.4l-spCase
+### draft v.0.4l-spCase-clean
 
 
 ### Hetero-Symmetric
@@ -1653,14 +1653,6 @@ sol = solve.S3Ht.P3(R, b)
 
 test.S3Ht.P3(sol, b)
 
-### Derivation:
-# 8*R^2 = 9*b^3 = 72*k^6;
-# k = 2/3 * (R/b);
-S^8 - 6*k^2*S^6 + 72*k^4*S^4 - 2*81*k^5*S^3 + (3*81*k^6 + 32*k^6)*S^2 - 4*81*k^7*S + 16*9*k^8 # = 0
-(S - k)^2 * (S^6 + 2*k*S^5 - 3*k^2*S^4 - 8*k^3*S^3 + 59*k^4*S^2 - 36*k^5*S + 144*k^6) # = 0
-E2*k - E3 + 2*k^3 # = 0;
-E2^2 + E2*k^2 + 3*k^4 # = 0;
-
 
 ### Test
 x = sol[,1]; y = sol[,2]; z = sol[,3];
@@ -1694,13 +1686,6 @@ x^6 - 2*k*x^5 - 2*k^3*x^3 + 6*k^4*x^2 - 4*k^5*x + 5*k^6 # = 0
 x^18 + 2*k*x^17 + 2*k^2*x^16 - 18*k^3*x^15 - 34*k^4*x^14 - 30*k^5*x^13 + 139*k^6*x^12 +
 	+ 244*k^7*x^11 + 188*k^8*x^10 - 532*k^9*x^9 - 852*k^10*x^8 - 532*k^11*x^7 + 959*k^12*x^6 +
 	+ 1354*k^13*x^5 + 482*k^14*x^4 - 602*k^15*x^3 - 458*k^16*x^2 + 658*k^17*x + 821*k^18 # = 0
-
-
-p1 = toPoly.pm("E2^2 + E2*k^2 + 3*k^4")
-p2 = toPoly.pm("E2*k - x*(E2 - x*(k - x)) + 2*k^3")
-pR = solve.pm(p2, p1, "E2")
-pR = pR$Rez;
-str(pR)
 
 
 ############################

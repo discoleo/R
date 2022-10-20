@@ -618,8 +618,32 @@ z = 0.465405799 + 1.498451837i;
 S = x+y+z; E2 = x*y+x*z+y*z; E3 = x*y*z;
 
 
+### Special Case:
+
+### Derivation:
+p1 = toPoly.pm("14*S^4 + 14*b*S^2 - 18*R*S + 3*b^2");
+pS = toPoly.pm("S^8 - 3*b*S^6 + 18*b^2*S^4 - 27*R*b*S^3 + (27*R^2 + 4*b^3)*S^2 - 27*R*b^2*S + 9*b^4");
+
+startBigNumbers();
+p1$coeff = as.bigz(p1$coeff);
+pS$coeff = as.bigz(pS$coeff);
+pR = solve.pm(p1, pS, "S")
+str(pR)
+pR = pR$Rez;
+pR = div.pm(pR, "9*b^3 - 8*R^2", "b")$Rez;
+print(pR)
+
+
+# 8*R^2 = 9*b^3 = 72*k^6;
+# k = 2/3 * (R/b);
+S^8 - 6*k^2*S^6 + 72*k^4*S^4 - 2*81*k^5*S^3 + (3*81*k^6 + 32*k^6)*S^2 - 4*81*k^7*S + 16*9*k^8 # = 0
+(S - k)^2 * (S^6 + 2*k*S^5 - 3*k^2*S^4 - 8*k^3*S^3 + 59*k^4*S^2 - 36*k^5*S + 144*k^6) # = 0
+E2*k - E3 + 2*k^3 # = 0;
+E2^2 + E2*k^2 + 3*k^4 # = 0;
+
+
 ### Classic Polynomial
-# - factorization: P3 * P24;
+# - factorization: P[3] * P[24];
 x = sol[,1]; y = sol[,2]; z = sol[,3]; S = x + y + z;
 b1 = b[1]; R = R[1];
 x^24 - b1*x^22 - 8*R*x^21 + b1^2*x^20 + 7*R*b1*x^19 + (28*R^2 - b1^3)*x^18 +
@@ -659,6 +683,21 @@ coeff = c(1,0,0, - 9*R, 0,0, 36*R^2, 0,0, 3*R*(b[1]^3 - 28*R^2), 0,0, - 18*R^2*(
 	9*R^4*(b[1]^6 - 2*R^2*b[1]^3 + R^4), 0, b[1]^13,
 	- (R*b[1]^12 - R^3*b[1]^9 + 3*R^5*b[1]^6 - 3*R^7*b[1]^3 + R^9))
 x = roots(coeff)
+
+
+### Special Case: Classic Poly
+# 8*R^2 = 9*b^3 = 72*k^6;
+p1 = toPoly.pm("E2^2 + E2*k^2 + 3*k^4")
+p2 = toPoly.pm("E2*k - x*(E2 - x*(k - x)) + 2*k^3")
+pR = solve.pm(p2, p1, "E2")
+pR = pR$Rez;
+str(pR)
+
+p24 = toPoly.pm(...); # P[24]
+p24 = replace.pm(p24, toPoly.pm("3*k^3"), "R")
+p24 = replace.pm(p24, toPoly.pm("2*k^2"), "b1")
+pR2 = div.pm(p24, pR, "x"); # pR from above;
+str(pR2)
 
 
 #####################
