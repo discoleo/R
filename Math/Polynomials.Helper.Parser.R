@@ -67,6 +67,8 @@ toPoly.pm = function(e, env=NULL, reduce=FALSE) {
 			return(pl);
 		}
 		e = parse(text=e);
+	} else if(inherits(e, "formula")) {
+		e = e[[2]];
 	} else if(is.numeric(e) || is.complex(e)) {
 		p = if(length(e) == 1) data.frame(coeff=e)
 			else stop("Not yet implemented!");
