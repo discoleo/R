@@ -6,7 +6,7 @@
 ### Polynomial Systems: S2
 ### Heterogeneous Symmetric
 ###
-### draft v.0.4c
+### draft v.0.4d
 
 
 ### Heterogeneous Symmetric Polynomial Systems
@@ -54,6 +54,7 @@
 # P5.3.) x^5 + b*y = R; (P10 => P20)
 # P5.4.) x^5 + b*y^4 = R; (P10 => P20)
 # P5.5.) x^5 + b2*y^2 + b1*y = R; (also P10)
+# P5.6.) x^5 + b4*x^4 + b3*y^3 + b2*y^2 + b1*y = R; (also P10)
 # Shifted Side-Chain:
 # P5.5.) x^5 + b3*x^3*y^2 + b2*x^2*y = R; (P10 => P20)
 # P5.6.) x^5 + b3*x^3*y^2 + b2*x^2*y + b1*x = R; (also P10)
@@ -1759,6 +1760,84 @@ b = c(1, -4);
 sol = solve.S2Ht.P5Y21(R, b)
 
 test.S2Ht.P5Y21(sol, b=b)
+
+
+########################
+########################
+
+### Extra-Extended Side-Chains
+
+# x^5 + b4*x^4 + b3*y^3 + b2*y^2 + b1*y = R
+# y^5 + b4*y^4 + b3*x^3 + b2*x^2 + b1*x = R
+
+### Solution
+
+### Diff =>
+S^4 + (x*y)^2 - 3*x*y*S^2- 2*b4*x*y*S + b3*x*y + b4*S^3 - b3*S^2 - b2*S - b1 # = 0
+
+### Diff(x*...) =>
+# - with efficient reduction & simple Reduction =>
+(- 5*S^3 - 6*b4*S^2 - 2*b4^2*S + b3*S - b3*b4 + b2)*x*y +
+	+ 2*S^5 + 3*b4*S^4 + b4^2*S^3 + b3*S^3 + b3*b4*S^2 - 3*b2*S^2 - b2*b4*S - 3*b1*S - b1*b4 + R # = 0
+
+
+### Solver:
+
+solve.S2Ht.P5Ch4 = function(R, b, debug=TRUE, all=TRUE) {
+	if(length(b) < 4) {
+		warning("Missing b coefficients! Set to 0.");
+		b = c(b, rep(0, 4 - length(b)));
+	}
+	b1 = b[1]; b2 = b[2]; b3 = b[3]; b4 = b[4];
+	coeff = c(1, 4*b4, - 2*b3 + 6*b4^2, - 4*b2 - 4*b3*b4 + 4*b4^3,
+		- 8*b1 - 8*b2*b4 - 6*b3^2 - 4*b3*b4^2 + b4^4,
+		11*R - 17*b1*b4 - 14*b2*b3 - 7*b2*b4^2 - 6*b3^2*b4 - b3*b4^3,
+		22*b4*R - 7*b1*b3 - 14*b1*b4^2 - 11*b2^2 - 12*b2*b3*b4 - 2*b2*b4^3 + 4*b3^3 - 2*b3^2*b4^2,
+		- (11*b3 - 16*b4^2)*R - 19*b1*b2 + 9*b2*b3^2 - (2*b1*b3 + 10*b2^2 - b3^3)*b4 +
+			- 4*b2*b3*b4^2 - 4*b1*b4^3,
+		3*b2*R - 15*b3*b4*R + 4*b4^3*R - 9*b1^2 - 15*b1*b2*b4 + 4*b1*b3^2 - b1*b3*b4^2 +
+			+ 6*b2^2*b3 - 3*b2^2*b4^2 + 2*b2*b3^2*b4,
+		(6*b1 + 4*b3^2 - 4*b3*b4^2)*R - (6*b1^2 - b1*b3^2 - b2^2*b3)*b4 + 5*b1*b2*b3 - 4*b1*b2*b4^2 + b2^3,
+		- R^2 + 2*b1*b4*R + b2*b3*R + b3^2*b4*R - b1^2*b4^2 + b1*b2^2 + b1*b2*b3*b4);
+	S = roots(coeff);
+	if(debug) print(S);
+	xy = (2*S^5 + 3*b4*S^4 - (3*b3 - b4^2)*S^3 - (3*b2 + b3*b4)*S^2 - (3*b1 + b2*b4)*S + R - b1*b4);
+	xy = xy / (5*S^3 + 6*b4*S^2 - (4*b3 - 2*b4^2)*S - b2 - b3*b4);
+	d = sqrt(S^2 - 4*xy + 0i);
+	x = (S + d)/2;
+	y = S - x;
+	sol = cbind(x, y);
+	if(all) sol = rbind(sol, sol[, c(2,1)]);
+	return(sol);
+}
+test.S2Ht.P5Ch4 = function(sol, b, R=NULL) {
+	x = sol[,1]; y = sol[,2];
+	if(length(b) < 4) {
+		warning("Missing b coefficients! Set to 0.");
+		b = c(b, rep(0, 4- length(b)));
+	}
+	err1 = x^5 + b[4]*x^4 + b[3]*y^3 + b[2]*y^2 + b[1]*y;
+	err2 = y^5 + b[4]*y^4 + b[3]*x^3 + b[2]*x^2 + b[1]*x;
+	err = rbind(err1, err2);
+	err = round0(err);
+	return(err);
+}
+
+### Examples:
+
+R = 2;
+b = c(-3, -1, 2, -1);
+sol = solve.S2Ht.P5Ch4(R, b)
+
+test.S2Ht.P5Ch4(sol, b=b)
+
+
+### Ex 2:
+R = -3;
+b = c(1, -4, 5, -2);
+sol = solve.S2Ht.P5Ch4(R, b)
+
+test.S2Ht.P5Ch4(sol, b=b)
 
 
 #######################
