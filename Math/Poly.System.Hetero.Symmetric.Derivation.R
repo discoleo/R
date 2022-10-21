@@ -1034,7 +1034,7 @@ S = sol[,1] + sol[,2]; S = S[c(1,3,9)]
 b1 = b[1]; b2 = b[2]; b3 = b[3]; b4 = b[4];
 S^10 + 4*b4*S^9 - 2*(b3 - 3*b4^2)*S^8 - 4*(b2 + b3*b4 - b4^3)*S^7 +
 	- (8*(b1 + b2*b4) + 6*b3^2 + 4*b3*b4^2 - b4^4)*S^6 +
-		+ (11*R - 14*b2*b3 - 17*b1*b4 - 6*b3^2*b4 - 7*b2*b4^2 - b3*b4^3)*S^5 +
+	+ (11*R - 14*b2*b3 - 17*b1*b4 - 6*b3^2*b4 - 7*b2*b4^2 - b3*b4^3)*S^5 +
 	+ (22*b4*R - 7*b1*b3 - 11*b2^2 + 4*b3^3 - 12*b2*b3*b4 - 14*b1*b4^2 - 2*b3^2*b4^2 - 2*b2*b4^3)*S^4 +
 	- ((11*b3 - 16*b4^2)*R + 19*b1*b2 - 9*b2*b3^2 + (10*b2^2 + 2*b1*b3 - b3^3)*b4 +
 		+ 4*b2*b3*b4^2 + 4*b1*b4^3)*S^3 +
@@ -1042,6 +1042,28 @@ S^10 + 4*b4*S^9 - 2*(b3 - 3*b4^2)*S^8 - 4*(b2 + b3*b4 - b4^3)*S^7 +
 		- 15*b1*b2*b4 + 2*b2*b3^2*b4 - 3*b2^2*b4^2 - b1*b3*b4^2)*S^2 +
 	+ ((6*b1 + 4*b3^2 - 4*b3*b4^2)*R + b2^3 + 5*b1*b2*b3 - (6*b1^2 - b2^2*b3 - b1*b3^2)*b4 - 4*b1*b2*b4^2)*S +
 	- R^2 + (b2*b3 + 2*b1*b4 + b3^2*b4)*R + b1*b2^2 - b1^2*b4^2 + b1*b2*b3*b4;
+
+
+### Classic Poly:
+# - avoids most of the inflation;
+p1 = toPoly.pm("x^5 + b4*x^4 + b3*(S-x)^3 + b2*(S-x)^2 + b1*(S-x) - R")
+p2 = toPoly.pm("S^4 + x^2*(S-x)^2 - 3*x*(S-x)*S^2- 2*b4*x*(S-x)*S + b3*x*(S-x) + b4*S^3 - b3*S^2 - b2*S - b1")
+pR = solve.pm(p1, p2, "S")
+pR = pR$Rez;
+pR = sort.pm.proper(pR)
+str(pR)
+table(pR$x)
+# TODO: factorize;
+# P[24] = P[4] * P[20]
+# P[4] = (b3^2*x^2 + b3*(b3*b4 - b2)*x + ...)^2;
+# - seems NO variable R;
+
+tmp = pR[pR$x == 0, ]
+tmp = drop.pm(tmp)
+# - possible to factorize tmp for the missing free term;
+
+px = replace.pm(pR, list(b1=b[1], b2=b[2], b3=b[3], b4=b[4], R=R))
+x = roots.pm(px)
 
 
 ##########################
