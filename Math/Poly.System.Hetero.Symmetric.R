@@ -6,7 +6,7 @@
 ### Polynomial Systems: S2
 ### Heterogeneous Symmetric
 ###
-### draft v.0.4b-ext2
+### draft v.0.4c
 
 
 ### Heterogeneous Symmetric Polynomial Systems
@@ -53,6 +53,8 @@
 # P5.2.) x^5 + b2*x*y + b1*(x+y) = 0; (TODO: based on (P16)^2)
 # P5.3.) x^5 + b*y = R; (P10 => P20)
 # P5.4.) x^5 + b*y^4 = R; (P10 => P20)
+# P5.5.) x^5 + b2*y^2 + b1*y = R; (also P10)
+# Shifted Side-Chain:
 # P5.5.) x^5 + b3*x^3*y^2 + b2*x^2*y = R; (P10 => P20)
 # P5.6.) x^5 + b3*x^3*y^2 + b2*x^2*y + b1*x = R; (also P10)
 # P5.7.) x^5 + b3*x^3*y^2 + b2*x^2*y + b1*y = R; (also P10)
@@ -1619,6 +1621,7 @@ round0(err)
 ####################
 
 ### x^5 + b*y^4
+# - efficient reduction;
 
 # x^5 + b*y^4 = R
 # y^5 + b*x^4 = R
@@ -1690,6 +1693,72 @@ x^20 - b*x^19 + b^2*x^18 - b^3*x^17 + b^4*x^16 - (b^5 + 4*R)*x^15 + b*(b^5 + 3*R
 	- b^7*x^13 - 2*b^2*R*x^13 + b^8*x^12 + b^3*R*x^12 - b^5*R*x^10 + 6*R^2*x^10 +
 	+ 2*b^6*R*x^9 - 3*b*R^2*x^9 - 3*b^7*R*x^8 + b^2*R^2*x^8 - b^5*R^2*x^5 - 4*R^3*x^5 +
 	+ 3*b^6*R^2*x^4 + b*R^3*x^4 - b^5*R^3 + R^4 # = 0
+
+
+########################
+########################
+
+### Extended Side-Chains
+### + b2*y^2 + b1*y
+
+# x^5 + b2*y^2 + b1*y = R
+# y^5 + b2*x^2 + b1*x = R
+
+### Solution
+
+### Diff =>
+S^4 - 3*x*y*S^2 + (x*y)^2 - b2*S - b1 # = 0
+
+### Diff(x*...) =>
+# - with efficient reduction;
+x*y*S^3 - 2*(x*y)^2*S + b2*x*y - b2*S^2 - b1*S + R # = 0
+# Reduction =>
+2*S^5 - 5*x*y*S^3 + b2*x*y - 3*b2*S^2 - 3*b1*S + R # = 0
+
+### Eq S:
+S^10 - 4*b2*S^7 - 8*b1*S^6 + 11*R*S^5 - 11*b2^2*S^4 - 19*b1*b2*S^3 +
+	- 3*(3*b1^2 - b2*R)*S^2 + (6*b1*R + b2^3)*S - R^2 + b1*b2^2 # = 0
+
+### Solver:
+
+solve.S2Ht.P5Y21 = function(R, b, debug=TRUE, all=TRUE) {
+	b1 = b[1]; b2 = b[2];
+	coeff = c(1, 0, 0, - 4*b2, - 8*b1, 11*R, - 11*b2^2, - 19*b1*b2,
+		- 9*b1^2 + 3*b2*R, 6*b1*R + b2^3, b1*b2^2 - R^2);
+	S = roots(coeff);
+	if(debug) print(S);
+	xy = (2*S^5 - 3*b2*S^2 - 3*b1*S + R) / (5*S^3 - b2);
+	d = sqrt(S^2 - 4*xy + 0i);
+	x = (S + d)/2;
+	y = S - x;
+	sol = cbind(x, y);
+	if(all) sol = rbind(sol, sol[, c(2,1)]);
+	return(sol);
+}
+test.S2Ht.P5Y21 = function(sol, b, R=NULL) {
+	x = sol[,1]; y = sol[,2];
+	err1 = x^5 + b[2]*y^2 + b[1]*y;
+	err2 = y^5 + b[2]*x^2 + b[1]*x;
+	err = rbind(err1, err2);
+	err = round0(err);
+	return(err);
+}
+
+### Examples:
+
+R = 2;
+b = c(-3, -1);
+sol = solve.S2Ht.P5Y21(R, b)
+
+test.S2Ht.P5Y21(sol, b=b)
+
+
+### Ex 2:
+R = -3;
+b = c(1, -4);
+sol = solve.S2Ht.P5Y21(R, b)
+
+test.S2Ht.P5Y21(sol, b=b)
 
 
 #######################

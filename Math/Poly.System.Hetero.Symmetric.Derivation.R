@@ -756,8 +756,8 @@ S^6 - b3*S^5 - 2*b3^2*S^4 - 2*b2*S^4 + b3^3*S^3 - 4*b1*S^3 - 4*b3*b2*S^3 + 4*R*S
 
 
 ### Derivation:
-p1 = toPoly.pm(parse(text="S^4 - 4*xy*S^2 + 2*xy^2 + b3*S^3 - 3*b3*xy*S + b2*S^2 - 2*b2*xy + b1*S - 2*R"))
-pxy0 = toPoly.pm(parse(text="S^3 - b3*S^2 - b2*S - b1"));
+p1 = toPoly.pm("S^4 - 4*xy*S^2 + 2*xy^2 + b3*S^3 - 3*b3*xy*S + b2*S^2 - 2*b2*xy + b1*S - 2*R")
+pxy0 = toPoly.pm("S^3 - b3*S^2 - b2*S - b1");
 pxyDiv = data.frame(S=1:0, b3=0:1, coeff=c(2,-1));
 pR = replace.fr.pm(p1, pxy0, pxyDiv, "xy")
 pR$coeff = - pR$coeff / gcd.vpm(pR)
@@ -955,6 +955,46 @@ x^25 - 5*R*x^20 + 10*R^2*x^15 - 10*R^3*x^10 + 5*R^4*x^5 - b[1]^6*x + (R*b[1]^5 -
 	(x^20 - b[1]*x^16 - 4*R*x^15 + b[1]^2*x^12 + 3*R*b[1]*x^11 + 6*R^2*x^10 - b[1]^3*x^8 +
 	- 2*R*b[1]^2*x^7 - 3*R^2*b[1]*x^6 - 4*R^3*x^5 + b[1]^4*x^4 + R*b[1]^3*x^3 +
 	+ R^2*b[1]^2*x^2 + R^3*b[1]*x + R^4 - b[1]^5)
+
+
+#########################
+
+### Order 5
+### Extended
+
+# x^5 + b2*y^2 + b1*y = R
+# y^5 + b2*x^2 + b1*x = R
+
+### Solution
+
+### Diff =>
+x^5 - y^5 - b2*(x - y)*S - b1*(x-y) # = 0
+(x-y)*(x^4 + y^4 + x*y*(x^2 + y^2) + (x*y)^2 - b2*S - b1) # = 0
+# Case: x != y =>
+S^4 - 3*x*y*S^2 + (x*y)^2 - b2*S - b1 # = 0
+
+### Diff(x*...) =>
+(x - y)*(x^5 + y^5 + x*y*(x^3 + y^3) + (x*y)^2*(x + y) - b2*x*y - R) # = 0
+# =>
+2*R - b2*(x^2 + y^2) - b1*S + x*y*(x^3 + y^3) + (x*y)^2*(x + y) - b2*x*y - R # = 0
+- b2*(S^2 - 2*x*y) - b1*S + x*y*S^3 - 3*(x*y)^2*S + (x*y)^2*S - b2*x*y + R # = 0
+x*y*S^3 - 2*(x*y)^2*S + b2*x*y - b2*S^2 - b1*S + R # = 0
+# Reduction =>
+2*S^5 - 5*x*y*S^3 + b2*x*y - 3*b2*S^2 - 3*b1*S + R # = 0
+
+### Eq S:
+S^10 - 4*b2*S^7 - 8*b1*S^6 + 11*R*S^5 - 11*b2^2*S^4 - 19*b1*b2*S^3 +
+	- 3*(3*b1^2 - b2*R)*S^2 + (6*b1*R + b2^3)*S - R^2 + b1*b2^2 # = 0
+
+### Derivation:
+p1 = toPoly.pm("S^4 - 3*xy*S^2 + (xy)^2 - b2*S - b1")
+p2 = toPoly.pm("2*S^5 - 5*xy*S^3 + b2*xy - 3*b2*S^2 - 3*b1*S + R")
+pR = solve.pm(p1, p2, "xy")
+pR$Rez = sort.pm.proper(pR$Rez)
+pR$Rez$coeff = - pR$Rez$coeff;
+str(p)
+
+print.pm(pR$Rez, "S")
 
 
 ##########################
