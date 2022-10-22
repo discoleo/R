@@ -113,8 +113,20 @@ pR = gcd.pm.exact(p1, p2, "x");
 if(nrow(pR) != 2) stop("Wrong GCD");
 
 
+### Test 4:
+cat("\nTest 4: Multi-Var GCD\n")
+p1 = toPoly.pm("(x^2 + y^2)*(x^3 + y^3 + 2)")
+p2 = toPoly.pm("(x + y)*(x^2 + y^2)")
+
+pR = gcd.pm.exact(p1, p2, "x");
+
+if(nRow(pR) != 2) stop("Wrong GCD");
+
+
 #############
 # Challenges:
+
+cat("\nChallanges:\n")
 
 ### Test 4:
 cat("\nTest 4: Multi-Var GCD\n")
@@ -131,6 +143,17 @@ pR = gcd.pm.exact(p1, p2, "x");
 cat("\nTest 5: Multi-Var GCD\n")
 p1 = toPoly.pm("a*x^3 + a*y^3")
 p2 = toPoly.pm("2*b*(x + y)*(b*x - 3*y)")
+
+pR = gcd.pm.exact(p1, p2, "x");
+
+# if(nRow(pR) != 2) stop("Wrong GCD");
+
+
+###########
+### Test 6:
+cat("\nTest 6: Multi-Var GCD\n")
+p1 = toPoly.pm("(x^2 + y^2)*(x^3 + y^3 + 3*x*y + 2)")
+p2 = toPoly.pm("(x + y + 1)*(x^2 + y^2)")
 
 pR = gcd.pm.exact(p1, p2, "x");
 

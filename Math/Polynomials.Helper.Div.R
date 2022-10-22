@@ -250,7 +250,8 @@ gcd.exact.p = function(p1, p2, xn="x", asBigNum=TRUE, doGCD=TRUE, debug=FALSE) {
 ### Multivariate Polynomials
 # - initial attempt;
 # - but far more challenging;
-gcd.pm.exact = function(p1, p2, xn="x", asBigNum=NULL, doGCD=TRUE, debug=FALSE, MAX.ITER=10) {
+gcd.pm.exact = function(p1, p2, xn="x", asBigNum=NULL, doGCD=TRUE, multi.stop=FALSE,
+			debug=FALSE, MAX.ITER=10) {
 	if(is.null(asBigNum)) asBigNum = inherits(p1$coeff, c("bigz", "bigq"));
 	if( ! doGCD) fact = if(asBigNum) as.bigz(1) else 1;
 	lead.f = function(p, n, id=1) p[ p[, xn[[id]]] == n, , drop=FALSE];
@@ -275,21 +276,43 @@ gcd.pm.exact = function(p1, p2, xn="x", asBigNum=NULL, doGCD=TRUE, debug=FALSE, 
 		}
 		# Leading Monomial:
 		mL2 = lead.f(p2, n2);
-		hasMulti = 1;
+		idMulti = 1;
+		doElimination = FALSE;
 		if(nrow(mL2) > 1) {
 			# stop("Multi-Lead: Not yet supported!");
-			if(length(xn) == 1) {
+			if(length(xn) == 1 && multi.stop) {
 				warning("Multi-Lead: Not yet supported!");
 				return(list(p1=p1, p2=p2));
 			}
-			n2  = max(mL2[, xn[[2]]]);
-			mL2 = lead.f(mL2, n2, id=2);
-			hasMulti = hasMulti + 1;
+			if(length(xn) > 1) {
+				idMulti = idMulti + 1;
+				n2  = max(mL2[, xn[[idMulti]]]);
+				mL2 = lead.f(mL2, n2, id=idMulti);
+				if(nrow(mL2) > 1) {
+					warning("Even bigger Multi-Lead: Not yet supported!");
+					return(list(p1=p1, p2=p2));
+				}
+			} else {
+				doElimination = TRUE;
+			}
 		}
+		if(doElimination) {
+			mL1 = lead.f(p1, n1);
+			div = gcd.vpm(mL1, xgcd = mL1$coeff[1]);
+			if(div > 1) div = gcd.vpm(mL2, xgcd = div);
+			if(div > 1) {
+				mL1$coeff = mL1$coeff / div;
+				mL2$coeff = mL2$coeff / div;
+				if(asBigNum) { mL1$coeff = as.bigz(mL1$coeff); mL2$coeff = as.bigz(mL2$coeff); }
+			}
+			dp = diff.pm(mult.pm(p1, mL2), mult.pm(p2, mL1));
+		} else {
+			# piece-wise elimination
 		mL1 = lead.f(p1, n1);
-		if(hasMulti > 1) {
-			n1  = max(mL1[, xn[[2]]]);
-			mL1 = lead.f(mL1, n1, id=2);
+		if(idMulti > 1) {
+			n1 = max(mL1[, xn[[idMulti]]]);
+			if(n1 == 0) warning("Variable NOT present in Lead!");
+			mL1 = lead.f(mL1, n1, id=idMulti);
 		}
 		# TODO: optimize selection of monomial;
 		mL1 = mL1[1, , drop=FALSE];
@@ -304,8 +327,8 @@ gcd.pm.exact = function(p1, p2, xn="x", asBigNum=NULL, doGCD=TRUE, debug=FALSE, 
 		p1m = p1; p1m$coeff = p1m$coeff * c2;
 		p2m = p2; p2m$coeff = p2m$coeff * c1;
 		# Powers:
-		m12 = align.pm(mL1, mL2, align.names=TRUE, doReduce=FALSE);
-		mL1 = m12[[1]]; mL2 = m12[[2]];
+		mLL = align.pm(mL1, mL2, align.names=TRUE, doReduce=FALSE);
+		mL1 = mLL[[1]]; mL2 = mLL[[2]];
 		nms = names(mL1);
 		idc = match("coeff", nms);
 		for(nc in seq(ncol(mL1))) {
@@ -320,6 +343,8 @@ gcd.pm.exact = function(p1, p2, xn="x", asBigNum=NULL, doGCD=TRUE, debug=FALSE, 
 		}
 		#
 		dp = diff.pm(p1m, p2m);
+		}
+		### Simplifications:
 		if(doGCD && nrow(dp) > 0) {
 			nms = names(dp);
 			idc = match("coeff", nms);
