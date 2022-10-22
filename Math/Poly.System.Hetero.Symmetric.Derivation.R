@@ -8,7 +8,7 @@
 ###
 ### Derivation of Formulas
 ###
-### draft v.0.4b-fix
+### draft v.0.4c
 
 
 ### Polynomial Systems:
@@ -1050,13 +1050,17 @@ p1 = toPoly.pm("x^5 + b4*x^4 + b3*(S-x)^3 + b2*(S-x)^2 + b1*(S-x) - R")
 p2 = toPoly.pm("S^4 + x^2*(S-x)^2 - 3*x*(S-x)*S^2- 2*b4*x*(S-x)*S + b3*x*(S-x) + b4*S^3 - b3*S^2 - b2*S - b1")
 pR = solve.pm(p1, p2, "S")
 pR = pR$Rez;
-pR = sort.pm.proper(pR)
+pR = div.pm(pR, "(b3^2*x^2 + b3*(b3*b4 - b2)*x - (b3^3 + b1*b3 + b2*b3*b4 - b2^2))^2", "x");
+pR = pR$Rez;
+pR = sort.pm.proper(pR);
+# 364 monomials;
 str(pR)
 table(pR$x)
-# TODO: factorize;
+
+# Factorization:
 # P[24] = P[4] * P[20]
-# P[4] = (b3^2*x^2 + b3*(b3*b4 - b2)*x + ...)^2;
-# - seems NO variable R;
+# P[4] = (b3^2*x^2 + b3*(b3*b4 - b2)*x - (b3^3 + b1*b3 + b2*b3*b4 - b2^2))^2;
+# - P[4]: lacks the variable R;
 
 tmp = pR[pR$x == 0, ]
 tmp = drop.pm(tmp)
