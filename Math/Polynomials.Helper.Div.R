@@ -247,3 +247,94 @@ gcd.exact.p = function(p1, p2, xn="x", asBigNum=TRUE, doGCD=TRUE, debug=FALSE) {
 	}
 }
 
+### Multivariate Polynomials
+# - initial attempt;
+gcd.pm.exact = function(p1, p2, xn="x", asBigNum=NULL, doGCD=TRUE, debug=FALSE) {
+	if(is.null(asBigNum)) asBigNum = inherits(p1$coeff, c("bigz", "bigq"));
+	if( ! doGCD) fact = if(asBigNum) as.bigz(1) else 1;
+	lead.f = function(p, n) p[ p[, xn[[1]]] == n, , drop=FALSE];
+	hasManyRows = function(p, n) sum(p[, xn[[1]]] == n) > 1;
+	#
+	while(TRUE) {
+		n1 = max(p1[,xn[[1]]]); n2 = max(p2[,xn[[1]]]);
+		if( ! doGCD && n1 < n2) return(list(p=p1, f=fact));
+		if(doGCD) {
+			if((n1 < n2) || (n1 == n2 && hasManyRows(p2, n2))) {
+				tmp = p1; p1 = p2; p2 = tmp;
+				tmp = n1; n1 = n2; n2 = tmp;
+			}
+		}
+		# Leading Monomial:
+		mL2 = lead.f(p2, n2);
+		if(nrow(mL2) > 1) {
+			# stop("Multi-Lead: Not yet supported!");
+			warning("Multi-Lead: Not yet supported!");
+			return(p2);
+		}
+		mL1 = lead.f(p1, n1);
+		# TODO: optimize selection of monomial;
+		mL1 = mL1[1, , drop=FALSE];
+		# Coefficients:
+		c1 = mL1$coeff;
+		c2 = mL2$coeff;
+		div = gcd(c1, c2);
+		if(div != 1) {
+			c1 = c1 / div; c2 = c2 / div;
+			if(asBigNum) {c1 = as.bigz(c1); c2 = as.bigz(c2);}
+		}
+		p1m = p1; p1m$coeff = p1m$coeff * c2;
+		p2m = p2; p2m$coeff = p2m$coeff * c1;
+		# Powers:
+		m12 = align.pm(mL1, mL2, align.names=TRUE, doReduce=FALSE);
+		mL1 = m12[[1]]; mL2 = m12[[2]];
+		nms = names(mL1);
+		idc = match("coeff", nms);
+		for(nc in seq(ncol(mL1))) {
+			if(nc == idc) next;
+			dn = mL1[[nc]] - mL2[[nc]];
+			nm = nms[nc];
+			if(is.na(match(nm, names(p1m)))) p1m[, nm] = 0;
+			if(is.na(match(nm, names(p2m)))) p2m[, nm] = 0;
+			#
+			if(dn > 0) { p2m[,nm] = p2m[,nm] + dn; }
+			else if(dn < 0) p1m[,nm] = p1m[,nm] - dn;
+		}
+		#
+		dp = diff.pm(p1m, p2m);
+		if(doGCD && nrow(dp) > 0) {
+			nms = names(dp);
+			idc = match("coeff", nms);
+			nms = nms[ - idc];
+			for(nc in nms) {
+				minPow = min(dp[ , nc]);
+				# print(nc); print(dp);
+				if(minPow > 0) dp[ , nc] = dp[ , nc] - minPow;
+			}
+			dp = drop.pm(dp);
+		}
+		# if(debug) print(toPoly.pm(dp)); # e.g. overflows massively;
+		if(nrow(dp) == 0) {
+			print("Factor found!");
+			if(doGCD) return(p2) else return(list(p=0, f=0));
+		}
+		# simplify the coefficients: robust for BigNumbers;
+		xgcd = gcd.vpm(dp, xgcd=dp$coeff[1]);
+		if( ! is.na(xgcd)) {
+			if(xgcd != 1) {
+				dp$coeff = dp$coeff / xgcd;
+				if(asBigNum) dp$coeff = as.bigz(dp$coeff);
+			}
+			if( ! doGCD) fact = fact * c2 / xgcd;
+		} else if( ! doGCD) fact = fact * c2;
+		if(debug) print(toPoly.pm(dp)); # e.g. overflows massively;
+		# Remaining x:
+		n0 = max(dp[, xn, drop=TRUE]);
+		print(paste0("Pow = ", n0, ", Len = ", nrow(dp)));
+		if(n0 == 0) {
+			print("Not divisible!");
+			if(doGCD) return(dp);
+			return(list(p=dp, f=fact));
+		}
+		p1 = dp;
+	}
+}

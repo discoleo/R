@@ -61,7 +61,7 @@ if(nrow(tmp) != 0) stop("Division went wrong!");
 
 
 ###
-cat("Example 2: Divisible w Div Factor\n")
+cat("\nExample 2: Divisible w Div Factor\n")
 p1   = toPoly.pm("x^3 + y^3")
 pDiv = toPoly.pm("a*x + a*y")
 pR = div.pm(p1, pDiv, by="x", NF.stop=FALSE)
@@ -71,6 +71,37 @@ if(nrow(pR$Rem) != 0) stop("Division went wrong! Should be Divisible!");
 tmp = diff.pm(p1*pR$pDiv, pDiv * as.pm(pR$Rez))
 if(nrow(tmp) != 0) stop("Division went wrong!")
 
+
+cat("\nFinished: Section 2!\n")
+
+#####################
+
+cat("\nSection 3: GCD\n\n")
+
+
+#####################
+
+cat("\nSection 4: Multivariable GCD\n\n")
+
+###
+cat("Example 1: Simple Multi-Var GCD\n")
+p1 = toPoly.pm("a*x^3 + a*y^3")
+p2 = toPoly.pm("2*b*x + 2*b*y")
+
+pR = gcd.pm.exact(p1, p2, "x");
+if(nrow(pR) != 2) stop("Wrong GCD");
+
+
+### Test 2:
+cat("\nExample 2: Multi-Var GCD\n")
+p1 = toPoly.pm("a*x^3 + a*y^3")
+p2 = toPoly.pm("2*b*(x + y)*(b*x - 3*y)")
+
+pR = gcd.pm.exact(p1, p2, "x");
+warning("Not yet fully implemented!")
+# if(nRow(pR) != 2) stop("Wrong GCD");
+
+cat("\nFinished: Section 4!\n")
 
 #################
 
