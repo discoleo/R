@@ -492,17 +492,20 @@ mult.sc.pm = function(p, s, div=1, coeff.name="coeff") {
 ### Simplify p: Powers & Coefficients
 # - useful when solving: p = 0;
 simplify.spm = function(p1, do.gcd=FALSE) {
-	if(nrow(p1) == 0) return(p1);
-	nms = names(p1);
+	return(simplify.pm.pow(p1, do.gcd=do.gcd))
+}
+simplify.pm.pow = function(p, do.gcd=FALSE) {
+	if(nrow(p) == 0) return(p);
+	nms = names(p);
 	nms = nms[ ! nms %in% "coeff"];
 	for(nm in nms) {
-		v.pow = min(p1[,nm]);
+		v.pow = min(p[,nm]);
 		if(v.pow > 0) {
-			p1[,nm] = p1[,nm] - v.pow;
+			p[,nm] = p[,nm] - v.pow;
 		}
 	}
-	if(do.gcd && (xgcd <- gcd.vpm(p1)) > 1) p1$coeff = p1$coeff / xgcd;
-	return(p1);
+	if(do.gcd && (xgcd <- gcd.vpm(p)) > 1) p$coeff = p$coeff / xgcd;
+	return(p);
 }
 simplify.pm = function(p1, p2) {
 	# simplify fractions: x^n1 / x^n2;
