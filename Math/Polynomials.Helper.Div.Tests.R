@@ -160,6 +160,17 @@ pR = gcd.pm.exact(p1, p2, "x");
 # if(nRow(pR) != 2) stop("Wrong GCD");
 
 
+###########
+### Test 7:
+cat("\nTest 7: Multi-Var GCD\n")
+p1 = toPoly.pm("(x^2 + a*y^2)^2 + b*x*(x^2 + a*y^2)")
+p2 = toPoly.pm("(x^2 + a*y^2)*(x^2 - c*y)")
+
+pR = gcd.pm.exact(p1, p2, "x");
+
+# if(nRow(pR) != 2) stop("Wrong GCD");
+
+
 cat("\nFinished: Section 4!\n")
 
 

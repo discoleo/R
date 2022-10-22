@@ -280,11 +280,17 @@ gcd.pm.exact = function(p1, p2, xn="x", asBigNum=NULL, doGCD=TRUE, multi.stop=FA
 		doElimination = FALSE;
 		if(nrow(mL2) > 1) {
 			# stop("Multi-Lead: Not yet supported!");
-			if(length(xn) == 1 && multi.stop) {
+			if(length(xn) == 1 && multi.stop[[1]]) {
 				warning("Multi-Lead: Not yet supported!");
 				return(list(p1=p1, p2=p2));
 			}
 			if(length(xn) > 1) {
+				# Different approach:
+				# - sequential processing: benefit still not known;
+				if(length(multi.stop) > 1) multi.stop = multi.stop[-1];
+				return(gcd.pm.exact(p1, p2, xn=xn[-1], asBigNum=asBigNum, doGCD=doGCD,
+					multi.stop=multi.stop, debug=debug, MAX.ITER=MAX.ITER));
+				# [old approach]
 				idMulti = idMulti + 1;
 				n2  = max(mL2[, xn[[idMulti]]]);
 				mL2 = lead.f(mL2, n2, id=idMulti);
@@ -373,7 +379,14 @@ gcd.pm.exact = function(p1, p2, xn="x", asBigNum=NULL, doGCD=TRUE, multi.stop=FA
 		} else if( ! doGCD) fact = fact * c2;
 		if(debug) print(toPoly.pm(dp)); # e.g. overflows massively;
 		# Remaining x:
-		n0 = max(dp[, xn, drop=TRUE]);
+		idVar = match(xn[[1]], names(dp));
+		if(is.na(idVar)) {
+			# can still have factor: e.g. by sequential processing and
+			# a variable NOT present in the factor;
+			warning("Something went wrong!");
+			return(list(p1 = dp, p2 = p2));
+		}
+		n0 = max(dp[, xn[[1]], drop=TRUE]);
 		print(paste0("Pow = ", n0, ", Len = ", nrow(dp)));
 		if(n0 == 0) {
 			print("Not divisible!");
