@@ -83,25 +83,62 @@ cat("\nSection 3: GCD\n\n")
 
 cat("\nSection 4: Multivariable GCD\n\n")
 
-###
-cat("Example 1: Simple Multi-Var GCD\n")
+### Test 1:
+cat("Test 1: Simple Multi-Var GCD\n")
 p1 = toPoly.pm("a*x^3 + a*y^3")
 p2 = toPoly.pm("2*b*x + 2*b*y")
 
 pR = gcd.pm.exact(p1, p2, "x");
+
 if(nrow(pR) != 2) stop("Wrong GCD");
 
 
 ### Test 2:
-cat("\nExample 2: Multi-Var GCD\n")
+cat("\nTest 2: Multi-Var GCD\n")
+p1 = toPoly.pm("x^3 + y^3")
+p2 = toPoly.pm("x^2 - y^2")
+
+pR = gcd.pm.exact(p1, p2, "x");
+
+if(nrow(pR) != 2) stop("Wrong GCD");
+
+
+### Test 3:
+cat("\nTest 3: Multi-Var GCD\n")
+p1 = toPoly.pm("x^5 + y^5")
+p2 = toPoly.pm("x^3 + y^3")
+
+pR = gcd.pm.exact(p1, p2, "x");
+
+if(nrow(pR) != 2) stop("Wrong GCD");
+
+
+#############
+# Challenges:
+
+### Test 4:
+cat("\nTest 4: Multi-Var GCD\n")
+p1 = toPoly.pm("x^5 + y^5 + 2*(x + y)")
+p2 = toPoly.pm("x^3 + y^3")
+
+pR = gcd.pm.exact(p1, p2, "x");
+
+# if(nRow(pR) != 2) stop("Wrong GCD");
+
+
+###########
+### Test 5:
+cat("\nTest 5: Multi-Var GCD\n")
 p1 = toPoly.pm("a*x^3 + a*y^3")
 p2 = toPoly.pm("2*b*(x + y)*(b*x - 3*y)")
 
 pR = gcd.pm.exact(p1, p2, "x");
-warning("Not yet fully implemented!")
+
 # if(nRow(pR) != 2) stop("Wrong GCD");
 
+
 cat("\nFinished: Section 4!\n")
+
 
 #################
 

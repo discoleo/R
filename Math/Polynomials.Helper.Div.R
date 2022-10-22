@@ -249,29 +249,48 @@ gcd.exact.p = function(p1, p2, xn="x", asBigNum=TRUE, doGCD=TRUE, debug=FALSE) {
 
 ### Multivariate Polynomials
 # - initial attempt;
-gcd.pm.exact = function(p1, p2, xn="x", asBigNum=NULL, doGCD=TRUE, debug=FALSE) {
+# - but far more challenging;
+gcd.pm.exact = function(p1, p2, xn="x", asBigNum=NULL, doGCD=TRUE, debug=FALSE, MAX.ITER=10) {
 	if(is.null(asBigNum)) asBigNum = inherits(p1$coeff, c("bigz", "bigq"));
 	if( ! doGCD) fact = if(asBigNum) as.bigz(1) else 1;
-	lead.f = function(p, n) p[ p[, xn[[1]]] == n, , drop=FALSE];
-	hasManyRows = function(p, n) sum(p[, xn[[1]]] == n) > 1;
+	lead.f = function(p, n, id=1) p[ p[, xn[[id]]] == n, , drop=FALSE];
+	hasManyRows.f = function(p, n, id=1) sum(p[, xn[[id]]] == n) > 1;
 	#
+	iter = 0;
 	while(TRUE) {
-		n1 = max(p1[,xn[[1]]]); n2 = max(p2[,xn[[1]]]);
+		if(MAX.ITER > 0) {
+			iter = iter + 1;
+			if(iter > MAX.ITER) {
+				return(list(p1=p1, p2=p2));
+			}
+		}
+		n1 = max(p1[, xn[[1]]]); n2 = max(p2[, xn[[1]]]);
 		if( ! doGCD && n1 < n2) return(list(p=p1, f=fact));
 		if(doGCD) {
-			if((n1 < n2) || (n1 == n2 && hasManyRows(p2, n2))) {
+			hasOneRow1 = ! hasManyRows.f(p1, n1);
+			if((n1 < n2) || (n1 == n2 && hasOneRow1)) {
 				tmp = p1; p1 = p2; p2 = tmp;
 				tmp = n1; n1 = n2; n2 = tmp;
 			}
 		}
 		# Leading Monomial:
 		mL2 = lead.f(p2, n2);
+		hasMulti = 1;
 		if(nrow(mL2) > 1) {
 			# stop("Multi-Lead: Not yet supported!");
-			warning("Multi-Lead: Not yet supported!");
-			return(p2);
+			if(length(xn) == 1) {
+				warning("Multi-Lead: Not yet supported!");
+				return(list(p1=p1, p2=p2));
+			}
+			n2  = max(mL2[, xn[[2]]]);
+			mL2 = lead.f(mL2, n2, id=2);
+			hasMulti = hasMulti + 1;
 		}
 		mL1 = lead.f(p1, n1);
+		if(hasMulti > 1) {
+			n1  = max(mL1[, xn[[2]]]);
+			mL1 = lead.f(mL1, n1, id=2);
+		}
 		# TODO: optimize selection of monomial;
 		mL1 = mL1[1, , drop=FALSE];
 		# Coefficients:
@@ -305,6 +324,7 @@ gcd.pm.exact = function(p1, p2, xn="x", asBigNum=NULL, doGCD=TRUE, debug=FALSE) 
 			nms = names(dp);
 			idc = match("coeff", nms);
 			nms = nms[ - idc];
+			# Reduce the Powers:
 			for(nc in nms) {
 				minPow = min(dp[ , nc]);
 				# print(nc); print(dp);
@@ -336,5 +356,6 @@ gcd.pm.exact = function(p1, p2, xn="x", asBigNum=NULL, doGCD=TRUE, debug=FALSE) 
 			return(list(p=dp, f=fact));
 		}
 		p1 = dp;
+		print(dp); # more DEBUG;
 	}
 }
