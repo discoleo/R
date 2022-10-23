@@ -168,6 +168,23 @@ p2 = toPoly.pm("(x^2 + a*y^2)*(x^2 - c*y)")
 
 pR = gcd.pm.exact(p1, p2, "x");
 
+# finds Original: (x^2 + a*y^2)*(x^2 - c*y)
+pR = gcd.pm.exact(p1, p2, c("x","a"));
+
+# if(nRow(pR) != 2) stop("Wrong GCD");
+
+
+###########
+### Test 8:
+cat("\nTest 8: Multi-Var GCD\n")
+p1 = toPoly.pm("(x^3 + a*y^2)^2 + b*x*(x^3 + a*y^2)")
+p2 = toPoly.pm("(x^3 + a*y^2)*(x^2 - c*y)")
+
+# Maximum Power in Factor:
+pR = gcd.pm.exact(p1, p2, "x");
+pR = gcd.pm.exact(p1, p2, "y");
+pR = gcd.pm.exact(p1, p2, "a");
+
 # if(nRow(pR) != 2) stop("Wrong GCD");
 
 
