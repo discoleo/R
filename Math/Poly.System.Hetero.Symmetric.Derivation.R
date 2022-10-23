@@ -1057,15 +1057,20 @@ pR = sort.pm.proper(pR);
 str(pR)
 table(pR$x)
 
-# Factorization:
+### Factorization:
 # P[24] = P[4] * P[20]
 # P[4] = (b3^2*x^2 + b3*(b3*b4 - b2)*x - (b3^3 + b1*b3 + b2*b3*b4 - b2^2))^2;
 # - P[4]: lacks the variable R;
 
+# pR = non-factored pR;
 tmp = pR[pR$x == 0, ]
 tmp = drop.pm(tmp)
+# R is not present in the Factor;
 # - possible to factorize tmp for the missing free term;
+# - the result is the square, but it can be used directly as well:
+tmp = dp.pm.all(tmp, "R")
 
+# - another method:
 px = replace.pm(pR, list(b1=b[1], b2=b[2], b3=b[3], b4=b[4], R=R))
 x = roots.pm(px)
 
