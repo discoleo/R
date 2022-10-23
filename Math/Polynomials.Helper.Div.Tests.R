@@ -128,6 +128,17 @@ if(nRow(pR) != 2) stop("Wrong GCD");
 
 cat("\nChallanges:\n")
 
+### Test 1:
+# - nice factorization of P1(x) * P2(x, y);
+cat("\nTest 3: P1(x) * P2(x, y)\n")
+p1 = toPoly.pm("(x^3 + 3*x + 1)*(x^2 + 2*x*y + 5*y^2)")
+p2 = dp.pm(p1, "y")
+
+pR = gcd.pm.exact(p1, p2, "x");
+
+# if(nRow(pR) != 2) stop("Wrong GCD");
+
+
 ### Test 4:
 cat("\nTest 4: Multi-Var GCD\n")
 p1 = toPoly.pm("x^5 + y^5 + 2*(x + y)")
@@ -179,6 +190,20 @@ pR = gcd.pm.exact(p1, p2, c("x","a"));
 cat("\nTest 8: Multi-Var GCD\n")
 p1 = toPoly.pm("(x^3 + a*y^2)^2 + b*x*(x^3 + a*y^2)")
 p2 = toPoly.pm("(x^3 + a*y^2)*(x^2 - c*y)")
+
+# Maximum Power in Factor:
+pR = gcd.pm.exact(p1, p2, "x");
+pR = gcd.pm.exact(p1, p2, "y");
+pR = gcd.pm.exact(p1, p2, "a");
+
+# if(nRow(pR) != 2) stop("Wrong GCD");
+
+
+###########
+### Test 9:
+cat("\nTest 9: Multi-Var GCD\n")
+p1 = toPoly.pm("(x^3*y + a*y^2 + 1)^2 + b*c^2*x*(x^3*y + a*y^2 + 1)")
+p2 = toPoly.pm("(x^3*y + a*y^2 + 1)*(x^2 - c*y)")
 
 # Maximum Power in Factor:
 pR = gcd.pm.exact(p1, p2, "x");
