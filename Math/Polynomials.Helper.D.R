@@ -80,8 +80,46 @@ dnp.pm = function(p, n=2, by="x", xn=by) {
 	}
 	return(p);
 }
+# Dn( p(x), n = max(p$x) );
+dp.pm.all = function(p, by, reduce=TRUE, warn=TRUE) {
+	if(missing(by)) stop("Missing variable!");
+	if(length(by) > 1) {
+		warning("More than 1 variable! Processing sequentially.");
+		for(xn in by) {
+			p = dp.pm.all(p, by=xn, reduce=reduce);
+		}
+		return(p);
+	}
+	# Fast technique:
+	id = match(by, names(p));
+	if(is.na(id)) {
+		if(warn) warning("variable ", by, " not present!");
+		return(data.frame(coeff=0));
+	}
+	xmax = max(p[, id]);
+	if(xmax == 0) {
+		if(warn) warning("variable ", by, " not present!");
+		return(data.frame(coeff=0));
+	}
+	p = p[p[, id] == xmax, -id, drop=FALSE];
+	p = drop.pm(p);
+	# Reduce using the gcd:
+	if(reduce) {
+		div = gcd.vpm(p, xgcd=p$coeff[1]);
+		if(div > 1) p$coeff = p$coeff / div;
+	} else {
+		if(inherits(p$coeff, c("bigz", "bigq"))) {
+			f = factorialZ(xmax);
+		} else f = factorial(xmax);
+		p$coeff = p$coeff * f;
+	}
+	return(p);
+}
+
 ### Specific Derivatives
+
 # D( p$Poly * exp(p$Exp) )
+# p = list(Poly, Exp);
 dp.exp.pm = function(p, xn="x") {
 	pr = mult.pm(dp.pm(p$Exp, xn), p$Poly);
 	pr = sum.pm(pr, dp.pm(p$Poly, xn));
