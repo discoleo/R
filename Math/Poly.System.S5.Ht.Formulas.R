@@ -32,6 +32,7 @@
 
 
 source("Polynomials.Helper.R")
+source("Polynomials.Helper.EP.R")
 
 
 ### Debug
@@ -84,15 +85,23 @@ A1 * B1 - E11a*E11b*(E3^2 - 2*E111a*E111b) - E111a*E111b*(E2^2 - 2*E11a*E11b) # 
 A1 * B1 - (E11a*E11b*E3^2 + E111a*E111b*E2^2) + 4*E11a*E11b*E111a*E111b # = 0
 
 # TODO:
-# - should be symmetric;
-# E4321 = 5!; E4311 = 5*4;
+# - unfortunately is not yet symmetric;
+#   E4321 = 60 (not 5! = 120);
+#   E43111 = 5*4; OK
+#   E42211 = 20 w coeff=3; 5 * choose(4,2) = 30;
+#   E42211 = 10 w coeff=2; 5 * choose(4,2) = 30;
 E11a*E11b*E111a*E111b
+
 
 pE2a = toPoly.pm("x1*x2 + x2*x3 + x3*x4 + x4*x5 + x5*x1")
 pE2b = toPoly.pm("x1*x3 + x2*x4 + x3*x5 + x4*x1 + x5*x2")
 pE3a = toPoly.pm("x1*x2*x3 + x2*x3*x4 + x3*x4*x5 + x4*x5*x1 + x5*x1*x2")
 pE3b = toPoly.pm("x1*x2*x4 + x2*x3*x5 + x3*x4*x1 + x4*x5*x2 + x5*x1*x3")
 pR = prod.pm(pE2a, pE2b, pE3a, pE3b)
+
+pc = countMonoms(pR)
+pc = sort.pm(pc, "V1")
+pc
 
 # TODO
 A2 = E11a*E11b*E3^2 + E111a*E111b*E2^2;
