@@ -43,6 +43,19 @@ help.EP = function(...) {
 
 ### Processing Symmetric Polynomials
 
+### Unique Monomials with Permutations:
+countMonoms = function(p) {
+	idc = match("coeff", names(p));
+	coeff = p[, idc];
+	p = p[, -idc];
+	p = apply(p, 1, function(x) sort(x, decreasing=TRUE));
+	p = cbind(t(p), coeff, LEN=1);
+	
+	r = aggregate(LEN ~ ., p, length);
+	return(r)
+}
+
+
 ### Extract Base-Terms of Symmetric Polynomials:
 unique.rpm =  function(p, xn="r", v=5) {
 	vn = if(length(xn) > 1) xn else paste0(xn, seq(v));
