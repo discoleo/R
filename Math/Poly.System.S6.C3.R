@@ -108,10 +108,11 @@ solver.S6C3.P1Ht2 = function(R, debug=TRUE, all=FALSE) {
 	x1 = sapply(seq(len), function(id) {
 		roots(c(1, -sx, E2x[id], -px));
 	})
-	# robust: x2 & x3 are linear;
+	# robust: x2 & x3 are exactly determined;
 	# E2x = rep(E2x, each=3); E2y = rep(E2y, each=3);
 	x23 = sx - x1; px23 = E2x - x1*x23;
 	# TODO
+	# Note: all 12 solutions valid when A1 == B1;
 	tmp = x1[c(1,3,2), ];
 	x1  = cbind(x1, tmp);
 	print(x1)
@@ -122,6 +123,9 @@ solver.S6C3.P1Ht2 = function(R, debug=TRUE, all=FALSE) {
 	y2  = (x3*y23 - A1 + x1*y1) / (x3 - x2);
 	y3  = y23 - y2;
 	sol = cbind(x1, x2, x3, y1, y2, y3);
+	if(all) {
+		# TODO
+	}
 	return(sol);
 }
 coeff.S6C3.P1Ht2 = function(R) {
@@ -157,6 +161,23 @@ R = c(2,3,-1,4,5,6)
 sol = solver.S6C3.P1Ht2(R)
 
 
+### Ex 2: Special Case
+R = c(2,3,-2,-2,5,6)
+sol = solver.S6C3.P1Ht2(R)
+
+
+### Test:
+x1 = sol[,1]; x2 = sol[,2]; x3 = sol[,3];
+y1 = sol[,4]; y2 = sol[,5]; y3 = sol[,6];
+
+x1 + x2 + x3 # = R1
+y1 + y2 + y3 # = R2
+x1*y1 + x2*y2 + x3*y3 # = R3
+x1*y2 + x2*y3 + x3*y1 # = R4
+x1*x2*x3 # = R5
+y1*y2*y3 # = R6
+
+
 ### Debug
 
 R = c(2,3,-1,4,5,6)
@@ -182,18 +203,6 @@ A2a = x1^2*x2 + x2^2*x3 + x3^2*x1;
 A2b = x1*x2^2 + x2*x3^2 + x3*x1^2;
 B2a = y1^2*y2 + y2^2*y3 + y3^2*y1;
 B2b = y1*y2^2 + y2*y3^2 + y3*y1^2;
-
-
-### Test:
-x1 = sol[,1]; x2 = sol[,2]; x3 = sol[,3];
-y1 = sol[,4]; y2 = sol[,5]; y3 = sol[,6];
-
-x1 + x2 + x3 # = R1
-y1 + y2 + y3 # = R2
-x1*y1 + x2*y2 + x3*y3 # = R3
-x1*y2 + x2*y3 + x3*y1 # = R4
-x1*x2*x3 # = R5
-y1*y2*y3 # = R6
 
 
 ### Derivation:
