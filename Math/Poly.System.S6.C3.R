@@ -108,11 +108,21 @@ solver.S6C3.P1Ht2 = function(R, debug=TRUE, all=FALSE) {
 	x1 = sapply(seq(len), function(id) {
 		roots(c(1, -sx, E2x[id], -px));
 	})
-	print(x1)
-	# robust:
-	E2x = rep(E2x, each=3); E2y = rep(E2y, each=3);
+	# robust: x2 & x3 are linear;
+	# E2x = rep(E2x, each=3); E2y = rep(E2y, each=3);
 	x23 = sx - x1; px23 = E2x - x1*x23;
 	# TODO
+	tmp = x1[c(1,3,2), ];
+	x1  = cbind(x1, tmp);
+	print(x1)
+	E2x = rep(E2x, 2); E2y = rep(E2y, 2);
+	x2  = as.vector(x1[2,]); x3 = as.vector(x1[3,]); x1 = as.vector(x1[1,]);
+	y1  = (x1*A1 + x3*B1 + x2*C1 - E2x*sy) / (sx^2 - 3*E2x);
+	y23 = sy - y1;
+	y2  = (x3*y23 - A1 + x1*y1) / (x3 - x2);
+	y3  = y23 - y2;
+	sol = cbind(x1, x2, x3, y1, y2, y3);
+	return(sol);
 }
 coeff.S6C3.P1Ht2 = function(R) {
 	sx = R[1]; sy = R[2]; px = R[5]; py = R[6];
@@ -175,6 +185,8 @@ B2b = y1*y2^2 + y2*y3^2 + y3*y1^2;
 
 
 ### Test:
+x1 = sol[,1]; x2 = sol[,2]; x3 = sol[,3];
+y1 = sol[,4]; y2 = sol[,5]; y3 = sol[,6];
 
 x1 + x2 + x3 # = R1
 y1 + y2 + y3 # = R2
@@ -198,3 +210,13 @@ pR2 = solve.pm(p1, pR, "E2y")
 str(pR2)
 toCoeff(pR2$Rez, "E2x")
 
+
+###
+x1*A1 + x3*B1 + x2*C1 - y1*(sx^2 - 2*E2x) - E2x*(sy - y1) # = 0
+x1*A1 + x3*B1 + x2*C1 - y1*(sx^2 - 3*E2x) - E2x*sy # = 0
+
+y1*(sx - 2*x1) + x2*y3 + x3*y2 + x1*sy - B1 - C1 # = 0
+
+### x3*A1 - x1*B1 =>
+(x2*x3 - x1^2)*y2 + (x3^2 - x1*x2)*y3 - A1*x3 + B1*x1 # = 0
+(x1^2 - x2*x3)*y1 - (x2^2 - x1*x3)*y3 - A1*x1 + B1*x2 # = 0
