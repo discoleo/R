@@ -7,7 +7,7 @@
 ### S6: C3-Hetero-Symmetric
 ### Basic Types
 ###
-### draft v.0.1a
+### draft v.0.1a-robust
 
 
 ####################
@@ -109,15 +109,24 @@ solver.S6C3.P1Ht2 = function(R, debug=TRUE, all=FALSE) {
 		roots(c(1, -sx, E2x[id], -px));
 	})
 	# robust: x2 & x3 are exactly determined;
-	# E2x = rep(E2x, each=3); E2y = rep(E2y, each=3);
-	x23 = sx - x1; px23 = E2x - x1*x23;
-	# TODO
 	# Note: all 12 solutions valid when A1 == B1;
-	tmp = x1[c(1,3,2), ];
-	x1  = cbind(x1, tmp);
-	print(x1)
-	E2x = rep(E2x, 2); E2y = rep(E2y, 2);
-	x2  = as.vector(x1[2,]); x3 = as.vector(x1[3,]); x1 = as.vector(x1[1,]);
+	if(round0(A1 - B1) == 0) {
+		tmp = x1[c(1,3,2), ];
+		x1  = cbind(x1, tmp);
+		E2x = rep(E2x, 2); E2y = rep(E2y, 2);
+		x2  = as.vector(x1[2,]); x3 = as.vector(x1[3,]); x1 = as.vector(x1[1,]);
+	}  else {
+		x1 = as.vector(x1);
+		E2x = rep(E2x, each=3); E2y = rep(E2y, each=3);
+		x23 = sx - x1; # px23 = E2x - x1*x23;
+		len = length(x1);
+		x2 = sapply(seq(len), function(id) {
+			lst = list(x1=x1[id], x23=x23[id], E2x=E2x[id], E2y=E2y[id],
+				A1=A1, B1=B1, C1=C1, sx=sx, sy=sy, px=px, py=py);
+			x2 = x2.S6C3.P1Ht2(lst);
+		})
+		x3 = x23 - x2;
+	}
 	y1  = (x1*A1 + x3*B1 + x2*C1 - E2x*sy) / (sx^2 - 3*E2x);
 	y23 = sy - y1;
 	y2  = (x3*y23 - A1 + x1*y1) / (x3 - x2);
@@ -127,6 +136,42 @@ solver.S6C3.P1Ht2 = function(R, debug=TRUE, all=FALSE) {
 		# TODO
 	}
 	return(sol);
+}
+x2.S6C3.P1Ht2 = function(vars) {
+	x1 = vars$x1; x23 = vars$x23; E2x = vars$E2x; E2y = vars$E2y;
+	A1 = vars$A1; B1 = vars$B1; C1 = vars$C1;
+	sx = vars$sx; sy = vars$sy; px = vars$px; py = vars$py;
+	cc = c((C1 - B1)^3, (C1 - B1)^2*(3*(A1*x1 + B1*x23) - sy*sx^2),
+		3*sy^2*E2x^2*(B1 - C1) + 2*sx^2*sy^2*E2x*(C1 - B1) +
+			+ 2*(B1 - C1)*sx^2*sy*(A1*x1 + B1*x23) +
+			+ 3*(C1 - B1)*(A1*x1 + B1*x23)^2 +
+			+ (C1 - B1)*(3*E2x - sx^2)^2*E2y,
+		2*sy^3*E2x^3 - sx^2*sy^3*E2x^2 + sx^2*sy^2*E2x*(A1*x1 + B1*x23) +
+			- sy^2*(3*E2x - sx^2)*(A1*x1 + B1*x23)*E2x +
+			+ (A1*x1 + B1*x23)^3 - sx^2*sy*(A1*x1 + B1*x23)^2 +
+			+ (3*E2x - sx^2)^3*py +
+			+ (3*E2x - sx^2)^2*(A1*x1 + B1*x23 - sy*E2x)*E2y
+	);
+	cc = rev(cc);
+	if(round0(B1 - C1) == 0) {
+		warning("Special Case!");
+		return(NA); # TODO
+	} else {
+		cc = cc / cc[4];
+		cc = cc[-4];
+		cc = cc - c(-px, E2x, -sx);
+	}
+	if(round0(cc[3]) == 0) return( - cc[1] / cc[2]);
+	cc = cc / cc[3];
+	dd = c(px, - E2x + cc[1], sx + cc[2]);
+	if(round0(dd[3]) == 0) return( - dd[1] / dd[2]);
+	dd = dd / dd[3];
+	cc = cc - dd;
+	if(round0(cc[2]) == 0) {
+		warning("Something went wrong in the robust computation of x2!");
+		return(NA);
+	}
+	return( - cc[1] / cc[2]);
 }
 coeff.S6C3.P1Ht2 = function(R) {
 	sx = R[1]; sy = R[2]; px = R[5]; py = R[6];
@@ -154,16 +199,50 @@ coeff.S6C3.P1Ht2 = function(R) {
 	);
 	return(coeff);
 }
+### Test:
+test.S6C3.P1Ht2 = function(sol, R=NULL) {
+	x1 = sol[,1]; x2 = sol[,2]; x3 = sol[,3];
+	y1 = sol[,4]; y2 = sol[,5]; y3 = sol[,6];
+	
+	err1 = x1 + x2 + x3;
+	err2 = y1 + y2 + y3;
+	err3 = x1*y1 + x2*y2 + x3*y3;
+	err4 = x1*y2 + x2*y3 + x3*y1;
+	err5 = x1*x2*x3;
+	err6 = y1*y2*y3;
+	err = rbind(err1, err2, err3, err4, err5, err6);
+	if( ! is.null(R)) err = err - R;
+	err = round0(err);
+	return(err);
+}
 
 ### Examples
 
 R = c(2,3,-1,4,5,6)
 sol = solver.S6C3.P1Ht2(R)
 
+test.S6C3.P1Ht2(sol)
+
 
 ### Ex 2: Special Case
 R = c(2,3,-2,-2,5,6)
 sol = solver.S6C3.P1Ht2(R)
+
+test.S6C3.P1Ht2(sol)
+
+
+### Ex 3: Special Case
+R = c(-1,3,-1,-1,5,6)
+sol = solver.S6C3.P1Ht2(R)
+
+test.S6C3.P1Ht2(sol)
+
+
+### Ex 4:
+R = c(-1,5,-1,2,3,-1)
+sol = solver.S6C3.P1Ht2(R)
+
+test.S6C3.P1Ht2(sol)
 
 
 ### Test:
@@ -229,3 +308,16 @@ y1*(sx - 2*x1) + x2*y3 + x3*y2 + x1*sy - B1 - C1 # = 0
 ### x3*A1 - x1*B1 =>
 (x2*x3 - x1^2)*y2 + (x3^2 - x1*x2)*y3 - A1*x3 + B1*x1 # = 0
 (x1^2 - x2*x3)*y1 - (x2^2 - x1*x3)*y3 - A1*x1 + B1*x2 # = 0
+
+###
+pYA = toPoly.pm("x1*y1 + x2*y2 + (x23 - x2)*(sy - y1 - y2) - A1")
+pYB = toPoly.pm("x1*y2 + x2*(sy - y1 - y2) + (x23 - x2)*y1 - B1")
+pY1 = toPoly.pm("x1*A1 + (x23 - x2)*B1 + x2*C1 - y1*(sx^2 - 3*E2x) - E2x*sy");
+pY2 = toPoly.pm("y1^3 - sy*y1^2 + E2y*y1 - py");
+pY = solve.pm(pYA, pYB, "y2")$Rez;
+pR = solve.pm(pY1, pY2, "y1")
+pR = pR$Rez;
+pX = toPoly.pm("x2^3 - sx*x2^2 + E2x*x2 - px")
+pR2 = solve.pm(pR, pX, "x2", stop.at=1)
+table(pR2[[2]]$x2)
+
