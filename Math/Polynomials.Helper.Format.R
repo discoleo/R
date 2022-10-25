@@ -22,7 +22,14 @@ order.df = function(x, decreasing=TRUE) {
 	return(id);
 }
 ### TODO: update use of sort.pm() everywhere!
-sort.pm = function(p, xn=NULL, xn2=NULL, sort.coeff) {
+# TODO: do.max;
+# do.sum = 0: NO sum; MAX has priority, then individual powers;
+#    x^4 > x^3*y^4 > y^4 > x^3*y*z > x^3*z^3;
+# do.sum = 1: sum has priority, then MAX and individual powers;
+#    x^4 > y^4 > x^3*y > x^2*y^2 > x^3;
+# do.sum = 2: MAX has priority, then sum and individual powers;
+#    x^4 > x^3*y*z > x^3*z^2 > x^3*y; (only 1st MAX counts)
+sort.pm = function(p, xn=NULL, xn2=NULL, do.sum=1, sort.coeff) {
 	### Special Cols:
 	# TODO: different approach;
 	# - over xn: c(1,2,3,4) = Sum, Max, Min, MinNZ; (IF length(xn) > 1)
@@ -32,9 +39,13 @@ sort.pm = function(p, xn=NULL, xn2=NULL, sort.coeff) {
 	xnM = xn; # Order: (Sum, Max) => x^2, y^2, x*y;
 	if( ! is.null(xn2)) xn = c(xn, xn2);
 	if(missing(sort.coeff)) {
-		sort.coeff = if(isM) c(1,2, seq(10, length.out=length(xn)), 5,6)
-			else if(is.null(xn)) c(1,2)
-			else c(seq(6, length.out=length(xn)), 1,2);
+		idSort =
+			if(do.sum == 1) { c(1,2); }
+			else if(do.sum == 0) c(2) else c(2,1);
+		# Sort priorities:
+		sort.coeff = if(isM) c(idSort, seq(10, length.out=length(xn)), 5,6)
+			else if(is.null(xn)) idSort
+			else c(seq(6, length.out=length(xn)), idSort);
 	}
 	# Check if Polynomial:
 	idCoeff = which(names(p) == "coeff");
@@ -56,6 +67,7 @@ sort.pm = function(p, xn=NULL, xn2=NULL, sort.coeff) {
 	} else {
 		id0 = 0;
 		s.df = to.df(1, pP, sum);
+		s.df = as.data.frame(s.df);
 	}
 	s.df = cbind(s.df, to.df(2 + id0, pP, max));
 	s.df = cbind(s.df, to.df(3 + id0, pP, min));
