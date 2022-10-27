@@ -397,3 +397,48 @@ gcd.pm.exact = function(p1, p2, xn="x", asBigNum=NULL, doGCD=TRUE, multi.stop=FA
 		print(dp); # more DEBUG;
 	}
 }
+
+############################
+
+### Fraction Rationalization
+
+rational.pm = function(p, p0, by=NULL, debug=TRUE) {
+	if(is.null(by)) {
+		if(ncol(p0) > 2) stop("Variable NOT specified!");
+		idc = match("coeff", names(p0));
+		by  = names(p0)[ - idc];
+	}
+	# TODO: check name in p;
+	powMax = max(p0[, by]);
+	if(max(p[, by]) >= powMax) {
+		p = div.pm(p, p0, by=by, debug=debug)$Rem;
+		# NO roots anymore in Denominator:
+		if(max(p[, by]) == 0) return(list(Rez=as.pm(1), Div=p));
+	}
+	pR = data.frame(coeff=numeric(0));
+	pD = p;
+	fs = 1;
+	while(TRUE) {
+		pQ = div.pm(p0, pD, by=by, debug=debug);
+		if(nrow(pR) == 0) { pR = pQ$Rez; }
+		else {
+			pR = mult.pm(pR, pQ$Rez);
+			# Reduce polynomial:
+			if(max(pR[, by]) > powMax)
+				pR = div.pm(pR, p0, by=by, debug=debug)$Rem;
+		}
+		if(nrow(pQ$Rem) == 0) {
+			warning("Division by 0!");
+			return(list(Rez=NULL, Div=pD));
+		}
+		#
+		fs = - fs;
+		pD = pQ$Rem;
+		if(debug) print(as.character(pD$coeff));
+		isRez = is.na(match(by, names(pD))) || (max(pD[, by]) == 0);
+		if(isRez) {
+			if(fs < 0) pR$coeff = - pR$coeff;
+			return(list(Rez = pR, Div = pD));
+		}
+	}
+}

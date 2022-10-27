@@ -258,6 +258,37 @@ pR = gcd.pm.exact(p1, p2, "a");
 cat("\nFinished: Section 4!\n")
 
 
+#############################
+
+### Rationalize Fractions ###
+
+cat("\nSection: Fraction Rationalization\n\n")
+
+### Ex 1:
+# - let r be a root of p0;
+# - rationalize 1 / p(r);
+p0 = toPoly.pm("x^5 - x - 1")
+p = toPoly.pm("x^4 + 2*x^3 + x + 1")
+r = roots.pm(p0)
+
+# Requires bigq:
+# ugly numeric instability BUG in div.pm;
+startBigNumbers();
+p0$coeff = as.bigq(p0$coeff);
+pR = rational.pm(p, p0)
+
+print(pR)
+
+### Test:
+rez = array(0, c(2, 0));
+for(ri in r) {
+	rez0 = 1 / eval.pm(p, ri);
+	rez1 = eval.pm(as.numeric.pm(pR$Rez), ri) / as.numeric(pR$Div$coeff);
+	rez  = cbind(rez, c(rez0, rez1));
+}
+print(rez)
+
+
 #################
 
 cat("\nDiv Tests: Finished!\n")
