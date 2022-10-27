@@ -5,7 +5,7 @@
 ###
 ### Polynomial Systems: S2
 ### Decompositions of Symmetric Systems
-### v.0.3j
+### v.0.3k
 
 
 ####################
@@ -37,6 +37,11 @@
 ### B.3. Div Ent
 # x^n + y^n = R1
 # x*y / (x+y) = R2
+
+
+### C. Other
+# x*y*(x^n + y^n) = R1
+# x*y*(x^m + y^m) = R2
 
 
 ###############
@@ -727,6 +732,13 @@ solve.p2p3ent = function(b, R, type="mult", n=3) {
 	#
 	return(list(sol=sol, test=rbind(t1, t2)))
 }
+polyGen.S2Ent.P3 = function(tR, tb, v=-6:6, type="mult", n=3) {
+	sapply(v, function(b) {
+		R  = if(inherits(tR, "formula")) eval(tR[[2]], list(b=b)) else tR;
+		bb = if(inherits(tb, "formula")) eval(tb[[2]], list(b=b)) else tb;
+		print(round0.p(poly.calc(solve.p2p3ent(bb, R, type=type, n=n)$sol[,1])));
+	})
+}
 
 ### Example 1
 b = c(-1)
@@ -870,7 +882,7 @@ round0(err)
 ### only 1 Coeff: Trivial
 b = c(2)
 R = c(-2, 1)
-p = sapply(-6:6, function(b) print(round0.p(poly.calc(solve.p2p3ent(b, R)$sol[,1]))))
+p = polyGen.S2Ent.P3(R, ~ b)
 # (x^3 + b*x + 1)^2
 1 - 10*x + 25*x^2 + 2*x^3 - 10*x^4 + x^6 
 1 - 8*x + 16*x^2 + 2*x^3 - 8*x^4 + x^6 
@@ -893,7 +905,8 @@ round0(err)
 
 ### (x^3 + b*x + 1)^2 - b*x^4 - b*x
 R = c(-2, 1)
-p = sapply(-6:6, function(b) print(round0.p(poly.calc(solve.p2p3ent(c(2*b, -b), R)$sol[,1]))))
+p = polyGen.S2Ent.P3(R, ~ c(2*b, -b))
+#
 1 - 5*x + 25*x^2 + 2*x^3 - 5*x^4 + x^6 
 1 - 4*x + 16*x^2 + 2*x^3 - 4*x^4 + x^6 
 1 - 3*x + 9*x^2 + 2*x^3 - 3*x^4 + x^6 
@@ -917,7 +930,7 @@ round0(err)
 
 ###
 R = c(-4,1)
-p = sapply(-6:6, function(b) print(round0.p(poly.calc(solve.p2p3ent(b, R, type="mult")$sol[,1]))))
+p = polyGen.S2Ent.P3(R, ~ b)
 # x^6 - R[1]*x^3 - (b*x - 1)^2; b0 = 1/(R[1]+3), more terms for other R = c(..., 1)
 -1 + 10*x - 25*x^2 + 4*x^3 + x^6 
 -1 + 8*x - 16*x^2 + 4*x^3 + x^6 
@@ -933,7 +946,7 @@ p = sapply(-6:6, function(b) print(round0.p(poly.calc(solve.p2p3ent(b, R, type="
 
 ###
 R = c(-2,1)
-p = sapply(-8:8, function(b) print(round0.p(poly.calc(solve.p2p3ent(b, R, type="div")$sol[,1]))))
+p = polyGen.S2Ent.P3(R, ~ b, v=-5:8, type="div")
 #
 -2 + 6*x - 12*x^2 + 14*x^3 - 3*x^4 - 3*x^5 + x^6 
 -2 + 6*x - 11*x^2 + 12*x^3 - 2*x^4 - 3*x^5 + x^6 
@@ -953,7 +966,7 @@ p = sapply(-8:8, function(b) print(round0.p(poly.calc(solve.p2p3ent(b, R, type="
 
 ###
 R = c(-2,1)
-p = sapply(-8:8, function(b) print(round0.p(poly.calc(solve.p2p3ent(b, R, type="div2")$sol[,1]))))
+p = polyGen.S2Ent.P3(R, ~ b, type="div2")
 #
 1 - 4*x + 16*x^2 + 2*x^3 - 4*x^4 + x^6 
 1 - 3.5*x + 12.25*x^2 + 2*x^3 - 3.5*x^4 + x^6 
@@ -975,14 +988,13 @@ p = sapply(-8:8, function(b) print(round0.p(poly.calc(solve.p2p3ent(b, R, type="
 
 
 ###
-p = sapply(-6:6, function(b) print(round0.p(poly.calc(solve.p2p3ent(c(b, 2), c(2, 2), type="mult", n=2)$sol[,1]))))
-
-p = sapply(-6:6, function(b) print(round0.p(poly.calc(solve.p2p3ent(c(b, b), c(2, 2), type="mult", n=2)$sol[,1]))))
-
-p = sapply(-6:6, function(b) print(round0.p(poly.calc(solve.p2p3ent(c(b, b), c(4, 4), type="mult", n=2)$sol[,1]))))
+p = polyGen.S2Ent.P3(c(2, 2), ~ c(b, 2), n=2)
+p = polyGen.S2Ent.P3(c(2, 2), ~ c(b, b), n=2)
+p = polyGen.S2Ent.P3(c(4, 4), ~ c(b, b), n=2)
 
 # b0 = b^2 / 2
-p = sapply( (-6:6)[-7], function(b) print(round0.p(poly.calc(solve.p2p3ent(c(-b, -b), c(b, b), type="mult", n=2)$sol[,1]))))
+p = polyGen.S2Ent.P3(~ c(b, b), ~ c(-b, -b), v=(-6:6)[-7], n=2)
+
 
 sol = solve.p2p3ent(c(-2, -2), c(2, 2), type="mult", n=2)
 x = sol$sol[,1]
@@ -1074,7 +1086,11 @@ S^6 - 5*R2*S^3 - R1*S + 5*R2^2 # = 0
 ### Solver:
 
 solve.S2Sym.P5 = function(R, b=0, debug=TRUE) {
-	S  = roots(c(1,0,0, - 5*R[2], 0, - R[1], 5*R[2]^2));
+	coeff = c(1,0,0, - 5*R[2], 0, - R[1], 5*R[2]^2);
+	if(b[1] != 0) {
+		coeff[5] = b[1];
+	}
+	S  = roots(coeff);
 	xy = R[2] / S;
 	if(debug) print(S);
 	x.diff = sqrt(S^2 - 4*xy + 0i);
@@ -1086,8 +1102,8 @@ solve.S2Sym.P5 = function(R, b=0, debug=TRUE) {
 }
 ### Test:
 test.S2Sym.P5 = function(sol, b=0, R=NULL) {
-	x = sol[,1]; y = sol[,2];
-	err1 = x^5 + y^5;
+	x = sol[,1]; y = sol[,2]; S = x + y;
+	err1 = x^5 + y^5 + b[1]*S;
 	err2 = x*y*(x+y);
 	err  = rbind(err1, err2);
 	err  = round0(err);
@@ -1115,6 +1131,24 @@ sol = solve.S2Sym.P5(R)
 test.S2Sym.P5(sol)
 
 
+### Ex 3:
+R = c(-2, 3)
+b = -1
+sol = solve.S2Sym.P5(R, b=b)
+
+test.S2Sym.P5(sol, b=b)
+
+
+### Ex 4:
+R = c(3*15^2, 15)
+b = 15^2;
+sol = solve.S2Sym.P5(R, b=b)
+
+test.S2Sym.P5(sol, b=b)
+
+x^12 + 9*x^10 + 15*x^9 + 270*x^8 - 675*x^7 + 2025*x^6 + 20250*x^2 + 10125 # = 0
+
+
 ### Test:
 x = sol[,1]; y = sol[,2];
 x^5 + y^5
@@ -1122,7 +1156,12 @@ x*y*(x+y)
 
 
 ### Classic Polynomial:
+x = sol[,1]; R1 = R[1]; R2 = R[2];
 5*R2*x^12 + R1*x^10 + 5*R2^2*x^9 - 5*R1*R2*x^7 - R1^2*x^5 - 5*R1*R2^2*x^4 + R2^5
+# Extension:
+x = sol[,1]; R1 = R[1]; R2 = R[2]; b1 = b[1];
+5*R2*x^12 + R1*x^10 + 5*R2^2*x^9 + 6*b1*R2*x^8 - 5*R1*R2*x^7 + b1*R1*x^6 +
+	- (R1^2 - 9*b1*R2^2)*x^5 + (b1^2*R2 - 5*R1*R2^2)*x^4 + 2*b1*R2^3*x^2 + R2^5
 
 ### Derivation:
 p1 = toPoly.pm("x^5 + y^5 - R1");
@@ -1541,5 +1580,85 @@ sol = rbind(
 
 poly.calc(sol$x)
 x = sol$x
+
+
+#########################
+#########################
+
+#############
+### Other ###
+#############
+
+### x*y * Sum
+### Order 3 & 2
+
+# x*y*(x^3 + y^3) = R1
+# x*y*(x^2 + y^2) = R2
+
+### Solution:
+
+x*y*(S^3 - 3*x*y*S) - R1 # = 0
+x*y*(S^2 - 2*x*y) - R2 # = 0
+
+### Eq S:
+R2*S^6 - R1*S^5 - 9*R2^2*S^2 + 12*R1*R2*S - 4*R1^2 # = 0
+
+### Solver:
+
+solve.S2Sym.P32M = function(R, b=0, debug=TRUE, all=FALSE) {
+	R1 = R[1]; R2 = R[2];
+	coeff = c(R2, - R1, 0, 0, - 9*R2^2, 12*R1*R2, - 4*R1^2);
+	if(b[1] != 0) {
+		coeff = coeff + c(b[1], 0, 0, 0, - 12*b[1]*R2 - 4*b[1]^2, 8*b[1]*R1, 0)
+	}
+	S = roots(coeff);
+	if(debug) print(S);
+	R1 = R1 - b[1]*S;
+	xy = (3*R2*S - 2*R1) / S^3;
+	d = sqrt(S^2 - 4*xy + 0i);
+	x = (S + d)/2;
+	y = (S - d)/2;
+	sol = cbind(x, y);
+	if(all) sol = rbind(sol, sol[,c(2,1)]);
+	return(sol);
+}
+test.S2Sym.P32M = function(sol, b=0, R=NULL) {
+	x = sol[,1]; y = sol[,2]; S = x + y;
+	err1 = x*y*(x^3 + y^3) + b[1]*S;
+	err2 = x*y*(x^2 + y^2);
+	err  = rbind(err1, err2);
+	if( ! is.null(R)) err = err - R;
+	err = round0(err);
+	return(err);
+}
+
+### Examples:
+
+### Ex 1:
+R = c(2,-1)
+sol = solve.S2Sym.P32M(R);
+
+test.S2Sym.P32M(sol)
+
+
+### Ex 2:
+R = c(-1,3)
+sol = solve.S2Sym.P32M(R);
+
+test.S2Sym.P32M(sol)
+
+
+### Ex 3:
+R = c(-1,3)
+b = -1;
+sol = solve.S2Sym.P32M(R, b=b);
+
+test.S2Sym.P32M(sol, b=b)
+
+
+### Classic Polynomial:
+x = sol[,1]; R1 = R[1]; R2 = R[2];
+2*R2*x^12 - 2*R1*x^11 + 3*R2^2*x^8 - 5*R2*R1*x^7 + 2*R1^2*x^6 + 3*R2^3*x^4 +
+	- 4*R2^2*R1*x^3 - R1^3*x + R2^4;
 
 
