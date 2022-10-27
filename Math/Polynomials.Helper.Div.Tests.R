@@ -7,7 +7,7 @@
 ### Multi-Variable Polynomials
 ### Polynomial Division: Tests
 ###
-### draft v.0.1a
+### draft v.0.1c
 
 
 ### Tests:
@@ -276,10 +276,17 @@ r = roots.pm(p0)
 startBigNumbers();
 p0$coeff = as.bigq(p0$coeff);
 pR = rational.pm(p, p0)
+# simplify
+pR$Rez$coeff = pR$Rez$coeff / pR$Div$coeff;
+pR$Div$coeff = 1;
 
 print(pR)
 
 ### Test:
+x = r;
+1 / (x^4 + 2*x^3 + x + 1); # ==
+(27*x^4 - 30*x^3 + 19*x^2 - 2*x - 20) / 43;
+
 rez = array(0, c(2, 0));
 for(ri in r) {
 	rez0 = 1 / eval.pm(p, ri);
@@ -287,6 +294,27 @@ for(ri in r) {
 	rez  = cbind(rez, c(rez0, rez1));
 }
 print(rez)
+
+
+### Ex 2:
+# Note:
+# - there are more efficient ways
+#   to rationalize expressions with simple radicals;
+K = 3
+p0 = toPoly.pm("x^5 - K()")
+p = toPoly.pm("x^4 + 2*x^3 + x + 1")
+r = roots.pm(p0)
+
+# Requires bigq:
+# ugly numeric instability BUG in div.pm;
+startBigNumbers();
+p0$coeff = as.bigq(p0$coeff);
+pR = rational.pm(p, p0)
+# simplify
+pR$Rez$coeff = pR$Rez$coeff / pR$Div$coeff;
+pR$Div$coeff = 1;
+
+print(pR)
 
 
 #################
