@@ -5,7 +5,7 @@
 ###
 ### Polynomial Systems: S2
 ### Decompositions of Symmetric Systems
-### v.0.3k
+### v.0.3l
 
 
 ####################
@@ -1661,4 +1661,124 @@ x = sol[,1]; R1 = R[1]; R2 = R[2];
 2*R2*x^12 - 2*R1*x^11 + 3*R2^2*x^8 - 5*R2*R1*x^7 + 2*R1^2*x^6 + 3*R2^3*x^4 +
 	- 4*R2^2*R1*x^3 - R1^3*x + R2^4;
 
+
+#########################
+#########################
+
+#############
+### Other ###
+#############
+
+### Higher Order Sums
+
+# x^7 + y^7 + b1*(x + y) = R1
+# x^5 + y^5 + b2*(x + y) = R2
+
+### Solution:
+
+# - the linear extensions will be added in the solver;
+
+### Eq 2:
+S^5 - 5*x*y*S^3 + 5*(x*y)^2*S - R2 # = 0
+
+### Diff:
+# (x^2 + y^2)*Eq 2 - Eq 1 =>
+(x*y)^2*(x^3 + y^3) - R2*(x^2 + y^2) + R1 # = 0
+(x*y)^2*(S^3 - 3*x*y*S) - R2*(S^2 - 2*x*y) + R1 # = 0
+
+
+### Eq S:
+S^15 - 28*R2*S^10 + 75*R1*S^8 - 147*R2^2*S^5 + 175*R1*R2*S^3 - 125*R1^2*S + 49*R2^3 # = 0
+
+
+### Solver:
+
+solve.S2Sym.Sum2P5P7 = function(R, b=0, debug=TRUE, all=FALSE) {
+	R1 = R[1]; R2 = R[2];
+	coeff = c(1, 0, 0, 0, 0, - 28*R2, 0, 75*R1, 0, 0, - 147*R2^2, 0, 175*R1*R2,
+		0, - 125*R1^2, 49*R2^3);
+	if(b[1] != 0) {
+		id = c(7, 12, 13, 14);
+		coeff[id] = coeff[id] + c(- 75*b[1], - 175*b[1]*R2, -125*b[1]^2, 250*b[1]*R1);
+	}
+	hasB2 = length(b) > 1 && b[2] != 0;
+	if(hasB2) {
+		id = c(5, 9, 10, 11, 12, 13,14,15);
+		coeff[id] = coeff[id] + c(28*b[2], -147*b[2]^2, 294*b[2]*R2, 175*b[1]*b[2], -175*b[2]*R1,
+			- 49*b[2]^3, 147*b[2]^2*R2, - 147*b[2]*R2^2);
+	}
+	S = roots(coeff);
+	if(debug) print(S);
+	R1 = R1 - b[1]*S;
+	if(hasB2) R2 = R2 - b[2]*S;
+	xy = (2*S^7 - 7*R2*S^2 + 5*R1) / (7*(S^5 - R2));
+	d = sqrt(S^2 - 4*xy + 0i);
+	x = (S + d)/2;
+	y = (S - d)/2;
+	#
+	sol = cbind(x, y);
+	if(all) {
+		sol = rbind(sol, sol[, c(2,1)]);
+	}
+	return(sol);
+}
+test.S2Sym.Sum2P5P7 = function(sol, b=0, R=NULL) {
+	x = sol[,1]; y = sol[,2]; S = x + y;
+	err1 = x^7 + y^7 + b[1]*S;
+	err2 = x^5 + y^5;
+	if(length(b) > 1) err2 = err2 + b[2]*S;
+	err = rbind(err1, err2);
+	if( ! is.null(R)) err = err - R;
+	notNAN = ! is.nan(err);
+	err[notNAN] = round0(err[notNAN]);
+	return(err);
+}
+
+### Examples:
+
+### Ex 1:
+R = c(2,-3)
+sol = solve.S2Sym.Sum2P5P7(R)
+
+test.S2Sym.Sum2P5P7(sol)
+
+
+### Ex 2:
+R = c(2,-3)
+b = 4
+sol = solve.S2Sym.Sum2P5P7(R, b=b)
+
+test.S2Sym.Sum2P5P7(sol, b=b)
+
+
+### Ex 3:
+R = c(-3, 4)
+b = c(-1, -3)
+sol = solve.S2Sym.Sum2P5P7(R, b=b)
+
+test.S2Sym.Sum2P5P7(sol, b=b)
+
+
+### Ex 3:
+R = c(5, 0)
+b = c(2, -1)
+sol = solve.S2Sym.Sum2P5P7(R, b=b)
+
+test.S2Sym.Sum2P5P7(sol, b=b)
+
+
+### Classic Polynomial:
+x = sol[,1]; R1 = R[1]; R2 = R[2];
+7*R2*x^30 - 5*R1*x^28 - 21*R2^2*x^25 + 10*R1^2*x^21 + 35*R2^3*x^20 - 35*R2^4*x^15 +
+	- 10*R1^3*x^14 + 21*R2^5*x^10 + 5*R1^4*x^7 - 7*R2^6*x^5 + R2^7 - R1^5 # = 0
+
+# TODO: Extensions;
+
+
+### Derivation:
+p1 = toPoly.pm("S^5 - 5*xy*S^3 + 5*(xy)^2*S - R2")
+p2 = toPoly.pm("(xy)^2*(S^3 - 3*xy*S) - R2*(S^2 - 2*xy) + R1")
+pR = solve.pm(p1, p2, "xy")
+pR$Rez$coeff = - pR$Rez$coeff;
+str(pR)
 
