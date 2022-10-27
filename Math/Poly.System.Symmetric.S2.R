@@ -1,4 +1,3 @@
-
 ########################
 ###
 ### Leonard Mada
@@ -6,7 +5,7 @@
 ###
 ### Polynomial Systems: S2
 ### Decompositions of Symmetric Systems
-### v.0.3i
+### v.0.3j
 
 
 ####################
@@ -72,7 +71,7 @@
 ### draft v.0.2f:
 # - entanglement: x*y*(x+y) = R;
 ### draft v.0.2e:
-# - solved a symmetric "liniar" etension;
+# - solved a symmetric "linear" etension;
 #   x^3 + y^3 + b1*(x+y) = R1;
 #   x*y + b2*(x+y) = R2;
 ### draft v.0.2d:
@@ -93,20 +92,22 @@
 #   x^6 + 3*a*x^5 + 3*a^2*x^4 + b*x^3 + 3*a^2*x^2 + 3*a*x + 1 = 0;
 
 
-######################
+####################
 
-### helper functions
+### Helper Functions
+
+source("Polynomials.Helper.R")
+source("Polynomials.Helper.EP.R")
+
 
 # TODO: use exact solver for P3
-library(polynom)
-library(pracma) # for polynomials with complex coefficients
-
 
 solve.shift.ps = function(s1, s2, R, n=3) {
 	# product is shifted as well
 	sol = solve.ps(s1 - s2, R, n=n)
 	return(sol - s2)
 }
+### Symmetrically Shifted S2
 solve.ps = function(shift, R, n=3) {
 	if(n == 2) {
 		# this is only a quadratic
@@ -122,46 +123,17 @@ solve.ps = function(shift, R, n=3) {
 	X = solve(polynomial(coeff))
 	# X = roots(rev(coeff)) # pracma
 	#
-	det = X^2 - 4*R[2]
-	x.m = sapply(det, function(det) if(Im(det) != 0 | Re(det) >= 0) sqrt(det) else complex(re=0, im=sqrt(-det)) )
+	det = X^2 - 4*R[2];
+	x.m = rootn(det, n=2);
+	# x.m = sapply(det, function(det) if(Im(det) != 0 | Re(det) >= 0) sqrt(det) else complex(re=0, im=sqrt(-det)) )
 	x = (X + x.m)/2
 	y = (X - x.m)/2
 	sol.df = data.frame(x=c(x, y), y=c(y, x))
 	return(sol.df)
 }
 
-### helper functions
-# round to 0
-round0 = function(m, tol=1E-7) {
-	m[abs(Re(m)) < tol & abs(Im(m)) < tol] = 0
-	isZero = (Re(m) != 0) & (abs(Re(m)) < tol)
-	if(sum(isZero) > 0) {
-		m[isZero] = complex(re=0, im=Im(m[isZero]))
-	}
-	isZero = (Im(m) != 0) & (abs(Im(m)) < tol)
-	if(sum(isZero) > 0) {
-		m[isZero] = Re(m[isZero])
-	}
-	return(m)
-}
-round0.p = function(p, tol=1E-7) {
-	p = round0(as.vector(p), tol=tol)
-	class(p) = "polynomial"
-	return(p)
-}
-### helper functions
-unity = function(n=3, all=TRUE) {
-	m = complex(re=cos(2*pi/n), im=sin(2*pi/n))
-	if(all) {
-		m = m^(0:(n-1))
-	}
-	return(m)
-}
-mult.p = function(p1, p2) {
-	p.m = outer(p1, p2)
-    p = as.vector(tapply(p.m, row(p.m) + col(p.m), sum))
-	return(p)
-}
+# - other helper functions:
+#   moved to file Polynomials.Helper.R;
 
 ########################
 
@@ -180,8 +152,12 @@ mult.p = function(p1, p2) {
 x^2 + y^2 + 2*a*(x + y) + 2*a^2 - R1 # = 0
 # S = x + y =>
 S^2 + 2*a*S + 2*a^2 - R1 - 2*R2 # = 0
-# Step 1: Solve for S
-# Step 2: x + y = S
+
+### Step 1: Solve for S
+### Step 2:
+# x + y = S
+# x * y = R2
+
 
 ### Examples:
 
@@ -206,17 +182,20 @@ sol$x * sol$y
 sol
 
 
-### Equivalent Polynomial:
+### Classic Polynomial:
 x = sol$x
 
 err = x^2*(x + a)^2 - R[1]*x^2 + (R[2] + a*x)^2
 round0(err)
 
 
-###
+### Extension / Composition:
 c3 = 2*cos(2*pi/7 * (1:3))
 R = c(1,1)
-x = sapply(c3, solve.ps, R=R, n=2)
+x = do.call(rbind, t(lapply(c3, solve.ps, R=R, n=2)))
+
+poly.calc(x$x)
+1 - 2*x - x^2 + 6*x^3 - 6*x^4 + 6*x^5 - 9*x^6 + 6*x^7 - 6*x^8 + 6*x^9 - x^10 - 2*x^11 + x^12
 
 
 ####################
@@ -228,11 +207,15 @@ x = sapply(c3, solve.ps, R=R, n=2)
 
 ### Solution:
 x^3 + y^3 + 3*a*(x^2 + y^2) + 3*a^2*(x + y) + 2*a^3 - R1 # = 0
-# X = x + y =>
-X^3 - 3*R2*X + 3*a*X^2 - 6*a*R2 + 3*a^2*X + 2*a^3 - R1 # = 0
-X^3 + 3*a*X^2 + 3*(a^2-R2)*X + 2*a^3 - R1 - 6*a*R2 # = 0
-# Step 1: Solve for X
-# Step 2: x + y = X
+# S = x + y =>
+S^3 - 3*R2*S + 3*a*S^2 - 6*a*R2 + 3*a^2*S + 2*a^3 - R1 # = 0
+S^3 + 3*a*S^2 + 3*(a^2-R2)*S + 2*a^3 - R1 - 6*a*R2 # = 0
+
+### Step 1: Solve for S
+### Step 2:
+# x + y = S
+# x * y = R2
+
 
 ### Examples:
 
@@ -387,7 +370,7 @@ x^4*(x + a)^4 + (x*a + R[2])^4 - R[1]*x^4 # = 0
 ############################
 ############################
 
-### Liniar/Polynomial Shifts
+### Linear/Polynomial Shifts
 
 ### Order 3
 # x^3 + y^3 + b1*(x + y) = R1
@@ -426,11 +409,12 @@ x^6 - x^4 - x^3 + x^2 - 1
 
 ###################
 
-###
+### Shift: Eq 1 & 2
 # x^3 + y^3 + b1*(x + y) = R1
 # x*y + b2*(x + y) = R2
 
-### Solution
+### Solution:
+
 ### Step 1:
 # s = x + y; c = x*y = R2
 # => c = R2 - b2*s
@@ -441,11 +425,12 @@ x^6 - x^4 - x^3 + x^2 - 1
 # x + y = s
 # x*y = R2 - b2*s
 
-solve.p2p3liniar = function(b, R) {
+solve.S2Simple.P3 = function(R, b, debug=TRUE) {
 	b = as.vector(unlist(b))
 	p.coeff = c(1, 3*b[2], - (3*R[2] - b[1]), -R[1])
 	# print(p.coeff)
-	s = roots(p.coeff)
+	s = roots(p.coeff);
+	if(debug) print(s);
 	xy = R[2] - b[2]*s
 	sm = sqrt(s^2 - 4*xy + 0i)
 	x = (s + sm)/2
@@ -453,26 +438,29 @@ solve.p2p3liniar = function(b, R) {
 	sol = cbind(x,y)
 	sol = rbind(sol, cbind(y,x))
 	# coeffs Classic
-	coeffs = c(1, 3*b[2], (b[1]+3*b[2]^2), (2*b[1]*b[2]-R[1]),
-		(b[1]*b[2]^2 + b[1]*R[2] + 3*b[2]^2*R[2] - 3*b[2]*R[1]),
-		(2*b[1]*b[2]*R[2] - 3*b[2]*R[2]^2 - 3*b[2]^2*R[1]),
-		R[2]^3 + b[1]*b[2]^2*R[2] - b[2]^3*R[1] )
+	coeffs = coeff.S2Simple.P3(R, b=b);
 	### Test
 	eq1 = x^3 + y^3 + b[1]*(x + y)
 	eq2 = x*y + b[2]*(x + y)
 	#
-	return(list(sol=sol, coeffs=coeffs, test=rbind(round0(eq1)), round0(eq2)))
+	return(list(sol=sol, coeffs=coeffs, test=round0(rbind(eq1, eq2))));
+}
+coeff.S2Simple.P3 = function(R, b) {
+	coeffs = c(1, 3*b[2], (b[1]+3*b[2]^2), (2*b[1]*b[2]-R[1]),
+		(b[1]*b[2]^2 + b[1]*R[2] + 3*b[2]^2*R[2] - 3*b[2]*R[1]),
+		(2*b[1]*b[2]*R[2] - 3*b[2]*R[2]^2 - 3*b[2]^2*R[1]),
+		R[2]^3 + b[1]*b[2]^2*R[2] - b[2]^3*R[1]
+	);
+	return(coeffs);
 }
 
+### Examples:
 
-############
-### Examples
-
-### Ex. 1
-b = c(-3, 1)
+### Ex 1:
 R = c(1, -1)
+b = c(-3, 1)
 ### Solution
-sol = solve.p2p3liniar(b, R)
+sol = solve.S2Simple.P3(R, b=b)
 sol
 
 ### Test
@@ -481,26 +469,22 @@ x^3 + y^3 + b[1]*(x + y)
 x*y + b[2]*(x + y)
 
 
-### Classic
-x = sol$sol[,1]
-coeffs = c(1, 3*b[2], (b[1]+3*b[2]^2), (2*b[1]*b[2]-R[1]),
-  (b[1]*b[2]^2 + b[1]*R[2] + 3*b[2]^2*R[2] - 3*b[2]*R[1]),
-  (2*b[1]*b[2]*R[2] - 3*b[2]*R[2]^2 - 3*b[2]^2*R[1]),
-  R[2]^3 + b[1]*b[2]^2*R[2] - b[2]^3*R[1] )
-coeffs
-x^6 + 3*b[2]*x^5 + (b[1]+3*b[2]^2)*x^4 + (2*b[1]*b[2]-R[1])*x^3 + (b[1]*b[2]^2 + b[1]*R[2] + 3*b[2]^2*R[2] - 3*b[2]*R[1])*x^2 + (2*b[1]*b[2]*R[2] - 3*b[2]*R[2]^2 - 3*b[2]^2*R[1])*x + R[2]^3 + b[1]*b[2]^2*R[2] - b[2]^3*R[1]
-#
-x^6 + 3*x^5 - 7*x^3 - 6*x^2 - 3*x - 3
+### Classic Polynomial:
+x = sol$sol[,1]; b1 = b[1]; b2 = b[2]; R1 = R[1]; R2 = R[2];
+x^6 + 3*b2*x^5 + (b1 + 3*b2^2)*x^4 + (2*b1*b2 - R1)*x^3 +
+	+ (b1*b2^2 + b1*R2 + 3*b2^2*R2 - 3*b2*R1)*x^2 + (2*b1*b2*R2 - 3*b2*R2^2 - 3*b2^2*R1)*x +
+	+ R2^3 + b1*b2^2*R2 - b2^3*R1;
 
 ### Derivation
 x^3*(x + b[2])^3 + b[1]*(x^2 + R[2])*(x + b[2])^2 - R[1]*(x + b[2])^3 + (R[2]-b[2]*x)^3 # == 0
 
+
 #########
 ### Ex. 2
-b = c(-3, 1)
 R = c(1, -2)
+b = c(-3, 1)
 ### Solution
-sol = solve.p2p3liniar(b, R)
+sol = solve.S2Simple.P3(R, b=b)
 sol
 
 
@@ -508,32 +492,30 @@ sol
 bg = expand.grid(-3:3, -3:3)
 R = c(1, 1)
 #
-p.l = sapply(1:nrow(bg), function(id) print(solve.p2p3liniar(bg[id,], R)$coeffs))
+p.l = sapply(1:nrow(bg), function(id) print(solve.S2Simple.P3(R, bg[id,], debug=FALSE)$coeffs))
 # contains various trivial examples
 # like x^6 + b1*x^5 + b2*x^4 + b2*x^2 - b1*x + 1; x = {1i, -1i, ...}
 # but also many non-trivial examples;
 
 
 ### trivial example
-b = c(0,-1)
 R = c(0, 1)
-sol = solve.p2p3liniar(b, R)
+b = c(0,-1)
+sol = solve.S2Simple.P3(R, b=b)
 sol
 x = sol$sol[,1]
 x^6 - 3*x^5 + 3*x^4 + 3*x^2 + 3*x + 1
 
 
 ### TODO: all variants
-# - liniar/polynomial shifts;
-# - root shifts;
-
+# - polynomial shifts: higher order;
 
 
 ############################
 ############################
 
 ############################
-### Non-Liniar Entanglements
+### Non-Linear Entanglements
 
 ###############
 ### Order 2 ###
@@ -703,6 +685,9 @@ S^3 + b1*S - R1 - 3*R2 # = 0
 # x + y = S
 # x*y = R2/S
 
+
+### Solver:
+
 solve.p2p3ent = function(b, R, type="mult", n=3) {
 	# type "mult": x*y*(x+y) + b[2]*(x+y) = R[2]
 	# type "div":  x*y/(x+y) + b[2]*(x+y) = R[2]
@@ -792,7 +777,7 @@ b3*(R1 + 3*R2)*x^5 +
 (- R1*b2^3 + R2*b1*b2^2 + R2^2*b2*b3 + R2^3) +
 (- 3*R1*R2*b2 + R1*b2^2*b3 - R2*b1*b2*b3 + 2*R2^2*b1 - 3*R2^2*b2 - R2^2*b3^2)*x^1 +
 (2*R1*R2*b3 - R1*b1*b2 + R2*b1*b2 + R2*b1^2 + 3*R2*b2^2 + 5*R2^2*b3)*x^2 +
-(- 3*R1*R2 - 2*R1*b2*b3 - R1^2 + R2*b1*b3 - 3*R2*b2*b3)*x^3 +
+(- R1^2 - 3*R1*R2 - 2*R1*b2*b3 + R2*b1*b3 - 3*R2*b2*b3)*x^3 +
 (R1*b1 + 4*R2*b1 + 3*R2*b2)*x^4 +
 b3*(R1 + 3*R2)*x^5 +
 (R1 + 3*R2)*x^6
@@ -1079,34 +1064,75 @@ x = sol
 # x^5 + y^5 = R1
 # x*y*(x+y) = R2
 
-# (x+y)^5 - 5*x*y*(x+y)^3 + 5*(x*y)^2*(x+y) - R1 = 0
-# X = x + y =>
-# X^5 - 5*R2*X^2 + 5*R2^2/X - R1
-# X^6 - 5*R2*X^3 - R1*X + 5*R2^2
+### Solution:
 
+(x+y)^5 - 5*x*y*(x+y)^3 + 5*(x*y)^2*(x+y) - R1 # = 0
+# S = x + y =>
+S^5 - 5*R2*S^2 + 5*R2^2/S - R1
+S^6 - 5*R2*S^3 - R1*S + 5*R2^2 # = 0
+
+### Solver:
+
+solve.S2Sym.P5 = function(R, b=0, debug=TRUE) {
+	S  = roots(c(1,0,0, - 5*R[2], 0, - R[1], 5*R[2]^2));
+	xy = R[2] / S;
+	if(debug) print(S);
+	x.diff = sqrt(S^2 - 4*xy + 0i);
+	x = (S + x.diff)/2;
+	y = (S - x.diff)/2;
+	sol = cbind(x, y);
+	sol = rbind(sol, sol[,2:1]);
+	return(sol);
+}
+### Test:
+test.S2Sym.P5 = function(sol, b=0, R=NULL) {
+	x = sol[,1]; y = sol[,2];
+	err1 = x^5 + y^5;
+	err2 = x*y*(x+y);
+	err  = rbind(err1, err2);
+	err  = round0(err);
+	return(err);
+}
+
+### Examples:
+
+### Ex 1:
 R = c(25, 5)
-x.sum = roots(c(1,0,0, - 5*R[2], 0, - R[1], 5*R[2]^2))
-xy = R[2] / x.sum
-x.diff = sqrt(x.sum^2 - 4*xy + 0i)
-x = (x.sum + x.diff)/2
-y = (x.sum - x.diff)/2
-sol = cbind(x, y)
-sol = rbind(sol, sol[,2:1])
-sol
+sol = solve.S2Sym.P5(R)
 
-### Test
-x^5 + y^5
-x*y*(x+y)
+test.S2Sym.P5(sol)
 
-### Classic
 round0.p(poly.calc(sol[,1]))
+x = sol[,1]
 err = 125 - 125*x^4 - 25*x^5 - 25*x^7 + 5*x^9 + x^10 + x^12
 round0(err)
 
-### TODO:
-# - parametric classic polynomial;
+
+### Ex 2:
+R = c(-1, 5)
+sol = solve.S2Sym.P5(R)
+
+test.S2Sym.P5(sol)
 
 
+### Test:
+x = sol[,1]; y = sol[,2];
+x^5 + y^5
+x*y*(x+y)
+
+
+### Classic Polynomial:
+5*R2*x^12 + R1*x^10 + 5*R2^2*x^9 - 5*R1*R2*x^7 - R1^2*x^5 - 5*R1*R2^2*x^4 + R2^5
+
+### Derivation:
+p1 = toPoly.pm("x^5 + y^5 - R1");
+p2 = toPoly.pm("x*y*(x+y) - R2");
+pR = solve.pm(p1, p2, "y");
+pR$Rez$coeff = - pR$Rez$coeff;
+str(pR)
+
+
+################################
 ################################
 ################################
 
@@ -1142,9 +1168,9 @@ round0(err)
 2*d*S^3 - (8*d^3 + R1 - R2)*S + 2*d*R1 + 2*d*R2 # = 0
 
 ### Solver
-solve.Shift2.S2P3 = function(R, d, debug=TRUE) {
-	coeff = c(2*d, 0, - (8*d^3 + R[1] - R[2]), 2*d*R[1] + 2*d*R[2])
-	S = roots(coeff)
+solve.S2Sym.Shift2.P3 = function(R, d, debug=TRUE) {
+	coeff = c(2*d, 0, - (8*d^3 + R[1] - R[2]), 2*d*(R[1] + R[2]));
+	S = roots(coeff);
 	if(debug) print(S);
 	#
 	R1 = R[1]; R2 = R[2];
@@ -1155,6 +1181,15 @@ solve.Shift2.S2P3 = function(R, d, debug=TRUE) {
 	sol = cbind(as.vector(x), as.vector(y))
 	return(rbind(sol, sol[,2:1]));
 }
+### Test:
+test.solve.S2Sym.Shift2.P3 = function(sol, d, R=NULL) {
+	x = sol[,1]; y = sol[,2];
+	err1 = (x + d)^3 + (y + d)^3;
+	err2 = (x - d)^3 + (y - d)^3;
+	err = rbind(err1, err2);
+	err = round0(err);
+	return(err);
+}
 
 # - trivial roots:
 #   if R1 = 0 or R2 = 0: S = -2*d or + 2*d;
@@ -1162,16 +1197,15 @@ solve.Shift2.S2P3 = function(R, d, debug=TRUE) {
 
 ### Examples:
 
+### Ex 1:
 R = c(1,2)
 d = 1
-sol = solve.Shift2.S2P3(R, d)
-x = sol[,1]; y = sol[,2];
+sol = solve.S2Sym.Shift2.P3(R, d)
 
-### Test
-(x + d)^3 + (y + d)^3 # - R[1]
-(x - d)^3 + (y - d)^3 # - R[2]
+test.solve.S2Sym.Shift2.P3(sol, d=d)
 
 ### Classic Polynomial:
+x = sol[,1];
 round0.p(poly.calc(x)) * 16*27
 
 
@@ -1179,15 +1213,36 @@ round0.p(poly.calc(x)) * 16*27
 ### Ex 2:
 R = c(-2, 1)
 d = 2
-sol = solve.Shift2.S2P3(R, d)
-x = sol[,1]; y = sol[,2];
+sol = solve.S2Sym.Shift2.P3(R, d)
+
+test.solve.S2Sym.Shift2.P3(sol, d=d)
+
+
+#########
+### Ex 3:
+R = c(-1, -1)
+d = 2
+sol = solve.S2Sym.Shift2.P3(R, d)
+
+test.solve.S2Sym.Shift2.P3(sol, d=d)
+
 
 ### Test
+x = sol[,1]; y = sol[,2];
 (x + d)^3 + (y + d)^3 # - R[1]
 (x - d)^3 + (y - d)^3 # - R[2]
 
-### Classic Polynomial:
 round0.p(poly.calc(x)) * 128 * 27
+
+
+### Classic Polynomial:
+x = sol[,1]; R1 = R[1]; R2 = R[2];
+432*d^3*x^6 - 108*d^2*(R1 - R2 - 4*d^3)*x^4 - 216*(R1 + R2)*d^3*x^3 +
+	+ 18*d*((R1 - R2)^2 + 16*(R1 - R2)*d^3 + 136*d^6)*x^2 - 648*(R1 + R2)*d^5*x +
+	- (R1 - R2)^3 + (30*(R1 - R2)^2 + 216*R1*R2)*d^3 - 84*(R1 - R2)*d^6 + 784*d^9;
+
+# Special Case: R1 == R2
+54*x^6 + 54*d^2*x^4 - 54*R1*x^3 + 306*d^4*x^2 - 162*R1*d^2*x + 27*R1^2 + 98*d^6;
 
 
 ##########################
