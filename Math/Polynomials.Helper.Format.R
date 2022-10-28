@@ -301,10 +301,22 @@ format.complex.pm = function(x, sign.invert=FALSE, rm.zero=TRUE, brackets=TRUE, 
 
 ### Other
 
-cut.character.int = function(n, w) {
+cut.character.int.old = function(n, w) {
 	ncm = cumsum(n);
 	nwd = ncm %/% w;
 	count = rle(nwd)$lengths;
+	pos = cumsum(count);
+	posS = pos[ - length(pos)] + 1;
+	posS = c(1, posS);
+	pos = rbind(posS, pos);
+	return(pos);
+}
+cut.character.int = function(n, w, extend=2) {
+	n = n + extend;
+	cumlen = cumsum(n);
+	max = tail(cumlen, 1) %/% w + 1;
+	pos = cut(cumlen, seq(0, max) * w);
+	count = rle(as.numeric(pos))$lengths;
 	pos = cumsum(count);
 	posS = pos[ - length(pos)] + 1;
 	posS = c(1, posS);
