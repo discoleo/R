@@ -328,7 +328,7 @@ as.coeff.pm = function(p, xn) {
 
 ### Convert to Coefficients: as string;
 # TODO: check everywhere that x is replaced with xn;
-toCoeff = function(p, xn="x", decreasing=TRUE, print=TRUE, sep=",\n") {
+toCoeff = function(p, xn="x", decreasing=TRUE, print=TRUE, sep=NULL) {
 	idx = match(xn, names(p));
 	if(idx < 0) stop(paste0("No variable ", xn));
 	px = p[,xn]; p = p[, - idx, drop=FALSE];
@@ -340,7 +340,19 @@ toCoeff = function(p, xn="x", decreasing=TRUE, print=TRUE, sep=",\n") {
 	p.all[1 + sort(unique(px))] = str;
 	if(decreasing) p.all = rev(p.all);
 	if(print) {
-		cat(p.all, sep = rep(sep, length(p.all)));
+		if(is.null(sep)) {
+			LEN  = cumsum(nchar(p.all));
+			last = length(LEN);
+			if(LEN[last] <= 60) { sep = ", "; }
+			else if(LEN[last] <= 120 && last > 2) {
+				# last = 2 is equivalent to: sep = ",\n";
+				LIMIT = round(last / 2);
+				cat(p.all[seq(LIMIT)], sep = c(rep(", ", LIMIT - 1), ",\n"));
+				cat(p.all[seq(LIMIT + 1, last)], sep = c(rep(", ", last - LIMIT - 1), ",\n"));
+				return(invisible(p.all));
+			} else { sep = ",\n"; }
+		}
+		cat(p.all, sep = rep(sep, length(p.all))); cat("\n");
 		# return invisibly: coefficients are already printed;
 		return(invisible(p.all));
 	}
