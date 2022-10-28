@@ -343,12 +343,13 @@ toCoeff = function(p, xn="x", decreasing=TRUE, print=TRUE, sep=NULL) {
 		if(is.null(sep)) {
 			LEN  = cumsum(nchar(p.all));
 			last = length(LEN);
-			if(LEN[last] <= 60) { sep = ", "; }
+			if(last <= 1) { sep = "\n"; }
+			else if(LEN[last] <= 60) { sep = ", "; }
 			else if(LEN[last] <= 120 && last > 2) {
 				# last = 2 is equivalent to: sep = ",\n";
 				LIMIT = round(last / 2);
 				cat(p.all[seq(LIMIT)], sep = c(rep(", ", LIMIT - 1), ",\n"));
-				cat(p.all[seq(LIMIT + 1, last)], sep = c(rep(", ", last - LIMIT - 1), ",\n"));
+				cat(p.all[seq(LIMIT + 1, last)], sep = c(rep(", ", last - LIMIT - 1), "\n"));
 				return(invisible(p.all));
 			} else { sep = ",\n"; }
 		}
