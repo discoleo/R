@@ -301,6 +301,17 @@ format.complex.pm = function(x, sign.invert=FALSE, rm.zero=TRUE, brackets=TRUE, 
 
 ### Other
 
+cut.character.int = function(n, w) {
+	ncm = cumsum(n);
+	nwd = ncm %/% w;
+	count = rle(nwd)$lengths;
+	pos = cumsum(count);
+	posS = pos[ - length(pos)] + 1;
+	posS = c(1, posS);
+	pos = rbind(posS, pos);
+	return(pos);
+}
+
 ### Convert to Coefficients
 # - as list of polynomials or of numeric values;
 # - the list is in descending order;
@@ -341,19 +352,24 @@ toCoeff = function(p, xn="x", decreasing=TRUE, print=TRUE, sep=NULL) {
 	if(decreasing) p.all = rev(p.all);
 	if(print) {
 		if(is.null(sep)) {
-			LEN  = cumsum(nchar(p.all));
-			last = length(LEN);
-			if(last <= 1) { sep = "\n"; }
-			else if(LEN[last] <= 60) { sep = ", "; }
-			else if(LEN[last] <= 120 && last > 2) {
-				# last = 2 is equivalent to: sep = ",\n";
-				LIMIT = round(last / 2);
-				cat(p.all[seq(LIMIT)], sep = c(rep(", ", LIMIT - 1), ",\n"));
-				cat(p.all[seq(LIMIT + 1, last)], sep = c(rep(", ", last - LIMIT - 1), "\n"));
+			LEN = length(p.all);
+			if(LEN <= 1) { sep = "\n"; }
+			else {
+				pos = cut.character.int(nchar(p.all), w=60);
+				nc  = ncol(pos);
+				if(nc > 1) for(id in seq(nc - 1)) {
+					slen = pos[2, id] - pos[1, id];
+					# "" vs ",\n": BUG in cat() inside FOR loop?
+					xsep = c(rep(", ", slen), "");
+					cat(p.all[seq(pos[1, id], pos[2, id])], sep = xsep); cat(",\n");
+				}
+				slen = pos[2, nc] - pos[1, nc];
+				cat(p.all[seq(pos[1, nc], pos[2, nc])], sep = c(rep(", ", slen), "\n"));
 				return(invisible(p.all));
-			} else { sep = ",\n"; }
+			}
 		}
-		cat(p.all, sep = rep(sep, length(p.all))); cat("\n");
+		xsep = c(rep(sep, length(p.all) - 1), "\n");
+		cat(p.all, sep = xsep);
 		# return invisibly: coefficients are already printed;
 		return(invisible(p.all));
 	}
