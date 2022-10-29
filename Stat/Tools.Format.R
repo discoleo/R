@@ -32,6 +32,42 @@
 ### Formatting ###
 ##################
 
+# Simple Word Wrap
+# s = vector of strings (the words);
+# w = preferred width;
+cut.string = function(s, w, force.split="\n", extend=1) {
+	n = nchar(s);
+	n = n + extend;
+	cumlen = cumsum(n);
+	# Force Split:
+	isFS = ! (is.null(force.split) || is.na(force.split));
+	if(isFS) {
+		isSplit = which(s %in% force.split);
+		if(length(isSplit) > 0) {
+			nn = rep(0, length(n));
+			dn = cumlen[isSplit] %% w;
+			# TODO: move "\n" starting a line on the previous line;
+			nn[isSplit] = (w + 1) - dn;
+			nn = cumsum(nn);
+			cumlen = cumlen + nn;
+		}
+	}
+	max = tail(cumlen, 1) %/% w + 1;
+	pos = cut(cumlen, seq(0, max) * w);
+	count = rle(as.numeric(pos))$lengths;
+	pos = cumsum(count);
+	posS = pos[ - length(pos)] + 1;
+	posS = c(1, posS);
+	pos = rbind(posS, pos);
+	return(pos);
+}
+cat.string = function(s, npos, sep=" ") {
+	for(id in seq(ncol(npos))) {
+		len = npos[2, id] - npos[1, id];
+		cat(s[seq(npos[1, id], npos[2, id])], c(rep(sep, len), "\n"));
+	}
+}
+
 ### Helper
 
 # Argument matching
