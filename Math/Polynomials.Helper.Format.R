@@ -15,12 +15,41 @@
 
 ######################
 
+### General Functions
+
+# TODO: analyse efficiency;
+cut.character.int = function(n, w, extend=2) {
+	n = n + extend;
+	cumlen = cumsum(n);
+	max = tail(cumlen, 1) %/% w + 1;
+	pos = cut(cumlen, seq(0, max) * w);
+	count = rle(as.numeric(pos))$lengths;
+	pos = cumsum(count);
+	posS = pos[ - length(pos)] + 1;
+	posS = c(1, posS);
+	pos = rbind(posS, pos);
+	return(pos);
+}
+cut.character.int.old = function(n, w) {
+	ncm = cumsum(n);
+	nwd = ncm %/% w;
+	count = rle(nwd)$lengths;
+	pos = cumsum(count);
+	posS = pos[ - length(pos)] + 1;
+	posS = c(1, posS);
+	pos = rbind(posS, pos);
+	return(pos);
+}
+
 # Basic function to order a df;
 order.df = function(x, decreasing=TRUE) {
 	order.s = function(...) order(..., decreasing=decreasing);
 	id = do.call(order.s, x);
 	return(id);
 }
+
+### Specific Functions
+
 ### TODO: update use of sort.pm() everywhere!
 # TODO: do.max;
 # do.sum = 0: NO sum; MAX has priority, then individual powers;
@@ -301,29 +330,6 @@ format.complex.pm = function(x, sign.invert=FALSE, rm.zero=TRUE, brackets=TRUE, 
 
 ### Other
 
-cut.character.int.old = function(n, w) {
-	ncm = cumsum(n);
-	nwd = ncm %/% w;
-	count = rle(nwd)$lengths;
-	pos = cumsum(count);
-	posS = pos[ - length(pos)] + 1;
-	posS = c(1, posS);
-	pos = rbind(posS, pos);
-	return(pos);
-}
-cut.character.int = function(n, w, extend=2) {
-	n = n + extend;
-	cumlen = cumsum(n);
-	max = tail(cumlen, 1) %/% w + 1;
-	pos = cut(cumlen, seq(0, max) * w);
-	count = rle(as.numeric(pos))$lengths;
-	pos = cumsum(count);
-	posS = pos[ - length(pos)] + 1;
-	posS = c(1, posS);
-	pos = rbind(posS, pos);
-	return(pos);
-}
-
 ### Convert to Coefficients
 # - as list of polynomials or of numeric values;
 # - the list is in descending order;
@@ -351,7 +357,7 @@ as.coeff.pm = function(p, xn) {
 
 ### Convert to Coefficients: as string;
 # TODO: check everywhere that x is replaced with xn;
-toCoeff = function(p, xn="x", decreasing=TRUE, print=TRUE, sep=NULL) {
+toCoeff = function(p, xn="x", decreasing=TRUE, print=TRUE, sep=NULL, WIDTH=80) {
 	idx = match(xn, names(p));
 	if(idx < 0) stop(paste0("No variable ", xn));
 	px = p[,xn]; p = p[, - idx, drop=FALSE];
@@ -362,31 +368,38 @@ toCoeff = function(p, xn="x", decreasing=TRUE, print=TRUE, sep=NULL) {
 	p.all = rep("0", length(x.all));
 	p.all[1 + sort(unique(px))] = str;
 	if(decreasing) p.all = rev(p.all);
+	class(p.all) = c("pm.coeff", class(p.all));
+	attr(p.all, "xn") = list(xn = xn, isDesc=decreasing);
+	### Print:
 	if(print) {
-		if(is.null(sep)) {
-			LEN = length(p.all);
-			if(LEN <= 1) { sep = "\n"; }
-			else {
-				pos = cut.character.int(nchar(p.all), w=60);
-				nc  = ncol(pos);
-				if(nc > 1) for(id in seq(nc - 1)) {
-					slen = pos[2, id] - pos[1, id];
-					# "" vs ",\n": BUG in cat() inside FOR loop?
-					xsep = c(rep(", ", slen), "");
-					cat(p.all[seq(pos[1, id], pos[2, id])], sep = xsep); cat(",\n");
-				}
-				slen = pos[2, nc] - pos[1, nc];
-				cat(p.all[seq(pos[1, nc], pos[2, nc])], sep = c(rep(", ", slen), "\n"));
-				return(invisible(p.all));
-			}
-		}
-		xsep = c(rep(sep, length(p.all) - 1), "\n");
-		cat(p.all, sep = xsep);
+		cat.pm.coeff(p.all, sep=sep, w=WIDTH);
 		# return invisibly: coefficients are already printed;
 		return(invisible(p.all));
 	}
 	return(p.all)
 }
+cat.pm.coeff = function(p, sep=NULL, w=60) {
+	if(is.null(sep)) {
+		LEN = length(p);
+		if(LEN <= 1) { sep = "\n"; }
+		else {
+			pos = cut.character.int(nchar(p), w=w);
+			nc  = ncol(pos);
+			if(nc > 1) for(id in seq(nc - 1)) {
+				slen = pos[2, id] - pos[1, id];
+				# "" vs ",\n": BUG in cat() inside FOR loop?
+				xsep = c(rep(", ", slen), "");
+				cat(p[seq(pos[1, id], pos[2, id])], sep = xsep); cat(",\n");
+			}
+			slen = pos[2, nc] - pos[1, nc];
+			cat(p[seq(pos[1, nc], pos[2, nc])], sep = c(rep(", ", slen), "\n"));
+			return();
+		}
+	}
+	xsep = c(rep(sep, length(p) - 1), "\n");
+	cat(p, sep = xsep);
+}
+
 # Evaluate the coefficients using "..."
 evalCoeff = function(p, xn="x", ...) {
 	idx = match(xn, names(p));
