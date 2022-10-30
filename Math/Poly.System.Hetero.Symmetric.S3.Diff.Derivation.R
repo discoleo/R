@@ -14,7 +14,7 @@
 ### Introduction ###
 
 # - this file contains the derivation of formulas for:
-#   Poly.System.Hetero.Symmetric.S3.R
+#   Poly.System.Hetero.Symmetric.S3.Diff.R
 # - see further details in that file;
 
 
@@ -31,7 +31,7 @@
 # - system:
 #   x^2 - y^2 + b[1]*x*y*(x+y+z) = R;
 ### draft v.0.1a:
-# - moved derivations from
+# - moved specific derivations from
 #   Poly.System.Hetero.Symmetric.S3.R
 #   to this file;
 # - systems:
@@ -42,10 +42,14 @@
 ####################
 ####################
 
-### helper functions
+### Helper Hunctions
 
-library(polynom)
-library(pracma)
+source("Polynomials.Helper.R")
+source("Polynomials.Helper.EP.R")
+
+
+# library(polynom)
+# library(pracma)
 
 # the functions are in the file:
 # Polynomials.Helper.R
@@ -59,11 +63,19 @@ library(pracma)
 
 # quasi-[Negative Correlations]
 
-### Example:
+### A. Trivial:
 x^n - y^n + b*x*y = R
 y^n - z^n + b*y*z = R
 z^n - x^n + b*z*x = R
 
+
+### B. Non-Trivial
+# x^n - Mixed Monomial[Order n] + P(x,y,z) = R;
+
+# - are special cases for more generic systems;
+
+
+###############
 
 ###############
 ### Order 2 ###
@@ -500,4 +512,79 @@ solve.L3.S3P3 = function(R, b, debug=FALSE) {
 	y = (2*R - 2*z^3 - b*z) / b;
 	return(data.frame(x=x, y=y, z=z, S=x+y+z))
 }
+
+######################
+######################
+######################
+
+######################
+### B. Non-Trivial ###
+######################
+
+### Type:
+### x^n - x^(n-1)*y
+
+# x^3 - x^2*y + b*z = R;
+
+
+### Solution:
+
+### Sum =>
+(x^3 + y^3 + z^3) - E21a + b*S - 3*R # = 0
+S^3 - 3*E2*S + 3*E3 + b*S - E21a - 3*R # = 0
+
+### E31a & E31b:
+# H1: Sum(z*...) =>
+E31b - E3*S + b*(S^2 - 2*E2) - R*S # = 0
+
+# H2: Sum(x*...) =>
+(x^4 + y^4 + z^4) - E31a + b*E2 - R*S # = 0
+S^4 - 4*S^2*E2 + 2*E2^2 + 4*E3*S - E31a + b*E2 - R*S # = 0
+
+# H3: Sum(y*...) =>
+# (may be redundant)
+E31a - (x^2*y^2 + x^2*z^2 + y^2*z^2) + b*E2 - R*S # = 0
+E31a - E2^2 + 2*E3*S + b*E2 - R*S # = 0
+
+
+### E32a & E32b:
+# Sum(y^2*...) =>
+E32a - E32b + b*E21a - R*(S^2 - 2*E2) # = 0
+# + b * Eq 1 =>
+E32a - E32b + b*(S^3 - 3*E2*S + 3*E3 + b*S) - R*(S^2 - 2*E2) - 3*b*R # = 0
+
+# Sum(z^2*...) =>
+E32b - E3*E2 + b*(S^3 - 3*E2*S + 3*E3) - R*(S^2 - 2*E2) # = 0
+
+
+### Eq 1:
+# Eq (H1) - Eq (H2) =>
+E31a + E31b - 5*E3*S - 2*E2^2 + 4*E2*S^2 - 3*b*E2 - S^4 + b*S^2 # = 0
+E2*(S^2 - 2*E2) - E3*S +
+	- 5*E3*S - 2*E2^2 + 4*E2*S^2 - 3*b*E2 - S^4 + b*S^2 # = 0
+6*E3*S + 4*E2^2 - 5*E2*S^2 + 3*b*E2 + S^4 - b*S^2 # = 0
+
+# TODO
+
+
+### Debug:
+R = 3; b = 2;
+x = -0.1563178728 + 1.2244913373i;
+y =  1.5360342822 - 0.1238932578i;
+z = -0.0061562585 + 0.6704627959i;
+S = x+y+z; E2 = (x+y)*z + x*y; E3 = x*y*z;
+n = 2;
+E21a = x^n*y + y^n*z + z^n*x;
+E21b = x*y^n + y*z^n + z*x^n;
+n = 3;
+E31a = x^n*y + y^n*z + z^n*x;
+E31b = x*y^n + y*z^n + z*x^n;
+n = 3; m = 2;
+E32a = x^n*y^m + y^n*z^m + z^n*x^m;
+E32b = x^m*y^n + y^m*z^n + z^m*x^n;
+
+### Test:
+x^3 - x^2*y + b*z # = R
+y^3 - y^2*z + b*x # = R
+z^3 - z^2*x + b*y # = R
 
