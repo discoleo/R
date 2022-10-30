@@ -357,7 +357,8 @@ as.coeff.pm = function(p, xn) {
 
 ### Convert to Coefficients: as string;
 # TODO: check everywhere that x is replaced with xn;
-toCoeff = function(p, xn="x", decreasing=TRUE, print=TRUE, sep=NULL, WIDTH=80) {
+toCoeff = function(p, xn="x", decreasing=TRUE, print=TRUE, addComments=FALSE,
+		sep=NULL, WIDTH=80) {
 	idx = match(xn, names(p));
 	if(idx < 0) stop(paste0("No variable ", xn));
 	px = p[,xn]; p = p[, - idx, drop=FALSE];
@@ -372,25 +373,38 @@ toCoeff = function(p, xn="x", decreasing=TRUE, print=TRUE, sep=NULL, WIDTH=80) {
 	attr(p.all, "xn") = list(xn = xn, isDesc=decreasing);
 	### Print:
 	if(print) {
-		cat.pm.coeff(p.all, sep=sep, w=WIDTH);
+		cat.pm.coeff(p.all, sep=sep, w=WIDTH, addComments=addComments);
 		# return invisibly: coefficients are already printed;
 		return(invisible(p.all));
 	}
 	return(p.all)
 }
-cat.pm.coeff = function(p, sep=NULL, w=60) {
+cat.pm.coeff = function(p, sep=NULL, w=60, addComments=FALSE) {
 	if(is.null(sep)) {
 		LEN = length(p);
 		if(LEN <= 1) { sep = "\n"; }
 		else {
 			pos = cut.character.int(nchar(p), w=w);
 			nc  = ncol(pos);
+			if(addComments) {
+				xn = attr(p, "xn");
+				if(is.null(xn)) { addComments = FALSE; }
+				else xn = xn$xn; # TODO: isDesc;
+			}
+			#
 			if(nc > 1) for(id in seq(nc - 1)) {
+				if(addComments) {
+					npow = pos[2, nc] - pos[1, id];
+					if(npow > 1) { spow = "^"; }
+					else { spow = ""; npow = ""; }
+					cat(paste0("# ", xn, spow, npow, "\n"), sep="");
+				}
 				slen = pos[2, id] - pos[1, id];
 				# "" vs ",\n": BUG in cat() inside FOR loop?
 				xsep = c(rep(", ", slen), "");
 				cat(p[seq(pos[1, id], pos[2, id])], sep = xsep); cat(",\n");
 			}
+			if(addComments) cat("# B0", sep="\n");
 			slen = pos[2, nc] - pos[1, nc];
 			cat(p[seq(pos[1, nc], pos[2, nc])], sep = c(rep(", ", slen), "\n"));
 			return();
