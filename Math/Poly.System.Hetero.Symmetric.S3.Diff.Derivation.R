@@ -7,7 +7,7 @@
 ### Hetero-Symmetric Differences
 ### == Derivation of Formulas ==
 ###
-### draft v.0.1c-fix
+### draft v.0.1e
 
 
 ####################
@@ -24,6 +24,9 @@
 ### History ###
 ###############
 
+### draft v.0.1d - v.0.1e:
+# - [started] x^3 - x^2*y + b*z = R;
+# - various cleanup;
 ### draft v.0.1c - v.0.1c-fix:
 # - system:
 #   x^3 + y^3 - z^3 + b*x = R; [minor sign fix]
@@ -73,6 +76,7 @@ z^n - x^n + b*z*x = R
 # x^n - Mixed Monomial[Order n] + P(x,y,z) = R;
 
 # - are special cases for more generic systems;
+# - these special cases behave differently than the generic system;
 
 
 ###############
@@ -83,26 +87,89 @@ z^n - x^n + b*z*x = R
 
 ### Solution:
 
-### TODO: cleanup / comments;
-
 ### Case 1:
 det = sqrt(R[1]/b[1])
 x = y = z = c(det, -det)
 
 ### Case 2:
-# (x, y, z) NOT equal;
+# (x, y, z) distinct;
 
-### Sum =>
+### Eq 1:
+# Sum =>
 b*E2 - 3*R # = 0
-E2 = 3*R[1] / b[1]
+E2 = 3*R[1] / b[1];
 
-### Sum(z^2*...) =>
+### Eq 2:
+# Sum(z^2*...) =>
 # b*x*y*z*S = R*(x^2+y^2+z^2)
 b*E3*S - R*(S^2 - 2*E2) # = 0
+#
 b*E3*S = R*(S^2 - 2*E2)
 b*E3*S = R*(S^2 - 6*R / b)
 
-### TODO: faster method;
+### Eq 3: Helper
+# H3a: Sum(z*...) =>
+E21b - E21a + 3*b*E3 - R*S # = 0
+
+# H3b: Sum(x*...) =>
+(x^3 + y^3 + z^3) - E21b + b*E21a - R*S # = 0
+S^3 - 3*E2*S + 3*E3 - E21b + b*E21a - R*S # = 0
+# + Eq H3a:
+S^3 - 3*E2*S + 3*(b+1)*E3 + (b - 1)*E21a - 2*R*S # = 0
+# Note: for b != 1 => E21a;
+# (b-1)*(E21a + E21b) =>
+(b-1)*(E21b + E21a) + 3*b*(b-1)*E3 - (b-1)*R*S +
+	+ 2*(S^3 - 3*E2*S + 3*(b+1)*E3 - 2*R*S) # = 0
+
+### Eq 3:
+(b-7)*E2*S + 3*(b^2 + 3)*E3 - (b + 3)*R*S + 2*S^3 # = 0
+
+# Special Case: b = 1:
+# - but the general formula works as well;
+S^3 - 3*E2*S + 6*E3 - 2*R*S # = 0
+# =>
+S^4 - 3*E2*S^2 + 6*E3*S - 2*R*S^2 # = 0 [b == 1]
+S^4 - 3*E2*S^2 + 6*R*(S^2 - 2*E2) - 2*R*S^2 # = 0
+S^4 - (3*E2 - 4*R)*S^2 - 12*R*E2 # = 0
+
+# =>
+2*b^2*S^4 + 3*(b-7)*b*R*S^2 + 3*(b^2 + 3)*R*(b*S^2 - 6*R) - b^2*(b + 3)*R*S^2 # = 0
+b^2*S^4 + (b^3 - 6*b)*R*S^2 - 9*(b^2 + 3)*R^2 # = 0
+
+### Eq S: P[2] * P[2]
+(b*S^2 + R*(b^2 + 3)) * (b*S^2 - 9*R)
+
+### Extension A1: pow 1:
+(b[1]*S^2 + 9*b[2]*S - 9*R)^2 * (b[1]*S^2 - b[2]*(b[1]^2 + 3)*S + R*(b[1]^2 + 3))
+### Extension A1: pow 2:
+((b[1] + 9*b[3])*S^2 + 9*b[2]*S - 9*R)^2 * ((b[1] - b[3]*(b[1]^2 + 3))*S^2 - b[2]*(b[1]^2 + 3)*S + R*(b[1]^2 + 3))
+
+
+### Debug:
+# Special Case:
+R = 1; b = 1;
+x =  1.6510934088i
+y = -1.2738905550i
+z = -2.3772028539i
+
+#
+R = 2; b = 3;
+x =  3.1777090299530i
+y = -1.1341112221540i
+z =  0.7848293169472i
+#
+S = x+y+z; E3 = x*y*z; E2 = x*y + x*z + y*z;
+n = 2;
+E21a = x^n*y + y^n*z + z^n*x;
+E21b = x*y^n + y*z^n + z*x^n;
+
+### Test
+x^2 - y^2 + b[1]*x*y # - R
+y^2 - z^2 + b[1]*y*z # - R
+z^2 - x^2 + b[1]*x*z # - R
+
+
+### [old] Eq 3:
 ### Sum(x*y*...) =>
 (x^3*y - x*y^3 - x^3*z + x*z^3 + y^3*z - y*z^3) + b*(x^2*y^2 + x^2*z^2 + y^2*z^2) - R*E2 # = 0
 E2*(S^2 - 2*E2) - E3*S - 2*(x*y^3 + x^3*z + y*z^3) + b*(E2^2 - 2*E3*S) - R*E2 # = 0
@@ -139,26 +206,6 @@ b^3*S^6 + R*(b^4 - 15*b^2)*S^4 + R^2*(27*b - 18*b^3)*S^2 + 81*R^3*(b^2 + 3)
 (b*S^2 - 9*R)*(b^2*S^4 + R*(b^3 - 6*b)*S^2 - 9*R^2*(b^2 + 3))
 (b*S^2 - 9*R)^2 * (b*S^2 + R*(b^2 + 3))
 
-### Extension A1: pow 1:
-(b[1]*S^2 + 9*b[2]*S - 9*R)^2 * (b[1]*S^2 - b[2]*(b[1]^2 + 3)*S + R*(b[1]^2 + 3))
-### Extension A1: pow 2:
-((b[1] + 9*b[3])*S^2 + 9*b[2]*S - 9*R)^2 * ((b[1] - b[3]*(b[1]^2 + 3))*S^2 - b[2]*(b[1]^2 + 3)*S + R*(b[1]^2 + 3))
-
-
-### Debug
-x =  1.6510934088i
-y = -1.2738905550i
-z = -2.3772028539i
-#
-S = x+y+z
-E3 = x*y*z
-E2 = x*y + x*z + y*z
-
-### Test
-x^2 - y^2 + b[1]*x*y # - R
-y^2 - z^2 + b[1]*y*z # - R
-z^2 - x^2 + b[1]*x*z # - R
-
 
 # [old][redundant]
 ### Sum((x^2+y^2)*...) =>
@@ -168,6 +215,7 @@ b*E2*S^2 - 2*b*E2^2 - b*E3*S - 2*R*S^2 + 4*R*E2 # = 0
 b*E2*S^2 - 2*b*E2^2 - R*(S^2 - 6*R / b) - 2*R*S^2 + 4*R*E2 # = 0
 b^2*E2*S^2 - 2*b^2*E2^2 - R*(b*S^2 - 6*R) - 2*b*R*S^2 + 4*R*b*E2 # = 0
 3*b*R*S^2 - 3*b*R*S^2 # = 0
+
 
 #######################
 
@@ -522,43 +570,47 @@ solve.L3.S3P3 = function(R, b, debug=FALSE) {
 ######################
 
 ### Type:
-### x^n - x^(n-1)*y
+### x^n - x^(n-k)*y^k
 
+### Order 3:
 # x^3 - x^2*y + b*z = R;
 
 
 ### Solution:
 
-### Sum =>
+### Helper Eqs:
+
+### H1: E21a
+# Sum =>
 (x^3 + y^3 + z^3) - E21a + b*S - 3*R # = 0
 S^3 - 3*E2*S + 3*E3 + b*S - E21a - 3*R # = 0
 
-### E31a & E31b:
-# H1: Sum(z*...) =>
+### H2: E31a & E31b:
+# H2a: Sum(z*...) =>
 E31b - E3*S + b*(S^2 - 2*E2) - R*S # = 0
 
-# H2: Sum(x*...) =>
+# H2b: Sum(x*...) =>
 (x^4 + y^4 + z^4) - E31a + b*E2 - R*S # = 0
 S^4 - 4*S^2*E2 + 2*E2^2 + 4*E3*S - E31a + b*E2 - R*S # = 0
 
-# H3: Sum(y*...) =>
+# H2c: Sum(y*...) =>
 # (may be redundant)
 E31a - (x^2*y^2 + x^2*z^2 + y^2*z^2) + b*E2 - R*S # = 0
 E31a - E2^2 + 2*E3*S + b*E2 - R*S # = 0
 
 
-### E32a & E32b:
-# Sum(y^2*...) =>
+### H3: E32a & E32b:
+# H3a: Sum(y^2*...) =>
 E32a - E32b + b*E21a - R*(S^2 - 2*E2) # = 0
 # + b * Eq 1 =>
 E32a - E32b + b*(S^3 - 3*E2*S + 3*E3 + b*S) - R*(S^2 - 2*E2) - 3*b*R # = 0
 
-# Sum(z^2*...) =>
+# H3b: Sum(z^2*...) =>
 E32b - E3*E2 + b*(S^3 - 3*E2*S + 3*E3) - R*(S^2 - 2*E2) # = 0
 
 
 ### Eq 1:
-# Eq (H1) - Eq (H2) =>
+# Eq (H2a) - Eq (H2b) =>
 E31a + E31b - 5*E3*S - 2*E2^2 + 4*E2*S^2 - 3*b*E2 - S^4 + b*S^2 # = 0
 E2*(S^2 - 2*E2) - E3*S +
 	- 5*E3*S - 2*E2^2 + 4*E2*S^2 - 3*b*E2 - S^4 + b*S^2 # = 0
