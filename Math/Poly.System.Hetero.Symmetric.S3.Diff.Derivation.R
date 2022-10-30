@@ -7,7 +7,7 @@
 ### Hetero-Symmetric Differences
 ### == Derivation of Formulas ==
 ###
-### draft v.0.1e
+### draft v.0.1e-branch
 
 
 ####################
@@ -140,13 +140,14 @@ b^2*S^4 + (b^3 - 6*b)*R*S^2 - 9*(b^2 + 3)*R^2 # = 0
 (b*S^2 + R*(b^2 + 3)) * (b*S^2 - 9*R)
 
 ### Extension A1: pow 1:
-(b[1]*S^2 + 9*b[2]*S - 9*R)^2 * (b[1]*S^2 - b[2]*(b[1]^2 + 3)*S + R*(b[1]^2 + 3))
+(b[1]*S^2 + 9*b[2]*S - 9*R) * (b[1]*S^2 - b[2]*(b[1]^2 + 3)*S + (b[1]^2 + 3)*R)
 ### Extension A1: pow 2:
-((b[1] + 9*b[3])*S^2 + 9*b[2]*S - 9*R)^2 * ((b[1] - b[3]*(b[1]^2 + 3))*S^2 - b[2]*(b[1]^2 + 3)*S + R*(b[1]^2 + 3))
+b1 = b[1]; b2 = b[2]; b3 = b[3];
+((b1 + 9*b3)*S^2 + 9*b2*S - 9*R) * ((b1 - b3*(b1^2 + 3))*S^2 - b2*(b1^2 + 3)*S + (b1^2 + 3)*R)
 
 
 ### Debug:
-# Special Case:
+# Special/Degenerate Case:
 R = 1; b = 1;
 x =  1.6510934088i
 y = -1.2738905550i
@@ -575,8 +576,32 @@ solve.L3.S3P3 = function(R, b, debug=FALSE) {
 ### Order 3:
 # x^3 - x^2*y + b*z = R;
 
-
 ### Solution:
+
+### Analysis:
+
+### Branch Points:
+# x^3 - x^2*y = 0 =>
+# x = y =>
+# - for this simple System:
+#   => x = y = z = R/b;
+# - the branch point affects only the trivial solution;
+# - very special case: when R^2 - b^3 = 0;
+
+### Special Case:
+# x = y; z = R/b;
+x^3 - x^2*z + b*x - R # = 0
+z^3 - z^2*x + b*x - R # = 0
+# =>
+b*x^3 - R*x^2 + b^2*x - b*R # = 0 (Eq Sp-1)
+(R^2 - b^3)*(R - b*x) # = 0
+### Case: R^2 = b^3 = k^6
+# z = R / b = k;
+# Eq  Sp-1 =>
+(x - k)*(x^2 + k^2) # = 0
+# Additional solution:
+# (k*1i, k*1i, k), (-k*1i, -k*1i, k);
+
 
 ### Helper Eqs:
 
