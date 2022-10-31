@@ -7,16 +7,30 @@
 ### Polynomial Systems: S3
 ### Hetero-Symmetric Differences
 ###
-### draft v.0.3a-fix2
+### draft v.0.3b
 
+
+##########################
+### Difference Types   ###
+##########################
+
+# quasi-[Negative Correlations]
 
 ### Hetero-Symmetric Differences
 ### Polynomial Systems: 3 Variables
 
-### Example:
+### A. Trivial:
 x^n - y^n + b*x*y = R
 y^n - z^n + b*y*z = R
 z^n - x^n + b*z*x = R
+
+### B. Non-Trivial
+# x^n - Mixed Monomial[Order n] + P(x,y,z) = 0
+
+# - are special cases for more generic systems;
+# - these special cases behave differently than
+#   the corresponding generic system;
+
 
 # - for full derivation of solutions, see:
 #   Poly.System.Hetero.Symmetric.S3.Diff.Derivation.R;
@@ -25,6 +39,7 @@ z^n - x^n + b*z*x = R
 
 ###############
 ### History ###
+###############
 
 ### draft v.0.3a - v.0.3a-fix2:
 # - solved + classic Polynomial (P[24]):
@@ -58,23 +73,24 @@ z^n - x^n + b*z*x = R
 ####################
 ####################
 
-### helper functions
+### Helper Functions
 
-library(polynom)
-library(pracma)
+source("Polynomials.Helper.R")
+
+# library(polynom)
+# library(pracma)
 
 # the functions are in the file:
 # Polynomials.Helper.R
 
-##########################
 
+#######################
+#######################
 
-##########################
-### Difference Types   ###
-##########################
-
-# quasi-[Negative Correlations]
-
+#######################
+### Section A:      ###
+### Trivial Systems ###
+#######################
 
 ###############
 ### Order 2 ###
@@ -83,6 +99,11 @@ library(pracma)
 # x^2 - y^2 + b*x*y = R
 # y^2 - z^2 + b*y*z = R
 # z^2 - x^2 + b*x*z = R
+
+### Note:
+# - Technically, this system does NOT have a major branch point;
+# - Possible relevant systems, e.g.:
+#   (b + 1)*x^2 - y^2 - b*x*y = R;
 
 ### Solution:
 
@@ -816,4 +837,95 @@ x =  0.2917949139 + 0.4133125124i;
 y = -0.3108981004 + 1.4856874177i;
 z =  1.1246683294 - 0.4366248387i;
 S = x+y+z; E2 = x*y+x*z+y*z; E3 = x*y*z;
+
+
+######################
+######################
+######################
+
+######################
+### B. Non-Trivial ###
+######################
+
+### Type:
+### x^n - x^(n-k)*y^k
+
+### Order 3:
+# x^3 - x^2*y + b*z = R;
+
+### Solution:
+
+### Analysis:
+
+# TODO
+
+
+### Eq S:
+S^8 + 2*b*S^6 - 4*R*S^5 + 68*b^2*S^4 - 180*R*b*S^3 + (196*R^2 + 98*b^3)*S^2 - 240*R*b^2*S + 75*b^4 # = 0
+
+
+### Solver:
+
+solve.S3Ht.D3m21 = function(R, b, debug=TRUE, all=FALSE) {
+	coeff = coeff.S3Ht.D3m21(R, b);
+	S = roots(coeff);
+	if(debug) print(S);
+	E2x0 = (9*S^6 + 36*b*S^4 - 90*R*S^3 + 21*b^2*S^2 + 12*R*b*S);
+	E2 = E2x0 / (27*S^4 + 60*b*S^2 - 126*R*S + 75*b^2);
+	E3 = (11*E2*S^2 - 5*b*E2 - 3*S^4 - b*S^2 + 8*R*S) / (18*S);
+	#
+	len = length(S);
+	x = sapply(seq(len), function(id) {
+		roots(c(1, -S[id], E2[id], -E3[id]));
+	});
+	# Robust:
+	x = as.vector(x);
+	S = rep(S, each=3); E2 = rep(E2, each=3);
+	s = S - x; # e2 = E2 - s*x;
+	y = (b*s - R + x^3) / (b + x^2);
+	z = s - y;
+	sol = cbind(x, y, z);
+	if(all) {
+		# TODO
+		# contains already all permutations;
+	}
+	return(sol);
+}
+coeff.S3Ht.D3m21 = function(R, b) {
+	coeff = c(1, 0, 2*b, - 4*R, 68*b^2, - 180*R*b, 196*R^2 + 98*b^3, - 240*R*b^2, 75*b^4);
+	return(coeff);
+}
+### Test:
+test.S3Ht.D3m21 = function(sol, b, R=NULL) {
+	x = sol[,1]; y = sol[,2]; z = sol[,3];
+	err1 = x^3 - x^2*y + b*z;
+	err2 = y^3 - y^2*z + b*x;
+	err3 = z^3 - z^2*x + b*y;
+	err = rbind(err1, err2, err3);
+	err = round0(err);
+	return(err);
+}
+
+### Examples:
+
+### Ex 1:
+R = 3
+b = -4
+sol = solve.S3Ht.D3m21(R, b)
+
+test.S3Ht.D3m21(sol, b=b)
+
+### Ex 2:
+R = -1
+b = -2
+sol = solve.S3Ht.D3m21(R, b)
+
+test.S3Ht.D3m21(sol, b=b)
+
+
+### Test:
+x = sol[,1]; y = sol[,2]; z = sol[,3];
+x^3 - x^2*y + b*z # = R
+y^3 - y^2*z + b*x # = R
+z^3 - z^2*x + b*y # = R
 
