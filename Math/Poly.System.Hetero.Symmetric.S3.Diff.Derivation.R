@@ -79,11 +79,23 @@ z^n - x^n + b*z*x = R
 # - these special cases behave differently than the generic system;
 
 
-###############
+#######################
+#######################
+
+#######################
+### Section A:      ###
+### Trivial Systems ###
+#######################
 
 ###############
 ### Order 2 ###
 ###############
+
+### Note:
+# - Technically, this system does NOT have a major branch point;
+# - Possible relevant systems, e.g.:
+#   (b + 1)*x^2 - y^2 - b*x*y = R;
+
 
 ### Solution:
 
@@ -224,6 +236,19 @@ b^2*E2*S^2 - 2*b^2*E2^2 - R*(b*S^2 - 6*R) - 2*b*R*S^2 + 4*R*b*E2 # = 0
 ### Order 3 ###
 ###############
 
+# x^3 - y^3 + b*x*y = R;
+
+### Solution:
+
+### Analysis:
+
+### Branch Points:
+# x^3 = y^3 => y = m*x;
+# where m^3 = 1;
+### Special Case:
+# TODO: is there a solution?
+
+
 ### Case 2:
 # (x, y, z) NOT equal;
 
@@ -271,9 +296,7 @@ x = 1.2583507026 + 1.1639791181i
 y = 0.2282819654 - 1.0195743279i
 z = 0.4163440587 + 0.6438339512i
 #
-S = x+y+z
-E3 = x*y*z
-E2 = x*y + x*z + y*z
+S = x+y+z; E3 = x*y*z; E2 = x*y + x*z + y*z;
 
 ### Test
 x^3 - y^3 + b[1]*x*y # - R[1]
@@ -639,8 +662,19 @@ E32b - E3*E2 + b*(S^3 - 3*E2*S + 3*E3) - R*(S^2 - 2*E2) # = 0
 E31a + E31b - 5*E3*S - 2*E2^2 + 4*E2*S^2 - 3*b*E2 - S^4 + b*S^2 # = 0
 E2*(S^2 - 2*E2) - E3*S +
 	- 5*E3*S - 2*E2^2 + 4*E2*S^2 - 3*b*E2 - S^4 + b*S^2 # = 0
-6*E3*S + 4*E2^2 - 5*E2*S^2 + 3*b*E2 + S^4 - b*S^2 # = 0
+4*E2^2 + 6*E3*S - 5*E2*S^2 + 3*b*E2 + S^4 - b*S^2 # = 0
 
+### Eq 2:
+# Eq (H3a) + 2*Eq (H3b) =>
+E32a + E32b + b*(S^3 - 3*E2*S + 3*E3 + b*S) - R*(S^2 - 2*E2) - 3*b*R +
+	- 2*(E3*E2 - b*(S^3 - 3*E2*S + 3*E3) + R*(S^2 - 2*E2)) # = 0
+E32a + E32b - 2*E2*E3 + 9*b*E3 - 9*b*E2*S + 6*R*E2 + 3*b*S^3 - 3*R*S^2 + b^2*S - 3*b*R # = 0
+E2^2*S - 3*E2*E3 - 2*E3*S^2 + 9*b*E3 - 9*b*E2*S + 6*R*E2 + 3*b*S^3 - 3*R*S^2 + b^2*S - 3*b*R # = 0
+# Reduction =>
+12*E2*E3 + 14*E3*S^2 - 36*b*E3 - 5*E2*S^3 + 39*b*E2*S - 24*R*E2 +
+	+ S^5 - 13*b*S^3 + 12*R*S^2 - 4*b^2*S + 12*b*R # = 0
+
+### Eq 3:
 # TODO
 
 
