@@ -7,7 +7,7 @@
 ### Hetero-Symmetric Differences
 ### == Derivation of Formulas ==
 ###
-### draft v.0.1e-branch
+### draft v.0.1f
 
 
 ####################
@@ -24,7 +24,7 @@
 ### History ###
 ###############
 
-### draft v.0.1d - v.0.1e:
+### draft v.0.1d - v.0.1f:
 # - [started] x^3 - x^2*y + b*z = R;
 # - various cleanup;
 ### draft v.0.1c - v.0.1c-fix:
@@ -663,6 +663,9 @@ E31a + E31b - 5*E3*S - 2*E2^2 + 4*E2*S^2 - 3*b*E2 - S^4 + b*S^2 # = 0
 E2*(S^2 - 2*E2) - E3*S +
 	- 5*E3*S - 2*E2^2 + 4*E2*S^2 - 3*b*E2 - S^4 + b*S^2 # = 0
 4*E2^2 + 6*E3*S - 5*E2*S^2 + 3*b*E2 + S^4 - b*S^2 # = 0
+# partial Reduction =>
+E2^2 + 6*E3*S - 4*E2*S^2 + 2*b*E2 + S^4 - 2*R*S # = 0
+
 
 ### Eq 2:
 # Eq (H3a) + 2*Eq (H3b) =>
@@ -675,7 +678,14 @@ E2^2*S - 3*E2*E3 - 2*E3*S^2 + 9*b*E3 - 9*b*E2*S + 6*R*E2 + 3*b*S^3 - 3*R*S^2 + b
 	+ S^5 - 13*b*S^3 + 12*R*S^2 - 4*b^2*S + 12*b*R # = 0
 
 ### Eq 3:
-# TODO
+E31a + E31b - E2^2 + E3*S - b*E2 + b*S^2 - 2*R*S # = 0
+3*E2^2 - E2*S^2 + b*E2 - b*S^2 + 2*R*S # = 0
+# Reduction =>
+18*E3*S - 11*E2*S^2 + 5*b*E2 + 3*S^4 + b*S^2 - 8*R*S # = 0
+
+
+### Eq S:
+S^8 + 2*b*S^6 - 4*R*S^5 + 68*b^2*S^4 - 180*R*b*S^3 + (196*R^2 + 98*b^3)*S^2 - 240*R*b^2*S + 75*b^4 # = 0
 
 
 ### Debug:
@@ -698,4 +708,19 @@ E32b = x^m*y^n + y^m*z^n + z^m*x^n;
 x^3 - x^2*y + b*z # = R
 y^3 - y^2*z + b*x # = R
 z^3 - z^2*x + b*y # = R
+
+
+### Derivation:
+
+p1 = toPoly.pm("18*E3*S - 11*E2*S^2 + 5*b*E2 + 3*S^4 + b*S^2 - 8*R*S")
+p2 = toPoly.pm("E2^2 + 6*E3*S - 4*E2*S^2 + 2*b*E2 + S^4 - 2*R*S")
+p3 = toPoly.pm("12*E2*E3 + 14*E3*S^2 - 36*b*E3 - 5*E2*S^3 + 39*b*E2*S - 24*R*E2 +
+	+ S^5 - 13*b*S^3 + 12*R*S^2 - 4*b^2*S + 12*b*R")
+
+pR = solve.lpm(p1, p2, p3, xn=c("E3", "E2"))
+str(pR)
+
+pR2 = pR[[2]]$Rez;
+pR2 = div.pm(pR2, "b*S - 3*R", "S")$Rez;
+print.pm(pR2, "S")
 
