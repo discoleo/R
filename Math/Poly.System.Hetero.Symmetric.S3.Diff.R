@@ -7,7 +7,7 @@
 ### Polynomial Systems: S3
 ### Hetero-Symmetric Differences
 ###
-### draft v.0.3b
+### draft v.0.3b-special
 
 
 ##########################
@@ -857,7 +857,13 @@ S = x+y+z; E2 = x*y+x*z+y*z; E3 = x*y*z;
 
 ### Analysis:
 
-# TODO
+### Branch Points:
+# x^3 - x^2*y = 0 =>
+# x = y =>
+# - for this simple System:
+#   => x = y = z = R/b;
+# - the branch point affects only the trivial solution;
+# - very special case: when R^2 - b^3 = 0;
 
 
 ### Eq S:
@@ -885,6 +891,13 @@ solve.S3Ht.D3m21 = function(R, b, debug=TRUE, all=FALSE) {
 	y = (b*s - R + x^3) / (b + x^2);
 	z = s - y;
 	sol = cbind(x, y, z);
+	### Special Cases:
+	isSpecial = round0(R^2 - b^3) == 0;
+	if(isSpecial) {
+		k = R / b;
+		sol2 = rbind(k*c(1, 1i, 1i), k*c(1, -1i, -1i));
+		sol  = rbind(sol, sol2);
+	}
 	if(all) {
 		# TODO
 		# contains already all permutations;
@@ -892,6 +905,11 @@ solve.S3Ht.D3m21 = function(R, b, debug=TRUE, all=FALSE) {
 	return(sol);
 }
 coeff.S3Ht.D3m21 = function(R, b) {
+	if(round0(R^2 - b^3) == 0) {
+		k = R / b;
+		coeff = c(1, 2*k, k^2, - 12*k^3, 39*k^4, - 42*k^5, 15*k^6);
+		return(coeff);
+	}
 	coeff = c(1, 0, 2*b, - 4*R, 68*b^2, - 180*R*b, 196*R^2 + 98*b^3, - 240*R*b^2, 75*b^4);
 	return(coeff);
 }
@@ -918,6 +936,15 @@ test.S3Ht.D3m21(sol, b=b)
 ### Ex 2:
 R = -1
 b = -2
+sol = solve.S3Ht.D3m21(R, b)
+
+test.S3Ht.D3m21(sol, b=b)
+
+
+### Ex 3: Special Case
+# R^3 == b^2;
+R = 8
+b = 4
 sol = solve.S3Ht.D3m21(R, b)
 
 test.S3Ht.D3m21(sol, b=b)
