@@ -246,11 +246,11 @@ b^2*E2*S^2 - 2*b^2*E2^2 - R*(b*S^2 - 6*R) - 2*b*R*S^2 + 4*R*b*E2 # = 0
 # x^3 = y^3 => y = m*x;
 # where m^3 = 1;
 ### Special Case:
-# TODO: is there a solution?
+# possible when: b^3 + 27*R = 0;
 
 
 ### Case 2:
-# (x, y, z) NOT equal;
+# (x, y, z) distinct;
 
 ### Sum =>
 b*E2 - 3*R # = 0
@@ -302,6 +302,24 @@ S = x+y+z; E3 = x*y*z; E2 = x*y + x*z + y*z;
 x^3 - y^3 + b[1]*x*y # - R[1]
 y^3 - z^3 + b[1]*y*z # - R[1]
 z^3 - x^3 + b[1]*x*z # - R[1]
+
+
+### Branch Points:
+# x^3 = y^3 =>
+### Case: y = m*x; m^3 = 1;
+b*m*x^2 - R # = 0
+x^3 - z^3 + b*m*x*z - R # = 0
+z^3 - x^3 + b*x*z - R # = 0
+# =>
+b*(m+1)*x*z - 2*R # = 0
+# =>
+(m - 1)*b^2*x - 9*R # = 0
+# =>
+b^3 + 27*R # = 0
+
+R = -1; b = 3;
+x = 9*R / (b^2*(m-1)); y = m*x; z = - 2*m*R / (b*x);
+
 
 #############################
 #############################
@@ -613,11 +631,6 @@ solve.L3.S3P3 = function(R, b, debug=FALSE) {
 
 ### Special Case:
 # x = y; z = R/b;
-x^3 - x^2*z + b*x - R # = 0
-z^3 - z^2*x + b*x - R # = 0
-# =>
-b*x^3 - R*x^2 + b^2*x - b*R # = 0 (Eq Sp-1)
-(R^2 - b^3)*(R - b*x) # = 0
 ### Case: R^2 = b^3 = k^6
 # z = R / b = k;
 # Eq  Sp-1 =>
@@ -723,4 +736,28 @@ str(pR)
 pR2 = pR[[2]]$Rez;
 pR2 = div.pm(pR2, "b*S - 3*R", "S")$Rez;
 print.pm(pR2, "S")
+
+
+### Branch Points:
+# sum(Leading monomials) = 0
+# x^3 - x^2*y = 0 =>
+# x = y =>
+b*z - R # = 0
+x^3 - x^2*z + b*x - R # = 0
+z^3 - x*z^2 + b*x - R # = 0
+# =>
+(b*x - R)*(x^2 + b) # = 0 (Eq Sp-1)
+(R^2 - b^3)*(b*x - R) # = 0 (Eq Sp-2)
+# - for this simple System:
+#   => x = y = z = R/b;
+# - the branch point affects only the trivial solution;
+# + very special case:
+#   possible when R^2 - b^3 = 0;
+
+### Case: R^2 = b^3 = k^6
+# z = R / b = k;
+# Eq Sp-1 =>
+(x - k)*(x^2 + k^2) # = 0
+# Additional solution:
+# (k*1i, k*1i, k), (-k*1i, -k*1i, k);
 
