@@ -7,7 +7,7 @@
 ### Polynomial Systems: S3
 ### Hetero-Symmetric Differences
 ###
-### draft v.0.3b-special
+### draft v.0.3c-refactor
 
 
 ##########################
@@ -300,7 +300,8 @@ x^6 + y^6 - 2*x^3*y^3 - (R^2 + b[1]^2*x^2*y^2 - 2*b[1]*R*x*y) # = 0
 (b[1]*S^2 - 9*R) * (b[1]*S^2 - 3*R) * (b[1]^3*S^4 - 9*R*b[1]^2*S^2 + (R*b[1]^4 + 27*R^2*b[1]))
 
 
-coeff = c(b[1]^3, 0, - 9*R[1]*b[1]^2, 0, (R[1]*b[1]^4 + 27*R[1]^2*b[1]))
+### Eq S:
+b1^3*S^4 - 9*R*b1^2*S^2 + R*b1^4 + 27*R^2*b1;
 
 
 ### Extension A1: power 1:
@@ -321,67 +322,44 @@ coeff = c(b[1]^3, 0, - 9*R[1]*b[1]^2, 0, (R[1]*b[1]^4 + 27*R[1]^2*b[1]))
 	- (b[1]^4*b[2] + 54*b[1]*b[2]*R)*S + (R*b[1]^4 + 27*b[1]*R^2))
 
 
-### Solution
-solve.Ht3DiffP3 = function(R, b) {
-	if(b[1] == 0) stop("System undefined when b[1] == 0!")
-	if(length(b) == 1) {
-		coeff = c(b[1]^3, 0, - 9*R[1]*b[1]^2, 0, (R[1]*b[1]^4 + 27*R[1]^2*b[1]))
-	} else if(length(b) == 2) {
-		coeff = c(b[1]^3, 9*b[1]^2*b[2], (27*b[1]*b[2]^2 - 9*R[1]*b[1]^2),
-			- (b[1]^4*b[2] + 54*b[1]*b[2]*R[1]), (R[1]*b[1]^4 + 27*R[1]^2*b[1]))
-	} else if(length(b) == 3) {
-		coeff = c((b[1]^3 + 9*b[1]^2*b[3] + 27*b[1]*b[3]^2), 9*(b[1]^2*b[2] + 6*b[1]*b[2]*b[3]),
-			(27*b[1]*b[2]^2 - 9*R[1]*b[1]^2 + 54*b[1]*b[2]*b[3] - b[1]^4*b[3] + 54*b[1]*b[3]*R[1]),
-			- (b[1]^4*b[2] + 54*b[1]*b[2]*R[1]), (R*b[1]^4 + 27*R[1]^2*b[1]))
-	} else if(length(b) == 4) {
-		coeff = c(27*b[1]*b[4]^2, 9*(b[1]^2*b[4] + 6*b[1]*b[3]*b[4]),
-			(b[1]^3 + 9*b[1]^2*b[3] + 27*b[1]*b[3]^2 + 54*b[1]*b[2]*b[4]), # S^4
-			9*(b[1]^2*b[2] + 6*b[1]*b[2]*b[3] - 6*b[1]*b[4]*R[1]) - b[1]^4*b[4], # S^3
-			(27*b[1]*b[2]^2 - 9*R[1]*b[1]^2 - b[1]^4*b[3] - 54*b[1]*b[3]*R[1]), # S^2
-			- (b[1]^4*b[2] + 54*b[1]*b[2]*R[1]), (R[1]*b[1]^4 + 27*b[1]*R[1]^2))
-	}
-	S = roots(coeff)
-	print(S)
-	#
+### Solver:
+
+solve.S3Ht.DiffP3 = function(R, b, debug=TRUE, all=FALSE) {
+	if(b[1] == 0) stop("System undefined when b[1] == 0!");
+	coeff = coeff.S3Ht.DiffP3(R, b=b);
+	S = roots(coeff);
+	if(debug) print(S);
+	# Extensions:
 	b2 = if(length(b) > 1) b[2] else 0; # Ext A1: pow 1;
 	b3 = if(length(b) > 2) b[3] else 0; # Ext A1: pow 2;
 	b4 = if(length(b) > 3) b[4] else 0; # Ext A1: pow 3;
 	R1 = R[1] - b2*S - b3*S^2 - b4*S^3
-	E2 = 3*R1 / b[1]
-	E3 = R1*(b[1]*S^3 - 9*R1*S) / b[1] / (b[1]*S^2 - 9*R1)
+	E2 = 3*R1 / b[1];
+	E3 = R1*S / b[1];
 	### x
 	x = sapply(seq_along(S), function(id) roots(c(1, -S[id], E2[id], - E3[id])))
-	len = length(S)
+	len = length(S);
+	x  = as.vector(x);
 	S  = rep(S,  each=3)
-	E3 = rep(E3, each=3)
+	E2 = rep(E2, each=3)
 	R1 = rep(R1, each=3)
-	isZero = round0(x) == 0
-	# x = x[ ! isZero] # TODO: changes length of x => S;
-	yz = E3/x
-	yz.s = S - x
+	#
+	yz.s = S - x;
+	yz   = E2 - x*yz.s;
 	### robust: includes Ext A1: powers 1 & 2;
 	y3 = (yz.s^3 + R1 - (3*yz.s + b[1])*yz) / 2
 	y = (R1 - x^3 + y3) / b[1] / x
 	z = yz.s - y;
-	sol = cbind(x=as.vector(x), y=as.vector(y), z=as.vector(z))
-	### x = 0
-	if(any(isZero)) {
-		print("Solution: x == 0")
-		# cleanup
-		sol = sol[ ! isZero , ];
-		R1 = R1[isZero]; yz.s = yz.s[isZero];
-		# y3 = - R1; z3 = R1;
-		yz = 3*R1 / b[1];
-		yz.d = - 2*R1 / (yz.s^2 - yz)
-		y = (yz.s + yz.d)/2;
-		z = yz.s - y;
-		sol2 = cbind(0, y, z)
-		sol2 = unique(sol2) # remove 3x duplicates;
-		sol = rbind(sol, sol2)
+	sol = cbind(x, y, z);
+	if(round0(b[1]^3 + 27*R) == 0) {
+		# Special Case:
+		sol2 = solve.S3Ht.DiffP3.Special(R, b, debug=debug);
+		sol  = rbind(sol, sol2);
 	}
+	if( ! all) return(sol);
 	### x == y == z
 	if(length(b) < 2) {
-		x = y = z = c(1,-1) * sqrt(R[1] / b[1] + 0i)
+		x = y = z = c(1,-1) * sqrt(R[1] / b[1] + 0i);
 	} else if(length(b) == 2) {
 		x = y = z = roots(c(b[1], 3*b[2], -R[1]))
 	} else if(length(b) == 3) {
@@ -392,29 +370,90 @@ solve.Ht3DiffP3 = function(R, b) {
 	sol = rbind(sol, cbind(x,y,z))
 	return(sol)
 }
+solve.S3Ht.DiffP3.Special = function(R, b, debug=TRUE) {
+	if(debug) print("Solution: x == 0");
+	# Case: S = 0
+	sol = cbind(x=0, y = b[1]/3, z = - b[1]/3);
+	# All permutations:
+	perm3 = function(sol) rbind(sol, sol[,c(3,1,2)], sol[c(2,3,1)]);
+	sol   = perm3(sol);
+	# Special Cases:
+	# TODO: analyse for Extensions;
+	if(length(b) == 1) {
+		m = unity(3, all=FALSE);
+		x = 9*R / (b^2*(m-1)); y = m*x; z = - 2*m*R / (b*x);
+		sol = rbind(sol, perm3(cbind(x, y, z)));
+	}
+	return(sol);
+}
+coeff.S3Ht.DiffP3 = function(R, b) {
+	if(length(R) > 1) stop("Invalid parameter R!");
+	b3R = (b[1]^3 + 27*R);
+	isSpecial = round0(b3R) == 0;
+	if(length(b) == 1) {
+		# Special Case:
+		if(isSpecial) return(c(3, 0, b[1]^2));
+		coeff = c(b[1]^3, 0, - 9*b[1]^2*R, 0, b[1]*R*b3R);
+	} else if(length(b) == 2) {
+		coeff = c(b[1]^3, 9*b[1]^2*b[2], (27*b[1]*b[2]^2 - 9*b[1]^2*R),
+			- (b[1]^4*b[2] + 54*b[1]*b[2]*R), b[1]*R*b3R);
+	} else if(length(b) == 3) {
+		coeff = c((b[1]^3 + 9*b[1]^2*b[3] + 27*b[1]*b[3]^2), 9*(b[1]^2*b[2] + 6*b[1]*b[2]*b[3]),
+			(27*b[1]*(b[2]^2 - 2*b[3]*R) - b[1]^4*b[3] - 9*b[1]^2*R),
+			- (b[1]^4*b[2] + 54*b[1]*b[2]*R), b[1]*R*b3R);
+	} else if(length(b) == 4) {
+		# TODO: fix bug;
+		coeff = c(27*b[1]*b[4]^2, 9*(b[1]^2*b[4] + 6*b[1]*b[3]*b[4]),
+			(b[1]^3 + 9*b[1]^2*b[3] + 27*b[1]*b[3]^2 + 54*b[1]*b[2]*b[4]), # S^4
+			9*(b[1]^2*b[2] + 6*b[1]*b[2]*b[3] - 6*b[1]*b[4]*R[1]) - b[1]^4*b[4], # S^3
+			(27*b[1]*b[2]^2 - 9*R[1]*b[1]^2 - b[1]^4*b[3] - 54*b[1]*b[3]*R[1]), # S^2
+			- (b[1]^4*b[2] + 54*b[1]*b[2]*R[1]), b[1]*R[1]*b3R);
+	}
+	# same special Case in Extensions;
+	if(isSpecial) coeff = coeff[ - length(coeff)];
+	return(coeff);
+}
+### Test:
+test.S3Ht.DiffP3 = function(sol, b, R=NULL) {
+	x = sol[,1]; y = sol[,2]; z = sol[,3];
+	err1 = x^3 - y^3 + b[1]*x*y;
+	err2 = y^3 - z^3 + b[1]*y*z;
+	err3 = z^3 - x^3 + b[1]*x*z;
+	err = rbind(err1, err2, err3);
+	if(length(b) > 1) {
+		S = x + y + z;
+		ext = b[2]*S;
+		if(length(b) > 2) {
+			ext = ext + b[3]*S^2;
+			if(length(b) > 3) ext = ext + b[4]*S^3;
+		}
+		err = err + rep(ext, each=3);
+	}
+	err = round0(err);
+	return(err);
+}
 
 
 ### Examples:
 
+### Ex 1:
 R = 2
 b = 3
 #
-sol = solve.Ht3DiffP3(R, b)
-x = sol[,1]; y = sol[,2]; z = sol[,3];
+sol = solve.S3Ht.DiffP3(R, b)
 
-### Test
-x^3 - y^3 + b[1]*x*y # - R[1]
-y^3 - z^3 + b[1]*y*z # - R[1]
-z^3 - x^3 + b[1]*x*z # - R[1]
+test.S3Ht.DiffP3(sol, b=b)
 
 
-#########
 ### Ex 2: x = 0
 R = -1; b = 3;
-sol = solve.Ht3DiffP3(R, b)
-x = sol[,1]; y = sol[,2]; z = sol[,3];
+sol = solve.S3Ht.DiffP3(R, b)
+
+test.S3Ht.DiffP3(sol, b=b)
+
 
 ### Test
+x = sol[,1]; y = sol[,2]; z = sol[,3];
 x^3 - y^3 + b[1]*x*y # - R[1]
 y^3 - z^3 + b[1]*y*z # - R[1]
 z^3 - x^3 + b[1]*x*z # - R[1]
@@ -427,13 +466,10 @@ z^3 - x^3 + b[1]*x*z # - R[1]
 R = 1
 b = c(1, -2)
 #
-sol = solve.Ht3DiffP3(R, b)
-x = sol[,1]; y = sol[,2]; z = sol[,3];
+sol = solve.S3Ht.DiffP3(R, b)
 
-### Test
-x^3 - y^3 + b[1]*x*y + b[2]*(x+y+z) # - R
-y^3 - z^3 + b[1]*y*z + b[2]*(x+y+z) # - R
-z^3 - x^3 + b[1]*x*z + b[2]*(x+y+z) # - R
+test.S3Ht.DiffP3(sol, b=b)
+
 
 round0.p(poly.calc(x[1:12]))
 
@@ -442,36 +478,65 @@ err = 28 + 330*x + 1563*x^2 + 4526*x^3 + 20325*x^4 + 47980*x^5 + 34722*x^6 - 205
 round0(err)
 
 
+### Ex: x = 0
+R = 8
+b = c(-6, 1)
+#
+sol = solve.S3Ht.DiffP3(R, b)
+
+test.S3Ht.DiffP3(sol, b=b)
+
+
 ### Ext. power 2:
 R = 1
 b = c(1, -2, -2)
 #
-sol = solve.Ht3DiffP3(R, b)
-x = sol[,1]; y = sol[,2]; z = sol[,3];
+sol = solve.S3Ht.DiffP3(R, b)
 
-### Test
-x^3 - y^3 + b[1]*x*y + b[2]*(x+y+z) + b[3]*(x+y+z)^2 # - R
-y^3 - z^3 + b[1]*y*z + b[2]*(x+y+z) + b[3]*(x+y+z)^2 # - R
-z^3 - x^3 + b[1]*x*z + b[2]*(x+y+z) + b[3]*(x+y+z)^2 # - R
+test.S3Ht.DiffP3(sol, b=b)
+
 
 round0.p(poly.calc(x[1:12])) ) * 7^3 * 13^3
 
+x = sol[,1]
 err = 28 + 330*x + 2217*x^2 + 10206*x^3 + 34283*x^4 + 83236*x^5 + 147578*x^6 + 217756*x^7 + 410766*x^8 +
 	+ 920194*x^9 + 1572389*x^10 + 1639638*x^11 + 753571*x^12
 round0(err)
+
+
+### Ex 2:
+R = 4
+b = c(1, -3, -2)
+#
+sol = solve.S3Ht.DiffP3(R, b)
+
+test.S3Ht.DiffP3(sol, b=b)
+
+
+### Ex: x = 0
+R = -8
+b = c(6, -2, -2)
+#
+sol = solve.S3Ht.DiffP3(R, b)
+
+test.S3Ht.DiffP3(sol, b=b)
 
 
 ### Ext. power 3:
 R = 1
 b = c(1, -2, -2, 1)
 #
-sol = solve.Ht3DiffP3(R, b)
-x = sol[,1]; y = sol[,2]; z = sol[,3];
+sol = solve.S3Ht.DiffP3(R, b)
+
+test.S3Ht.DiffP3(sol, b=b)
+
 
 ### Test
-x^3 - y^3 + b[1]*x*y + b[2]*(x+y+z) + b[3]*(x+y+z)^2 + b[4]*(x+y+z)^3 # - R
-y^3 - z^3 + b[1]*y*z + b[2]*(x+y+z) + b[3]*(x+y+z)^2 + b[4]*(x+y+z)^3 # - R
-z^3 - x^3 + b[1]*x*z + b[2]*(x+y+z) + b[3]*(x+y+z)^2 + b[4]*(x+y+z)^3 # - R
+x = sol[,1]; y = sol[,2]; z = sol[,3]; S = x+y+z;
+ext = b[2]*S + b[3]*S^2 + b[4]*S^3;
+x^3 - y^3 + b[1]*x*y + ext # - R
+y^3 - z^3 + b[1]*y*z + ext # - R
+z^3 - x^3 + b[1]*x*z + ext # - R
 
 
 ##########################
