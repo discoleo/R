@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric S3:
 ### Mixed Type: Dual / Multiple E2a Eqs
 ###
-### draft v.0.1c
+### draft v.0.1c-sol
 
 
 ### Heterogeneous Symmetric
@@ -733,6 +733,50 @@ E3*S^9 - (14*E3^2 + 9*E3*E21b)*S^6 - E31a*(9*E3 + E21b)*S^5 +
 	+ (38*E3^3 + 62*E3^2*E21b + 18*E3*E21b^2)*S^3 +
 	+ E31a*(69*E3^2 + 47*E3*E21b + 5*E21b^2)*S^2 + E31a^2*(18*E3 + 5*E21b)*S +
 	+ 81*E3^4 + 54*E3^3*E21b + 27*E3^2*E21b^2 + 6*E3*E21b^3 + E21b^4 + E31a^3 # = 0
+
+
+### Solver:
+
+solve.S3HtMix.D32b = function(R, debug=TRUE, all=FALSE) {
+	coeff = coeff.S3HtMix.D32b(R);
+	S = roots(coeff);
+	if(debug) print(S);
+	E3 = R[3]; E31a = R[1]; E21b = R[2];
+	E2x0 = E3*S^3 + E21b*S^3 + E31a*S^2 - 9*E3^2 - 3*E3*E21b - E21b^2;
+	E2   = E2x0 / (S^4 - 8*E3*S - 2*E21b*S - E31a);
+	E21a = E2*S - 3*E3 - E21b;
+	#
+	len = length(S);
+	x = sapply(seq(len), function(id) roots(c(1, -S[id], E2[id], -E3)));
+	x = as.vector(x);
+	S = rep(S, each=3); E2 = rep(E2, each=3); E21a = rep(E21a, each=3);
+	# Robust:
+	s = S - x; e2 = E2 - s*x;
+	# (x^2 + e2)*y + s*x*z = E21a + e2*x;
+	y = (s^2*x - E21a - e2*x) / (s*x - x^2 - e2);
+	z = s - y;
+	sol = cbind(x, y, z);
+	return(sol);
+}
+coeff.S3HtMix.D32b = function(R) {
+	E31a = R[1]; E21b = R[2]; E3 = R[3];
+	coeff = c(E3, 0, 0, - (14*E3^2 + 9*E3*E21b), - E31a*(9*E3 + E21b),
+		0, (38*E3^3 + 62*E3^2*E21b + 18*E3*E21b^2),
+		E31a*(69*E3^2 + 47*E3*E21b + 5*E21b^2), E31a^2*(18*E3 + 5*E21b),
+		81*E3^4 + 54*E3^3*E21b + 27*E3^2*E21b^2 + 6*E3*E21b^3 + E21b^4 + E31a^3);
+	return(coeff);
+}
+
+### Examples:
+
+###
+R = c(-1,3,2)
+sol = solve.S3HtMix.D32b(R)
+
+
+### Ex 2:
+R = c(2,-3,5)
+sol = solve.S3HtMix.D32b(R)
 
 
 ### Test:
