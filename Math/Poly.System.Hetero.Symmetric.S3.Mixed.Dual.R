@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric S3:
 ### Mixed Type: Dual / Multiple E2a Eqs
 ###
-### draft v.0.1b-sol
+### draft v.0.1c
 
 
 ### Heterogeneous Symmetric
@@ -704,6 +704,66 @@ pE31 = solve.pm(pE31, pE31b, "E31b")$Rez
 
 
 p0 = toPoly.pm("E31a - E21a*S - 2*E3*S + E2^2 + E3*S")
+
+pR = solve.pm(p0, pE21, "E2")
+
+
+####################
+####################
+
+### Variant:
+x^3*y + y^3*z + z^3*x - R1 # = 0
+x*y^2 + y*z^2 + z*x^2 - R2 # = 0
+x*y*z - R3 # = 0
+
+### Solution:
+
+### E21a + E21b:
+E21a + E21b - E2*S + 3*E3 # = 0
+
+### E21a * E21b:
+E21a * E21b - E3*S^3 + 6*E2*E3*S - E2^3 - 9*E3^2 # = 0
+
+### E31a:
+E31a - (E2*S - 3*E3 - E21b)*S - 2*E3*S + E2^2 + E3*S # = 0
+
+
+### Eq S:
+E3*S^9 - (14*E3^2 + 9*E3*E21b)*S^6 - E31a*(9*E3 + E21b)*S^5 +
+	+ (38*E3^3 + 62*E3^2*E21b + 18*E3*E21b^2)*S^3 +
+	+ E31a*(69*E3^2 + 47*E3*E21b + 5*E21b^2)*S^2 + E31a^2*(18*E3 + 5*E21b)*S +
+	+ 81*E3^4 + 54*E3^3*E21b + 27*E3^2*E21b^2 + 6*E3*E21b^3 + E21b^4 + E31a^3 # = 0
+
+
+### Test:
+x = sol[,1]; y = sol[,2]; z = sol[,3];
+x^3*y + y^3*z + z^3*x # - R[1]
+x*y^2 + y*z^2 + z*x^2 # - R[2]
+x*y*z # - R[3]
+
+
+### Debug:
+R = c(3, -5, 2);
+x = -1.0250224170 + 0.9623828205i;
+y =  1.6907030825 + 1.0892619142i;
+z = -0.6956453993 - 0.1277054425i;
+S = x+y+z; E2 = (x+y)*z + x*y; E3 = x*y*z;
+E21a = x^2*y + y^2*z + z^2*x;
+E21b = x*y^2 + y*z^2 + z*x^2;
+E31a = x^3*y + y^3*z + z^3*x;
+E31b = x*y^3 + y*z^3 + z*x^3;
+
+
+### Derivation:
+
+prod.S3E2ab(2,1)
+
+###
+pE21 = toPoly.pm("E21a * E21b - E3*S^3 + 6*E2*E3*S - E2^3 - 9*E3^2")
+pE21b = toPoly.pm("E21a + E21b - E2*S + 3*E3")
+pE21 = solve.pm(pE21, pE21b, "E21a")$Rez
+
+p0 = toPoly.pm("E31a - (E2*S - 3*E3 - E21b)*S - 2*E3*S + E2^2 + E3*S")
 
 pR = solve.pm(p0, pE21, "E2")
 
