@@ -57,6 +57,7 @@ countMonoms = function(p) {
 
 
 ### Extract Base-Terms of Symmetric Polynomials:
+# - does NOT check if symmetric;
 unique.rpm =  function(p, xn="r", v=5) {
 	vn = if(length(xn) > 1) xn else paste0(xn, seq(v));
 	r = p[, vn, drop=FALSE];
@@ -157,7 +158,56 @@ rotate = function(p, n, val0=0, asPoly=TRUE) {
 
 ########################
 
+### S3: Prod
+
+### E[n.m]a * E[n,m]b
+# - useful for S3 Ht-Mixed systems:
+prod.S3E2ab = function(n, m, print=TRUE, sort="S") {
+	format.f = function(p) {
+		maxPow = max(p$S);
+		coeff  = p$coeff[p$S == maxPow];
+		if(length(coeff) == 1 && coeff[1] < 0) p$coeff = - p$coeff;
+		p = sort.pm(p, c("E2", "E3"));
+		if(print) {
+			print.pm(p, lead=sort, print=TRUE);
+			return(invisible(p));
+		}
+		return(p);
+	}
+	### Symmetric:
+	if(missing(m) || n == m) {
+		p = Epoly.adv(n, v=3);
+		return(format.f(p));
+	}
+	# E[n, m]
+	if(n < m) { tmp = n; n = m; m = tmp; }
+	E = Epoly.gen(2*(n + m), v=3, full=TRUE);
+	p = Epoly.adv(n+m, v=3, e=2, E=E);
+	m2 = 2*m;
+	if(n == m2) {
+		e3 = data.frame(E3=n, coeff=3);
+	} else if(n > m2) {
+		e3 = Epoly.adv(n - m2, v=3, e=2, E=E);
+		if(is.na(match("E3", names(e3)))) { e3$E3 = m2; }
+		else e3$E3 = e3$E3 + m2;
+	} else {
+		e3 = Epoly.gen(m2 - n, v=3, E=E);
+		if(is.na(match("E3", names(e3)))) { e3$E3 = n; }
+		else e3$E3 = e3$E3 + n;
+	}
+	p = sum.pm(p, e3);
+	#
+	n2 = 2*n;
+	e3 = Epoly.gen(n2 - m, v=3, E=E);
+	if(is.na(match("E3", names(e3)))) { e3$E3 = m; }
+	else e3$E3 = e3$E3 + m;
+	p = sum.pm(p, e3);
+	return(format.f(p));
+}
+
 ### E2: Hetero-Symmetric
+
+# - compute: sum & diff;
 
 ### Sum & Diff:
 E2.pm = function(n) {
