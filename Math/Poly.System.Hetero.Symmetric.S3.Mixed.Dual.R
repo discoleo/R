@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric S3:
 ### Mixed Type: Dual / Multiple E2a Eqs
 ###
-### draft v.0.1b
+### draft v.0.1b-sol
 
 
 ### Heterogeneous Symmetric
@@ -596,6 +596,7 @@ round0.p(poly.calc(x))
 ### Orders 2 & 3 ###
 ####################
 
+### System:
 x^3*y + y^3*z + z^3*x - R1 # = 0
 x^2*y + y^2*z + z^2*x - R2 # = 0
 x*y*z - R3 # = 0
@@ -614,12 +615,57 @@ E31a + E31b - E2*(S^2 - 2*E2) + E3*S # = 0
 ### E31a * E31b:
 E31a * E31b - E3*S^5 + 5*E2*E3*S^3 - 7*E3^2*S^2 - E2^2*E3*S - E2^4 # = 0
 
+### Alternative:
+E31a - E21a*S - 2*E3*S + E2^2 + E3*S # = 0
+
+### Eq S:
+E3^2*S^6 + (2*E21a^2*E3 - 19*E21a*E3^2 - 7*E3^3)*S^3 - 5*(2*E21a*E3*E31a - 3*E3^2*E31a)*S^2 +
+	- (E21a*E31a^2 - 9*E3*E31a^2)*S +
+	+ E21a^4 + 6*E21a^3*E3 + 27*E21a^2*E3^2 + 54*E21a*E3^3 + 81*E3^4 + E31a^3 # = 0
+
+### Solver:
+
+solve.S3HtMix.D32 = function(R, debug=TRUE, all=FALSE) {
+	coeff = coeff.S3HtMix.D32(R);
+	S = roots(coeff);
+	if(debug) print(S);
+	E3 = R[3]; E31a = R[1]; E21a = R[2];
+	E2x0 = E3*S^3 + E21a^2 + 3*E21a*E3 + 9*E3^2;
+	E2 = E2x0 / (5*E3*S + E31a);
+	#
+	len = length(S);
+	x = sapply(seq(len), function(id) roots(c(1, -S[id], E2[id], -E3)));
+	x = as.vector(x);
+	S = rep(S, each=3); E2 = rep(E2, each=3);
+	# Robust:
+	s = S - x; e2 = E2 - s*x;
+	# (x^2 + e2)*y + s*x*z = E21a + e2*x;
+	y = (s^2*x - E21a - e2*x) / (s*x - x^2 - e2);
+	z = s - y;
+	sol = cbind(x, y, z);
+	return(sol);
+}
+coeff.S3HtMix.D32 = function(R) {
+	E31a = R[1]; E21a = R[2]; E3 = R[3];
+	coeff = c(E3^2, 0, 0, (2*E21a^2*E3 - 19*E21a*E3^2 - 7*E3^3),
+		- 5*(2*E21a*E3*E31a - 3*E3^2*E31a), - (E21a*E31a^2 - 9*E3*E31a^2),
+		E21a^4 + 6*E21a^3*E3 + 27*E21a^2*E3^2 + 54*E21a*E3^3 + 81*E3^4 + E31a^3);
+	return(coeff);
+}
+
+### Examples:
+
+###
+R = c(-1,3,2)
+sol = solve.S3HtMix.D32(R)
 
 
 ### Test:
+x = sol[,1]; y = sol[,2]; z = sol[,3];
 x^3*y + y^3*z + z^3*x # - R[1]
 x^2*y + y^2*z + z^2*x # - R[2]
 x*y*z # - R[3]
+
 
 ### Debug:
 R = c(3, -5, 2);
@@ -652,8 +698,12 @@ pE31 = toPoly.pm("E31a * E31b - E3*S^5 + 5*E2*E3*S^3 - 7*E3^2*S^2 - E2^2*E3*S - 
 pE31b = toPoly.pm("E31a + E31b - E2*(S^2 - 2*E2) + E3*S")
 pE31 = solve.pm(pE31, pE31b, "E31b")$Rez
 
-pR = solve.pm(pE21, pE31, "E2")
-str(pR) # 172 Monomials
+### [old]
+# pR = solve.pm(pE21, pE31, "E2")
+# str(pR) # 172 Monomials
 
-# TODO
+
+p0 = toPoly.pm("E31a - E21a*S - 2*E3*S + E2^2 + E3*S")
+
+pR = solve.pm(p0, pE21, "E2")
 
