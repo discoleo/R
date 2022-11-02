@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric S3:
 ### Mixed Type: Dual / Multiple E2a Eqs
 ###
-### draft v.0.1d
+### draft v.0.1d-sol
 
 
 ### Heterogeneous Symmetric
@@ -902,7 +902,23 @@ solve.S3HtMix.D42 = function(R, debug=TRUE, all=FALSE) {
 	coeff = coeff.S3HtMix.D42(R);
 	S = roots(coeff);
 	if(debug) print(S);
-	# TODO
+	E41a = R[1]; E21a = R[2]; E3 = R[3];
+	E2x0 = E3*S^5 + 10*E3^2*S^2 + 3*E3*E21a*S^2 - E3*E41a + E21a*E41a;
+	E2 = E2x0 / (5*E3*S^3 + E41a*S - E3^2 + 2*E3*E21a - E21a^2);
+	#
+	len = length(S);
+	x = sapply(seq(len), function(id) {
+		roots(c(1, -S[id], E2[id], -E3));
+	})
+	x = as.vector(x);
+	# Robust:
+	S = rep(S, each=3); E2 = rep(E2, each=3);
+	s = S - x; e2 = E2 - s*x;
+	# (x^2 + e2)*y + s*x*z = E21a + e2*x;
+	y = (s^2*x - E21a - e2*x) / (s*x - x^2 - e2);
+	z = s - y;
+	sol = cbind(x, y, z);
+	return(sol);
 }
 coeff.S3HtMix.D42 = function(R) {
 	E41a = R[1]; E21a = R[2]; E3 = R[3];
@@ -913,6 +929,27 @@ coeff.S3HtMix.D42 = function(R) {
 		9*E3^5 - 24*E3^4*E21a + 19*E3^3*E21a^2 - 3*E3^2*E21a^3 - E21a^5 + E41a^3);
 	return(coeff);
 }
+### Test:
+test.S3HtMix.D42 = function(sol, b=0, R=NULL) {
+	test.S3HtDual(sol, b=b, R=R, n=c(4,1,2,1), type="E3");
+}
+
+
+### Examples:
+
+### Ex 1:
+R = c(-1,3,2)
+sol = solve.S3HtMix.D42(R)
+
+test.S3HtMix.D42(sol)
+
+
+### Ex 2:
+R = c(2,-3,5)
+sol = solve.S3HtMix.D42(R)
+
+test.S3HtMix.D42(sol)
+
 
 
 ### Test:
