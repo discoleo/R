@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric S3:
 ### Mixed Type: Dual / Multiple E2a Eqs
 ###
-### draft v.0.1a
+### draft v.0.1b
 
 
 ### Heterogeneous Symmetric
@@ -587,4 +587,73 @@ test.ht3Dual(x, y, z, n=3)
 
 # order 39
 round0.p(poly.calc(x))
+
+
+######################
+######################
+
+####################
+### Orders 2 & 3 ###
+####################
+
+x^3*y + y^3*z + z^3*x - R1 # = 0
+x^2*y + y^2*z + z^2*x - R2 # = 0
+x*y*z - R3 # = 0
+
+### Solution:
+
+### E21a + E21b:
+E21a + E21b - E2*S + 3*E3 # = 0
+
+### E21a * E21b:
+E21a * E21b - E3*S^3 + 6*E2*E3*S - E2^3 - 9*E3^2 # = 0
+
+### E31a + E31b:
+E31a + E31b - E2*(S^2 - 2*E2) + E3*S # = 0
+
+### E31a * E31b:
+E31a * E31b - E3*S^5 + 5*E2*E3*S^3 - 7*E3^2*S^2 - E2^2*E3*S - E2^4 # = 0
+
+
+
+### Test:
+x^3*y + y^3*z + z^3*x # - R[1]
+x^2*y + y^2*z + z^2*x # - R[2]
+x*y*z # - R[3]
+
+### Debug:
+R = c(3, -5, 2);
+x =  0.7431564372 + 1.5834791598i;
+y =  0.3769770644 + 0.7079940406i;
+z = -0.8543963617 - 1.1410556005i;
+S = x+y+z; E2 = (x+y)*z + x*y; E3 = x*y*z;
+E21a = x^2*y + y^2*z + z^2*x;
+E21b = x*y^2 + y*z^2 + z*x^2;
+E31a = x^3*y + y^3*z + z^3*x;
+E31b = x*y^3 + y*z^3 + z*x^3;
+
+
+### Eqs:
+E21a^2 + 3*E3*E21a - E2*S*E21a + 9*E3^2 + E3*S^3 - 6*E2*E3*S + E2^3 # = 0
+
+E31a^2 + E3*S*E31a - E2*S^2*E31a + 2*E2^2*E31a + E3*S^5 + 7*E3^2*S^2 - 5*E2*E3*S^3 + E2^2*E3*S + E2^4 # = 0
+
+
+### Derivation:
+
+prod.S3E2ab(2,1)
+
+###
+pE21 = toPoly.pm("E21a * E21b - E3*S^3 + 6*E2*E3*S - E2^3 - 9*E3^2")
+pE21b = toPoly.pm("E21a + E21b - E2*S + 3*E3")
+pE21 = solve.pm(pE21, pE21b, "E21b")$Rez
+
+pE31 = toPoly.pm("E31a * E31b - E3*S^5 + 5*E2*E3*S^3 - 7*E3^2*S^2 - E2^2*E3*S - E2^4")
+pE31b = toPoly.pm("E31a + E31b - E2*(S^2 - 2*E2) + E3*S")
+pE31 = solve.pm(pE31, pE31b, "E31b")$Rez
+
+pR = solve.pm(pE21, pE31, "E2")
+str(pR) # 172 Monomials
+
+# TODO
 
