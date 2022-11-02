@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric S3:
 ### Mixed Type: Dual / Multiple E2a Eqs
 ###
-### draft v.0.1c-sol
+### draft v.0.1c-test
 
 
 ### Heterogeneous Symmetric
@@ -41,6 +41,33 @@ source("Polynomials.Helper.EP.R")
 
 ### Other Functions
 
+test.S3HtDual = function(sol, b=0, R=NULL, type="E3", n) {
+	# Types Eq 3: E3, E2, E3*S, E3/S;
+	x = sol[,1]; y = sol[,2]; z = sol[,3];
+	# Extensions:
+	S = if(any(b != 0)) x + y + z else 0;
+	ext1 = b[1]*S;
+	ext2 = if(length(b) >= 2) b[2]*S else 0;
+	### Test
+	n1 = n[1]; p1 = n[2];
+	n2 = n[3]; p2 = n[4];
+	err1 = x^n1*y^p1 + y^n1*z^p1 + z^n1*x^p1 + ext1;
+	err2 = x^n2*y^p2 + y^n2*z^p2 + z^n2*x^p2 + ext2;
+	# Eq 3:
+	if(type == "E3") { err3 = x*y*z; }
+	else if(type == "E2") { err3 = (x+y)*z + x*y; }
+	else if(type == "S") { err3 = x + y + z; }
+	else if(type == "Sn") { nn = n[5]; err3 = x^nn + y^nn + z^nn; }
+	else stop("Not yet implemented!");
+	#
+	err = rbind(err1, err2, err3);
+	if( ! is.null(R)) {
+		err = err - R;
+	}
+	err = round0(err);
+	return(err)
+}
+# [old]
 test.Ht3Dual = function(x, y, z, R, n=2, p=1, b=0, type) {
 	# Types Eq 3: E3, E3*S, E3/S;
 	if(missing(y)) {
@@ -652,12 +679,25 @@ coeff.S3HtMix.D32 = function(R) {
 		E21a^4 + 6*E21a^3*E3 + 27*E21a^2*E3^2 + 54*E21a*E3^3 + 81*E3^4 + E31a^3);
 	return(coeff);
 }
+### Test:
+test.S3HtMix.D32 = function(sol, b=0, R=NULL) {
+	test.S3HtDual(sol, b=b, R=R, n=c(3,1,2,1), type="E3");
+}
 
 ### Examples:
 
-###
+### Ex 1:
 R = c(-1,3,2)
 sol = solve.S3HtMix.D32(R)
+
+test.S3HtMix.D32(sol)
+
+
+### Ex 2:
+R = c(-3,-2,2)
+sol = solve.S3HtMix.D32(R)
+
+test.S3HtMix.D32(sol)
 
 
 ### Test:
@@ -766,6 +806,11 @@ coeff.S3HtMix.D32b = function(R) {
 		81*E3^4 + 54*E3^3*E21b + 27*E3^2*E21b^2 + 6*E3*E21b^3 + E21b^4 + E31a^3);
 	return(coeff);
 }
+### Test:
+test.S3HtMix.D32b = function(sol, b=0, R=NULL) {
+	test.S3HtDual(sol, b=b, R=R, n=c(3,1,1,2), type="E3");
+}
+
 
 ### Examples:
 
@@ -773,10 +818,14 @@ coeff.S3HtMix.D32b = function(R) {
 R = c(-1,3,2)
 sol = solve.S3HtMix.D32b(R)
 
+test.S3HtMix.D32b(sol)
+
 
 ### Ex 2:
 R = c(2,-3,5)
 sol = solve.S3HtMix.D32b(R)
+
+test.S3HtMix.D32b(sol)
 
 
 ### Test:
