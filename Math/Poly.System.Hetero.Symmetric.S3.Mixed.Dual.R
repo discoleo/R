@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric S3:
 ### Mixed Type: Dual / Multiple E2a Eqs
 ###
-### draft v.0.1d-sol
+### draft v.0.1e
 
 
 ### Heterogeneous Symmetric
@@ -859,6 +859,88 @@ pE21 = solve.pm(pE21, pE21b, "E21a")$Rez
 p0 = toPoly.pm("E31a - (E2*S - 3*E3 - E21b)*S - 2*E3*S + E2^2 + E3*S")
 
 pR = solve.pm(p0, pE21, "E2")
+
+
+########################
+########################
+
+########################
+### Orders 3-1 & 3-2 ###
+########################
+
+### System:
+x^3*y^2 + y^3*z^2 + z^3*x^2 - R1 # = 0
+x^3*y + y^3*z + z^3*x - R2 # = 0
+x*y*z - R3 # = 0
+
+### Solution:
+
+### E21a + E21b:
+E21a + E21b - E2*S + 3*E3 # = 0
+
+### E21a * E21b:
+E21a * E21b - E3*S^3 + 6*E2*E3*S - E2^3 - 9*E3^2 # = 0
+
+### E32a:
+E32a - E21a*E2 + E2*E3 + E3*(S^2 - 2*E2) # = 0
+
+### E31a:
+E31a - E21a*S + (E2^2 - 2*E3*S) + E3*S # = 0
+
+
+### Eq S:
+E3^5*S^13 + 2*E3^4*E31a*S^12 + E3^3*E31a^2*S^11 - 31*E3^6*S^10 - 78*E3^5*E31a*S^9 +
+	- 63*E3^4*E31a^2*S^8 - 7*E3^5*E32a*S^8 + 232*E3^7*S^7 - 16*E3^3*E31a^3*S^7 - 34*E3^4*E31a*E32a*S^7 +
+	+ 706*E3^6*E31a*S^6 - 55*E3^3*E31a^2*E32a*S^6 + 33*E3^4*E32a^2*S^6 +
+	+ 844*E3^5*E31a^2*S^5 + 65*E3^6*E32a*S^5 - 37*E3^2*E31a^3*E32a*S^5 + 85*E3^3*E31a*E32a^2*S^5 +
+	+ 343*E3^8*S^4 + 542*E3^4*E31a^3*S^4 + 170*E3^5*E31a*E32a*S^4 - 10*E3*E31a^4*E32a*S^4 + 74*E3^2*E31a^2*E32a^2*S^4 - 11*E3^3*E32a^3*S^4 +
+	+ 735*E3^7*E31a*S^3 + 227*E3^3*E31a^4*S^3 + 164*E3^4*E31a^2*E32a*S^3 - E31a^5*E32a*S^3 - 20*E3^5*E32a^2*S^3 + 25*E3*E31a^3*E32a^2*S^3 - 25*E3^2*E31a*E32a^3*S^3 +
+	+ 490*E3^6*E31a^2*S^2 + 67*E3^2*E31a^5*S^2 + 80*E3^3*E31a^3*E32a*S^2 - 53*E3^4*E31a*E32a^2*S^2 + 3*E31a^4*E32a^2*S^2 - 17*E3*E31a^2*E32a^3*S^2 + E3^2*E32a^4*S^2 +
+	+ 147*E3^5*E31a^3*S + 13*E3*E31a^6*S + 23*E3^2*E31a^4*E32a*S - 46*E3^3*E31a^2*E32a^2*S - 3*E31a^3*E32a^3*S + 2*E3*E31a*E32a^4*S +
+	+ 49*E3^4*E31a^4 + E31a^7 + 2*E3*E31a^5*E32a - 13*E3^2*E31a^3*E32a^2 + E31a^2*E32a^4 # = 0
+
+
+### Test:
+x = sol[,1]; y = sol[,2]; z = sol[,3];
+x^3*y^2 + y^3*z^2 + z^3*x^2 # - R[1]
+x^3*y + y^3*z + z^3*x # - R[2]
+x*y*z # - R[3]
+
+
+### Debug:
+R = c(3, -5, 2);
+x = -1.3108796496 - 1.0819793736i;
+y =  0.2799468992 - 0.8127253313i;
+z = -1.1676721393 - 0.7143672018i;
+S = x+y+z; E2 = (x+y)*z + x*y; E3 = x*y*z;
+n = 2;
+E21a = x^n*y + y^n*z + z^n*x;
+E21b = x*y^n + y*z^n + z*x^n;
+n = 3; p = 1;
+E31a = x^n*y^p + y^n*z^p + z^n*x^p;
+n = 3; p = 2;
+E32a = x^n*y^p + y^n*z^p + z^n*x^p;
+# E32b = x^p*y^n + y^p*z^n + z^p*x^n;
+
+
+### Derivation:
+
+prod.S3E2ab(2,1)
+
+###
+pE21 = toPoly.pm("E21a * E21b - E3*S^3 + 6*E2*E3*S - E2^3 - 9*E3^2")
+pE21b = toPoly.pm("E21a + E21b - E2*S + 3*E3")
+pE21 = solve.pm(pE21, pE21b, "E21b")$Rez
+
+
+p1 = toPoly.pm("E31a - E21a*S + (E2^2 - 2*E3*S) + E3*S")
+p2 = toPoly.pm("E32a - E21a*E2 + E2*E3 + E3*(S^2 - 2*E2)")
+
+# 112 monomials
+# pR = solve.lpm(pE21, p2, p1, xn=c("E21a", "E2"))
+# 48 monomials
+pR = solve.lpm(pE21, p1, p2, xn=c("E21a", "E2"))
+str(pR)
 
 
 ######################
