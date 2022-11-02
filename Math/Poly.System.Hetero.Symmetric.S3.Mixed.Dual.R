@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric S3:
 ### Mixed Type: Dual / Multiple E2a Eqs
 ###
-### draft v.0.1c-test
+### draft v.0.1d
 
 
 ### Heterogeneous Symmetric
@@ -620,7 +620,7 @@ round0.p(poly.calc(x))
 ######################
 
 ####################
-### Orders 2 & 3 ###
+### Orders 3 & 2 ###
 ####################
 
 ### System:
@@ -859,4 +859,98 @@ pE21 = solve.pm(pE21, pE21b, "E21a")$Rez
 p0 = toPoly.pm("E31a - (E2*S - 3*E3 - E21b)*S - 2*E3*S + E2^2 + E3*S")
 
 pR = solve.pm(p0, pE21, "E2")
+
+
+######################
+######################
+
+####################
+### Orders 4 & 2 ###
+####################
+
+### System:
+x^4*y + y^4*z + z^4*x - R1 # = 0
+x^2*y + y^2*z + z^2*x - R2 # = 0
+x*y*z - R3 # = 0
+
+### Solution:
+
+### E21a + E21b:
+E21a + E21b - E2*S + 3*E3 # = 0
+
+### E21a * E21b:
+E21a * E21b - E3*S^3 + 6*E2*E3*S - E2^3 - 9*E3^2 # = 0
+
+### E41a:
+E41a - E31a*S + E32a + E3*(S^2 - 2*E2) # = 0
+E31a - E21a*S + (E2^2 - 2*E3*S) + E3*S # = 0
+E32a - E21a*E2 + E2*E3 + E3*(S^2 - 2*E2) # = 0
+# =>
+E41a - E21a*S^2 + E21a*E2 - E3*S^2 + E2^2*S - E2*E3 # = 0
+
+### Eq S:
+E3^2*S^9 - E3^2*(10*E3 + 14*E21a)*S^6 + E41a*(12*E3^2 - 7*E3*E21a)*S^4 +
+	+ (61*E3^4 + 82*E3^3*E21a + 17*E3^2*E21a^2 + 9*E3*E21a^3)*S^3 +
+	+ E41a^2*(9*E3 - E21a)*S^2 +
+	- (33*E3^3 - 29*E3^2*E21a - 2*E3*E21a^2 - 2*E21a^3)*E41a*S +
+	+ 9*E3^5 - 24*E3^4*E21a + 19*E3^3*E21a^2 - 3*E3^2*E21a^3 - E21a^5 + E41a^3 # = 0
+
+
+### Solver:
+
+solve.S3HtMix.D42 = function(R, debug=TRUE, all=FALSE) {
+	coeff = coeff.S3HtMix.D42(R);
+	S = roots(coeff);
+	if(debug) print(S);
+	# TODO
+}
+coeff.S3HtMix.D42 = function(R) {
+	E41a = R[1]; E21a = R[2]; E3 = R[3];
+	coeff = c(E3^2, 0, 0, - E3^2*(10*E3 + 14*E21a), 0, E41a*(12*E3^2 - 7*E3*E21a),
+		E3*(61*E3^3 + 82*E3^2*E21a + 17*E3*E21a^2 + 9*E21a^3),
+		E41a^2*(9*E3 - E21a),
+		- (33*E3^3 - 29*E3^2*E21a - 2*E3*E21a^2 - 2*E21a^3)*E41a,
+		9*E3^5 - 24*E3^4*E21a + 19*E3^3*E21a^2 - 3*E3^2*E21a^3 - E21a^5 + E41a^3);
+	return(coeff);
+}
+
+
+### Test:
+x = sol[,1]; y = sol[,2]; z = sol[,3];
+x^4*y + y^4*z + z^4*x # - R[1]
+x^2*y + y^2*z + z^2*x # - R[2]
+x*y*z # - R[3]
+
+
+### Debug:
+R = c(3, -5, 2);
+x = -0.6456492108 - 0.0302107700i;
+y =  1.3336273710 - 0.7245744234i;
+z = -1.8349293976 - 0.8884911564i;
+S = x+y+z; E2 = (x+y)*z + x*y; E3 = x*y*z;
+n = 2;
+E21a = x^n*y + y^n*z + z^n*x;
+E21b = x*y^n + y*z^n + z*x^n;
+n = 4; p = 1;
+E41a = x^n*y^p + y^n*z^p + z^n*x^p;
+E41b = x^p*y^n + y^p*z^n + z^p*x^n;
+n = 3; p = 1;
+E31a = x^n*y^p + y^n*z^p + z^n*x^p;
+n = 3; p = 2;
+E32a = x^n*y^p + y^n*z^p + z^n*x^p;
+
+
+### Derivation:
+
+prod.S3E2ab(2,1)
+
+###
+pE21 = toPoly.pm("E21a * E21b - E3*S^3 + 6*E2*E3*S - E2^3 - 9*E3^2")
+pE21b = toPoly.pm("E21a + E21b - E2*S + 3*E3")
+pE21 = solve.pm(pE21, pE21b, "E21b")$Rez
+
+p0 = toPoly.pm("E41a - E21a*S^2 + E21a*E2 - E3*S^2 + E2^2*S - E2*E3")
+
+pR = solve.pm(p0, pE21, "E2")
+str(pR)
 
