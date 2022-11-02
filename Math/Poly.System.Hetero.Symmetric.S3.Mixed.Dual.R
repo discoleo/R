@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric S3:
 ### Mixed Type: Dual / Multiple E2a Eqs
 ###
-### draft v.0.1e
+### draft v.0.1e-sol
 
 
 ### Heterogeneous Symmetric
@@ -814,7 +814,7 @@ test.S3HtMix.D32b = function(sol, b=0, R=NULL) {
 
 ### Examples:
 
-###
+### Ex 1:
 R = c(-1,3,2)
 sol = solve.S3HtMix.D32b(R)
 
@@ -888,16 +888,77 @@ E32a - E21a*E2 + E2*E3 + E3*(S^2 - 2*E2) # = 0
 E31a - E21a*S + (E2^2 - 2*E3*S) + E3*S # = 0
 
 
-### Eq S:
-E3^5*S^13 + 2*E3^4*E31a*S^12 + E3^3*E31a^2*S^11 - 31*E3^6*S^10 - 78*E3^5*E31a*S^9 +
-	- 63*E3^4*E31a^2*S^8 - 7*E3^5*E32a*S^8 + 232*E3^7*S^7 - 16*E3^3*E31a^3*S^7 - 34*E3^4*E31a*E32a*S^7 +
-	+ 706*E3^6*E31a*S^6 - 55*E3^3*E31a^2*E32a*S^6 + 33*E3^4*E32a^2*S^6 +
-	+ 844*E3^5*E31a^2*S^5 + 65*E3^6*E32a*S^5 - 37*E3^2*E31a^3*E32a*S^5 + 85*E3^3*E31a*E32a^2*S^5 +
-	+ 343*E3^8*S^4 + 542*E3^4*E31a^3*S^4 + 170*E3^5*E31a*E32a*S^4 - 10*E3*E31a^4*E32a*S^4 + 74*E3^2*E31a^2*E32a^2*S^4 - 11*E3^3*E32a^3*S^4 +
-	+ 735*E3^7*E31a*S^3 + 227*E3^3*E31a^4*S^3 + 164*E3^4*E31a^2*E32a*S^3 - E31a^5*E32a*S^3 - 20*E3^5*E32a^2*S^3 + 25*E3*E31a^3*E32a^2*S^3 - 25*E3^2*E31a*E32a^3*S^3 +
-	+ 490*E3^6*E31a^2*S^2 + 67*E3^2*E31a^5*S^2 + 80*E3^3*E31a^3*E32a*S^2 - 53*E3^4*E31a*E32a^2*S^2 + 3*E31a^4*E32a^2*S^2 - 17*E3*E31a^2*E32a^3*S^2 + E3^2*E32a^4*S^2 +
-	+ 147*E3^5*E31a^3*S + 13*E3*E31a^6*S + 23*E3^2*E31a^4*E32a*S - 46*E3^3*E31a^2*E32a^2*S - 3*E31a^3*E32a^3*S + 2*E3*E31a*E32a^4*S +
-	+ 49*E3^4*E31a^4 + E31a^7 + 2*E3*E31a^5*E32a - 13*E3^2*E31a^3*E32a^2 + E31a^2*E32a^4 # = 0
+### Eq S: P[11]
+E3^3*S^11 - 31*E3^4*S^8 - 16*E3^3*E31a*S^7 - 7*E3^3*E32a*S^6 +
+	+ E3^2*(232*E3^3 - 20*E31a*E32a)*S^5 + E3*(242*E3^3*E31a - 8*E31a^2*E32a + 33*E3*E32a^2)*S^4 +
+	+ (128*E3^3*E31a^2 + 65*E3^4*E32a - E31a^3*E32a + 19*E3*E31a*E32a^2)*S^3 +
+	+ (343*E3^6 + 44*E3^2*E31a^3 + 40*E3^3*E31a*E32a + 3*E31a^2*E32a^2 - 11*E3*E32a^3)*S^2 +
+	+ (49*E3^5*E31a + 11*E3*E31a^4 + 19*E3^2*E31a^2*E32a - 20*E3^3*E32a^2 - 3*E31a*E32a^3)*S +
+	+ E31a^5 + 2*E3*E31a^3*E32a + 49*E3^4*E31a^2 - 13*E3^2*E31a*E32a^2 + E32a^4 # = 0
+
+
+### Solver:
+
+solve.S3HtMix.D32D31 = function(R, debug=TRUE, all=FALSE) {
+	coeff = coeff.S3HtMix.D32D31(R);
+	S = roots(coeff);
+	if(debug) print(S);
+	E32a = R[1]; E31a = R[2]; E3 = R[3];
+	E2x0 = 4*E3^2*S^6 + E3*E31a*S^5 - E3*E32a*S^4 + 29*E3^3*S^3 + 13*E3^2*E31a*S^2 +
+		+ 6*E3*E31a^2*S - 6*E3^2*E32a*S + E31a^3 + E3*E31a*E32a;
+	E2div = 15*E3^2*S^4 + 7*E3*E31a*S^3 + E31a^2*S^2 - 8*E3*E32a*S^2 - 7*E3^3*S - 2*E31a*E32a*S +
+		- 7*E3^2*E31a + E32a^2;
+	E2   = E2x0 / E2div;
+	E21a = (E31a + E2^2 - E3*S) / S;
+	#
+	len = length(S);
+	x = sapply(seq(len), function(id) roots(c(1, -S[id], E2[id], -E3)));
+	x = as.vector(x);
+	S = rep(S, each=3); E2 = rep(E2, each=3); E21a = rep(E21a, each=3);
+	# Robust:
+	s = S - x; e2 = E2 - s*x;
+	# (x^2 + e2)*y + s*x*z = E21a + e2*x;
+	y = (s^2*x - E21a - e2*x) / (s*x - x^2 - e2);
+	z = s - y;
+	sol = cbind(x, y, z);
+	return(sol);
+}
+coeff.S3HtMix.D32D31 = function(R) {
+	E32a = R[1]; E31a = R[2]; E3 = R[3];
+	coeff = c(E3^3, 0, 0, - 31*E3^4, - 16*E3^3*E31a, - 7*E3^3*E32a,
+		232*E3^5 - 20*E3^2*E31a*E32a, 242*E3^4*E31a - 8*E3*E31a^2*E32a + 33*E3^2*E32a^2,
+		128*E3^3*E31a^2 + 65*E3^4*E32a - E31a^3*E32a + 19*E3*E31a*E32a^2,
+		343*E3^6 + 44*E3^2*E31a^3 + 40*E3^3*E31a*E32a + 3*E31a^2*E32a^2 - 11*E3*E32a^3,
+		49*E3^5*E31a + 11*E3*E31a^4 + 19*E3^2*E31a^2*E32a - 20*E3^3*E32a^2 - 3*E31a*E32a^3,
+		E31a^5 + 2*E3*E31a^3*E32a + 49*E3^4*E31a^2 - 13*E3^2*E31a*E32a^2 + E32a^4);
+	return(coeff);
+}
+### Test:
+test.S3HtMix.D32D31 = function(sol, b=0, R=NULL) {
+	test.S3HtDual(sol, b=b, R=R, n=c(3,2,3,1), type="E3");
+}
+
+### Examples:
+
+### Ex 1:
+R = c(-1,3,2)
+sol = solve.S3HtMix.D32D31(R)
+
+test.S3HtMix.D32D31(sol)
+
+
+### Ex 2:
+R = c(-1,4,3)
+sol = solve.S3HtMix.D32D31(R)
+
+test.S3HtMix.D32D31(sol)
+
+
+### Ex 3:
+R = c(3,-1,2)
+sol = solve.S3HtMix.D32D31(R)
+
+test.S3HtMix.D32D31(sol)
 
 
 ### Test:
@@ -940,7 +1001,9 @@ p2 = toPoly.pm("E32a - E21a*E2 + E2*E3 + E3*(S^2 - 2*E2)")
 # pR = solve.lpm(pE21, p2, p1, xn=c("E21a", "E2"))
 # 48 monomials
 pR = solve.lpm(pE21, p1, p2, xn=c("E21a", "E2"))
-str(pR)
+pR2 = div.pm(pR[[2]]$Rez, "(E3*S + E31a)^2", "S")
+
+str(pR2)
 
 
 ######################
