@@ -226,14 +226,14 @@ print.monome = function(name, p) {
 	v.r[v == 1] = name;
 	return(v.r);
 }
-print.pm = function(...) {
+print.pm = function(..., print=TRUE) {
 	ch = as.character.pm(...);
-	print(ch);
+	if(print) { cat(ch); cat("\n"); }
 	invisible(ch);
 }
-print.p = function(...) {
+print.p = function(..., print=TRUE) {
 	ch = as.character.pm(...);
-	print(ch);
+	if(print) { cat(ch); cat("\n"); }
 	invisible(ch);
 }
 print.pm.df = function(p, n=100) {
