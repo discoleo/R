@@ -25,7 +25,8 @@ extract.regex = function(x, pattern, gr=0, perl=TRUE, simplify=TRUE) {
 	s = lapply(seq(length(x)), function(id) {
 		tmp = r[[id]];
 		if(tmp[1] == -1) return("");
-		substr(x[id], tmp[gr], attr(tmp, "match.length")[gr]);
+		nStart = tmp[gr];
+		substr(x[id], nStart, nStart - 1 + attr(tmp, "match.length")[gr]);
 	});
 	if(simplify) s = unlist(s);
 	return(s)
