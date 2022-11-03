@@ -6,7 +6,7 @@
 ### Polynomials: Fractions
 ### Derivations
 ###
-### draft v.0.1d-alt
+### draft v.0.1e-example
 
 
 ### Polynomial Fractions
@@ -102,6 +102,41 @@ sum( (r^3 - x^3) / (x - r) ) + sum( x^3 / (x - r) ) # =
 # - Higher powers: sum( r^k / (x-r) )
 #   are useful for decomposition into fractions of Order 1;
 #   ["pure" decompositions]
+
+### Examples
+
+px = function(x) (x^5 - x^4 - 5*x - 1);
+r = roots(c(1, -1,0,0,-5,-1))
+# Test value:
+x = 4
+# D(px)
+(5*x^4 - 4*x^3 - 5)/px(x)
+sum(1 / (x - r))
+#
+(x^4 + 20*x + 5)/px(x)
+sum(r/(x - r))
+#
+(x^4 + 20*x^2 + 10*x + 1)/px(x)
+sum(r^2/(x - r))
+#
+(20*x^2 - 10*x - 4)/px(x)
+sum((r^2 - r)/(x - r))
+#
+(x^4 + 20*x^3 + 10*x^2 + 6*x + 1)/px(x)
+sum(r^3/(x - r))
+#
+(20*x^3 + 10*x^2 - 14*x - 4)/px(x)
+sum((r^3 - r)/(x - r))
+#
+(21*x^4 + 10*x^3 + 6*x^2 + 6*x + 1)/px(x)
+sum(r^4/(x - r))
+# (a*x + b0) / px(x)
+- 2*(509*x + 152)/px(x)
+sum((2*r^3 - r^2 - 51*r + 10)/(x - r))
+# (a*x^2 + b0) / px(x)
+(20*509*x^2 - 516) / px(x)
+sum((509*(r^2 - r) - 5*(2*r^3 - r^2 - 51*r + 10))/(x - r))
+sum((- 10*r^3 + 514*r^2 - 254*r - 50)/(x - r))
 
 
 ###############
