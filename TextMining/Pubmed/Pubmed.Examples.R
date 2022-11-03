@@ -44,6 +44,7 @@ print(r)
 # Retrieve Abstracts
 nStart = 0; nMax = 30;
 doc2 = search.entrez.fetch(r, nStart, max=nMax)
+# save Results;
 writeLines(doc2, con="_Pubmed_Test.xml", useBytes = TRUE)
 
 # Titles
