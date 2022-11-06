@@ -20,6 +20,28 @@ print.str = function(x, w=80) {
 	cat(strwrap(x, w), sep="\n");
 }
 
+cat.aa = function(x, w=90, sep=" ") {
+	id = x$idRes;
+	aa = x$aa;
+	n  = w %/% 4;
+	nA = (length(id) %/% n);
+	if(nA > 0) for(npos in seq(nA)) {
+		nStart = (npos - 1) * n;
+		idAA = id[seq(nStart, nStart + n)];
+		idAA = format(as.character(idAA), justify = "centre", width=3);
+		cat(idAA, sep=sep); cat("\n");
+		cat(aa[seq(nStart, nStart + n)], sep=sep); cat("\n");
+	}
+	nStart = nA * n + 1;
+	if(nStart < length(id)) {
+		idAA = id[seq(nStart, length(id))];
+		idAA = format(as.character(idAA), justify = "centre", width=3);
+		cat(idAA, sep=sep); cat("\n");
+		cat(aa[seq(nStart, length(id))], sep=sep); cat("\n");
+	}
+	invisible();
+}
+
 extract.regex = function(x, pattern, gr=0, perl=TRUE, simplify=TRUE) {
 	r = regexec(pattern, x, perl=perl);
 	gr = gr + 1;
@@ -126,6 +148,21 @@ atoms.chain = function(ch, x) {
 	atoms = x$atoms$elename[idCh];
 	names(atoms) = x$atoms$resname[idCh];
 	return(atoms);
+}
+
+as.aa = function(x, ch, drop="HETATM") {
+	return(unique.aa(x, ch=ch, drop=drop));
+}
+unique.aa = function(x, ch, drop="HETATM") {
+	idCh = x$atoms$chainid == ch;
+	idCh = which(idCh);
+	if( ! is.null(drop) && ! is.na(drop) ) {
+		tmp  = x$atoms$recname[idCh];
+		idCh[tmp %in% drop] = FALSE;
+	}
+	aa = unique(x$atoms[idCh, c("resid", "resname")]);
+	names(aa) = c("idRes", "aa")
+	return(aa);
 }
 
 #################

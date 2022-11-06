@@ -20,6 +20,8 @@ tt
 
 length.chains(x)
 
+cat.aa(as.aa(x, "A"))
+
 
 #############
 
