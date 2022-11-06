@@ -14,8 +14,14 @@
 x = read.pdb("pdb1duz.ent.gz")
 
 tt = title.pdb(x)
-print.str(tt)
+# print.str(tt)
+# should print automatically
+tt
 
+length.chains(x)
+
+
+#############
 
 ### All files
 

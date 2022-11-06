@@ -44,6 +44,7 @@ title.pdb = function(x) {
 		t2 = paste0(t2, collapse=" ");
 		t1 = paste0(t1, " ", t2);
 	}
+	class(t1) = c("str", class(t1));
 	return(t1);
 }
 
@@ -92,6 +93,39 @@ read.meta.pdb = function(path = ".", pattern="\\.ent\\.gz$", rm.res.string=TRUE)
 		res$resolution = sub("^(?i)Resolution[. ]++", "", res$resolution, perl=TRUE);
 	}
 	return(res);
+}
+
+### Chains
+
+chains = function(x) {
+	unique(x$atoms$chainid);
+}
+
+length.chains = function(x) {
+	table(x$atoms$chainid);
+}
+
+chain = function(ch, x, drop="HETATM") {
+	idCh = x$atoms$chainid == ch;
+	if( ! any(idCh)) return(data.frame(atom=character(0), id=numeric(0), idRes=numeric(0)));
+	#
+	atoms  = x$atoms$elename[idCh];
+	idAtom = x$atoms$resname[idCh];
+	idRes  = x$atoms$resid[idCh];
+	rez = data.frame(atom=atoms, id=idAtom, idRes=idRes);
+	if( ! is.null(drop) && ! is.na(drop) ) {
+		tmp = x$atoms$recname[idCh];
+		rez = rez[ ! tmp %in% drop, ];
+	}
+	return(rez);
+}
+
+atoms.chain = function(ch, x) {
+	idCh = x$atoms$chainid == ch;
+	if( ! any(idCh)) return(character(0));
+	atoms = x$atoms$elename[idCh];
+	names(atoms) = x$atoms$resname[idCh];
+	return(atoms);
 }
 
 #################
