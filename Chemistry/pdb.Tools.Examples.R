@@ -29,5 +29,5 @@ cat.aa(as.aa(x, "A"))
 
 meta = read.meta.pdb()
 
-scroll.txt(meta, w=c(8, 56, 20))
+scroll.txt(meta, w=c(8, 56, 20, 3, 6, 15))
 

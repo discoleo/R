@@ -23,24 +23,35 @@ print.str = function(x, w=80) {
 cat.aa = function(x, w=90, sep=" ") {
 	id = x$idRes;
 	aa = x$aa;
-	LN = 4; # TODO
-	n  = w %/% LN;
+	# Case: id > 3 digits;
+	LN = max(3, length.digits(length(id)));
+	n  = w %/% (LN + nchar(sep));
 	nA = (length(id) %/% n);
 	if(nA > 0) for(npos in seq(nA)) {
 		nStart = (npos - 1) * n;
 		idAA = id[seq(nStart, nStart + n)];
-		idAA = format(as.character(idAA), justify = "centre", width=3);
+		idAA = format(as.character(idAA), justify = "centre", width=LN);
 		cat(idAA, sep=sep); cat("\n");
-		cat(aa[seq(nStart, nStart + n)], sep=sep); cat("\n");
+		# AA:
+		strAA = aa[seq(nStart, nStart + n)];
+		if(LN > 3) strAA = format(strAA, justify = "centre", width=LN);
+		cat(strAA, sep=sep); cat("\n");
 	}
 	nStart = nA * n + 1;
 	if(nStart < length(id)) {
 		idAA = id[seq(nStart, length(id))];
-		idAA = format(as.character(idAA), justify = "centre", width=3);
+		idAA = format(as.character(idAA), justify = "centre", width=LN);
 		cat(idAA, sep=sep); cat("\n");
-		cat(aa[seq(nStart, length(id))], sep=sep); cat("\n");
+		# AA:
+		strAA = aa[seq(nStart, length(id))];
+		if(LN > 3) strAA = format(strAA, justify = "centre", width=LN);
+		cat(strAA, sep=sep); cat("\n");
 	}
 	invisible();
+}
+length.digits = function(x) {
+	# TODO:
+	return(3);
 }
 
 extract.regex = function(x, pattern, gr=0, perl=TRUE, simplify=TRUE) {
@@ -107,7 +118,10 @@ read.meta.pdb = function(path = ".", pattern="\\.ent\\.gz$", rm.res.string=TRUE)
 		res = resolution(x);
 		isRes = grepl("^(?i)Resolution", res);
 		res = res[isRes][[1]];
-		data.frame(title=tt, resolution=res);
+		nChains = length(unique(x$atoms$chainid));
+		nAA = length.chains.aa(x);
+		data.frame(title=tt, resolution=res, chains=nChains,
+			maxAA = max(nAA), nAA = paste0(nAA, collapse=", "));
 	})
 	res = do.call(rbind, res);
 	pdb = extract.regex(files, "(?i)^pdb([^.]++)", gr=1)
@@ -126,6 +140,27 @@ chains = function(x) {
 
 length.chains = function(x) {
 	table(x$atoms$chainid);
+}
+length.chains.aa = function(x, drop="HETATM") {
+	chs = chains(x);
+	doDrop = FALSE;
+	if( ! is.null(drop) && ! is.na(drop) ) {
+		if(is.logical(drop)) {
+			if(drop) { drop = "HETATM"; doDrop = TRUE; }
+			else drop = character(0); # BREAK!
+		} else doDrop = TRUE;
+	}
+	nAA = sapply(chs, function(ch) {
+		idCh = x$atoms$chainid == ch;
+		idCh = which(idCh);
+		if(doDrop) {
+			tmp  = x$atoms$recname[idCh];
+			idCh = idCh[ ! tmp %in% drop];
+		}
+		aa = unique(x$atoms[idCh, c("resid")]);
+		return(length(aa));
+	});
+	return(nAA);
 }
 
 chain = function(ch, x, drop="HETATM") {
