@@ -23,7 +23,8 @@ print.str = function(x, w=80) {
 cat.aa = function(x, w=90, sep=" ") {
 	id = x$idRes;
 	aa = x$aa;
-	n  = w %/% 4;
+	LN = 4; # TODO
+	n  = w %/% LN;
 	nA = (length(id) %/% n);
 	if(nA > 0) for(npos in seq(nA)) {
 		nStart = (npos - 1) * n;
@@ -157,11 +158,15 @@ unique.aa = function(x, ch, drop="HETATM") {
 	idCh = x$atoms$chainid == ch;
 	idCh = which(idCh);
 	if( ! is.null(drop) && ! is.na(drop) ) {
+		if(is.logical(drop)) {
+			if(drop) { drop = "HETATM"; }
+			else drop = character(0); # BREAK!
+		}
 		tmp  = x$atoms$recname[idCh];
-		idCh[tmp %in% drop] = FALSE;
+		idCh = idCh[ ! tmp %in% drop];
 	}
 	aa = unique(x$atoms[idCh, c("resid", "resname")]);
-	names(aa) = c("idRes", "aa")
+	names(aa) = c("idRes", "aa");
 	return(aa);
 }
 
