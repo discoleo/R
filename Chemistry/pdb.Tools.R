@@ -110,7 +110,7 @@ resolution = function(x, sep=" ", rm.related=TRUE) {
 	attr(res, "id") = id;
 	return(res)
 }
-read.meta.pdb = function(path = ".", pattern="\\.ent\\.gz$", rm.res.string=TRUE) {
+read.meta.pdb = function(path = ".", pattern="\\.ent\\.gz$", FUN=NULL, rm.res.string=TRUE) {
 	files = list.files(path, pattern=pattern);
 	res = lapply(files, function(name) {
 		x = read.pdb(name);
@@ -120,8 +120,12 @@ read.meta.pdb = function(path = ".", pattern="\\.ent\\.gz$", rm.res.string=TRUE)
 		res = res[isRes][[1]];
 		nChains = length(unique(x$atoms$chainid));
 		nAA = length.chains.aa(x);
-		data.frame(title=tt, resolution=res, chains=nChains,
+		rez = data.frame(title=tt, resolution=res, chains=nChains,
 			maxAA = max(nAA), nAA = paste0(nAA, collapse=", "));
+		if( ! is.null(FUN)) {
+			rez$FUN = FUN(x);
+		}
+		return(rez);
 	})
 	res = do.call(rbind, res);
 	pdb = extract.regex(files, "(?i)^pdb([^.]++)", gr=1)
@@ -202,6 +206,26 @@ unique.aa = function(x, ch, drop="HETATM") {
 	}
 	aa = unique(x$atoms[idCh, c("resid", "resname")]);
 	names(aa) = c("idRes", "aa");
+	return(aa);
+}
+
+### Filter Chains:
+which.oligo = function(x, len=30, drop="HETATM") {
+	n  = length.chains.aa(x, drop=drop);
+	id = which(n <= len);
+	if(length(id) == 0) return(character(0));
+	ch = chains(x);
+	return(ch[id]);
+}
+filter.oligo = function(x, len=30, drop="HETATM", maxChains=0) {
+	idCh = which.oligo(x, len=len, drop=drop);
+	if(length(idCh) == 0) return(data.frame(idRes = numeric(0), aa = character(0)));
+	if(maxChains > 0) {
+		maxChains = min(maxChains, length(idCh));
+		idCh = idCh[seq(maxChains)];
+	}
+	aa = lapply(idCh, function(ch) as.aa(x, ch=ch, drop=drop));
+	if(length(aa) == 1) aa = aa[[1]];
 	return(aa);
 }
 

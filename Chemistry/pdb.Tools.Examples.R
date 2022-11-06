@@ -27,7 +27,7 @@ cat.aa(as.aa(x, "A"))
 
 ### All files
 
-meta = read.meta.pdb()
+meta = read.meta.pdb(FUN = function(x) paste0(filter.oligo(x, maxChains=1)$aa, collapse=" "))
 
-scroll.txt(meta, w=c(8, 56, 20, 3, 6, 15))
+scroll.txt(meta, w=c(8, 56, 20, 3, 6, 15, 17))
 
