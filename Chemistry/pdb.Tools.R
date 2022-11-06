@@ -110,6 +110,7 @@ resolution = function(x, sep=" ", rm.related=TRUE) {
 	attr(res, "id") = id;
 	return(res)
 }
+# Basic Summary of Collection of PDBs
 read.meta.pdb = function(path = ".", pattern="\\.ent\\.gz$", FUN=NULL, rm.res.string=TRUE) {
 	files = list.files(path, pattern=pattern);
 	res = lapply(files, function(name) {
@@ -120,7 +121,7 @@ read.meta.pdb = function(path = ".", pattern="\\.ent\\.gz$", FUN=NULL, rm.res.st
 		res = res[isRes][[1]];
 		nChains = length(unique(x$atoms$chainid));
 		nAA = length.chains.aa(x);
-		rez = data.frame(title=tt, resolution=res, chains=nChains,
+		rez = data.frame(Title=tt, Resolution=res, Chains=nChains,
 			maxAA = max(nAA), nAA = paste0(nAA, collapse=", "));
 		if( ! is.null(FUN)) {
 			rez$FUN = FUN(x);
@@ -129,9 +130,9 @@ read.meta.pdb = function(path = ".", pattern="\\.ent\\.gz$", FUN=NULL, rm.res.st
 	})
 	res = do.call(rbind, res);
 	pdb = extract.regex(files, "(?i)^pdb([^.]++)", gr=1)
-	res = cbind(pdb, res);
+	res = cbind(pdb, res); names(res)[1] = "PDB";
 	if(rm.res.string) {
-		res$resolution = sub("^(?i)Resolution[. ]++", "", res$resolution, perl=TRUE);
+		res$Resolution = sub("^(?i)Resolution[. ]++", "", res$Resolution, perl=TRUE);
 	}
 	return(res);
 }
