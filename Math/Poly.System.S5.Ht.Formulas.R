@@ -176,7 +176,7 @@ print.pm(pR, lead="x5") # trivial: ordinary P[5];
 
 ### Test
 
-# aby permutation:
+# any permutation:
 x = 2*cos(2*pi* c(1,5,3,4,2) /11)
 # *OR*
 m = unity(5, all=T)
@@ -205,7 +205,18 @@ poly.calc(x)
 109*x^33 + 27*x^35 # = 0
 
 # fixed R-values!
-solve.S3HtMixed = function() {
+solve.S3HtMixed = function(R = c(0,1,0,0,1), debug=TRUE) {
+	coeff = c(27, 80, 27, -10, -10, -3098, -9294, -3098);
+	E11b = roots(coeff);
+	if(debug) print(E11b);
+	E2 = R[2] + E11b;
+	x1 = sapply(E2, function(E2) roots(c(1, - R[1], E2, -R[3], R[4], -R[5])));
+	x1 = as.vector(x1);
+	# Robust:
+	# TODO
+	return(x1);
+}
+solve.S3HtMixed.Classic = function() {
 	coeff = c(27, 0, 109, 0, 114, -189, -110, -654, -355, -570, 3332, 440, -1609, 1065, -1984, -6475, -660,
 		1064, -1065, -1140, 3710, 440, 1635, 355, 570, -567, -110, -654, 0, -114, 189, 0, 109, 0, 0, -27);
 	x1 = roots(coeff);
@@ -305,8 +316,10 @@ xx = multiroot(solve.S5HtMixed, start=x0)
 x = matrix(xx$root, nr=2); xc = x[2,]; x = x[1,] + 1i * xc;
 # print(poly.calc(x)[4], 12)
 x.all = c(x.all, x)
+x.all = matrix(x.all, nc=5, byrow=T)
 
 round0(poly.calc(x.all)) * 27
+poly.calc(apply(x.all, 1, function(x) sum(x * x[c(3,4,5,1,2)]))) * 27
 
 
 paste0(format(x, digits=4), collapse=",")
