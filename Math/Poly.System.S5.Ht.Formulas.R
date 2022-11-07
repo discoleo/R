@@ -153,7 +153,11 @@ pR = solve.lpm(pE1, pE5, pE2, pE3, pE4, xn=c("x5", "s2", "s1", "p2"))
 max(pR[[4]]$Rez$p1)
 
 
-###
+####################
+
+### Standard P[5]
+
+### quasi-redundant
 # spp = sp + ps; pp4 = p1*p2;
 # - Solvable, but just ordinary P[5];
 pE2 = toPoly.pm("spp + x5*(S - x5) - E2");
@@ -167,3 +171,142 @@ pR = solve.pm(pE2, pE4, xn=c("spp"))
 pR = pR$Rez;
 print.pm(pR, lead="x5") # trivial: ordinary P[5];
 
+
+#####################
+
+### Test
+
+# aby permutation:
+x = 2*cos(2*pi* c(1,5,3,4,2) /11)
+# *OR*
+m = unity(5, all=T)
+k = rootn(2, 5); x = sapply(m, function(m) (k*m)^3 - (k*m)^2 + 3*k*m)
+#
+x1 = x[1]; x2 = x[2]; x3 = x[3]; x4 = x[4]; x5 = x[5];
+S = sum(x);
+s1 = x1 + x2; p1 = x1 * x2;
+s2 = S - s1; e2 = (x3 + x4)*x5 + x3*x4; e3 = x3*x4*x5;
+
+x12 = roots(c(1, -s1, p1));
+x35 = roots(c(1, -s2, e2, -e3));
+
+# the same:
+poly.calc(c(x12, x35))
+poly.calc(x)
+
+
+##########################
+##########################
+
+# - a great discovery in mathematics;
+-27 + 109*x^3 + 189*x^5 - 114*x^6 - 654*x^8 - 110*x^9 - 567*x^10 + 570*x^11 + 355*x^12 + 1635*x^13 +  
+440*x^14 + 3710*x^15 - 1140*x^16 - 1065*x^17 + 1064*x^18 - 660*x^19 - 6475*x^20 - 1984*x^21 + 1065*x^22 -  
+1609*x^23 + 440*x^24 + 3332*x^25 - 570*x^26 - 355*x^27 - 654*x^28 - 110*x^29 - 189*x^30 + 114*x^31 +  
+109*x^33 + 27*x^35 # = 0
+
+# fixed R-values!
+solve.S3HtMixed = function() {
+	coeff = c(27, 0, 109, 0, 114, -189, -110, -654, -355, -570, 3332, 440, -1609, 1065, -1984, -6475, -660,
+		1064, -1065, -1140, 3710, 440, 1635, 355, 570, -567, -110, -654, 0, -114, 189, 0, 109, 0, 0, -27);
+	x1 = roots(coeff);
+	# TODO:
+	return(x1)
+}
+
+solve.S5HtMixed = function(x) {
+	R = c(0,1,0,0,1);
+	x = matrix(x, nr=2); xc = x[2,]; x = x[1,] + 1i * xc;
+	x1 = x[1]; x2 = x[2]; x3 = x[3]; x4 = x[4]; x5 = x[5];
+	s1 = x1 + x3; s2 = x2 + x4; S = s1 + s2 + x5;
+	p1 = x1 * x3; p2 = x2 * x4; E5 = p1 * p2 * x5;
+	ps = s1 * s2; sp = p1 + p2;
+	# E2 = x1*(S - x1) + x2*(x3 + x4 + x5) + x3*(x4 + x5) + x4*x5;
+	# E2 = sp + ps + x5*(S - x5);
+	E3 = p1*s2 + p2*s1 + x5*(sp + ps);
+	E4 = p1*p2 + x5*(p1*s2 + p2*s1);
+
+	### E2:
+	E11a = x1*x2 + x2*x3 + x3*x4 + x4*x5 + x5*x1;
+	#
+	y = c(S, E11a, E3, E4, E5) - R;
+	y = rbind(Re(y), Im(y));
+	return(y);
+}
+
+### Set 1:
+x0 = c(-0.70449+0.64i, 0.8913, -0.70449-0.64i, 0.2589 + 1.08i, 0.2589 - 1.08i);
+x0 = rbind(Re(x0), Im(x0))
+xx = multiroot(solve.S5HtMixed, start=x0)
+
+x = matrix(xx$root, nr=2); xc = x[2,]; x = x[1,] + 1i * xc;
+print(poly.calc(x)[4], 12)
+x.all = c(x)
+
+
+### Set 3:
+x0 = c(-1.70449-0.64i, -0.8913, -1.70449+0.64i, -0.2589 + 1.08i, -0.2589 - 1.08i);
+x0 = rbind(Re(x0), Im(x0))
+xx = multiroot(solve.S5HtMixed, start=x0)
+
+x = matrix(xx$root, nr=2); xc = x[2,]; x = x[1,] + 1i * xc;
+print(poly.calc(x)[4], 12)
+x.all = c(x.all, x)
+
+
+### Set 3:
+x0 = c(0.05-0.94i, -2.8913, 0.05+0.04i, -0.2589 + 1.08i, -0.2589 - 1.08i);
+x0 = rbind(Re(x0), Im(x0))
+xx = multiroot(solve.S5HtMixed, start=x0)
+
+x = matrix(xx$root, nr=2); xc = x[2,]; x = x[1,] + 1i * xc;
+print(poly.calc(x)[4], 12)
+x.all = c(x.all, x)
+
+
+### Set 4:
+x0 = c(0.95+0.94i, 2.8913, 0.95-0.04i, -0.2589 + 1.08i, -0.2589 - 1.08i);
+#
+x0 = c(-1.274+0.729i, 1.23-0.47i, 0.58-0.67i, 0.178+0.725i, -0.71 - 0.31i);
+x0 = rbind(Re(x0), Im(x0))
+xx = multiroot(solve.S5HtMixed, start=x0)
+
+x = matrix(xx$root, nr=2); xc = x[2,]; x = x[1,] + 1i * xc;
+# print(poly.calc(x)[4], 12)
+x.all = c(x.all, x)
+
+
+### Set 5:
+x0 = c(-1.274-0.729i, 1.23+0.47i, 0.58+0.67i, 0.178-0.725i, -0.71 + 0.31i);
+x0 = rbind(Re(x0), Im(x0))
+xx = multiroot(solve.S5HtMixed, start=x0)
+
+x = matrix(xx$root, nr=2); xc = x[2,]; x = x[1,] + 1i * xc;
+# print(poly.calc(x)[4], 12)
+x.all = c(x.all, x)
+
+
+### Set 6:
+x0 = c(-0.8108+1.5014i, 0.7763-1.6039i, 0.6605-0.1778i, -0.5008-0.4342i, -0.1252+0.7145i);
+x0 = rbind(Re(x0), Im(x0))
+xx = multiroot(solve.S5HtMixed, start=x0)
+
+x = matrix(xx$root, nr=2); xc = x[2,]; x = x[1,] + 1i * xc;
+# print(poly.calc(x)[4], 12)
+x.all = c(x.all, x)
+
+
+### Set 7:
+x0 = c(-1.574+0.129i, 1.23-0.47i, 0.58-0.67i, 0.4-0.725i, 0.71 + 0.31i);
+#
+x0 = c(-0.8108-1.5014i, 0.7763+1.6039i, 0.6605+0.1778i, -0.5008+0.4342i, -0.1252-0.7145i);
+x0 = rbind(Re(x0), Im(x0))
+xx = multiroot(solve.S5HtMixed, start=x0)
+
+x = matrix(xx$root, nr=2); xc = x[2,]; x = x[1,] + 1i * xc;
+# print(poly.calc(x)[4], 12)
+x.all = c(x.all, x)
+
+round0(poly.calc(x.all)) * 27
+
+
+paste0(format(x, digits=4), collapse=",")
