@@ -71,6 +71,24 @@ E111a + E111b - E3 # = 0
 #   Perm(S5, by = 3) = rev(E11b) = E11b;
 #   Perm(S5, by = 4) = rev(E11a) = E11a;
 
+
+### Mixed C2 & C3-Decomposition
+
+s1 = x1 + x2; p1 = x1 * x2;
+s2 = S - s1; e2 = (x3 + x4)*x5 + x3*x4; e3 = x3*x4*x5;
+
+### Transformed P[5] System:
+s1 + s2 - S # = 0
+s1*s2 + p1 + e2 - E2 # = 0
+s1*e2 + s2*p1 + e3 - E3 # = 0
+s1*e3 + p1*e2 - E4 # = 0
+p1*e3 - E5 # = 0
+
+### Note:
+# Order: 5! / (2*6) = 120/12 = 10;
+# - much better than 5!, but still not enough;
+
+
 #######################
 
 A1 = E11a*E111a + E11b*E111b;
