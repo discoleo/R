@@ -206,9 +206,10 @@ poly.calc(x)
 
 # fixed R-values!
 solve.S3HtMixed = function(R = c(0,1,0,0,1), debug=TRUE) {
-	E5 = R[5];
+	E11a = R[2]; E5 = R[5];
 	# coeff = c(27, 80, 27, -10, -10, -3098, -9294, -3098);
-	coeff = c(27, 81 - 1/E5^2, 27, -10, -10, -3125*E5^2 + 27, -9375*E5^2 + 81, -3125*E5^2 + 27);
+	coeff = c(27, 81*E11a - E11a^6/E5^2, 27*E11a^2, -10*E11a^3, -10*E11a^4,
+		-3125*E5^2 + 27*E11a^5, -9375*E11a*E5^2 + 81*E11a^6, -3125*E11a^2*E5^2 + 27*E11a^7);
 	E11b = roots(coeff);
 	if(debug) print(E11b);
 	E2 = R[2] + E11b;
