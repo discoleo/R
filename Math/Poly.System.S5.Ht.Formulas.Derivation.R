@@ -23,6 +23,14 @@ source("Polynomials.Helper.R")
 source("Polynomials.Helper.EP.R")
 
 
+cat.sol = function(x) {
+	if(inherits(x, "list")) {
+		x = x$root;
+		x = matrix(xx$root, nr=2); xc = x[2,]; x = x[1,] + 1i * xc;
+	}
+	cat(paste0(round(x, digits=4), collapse=", ")); cat("\n");
+}
+
 #######################
 #######################
 
@@ -49,9 +57,6 @@ solve.S5HtMixed.Num = function(x, R=c(0,1,0,0,1)) {
 	y = c(S, E11a, E3, E4, E5) - R;
 	y = rbind(Re(y), Im(y));
 	return(y);
-}
-cat.sol = function(x) {
-	cat(paste0(round(x, digits=4), collapse=", ")); cat("\n");
 }
 
 ### Set 1:
@@ -204,7 +209,107 @@ poly.calc(apply(x.all, 1, function(x) sum(x * x[c(3,4,5,1,2)]))) * 27
 -12473 - 37419*x - 12473*x^2 - 10*x^3 - 10*x^4 + 27*x^5 + 80.75*x^6 + 27*x^7
 
 
-####################
+###################
+
+### Case 3:
+# S = 1; E11a = 0;
+
+### Set 1:
+R2 = c(1,0,0,0,2)
+x0 = c(-0.7472+0.6624i, 1.3684+0i, -0.7472-0.6624i, 0.5629+1.0719i, 0.5629-1.0719i);
+x0 = rbind(Re(x0), Im(x0))
+xx = multiroot(solve.S5HtMixed.Num, start=x0, R=R2)
+
+x = matrix(xx$root, nr=2); xc = x[2,]; x = x[1,] + 1i * xc;
+print(poly.calc(x)[4], 12)
+x.all = c(x)
+
+### Set 2:
+x0 = c(-0.4726-0.6449i, 0.8466+0i, -0.4726+0.6449i, 0.5493+1.8422i, 0.5493-1.8422i);
+x0 = rbind(Re(x0), Im(x0))
+xx = multiroot(solve.S5HtMixed.Num, start=x0, R=R2)
+cat.sol(xx)
+
+x = matrix(xx$root, nr=2); xc = x[2,]; x = x[1,] + 1i * xc;
+print(poly.calc(x)[4], 12)
+x.all = c(x.all, x)
+
+### Set 3:
+x0 = c(0.5758+1.1678i, 1.248+0i, 0.5758-1.1678i, -0.6998-0.675i, -0.6998+0.675i);
+x0 = rbind(Re(x0), Im(x0))
+xx = multiroot(solve.S5HtMixed.Num, start=x0, R=R2)
+cat.sol(xx)
+
+x = matrix(xx$root, nr=2); xc = x[2,]; x = x[1,] + 1i * xc;
+print(poly.calc(x)[4], 12)
+x.all = c(x.all, x)
+
+### Set 4:
+x0 = c(-0.0203+0.9575i, -0.599-0.4604i, 0.7755-0.3705i, 1.5775-1.4408i, -0.7338+1.3143i);
+x0 = rbind(Re(x0), Im(x0))
+xx = multiroot(solve.S5HtMixed.Num, start=x0, R=R2)
+cat.sol(xx)
+
+x = matrix(xx$root, nr=2); xc = x[2,]; x = x[1,] + 1i * xc;
+# print(poly.calc(x)[4], 12)
+x.all = c(x.all, x)
+
+### Set 5:
+x0 = c(-0.0203-0.9575i, -0.599+0.4604i, 0.7755+0.3705i, 1.5775+1.4408i, -0.7338-1.3143i);
+x0 = rbind(Re(x0), Im(x0))
+xx = multiroot(solve.S5HtMixed.Num, start=x0, R=R2)
+cat.sol(xx)
+
+x = matrix(xx$root, nr=2); xc = x[2,]; x = x[1,] + 1i * xc;
+# print(poly.calc(x)[4], 12)
+x.all = c(x.all, x)
+
+### Set 6:
+x0 = c(0.2929+0.7451i, -0.803-0.3106i, -1.3451+0.6949i, 2.34-0.5178i, 0.5152-0.6116i);
+x0 = rbind(Re(x0), Im(x0))
+xx = multiroot(solve.S5HtMixed.Num, start=x0, R=R2)
+cat.sol(xx)
+
+x = matrix(xx$root, nr=2); xc = x[2,]; x = x[1,] + 1i * xc;
+# print(poly.calc(x)[4], 12)
+x.all = c(x.all, x)
+
+### Set 7:
+x0 = c(0.2929-0.7451i, -0.803+0.3106i, -1.3451-0.6949i, 2.34+0.5178i, 0.5152+0.6116i);
+x0 = rbind(Re(x0), Im(x0))
+xx = multiroot(solve.S5HtMixed.Num, start=x0, R=R2)
+cat.sol(xx)
+
+x = matrix(xx$root, nr=2); xc = x[2,]; x = x[1,] + 1i * xc;
+# print(poly.calc(x)[4], 12)
+x.all = c(x.all, x)
+x.all = matrix(x.all, nc=5, byrow=T)
+
+round0(poly.calc(x.all)) * 27
+poly.calc(apply(x.all, 1, function(x) sum(x * x[c(3,4,5,1,2)]))) * 27
+
+R2 = c(1,0,0,0,2)
+-2500 + 12500*x - 12472*x^2 - 100*x^3 - 1*x^4 + 9*x^5 - 27*x^6 + 27*x^7
+
+R2 = c(1,0,0,0,3/2)
+-1406.25 + 7031.25*x - 7010.25*x^2 - 75*x^3 - 1*x^4 + 9*x^5 - 27*x^6 + 27*x^7
+
+
+27*(E11a^7 + E11b^7)*E5^2 - 27*(E11a^6 + E11b^6)*E5^2*S^2 + 81*E11a*E11b*(E11a^5 + E11b^5)*E5^2 +
+	+ 9*(E11a^5 + E11b^5)*E5^2*S^4 - (E11a^4 + E11b^4)*E5^2*S^6 +
+	+ 27*(E11a*E11b)^2*(E11a^3 + E11b^3)*E5^2 - 50*(E11a^3 + E11b^3)*E5^3*S^3 +
+	- 10*(E11a*E11b)^3*E2*E5^2 - (E11a*E11b)^6 +
+	# - 54*(E11a*E11b)^5*(E11a^1 + E11b^1)*S^2 +
+	# TODO: + ... +
+	+ 14*(E11a^2 + E11b^2)*E5^3*S^5 +
+	- 5^5*E5^4*(E11a^2 + 3*E11a*E11b + E11b^2) +
+	+ 5^5*(E11a + E11b)*E5^4*S^2 - 5^4*E5^4*S^4 # = 0
+
+
+######################
+######################
+
+### Robust Derivation:
 
 
 x = x.all[1,]; E3 = E4 = 0;
