@@ -24,6 +24,7 @@ source("Polynomials.Helper.EP.R")
 
 # Solve for all initial tuples in x0
 solve.all = function(FUN, x0, ..., debug=TRUE) {
+	if(is.null(dim(x0))) x0 = matrix(x0, nrow=1);
 	nr = nrow(x0);
 	x.all = array(0, c(ncol(x0), 0));
 	#
@@ -49,7 +50,8 @@ cat.sol = function(x, digits=4) {
 		x = x$root;
 		x = matrix(x, nr=2); xc = x[2,]; x = x[1,] + 1i * xc;
 	}
-	cat(paste0(round(x, digits=digits), collapse=", ")); cat("\n");
+	cat("c(");
+	cat(paste0(round(x, digits=digits), collapse=", ")); cat(")\n");
 }
 
 #######################
@@ -270,7 +272,7 @@ R2 = c(1,-1/3,0,0,2)
 	# + 54*(E11a*E11b)^5*(E11a^1 + E11b^1)*S^2 + # still TODO
 	# x^5:
 	+ 9*(E11a^5 + E11b^5)*E5^2*S^4 + 27*(E11a*E11b)^2*(E11a^3 + E11b^3)*E5^2 +
-	- 2*(E11a*E11b)^3*(E11a^2 + E11b^2)*E5*S^4 - 3*(E11a*E11b)^4*(E11a + E11b)*E5*S^2 +
+	- 2*(E11a*E11b)^3*(E11a^2 + E11b^2)*E5*S^3 - 3*(E11a*E11b)^4*(E11a + E11b)*E5*S +
 	# x^4:
 	- (E11a^4 + E11b^4)*E5^2*S^6 +
 	- 50*(E11a^3 + E11b^3)*E5^3*S^3 +
