@@ -22,13 +22,34 @@
 source("Polynomials.Helper.R")
 source("Polynomials.Helper.EP.R")
 
-
-cat.sol = function(x) {
+# Solve for all initial tuples in x0
+solve.all = function(FUN, x0, ..., debug=TRUE) {
+	nr = nrow(x0);
+	x.all = array(0, c(ncol(x0), 0));
+	#
+	for(id in seq(nr)) {
+		xi = rbind(Re(x0[id,]), Im(x0[id,]));
+		xx = multiroot(solve.S5HtMixed.Num, start=xi, ...);
+		#
+		x = xx$root;
+		x = matrix(x, nr=2); xc = x[2,]; x = x[1,] + 1i * xc;
+		if(debug) {
+			cat(paste0("ID = ", id, "; Iter = ", xx$iter, "; Prec = ", xx$estim.precis));
+			cat("\n   "); cat.sol(xx);
+		}
+		x.all = cbind(x.all, x);
+	}
+	x.all = t(x.all);
+	colnames(x.all) = paste0("x", seq(ncol(x0)));
+	rownames(x.all) = NULL;
+	return(x.all);
+}
+cat.sol = function(x, digits=4) {
 	if(inherits(x, "list")) {
 		x = x$root;
-		x = matrix(xx$root, nr=2); xc = x[2,]; x = x[1,] + 1i * xc;
+		x = matrix(x, nr=2); xc = x[2,]; x = x[1,] + 1i * xc;
 	}
-	cat(paste0(round(x, digits=4), collapse=", ")); cat("\n");
+	cat(paste0(round(x, digits=digits), collapse=", ")); cat("\n");
 }
 
 #######################
@@ -214,79 +235,23 @@ poly.calc(apply(x.all, 1, function(x) sum(x * x[c(3,4,5,1,2)]))) * 27
 ### Case 3:
 # S = 1; E11a = 0;
 
-### Set 1:
 R2 = c(1,0,0,0,2)
-x0 = c(-0.7472+0.6624i, 1.3684+0i, -0.7472-0.6624i, 0.5629+1.0719i, 0.5629-1.0719i);
-x0 = rbind(Re(x0), Im(x0))
-xx = multiroot(solve.S5HtMixed.Num, start=x0, R=R2)
+x0 = rbind(
+	c(-0.7472+0.6624i, 1.3684+0i, -0.7472-0.6624i, 0.5629+1.0719i, 0.5629-1.0719i),
+	c(-0.4726-0.6449i, 0.8466+0i, -0.4726+0.6449i, 0.5493+1.8422i, 0.5493-1.8422i),
+	c(0.5758+1.1678i, 1.248+0i, 0.5758-1.1678i, -0.6998-0.675i, -0.6998+0.675i),
+	c(-0.0203+0.9575i, -0.599-0.4604i, 0.7755-0.3705i, 1.5775-1.4408i, -0.7338+1.3143i),
+	c(-0.0203-0.9575i, -0.599+0.4604i, 0.7755+0.3705i, 1.5775+1.4408i, -0.7338-1.3143i),
+	c(0.2929+0.7451i, -0.803-0.3106i, -1.3451+0.6949i, 2.34-0.5178i, 0.5152-0.6116i),
+	c(0.2929-0.7451i, -0.803+0.3106i, -1.3451-0.6949i, 2.34+0.5178i, 0.5152+0.6116i)
+);
 
-x = matrix(xx$root, nr=2); xc = x[2,]; x = x[1,] + 1i * xc;
-print(poly.calc(x)[4], 12)
-x.all = c(x)
+x.all = solve.all(solve.S5HtMixed.Num, x0, R=R2)
 
-### Set 2:
-x0 = c(-0.4726-0.6449i, 0.8466+0i, -0.4726+0.6449i, 0.5493+1.8422i, 0.5493-1.8422i);
-x0 = rbind(Re(x0), Im(x0))
-xx = multiroot(solve.S5HtMixed.Num, start=x0, R=R2)
-cat.sol(xx)
 
-x = matrix(xx$root, nr=2); xc = x[2,]; x = x[1,] + 1i * xc;
-print(poly.calc(x)[4], 12)
-x.all = c(x.all, x)
-
-### Set 3:
-x0 = c(0.5758+1.1678i, 1.248+0i, 0.5758-1.1678i, -0.6998-0.675i, -0.6998+0.675i);
-x0 = rbind(Re(x0), Im(x0))
-xx = multiroot(solve.S5HtMixed.Num, start=x0, R=R2)
-cat.sol(xx)
-
-x = matrix(xx$root, nr=2); xc = x[2,]; x = x[1,] + 1i * xc;
-print(poly.calc(x)[4], 12)
-x.all = c(x.all, x)
-
-### Set 4:
-x0 = c(-0.0203+0.9575i, -0.599-0.4604i, 0.7755-0.3705i, 1.5775-1.4408i, -0.7338+1.3143i);
-x0 = rbind(Re(x0), Im(x0))
-xx = multiroot(solve.S5HtMixed.Num, start=x0, R=R2)
-cat.sol(xx)
-
-x = matrix(xx$root, nr=2); xc = x[2,]; x = x[1,] + 1i * xc;
-# print(poly.calc(x)[4], 12)
-x.all = c(x.all, x)
-
-### Set 5:
-x0 = c(-0.0203-0.9575i, -0.599+0.4604i, 0.7755+0.3705i, 1.5775+1.4408i, -0.7338-1.3143i);
-x0 = rbind(Re(x0), Im(x0))
-xx = multiroot(solve.S5HtMixed.Num, start=x0, R=R2)
-cat.sol(xx)
-
-x = matrix(xx$root, nr=2); xc = x[2,]; x = x[1,] + 1i * xc;
-# print(poly.calc(x)[4], 12)
-x.all = c(x.all, x)
-
-### Set 6:
-x0 = c(0.2929+0.7451i, -0.803-0.3106i, -1.3451+0.6949i, 2.34-0.5178i, 0.5152-0.6116i);
-x0 = rbind(Re(x0), Im(x0))
-xx = multiroot(solve.S5HtMixed.Num, start=x0, R=R2)
-cat.sol(xx)
-
-x = matrix(xx$root, nr=2); xc = x[2,]; x = x[1,] + 1i * xc;
-# print(poly.calc(x)[4], 12)
-x.all = c(x.all, x)
-
-### Set 7:
-x0 = c(0.2929-0.7451i, -0.803+0.3106i, -1.3451-0.6949i, 2.34+0.5178i, 0.5152+0.6116i);
-x0 = rbind(Re(x0), Im(x0))
-xx = multiroot(solve.S5HtMixed.Num, start=x0, R=R2)
-cat.sol(xx)
-
-x = matrix(xx$root, nr=2); xc = x[2,]; x = x[1,] + 1i * xc;
-# print(poly.calc(x)[4], 12)
-x.all = c(x.all, x)
-x.all = matrix(x.all, nc=5, byrow=T)
-
-round0(poly.calc(x.all)) * 27
+# round0(poly.calc(x.all)) * 27
 poly.calc(apply(x.all, 1, function(x) sum(x * x[c(3,4,5,1,2)]))) * 27
+
 
 R2 = c(1,0,0,0,2)
 -2500 + 12500*x - 12472*x^2 - 100*x^3 - 1*x^4 + 9*x^5 - 27*x^6 + 27*x^7
