@@ -24,6 +24,7 @@ cat.aa = function(x, w=90, sep=" ") {
 	id = x$idRes;
 	aa = x$aa;
 	# Case: id > 3 digits;
+	# LN = Length of N;
 	LN = max(3, length.digits(length(id)));
 	n  = w %/% (LN + nchar(sep));
 	nA = (length(id) %/% n);
@@ -232,4 +233,37 @@ filter.oligo = function(x, len=30, drop="HETATM", maxChains=0) {
 
 #################
 #################
+
+### Simple Analysis
+
+# Frequency of AA at every position:
+# - crude summary;
+summary.set.pp = function(x, sep=" ", filter=6) {
+	if(is.character(sep)) {
+		pp = strsplit(x, sep);
+	} else {
+		pp = pp = strsplit(x, sep, fixed=TRUE);
+	}
+	if(filter > 0) {
+		id = sapply(pp, length);
+		pp = pp[id >= filter];
+	}
+	pp = lapply(pp, function(p) {
+		n = length(p);
+		return(data.frame(Pos = seq(n), AA=p));
+	});
+	pp = do.call(rbind, pp);
+	pp$Count = 1;
+	pp = aggregate(Count ~ ., pp, length);
+	id = order(pp$Pos, pp$AA);
+	pp = pp[id,];
+	return(pp);
+}
+
+library(ggplot2)
+
+plot.aa.freq = function(x) {
+	ggplot(x, mapping=aes(x=AA, y=Pos, size=Count)) +
+		geom_point();
+}
 
