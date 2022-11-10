@@ -41,3 +41,5 @@ scroll.txt(meta, w=c(8, 56, 20, 3, 6, 15, 17))
 # - looks better with a few hundred PPs;
 plot.aa.freq(summary.set.pp(meta$PP))
 
+plot.aaType.freq(summary.set.pp(meta$PP))
+

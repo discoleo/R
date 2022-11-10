@@ -13,6 +13,10 @@
 
 library(Rpdb)
 
+library(ggplot2)
+
+source("Chem.AA.R")
+
 
 ####################
 
@@ -260,10 +264,34 @@ summary.set.pp = function(x, sep=" ", filter=6) {
 	return(pp);
 }
 
-library(ggplot2)
-
+# requires ggplot2;
 plot.aa.freq = function(x) {
 	ggplot(x, mapping=aes(x=AA, y=Pos, size=Count)) +
 		geom_point();
+}
+plot.aaType.freq = function(x) {
+	x$AA = as.aaType(x$AA);
+	ggplot(x, mapping=aes(x=AA, y=Pos, size=Count)) +
+		geom_point();
+}
+
+#########################
+#########################
+
+### Specialized Functions
+
+# TODO: HLA Class 2:
+extract.HLA = function(x) {
+	# Text-Errors:
+	x = gsub("_", "-", x);
+	x = gsub("(?<=HLA)(?: +- +| +-|- +)", "-", x, perl=TRUE);
+	x = sub("^A([0-9]++) HLA", "HLA A\\1", x, perl=TRUE);
+	#
+	HLA = "(?:HLA|MHC(?: CLASS I| I)?+|HUMAN LEUKOCYTE ANTIGEN(?: CLASS I)?+) *";
+	EXC = "(?!LASS|OMPL|RESTR|(?<=-|-[A-Z])[A-Z]{6})";
+	reg = paste0(HLA, "[-\\:*.ABCWw0-9]+", EXC, "(?: [0-9.*]+)?+");
+	rez = extract.regex(x, reg, perl=TRUE);
+	rez = sub("HUMAN LEUKOCYTE ANTIGEN(?: CLASS I)?+", "HLA", rez, perl=TRUE);
+	return(rez);
 }
 
