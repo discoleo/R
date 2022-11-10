@@ -1,9 +1,26 @@
+####################
+###
+### Chemistry Tools
+### Smiles Format
+###
+### Leonard Mada
+###
+### v.0.1c
 
-### Peptide Tools
 
-# Peptide => Smile
-# Smile => Peptide
+### Chemistry Tools:
 
+# - Encode / Parse Smiles codes: only for peptides;
+
+
+####################
+
+### Helper Functions
+
+# aaCodes moved to external file!
+source("Chem.AA.R")
+
+###################
 
 as.smile = function(x, n=1) {
 	s = strsplit(x, split=c());
@@ -33,28 +50,6 @@ split.pp.smile = function(x) {
 	strsplit(x, "(?<=C\\(=O\\))(?=N(?!\\)))", perl=TRUE);
 }
 
-aaCodes = function(n=1) {
-	if( ! any(n == c(0,1,3))) stop("Unsupported codes!");
-	a3 = c("Ala", "Arg", "Asn", "Asp", "Cys", "Gln", "Glu", "Gly", "His", "Ile", "Leu", "Lys", "Met",
-		"Phe", "Pro", "Pyl", "Ser", "Sec", "Thr", "Trp", "Tyr", "Val", "Asx", "Glx", "Xaa", "Xle");
-	a1 = c("A", "R", "N", "D", "C", "Q", "E", "G", "H", "I", "L", "K", "M",
-		"F", "P", "O", "S", "U", "T", "W", "Y", "V", "B", "Z", "X", "J");
-	name = c("Alanine", "Arginine", "Asparagine", "Aspartic acid", "Cysteine", "Glutamine",
-		"Glutamic acid", "Glycine", "Histidine", "Isoleucine", "Leucine", "Lysine", "Methionine",
-		"Phenylalanine", "Proline", "Pyrrolysine", "Serine", "Selenocysteine", "Threonine", "Tryptophan",
-		"Tyrosine", "Valine", "Aspartic acid or Asparagine", "Glutamic acid or Glutamine",
-		"Any amino acid", "Leucine or Isoleucine");
-	if(n == 1) {
-		aa = as.list(a1);
-		names(aa) = a3;
-	} else if(n == 3) {
-		aa = as.list(a3);
-		names(aa) = a1;
-	} else {
-		aa = data.frame(A3=a3, A1=a1, Name=name);
-	}
-	return(aa);
-}
 
 getAA = function(n=1) {
 	if( ! any(n == c(1,3))) stop("Unsupported codes!");
