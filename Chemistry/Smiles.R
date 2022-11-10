@@ -10,8 +10,11 @@
 
 ### Chemistry Tools:
 
-# - Encode / Parse Smiles codes: only for peptides;
+# - Encode / Parse Smiles codes:
+#   only for peptides;
 
+# Peptide => Smile
+# Smile => Peptide
 
 ####################
 
