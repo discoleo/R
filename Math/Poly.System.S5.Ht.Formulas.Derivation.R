@@ -22,6 +22,7 @@
 source("Polynomials.Helper.R")
 source("Polynomials.Helper.EP.R")
 
+
 # Solve for all initial tuples in x0
 solve.all = function(FUN, x0, ..., debug=TRUE) {
 	if(is.null(dim(x0))) x0 = matrix(x0, nrow=1);
@@ -45,13 +46,20 @@ solve.all = function(FUN, x0, ..., debug=TRUE) {
 	rownames(x.all) = NULL;
 	return(x.all);
 }
-cat.sol = function(x, digits=4) {
+cat.sol = function(x, digits=4, sep="\n") {
 	if(inherits(x, "list")) {
 		x = x$root;
 		x = matrix(x, nr=2); xc = x[2,]; x = x[1,] + 1i * xc;
 	}
 	cat("c(");
-	cat(paste0(round(x, digits=digits), collapse=", ")); cat(")\n");
+	cat(paste0(round(x, digits=digits), collapse=", ")); cat(")"); cat(sep);
+}
+cat.sol.m = function(x, digits=4, sep=",\n") {
+	if( ! inherits(x, "matrix")) {
+		return(cat.sol(x, digits=digits));
+	}
+	apply(x, 1, cat.sol, digits=digits, sep=sep);
+	invisible();
 }
 
 #######################
@@ -159,73 +167,22 @@ poly.calc(apply(x.all, 1, function(x) sum(x * x[c(3,4,5,1,2)]))) * 27
 #################
 
 ### Case 2:
+# S = 0, E5 = 2;
 
-### Set 1:
 R2 = c(0,1,0,0,2)
-x0 = c(-0.8392+0.7287i, 1.051, -0.8392-0.7287i, 0.3137+1.2009i, 0.3137-1.2009i);
-x0 = rbind(Re(x0), Im(x0))
-xx = multiroot(solve.S5HtMixed.Num, start=x0, R=R2)
+x0 = rbind(
+	c(-0.8392+0.7287i, 1.051, -0.8392-0.7287i, 0.3137+1.2009i, 0.3137-1.2009i),
+	c(-0.42-0.6586i, 0.7387+0i, -0.42+0.6586i, 0.0507+2.1058i, 0.0507-2.1058i),
+	c(0.392+0.8686i, 1.4881+0i, 0.392-0.8686i, -1.136-0.4352i, -1.136+0.4352i),
+	c(-0.1185+0.8347i, -0.591-0.4927i, 0.7697-0.2215i, 0.9223-1.7751i, -0.9826+1.6545i),
+	c(-0.1185-0.8347i, -0.591+0.4927i, 0.7697+0.2215i, 0.9223+1.7751i, -0.9826-1.6545i),
+	c(0.218+0.8128i, -0.8281-0.33i, -1.526+0.7887i, 1.5164-0.5302i, 0.6196-0.7413i),
+	c(0.218-0.8128i, -0.8281+0.33i, -1.526-0.7887i, 1.5164+0.5302i, 0.6196+0.7413i)
+);
 
-x = matrix(xx$root, nr=2); xc = x[2,]; x = x[1,] + 1i * xc;
-print(poly.calc(x)[4], 12)
-x.all = c(x)
+x.all = solve.all(solve.S5HtMixed.Num, x0, R=R2)
 
-### Set 2:
-x0 = c(-0.42-0.6586i, 0.7387+0i, -0.42+0.6586i, 0.0507+2.1058i, 0.0507-2.1058i);
-x0 = rbind(Re(x0), Im(x0))
-xx = multiroot(solve.S5HtMixed.Num, start=x0, R=R2)
-
-x = matrix(xx$root, nr=2); xc = x[2,]; x = x[1,] + 1i * xc;
-print(poly.calc(x)[4], 12)
-x.all = c(x.all, x)
-
-### Set 3:
-x0 = c(0.392+0.8686i, 1.4881+0i, 0.392-0.8686i, -1.136-0.4352i, -1.136+0.4352i);
-x0 = rbind(Re(x0), Im(x0))
-xx = multiroot(solve.S5HtMixed.Num, start=x0, R=R2)
-
-x = matrix(xx$root, nr=2); xc = x[2,]; x = x[1,] + 1i * xc;
-print(poly.calc(x)[4], 12)
-x.all = c(x.all, x)
-
-### Set 4:
-x0 = c(-0.1185+0.8347i, -0.591-0.4927i, 0.7697-0.2215i, 0.9223-1.7751i, -0.9826+1.6545i);
-x0 = rbind(Re(x0), Im(x0))
-xx = multiroot(solve.S5HtMixed.Num, start=x0, R=R2)
-
-x = matrix(xx$root, nr=2); xc = x[2,]; x = x[1,] + 1i * xc;
-# print(poly.calc(x)[4], 12)
-x.all = c(x.all, x)
-
-### Set 5:
-x0 = c(-0.1185-0.8347i, -0.591+0.4927i, 0.7697+0.2215i, 0.9223+1.7751i, -0.9826-1.6545i);
-x0 = rbind(Re(x0), Im(x0))
-xx = multiroot(solve.S5HtMixed.Num, start=x0, R=R2)
-
-x = matrix(xx$root, nr=2); xc = x[2,]; x = x[1,] + 1i * xc;
-# print(poly.calc(x)[4], 12)
-x.all = c(x.all, x)
-
-### Set 6:
-x0 = c(0.218+0.8128i, -0.8281-0.33i, -1.526+0.7887i, 1.5164-0.5302i, 0.6196-0.7413i);
-x0 = rbind(Re(x0), Im(x0))
-xx = multiroot(solve.S5HtMixed.Num, start=x0, R=R2)
-
-x = matrix(xx$root, nr=2); xc = x[2,]; x = x[1,] + 1i * xc;
-# print(poly.calc(x)[4], 12)
-x.all = c(x.all, x)
-
-### Set 7:
-x0 = c(0.218-0.8128i, -0.8281+0.33i, -1.526-0.7887i, 1.5164+0.5302i, 0.6196+0.7413i);
-x0 = rbind(Re(x0), Im(x0))
-xx = multiroot(solve.S5HtMixed.Num, start=x0, R=R2)
-
-x = matrix(xx$root, nr=2); xc = x[2,]; x = x[1,] + 1i * xc;
-# print(poly.calc(x)[4], 12)
-x.all = c(x.all, x)
-x.all = matrix(x.all, nc=5, byrow=T)
-
-round0(poly.calc(x.all)) * 27
+# round0(poly.calc(x.all)) * 27
 poly.calc(apply(x.all, 1, function(x) sum(x * x[c(3,4,5,1,2)]))) * 27
 
 
@@ -254,6 +211,43 @@ x.all = solve.all(solve.S5HtMixed.Num, x0, R=R2)
 # round0(poly.calc(x.all)) * 27
 poly.calc(apply(x.all, 1, function(x) sum(x * x[c(3,4,5,1,2)]))) * 27
 
+
+################
+
+### Cases 3 & 4:
+# S =  1, E11a = 1;
+# S = -1, E11a = 1;
+
+###
+R2 = c(1,1,0,0,2)
+x0 = rbind(
+	c(-0.6816+0.6782i, 1.2058+0i, -0.6816-0.6782i, 0.5787+1.208i, 0.5787-1.208i),
+	c(-0.4213-0.6133i, 0.7734+0i, -0.4213+0.6133i, 0.5346+2.094i, 0.5346-2.094i),
+	c(0.4993+0.8644i, 1.7734+0i, 0.4993-0.8644i, -0.886-0.5887i, -0.886+0.5887i),
+	c(-0.1608+0.9233i, -0.5632-0.4736i, 0.7705-0.2968i, 1.4773-1.6499i, -0.5238+1.4969i),
+	c(-0.1608-0.9233i, -0.5632+0.4736i, 0.7705+0.2968i, 1.4773+1.6499i, -0.5238-1.4969i),
+	c(0.2909+0.8266i, -0.7785-0.4025i, -1.1452+0.7978i, 2.0352-0.5726i, 0.5976-0.6494i),
+	c(0.2909-0.8266i, -0.7785+0.4025i, -1.1452-0.7978i, 2.0352+0.5726i, 0.5976+0.6494i)
+)
+
+###
+R2 = c(-1,1,0,0,2)
+x0 = rbind(
+	c(-1.04+0.7834i, 0.9117+0i, -1.04-0.7834i, 0.0842+1.1344i, 0.0842-1.1344i),
+	c(-0.4058-0.7245i, 0.7146+0i, -0.4058+0.7245i, -0.4515+1.9633i, -0.4515-1.9633i),
+	c(0.2519+0.9654i, 1.0961+0i, 0.2519-0.9654i, -1.3-0.3782i, -1.3+0.3782i),
+	c(-0.0945+0.7799i, -0.6323-0.508i, 0.7477-0.1733i, 0.4808-1.761i, -1.5017+1.6623i),
+	c(-0.0945-0.7799i, -0.6323+0.508i, 0.7477+0.1733i, 0.4808+1.761i, -1.5017-1.6623i),
+	c(0.1546+0.7818i, -0.8239-0.2526i, -2.0817+0.7679i, 1.1557-0.4064i, 0.5954-0.8906i),
+	c(0.1546-0.7818i, -0.8239+0.2526i, -2.0817-0.7679i, 1.1557+0.4064i, 0.5954+0.8906i)
+);
+
+x.all = solve.all(solve.S5HtMixed.Num, x0, R=R2)
+
+# round0(poly.calc(x.all)) * 27
+poly.calc(apply(x.all, 1, function(x) sum(x * x[c(3,4,5,1,2)]))) * 27
+
+
 ###
 R2 = c(5/4, -1/3,0,0,2.2)
 x.all = solve.all(solve.S5HtMixed.Num, x0, R=R2, debug=F)
@@ -271,21 +265,28 @@ R2 = c(1,1/3,0,0,2)
 R2 = c(1,-1/3,0,0,2)
 -8048.84 + 25090.59*x - 12773*x^2 + 152.4053*x^3 + 8.401235*x^4 + 12.01852*x^5 - 54.16701*x^6 + 27*x^7
 
+R2 = c(1,1,0,0,2)
+-2564 - 25342*x - 13521*x^2 - 908.5*x^3 - 13.5*x^4 + 33.5*x^5 + 58.25*x^6 + 27*x^7
+R2 = c(-1,1,0,0,2)
+-2420 - 24530*x - 11377*x^2 + 784.5*x^3 - 14.5*x^4 + 38.5*x^5 + 49.25*x^6 + 27*x^7
+
+
 
 27*(E11a^7 + E11b^7)*E5^2 +
 	# x^6
 	- 27*(E11a^6 + E11b^6)*E5^2*S^2 - (E11a*E11b)^6 +
 	+ 81*E11a*E11b*(E11a^5 + E11b^5)*E5^2 + 9*(E11a*E11b)^3*(E11a^3 + E11b^3)*E5*S +
-	# + 0*(E11a*E11b)^2*(E11a^4 + E11b^4)*E5*S^3 + 0*(E11a*E11b)^4*(E11a^2 + E11b^2)*S^4 +
-	# + 0*(E11a*E11b)^5*(E11a^1 + E11b^1)*S^2 +
 	# x^5:
 	+ 9*(E11a^5 + E11b^5)*E5^2*S^4 + 27*(E11a*E11b)^2*(E11a^3 + E11b^3)*E5^2 +
 	- 2*(E11a*E11b)^3*(E11a^2 + E11b^2)*E5*S^3 - 3*(E11a*E11b)^4*(E11a + E11b)*E5*S +
-	# x^4:
+	# x^4: Note: 1 term from x^5 contributes as well;
+	- (E11a^4 + E11b^4)*E5^2*S^6 + 18*(E11a*E11b)^2*(E11a^2 + E11b^2)*E5^2*S^2 +
+	+ 4*(E11a*E11b)^4*E5*S^3 - 10*(E11a*E11b)^3*(E11a + E11b)*E5^2 +
+	- 21*(E11a*E11b)*(E11a^3 + E11b^3)*E5^2*S^4 +
+	# x^3:
 	# TODO: + ... +
-	- (E11a^4 + E11b^4)*E5^2*S^6 +
 	- 50*(E11a^3 + E11b^3)*E5^3*S^3 +
-	- 10*(E11a*E11b)^3*E2*E5^2 +
+	- 10*(E11a*E11b)^3*E2*E5^2 + # *E5^2*S^2 ???
 	+ 14*(E11a^2 + E11b^2)*E5^3*S^5 +
 	- 5^5*E5^4*(E11a^2 + 3*E11a*E11b + E11b^2) +
 	+ 5^5*(E11a + E11b)*E5^4*S^2 - 5^4*E5^4*S^4 # = 0
