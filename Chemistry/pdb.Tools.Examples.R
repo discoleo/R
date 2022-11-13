@@ -27,8 +27,10 @@ cat.aa(as.aa(x, "A"))
 
 ### All files
 
-meta = read.meta.pdb(FUN = function(x) paste0(filter.oligo(x, maxChains=1)$aa, collapse=" "))
+lim  = 0;
+meta = read.meta.pdb(FUN = function(x) paste0(filter.oligo(x, maxChains=1)$aa, collapse=" "), lim=lim)
 names(meta)[match("FUN", names(meta))] = "PP";
+meta$HLA = extract.HLA(meta$Title);
 
 # TODO:
 # - save the results first;

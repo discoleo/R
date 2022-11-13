@@ -116,8 +116,9 @@ resolution = function(x, sep=" ", rm.related=TRUE) {
 	return(res)
 }
 # Basic Summary of Collection of PDBs
-read.meta.pdb = function(path = ".", pattern="\\.ent\\.gz$", FUN=NULL, rm.res.string=TRUE) {
+read.meta.pdb = function(path = ".", pattern="\\.ent\\.gz$", FUN=NULL, rm.res.string=TRUE, lim=0) {
 	files = list.files(path, pattern=pattern);
+	if(any(lim > 0)) files = files[seq(lim)]; # TODO
 	res = lapply(files, function(name) {
 		x = read.pdb(name);
 		tt  = title.pdb(x);
@@ -135,7 +136,7 @@ read.meta.pdb = function(path = ".", pattern="\\.ent\\.gz$", FUN=NULL, rm.res.st
 	})
 	res = do.call(rbind, res);
 	pdb = extract.regex(files, "(?i)^pdb([^.]++)", gr=1)
-	res = cbind(pdb, res); names(res)[1] = "PDB";
+	res = cbind(ID = seq(nrow(res)), PDB = pdb, res); # names(res)[1] = "PDB";
 	if(rm.res.string) {
 		res$Resolution = sub("^(?i)Resolution[. ]++", "", res$Resolution, perl=TRUE);
 	}
