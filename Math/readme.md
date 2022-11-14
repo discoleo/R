@@ -65,7 +65,7 @@ B.3. Special Compositions
 
 Linear ODEs with Polynomial Coefficients are constructed starting from the following functions:
 - y = B1 * exp(P1) + B2 * exp(P2) + B0, see file DE.ODE.Gaussian.R, Section B.1 (Mixed);
-- y = B1 * log(P1) + B2 * log(P2) + B0;
+- y = B1 * log(P1) + B2 * log(P2) + B0, see file DE.ODE.Log.R;
 - y = B1 * atan(P1) + B2 * atan(P2) + B0;
 - Mixed: y = B1 * exp(P1) + B2 * log(P2) + B0 and all other combinations; (TODO)
 - y = B1 * sin(P) + B2 * cos(P) + B0; (Note: the same function P(x))
