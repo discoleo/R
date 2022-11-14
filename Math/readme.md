@@ -70,9 +70,14 @@ Linear ODEs with Polynomial Coefficients are constructed starting from the follo
 - Mixed: y = B1 * exp(P1) + B2 * log(P2) + B0 and all other combinations; (TODO)
 - y = B1 * sin(P) + B2 * cos(P) + B0; (Note: the same function P(x))
 - Mixed Exp-Trig: y = sin(P1) * exp(P2) + B0, see file DE.ODE.Gaussian.R (currently only a simple example);
-- y = B1 * exp(exp(P)) + B0; (TODO; see also the non-liniar variants based on exp(exp(y)));
 
 Note:
 - B2(x), B1(x), B0(x), P1(x), P2(x) are polynomials or polynomial fractions of x;
   > Note: the examples are usually based on simple polynomials, as the fractions are much uglier to work with;
 - some of the files need extensive cleanup and refactoring;
+
+
+### B. Non-Linear ODEs
+- TODO: y = B1 * exp(exp(P)) + B0;
+- exp(exp(y)) = P1(y) + B0(x);
+- many more examples available;
