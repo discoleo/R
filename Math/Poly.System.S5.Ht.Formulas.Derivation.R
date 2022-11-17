@@ -93,7 +93,7 @@ which.perm.S5 = function(s, tol=1E-6) {
 	for(i1 in seq(nr, 2, by=-1)) {
 		for(i2 in seq(i1 - 1)) {
 			if(is.perm.S5(s[i1,], s[i2,])) {
-				id = c(id, i1, i2); break;
+				id = c(id, i2, i1); break;
 			}
 		}
 	}
@@ -132,7 +132,11 @@ polyS = function(R, x0, sol.rm=NULL, debug=FALSE) {
 	if(is.character(x0)) x0 = x0All[[x0]];
 	x.all = solve.all(solve.S5HtMixed.Num, x0, R=R, debug=debug);
 	if( ! is.null(sol.rm)) x.all = x.all[ - sol.rm, ];
-	if(nrow(x.all) != 7) stop("Wrong number of solutions!");
+	if(nrow(x.all) != 7) {
+		# stop("Wrong number of solutions!");
+		cat("ERROR: Wrong number of solutions!\n");
+		return(x.all);
+	}
 	p = poly.calc(apply(x.all, 1, function(x) sum(x * x[c(3,4,5,1,2)]))) * 27;
 	print(p);
 	return(x.all);
@@ -300,7 +304,7 @@ x0All = list(
 	),
 	# R2 = c(-5/3, -1,0,0,2.5)
 	# + internal permutation: 8 solutions! (sol[2,] can be excluded)
-	Vn1fn1n2f = rbind(
+	Vn1fn12f = rbind(
 	c(-1.4391+0.489i, 0.9708+0i, -1.4391-0.489i, 0.1203+1.0489i, 0.1203-1.0489i),
 	c(-1.4391-0.489i, 0.9708+0i, -1.4391+0.489i, 0.1203-1.0489i, 0.1203+1.0489i),
 	c(-0.67+1.3553i, -0.4885+1.0588i, -0.9735-1.4403i, -0.3205-0.987i, 0.7859+0.0133i),
@@ -362,73 +366,22 @@ x0All = list(
 	)
 );
 
-### Example
+### Examples
+
+### Using given Path:
 # - deriving solution for: R2 = c(-2,-1,0,0,2.5)
 #   using a path from R2 = c(-5/3,-1,0,0,2.5);
 R2 = c(-2,-1,0,0,2.5)
 path = lapply(c(-5/3, -1.8, -2), function(R1) c(R1, -1,0,0,2.5));
-x0 = x0All$Vn1fn1n2f
+x0 = x0All$Vn1fn12f
 x.all = solve.path(solve.S5HtMixed.Num, x0, path=path, debug=T)
 x.all = x.all[-2,]
 
-
-### Case 2:
-# S = 0, E5 = 2;
-
-R2 = c(0,1,0,0,2)
-x0 = x0All$V01;
-
-x.all = solve.all(solve.S5HtMixed.Num, x0, R=R2, debug=F)
-poly.calc(apply(x.all, 1, function(x) sum(x * x[c(3,4,5,1,2)]))) * 27
-# round0(poly.calc(x.all)) * 27
-
--12473 - 37419*x - 12473*x^2 - 10*x^3 - 10*x^4 + 27*x^5 + 80.75*x^6 + 27*x^7
-
-
-### Case 6:
+### Ex 2:
 R2 = c(-1,1,0,0,2)
 x0 = x0All$Vn11
 x.all = solve.all(solve.S5HtMixed.Num, x0, R=R2, debug=F)
 poly.calc(apply(x.all, 1, function(x) sum(x * x[c(3,4,5,1,2)]))) * 27
-
-###
-R2 = c(5,1/3,0,0,2)
-x0 = x0All$V50f
-x.all = solve.all(solve.S5HtMixed.Num, x0, R=R2, debug=F)
-poly.calc(apply(x.all, 1, function(x) sum(x * x[c(3,4,5,1,2)]))) * 27
-
-###
-R2 = c(5/4, -1/3,0,0,2)
-x0 = x0All$V10
-x.all = solve.all(solve.S5HtMixed.Num, x0, R=R2, debug=F)
-poly.calc(apply(x.all, 1, function(x) sum(x * x[c(3,4,5,1,2)]))) * 27
-
-
-R2 = c(1,0,0,0,2)
--2500 + 12500*x - 12472*x^2 - 100*x^3 - 1*x^4 + 9*x^5 - 27*x^6 + 27*x^7
-
-R2 = c(1,0,0,0,3/2)
--1406.25 + 7031.25*x - 7010.25*x^2 - 75*x^3 - 1*x^4 + 9*x^5 - 27*x^6 + 27*x^7
-
-R2 = c(1,1/3,0,0,2)
-277.185 - 2*x - 12505.22*x^2 - 349.9733*x^3 - 6.351853*x^4 + 11.94444*x^5 + 0.1663215*x^6 + 27*x^7
-R2 = c(1,-1/3,0,0,2)
--8048.84 + 25090.59*x - 12773*x^2 + 152.4053*x^3 + 8.401235*x^4 + 12.01852*x^5 - 54.16701*x^6 + 27*x^7
-R2 = c(-1,1/3,0,0,2)
-278.3705 + 2*x - 12494.56*x^2 + 350.0226*x^3 - 6.388888*x^4 + 12.05556*x^5 - 0.1670072*x^6 + 27*x^7
-
-R2 = c(1,1,0,0,2)
--2564 - 25342*x - 13521*x^2 - 908.5*x^3 - 13.5*x^4 + 33.5*x^5 + 58.25*x^6 + 27*x^7
-R2 = c(1,-1,0,0,2)
--27436 + 51262*x - 14399*x^2 + 721.5*x^3 + 51.5*x^4 + 35.5*x^5 - 112.75*x^6 + 27*x^7
-R2 = c(-1,1,0,0,2)
--2420 - 24530*x - 11377*x^2 + 784.5*x^3 - 14.5*x^4 + 38.5*x^5 + 49.25*x^6 + 27*x^7
-R2 = c(-1,-1,0,0,2)
--27692 + 48850*x - 10655*x^2 - 589.5*x^3 + 44.5*x^4 + 36.5*x^5 - 103.75*x^6 + 27*x^7
-R2 = c(1,1,0,0,3)
--5725 - 56795*x - 29682*x^2 - 1334.667*x^3 - 13.66667*x^4 + 34.33333*x^5 + 56.88889*x^6 + 27*x^7
-R2 = c(-1,1,0,0,3)
--5509 - 55577*x - 26466*x^2 + 1210.667*x^3 - 14.33333*x^4 + 37.66667*x^5 + 50.88889*x^6 + 27*x^7
 
 
 27*(E11a^7 + E11b^7)*E5^2 +
@@ -484,6 +437,58 @@ f5 = function(S, E11a, E5) {
 }
 f6 = function(S, E11a, E5) - 27*S^2 - E11a^6/E5^2 + 81*E11a + 9*E11a^3*S/E5;
 
+### Simple Examples:
+
+### S = 0
+R2 = c(0,1,0,0,2)
+x0 = x0All$V01;
+
+x.all = solve.all(solve.S5HtMixed.Num, x0, R=R2, debug=F)
+poly.calc(apply(x.all, 1, function(x) sum(x * x[c(3,4,5,1,2)]))) * 27
+# round0(poly.calc(x.all)) * 27
+
+-12473 - 37419*x - 12473*x^2 - 10*x^3 - 10*x^4 + 27*x^5 + 80.75*x^6 + 27*x^7
+
+### E11a = 0
+R2 = c(1,0,0,0,2)
+-2500 + 12500*x - 12472*x^2 - 100*x^3 - 1*x^4 + 9*x^5 - 27*x^6 + 27*x^7
+
+R2 = c(1,0,0,0,3/2)
+-1406.25 + 7031.25*x - 7010.25*x^2 - 75*x^3 - 1*x^4 + 9*x^5 - 27*x^6 + 27*x^7
+
+### Examples: S & E11a
+R2 = c(1,1/3,0,0,2)
+277.185 - 2*x - 12505.22*x^2 - 349.9733*x^3 - 6.351853*x^4 + 11.94444*x^5 + 0.1663215*x^6 + 27*x^7
+R2 = c(1,-1/3,0,0,2)
+-8048.84 + 25090.59*x - 12773*x^2 + 152.4053*x^3 + 8.401235*x^4 + 12.01852*x^5 - 54.16701*x^6 + 27*x^7
+R2 = c(-1,1/3,0,0,2)
+278.3705 + 2*x - 12494.56*x^2 + 350.0226*x^3 - 6.388888*x^4 + 12.05556*x^5 - 0.1670072*x^6 + 27*x^7
+
+R2 = c(1,1,0,0,2)
+-2564 - 25342*x - 13521*x^2 - 908.5*x^3 - 13.5*x^4 + 33.5*x^5 + 58.25*x^6 + 27*x^7
+R2 = c(1,-1,0,0,2)
+-27436 + 51262*x - 14399*x^2 + 721.5*x^3 + 51.5*x^4 + 35.5*x^5 - 112.75*x^6 + 27*x^7
+R2 = c(-1,1,0,0,2)
+-2420 - 24530*x - 11377*x^2 + 784.5*x^3 - 14.5*x^4 + 38.5*x^5 + 49.25*x^6 + 27*x^7
+R2 = c(-1,-1,0,0,2)
+-27692 + 48850*x - 10655*x^2 - 589.5*x^3 + 44.5*x^4 + 36.5*x^5 - 103.75*x^6 + 27*x^7
+R2 = c(1,1,0,0,3)
+-5725 - 56795*x - 29682*x^2 - 1334.667*x^3 - 13.66667*x^4 + 34.33333*x^5 + 56.88889*x^6 + 27*x^7
+R2 = c(-1,1,0,0,3)
+-5509 - 55577*x - 26466*x^2 + 1210.667*x^3 - 14.33333*x^4 + 37.66667*x^5 + 50.88889*x^6 + 27*x^7
+
+
+### Other:
+R2 = c(5,1/3,0,0,2)
+x0 = x0All$V50f
+x.all = solve.all(solve.S5HtMixed.Num, x0, R=R2, debug=F)
+poly.calc(apply(x.all, 1, function(x) sum(x * x[c(3,4,5,1,2)]))) * 27
+
+###
+R2 = c(5/4, -1/3,0,0,2)
+x0 = x0All$V10
+x.all = solve.all(solve.S5HtMixed.Num, x0, R=R2, debug=F)
+poly.calc(apply(x.all, 1, function(x) sum(x * x[c(3,4,5,1,2)]))) * 27
 
 ######################
 ######################
