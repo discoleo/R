@@ -73,6 +73,19 @@ cat.sol.m = function(x, digits=4, sep=",\n") {
 	invisible();
 }
 
+### Other
+
+# - check if 2 solutions are permutations of each other;
+is.perm.S5 = function(s1, s2, tol=1E-6) {
+	if(length(s1) != 5 || length(s2) != 5) stop("Not solutions of S5!");
+	# E11b is different:
+	id  = c(3,4,5,1,2);
+	e21 = sum(s1 * s1[id]);
+	e22 = sum(s2 * s2[id]);
+	d = round0(e21 - e22, tol=tol);
+	return(d == 0);
+}
+
 #######################
 #######################
 
