@@ -103,6 +103,9 @@ x = solve.S4HtDiff.P1(R)
 
 test.S4HtDiff.P1(x)
 
+print(poly.calc(x[,c(1,3)]) * 23, 16)
+
+
 ### Ex 2: Special Case
 # TODO
 R = c(2,-1,4,1)
