@@ -198,35 +198,49 @@ poly.calc(x)
 ##########################
 ##########################
 
+### E11a & E11b:
 # - a great discovery in mathematics;
--27 + 109*x^3 + 189*x^5 - 114*x^6 - 654*x^8 - 110*x^9 - 567*x^10 + 570*x^11 + 355*x^12 + 1635*x^13 +  
-440*x^14 + 3710*x^15 - 1140*x^16 - 1065*x^17 + 1064*x^18 - 660*x^19 - 6475*x^20 - 1984*x^21 + 1065*x^22 -  
-1609*x^23 + 440*x^24 + 3332*x^25 - 570*x^26 - 355*x^27 - 654*x^28 - 110*x^29 - 189*x^30 + 114*x^31 +  
-109*x^33 + 27*x^35 # = 0
+# - newest formula is in file: Poly.System.S5.Ht.Formulas.Derivation.R;
+# TODO: work out E3, E4;
 
-# TODO: work out S, E3, E4;
 27*(E11a^7 + E11b^7)*E5^2 + 81*E11a*E11b*(E11a^5 + E11b^5)*E5^2 + 27*(E11a*E11b)^2*(E11a^3 + E11b^3)*E5^2 +
 	- 10*(E11a*E11b)^3*E2*E5^2 - (E11a*E11b)^6 +
 	# - 54*(E11a*E11b)^5*(E11a^1 + E11b^1)*S^2 + 19*5^3*(E11a^4 + E11b^4)*E5^3*S +
 	# TODO: + ... +
 	- 5^5*E5^4*(E11b^2 + 3*E11a*E11b + E11a^2) # = 0
 
-# some R-values are still fixed!
-solve.S3HtMixed = function(R = c(0,1,0,0,1), debug=TRUE) {
-	E11a = R[2]; E5 = R[5];
-	# coeff = c(27, 80, 27, -10, -10, -3098, -9294, -3098);
-	coeff = c(27, 81*E11a - E11a^6/E5^2, 27*E11a^2, -10*E11a^3, -10*E11a^4,
-		-3125*E5^2 + 27*E11a^5, -9375*E11a*E5^2 + 81*E11a^6, -3125*E11a^2*E5^2 + 27*E11a^7);
+# Note: some R-values are still fixed!
+solve.S5HtMixed = function(R, debug=TRUE) {
+	coeff = coeff.S5HtMixed(R);
 	E11b = roots(coeff);
 	if(debug) print(E11b);
+	S = R[1]; E11a = R[2]; E5 = R[5];
 	E2 = R[2] + E11b;
-	x1 = sapply(E2, function(E2) roots(c(1, - R[1], E2, -R[3], R[4], -R[5])));
+	x1 = sapply(E2, function(E2) roots(c(1, -S, E2, -R[3], R[4], -E5)));
 	x1 = as.vector(x1);
 	# Robust:
 	# TODO
 	return(x1);
 }
-solve.S3HtMixed.Classic = function() {
+coeff.S5HtMixed = function(R) {
+	S = R[1]; E11a = R[2]; E3 = R[3]; E4 = R[4]; E5 = R[5];
+	# Note: still assumes E3 = E4 = 0!
+	coeff = c(27*E5^2, - 27*S^2*E5^2 + 81*E5^2*E11a + 9*S*E5*E11a^3 - E11a^6,
+		9*S^4*E5^2 + 27*E5^2*E11a^2 - 2*S^3*E5*E11a^3 - 3*S*E5*E11a^4,
+		- S^6*E5^2 - 21*S^4*E5^2*E11a + 18*S^2*E5^2*E11a^2 - 10*E5^2*E11a^3 + 4*S^3*E5*E11a^4 - 3*S*E5*E11a^5,
+		- 50*S^3*E5^3 + 4*S^6*E5^2*E11a - 375*S*E5^3*E11a + 12*S^4*E5^2*E11a^2 - 68*S^2*E5^2*E11a^3 +
+			- 10*E5^2*E11a^4 - 2*S^3*E5*E11a^5 + 9*S*E5*E11a^6,
+		14*S^5*E5^3 - 3125*E5^4 + 200*S^3*E5^3*E11a - 6*S^6*E5^2*E11a^2 - 750*S*E5^3*E11a^2 +
+			+ 12*S^4*E5^2*E11a^3 + 18*S^2*E5^2*E11a^4 + 27*E5^2*E11a^5,
+		3125*S^2*E5^4 - 28*S^5*E5^3*E11a - 9375*E5^4*E11a + 200*S^3*E5^3*E11a^2 + 4*S^6*E5^2*E11a^3 +
+			- 375*S*E5^3*E11a^3 - 21*S^4*E5^2*E11a^4 + 81*E5^2*E11a^6,
+		- 625*S^4*E5^4 + 3125*S^2*E5^4*E11a + 14*S^5*E5^3*E11a^2 - 3125*E5^4*E11a^2 - 50*S^3*E5^3*E11a^3 +
+			- S^6*E5^2*E11a^4 + 9*S^4*E5^2*E11a^5 - 27*S^2*E5^2*E11a^6 + 27*E5^2*E11a^7
+	);
+	return(coeff);
+}
+# Classic Solver:
+solve.S5HtMixed.Classic = function() {
 	coeff = c(27, 0, 109, 0, 114, -189, -110, -654, -355, -570, 3332, 440, -1609, 1065, -1984, -6475, -660,
 		1064, -1065, -1140, 3710, 440, 1635, 355, 570, -567, -110, -654, 0, -114, 189, 0, 109, 0, 0, -27);
 	x1 = roots(coeff);
