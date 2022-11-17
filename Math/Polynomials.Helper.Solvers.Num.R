@@ -32,7 +32,7 @@ solve.all = function(FUN, x0, ..., debug=TRUE) {
 	#
 	for(id in seq(nr)) {
 		xi = rbind(Re(x0[id,]), Im(x0[id,]));
-		xx = multiroot(solve.S5HtMixed.Num, start=xi, ...);
+		xx = multiroot(FUN, start=xi, ...);
 		#
 		x = xx$root;
 		x = matrix(x, nr=2); xc = x[2,]; x = x[1,] + 1i * xc;
@@ -73,4 +73,17 @@ cat.sol.m = function(x, digits=4, sep=",\n") {
 	apply(x, 1, cat.sol, digits=digits, sep=sep);
 	invisible();
 }
-
+# Print also variabe names:
+cat.sol.var = function(x, digits=8, sep=";\n") {
+	if(inherits(x, "list")) {
+		x = x$root;
+		x = matrix(x, nr=2); xc = x[2,]; x = x[1,] + 1i * xc;
+	}
+	#
+	len = length(x);
+	if(len == 2) { vn = c("x", "y"); }
+	else if(len == 3) { vn = c("x", "y", "z"); }
+	else vn = paste0("x", seq(len));
+	#
+	cat(paste0(vn, " = ", round(x, digits=digits), sep), sep=""); cat("\n");
+}
