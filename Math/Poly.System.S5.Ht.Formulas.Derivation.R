@@ -85,6 +85,21 @@ is.perm.S5 = function(s1, s2, tol=1E-6) {
 	d = round0(e21 - e22, tol=tol);
 	return(d == 0);
 }
+which.perm.S5 = function(s, tol=1E-6) {
+	nr = nrow(s);
+	if(nr <= 1) return(array(0, c(0, 2)));
+	# ID of permuted solutions;
+	id = numeric(0);
+	for(i1 in seq(nr, 2, by=-1)) {
+		for(i2 in seq(i1 - 1)) {
+			if(is.perm.S5(s[i1,], s[i2,])) {
+				id = c(id, i1, i2); break;
+			}
+		}
+	}
+	id = matrix(id, nrow=2);
+	return(id);
+}
 
 #######################
 #######################
