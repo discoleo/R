@@ -6,7 +6,7 @@
 ### Polynomial Systems: S4
 ### Diff Hetero-Symmetric
 ###
-### draft v.0.1a
+### draft v.0.1b
 
 
 ### Hetero-Symmetric: Diff-Ht
@@ -68,6 +68,12 @@ ps^4 - 2*E11d^2*ps^2 - 32*E4*ps^2 - 4*S*E3*ps^2 + 16*E4*S^2*ps + 16*E3^2*ps + E1
 ### Solver:
 solve.S4HtDiff.P1 = function(R, debug=TRUE, all=FALSE) {
 	S = R[1]; E11d = R[2]; E3 = R[3]; E4 = R[4];
+	# Special Cases:
+	z = S^4 - 32*E3*S + 256*E4 - 16*E11d^2;
+	isSpecial = (round0(z) == 0);
+	if(isSpecial) {
+		warning("Special Case!");
+	}
 	coeff = c(1, 0, - 2*E11d^2 - 32*E4 - 4*S*E3, 16*E4*S^2 + 16*E3^2,
 		E11d^4 - 32*E11d^2*E4 + 256*E4^2 + 4*E11d^2*S*E3 - 64*E4*S*E3);
 	ps = roots(coeff);
@@ -103,12 +109,49 @@ x = solve.S4HtDiff.P1(R)
 
 test.S4HtDiff.P1(x)
 
+# Leading: (... + 16*E4);
 print(poly.calc(x[,c(1,3)]) * 23, 16)
 
 
-### Ex 2: Special Case
+### Ex 2:
+R = c(5,3,-2,2)
+x = solve.S4HtDiff.P1(R)
+
+test.S4HtDiff.P1(x)
+
+print(poly.calc(x[,c(1,3)]) * 23, 16)
+
+
+### Ex 3:
+R = c(4,2,3,-1)
+x = solve.S4HtDiff.P1(R)
+
+test.S4HtDiff.P1(x)
+
+print(poly.calc(x[,c(1,3)]) * 17, 16)
+
+
+### Ex 4:
+R = c(4,2,1,-3)
+x = solve.S4HtDiff.P1(R)
+
+test.S4HtDiff.P1(x)
+
+print(poly.calc(x[,c(1,3)]) * 13, 16)
+
+
+###  Special Cases
+
+### Ex 5:
 # TODO
 R = c(2,-1,4,1)
+x = solve.S4HtDiff.P1(R)
+
+test.S4HtDiff.P1(x)
+
+### Ex 6:
+# TODO: (s1 - s2) is actually (relatively) close to 0;
+R = c(2,3,2,1)
 x = solve.S4HtDiff.P1(R)
 
 test.S4HtDiff.P1(x)
