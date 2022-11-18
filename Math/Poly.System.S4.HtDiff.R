@@ -128,8 +128,8 @@ coeff.S4HtDiff.P1 = function(R, debug=TRUE) {
 	# Special Cases:
 	z = S^4 - 32*E3*S + 256*E4 - 16*E11d^2;
 	isSpecial = (round0(z) == 0);
-	if(isSpecial && debug) {
-		warning("Special Case!");
+	if(isSpecial) {
+		if(debug) warning("Special Case!");
 		coeff = c(64, 16*S^2, - 4*S^4 - 4096*E4, 1024*E3^2 - S^6);
 		attr(coeff, "Special") = TRUE;
 		return(coeff);
