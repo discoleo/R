@@ -1,6 +1,6 @@
 
 
-# The Linear Rod Process #
+# A. Linear Rod Process #
 
 Inspired by the discrete hard rod process (see Ref. 1). However, that process introduces discontinuities during the swap of rods. Although it is a "discrete" model, I am rather unhappy with such discontinuities.
 
@@ -60,7 +60,7 @@ E{after collision} = (1 - damping) * E{before collision};
 
 ====
 
-# The Circular Rod Process #
+# B. Circular Rod Process #
 
 Circular rods are placed in a large circular tube of radius R.
 
@@ -74,3 +74,29 @@ For simplicity, the N rods can be placed equidistantly. The remaining features r
 
 2. Terminal velocity
 
+## Open Questions ##
+
+1. Do the rods group/aggregate into 2 separate compartments?
+> The group-velocity of the 2 compartments has to be equal for the 2 separate compartments to be stable.
+
+2. Is it possible to separate the rods into more than 2 large compartments? Which values of the initial parameters would induce such behaviour?
+
+3. Median Time of survival of the compartments
+
+
+====
+
+# C. Mathematical Alternatives #
+
+The formulas for the energy and for the momentum can be varied, e.g. E = l * h^3, or p = l^2 * v, where l = length of rod. Note: constants have been omitted from any of the formulas.
+
+Although these formulas may not represent any real physical phenomena, the resulting mathematical models may be still interesting.
+
+
+====
+
+# D. Spin Models #
+
+Circular disks can be used instead of rods. The disks can spin (positive or negative spin). Conservation of spin has to be added to the formulas.
+
+Note: These models are more complicated and will be moved to a separate file (the disks are not rods anyway).
