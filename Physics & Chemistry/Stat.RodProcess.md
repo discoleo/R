@@ -1,6 +1,6 @@
 
 
-# The Rod Process #
+# The Linear Rod Process #
 
 Inspired by the discrete hard rod process (see Ref. 1). However, that process introduces discontinuities during the swap of rods. Although it is a "discrete" model, I am rather unhappy with such discontinuities.
 
@@ -36,10 +36,14 @@ Inhomogeneous hard rods interacting inertially during collisions:
 2. Constant damping during each collision;
 3. Damping proportional to abs(diff(v)) during each collision;
 
+For simple damping:\
+E{after collision} = (1 - damping) * E{before collision};
 
-### Outcomes ###
+
+## Outcomes ##
 
 1. Distribution of Escape velocities: e.g. the rods can only escape (when there is NO damping);
+  - Escape = NO further collisions possible;
 
 2. Proportion of rods with arbitrarily small velocity (in the variants with damping);
 
@@ -49,5 +53,24 @@ Inhomogeneous hard rods interacting inertially during collisions:
 - number N of rods at which a phase transition is expected, dependent on the value of the damping factor and the parameters of the initial distributions;
 
 4. Time Measures:
-- Median Escape Time: at which 50% of rods have escaped;
+- Median Escape Time: at which 50% of rods have escaped (or, for the variants with damping: 50% of rods in the escaping compartment);
 - Median Slowdown Time: at which the average velocity of the rods has decreased below some critical value (in the model with damping), e.g. below 50% of the average initial velocity;
+> Note: the median velocity may behave badly due to the different sizes of the compartments that will arise (Escape compartment vs quasi-Stationary compartment);
+
+
+====
+
+# The Circular Rod Process #
+
+Circular rods are placed in a large circular tube of radius R.
+
+For simplicity, the N rods can be placed equidistantly. The remaining features remain the same as in the Linear rod model: rod lengths and initial velocities follow some given distributions.
+
+## Outcomes ##
+
+1. Time Measures:
+- Mean/Median Time until the velocities have almost-converged to a uniform velocity: e.g. variance of velocities less than a critical value or, alternatively, until the variance decreased to 50% of the initial variance;
+- Median Slowdown Time: for the models with damping (similar to the Linear rod model);
+
+2. Terminal velocity
+
