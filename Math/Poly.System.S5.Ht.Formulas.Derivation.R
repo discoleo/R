@@ -351,8 +351,8 @@ R2 = c(0,0,1,0,2)
 path = lapply(c(1/3, 2/3, 1), function(x) c(0, 1 - x, x,0,2));
 x0 = x0All$V01
 x.all = solve.path(solve.S5HtMixed.Num, x0, path=path, debug=T)
-which.perm.S5(x.all)
-polyS(R2, "E3V01")
+which.perm.S5(x.all) # all roots OK;
+x.all = polyS(R2, "E3V01")
 
 R2 = c(0,0,1,0,2)
 -0.25 + 125*x - 12494*x^2 + 150*x^4 + 2*x^5 + 27*x^7
@@ -365,10 +365,12 @@ R2 = c(0,0,1,0,2)
 	# x^5:
 	+ 9*(E11a^5 + E11b^5)*E5^2*S^4 + 27*(E11a*E11b)^2*(E11a^3 + E11b^3)*E5^2 +
 	- 2*(E11a*E11b)^3*(E11a^2 + E11b^2)*E5*S^3 - 3*(E11a*E11b)^4*(E11a + E11b)*E5*S +
+	+ 4*(E11a^5 + E11b^5)*E3^3*E5 +
 	# x^4: Note: 1 term from x^5 contributes as well;
 	- (E11a^4 + E11b^4)*E5^2*S^6 + 18*(E11a*E11b)^2*(E11a^2 + E11b^2)*E5^2*S^2 +
 	+ 4*(E11a*E11b)^4*E5*S^3 - 10*(E11a*E11b)^3*(E11a + E11b)*E5^2 +
 	- 21*(E11a*E11b)*(E11a^3 + E11b^3)*E5^2*S^4 +
+	+ 150*(E11a^4 + E11b^4)*E3^2*E5^2 +
 	# x^3:
 	- 50*(E11a^3 + E11b^3)*E5^3*S^3 +
 	- 375*(E11a*E11b)*(E11a^2 + E11b^2)*E5^3*S + 4*(E11a*E11b)*(E11a^2 + E11b^2)*E5^2*S^6 +
@@ -378,36 +380,39 @@ R2 = c(0,0,1,0,2)
 	+ 200*(E11a*E11b)*(E11a + E11b)*E5^3*S^3 +
 	- 6*(E11a*E11b)^2*E5^2*S^6 - 750*(E11a*E11b)^2*E5^3*S +
 	- 5^5*E5^4*(E11a^2 + 3*E11a*E11b + E11b^2) +
+	+ 12*(E11a^2 + E11b^2)*E3^5*E5 +
 	# x^1:
 	+ 5^5*(E11a + E11b)*E5^4*S^2 - 28*E11a*E11b*E5^3*S^5 +
+	+ 125*(E11a + E11b)*E3^4*E5^2 +
 	# B0:
-	- 5^4*E5^4*S^4 # = 0
+	- 5^4*E5^4*S^4 - E3^8 # = 0
 
 
 ### Coefficients:
-f0 = function(S, E11a, E5) {
+f0 = function(S, E11a, E3, E5) {
 	cc = - 625*S^4*E5^4 + 3125*S^2*E5^4*E11a + 14*S^5*E5^3*E11a^2 - 3125*E5^4*E11a^2 - 50*S^3*E5^3*E11a^3 +
-		- S^6*E5^2*E11a^4 + 9*S^4*E5^2*E11a^5 - 27*S^2*E5^2*E11a^6 + 27*E5^2*E11a^7;
+		- S^6*E5^2*E11a^4 + 9*S^4*E5^2*E11a^5 - 27*S^2*E5^2*E11a^6 + 27*E5^2*E11a^7 +
+		- E3^8; # + TODO: remaining terms;
 	cc / E5^2;
 }
-f1 = function(S, E11a, E5, coeff=8) {
+f1 = function(S, E11a, E3, E5) {
 	cc = 3125*S^2*E5^4 - 28*S^5*E5^3*E11a - 9375*E5^4*E11a + 200*S^3*E5^3*E11a^2 + 4*S^6*E5^2*E11a^3 +
-		- 375*S*E5^3*E11a^3 - 21*S^4*E5^2*E11a^4 + 81*E5^2*E11a^6;
+		- 375*S*E5^3*E11a^3 - 21*S^4*E5^2*E11a^4 + 81*E5^2*E11a^6 + 125*E3^4*E5^2;
 	cc / E5^2;
 }
-f2 = function(S, E11a, E5) {
+f2 = function(S, E11a, E3, E5) {
 	14*S^5*E5 - 3125*E5^2 + 12*S^4*E11a^3 + 18*S^2*E11a^4 + 27*E11a^5 +
-	- 6*E11a^2*S^6 - 750*E11a^2*E5*S + 200*E11a*E5*S^3;
+	- 6*E11a^2*S^6 - 750*E11a^2*E5*S + 200*E11a*E5*S^3 + 12*E3^5/E5;
 }
 f3 = function(S, E11a, E5) {
 	- 50*S^3*E5 - 10*E11a^4 - 2*S^3*E11a^5/E5 + 9*S*E11a^6/E5 +
 	+ 12*E11a^2*S^4 - 375*E11a*E5*S - 68*E11a^3*S^2 + 4*E11a*S^6;
 }
-f4 = function(S, E11a, E5) {
-	- S^6 + 18*E11a^2*S^2 + 4*E11a^4*S^3/E5 - 10*E11a^3 - 21*E11a*S^4 - 3*E11a^5*S/E5;
+f4 = function(S, E11a, E3, E5) {
+	- S^6 + 18*E11a^2*S^2 + 4*E11a^4*S^3/E5 - 10*E11a^3 - 21*E11a*S^4 - 3*E11a^5*S/E5 + 150*E3^2;
 }
-f5 = function(S, E11a, E5) {
-	9*S^4 + 27*E11a^2 - 2*E11a^3*S^3/E5 - 3*E11a^4*S/E5;
+f5 = function(S, E11a, E3, E5) {
+	9*S^4 + 27*E11a^2 - 2*E11a^3*S^3/E5 - 3*E11a^4*S/E5 + 4*E3^3/E5;
 }
 f6 = function(S, E11a, E5) - 27*S^2 - E11a^6/E5^2 + 81*E11a + 9*E11a^3*S/E5;
 
