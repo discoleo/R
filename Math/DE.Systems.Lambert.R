@@ -61,7 +61,8 @@ exp(y2)*dy2 - b2*dy1 - db2*y1 - dR2 # = 0
 (b*y1 + R2)*dy2 - b*dy1 - dR2 # = 0
 
 # TODO: check & solve;
-
+# - Solution to original system: see below,
+#   Section Supplementary Info;
 
 #############
 
@@ -119,6 +120,38 @@ y = log(- b * lambertWp( - exp(-R/b) / b));
 ### Case 2:
 # - non-Trivial: y1 != y2;
 
+
+### Non-Trivial: Numeric
+
+### Solver Tools
+source("Polynomials.Helper.Solvers.Num.R")
+
+
+solve.SExp = function(x, R, bb) {
+	x = matrix(x, nr=2); xc = x[2,]; x = x[1,] + 1i * xc;
+	y = exp(x) - bb*x[c(2,1)] - R;
+	y = rbind(Re(y), Im(y));
+	return(y);
+}
+
+### Examples
+R = 2;
+b = 1;
+x0 = rbind(
+	c(1.8881+5.3416i, 1.8881-5.3416i),
+	c(2.5041+11.3727i, 2.5041-11.3727i),
+	c(2.9171+4.9272i, 1.9403-18.0631i),
+	c(2.9171-4.9272i, 1.9403+18.0631i),
+	c(2.9044+11.245i, 2.507-17.69i),
+	c(2.9044-11.245i, 2.507+17.69i)
+)
+x.all = solve.all(solve.SExp, x0, R=R, bb=b, debug=T)
+
+# Test:
+exp(x.all) - b*x.all[, c(2,1)]
+
+
+################
 ### Non-Trivial: "Brute-Force"
 
 source("Polynomials.Helper.ODE.R")
