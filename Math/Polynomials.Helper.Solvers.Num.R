@@ -57,6 +57,20 @@ solve.path = function(FUN, x0, path, debug=TRUE) {
 	return(x0)
 }
 
+# create a seq from Xstart to Xend;
+expand.path = function(xs, xe, steps=6, start.at=0) {
+	if(steps <=0 ) stop("Invalid number of steps!");
+	if(steps == 1) {
+		warning("Only final step!");
+		return(xe);
+	}
+	if(length(xe) == 1) xe = rep(xe, length(xs));
+	#
+	i  = seq(start.at, steps, by=1) / steps;
+	sq = lapply(i, function(i) (1 - i)*xs + i*xe );
+	return(sq);
+}
+
 ### Print/Format
 cat.sol = function(x, digits=4, sep="\n") {
 	if(inherits(x, "list")) {
@@ -73,7 +87,7 @@ cat.sol.m = function(x, digits=4, sep=",\n") {
 	apply(x, 1, cat.sol, digits=digits, sep=sep);
 	invisible();
 }
-# Print also variabe names:
+# Print also variable names:
 cat.sol.var = function(x, digits=8, sep=";\n") {
 	if(inherits(x, "list")) {
 		x = x$root;
