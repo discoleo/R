@@ -175,6 +175,15 @@ exp(4*a) - (R^2 + 2*a*b*R + b^2*(a^2 - d^2))^2 - 4*b^2*d^2*(b*a + R)^2 # = 0
 # unfortunately redundant;
 
 
+### Case 2.b:
+# (x1, y1), (x2, y2) = conjugate set of roots;
+# x1 = a1 + d1*1i; y1 = a2 + d2*1i;
+# x2 = a1 - d1*1i; y2 = a2 - d2*1i;
+# => 4 coupled equations;
+
+# TODO
+
+
 ################
 ### Non-Trivial: "Brute-Force"
 
