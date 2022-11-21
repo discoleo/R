@@ -151,6 +151,30 @@ x.all = solve.all(solve.SExp, x0, R=R, bb=b, debug=T)
 exp(x.all) - b*x.all[, c(2,1)]
 
 
+### Experimental:
+### Case 2.a:
+# (x, y) = conjugate roots;
+# x = a + d*1i; y = a - d*1i;
+
+id = 1;
+a = Re(x.all[id,1]); d = Im(x.all[id,1]);
+# Sum =>
+exp(a)*cos(d) - b*a - R # = 0
+# Diff =>
+exp(a)*sin(d) + b*d # = 0
+
+### Sum(squares(...)) =>
+exp(2*a) - (b*a + R)^2 - b^2*d^2 # = 0
+
+# Square(Base-Eqs) =>
+exp(2*a)*cos(2*d) - R^2 - 2*a*b*R - b^2*(a^2 - d^2) # = 0
+# Prod =>
+exp(2*a)*sin(2*d) + 2*b*d*(b*a + R) # = 0
+# =>
+exp(4*a) - (R^2 + 2*a*b*R + b^2*(a^2 - d^2))^2 - 4*b^2*d^2*(b*a + R)^2 # = 0
+# unfortunately redundant;
+
+
 ################
 ### Non-Trivial: "Brute-Force"
 
