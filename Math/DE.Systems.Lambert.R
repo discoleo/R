@@ -127,7 +127,7 @@ y = log(- b * lambertWp( - exp(-R/b) / b));
 source("Polynomials.Helper.Solvers.Num.R")
 
 
-solve.SExp = function(x, R, bb) {
+solve.SExp = function(x, R, bb=1) {
 	x = matrix(x, nr=2); xc = x[2,]; x = x[1,] + 1i * xc;
 	y = exp(x) - bb*x[c(2,1)] - R;
 	y = rbind(Re(y), Im(y));
@@ -140,15 +140,28 @@ b = 1;
 x0 = rbind(
 	c(1.8881+5.3416i, 1.8881-5.3416i),
 	c(2.5041+11.3727i, 2.5041-11.3727i),
+	c(2.000+1.0893i, 1.4221+6.5491i),
+	c(2.000-1.0893i, 1.4221-6.5491i),
 	c(2.9171+4.9272i, 1.9403-18.0631i),
 	c(2.9171-4.9272i, 1.9403+18.0631i),
 	c(2.9044+11.245i, 2.507-17.69i),
 	c(2.9044-11.245i, 2.507+17.69i)
 )
-x.all = solve.all(solve.SExp, x0, R=R, bb=b, debug=T)
+x.all = solve.all(solve.SExp, x0, R=R, bb=b, ..., debug=T)
 
 # Test:
 exp(x.all) - b*x.all[, c(2,1)]
+
+
+### Numerical Approach: Starting Solution
+# - just an experiment:
+#   but we get another solution;
+b = 1
+x0 = 1i*sqrt(2)*c(-1, -6); # alternative: c(-1, -10)
+R0 = exp(x0) - b*x0[c(2,1)]
+R  = 2
+path = expand.path(R0, R)
+x.all = solve.path(solve.SExp, x0, path=path, bb=b)
 
 
 ### Experimental:
@@ -165,6 +178,7 @@ exp(a)*sin(d) + b*d # = 0
 
 ### Sum(squares(...)) =>
 exp(2*a) - (b*a + R)^2 - b^2*d^2 # = 0
+
 
 # Square(Base-Eqs) =>
 exp(2*a)*cos(2*d) - R^2 - 2*a*b*R - b^2*(a^2 - d^2) # = 0
