@@ -48,11 +48,11 @@ solve.all = function(FUN, x0, ..., debug=TRUE) {
 	return(x.all);
 }
 # Solve using given Path:
-solve.path = function(FUN, x0, path, debug=TRUE) {
+solve.path = function(FUN, x0, path, ..., debug=TRUE) {
 	n = length(path);
 	for(i in seq(n)) {
 		if(debug) cat(paste0("Step: ", i, "\n"));
-		x0 = solve.all(FUN, x0=x0, R=path[[i]], debug=debug);
+		x0 = solve.all(FUN, x0=x0, R=path[[i]], ..., debug=debug);
 	}
 	return(x0)
 }
