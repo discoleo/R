@@ -147,7 +147,7 @@ x0 = rbind(
 	c(2.9044+11.245i, 2.507-17.69i),
 	c(2.9044-11.245i, 2.507+17.69i)
 )
-x.all = solve.all(solve.SExp, x0, R=R, bb=b, ..., debug=T)
+x.all = solve.all(solve.SExp, x0, R=R, bb=b, debug=T)
 
 # Test:
 exp(x.all) - b*x.all[, c(2,1)]
