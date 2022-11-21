@@ -25,14 +25,14 @@ library(rootSolve)
 
 
 # Solve for all initial tuples in x0
-solve.all = function(FUN, x0, ..., debug=TRUE) {
+solve.all = function(FUN, x0, ..., debug=TRUE, maxiter=100) {
 	if(is.null(dim(x0))) x0 = matrix(x0, nrow=1);
 	nr = nrow(x0);
 	x.all = array(0, c(ncol(x0), 0));
 	#
 	for(id in seq(nr)) {
 		xi = rbind(Re(x0[id,]), Im(x0[id,]));
-		xx = multiroot(FUN, start=xi, ...);
+		xx = multiroot(FUN, start=xi, ..., maxiter=maxiter);
 		#
 		x = xx$root;
 		x = matrix(x, nr=2); xc = x[2,]; x = x[1,] + 1i * xc;
@@ -48,11 +48,11 @@ solve.all = function(FUN, x0, ..., debug=TRUE) {
 	return(x.all);
 }
 # Solve using given Path:
-solve.path = function(FUN, x0, path, ..., debug=TRUE) {
+solve.path = function(FUN, x0, path, ..., debug=TRUE, maxiter=100) {
 	n = length(path);
 	for(i in seq(n)) {
 		if(debug) cat(paste0("Step: ", i, "\n"));
-		x0 = solve.all(FUN, x0=x0, R=path[[i]], ..., debug=debug);
+		x0 = solve.all(FUN, x0=x0, R=path[[i]], ..., debug=debug, maxiter=maxiter);
 	}
 	return(x0)
 }
