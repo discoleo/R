@@ -39,7 +39,7 @@ is.perm.S5 = function(s1, s2, tol=1E-6) {
 	d = round0(e21 - e22, tol=tol);
 	return(d == 0);
 }
-which.perm.S5 = function(s, tol=1E-6) {
+which.perm.S5 = function(s, tol=1E-6, verbose=TRUE) {
 	nr = nrow(s);
 	if(nr <= 1) return(array(0, c(0, 2)));
 	# ID of permuted solutions;
@@ -52,6 +52,10 @@ which.perm.S5 = function(s, tol=1E-6) {
 		}
 	}
 	id = matrix(id, nrow=2);
+	if(ncol(id) == 0) {
+		if(verbose) cat("No duplicates!\n");
+		return(invisible(id));
+	}
 	return(id);
 }
 
@@ -103,10 +107,11 @@ test.sol = function(x, R=c(0,0,0,0,0)) {
 	round0(apply(x.all, 1, test.f));
 }
 # Solve Eqs for coefficients
-solve.coeff = function(R1, R2, b0, FUNc, FUN) {
+solve.coeff = function(R1, R2, b0, EXPc, FUN) {
+	if(is.character(EXPc)) EXPc = parse(text=EXPc);
 	coeff = function(R, b) {
 		S = R[1]; E11a = R[2]; E3 = R[3]; E4 = R[4]; E5 = R[5];
-		m = eval(FUNc, list(S=S, E11a=E11a, E3=E3, E4=E4, E5=E5));
+		m = eval(EXPc, list(S=S, E11a=E11a, E3=E3, E4=E4, E5=E5));
 		v = b - FUN(R);
 		list(m=m, v=v);
 	}
@@ -438,17 +443,18 @@ R2 = c(0,1,1,0,2)
 	+ 200*(E11a*E11b)*(E11a + E11b)*E5^3*S^3 +
 	- 6*(E11a*E11b)^2*E5^2*S^6 - 750*(E11a*E11b)^2*E5^3*S +
 	- 5^5*E5^4*(E11a^2 + 3*E11a*E11b + E11b^2) +
-	+ 12*(E11a^2 + E11b^2)*E3^5*E5 +
-	+ ...*(E11a*E11b)*(E11a + E11b)*E3*E5^3 + ...*(E11a*E11b)*(E11a + E11b)*E3^6 +
+	+ 12*(E11a^2 + E11b^2)*E3^5*E5 + 5^4*(E11a*E11b)*(E11a + E11b)*E3*E5^3 +
+	- 2*(E11a*E11b)*(E11a + E11b)*E3^6 - 375*(E11a*E11b)^2*E3^2*E5^2 +
 	# x^1:
 	+ 5^5*(E11a + E11b)*E5^4*S^2 - 28*E11a*E11b*E5^3*S^5 +
-	+ 125*(E11a + E11b)*E3^4*E5^2 +
+	+ 125*(E11a + E11b)*E3^4*E5^2 - 34*E11a*E11b*E3^5*E5 +
 	# B0:
 	- 5^4*E5^4*S^4 - E3^8 # = 0
 
 
 ### Coefficients:
-f0 = function(S, E11a, E3, E5) {
+f0 = function(R) {
+	S = R[1]; E11a = R[2]; E3 = R[3]; E4 = R[4]; E5 = R[5];
 	cc = - 625*S^4*E5^4 + 3125*S^2*E5^4*E11a + 14*S^5*E5^3*E11a^2 - 3125*E5^4*E11a^2 - 50*S^3*E5^3*E11a^3 +
 		- S^6*E5^2*E11a^4 + 9*S^4*E5^2*E11a^5 - 27*S^2*E5^2*E11a^6 + 27*E5^2*E11a^7 +
 		- E3^8 + 4*E11a^5*E3^3*E5 + 150*E11a^4*E3^2*E5^2 + 12*E11a^2*E3^5*E5 + 125*E11a*E3^4*E5^2 +
@@ -459,14 +465,16 @@ f1 = function(R) {
 	S = R[1]; E11a = R[2]; E3 = R[3]; E4 = R[4]; E5 = R[5];
 	cc = 3125*S^2*E5^4 - 28*S^5*E5^3*E11a - 9375*E5^4*E11a + 200*S^3*E5^3*E11a^2 + 4*S^6*E5^2*E11a^3 +
 		- 375*S*E5^3*E11a^3 - 21*S^4*E5^2*E11a^4 + 81*E5^2*E11a^6 + 125*E3^4*E5^2 +
-		- 11*E11a^4*E3^3*E5 + 275*E11a^3*E3^2*E5^2;
+		- 11*E11a^4*E3^3*E5 + 275*E11a^3*E3^2*E5^2 + 5^4*E11a^2*E3*E5^3 +
+		- 2*E11a^2*E3^6 - 34*E11a*E3^5*E5;
 	cc / E5^2;
 }
 f2 = function(R) {
 	S = R[1]; E11a = R[2]; E3 = R[3]; E4 = R[4]; E5 = R[5];
 	14*S^5*E5 - 3125*E5^2 + 12*S^4*E11a^3 + 18*S^2*E11a^4 + 27*E11a^5 +
 	- 6*E11a^2*S^6 - 750*E11a^2*E5*S + 200*E11a*E5*S^3 + 12*E3^5/E5 +
-	- E11a^4*E3^4/E5^2 - 3*E11a^3*E3^3/E5;
+	- E11a^4*E3^4/E5^2 - 3*E11a^3*E3^3/E5 + 5^4*E11a*E3*E5 +
+	- 2*E11a*E3^6/E5^2 - 375*E11a^2*E3^2;
 }
 f3 = function(R) {
 	S = R[1]; E11a = R[2]; E3 = R[3]; E4 = R[4]; E5 = R[5];
