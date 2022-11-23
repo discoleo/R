@@ -189,6 +189,14 @@ isConj.f = function(x, y, tol=1E-3) {
 	return(isConj);
 }
 
+as.conj = function(x, nrow=0) {
+	if(nrow > 0) {
+		x[nrow,] = abs(x[nrow,])^2 / x[nrow,];
+		return(x);
+	}
+	abs(x)^2 / x;
+}
+
 ###################
 ### Polynomials ###
 ###################
