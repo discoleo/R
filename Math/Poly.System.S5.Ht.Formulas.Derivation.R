@@ -169,10 +169,12 @@ max.pow.S = function(R, x0, pow, FUN, npos=1, v=2, debug=FALSE) {
 	p4 = poly.calc.S5(x04);
 	print(p3); print(p4);
 	p3 = p3[[pow]]; p4 = p4[[pow]];
-	powPlus = (p3 + p4 - FUN(R2) - FUN(R2n)) / (p1 + p2 - FUN(R) - FUN(Rn));
-	powMinus = (p3 - p4 - FUN(R2) + FUN(R2n)) / (p1 - p2 - FUN(R) + FUN(Rn));
+	b0 = c(FUN(R), FUN(Rn), FUN(R2), FUN(R2n));
+	powPlus  = (p3 + p4 - b0[3] - b0[4]) / (p1 + p2 - b0[1] - b0[2]);
+	powMinus = (p3 - p4 - b0[3] + b0[4]) / (p1 - p2 - b0[1] + b0[2]);
+	div = log(abs(v / R[npos]));
 	r = c(powPlus, powMinus,
-		log(abs(powPlus)) / log(abs(v / R[npos])), log(abs(powMinus)) / log(abs(v / R[npos])));
+		log(abs(powPlus)) / div, log(abs(powMinus)) / div);
 	return(r);
 }
 
@@ -317,13 +319,14 @@ max.pow.S(c(1,0,1,0,2), c("E3V101", "E3Vn101"), pow=4, FUN=f4, v=3)
 	- 21*(E11a*E11b)*(E11a^3 + E11b^3)*E5^2*S^4 + 150*(E11a^4 + E11b^4)*E3^2*E5^2 +
 	- 11*(E11a*E11b)*(E11a^3 + E11b^3)*E3^3*E5 - (E11a*E11b)^2*(E11a^2 + E11b^2)*E3^4 +
 	+ 20*(E11a*E11b)^4*E3*E5 +
-	+ (E11a^4 + E11b^4)*(...*E3*E5^2*S^3 + ...*E3^2*E5*S^5 + 288*E3^3*E5*S^2 + 0*E3^4*S^4) +
+	+ (E11a^4 + E11b^4)*(48*E3*E5^2*S^3 - 10*E3^3*E5*S^2) +
 	# x^3:
 	- 50*(E11a^3 + E11b^3)*E5^3*S^3 +
 	- 375*(E11a*E11b)*(E11a^2 + E11b^2)*E5^3*S + 4*(E11a*E11b)*(E11a^2 + E11b^2)*E5^2*S^6 +
 	+ 12*(E11a*E11b)^2*(E11a + E11b)*E5^2*S^4 - 68*(E11a*E11b)^3*E5^2*S^2 +
 	+ 275*(E11a*E11b)*(E11a^2 + E11b^2)*E3^2*E5^2 - 4*(E11a*E11b)^3*E3^4 +
 	- 3*(E11a*E11b)^2*(E11a + E11b)*E3^3*E5 +
+	+ (E11a^3 + E11b^3)*(...*E3^4*E5*S) +
 	# x^2:
 	+ 14*(E11a^2 + E11b^2)*E5^3*S^5 +
 	+ 200*(E11a*E11b)*(E11a + E11b)*E5^3*S^3 +
@@ -371,9 +374,9 @@ f3 = function(R) {
 }
 f4 = function(R) {
 	S = R[1]; E11a = R[2]; E3 = R[3]; E4 = R[4]; E5 = R[5];
-	- S^6 + 18*E11a^2*S^2 + 4*E11a^4*S^3/E5 - 10*E11a^3 - 21*E11a*S^4 - 3*E11a^5*S/E5 + 150*E3^2 +
+	150*E3^2 - S^6 + 18*E11a^2*S^2 + 4*E11a^4*S^3/E5 - 10*E11a^3 - 21*E11a*S^4 - 3*E11a^5*S/E5 +
 	- 2*E11a^5*E3^2/E5^2 - E11a^2*E3^4/E5^2 - 11*E11a*E3^3/E5 + 20*E11a^4*E3/E5 +
-	- 0*E3^3*S^2/E5;
+	+ 48*E3*S^3 - 10*E3^3*S^2/E5;
 }
 f5 = function(R) {
 	S = R[1]; E11a = R[2]; E3 = R[3]; E4 = R[4]; E5 = R[5];
