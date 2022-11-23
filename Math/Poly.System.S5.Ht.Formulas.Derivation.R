@@ -59,6 +59,16 @@ which.perm.S5 = function(s, tol=1E-6, verbose=TRUE) {
 	return(id);
 }
 
+as.conj.S5 = function(x, nrow, rm.rows=0) {
+	id = seq(7);
+	if(any(rm.rows > 0)) {
+		id = id[-rm.rows];
+	}
+	r = x[id,];
+	r = rbind(r, as.conj(x[nrow,]));
+	return(r);
+}
+
 #######################
 #######################
 
@@ -88,6 +98,19 @@ solve.S5HtMixed.Num = function(x, R=c(0,1,0,0,1)) {
 	y = rbind(Re(y), Im(y));
 	return(y);
 }
+solve.path.S5 = function(R, R0, x0, steps=6, check=TRUE, verbose=FALSE) {
+	path = expand.path(R0, R, steps=steps);
+	if(is.character(x0)) x0 = x0All[[x0]];
+	x.all = solve.path(solve.S5HtMixed.Num, x0, path=path, debug=verbose);
+	if(check) {
+		idDuplicates = which.perm.S5(x.all, verbose=verbose);
+		if(ncol(idDuplicates) > 0) {
+			cat("Warning: Duplicate roots!\n");
+			print(idDuplicates);
+		}
+	}
+	return(x.all);
+}
 polyS = function(R, x0, sol.rm=NULL, debug=FALSE) {
 	if(is.character(x0)) x0 = x0All[[x0]];
 	x.all = solve.all(solve.S5HtMixed.Num, x0, R=R, debug=debug);
@@ -102,6 +125,8 @@ polyS = function(R, x0, sol.rm=NULL, debug=FALSE) {
 	return(x.all);
 }
 poly.calc.S5 = function(x, tol=1E-8) {
+	if(is.character(x)) x = x0All[[x]];
+	if(length(x) != 35) stop("Wrong roots!");
 	p = poly.calc(apply(x, 1, function(x) sum(x * x[c(3,4,5,1,2)]))) * 27;
 	p = round0(p, tol=tol);
 	return(p);
@@ -136,30 +161,42 @@ solve.coeff = function(R1, R2, b0, EXPc, FUN) {
 
 # Estimate Maximal Power of a Parameter
 # npos = which variable in vector R;
-max.pow.S = function(R, x0, pow, FUN, npos=1, v=2, debug=FALSE) {
+# pow = which power in the polynomial;
+# v = value used to vary parameter R;
+max.pow.S = function(R, x0, pow, FUN, npos=1, v=2, R2=NULL, skip.path=FALSE, debug=FALSE) {
 	if(is.character(x0)) x0 = x0All[x0];
 	Rn = R; Rn[npos] = - Rn[npos];
 	x01 = polyS(R,  x0=x0[[1]], debug=debug);
 	x02 = polyS(Rn, x0=x0[[2]], debug=debug);
 	#
-	R2 = R; R2[npos] = v;
-	path = expand.path(R, R2);
-	x03  = solve.path(solve.S5HtMixed.Num, x0[[1]], path=path, debug=debug);
-	idDuplicates = which.perm.S5(x03, verbose=FALSE);
-	if(ncol(idDuplicates) != 0) {
-		cat("Error in roots: step 3!\n");
-		print(idDuplicates);
-		return(x03);
+	if(is.null(R2)) {
+		R2  = R; R2[npos] = v;
+		R2n = R2; R2n[npos] = - v;
+	} else {
+		v = R2[npos];
+		R2n = R2; R2n[npos] = - v;
 	}
-	#
-	R2n = R; R2n[npos] = - v;
-	path = expand.path(Rn, R2n);
-	x04  = solve.path(solve.S5HtMixed.Num, x0[[2]], path=path, debug=debug);
-	idDuplicates = which.perm.S5(x04, verbose=FALSE);
-	if(ncol(idDuplicates) != 0) {
-		cat("Error in roots: step 4!\n");
-		print(idDuplicates);
-		return(x04);
+	if(skip.path) {
+		x03 = polyS(R2,  x0=x0[[3]], debug=debug);
+		x04 = polyS(R2n, x0=x0[[4]], debug=debug);
+	} else {
+		path = expand.path(R, R2);
+		x03  = solve.path(solve.S5HtMixed.Num, x0[[1]], path=path, debug=debug);
+		idDuplicates = which.perm.S5(x03, verbose=FALSE);
+		if(ncol(idDuplicates) != 0) {
+			cat("Error in roots: step 3!\n");
+			print(idDuplicates);
+			return(x03);
+		}
+		#
+		path = expand.path(Rn, R2n);
+		x04  = solve.path(solve.S5HtMixed.Num, x0[[2]], path=path, debug=debug);
+		idDuplicates = which.perm.S5(x04, verbose=FALSE);
+		if(ncol(idDuplicates) != 0) {
+			cat("Error in roots: step 4!\n");
+			print(idDuplicates);
+			return(x04);
+		}
 	}
 	#
 	pow = pow + 1;
@@ -167,7 +204,7 @@ max.pow.S = function(R, x0, pow, FUN, npos=1, v=2, debug=FALSE) {
 	p2 = poly.calc.S5(x02)[[pow]];
 	p3 = poly.calc.S5(x03);
 	p4 = poly.calc.S5(x04);
-	print(p3); print(p4);
+	if( ! skip.path) { print(p3); print(p4); }
 	p3 = p3[[pow]]; p4 = p4[[pow]];
 	b0 = c(FUN(R), FUN(Rn), FUN(R2), FUN(R2n));
 	powPlus  = (p3 + p4 - b0[3] - b0[4]) / (p1 + p2 - b0[1] - b0[2]);
@@ -326,7 +363,8 @@ max.pow.S(c(1,0,1,0,2), c("E3V101", "E3Vn101"), pow=4, FUN=f4, v=3)
 	+ 12*(E11a*E11b)^2*(E11a + E11b)*E5^2*S^4 - 68*(E11a*E11b)^3*E5^2*S^2 +
 	+ 275*(E11a*E11b)*(E11a^2 + E11b^2)*E3^2*E5^2 - 4*(E11a*E11b)^3*E3^4 +
 	- 3*(E11a*E11b)^2*(E11a + E11b)*E3^3*E5 +
-	+ (E11a^3 + E11b^3)*(...*E3^4*E5*S) +
+	+ (E11a^3 + E11b^3)*(6*E3^4*E5*S - 6*E3*E5^2*S^5 +
+		+ 2*E3^3*E5*S^4 + 5*E3^2*E5^2*S^2) +
 	# x^2:
 	+ 14*(E11a^2 + E11b^2)*E5^3*S^5 +
 	+ 200*(E11a*E11b)*(E11a + E11b)*E5^3*S^3 +
@@ -334,6 +372,7 @@ max.pow.S(c(1,0,1,0,2), c("E3V101", "E3Vn101"), pow=4, FUN=f4, v=3)
 	- 5^5*E5^4*(E11a^2 + 3*E11a*E11b + E11b^2) +
 	+ 12*(E11a^2 + E11b^2)*E3^5*E5 + 5^4*(E11a*E11b)*(E11a + E11b)*E3*E5^3 +
 	- 2*(E11a*E11b)*(E11a + E11b)*E3^6 - 375*(E11a*E11b)^2*E3^2*E5^2 +
+	+ (E11a^2 + E11b^2)*(...*E3^4*E5*S^2) +
 	# x^1:
 	+ 5^5*(E11a + E11b)*E5^4*S^2 - 28*E11a*E11b*E5^3*S^5 +
 	+ 125*(E11a + E11b)*E3^4*E5^2 - 34*E11a*E11b*E3^5*E5 +
@@ -370,7 +409,8 @@ f3 = function(R) {
 	- 50*S^3*E5 - 10*E11a^4 - 2*S^3*E11a^5/E5 + 9*S*E11a^6/E5 +
 	+ 12*E11a^2*S^4 - 375*E11a*E5*S - 68*E11a^3*S^2 + 4*E11a*S^6 +
 	- 15*E11a^5*E3/E5 - 3*E11a^2*E3^3/E5 +
-	+ 275*E11a*E3^2 - 4*E11a^3*E3^4/E5^2;
+	+ 275*E11a*E3^2 - 4*E11a^3*E3^4/E5^2 + 6*E3^4*S/E5 - 6*E3*S^5 +
+	+ 2*E3^3*S^4/E5 + 5*E3^2*S^2;
 }
 f4 = function(R) {
 	S = R[1]; E11a = R[2]; E3 = R[3]; E4 = R[4]; E5 = R[5];
@@ -387,6 +427,13 @@ f6 = function(R) {
 	S = R[1]; E11a = R[2]; E3 = R[3]; E4 = R[4]; E5 = R[5];
 	- 27*S^2 - E11a^6/E5^2 + 81*E11a + 9*E11a^3*S/E5;
 }
+
+
+# before f3 was updated;
+solve.coeff(c(1,0,1,0,2.2), c(5,0,1,0,2.2), c(- 107.3636 - 119.1818, - 31793.18 - 33179.55) / 2,
+	"c(E3^4*S/E5, E3*S^5)", function(R) { Rn = R; Rn[1] = - Rn[1]; (f3(R) - f3(Rn))/2; })
+solve.coeff(c(1,0,1,0,2), c(5,0,1,0,2), c(- 97 - 109, - 30485 - 31985) / 2,
+	"c(E3^4*S/E5, E3*S^5)", function(R) { Rn = R; Rn[1] = - Rn[1]; (f3(R) - f3(Rn))/2; })
 
 ### Simple Examples:
 
