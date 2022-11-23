@@ -101,6 +101,11 @@ polyS = function(R, x0, sol.rm=NULL, debug=FALSE) {
 	print(p);
 	return(x.all);
 }
+poly.calc.S5 = function(x, tol=1E-8) {
+	p = poly.calc(apply(x, 1, function(x) sum(x * x[c(3,4,5,1,2)]))) * 27;
+	p = round0(p, tol=tol);
+	return(p);
+}
 ### Test solutions
 test.sol = function(x, R=c(0,0,0,0,0)) {
 	R = R;
@@ -128,6 +133,51 @@ solve.coeff = function(R1, R2, b0, EXPc, FUN) {
 	r  = solve(rbind(l1$m, l2$m), c(l1$v, l2$v));
 	return(r);
 }
+
+# Estimate Maximal Power of a Parameter
+# npos = which variable in vector R;
+max.pow.S = function(R, x0, pow, FUN, npos=1, v=2, debug=FALSE) {
+	if(is.character(x0)) x0 = x0All[x0];
+	Rn = R; Rn[npos] = - Rn[npos];
+	x01 = polyS(R,  x0=x0[[1]], debug=debug);
+	x02 = polyS(Rn, x0=x0[[2]], debug=debug);
+	#
+	R2 = R; R2[npos] = v;
+	path = expand.path(R, R2);
+	x03  = solve.path(solve.S5HtMixed.Num, x0[[1]], path=path, debug=debug);
+	idDuplicates = which.perm.S5(x03, verbose=FALSE);
+	if(ncol(idDuplicates) != 0) {
+		cat("Error in roots: step 3!\n");
+		print(idDuplicates);
+		return(x03);
+	}
+	#
+	R2n = R; R2n[npos] = - v;
+	path = expand.path(Rn, R2n);
+	x04  = solve.path(solve.S5HtMixed.Num, x0[[2]], path=path, debug=debug);
+	idDuplicates = which.perm.S5(x04, verbose=FALSE);
+	if(ncol(idDuplicates) != 0) {
+		cat("Error in roots: step 4!\n");
+		print(idDuplicates);
+		return(x04);
+	}
+	#
+	pow = pow + 1;
+	p1 = poly.calc.S5(x01)[[pow]];
+	p2 = poly.calc.S5(x02)[[pow]];
+	p3 = poly.calc.S5(x03);
+	p4 = poly.calc.S5(x04);
+	print(p3); print(p4);
+	p3 = p3[[pow]]; p4 = p4[[pow]];
+	powPlus = (p3 + p4 - FUN(R2) - FUN(R2n)) / (p1 + p2 - FUN(R) - FUN(Rn));
+	powMinus = (p3 - p4 - FUN(R2) + FUN(R2n)) / (p1 - p2 - FUN(R) + FUN(Rn));
+	r = c(powPlus, powMinus,
+		log(abs(powPlus)) / log(abs(v / R[npos])), log(abs(powMinus)) / log(abs(v / R[npos])));
+	return(r);
+}
+
+###################
+###################
 
 # Note:
 # - the double permutation (x1, x3) & (x4, x5) like c(x3, x2, x1, x5, x4),
@@ -249,6 +299,8 @@ which.perm.S5(x.all) # all roots OK;
 x.all = polyS(R2, "E3V001")
 x.all = polyS(R2, "E3V011")
 
+max.pow.S(c(1,0,1,0,2), c("E3V101", "E3Vn101"), pow=4, FUN=f4, v=3)
+
 
 27*(E11a^7 + E11b^7)*E5^2 +
 	# x^6
@@ -265,6 +317,7 @@ x.all = polyS(R2, "E3V011")
 	- 21*(E11a*E11b)*(E11a^3 + E11b^3)*E5^2*S^4 + 150*(E11a^4 + E11b^4)*E3^2*E5^2 +
 	- 11*(E11a*E11b)*(E11a^3 + E11b^3)*E3^3*E5 - (E11a*E11b)^2*(E11a^2 + E11b^2)*E3^4 +
 	+ 20*(E11a*E11b)^4*E3*E5 +
+	+ (E11a^4 + E11b^4)*(...*E3*E5^2*S^3 + ...*E3^2*E5*S^5 + 288*E3^3*E5*S^2 + 0*E3^4*S^4) +
 	# x^3:
 	- 50*(E11a^3 + E11b^3)*E5^3*S^3 +
 	- 375*(E11a*E11b)*(E11a^2 + E11b^2)*E5^3*S + 4*(E11a*E11b)*(E11a^2 + E11b^2)*E5^2*S^6 +
@@ -319,7 +372,8 @@ f3 = function(R) {
 f4 = function(R) {
 	S = R[1]; E11a = R[2]; E3 = R[3]; E4 = R[4]; E5 = R[5];
 	- S^6 + 18*E11a^2*S^2 + 4*E11a^4*S^3/E5 - 10*E11a^3 - 21*E11a*S^4 - 3*E11a^5*S/E5 + 150*E3^2 +
-	- 2*E11a^5*E3^2/E5^2 - E11a^2*E3^4/E5^2 - 11*E11a*E3^3/E5 + 20*E11a^4*E3/E5;
+	- 2*E11a^5*E3^2/E5^2 - E11a^2*E3^4/E5^2 - 11*E11a*E3^3/E5 + 20*E11a^4*E3/E5 +
+	- 0*E3^3*S^2/E5;
 }
 f5 = function(R) {
 	S = R[1]; E11a = R[2]; E3 = R[3]; E4 = R[4]; E5 = R[5];
