@@ -220,6 +220,30 @@ mult.p = function(p1, p2) {
 	return(p)
 }
 
+# Replace "poly.calc" & "polynomial" constructor in package polynom;
+# - only basic construction:
+poly.calc0 = function(x, toReal=TRUE, tol=1E-8, warn=TRUE) {
+	p = 1;
+	for (xi in x) {
+		p = c(0, p) - c(xi * p, 0);
+	}
+	return(polynomial(p, tol=tol, toReal=toReal, warn=warn));
+}
+polynomial = function(coef = c(0, 1), tol=1E-8, toReal=TRUE, warn=TRUE) {
+	b   = round0(coef, tol=tol);
+	isC = Im(b) != 0;
+	if(warn && any(isC)) warning("Some coefficients are complex!");
+	if(toReal) b = Re(b);
+	last = length(b);
+	if(last > 0) {
+		for(npos in seq(last, 1)) {
+			if(b[last] != 0) break;
+		}
+		b = b[seq(1, last)];
+	}
+	structure(b, class = "polynomial");
+}
+
 ##################
 
 ### Multi-variable Polynomials:
