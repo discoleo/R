@@ -237,9 +237,9 @@ polynomial = function(coef = c(0, 1), tol=1E-8, toReal=TRUE, warn=TRUE) {
 	last = length(b);
 	if(last > 0) {
 		for(npos in seq(last, 1)) {
-			if(b[last] != 0) break;
+			if(b[npos] != 0) break;
 		}
-		b = b[seq(1, last)];
+		b = b[seq(1, npos)];
 	}
 	structure(b, class = "polynomial");
 }
