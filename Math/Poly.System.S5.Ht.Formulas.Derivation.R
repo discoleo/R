@@ -111,7 +111,7 @@ solve.path.S5 = function(R, R0, x0, steps=6, check=TRUE, verbose=FALSE) {
 	}
 	return(x.all);
 }
-polyS = function(R, x0, sol.rm=NULL, debug=FALSE) {
+polyS = function(R, x0, sol.rm=NULL, debug=FALSE, tol=5E-7) {
 	if(is.character(x0)) x0 = x0All[[x0]];
 	x.all = solve.all(solve.S5HtMixed.Num, x0, R=R, debug=debug);
 	if( ! is.null(sol.rm)) x.all = x.all[ - sol.rm, ];
@@ -120,15 +120,14 @@ polyS = function(R, x0, sol.rm=NULL, debug=FALSE) {
 		cat("ERROR: Wrong number of solutions!\n");
 		return(x.all);
 	}
-	p = poly.calc(apply(x.all, 1, function(x) sum(x * x[c(3,4,5,1,2)]))) * 27;
+	p = poly.calc0(apply(x.all, 1, function(x) sum(x * x[c(3,4,5,1,2)])), tol=tol) * 27;
 	print(p);
 	return(x.all);
 }
-poly.calc.S5 = function(x, tol=1E-8) {
+poly.calc.S5 = function(x, tol=5E-7) {
 	if(is.character(x)) x = x0All[[x]];
 	if(length(x) != 35) stop("Wrong roots!");
-	p = poly.calc(apply(x, 1, function(x) sum(x * x[c(3,4,5,1,2)]))) * 27;
-	p = round0(p, tol=tol);
+	p = poly.calc0(apply(x, 1, function(x) sum(x * x[c(3,4,5,1,2)])), tol=tol) * 27;
 	return(p);
 }
 ### Test solutions
@@ -358,43 +357,50 @@ max.pow.S(c(1,0,1,0,2), c("E3V101", "E3Vn101"), pow=4, FUN=f4, v=3)
 	+ 20*(E11a*E11b)^4*E3*E5 +
 	+ (E11a^4 + E11b^4)*(48*E3*E5^2*S^3 - 10*E3^3*E5*S^2) +
 	# x^3:
-	- 50*(E11a^3 + E11b^3)*E5^3*S^3 +
+	+ (E11a^3 + E11b^3)*(6*E3^4*E5*S - 6*E3*E5^2*S^5 +
+		+ 2*E3^3*E5*S^4 - 50*E5^3*S^3 + 5*E3^2*E5^2*S^2) +
 	- 375*(E11a*E11b)*(E11a^2 + E11b^2)*E5^3*S + 4*(E11a*E11b)*(E11a^2 + E11b^2)*E5^2*S^6 +
 	+ 12*(E11a*E11b)^2*(E11a + E11b)*E5^2*S^4 - 68*(E11a*E11b)^3*E5^2*S^2 +
 	+ 275*(E11a*E11b)*(E11a^2 + E11b^2)*E3^2*E5^2 - 4*(E11a*E11b)^3*E3^4 +
 	- 3*(E11a*E11b)^2*(E11a + E11b)*E3^3*E5 +
-	+ (E11a^3 + E11b^3)*(6*E3^4*E5*S - 6*E3*E5^2*S^5 +
-		+ 2*E3^3*E5*S^4 + 5*E3^2*E5^2*S^2) +
 	# x^2:
-	+ 14*(E11a^2 + E11b^2)*E5^3*S^5 +
+	+ (E11a^2 + E11b^2)*(14*E5^3*S^5 + 500*E3*E5^3*S^2 - 21*E3^2*E5^2*S^4 - E3^6*S^2 +
+		- 200*E3^3*E5^2*S + 8*E3^4*E5*S^3) +
 	+ 200*(E11a*E11b)*(E11a + E11b)*E5^3*S^3 +
-	- 6*(E11a*E11b)^2*E5^2*S^6 - 750*(E11a*E11b)^2*E5^3*S +
+	- (E11a*E11b)^2*(6*E5^2*S^6 + 750*E5^3*S) +
 	- 5^5*E5^4*(E11a^2 + 3*E11a*E11b + E11b^2) +
 	+ 12*(E11a^2 + E11b^2)*E3^5*E5 + 5^4*(E11a*E11b)*(E11a + E11b)*E3*E5^3 +
 	- 2*(E11a*E11b)*(E11a + E11b)*E3^6 - 375*(E11a*E11b)^2*E3^2*E5^2 +
-	+ (E11a^2 + E11b^2)*(...*E3^4*E5*S^2) +
 	# x^1:
-	+ 5^5*(E11a + E11b)*E5^4*S^2 - 28*E11a*E11b*E5^3*S^5 +
-	+ 125*(E11a + E11b)*E3^4*E5^2 - 34*E11a*E11b*E3^5*E5 +
+	+ (E11a + E11b)*(5^5*E5^4*S^2 + 125*E3^4*E5^2 + 2*E3^7*S - 1250*E3^2*E5^3*S +
+		+ 110*E3^3*E5^2*S^3 - 26*E3^5*E5*S^2 - 150*E3*E5^3*S^4) +
+	- E11a*E11b*(28*E5^3*S^5 + 34*E3^5*E5) +
 	# B0:
-	- 5^4*E5^4*S^4 - E3^8 # = 0
+	- 5^4*E5^4*S^4 - E3^8 - 150*E3^4*E5^2*S^2 + 20*E3^6*E5*S + 500*E3^2*E5^3*S^3 # = 0
 
 
 ### Coefficients:
 f0 = function(R) {
 	S = R[1]; E11a = R[2]; E3 = R[3]; E4 = R[4]; E5 = R[5];
-	cc = - 625*S^4*E5^4 + 3125*S^2*E5^4*E11a + 14*S^5*E5^3*E11a^2 - 3125*E5^4*E11a^2 - 50*S^3*E5^3*E11a^3 +
-		- S^6*E5^2*E11a^4 + 9*S^4*E5^2*E11a^5 - 27*S^2*E5^2*E11a^6 + 27*E5^2*E11a^7 +
-		- E3^8 + 4*E11a^5*E3^3*E5 + 150*E11a^4*E3^2*E5^2 + 12*E11a^2*E3^5*E5 + 125*E11a*E3^4*E5^2 +
-		- 90*E11a^5*E3*E5^2*S;
+	cc = 27*E5^2*E11a^7 - 27*S^2*E5^2*E11a^6 +
+		+ E11a^5*(9*E5^2*S^4 + 4*E3^3*E5 - 90*E3*E5^2*S) +
+		- E11a^4*(E5^2*S^6 - 150*E3^2*E5^2 - 48*E3*E5^2*S^3 + 10*E3^3*E5*S^2) +
+		+ E11a^3*(- 6*E3*E5^2*S^5 - 50*E5^3*S^3 + 6*E3^4*E5*S + 2*E3^3*E5*S^4 + 5*E3^2*E5^2*S^2) +
+		+ E11a^2*(14*E5^3*S^5 + 500*E3*E5^3*S^2 - 21*E3^2*E5^2*S^4 - E3^6*S^2 +
+			- 200*E3^3*E5^2*S + 8*E3^4*E5*S^3 - 3125*E5^4 + 12*E3^5*E5) +
+		+ E11a*(3125*E5^4*S^2 + 125*E3^4*E5^2 + 2*E3^7*S - 1250*E3^2*E5^3*S + 110*E3^3*E5^2*S^3 +
+			- 26*E3^5*E5*S^2 - 150*E3*E5^3*S^4) +
+		- 625*S^4*E5^4 - E3^8 - 150*E3^4*E5^2*S^2 + 20*E3^6*E5*S + 500*E3^2*E5^3*S^3;
 	cc / E5^2;
 }
 f1 = function(R) {
 	S = R[1]; E11a = R[2]; E3 = R[3]; E4 = R[4]; E5 = R[5];
-	cc = 3125*S^2*E5^4 - 28*S^5*E5^3*E11a - 9375*E5^4*E11a + 200*S^3*E5^3*E11a^2 + 4*S^6*E5^2*E11a^3 +
-		- 375*S*E5^3*E11a^3 - 21*S^4*E5^2*E11a^4 + 81*E5^2*E11a^6 + 125*E3^4*E5^2 +
-		- 11*E11a^4*E3^3*E5 + 275*E11a^3*E3^2*E5^2 + 5^4*E11a^2*E3*E5^3 +
-		- 2*E11a^2*E3^6 - 34*E11a*E3^5*E5;
+	cc = 3125*E5^4*S^2 + 125*E3^4*E5^2 + 2*E3^7*S - 1250*E3^2*E5^3*S + 110*E3^3*E5^2*S^3 +
+		- 26*E3^5*E5*S^2 - 150*E3*E5^3*S^4 +
+		+ 81*E5^2*E11a^6 - E11a^4*(21*S^4*E5^2 + 11*E3^3*E5) +
+		+ E11a^3*(4*E5^2*S^6 - 375*E5^3*S + 275*E3^2*E5^2) +
+		+ E11a^2*(200*E5^3*S^3 - 2*E3^6 + 5^4*E3*E5^3) +
+		- E11a*(9375*E5^4 + 28*E5^3*S^5 + 34*E3^5*E5);
 	cc / E5^2;
 }
 f2 = function(R) {
@@ -402,7 +408,8 @@ f2 = function(R) {
 	14*S^5*E5 - 3125*E5^2 + 12*S^4*E11a^3 + 18*S^2*E11a^4 + 27*E11a^5 +
 	- 6*E11a^2*S^6 - 750*E11a^2*E5*S + 200*E11a*E5*S^3 + 12*E3^5/E5 +
 	- E11a^4*E3^4/E5^2 - 3*E11a^3*E3^3/E5 + 5^4*E11a*E3*E5 +
-	- 2*E11a*E3^6/E5^2 - 375*E11a^2*E3^2;
+	- 2*E11a*E3^6/E5^2 - 375*E11a^2*E3^2 + 500*E3*E5*S^2 - 21*E3^2*S^4 - E3^6*S^2/E5^2 +
+	- 200*E3^3*S + 8*E3^4*S^3/E5;
 }
 f3 = function(R) {
 	S = R[1]; E11a = R[2]; E3 = R[3]; E4 = R[4]; E5 = R[5];
@@ -428,6 +435,11 @@ f6 = function(R) {
 	- 27*S^2 - E11a^6/E5^2 + 81*E11a + 9*E11a^3*S/E5;
 }
 
+
+max.pow.S(c("E3V101", "E3Vn101", "E3V501", "E3Vn501"), pow=0, FUN=f0, skip.path=T, R=c(1.1,0,3/4,0,2), R2=c(5,0,3/4,0,2))
+
+solve.coeff(c(1.1,0,3/4,0,2), c(5,0,3/4,0,2), c(-2967.058 + 4468.348, -1493365 + 1634008) / 2,
+"c(E3^6*S/E5, E3^2*E5*S^3)", function(R) { Rn = R; Rn[1] = - Rn[1]; (f0(R) - f0(Rn))/2; })
 
 # before f3 was updated;
 solve.coeff(c(1,0,1,0,2.2), c(5,0,1,0,2.2), c(- 107.3636 - 119.1818, - 31793.18 - 33179.55) / 2,
