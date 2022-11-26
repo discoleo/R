@@ -94,7 +94,7 @@ cat.sol = function(x, digits=4, sep=",\n") {
 	if( ! inherits(x, "matrix")) {
 		return(cat.sol0(x, digits=digits));
 	}
-	apply(x, 1, cat.sol, digits=digits, sep=sep);
+	apply(x, 1, cat.sol0, digits=digits, sep=sep);
 	invisible();
 }
 # Print also variable names:
