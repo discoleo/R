@@ -12,9 +12,9 @@ This tutorial uses package *rootSolve*, but I presume that *nleqslv* works equal
 ## Problem
 
 **SYSTEM:**
-> exp(x) = b*y + R;
-> exp(y) = b*x + R;
-> 	# where b, R = given parameters;
+	exp(x) = b*y + R;
+	exp(y) = b*x + R;
+	# where b, R = given parameters;
 
 This system has the trivial solution x = y.
 
@@ -89,12 +89,13 @@ In case of multiple failed attempts to solve the system:
 
 I hope this helps solving a few more non-linear systems.
 
+
 ## GitHub
 
 The code is also available on GitHub:
-> **Helper Functions:**
+1. **Helper Functions:**
 > https://github.com/discoleo/R/blob/master/Math/Polynomials.Helper.Solvers.Num.R
-> **Exponential example:**
+2. **Exponential example:**
 > - see Section "Supplementary Info";
 > https://github.com/discoleo/R/blob/master/Math/DE.Systems.Lambert.R
 
