@@ -38,13 +38,19 @@ solve.all = function(FUN, x0, ..., debug=TRUE, maxiter=100) {
 		x = matrix(x, nr=2); xc = x[2,]; x = x[1,] + 1i * xc;
 		if(debug) {
 			cat(paste0("ID = ", id, "; Iter = ", xx$iter, "; Prec = ", xx$estim.precis));
-			cat("\n   "); cat.sol(xx);
+			cat("\n   "); cat.sol0(x);
 		}
 		x.all = cbind(x.all, x);
 	}
 	x.all = t(x.all);
 	colnames(x.all) = paste0("x", seq(ncol(x0)));
 	rownames(x.all) = NULL;
+	if(nr == 1) {
+		# TODO: new class?
+		class(x.all) = c("sol", class(x.all));
+	} else {
+		class(x.all) = c("sol", class(x.all));
+	}
 	return(x.all);
 }
 # Solve using given Path:
@@ -72,7 +78,11 @@ expand.path = function(xs, xe, steps=6, start.at=0) {
 }
 
 ### Print/Format
-cat.sol = function(x, digits=4, sep="\n") {
+print.sol = function(x, digits=4, sep=",\n") {
+	# cat() is NOT generic!
+	cat.sol(x, digits=digits, sep=sep);
+}
+cat.sol0 = function(x, digits=4, sep="\n") {
 	if(inherits(x, "list")) {
 		x = x$root;
 		x = matrix(x, nr=2); xc = x[2,]; x = x[1,] + 1i * xc;
@@ -80,9 +90,9 @@ cat.sol = function(x, digits=4, sep="\n") {
 	cat("c(");
 	cat(paste0(round(x, digits=digits), collapse=", ")); cat(")"); cat(sep);
 }
-cat.sol.m = function(x, digits=4, sep=",\n") {
+cat.sol = function(x, digits=4, sep=",\n") {
 	if( ! inherits(x, "matrix")) {
-		return(cat.sol(x, digits=digits));
+		return(cat.sol0(x, digits=digits));
 	}
 	apply(x, 1, cat.sol, digits=digits, sep=sep);
 	invisible();
