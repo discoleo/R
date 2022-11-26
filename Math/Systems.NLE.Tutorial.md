@@ -11,9 +11,9 @@ This tutorial uses package *rootSolve*, but I presume that *nleqslv* works equal
 
 ## Problem
 
-**SYSTEM:**
-	exp(x) = b*y + R;
-	exp(y) = b*x + R;
+**SYSTEM:**\
+	exp(x) = b * y + R;
+	exp(y) = b * x + R;
 	# where b, R = given parameters;
 
 This system has the trivial solution x = y.
@@ -25,7 +25,7 @@ We want to find some non-trivial solutions with x != y, and possibly having comp
 
 1. Step 1:
 We will start with a different system:
-- we **select** the "solution" and basically "transform" the system to fit this solution: i.e. we compute the 2 "R" values for this new system;
+- we **select** a set of values as the "solution" and basically "transform" the system to fit this "solution": i.e. we compute the 2 new "R" values for this new system;
 
 2. Step 2:
 We will "flow" the initial "solution", while changing the system back to the original system. Hopefully, the pseudo-solution will converge to a true/desired solution.
