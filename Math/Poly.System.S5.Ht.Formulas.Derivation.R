@@ -98,8 +98,8 @@ solve.S5HtMixed.Num = function(x, R=c(0,1,0,0,1)) {
 	y = rbind(Re(y), Im(y));
 	return(y);
 }
-solve.path.S5 = function(R, R0, x0, steps=6, check=TRUE, verbose=FALSE) {
-	path = expand.path(R0, R, steps=steps);
+solve.path.S5 = function(R, R0, x0, steps=6, start.at=0, check=TRUE, verbose=FALSE) {
+	path = expand.path(R0, R, steps=steps, start.at=start.at);
 	if(is.character(x0)) x0 = x0All[[x0]];
 	x.all = solve.path(solve.S5HtMixed.Num, x0, path=path, debug=verbose);
 	if(check) {
@@ -162,7 +162,8 @@ solve.coeff = function(R1, R2, b0, EXPc, FUN) {
 # npos = which variable in vector R;
 # pow = which power in the polynomial;
 # v = value used to vary parameter R;
-max.pow.S = function(R, x0, pow, FUN, npos=1, v=2, R2=NULL, skip.path=FALSE, debug=FALSE) {
+max.pow.S = function(R, x0, pow, FUN, npos=1, v=2, R2=NULL, skip.path=FALSE, check=TRUE,
+		steps=6, debug=FALSE) {
 	if(is.character(x0)) x0 = x0All[x0];
 	Rn = R; Rn[npos] = - Rn[npos];
 	x01 = polyS(R,  x0=x0[[1]], debug=debug);
@@ -179,22 +180,22 @@ max.pow.S = function(R, x0, pow, FUN, npos=1, v=2, R2=NULL, skip.path=FALSE, deb
 		x03 = polyS(R2,  x0=x0[[3]], debug=debug);
 		x04 = polyS(R2n, x0=x0[[4]], debug=debug);
 	} else {
-		path = expand.path(R, R2);
+		path = expand.path(R, R2, steps=steps);
 		x03  = solve.path(solve.S5HtMixed.Num, x0[[1]], path=path, debug=debug);
 		idDuplicates = which.perm.S5(x03, verbose=FALSE);
 		if(ncol(idDuplicates) != 0) {
 			cat("Error in roots: step 3!\n");
 			print(idDuplicates);
-			return(x03);
+			if(check) return(x03);
 		}
 		#
-		path = expand.path(Rn, R2n);
+		path = expand.path(Rn, R2n, steps=steps);
 		x04  = solve.path(solve.S5HtMixed.Num, x0[[2]], path=path, debug=debug);
 		idDuplicates = which.perm.S5(x04, verbose=FALSE);
 		if(ncol(idDuplicates) != 0) {
 			cat("Error in roots: step 4!\n");
 			print(idDuplicates);
-			return(x04);
+			if(check) return(x04);
 		}
 	}
 	#
@@ -212,6 +213,49 @@ max.pow.S = function(R, x0, pow, FUN, npos=1, v=2, R2=NULL, skip.path=FALSE, deb
 	r = c(powPlus, powMinus,
 		log(abs(powPlus)) / div, log(abs(powMinus)) / div);
 	return(r);
+}
+
+plot.path.S5 = function(R, R0, x0, steps=20, col=seq(length(R0)), ...,
+		subset=NULL, p0.pch=5, debug=FALSE) {
+	plot.path(R, R0=R0, x0=x0, FUN=solve.S5HtMixed.Num, steps=steps, col=col, ...,
+		subset=subset, p0.pch=p0.pch, debug=debug);
+}
+plot.path = function(R, R0, x0, FUN, steps=20, col=seq(length(R0)), ...,
+		subset=NULL, p0.pch=5, debug=FALSE) {
+	if(is.character(x0)) x0 = x0All[[x0]];
+	isMatrix = is.matrix(x0);
+	len = if(isMatrix) nrow(x0) else 1;
+	# Path:
+	path = expand.path(R0, R, steps=steps);
+	x = array(0, c(length(R0), 0));
+	for(id in seq(steps)) {
+		x0 = solve.all(FUN, x0=x0, R=path[[id]], ..., debug=debug);
+		x  = cbind(x, t(x0));
+	}
+	nr = nrow(x);
+	isSubset = ! is.null(subset);
+	if(nr > 1) {
+		xlim = c(min(Re(x)), max(Re(x)));
+		ylim = c(min(Im(x)), max(Im(x)));
+		plot(Re(x[1,]), Im(x[1,]), col=col[1], xlim=xlim, ylim=ylim);
+		idAll = if(isSubset) subset else seq(2, nr);
+		for(id in idAll) {
+			points(Re(x[id,]), Im(x[id,]), col=col[id]);
+		}
+		# Initial points
+		if(p0.pch > 0) {
+			p0 = function(x, col) {
+				points(jitter(Re(x)), Im(x), col=col, pch=p0.pch, cex=1.5, lwd=1.5);
+			}
+			if(isSubset) {
+				p0(x[- subset, seq(len)], col="blue");
+				p0(x[  subset, seq(len)], col="red");
+			} else {
+				p0(x[, seq(len)], col="red");
+			}
+		}
+	}
+	invisible(x);
 }
 
 ###################
@@ -321,6 +365,11 @@ x0 = x0All$Vn1fn12f
 x.all = solve.path(solve.S5HtMixed.Num, x0, path=path, debug=T)
 x.all = x.all[-2,]
 
+### Example plot.path:
+tmp = plot.path.S5(c(5,3,1,0,2), c(1,3,1,0,2), "E3V131", steps=101)
+tmp = plot.path.S5(c(-5,3,1,0,2), c(-1,3,1,0,2), "E3Vn131", steps=101)
+
+
 ### Ex 2:
 R2 = c(-1,1,0,0,2)
 x0 = x0All$Vn11
@@ -340,15 +389,24 @@ x.all = polyS(R2, "E3V011")
 max.pow.S(c(1,0,1,0,2), c("E3V101", "E3Vn101"), pow=4, FUN=f4, v=3)
 
 
+max.pow.S(c("E3V131", "E3Vn131", "E3V531", "E3Vn531"), pow=4, FUN=f4, skip.path=T, R=c(1,2.8,1,0,2), R2=c(5,3,1,0,2))
+
+
+solve.coeff(c(1,2.8,1,0,2), c(5,3,1,0,2), c(- 217.8506 - 1100.902, - 19610.25 + 65015.25) / 2,
+"c(...)", function(R) { Rn = R; Rn[1] = - Rn[1]; (f4(R) - f4(Rn))/2; })
+
+
 27*(E11a^7 + E11b^7)*E5^2 +
 	# x^6
 	- 27*(E11a^6 + E11b^6)*E5^2*S^2 - (E11a*E11b)^6 +
 	+ 81*E11a*E11b*(E11a^5 + E11b^5)*E5^2 + 9*(E11a*E11b)^3*(E11a^3 + E11b^3)*E5*S +
 	# x^5:
-	+ 9*(E11a^5 + E11b^5)*E5^2*S^4 + 27*(E11a*E11b)^2*(E11a^3 + E11b^3)*E5^2 +
-	- 2*(E11a*E11b)^3*(E11a^2 + E11b^2)*E5*S^3 - 3*(E11a*E11b)^4*(E11a + E11b)*E5*S +
-	+ 4*(E11a^5 + E11b^5)*E3^3*E5 - 90*(E11a^5 + E11b^5)*E3*E5^2*S +
-	- 15*(E11a*E11b)^3*(E11a^2 + E11b^2)*E3*E5 - 2*(E11a*E11b)^4*(E11a + E11b)*E3^2 +
+	+ (E11a^5 + E11b^5)*(9*E5^2*S^4 + 4*E3^3*E5 - 90*E3*E5^2*S) +
+	+ (E11a*E11b)*(E11a^4 + E11b^4)*(9*E3^2*E5*S) +
+	+ (E11a*E11b)^2*(E11a^3 + E11b^3)*(27*E5^2 - 18*E3*E5*S^2) +
+	- (E11a*E11b)^3*(E11a^2 + E11b^2)*(2*E5*S^3 + 15*E3*E5 + 0*E3^2*S^2) +
+	- (E11a*E11b)^4*(E11a + E11b)*(3*E5*S + 2*E3^2) +
+	+ 4*(E11a*E11b)^5*E3*S +
 	# x^4: Note: 1 term from x^5 contributes as well;
 	- (E11a^4 + E11b^4)*E5^2*S^6 + 18*(E11a*E11b)^2*(E11a^2 + E11b^2)*E5^2*S^2 +
 	+ 4*(E11a*E11b)^4*E5*S^3 - 10*(E11a*E11b)^3*(E11a + E11b)*E5^2 +
@@ -374,7 +432,7 @@ max.pow.S(c(1,0,1,0,2), c("E3V101", "E3Vn101"), pow=4, FUN=f4, v=3)
 	# x^1:
 	+ (E11a + E11b)*(5^5*E5^4*S^2 + 125*E3^4*E5^2 + 2*E3^7*S - 1250*E3^2*E5^3*S +
 		+ 110*E3^3*E5^2*S^3 - 26*E3^5*E5*S^2 - 150*E3*E5^3*S^4) +
-	- E11a*E11b*(28*E5^3*S^5 + 34*E3^5*E5) +
+	- E11a*E11b*(28*E5^3*S^5 + 34*E3^5*E5 + ...*E3^4*E5*S^3 + ...*E3^3*E5^2*S) +
 	# B0:
 	- 5^4*E5^4*S^4 - E3^8 - 150*E3^4*E5^2*S^2 + 20*E3^6*E5*S + 500*E3^2*E5^3*S^3 # = 0
 
@@ -427,8 +485,10 @@ f4 = function(R) {
 }
 f5 = function(R) {
 	S = R[1]; E11a = R[2]; E3 = R[3]; E4 = R[4]; E5 = R[5];
-	9*S^4 + 27*E11a^2 - 2*E11a^3*S^3/E5 - 3*E11a^4*S/E5 + 4*E3^3/E5 +
-	- 15*E11a^3*E3/E5 - 2*E11a^4*E3^2/E5^2 - 90*E3*S;
+	9*S^4 + 4*E3^3/E5 - 90*E3*S +
+	+ 9*E11a*E3^2*S/E5 + E11a^2*(27 - 18*E3*S^2/E5) +
+	- E11a^3*(2*S^3/E5 + 15*E3/E5) - E11a^4*(3*S/E5 + 2*E3^2/E5^2) +
+	+ 4*E11a^5*E3*S/E5^2;
 }
 f6 = function(R) {
 	S = R[1]; E11a = R[2]; E3 = R[3]; E4 = R[4]; E5 = R[5];
