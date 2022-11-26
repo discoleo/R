@@ -111,3 +111,47 @@ cat.sol.var = function(x, digits=8, sep=";\n") {
 	#
 	cat(paste0(vn, " = ", round(x, digits=digits), sep), sep=""); cat("\n");
 }
+
+##################
+
+### Graphics
+
+### Plot path of roots: The Leo-Diagram
+# R = parameter of function FUN;
+# FUN = function with the system of NLEs;
+plot.path = function(R, R0, x0, FUN, steps=20, col=seq(length(R0)), ...,
+		subset=NULL, p0.pch=5, debug=FALSE) {
+	isMatrix = is.matrix(x0);
+	len = if(isMatrix) nrow(x0) else 1;
+	# Path:
+	path = expand.path(R0, R, steps=steps);
+	x = array(0, c(length(R0), 0));
+	for(id in seq(steps)) {
+		x0 = solve.all(FUN, x0=x0, R=path[[id]], ..., debug=debug);
+		x  = cbind(x, t(x0));
+	}
+	nr = nrow(x);
+	isSubset = ! is.null(subset);
+	if(nr > 1) {
+		xlim = c(min(Re(x)), max(Re(x)));
+		ylim = c(min(Im(x)), max(Im(x)));
+		plot(Re(x[1,]), Im(x[1,]), col=col[1], xlim=xlim, ylim=ylim);
+		idAll = if(isSubset) subset else seq(2, nr);
+		for(id in idAll) {
+			points(Re(x[id,]), Im(x[id,]), col=col[id]);
+		}
+		# Initial points
+		if(p0.pch > 0) {
+			p0 = function(x, col) {
+				points(jitter(Re(x)), Im(x), col=col, pch=p0.pch, cex=1.5, lwd=1.5);
+			}
+			if(isSubset) {
+				p0(x[- subset, seq(len)], col="blue");
+				p0(x[  subset, seq(len)], col="red");
+			} else {
+				p0(x[, seq(len)], col="red");
+			}
+		}
+	}
+	invisible(x);
+}
