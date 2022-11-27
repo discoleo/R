@@ -136,13 +136,13 @@ poly.calc.S5 = function(x, tol=5E-7) {
 	return(p);
 }
 ### Test solutions
-test.sol = function(x, R=c(0,0,0,0,0)) {
+test.S5Ht = function(x, R=c(0,0,0,0,0)) {
 	R = R;
 	test.f = function(x) {
 		err = solve.S5HtMixed.Num(rbind(Re(x), Im(x)), R=R);
 		err = err[1,] + 1i * err[2,];
 	}
-	round0(apply(x.all, 1, test.f));
+	round0(apply(x, 1, test.f));
 }
 # Solve Eqs for coefficients
 # - mini-solve for 2 unknown coefficients:
@@ -359,11 +359,12 @@ x.all = polyS(R2, "E3V011")
 max.pow.S(c(1,0,1,0,2), c("E3V101", "E3Vn101"), pow=4, FUN=f4, v=3)
 
 
-max.pow.S(c("E3V131", "E3Vn131", "E3V531", "E3Vn531"), pow=4, FUN=f4, skip.path=T, R=c(1,2.8,1,0,2), R2=c(5,3,1,0,2))
+max.pow.S(c("E3V131", "E3Vn131", "E3V531", "E3Vn531"), pow=3, FUN=f3, skip.path=T, R=c(1,2.8,1,0,2), R2=c(5,3,1,0,2))
+max.pow.S(c("E3V111", "E3V1n11", "E3V131", "E3V1n31"), pow=3, FUN=f3, skip.path=F, npos=2, R=c(1.1,1,1,0,2), R2=c(1.1,3,1,0,2))
 
 
-solve.coeff(c(1,2.8,1,0,2), c(5,3,1,0,2), c(- 217.8506 - 1100.902, - 19610.25 + 65015.25) / 2,
-"c(...)", function(R) { Rn = R; Rn[1] = - Rn[1]; (f4(R) - f4(Rn))/2; })
+solve.coeff(c(1,2.8,1,0,2), c(5,3,1,0,2), c(...) / 2,
+"c(...2)", function(R) { Rn = R; Rn[1] = - Rn[1]; (f4(R) - f4(Rn))/2; })
 
 
 27*(E11a^7 + E11b^7)*E5^2 +
@@ -374,15 +375,15 @@ solve.coeff(c(1,2.8,1,0,2), c(5,3,1,0,2), c(- 217.8506 - 1100.902, - 19610.25 + 
 	+ (E11a^5 + E11b^5)*(9*E5^2*S^4 + 4*E3^3*E5 - 90*E3*E5^2*S) +
 	+ (E11a*E11b)*(E11a^4 + E11b^4)*(9*E3^2*E5*S) +
 	+ (E11a*E11b)^2*(E11a^3 + E11b^3)*(27*E5^2 - 18*E3*E5*S^2) +
-	- (E11a*E11b)^3*(E11a^2 + E11b^2)*(2*E5*S^3 + 15*E3*E5 + 0*E3^2*S^2) +
+	- (E11a*E11b)^3*(E11a^2 + E11b^2)*(2*E5*S^3 + 15*E3*E5) +
 	- (E11a*E11b)^4*(E11a + E11b)*(3*E5*S + 2*E3^2) +
 	+ 4*(E11a*E11b)^5*E3*S +
 	# x^4: Note: 1 term from x^5 contributes as well;
 	+ (E11a^4 + E11b^4)*(48*E3*E5^2*S^3 - E5^2*S^6 - 10*E3^3*E5*S^2 + 150*E3^2*E5^2) +
-	- (E11a*E11b)*(E11a^3 + E11b^3)*(21*E5^2*S^4 + 11*E3^3*E5) +
-	+ (E11a*E11b)^2*(E11a^2 + E11b^2)*(18*E5^2*S^2 - E3^4) +
-	- 10*(E11a*E11b)^3*(E11a + E11b)*E5^2 +
-	+ (E11a*E11b)^4*(4*E5*S^3 + 20*E3*E5) +
+	- (E11a*E11b)*(E11a^3 + E11b^3)*(21*E5^2*S^4 + 11*E3^3*E5 - 7*E3^2*E5*S^3 + 270*E3*E5^2*S) +
+	+ (E11a*E11b)^2*(E11a^2 + E11b^2)*(18*E5^2*S^2 - E3^4 + 4*E3*E5*S^4 + 36*E3^2*E5*S) +
+	- (E11a*E11b)^3*(E11a + E11b)*(10*E5^2 - 6*E3^3*S) +
+	+ (E11a*E11b)^4*(4*E5*S^3 + 20*E3*E5 - 6*E3^2*S^2) +
 	# x^3:
 	+ (E11a^3 + E11b^3)*(6*E3^4*E5*S - 6*E3*E5^2*S^5 +
 		+ 2*E3^3*E5*S^4 - 50*E5^3*S^3 + 5*E3^2*E5^2*S^2) +
@@ -449,9 +450,10 @@ f3 = function(R) {
 f4 = function(R) {
 	S = R[1]; E11a = R[2]; E3 = R[3]; E4 = R[4]; E5 = R[5];
 	cc = 150*E3^2*E5^2 - 10*E3^3*E5*S^2 + 48*E3*E5^2*S^3 - E5^2*S^6 +
-	- E11a^5*(2*E3^2 + 3*E5*S) + E11a^4*(20*E3*E5 + 4*E5*S^3) +
-	- 10*E11a^3*E5^2 - E11a^2*(E3^4 - 18*E5^2*S^2) +
-	- E11a*(11*E3^3*E5 + 21*E5^2*S^4);
+	- E11a^5*(2*E3^2 + 3*E5*S) + E11a^4*(20*E3*E5 + 4*E5*S^3 - 6*E3^2*S^2) +
+	- E11a^3*(10*E5^2 - 6*E3^3*S) +
+	- E11a^2*(E3^4 - 18*E5^2*S^2 - 4*E3*E5*S^4 - 36*E3^2*E5*S) +
+	- E11a*(11*E3^3*E5 + 21*E5^2*S^4 - 7*E3^2*E5*S^3 + 270*E3*E5^2*S);
 	cc / E5^2;
 }
 f5 = function(R) {
