@@ -69,6 +69,11 @@ as.conj.S5 = function(x, nrow, rm.rows=0) {
 	return(r);
 }
 
+polyClip = function(env=parent.frame()) {
+	p = paste0(readClipboard(), collapse="\n");
+	toPoly.pm(p, env=env);
+}
+
 #######################
 #######################
 
@@ -217,46 +222,11 @@ max.pow.S = function(R, x0, pow, FUN, npos=1, v=2, R2=NULL, skip.path=FALSE, che
 
 plot.path.S5 = function(R, R0, x0, steps=20, col=seq(length(R0)), ...,
 		subset=NULL, p0.pch=5, debug=FALSE) {
+	if(is.character(x0)) x0 = x0All[[x0]];
 	plot.path(R, R0=R0, x0=x0, FUN=solve.S5HtMixed.Num, steps=steps, col=col, ...,
 		subset=subset, p0.pch=p0.pch, debug=debug);
 }
-plot.path = function(R, R0, x0, FUN, steps=20, col=seq(length(R0)), ...,
-		subset=NULL, p0.pch=5, debug=FALSE) {
-	if(is.character(x0)) x0 = x0All[[x0]];
-	isMatrix = is.matrix(x0);
-	len = if(isMatrix) nrow(x0) else 1;
-	# Path:
-	path = expand.path(R0, R, steps=steps);
-	x = array(0, c(length(R0), 0));
-	for(id in seq(steps)) {
-		x0 = solve.all(FUN, x0=x0, R=path[[id]], ..., debug=debug);
-		x  = cbind(x, t(x0));
-	}
-	nr = nrow(x);
-	isSubset = ! is.null(subset);
-	if(nr > 1) {
-		xlim = c(min(Re(x)), max(Re(x)));
-		ylim = c(min(Im(x)), max(Im(x)));
-		plot(Re(x[1,]), Im(x[1,]), col=col[1], xlim=xlim, ylim=ylim);
-		idAll = if(isSubset) subset else seq(2, nr);
-		for(id in idAll) {
-			points(Re(x[id,]), Im(x[id,]), col=col[id]);
-		}
-		# Initial points
-		if(p0.pch > 0) {
-			p0 = function(x, col) {
-				points(jitter(Re(x)), Im(x), col=col, pch=p0.pch, cex=1.5, lwd=1.5);
-			}
-			if(isSubset) {
-				p0(x[- subset, seq(len)], col="blue");
-				p0(x[  subset, seq(len)], col="red");
-			} else {
-				p0(x[, seq(len)], col="red");
-			}
-		}
-	}
-	invisible(x);
-}
+
 
 ###################
 ###################
@@ -408,12 +378,11 @@ solve.coeff(c(1,2.8,1,0,2), c(5,3,1,0,2), c(- 217.8506 - 1100.902, - 19610.25 + 
 	- (E11a*E11b)^4*(E11a + E11b)*(3*E5*S + 2*E3^2) +
 	+ 4*(E11a*E11b)^5*E3*S +
 	# x^4: Note: 1 term from x^5 contributes as well;
-	- (E11a^4 + E11b^4)*E5^2*S^6 + 18*(E11a*E11b)^2*(E11a^2 + E11b^2)*E5^2*S^2 +
-	+ 4*(E11a*E11b)^4*E5*S^3 - 10*(E11a*E11b)^3*(E11a + E11b)*E5^2 +
-	- 21*(E11a*E11b)*(E11a^3 + E11b^3)*E5^2*S^4 + 150*(E11a^4 + E11b^4)*E3^2*E5^2 +
-	- 11*(E11a*E11b)*(E11a^3 + E11b^3)*E3^3*E5 - (E11a*E11b)^2*(E11a^2 + E11b^2)*E3^4 +
-	+ 20*(E11a*E11b)^4*E3*E5 +
-	+ (E11a^4 + E11b^4)*(48*E3*E5^2*S^3 - 10*E3^3*E5*S^2) +
+	+ (E11a^4 + E11b^4)*(48*E3*E5^2*S^3 - E5^2*S^6 - 10*E3^3*E5*S^2 + 150*E3^2*E5^2) +
+	- (E11a*E11b)*(E11a^3 + E11b^3)*(21*E5^2*S^4 + 11*E3^3*E5) +
+	+ (E11a*E11b)^2*(E11a^2 + E11b^2)*(18*E5^2*S^2 - E3^4) +
+	- 10*(E11a*E11b)^3*(E11a + E11b)*E5^2 +
+	+ (E11a*E11b)^4*(4*E5*S^3 + 20*E3*E5) +
 	# x^3:
 	+ (E11a^3 + E11b^3)*(6*E3^4*E5*S - 6*E3*E5^2*S^5 +
 		+ 2*E3^3*E5*S^4 - 50*E5^3*S^3 + 5*E3^2*E5^2*S^2) +
@@ -432,7 +401,7 @@ solve.coeff(c(1,2.8,1,0,2), c(5,3,1,0,2), c(- 217.8506 - 1100.902, - 19610.25 + 
 	# x^1:
 	+ (E11a + E11b)*(5^5*E5^4*S^2 + 125*E3^4*E5^2 + 2*E3^7*S - 1250*E3^2*E5^3*S +
 		+ 110*E3^3*E5^2*S^3 - 26*E3^5*E5*S^2 - 150*E3*E5^3*S^4) +
-	- E11a*E11b*(28*E5^3*S^5 + 34*E3^5*E5 + ...*E3^4*E5*S^3 + ...*E3^3*E5^2*S) +
+	- E11a*E11b*(28*E5^3*S^5 + 34*E3^5*E5) + # + (0*E3^4*E5*S^3 + 0*E3^3*E5^2*S) +
 	# B0:
 	- 5^4*E5^4*S^4 - E3^8 - 150*E3^4*E5^2*S^2 + 20*E3^6*E5*S + 500*E3^2*E5^3*S^3 # = 0
 
@@ -479,9 +448,11 @@ f3 = function(R) {
 }
 f4 = function(R) {
 	S = R[1]; E11a = R[2]; E3 = R[3]; E4 = R[4]; E5 = R[5];
-	150*E3^2 - S^6 + 18*E11a^2*S^2 + 4*E11a^4*S^3/E5 - 10*E11a^3 - 21*E11a*S^4 - 3*E11a^5*S/E5 +
-	- 2*E11a^5*E3^2/E5^2 - E11a^2*E3^4/E5^2 - 11*E11a*E3^3/E5 + 20*E11a^4*E3/E5 +
-	+ 48*E3*S^3 - 10*E3^3*S^2/E5;
+	cc = 150*E3^2*E5^2 - 10*E3^3*E5*S^2 + 48*E3*E5^2*S^3 - E5^2*S^6 +
+	- E11a^5*(2*E3^2 + 3*E5*S) + E11a^4*(20*E3*E5 + 4*E5*S^3) +
+	- 10*E11a^3*E5^2 - E11a^2*(E3^4 - 18*E5^2*S^2) +
+	- E11a*(11*E3^3*E5 + 21*E5^2*S^4);
+	cc / E5^2;
 }
 f5 = function(R) {
 	S = R[1]; E11a = R[2]; E3 = R[3]; E4 = R[4]; E5 = R[5];
