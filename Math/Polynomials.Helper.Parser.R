@@ -58,7 +58,13 @@ as.pm.polynom = function(p, xn="x", tol=1E-8) {
 as.pm = function(p) {
 	return(toPoly.pm(p));
 }
-toPoly.pm = function(e, env=NULL, reduce=FALSE) {
+# Read from Clipboard
+polyClip = function(env=parent.frame(), reduce=FALSE, verbose=FALSE) {
+	p = paste0(readClipboard(), collapse="\n");
+	toPoly.pm(p, env=env, reduce=reduce, verbose=verbose);
+}
+# Parser:
+toPoly.pm = function(e, env=NULL, reduce=FALSE, verbose=TRUE) {
 	if(is.null(env)) env = parent.frame();
 	if(is.character(e)) {
 		if(length(e) > 1) {
@@ -92,26 +98,26 @@ toPoly.pm = function(e, env=NULL, reduce=FALSE) {
 		if(isSymbol || is.symbol(e[[1]])) {
 			op = if(isSymbol) e else e[[1]];
 			if(op == "+") {
-				m = toMonom.pm(e[[3]], env=env);
+				m = toMonom.pm(e[[3]], env=env, verbose=verbose);
 				p = if(nrow(p) == 0) m else sum.pm(p, m);
 				e = e[[2]];
 			} else if(op == "-") {
 				if(length(e) > 2) {
-					m = toMonom.pm(e[[3]], xsign=-1, env=env);
+					m = toMonom.pm(e[[3]], xsign=-1, env=env, verbose=verbose);
 					p = if(nrow(p) == 0) m else sum.pm(p, m);
 					e = e[[2]];
 				} else {
-					m = toMonom.pm(e[[2]], xsign=-1, env=env);
+					m = toMonom.pm(e[[2]], xsign=-1, env=env, verbose=verbose);
 					p = if(nrow(p) == 0) m else sum.pm(p, m);
 					break;
 				}
 			} else {
-				m = toMonom.pm(e, env=env);
+				m = toMonom.pm(e, env=env, verbose=verbose);
 				p = if(nrow(p) == 0) m else sum.pm(p, m);
 				break;
 			}
 		} else if(is.numeric(e) || is.complex(e)) {
-			m = toMonom.pm(e, env=env);
+			m = toMonom.pm(e, env=env, verbose=verbose);
 			p = if(nrow(p) == 0) m else sum.pm(p, m);
 			break;
 		} else break;
@@ -121,7 +127,7 @@ toPoly.pm = function(e, env=NULL, reduce=FALSE) {
 	return(p);
 }
 
-toMonom.pm = function(e, xsign = 1, env=NULL) {
+toMonom.pm = function(e, xsign = 1, env=NULL, verbose=TRUE) {
 	if(is.null(env)) env = .GlobalEnv;
 	m = data.frame(coeff=xsign);
 	acc = list();
@@ -149,9 +155,9 @@ toMonom.pm = function(e, xsign = 1, env=NULL) {
 					acc = c(acc, e[[2]]);
 					e = e[[3]];
 					if(is.call(e)) {
-						pp = toMonom.pm(e, env=env);
+						pp = toMonom.pm(e, env=env, verbose=verbose);
 						nLast = length(acc);
-						pp2 = toMonom.pm(acc[[nLast]], env=env);
+						pp2 = toMonom.pm(acc[[nLast]], env=env, verbose=verbose);
 						pp = mult.pm(pp, pp2);
 						# TODO: enforce multiplication;
 						m  = mult.pm(pp, m);
@@ -181,13 +187,13 @@ toMonom.pm = function(e, xsign = 1, env=NULL) {
 						e = e[[2]];
 						if(e[[1]] == "(") {
 							pp = parse.parenth.pm(e[[2]], env=env);
-							pp = pow.pm(pp, pow);
+							pp = pow.pm(pp, pow, debug=verbose);
 							m  = mult.pm(pp, m);
 						} else {
 							print("Power of px!");
 							pp = parse.epm(e, env=env);
 							if(inherits(pp, "data.frame")) {
-								pp = pow.pm(pp, pow);
+								pp = pow.pm(pp, pow, debug=verbose);
 								m  = mult.pm(pp, m);
 							} else {
 								m[, "coeff"] = m[, "coeff"] * pp^pow;
