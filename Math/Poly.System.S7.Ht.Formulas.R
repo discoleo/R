@@ -25,6 +25,16 @@
 # A.) E11a
 # B.) Higher Powers
 
+### S7 Ht: Non-Oriented Ht
+# - allow an inversion;
+# - Example: E11a;
+
+# If (x1,x2,x3,x4,x5,x6,x7) is a solution, then:
+# - all 7 cyclic permutations are also solutions;
+# - the triple permutation {(1,3), (4,7), (5,6)}
+#   => (x3,x2,x1,x7,x6,x5,x4) is also a solution;
+# - the 7 triple-permutations are cyclic permutations of each  other;
+
 
 ####################
 
