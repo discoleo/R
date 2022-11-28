@@ -163,6 +163,12 @@ R  = 2
 path = expand.path(R0, R)
 x.all = solve.path(solve.SExp, x0, path=path, bb=b)
 
+### Analyse Path
+# - a little bit boring;
+tmp = plot.path(c(7,7), c(2,2), x0=x0, solve.SExp, bb=1, steps=37)
+# - slightly more going on;
+tmp = plot.path(c(-7,-7), c(2,2), x0=x0, solve.SExp, bb=1, steps=101)
+
 
 ### Experimental:
 ### Case 2.a:
