@@ -1065,9 +1065,12 @@ sol = solve.S3HtM.DualSum21(R, a=a)
 test.S3HtM.P21(sol, a=a)
 
 
-### Special Case:
-# Non-Oriented Ht:
-# => all permutations are enabled!
+### Special Cases:
+
+### Non-Oriented Ht:
+# => all permutations are valid solutions!
+# - moved to file:
+#   Poly.System.Hetero.Symmetric.S3.Mixed.NonOriented.R;
 
 # TODO:
 
@@ -1077,34 +1080,14 @@ sol = solve.S3HtM.DualSum21(R, a=a)
 
 test.S3HtM.P21(sol, a=a)
 
-### Debug
-R = c(0, 2, 3)
-a = 1
 
-x =  1.089990536315 - 1.250695049316i;
-y = -0.148968812161 + 1.079762780452i;
-z =  1.089990536315 - 1.250695049316i;
-sol = cbind(x, y, z)
-# every permutation is valid;
-sol = rbind(sol, sol[c(1,3,2)])
-test.S3HtM.P21(sol, a=a)
-
-
-###
-source("Polynomials.Helper.Solvers.Num.R")
-
-solve.S3HtM.Num = function(x, R, a=1) {
-	x = matrix(x, ncol=3);
-	xc = x[2,]; x = x[1,] + 1i*xc;
-	x = matrix(x, nrow=1);
-	y = test.S3HtM.P21(matrix(x, nrow=1), R=R, a=a, tol=1E-15);
-	y = rbind(Re(y), Im(y));
-	y = as.vector(y);
-	return(y);
-}
-
-x0 = c(1.09-1.2507i, -0.149+1.0798i, 1.09-1.2507i);
-x = solve.all(solve.S3HtM.Num, x0, R=R)
+### Special Case:
+# a = -1;
+# => E21b - a*E21a == E21;
+# => all permutations are valid solutions!
+E21 - R1 # = 0
+E21 - E2*S + 3*E3 # = 0
+# S = (R1 + 3*E3) / E2;
 
 
 ### Test
