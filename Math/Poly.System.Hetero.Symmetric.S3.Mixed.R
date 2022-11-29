@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric S3:
 ### Mixed Type
 ###
-### draft v.0.4a
+### draft v.0.4b
 
 
 ### Heterogeneous Symmetric
@@ -1008,7 +1008,11 @@ R3*S^3 - 6*R2*R3*S + R2^3 + 9*R3^2 +
 
 
 ### Solution
-solve.S3HtM.DualSum21 = function(R, a, b=0) {
+solve.S3HtM.DualSum21 = function(R, a, b=0, debug=TRUE) {
+	if((a - 1) == 0 && R[1] == 0) {
+		# Special Case: Non-Oriented Ht;
+		return(solve.S3HtM.DualSum21.NonD(R, b=b, debug=debug));
+	}
 	if(all(b == 0)) {
 		coeff = c((a+1)^2*R[3], - a*R[2]^2, - 6*(a+1)^2*R[2]*R[3] + 6*a*R[2]*R[3] + (a-1)*R[1]*R[2],
 			R[1]^2 + (a+1)^2*R[2]^3 + 9*((a+1)^2-a)*R[3]^2 - 3*(a-1)*R[1]*R[3])
@@ -1018,9 +1022,9 @@ solve.S3HtM.DualSum21 = function(R, a, b=0) {
 	}
 	S = roots(coeff)
 	len = length(S)
-	print(S)
+	if(debug) print(S)
 	b2 = if(length(b) > 1) b[2] else 0; # Ext 2;
-	x = sapply(S, function(x) roots(c(1, -x, R[2] - b2*x, -R[3])))
+	x = sapply(S, function(S) roots(c(1, -S, R[2] - b2*S, -R[3])))
 	S = matrix(S, ncol=len, nrow=3, byrow=T)
 	yz = R[3]/x
 	yz.s = S - x
@@ -1032,6 +1036,24 @@ solve.S3HtM.DualSum21 = function(R, a, b=0) {
 	y = (yz.s + yz.d)/2
 	z = yz.s - y
 	cbind(as.vector(x), as.vector(y), as.vector(z))
+}
+solve.S3HtM.DualSum21.NonD = function(R, b=0, debug=TRUE, all=TRUE) {
+	# - the solution based on S3 invariants is numerically unstable;
+	# - for that solution, see file:
+	#   Poly.System.Hetero.Symmetric.S3.Mixed.NonOriented.R;
+	x = roots(c(1, 0, -R[2], 2*R[3]));
+	z = R[3] / x^2;
+	sol = cbind(x, x, z);
+	if(all) {
+		# - naive: but massive duplication;
+		# len = nrow(sol);
+		# sol = lapply(seq(len), function(id) perm(sol[id,]));
+		# sol = do.call(rbind, sol);
+		# - better variant:
+		sol = rbind(sol, sol[, c(1,3,2)], sol[, c(3,2,1)]);
+	}
+	colnames(sol) = c("x","y","z");
+	return(sol);
 }
 test.S3HtM.P21 = function(sol, a, b.ext=0, R=NULL, tol=1E-8) {
 	x = sol[,1]; y = sol[,2]; z = sol[,3];
@@ -1072,8 +1094,6 @@ test.S3HtM.P21(sol, a=a)
 # - moved to file:
 #   Poly.System.Hetero.Symmetric.S3.Mixed.NonOriented.R;
 
-# TODO:
-
 R = c(0, 2, 3)
 a = 1
 sol = solve.S3HtM.DualSum21(R, a=a)
@@ -1084,10 +1104,12 @@ test.S3HtM.P21(sol, a=a)
 ### Special Case:
 # a = -1;
 # => E21b - a*E21a == E21;
-# => all permutations are valid solutions!
+# => Symmetric E21: all permutations are valid solutions!
 E21 - R1 # = 0
 E21 - E2*S + 3*E3 # = 0
 # S = (R1 + 3*E3) / E2;
+
+# TODO
 
 
 ### Test
