@@ -134,7 +134,10 @@ resonance = function(p, n=3) {
 	r = list(p=p.all, f=factors(p.all), p.trivial = sum(p));
 	return(r);
 }
-test.ht3 = function(x, y, z, R, n=2, p=1, b=0) {
+test.S3HtM = function(sol, b.ext=0, R=NULL, n) {
+	test.ht3(sol, b=b.ext, R=R, n=n[1], p=n[2]);
+}
+test.ht3 = function(x, y, z, R=NULL, n=2, p=1, b=0) {
 	if(missing(y)) {
 		y = x[,2]; z = x[,3]; x = x[,1];
 	}
@@ -144,7 +147,7 @@ test.ht3 = function(x, y, z, R, n=2, p=1, b=0) {
 	err2 = x*y + y*z + z*x + if(length(b) < 2) 0 else b[2]*x.sum
 	err3 = x*y*z + if(length(b) < 3) 0 else b[3]*x.sum
 	err = rbind(err1, err2, err3)
-	if( ! missing(R)) {
+	if( ! is.null(R)) {
 		err = err - rep(R, each=length(x))
 	}
 	err = round0(err)
@@ -1005,8 +1008,8 @@ R3*S^3 - 6*R2*R3*S + R2^3 + 9*R3^2 +
 
 
 ### Solution
-solve.ht3Combi = function(R, a, b=0) {
-	if(length(b) == 1 && b[1] == 0) {
+solve.S3HtM.DualSum21 = function(R, a, b=0) {
+	if(all(b == 0)) {
 		coeff = c((a+1)^2*R[3], - a*R[2]^2, - 6*(a+1)^2*R[2]*R[3] + 6*a*R[2]*R[3] + (a-1)*R[1]*R[2],
 			R[1]^2 + (a+1)^2*R[2]^3 + 9*((a+1)^2-a)*R[3]^2 - 3*(a-1)*R[1]*R[3])
 	} else {
@@ -1030,22 +1033,84 @@ solve.ht3Combi = function(R, a, b=0) {
 	z = yz.s - y
 	cbind(as.vector(x), as.vector(y), as.vector(z))
 }
+test.S3HtM.P21 = function(sol, a, b.ext=0, R=NULL, tol=1E-8) {
+	x = sol[,1]; y = sol[,2]; z = sol[,3];
+	err1 = (x*y^2 + y*z^2 + z*x^2) - a*(x*z^2 + y*x^2 + z*y^2);
+	err2 = x*y + x*z + y*z;
+	err3 = x*y*z;
+	err = rbind(err1, err2, err3);
+	if( ! is.null(R)) {
+		err = err - R;
+	}
+	err = round0(err, tol=tol);
+	return(err);
+}
 
 ### Example:
 a = 1
 R = c(1,1,1)
-sol = solve.ht3Combi(R, a=a)
-x = sol[,1]; y = sol[,2]; z = sol[,3];
+sol = solve.S3HtM.DualSum21(R, a=a)
+
+test.S3HtM.P21(sol, a=a)
+
+poly.calc0(x)
+err = -1 + 3*x - 3.25*x^2 + 4.5*x^3 - 1.75*x^4 - x^5 + 4.5*x^6 - 1.5*x^7 - 0.25*x^8 + x^9
+round0(err)
+
+### Ex 2:
+a = 2
+R = c(1,3,-2)
+sol = solve.S3HtM.DualSum21(R, a=a)
+
+test.S3HtM.P21(sol, a=a)
+
+
+### Special Case:
+# Non-Oriented Ht:
+# => all permutations are enabled!
+
+# TODO:
+
+R = c(0, 2, 3)
+a = 1
+sol = solve.S3HtM.DualSum21(R, a=a)
+
+test.S3HtM.P21(sol, a=a)
+
+### Debug
+R = c(0, 2, 3)
+a = 1
+
+x =  1.089990536315 - 1.250695049316i;
+y = -0.148968812161 + 1.079762780452i;
+z =  1.089990536315 - 1.250695049316i;
+sol = cbind(x, y, z)
+# every permutation is valid;
+sol = rbind(sol, sol[c(1,3,2)])
+test.S3HtM.P21(sol, a=a)
+
+
+###
+source("Polynomials.Helper.Solvers.Num.R")
+
+solve.S3HtM.Num = function(x, R, a=1) {
+	x = matrix(x, ncol=3);
+	xc = x[2,]; x = x[1,] + 1i*xc;
+	x = matrix(x, nrow=1);
+	y = test.S3HtM.P21(matrix(x, nrow=1), R=R, a=a, tol=1E-15);
+	y = rbind(Re(y), Im(y));
+	y = as.vector(y);
+	return(y);
+}
+
+x0 = c(1.09-1.2507i, -0.149+1.0798i, 1.09-1.2507i);
+x = solve.all(solve.S3HtM.Num, x0, R=R)
+
 
 ### Test
 (x*y^2 + y*z^2 + z*x^2) - a*(x*z^2 + y*x^2 + z*y^2) # - R[1] # = 0
 x*y + x*z + y*z # - R[2] # = 0
 x*y*z # - R[3] # = 0
-
-round0.p(poly.calc(x))
-
-err = -1 + 3*x - 3.25*x^2 + 4.5*x^3 - 1.75*x^4 - x^5 + 4.5*x^6 - 1.5*x^7 - 0.25*x^8 + x^9
-round0(err)
 
 
 ############################
