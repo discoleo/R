@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric S3:
 ### Mixed Type: Non-Oriented
 ###
-### draft v.0.1c
+### draft v.0.1d
 
 
 ### Heterogeneous Symmetric
@@ -219,6 +219,69 @@ x^3 - R2*x + 2*R3 # = 0
 # Note: formula for z works only for this method (x == y);
 
 
+####################
+####################
+
+####################
+### Order E[3,1] ###
+####################
+
+# (x^3*y + y^3*z + z^3*x) - (x^3*z + y^3*x + z^3*y) = 0
+
+### Solution:
+
+### Note:
+# Case 1: x == y or x == z or y == z;
+# Case 2: S = 0;
+
+# TODO
+
+
+### Solver:
+
+test.S3HtM.P31 = function(sol, b.ext=0, R=NULL, tol=1E-8) {
+	test.S3HtM.Simple(sol, b.ext=b.ext, R=R, n=c(3,1), a=1, tol=tol);
+}
+
+### Examples:
+
+R = c(0,2,3)
+
+
+### Debug:
+R = c(0,2,3)
+x =  1.089990536315 - 1.250695049316i;
+y = -0.148968812161 + 1.079762780452i
+z =  1.089990536315 - 1.250695049316i;
+sol = cbind(x, y, z); # x == z;
+
+###
+x = -0.5 + 1.658312395178i;
+y = -0.5 - 1.658312395178i;
+z =  1;
+sol = rbind(sol, c(x, y, z));
+
+test.S3HtM.P31(sol)
+
+
+### Numerical solver
+
+solve.S3HtM.Num = function(x, R, isSZero=FALSE) {
+	x = matrix(x, ncol=3);
+	xc = x[2,]; x = x[1,] + 1i*xc;
+	x = matrix(x, nrow=1);
+	y = test.S3HtM.P31(matrix(x, nrow=1), R=R, tol=1E-15);
+	if(isSZero) y[1] = sum(x);
+	y = rbind(Re(y), Im(y));
+	y = as.vector(y);
+	return(y);
+}
+
+x0 = c(1.09-1.2507i, -0.149+1.0798i, 1.09-1.2507i); # x == z;
+x0 = c(-1.09-1.2507i, 0.149+0.0798i, 1.09-1.2507i); # S = 0;
+x = solve.all(solve.S3HtM.Num, x0, R=R, isSZero=TRUE)
+
+
 ##########################
 ##########################
 
@@ -344,4 +407,14 @@ p2 = toPoly.pm("E3*S^5 - 5*E2*E3*S^3 + 7*E3^2*S^2 + E2^2*E3*S + E2^4 - R2^2")
 pR = solve.pm(p1, p2, "E2")
 pR$Rez$coeff = - pR$Rez$coeff;
 print.pm(pR$Rez, "S")
+
+
+### Classic Poly
+# P[9] * P[9]
+
+# P[9] = under the assumption: x == y;
+# - Note: fails for the 9 triples where x is the distinct value;
+x = sol[,1]; R2 = R[2]; R3 = R[3];
+err = x^9 + R3*x^6 - R2*x^5 + R3^3 # = 0
+round0(err, tol=1E-4)
 
