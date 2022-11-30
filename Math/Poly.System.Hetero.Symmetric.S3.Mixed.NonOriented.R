@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric S3:
 ### Mixed Type: Non-Oriented
 ###
-### draft v.0.1d
+### draft v.0.1d-sol
 
 
 ### Heterogeneous Symmetric
@@ -234,11 +234,29 @@ x^3 - R2*x + 2*R3 # = 0
 # Case 1: x == y or x == z or y == z;
 # Case 2: S = 0;
 
-# TODO
+### Case 1: x == y;
+# - same as E[2,1], see previous section;
 
+### Case 2: S = 0;
+# - trivial P[3] in x;
 
 ### Solver:
 
+solve.S3HtM.P31 = function(R, b.ext=NULL, debug=TRUE, all=FALSE) {
+	# Note: does NOT include solutions for E[2,1]!
+	S = 0; E2 = R[2]; E3 = R[3];
+	x = roots(c(1, -S, E2, -E3));
+	#
+	s = S - x; e2 = E2 - s*x;
+	len = length(x);
+	y12 = sapply(seq(len), function(id) roots(c(1, -s[id], e2[id])) );
+	y = y12[1,]; z = y12[2,];
+	sol = cbind(x, y, z);
+	if(all) {
+		sol = rbind(sol, sol[, c(1,3,2)]);
+	}
+	return(sol);
+}
 test.S3HtM.P31 = function(sol, b.ext=0, R=NULL, tol=1E-8) {
 	test.S3HtM.Simple(sol, b.ext=b.ext, R=R, n=c(3,1), a=1, tol=tol);
 }
@@ -246,8 +264,19 @@ test.S3HtM.P31 = function(sol, b.ext=0, R=NULL, tol=1E-8) {
 ### Examples:
 
 R = c(0,2,3)
+sol = solve.S3HtM.P31(R);
+
+test.S3HtM.P31(sol)
 
 
+### Ex 2:
+R = c(0,2,-1)
+sol = solve.S3HtM.P31(R);
+
+test.S3HtM.P31(sol)
+
+
+##########
 ### Debug:
 R = c(0,2,3)
 x =  1.089990536315 - 1.250695049316i;
