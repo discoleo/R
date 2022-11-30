@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric S3:
 ### Mixed Type: Non-Oriented
 ###
-### draft v.0.1d-sol
+### draft v.0.1e
 
 
 ### Heterogeneous Symmetric
@@ -57,11 +57,12 @@ E2n.f = function(sol, n) {
 }
 
 ### Tests:
-test.S3HtM.Simple = function(sol, b.ext=0, R=NULL, n, a=1, tol=1E-8) {
+test.S3HtM.Simple = function(sol, b.ext=0, R=NULL, n, a=1, tol=1E-8, type="E2") {
 	x = sol[,1]; y = sol[,2]; z = sol[,3];
 	n1 = n[1]; n2 = n[2];
+	type = match(type, c("S", "E2"));
 	err1 = (x^n1*y^n2 + y^n1*z^n2 + z^n1*x^n2) - a*(x^n2*y^n1 + y^n2*z^n1 + z^n2*x^n1);
-	err2 = x*y + x*z + y*z;
+	err2 = if(type == 2) x*y + x*z + y*z else x + y + z;
 	err3 = x*y*z;
 	err = rbind(err1, err2, err3);
 	if( ! is.null(R)) {
@@ -115,9 +116,14 @@ E2^2*S^2 - 4*E2^3 - 27*E3^2 - 4*E3*S^3 + 18*E2*E3*S # = 0
 
 # Note:
 # - includes automatically all permutations;
-solve.S3HtM.P21NonD = function(R, b.ext=0, debug=TRUE, all=TRUE) {
-	# assumes R[1] == 0;
-	E2 = R[2]; E3 = R[3];
+solve.S3HtM.P21NonD = function(R, b.ext=0, debug=TRUE, all=TRUE, tol=1E-8) {
+	len = length(R);
+	if(len == 2) {
+		E2 = R[1]; E3 = R[2];
+	} else {
+		# assumes R[1] == 0;
+		E2 = R[2]; E3 = R[3];
+	}
 	coeff = c(4*E3, - E2^2, - 18*E2*E3, 4*E2^3 + 27*E3^2);
 	S = roots(coeff);
 	if(debug) print(S);
@@ -128,7 +134,15 @@ solve.S3HtM.P21NonD = function(R, b.ext=0, debug=TRUE, all=TRUE) {
 	S = rep(S, each=3);
 	s = S - x; e2 = E2 - x*s;
 	len = length(x);
-	y12 = sapply(seq(len), function(id) roots(c(1, -s[id], e2[id])));
+	roots2 = function(cc) {
+		d = (cc[1]^2 - 4*cc[2]);
+		# fixes some of the cases of instability;
+		d = round0(d, tol=tol);
+		d = if(Re(d) >= 0) sqrt(d) else sqrt(d + 0i);
+		x = c( - cc[1] - d, - cc[1] + d)/2;
+		return(x);
+	}
+	y12 = sapply(seq(len), function(id) roots2(c(-s[id], e2[id])));
 	y = y12[1,]; z = y12[2,];
 	#
 	sol = cbind(x, y, z);
@@ -210,13 +224,13 @@ x^2*(y-z) + y*z*(y-z) + x*z^2 - x*y^2 # = 0
 
 # Alternative Solution:
 # x = y =>
-# System:
+# Simplified System:
 x^2 + 2*x*z - R2 # = 0
 x^2*z - R3 # = 0
 # =>
 x^3 - R2*x + 2*R3 # = 0
 # z = R3 / x^2;
-# Note: formula for z works only for this method (x == y);
+# Note: formula for z works only for this case/method (x == y);
 
 
 ####################
@@ -309,6 +323,107 @@ solve.S3HtM.Num = function(x, R, isSZero=FALSE) {
 x0 = c(1.09-1.2507i, -0.149+1.0798i, 1.09-1.2507i); # x == z;
 x0 = c(-1.09-1.2507i, 0.149+0.0798i, 1.09-1.2507i); # S = 0;
 x = solve.all(solve.S3HtM.Num, x0, R=R, isSZero=TRUE)
+
+
+####################
+####################
+
+####################
+### Order E[3,2] ###
+####################
+
+# (x^3*y^2 + y^3*z^2 + z^3*x^2) - (x^3*z^2 + y^3*x^2 + z^3*y^2) = 0
+# x + y + z = R2
+# x*y*z = R3
+
+### Solution:
+
+### Note:
+# Case 1: x == y or x == z or y == z;
+# Case 2: E2 = 0;
+
+### Case 1: x == y;
+# - similar as E[2,1]:
+#   S = known, E2 = unknown;
+
+### Case 2: E2 = 0;
+# - trivial P[3] in x;
+
+### Solver:
+
+solve.S3HtM.P32 = function(R, b.ext=NULL, debug=TRUE, all=FALSE) {
+	# Note: does NOT include solutions for E[2,1]!
+	len = length(R);
+	if(len == 2) {
+		E2 = 0; S = R[1]; E3 = R[2];
+	} else {
+		E2 = 0; S = R[2]; E3 = R[3];
+	}
+	x = roots(c(1, -S, E2, -E3));
+	#
+	s = S - x; e2 = E2 - s*x;
+	len = length(x);
+	y12 = sapply(seq(len), function(id) roots(c(1, -s[id], e2[id])) );
+	y = y12[1,]; z = y12[2,];
+	sol = cbind(x, y, z);
+	if(all) {
+		sol = rbind(sol, sol[, c(1,3,2)]);
+	}
+	return(sol);
+}
+test.S3HtM.P32 = function(sol, b.ext=0, R=NULL, tol=1E-8) {
+	test.S3HtM.Simple(sol, b.ext=b.ext, R=R, n=c(3,2), a=1, tol=tol, type="S");
+}
+
+### Examples:
+
+R = c(0,2,3)
+sol = solve.S3HtM.P32(R);
+
+test.S3HtM.P32(sol)
+
+
+### Ex 2:
+R = c(0,2,-1)
+sol = solve.S3HtM.P32(R);
+
+test.S3HtM.P32(sol)
+
+
+##########
+### Debug:
+R = c(0,2,3)
+x = 0.945352377131 - 0.889026771306i;
+y = 0.109295245737 + 1.778053542613i;
+z = 0.945352377131 - 0.889026771306i;
+sol = cbind(x, y, z); # x == z;
+
+###
+x =  2.485583997691;
+y = -0.242791998845 + 1.071453153205i;
+z = -0.242791998845 - 1.071453153205i;
+sol = rbind(sol, c(x, y, z));
+
+test.S3HtM.P32(sol)
+
+
+### Numerical solver
+
+solve.S3HtM.Num = function(x, R, isZero=FALSE) {
+	x = matrix(x, ncol=3);
+	xc = x[2,]; x = x[1,] + 1i*xc;
+	x = matrix(x, nrow=1);
+	y = test.S3HtM.P32(matrix(x, nrow=1), R=R, tol=1E-15);
+	if(isZero) y[1] = (x[1] + x[2])*x[3] + x[1]*x[2];
+	y = rbind(Re(y), Im(y));
+	y = as.vector(y);
+	return(y);
+}
+
+x0 = c(0.9454-0.889i, 0.1093+1.7781i, 0.9454-0.889i); # x == z;
+x0 = c(2.485, -0.24+1.07i, -0.24-1.07i); # E2 = 0;
+x = solve.all(solve.S3HtM.Num, x0, R=R, isZero=TRUE)
+
 
 
 ##########################
