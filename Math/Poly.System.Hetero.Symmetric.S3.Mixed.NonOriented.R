@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric S3:
 ### Mixed Type: Non-Oriented
 ###
-### draft v.0.1f
+### draft v.0.1g
 
 
 ### Heterogeneous Symmetric
@@ -17,7 +17,7 @@
 
 
 ### Non-Oriented Ht:
-# => all permutations are valid solutions!
+# => all permutations of (x,y,z) are valid solutions!
 
 ### Example: Simple
 # (x^n*y^p + y^n*z^p + z^n*x^p) - (x^p*y^n + y^p*z^n + z^p*x^n) = 0
@@ -28,6 +28,11 @@
 # (x^n*y^p + y^n*z^p + z^n*x^p) - (x^p*y^n + y^p*z^n + z^p*x^n) = 0
 # x^n2*y + y^n2*z + z^n2*x = R2
 # x*y*z = R3
+
+### Note:
+# The Simple System: E[n,m] - E[m,n] = 0;
+# - is a special case of the generalized system:
+#   E[n,m] + a*E[m,n] = R1;
 
 
 ####################
@@ -530,6 +535,143 @@ solve.S3HtM.Num = function(x, R, isZero=FALSE) {
 x0 = c(1.09-1.2507i, -0.149+1.0798i, 1.09-1.2507i); # x == z;
 x0 = c(1.4559+0i, -0.0208+1.4353i, -0.0208-1.4353i); # S^2 - E2 = 0;
 x = solve.all(solve.S3HtM.Num, x0, R=R, isZero=TRUE, atol=1E-10)
+
+
+####################
+####################
+
+####################
+### Order E[4,2] ###
+####################
+
+# (x^4*y^2 + y^4*z^2 + z^4*x^2) - (x^4*z^2 + y^4*x^2 + z^4*y^2) = 0
+
+
+### Solution:
+
+### Note:
+# Case 1: x == y or x == z or y == z;
+# Case 2: E2*S - E3 = 0;
+
+### Case 1: x == y;
+# - can be reduced to E[2,1];
+
+### Case 2: E2*S - E3 = 0;
+# - trivial P[3] in x;
+
+
+### Solver:
+
+solve.S3HtM.P42 = function(R, b.ext=NULL, debug=TRUE, all=FALSE) {
+	# Note: does NOT include solutions for E[2,1]!
+	len = length(R);
+	if(len == 2) {
+		E2 = R[1]; E3 = R[2];
+	} else {
+		E2 = R[2]; E3 = R[3];
+	}
+	S = E3/E2;
+	x = sapply(S, function(S) roots(c(1, -S, E2, -E3)));
+	x = as.vector(x);
+	S = rep(S, each=3);
+	#
+	s = S - x; e2 = E2 - s*x;
+	len = length(x);
+	y12 = sapply(seq(len), function(id) roots(c(1, -s[id], e2[id])) );
+	y = y12[1,]; z = y12[2,];
+	sol = cbind(x, y, z);
+	if(all) {
+		sol = rbind(sol, sol[, c(1,3,2)]);
+	}
+	return(sol);
+}
+test.S3HtM.P42 = function(sol, b.ext=0, R=NULL, tol=1E-8) {
+	test.S3HtM.Simple(sol, b.ext=b.ext, R=R, n=c(4,2), a=1, tol=tol);
+}
+
+### Examples:
+
+R = c(0,2,3)
+sol = solve.S3HtM.P42(R);
+
+test.S3HtM.P42(sol)
+
+
+### Ex 2:
+R = c(0,2,-1)
+sol = solve.S3HtM.P42(R);
+
+test.S3HtM.P42(sol)
+
+
+####################
+####################
+
+####################
+### Order E[4,3] ###
+####################
+
+# (x^4*y^3 + y^4*z^3 + z^4*x^3) - (x^4*z^3 + y^4*x^3 + z^4*y^3) = 0
+# x + y + z = R2
+# x*y*z = R3
+
+
+### Solution:
+
+### Note:
+# Case 1: x == y or x == z or y == z;
+# Case 2: E2^2 - E3*S = 0;
+
+### Case 1: x == y;
+# - can be reduced to E[2,1];
+
+### Case 2: E2^2 - E3*S = 0;
+# - trivial P[3] in x;
+
+
+### Solver:
+
+solve.S3HtM.P43 = function(R, b.ext=NULL, debug=TRUE, all=FALSE) {
+	# Note: does NOT include solutions for E[2,1]!
+	len = length(R);
+	# Variant: S = given, E2 = unknown;
+	if(len == 2) {
+		S = R[1]; E3 = R[2];
+	} else {
+		S = R[2]; E3 = R[3];
+	}
+	E2 = rootn(E3*S, 2); E2 = c(E2, - E2);
+	x = sapply(E2, function(E2) roots(c(1, -S, E2, -E3)));
+	x = as.vector(x);
+	E2 = rep(E2, each=3);
+	#
+	s = S - x; e2 = E2 - s*x;
+	len = length(x);
+	y12 = sapply(seq(len), function(id) roots(c(1, -s[id], e2[id])) );
+	y = y12[1,]; z = y12[2,];
+	sol = cbind(x, y, z);
+	if(all) {
+		sol = rbind(sol, sol[, c(1,3,2)]);
+	}
+	return(sol);
+}
+test.S3HtM.P43 = function(sol, b.ext=0, R=NULL, tol=1E-8) {
+	test.S3HtM.Simple(sol, b.ext=b.ext, R=R, n=c(4,3), a=1, tol=tol, type="S");
+}
+
+### Examples:
+
+R = c(0,2,3)
+sol = solve.S3HtM.P43(R);
+
+test.S3HtM.P43(sol)
+
+
+### Ex 2:
+R = c(0,2,-1)
+sol = solve.S3HtM.P43(R);
+
+test.S3HtM.P43(sol)
 
 
 ##########################
