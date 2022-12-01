@@ -91,6 +91,37 @@ test.S3HtM.Dual = function(sol, b.ext=0, R=NULL, n, a=1, tol=1E-8) {
 }
 
 ######################
+######################
+
+### Useful Formulas
+
+Diff2 = function(n,m) E2n.f(x, c(n,m)) - E2n.f(x, c(m,n));
+#
+x = sqrt(c(2,3,5))
+S = sum(x); E2 = (x[1]+x[2])*x[3] + x[1]*x[2]; E3 = prod(x);
+DE21 = Diff2(2,1)
+
+
+### The "Hur" Polynomials:
+
+### E[3,k]
+Diff2(3,1) - S*DE21 # = 0
+Diff2(3,2) - E2*DE21 # = 0
+
+### E[4,k]
+Diff2(4,1) - (S^2 - E2)*DE21 # = 0
+Diff2(4,2) - (E2*S - E3)*DE21 # = 0
+Diff2(4,3) - (E2^2 - E3*S)*DE21 # = 0
+
+### E[5,k]
+Diff2(5,1) - (S^3 - 2*E2*S + E3)*DE21 # = 0
+Diff2(5,2) - (E2*S^2 - E3*S - E2^2)*DE21 # = 0
+Diff2(5,3) - (E2^2*S - E3*S^2 - E3*E2)*DE21 # = 0
+Diff2(5,4) - (E2^3 - E2*E3*S - E2*E3*S + E3^2)*DE21 # = 0
+
+
+####################
+####################
 
 ####################
 ### Order E[2,1] ###
