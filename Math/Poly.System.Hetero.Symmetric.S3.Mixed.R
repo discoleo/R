@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric S3:
 ### Mixed Type
 ###
-### draft v.0.4d
+### draft v.0.4e
 
 
 ### Heterogeneous Symmetric
@@ -174,6 +174,31 @@ E2n.f = function(sol, n) {
 	}
 	if(is.null(dim(sol))) return(E2f(sol));
 	apply(sol, 1, E2f);
+}
+### Generators
+solver.gen.Y = function(n, print=TRUE) {
+	n1 = n[1]; n2 = n[2];
+	En = paste0("E", n1, n2, "a");
+	p1 = paste0("x^n1*y^n2 + y^n1*z^n2 + z^n1*x^n2 - ", En);
+	p1 = toPoly.pm(p1);
+	zp = toPoly.pm("s - y");
+	p1 = replace.pm(p1, zp, "z");
+	p2 = toPoly.pm("y^2 - s*y + e2");
+	pR = div.pm(p1, p2, "y");
+	pR = pR$Rem;
+	if(nrow(pR) == 0) stop("Polynomial should NOT be divisible!");
+	py = pR[pR$y > 0, ];
+	p0 = pR[pR$y == 0, ];
+	p0$coeff = -p0$coeff;
+	py = py[ , ! names(py) %in% "y"];
+	py = sort.pm(py, "x");
+	pR = list(y0 = p0, div=py);
+	if(print) {
+		cat(" y0: "); print.pm(p0, "x");
+		cat("Div: "); print.pm(py, "x");
+		return(invisible(pR))
+	}
+	return(pR);
 }
 
 ### Resonances
@@ -1129,9 +1154,9 @@ str(pR)
 E52a + E52b + (2*E3*S^4 - E2^2*S^3 - 6*E2*E3*S^2 + 3*E2^3*S + 7*E3^2*S - 3*E2^2*E3) # = 0
 
 ### E[5,2]: "Hur" Polynomial
+E52a - E52b - (E2*S^2 - E3*S - E2^2)*DE21 # = 0
 # see file:
 # Poly.System.Hetero.Symmetric.S3.Mixed.NonOriented.R;
-E52a - E52b - (E2*S^2 - E3*S - E2^2)*DE21 # = 0
 
 ### Eq S:
 E3^2*S^8 - 8*E3^2*E2*S^6 + 8*E3^3*S^5 + E3*(20*E3*E2^2 + 2*E52a)*S^4 +
@@ -1213,6 +1238,118 @@ E52b = E2n.f(sol, c(2,5));
 ### E52a:
 2*E3*S^4 - E2^2*S^3 - 6*E2*E3*S^2 + 3*E2^3*S + 7*E3^2*S - 3*E2^2*E3 +
 	- (E2*S^2 - E3*S - E2^2)*DE21 + 2*E52a # = 0
+
+### DE21:
+2*E21a - (E2*S - 3*E3) - DE21 # = 0
+
+### E21a:
+E21a^2 - (E2*S - 3*E3)*E21a + E3*S^3 - 6*E3*E2*S + E2^3 + 9*E3^2 # = 0
+
+# p1, p2, p3 = polys from above;
+pR = solve.lpm(p1, p2, p3, xn=c("DE21", "E21a"))
+str(pR)
+
+
+###############
+###############
+
+############
+### E53a ###
+############
+
+# x^5*y^3 + y^5*z^3 + z^5*x^3 = R1
+
+
+### Solution:
+
+### E[5,3]: Sum
+E53a + E53b + 3*E2*E3*S^3 - E2^3*S^2 - 3*E3^2*S^2 - 6*E2^2*E3*S + 2*E2^4 + 7*E2*E3^2 # = 0
+
+### E[5,3]: "Hur" Polynomial
+E53a - E53b - (E2^2*S - E3*S^2 - E3*E2)*DE21 # = 0
+# see file:
+# Poly.System.Hetero.Symmetric.S3.Mixed.NonOriented.R;
+
+### Eq S:
+E3^3*S^7 - 7*E3^3*E2*S^5 + 9*E3^4*S^4 - E3*(2*E3^2*E2^2 - 3*E2*E53a)*S^3 +
+	+ (3*E3^4*E2 + 20*E3^2*E2^4 - 3*E3^2*E53a - E2^3*E53a)*S^2 +
+	- E3*(39*E3^2*E2^3 + 8*E2^6 + 6*E2^2*E53a)*S +
+	+ 19*E3^4*E2^2 + 8*E3^2*E2^5 + E2^8 + 7*E3^2*E2*E53a + 2*E2^4*E53a + E53a^2 # = 0
+
+
+### Solver:
+
+solve.S3HtM.P53 = function(R, debug=TRUE, all=FALSE) {
+	coeff = coeff.S3HtM.P53(R);
+	S = roots(coeff);
+	if(debug) print(S);
+	#
+	E53a = R[1]; E2 = R[2]; E3 = R[3];
+	x = sapply(S, function(S) roots(c(1, -S, E2, -E3)));
+	x = as.vector(x);
+	S = rep(S, each=3);
+	# Robust:
+	s = S - x; e2 = E2 - s*x;
+	y0  = s*e2*x^5 - s^5*x^3 + 4*s^3*e2*x^3 - 3*s*e2^2*x^3 + E53a + e2^4;
+	div = s^2*x^5 - e2*x^5 - s^4*x^3 + 3*s^2*e2*x^3 - e2^2*x^3 + s*e2^3;
+	y = y0/div;
+	z = s - y;
+	#
+	sol = cbind(x,y,z);
+	if(all) {
+		sol = rbind(sol, sol[, c(2,3,1)], sol[, c(3,1,2)]);
+	}
+	return(sol);
+}
+coeff.S3HtM.P53 = function(R) {
+	E53a = R[1]; E2 = R[2]; E3 = R[3];
+	coeff = c(E3^3, 0, - 7*E3^3*E2, 9*E3^4, - E3*(2*E3^2*E2^2 - 3*E2*E53a),
+		3*E3^4*E2 + 20*E3^2*E2^4 - 3*E3^2*E53a - E2^3*E53a,
+		- E3*(39*E3^2*E2^3 + 8*E2^6 + 6*E2^2*E53a),
+		19*E3^4*E2^2 + 8*E3^2*E2^5 + E2^8 + 7*E3^2*E2*E53a + 2*E2^4*E53a + E53a^2);
+	return(coeff);
+}
+### Test
+test.S3HtM.P53 = function(sol, R=NULL) {
+	test.S3HtM(sol, R=R, n=c(3,5));
+}
+
+### Examples:
+
+### Ex 1:
+R = c(-1,3,2)
+sol = solve.S3HtM.P53(R);
+
+test.S3HtM.P53(sol);
+
+
+### Ex 2:
+R = c(-2,4,-1)
+sol = solve.S3HtM.P53(R);
+
+test.S3HtM.P53(sol);
+
+
+##########
+### Debug:
+R = c(-1,3,2)
+x = -4.988205846462;
+y =  0.378238065763;
+z = -1.060035463035;
+sol = c(x,y,z);
+S = sum(sol); E2 = (x+y)*z + x*y; E3 = x*y*z;
+E21a = E2n.f(sol, c(2,1));
+E21b = E2n.f(sol, c(1,2));
+DE21 = E21a - E21b;
+E53a = E2n.f(sol, c(5,3));
+E53b = E2n.f(sol, c(3,5));
+
+
+### Derivation:
+
+### E52a:
+2*E53a + 3*E2*E3*S^3 - E2^3*S^2 - 3*E3^2*S^2 - 6*E2^2*E3*S + 2*E2^4 + 7*E2*E3^2 +
+	- (E2^2*S - E3*S^2 - E3*E2)*DE21 # = 0
 
 ### DE21:
 2*E21a - (E2*S - 3*E3) - DE21 # = 0
