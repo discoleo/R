@@ -563,9 +563,18 @@ Epoly.adv = function(n, v=4, e=1, E=NULL, full=FALSE) {
 	if(full) return(list(E=E, p=p));
 	return(p);
 }
-Epoly.distinct = function(pow, v=3, E=NULL, full=FALSE) {
+# negative = return the negative of E[...];
+Epoly.distinct = function(pow, v=3, E=NULL, full=FALSE, negative=FALSE) {
 	pow = pow[pow != 0];
 	if(length(pow) > v) stop("Error! Longer than no. of variables."); # TODO
+	asPoly = function(p) {
+		# Note: negative = - E[pow];
+		if(negative) p$coeff = - p$coeff;
+		p = sort.pm.proper(p, c("E", "S"));
+		p = sort.pm(p, "S");
+		if( ! inherits(p, "pm")) class(p) = c("pm", class(p));
+		return(p);
+	}
 	if(length(pow) == v) {
 		# Case: Prod[over_v]
 		p.min = min(pow);
@@ -578,7 +587,7 @@ Epoly.distinct = function(pow, v=3, E=NULL, full=FALSE) {
 			p[, Ep.nm] = p.min;
 		} else p[, id] = p[, id] + p.min;
 		if(full) return(list(E=E, p=p));
-		return(p);
+		return(asPoly(p));
 	}
 	if(length(pow) == 1) return(Epoly.gen(pow[1], v=v, e=1, E=E, full=full));
 	# Composite Cases:
@@ -592,7 +601,7 @@ Epoly.distinct = function(pow, v=3, E=NULL, full=FALSE) {
 		p = mult.pm(E[[p.rg[2]]], E[[p.rg[1]]]);
 		p = diff.pm(p, E[[len]]);
 		if(full) return(list(E=E, p=p));
-		return(p);
+		return(asPoly(p));
 	}
 	if(length(pow) == 3) {
 		p = Epoly.distinct(pow[1:2], v=v, E=E);
@@ -605,7 +614,7 @@ Epoly.distinct = function(pow, v=3, E=NULL, full=FALSE) {
 		}
 		if(any(pow[1:2] == pow[3])) p = mult.sc.pm(p, 1, 2);
 		if(full) return(list(E=E, p=p));
-		return(p);
+		return(asPoly(p));
 	}
 	# TODO: generalize & check;
 	tbl = table(pow);
@@ -647,7 +656,7 @@ Epoly.distinct = function(pow, v=3, E=NULL, full=FALSE) {
 	}
 	#
 	if(full) return(list(E=E, p=p));
-	return(p);
+	return(asPoly(p));
 }
 
 
