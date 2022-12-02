@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric S3:
 ### Mixed Type
 ###
-### draft v.0.4b
+### draft v.0.4c
 
 
 ### Heterogeneous Symmetric
@@ -124,16 +124,8 @@ source("Polynomials.Helper.EP.R")
 # the functions are in the file:
 # Polynomials.Helper.R
 
-### other functions
+### Other Functions
 
-resonance = function(p, n=3) {
-	# "Resonance" with Roots of unity;
-	# currently only for 2-variable terms: x^p1*y^p2;
-	sg = if(n %% 2 == 1) 1 else -1;
-	p.all = p[1]^n + sg*p[2]^n;
-	r = list(p=p.all, f=factors(p.all), p.trivial = sum(p));
-	return(r);
-}
 test.S3HtM = function(sol, b.ext=0, R=NULL, n) {
 	test.ht3(sol, b=b.ext, R=R, n=n[1], p=n[2]);
 }
@@ -170,6 +162,28 @@ test.Ht3Dual = function(x, y, z, R, n=2, p=1, b=0, type) {
 	}
 	err = round0(err)
 	return(err)
+}
+# more debug:
+E2n.f = function(sol, n) {
+	if(length(n) == 1) {
+		n1 = n; n2 = 1;
+	} else { n1 = n[1]; n2 = n[2]; }
+	E2f = function(sol) {
+		x = sol[1]; y = sol[2]; z = sol[3];
+		x^n1*y^n2 + y^n1*z^n2 + z^n1*x^n2;
+	}
+	if(is.null(dim(sol))) return(E2f(sol));
+	apply(sol, 1, E2f);
+}
+
+### Resonances
+resonance = function(p, n=3) {
+	# "Resonance" with Roots of unity;
+	# currently only for 2-variable terms: x^p1*y^p2;
+	sg = if(n %% 2 == 1) 1 else -1;
+	p.all = p[1]^n + sg*p[2]^n;
+	r = list(p=p.all, f=factors(p.all), p.trivial = sum(p));
+	return(r);
 }
 
 ############################
@@ -594,8 +608,8 @@ R3^2*S^4 + (2*R1*R3 + R2*R3^2)*S^2 - (R1*R2^2 + 5*R2^3*R3)*S +
 	+ R1^2 + R2^5 + 7*R2^2*R3^2 + R1*R2*R3 # = 0
 
 ### Solver:
-solve.Ht3.S3P32 = function(R, b=0) {
-	if(length(b) == 1 && b[1] == 0) {
+solve.S3HtM.P32 = function(R, b=0, debug=TRUE) {
+	if(all(b == 0)) {
 		coeff = c(R[3]^2, 0, (2*R[1]*R[3] + R[2]*R[3]^2), - (R[1]*R[2]^2 + 5*R[2]^3*R[3]),
 			R[1]^2 + R[2]^5 + 7*R[2]^2*R[3]^2 + R[1]*R[2]*R[3])
 	} else {
@@ -605,13 +619,14 @@ solve.Ht3.S3P32 = function(R, b=0) {
 		# Ext 2:
 		# TODO
 	}
-	S = roots(coeff)
-	print(S)
+	S = roots(coeff);
+	if(debug) print(S);
 	b2 = if(length(b) > 1) b[2] else 0; # TODO: Ext 2;
-	x = sapply(S, function(x) roots(c(1,-x, R[2] - b2*x, -R[3])))
-	S = matrix(S, ncol=4, nrow=3, byrow=T)
-	yz = R[3]/x
-	yz.s = S - x
+	x = sapply(S, function(S) roots(c(1, -S, R[2] - b2*S, -R[3])));
+	x = as.vector(x);
+	S = rep(S, each=3);
+	yz.s = S - x;
+	yz = R[2] - yz.s*x;
 	### robust:
 	if(R[1] == 0) {
 		# with chain rule!
@@ -623,21 +638,31 @@ solve.Ht3.S3P32 = function(R, b=0) {
 	yz.d = (x3 - R[1]) / (x^3*yz.s + yz^2 - x^2*(yz.s^2 - yz))
 	y = (yz.s + yz.d) / 2
 	z = yz.s - y
-	cbind(as.vector(x), as.vector(y), as.vector(z))
+	cbind(x, y, z)
+}
+test.S3HtM.P32 = function(sol, b=0, R=NULL) {
+	if(is.null(dim(sol))) {
+		x = sol[1]; y = sol[2]; z = sol[3];
+	} else {
+		x = sol[,1]; y = sol[,2]; z = sol[,3];
+	}
+	err1 = x^2*y^3 + y^2*z^3 + z^2*x^3;
+	err2 = x*y + y*z + z*x;
+	err3 = x*y*z;
+	err = rbind(err1, err2, err3);
+	err = round0(err);
+	return(err);
 }
 
 ### Examples:
 
+### Ex 1:
 R = c(1, 1, -1);
-sol = solve.Ht3.S3P32(R)
-x = sol[,1]; y = sol[,2]; z = sol[,3];
+sol = solve.S3HtM.P32(R)
 
-### Test
-x^2*y^3 + y^2*z^3 + z^2*x^3 # - R[1] # = 0
-x*y + y*z + z*x # - R[2] # = 0
-x*y*z # - R[3] # = 0
+test.S3HtM.P32(sol)
 
-
+x = sol[,1];
 poly.calc(x)
 
 err = 1 + 4*x + 6*x^2 + 8*x^3 + 12*x^4 + 10*x^5 + 13*x^6 + 14*x^7 + 12*x^8 + 8*x^9 + 3*x^10 + x^12
@@ -647,20 +672,22 @@ round0(err)
 #########
 ### Ex 2:
 R = c(0, 2, -1);
-sol = solve.Ht3.S3P32(R)
-x = sol[,1]; y = sol[,2]; z = sol[,3];
+sol = solve.S3HtM.P32(R)
 
-### Test
-x^2*y^3 + y^2*z^3 + z^2*x^3 # - R[1] # = 0
-x*y + y*z + z*x # - R[2] # = 0
-x*y*z # - R[3] # = 0
+test.S3HtM.P32(sol)
 
-
+x = sol[,1];
 poly.calc(x)
 
 err = 1 + 8*x + 24*x^2 + 36*x^3 + 42*x^4 + 56*x^5 + 86*x^6 + 108*x^7 + 92*x^8 + 44*x^9 + 10*x^10 + x^12
 round0(err)
 
+
+### Test
+x = sol[,1]; y = sol[,2]; z = sol[,3];
+x^2*y^3 + y^2*z^3 + z^2*x^3 # - R[1] # = 0
+x*y + y*z + z*x # - R[2] # = 0
+x*y*z # - R[3] # = 0
 
 ###############
 ### Extensions:
@@ -971,6 +998,119 @@ x^84 - 4*R2*x^77 + (6*R2^2 - 7*R1*R2*R3 - 21*R1^2*R3^2) * x^70 +
 		- 294*R1^5*R2*R3^5 - 392*R1^6*R3^6 - 11*R2^3*R3^7 - 14*R1*R2^2*R3^8 - 63*R1^2*R2*R3^9 +
 		+ 98*R1^3*R3^10 + 6*R3^14) * x^42 +
 	+ 0; # TODO
+
+
+###########################
+###########################
+
+###############
+### Order 5 ###
+###############
+
+### E51a ###
+# x^5*y + y^5*z + z^5*x = R1
+
+
+### Solution:
+
+### E[5,1]: Sum
+E51a + E51b - (E2*S^4 - E3*S^3 - 4*E2^2*S^2 + 7*E2*E3*S + 2*E2^3 - 3*E3^2) # = 0
+
+### E[5,1]: "Hur" Polynomial
+# see file:
+# Poly.System.Hetero.Symmetric.S3.Mixed.NonOriented.R;
+E51a - E51b - (S^3 - 2*E2*S + E3)*DE21 # = 0
+
+### Eq S:
+E3*S^9 - 9*E3*E2*S^7 + 9*E3^2*S^6 + 27*E3*E2^2*S^5 - E2*(45*E3^2 + E51a)*S^4 +
+	+ E3*(16*E3^2 - 30*E2^3 + E51a)*S^3 + E2^2*(63*E3^2+ 4*E51a)*S^2 +
+	- E2*E3*(42*E3^2 - 3*E2^3 + 7*E51a)*S +
+	+ 9*E3^4 - 2*E3^2*E2^3 + E2^6 + 3*E3^2*E51a - 2*E2^3*E51a + E51a^2 # = 0
+
+
+### Solver:
+
+solve.S3HtM.P51 = function(R, debug=TRUE, all=FALSE) {
+	coeff = coeff.S3HtM.P51(R);
+	S = roots(coeff);
+	if(debug) print(S);
+	#
+	E51a = R[1]; E2 = R[2]; E3 = R[3];
+	x = sapply(S, function(S) roots(c(1, -S, E2, -E3)));
+	x = as.vector(x);
+	S = rep(S, each=3);
+	# Robust:
+	s = S - x; e2 = E2 - s*x;
+	y0  = E51a - x*s^5 + 4*x*s^3*e2 - 3*x*s*e2^2 + s^2*e2^2 - e2^3;
+	div = x^5 - x*s^4 + 3*x*s^2*e2 + s^3*e2 - x*e2^2 - 2*s*e2^2;
+	y = y0/div;
+	z = s - y;
+	#
+	sol = cbind(x,y,z);
+	if(all) {
+		sol = rbind(sol, sol[, c(2,3,1)], sol[, c(3,1,2)]);
+	}
+	return(sol);
+}
+coeff.S3HtM.P51 = function(R) {
+	E51a = R[1]; E2 = R[2]; E3 = R[3];
+	coeff = c(E3, 0, - 9*E3*E2, 9*E3^2, 27*E3*E2^2, - E2*(45*E3^2 + E51a),
+		E3*(16*E3^2 - 30*E2^3 + E51a), E2^2*(63*E3^2+ 4*E51a),
+		- E2*E3*(42*E3^2 - 3*E2^3 + 7*E51a),
+		9*E3^4 - 2*E3^2*E2^3 + E2^6 + 3*E3^2*E51a - 2*E2^3*E51a + E51a^2);
+	return(coeff);
+}
+### Test
+test.S3HtM.P51 = function(sol, R=NULL) {
+	test.S3HtM(sol, R=R, n=c(1,5));
+}
+
+### Examples:
+
+### Ex 1:
+R = c(-1,3,2)
+sol = solve.S3HtM.P51(R);
+
+test.S3HtM.P51(sol);
+
+
+### Ex 1:
+R = c(-2,4,-1)
+sol = solve.S3HtM.P51(R);
+
+test.S3HtM.P51(sol);
+
+
+##########
+### Debug:
+R = c(-1,3,2)
+x = -2.657729844829;
+y =  0.412475670448;
+z = -1.824403199583;
+sol = c(x,y,z);
+S = sum(sol); E2 = (x+y)*z + x*y; E3 = x*y*z;
+E21a = E2n.f(sol, c(2,1));
+E21b = E2n.f(sol, c(1,2));
+DE21 = E21a - E21b;
+E51a = E2n.f(sol, c(5,1));
+E51b = E2n.f(sol, c(1,5));
+
+
+### Derivation:
+
+### E51a:
+E2*S^4 - E3*S^3 - 4*E2^2*S^2 + 7*E2*E3*S + 2*E2^3 - 3*E3^2 +
+	+ (S^3 - 2*E2*S + E3)*DE21 - 2*E51a # = 0
+
+### DE21:
+2*E21a - (E2*S - 3*E3) - DE21 # = 0
+
+### E21a:
+E21a^2 - (E2*S - 3*E3)*E21a + E3*S^3 - 6*E3*E2*S + E2^3 + 9*E3^2 # = 0
+
+# p1, p2, p3 = polys from above;
+pR = solve.pm(p1, p2, p3, xn=c("DE21", "E21a"))
+str(pR)
 
 
 ###########################
