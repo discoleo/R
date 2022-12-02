@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric S3:
 ### Mixed Type
 ###
-### draft v.0.4c
+### draft v.0.4d
 
 
 ### Heterogeneous Symmetric
@@ -1074,7 +1074,7 @@ sol = solve.S3HtM.P51(R);
 test.S3HtM.P51(sol);
 
 
-### Ex 1:
+### Ex 2:
 R = c(-2,4,-1)
 sol = solve.S3HtM.P51(R);
 
@@ -1109,7 +1109,119 @@ E2*S^4 - E3*S^3 - 4*E2^2*S^2 + 7*E2*E3*S + 2*E2^3 - 3*E3^2 +
 E21a^2 - (E2*S - 3*E3)*E21a + E3*S^3 - 6*E3*E2*S + E2^3 + 9*E3^2 # = 0
 
 # p1, p2, p3 = polys from above;
-pR = solve.pm(p1, p2, p3, xn=c("DE21", "E21a"))
+pR = solve.lpm(p1, p2, p3, xn=c("DE21", "E21a"))
+str(pR)
+
+
+###############
+###############
+
+############
+### E52a ###
+############
+
+# x^5*y^2 + y^5*z^2 + z^5*x^2 = R1
+
+
+### Solution:
+
+### E[5,2]: Sum
+E52a + E52b + (2*E3*S^4 - E2^2*S^3 - 6*E2*E3*S^2 + 3*E2^3*S + 7*E3^2*S - 3*E2^2*E3) # = 0
+
+### E[5,2]: "Hur" Polynomial
+# see file:
+# Poly.System.Hetero.Symmetric.S3.Mixed.NonOriented.R;
+E52a - E52b - (E2*S^2 - E3*S - E2^2)*DE21 # = 0
+
+### Eq S:
+E3^2*S^8 - 8*E3^2*E2*S^6 + 8*E3^3*S^5 + E3*(20*E3*E2^2 + 2*E52a)*S^4 +
+	- E2*(39*E3^3 + E2*E52a)*S^3 + (19*E3^4 - 2*E3^2*E2^3 - 6*E3*E2*E52a)*S^2 +
+	+ (3*E3^3*E2^2 - 7*E3*E2^5 + 7*E3^2*E52a + 3*E2^3*E52a)*S +
+	+ 9*E3^2*E2^4 + E2^7 - 3*E3*E2^2*E52a + E52a^2 # = 0
+
+
+### Solver:
+
+solve.S3HtM.P52 = function(R, debug=TRUE, all=FALSE) {
+	coeff = coeff.S3HtM.P52(R);
+	S = roots(coeff);
+	if(debug) print(S);
+	#
+	E52a = R[1]; E2 = R[2]; E3 = R[3];
+	x = sapply(S, function(S) roots(c(1, -S, E2, -E3)));
+	x = as.vector(x);
+	S = rep(S, each=3);
+	# Robust:
+	s = S - x; e2 = E2 - s*x;
+	y0  = E52a - x^2*s^5 + x^5*e2 + 4*x^2*s^3*e2 - 3*x^2*s*e2^2 + s*e2^3;
+	div = x^5*s - x^2*s^4 + 3*x^2*s^2*e2 - x^2*e2^2 + s^2*e2^2 - e2^3;
+	y = y0/div;
+	z = s - y;
+	#
+	sol = cbind(x,y,z);
+	if(all) {
+		sol = rbind(sol, sol[, c(2,3,1)], sol[, c(3,1,2)]);
+	}
+	return(sol);
+}
+coeff.S3HtM.P52 = function(R) {
+	E52a = R[1]; E2 = R[2]; E3 = R[3];
+	coeff = c(E3^2, 0, - 8*E3^2*E2, 8*E3^3, E3*(20*E3*E2^2 + 2*E52a),
+		- E2*(39*E3^3 + E2*E52a), (19*E3^4 - 2*E3^2*E2^3 - 6*E3*E2*E52a),
+		3*E3^3*E2^2 - 7*E3*E2^5 + 7*E3^2*E52a + 3*E2^3*E52a,
+		9*E3^2*E2^4 + E2^7 - 3*E3*E2^2*E52a + E52a^2);
+	return(coeff);
+}
+### Test
+test.S3HtM.P52 = function(sol, R=NULL) {
+	test.S3HtM(sol, R=R, n=c(2,5));
+}
+
+### Examples:
+
+### Ex 1:
+R = c(-1,3,2)
+sol = solve.S3HtM.P52(R);
+
+test.S3HtM.P52(sol);
+
+
+### Ex 2:
+R = c(-2,4,-1)
+sol = solve.S3HtM.P52(R);
+
+test.S3HtM.P52(sol);
+
+
+##########
+### Debug:
+R = c(-1,3,2)
+x = -3.016896082742 + 1.415689461012i;
+y =  0.413487676891 + 0.022508284188i;
+z = -1.343524792560 - 0.543437338553i;
+sol = c(x,y,z);
+S = sum(sol); E2 = (x+y)*z + x*y; E3 = x*y*z;
+E21a = E2n.f(sol, c(2,1));
+E21b = E2n.f(sol, c(1,2));
+DE21 = E21a - E21b;
+E52a = E2n.f(sol, c(5,2));
+E52b = E2n.f(sol, c(2,5));
+
+
+### Derivation:
+
+### E52a:
+2*E3*S^4 - E2^2*S^3 - 6*E2*E3*S^2 + 3*E2^3*S + 7*E3^2*S - 3*E2^2*E3 +
+	- (E2*S^2 - E3*S - E2^2)*DE21 + 2*E52a # = 0
+
+### DE21:
+2*E21a - (E2*S - 3*E3) - DE21 # = 0
+
+### E21a:
+E21a^2 - (E2*S - 3*E3)*E21a + E3*S^3 - 6*E3*E2*S + E2^3 + 9*E3^2 # = 0
+
+# p1, p2, p3 = polys from above;
+pR = solve.lpm(p1, p2, p3, xn=c("DE21", "E21a"))
 str(pR)
 
 
