@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric S3:
 ### Mixed Type
 ###
-### draft v.0.4e
+### draft v.0.4f
 
 
 ### Heterogeneous Symmetric
@@ -243,12 +243,15 @@ x*y*z - R3 # = 0
 
 ### Solution:
 
-### Eq:
+### Eq S:
 E3*S^3 - (R1+6*E3)*E2*S + R1^2 + E2^3 + 9*E3^2 + 3*R1*E3 # = 0
 
 
 ### Solver:
-solve.Ht3 = function(R, b=0, debug=TRUE) {
+
+# - computes automatically ALL solutions (+ permutations);
+solve.S3Ht.P2 = function(R, b.ext=0, debug=TRUE) {
+	b = b.ext;
 	if(all(b == 0)) {
 		coeff = c(R[3], 0, - (R[1]+6*R[3])*R[2], R[1]^2 + R[2]^3 + 9*R[3]^2 + 3*R[1]*R[3])
 	} else if(length(b) < 3) {
@@ -272,7 +275,8 @@ solve.Ht3 = function(R, b=0, debug=TRUE) {
 	b2 = if(length(b) > 1) b[2] else 0; # Ext 2;
 	b3 = if(length(b) > 2) b[3] else 0; # Ext 3;
 	x = sapply(S, function(S) roots(c(1, -S, R[2] - b2*S, - R[3] + b3*S)))
-	S = matrix(S, ncol=len, nrow=3, byrow=T)
+	x = as.vector(x);
+	S = rep(S, each=3);
 	yz = (R[3] - b3*S) / x
 	yz.s = S - x
 	### robust:
@@ -281,26 +285,29 @@ solve.Ht3 = function(R, b=0, debug=TRUE) {
 	# (x^2+yz - x*yz.s)*y + x*yz - (x^2+yz)*yz.s - b1*S + R1 = 0
 	y = - (x*yz - (x^2+yz)*yz.s - b[1]*S + R[1]) / (x^2+yz - x*yz.s)
 	z = yz.s - y
-	cbind(as.vector(x), as.vector(y), as.vector(z))
+	cbind(x, y, z);
+}
+### Test:
+test.S3Ht.P2 = function(sol, b.ext=0, R=NULL) {
+	test.S3HtM(sol, b.ext=b.ext, R=R, n=c(2,1));
 }
 
-### Examples
+### Examples:
 
 ### Ex 1:
 R = c(1, 1, 1)
-b = 0
-sol = solve.Ht3(R, b=b)
-x = sol[,1]; y = sol[,2]; z = sol[,3];
+sol = solve.S3Ht.P2(R)
 
 ### Test
-test.ht3(x, y, z, b=b)
+test.S3Ht.P2(sol)
 
-round0.p(poly.calc(x))
+x = sol[,1];
+poly.calc0(x)
 
 err = -1 + 3*x - 3*x^2 + 4*x^3 + x^4 - 4*x^5 + 11*x^6 - 4*x^7 + x^9
 round0(err)
 
-### P[9]
+### Classic Poly: P[9]
 R1 = R[1]; R2 = R[2]; R3 = R[3];
 R3*x^9 - R2*(R1 + 3*R3)*x^7 + (R1^2 + R2^3 + 3*R1*R3 + 6*R3^2)*x^6 +
 	- R2^2*(R1 + 3*R3)*x^5 + R1*R2*R3*x^4 + R3*(R2^3 + 3*R3^2)*x^3 +
@@ -311,13 +318,13 @@ R3*x^9 - R2*(R1 + 3*R3)*x^7 + (R1^2 + R2^3 + 3*R1*R3 + 6*R3^2)*x^6 +
 ### Ex 2:
 R = c(-3*6, -6, 6)
 b = 0
-sol = solve.Ht3(R, b=b)
-x = sol[,1]; y = sol[,2]; z = sol[,3];
+sol = solve.S3Ht.P2(R, b.ext=b)
 
 ### Test
-test.ht3(x, y, z, b=b)
+test.S3Ht.P2(sol, b.ext=b)
 
-round0.p(poly.calc(x))
+x = sol[,1];
+poly.calc0(x)
 err = -216 - 648*x - 648*x^2 - 108*x^3 + 108*x^4 + x^9
 round0(err)
 # also R = c(-3*3, -3, 3)
@@ -329,25 +336,25 @@ round0(err)
 k = 1 # trivial
 R = c(3*k^3, 3*k^2, k^3)
 b = 1 # not trivial anymore
-sol = solve.Ht3(R, b=b)
-x = sol[,1]; y = sol[,2]; z = sol[,3];
+sol = solve.S3Ht.P2(R, b.ext=b)
 
 ### Test
-test.ht3(x, y, z, b=b)
+test.S3Ht.P2(sol, b.ext=b)
 
-round0.p(poly.calc(x))
+x = sol[,1];
+poly.calc0(x)
 
 
 #########
 ### Ex 3:
 R = c(0, 1, 1)
-sol = solve.Ht3(R)
+sol = solve.S3Ht.P2(R)
 
 ### Test
-test.ht3(sol)
+test.S3Ht.P2(sol)
 
-round0.p(poly.calc(sol[,1]))
 x = sol[,1]
+poly.calc0(x)
 err = -1 + 3*x - 3*x^2 + 4*x^3 - 3*x^5 + 7*x^6 - 3*x^7 + x^9
 round0(err)
 
@@ -367,8 +374,8 @@ R3*S^3 + (b1^2 + b1*R2)*S^2 - (R1*R2 + 3*b1*R3 + 6*R2*R3 + 2*b1*R1)*S +
 	+ R1^2 + R2^3 + 9*R3^2 + 3*R1*R3 # = 0
 
 ### Extension A3:
-# - includes A1, but A2 was missed;
-#   [see function solve.Ht3() for complete variant]
+# - the equation includes A1, but A2 was missed;
+#   [see function solve.S3Ht...() for complete variant]
 # E3 = R3 - b3*S
 -b3*S^4 + R3*S^3 + (b1^2 + 3*b1*b3 + 9*b3^2 + b1*R2 + 6*b3*R2)*S^2 +
 	- (R1*R2 + 3*b1*R3 + 6*R2*R3 + 2*b1*R1 + 3*b3*R1 + 18*b3*R3)*S +
@@ -377,15 +384,15 @@ R3*S^3 + (b1^2 + b1*R2)*S^2 - (R1*R2 + 3*b1*R3 + 6*R2*R3 + 2*b1*R1)*S +
 
 ### Examples
 
-###
+### Ex A1:
 R = c(1, 1, 1); b = 1;
-sol = solve.Ht3(R, b=b)
-x = sol[,1]; y = sol[,2]; z = sol[,3];
+sol = solve.S3Ht.P2(R, b.ext=b)
 
 ### Test
-test.ht3(x, y, z, b=b)
+test.S3Ht.P2(sol, b.ext=b)
 
-round0.p(poly.calc(x))
+x = sol[,1];
+poly.calc0(x)
 err = -1 + 3*x - x^2 + 8*x^4 - 13*x^5 + 15*x^6 - 9*x^7 + 2*x^8 + x^9
 round0(err)
 
@@ -393,14 +400,14 @@ round0(err)
 ### Ex 2:
 R = c(0, 0, 1);
 b = 1; # b = -2;
-sol = solve.Ht3(R, b=b)
-x = sol[,1]; y = sol[,2]; z = sol[,3];
+sol = solve.S3Ht.P2(R, b.ext=b)
 
 ### Test
-test.ht3(x, y, z, b=b)
+test.S3Ht.P2(sol, b.ext=b)
 
-round0.p(poly.calc(x[4:9]))
-# works only with b = 1, b = -2
+x = sol[,1];
+poly.calc0(x[4:9])
+# works only with b = 1 or b = -2;
 err = 1 + 2*x^2 - 2*x^3 + 3*x^4 - 2*x^5 + x^6
 # err = 1 - x^2 - 2*x^3 + 3*x^4 + x^5 + x^6
 round0(err)
@@ -408,59 +415,56 @@ round0(err)
 
 ### Ex 3:
 R = c(0, 1, -1); b = 1;
-sol = solve.Ht3(R, b=b)
-x = sol[,1]; y = sol[,2]; z = sol[,3];
+sol = solve.S3Ht.P2(R, b.ext=b)
 
 ### Test
-test.ht3(x, y, z, b=b)
+test.S3Ht.P2(sol, b.ext=b)
 
-round0.p(poly.calc(x))
-
+x = sol[,1];
+poly.calc0(x)
 err = 1 + 3*x + x^2 - 5*x^4 - 10*x^5 - 11*x^6 - 6*x^7 - 2*x^8 + x^9
 round0(err)
 
 
-###
+### Ex 4:
 # R3 = (b[2]^2 + b[1]*b[2]) +/- 1;
 R = c(0, 1, 9); b = c(1, 2);
-sol = solve.Ht3(R, b=b)
-x = sol[,1]; y = sol[,2]; z = sol[,3];
+sol = solve.S3Ht.P2(R, b.ext=b)
 
 ### Test
-test.ht3(x, y, z, b=b)
+test.S3Ht.P2(sol, b.ext=b)
 
+x = sol[,1];
 poly.calc(x)
-
 # numeric instability with 1st root!
 err = -729 - 19521*x - 8649*x^2 - 6428*x^3 - 4979*x^4 - 2234*x^5 - 653*x^6 - 154*x^7 - 122*x^8 + x^9
 round0(err)
 
 
-###
+### Ex 5:
 # R3 = (b[2]^2 + b[1]*b[2]) +/- 1;
 R = c(0, 1, -2); b = c(2, -1);
-sol = solve.Ht3(R, b=b)
-x = sol[,1]; y = sol[,2]; z = sol[,3];
+sol = solve.S3Ht.P2(R, b.ext=b)
 
 ### Test
-test.ht3(x, y, z, b=b)
+test.S3Ht.P2(sol, b.ext=b)
 
-poly.calc(x)
-
+x = sol[,1];
+poly.calc0(x)
 err = 8 - 72*x + 60*x^2 - 42*x^3 + 60*x^4 - 12*x^5 + 31*x^6 + 9*x^7 + 21*x^8 + x^9
 round0(err)
 
 
+##########
 ### Ext 3:
 R = c(1, 1, 0); b = c(-7, 1, 1);
-sol = solve.Ht3(R, b=b)
-x = sol[,1]; y = sol[,2]; z = sol[,3];
+sol = solve.S3Ht.P2(R, b.ext=b)
 
 ### Test
-test.ht3(x, y, z, b=b)
+test.S3Ht.P2(sol, b.ext=b)
 
-round0.p(poly.calc(x))
-
+x = sol[,1];
+poly.calc0(x)
 err = -2 + 15*x - 65*x^2 + 71*x^3 - 15*x^4 + 96*x^5 + 14*x^6 - 95*x^7 - 57*x^8 +
 	- 87*x^9 - 36*x^10 + x^12
 round0(err)
@@ -468,14 +472,13 @@ round0(err)
 
 ### Ext 3, ex 2:
 R = c(0, 1, 0); b = c(-7, 1, 1);
-sol = solve.Ht3(R, b=b)
-x = sol[,1]; y = sol[,2]; z = sol[,3];
+sol = solve.S3Ht.P2(R, b.ext=b)
 
 ### Test
-test.ht3(x, y, z, b=b)
+test.S3Ht.P2(sol, b.ext=b)
 
-round0.p(poly.calc(x))
-
+x = sol[,1];
+poly.calc0(x)
 err = -1 + x - 32*x^2 + 67*x^3 - 39*x^4 + 86*x^5 - 4*x^6 - 79*x^7 - 25*x^8 +
 	- 75*x^9 - 35*x^10 + x^12
 round0(err)
