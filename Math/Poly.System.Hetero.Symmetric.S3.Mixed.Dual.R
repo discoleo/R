@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric S3:
 ### Mixed Type: Dual / Multiple E2a Eqs
 ###
-### draft v.0.1e-sol
+### draft v.0.2a
 
 
 ### Heterogeneous Symmetric
@@ -31,6 +31,8 @@
 source("Polynomials.Helper.R")
 source("Polynomials.Helper.EP.R")
 
+### Numerical solver
+source("Polynomials.Helper.Solvers.Num.R")
 
 # library(polynom)
 # library(pracma)
@@ -41,7 +43,7 @@ source("Polynomials.Helper.EP.R")
 
 ### Other Functions
 
-test.S3HtDual = function(sol, b=0, R=NULL, type="E3", n) {
+test.S3HtDual = function(sol, b=0, R=NULL, type="E3", n, tol=1E-8) {
 	# Types Eq 3: E3, E2, E3*S, E3/S;
 	x = sol[,1]; y = sol[,2]; z = sol[,3];
 	# Extensions:
@@ -64,7 +66,7 @@ test.S3HtDual = function(sol, b=0, R=NULL, type="E3", n) {
 	if( ! is.null(R)) {
 		err = err - R;
 	}
-	err = round0(err);
+	err = round0(err, tol=tol);
 	return(err)
 }
 # [old]
@@ -86,6 +88,19 @@ test.Ht3Dual = function(x, y, z, R, n=2, p=1, b=0, type) {
 	}
 	err = round0(err)
 	return(err)
+}
+
+# more debug:
+E2n.f = function(sol, n) {
+	if(length(n) == 1) {
+		n1 = n; n2 = 1;
+	} else { n1 = n[1]; n2 = n[2]; }
+	E2f = function(sol) {
+		x = sol[1]; y = sol[2]; z = sol[3];
+		x^n1*y^n2 + y^n1*z^n2 + z^n1*x^n2;
+	}
+	if(is.null(dim(sol))) return(E2f(sol));
+	apply(sol, 1, E2f);
 }
 
 ###########################
@@ -1004,6 +1019,163 @@ pR = solve.lpm(pE21, p1, p2, xn=c("E21a", "E2"))
 pR2 = div.pm(pR[[2]]$Rez, "(E3*S + E31a)^2", "S")
 
 str(pR2)
+
+
+########################
+########################
+
+########################
+### Orders 3-1 & 3-2 ###
+###   reverse 3-1    ###
+########################
+
+### System:
+x^3*y^2 + y^3*z^2 + z^3*x^2 - R1 # = 0
+x^3*z + y^3*x + z^3*y - R2 # = 0
+x*y*z - R3 # = 0
+
+### Note:
+# - if (x,y,z) is a solution, then:
+#   (x,y,z) * (m, m^2, m^4) is also a solution;
+#   (where m^7 = 1)
+
+
+### Solution:
+
+# - based on the "Hur"-polynomials, see file:
+#   Poly.System.Hetero.Symmetric.S3.Mixed.NonOriented.R;
+
+### Eq S:
+# TODO
+
+
+### Solver:
+
+solve.S3HtD.E32E31r = function(R, debug=TRUE) {
+	coeff = coeff.S3HtD.E32E31r(R);
+	S = roots(coeff);
+	if(debug) print(S);
+	E2 = E2.S3HtD.E32E31r(S, R);
+	E3 = R[3]; E32a = R[1];
+	#
+	len = length(S);
+	x = sapply(seq(len), function(id) roots(c(1, -S[id], E2[id], -E3)));
+	x = as.vector(x);
+	S = rep(S, each=3); E2 = rep(E2, each=3);
+	# Robust:
+	s = S - x; e2 = E2 - s*x;
+	y = (e2*x^3 - s^3*x^2 + 2*s*e2*x^2 + E32a);
+	y = y / (s*x^3 - s^2*x^2 + e2*x^2 + e2^2);
+	z = s - y;
+	#
+	sol = cbind(x, y, z);
+	return(sol);
+}
+E2.S3HtD.E32E31r = function(S, R) {
+	E32a = R[1]; E31b = R[2]; E3 = R[3];
+	E2x0 = E3^2*S^12 + E3*E32a*S^10 - 6*E3^3*S^9 - 6*E3^2*E31b*S^8 - 6*E3^2*E32a*S^7 +
+		- (14*E3^4 + 4*E3*E32a*E31b)*S^6 + E3*(E32a^2 + 35*E3^2*E31b)*S^5 +
+		- (21*E3^3*E32a - 14*E3^2*E31b^2 - 2*E32a^2*E31b)*S^4 +
+		+ (49*E3^5 + E32a^3 + 43*E3^2*E32a*E31b + E3*E31b^3)*S^3 +
+		- E3*E32a*(6*E3*E32a - 15*E31b^2)*S^2 + E32a*(49*E3^4 + 8*E3*E32a*E31b + E31b^3)*S +
+		+ E32a^2*(E3*E32a + E31b^2);
+	E2div = 4*E3^2*S^10 + 5*E3*E32a*S^8 - (43*E3^3 - E32a*E31b)*S^7 - 13*E3^2*E31b*S^6 +
+		- (70*E3^2*E32a - 2*E3*E31b^2)*S^5 + (63*E3^4 - 34*E3*E32a*E31b)*S^4 +
+		- (24*E3*E32a^2 + 6*E32a*E31b^2)*S^3 + (63*E3^3*E32a - 8*E32a^2*E31b - 42*E3^2*E31b^2)*S^2 +
+		- (49*E3^5 + 2*E32a^3 - 21*E3^2*E32a*E31b + 14*E3*E31b^3)*S +
+		+ 6*E3^2*E32a^2 - 49*E3^4*E31b - 2*E3*E32a*E31b^2 - E31b^4;
+	E2 = E2x0 / E2div;
+	return(E2);
+}
+coeff.S3HtD.E32E31r = function(R) {
+	# TODO
+	# pR = pR[[3]]$Rez;
+	pR = replace.pm(pR, list(E32a = R[1], E31b = R[2], E3 = R[3]));
+	coeff = unlist(as.coeff.pm(pR, "S"));
+	coeff = coeff / R[3]^4;
+	return(coeff);
+}
+
+### Test:
+test.S3HtD.E32E31r = function(sol, R=NULL, tol=1E-8) {
+	test.S3HtDual(sol, R=R, n=c(3,2,1,3), tol=tol);
+}
+
+
+### Examples:
+
+### Ex 1:
+R = c(-1,3,2)
+sol = solve.S3HtD.E32E31r(R)
+
+test.S3HtD.E32E31r(sol)
+
+x = sol[,1];
+16384 + 7808*x^7 + 390*x^14 - 1503.75*x^21 + 322.5*x^28 + 9.25*x^35 + x^42
+
+
+### Ex 2:
+R = c(-1,2,1)
+sol = solve.S3HtD.E32E31r(R)
+
+test.S3HtD.E32E31r(sol)
+
+
+##########
+### Debug:
+R = c(-1,3,2)
+x =  1.208977549741 + 0.090053530142i;
+y = -0.730700722851 + 1.341312698729i;
+z = -0.585711781827 - 0.907456147172i;
+m = unity(7, all=FALSE);
+sol = c(x,y,z);
+sol = rbind(sol, sol * c(m^2, m^4, m), sol * c(m^3, m^6, m^5));
+x = sol[,1]; y = sol[,2]; z = sol[,3];
+S = x + y + z; E2 = (x+y)*z + x*y; E3 = x*y*z;
+E21a = E2n.f(sol, c(2,1));
+E21b = E2n.f(sol, c(1,2));
+DE21 = E21a - E21b;
+E32a = E2n.f(sol, c(3,2));
+E32b = E2n.f(sol, c(2,3));
+E31a = E2n.f(sol, c(3,1));
+E31b = E2n.f(sol, c(1,3));
+
+
+### Numeric Solver:
+solve.S3HtD.E32E31r.Num = function(x, R) {
+	x = matrix(x, ncol=3);
+	xc = x[2,]; x = x[1,] + 1i*xc;
+	x = matrix(x, nrow=1);
+	y = test.S3HtD.E32E31r(x, R=R, tol=1E-15);
+	y = rbind(Re(y), Im(y));
+	y = as.vector(y);
+	return(y);
+}
+
+R = c(-1,3,2)
+x0 = c(1.209+0.0901i, -0.7307+1.3413i, -0.5857-0.9075i);
+x = solve.all(solve.S3HtD.E32E31r.Num, x0, R=R, rtol=1E-10)
+
+
+### Derivation:
+
+### E32a:
+2*E32a + 2*E3*S^2 - E2^2*S + E2*E3 - E2*DE21 # = 0
+
+### E31b:
+2*E31b - E2*S^2 + E3*S + 2*E2^2 + S*DE21 # = 0
+
+### DE21:
+2*E21a - (E2*S - 3*E3) - DE21 # = 0
+
+### E21a:
+E21a^2 - (E2*S - 3*E3)*E21a + E3*S^3 - 6*E3*E2*S + E2^3 + 9*E3^2 # = 0
+
+# p1, p2, p3, p4 = polys from above;
+pR = solve.lpm(p3, p1, p2, p4, xn=c("DE21", "E21a", "E2"))
+str(pR)
+# TODO: Order 30, with 222 monomials; (was 542 monomials)
+# TRUE roots: P[14];
 
 
 ######################
