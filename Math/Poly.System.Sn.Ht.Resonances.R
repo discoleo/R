@@ -5,13 +5,14 @@
 ###
 ### Polynomial Systems
 ### Heterogeneous Symmetric:
-### Mixed Type
+### Resonances
 ###
 ### draft v.0.1a
 
 
-### Heterogeneous Symmetric
-### Polynomial Systems: 3..n Variables
+### Resonances in Polynomial Systems
+# System: 3..n Variables
+# Type: Heterogeneous Symmetric
 
 
 # Note:
@@ -50,7 +51,7 @@ resonance = function(p, n=3) {
 ### Roots of Unity ###
 ######################
 
-### S3: 3 Variables
+### Sys[3]: 3 Variables
 # - if (x, y, z) is a solution, then:
 #   (x, y, z) * m^(k1, k2, k3) is also a solution;
 
