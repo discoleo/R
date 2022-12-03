@@ -1,13 +1,13 @@
 ########################
 ###
 ### Leonard Mada
-### [the one and only
+### [the one and only]
 ###
 ### Polynomial Systems:
 ### Heterogeneous Symmetric S3:
 ### Mixed Type
 ###
-### draft v.0.4g
+### draft v.0.4h
 
 
 ### Heterogeneous Symmetric
@@ -18,6 +18,11 @@
 # x^p*y^n + y^p*z^n + z^p*x^n = R1
 # x*y + x*z + y*z = R2
 # x*y*z = R3
+
+# Note: Efficient solution
+# - is possible using the "Hur"-polynomials;
+# - for the "Hur"-polynomials, see file:
+#   Poly.System.Hetero.Symmetric.S3.Mixed.NonOriented.R;
 
 
 ###############
@@ -875,6 +880,9 @@ x^27 - 3*R2*x^24 + 3*(R2^2 - R2*R3 - 3*R3^2)*x^21 +
 # x^7 + y^7 + z^7 = R2
 # x*y*z = R3
 
+# Note:
+# - another valid Eq for (m^1, m^2, m^4):
+#   x^5*y + y^5*z + z^5*x = R2;
 
 ### Solution:
 
@@ -1346,6 +1354,118 @@ E53b = E2n.f(sol, c(3,5));
 ### E52a:
 2*E53a + 3*E2*E3*S^3 - E2^3*S^2 - 3*E3^2*S^2 - 6*E2^2*E3*S + 2*E2^4 + 7*E2*E3^2 +
 	- (E2^2*S - E3*S^2 - E3*E2)*DE21 # = 0
+
+### DE21:
+2*E21a - (E2*S - 3*E3) - DE21 # = 0
+
+### E21a:
+E21a^2 - (E2*S - 3*E3)*E21a + E3*S^3 - 6*E3*E2*S + E2^3 + 9*E3^2 # = 0
+
+# p1, p2, p3 = polys from above;
+pR = solve.lpm(p1, p2, p3, xn=c("DE21", "E21a"))
+str(pR)
+
+
+###############
+###############
+
+############
+### E54a ###
+############
+
+# x^5*y^4 + y^5*z^4 + z^5*x^4 = R1
+
+
+### Solution:
+
+### E[5,4]: Sum
+E54a + E54b - 2*E3^2*S^3 + 4*E2^2*E3*S^2 - E2^4*S - 7*E2*E3^2*S + E2^3*E3 + 3*E3^3 # = 0
+
+### E[5,4]: "Hur" Polynomial
+E54a - E54b - (E2^3 - E2*E3*S - E2*E3*S + E3^2)*DE21 # = 0
+# see file:
+# Poly.System.Hetero.Symmetric.S3.Mixed.NonOriented.R;
+
+### Eq S:
+E3^4*S^6 + 3*E3^4*E2*S^4 - 2*E3^2*(E3^3 + 15*E3*E2^3 + E54a)*S^3 +
+	+ E2^2*(63*E3^4 + 27*E3^2*E2^3 + 4*E3*E54a)*S^2 +
+	- E2*(42*E3^5 + 45*E3^3*E2^3 + 9*E3*E2^6 + 7*E3^2*E54a + E2^3*E54a)*S +
+	+ 9*E3^6 + 16*E3^4*E2^3 + 9*E3^2*E2^6 + E2^9 + 3*E3^3*E54a + E3*E2^3*E54a + E54a^2 # = 0
+
+
+### Solver:
+
+solve.S3HtM.P54 = function(R, debug=TRUE, all=FALSE) {
+	coeff = coeff.S3HtM.P54(R);
+	S = roots(coeff);
+	if(debug) print(S);
+	#
+	E54a = R[1]; E2 = R[2]; E3 = R[3];
+	x = sapply(S, function(S) roots(c(1, -S, E2, -E3)));
+	x = as.vector(x);
+	S = rep(S, each=3);
+	# Robust:
+	s = S - x; e2 = E2 - s*x;
+	y0  = s^2*e2*x^5 - e2^2*x^5 - s^5*x^4 + 4*s^3*e2*x^4 - 3*s*e2^2*x^4 + E54a;
+	div = s^3*x^5 - 2*s*e2*x^5 - s^4*x^4 + 3*s^2*e2*x^4 - e2^2*x^4 + e2^4;
+	y = y0/div;
+	z = s - y;
+	#
+	sol = cbind(x,y,z);
+	if(all) {
+		sol = rbind(sol, sol[, c(2,3,1)], sol[, c(3,1,2)]);
+	}
+	return(sol);
+}
+coeff.S3HtM.P54 = function(R) {
+	E54a = R[1]; E2 = R[2]; E3 = R[3];
+	coeff = c(E3^4, 0, 3*E3^4*E2, - 2*E3^2*(E3^3 + 15*E3*E2^3 + E54a),
+		E2^2*(63*E3^4 + 27*E3^2*E2^3 + 4*E3*E54a),
+		- E2*(42*E3^5 + 45*E3^3*E2^3 + 9*E3*E2^6 + 7*E3^2*E54a + E2^3*E54a),
+		9*E3^6 + 16*E3^4*E2^3 + 9*E3^2*E2^6 + E2^9 + 3*E3^3*E54a + E3*E2^3*E54a + E54a^2);
+	return(coeff);
+}
+### Test
+test.S3HtM.P54 = function(sol, R=NULL) {
+	test.S3HtM(sol, R=R, n=c(4,5));
+}
+
+### Examples:
+
+### Ex 1:
+R = c(-1,3,2)
+sol = solve.S3HtM.P54(R);
+
+test.S3HtM.P54(sol);
+
+
+### Ex 2:
+R = c(-2,4,-1)
+sol = solve.S3HtM.P54(R);
+
+test.S3HtM.P54(sol);
+
+
+##########
+### Debug:
+R = c(-1,3,2)
+x = -4.888164195956 + 7.165245550081i;
+y =  0.332665105958 + 0.102516631656i;
+z = -0.517883266812 - 0.412982933842i;
+sol = c(x,y,z);
+S = sum(sol); E2 = (x+y)*z + x*y; E3 = x*y*z;
+E21a = E2n.f(sol, c(2,1));
+E21b = E2n.f(sol, c(1,2));
+DE21 = E21a - E21b;
+E54a = E2n.f(sol, c(5,4));
+E54b = E2n.f(sol, c(4,5));
+
+
+### Derivation:
+
+### E52a:
+2*E54a - 2*E3^2*S^3 + 4*E2^2*E3*S^2 - E2^4*S - 7*E2*E3^2*S + E2^3*E3 + 3*E3^3 +
+	- (E2^3 - E2*E3*S - E2*E3*S + E3^2)*DE21 # = 0
 
 ### DE21:
 2*E21a - (E2*S - 3*E3) - DE21 # = 0
