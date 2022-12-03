@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric S3:
 ### Mixed Type: Dual / Multiple E2a Eqs
 ###
-### draft v.0.2a-clPoly
+### draft v.0.2b
 
 
 ### Heterogeneous Symmetric
@@ -1046,7 +1046,13 @@ x*y*z - R3 # = 0
 #   Poly.System.Hetero.Symmetric.S3.Mixed.NonOriented.R;
 
 ### Eq S:
-# TODO
+E3^2*S^14 - 28*E3^3*S^11 - 14*E3^2*E31b*S^10 - 28*E3^2*E32a*S^9 + 7*(29*E3^4 - E3*E32a*E31b)*S^8 +
+	+ (2*E3*E32a^2 + 183*E3^3*E31b - E32a*E31b^2)*S^7 + 49*E3^2*(8*E3*E32a + E31b^2)*S^6 +
+	- 98*E3^2*(E3^3 - 3*E32a*E31b)*S^5 + 7*(24*E3^2*E32a^2 + 19*E3^4*E31b + 9*E3*E32a*E31b^2)*S^4 +
+	- 7*(14*E3^4*E32a - 12*E3*E32a^2*E31b - 13*E3^3*E31b^2 - E32a*E31b^3)*S^3 +
+	+ 7*(49*E3^6 + 3*E3*E32a^3 - 9*E3^3*E32a*E31b + 2*E32a^2*E31b^2 + 7*E3^2*E31b^3)*S^2 +
+	+ 7*E3^3*E32a^2*S + 7*E31b*(7*E3^5 + E32a^3 - 3*E3^2*E32a*E31b + 2*E3*E31b^3)*S +
+	+ E32a^4 - 13*E3^2*E32a^2*E31b + 49*E3^4*E31b^2 + 2*E3*E32a*E31b^3 + E31b^5
 
 
 ### Solver:
@@ -1088,11 +1094,17 @@ E2.S3HtD.E32E31r = function(S, R) {
 	return(E2);
 }
 coeff.S3HtD.E32E31r = function(R) {
-	# TODO
-	# pR = pR[[3]]$Rez;
-	pR = replace.pm(pR, list(E32a = R[1], E31b = R[2], E3 = R[3]));
-	coeff = unlist(as.coeff.pm(pR, "S"));
-	coeff = coeff / R[3]^4;
+	E32a = R[1]; E31b = R[2]; E3 = R[3];
+	# pR = replace.pm(pR, list(E32a = R[1], E31b = R[2], E3 = R[3]));
+	# coeff = unlist(as.coeff.pm(pR, "S"));
+	# coeff = coeff / R[3]^4;
+	coeff = c(E3^2, 0, 0, - 28*E3^3, - 14*E3^2*E31b, - 28*E3^2*E32a, 7*(29*E3^4 - E3*E32a*E31b),
+		(2*E3*E32a^2 + 183*E3^3*E31b - E32a*E31b^2), 49*E3^2*(8*E3*E32a + E31b^2),
+		- 98*E3^2*(E3^3 - 3*E32a*E31b), 7*(24*E3^2*E32a^2 + 19*E3^4*E31b + 9*E3*E32a*E31b^2),
+		- 7*(14*E3^4*E32a - 12*E3*E32a^2*E31b - 13*E3^3*E31b^2 - E32a*E31b^3),
+		7*(49*E3^6 + 3*E3*E32a^3 - 9*E3^3*E32a*E31b + 2*E32a^2*E31b^2 + 7*E3^2*E31b^3),
+		7*E3^3*E32a^2 + 7*E31b*(7*E3^5 + E32a^3 - 3*E3^2*E32a*E31b + 2*E3*E31b^3),
+		E32a^4 - 13*E3^2*E32a^2*E31b + 49*E3^4*E31b^2 + 2*E3*E32a*E31b^3 + E31b^5);
 	return(coeff);
 }
 
@@ -1123,16 +1135,18 @@ sol = solve.S3HtD.E32E31r(R)
 
 test.S3HtD.E32E31r(sol)
 
+x = sol[,1]
 3^16 + 846369*x^7 - 88722*x^14 - 61669*x^21 + 2052*x^28 + 64*x^35 + 9*x^42
 #
 9*S^14 - 756*S^11 - 252*S^10 + 252*S^9 + 16485*S^8 + 9892*S^7 - 8820*S^6 - 29106*S^5 + 22302*S^4 +
 	+ 18214*S^3 + 256970*S^2 + 25417*S + 15627
 
-### P[14]:
-E3^2*S^14 - 28*E3^3*S^11 + ... +
-	+ (49*E31b^2*E3^4 - 13*E32a^2*E31b*E3^2 + 2*E32a*E31b^3*E3 + E32a^4 + E31b^5)
 
-pDiv = toPoly.pm("E3^2*S^16 + 2*E32a*E3*S^14 - 16*E3*S^13 + ... + 49*E32a^2*E3^4")
+### Ex 3:
+R = c(3,0,-2)
+sol = solve.S3HtD.E32E31r(R)
+
+test.S3HtD.E32E31r(sol)
 
 
 ##########
@@ -1187,9 +1201,13 @@ E21a^2 - (E2*S - 3*E3)*E21a + E3*S^3 - 6*E3*E2*S + E2^3 + 9*E3^2 # = 0
 
 # p1, p2, p3, p4 = polys from above;
 pR = solve.lpm(p3, p1, p2, p4, xn=c("DE21", "E21a", "E2"))
+pR = pR[[3]]$Rez;
+pR = div.pm(pR, "(E3*S^2 + E32a)^2", "S")$Rez;
+pR = div.pm(pR, "(S^6 - 8*E3*S^3 - 2*E31b*S^2 - 2*E32a*S + 7*E3^2)^2", "S")$Rez;
 str(pR)
-# TODO: Order 30, with 222 monomials; (was 542 monomials)
 # TRUE roots: P[14];
+# [was] Order 26, with 132 monomials;
+# [was] Order 30, with 222 monomials;
 
 
 ### Classic Poly: P[42]
