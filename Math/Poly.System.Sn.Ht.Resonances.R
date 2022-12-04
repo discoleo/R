@@ -40,6 +40,16 @@ resonance = function(p, n=3) {
 	return(r);
 }
 
+### Test
+
+test.res.T3 = function(k, n, pow=c(3,1,1)) {
+	sapply(seq(0, n-1), function(i) {
+		id = c(i, i+1, i+2);
+		id = (id %% n) + 1;
+		sum(k[id] * pow);
+	});
+}
+
 
 #####################
 #####################
@@ -177,7 +187,7 @@ p = 13;
 ### Sys[i]:
 
 ### System with [i] Variables
-# - for i = all odd;
+# - for i = any odd;
 ### Order: k + n
 # - Base-Eq with terms:
 #   x[1]^k*x[2]^n, x[2]^k*x[3]^n, ..., x[i-1]^k*x[i]^n, x[i]^k*x[1]^n;
@@ -196,8 +206,9 @@ p = 3;
 ### Non-Trivial & Combinations:
 p = c(11, 33);
 # ex: p = 11 =>
-# new solution:
+# new solutions:
 # (x1,x2,x3,x4,x5) * (m^1, m^9, m^4, m^3, m^5);
+# (x1,x2,x3,x4,x5) * (m^2, m^7, m^8, m^6, m^10);
 
 
 #######
@@ -378,8 +389,9 @@ p = c();
 ### Order: (p1,1,1)
 
 ### 5 Variables:
-# p = Divisors(p1^3*(p1-1)*(2*p1^2 + 3))
-# - but condition is often insufficient;
+# p = Divisors(p1^5 + 5*p1^2 - 5*p1 + 2)
+#   = (p1 + 2) * (p1^4 - 2*p1^3 + 4*p1^2 - 3*p1 + 1)
+# - Note: finding the explicit/individual powers is a headache;
 
 ### Order: 2+1+1
 ### 5 Variables
@@ -388,21 +400,41 @@ p = c();
 ### Trivial:
 p = 4;
 ### Non-Trivial & Combinations:
-p = c(11, 22); # & higher
+p = c(11, 22, 44);
 # ex: p = 11 =>
-# new solution:
+# new solutions:
 # (x1,x2,...,x5) * (m^1, m^4, m^5, m^9, m^3);
 # (1,4,5), (4,5,9), (5,9,3), (9,3,1), (3,1,4)
+# (x1,x2,...,x5) * (m^2, m^8, m^10, m^7, m^6);
 # ex: p = 22 =>
 # new solution:
 # (x1,x2,...,x5) * (m^1, m^15, m^5, m^9, m^3);
 # (1,15,5), (15,5,9), (5,9,3), (9,3,1), (3,1,15)
+k = c(1,4,5,9,3);
+k = c(2,8,10,7,6);
+test.res.T3(k, n=5, pow=c(2,1,1))
 
 
 ### Order: 3+1+1
+# i = 5; p = c(3,1,1)
+# p = Divisors(25*11)
+### Trivial:
+p = 5;
+### Non-Trivial & Combinations:
+p = c(11); # & combinations;
+# ex: p = 11 =>
+# new solutions:
+# (x1,x2,...,x6) * (m^1, m^5, m^3, m^4, m^9);
+# (1,5,3), (5,3,4), (3,4,9), (4,9,1), (9,1,5);
+# (x1,x2,...,x6) * (m^2, m^10, m^6, m^8, m^7);
+k = c(1,5,3,4,9);
+k = c(2,10,6,8,7);
+test.res.T3(k, n=5, pow=c(3,1,1))
+
+
 ### 6 Variables
 # i = 6; p = c(3,1,1)
-# p = Divisors(???);
+# p = Divisors(720);
 ### Trivial:
 p = 5;
 ### Non-Trivial & Combinations:
