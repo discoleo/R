@@ -30,6 +30,7 @@ source("Polynomials.Helper.EP.R")
 
 
 ### Resonances
+# n = number of variables;
 resonance = function(p, n=3) {
 	# "Resonance" with Roots of unity;
 	# currently only for 2-variable terms: x^p1*y^p2;
@@ -128,6 +129,41 @@ p = c(7, 35);
 # new solution: (x,y,z) * (m^1, m^2, m^4);
 # ex: p = 35 =>
 # new solution: (x,y,z) * (m^1, m^16, m^11);
+
+
+#####################
+### Dual Resonances
+### Conjugate Powers:
+# (n^2 + k^2 - n*k) is the same!
+
+###
+# (n, 1) => p | (n^2 - n + 1);
+# (n, n-1) => p | (n^2 - n + 1);
+
+###
+# (n, i) => p | (n^2 + i^2 - n*i);
+# (n, n - i) => p | (n^2 + i^2 - n*i);
+
+### Examples:
+
+### Ex 1:
+p = 7;
+# n = c(3, 2) & c(1, 3);
+# New solutions:
+# (x,y,z) * (m^1, m^2, m^4);
+# (x,y,z) * (m^3, m^6, m^5);
+# - see a solved example in file:
+#   Poly.System.Hetero.Symmetric.S3.Mixed.Dual.R;
+
+
+### Ex 2:
+p = 13;
+# n = c(4, 3) & c(1, 4);
+# New solutions:
+# (x,y,z) * (m^1, m^3, m^9);
+# (x,y,z) * (m^2, m^6, m^5);
+# (x,y,z) * (m^4, m^12, m^10);
+# (x,y,z) * (m^7, m^8, m^11);
 
 
 ######################
