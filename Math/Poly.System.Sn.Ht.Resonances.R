@@ -463,8 +463,11 @@ p = c(9); # possible others
 ####################
 
 ### Sys: 5 Variables
-### Order: c(p1, 1, p1)
 
+### Order: c(p1, p2, p1)
+# p = Divisors((2*p1 + p2) * (p1^2 + p1*p2 - p2^2)^2);
+
+### Special Case: c(p1, 1, p1)
 # p = Divisors((2*p1 + 1) * (p1^2 + p1 - 1)^2);
 
 ### Ex 1: c(2,1,2)
@@ -473,4 +476,8 @@ p = c(9); # possible others
 
 ### Ex 2: c(3,1,3)
 # p = Divisors(7 * 11^2);
+
+
+### Ex 3: c(4,5,4)
+# p = Divisors(13 * 11^2);
 
