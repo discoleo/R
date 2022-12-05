@@ -40,6 +40,18 @@ resonance = function(p, n=3) {
 	return(r);
 }
 
+diag.T3 = function(x, n) {
+	if(length(x) != 3) {
+		stop("Number of powers is not 3!");
+	}
+	m = diag(x[1], n);
+	for(nc in seq(n-1)) m[nc, nc + 1] = x[2];
+	for(nc in seq(n-2)) m[nc, nc + 2] = x[3];
+	m[n-1, 1] = x[3];
+	m[n, 1] = x[2]; m[n, 2] = x[3];
+	return(m);
+}
+
 ### Test
 
 test.res.T3 = function(k, n, pow=c(3,1,1)) {
@@ -334,6 +346,8 @@ p = c(7, 9, 21, 63);
 # a^2*c^4 - 2*a^4*c^2 + 4*b^2*a^3*c - b^4*a^2 + a^6
 
 
+### Sys: 4 Variables
+
 ### Order: 2+1+1
 ### 4 Variables
 # i = 4; p = c(2,1,1)
@@ -386,6 +400,7 @@ p = c();
 # (5,7,5), (7,5,7), (5,7,5), (7,5,7)
 
 
+### Sys: 5 Variables
 ### Order: (p1,1,1)
 
 ### 5 Variables:
@@ -443,4 +458,19 @@ p = c(9); # possible others
 # new solution:
 # (x1,x2,...,x6) * (m^1, m^2, m^4, m^8, m^7, m^5);
 # (1,2,4), (2,4,8), (4,8,7), (8,7,5), (7,5,1), (5,1,2)
+
+
+####################
+
+### Sys: 5 Variables
+### Order: c(p1, 1, p1)
+
+# p = Divisors((2*p1 + 1) * (p1^2 + p1 - 1)^2);
+
+### Ex 1: c(2,1,2)
+# p = Divisors(125);
+
+
+### Ex 2: c(3,1,3)
+# p = Divisors(7 * 11^2);
 
