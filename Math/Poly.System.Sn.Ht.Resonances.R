@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric:
 ### Resonances
 ###
-### draft v.0.1a
+### draft v.0.1c
 
 
 ### Resonances in Polynomial Systems
@@ -57,6 +57,13 @@ diag.T3 = function(x, n) {
 test.res.T3 = function(k, n, pow=c(3,1,1)) {
 	sapply(seq(0, n-1), function(i) {
 		id = c(i, i+1, i+2);
+		id = (id %% n) + 1;
+		sum(k[id] * pow);
+	});
+}
+test.res.T2 = function(k, n, pow) {
+	sapply(seq(0, n-1), function(i) {
+		id = c(i, i+1);
 		id = (id %% n) + 1;
 		sum(k[id] * pow);
 	});
@@ -480,4 +487,17 @@ p = c(9); # possible others
 
 ### Ex 3: c(4,5,4)
 # p = Divisors(13 * 11^2);
+
+
+##########
+### Order: c(p1, p2, 1)
+# p = Divisors(p1^5 + p2^5 + 5*p1^2*p2 - 5*p1*p2^3 + 1)
+#   = (p1 + p2 + 1) * (...);
+divisors.S5T3 = function(p) {
+	# assumes p[3] == 1;
+	p1 = p[1]; p2 = p[2];
+	d = p1^4 + p2^4 - p1^3*p2 - p1*p2^3 + p1^2*p2^2 - p1^3 - p2^3 + 2*p1^2*p2 - 3*p1*p2^2 +
+		+ p1^2 + p2^2 + 2*p1*p2 - p1 - p2 + 1;
+	return(d);
+}
 
