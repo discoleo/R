@@ -42,21 +42,27 @@
 ### Parser ###
 ##############
 
-### Class polynom => "pm"
-as.pm.polynom = function(p, xn="x", tol=1E-8) {
+### Class polynomial => "pm"
+# from package polynom;
+as.pm.polynomial = function(p, xn="x", sort=NULL, tol=1E-8) {
 	if(length(xn) != 1) stop("Only univariate polynomials are supported!");
 	p = unclass(p);
 	if(tol != 0) p = round0(p, tol=tol);
 	len = length(p);
 	pR  = data.frame(x = seq(0, len-1), coeff = p);
 	names(pR)[1] = xn;
+	if( ! is.null(sort)) pR = sort.pm(pR, xn);
 	class(pR) = c("pm", class(pR));
 	return(pR);
 }
 
 ### Parse expressions / polynomials
-as.pm = function(p) {
-	return(toPoly.pm(p));
+as.pm = function (p, ...) UseMethod("as.pm");
+as.pm.default = function(p, ...) {
+	# if(inherits(p, "polynomial")) {
+		# return(as.pm.polynomial(p, ...));
+	# }
+	return(toPoly.pm(p, ...));
 }
 # Read from Clipboard
 polyClip = function(env=parent.frame(), reduce=FALSE, verbose=FALSE) {
