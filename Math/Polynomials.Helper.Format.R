@@ -19,6 +19,11 @@
 
 # TODO: analyse efficiency;
 cut.character.int = function(n, w, extend=2) {
+	if(w == 0) {
+		len = length(n);
+		pos = rbind(seq(len), seq(len));
+		return(pos);
+	}
 	n = n + extend;
 	cumlen = cumsum(n);
 	max = tail(cumlen, 1) %/% w + 1;
