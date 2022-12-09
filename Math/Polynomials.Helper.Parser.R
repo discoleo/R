@@ -42,8 +42,17 @@
 ### Parser ###
 ##############
 
-### Class polynomial => "pm"
-# from package polynom;
+### Parse expressions / polynomials
+as.pm = function (p, ...) UseMethod("as.pm");
+as.pm.default = function(p, ...) {
+	# if(inherits(p, "polynomial")) {
+		# return(as.pm.polynomial(p, ...));
+	# }
+	return(toPoly.pm(p, ...));
+}
+
+# Class polynomial => "pm"
+# - from package polynom;
 as.pm.polynomial = function(p, xn="x", sort=NULL, tol=1E-8) {
 	if(length(xn) != 1) stop("Only univariate polynomials are supported!");
 	p = unclass(p);
@@ -56,20 +65,13 @@ as.pm.polynomial = function(p, xn="x", sort=NULL, tol=1E-8) {
 	return(pR);
 }
 
-### Parse expressions / polynomials
-as.pm = function (p, ...) UseMethod("as.pm");
-as.pm.default = function(p, ...) {
-	# if(inherits(p, "polynomial")) {
-		# return(as.pm.polynomial(p, ...));
-	# }
-	return(toPoly.pm(p, ...));
-}
 # Read from Clipboard
 polyClip = function(env=parent.frame(), reduce=FALSE, verbose=FALSE) {
 	p = paste0(readClipboard(), collapse="\n");
 	toPoly.pm(p, env=env, reduce=reduce, verbose=verbose);
 }
-# Parser:
+
+### Parser:
 toPoly.pm = function(e, env=NULL, reduce=FALSE, verbose=TRUE) {
 	if(is.null(env)) env = parent.frame();
 	if(is.character(e)) {
