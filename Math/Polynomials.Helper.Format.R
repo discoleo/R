@@ -180,6 +180,9 @@ sort.pm.proper = function(p, xn = c("b", "R", "E", "S"), warn=TRUE, do.grep=TRUE
 }
 
 # used by: as.character.pm()
+# sort.order = default decreasing;
+# do.rev = reverse order of multiple leading variables:
+#   (x,y,z) => (z,y,x);
 sort.simple.pm = function(p, leading=1, do.rev=FALSE, sort.order=TRUE) {
 	if(length(leading) == 1) {
 		p = p[order(p[, leading], decreasing=sort.order), , drop=FALSE];
@@ -191,7 +194,10 @@ sort.simple.pm = function(p, leading=1, do.rev=FALSE, sort.order=TRUE) {
 		p = p[id,];
 		if(do.rev) leading = rev(leading);
 	}
-	p = cbind(p[,-leading, drop=FALSE], p[,leading, drop=FALSE]);
+	orderVars = ! is.na(do.rev);
+	if(orderVars) {
+		p = cbind(p[ , -leading, drop=FALSE], p[ , leading, drop=FALSE]);
+	}
 	return(p)
 }
 
@@ -241,7 +247,9 @@ print.p = function(..., print=TRUE) {
 	if(print) { cat(ch); cat("\n"); }
 	invisible(ch);
 }
-print.pm.df = function(p, n=100) {
+# print as data.frame;
+print.df = function(p, n=100) UseMethod("print.df");
+print.df.pm = function(p, n=100) {
 	if(is.null(n) || is.na(n)) {
 		print.data.frame(p);
 		return(invisible());
@@ -249,6 +257,10 @@ print.pm.df = function(p, n=100) {
 	head(as.data.frame(p), n=n);
 }
 
+# - leading = "leading" variable, printed at the end of the monomials;
+# - do.sort = sort monomials based on "leading" variables;
+# - do.rev = order "leading" variables in reverse order;
+# - sort.order = default descending;
 as.character.pm = function(p, leading=NA, do.sort=TRUE, do.rev=FALSE, sort.order=TRUE,
 		simplify.complex=TRUE, brackets.complex=TRUE) {
 	if(inherits(p, "pm.div")) {
@@ -268,7 +280,7 @@ as.character.pm = function(p, leading=NA, do.sort=TRUE, do.rev=FALSE, sort.order
 			p = sort.simple.pm(p, leading=leading, do.rev=do.rev);
 		} else {
 			if(do.rev) leading = rev(leading);
-			p = cbind(p[,-leading, drop=FALSE], p[,leading, drop=FALSE]);
+			p = cbind(p[ , -leading, drop=FALSE], p[ , leading, drop=FALSE]);
 		}
 	}
 	###
