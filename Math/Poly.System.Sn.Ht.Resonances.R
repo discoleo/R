@@ -460,9 +460,10 @@ p = 7;
 # Note: unfortunate repetition of "p";
 
 divisors.S5T3 = function(n) {
+	# Note: (k+n+p) is omitted;
 	k = n[1]; p = n[3]; n = n[2];
 	k^4 + n^4 + p^4 - k^3*n - k^3*p - k*n^3 - n^3*p - k*p^3 - n*p^3 +
-		+ k^2*n^2 + 2*k^2*n*p + k^2*p^2 - 3*k*n^2*p + 2*k*n*p^2 + n^2*p^2;
+		+ k^2*n^2 + k^2*p^2 + n^2*p^2 + k*n*p*(2*(k + p) - 3*n);
 }
 
 
