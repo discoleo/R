@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric:
 ### Resonances
 ###
-### draft v.0.1d
+### draft v.0.1e
 
 
 ### Resonances in Polynomial Systems
@@ -559,4 +559,31 @@ divisors.S5T3 = function(p) {
 		+ p1^2 + p2^2 + 2*p1*p2 - p1 - p2 + 1;
 	return(d);
 }
+
+
+######################
+######################
+
+### Sys: 7 variables
+
+### Order: c(k,n,p)
+# p = Divisors(k^7 + n^7 + p^7 - 7*k*n^5*p - 7*k^3*n*p^3 + 14*k^2*n^3*p^2)
+
+
+######################
+######################
+
+### Sys: 9 variables
+
+### Order: c(k,n,p)
+# p = Divisors(k^9 + n^9 + p^9 - 9*k*n^7*p + 9*k^4*n*p^4 + 27*k^2*n^5*p^2 - 30*k^3*n^3*p^3)
+
+
+######################
+######################
+
+### Sys: 11 variables
+
+### Order: c(k,n,p)
+# p = Divisors(k^11 + n^11 + p^11 - 11*k*n^9*p - 11*k^5*n*p^5 + 44*k^2*n^7*p^2 - 77*k^3*n^5*p^3 + 55*k^4*n^3*p^4)
 
