@@ -208,8 +208,16 @@ is.pm = function(p, strict=FALSE) {
 	} else inherits(p, "data.frame");
 }
 # isNonZero:
-isNZ.pm = function(p) {
+isNZ.pm = function(p) return(is.NZ.pm(p));
+is.NZ.pm = function(p) {
 	is.data.frame(p) && (nrow(p) > 0);
+}
+is.zero.pm = function(p) {
+	if(is.numeric(p)) return(p == 0);
+	if(is.complex(p)) return(p == 0);
+	if(nrow(p) == 0) return(TRUE);
+	isZero = all(p$coeff == 0);
+	return(isZero);
 }
 
 ### Simple Multiplication
