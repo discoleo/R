@@ -5,7 +5,7 @@
 ###
 ### Helper Functions
 ### Multi-Variable Polynomials
-### Polynomials Matrices
+### Polynomial Matrices
 
 
 # this file:
@@ -13,6 +13,12 @@
 
 
 #########################
+
+print.mpm = function(p) {
+	ch = sapply(p, function(p) if(is.numeric(p)) p else as.character.pm(p));
+	n  = attr(p, "dim");
+	matrix(ch, nrow=n[[1]], ncol=n[[2]]);
+}
 
 
 ### Upper-Multi-Diagonal matrix
@@ -37,7 +43,7 @@ diag.lpm.character = function(p, n, ...) {
 }
 
 # - naive implementation;
-det.mpm = function(p) {
+det.mpm = function(p, verbose=FALSE) {
 	n = attr(p, "dim");
 	if(is.null(n)) stop("Not a polynomial matrix!");
 	if(length(n) != 2 && n[1] != n[2]) stop("Improper Matrix!");
@@ -52,8 +58,10 @@ det.mpm = function(p) {
 		if(n == 2) return(det2(p));
 		#
 		det3 = function(p) {
+			if(verbose) print("Started D3");
 			pR = if(is.zero.pm(p[[1]])) 0 else mult.pm(p[[1]], det2(p[c(5,6,8,9)]));
 			if( ! is.zero.pm(p[[2]])) {
+				tmp = det2(p[c(4,5,7,8)]);
 				pR = diff.pm(pR, mult.pm(p[[2]], det2(p[c(4,6,7,9)])));
 			}
 			if( ! is.zero.pm(p[[3]])) {
@@ -76,15 +84,16 @@ det.mpm = function(p) {
 		return(pR);
 	}
 	len = n*n;
-	id.m = matrix(seq(len), ncol=n);
+	id.m = matrix(seq(len), nrow=n, ncol=n);
 	pR = 0;
 	# TODO: find optimal column;
 	for(nr in seq(n)) {
 		if( ! is.zero.pm(p[[nr]])) {
+			if(verbose) print(paste0("M", n, ", Row: ", nr));
 			tmp = p[id.m[-nr, -1]];
 			attr(tmp, "dim") = c(n-1, n-1);
-			tmp = mult.pm(p[[nr]], det.mpm(tmp));
-			if(nr %% 2 == 0) pR = diff.pm(pR, tmp)
+			tmp = mult.pm(p[[nr]], det.mpm(tmp, verbose=verbose));
+			if(nr %% 2 == 0) { pR = diff.pm(pR, tmp); }
 			else pR = sum.pm(pR, tmp);
 		}
 	}
