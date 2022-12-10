@@ -420,21 +420,22 @@ mult.pm = function(p1, p2, sc=1) {
 		names(p.l) = colnames(p.df);
 		return(p.l);
 	}
+	# Zero:
+	if(inherits(p1, "data.frame") && nrow(p1) == 0) return(p1);
+	if( ! missing(p2) &&
+		inherits(p2, "data.frame") && nrow(p2) == 0) return(p2);
 	if(is.numeric(p1) || is.complex(p1) || ncol(p1) == 1) {
-		if( ! (is.numeric(p1) || is.complex(p1)) ) p1 = p1$coeff;
+		if(inherits(p1, "data.frame")) p1 = p1$coeff;
 		if(missing(p2)) p2 = p1; # Note: computes p1^2; (but may be dropped)
 		if(is.list(p2)) return(mult.sc.pm(p2, p1));
 		return(data.frame(coeff=p1*p2));
 	}
 	if( ! missing(p2)) {
 	if(is.numeric(p2) || is.complex(p2) || ncol(p2) == 1) {
-		if( ! (is.numeric(p2) || is.complex(p2)) ) p2 = p2$coeff;
+		if(inherits(p2, "data.frame")) p2 = p2$coeff;
 		return(mult.sc.pm(p1, p2));
 	}
 	}
-	# Zero:
-	if(nrow(p1) == 0) return(p1);
-	if( ! missing(p2) && nrow(p2) == 0) return(p2);
 	# TODO: drop support for simple lists
 	if(is.data.frame(p1)) {
 		p1 = split.df(p1);
