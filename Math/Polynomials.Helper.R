@@ -404,6 +404,8 @@ mult.m = function(p, m) {
 }
 mult.pm = function(p1, p2, sc=1) {
 	if(is.character(p2)) {
+		# multiply by a single variable:
+		if(length(p2) > 1) stop("Not yet implemented!");
 		idx = match(p2, names(p1));
 		if(is.na(idx)) {
 			p1[, p2] = 1;
@@ -420,7 +422,7 @@ mult.pm = function(p1, p2, sc=1) {
 	}
 	if(is.numeric(p1) || is.complex(p1) || ncol(p1) == 1) {
 		if( ! (is.numeric(p1) || is.complex(p1)) ) p1 = p1$coeff;
-		if(missing(p2)) p2 = p1;
+		if(missing(p2)) p2 = p1; # Note: computes p1^2; (but may be dropped)
 		if(is.list(p2)) return(mult.sc.pm(p2, p1));
 		return(data.frame(coeff=p1*p2));
 	}
@@ -430,6 +432,9 @@ mult.pm = function(p1, p2, sc=1) {
 		return(mult.sc.pm(p1, p2));
 	}
 	}
+	# Zero:
+	if(nrow(p1) == 0) return(p1);
+	if( ! missing(p2) && nrow(p2) == 0) return(p2);
 	# TODO: drop support for simple lists
 	if(is.data.frame(p1)) {
 		p1 = split.df(p1);
