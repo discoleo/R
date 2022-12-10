@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric:
 ### Resonances
 ###
-### draft v.0.1c-fix
+### draft v.0.1c-spec
 
 
 ### Resonances in Polynomial Systems
@@ -54,7 +54,8 @@ diag.T3 = function(x, n) {
 
 ### Test
 
-test.res.T3 = function(k, n, pow=c(3,1,1)) {
+# n = number of variables;
+test.res.T3 = function(k, pow=c(3,1,1), n=length(k)) {
 	sapply(seq(0, n-1), function(i) {
 		id = c(i, i+1, i+2);
 		id = (id %% n) + 1;
@@ -364,7 +365,7 @@ divisors.S4T3 = function(n) {
 
 ### Special Cases:
 ### k = p;
-# d = (2*k - n)*n^2;
+# d = (2*k + n)*(2*k - n)*n^2;
 ### n = k + p;
 # d = 0;
 
@@ -391,7 +392,7 @@ p = c(8, 16); # also = 4;
 ### Trivial:
 p = 5;
 ### Non-Trivial & Combinations:
-p = c(3, 15, 25, 75);
+p = c(3, 15, 25, 75, 125, 375);
 # - there are also quasi-non-trivial solutions for p = 5;
 # - p = 3 reduces to an E2-type;
 ### Ex: p = 3 =>
@@ -429,6 +430,20 @@ p = c(4,5,8); # and many more
 # (5,7,5), (7,5,7), (5,7,5), (7,5,7)
 
 
+### Special Cases:
+
+### Order: 2+3+1
+# d = 0
+p = 5;
+# (x1,x2,x3,x4) * (m^1, m^2, m^2, m^0);
+# (1,2,2), (2,2,0), (2,0,1), (0,1,2)
+p = 7;
+# (x1,x2,x3,x4) * (m^1, m^6, m^1, m^6);
+# (1,6,1), (6,1,6), (1,6,1), (6,1,6)
+# (x1,x2,x3,x4) * (m^2, m^5, m^2, m^5);
+# (2,5,2), (5,2,5), (2,5,2), (5,2,5)
+
+
 ####################
 ####################
 
@@ -459,7 +474,7 @@ p = c(11, 22, 44);
 # (1,15,5), (15,5,9), (5,9,3), (9,3,1), (3,1,15)
 k = c(1,4,5,9,3);
 k = c(2,8,10,7,6);
-test.res.T3(k, n=5, pow=c(2,1,1))
+test.res.T3(k, pow=c(2,1,1))
 
 
 ### Order: 3+1+1
@@ -476,7 +491,7 @@ p = c(11); # & combinations;
 # (x1,x2,...,x6) * (m^2, m^10, m^6, m^8, m^7);
 k = c(1,5,3,4,9);
 k = c(2,10,6,8,7);
-test.res.T3(k, n=5, pow=c(3,1,1))
+test.res.T3(k, pow=c(3,1,1))
 
 
 ### 6 Variables
