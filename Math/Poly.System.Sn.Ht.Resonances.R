@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric:
 ### Resonances
 ###
-### draft v.0.1c
+### draft v.0.1c-fix
 
 
 ### Resonances in Polynomial Systems
@@ -349,20 +349,34 @@ p = c(7, 9, 21, 63);
 ### 3 Powers ###
 ################
 
-## Order (a,b,c)
-# a^2*c^4 - 2*a^4*c^2 + 4*b^2*a^3*c - b^4*a^2 + a^6
-
-
 ### Sys: 4 Variables
+
+### Order (k,n,p)
+# p = Divisors(k^4 + p^4 - n^4 + 4*k*p*n^2 - 2*k^2*p^2)
+#   = Divisors((k+n+p) * (...));
+
+divisors.S4T3 = function(n) {
+	# Note: (k+n+p) is omitted;
+	k = n[1]; p = n[3]; n = n[2];
+	d = k^3 + p^3 - n^3 - k*p*(k + p) - n*(k - p)^2 + n^2*(k + p);
+	return(d);
+}
+
+### Special Cases:
+### k = p;
+# d = (2*k - n)*n^2;
+### n = k + p;
+# d = 0;
+
 
 ### Order: 2+1+1
 ### 4 Variables
 # i = 4; p = c(2,1,1)
-# p = Divisors(2^6);
+# p = Divisors(16);
 ### Trivial:
 p = 4;
 ### Non-Trivial & Combinations:
-p = c();
+p = c(8, 16); # also = 4;
 # - there are various quasi-non-trivial solutions;
 ### Ex: p = 8 =>
 # new "non-trivial" solution:
@@ -373,20 +387,25 @@ p = c();
 ### Order: 3+1+1
 ### 4 Variables
 # i = 4; p = c(3,1,1)
-# p = Divisors(3^3*5^2);
+# p = Divisors(75);
 ### Trivial:
 p = 5;
 ### Non-Trivial & Combinations:
-p = c(15);
-# - the computed ones do NOT work;
-# - but there are quasi-non-trivial solutions for p = 5;
+p = c(3, 15, 25, 75);
+# - there are also quasi-non-trivial solutions for p = 5;
+# - p = 3 reduces to an E2-type;
+### Ex: p = 3 =>
+# "non-trivial" solution:
+# (x1,x2,x3,x4) * (m^1, m^2, m^1, m^2);
+# (1,2,1), (2,1,2), (1,2,1), (2,1,2)
 ### Ex: p = 5 =>
-# new "non-trivial" solution:
+# "non-trivial" solutions:
 # (x1,x2,x3,x4) * (m^1, m^2, m^0, m^4);
 # (1,2,0), (2,0,4), (0,4,1), (4,1,2)
+# (x1,x2,x3,x4) * (m^3, m^2, m^4, m^0);
 # (3,2,4), (2,4,0), (4,0,3), (0,3,2)
 ### Ex: p = 15 =>
-# new "non-trivial" solution:
+# "non-trivial" solution:
 # (x1,x2,x3,x4) * (m^1, m^11, m^1, m^11);
 # (1,11,1), (11,1,11), (1,11,1), (11,1,11)
 
@@ -394,18 +413,24 @@ p = c(15);
 ### Order: 4+1+1
 ### 4 Variables
 # i = 4; p = c(4,1,1)
-# p = Divisors(2^8*3*5);
+# p = Divisors(6*40);
 ### Trivial:
 p = 6;
 ### Non-Trivial & Combinations:
-p = c();
-# - some of the computed ones do NOT work;
-# - but there are various quasi-non-trivial solutions;
+p = c(4,5,8); # and many more
+# - there are various quasi-non-trivial solutions;
+### Ex: p = 5 =>
+# "non-trivial" solution:
+# (x1,x2,x3,x4) * (m^1, m^2, m^4, m^3);
+# (1,2,4), (2,4,3), (4,3,1), (3,1,2)
 ### Ex: p = 8 =>
-# new "non-trivial" solution:
+# "non-trivial" solution:
 # (x1,x2,x3,x4) * (m^5, m^7, m^5, m^7);
 # (5,7,5), (7,5,7), (5,7,5), (7,5,7)
 
+
+####################
+####################
 
 ### Sys: 5 Variables
 ### Order: (p1,1,1)
