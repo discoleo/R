@@ -69,6 +69,22 @@ as.conj.S5 = function(x, nrow, rm.rows=0) {
 	return(r);
 }
 
+# Compare specific coefficients of E11b;
+cmpE11b = function(p1, p2, n=NULL, xn="E11b") {
+	if( ! is.null(n)) {
+		id = match(xn, names(p1));
+		if( ! is.na(id)) {
+			p1 = p1[p1[,id] == n, - id, drop=FALSE];
+		}
+		id = match(xn, names(p2));
+		if( ! is.na(id)) {
+			p2 = p2[p2[,id] == n, - id, drop=FALSE];
+		}
+	}
+	pR = diff.pm(p1, p2);
+	return(pR);
+}
+
 
 #######################
 #######################
@@ -356,18 +372,18 @@ x.all = polyS(R2, "E3V011")
 R2 = c(0,0,0,1,2)
 x.all = polyS(R2, "E4V0001")
 
-max.pow.S(c("E3V131", "E3Vn131", "E3V531", "E3Vn531"), pow=1, FUN=f1, skip.path=T, R=c(1,2.8,1,0,2), R2=c(5,3,1,0,2))
+max.pow.S(c("E4V1001", "E4Vn1001", "E4V1001", "E4Vn1001"), pow=3, FUN=f3, skip.path=T, R=c(1,0,0,1,2), R2=c(1.3,0,0,1,2))
 max.pow.S(c("E3V111", "E3V1n11", "E3V131", "E3V1n31"), pow=1, FUN=f1, skip.path=F, npos=2, R=c(1.2,1,0.9,0,2), R2=c(0.9,3,1.2,0,2))
 
 
 fc = function(R) { S = R[1]; E3 = R[3]; E4 = R[4]; E5 = R[5];
 	c(...); }
 
-cc = list(c(1,0,0,1,2), c(1.1,0,0,1,1.9), c(1.3,0,0,1,2.3), c(1.9,0,0,0.9,2.1))
+cc = list(c(1,0,0,1,2), c(1.3,0,0,1,2))
 tmp = sapply(cc, function(R) polyS(R, "E4V1001"));
 c0 = c(...)
 m = sapply(cc, fc)
-solve(t(m), c0 - sapply(cc, f0))
+solve(t(m), c0 - sapply(cc, f4))
 
 
 27*(E11a^7 + E11b^7)*E5^2 +
@@ -375,7 +391,8 @@ solve(t(m), c0 - sapply(cc, f0))
 	- (E11a^6 + E11b^6)*(27*E5^2*S^2 - 4*E4^3 + 18*E3*E4*E5) - (E11a*E11b)^6 +
 	+ 81*E11a*E11b*(E11a^5 + E11b^5)*E5^2 + 9*(E11a*E11b)^3*(E11a^3 + E11b^3)*E5*S +
 	# x^5:
-	+ (E11a^5 + E11b^5)*(9*E5^2*S^4 + 4*E3^3*E5 - 90*E3*E5^2*S - 225*E4*E5^2 - E3^2*E4^2) +
+	+ (E11a^5 + E11b^5)*(9*E5^2*S^4 - E4^3*S^2 - 90*E3*E5^2*S - 3*E4^2*E5*S +
+		+ 4*E3^3*E5 - 225*E4*E5^2 - E3^2*E4^2) +
 	+ (E11a*E11b)*(E11a^4 + E11b^4)*(9*E3^2*E5*S) +
 	+ (E11a*E11b)^2*(E11a^3 + E11b^3)*(27*E5^2 - 18*E3*E5*S^2) +
 	- (E11a*E11b)^3*(E11a^2 + E11b^2)*(2*E5*S^3 + 15*E3*E5) +
@@ -383,7 +400,7 @@ solve(t(m), c0 - sapply(cc, f0))
 	+ 4*(E11a*E11b)^5*E3*S +
 	# x^4: Note: 1 term from x^5 contributes as well;
 	+ (E11a^4 + E11b^4)*(48*E3*E5^2*S^3 - E5^2*S^6 - 10*E3^3*E5*S^2 +
-		+ 150*E3^2*E5^2 - 33*E4^4 + 155*E3*E4^2*E5) +
+		+ 150*E3^2*E5^2 - 33*E4^4 + 155*E3*E4^2*E5 - 31*E4^2*S^3*E5 + 345*E4*S^2*E5^2) +
 	- (E11a*E11b)*(E11a^3 + E11b^3)*(21*E5^2*S^4 + 11*E3^3*E5 - 7*E3^2*E5*S^3 + 270*E3*E5^2*S) +
 	+ (E11a*E11b)^2*(E11a^2 + E11b^2)*(18*E5^2*S^2 - E3^4 + 4*E3*E5*S^4 + 36*E3^2*E5*S) +
 	- (E11a*E11b)^3*(E11a + E11b)*(10*E5^2 - 6*E3^3*S) +
@@ -478,7 +495,7 @@ f3 = function(R) {
 }
 f4 = function(R) {
 	S = R[1]; E11a = R[2]; E3 = R[3]; E4 = R[4]; E5 = R[5];
-	cc = - E5^2*S^6 + 48*E3*E5^2*S^3 - 10*E3^3*E5*S^2 +
+	cc = - E5^2*S^6 + 48*E3*E5^2*S^3 - 31*E4^2*S^3*E5 - 10*E3^3*E5*S^2 + 345*E4*S^2*E5^2 +
 		+ 150*E3^2*E5^2 - 33*E4^4 + 155*E3*E4^2*E5 +
 	- E11a^5*(2*E3^2 + 3*E5*S) + E11a^4*(20*E3*E5 + 4*E5*S^3 - 6*E3^2*S^2) +
 	- E11a^3*(10*E5^2 - 6*E3^3*S) +
@@ -488,11 +505,13 @@ f4 = function(R) {
 }
 f5 = function(R) {
 	S = R[1]; E11a = R[2]; E3 = R[3]; E4 = R[4]; E5 = R[5];
-	9*S^4 - 90*E3*S + 4*E3^3/E5 - 225*E4 - E3^2*E4^2/E5^2 +
-	+ E11a*(9*E3^2*S/E5) +
-	+ E11a^2*(27 - 18*E3*S^2/E5) +
-	- E11a^3*(2*S^3/E5 + 15*E3/E5) - E11a^4*(3*S/E5 + 2*E3^2/E5^2) +
-	+ 4*E11a^5*E3*S/E5^2;
+	cc = 9*E5^2*S^4 - E4^3*S^2 - 3*E4^2*E5*S - 90*E3*E5^2*S +
+			- E3^2*E4^2 + 4*E3^3*E5 - 225*E4*E5^2 +
+		+ E11a*(9*E3^2*E5*S) +
+		- E11a^2*(18*E3*E5*S^2 - 27*E5^2) +
+		- E11a^3*(2*E5*S^3 + 15*E3*E5) +
+		- E11a^4*(3*E5*S + 2*E3^2) + E11a^5*(4*E3*S);
+	cc / E5^2;
 }
 f6 = function(R) {
 	S = R[1]; E11a = R[2]; E3 = R[3]; E4 = R[4]; E5 = R[5];
