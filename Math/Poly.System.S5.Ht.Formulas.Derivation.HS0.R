@@ -58,9 +58,9 @@ solve.path.S5 = function(R, R0, x0, steps=6, start.at=0, check=TRUE, verbose=FAL
 	}
 	return(x.all);
 }
-polyS = function(R, x0, sol.rm=NULL, debug=FALSE, tol=5E-7) {
+polyS = function(R, x0, sol.rm=NULL, debug=FALSE, ..., tol=5E-7) {
 	if(is.character(x0)) x0 = x0All[[x0]];
-	x.all = solve.all(solve.S5HtMixed.Num, x0, R=R, debug=debug);
+	x.all = solve.all(solve.S5HtMixed.Num, x0, R=R, ..., debug=debug);
 	if( ! is.null(sol.rm)) x.all = x.all[ - sol.rm, ];
 	if(nrow(x.all) != 7) {
 		# stop("Wrong number of solutions!");
