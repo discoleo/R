@@ -67,12 +67,22 @@ polyS = function(R, x0, sol.rm=NULL, debug=FALSE, tol=5E-7) {
 		cat("ERROR: Wrong number of solutions!\n");
 		return(x.all);
 	}
+	id = which.perm.S5(x.all, verbose=FALSE);
+	if(ncol(id) > 0) {
+		cat("Warning: duplicate roots!\n");
+		print(id);
+	}
 	p = poly.calc0(apply(x.all, 1, function(x) sum(x * x[c(3,4,5,1,2)])), tol=tol) * 27;
 	print(p);
 	return(x.all);
 }
 poly.calc.S5 = function(x, tol=5E-7) {
-	if(is.character(x)) x = x0All[[x]];
+	if(is.character(x)) {
+		x = x0All[[x]];
+		R = round(test.S5Ht(x[1,, drop=FALSE]), 3);
+		print(R[,1]);
+		x = solve.all(solve.S5HtMixed.Num, x0=x, R=R, debug=FALSE);
+	}
 	if(length(x) != 35) stop("Wrong roots!");
 	p = poly.calc0(apply(x, 1, function(x) sum(x * x[c(3,4,5,1,2)])), tol=tol) * 27;
 	return(p);
