@@ -815,6 +815,8 @@ eval.pm.sol = function(p, sol, ..., round0=TRUE, tol=1E-7) {
 
 ### Solve Variable
 # - list of polynomials is usually in ascending order of powers of substituted variables;
+# - xn = vector of variables which are sequentially eliminated;
+#   -- can be shorter than (number of polynomials - 1);
 solve.lpm = function(..., xn, stop.at=NULL, asBigNum=FALSE) {
 	pL  = list(...);
 	len = length(pL);
@@ -829,9 +831,10 @@ solve.lpm = function(..., xn, stop.at=NULL, asBigNum=FALSE) {
 	}
 	#
 	pR = list();
-	for(id in seq(len - 1)) {
+	lenX = min(len - 1, length(xn));
+	for(id in seq(lenX)) {
 		cat(paste0("\nStarting step: ", id, "\n"));
-		if( ! is.null(stop.at) && id == (len - 1)) {
+		if( ! is.null(stop.at) && id == lenX) {
 			# Stop only during the last elimination;
 			tmp = solve.pm(pL[[id+1]], pL[[id]], xn=xn[[id]], stop.at=stop.at, asBigNum=asBigNum);
 		} else {
@@ -849,6 +852,10 @@ solve.lpm = function(..., xn, stop.at=NULL, asBigNum=FALSE) {
 			# TODO: reuse powers of tmp$x0, tmp$div;
 			pL[[id2]] = replace.fr.pm(pL[[id2]], tmp$x0, tmp$div, xn=xn[[id]]);
 		}
+	}
+	lenX = lenX + 2; # Note: + 2 avoids repeating (lenX + 1);
+	if(lenX <= len) {
+		pR = c(pR, pL[seq(lenX, len)]);
 	}
 	return(pR);
 }
