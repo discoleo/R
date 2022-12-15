@@ -7,7 +7,7 @@
 ### S5: Hetero-Symmetric
 ### Useful Formulas
 ###
-### draft v.0.1a-E3
+### draft v.0.1b
 
 
 ### Formulas:
@@ -209,14 +209,18 @@ poly.calc(x)
 	# TODO: + ... +
 	- 5^5*E5^4*(E11b^2 + 3*E11a*E11b + E11a^2) # = 0
 
-# Note: some R-values are still fixed!
+
+# Note:
+# - some R-values are still fixed!
+# - the functions: f6(), ..., f0() are in file:
+#   Poly.System.S5.Ht.Formulas.Derivation.Coeffs.R;
 solve.S5HtMixed = function(R, debug=TRUE) {
 	coeff = coeff.S5HtMixed(R);
 	E11b = roots(coeff);
 	if(debug) print(E11b);
-	S = R[1]; E11a = R[2]; E5 = R[5];
+	S = R[1]; E11a = R[2]; E3 = R[3]; E5 = R[5];
 	E2 = R[2] + E11b;
-	x1 = sapply(E2, function(E2) roots(c(1, -S, E2, -R[3], R[4], -E5)));
+	x1 = sapply(E2, function(E2) roots(c(1, -S, E2, -E3, R[4], -E5)));
 	x1 = as.vector(x1);
 	# Robust:
 	# TODO
@@ -224,18 +228,13 @@ solve.S5HtMixed = function(R, debug=TRUE) {
 }
 coeff.S5HtMixed = function(R) {
 	S = R[1]; E11a = R[2]; E3 = R[3]; E4 = R[4]; E5 = R[5];
-	# Note: still assumes E3 = E4 = 0!
-	coeff = c(27*E5^2, - 27*S^2*E5^2 + 81*E5^2*E11a + 9*S*E5*E11a^3 - E11a^6,
-		9*S^4*E5^2 + 27*E5^2*E11a^2 - 2*S^3*E5*E11a^3 - 3*S*E5*E11a^4,
-		- S^6*E5^2 - 21*S^4*E5^2*E11a + 18*S^2*E5^2*E11a^2 - 10*E5^2*E11a^3 + 4*S^3*E5*E11a^4 - 3*S*E5*E11a^5,
-		- 50*S^3*E5^3 + 4*S^6*E5^2*E11a - 375*S*E5^3*E11a + 12*S^4*E5^2*E11a^2 - 68*S^2*E5^2*E11a^3 +
-			- 10*E5^2*E11a^4 - 2*S^3*E5*E11a^5 + 9*S*E5*E11a^6,
-		14*S^5*E5^3 - 3125*E5^4 + 200*S^3*E5^3*E11a - 6*S^6*E5^2*E11a^2 - 750*S*E5^3*E11a^2 +
-			+ 12*S^4*E5^2*E11a^3 + 18*S^2*E5^2*E11a^4 + 27*E5^2*E11a^5,
-		3125*S^2*E5^4 - 28*S^5*E5^3*E11a - 9375*E5^4*E11a + 200*S^3*E5^3*E11a^2 + 4*S^6*E5^2*E11a^3 +
-			- 375*S*E5^3*E11a^3 - 21*S^4*E5^2*E11a^4 + 81*E5^2*E11a^6,
-		- 625*S^4*E5^4 + 3125*S^2*E5^4*E11a + 14*S^5*E5^3*E11a^2 - 3125*E5^4*E11a^2 - 50*S^3*E5^3*E11a^3 +
-			- S^6*E5^2*E11a^4 + 9*S^4*E5^2*E11a^5 - 27*S^2*E5^2*E11a^6 + 27*E5^2*E11a^7
+	# Note: still assumes E4 == 0 || E11a == 0;
+	if(E4 != 0 && E11a != 0) {
+		warning("The results are NOT exact!");
+		# but may be still useful to indicate where the true roots are;
+	}
+	# Note: f[i]() are divided by E5^2;
+	coeff = c(27, f6(R), f5(R), f4(R), f3(R), f2(R), f1(R), f0(R)
 	);
 	return(coeff);
 }
