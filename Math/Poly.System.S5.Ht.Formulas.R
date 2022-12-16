@@ -7,7 +7,7 @@
 ### S5: Hetero-Symmetric
 ### Useful Formulas
 ###
-### draft v.0.1b
+### draft v.0.1c
 
 
 ### Formulas:
@@ -29,7 +29,6 @@
 ####################
 
 ### Helper Functions
-
 
 source("Polynomials.Helper.R")
 source("Polynomials.Helper.EP.R")
@@ -210,11 +209,18 @@ poly.calc(x)
 	- 5^5*E5^4*(E11b^2 + 3*E11a*E11b + E11a^2) # = 0
 
 
+### Solver:
+
+# Coeffs for x2 & x3;
+source("Poly.System.S5.Ht.Formulas.CoeffX.R")
+# Coeffs for Characterstic polynomial:
+source("Poly.System.S5.Ht.Formulas.Derivation.Coeffs.R")
+
 # Note:
 # - some R-values are still fixed!
 # - the functions: f6(), ..., f0() are in file:
 #   Poly.System.S5.Ht.Formulas.Derivation.Coeffs.R;
-solve.S5HtMixed = function(R, debug=TRUE) {
+solve.S5HtMixed = function(R, debug=TRUE, all=FALSE) {
 	coeff = coeff.S5HtMixed(R);
 	E11b = roots(coeff);
 	if(debug) print(E11b);
@@ -222,9 +228,7 @@ solve.S5HtMixed = function(R, debug=TRUE) {
 	E2 = R[2] + E11b;
 	x1 = sapply(E2, function(E2) roots(c(1, -S, E2, -E3, R[4], -E5)));
 	x1 = as.vector(x1);
-	# Robust:
-	# TODO
-	return(x1);
+	return(solve.S5HtMixed.x2(x1, E11b, R, all=all));
 }
 coeff.S5HtMixed = function(R) {
 	S = R[1]; E11a = R[2]; E3 = R[3]; E4 = R[4]; E5 = R[5];
@@ -246,4 +250,36 @@ solve.S5HtMixed.Classic = function() {
 	# TODO:
 	return(x1)
 }
+###
+
+solve.S5HtMixed.x2 = function(x1, E11b, R, all=FALSE) {
+	S = R[1]; E11a = R[2]; E3 = R[3]; E4 = R[4]; E5 = R[5];
+	E11b = rep(E11b, 5);
+	E2 = E11a + E11b;
+	s = S - x1; e2 = E2 - s*x1; e3 = E3 - e2*x1; e4 = E4 - e3*x1;
+	# Robust:
+	# TODO
+	return(x1); # temporary;
+	### x2:
+	# function is defined in file:
+	# Poly.System.S5.Ht.Formulas.CoeffX.R;
+	xCoeff = coeff.S5HtMixed.x2(x1, cbind(s, e2, e3, e4), E11a, E11b);
+	v = xCoeff$v; dq = xCoeff$dq;
+	v0r = v[,1]; v1r = v[,2]; v2r = v[,3]; v3r = v[,4];
+	dq0r = dq[,1]; dq1r = dq[,2]; dq2r = dq[,3]; dq3r = dq[,4];
+	# TODO: x2;
+	# ...
+	### x3:
+	x3 = - (v3r*x2^3 + v2r*x2^2 + v1r*x2 + v0r) / (dq3r*x2^3 + dq2r*x2^2 + dq1r*x2 + dq0r);
+	### x4:
+	x4 = x2^2 - s*x2 + 2*x3*x2 - s*x3 + x3^2 + E11b - x3*x1;
+	x4 = x4 / (x1 - x3);
+	x5 = s - x2 - x3 - x4;
+	sol = cbind(x1, x2, x3, x4, x5);
+	return(sol);
+}
+
+### Examples:
+
+
 
