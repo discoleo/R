@@ -259,10 +259,10 @@ print.df.pm = function(p, n=100) {
 
 # - leading = "leading" variable, printed at the end of the monomials;
 # - do.sort = sort monomials based on "leading" variables;
-# - do.rev = order "leading" variables in reverse order;
+# - do.rev  = order "leading" variables in reverse order;
 # - sort.order = default descending;
 as.character.pm = function(p, leading=NA, do.sort=TRUE, do.rev=FALSE, sort.order=TRUE,
-		simplify.complex=TRUE, brackets.complex=TRUE) {
+		width=100, simplify.complex=TRUE, brackets.complex=TRUE) {
 	if(inherits(p, "pm.div")) {
 		if(nrow(p$Rem) > 0) warning("The Remainder of division is NOT printed!");
 		p = p$Rez;
@@ -294,20 +294,41 @@ as.character.pm = function(p, leading=NA, do.sort=TRUE, do.rev=FALSE, sort.order
 	}
 	if( ! is.null(dim(p.str))) p.str = apply(p.str, 1, paste.nonempty)
 	else p.str = paste.nonempty(p.str);
-	# Sign: 0 treated as "+"
-	isPlus = if(inherits(coeff, c("bigz", "bigq"))) (coeff > 0)
+	### Sign: 0 treated as "+" through Im(coeff) >= 0;
+	isPlus = if(inherits(coeff, c("bigz", "bigq"))) (coeff >= 0)
 		else (Re(coeff) > 0) | (Re(coeff) == 0 & Im(coeff) >= 0);
 	sign.str = ifelse(isPlus, " + ", " - ");
 	sign.str[1] = if(isPlus[1]) "" else "- ";
 	# Complex numbers
 	coeffPlus = as.abs.complex(coeff, rm.zero = simplify.complex, coupled = brackets.complex);
 	coeff.str = format.complex.pm(coeffPlus, rm.zero = simplify.complex, brackets = brackets.complex);
+	### Skip Coeff:
 	# Coeff == 1
 	hasCoeff = (coeffPlus != 1 & nchar(p.str) > 0); # TODO: verify if fixed!
+	# B0 == 0
 	isB0 = (nchar(p.str) == 0);
 	p.str[hasCoeff] = paste(coeff.str[hasCoeff], p.str[hasCoeff], sep = "*");
 	p.str[isB0] = coeff.str[isB0]; # [should be fixed]: ERROR "+ b0*";
-	return(paste(sign.str, p.str, sep="", collapse=""));
+	### Format Width
+	if(width == 0) {
+		return(paste(sign.str, p.str, sep="", collapse=""));
+	}
+	return(format.pm(p.str, sign.str=sign.str, width=width));
+}
+format.pm = function(x, width=100, sep=" +\n", indent="", sign.str=NULL) {
+	# TODO: proper flow between as.character & format.pm;
+	nch = nchar(x) + nchar(sign.str);
+	pos = cut.character.int(nch, w=width, extend=0);
+	nc = ncol(pos);
+	if(nc > 1) {
+		len = length(x);
+		sep.str = rep("", len);
+		sep.str[pos[2, -nc]] = sep;
+		indent = rep(indent, len);
+		indent[pos[1,]] = "";
+		x = paste0(indent, sign.str, x, sep.str, collapse="");
+	} else x = paste0(sign.str, x, collapse="");
+	return(x);
 }
 # coupled: "-2 + 3i" => - "(2 - 3i)";
 # de-coupled: "-2 + 3i" => - "2 + 3i";
