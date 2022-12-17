@@ -203,10 +203,158 @@ coeff.S5HtMixed.x2 = function(x1, e, E11a, E11b) {
 		+ 6*v10*e4*e3*e2*s - 3*v9*e4*e2^2*s - v6*e4*s^2 + 3*v10*e4^2*s^2 - 3*v9*e4*e3*s^2 +
 		+ 3*v8*e4*e2*s^2 - 6*v10*e4*e2^2*s^2 - v7*e4*s^3 - 4*v10*e4*e3*s^3 + 4*v9*e4*e2*s^3 +
 		- v8*e4*s^4 + 5*v10*e4*e2*s^4 - v9*e4*s^5 - v10*e4*s^6;
+	### x2:
+	f0 = - dq0r^3*b00r - 2*v0r^3*x1 + v0r*dq0r^2*b01r - v0r^2*dq0r*b02r;
+	f1 = 2*v0r^3 - 3*dq0r^2*dq1r*b00r - dq0r^3*b10r - 6*v0r^2*v1r*x1 + 2*v0r^2*dq0r*x1 + 3*v0r^2*dq0r*s +
+			+ v1r*dq0r^2*b01r + 2*v0r*dq0r*dq1r*b01r + v0r*dq0r^2*b11r - 2*v0r*v1r*dq0r*b02r - v0r^2*dq1r*b02r;
+	f2 = 6*v0r^2*v1r - 4*v0r^2*dq0r - 3*dq0r*dq1r^2*b00r - 3*dq0r^2*dq2r*b00r - 3*dq0r^2*dq1r*b10r +
+			- dq0r^3*b20r - 6*v0r*v1r^2*x1 - 6*v0r^2*v2r*x1 + 4*v0r*v1r*dq0r*x1 - v0r*dq0r^2*x1 + 2*v0r^2*dq1r*x1 +
+			+ 6*v0r*v1r*dq0r*s - 4*v0r*dq0r^2*s + 3*v0r^2*dq1r*s + v2r*dq0r^2*b01r + 2*v1r*dq0r*dq1r*b01r +
+			+ v0r*dq1r^2*b01r + 2*v0r*dq0r*dq2r*b01r + v1r*dq0r^2*b11r + 2*v0r*dq0r*dq1r*b11r - v1r^2*dq0r*b02r +
+			- 2*v0r*v2r*dq0r*b02r - 2*v0r*v1r*dq1r*b02r - v0r^2*dq2r*b02r;
+	f3 = 6*v0r*v1r^2 + 6*v0r^2*v2r - 8*v0r*v1r*dq0r + 3*v0r*dq0r^2 - 4*v0r^2*dq1r - dq1r^3*b00r +
+			- 6*dq0r*dq1r*dq2r*b00r - 3*dq0r^2*dq3r*b00r - 3*dq0r*dq1r^2*b10r - 3*dq0r^2*dq2r*b10r - 3*dq0r^2*dq1r*b20r +
+			- 2*v1r^3*x1 - 12*v0r*v1r*v2r*x1 - 6*v0r^2*v3r*x1 + 2*v1r^2*dq0r*x1 + 4*v0r*v2r*dq0r*x1 - v1r*dq0r^2*x1 +
+			- dq0r^3*x1 + 4*v0r*v1r*dq1r*x1 - 2*v0r*dq0r*dq1r*x1 + 2*v0r^2*dq2r*x1 + 3*v1r^2*dq0r*s +
+			+ 6*v0r*v2r*dq0r*s - 4*v1r*dq0r^2*s + dq0r^3*s + 6*v0r*v1r*dq1r*s - 8*v0r*dq0r*dq1r*s + 3*v0r^2*dq2r*s +
+			+ v3r*dq0r^2*b01r + 2*v2r*dq0r*dq1r*b01r + v1r*dq1r^2*b01r + 2*v1r*dq0r*dq2r*b01r + 2*v0r*dq1r*dq2r*b01r +
+			+ 2*v0r*dq0r*dq3r*b01r + v2r*dq0r^2*b11r + 2*v1r*dq0r*dq1r*b11r + v0r*dq1r^2*b11r + 2*v0r*dq0r*dq2r*b11r +
+			- 2*v1r*v2r*dq0r*b02r - 2*v0r*v3r*dq0r*b02r - v1r^2*dq1r*b02r - 2*v0r*v2r*dq1r*b02r +
+			- 2*v0r*v1r*dq2r*b02r - v0r^2*dq3r*b02r;
+	f4 = 2*v1r^3 + 12*v0r*v1r*v2r + 6*v0r^2*v3r - 4*v1r^2*dq0r - 8*v0r*v2r*dq0r + 3*v1r*dq0r^2 +
+			- 8*v0r*v1r*dq1r + 6*v0r*dq0r*dq1r - 4*v0r^2*dq2r - 3*dq1r^2*dq2r*b00r - 3*dq0r*dq2r^2*b00r +
+			- 6*dq0r*dq1r*dq3r*b00r - dq1r^3*b10r - 6*dq0r*dq1r*dq2r*b10r - 3*dq0r^2*dq3r*b10r - 3*dq0r*dq1r^2*b20r +
+			- 3*dq0r^2*dq2r*b20r - 6*v1r^2*v2r*x1 - 6*v0r*v2r^2*x1 - 12*v0r*v1r*v3r*x1 + 4*v1r*v2r*dq0r*x1 + 4*v0r*v3r*dq0r*x1 +
+			- v2r*dq0r^2*x1 + 2*v1r^2*dq1r*x1 + 4*v0r*v2r*dq1r*x1 - 2*v1r*dq0r*dq1r*x1 - 3*dq0r^2*dq1r*x1 +
+			- v0r*dq1r^2*x1 + 4*v0r*v1r*dq2r*x1 - 2*v0r*dq0r*dq2r*x1 + 2*v0r^2*dq3r*x1 + 6*v1r*v2r*dq0r*s +
+			+ 6*v0r*v3r*dq0r*s - 4*v2r*dq0r^2*s + 3*v1r^2*dq1r*s + 6*v0r*v2r*dq1r*s - 8*v1r*dq0r*dq1r*s + 3*dq0r^2*dq1r*s +
+			- 4*v0r*dq1r^2*s + 6*v0r*v1r*dq2r*s - 8*v0r*dq0r*dq2r*s + 3*v0r^2*dq3r*s + 2*v3r*dq0r*dq1r*b01r +
+			+ v2r*dq1r^2*b01r + 2*v2r*dq0r*dq2r*b01r + 2*v1r*dq1r*dq2r*b01r + v0r*dq2r^2*b01r + 2*v1r*dq0r*dq3r*b01r +
+			+ 2*v0r*dq1r*dq3r*b01r + v3r*dq0r^2*b11r + 2*v2r*dq0r*dq1r*b11r + v1r*dq1r^2*b11r + 2*v1r*dq0r*dq2r*b11r +
+			+ 2*v0r*dq1r*dq2r*b11r + 2*v0r*dq0r*dq3r*b11r - v2r^2*dq0r*b02r - 2*v1r*v3r*dq0r*b02r +
+			- 2*v1r*v2r*dq1r*b02r - 2*v0r*v3r*dq1r*b02r - v1r^2*dq2r*b02r - 2*v0r*v2r*dq2r*b02r - 2*v0r*v1r*dq3r*b02r;
+	f5 = 6*v1r^2*v2r + 6*v0r*v2r^2 + 12*v0r*v1r*v3r - 8*v1r*v2r*dq0r - 8*v0r*v3r*dq0r + 3*v2r*dq0r^2 +
+			- 4*v1r^2*dq1r - 8*v0r*v2r*dq1r + 6*v1r*dq0r*dq1r + 3*v0r*dq1r^2 - 8*v0r*v1r*dq2r + 6*v0r*dq0r*dq2r +
+			- 4*v0r^2*dq3r - 3*dq1r*dq2r^2*b00r - 3*dq1r^2*dq3r*b00r - 6*dq0r*dq2r*dq3r*b00r - 3*dq1r^2*dq2r*b10r +
+			- 3*dq0r*dq2r^2*b10r - 6*dq0r*dq1r*dq3r*b10r - dq1r^3*b20r - 6*dq0r*dq1r*dq2r*b20r - 3*dq0r^2*dq3r*b20r +
+			- 6*v1r*v2r^2*x1 - 6*v1r^2*v3r*x1 - 12*v0r*v2r*v3r*x1 + 2*v2r^2*dq0r*x1 + 4*v1r*v3r*dq0r*x1 +
+			- v3r*dq0r^2*x1 + 4*v1r*v2r*dq1r*x1 + 4*v0r*v3r*dq1r*x1 - 2*v2r*dq0r*dq1r*x1 - v1r*dq1r^2*x1 +
+			- 3*dq0r*dq1r^2*x1 + 2*v1r^2*dq2r*x1 + 4*v0r*v2r*dq2r*x1 - 2*v1r*dq0r*dq2r*x1 - 3*dq0r^2*dq2r*x1 - 2*v0r*dq1r*dq2r*x1 +
+			+ 4*v0r*v1r*dq3r*x1 - 2*v0r*dq0r*dq3r*x1 + 3*v2r^2*dq0r*s + 6*v1r*v3r*dq0r*s - 4*v3r*dq0r^2*s +
+			+ 6*v1r*v2r*dq1r*s + 6*v0r*v3r*dq1r*s - 8*v2r*dq0r*dq1r*s - 4*v1r*dq1r^2*s + 3*dq0r*dq1r^2*s +
+			+ 3*v1r^2*dq2r*s + 6*v0r*v2r*dq2r*s - 8*v1r*dq0r*dq2r*s + 3*dq0r^2*dq2r*s - 8*v0r*dq1r*dq2r*s + 6*v0r*v1r*dq3r*s +
+			- 8*v0r*dq0r*dq3r*s + v3r*dq1r^2*b01r + 2*v3r*dq0r*dq2r*b01r + 2*v2r*dq1r*dq2r*b01r +
+			+ v1r*dq2r^2*b01r + 2*v2r*dq0r*dq3r*b01r + 2*v1r*dq1r*dq3r*b01r + 2*v0r*dq2r*dq3r*b01r + 2*v3r*dq0r*dq1r*b11r +
+			+ v2r*dq1r^2*b11r + 2*v2r*dq0r*dq2r*b11r + 2*v1r*dq1r*dq2r*b11r + v0r*dq2r^2*b11r + 2*v1r*dq0r*dq3r*b11r +
+			+ 2*v0r*dq1r*dq3r*b11r - 2*v2r*v3r*dq0r*b02r - v2r^2*dq1r*b02r - 2*v1r*v3r*dq1r*b02r +
+			- 2*v1r*v2r*dq2r*b02r - 2*v0r*v3r*dq2r*b02r - v1r^2*dq3r*b02r - 2*v0r*v2r*dq3r*b02r;
+	f6 = 6*v1r*v2r^2 + 6*v1r^2*v3r + 12*v0r*v2r*v3r - 4*v2r^2*dq0r - 8*v1r*v3r*dq0r + 3*v3r*dq0r^2 +
+			- 8*v1r*v2r*dq1r - 8*v0r*v3r*dq1r + 6*v2r*dq0r*dq1r + 3*v1r*dq1r^2 - 4*v1r^2*dq2r - 8*v0r*v2r*dq2r +
+			+ 6*v1r*dq0r*dq2r + 6*v0r*dq1r*dq2r - 8*v0r*v1r*dq3r + 6*v0r*dq0r*dq3r - dq2r^3*b00r - 6*dq1r*dq2r*dq3r*b00r +
+			- 3*dq0r*dq3r^2*b00r - 3*dq1r*dq2r^2*b10r - 3*dq1r^2*dq3r*b10r - 6*dq0r*dq2r*dq3r*b10r +
+			- 3*dq1r^2*dq2r*b20r - 3*dq0r*dq2r^2*b20r - 6*dq0r*dq1r*dq3r*b20r - 2*v2r^3*x1 - 12*v1r*v2r*v3r*x1 - 6*v0r*v3r^2*x1 +
+			+ 4*v2r*v3r*dq0r*x1 + 2*v2r^2*dq1r*x1 + 4*v1r*v3r*dq1r*x1 - 2*v3r*dq0r*dq1r*x1 - v2r*dq1r^2*x1 +
+			- dq1r^3*x1 + 4*v1r*v2r*dq2r*x1 + 4*v0r*v3r*dq2r*x1 - 2*v2r*dq0r*dq2r*x1 - 2*v1r*dq1r*dq2r*x1 +
+			- 6*dq0r*dq1r*dq2r*x1 - v0r*dq2r^2*x1 + 2*v1r^2*dq3r*x1 + 4*v0r*v2r*dq3r*x1 - 2*v1r*dq0r*dq3r*x1 +
+			- 3*dq0r^2*dq3r*x1 - 2*v0r*dq1r*dq3r*x1 + 6*v2r*v3r*dq0r*s + 3*v2r^2*dq1r*s + 6*v1r*v3r*dq1r*s +
+			- 8*v3r*dq0r*dq1r*s - 4*v2r*dq1r^2*s + dq1r^3*s + 6*v1r*v2r*dq2r*s + 6*v0r*v3r*dq2r*s - 8*v2r*dq0r*dq2r*s +
+			- 8*v1r*dq1r*dq2r*s + 6*dq0r*dq1r*dq2r*s - 4*v0r*dq2r^2*s + 3*v1r^2*dq3r*s + 6*v0r*v2r*dq3r*s +
+			- 8*v1r*dq0r*dq3r*s + 3*dq0r^2*dq3r*s - 8*v0r*dq1r*dq3r*s + 2*v3r*dq1r*dq2r*b01r + v2r*dq2r^2*b01r +
+			+ 2*v3r*dq0r*dq3r*b01r + 2*v2r*dq1r*dq3r*b01r + 2*v1r*dq2r*dq3r*b01r + v0r*dq3r^2*b01r + v3r*dq1r^2*b11r +
+			+ 2*v3r*dq0r*dq2r*b11r + 2*v2r*dq1r*dq2r*b11r + v1r*dq2r^2*b11r + 2*v2r*dq0r*dq3r*b11r + 2*v1r*dq1r*dq3r*b11r +
+			+ 2*v0r*dq2r*dq3r*b11r - v3r^2*dq0r*b02r - 2*v2r*v3r*dq1r*b02r - v2r^2*dq2r*b02r - 2*v1r*v3r*dq2r*b02r +
+			- 2*v1r*v2r*dq3r*b02r - 2*v0r*v3r*dq3r*b02r;
+	f7 = 2*v2r^3 + 12*v1r*v2r*v3r + 6*v0r*v3r^2 - 8*v2r*v3r*dq0r - 4*v2r^2*dq1r - 8*v1r*v3r*dq1r +
+			+ 6*v3r*dq0r*dq1r + 3*v2r*dq1r^2 - 8*v1r*v2r*dq2r - 8*v0r*v3r*dq2r + 6*v2r*dq0r*dq2r + 6*v1r*dq1r*dq2r +
+			+ 3*v0r*dq2r^2 - 4*v1r^2*dq3r - 8*v0r*v2r*dq3r + 6*v1r*dq0r*dq3r + 6*v0r*dq1r*dq3r - 3*dq2r^2*dq3r*b00r +
+			- 3*dq1r*dq3r^2*b00r - dq2r^3*b10r - 6*dq1r*dq2r*dq3r*b10r - 3*dq0r*dq3r^2*b10r - 3*dq1r*dq2r^2*b20r +
+			- 3*dq1r^2*dq3r*b20r - 6*dq0r*dq2r*dq3r*b20r - 6*v2r^2*v3r*x1 - 6*v1r*v3r^2*x1 + 2*v3r^2*dq0r*x1 +
+			+ 4*v2r*v3r*dq1r*x1 - v3r*dq1r^2*x1 + 2*v2r^2*dq2r*x1 + 4*v1r*v3r*dq2r*x1 - 2*v3r*dq0r*dq2r*x1 +
+			- 2*v2r*dq1r*dq2r*x1 - 3*dq1r^2*dq2r*x1 - v1r*dq2r^2*x1 - 3*dq0r*dq2r^2*x1 + 4*v1r*v2r*dq3r*x1 +
+			+ 4*v0r*v3r*dq3r*x1 - 2*v2r*dq0r*dq3r*x1 - 2*v1r*dq1r*dq3r*x1 - 6*dq0r*dq1r*dq3r*x1 - 2*v0r*dq2r*dq3r*x1 +
+			+ 3*v3r^2*dq0r*s + 6*v2r*v3r*dq1r*s - 4*v3r*dq1r^2*s + 3*v2r^2*dq2r*s + 6*v1r*v3r*dq2r*s - 8*v3r*dq0r*dq2r*s +
+			- 8*v2r*dq1r*dq2r*s + 3*dq1r^2*dq2r*s - 4*v1r*dq2r^2*s + 3*dq0r*dq2r^2*s + 6*v1r*v2r*dq3r*s +
+			+ 6*v0r*v3r*dq3r*s - 8*v2r*dq0r*dq3r*s - 8*v1r*dq1r*dq3r*s + 6*dq0r*dq1r*dq3r*s - 8*v0r*dq2r*dq3r*s +
+			+ v3r*dq2r^2*b01r + 2*v3r*dq1r*dq3r*b01r + 2*v2r*dq2r*dq3r*b01r + v1r*dq3r^2*b01r + 2*v3r*dq1r*dq2r*b11r +
+			+ v2r*dq2r^2*b11r + 2*v3r*dq0r*dq3r*b11r + 2*v2r*dq1r*dq3r*b11r + 2*v1r*dq2r*dq3r*b11r + v0r*dq3r^2*b11r +
+			- v3r^2*dq1r*b02r - 2*v2r*v3r*dq2r*b02r - v2r^2*dq3r*b02r - 2*v1r*v3r*dq3r*b02r;
+	f8 = 6*v2r^2*v3r + 6*v1r*v3r^2 - 4*v3r^2*dq0r - 8*v2r*v3r*dq1r + 3*v3r*dq1r^2 - 4*v2r^2*dq2r +
+			- 8*v1r*v3r*dq2r + 6*v3r*dq0r*dq2r + 6*v2r*dq1r*dq2r + 3*v1r*dq2r^2 - 8*v1r*v2r*dq3r - 8*v0r*v3r*dq3r +
+			+ 6*v2r*dq0r*dq3r + 6*v1r*dq1r*dq3r + 6*v0r*dq2r*dq3r - 3*dq2r*dq3r^2*b00r - 3*dq2r^2*dq3r*b10r +
+			- 3*dq1r*dq3r^2*b10r - dq2r^3*b20r - 6*dq1r*dq2r*dq3r*b20r - 3*dq0r*dq3r^2*b20r - 6*v2r*v3r^2*x1 + 2*v3r^2*dq1r*x1 +
+			+ 4*v2r*v3r*dq2r*x1 - 2*v3r*dq1r*dq2r*x1 - v2r*dq2r^2*x1 - 3*dq1r*dq2r^2*x1 + 2*v2r^2*dq3r*x1 +
+			+ 4*v1r*v3r*dq3r*x1 - 2*v3r*dq0r*dq3r*x1 - 2*v2r*dq1r*dq3r*x1 - 3*dq1r^2*dq3r*x1 - 2*v1r*dq2r*dq3r*x1 +
+			- 6*dq0r*dq2r*dq3r*x1 - v0r*dq3r^2*x1 + 3*v3r^2*dq1r*s + 6*v2r*v3r*dq2r*s - 8*v3r*dq1r*dq2r*s +
+			- 4*v2r*dq2r^2*s + 3*dq1r*dq2r^2*s + 3*v2r^2*dq3r*s + 6*v1r*v3r*dq3r*s - 8*v3r*dq0r*dq3r*s +
+			- 8*v2r*dq1r*dq3r*s + 3*dq1r^2*dq3r*s - 8*v1r*dq2r*dq3r*s + 6*dq0r*dq2r*dq3r*s - 4*v0r*dq3r^2*s + 2*v3r*dq2r*dq3r*b01r +
+			+ v2r*dq3r^2*b01r + v3r*dq2r^2*b11r + 2*v3r*dq1r*dq3r*b11r + 2*v2r*dq2r*dq3r*b11r + v1r*dq3r^2*b11r +
+			- v3r^2*dq2r*b02r - 2*v2r*v3r*dq3r*b02r;
+	f9 = 6*v2r*v3r^2 - 4*v3r^2*dq1r - 8*v2r*v3r*dq2r + 6*v3r*dq1r*dq2r + 3*v2r*dq2r^2 - 4*v2r^2*dq3r +
+			- 8*v1r*v3r*dq3r + 6*v3r*dq0r*dq3r + 6*v2r*dq1r*dq3r + 6*v1r*dq2r*dq3r + 3*v0r*dq3r^2 - dq3r^3*b00r +
+			- 3*dq2r*dq3r^2*b10r - 3*dq2r^2*dq3r*b20r - 3*dq1r*dq3r^2*b20r - 2*v3r^3*x1 + 2*v3r^2*dq2r*x1 +
+			- v3r*dq2r^2*x1 - dq2r^3*x1 + 4*v2r*v3r*dq3r*x1 - 2*v3r*dq1r*dq3r*x1 - 2*v2r*dq2r*dq3r*x1 - 6*dq1r*dq2r*dq3r*x1 +
+			- v1r*dq3r^2*x1 - 3*dq0r*dq3r^2*x1 + 3*v3r^2*dq2r*s - 4*v3r*dq2r^2*s + dq2r^3*s + 6*v2r*v3r*dq3r*s +
+			- 8*v3r*dq1r*dq3r*s - 8*v2r*dq2r*dq3r*s + 6*dq1r*dq2r*dq3r*s - 4*v1r*dq3r^2*s + 3*dq0r*dq3r^2*s +
+			+ v3r*dq3r^2*b01r + 2*v3r*dq2r*dq3r*b11r + v2r*dq3r^2*b11r - v3r^2*dq3r*b02r;
+	f10 = 2*v3r^3 - 4*v3r^2*dq2r + 3*v3r*dq2r^2 - 8*v2r*v3r*dq3r + 6*v3r*dq1r*dq3r + 6*v2r*dq2r*dq3r +
+			+ 3*v1r*dq3r^2 - dq3r^3*b10r - 3*dq2r*dq3r^2*b20r + 2*v3r^2*dq3r*x1 - 2*v3r*dq2r*dq3r*x1 - 3*dq2r^2*dq3r*x1 +
+			- v2r*dq3r^2*x1 - 3*dq1r*dq3r^2*x1 + 3*v3r^2*dq3r*s - 8*v3r*dq2r*dq3r*s + 3*dq2r^2*dq3r*s +
+			- 4*v2r*dq3r^2*s + 3*dq1r*dq3r^2*s + v3r*dq3r^2*b11r;
+	f11 = - 4*v3r^2*dq3r + 6*v3r*dq2r*dq3r + 3*v2r*dq3r^2 - dq3r^3*b20r - v3r*dq3r^2*x1 - 3*dq2r*dq3r^2*x1 +
+			- 4*v3r*dq3r^2*s + 3*dq2r*dq3r^2*s;
+	f12 = 3*v3r*dq3r^2 - dq3r^3*x1 + dq3r^3*s;
+	### x2: Reduced
+	f0r = f0 - f4*e4 + f8*e4^2 - f12*e4^3 - f7*e4*e3 + 2*f11*e4^2*e3 - f10*e4*e3^2 + f6*e4*e2 - 2*f10*e4^2*e2 +
+		+ 2*f9*e4*e3*e2 + 3*f12*e4*e3^2*e2 - f8*e4*e2^2 + 3*f12*e4^2*e2^2 - 3*f11*e4*e3*e2^2 + f10*e4*e2^3 +
+		- f12*e4*e2^4 - f5*e4*s + 2*f9*e4^2*s - 2*f8*e4*e3*s + 6*f12*e4^2*e3*s - 3*f11*e4*e3^2*s +
+		+ 2*f7*e4*e2*s - 6*f11*e4^2*e2*s + 6*f10*e4*e3*e2*s - 3*f9*e4*e2^2*s - 12*f12*e4*e3*e2^2*s + 4*f11*e4*e2^3*s +
+		- f6*e4*s^2 + 3*f10*e4^2*s^2 - 3*f9*e4*e3*s^2 - 6*f12*e4*e3^2*s^2 + 3*f8*e4*e2*s^2 - 12*f12*e4^2*e2*s^2 +
+		+ 12*f11*e4*e3*e2*s^2 - 6*f10*e4*e2^2*s^2 + 10*f12*e4*e2^3*s^2 - f7*e4*s^3 + 4*f11*e4^2*s^3 +
+		- 4*f10*e4*e3*s^3 + 4*f9*e4*e2*s^3 + 20*f12*e4*e3*e2*s^3 - 10*f11*e4*e2^2*s^3 - f8*e4*s^4 + 5*f12*e4^2*s^4 +
+		- 5*f11*e4*e3*s^4 + 5*f10*e4*e2*s^4 - 15*f12*e4*e2^2*s^4 - f9*e4*s^5 - 6*f12*e4*e3*s^5 +
+		+ 6*f11*e4*e2*s^5 - f10*e4*s^6 + 7*f12*e4*e2*s^6 - f11*e4*s^7 - f12*e4*s^8;
+	f1r = f1 - f5*e4 + f9*e4^2 + f4*e3 - 2*f8*e4*e3 + 3*f12*e4^2*e3 + f7*e3^2 - 3*f11*e4*e3^2 + f10*e3^3 +
+		+ f7*e4*e2 - 2*f11*e4^2*e2 - f6*e3*e2 + 4*f10*e4*e3*e2 - 2*f9*e3^2*e2 - 3*f12*e3^3*e2 - f9*e4*e2^2 +
+		+ f8*e3*e2^2 - 6*f12*e4*e3*e2^2 + 3*f11*e3^2*e2^2 + f11*e4*e2^3 - f10*e3*e2^3 + f12*e3*e2^4 - f6*e4*s +
+		+ 2*f10*e4^2*s + f5*e3*s - 4*f9*e4*e3*s + 2*f8*e3^2*s - 9*f12*e4*e3^2*s + 3*f11*e3^3*s + 2*f8*e4*e2*s +
+		- 6*f12*e4^2*e2*s - 2*f7*e3*e2*s + 12*f11*e4*e3*e2*s - 6*f10*e3^2*e2*s - 3*f10*e4*e2^2*s +
+		+ 3*f9*e3*e2^2*s + 12*f12*e3^2*e2^2*s + 4*f12*e4*e2^3*s - 4*f11*e3*e2^3*s - f7*e4*s^2 + 3*f11*e4^2*s^2 +
+		+ f6*e3*s^2 - 6*f10*e4*e3*s^2 + 3*f9*e3^2*s^2 + 6*f12*e3^3*s^2 + 3*f9*e4*e2*s^2 - 3*f8*e3*e2*s^2 +
+		+ 24*f12*e4*e3*e2*s^2 - 12*f11*e3^2*e2*s^2 - 6*f11*e4*e2^2*s^2 + 6*f10*e3*e2^2*s^2 - 10*f12*e3*e2^3*s^2 +
+		- f8*e4*s^3 + 4*f12*e4^2*s^3 + f7*e3*s^3 - 8*f11*e4*e3*s^3 + 4*f10*e3^2*s^3 + 4*f10*e4*e2*s^3 +
+		- 4*f9*e3*e2*s^3 - 20*f12*e3^2*e2*s^3 - 10*f12*e4*e2^2*s^3 + 10*f11*e3*e2^2*s^3 - f9*e4*s^4 + f8*e3*s^4 +
+		- 10*f12*e4*e3*s^4 + 5*f11*e3^2*s^4 + 5*f11*e4*e2*s^4 - 5*f10*e3*e2*s^4 + 15*f12*e3*e2^2*s^4 - f10*e4*s^5 +
+		+ f9*e3*s^5 + 6*f12*e3^2*s^5 + 6*f12*e4*e2*s^5 - 6*f11*e3*e2*s^5 - f11*e4*s^6 + f10*e3*s^6 +
+		- 7*f12*e3*e2*s^6 - f12*e4*s^7 + f11*e3*s^7 + f12*e3*s^8;
+	f2r = f2 - f6*e4 + f10*e4^2 + f5*e3 - 2*f9*e4*e3 + f8*e3^2 - 3*f12*e4*e3^2 + f11*e3^3 - f4*e2 + 2*f8*e4*e2 +
+		- 3*f12*e4^2*e2 - 2*f7*e3*e2 + 6*f11*e4*e3*e2 - 3*f10*e3^2*e2 + f6*e2^2 - 3*f10*e4*e2^2 +
+		+ 3*f9*e3*e2^2 + 6*f12*e3^2*e2^2 - f8*e2^3 + 4*f12*e4*e2^3 - 4*f11*e3*e2^3 + f10*e2^4 - f12*e2^5 - f7*e4*s +
+		+ 2*f11*e4^2*s + f6*e3*s - 4*f10*e4*e3*s + 2*f9*e3^2*s + 3*f12*e3^3*s - f5*e2*s + 4*f9*e4*e2*s +
+		- 4*f8*e3*e2*s + 18*f12*e4*e3*e2*s - 9*f11*e3^2*e2*s + 2*f7*e2^2*s - 9*f11*e4*e2^2*s + 9*f10*e3*e2^2*s +
+		- 3*f9*e2^3*s - 16*f12*e3*e2^3*s + 4*f11*e2^4*s - f8*e4*s^2 + 3*f12*e4^2*s^2 + f7*e3*s^2 - 6*f11*e4*e3*s^2 +
+		+ 3*f10*e3^2*s^2 - f6*e2*s^2 + 6*f10*e4*e2*s^2 - 6*f9*e3*e2*s^2 - 18*f12*e3^2*e2*s^2 +
+		+ 3*f8*e2^2*s^2 - 18*f12*e4*e2^2*s^2 + 18*f11*e3*e2^2*s^2 - 6*f10*e2^3*s^2 + 10*f12*e2^4*s^2 - f9*e4*s^3 +
+		+ f8*e3*s^3 - 8*f12*e4*e3*s^3 + 4*f11*e3^2*s^3 - f7*e2*s^3 + 8*f11*e4*e2*s^3 - 8*f10*e3*e2*s^3 +
+		+ 4*f9*e2^2*s^3 + 30*f12*e3*e2^2*s^3 - 10*f11*e2^3*s^3 - f10*e4*s^4 + f9*e3*s^4 + 5*f12*e3^2*s^4 - f8*e2*s^4 +
+		+ 10*f12*e4*e2*s^4 - 10*f11*e3*e2*s^4 + 5*f10*e2^2*s^4 - 15*f12*e2^3*s^4 - f11*e4*s^5 + f10*e3*s^5 +
+		- f9*e2*s^5 - 12*f12*e3*e2*s^5 + 6*f11*e2^2*s^5 - f12*e4*s^6 + f11*e3*s^6 - f10*e2*s^6 + 7*f12*e2^2*s^6 +
+		+ f12*e3*s^7 - f11*e2*s^7 - f12*e2*s^8;
+	f3r = f3 - f7*e4 + f11*e4^2 + f6*e3 - 2*f10*e4*e3 + f9*e3^2 + f12*e3^3 - f5*e2 + 2*f9*e4*e2 - 2*f8*e3*e2 +
+		+ 6*f12*e4*e3*e2 - 3*f11*e3^2*e2 + f7*e2^2 - 3*f11*e4*e2^2 + 3*f10*e3*e2^2 - f9*e2^3 - 4*f12*e3*e2^3 +
+		+ f11*e2^4 + f4*s - 2*f8*e4*s + 3*f12*e4^2*s + 2*f7*e3*s - 6*f11*e4*e3*s + 3*f10*e3^2*s - 2*f6*e2*s +
+		+ 6*f10*e4*e2*s - 6*f9*e3*e2*s - 12*f12*e3^2*e2*s + 3*f8*e2^2*s - 12*f12*e4*e2^2*s +
+		+ 12*f11*e3*e2^2*s - 4*f10*e2^3*s + 5*f12*e2^4*s + f5*s^2 - 3*f9*e4*s^2 + 3*f8*e3*s^2 - 12*f12*e4*e3*s^2 +
+		+ 6*f11*e3^2*s^2 - 3*f7*e2*s^2 + 12*f11*e4*e2*s^2 - 12*f10*e3*e2*s^2 + 6*f9*e2^2*s^2 + 30*f12*e3*e2^2*s^2 +
+		- 10*f11*e2^3*s^2 + f6*s^3 - 4*f10*e4*s^3 + 4*f9*e3*s^3 + 10*f12*e3^2*s^3 - 4*f8*e2*s^3 + 20*f12*e4*e2*s^3 +
+		- 20*f11*e3*e2*s^3 + 10*f10*e2^2*s^3 - 20*f12*e2^3*s^3 + f7*s^4 - 5*f11*e4*s^4 + 5*f10*e3*s^4 +
+		- 5*f9*e2*s^4 - 30*f12*e3*e2*s^4 + 15*f11*e2^2*s^4 + f8*s^5 - 6*f12*e4*s^5 + 6*f11*e3*s^5 - 6*f10*e2*s^5 +
+		+ 21*f12*e2^2*s^5 + f9*s^6 + 7*f12*e3*s^6 - 7*f11*e2*s^6 + f10*s^7 - 8*f12*e2*s^7 + f11*s^8 +
+		+ f12*s^9;
 	###
 	coeff = list(
 		v  = cbind(v0r, v1r, v2r, v3r),
-		dq = cbind(dq0r, dq1r, dq2r, dq3r));
+		dq = cbind(dq0r, dq1r, dq2r, dq3r),
+		f  = cbind(f0r, f1r, f2r, f3r));
 	return(coeff);
 }
 
