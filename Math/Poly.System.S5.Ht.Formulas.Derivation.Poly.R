@@ -7,7 +7,7 @@
 ### S5: Hetero-Symmetric
 ### Derivation / Intermediary Polynomials
 ###
-### draft v.0.1a
+### draft v.0.1b
 
 
 ### Derivation:
@@ -257,4 +257,36 @@ for(i in seq(5)) p2 = replace.pm(p2, px2, "x2", pow=4)
 
 ### Derivation x2:
 # TODO
+
+p1 = toPoly.pm("(dq3r*x2^3 + dq2r*x2^2 + dq1r*x2 + dq0r)*x3 +
+	v3r*x2^3 + v2r*x2^2 + v1r*x2 + v0r");
+p2 = toPoly.pm("2*x2*x3^3 - 2*x1*x3^3 + (4*x2^2 - 2*x2*x1 - 3*x2*s + b02r)*x3^2 +
+	+ (3*x2^3 - x2^2*x1 - 4*x2^2*s + b11r*x2 + b01r)*x3 +
+	- (s - x1)*x2^3 + b20r*x2^2 + b10r*x2 + b00r");
+
+pR = solve.pm(p1, p2, xn="x3")
+pR = pR$Rez;
+str(pR)
+# substantial:
+cat(paste0("f", 0:12, " = ", rev(toCoeff(pR, "x2", print=F)), ";\n"))
+
+
+
+p2 = toPoly.pm("f12*x2^12 + f11*x2^11 + f10*x2^10 + f9*x2^9 + f8*x2^8 + f7*x2^7 + f6*x2^6 + f5*x2^5 +
+	+ f4*x2^4 + f3*x2^3 + f2*x2^2 + f1*x2 + f0")
+
+for(i in seq(6)) p2 = replace.pm(p2, px2, "x2", pow=4)
+#
+cat(paste0("f", 0:3, "r = ", rev(toCoeff(p2, "x2", print=F)), ";\n"))
+
+### Test:
+err = f3r*x2^3 + f2r*x2^2 + f1r*x2 + f0r # = 0
+# but massive overflow;
+err / min(abs(c(f0r,f1r,f2r,f3r)))
+
+###
+p1 = toPoly.pm("f3r*x2^3 + f2r*x2^2 + f1r*x2 + f0r");
+p2 = toPoly.pm("x2^4 - s*x2^3 + e2*x2^2 - e3*x2 + e4");
+pR = solve.pm(p1, p2, xn="x2", stop.at=2)
+
 
