@@ -7,7 +7,7 @@
 ### S5: Hetero-Symmetric
 ### Useful Formulas
 ###
-### draft v.0.1c
+### draft v.0.2a
 
 
 ### Formulas:
@@ -33,6 +33,48 @@
 source("Polynomials.Helper.R")
 source("Polynomials.Helper.EP.R")
 
+
+test.S5 = function(sol, tol=1E-4) {
+	x = sol;
+	if(is.null(dim(sol))) {
+		x1 = x[1]; x2 = x[2]; x3 = x[3]; x4 = x[4]; x5 = x[5];
+	} else {
+		x1 = x[, 1]; x2 = x[, 2]; x3 = x[, 3]; x4 = x[, 4]; x5 = x[, 5];
+	}
+	s1 = x1 + x3; s2 = x2 + x4;
+	p1 = x1 * x3; p2 = x2 * x4;
+	ps = s1 * s2; sp = p1 + p2;
+	e4 = p1 * p2; s  = s1 + s2; S = s + x5;
+	E3 = p1*s2 + p2*s1 + x5*(sp + ps);
+	E4 = e4 + x5*(p1*s2 + p2*s1);
+	E5 = e4 * x5;
+	# E2 = sp + ps + x5*s;
+	E11a = x1*x2 + x2*x3 + x3*x4 + x4*x5 + x5*x1;
+	err = cbind(S, E11a, E3, E4, E5);
+	err = round0(err, tol=tol);
+	return(err)
+}
+# the S4-components
+test.S5.S4 = function(sol) {
+	x = sol;
+	if(is.null(dim(sol))) {
+		x1 = x[1]; x2 = x[2]; x3 = x[3]; x4 = x[4]; x5 = x[5];
+	} else {
+		x1 = x[, 1]; x2 = x[, 2]; x3 = x[, 3]; x4 = x[, 4]; x5 = x[, 5];
+	}
+	s1 = x5 + x3; s2 = x2 + x4;
+	p1 = x5 * x3; p2 = x2 * x4;
+	ps = s1 * s2; sp = p1 + p2;
+	e2 = sp + ps; e3 = p2*s1 + p1*s2;
+	e4 = p1 * p2; s  = s1 + s2;
+	E11a = x1*x2 + x2*x3 + x3*x4 + x4*x5 + x5*x1;
+	E11b = x1*x3 + x2*x4 + x3*x5 + x4*x1 + x5*x2;
+	err = cbind(s, e2, e3, e4, E11a, E11b);
+	return(err)
+}
+
+
+########################
 
 ### Debug
 x = sqrt(c(2,3,5,7,11));
@@ -224,10 +266,12 @@ solve.S5HtMixed = function(R, debug=TRUE, all=FALSE) {
 	coeff = coeff.S5HtMixed(R);
 	E11b = roots(coeff);
 	if(debug) print(E11b);
-	S = R[1]; E11a = R[2]; E3 = R[3]; E5 = R[5];
+	S = R[1]; E11a = R[2]; E3 = R[3]; E4 = R[4]; E5 = R[5];
 	E2 = R[2] + E11b;
-	x1 = sapply(E2, function(E2) roots(c(1, -S, E2, -E3, R[4], -E5)));
+	x1 = sapply(E2, function(E2) roots(c(1, -S, E2, -E3, E4, -E5)));
+	if( ! all) x1 = x1[1,];
 	x1 = as.vector(x1);
+	if(all) E11b = rep(E11b, each=5);
 	return(solve.S5HtMixed.x2(x1, E11b, R, all=all));
 }
 coeff.S5HtMixed = function(R) {
@@ -242,44 +286,67 @@ coeff.S5HtMixed = function(R) {
 	);
 	return(coeff);
 }
-# Classic Solver:
+solve.S5HtMixed.x2 = function(x1, E11b, R, all=FALSE) {
+	S = R[1]; E11a = R[2]; E3 = R[3]; E4 = R[4]; E5 = R[5];
+	E2 = E11a + E11b;
+	s = S - x1; e2 = E2 - s*x1; e3 = E3 - e2*x1; e4 = E4 - e3*x1;
+	### x2: robust computation
+	# Note: function is defined in file:
+	# Poly.System.S5.Ht.Formulas.CoeffX.R;
+	xCoeff = coeff.S5HtMixed.x2(x1, cbind(s, e2, e3, e4), E11a, E11b);
+	f = xCoeff$f; v = xCoeff$v; dq = xCoeff$dq;
+	f0r = f[,1]; f1r = f[,2]; f2r = f[,3]; f3r = f[,4];
+	v0r = v[,1]; v1r = v[,2]; v2r = v[,3]; v3r = v[,4];
+	dq0r = dq[,1]; dq1r = dq[,2]; dq2r = dq[,3]; dq3r = dq[,4];
+	#
+	len = length(x1);
+	coeff = cbind(f2r^2 - f1r*f3r + s*f2r*f3r + e2*f3r^2,
+		f1r*f2r - f0r*f3r + s*f1r*f3r - e3*f3r^2, f0r*f2r + s*f0r*f3r + e4*f3r^2);
+	x2 = sapply(seq(len), function(id) {
+		roots(coeff[id,]);
+	});
+	# [was TODO] include all solutions for all == TRUE;
+	# x5 = as.vector(x2[2,]);
+	x2 = as.vector(x2[1,]);
+	### x3:
+	x3 = - (v3r*x2^3 + v2r*x2^2 + v1r*x2 + v0r) / (dq3r*x2^3 + dq2r*x2^2 + dq1r*x2 + dq0r);
+	### x4:
+	x4 = x2^2 - s*x2 + 2*x3*x2 - s*x3 + x3^2 + E11b - x3*x1;
+	x4 = x4 / (x1 - x3);
+	x5 = s - x2 - x3 - x4; # can be / already computed;
+	sol = cbind(x1, x2, x3, x4, x5);
+	return(sol);
+}
+
+### Classic Solver:
 solve.S5HtMixed.Classic = function() {
+	# TODO:
 	coeff = c(27, 0, 109, 0, 114, -189, -110, -654, -355, -570, 3332, 440, -1609, 1065, -1984, -6475, -660,
 		1064, -1065, -1140, 3710, 440, 1635, 355, 570, -567, -110, -654, 0, -114, 189, 0, 109, 0, 0, -27);
 	x1 = roots(coeff);
 	# TODO:
 	return(x1)
 }
-###
-
-solve.S5HtMixed.x2 = function(x1, E11b, R, all=FALSE) {
-	S = R[1]; E11a = R[2]; E3 = R[3]; E4 = R[4]; E5 = R[5];
-	E11b = rep(E11b, 5);
-	E2 = E11a + E11b;
-	s = S - x1; e2 = E2 - s*x1; e3 = E3 - e2*x1; e4 = E4 - e3*x1;
-	# Robust:
-	# TODO
-	return(x1); # temporary;
-	### x2:
-	# function is defined in file:
-	# Poly.System.S5.Ht.Formulas.CoeffX.R;
-	xCoeff = coeff.S5HtMixed.x2(x1, cbind(s, e2, e3, e4), E11a, E11b);
-	v = xCoeff$v; dq = xCoeff$dq;
-	v0r = v[,1]; v1r = v[,2]; v2r = v[,3]; v3r = v[,4];
-	dq0r = dq[,1]; dq1r = dq[,2]; dq2r = dq[,3]; dq3r = dq[,4];
-	# TODO: x2;
-	# ...
-	### x3:
-	x3 = - (v3r*x2^3 + v2r*x2^2 + v1r*x2 + v0r) / (dq3r*x2^3 + dq2r*x2^2 + dq1r*x2 + dq0r);
-	### x4:
-	x4 = x2^2 - s*x2 + 2*x3*x2 - s*x3 + x3^2 + E11b - x3*x1;
-	x4 = x4 / (x1 - x3);
-	x5 = s - x2 - x3 - x4;
-	sol = cbind(x1, x2, x3, x4, x5);
-	return(sol);
-}
 
 ### Examples:
 
+### Ex 1:
+R = c(2,0,-3,5,-1)
+sol = solve.S5HtMixed(R)
 
+test.S5(sol)
+
+
+### Ex 2:
+R = c(3,0,-1,5,2)
+sol = solve.S5HtMixed(R)
+
+test.S5(sol)
+
+
+### Ex 3:
+R = c(3,-1,-4,0,2)
+sol = solve.S5HtMixed(R)
+
+test.S5(sol)
 
