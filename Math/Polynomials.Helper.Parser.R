@@ -53,7 +53,7 @@ as.pm.default = function(p, ...) {
 
 # Class polynomial => "pm"
 # - from package polynom;
-as.pm.polynomial = function(p, xn="x", sort=NULL, tol=1E-8) {
+as.pm.polynomial = function(p, xn="x", sort=TRUE, tol=1E-8) {
 	if(length(xn) != 1) stop("Only univariate polynomials are supported!");
 	p = unclass(p);
 	if(tol != 0) p = round0(p, tol=tol);
