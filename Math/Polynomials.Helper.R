@@ -230,24 +230,31 @@ mult.p = function(p1, p2) {
 
 # Replace "poly.calc" & "polynomial" constructor in package polynom;
 # - only basic construction:
-poly.calc0 = function(x, toReal=TRUE, tol=1E-8, warn=TRUE) {
+poly.calc0 = function(x, toReal=TRUE, tol=1E-8, digits=0, as.pm=TRUE, warn=TRUE) {
 	p = 1;
 	for (xi in x) {
 		p = c(0, p) - c(xi * p, 0);
 	}
-	return(polynomial(p, tol=tol, toReal=toReal, warn=warn));
+	return(polynomial(p, tol=tol, digits=digits, toReal=toReal, as.pm=as.pm, warn=warn));
 }
-polynomial = function(coef = c(0, 1), tol=1E-8, toReal=TRUE, warn=TRUE) {
+polynomial = function(coef = c(0, 1), tol=1E-8, digits=0, toReal=TRUE, as.pm=TRUE, warn=TRUE) {
 	b   = round0(coef, tol=tol);
 	isC = Im(b) != 0;
-	if(warn && any(isC)) warning("Some coefficients are complex!");
+	if(warn && any(isC)) {
+		Res = sum(abs(Im(b)));
+		warning("Some coefficients are complex:\n  Residual = ", Res, "!");
+	}
 	if(toReal) b = Re(b);
+	if(digits > 0) b = round(b, digits);
 	last = length(b);
 	if(last > 0) {
 		for(npos in seq(last, 1)) {
 			if(b[npos] != 0) break;
 		}
 		b = b[seq(1, npos)];
+	}
+	if(as.pm) {
+		return(as.pm.polynomial(b));
 	}
 	structure(b, class = "polynomial");
 }
