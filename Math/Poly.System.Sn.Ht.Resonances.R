@@ -574,6 +574,14 @@ divisors.S5T3 = function(p) {
 ######################
 ######################
 
+### Note:
+# - the polynomials are always divisible by (k + n + p),
+#   but the number of monomials in the result rises rapidly;
+# - number monomials = 28 (for v = 7);
+# - number monomilas = 55 (for v = 10);
+# - number monomials = 91 (for v = 13);
+
+
 ### Sys: 7 variables
 
 ### Order: c(k,n,p)
@@ -632,9 +640,12 @@ x^6 - 13*x^5 + 65*x^4 - 156*x^3 + 182*x^2 - 91*x + 13 # = 0
 
 ### Even Number of Vars:
 
+### Note:
 # - formula is still applicable;
 # - only the "n"-leading term has a changed sign:
 #   k^v - n^v + p^v, or n^v - k^v - p^v;
+# - the polynomials are always divisible by (k + n + p),
+#   but the number of monomials in the result rises rapidly;
 
 
 ### Sys: 6 variables
@@ -686,4 +697,12 @@ x^5 - 10*x^4 + 35*x^3 - 50*x^2 + 25*x - 2 # = 0
 
 x = 2*cos(pi*c(seq(1,11, by=2))/12) + 2;
 x^6 - 12*x^5 + 54*x^4 - 112*x^3 + 105*x^2 - 36*x + 2 # = 0
+
+### Div:
+p = toPoly.pm("k^12 - n^12 + p^12 + 12*k*n^10*p - 54*k^2*n^8*p^2 + 112*k^3*n^6*p^3 - 105*k^4*n^4*p^4 +
+		+ 36*k^5*n^2*p^5 - 2*k^6*p^6");
+pR = replace.pm(p, toPoly.pm("- k - p"), "n")
+nrow(pR)
+
+# pR = div.pm(p, "k + n + p", "n")
 
