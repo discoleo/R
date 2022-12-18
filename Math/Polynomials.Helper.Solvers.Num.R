@@ -77,6 +77,19 @@ expand.path = function(xs, xe, steps=6, start.at=0) {
 	return(sq);
 }
 
+### Helper
+
+wrap = function(FUN) {
+	FUN = FUN;
+	wF = function(x, ...) {
+		x = matrix(x, nrow=2); xc = x[2,]; x = x[1,] + 1i * xc;
+		y = FUN(x, ...);
+		y = rbind(Re(y), Im(y));
+		return(y);
+	}
+	return(wF);
+}
+
 ### Print/Format
 print.sol = function(x, digits=4, sep=",\n") {
 	# cat() is NOT generic!
