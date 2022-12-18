@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric:
 ### Resonances
 ###
-### draft v.0.1f
+### draft v.0.1g
 
 
 ### Resonances in Polynomial Systems
@@ -600,4 +600,20 @@ x^4 - 9*x^3  + 27*x^2 - 30*x + 9 # = 0
 x = 2*cos(pi*c(1,3,5,7,9)/11) + 2;
 x^5 - 11*x^4 + 44*x^3 - 77*x^2 + 55*x - 11 # = 0
 
+
+######################
+######################
+
+### Sys: 13 variables
+
+### Order: c(k,n,p)
+# p = Divisors(
+#		k^13 + n^13 + p^13 - 13*k*n^11*p + 65*k^2*n^9*p^2 - 156*k^3*n^7*p^3 + 182*k^4*n^5*p^4 +
+#		- 91*k^5*n^3*p^5 + 13*k^6*n*p^6)
+
+# Note: takes some seconds to compute!
+# det.mpm(diag.lpm(c("k", "n", "p"), n=13))
+
+x = 2*cos(pi*c(seq(1,11, by=2))/13) + 2;
+x^6 - 13*x^5 + 65*x^4 - 156*x^3 + 182*x^2 - 91*x + 13 # = 0
 
