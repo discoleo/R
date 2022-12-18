@@ -19,10 +19,10 @@
 # - if (x1,x2,y1,y2) is a solution, then
 #   the following permutations are also solutions:
 #   C2 permutation: {(x2,x1}, (y2,y1)};
-#   X2 permutations: {(y1,y2), (x2,x1)};
+#   X2 permutation: {(y1,y2), (x2,x1)};
 ### Note:
 # - in the X2 permutation: the x's are swapped (x2,x1);
-# - NO solutions of type: x1 = x2, y1 = y2;
+# - NO solutions of type: x1 = y1, x2 = y2;
 #   (only in special cases)
 
 
@@ -136,6 +136,8 @@ E11a * E11b - ps^2 + R2*S + 4*E4 # = 0
 
 ### Eq E11a:
 5*ps*E11a^2 - (5*ps^2 + 4*R2*s2 - 4*R2*s1)*E11a + ps^3 - 4*R2^2 - R2*ps*S + 4*R2*ps*s2 # = 0
+#
+5*R1^2*E11a^2 - 5*R1^4*E11a + R1^6 + 2*R1^3*R2 - 4*R2^2 # = 0
 
 
 ### Solver:
@@ -214,7 +216,7 @@ x1*y1 + (s1 - x1)*(s2 - y1) - E11a # = 0
 (s2^2 - 4*p2)*x1^2 - s1*(s2^2 - 4*p2)*x1 - E11a^2 + E11a*s2*s1 - s1^2*p2 # = 0
 # =>
 (s2^2 - 4*p2)*(s1*x1 - p1) - s1*(s2^2 - 4*p2)*x1 - E11a^2 + E11a*s2*s1 - s1^2*p2 # = 0
-# redundant:
+# redundant: x1 cancels out;
 - p1*(s2^2 - 4*p2) - E11a^2 + E11a*s2*s1 - s1^2*p2 # = 0
 
 
