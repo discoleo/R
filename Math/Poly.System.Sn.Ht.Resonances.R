@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric:
 ### Resonances
 ###
-### draft v.0.1g
+### draft v.0.1h
 
 
 ### Resonances in Polynomial Systems
@@ -51,6 +51,15 @@ diag.T3 = function(x, n) {
 	m[n-1, 1] = x[3];
 	m[n, 1] = x[2]; m[n, 2] = x[3];
 	return(m);
+}
+
+### Generators
+# n = number of variables;
+polyRes3 = function(n) {
+	p = det.mpm(diag.lpm(c("k", "n", "p"), n=n));
+	p = sort.pm(p, c("k", "n"));
+	if( ! inherits(p, "pm")) class(p) = c("pm", class(p));
+	return(p);
 }
 
 ### Test
@@ -616,4 +625,65 @@ x^5 - 11*x^4 + 44*x^3 - 77*x^2 + 55*x - 11 # = 0
 
 x = 2*cos(pi*c(seq(1,11, by=2))/13) + 2;
 x^6 - 13*x^5 + 65*x^4 - 156*x^3 + 182*x^2 - 91*x + 13 # = 0
+
+
+######################
+######################
+
+### Even Number of Vars:
+
+# - formula is still applicable;
+# - only the "n"-leading term has a changed sign:
+#   k^v - n^v + p^v, or n^v - k^v - p^v;
+
+
+### Sys: 6 variables
+
+### Order: c(k,n,p)
+# p = Divisors(k^6 - n^6 + p^6 + 6*k*n^4*p - 9*k^2*n^2*p^2  + 2*k^3*p^3)
+
+# x is relative to exponent variable n;
+x = 2*cos(pi*c(seq(1,5, by=2))/6) + 2;
+x^3 - 6*x^2 + 9*x - 2 # = 0
+
+
+#######################
+#######################
+
+### Sys: 8 variables
+
+### Order: c(k,n,p)
+# p = Divisors(k^8 - n^8 + p^8 + 8*k*n^6*p - 20*k^2*n^4*p^2 + 16*k^3*n^2*p^3 - 2*k^4*p^4)
+
+# x is relative to exponent variable n;
+x = 2*cos(pi*c(seq(1,7, by=2))/8) + 2;
+x^4 - 8*x^3 + 20*x^2 - 16*x + 2 # = 0
+x^3 - 6*x^2 + 9*x - 2 # = 0
+
+
+######################
+######################
+
+### Sys: 10 variables
+
+### Order: c(k,n,p)
+# p = Divisors(
+#		k^10 - n^10 + p^10 + 10*k*n^8*p - 35*k^2*n^6*p^2 + 50*k^3*n^4*p^3 - 25*k^4*n^2*p^4 + 2*k^5*p^5)
+
+x = 2*cos(pi*c(seq(1,9, by=2))/10) + 2;
+x^5 - 10*x^4 + 35*x^3 - 50*x^2 + 25*x - 2 # = 0
+
+
+######################
+######################
+
+### Sys: 12 variables
+
+### Order: c(k,n,p)
+# p = Divisors(
+#		k^12 - n^12 + p^12 + 12*k*n^10*p - 54*k^2*n^8*p^2 + 112*k^3*n^6*p^3 - 105*k^4*n^4*p^4 +
+#			+ 36*k^5*n^2*p^5 - 2*k^6*p^6)
+
+x = 2*cos(pi*c(seq(1,11, by=2))/12) + 2;
+x^6 - 12*x^5 + 54*x^4 - 112*x^3 + 105*x^2 - 36*x + 2 # = 0
 
