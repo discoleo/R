@@ -32,18 +32,18 @@
 # x1^p1 + x2^p1 = R1
 # y1^p1 + y2^p1 = R1
 # x1^n1*y1^n2 + x2^n1*y2^n2 = R2
-# y1^n1*x2^n2 + y1^n1*x1^n2 = R2
+# y1^n1*x2^n2 + y2^n1*x1^n2 = R2
 
 ### B. SP-Type
 # x1^p1 + x2^p1 + y1^p1 + y2^p1 = R1
 # x1^n1*y1^n2 + x2^n1*y2^n2 = R2
-# y1^n1*x2^n2 + y1^n1*x1^n2 = R2
+# y1^n1*x2^n2 + y2^n1*x1^n2 = R2
 # x1*x2*y1*y2 = R3
 
 ### C. Non-Oriented
 # x1^p1 + x2^p1 = R1
 # y1^p1 + y2^p1 = R1
-# x1^n1*y1^n2 + x2^n1*y2^n2 - (y1^n1*x2^n2 + y1^n1*x1^n2) = 0
+# x1^n1*y1^n2 + x2^n1*y2^n2 - (y1^n1*x2^n2 + y2^n1*x1^n2) = 0
 # x1*x2*y1*y2 = R3
 
 
@@ -89,7 +89,7 @@ test.S4C2X2.Simple = function(x, R=NULL, n=c(2,1)) {
 # x1 + x2 = R1
 # y1 + y2 = R1
 # x1^2*y1 + x2^2*y2 = R2
-# y1^2*x2 + y1^2*x1 = R2
+# y1^2*x2 + y2^2*x1 = R2
 
 ### Solution:
 
@@ -145,12 +145,23 @@ E11a * E11b - ps^2 + R2*S + 4*E4 # = 0
 solve.S4C2X2.E21 = function(R, debug=TRUE, all=TRUE) {
 	R1 = R[1]; R2 = R[2];
 	s1 = s2 = R1; S = s1 + s2; ps = s1 * s2;
+	if(round0(s1) == 0) {
+		if(round0(R2) != 0) {
+			warning("No solution!");
+			return(array(numeric(0), c(0,4)));
+		}
+		warning("Infinitely many solutions!");
+		x = 3; y = -4; # just an example;
+		x1 = c(x, NA); x2 = c(-x, NA);
+		y1 = c(y, NA); y2 = c(-y, NA);
+		return(cbind(x1=x1, x2=x2, y1=y1, y2=y2));
+	}
 	coeff = c(5*ps, - 5*ps^2 - 4*R2*s2 + 4*R2*s1,
 		ps^3 - 4*R2^2 - ps*R2*S + 4*ps*R2*s2);
 	E11a = roots(coeff);
 	E11b = ps - E11a;
 	if(debug) print(E11a);
-	# TODO: s1 = s2 = 0;
+	# Case: s1 = s2 = 0 (is already covered);
 	p1 = (E11a*s1 - R2) / s2;
 	p2 = (E11b*s2 - R2) / s1;
 	#
