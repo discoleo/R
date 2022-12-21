@@ -5,8 +5,18 @@
 ###
 ### Leonard Mada
 ###
-### v.0.1a
+### v.0.1b
 
+
+
+# TODO:
+# 1. Roseman, M. A. 1988. Hydrophilicity of polar amino acid side-chains is markedly reduced
+#    by flanking peptide bonds. J. Mol. Biol. 200:513-522.
+# 2. Koehl, P., and M. Levitt. 1999. Structure-based conformational preferences of amino acids.
+#    Proc. Natl. Acad. Sci. U. S. A. 96:12524-12529.
+# 3. Street, A. G., and S. L. Mayo. 1999. Intrinsic beta-sheet propensities result from
+#    van der Waals interactions between side chains and the local backbone.
+#    Proc. Natl. Acad. Sci. U. S. A. 96:9074-9076.
 
 
 ### Amino-Acids
