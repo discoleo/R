@@ -51,6 +51,53 @@ groups.aa = function(n=3) {
 	return(type);
 }
 
+# Kyte-Doolittle Hydropathicity:
+# J Mol Biol 157:105-132 1982
+aaHydrophobicity = function() {
+	coeff = c(0.0, # 'X'
+	1.8, # 'A'
+	2.5, # 'C'
+	-3.5, # 'D'
+	-3.5, # 'E'
+	2.8, # 'F'
+	-0.4, # 'G'
+	-3.2, # 'H'
+	4.5, # 'I'
+	-3.9, # 'K'
+	3.8, # 'L'
+	1.9, # 'M'
+	-3.5, # 'N'
+	-1.6, # 'P'
+	-3.5, # 'Q'
+	-4.5, # 'R'
+	-0.8, # 'S'
+	-0.7, # 'T'
+	4.2, # 'V'
+	-0.9, # 'W'
+	-1.3, # 'Y'
+	0.0,  # '*'
+	-3.5, -3.5, 4.15 # Asn, Gln; J = Leu/Ile;
+	);
+	names(coeff) = c("X", "A", "C", "D", "E", "F", "G", "H", "I", "K", "L", "M", "N", "P", "Q", "R",
+		"S", "T", "V", "W", "Y", "*", "B", "Z", "J");
+	return(coeff);
+}
+hydrophobicity = function(aa) {
+	if(length(aa[1]) == 3) {
+		aaCodes = aaCodes(n = 0);
+		id = match(aa, aaCodes$A3);
+		tmpAA = aaCodes$A1[id];
+	} else tmpAA = aa;
+	hydroBase = aaHydrophobicity();
+	id = match(tmpAA, names(hydroBase));
+	hydro = hydroBase[id];
+	return(hydro);
+}
+hydroGroups = function() {
+	aa = groups.aa(1);
+	tapply(names(aa), aa, function(aa) hydrophobicity(aa));
+}
+
 as.aaType = function(x) {
 	n = nchar(x[[1]]);
 	type = groups.aa(n=n);
