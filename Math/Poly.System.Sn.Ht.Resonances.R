@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric:
 ### Resonances
 ###
-### draft v.0.1h
+### draft v.0.1i
 
 
 ### Resonances in Polynomial Systems
@@ -52,6 +52,19 @@ diag.T3 = function(x, n) {
 	m[n, 1] = x[2]; m[n, 2] = x[3];
 	return(m);
 }
+diag.T4 = function(x, n) {
+	if(length(x) != 4) {
+		stop("Number of powers is not 4!");
+	}
+	m = diag(x[1], n);
+	for(nc in seq(n-1)) m[nc, nc + 1] = x[2];
+	for(nc in seq(n-2)) m[nc, nc + 2] = x[3];
+	for(nc in seq(n-3)) m[nc, nc + 3] = x[4];
+	m[n-2, 1] = x[4];
+	m[n-1, 1] = x[3]; m[n-1, 2] = x[4];
+	m[n, 1] = x[2]; m[n, 2] = x[3]; m[n, 3] = x[4];
+	return(m);
+}
 
 ### Generators
 # n = number of variables;
@@ -61,10 +74,23 @@ polyRes3 = function(n) {
 	if( ! inherits(p, "pm")) class(p) = c("pm", class(p));
 	return(p);
 }
+polyRes4 = function(n) {
+	p = det.mpm(diag.lpm(c("k1", "n1", "n2", "k2"), n=n));
+	p = sort.pm(p, c("k1", "n1", "n2", "k2"));
+	if( ! inherits(p, "pm")) class(p) = c("pm", class(p));
+	return(p);
+}
 
 ### Test
 
 # n = number of variables;
+test.res.T4 = function(k, pow=c(2,1,1,1), n=length(k)) {
+	sapply(seq(0, n-1), function(i) {
+		id = c(i, i+1, i+2, i+3);
+		id = (id %% n) + 1;
+		sum(k[id] * pow);
+	});
+}
 test.res.T3 = function(k, pow=c(3,1,1), n=length(k)) {
 	sapply(seq(0, n-1), function(i) {
 		id = c(i, i+1, i+2);
@@ -705,4 +731,113 @@ pR = replace.pm(p, toPoly.pm("- k - p"), "n")
 nrow(pR)
 
 # pR = div.pm(p, "k + n + p", "n")
+
+
+####################
+####################
+
+################
+### 4 Powers ###
+################
+
+### 5 Variables:
+
+polyRes4(5)
+
+k1^5 + n1^5 + n2^5 + k2^5 - 5*k1^3*k2*n2 - 5*k1*k2^3*n1 - 5*k1*n1^3*n2 - 5*k2*n1*n2^3 +
+	+ 5*k1^2*k2*n1^2 + 5*k1*k2^2*n2^2 + 5*k1^2*n1*n2^2 + 5*k2^2*n1^2*n2
+
+
+################
+### 7 Variables:
+
+polyRes4(7)
+
+k1^7 + n1^7 + n2^7 + k2^7 - 7*k1*n1^5*n2 - 7*k2*n1*n2^5 +
+	+ 7*k1^4*k2^2*n1 + 7*k1^2*k2^4*n2 + 7*k1^4*k2*n2^2 + 7*k1*k2^4*n1^2 + 7*k1^2*k2*n1^4 + 7*k1*k2^2*n2^4 +
+	- 7*k1^3*n1*n2^3 - 7*k2^3*n1^3*n2 + 14*k1^2*n1^3*n2^2 + 14*k2^2*n1^2*n2^3 +
+	- 21*k1^3*k2*n1^2*n2 - 21*k1*k2^3*n1*n2^2
+
+
+################
+### 9 Variables:
+
+polyRes4(9)
+
+k1^9 + n1^9 + n2^9 + k2^9 + 3*k1^6*k2^3 + 3*k1^3*k2^6 +
+	- 9*k1^5*k2*n2^3 - 9*k1*k2^5*n1^3 + 18*k1^4*k2^2*n1^3 + 18*k1^2*k2^4*n2^3 +
+		+ 9*k1^2*k2*n1^6 + 9*k1*k2^2*n2^6 +
+	+ 9*k1^4*n1*n2^4 + 9*k2^4*n1^4*n2 - 30*k1^3*n1^3*n2^3 - 30*k2^3*n1^3*n2^3 +
+		+ 27*k1^2*n1^5*n2^2 + 27*k2^2*n1^2*n2^5 - 9*k1*n1^7*n2 - 9*k2*n1*n2^7 +
+	- 27*k1^5*k2^2*n1*n2 - 27*k1^2*k2^5*n1*n2 + 54*k1^4*k2*n1^2*n2^2 + 54*k1*k2^4*n1^2*n2^2 +
+	- 45*k1^3*k2*n1^4*n2 - 45*k1*k2^3*n1*n2^4
+
+# still ???
+x = 2*cos(pi*c(seq(1,18, by=2))/18) + 1;
+x^9 - 9*x^8 + 27*x^7 - 21*x^6 - 36*x^5 + 54*x^4 + 9*x^3 - 27*x^2 + 2 # = 0
+# - possible the k1^j * n1^(9 - 2*j) * n2^j
+#   and the equivalent k2^j * n2^(9 - 2*j) * n1^j parts;
+x = 2*cos(pi*c(seq(1,9, by=2))/9) + 2;
+x^5 - 9*x^4 + 27*x^3 - 30*x^2 + 9*x # = 0
+
+
+################
+################
+
+################
+### 6 Variables:
+
+polyRes4(6)
+
+k1^6 - n1^6 + n2^6 - k2^6 - 3*k1^4*k2^2 + 3*k1^2*k2^4 + 2*k1^3*n2^3 - 2*k2^3*n1^3 +
+	- 6*k1^2*k2*n1^3 + 6*k1*k2^2*n2^3 + 6*k1*n1^4*n2 - 6*k2*n1*n2^4 +
+	- 9*k1^2*n1^2*n2^2 + 9*k2^2*n1^2*n2^2 + 12*k1^3*k2*n1*n2 - 12*k1*k2^3*n1*n2
+
+# still ???
+x = 2*cos(pi*c(seq(1,12, by=2))/6) + 1;
+x^6 - 6*x^5 + 9*x^4 + 4*x^3 - 12*x^2 + 4 # = 0
+x = 2*cos(pi*c(seq(1,6, by=2))/6) + 1;
+x^3 - 3*x^2 + 2 # = 0
+
+
+################
+### 8 Variables:
+
+polyRes4(8)
+
+k1^8 - n1^8 + n2^8 - k2^8 - 2*k1^4*n2^4 + 2*k2^4*n1^4 +
+ + 8*k1^5*k2^2*n2 - 8*k1^2*k2^5*n1 - 12*k1^4*n1^2*k2^2 + 12*k1^2*k2^4*n2^2 +
+ + 16*k1^3*n1^2*n2^3 - 16*k2^3*n1^3*n2^2 +
+ - 8*k1^2*k2*n1^5 + 8*k1*k2^2*n2^5 +
+ + 8*k1*n1^6*n2 - 8*k2*n1*n2^6 +
+ - 24*k1^4*k2*n1*n2^2 + 24*k1*k2^4*n1^2*n2 - 20*k1^2*n1^4*n2^2 + 20*n1^2*k2^2*n2^4 +
+ + 32*k1^3*k2*n1^3*n2 - 32*k1*k2^3*n1*n2^3
+
+# still: 16, 32 ???
+x = 2*cos(pi*c(seq(1,16, by=2))/8) + 1;
+x^8 - 8*x^7 + 20*x^6 - 8*x^5 - 30*x^4 + 24*x^3 + 12*x^2 - 8*x + 1 # = 0
+x = 2*cos(pi*c(seq(1,8, by=2))/8) + 1;
+x^4 - 4*x^3 + 2*x^2 + 4*x - 1 # = 0
+x = 2*cos(pi*c(seq(1,4, by=2))/4) + 1;
+x^2 - 2*x - 1 # = 0 => k1^8 - 2*k1^4*n2^4 - n2^4;
+
+
+#################
+### 10 Variables:
+
+polyRes4(10)
+
+k1^10 - n1^10 + n2^10 - k2^10 + 2*k1^5*n2^5 - 2*k2^5*n1^5 +
+ + 10*k1*n1^8*n2 - 10*n1*k2*n2^8 - 10*k1^2*n1^7*k2 + 10*k1*k2^2*n2^7 +
+ - 10*k1^6*n1*k2^3 - 15*k1^6*k2^2*n2^2 + 10*k1^3*k2^6*n2 - 35*k1^2*n1^6*n2^2 + 15*k1^2*n1^2*k2^6 +
+ + 35*n1^2*k2^2*n2^6 + 60*k1^5*n1^2*k2^2*n2 + 40*k1^5*n1*k2*n2^3 + 60*k1^3*n1^5*k2*n2 +
+ - 40*k1*n1^3*k2^5*n2 - 25*k1^4*k2^2*n1^4 + 25*k1^2*k2^4*n2^4 +
+ - 25*k1^4*n1^2*n2^4 + 25*k2^4*n1^4*n2^2 + 50*k1^3*n1^4*n2^3 - 50*n1^3*k2^3*n2^4 +
+ - 100*k1^4*k2*n1^3*n2^2 + 100*k1*k2^4*n1^2*n2^3 - 60*k1^2*n1*k2^5*n2^2 - 60*k1*n1*k2^3*n2^5
+
+# still: 25, 100 ???
+x = 2*cos(pi*c(seq(1,20, by=2))/10) + 1;
+x^10 - 10*x^9 + 35*x^8 - 40*x^7 - 35*x^6 + 98*x^5 - 15*x^4 - 60*x^3 + 15*x^2 + 10*x + 1 # = 0
+x = 2*cos(pi*c(seq(2,20, by=2))/10) + 1;
+x^10 - 10*x^9 + 35*x^8 - 40*x^7 - 35*x^6 + 98*x^5 - 15*x^4 - 60*x^3 + 15*x^2 + 10*x - 3 # = 0
 
