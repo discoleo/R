@@ -5,7 +5,7 @@
 ###
 ### Leonard Mada
 ###
-### v.0.1b
+### v.0.1c
 
 
 
@@ -22,20 +22,23 @@
 #    Prediction of “aggregation-prone” and “aggregation-susceptible” regions in proteins
 #    associated with neurodegenerative diseases. J. Mol. Biol. 350:379-392.
 
+# this file:
+# source("Chem.AA.R");
+
 
 ### Amino-Acids
 
 aaCodes = function(n=1) {
 	if( ! any(n == c(0,1,3))) stop("Unsupported codes!");
 	a3 = c("Ala", "Arg", "Asn", "Asp", "Cys", "Gln", "Glu", "Gly", "His", "Ile", "Leu", "Lys", "Met",
-		"Phe", "Pro", "Pyl", "Ser", "Sec", "Thr", "Trp", "Tyr", "Val", "Asx", "Glx", "Xaa", "Xle");
+		"Phe", "Pro", "Pyl", "Ser", "Sec", "Thr", "Trp", "Tyr", "Val", "Asx", "Glx", "Xaa", "Xle", "Css");
 	a1 = c("A", "R", "N", "D", "C", "Q", "E", "G", "H", "I", "L", "K", "M",
-		"F", "P", "O", "S", "U", "T", "W", "Y", "V", "B", "Z", "X", "J");
+		"F", "P", "O", "S", "U", "T", "W", "Y", "V", "B", "Z", "X", "J", "~");
 	name = c("Alanine", "Arginine", "Asparagine", "Aspartic acid", "Cysteine", "Glutamine",
 		"Glutamic acid", "Glycine", "Histidine", "Isoleucine", "Leucine", "Lysine", "Methionine",
 		"Phenylalanine", "Proline", "Pyrrolysine", "Serine", "Selenocysteine", "Threonine", "Tryptophan",
 		"Tyrosine", "Valine", "Aspartic acid or Asparagine", "Glutamic acid or Glutamine",
-		"Any amino acid", "Leucine or Isoleucine");
+		"Any amino acid", "Leucine or Isoleucine", "Cys-S-S-Cys");
 	if(n == 1) {
 		aa = as.list(a1);
 		names(aa) = a3;
@@ -51,14 +54,17 @@ aaCodes = function(n=1) {
 groups.aa = function(n=3) {
 	if(n == 3) {
 		aa = c("Ala", "Arg", "Asn", "Asp", "Cys", "Gln", "Glu", "Gly", "His", "Ile", "Leu", "Lys", "Met",
-			"Phe", "Pro", "Pyl", "Ser", "Sec", "Thr", "Trp", "Tyr", "Val", "Asx", "Glx", "Xaa", "Xle");
+			"Phe", "Pro", "Pyl", "Ser", "Sec", "Thr", "Trp", "Tyr", "Val", "Asx", "Glx",
+			"Xaa", "Xle", "Css");
 	} else if(n == 1) {
 		aa = c("A", "R", "N", "D", "C", "Q", "E", "G", "H", "I", "L", "K", "M",
-			"F", "P", "O", "S", "U", "T", "W", "Y", "V", "B", "Z", "X", "J");
+			"F", "P", "O", "S", "U", "T", "W", "Y", "V", "B", "Z", "X", "J", "~");
 	} else stop("Unsupported Code!");
 	# Aliphatic = 1; Alcohol, Thiol = 2; Branched = 3;
 	# Aromatic (includes His & Trp) = 4; Pro = 5; Acidic = 6; Basic = 7;
-	type = c(1, 7, 6,6, 2, 6,6, 1, 4, 3,3, 7, 2, 4, 5, 7, 2, 2, 2, 4, 4, 3, 6, 6, NA, 3);
+	# Cys-S-S-Cys: behaves more like a branched/non-polar AA;
+	# Sec = Se-Cysteine;
+	type = c(1, 7, 6,6, 2, 6,6, 1, 4, 3,3, 7, 2, 4, 5, 7, 2, 2, 2, 4, 4, 3, 6, 6, NA, 3, 3);
 	type = factor(type, levels=1:7, labels=c("Aliphatic", "Alcohol, Thiol", "Branched",
 		"Aromatic", "Pro", "Acidic", "Basic"));
 	names(type) = aa;
@@ -90,10 +96,12 @@ aaHydrophobicity = function() {
 	-0.9, # 'W'
 	-1.3, # 'Y'
 	0.0,  # '*'
-	-3.5, -3.5, 4.15 # Asn, Gln; J = Leu/Ile;
+	# Asn, Gln; J = Leu/Ile;
+	# "~" = Cys-S-S-Cys; U = Se-Cys;
+	-3.5, -3.5, 4.15, 2.5, NA
 	);
 	names(coeff) = c("X", "A", "C", "D", "E", "F", "G", "H", "I", "K", "L", "M", "N", "P", "Q", "R",
-		"S", "T", "V", "W", "Y", "*", "B", "Z", "J");
+		"S", "T", "V", "W", "Y", "*", "B", "Z", "J", "~", "U");
 	return(coeff);
 }
 hydrophobicity = function(aa) {
