@@ -10,6 +10,7 @@
 
 
 # TODO:
+# - propensity for alpha-helix & beta-sheet;
 # 1. Roseman, M. A. 1988. Hydrophilicity of polar amino acid side-chains is markedly reduced
 #    by flanking peptide bonds. J. Mol. Biol. 200:513-522.
 # 2. Koehl, P., and M. Levitt. 1999. Structure-based conformational preferences of amino acids.
@@ -17,6 +18,9 @@
 # 3. Street, A. G., and S. L. Mayo. 1999. Intrinsic beta-sheet propensities result from
 #    van der Waals interactions between side chains and the local backbone.
 #    Proc. Natl. Acad. Sci. U. S. A. 96:9074-9076.
+# 4. Pawar, A. P., K. F. Dubay, J. Zurdo, F. Chiti, M. Vendruscolo, and C. M. Dobson. 2005.
+#    Prediction of “aggregation-prone” and “aggregation-susceptible” regions in proteins
+#    associated with neurodegenerative diseases. J. Mol. Biol. 350:379-392.
 
 
 ### Amino-Acids
