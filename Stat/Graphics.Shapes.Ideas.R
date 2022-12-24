@@ -24,11 +24,20 @@ plot(y * 1i, type="l", xlim=c(-1,1))
 #   + Columella;
 # - missing Sporangiospores;
 y = (exp(z) + exp(z^2)) / (z^2*exp(z^2) + exp(z))
-plot(y, type="l")
+plot(y * -1i, type="l", xlim=c(-2,2))
 
 # TODO:
 # - the 2 "circles" actually intersect;
 # - find separate equations;
+
+###
+k = 2; # parameter
+y = (exp(z) + exp(z^2/2)) / (z*exp(z) - sin(z^2/k))
+plot(y * 1i, type="l", ylim=c(-4,2))
+for(k in seq(2.5, 5, by=0.5)) {
+	y = (exp(z) + exp(z^2/2)) / (z*exp(z) - sin(z^2/k));
+	lines(y * 1i, type="l", col="red");
+}
 
 
 ### Other
@@ -61,6 +70,9 @@ y = (exp(z2)*(1-z2^2) + exp(z2^2)*z2) / (exp(z2^2) - z2)
 plot(y, type="l", ylim=c(-8,8))
 
 ###
+library(rootSolve)
+
+# Im(y) == 0;
 x0 = multiroot(function(x) {
 	z2 = cos(x) + 1i*sin(x);
 	y = (exp(z2)*(1-z2^2) + exp(z2^2)*z2) / (exp(z2^2) - z2);
