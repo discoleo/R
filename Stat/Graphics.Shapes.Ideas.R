@@ -40,6 +40,20 @@ for(k in seq(2.5, 5, by=0.5)) {
 }
 
 
+### Sporangium or Embryology
+# Embryology: Transverse section;
+y = (exp(z) + exp(z^2)) / (z*exp(z) - sin(1/z))
+plot(y * 1i, type="l")
+#
+plot(y * -1i, type="l")
+# Parametric
+plot(y * 1i, type="l", xlim=c(-8,8), ylim=c(-4,12))
+for(k in seq(1.125, 1.5, by=0.125)) {
+	y2 = (exp(z) + exp(z^2)) / (z*exp(z) - sin(1/z/k));
+	lines(y2 * 1i, type="l", col="red");
+}
+
+
 ### Other
 y = (exp(z) + exp(z^2)) / (sqrt(z)*exp(z^2) + exp(z))
 plot(y * -1i, type="l")
