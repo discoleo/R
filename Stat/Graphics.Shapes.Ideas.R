@@ -12,7 +12,13 @@ z = cos(x) + 1i*sin(x);
 
 ### Lightbulb
 y = (exp(z) + exp(z^2)) / (z*exp(z^2) + exp(z))
-plot(y * 1i, type="l", xlim=c(-1,1))
+plot(y * 1i, type="l", xlim=c(-2,2), ylim=c(-2,2))
+#
+for(k in seq(1.125, 1.5, by=0.125)) {
+	y = (exp(z) + exp(z^2)) / (z*exp(z^2) + exp(z*k));
+	y = sqrt(k) * Re(y) + 1i*Im(y);
+	lines(y * 1i, type="l", col="red")
+}
 
 
 ### Mycology
@@ -92,6 +98,40 @@ x0 = multiroot(function(x) {
 	y = (exp(z2)*(1-z2^2) + exp(z2^2)*z2) / (exp(z2^2) - z2);
 	return(Im(y));
 	}, 0.87)
+x0; print(x0$root, 12)
+
+
+
+
+####################
+
+### 2 Shells:
+y = (exp(z) + exp(z^2/2)) / (z*exp(z) - sin(z^2/1.5))
+plot(y * 1i * Im(y), type="l", ylim=c(-3,3))
+#
+for(k in c(1.6, 1.7, 1.8)) {
+	y = (exp(z) + exp(z^2/2)) / (z*exp(z) - sin(z^2/k))
+	lines(y * 1i * Im(y), type="l", col="red")
+}
+
+
+# Half:
+k = 1.6;
+x0 = pi;
+x2 = seq(0, x0, by=0.0025);
+z2 = cos(x2) + 1i*sin(x2);
+y = (exp(z2) + exp(z2^2/2)) / (z2*exp(z2) - sin(z2^2/k))
+plot(y * 1i * Im(y), type="l", ylim=c(-3,3))
+
+
+# Im(y) == 0;
+# - the other non-trivial "root";
+x0 = multiroot(function(x, k=1.6) {
+	z = cos(x) + 1i*sin(x);
+	y = (exp(z) + exp(z^2/2)) / (z*exp(z) - sin(z^2/k));
+	y = y * 1i * Im(y);
+	return(Im(y));
+	}, 1.9)
 x0; print(x0$root, 12)
 
 
