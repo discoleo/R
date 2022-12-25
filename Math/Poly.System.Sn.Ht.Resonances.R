@@ -7,12 +7,17 @@
 ### Heterogeneous Symmetric:
 ### Resonances
 ###
-### draft v.0.1j-Special
+### draft v.0.1j-Special2
 
 
 ### Resonances in Polynomial Systems
 # System: 3..n Variables
 # Type: Heterogeneous Symmetric
+
+### Description:
+# - this work started as an exploration of resonances
+#   in polynomial systems;
+# - however, it is more widely applicable to Matrix Theory;
 
 
 # Note:
@@ -735,6 +740,7 @@ nrow(pR)
 
 ####################
 ####################
+####################
 
 ################
 ### 4 Powers ###
@@ -820,12 +826,29 @@ x^9 - 9*x^8 + 27*x^7 - 21*x^6 - 36*x^5 + 54*x^4 + 9*x^3 - 27*x^2 + 0*x + 4 # = 0
 x = 2*cos(pi*c(seq(1,9, by=2))/9) + 2;
 x^5 - 9*x^4 + 27*x^3 - 30*x^2 + 9*x # = 0
 
-### Special Case:
-# k1 = k2; n1 = n2;
-2*(k1 + n1) * (2*k1 - n1)^2 * (k1^3 + n1^3 - 3*n1^2*k1)^2
 
+### Special Cases:
+
+### Case: k1 = k2; n1 = n2;
+2*(k1 + n1) * (2*k1 - n1)^2 * (n1^3 - 3*n1^2*k1 + k1^3)^2
+
+# x = n1/k1;
 x = 1 - 2*cos(2*seq(1,4)*pi/9);
 (x - 2)*(x^3 - 3*x^2 + 1) # = 0
+
+
+### Case: n2 = 0;
+k1^9 + k2^9 + 3*k1^3*k2^6 - 9*k1*k2^5*n1^3 +
+	+ n1^9 + 9*k1^2*k2*n1^6 + 18*k1^4*k2^2*n1^3 + 3*k1^6*k2^3
+
+
+### Case: k2 = -k1; n2 = - n1;
+# Note: (k1 + k2) == 0;
+9*n1^2 * (k1 + k2) * (n1^6 + 6*n1^5*k1 + 9*n1^4*k1^2 - 6*n1^3*k1^3 - 18*n1^2*k1^4 + 9*k1^6)
+9*n1^2 * (k1 + k2) * (n1^3 + 3*n1^2*k1 - 3*k1^3)^2
+
+x = 2*cos(c(1,3,5,7)*pi/9) - 1;
+x*(x^3 + 3*x^2 - 3) # = 0
 
 
 #################
@@ -853,12 +876,22 @@ x = 2 - 2*cos(2*(1:5)*pi/11); # k1^j*n1^(11-2*j)*n2^j; j = 0:5;
 x^5 - 11*x^4 + 44*x^3 - 77*x^2 + 55*x - 11 # = 0
 
 
-### Special Case:
-# k1 = k2; n1 = n2;
+### Special Cases:
+
+### Case: k1 = k2; n1 = n2;
 2*(k1 + n1) * (n1^5 - 6*n1^4*k1 + 10*n1^3*k1^2 - n1^2*k1^3 - 6*n1*k1^4 + k1^5)^2
 
+# x = n1/k1;
 x = 1 - 2*cos(2*seq(1,5)*pi/11);
 x^5 - 6*x^4 + 10*x^3 - x^2 - 6*x + 1 # = 0
+
+
+### Case: k2 = -k1; n2 = - n1;
+# Note: (k1 + k2) == 0;
+11*(k1 + k2) * (n1^5 + 4*n1^4*k1 + 2*n1^3*k1^2 - 5*n1^2*k1^3 - 2*n1*k1^4 + k1^5)^2
+
+x = - 2*cos(2*seq(1,5)*pi/11) - 1;
+x^5 + 4*x^4 + 2*x^3 - 5*x^2 - 2*x + 1 # = 0
 
 
 #################
