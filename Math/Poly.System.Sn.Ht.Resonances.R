@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric:
 ### Resonances
 ###
-### draft v.0.1i-explore
+### draft v.0.1j-Special
 
 
 ### Resonances in Polynomial Systems
@@ -820,6 +820,10 @@ x^9 - 9*x^8 + 27*x^7 - 21*x^6 - 36*x^5 + 54*x^4 + 9*x^3 - 27*x^2 + 0*x + 4 # = 0
 x = 2*cos(pi*c(seq(1,9, by=2))/9) + 2;
 x^5 - 9*x^4 + 27*x^3 - 30*x^2 + 9*x # = 0
 
+### Special Case:
+# k1 = k2; n1 = n2;
+2*(k1 + n1) * (2*k1 - n1)^2 * (k1^3 + n1^3 - 3*n1^2*k1)^2
+
 
 #################
 ### 11 Variables:
@@ -844,6 +848,14 @@ x = 2*cos(2*(1:4)*pi/9) + 2;
 11*x^4 - 77*x^3 + 165*x^2 - 110*x + 11 # = 0
 x = 2 - 2*cos(2*(1:5)*pi/11); # k1^j*n1^(11-2*j)*n2^j; j = 0:5;
 x^5 - 11*x^4 + 44*x^3 - 77*x^2 + 55*x - 11 # = 0
+
+
+### Special Case:
+# k1 = k2; n1 = n2;
+2*(k1 + n1) * (n1^5 - 6*n1^4*k1 + 10*n1^3*k1^2 - n1^2*k1^3 - 6*n1*k1^4 + k1^5)^2
+
+x = 1 - 2*cos(2*seq(1,5)*pi/11);
+x^5 - 6*x^4 + 10*x^3 - x^2 - 6*x + 1
 
 
 #################
