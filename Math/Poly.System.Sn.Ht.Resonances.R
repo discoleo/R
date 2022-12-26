@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric:
 ### Resonances
 ###
-### draft v.0.1j-Special3
+### draft v.0.1k
 
 
 ### Resonances in Polynomial Systems
@@ -18,6 +18,8 @@
 # - this work started as an exploration of resonances
 #   in polynomial systems;
 # - however, it is more widely applicable to Matrix Theory;
+# - Class 2 polynomials play an important role
+#   in Matrix Theory;
 
 
 # Note:
@@ -34,6 +36,32 @@ source("Polynomials.Helper.R")
 source("Polynomials.Helper.EP.R")
 source("Polynomials.Helper.Matrix.R")
 
+
+### Class 2 Poly:
+# - calculate the Class 2 polynomial;
+# - unity = only a placeholder;
+expand.u.pm = function(x, n, unity="u") {
+	pR = x;
+	for(i in seq(2, n-1)) {
+		tmp = x;
+		tmp[, unity] = (tmp[, unity] * i) %% n;
+		pR = mult.pm(pR, tmp);
+	}
+	# Simplify:
+	pR[, unity] = pR[, unity] %% n;
+	isMaxPow = pR[, unity] == (n-1);
+	pInv = data.frame(u = seq(0, n-2), coeff=-1);
+	names(pInv)[1] = unity;
+	pR = replace.pm(pR, pInv, unity, pow=n-1);
+	# Test:
+	hasUnity = ! is.na(match(unity, names(pR)));
+	if(hasUnity && any(pR[, unity] != 0)) {
+		warning("Something went wrong!");
+	}
+	pR = drop.pm(pR);
+	if(! inherits(pR, "pm")) class(pR) = c("pm", class(pR));
+	return(pR);
+}
 
 ### Resonances
 # n = number of variables;
@@ -803,7 +831,17 @@ x^3 + 2*x^2 - x - 1 # = 0
 
 
 ### Case: n2 = 0
-k1^7 + k2^7 + n1^7 + 7*k1^4*k2^2*n1 + 7*k1*k2^4*n1^2 + 7*k1^2*k2*n1^4
+k1^7 + k2^7 + n1^7 + 7*k1^4*k2^2*n1 + 7*k1^2*k2*n1^4 + 7*k1*k2^4*n1^2
+
+# Class 2 Poly:
+p = expand.u.pm(toPoly.pm("k1 + n1*u + k2*u^3"), n=7)
+pR = mult.pm(p, toPoly.pm("k1+k2+n1"))
+print.pm(pR)
+
+# same as above!
+k1^7 + k2^7 + n1^7 + 7*k1^4*k2^2*n1 + 7*k1^2*k2*n1^4 + 7*k1*k2^4*n1^2
+
+
 # n1 = - k1; n2 = 0;
 k2*(k2^6 + 7*k2^3*k1^3 - 7*k2*k1^5 + 7*k1^6)
 
