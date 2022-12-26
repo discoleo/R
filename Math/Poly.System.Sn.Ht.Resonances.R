@@ -896,14 +896,13 @@ k1^9 + n1^9 + n2^9 + k2^9 +
 
 
 # Class 2 Poly:
-# TODO: NOT yet!
 p = expand.u.pm(toPoly.pm("k1 + n1*u + n2*u^2 + k2*u^3"), n=9)
 # problem with non-prime powers;
-p = replace.pm(p, toPoly.pm("1 - u^3"), "u", pow=6)
+p = replace.pm(p, toPoly.pm("-1 - u^3"), "u", pow=6)
 pR = mult.pm(p, toPoly.pm("k1+k2+n1+n2"))
 # print.pm(pR)
 # p0 = polyClip();
-# diff.pm(p0, pR);
+# diff.pm(p0, pR); # SUCCESS !
 
 
 # [old]
