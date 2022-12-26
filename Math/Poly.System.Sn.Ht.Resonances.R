@@ -46,6 +46,7 @@ expand.u.pm = function(x, n, unity="u") {
 		tmp = x;
 		tmp[, unity] = (tmp[, unity] * i) %% n;
 		pR = mult.pm(pR, tmp);
+		pR[, unity] = pR[, unity] %% n;
 	}
 	# Simplify:
 	pR[, unity] = pR[, unity] %% n;
@@ -813,8 +814,7 @@ x = 2*cos(2*(1:2)*pi/5) + 2;
 x = 2 - 2*cos(2*(1:3)*pi/7);
 x^3 - 7*x^2 + 14*x - 7 # = 0
 
-
-# still ???
+# [old]
 x = 2*cos(pi*c(seq(1,14, by=2))/7) + 1;
 x^7 - 7*x^6 + 14*x^5 - 21*x^3 + 7*x^2 + 7*x + 1 # = 0
 
@@ -884,13 +884,22 @@ k1^9 + n1^9 + n2^9 + k2^9 +
 	+ 3*k1^6*k2^3 + 3*k1^3*k2^6;
 
 
+# Class 2 Poly:
+# TODO: NOT yet!
+p = expand.u.pm(toPoly.pm("k1 + n1*u + n2*u^2 + k2*u^3"), n=9)
+# problem with non-prime powers;
+p = replace.pm(p, toPoly.pm("1 - u^3"), "u", pow=6)
+pR = mult.pm(p, toPoly.pm("k1+k2+n1+n2"))
+# print.pm(pR)
+# p0 = polyClip();
+# diff.pm(p0, pR);
+
+
+# [old]
 x = 2*cos(2*(1:3)*pi/7) + 2;
 9*x^3 - 45*x^2 + 54*x - 9 # = 0
 x = 2 - 2*cos(2*(1:4)*pi/9);
 x^4 - 9*x^3 + 27*x^2 - 30*x + 9 # = 0
-
-
-# still ???
 x = 2*cos(pi*c(seq(1,18, by=2))/18) + 1;
 x^9 - 9*x^8 + 27*x^7 - 21*x^6 - 36*x^5 + 54*x^4 + 9*x^3 - 27*x^2 + 2 # = 0
 # - possible the k1^j * n1^(9 - 2*j) * n2^j
@@ -958,6 +967,15 @@ k1^11 + n1^11 + n2^11 + k2^11 +
  + 33*k1^4*k2^2*n1^5 + 33*k1^2*k2^4*n2^5
 
 
+# Class 2 Poly:
+p = expand.u.pm(toPoly.pm("k1 + n1*u + n2*u^2 + k2*u^3"), n=11)
+pR = mult.pm(p, toPoly.pm("k1+k2+n1+n2"))
+# print.pm(pR)
+# p0 = polyClip();
+# diff.pm(p0, pR); # SUCCESS !
+
+
+# [old]
 x = 2*cos(2*(1:4)*pi/9) + 2;
 11*x^4 - 77*x^3 + 165*x^2 - 110*x + 11 # = 0
 x = 2 - 2*cos(2*(1:5)*pi/11); # k1^j*n1^(11-2*j)*n2^j; j = 0:5;
