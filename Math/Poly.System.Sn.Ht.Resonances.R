@@ -65,6 +65,10 @@ expand.u.pm = function(x, n, unity="u") {
 	pInv = data.frame(u = seq(0, n-2), coeff=-1);
 	names(pInv)[1] = unity;
 	pR = replace.pm(pR, pInv, unity, pow=n-1);
+	if(n %% 2 == 0) {
+		n2 = n %/% 2;
+		pR = replace.pm(pR, -1, unity, pow=n2);
+	}
 	# Test:
 	hasUnity = ! is.na(match(unity, names(pR)));
 	if(hasUnity && any(pR[, unity] != 0)) {
@@ -1089,6 +1093,9 @@ x^12 + 26*x^7 + 13*x^6 - 13*x^3 + 65*x^2 - 52*x + 13 # = 0
 ################
 
 ### Note:
+# - All formulas can be computed using Class 2 polynomials;
+
+# [old]
 # - formula seems dependent on: Order (mod 6);
 ### Order: 6*v
 (k1^(2*v) - k2^(2*v))^3 + ...
@@ -1111,19 +1118,23 @@ k1^6 - n1^6 + n2^6 - k2^6 +
 	- 3*k1^4*k2^2 + 3*k1^2*k2^4 +
 	+ 2*k1^3*n2^3 - 9*k1^2*n1^2*n2^2 + 6*k1*n1^4*n2 +
 	- 2*k2^3*n1^3 + 9*k2^2*n1^2*n2^2 - 6*k2*n1*n2^4 +
-	# + 12*k1*k2*n1*n2*(k1^2 - k2^2) - 6*k1*k2*(k1*n1^3 - k2*n2^3);
 	+ 12*k1^3*k2*n1*n2 - 6*k1^2*k2*n1^3 +
 	- 12*k1*k2^3*n1*n2 + 6*k1*k2^2*n2^3;
 
+# Class 2 Poly:
+p = expand.u.pm(toPoly.pm("k1 + n1*u + n2*u^2 + k2*u^3"), n=6)
+p = replace.pm(p, toPoly.pm("-1 + u"), "u", pow=2)
+pR = mult.pm(p, toPoly.pm("k1+k2+n1+n2"))
+# print.pm(pR)
+# p0 = polyClip();
+# diff.pm(p0, pR); # SUCCESS !
 
-# ???
+
+# [old]
 x = 2*cos(seq(1,4, by=2)*pi/4) + 2;
 3*x^2 - 12*x + 6 # = 0
 x = 2 - 2*cos(seq(1,6,by=2)*pi/6); # k1^j*n1^(6-2*j)*n2^j; j = 0:3;
 x^3 - 6*x^2 + 9*x - 2 # = 0
-
-
-# still ???
 x = 2*cos(pi*c(seq(1,12, by=2))/6) + 1;
 x^6 - 6*x^5 + 9*x^4 + 4*x^3 - 12*x^2 + 4 # = 0
 x = 2*cos(pi*c(seq(1,6, by=2))/6) + 1;
