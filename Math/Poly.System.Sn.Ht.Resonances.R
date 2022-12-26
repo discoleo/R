@@ -7,7 +7,7 @@
 ### Heterogeneous Symmetric:
 ### Resonances
 ###
-### draft v.0.1k
+### draft v.0.1L
 
 
 ### Resonances in Polynomial Systems
@@ -40,34 +40,53 @@ source("Polynomials.Helper.Matrix.R")
 ### Class 2 Poly:
 # - calculate the Class 2 polynomial;
 # - unity = only a placeholder;
+# TODO:
+# - proper name: expand.u vs poly.unity;
+# - Optimization: replace.pm is very slow;
 expand.u.pm = function(x, n, unity="u") {
 	# TODO: n = non-prime;
-	pR = x;
+	if(n < 2) stop("Invalid n!");
+	if(n == 2) return(x);
+	#
+	pR  = x;
+	tmp = x; tmp[, unity] = (tmp[, unity] * (n - 1)) %% n;
+	pR  = mult.pm(pR, tmp);
+	pR[, unity] = pR[, unity] %% n;
 	# quasi-optimization;
-	if(n %% 2 == 0) {
-		id = matrix(seq(2, n-3), nrow=2, byrow=TRUE);
-		id[2,] = rev(id[2,]);
-		id = c(n-1, n-2, id);
-	} else {
-		id = matrix(seq(2, n-2), nrow=2, byrow=TRUE);
-		id[2,] = rev(id[2,]);
-		id = c(n-1, id);
+	isEven = (n %% 2) == 0;
+	if(isEven) {
+		tmp = replace.pm(x, -1, unity);
+		pR  = mult.pm(pR, tmp);
 	}
-	for(i in id) {
-		tmp = x;
-		tmp[, unity] = (tmp[, unity] * i) %% n;
+	n2b = (n - 1) %/% 2;
+	if(n > 4) for(i in seq(2, n2b)) {
+		tmp1 = x;
+		tmp1[, unity] = (tmp1[, unity] * i) %% n;
+		tmp2 = x;
+		tmp2[, unity] = (tmp2[, unity] * (n - i)) %% n;
+		tmp = mult.pm(tmp1, tmp2);
+		tmp[, unity] = tmp[, unity] %% n;
 		pR = mult.pm(pR, tmp);
 		pR[, unity] = pR[, unity] %% n;
 	}
-	# Simplify:
-	pR[, unity] = pR[, unity] %% n;
-	isMaxPow = pR[, unity] == (n-1);
-	pInv = data.frame(u = seq(0, n-2), coeff=-1);
-	names(pInv)[1] = unity;
-	pR = replace.pm(pR, pInv, unity, pow=n-1);
-	if(n %% 2 == 0) {
-		n2 = n %/% 2;
-		pR = replace.pm(pR, -1, unity, pow=n2);
+	# Simplify: SLOW !!!
+	if(isEven) {
+		pR = replace.pm(pR, -1, unity, pow = n2b + 1);
+		hasUnity = ! is.na(match(unity, names(pR)));
+		if(hasUnity) {
+			# tricky: alternating;
+			if(n2b %% 2 == 1) {
+				pInv = data.frame(u = seq(0, n2b - 2), coeff=c(-1, 1));
+				pInv = rbind(pInv, c(n2b - 1, -1));
+			} else
+				pInv = data.frame(u = seq(0, n2b - 1), coeff=c(-1, 1));
+			names(pInv)[1] = unity;
+			pR = replace.pm(pR, pInv, unity, pow=n2b);
+		}
+	} else {
+		pInv = data.frame(u = seq(0, n-2), coeff=-1);
+		names(pInv)[1] = unity;
+		pR = replace.pm(pR, pInv, unity, pow=n-1);
 	}
 	# Test:
 	hasUnity = ! is.na(match(unity, names(pR)));
@@ -1123,11 +1142,10 @@ k1^6 - n1^6 + n2^6 - k2^6 +
 
 # Class 2 Poly:
 p = expand.u.pm(toPoly.pm("k1 + n1*u + n2*u^2 + k2*u^3"), n=6)
-p = replace.pm(p, toPoly.pm("-1 + u"), "u", pow=2)
 pR = mult.pm(p, toPoly.pm("k1+k2+n1+n2"))
 # print.pm(pR)
 # p0 = polyClip();
-# diff.pm(p0, pR); # SUCCESS !
+diff.pm(p0, pR); # SUCCESS !
 
 
 # [old]
@@ -1154,7 +1172,15 @@ k1^8 - n1^8 + n2^8 - k2^8 - 2*k1^4*n2^4 + 2*k2^4*n1^4 +
  - 24*k1^4*k2*n1*n2^2 + 24*k1*k2^4*n1^2*n2 - 20*k1^2*n1^4*n2^2 + 20*n1^2*k2^2*n2^4 +
  + 32*k1^3*k2*n1^3*n2 - 32*k1*k2^3*n1*n2^3
 
-# still: 16, 32 ???
+# Class 2 Poly:
+p = expand.u.pm(toPoly.pm("k1 + n1*u + n2*u^2 + k2*u^3"), n=8)
+pR = mult.pm(p, toPoly.pm("k1+k2+n1+n2"))
+# print.pm(pR)
+# p0 = polyClip();
+diff.pm(p0, pR); # SUCCESS !
+
+
+# [old]
 x = 2*cos(pi*c(seq(1,16, by=2))/8) + 1;
 x^8 - 8*x^7 + 20*x^6 - 8*x^5 - 30*x^4 + 24*x^3 + 12*x^2 - 8*x + 1 # = 0
 x = 2*cos(pi*c(seq(1,8, by=2))/8) + 1;
@@ -1176,7 +1202,16 @@ k1^10 - n1^10 + n2^10 - k2^10 + 2*k1^5*n2^5 - 2*k2^5*n1^5 +
  - 25*k1^4*n1^2*n2^4 + 25*k2^4*n1^4*n2^2 + 50*k1^3*n1^4*n2^3 - 50*n1^3*k2^3*n2^4 +
  - 100*k1^4*k2*n1^3*n2^2 + 100*k1*k2^4*n1^2*n2^3 - 60*k1^2*n1*k2^5*n2^2 - 60*k1*n1*k2^3*n2^5
 
-# still: 25, 100 ???
+
+# Class 2 Poly:
+p = expand.u.pm(toPoly.pm("k1 + n1*u + n2*u^2 + k2*u^3"), n=10)
+pR = mult.pm(p, toPoly.pm("k1+k2+n1+n2"))
+# print.pm(pR)
+# p0 = polyClip();
+diff.pm(p0, pR); # SUCCESS !
+
+
+# [old]
 x = 2*cos(pi*c(seq(1,20, by=2))/10) + 1;
 x^10 - 10*x^9 + 35*x^8 - 40*x^7 - 35*x^6 + 98*x^5 - 15*x^4 - 60*x^3 + 15*x^2 + 10*x + 1 # = 0
 x = 2*cos(pi*c(seq(2,20, by=2))/10) + 1;
@@ -1198,5 +1233,14 @@ k1^12 - n1^12 + n2^12 - k2^12 - 3*k1^8*k2^4 + 3*k1^4*k2^8 +
  + 2*n1^6*k2^6 - 112*n1^3*k2^3*n2^6 + 180*k1^5*n1^4*k2^2*n2 + 240*k1^5*n1^3*k2*n2^3 +
  + 36*k1^5*n1^2*n2^5 - 252*k1^4*n1^5*k2*n2^2 - 180*k1^2*n1*k2^5*n2^4 - 240*k1*n1^3*k2^5*n2^3 + 252*k1*n1^2*k2^4*n2^5 +
  - 36*n1^5*k2^5*n2^2 - 105*k1^4*n1^4*n2^4 + 105*n1^4*k2^4*n2^4
+
+
+# Class 2 Poly:
+p = expand.u.pm(toPoly.pm("k1 + n1*u + n2*u^2 + k2*u^3"), n=12)
+p = replace.pm(p, toPoly.pm("u^2 - 1"), "u", pow=4);
+pR = mult.pm(p, toPoly.pm("k1+k2+n1+n2"))
+# print.pm(pR)
+# p0 = polyClip();
+diff.pm(p0, pR); # SUCCESS !
 
 
