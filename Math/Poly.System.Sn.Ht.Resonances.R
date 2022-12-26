@@ -41,8 +41,19 @@ source("Polynomials.Helper.Matrix.R")
 # - calculate the Class 2 polynomial;
 # - unity = only a placeholder;
 expand.u.pm = function(x, n, unity="u") {
+	# TODO: n = non-prime;
 	pR = x;
-	for(i in seq(2, n-1)) {
+	# quasi-optimization;
+	if(n %% 2 == 0) {
+		id = matrix(seq(2, n-3), nrow=2, byrow=TRUE);
+		id[2,] = rev(id[2,]);
+		id = c(n-1, n-2, id);
+	} else {
+		id = matrix(seq(2, n-2), nrow=2, byrow=TRUE);
+		id[2,] = rev(id[2,]);
+		id = c(n-1, id);
+	}
+	for(i in id) {
 		tmp = x;
 		tmp[, unity] = (tmp[, unity] * i) %% n;
 		pR = mult.pm(pR, tmp);
@@ -1033,6 +1044,15 @@ k1^13 + n1^13 + n2^13 + k2^13 +
  + 65*k1^6*n1^4*k2^3 + 65*k1^3*k2^6*n2^4 - 273*k1^5*n1^5*k2^2*n2 - 273*k1^2*n1*k2^5*n2^5;
 
 
+# Class 2 Poly:
+p = expand.u.pm(toPoly.pm("k1 + n1*u + n2*u^2 + k2*u^3"), n=13)
+pR = mult.pm(p, toPoly.pm("k1+k2+n1+n2"))
+# print.pm(pR)
+# p0 = polyClip();
+# diff.pm(p0, pR); # SUCCESS !
+
+
+# [old]
 x = 2*cos(2*(1:5)*pi/11) + 2;
 13*x^5 - 117*x^4 + 364*x^3 - 455*x^2 + 195*x - 13 # = 0
 x = 2 - 2*cos(2*(1:6)*pi/13); # k1^j*n1^(11-2*j)*n2^j; j = 0:6;
