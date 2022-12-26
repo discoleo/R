@@ -799,7 +799,14 @@ k1^7 + n1^7 + n2^7 + k2^7 +
 	- 7*k2*n1*n2^5 + 14*k2^2*n1^2*n2^3 - 7*k2^3*n1^3*n2 +
 	# ???
 	+ 7*k1^4*k2^2*n1 + 7*k1^2*k2^4*n2;
-	
+
+
+# Class 2 Poly:
+p = expand.u.pm(toPoly.pm("k1 + n1*u + n2*u^2 + k2*u^3"), n=7)
+pR = mult.pm(p, toPoly.pm("k1+k2+n1+n2"))
+# print.pm(pR)
+# p0 = polyClip();
+# diff.pm(p0, pR); # SUCCESS !
 
 x = 2*cos(2*(1:2)*pi/5) + 2;
 7*x^2 - 21*x + 7 # = 0
