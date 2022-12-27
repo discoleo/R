@@ -115,6 +115,26 @@ roots.class2(x, 7)
 eigen(m)$values
 
 
+### Even Dim ###
+x = c(1,2,4,3,1)
+m = diag.band(x, n=8)
+roots.class2(x, 8)
+eigen(m)$values
+
+###
+x = c(1,2,4,2,3)
+m = diag.band(x, n=8)
+# TODO: round0
+roots.class2(x, 8)
+eigen(m)$values
+
+###
+x = c(1,2,4,2,3,1)
+m = diag.band(x, n=8)
+roots.class2(x, 8)
+eigen(m)$values
+
+
 ####################
 
 ### Test Complex Det
