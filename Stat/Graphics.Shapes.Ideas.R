@@ -1,8 +1,28 @@
+########################
+###
+### Leonard Mada
+### [the one and only]
+###
+### Object Shapes
+###
+### draft v.0.1c
 
 
+### Ideas for students
 
-# Ideas for students
 
+##################
+
+library(rootSolve)
+# used to compute some bounds;
+
+
+seq.unit = function(x0=0, by=0.0025, symmetric=TRUE) {
+	xEnd = if(symmetric) 2*pi - x0 else x0[2];
+	x2 = seq(x0, xEnd, by=by);
+	z2 = cos(x2) + 1i*sin(x2);
+	return(z2);
+}
 
 # Init
 x = seq(0, 2*pi, by=0.0025);
@@ -10,7 +30,7 @@ z = cos(x) + 1i*sin(x);
 
 ######################
 
-### Lightbulb
+### Light-bulb
 y = (exp(z) + exp(z^2)) / (z*exp(z^2) + exp(z))
 plot(y * 1i, type="l", xlim=c(-2,2), ylim=c(-2,2))
 #
@@ -20,10 +40,49 @@ for(k in seq(1.125, 1.5, by=0.125)) {
 	lines(y * 1i, type="l", col="red")
 }
 
+### Chemistry: various Flasks
+x0 = 1.028713;
+z2 = seq.unit(x0)
+flask = function(z, k=1.25, mult=1i) {
+	y = (exp(z) + exp(z^2)) / (z*exp(z^2) + exp(z/k));
+	y = 1/k * Re(y) + 1i*Im(y);
+	return(y * mult);
+}
+### Flask
+plot(flask(z2), type="l", xlim=c(-2,2), ylim=c(-2,2))
+for(k in seq(1,1.5, by=0.125)) lines(flask(z2, k=k), col="red")
+lines(flask(z2))
 
-### Mycology
+### Anatomy: Bladder
+x0 = 1.193736;
+z2 = seq.unit(x0)
+plot(flask(z2, k=1.75, mult=-1i), type="l", xlim=c(-2,2), ylim=c(-2,2))
+
+
+solve.x0 = function(x0, ...) {
+	multiroot(function(x, k, R=1, mult=1i) {
+		z = cos(x) + 1i*sin(x);
+		y = (exp(z) + exp(z^2)) / (z*exp(z^2) + exp(z/k));
+		y = 1/k * Re(y) + 1i*Im(y);
+		y = y * mult;
+		return(Im(y) - R);
+	}, x0, ...)
+}
+#
+x0 = solve.x0(1, k=1.25, R=1, mult=1i)
+x0; print(x0$root, 12)
+#
+x0 = solve.x0(1, k=1.75, R=0, mult=1)
+x0; print(x0$root, 12)
+
+
+################
+
+################
+### Mycology ###
+################
+
 ### Ascomycota & Zygomycota
-
 
 ### Sporangium
 # - Mucor type:
@@ -90,7 +149,6 @@ y = (exp(z2)*(1-z2^2) + exp(z2^2)*z2) / (exp(z2^2) - z2)
 plot(y, type="l", ylim=c(-8,8))
 
 ###
-library(rootSolve)
 
 # Im(y) == 0;
 x0 = multiroot(function(x) {
@@ -125,13 +183,13 @@ plot(y * 1i * Im(y), type="l", ylim=c(-3,3))
 
 
 # Im(y) == 0;
-# - the other non-trivial "root";
+# - the other non-trivial "roots";
 x0 = multiroot(function(x, k=1.6) {
 	z = cos(x) + 1i*sin(x);
 	y = (exp(z) + exp(z^2/2)) / (z*exp(z) - sin(z^2/k));
 	y = y * 1i * Im(y);
 	return(Im(y));
-	}, 1.9)
+	}, 1.9) # x0 = 2*pi - 1.9;
 x0; print(x0$root, 12)
 
 
