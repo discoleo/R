@@ -5,7 +5,7 @@
 ###
 ### Polygon Process
 ###
-### draft v.0.1b
+### draft v.0.1c
 
 
 ### "Polygon"-Process
@@ -58,6 +58,37 @@ coords.dp = function(x, a) {
 	};
 	return(cbind(x, y));
 }
+
+plot.ini = function(xlim, ylim=xlim) {
+	plot.new();
+	plot.window(xlim=xlim, ylim=ylim);
+	Axis(side=1); Axis(side=2);
+}
+
+### Generators
+
+# v = speed of traversal (similar to a Bezier curve);
+polygonBySpeed = function(v, t, r=1, phi=0, center=c(0,0), xy=NULL) {
+	n = length(v);
+	if(is.null(xy)) {
+		x = r*cos(2*seq(0, n-1)*pi/n + phi) + center[1];
+		y = r*sin(2*seq(0, n-1)*pi/n + phi) + center[2];
+	} else {
+		x = xy[,1]; y = xy[,2];
+	}
+	xp = rep(0, n); yp = rep(0, n);
+	t  = v * t;
+	id = c(seq(2, n), 1);
+	xp = (1-t)*x + t*x[id];
+	yp = (1-t)*y + t*y[id];
+	p = cbind(x=xp, y=yp);
+	class(p) = c("polygon", class(p));
+	return(p);
+}
+
+# TODO:
+# - LatticeBySpeed();
+
 
 ### Solve/Optimize: Polygon-Angles
 
@@ -203,4 +234,47 @@ print(a1); cat("=========\n"); print(a2);
 
 plot.dp(x, a2$par)
 lines.dp(x, a1$root, col="red", lty=4, lwd=2)
+
+
+######################
+######################
+
+### Polygon by Speed
+
+###
+n = 6
+v = seq(n)
+p = polygonBySpeed(v, t = 1/(n+1), phi=pi/5)
+
+plot.ini(range(p)*1.25)
+polygon(p)
+
+
+###
+n = 6
+v = seq(n)*3
+p = polygonBySpeed(v, t = 1/(4*n+1))
+
+plot.ini(range(p)*1.25)
+polygon(p)
+
+
+###
+v = c(1,2,5,3,6,4)
+n = length(v)
+p = polygonBySpeed(v, t = 1/(n+1))
+
+plot.ini(range(p)*1.25)
+polygon(p)
+
+
+###
+v = (1:6)^1.5
+n = max(v)*2;
+p = polygonBySpeed(v, t = 1/(n+1))
+
+plot.ini(range(p)*1.25)
+polygon(p)
+p = polygonBySpeed(c(v[-1], v[1]), t = 1/(n+1), xy=p)
+polygon(p, border="red")
 
