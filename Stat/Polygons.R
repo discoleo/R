@@ -5,7 +5,7 @@
 ###
 ### Polygon Process
 ###
-### draft v.0.1d
+### draft v.0.1d-comment
 
 
 ### "Polygon"-Process
@@ -68,12 +68,19 @@ plot.ini = function(xlim, ylim=xlim) {
 ### Generators
 
 # Side 1 = along OX axis;
+# Note: generates only 1 triangle;
+# - Issue with multiple triangles:
+#   either list with coordinates for each triangle,
+#   or matrix/df with an additional id-column;
 as.triangle.dist = function(d, tol=1E-8) {
 	# Note: does NOT check if triangle is valid;
 	len = length(d);
 	if(len == 0) return(array(0, c(0,2)));
-	if(len %% 3 != 0) stop("Incorrect number of distances!");
+	if(len != 3) stop("Incorrect number of distances!");
 	dd23 = (d[2]^2 + d[3]^2 - d[1]^2);
+	### Special Case: right A
+	# numerical instability unlikely:
+	# => probably unnecessary;
 	if(abs(dd23) <= tol) {
 		# d1 is along OX:
 		h  = d[2]*d[3]/d[1];
