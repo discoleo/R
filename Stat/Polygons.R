@@ -16,9 +16,14 @@
 
 ###
 
+library(shape)
 library(rootSolve)
 
 ### Plot
+
+circle = function(r, mid, col=1, fill=NULL, ...) {
+	filledcircle(r1=r, mid=mid, lcol=col, col=fill, ...);
+}
 
 plot.dp = function(x, a, type="l", ...) {
 	xy = coords.dp(x, a=a)
@@ -59,9 +64,9 @@ coords.dp = function(x, a) {
 	return(cbind(x, y));
 }
 
-plot.ini = function(xlim, ylim=xlim) {
+plot.ini = function(xlim, ylim=xlim, ...) {
 	plot.new();
-	plot.window(xlim=xlim, ylim=ylim);
+	plot.window(xlim=xlim, ylim=ylim, ...);
 	Axis(side=1); Axis(side=2);
 }
 
@@ -98,6 +103,26 @@ as.triangle.dist = function(d, tol=1E-8) {
 	x = c(0, d[1], xA);
 	y = c(0,0,yA);
 	return(cbind(x,y));
+}
+
+# Based on the incircle
+# d = side 1 (along OX);
+# r = radius of incircle;
+# prop = proportion of side 1 determined by incircle;
+as.triangle.incircle = function(d, r, prop, tol=1E-8) {
+	dB = d*prop; dC = d - dB;
+	sinB = 2*dB*r / (r^2 + dB^2);
+	sinC = 2*dC*r / (r^2 + dC^2);
+	ds = sinB - sinC;
+	if(abs(ds) < tol) {
+		r2 = r^2;
+		dA = 4*d*r2 / (d^2 - 4*r^2);
+		x  = c(0,d,d/2);
+		y  = c(0,0, r + dA);
+		return(cbind(x, y));
+	}
+	dA = (dC*sinC - dB*sinB) / ds;
+	# TODO:
 }
 
 # t = proportion of sides (similar to a quasi-Bezier curve);
@@ -326,6 +351,29 @@ p = as.triangle.dist(d)
 r = range(p)*1.25;
 plot.ini(r, r + 3)
 polygon(p)
+
+
+################
+
+################
+### Incircle ###
+
+###
+d = 6; r = 2;
+p = as.triangle.incircle(d, r=r, prop=1/2)
+
+plot.ini(range(p)*1.25, asp=1)
+polygon(p)
+circle(r=r, mid=c(d/2, r), col="red")
+
+
+###
+d = 6; r = 2.5;
+p = as.triangle.incircle(d, r=r, prop=1/2)
+
+plot.ini(range(p)*1.25, asp=1)
+polygon(p)
+circle(r=r, mid=c(d/2, r), col="red")
 
 
 ######################
