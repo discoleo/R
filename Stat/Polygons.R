@@ -5,7 +5,7 @@
 ###
 ### Polygon Process
 ###
-### draft v.0.1d-comment
+### draft v.0.1e
 
 
 ### "Polygon"-Process
@@ -72,6 +72,11 @@ plot.ini = function(xlim, ylim=xlim, ...) {
 
 ### Generators
 
+# TODO:
+# rtriangle:
+# - .sas, .dist, .area, .circle, .incircle;
+
+
 # Side 1 = along OX axis;
 # Note: generates only 1 triangle;
 # - Issue with multiple triangles:
@@ -122,7 +127,8 @@ as.triangle.incircle = function(d, r, prop, tol=1E-8) {
 		return(cbind(x, y));
 	}
 	dA = (dC*sinC - dB*sinB) / ds;
-	# TODO:
+	# TODO: optimize?
+	as.triangle.dist(c(d, dC + dA, dB + dA));
 }
 
 # t = proportion of sides (similar to a quasi-Bezier curve);
@@ -374,6 +380,33 @@ p = as.triangle.incircle(d, r=r, prop=1/2)
 plot.ini(range(p)*1.25, asp=1)
 polygon(p)
 circle(r=r, mid=c(d/2, r), col="red")
+
+
+###
+d = 6; r = 2; prop = 1/3
+p = as.triangle.incircle(d, r=r, prop=prop)
+
+plot.ini(range(p)*1.25, asp=1)
+polygon(p)
+circle(r=r, mid=c(prop*d, r), col="red")
+
+
+###
+d = 6; r = 2; prop = 1/4;
+p = as.triangle.incircle(d, r=r, prop=prop)
+
+plot.ini(range(p)*1.25, asp=1)
+polygon(p)
+circle(r=r, mid=c(prop*d, r), col="red")
+
+
+###
+d = 6; r = 2; prop = 4/5;
+p = as.triangle.incircle(d, r=r, prop=prop)
+
+plot.ini(range(p)*1.25, asp=1)
+polygon(p)
+circle(r=r, mid=c(prop*d, r), col="red")
 
 
 ######################
