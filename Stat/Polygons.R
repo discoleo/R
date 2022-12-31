@@ -5,7 +5,7 @@
 ###
 ### Polygon Process
 ###
-### draft v.0.1c-ref
+### draft v.0.1d
 
 
 ### "Polygon"-Process
@@ -66,6 +66,32 @@ plot.ini = function(xlim, ylim=xlim) {
 }
 
 ### Generators
+
+# Side 1 = along OX axis;
+as.triangle.dist = function(d, tol=1E-8) {
+	# Note: does NOT check if triangle is valid;
+	len = length(d);
+	if(len == 0) return(array(0, c(0,2)));
+	if(len %% 3 != 0) stop("Incorrect number of distances!");
+	dd23 = (d[2]^2 + d[3]^2 - d[1]^2);
+	if(abs(dd23) <= tol) {
+		# d1 is along OX:
+		h  = d[2]*d[3]/d[1];
+		xA = (d[1]^2 + d[3]^2 - d[2]^2) / (2*d[1]);
+		x = c(0, d[1], xA);
+		y = c(0, 0, h);
+		return(cbind(x, y));
+	}
+	#   A
+	# B___C
+	xA = (d[1]^2 + d[3]^2 - d[2]^2) / (2*d[1]);
+	sq = d^2;
+	yA = 2*(sq[1]*sq[2] + sq[1]*sq[3] + sq[2]*sq[3]) - sq[1]^2 - sq[2]^2 - sq[3]^2;
+	yA = sqrt(yA) / (2*d[1]);
+	x = c(0, d[1], xA);
+	y = c(0,0,yA);
+	return(cbind(x,y));
+}
 
 # t = proportion of sides (similar to a quasi-Bezier curve);
 # r, phi, center = convenience parameters to generate regular n-gon;
@@ -237,10 +263,66 @@ plot.dp(x, a2$par)
 lines.dp(x, a1$root, col="red", lty=4, lwd=2)
 
 
-######################
-######################
+####################
+####################
 
-### Polygon by Speed
+#################
+### Triangles ###
+#################
+
+### Right A:
+d = c(5,4,3)
+p = as.triangle.dist(d)
+
+plot.ini(range(p)*1.25)
+polygon(p)
+
+
+### Right B:
+d = c(4,5,3)
+p = as.triangle.dist(d)
+
+plot.ini(range(p)*1.25)
+polygon(p)
+
+
+### Right C:
+d = c(4,3,5)
+p = as.triangle.dist(d)
+
+plot.ini(range(p)*1.25)
+polygon(p)
+
+
+### Obtuse C:
+d = c(4,3,6)
+p = as.triangle.dist(d)
+plot.ini(c(0, 7), c(0, 7))
+polygon(p)
+### Obtuse C: larger
+d = c(4,3,6.9)
+p = as.triangle.dist(d)
+polygon(p, border="red")
+
+
+### Obtuse A:
+d = c(7,4,3.1)
+p = as.triangle.dist(d)
+
+plot.ini(range(p)*1.25)
+polygon(p)
+
+
+### Negative x: Obtuse B
+d = c(4,8,5)
+p = as.triangle.dist(d)
+r = range(p)*1.25;
+plot.ini(r, r + 3)
+polygon(p)
+
+
+######################
+### Polygon Transforms
 
 ###
 n = 6
