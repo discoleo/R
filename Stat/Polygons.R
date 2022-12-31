@@ -5,12 +5,13 @@
 ###
 ### Polygon Process
 ###
-### draft v.0.1e
+### draft v.0.1f
 
 
 ### "Polygon"-Process
 
 # TODO:
+# - distribute randomly using a point process, see:
 # https://search.r-project.org/CRAN/refmans/spatstat.random/html/00Index.html
 
 
@@ -131,29 +132,6 @@ as.triangle.incircle = function(d, r, prop, tol=1E-8) {
 	as.triangle.dist(c(d, dC + dA, dB + dA));
 }
 
-# t = proportion of sides (similar to a quasi-Bezier curve);
-# r, phi, center = convenience parameters to generate regular n-gon;
-# - transform can be applied twice for a Bezier-like effect;
-transform.Bezier = function(t, xy=NULL, r=1, phi=0, center=c(0,0)) {
-	n = length(t);
-	if(is.null(xy)) {
-		x = r*cos(2*seq(0, n-1)*pi/n + phi) + center[1];
-		y = r*sin(2*seq(0, n-1)*pi/n + phi) + center[2];
-	} else {
-		x = xy[,1]; y = xy[,2];
-	}
-	xp = rep(0, n); yp = rep(0, n);
-	id = c(seq(2, n), 1);
-	xp = (1-t)*x + t*x[id];
-	yp = (1-t)*y + t*y[id];
-	p = cbind(x=xp, y=yp);
-	class(p) = c("polygon", class(p));
-	return(p);
-}
-
-# TODO:
-# - transform.lattice();
-
 
 ### Solve/Optimize: Polygon-Angles
 
@@ -210,7 +188,23 @@ is.valid.poly = function(x, degenerate=FALSE) {
 	return(FALSE);
 }
 
+### Triangles: Incircle
+is.valid.incircle = function(d, r, prop, degenerate=FALSE) {
+	d2 = d/2;
+	if(r > d2) return(FALSE);
+	if(e == d2) {
+		if(prop != 1/2) return(FALSE);
+		return(degenerate);
+	}
+	# TODO
+}
+
 ### Transformations
+
+### TODO:
+# - rotate:
+#   around one vertex, center of incircle,
+#   center of circumscribed circle;
 
 as.convex = function(x, y) {
 	if(missing(y)) {
@@ -224,7 +218,34 @@ as.convex = function(x, y) {
 	}
 }
 
+
+# t = proportion of sides (similar to a quasi-Bezier curve);
+# r, phi, center = convenience parameters to generate regular n-gon;
+# - transform can be applied twice for a Bezier-like effect;
+transform.Bezier = function(t, xy=NULL, r=1, phi=0, center=c(0,0)) {
+	n = length(t);
+	if(is.null(xy)) {
+		x = r*cos(2*seq(0, n-1)*pi/n + phi) + center[1];
+		y = r*sin(2*seq(0, n-1)*pi/n + phi) + center[2];
+	} else {
+		x = xy[,1]; y = xy[,2];
+	}
+	xp = rep(0, n); yp = rep(0, n);
+	id = c(seq(2, n), 1);
+	xp = (1-t)*x + t*x[id];
+	yp = (1-t)*y + t*y[id];
+	p = cbind(x=xp, y=yp);
+	class(p) = c("polygon", class(p));
+	return(p);
+}
+
+# TODO:
+# - transform.lattice();
+
 ###################
+###################
+
+### Examples:
 
 ### Ex 1:
 x = runif(10, 1, 3)
