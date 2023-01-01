@@ -5,7 +5,7 @@
 ###
 ### Polygon Process
 ###
-### draft v.0.1f
+### draft v.0.1g
 
 
 ### "Polygon"-Process
@@ -137,6 +137,7 @@ as.triangle.incircle = function(d, r, prop, tol=1E-8) {
 
 # based on LastPx == Origin = c(0,0);
 # d = side lengths of polygon;
+# a = pi - angles;
 polygonOrigin = function(a, d, id=NULL) {
 	len = length(d); lenA = length(a) - 2;
 	x1  = d[1]; y1 = 0;
@@ -189,14 +190,26 @@ is.valid.poly = function(x, degenerate=FALSE) {
 }
 
 ### Triangles: Incircle
-is.valid.incircle = function(d, r, prop, degenerate=FALSE) {
+# tol = tolerance for degenerate triangle;
+is.valid.incircle = function(d, r, prop, degenerate=FALSE, tol=1E-8) {
 	d2 = d/2;
 	if(r > d2) return(FALSE);
-	if(e == d2) {
+	if(r == d2) {
+		# TODO:
+		# (abs(prop - 1/2) < tol) OR (abs(r - d2) < tol); ???
 		if(prop != 1/2) return(FALSE);
 		return(degenerate);
 	}
-	# TODO
+	dB = d*prop; dC = d - dB;
+	sinB = 2*dB*r / (r^2 + dB^2);
+	sinC = 2*dC*r / (r^2 + dC^2);
+	ds = sinB - sinC;
+	if((ds < 0 && prop < 1/2) || (ds > 0 && prop > 1/2)) {
+		return(FALSE);
+	} else if(abs(ds) < tol) {
+		return(degenerate);
+	}
+	return(TRUE);
 }
 
 ### Transformations
@@ -241,6 +254,7 @@ transform.Bezier = function(t, xy=NULL, r=1, phi=0, center=c(0,0)) {
 
 # TODO:
 # - transform.lattice();
+
 
 ###################
 ###################
@@ -426,6 +440,15 @@ d = 6; r = 2; prop = 4/5;
 p = as.triangle.incircle(d, r=r, prop=prop)
 
 plot.ini(range(p)*1.25, asp=1)
+polygon(p)
+circle(r=r, mid=c(prop*d, r), col="red")
+
+
+### Almost degenerate:
+d = 7; r = 3; prop = 1/4;
+p = as.triangle.incircle(d, r=r, prop=prop)
+
+plot.ini(c(-250, 50), c(0, 300), asp=1)
 polygon(p)
 circle(r=r, mid=c(prop*d, r), col="red")
 
