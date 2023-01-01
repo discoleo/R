@@ -5,7 +5,7 @@
 ###
 ### Polygon Process
 ###
-### draft v.0.1i
+### draft v.0.1j
 
 
 ### "Polygon"-Process
@@ -20,7 +20,7 @@
 # https://search.r-project.org/CRAN/refmans/spatstat.random/html/00Index.html
 
 
-###
+### Libraries
 
 library(shape)
 library(rootSolve)
@@ -82,7 +82,8 @@ plot.ini = function(xlim, ylim=xlim, ...) {
 # rtriangle:
 # - .sas, .dist, .area, .circle, .incircle;
 
-rtriangle.circle = function(n, ..., r=1, type=c("sequential", "random"),
+rtriangle.circle = function(n, ..., r=1,
+		type=c("sequential", "random", "half"),
 		center=c(0,0), asX = FALSE, tol=1E-4) {
 	type = match.arg(type);
 	if(type == "sequential") {
@@ -99,7 +100,34 @@ rtriangle.circle = function(n, ..., r=1, type=c("sequential", "random"),
 		});
 		return(xy);
 	}
-	# TODO
+	if(type == "half") {
+		a1 = rnorm(n, tol, pi);
+		a2 = rnorm(n, tol, pi - tol);
+		if(length(r) == 1) r = rep(r, n);
+		xy = lapply(seq(n), function(id) {
+			as.triangle.circle(c(0, a1[id], a2[id]), r=r[id], type="sequential",
+				center=center, asX=asX);
+		});
+		return(xy);
+	}
+	# Note: probably skews towards "larger" triangles,
+	# including close-to-right angles;
+	if(type == "random") {
+		upper = 2*pi - tol;
+		a1 = rnorm(n, tol, upper);
+		a2 = rnorm(n, tol, upper);
+		isEq = abs(a1 - a2) <= tol;
+		n2 = sum(isEq);
+		if(n2 > 0) {
+			a2[isEq] = rnorm(n2, tol, upper);
+		}
+		if(length(r) == 1) r = rep(r, n);
+		xy = lapply(seq(n), function(id) {
+			as.triangle.circle(c(0, a1[id], a2[id]), r=r[id], type="random",
+				center=center, asX=asX);
+		});
+		return(xy);
+	}
 }
 
 
