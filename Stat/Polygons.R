@@ -5,7 +5,7 @@
 ###
 ### Polygon Process
 ###
-### draft v.0.1j
+### draft v.0.1k
 
 
 ### "Polygon"-Process
@@ -83,7 +83,7 @@ plot.ini = function(xlim, ylim=xlim, ...) {
 # - .sas, .dist, .area, .circle, .incircle;
 
 rtriangle.circle = function(n, ..., r=1,
-		type=c("sequential", "random", "half"),
+		type=c("sequential", "random", "half", "phalf"),
 		center=c(0,0), asX = FALSE, tol=1E-4) {
 	type = match.arg(type);
 	if(type == "sequential") {
@@ -100,12 +100,14 @@ rtriangle.circle = function(n, ..., r=1,
 		});
 		return(xy);
 	}
-	if(type == "half") {
+	if(type == "half" || type == "phalf") {
 		a1 = rnorm(n, tol, pi);
 		a2 = rnorm(n, tol, pi - tol);
+		if(type == "phalf") a2 = a2 + pi;
 		if(length(r) == 1) r = rep(r, n);
+		type = if(type == "half") "sequential" else "random";
 		xy = lapply(seq(n), function(id) {
-			as.triangle.circle(c(0, a1[id], a2[id]), r=r[id], type="sequential",
+			as.triangle.circle(c(0, a1[id], a2[id]), r=r[id], type=type,
 				center=center, asX=asX);
 		});
 		return(xy);
