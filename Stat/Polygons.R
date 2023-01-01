@@ -5,7 +5,7 @@
 ###
 ### Polygon Process
 ###
-### draft v.0.1g
+### draft v.0.1h
 
 
 ### "Polygon"-Process
@@ -77,6 +77,26 @@ plot.ini = function(xlim, ylim=xlim, ...) {
 # rtriangle:
 # - .sas, .dist, .area, .circle, .incircle;
 
+rtriangle.circle = function(n, ..., r=1, type=c("sequential", "random"),
+		center=c(0,0), asX = FALSE, tol=1E-4) {
+	type = match.arg(type);
+	if(type == "sequential") {
+		# if a1 = rnorm(tol, 2*pi-3*tol)
+		# => skewed towards almost-degenerate triangles;
+		a1 = rnorm(n, tol, pi);
+		dA = 2*pi - a1 - 2*tol;
+		dA = pmax(tol, dA);
+		a2 = rnorm(n, tol, dA);
+		if(length(r) == 1) r = rep(r, n);
+		xy = lapply(seq(n), function(id) {
+			as.triangle.circle(c(0, a1[id], a2[id]), r=r[id], type="sequential",
+				center=center, asX=asX);
+		});
+		return(xy);
+	}
+	# TODO
+}
+
 
 # Side 1 = along OX axis;
 # Note: generates only 1 triangle;
@@ -109,6 +129,29 @@ as.triangle.dist = function(d, tol=1E-8) {
 	x = c(0, d[1], xA);
 	y = c(0,0,yA);
 	return(cbind(x,y));
+}
+
+### Circumscribed Circle
+# a = central angles: can be 2 angles or
+#     3 angles with sum = 2*pi for type sequential, but NOT checked;
+# r = radius of circle;
+# mid = c(0,0): convenience parameter;
+# asX = normalize side 1 parallel to OX;
+as.triangle.circle = function(a, r=1, type=c("sequential", "random"),
+		center=c(0,0), asX = FALSE) {
+	type = match.arg(type);
+	if(length(a) < 3) a = c(0, a);
+	if(type == "sequential") {
+		a = cumsum(a[1:3]);
+	}
+	if(asX) {
+		dA = (pi - a[2]) / 2 - a[1];
+		a = a + dA;
+	}
+	x = r*cos(a) + center[1];
+	y = r*sin(a) + center[2];
+	xy = cbind(x, y);
+	return(xy);
 }
 
 # Based on the incircle
@@ -392,6 +435,57 @@ p = as.triangle.dist(d)
 r = range(p)*1.25;
 plot.ini(r, r + 3)
 polygon(p)
+
+
+#####################
+
+#####################
+### Circumscribed ###
+
+### Ex 1:
+a = c(3*pi/5, pi/7); r=1;
+p = as.triangle.circle(a, r=r, type="r", asX=TRUE)
+
+plot.ini(c(-r, r), asp=1)
+polygon(p)
+circle(r=r, mid=c(0,0), col="red")
+
+
+### Ex 2:
+a = c(3*pi/5, 8*pi/7); r=1;
+p = as.triangle.circle(a, r=r, type="r", asX=TRUE)
+
+plot.ini(c(-r, r), asp=1)
+polygon(p)
+circle(r=r, mid=c(0,0), col="red")
+
+
+### Ex 3:
+# 180 * (1 - 3/10 - 1/7) = 100;
+a = c(3*pi/5, 2*pi/7); r=1;
+p = as.triangle.circle(a, r=r, asX=TRUE)
+
+plot.ini(c(-r, r), asp=1)
+polygon(p)
+circle(r=r, mid=c(0,0), col="red")
+
+
+### Ex 4:
+a = c(2*pi/5, 8*pi/7); r=1;
+p = as.triangle.circle(a, r=r, asX=TRUE)
+
+plot.ini(c(-r, r), asp=1)
+polygon(p)
+circle(r=r, mid=c(0,0), col="red")
+
+
+### Random:
+n = 8; r=1;
+p = rtriangle.circle(n, r=r, asX=TRUE)
+
+plot.ini(c(-r,r), asp=1)
+tmp = lapply(seq(n), function(id) polygon(p[[id]], border=id));
+circle(r=r, mid=c(0,0), col="red")
 
 
 ################
