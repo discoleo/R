@@ -202,8 +202,8 @@ n = 8; r=1;
 p = rtriangle.circle(n, r=r, asX=TRUE)
 
 plot.ini(c(-r,r), asp=1)
-tmp = lapply(seq(n), function(id) polygon(p[[id]], border=id));
 circle(r=r, mid=c(0,0), col="red")
+tmp = lapply(seq(n), function(id) polygon(p[[id]], border=id));
 
 
 ### Ex 2:
@@ -211,8 +211,53 @@ n = 8; r=1;
 p = rtriangle.circle(n, r=r, asX=FALSE)
 
 plot.ini(c(-r,r), asp=1)
-tmp = lapply(seq(n), function(id) polygon(p[[id]], border=id));
 circle(r=r, mid=c(0,0), col="red")
+tmp = lapply(seq(n), function(id) polygon(p[[id]], border=id));
+
+
+### Ex 3:
+n = 8; r=1;
+p = rtriangle.circle(n, r=r, type="half", asX=TRUE)
+
+plot.ini(c(-r,r), asp=1)
+circle(r=r, mid=c(0,0), col="red")
+tmp = lapply(seq(n), function(id) polygon(p[[id]], border=id));
+
+
+### Ex 4:
+n = 8; r=1;
+p = rtriangle.circle(n, r=r, type="phalf", asX=TRUE)
+
+plot.ini(c(-r,r), asp=1)
+circle(r=r, mid=c(0,0), col="red")
+tmp = lapply(seq(n), function(id) polygon(p[[id]], border=id));
+
+
+### Ex 5:
+n = 8; r=1;
+p = rtriangle.circle(n, r=r, type="random", asX=TRUE)
+
+plot.ini(c(-r,r), asp=1)
+circle(r=r, mid=c(0,0), col="red")
+tmp = lapply(seq(n), function(id) polygon(p[[id]], border=id));
+
+
+### Ex 6: Eq. Partitions
+n = 8; r=1;
+p = rtriangle.circle(n, r=r, type="eqpart", asX=TRUE)
+
+plot.ini(c(-r,r), asp=1)
+circle(r=r, mid=c(0,0), col="red")
+tmp = lapply(seq(n), function(id) polygon(p[[id]], border=id));
+
+
+### Ex 7: Eq. Partitions
+n = 16; r=1;
+p = rtriangle.circle(n, r=r, type="eqpart", asX=TRUE)
+
+plot.ini(c(-r,r), asp=1)
+circle(r=r, mid=c(0,0), col="red")
+tmp = lapply(seq(n), function(id) polygon(p[[id]], border=id));
 
 
 ################
