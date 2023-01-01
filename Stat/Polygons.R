@@ -5,7 +5,7 @@
 ###
 ### Polygon Process
 ###
-### draft v.0.1k
+### draft v.0.1l
 
 
 ### "Polygon"-Process
@@ -83,7 +83,7 @@ plot.ini = function(xlim, ylim=xlim, ...) {
 # - .sas, .dist, .area, .circle, .incircle;
 
 rtriangle.circle = function(n, ..., r=1,
-		type=c("sequential", "random", "half", "phalf"),
+		type=c("sequential", "random", "half", "phalf", "eqpart"),
 		center=c(0,0), asX = FALSE, tol=1E-4) {
 	type = match.arg(type);
 	if(type == "sequential") {
@@ -108,6 +108,24 @@ rtriangle.circle = function(n, ..., r=1,
 		type = if(type == "half") "sequential" else "random";
 		xy = lapply(seq(n), function(id) {
 			as.triangle.circle(c(0, a1[id], a2[id]), r=r[id], type=type,
+				center=center, asX=asX);
+		});
+		return(xy);
+	}
+	if(type == "eqpart") {
+		opt = list(...);
+		mult = opt$mult;
+		if(is.null(mult)) mult = 2;
+		id = sample(seq(mult*n), n);
+		a1 = id * pi / (mult*n);
+		# 2nd Partition:
+		part = opt$part;
+		if(is.null(part)) part = 5;
+		id = sample(seq(part), n, replace=TRUE);
+		a2 = pi * (1 + id / (part + 1));
+		if(length(r) == 1) r = rep(r, n);
+		xy = lapply(seq(n), function(id) {
+			as.triangle.circle(c(0, a1[id], a2[id]), r=r[id], type="random",
 				center=center, asX=asX);
 		});
 		return(xy);
