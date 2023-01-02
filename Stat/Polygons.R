@@ -5,7 +5,7 @@
 ###
 ### Polygon Process
 ###
-### draft v.0.1m
+### draft v.0.1n
 
 
 ### "Polygon"-Process
@@ -120,7 +120,7 @@ rtriangle.circle = function(n, ..., r=1,
 		a1 = id * pi / (mult*n);
 		# 2nd Partition:
 		part = opt$part;
-		if(is.null(part)) part = 5;
+		if(is.null(part)) part = max(5, round(sqrt(n)));
 		id = sample(seq(part), n, replace=TRUE);
 		a2 = pi * (1 + id / (part + 1));
 		if(length(r) == 1) r = rep(r, n);
@@ -361,6 +361,24 @@ area.triangle.pdist = function(d) {
 	area = sqrt(area);
 	return(area);
 }
+
+analyse.triangle = function(n, r=1, bw = NULL) {
+	par.old = par(mfrow = c(2,2));
+	for(type in c("sequential", "random", "phalf", "eqpart")) {
+		p = rtriangle.circle(n, r=r, type=type, asX=TRUE);
+		d = dist.triangle(p);
+		A = area.triangle(d);
+		if(is.null(bw)) {
+			Density = density(A);
+		} else {
+			Density = density(A, bw=bw);
+		}
+		plot(Density, main=type);
+	}
+	par(par.old);
+	invisible();
+}
+
 
 ### Transformations
 
