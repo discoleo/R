@@ -122,7 +122,7 @@ rtriangle.circle = function(n, ..., r=1,
 		part = opt$part;
 		if(is.null(part)) part = max(5, round(sqrt(n)));
 		id = sample(seq(part), n, replace=TRUE);
-		a2 = pi * (1 + id / (part + 1));
+		a2 = pi * (1 - 1/(2*sqrt(n)) + id / (part + 1.5));
 		if(length(r) == 1) r = rep(r, n);
 		xy = lapply(seq(n), function(id) {
 			as.triangle.circle(c(0, a1[id], a2[id]), r=r[id], type="random",
