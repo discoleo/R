@@ -5,7 +5,7 @@
 ###
 ### Polygon Process
 ###
-### draft v.0.1l
+### draft v.0.1m
 
 
 ### "Polygon"-Process
@@ -306,6 +306,60 @@ is.valid.incircle = function(d, r, prop, degenerate=FALSE, tol=1E-8) {
 		return(degenerate);
 	}
 	return(TRUE);
+}
+
+### Analysis
+
+### Side Lengths
+dist.triangle = function(x, sort=TRUE) {
+	distf = if(sort) {
+			function(xy) {
+				x = xy[,1]; y = xy[,2];
+				sort(c(sqrt( (x[c(1,1,2)] - x[c(2,3,3)])^2 +
+					+ (y[c(1,1,2)] - y[c(2,3,3)])^2)));
+			}
+		} else {
+			function(xy) {
+				x = xy[,1]; y = xy[,2];
+				c(sqrt( (x[c(1,1,2)] - x[c(2,3,3)])^2 +
+					+ (y[c(1,1,2)] - y[c(2,3,3)])^2));
+			}
+		}
+	if(inherits(x, "matrix")) {
+		d = distf(x);
+		class(d) = c("dist", class(d));
+		return(d);
+	} else if(inherits(x, "list")) {
+		d = sapply(x, distf);
+		d = t(d);
+		class(d) = c("pdist", class(d));
+		return(d);
+	}
+}
+
+'[.pdist' = function(x, op1, op2) {
+	tmp = unclass(x);
+	tmp = tmp[op1, op2];
+	isDist = missing(op2) ||
+		(length(op2) == 3 && ! any(is.na(op2 %in% c(1,2,3))));
+	if(isDist) class(tmp) = c("pdist", class(tmp));
+	return(tmp);
+}
+
+
+### Area
+area.triangle = function(x, ...) {
+	UseMethod("area.triangle");
+}
+area.triangle.dist = function(d) {
+	return(area.triangle.pdist(d));
+}
+area.triangle.pdist = function(d) {
+	if(is.null(dim(d))) d = matrix(d, nrow=1);
+	s = (d[,1] + d[,2] + d[,3]) / 2;
+	area = s*(s - d[,1])*(s - d[,2])*(s - d[,3]);
+	area = sqrt(area);
+	return(area);
 }
 
 ### Transformations
