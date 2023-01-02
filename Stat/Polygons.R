@@ -5,7 +5,7 @@
 ###
 ### Polygon Process
 ###
-### draft v.0.1n
+### draft v.0.1p
 
 
 ### "Polygon"-Process
@@ -80,19 +80,20 @@ plot.ini = function(xlim, ylim=xlim, ...) {
 
 # TODO:
 # rtriangle:
+# - various types of random triangles with specific sets of properties;
 # - .sas, .dist, .area, .circle, .incircle;
 
 rtriangle.circle = function(n, ..., r=1,
-		type=c("sequential", "random", "half", "phalf", "eqpart"),
+		type=c("sequential", "random", "half", "yhalf", "phalf", "eqpart"),
 		center=c(0,0), asX = FALSE, tol=1E-4) {
 	type = match.arg(type);
 	if(type == "sequential") {
 		# if a1 = rnorm(tol, 2*pi-3*tol)
 		# => skewed towards almost-degenerate triangles;
-		a1 = rnorm(n, tol, pi);
+		a1 = runif(n, tol, pi);
 		dA = 2*pi - a1 - 2*tol;
 		dA = pmax(tol, dA);
-		a2 = rnorm(n, tol, dA);
+		a2 = runif(n, tol, dA);
 		if(length(r) == 1) r = rep(r, n);
 		xy = lapply(seq(n), function(id) {
 			as.triangle.circle(c(0, a1[id], a2[id]), r=r[id], type="sequential",
@@ -100,9 +101,22 @@ rtriangle.circle = function(n, ..., r=1,
 		});
 		return(xy);
 	}
+	if(type == "yhalf") {
+		# a1 = runif(n, tol, pi - tol);
+		a1 = rnorm(n, pi/2, pi/5);
+		a1[a1 < tol] = tol; a1[a1 > pi - tol] = pi - tol;
+		lu = 2*pi - a1;
+		if(length(r) == 1) r = rep(r, n);
+		xy = lapply(seq(n), function(id) {
+			a10 = a1[id];
+			as.triangle.circle(c(0, a10, runif(1, a10 + tol, lu[id])), r=r[id], type="sequential",
+				center=center, asX=asX);
+		});
+		return(xy);
+	}
 	if(type == "half" || type == "phalf") {
-		a1 = rnorm(n, tol, pi);
-		a2 = rnorm(n, tol, pi - tol);
+		a1 = runif(n, tol, pi);
+		a2 = runif(n, tol, pi - tol);
 		if(type == "phalf") a2 = a2 + pi;
 		if(length(r) == 1) r = rep(r, n);
 		type = if(type == "half") "sequential" else "random";
@@ -134,12 +148,12 @@ rtriangle.circle = function(n, ..., r=1,
 	# including close-to-right angles;
 	if(type == "random") {
 		upper = 2*pi - tol;
-		a1 = rnorm(n, tol, upper);
-		a2 = rnorm(n, tol, upper);
+		a1 = runif(n, tol, upper);
+		a2 = runif(n, tol, upper);
 		isEq = abs(a1 - a2) <= tol;
 		n2 = sum(isEq);
 		if(n2 > 0) {
-			a2[isEq] = rnorm(n2, tol, upper);
+			a2[isEq] = runif(n2, tol, upper);
 		}
 		if(length(r) == 1) r = rep(r, n);
 		xy = lapply(seq(n), function(id) {
@@ -364,7 +378,7 @@ area.triangle.pdist = function(d) {
 
 analyse.triangle = function(n, r=1, bw = NULL) {
 	par.old = par(mfrow = c(2,2));
-	for(type in c("sequential", "random", "phalf", "eqpart")) {
+	for(type in c("sequential", "random", "yhalf", "eqpart")) {
 		p = rtriangle.circle(n, r=r, type=type, asX=TRUE);
 		d = dist.triangle(p);
 		A = area.triangle(d);
