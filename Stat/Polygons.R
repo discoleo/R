@@ -341,7 +341,7 @@ dist.triangle = function(x, sort=TRUE) {
 	tmp = unclass(x);
 	tmp = tmp[op1, op2];
 	isDist = missing(op2) ||
-		(length(op2) == 3 && ! any(is.na(op2 %in% c(1,2,3))));
+		(length(op2) == 3 && all(c(1,2,3) %in% op2));
 	if(isDist) class(tmp) = c("pdist", class(tmp));
 	return(tmp);
 }
