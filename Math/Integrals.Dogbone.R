@@ -47,6 +47,7 @@ k = 11; b = 4;
 p = 5;
 integrate(function(x) x^((p-1)/p)*(b - x)^(1/p) / (k - x), lower=0, upper=b)
 2i * pi*(k - b/p - (k^(p-1)*(k - b))^(1/p)) * exp(1i*pi/p) / (exp(2i*pi/p) - 1)
+pi*(k - b/p - (k^(p-1)*(k - b))^(1/p)) / sin(pi/p)
 
 # Arg - Inf from above: (p+1)/p * pi;
 # Arg - Inf from below: -(p-1)/p * pi;
@@ -61,5 +62,5 @@ k = 11; b = 4;
 integrate(function(x) x^(3/5)*(b - x)^(2/5) / (k - x), lower=0, upper=b)
 #
 integrate(function(x) x^((p-1)/p)*(b - x)^(1/p) / (k - x), lower=0, upper=b)
-2i * pi*(k - b/p - (k^(p-1)*(k - b))^(1/p)) * exp(1i*pi/p) / (exp(2i*pi/p) - 1)
+pi*(k - b/p - (k^(p-1)*(k - b))^(1/p)) / sin(pi/p)
 
