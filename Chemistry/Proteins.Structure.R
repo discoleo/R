@@ -235,6 +235,26 @@ FiScore = function(pdb_df) {
 	return(fi_score);
 }
 
+### AA Indices
+
+# from: data(bio3d::aa.index)
+hydrophob = function() {
+	tmp = sapply(bio3d::aa.index, function(x) grepl("(?i)Hydropath|Hydrophob", x$D))
+	I   = lapply(bio3d::aa.index[tmp], function(x) x$I);
+	do.call(rbind, I);
+}
+describe = function(width = 0.9 * getOption("width"), indent.ext = 3, print=TRUE) {
+	txt = sapply(bio3d::aa.index, '[[', "D");
+	txt = paste0(names(txt), ": ", txt);
+	if(print) {
+		cat(strwrap(txt, width=width, exdent=indent.ext), sep = "\n");
+	}
+	invisible(txt);
+}
+
+
+####################
+
 ### Helper functions for the analysis
 	
 ### MIN-MAX normalisation based on the input array

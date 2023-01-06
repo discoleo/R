@@ -14,3 +14,13 @@ feat = features.pdb(x)
 
 fi = PDB_prepare(x)
 
+
+
+########################
+
+# data(aa.index)
+
+hydrophob()
+
+describe()
+
