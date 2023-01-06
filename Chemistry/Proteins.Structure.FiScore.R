@@ -9,8 +9,10 @@
 # - new code should be optimized compared to initial code;
 # - new code: NOT tested for bugs !!!
 # - see GitHub issues:
-#   1) ...
-#   2) https://github.com/AusteKan/Fiscore/issues/1
+#   1) Refactoring of PDB_Prepare
+#      https://github.com/AusteKan/Fiscore/issues/2
+#   2) [PDB_prepare.R] Optimize helper function MINMAX_normalisation_func
+#      https://github.com/AusteKan/Fiscore/issues/1
 
 
 #' @title PDB_prepare
