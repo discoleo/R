@@ -92,6 +92,15 @@ p = 5;
 integrate(function(x) (1 - x)^(1/p - 1) * (1 + x)^(-1/p) / (k^2 + x^2), lower=-1, upper=1)
 pi*sin(atan(k)*(1-2/p) + pi/p) / sin(pi/p) / sqrt(1 + k^2) / k
 
+
+### Gen 3:
+b = 5;
+k = sqrt(3);
+p = 5;
+integrate(function(x) (b - x)^(1/p - 1) * (b + x)^(-1/p) / (k^2 + x^2), lower=-b, upper=b)
+pi*sin(atan(k/b)*(1-2/p) + pi/p) / sin(pi/p) / sqrt(b^2 + k^2) / k
+
+
 ### Derivation:
 pi*(exp(1i*atan(k)*(1-2/p) + 2i*pi/p) +
 	- exp(1i*(2/p-1)*atan(k))) / sqrt(1 + k^2) / (2i*k) / (exp(1i*pi/p) * sin(pi/p))
@@ -102,4 +111,16 @@ pi*(exp(1i*atan(k)*(1-2/p) + 2i*pi/p) +
 # 2*pi + (1/p - 2)*pi => 1/p * pi;
 
 # (1/p - 1)*2*pi (equivalent to: 2*pi/p); 0;
+# (2*pi - fi)*(1/p-1) - fi/p = 2*pi/p + (1 - 2/p)*fi;
+
+
+### Variant: n = 0
+# (b - x)^(1/p - 0)
+# Conditions: b > 0
+b = sqrt(3);
+k = sqrt(7);
+p = 5;
+integrate(function(x) (b - x)^(1/p) * (b + x)^(-1/p) / (k^2 + x^2), lower=-b, upper=b)
+pi*sin(atan(k/b)*(-2/p) + pi/p) / sin(pi/p) / k
+
 
