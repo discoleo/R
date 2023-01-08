@@ -5,7 +5,7 @@
 ###
 ### Integral Tricks
 ###
-### draft v.0.3e
+### draft v.0.3f
 
 
 ### various Integral Tricks
@@ -60,7 +60,8 @@
 ### Logarithms ###
 ##################
 
-### Ex 0:
+### Feynman trick & Other tricks
+# - usually (much) simpler than Contour integration;
 
 ###
 b = sqrt(3)
@@ -70,7 +71,27 @@ pi*log(b)/(2*b)
 integrate(function(x) log(x) / (b^2*x^2 + 1), lower=0, upper=Inf)
 - pi*log(b)/(2*b)
 
-###
+### TODO:
+Catalan = 0.915965594177219015054603514;
+integrate(function(x) log(x + 1) / (x^2 + 1), lower=0, upper=Inf)
+pi*log(2)/4 + Catalan;
+
+### TODO:
+Catalan = 0.915965594177219015054603514;
+integrate(function(x) log(x + 1) / (x^2 + b^2), lower=0, upper=Inf)
+pi*log(b^2 + 1)/(4*b) + log(b)*atan(1/b)/b +
+	- integrate(function(x) log(x) / (x^2 + b^2), 0, 1)$value;
+pi*log(b^2 + 1)/(4*b) +
+	- integrate(function(x) log(x) / (x^2 + 1), 0, 1/b)$value / b;
+
+### TODO:
+a = sqrt(5); b = sqrt(3)
+integrate(function(x) log(x + a) / (x^2 + b^2), lower=0, upper=Inf)
+pi*log(a^2 + b^2)/(4*b) + log(b)*atan(a/b)/b +
+	- integrate(function(x) log(x) / (x^2 + b^2), 0, a)$value;
+
+
+### log(P[2])
 integrate(function(x) log(x^2 + 1) / (x^2 + 1), lower=0, upper=Inf)
 pi*log(2)
 
@@ -89,10 +110,12 @@ integrate(function(x) log(x^2 + a^2) / (x^2 + b^2), lower=0, upper=Inf)
 pi*log(a + b)/b
 
 # "cyclic redundancy"
+b = sqrt(3)
+integrate(function(x) log(x^2 + 1) / (x^2 + b^2), lower=0, upper=Inf)
 integrate(function(x) log(x^2 + 1) / (1 + b^2*x^2), lower=0, upper=Inf)$value +
 	+ pi*log(b)/b;
 integrate(function(x) log(x^2 + b^2) / (x^2 + 1), lower=0, upper=Inf)$value / b;
-
+pi*log(b+1)/b
 
 
 ### Example 1:
