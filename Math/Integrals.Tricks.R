@@ -5,7 +5,7 @@
 ###
 ### Integral Tricks
 ###
-### draft v.0.3d
+### draft v.0.3e
 
 
 ### various Integral Tricks
@@ -59,6 +59,41 @@
 ##################
 ### Logarithms ###
 ##################
+
+### Ex 0:
+
+###
+b = sqrt(3)
+integrate(function(x) log(x) / (x^2 + b^2), lower=0, upper=Inf)
+pi*log(b)/(2*b)
+#
+integrate(function(x) log(x) / (b^2*x^2 + 1), lower=0, upper=Inf)
+- pi*log(b)/(2*b)
+
+###
+integrate(function(x) log(x^2 + 1) / (x^2 + 1), lower=0, upper=Inf)
+pi*log(2)
+
+###
+b = sqrt(3)
+integrate(function(x) log(x^2 + b^2) / (x^2 + b^2), lower=0, upper=Inf)
+pi*log(2*b)/b
+
+###
+b = sqrt(3)
+integrate(function(x) log(x^2 + 1) / (x^2 + b^2), lower=0, upper=Inf)
+pi*log(b+1)/b
+###
+b = sqrt(3); a = sqrt(2)
+integrate(function(x) log(x^2 + a^2) / (x^2 + b^2), lower=0, upper=Inf)
+pi*log(a + b)/b
+
+# "cyclic redundancy"
+integrate(function(x) log(x^2 + 1) / (1 + b^2*x^2), lower=0, upper=Inf)$value +
+	+ pi*log(b)/b;
+integrate(function(x) log(x^2 + b^2) / (x^2 + 1), lower=0, upper=Inf)$value / b;
+
+
 
 ### Example 1:
 # - based on: "This trick is new to me!"
