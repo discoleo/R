@@ -6,7 +6,7 @@
 ### Polynomial Systems:
 ### Diophantine Equations
 ###
-### draft v.0.1m
+### draft v.0.1n
 
 
 ####################
@@ -352,6 +352,11 @@ y^2 - x^3 + 4*x - 4
 roots.elliptic(c(1/4,1, 11/8, 1), c(1,-2,0,2))
 
 
+### Ex 3: Fully Invertible System
+# TODO:
+
+
+
 #######################
 #######################
 
@@ -365,4 +370,36 @@ roots.elliptic(c(1/4,1, 11/8, 1), c(1,-2,0,2))
 
 x = 16; y = 9; z = -25;
 x^3 + y^3 + z^3 - 3*x*y*z
+
+
+######################
+
+### Markov Eq
+
+# Michael Penn: The first Markov chain.
+# https://www.youtube.com/watch?v=fgyEoP4BtXc
+
+### Extension
+# 5 Variables
+
+test.Dioph.Markov = function(x) sum(x^2) - 5*prod(x)
+change = function(x, which=5) {
+	x[which] = 5*prod(x[-which]) - x[which];
+	return(x);
+}
+
+x = c(1,1,1,1,1)
+test.Dioph.Markov(x) # = 0
+
+#
+x = change(x)
+test.Dioph.Markov(x) # = 0
+
+#
+x = change(x, which=2)
+test.Dioph.Markov(x) # = 0
+
+#
+x = change(x, which=5)
+test.Dioph.Markov(x) # = 0
 
