@@ -5,7 +5,7 @@
 ###
 ### Integral Tricks
 ###
-### draft v.0.3f
+### draft v.0.3g
 
 
 ### various Integral Tricks
@@ -72,6 +72,8 @@ integrate(function(x) log(x) / (b^2*x^2 + 1), lower=0, upper=Inf)
 - pi*log(b)/(2*b)
 
 ### TODO:
+# - using Feynman's trick;
+# - Note: Catalan = - I(log(x)/(x^2 + 1), lower=0, upper=1)
 Catalan = 0.915965594177219015054603514;
 integrate(function(x) log(x + 1) / (x^2 + 1), lower=0, upper=Inf)
 pi*log(2)/4 + Catalan;
@@ -92,6 +94,7 @@ pi*log(a^2 + b^2)/(4*b) + log(b)*atan(a/b)/b +
 
 
 ### log(P[2])
+# - using Feynman's trick;
 integrate(function(x) log(x^2 + 1) / (x^2 + 1), lower=0, upper=Inf)
 pi*log(2)
 
@@ -117,6 +120,39 @@ integrate(function(x) log(x^2 + 1) / (1 + b^2*x^2), lower=0, upper=Inf)$value +
 integrate(function(x) log(x^2 + b^2) / (x^2 + 1), lower=0, upper=Inf)$value / b;
 pi*log(b+1)/b
 
+
+### Generalization:
+# - using Feynman's trick;
+# - using formulas for Fractions with roots of unity, see:
+#   Integrals.Fractions.Unity.R;
+n = 3
+a = sqrt(3); b = sqrt(5)
+integrate(function(x) log(x^n + a^n) / (x^n + b^n), lower=0, upper=Inf)
+
+### Case: n = 3
+n = 3
+integrate(function(x) log(x^n + a^n) / (x^n + b^n), lower=0, upper=Inf)
+
+# dI: evaluated at Inf & at 0;
+n = 3
+integrate(function(x) n*a^(n-1)/(b^n-a^n)* (1/(x^n + a^n) -  1/(x^n + b^n)), lower=0, upper=Inf)
+1/2/(b^n - a^n) * log((x+a)^2/(x^2-a*x+a^2)) +
+	- 1/2*a^2/b^2/(b^n - a^n)*log((x+b)^2/(x^2-b*x+b^2)) +
+	+ 3/sqrt(3)/(b^n - a^n)*(atan(2*x/(a*sqrt(3)) - 1/sqrt(3)) - a^2/b^2*atan(2*x/(b*sqrt(3)) - 1/sqrt(3)))
+3/sqrt(3)/(b^n - a^n)*(atan(2*x/(a*sqrt(3)) - 1/sqrt(3)) - a^2/b^2*atan(2*x/(b*sqrt(3)) - 1/sqrt(3)))
+# =>
+sqrt(3)*(1 - a^2/b^2)/(b^n - a^n)*(pi/2 + atan(1/sqrt(3)))
+2*sqrt(3)*pi/3 * (1 - a^2/b^2)/(b^n - a^n)
+
+### Case: n = 5
+n = 5
+# dI:
+integrate(function(x) n*a^(n-1)/(b^n-a^n)* (1/(x^n + a^n) -  1/(x^n + b^n)), lower=0, upper=Inf)
+# [more complicated] x^2 - (m+m^4)*a*x + a^2 =>
+sqrt(n)*(1 - (a/b)^(n-1))/(b^n - a^n) * (pi/2 + ...)
+
+
+##############
 
 ### Example 1:
 # - based on: "This trick is new to me!"
