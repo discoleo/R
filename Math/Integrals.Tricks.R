@@ -250,6 +250,8 @@ integrate(function(x) log(2)/2 * (x^3+1)/(x^5 + 3/2*x^4 + 3/2*x + 1), lower=0, u
 
 library(pracma)
 
+# Finite Integrals
+
 ### I( log(x) / (x^2 - 1) ) dx
 line_integral(function(x)  log(x) / (x^2+1), c((1-1i)/sqrt(2), (1+1i)/sqrt(2)))
 line_integral(function(x) -log(-x*1i)*1i / (x^2-1), c((-1+1i)/sqrt(2), (1+1i)/sqrt(2)))
@@ -284,7 +286,39 @@ integrate(function(x) log(x) / (x^2-1), lower=lim[1], upper=lim[2])
 ### TODO:
 # - find full path;
 
+
 ########################
+
+# Michael Penn: I really like this integral
+# https://www.youtube.com/watch?v=5sxtrPgHFw8
+
+###
+n = 4
+a = sqrt(2)
+integrate(function(x) x^a * abs(log(x))^n, lower=0, upper=1)
+gamma(n+1) / (a+1)^(n+1)
+
+
+###
+n = sqrt(5)
+a = sqrt(2)
+integrate(function(x) x^a * abs(log(x))^n, lower=0, upper=1)
+gamma(n+1) / (a+1)^(n+1)
+
+
+###
+n = 3
+a = 2^(1/3)
+integrate(function(x) x^a * abs(log(x))^n, lower=0, upper=1)
+gamma(n+1) / (a+1)^(n+1)
+
+
+########################
+########################
+
+#####################
+### Trigonometric ###
+#####################
 
 ### sin(log(x))
 a = 3
