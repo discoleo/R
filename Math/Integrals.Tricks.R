@@ -5,7 +5,7 @@
 ###
 ### Integral Tricks
 ###
-### draft v.0.3g
+### draft v.0.3h
 
 
 ### various Integral Tricks
@@ -132,6 +132,24 @@ integrate(function(x) log(x^n + a^n) / (x^n + b^n), lower=0, upper=Inf)
 ### Case: n = 3
 n = 3
 integrate(function(x) log(x^n + a^n) / (x^n + b^n), lower=0, upper=Inf)
+# TODO + debug + Constant(Helper);
+2*sqrt(3)*pi/9/b^2 * log(a^n - b^n) +
+	- 2*sqrt(3)*pi/9/b^2*log(a-b) +
+	+ 2*sqrt(3)*pi/9/b^2 * integrate(function(x) 1/(x^2+b*x+b^2), lower=0, upper=a)$value
+
+# Helper:
+integrate(function(x) log(x) / (x^3 + 1), lower=0, upper=Inf)
+- 2*pi^2/27
+
+#
+b = sqrt(5)
+integrate(function(x) log(x) / (x^3 + b^3), lower=0, upper=Inf)
+- 2*pi^2/27/b^2 + 2*pi/(3*sqrt(3))*log(b)/b^2
+
+# Derivation:
+- 2*pi^2/27/b^2 + log(b)/b^2 * integrate(function(x) 1 / (x^3 + 1), lower=0, upper=Inf)$value
+# - 2*pi^2/27/b^2 + log(b)/b^2/3 * (log(x+1) - 1/2*log(x^2-x+1) + 3/sqrt(3)*atan((2*x-1)/sqrt(3)))
+- 2*pi^2/27/b^2 + log(b)/b^2*(pi/2 - atan(-1/sqrt(3)))/sqrt(3)
 
 # dI: evaluated at Inf & at 0;
 n = 3
@@ -143,6 +161,7 @@ integrate(function(x) n*a^(n-1)/(b^n-a^n)* (1/(x^n + a^n) -  1/(x^n + b^n)), low
 # =>
 sqrt(3)*(1 - a^2/b^2)/(b^n - a^n)*(pi/2 + atan(1/sqrt(3)))
 2*sqrt(3)*pi/3 * (1 - a^2/b^2)/(b^n - a^n)
+
 
 ### Case: n = 5
 n = 5
