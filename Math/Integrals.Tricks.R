@@ -138,7 +138,7 @@ sqrt(3)*pi/3 * log((a^n - b^n)/(a - b)) / b^2 - pi^2/3/b^2 +
 
 
 # Helper:
-integrate(function(x) log(x) / (x^3 + 1), lower=0, upper=Inf)00
+integrate(function(x) log(x) / (x^3 + 1), lower=0, upper=Inf)
 - 2*pi^2/27
 
 #
@@ -163,7 +163,7 @@ integrate(function(x) n*a^(n-1)/(b^n-a^n)* (1/(x^n + a^n) -  1/(x^n + b^n)), low
 sqrt(3)*(1 - a^2/b^2)/(b^n - a^n)*(pi/2 + atan(1/sqrt(3)))
 2*sqrt(3)*pi/3 * (1 - a^2/b^2)/(b^n - a^n)
 
-# Integration back:
+# back-Integration:
 2*sqrt(3)*pi/3 * integrate(function(x) (x^2/b^2 - 1)/(x^n - b^n), lower=0, upper=a)$value +
 	- 2*pi^2/9/b^2 + 2*pi/sqrt(3)*log(b)/b^2;
 2*sqrt(3)*pi/9 * log((a^n - b^n)/(a - b)) / b^2 +
