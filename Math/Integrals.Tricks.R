@@ -5,7 +5,7 @@
 ###
 ### Integral Tricks
 ###
-### draft v.0.3i
+### draft v.0.3j
 
 
 ### various Integral Tricks
@@ -63,7 +63,7 @@
 ### Feynman trick & Other tricks
 # - usually (much) simpler than Contour integration;
 
-###
+### Basic / Helper
 b = sqrt(3)
 integrate(function(x) log(x) / (x^2 + b^2), lower=0, upper=Inf)
 pi*log(b)/(2*b)
@@ -92,27 +92,28 @@ integrate(function(x) log(x + a) / (x^2 + b^2), lower=0, upper=Inf)
 pi*log(a^2 + b^2)/(4*b) + log(b)*atan(a/b)/b +
 	- integrate(function(x) log(x) / (x^2 + b^2), 0, a)$value;
 
-
+#############
 ### log(P[2])
 # - using Feynman's trick;
+b = sqrt(3); a = sqrt(2)
+integrate(function(x) log(x^2 + a^2) / (x^2 + b^2), lower=0, upper=Inf)
+pi*log(a + b)/b
+
+### Helper
 integrate(function(x) log(x^2 + 1) / (x^2 + 1), lower=0, upper=Inf)
 pi*log(2)
 
 ###
 b = sqrt(3)
+integrate(function(x) log(x^2 + 1) / (x^2 + b^2), lower=0, upper=Inf)
+pi*log(b+1)/b
+
+### [Special Case]
+b = sqrt(3)
 integrate(function(x) log(x^2 + b^2) / (x^2 + b^2), lower=0, upper=Inf)
 pi*log(2*b)/b
 
-###
-b = sqrt(3)
-integrate(function(x) log(x^2 + 1) / (x^2 + b^2), lower=0, upper=Inf)
-pi*log(b+1)/b
-###
-b = sqrt(3); a = sqrt(2)
-integrate(function(x) log(x^2 + a^2) / (x^2 + b^2), lower=0, upper=Inf)
-pi*log(a + b)/b
-
-# "cyclic redundancy"
+# "cyclic redundancy" / Extra Cases
 b = sqrt(3)
 integrate(function(x) log(x^2 + 1) / (x^2 + b^2), lower=0, upper=Inf)
 integrate(function(x) log(x^2 + 1) / (1 + b^2*x^2), lower=0, upper=Inf)$value +
