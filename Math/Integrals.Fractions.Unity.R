@@ -22,6 +22,8 @@
 
 ### version 1 [RC1] [draft]
 #
+### 2023-01-09:
+# - shortcut formulas for I on [0, Inf];
 ### 2021-12-08:
 # - cleanup: simplification of showcases;
 ### 2020-09-13:
@@ -109,6 +111,33 @@ x = 2 # any value;
 # used to test the fraction decomposition;
 1/(x^n - 1) # ==
 sum((a*c1*x + b) / (x^2 - c1*x + 1)) - b/(x^2-1)
+
+
+### Infinite Integrals
+# - shortcut formulas are available;
+
+n = 5
+integrate(function(x) 1/(x^n + 1), lower=0, upper=Inf)
+integrate(function(x) x^3/(x^n + 1), lower=0, upper=Inf)
+pi / sin(pi/n) / n
+#
+integrate(function(x) x/(x^n + 1), lower=0, upper=Inf)
+integrate(function(x) x^2/(x^n + 1), lower=0, upper=Inf)
+pi / sin(2*pi/n) / n
+
+###
+n = 7
+integrate(function(x) 1/(x^n + 1), lower=0, upper=Inf)
+integrate(function(x) x^5/(x^n + 1), lower=0, upper=Inf)
+pi / sin(pi/n) / n
+#
+integrate(function(x) x/(x^n + 1), lower=0, upper=Inf)
+integrate(function(x) x^4/(x^n + 1), lower=0, upper=Inf)
+pi / sin(2*pi/n) / n
+#
+integrate(function(x) x^2/(x^n + 1), lower=0, upper=Inf)
+integrate(function(x) x^3/(x^n + 1), lower=0, upper=Inf)
+pi / sin(3*pi/n) / n
 
 
 ########################
