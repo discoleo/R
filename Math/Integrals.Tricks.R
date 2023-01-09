@@ -5,7 +5,7 @@
 ###
 ### Integral Tricks
 ###
-### draft v.0.3h
+### draft v.0.3i
 
 
 ### various Integral Tricks
@@ -131,14 +131,14 @@ integrate(function(x) log(x^n + a^n) / (x^n + b^n), lower=0, upper=Inf)
 
 ### Case: n = 3
 n = 3
+a = sqrt(3); b = sqrt(5)
 integrate(function(x) log(x^n + a^n) / (x^n + b^n), lower=0, upper=Inf)
-# TODO + debug + Constant(Helper);
-2*sqrt(3)*pi/9/b^2 * log(a^n - b^n) +
-	- 2*sqrt(3)*pi/9/b^2*log(a-b) +
-	+ 2*sqrt(3)*pi/9/b^2 * integrate(function(x) 1/(x^2+b*x+b^2), lower=0, upper=a)$value
+sqrt(3)*pi/3 * log((a^n - b^n)/(a - b)) / b^2 - pi^2/3/b^2 +
+	+ 2*pi/3 * atan((2*a/b + 1)/sqrt(3)) / b^2;
+
 
 # Helper:
-integrate(function(x) log(x) / (x^3 + 1), lower=0, upper=Inf)
+integrate(function(x) log(x) / (x^3 + 1), lower=0, upper=Inf)00
 - 2*pi^2/27
 
 #
@@ -154,6 +154,7 @@ integrate(function(x) log(x) / (x^3 + b^3), lower=0, upper=Inf)
 # dI: evaluated at Inf & at 0;
 n = 3
 integrate(function(x) n*a^(n-1)/(b^n-a^n)* (1/(x^n + a^n) -  1/(x^n + b^n)), lower=0, upper=Inf)
+# [not run]
 1/2/(b^n - a^n) * log((x+a)^2/(x^2-a*x+a^2)) +
 	- 1/2*a^2/b^2/(b^n - a^n)*log((x+b)^2/(x^2-b*x+b^2)) +
 	+ 3/sqrt(3)/(b^n - a^n)*(atan(2*x/(a*sqrt(3)) - 1/sqrt(3)) - a^2/b^2*atan(2*x/(b*sqrt(3)) - 1/sqrt(3)))
@@ -161,6 +162,15 @@ integrate(function(x) n*a^(n-1)/(b^n-a^n)* (1/(x^n + a^n) -  1/(x^n + b^n)), low
 # =>
 sqrt(3)*(1 - a^2/b^2)/(b^n - a^n)*(pi/2 + atan(1/sqrt(3)))
 2*sqrt(3)*pi/3 * (1 - a^2/b^2)/(b^n - a^n)
+
+# Integration back:
+2*sqrt(3)*pi/3 * integrate(function(x) (x^2/b^2 - 1)/(x^n - b^n), lower=0, upper=a)$value +
+	- 2*pi^2/9/b^2 + 2*pi/sqrt(3)*log(b)/b^2;
+2*sqrt(3)*pi/9 * log((a^n - b^n)/(a - b)) / b^2 +
+	- 2*pi^2/9/b^2 + 2*sqrt(3)*pi/9*log(b) / b^2 +
+	+ 2*sqrt(3)*pi/9/b^2 * integrate(function(x) (x + 2*b)/(x^2+b*x+b^2), lower=0, upper=a)$value
+sqrt(3)*pi/3 * log((a^n - b^n)/(a - b)) / b^2 - 2*pi^2/9/b^2 +
+	+ 2*pi/3 *(atan((2*a/b + 1)/sqrt(3)) - atan(1/sqrt(3))) / b^2;
 
 
 ### Case: n = 5
