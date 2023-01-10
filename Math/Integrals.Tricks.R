@@ -5,7 +5,7 @@
 ###
 ### Integral Tricks
 ###
-### draft v.0.3j
+### draft v.0.3k
 
 
 ### various Integral Tricks
@@ -311,6 +311,31 @@ n = 3
 a = 2^(1/3)
 integrate(function(x) x^a * abs(log(x))^n, lower=0, upper=1)
 gamma(n+1) / (a+1)^(n+1)
+
+
+########################
+
+# qncubed3: Complex Analysis: An Integral from @MichaelPennMath
+# https://www.youtube.com/watch?v=LH4i9XJsz_I
+# - Generalization of the 2nd (sub-) Integral;
+
+p = 1/5
+k = 3
+integrate(function(x) log(x)/x^p/(x+k)^2, lower=0, upper=Inf)
+pi*((p*log(k) - 1)*sin(pi*p) + pi*p*cos(pi*p)) / k^(p+1) / sin(pi*p)^2
+
+
+# Residue: x = - k;
+# x^(p-1)*(1 - p*log(x))
+2i*pi*k^(-p-1)*exp(-1i*pi*(p+1))*(1 - p*log(k) - 1i*pi*p)
+
+# Div:
+(1 - exp(-2i*pi*p))
+
+# Helper
+integrate(function(x) x^(-p)/(x+k)^2, lower=0, upper=Inf)
+pi*p/sin(pi*p)/k^(p+1)
+
 
 
 ########################
