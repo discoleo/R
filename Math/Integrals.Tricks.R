@@ -5,7 +5,7 @@
 ###
 ### Integral Tricks
 ###
-### draft v.0.3k
+### draft v.0.3m
 
 
 ### various Integral Tricks
@@ -180,6 +180,26 @@ n = 5
 integrate(function(x) n*a^(n-1)/(b^n-a^n)* (1/(x^n + a^n) -  1/(x^n + b^n)), lower=0, upper=Inf)
 # [more complicated] x^2 - (m+m^4)*a*x + a^2 =>
 sqrt(n)*(1 - (a/b)^(n-1))/(b^n - a^n) * (pi/2 + ...)
+
+# Helper
+integrate(function(x) log(x)/(x^5 + 1), 0, Inf)
+- pi^2*cos(pi/5)/sin(pi/5)^2 / 25
+
+# Derivation:
+m = cos(pi/5) + 1i*sin(pi/5)
+v = pi/sin(pi/5)/5
+integrate(function(x) log(x)/(x^5 + 1), 0, Inf)
+2i*pi*(log(m)/((m+1)*prod(m - m^c(3,7,9))) + (1/5)*v*exp(2i*pi/5)) / (1 - exp(2i*pi/5))
+2i/25*pi^2*(1i/m^4 + exp(2i*pi/5)/sin(pi/5)) / (1 - exp(2i*pi/5))
+2i/25*pi^2*(1i*exp(-4i*pi/5) + exp(2i*pi/5)/sin(pi/5)) / (1 - exp(2i*pi/5))
+- pi^2*(exp(1i*pi/5)/sin(pi/5) - 1i) / sin(pi/5) / 25
+
+
+
+### Generalization
+n = 7
+integrate(function(x) log(x)/(x^n + 1), 0, Inf)
+- pi^2*cos(pi/n)/sin(pi/n)^2 / n^2
 
 
 ##############
