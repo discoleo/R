@@ -19,6 +19,23 @@
 # - distribute randomly using a point process, see:
 # https://search.r-project.org/CRAN/refmans/spatstat.random/html/00Index.html
 
+### Designs
+# - Low Discrepancy Sequences, Latin Hypercubes;
+# - Analysis of Designs;
+### Packages:
+# - Halton and Sobol low discrepancy sequences: randtoolbox, fOptions;
+# - lhs, DiceDesign;
+#
+### References:
+# 1. Delphine Dupuy, Céline Helbert, Jessica Franco.
+#    DiceDesign and DiceEval: Two R Packages for Design and Analysis of
+#    Computer Experiments. (2015)
+#    https://doi.org/10.18637/jss.v065.i11
+# 2. Giray Ökten: Number sequences for simulation - Lecture 1
+#    https://www.youtube.com/watch?v=wPxxCpmsdio
+
+
+##################
 
 ### Libraries
 
@@ -106,10 +123,10 @@ rtriangle.circle = function(n, ..., r=1,
 		a1 = rnorm(n, pi/2, pi/5);
 		a1[a1 < tol] = tol; a1[a1 > pi - tol] = pi - tol;
 		lu = 2*pi - a1;
+		a2 = runif(n, a1 + tol, lu);
 		if(length(r) == 1) r = rep(r, n);
 		xy = lapply(seq(n), function(id) {
-			a10 = a1[id];
-			as.triangle.circle(c(0, a10, runif(1, a10 + tol, lu[id])), r=r[id], type="sequential",
+			as.triangle.circle(c(0, a1[id], a2[id]), r=r[id], type="sequential",
 				center=center, asX=asX);
 		});
 		return(xy);
