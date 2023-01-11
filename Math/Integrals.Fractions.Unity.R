@@ -144,26 +144,39 @@ pi / sin(3*pi/n) / n
 n = 3
 integrate(function(x) 1/(x^3 + 1), 0, 1)
 2/n * cos(2*pi/3)*log(cos(pi/3)) +
-	+ 2/n*sin(2*pi/3)*atan((1 + cos(2*pi/3))/sin(2*pi/3)) +
-	- 2/n * (pi/2 - 2*pi/3) * sin(2*pi/3) # * atan(cos(2*pi/3)/sin(2*pi/3))
+	+ 2*pi*sin(2*pi/3)/n^2
 
+# Fraction Decomposition:
 1/n/(x+1) + 2/n * sum( (cos(2*pi/3)*x + 1) / (x^2 + 2*cos(2*pi/3)*x + 1) )
 1/n/(x+1) + 1/n * cos(2*pi/3)*(2*x + 2*cos(2*pi/3)) / (x^2 + 2*cos(2*pi/3)*x + 1) +
 	+ 2/n * sin(2*pi/3)^2 / (x^2 + 2*cos(2*pi/3)*x + 1)
+# I on [0, 1] =>
+2/n * cos(2*pi/3)*log(cos(pi/3)) +
+	+ 2/n * sin(2*pi/3)*atan( (1 + cos(2*pi/3))/sin(2*pi/3) ) +
+	# - 2/n * sin(2*pi/3)*atan( (0 + cos(2*pi/3))/sin(2*pi/3) );
+	- 2/n * (pi/2 - 2*pi/3) * sin(2*pi/3);
 
+### n = 5
 # TODO: simplify
 n = 5
 integrate(function(x) 1/(x^n + 1), 0, 1)
-2/n * cos(2*pi/n)*log(cos(pi/n)) +
-	+ 2/n * cos(4*pi/n)*log(cos(2*pi/n)) +
-	+ 2/n*sin(2*pi/n)*atan( (1 + cos(2*pi/n))/sin(2*pi/n) ) +
-	+ 2/n*sin(4*pi/n)*atan( (1 + cos(4*pi/n))/sin(4*pi/n) ) +
-	- 2/n * (pi/2 - 2*pi/n) * sin(2*pi/n) +
-	- 2/n * (pi/2 - 4*pi/n) * sin(4*pi/n)
+2*cos(2*pi/n)*log(cos(pi/n)) / n +
+	+ 2*cos(4*pi/n)*log(cos(2*pi/n)) / n +
+	+ 2*pi*(sin(2*pi/n) + 2*sin(4*pi/n)) / n^2;
+# useful ???
+- 4*log(2)*cos(2*pi/n)/n +
+	+ 4/n * (4*cos(pi/n)^4 - 5*cos(pi/n)^2 + 1)*log(cos(2*pi/n)) +
+	+ 2*pi*sin(2*pi/n)*(2*cos(pi/n)^2 + 3*cos(2*pi/n)) / n^2;
 
 #
 n = 7
 integrate(function(x) 1/(x^n + 1), 0, 1)
+2*cos(2*pi/n)*log(cos(pi/n)) / n +
+	+ 2*cos(4*pi/n)*log(cos(2*pi/n)) / n +
+	+ 2*cos(6*pi/n)*log(cos(3*pi/n)) / n +
+	+ 2*pi*(sin(2*pi/n) + 2*sin(4*pi/n) + 3*sin(6*pi/n)) / n^2;
+
+#
 2/n * cos(2*pi/n)*log(cos(pi/n)) +
 	+ 2/n * cos(4*pi/n)*log(cos(2*pi/n)) +
 	+ 2/n * cos(6*pi/n)*log(cos(3*pi/n)) +
