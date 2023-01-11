@@ -5,7 +5,7 @@
 ###
 ### Integral Tricks
 ###
-### draft v.0.3m
+### draft v.0.3n
 
 
 ### various Integral Tricks
@@ -130,6 +130,7 @@ n = 3
 a = sqrt(3); b = sqrt(5)
 integrate(function(x) log(x^n + a^n) / (x^n + b^n), lower=0, upper=Inf)
 
+###############
 ### Case: n = 3
 n = 3
 a = sqrt(3); b = sqrt(5)
@@ -185,6 +186,13 @@ sqrt(n)*(1 - (a/b)^(n-1))/(b^n - a^n) * (pi/2 + ...)
 integrate(function(x) log(x)/(x^5 + 1), 0, Inf)
 - pi^2*cos(pi/5)/sin(pi/5)^2 / 25
 
+#
+b = 3^(1/4);
+integrate(function(x) log(x)/(x^5 + b^5), 0, Inf)
+- pi^2*cos(pi/5)/sin(pi/5)^2 / 5^2 / b^4 +
+	+ pi*log(b)/sin(pi/5) / 5 / b^4;
+
+
 # Derivation:
 m = cos(pi/5) + 1i*sin(pi/5)
 v = pi/sin(pi/5)/5
@@ -200,6 +208,13 @@ integrate(function(x) log(x)/(x^5 + 1), 0, Inf)
 n = 7
 integrate(function(x) log(x)/(x^n + 1), 0, Inf)
 - pi^2*cos(pi/n)/sin(pi/n)^2 / n^2
+
+
+#
+n = 7; b = 3^(1/4);
+integrate(function(x) log(x)/(x^n + b^n), 0, Inf)
+- pi^2*cos(pi/n)/sin(pi/n)^2 / n^2 / b^(n-1) +
+	+ pi*log(b)/sin(pi/n) / n / b^(n-1);
 
 
 ##############
