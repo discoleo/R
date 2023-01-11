@@ -143,7 +143,7 @@ pi / sin(3*pi/n) / n
 ### Other Shortcuts
 n = 3
 integrate(function(x) 1/(x^3 + 1), 0, 1)
-log(2)/(2*n) + 1/n * cos(2*pi/3)*log(cos(2*pi/3) + 1) +
+2/n * cos(2*pi/3)*log(cos(pi/3)) +
 	+ 2/n*sin(2*pi/3)*atan((1 + cos(2*pi/3))/sin(2*pi/3)) +
 	- 2/n * (pi/2 - 2*pi/3) * sin(2*pi/3) # * atan(cos(2*pi/3)/sin(2*pi/3))
 
@@ -154,9 +154,8 @@ log(2)/(2*n) + 1/n * cos(2*pi/3)*log(cos(2*pi/3) + 1) +
 # TODO: simplify
 n = 5
 integrate(function(x) 1/(x^n + 1), 0, 1)
-log(2)/(2*n) +
-	+ 1/n * cos(2*pi/n)*log(cos(2*pi/n) + 1) +
-	+ 1/n * cos(4*pi/n)*log(cos(4*pi/n) + 1) +
+2/n * cos(2*pi/n)*log(cos(pi/n)) +
+	+ 2/n * cos(4*pi/n)*log(cos(2*pi/n)) +
 	+ 2/n*sin(2*pi/n)*atan( (1 + cos(2*pi/n))/sin(2*pi/n) ) +
 	+ 2/n*sin(4*pi/n)*atan( (1 + cos(4*pi/n))/sin(4*pi/n) ) +
 	- 2/n * (pi/2 - 2*pi/n) * sin(2*pi/n) +
@@ -165,10 +164,9 @@ log(2)/(2*n) +
 #
 n = 7
 integrate(function(x) 1/(x^n + 1), 0, 1)
-log(2)/(2*n) +
-	+ 1/n * cos(2*pi/n)*log(cos(2*pi/n) + 1) +
-	+ 1/n * cos(4*pi/n)*log(cos(4*pi/n) + 1) +
-	+ 1/n * cos(6*pi/n)*log(cos(6*pi/n) + 1) +
+2/n * cos(2*pi/n)*log(cos(pi/n)) +
+	+ 2/n * cos(4*pi/n)*log(cos(2*pi/n)) +
+	+ 2/n * cos(6*pi/n)*log(cos(3*pi/n)) +
 	+ 2/n*sin(2*pi/n)*atan( (1 + cos(2*pi/n))/sin(2*pi/n) ) +
 	+ 2/n*sin(4*pi/n)*atan( (1 + cos(4*pi/n))/sin(4*pi/n) ) +
 	+ 2/n*sin(6*pi/n)*atan( (1 + cos(6*pi/n))/sin(6*pi/n) ) +
