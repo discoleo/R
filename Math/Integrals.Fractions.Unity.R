@@ -65,7 +65,7 @@
 ### Part C:
 ### Polynomial fraction: P(x) / (x^n - 1)^2
 ### TODO: move to: Integrals.Fractions.Unity.Powers.R;
-### [are solvaable using a different approach!]
+### [are solvable using a different approach!]
 
 
 ### Publishing:
@@ -138,6 +138,43 @@ pi / sin(2*pi/n) / n
 integrate(function(x) x^2/(x^n + 1), lower=0, upper=Inf)
 integrate(function(x) x^3/(x^n + 1), lower=0, upper=Inf)
 pi / sin(3*pi/n) / n
+
+
+### Other Shortcuts
+n = 3
+integrate(function(x) 1/(x^3 + 1), 0, 1)
+log(2)/(2*n) + 1/n * cos(2*pi/3)*log(cos(2*pi/3) + 1) +
+	+ 2/n*sin(2*pi/3)*atan((1 + cos(2*pi/3))/sin(2*pi/3)) +
+	- 2/n * (pi/2 - 2*pi/3) * sin(2*pi/3) # * atan(cos(2*pi/3)/sin(2*pi/3))
+
+1/n/(x+1) + 2/n * sum( (cos(2*pi/3)*x + 1) / (x^2 + 2*cos(2*pi/3)*x + 1) )
+1/n/(x+1) + 1/n * cos(2*pi/3)*(2*x + 2*cos(2*pi/3)) / (x^2 + 2*cos(2*pi/3)*x + 1) +
+	+ 2/n * sin(2*pi/3)^2 / (x^2 + 2*cos(2*pi/3)*x + 1)
+
+# TODO: simplify
+n = 5
+integrate(function(x) 1/(x^n + 1), 0, 1)
+log(2)/(2*n) +
+	+ 1/n * cos(2*pi/n)*log(cos(2*pi/n) + 1) +
+	+ 1/n * cos(4*pi/n)*log(cos(4*pi/n) + 1) +
+	+ 2/n*sin(2*pi/n)*atan( (1 + cos(2*pi/n))/sin(2*pi/n) ) +
+	+ 2/n*sin(4*pi/n)*atan( (1 + cos(4*pi/n))/sin(4*pi/n) ) +
+	- 2/n * (pi/2 - 2*pi/n) * sin(2*pi/n) +
+	- 2/n * (pi/2 - 4*pi/n) * sin(4*pi/n)
+
+#
+n = 7
+integrate(function(x) 1/(x^n + 1), 0, 1)
+log(2)/(2*n) +
+	+ 1/n * cos(2*pi/n)*log(cos(2*pi/n) + 1) +
+	+ 1/n * cos(4*pi/n)*log(cos(4*pi/n) + 1) +
+	+ 1/n * cos(6*pi/n)*log(cos(6*pi/n) + 1) +
+	+ 2/n*sin(2*pi/n)*atan( (1 + cos(2*pi/n))/sin(2*pi/n) ) +
+	+ 2/n*sin(4*pi/n)*atan( (1 + cos(4*pi/n))/sin(4*pi/n) ) +
+	+ 2/n*sin(6*pi/n)*atan( (1 + cos(6*pi/n))/sin(6*pi/n) ) +
+	- 2/n * (pi/2 - 2*pi/n) * sin(2*pi/n) +
+	- 2/n * (pi/2 - 4*pi/n) * sin(4*pi/n) +
+	- 2/n * (pi/2 - 6*pi/n) * sin(6*pi/n)
 
 
 ########################
