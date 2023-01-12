@@ -187,6 +187,38 @@ integrate(function(x) 1/(x^n + 1), 0, 1)
 	- 2/n * (pi/2 - 4*pi/n) * sin(4*pi/n) +
 	- 2/n * (pi/2 - 6*pi/n) * sin(6*pi/n)
 
+###
+intUnityI01 = function(n) {
+	if(n %% 2 == 0) warning("Not yet implemented for even powers!");
+	n2 = n %/% 2;
+	sum(cos(2*seq(n2)*pi/n)*log(cos(seq(n2)*pi/n))) * 2 / n +
+	+ sum(seq(n2)*sin(2*seq(n2)*pi/n)) * 2*pi / n^2;
+}
+
+###
+n = 9
+integrate(function(x) 1/(x^n + 1), 0, 1)
+intUnityI01(n)
+
+###
+n = 15
+integrate(function(x) 1/(x^n + 1), 0, 1)
+intUnityI01(n)
+
+###
+n = seq(3, 21, by=2)
+x = sapply(n, intUnityI01)
+# asymptotic to y = 1;
+plot(n, x)
+curve( (x + 1/3)/(x+1), add=T, col="orange")
+
+###
+n = seq(3, 101, by=2)
+x = sapply(n, intUnityI01)
+# asymptotic to y = 1;
+plot(n, x)
+curve( (x + 1/3)/(x+1), add=T, col="orange")
+
 
 ########################
 ########################
