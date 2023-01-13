@@ -6,7 +6,7 @@
 ### Integrals:
 ### Trigonometric: Other
 ###
-### draft v.0.1d
+### draft v.0.1d-initial
 
 
 
@@ -143,7 +143,7 @@ a = sqrt(3)
 # Factor 1i omitted:
 line_integral(function(z) z/(a - exp(-1i*k*z)), pi+c(0, 30i)) +
 	+ line_integral(function(z) z/(a - exp(-1i*k*z)), -pi+c(30i, 0))
-pi/(k*a)*log(a^2 + 1) + 2/a/k^2*log(a)*(pi/2 - atan(1/a)) +
+pi/(k*a)*log(a^2 + 1) + 2/a/k^2*log(a)*atan(a) +
 	+ 2/a/k^2*integrate(function(z) log(z) / (z^2 + 1), 1/a, Inf)$value;
 
 # Derivation:
@@ -153,4 +153,12 @@ pi/(k*a)*log(a^2 + 1) +
 	+ 2*integrate(function(z) z / (a^2*exp(-k*z) + exp(k*z)), 0, Inf)$value;
 pi/(k*a)*log(a^2 + 1) +
 	+ 2/k^2*integrate(function(z) log(z) / (z^2 + a^2), 1, Inf)$value;
+
+
+###
+a = sqrt(3) + 5^(1/3)
+k = 1/2; # FIXED value!
+integrate(function(x) x*sin(k*x) / (a^2 + 1 - 2*a*cos(k*x)), 0, pi)
+- pi*log(a)/(k^2*a) + pi*log(a^2 + 1)/(2*k*a) + log(a)*atan(a)/(k^2*a) +
+	+ 1/a/k^2*integrate(function(z) log(z) / (z^2 + 1), 1/a, Inf)$value;
 
