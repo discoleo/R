@@ -6,7 +6,7 @@
 ### Integrals:
 ### Trigonometric: Other
 ###
-### draft v.0.1c
+### draft v.0.1c-Gen-a
 
 
 
@@ -93,26 +93,42 @@ integrate(function(x) - log(x)/(1+x^2), 0, tan(pi/4))
 # Generalization:
 
 ###
+# Case: a >= 1;
 a = sqrt(3)
 k = 3; # odd
 integrate(function(x) x*sin(k*x) / (a^2 + 1 - 2*a*cos(k*x)), 0, pi)
-- pi*log(a/(a+1)) / (k*a)
+pi*log((a+1)/a) / (k*a)
 
 ###
 a = sqrt(3)
 k = 2; # even
 integrate(function(x) x*sin(k*x) / (a^2 + 1 - 2*a*cos(k*x)), 0, pi)
-- pi*log(a/(a-1)) / (k*a)
+pi*log((a-1)/a) / (k*a)
 
 ###
 a = sqrt(3)
 k = 4; # even
 integrate(function(x) x*sin(k*x) / (a^2 + 1 - 2*a*cos(k*x)), 0, pi)
-- pi*log(a/(a-1)) / (k*a)
+pi*log((a-1)/a) / (k*a)
 #
 integrate(function(x) x*sin(x) / (a^2 + 1 - 2*a*cos(x)), 0, pi*k)
-- k*pi*log(a/(a-1)) / a
+k*pi*log((a-1)/a) / a
 
 ###
 # TODO: k = non-integer;
+
+
+### Gen 2:
+b = c(5, sqrt(3))
+k = 3; # odd
+integrate(function(x) x*sin(k*x) / (b[1] - b[2]*cos(k*x)), 0, pi)
+bb = b[1]/b[2]; a = bb + sqrt(bb^2 - 1)
+2*pi*log((a+1)/a) / (k*b[2])
+
+###
+b = c(5, sqrt(3))
+k = 4; # even
+integrate(function(x) x*sin(k*x) / (b[1] - b[2]*cos(k*x)), 0, pi)
+bb = b[1]/b[2]; a = bb + sqrt(bb^2 - 1)
+2*pi*log((a-1)/a) / (k*b[2])
 
