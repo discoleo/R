@@ -202,7 +202,7 @@ intUnityI01Even = function(n) {
 	id = seq(1, n, by=2);
 	if(isNotM4) id = id[ - (n+2)/4];
 	cs = cos(id*pi/n); sn = sin(id*pi/n);
-	# TODO:
+	# Base-Formula:
 	# fr = sum(2*cs*x + 2)/(x^2 + 2*cs*x + 1)) / n;
 	# r = sum(cs*log(x^2 + 2*cs*x + 1)) + sum(2*atan((x - cs)/sn));
 	r = sum(cs*log(cs + 1)) +
@@ -235,6 +235,17 @@ x = sapply(n, intUnityI01)
 # asymptotic to y = 1;
 plot(n, x)
 curve( (x + 1/3)/(x+1), add=T, col="orange")
+
+
+### Special Fractional Powers
+n = 7
+integrate(function(x) 1/(x^(1 - 1/(n+1)) + 1), 0, 1)
+n + 1 - (n+1)*integrate(function(x) 1/(x^n + 1), 0, 1)$value;
+
+###
+n = 8
+integrate(function(x) 1/(x^(1 - 1/(n+1)) + 1), 0, 1)
+n + 1 - (n+1)*integrate(function(x) 1/(x^n + 1), 0, 1)$value;
 
 
 ########################
