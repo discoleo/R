@@ -6,7 +6,7 @@
 ### Integrals:
 ### Trigonometric: Other
 ###
-### draft v.0.1b
+### draft v.0.1c
 
 
 
@@ -35,7 +35,8 @@ integrate(function(x) atan(1/x)^n, 0, Inf, subdivisions=1024)
 integrate(function(x) n*x^(n-1) / tan(x), 0, pi/2, subdivisions=1024)
 
 
-#########
+#####################
+#####################
 
 ### n = 2
 integrate(function(x) log(cos(x)), 0, pi/2, subdivisions=1024)
@@ -61,12 +62,12 @@ integrate(function(x) x*log(sin(x)), 0, pi/2, subdivisions=1024)$value +
 line_integral(\(x) x*log(sin(1i * x)), c(0, pi/2)) +
 	(pi/2)^2*1i * line_integral(\(x) exp(2i*x)*log(sin(pi/2*exp(1i*x))), c(0, pi/2))
 integrate(function(x) - x*log(sin(x)), 0, pi/2, subdivisions=1024)
-# Note: needs to be multiplied by: pi/2 * R = (pi/2)^2
+# Note: needs to be multiplied by: pi/2 * R * 1i = (pi/2)^2 * 1i;
 Re(line_integral(\(x) exp(2i*x)*log(sin(pi/2*exp(1i*x))), c(0, pi/2)))
 - pi / 4
 #
 line_integral(\(x) exp(2i*x)*log(sin(pi/2*exp(1i*x))), c(0, 2*pi))
-pi # * (pi/2)^2 => pi^3/4
+pi # * (pi/2)^2 * 1i => pi^3/4 * 1i
 
 ###
 integrate(function(x) x*log(sin(x)/cos(x)), 0, pi/2, subdivisions=1024)
@@ -78,4 +79,40 @@ integrate(function(x) log(sin(x)/cos(x)), 0, pi/2);
 integrate(function(x) log(cos(x)/sin(x)), 0, pi/4)
 integrate(function(x) - log(x)/(1+x^2), 0, tan(pi/4))
 # TODO: How?
+
+
+########################
+########################
+
+### x*sin(k*x) / (a^2 + 1 - 2*a*cos(k*x))
+
+### Ref:
+# qncubed3: Complex Analysis: Viewer Suggests INSANE Integral
+# https://www.youtube.com/watch?v=Q4il1GoCJVE
+
+# Generalization:
+
+###
+a = sqrt(3)
+k = 3; # odd
+integrate(function(x) x*sin(k*x) / (a^2 + 1 - 2*a*cos(k*x)), 0, pi)
+- pi*log(a/(a+1)) / (k*a)
+
+###
+a = sqrt(3)
+k = 2; # even
+integrate(function(x) x*sin(k*x) / (a^2 + 1 - 2*a*cos(k*x)), 0, pi)
+- pi*log(a/(a-1)) / (k*a)
+
+###
+a = sqrt(3)
+k = 4; # even
+integrate(function(x) x*sin(k*x) / (a^2 + 1 - 2*a*cos(k*x)), 0, pi)
+- pi*log(a/(a-1)) / (k*a)
+#
+integrate(function(x) x*sin(x) / (a^2 + 1 - 2*a*cos(x)), 0, pi*k)
+- k*pi*log(a/(a-1)) / a
+
+###
+# TODO: k = non-integer;
 
