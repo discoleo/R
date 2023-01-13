@@ -6,7 +6,7 @@
 ### Integrals:
 ### Trigonometric: Other
 ###
-### draft v.0.1c-Gen-a
+### draft v.0.1d
 
 
 
@@ -98,18 +98,21 @@ a = sqrt(3)
 k = 3; # odd
 integrate(function(x) x*sin(k*x) / (a^2 + 1 - 2*a*cos(k*x)), 0, pi)
 pi*log((a+1)/a) / (k*a)
+pi*log((a - exp(-1i*pi*k))/a) / (k*a)
 
 ###
 a = sqrt(3)
 k = 2; # even
 integrate(function(x) x*sin(k*x) / (a^2 + 1 - 2*a*cos(k*x)), 0, pi)
 pi*log((a-1)/a) / (k*a)
+pi*log((a - exp(-1i*pi*k))/a) / (k*a)
 
 ###
 a = sqrt(3)
 k = 4; # even
 integrate(function(x) x*sin(k*x) / (a^2 + 1 - 2*a*cos(k*x)), 0, pi)
 pi*log((a-1)/a) / (k*a)
+pi*log((a - exp(-1i*pi*k))/a) / (k*a)
 #
 integrate(function(x) x*sin(x) / (a^2 + 1 - 2*a*cos(x)), 0, pi*k)
 k*pi*log((a-1)/a) / a
@@ -131,4 +134,23 @@ k = 4; # even
 integrate(function(x) x*sin(k*x) / (b[1] - b[2]*cos(k*x)), 0, pi)
 bb = b[1]/b[2]; a = bb + sqrt(bb^2 - 1)
 2*pi*log((a-1)/a) / (k*b[2])
+
+
+### Analysis
+
+k = 1/2; # FIXED value!
+a = sqrt(3)
+# Factor 1i omitted:
+line_integral(function(z) z/(a - exp(-1i*k*z)), pi+c(0, 30i)) +
+	+ line_integral(function(z) z/(a - exp(-1i*k*z)), -pi+c(30i, 0))
+pi/(k*a)*log(a^2 + 1) + 2/a/k^2*log(a)*(pi/2 - atan(1/a)) +
+	+ 2/a/k^2*integrate(function(z) log(z) / (z^2 + 1), 1/a, Inf)$value;
+
+# Derivation:
+line_integral(function(z) z/(a - exp(-1i*k*z)), pi+c(0, 30i)) +
+	+ line_integral(function(z) z/(a - exp(-1i*k*z)), -pi+c(30i, 0))
+pi/(k*a)*log(a^2 + 1) +
+	+ 2*integrate(function(z) z / (a^2*exp(-k*z) + exp(k*z)), 0, Inf)$value;
+pi/(k*a)*log(a^2 + 1) +
+	+ 2/k^2*integrate(function(z) log(z) / (z^2 + a^2), 1, Inf)$value;
 
