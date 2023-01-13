@@ -194,6 +194,11 @@ intUnityI01 = function(n) {
 	sum(cos(2*seq(n2)*pi/n)*log(cos(seq(n2)*pi/n))) * 2 / n +
 	+ sum(seq(n2)*sin(2*seq(n2)*pi/n)) * 2*pi / n^2;
 }
+intUnityI01 = function(n) {
+	id = seq(1, n, by=2)
+	sum(cos(id*pi/n)*log(cos(id*pi/n))) * 2 / n +
+	+ sum(id*sin(2*id*pi/n)) * 2*pi / n^2;
+}
 
 ###
 n = 9
@@ -649,6 +654,61 @@ f$integrate.all(lower, upper)
 # 0.1368511+0i
 # ERROR: wide discrepancy:
 # 5.118336e-33 with absolute error < 1e-32
+
+
+################
+
+### Even Powers: Direct Formula
+
+
+### Case: 2*(2*n+1)
+n = 6
+x = sqrt(3/5);
+cs = 2*cos(seq(1,n, by=2)*pi/n);
+div = n;
+1/(x^n + 1)
+r = 2/(x^2 + 1) + (cs[1]*x + 2)/(x^2+cs[1]*x+1) + (cs[3]*x + 2)/(x^2 + cs[3]*x+1)
+r / div
+
+
+###
+n = 10
+x = sqrt(3/5);
+cs = 2*cos(seq(1,n, by=2)*pi/n);
+div = n;
+1/(x^n + 1)
+r = 2/(x^2 + 1) + (cs[1]*x + 2)/(x^2+cs[1]*x+1) + (cs[2]*x + 2)/(x^2 + cs[2]*x+1) +
+	+ (cs[4]*x + 2)/(x^2+cs[4]*x+1) + (cs[5]*x + 2)/(x^2 + cs[5]*x+1)
+r / div
+
+
+### Case: 4*n
+n = 4
+x = sqrt(3/5);
+cs = 2*cos(seq(1,n, by=2)*pi/n);
+1/(x^n + 1)
+r = (cs[1]*x + 2)/(x^2+cs[1]*x+1) + (cs[2]*x + 2)/(x^2 + cs[2]*x+1)
+r / n
+
+###
+n = 8
+x = sqrt(3/5);
+cs = 2*cos(seq(1,n, by=2)*pi/n);
+1/(x^n + 1)
+r = (cs[1]*x + 2)/(x^2+cs[1]*x+1) + (cs[2]*x + 2)/(x^2+cs[2]*x+1) +
+	+ (cs[3]*x + 2)/(x^2 + cs[3]*x+1) + (cs[4]*x + 2)/(x^2 + cs[4]*x+1)
+r / n
+
+###
+n = 16
+x = sqrt(3/5);
+cs = 2*cos(seq(1,n, by=2)*pi/n);
+1/(x^n + 1)
+r = (cs[1]*x + 2)/(x^2+cs[1]*x+1) + (cs[2]*x + 2)/(x^2+cs[2]*x+1) +
+	+ (cs[3]*x + 2)/(x^2 + cs[3]*x+1) + (cs[4]*x + 2)/(x^2 + cs[4]*x+1) +
+	+ (cs[5]*x + 2)/(x^2 + cs[5]*x+1) + (cs[6]*x + 2)/(x^2 + cs[6]*x+1) +
+	+ (cs[7]*x + 2)/(x^2 + cs[7]*x+1) + (cs[8]*x + 2)/(x^2 + cs[8]*x+1)
+r / n
 
 
 #########################
