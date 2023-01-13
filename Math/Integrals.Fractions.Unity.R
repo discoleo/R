@@ -189,15 +189,27 @@ integrate(function(x) 1/(x^n + 1), 0, 1)
 
 ###
 intUnityI01 = function(n) {
-	if(n %% 2 == 0) warning("Not yet implemented for even powers!");
+	if(n %% 2 == 0) {
+		return(intUnityI01Even(n));
+	}
 	n2 = n %/% 2;
 	sum(cos(2*seq(n2)*pi/n)*log(cos(seq(n2)*pi/n))) * 2 / n +
 	+ sum(seq(n2)*sin(2*seq(n2)*pi/n)) * 2*pi / n^2;
 }
-intUnityI01 = function(n) {
-	id = seq(1, n, by=2)
-	sum(cos(id*pi/n)*log(cos(id*pi/n))) * 2 / n +
-	+ sum(id*sin(2*id*pi/n)) * 2*pi / n^2;
+intUnityI01Even = function(n) {
+	if(n %% 2 == 1) return(intUnityI01(n));
+	isNotM4 = n %% 4 != 0;
+	id = seq(1, n, by=2);
+	if(isNotM4) id = id[ - (n+2)/4];
+	cs = cos(id*pi/n); sn = sin(id*pi/n);
+	# TODO:
+	# fr = sum(2*cs*x + 2)/(x^2 + 2*cs*x + 1)) / n;
+	# r = sum(cs*log(x^2 + 2*cs*x + 1)) + sum(2*atan((x - cs)/sn));
+	r = sum(cs*log(cs + 1)) +
+		# + sum(2*sn*atan((1 - cs)/sn)) - sum(2*sn*atan((0 - cs)/sn));
+		+ sum(2*sn*atan((1 - cs)/sn)) - 2*pi*sum(id*sn)/n + pi*sum(sn);
+	if(isNotM4) r = r + pi/2;
+	return(r/n);
 }
 
 ###
