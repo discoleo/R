@@ -7,7 +7,7 @@
 ### Polynomial Fractions: Unity
 ### Definite Integrals
 ###
-### draft v.0.1c
+### draft v.0.1c-Sqrt
 
 
 
@@ -51,6 +51,18 @@ intUnityI01Even = function(n) {
 		+ sum(2*sn*atan((1 - cs)/sn)) - 2*pi*sum(id*sn)/n + pi*sum(sn);
 	if(isNotM4) r = r + pi/2;
 	return(r/n);
+}
+# I( 1 / (x^(n/2) + 1) )
+intUnityI01Half = function(n) {
+	if(n %% 2 == 0) warning("Not yet implemented!");
+	cs = cos(seq((n-1)/2)*2*pi/n);
+	sn = sin(seq((n-1)/2)*2*pi/n);
+	cs2 = 2*cs^2 - 1; sn2 = 2*sn*cs;
+	#
+	int = - 1/(2*n)*log(2) - 1/n * sum( cs2*log(cs + 1) ) +
+		- 2/n * sum( sn2 * atan((1 + cs)/sn) ) +
+		+ 2*pi/n * sum( sn2 * (1/2 - 2*seq((n-1)/2)/n) );
+	return(2*int);
 }
 
 ######################
@@ -214,7 +226,7 @@ integrate(function(x) x/(x^n + 1), 0, 1)
 	+ 2/n * sum( sn2 * (pi/2 - 2*seq((n-1)/2)*pi/n) );
 # alternate:
 csH = cos(seq((n-1)/2)*pi/n);
-- 1/n * sum( 2*cs2*log(csH) ) +
+- 2/n * sum( cs2*log(csH) ) +
 	- 2/n * sum( sn2 * atan((1 + cs)/sn) ) +
 	+ pi/n * sum(sn2) - 4*pi/n^2 * sum(sn2*seq((n-1)/2));
 
