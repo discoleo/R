@@ -7,7 +7,7 @@
 ### Polynomial Fractions: Unity
 ### Definite Integrals
 ###
-### draft v.0.1a
+### draft v.0.1b
 
 
 
@@ -157,9 +157,19 @@ integrate(function(x) 1/(x^n + 1), 0, 1)
 	- 2/n * (pi/2 - 6*pi/n) * sin(6*pi/n)
 
 
+##################
 
+### "Continuity" & Approximation
+# - "quasi-analytic" continuity possible;
 
 ###
+n = seq(3, 22)
+x = sapply(n, intUnityI01)
+# asymptotic to y = 1;
+plot(n, x)
+curve( (x + 1/3)/(x+1), add=T, col="orange")
+
+### [old] Only Odd Powers
 n = seq(3, 21, by=2)
 x = sapply(n, intUnityI01)
 # asymptotic to y = 1;
@@ -167,12 +177,14 @@ plot(n, x)
 curve( (x + 1/3)/(x+1), add=T, col="orange")
 
 ###
-n = seq(3, 101, by=2)
+n = c(seq(3,20), seq(21, 101, by=3))
 x = sapply(n, intUnityI01)
 # asymptotic to y = 1;
 plot(n, x)
 curve( (x + 1/3)/(x+1), add=T, col="orange")
 
+
+######################
 
 ### Special Fractional Powers
 n = 7
