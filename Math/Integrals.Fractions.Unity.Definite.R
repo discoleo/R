@@ -7,7 +7,7 @@
 ### Polynomial Fractions: Unity
 ### Definite Integrals
 ###
-### draft v.0.1b
+### draft v.0.1c
 
 
 
@@ -195,4 +195,44 @@ n + 1 - (n+1)*integrate(function(x) 1/(x^n + 1), 0, 1)$value;
 n = 8
 integrate(function(x) 1/(x^(1 - 1/(n+1)) + 1), 0, 1)
 n + 1 - (n+1)*integrate(function(x) 1/(x^n + 1), 0, 1)$value;
+
+
+
+#######################
+
+### I( x / (x^n + 1) )
+
+### Odd Powers:
+n = 5
+cs = cos(seq((n-1)/2)*2*pi/n);
+sn = sin(seq((n-1)/2)*2*pi/n);
+cs2 = 2*cs^2 - 1; sn2 = 2*sn*cs;
+#
+integrate(function(x) x/(x^n + 1), 0, 1)
+- 1/(2*n)*log(2) - 1/n * sum( cs2*log(cs + 1) ) +
+	- 2/n * sum( sn2 * atan((1 + cs)/sn) ) +
+	+ 2/n * sum( sn2 * (pi/2 - 2*seq((n-1)/2)*pi/n) );
+# alternate:
+csH = cos(seq((n-1)/2)*pi/n);
+- 1/n * sum( 2*cs2*log(csH) ) +
+	- 2/n * sum( sn2 * atan((1 + cs)/sn) ) +
+	+ pi/n * sum(sn2) - 4*pi/n^2 * sum(sn2*seq((n-1)/2));
+
+
+# Indefinite Integral:
+- 1/n*log(x+1) - 1/n * sum( cs2*log(x^2 + 2*cs*x + 1) ) +
+	- 2/n * sum( sn2 * atan((x - cs)/sn) )
+
+# Fraction Decomposition:
+n = 5
+x = 3^(1/4) # test value;
+cs = cos(seq((n-1)/2)*2*pi/n)
+cs2 = 2*cs^2 - 1; # cos(2*...);
+#
+x/(x^n + 1)
+x/n/(x+1) + 2/n * sum( (cs*x^2 + x) / (x^2 + 2*cs*x + 1) )
+- 1/n/(x+1) - 2/n * sum( (cs2*x + cs) / (x^2 + 2*cs*x + 1) )
+- 1/n/(x+1) - 2/n * sum( (cs2*x + cs*cs2) / (x^2 + 2*cs*x + 1) ) +
+	- 2/n * sum( (cs - cs*cs2) / (x^2 + 2*cs*x + 1) )
+
 
