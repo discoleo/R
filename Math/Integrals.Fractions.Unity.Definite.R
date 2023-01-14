@@ -64,6 +64,19 @@ intUnityI01Half = function(n) {
 		+ 2*pi/n * sum( sn2 * (1/2 - 2*seq((n-1)/2)/n) );
 	return(2*int);
 }
+# works for p = 3, but with "-";
+intUnityI01P = function(n, p=3) {
+	if(n %% 2 == 0) warning("Not yet implemented!");
+	cs = cos(seq((n-1)/2)*2*pi/n);
+	sn = sin(seq((n-1)/2)*2*pi/n);
+	cs2 = cos(3*seq((n-1)/2)*2*pi/n);
+	sn2 = sin(3*seq((n-1)/2)*2*pi/n);
+	#
+	int = - 1/(2*n)*log(2) - 1/n * sum( cs2*log(cs + 1) ) +
+		- 2/n * sum( sn2 * atan((1 + cs)/sn) ) +
+		+ 2*pi/n * sum( sn2 * (1/2 - 2*seq((n-1)/2)/n) );
+	return(- p*int);
+}
 
 ######################
 ######################
