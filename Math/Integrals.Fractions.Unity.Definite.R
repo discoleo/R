@@ -7,7 +7,7 @@
 ### Polynomial Fractions: Unity
 ### Definite Integrals
 ###
-### draft v.0.1c-fractional
+### draft v.0.1d
 
 
 
@@ -22,6 +22,45 @@
 # - contains various Shortcut Formulas;
 # - moved specific code to this file from file:
 #   Integrals.Fractions.Unity.R;
+
+
+### Useful Formulas
+# - trigonometric identitites;
+
+### n = ODD
+n = 11
+p = 3
+#
+id = seq((n-1)/2)
+sum(id * sin(2*pi*p*id/n)) # ==
+(-1)^((p %% 2) + 1) * n/4/sin(pi*p/n)
+
+### n = ODD
+n = 11
+p = 4
+#
+id = seq((n-1)/2)
+sum(id * sin(2*pi*p*id/n)) # ==
+(-1)^((p %% 2) + 1) * n/4/sin(pi*p/n)
+
+### n = 4*k + 2
+k = 3
+p = 1
+#
+n = 4*k + 2;
+id = seq(1, n, by=2);
+sum(id * sin(pi*p*id/n)) # ==
+(-1)^((p %% 2) + 1) * n/2/sin(pi*p/n)
+
+### n = 4*k
+# - same formula;
+k = 3
+p = 1
+#
+n = 4*k;
+id = seq(1, n, by=2);
+sum(id * sin(pi*p*id/n)) # ==
+(-1)^((p %% 2) + 1) * n/2/sin(pi*p/n)
 
 
 ######################
