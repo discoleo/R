@@ -66,7 +66,7 @@ intUnityI01Half = function(n) {
 }
 # I( 1 / (x^(n/p) + 1) )
 # - works for p < n; added proper sign;
-intUnityI01P = function(n, p=3) {
+intUnityI01POld = function(n, p=3) {
 	if(n %% 2 == 0) warning("Not yet implemented!");
 	cs = cos(seq((n-1)/2)*2*pi/n);
 	sn = sin(seq((n-1)/2)*2*pi/n);
@@ -77,6 +77,21 @@ intUnityI01P = function(n, p=3) {
 		- 2/n * sum( snp * atan((1 + cs)/sn) ) +
 		+ 2*pi/n * sum( snp * (1/2 - 2*seq((n-1)/2)/n) );
 	if(p %% 2 == 1) int = - int;
+	return(p*int);
+}
+# simplification:
+intUnityI01P = function(n, p=3) {
+	if(n %% 2 == 0) warning("Not yet implemented!");
+	cs = cos(seq((n-1)/2)*2*pi/n);
+	sn = sin(seq((n-1)/2)*2*pi/n);
+	csp = cos(p*seq((n-1)/2)*2*pi/n);
+	snp = sin(p*seq((n-1)/2)*2*pi/n);
+	#
+	int = - 1/(2*n)*log(2) - 1/n * sum( csp*log(cs + 1) ) +
+		- 2/n * sum( snp * atan((1 + cs)/sn) ) +
+		+ 2*pi/n * sum( snp/2 );
+	if(p %% 2 == 1) int = - int;
+	int = int + pi/sin(pi*p/n)/n;
 	return(p*int);
 }
 
