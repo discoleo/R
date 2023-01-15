@@ -7,7 +7,7 @@
 ### Polynomial Fractions: Unity
 ### Definite Integrals
 ###
-### draft v.0.1d
+### draft v.0.1d-ref
 
 
 
@@ -23,44 +23,10 @@
 # - moved specific code to this file from file:
 #   Integrals.Fractions.Unity.R;
 
-
-### Useful Formulas
-# - trigonometric identitites;
-
-### n = ODD
-n = 11
-p = 3
-#
-id = seq((n-1)/2)
-sum(id * sin(2*pi*p*id/n)) # ==
-(-1)^((p %% 2) + 1) * n/4/sin(pi*p/n)
-
-### n = ODD
-n = 11
-p = 4
-#
-id = seq((n-1)/2)
-sum(id * sin(2*pi*p*id/n)) # ==
-(-1)^((p %% 2) + 1) * n/4/sin(pi*p/n)
-
-### n = 4*k + 2
-k = 3
-p = 1
-#
-n = 4*k + 2;
-id = seq(1, n, by=2);
-sum(id * sin(pi*p*id/n)) # ==
-(-1)^((p %% 2) + 1) * n/2/sin(pi*p/n)
-
-### n = 4*k
-# - same formula;
-k = 3
-p = 1
-#
-n = 4*k;
-id = seq(1, n, by=2);
-sum(id * sin(pi*p*id/n)) # ==
-(-1)^((p %% 2) + 1) * n/2/sin(pi*p/n)
+### Sections:
+# A.) Helper Formulas:
+# - Trigonometric identities;
+# B.) Definite Integrals
 
 
 ######################
@@ -134,12 +100,66 @@ intUnityI01P = function(n, p=3) {
 	return(p*int);
 }
 
+####################
+####################
+
+#################
+### Section A ###
+#################
+
+### Useful Formulas
+# - Trigonometric identities;
+
+### n = ODD
+n = 11
+p = 3
+#
+id = seq((n-1)/2)
+sum(id * sin(2*pi*p*id/n)) # ==
+(-1)^((p %% 2) + 1) * n/4/sin(pi*p/n)
+
+### n = ODD
+n = 11
+p = 4
+#
+id = seq((n-1)/2)
+sum(id * sin(2*pi*p*id/n)) # ==
+(-1)^((p %% 2) + 1) * n/4/sin(pi*p/n)
+
+### n = 4*k + 2
+k = 3
+p = 1
+#
+n = 4*k + 2;
+id = seq(1, n, by=2);
+sum(id * sin(pi*p*id/n)) # ==
+(-1)^((p %% 2) + 1) * n/2/sin(pi*p/n)
+
+### n = 4*k
+# - same formula;
+k = 3
+p = 1
+#
+n = 4*k;
+id = seq(1, n, by=2);
+sum(id * sin(pi*p*id/n)) # ==
+(-1)^((p %% 2) + 1) * n/2/sin(pi*p/n)
+
+
 ######################
 ######################
+
+###################
+###  Section B  ###
+###  Integrals  ###
+###################
 
 ### Infinite Integrals
 # - shortcut formulas are available;
 
+### I( x^k/(x^n + 1) )
+
+###
 n = 5
 integrate(function(x) 1/(x^n + 1), lower=0, upper=Inf)
 integrate(function(x) x^3/(x^n + 1), lower=0, upper=Inf)
