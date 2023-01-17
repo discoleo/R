@@ -74,6 +74,13 @@ fresnel(n)
 
 
 ### Weighted:
+
+# Types of Corrections:
+# - Weighting/"Overfitting":
+#   lower weight for later [0, 2*pi]-intervals,
+#   as late intervals become oscillatory and converging to 0;
+# - Residual: add some residual corresponding to the tail;
+
 # takes ~ 5 min!
 test.fresnel(2)
 # takes ~ 5 min!
