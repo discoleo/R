@@ -6,7 +6,14 @@
 ### Integrals: Trigonometric
 ### Fresnel Integrals
 ###
-### draft v.0.1b
+### draft v.0.1c
+
+
+
+# TODO:
+# - evaluate if any of the concepts are useful:
+#   Giray Ökten: Number sequences for simulation - Lecture 2
+#   https://www.youtube.com/watch?v=3YFVV5YqLsI
 
 
 # I( sin(k*x^n) ) on [0, Inf]
@@ -31,6 +38,24 @@ fresnel = function(n, iter=10000, k=1, doWeights = TRUE) {
 		
 	} else int = sum(int);
 	return(int);
+}
+# much faster, but far LESS robust;
+fresnel2 = function(n, iter=10000, subdiv=16, k=1) {
+	id = seq(iter);
+	ninv = 1/n;
+	limX = ((2*pi)*id)^ninv;
+	limI = c(0, limX);
+	x = sapply(id, function(id) {
+		x = seq(limI[id], limI[id + 1], length.out=subdiv);
+		# return(x[-c(1, subdiv)]);
+		return(x);
+	})
+	int = sin(k*x^n);
+	int[seq(1, iter*subdiv, by=subdiv)] = 0;
+	int[seq(subdiv, iter*subdiv, by=subdiv)] = 0;
+	dfx = diff(c(0, x));
+	int = sum(dfx * int);
+	return(int)
 }
 
 # may take long!
