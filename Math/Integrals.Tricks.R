@@ -5,7 +5,7 @@
 ###
 ### Integral Tricks
 ###
-### draft v.0.3n
+### draft v.0.3o
 
 
 ### various Integral Tricks
@@ -371,6 +371,32 @@ pi*((p*log(k) - 1)*sin(pi*p) + pi*p*cos(pi*p)) / k^(p+1) / sin(pi*p)^2
 integrate(function(x) x^(-p)/(x+k)^2, lower=0, upper=Inf)
 pi*p/sin(pi*p)/k^(p+1)
 
+
+########################
+
+# qncubed3: Complex Analysis: Is this solution way too overkill?
+# https://www.youtube.com/watch?v=vfa5wGE7fRI
+
+###
+integrate(function(x) log(x)^2/(x^2 + 1), lower=0, upper=Inf)
+pi^3/8
+
+###
+integrate(function(x) log(x)^4/(x^2 + 1), lower=0, upper=Inf)
+5*pi^5/32
+
+###
+integrate(function(x) log(x)^6/(x^2 + 1), lower=0, upper=Inf)
+61*pi^7/128
+
+###
+integrate(function(x) log(x)^8/(x^2 + 1), lower=0, upper=Inf)
+1385*pi^9/512
+
+###
+integrate(function(x) log(x)^10/(x^2 + 1), lower=0, upper=Inf,
+	abs.tol=1E-8, rel.tol=1E-8, subdivisions=4096)
+50521*pi^11/2^11
 
 
 ########################
