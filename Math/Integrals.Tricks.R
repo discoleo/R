@@ -5,7 +5,7 @@
 ###
 ### Integral Tricks
 ###
-### draft v.0.3p
+### draft v.0.3p8
 
 
 ### various Integral Tricks
@@ -401,9 +401,22 @@ integrate(function(x) log(x)^4/(x^2 + b^2), lower=0, upper=Inf)
 integrate(function(x) log(x)^6/(x^2 + 1), lower=0, upper=Inf)
 61*pi^7/128
 
+#
+b = sqrt(5)
+integrate(function(x) log(x)^6/(x^2 + b^2), lower=0, upper=Inf)
+61*pi^7/(2^7*b) + pi/2 * log(b)^6/b + 75*pi^5*log(b)^2/(2^5*b) + 15*pi^3*log(b)^4/(8*b)
+
+
 ###
 integrate(function(x) log(x)^8/(x^2 + 1), lower=0, upper=Inf)
 1385*pi^9/512
+
+#
+b = sqrt(5)
+integrate(function(x) log(x)^8/(x^2 + b^2), lower=0, upper=Inf)
+1385*pi^9/(2^9*b) + pi/2 * log(b)^8/b + 28*61*pi^7*log(b)^2/(2^7*b) +
+	+ 70*5*pi^5*log(b)^4/(2^5*b) + 28*pi^3*log(b)^6/(8*b)
+
 
 ###
 integrate(function(x) log(x)^10/(x^2 + 1), lower=0, upper=Inf,
