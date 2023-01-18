@@ -5,7 +5,7 @@
 ###
 ### Integral Tricks
 ###
-### draft v.0.3o
+### draft v.0.3p
 
 
 ### various Integral Tricks
@@ -381,9 +381,21 @@ pi*p/sin(pi*p)/k^(p+1)
 integrate(function(x) log(x)^2/(x^2 + 1), lower=0, upper=Inf)
 pi^3/8
 
-###
+### Gen 1:
+b = sqrt(5)
+integrate(function(x) log(x)^2/(x^2 + b^2), lower=0, upper=Inf)
+pi^3/(2^3*b) + pi/2 * log(b)^2/b
+
+
+### Gen: Power of log
 integrate(function(x) log(x)^4/(x^2 + 1), lower=0, upper=Inf)
 5*pi^5/32
+
+#
+b = sqrt(5)
+integrate(function(x) log(x)^4/(x^2 + b^2), lower=0, upper=Inf)
+5*pi^5/(2^5*b) + pi/2 * log(b)^4/b + 6*pi^3*log(b)^2/(8*b)
+
 
 ###
 integrate(function(x) log(x)^6/(x^2 + 1), lower=0, upper=Inf)
