@@ -454,7 +454,7 @@ replace.pm.character.pm = function(p1, pn, pv, ..., drop=TRUE) {
 	return(p1)
 }
 # Replace: with fraction p2/p2fr
-replace.fr.pm = function(p1, p2, p2fr, xn, pow=1) {
+replace.fr.pm = function(p1, p2, p2fr, xn, pow=1, verbose=TRUE) {
 	# replace xn^pow by p2/p2fr;
 	idx = match(xn, names(p1));
 	if(is.na(idx)) stop(paste0("Polynomial does NOT contain variable: ", xn));
@@ -467,14 +467,14 @@ replace.fr.pm = function(p1, p2, p2fr, xn, pow=1) {
 	p2fr.pows = list(p2fr); # powers of p2fr
 	if(max.pow > 1) {
 		for(ipow in seq(2, max.pow)) {
-			print(paste0("Pow = ", ipow))
+			if(verbose) print(paste0("Pow = ", ipow))
 			p2.pows[[ipow]] = mult.pm(p2.pows[[ipow - 1]], p2);
 			p2fr.pows[[ipow]] = mult.pm(p2fr.pows[[ipow - 1]], p2fr);
 		}
-		print("Finished Powers!");
+		if(verbose) print("Finished Powers!");
 	}
 	p2m = c(tail(p2fr.pows, 1), p2.pows);
-	print("Starting cross-multiplication:");
+	if(verbose) print("Starting cross-multiplication:");
 	# pre-align p1 & p2: verify if useful?
 	pall = align.pm(p1, p2);
 	p1 = pall[[1]];
@@ -484,7 +484,7 @@ replace.fr.pm = function(p1, p2, p2fr, xn, pow=1) {
 		p2m[[ipow + 1]] = align.pm(p1, p2m[[ipow + 1]], doReduce=FALSE)[[2]];
 	}
 	}
-	print("Finished cross-multiplication!");
+	if(verbose) print("Finished cross-multiplication!");
 	pR = data.frame();
 	for(nr in seq(nrow(p1))) {
 		ipow = rpow[nr];
