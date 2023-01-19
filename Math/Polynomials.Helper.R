@@ -874,7 +874,7 @@ solve.lpm = function(..., xn, stop.at=NULL, asBigNum=FALSE) {
 	}
 	return(pR);
 }
-solve.pm = function(p1, p2, xn, stop.at=NULL, simplify=TRUE, asBigNum=FALSE) {
+solve.pm = function(p1, p2, xn, stop.at=NULL, simplify=TRUE, asBigNum=FALSE, verbose=TRUE) {
 	if(missing(xn)) stop("Missing variable name!");
 	if(is.pm(xn)) stop("Invalid variables: Did you mean to use solve.lpm()?");
 	#
@@ -912,17 +912,17 @@ solve.pm = function(p1, p2, xn, stop.at=NULL, simplify=TRUE, asBigNum=FALSE) {
 			"; Len = ", nrow(lp2[[1]]), " + ", nrow(lp2[[2]])));
 		lp2[[2]]$coeff = - lp2[[2]]$coeff; # "-" !!!
 		if(asBigNum) {
-			print("Computing GCD!")
+			if(verbose) print("Computing GCD!")
 			xgcd = as.bigz(0);
 			for(i in seq(nrow(lp2[[1]]))) xgcd = gcd(xgcd, lp2[[1]]$coeff[i]);
 			for(i in seq(nrow(lp2[[2]]))) xgcd = gcd(xgcd, lp2[[2]]$coeff[i]);
 			if(xgcd > 1) {
-				print("Simplifying by GCD!")
+				if(verbose) print("Simplifying by GCD!")
 				lp2[[1]]$coeff = as.bigz(lp2[[1]]$coeff / xgcd);
 				lp2[[2]]$coeff = as.bigz(lp2[[2]]$coeff / xgcd);
 			}
 		}
-		p1 = replace.fr.pm(p1, lp2[[1]], lp2[[2]], x=xn, pow=1);
+		p1 = replace.fr.pm(p1, lp2[[1]], lp2[[2]], x=xn, pow=1, verbose=verbose);
 		if(simplify) p1 = simplify.spm(p1, do.gcd=TRUE);
 		return(list(Rez=p1, x0=lp2[[1]], div=lp2[[2]], xn=xn));
 	}
@@ -939,7 +939,7 @@ solve.pm = function(p1, p2, xn, stop.at=NULL, simplify=TRUE, asBigNum=FALSE) {
 	if(dmax > 0) p1cf[,xn] = dmax;
 	# TODO: gcd of coefficients & polynomials;
 	p1 = sum.pm(mult.pm(p1, p2cf), mult.pm(p2, p1cf, -1));
-	print(paste0("Max pow: ", max1, "; Len = ", nrow(p1)));
+	if(verbose) print(paste0("Max pow: ", max1, "; Len = ", nrow(p1)));
 	if(simplify) { p1 = simplify.spm(p1); p2 = simplify.spm(p2); }
 	return(solve.pm(p1, p2, xn=xn, stop.at=stop.at, simplify=simplify, asBigNum=asBigNum));
 }
