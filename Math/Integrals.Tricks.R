@@ -5,7 +5,9 @@
 ###
 ### Integral Tricks
 ###
-### draft v.0.3r
+### draft v.0.3r-var2
+
+# TODO: refactor & split file;
 
 
 ### various Integral Tricks
@@ -224,21 +226,30 @@ integrate(function(x) log(x)/(x^n + b^n), 0, Inf)
 
 ###
 Catalan = 0.915965594177219015054603514;
+
+###
+integrate(function(x) log(x+1) / (x^2 + 1), lower=-1, upper=1)
+pi*log(2)/4 - Catalan;
+
+# Base:
 integrate(function(x) log(x + 1) / (x^2 + 1), lower=0, upper=Inf)
 pi*log(2)/4 + Catalan;
 # x => (1-x)/(1+x)
 integrate(function(x) (log(2) - log(x+1)) / (x^2 + 1), lower=-1, upper=1)
 # =>
 pi*log(2)/2 - integrate(function(x) log(x+1) / (x^2 + 1), lower=-1, upper=1)$value
-# =>
-integrate(function(x) log(x+1) / (x^2 + 1), lower=-1, upper=1)
-pi*log(2)/4 - Catalan;
 
 
 ### x => (a-x)/(a+x)
 a = 7/5
-integrate(function(x) log(x+a) / (x^2 + a^2), lower=-a, upper=a)$value
+integrate(function(x) log(x+a) / (x^2 + a^2), lower=-a, upper=a)
 pi*log(a)/(2*a) + pi*log(2)/(4*a) - Catalan/a;
+
+
+### x => (1-x)/(a+x)
+a = 7/5
+integrate(function(x) log(x+a) / (2*x^2 + 2*(a-1)*x + a^2 + 1), lower=-a, upper=1)
+pi*log(a+1)/(2*(a+1)) - pi*log(2)/(4*(a+1)) - Catalan/(a+1);
 
 
 ##################
