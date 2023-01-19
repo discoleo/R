@@ -497,11 +497,43 @@ b5 = - 3*k; b4 = 5/2*k^2; b3 = 0; b2 = -1/2*k^4;
 # Derivation:
 source("Polynomials.Helper.R")
 
+solve.polyInt = function(n, verbose=TRUE, subst=BULL) {
+	px = toPoly.pm(paste0("x^", seq(n-1), "*b", seq(n-1), collapse="+"));
+	px = sum.pm(px, toPoly.pm("x^n"));
+	pd = diff.pm(replace.pm(px, toPoly.pm("x+k"), "x"), px);
+	b = paste0("b", seq(n-1));
+	r = list();
+	for(i in seq(n-1, 1)) {
+		tmp = pd[pd$x == (i-1), , drop=FALSE];
+		tmp$x = NULL;
+		tmp = drop.pm(tmp);
+		tmp = simplify.pm.pow(tmp, do.gcd=TRUE);
+		if(verbose) print.pm(tmp);
+		if(nrow(tmp) == 1) {
+			r = c(r, list(0, 1));
+			pd = replace.pm(pd, 0, b[i]);
+			px = replace.pm(px, 0, b[i]);
+		} else {
+			tmp = solve.pm(tmp, pd, b[i], verbose=FALSE);
+			r = c(r, list(tmp$x0, tmp$div));
+			div = tmp$div;
+			if(is.null(div)) div = data.frame(coeff=1);
+			pd = replace.fr.pm(pd, tmp$x0, div, b[i], verbose=FALSE);
+			px = replace.fr.pm(px, tmp$x0, div, b[i], verbose=FALSE);
+		}
+	}
+	if(px$coeff[px$x == n] < 0) px$coeff = -px$coeff;
+	if( ! is.null(subst)) {
+		px = replace.pm(px, subst, "k");
+	}
+	px = reduce.coef.pm(px);
+	return(list(poly=px, Coeff=r));
+}
+
 n = 6
-px = toPoly.pm(paste0("x^", seq(n-1), "*b", seq(n-1), collapse="+"));
-px = sum.pm(px, toPoly.pm("x^n"));
-pd = diff.pm(replace.pm(px, toPoly.pm("x+k"), "x"), px);
-toCoeff(pd, "x")
+px = solve.polyInt(n, subst=as.pm("2i*pi"))
+print.pm(px$poly, "x")
+# toCoeff(px$poly, "x")
 
 px = toPoly.pm("x^6 - 6i*pi*x^5 - 10*pi^2*x^4 - 8*pi^4*x^2")
 eval.pm(px, list(x=1i*pi/5, pi=pi)) / pi^6 * 5^6
