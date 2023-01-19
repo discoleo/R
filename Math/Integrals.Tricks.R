@@ -5,7 +5,7 @@
 ###
 ### Integral Tricks
 ###
-### draft v.0.3q
+### draft v.0.3r
 
 
 ### various Integral Tricks
@@ -180,6 +180,7 @@ n = 5
 # dI:
 integrate(function(x) n*a^(n-1)/(b^n-a^n)* (1/(x^n + a^n) -  1/(x^n + b^n)), lower=0, upper=Inf)
 # [more complicated] x^2 - (m+m^4)*a*x + a^2 =>
+# TODO:
 sqrt(n)*(1 - (a/b)^(n-1))/(b^n - a^n) * (pi/2 + ...)
 
 # Helper
@@ -217,7 +218,31 @@ integrate(function(x) log(x)/(x^n + b^n), 0, Inf)
 	+ pi*log(b)/sin(pi/n) / n / b^(n-1);
 
 
-##############
+##################
+### Transforms ###
+##################
+
+###
+Catalan = 0.915965594177219015054603514;
+integrate(function(x) log(x + 1) / (x^2 + 1), lower=0, upper=Inf)
+pi*log(2)/4 + Catalan;
+# x => (1-x)/(1+x)
+integrate(function(x) (log(2) - log(x+1)) / (x^2 + 1), lower=-1, upper=1)
+# =>
+pi*log(2)/2 - integrate(function(x) log(x+1) / (x^2 + 1), lower=-1, upper=1)$value
+# =>
+integrate(function(x) log(x+1) / (x^2 + 1), lower=-1, upper=1)
+pi*log(2)/4 - Catalan;
+
+
+### x => (a-x)/(a+x)
+a = 7/5
+integrate(function(x) log(x+a) / (x^2 + a^2), lower=-a, upper=a)$value
+pi*log(a)/(2*a) + pi*log(2)/(4*a) - Catalan/a;
+
+
+##################
+##################
 
 ### Example 1:
 # - based on: "This trick is new to me!"
