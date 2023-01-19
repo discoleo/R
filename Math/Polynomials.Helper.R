@@ -594,9 +594,17 @@ drop.pm = function(p) {
 	return(p[, nc, drop=FALSE]);
 }
 reduce.cpm = function(p, asBigNum=FALSE) {
+	warning("Obsolete function: use reduce.coef.pm!");
+	reduce.coef.pm(p, asBigNum=asBigNum);
+}
+reduce.coef.pm = function(p, asBigNum=FALSE) {
 	# simplify coefficients
 	xgcd = if(asBigNum) as.bigz(0) else 0;
-	xgcd = gcd.vpm(p, xgcd);
+	if(is.complex(p$coeff)) {
+		xgcd = gcd.vpm.complex(p, xgcd);
+	} else {
+		xgcd = gcd.vpm(p, xgcd);
+	}
 	if(xgcd != 1) {
 		p$coeff = p$coeff / xgcd;
 		if(asBigNum) p$coeff = as.bigz(p$coeff);
