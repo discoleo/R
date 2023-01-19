@@ -173,6 +173,14 @@ gcd.vpm = function(p, xgcd=0) {
 	for(i in seq(nrow(p))) xgcd = gcd(xgcd, p$coeff[i]);
 	return(xgcd);
 }
+gcd.vpm.complex = function(p, xgcd=0) {
+	if(xgcd == 0 && inherits(p$coeff, c("bigz", "bigq"))) {
+		xgcd = as.bigz(0);
+	}
+	for(i in seq(nrow(p))) xgcd = gcd(xgcd, Re(p$coeff[i])) |>
+		gcd(Im(p$coeff[i]));
+	return(xgcd);
+}
 gcd.pm = function(p1, p2, by="x", div.sc=1) {
 	if(missing(p2)) return(gcd.vpm(p1)); # scalar gcd on coeff;
 	# basic implementation without much thought!
