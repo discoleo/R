@@ -7,7 +7,7 @@
 ### Polynomial Fractions: Unity
 ### Definite Integrals
 ###
-### draft v.0.1d-ref
+### draft v.0.1e
 
 
 
@@ -182,6 +182,36 @@ pi / sin(2*pi/n) / n
 integrate(function(x) x^2/(x^n + 1), lower=0, upper=Inf)
 integrate(function(x) x^3/(x^n + 1), lower=0, upper=Inf)
 pi / sin(3*pi/n) / n
+
+
+### Non-Standard Powers
+
+###
+n = sqrt(5)
+#
+integrate(function(x) 1/(x^n + 1), lower=0, upper=Inf)
+pi / sin(pi/n) / n
+#
+integrate(function(x) x/(x^n + 1), lower=0, upper=Inf)
+pi / sin(2*pi/n) / n
+
+
+###
+n = 3; p = sqrt(2);
+#
+integrate(function(x) x^p/(x^n + 1), lower=0, upper=Inf)
+pi / sin(pi*(p+1)/n) / n
+
+###
+n = 5; p = sqrt(3);
+integrate(function(x) x^p/(x^n + 1), lower=0, upper=Inf)
+pi / sin(pi*(p+1)/n) / n
+
+
+###
+n = sqrt(11); p = sqrt(3);
+integrate(function(x) x^p/(x^n + 1), lower=0, upper=Inf)
+pi / sin(pi*(p+1)/n) / n
 
 
 ############################
