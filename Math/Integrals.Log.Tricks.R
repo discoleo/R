@@ -8,7 +8,7 @@
 ###
 ### draft v.0.4a-Ref2
 
-# TODO: refactor & split file;
+# TODO: refactor & cleanup;
 
 
 ### various Integral Tricks
@@ -77,12 +77,35 @@
 # lower = 1/a, upper = a, I = 0;
 b = 3
 lim = 2
+# I == 0
 integrate(function(x) log(x) / (x^2 + b*x + 1), lower=1/lim, upper=lim)
 
+# log becomes constant;
+solve.intFr = function(b, lim) {
+	if(b[2] == 2) {
+		# Note: Case b[2] == -2 skipped;
+		log(b[1]) * (1/(1/lim + 1) - 1/(lim + 1)) / b[1];
+	} else {
+		d = (b[2]^2 - 4) / 4;
+		if(d > 0) {
+			d  = sqrt(d);
+			lg = (lim + (b[2]/2 - d))/(lim + (b[2]/2 + d)) *
+				(1/lim + (b[2]/2 + d))/(1/lim + (b[2]/2 - d));
+			log(b[1]) * log(lg) / (2*b[1]*d);
+		} else {
+			d = sqrt(- d);
+			log(b[1]) * (atan((lim + b[2]/2)/d) - atan((1/lim + b[2]/2)/d)) / (b[1]*d);
+		}
+	}
+}
+#
 b = c(5, 2)
+b = c(5, 3/2)
+# b = c(5, 3)
 lim = 2
 integrate(function(x) log(x) / (x^2 + b[2]*b[1]*x + b[1]^2), lower=b[1]/lim, upper=b[1]*lim)
 integrate(function(x) log(b[1]) / (x^2 + b[2]*b[1]*x + b[1]^2), lower=b[1]/lim, upper=b[1]*lim)
+solve.intFr(b, lim)
 
 
 ### Higher Powers
