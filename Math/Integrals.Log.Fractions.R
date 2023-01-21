@@ -6,7 +6,7 @@
 ### Integrals: Logarithms
 ### log-Fractions
 ###
-### draft v.0.1c
+### draft v.0.1d
 
 
 ##################
@@ -303,8 +303,29 @@ solve.polyInt = function(n, verbose=TRUE, subst=BULL) {
 
 ### Gen: Power of log
 
+### "Miss Piggy" Polynomials
+# n = 3
+x^4 - 4i*pi*x^3 - 4*pi^2*x^2
+# n = 4
+3*x^5 - 15i*pi*x^4 - 20*pi^2*x^3 - 8*pi^4*x
+# n = 5; Factor = 30i*pi;
+x^6 - 6i*pi*x^5 - 10*pi^2*x^4 - 8*pi^4*x^2
+# n = 6; Factor = 42i*pi;
+3*x^7 - 21i*pi*x^6 - 42*pi^2*x^5 - 56*pi^4*x^3 - 32*pi^6*x
+# n = 7; Factor = 48i*pi;
+3*x^8 - 24i*pi*x^7 - 56*pi^2*x^6 - 112*pi^4*x^4 - 128*pi^6*x^2
+# n = 8; Factor = 90i*pi;
+5*x^9 - 45i*pi*x^8 - 120*pi^2*x^7 - 336*pi^4*x^5 - 640*pi^6*x^3 - 384*pi^8*x
+
+
+n = 9
+px = solve.polyInt(n, subst=as.pm("2i*pi"))
+print.pm(px$poly, "x")
+
+
 ###
 b = sqrt(5)
+# Note: for b = 1 => 0;
 integrate(function(x) log(x)^3/(x^2 + b^2), lower=0, upper=Inf)
 pi*log(b)^3 / (2*b) + 3*pi^3*log(b)/(8*b)
 
@@ -396,7 +417,7 @@ b5 = - 3*k; b4 = 5/2*k^2; b3 = 0; b2 = -1/2*k^4;
 n = 6
 px = solve.polyInt(n, subst=as.pm("2i*pi"))
 print.pm(px$poly, "x")
-# toCoeff(px$poly, "x")
+
 
 px = toPoly.pm("x^6 - 6i*pi*x^5 - 10*pi^2*x^4 - 8*pi^4*x^2")
 eval.pm(px, list(x=1i*pi/5, pi=pi)) / pi^6 * 5^6
@@ -421,7 +442,7 @@ integrate(function(x) log(x)^6/(x^6 + 1), lower=0, upper=Inf)
 #
 px = toPoly.pm("3*x^7 - 21i*pi*x^6 - 42*pi^2*x^5 - 56*pi^4*x^3 - 32*pi^6*x")
 # x = c(1,3,5,7,9,11)*pi/6;
-eval.pm(px, list(x=1i*pi/6, pi=pi)) / pi^7 * 6^7;
+eval.pm(px, list(x=1i*pi/6, pi=pi)) / pi^7 * 6^7 / 3;
 # =>
 1i*pi^7*(473935/exp(5i*pi/6) - 473935/exp(55i*pi/6) +
 	+ 933849/exp(15i*pi/6) - 933849/exp(45i*pi/6) +
