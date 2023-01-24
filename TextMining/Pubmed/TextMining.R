@@ -19,8 +19,10 @@
 
 ### Basic Tools
 
-extract.regex = function(x, pattern, gr=0, perl=TRUE, simplify=TRUE) {
+extract.regex = function(x, pattern, gr=0, perl=TRUE, simplify=TRUE, verbose=TRUE) {
+	if(inherits(x, "data.frame")) stop("x should be an array!");
 	r = regexec(pattern, x, perl=perl);
+	if(verbose) cat("Finished Regex.\nStarting extraction.\n");
 	gr = gr + 1;
 	s = lapply(seq(length(x)), function(id) {
 		tmp = r[[id]];
