@@ -6,7 +6,7 @@
 ### Integrals: Logarithms
 ### log-Fractions
 ###
-### draft v.0.1d
+### draft v.0.1e
 
 
 ##################
@@ -216,6 +216,48 @@ pi*log(a+1)/(2*(a+1)) - pi*log(2)/(4*(a+1)) - Catalan/(a+1);
 #######################
 #######################
 
+### Simple Fractions
+
+# qncubed3: Complex Analysis: Integral of log(x)/(x+1)^2
+# https://www.youtube.com/watch?v=tPveHNdBWR8
+
+# Note:
+# - easy pole with higher multiplicity;
+
+integrate(function(x) log(x)/(x+1)^2, 0, Inf)
+# == 0
+
+###
+integrate(function(x) log(x)/(x+1)^3, 0, Inf)
+-1/2
+
+###
+integrate(function(x) log(x)/(x+1)^4, 0, Inf)
+-1/2
+
+### n = 5
+integrate(function(x) log(x)/(x+1)^5, 0, Inf)
+- 11 / gamma(5)
+
+### n = 6
+integrate(function(x) log(x)/(x+1)^6, 0, Inf)
+- 50 / gamma(6)
+
+# x = exp(1i*pi);
+# - 4i*pi*I + 4*pi^2/(n-1) = 2i*pi*(- 100/x^5 + 48*log(x)/x^5)/gamma(6)
+
+
+### n = 7
+integrate(function(x) log(x)/(x+1)^7, 0, Inf)
+- 274 / gamma(7)
+
+# x = exp(1i*pi);
+# - 4i*pi*I + 4*pi^2/(n-1) = 2i*pi*(2*274 - 240*log(x)/x^6)/gamma(7)
+# - 2i*I + 2*pi/(n-1) = 1i*(2*274 - 240*log(x)/x^6)/gamma(7)
+
+
+#######################
+
 ### Composite Fractions
 
 # qncubed3: Complex Analysis: An Integral from @MichaelPennMath
@@ -267,6 +309,7 @@ pi^3/(2^3*b) + pi/2 * log(b)^2/b
 # Derivation:
 source("Polynomials.Helper.R")
 
+# Generate Auxiliary Polynomial:
 solve.polyInt = function(n, verbose=TRUE, subst=BULL) {
 	px = toPoly.pm(paste0("x^", seq(n-1), "*b", seq(n-1), collapse="+"));
 	px = sum.pm(px, toPoly.pm("x^n"));
@@ -319,7 +362,7 @@ x^6 - 6i*pi*x^5 - 10*pi^2*x^4 - 8*pi^4*x^2
 
 
 n = 9
-px = solve.polyInt(n, subst=as.pm("2i*pi"))
+px = solve.polyInt(n + 1, subst=as.pm("2i*pi"))
 print.pm(px$poly, "x")
 
 
