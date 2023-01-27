@@ -6,7 +6,7 @@
 ### Integrals: Logarithms
 ### log-Fractions
 ###
-### draft v.0.1e
+### draft v.0.1f
 
 
 ##################
@@ -490,4 +490,49 @@ eval.pm(px, list(x=1i*pi/6, pi=pi)) / pi^7 * 6^7 / 3;
 1i*pi^7*(473935/exp(5i*pi/6) - 473935/exp(55i*pi/6) +
 	+ 933849/exp(15i*pi/6) - 933849/exp(45i*pi/6) +
 	+ 461195/exp(25i*pi/6) - 461195/exp(35i*pi/6)) / 7 / 6^8
+
+
+##########################
+##########################
+
+### Composite Log 
+### w. Simple Fraction
+
+# qncubed3: Complex Analysis: Logarithms and Branch Cuts
+# https://www.youtube.com/watch?v=8fYC8ldo__Y
+
+k = sqrt(3)
+p = sqrt(2) - 1
+integrate(function(x) log(k*x + 1)/x^(p+1), 0, Inf)
+pi*k^p / (p*sin(pi*p))
+
+
+### n = 3
+p = sqrt(2)
+integrate(function(x) log(x^3 + 1)/x^(p+1), 0, Inf)
+1/p*pi/sin(pi*(1 - p/3))
+
+# Int by parts:
+integrate(function(x) 3/p * x^(2-p)/(x^3+1), 0, Inf)
+1/p*pi/sin(pi*(1 - p/3))
+
+
+### n = 5
+p = sqrt(2)
+integrate(function(x) log(x^5 + 1)/x^(p+1), 0, Inf)
+1/p*pi/sin(pi*(1 - p/5))
+
+
+### n = 6
+p = sqrt(2)
+n = 6;
+integrate(function(x) log(x^n + 1)/x^(p+1), 0, Inf)
+1/p*pi/sin(pi*(1 - p/n))
+
+
+### n = 7
+p = sqrt(2)
+n = 7;
+integrate(function(x) log(x^n + 1)/x^(p+1), 0, Inf)
+1/p*pi/sin(pi*(1 - p/n))
 
