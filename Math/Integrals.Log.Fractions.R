@@ -6,7 +6,7 @@
 ### Integrals: Logarithms
 ### log-Fractions
 ###
-### draft v.0.1f
+### draft v.0.1f-simplif
 
 
 ##################
@@ -528,6 +528,7 @@ p = sqrt(2)
 n = 6;
 integrate(function(x) log(x^n + 1)/x^(p+1), 0, Inf)
 1/p*pi/sin(pi*(1 - p/n))
+1/p*pi/sin(pi*p/n)
 
 
 ### n = 7
@@ -535,4 +536,12 @@ p = sqrt(2)
 n = 7;
 integrate(function(x) log(x^n + 1)/x^(p+1), 0, Inf)
 1/p*pi/sin(pi*(1 - p/n))
+1/p*pi/sin(pi*p/n)
+
+
+### n = pi
+p = sqrt(2)
+n = pi;
+integrate(function(x) log(x^n + 1)/x^(p+1), 0, Inf)
+1/p*pi/sin(pi*p/n)
 
