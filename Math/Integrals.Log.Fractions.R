@@ -6,7 +6,7 @@
 ### Integrals: Logarithms
 ### log-Fractions
 ###
-### draft v.0.1f-simplif
+### draft v.0.1g
 
 
 ##################
@@ -179,6 +179,20 @@ n = 7; b = 3^(1/4);
 integrate(function(x) log(x)/(x^n + b^n), 0, Inf)
 - pi^2*cos(pi/n)/sin(pi/n)^2 / n^2 / b^(n-1) +
 	+ pi*log(b)/sin(pi/n) / n / b^(n-1);
+
+###
+n = 7
+p = sqrt(2)
+integrate(function(x) x^p*log(x)/(x^n + 1), 0, Inf)
+- pi^2*cos(pi*(p+1)/n)/sin(pi*(p+1)/n)^2 / n^2
+
+###
+n = 7
+p = sqrt(2)
+b = 3^(1/4)
+integrate(function(x) x^p*log(x)/(x^n + b^n), 0, Inf)
+- pi^2*cos(pi*(p+1)/n)/sin(pi*(p+1)/n)^2 / n^2 * b^(p + 1 - n) +
+	+ pi*log(b)/(n*sin(pi*(p+1)/n)) * b^(p + 1 - n)
 
 
 ##################
