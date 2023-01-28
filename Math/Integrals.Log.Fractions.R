@@ -6,7 +6,7 @@
 ### Integrals: Logarithms
 ### log-Fractions
 ###
-### draft v.0.1g
+### draft v.0.1h
 
 
 ##################
@@ -169,6 +169,7 @@ integrate(function(x) log(x)/(x^5 + 1), 0, Inf)
 
 
 ### Generalization
+### log(x) / (x^n + 1)
 n = 7
 integrate(function(x) log(x)/(x^n + 1), 0, Inf)
 - pi^2*cos(pi/n)/sin(pi/n)^2 / n^2
@@ -180,17 +181,18 @@ integrate(function(x) log(x)/(x^n + b^n), 0, Inf)
 - pi^2*cos(pi/n)/sin(pi/n)^2 / n^2 / b^(n-1) +
 	+ pi*log(b)/sin(pi/n) / n / b^(n-1);
 
-###
+
+###  log(x) * x^p / (x^n + 1)
 n = 7
 p = sqrt(2)
-integrate(function(x) x^p*log(x)/(x^n + 1), 0, Inf)
+integrate(function(x) x^p * log(x)/(x^n + 1), 0, Inf)
 - pi^2*cos(pi*(p+1)/n)/sin(pi*(p+1)/n)^2 / n^2
 
 ###
 n = 7
 p = sqrt(2)
 b = 3^(1/4)
-integrate(function(x) x^p*log(x)/(x^n + b^n), 0, Inf)
+integrate(function(x) x^p * log(x)/(x^n + b^n), 0, Inf)
 - pi^2*cos(pi*(p+1)/n)/sin(pi*(p+1)/n)^2 / n^2 * b^(p + 1 - n) +
 	+ pi*log(b)/(n*sin(pi*(p+1)/n)) * b^(p + 1 - n)
 
@@ -558,4 +560,31 @@ p = sqrt(2)
 n = pi;
 integrate(function(x) log(x^n + 1)/x^(p+1), 0, Inf)
 1/p*pi/sin(pi*p/n)
+
+
+########################
+########################
+
+# qncubed3: Complex Analysis: Fancy Branch Cuts
+# https://www.youtube.com/watch?v=2EnE78LKY3Y
+
+integrate(function(x) log(x^4 + 1)/(x^2 + 1), 0, Inf)
+pi*log(2 + sqrt(2))
+
+###
+integrate(function(x) log(x^(4*2) + 1)/(x^2 + 1), 0, Inf)
+2*pi*log(2) + pi*log((1 + sin(pi/8))*(1 + sin(3*pi/8)))
+
+# Derivation:
+pi*log(2)/2 + pi*log((1 + sin(pi/8))*(1 + sin(3*pi/8))/(1 - sin(pi/8))/(1 - sin(3*pi/8)))/2
+pi*log(2)/2 + pi*log((1 + sin(pi/8))*(1 + sin(3*pi/8))/cos(pi/8)/cos(3*pi/8))
+pi*log(2)/2 + pi*log((1 + sin(pi/8))*(1 + sin(3*pi/8)) * 2^2/sqrt(2))
+2*pi*log(2) + pi*log((1 + sin(pi/8))*(1 + sin(3*pi/8)))
+# TODO: simplify further;
+
+
+###
+k = 3
+integrate(function(x) log(x^(4*k) + 1)/(x^2 + 1), 0, Inf)
+k*pi*log(2) + pi*log(prod(1 + sin(pi * seq(1, 2*k-1, by=2)/(4*k))))
 
