@@ -6,7 +6,7 @@
 ### Integrals: Logarithms
 ### log-Fractions
 ###
-### draft v.0.1h
+### draft v.0.1h-simpl1
 
 
 ##################
@@ -573,18 +573,25 @@ pi*log(2 + sqrt(2))
 
 ###
 integrate(function(x) log(x^(4*2) + 1)/(x^2 + 1), 0, Inf)
-2*pi*log(2) + pi*log((1 + sin(pi/8))*(1 + sin(3*pi/8)))
+2*2*pi*log(2) + 2*pi*log(prod(cos(pi/4 - pi/16), cos(pi/4 - 3*pi/16)))
 
 # Derivation:
 pi*log(2)/2 + pi*log((1 + sin(pi/8))*(1 + sin(3*pi/8))/(1 - sin(pi/8))/(1 - sin(3*pi/8)))/2
 pi*log(2)/2 + pi*log((1 + sin(pi/8))*(1 + sin(3*pi/8))/cos(pi/8)/cos(3*pi/8))
 pi*log(2)/2 + pi*log((1 + sin(pi/8))*(1 + sin(3*pi/8)) * 2^2/sqrt(2))
 2*pi*log(2) + pi*log((1 + sin(pi/8))*(1 + sin(3*pi/8)))
-# TODO: simplify further;
+2*pi*log(2) + pi*log(1 + 1/sin(pi/8)/2 + sin(2*pi/8)/2)
+pi*log(2) + pi*log(2 + 1/sin(pi/8) + sin(2*pi/8))
+
 
 
 ###
 k = 3
 integrate(function(x) log(x^(4*k) + 1)/(x^2 + 1), 0, Inf)
+2*k*pi*log(2) + 2*pi*log(prod(cos(pi/4 - pi * seq(1, 2*k-1, by=2)/(8*k))))
+
+# Derivation:
 k*pi*log(2) + pi*log(prod(1 + sin(pi * seq(1, 2*k-1, by=2)/(4*k))))
+k*pi*log(2) + pi*log(prod(1 + cos(pi/2 - pi * seq(1, 2*k-1, by=2)/(4*k))))
+2*k*pi*log(2) + 2*pi*log(prod(cos(pi/4 - pi * seq(1, 2*k-1, by=2)/(8*k))))
 
