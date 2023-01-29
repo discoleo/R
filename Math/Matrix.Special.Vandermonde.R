@@ -6,11 +6,13 @@
 ### Special Matrices
 ### Quasi-Vandermonde
 ###
-### draft v.0.1a
+### draft v.0.1b
 
 
 ### Quasi-Vandermonde Matrix
 # - same determinant as a Vandermonde matrix;
+# - useful for Fraction Decomposition of polynomial fractions;
+
 
 # TODO: proper sign;
 matrix.quasiVand = function(x) {
@@ -32,6 +34,19 @@ det.Vand = function(x) {
 	prod(combn(x, 2, FUN=diff));
 }
 
+# Fraction Decomposition:
+coef.fr = function(x) {
+	# TODO: proper sign;
+	d = det.Vand(x);
+	r = sapply(seq(length(x)), function(id) {
+		d = det.Vand(x[-id]);
+		if(id %% 2 == 0) d = -d;
+		return(d);
+	});
+	return(r/d)
+}
+
+
 
 ### Examples:
 
@@ -41,7 +56,11 @@ x = sqrt(c(2,3,5,7))
 m = matrix.quasiVand(x)
 det(m)
 det.Vand(x)
-
+# Fraction Decomposition
+xx = 3^(1/3)
+a  = coef.fr(x)
+1/prod(xx - x) # ==
+sum(a / (xx - x))
 
 ###
 x = sqrt(c(2,3,5,7,11))
@@ -49,6 +68,11 @@ x = sqrt(c(2,3,5,7,11))
 m = matrix.quasiVand(x)
 det(m)
 det.Vand(x)
+# Fraction Decomposition
+xx = 3^(1/3)
+a  = coef.fr(x)
+1/prod(xx - x) # ==
+sum(a / (xx - x))
 
 
 ###
@@ -57,6 +81,11 @@ x = sqrt(c(2,3,5,7,11,13))
 m = matrix.quasiVand(x)
 det(m)
 det.Vand(x)
+# Fraction Decomposition
+xx = 3^(1/3)
+a  = coef.fr(x)
+1/prod(xx - x) # ==
+sum(a / (xx - x))
 
 
 ###
@@ -65,4 +94,9 @@ x = sqrt(c(2,3,5,7,11,13, 17))
 m = matrix.quasiVand(x)
 det(m)
 det.Vand(x)
+# Fraction Decomposition
+xx = 3^(1/3)
+a  = coef.fr(x)
+1/prod(xx - x) # ==
+sum(a / (xx - x))
 
