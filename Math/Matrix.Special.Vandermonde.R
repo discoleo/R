@@ -6,7 +6,7 @@
 ### Special Matrices
 ### Quasi-Vandermonde
 ###
-### draft v.0.1b
+### draft v.0.1b-sign
 
 
 ### Quasi-Vandermonde Matrix
@@ -30,22 +30,24 @@ matrix.quasiVand = function(x) {
 	}
 	return(r);
 }
+# Direct computation:
 det.Vand = function(x) {
-	prod(combn(x, 2, FUN=diff));
+	r = prod(combn(x, 2, FUN=diff));
+	return(r);
 }
 
 # Fraction Decomposition:
 coef.fr = function(x) {
-	# TODO: proper sign;
-	d = det.Vand(x);
 	r = sapply(seq(length(x)), function(id) {
 		d = det.Vand(x[-id]);
 		if(id %% 2 == 0) d = -d;
 		return(d);
 	});
+	# TODO: proper sign;
+	d = det.Vand(x);
+	if(length(x) %% 2 == 1) d = -d;
 	return(r/d)
 }
-
 
 
 ### Examples:
@@ -61,6 +63,7 @@ xx = 3^(1/3)
 a  = coef.fr(x)
 1/prod(xx - x) # ==
 sum(a / (xx - x))
+
 
 ###
 x = sqrt(c(2,3,5,7,11))
