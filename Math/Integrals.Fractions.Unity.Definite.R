@@ -7,7 +7,7 @@
 ### Polynomial Fractions: Unity
 ### Definite Integrals
 ###
-### draft v.0.1f-simpl2
+### draft v.0.1f-TODO
 
 
 
@@ -394,6 +394,15 @@ integrate(function(x) x^p/(x^n + 1), 0, 1)
 	+ pi/n / sin((p+1)*pi/n);
 - sign * 2/n * sum( cs2*log(csH) ) +
 	+ pi/(2*n) / sin((p+1)*pi/n);
+
+
+### TODO:
+n = 7
+p = sqrt(3)
+- pi/(2*n) / sin((p+1)*pi/n) + integrate(function(x) x^p/(x^n + 1), 0, 1)$value;
+- pi/(2*n) / sin((p+1)*pi/n) + integrate(function(x) x^p/(x^n + 1), 1, Inf)$value;
+# TODO:
+# - formula to compute: 0.06055876;
 
 
 #####################
