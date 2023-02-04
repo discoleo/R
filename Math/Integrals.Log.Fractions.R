@@ -6,7 +6,7 @@
 ### Integrals: Logarithms
 ### log-Fractions
 ###
-### draft v.0.1h-simpl1
+### draft v.0.1i
 
 
 ##################
@@ -298,6 +298,18 @@ integrate(function(x) x^(-p)/(x+k)^2, lower=0, upper=Inf)
 pi*p/sin(pi*p)/k^(p+1)
 
 
+###
+p = sqrt(1/5)
+k = sqrt(7)
+integrate(function(x) log(x)/x^p/(x+k)^2, lower=0, upper=Inf)
+full = pi*((p*log(k) - 1)*sin(pi*p) + pi*p*cos(pi*p)) / k^(p+1) / sin(pi*p)^2
+print(full)
+#
+- full/2 + integrate(function(x) log(x)/x^p/(x+k)^2, lower=0, upper=1)$value
+- full/2 + integrate(function(x) log(x)/x^p/(x+k)^2, lower=1, upper=Inf)$value
+# TODO: formula to compute 0.3017509;
+
+
 #####################
 #####################
 
@@ -523,6 +535,9 @@ integrate(function(x) log(k*x + 1)/x^(p+1), 0, Inf)
 pi*k^p / (p*sin(pi*p))
 
 
+### Gen 1:
+# - continuous power;
+
 ### n = 3
 p = sqrt(2)
 integrate(function(x) log(x^3 + 1)/x^(p+1), 0, Inf)
@@ -571,7 +586,7 @@ integrate(function(x) log(x^n + 1)/x^(p+1), 0, Inf)
 integrate(function(x) log(x^4 + 1)/(x^2 + 1), 0, Inf)
 pi*log(2 + sqrt(2))
 
-###
+### Gen 1:
 integrate(function(x) log(x^(4*2) + 1)/(x^2 + 1), 0, Inf)
 2*2*pi*log(2) + 2*pi*log(prod(cos(pi/4 - pi/16), cos(pi/4 - 3*pi/16)))
 
@@ -580,9 +595,9 @@ pi*log(2)/2 + pi*log((1 + sin(pi/8))*(1 + sin(3*pi/8))/(1 - sin(pi/8))/(1 - sin(
 pi*log(2)/2 + pi*log((1 + sin(pi/8))*(1 + sin(3*pi/8))/cos(pi/8)/cos(3*pi/8))
 pi*log(2)/2 + pi*log((1 + sin(pi/8))*(1 + sin(3*pi/8)) * 2^2/sqrt(2))
 2*pi*log(2) + pi*log((1 + sin(pi/8))*(1 + sin(3*pi/8)))
+# alternative:
 2*pi*log(2) + pi*log(1 + 1/sin(pi/8)/2 + sin(2*pi/8)/2)
 pi*log(2) + pi*log(2 + 1/sin(pi/8) + sin(2*pi/8))
-
 
 
 ###
