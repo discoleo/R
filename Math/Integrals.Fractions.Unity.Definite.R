@@ -7,7 +7,7 @@
 ### Polynomial Fractions: Unity
 ### Definite Integrals
 ###
-### draft v.0.1f-TODO
+### draft v.0.1g
 
 
 
@@ -389,6 +389,10 @@ sign = if(p %% 2 == 0) - 1 else 1;
 #
 integrate(function(x) x^p/(x^n + 1), 0, 1)
 # simplification:
+- sign * 2/n * sum( cs2*log(csH) ) +
+	+ pi/(2*n) / sin((p+1)*pi/n);
+
+# Derivation:
 (- 2/n * sum( cs2*log(csH) ) + pi/n * sum(sn2) +
 	- 2/n * sum( sn2 * atan((1 + cs)/sn) ) ) * sign +
 	+ pi/n / sin((p+1)*pi/n);
@@ -426,4 +430,22 @@ integrate(function(x) 1/(1-x^n)^(1+1/n), lower=0, upper=1/2^(1/n))
 n = 11
 integrate(function(x) 1/(1-x^n)^(1+1/n), lower=0, upper=1/2^(1/n))
 # == 1
+
+
+####################
+
+###
+p = 1 - sqrt(2)
+n = sqrt(11)
+k = sqrt(3)
+integrate(function(x) x^p / (x^n+1)^(1/k), lower=0, upper=Inf)
+gamma((1+p)/n)*gamma(1/k - (p+1)/n) / gamma(1/k) / n
+
+
+###
+p = sqrt(5) - 2
+n = sqrt(11)
+k = sqrt(3)
+integrate(function(x) x^p / (x^n+1)^(1/k), lower=0, upper=Inf)
+gamma((1+p)/n)*gamma(1/k - (p+1)/n) / gamma(1/k) / n
 
