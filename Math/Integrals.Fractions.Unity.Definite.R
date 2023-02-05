@@ -7,7 +7,7 @@
 ### Polynomial Fractions: Unity
 ### Definite Integrals
 ###
-### draft v.0.1g-simplif
+### draft v.0.1g-simplif2
 
 
 
@@ -39,9 +39,10 @@ intUnityI01 = function(n) {
 		return(intUnityI01Even(n));
 	}
 	n2 = n %/% 2;
-	sum(cos(2*seq(n2)*pi/n)*log(cos(seq(n2)*pi/n))) * 2 / n +
+	id = seq(n2);
+	sum(cos(2*pi*id/n)*log(cos(pi*id/n))) * 2 / n +
 		# simplification:
-		# + sum(seq(n2)*sin(2*seq(n2)*pi/n)) * 2*pi / n^2;
+		# + sum(id*sin(2*pi*id/n)) * 2*pi / n^2;
 		+ pi/(2*n) / sin(pi/n);
 }
 intUnityI01Even = function(n) {
@@ -55,10 +56,9 @@ intUnityI01Even = function(n) {
 	# r = sum(cs*log(x^2 + 2*cs*x + 1)) + sum(2*atan((x - cs)/sn));
 	r = sum(cs*log(cs + 1)) +
 		# + sum(2*sn*atan((1 - cs)/sn)) - sum(2*sn*atan((0 - cs)/sn));
-		+ sum(2*sn*atan((1 - cs)/sn)) + pi*sum(sn) +
+		# simplification: sum(2*sn*atan((1 - cs)/sn));
 		# simplification: - 2*pi*sum(id*sn)/n;
-		- pi/sin(pi/n);
-	if(isNotM4) r = r + 3*pi/2;
+		+ pi/2/sin(pi/n);
 	return(r/n);
 }
 
@@ -149,6 +149,15 @@ n = 4*k;
 id = seq(1, n, by=2);
 sum(id * sin(pi*p*id/n)) # ==
 (-1)^((p %% 2) + 1) * n/2/sin(pi*p/n)
+
+
+##############
+
+### sum(sn)
+n = 10 # EVEN!
+id = seq(1, n, by=2);
+sn = sin(pi*id/n);
+sum(sn) - 1/sin(pi/n) # = 0
 
 
 ######################
