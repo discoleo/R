@@ -7,7 +7,7 @@
 ### Polynomial Fractions: Unity
 ### Definite Integrals
 ###
-### draft v.0.1g
+### draft v.0.1g-simplif
 
 
 
@@ -40,7 +40,9 @@ intUnityI01 = function(n) {
 	}
 	n2 = n %/% 2;
 	sum(cos(2*seq(n2)*pi/n)*log(cos(seq(n2)*pi/n))) * 2 / n +
-	+ sum(seq(n2)*sin(2*seq(n2)*pi/n)) * 2*pi / n^2;
+		# simplification:
+		# + sum(seq(n2)*sin(2*seq(n2)*pi/n)) * 2*pi / n^2;
+		+ pi/(2*n) / sin(pi/n);
 }
 intUnityI01Even = function(n) {
 	if(n %% 2 == 1) return(intUnityI01(n));
@@ -53,10 +55,13 @@ intUnityI01Even = function(n) {
 	# r = sum(cs*log(x^2 + 2*cs*x + 1)) + sum(2*atan((x - cs)/sn));
 	r = sum(cs*log(cs + 1)) +
 		# + sum(2*sn*atan((1 - cs)/sn)) - sum(2*sn*atan((0 - cs)/sn));
-		+ sum(2*sn*atan((1 - cs)/sn)) - 2*pi*sum(id*sn)/n + pi*sum(sn);
-	if(isNotM4) r = r + pi/2;
+		+ sum(2*sn*atan((1 - cs)/sn)) + pi*sum(sn) +
+		# simplification: - 2*pi*sum(id*sn)/n;
+		- pi/sin(pi/n);
+	if(isNotM4) r = r + 3*pi/2;
 	return(r/n);
 }
+
 # I( 1 / (x^(n/2) + 1) )
 intUnityI01Half = function(n) {
 	if(n %% 2 == 0) warning("Not yet implemented!");
@@ -218,10 +223,16 @@ pi / sin(pi*(p+1)/n) / n
 ############################
 
 ### Special Finite Integrals
+# - on [0, 1];
 # - shortcut formulas are available;
 
 ###
 n = 9
+integrate(function(x) 1/(x^n + 1), 0, 1)
+intUnityI01(n)
+
+###
+n = 14
 integrate(function(x) 1/(x^n + 1), 0, 1)
 intUnityI01(n)
 
@@ -235,8 +246,13 @@ n = 16
 integrate(function(x) 1/(x^n + 1), 0, 1)
 intUnityI01(n)
 
+###
+n = 18
+integrate(function(x) 1/(x^n + 1), 0, 1)
+intUnityI01(n)
 
-### Specific Cases
+
+### Derivation: Specific Cases
 # Note: generalized formulas available;
 
 ###
@@ -447,7 +463,7 @@ p = sqrt(5) - 2
 n = sqrt(11)
 k = sqrt(3)
 integrate(function(x) x^p / (x^n+1)^(1/k), lower=0, upper=Inf)
-IInf = gamma((1+p)/n)*gamma(1/k - (p+1)/n) / gamma(1/k) / n
+IInf = gamma((p+1)/n)*gamma(1/k - (p+1)/n) / gamma(1/k) / n
 print(IInf)
 #
 - IInf/2 + integrate(function(x) x^p / (x^n+1)^(1/k), lower=0, upper=1)$value
