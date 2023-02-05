@@ -447,5 +447,10 @@ p = sqrt(5) - 2
 n = sqrt(11)
 k = sqrt(3)
 integrate(function(x) x^p / (x^n+1)^(1/k), lower=0, upper=Inf)
-gamma((1+p)/n)*gamma(1/k - (p+1)/n) / gamma(1/k) / n
+IInf = gamma((1+p)/n)*gamma(1/k - (p+1)/n) / gamma(1/k) / n
+print(IInf)
+#
+- IInf/2 + integrate(function(x) x^p / (x^n+1)^(1/k), lower=0, upper=1)$value
+- IInf/2 + integrate(function(x) x^p / (x^n+1)^(1/k), lower=1, upper=Inf)$value
+# TODO: find formula for -0.3248496;
 
