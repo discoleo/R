@@ -150,7 +150,15 @@ p = 1/3; a = 1; b = 4;
 integrate(function(x) (x - a)^p * (b - x)^(1 - p), lower=a, upper=b)
 pi/2 * p*(1 - p)*(b - a)^2/sin(pi*p)
 
-###
+
+### Gen 1:
+p = sqrt(3) - sqrt(2)
+a = sqrt(5); b = sqrt(7);
+integrate(function(x) x * (x - a)^p * (b - x)^(1 - p), lower=a, upper=b)
+pi/6 * p*(1-p)*((2-p)*a + (1+p)*b)*(b - a)^2/sin(pi*p)
+
+
+### TODO:
 p = 1/3; a = 1; b = 4;
 integrate(function(x) (x - a)^p * (b - x)^p, lower=a, upper=b)
 # TODO:
