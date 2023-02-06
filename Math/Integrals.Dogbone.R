@@ -18,7 +18,13 @@ integrate(function(x) (1 - x)^(-2/3) * (1 + x)^(-1/3) / (4 + x^2), lower=-1, upp
 # - is similar to [2];
 integrate(function(x) (1 - x)^(1/2) * (1 + x)^(1/2) / (1 + x^2), lower=-1, upper=1)
 
-# 4. ...
+
+# 4. qncubed3: Complex Analysis: Dogbone Contour Generalisation
+# https://www.youtube.com/watch?v=w-NIlyXZzqU
+p = 1/3; a = 1; b = 4;
+integrate(function(x) (x - a)^p * (b - x)^(1 - p), lower=a, upper=b)
+
+# 5. ...
 
 
 ##############
@@ -122,5 +128,32 @@ k = sqrt(7);
 p = 5;
 integrate(function(x) (b - x)^(1/p) * (b + x)^(-1/p) / (k^2 + x^2), lower=-b, upper=b)
 pi*sin(atan(k/b)*(-2/p) + pi/p) / sin(pi/p) / k
+
+
+### Variant: n1 = -1; n2 = 1;
+# - equivalent to substitution:
+#   1/p => 1/p - 1 (in Variant 1);
+b = sqrt(3);
+k = sqrt(7);
+p = 5;
+integrate(function(x) (b - x)^(1/p - 1) * (b + x)^(1-1/p) / (k^2 + x^2), lower=-b, upper=b)
+pi*sin(atan(k/b)*(2-2/p) + pi/p) / sin(pi/p) / k
+
+
+#########################
+#########################
+
+# 4. qncubed3: Complex Analysis: Dogbone Contour Generalisation
+# https://www.youtube.com/watch?v=w-NIlyXZzqU
+
+p = 1/3; a = 1; b = 4;
+integrate(function(x) (x - a)^p * (b - x)^(1 - p), lower=a, upper=b)
+pi/2 * p*(1 - p)*(b - a)^2/sin(pi*p)
+
+###
+p = 1/3; a = 1; b = 4;
+integrate(function(x) (x - a)^p * (b - x)^p, lower=a, upper=b)
+# TODO:
+# ???
 
 
