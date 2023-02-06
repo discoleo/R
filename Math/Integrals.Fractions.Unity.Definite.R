@@ -7,7 +7,7 @@
 ### Polynomial Fractions: Unity
 ### Definite Integrals
 ###
-### draft v.0.1g-simplif2
+### draft v.0.1h
 
 
 
@@ -49,8 +49,8 @@ intUnityI01Even = function(n) {
 	if(n %% 2 == 1) return(intUnityI01(n));
 	isNotM4 = n %% 4 != 0;
 	id = seq(1, n, by=2);
-	if(isNotM4) id = id[ - (n+2)/4];
-	cs = cos(id*pi/n); sn = sin(id*pi/n);
+	if(isNotM4) id = id[ - (n+2)/4]; # cs == 0;
+	cs = cos(id*pi/n); # sn = sin(id*pi/n);
 	# Base-Formula:
 	# fr = sum(2*cs*x + 2)/(x^2 + 2*cs*x + 1)) / n;
 	# r = sum(cs*log(x^2 + 2*cs*x + 1)) + sum(2*atan((x - cs)/sn));
@@ -58,7 +58,26 @@ intUnityI01Even = function(n) {
 		# + sum(2*sn*atan((1 - cs)/sn)) - sum(2*sn*atan((0 - cs)/sn));
 		# simplification: sum(2*sn*atan((1 - cs)/sn));
 		# simplification: - 2*pi*sum(id*sn)/n;
-		+ pi/2/sin(pi/n);
+		+ pi/2 / sin(pi/n);
+	return(r/n);
+}
+### x^p:
+intUnityI01WX = function(m, p=1) {
+	if(n %% 2 == 0) {
+		return(intUnityI01EvenWX(n, p=p));
+	}
+	n2 = n %/% 2;
+	id = seq(n2);
+	cs = cos(2*pi*id*(p+1)/n); csH = cos(pi*id/n);
+	sign = if(p %% 2 == 0) 1 else -1;
+	pi/(2*n) / sin(pi*(p+1)/n) + sign * sum(cs*log(csH)) * 2 / n;
+}
+intUnityI01EvenWX = function(n, p = 1) {
+	if(n %% 2 == 1) return(intUnityI01WX(n, p=p));
+	id = seq(1, n, by=2);
+	cs = cos(id*pi*(p+1)/n); csH = cos(id*pi/n);
+	sign = if(p %% 2 == 0) 1 else -1;
+	r = pi/2 / sin(pi*(p+1)/n) + sign * sum(cs*log(csH + 1));
 	return(r/n);
 }
 
@@ -434,6 +453,41 @@ p = sqrt(3)
 # - formula to compute: 0.06055876;
 
 
+###
+n = 11
+p = 3
+integrate(function(x) x^p/(x^n + 1), 0, 1)
+intUnityI01WX(n, p)
+
+
+### Even Powers
+
+###
+n = 14
+p = 2
+integrate(function(x) x^p/(x^n + 1), 0, 1)
+intUnityI01WX(n, p)
+
+###
+n = 14
+p = 3
+integrate(function(x) x^p/(x^n + 1), 0, 1)
+intUnityI01WX(n, p)
+
+###
+n = 14
+p = 4
+integrate(function(x) x^p/(x^n + 1), 0, 1)
+intUnityI01WX(n, p)
+
+
+###
+n = 16
+p = 4
+integrate(function(x) x^p/(x^n + 1), 0, 1)
+intUnityI01WX(n, p)
+
+
 #####################
 
 #############
@@ -464,7 +518,7 @@ p = 1 - sqrt(2)
 n = sqrt(11)
 k = sqrt(3)
 integrate(function(x) x^p / (x^n+1)^(1/k), lower=0, upper=Inf)
-gamma((1+p)/n)*gamma(1/k - (p+1)/n) / gamma(1/k) / n
+gamma((p+1)/n)*gamma(1/k - (p+1)/n) / gamma(1/k) / n
 
 
 ###
