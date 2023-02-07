@@ -11,8 +11,6 @@ integrate(function(x) x^(3/4) * (3 - x)^(1/4) / (5 - x), lower=0, upper=3)
 integrate(function(x) (1 - x)^(-2/3) * (1 + x)^(-1/3) / (4 + x^2), lower=-1, upper=1)
 
 
-### TODO: explore subsequent examples:
-
 # 3. Complex Analysis: Dogbone Contour Example #3
 # https://www.youtube.com/watch?v=-HWcFun7e4k
 # - is similar to [2];
@@ -24,7 +22,10 @@ integrate(function(x) (1 - x)^(1/2) * (1 + x)^(1/2) / (1 + x^2), lower=-1, upper
 p = 1/3; a = 1; b = 4;
 integrate(function(x) (x - a)^p * (b - x)^(1 - p), lower=a, upper=b)
 
-# 5. ...
+# 5. qncubed3: Complex Analysis: Double Keyhole Contour
+# https://www.youtube.com/watch?v=LT3jpvWMH2s
+integrate(function(x) 1 / (x*sqrt(x^2 - 1)), lower=1, upper=Inf)
+
 
 
 ##############
@@ -164,4 +165,24 @@ integrate(function(x) (x - a)^p * (b - x)^p, lower=a, upper=b)
 # TODO:
 # ???
 
+
+###########################
+###########################
+
+# 5. qncubed3: Complex Analysis: Double Keyhole Contour
+# https://www.youtube.com/watch?v=LT3jpvWMH2s
+integrate(function(x) 1 / (x*sqrt(x^2 - 1)), lower=1, upper=Inf)
+pi / 2
+
+### Gen 1:
+k = 3
+integrate(function(x) 1 / (x * (x^2 - 1)^(1/k)), lower=1, upper=Inf)
+pi/2 / sin(pi/k)
+
+###
+k = sqrt(5)
+integrate(function(x) 1 / (x * (x^2 - 1)^(1/k)), lower=1, upper=Inf)
+pi/2 / sin(pi/k)
+
+# Res = 2i*pi * exp(-1i*pi/k)
 
