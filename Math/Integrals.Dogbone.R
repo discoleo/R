@@ -186,3 +186,17 @@ pi/2 / sin(pi/k)
 
 # Res = 2i*pi * exp(-1i*pi/k)
 
+
+### Gen 2:
+n = 3
+k = 2
+integrate(function(x) 1 / (x * (x^n - 1)^(1/k)), lower=1, upper=Inf)
+pi/n / sin(pi/k)
+
+
+###
+n = sqrt(5)
+k = sqrt(2)
+integrate(function(x) 1 / (x * (x^n - 1)^(1/k)), lower=1, upper=Inf)
+pi/n / sin(pi/k)
+
