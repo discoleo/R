@@ -125,7 +125,7 @@ intUnityI01P = function(n, p=3) {
 }
 
 ### Plot
-# sum( cos(2*pi*seq(...)*p/n) * log(cos(pi*seq(...)/n)) )
+# sum( cos(pi*seq(...)*p/n) * log(cos(pi*seq(...)/n)) )
 plot.logcos = function(n, dx = 1/8, len=129, points=TRUE,
 		type = "l", col.px = "red", title=TRUE, ...) {
 	p = seq(-1 + dx, n - 1 - dx, length.out=len);
@@ -139,18 +139,19 @@ plot.logcos = function(n, dx = 1/8, len=129, points=TRUE,
 	if(points) {
 		isEven = (n %% 2 == 1)
 		if(isEven) {
-			id = seq(1, (n-1)/2);
-			fc = 2; csH = cos(pi*id/n);
+			# even seq:
+			id = 2 * seq(1, (n-1)/2);
 		} else {
 			id = seq(1, n, by=2);
-			fc = 1; csH = 1 + cos(pi*id/n);
+			# csH = 1 + cos(pi*id/n);
 		}
+		logcsH = log(cos(pi*id/(2*n)));
 		px = seq(0, n-2, by=1);
 		py = sapply(px, function(p) {
 			sign = if(p %% 2 == 0) 1 else -1;
-			sign * sum(cos(pi*fc*id*(p+1)/n) * log(csH));
+			sign * sum(cos(pi*id*(p+1)/n) * logcsH);
 		})
-		points(px, fc*py / n, col=col.px);
+		points(px, 2*py / n, col=col.px);
 		return(py);
 	}
 	invisible()
