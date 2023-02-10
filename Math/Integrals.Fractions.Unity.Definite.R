@@ -7,7 +7,7 @@
 ### Polynomial Fractions: Unity
 ### Definite Integrals
 ###
-### draft v.0.1h
+### draft v.0.1i
 
 
 
@@ -75,7 +75,7 @@ intUnityI01WX = function(m, p=1) {
 intUnityI01EvenWX = function(n, p = 1) {
 	if(n %% 2 == 1) return(intUnityI01WX(n, p=p));
 	id = seq(1, n, by=2);
-	cs = cos(id*pi*(p+1)/n); csH = cos(id*pi/n);
+	cs = cos(id*pi*(p+1)/n); csH = cos(pi*id/n);
 	sign = if(p %% 2 == 0) 1 else -1;
 	r = pi/2 / sin(pi*(p+1)/n) + sign * sum(cs*log(csH + 1));
 	return(r/n);
@@ -123,6 +123,39 @@ intUnityI01P = function(n, p=3) {
 	int = int + pi/sin(pi*p/n)/n;
 	return(p*int);
 }
+
+### Plot
+# sum( cos(2*pi*seq(...)*p/n) * log(cos(pi*seq(...)/n)) )
+plot.logcos = function(n, dx = 1/8, len=129, points=TRUE,
+		type = "l", col.px = "red", title=TRUE, ...) {
+	p = seq(-1 + dx, n - 1 - dx, length.out=len);
+	r = sapply(p, function(p) {
+		integrate(function(x) x^p / (x^n + 1), 0, 1)$value;
+	})
+	r = r - pi / sin(pi*(p+1)/n) / (2*n);
+	plot(p, r, type=type, ...);
+	if(title) title(paste0("n = ", n));
+	# Explicit Points
+	if(points) {
+		isEven = (n %% 2 == 1)
+		if(isEven) {
+			id = seq(1, (n-1)/2);
+			fc = 2; csH = cos(pi*id/n);
+		} else {
+			id = seq(1, n, by=2);
+			fc = 1; csH = 1 + cos(pi*id/n);
+		}
+		px = seq(0, n-2, by=1);
+		py = sapply(px, function(p) {
+			sign = if(p %% 2 == 0) 1 else -1;
+			sign * sum(cos(pi*fc*id*(p+1)/n) * log(csH));
+		})
+		points(px, fc*py / n, col=col.px);
+		return(py);
+	}
+	invisible()
+}
+
 
 ####################
 ####################
@@ -357,6 +390,10 @@ x = sapply(n, intUnityI01)
 # asymptotic to y = 1;
 plot(n, x)
 curve( (x + 1/3)/(x+1), add=T, col="orange")
+
+###
+plot.logcos(9)
+plot.logcos(10)
 
 
 ######################
