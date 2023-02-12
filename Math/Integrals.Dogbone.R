@@ -159,6 +159,11 @@ integrate(function(x) x * (x - a)^p * (b - x)^(1 - p), lower=a, upper=b)
 pi/6 * p*(1-p)*((2-p)*a + (1+p)*b)*(b - a)^2/sin(pi*p)
 
 
+### Gen 2 & 3: (x - a)^p * (b - x)^q
+# Transform: y = b - (b-a)/(x+1);
+# New: (b-a)^(p+q+1) * x^p / (x+1)^(p+q+2);
+# Interval: [0, 1] => [0, Inf];
+
 ### Gen 2:
 p = 1/3; a = 1; b = 4;
 integrate(function(x) (x - a)^p * (b - x)^p, lower=a, upper=b)
@@ -179,6 +184,14 @@ integrate(function(x) (x - a)^p * (b - x)^q, lower=a, upper=b)
 p = sqrt(3); q = sqrt(5); a = 1; b = 4;
 integrate(function(x) (x - a)^p * (b - x)^q, lower=a, upper=b)
 (b-a)^(p+q+1) * gamma(p+1)*gamma(q+1) / gamma(p+q+2)
+
+
+### Variant:
+p = sqrt(3); q = sqrt(5); a = 1; b = 4;
+integrate(function(x) x * (x - a)^p * (b - x)^q, lower=a, upper=b)
+b*(b-a)^(p+q+1) * gamma(p+1)*gamma(q+1) / gamma(p+q+2) +
+	- (b-a)^(p+q+2) * gamma(p+1)*gamma(q+2) / gamma(p+q+3)
+# Note: can be simplified;
 
 
 ###########################
