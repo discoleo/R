@@ -7,7 +7,7 @@
 ###   Polynomial Fractions
 ###   derived from Roots of Unity
 ###
-### draft v.0.2k-hyper
+### draft v.0.2l
 
 
 
@@ -48,7 +48,7 @@
 # - Integral: 1 / (x*(x^n - 1)) dx;
 ### draft v.0.1e-tan - v.0.1e-tanx:
 # - added some trigonometric derivatives
-#   (based actually on Cardan-polynomials);
+#   (based actually on Cardano-polynomials);
 # - generalisations using generic P5 polynomials (v.0.1e-tan2, v.0.1e-tan3, v.0.1e-tanx);
 # - work in progress using generic P7 polynomials (v.0.1e-tan7);
 # draft v.0.1e:
@@ -398,6 +398,27 @@ integrate(function(x) p * x^p / ((x^p-s)^n - 1), lower=(lim[1] + s)^(1/p), upper
 integrate(function(x) (x + s)^(1/p) / (x^n + 1), lower=lim[1], upper=lim[2])
 integrate(function(x) x^(1/p) / ((x-s)^n + 1), lower=lim[1] + s, upper=lim[2] + s)
 integrate(function(x) p * x^p / ((x^p-s)^n + 1), lower=(lim[1] + s)^(1/p), upper=(lim[2] + s)^(1/p))
+
+
+##############
+### Transform:
+# y = sqrt( (1-x) / (1+x) );
+
+# Note: preserves Interval [0, 1] => [0, 1];
+
+###
+integrate(function(x) x/(x^10+1), 0, 1)
+integrate(function(x) (1+x)^3/((1+x)^5+(1-x)^5), 0, 1)
+integrate(function(x) x^3/(x^5+(2-x)^5), 1, 2)
+n = 10; p1 = 2; id = seq(1, n, by=2);
+(pi/2/sin(p1*pi/n) - 2*sum(cos(p1*id*pi/n) * log(cos(id*pi/(2*n)))))/n
+
+###
+integrate(function(x) x/(x^12+1), 0, 1)
+integrate(function(x) (1+x)^4/((1+x)^6+(1-x)^6), 0, 1)
+integrate(function(x) x^4/(x^6+(2-x)^6), 1, 2)
+n = 12; p1 = 2; id = seq(1, n, by=2);
+(pi/2/sin(p1*pi/n) - 2*sum(cos(p1*id*pi/n) * log(cos(id*pi/(2*n)))))/n
 
 
 ######################
