@@ -159,11 +159,15 @@ integrate(function(x) x * (x - a)^p * (b - x)^(1 - p), lower=a, upper=b)
 pi/6 * p*(1-p)*((2-p)*a + (1+p)*b)*(b - a)^2/sin(pi*p)
 
 
-### TODO:
+### Gen 2:
 p = 1/3; a = 1; b = 4;
 integrate(function(x) (x - a)^p * (b - x)^p, lower=a, upper=b)
-# TODO:
-# ???
+(b-a)^(2*p+1) * gamma((p+1))*gamma(p+1) / gamma(2*p+2)
+
+###
+p = sqrt(5) - sqrt(3); a = sqrt(2); b = 4;
+integrate(function(x) (x - a)^p * (b - x)^p, lower=a, upper=b)
+(b-a)^(2*p+1) * gamma((p+1))*gamma(p+1) / gamma(2*p+2)
 
 
 ###########################
@@ -171,6 +175,7 @@ integrate(function(x) (x - a)^p * (b - x)^p, lower=a, upper=b)
 
 # 5. qncubed3: Complex Analysis: Double Keyhole Contour
 # https://www.youtube.com/watch?v=LT3jpvWMH2s
+# - Contour: double keyhole (not a dogbone contour);
 integrate(function(x) 1 / (x*sqrt(x^2 - 1)), lower=1, upper=Inf)
 pi / 2
 
