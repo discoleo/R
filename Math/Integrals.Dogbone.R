@@ -191,7 +191,20 @@ p = sqrt(3); q = sqrt(5); a = 1; b = 4;
 integrate(function(x) x * (x - a)^p * (b - x)^q, lower=a, upper=b)
 b*(b-a)^(p+q+1) * gamma(p+1)*gamma(q+1) / gamma(p+q+2) +
 	- (b-a)^(p+q+2) * gamma(p+1)*gamma(q+2) / gamma(p+q+3)
-# Note: can be simplified;
+# simplified:
+(b*(p+q+2) - (b-a)*(q+1)) * (b-a)^(p+q+1) * gamma(p+1)*gamma(q+1) / gamma(p+q+3)
+(b*(p+1) + a*(q+1)) * (b-a)^(p+q+1) * gamma(p+1)*gamma(q+1) / gamma(p+q+3)
+
+
+### Variant:
+p = sqrt(3); q = sqrt(5); a = 1; b = 4;
+integrate(function(x) x^2 * (x - a)^p * (b - x)^q, lower=a, upper=b)
+b^2*(b-a)^(p+q+1) * gamma(p+1)*gamma(q+1) / gamma(p+q+2) +
+	- 2*b*(b-a)^(p+q+2) * gamma(p+1)*gamma(q+2) / gamma(p+q+3) +
+	+ (b-a)^(p+q+3) * gamma(p+1)*gamma(q+3) / gamma(p+q+4)
+# simplified:
+(b^2*(p+q+2)*(p+q+3) - 2*b*(b-a)*(q+1)*(p+q+3) + (b-a)^2*(q+1)*(q+2)) *
+	(b-a)^(p+q+1) * gamma(p+1)*gamma(q+1) / gamma(p+q+4)
 
 
 ###########################
