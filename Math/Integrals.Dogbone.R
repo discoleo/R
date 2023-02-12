@@ -162,12 +162,23 @@ pi/6 * p*(1-p)*((2-p)*a + (1+p)*b)*(b - a)^2/sin(pi*p)
 ### Gen 2:
 p = 1/3; a = 1; b = 4;
 integrate(function(x) (x - a)^p * (b - x)^p, lower=a, upper=b)
-(b-a)^(2*p+1) * gamma((p+1))*gamma(p+1) / gamma(2*p+2)
+(b-a)^(2*p+1) * gamma(p+1)*gamma(p+1) / gamma(2*p+2)
 
 ###
 p = sqrt(5) - sqrt(3); a = sqrt(2); b = 4;
 integrate(function(x) (x - a)^p * (b - x)^p, lower=a, upper=b)
-(b-a)^(2*p+1) * gamma((p+1))*gamma(p+1) / gamma(2*p+2)
+(b-a)^(2*p+1) * gamma(p+1)*gamma(p+1) / gamma(2*p+2)
+
+
+### Gen 3:
+p = 1/3; q = 1/5; a = 1; b = 4;
+integrate(function(x) (x - a)^p * (b - x)^q, lower=a, upper=b)
+(b-a)^(p+q+1) * gamma(p+1)*gamma(q+1) / gamma(p+q+2)
+
+###
+p = sqrt(3); q = sqrt(5); a = 1; b = 4;
+integrate(function(x) (x - a)^p * (b - x)^q, lower=a, upper=b)
+(b-a)^(p+q+1) * gamma(p+1)*gamma(q+1) / gamma(p+q+2)
 
 
 ###########################
