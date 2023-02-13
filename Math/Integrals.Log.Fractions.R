@@ -6,7 +6,7 @@
 ### Integrals: Logarithms
 ### log-Fractions
 ###
-### draft v.0.1i
+### draft v.0.1j
 
 
 ##################
@@ -25,6 +25,63 @@
 
 ### Feynman trick & Other tricks
 # - usually (much) simpler than Contour integration;
+
+### Generalization
+
+### log(x) / (x^n + 1)
+n = 7
+integrate(function(x) log(x)/(x^n + 1), 0, Inf)
+- pi^2*cos(pi/n) / sin(pi/n)^2 / n^2
+
+### x^p * log(x) / (x^n + 1)
+n = 8
+p = sqrt(2)
+integrate(function(x) x^p*log(x)/(x^n + 1), 0, Inf)
+- pi^2*cos(pi*(p+1)/n) / sin(pi*(p+1)/n)^2 / n^2
+
+
+### x^p * log(x) / (x^n + 1)^(1/k)
+# TODO:
+# log-Term is NOT yet generalized!
+
+### k = 2
+n = 6
+integrate(function(x) log(x)/(x^n + 1)^(1/2), 0, Inf)
+- (pi*cos(2*pi/n)/sin(2*pi/n) - 2*log(1/2)) * gamma(1/n) * gamma(1/2 - 1/n) / gamma(1/2) / n^2
+
+#
+n = 6; p = 1
+integrate(function(x) x^p * log(x)/(x^n + 1)^(1/2), 0, Inf)
+- (pi*cos(2*(p+1)*pi/n)/sin(2*(p+1)*pi/n) + 2*log(1/2)) *
+	gamma((p+1)/n) * gamma(1/2 - (p+1)/n) / gamma(1/2) / n^2
+
+
+###
+n = 8
+integrate(function(x) log(x)/(x^n + 1)^(1/2), 0, Inf)
+- (pi*cos(2*pi/n)/sin(2*pi/n) - 2*sqrt(2)*log(tan(pi/8))) *
+	gamma(1/n) * gamma(1/2 - 1/n) / gamma(1/2) / n^2
+# log-Term: still NOT generalized!
+p = 1
+integrate(function(x) x^p * log(x)/(x^n + 1)^(1/2), 0, Inf)
+- (pi*cos(2*pi*(p+1)/n)/sin(2*pi*(p+1)/n) - 2*sqrt(2)*log(tan(pi*(p+1)/8))) *
+	gamma((p+1)/n) * gamma(1/2 - (p+1)/n) / gamma(1/2) / n^2
+
+###
+k = sqrt(5); n = 2*k;
+integrate(function(x) log(x)/(x^n + 1)^(1/k), 0, Inf)
+# == 0
+
+### [k == 2]
+k = 2; p = sqrt(3);
+n = 4*(p+1);
+integrate(function(x) x^p * log(x)/(x^n + 1)^(1/k), 0, Inf)
+# == 0
+
+
+###############
+
+### Derivation:
 
 ### Basic / Helper
 b = sqrt(3)
