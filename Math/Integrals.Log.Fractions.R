@@ -6,7 +6,7 @@
 ### Integrals: Logarithms
 ### log-Fractions
 ###
-### draft v.0.1k
+### draft v.0.1k-correct
 
 
 ##################
@@ -70,11 +70,11 @@ integrate(function(x) x^p * log(x)/(x^n + 1)^(1/2), 0, Inf)
 
 ### n = EVEN
 n = 10
-p = 0; # NOT YET
+p = 0;
 integrate(function(x) x^p * log(x)/(x^n + 1)^(1/2), 0, Inf)
 id = seq(1, n, by=2);
 - (pi*cos(2*pi*(p+1)/n)/sin(2*pi*(p+1)/n) - 4*sum(cos(2*pi*(p+1)*id/n)*log(cos(pi*id/(2*n))))) *
-	gamma(1/n) * gamma(1/2 - 1/n) / gamma(1/2) / n^2
+	gamma((p+1)/n) * gamma(1/2 - (p+1)/n) / gamma(1/2) / n^2
 
 
 ###
