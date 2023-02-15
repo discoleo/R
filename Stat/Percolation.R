@@ -103,11 +103,28 @@ norm.flux = function(m, add=0) {
 ### Generators ###
 ##################
 
-rugrid.gen = function(dims, p) {
-	m = sample(c(-1, 0), prod(dims), replace=T, prob=c(p, 1-p))
+### Random uniform grid
+rugrid.gen = function(dims, p, val=c(-1, 0)) {
+	m = sample(val, prod(dims), replace=T, prob=c(p, 1-p))
 	m = matrix(m, nrow=dims[1])
 }
 
+# Probability matrix
+# - used to generate a percolation process;
+rugrid = function(dims) {
+	m = runif(prod(dims));
+	m = matrix(m, nrow=dims[1]);
+}
+
+as.grid = function(m, p, val=c(-1, 0)) {
+	isClosed = m > p;
+	m[isClosed] = val[1];
+	m[! isClosed] = val[2];
+	return(invisible(m));
+}
+
+### Random material organized in blocks
+# n = number of blocks (height x width);
 rblock.gen = function(n, block.dim, min=0, max, prob, val=-1) {
 	if(missing(max)) {
 		if(length(min) >= 2) {
@@ -117,16 +134,18 @@ rblock.gen = function(n, block.dim, min=0, max, prob, val=-1) {
 		}
 	}
 	val.count = seq(min, max);
+	# prod(n) = total number of blocks;
 	if(missing(prob)) {
 		nn = sample(val.count, prod(n), replace=TRUE);
 	} else {
 		nn = sample(val.count, prod(n), replace=TRUE, prob=prob);
 	}
+	# individual block
 	blocks.n = prod(block.dim);
 	sample.block = function(n) {
 		bm = array(as.integer(0), block.dim)
 		npos = sample(seq(blocks.n), n)
-		bm[npos] = val;
+		bm[npos] = val; # "close" material;
 		bm
 	}
 	m = lapply(nn, sample.block);
