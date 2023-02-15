@@ -5,7 +5,7 @@
 ###
 ### Percolation
 ###
-### draft v.0.4b
+### draft v.0.4c
 
 ### Percolation
 
@@ -34,11 +34,13 @@
 ####################
 ####################
 
-### helper Functions
+### Helper Functions
 
 # fast load
 # source("Percolation.R")
 
+
+# column tail: last n columns;
 tail.m = function(m, n=30, print=FALSE) {
 	len = dim(m)[2];
 	m = m[ , seq(max(1, len - n), len)]
@@ -56,7 +58,9 @@ reset.m = function(m, id, val=0) {
 	invisible(m)
 }
 revcol = function(m) {
-	m = m[,rev(seq(ncol(m)))];
+	nc = ncol(m);
+	if(nc == 0) return(m);
+	m = m[, rev(seq(nc))];
 	invisible(m);
 }
 clean.percol = function(m, val=0) {
@@ -82,13 +86,17 @@ shuffle.colors = function(m) {
 	invisible(m2)
 }
 
-max.id = function(m) {
-	out.m = m[, ncol(m)]
+### Extract id of Path:
+# - path which percolates and has largest outflow;
+max.id = function(m, fail=FALSE) {
+	out.m = m[, ncol(m)];
 	out = table(out.m[out.m > 0])
 	if(dim(out) == 0) {
 		print("NO percolation!");
-		out = table(m[m > 0])
+		if(fail) return(NA);
+		out = table(m[m > 0]);
 	}
+	# matches only the 1st path with max outflow;
 	id = match(max(out), out);
 	id = as.integer(names(out)[id])
 	return(id)
@@ -123,37 +131,48 @@ as.grid = function(m, p, val=c(-1, 0)) {
 	return(invisible(m));
 }
 
-### Random material organized in blocks
-# n = number of blocks (height x width);
+### Randomise within blocks
+# n = number of blocks forming the material (height x width);
+# min, max = range of "closed" sub-elements in each block;
+# - can be also an explicit sequence of values;
 rblock.gen = function(n, block.dim, min=0, max, prob, val=-1) {
 	if(missing(max)) {
-		if(length(min) >= 2) {
-			max = min[2]; min = min[1];
+		if(length(min) > 2) {
+			val.count = min;
 		} else {
-			max = prod(block.dim);
+			if(length(min) == 1) {
+				max = prod(block.dim);
+			} else {
+				max = min[2]; min = min[1];
+			}
+			val.count = seq(min, max);
 		}
+	} else {
+		val.count = seq(min, max);
 	}
-	val.count = seq(min, max);
 	# prod(n) = total number of blocks;
 	if(missing(prob)) {
 		nn = sample(val.count, prod(n), replace=TRUE);
 	} else {
 		nn = sample(val.count, prod(n), replace=TRUE, prob=prob);
 	}
-	# individual block
+	# individual blocks:
 	blocks.n = prod(block.dim);
 	sample.block = function(n) {
+		# n = number of "closed" sub-elements;
 		bm = array(as.integer(0), block.dim)
-		npos = sample(seq(blocks.n), n)
+		npos = sample(seq(blocks.n), n);
 		bm[npos] = val; # "close" material;
 		bm
 	}
 	m = lapply(nn, sample.block);
 	m = do.call(rbind, m);
+	# Correct dimensions of Matrix:
 	dims = n * block.dim;
 	dim(m) = dims;
 	invisible(m);
 }
+
 rliniar.gen = function(n, w, d, ppore=3, pblock=0.5, val=-1) {
 	# n = no. of channels; w = width;
 	nc = d*n+n+1;
@@ -453,7 +472,7 @@ flood.all = function(m, type="Col1", val0=0, id.start, debug=TRUE) {
 ### Path Length
 length.path = function(m, id, debug=TRUE) {
 	if(missing(id)) {
-		id = max.id(m)
+		id = max.id(m);
 		if(debug) print(id);
 	}
 	p.m = m;
