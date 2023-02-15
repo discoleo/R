@@ -6,7 +6,7 @@
 ### Integrals: Logarithms
 ### log-Fractions
 ###
-### draft v.0.1k-Odd
+### draft v.0.1L
 
 
 ##################
@@ -86,7 +86,32 @@ id = seq(2, n, by=2);
 	gamma((p+1)/n) * gamma(1/2 - (p+1)/n) / gamma(1/2) / n^2
 
 
+### n = ODD
+n = 7
+p = 0; # p = Integer!
+k = 3; # TODO: ???
+integrate(function(x) x^p * log(x)/(x^n + 1)^(1/k), 0, Inf)
+id = seq(2, n, by=2); th = pi*(p+1)/n;
+# ???
+- (pi*cos(k*th)/sin(k*th) - 4*sum(cos(2*id*th)*log(cos(pi*id/(k*n))))) *
+	gamma((p+1)/n) * gamma(1/k - (p+1)/n) / gamma(1/k) / n^2
+
+
 ###
+n = 4
+p = 0; # p = Integer!
+k = 3; # TODO: ???
+integrate(function(x) x^p * log(x)/(x^n + 1)^(1/k), 0, Inf)
+id = seq(2, n, by=2); th = pi*(p+1)/n;
+(pi*cos(pi/n-pi/3)/sin(pi/n) + 3*log(3)/2 + (2*(sqrt(3)+1)*acosh(26) - 4*(3+sqrt(3))*atanh(1/sqrt(3))) / 4) *
+	gamma((p+1)/n) * gamma(1/k - (p+1)/n) / gamma(1/k) / n^2
+
+# fails with: n = 6; k = 3;
+- (pi*cos(th - pi/3)/sin(th) - k*sum(cos(2*id*th)*log(cos(pi*id/(k*n)))) +    0) *
+	gamma((p+1)/n) * gamma(1/k - (p+1)/n) / gamma(1/k) / n^2
+
+
+### Other
 k = sqrt(5); n = 2*k;
 integrate(function(x) log(x)/(x^n + 1)^(1/k), 0, Inf)
 # == 0
@@ -94,6 +119,18 @@ integrate(function(x) log(x)/(x^n + 1)^(1/k), 0, Inf)
 ### [k == 2]
 k = 2; p = sqrt(3);
 n = 4*(p+1);
+integrate(function(x) x^p * log(x)/(x^n + 1)^(1/k), 0, Inf)
+# == 0
+
+### [k == 3]
+n = 10;
+k = 3; p = 2/3;
+integrate(function(x) x^p * log(x)/(x^n + 1)^(1/k), 0, Inf)
+# == 0
+
+### [k == 3]
+k = 3;
+p = 5/6; n = 2*k*(p+1);
 integrate(function(x) x^p * log(x)/(x^n + 1)^(1/k), 0, Inf)
 # == 0
 
