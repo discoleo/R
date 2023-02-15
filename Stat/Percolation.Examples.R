@@ -56,6 +56,7 @@ table(m[,dims[2]])
 
 plot.rs(m, "Percolation")
 
+
 ### Diffusion
 
 # - simple: NO Mixing effects;
@@ -180,6 +181,9 @@ table(m[,dims[2]])
 
 ### Periodic Boundary Condition
 
+# TODO:
+# - real Periodic Boundary;
+
 # - takes ~20 s;
 dims = c(2000, 80)
 p = 0.4
@@ -284,6 +288,19 @@ path.m = flood.all(m)
 path.m = shuffle.colors(path.m)
 plot.rs(split.rs(path.m), main="Paths")
 
+
+#############
+
+### Ex 2
+# - min = explicit values with number of elements per block which are "closed";
+m = rblock.gen(c(450, 10), c(5,5), min=c(1:5, 15:20))
+
+plot.rs(split.rs(m))
+
+# Note: takes a few seconds!
+path.m = flood.all(m)
+path.m = shuffle.colors(path.m)
+plot.rs(split.rs(path.m), main="Paths")
 
 
 #############
