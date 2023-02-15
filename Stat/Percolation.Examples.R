@@ -93,8 +93,9 @@ path.m[1:10, seq(id - 10, id)]
 table(path.m[,dims[2]])
 
 
-### Raster
-plot.rs(rs.m, main="Path Length")
+### Length of Path
+# Gradient = distance from origin;
+plot.rs(path.m, main="Path Length")
 
 
 ### Stat/Percolation
