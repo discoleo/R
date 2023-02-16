@@ -302,6 +302,9 @@ path.m = flood.all(m)
 path.m = shuffle.colors(path.m)
 plot.rs(split.rs(path.m), main="Paths")
 
+# added blue to "green"-percolating paths;
+plot.rs(split.rs(path.m), main="Paths", addBlue=as.logical.percol(path.m))
+
 
 #############
 

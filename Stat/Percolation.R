@@ -187,10 +187,16 @@ rblock.gen = function(n, block.dim, min=0, max, prob, val=-1) {
 		bm
 	}
 	m = lapply(nn, sample.block);
-	m = do.call(rbind, m);
+	m = lapply(seq(0, n[2] - 1), function(id) {
+		id0 = id*n[1];
+		do.call(rbind, m[seq(id0 + 1, id0 + n[1])]);
+	})
+	m = do.call(cbind, m);
+	# Note: old code does NOT preserve blocks!
+	# m = do.call(rbind, m);
 	# Correct dimensions of Matrix:
-	dims = n * block.dim;
-	dim(m) = dims;
+	# dims = n * block.dim;
+	# dim(m) = dims;
 	invisible(m);
 }
 
