@@ -8,6 +8,24 @@ library(ggplot2)
 library(plyr)
 
 
+### String Tools
+
+seq.character = function(from, to) {
+	from = as.integer(charToRaw(from));
+	isUpper = if(from <= 90) TRUE else FALSE;
+	off = if(isUpper) 64 else 96;
+	from = from - off;
+	# Length:
+	if(is.numeric(to)) {
+		if(isUpper) return(LETTERS[seq(from, from + to)]);
+		return(letters[seq(from, from + to)]);
+	}
+	to = as.integer(charToRaw(to)) - off;
+	if(isUpper) return(LETTERS[seq(from, to)]);
+	return(letters[seq(from, to)]);
+}
+
+
 ########################
 ### Data Transformations
 
@@ -58,4 +76,5 @@ x %>% ddcountUnique(col.names) %>%
   ggplot(aes(x=luna, y=Count))+
   geom_line()+
   facet_wrap(~ID_Judet)
+
 
