@@ -14,6 +14,18 @@
 
 ######################
 
+### Format Time
+
+format.time = function(x, sep=":", h.width=2) {
+	h  = x %/% 3600;
+	ms = x %%  3600;
+	if(h.width != 1) h = formatC(h, width = h.width, flag = 0);
+	paste(h,
+		formatC(ms %/% 60, width = 2, flag = 0),
+		formatC(ms %% 60, width = 2, flag = 0), sep=sep);
+}
+
+
 ### Extract Year/Month
 
 extract.YMDate = function(x) {
