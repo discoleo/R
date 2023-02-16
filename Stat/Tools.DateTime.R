@@ -5,7 +5,7 @@
 ###
 ### Data Tools: Date-Time
 ###
-### draft v.0.1b
+### draft v.0.1c
 
 
 ### Tools to Process/Transform Dates
@@ -16,13 +16,25 @@
 
 ### Format Time
 
-format.time = function(x, sep=":", h.width=2) {
+# Note: may be useful in:
+# - research: biochemistry, cellular biology;
+# - clinical trials: pharmacology, hormone assays;
+
+# s.drop = drop seconds;
+# collapse = convenience argument;
+format.time = function(x, sep=":", h.width=2, s.drop=FALSE, collapse=NULL) {
 	h  = x %/% 3600;
 	ms = x %%  3600;
+	m  = formatC(ms %/% 60, width = 2, flag = 0);
 	if(h.width != 1) h = formatC(h, width = h.width, flag = 0);
-	paste(h,
-		formatC(ms %/% 60, width = 2, flag = 0),
-		formatC(ms %% 60, width = 2, flag = 0), sep=sep);
+	if(s.drop) {
+		tt = paste(h, m, sep=sep);
+	} else {
+		s = formatC(ms %% 60, width = 2, flag = 0);
+		tt = paste(h, m, s, sep=sep);
+	}
+	if( ! is.null(collapse)) tt = paste(tt, collapse=collapse);
+	return(tt);
 }
 
 
