@@ -85,8 +85,27 @@ shuffle.colors = function(m) {
 	}
 	invisible(m2)
 }
+which.percol = function(m) {
+	nc = ncol(m);
+	id = unique(m[, nc]);
+	id = id[id > 0];
+	return(id);
+}
+as.logical.percol = function(m, percolates=TRUE) {
+	id = which.percol(m);
+	if( ! percolates) {
+		tmp = unique(m[, 1]);
+		tmp = tmp[tmp > 0];
+		isPercol = tmp %in% id;
+		id = tmp[ ! isPercol];
+	}
+	isE = m %in% id;
+	dim(isE) = dim(m);
+	invisible(isE);
+}
 
 ### Extract id of Path:
+# TODO: new name which.max.outflow;
 # - path which percolates and has largest outflow;
 max.id = function(m, fail=FALSE) {
 	out.m = m[, ncol(m)];
@@ -102,6 +121,7 @@ max.id = function(m, fail=FALSE) {
 	return(id)
 }
 
+### Log Transform
 norm.flux = function(m, add=0) {
 	m[m > 0] = abs(log(add + m[m > 0]))
 	invisible(m)
@@ -135,6 +155,7 @@ as.grid = function(m, p, val=c(-1, 0)) {
 # n = number of blocks forming the material (height x width);
 # min, max = range of "closed" sub-elements in each block;
 # - can be also an explicit sequence of values;
+# - prob = probability of each of those values;
 rblock.gen = function(n, block.dim, min=0, max, prob, val=-1) {
 	if(missing(max)) {
 		if(length(min) > 2) {
@@ -160,7 +181,7 @@ rblock.gen = function(n, block.dim, min=0, max, prob, val=-1) {
 	blocks.n = prod(block.dim);
 	sample.block = function(n) {
 		# n = number of "closed" sub-elements;
-		bm = array(as.integer(0), block.dim)
+		bm = array(0L, block.dim);
 		npos = sample(seq(blocks.n), n);
 		bm[npos] = val; # "close" material;
 		bm
@@ -781,7 +802,7 @@ diffusion.dynamic = function(m, id, iter=40, val0 = 1.0, debug=TRUE) {
 
 ### Raster
 
-toRaster = function(m, showVal=0) {
+toRaster = function(m, showVal=0, isBlue = NULL, rgb.cut=160/255) {
 	rs.m = array(0, c(dim(m), 3));
 	if( ! is.na(showVal)) {
 		isZero = (m == showVal);
@@ -808,19 +829,31 @@ toRaster = function(m, showVal=0) {
 	if(doShow) {
 		layer.m = array(0, dim(m));
 		layer.m[isZero] = 1;
-		rs.m[,,3] = layer.m
+		if( ! is.null(isBlue)) {
+			addBlue = (rs.m[,,1] < rgb.cut) & isBlue;
+			tmpBlue = m[addBlue];
+			val.max = max(tmpBlue);
+			if(val.max > 0) tmpBlue = tmpBlue / val.max;
+			layer.m[addBlue] = tmpBlue;
+		}
+		rs.m[,,3] = layer.m;
 	}
 
 	rs.m = as.raster(rs.m)
 	return(rs.m);
 }
-plot.rs = function(m, main, mar, line=0.5) {
+plot.rs = function(m, main, mar, line=0.5, addBlue = NULL) {
 	if( ! missing(main) ) hasTitle = TRUE else hasTitle = FALSE;
 	if(missing(mar)) mar = c(0,0, if(hasTitle) 2 else 0, 0) + 0.1;
 	type = match(class(m), c("raster", "matrix"));
 	if(all(is.na(type))) stop("Data NOT supported!")
 	if(any(type == 2)) {
-		m = toRaster(m);
+		if( ! is.null(addBlue)) {
+			# TODO: better concept to handle split images;
+			m = toRaster(m, isBlue = split.rs(as.logical.percol(addBlue)));
+		} else {
+			m = toRaster(m);
+		}
 	}
 	old.par = par(mar=mar);
 		plot(m);
@@ -830,6 +863,7 @@ plot.rs = function(m, main, mar, line=0.5) {
 }
 split.rs = function(m, n=5, from=1, max.len=5, w=10) {
 	# w = width between displayed fragments;
+	# n = number of fragments;
 	nr.tot = round(nrow(m) / n);
 	frg.tot = ceiling(nrow(m) / nr.tot);
 	# TODO: nrow(m) %% nr.tot > 0;
@@ -837,6 +871,7 @@ split.rs = function(m, n=5, from=1, max.len=5, w=10) {
 	if(from > 0) {
 		frg.to = min(frg.tot, from + max.len);
 	} else {
+		# Negative = tail;
 		from = max(1, frg.tot + 1 + from - max.len);
 		frg.to = min(frg.tot, from + max.len);
 	}
