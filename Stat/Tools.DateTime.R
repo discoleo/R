@@ -5,11 +5,12 @@
 ###
 ### Data Tools: Date-Time
 ###
-### draft v.0.1a
+### draft v.0.1b
 
 
 ### Tools to Process/Transform Dates
 
+# - Basic Tools;
 
 ######################
 
@@ -27,6 +28,9 @@ is.LeapYear = function(year) {
 	return(year %% 4 == 0 && year %% 400 != 0);
 }
 
+# Note:
+# - benchmarking experiment vs Internal R code;
+# - NOT PRODUCTION CODE!
 toDate.R = function(s) {
 	sf = function(s) {
 		bdt = as.integer(charToRaw(s)[-c(5,8)]);
@@ -56,29 +60,30 @@ toDate.R = function(s) {
 ##############
 
 ### Start of each Month
+# - returns also the start of the new year: the 13th month;
 start.month = function(year=NULL, day0=0) {
 	days = c(day0,31,28, 31,30,31,30,31,31,30,31,30,31);
-	days = cumsum(days);
 	if( ! is.null(year) && is.LeapYear(year)) {
 		days[3] = 29;
 	}
+	days = cumsum(days);
 	return(days);
 }
 ### Start of each Month
 # - after start.dt;
-shift.days = function(start.dt) {
+shift.days1 = function(start.dt, day0=0) {
 	xlt = as.POSIXlt(start.dt);
 	year = xlt$year + 1900;
 	diff.days = as.Date(start.dt) - as.Date(trunc.POSIXt(xlt, "years"));
-	days = start.month(year=year);
+	days = start.month(year=year, day0=day0);
 	offset.days = days - diff.days;
 	isBefore = (offset.days < 0); # move to next year;
 	ydays = if(is.LeapYear(year)) 366 else 365;
 	days = c(offset.days[ ! isBefore], ydays + offset.days[isBefore]);
 	return(days);
 }
-shift.vdays = function(start.dt) {
-	sapply(start.dt, shift.days);
+shift.days = function(start.dt, day0=0) {
+	sapply(start.dt, shift.days1, day0=day0);
 }
 
 
@@ -86,9 +91,10 @@ shift.vdays = function(start.dt) {
 
 ### Test
 
-shift.vdays(as.Date(c("2019-03-24", "2021-06-19")))
+shift.days(as.Date(c("2019-01-10", "2020-01-10", "2019-03-24", "2021-06-19")))
 
 
+# TODO: repeat benchmarks;
 toDate.R(c("2019-03-24", "2021-06-19"))
 
 
