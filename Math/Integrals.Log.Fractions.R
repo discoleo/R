@@ -6,7 +6,7 @@
 ### Integrals: Logarithms
 ### log-Fractions
 ###
-### draft v.0.1L
+### draft v.0.1m
 
 
 ##################
@@ -688,6 +688,26 @@ p = sqrt(2)
 n = pi;
 integrate(function(x) log(x^n + 1)/x^(p+1), 0, Inf)
 1/p*pi/sin(pi*p/n)
+
+
+##############
+
+### n = ODD
+n = 7;
+p = 1; # INTEGER between [1, n-2]!
+# [low precision for p = n - 2]
+integrate(function(x) log(x^n + 1)/x^(p+1), 0, 1)
+pracma::integral(function(x) log(x^n + 1)/x^(p+1), 0, 1)
+#
+pn = seq(2, n, by=2) * pi/n;
+cs = cos(pn*(n-p)); csH = cos(pn/2);
+sign = if((n-p-1) %% 2 == 0) 1 else -1;
+pi/(2*p)/sin(pi*(n-p)/n) - log(2)/p +
+	+ sign*sum(cs*log(csH))*2/p;
+
+# Derivation:
+- log(2)/p + integrate(function(x) n/p * x^(n-p-1)/(x^n + 1), 0, 1)$value
+# [high precision even with p = n-2]
 
 
 ########################
