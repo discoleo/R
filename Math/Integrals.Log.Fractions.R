@@ -6,7 +6,7 @@
 ### Integrals: Logarithms
 ### log-Fractions
 ###
-### draft v.0.1m
+### draft v.0.1m-EVEN
 
 
 ##################
@@ -692,18 +692,42 @@ integrate(function(x) log(x^n + 1)/x^(p+1), 0, Inf)
 
 ##############
 
-### n = ODD
+logcos = function(n, p) {
+	nint = trunc(n);
+	if(n != nint) {
+		warning("n and p must be integers! Result will be inaccurate!");
+	}
+	if(nint %% 2 == 1) {
+		pn = seq(2, n, by=2) * pi/n;
+	} else {
+		pn = seq(1, n, by=2) * pi/n;
+	}
+	cs = cos(pn*(n-p)); csH = cos(pn/2);
+	sign = if((n-p-1) %% 2 == 0) 1 else -1;
+	# Note: omitted division by n;
+	r = 2*sign*sum(cs*log(csH));
+	return(r);
+}
+
+### n = ODD or EVEN
 n = 7;
 p = 1; # INTEGER between [1, n-2]!
 # [low precision for p = n - 2]
 integrate(function(x) log(x^n + 1)/x^(p+1), 0, 1)
 pracma::integral(function(x) log(x^n + 1)/x^(p+1), 0, 1)
 #
-pn = seq(2, n, by=2) * pi/n;
-cs = cos(pn*(n-p)); csH = cos(pn/2);
-sign = if((n-p-1) %% 2 == 0) 1 else -1;
-pi/(2*p)/sin(pi*(n-p)/n) - log(2)/p +
-	+ sign*sum(cs*log(csH))*2/p;
+pi/(2*p)/sin(pi*(n-p)/n) - log(2)/p + logcos(n, p)/p;
+
+
+###
+n = 10;
+p = 1; # INTEGER between [1, n-2]!
+# [low precision for p = n - 2]
+integrate(function(x) log(x^n + 1)/x^(p+1), 0, 1)
+pracma::integral(function(x) log(x^n + 1)/x^(p+1), 0, 1)
+#
+pi/(2*p)/sin(pi*(n-p)/n) - log(2)/p + logcos(n, p)/p;
+
 
 # Derivation:
 - log(2)/p + integrate(function(x) n/p * x^(n-p-1)/(x^n + 1), 0, 1)$value
