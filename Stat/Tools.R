@@ -17,7 +17,7 @@ seq.character = function(from, to) {
 	from = from - off;
 	# Length:
 	if(is.numeric(to)) {
-		if(isUpper) return(LETTERS[seq(from, from + to)]);
+		if(isUpper) return(LETTERS[seq(from, from + to - 1)]);
 		return(letters[seq(from, from + to)]);
 	}
 	to = as.integer(charToRaw(to)) - off;
