@@ -6,7 +6,7 @@
 ### Integrals: Logarithms
 ### log-Fractions
 ###
-### draft v.0.1m-EVEN
+### draft v.0.1n
 
 
 ##################
@@ -152,7 +152,12 @@ integrate(function(x) x^p * log(x)/(x^n + 1)^(1/k), 0, Inf)
 # == 0
 
 
-###############
+####################
+####################
+
+### Basic Fractions:
+
+Catalan = 0.915965594177219015054603514;
 
 ### Derivation:
 
@@ -167,7 +172,6 @@ integrate(function(x) log(x) / (b^2*x^2 + 1), lower=0, upper=Inf)
 ### TODO:
 # - using Feynman's trick;
 # - Note: Catalan = - I(log(x)/(x^2 + 1), lower=0, upper=1)
-Catalan = 0.915965594177219015054603514;
 integrate(function(x) log(x + 1) / (x^2 + 1), lower=0, upper=Inf)
 pi*log(2)/4 + Catalan;
 
@@ -791,13 +795,20 @@ k*pi*log(2) + pi*log(prod(1 + cos(pi/2 - pi * seq(1, 2*k-1, by=2)/(4*k))))
 ### Michael Penn: Can you guess the trick for this integral?
 # https://www.youtube.com/watch?v=8R0MiRYmjbk
 
-integrate(function(x) log(1 - x)/(x^2 + 1), 0, 1)
+integrate(function(x) log(1 - x) / (x^2 + 1), 0, 1)
 pi*log(2)/8 - Catalan
+
+###
+integrate(function(x) log(1 + x) / (x^2 + 1), 0, 1)
+log(2)*pi/8
+
+###
+integrate(function(x) log(1 - x) / (x + 1) / sqrt(x), 0, 1)
+log(2)*pi/2 - 2*Catalan
 
 
 ### Gen 1:
 k = 3
 integrate(function(x) log(k - x)/(x^2 + k^2), 0, k)
 (pi*log(2)/8 - Catalan)/k + pi*log(k)/(4*k)
-
 
