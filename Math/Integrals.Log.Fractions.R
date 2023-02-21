@@ -6,7 +6,7 @@
 ### Integrals: Logarithms
 ### log-Fractions
 ###
-### draft v.0.1n
+### draft v.0.1o
 
 
 ##################
@@ -21,6 +21,12 @@
 Catalan = 0.915965594177219015054603514;
 # Note:
 # Catalan = - I(log(x)/(x^2 + 1), lower=0, upper=1)
+
+
+### Solved:
+# x^p * log(x) / (x^n + 1) on [0, Inf];
+# x^p * log(x) / (x^n + 1)^(1/2) on [0, Inf]
+#  with n, p = Integers;
 
 
 ####################
@@ -46,9 +52,14 @@ integrate(function(x) x^p*log(x)/(x^n + 1), 0, Inf)
 - pi^2*cos(pi*(p+1)/n) / sin(pi*(p+1)/n)^2 / n^2
 
 
+################
+### Radicals ###
+################
+
 ### x^p * log(x) / (x^n + 1)^(1/k)
 # TODO:
-# log-Term is NOT yet generalized!
+# - log-Term in result-formula is NOT yet generalized!
+#   (only n, p = Integers)
 
 ### k = 2
 n = 6
@@ -91,6 +102,10 @@ id = seq(2, n, by=2);
 - (pi*cos(2*pi*(p+1)/n)/sin(2*pi*(p+1)/n) - 4*sum(cos(2*pi*(p+1)*id/n)*log(cos(pi*id/(2*n))))) *
 	gamma((p+1)/n) * gamma(1/2 - (p+1)/n) / gamma(1/2) / n^2
 
+
+#############
+### k = 3 ###
+#############
 
 ### n = ODD
 n = 7
@@ -188,6 +203,7 @@ a = sqrt(5); b = sqrt(3)
 integrate(function(x) log(x + a) / (x^2 + b^2), lower=0, upper=Inf)
 pi*log(a^2 + b^2)/(4*b) + log(b)*atan(a/b)/b +
 	- integrate(function(x) log(x) / (x^2 + b^2), 0, a)$value;
+
 
 #############
 ### log(P[2])
@@ -811,4 +827,52 @@ log(2)*pi/2 - 2*Catalan
 k = 3
 integrate(function(x) log(k - x)/(x^2 + k^2), 0, k)
 (pi*log(2)/8 - Catalan)/k + pi*log(k)/(4*k)
+
+###
+k = 1/3
+integrate(function(x) log(x + k) / (x^2 + k^2), k, Inf)
+pi*log(2)/(8*k) + pi*log(k)/(4*k) + Catalan/k
+#
+integrate(function(x) log(x + k) / (x^2 + k^2), 0, k)
+pi*log(2)/(8*k) + pi*log(k)/(4*k)
+
+###
+k = sqrt(5) - sqrt(3)
+integrate(function(x) log(k^2 - x) / (x + k^2) / sqrt(x), 0, k^2)
+pi*log(2)/(2*k) + pi*log(k)/k - 2*Catalan/k
+
+
+### Transforms
+
+# x => 1 - 1/x
+integrate(function(x) - log(1 - x) / (x^2 + 1), 0, 1)
+integrate(function(x) log(x) / (2*x^2 - 2*x + 1), 1, Inf)
+- pi*log(2)/8 + Catalan
+
+###
+integrate(function(x) log(x) / (2*x^2 + 2*x + 1), 0, Inf)
+- pi*log(2)/8
+
+
+###
+# x => b - (b-a)/(x+1)
+a = sqrt(2); b = sqrt(3);
+p = 1/2
+integrate(function(x) log(x) * ((x - a)*(b - x))^p, a, b)
+integrate(function(x) log(b - (b-a)/(x+1)) * x^p / (x + 1)^(2*p + 2) * (b-a)^(2*p+1), 0, Inf)
+
+### p = 1
+a = sqrt(2); b = sqrt(3);
+integrate(function(x) log(b*x + a) * x / (x + 1)^4, 0, Inf)
+d = (b-a)^3;
+b^2*(b - 3*a)*log(b)/(6*d) - a^2*(a - 3*b)*log(a)/(6*d) + 5/36 +
+	+ (4*b^3 - 9*(a+b)*b^2 + 36*a*b^2)/(36*d) - (4*a^3 - 9*(a+b)*a^2 + 36*a^2*b)/(36*d)
+
+# Derivation:
+integrate(function(x) log(b - (b-a)/(x+1)) * x / (x + 1)^4, 0, Inf)
+integrate(function(x) log((b*x + a)/(x+1)) * x / (x + 1)^4, 0, Inf)
+integrate(function(x) - log(x) * (x^2 - (a+b)*x + a*b) / (b-a)^3, a, b)
+#
+integrate(function(x) log(x+1) * x / (x + 1)^4, 0, Inf)
+5/36
 
