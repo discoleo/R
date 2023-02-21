@@ -17,6 +17,12 @@
 # - various types of Logarithms combined with fractions;
 
 
+### Helper Constants
+Catalan = 0.915965594177219015054603514;
+# Note:
+# Catalan = - I(log(x)/(x^2 + 1), lower=0, upper=1)
+
+
 ####################
 
 #################
@@ -109,6 +115,17 @@ id = seq(2, n, by=2); th = pi*(p+1)/n;
 # fails with: n = 6; k = 3;
 - (pi*cos(th - pi/3)/sin(th) - k*sum(cos(2*id*th)*log(cos(pi*id/(k*n)))) +    0) *
 	gamma((p+1)/n) * gamma(1/k - (p+1)/n) / gamma(1/k) / n^2
+
+
+###
+n = 9
+p = 0; # p = Integer!
+k = 3; # TODO: ???
+integrate(function(x) x^p * log(x)/(x^n + 1)^(1/k), 0, Inf)
+id = seq(2, n, by=2); th = pi*(p+1)/n;
+- gamma((p+1)/n) * gamma(1/k - (p+1)/n) / gamma(1/k) / n^2 *
+	(pi/sin(2*pi/9)/2 - 2*(cos(pi/9)*log(2*cos(5*pi/9) + 1) + cos(2*pi/9)*log(cos(4*pi/9)) + cos(4*pi/9)*log(cos(pi/9))) +
+	- 2*log(2)*(cos(2*pi/9) + cos(4*pi/9)))
 
 
 ### Other
@@ -766,4 +783,21 @@ integrate(function(x) log(x^(4*k) + 1)/(x^2 + 1), 0, Inf)
 k*pi*log(2) + pi*log(prod(1 + sin(pi * seq(1, 2*k-1, by=2)/(4*k))))
 k*pi*log(2) + pi*log(prod(1 + cos(pi/2 - pi * seq(1, 2*k-1, by=2)/(4*k))))
 2*k*pi*log(2) + 2*pi*log(prod(cos(pi/4 - pi * seq(1, 2*k-1, by=2)/(8*k))))
+
+
+#################
+#################
+
+### Michael Penn: Can you guess the trick for this integral?
+# https://www.youtube.com/watch?v=8R0MiRYmjbk
+
+integrate(function(x) log(1 - x)/(x^2 + 1), 0, 1)
+pi*log(2)/8 - Catalan
+
+
+### Gen 1:
+k = 3
+integrate(function(x) log(k - x)/(x^2 + k^2), 0, k)
+(pi*log(2)/8 - Catalan)/k + pi*log(k)/(4*k)
+
 
