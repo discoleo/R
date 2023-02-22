@@ -51,6 +51,24 @@ p = sqrt(2)
 integrate(function(x) x^p*log(x)/(x^n + 1), 0, Inf)
 - pi^2*cos(pi*(p+1)/n) / sin(pi*(p+1)/n)^2 / n^2
 
+###
+integrate(function(x) log(x)/(x^2 + 1)^2, 0, Inf)
+- pi / 4
+
+###
+integrate(function(x) log(x)/(x^2 + 1)^3, 0, Inf)
+- pi / 4
+
+###
+k = 4
+integrate(function(x) log(x)/(x^2 + 1)^k, 0, Inf)
+- 23/30 * gamma(1/2)*gamma(k-1/2)/gamma(k)
+
+###
+k = 5
+integrate(function(x) log(x)/(x^2 + 1)^k, 0, Inf)
+- 88/(3*5*7) * gamma(1/2)*gamma(k-1/2)/gamma(k)
+
 
 ################
 ### Radicals ###
