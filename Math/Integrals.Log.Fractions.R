@@ -6,7 +6,7 @@
 ### Integrals: Logarithms
 ### log-Fractions
 ###
-### draft v.0.1o
+### draft v.0.1p
 
 
 ##################
@@ -875,4 +875,59 @@ integrate(function(x) - log(x) * (x^2 - (a+b)*x + a*b) / (b-a)^3, a, b)
 #
 integrate(function(x) log(x+1) * x / (x + 1)^4, 0, Inf)
 5/36
+
+###
+a = sqrt(2); b = sqrt(3);
+d = (b-a)^3; # actually d3;
+integrate(function(x) log(b*x + a) / (x + 1)^3, 0, Inf)
+b^2*(b - 3*a)*log(b)/(6*d) - a^2*(a - 3*b)*log(a)/(6*d) + log(a)/3 +
+	+ log(a/b) / (a/b-1)^3 / 3 +
+	+ 1/3 * (1-a/b)/(a/b-1)^3 + 1/3 * a*b/(b-a)^2 + 1/6/(a/b-1);
+
+# integrate(function(x) b/3/(b*x + a) / (x + 1)^3, 0, Inf)
+# 1/3/(a/b-1)^3 * integrate(function(x) (x^2 + (3-a/b)*x + 3-3*a/b+a^2/b^2) / (x + 1)^3 +
+#	- 1/(x + a/b), 0, Inf)$value
+# - [above] more simplifications may be possible;
+# - may have been simpler to integrate by parts directly;
+
+
+### log(x+1) * x / (x + 1)^n
+integrate(function(x) log(x+1) * x / (x + 1)^4, 0, Inf)
+5/36
+
+###
+integrate(function(x) log(x+1) * x / (x + 1)^5, 0, Inf)
+35 / factorial(6)
+
+###
+integrate(function(x) log(x+1) * x / (x + 1)^6, 0, Inf)
+81/5 / factorial(6)
+
+
+###########
+### p = 1/2
+a = sqrt(2); b = sqrt(3);
+p = 1/2; d = (b - a);
+f = function(x) {
+	tmp = (x - (a+b)/2)*2/d;
+	tmp = round(tmp, 12); # keep between [-1, 1];
+	(d/2)^(2*p + 1)*(tmp*sqrt(1-tmp^2) + asin(tmp))/2;
+}
+integrate(function(x) log(x) * ((x - a)*(b - x))^p, a, b)
+log(b)*f(b) - log(a)*f(a) - integrate(function(x) f(x)/x, a, b)$value
+pi/4*(d/2)^(2*p + 1)*log(a*b) - integrate(function(x) f(x)/x, a, b)$value
+# TODO
+
+
+# Helper:
+p = 1/2
+d = (b - a);
+integrate(function(x) ((x - a)*(b - x))^p, a, b)
+integrate(function(x) ((x + d/2)*(d/2 - x))^p, -d/2, d/2)
+integrate(function(x) (d/2)^(2*p + 1)*((1 + x)*(1 - x))^p, -1, 1)
+(d/2)^(2*p + 1) * pi/2
+
+# Derivation:
+(d/2)^(2*p + 1)*(sin(2*asin((x - (a+b)/2)*2/d))/2 + asin((x - (a+b)/2)*2/d))/2
+
 
