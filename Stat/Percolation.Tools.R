@@ -27,6 +27,11 @@ reset.m = function(m, id, val=0) {
 	invisible(m)
 }
 revcol = function(m) {
+	warning("Deprecated!");
+	# rev.col can be searched using: methods(rev);
+	return(rev.col(m));
+}
+rev.col = function(m) {
 	nc = ncol(m);
 	if(nc == 0) return(m);
 	m = m[, rev(seq(nc))];
