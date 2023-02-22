@@ -13,7 +13,7 @@
 # - for Examples, see file:
 #   Percolation.Examples.R;
 
-### Github:
+### GitHub:
 # https://github.com/discoleo/R/blob/master/Stat/Percolation.R
 
 
@@ -365,6 +365,10 @@ if(TEST) {
 
 ###############
 ### Geo-Physics
+
+mod = function(K, ...) {
+	UseMethod("mod");
+}
 
 ### Bulk Modulus
 mod.bulk = function(phi, K) {
