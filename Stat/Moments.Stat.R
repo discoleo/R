@@ -21,6 +21,15 @@
 ### H(2, 0) = sqrt(n / sum(1/(x[i]*x[j])))
 ### H(2, 1) = n / sum((x[i]+x[j]) / (x[i]*x[j])))
 
+
+### Other
+
+# IAS: Sihao Cheng - How to quantify random fields and textures
+#   in astrophysics? (2023)
+# https://www.youtube.com/watch?v=vDwEMC6UgLc
+# - Scatter Statistics vs Power Spectrum vs CNN
+
+
 ####################
 
 ### Harmonic Moments
