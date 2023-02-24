@@ -5,7 +5,7 @@
 ###
 ### Statistics: Moments
 ###
-### draft v.0.1d
+### draft v.0.1e
 
 
 ### Harmonic Moments
@@ -20,6 +20,13 @@
 ### H(1, 0) = n / sum(1/x[i])
 ### H(2, 0) = sqrt(n / sum(1/(x[i]*x[j])))
 ### H(2, 1) = n / sum((x[i]+x[j]) / (x[i]*x[j])))
+
+
+### Harmonic Dispersion
+
+# HV(1, 0) = n / sum(1 / (HM - x[i]))
+# HV(1, 1) = n / sum(x[i] / (HM - x[i]))
+# where HM = harmonic mean; other types of mean also possible;
 
 
 ### Other
@@ -159,6 +166,17 @@ gmean.Gn0(x)
 gmean.Gnm10(x)
 ### Geometric Harmonic
 moments.GH20(x, useLog=TRUE)
+
+
+### Dispersion
+mm = moments.h10(x)
+n / sum(1 / (mm - x))
+n / sum(x / (mm - x))
+
+#
+mm = mean(x)
+n / sum(1 / (mm - x))
+n / sum(x / (mm - x))
 
 
 #################
