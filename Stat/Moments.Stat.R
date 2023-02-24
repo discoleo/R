@@ -85,6 +85,22 @@ moments.h21 = function(x, pow=1, type=c("Mean", "Simple")) {
 	return(xm)
 }
 
+### Dispersion
+# - insensitive to outliers;
+# - values equal to mean have NO impact;
+sd.harm = function(x, mu, pow=1, tol=1E-10) {
+	x = abs(x - mu);
+	isZero = (x <= tol);
+	### Values == mean:
+	# - either remove;
+	# - ore replace with smallest non-zero values;
+	nZ = sum(isZero);
+	s = sum(x[ ! isZero ]^pow);
+	s = s / (length(x) - nZ);
+	s = s^(1/pow);
+	return(1/s);
+}
+
 ### Geometric Moments
 gmean.Gn0 = function(x, pow=NA) {
 	xm = prod(x);
@@ -169,8 +185,16 @@ moments.GH20(x, useLog=TRUE)
 
 
 ### Dispersion
+# - more robust to outliers or heavy tails;
+sd.harm(x, mean(x))
+sd.harm(x, mean(x), pow=1/2)
+sd.harm(x, moments.h10(x))
+sd.harm(x, moments.h10(x), pow=1/2)
+
+#
 mm = moments.h10(x)
 n / sum(1 / (mm - x))
+n / sum(1 / abs(mm - x))
 n / sum(x / (mm - x))
 
 #
