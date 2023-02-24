@@ -11,6 +11,10 @@ library(plyr)
 ### String Tools
 
 seq.character = function(from, to) {
+	if(nchar(from[1]) > 1) {
+		# convenience functionality;
+		if(is.numeric(to)) return(seq.nchar(from, to));
+	}
 	from = as.integer(charToRaw(from));
 	isUpper = if(from <= 90) TRUE else FALSE;
 	off = if(isUpper) 64 else 96;
@@ -23,6 +27,10 @@ seq.character = function(from, to) {
 	to = as.integer(charToRaw(to)) - off;
 	if(isUpper) return(LETTERS[seq(from, to)]);
 	return(letters[seq(from, to)]);
+}
+# simple replacement for paste(from, seq(n), sep="")
+seq.nchar = function(from, length.out, start.at=1, sep="") {
+	paste(from, seq(start.at, length.out=length.out), sep=sep)
 }
 
 
