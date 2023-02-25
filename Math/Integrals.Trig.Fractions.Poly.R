@@ -13,6 +13,18 @@ integrate(function(x) cos(k*x) / (x^2 + 1), 0, Inf, subdivisions=4096*2, rel.tol
 pi/2*exp(-k)
 
 
+###
+k = sqrt(3)
+b = sqrt(5)
+integrate(function(x) cos(k*x) / (x^2 + b^2), 0, Inf, subdivisions=4096*2, rel.tol=1E-6)
+pi/2*exp(-k*b)/b
+
+
+### TODO
+k = 1
+integrate(function(x) sin(k*x) / (x^2 + 1), 0, Inf, subdivisions=4096*2, rel.tol=1E-5)
+
+
 ### Gen 1:
 k = sqrt(3)
 integrate(function(x) sin(k*x)^2 / (x^2 + 1), 0, Inf, subdivisions=4096, rel.tol=1E-6)
@@ -24,7 +36,8 @@ k = sqrt(3)
 integrate(function(x) sin(k*x)^2 / (x^2*(x^2 + 1)), 0, Inf, subdivisions=1024, rel.tol=1E-8)
 pi/4*(2*k - 1 + exp(-2*k))
 
-# Res = pi*(1 - exp(-2*k))
+# f = (1 - exp(2i*k*z)) / (z^2 * (z^2 + 1));
+# Res at 1i = pi*(1 - exp(-2*k));
 
 
 ########################
@@ -44,4 +57,29 @@ r + integrate(function(x) cos(k*x) / (x^2 + 1), 2*pi*(steps+1)/k, Inf, subdivisi
 # residual: should be < 1E-8;
 print(r, 12)
 print(pi/2*exp(-k), 12)
+
+
+######################
+######################
+
+### "Inverse"
+
+Catalan = 0.915965594177219015054603514;
+
+
+###
+integrate(function(x) x / sin(x), 0, pi/2)
+2*Catalan
+
+###
+integrate(function(x) x^2 / sin(x), 0, pi/2)
+2*pi*Catalan - 7/2*pracma::zeta(3)
+
+###
+integrate(function(x) x*(pi - x) / sin(x), 0, pi)
+7*pracma::zeta(3)
+
+###
+pracma::integral(function(x) x*(pi - x)*(pi + x) / sin(x), -pi, pi)
+21*pi * pracma::zeta(3)
 
