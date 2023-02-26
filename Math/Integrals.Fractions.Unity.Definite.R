@@ -290,6 +290,13 @@ pi / sin(pi*(p+1)/n) / n
 # - shortcut formulas are available;
 
 ###
+n = sqrt(31)
+p = sqrt(5)
+integrate(function(x) x^p / (x^n + 1), 0, 1)
+(digamma(((p+1)/n + 1)/2) - digamma((p+1)/n/2)) / (2*n)
+
+
+###
 n = 9
 integrate(function(x) 1/(x^n + 1), 0, 1)
 intUnityI01(n)
