@@ -126,7 +126,7 @@ intUnityI01P = function(n, p=3) {
 
 ### Plot
 # sum( cos(pi*seq(...)*p/n) * log(cos(pi*seq(...)/n)) )
-# [solved] (digamma((1/n+1)/2) - digamma(1/n/2) - pi/sin(pi/n) ) / 4
+# [solved] (digamma(((p+1)/n+1)/2) - digamma((p+1)/n/2) - pi/sin(pi*(p+1)/n) ) / 4
 plot.logcos = function(n, dx = 1/8, len=129, points=TRUE,
 		type = "l", col.px = "red", title=TRUE, ...) {
 	p = seq(-1 + dx, n - 1 - dx, length.out=len);
@@ -398,7 +398,9 @@ plot.logcos(9)
 plot.logcos(10)
 
 n = 10
-(digamma((1/n+1)/2) - digamma(1/n/2) - pi/sin(pi/n) ) / 4
+plot.logcos(n)
+p = seq(0, n - 2)
+(digamma(((p+1)/n+1)/2) - digamma((p+1)/n/2) - pi/sin(pi*(p+1)/n) ) / 4
 
 
 ######################
