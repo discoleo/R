@@ -126,6 +126,7 @@ intUnityI01P = function(n, p=3) {
 
 ### Plot
 # sum( cos(pi*seq(...)*p/n) * log(cos(pi*seq(...)/n)) )
+# [solved] (digamma((1/n+1)/2) - digamma(1/n/2) - pi/sin(pi/n) ) / 4
 plot.logcos = function(n, dx = 1/8, len=129, points=TRUE,
 		type = "l", col.px = "red", title=TRUE, ...) {
 	p = seq(-1 + dx, n - 1 - dx, length.out=len);
@@ -137,8 +138,8 @@ plot.logcos = function(n, dx = 1/8, len=129, points=TRUE,
 	if(title) title(paste0("n = ", n));
 	# Explicit Points
 	if(points) {
-		isEven = (n %% 2 == 1)
-		if(isEven) {
+		isOdd = (n %% 2 == 1)
+		if(isOdd) {
 			# even seq:
 			id = 2 * seq(1, (n-1)/2);
 		} else {
@@ -396,6 +397,9 @@ curve( (x + 1/3)/(x+1), add=T, col="orange")
 plot.logcos(9)
 plot.logcos(10)
 
+n = 10
+(digamma((1/n+1)/2) - digamma(1/n/2) - pi/sin(pi/n) ) / 4
+
 
 ######################
 
@@ -570,4 +574,13 @@ print(IInf)
 - IInf/2 + integrate(function(x) x^p / (x^n+1)^(1/k), lower=0, upper=1)$value
 - IInf/2 + integrate(function(x) x^p / (x^n+1)^(1/k), lower=1, upper=Inf)$value
 # TODO: find formula for -0.3248496;
+
+
+####################
+
+# TODO:
+
+integrate(function(x) 1/(x^3 + 1)^5, 0, 1, rel.tol=1E-8)
+1/2^4/12 + 11/12*(1/2^3/9 + 8/9*(1/2^2/6 + 5/6*(1/2/3 + 2/3*0.8356488)))
+
 
