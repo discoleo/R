@@ -13,7 +13,7 @@ integrate(function(x) cos(k*x) / (x^2 + 1), 0, Inf, subdivisions=4096*2, rel.tol
 pi/2*exp(-k)
 
 
-###
+### Gen 1:
 k = sqrt(3)
 b = sqrt(5)
 integrate(function(x) cos(k*x) / (x^2 + b^2), 0, Inf, subdivisions=4096*2, rel.tol=1E-6)
@@ -64,6 +64,8 @@ print(pi/2*exp(-k), 12)
 
 ### "Inverse"
 
+library(pracma)
+
 Catalan = 0.915965594177219015054603514;
 
 
@@ -80,6 +82,22 @@ integrate(function(x) x*(pi - x) / sin(x), 0, pi)
 7*pracma::zeta(3)
 
 ###
-pracma::integral(function(x) x*(pi - x)*(pi + x) / sin(x), -pi, pi)
-21*pi * pracma::zeta(3)
+integral(function(x) x*(pi - x)*(pi + x) / sin(x), -pi, pi)
+3*7*pi*zeta(3)
+
+###
+integral(function(x) x^2*(pi - x)*(pi + x) / sin(x), 0, pi)
+2*7*pi^2*zeta(3) - 3*31*zeta(5)
+
+###
+integral(function(x) x^3*(pi - x)*(pi + x) / sin(x), -pi, pi)
+7*7*pi^3*zeta(3) - 15*31*pi*zeta(5)
+
+###
+integral(function(x) x^4*(pi - x)*(pi + x) / sin(x), 0, pi)
+9/2*7*pi^4*zeta(3) - 39/2*31*pi^2*zeta(5) + 45/2*127*zeta(7)
+
+###
+integral(function(x) x^5*(pi - x)*(pi + x) / sin(x), -pi, pi)
+11*7*pi^5*zeta(3) - 90*31*pi^3*zeta(5) + 315/2*127*pi*zeta(7)
 
