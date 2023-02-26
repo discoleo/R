@@ -79,7 +79,7 @@ integrate(function(x) x^2 / sin(x), 0, pi/2)
 
 ###
 integrate(function(x) x*(pi - x) / sin(x), 0, pi)
-7*pracma::zeta(3)
+7*zeta(3)
 
 ###
 integral(function(x) x*(pi - x)*(pi + x) / sin(x), -pi, pi)
@@ -101,3 +101,50 @@ integral(function(x) x^4*(pi - x)*(pi + x) / sin(x), 0, pi)
 integral(function(x) x^5*(pi - x)*(pi + x) / sin(x), -pi, pi)
 11*7*pi^5*zeta(3) - 90*31*pi^3*zeta(5) + 315/2*127*pi*zeta(7)
 
+
+### Derived
+# on [0, pi]
+
+###
+integrate(function(x) x*(pi - x) / sin(x), 0, pi)
+7*zeta(3)
+
+###
+integrate(function(x) x^2*(pi - x) / sin(x), 0, pi)
+1/2*7*pi*zeta(3)
+
+###
+integral(function(x) x^3*(pi - x) / sin(x), 0, pi)
+3/2*7*pi^2*zeta(3) - 3*31*zeta(5)
+
+###
+integral(function(x) x^4*(pi - x) / sin(x), 0, pi)
+4/2*7*pi^3*zeta(3) - 9/2*31*pi*zeta(5)
+
+###
+integral(function(x) x^5*(pi - x) / sin(x), 0, pi)
+5/2*7*pi^4*zeta(3) - 30/2*31*pi^2*zeta(5) + 45/2*127*zeta(7)
+
+
+### Derived
+# on [0, pi/2]
+
+###
+integrate(function(x) x*(pi - x) / sin(x), 0, pi/2)
+7/2*zeta(3)
+
+###
+integrate(function(x) x^2 / sin(x), 0, pi/2)
+2*pi*Catalan - 7/2*zeta(3)
+
+###
+# TODO: seems to involve polygamma;
+integrate(function(x) x^2*(pi - x) / sin(x), 0, pi/2)
+
+###
+integrate(function(x) x^3*(pi - x) / sin(x), 0, pi/2)
+3/2*7*pi^2*zeta(3) - 3*31*zeta(5) - integrate(function(x) x*(pi - x)^3 / sin(x), 0, pi/2)$value
+1/2*7*pi^2*zeta(3) - 3/2*31*zeta(5) + pi * integrate(function(x) x^2*(pi - x) / sin(x), 0, pi/2)$value
+###
+integrate(function(x) x^2*(pi - x)^2 / sin(x), 0, pi/2)
+- 1/2*7*pi^2*zeta(3) + 3/2*31*zeta(5)
