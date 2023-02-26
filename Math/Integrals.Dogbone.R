@@ -175,7 +175,7 @@ integrate(function(x) (x - a)^p * (b - x)^p, lower=a, upper=b)
 (b-a)^(2*p+1) * gamma(p+1)*gamma(p+1) / gamma(2*p+2)
 
 
-### Gen 3:
+### Gen 3: Full
 p = 1/3; q = 1/5; a = 1; b = 4;
 integrate(function(x) (x - a)^p * (b - x)^q, lower=a, upper=b)
 (b-a)^(p+q+1) * gamma(p+1)*gamma(q+1) / gamma(p+q+2)
@@ -184,6 +184,11 @@ integrate(function(x) (x - a)^p * (b - x)^q, lower=a, upper=b)
 p = sqrt(3); q = sqrt(5); a = 1; b = 4;
 integrate(function(x) (x - a)^p * (b - x)^q, lower=a, upper=b)
 (b-a)^(p+q+1) * gamma(p+1)*gamma(q+1) / gamma(p+q+2)
+
+# Note:
+# - based on Convolution & Laplace transform:
+#   Dr. Peyam: Laplace integral gone BANANAS
+#   https://www.youtube.com/watch?v=a5l4owYxjRw
 
 
 ### Variant:
