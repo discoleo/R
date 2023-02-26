@@ -7,7 +7,7 @@
 ### Polynomial Fractions: Unity
 ### Definite Integrals
 ###
-### draft v.0.1i
+### draft v.0.1k
 
 
 
@@ -34,6 +34,17 @@
 ### Helper Functions
 
 ### I on [0, 1]
+# I( x^p / (x^n + 1))
+
+# - code based on the Digamma function:
+#   enables continuous values of n & p;
+int.FrU01 = function(n, p=0) {
+	(digamma(((p+1)/n + 1)/2) - digamma((p+1)/n/2)) / (2*n);
+}
+
+# [old code]
+# - works only with n, p = Integers;
+# - formulas are slightly different for n = Odd vs Even;
 intUnityI01 = function(n) {
 	if(n %% 2 == 0) {
 		return(intUnityI01Even(n));
@@ -80,6 +91,9 @@ intUnityI01EvenWX = function(n, p = 1) {
 	r = pi/2 / sin(pi*(p+1)/n) + sign * sum(cs*log(csH + 1));
 	return(r/n);
 }
+
+### Fractional n & p
+# - can be converted to integers;
 
 # I( 1 / (x^(n/2) + 1) )
 intUnityI01Half = function(n) {
@@ -564,7 +578,9 @@ integrate(function(x) 1/(1-x^n)^(1+1/n), lower=0, upper=1/2^(1/n))
 
 ####################
 
-###
+### Radicals
+
+### [0, Inf]
 p = 1 - sqrt(2)
 n = sqrt(11)
 k = sqrt(3)
@@ -588,8 +604,13 @@ print(IInf)
 ####################
 
 # TODO:
+# Integer Powers:
 
 integrate(function(x) 1/(x^3 + 1)^5, 0, 1, rel.tol=1E-8)
-1/2^4/12 + 11/12*(1/2^3/9 + 8/9*(1/2^2/6 + 5/6*(1/2/3 + 2/3*0.8356488)))
-
+1/2^4/12 + 11/12*(1/2^3/9 + 8/9*(1/2^2/6 + 5/6*(1/2/3 + 2/3 * int.FrU01(3, 0))));
+1/2^4/12 + 11/12*(1/2^3/9 + 8/9*(1/2^2/6 + 5/6*(1/2/3))) +
+	+ 11/12 * 8/9 * 5/6 * 2/3 * int.FrU01(3, 0);
+# TODO:
+1/2^4/12 + 11/12*(1/2^3/9 + 8/9*(1/2^2/6 + 5/6*(1/2/3))) +
+	+ ???
 
