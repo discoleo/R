@@ -12,10 +12,17 @@
 #######################
 ### Graphical Functions
 
+# this file:
+# source("Percolation.Plot.R")
+
 
 ### Raster
 
-toRaster = function(m, showVal=0, isBlue = NULL, rgb.cut=160/255) {
+as.raster.percol = function(x, showVal=0, isBlue = NULL, rgb.cut = 160/255) {
+	rs = toRaster(x, showVal=showVal, isBlue=isBlue, rgb.cut=rgb.cut);
+	invisible(rs);
+}
+toRaster = function(m, showVal=0, isBlue = NULL, rgb.cut = 160/255) {
 	rs.m = array(0, c(dim(m), 3));
 	if( ! is.na(showVal)) {
 		isZero = (m == showVal);
@@ -55,6 +62,7 @@ toRaster = function(m, showVal=0, isBlue = NULL, rgb.cut=160/255) {
 	rs.m = as.raster(rs.m)
 	return(rs.m);
 }
+# addBlue = Matrix used for blue bin;
 plot.rs = function(m, main, mar, line=0.5, addBlue = NULL) {
 	if( ! missing(main) ) hasTitle = TRUE else hasTitle = FALSE;
 	if(missing(mar)) mar = c(0,0, if(hasTitle) 2 else 0, 0) + 0.1;
@@ -63,7 +71,12 @@ plot.rs = function(m, main, mar, line=0.5, addBlue = NULL) {
 	if(any(type == 2)) {
 		if( ! is.null(addBlue)) {
 			# TODO: better concept to handle split images;
-			m = toRaster(m, isBlue = split.rs(as.logical.percol(addBlue)));
+			rsBlue = as.logical.percol(addBlue);
+			split = attr(m, "split");
+			if( ! is.null(split)) {
+				rsBlue = do.call(split.rs, c(list(rsBlue), split));
+			}
+			m = toRaster(m, isBlue = rsBlue);
 		} else {
 			m = toRaster(m);
 		}
@@ -94,12 +107,14 @@ split.rs = function(m, n=5, from=1, max.len=5, w=10) {
 		r.start = (frg - 1) * nr.tot + 1;
 		r.end   = r.start + nr.tot - 1;
 		if(r.end > nrow(m)) {
-			m1 = matrix(0, ncol=ncol(m), nrow= r.end - nrow(m))
+			m1 = matrix(0, ncol=ncol(m), nrow = r.end - nrow(m))
 			m2 = cbind(m2, rbind(m[r.start:nrow(m),], m1), m0)
 		} else {
 			m2 = cbind(m2, m[r.start:r.end,], m0)
 		}
 	}
+	# TODO: Case from < 0; (but may already work)
+	attr(m2, "split") = list(n=n, from=from, max.len=max.len, w=w);
 	invisible(m2);
 }
 
