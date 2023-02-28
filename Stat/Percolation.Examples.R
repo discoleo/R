@@ -303,12 +303,12 @@ path.m = shuffle.colors(path.m)
 plot.rs(split.rs(path.m), main="Paths")
 
 # added blue to "green"-percolating paths;
-plot.rs(split.rs(path.m), main="Paths", addBlue=as.logical.percol(path.m))
+plot.rs(split.rs(path.m), main="Paths", addBlue=path.m)
 
 
 #############
 
-### Ex 2
+### Ex 3:
 m = rblock.gen(c(450, 10), c(3,3), min=c(1,7))
 
 plot.rs(split.rs(m))
@@ -322,7 +322,7 @@ plot.rs(split.rs(path.m), main="Paths")
 
 #############
 
-### Ex 3:
+### Ex 4:
 # - foamy structure, little (or no) percolation;
 m = rblock.gen(c(450, 10), c(3,3), min=c(4,5), prob=c(0.65, 0.35))
 
