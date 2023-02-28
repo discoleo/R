@@ -18,6 +18,13 @@
 - dead-end area with specified maximum inflow (e.g. inflow of 1 unit);
 
 
+### Linear Channels with Blocks & Pores
+> rgrid.channel()
+- density of percolating channels;
+- minimal & maximal length of percolating channels;
+- minimal & maximal height of percolating channels;
+
+
 ===============
 
 ## Bibliography

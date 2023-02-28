@@ -5,7 +5,7 @@
 ###
 ### Percolation
 ###
-### draft v.0.4d-Ref3
+### draft v.0.4e
 
 ### Percolation
 
@@ -52,6 +52,40 @@ source("Percolation.Analysis.R")
 
 ##################
 ### Generators ###
+##################
+
+rgrid = function(dim, ...) {
+	UseMethod("rgrid");
+}
+
+rgrid.binom = function(dim, prob, val=c(-1,0)) {
+	rugrid.gen(dim, p=prob, val=val);
+}
+rgrid.unif = function(dim) {
+	rugrid(dim);
+}
+
+### Randomize within blocs
+# dim = "dimension" as number of blocks;
+rgrid.binblocks = function(dim, block.dim, min=0, max, prob, val=-1) {
+	rblock.gen(dim, block.dim, min=min, max=max, prob=prob, val=val);
+}
+
+### Linear Channels
+# TODO: name?
+rgrid.channel = function(dim, w, d, ppore=3, pblock=0.5, val=-1) {
+	if(length(dim) == 1) {
+		n = dim; w = w; d = d;
+	} else {
+		if(missing(d)) d = w;
+		n = (dim[1] - 1) / d;
+		if(n != trunc(n)) warning("Non-integer number of channels!");
+		w = dim[2]; 
+	}
+	rliniar.gen(n=n, w=w, d=d, ppore=ppore, pblock=pblock, val=val);
+}
+
+
 ##################
 
 ### Random uniform grid
@@ -123,8 +157,10 @@ rblock.gen = function(n, block.dim, min=0, max, prob, val=-1) {
 	invisible(m);
 }
 
+# ppore, pblock = Poisson distributions;
 rliniar.gen = function(n, w, d, ppore=3, pblock=0.5, val=-1) {
-	# n = no. of channels; w = width;
+	# n = no. of channels;
+	# w = width of material/grid; d = width of channel;
 	nc = d*n+n+1;
 	m = matrix(0, nrow=w, ncol=nc);
 	# Channel walls
