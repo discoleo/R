@@ -26,6 +26,15 @@ pkg = "partitions"
 fn = "restrictedparts"
 extract.str.fun(fn, pkg)
 
+### C-Code:
+# Type == 50
+s = deparse.fun("C_acf", "stats");
+npos = parse.pC(s)
+# npos = cut.code(npos)
+# head(npos)
+# preserve NL;
+cat(extract.str(s, npos[npos$Type == 50, ]), sep="\n")
+
 
 ###################
 
