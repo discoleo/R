@@ -44,7 +44,7 @@ ids = sapply(nms, function(FUN.nm) {
 	isC = is.code.RC(s);
 	return(isC);
 })
-print(ids[ids])
+print(names(ids)[ids])
 
 
 ###################

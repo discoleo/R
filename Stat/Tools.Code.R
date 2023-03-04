@@ -5,7 +5,7 @@
 ###
 ### Code Tools
 ###
-### draft v.0.2b
+### draft v.0.2c
 
 
 ### Tools to Process Formulas & Expressions
@@ -36,10 +36,25 @@
 # minimalistic parser:
 parse.simple = function(x, eol="\n", all.tokens=FALSE) {
 	len = nchar(x);
+	if(is.character(all.tokens)) {
+		tokens = pmatch(all.tokens, c("all", "braces", "c"));
+		if(is.na(tokens)) {
+			stop("Wrong type of tokens!");
+		} else if(tokens == 2) {
+			tokens.braces = TRUE; tokens.c = FALSE;
+		} else if(tokens == 3) {
+			tokens.braces = FALSE; tokens.c = TRUE;
+		} else {
+			tokens.braces = tokens.c = all.tokens;
+		}
+	} else {
+		tokens.braces = tokens.c = all.tokens;
+	}
 	# Type:
 	#  1 = "string", 2 = r"raw string", 8/9 = unmatched string (raw string),
 	#  11 = "#", 12 = "#" with missing EOL,
-	#  23 = "{", 24 = "(", 25 = "[";
+	#  23 = "{", 24 = "(", 25 = "[",
+	#  50 = "<pointer: 0x...>";
 	tk.df = data.frame(nS=integer(0), nE=integer(0), id=integer(0),
 			Type=integer(0), Nested=logical(0));
 	#
@@ -124,7 +139,7 @@ parse.simple = function(x, eol="\n", all.tokens=FALSE) {
 			npos = npos + 1; next;
 		}
 		# Brackets
-		if(all.tokens) {
+		if(tokens.braces) {
 			type = 0;
 			if(s == "{") {
 				type = 23;
@@ -161,6 +176,36 @@ parse.simple = function(x, eol="\n", all.tokens=FALSE) {
 				id = tail(tk.df$id[is.na(tk.df$nE) & tk.df$Type == type], 1);
 				tk.df$nE[id] = npos;
 				npos = npos + 1; next;
+			}
+		}
+		# State: Pointer
+		if(tokens.c) {
+			if(s == "<") {
+				sP = c("p","o","i","n","t","e","r",":"," ","0","x");
+				idP = 1; nposP = npos;
+				while(nposP < len && idP <= length(sP)) {
+					nposP = nposP + 1;
+					se = substr(x, nposP, nposP);
+					if(se == sP[idP]) { idP = idP + 1; next; }
+					break;
+				}
+				if(idP == length(sP) + 1) {
+					while(nposP < len) {
+						nposP = nposP + 1;
+						se = substr(x, nposP, nposP);
+						if(is.hex(se)) { nposP = nposP + 1; next; }
+						break;
+					}
+					if(nposP <= len) {
+						se = substr(x, nposP, nposP);
+						if(se == ">") {
+							nr = nrow(tk.df) + 1; nE = nposP;
+							TYPE = 50;
+							tk.df[nr,] = data.frame(npos, nE, nr, TYPE, FALSE);
+							npos = nposP + 1; next;
+						}
+					}
+				}
 			}
 		}
 		npos = npos + 1;
@@ -215,132 +260,16 @@ parse.calls = function(x) {
 	lapply(x, parse.f2);
 }
 parse.RC = function(x, eol="\n") {
-	len = nchar(x);
-	# Type:
-	#  1 = "string", 2 = r"raw string", 8/9 = unmatched string (raw string),
-	#  11 = "#", 12 = "#" with missing EOL,
-	#  50 = "<pointer: 0x...>"
-	tk.df = data.frame(nS=integer(0), nE=integer(0), id=integer(0),
-			Type=integer(0), Nested=logical(0));
-	#
-	is.hex = function(ch) {
-		# Note: only for 1 character!
-		return((ch >= "0" && ch <= "9") ||
-			(ch >= "A" && ch <= "F") ||
-			(ch >= "a" && ch <= "f"));
-	}
-	npos = 1;
-	while(npos <= len) {
-		s = substr(x, npos, npos);
-		# State: COMMENT
-		if(s == "#") {
-			nS = npos;
-			isEOL = FALSE;
-			while(npos < len) {
-				npos = npos + 1;
-				if(substr(x, npos, npos) == eol) { isEOL = TRUE; break; }
-			}
-			nr = nrow(tk.df) + 1;
-			nE = if(isEOL) npos else npos + 1;
-			TYPE = if(isEOL) 11 else 12;
-			tk.df[nr,] = data.frame(nS, nE, nr, TYPE, FALSE);
-			npos = npos + 1; next;
-		}
-		# State: STRING
-		if(s == "\"" || s == "'") {
-			nS = npos;
-			if(npos > 1 && substr(x, npos-1, npos-1) == "r") {
-				# Raw String: r"(...)";
-				nS = nS - 1;
-				nr = nrow(tk.df) + 1;
-				if(npos + 3 > len) {
-					nE = len + 1;
-					TYPE = 9; # type = 8 vs 9!
-					tk.df[nr,] = data.frame(nS, nE, nr, TYPE, FALSE);
-					warning("Unmatched String!");
-					break;
-				}
-				npos = npos + 1;
-				ch1 = substr(x, npos, npos);
-				isMatched = FALSE;
-				while(npos < len - 2) {
-					npos = npos + 1;
-					if(substr(x, npos, npos) == ch1 && substr(x, npos+1, npos+1) == s) {
-						isMatched = TRUE; break;
-					}
-				}
-				if( ! isMatched) warning("Unmatched String!");
-				TYPE = if(isMatched) 2 else 9;
-				nE = if(isMatched) npos else npos + 1;
-				tk.df[nr,] = data.frame(nS, nE, nr, TYPE, FALSE);
-				npos = npos + 1; next;
-			}
-			# ELSE:
-			while(npos < len) {
-				# Standard String
-				npos = npos + 1;
-				se = substr(x, npos, npos);
-				# Escape:
-				if(se == "\\") {
-					npos = npos + 1;
-					# simple escape vs Unicode:
-					if(substr(x, npos, npos) != "u") next;
-					len.end = min(len, npos + 4); # max length of HEX = 4;
-					npos = npos + 1;
-					isAllHex = TRUE;
-					while(npos <= len.end) {
-						se = substr(x, npos, npos);
-						if( ! is.hex(se)) { isAllHex = FALSE; break; }
-						npos = npos + 1;
-					}
-					if(isAllHex) next;
-				}
-				if(se == s) break;
-			}
-			# n.str[[2]] = c(n.str[[2]], npos);
-			nr = nrow(tk.df) + 1; nE = npos;
-			TYPE = 1;
-			tk.df[nr,] = data.frame(nS, nE, nr, TYPE, FALSE);
-			npos = npos + 1; next;
-		}
-		# State: Pointer
-		if(s == "<") {
-			sP = c("p","o","i","n","t","e","r",":"," ","0","x");
-			idP = 1; nposP = npos;
-			while(nposP < len && idP <= length(sP)) {
-				nposP = nposP + 1;
-				se = substr(x, nposP, nposP);
-				if(se == sP[idP]) { idP = idP + 1; next; }
-				break;
-			}
-			if(idP == length(sP) + 1) {
-				while(nposP < len) {
-					nposP = nposP + 1;
-					se = substr(x, nposP, nposP);
-					if(is.hex(se)) { nposP = nposP + 1; next; }
-					break;
-				}
-				if(nposP <= len) {
-					se = substr(x, nposP, nposP);
-					if(se == ">") {
-						nr = nrow(tk.df) + 1; nE = nposP;
-						TYPE = 50;
-						tk.df[nr,] = data.frame(npos, nE, nr, TYPE, FALSE);
-						npos = nposP + 1; next;
-					}
-				}
-			}
-		}
-		npos = npos + 1;
-	}
-	class(tk.df) = c("code", class(tk.df));
-	return(tk.df);
+	return(parse.simple(x, eol=eol, all.tokens = "c"));
 }
 
 
 ### Processing
 
 is.code.RC = function(x) {
+	# Note:
+	# - detailed parsing of the whole code
+	#   is not efficient;
 	npos = parse.RC(x);
 	return(any(npos$Type == 50));
 }
