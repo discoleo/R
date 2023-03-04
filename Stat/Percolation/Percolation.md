@@ -3,12 +3,12 @@
 
 ## Project
 
-> Student: Adrian Ivan
-> Candidate BSc CS 2023
+> Student: Adrian Ivan\
+> Candidate BSc CS 2023\
 > West University, Timisoara
 >
 > Supervisors:
-> Prof. Dr. Daniela Zaharie
+> Prof. Dr. Daniela Zaharie\
 > Dr. med. Leonard Mada (Syonic SRL)
 >
 > URL: https://github.com/adrian0010/Percolation
