@@ -214,12 +214,12 @@ parse.calls = function(x) {
 	}
 	lapply(x, parse.f2);
 }
-parse.pC = function(x, eol="\n") {
+parse.RC = function(x, eol="\n") {
 	len = nchar(x);
 	# Type:
 	#  1 = "string", 2 = r"raw string", 8/9 = unmatched string (raw string),
 	#  11 = "#", 12 = "#" with missing EOL,
-	#  23 = "{", 24 = "(", 25 = "[";
+	#  50 = "<pointer: 0x...>"
 	tk.df = data.frame(nS=integer(0), nE=integer(0), id=integer(0),
 			Type=integer(0), Nested=logical(0));
 	#
@@ -339,6 +339,11 @@ parse.pC = function(x, eol="\n") {
 
 
 ### Processing
+
+is.code.RC = function(x) {
+	npos = parse.RC(x);
+	return(any(npos$Type == 50));
+}
 
 # cut code into disjoint code blocks
 cut.code = function(npos, last=0) {

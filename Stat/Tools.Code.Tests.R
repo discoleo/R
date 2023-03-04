@@ -29,11 +29,22 @@ extract.str.fun(fn, pkg)
 ### C-Code:
 # Type == 50
 s = deparse.fun("C_acf", "stats");
-npos = parse.pC(s)
+npos = parse.RC(s)
 # npos = cut.code(npos)
 # head(npos)
 # preserve NL;
 cat(extract.str(s, npos[npos$Type == 50, ]), sep="\n")
+
+###
+pkg = "stats"
+nms = ls(getNamespace(pkg));
+# takes ~ 10-20 s;
+ids = sapply(nms, function(FUN.nm) {
+	s = deparse.fun(FUN.nm, pkg);
+	isC = is.code.RC(s);
+	return(isC);
+})
+print(ids[ids])
 
 
 ###################
