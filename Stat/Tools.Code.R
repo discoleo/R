@@ -5,7 +5,7 @@
 ###
 ### Code Tools
 ###
-### draft v.0.2c
+### draft v.0.2d
 
 
 ### Tools to Process Formulas & Expressions
@@ -227,6 +227,13 @@ deparse.fun = function(fn, pkg, collapse="\n", width.cutoff=160) {
 	s = paste0(do.call(deparse, fn), collapse=collapse);
 	return(s)
 }
+class.fun = function(fn, pkg) {
+	fn = as.symbol(fn); pkg = as.symbol(pkg);
+	fn = list(substitute(pkg ::: fn));
+	# deparse
+	s = do.call(class, fn);
+	return(s)
+}
 
 # Extract Calls
 # TODO:
@@ -272,6 +279,10 @@ is.code.RC = function(x) {
 	#   is not efficient;
 	npos = parse.RC(x);
 	return(any(npos$Type == 50));
+}
+# much faster!
+is.call.C = function(FUN, pkg) {
+	isC = "NativeSymbolInfo" %in% class.fun(FUN, pkg);
 }
 
 # cut code into disjoint code blocks

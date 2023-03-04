@@ -38,13 +38,17 @@ cat(extract.str(s, npos[npos$Type == 50, ]), sep="\n")
 ###
 pkg = "stats"
 nms = ls(getNamespace(pkg));
-# takes ~ 10-20 s;
+# very slow: takes ~ 10-20 s;
 ids = sapply(nms, function(FUN.nm) {
 	s = deparse.fun(FUN.nm, pkg);
 	isC = is.code.RC(s);
 	return(isC);
 })
 print(names(ids)[ids])
+
+# much faster!
+ids = sapply(nms, is.call.C, pkg=pkg)
+print(nms[ids])
 
 
 ###################
