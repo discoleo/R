@@ -5,7 +5,7 @@
 ###
 ### Code Tools
 ###
-### draft v.0.2d
+### draft v.0.2e
 
 
 ### Tools to Process Formulas & Expressions
@@ -30,6 +30,16 @@
 
 
 ########################
+
+# List all Functions in a package
+ls.pkg = function(pkg, exclude.C = TRUE) {
+	nms = ls(getNamespace(pkg));
+	if(exclude.C) {
+		isC = sapply(nms, is.call.C, pkg=pkg);
+		nms = nms[ ! isC];
+	}
+	return(nms);
+}
 
 ### Parser
 
@@ -363,6 +373,9 @@ read.code = function(file, all.tokens=FALSE) {
 	attr(s, "type") = npos$Type;
 	return(s);
 }
+
+### Formatting
+
 # preserve "relevant" NLs;
 regex.trim = function() {
 	paste0("(?<=^|\n)[ \n\t\r]++|[ \t]++(?=\n)|(?<=[ \t])[ \t]++",
