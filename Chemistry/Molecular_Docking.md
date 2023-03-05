@@ -18,8 +18,9 @@ Some basic ideas in 2D are explored using tools in the R/Stat folder:
 - Polymers.R: variants/conformers with a particular backbone;
 - Polygons.R: structure optimization for 2D polygons;
 - see:
-  > https://github.com/discoleo/R/blob/master/Stat/Polymers.R
-  > https://github.com/discoleo/R/blob/master/Stat/Polygons.R
+  > https://github.com/discoleo/R/blob/master/Stat/Polymers.R;
+  >
+  > https://github.com/discoleo/R/blob/master/Stat/Polygons.R;
 
 
 ## Bibliography
