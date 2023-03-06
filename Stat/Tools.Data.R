@@ -5,7 +5,7 @@
 ###
 ### Data Tools
 ###
-### draft v.0.2c
+### draft v.0.2d
 
 
 ### Tools to Process/Transform Data
@@ -139,6 +139,9 @@ recode.df.factor = function(x, var.name, ..., more.warn = "Stop") {
 	return(x);
 }
 
+
+### Factors
+
 ### Middle of an Interval
 mid.factor = function(x, inf.to = NULL, split.str=",") {
 	lvl0 = levels(x); lvl = lvl0;
@@ -161,6 +164,21 @@ mid.factor = function(x, inf.to = NULL, split.str=",") {
 	lvl = data.frame(lvl=lvl0, mid=mid);
 	merge(data.frame(lvl=x), lvl, by="lvl");
 }
+
+### Grid / Hierarchical Data
+
+# freq = counts for level 2;
+expand.hierarchy = function(freq, labels=NULL) {
+	n = length(freq);
+	h1 = unlist(lapply(seq(n), function(i) rep(i, freq[i])));
+	h2 = unlist(lapply(seq(n), function(i) if(freq[i] == 0) NULL else seq(freq[i])));
+	r = data.frame(h1, h2);
+	if( ! is.null(labels)) {
+		colnames(r) = labels;
+	}
+	return(r);
+}
+
 
 ##################
 ##################
