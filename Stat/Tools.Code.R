@@ -5,7 +5,7 @@
 ###
 ### Code Tools
 ###
-### draft v.0.2e
+### draft v.0.2f
 
 
 ### Tools to Process Formulas & Expressions
@@ -31,8 +31,28 @@
 
 ########################
 
-# List all Functions in a package
-ls.pkg = function(pkg, exclude.C = TRUE) {
+### List All Packages
+ls.pkg = function(pkg=NULL, more.fields=FALSE, fields=c("Repository", "Description", "Imports")) {
+	if(is.null(pkg)) {
+		if(more.fields) {
+			pkg = installed.packages(fields=fields);
+		} else {
+			pkg = installed.packages();
+			fields = NULL;
+		}
+	} else {
+		all.pkg = installed.packages();
+		pkg = all.pkg[all.pkg[,1] %in% pkg, ];
+	}
+	p = pkg;
+	p = as.data.frame(p);
+	p = p[ , c("Package", "Version", "Built", fields)];
+	rownames(p) = seq(nrow(p));
+	return(p);
+}
+
+### List all Functions in a package
+ls.fun = function(pkg, exclude.C = TRUE) {
 	nms = ls(getNamespace(pkg));
 	if(exclude.C) {
 		isC = sapply(nms, is.call.C, pkg=pkg);
@@ -41,7 +61,22 @@ ls.pkg = function(pkg, exclude.C = TRUE) {
 	return(nms);
 }
 
-### Parser
+# much faster!
+is.call.C = function(FUN, pkg) {
+	isC = "NativeSymbolInfo" %in% class.fun(FUN, pkg);
+}
+is.code.RC = function(x) {
+	# Note:
+	# - detailed parsing of the whole code
+	#   is not efficient;
+	npos = parse.RC(x);
+	return(any(npos$Type == 50));
+}
+
+##############
+
+##############
+### Parser ###
 
 # minimalistic parser:
 parse.simple = function(x, eol="\n", all.tokens=FALSE) {
@@ -282,18 +317,6 @@ parse.RC = function(x, eol="\n") {
 
 
 ### Processing
-
-is.code.RC = function(x) {
-	# Note:
-	# - detailed parsing of the whole code
-	#   is not efficient;
-	npos = parse.RC(x);
-	return(any(npos$Type == 50));
-}
-# much faster!
-is.call.C = function(FUN, pkg) {
-	isC = "NativeSymbolInfo" %in% class.fun(FUN, pkg);
-}
 
 # cut code into disjoint code blocks
 cut.code = function(npos, last=0) {

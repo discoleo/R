@@ -55,7 +55,7 @@ ids = sapply(nms, is.call.C, pkg=pkg)
 print(nms[ids])
 
 # Filter C-Calls:
-nms = ls.pkg(pkg)
+nms = ls.fun(pkg)
 tail(nms, n=20)
 
 
