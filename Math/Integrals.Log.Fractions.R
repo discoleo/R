@@ -6,7 +6,7 @@
 ### Integrals: Logarithms
 ### log-Fractions
 ###
-### draft v.0.1p
+### draft v.0.1q
 
 
 ##################
@@ -747,7 +747,23 @@ integrate(function(x) log(x^n + 1)/x^(p+1), 0, Inf)
 
 ##############
 
-logcos = function(n, p) {
+### on [0, 1]
+
+# Note: formula based on Digamma available!
+logcos.sh = function(n, p) {
+	# shifted: p => n - p - 1;
+	if(p == 0) {
+		# r = - (digamma(1) - digamma(1/2))*n/2 + log(2);
+		r = - (n-1)*log(2)
+		return(r);
+	}
+	# shift: to match old variant;
+	p = n - p - 1;
+	# Note: NO division by n!
+	r = (digamma(((p+1)/n + 1)/2) - digamma((p+1)/n/2)) / 2;
+	r - pi/sin((p+1)*pi/n)/2;
+}
+logcos.old = function(n, p) {
 	nint = trunc(n);
 	if(n != nint) {
 		warning("n and p must be integers! Result will be inaccurate!");
@@ -771,7 +787,7 @@ p = 1; # INTEGER between [1, n-2]!
 integrate(function(x) log(x^n + 1)/x^(p+1), 0, 1)
 pracma::integral(function(x) log(x^n + 1)/x^(p+1), 0, 1)
 #
-pi/(2*p)/sin(pi*(n-p)/n) - log(2)/p + logcos(n, p)/p;
+pi/(2*p)/sin(pi*(n-p)/n) - log(2)/p + logcos.sh(n, p)/p;
 
 
 ###
@@ -781,12 +797,21 @@ p = 1; # INTEGER between [1, n-2]!
 integrate(function(x) log(x^n + 1)/x^(p+1), 0, 1)
 pracma::integral(function(x) log(x^n + 1)/x^(p+1), 0, 1)
 #
-pi/(2*p)/sin(pi*(n-p)/n) - log(2)/p + logcos(n, p)/p;
+pi/(2*p)/sin(pi*(n-p)/n) - log(2)/p + logcos.sh(n, p)/p;
 
 
 # Derivation:
 - log(2)/p + integrate(function(x) n/p * x^(n-p-1)/(x^n + 1), 0, 1)$value
 # [high precision even with p = n-2]
+
+
+###
+n = sqrt(11);
+p = sqrt(3);
+integrate(function(x) log(x^n + 1)/x^(p+1), 0, 1)
+pracma::integral(function(x) log(x^n + 1)/x^(p+1), 0, 1)
+#
+pi/(2*p)/sin(pi*(n-p)/n) - log(2)/p + logcos.sh(n, p)/p;
 
 
 ########################
@@ -948,4 +973,28 @@ integrate(function(x) (d/2)^(2*p + 1)*((1 + x)*(1 - x))^p, -1, 1)
 # Derivation:
 (d/2)^(2*p + 1)*(sin(2*asin((x - (a+b)/2)*2/d))/2 + asin((x - (a+b)/2)*2/d))/2
 
+
+################
+################
+
+# Maths 505: Another INSANE integral!
+# https://www.youtube.com/watch?v=KEDEzVqlAYU
+
+integrate(function(x) atan(x)*log((1-x)/(1+x)), 0, 1)
+pi^2/16 - pi/4*log(2) - Catalan;
+
+
+# Gen 1: TODO
+k = 2
+integrate(function(x) atan(x)*log((k - x)/(k + x)), 0, 1)
+(pi/4 - log(2)/2)*log((k-1)/(k+1)) +
+	+ integrate(function(x) (x*atan(x) - log(x^2+1)/2)*(1/(k - x) + 1/(k + x)), 0, 1)$value
+(pi/4 - log(2)/2)*log((k-1)/(k+1)) +
+	+ integrate(function(x) k*atan(x)*(1/(k-x) - 1/(x+k)), 0, 1)$value +
+	- integrate(function(x) log(x^2+1)/2*(1/(k - x) + 1/(k + x)), 0, 1)$value
+
+
+###
+integrate(function(x) atan(x) / x, 0, 1)
+Catalan
 
