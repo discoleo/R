@@ -63,16 +63,22 @@ ls.fun = function(pkg, exclude.C = TRUE) {
 
 ### Args
 args = function(name, default = TRUE, verbose = TRUE) {
-	# TODO: is.function.generic();
 	if(default) {
 		fn = match.call()[[2]];
-		# if(isGeneric(fn)) {
+		if(is.function.generic(fn)) {
 			fn = paste0(as.character(fn), ".default");
 			name = fn;
 			if(verbose) cat(fn, "\n");
-		# }
+		}
 	}
 	.Internal(args(name));
+}
+
+is.function.generic = function(name) {
+	# TODO: is.function.generic();
+	# - this version is a little bit ugly;
+	# - S4: if(isGeneric(name));
+	length(do.call(.S3methods, list(name))) > 0;
 }
 
 # much faster!
