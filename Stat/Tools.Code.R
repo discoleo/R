@@ -62,12 +62,15 @@ ls.fun = function(pkg, exclude.C = TRUE) {
 }
 
 ### Args
-args = function(name, default = TRUE) {
+args = function(name, default = TRUE, verbose = TRUE) {
 	# TODO: is.function.generic();
 	if(default) {
 		fn = match.call()[[2]];
-		fn = paste0(as.character(fn), ".default");
-		name = fn; print(fn)
+		# if(isGeneric(fn)) {
+			fn = paste0(as.character(fn), ".default");
+			name = fn;
+			if(verbose) cat(fn, "\n");
+		# }
 	}
 	.Internal(args(name));
 }
