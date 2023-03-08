@@ -61,6 +61,17 @@ ls.fun = function(pkg, exclude.C = TRUE) {
 	return(nms);
 }
 
+### Args
+args = function(name, default = TRUE) {
+	# TODO: is.function.generic();
+	if(default) {
+		fn = match.call()[[2]];
+		fn = paste0(as.character(fn), ".default");
+		name = fn; print(fn)
+	}
+	.Internal(args(name));
+}
+
 # much faster!
 is.call.C = function(FUN, pkg) {
 	isC = "NativeSymbolInfo" %in% class.fun(FUN, pkg);
