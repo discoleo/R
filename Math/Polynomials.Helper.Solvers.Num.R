@@ -105,9 +105,12 @@ cat.sol0 = function(x, digits=4, sep="\n") {
 }
 cat.sol = function(x, digits=4, sep=",\n") {
 	if( ! inherits(x, "matrix")) {
-		return(cat.sol0(x, digits=digits));
+		return(cat.sol0(x, digits=digits, sep="\n"));
 	}
-	apply(x, 1, cat.sol0, digits=digits, sep=sep);
+	nr = nrow(x);
+	if(nr == 0) return(invisible());
+	sep = c(rep(sep, nr - 1), "\n");
+	lapply(seq(nr), function(id) cat.sol0(x[id,], digits=digits, sep=sep[id]));
 	invisible();
 }
 # Print also variable names:
