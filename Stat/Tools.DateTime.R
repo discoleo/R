@@ -47,6 +47,11 @@ extract.YMDate = function(x) {
 	rdt = data.frame(year=xyear, month=xmonth);
 	return(rdt);
 }
+as.time = function(x, sep=":") {
+	x = as.POSIXlt(x);
+	min0 = ifelse(x$min < 10, "0", "");
+	paste0(x$hour, sep, min0, x$min);
+}
 
 is.LeapYear = function(year) {
 	return(year %% 4 == 0 && year %% 400 != 0);
