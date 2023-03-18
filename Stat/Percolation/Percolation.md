@@ -7,7 +7,7 @@
 > Candidate BSc CS 2023\
 > West University, Timisoara
 >
-> Supervisors:
+> Supervisors:\
 > Prof. Dr. Daniela Zaharie\
 > Dr. med. Leonard Mada (Syonic SRL)
 >
