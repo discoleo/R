@@ -312,6 +312,80 @@ extractNested = function(x, pos, simplify=TRUE) {
 	return(sContent);
 }
 
+
+### Wikipedia Corpus
+
+# - file = filename;
+# - n = Line buffer;
+# - Records are separated by empty lines;
+# - each record may contain 1 or more lines of text;
+# - the file is processed sequentially,
+#   thus avoiding to load huge files into memory;
+read.txt.wiki = function(file, pattern, n=4000, verbose=TRUE) {
+	file = file(file);
+	open(file, "rt");
+	extract = function(str, isWord) {
+		len = length(str);
+		nposR = which(nchar(str) == 0);
+		last  = length(nposR);
+		if(last == 0) {
+			return(list(str));
+		} else {
+			if(nposR[[1]] > 1) nposR = c(0, nposR);
+			if(nposR[[last]] < len) nposR = c(nposR, len + 1);
+		}
+		nposW = which(isWord);
+		nposT = c(nposR, nposW);
+		tkT = c(rep(FALSE, length(nposR)), rep(TRUE, length(nposW)));
+		id  = order(nposT);
+		nposT = nposT[id];
+		tkT   = tkT[id];
+		len = length(tkT);
+		# lim = xor(tkT, c(tkT[-1], tkT[len]));
+		isUnique = ! (tkT & c(tkT[-1], tkT[len]));
+		nposT = nposT[isUnique];
+		tkT   = tkT[isUnique];
+		id  = which(tkT);
+		idS = id - 1; idE = id + 1;
+		nposS = nposT[idS];
+		nposE = nposT[idE];
+		len = length(nposS);
+		lapply(seq(len), function(id) {
+			str[seq(nposS[id] + 1, nposE[id] - 1)];
+		})
+	}
+	#
+	buffer = NULL;
+	sRez   = list();
+	repeat({
+		input = readLines(con=file, n=n);
+		# TODO: process last Record;
+		if(length(input) == 0) break;
+		buffer = c(buffer, input);
+		# Last Record: nStart;
+		len = length(buffer);
+		for(npos in seq(len, 1, by=-1)) {
+			if(nchar(buffer[npos]) == 0) break;
+		}
+		if(npos > 1) {
+			str = buffer[1:npos];
+			if(npos == len) { buffer = NULL; }
+			else {
+				buffer = buffer[seq(npos + 1, len)];
+			}
+			isWord = grepl(pattern, str);
+			if(any(isWord)) {
+				if(verbose) cat("\nFound!\n\n");
+				sRez = c(sRez, extract(str, isWord));
+			}
+		}
+		# Debug:
+		print(tail(buffer, 1));
+	})
+	close(file);
+	return(sRez);
+}
+
 ######################
 
 strsplitTokens = function(x, sep=";\\s*+", simplify=TRUE, perl=TRUE) {
