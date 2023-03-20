@@ -322,8 +322,8 @@ extractNested = function(x, pos, simplify=TRUE) {
 # - the file is processed sequentially,
 #   thus avoiding to load huge files into memory;
 read.txt.wiki = function(file, pattern, n=4000, verbose=TRUE) {
-	file = file(file);
-	open(file, "rt");
+	con = file(file);
+	open(con, "rt");
 	extract = function(str, isWord) {
 		len = length(str);
 		nposR = which(nchar(str) == 0);
@@ -358,12 +358,14 @@ read.txt.wiki = function(file, pattern, n=4000, verbose=TRUE) {
 	buffer = NULL;
 	sRez   = list();
 	repeat({
-		input = readLines(con=file, n=n);
+		input = readLines(con=con, n=n);
 		# TODO: process last Record;
 		if(length(input) == 0) break;
 		buffer = c(buffer, input);
-		# Last Record: nStart;
+		# Cut before Last Record:
+		# Note: Last Record may be incomplete;
 		len = length(buffer);
+		if(len == 0) next; # should never happen;
 		for(npos in seq(len, 1, by=-1)) {
 			if(nchar(buffer[npos]) == 0) break;
 		}
@@ -375,16 +377,26 @@ read.txt.wiki = function(file, pattern, n=4000, verbose=TRUE) {
 			}
 			isWord = grepl(pattern, str);
 			if(any(isWord)) {
-				if(verbose) cat("\nFound!\n\n");
+				if(verbose) cat("Found!\n");
 				sRez = c(sRez, extract(str, isWord));
 			}
 		}
 		# Debug:
-		print(tail(buffer, 1));
+		# print(tail(buffer, 1));
 	})
-	close(file);
+	close(con);
+	# Last Record:
+	if(length(buffer) > 0) {
+		str = buffer;
+		isWord = grepl(pattern, str);
+		if(any(isWord)) {
+			if(verbose) cat("\nFound!\n\n");
+			sRez = c(sRez, extract(str, isWord));
+		}
+	}
 	return(sRez);
 }
+
 
 ######################
 
