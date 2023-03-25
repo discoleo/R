@@ -321,7 +321,7 @@ extractNested = function(x, pos, simplify=TRUE) {
 # - each record may contain 1 or more lines of text;
 # - the file is processed sequentially,
 #   thus avoiding to load huge files into memory;
-read.txt.wiki = function(file, pattern, n=4000, verbose=TRUE) {
+read.txt.wiki = function(file, pattern, n=4000, perl=TRUE, verbose=TRUE) {
 	con = file(file);
 	open(con, "rt");
 	extract = function(str, isWord) {
@@ -375,7 +375,7 @@ read.txt.wiki = function(file, pattern, n=4000, verbose=TRUE) {
 			else {
 				buffer = buffer[seq(npos + 1, len)];
 			}
-			isWord = grepl(pattern, str);
+			isWord = grepl(pattern, str, perl=perl);
 			if(any(isWord)) {
 				if(verbose) cat("Found!\n");
 				sRez = c(sRez, extract(str, isWord));
@@ -388,9 +388,9 @@ read.txt.wiki = function(file, pattern, n=4000, verbose=TRUE) {
 	# Last Record:
 	if(length(buffer) > 0) {
 		str = buffer;
-		isWord = grepl(pattern, str);
+		isWord = grepl(pattern, str, perl=perl);
 		if(any(isWord)) {
-			if(verbose) cat("\nFound!\n\n");
+			if(verbose) cat("Found!\n");
 			sRez = c(sRez, extract(str, isWord));
 		}
 	}
