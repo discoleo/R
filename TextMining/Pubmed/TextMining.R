@@ -34,6 +34,23 @@ extract.regex = function(x, pattern, gr=0, perl=TRUE, simplify=TRUE, verbose=TRU
 	return(s)
 }
 
+# Extract sequentially from text-file
+extract.multiLines = function(file, pattern, gr=0, n=60000, perl=TRUE, verbose=TRUE) {
+	con = file(file);
+	open(con, "rt");
+	sRez = NULL;
+	repeat({
+		input = readLines(con=con, n=n);
+		if(length(input) == 0) break;
+		tmp = extract.regex(input, pattern, gr=gr, perl=perl,
+			simplify=TRUE, verbose=verbose);
+		tmp = tmp[tmp != ""];
+		sRez = c(sRez, tmp);
+	})
+	close(con);
+	return(sRez);
+}
+
 # strips the Section Title
 stripSection = function(x, len=25) {
 	patt = paste0("(?i)^[^:]{1,", len, "}+\\:\\s*+");
