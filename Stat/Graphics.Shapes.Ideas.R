@@ -5,7 +5,7 @@
 ###
 ### Object Shapes
 ###
-### draft v.0.1c
+### draft v.0.1d
 
 
 ### Ideas for students
@@ -191,5 +191,65 @@ x0 = multiroot(function(x, k=1.6) {
 	return(Im(y));
 	}, 1.9) # x0 = 2*pi - 1.9;
 x0; print(x0$root, 12)
+
+
+##################
+##################
+
+bezier.radial = function(c1, c2, phi1, phi2, r = c(1,1), n=65) {
+	phi1 = phi1 * pi / 180;
+	phi2 = phi2 * pi / 180;
+	th1 = seq(phi1[1], phi1[2], length.out = n);
+	th2 = seq(phi2[1], phi2[2], length.out = n);
+	x1 = r[1]*cos(th1) + c1[1];
+	y1 = r[1]*sin(th1) + c1[2];
+	x2 = r[2]*cos(th2) + c2[1];
+	y2 = r[2]*sin(th2) + c2[2];
+	tt = seq(0, 1, length.out = n);
+	x  = (1 - tt)*x1 + tt*x2;
+	y  = (1 - tt)*y1 + tt*y2;
+	xy = list(x=x, y=y);
+	return(xy);
+}
+
+###
+xy = bezier.radial(c(0,0), c(3,0), c(0, 90), c(90, 180))
+plot(xy, type="l")
+
+###
+xy = bezier.radial(c(0,0), c(3,0), c(0, 90), c(180,90))
+plot(xy, type="l")
+
+###
+xy = bezier.radial(c(0,0), c(3,0), c(0, 90), c(270,90))
+plot(xy, type="l")
+
+###
+xy = bezier.radial(c(0,1), c(3,-1), c(90, 0), c(180, 90))
+plot(xy, type="l")
+
+###
+xy = bezier.radial(c(0,1), c(3,-1), c(90, 0), c(90, 180))
+plot(xy, type="l")
+
+###
+xy = bezier.radial(c(0,1), c(3,-1), c(0, 90), c(90, 0))
+plot(xy, type="l")
+
+### C2 in C1: Tangent
+xy = bezier.radial(c(0,0), c(1,0), c(0, 360), c(360, 0), r=c(2,1))
+plot(xy, type="l")
+
+### C2 in C1: inside
+xy = bezier.radial(c(0,0), c(1,0), c(0, 360) + 90, c(360, 0), r=c(3,1))
+plot(xy, type="l")
+
+# Ventricle
+xy = bezier.radial(c(0,0), c(0,-1), c(0, 360) + 190, c(360, 0) - 45, r=c(3,1))
+plot(xy, type="l")
+
+###
+xy = bezier.radial(c(0,0), c(1,0), c(0, 2*360), c(90, 0), r=c(3,1), n=129)
+plot(xy, type="l")
 
 
