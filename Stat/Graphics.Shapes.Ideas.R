@@ -5,7 +5,7 @@
 ###
 ### Object Shapes
 ###
-### draft v.0.1d
+### draft v.0.1d-experimental
 
 
 ### Ideas for students
@@ -196,6 +196,8 @@ x0; print(x0$root, 12)
 ##################
 ##################
 
+# - enables easier understanding of the curve-shape,
+#   but still not trivial;
 bezier.radial = function(c1, c2, phi1, phi2, r = c(1,1), n=65) {
 	phi1 = phi1 * pi / 180;
 	phi2 = phi2 * pi / 180;
@@ -252,4 +254,27 @@ plot(xy, type="l")
 xy = bezier.radial(c(0,0), c(1,0), c(0, 2*360), c(90, 0), r=c(3,1), n=129)
 plot(xy, type="l")
 
+
+### Ventricle-like
+xy = bezier.radial(c(0,0), c(0,-1), c(0, 360) + 190, c(360, 0) - 45, r=c(3,1))
+dr = c(-1, 3); rx = range(xy$x) + dr; ry = range(xy$y) + dr;
+plot(xy, type="l", xlim=rx, ylim=ry)
+tmp = lapply(seq(30, 300, by=30), function(d) {
+	xy = bezier.radial(c(0,0), c(0,-1), c(0, 360) + 190 + d, c(360, 0) - 45 - d, r=c(3,1))
+	rr = 12*d/15; gg = 250 - rr;
+	col = paste0("#", as.hexmode(rr), ifelse(gg < 16, "0", ""), as.hexmode(gg), "00");
+	lines(xy, col=col);
+})
+
+###
+phi1 = c(0 - 90, 360); phi2 = c(360 + 90, 0) + 10
+xy = bezier.radial(c(0,0), c(0,2), phi1, phi2, r=c(3,2))
+dr = c(-1.5, 0.75); rx = range(xy$x) + dr; ry = range(xy$y) + 2*dr;
+plot(xy, type="l", xlim=rx, ylim=ry)
+tmp = lapply(seq(30, 300, by=60), function(d) {
+	xy = bezier.radial(c(0,0), c(0,2), phi1 + d, phi2 - d, r=c(3,2))
+	rr = 12*d/15; gg = 250 - rr;
+	col = paste0("#", as.hexmode(rr), ifelse(gg < 16, "0", ""), as.hexmode(gg), "00");
+	lines(xy, col=col);
+})
 
