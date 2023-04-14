@@ -66,7 +66,7 @@ extract.nonAscii = function(x, sort=TRUE, encode = TRUE, filter = 127,
 	return(s);
 }
 encode.utf.int = function(x, bytes=2, upper=TRUE) {
-	s = as.hexmode(x);
+	# s = as.hexmode(x); # not needed;
 	if(bytes == 2) {
 		fmt = "%04";
 	} else {
@@ -77,7 +77,7 @@ encode.utf.int = function(x, bytes=2, upper=TRUE) {
 	s = paste0("\\u", s);
 }
 # [complex code]
-extract.nonLetters = function(x, rm.ch = " ,.", escape=TRUE, sort=TRUE, normalize=TRUE) {
+extract.nonLetters = function(x, rm.ch = " ,.0-9", escape=TRUE, sort=TRUE, normalize=TRUE) {
 	if(normalize) str = stringi::stri_trans_nfc(str);
 	ch = strsplit(str, "", fixed = TRUE);
 	ch = unique(unlist(ch));
