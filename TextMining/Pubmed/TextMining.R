@@ -51,6 +51,37 @@ extract.multiLines = function(file, pattern, gr=0, n=60000, perl=TRUE, verbose=T
 	return(sRez);
 }
 
+### Identify non-ASCII Characters
+extract.nonLetters = function(x, rm.ch = " ,.", escape=TRUE, sort=TRUE, normalize=TRUE) {
+	if(normalize) str = stringi::stri_trans_nfc(str);
+	ch = strsplit(str, "", fixed = TRUE);
+	ch = unique(unlist(ch));
+	if(sort) ch = sort(ch);
+	pat = paste0("^[a-zA-Z", rm.ch, "]");
+	isLetter = grepl(pat, ch);
+	ch = ch[ ! isLetter];
+	if(escape) ch = stringi::stri_escape_unicode(ch);
+	return(ch);
+}
+
+# [OLD] Beware:
+# - various operations may break the codes:
+#   e.g. unique bytes, filtering and sorting;
+extract.nonLetters.old = function(x, rm.space = TRUE, sort=FALSE) {
+	code = as.numeric(unique(unlist(lapply(x, charToRaw))));
+	isLetter =
+		(code >= 97 & code <= 122) |
+		(code >= 65 & code <= 90);
+	code = code[ ! isLetter];
+	if(rm.space) {
+		# removes only simple space!
+		code = code[code != 32];
+	}
+	if(sort) code = sort(code);
+	return(code);
+}
+
+
 # strips the Section Title
 stripSection = function(x, len=25) {
 	patt = paste0("(?i)^[^:]{1,", len, "}+\\:\\s*+");
