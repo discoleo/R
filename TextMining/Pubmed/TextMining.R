@@ -52,6 +52,31 @@ extract.multiLines = function(file, pattern, gr=0, n=60000, perl=TRUE, verbose=T
 }
 
 ### Identify non-ASCII Characters
+# [based on hint by Marek Gagolewski]
+extract.nonAscii = function(x, sort=TRUE, encode = TRUE, filter = 127,
+		bytes=2, upper=TRUE) {
+	x = unique(unlist(stringi::stri_enc_toutf32(x)));
+	if(sort) x = sort(x);
+	x = x[x > filter];
+	if(encode) {
+		s = encode.utf.int(x, bytes=bytes, upper=upper);
+	} else {
+		s = stringi::stri_enc_fromutf32(x);
+	}
+	return(s);
+}
+encode.utf.int = function(x, bytes=2, upper=TRUE) {
+	s = as.hexmode(x);
+	if(bytes == 2) {
+		fmt = "%04";
+	} else {
+		fmt = "%";
+	}
+	fmt = paste0(fmt, ifelse(upper, "X", "x"));
+	s = sprintf(fmt, x);
+	s = paste0("\\u", s);
+}
+# [complex code]
 extract.nonLetters = function(x, rm.ch = " ,.", escape=TRUE, sort=TRUE, normalize=TRUE) {
 	if(normalize) str = stringi::stri_trans_nfc(str);
 	ch = strsplit(str, "", fixed = TRUE);
