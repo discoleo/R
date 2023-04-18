@@ -62,7 +62,40 @@ print(pi/2*exp(-k), 12)
 ######################
 ######################
 
-### "Inverse"
+### sin(x) / x^(s+1)
+# A RIDICULOUSLY AWESOME INTEGRAL: Ramanujan vs Maths 505
+# https://www.youtube.com/watch?v=_VkRvuSxF18
+
+# s in (-1, 0)
+s = 1 - sqrt(2)
+# FAILS:
+integrate(\(x) sin(x) / x^(s+1), 0, Inf, subdivisions=128)
+integrate(\(x) sin(x) / x^(s+1), 0, 200000, subdivisions=400000)
+pracma::integral(\(x) sin(x) / x^(s+1), 0, 2^16*pi, no_intervals=1024)
+- gamma(-s)*sin(pi*s/2)
+
+# s in (0, Inf)
+s = 2 - sqrt(2)
+integrate(\(x) sin(x) / x^(s+1), 0, Inf, subdivisions=128)
+integrate(\(x) sin(x) / x^(s+1), 0, 200000, subdivisions=400000)
+- gamma(-s)*sin(pi*s/2)
+
+# s = 0
+integrate(\(x) sin(x) / x, 0, Inf, subdivisions=128)
+integrate(\(x) sin(x) / x, 0, 200000, subdivisions=400000)
+pi/2
+
+# Note: Compute:
+# lim (gamma(x) * sin(pi*x)) as x -> 0;
+# lim (gamma(x) * sin(x)) as x -> 0;
+
+
+######################
+######################
+
+#################
+### "Inverse" ###
+#################
 
 library(pracma)
 
