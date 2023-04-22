@@ -995,12 +995,18 @@ integrate(\(x) log(x) / sqrt(1 - x), 0, 1)
 4*log(2) - 4
 
 ### Subst: x => sin(x)^2
+# or simpler: Integration by parts;
 integrate(\(x) sin(x) * log(sin(x)), 0, pi/2)
 log(2) - 1
 
 ###
 integrate(\(x) sin(2*x) * log(sin(x)), 0, pi/2)
 -1/2
+
+###
+integrate(\(x) sin(3*x) * log(sin(x)), 0, pi/2, rel.tol=1E-8)
+log(2)/3 - 7/9
+
 
 ################
 ################
