@@ -52,8 +52,16 @@ integrate(function(x) x^p*log(x)/(x^n + 1), 0, Inf)
 - pi^2*cos(pi*(p+1)/n) / sin(pi*(p+1)/n)^2 / n^2
 
 ###
+integrate(function(x) log(x)/(x^2 + 1)^(3/2), 0, Inf)
+- log(2)
+
+###
 integrate(function(x) log(x)/(x^2 + 1)^2, 0, Inf)
 - pi / 4
+
+###
+integrate(function(x) log(x)/(x^2 + 1)^(5/2), 0, Inf)
+- 2/3 * log(2) - 1/3
 
 ###
 integrate(function(x) log(x)/(x^2 + 1)^3, 0, Inf)
@@ -974,6 +982,26 @@ integrate(function(x) (d/2)^(2*p + 1)*((1 + x)*(1 - x))^p, -1, 1)
 (d/2)^(2*p + 1)*(sin(2*asin((x - (a+b)/2)*2/d))/2 + asin((x - (a+b)/2)*2/d))/2
 
 
+####################
+
+### log(x) / sqrt(1 - x)
+### on [0, 1]
+
+integrate(\(x) x*log(x) / sqrt(1 - x^2), 0, 1)
+log(2) - 1
+
+###
+integrate(\(x) log(x) / sqrt(1 - x), 0, 1)
+4*log(2) - 4
+
+### Subst: x => sin(x)^2
+integrate(\(x) sin(x) * log(sin(x)), 0, pi/2)
+log(2) - 1
+
+###
+integrate(\(x) sin(2*x) * log(sin(x)), 0, pi/2)
+-1/2
+
 ################
 ################
 
@@ -997,4 +1025,9 @@ integrate(function(x) atan(x)*log((k - x)/(k + x)), 0, 1)
 ###
 integrate(function(x) atan(x) / x, 0, 1)
 Catalan
+
+# Varia:
+x = exp(pracma::lambertWp(exp(-1)) / 2 + 1/2)
+# Maximum of function:
+log(x) / (x^2 + 1)
 
