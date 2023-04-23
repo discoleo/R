@@ -7,7 +7,7 @@
 ### Polynomial Fractions: Unity
 ### Definite Integrals
 ###
-### draft v.0.1k
+### draft v.0.1l
 
 
 
@@ -266,6 +266,14 @@ integrate(function(x) x^3/(x^n + 1), lower=0, upper=Inf)
 pi / sin(3*pi/n) / n
 
 
+### Generalized Formula
+# [see a few sections below]
+
+p = sqrt(2); n = 5*sqrt(11); k = 2 + sqrt(3);
+integrate(function(x) x^p/(x^n + 1)^(1/k), lower=0, upper=Inf)
+gamma((p+1)/n) * gamma(1/k - (p+1)/n) / gamma(1/k) / n
+
+
 ### Non-Standard Powers
 
 ###
@@ -509,13 +517,12 @@ integrate(function(x) x^p/(x^n + 1), 0, 1)
 	+ pi/(2*n) / sin((p+1)*pi/n);
 
 
-### TODO:
+### Using Digamma Function:
 n = 7
 p = sqrt(3)
 - pi/(2*n) / sin((p+1)*pi/n) + integrate(function(x) x^p/(x^n + 1), 0, 1)$value;
 - pi/(2*n) / sin((p+1)*pi/n) + integrate(function(x) x^p/(x^n + 1), 1, Inf)$value;
-# TODO:
-# - formula to compute: 0.06055876;
+int.FrU01(n, p=p) - pi/(2*n) / sin((p+1)*pi/n);
 
 
 ###
@@ -588,7 +595,7 @@ integrate(function(x) x^p / (x^n+1)^(1/k), lower=0, upper=Inf)
 gamma((p+1)/n)*gamma(1/k - (p+1)/n) / gamma(1/k) / n
 
 
-###
+### [0, 1]
 p = sqrt(5) - 2
 n = sqrt(11)
 k = sqrt(3)
@@ -614,4 +621,13 @@ integrate(function(x) 1/(x^3 + 1)^5, 0, 1, rel.tol=1E-8)
 # (3!/(3*2^4) + 11 * 2!/(3^2*2^3) + 11*8 * 1!/(3^3*2^2) + 11*8*5 * 0!(3^4*2)) / gamma(5)
 1/2^4/12 + 11/12*(1/2^3/9 + 8/9*(1/2^2/6 + 5/6*(1/2/3))) +
 	+ int.FrU01(3, 0) * gamma(5 - 1/3)/gamma(1 - 1/3)/gamma(5);
+
+
+#######################
+#######################
+
+n = 5
+I0 = integrate(\(x) sqrt(x^n + 1), 0, 1)
+Ii = integrate(\(x) 1/sqrt(x^n + 1), 0, 1)
+(n+2)/2*I0$value - n/2*Ii$value - sqrt(2) # == 0
 
