@@ -7,7 +7,7 @@
 ### Polynomial Fractions: Unity
 ### Definite Integrals
 ###
-### draft v.0.1l
+### draft v.0.1m
 
 
 
@@ -626,8 +626,19 @@ integrate(function(x) 1/(x^3 + 1)^5, 0, 1, rel.tol=1E-8)
 #######################
 #######################
 
+###
 n = 5
 I0 = integrate(\(x) sqrt(x^n + 1), 0, 1)
 Ii = integrate(\(x) 1/sqrt(x^n + 1), 0, 1)
 (n+2)/2*I0$value - n/2*Ii$value - sqrt(2) # == 0
+
+
+###
+n = 5
+I1 = integrate(\(x) (x^n + 1)^(1/3), 0, 1)
+I2 = integrate(\(x) (x^n + 1)^(2/3), 0, 1)
+In1 = integrate(\(x) 1/(x^n + 1)^(1/3), 0, 1)
+In2 = integrate(\(x) 1/(x^n + 1)^(2/3), 0, 1)
+(n+3)/3*I1$value - n/3*In2$value - 2^(1/3) # == 0
+(2*n+3)/3*I2$value - 2*n/3*In1$value - 2^(2/3) # == 0
 
