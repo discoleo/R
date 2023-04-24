@@ -181,3 +181,21 @@ integrate(function(x) x^3*(pi - x) / sin(x), 0, pi/2)
 ###
 integrate(function(x) x^2*(pi - x)^2 / sin(x), 0, pi/2)
 - 1/2*7*pi^2*zeta(3) + 3/2*31*zeta(5)
+
+
+### Square:
+integrate(function(x) x^2 / sin(x)^2, 0, pi/2)
+pi*log(2)
+
+# By Parts:
+integrate(function(x) x^2 / tan(x)^2, 0, pi/2)
+pi*log(2) - pi^3/24
+
+# By Parts:
+integrate(function(x) x / tan(x), 0, pi/2)
+pi*log(2)/2
+
+# By Parts:
+integrate(function(x) log(sin(x)), 0, pi/2)
+- pi*log(2)/2
+
