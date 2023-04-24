@@ -95,7 +95,20 @@ round0.p = function(p, tol=1E-7) {
 ### Exercises ###
 #################
 
-### E.1.) x^5 - 25/2 * x^2 - 125/4
+
+### E.1.) x^5 + 750*x + 3750
+K = 24
+#
+m = unity(5, all=T)
+k = K^(1/5)
+x = sapply(m, function(m) { k = k*m; k^4/4 - k^3/2 - k^2/2 - k; } )
+err = x^5 + 750*x + 3750;
+round0(err)
+# Note:
+# x^5 + 6*5^3*x + 6*5^4; # NO 5^5!
+
+
+### E.2.) x^5 - 25/2 * x^2 - 125/4
 # - let P(x) = x^5 - 25/2 * x^2 - 125/4;
 # - let r0 = s*k^4 - s*k^3 + k^2 + k, where k = K^(1/5)
 # E.1.a.) Show that for K=2 and s=1/2, r0 is a root of P(x) = 0;
