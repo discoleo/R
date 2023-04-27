@@ -12,3 +12,10 @@ gamma(p) * pracma::zeta(p + 1) * (1 - 1/2^p) * p
 p = sqrt(5)
 integrate(\(x) x^p / (1 + exp(x)), 0, Inf, rel.tol=1E-8)
 gamma(p) * pracma::zeta(p + 1) * (1 - 1/2^p) * p
+
+###
+# - bringing pi back into the equation:
+p = sqrt(5)
+integrate(\(x) x^p / (1 + pi^x), 0, Inf, rel.tol=1E-8)
+gamma(p) * pracma::zeta(p + 1) * (1 - 1/2^p) * p / log(pi)^(p + 1)
+
