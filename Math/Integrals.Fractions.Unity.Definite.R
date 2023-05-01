@@ -642,3 +642,28 @@ In2 = integrate(\(x) 1/(x^n + 1)^(2/3), 0, 1)
 (n+3)/3*I1$value - n/3*In2$value - 2^(1/3) # == 0
 (2*n+3)/3*I2$value - 2*n/3*In1$value - 2^(2/3) # == 0
 
+
+##########################
+##########################
+
+constEuler = 0.57721566490153286060651209008240243079;
+
+### Digamma Function
+# see: Lines That Connect: Extending the Harmonic Numbers to the Reals
+# https://www.youtube.com/watch?v=9p_U_o1pMKo
+
+
+###
+n = 7
+integrate(\(x) (1 - (1-x)^n)/x, 0, 1)
+integrate(\(x) (1 - x^n) / (1 - x), 0, 1)
+sum(1/seq(n))
+constEuler + digamma(n + 1)
+
+
+###
+n = sqrt(5)
+integrate(\(x) (1 - (1-x)^n)/x, 0, 1)
+integrate(\(x) (1 - x^n) / (1 - x), 0, 1)
+constEuler + digamma(n + 1)
+
