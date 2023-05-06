@@ -13,6 +13,24 @@
 
 ### Helper Functions
 
+### Simple ###
+
+### Based on the Zeta-function
+# - Zeta Partial-Sums;
+
+### sum( 1 / n^p )
+zetaSum = function(x, p=2, N = 50) {
+	id = seq(1, N);
+	sapply(x, \(x) sum(1/id^p) - sum(1/(x+id)^p));
+}
+zetaSum0 = function(n, p=2) {
+	id = seq(1, n);
+	sum(1/id^p);
+}
+
+
+### Exponentials ###
+
 ### sum( n / exp(n) )
 invExpSum = function(x, N = 30) {
 	id = seq(0, N);
@@ -37,8 +55,29 @@ invXExpSum0 = function(n, k=1) {
 }
 
 #####################
+#####################
 
-### Examples
+################
+### Examples ###
+################
+
+### Simple
+
+### sum( 1 / n^p )
+curve(zetaSum(x), xlim=c(0,10))
+tmp = sapply(seq(1, 8), \(x) points(x, zetaSum0(x), col="red"))
+#
+p = 3
+curve(zetaSum(x, p=p), add=T, col="blue")
+tmp = sapply(seq(1, 8), \(x) points(x, zetaSum0(x, p=p), col="red"))
+
+# Q: Can we compute a closed form for zetaSum(3/2)?
+zetaSum(3/2)
+
+
+################
+
+### Exponentials
 
 ### sum( n / exp(n) )
 curve(invExpSum(x), xlim=c(0,10))
