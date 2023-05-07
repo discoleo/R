@@ -72,10 +72,15 @@ curve(zetaSum(x, p=p), add=T, col="blue")
 tmp = sapply(seq(1, 8), \(x) points(x, zetaSum0(x, p=p), col="red"))
 
 # Q: Can we compute a closed form for zetaSum(3/2)?
+zetaSum(1/2, N=200)
+4 - pi^2/3
 zetaSum(3/2, N=200)
 4 - pi^2/3 + 4/9
+zetaSum(5/2, N=200)
+4 - pi^2/3 + 4/9 + 4/25
 
 
+################
 ################
 
 ### Exponentials
