@@ -65,10 +65,14 @@ integrate(\(x) exp(-x^n) / (x^n + 1), 0, Inf)
 int = integrate(\(x) x^(-1/n) * exp(-x), 0, 1)$value
 exp(1) * (pi/sin(pi/n) - int*gamma(1/n))/n
 
-### n > 1
-n = sqrt(7) - sqrt(2)
+### [stable]
+n = sqrt(3) - sqrt(2)
 integrate(\(x) exp(-x^n) / (x^n + 1), 0, Inf)
-# int = integrate(\(x) x^(-1/n) * exp(-x), 0, 1)
+int = integrate(\(x) n*x^(n-2) * exp(-x^n), 1, Inf)$value
+exp(1) * int * gamma(1/n) / n
+
+# only: n > 1
+# int = integrate(\(x) x^(-1/n) * exp(-x), 0, 1)$value
 int = integrate(\(x) n*x^(n-2) * exp(-x^n), 0, 1)$value
-exp(1) * (pi/sin(pi/n) - int*gamma(1/n))/n
+exp(1) * (pi/sin(pi/n) - int*gamma(1/n)) / n
 
