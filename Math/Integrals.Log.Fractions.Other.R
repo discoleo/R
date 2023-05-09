@@ -23,6 +23,23 @@ Catalan = 0.915965594177219015054603514;
 # Catalan = - I(log(x)/(x^2 + 1), lower=0, upper=1)
 
 
+################
+################
+
+### I( log(x)*log(1-x^p) / x )
+# Maths 505: A beautiful log-trig integral featuring an important constant
+# https://www.youtube.com/watch?v=2bwvuWsQSEY
+# [the intermediate integral]
+
+###
+integrate(\(x) log(x)*log(1-x^2)/x, 0, 1)
+pracma::zeta(3) / 4
+
+###
+p = sqrt(5)
+integrate(\(x) log(x)*log(1-x^p)/x, 0, 1)
+pracma::zeta(3) / p^2
+
 
 ################
 ################
