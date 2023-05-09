@@ -51,3 +51,24 @@ integrate(\(x) cos(x) / (exp(1/x) - 1), -lim, lim)
 - sin(lim)
 
 
+#####################
+#####################
+
+### I( exp(-x^n) / (x^n + 1) ) on [0, Inf]
+# Maths 505: A crazy yet perfect integral
+# https://www.youtube.com/watch?v=regnh-HOR0c
+# [the sub-integral]
+
+###
+n = sqrt(3)
+integrate(\(x) exp(-x^n) / (x^n + 1), 0, Inf)
+int = integrate(\(x) x^(-1/n) * exp(-x), 0, 1)$value
+exp(1) * (pi/sin(pi/n) - int*gamma(1/n))/n
+
+### n > 1
+n = sqrt(7) - sqrt(2)
+integrate(\(x) exp(-x^n) / (x^n + 1), 0, Inf)
+# int = integrate(\(x) x^(-1/n) * exp(-x), 0, 1)
+int = integrate(\(x) n*x^(n-2) * exp(-x^n), 0, 1)$value
+exp(1) * (pi/sin(pi/n) - int*gamma(1/n))/n
+
