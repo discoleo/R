@@ -296,6 +296,35 @@ x = 2.1
 	+ sum( D / ((x + m.shift)^2 - m.sq^2))
 
 
+################
+### Section A.2:
+### Composite Sums
+
+### Sum( (-1)^j * (1/(k1*j + k0) + ...) )
+# - various Simplifications of some of the composite sums;
+
+# Michael Penn: Newton's Sum
+# https://www.youtube.com/watch?v=qoQ2pQi7mvM
+
+id = seq(0, 30000)
+# see file Integrals.Fractions.Unity.Definite.R
+# for exact formulas for the Integrals on [0, 1];
+
+### (1/1+1/3) - (1/5+1/7) + ...
+sum(sapply(id, \(n) (-1)^n / (4*n + c(1, 3))))
+integrate(\(x) (x^2 + 1)/(x^4 + 1), 0, 1)
+pi/(2*sqrt(2))
+
+### (1/1+1/3+1/5) - (1/7+1/9+1/11) + ...
+sum(sapply(id, \(n) (-1)^n / (6*n + c(1, 3, 5))))
+integrate(\(x) (x^4 + x^2 + 1)/(x^6 + 1), 0, 1)
+5/12*pi
+#
+sum(sapply(id, \(n) (-1)^n / (6*n + c(1, 5))))
+integrate(\(x) (x^4 + 1)/(x^6 + 1), 0, 1)
+pi/3
+
+
 #######################
 #######################
 
