@@ -52,10 +52,19 @@ sum(sapply(seq(n), \(n) (pracma::zeta(2*n) - 1) * x^(2*n)) )
 (3 - pi*x/tan(pi*x)) / 2 - 1/(1 - x^2)
 
 
-###
+### sum( zeta(4*n) - 1 )
+# Michael Penn: More identities involving the Riemann-Zeta function!
+# https://www.youtube.com/watch?v=bRdGQKwusiE
+
 n = 500
 sum(sapply(seq(n), \(n) zeta(4*n) - 1))
 7/8 - pi/4 * (exp(2*pi) + 1) / (exp(2*pi) - 1)
+
+### sum( zeta(6*n) - 1 )
+n = 500
+sum(sapply(seq(n), \(n) zeta(6*n) - 1))
+x = cos(2*pi/3) + 1i*c(1,-1)*sin(2*pi/3)
+1 + 1/4 - 1/3 - sum(pi*x/tan(pi*x)) / 6
 
 
 ###
