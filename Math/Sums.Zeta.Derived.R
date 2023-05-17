@@ -6,6 +6,11 @@ constEuler = 0.57721566490153286060651209008240243079
 zeta = function(n) {
 	(1 + 1/(2^(n-1) - 1)) * pracma::eta(n);
 }
+unity.neg = function(n) {
+	id = seq(1, 2*n, by=2);
+	m  = complex(real = cos(id*pi/n), imaginary = sin(id*pi/n));
+	return(m);
+}
 
 
 ### sum( (zeta(n) - 1) / n )
@@ -63,8 +68,28 @@ sum(sapply(seq(n), \(n) zeta(4*n) - 1))
 ### sum( zeta(6*n) - 1 )
 n = 500
 sum(sapply(seq(n), \(n) zeta(6*n) - 1))
-x = cos(2*pi/3) + 1i*c(1,-1)*sin(2*pi/3)
-1 + 1/4 - 1/3 - sum(pi*x/tan(pi*x)) / 6
+m3 = cos(2*pi/3) + 1i*c(1,-1)*sin(2*pi/3)
+1 - 1/3 + 1/4 - sum(pi*m3/tan(pi*m3)) / 6
+
+### sum( zeta(12*n) - 1 )
+n = 500
+m12 = unity.neg(12);
+sum(sapply(seq(n), \(n) zeta(12*n) - 1))
+sum(pi*m12/tan(pi*m12)) / 24 - 1;
+
+### sum( zeta(12*n + 6) - 1 )
+n = 300
+m3  = cos(2*pi/3) + 1i*c(1,-1)*sin(2*pi/3);
+m12 = unity.neg(12);
+sum(sapply(seq(0, n), \(n) zeta(12*n + 6) - 1))
+2 - 1/3 + 1/4 - sum(pi*m3/tan(pi*m3)) / 6 - sum(pi*m12/tan(pi*m12)) / 24;
+
+### sum( zeta(12*n + 4) + zeta(12*n + 8) - 2 )
+n = 300
+m12 = unity.neg(12);
+sum(sapply(seq(0, n), \(n) zeta(12*n + 4) + zeta(12*n + 8) - 2))
+1 + 7/8 - pi/4 * (exp(2*pi) + 1) / (exp(2*pi) - 1) +
+	- sum(pi*m12/tan(pi*m12)) / 24;
 
 
 ###
