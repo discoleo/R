@@ -92,6 +92,38 @@ sum(sapply(seq(0, n), \(n) zeta(12*n + 4) + zeta(12*n + 8) - 2))
 	- sum(pi*m12/tan(pi*m12)) / 24;
 
 
+### sum( zeta(12*n + 4) - 1 )
+n = 200
+m3  = cos(2*pi/3) + 1i*c(1,-1)*sin(2*pi/3);
+m12 = unity.neg(12);
+sum(sapply(seq(0, n), \(n) zeta(12*n + 4) - 1));
+# TODO: simplify
+(2*(1 + 7/8 - pi/4 * (exp(2*pi) + 1) / (exp(2*pi) - 1) +
+	- sum(pi*m12/tan(pi*m12)) / 24) +
+	- m3[1]*(sum((3 - pi*m3[1]*1i/tan(pi*m3[1]*1i)) / 2 - 1/(1 + m3[1]^2)) +
+	+ sum((3 - pi*m3[1]/tan(pi*m3[1])) / 2 - 1/(1 - m3[1]^2)) +
+	- 2*(sum(pi*m12/tan(pi*m12)) / 24 - 1)) ) / (2 - 2*m3[2])
+
+
+# Derivation:
+sum(sapply(seq(0, n), \(n) {
+	m3[2]*(-zeta(12*n + 2) + zeta(12*n + 8)) +
+	+ m3[1]*(zeta(12*n + 4) - zeta(12*n + 10))
+}))
+sum((3 - pi*m3[1]*1i/tan(pi*m3[1]*1i)) / 2 - 1/(1 + m3[1]^2)) +
+	- 2*(sum(pi*m12/tan(pi*m12)) / 24 - 1) +
+	+ 1 - 1/3 + 1/4 - sum(pi*m3/tan(pi*m3)) / 6;
+#
+sum(sapply(seq(0, n), \(n) {
+	m3[2]*zeta(12*n + 8) + m3[1]*zeta(12*n + 4) + 1;
+})) * 2
+sum((3 - pi*m3[1]*1i/tan(pi*m3[1]*1i)) / 2 - 1/(1 + m3[1]^2)) +
+	+ sum((3 - pi*m3[1]/tan(pi*m3[1])) / 2 - 1/(1 - m3[1]^2)) +
+	- 2*(sum(pi*m12/tan(pi*m12)) / 24 - 1);
+
+
+##################
+
 ###
 # Michael Penn: Another Riemann-Zeta function identity.
 # https://www.youtube.com/watch?v=AmWvTN6cPz8
