@@ -15,6 +15,28 @@
 
 ### Simple ###
 
+### Based on H(n)
+
+### H(3*n) - H(n)
+# - accuracy/convergence problems possible with some of the formulas;
+#   (I may have had a bug in the code as well)
+H3n = function(x, N = 30) {
+	n = seq(0, N);
+	sapply(x, \(x) {
+		m = n + x;
+		sum( (9*n+5) / ((3*n+1)*(3*n+2)*(3*n+3)) ) +
+			- sum( (9*m+5) / ((3*m+1)*(3*m+2)*(3*m+3)));
+	})
+}
+H3n0 = function(n) {
+	sum(1/seq(3*n)) - sum(1/seq(n));
+}
+H3n0.alt = function(n) {
+	n = seq(0, n-1);
+	sum( (9*n+5) / ((3*n+1)*(3*n+2)*(3*n+3)) );
+}
+
+
 ### Based on the Zeta-function
 # - Zeta Partial-Sums;
 
@@ -63,6 +85,19 @@ invXExpSum0 = function(n, k=1) {
 
 ### Simple
 
+### H(3*n) - H(n)
+
+px = c(1,5,10,15);
+curve(H3n(x), xlim=c(0, 30), ylim=c(0, 1.2))
+points(px, sapply(px, H3n0), col="red")
+abline(h = log(3), col="red")
+# for derivation of log(3), see file:
+# Sums.Trig.R;
+
+
+##################
+##################
+
 ### sum( 1 / n^p )
 curve(zetaSum(x), xlim=c(0,10))
 tmp = sapply(seq(1, 8), \(x) points(x, zetaSum0(x), col="red"))
@@ -78,6 +113,11 @@ zetaSum(3/2, N=200)
 4 - pi^2/3 + 4/9
 zetaSum(5/2, N=200)
 4 - pi^2/3 + 4/9 + 4/25
+
+
+################
+################
+
 
 
 ################
