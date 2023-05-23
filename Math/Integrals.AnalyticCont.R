@@ -66,6 +66,30 @@ zetaQSum0 = function(n) {
 	sum(1/id^id);
 }
 
+### sum( (-1)^n / n^n )
+zetaQnegSum = function(x, N = 30) {
+	id = seq(1, N);
+	u  = (-1)^id;
+	sapply(x, \(x) {
+		m = id + x;
+		b = sin(pi*m - pi/2);
+		- sum(u/id^id) - sum(b/m^m);
+	})
+}
+zetaQnegSum = function(x, N = 30) {
+	id = seq(1, N);
+	u  = (-1)^id;
+	sapply(x, \(x) {
+		m = id + x;
+		b = if(floor(x) %% 2 == 0) 1 else -1;
+		- sum(u/id^id) + b * sum(u/m^m);
+	})
+}
+zetaQnegSum0 = function(n) {
+	id = seq(1, n);
+	- sum((-1)^id / id^id);
+}
+
 
 ### Exponentials ###
 
@@ -154,7 +178,23 @@ zetaQSum(1/2)
 # TODO: ???
 
 
-################
+###############
+
+### Quasi-Zeta
+### Alternating
+
+# sum( (-1)^n / n^n )
+
+# TODO: Clarify if the use of sin() is the best option?
+curve(zetaQnegSum(x), xlim=c(0, 6))
+tmp = sapply(seq(1, 6), \(x) points(x, zetaQnegSum0(x), col="red"))
+
+###
+zetaQnegSum(20)
+zetaQnegSum0(20)
+
+###
+zetaQnegSum(1/2)
 
 ### Bernoulli Integral
 # TODO:
