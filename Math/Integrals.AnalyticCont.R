@@ -76,7 +76,8 @@ zetaQnegSum = function(x, N = 30) {
 		- sum(u/id^id) - sum(b/m^m);
 	})
 }
-zetaQnegSum = function(x, N = 30) {
+# non-Smooth
+zetaQnegSum.nonSmooth = function(x, N = 30) {
 	id = seq(1, N);
 	u  = (-1)^id;
 	sapply(x, \(x) {
@@ -88,6 +89,23 @@ zetaQnegSum = function(x, N = 30) {
 zetaQnegSum0 = function(n) {
 	id = seq(1, n);
 	- sum((-1)^id / id^id);
+}
+
+### Alternating Zeta
+
+### sum( (-1)^n / n^p )
+zetaAltSum = function(x, p=1/2, N = 20000) {
+	id = seq(1, N);
+	u  = (-1)^id;
+	sapply(x, \(x) {
+		m = id + x;
+		b = sin(pi*m - pi/2);
+		- sum(u/id^p) - sum(b/m^p);
+	})
+}
+zetaAltSum0 = function(n, p=1/2) {
+	id = seq(1, n);
+	- sum((-1)^id / id^p);
 }
 
 
@@ -198,6 +216,22 @@ zetaQnegSum(1/2)
 
 ### Bernoulli Integral
 # TODO:
+
+
+####################
+
+### Alternating Zeta
+# sum( (-1)^n / n^p )
+
+# TODO: Clarify if the use of sin() is the best option?
+# Note: large N needed for convergence of odd terms;
+curve(zetaAltSum(x), xlim=c(0, 10))
+tmp = sapply(seq(1, 8), \(x) points(x, zetaAltSum0(x), col="red"))
+
+
+###
+curve(zetaAltSum(x, p=3/2, N=5000), xlim=c(0, 10))
+tmp = sapply(seq(1, 8), \(x) points(x, zetaAltSum0(x, p=3/2), col="red"))
 
 
 ################
