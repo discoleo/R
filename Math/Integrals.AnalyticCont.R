@@ -51,6 +51,22 @@ zetaSum0 = function(n, p=2) {
 }
 
 
+### Quasi-Zeta
+
+### sum( 1 / n^n )
+zetaQSum = function(x, N = 30) {
+	id = seq(1, N);
+	sapply(x, \(x) {
+		m = id + x;
+		sum(1/id^id) - sum(1/m^m);
+	})
+}
+zetaQSum0 = function(n) {
+	id = seq(1, n);
+	sum(1/id^id);
+}
+
+
 ### Exponentials ###
 
 ### sum( n / exp(n) )
@@ -94,9 +110,15 @@ abline(h = log(3), col="red")
 # for derivation of log(3), see file:
 # Sums.Trig.R;
 
+###
+H3n(1/2, N=10000)
+2/3
+
 
 ##################
 ##################
+
+### Zeta-based
 
 ### sum( 1 / n^p )
 curve(zetaSum(x), xlim=c(0,10))
@@ -115,9 +137,27 @@ zetaSum(5/2, N=200)
 4 - pi^2/3 + 4/9 + 4/25
 
 
-################
+##############
+
+### Quasi-Zeta
+# sum( 1 / n^n )
+
+curve(zetaQSum(x), xlim=c(0, 6))
+tmp = sapply(seq(1, 6), \(x) points(x, zetaQSum0(x), col="red"))
+
+###
+curve(zetaQSum(x), xlim=c(1.95, 7))
+tmp = sapply(seq(2, 6), \(x) points(x, zetaQSum0(x), col="red"))
+
+###
+zetaQSum(1/2)
+# TODO: ???
+
+
 ################
 
+### Bernoulli Integral
+# TODO:
 
 
 ################
