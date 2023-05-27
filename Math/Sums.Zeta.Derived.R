@@ -39,7 +39,7 @@ sum(sapply(seq(n), \(n) pracma::zeta(2*n) / 4^n))
 
 #
 sum(sapply(seq(n), \(n) pracma::zeta(2*n) / 2^n))
-(1 - pi/sqrt(2)/tan(pi/sqrt(2))) / 2
+(1 - pi/sqrt(2) / tan(pi/sqrt(2))) / 2
 
 #
 x = 1/sqrt(3)
@@ -175,4 +175,43 @@ sum(sapply(seq(n), \(n) zeta(2*n+1) - 1) )
 n = 1000
 sum(sapply(seq(n), \(n) zeta(n+1) - 1) )
 1
+
+
+#################
+
+###
+# Maths 505: 3 RIDICULOUSLY AWESOME infinite zeta series!!!
+# https://www.youtube.com/watch?v=Pl-GUHN4DyI
+
+# sum[n]( zeta(n+1)*x^n )
+# = sum[k]( 1/(k-x) - 1/k )
+# = - digamma(1-x) - constEuler;
+
+n = 500
+
+###
+x = 2
+sum(sapply(seq(n), \(n) zeta(n+1) / x^n))
+- digamma(1 - 1/x) - constEuler;
+
+###
+x = sqrt(5)
+sum(sapply(seq(n), \(n) zeta(n+1) / x^n))
+- digamma(1 - 1/x) - constEuler;
+
+
+### sum( zeta(n) / x^n )
+# Note: from n = 2!
+sum(sapply(seq(2, 100), \(n) zeta(n) / 2^n))
+log(2)
+
+###
+x = 3
+sum(sapply(seq(2, 100), \(n) zeta(n) / x^n))
+- (digamma(1 - 1/x) + constEuler) / x
+
+
+### sum( n * zeta(n+1) / x^n )
+sum(sapply(seq(n), \(n) n * zeta(n+1) / 2^n))
+# TODO
 
