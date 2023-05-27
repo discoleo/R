@@ -214,8 +214,20 @@ zetaQnegSum0(20)
 ###
 zetaQnegSum(1/2)
 
+
 ### Bernoulli Integral
-# TODO:
+# Dr. Trefor Bazett: The Bernoulli Integral is ridiculous
+# https://www.youtube.com/watch?v=PxyK_Tsnz10
+# Dr. Peyam: Integral x^x from 0 to 1
+# https://www.youtube.com/watch?v=A54_QPXdkU0
+
+
+integrate(\(x) x^x, 0, 1)
+zetaQnegSum(50)
+
+###
+integrate(\(x) x^(- x), 0, 1)
+zetaQSum(50)
 
 
 ####################
