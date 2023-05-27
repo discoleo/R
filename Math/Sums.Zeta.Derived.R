@@ -218,6 +218,24 @@ sum(sapply(seq(100), \(n) zeta(2*n+1) / x^(2*n+1)))
 - (digamma(1 - 1/x) + constEuler - pi/2/tan(pi/x)) / x - 1/2;
 
 
+### sum( (-1)^n * zeta(n+1) / x^n )
+x = 2
+sum(sapply(seq(100), \(n) - (-1)^n * zeta(n+1) / x^n))
+digamma(1 + 1/x) + constEuler
+
+###
+x = sqrt(3)
+sum(sapply(seq(100), \(n) - (-1)^n * zeta(n+1) / x^n))
+digamma(1 + 1/x) + constEuler
+
+
+### sum( (-1)^n * zeta(n) / x^n )
+# from n = 2;
+x = 3
+sum(sapply(seq(2, 100), \(n) (-1)^n * zeta(n) / x^n))
+(digamma(1 + 1/x) + constEuler) / x
+
+
 ### sum( n * zeta(n+1) / x^n )
 sum(sapply(seq(n), \(n) n * zeta(n+1) / 2^n))
 # TODO
