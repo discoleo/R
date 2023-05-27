@@ -210,6 +210,13 @@ x = 3
 sum(sapply(seq(2, 100), \(n) zeta(n) / x^n))
 - (digamma(1 - 1/x) + constEuler) / x
 
+### sum( zeta(2*n+1) / x^(2*n+1) )
+# =>
+x = sqrt(5)
+sum(sapply(seq(100), \(n) zeta(2*n+1) / x^(2*n+1)))
+- (digamma(1 - 1/x) + constEuler) / x - (1 - pi/x / tan(pi/x)) / 2;
+- (digamma(1 - 1/x) + constEuler - pi/2/tan(pi/x)) / x - 1/2;
+
 
 ### sum( n * zeta(n+1) / x^n )
 sum(sapply(seq(n), \(n) n * zeta(n+1) / 2^n))
