@@ -178,6 +178,25 @@ zetaSum(3/2, N=200)
 zetaSum(5/2, N=200)
 4 - pi^2/3 + 4/9 + 4/25
 
+###
+zetaSum(1/2, p=3)
+8 - 6*pracma::zeta(3)
+
+###
+zetaSum(1/3, p=3, N=1000)
+27 - 12 * pracma::zeta(3) - pi^3 / sin(pi/3)^3/4
+
+#
+pracma::psi(2, 2/3) - pracma::psi(2, 1/3)
+pi^3/sin(pi/3)^3
+
+#
+pracma::psi(2, 1/3) / 2 + 27 + pracma::zeta(3)
+zetaSum(1/3, p=3)
+#
+pracma::psi(2, 2/3) / 2 + 27/8 + pracma::zeta(3)
+zetaSum(2/3, p=3)
+
 
 ##############
 
