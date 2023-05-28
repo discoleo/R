@@ -191,15 +191,15 @@ zetaSum(1/2, p=3)
 
 ###
 zetaSum(1/3, p=3, N=1000)
-27 - 12 * pracma::zeta(3) - pi^3 / sin(pi/3)^3/4
+27 - 12 * pracma::zeta(3) - pi^3 * cos(pi/3) / sin(pi/3)^3 / 2
 #
 zetaSum(2/3, p=3, N=1000)
-27/8 - 12 * pracma::zeta(3) + pi^3 / sin(pi/3)^3/4
+27/8 - 12 * pracma::zeta(3) + pi^3 * cos(pi/3) / sin(pi/3)^3 / 2
 
 
 # Derivation:
 pracma::psi(2, 2/3) - pracma::psi(2, 1/3)
-pi^3/sin(pi/3)^3
+2 * pi^3 * cos(pi/3) / sin(pi/3)^3
 
 #
 pracma::psi(2, 1/3) / 2 + 27 + pracma::zeta(3)
@@ -207,6 +207,17 @@ zetaSum(1/3, p=3)
 #
 pracma::psi(2, 2/3) / 2 + 27/8 + pracma::zeta(3)
 zetaSum(2/3, p=3)
+
+
+###
+pracma::psi(2, 3/4) - pracma::psi(2, 1/4)
+2 * pi^3 / sin(pi/4)^2 / tan(pi/4)
+
+
+###
+n = 5; # n = sqrt(11);
+pracma::psi(2, 1 - 1/n) - pracma::psi(2, 1/n)
+2 * pi^3 / sin(pi/n)^2 / tan(pi/n)
 
 
 ##############
