@@ -216,6 +216,8 @@ x = sqrt(5)
 sum(sapply(seq(100), \(n) zeta(2*n+1) / x^(2*n+1)))
 - (digamma(1 - 1/x) + constEuler) / x - (1 - pi/x / tan(pi/x)) / 2;
 - (digamma(1 - 1/x) + constEuler - pi/2/tan(pi/x)) / x - 1/2;
+- (digamma(1 + 1/x) + digamma(1 - 1/x) + 2*constEuler) / (2*x);
+- (digamma(1/x) + digamma(- 1/x) + 2*constEuler) / (2*x);
 
 
 ### sum( (-1)^n * zeta(n+1) / x^n )
@@ -237,6 +239,31 @@ sum(sapply(seq(2, 100), \(n) (-1)^n * zeta(n) / x^n))
 
 
 ### sum( n * zeta(n+1) / x^n )
+# = x * sum( 1 / (k - x)^2 )
+
+x = 2
 sum(sapply(seq(n), \(n) n * zeta(n+1) / 2^n))
 # TODO
+
+
+#################
+
+### Varia
+
+###
+# only Integers!
+x = 7
+digamma(1/x) + digamma(-1/x)
+id = seq(floor(x/2));
+cs = cos(2*pi*id/x); sn = sin(pi*id/x);
+x - 2*constEuler - 2*log(2*x) + 4*sum(cs * log(sn))
+
+###
+x = sqrt(7)
+digamma(1/x) - digamma(-1/x)
+- x - pi/tan(pi/x)
+
+###
+digamma(-1/x)
+digamma(1/x) + pi/tan(pi/x) + x
 
