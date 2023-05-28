@@ -2,6 +2,10 @@
 
 ### Analytic Continuation
 
+### Partial Zeta-Functions
+# => Digamma & Polygamma Functions
+### Other Partial Functions
+
 
 # For an Introduction, see link to Digamma Function:
 # - Lines That Connect: Extending the Harmonic Numbers to the Reals
@@ -19,7 +23,7 @@
 
 ### H(3*n) - H(n)
 # - accuracy/convergence problems possible with some of the formulas;
-#   (I may have had a bug in the code as well)
+#   (I may have had a bug in the initial code as well)
 H3n = function(x, N = 30) {
 	n = seq(0, N);
 	sapply(x, \(x) {
@@ -170,6 +174,8 @@ p = 3
 curve(zetaSum(x, p=p), add=T, col="blue")
 tmp = sapply(seq(1, 8), \(x) points(x, zetaSum0(x, p=p), col="red"))
 
+
+### Zeta(2)
 # Q: Can we compute a closed form for zetaSum(3/2)?
 zetaSum(1/2, N=200)
 4 - pi^2/3
@@ -178,15 +184,20 @@ zetaSum(3/2, N=200)
 zetaSum(5/2, N=200)
 4 - pi^2/3 + 4/9 + 4/25
 
-###
+
+### Zeta(3)
 zetaSum(1/2, p=3)
 8 - 6*pracma::zeta(3)
 
 ###
 zetaSum(1/3, p=3, N=1000)
 27 - 12 * pracma::zeta(3) - pi^3 / sin(pi/3)^3/4
-
 #
+zetaSum(2/3, p=3, N=1000)
+27/8 - 12 * pracma::zeta(3) + pi^3 / sin(pi/3)^3/4
+
+
+# Derivation:
 pracma::psi(2, 2/3) - pracma::psi(2, 1/3)
 pi^3/sin(pi/3)^3
 
@@ -198,6 +209,7 @@ pracma::psi(2, 2/3) / 2 + 27/8 + pracma::zeta(3)
 zetaSum(2/3, p=3)
 
 
+##############
 ##############
 
 ### Quasi-Zeta
