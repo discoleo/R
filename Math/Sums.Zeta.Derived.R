@@ -239,7 +239,7 @@ sum(sapply(seq(2, 100), \(n) (-1)^n * zeta(n) / x^n))
 
 
 ### sum( n * zeta(n+1) / x^n )
-# = x * sum( 1 / (k - x)^2 )
+# = sum( 1 / (k - 1/x)^2 ) / x;
 
 x = 2
 sum(sapply(seq(n), \(n) n * zeta(n+1) / x^n))
