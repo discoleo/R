@@ -76,3 +76,44 @@ exp(1) * int * gamma(1/n) / n
 int = integrate(\(x) n*x^(n-2) * exp(-x^n), 0, 1)$value
 exp(1) * (pi/sin(pi/n) - int*gamma(1/n)) / n
 
+
+#####################
+#####################
+
+### I( sin(x) / (exp(x) - 1))
+# Maths 505: One of the coolest integrals on YouTube!
+# https://www.youtube.com/watch?v=I7a-6VwKhgo
+
+###
+integrate(\(x) sin(x) / (exp(x) - 1), 0, Inf)
+pi/2 / tanh(pi) - 1/2
+(digamma((1/2+1)/2) - digamma(1/4))/2 - 1/2
+
+###
+integrate(\(x) sin(x) / (exp(x) * (exp(x) - 1)), 0, Inf)
+pi/2 / tanh(pi) - 1
+
+###
+integrate(\(x) x * sin(x) / (exp(x) - 1), 0, Inf)
+# TODO
+id = seq(10000)
+2 * sum(id/(id^2 + 1)^2)
+
+
+### Derivation:
+integrate(\(x) sin(x) / exp(x), 0, Inf)
+1/2
+#
+integrate(\(x) x*sin(x) / exp(x), 0, Inf)
+1/2
+#
+integrate(\(x) x^2*sin(x) / exp(x), 0, Inf)
+1/2
+#
+sapply(seq(9), \(n) round(integrate(\(x) x^n * sin(x) / exp(x), 0, Inf)$value, 3))
+sapply(seq(9), \(n) Im(gamma(n + 1)/(1-1i)^(n + 1)))
+#
+sapply(seq(9), \(n) round(integrate(\(x) x * sin(x) / exp(n*x), 0, Inf)$value, 5))
+sapply(seq(9), \(n) round(Im(gamma(2)/(n - 1i)^(1 + 1)), 5))
+sapply(seq(9), \(n) round(2*n*gamma(2)/(n^2 + 1)^(1 + 1), 5))
+
