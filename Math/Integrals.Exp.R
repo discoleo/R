@@ -95,11 +95,19 @@ pi/2 / tanh(pi) - 1
 
 ###
 integrate(\(x) x * sin(x) / (exp(x) - 1), 0, Inf)
-# TODO
 id = seq(10000)
 2 * sum(id/(id^2 + 1)^2)
-# see file: Sums.Fractions.Higher.R;
-(pracma::psi(1, 1i) - pracma::psi(1, - 1i)) * 1i/2
+# TODO: see file: Sums.Fractions.Higher.R;
+(pracma::psi(1, 1i) - pracma::psi(1, - 1i)) * 1i / 2
+
+
+###
+integrate(\(x) x * sin(2*x) / (exp(x) - 1), 0, Inf)
+(pracma::psi(1, 2i) - pracma::psi(1, - 2i)) * 1i / 2
+#
+k = sqrt(2)
+integrate(\(x) x * sin(k*x) / (exp(x) - 1), 0, Inf)
+(pracma::psi(1, k*1i) - pracma::psi(1, - k*1i)) * 1i / 2
 
 
 ###
