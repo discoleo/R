@@ -98,7 +98,7 @@ integrate(\(x) x * sin(x) / (exp(x) - 1), 0, Inf)
 # TODO
 id = seq(10000)
 2 * sum(id/(id^2 + 1)^2)
-# see file: Sums.Fractions.Other.R;
+# see file: Sums.Fractions.Higher.R;
 (pracma::psi(1, 1i) - pracma::psi(1, - 1i)) * 1i/2
 
 
