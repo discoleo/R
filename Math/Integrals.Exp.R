@@ -98,6 +98,9 @@ integrate(\(x) x * sin(x) / (exp(x) - 1), 0, Inf)
 # TODO
 id = seq(10000)
 2 * sum(id/(id^2 + 1)^2)
+# see file: Sums.Fractions.Other.R;
+(pracma::psi(1, 1i) - pracma::psi(1, - 1i)) * 1i/2
+
 
 ###
 n = sqrt(3); # n >= 0 !!!
