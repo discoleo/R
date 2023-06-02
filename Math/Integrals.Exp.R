@@ -99,6 +99,13 @@ integrate(\(x) x * sin(x) / (exp(x) - 1), 0, Inf)
 id = seq(10000)
 2 * sum(id/(id^2 + 1)^2)
 
+###
+n = sqrt(3); # n >= 0 !!!
+integrate(\(x) x^n * sin(x) / (exp(x) - 1), 0, Inf)
+# TODO
+id = seq(10000)
+gamma(n+1) * sum(sin((n+1)*pi/2 - (n+1)*atan(id)) / (id^2 + 1)^((n + 1)/2))
+
 
 ### Derivation:
 integrate(\(x) sin(x) / exp(x), 0, Inf)
