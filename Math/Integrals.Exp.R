@@ -117,3 +117,14 @@ sapply(seq(9), \(n) round(integrate(\(x) x * sin(x) / exp(n*x), 0, Inf)$value, 5
 sapply(seq(9), \(n) round(Im(gamma(2)/(n - 1i)^(1 + 1)), 5))
 sapply(seq(9), \(n) round(2*n*gamma(2)/(n^2 + 1)^(1 + 1), 5))
 
+###
+k = sqrt(5)
+integrate(\(x) x * sin(x) / exp(k*x), 0, Inf)
+2*k*gamma(2)/(k^2 + 1)^(1 + 1)
+
+###
+k = sqrt(5); n = sqrt(3)
+integrate(\(x) x^n * sin(x) / exp(k*x), 0, Inf)
+Im(gamma(n+1)/(k - 1i)^(n + 1))
+gamma(n+1) / (k^2 + 1)^((n + 1)/2) * sin((n+1)*pi/2 - (n+1)*atan(k))
+
