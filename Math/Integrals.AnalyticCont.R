@@ -231,6 +231,26 @@ zetaSum(3/4, p=3, N=1000)
 n = 5; # n = sqrt(11);
 pracma::psi(2, 1 - 1/n) - pracma::psi(2, 1/n)
 2 * pi^3 / sin(pi/n)^2 / tan(pi/n)
+# TODO: zetaSum(1/5)
+
+
+### n = 1/6
+zetaSum(1/6, p=3, N=1000)
+6^3 - 90 * pracma::zeta(3) - pi^3/2 * cos(pi/6) / sin(pi/6)^3
+zetaSum(5/6, p=3, N=1000)
+(6/5)^3 - 90 * pracma::zeta(3) + pi^3/2 * cos(pi/6) / sin(pi/6)^3
+
+# Derivation:
+pracma::psi(2, 5/6) - pracma::psi(2, 1/6)
+2 * pi^3 * cos(pi/6) / sin(pi/6)^3
+
+#
+zetaSum(1/6, p=3, N=1000) + zetaSum(5/6, p=3, N=1000)
+6^3 + (6/5)^3 + (3 - 6^3 + 6^3*(1/8 - 1/8*1/27 + 1/27 - 1/27*1/8)) * pracma::zeta(3)
+6^3 + (6/5)^3 - 180*pracma::zeta(3)
+#
+pracma::psi(2, 5/6) / 2 + (6/5)^3 + pracma::zeta(3)
+zetaSum(5/6, p=3, N=1000)
 
 
 ##############
