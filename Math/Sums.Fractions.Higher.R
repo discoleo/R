@@ -47,7 +47,7 @@ pi^2 / sin(pi*k*1i)^2
 - 4*pi^2 / (exp(pi*k) - exp(-pi*k))^2
 
 
-###
+### "Sub-Sums"
 # Kölbig, K. S. (1996). The polygamma function psi^k(x) for x=1/4 and x=3/4.
 # J. Comput. Appl. Math. 75 (1): 43–46.
 # doi:10.1016/S0377-0427(96)00055-6
@@ -71,4 +71,49 @@ pracma::psi(2, 1/3)
 #
 pracma::psi(2, 2/3)
 - 26 * pracma::zeta(3) + pi^3 * cos(pi/3) / sin(pi/3)^3
+
+### Psi(2, 1/4)
+# see either article by Kolbig,
+# or see file: Integrals.AnalyticCont.R;
+pracma::psi(2, 1/4)
+- 56 * pracma::zeta(3) - pi^3 * cos(pi/4) / sin(pi/4)^3
+#
+pracma::psi(2, 3/4)
+- 56 * pracma::zeta(3) + pi^3 * cos(pi/4) / sin(pi/4)^3
+
+### Psi(2, 1/6)
+# see file: Integrals.AnalyticCont.R;
+pracma::psi(2, 1/6)
+- 182 * pracma::zeta(3) - pi^3 * cos(pi/6) / sin(pi/6)^3
+#
+pracma::psi(2, 5/6)
+- 182 * pracma::zeta(3) + pi^3 * cos(pi/6) / sin(pi/6)^3
+
+
+### "Sub-Sums"
+id = 10000
+
+### 3*k + 1
+sum(1/(3*seq(0, id) + 1)^3)
+13/27 * pracma::zeta(3) + pi^3/54 * cos(pi/3) / sin(pi/3)^3
+#
+sum(1/(3*seq(0, id) + 2)^3)
+13/27 * pracma::zeta(3) - pi^3/54 * cos(pi/3) / sin(pi/3)^3
+
+
+### 4*k + 1
+sum(1/(4*seq(0, id) + 1)^3)
+28/64 * pracma::zeta(3) + pi^3/128 * cos(pi/4) / sin(pi/4)^3
+#
+sum(1/(4*seq(0, id) + 3)^3)
+28/64 * pracma::zeta(3) - pi^3/128 * cos(pi/4) / sin(pi/4)^3
+
+
+### 6*k + 1
+sum(1/(6*seq(0, id) + 1)^3)
+91/6^3 * pracma::zeta(3) + pi^3/(2*6^3) * cos(pi/6) / sin(pi/6)^3
+#
+sum(1/(6*seq(0, id) + 5)^3)
+91/6^3 * pracma::zeta(3) - pi^3/(2*6^3) * cos(pi/6) / sin(pi/6)^3
+
 
