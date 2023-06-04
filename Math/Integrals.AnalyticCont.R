@@ -17,6 +17,9 @@
 
 ### Helper Functions
 
+Euler   = 0.57721566490153286060651209008240243079;
+Catalan = 0.915965594177219015054603514;
+
 ### Simple ###
 
 ### Based on H(n)
@@ -173,6 +176,24 @@ tmp = sapply(seq(1, 8), \(x) points(x, zetaSum0(x), col="red"))
 p = 3
 curve(zetaSum(x, p=p), add=T, col="blue")
 tmp = sapply(seq(1, 8), \(x) points(x, zetaSum0(x, p=p), col="red"))
+
+
+### Zeta(1)
+zetaSum(1/3, p=1, N=100000)
+pracma::psi(1/3) + 3 + Euler
+-3/2*log(3) + 3 - pi/2 * cos(pi/3) / sin(pi/3)
+#
+zetaSum(2/3, p=1, N=100000)
+-3/2*log(3) + 3/2 + pi/2 * cos(pi/3) / sin(pi/3)
+
+#
+pracma::psi(1/3) - pracma::psi(2/3)
+- pi * cos(pi/3) / sin(pi/3)
+#
+pracma::psi(1/3) + pracma::psi(2/3)
+- 3*(log(3) + Euler) + Euler
+# Note:
+# - directly: using the Digamma formula by Gauss;
 
 
 ### Zeta(2)
