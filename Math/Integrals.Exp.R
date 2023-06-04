@@ -146,3 +146,27 @@ integrate(\(x) x^n * sin(x) / exp(k*x), 0, Inf)
 Im(gamma(n+1)/(k - 1i)^(n + 1))
 gamma(n+1) / (k^2 + 1)^((n + 1)/2) * sin((n+1)*pi/2 - (n+1)*atan(k))
 
+
+#######################
+#######################
+
+### I( atan(x) / (exp(x) - 1) )
+# Flammable Maths: A ""-relaxing Integral Experience
+# https://www.youtube.com/watch?v=QVgfL8Le0I0
+# Flammable Maths:: One Spicy Class of Integrals.
+# https://www.youtube.com/watch?v=HDaQAHhwtLo
+
+
+###
+integrate(\(x) atan(x) / (exp(2*pi*x) - 1), 0, Inf)
+1/2 - log(2*pi)/4
+
+###
+integrate(\(x) atan(x) / (exp(x) - 1), 0, Inf)
+pi*log(gamma(1/(2*pi))) - (pi - 1/2)*log(2*pi) + 1/2
+
+###
+n = sqrt(3)
+integrate(\(x) atan(x) / (exp(n*x) - 1), 0, Inf)
+log(gamma(n/(2*pi))) * pi/n + (1 - pi/n)/2*log(2*pi/n) - log(2*pi) * pi/(2*n) + 1/2
+
