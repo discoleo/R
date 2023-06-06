@@ -99,7 +99,9 @@ log(a) * sum((-a)^(id+1) / (id*(id+1))) +
 ###
 integrate(\(x) log(x) * log(x+1), 0, 1/2)
 # TODO: find closed form?
-id = seq(10000)
-Li2 = sum((-1/2)^id / id^2)
+Li2 = - integrate(\(x) x / (2*exp(x) + 1), 0, Inf)$value;
 (1/2 - 3/2*log(3/2))*log(2) - 3/2*log(3/2) + Li2 + 1
+# alternative for Li2:
+id = seq(10000)
+Li2 = sum((-1/2)^id / id^2);
 
