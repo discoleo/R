@@ -70,3 +70,36 @@ x = exp(pracma::lambertWp(exp(-1)) / 2 + 1/2)
 # Maximum of function:
 log(x) / (x^2 + 1)
 
+
+####################
+####################
+
+### I( log(x) * log(x+1) )
+# Maths 505: A surprisingly wonderful log integral
+# https://www.youtube.com/watch?v=v6iNE-heksU
+
+integrate(\(x) log(x) * log(x+1), 0, 1)
+2 - 2*log(2) - pi^2/12
+
+###
+a = sqrt(5)
+integrate(\(x) log(x) * log(x+a), 0, a)
+integrate(\(x) a*log(a*x) * log(a*x+a), 0, 1)
+a*(2 + 2*log(2)*log(a) - 2*log(2) - 2*log(a) + log(a)^2 - pi^2/12)
+
+
+###
+a = 1/sqrt(3)
+integrate(\(x) log(x) * log(x+1), 0, a)
+# TODO:
+id = seq(10000)
+log(a) * sum((-a)^(id+1) / (id*(id+1))) +
+	sum((-1)^id * a^(id+1) / (id*(id+1)^2))
+
+###
+integrate(\(x) log(x) * log(x+1), 0, 1/2)
+# TODO: find closed form?
+id = seq(10000)
+Li2 = sum((-1/2)^id / id^2)
+(1/2 - 3/2*log(3/2))*log(2) - 3/2*log(3/2) + Li2 + 1
+
