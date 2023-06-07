@@ -13,6 +13,20 @@ constEuler
 #########################
 #########################
 
+### I( 1 / (exp(x^n) + 1) )
+# Maths 505: A RIDICULOUSLY AWESOME integral from the quantum realm
+# https://www.youtube.com/watch?v=oZWsDyN5ssI
+
+n = sqrt(5)
+integrate(\(x) 1 / (exp(x^n) + 1), 0, Inf)
+gamma(1/n) * (1 - 2^(1-1/n)) * pracma::zeta(1/n) / n;
+
+
+#########################
+#########################
+
+### Trig - Exp
+
 ### I( cos(x) / (exp(1/x) + 1) )
 # Michael Penn: is this integration trick TOO POWERFUL?
 # https://www.youtube.com/watch?v=PX2QXILRgsc
