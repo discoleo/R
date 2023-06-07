@@ -7,7 +7,7 @@
 ### Polynomial Fractions: Unity
 ### Definite Integrals
 ###
-### draft v.0.1m
+### draft v.0.1n
 
 
 
@@ -32,6 +32,9 @@
 ######################
 
 ### Helper Functions
+
+constEuler = 0.57721566490153286060651209008240243079;
+
 
 ### I on [0, 1]
 # I( x^p / (x^n + 1))
@@ -302,6 +305,23 @@ pi / sin(pi*(p+1)/n) / n
 n = sqrt(11); p = sqrt(3);
 integrate(function(x) x^p/(x^n + 1), lower=0, upper=Inf)
 pi / sin(pi*(p+1)/n) / n
+
+
+##################
+
+### Composite
+
+###
+integrate(\(x) 1 / ((x^2+1) * (x^5+1)), 0, Inf)
+integrate(\(x) 1/2 * ((x^4 - x^3 - x^2 + x + 1)/(x^5+1) - (x-1)/(x^2+1)), 0, Inf)
+pi/2 * sum(c(-1,-1,1,1)/5/sin(pi * c(4,3,2,1)/ 5), 1/2/sin(pi/2))
+
+###
+p = sqrt(2)
+# Monomials x^4 & x: cannot be ignored!
+integrate(\(x) x^p / ((x^2+1) * (x^5+1)), 0, Inf)
+pi/2 * sum(c(1,-1,-1,1,1)/5/sin(pi * (p + c(5,4,3,2,1))/ 5),
+	c(-1,1)/2/sin(pi*(p+c(2,1))/2))
 
 
 ############################
