@@ -303,6 +303,7 @@ integrate(function(x) n*a^(n-1)/(b^n-a^n)* (1/(x^n + a^n) -  1/(x^n + b^n)), low
 # =>
 sqrt(3)*(1 - a^2/b^2)/(b^n - a^n)*(pi/2 + atan(1/sqrt(3)))
 2*sqrt(3)*pi/3 * (1 - a^2/b^2)/(b^n - a^n)
+pi/sin(pi/3) * (1 - (a/b)^2) / (b^n - a^n)
 
 # back-Integration:
 2*sqrt(3)*pi/3 * integrate(function(x) (x^2/b^2 - 1)/(x^n - b^n), lower=0, upper=a)$value +
@@ -316,11 +317,24 @@ sqrt(3)*pi/3 * log((a^n - b^n)/(a - b)) / b^2 - 2*pi^2/9/b^2 +
 
 ### Case: n = 5
 n = 5
-a = sqrt(5); b = sqrt(3);
+a = sqrt(3); b = sqrt(5);
+#
+integrate(function(x) log(x^n + a^n) / (x^n + b^n), lower=0, upper=Inf)
+Int = integrate(function(x) 1/(1 - x^n), lower=0, upper=a/b)$value
+Const = - pi/sin(pi/n) / b^(n-1) * (pi*cos(pi/n)/sin(pi/n) / n - log(b));
+(log(abs(a^n - b^n)) - n*log(b) + n * Int) * pi/sin(pi/n) / n / b^(n-1) + Const;
+
+# Int = can be computed exactly for n = integer;
+# if(a > b): Int = Int[0, 1 - eps] + Int[1 + eps, a/b];
+
+
 # dI/da:
-integrate(function(x) n*a^(n-1)/(b^n-a^n)* (1/(x^n + a^n) -  1/(x^n + b^n)), lower=0, upper=Inf)
+integrate(\(x) n*a^(n-1)/(b^n - a^n)* (1/(x^n + a^n) -  1/(x^n + b^n)), lower=0, upper=Inf)
 n*a^(n-1)/(b^n - a^n) * (1/a^(n-1) - 1/b^(n-1)) * pi/sin(pi/n) / n;
-# TODO: back-integrate: I( dI(a) da );
+(1 - (a/b)^(n-1)) / (1 - (a/b)^n) / b^n * pi/sin(pi/n);
+# Back-integration: I( dI(a) da );
+# a = 0 =>
+Const = - pi/sin(pi/n) / b^(n-1) * (pi*cos(pi/n)/sin(pi/n) / n - log(b));
 
 
 # Helper
