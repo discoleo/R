@@ -327,6 +327,12 @@ Const = - pi/sin(pi/n) / b^(n-1) * (pi*cos(pi/n)/sin(pi/n) / n - log(b));
 # Int = can be computed exactly for n = integer;
 # if(a > b): Int = Int[0, 1 - eps] + Int[1 + eps, a/b];
 
+### Special Case: a == b
+integrate(function(x) log(x^n + b^n) / (x^n + b^n), lower=0, upper=Inf)
+# TODO: closed formula;
+Int = integrate( \(x) (x^3 + 2*x^2 + 3*x + 4) / (x^4+x^3+x^2+x+1), lower=0, upper=1)$value
+Const = - pi/sin(pi/n) / b^(n-1) * (pi*cos(pi/n)/sin(pi/n) / n - log(b));
+(log(n) + Int) * pi/sin(pi/n) / n / b^(n-1) + Const;
 
 # dI/da:
 integrate(\(x) n*a^(n-1)/(b^n - a^n)* (1/(x^n + a^n) -  1/(x^n + b^n)), lower=0, upper=Inf)
