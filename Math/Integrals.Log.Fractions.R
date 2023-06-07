@@ -316,15 +316,20 @@ sqrt(3)*pi/3 * log((a^n - b^n)/(a - b)) / b^2 - 2*pi^2/9/b^2 +
 
 ### Case: n = 5
 n = 5
-# dI:
+a = sqrt(5); b = sqrt(3);
+# dI/da:
 integrate(function(x) n*a^(n-1)/(b^n-a^n)* (1/(x^n + a^n) -  1/(x^n + b^n)), lower=0, upper=Inf)
-# [more complicated] x^2 - (m+m^4)*a*x + a^2 =>
-# TODO:
-sqrt(n)*(1 - (a/b)^(n-1))/(b^n - a^n) * (pi/2 + ...)
+n*a^(n-1)/(b^n - a^n) * (1/a^(n-1) - 1/b^(n-1)) * pi/sin(pi/n) / n;
+# TODO: back-integrate: I( dI(a) da );
+
 
 # Helper
 integrate(function(x) log(x)/(x^5 + 1), 0, Inf)
 - pi^2*cos(pi/5)/sin(pi/5)^2 / 25
+#
+p = sqrt(3)
+integrate(function(x) x^p * log(x) / (x^5 + 1), 0, Inf)
+- pi^2*cos(pi*(p+1)/5)/sin(pi*(p+1)/5)^2 / 25
 
 #
 b = 3^(1/4);
@@ -867,7 +872,7 @@ pi*log(2)/8 - Catalan
 
 ###
 integrate(function(x) log(1 + x) / (x^2 + 1), 0, 1)
-log(2)*pi/8
+pi*log(2)/8
 
 ###
 integrate(function(x) log(1 - x) / (x + 1) / sqrt(x), 0, 1)
