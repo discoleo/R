@@ -14,6 +14,12 @@
 # 3.b.) Generalization
 #  - various (integer) powers of n:
 #    I( x^k / (x^n+1) ), where -1 < k < 0;
+#    I( cosh(k*x) / cosh(x) ) on [0, Inf];
+#  - full: I( x^p / (x^n + 1)^(1/k) ) on [0, Inf];
+# 3.c.) I( sqrt(1 - x^2) / (x^2 + a^2) ) on [-1, 1];
+# 4) Log-Fractions:
+#    I( log(x) / (x^n + 1) ) on [0, Inf]
+#    I( log(x) / (x^n + 1)^2 ) on [0, Inf];
 
 
 ########################
