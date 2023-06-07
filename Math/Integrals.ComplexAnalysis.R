@@ -67,7 +67,7 @@ integrate.cosFrAbs(n) * n
 #####################
 #####################
 
-### I [-Inf, + Inf] ( x*cos(x) / (x^(2*n) + 1) )
+### I( x*cos(x) / (x^(2*n) + 1) ) on [-Inf, + Inf];
 
 unityMinus = function(n) {
 	id = seq(1, by=2, length.out=n);
@@ -286,15 +286,17 @@ pi^2 / n^2 / sin(pi/n)^2
 pi^2 / n^2 * 4
 
 
-### TODO
-n = sqrt(2);
-n = 3
-m  = complex(re=cos(2*pi/n), im=sin(2*pi/n))
-m1 = complex(re=cos(pi/n), im=sin(pi/n))
+###
+# see file: Integrals.Log.Fractions.R
+n = 3;
 integrate(function(x) log(x^n + 1) / (x^n + 1), lower=0, upper=Inf)
-# TODO: wrong
--2i*(pi/n) * exp(pi*1i/n) / (1-m)
-m1/((m1+1)*(m1^2-1))
+pi/3 * (sqrt(3) * log(3) - pi + 2*atan(sqrt(3)));
+
+### Gen 1:
+a = sqrt(3); b = sqrt(5)
+integrate(function(x) log(x^n + a^n) / (x^n + b^n), lower=0, upper=Inf)
+sqrt(3)*pi/3 * log((a^n - b^n)/(a - b)) / b^2 - pi^2/3/b^2 +
+	+ 2*pi/3 * atan((2*a/b + 1)/sqrt(3)) / b^2;
 
 
 ##########################
