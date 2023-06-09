@@ -607,7 +607,33 @@ integrate(function(x) 1/(1-x^n)^(1+1/n), lower=0, upper=1/2^(1/n))
 
 ### 1 / (x^n - 1)
 
-# TODO: I() on [0, 1]
+# I() on [0, 1]
+n = 5
+#
+id = seq(floor((n - 1)/2))
+cs = cos(2*pi*id/n); # ONLY 1 * cos()!
+sn = sin(2*pi*id/n);
+sn2 = sin(pi*id/n);
+integrate(\(x) (x^3 + 2*x^2 + 3*x + 4) / (x^4 + x^3 + x^2 + x + 1), 0, 1)
+log(2) - 2*sum(cs * log(sn2)) + pi/2 * cos(pi/n) / sin(pi/n)
+
+###
+n = 7; # n = integer: odd & even!
+#
+id = seq(floor((n - 1)/2))
+cs = cos(2*pi*id/n);
+sn = sin(2*pi*id/n);
+sn2 = sin(pi*id/n);
+integrate(\(x) (x^5 + 2*x^4 + 3*x^3 + 4*x^2 + 5*x + 6) /
+	(x^6 + x^5 + x^4 + x^3 + x^2 + x + 1), 0, 1)
+log(2) - 2*sum(cs * log(sn2)) + pi/2 * cos(pi/n) / sin(pi/n)
+
+
+# - cs * log(x^2 - 2*cs*x + 1) + 2*sn*atan((x - cs)/sn)
+- sum(cs * log(2 - 2*cs)) + 2*sum(sn*atan((1 - cs)/sn) - sn*atan(- cs/sn))
+log(2)/2 - sum(cs * log(1 - cs)) + 2*sum(sn*atan((1 - cs)/sn) - sn*atan(- cs/sn))
+log(2) - 2*sum(cs * log(sn2)) + pi/2 * cos(pi/n) / sin(pi/n)
+
 
 ### Fraction Decomposition:
 x = sqrt(11)
