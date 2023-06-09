@@ -615,14 +615,31 @@ x = sqrt(11)
 n = 5
 1/(x - 1) - n/(x^n - 1)
 (x^3 + 2*x^2 + 3*x + 4) / (x^4 + x^3 + x^2 + x + 1)
+id = seq(floor((n - 1)/2))
+cs = 2*cos(2*pi*id/n)
+sum((2 - cs*x)/(x^2 - cs*x + 1))
 #
 n = 6
 1/(x - 1) - n/(x^n - 1)
 (x^4 + 2*x^3 + 3*x^2 + 4*x + 5) / (x^5 + x^4 + x^3 + x^2 + x + 1)
+id = seq(floor((n - 1)/2))
+cs = 2*cos(2*pi*id/n)
+sum((2 - cs*x)/(x^2 - cs*x + 1)) + 1/(x+1)
 #
 n = 7
 1/(x - 1) - n/(x^n - 1)
 (x^5 + 2*x^4 + 3*x^3 + 4*x^2 + 5*x + 6) / (x^6 + x^5 + x^4 + x^3 + x^2 + x + 1)
+id = seq(floor((n - 1)/2))
+cs = 2*cos(2*pi*id/n)
+sum((2 - cs*x)/(x^2 - cs*x + 1))
+#
+n = 8
+1/(x - 1) - n/(x^n - 1)
+(x^6 + 2*x^5 + 3*x^4 + 4*x^3 + 5*x^2 + 6*x + 7) /
+	(x^7 + x^6 + x^5 + x^4 + x^3 + x^2 + x + 1)
+id = seq(floor((n - 1)/2))
+cs = 2*cos(2*pi*id/n)
+sum((2 - cs*x)/(x^2 - cs*x + 1)) + 1/(x+1)
 
 
 ####################
