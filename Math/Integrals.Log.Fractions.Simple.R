@@ -101,6 +101,13 @@ integrate(\(x) log(x) * (x + 1)^(1/3), 0, 1)
 	+ 9/8 / sin(pi/3) * atan((2^(1/3) + cos(pi/3)) / sin(pi/3)) +
 	- 9/8 / sin(pi/3) * atan((1 + cos(pi/3)) / sin(pi/3));
 
+
+### I( log(x) / (x + 1)^(2/3) )
+integrate(\(x) log(x) / (x + 1)^(2/3), 0, 1)
+4 * integrate(\(x) log(x) * (x + 1)^(1/3), 0, 1)$value +
+	+ 3*2*2^(1/3)*(1 - 1/4) - 3*(1 - 1/4);
+# see above for I( log(x) * (x+1)^(1/3) );
+
 #
 integrate(\(x) - 3/4 * ((x+1)^(4/3) - 1)/x, 0, 1)
 integrate(\(x) - 9/4 * (x^6 - x^2) / (x^3 - 1), 1, 2^(1/3))
@@ -111,7 +118,6 @@ integrate(\(x) - 9/4 * (x^6 - x^2) / (x^3 - 1), 1, 2^(1/3))
 	+ integrate(\(x) 9/4 * (1/2*(2*x+1) + 1/2) / (x^2 + x + 1), 1, 2^(1/3))$value;
 	# + 9/8 / sin(pi/3) * atan((x + cos(pi/3)) / sin(pi/3))
 	# + integrate(\(x) 9/8 / (x^2 + x + 1), 1, 2^(1/3))$value
-
 
 
 # Derivation:
