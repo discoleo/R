@@ -94,3 +94,19 @@ integrate(\(x) ((x+1)*sqrt(x + 1) - 1)/x, 0, 1)
 integrate(\(x) log(x) / sqrt(x + 1), 0, 1)
 4 * (asinh(1) - log(2) - sqrt(2) + 1)
 
+
+###
+integrate(\(x) log(x) * (x + 1)^(1/3), 0, 1)
+integrate(\(x) - 3/4 * ((x+1)^(4/3) - 1)/x, 0, 1)
+integrate(\(x) - 9/4 * (x^6 - x^2)/ (x^3 - 1), 1, 2^(1/3))
+# TODO
+
+
+# Derivation:
+integrate(\(x) ((x+1)^(1/3) - 1)/x, 0, 1)
+integrate(\(x) 3*(x^3 - x^2)/ (x^3 - 1), 1, 2^(1/3))
+#
+integrate(\(x) ((x+1)^(4/3) - 1)/x, 0, 1)
+integrate(\(x) 3*(x^6 - x^2)/ (x^3 - 1), 1, 2^(1/3))
+
+
