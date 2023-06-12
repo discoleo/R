@@ -28,6 +28,10 @@ Catalan = 0.915965594177219015054603514;
 # x^p * log(x) / (x^n + 1)^(1/2) on [0, Inf]
 #  with n, p = Integers;
 
+### Refactor:
+# - I( log(x) / (x + 1)^p ) on [0, Inf]
+#   moved to file Integrals.Log.Fractions.Simple.R;
+
 
 ####################
 
@@ -51,7 +55,8 @@ p = sqrt(2)
 integrate(function(x) x^p*log(x)/(x^n + 1), 0, Inf)
 - pi^2*cos(pi*(p+1)/n) / sin(pi*(p+1)/n)^2 / n^2
 
-###
+
+### Powers
 integrate(function(x) log(x)/(x^2 + 1)^(3/2), 0, Inf)
 - log(2)
 
@@ -431,49 +436,6 @@ pi*log(a+1)/(2*(a+1)) - pi*log(2)/(4*(a+1)) - Catalan/(a+1);
 
 
 #######################
-#######################
-
-### Simple Fractions
-
-# qncubed3: Complex Analysis: Integral of log(x)/(x+1)^2
-# https://www.youtube.com/watch?v=tPveHNdBWR8
-
-# Note:
-# - easy pole with higher multiplicity;
-
-integrate(function(x) log(x)/(x+1)^2, 0, Inf)
-# == 0
-
-###
-integrate(function(x) log(x)/(x+1)^3, 0, Inf)
--1/2
-
-###
-integrate(function(x) log(x)/(x+1)^4, 0, Inf)
--1/2
-
-### n = 5
-integrate(function(x) log(x)/(x+1)^5, 0, Inf)
-- 11 / gamma(5)
-
-### n = 6
-integrate(function(x) log(x)/(x+1)^6, 0, Inf)
-- 50 / gamma(6)
-
-# x = exp(1i*pi);
-# - 4i*pi*I + 4*pi^2/(n-1) = 2i*pi*(- 100/x^5 + 48*log(x)/x^5)/gamma(6)
-
-
-### n = 7
-integrate(function(x) log(x)/(x+1)^7, 0, Inf)
-- 274 / gamma(7)
-
-# x = exp(1i*pi);
-# - 4i*pi*I + 4*pi^2/(n-1) = 2i*pi*(2*274 - 240*log(x)/x^6)/gamma(7)
-# - 2i*I + 2*pi/(n-1) = 1i*(2*274 - 240*log(x)/x^6)/gamma(7)
-
-
-#######################
 
 ### Composite Fractions
 
@@ -778,6 +740,7 @@ integrate(function(x) log(x^n + 1)/x^(p+1), 0, Inf)
 1/p*pi/sin(pi*p/n)
 
 
+##############
 ##############
 
 ### on [0, 1]
