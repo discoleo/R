@@ -38,7 +38,13 @@ The origin of the 5700 K black-body radiation in the sun is probably '''NOT''' m
 
 The high melting points of Wolfram and Osmium and the high density of Osmium indicate a large number of metal-bond type "electrons" in the outer shells, which can interact quasi-diffusely with radiation: the black-body effect in the sun is probably produced by such atoms.
 
+The boiling points of Wolfram, Rhenium and Osmium are all around 5700 K: this may further indicate that a mixture of these metals functions as a quasi-"atomic"-black body in the sun. See also:
+:[https://github.com/discoleo/R/blob/master/Chemistry/Chemistry.NuclearStructure.wiki]
+
+:Note:
+:The structure may be more complex than "pure atoms" due to the high pressure inside the sun.
+
 :Ref. Robitaille:
-Sky Scolar. What is the Sun Made Of? Evidence from the Solar Spectrum!
+:Sky Scolar. What is the Sun Made Of? Evidence from the Solar Spectrum!
 [https://www.youtube.com/watch?v=fynuCLQp1TE]
 
