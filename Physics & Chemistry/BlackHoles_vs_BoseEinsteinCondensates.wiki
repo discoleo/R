@@ -6,6 +6,7 @@ https://github.com/discoleo/R/tree/master/Physics%20&%20Chemistry/BlackHoles_vs_
 
 
 == Theory ==
+
 '''Black Holes''' are likely a mathematical artifact:
 https://en.wikipedia.org/wiki/Division_by_zero
 
@@ -15,7 +16,7 @@ https://en.wikipedia.org/wiki/Division_by_zero
 
 '''Gravity:''' is a mass effect on polarized nuclei. The Higgs boson is also an artifact.
 
-Atomic nuclei carry de facto all mass. Gravity must therefore be directly related to the atomic nucleus. The polarized nuclei can interact in a mass effect that becomes manifest as gravity. This "gravity" obeys a similar law to Gauss law computed outside a sphere and decreases with R^2.
+Atomic nuclei carry de facto all mass. Gravity must therefore be directly related to the atomic nucleus. The polarized nuclei can interact in a mass effect that becomes manifest as gravity. This "gravity" obeys a similar law to Gauss' law computed outside a sphere and decreases with R^2.
 
 
 == History ==
@@ -27,3 +28,17 @@ Building an entire theory around a division by zero should make everyone doubt t
 Although I contacted multiple physicists with these ideas (including the late Stephen Hawkins), there was little interest in non-mainstream ideas. Such ideas were/are likely difficult to publish in the literature as well.
 
 '''Note to Wikipedia Editors:''' Nevertheless, it may be still warranted to search the literature, because of the huge impact on many important areas of physics. A Bose-Einstein condensate is a much better description than a mathematical division by zero. (The note was deleted from the Wikipedia Talk page, but is still available here.)
+
+
+= Stars =
+
+== Black-Body radiation ==
+
+The origin of the 5700 K black-body radiation in the sun is probably '''NOT''' metallic hydrogen (Ref. Robitaille). Instead, it is more likely a true metal like Wolfram or Osmium.
+
+The high melting points of Wolfram and Osmium and the high density of Osmium indicate a large number of metal-bond type "electrons" in the outer shells, which can interact quasi-diffusely with radiation: the black-body effect in the sun is probably produced by such atoms.
+
+:Ref. Robitaille:
+Sky Scolar. What is the Sun Made Of? Evidence from the Solar Spectrum!
+[https://www.youtube.com/watch?v=fynuCLQp1TE]
+
