@@ -112,6 +112,13 @@ integrate(\(x) - 3/5 * ((x + 1)^(5/3) - 1) / x, 0, 1)
 	+ 9/10 / sin(pi/3) * atan((1 + cos(pi/3)) / sin(pi/3));
 
 
+### I( log(x) / (x + 1)^(1/3) )
+integrate(\(x) log(x) / (x + 1)^(1/3), 0, 1)
+5/2 * integrate(\(x) log(x) * (x + 1)^(2/3), 0, 1)$value +
+	+ 3*2*2^(2/3)*(1/2 - 1/5) - 3*(1/2 - 1/5);
+# see above for I( log(x) * (x+1)^(2/3) );
+
+
 ### I( log(x) / (x + 1)^(2/3) )
 integrate(\(x) log(x) / (x + 1)^(2/3), 0, 1)
 4 * integrate(\(x) log(x) * (x + 1)^(1/3), 0, 1)$value +
