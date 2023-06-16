@@ -44,6 +44,43 @@ pracma::zeta(3) / p^2
 ################
 ################
 
+### I( log((x - 1) / (x + 1)) / x ) on [1, Inf]
+# Maths 505: A RIDICULOUSLY AWESOME LOG INTEGRAL!!!
+# https://www.youtube.com/watch?v=tTu6hedSlm0
+
+# numerical issue:
+integrate(\(x) log((exp(x) - 1) / (exp(x) + 1)), 0, Inf)
+integrate(\(x) log((exp(x) - 1) / (exp(x) + 1)), 0, 100)
+# alternative:
+integrate(\(x) log((x - 1) / (x + 1)) / x, 1, Inf)
+integrate(\(x) log((1 - x) / (x + 1)) / x, 0, 1)
+- pi^2/4
+
+###
+integrate(\(x) log(x) * log((1 - x) / (x + 1)) / x, 0, 1)
+7/4 * pracma::zeta(3)
+
+###
+integrate(\(x) log(x)^2 * log((1 - x) / (x + 1)) / x, 0, 1, rel.tol = 1E-8)
+15/4 * pracma::zeta(4)
+
+###
+integrate(\(x) log(x)^3 * log((1 - x) / (x + 1)) / x, 0, 1, rel.tol = 1E-8)
+93/8 * pracma::zeta(5)
+
+
+### Simple:
+integrate(\(x) log((1 - x) / (x + 1)), 0, 1)
+- 2*log(2)
+
+###
+integrate(\(x) log(x) * log((1 - x) / (x + 1)), 0, 1)
+2*log(2) - pi^2/12
+
+
+################
+################
+
 # Maths 505: Another INSANE integral!
 # https://www.youtube.com/watch?v=KEDEzVqlAYU
 
