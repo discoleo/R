@@ -32,7 +32,7 @@ Catalan = 0.915965594177219015054603514;
 # [the intermediate integral]
 
 ###
-integrate(\(x) log(x)*log(1-x^2)/x, 0, 1)
+integrate(\(x) log(x) * log(1-x^2) / x, 0, 1)
 pracma::zeta(3) / 4
 
 ###
@@ -57,16 +57,30 @@ integrate(\(x) log((1 - x) / (x + 1)) / x, 0, 1)
 - pi^2/4
 
 ###
-integrate(\(x) log(x) * log((1 - x) / (x + 1)) / x, 0, 1)
+integrate(\(x) log(x) * log((1 - x) / (1 + x)) / x, 0, 1)
 7/4 * pracma::zeta(3)
 
 ###
-integrate(\(x) log(x)^2 * log((1 - x) / (x + 1)) / x, 0, 1, rel.tol = 1E-8)
-15/4 * pracma::zeta(4)
+integrate(\(x) log(x)^2 * log((1 - x) / (1 + x)) / x, 0, 1, rel.tol = 1E-8)
+- 15/4 * pracma::zeta(4)
 
 ###
-integrate(\(x) log(x)^3 * log((1 - x) / (x + 1)) / x, 0, 1, rel.tol = 1E-8)
+integrate(\(x) log(x)^3 * log((1 - x) / (1 + x)) / x, 0, 1, rel.tol = 1E-8)
 93/8 * pracma::zeta(5)
+
+### =>
+integrate(\(x) log(x) * log(1 - x) / x, 0, 1)
+pracma::zeta(3)
+#
+integrate(\(x) log(x) * log(1 + x) / x, 0, 1)
+-3/4 * pracma::zeta(3)
+
+### =>
+integrate(\(x) log(x)^3 * log(1 - x) / x, 0, 1)
+6 * pracma::zeta(5)
+#
+integrate(\(x) log(x)^3 * log(1 + x) / x, 0, 1)
+-45/8 * pracma::zeta(5)
 
 
 ### Simple:
