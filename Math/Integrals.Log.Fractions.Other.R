@@ -82,6 +82,11 @@ integrate(\(x) log(x)^3 * log(1 - x) / x, 0, 1)
 integrate(\(x) log(x)^3 * log(1 + x) / x, 0, 1)
 -45/8 * pracma::zeta(5)
 
+### Generalized:
+p = sqrt(5)
+integrate(\(x) abs(log(x))^p * log(1 - x) / x, 0, 1)
+- gamma(p+1) * pracma::zeta(p+2)
+
 
 ### Simple:
 integrate(\(x) log((1 - x) / (x + 1)), 0, 1)
