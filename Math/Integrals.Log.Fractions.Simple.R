@@ -162,3 +162,14 @@ integrate(\(x) 3*(x^4 - x^2) / (x^3 - 1), 1, 2^(1/3))
 integrate(\(x) ((x+1)^(5/3) - 1)/x, 0, 1)
 integrate(\(x) 3*(x^7 - x^2) / (x^3 - 1), 1, 2^(1/3))
 
+
+##################
+##################
+
+### I( log(1 - x) / x ) on [0, 1/2]
+# see special values of polylog function:
+# https://en.wikipedia.org/wiki/Polylogarithm
+
+integrate(\(x) log(1-x) / x, 0, 1/2)
+- pi^2/12 + log(2)^2 / 2
+
