@@ -94,6 +94,13 @@ integrate(\(x) abs(log(x))^p * log(1 - x^n) / x, 0, 1, rel.tol=1E-8)
 - gamma(p+1) * pracma::zeta(p+2) / n^(p+1)
 
 
+### I( |log(x)|^p * log(1 + x) / x )
+# workout of log(1 - x^2) =>
+p = sqrt(7)
+integrate(\(x) abs(log(x))^p * log(1 + x) / x, 0, 1, rel.tol=1E-8)
+gamma(p+1) * pracma::zeta(p+2) * (1 - 1/2^(p+1))
+
+
 ### Simple:
 integrate(\(x) log((1 - x) / (x + 1)), 0, 1)
 - 2*log(2)
