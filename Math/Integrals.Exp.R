@@ -15,6 +15,35 @@ integrate(\(x) x^p * exp(x), 0, 1, rel.tol = 1E-8)
 exp(1) - integrate(\(x) exp(x^(1/p)), 0, 1, rel.tol = 1E-8)$value
 
 
+###
+gamma.part = function(up, n=2, rel.tol=1E-8) {
+	integrate(\(x) exp(x^n), 0, up, rel.tol = rel.tol)$value;
+}
+
+#
+integrate(\(x) x^(1/2) * exp(x^2), 0, 1, rel.tol = 1E-8)
+integrate(\(x) 2*x^2 * exp(x^4), 0, 1, rel.tol = 1E-8)
+# direct:
+integrate(\(x) 2/3 * exp(x^(2/(1/2 + 1))), 0, 1, rel.tol = 1E-8)
+
+# Complicated:
+# Note: up = x^2;
+gamma.part(1) - integrate(\(x) sapply(x^2, gamma.part), 0, 1)$value;
+# Note:
+gamma.part(1, 2) + 2/3 * gamma.part(1, 2/3) # == exp(1)
+
+###
+p = sqrt(3)
+integrate(\(x) x^p * exp(x^2), 0, 1, rel.tol = 1E-8)
+integrate(\(x) 1/(p+1) * exp(x^(2/(p+1))), 0, 1, rel.tol = 1E-8)
+gamma.part(1, n = 2/(p+1)) / (p+1)
+
+#
+p = sqrt(3); n = sqrt(5);
+integrate(\(x) x^p * exp(x^n), 0, 1, rel.tol = 1E-8)
+gamma.part(1, n = n/(p+1)) / (p+1)
+
+
 ####################
 ####################
 
