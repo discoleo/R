@@ -2,6 +2,7 @@
 
 ### Constants
 Catalan = 0.915965594177219015054603514;
+Euler   = 0.57721566490153286060651209008240243079;
 
 
 ##########################
@@ -181,6 +182,7 @@ sum( 1/(8*id+1)^3, 1/(8*id+3)^3)
 	+ pi^3 * (1 + 3*sqrt(2)/4)/(32*2)
 
 # x = 1/8
+# but redundant, as == f(psi(2, k/16));
 id =  seq(0, 40000)
 sum((-1)^id * sin(pi/8) / (8*id+1)^3) +
 	+ sum((-1)^id * sin(3*pi/8) / (8*id+3)^3) +
@@ -194,4 +196,13 @@ sum((-1)^id * sin(pi*3/8) / (8*id+1)^3) +
 	+ sum((-1)^id * sin(3*pi/8) / (8*id+7)^3)
 pi^3 * 15 / (64*8)
 
-# TODO
+# Note: the formulas above can be composed using all versions of:
+k = 1
+(pracma::psi(2, k/16) - pracma::psi(2, 1 - k/16))/2
+- pi^3 * cos(k*pi/16) / sin(k*pi/16)^3
+#
+(pracma::zeta(3) - pracma::psi(2, k/16) / 2 - k^3) / 16^3
+sum(1/(16*id + k)^3)
+
+# TODO: find solution;
+
