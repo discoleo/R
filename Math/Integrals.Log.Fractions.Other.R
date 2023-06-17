@@ -99,6 +99,17 @@ integrate(\(x) abs(log(x))^p * log(1 - x^n) / x, 0, 1, rel.tol=1E-8)
 p = sqrt(7)
 integrate(\(x) abs(log(x))^p * log(1 + x) / x, 0, 1, rel.tol=1E-8)
 gamma(p+1) * pracma::zeta(p+2) * (1 - 1/2^(p+1))
+#
+n = sqrt(5)
+integrate(\(x) abs(log(x))^p * log(1 + x^n) / x, 0, 1, rel.tol=1E-8)
+gamma(p+1) * pracma::zeta(p+2) * (1 - 1/2^(p+1)) / n^(p+1)
+
+#
+integrate(\(x) abs(log(x))^p * log(1 + x + x^2) / x, 0, 1, rel.tol=1E-8)
+gamma(p+1) * pracma::zeta(p+2) * (1 - 1/3^(p+1))
+#
+integrate(\(x) abs(log(x))^p * log(1 - x + x^2) / x, 0, 1, rel.tol=1E-8)
+- gamma(p+1) * pracma::zeta(p+2) * (1 - 1/2^(p+1)) * (1 - 1/3^(p+1))
 
 
 ### Simple:
