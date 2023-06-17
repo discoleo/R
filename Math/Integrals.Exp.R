@@ -2,6 +2,22 @@
 
 constEuler = 0.57721566490153286060651209008240243079;
 
+
+####################
+####################
+
+### Basics
+
+### I( x^p * exp(x) ) on [0, 1]
+# using an Erf1-generalization:
+p = sqrt(3)
+integrate(\(x) x^p * exp(x), 0, 1, rel.tol = 1E-8)
+exp(1) - integrate(\(x) exp(x^(1/p)), 0, 1, rel.tol = 1E-8)$value
+
+
+####################
+####################
+
 ### I( (1 - exp(-x) - exp(-1/x)) / x )
 # Michael Penn: if you gamma be my constant, you gamma solve this integral.
 # https://www.youtube.com/watch?v=heIrFaP05Lk
