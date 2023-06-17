@@ -137,3 +137,29 @@ sum(1/(12*id + 1)^3, - 1/(12*id + 11)^3)
 sum(1/(12*id + 5)^3, - 1/(12*id + 7)^3)
 (pi^3 * cos(5*pi/12) / sin(5*pi/12)^3 + (12/5)^3 - (12/7)^3)/2/12^3
 
+
+##########################
+##########################
+
+### sum( (-1)^j / (2*j + 1)^p )
+# Flammable Maths: An AMAZING Journey of Series Evaluation!
+# Calculating Euler's Sum! [ Series pi^3/32 (-1)^k/(2k+1)^3 ]
+# https://www.youtube.com/watch?v=LQi7BMWU_1Y
+# - could benefit from streamlining the presentation
+#   and correcting the mistakes (odd function);
+
+###
+id = seq(0, 400000)
+sum((-1)^id / (2*id+1)^1)
+pi/4
+
+###
+id = seq(0, 40000)
+sum((-1)^id / (2*id+1)^3)
+pi^3/32
+
+###
+sum((-1)^id / (2*id+1)^5)
+5/1536 * pi^5
+
+
