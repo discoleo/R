@@ -148,6 +148,9 @@ sum(1/(12*id + 5)^3, - 1/(12*id + 7)^3)
 # - could benefit from streamlining the presentation
 #   and correcting the mistakes (odd function);
 
+# sum( (1 - (-1)^k) * sin(k*pi*x) ) =
+# (x - x^2) * pi^3 / 4;
+
 ###
 id = seq(0, 400000)
 sum((-1)^id / (2*id+1)^1)
@@ -163,3 +166,32 @@ sum((-1)^id / (2*id+1)^5)
 5/1536 * pi^5
 
 
+###
+# x = 1/4 =>
+# - see also previous section for an alternative approach based on psi(2, 1/4);
+sum((-1)^id / (4*id+1)^3) + sum((-1)^id / (4*id+3)^3)
+pi^3 * 3*sqrt(2)/(32*4)
+
+# =>
+sum( 1/(8*id+1)^3, -1/(8*id+7)^3 )
+pi^3 * (1 + 3*sqrt(2)/4)/(32*2)
+# =>
+sum( 1/(8*id+1)^3, 1/(8*id+3)^3)
+28/64 * pracma::zeta(3) - pi^3/128 * cos(pi/4) / sin(pi/4)^3 +
+	+ pi^3 * (1 + 3*sqrt(2)/4)/(32*2)
+
+# x = 1/8
+id =  seq(0, 40000)
+sum((-1)^id * sin(pi/8) / (8*id+1)^3) +
+	+ sum((-1)^id * sin(3*pi/8) / (8*id+3)^3) +
+	+ sum((-1)^id * sin(3*pi/8) / (8*id+5)^3) +
+	+ sum((-1)^id * sin(pi/8) / (8*id+7)^3)
+pi^3 * 7 / (64*8)
+# x = 3/8
+sum((-1)^id * sin(pi*3/8) / (8*id+1)^3) +
+	- sum((-1)^id * sin(pi/8) / (8*id+3)^3) +
+	- sum((-1)^id * sin(pi/8) / (8*id+5)^3) +
+	+ sum((-1)^id * sin(3*pi/8) / (8*id+7)^3)
+pi^3 * 15 / (64*8)
+
+# TODO
