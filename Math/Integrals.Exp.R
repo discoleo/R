@@ -224,10 +224,16 @@ integrate(\(x) atan(x) / (exp(2*pi*x) - 1), 0, Inf)
 integrate(\(x) atan(x) / (exp(x) - 1), 0, Inf)
 pi*log(gamma(1/(2*pi))) - (pi - 1/2)*log(2*pi) + 1/2
 
-###
+### I( atan(x) / (exp(n*x) - 1) )
 n = sqrt(3)
 integrate(\(x) atan(x) / (exp(n*x) - 1), 0, Inf)
 log(gamma(n/(2*pi))) * pi/n + (1 - pi/n)/2*log(2*pi/n) - log(2*pi) * pi/(2*n) + 1/2
+
+### I( atan(x) / (exp(n*x) + 1) )
+n = sqrt(3)
+integrate(\(x) atan(x) / (exp(n*x) + 1), 0, Inf)
+log( gamma(n/(2*pi)) / gamma(n/pi) ) * pi/n +
+	- 1/2*log(pi/n) + (1 - pi/n)/2*log(2) - 1/2;
 
 
 ### Transformations
