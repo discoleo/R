@@ -246,3 +246,13 @@ integrate(\(x) log(exp(x) - 1) / (x^2 + 1) - exp(-1/x)/x, 0, Inf)
 # numerically problematic:
 integrate(\(x) log(exp(x) - 1) / (x^2 + 1) - exp(-x)/x, 0, Inf)
 
+
+###
+# x => log(y)
+integrate(\(x) atan(x) / (exp(x) - 1), 0, Inf)
+integrate(\(x) atan(log(x)) / (x*(x - 1)), 1, Inf)
+integrate(\(x) atan(log(x)) / (x - 1), 0, 1)
+integrate(\(x) - log(1-x) / (x * (log(x)^2 + 1)), 0, 1)
+integrate(\(x) - log(1 - exp(-x)) / (x^2 + 1), 0, Inf) # redundant
+pi*log(gamma(1/(2*pi))) - (pi - 1/2)*log(2*pi) + 1/2
+
