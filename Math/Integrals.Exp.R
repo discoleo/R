@@ -256,3 +256,17 @@ integrate(\(x) - log(1-x) / (x * (log(x)^2 + 1)), 0, 1)
 integrate(\(x) - log(1 - exp(-x)) / (x^2 + 1), 0, Inf) # redundant
 pi*log(gamma(1/(2*pi))) - (pi - 1/2)*log(2*pi) + 1/2
 
+### I( atan(x) / (exp(x) + 1) )
+integrate(\(x) atan(x) / (exp(2*x) - 1), 0, Inf)
+log(gamma(1/pi)) * pi/2 + (1 - pi/2)/2*log(pi) - log(2*pi) * pi/4 + 1/2
+# =>
+integrate(\(x) atan(x) / (exp(x) + 1), 0, Inf)
+integrate(\(x) atan(log(x)) / (x*(x + 1)), 1, Inf)
+integrate(\(x) - atan(log(x)) / (x + 1), 0, 1)
+integrate(\(x) log(x + 1) / (x*(log(x)^2 + 1)), 0, 1)
+pi*log( gamma(1/(2*pi)) / gamma(1/pi) ) +
+	- 1/2*log(pi) - pi/2*log(2) + 1/2*log(2) - 1/2;
+
+# TODO:
+# - find any utility?
+
