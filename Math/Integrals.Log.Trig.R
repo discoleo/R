@@ -43,6 +43,15 @@ integrate(function(x) log(cos(x) + sin(x)), 0, pi/4)
 - pi/8*log(2) + Catalan/2
 
 
+### I( log(sin(x)) ) on [0, pi/8]
+# TODO: C8;
+C8 = integrate(\(x) log(x) / (x^2 + 1), 0, tan(pi/8))$value
+integrate(function(x) log(sin(x)), 0, pi/8)
+- pi/8*log(2) - Catalan/8 + C8/2
+#
+integrate(function(x) log(cos(x)), 0, pi/8)
+- pi/8*log(2) - Catalan/8 - C8/2
+
 
 #################
 
