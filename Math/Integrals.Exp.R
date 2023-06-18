@@ -242,6 +242,13 @@ integrate(\(x) - atan(x) / (exp(x) - 1), 0, Inf)
 integrate(\(x) log(1 - exp(-x)) / (x^2 + 1), 0, Inf)
 integrate(\(x) log(1 - exp(-1/x)) / (x^2 + 1), 0, Inf)
 
+### I( log((exp(n*x) - 1)/(exp(n*x) + 1)) / (x^2 + 1) )
+n = sqrt(5) - sqrt(3); # numerical problems for n > 1.5
+integrate(\(x) - log((exp(n*x) - 1)/(exp(n*x) + 1)) / (x^2 + 1), 0, Inf)
+log( gamma(n/(2*pi))^2 / gamma(n/pi) ) * pi +
+	- pi*log(pi/n) - pi/2*log(n) + (n - 3/2*pi) * log(2);
+
+
 ### Perverse Transformations
 integrate(\(x) log(exp(x) - 1) / (x^2 + 1) - x/(x^2+2), 0, Inf)
 log(2)/2 - pi*log(gamma(1/(2*pi))) + (pi - 1/2)*log(2*pi) - 1/2
