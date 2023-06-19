@@ -66,6 +66,18 @@ n = sqrt(5)
 integrate(\(x) 1 / (exp(x^n) + 1), 0, Inf)
 gamma(1/n) * (1 - 2^(1-1/n)) * pracma::zeta(1/n) / n;
 
+### Generalization:
+n = sqrt(5); p = sqrt(3);
+integrate(\(x) x^p / (exp(x^n) + 1), 0, Inf)
+gamma((p+1)/n) * (1 - 2^(1-(p+1)/n)) * pracma::zeta((p+1)/n) / n;
+
+# - see also:
+#   I( x^p / (exp(x) + 1) );
+#   I( x^p / (exp(x) - 1) );
+#   in file: Integrals.Gamma.Other.R;
+
+# TODO: move here;
+
 
 #########################
 #########################
@@ -247,6 +259,9 @@ n = sqrt(5) - sqrt(3); # numerical problems for n > 1.5
 integrate(\(x) - log((exp(n*x) - 1)/(exp(n*x) + 1)) / (x^2 + 1), 0, Inf)
 log( gamma(n/(2*pi))^2 / gamma(n/pi) ) * pi +
 	- pi*log(pi/n) - pi/2*log(n) + (n - 3/2*pi) * log(2);
+
+# - see also: I( x^p * log((exp(x) - 1) / (exp(x) + 1)) )
+#   in file: Integrals.Gamma.Other.R;
 
 
 ### Perverse Transformations

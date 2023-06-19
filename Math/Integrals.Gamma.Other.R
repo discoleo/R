@@ -30,6 +30,13 @@ integrate(\(x) x^p / (exp(x) - 1), 0, Inf, rel.tol=1E-8)
 gamma(p + 1) * pracma::zeta(p + 1)
 
 
+### I( x^p * log((exp(x) - 1) / (exp(x) + 1)) )
+p = sqrt(5);
+# numerical issues: upper -> Inf;
+integrate(\(x) x^p * log((exp(x) - 1) / (exp(x) + 1)), 0, 200, rel.tol=1E-8)
+- gamma(p + 1) * pracma::zeta(p + 2) * (2 - 1/2^(p+1))
+
+
 ####################
 ####################
 
