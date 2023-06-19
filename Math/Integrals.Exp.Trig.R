@@ -81,6 +81,13 @@ integrate(\(x) x/a * atan(x/a) - 1/2*log(x^2 + a^2), 0, 1)
 integrate(\(x) sin(x) / (exp(x) - 1), 0, Inf)
 pi/2 / tanh(pi) - 1/2
 (digamma((1/2+1)/2) - digamma(1/4))/2 - 1/2
+- (pracma::psi(0, 1i) - pracma::psi(0, - 1i)) * 1i / 2 - 1
+
+### I( sin(k*x) / (exp(x) - 1) ) on [0, Inf]
+k = sqrt(3)
+integrate(\(x) sin(k*x) / (exp(x) - 1), 0, Inf)
+- (pracma::psi(0, 1i*k) - pracma::psi(0, - 1i*k)) * 1i / 2 - 1/k;
+
 
 ###
 integrate(\(x) sin(x) / (exp(x) * (exp(x) - 1)), 0, Inf)
