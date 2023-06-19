@@ -79,10 +79,17 @@ n = sqrt(5)
 integrate(\(x) 1 / (exp(x^n) + 1), 0, Inf)
 gamma(1/n) * (1 - 2^(1-1/n)) * pracma::zeta(1/n) / n;
 
-### Generalization:
+### Generalizations:
+
+### I( x^p / (exp(x^n) + 1) )
 n = sqrt(5); p = sqrt(3);
 integrate(\(x) x^p / (exp(x^n) + 1), 0, Inf)
 gamma((p+1)/n) * (1 - 2^(1-(p+1)/n)) * pracma::zeta((p+1)/n) / n;
+
+### I( x^p / (exp(x^n) - 1) )
+n = sqrt(5); p = sqrt(3);
+integrate(\(x) x^p / (exp(x^n) - 1), 0, Inf)
+gamma((p+1)/n) * pracma::zeta((p+1)/n) / n;
 
 # - see also:
 #   I( x^p / (exp(x) + 1) );
