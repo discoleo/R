@@ -1,6 +1,10 @@
 
 
 
+#####################
+
+### Simple
+
 ### I( sin(x)^n / x^n * exp(-x) )
 # Maths 505: Feynman's technique is incredibly overpowered!
 # https://www.youtube.com/watch?v=_d1PJiIm-lE
@@ -64,4 +68,74 @@ a = sqrt(3)
 # x^2/(2*a) * atan(x/a) - a/2 * atan(x/a) - 1/2*x*log(x^2 + a^2) + x/2;
 integrate(\(x) x/a * atan(x/a) - 1/2*log(x^2 + a^2), 0, 1)
 1/(2*a) * atan(1/a) - a/2 * atan(1/a) - 1/2*log(a^2 + 1) + 1/2
+
+
+#####################
+#####################
+
+### I( sin(x) / (exp(x) - 1))
+# Maths 505: One of the coolest integrals on YouTube!
+# https://www.youtube.com/watch?v=I7a-6VwKhgo
+
+###
+integrate(\(x) sin(x) / (exp(x) - 1), 0, Inf)
+pi/2 / tanh(pi) - 1/2
+(digamma((1/2+1)/2) - digamma(1/4))/2 - 1/2
+
+###
+integrate(\(x) sin(x) / (exp(x) * (exp(x) - 1)), 0, Inf)
+pi/2 / tanh(pi) - 1
+
+###
+integrate(\(x) x * sin(x) / (exp(x) - 1), 0, Inf)
+id = seq(10000)
+2 * sum(id/(id^2 + 1)^2)
+# TODO: see file: Sums.Fractions.Higher.R;
+(pracma::psi(1, 1i) - pracma::psi(1, - 1i)) * 1i / 2
+
+
+### I( x * sin(k*x) / (exp(x) - 1) )
+integrate(\(x) x * sin(2*x) / (exp(x) - 1), 0, Inf)
+(pracma::psi(1, 2i) - pracma::psi(1, - 2i)) * 1i / 2
+#
+k = sqrt(2)
+integrate(\(x) x * sin(k*x) / (exp(x) - 1), 0, Inf)
+(pracma::psi(1, k*1i) - pracma::psi(1, - k*1i)) * 1i / 2
+
+
+###
+n = sqrt(3); # n >= 0 !!!
+integrate(\(x) x^n * sin(x) / (exp(x) - 1), 0, Inf)
+# TODO: formula for sum();
+id = seq(10000)
+gamma(n+1) * sum(sin((n+1)*pi/2 - (n+1)*atan(id)) / (id^2 + 1)^((n + 1)/2))
+
+
+### Derivation:
+integrate(\(x) sin(x) / exp(x), 0, Inf)
+1/2
+#
+integrate(\(x) x*sin(x) / exp(x), 0, Inf)
+1/2
+#
+integrate(\(x) x^2*sin(x) / exp(x), 0, Inf)
+1/2
+#
+sapply(seq(9), \(n) round(integrate(\(x) x^n * sin(x) / exp(x), 0, Inf)$value, 3))
+sapply(seq(9), \(n) Im(gamma(n + 1)/(1-1i)^(n + 1)))
+#
+sapply(seq(9), \(n) round(integrate(\(x) x * sin(x) / exp(n*x), 0, Inf)$value, 5))
+sapply(seq(9), \(n) round(Im(gamma(2)/(n - 1i)^(1 + 1)), 5))
+sapply(seq(9), \(n) round(2*n*gamma(2)/(n^2 + 1)^(1 + 1), 5))
+
+###
+k = sqrt(5)
+integrate(\(x) x * sin(x) / exp(k*x), 0, Inf)
+2*k*gamma(2)/(k^2 + 1)^(1 + 1)
+
+###
+k = sqrt(5); n = sqrt(3)
+integrate(\(x) x^n * sin(x) / exp(k*x), 0, Inf)
+Im(gamma(n+1)/(k - 1i)^(n + 1))
+gamma(n+1) / (k^2 + 1)^((n + 1)/2) * sin((n+1)*pi/2 - (n+1)*atan(k))
 
