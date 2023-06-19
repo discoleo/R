@@ -90,7 +90,8 @@ k = sqrt(3)
 integrate(\(x) sin(k*x) / (exp(x) - 1), 0, Inf)
 - (pracma::psi(0, 1i*k + 1) - pracma::psi(0, - 1i*k + 1)) * 1i / 2;
 - (pracma::psi(0, 1i*k) - pracma::psi(0, - 1i*k)) * 1i / 2 - 1/k;
-#
+
+### I( sin(x) / (exp(k*x) - 1) ) on [0, Inf]
 integrate(\(x) sin(x) / (exp(k*x) - 1), 0, Inf)
 - (pracma::psi(0, 1i/k) - pracma::psi(0, - 1i/k)) * 1i / (2*k) - 1;
 
@@ -149,6 +150,15 @@ integrate(\(x) x^n * sin(x) / (exp(x) - 1), 0, Inf)
 n = 4; k = sqrt(3)
 integrate(\(x) x^n * sin(k*x) / (exp(x) - 1), 0, Inf)
 - (pracma::psi(n, 1i*k + 1) - pracma::psi(n, - 1i*k + 1)) * 1i / 2
+
+
+### Pow of sin
+
+### n = ODD
+n = 5; k = sqrt(3)
+integrate(\(x) x^n * sin(k*x)^3 / (exp(x) - 1), 0, Inf)
+(pracma::psi(n, 1i*k) - pracma::psi(n, - 1i*k)) * 3i / 8 +
+	- (pracma::psi(n, 3i*k) - pracma::psi(n, - 3i*k)) * 1i / 8
 
 
 ### Derivation:
