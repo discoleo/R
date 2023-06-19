@@ -87,13 +87,22 @@ pi/2 / tanh(pi) - 1/2
 k = sqrt(3)
 integrate(\(x) sin(k*x) / (exp(x) - 1), 0, Inf)
 - (pracma::psi(0, 1i*k) - pracma::psi(0, - 1i*k)) * 1i / 2 - 1/k;
+#
+integrate(\(x) sin(x) / (exp(k*x) - 1), 0, Inf)
+- (pracma::psi(0, 1i/k) - pracma::psi(0, - 1i/k)) * 1i / (2*k) - 1;
 
 
-###
+### I( sin(x) / (exp(k*x) + 1) ) on [0, Inf]
+integrate(\(x) sin(x) / (exp(k*x) + 1), 0, Inf)
+(pracma::psi(0, 1i/(2*k)) - pracma::psi(0, - 1i/(2*k))) * 1i / (2*k) +
+	- (pracma::psi(0, 1i/k) - pracma::psi(0, - 1i/k)) * 1i / (2*k) + 1;
+
+
+### Other:
 integrate(\(x) sin(x) / (exp(x) * (exp(x) - 1)), 0, Inf)
 pi/2 / tanh(pi) - 1
 
-###
+### x^p
 integrate(\(x) x * sin(x) / (exp(x) - 1), 0, Inf)
 id = seq(10000)
 2 * sum(id/(id^2 + 1)^2)
