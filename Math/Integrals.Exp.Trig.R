@@ -160,6 +160,18 @@ integrate(\(x) x^n * sin(k*x)^3 / (exp(x) - 1), 0, Inf)
 (pracma::psi(n, 1i*k) - pracma::psi(n, - 1i*k)) * 3i / 8 +
 	- (pracma::psi(n, 3i*k) - pracma::psi(n, - 3i*k)) * 1i / 8
 
+###
+n = 5; k = sqrt(3)
+integrate(\(x) x^n * sin(x)^3 / (exp(k*x) - 1), 0, Inf)
+(pracma::psi(n, 1i/k) - pracma::psi(n, - 1i/k)) * 3i / (8*k^(n+1)) +
+	- (pracma::psi(n, 3i/k) - pracma::psi(n, - 3i/k)) * 1i / (8*k^(n+1))
+#
+integrate(\(x) x^n * sin(x)^3 / (exp(k*x) + 1), 0, Inf)
+(pracma::psi(n, 1i/k) - pracma::psi(n, - 1i/k)) * 3i / (8*k^(n+1)) +
+	- (pracma::psi(n, 3i/k) - pracma::psi(n, - 3i/k)) * 1i / (8*k^(n+1)) +
+	- (pracma::psi(n, 1i/(2*k)) - pracma::psi(n, - 1i/(2*k))) * 3i / (4*(2*k)^(n+1)) +
+	+ (pracma::psi(n, 3i/(2*k)) - pracma::psi(n, - 3i/(2*k))) * 1i / (4*(2*k)^(n+1))
+
 
 ### Derivation:
 # Decomposition into sum:
