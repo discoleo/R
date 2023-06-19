@@ -110,12 +110,32 @@ integrate(\(x) x * sin(k*x) / (exp(x) - 1), 0, Inf)
 (pracma::psi(1, k*1i) - pracma::psi(1, - k*1i)) * 1i / 2
 
 
-###
+### Generalization:
 n = sqrt(3); # n >= 0 !!!
 integrate(\(x) x^n * sin(x) / (exp(x) - 1), 0, Inf)
 # TODO: formula for sum();
 id = seq(10000)
 gamma(n+1) * sum(sin((n+1)*pi/2 - (n+1)*atan(id)) / (id^2 + 1)^((n + 1)/2))
+
+
+### n = ODD
+n = 3;
+integrate(\(x) x^n * sin(x) / (exp(x) - 1), 0, Inf)
+(pracma::psi(n, 1i) - pracma::psi(n, - 1i)) * 1i / 2
+#
+n = 5; k = sqrt(3)
+integrate(\(x) x^n * sin(k*x) / (exp(x) - 1), 0, Inf)
+(pracma::psi(n, 1i*k) - pracma::psi(n, - 1i*k)) * 1i / 2
+
+
+### n = EVEN
+
+# TODO: ???
+n = 2;
+integrate(\(x) x^n * sin(x) / (exp(x) - 1), 0, Inf)
+#
+n = 4; k = sqrt(3)
+integrate(\(x) x^n * sin(k*x) / (exp(x) - 1), 0, Inf)
 
 
 ### Derivation:
