@@ -139,3 +139,46 @@ integrate(\(x) x^n * sin(x) / exp(k*x), 0, Inf)
 Im(gamma(n+1)/(k - 1i)^(n + 1))
 gamma(n+1) / (k^2 + 1)^((n + 1)/2) * sin((n+1)*pi/2 - (n+1)*atan(k))
 
+
+#########################
+#########################
+
+### Trig - Exp
+
+### I( cos(x) / (exp(1/x) + 1) )
+# Michael Penn: is this integration trick TOO POWERFUL?
+# https://www.youtube.com/watch?v=PX2QXILRgsc
+
+###
+lim = 1
+integrate(\(x) cos(x) / (exp(1/x) + 1), -lim, lim)
+sin(lim)
+
+### Various Variants:
+lim = sqrt(pi)
+integrate(\(x) 1 / (exp(1/x) + 1), -lim, lim)
+lim
+
+###
+lim = 1
+integrate(\(x) cos(x)^2 / (exp(1/x) + 1), -lim, lim)
+sin(2*lim) / 4 + lim/2
+
+###
+lim = sqrt(pi)
+integrate(\(x) sin(x)^2 / (exp(1/x) + 1), -lim, lim)
+lim/2 - sin(2*lim) / 4
+
+
+### Variants: exp() - 1
+
+###
+lim = sqrt(pi)
+integrate(\(x) 1 / (exp(1/x) - 1), -lim, lim)
+- lim
+
+###
+lim = sqrt(pi)
+integrate(\(x) cos(x) / (exp(1/x) - 1), -lim, lim)
+- sin(lim)
+

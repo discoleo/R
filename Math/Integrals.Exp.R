@@ -9,9 +9,11 @@ constEuler = 0.57721566490153286060651209008240243079;
 #    I( atan(x) / (exp(x) + 1) )
 #    to new file: Integrals.Exp.Advanced.R;
 # - [refactor] moved:
-#    I( sin(x) / (exp(x) - 1) ) and
+#    I( sin(x) / (exp(x) - 1) )
 #    I( x * sin(k*x) / (exp(x) - 1) )
-#    to new file: Integrals.Exp.Trig.R;
+#    I( cos(x) / (exp(1/x) - 1) )
+#    I( cos(x) / (exp(1/x) + 1) )
+#    to file: Integrals.Exp.Trig.R;
 
 
 ####################
@@ -88,49 +90,6 @@ gamma((p+1)/n) * (1 - 2^(1-(p+1)/n)) * pracma::zeta((p+1)/n) / n;
 #   in file: Integrals.Gamma.Other.R;
 
 # TODO: move here;
-
-
-#########################
-#########################
-
-### Trig - Exp
-
-### I( cos(x) / (exp(1/x) + 1) )
-# Michael Penn: is this integration trick TOO POWERFUL?
-# https://www.youtube.com/watch?v=PX2QXILRgsc
-
-###
-lim = 1
-integrate(\(x) cos(x) / (exp(1/x) + 1), -lim, lim)
-sin(lim)
-
-### Various Variants:
-lim = sqrt(pi)
-integrate(\(x) 1 / (exp(1/x) + 1), -lim, lim)
-lim
-
-###
-lim = 1
-integrate(\(x) cos(x)^2 / (exp(1/x) + 1), -lim, lim)
-sin(2*lim) / 4 + lim/2
-
-###
-lim = sqrt(pi)
-integrate(\(x) sin(x)^2 / (exp(1/x) + 1), -lim, lim)
-lim/2 - sin(2*lim) / 4
-
-
-### Variants: exp() - 1
-
-###
-lim = sqrt(pi)
-integrate(\(x) 1 / (exp(1/x) - 1), -lim, lim)
-- lim
-
-###
-lim = sqrt(pi)
-integrate(\(x) cos(x) / (exp(1/x) - 1), -lim, lim)
-- sin(lim)
 
 
 #####################
