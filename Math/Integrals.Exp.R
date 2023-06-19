@@ -101,13 +101,6 @@ integrate(\(x) x^p / (exp(x) - 1), 0, Inf, rel.tol=1E-8)
 gamma(p + 1) * pracma::zeta(p + 1)
 
 
-### I( x^p * log((exp(x) - 1) / (exp(x) + 1)) )
-p = sqrt(5);
-# numerical issues: upper -> Inf;
-integrate(\(x) x^p * log((exp(x) - 1) / (exp(x) + 1)), 0, 200, rel.tol=1E-8)
-- gamma(p + 1) * pracma::zeta(p + 2) * (2 - 1/2^(p+1))
-
-
 #########################
 
 ### I( 1 / (exp(x^n) + 1) )
@@ -130,12 +123,15 @@ n = sqrt(5); p = sqrt(3);
 integrate(\(x) x^p / (exp(x^n) - 1), 0, Inf)
 gamma((p+1)/n) * pracma::zeta((p+1)/n) / n;
 
-# - see also:
-#   I( x^p / (exp(x) + 1) );
-#   I( x^p / (exp(x) - 1) );
-#   in file: Integrals.Gamma.Other.R;
 
-# TODO: move here;
+### Transforms
+
+### I( x^p * log((exp(x) - 1) / (exp(x) + 1)) )
+p = sqrt(5);
+# numerical issues: upper -> Inf;
+integrate(\(x) x^p * log((exp(x) - 1) / (exp(x) + 1)), 0, 200, rel.tol=1E-8)
+- gamma(p + 1) * pracma::zeta(p + 2) * (2 - 1/2^(p+1))
+
 
 
 #####################
