@@ -79,6 +79,8 @@ integrate(\(x) x/a * atan(x/a) - 1/2*log(x^2 + a^2), 0, 1)
 
 ###
 integrate(\(x) sin(x) / (exp(x) - 1), 0, Inf)
+- (pracma::psi(0, 1i + 1) - pracma::psi(0, - 1i + 1)) * 1i / 2
+#
 pi/2 / tanh(pi) - 1/2
 (digamma((1/2+1)/2) - digamma(1/4))/2 - 1/2
 - (pracma::psi(0, 1i) - pracma::psi(0, - 1i)) * 1i / 2 - 1
@@ -86,6 +88,7 @@ pi/2 / tanh(pi) - 1/2
 ### I( sin(k*x) / (exp(x) - 1) ) on [0, Inf]
 k = sqrt(3)
 integrate(\(x) sin(k*x) / (exp(x) - 1), 0, Inf)
+- (pracma::psi(0, 1i*k + 1) - pracma::psi(0, - 1i*k + 1)) * 1i / 2;
 - (pracma::psi(0, 1i*k) - pracma::psi(0, - 1i*k)) * 1i / 2 - 1/k;
 #
 integrate(\(x) sin(x) / (exp(k*x) - 1), 0, Inf)
@@ -123,6 +126,7 @@ integrate(\(x) x * sin(k*x) / (exp(x) - 1), 0, Inf)
 n = sqrt(3); # n >= 0 !!!
 integrate(\(x) x^n * sin(x) / (exp(x) - 1), 0, Inf)
 # TODO: formula for sum();
+# [done using polygamma function]
 id = seq(10000)
 gamma(n+1) * sum(sin((n+1)*pi/2 - (n+1)*atan(id)) / (id^2 + 1)^((n + 1)/2))
 
@@ -138,16 +142,17 @@ integrate(\(x) x^n * sin(k*x) / (exp(x) - 1), 0, Inf)
 
 
 ### n = EVEN
-
-# TODO: ???
 n = 2;
 integrate(\(x) x^n * sin(x) / (exp(x) - 1), 0, Inf)
+- (pracma::psi(n, 1i + 1) - pracma::psi(n, - 1i + 1)) * 1i / 2
 #
 n = 4; k = sqrt(3)
 integrate(\(x) x^n * sin(k*x) / (exp(x) - 1), 0, Inf)
+- (pracma::psi(n, 1i*k + 1) - pracma::psi(n, - 1i*k + 1)) * 1i / 2
 
 
 ### Derivation:
+# Decomposition into sum:
 integrate(\(x) sin(x) / exp(x), 0, Inf)
 1/2
 #
