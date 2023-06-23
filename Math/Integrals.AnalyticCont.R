@@ -126,7 +126,8 @@ nspSum = function(x, p=7/8, N = 100) {
 	#	sum(p^id - p^(x + id));
 	# });
 	# exact formula:
-	p0 = (1 - p^N) / (1 - p);
+	# p0 = (1 - p^N) / (1 - p);
+	p0 = 1 / (1 - p);
 	(1-p)^2 * p0 * p * (1 - p^x);
 }
 nspSum0 = function(s, p=7/8) {
@@ -138,11 +139,6 @@ nspSum0.old = function(s, p=7/8) {
 	r  = sum(p^id);
 	(1-p)^2 * r;
 }
-
-px = c(1,5,10,15);
-curve(nspSum(x), xlim=c(0, 30), ylim=c(0, 0.2))
-points(px, sapply(px, nspSum0.old), col="blue")
-points(px, sapply(px, nspSum0), col="red")
 
 
 ####################
