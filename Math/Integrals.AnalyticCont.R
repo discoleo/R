@@ -116,6 +116,37 @@ zetaAltSum0 = function(n, p=1/2) {
 }
 
 
+### Percolation
+
+### Number of clusters: in 1D
+# - with size in seq(1, s)
+nspSum = function(x, p=7/8, N = 100) {
+	# id = seq(1, N);
+	# r  = sapply(x, \(x) {
+	#	sum(p^id - p^(x + id));
+	# });
+	# exact formula:
+	p0 = (1 - p^N) / (1 - p);
+	(1-p)^2 * p0 * p * (1 - p^x);
+}
+nspSum0 = function(s, p=7/8) {
+	r  = (1 - p^s) / (1 - p);
+	(1-p)^2 * r * p;
+}
+nspSum0.old = function(s, p=7/8) {
+	id = seq(s, 1);
+	r  = sum(p^id);
+	(1-p)^2 * r;
+}
+
+px = c(1,5,10,15);
+curve(nspSum(x), xlim=c(0, 30), ylim=c(0, 0.2))
+points(px, sapply(px, nspSum0.old), col="blue")
+points(px, sapply(px, nspSum0), col="red")
+
+
+####################
+
 ### Exponentials ###
 
 ### sum( n / exp(n) )
@@ -340,6 +371,18 @@ tmp = sapply(seq(1, 8), \(x) points(x, zetaAltSum0(x), col="red"))
 ###
 curve(zetaAltSum(x, p=3/2, N=5000), xlim=c(0, 10))
 tmp = sapply(seq(1, 8), \(x) points(x, zetaAltSum0(x, p=3/2), col="red"))
+
+
+#####################
+
+### Percolation
+
+### Cluster Number: in 1D
+# p(Cluster of size in seq(1, s))
+px = c(1,5,10,15);
+curve(nspSum(x), xlim=c(0, 30), ylim=c(0, 0.2))
+points(px, sapply(px, nspSum0.old), col="blue")
+points(px, sapply(px, nspSum0), col="red")
 
 
 ################
