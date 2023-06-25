@@ -68,6 +68,43 @@ integrate(\(x) (1 - exp(-x) - exp(-1/x)) / x, 0, 1)
 constEuler
 
 
+####################
+####################
+
+### I( x^p * (exp(-a*x) - exp(-b*x)) )
+# Dr Peyam: A multivariable integral
+# https://www.youtube.com/watch?v=NLNDdfbQBWU
+
+###
+a = c(3, 2)
+integrate(\(x) (exp(-a[1]*x) - exp(-a[2]*x)) / x, 0, Inf)
+log(a[2] / a[1])
+
+
+### Generalization:
+a = sqrt(c(3, 2))
+integrate(\(x) x^(-1/2) * (exp(-a[1]*x) - exp(-a[2]*x)), 0, Inf)
+gamma(1/2) * (a[1]^(-1/2) - a[2]^(-1/2))
+
+###
+p = -1/3; # p > -1 (strictly) !!!
+a = sqrt(c(5, 2))
+integrate(\(x) x^p * (exp(-a[1]*x) - exp(-a[2]*x)), 0, Inf)
+gamma(p + 1) * (a[1]^(-p-1) - a[2]^(-p-1))
+
+###
+p = sqrt(2) - sqrt(3); # p > -1 (strictly) !!!
+a = sqrt(c(5, 2))
+integrate(\(x) x^p * (exp(-a[1]*x) - exp(-a[2]*x)), 0, Inf)
+gamma(p + 1) * (a[1]^(-p-1) - a[2]^(-p-1))
+
+###
+p = sqrt(7); # p > -1 (strictly) !!!
+a = sqrt(c(5, 2))
+integrate(\(x) x^p * (exp(-a[1]*x) - exp(-a[2]*x)), 0, Inf)
+gamma(p + 1) * (a[1]^(-p-1) - a[2]^(-p-1))
+
+
 #########################
 #########################
 
