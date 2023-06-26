@@ -36,6 +36,8 @@ pi^2/6 + Euler^2
 ### Pow = 3
 integrate(\(x) exp(-x) * log(x)^3, 0, Inf)
 - 2 * pracma::zeta(3) - Euler*(pi^2/2 + Euler^2)
+
+# Derivation:
 # psi2(1)*gamma(1) + 2*psi1(1)*d(gamma)(1) + psi(1)*d2(gamma)(1)
 - 2* pracma::zeta(3) - 2*pi^2/6 * Euler - Euler*(pi^2/6 + Euler^2)
 
