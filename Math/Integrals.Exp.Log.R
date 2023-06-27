@@ -5,6 +5,7 @@
 
 Euler   = 0.57721566490153286060651209008240243079;
 Catalan = 0.915965594177219015054603514;
+gStjelt1 = - 0.0728158454836767248605863758749013191377363383;
 # Note:
 # Catalan = - I(log(x)/(x^2 + 1), lower=0, upper=1)
 
@@ -40,4 +41,30 @@ integrate(\(x) exp(-x) * log(x)^3, 0, Inf)
 # Derivation:
 # psi2(1)*gamma(1) + 2*psi1(1)*d(gamma)(1) + psi(1)*d2(gamma)(1)
 - 2* pracma::zeta(3) - 2*pi^2/6 * Euler - Euler*(pi^2/6 + Euler^2)
+
+
+#####################
+#####################
+
+### I( log(x) / (exp(x) + 1) )
+# Maths 505: ONE OF THE COOLEST INTEGRALS EVER!!! int ln(x)/(1+e^x) from 0 to infty
+# https://www.youtube.com/watch?v=qY_sLn8yYLM
+
+integrate(\(x) log(x) / (exp(x) + 1), 0, Inf)
+- log(2)^2/2
+
+
+###
+integrate(\(x) log(x)^2 / (exp(x) + 1), 0, Inf, rel.tol=1E-8)
+log(2)*(pi^2/6 - Euler^2) - 2*gStjelt1*log(2) + log(2)^3 / 3
+
+
+id = seq(120000)
+log(2)*(pi^2/6 - Euler^2) + Euler*log(2)^2 +
+	- sum((-1)^id * log(id)^2 / id)
+# TODO: d2 eta(s) (1);
+# after 8:00 in the presentation;
+# d eta(s) = (1 - 2^(1-s)) * d zeta(s) + log(2)*2^(1-s) * zeta(s);
+# d2 eta(s) = (1 - 2^(1-s)) * d2 zeta(s) +
+#   + 2*log(2)*2^(1-s) * d zeta(s) - log(2)^2 * zeta(s);
 
