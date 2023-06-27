@@ -83,3 +83,13 @@ integrate(\(x) log(x)/(exp(k*x) + 1), 0, Inf)
 integrate(\(x) log(x) * (exp(x) - 2) / (exp(2*x) - exp(x) + 1), 0, 100)
 log(2)*log(3)
 
+
+### I( log(x) * exp(x) / (exp(2*x) + 1) )
+# up = Inf; numerical issue!
+integrate(\(x) log(x) / (exp(x) + exp(-x)), 0, 20)
+integrate(\(x) log(x) / cosh(x) / 2, 0, 100)
+pracma::integral(\(x) log(x) / cosh(x) / 2, 0, Inf)
+id = seq(160000)
+- pi*Euler / 4 - sum((-1)^id * log(2*id + 1) / (2*id + 1))
+# TODO: how?
+
