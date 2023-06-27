@@ -42,7 +42,7 @@ log( gamma(n/(2*pi))^2 / gamma(n/pi) ) * pi +
 	- pi*log(pi/n) - pi/2*log(n) + (n - 3/2*pi) * log(2);
 
 # - see also: I( x^p * log((exp(x) - 1) / (exp(x) + 1)) )
-#   in file: Integrals.Gamma.Other.R;
+#   in file: Integrals.Exp.R;
 
 
 ### Perverse Transformations
