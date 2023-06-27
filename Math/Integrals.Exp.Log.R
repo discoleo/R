@@ -54,7 +54,7 @@ integrate(\(x) log(x) / (exp(x) + 1), 0, Inf)
 - log(2)^2/2
 
 
-###
+### Gen 1:
 integrate(\(x) log(x)^2 / (exp(x) + 1), 0, Inf, rel.tol=1E-8)
 log(2)*(pi^2/6 - Euler^2) - 2*gStjelt1*log(2) + log(2)^3 / 3
 
@@ -67,4 +67,19 @@ log(2)*(pi^2/6 - Euler^2) + Euler*log(2)^2 +
 # d eta(s) = (1 - 2^(1-s)) * d zeta(s) + log(2)*2^(1-s) * zeta(s);
 # d2 eta(s) = (1 - 2^(1-s)) * d2 zeta(s) +
 #   + 2*log(2)*2^(1-s) * d zeta(s) - log(2)^2 * zeta(s);
+
+
+### Gen 2: I( log(x) / (exp(k*x) + 1) )
+integrate(\(x) log(x)/(exp(2*x) + 1), 0, Inf)
+- log(2)^2 * 3/4
+
+###
+k = 3
+integrate(\(x) log(x)/(exp(k*x) + 1), 0, Inf)
+- log(2)^2/(2*k) - log(2)*log(k)/k
+
+###
+# up = Inf; numerical issue!
+integrate(\(x) log(x) * (exp(x) - 2) / (exp(2*x) - exp(x) + 1), 0, 100)
+log(2)*log(3)
 
