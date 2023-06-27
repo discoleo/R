@@ -29,8 +29,11 @@ exp(1) - integrate(\(x) exp(x^(1/p)), 0, 1, rel.tol = 1E-8)$value
 
 
 ###
-gamma.part = function(up, n=2, rel.tol=1E-8) {
+gamma.p.part = function(up, n=2, rel.tol=1E-8) {
 	integrate(\(x) exp(x^n), 0, up, rel.tol = rel.tol)$value;
+}
+gamma.part = function(up, n=2, rel.tol=1E-8) {
+	integrate(\(x) exp(-x^n), 0, up, rel.tol = rel.tol)$value;
 }
 
 #
@@ -39,22 +42,22 @@ integrate(\(x) 2*x^2 * exp(x^4), 0, 1, rel.tol = 1E-8)
 # direct:
 integrate(\(x) 2/3 * exp(x^(2/(1/2 + 1))), 0, 1, rel.tol = 1E-8)
 
-# Complicated:
+# Complicated way:
 # Note: up = x^2;
-gamma.part(1) - integrate(\(x) sapply(x^2, gamma.part), 0, 1)$value;
+gamma.p.part(1) - integrate(\(x) sapply(x^2, gamma.p.part), 0, 1)$value;
 # Note:
-gamma.part(1, 2) + 2/3 * gamma.part(1, 2/3) # == exp(1)
+gamma.p.part(1, 2) + 2/3 * gamma.p.part(1, 2/3) # == exp(1)
 
 ###
 p = sqrt(3)
 integrate(\(x) x^p * exp(x^2), 0, 1, rel.tol = 1E-8)
 integrate(\(x) 1/(p+1) * exp(x^(2/(p+1))), 0, 1, rel.tol = 1E-8)
-gamma.part(1, n = 2/(p+1)) / (p+1)
+gamma.p.part(1, n = 2/(p+1)) / (p+1)
 
 #
 p = sqrt(3); n = sqrt(5);
 integrate(\(x) x^p * exp(x^n), 0, 1, rel.tol = 1E-8)
-gamma.part(1, n = n/(p+1)) / (p+1)
+gamma.p.part(1, n = n/(p+1)) / (p+1)
 
 
 ####################
@@ -75,13 +78,17 @@ constEuler
 # Dr Peyam: A multivariable integral
 # https://www.youtube.com/watch?v=NLNDdfbQBWU
 
-###
+### p = -1
 a = c(3, 2)
 integrate(\(x) (exp(-a[1]*x) - exp(-a[2]*x)) / x, 0, Inf)
 log(a[2] / a[1])
 
 
 ### Generalization:
+# I( I( x^(p+1) * exp(-x*y) ) )
+# x on [0, Inf] & y on [a, b];
+
+# p > -1;
 a = sqrt(c(3, 2))
 integrate(\(x) x^(-1/2) * (exp(-a[1]*x) - exp(-a[2]*x)), 0, Inf)
 gamma(1/2) * (a[1]^(-1/2) - a[2]^(-1/2))
@@ -197,7 +204,7 @@ integrate(\(x) exp(-x^n) / (x^n + 1), 0, Inf)
 int = integrate(\(x) n*x^(n-2) * exp(-x^n), 1, Inf)$value
 exp(1) * int * gamma(1/n) / n
 
-# only: n > 1
+# [unstable/divergent] only: n > 1
 # int = integrate(\(x) x^(-1/n) * exp(-x), 0, 1)$value
 int = integrate(\(x) n*x^(n-2) * exp(-x^n), 0, 1)$value
 exp(1) * (pi/sin(pi/n) - int*gamma(1/n)) / n
