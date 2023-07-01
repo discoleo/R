@@ -6,6 +6,8 @@
 Euler   = 0.57721566490153286060651209008240243079;
 Catalan = 0.915965594177219015054603514;
 gStjelt1 = - 0.0728158454836767248605863758749013191377363383;
+dzeta2   = -0.937548254316;
+
 # Note:
 # Catalan = - I(log(x)/(x^2 + 1), lower=0, upper=1)
 
@@ -49,6 +51,9 @@ integrate(\(x) exp(-x) * log(x)^3, 0, Inf)
 ### I( log(x) / (exp(x) + 1) )
 # Maths 505: ONE OF THE COOLEST INTEGRALS EVER!!! int ln(x)/(1+e^x) from 0 to infty
 # https://www.youtube.com/watch?v=qY_sLn8yYLM
+# 2.) Michael Penn: a stylized integral [alternative method]
+# https://www.youtube.com/watch?v=_orPdt5r1Yg
+
 
 integrate(\(x) log(x) / (exp(x) + 1), 0, Inf)
 - log(2)^2/2
@@ -92,4 +97,11 @@ pracma::integral(\(x) log(x) / cosh(x) / 2, 0, Inf)
 id = seq(160000)
 - pi*Euler / 4 - sum((-1)^id * log(2*id + 1) / (2*id + 1))
 # TODO: how?
+
+
+###
+integrate(\(x) x * log(x) / (exp(x) - 1), 0, Inf)
+(1 - Euler)*pi^2 / 6 + dzeta2;
+# TODO: dzeta2 ???
+
 
