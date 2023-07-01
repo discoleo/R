@@ -1,5 +1,13 @@
 
 
+
+### Helper
+
+int.FrU01 = function(n, p=0) {
+	(digamma(((p+1)/n + 1)/2) - digamma((p+1)/n/2)) / (2*n);
+}
+
+
 ########################
 ########################
 
@@ -172,4 +180,32 @@ integrate(\(x) 3*(x^7 - x^2) / (x^3 - 1), 1, 2^(1/3))
 
 integrate(\(x) log(1-x) / x, 0, 1/2)
 - pi^2/12 + log(2)^2 / 2
+
+###
+integrate(\(x) log(x) / (x^2 - x), 1, 2)
+integrate(\(x) log(x + 1) / (x^2 + x), 0, 1)
+pi^2/12 - log(2)^2 / 2
+
+###
+integrate(\(x) log( (1 + x^2)/(1 - x^2) ) / x, 0, 1)
+integrate(\(x) log( (1 + x)/(1 - x) ) / (2*x), 0, 1)
+integrate(\(x) log( (1 + x)/(x - 1) ) / (2*x), 1, Inf)
+pi^2 / 8
+
+#
+integrate(\(x) log( (1 + x)) / x, 0, 1)
+integrate(\(x) - log( (1 - x)) / (2*x), 0, 1)
+pi^2 / 12
+
+#
+integrate(\(x) log( (1 + x)) / x^(1/2), 0, 1)
+2*log(2) - 4*(1 - pi/4)
+
+#
+integrate(\(x) log( (1 + x)) / x^(1/3), 0, 1)
+integrate(\(x) 3 * x * log( (1 + x^3)), 0, 1)
+3/2*log(2) - 9/4 + 9/2 * integrate(\(x) x / (1 + x^3), 0, 1)$value
+3/2*log(2) - 9/4 + 9/2 * int.FrU01(3, p=1)
+
+# TODO: Generalization
 
