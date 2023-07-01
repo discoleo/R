@@ -226,3 +226,19 @@ integrate(\(x) log( (1 + x)/(1 - x) ) / (2*x), 0, 1)
 integrate(\(x) log( (1 + x)/(x - 1) ) / (2*x), 1, Inf)
 pi^2 / 8
 
+
+###
+integrate(\(x) log(x) / (x - 1), 0, 1/2)
+pi^2 / 12 + log(2)^2 / 2
+integrate(\(x) log(x) / (x - 1), 1/2, 1)
+pi^2 / 12 - log(2)^2 / 2
+
+# Derivation:
+integrate(\(x) log(1 + x) / x, 0, 1)
+integrate(\(x) log(x) / (x^2 - x), 1/2, 1)
+pi^2 / 12
+# =>
+integrate(\(x) log(x) / (x - 1), 1/2, 1)
+pi^2 / 12 - log(2)^2 / 2
+
+
