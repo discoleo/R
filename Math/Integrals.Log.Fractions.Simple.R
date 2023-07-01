@@ -8,6 +8,19 @@ int.FrU01 = function(n, p=0) {
 }
 
 
+### Simple Log:
+n = sqrt(5)
+integrate(\(x) log(x^n + 1), 0, 1)
+log(2) - n * int.FrU01(n, p = n)
+
+
+###
+n = 3
+integrate(\(x) log(1 - x^n), 0, 1)
+log(n) - n - integrate(\(x) 1/(1 - x) - n / (1 - x^n), 0, 1)$value
+# TODO
+
+
 ########################
 ########################
 
