@@ -220,6 +220,22 @@ integrate(\(x) 1/p * x^(1/p - 2) * log(1 + x^(1/p)), 0, 1)
 1/(1 - p)*log(2) - 1/(1-p)/p * int.FrU01(1/p, p = 2/p - 2)
 
 
+### I( log(x^p + 1) / x^p )
+integrate(\(x) log(x^2 + 1) / x^2, 0, 1)
+- log(2) + integrate(\(x) 2 / (x^2 + 1), 0, 1)$value
+pi/2 - log(2)
+
+###
+integrate(\(x) log(x^3 + 1) / x^3, 0, 1)
+- log(2)/2 + integrate(\(x) 3/2 / (x^3 + 1), 0, 1)$value
+- log(2)/2 + 3/2 * int.FrU01(3, p = 0)
+
+### I( log(x^p + 1) / x^p )
+p = sqrt(5)
+integrate(\(x) log(x^p + 1) / x^p, 0, 1)
+- log(2)/(p-1) + p/(p-1) * int.FrU01(p, p = 0)
+
+
 ### Other:
 integrate(\(x) log( (1 + x^2)/(1 - x^2) ) / x, 0, 1)
 integrate(\(x) log( (1 + x)/(1 - x) ) / (2*x), 0, 1)
