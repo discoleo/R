@@ -188,21 +188,36 @@ pi^2/12 - log(2)^2 / 2
 
 
 ###
-integrate(\(x) log( (1 + x)) / x, 0, 1)
-integrate(\(x) - log( (1 - x)) / (2*x), 0, 1)
+integrate(\(x) log(1 + x) / x, 0, 1)
+integrate(\(x) - log(1 - x) / (2*x), 0, 1)
 pi^2 / 12
 
 #
-integrate(\(x) log( (1 + x)) / x^(1/2), 0, 1)
+integrate(\(x) log(1 + x) / x^(1/2), 0, 1)
 2*log(2) - 4*(1 - pi/4)
 
 #
-integrate(\(x) log( (1 + x)) / x^(1/3), 0, 1)
-integrate(\(x) 3 * x * log( (1 + x^3)), 0, 1)
+integrate(\(x) log(1 + x) / x^(1/3), 0, 1)
+integrate(\(x) 3 * x * log(1 + x^3), 0, 1)
 3/2*log(2) - 9/4 + 9/2 * integrate(\(x) x / (1 + x^3), 0, 1)$value
 3/2*log(2) - 9/4 + 9/2 * int.FrU01(3, p=1)
 
-# TODO: Generalization
+### Generalization
+
+### p < 1
+p = 1/5; # but can be negative;
+integrate(\(x) log(1 + x) / x^p, 0, 1)
+log(2)/(1 - p) - 1/(p*(1-p)) * int.FrU01(1/p, p = 2/p - 2)
+
+###
+p = 1/sqrt(5)
+integrate(\(x) log(1 + x) / x^p, 0, 1)
+log(2)/(1 - p) - 1/(p*(1-p)) * int.FrU01(1/p, p = 2/p - 2)
+
+# Derivation:
+integrate(\(x) 1/p * x^(1/p - 2) * log(1 + x^(1/p)), 0, 1)
+1/(1 - p)*log(2) - 1/(1-p)/p * integrate(\(x) x^(2/p - 2) / (1 + x^(1/p)), 0, 1)$value
+1/(1 - p)*log(2) - 1/(1-p)/p * int.FrU01(1/p, p = 2/p - 2)
 
 
 ### Other:
