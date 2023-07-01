@@ -186,13 +186,8 @@ integrate(\(x) log(x) / (x^2 - x), 1, 2)
 integrate(\(x) log(x + 1) / (x^2 + x), 0, 1)
 pi^2/12 - log(2)^2 / 2
 
-###
-integrate(\(x) log( (1 + x^2)/(1 - x^2) ) / x, 0, 1)
-integrate(\(x) log( (1 + x)/(1 - x) ) / (2*x), 0, 1)
-integrate(\(x) log( (1 + x)/(x - 1) ) / (2*x), 1, Inf)
-pi^2 / 8
 
-#
+###
 integrate(\(x) log( (1 + x)) / x, 0, 1)
 integrate(\(x) - log( (1 - x)) / (2*x), 0, 1)
 pi^2 / 12
@@ -208,4 +203,11 @@ integrate(\(x) 3 * x * log( (1 + x^3)), 0, 1)
 3/2*log(2) - 9/4 + 9/2 * int.FrU01(3, p=1)
 
 # TODO: Generalization
+
+
+### Other:
+integrate(\(x) log( (1 + x^2)/(1 - x^2) ) / x, 0, 1)
+integrate(\(x) log( (1 + x)/(1 - x) ) / (2*x), 0, 1)
+integrate(\(x) log( (1 + x)/(x - 1) ) / (2*x), 1, Inf)
+pi^2 / 8
 
