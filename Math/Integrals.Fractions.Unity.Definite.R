@@ -44,6 +44,20 @@ constEuler = 0.57721566490153286060651209008240243079;
 int.FrU01 = function(n, p=0) {
 	(digamma(((p+1)/n + 1)/2) - digamma((p+1)/n/2)) / (2*n);
 }
+int.FrDU01 = function(n, p=0) {
+	# TODO: p != 0;
+	# pi/tan(pi/n)/2 - pi/tan(pi/n/2)/2 + pi/sin(pi/n)/2  == 0;
+	digamma(1/n) + Euler + log(n);
+}
+
+int.FrUInf = function(n, p=0, pow=1, coeff=1) {
+	k = 1/pow;
+	tmp = sapply(p, function(p) {
+		gamma((p+1)/n) * gamma(1/k - (p+1)/n) / gamma(1/k) / n;
+	});
+	tmp = sum(coeff * tmp);
+	return(tmp);
+}
 
 # [old code]
 # - works only with n, p = Integers;
@@ -275,6 +289,10 @@ pi / sin(3*pi/n) / n
 p = sqrt(2); n = 5*sqrt(11); k = 2 + sqrt(3);
 integrate(function(x) x^p/(x^n + 1)^(1/k), lower=0, upper=Inf)
 gamma((p+1)/n) * gamma(1/k - (p+1)/n) / gamma(1/k) / n
+
+###
+integrate(\(x) (x^(1/3) + 2*x^(1/4) - 1)/sqrt(x^5 + 1), 0, Inf)
+int.FrUInf(5, c(1/3, 1/4, 0), pow = 1/2, coeff = c(1,2,-1))
 
 
 ### Non-Standard Powers
@@ -752,4 +770,42 @@ n = sqrt(5)
 integrate(\(x) (1 - (1-x)^n)/x, 0, 1)
 integrate(\(x) (1 - x^n) / (1 - x), 0, 1)
 constEuler + digamma(n + 1)
+
+
+####################
+####################
+
+### Any n:
+n = sqrt(7)
+integrate(\(x) 1/(1 - x) - n / (1 - x^n), 0, 1)
+digamma(1/n) + Euler + log(n)
+
+# [alternative] [n = 5]
+pi/tan(pi/n)/2 + 1/4*log(n) + sqrt(5)/2*atanh(1/sqrt(5))
+
+### ODD n:
+n = 5
+id = seq(1, floor(n/2))
+cs = cos(2*pi*id/n)
+sn = sin(2*pi*id/n);sh = sin(pi*id/n);
+integrate(\(x) 1/(1 - x) - n / (1 - x^n), 0, 1)
+sum(cs * log(2 - 2*cs)) - 2 * sum(sn * atan((1 - cs)/sn) - sn * atan(-cs/sn))
+
+sum(cs * log(2 - 2*cs)) - 2 * sum(sn * atan((1 - cs)/sn) - sn * atan(-cs/sn))
+sum(cs * log(2 - 2*cs)) - 2 * sum(sn * atan((1 - cs)/sn) + sn * (pi/2 - 2*id*pi/n))
+sum(cs * log(2 - 2*cs)) - 2 * sum(sn * atan((1 - cs)/sn)) +
+	+ 4*pi * sum(id*sn)/n - pi * sum(sn)
+sum(cs * log(2 - 2*cs)) - 2 * sum(sn * atan((1 - cs)/sn)) +
+	+ pi/sin(pi/n) - pi/tan(pi/n/2)/2
+2*sum(cs * log(sh)) - log(2) +
+	+ pi/sin(pi/n)/2 - pi/tan(pi/n/2)/2
+digamma(1/n) + Euler + log(n) +
+	+ pi/tan(pi/n)/2 - pi/tan(pi/n/2)/2 + pi/sin(pi/n)/2; # sum(TRIG) == 0;
+
+#
+pi * sum(sn)
+pi/tan(pi/n/2)/2
+#
+sum(id*sn)
+n/sin(pi/n)/4
 
