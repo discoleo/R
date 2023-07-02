@@ -18,7 +18,12 @@ log(2) - n * int.FrU01(n, p = n)
 n = 3
 integrate(\(x) log(1 - x^n), 0, 1)
 log(n) - n - integrate(\(x) 1/(1 - x) - n / (1 - x^n), 0, 1)$value
-# TODO
+log(n) - n - digamma(1/n) - Euler - log(n)
+
+#
+n = sqrt(7)
+integrate(\(x) log(1 - x^n), 0, 1)
+log(n) - n - digamma(1/n) - Euler - log(n)
 
 
 ########################
