@@ -110,3 +110,9 @@ sum(x^2, 4*E2, - E2a)
 
 # TODO
 
+### Powers of x:
+sum(- r^2, 2*x^2, 2*E2a)
+sum(- r^3, 2*x^3, 3*E2a*S, -3*E3, -3*E3a)
+
+# TODO: r^4, r^5;
+
