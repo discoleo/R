@@ -107,6 +107,9 @@ poly.calc(r)
 - 2*S
 # x^3 Monome:
 sum(x^2, 4*E2, - E2a)
+# x^2 Monome:
+sum(6*E3, -2*E3a) + S*sum(x^2) - sum(x^3) + sum(x^2 * (shift.f(x,2) + shift.f(x,3)))
+sum(7*E3, -E3a, - E2a*S) + 2*S*sum(x^2) - 2*sum(x^3)
 
 # TODO
 
@@ -115,4 +118,9 @@ sum(- r^2, 2*x^2, 2*E2a)
 sum(- r^3, 2*x^3, 3*E2a*S, -3*E3, -3*E3a)
 
 # TODO: r^4, r^5;
+
+
+### Ht Prod( x - x1 - x3 )
+r = x + shift.f(x, 2)
+poly.calc(r)
 
