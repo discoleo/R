@@ -88,4 +88,9 @@ E3a5 - E3a*E3a4 + (E5*S + E1221a)*E3a3 - E5*(E4 + E121a)*E3a2 + E5^2*E2a*E3a - 5
 ### Ht Prod( x - x1*x2 )
 E2a5 - E2a*E2a4 + (E4 + E121a)*E2a3 - (E5*S + E1221a)*E2a2 + E5*E3a*E2a - 5*E5^2
 
+### Additional Eqs:
+E2a2 + 2*E121a + 2*E4 - E2a^2 # = 0
+E3a2 + 2*E1221a + 2*E5*S  - E3a^2 # = 0
+
+# TODO: remaining;
 
