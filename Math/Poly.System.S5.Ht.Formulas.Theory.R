@@ -113,11 +113,11 @@ poly.calc(r)
 sum(x^2, 4*E2, - E2a)
 # Coeff of x^2:
 sum(6*E3, -2*E3a) + S*sum(x^2) - sum(x^3) + sum(x^2 * (shift.f(x,2) + shift.f(x,3)))
-7*E3 -E3a - E2a*S + 2*S*sum(x^2) - 2*sum(x^3)
+7*E3 - E3a - E2a*S + 2*S*(S^2 - 2*E2) - 2*sum(x^3)
 # Coeff of x:
-# sum(5*E3, E2b^2, -2*E4, )
+E121a - E3a*S - E2a*E2 + E3*S + E2^2
 
-# TODO
+# TODO: Coeff of b0;
 
 ### Powers of x:
 sum(- r^2, 2*x^2, 2*E2a)
@@ -158,5 +158,32 @@ sum(- r^4, 2*x^4, 4 * E2a*x^2, 4*(E2a*E2b + 2*E121a - E3a*S - E3*S + 5*E4),
 	6 * sum(x^2 * shift.f(x^2,1)) )
 sum(- r^4, 2*x^4, 4*E2a*x^2, 6*E2a^2 + 4*(E2a*E2b - E121a - E3a*S - E3*S + 2*E4))
 sum(- r^4, 2*x^4, 2*E2a^2 + 4*(E2a*(S^2 - E2) - E121a - E3a*S - E3*S + 2*E4))
+
+
+### Derivation: Coeff of x
+poly.calc(r)
+2*sum((x^2*shift.f(x,1) + x*shift.f(x^2,1)) * shift.f(x,3)) + # E2101a + E1201a
+	+ sum(x^2*shift.f(x,1) * shift.f(x,2),
+		x*shift.f(x,1) * shift.f(x^2,2)) + # E211a + E112a
+	+ 3*sum(x^2*shift.f(x,2) * shift.f(x,3)) + # E2011a
+	+ 5*E4 + E121a + sum(x^2 * shift.f(x^2, 2))
+2*sum((x^2*shift.f(x,1) + x*shift.f(x^2,1)) * shift.f(x,3)) + # E2101a + E1201a
+	+ 3*sum(x^2*shift.f(x,2) * shift.f(x,3)) + # E2011a
+	+ 3*E4 + E3a*S + sum(x^2 * shift.f(x^2, 2))
+2*E3*S - E3a*S - E4 +
+	+ sum(x^2 * shift.f(x,2) * shift.f(x,3)) + # E2011a
+	+ sum(x^2 * shift.f(x^2, 2))
+2*E3*S - E3a*S - E4 - (E2a*E2b + E121a - E3*S + 3*E4) +
+	+ sum(x^2 * shift.f(x^2, 2))
+E121a - E3a*S - E2a*E2 + E3*S + E2^2
+
+### E2011a
+sum(x^2 * shift.f(x,2) * shift.f(x,3))
+- (E2a*E2b + E121a - E3*S + 3*E4)
+
+### E202a
+sum(x^2 * shift.f(x^2, 2))
+S2^2/2 - sum(x^4)/2 + (2*E121a + 2*E4 - E2a^2)
+2*E121a + 4*E4 - 2*E3*S + E2^2 - E2a^2
 
 
