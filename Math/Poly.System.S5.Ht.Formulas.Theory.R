@@ -62,8 +62,12 @@ E5 = p1 * p2 * x[5];
 # Test:
 x^5 - S*x^4 + E2*x^3 - E3*x^2 + E4*x - E5 # == 0
 
+S2  = sum(x^2);
 E2a = as.E2ps(x);
 E3a = as.E3ps(x, p=1);
+E2b = E2 - E2a;
+E22a = as.E2ps(x, pow=2);
+E22b = as.E2ps(x, pow=2, shift=2);
 #
 E121a  = as.E3p(x, pow=c(1,2,1));
 E1221a = as.E4p(x, pow=c(1,2,2,1));
@@ -103,24 +107,56 @@ E3a2 + 2*E1221a + 2*E5*S  - E3a^2 # = 0
 r = x + shift.f(x, 1)
 poly.calc(r)
 
-# x^4 Monome:
+# Coeff of x^4:
 - 2*S
-# x^3 Monome:
+# Coeff of x^3:
 sum(x^2, 4*E2, - E2a)
-# x^2 Monome:
+# Coeff of x^2:
 sum(6*E3, -2*E3a) + S*sum(x^2) - sum(x^3) + sum(x^2 * (shift.f(x,2) + shift.f(x,3)))
-sum(7*E3, -E3a, - E2a*S) + 2*S*sum(x^2) - 2*sum(x^3)
+7*E3 -E3a - E2a*S + 2*S*sum(x^2) - 2*sum(x^3)
+# Coeff of x:
+# sum(5*E3, E2b^2, -2*E4, )
 
 # TODO
 
 ### Powers of x:
 sum(- r^2, 2*x^2, 2*E2a)
 sum(- r^3, 2*x^3, 3*E2a*S, -3*E3, -3*E3a)
+sum(- r^4, 2*x^4, 2*E2a^2 + 4*(E2a*(S^2 - E2) - E121a - E3a*S - E3*S + 2*E4))
 
-# TODO: r^4, r^5;
+# TODO: r^5;
 
 
 ### Ht Prod( x - x1 - x3 )
 r = x + shift.f(x, 2)
 poly.calc(r)
+
+# TODO
+
+
+### Helper & Derivation:
+S2^2 - sum(x^4) - 2*E22a - 2*E22b # = 0
+E2a^2 - E22a - 2*E121a - 2*E4 # = 0
+# E2101a + E1201a
+E2a*E2b - E3a*S + E121a + 2*E4 - E4 +
+	- sum(x^2 * (shift.f(x,1) * shift.f(x,3) + shift.f(x,4) * shift.f(x,2))) # = 0
+
+# E31a + E13a
+sum(x^3 * (shift.f(x,1) + shift.f(x,4)))
+sum(E2a*x^2, - E3a*S, E121a, 2*E4, - x * shift.f(x,1) * shift.f(x^2,3))
+# =>
+sum(E2a*x^2, - E3a*S, E121a, 2*E4) + (E2a*E2b - E3a*S + E121a + E4) +
+	- sum(x * shift.f(x,1) * shift.f(x^2,3)) +
+	- sum(x^2 * (shift.f(x,1) * shift.f(x,3) + shift.f(x,4) * shift.f(x,2))) # = 0
+sum(E2a*x^2) + E2a*E2b + 2*E121a - E3a*S - E3*S + 5*E4
+
+# =>
+r = x + shift.f(x, 1)
+sum(- r^4, 2*x^4, 4 * sum(x^3 * (shift.f(x,1) + shift.f(x,4))),
+	6 * sum(x^2 * shift.f(x^2,1)) )
+sum(- r^4, 2*x^4, 4 * E2a*x^2, 4*(E2a*E2b + 2*E121a - E3a*S - E3*S + 5*E4),
+	6 * sum(x^2 * shift.f(x^2,1)) )
+sum(- r^4, 2*x^4, 4*E2a*x^2, 6*E2a^2 + 4*(E2a*E2b - E121a - E3a*S - E3*S + 2*E4))
+sum(- r^4, 2*x^4, 2*E2a^2 + 4*(E2a*(S^2 - E2) - E121a - E3a*S - E3*S + 2*E4))
+
 
