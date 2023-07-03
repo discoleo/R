@@ -7,7 +7,11 @@
 
 ##################
 
-### Helper
+### Helper Functions
+
+source("Polynomials.Helper.R")
+source("Polynomials.Helper.EP.R")
+
 
 shift.f = function(x, shift = 1) {
 	if(shift == 0) return(x);
@@ -44,7 +48,7 @@ as.E4p = function(x, pow = c(1,2,2,1)) {
 
 ### Test Values
 
-x = sqrt(c(3,5,7,11,13));
+x = (c(3,5,7,11,13))^(1/3);
 x[4] = - x[4];
 
 s1 = x[1] + x[3]; s2 = x[2] + x[4];
@@ -93,4 +97,16 @@ E2a2 + 2*E121a + 2*E4 - E2a^2 # = 0
 E3a2 + 2*E1221a + 2*E5*S  - E3a^2 # = 0
 
 # TODO: remaining;
+
+
+### Ht Prod( x - x1 - x2 )
+r = x + shift.f(x, 1)
+poly.calc(r)
+
+# x^4 Monome:
+- 2*S
+# x^3 Monome:
+sum(x^2, 4*E2, - E2a)
+
+# TODO
 
