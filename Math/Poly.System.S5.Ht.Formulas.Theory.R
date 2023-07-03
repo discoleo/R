@@ -1,6 +1,6 @@
 
 
-### Ht5 Theory
+### S5 Ht Theory
 
 # - the start to develop a Theory;
 
@@ -13,12 +13,14 @@ shift.f = function(x, shift = 1) {
 	if(shift == 0) return(x);
 	c(x[-seq(shift)], x[seq(shift)]);
 }
-as.E2p = function(x, shift = 1) {
+# symmetric
+as.E2ps = function(x, pow = 1, shift = 1) {
+	if(pow != 1) x = x^pow;
 	sum(x * shift.f(x, shift=shift));
 }
 # symmetric
 as.E3ps = function(x, pow = 1) {
-	x = x^pow;
+	if(pow != 1) x = x^pow;
 	sum(x * c(x[-1], x[1]) * c(x[-c(1,2)], x[c(1,2)]));
 }
 as.E3p = function(x, pow=c(1,2,1)) {
@@ -56,24 +58,34 @@ E5 = p1 * p2 * x[5];
 # Test:
 x^5 - S*x^4 + E2*x^3 - E3*x^2 + E4*x - E5 # == 0
 
-E2a = as.E2p(x);
+E2a = as.E2ps(x);
 E3a = as.E3ps(x, p=1);
-#
-E4p5 = as.E4(x, 5); E4p4 = as.E4(x, 4);
-E4p3 = as.E4(x, 3); E4p2 = as.E4(x, 2);
 #
 E121a  = as.E3p(x, pow=c(1,2,1));
 E1221a = as.E4p(x, pow=c(1,2,2,1));
+
+# Powers:
+E4p5 = as.E4(x, 5); E4p4 = as.E4(x, 4);
+E4p3 = as.E4(x, 3); E4p2 = as.E4(x, 2);
 #
 E3a2 = as.E3ps(x, p=2); E3a3 = as.E3ps(x, p=3);
 E3a4 = as.E3ps(x, p=4); E3a5 = as.E3ps(x, p=5);
+#
+E2a2 = as.E2ps(x, p=2); E2a3 = as.E2ps(x, p=3);
+E2a4 = as.E2ps(x, p=4); E2a5 = as.E2ps(x, p=5);
 
 
 ### Prod( x - x1*x2*x3*x4 )
+# [symmetric]
 E4p5 - E4*E4p4 + E5*E3*E4p3 - E5^2*E2*E4p2 + E5^3*S*E4 - 5*E5^4
 
 
+### Ea-based:
+
 ### Ht Prod( x - x1*x2*x3 )
 E3a5 - E3a*E3a4 + (E5*S + E1221a)*E3a3 - E5*(E4 + E121a)*E3a2 + E5^2*E2a*E3a - 5*E5^3
+
+### Ht Prod( x - x1*x2 )
+E2a5 - E2a*E2a4 + (E4 + E121a)*E2a3 - (E5*S + E1221a)*E2a2 + E5*E3a*E2a - 5*E5^2
 
 
