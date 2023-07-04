@@ -1,5 +1,20 @@
 
 
+
+### Helper
+
+int.FrU01 = function(n, p=0) {
+	(digamma(((p+1)/n + 1)/2) - digamma((p+1)/n/2)) / (2*n);
+}
+int.FrDU01 = function(n, p=0) {
+	# TODO: p != 0
+	digamma(1/n) + Euler + log(n);
+}
+
+
+####################
+####################
+
 # qncubed3:  TWO WAYS to destroy this INSANE integral feat. @maths_505
 # https://www.youtube.com/watch?v=Ry5q4NsZDx0
 
@@ -216,3 +231,12 @@ p = sqrt(5)
 integrate(\(x) atan(x^p) / x, 0, 1)
 Catalan / p
 
+### I( x^p * atan(x^n) )
+n = sqrt(5)
+integrate(\(x) atan(x^n), 0, 1)
+pi/4 - n * int.FrU01(2*n, n)
+
+###
+n = sqrt(5); p = sqrt(3);
+integrate(\(x) x^p * atan(x^n), 0, 1)
+pi/(4*(p+1)) - n / (p+1) * int.FrU01(2*n, n + p)
