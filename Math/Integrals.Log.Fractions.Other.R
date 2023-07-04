@@ -177,6 +177,16 @@ id = seq(0, 20000)
 pi^2/48 - pi/4 + log(2)/2
 
 
+### I( log(x) * atan(x^p) / x )
+integrate(\(x) log(x) * atan(x^2) / x, 0, 1)
+- pi^3 / 128
+
+### Gen:
+p = sqrt(5)
+integrate(\(x) log(x) * atan(x^p) / x, 0, 1)
+- pi^3 / (32 * p^2)
+
+
 ####################
 ####################
 
