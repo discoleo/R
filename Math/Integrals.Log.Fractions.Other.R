@@ -124,6 +124,8 @@ integrate(\(x) log(x) * log((1 - x) / (x + 1)), 0, 1)
 ################
 ################
 
+# TODO: move to Trig
+
 # Maths 505: Another INSANE integral!
 # https://www.youtube.com/watch?v=KEDEzVqlAYU
 
@@ -149,6 +151,19 @@ Catalan
 x = exp(pracma::lambertWp(exp(-1)) / 2 + 1/2)
 # Maximum of function:
 log(x) / (x^2 + 1)
+
+
+##################
+
+### I( log(x) * atan(x) / x )
+# 1.) Maths 505: a superb integral sprinkled with some fourier analysis
+# https://www.youtube.com/watch?v=aHCLS4l65VE
+# 2.a) see also: Sums.Fractions.Higher.R;
+# 2.b) Flammable Maths: An AMAZING Journey of Series Evaluation!
+# Calculating Euler's Sum! [ Series pi^3/32 (-1)^k/(2k+1)^3 ]
+
+integrate(\(x) log(x) * atan(x) / x, 0, 1)
+- pi^3 / 32
 
 
 ####################
