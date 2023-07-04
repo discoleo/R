@@ -166,6 +166,17 @@ integrate(\(x) log(x) * atan(x) / x, 0, 1)
 - pi^3 / 32
 
 
+### I( log(x) * atan(x) )
+integrate(\(x) log(x) * atan(x), 0, 1)
+pi^2/48 - pi/4 + log(2)/2
+
+# Derivation:
+id = seq(0, 20000)
+- sum((-1)^id * (1/(2*id+1) - 1/(2*id+2))) + pi^2/48
+- sum((-1)^id / (2*id+1)) + pi^2/48 + log(2)/2
+pi^2/48 - pi/4 + log(2)/2
+
+
 ####################
 ####################
 
