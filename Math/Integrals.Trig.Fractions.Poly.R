@@ -199,3 +199,20 @@ pi*log(2)/2
 integrate(function(x) log(sin(x)), 0, pi/2)
 - pi*log(2)/2
 
+
+#######################
+#######################
+
+### ATAN
+
+### I( atan(x^p) / x )
+integrate(\(x) atan(x) / x, 0, 1)
+Catalan
+#
+integrate(\(x) atan(x^2) / x, 0, 1)
+Catalan / 2
+#
+p = sqrt(5)
+integrate(\(x) atan(x^p) / x, 0, 1)
+Catalan / p
+
