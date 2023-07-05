@@ -1,8 +1,13 @@
 
 
-constEuler = 0.57721566490153286060651209008240243079
+
+### Helper Functions
+
+constEuler = 0.57721566490153286060651209008240243079;
+Euler = constEuler;
 
 
+###
 zeta = function(n) {
 	(1 + 1/(2^(n-1) - 1)) * pracma::eta(n);
 }
@@ -271,4 +276,30 @@ digamma(1/x) - digamma(-1/x)
 ###
 digamma(-1/x)
 digamma(1/x) + pi/tan(pi/x) + x
+
+
+######################
+######################
+
+### sum( (-1)^n * zeta(n) * x^n / n )
+# Maths 505: THE MOST BEAUTIFUL RESULT IN ALL OF CALCULUS!!!
+# https://www.youtube.com/watch?v=9BTiRweEcT0
+
+
+###
+id = seq(2, 1000)
+sum(zeta(id) / (id * 2^id))
+log(pi / exp(Euler)) / 2
+
+###
+x = -1/3
+id = seq(2, 1000)
+log(gamma(x + 1))
+sum((-1)^id * zeta(id) * x^id / id) - Euler * x;
+
+###
+x = 1/sqrt(3); # x = 1/pi;
+id = seq(1, 1000)
+log(pi*x/sin(pi*x))
+sum(zeta(2*id) * x^(2*id) / id);
 
