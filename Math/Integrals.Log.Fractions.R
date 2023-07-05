@@ -407,12 +407,19 @@ integrate(function(x) x^p * log(x)/(x^n + b^n), 0, Inf)
 	+ pi*log(b)/(n*sin(pi*(p+1)/n)) * b^(p + 1 - n)
 
 
-### I( log(x^n + b^n) / (x^n + b^n) )
+### I( x^p * log(x^n + b^n) / (x^n + b^n) )
 n = sqrt(11)
 b = sqrt(5);
 integrate(function(x) log(x^n + b^n) / (x^n + b^n), lower=0, upper=Inf)
 Const = - pi/sin(pi/n) / b^(n-1) * (pi*cos(pi/n)/sin(pi/n) / n - log(b));
 - (digamma(1/n) + Euler) * pi/sin(pi/n) / n / b^(n-1) + Const;
+
+### Full:
+p = sqrt(3); n = sqrt(11);
+integrate(function(x) x^p * log(x^n + b^n) / (x^n + b^n), lower=0, upper=Inf)
+Const = - pi/sin(pi*(p+1)/n) / b^(n - (p+1)) *
+	(pi*cos(pi*(p+1)/n)/sin(pi*(p+1)/n) / n - log(b));
+- (digamma((p+1)/n) + Euler) * pi/sin(pi*(p+1)/n) / n / b^(n - (p+1)) + Const;
 
 
 ##################
