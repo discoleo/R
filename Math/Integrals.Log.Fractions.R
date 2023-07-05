@@ -334,11 +334,15 @@ Const = - pi/sin(pi/n) / b^(n-1) * (pi*cos(pi/n)/sin(pi/n) / n - log(b));
 
 ### Special Case: a == b
 integrate(function(x) log(x^n + b^n) / (x^n + b^n), lower=0, upper=Inf)
-# TODO: closed formula;
-Int = integrate( \(x) (x^3 + 2*x^2 + 3*x + 4) / (x^4+x^3+x^2+x+1), lower=0, upper=1)$value
+# Closed formula;
+# Int = integrate( \(x) (x^3 + 2*x^2 + 3*x + 4) / (x^4+x^3+x^2+x+1), lower=0, upper=1)
+Int = - (digamma(1/n) + Euler + log(n));
 Const = - pi/sin(pi/n) / b^(n-1) * (pi*cos(pi/n)/sin(pi/n) / n - log(b));
 (log(n) + Int) * pi/sin(pi/n) / n / b^(n-1) + Const;
+- (digamma(1/n) + Euler) * pi/sin(pi/n) / n / b^(n-1) + Const;
 
+
+# Derivation:
 # dI/da:
 integrate(\(x) n*a^(n-1)/(b^n - a^n)* (1/(x^n + a^n) -  1/(x^n + b^n)), lower=0, upper=Inf)
 n*a^(n-1)/(b^n - a^n) * (1/a^(n-1) - 1/b^(n-1)) * pi/sin(pi/n) / n;
@@ -401,6 +405,14 @@ b = 3^(1/4)
 integrate(function(x) x^p * log(x)/(x^n + b^n), 0, Inf)
 - pi^2*cos(pi*(p+1)/n)/sin(pi*(p+1)/n)^2 / n^2 * b^(p + 1 - n) +
 	+ pi*log(b)/(n*sin(pi*(p+1)/n)) * b^(p + 1 - n)
+
+
+### I( log(x^n + b^n) / (x^n + b^n) )
+n = sqrt(11)
+b = sqrt(5);
+integrate(function(x) log(x^n + b^n) / (x^n + b^n), lower=0, upper=Inf)
+Const = - pi/sin(pi/n) / b^(n-1) * (pi*cos(pi/n)/sin(pi/n) / n - log(b));
+- (digamma(1/n) + Euler) * pi/sin(pi/n) / n / b^(n-1) + Const;
 
 
 ##################
