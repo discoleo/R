@@ -153,6 +153,12 @@ integral(function(x) x^5*(pi - x)*(pi + x) / sin(x), -pi, pi)
 ### TAN:
 integrate(function(x) x / tan(x), 0, pi/2)
 pi*log(2)/2
+#
+integrate(function(x) 2*x * (1/tan(x) - tan(x)), 0, pi/4)
+
+# =>
+integrate(function(x) x / tan(x), 0, pi/4)
+pi*log(2)/8 + Catalan/2
 
 ###
 integrate(function(x) x*(pi-x)*(pi+x) / tan(x), 0, pi)
@@ -265,3 +271,14 @@ pi/4 - n * int.FrU01(2*n, n)
 n = sqrt(5); p = sqrt(3);
 integrate(\(x) x^p * atan(x^n), 0, 1)
 pi/(4*(p+1)) - n / (p+1) * int.FrU01(2*n, n + p)
+
+
+###
+# see file: Integrals.Trig.Tan.R;
+integrate(\(x) atan(x) * x / (x^2 + 1), 0, 1)
+Catalan / 2 - 1/8 * pi*log(2)
+
+###
+integrate(\(x) atan(x) / (x^2 + 1), 0, 1)
+pi^2 / 32
+
