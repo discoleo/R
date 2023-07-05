@@ -45,9 +45,12 @@ int.FrU01 = function(n, p=0) {
 	(digamma(((p+1)/n + 1)/2) - digamma((p+1)/n/2)) / (2*n);
 }
 int.FrDU01 = function(n, p=0) {
-	# TODO: p != 0;
-	# pi/tan(pi/n)/2 - pi/tan(pi/n/2)/2 + pi/sin(pi/n)/2  == 0;
-	digamma(1/n) + Euler + log(n);
+	if( p!= 0) {
+		# r = int.FrDU01(1, p) - int.FrDU01(n, p);
+		r = digamma((p+1)) - digamma((p+1)/n) - log(n);
+		return(r);
+	}
+	digamma((p+1)/n) + Euler + log(n/(p+1));
 }
 
 int.FrUInf = function(n, p=0, pow=1, coeff=1) {
@@ -779,6 +782,14 @@ constEuler + digamma(n + 1)
 n = sqrt(7)
 integrate(\(x) 1/(1 - x) - n / (1 - x^n), 0, 1)
 digamma(1/n) + Euler + log(n)
+
+
+### I( x^p/(x-1) - n*x^p/(x^n - 1) )
+p = sqrt(3); n = sqrt(11);
+# can be: p > n;
+integrate(\(x) x^p/(x-1) - n*x^p/(x^n - 1), 0, 1)
+int.FrDU01(n, p)
+
 
 # [alternative] [n = 5]
 pi/tan(pi/n)/2 + 1/4*log(n) + sqrt(5)/2*atanh(1/sqrt(5))
