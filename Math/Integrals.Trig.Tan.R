@@ -24,3 +24,8 @@ integrate(\(x) x^2 * tan(x)^2, 0, pi/4)
 integrate(\(x) x^2 * tan(x), 0, pi/4)
 - 21/64 * zeta(3) - 1/32 * pi^2 * log(2) + 1/4 * pi * Catalan
 
+### [by Parts]
+integrate(\(x) x^3 * tan(x)^2, 0, pi/4)
+(pi/4)^3 - 1/4*(pi/4)^4 + 63/64 * zeta(3) +
+	+ 3/32 * pi^2 * log(2) - 3/4 * pi * Catalan;
+
