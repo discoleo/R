@@ -150,6 +150,31 @@ integral(function(x) x^5*(pi - x)*(pi + x) / sin(x), -pi, pi)
 11*7*pi^5*zeta(3) - 90*31*pi^3*zeta(5) + 315/2*127*pi*zeta(7)
 
 
+### TAN:
+integrate(function(x) x / tan(x), 0, pi/2)
+pi*log(2)/2
+
+###
+integrate(function(x) x*(pi-x)*(pi+x) / tan(x), 0, pi)
+- 3/2 * pi * zeta(3)
+
+###
+integrate(function(x) x*(pi-x)*(pi+x) / tan(x), 0, pi/2)
+9/16 * pi * zeta(3) + 3/8 * pi^3 * log(2)
+
+###
+integrate(function(x) x^2 / tan(x), 0, pi/2)
+- 7/8 * zeta(3) + 1/4 * pi^2 * log(2)
+
+###
+integrate(function(x) x^3 / tan(x), 0, pi/2)
+- 9/16 * pi * zeta(3) + 1/8 * pi^3 * log(2)
+
+###
+integrate(function(x) x^4 / tan(x), 0, pi/2)
+93/32 * zeta(5) - 9/16 * pi^2 * zeta(3) + 1/16 * pi^4 * log(2)
+
+
 ### Derived
 # on [0, pi]
 
