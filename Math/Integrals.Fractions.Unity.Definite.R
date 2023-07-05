@@ -50,7 +50,7 @@ int.FrDU01 = function(n, p=0) {
 		r = digamma((p+1)) - digamma((p+1)/n) - log(n);
 		return(r);
 	}
-	digamma((p+1)/n) + Euler + log(n/(p+1));
+	digamma(1/n) + Euler + log(n);
 }
 
 int.FrUInf = function(n, p=0, pow=1, coeff=1) {
