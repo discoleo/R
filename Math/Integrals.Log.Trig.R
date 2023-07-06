@@ -22,7 +22,12 @@ Catalan = 0.915965594177219015054603514;
 
 ###
 integrate(function(x) log(sin(x)), 0, pi/2)
+integrate(function(x) log(cos(x)), 0, pi/2)
 - pi/2*log(2)
+#
+integrate(\(x) log(1 + cos(x)), 0, pi/2)
+integrate(\(x) log(1 + sin(x)), 0, pi/2)
+- pi/2*log(2) + 2*Catalan
 
 ###
 integrate(function(x) log(sin(x)), 0, pi/4)
