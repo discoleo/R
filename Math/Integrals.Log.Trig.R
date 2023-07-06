@@ -58,6 +58,24 @@ integrate(function(x) log(cos(x)), 0, pi/8)
 - pi/8*log(2) - Catalan/8 - C8/2
 
 
+### on [0, pi/3]
+
+integrate(\(x) log(cos(x)), 0, pi/3)
+- pi*log(2)/3 + sqrt(3)/(4*36) *
+	(pracma::psi(1, 1/6) - pracma::psi(1, 5/6) + pracma::psi(1, 1/3) - pracma::psi(1, 2/3))
+
+# Derivation:
+id = seq(0, 40000)
+- pi*log(2)/3 + sqrt(3)/4 * sum(1/(6*id+1)^2, -1/(6*id+5)^2, 1/(6*id+2)^2, - 1/(6*id+4)^2)
+- pi*log(2)/3 + sqrt(3)/(4*36) *
+	(pracma::psi(1, 1/6) - pracma::psi(1, 5/6) + pracma::psi(1, 2/6) - pracma::psi(1, 4/6))
+
+# Varia:
+(pracma::psi(1, 1/3) - pracma::psi(1, 2/3)) / 9
+integrate(\(x) - log(x) / (x^2 + x + 1), 0, 1)
+# TODO
+
+
 #################
 
 ### Michael Penn: Can you guess the trick for this integral?
