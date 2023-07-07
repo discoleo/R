@@ -318,9 +318,21 @@ s = 5
 integrate(\(x) log(x)^s / (x - 1), 0, 1)
 gamma(s+1) * zeta(s+1)
 
+#
 s = sqrt(5)
 integrate(\(x) - abs(log(x))^s / (x - 1), 0, 1)
 gamma(s+1) * zeta(s+1)
+
+
+### Gen: I( log(x)^s / (x + 1) )
+s = sqrt(5)
+integrate(\(x) - abs(log(x))^s / (x + 1), 0, 1)
+- gamma(s+1)*zeta(s+1) * (1 - 1/2^s)
+
+# TODO:
+s = 1/2
+integrate(\(x) - abs(log(x))^s / (x^2 - 1), 0, 1)
+gamma(1/2+1)*zeta(1/2+1) * (1 - 1/2^(3/2))
 
 
 ### Derived Variants:
