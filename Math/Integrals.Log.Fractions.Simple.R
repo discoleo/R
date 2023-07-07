@@ -53,6 +53,23 @@ integrate(\(x) x^p * abs(log(x))^s, 0, 1)
 gamma(s+1) / (p+1)^(s+1)
 
 
+### Shifted
+
+### I( log(x+1)^s )
+
+integrate(\(x) log(x+1), 0, 1)
+2*log(2) - 1
+#
+integrate(\(x) log(x+1)^2, 0, 1)
+2*log(2)^2 - 2*(2*log(2) - 1)
+#
+integrate(\(x) log(x+1)^3, 0, 1)
+2*log(2)^3 - 3*(2*log(2)^2 - 2*(2*log(2) - 1))
+#
+integrate(\(x) log(x+1)^4, 0, 1)
+2*log(2)^4 - 4*(2*log(2)^3 - 3*(2*log(2)^2 - 2*(2*log(2) - 1)))
+
+
 ########################
 ########################
 
