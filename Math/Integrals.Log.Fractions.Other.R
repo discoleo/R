@@ -129,7 +129,7 @@ integrate(\(x) log(x) * log((1 - x) / (x + 1)), 0, 1)
 # Maths 505: Another INSANE integral!
 # https://www.youtube.com/watch?v=KEDEzVqlAYU
 
-integrate(function(x) atan(x)*log((1-x)/(1+x)), 0, 1)
+integrate(function(x) atan(x) * log((1-x)/(1+x)), 0, 1)
 pi^2/16 - pi/4*log(2) - Catalan;
 
 
@@ -186,6 +186,14 @@ p = sqrt(5)
 integrate(\(x) log(x) * atan(x^p) / x, 0, 1)
 - pi^3 / (32 * p^2)
 
+### Other:
+integrate(\(x) log(x) * x / (x^2 + 1), 0, 1)
+- pi^2/48
+
+###
+integrate(\(x) log(x^2 + 1) / x, 0, 1)
+pi^2/24
+
 
 ####################
 ####################
@@ -220,4 +228,29 @@ Li2 = - integrate(\(x) x / (2*exp(x) + 1), 0, Inf)$value;
 # alternative for Li2:
 id = seq(10000)
 Li2 = sum((-1/2)^id / id^2);
+
+
+######################
+######################
+
+### I( log(sqrt(x^2 + 1) + x) / (x^2 + 1) )
+# Maths 505: An AWESOME log integral with a surprising result
+# https://www.youtube.com/watch?v=a2On9rAvqks
+
+integrate(\(x) log(sqrt(x^2 + 1) + x) / (x^2 + 1), 0, Inf)
+integrate(\(x) log(sqrt(x^2 + 1) + 1) / (x^2 + 1), 0, Inf)
+integrate(\(x) - log(sqrt(x^2 + 1) - x) / (x^2 + 1), 0, Inf)
+integrate(\(x) - log(sqrt(x^2 + 1) - 1) / (x^2 + 1), 0, Inf)
+2*Catalan
+
+
+### Derived / Sub-Integrals:
+integrate(\(x) log((1 + cos(x)) / cos(x)), 0, pi/2)
+2*Catalan
+
+###
+# - see also file: Integrals.Log.Trig.R
+integrate(\(x) log(1 + cos(x)), 0, pi/2)
+integrate(\(x) 4*log(cos(x)), 0, pi/4)$value + pi*log(2)/2
+- pi*log(2)/2 + 2*Catalan
 
