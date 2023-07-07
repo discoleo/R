@@ -3,10 +3,17 @@
 
 ### Helper
 
+# I( x^p / (x^n + 1) ) on [0, 1]
 int.FrU01 = function(n, p=0) {
 	(digamma(((p+1)/n + 1)/2) - digamma((p+1)/n/2)) / (2*n);
 }
+# I( x^p * log(x) / (x^n + 1) ) on [0, 1]
+int.LogFrU01 = function(n, p=0) {
+	(pracma::psi(1, (p+1)/n) - pracma::psi(1, (p+1)/(2*n))/2) / n^2;
+}
 
+
+###############
 
 ### Simple Log:
 n = sqrt(5)
@@ -18,12 +25,12 @@ log(2) - n * int.FrU01(n, p = n)
 n = 3
 integrate(\(x) log(1 - x^n), 0, 1)
 log(n) - n - integrate(\(x) 1/(1 - x) - n / (1 - x^n), 0, 1)$value
-log(n) - n - digamma(1/n) - Euler - log(n)
+- n - digamma(1/n) - Euler
 
 #
 n = sqrt(7)
 integrate(\(x) log(1 - x^n), 0, 1)
-log(n) - n - digamma(1/n) - Euler - log(n)
+- n - digamma(1/n) - Euler
 
 
 ########################
@@ -208,6 +215,7 @@ pi^2/12 - log(2)^2 / 2
 ###
 integrate(\(x) log(1 + x) / x, 0, 1)
 integrate(\(x) - log(1 - x) / (2*x), 0, 1)
+integrate(\(x) - log(1 - x^2) / x, 0, 1)
 pi^2 / 12
 
 #
@@ -275,4 +283,44 @@ pi^2 / 12
 integrate(\(x) log(x) / (x - 1), 1/2, 1)
 pi^2 / 12 - log(2)^2 / 2
 
+
+######################
+######################
+
+### I( log(x) / (x^n - 1) ) on [0, 1]
+n = sqrt(5)
+integrate(\(x) log(x)/(x^n - 1), 0, 1)
+pracma::psi(1, 1/n) / n^2
+
+
+### Examples:
+integrate(\(x) log(x)/(x - 1), 0, 1)
+pi^2/6
+
+### Derived Variants:
+integrate(\(x) log(x)/(x^3 - 1), 0, 1)
+pracma::psi(1, 1/3)/9
+# =>
+integrate(\(x) log(x) * (x+2) / (x^2 + x + 1), 0, 1)
+pi^2/6 - pracma::psi(1, 1/3)/3
+
+###
+integrate(\(x) log(x) / (x^2 + x + 1), 0, 1)
+- (pracma::psi(1, 1/3) - pracma::psi(1, 2/3)) / 9
+
+### =>
+integrate(\(x) log(x) * x / (x^2 + x + 1), 0, 1)
+pi^2/6 - (pracma::psi(1, 1/3) + 2*pracma::psi(1, 2/3))/9
+pi^2/(2*27) - pracma::psi(1, 2/3)/9
+
+
+### I( x^p * log(x) / (x^n + 1) ) on [0, 1]
+n = sqrt(5)
+integrate(\(x) log(x)/(x^n + 1), 0, 1)
+pracma::psi(1, 1/n) / n^2 - pracma::psi(1, 1/(2*n)) / (2*n^2)
+
+### Full:
+n = sqrt(5); p = sqrt(3);
+integrate(\(x) x^p * log(x) / (x^n + 1), 0, 1)
+(pracma::psi(1, (p+1)/n) - pracma::psi(1, (p+1)/(2*n))/2) / n^2
 
