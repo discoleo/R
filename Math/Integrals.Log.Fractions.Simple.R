@@ -287,6 +287,13 @@ pi^2 / 12 - log(2)^2 / 2
 ######################
 ######################
 
+
+### I( log(x)^s / (x^n - 1) ) on [0, 1]
+n = sqrt(5); s = 3; # s = integer;
+integrate(\(x) log(x)^s / (x^n - 1), 0, 1)
+pracma::psi(s, 1/n) / n^(s+1)
+
+
 ### I( log(x) / (x^n - 1) ) on [0, 1]
 n = sqrt(5)
 integrate(\(x) log(x)/(x^n - 1), 0, 1)
