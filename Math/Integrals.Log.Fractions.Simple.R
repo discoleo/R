@@ -293,6 +293,11 @@ n = sqrt(5); s = 3; # s = integer;
 integrate(\(x) log(x)^s / (x^n - 1), 0, 1)
 pracma::psi(s, 1/n) / n^(s+1)
 
+### I( log(x)^s / (x^n + 1) ) on [0, 1]
+n = sqrt(5); s = 3; # s = integer;
+integrate(\(x) log(x)^s / (x^n + 1), 0, 1)
+pracma::psi(s, 1/n) / n^(s+1) - 2*pracma::psi(s, 1/(2*n)) / (2*n)^(s+1)
+
 
 ### I( log(x) / (x^n - 1) ) on [0, 1]
 n = sqrt(5)
