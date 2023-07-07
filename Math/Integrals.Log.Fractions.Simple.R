@@ -1,7 +1,7 @@
 
 
 
-### Helper
+### Helper Functions
 
 # I( x^p / (x^n + 1) ) on [0, 1]
 int.FrU01 = function(n, p=0) {
@@ -35,6 +35,22 @@ log(n) - n - integrate(\(x) 1/(1 - x) - n / (1 - x^n), 0, 1)$value
 n = sqrt(7)
 integrate(\(x) log(1 - x^n), 0, 1)
 - n - digamma(1/n) - Euler
+
+
+##################
+
+### Basic Log:
+
+### I( log(x)^s )
+s = log(5)
+integrate(\(x) abs(log(x))^s, 0, 1)
+gamma(s+1)
+
+
+### I( x^p * log(x)^s )
+s = log(5); p = sqrt(7);
+integrate(\(x) x^p * abs(log(x))^s, 0, 1)
+gamma(s+1) / (p+1)^(s+1)
 
 
 ########################
