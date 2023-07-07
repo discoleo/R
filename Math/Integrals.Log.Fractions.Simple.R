@@ -12,6 +12,10 @@ int.LogFrU01 = function(n, p=0) {
 	(pracma::psi(1, (p+1)/n) - pracma::psi(1, (p+1)/(2*n))/2) / n^2;
 }
 
+zeta = function(n) {
+	(1 + 1/(2^(n-1) - 1)) * pracma::eta(n);
+}
+
 
 ###############
 
@@ -308,6 +312,16 @@ pracma::psi(1, 1/n) / n^2
 ### Examples:
 integrate(\(x) log(x)/(x - 1), 0, 1)
 pi^2/6
+
+### Gen: I( log(x)^s / (x - 1) )
+s = 5
+integrate(\(x) log(x)^s / (x - 1), 0, 1)
+gamma(s+1) * zeta(s+1)
+
+s = sqrt(5)
+integrate(\(x) - abs(log(x))^s / (x - 1), 0, 1)
+gamma(s+1) * zeta(s+1)
+
 
 ### Derived Variants:
 integrate(\(x) log(x)/(x^3 - 1), 0, 1)
