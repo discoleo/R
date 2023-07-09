@@ -37,7 +37,7 @@ pracma::zeta(3) / 4
 
 ###
 p = sqrt(5)
-integrate(\(x) log(x)*log(1-x^p)/x, 0, 1)
+integrate(\(x) log(x) * log(1-x^p) / x, 0, 1)
 pracma::zeta(3) / p^2
 
 
@@ -230,6 +230,15 @@ id = seq(10000)
 Li2 = sum((-1/2)^id / id^2);
 
 
+###
+integrate(\(x) log(x) * log(1-x) / x^2, 1/2, 1)
+pi^2/12 + 2*log(2)^2 - 2*log(2)
+
+#
+integrate(\(x) log(x)^2 / x^2, 1/2, 1)
+2*log(2)^2 - 4*log(2) + 2
+
+
 ######################
 ######################
 
@@ -271,4 +280,16 @@ integrate(\(x) x * log(x) / cosh(k*x)^2, 0, 100)
 k = sqrt(3)
 integrate(\(x) x * exp(k*x) / (exp(k*x) + 1)^2, 0, 100)
 log(2) / k^2
+
+
+#######################
+#######################
+
+### I( (x^n - 1) / log(x) )
+# Michael Penn: My favorite way "around" Feynman's trick -- and a challenge for you!
+# https://www.youtube.com/watch?v=EseFhG1QARM
+
+n = sqrt(5)
+integrate(\(x) (x^n - 1) / log(x), 0, 1)
+log(n+1)
 
