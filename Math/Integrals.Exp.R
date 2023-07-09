@@ -120,14 +120,14 @@ gamma(p + 1) * (a[1]^(-p-1) - a[2]^(-p-1))
 # https://www.youtube.com/watch?v=amL2uBK2buU
 
 p = 1/3
-integrate(\(x) x^p / (1 + exp(x)), 0, Inf, rel.tol=1E-8)
+integrate(\(x) x^p / (exp(x) + 1), 0, Inf, rel.tol=1E-8)
 gamma(p) * pracma::zeta(p + 1) * (1 - 1/2^p) * p
 gamma(p + 1) * pracma::zeta(p + 1) * (1 - 1/2^p)
 
 ###
 p = sqrt(5)
 integrate(\(x) x^p / (exp(x) + 1), 0, Inf, rel.tol=1E-8)
-gamma(p) * pracma::zeta(p + 1) * (1 - 1/2^p) * p
+gamma(p + 1) * pracma::zeta(p + 1) * (1 - 1/2^p)
 
 ###
 p = sqrt(5); k = sqrt(3);
@@ -141,7 +141,7 @@ gamma(p + 1) * pracma::zeta(p + 1) / k^(p + 1)
 # - bringing pi back into the equation:
 p = sqrt(5)
 integrate(\(x) x^p / (1 + pi^x), 0, Inf, rel.tol=1E-8)
-gamma(p) * pracma::zeta(p + 1) * (1 - 1/2^p) * p / log(pi)^(p + 1)
+gamma(p + 1) * pracma::zeta(p + 1) * (1 - 1/2^p) / log(pi)^(p + 1)
 
 
 ### I( x^p / (exp(x) - 1) )
@@ -151,6 +151,31 @@ gamma(p) * pracma::zeta(p + 1) * (1 - 1/2^p) * p / log(pi)^(p + 1)
 p = sqrt(5)
 integrate(\(x) x^p / (exp(x) - 1), 0, Inf, rel.tol=1E-8)
 gamma(p + 1) * pracma::zeta(p + 1)
+
+
+################
+
+###
+k = sqrt(3)
+integrate(\(x) 1 / (exp(k*x) + 1), 0, 100)
+log(2)/k
+
+###
+k = sqrt(3)
+integrate(\(x) 1 / (exp(k*x) + 1)^2, 0, 100)
+(log(2) - 1/2)/k
+
+###
+k = sqrt(3)
+integrate(\(x) x * exp(k*x) / (exp(k*x) + 1)^2, 0, 100)
+log(2) / k^2
+
+
+### I( x^p / (exp(k*x) + 1)^2 )
+k = sqrt(3); p = sqrt(5);
+integrate(\(x) x^p / (exp(k*x) + 1)^2, 0, 100)
+gamma(p + 1) * (pracma::zeta(p + 1) * (2^p - 1) +
+	- pracma::zeta(p) * (2^p - 2)) / (2^p * k^(p+1));
 
 
 #########################
