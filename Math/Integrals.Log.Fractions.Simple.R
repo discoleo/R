@@ -16,6 +16,16 @@ zeta = function(n) {
 	(1 + 1/(2^(n-1) - 1)) * pracma::eta(n);
 }
 
+### Fractions: Polynomials
+int.FrUInf = function(n, p=0, pow=1, coeff=1) {
+	k = 1/pow;
+	tmp = sapply(p, function(p) {
+		gamma((p+1)/n) * gamma(1/k - (p+1)/n) / gamma(1/k) / n;
+	});
+	tmp = sum(coeff * tmp);
+	return(tmp);
+}
+
 
 ###############
 
@@ -91,20 +101,40 @@ integrate(function(x) log(x)/(x+1)^2, 0, Inf)
 # == 0
 
 ###
+integrate(function(x) log(x)/(x+1)^(3/2), 0, Inf, rel.tol=1E-8)
+4*log(2)
+
+###
 integrate(function(x) log(x)/(x+1)^3, 0, Inf)
 -1/2
+
+###
+integrate(function(x) log(x)/(x+1)^(5/2), 0, Inf, rel.tol=1E-8)
+4*log(2)/3 - 4/3
 
 ###
 integrate(function(x) log(x)/(x+1)^4, 0, Inf)
 -1/2
 
+###
+integrate(function(x) log(x)/(x+1)^(7/2), 0, Inf)
+4*log(2)/5 - 16/15
+
 ### n = 5
 integrate(function(x) log(x)/(x+1)^5, 0, Inf)
 - 11 / gamma(5)
 
+###
+integrate(function(x) log(x)/(x+1)^(9/2), 0, Inf)
+4*log(2)/7 - 92/(3*5*7)
+
 ### n = 6
 integrate(function(x) log(x)/(x+1)^6, 0, Inf)
 - 50 / gamma(6)
+
+###
+integrate(function(x) log(x)/(x+1)^(11/2), 0, Inf, rel.tol=1E-8)
+4*log(2)/9 - 704/(3*5*7*9)
 
 # x = exp(1i*pi);
 # - 4i*pi*I + 4*pi^2/(n-1) = 2i*pi*(- 100/x^5 + 48*log(x)/x^5)/gamma(6)
