@@ -105,6 +105,7 @@ p = 1 + sqrt(3)/7
 integrate(function(x) x * log(x) / (x+1)^(p+1), 0, Inf, rel.tol=1E-8)
 - (digamma(p-1) + Euler)/(p-1) + (digamma(p) + Euler)/p
 digamma(p)/p - digamma(p-1)/(p-1) - Euler/(p*(p-1))
+- (digamma(p-1) + Euler - 1) / (p*(p-1))
 
 
 ###
