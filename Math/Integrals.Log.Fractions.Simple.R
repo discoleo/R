@@ -95,8 +95,14 @@ integrate(\(x) log(x+1)^4, 0, 1)
 # Note:
 # - easy pole with higher multiplicity;
 
-# TODO: full generalization;
 
+### Full generalisation: I( log(x) / (x+1)^(p+1) )
+p = sqrt(3)/7
+integrate(function(x) log(x)/(x+1)^(p+1), 0, Inf, rel.tol=1E-8)
+- (digamma(p) + Euler)/p
+
+
+###
 integrate(function(x) log(x)/(x+1)^2, 0, Inf)
 # == 0
 
@@ -128,13 +134,13 @@ integrate(function(x) log(x)/(x+1)^5, 0, Inf)
 integrate(function(x) log(x)/(x+1)^(9/2), 0, Inf)
 4*log(2)/7 - 92/(3*5*7)
 
-### n = 6
-integrate(function(x) log(x)/(x+1)^6, 0, Inf)
-- 50 / gamma(6)
-
 ###
 integrate(function(x) log(x)/(x+1)^(11/2), 0, Inf, rel.tol=1E-8)
 4*log(2)/9 - 704/(3*5*7*9)
+
+### n = 6
+integrate(function(x) log(x)/(x+1)^6, 0, Inf)
+- 50 / gamma(6)
 
 # x = exp(1i*pi);
 # - 4i*pi*I + 4*pi^2/(n-1) = 2i*pi*(- 100/x^5 + 48*log(x)/x^5)/gamma(6)
@@ -147,6 +153,15 @@ integrate(function(x) log(x)/(x+1)^7, 0, Inf)
 # x = exp(1i*pi);
 # - 4i*pi*I + 4*pi^2/(n-1) = 2i*pi*(2*274 - 240*log(x)/x^6)/gamma(7)
 # - 2i*I + 2*pi/(n-1) = 1i*(2*274 - 240*log(x)/x^6)/gamma(7)
+
+
+### Pow = 1/n Series
+integrate(function(x) log(x)/(x+1)^(4/3), 0, Inf)
+- (digamma(1/3) + Euler)*3
+
+###
+integrate(function(x) log(x)/(x+1)^(6/5), 0, Inf, rel.tol=1E-8)
+- (digamma(1/5) + Euler)*5
 
 
 ########################
