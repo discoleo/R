@@ -206,6 +206,14 @@ tmp = sapply(seq(1, 8), \(x) points(x, zetaSum0(x, p=p), col="red"))
 
 
 ### Zeta(1)
+
+### z = 1/2
+zetaSum(1/2, p=1, N=320000)
+digamma(3/2) + Euler
+- 2*log(2) + 2
+
+
+### z = 1/3
 zetaSum(1/3, p=1, N=100000)
 pracma::psi(1/3) + 3 + Euler
 -3/2*log(3) + 3 - pi/2 * cos(pi/3) / sin(pi/3)
