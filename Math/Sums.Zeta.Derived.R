@@ -17,6 +17,14 @@ unity.neg = function(n) {
 	return(m);
 }
 
+### sum( 1/(n^2 + k) )
+exact.nsq = function(k) {
+	ksqr = if(k >= 0) sqrt(k) else (sqrt(k + 0i));
+	(1i/ksqr + pi / tan(pi*1i*ksqr)) * 1i / (2*ksqr);
+}
+
+
+########################
 
 ### sum( (zeta(n) - 1) / n )
 # Maths 505: A Beautiful Riemann Zeta Sum
@@ -148,9 +156,27 @@ sum((3 - pi*m3[1]*1i/tan(pi*m3[1]*1i)) / 2 - 1/(1 + m3[1]^2)) +
 	+ 2*(2 - 1/3 + 1/4 - sum(pi*m3/tan(pi*m3)) / 6 - sum(pi*m12/tan(pi*m12)) / 24);
 
 
-##################
+####################
+
+### Sum( (-1)^n * zeta(2*n) / pi^(2*n) )
+# Michael Penn: One of my favorite identities.
+# https://www.youtube.com/watch?v=9_Klka9x4zg
 
 ###
+id = seq(500)
+sum((-1)^(id+1) * zeta(2*id) / pi^(2*id))
+(coth(1) - 1)/2
+
+
+### Sum( zeta(2*n) / pi^(2*n) )
+id = seq(500)
+sum(zeta(2*id) / pi^(2*id))
+exact.nsq(-1/pi^2)/pi^2
+
+
+####################
+
+### Sum( zeta(2*n) / ((n+1)*(2*n+1)) )
 # Michael Penn: Another Riemann-Zeta function identity.
 # https://www.youtube.com/watch?v=AmWvTN6cPz8
 
