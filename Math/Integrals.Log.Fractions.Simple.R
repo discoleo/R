@@ -113,6 +113,7 @@ digamma(p)/p - digamma(p-1)/(p-1) - Euler/(p*(p-1))
 #
 p = sqrt(5)
 integrate(function(x) x^2 * log(x) / (x+1)^(p+2), 0, Inf, rel.tol=1E-8)
+# ???
 #
 - (digamma(p-1) + Euler)/(p-1) - (digamma(p+1) + Euler)/(p+1) + 2*(digamma(p) + Euler)/(p);
 - (digamma(p) + Euler) * (1/(p-1) + 1/(p+1) - 2/p) +
@@ -144,6 +145,22 @@ integrate(function(x) x^(1/2) * log(x) / (x+1)^5, 0, Inf, rel.tol=1E-8)
 #
 integrate(function(x) x^(1/2) * log(x) / (x+1)^6, 0, Inf, rel.tol=1E-8)
 - 71/(30*64) * pi
+
+### Derivation: log(x) / (x^2+1)^(5/2)
+integrate(function(x) log(x) / (x^2+1)^(3/2), 0, Inf, rel.tol=1E-8)
+integrate(function(x) 1/4 * x^(-1/2) * log(x) / (x+1)^(3/2), 0, Inf, rel.tol=1E-8)
+- log(2)
+#
+integrate(function(x) (log(x) - 1)*x^2 / (x^2+1)^(5/2), 0, Inf, rel.tol=1E-8)
+- log(2)/3
+# =>
+integrate(function(x) log(x) / (x^2+1)^(5/2), 0, Inf, rel.tol=1E-8)
+-2/3 * log(2) - int.FrUInf(2,0,3/2) + int.FrUInf(2,0,5/2)
+
+### I( log(x) / (x^2+1)^(7/2) )
+integrate(function(x) log(x) / (x^2+1)^(7/2), 0, Inf, rel.tol=1E-8)
+-2/3*4/5 * log(2) - (4*int.FrUInf(2,0,3/2) + int.FrUInf(2,0,5/2)) / 5 +
+	+ int.FrUInf(2,0,7/2)
 
 
 ### Initial Workout:
