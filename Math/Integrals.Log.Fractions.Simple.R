@@ -101,7 +101,8 @@ p = sqrt(3)/7
 integrate(function(x) log(x) / (x+1)^(p+1), 0, Inf, rel.tol=1E-8)
 - (digamma(p) + Euler)/p
 
-#
+### Series: x^Integer * ...;
+# TODO: Genralisation of Formula;
 p = 1 + sqrt(3)/7
 integrate(function(x) x * log(x) / (x+1)^(p+1), 0, Inf, rel.tol=1E-8)
 - (digamma(p-1) + Euler - 1) / (p*(p-1))
@@ -118,7 +119,34 @@ integrate(function(x) x^2 * log(x) / (x+1)^(p+2), 0, Inf, rel.tol=1E-8)
 	+ 1/(p-1)^2 - 1/(p*(p+1))
 
 
-###
+### Variants: Examples
+p = sqrt(7) - sqrt(2)/2; # p > 1 (but should be >= 1.7 for numerical reasons)
+integrate(function(x) x^2 * log(x) / (x+1)^(p+2), 0, Inf, rel.tol=1E-8)
+integrate(function(x) 1/9 * log(x) / (x^(1/3) + 1)^(p+2), 0, Inf, rel.tol=1E-8)
+integrate(function(x) 1/4  * x^(1/2) * log(x) / (x^(1/2) + 1)^(p+2), 0, Inf, rel.tol=1E-8)
+integrate(function(x) 4/25 * x^(1/5) * log(x) / (x^(2/5) + 1)^(p+2), 0, Inf, rel.tol=1E-8)
+- (digamma(p) + Euler) * (1/(p-1) + 1/(p+1) - 2/p) +
+	+ 1/(p-1)^2 - 1/(p*(p+1))
+
+
+### Series: x^(1/2)
+integrate(function(x) x^(1/2) * log(x) / (x+1)^2, 0, Inf, rel.tol=1E-8)
+pi
+#
+integrate(function(x) x^(1/2) * log(x) / (x+1)^3, 0, Inf, rel.tol=1E-8)
+0
+#
+integrate(function(x) x^(1/2) * log(x) / (x+1)^4, 0, Inf, rel.tol=1E-8)
+- pi/24
+#
+integrate(function(x) x^(1/2) * log(x) / (x+1)^5, 0, Inf, rel.tol=1E-8)
+- pi/24
+#
+integrate(function(x) x^(1/2) * log(x) / (x+1)^6, 0, Inf, rel.tol=1E-8)
+- 71/(30*64) * pi
+
+
+### Initial Workout:
 integrate(function(x) log(x)/(x+1)^2, 0, Inf)
 # == 0
 
