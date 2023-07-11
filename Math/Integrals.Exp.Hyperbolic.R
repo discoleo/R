@@ -24,3 +24,26 @@ gamma((p + 1)/n) * pracma::zeta((p + 1)/n - 1) * (1 - 2^(2 - (p + 1)/n)) / 2^((p
 
 # TODO: even more generalizations
 
+
+######################
+######################
+
+### I( 1 / cosh(x)^s )
+# Maths 505: An epic exponential function integral
+# https://www.youtube.com/watch?v=rKkTGwIpODs
+
+###
+integrate(\(x) 1 / (2*cosh(x))^(1/2), 0, Inf)
+gamma(1/4)^2 / gamma(1/2) /4
+
+
+###
+integrate(\(x) 1 / (2*cosh(x))^(1/3), 0, Inf)
+gamma(1/6)^2 / gamma(1/3) / 4
+
+
+### Gen:
+s = sqrt(3)/sqrt(5);
+integrate(\(x) 1 / (2*cosh(x))^s, 0, Inf)
+gamma(s/2)^2 / gamma(s) / 4
+
