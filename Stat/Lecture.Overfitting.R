@@ -123,6 +123,18 @@ plot.data(px, py, out=out, col=col, main = "Entire Population", FUN = FUN)
 #   to the entire population will induce massive miss-classifications;
 # => the real reason to avoid over-fitting!
 
+### Note:
+# - the data overlap is depicted symmetrically;
+# - anisotropy can be present in real data:
+#   however, it is still very unlikely to have a local neighborhood
+#   with a different class composition than its own neighborhood;
+#   (i.e. pockets as above are very unlikely)
+
+### TODO:
+# - Anisotropy;
+# - Interactions: e.g. between 20,000 genes;
+# - Regularization: Stats vs Coefficients;
+
 
 #########################
 #########################
