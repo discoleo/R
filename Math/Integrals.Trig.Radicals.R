@@ -267,6 +267,15 @@ integrate(\(x) cos(x)^(4/3) / sin(x)^(2/3), 0, pi/4)
 (beta(1/6, 1/2) + beta(1/6, 1)) / 2^(2 + 1/3)
 
 
+### I( sin(x)^(5/3) / cos(x)^(1/3) )
+integrate(\(x) sin(x)^(5/3) / cos(x)^(1/3), 0, pi/4)
+(beta(1/3, 1/2) - beta(1/3, 1)) / 2^(2 + 2/3)
+
+###
+integrate(\(x) cos(x)^(5/3) / sin(x)^(1/3), 0, pi/4)
+(beta(1/3, 1/2) + beta(1/3, 1)) / 2^(2 + 2/3)
+
+
 # Derivation:
 integrate(\(x) 2^(4/3) * sin(x)^(4/3) / cos(x)^(2/3), 0, pi/4)
 integrate(\(x) cos(x)^(4/3) * (1 - sin(x))/cos(x)^2, 0, pi/2)
