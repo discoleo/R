@@ -8,7 +8,7 @@
 ###   Integral( 1 / tan(x)^(1/p) ) dx
 ###   Integral( tan(x)^(1/p) ) dx
 ###
-### draft v.0.1f
+### draft v.0.1h
 
 
 ###############
@@ -258,15 +258,6 @@ integrate(sin.rp, lower = lower, upper = upper, p=p, rel.tol=1E-10)
 ####################
 ####################
 
-### I( sin(x)^(4/3) / cos(x)^(2/3) )
-integrate(\(x) sin(x)^(4/3) / cos(x)^(2/3), 0, pi/4)
-(beta(1/6, 1/2) - beta(1/6, 1)) / 2^(2 + 1/3)
-
-###
-integrate(\(x) cos(x)^(4/3) / sin(x)^(2/3), 0, pi/4)
-(beta(1/6, 1/2) + beta(1/6, 1)) / 2^(2 + 1/3)
-
-
 ### I( sin(x)^(5/3) / cos(x)^(1/3) )
 integrate(\(x) sin(x)^(5/3) / cos(x)^(1/3), 0, pi/4)
 (beta(1/3, 1/2) - beta(1/3, 1)) / 2^(2 + 2/3)
@@ -274,6 +265,15 @@ integrate(\(x) sin(x)^(5/3) / cos(x)^(1/3), 0, pi/4)
 ###
 integrate(\(x) cos(x)^(5/3) / sin(x)^(1/3), 0, pi/4)
 (beta(1/3, 1/2) + beta(1/3, 1)) / 2^(2 + 2/3)
+
+
+### I( sin(x)^(4/3) / cos(x)^(2/3) )
+integrate(\(x) sin(x)^(4/3) / cos(x)^(2/3), 0, pi/4)
+(beta(1/6, 1/2) - beta(1/6, 1)) / 2^(2 + 1/3)
+
+###
+integrate(\(x) cos(x)^(4/3) / sin(x)^(2/3), 0, pi/4)
+(beta(1/6, 1/2) + beta(1/6, 1)) / 2^(2 + 1/3)
 
 
 ### I( sin(x)^(2/3) / cos(x)^(4/3) )
