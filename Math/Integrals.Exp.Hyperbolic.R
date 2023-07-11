@@ -47,3 +47,10 @@ s = sqrt(3)/sqrt(5);
 integrate(\(x) 1 / (2*cosh(x))^s, 0, Inf)
 gamma(s/2)^2 / gamma(s) / 4
 
+
+### Full Gen:
+# see file: Integrals.ComplexAnalysis.R;
+n = sqrt(19); k = sqrt(3); p = sqrt(2);
+integrate(function(x) cosh(p*x) / cosh(n*x)^(1/k), lower=0, upper=100) # BUG: upper = Inf
+gamma(1/(2*k) - p/(2*n)) * gamma(1/(2*k) + p/(2*n)) / gamma(1/k) * 2^(1/k - 2) / n
+
