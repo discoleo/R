@@ -254,3 +254,22 @@ integrate(sin.rp, lower = lower, upper = upper, p=p, rel.tol=1E-10)
 # I(p) =
 # = 1i^(1 + 1/p) * I( sin(y)^(1/p) / cos(y) ) dy;
 
+
+####################
+####################
+
+### I( sin(x)^(4/3) / cos(x)^(2/3) )
+integrate(\(x) sin(x)^(4/3) / cos(x)^(2/3), 0, pi/4)
+(beta(1/6, 1/2) - beta(1/6, 1)) / 2^(2 + 1/3)
+
+###
+integrate(\(x) cos(x)^(4/3) / sin(x)^(2/3), 0, pi/4)
+(beta(1/6, 1/2) + beta(1/6, 1)) / 2^(2 + 1/3)
+
+
+# Derivation:
+integrate(\(x) 2^(4/3) * sin(x)^(4/3) / cos(x)^(2/3), 0, pi/4)
+integrate(\(x) cos(x)^(4/3) * (1 - sin(x))/cos(x)^2, 0, pi/2)
+integrate(\(x) cos(x)^(-2/3) - sin(x)*cos(x)^(-2/3), 0, pi/2)
+(beta(1/6, 1/2) - beta(1/6, 1))/2
+
