@@ -280,6 +280,7 @@ integrate(\(x) cos(x)^(4/3) / sin(x)^(2/3), 0, pi/4)
 integrate(\(x) sin(x)^(2/3) / cos(x)^(4/3), 0, pi/4, rel.tol=1E-8)
 (gamma(-1/6)*gamma(1/2)/gamma(1/3) - gamma(-1/6)*gamma(1)/gamma(5/6)) / 2^(2 - 1/3)
 -6 * (beta(5/6, 1/2)/3 - beta(5/6, 1)*5/6) / 2^(2 - 1/3)
+# Note: beta(5/6, 1)*5/6 == 1;
 # (beta(-1/6, 1/2) - beta(-1/6, 1)) / 2^(2 - 1/3)
 
 ###
@@ -287,8 +288,23 @@ integrate(\(x) cos(x)^(2/3) / sin(x)^(4/3) - 1/x^(4/3), 0, pi/4, rel.tol=1E-8)
 -6 * (beta(5/6, 1/2)/3 + beta(5/6, 1)*5/6) / 2^(2 - 1/3) + 3*(pi/4)^(-1/3)
 # divergent: hypothetical result;
 integrate(\(x) cos(x)^(2/3) / sin(x)^(4/3), 0, pi/4, rel.tol=1E-8)
--6 * (beta(5/6, 1/2)/3 + beta(5/6, 1)*5/6) / 2^(2 - 1/3)
+-6 * (beta(5/6, 1/2)/3 + beta(5/6, 1)*5/6) / 2^(2 - 1/3);
 # (beta(-1/6, 1/2) + beta(-1/6, 1)) / 2^(2 - 1/3)
+
+
+### I( sin(x)^(1/3) / cos(x)^(5/3) )
+integrate(\(x) sin(x)^(1/3) / cos(x)^(5/3), 0, pi/4, rel.tol=1E-8)
+(gamma(-1/3)*gamma(1/2)/gamma(1/6) - gamma(-1/3)*gamma(1)/gamma(2/3)) / 2^(2 - 2/3)
+- (beta(2/3, 1/2)/2 - 3) / 2^(2 - 2/3)
+# (beta(-1/3, 1/2) - beta(-1/3, 1)) / 2^(2 - 2/3)
+
+###
+integrate(\(x) cos(x)^(1/3) / sin(x)^(5/3) - 1/x^(5/3), 0, pi/4, rel.tol=1E-8)
+- (beta(2/3, 1/2)/2 + 3) / 2^(2 - 2/3) + 3/2*(pi/4)^(-2/3)
+# divergent: hypothetical result;
+integrate(\(x) cos(x)^(2/3) / sin(x)^(4/3), 0, pi/4, rel.tol=1E-8)
+- (beta(2/3, 1/2)/2 + 3) / 2^(2 - 2/3)
+# (beta(-1/3, 1/2) + beta(-1/3, 1)) / 2^(2 - 2/3)
 
 
 # Derivation:
