@@ -355,7 +355,7 @@ integrate(\(x) log(x + 1) / (x^2 + x), 0, 1)
 pi^2/12 - log(2)^2 / 2
 
 
-###
+### Other:
 integrate(\(x) log(1 + x) / x, 0, 1)
 integrate(\(x) - log(1 - x) / (2*x), 0, 1)
 integrate(\(x) - log(1 - x^2) / x, 0, 1)
@@ -390,6 +390,8 @@ integrate(\(x) 1/p * x^(1/p - 2) * log(1 + x^(1/p)), 0, 1)
 
 
 ### I( log(x^p + 1) / x^p )
+
+###
 integrate(\(x) log(x^2 + 1) / x^2, 0, 1)
 - log(2) + integrate(\(x) 2 / (x^2 + 1), 0, 1)$value
 pi/2 - log(2)
@@ -405,11 +407,28 @@ integrate(\(x) log(x^p + 1) / x^p, 0, 1)
 - log(2)/(p-1) + p/(p-1) * int.FrU01(p, p = 0)
 
 
+### I( log(1 - x^p) / x^p )
+
+###
+p = sqrt(5)
+integrate(\(x) log(1 - x^p)/x^p, 0, 1)
+1/(p-1) * (digamma(1/p) + Euler)
+
+
 ### Other:
 integrate(\(x) log( (1 + x^2)/(1 - x^2) ) / x, 0, 1)
 integrate(\(x) log( (1 + x)/(1 - x) ) / (2*x), 0, 1)
 integrate(\(x) log( (1 + x)/(x - 1) ) / (2*x), 1, Inf)
 pi^2 / 8
+
+###
+integrate(\(x) log( (1 + x^2)/(1 - x^2) ) / x^2, 0, 1)
+pi/2 + log(2)
+# based on:
+integrate(\(x) log(1 + x^2)/x^2, 0, 1)
+pi/2 - log(2)
+integrate(\(x) log(1 - x^2)/x^2, 0, 1)
+- 2*log(2)
 
 
 ###
