@@ -419,6 +419,14 @@ n = sqrt(5); p = sqrt(3);
 integrate(\(x) x^p * log(1 - x^n), 0, 1)
 - (digamma((n+p+1)/n) + Euler) / (p+1)
 
+### Special Cases:
+integrate(\(x) log(1 - x) / x, 0, 1)
+- pi^2 / 6
+# Note: Dp(digamma(1 + (p+1)/n)) => 1/n;
+n = sqrt(5)
+integrate(\(x) log(1 - x^n) / x, 0, 1)
+- pi^2 / (6*n);
+
 
 ### Other:
 integrate(\(x) log( (1 + x^2)/(1 - x^2) ) / x, 0, 1)
