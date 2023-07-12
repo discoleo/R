@@ -222,9 +222,22 @@ eval.pm(px, list(x=1i*pi/6, pi=pi)) / pi^7 * 6^7 / 3;
 ####################
 
 ### on [0, 1]
+
+### I( log(x)^s / (x^n + 1) ) on [0, 1]
+# see file: Integrals.Log.Fractions.Simple.R;
+n = sqrt(5); s = 3; # s = integer;
+integrate(\(x) log(x)^s / (x^n + 1), 0, 1)
+pracma::psi(s, 1/n) / n^(s+1) - 2*pracma::psi(s, 1/(2*n)) / (2*n)^(s+1)
+
+###
 integrate(function(x) log(x)^2 / (x^2 + 1), 0, 1)
 integrate(function(x) log(x)^2 / (x^2 + 1), 1, Inf)
 pi^3 / 16
+
+###
+n = 2; s = 3; # s = integer;
+integrate(\(x) log(x)^s / (x^n + 1), 0, 1)
+pracma::psi(s, 1/n) / n^(s+1) - 2*pracma::psi(s, 1/(2*n)) / (2*n)^(s+1)
 
 
 ###
