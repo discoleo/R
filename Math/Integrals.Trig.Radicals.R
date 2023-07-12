@@ -302,7 +302,7 @@ integrate(\(x) sin(x)^(1/3) / cos(x)^(5/3), 0, pi/4, rel.tol=1E-8)
 integrate(\(x) cos(x)^(1/3) / sin(x)^(5/3) - 1/x^(5/3), 0, pi/4, rel.tol=1E-8)
 - (beta(2/3, 1/2)/2 + 3) / 2^(2 - 2/3) + 3/2*(pi/4)^(-2/3)
 # divergent: hypothetical result;
-integrate(\(x) cos(x)^(2/3) / sin(x)^(4/3), 0, pi/4, rel.tol=1E-8)
+integrate(\(x) cos(x)^(1/3) / sin(x)^(5/3), 0, pi/4, rel.tol=1E-8)
 - (beta(2/3, 1/2)/2 + 3) / 2^(2 - 2/3)
 # (beta(-1/3, 1/2) + beta(-1/3, 1)) / 2^(2 - 2/3)
 
