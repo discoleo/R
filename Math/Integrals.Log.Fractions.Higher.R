@@ -217,3 +217,27 @@ eval.pm(px, list(x=1i*pi/6, pi=pi)) / pi^7 * 6^7 / 3;
 	+ 933849/exp(15i*pi/6) - 933849/exp(45i*pi/6) +
 	+ 461195/exp(25i*pi/6) - 461195/exp(35i*pi/6)) / 7 / 6^8
 
+
+####################
+####################
+
+### on [0, 1]
+integrate(function(x) log(x)^2 / (x^2 + 1), 0, 1)
+integrate(function(x) log(x)^2 / (x^2 + 1), 1, Inf)
+pi^3 / 16
+
+
+###
+integrate(function(x) log(x)^4 / (x^2 + 1), 0, 1)
+pi^5 * 5/64
+
+
+# Varia:
+integrate(function(x) log(1 - x)*log(x) / (x^2 + 1), 0, 1)$value +
+integrate(function(x) log(x - 1)*log(x) / (x^2 + 1), 1, Inf)$value
+pi^3/16
+
+integrate(function(x) log(x - 1) / (x^2 + 1), 1, Inf)
+pi*log(2)/8
+
+
