@@ -412,7 +412,12 @@ integrate(\(x) log(x^p + 1) / x^p, 0, 1)
 ###
 p = sqrt(5)
 integrate(\(x) log(1 - x^p)/x^p, 0, 1)
-1/(p-1) * (digamma(1/p) + Euler)
+(digamma(1/p) + Euler) / (p-1)
+
+### I( x^p * log(1 - x^n) )
+n = sqrt(5); p = sqrt(3);
+integrate(\(x) x^p * log(1 - x^n), 0, 1)
+- (digamma((n+p+1)/n) + Euler) / (p+1)
 
 
 ### Other:
