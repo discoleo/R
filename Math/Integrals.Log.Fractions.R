@@ -1014,3 +1014,27 @@ integrate(\(x) sin(2*x) * log(sin(x)), 0, pi/2)
 integrate(\(x) sin(3*x) * log(sin(x)), 0, pi/2, rel.tol=1E-8)
 log(2)/3 - 7/9
 
+
+########################
+########################
+
+### I( (x^p - 1) / ((x^n + 1) * log(x)) )
+# Maths 505: AN ABSOLUTE BEAST!!! And we're solving it using Feynman's technique
+# https://www.youtube.com/watch?v=wnRZmd1vaxQ
+
+###
+integrate(\(x) (x - 1) / (log(x) * (x^2 + 1)), 0, 1)
+log(gamma(1/4)^2 / gamma(1/2)^3) - log(2)/2
+
+### Gen 1:
+n = sqrt(5)
+integrate(\(x) (x - 1) / (log(x) * (x^n + 1)), 0, 1)
+log(gamma(1/(2*n))^2 * gamma(2/n) / gamma(1/n)^3) - log(2)/n
+
+### Gen 2:
+n = sqrt(5)
+p = sqrt(3)
+integrate(\(x) (x^p - 1) / (log(x) * (x^n + 1)), 0, 1)
+log(gamma(1/(2*n))^2 * gamma((p+1)/n) / gamma((p+1)/(2*n))^2 / gamma(1/n)) - p*log(2)/n
+
+
