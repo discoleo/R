@@ -26,19 +26,55 @@ Catalan = 0.915965594177219015054603514;
 ################
 ################
 
-### I( log(x)*log(1-x^p) / x )
+### I( log(x) * log(1 - x^n) / x )
 # Maths 505: A beautiful log-trig integral featuring an important constant
 # https://www.youtube.com/watch?v=2bwvuWsQSEY
 # [the intermediate integral]
 
 ###
-integrate(\(x) log(x) * log(1-x^2) / x, 0, 1)
+integrate(\(x) log(x) * log(1 - x^2) / x, 0, 1)
 pracma::zeta(3) / 4
 
 ###
-p = sqrt(5)
-integrate(\(x) log(x) * log(1-x^p) / x, 0, 1)
-pracma::zeta(3) / p^2
+n = sqrt(5)
+integrate(\(x) log(x) * log(1 - x^n) / x, 0, 1)
+pracma::zeta(3) / n^2
+
+###
+integrate(\(x) log(x) * log(1 + x) / x, 0, 1)
+- pracma::zeta(3) * 3/4
+
+###
+n = sqrt(5)
+integrate(\(x) log(x) * log(1 + x^n) / x, 0, 1)
+- pracma::zeta(3) * 3/4 / n^2
+
+### Derived:
+integrate(\(x) log(x) * log(x^2 + x + 1) / x, 0, 1)
+- pracma::zeta(3) * 8/9
+#
+integrate(\(x) log(x) * log(x^2 - x + 1) / x, 0, 1)
+pracma::zeta(3) * 2/3
+
+
+### Series: Pow = 2
+integrate(\(x) log(x) * log(1 - x^2) / x^2, 0, 1)
+pi^2 / 4 - 2*log(2)
+
+###
+n = sqrt(3)
+integrate(\(x) log(x) * log(1 - x^(2*n)) / x^(n+1), 0, 1)
+(pi^2 / 4 - 2*log(2)) / n^2
+
+
+### Other:
+integrate(function(x) log(x) * log(1 - x), 0, 1)
+2 - pi^2/6
+#
+integrate(function(x) log(x) * log(1 - x), 0, 1/2)
+integrate(function(x) log(x) * log(1 - x), 1/2, 1)
+integrate(function(x) log(1/2 - x) * log(1/2 + x), 0, 1/2)
+1 - pi^2/12
 
 
 ################
