@@ -66,6 +66,13 @@ n = sqrt(3)
 integrate(\(x) log(x) * log(1 - x^(2*n)) / x^(n+1), 0, 1)
 (pi^2 / 4 - 2*log(2)) / n^2
 
+# Partial Variants:
+# =>
+integrate(\(x) log(x) * log(1 + x) / x^2 - log(x)/x + log(x)/2, 0, 1)
+pi^2/12 - 2*log(2) + 0.5
+integrate(\(x) log(x) * log(1 - x) / x^2 + log(x)/x + log(x)/2, 0, 1)
+pi^2/6 - 1.5
+
 
 ### Other:
 integrate(function(x) log(x) * log(1 - x), 0, 1)
