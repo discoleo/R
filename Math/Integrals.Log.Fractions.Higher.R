@@ -246,11 +246,20 @@ pi^5 * 5/64
 
 
 # Varia:
+# TODO: move to file Other;
 integrate(function(x) log(1 - x)*log(x) / (x^2 + 1), 0, 1)$value +
 integrate(function(x) log(x - 1)*log(x) / (x^2 + 1), 1, Inf)$value
 pi^3/16
 
+#
+integrate(function(x) log(1 - x) / (x^2 + 1), 0, 1)
+pi*log(2)/8 - Catalan
+integrate(function(x) log(1 + x) / (x^2 + 1), 0, 1)
+pi*log(2)/8
+#
 integrate(function(x) log(x - 1) / (x^2 + 1), 1, Inf)
 pi*log(2)/8
+integrate(function(x) log(x + 1) / (x^2 + 1), 1, Inf)
+pi*log(2)/8 + Catalan
 
 
