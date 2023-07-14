@@ -35,3 +35,18 @@ erf1 = integrate(\(x) x^(p-2)*exp(-x^p), 0, 1)$value;
 gamma(1/p) * (gamma(1-1/p)/p - erf1) * exp(1)
 
 
+########################
+########################
+
+### I( log(gamma(x + k)) )
+# Flammable Maths:
+# WOW! The Most AMAZING Way of Solving an Integral Ever! Deriving Raabe's Integral Formula!
+# https://www.youtube.com/watch?v=APRr6wmLyuk
+
+###
+k = sqrt(5)
+integrate(\(x) log(gamma(x)), k, k+1)
+integrate(\(x) log(gamma(x + k)), 0, 1)
+log(2*pi)/2 + k*log(k) - k
+
+
