@@ -7,6 +7,9 @@ Euler   = 0.57721566490153286060651209008240243079;
 Catalan = 0.915965594177219015054603514;
 gStjelt1 = - 0.0728158454836767248605863758749013191377363383;
 dzeta2   = -0.937548254316;
+### Glaisher–Kinkelin Constant:
+# https://en.wikipedia.org/wiki/Glaisher%E2%80%93Kinkelin_constant
+A = exp((log(2*pi) + Euler - 6*dzeta2/pi^2)/12);
 
 # Note:
 # Catalan = - I(log(x)/(x^2 + 1), lower=0, upper=1)
@@ -104,4 +107,20 @@ integrate(\(x) x * log(x) / (exp(x) - 1), 0, Inf)
 (1 - Euler)*pi^2 / 6 + dzeta2;
 # TODO: dzeta2 ???
 
+
+###
+k = sqrt(5)
+integrate(\(x) x * log(k*x) / (exp(k*x) - 1), 0, Inf)
+((1 - Euler)*pi^2 / 6 + dzeta2) / k^2;
+# =>
+integrate(\(x) x * log(x) / (exp(k*x) - 1), 0, Inf)
+((1 - Euler)*pi^2 / 6 + dzeta2) / k^2 - log(k) * gamma(2) * pracma::zeta(2)/k^2;
+
+### Glaisher–Kinkelin Constant:
+k = 2*pi;
+integrate(\(x) x * log(x) / (exp(k*x) - 1), 0, Inf)
+((1 - Euler)*pi^2 / 6 + dzeta2) / k^2 - log(k) * gamma(2) * pracma::zeta(2)/k^2;
+#
+A = exp(1/12 - ((1 - Euler)*pi^2 / 6 + dzeta2 - log(2*pi) * gamma(2) * pracma::zeta(2))/(2*pi^2));
+A = exp((log(2*pi) + Euler - 6*dzeta2/pi^2)/12);
 
