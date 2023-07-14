@@ -1,6 +1,13 @@
 
 
 
+dzeta2   = -0.937548254316;
+### Glaisher–Kinkelin Constant:
+# https://en.wikipedia.org/wiki/Glaisher%E2%80%93Kinkelin_constant
+A = exp((log(2*pi) + Euler - 6*dzeta2/pi^2)/12);
+
+
+
 ### History:
 
 # [refactor] moved integrals:
@@ -48,5 +55,41 @@ k = sqrt(5)
 integrate(\(x) log(gamma(x)), k, k+1)
 integrate(\(x) log(gamma(x + k)), 0, 1)
 log(2*pi)/2 + k*log(k) - k
+
+
+### I( x * log(gamma(x)) )
+integrate(\(x) x * log(gamma(x)), 0, 1)
+log(2*pi)/4 - log(A);
+
+
+### TODO:
+integrate(\(x) log(1-x) * log(gamma(x)), 0, 1)
+integrate(\(x) log(x) * log(gamma(x)), 0, 1)
+
+integrate(\(x) log(gamma(x)) / (x + 1), 0, 1)
+
+integrate(\(x) log(gamma(x)) / log(x), 0, 1)
+
+integrate(\(x) log(gamma(x)) / gamma(x), 0, 1)
+
+integrate(\(x) 1/gamma(x), 0, 1)
+
+integrate(\(x) x / gamma(x), 0, 1)
+
+integrate(\(x) log(x) / gamma(x), 0, 1)
+
+integrate(\(x) log(gamma(x)) * log(gamma(1-x)), 0, 1)
+
+integrate(\(x) gamma(x) / gamma(1/x), 0,1)
+
+
+integrate(\(x) x * log(gamma(x)*gamma(1-x)), 0, 1)
+log(2*pi)/2
+
+integrate(\(x) x * log(sin(x)), 0, pi)
+- pi^2 * log(2)/2
+integrate(\(x) x * log(sin(pi*x)), 0, 1)
+- log(2)/2
+
 
 
