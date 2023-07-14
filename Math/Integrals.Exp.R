@@ -63,6 +63,19 @@ gamma.p.part(1, n = n/(p+1)) / (p+1)
 ####################
 ####################
 
+###
+integrate(\(x) exp(-x)/x^2 - 1/x^2 + exp(-x)/x, 0, 1)
+- exp(-1)
+
+
+### TODO:
+integrate(\(x) exp(-x)/x^2 - 1/x^2 + 1/x - 1, 0, 1)
+# ???
+
+
+####################
+####################
+
 ### I( (1 - exp(-x) - exp(-1/x)) / x )
 # Michael Penn: if you gamma be my constant, you gamma solve this integral.
 # https://www.youtube.com/watch?v=heIrFaP05Lk
@@ -241,4 +254,15 @@ exp(1) * int * gamma(1/n) / n
 # int = integrate(\(x) x^(-1/n) * exp(-x), 0, 1)$value
 int = integrate(\(x) n*x^(n-2) * exp(-x^n), 0, 1)$value
 exp(1) * (pi/sin(pi/n) - int*gamma(1/n)) / n
+
+
+### I( exp(-x^n) / (x^n - 1) )
+n = sqrt(3)
+# Note: numerical issues;
+integrate(\(x) exp(-x^n) / (x^n - 1), 0, 1 - 1E-7, rel.tol=1E-8)$value +
+	integrate(\(x) exp(-x^n) / (x^n - 1), 1 + 1E-7, Inf, rel.tol=1E-8)$value;
+# Partial Gamma:
+int = integrate(\(x) abs(x)^(-1/n) * exp(-x), 0, -1)$value;
+int = - n/(n-1) * integrate(\(x) exp(x^(n/(n-1))), 0, 1, rel.tol = 1E-8)$value;
+- (pi/tan(pi/n) - int*gamma(1/n)) / (n * exp(1))
 
