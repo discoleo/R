@@ -91,6 +91,7 @@ pracma::psi(2, 5/6)
 - 182 * pracma::zeta(3) + pi^3 * cos(pi/6) / sin(pi/6)^3
 
 
+### Pow = 3
 ### "Sub-Sums"
 id = 10000
 
@@ -205,4 +206,32 @@ k = 1
 sum(1/(16*id + k)^3)
 
 # TODO: find solution;
+
+
+######################
+######################
+
+### Sum( 1 / (n^3 + 1) )
+m = cos(pi/3) + 1i*sin(pi/3);
+
+id = seq(0, 10000)
+sum(1/(id^3 + 1))
+(pracma::psi(-m)*m + pracma::psi(-1/m)/m + Euler) / 3
+(pracma::psi(-m)*m - pracma::psi(-1/m)*m^2 + Euler) / 3
+
+
+### Gen: Sum( 1 / (n^3 + k^3) )
+k = 3^(1/3)
+id = seq(0, 10000)
+sum(1/(id^3 + k^3))
+(pracma::psi(-k*m)*m - pracma::psi(-k/m)*m^2 - pracma::psi(k)) / (3*k^2)
+
+
+### Sum( 1 / (n^5 + 1) )
+m = cos(pi/5) + 1i*sin(pi/5);
+
+id = seq(0, 10000)
+sum(1/(id^5 + 1))
+(pracma::psi(-m)*m - pracma::psi(-1/m)*m^4 +
+	+ pracma::psi(-m^3)*m^3 - pracma::psi(-1/m^3)*m^2 + Euler) / 5
 
