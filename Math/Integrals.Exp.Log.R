@@ -102,11 +102,12 @@ id = seq(160000)
 # TODO: how?
 
 
+### I( x * log(x) / (exp(k*x) - 1) )
+
 ###
 integrate(\(x) x * log(x) / (exp(x) - 1), 0, Inf)
 (1 - Euler)*pi^2 / 6 + dzeta2;
 # TODO: dzeta2 ???
-
 
 ###
 k = sqrt(5)
@@ -121,6 +122,18 @@ k = 2*pi;
 integrate(\(x) x * log(x) / (exp(k*x) - 1), 0, Inf)
 ((1 - Euler)*pi^2 / 6 + dzeta2) / k^2 - log(k) * gamma(2) * pracma::zeta(2)/k^2;
 #
-A = exp(1/12 - ((1 - Euler)*pi^2 / 6 + dzeta2 - log(2*pi) * gamma(2) * pracma::zeta(2))/(2*pi^2));
+A = exp(1/12 - ((1 - Euler)*pi^2 / 6 + dzeta2 - log(2*pi) * pracma::zeta(2))/(2*pi^2));
 A = exp((log(2*pi) + Euler - 6*dzeta2/pi^2)/12);
+
+
+### I( x * log(x) / (exp(k*x) + 1) )
+# =>
+k = 1/sqrt(3)
+integrate(\(x) x * log(x) / (exp(k*x) + 1), 0, Inf)
+(1 - Euler + dzeta2 * 6/pi^2 - log(k/2)) * pi^2 / (12*k^2);
+
+### Special Case:
+integrate(\(x) x * log(x) / (exp(2*x) + 1), 0, Inf)
+(1 - Euler + dzeta2 * 6/pi^2) * pi^2 / 48;
+
 
