@@ -6,12 +6,16 @@
 ### Integrals: Logarithms
 ### Log-Products
 ###
-### draft v.0.2a
+### draft v.0.2b
 
 
 ### Constants
 
 Catalan = 0.915965594177219015054603514;
+
+
+### Note:
+# abs(log(x)) = log(1/x) for x in [0, 1];
 
 
 ################
@@ -79,6 +83,14 @@ integrate(\(x) log(x) * log(1 + x^n) / x^p, 0, 1)
 #   Integrals.Log.Fractions.Simple.R;
 
 
+### Special Cases: p = 1:
+# - see section above;
+#   I( log(x) * log(1 - x^n) / x )
+# - Generalization of Special Case:
+#   I( log(x)^s * log(1 - x^n) / x )
+#   see section further below;
+
+
 ### [old] Variants:
 n = sqrt(3)
 integrate(\(x) log(x) * log(1 - x^(2*n)) / x^(n+1), 0, 1)
@@ -112,8 +124,10 @@ integrate(\(x) log(x) * log(1 + x) / x, 0, 1)
 -3/4 * pracma::zeta(3)
 
 
-### Higher Power
+### Log: Higher Power
 
+# see section further below for details;
+# (example starting from a double Integral)
 # =>
 integrate(\(x) log(x)^3 * log(1 - x) / x, 0, 1)
 6 * pracma::zeta(5)
@@ -195,6 +209,8 @@ integrate(\(x) log(x) * log((1 - x) / (x + 1)), 0, 1)
 # Maths 505: A surprisingly wonderful log integral
 # https://www.youtube.com/watch?v=v6iNE-heksU
 
+# - a very special case;
+
 integrate(\(x) log(x) * log(x+1), 0, 1)
 2 - 2*log(2) - pi^2/12
 
@@ -245,7 +261,7 @@ s = sqrt(5)
 integrate(\(x) abs(log(x))^s * log(1-x) / x, 0, 1)
 - gamma(s+1) * pracma::zeta(s+2)
 
-# Note: based on Double Integral
+# Note: example starts with the Double Integral
 # II( log(x)^s / (1 - x*y) ) on [0,1]x[0,1]
 
 
