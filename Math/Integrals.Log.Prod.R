@@ -63,7 +63,14 @@ pi/2 - log(2) - 2*Catalan
 ### Gen: I( log(x) * log(1 - x^n) / x^p )
 n = sqrt(7); p = sqrt(3);
 integrate(\(x) log(x) * log(1 - x^n) / x^p, 0, 1)
-pracma::psi(1, (n-p+1)/n) / ((p-1)*n) + (digamma((n-p+1)/n) + Euler) / (p-1)^2
+pracma::psi(1, 1 - (p-1)/n) / ((p-1)*n) + (digamma(1 - (p-1)/n) + Euler) / (p-1)^2
+
+
+### Gen: I( log(x) * log(1 + x^n) / x^p )
+n = sqrt(7); p = sqrt(3);
+integrate(\(x) log(x) * log(1 + x^n) / x^p, 0, 1)
+(pracma::psi(1, 1 - (p-1)/(2*n)) - 2*pracma::psi(1, 1 - (p-1)/n)) / (2*(p-1)*n) +
+	+ (digamma(1 - (p-1)/(2*n)) - digamma(1 - (p-1)/n)) / (p-1)^2;
 
 
 ###
