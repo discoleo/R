@@ -6,7 +6,7 @@
 ### Integrals: Logarithms
 ### Log-Products
 ###
-### draft v.0.1c
+### draft v.0.2a
 
 
 ### Constants
@@ -213,7 +213,8 @@ id = seq(10000)
 log(a) * sum((-a)^(id+1) / (id*(id+1))) +
 	sum((-1)^id * a^(id+1) / (id*(id+1)^2))
 
-###
+
+### on [0, 1/2]
 integrate(\(x) log(x) * log(x+1), 0, 1/2)
 # TODO: find closed form?
 Li2 = - integrate(\(x) x / (2*exp(x) + 1), 0, Inf)$value;
@@ -230,4 +231,32 @@ pi^2/12 + 2*log(2)^2 - 2*log(2)
 #
 integrate(\(x) log(x)^2 / x^2, 1/2, 1)
 2*log(2)^2 - 4*log(2) + 2
+
+
+######################
+######################
+
+### I( log(x)^s * log(1 - x^n) / x )
+# Maths 505: AN EPIC DOUBLE INTEGRAL!!!
+# https://www.youtube.com/watch?v=xBbCiOFSqSA&t=192s
+
+###
+s = sqrt(5)
+integrate(\(x) abs(log(x))^s * log(1-x) / x, 0, 1)
+- gamma(s+1) * pracma::zeta(s+2)
+
+# Note: based on Double Integral
+# II( log(x)^s / (1 - x*y) ) on [0,1]x[0,1]
+
+
+### Gen 1: I( log(x)^s * log(1 - x^n) / x )
+s = sqrt(5); n = sqrt(3)
+integrate(\(x) abs(log(x))^s * log(1 - x^n) / x, 0, 1)
+- gamma(s+1) * pracma::zeta(s+2) / n^(s+1)
+
+
+### Gen 2: I( log(x)^s * log(1 + x^n) / x )
+s = sqrt(5); n = sqrt(3)
+integrate(\(x) abs(log(x))^s * log(1 + x^n) / x, 0, 1)
+gamma(s+1) * pracma::zeta(s+2) * (1 - 1/2^(s+1)) / n^(s+1)
 
