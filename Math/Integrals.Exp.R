@@ -256,6 +256,30 @@ int = integrate(\(x) n*x^(n-2) * exp(-x^n), 0, 1)$value
 exp(1) * (pi/sin(pi/n) - int*gamma(1/n)) / n
 
 
+### I( x^p * exp(-x^n) / (x^n + 1) )
+p = sqrt(3); n = sqrt(11);
+integrate(\(x) x^p * exp(-x^n) / (x^n + 1), 0, Inf)
+# numerical issues when p+1 >= n;
+int = integrate(\(x) x^(-(p+1)/n) * exp(-x), 0, 1)$value
+exp(1) * (pi/sin(pi*(p+1)/n) - int*gamma((p+1)/n)) / n
+
+
+### Special Cases:
+### p == n
+n = sqrt(11);
+integrate(\(x) x^n * exp(-x^n) / (x^n + 1), 0, Inf)
+int = integrate(\(x) x^(-1/n) * exp(-x), 0, 1)$value
+gamma(1/n) / n - exp(1) * (pi/sin(pi/n) - int*gamma(1/n)) / n
+
+# TODO:
+n = sqrt(11); p = n-1;
+integrate(\(x) x^p * exp(-x^n) / (x^n + 1), 0, Inf)
+# Exponential Integral:
+# - exp(1) * Ei(-1) / n;
+
+
+##################
+
 ### I( exp(-x^n) / (x^n - 1) )
 n = sqrt(3)
 # Note: numerical issues;
@@ -265,4 +289,13 @@ integrate(\(x) exp(-x^n) / (x^n - 1), 0, 1 - 1E-7, rel.tol=1E-8)$value +
 int = integrate(\(x) abs(x)^(-1/n) * exp(-x), 0, -1)$value;
 int = - n/(n-1) * integrate(\(x) exp(x^(n/(n-1))), 0, 1, rel.tol = 1E-8)$value;
 - (pi/tan(pi/n) - int*gamma(1/n)) / (n * exp(1))
+
+
+#########################
+
+### Exponential Integrals
+
+### exp(1) * Ei(-1)
+integrate(\(x) exp(-x) / (x + 1), 0, Inf)
+integrate(\(x) exp(1 - exp(x)), 0, Inf)
 
