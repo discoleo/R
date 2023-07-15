@@ -73,7 +73,13 @@ integrate(\(x) log(x) * log(1 + x^n) / x^p, 0, 1)
 	+ (digamma(1 - (p-1)/(2*n)) - digamma(1 - (p-1)/n)) / (p-1)^2;
 
 
-###
+### Derivation:
+# - Feynman technique;
+# - for I( log(1 - x^n) / x^p ) see file:
+#   Integrals.Log.Fractions.Simple.R;
+
+
+### [old] Variants:
 n = sqrt(3)
 integrate(\(x) log(x) * log(1 - x^(2*n)) / x^(n+1), 0, 1)
 (pi^2 / 4 - 2*log(2)) / n^2
