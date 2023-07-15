@@ -67,22 +67,27 @@ integrate(\(x) log(1-x) * log(gamma(x)), 0, 1)
 integrate(\(x) log(x) * log(gamma(x)), 0, 1)
 
 integrate(\(x) log(gamma(x)) / (x + 1), 0, 1)
-
+integrate(\(x) log(gamma(x)) / (x^2 + 1), 0, 1)
 integrate(\(x) log(gamma(x)) / log(x), 0, 1)
-
 integrate(\(x) log(gamma(x)) / gamma(x), 0, 1)
-
-integrate(\(x) 1/gamma(x), 0, 1)
-
-integrate(\(x) x / gamma(x), 0, 1)
-
-integrate(\(x) log(x) / gamma(x), 0, 1)
-
 integrate(\(x) log(gamma(x)) * log(gamma(1-x)), 0, 1)
 
+integrate(\(x) 1/gamma(x), 0, 1)
+integrate(\(x) x / gamma(x), 0, 1)
+integrate(\(x) log(x) / gamma(x), 0, 1)
+integrate(\(x) sin(x) / gamma(x), 0, 1)
+
+integrate(\(x) gamma(x) * sin(x), 0, 1)
+integrate(\(x) gamma(x) * sin(pi*x), 0, 1)
+integrate(\(x) gamma(x) * (exp(x) - 1), 0, 1)
+integrate(\(x) gamma(x) * log(x + 1), 0, 1)
+integrate(\(x) gamma(x) * log(x*exp(x) + 1), 0, 1)
+integrate(\(x) gamma(x) * atan(x), 0, 1)
+integrate(\(x) atan(gamma(x)), 0, 1)
 integrate(\(x) gamma(x) / gamma(1/x), 0,1)
 
 
+###
 integrate(\(x) x * log(gamma(x)*gamma(1-x)), 0, 1)
 log(2*pi)/2
 
