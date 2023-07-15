@@ -9,6 +9,11 @@
 ### draft v.0.1c
 
 
+### Constants
+
+Catalan = 0.915965594177219015054603514;
+
+
 ################
 ################
 
@@ -49,6 +54,17 @@ pracma::zeta(3) * 2/3
 ###
 integrate(\(x) log(x) * log(1 - x^2) / x^2, 0, 1)
 pi^2 / 4 - 2*log(2)
+
+###
+integrate(\(x) log(x) * log(1 + x^2) / x^2, 0, 1)
+pi/2 - log(2) - 2*Catalan
+
+
+### Gen: I( log(x) * log(1 - x^n) / x^p )
+n = sqrt(7); p = sqrt(3);
+integrate(\(x) log(x) * log(1 - x^n) / x^p, 0, 1)
+pracma::psi(1, (n-p+1)/n) / ((p-1)*n) + (digamma((n-p+1)/n) + Euler) / (p-1)^2
+
 
 ###
 n = sqrt(3)
