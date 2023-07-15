@@ -6,7 +6,7 @@
 ### Integrals: Logarithms
 ### Log-Products
 ###
-### draft v.0.1a
+### draft v.0.1b
 
 
 ################
@@ -44,6 +44,8 @@ pracma::zeta(3) * 2/3
 
 
 ### Series: Pow = 2
+
+###
 integrate(\(x) log(x) * log(1 - x^2) / x^2, 0, 1)
 pi^2 / 4 - 2*log(2)
 
@@ -70,7 +72,9 @@ integrate(function(x) log(1/2 - x) * log(1/2 + x), 0, 1/2)
 1 - pi^2/12
 
 
-### Variants / Repeated Stuff:
+### Higher Power
+
+# TODO: move below;
 
 ###
 integrate(\(x) log(x) * log((1 - x) / (1 + x)) / x, 0, 1)
@@ -84,12 +88,19 @@ integrate(\(x) log(x)^2 * log((1 - x) / (1 + x)) / x, 0, 1, rel.tol = 1E-8)
 integrate(\(x) log(x)^3 * log((1 - x) / (1 + x)) / x, 0, 1, rel.tol = 1E-8)
 93/8 * pracma::zeta(5)
 
-### =>
+###
+integrate(\(x) log(x)^4 * log((1 - x) / (1 + x)) / x, 0, 1, rel.tol = 1E-8)
+- 189/4 * pracma::zeta(6)
+
+
+### Variants:
+# =>
 integrate(\(x) log(x) * log(1 - x) / x, 0, 1)
 pracma::zeta(3)
 #
 integrate(\(x) log(x) * log(1 + x) / x, 0, 1)
 -3/4 * pracma::zeta(3)
+
 
 ### Higher Powers
 
