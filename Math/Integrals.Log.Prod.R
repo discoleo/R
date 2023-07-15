@@ -6,7 +6,7 @@
 ### Integrals: Logarithms
 ### Log-Products
 ###
-### draft v.0.1b
+### draft v.0.1c
 
 
 ################
@@ -124,6 +124,12 @@ integrate(\(x) abs(log(x))^p * log(1 - x + x^2) / x, 0, 1, rel.tol=1E-8)
 
 ### Variants:
 # I( log(x)^s * log((1-x)/(1+x) / x )
+
+### Gen:
+s = sqrt(3)
+integrate(\(x) abs(log(x))^s * log((1 - x) / (1 + x)) / x, 0, 1, rel.tol=1E-8)
+- gamma(s+1) * pracma::zeta(s+2) * (2 - 1/2^(s+1))
+
 
 ###
 integrate(\(x) log(x) * log((1 - x) / (1 + x)) / x, 0, 1)
