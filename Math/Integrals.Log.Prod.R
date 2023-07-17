@@ -6,7 +6,7 @@
 ### Integrals: Logarithms
 ### Log-Products
 ###
-### draft v.0.2c
+### draft v.0.2d
 
 
 ### Constants
@@ -96,13 +96,24 @@ integrate(\(x) log(x) * log(1 + x^n) / x^p, 0, 1)
 #   see section further below;
 
 
-### Pow = 2: I( log(x)^2 * log(1 - x) / x^p )
+### Pow = 2:
+
+### I( log(x)^2 * log(1 - x^n) / x^p )
 # - using Feynman technique;
 p = sqrt(3); n = sqrt(5);
 integrate(\(x) log(x)^2 * log(1 - x^n) / x^p, 0, 1)
 pracma::psi(2, 1 - (p-1)/n) / ((p-1)*n^2) +
 	+ 2*pracma::psi(1, 1 - (p-1)/n) / (n*(p-1)^2) +
 	+ 2*(digamma(1 - (p-1)/n) + Euler) / (p-1)^3
+
+
+### I( log(x)^2 * log(1 + x^n) / x^p )
+p = sqrt(3); n = sqrt(5);
+integrate(\(x) log(x)^2 * log(1 + x^n) / x^p, 0, 1)
+(pracma::psi(2, 1 - (p-1)/(2*n)) - 4*pracma::psi(2, 1 - (p-1)/n)) / (4*(p-1)*n^2) +
+	+ 2*(pracma::psi(1, 1 - (p-1)/(2*n)) +
+		- 2*pracma::psi(1, 1 - (p-1)/n)) / (2*n*(p-1)^2) +
+	+ 2*(digamma(1 - (p-1)/(2*n)) - digamma(1 - (p-1)/n)) / (p-1)^3;
 
 
 ### [old] Variants:
@@ -311,6 +322,10 @@ n = sqrt(3)
 integrate(\(x) log(1 - x^n)^2 * log(x) / x, 0, 1, rel.tol=1E-8)
 - pracma::zeta(4) / (2*n^2)
 
+
+### I( log(1 - x) * log(1 + x) * log(x) / x )
+integrate(\(x) log(1 - x) * log(1 + x) * log(x) / x, 0, 1, rel.tol=1E-8)
+# TODO: ???
 
 
 ###
