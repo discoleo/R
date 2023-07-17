@@ -104,11 +104,20 @@ integrate(\(x) log(x+1)^4, 0, 1)
 # - easy pole with higher multiplicity;
 
 
-### Full generalisation: I( log(x) / (x+1)^(p+1) )
+### Simple generalisation: I( log(x) / (x + 1)^(p+1) )
 p = sqrt(3)/7
 integrate(function(x) log(x) / (x+1)^(p+1), 0, Inf, rel.tol=1E-8)
 - (digamma(p) + Euler)/p
 
+
+### Full Gen: I( x^p * log(x) / (x^n + 1)^k )
+p = sqrt(3); n = sqrt(7); k = 1/sqrt(5);
+integrate(function(x) x^p * log(x) / (x^n + 1)^(1/k), 0, Inf, rel.tol=1E-8)
+(gamma((p+1)/n) * gamma(1/k - (p+1)/n) * digamma((p+1)/n) +
+	- gamma((p+1)/n) * gamma(1/k - (p+1)/n) * digamma(1/k - (p+1)/n)) / gamma(1/k) / n^2;
+
+
+### [old]
 
 ### Series: x^Integer * ...;
 # TODO: Generalisation of Formula;
@@ -554,9 +563,9 @@ pi^2/(2*27) - pracma::psi(1, 2/3)/9
 
 ### I( x^p * log(x) / (x^n + 1) ) on [0, 1]
 
-# p = 1:
+# p = 0:
 n = sqrt(5)
-integrate(\(x) log(x)/(x^n + 1), 0, 1)
+integrate(\(x) log(x) / (x^n + 1), 0, 1)
 pracma::psi(1, 1/n) / n^2 - pracma::psi(1, 1/(2*n)) / (2*n^2)
 
 ### Full:
