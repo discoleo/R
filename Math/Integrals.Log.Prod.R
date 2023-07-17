@@ -6,7 +6,7 @@
 ### Integrals: Logarithms
 ### Log-Products
 ###
-### draft v.0.2b
+### draft v.0.2c
 
 
 ### Constants
@@ -94,6 +94,15 @@ integrate(\(x) log(x) * log(1 + x^n) / x^p, 0, 1)
 # - Generalization of Special Case:
 #   I( log(x)^s * log(1 - x^n) / x )
 #   see section further below;
+
+
+### Pow = 2: I( log(x)^2 * log(1 - x) / x^p )
+# - using Feynman technique;
+p = sqrt(3); n = sqrt(5);
+integrate(\(x) log(x)^2 * log(1 - x^n) / x^p, 0, 1)
+pracma::psi(2, 1 - (p-1)/n) / ((p-1)*n^2) +
+	+ 2*pracma::psi(1, 1 - (p-1)/n) / (n*(p-1)^2) +
+	+ 2*(digamma(1 - (p-1)/n) + Euler) / (p-1)^3
 
 
 ### [old] Variants:
