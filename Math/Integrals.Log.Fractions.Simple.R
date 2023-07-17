@@ -6,7 +6,7 @@
 ### Integrals: Logarithms
 ### Simple Fractions
 ###
-### draft v.0.2c-Spec
+### draft v.0.2c-Simplif
 
 
 ### Helper Functions
@@ -95,6 +95,12 @@ integrate(\(x) log(x+1)^4, 0, 1)
 ### Simple Fractions ###
 ########################
 
+### I( x^p * log(x) / (x^n + 1)^k )
+
+# - started initially from a much simpler example;
+# - full generalisation is below;
+
+
 ### I( log(x) / (x + 1)^k ) on [0, Inf]
 
 # qncubed3: Complex Analysis: Integral of log(x)/(x+1)^2
@@ -104,17 +110,17 @@ integrate(\(x) log(x+1)^4, 0, 1)
 # - easy pole with higher multiplicity;
 
 
-### Simple generalisation: I( log(x) / (x + 1)^(k+1) )
+### Simple Gen: I( log(x) / (x + 1)^k )
 k = sqrt(3)/7
 integrate(function(x) log(x) / (x+1)^(k+1), 0, Inf, rel.tol=1E-8)
 - (digamma(k) + Euler)/k
 
 
 ### Full Gen: I( x^p * log(x) / (x^n + 1)^k )
-p = sqrt(3); n = sqrt(7); k = 1/sqrt(5);
-integrate(function(x) x^p * log(x) / (x^n + 1)^(1/k), 0, Inf, rel.tol=1E-8)
-(gamma((p+1)/n) * gamma(1/k - (p+1)/n) * digamma((p+1)/n) +
-	- gamma((p+1)/n) * gamma(1/k - (p+1)/n) * digamma(1/k - (p+1)/n)) / gamma(1/k) / n^2;
+p = sqrt(3); n = sqrt(7); k = sqrt(5);
+integrate(function(x) x^p * log(x) / (x^n + 1)^k, 0, Inf, rel.tol=1E-8)
+gamma((p+1)/n) * gamma(k - (p+1)/n) *
+	(digamma((p+1)/n) - digamma(k - (p+1)/n)) / gamma(k) / n^2;
 
 
 ### [old]
@@ -126,8 +132,8 @@ integrate(function(x) x^p * log(x) / (x^n + 1)^(1/k), 0, Inf, rel.tol=1E-8)
 # - using 1/k => k;
 p = 1/sqrt(3); k = sqrt(5);
 integrate(function(x) x^p * log(x) / (x + 1)^k, 0, Inf, rel.tol=1E-8)
-(gamma(p+1) * gamma(k - (p+1)) * digamma((p+1)) +
-	- gamma(p+1) * gamma(k - (p+1)) * digamma(k - (p+1))) / gamma(k);
+gamma(p+1) * gamma(k - (p+1)) * (digamma((p+1)) - digamma(k - (p+1))) / gamma(k);
+
 
 # [old]
 p = 1 + sqrt(3)/7
