@@ -52,6 +52,11 @@ integrate(\(x) log(x) * log(x^2 - x + 1) / x, 0, 1)
 pracma::zeta(3) * 2/3
 
 
+### Varia:
+integrate(\(x) log(1+x) * log(1-x) / x, 0, 1)
+- pracma::zeta(3) * 5/8
+
+
 ### Series: Pow = 2
 # P() / x^2
 
@@ -239,6 +244,11 @@ Li2 = - integrate(\(x) x / (2*exp(x) + 1), 0, Inf)$value;
 id = seq(10000)
 Li2 = sum((-1/2)^id / id^2);
 
+###
+integrate(\(x) log(x) * log(1-x), 0, 1/2)
+integrate(\(x) log(x) * log(1-x), 1/2,1)
+1 - pi^2/12
+
 
 ###
 integrate(\(x) log(x) * log(1-x) / x^2, 1/2, 1)
@@ -275,4 +285,27 @@ integrate(\(x) abs(log(x))^s * log(1 - x^n) / x, 0, 1)
 s = sqrt(5); n = sqrt(3)
 integrate(\(x) abs(log(x))^s * log(1 + x^n) / x, 0, 1)
 gamma(s+1) * pracma::zeta(s+2) * (1 - 1/2^(s+1)) / n^(s+1)
+
+
+### Simple: I( log(1 - x)^s / x )
+s = sqrt(5)
+integrate(\(x) abs(log(1-x))^s / x, 0, 1)
+gamma(s+1) * pracma::zeta(s+1)
+
+
+### Reverse:
+integrate(\(x) log(1 - x)^2 * log(x) / x, 0, 1, rel.tol=1E-8)
+- pracma::zeta(4) / 2
+
+### I( log(1 - x^n)^2 * log(x) / x )
+n = sqrt(3)
+integrate(\(x) log(1 - x^n)^2 * log(x) / x, 0, 1, rel.tol=1E-8)
+- pracma::zeta(4) / (2*n^2)
+
+
+
+###
+integrate(\(x) log(1 - x)^3 * log(x) / x, 0, 1, rel.tol=1E-8)
+integrate(\(x) 3/2 * log(1 - x)^2 * log(x)^2 / x, 0, 1, rel.tol=1E-8)
+# TODO: ???
 
