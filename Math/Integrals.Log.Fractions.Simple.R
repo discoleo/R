@@ -1,4 +1,12 @@
-
+########################
+###
+### Leonard Mada
+### [the one and only]
+###
+### Integrals: Logarithms
+### Simple Fractions
+###
+### draft v.0.2b
 
 
 ### Helper Functions
@@ -101,8 +109,9 @@ p = sqrt(3)/7
 integrate(function(x) log(x) / (x+1)^(p+1), 0, Inf, rel.tol=1E-8)
 - (digamma(p) + Euler)/p
 
+
 ### Series: x^Integer * ...;
-# TODO: Genralisation of Formula;
+# TODO: Generalisation of Formula;
 p = 1 + sqrt(3)/7
 integrate(function(x) x * log(x) / (x+1)^(p+1), 0, Inf, rel.tol=1E-8)
 - (digamma(p-1) + Euler - 1) / (p*(p-1))
@@ -407,12 +416,13 @@ integrate(\(x) log(x^p + 1) / x^p, 0, 1)
 - log(2)/(p-1) + p/(p-1) * int.FrU01(p, p = 0)
 
 
-### I( log(1 - x^p) / x^p )
+### I( log(1 - x^n) / x^p )
 
 ###
 p = sqrt(5)
-integrate(\(x) log(1 - x^p)/x^p, 0, 1)
+integrate(\(x) log(1 - x^p) / x^p, 0, 1)
 (digamma(1/p) + Euler) / (p-1)
+
 
 ### I( x^p * log(1 - x^n) )
 n = sqrt(5); p = sqrt(3);
@@ -462,6 +472,25 @@ pi^2 / 12 - log(2)^2 / 2
 ######################
 ######################
 
+### I( x^p * log(x)^s / (x^n - 1) )
+### I( x^p * log(x)^s / (x^n + 1) )
+# - on [0, 1];
+# - Note: pracma::psi handles only integer orders;
+
+###
+s = 3; # s = integer;
+n = sqrt(5); p = sqrt(7);
+integrate(\(x) x^p * log(x)^s / (x^n - 1), 0, 1)
+pracma::psi(s, (p+1)/n) / n^(s+1)
+
+###
+s = 3; # s = integer;
+n = sqrt(5); p = sqrt(7);
+integrate(\(x) x^p * log(x)^s / (x^n + 1), 0, 1)
+pracma::psi(s, (p+1)/n) / n^(s+1) - 2*pracma::psi(s, (p+1)/(2*n)) / (2*n)^(s+1)
+
+
+### Simpler Versions:
 
 ### I( log(x)^s / (x^n - 1) ) on [0, 1]
 n = sqrt(5); s = 3; # s = integer;
@@ -524,6 +553,8 @@ pi^2/(2*27) - pracma::psi(1, 2/3)/9
 
 
 ### I( x^p * log(x) / (x^n + 1) ) on [0, 1]
+
+# p = 1:
 n = sqrt(5)
 integrate(\(x) log(x)/(x^n + 1), 0, 1)
 pracma::psi(1, 1/n) / n^2 - pracma::psi(1, 1/(2*n)) / (2*n^2)
