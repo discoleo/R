@@ -6,7 +6,7 @@
 ### Integrals: Logarithms
 ### Log-Products
 ###
-### draft v.0.2d
+### draft v.0.2e
 
 
 ### Constants
@@ -332,4 +332,20 @@ integrate(\(x) log(1 - x) * log(1 + x) * log(x) / x, 0, 1, rel.tol=1E-8)
 integrate(\(x) log(1 - x)^3 * log(x) / x, 0, 1, rel.tol=1E-8)
 integrate(\(x) 3/2 * log(1 - x)^2 * log(x)^2 / x, 0, 1, rel.tol=1E-8)
 # TODO: ???
+
+
+####################
+####################
+
+### Other
+
+dzeta = function(x, dx=1E-8) {
+	(pracma::zeta(x + dx) - pracma::zeta(x)) / dx;
+}
+
+### I( log(1 - x)^s * log(-log(1 - x)) / x^3 )
+s = sqrt(11); # s > 3
+integrate(\(x) abs(log(1 - x))^s * log(-log(1 - x)) / x^3, 0, 1, rel.tol=1E-8)
+(digamma(s+1) * (pracma::zeta(s) + pracma::zeta(s-1)) +
+	+ dzeta(s) + dzeta(s-1)) * gamma(s+1) / 2
 
