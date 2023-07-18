@@ -88,6 +88,46 @@ integrate(\(x) log(x+1)^4, 0, 1)
 2*log(2)^4 - 4*(2*log(2)^3 - 3*(2*log(2)^2 - 2*(2*log(2) - 1)))
 
 
+####################
+
+### I( log(1 - x^n)^s / x )
+
+### Integer:
+s = 2
+integrate(\(x) log(1 - x)^s / x, 0, 1, rel.tol=1E-8)
+(-1)^s * gamma(s+1) * pracma::zeta(s+1)
+
+###
+s = 3
+integrate(\(x) log(1 - x)^s / x, 0, 1, rel.tol=1E-8)
+(-1)^s * gamma(s+1) * pracma::zeta(s+1)
+
+### Gen 1:
+s = sqrt(5)
+integrate(\(x) abs(log(1 - x))^s / x, 0, 1, rel.tol=1E-8)
+gamma(s+1) * pracma::zeta(s+1)
+
+### Gen 2:
+s = sqrt(5); n = sqrt(7)
+integrate(\(x) abs(log(1 - x^n))^s / x, 0, 1, rel.tol=1E-8)
+gamma(s+1) * pracma::zeta(s+1) / n
+
+
+### I( log(1 - x)^s / x^2 )
+
+### x-Pow = 2
+s = sqrt(7)
+integrate(\(x) abs(log(1 - x))^s / x^2, 0, 1, rel.tol=1E-8)
+gamma(s+1) * pracma::zeta(s)
+
+
+### x-Pow = 3
+s = 3; p = 3;
+integrate(\(x) log(1 - x)^3 / x^3, 0, 1, rel.tol=1E-8)
+- gamma(4) * (pracma::zeta(3)/2 + pracma::zeta(2)) + pi^2/2
+# TODO: Generalisation;
+
+
 ########################
 ########################
 
