@@ -52,7 +52,13 @@ integrate(\(x) exp(-x) * log(x)^3, 0, Inf)
 ### I( x^n * log(x) * exp( - x^n) )
 n = sqrt(5)
 integrate(\(x) x^n * log(x) * exp( - x^n), 0, Inf)
-gamma(1/n) * (digamma(1/n) + n) / n^3
+gamma(1/n) * digamma(1/n + 1) / n^3
+
+
+### Gen: I( x^p * log(x) * exp( - x^n) )
+p = sqrt(5); n = sqrt(3);
+integrate(\(x) x^p * log(x) * exp( - x^n), 0, Inf)
+gamma((p+1)/n) * digamma((p+1)/n) / n^2;
 
 
 #####################
