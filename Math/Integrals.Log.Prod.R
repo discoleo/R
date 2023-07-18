@@ -337,6 +337,17 @@ integrate(\(x) 3/2 * log(1 - x)^2 * log(x)^2 / x, 0, 1, rel.tol=1E-8)
 ####################
 ####################
 
+### I( x^p * log(x) * log(x^n + 1) / (x^n + 1)^k )
+p = sqrt(3); n = sqrt(5); k = sqrt(2) + sqrt(3);
+integrate(function(x) x^p * log(x) * log(x^n + 1) / (x^n + 1)^k, lower=0, upper=Inf)
+gamma((p+1)/n) * gamma(k - (p+1)/n) *
+	(pracma::psi(1, k - (p+1)/n) + (digamma(k - (p+1)/n) - digamma((p+1)/n)) *
+	(digamma(k - (p+1)/n) - digamma(k)) ) / gamma(k) / n^2;
+
+
+####################
+####################
+
 ### Other
 
 dzeta = function(x, dx=1E-8) {
