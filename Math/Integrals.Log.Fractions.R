@@ -6,7 +6,7 @@
 ### Integrals: Logarithms
 ### Log-Fractions
 ###
-### draft v.0.1q
+### draft v.0.2a
 
 
 ##################
@@ -46,6 +46,8 @@ Catalan = 0.915965594177219015054603514;
 
 ### Generalization
 
+### Base-Formulas:
+
 ### log(x) / (x^n + 1)
 n = 7
 integrate(function(x) log(x)/(x^n + 1), 0, Inf)
@@ -59,6 +61,7 @@ integrate(function(x) x^p*log(x)/(x^n + 1), 0, Inf)
 
 
 ### Powers
+### [old]
 integrate(function(x) log(x)/(x^2 + 1)^(3/2), 0, Inf)
 - log(2)
 
@@ -93,6 +96,7 @@ integrate(function(x) log(x)/(x^2 + 1)^k, 0, Inf)
 # TODO:
 # - log-Term in result-formula is NOT yet generalized!
 #   (only n, p = Integers)
+# - cleanup & full generalization;
 
 ### k = 2
 n = 6
@@ -206,6 +210,14 @@ integrate(function(x) x^p * log(x)/(x^n + 1)^(1/k), 0, Inf)
 ### Basic Fractions:
 
 Catalan = 0.915965594177219015054603514;
+
+
+### I( x^p * log(x^n + 1) / (x^n + 1)^k )
+p = sqrt(3); n = sqrt(5); k = sqrt(3);
+integrate(function(x) x^p * log(x^n + 1) / (x^n + 1)^k, lower=0, upper=Inf)
+- gamma((p+1)/n) * gamma(k - (p+1)/n) *
+	(digamma(k - (p+1)/n) - digamma(k)) / gamma(k) / n;
+
 
 ### Derivation:
 
