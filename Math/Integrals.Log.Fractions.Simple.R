@@ -124,8 +124,16 @@ gamma(s+1) * pracma::zeta(s)
 ### x-Pow = 3
 s = 3; p = 3;
 integrate(\(x) log(1 - x)^3 / x^3, 0, 1, rel.tol=1E-8)
-- gamma(4) * (pracma::zeta(3)/2 + pracma::zeta(2)) + pi^2/2
-# TODO: Generalisation;
+- gamma(4) * (pracma::zeta(3) + pracma::zeta(2)) / 2
+
+###
+integrate(\(x) log(1 - x)^4 / x^3, 0, 1, rel.tol=1E-8)
+gamma(5) * (pracma::zeta(4) + pracma::zeta(3)) / 2
+
+### Gen: I( log(1 - x)^s / x^3 )
+s = sqrt(11)
+integrate(\(x) abs(log(1 - x))^s / x^3, 0, 1, rel.tol=1E-8)
+gamma(s+1) * (pracma::zeta(s) + pracma::zeta(s-1)) / 2
 
 
 ########################
