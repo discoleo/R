@@ -354,9 +354,21 @@ dzeta = function(x, dx=1E-8) {
 	(pracma::zeta(x + dx) - pracma::zeta(x)) / dx;
 }
 
-### I( log(1 - x)^s * log(-log(1 - x)) / x^3 )
+### I( log(1 - x)^s * log(- log(1 - x)) / x^3 )
 s = sqrt(11); # s > 3
 integrate(\(x) abs(log(1 - x))^s * log(-log(1 - x)) / x^3, 0, 1, rel.tol=1E-8)
 (digamma(s+1) * (pracma::zeta(s) + pracma::zeta(s-1)) +
 	+ dzeta(s) + dzeta(s-1)) * gamma(s+1) / 2
+
+
+### I( x^p * log(x)^s * log(- log(x)) )
+s = sqrt(5); p = sqrt(7);
+integrate(\(x) x^p * abs(log(x))^s * log(-log(x)), 0, 1)
+gamma(s+1) * (digamma(s+1) - log(p+1)) / (p+1)^(s+1)
+
+
+### Special Case: p = 0
+s = sqrt(7)
+integrate(\(x) abs(log(x))^s * log(-log(x)), 0, 1)
+gamma(s+1) * digamma(s+1)
 
