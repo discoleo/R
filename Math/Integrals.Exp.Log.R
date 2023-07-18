@@ -6,6 +6,7 @@
 Euler   = 0.57721566490153286060651209008240243079;
 Catalan = 0.915965594177219015054603514;
 gStjelt1 = - 0.0728158454836767248605863758749013191377363383;
+# https://en.wikipedia.org/wiki/Stieltjes_constants
 dzeta2   = -0.937548254316;
 ### Glaisher–Kinkelin Constant:
 # https://en.wikipedia.org/wiki/Glaisher%E2%80%93Kinkelin_constant
@@ -46,6 +47,12 @@ integrate(\(x) exp(-x) * log(x)^3, 0, Inf)
 # Derivation:
 # psi2(1)*gamma(1) + 2*psi1(1)*d(gamma)(1) + psi(1)*d2(gamma)(1)
 - 2* pracma::zeta(3) - 2*pi^2/6 * Euler - Euler*(pi^2/6 + Euler^2)
+
+
+### I( x^n * log(x) * exp( - x^n) )
+n = sqrt(5)
+integrate(\(x) x^n * log(x) * exp( - x^n), 0, Inf)
+gamma(1/n) * (digamma(1/n) + n) / n^3
 
 
 #####################
