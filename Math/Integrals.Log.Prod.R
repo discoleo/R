@@ -328,10 +328,10 @@ integrate(\(x) log(1 - x) * log(1 + x) * log(x) / x, 0, 1, rel.tol=1E-8)
 # TODO: ???
 
 
-###
+### I( log(1 - x)^3 * log(x) / x )
 integrate(\(x) log(1 - x)^3 * log(x) / x, 0, 1, rel.tol=1E-8)
 integrate(\(x) 3/2 * log(1 - x)^2 * log(x)^2 / x, 0, 1, rel.tol=1E-8)
-# TODO: ???
+(pi^2*pracma::psi(2,1) - pracma::psi(4,1))/2
 
 
 ####################
@@ -364,6 +364,33 @@ gamma(p+1) * gamma(q+1) * (
 	+ pracma::psi(1, p+q+2) * (3*digamma(p+q+2) - 2*digamma(q+1) - digamma(p+1)) +
 	- pracma::psi(1, q+1) * (digamma(p+q+2) - digamma(p+1))
 	) / gamma(p+q+2);
+
+# Special Case: q = 0
+integrate(function(x) x^p * log(1-x)^2 * log(x), 0, 1)
+( - (digamma(p+2) + Euler)^2 - pi^2/6 +
+	- pracma::psi(2, p+2) * (p+1) +
+	+ pracma::psi(1, p+2) * (2*digamma(p+2) + 2*Euler) * (p+1) +
+	+ pracma::psi(1, p+2)
+	) / (p+1)^2;
+
+### I( x^p * log(1-x)^2 * log(x)^2 )
+p = 1/7
+integrate(function(x) x^p * log(1-x)^2 * log(x)^2, 0, 1)
+(   - pracma::psi(3, p+2) +
+	+ pracma::psi(2, p+2) * (digamma(p+2) + Euler) * 2 +
+	+ pracma::psi(1, p+2) * pracma::psi(1, p+2) * 2
+	) / (p+1) +
+	- 2*( - (digamma(p+2) + Euler)^2 +
+	- pracma::psi(2, p+2) * (p+1) +
+	+ pracma::psi(1, p+2) * (2*digamma(p+2) + 2*Euler) * (p+1) +
+	+ pracma::psi(1, p+2) - pi^2/6
+	) / (p+1)^3;
+
+
+### Lim: x -> -1
+integrate(function(x) log(1-x)^2 * log(x)^2 / x, 0, 1)
+pracma::psi(1,1)*pracma::psi(2,1)*2 - pracma::psi(4,1)/3
+(pi^2*pracma::psi(2,1) - pracma::psi(4,1))/3
 
 
 ####################
