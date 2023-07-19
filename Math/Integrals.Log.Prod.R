@@ -6,7 +6,7 @@
 ### Integrals: Logarithms
 ### Log-Products
 ###
-### draft v.0.2e
+### draft v.0.2f
 
 
 ### Constants
@@ -334,6 +334,11 @@ integrate(\(x) 3/2 * log(1 - x)^2 * log(x)^2 / x, 0, 1, rel.tol=1E-8)
 (pi^2*pracma::psi(2,1) - pracma::psi(4,1))/2
 
 
+### I( log(1 - x) * log(1 + x) )
+integrate(\(x) log(1 - x) * log(1 + x), 0, 1)
+log(2)^2 - 2*log(2) - pi^2/6 + 2
+
+
 ####################
 
 ### I( x^p * (1 - x)^q * log(1-x) * log(x) )
@@ -391,6 +396,40 @@ integrate(function(x) x^p * log(1-x)^2 * log(x)^2, 0, 1)
 integrate(function(x) log(1-x)^2 * log(x)^2 / x, 0, 1)
 pracma::psi(1,1)*pracma::psi(2,1)*2 - pracma::psi(4,1)/3
 (pi^2*pracma::psi(2,1) - pracma::psi(4,1))/3
+
+
+####################
+
+### I( (1 + x)^p * (1 - x)^q * log(1+x) * log(1-x) )
+
+###
+p = 1/5; q = - 1/7;
+# p = q = 1/7
+integrate(function(x) (1 + x)^p * (1 - x)^q, lower=-1, upper=1)
+2^(p+q+1) * gamma(p+1)*gamma(q+1) / gamma(p+q+2)
+
+###
+p = 1/5; q = - 1/7;
+# p = q = 1/7
+integrate(function(x) (1 + x)^p * (1 - x)^q * log(1+x), -1, 1)
+2^(p+q+1) * gamma(p+1)*gamma(q+1) *
+	(log(2) + digamma(p+1) - digamma(p+q+2)) / gamma(p+q+2)
+
+###
+p = 1/5; q = - 1/7;
+# p = q = 1/7
+integrate(function(x) (1 + x)^p * (1 - x)^q * log(1+x) * log(1-x), -1, 1)
+- 2^(p+q+1) * gamma(p+1)*gamma(q+1) * pracma::psi(1, p+q+2) / gamma(p+q+2) +
+2^(p+q+1) * gamma(p+1)*gamma(q+1) *
+	(log(2) + digamma(q+1) - digamma(p+q+2)) *
+	(log(2) + digamma(p+1) - digamma(p+q+2)) / gamma(p+q+2)
+
+# Special Case: p = q =>
+2^(2*p+1) * gamma(p+1)^2 *
+	((log(2) + digamma(p+1) - digamma(2*p+2))^2 - pracma::psi(1, 2*p+2)) / gamma(2*p+2)
+# p = q = 0 =>
+2 * ((log(2) - 1)^2 - pracma::psi(1, 2))
+2 * (log(2)^2 - 2*log(2) - pi^2/6 + 2)
 
 
 ####################
