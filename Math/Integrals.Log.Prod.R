@@ -355,6 +355,16 @@ gamma(p+1) * gamma(q+1) *
 	( (digamma(p+q+2) - digamma(q+1)) * (digamma(p+q+2) - digamma(p+1)) +
 		- pracma::psi(1, p+q+2) ) / gamma(p+q+2);
 
+### I( x^p * (1 - x)^q * log(1-x)^2 * log(x) )
+p = - 1/3; q = 1/5;
+integrate(function(x) x^p * (1 - x)^q * log(1-x)^2 * log(x), 0, 1)
+gamma(p+1) * gamma(q+1) * (
+	- (digamma(p+q+2) - digamma(q+1))^2 * (digamma(p+q+2) - digamma(p+1)) +
+	- pracma::psi(2, p+q+2) +
+	+ pracma::psi(1, p+q+2) * (3*digamma(p+q+2) - 2*digamma(q+1) - digamma(p+1)) +
+	- pracma::psi(1, q+1) * (digamma(p+q+2) - digamma(p+1))
+	) / gamma(p+q+2);
+
 
 ####################
 ####################
