@@ -204,7 +204,7 @@ integrate(function(x) x^2*(pi - x) / sin(x), 0, pi)
 1/2*7*pi*zeta(3)
 
 ###
-integral(function(x) x^3*(pi - x) / sin(x), 0, pi/2)
+integral(function(x) x^3*(pi - x) / sin(x), 0, pi)
 3/2*7*pi^2*zeta(3) - 3*31*zeta(5)
 
 ###
