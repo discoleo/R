@@ -335,6 +335,28 @@ integrate(\(x) 3/2 * log(1 - x)^2 * log(x)^2 / x, 0, 1, rel.tol=1E-8)
 
 
 ####################
+
+### I( x^p * (1 - x)^q * log(1-x) * log(x) )
+
+###
+p = 1/3; q = 1/5;
+integrate(function(x) x^p * (1 - x)^q, 0, 1)
+gamma(p+1)*gamma(q+1) / gamma(p+q+2)
+
+###
+p = 1/3; q = 1/5;
+integrate(function(x) x^p * (1 - x)^q * log(1-x), 0, 1)
+gamma(p+1) * gamma(q+1) * (digamma(q+1) - digamma(p+q+2)) / gamma(p+q+2)
+
+###
+p = - 1/3; q = 1/5;
+integrate(function(x) x^p * (1 - x)^q * log(1-x) * log(x), 0, 1)
+gamma(p+1) * gamma(q+1) *
+	( (digamma(p+q+2) - digamma(q+1)) * (digamma(p+q+2) - digamma(p+1)) +
+		- pracma::psi(1, p+q+2) ) / gamma(p+q+2);
+
+
+####################
 ####################
 
 ### I( x^p * log(x) * log(x^n + 1) / (x^n + 1)^k )
