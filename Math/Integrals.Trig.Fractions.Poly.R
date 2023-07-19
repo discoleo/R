@@ -3,6 +3,9 @@
 
 ### Helper
 
+Catalan = 0.915965594177219015054603514;
+
+
 int.FrU01 = function(n, p=0) {
 	(digamma(((p+1)/n + 1)/2) - digamma((p+1)/n/2)) / (2*n);
 }
@@ -116,6 +119,10 @@ library(pracma)
 
 Catalan = 0.915965594177219015054603514;
 
+### Refs:
+# 1) Maths 505: Integral of x^2/sin(x) from zero to pi/2
+#    https://www.youtube.com/watch?v=g4aKTQyETZw
+
 
 ###
 integrate(function(x) x / sin(x), 0, pi/2)
@@ -124,6 +131,10 @@ integrate(function(x) x / sin(x), 0, pi/2)
 ###
 integrate(function(x) x^2 / sin(x), 0, pi/2)
 2*pi*Catalan - 7/2*pracma::zeta(3)
+
+###
+integrate(function(x) x^3 / sin(x), 0, pi/2)
+(pracma::psi(3, 3/4) - pracma::psi(3, 1/4)) / 128 + 3/2*pi^2*Catalan
 
 ###
 integrate(function(x) x*(pi - x) / sin(x), 0, pi)
@@ -193,7 +204,7 @@ integrate(function(x) x^2*(pi - x) / sin(x), 0, pi)
 1/2*7*pi*zeta(3)
 
 ###
-integral(function(x) x^3*(pi - x) / sin(x), 0, pi)
+integral(function(x) x^3*(pi - x) / sin(x), 0, pi/2)
 3/2*7*pi^2*zeta(3) - 3*31*zeta(5)
 
 ###
