@@ -235,3 +235,17 @@ sum(1/(id^5 + 1))
 (pracma::psi(-m)*m - pracma::psi(-1/m)*m^4 +
 	+ pracma::psi(-m^3)*m^3 - pracma::psi(-1/m^3)*m^2 + Euler) / 5
 
+
+###########################
+###########################
+
+### Dilog/Polylog Functions
+
+### Sum( z^n / n^2 )
+# Michael Penn: The dilogarithm -- a favorite "special function"
+# https://www.youtube.com/watch?v=Bf69XqbpnzY
+
+id = seq(40000)
+sum( 1/(2^id * id^2) )
+pi^2/12 - log(2)^2/2
+
