@@ -84,7 +84,7 @@ print(pi/2*exp(-k), 12)
 # A RIDICULOUSLY AWESOME INTEGRAL: Ramanujan vs Maths 505
 # https://www.youtube.com/watch?v=_VkRvuSxF18
 
-# s in [-1, 1)
+# s in (-1, 1)
 s = 1 - sqrt(2)
 # FAILS:
 integrate(\(x) sin(x) / x^(s+1), 0, Inf, subdivisions=128)
@@ -92,13 +92,13 @@ integrate(\(x) sin(x) / x^(s+1), 0, 200000, subdivisions=400000)
 pracma::integral(\(x) sin(x) / x^(s+1), 0, 2^16*pi, no_intervals=1024)
 - gamma(-s)*sin(pi*s/2)
 
-# s in [-1, 1)
+# s in (-1, 1)
 s = 2 - sqrt(2)
 integrate(\(x) sin(x) / x^(s+1), 0, 200000, subdivisions=40000)
 - gamma(-s)*sin(pi*s/2)
 
 # s = 0
-integrate(\(x) sin(x) / x, 0, Inf, subdivisions=128)
+# integrate(\(x) sin(x) / x, 0, Inf, subdivisions=128)
 integrate(\(x) sin(x) / x, 0, 200000, subdivisions=400000)
 pi/2
 
