@@ -6,7 +6,7 @@
 ### Integrals: Trigonometric
 ### Fresnel Integrals
 ###
-### draft v.0.1c
+### draft v.0.2b
 
 
 
@@ -142,16 +142,24 @@ fresnel(n, k=k)
 
 ### I( x^p * sin(x^n) )
 n = 3
-p = - 3/4; # -n <= p <= 0;
+p = - 3/4; # - (n+1) < p <= 0;
 # very slow!
 # pracma::integral(\(x) x^p * sin(x^n), 0, 1000)
+fresnel(n=n, p=p, k=1)
+1/n * sin(pi*(p+1)/(2*n)) * gamma((p+1)/n)
+
+###
+n = 3
+# - (n+1) < p <= 0;
+# but numerically problematic for p < - (n + 0.5);
+p = 0.5 - (n+1);
 fresnel(n=n, p=p, k=1)
 1/n * sin(pi*(p+1)/(2*n)) * gamma((p+1)/n)
 
 
 ### I( x^p * log(x) * sin(x^n) )
 n = 3
-p = - 3/4; # -n <= p <= 0;
+p = - 3/4; # - (n+1) <= p < 0;
 # Upper = Inf: very slow!
 pracma::integral(\(x) x^p * log(x) * sin(x^n), 0, 100)
 gamma((p+1)/n)* (digamma((p+1)/n) * sin(pi*(p+1)/(2*n)) +
@@ -160,7 +168,16 @@ gamma((p+1)/n)* (digamma((p+1)/n) * sin(pi*(p+1)/(2*n)) +
 
 ###
 n = 3
-p = - 2.5; # -n <= p <= 0;
+p = - 2.5; # - (n+1) < p < 0;
+# Upper = Inf: very slow!
+pracma::integral(\(x) x^p * log(x) * sin(x^n), 0, 100)
+gamma((p+1)/n)* (digamma((p+1)/n) * sin(pi*(p+1)/(2*n)) +
+	pi/2 * cos(pi*(p+1)/(2*n))) / n^2
+
+
+###
+n = 3
+p = - 3.25; # - (n+1) < p < 0;
 # Upper = Inf: very slow!
 pracma::integral(\(x) x^p * log(x) * sin(x^n), 0, 100)
 gamma((p+1)/n)* (digamma((p+1)/n) * sin(pi*(p+1)/(2*n)) +
