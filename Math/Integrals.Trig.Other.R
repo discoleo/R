@@ -6,7 +6,7 @@
 ### Integrals:
 ### Trigonometric: Other
 ###
-### draft v.0.1d-initial
+### draft v.0.1e
 
 
 
@@ -23,6 +23,7 @@
 # https://www.youtube.com/watch?v=7wiybMkEfbc
 
 
+# TODO:
 # [work in progress]
 
 n = 3
@@ -84,7 +85,7 @@ integrate(function(x) - log(x)/(1+x^2), 0, tan(pi/4))
 ########################
 ########################
 
-### x*sin(k*x) / (a^2 + 1 - 2*a*cos(k*x))
+### x * sin(k*x) / (a^2 + 1 - 2*a*cos(k*x))
 
 ### Ref:
 # qncubed3: Complex Analysis: Viewer Suggests INSANE Integral
@@ -161,4 +162,13 @@ k = 1/2; # FIXED value!
 integrate(function(x) x*sin(k*x) / (a^2 + 1 - 2*a*cos(k*x)), 0, pi)
 - pi*log(a)/(k^2*a) + pi*log(a^2 + 1)/(2*k*a) + log(a)*atan(a)/(k^2*a) +
 	+ 1/a/k^2*integrate(function(z) log(z) / (z^2 + 1), 1/a, Inf)$value;
+
+
+#####################
+#####################
+
+### I( sin(x) * sin(1/x) )
+# Upper = Inf: numerical instability;
+pracma::integral(\(x) sin(x) * sin(1/x), 0, 320000)
+pi/2 * Rmpfr::jn(1,2)
 
