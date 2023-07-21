@@ -6,7 +6,7 @@
 ### Integrals: Trigonometric
 ### Fresnel Integrals
 ###
-### draft v.0.2b
+### draft v.0.2c
 
 
 
@@ -157,9 +157,11 @@ fresnel(n=n, p=p, k=1)
 1/n * sin(pi*(p+1)/(2*n)) * gamma((p+1)/n)
 
 
+### Log
+
 ### I( x^p * log(x) * sin(x^n) )
 n = 3
-p = - 3/4; # - (n+1) <= p < 0;
+p = - 3/4; # - (n+1) < p < 0;
 # Upper = Inf: very slow!
 pracma::integral(\(x) x^p * log(x) * sin(x^n), 0, 100)
 gamma((p+1)/n)* (digamma((p+1)/n) * sin(pi*(p+1)/(2*n)) +
@@ -182,4 +184,33 @@ p = - 3.25; # - (n+1) < p < 0;
 pracma::integral(\(x) x^p * log(x) * sin(x^n), 0, 100)
 gamma((p+1)/n)* (digamma((p+1)/n) * sin(pi*(p+1)/(2*n)) +
 	pi/2 * cos(pi*(p+1)/(2*n))) / n^2
+
+
+#####################
+
+### Higher Power: sin
+
+### I( sin(x^n)^2 / x^p )
+# 1 < p < 2*n + 1;
+n = 2
+p = sqrt(5);
+# Upper = Inf: very slow!
+pracma::integral(\(x) sin(x^n)^2 / x^p, 0, 6000)
+sin(pi*(1/2 - (p-1)/(2*n))) * gamma(1 - (p-1)/n) * 2^((p-1)/n - 1) / (p-1)
+
+
+### works: 0 < n <= 1
+# (as it depends on x^p for convergence)
+# Note: n = 0 implies 1 < p < 1 => Contradiction;
+n = 1/2
+p = 1.4
+pracma::integral(\(x) sin(x^n)^2 / x^p, 0, 1000000)
+sin(pi*(1/2 - (p-1)/(2*n))) * gamma(1 - (p-1)/n) * 2^((p-1)/n - 1) / (p-1)
+
+###
+n = 2
+p = 2*n + 0.45;
+# Upper = Inf: very slow!
+pracma::integral(\(x) sin(x^n)^2 / x^p, 0, 6000)
+sin(pi*(1/2 - (p-1)/(2*n))) * gamma(1 - (p-1)/n) * 2^((p-1)/n - 1) / (p-1)
 
