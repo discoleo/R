@@ -19,6 +19,10 @@ Catalan = 0.915965594177219015054603514;
 # A MONSTER INTEGRAL!!! int from 0 to infty arctan(x)/(x(x+1)(x^2+1))
 # https://www.youtube.com/watch?v=u-FKjn_83l8
 
+# TODO: move to Trig;
+integrate(\(x) x / (tan(x) + 1), 0, pi/2)
+pi^2/16 + pi*log(2)/8 - Catalan/2
+
 
 ###
 integrate(function(x) log(sin(x)), 0, pi/2)
@@ -51,6 +55,7 @@ integrate(function(x) log(cos(x) + sin(x)), 0, pi/4)
 ### I( log(sin(x)) ) on [0, pi/8]
 # TODO: C8;
 C8 = integrate(\(x) log(x) / (x^2 + 1), 0, tan(pi/8))$value
+#
 integrate(function(x) log(sin(x)), 0, pi/8)
 - pi/8*log(2) - Catalan/8 + C8/2
 #
@@ -65,10 +70,28 @@ integrate(\(x) log(cos(x)), 0, pi/3)
 	(pracma::psi(1, 1/6) - pracma::psi(1, 5/6) + pracma::psi(1, 1/3) - pracma::psi(1, 2/3))
 
 # Derivation:
+# see from 12:40 in the Ref. Maths 505;
 id = seq(0, 40000)
 - pi*log(2)/3 + sqrt(3)/4 * sum(1/(6*id+1)^2, -1/(6*id+5)^2, 1/(6*id+2)^2, - 1/(6*id+4)^2)
 - pi*log(2)/3 + sqrt(3)/(4*36) *
 	(pracma::psi(1, 1/6) - pracma::psi(1, 5/6) + pracma::psi(1, 2/6) - pracma::psi(1, 4/6))
+
+
+### on [0, pi/5]
+integrate(\(x) log(cos(x)), 0, pi/5)
+sn = sin(2*pi/5 * c(1,2));
+- pi*log(2)/5 +
+	+ (sn[1] * (pracma::psi(1, 1/10) - pracma::psi(1, 9/10) +
+		+ pracma::psi(1, 4/10) - pracma::psi(1, 6/10)) +
+	- sn[2] * (pracma::psi(1, 2/10) - pracma::psi(1, 8/10) +
+		+ pracma::psi(1, 3/10) - pracma::psi(1, 7/10))) / (2*100);
+
+# Note: also alternating signs;
+- pi*log(2)/5 + 1/2 * sum(
+	sn[1]/(10*id+1)^2, - sn[1]/(10*id+9)^2, - sn[2]/(10*id+2)^2, sn[2]/(10*id+8)^2,
+	- sn[2]/(10*id+3)^2, sn[2]/(10*id+7)^2, sn[1]/(10*id+4)^2, - sn[1]/(10*id+6)^2)
+
+
 
 # Varia:
 (pracma::psi(1, 1/3) - pracma::psi(1, 2/3)) / 9
@@ -78,10 +101,20 @@ integrate(\(x) - log(x) / (x^2 + x + 1), 0, 1)
 
 #################
 
-### Michael Penn: Can you guess the trick for this integral?
+### I( log(tan(x)) )
+# Michael Penn: Can you guess the trick for this integral?
 # https://www.youtube.com/watch?v=8R0MiRYmjbk
 
 # Intermediary:
 integrate(function(x) log(tan(x)), 0, pi/4)
 # ==
 - Catalan
+
+
+### I( log(cos x)^2 )
+# Michael Penn: Integral of (ln(cos x))^2
+# https://www.youtube.com/watch?v=ikyVHEHmgP8
+
+integrate(\(x) log(cos(x))^2, 0, pi/2)
+pi^3/24 + pi/2 * log(2)^2
+
