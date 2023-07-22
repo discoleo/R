@@ -60,6 +60,12 @@ pi/(4*(p+1)) - (digamma(((n+p+1)/(2*n) + 1)/2) - digamma((n+p+1)/(4*n))) / (4*(p
 pi/(4*(p+1)) - (digamma(((p+1)/n + 3)/4) - digamma(((p+1)/n + 1)/4)) / (4*(p+1))
 
 
+### Lim: p -> -1
+n = 1/sqrt(3)
+integrate(\(x) atan(x^n) / x, 0, 1)
+Catalan / n;
+
+
 ### I( x^p * atan(x^n) * log(x) )
 n = sqrt(5); p = sqrt(3);
 integrate(\(x) x^p * atan(x^n) * log(x), 0, 1)
