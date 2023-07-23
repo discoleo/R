@@ -124,7 +124,7 @@ x = 5^(1/3)
 ########################
 ########################
 
-###
+### I( 1 / (sin(x)^5 + cos(x)^5) )
 integrate(\(x) 1 / (sin(x)^5 + cos(x)^5), 0, pi/4)
 # sin(x) + cos(x) => x
 integrate(\(x) - 4/sqrt(2 - x^2) / (x^5 - 5*x), 1, sqrt(2))
@@ -135,7 +135,19 @@ integrate(\(x) - 2*sqrt(2) / (4*sin(x)^5 - 5*sin(x)), pi/4, pi/2)
 # cos(x) => x
 integrate(\(x) - 2*sqrt(2) / ((1 - x^2) * (4*(1-x^2)^2 - 5)), 0, 1/sqrt(2))
 integrate(\(x) - 2*sqrt(2) / ((1 - x^2) * (4*x^4 - 8*x^2 - 1)), 0, 1/sqrt(2))
-# TODO
+# Fraction Decomposition
+integrate(\(x) 1/sqrt(10) / (x^2 - 1) *
+	(1/(x^2 - 1 - sqrt(5)/2) - 1/(x^2 - 1 + sqrt(5)/2)), 0, 1/sqrt(2))
+integrate(\(x) sqrt(2)/5 *
+	(1/(x^2 - 1 - sqrt(5)/2) + 1/(x^2 - 1 + sqrt(5)/2) - 2/(x^2-1)), 0, 1/sqrt(2))
+#
+2*sqrt(sqrt(5) + 2)/5 * (pi/2 - atan(sqrt(sqrt(5) - 2))) +
+	+ sqrt(sqrt(5) - 2)/5 *
+		log((sqrt(sqrt(5) + 2) - 1)^2 / (sqrt(5) + 1)) +
+	- 2*sqrt(2)/5 * log(sqrt(2)-1)
+
+# TODO:
+# - compact / generalized formula ???
 
 
 ###
