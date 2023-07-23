@@ -149,6 +149,11 @@ integrate(\(x) sqrt(2)/5 *
 # TODO:
 # - compact / generalized formula ???
 
+### on [0, pi/2]
+integrate(\(x) 1 / (sin(x)^5 + cos(x)^5), 0, pi/2)
+integrate(\(x) 2 / (sin(x)^5 + cos(x)^5), 0, pi/4)
+# see above;
+
 
 ###
 lim = c(pi/7, pi/3)
@@ -161,4 +166,19 @@ integrate(\(x) 1 / (sin(x)^5 + cos(x)^5), 0, pi/4)
 integrate(\(x) { y = sin(x) + cos(x); 1 / (y^5 - 5/2*(y^2-1)*y^3 + 5/4*(y^2-1)^2*y) }, 0, pi/4)
 integrate(\(x) { y = sin(x + pi/4); - 2*sqrt(2) / (4*y^5 - 5*y) }, 0, pi/4)
 integrate(\(x) { y = sin(x); - 2*sqrt(2) / (4*y^5 - 5*y) }, pi/4, pi/2)
+
+
+### Pow = 7
+integrate(\(x) 1 / (sin(x)^7 + cos(x)^7), 0, pi/4)
+integrate(\(x) { y = sin(x) + cos(x); y2 = y^2 - 1;
+	1 / (y^7 - 7/2*y2*y^5 + 7/2*y2^2*y^3 - 7/8*y2^3*y) }, 0, pi/4)
+integrate(\(x) { y = sin(x + pi/4);
+	4*sqrt(2) / (8*y^7 - 4*7*y^5 + 2*7*y^3 + 7*y) }, 0, pi/4)
+integrate(\(x) { y = sin(x); 4*sqrt(2) / (8*y^7 - 4*7*y^5 + 2*7*y^3 + 7*y) }, pi/4, pi/2)
+integrate(\(x) 8 / ((x^2 - 2) * (x^6 + x^4 - 9*x^2 - 1)), 0, 1)
+
+# TODO: Fraction Decomposition
+x = 2*cos(1:3 * 2*pi/7)
+x = -2*x - 1;
+x^3 + x^2 - 9*x - 1 # == 0
 
