@@ -18,6 +18,19 @@ int.FrDU01 = function(n, p=0) {
 ####################
 ####################
 
+###
+# Michael Penn: Check out this crazy integral trick!
+# https://www.youtube.com/watch?v=nBGcO3VL8Kw
+
+# Upper = Inf: numeric instability;
+pracma::integral(\(x) sin(x) / (x + 1), 0, 1000000)
+integrate(\(x) 1/(log(x)^2 + 1), 0, 1)
+# TODO: ???
+
+
+####################
+####################
+
 # qncubed3:  TWO WAYS to destroy this INSANE integral feat. @maths_505
 # https://www.youtube.com/watch?v=Ry5q4NsZDx0
 
@@ -27,8 +40,16 @@ pi/4*(1 + exp(-2))
 
 ### Helper:
 k = sqrt(3)
-integrate(function(x) cos(k*x) / (x^2 + 1), 0, Inf, subdivisions=4096*2, rel.tol=1E-6)
+integrate(\(x) cos(k*x) / (x^2 + 1), 0, Inf, subdivisions=4096*2, rel.tol=1E-6)
 pi/2*exp(-k)
+
+
+### I( x * sin(k*x) / (x^2 + 1) )
+k = sqrt(3)
+# Upper = Inf: numerical instability;
+pracma::integral(\(x) x * sin(k*x) / (x^2 + 1), 0, 200000)
+pi/2*exp(-k)
+
 
 
 ### Gen 1:
