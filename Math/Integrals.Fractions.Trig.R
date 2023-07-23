@@ -49,6 +49,7 @@ integrate(function(x) (4 - sqrt(2)) / (x^4 + 4*x^2 + 2), lower=0, upper=Inf)$val
 n = 10; n2 = 2*n;
 integrate(function(x) 1 / (cos(x)^n + sin(x)^n), lower=0, upper=pi/4)
 integrate(function(x) (x^2 + 1)^(n/2 - 1) / (x^n + 1), lower=0, upper=1)
+# the pattern of: (...)^(n/2 - 1)
 pi*(1/tan(pi/n2) + 1/tan(9*pi/n2) + 4/tan(pi*3/n2) + 4/tan(pi*7/n2) +
 	+ 6/tan(pi*5/n2))/n2
 
@@ -68,6 +69,7 @@ integrate(\(x) sin(x) / (sin(x)^6 + cos(x)^6), 0, pi/4)
 integrate(\(x) x * (x^2 + 1)^(3/2) / (x^6 + 1), 0, 1)
 integrate(\(x) 1/2 * (x + 1)^(3/2) / (x^3 + 1), 0, 1)
 integrate(\(x) x^4 / ((x^2-1)^3 + 1), 1, sqrt(2))
+integrate(\(x) x^2 / (x^4 - 3*x^2 + 3), 1, sqrt(2))
 
 # =>
 integrate(\(x) sqrt(3) / (x^4 - 3*x^2 + 3), sqrt(6)/2, sqrt(3));
@@ -117,4 +119,34 @@ x = 5^(1/3)
 (1/(x^2 - r[1]) - 1/(x^2 - r[2])) / sqrt(3) * 1i
 (1i/(x - sqrt(r[1])) - 1i/(x + sqrt(r[1]))) / (2*sqrt(3*r[1])) +
 	- (1i/(x - sqrt(r[2])) - 1i/(x + sqrt(r[2]))) / (2*sqrt(3*r[2]))
+
+
+########################
+########################
+
+###
+integrate(\(x) 1 / (sin(x)^5 + cos(x)^5), 0, pi/4)
+# sin(x) + cos(x) => x
+integrate(\(x) - 4/sqrt(2 - x^2) / (x^5 - 5*x), 1, sqrt(2))
+# x => sqrt(2)*x
+integrate(\(x) - 2*sqrt(2) / sqrt(1 - x^2) / (4*x^5 - 5*x), 1/sqrt(2), 1)
+# x => sin(x):
+integrate(\(x) - 2*sqrt(2) / (4*sin(x)^5 - 5*sin(x)), pi/4, pi/2)
+# cos(x) => x
+integrate(\(x) - 2*sqrt(2) / ((1 - x^2) * (4*(1-x^2)^2 - 5)), 0, 1/sqrt(2))
+integrate(\(x) - 2*sqrt(2) / ((1 - x^2) * (4*x^4 - 8*x^2 - 1)), 0, 1/sqrt(2))
+# TODO
+
+
+###
+lim = c(pi/7, pi/3)
+integrate(\(x) 1 / (1 - sin(x)), lim[1], lim[2])
+diff(tan(lim/2 + pi/4))
+
+###
+# explore alternative method: but the same;
+integrate(\(x) 1 / (sin(x)^5 + cos(x)^5), 0, pi/4)
+integrate(\(x) { y = sin(x) + cos(x); 1 / (y^5 - 5/2*(y^2-1)*y^3 + 5/4*(y^2-1)^2*y) }, 0, pi/4)
+integrate(\(x) { y = sin(x + pi/4); - 2*sqrt(2) / (4*y^5 - 5*y) }, 0, pi/4)
+integrate(\(x) { y = sin(x); - 2*sqrt(2) / (4*y^5 - 5*y) }, pi/4, pi/2)
 
