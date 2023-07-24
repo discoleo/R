@@ -79,6 +79,14 @@ pi/4*(2*k - 1 + exp(-2*k))
 # Res at 1i = pi*(1 - exp(-2*k));
 
 
+### I( sin(k*x) / (x*(x^2 + 1)) )
+# D(k) =>
+k = sqrt(3)
+# Upper = Inf: Numeric instability;
+pracma::integral(function(x) sin(k*x) / (x*(x^2 + 1)), 0, 100000)
+pi/2*(1 - exp(-k))
+
+
 ########################
 
 ### Numerical Stability:
@@ -144,6 +152,12 @@ sin(pi*(1 - p)/2) * gamma(1 - p)
 pracma::integral(\(x) sin(x) / x, 0, 20000)
 # sin(pi*(1 - p)/2) * gamma(1 - p)
 pi/2
+
+
+###
+k = sqrt(3)
+integrate(\(x) sin(k*x)^2 / x^2, 0, Inf, subdivisions=1025)
+pi*k/2
 
 
 ######################
