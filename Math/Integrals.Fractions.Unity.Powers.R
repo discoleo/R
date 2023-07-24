@@ -348,7 +348,7 @@ integrate(F.f, lower=lim[1], upper=lim[2], k=-n, n=n, p = 1)
 
 ### Test: p == 1
 n = 5
-k = 3
+k = 3 # -k;
 lim = c(1.1, 4)
 integrate(F.f, lower=lim[1], upper=lim[2], k=-k, n=n, p = 1)
 (I.f(lim, n-k, n, 1)$value + (1/lim[2]^(k-1) - 1/lim[1]^(k-1))/(k-1))
@@ -365,4 +365,45 @@ lim = c(1.1, 4)
 ### I(k, n, 2)
 integrate(F.f, lower=lim[1], upper=lim[2], k=k, n=n, p = p + 1)
 -1/(n*p) * (F.range(lim, k+1, n, p) + (n*p - k - 1)*I.f(lim, k, n, p)$value)
+
+
+######################
+######################
+
+### Mixed Fractions
+
+### I( 1 / ((x^n + 1) * (x^(2*n) + 1)) )
+n = sqrt(7)
+integrate(\(x) 1 / ((x^n + 1) * (x^(2*n) + 1)), 0, 1)
+(digamma((1/n + 1)/2) - digamma(1/n/2)) / (4*n) +
+	- (digamma((1/n + 3)/4) - digamma((1/n + 1)/4)) / (8*n) +
+	+ (digamma((1/n + 2)/4) - digamma((1/n + 0)/4)) / (8*n);
+
+
+### I( x^p / ((x^n + 1) * (x^(2*n) + 1)) )
+n = sqrt(7); p = sqrt(3)
+integrate(\(x) x^p / ((x^n + 1) * (x^(2*n) + 1)), 0, 1)
+(digamma(((p+1)/n + 1)/2) - digamma((p+1)/n/2)) / (4*n) +
+	- (digamma(((p+1)/n + 3)/4) - digamma(((p+1)/n + 1)/4)) / (8*n) +
+	+ (digamma(((p+1)/n + 2)/4) - digamma(((p+1)/n + 0)/4)) / (8*n);
+
+
+### I( 1 / ((x^n + 1) * (x^(3*n) + 1)) )
+n = sqrt(7)
+integrate(\(x) 1 / ((x^n + 1) * (x^(3*n) + 1)), 0, 1)
+1/(6*n) + (2*n-1)*(digamma((1/n + 1)/2) - digamma(1/n/2)) / (6*n^2) +
+	- (digamma((1/n + 5)/6) - digamma((1/n + 2)/6)) / (18*n) +
+	+ (digamma((1/n + 3)/6) - digamma((1/n + 0)/6)) / (18*n);
+
+
+### Derivation:
+integrate(\(x) 1 / ((x^n + 1) * (x^(3*n) + 1)), 0, 1)
+integrate(\(x) 1/3/(x^n + 1)^2 - 1/3*(x^n + 1)/(x^(3*n) + 1) +
+	+ 1/(x^(2*n) - x^n + 1) / (x^n + 1), 0, 1)
+integrate(\(x) 1/3/(x^n + 1)^2 + 1/3/(x^n + 1) +
+	- 1/3*(x^(2*n) - 1)/(x^(3*n) + 1), 0, 1)
+
+###
+integrate(\(x) 1/(x^n + 1)^2, 0, 1)
+1/(2*n) + (n-1)*(digamma((1/n + 1)/2) - digamma(1/n/2)) / (2*n^2)
 
