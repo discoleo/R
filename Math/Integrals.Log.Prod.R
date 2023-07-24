@@ -11,6 +11,7 @@
 
 ### Constants
 
+Euler   = 0.57721566490153286060651209008240243079;
 Catalan = 0.915965594177219015054603514;
 
 
@@ -338,6 +339,10 @@ integrate(\(x) 3/2 * log(1 - x)^2 * log(x)^2 / x, 0, 1, rel.tol=1E-8)
 integrate(\(x) log(1 - x) * log(1 + x), 0, 1)
 log(2)^2 - 2*log(2) - pi^2/6 + 2
 
+###  I( log(1 - x) * log(1 + x) / x )
+integrate(\(x) log(1 - x) * log(1 + x) / x, 0, 1)
+- pracma::zeta(3) * 5/8
+
 
 ####################
 
@@ -352,6 +357,12 @@ gamma(p+1)*gamma(q+1) / gamma(p+q+2)
 p = 1/3; q = 1/5;
 integrate(function(x) x^p * (1 - x)^q * log(1-x), 0, 1)
 gamma(p+1) * gamma(q+1) * (digamma(q+1) - digamma(p+q+2)) / gamma(p+q+2)
+
+### Lim: q -> 0
+p = -1/5;
+integrate(function(x) x^p * log(1-x), 0, 1)
+- (digamma(p+2) + Euler) / (p+1)
+
 
 ###
 p = - 1/3; q = 1/5;
@@ -441,6 +452,26 @@ integrate(function(x) x^p * log(x) * log(x^n + 1) / (x^n + 1)^k, lower=0, upper=
 gamma((p+1)/n) * gamma(k - (p+1)/n) *
 	(pracma::psi(1, k - (p+1)/n) + (digamma(k - (p+1)/n) - digamma((p+1)/n)) *
 	(digamma(k - (p+1)/n) - digamma(k)) ) / gamma(k) / n^2;
+
+
+### Special Cases:
+
+### Lim: p -> -1
+n = sqrt(5); k = sqrt(2) + sqrt(3);
+integrate(function(x) log(x) * log(x^n + 1) / (x * (x^n + 1)^k), lower=0, upper=Inf)
+- (pracma::psi(2, k)/2 + pracma::psi(1, k)*(digamma(k) + Euler)) / n^2
+
+
+### Lim: p = -1; n = k = 1;
+# Michael Penn: An integral with many logs
+# https://www.youtube.com/watch?v=5blBvR7T24o
+integrate(\(x) log(x) * log(x + 1) / (x*(x+1)), 0, Inf)
+pracma::zeta(3)
+
+
+#
+integrate(\(x) log(1-x)^2 / x, 0, 1)
+2*pracma::zeta(3)
 
 
 ####################
