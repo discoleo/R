@@ -333,15 +333,27 @@ pi/4 - n * int.FrU01(2*n, n)
 ###
 n = sqrt(5); p = sqrt(3);
 integrate(\(x) x^p * atan(x^n), 0, 1)
+pi/(4*(p+1)) +
+	- (digamma(((p+1)/n + 3)/4) - digamma(((p+1)/n + 1)/4)) / (4*(p+1));
 pi/(4*(p+1)) - n / (p+1) * int.FrU01(2*n, n + p)
 
 
 ###
 # see file: Integrals.Trig.Tan.R;
-integrate(\(x) atan(x) * x / (x^2 + 1), 0, 1)
+integrate(\(x) x * atan(x) / (x^2 + 1), 0, 1)
 Catalan / 2 - 1/8 * pi*log(2)
 
 ###
 integrate(\(x) atan(x) / (x^2 + 1), 0, 1)
 pi^2 / 32
+
+
+### I( x^p * atan(x^n) * log(x) )
+n = sqrt(3); p = sqrt(5);
+# works only for n > 0;
+# see also file: Integrals.Trig.Tan.R;
+integrate(\(x) x^p * atan(x^n) * log(x), 0, 1)
+- pi/(4*(p+1)^2) +
+	+ (digamma(((p+1)/n + 3)/4) - digamma(((p+1)/n + 1)/4)) / (4*(p+1)^2) +
+	- (pracma::psi(1, ((p+1)/n + 3)/4) - pracma::psi(1, ((p+1)/n + 1)/4)) / (16*(p+1)*n);
 
