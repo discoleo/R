@@ -62,6 +62,16 @@ gamma((p+1)/n) * digamma((p+1)/n) / n^2;
 
 
 #####################
+
+### I( x^p * log(x) * (exp(-a1*x) - exp(-a2*x)) )
+p = -1/3; # p > -1 (strictly) !!!
+a = sqrt(c(5, 2))
+integrate(\(x) x^p * log(x) * (exp(-a[1]*x) - exp(-a[2]*x)), 0, Inf)
+gamma(p + 1) * digamma(p + 1) * (a[1]^(-p-1) - a[2]^(-p-1)) +
+	- gamma(p + 1) * (a[1]^(-p-1)*log(a[1]) - a[2]^(-p-1)*log(a[2]))
+
+
+#####################
 #####################
 
 ### I( log(x) / (exp(x) + 1) )
@@ -113,6 +123,20 @@ pracma::integral(\(x) log(x) / cosh(x) / 2, 0, Inf)
 id = seq(160000)
 - pi*Euler / 4 - sum((-1)^id * log(2*id + 1) / (2*id + 1))
 # TODO: how?
+
+
+### I( x * log(x) * exp(k*x) / (exp(k*x) + 1)^2 )
+k = sqrt(5)
+# up = Inf; numerical issue!
+integrate(\(x) x * log(x) * exp(k*x) / (exp(k*x) + 1)^2, 0, 30)
+- log(2)^2/(2*k^2) + log(2)*(1 - log(k))/k^2
+
+### I( x * log(x) / (exp(k*x) + 1)^2 )
+k = 1/sqrt(5)
+# up = Inf; numerical issue!
+integrate(\(x) x * log(x) / (exp(k*x) + 1)^2, 0, 30)
+(1 - Euler + dzeta2 * 6/pi^2 - log(k/2)) * pi^2 / (12*k^2) +
+	+ log(2)^2/(2*k^2) - log(2)*(1 - log(k))/k^2;
 
 
 ### I( x * log(x) / (exp(k*x) - 1) )
