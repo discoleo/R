@@ -6,7 +6,7 @@
 ### Integrals: Logarithms
 ### Log-Products
 ###
-### draft v.0.2f
+### draft v.0.2g
 
 
 ### Constants
@@ -358,7 +358,7 @@ p = 1/3; q = 1/5;
 integrate(function(x) x^p * (1 - x)^q * log(1-x), 0, 1)
 gamma(p+1) * gamma(q+1) * (digamma(q+1) - digamma(p+q+2)) / gamma(p+q+2)
 
-### Lim: q -> 0
+### Lim: q = 0
 p = -1/5;
 integrate(function(x) x^p * log(1-x), 0, 1)
 - (digamma(p+2) + Euler) / (p+1)
@@ -468,6 +468,25 @@ integrate(function(x) log(x) * log(x^n + 1) / (x * (x^n + 1)^k), lower=0, upper=
 integrate(\(x) log(x) * log(x + 1) / (x*(x+1)), 0, Inf)
 pracma::zeta(3)
 
+
+### p = -2
+n = sqrt(5); k = sqrt(2) + sqrt(3);
+integrate(function(x) log(x) * log(x^n + 1) / (x^2 * (x^n + 1)^k), lower=0, upper=Inf)
+gamma(-1/n) * gamma(k + 1/n) *
+	(pracma::psi(1, k + 1/n) + (digamma(k + 1/n) - digamma(-1/n)) *
+	(digamma(k + 1/n) - digamma(k)) ) / gamma(k) / n^2;
+# Lim: k -> 0
+integrate(function(x) log(x) * log(x^n + 1) / x^2, 0, Inf)
+- gamma(-1/n) * gamma(1/n) * (pi /tan(pi/n) + n) / n^2
+pi/sin(pi/n) * (pi / tan(pi/n) + n) / n
+
+
+###
+# Maths 505: A savage logarithmic integral!
+# https://www.youtube.com/watch?v=gTBARM502JY
+
+integrate(function(x) log(x) * log(x^2 + 1) / x^2, lower=0, upper=1)
+pi/2 - log(2) - 2*Catalan;
 
 #
 integrate(\(x) log(1-x)^2 / x, 0, 1)
