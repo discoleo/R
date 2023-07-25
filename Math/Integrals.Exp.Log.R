@@ -3,6 +3,8 @@
 ### Integrals: Log & Exp
 
 
+### Helper
+
 Euler   = 0.57721566490153286060651209008240243079;
 Catalan = 0.915965594177219015054603514;
 gStjelt1 = - 0.0728158454836767248605863758749013191377363383;
@@ -15,6 +17,13 @@ A = exp((log(2*pi) + Euler - 6*dzeta2/pi^2)/12);
 # Note:
 # Catalan = - I(log(x)/(x^2 + 1), lower=0, upper=1)
 
+###
+dzeta = function(x, dx = 1E-6) {
+	(pracma::zeta(x + dx) - pracma::zeta(x)) / dx;
+}
+
+###########################
+###########################
 
 ### I( exp(-x) * log(x)^2 )
 # 1.) Maths 505: Another awesome integral with a beautiful result
@@ -199,6 +208,23 @@ integrate(\(x) x * log(x) / (exp(2*x) + 1), 0, Inf)
 (1 - Euler + dzeta2 * 6/pi^2) * pi^2 / 48;
 
 
+### Gen: I( x^p * log(x) / (exp(k*x) + 1) )
+p = sqrt(5); k = sqrt(3);
+integrate(\(x) x^p * log(x) / (exp(k*x) + 1), 0, Inf, rel.tol=1E-8)
+gamma(p + 1) * digamma(p + 1) * pracma::zeta(p + 1) * (1 - 1/2^p) / k^(p + 1) +
+	+ gamma(p + 1) * dzeta(p + 1) * (1 - 1/2^p) / k^(p + 1) +
+	+ gamma(p + 1) * pracma::zeta(p + 1) * log(2) / (2^p * k^(p + 1)) +
+	- gamma(p + 1) * pracma::zeta(p + 1) * (1 - 1/2^p) * log(k) / k^(p + 1);
+
+
+### Special Case:
+# I( x^2 * log(x) / (exp(k*x) + 1) )
+p = sqrt(5); k = sqrt(3);
+integrate(\(x) x^2 * log(x) / (exp(k*x) + 1), 0, Inf, rel.tol=1E-8)
+(3*digamma(3) + log(2) - 3*log(k)) * pracma::zeta(3) / (2*k^3) +
+	+ 3/2 * dzeta(3) / k^3;
+
+
 ### Pow: x^2
 
 ### I( x^2 * log(x) * exp(k*x) / (exp(k*x) - 1)^2 )
@@ -216,3 +242,13 @@ pracma::integral(\(x) x^2 * log(x) * exp(k*x) / (exp(k*x) + 1)^2, 0, 100)
 ((3/2 - Euler)*pi^2 + 6*dzeta2) / (6*k^3) +
 	- pi^2 * log(k/2) / (6*k^3);
 
+
+### I( x^2 * log(x) / (exp(k*x) + 1)^2 )
+# =>
+k = 1/sqrt(5)
+# Up = Inf; numerical issue!
+pracma::integral(\(x) x^2 * log(x) / (exp(k*x) + 1)^2, 0, 100)
+(3*digamma(3) + log(2) - 3*log(k)) * pracma::zeta(3) / (2*k^3) +
+	- ((3/2 - Euler)*pi^2/6 + dzeta2 - 3/2*dzeta(3)) / k^3 +
+	+ pi^2 * log(k/2) / (6*k^3);
+# Note: digamma(3) = 3/2 - Euler;
