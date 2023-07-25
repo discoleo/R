@@ -150,7 +150,15 @@ k = 1/sqrt(5)
 # up = Inf; numerical issue!
 integrate(\(x) x * log(x) / (exp(k*x) + 1)^2, 0, 30)
 (1 - Euler - log(k/2)) * pi^2 / (12*k^2) +
-	+ (log(2)^2 - 2*log(2) + 2*log(2)*log(k) + dzeta2)/(2*k^2);
+	+ (log(2)^2 - 2*log(2) + 2*log(2)*log(k) + dzeta2) / (2*k^2);
+
+
+### I( x^2 * log(x) * exp(k*x) / (exp(k*x) + 1)^3 )
+k = 1/sqrt(5)
+# up = Inf; numerical issue!
+integrate(\(x) x^2 * log(x) * exp(k*x) / (exp(k*x) + 1)^3, 0, 30)
+(log(2)^2 - 3*log(2) + dzeta2 + pi^2*(log(2) + 3/2 - Euler)/6) / (2*k^3) +
+	+ (12*log(2) - pi^2) * log(k) / (12*k^3);
 
 
 ### I( x * log(x) / (exp(k*x) - 1) )
@@ -164,9 +172,12 @@ integrate(\(x) x * log(x) / (exp(x) - 1), 0, Inf)
 k = sqrt(5)
 integrate(\(x) x * log(k*x) / (exp(k*x) - 1), 0, Inf)
 ((1 - Euler)*pi^2 / 6 + dzeta2) / k^2;
+
 # =>
 integrate(\(x) x * log(x) / (exp(k*x) - 1), 0, Inf)
 ((1 - Euler)*pi^2 / 6 + dzeta2) / k^2 - log(k) * gamma(2) * pracma::zeta(2)/k^2;
+((1 - Euler)*pi^2 / 6 + dzeta2) / k^2 - pracma::zeta(2) * log(k) / k^2;
+
 
 ### Glaisher–Kinkelin Constant:
 k = 2*pi;
@@ -187,4 +198,21 @@ integrate(\(x) x * log(x) / (exp(k*x) + 1), 0, Inf)
 integrate(\(x) x * log(x) / (exp(2*x) + 1), 0, Inf)
 (1 - Euler + dzeta2 * 6/pi^2) * pi^2 / 48;
 
+
+### Pow: x^2
+
+### I( x^2 * log(x) * exp(k*x) / (exp(k*x) - 1)^2 )
+k = sqrt(5)
+# Up = Inf; numerical issue!
+pracma::integral(\(x) x^2 * log(x) * exp(k*x) / (exp(k*x) - 1)^2, 0, 100)
+((3/2 - Euler)*pi^2 / 3 + 2*dzeta2) / k^3 +
+	- 2 * pracma::zeta(2) * log(k) / k^3;
+
+
+### I( x^2 * log(x) * exp(k*x) / (exp(k*x) + 1)^2 )
+k = sqrt(5)
+# Up = Inf; numerical issue!
+pracma::integral(\(x) x^2 * log(x) * exp(k*x) / (exp(k*x) + 1)^2, 0, 100)
+((3/2 - Euler)*pi^2 + 6*dzeta2) / (6*k^3) +
+	- pi^2 * log(k/2) / (6*k^3);
 
