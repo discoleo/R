@@ -480,6 +480,12 @@ integrate(function(x) log(x) * log(x^n + 1) / x^2, 0, Inf)
 - gamma(-1/n) * gamma(1/n) * (pi /tan(pi/n) + n) / n^2
 pi/sin(pi/n) * (pi / tan(pi/n) + n) / n
 
+### I( log(x) * log(x^n + 1) / x^p )
+# p > 1; n >= floor(p);
+n = sqrt(5); p = sqrt(7);
+integrate(function(x) log(x) * log(x^n + 1) / x^p, 0, Inf)
+pi/sin(pi*(p-1)/n) * (pi / tan(pi*(p-1)/n) + n/(p-1)) / ((p-1)*n)
+
 
 ###
 # Maths 505: A savage logarithmic integral!
