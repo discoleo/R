@@ -64,11 +64,25 @@ gamma((p+1)/n) * digamma((p+1)/n) / n^2;
 #####################
 
 ### I( x^p * log(x) * (exp(-a1*x) - exp(-a2*x)) )
-p = -1/3; # p > -1 (strictly) !!!
+p = -1/3; # p != -1 && p > - 2 !!!
 a = sqrt(c(5, 2))
 integrate(\(x) x^p * log(x) * (exp(-a[1]*x) - exp(-a[2]*x)), 0, Inf)
 gamma(p + 1) * digamma(p + 1) * (a[1]^(-p-1) - a[2]^(-p-1)) +
 	- gamma(p + 1) * (a[1]^(-p-1)*log(a[1]) - a[2]^(-p-1)*log(a[2]))
+
+###
+p = - sqrt(3)
+a = sqrt(c(5, 2))
+integrate(\(x) x^p * log(x) * (exp(-a[1]*x) - exp(-a[2]*x)), 0, Inf)
+gamma(p + 1) * digamma(p + 1) * (a[1]^(-p-1) - a[2]^(-p-1)) +
+	- gamma(p + 1) * (a[1]^(-p-1)*log(a[1]) - a[2]^(-p-1)*log(a[2]))
+
+
+### I( log(x) * (exp(-a[1]*x) - exp(-a[2]*x)) / x )
+# Lim: p -> -1
+a = sqrt(c(5, 2))
+integrate(\(x) log(x) * (exp(-a[1]*x) - exp(-a[2]*x)) / x, 0, Inf)
+log(a[1]/a[2]) * (log(a[1]) + log(a[2]) + 2*Euler)/2
 
 
 #####################
@@ -135,8 +149,8 @@ integrate(\(x) x * log(x) * exp(k*x) / (exp(k*x) + 1)^2, 0, 30)
 k = 1/sqrt(5)
 # up = Inf; numerical issue!
 integrate(\(x) x * log(x) / (exp(k*x) + 1)^2, 0, 30)
-(1 - Euler + dzeta2 * 6/pi^2 - log(k/2)) * pi^2 / (12*k^2) +
-	+ log(2)^2/(2*k^2) - log(2)*(1 - log(k))/k^2;
+(1 - Euler - log(k/2)) * pi^2 / (12*k^2) +
+	+ (log(2)^2 - 2*log(2) + 2*log(2)*log(k) + dzeta2)/(2*k^2);
 
 
 ### I( x * log(x) / (exp(k*x) - 1) )
