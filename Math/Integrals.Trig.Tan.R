@@ -150,7 +150,29 @@ b = sqrt(5)
 integrate(\(x) atan(sqrt(x^2 + b^2)) / ((x^2 + 1) * sqrt(x^2 + b^2)), 0, 1)
 
 # D(b)
-# I(  atan(sqrt(x^2 + b^2)) * sqrt(x^2 + b^2) / (x^2 + 1) )
+# D( atan(sqrt(x^2 + b^2)) * sqrt(x^2 + b^2) / (x^2 + 1) )
 # b / ((x^2 + 1) * (x^2 + b^2+1)) + b * atan(sqrt(x^2 + b^2)) / sqrt(x^2 + b^2) / (x^2 + 1)
 # ???
+
+### TODO:
+integrate(\(x) atan(sqrt(x^2 + b^2)) / ((x^2 + 2) * sqrt(x^2 + b^2)), 0, 1)
+# much work;
+
+
+#################
+
+### I( atan(sqrt(x^2 + b^2)) / (x^2 + b^2)^(3/2) )
+lim = c(1/5, 1/3)
+integrate(\(x) atan(sqrt(x^2 + 1)) / (x^2 + 1)^(3/2), lim[1], lim[2])
+x = lim
+diff(x * atan(sqrt(x^2 + 1)) / sqrt(x^2 + 1) + atan(x) - sqrt(2) * atan(x/sqrt(2)))
+
+
+### Gen:
+lim = c(1/5, 1/3)
+b = sqrt(5)
+integrate(\(x) atan(sqrt(x^2 + b^2)) / (x^2 + b^2)^(3/2), lim[1], lim[2])
+x = lim
+diff(x * atan(sqrt(x^2 + b^2)) / sqrt(x^2 + b^2) + b*atan(x/b) +
+	- sqrt(b^2 + 1) * atan(x/sqrt(b^2 + 1))) / b^2
 
