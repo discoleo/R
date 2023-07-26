@@ -79,3 +79,19 @@ pi*log( gamma(1/(2*pi)) / gamma(1/pi) ) +
 # TODO:
 # - find any utility?
 
+
+#####################
+#####################
+
+### I( atan(x) / (exp(n*x) - 1) )
+n = sqrt(3); k = sqrt(5);
+integrate(\(x) atan(x/k) / (exp(n*x) - 1), 0, Inf)
+log(gamma(k*n/(2*pi))) * pi/n + (k - pi/n)/2*log(2*pi/(k*n)) - log(2*pi) * pi/(2*n) + k/2;
+
+
+### I( x / (x^2 + k^2) * 1/(exp(n*x) - 1) )
+n = sqrt(3); k = sqrt(5);
+integrate(\(x) x / (x^2 + k^2) *  1/(exp(n*x) - 1), 0, Inf)
+- 1/2 * digamma(k*n/(2*pi)) +
+	- 1/2*log(2*pi/(k*n)) + (k - pi/n)/(2*k)  - 1/2;
+
