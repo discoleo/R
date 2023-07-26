@@ -154,6 +154,24 @@ pracma::integral(\(x) sin(x) / x, 0, 20000)
 pi/2
 
 
+### Pow = 2
+### I( sin(k*x)^2 / x^(p+1) )
+
+###
+# p in (0, 2)
+p = sqrt(2)
+# Up = Inf; numerical issues;
+integrate(\(x) sin(x)^2 / x^(p+1), 0, 200000, subdivisions=40000)
+integrate(\(x) 1/p * sin(2*x) / x^p, 0, 200000, subdivisions=40000)
+- gamma(-(p-1)) * sin(pi*(p-1)/2) * 2^(p-1) / p
+
+###
+p = sqrt(2)
+k = 1/5; # numerical issues with irrational numbers;
+integrate(\(x) sin(k*x)^2 / x^(p+1), 0, 200000, subdivisions=40000)
+- gamma(-(p-1)) * sin(pi*(p-1)/2) * 2^(p-1) * k^p / p
+
+
 ###
 k = sqrt(3)
 integrate(\(x) sin(k*x)^2 / x^2, 0, Inf, subdivisions=1025)
