@@ -225,6 +225,20 @@ integrate(\(x) x^2 * log(x) / (exp(k*x) + 1), 0, Inf, rel.tol=1E-8)
 	+ 3/2 * dzeta(3) / k^3;
 
 
+### I( x^p * log(x) / (exp(k*x) + 1)^2 )
+k = sqrt(3) - sqrt(2); p = sqrt(5);
+integrate(\(x) x^p * log(x) / (exp(k*x) + 1)^2, 0, Inf)
+gamma(p + 1) * digamma(p + 1) *
+	( pracma::zeta(p + 1) * (2^p - 1) +
+	- pracma::zeta(p) * (2^p - 2) ) / (2^p * k^(p+1)) +
+	+ gamma(p + 1) *
+	( dzeta(p + 1) * (2^p - 1) - dzeta(p) * (2^p - 2) +
+	+ (pracma::zeta(p + 1) - pracma::zeta(p)) * 2^p * log(2) ) / (2^p * k^(p+1)) +
+	- gamma(p + 1) *
+	( pracma::zeta(p + 1) * (2^p - 1) +
+	- pracma::zeta(p) * (2^p - 2) ) * log(2*k) / (2^p * k^(p+1));
+
+
 ### Pow: x^2
 
 ### I( x^2 * log(x) * exp(k*x) / (exp(k*x) - 1)^2 )
@@ -252,3 +266,4 @@ pracma::integral(\(x) x^2 * log(x) / (exp(k*x) + 1)^2, 0, 100)
 	- ((3/2 - Euler)*pi^2/6 + dzeta2 - 3/2*dzeta(3)) / k^3 +
 	+ pi^2 * log(k/2) / (6*k^3);
 # Note: digamma(3) = 3/2 - Euler;
+
