@@ -25,6 +25,11 @@ p = sqrt(3); a = sqrt(5);
 integrate(\(x) x^p * sin(x) / exp(a*x), 0, Inf)
 gamma(p + 1) * Im(1 / (a - 1i)^(p + 1))
 
+###
+p = sqrt(3); a = sqrt(5) - sqrt(2); k = sqrt(3);
+integrate(\(x) x^p * sin(k*x) / exp(a*x), 0, Inf)
+gamma(p + 1) * Im(1 / (a - k*1i)^(p + 1))
+
 
 ### I( x^p * cos(k*x) * exp(- a*x) )
 
@@ -42,6 +47,11 @@ Re(gamma(p + 1) / (1-1i)^(p + 1))
 p = sqrt(3); a = sqrt(5);
 integrate(\(x) x^p * cos(x) / exp(a*x), 0, Inf)
 gamma(p + 1) * Re(1 / (a - 1i)^(p + 1))
+
+###
+p = sqrt(3); a = sqrt(5) - sqrt(2); k = sqrt(3);
+integrate(\(x) x^p * cos(k*x) / exp(a*x), 0, Inf)
+gamma(p + 1) * Re(1 / (a - k*1i)^(p + 1))
 
 
 ##########
