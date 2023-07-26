@@ -3,6 +3,48 @@
 
 #####################
 
+### Basic
+
+### I( x^p * TRIG(k*x) * exp(- a*x) )
+
+
+### I( x^p * sin(k*x) * exp(- a*x) )
+
+###
+a = sqrt(3); k = sqrt(5);
+integrate(\(x) sin(k*x) * exp(- a*x), 0, Inf)
+k / (a^2 + k^2)
+
+###
+p = sqrt(3)
+integrate(\(x) x^p * sin(x) / exp(x), 0, Inf)
+Im(gamma(p + 1) / (1-1i)^(p + 1))
+
+###
+p = sqrt(3); a = sqrt(5);
+integrate(\(x) x^p * sin(x) / exp(a*x), 0, Inf)
+gamma(p + 1) * Im(1 / (a - 1i)^(p + 1))
+
+
+### I( x^p * cos(k*x) * exp(- a*x) )
+
+###
+a = sqrt(3); k = 1/sqrt(5);
+integrate(\(x) cos(k*x) * exp(- a*x), 0, Inf)
+a / (a^2 + k^2)
+
+###
+p = sqrt(3)
+integrate(\(x) x^p * cos(x) / exp(x), 0, Inf)
+Re(gamma(p + 1) / (1-1i)^(p + 1))
+
+###
+p = sqrt(3); a = sqrt(5);
+integrate(\(x) x^p * cos(x) / exp(a*x), 0, Inf)
+gamma(p + 1) * Re(1 / (a - 1i)^(p + 1))
+
+
+##########
 ### Simple
 
 ### I( sin(x)^n / x^n * exp(-x) )
@@ -184,8 +226,8 @@ integrate(\(x) x*sin(x) / exp(x), 0, Inf)
 integrate(\(x) x^2*sin(x) / exp(x), 0, Inf)
 1/2
 #
-sapply(seq(9), \(n) round(integrate(\(x) x^n * sin(x) / exp(x), 0, Inf)$value, 3))
-sapply(seq(9), \(n) Im(gamma(n + 1)/(1-1i)^(n + 1)))
+sapply(seq(9), \(n) round(integrate(\(x) x^p * sin(x) / exp(x), 0, Inf)$value, 3))
+sapply(seq(9), \(n) Im(gamma(p + 1)/(1-1i)^(p + 1)))
 #
 sapply(seq(9), \(n) round(integrate(\(x) x * sin(x) / exp(n*x), 0, Inf)$value, 5))
 sapply(seq(9), \(n) round(Im(gamma(2)/(n - 1i)^(1 + 1)), 5))
