@@ -21,6 +21,8 @@ constEuler = 0.57721566490153286060651209008240243079;
 
 ### Basics
 
+### on [0, 1]
+
 ### I( x^p * exp(x) ) on [0, 1]
 # using an Erf1-generalization:
 p = sqrt(3)
@@ -106,23 +108,25 @@ a = sqrt(c(3, 2))
 integrate(\(x) x^(-1/2) * (exp(-a[1]*x) - exp(-a[2]*x)), 0, Inf)
 gamma(1/2) * (a[1]^(-1/2) - a[2]^(-1/2))
 
-###
-p = -1/3; # p > -1 (strictly) !!!
+### I( x^p * (exp(-a1*x) - exp(-a2*x)) )
+p = -1/3; # p > -2 (strictly) && p != - 1 !!!
 a = sqrt(c(5, 2))
 integrate(\(x) x^p * (exp(-a[1]*x) - exp(-a[2]*x)), 0, Inf)
 gamma(p + 1) * (a[1]^(-p-1) - a[2]^(-p-1))
 
 ###
-p = sqrt(2) - sqrt(3); # p > -1 (strictly) !!!
+p = sqrt(2) - sqrt(3); # p > -2 (strictly) !!!
 a = sqrt(c(5, 2))
 integrate(\(x) x^p * (exp(-a[1]*x) - exp(-a[2]*x)), 0, Inf)
 gamma(p + 1) * (a[1]^(-p-1) - a[2]^(-p-1))
 
 ###
-p = sqrt(7); # p > -1 (strictly) !!!
+p = sqrt(7); # p > -2 (strictly) !!!
 a = sqrt(c(5, 2))
 integrate(\(x) x^p * (exp(-a[1]*x) - exp(-a[2]*x)), 0, Inf)
 gamma(p + 1) * (a[1]^(-p-1) - a[2]^(-p-1))
+
+# TODO: Lim: p -> -1
 
 
 #########################
@@ -166,7 +170,10 @@ integrate(\(x) x^p / (exp(x) - 1), 0, Inf, rel.tol=1E-8)
 gamma(p + 1) * pracma::zeta(p + 1)
 
 
-################
+#################
+
+### Higher Powers
+### I( x^p / (exp(k*x) + 1)^r )
 
 ###
 k = sqrt(3)
@@ -187,8 +194,28 @@ log(2) / k^2
 ### I( x^p / (exp(k*x) + 1)^2 )
 k = sqrt(3); p = sqrt(5);
 integrate(\(x) x^p / (exp(k*x) + 1)^2, 0, 100)
-gamma(p + 1) * (pracma::zeta(p + 1) * (2^p - 1) +
-	- pracma::zeta(p) * (2^p - 2)) / (2^p * k^(p+1));
+gamma(p + 1) *
+	( pracma::zeta(p + 1) * (2^p - 1) +
+	- pracma::zeta(p) * (2^p - 2) ) / (2^p * k^(p+1));
+
+
+### I( x^p * exp(k*x) / (exp(k*x) + 1)^3 )
+k = 1/sqrt(3); p = sqrt(5);
+# Up = Inf; numerical issues;
+integrate(\(x) x^p * exp(k*x) / (exp(k*x) + 1)^3, 0, 100)
+gamma(p + 1) *
+	( pracma::zeta(p) * (2^(p-1) - 1) +
+	- pracma::zeta(p - 1) * (2^(p-1) - 2) ) / (2^p * k^(p+1));
+
+
+### I( x^p / (exp(k*x) + 1)^3 )
+# =>
+k = 1/sqrt(3); p = sqrt(5);
+# Up = Inf; numerical issues;
+integrate(\(x) x^p / (exp(k*x) + 1)^3, 0, 100)
+gamma(p + 1) *
+	( pracma::zeta(p + 1) * (2^p - 1) - 3 * pracma::zeta(p) * (2^(p-1) - 1) +
+	+ pracma::zeta(p - 1) * (2^(p-1) - 2) ) / (2^p * k^(p+1));
 
 
 #########################
