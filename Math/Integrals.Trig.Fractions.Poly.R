@@ -178,6 +178,30 @@ integrate(\(x) sin(k*x)^2 / x^2, 0, Inf, subdivisions=1025)
 pi*k/2
 
 
+### Pow = 3
+### I( sin(k*x)^3 / x^(p+1) )
+
+###
+# p in (0, 4)
+p = sqrt(2)
+integrate(\(x) sin(x)^3 / x^p, 0, Inf, subdivisions=4000)
+gamma(-(p-1)) * sin(pi*(p-1)/2) * (3^(p-1) - 3) / 4;
+
+
+###
+p = sqrt(2); k = 7/16;
+# extensive numerical issues;
+integrate(\(x) sin(k*x)^3 / x^p, 0, Inf, rel.tol=1E-5, subdivisions=40000)
+pracma::integral(\(x) sin(k*x)^3 / x^p, 0, 32*pi*1000) +
+	pracma::integral(\(x) sin(k*x)^3 / x^p, 32*pi*1000, 32*pi*10000)
+gamma(-(p-1)) * sin(pi*(p-1)/2) * (3^(p-1) - 3) * k^(p-1) / 4;
+
+
+# Note: FAILS
+p = sqrt(2); k = 7/16;
+integrate(\(x) sin(k*x)^3 / x^p, 32*pi*1000, 32*pi*10000)
+
+
 ######################
 ######################
 
