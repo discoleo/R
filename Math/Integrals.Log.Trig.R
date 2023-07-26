@@ -2,6 +2,11 @@
 
 ### Integrals: Log(Trig)
 
+# - this file covers primarily
+#   integrals of type: Log( Trig );
+
+
+### Helper
 
 Catalan = 0.915965594177219015054603514;
 # Note:
@@ -70,7 +75,7 @@ integrate(\(x) log(cos(x)), 0, pi/3)
 	(pracma::psi(1, 1/6) - pracma::psi(1, 5/6) + pracma::psi(1, 1/3) - pracma::psi(1, 2/3))
 
 # Derivation:
-# see from 12:40 in the Ref. Maths 505;
+# for technique see from 12:40 in the Ref. Maths 505;
 id = seq(0, 40000)
 - pi*log(2)/3 + sqrt(3)/4 * sum(1/(6*id+1)^2, -1/(6*id+5)^2, 1/(6*id+2)^2, - 1/(6*id+4)^2)
 - pi*log(2)/3 + sqrt(3)/(4*36) *
