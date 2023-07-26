@@ -103,6 +103,17 @@ pracma::psi(1, k*n/(2*pi)) * n / (8*pi*k) +
 	- 1/(4*k^2) - pi/(4*k^3*n);
 
 
+### Series: exp(n*x) + 1
+
+### I( x / (x^2 + k^2) * 1/(exp(n*x) + 1) )
+n = sqrt(3); k = 1 / sqrt(5);
+integrate(\(x) x / (x^2 + k^2) *  1/(exp(n*x) + 1), 0, Inf)
+digamma(k*n/pi) - 1/2 * digamma(k*n/(2*pi)) +
+	+ 1/2*log(pi/(2*k*n));
+
+
+### Other:
+
 ### I( atan(k/x) / (exp(n*x) - 1) )
 n = sqrt(3); k = sqrt(5);
 integrate(\(x) (atan(k/x) - atan(1/x)) / (exp(n*x) - 1), 0, Inf)
@@ -110,4 +121,8 @@ k = c(1, k)
 diff( -1/2 * log(gamma(k*n/(2*pi))) * 2*pi/n +
 	- k/2*log(2*pi/n) + 1/2*(k*log(k) - k) - pi/(2*n)*log(k) );
 # TODO
+
+# Note:
+# - redundant: atan(k/x) = pi/2 - atan(x/k);
+# - however, still useful as proof of concept of back-integration;
 
