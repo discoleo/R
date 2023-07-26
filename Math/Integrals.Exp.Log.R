@@ -22,6 +22,26 @@ dzeta = function(x, dx = 1E-6) {
 	(pracma::zeta(x + dx) - pracma::zeta(x)) / dx;
 }
 
+
+#################
+#################
+
+### Trig * Log
+
+### Gen: Sin
+p = sqrt(3); a = sqrt(5) - sqrt(2); k = sqrt(3);
+integrate(\(x) x^p * sin(k*x) * log(x) / exp(a*x), 0, Inf)
+gamma(p + 1) * digamma(p + 1) * Im(1 / (a - k*1i)^(p + 1)) +
+	- gamma(p + 1) * Im(1 / (a - k*1i)^(p + 1) * log(a - k*1i))
+
+
+### Gen: Cos
+p = sqrt(3); a = sqrt(5) - sqrt(2); k = sqrt(3);
+integrate(\(x) x^p * cos(k*x) * log(x) / exp(a*x), 0, Inf)
+gamma(p + 1) * digamma(p + 1) * Re(1 / (a - k*1i)^(p + 1)) +
+	- gamma(p + 1) * Re(1 / (a - k*1i)^(p + 1) * log(a - k*1i))
+
+
 ###########################
 ###########################
 
