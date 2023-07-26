@@ -112,6 +112,12 @@ digamma(k*n/pi) - 1/2 * digamma(k*n/(2*pi)) +
 	+ 1/2*log(pi/(2*k*n));
 
 
+### I( x / (x^2 + k^2)^2 / (exp(n*x) + 1) )
+n = 1/sqrt(3); k = 1/sqrt(5);
+integrate(\(x) x / (x^2+k^2)^2 / (exp(n*x) + 1), 0, Inf)
+(pracma::psi(1, k*n/(2*pi)) - 4*pracma::psi(1, k*n/pi)) * n / (8*pi*k) + 1/(4*k^2);
+
+
 ### Other:
 
 ### I( atan(k/x) / (exp(n*x) - 1) )
