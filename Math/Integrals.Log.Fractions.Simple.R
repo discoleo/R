@@ -6,7 +6,7 @@
 ### Integrals: Logarithms
 ### Simple Fractions
 ###
-### draft v.0.2c-Simplif
+### draft v.0.2e
 
 
 ### Helper Functions
@@ -323,7 +323,7 @@ integrate(\(x) x^2 * log(x+1) / (x+1)^s, 0, 1)
 	- (2^(3-s)-1)/(3-s)^2 + (2^(3-s)-2)/(2-s)^2 - (2^(1-s)-1)/(1-s)^2;
 
 
-### I( log(x) / (x + 1)^p ) on [0, 1]
+### I( x^p * log(x) / (x + 1)^s ) on [0, 1]
 
 # TODO: truncated Polylog function;
 
@@ -432,6 +432,21 @@ integrate(\(x) 3*(x^4 - x^2) / (x^3 - 1), 1, 2^(1/3))
 #
 integrate(\(x) ((x+1)^(5/3) - 1)/x, 0, 1)
 integrate(\(x) 3*(x^7 - x^2) / (x^3 - 1), 1, 2^(1/3))
+
+
+##################
+##################
+
+### I( x^p * log(x) / (x - 1) )
+p = sqrt(3)
+integrate(\(x) x^p * log(x) / (x - 1), 0, 1)
+pracma::psi(1, p+1)
+
+
+### I( x^p * log(x)^2 / (x - 1) )
+p = sqrt(3)
+integrate(\(x) x^p * log(x)^2 / (x - 1), 0, 1)
+pracma::psi(2, p+1)
 
 
 ##################
