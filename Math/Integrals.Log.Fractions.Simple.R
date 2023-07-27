@@ -309,6 +309,13 @@ integrate(function(x) log(x)/(x+1)^(6/5), 0, Inf, rel.tol=1E-8)
 ########################
 ########################
 
+### I( x * log(x+1) / (x+1)^s )
+s = 1/sqrt(3)
+integrate(\(x) x * log(x+1) / (x+1)^s, 0, 1)
+2^(2-s)* log(2)/(2-s) - 2^(1-s)*log(2)/(1-s) +
+	- (2^(2-s)-1)/(2-s)^2 + (2^(1-s)-1)/(1-s)^2;
+
+
 ### I( log(x) / (x + 1)^p ) on [0, 1]
 
 # TODO: truncated Polylog function;
