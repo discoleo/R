@@ -6,7 +6,7 @@
 ### Integrals: Logarithms
 ### Log-Fractions: Other
 ###
-### draft v.0.2b
+### draft v.0.2c
 
 
 ##################
@@ -123,6 +123,17 @@ integrate(\(x) log(x) * atan(x^p) / x, 0, 1)
 integrate(\(x) log(x) * x / (x^2 + 1), 0, 1)
 - pi^2/48
 
+
+### Pow = 2
+p = sqrt(5)
+integrate(\(x) log(x)^2 * x^(p-1) / (x^(2*p) + 1), 0, 1)
+pi^3 / (16 * p^3)
+
+###
+integrate(\(x) log(x)^2 / (x^2 + 1), 0, 1)
+pi^3 / 16
+
+
 ###
 integrate(\(x) log(x^2 + 1) / x, 0, 1)
 pi^2/24
@@ -156,6 +167,18 @@ integrate(\(x) 4*log(cos(x)), 0, pi/4)$value + pi*log(2)/2
 #######################
 #######################
 
+### Varia:
+
+###
+n = sqrt(5)
+integrate(function(x) log(2 - x^n) / (2 - x^n)^(1+1/n), lower=0, upper=1)
+integrate(function(x) - n*(n+1) * x^n * log(x) / (2 - x^n)^(2+1/n), lower=0, upper=1)
+# TODO
+
+
+#######################
+#######################
+
 ### I( x * log(x) / cosh(k*x)^2 )
 # Maths 505: Feynman's trick solves an AWESOME integral
 # https://www.youtube.com/watch?v=qZywLtQaDGQ
@@ -173,6 +196,8 @@ log(2) / k^2
 
 #######################
 #######################
+
+### 1 / LOG()
 
 ### I( (x^n - 1) / log(x) )
 # Michael Penn: My favorite way "around" Feynman's trick -- and a challenge for you!
