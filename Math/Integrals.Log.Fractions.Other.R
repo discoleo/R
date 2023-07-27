@@ -182,8 +182,13 @@ n = sqrt(5)
 integrate(\(x) (x^n - 1) / log(x), 0, 1)
 log(n+1)
 
+###
+n = sqrt(5); p = sqrt(3)
+integrate(\(x) x^p * (x^n - 1) / log(x), 0, 1)
+log(n+p+1) - log(p+1)
 
-### I( (x^n - 1)^2 / log(x)^2 )
+
+### I( x^p * (x^n - 1)^2 / log(x)^2 )
 # Maths 505: How Richard Feynman would solve this awesome golden integral
 # https://www.youtube.com/watch?v=g2NPdw4ig5M
 
@@ -191,9 +196,25 @@ n = sqrt(5)
 integrate(\(x) (x^n - 1)^2 / log(x)^2, 0, 1)
 (2*n+1)*log(2*n+1) - (2*n+2)*log(n+1)
 
+### I( x^p * (x^n - 1)^2 / log(x)^2 )
+n = sqrt(5); p = sqrt(3)
+integrate(\(x) x^p * (x^n - 1)^2 / log(x)^2, 0, 1)
+(2*n+p+1)*log(2*n+p+1) - 2*(n+p+1)*log(n+p+1) + (p+1)*log(p+1)
+
+
+### Pow = 3
 
 ### I( (x^n - 1)^3 / log(x)^3 )
 n = sqrt(5)
 integrate(\(x) (x^n - 1)^3 / log(x)^3, 0, 1)
 1/2*(3*n+1)^2*log(3*n+1) - 3/2*(2*n+1)^2*log(2*n+1) + 3/2*(n+1)^2*log(n+1)
+
+### I( x^p * (x^n - 1)^3 / log(x)^3 )
+n = sqrt(5); p = sqrt(3)
+integrate(\(x) x^p * (x^n - 1)^3 / log(x)^3, 0, 1)
+1/2*(3*n+p+1)^2*log(3*n+p+1) - 3/2*(2*n+p+1)^2*log(2*n+p+1) +
+	+ 3/2*(n+p+1)^2*log(n+p+1) - 1/2*(p+1)^2*log(p+1)
+
+# Note:
+# shortcut: integrate (f(3*n) - 3*f(2*n) + 3*f(n)) dp;
 
