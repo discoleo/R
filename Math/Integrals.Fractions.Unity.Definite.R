@@ -15,6 +15,7 @@
 
 # I( 1 / (x^n + 1) )
 # I( x^p / (x^n + 1) )
+# I( 1/(1 - x) - n/(1 - x^n) ) on [0, 1]
 
 ### Intervals:
 # [0, Inf], [0, 1];
@@ -34,6 +35,7 @@
 ### Helper Functions
 
 constEuler = 0.57721566490153286060651209008240243079;
+Euler = constEuler;
 
 
 ### I on [0, 1]
@@ -654,8 +656,9 @@ n = 10
 integrate(function(x) 1/(1-x^n)^(1+1/n), lower=0, upper=1/2^(1/n))
 # == 1
 
-n = 11
-integrate(function(x) 1/(1-x^n)^(1+1/n), lower=0, upper=1/2^(1/n))
+n = sqrt(11)
+integrate(function(x) 1/(1 - x^n)^(1+1/n), lower=0, upper=1/2^(1/n))
+integrate(function(x) 2/(2 - x^n)^(1+1/n), lower=0, upper=1)
 # == 1
 
 
@@ -744,7 +747,7 @@ k = sqrt(3)
 integrate(function(x) x^p / (x^n+1)^(1/k), lower=0, upper=Inf)
 IInf = gamma((p+1)/n)*gamma(1/k - (p+1)/n) / gamma(1/k) / n
 print(IInf)
-#
+# on [0, 1]
 - IInf/2 + integrate(function(x) x^p / (x^n+1)^(1/k), lower=0, upper=1)$value
 - IInf/2 + integrate(function(x) x^p / (x^n+1)^(1/k), lower=1, upper=Inf)$value
 # TODO: find formula for -0.3248496;
@@ -788,7 +791,7 @@ In2 = integrate(\(x) 1/(x^n + 1)^(2/3), 0, 1)
 ##########################
 ##########################
 
-constEuler = 0.57721566490153286060651209008240243079;
+Euler = 0.57721566490153286060651209008240243079;
 
 ### Digamma Function
 # see: Lines That Connect: Extending the Harmonic Numbers to the Reals
@@ -800,14 +803,14 @@ n = 7
 integrate(\(x) (1 - (1-x)^n)/x, 0, 1)
 integrate(\(x) (1 - x^n) / (1 - x), 0, 1)
 sum(1/seq(n))
-constEuler + digamma(n + 1)
+digamma(n + 1) + Euler
 
 
 ###
 n = sqrt(5)
 integrate(\(x) (1 - (1-x)^n)/x, 0, 1)
 integrate(\(x) (1 - x^n) / (1 - x), 0, 1)
-constEuler + digamma(n + 1)
+digamma(n + 1) + Euler
 
 
 ####################
@@ -854,4 +857,28 @@ pi/tan(pi/n/2)/2
 #
 sum(id*sn)
 n/sin(pi/n)/4
+
+
+#####################
+#####################
+
+### Radicals
+
+### I( x^p * (1 - x^n)^r )
+p = sqrt(3); r = sqrt(3); n = 1/sqrt(5)
+integrate(function(x) x^p * (1 - x^n)^r, lower=0, upper=1)
+gamma((p+1)/n) * gamma(r+1) / gamma((p+1)/n + r + 1) / n
+
+### r > -1; p > - 1;
+p = sqrt(7); r = - 1/sqrt(3); n = 1/sqrt(5)
+integrate(function(x) x^p * (1 - x^n)^r, lower=0, upper=1)
+gamma((p+1)/n) * gamma(r+1) / gamma((p+1)/n + r + 1) / n
+
+
+### Special Cases:
+
+### I( (1 - x^n)^r )
+r = sqrt(7); n = sqrt(5)
+integrate(function(x) (1 - x^n)^r, lower=0, upper=1)
+gamma(1/n) * gamma(r+1) / gamma(1/n + r + 1) / n
 
