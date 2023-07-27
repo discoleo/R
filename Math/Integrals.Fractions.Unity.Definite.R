@@ -15,7 +15,9 @@
 
 # I( 1 / (x^n + 1) )
 # I( x^p / (x^n + 1) )
+# I( x^p / (x^n + 1)^r ) on [0, Inf]
 # I( 1/(1 - x) - n/(1 - x^n) ) on [0, 1]
+# I( x^p * (1 - x^n)^r ) on [0, 1]
 
 ### Intervals:
 # [0, Inf], [0, 1];
@@ -881,4 +883,27 @@ gamma((p+1)/n) * gamma(r+1) / gamma((p+1)/n + r + 1) / n
 r = sqrt(7); n = sqrt(5)
 integrate(function(x) (1 - x^n)^r, lower=0, upper=1)
 gamma(1/n) * gamma(r+1) / gamma(1/n + r + 1) / n
+
+
+### Fractions:
+# works for r < 2; (e.g. up to r = 1.95)
+p = sqrt(7); r = sqrt(3); n = 1/sqrt(5)
+integrate(function(x) x^p / (1 - x)^r - n^r * x^p / (1 - x^n)^r, lower=0, upper=1)
+gamma(p+1) * gamma(1 - r) / gamma(p - r + 2) +
+	- n^r * gamma((p+1)/n) * gamma(1 - r) / gamma((p+1)/n - r + 1) / n;
+
+
+ff = \(x) sapply(x, \(r) {
+	integrate(function(x) x^p / (1 - x)^r - n^r * x^p / (1 - x^n)^r, 0, 1)$value;
+})
+fg = \(r) gamma(p+1) * gamma(1 - r) / gamma(p - r + 2) +
+	- n^r * gamma((p+1)/n) * gamma(1 - r) / gamma((p+1)/n - r + 1) / n;
+curve(ff(x), 1.5, 1.95, col="green")
+curve(fg(x), add=TRUE, col="red", lty=2)
+
+
+### Lim: r -> 1
+p = sqrt(7); n = 1/sqrt(5)
+integrate(function(x) x^p / (1 - x) - n * x^p / (1 - x^n), lower=0, upper=1)
+digamma((p+1)/n) - digamma((p+1)) + log(n);
 
