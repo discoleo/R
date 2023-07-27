@@ -218,3 +218,19 @@ integrate(\(x) x^p * (x^n - 1)^3 / log(x)^3, 0, 1)
 # Note:
 # shortcut: integrate (f(3*n) - 3*f(2*n) + 3*f(n)) dp;
 
+
+### I( x^p * (x^n - 1)^4 / log(x)^4 )
+n = sqrt(5); p = sqrt(3)
+integrate(\(x) x^p * (x^n - 1)^4 / log(x)^4, 0, 1)
+1/6*(4*n+p+1)^3*log(4*n+p+1) - 2/3*(3*n+p+1)^3*log(3*n+p+1) +
+	+ (2*n+p+1)^3*log(2*n+p+1) - 2/3*(n+p+1)^3*log(n+p+1) +
+	+ 1/6*(p+1)^3*log(p+1);
+
+
+### I( x^p * (x^n - 1)^5 / log(x)^5 )
+n = sqrt(5); p = sqrt(3)
+integrate(\(x) x^p * (x^n - 1)^5 / log(x)^5, 0, 1)
+((5*n+p+1)^4*log(5*n+p+1) - 5*(4*n+p+1)^4*log(4*n+p+1) +
+	+ 10*(3*n+p+1)^4*log(3*n+p+1) - 10*(2*n+p+1)^4*log(2*n+p+1) +
+	+ 5*(n+p+1)^4*log(n+p+1) - (p+1)^4*log(p+1)) / 24;
+
