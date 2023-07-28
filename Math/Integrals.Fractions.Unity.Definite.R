@@ -7,7 +7,7 @@
 ### Polynomial Fractions: Unity
 ### Definite Integrals
 ###
-### draft v.0.1n
+### draft v.0.2a
 
 
 
@@ -293,14 +293,27 @@ integrate(function(x) x^3/(x^n + 1), lower=0, upper=Inf)
 pi / sin(3*pi/n) / n
 
 
+####################
+
+### Radicals
+
 ### Generalized Formula
-# [see a few sections below]
+### [0, Inf]
+
+# Derivation:
+# - see file: Integrals.ComplexAnalysis.R;
+#   [but is based on beta-function]
 
 p = sqrt(2); n = 5*sqrt(11); k = 2 + sqrt(3);
 integrate(function(x) x^p/(x^n + 1)^(1/k), lower=0, upper=Inf)
 gamma((p+1)/n) * gamma(1/k - (p+1)/n) / gamma(1/k) / n
 
 ###
+p = 1 - sqrt(2); n = sqrt(11); k = sqrt(3)
+integrate(function(x) x^p / (x^n+1)^(1/k), lower=0, upper=Inf)
+gamma((p+1)/n)*gamma(1/k - (p+1)/n) / gamma(1/k) / n
+
+### Composite:
 integrate(\(x) (x^(1/3) + 2*x^(1/4) - 1)/sqrt(x^5 + 1), 0, Inf)
 int.FrUInf(5, c(1/3, 1/4, 0), pow = 1/2, coeff = c(1,2,-1))
 
@@ -357,7 +370,9 @@ pi/2 * sum(c(1,-1,-1,1,1)/5/sin(pi * (p + c(5,4,3,2,1))/ 5),
 
 ### Special Finite Integrals
 # - on [0, 1];
-# - shortcut formulas are available;
+# - shortcut formulas are available:
+#   based on the digamma function;
+
 
 ###
 n = sqrt(31)
@@ -393,8 +408,8 @@ intUnityI01(n)
 
 
 ### Derivation: Specific Cases
-# Note: generalized formulas available;
-# - moved to file:
+# Note:
+# - derivation moved to file:
 #   Integrals.Fractions.Unity.Definite.Deriv.R;
 
 
@@ -435,9 +450,11 @@ p = seq(0, n - 2)
 (digamma(((p+1)/n+1)/2) - digamma((p+1)/n/2) - pi/sin(pi*(p+1)/n) ) / 4
 
 
-######################
-
 ### Special Fractional Powers
+
+# [old]
+# - full generalization using digamma function;
+
 n = 7
 integrate(function(x) 1/(x^(1 - 1/(n+1)) + 1), 0, 1)
 n + 1 - (n+1)*integrate(function(x) 1/(x^n + 1), 0, 1)$value;
@@ -484,31 +501,7 @@ integrate(\(x) x^(- p) * (1 - x)^p, 1/2, 1)
 integrate(\(x) x^p / (x^n + 1)^2, 0, 1)
 (digamma(((p+1)/n + 0)/2) - digamma(((p+1)/n - 1)/2)) * ((p+1)/n - 1) / (2*n) - 1/(2*n)
 
-
-#####################
-
-#############
-### Other ###
-#############
-
-n = 8
-integrate(function(x) 1/(1-x^n)^(1+1/n), lower=0, upper=1/2^(1/n))
-# == 1
-
-n = 9
-integrate(function(x) 1/(1-x^n)^(1+1/n), lower=0, upper=1/2^(1/n))
-# == 1
-
-n = 10
-integrate(function(x) 1/(1-x^n)^(1+1/n), lower=0, upper=1/2^(1/n))
-# == 1
-
-n = sqrt(11)
-integrate(function(x) 1/(1 - x^n)^(1+1/n), lower=0, upper=1/2^(1/n))
-integrate(function(x) 2/(2 - x^n)^(1+1/n), lower=0, upper=1)
-# == 1
-
-
+####################
 ####################
 
 ### 1 / (x^n - 1)
@@ -700,7 +693,7 @@ sum(cs * log(2 - 2*cs)) - 2 * sum(sn * atan((1 - cs)/sn)) +
 digamma(1/n) + Euler + log(n) +
 	+ pi/tan(pi/n)/2 - pi/tan(pi/n/2)/2 + pi/sin(pi/n)/2; # sum(TRIG) == 0;
 
-#
+# Helper:
 pi * sum(sn)
 pi/tan(pi/n/2)/2
 #
@@ -753,4 +746,28 @@ curve(fg(x), add=TRUE, col="red", lty=2)
 p = sqrt(7); n = 1/sqrt(5)
 integrate(function(x) x^p / (1 - x) - n * x^p / (1 - x^n), lower=0, upper=1)
 digamma((p+1)/n) - digamma((p+1)) + log(n);
+
+
+#####################
+
+#############
+### Other ###
+#############
+
+n = 8
+integrate(function(x) 1/(1 - x^n)^(1+1/n), lower=0, upper=1/2^(1/n))
+# == 1
+
+n = 9
+integrate(function(x) 1/(1 - x^n)^(1+1/n), lower=0, upper=1/2^(1/n))
+# == 1
+
+n = 10
+integrate(function(x) 1/(1 - x^n)^(1+1/n), lower=0, upper=1/2^(1/n))
+# == 1
+
+n = sqrt(11)
+integrate(function(x) 1/(1 - x^n)^(1+1/n), lower=0, upper=1/2^(1/n))
+integrate(function(x) 2/(2 - x^n)^(1+1/n), lower=0, upper=1)
+# == 1
 
