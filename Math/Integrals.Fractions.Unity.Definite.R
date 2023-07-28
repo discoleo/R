@@ -754,6 +754,8 @@ digamma((p+1)/n) - digamma((p+1)) + log(n);
 ### Other ###
 #############
 
+### Special Cases:
+
 n = 8
 integrate(function(x) 1/(1 - x^n)^(1+1/n), lower=0, upper=1/2^(1/n))
 # == 1
@@ -770,4 +772,16 @@ n = sqrt(11)
 integrate(function(x) 1/(1 - x^n)^(1+1/n), lower=0, upper=1/2^(1/n))
 integrate(function(x) 2/(2 - x^n)^(1+1/n), lower=0, upper=1)
 # == 1
+
+
+### Gen: I( 1 / (a - x^n)^(1/n + 1) )
+a = sqrt(7); n = sqrt(5);
+integrate(function(x) 1 / (a - x^n)^(1/n + 1), lower=0, upper=1)
+1/(a-1)^(1/n) / a
+
+
+### Gen: I( 1 / (x^n + a)^(1/n+1) )
+n = sqrt(7); a = sqrt(5);
+integrate(function(x) 1 / (x^n + a)^(1/n + 1), lower=0, upper=1)
+1/(a+1)^(1/n) / a
 
