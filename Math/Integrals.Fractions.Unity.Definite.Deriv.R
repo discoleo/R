@@ -1,7 +1,14 @@
 
 
 ### Derivation: Specific Cases
-# Note: generalized formulas available;
+
+# Note:
+# - generalized formulas available;
+# - uses function intUnityI01WX, see file:
+#   Integrals.Fractions.Unity.Definite.R
+
+
+####################
 
 ###
 n = 3
@@ -26,7 +33,11 @@ integrate(function(x) 1/(x^n + 1), 0, 1)
 2*cos(2*pi/n)*log(cos(pi/n)) / n +
 	+ 2*cos(4*pi/n)*log(cos(2*pi/n)) / n +
 	+ 2*pi*(sin(2*pi/n) + 2*sin(4*pi/n)) / n^2;
-# useful ???
+# simplification:
+id = 1:2; cs = cos(2*id*pi/n); ch = cos(id*pi/n);
+2*sum(cs * log(ch)) / n + pi/sin(pi/n) / (2*n)
+
+# [old]
 - 4*log(2)*cos(2*pi/n)/n +
 	+ 4/n * (4*cos(pi/n)^4 - 5*cos(pi/n)^2 + 1)*log(cos(2*pi/n)) +
 	+ 2*pi*sin(2*pi/n)*(2*cos(pi/n)^2 + 3*cos(2*pi/n)) / n^2;
@@ -39,6 +50,9 @@ integrate(function(x) 1/(x^n + 1), 0, 1)
 	+ 2*cos(4*pi/n)*log(cos(2*pi/n)) / n +
 	+ 2*cos(6*pi/n)*log(cos(3*pi/n)) / n +
 	+ 2*pi*(sin(2*pi/n) + 2*sin(4*pi/n) + 3*sin(6*pi/n)) / n^2;
+# simplification:
+id = 1:3; cs = cos(2*id*pi/n); ch = cos(id*pi/n);
+2*sum(cs * log(ch)) / n + pi/sin(pi/n) / (2*n)
 
 #
 2/n * cos(2*pi/n)*log(cos(pi/n)) +
