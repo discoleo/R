@@ -785,3 +785,9 @@ n = sqrt(7); a = sqrt(5);
 integrate(function(x) 1 / (x^n + a)^(1/n + 1), lower=0, upper=1)
 1/(a+1)^(1/n) / a
 
+
+### Gen: I( x^p / (x^n + a)^((p+1)/n + 1) )
+p = sqrt(3); n = sqrt(7); a = sqrt(5);
+integrate(function(x) x^p / (x^n + a)^((p+1)/n + 1), lower=0, upper=1)
+1/(a+1)^((p+1)/n) / (a*(p+1))
+
