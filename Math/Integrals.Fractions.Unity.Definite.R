@@ -7,7 +7,7 @@
 ### Polynomial Fractions: Unity
 ### Definite Integrals
 ###
-### draft v.0.2b
+### draft v.0.2c
 
 
 
@@ -27,6 +27,8 @@
 #   Integrals.Fractions.Unity.R;
 # - [refactor] moved initial derivations to file:
 #   Integrals.Fractions.Unity.Definite.Deriv.R;
+# - [refactor] moved Radicals to file:
+#   Integrals.Fractions.Unity.Radicals.R;
 
 
 ### Sections:
@@ -60,6 +62,7 @@ int.FrDU01 = function(n, p=0) {
 	digamma(1/n) + Euler + log(n);
 }
 
+### I on [0, Inf]
 int.FrUInf = function(n, p=0, pow=1, coeff=1) {
 	k = 1/pow;
 	tmp = sapply(p, function(p) {
@@ -504,6 +507,10 @@ integrate(\(x) x^p / (x^n + 1)^2, 0, 1)
 ####################
 ####################
 
+#################
+### Diff Type ###
+#################
+
 ### 1 / (x^n - 1)
 
 # I() on [0, 1]
@@ -567,140 +574,6 @@ cs = 2*cos(2*pi*id/n)
 sum((2 - cs*x)/(x^2 - cs*x + 1)) + 1/(x+1)
 
 
-####################
-####################
-
-### Radicals
-
-### [0, Inf]
-p = 1 - sqrt(2)
-n = sqrt(11)
-k = sqrt(3)
-integrate(function(x) x^p / (x^n+1)^(1/k), lower=0, upper=Inf)
-gamma((p+1)/n)*gamma(1/k - (p+1)/n) / gamma(1/k) / n
-
-
-###############
-
-### [0, 1]
-
-### I( 1 / (x^(2*n) + 1)^(1/n) )
-
-### I( 1 / (x^3 + 1)^(1/3) )
-integrate(\(x) 1 / (x^3 + 1)^(1/3), 0, 1)
-- (digamma(1/3) + Euler)/3 + 1/2*log((2^(2/3) + 2^(1/3) + 1)/3) +
-	- 1/sqrt(3)*atan((2^(1/3) + 1/2)*2/sqrt(3)) +
-	+ 1/sqrt(3)*atan((1 + 1/2)*2/sqrt(3));
-
-### I( x / (x^3 + 1)^(1/3) )
-integrate(\(x) 1 / (x^(3/2) + 1)^(4/3), 0, 1)
-gamma(2/3)^2/gamma(4/3) / 3
-#
-integrate(\(x) x / (x^3 + 1)^(4/3), 0, 1)
-gamma(2/3)^2/gamma(4/3) / 6
-#
-integrate(\(x) x / (x^3 + 1)^(1/3), 0, 1)
-1/2^(1/3) - gamma(2/3)^2/gamma(4/3) / 6
-
-### I( 1 / (x^3 + 1)^(2/3) )
-integrate(\(x) 1 / (x^3 + 1)^(2/3), 0, 1)
-gamma(1/3)^2/gamma(2/3) / 6
-
-### Trivial:
-integrate(\(x) 1 / (x^3 + 1)^(4/3), 0, 1)
-1/2^(1/3) # see section further below;
-
-###
-integrate(\(x) 1 / (x^(3/2) + 1)^(5/3), 0, 1)
-integrate(\(x) 2 * x/(x^3 + 1)^(5/3), 0, 1)
-1/2^(2/3)
-#
-integrate(\(x) x / (x^3 + 1)^(5/3), 0, 1)
-1/2^(5/3)
-
-
-###
-integrate(\(x) 1 / (x^6 + 1)^(1/3), 0, 1)
-gamma(1/6)^2 / gamma(1/3) / 12
-
-###
-integrate(\(x) 1 / (x^(6/5) + 1)^(5/3), 0, 1)
-integrate(\(x) 5*x^4 / (x^6 + 1)^(5/3), 0, 1)
-gamma(5/6)^2 / gamma(5/3) / (6/5)/2
-
-
-###
-n = sqrt(5)
-integrate(\(x) 1 / (x^(2*n) + 1)^(1/n), 0, 1)
-gamma(1/(2*n))^2 / gamma(1/n) / (4*n)
-
-
-###
-n = 3; p = -1 + 1E-6;
-gamma((p+1)/n) * gamma(1/k - (p+1)/n) / gamma(1/k) / n - gamma(p+1)
-- (digamma(1/3) - 2*Euler)/3
-
-#
-integrate(\(x) x / (x^2 + x + 1), 1, 2^(1/3))
-1/2*log((2^(2/3) + 2^(1/3) + 1)/3) - 1/sqrt(3)*atan((2^(1/3) + 1/2)*2/sqrt(3)) +
-	+ 1/sqrt(3)*atan((1 + 1/2)*2/sqrt(3))
-
-
-### [old]
-p = sqrt(5) - 2
-n = sqrt(11)
-k = sqrt(3)
-integrate(function(x) x^p / (x^n+1)^(1/k), lower=0, upper=Inf)
-IInf = gamma((p+1)/n)*gamma(1/k - (p+1)/n) / gamma(1/k) / n
-print(IInf)
-# on [0, 1]
-- IInf/2 + integrate(function(x) x^p / (x^n+1)^(1/k), lower=0, upper=1)$value
-- IInf/2 + integrate(function(x) x^p / (x^n+1)^(1/k), lower=1, upper=Inf)$value
-# TODO: find formula for -0.3248496;
-
-
-####################
-
-# TODO:
-# Integer Powers:
-
-integrate(function(x) 1/(x^3 + 1)^5, 0, 1, rel.tol=1E-8)
-1/2^4/12 + 11/12*(1/2^3/9 + 8/9*(1/2^2/6 + 5/6*(1/2/3 + 2/3 * int.FrU01(3, 0))));
-1/2^4/12 + 11/12*(1/2^3/9 + 8/9*(1/2^2/6 + 5/6*(1/2/3))) +
-	+ 11/12 * 8/9 * 5/6 * 2/3 * int.FrU01(3, 0);
-# TODO:
-# (3!/(3*2^4) + 11 * 2!/(3^2*2^3) + 11*8 * 1!/(3^3*2^2) + 11*8*5 * 0!(3^4*2)) / gamma(5)
-1/2^4 / 12 + 1/2^3 * 11/12 / 9 + 1/2^2 * 11/12*8/9 / 6 + 1/2 * 11/12*8/9*5/6 / 3 +
-	+ int.FrU01(3, 0) * gamma(5 - 1/3)/gamma(1 - 1/3)/gamma(5);
-
-###
-# I[3,6] = 1/2^5 / (3*5) + 14/15 * I[3,5];
-integrate(function(x) 1/(x^3 + 1)^6, 0, 1, rel.tol=1E-8)
-1/2^5 / 15 + 1/2^4 * 14/15 / 12 + 1/2^3 * 14/15*11/12 / 9 +
-	+ 1/2^2 * 14/15*11/12*8/9 / 6 + 1/2 * 14/15*11/12*8/9*5/6 / 3 +
-	+ int.FrU01(3, 0) * gamma(6 - 1/3)/gamma(1 - 1/3)/gamma(6);
-
-
-#######################
-#######################
-
-###
-n = 5
-I0 = integrate(\(x) sqrt(x^n + 1), 0, 1)
-Ii = integrate(\(x) 1/sqrt(x^n + 1), 0, 1)
-(n+2)/2*I0$value - n/2*Ii$value - sqrt(2) # == 0
-
-
-###
-n = 5
-I1 = integrate(\(x) (x^n + 1)^(1/3), 0, 1)
-I2 = integrate(\(x) (x^n + 1)^(2/3), 0, 1)
-In1 = integrate(\(x) 1/(x^n + 1)^(1/3), 0, 1)
-In2 = integrate(\(x) 1/(x^n + 1)^(2/3), 0, 1)
-(n+3)/3*I1$value - n/3*In2$value - 2^(1/3) # == 0
-(2*n+3)/3*I2$value - 2*n/3*In1$value - 2^(2/3) # == 0
-
-
 ##########################
 ##########################
 
@@ -728,6 +601,8 @@ digamma(n + 1) + Euler
 
 ####################
 ####################
+
+### Diff Type
 
 ### Any n:
 n = sqrt(7)
@@ -770,95 +645,4 @@ pi/tan(pi/n/2)/2
 #
 sum(id*sn)
 n/sin(pi/n)/4
-
-
-#####################
-#####################
-
-### Radicals
-
-### I( x^p * (1 - x^n)^r )
-p = sqrt(3); r = sqrt(3); n = 1/sqrt(5)
-integrate(function(x) x^p * (1 - x^n)^r, lower=0, upper=1)
-gamma((p+1)/n) * gamma(r+1) / gamma((p+1)/n + r + 1) / n
-
-### r > -1; p > - 1;
-p = sqrt(7); r = - 1/sqrt(3); n = 1/sqrt(5)
-integrate(function(x) x^p * (1 - x^n)^r, lower=0, upper=1)
-gamma((p+1)/n) * gamma(r+1) / gamma((p+1)/n + r + 1) / n
-
-
-### Special Cases:
-
-### I( (1 - x^n)^r )
-r = sqrt(7); n = sqrt(5)
-integrate(function(x) (1 - x^n)^r, lower=0, upper=1)
-gamma(1/n) * gamma(r+1) / gamma(1/n + r + 1) / n
-
-
-### Fractions:
-# works for r < 2; (e.g. up to r = 1.95)
-p = sqrt(7); r = sqrt(3); n = 1/sqrt(5)
-integrate(function(x) x^p / (1 - x)^r - n^r * x^p / (1 - x^n)^r, lower=0, upper=1)
-gamma(p+1) * gamma(1 - r) / gamma(p - r + 2) +
-	- n^r * gamma((p+1)/n) * gamma(1 - r) / gamma((p+1)/n - r + 1) / n;
-
-
-ff = \(x) sapply(x, \(r) {
-	integrate(function(x) x^p / (1 - x)^r - n^r * x^p / (1 - x^n)^r, 0, 1)$value;
-})
-fg = \(r) gamma(p+1) * gamma(1 - r) / gamma(p - r + 2) +
-	- n^r * gamma((p+1)/n) * gamma(1 - r) / gamma((p+1)/n - r + 1) / n;
-curve(ff(x), 1.5, 1.95, col="green")
-curve(fg(x), add=TRUE, col="red", lty=2)
-
-
-### Lim: r -> 1
-p = sqrt(7); n = 1/sqrt(5)
-integrate(function(x) x^p / (1 - x) - n * x^p / (1 - x^n), lower=0, upper=1)
-digamma((p+1)/n) - digamma((p+1)) + log(n);
-
-
-#####################
-
-#############
-### Other ###
-#############
-
-### Special Cases:
-
-n = 8
-integrate(function(x) 1/(1 - x^n)^(1+1/n), lower=0, upper=1/2^(1/n))
-# == 1
-
-n = 9
-integrate(function(x) 1/(1 - x^n)^(1+1/n), lower=0, upper=1/2^(1/n))
-# == 1
-
-n = 10
-integrate(function(x) 1/(1 - x^n)^(1+1/n), lower=0, upper=1/2^(1/n))
-# == 1
-
-n = sqrt(11)
-integrate(function(x) 1/(1 - x^n)^(1+1/n), lower=0, upper=1/2^(1/n))
-integrate(function(x) 2/(2 - x^n)^(1+1/n), lower=0, upper=1)
-# == 1
-
-
-### Gen: I( 1 / (a - x^n)^(1/n + 1) )
-a = sqrt(7); n = sqrt(5);
-integrate(function(x) 1 / (a - x^n)^(1/n + 1), lower=0, upper=1)
-1/(a-1)^(1/n) / a
-
-
-### Gen: I( 1 / (x^n + a)^(1/n+1) )
-n = sqrt(7); a = sqrt(5);
-integrate(function(x) 1 / (x^n + a)^(1/n + 1), lower=0, upper=1)
-1/(a+1)^(1/n) / a
-
-
-### Gen: I( x^p / (x^n + a)^((p+1)/n + 1) )
-p = sqrt(3); n = sqrt(7); a = sqrt(5);
-integrate(function(x) x^p / (x^n + a)^((p+1)/n + 1), lower=0, upper=1)
-1/(a+1)^((p+1)/n) / (a*(p+1))
 
