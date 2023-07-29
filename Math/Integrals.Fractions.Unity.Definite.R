@@ -7,7 +7,7 @@
 ### Polynomial Fractions: Unity
 ### Definite Integrals
 ###
-### draft v.0.2a
+### draft v.0.2b
 
 
 
@@ -585,6 +585,21 @@ gamma((p+1)/n)*gamma(1/k - (p+1)/n) / gamma(1/k) / n
 ### [0, 1]
 
 ### I( 1 / (x^(2*n) + 1)^(1/n) )
+
+### I( x / (x^3 + 1)^(1/3) )
+integrate(\(x) 1 / (x^(3/2) + 1)^(4/3), 0, 1)
+gamma(2/3)^2/gamma(4/3) / 3
+#
+integrate(\(x) x / (x^3 + 1)^(4/3), 0, 1)
+gamma(2/3)^2/gamma(4/3) / 6
+#
+integrate(\(x) x / (x^3 + 1)^(1/3), 0, 1)
+1/2^(1/3) - gamma(2/3)^2/gamma(4/3) / 6
+
+### I( 1 / (x^3 + 1)^(2/3) )
+integrate(\(x) 1 / (x^3 + 1)^(2/3), 0, 1)
+gamma(1/3)^2/gamma(2/3) / 6
+
 
 ###
 integrate(\(x) 1 / (x^6 + 1)^(1/3), 0, 1)
