@@ -77,10 +77,17 @@ integrate(\(x) 1 / (x^3 + 1)^(1/3), 0, 1)
 	- 1/sqrt(3) * atan((2^(1/3) + 1/2) * 2/sqrt(3)) +
 	+ 1/sqrt(3) * atan((1 + 1/2) * 2/sqrt(3));
 
+
 ### I( 1 / (x^5 + 1)^(1/5) )
 integrate(\(x) 1 / (x^5 + 1)^(1/5), 0, 1)
 - (digamma(1/5) + Euler)/5 +
 	+ integrate(\(x) x^3 / (x^4 + x^3 + x^2 + x + 1), 1, 2^(1/5))$value
+
+
+### I( 1 / (x^7 + 1)^(1/7) )
+integrate(\(x) 1 / (x^7 + 1)^(1/7), 0, 1)
+- (digamma(1/7) + Euler)/7 +
+	+ integrate(\(x) x^5 * (x - 1) / (x^7 - 1), 1, 2^(1/7))$value
 
 
 ### Derivation:
