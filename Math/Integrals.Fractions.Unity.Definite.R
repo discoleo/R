@@ -586,6 +586,12 @@ gamma((p+1)/n)*gamma(1/k - (p+1)/n) / gamma(1/k) / n
 
 ### I( 1 / (x^(2*n) + 1)^(1/n) )
 
+### I( 1 / (x^3 + 1)^(1/3) )
+integrate(\(x) 1 / (x^3 + 1)^(1/3), 0, 1)
+- (digamma(1/3) + Euler)/3 + 1/2*log((2^(2/3) + 2^(1/3) + 1)/3) +
+	- 1/sqrt(3)*atan((2^(1/3) + 1/2)*2/sqrt(3)) +
+	+ 1/sqrt(3)*atan((1 + 1/2)*2/sqrt(3));
+
 ### I( x / (x^3 + 1)^(1/3) )
 integrate(\(x) 1 / (x^(3/2) + 1)^(4/3), 0, 1)
 gamma(2/3)^2/gamma(4/3) / 3
@@ -600,15 +606,44 @@ integrate(\(x) x / (x^3 + 1)^(1/3), 0, 1)
 integrate(\(x) 1 / (x^3 + 1)^(2/3), 0, 1)
 gamma(1/3)^2/gamma(2/3) / 6
 
+### Trivial:
+integrate(\(x) 1 / (x^3 + 1)^(4/3), 0, 1)
+1/2^(1/3) # see section further below;
+
+###
+integrate(\(x) 1 / (x^(3/2) + 1)^(5/3), 0, 1)
+integrate(\(x) 2 * x/(x^3 + 1)^(5/3), 0, 1)
+1/2^(2/3)
+#
+integrate(\(x) x / (x^3 + 1)^(5/3), 0, 1)
+1/2^(5/3)
+
 
 ###
 integrate(\(x) 1 / (x^6 + 1)^(1/3), 0, 1)
 gamma(1/6)^2 / gamma(1/3) / 12
 
 ###
+integrate(\(x) 1 / (x^(6/5) + 1)^(5/3), 0, 1)
+integrate(\(x) 5*x^4 / (x^6 + 1)^(5/3), 0, 1)
+gamma(5/6)^2 / gamma(5/3) / (6/5)/2
+
+
+###
 n = sqrt(5)
 integrate(\(x) 1 / (x^(2*n) + 1)^(1/n), 0, 1)
 gamma(1/(2*n))^2 / gamma(1/n) / (4*n)
+
+
+###
+n = 3; p = -1 + 1E-6;
+gamma((p+1)/n) * gamma(1/k - (p+1)/n) / gamma(1/k) / n - gamma(p+1)
+- (digamma(1/3) - 2*Euler)/3
+
+#
+integrate(\(x) x / (x^2 + x + 1), 1, 2^(1/3))
+1/2*log((2^(2/3) + 2^(1/3) + 1)/3) - 1/sqrt(3)*atan((2^(1/3) + 1/2)*2/sqrt(3)) +
+	+ 1/sqrt(3)*atan((1 + 1/2)*2/sqrt(3))
 
 
 ### [old]
