@@ -6,7 +6,7 @@
 ### Exact Integration
 ### Polynomial Radicals
 ###
-### draft v.0.1a
+### draft v.0.1b
 
 
 ### Types:
@@ -74,8 +74,13 @@ gamma((p+1)/n)*gamma(1/k - (p+1)/n) / gamma(1/k) / n
 ### I( 1 / (x^3 + 1)^(1/3) )
 integrate(\(x) 1 / (x^3 + 1)^(1/3), 0, 1)
 - (digamma(1/3) + Euler)/3 + 1/2*log((2^(2/3) + 2^(1/3) + 1)/3) +
-	- 1/sqrt(3)*atan((2^(1/3) + 1/2)*2/sqrt(3)) +
-	+ 1/sqrt(3)*atan((1 + 1/2)*2/sqrt(3));
+	- 1/sqrt(3) * atan((2^(1/3) + 1/2) * 2/sqrt(3)) +
+	+ 1/sqrt(3) * atan((1 + 1/2) * 2/sqrt(3));
+
+### I( 1 / (x^5 + 1)^(1/5) )
+integrate(\(x) 1 / (x^5 + 1)^(1/5), 0, 1)
+- (digamma(1/5) + Euler)/5 +
+	+ integrate(\(x) x^3 / (x^4 + x^3 + x^2 + x + 1), 1, 2^(1/5))$value
 
 
 ### Derivation:
@@ -88,6 +93,12 @@ gamma((p+1)/n) * gamma(1/k - (p+1)/n) / gamma(1/k) / n - gamma(p+1)
 integrate(\(x) x / (x^2 + x + 1), 1, 2^(1/3))
 1/2*log((2^(2/3) + 2^(1/3) + 1)/3) - 1/sqrt(3)*atan((2^(1/3) + 1/2)*2/sqrt(3)) +
 	+ 1/sqrt(3)*atan((1 + 1/2)*2/sqrt(3))
+
+# simplifications:
+- 1/sqrt(3) * atan((2^(1/3) + 1/2) * 2/sqrt(3)) +
+	+ 1/sqrt(3) * atan((1 + 1/2) * 2/sqrt(3));
+- 1/sqrt(3) * atan((2^(1/3)-1)*2/sqrt(3) / (1 + 4/3*(2^(1/3) + 1/2)*(1 + 1/2)))
+- 1/sqrt(3) * atan((2^(1/3) - 1) / (2^(1/3) + 1) / sqrt(3));
 
 
 ##################
