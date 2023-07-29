@@ -12,7 +12,7 @@
 ### - Polynomial fractions:
 ###   Integral( P(x) / (x^n - 1)^p )dx
 ###
-### draft v.0.1d
+### draft v.0.1f
 
 
 
@@ -387,6 +387,23 @@ integrate(\(x) x^p / ((x^n + 1) * (x^(2*n) + 1)), 0, 1)
 	- (digamma(((p+1)/n + 3)/4) - digamma(((p+1)/n + 1)/4)) / (8*n) +
 	+ (digamma(((p+1)/n + 2)/4) - digamma(((p+1)/n + 0)/4)) / (8*n);
 
+
+### Special Case: [0, Inf]
+n = sqrt(7)
+integrate(\(x) 1 / ((x^2 + 1) * (x^n + 1)), 0, Inf)
+pi/4; # always
+
+
+### I( 1 / sqrt(x^4 + 1) ) on [0, 1]
+n = sqrt(5); # any n, including n= 0;
+integrate(\(x) 1 / (sqrt(x*(x^2 + 1)) * (x^n + 1)), 0, Inf)
+integrate(\(x) 1 / sqrt(x*(x^2 + 1)) * 1/2, 0, Inf)
+integrate(\(x) 1 / sqrt(x*(x^2 + 1)), 0, 1)
+integrate(\(x) 2 / sqrt(x^4 + 1), 0, 1)
+gamma(1/4)^2 / gamma(1/2) / 4;
+
+
+### Series: 3*n
 
 ### I( 1 / ((x^n + 1) * (x^(3*n) + 1)) )
 n = sqrt(7)
