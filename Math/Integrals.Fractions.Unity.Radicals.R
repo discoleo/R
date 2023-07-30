@@ -98,8 +98,41 @@ integrate(\(x) x / (x^3 + 1)^(2/3), 0, 1)
 ### I( 1 / (x^5 + 1)^(1/5) )
 integrate(\(x) 1 / (x^5 + 1)^(1/5), 0, 1)
 - (digamma(1/5) + Euler)/5 +
-	+ integrate(\(x) x^3 / (x^4 + x^3 + x^2 + x + 1), 1, 2^(1/5))$value
+	+ integrate(\(x) x^3 * (x-1) / (x^5 - 1), 1, 2^(1/5))$value;
 
+### I( x^2 / (x^5 + 1)^(1/5) )
+integrate(\(x) x^2 / (x^5 + 1)^(1/5), 0, 1)
+1/2^(6/5) - gamma(3/5)^2/gamma(1/5) / 4
+
+### I( 1 / (x^5 + 1)^(2/5) )
+integrate(\(x) 1 / (x^5 + 1)^(2/5), 0, 1)
+gamma(1/5)^2/gamma(2/5) / 10
+
+### I( x / (x^5 + 1)^(2/5) )
+integrate(\(x) x / (x^5 + 1)^(2/5), 0, 1)
+- (digamma(2/5) + Euler)/5 +
+	+ integrate(\(x) (x^4 - x^2) / (x^5 - 1), 1, 2^(1/5))$value;
+
+### I( x^2 / (x^5 + 1)^(3/5) )
+integrate(\(x) x^2 / (x^5 + 1)^(3/5), 0, 1)
+- (digamma(3/5) + Euler)/5 +
+	+ integrate(\(x) (x^4 - x) / (x^5 - 1), 1, 2^(1/5))$value;
+
+### I( x^3 / (x^5 + 1)^(3/5) )
+integrate(\(x) x^3 / (x^5 + 1)^(3/5), 0, 1)
+1/2^(3/5) - gamma(4/5)^2/gamma(3/5) / 2
+
+### I( x / (x^5 + 1)^(4/5) )
+integrate(\(x) x / (x^5 + 1)^(4/5), 0, 1)
+gamma(2/5)^2/gamma(4/5) / 10
+
+### I( x^3 / (x^5 + 1)^(4/5) )
+integrate(\(x) x^3 / (x^5 + 1)^(4/5), 0, 1)
+- (digamma(4/5) + Euler)/5 +
+	+ integrate(\(x) (x^4 - 1) / (x^5 - 1), 1, 2^(1/5))$value;
+
+
+### Pow = 7
 
 ### I( 1 / (x^7 + 1)^(1/7) )
 integrate(\(x) 1 / (x^7 + 1)^(1/7), 0, 1)
@@ -141,6 +174,13 @@ integrate(\(x) x / (x^2 + x + 1), 1, 2^(1/3))
 
 ### I( 1 / (x^(2*n) + 1)^(1/n) )
 
+###
+n = sqrt(5)
+integrate(\(x) 1 / (x^(2*n) + 1)^(1/n), 0, 1)
+gamma(1/(2*n))^2 / gamma(1/n) / (4*n)
+
+
+### Series:
 
 ### I( x / (x^3 + 1)^(1/3) )
 integrate(\(x) 1 / (x^(3/2) + 1)^(4/3), 0, 1)
@@ -171,6 +211,26 @@ integrate(\(x) x / (x^3 + 1)^(5/3), 0, 1)
 1/2^(5/3)
 
 
+### Series: Pow = 5
+
+###
+integrate(\(x) x^2 / (x^5 + 1)^(6/5), 0, 1)
+gamma(3/5)^2/gamma(6/5) / 10
+#
+integrate(\(x) x^2 / (x^5 + 1)^(1/5), 0, 1)
+1/2^(6/5) - gamma(3/5)^2/gamma(6/5) / 20
+
+
+###
+integrate(\(x) x^3 / (x^5 + 1)^(8/5), 0, 1)
+gamma(4/5)^2/gamma(8/5) / 10
+#
+integrate(\(x) x^3 / (x^5 + 1)^(3/5), 0, 1)
+1/2^(3/5) - 3*gamma(4/5)^2/gamma(8/5) / 10
+
+
+### Other Series:
+
 ### Type: (x^n + 1)^(2/n)
 integrate(\(x) 1 / (x^6 + 1)^(1/3), 0, 1)
 gamma(1/6)^2 / gamma(1/3) / 12
@@ -179,12 +239,6 @@ gamma(1/6)^2 / gamma(1/3) / 12
 integrate(\(x) 1 / (x^(6/5) + 1)^(5/3), 0, 1)
 integrate(\(x) 5*x^4 / (x^6 + 1)^(5/3), 0, 1)
 gamma(5/6)^2 / gamma(5/3) / (6/5)/2
-
-
-###
-n = sqrt(5)
-integrate(\(x) 1 / (x^(2*n) + 1)^(1/n), 0, 1)
-gamma(1/(2*n))^2 / gamma(1/n) / (4*n)
 
 
 #######################
