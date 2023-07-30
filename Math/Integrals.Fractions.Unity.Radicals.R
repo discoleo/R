@@ -6,7 +6,7 @@
 ### Exact Integration
 ### Polynomial Radicals
 ###
-### draft v.0.1b
+### draft v.0.1c
 
 
 ### Types:
@@ -77,6 +77,23 @@ integrate(\(x) 1 / (x^3 + 1)^(1/3), 0, 1)
 	- 1/sqrt(3) * atan((2^(1/3) + 1/2) * 2/sqrt(3)) +
 	+ 1/sqrt(3) * atan((1 + 1/2) * 2/sqrt(3));
 
+### I( x / (x^3 + 1)^(1/3) )
+# - simplified formula: see below;
+integrate(\(x) x / (x^3 + 1)^(1/3), 0, 1)
+1/2^(1/3) - gamma(2/3)^2/gamma(4/3) / 6
+
+### I( 1 / (x^3 + 1)^(2/3) )
+# - simplified formula: see below;
+integrate(\(x) 1 / (x^3 + 1)^(2/3), 0, 1)
+gamma(1/3)^2/gamma(2/3) / 6
+
+### I( x / (x^3 + 1)^(2/3) )
+integrate(\(x) x / (x^3 + 1)^(2/3), 0, 1)
+- (digamma(2/3) + Euler)/3 +
+	+ integrate(\(x) (x^2 - 1) / (x^3 - 1), 1, 2^(1/3))$value
+
+
+### Pow = 5
 
 ### I( 1 / (x^5 + 1)^(1/5) )
 integrate(\(x) 1 / (x^5 + 1)^(1/5), 0, 1)
@@ -90,11 +107,21 @@ integrate(\(x) 1 / (x^7 + 1)^(1/7), 0, 1)
 	+ integrate(\(x) x^5 * (x - 1) / (x^7 - 1), 1, 2^(1/7))$value
 
 
+### Note:
+# - the fraction decomposition of x^p / (x^n - 1)
+#   (for n, p = integers) is described in file:
+#   Integrals.Fractions.Unity.R;
+
+
 ### Derivation:
 # Limit: (p+1) -> 0
-n = 3; p = -1 + 1E-6;
+n = 3; p = -1 + 1E-6; k = 3;
+integrate(\(x) 1 / (x^3 + 1)^(1/3)/x - 1/x * exp(-x), 0, Inf)
 gamma((p+1)/n) * gamma(1/k - (p+1)/n) / gamma(1/k) / n - gamma(p+1)
 - (digamma(1/3) - 2*Euler)/3
+
+#
+integrate(\(x) 1/x * exp(-x) - 1/(x*(x+1)), 0, Inf)
 
 #
 integrate(\(x) x / (x^2 + x + 1), 1, 2^(1/3))
