@@ -6,7 +6,7 @@
 ### Exact Integration
 ### Polynomial Radicals
 ###
-### draft v.0.1c
+### draft v.0.1d
 
 
 ### Types:
@@ -71,6 +71,11 @@ gamma((p+1)/n)*gamma(1/k - (p+1)/n) / gamma(1/k) / n
 
 ### [0, 1]
 
+### Note:
+# - the fraction decomposition of x^p / (x^n - 1)
+#   (for n, p = integers) is described in file:
+#   Integrals.Fractions.Unity.R;
+
 ### I( 1 / (x^3 + 1)^(1/3) )
 integrate(\(x) 1 / (x^3 + 1)^(1/3), 0, 1)
 - (digamma(1/3) + Euler)/3 + 1/2*log((2^(2/3) + 2^(1/3) + 1)/3) +
@@ -78,12 +83,12 @@ integrate(\(x) 1 / (x^3 + 1)^(1/3), 0, 1)
 	+ 1/sqrt(3) * atan((1 + 1/2) * 2/sqrt(3));
 
 ### I( x / (x^3 + 1)^(1/3) )
-# - simplified formula: see below;
+# - based on simplified formula: see below;
 integrate(\(x) x / (x^3 + 1)^(1/3), 0, 1)
 1/2^(1/3) - gamma(2/3)^2/gamma(4/3) / 6
 
 ### I( 1 / (x^3 + 1)^(2/3) )
-# - simplified formula: see below;
+# - based on simplified formula: see below;
 integrate(\(x) 1 / (x^3 + 1)^(2/3), 0, 1)
 gamma(1/3)^2/gamma(2/3) / 6
 
@@ -99,6 +104,12 @@ integrate(\(x) x / (x^3 + 1)^(2/3), 0, 1)
 integrate(\(x) 1 / (x^5 + 1)^(1/5), 0, 1)
 - (digamma(1/5) + Euler)/5 +
 	+ integrate(\(x) x^3 * (x-1) / (x^5 - 1), 1, 2^(1/5))$value;
+
+### I( x / (x^5 + 1)^(1/5) )
+integrate(\(x) x / (x^5 + 1)^(1/5), 0, 1)
+2^(4/5) - gamma(4/5) * gamma(2/5) / gamma(1/5) +
+	- integrate(\(x) 3 * x^3 / (x^5 + 1)^(1/5), 0, 1)$value;
+# TODO
 
 ### I( x^2 / (x^5 + 1)^(1/5) )
 integrate(\(x) x^2 / (x^5 + 1)^(1/5), 0, 1)
@@ -155,6 +166,7 @@ gamma((p+1)/n) * gamma(1/k - (p+1)/n) / gamma(1/k) / n - gamma(p+1)
 
 #
 integrate(\(x) 1/x * exp(-x) - 1/(x*(x+1)), 0, Inf)
+- Euler
 
 #
 integrate(\(x) x / (x^2 + x + 1), 1, 2^(1/3))
@@ -166,6 +178,40 @@ integrate(\(x) x / (x^2 + x + 1), 1, 2^(1/3))
 	+ 1/sqrt(3) * atan((1 + 1/2) * 2/sqrt(3));
 - 1/sqrt(3) * atan((2^(1/3)-1)*2/sqrt(3) / (1 + 4/3*(2^(1/3) + 1/2)*(1 + 1/2)))
 - 1/sqrt(3) * atan((2^(1/3) - 1) / (2^(1/3) + 1) / sqrt(3));
+
+
+### Derivation:
+integrate(\(x) x / (x^5 + 1)^(1/5), 0, 1)
+1 - gamma(4/5) * gamma(2/5) / gamma(1/5) +
+	- integrate(\(x) 1/(x^5 + 1)^(1/5) / x^2 - 1/x^2, 0, 1)$value;
+1 - gamma(4/5) * gamma(2/5) / gamma(1/5) +
+	+ integrate(\(x) x^3 * (x - 1) / (x^5 - 1)^(6/5), 1, 2^(1/5))$value;
+	
+#
+integrate(\(x) 1/(x^5 + 1)^(1/5) / x^2 - (1/x^2 + 1/x) * exp(-x), 0, Inf)
+n = 5; p = -2 + 1E-6; k = 5;
+gamma((p+1)/n) * gamma(1/k - (p+1)/n) / gamma(1/k) / n - gamma(p+1) - gamma(p+2)
+1 - gamma(4/5) * gamma(2/5) / gamma(1/5)
+
+#
+integrate(\(x) (1/x^2 + 1/x) * exp(-x) - 1/x^2, 0, Inf)
+-1;
+
+#
+integrate(\(x) -1 / (x^5 + 1)^(1/5) / x^2 + 1/x^2, 0, 1)
+integrate(\(x) (1 - 1/(x^5 + 1)^(1/5)) / x^2, 0, 1)
+integrate(\(x) 1/5 * (1 - 1/(x + 1)^(1/5)) / x^(6/5), 0, 1)
+integrate(\(x) x^3 * (x - 1) / (x^5 - 1)^(6/5), 1, 2^(1/5))
+2^(4/5) - 2 + integrate(\(x) (4*x^4 - 3*x^3) / (x^5 - 1)^(1/5), 1, 2^(1/5))$value;
+2^(4/5) - 1 - integrate(\(x) 3*x^3 / (x^5 - 1)^(1/5), 1, 2^(1/5))$value;
+2^(4/5) - 1 - integrate(\(x) 3/5*(x+1)^(-1/5) / x^(1/5), 0, 1)$value;
+2^(4/5) - 1 - integrate(\(x) 3 * x^3 / (x^5 + 1)^(1/5), 0, 1)$value;
+
+# TODO: ???
+
+#
+integrate(\(x) (4*x^4 - 3*x^3) / (x^5 - 1)^(1/5), 1, 2^(1/5))
+(2 - 2^(4/5)) + integrate(\(x) x^3 * (x-1) / (x^5 - 1)^(6/5), 1, 2^(1/5))$value
 
 
 ##################
