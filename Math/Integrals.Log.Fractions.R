@@ -75,6 +75,13 @@ gamma((p+1)/n) * gamma(k - (p+1)/n) *
 	(digamma((p+1)/n) - digamma(k - (p+1)/n)) / gamma(k) / n^2;
 
 
+### on [0, 1]
+n = 8
+p = sqrt(2)
+integrate(function(x) x^p * log(x) / (x^n + 1), 0, 1)
+(pracma::psi(1, ((p+1)/n + 1)/2) - pracma::psi(1, (p+1)/n/2)) / (4*n^2);
+
+
 ####################
 ####################
 
@@ -111,7 +118,7 @@ pi*log(b)/(2*b)
 integrate(function(x) log(x) / (b^2*x^2 + 1), lower=0, upper=Inf)
 - pi*log(b)/(2*b)
 
-### TODO:
+###
 # - using Feynman's trick;
 # - Note: Catalan = - I(log(x)/(x^2 + 1), lower=0, upper=1)
 integrate(function(x) log(x + 1) / (x^2 + 1), lower=0, upper=Inf)
@@ -129,6 +136,30 @@ a = sqrt(5); b = sqrt(3)
 integrate(function(x) log(x + a) / (x^2 + b^2), lower=0, upper=Inf)
 pi*log(a^2 + b^2)/(4*b) + log(b)*atan(a/b)/b +
 	- integrate(function(x) log(x) / (x^2 + b^2), 0, a)$value;
+
+### TODO:
+integrate(function(x) x^(1/2) * log(x + 1) / (x^2 + 1), 0, 1)
+integrate(function(x) 2 * x^2 * log(x^2 + 1) / (x^4 + 1), 0, 1)
+integrate(\(b) 4*b^2 / (b^4 + 1) * atan(b), 0, 1)$value +
+	+ (pracma::psi(1, 7/8) - pracma::psi(1, 3/8)) / 16 +
+	- pi * (digamma(7/8) - digamma(3/8)) / 4 +
+	+ (digamma(5/8) - digamma(1/8)) / 4 * pi/4 +
+	+ (digamma(7/8) - digamma(3/8)) / 8 * log(2);
+
+
+# Fraction Decomposition:
+p = 1/2; b = sqrt(3);
+# possibly solvable for p = rational?
+# p = 1/2 => (x => x^2)
+integrate(\(x) x^p * (1/(x + b) - (x - b)/(x^2 + 1)) / (b^2 + 1), 0, 1)
+2/(b^2 + 1) * integrate(\(x) x^2 / (x^2 + b) - x^4 / (x^4 + 1) + b * x^2 / (x^4 + 1), 0, 1)$value
+2/(b^2 + 1) * integrate(\(x) -b / (x^2 + b) + 1 / (x^4 + 1) + b * x^2 / (x^4 + 1), 0, 1)$value;
+- 2*b / (b^2 + 1) * integrate(\(x) 1 / (x^2 + b), 0, 1)$value +
+	+ (digamma(5/8) - digamma(1/8)) / (4*(b^2 + 1)) +
+	+ (digamma(7/8) - digamma(3/8)) * b / (4*(b^2 + 1));
+2*sqrt(b) / (b^2 + 1) * atan(sqrt(b)) - pi*sqrt(b) / (b^2 + 1) +
+	+ (digamma(5/8) - digamma(1/8)) / (4*(b^2 + 1)) +
+	+ (digamma(7/8) - digamma(3/8)) * b / (4*(b^2 + 1));
 
 
 #######################
