@@ -7,7 +7,7 @@
 ### Polynomial Fractions: Unity
 ### Definite Integrals
 ###
-### draft v.0.2c
+### draft v.0.2d
 
 
 
@@ -16,6 +16,7 @@
 # I( 1 / (x^n + 1) )
 # I( x^p / (x^n + 1) )
 # I( x^p / (x^n + 1)^r ) on [0, Inf]
+# I( x^p / (x^n - 1) ) on [0, Inf]
 # I( 1/(1 - x) - n/(1 - x^n) ) on [0, 1]
 # I( x^p * (1 - x^n)^r ) on [0, 1]
 
@@ -366,6 +367,33 @@ p = sqrt(2)
 integrate(\(x) x^p / ((x^2+1) * (x^5+1)), 0, Inf)
 pi/2 * sum(c(1,-1,-1,1,1)/5/sin(pi * (p + c(5,4,3,2,1))/ 5),
 	c(-1,1)/2/sin(pi*(p+c(2,1))/2))
+
+
+#######################
+#######################
+
+### I( x^p / (x^n - 1) ) on [0, Inf]
+
+###
+n = 3
+tol = 1E-7;
+integrate(\(x) 1 / (x^n - 1), 0, 1 - tol)$value +
+	+ integrate(\(x) 1 / (x^n - 1), 1 + tol, Inf)$value
+- pi / tan(pi/n) / n;
+
+###
+n = 7; p = 3
+tol = 1E-7;
+integrate(\(x) x^p / (x^n - 1), 0, 1 - tol)$value +
+	+ integrate(\(x) x^p / (x^n - 1), 1 + tol, Inf)$value
+- pi / tan(pi*(p+1)/n) / n;
+
+###
+n = 7; p = sqrt(5)
+tol = 1E-7;
+integrate(\(x) x^p / (x^n - 1), 0, 1 - tol)$value +
+	+ integrate(\(x) x^p / (x^n - 1), 1 + tol, Inf)$value
+- pi / tan(pi*(p+1)/n) / n;
 
 
 ############################
