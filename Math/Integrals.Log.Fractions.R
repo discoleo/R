@@ -6,7 +6,7 @@
 ### Integrals: Logarithms
 ### Log-Fractions
 ###
-### draft v.0.2a
+### draft v.0.2b
 
 
 ##################
@@ -27,6 +27,7 @@ Catalan = 0.915965594177219015054603514;
 # x^p * log(x) / (x^n + 1) on [0, Inf];
 # x^p * log(x) / (x^n + 1)^(1/2) on [0, Inf]
 #  with n, p = Integers;
+# I( x^p * log(x)^2 / (x^n - 1) ) on [0, Inf]
 
 ### Refactor:
 # - I( log(x) / (x + 1)^p ) on [0, Inf]
@@ -176,7 +177,8 @@ k = 3; # TODO: ???
 integrate(function(x) x^p * log(x)/(x^n + 1)^(1/k), 0, Inf)
 id = seq(2, n, by=2); th = pi*(p+1)/n;
 - gamma((p+1)/n) * gamma(1/k - (p+1)/n) / gamma(1/k) / n^2 *
-	(pi/sin(2*pi/9)/2 - 2*(cos(pi/9)*log(2*cos(5*pi/9) + 1) + cos(2*pi/9)*log(cos(4*pi/9)) + cos(4*pi/9)*log(cos(pi/9))) +
+	(pi/sin(2*pi/9)/2 - 2*(cos(pi/9)*log(2*cos(5*pi/9) + 1) +
+		+ cos(2*pi/9)*log(cos(4*pi/9)) + cos(4*pi/9)*log(cos(pi/9))) +
 	- 2*log(2)*(cos(2*pi/9) + cos(4*pi/9)))
 
 
@@ -213,7 +215,7 @@ Catalan = 0.915965594177219015054603514;
 
 
 ### I( x^p * log(x^n + 1) / (x^n + 1)^k )
-p = sqrt(3); n = sqrt(5); k = sqrt(3);
+p = sqrt(3); n = sqrt(5); k = sqrt(3) + sqrt(2);
 integrate(function(x) x^p * log(x^n + 1) / (x^n + 1)^k, lower=0, upper=Inf)
 - gamma((p+1)/n) * gamma(k - (p+1)/n) *
 	(digamma(k - (p+1)/n) - digamma(k)) / gamma(k) / n;
@@ -847,4 +849,34 @@ p = 2; n = 1;
 integrate(\(x) (x - 1) / log(x), 0, 1)
 log(2)
 
+
+########################
+########################
+
+#################
+### Diff Type ###
+#################
+
+### I( x^p * log(x) / (x^n - 1) )
+n = 7; p = sqrt(5)
+tol = 1E-7;
+integrate(\(x) x^p * log(x) / (x^n - 1), 0, 1 - tol)$value +
+	+ integrate(\(x) x^p * log(x) / (x^n - 1), 1 + tol, Inf)$value
+pi^2 / sin(pi*(p+1)/n)^2 / n^2;
+
+
+### I( x^p * log(x)^2 / (x^n - 1) )
+n = 7; p = sqrt(5)
+tol = 1E-7;
+integrate(\(x) x^p * log(x)^2 / (x^n - 1), 0, 1 - tol)$value +
+	+ integrate(\(x) x^p * log(x)^2 / (x^n - 1), 1 + tol, Inf)$value
+- 2*pi^3 * cos(pi*(p+1)/n) / sin(pi*(p+1)/n)^3 / n^3;
+
+
+### Base:
+n = 7; p = sqrt(5)
+tol = 1E-7;
+integrate(\(x) x^p / (x^n - 1), 0, 1 - tol)$value +
+	+ integrate(\(x) x^p / (x^n - 1), 1 + tol, Inf)$value
+- pi / tan(pi*(p+1)/n) / n;
 
