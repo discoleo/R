@@ -27,7 +27,9 @@ Catalan = 0.915965594177219015054603514;
 # I( x^p * log(x) / (x^n + 1) ) on [0, Inf];
 # I( x^p * log(x) / (x^n + 1)^k ) on [0, Inf]
 # I( x^p * log(x^n + 1) / (x^n + 1)^k ) on [0, Inf]
-# I( log(x^n + a^n) / (x^n + b^n) )
+# I( log(x^n + 1) / x^p ) on [0, Inf]
+# I( log(x^n + a^n) / (x^n + b^n) ) on [0, Inf]
+# I( (x^p - 1) / ((x^n + 1) * log(x)) ) on [0, 1]
 ### Diff-Type:
 # I( x^p * log(x)^2 / (x^n - 1) ) on [0, Inf]
 # - any n, p, k;
@@ -84,6 +86,17 @@ Catalan = 0.915965594177219015054603514;
 ### I( x^p * log(x^n + 1) / (x^n + 1)^k )
 p = sqrt(3); n = sqrt(5); k = sqrt(3) + sqrt(2);
 integrate(function(x) x^p * log(x^n + 1) / (x^n + 1)^k, lower=0, upper=Inf)
+- gamma((p+1)/n) * gamma(k - (p+1)/n) *
+	(digamma(k - (p+1)/n) - digamma(k)) / gamma(k) / n;
+
+
+### Lim: k -> 0
+p = - sqrt(3); n = 5;
+integrate(function(x) x^p * log(x^n + 1), lower=0, upper=Inf)
+- gamma((p+1)/n) * gamma(-(p+1)/n) / n
+
+#
+k = 1E-6;
 - gamma((p+1)/n) * gamma(k - (p+1)/n) *
 	(digamma(k - (p+1)/n) - digamma(k)) / gamma(k) / n;
 
