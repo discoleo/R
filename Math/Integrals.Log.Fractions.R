@@ -26,6 +26,9 @@ Catalan = 0.915965594177219015054603514;
 ### Solved:
 # I( x^p * log(x) / (x^n + 1) ) on [0, Inf];
 # I( x^p * log(x) / (x^n + 1)^k ) on [0, Inf]
+# I( x^p * log(x^n + 1) / (x^n + 1)^k ) on [0, Inf]
+# I( log(x^n + a^n) / (x^n + b^n) )
+### Diff-Type:
 # I( x^p * log(x)^2 / (x^n - 1) ) on [0, Inf]
 # - any n, p, k;
 
@@ -102,7 +105,6 @@ integrate(function(x) log(x + 1) / (x^2 + 1), lower=0, upper=Inf)
 pi*log(2)/4 + Catalan;
 
 ### TODO:
-Catalan = 0.915965594177219015054603514;
 integrate(function(x) log(x + 1) / (x^2 + b^2), lower=0, upper=Inf)
 pi*log(b^2 + 1)/(4*b) + log(b)*atan(1/b)/b +
 	- integrate(function(x) log(x) / (x^2 + b^2), 0, 1)$value;
@@ -115,6 +117,10 @@ integrate(function(x) log(x + a) / (x^2 + b^2), lower=0, upper=Inf)
 pi*log(a^2 + b^2)/(4*b) + log(b)*atan(a/b)/b +
 	- integrate(function(x) log(x) / (x^2 + b^2), 0, a)$value;
 
+
+#######################
+
+### I( log(x^n + a^n) / (x^n + b^n) )
 
 #############
 ### log(P[2])
@@ -150,11 +156,19 @@ pi*log(b+1)/b
 # - using Feynman's trick;
 # - using formulas for Fractions with roots of unity, see:
 #   Integrals.Fractions.Unity.R;
-n = 3
+n = 7
 a = sqrt(3); b = sqrt(5)
 integrate(function(x) log(x^n + a^n) / (x^n + b^n), lower=0, upper=Inf)
+#
+Int   = integrate(function(x) 1/(1 - x^n), lower=0, upper=a/b)$value
+Const = - pi/sin(pi/n) / b^(n-1) * (pi*cos(pi/n)/sin(pi/n) / n - log(b));
+(log(abs(a^n - b^n)) - n*log(b) + n * Int) * pi/sin(pi/n) / n / b^(n-1) + Const;
 
-###############
+
+###################
+
+### Explicit Cases:
+
 ### Case: n = 3
 n = 3
 a = sqrt(3); b = sqrt(5)
@@ -344,7 +358,7 @@ pi*log(a+1)/(2*(a+1)) - pi*log(2)/(4*(a+1)) - Catalan/(a+1);
 
 p = 1/5
 k = 3
-integrate(function(x) log(x)/x^p/(x+k)^2, lower=0, upper=Inf)
+integrate(function(x) log(x) / x^p / (x+k)^2, lower=0, upper=Inf)
 pi*((p*log(k) - 1)*sin(pi*p) + pi*p*cos(pi*p)) / k^(p+1) / sin(pi*p)^2
 
 
@@ -383,7 +397,7 @@ print(full)
 
 k = sqrt(3)
 p = sqrt(2) - 1
-integrate(function(x) log(k*x + 1)/x^(p+1), 0, Inf)
+integrate(function(x) log(k*x + 1) / x^(p+1), 0, Inf)
 pi*k^p / (p*sin(pi*p))
 
 
@@ -392,11 +406,11 @@ pi*k^p / (p*sin(pi*p))
 
 ### n = 3
 p = sqrt(2)
-integrate(function(x) log(x^3 + 1)/x^(p+1), 0, Inf)
+integrate(function(x) log(x^3 + 1) / x^(p+1), 0, Inf)
 1/p*pi/sin(pi*(1 - p/3))
 
 # Int by parts:
-integrate(function(x) 3/p * x^(2-p)/(x^3+1), 0, Inf)
+integrate(function(x) 3/p * x^(2-p) / (x^3+1), 0, Inf)
 1/p*pi/sin(pi*(1 - p/3))
 
 
@@ -604,7 +618,7 @@ integrate(function(x) - log(x) * (x^2 - (a+b)*x + a*b) / (b-a)^3, a, b)
 integrate(function(x) log(x+1) * x / (x + 1)^4, 0, Inf)
 5/36
 
-###
+### I( log(b*x + a) / (x + 1)^3 )
 a = sqrt(2); b = sqrt(3);
 d = (b-a)^3; # actually d3;
 integrate(function(x) log(b*x + a) / (x + 1)^3, 0, Inf)
@@ -659,6 +673,7 @@ integrate(function(x) (d/2)^(2*p + 1)*((1 + x)*(1 - x))^p, -1, 1)
 (d/2)^(2*p + 1)*(sin(2*asin((x - (a+b)/2)*2/d))/2 + asin((x - (a+b)/2)*2/d))/2
 
 
+####################
 ####################
 
 ### log(x) / sqrt(1 - x)
