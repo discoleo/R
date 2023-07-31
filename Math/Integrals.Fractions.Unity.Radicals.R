@@ -6,7 +6,7 @@
 ### Exact Integration
 ### Polynomial Radicals
 ###
-### draft v.0.1d
+### draft v.0.1d-check
 
 
 ### Types:
@@ -149,6 +149,27 @@ integrate(\(x) x^3 / (x^5 + 1)^(4/5), 0, 1)
 integrate(\(x) 1 / (x^7 + 1)^(1/7), 0, 1)
 - (digamma(1/7) + Euler)/7 +
 	+ integrate(\(x) x^5 * (x - 1) / (x^7 - 1), 1, 2^(1/7))$value
+
+
+### Higher Powers
+
+### I( 1 / (x^8 + 1)^(1/8) )
+n = 8
+integrate(\(x) 1 / (x^n + 1)^(1/n), 0, 1)
+- (digamma(1/n) + Euler)/n +
+	+ integrate(\(x) x^(n-2) * (x - 1) / (x^n - 1), 1, 2^(1/n))$value
+
+### I( 1 / (x^9 + 1)^(1/9) )
+n = 9
+integrate(\(x) 1 / (x^n + 1)^(1/n), 0, 1)
+- (digamma(1/n) + Euler)/n +
+	+ integrate(\(x) x^(n-2) * (x - 1) / (x^n - 1), 1, 2^(1/n))$value
+
+###
+n = sqrt(5)
+integrate(\(x) 1 / (x^n + 1)^(1/n), 0, 1)
+- (digamma(1/n) + Euler)/n +
+	+ integrate(\(x) x^(n-2) * (x - 1) / (x^n - 1), 1, 2^(1/n))$value
 
 
 ### Note:
