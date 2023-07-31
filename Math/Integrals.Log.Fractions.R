@@ -24,10 +24,11 @@ Catalan = 0.915965594177219015054603514;
 
 
 ### Solved:
-# x^p * log(x) / (x^n + 1) on [0, Inf];
-# x^p * log(x) / (x^n + 1)^(1/2) on [0, Inf]
-#  with n, p = Integers;
+# I( x^p * log(x) / (x^n + 1) ) on [0, Inf];
+# I( x^p * log(x) / (x^n + 1)^k ) on [0, Inf]
 # I( x^p * log(x)^2 / (x^n - 1) ) on [0, Inf]
+# - any n, p, k;
+
 
 ### Refactor:
 # - I( log(x) / (x + 1)^p ) on [0, Inf]
@@ -49,16 +50,22 @@ Catalan = 0.915965594177219015054603514;
 
 ### Base-Formulas:
 
-### log(x) / (x^n + 1)
+### I( log(x) / (x^n + 1) )
 n = 7
-integrate(function(x) log(x)/(x^n + 1), 0, Inf)
+integrate(function(x) log(x) / (x^n + 1), 0, Inf)
 - pi^2*cos(pi/n) / sin(pi/n)^2 / n^2
 
-### x^p * log(x) / (x^n + 1)
+### I( x^p * log(x) / (x^n + 1) )
 n = 8
 p = sqrt(2)
-integrate(function(x) x^p*log(x)/(x^n + 1), 0, Inf)
+integrate(function(x) x^p * log(x) / (x^n + 1), 0, Inf)
 - pi^2*cos(pi*(p+1)/n) / sin(pi*(p+1)/n)^2 / n^2
+
+### I( x^p * log(x) / (x^n + 1)^k )
+n = 5; p = sqrt(2); k = sqrt(3);
+integrate(function(x) x^p * log(x) / (x^n + 1)^k, 0, Inf)
+gamma((p+1)/n) * gamma(k - (p+1)/n) *
+	(digamma((p+1)/n) - digamma(k - (p+1)/n)) / gamma(k) / n^2;
 
 
 ### Powers
