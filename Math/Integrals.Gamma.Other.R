@@ -57,6 +57,12 @@ integrate(\(x) log(gamma(x + k)), 0, 1)
 log(2*pi)/2 + k*log(k) - k
 
 
+### I( log(gamma(2*x + k)) )
+k = sqrt(5)
+integrate(\(x) log(gamma(2*x + k)), 0, 1)
+((k+1)*log(k+1) + k*log(k)) / 2 - k + log(2*pi)/2 - 1/2
+
+
 ### I( x * log(gamma(x)) )
 integrate(\(x) x * log(gamma(x)), 0, 1)
 log(2*pi)/4 - log(A);
@@ -77,6 +83,7 @@ integrate(\(x) x / gamma(x), 0, 1)
 integrate(\(x) log(x) / gamma(x), 0, 1)
 integrate(\(x) sin(x) / gamma(x), 0, 1)
 
+integrate(\(x) gamma(x) * x, 0, 1)
 integrate(\(x) gamma(x) * sin(x), 0, 1)
 integrate(\(x) gamma(x) * sin(pi*x), 0, 1)
 integrate(\(x) gamma(x) * (exp(x) - 1), 0, 1)
@@ -85,6 +92,8 @@ integrate(\(x) gamma(x) * log(x*exp(x) + 1), 0, 1)
 integrate(\(x) gamma(x) * atan(x), 0, 1)
 integrate(\(x) atan(gamma(x)), 0, 1)
 integrate(\(x) gamma(x) / gamma(1/x), 0,1)
+integrate(\(x) gamma(x) / pracma::zeta(x+1), 0, 1)
+integrate(\(x) gamma(x) / pracma::zeta(1-x), 0, 1)
 
 
 ###
@@ -95,6 +104,5 @@ integrate(\(x) x * log(sin(x)), 0, pi)
 - pi^2 * log(2)/2
 integrate(\(x) x * log(sin(pi*x)), 0, 1)
 - log(2)/2
-
 
 
