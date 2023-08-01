@@ -766,11 +766,29 @@ p = sqrt(3)
 integrate(\(x) (x^p - 1) / (log(x) * (x^n + 1)), 0, 1)
 log(gamma(1/(2*n))^2 * gamma((p+1)/n) / gamma((p+1)/(2*n))^2 / gamma(1/n)) - p*log(2)/n
 
+### Gen 3: I( x^p1 * (x^p2 - 1) / (log(x) * (x^n + 1)) )
+n = sqrt(5)
+p1 = sqrt(3); p2 = sqrt(2)
+integrate(\(x) x^p1 * (x^p2 - 1) / (log(x) * (x^n + 1)), 0, 1);
+log(gamma((p1+p2+1)/n) / gamma((p1+p2+1)/(2*n))^2) +
+	- log(gamma((p1+1)/n) / gamma((p1+1)/(2*n))^2) +
+	- (p1+p2)*log(2)/n + p1*log(2)/n;
+
 
 ### Special Case:
 p = 2; n = 1;
 integrate(\(x) (x - 1) / log(x), 0, 1)
 log(2)
+
+
+### Gen 3: Pow = 2
+n = sqrt(5)
+p1 = sqrt(3); p2 = sqrt(2)
+integrate(\(x) (x^p1 - 1) * (x^p2 - 1) / (log(x)^2 * (x^n + 1)), 0, 1);
+# TODO:
+# log(gamma((p1+p2+1)/n) / gamma((p1+p2+1)/(2*n))^2) +
+#	- log(gamma((p1+1)/n) / gamma((p1+1)/(2*n))^2) +
+	- p1*p2*log(2)/n;
 
 
 ########################
