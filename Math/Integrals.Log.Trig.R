@@ -70,9 +70,24 @@ integrate(function(x) log(cos(x)), 0, pi/8)
 
 ### on [0, pi/3]
 
+###
 integrate(\(x) log(cos(x)), 0, pi/3)
 - pi*log(2)/3 + sqrt(3)/(4*36) *
 	(pracma::psi(1, 1/6) - pracma::psi(1, 5/6) + pracma::psi(1, 1/3) - pracma::psi(1, 2/3))
+
+###
+integrate(\(x) log(sin(x)), 0, pi/6)
+- pi*log(2)/6 - sqrt(3)/(4*36) *
+	(pracma::psi(1, 1/6) - pracma::psi(1, 5/6) + pracma::psi(1, 1/3) - pracma::psi(1, 2/3))
+
+### I( log(sin(x)) )
+integrate(\(x) log(sin(x)), 0, pi/3)
+- pi*log(2)/3 + sqrt(3)/(8*6^2) *
+	( pracma::psi(1, 1/12) - pracma::psi(1, 11/12) +
+	- pracma::psi(1, 5/12) + pracma::psi(1, 7/12) +
+	- 5 * pracma::psi(1, 1/6) + 5 * pracma::psi(1, 5/6) +
+	- 3 * pracma::psi(1, 2/6) + 3 * pracma::psi(1, 4/6));
+
 
 # Derivation:
 # for technique see from 12:40 in the Ref. Maths 505;
@@ -97,11 +112,26 @@ sn = sin(2*pi/5 * c(1,2));
 	- sn[2]/(10*id+3)^2, sn[2]/(10*id+7)^2, sn[1]/(10*id+4)^2, - sn[1]/(10*id+6)^2)
 
 
+### on [0, pi/6]
+integrate(\(x) log(cos(x)), 0, pi/6)
+- pi*log(2)/6 + sqrt(3)/(4*12^2) *
+	( pracma::psi(1, 1/12) - pracma::psi(1, 11/12) +
+	- pracma::psi(1, 5/12) + pracma::psi(1,  7/12) +
+	- pracma::psi(1, 1/6) + pracma::psi(1, 5/6) +
+	+ pracma::psi(1, 2/6) - pracma::psi(1, 4/6));
+
+#
+id = seq(0, 40000)
+sn = sin(2*pi/6 * c(1,2,3));
+- pi*log(2)/6 + 1/2 * sum(
+	sn[1]/(12*id+1)^2, - sn[1]/(12*id+11)^2, - sn[2]/(12*id+2)^2, sn[2]/(12*id+10)^2,
+	sn[1]/(12*id+4)^2, - sn[1]/(12*id+8)^2, - sn[2]/(12*id+5)^2, + sn[2]/(12*id+7)^2)
+
 
 # Varia:
-(pracma::psi(1, 1/3) - pracma::psi(1, 2/3)) / 9
 integrate(\(x) - log(x) / (x^2 + x + 1), 0, 1)
-# TODO
+(pracma::psi(1, 1/3) - pracma::psi(1, 2/3)) / 9
+# TODO: psi(1, x) - psi(1, 1-x) ???
 
 
 #################
