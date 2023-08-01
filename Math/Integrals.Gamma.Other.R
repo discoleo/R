@@ -62,6 +62,13 @@ k = sqrt(5)
 integrate(\(x) log(gamma(2*x + k)), 0, 1)
 ((k+1)*log(k+1) + k*log(k)) / 2 - k + log(2*pi)/2 - 1/2
 
+### I( log(gamma(3*x + k)) )
+k = sqrt(5)
+integrate(\(x) log(gamma(3*x + k)), 0, 1)
+(k*log(k) + (k+1)*log(k+1) + (k+2)*log(k+2)) / 3 - k + log(2*pi)/2 - 1
+
+
+###############
 
 ### I( x * log(gamma(x)) )
 integrate(\(x) x * log(gamma(x)), 0, 1)
