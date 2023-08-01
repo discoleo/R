@@ -97,6 +97,12 @@ integrate(\(x) 1/4 * log(gamma(x/4 + 1)), 0, 1)
 integrate(\(x) log(gamma(x + 1)), 0, 1/4)
 log(pi)/8 + 9/8 * log(A) - 3/8 * log(2) + Catalan / (4*pi) - 1/4
 
+### on [0, z]
+z = 1/sqrt(7);
+integrate(\(x) log(gamma(x + 1 - z/2)), 0, z)
+integrate(\(x) - 1/pi * log(sin(x)), 0, pi/2 * z)$value +
+	+ log(pi/2 * z) * z/2 - z/2;
+
 
 ###############
 

@@ -128,6 +128,19 @@ sn = sin(2*pi/6 * c(1,2,3));
 	sn[1]/(12*id+4)^2, - sn[1]/(12*id+8)^2, - sn[2]/(12*id+5)^2, + sn[2]/(12*id+7)^2)
 
 
+### Ap / Cp Constants
+Ap = function(p, iter=10000) {
+	n = iter; id = seq(n) + 1/p;
+	sum(id * log(id)) - (n^2 + (2/p+1)*n + 1/p^2 + 1/p + 1/6)*log(n + 1/p)/2 +
+		+ n^2/4 + n/(2*p);
+}
+#
+Ap(6) - Ap(-6)
+log(6)/6 - sqrt(3)/(4*36*pi) *
+	(pracma::psi(1, 1/6) - pracma::psi(1, 5/6) + pracma::psi(1, 1/3) - pracma::psi(1, 2/3))
+
+
+
 # Varia:
 integrate(\(x) - log(x) / (x^2 + x + 1), 0, 1)
 (pracma::psi(1, 1/3) - pracma::psi(1, 2/3)) / 9
