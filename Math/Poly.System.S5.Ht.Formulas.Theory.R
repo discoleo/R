@@ -83,6 +83,24 @@ E2a2 = as.E2ps(x, p=2); E2a3 = as.E2ps(x, p=3);
 E2a4 = as.E2ps(x, p=4); E2a5 = as.E2ps(x, p=5);
 
 
+#######################
+
+###
+# D. Aharonov, U. Elias. More on the identity of Chaundy and Bullard. (2014)
+# https://doi.org/10.1016/j.jmaa.2014.04.025
+
+###
+1 / E5
+sum( x / (S*E5) )
+sum( x * shift.f(x, 1) / (E2a*E5) )
+sum( x * shift.f(x, 2) / (E2b*E5) )
+
+# TODO:
+# - find way to combine all components: S, E2a, E2b, E3, E4, E5;
+
+
+#####################
+
 ### Prod( x - x1*x2*x3*x4 )
 # [symmetric]
 E4p5 - E4*E4p4 + E5*E3*E4p3 - E5^2*E2*E4p2 + E5^3*S*E4 - 5*E5^4
@@ -149,6 +167,7 @@ sum(E2a*x^2, - E3a*S, E121a, 2*E4) + (E2a*E2b - E3a*S + E121a + E4) +
 	- sum(x * shift.f(x,1) * shift.f(x^2,3)) +
 	- sum(x^2 * (shift.f(x,1) * shift.f(x,3) + shift.f(x,4) * shift.f(x,2))) # = 0
 sum(E2a*x^2) + E2a*E2b + 2*E121a - E3a*S - E3*S + 5*E4
+E2a*E2b - 2*E2*E2a + E2a*S^2 + 2*E121a - E3a*S - E3*S + 5*E4
 
 # =>
 r = x + shift.f(x, 1)
