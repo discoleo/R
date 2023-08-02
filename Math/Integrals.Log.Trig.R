@@ -144,9 +144,10 @@ sn = sin(2*pi/6 * c(1,2,3));
 
 
 ### Ap / Cp Constants
+# - useful for: I( log(gamma(x+k)) )
 Ap = function(p, iter=10000) {
 	n = iter; id = seq(n) + 1/p;
-	sum(id * log(id)) - (n^2 + (2/p+1)*n + 1/p^2 + 1/p + 1/6)*log(n + 1/p)/2 +
+	sum(id * log(id)) - (n^2 + (2/p + 1)*n + 1/p^2 + 1/p + 1/6)*log(n + 1/p)/2 +
 		+ n^2/4 + n/(2*p);
 }
 #
@@ -154,6 +155,11 @@ Ap(6) - Ap(-6)
 log(6)/6 - sqrt(3)/(4*36*pi) *
 	(pracma::psi(1, 1/6) - pracma::psi(1, 5/6) + pracma::psi(1, 1/3) - pracma::psi(1, 2/3))
 
+
+### Varia: Clausen Function
+# see e.g.
+# 1. Michael Penn: When "normal" trig functions aren't enough -- the Clausen function.
+#    https://www.youtube.com/watch?v=5kN4oH8W1r8
 
 
 # Varia:
