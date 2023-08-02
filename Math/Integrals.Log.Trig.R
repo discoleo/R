@@ -112,6 +112,21 @@ sn = sin(2*pi/5 * c(1,2));
 	- sn[2]/(10*id+3)^2, sn[2]/(10*id+7)^2, sn[1]/(10*id+4)^2, - sn[1]/(10*id+6)^2)
 
 
+### on [0, pi * 2/5]
+integrate(\(x) log(cos(x)), 0, 2*pi/5)
+sn = sin(2*pi/5 * c(2,4));
+- pi*log(2) * 2/5 +
+	+ (sn[1] * (pracma::psi(1, 1/10) - pracma::psi(1, 9/10) +
+		+ pracma::psi(1, 4/10) - pracma::psi(1, 6/10)) +
+	- sn[2] * (pracma::psi(1, 2/10) - pracma::psi(1, 8/10) +
+		+ pracma::psi(1, 3/10) - pracma::psi(1, 7/10))) / (2*100);
+
+# Derivation:
+- pi*log(2) * 2/5 + 1/2 * sum(
+	sn[1]/(10*id+1)^2, - sn[1]/(10*id+9)^2, - sn[2]/(10*id+2)^2, sn[2]/(10*id+8)^2,
+	- sn[2]/(10*id+3)^2, sn[2]/(10*id+7)^2, sn[1]/(10*id+4)^2, - sn[1]/(10*id+6)^2)
+
+
 ### on [0, pi/6]
 integrate(\(x) log(cos(x)), 0, pi/6)
 - pi*log(2)/6 + sqrt(3)/(4*12^2) *
