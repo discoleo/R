@@ -14,6 +14,10 @@ int.FrDU01 = function(n, p=0) {
 	digamma(1/n) + Euler + log(n);
 }
 
+zeta = function(x) {
+	pracma::zeta(x);
+}
+
 
 ####################
 ####################
@@ -24,7 +28,7 @@ int.FrDU01 = function(n, p=0) {
 
 # Upper = Inf: numeric instability;
 pracma::integral(\(x) sin(x) / (x + 1), 0, 1000000)
-integrate(\(x) 1/(log(x)^2 + 1), 0, 1)
+integrate(\(x) 1 / (log(x)^2 + 1), 0, 1)
 # TODO: ???
 
 
@@ -109,9 +113,16 @@ print(pi/2*exp(-k), 12)
 ######################
 ######################
 
+### Basic
+
 ### sin(x) / x^(s+1)
 # A RIDICULOUSLY AWESOME INTEGRAL: Ramanujan vs Maths 505
 # https://www.youtube.com/watch?v=_VkRvuSxF18
+
+# see also:
+# 3Blue1Brown: Researchers thought this was a bug (Borwein integrals)
+# https://www.youtube.com/watch?v=851U557j6HE
+
 
 # s in (-1, 1)
 s = 1 - sqrt(2)
@@ -179,7 +190,7 @@ pi*k/2
 
 
 ### Pow = 3
-### I( sin(k*x)^3 / x^(p+1) )
+### I( sin(k*x)^3 / x^p )
 
 ###
 # p in (0, 4)
@@ -200,6 +211,12 @@ gamma(-(p-1)) * sin(pi*(p-1)/2) * (3^(p-1) - 3) * k^(p-1) / 4;
 # Note: FAILS
 p = sqrt(2); k = 7/16;
 integrate(\(x) sin(k*x)^3 / x^p, 32*pi*1000, 32*pi*10000)
+
+
+### Borwein Integrals:
+# - already numerical issues;
+integrate(\(x) sin(x) / x * sin(x/3) / x, 0, Inf, rel.tol=1E-6, subdivisions=4000)
+pi/2 / 3
 
 
 ######################
@@ -231,6 +248,13 @@ integrate(function(x) x^3 / sin(x), 0, pi/2)
 (pracma::psi(3, 3/4) - pracma::psi(3, 1/4)) / 128 + 3/2*pi^2*Catalan
 
 ###
+integrate(function(x) x^4 / sin(x), 0, pi/2)
+3/2*31*zeta(5) + pi^3*Catalan +
+	+ pi*(pracma::psi(3, 3/4) - pracma::psi(3, 1/4)) / 64;
+
+
+### Composed: on [0, pi]
+# - some terms cancel out;
 integrate(function(x) x*(pi - x) / sin(x), 0, pi)
 7*zeta(3)
 
@@ -255,6 +279,7 @@ integral(function(x) x^5*(pi - x)*(pi + x) / sin(x), -pi, pi)
 11*7*pi^5*zeta(3) - 90*31*pi^3*zeta(5) + 315/2*127*pi*zeta(7)
 
 
+########
 ### TAN:
 integrate(function(x) x / tan(x), 0, pi/2)
 pi*log(2)/2
@@ -322,13 +347,16 @@ integrate(function(x) x^2 / sin(x), 0, pi/2)
 2*pi*Catalan - 7/2*zeta(3)
 
 ###
-# TODO: seems to involve polygamma;
 integrate(function(x) x^2*(pi - x) / sin(x), 0, pi/2)
+2*pi^2*Catalan - 7/2*pi*zeta(3) +
+	- (pracma::psi(3, 3/4) - pracma::psi(3, 1/4)) / 128 - 3/2*pi^2*Catalan
 
 ###
 integrate(function(x) x^3*(pi - x) / sin(x), 0, pi/2)
 3/2*7*pi^2*zeta(3) - 3*31*zeta(5) - integrate(function(x) x*(pi - x)^3 / sin(x), 0, pi/2)$value
-1/2*7*pi^2*zeta(3) - 3/2*31*zeta(5) + pi * integrate(function(x) x^2*(pi - x) / sin(x), 0, pi/2)$value
+- 3/2*31*zeta(5) + 1/2*pi^3*Catalan +
+	- pi*(pracma::psi(3, 3/4) - pracma::psi(3, 1/4)) / 128;
+
 ###
 integrate(function(x) x^2*(pi - x)^2 / sin(x), 0, pi/2)
 - 1/2*7*pi^2*zeta(3) + 3/2*31*zeta(5)
