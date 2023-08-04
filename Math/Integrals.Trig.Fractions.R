@@ -48,8 +48,18 @@ integrate(\(x) 1 / (sin(x)^n + 1), 0, pi/2)
 	+ (cs + 1i*sn) * int.sinfr(c(0, pi/2), cs + 1i*sn) +
 	+ (cs - 1i*sn) * int.sinfr(c(0, pi/2), cs - 1i*sn)) / n;
 
-# TODO: compute expression;
+# TODO: compute/simplify expression;
 
+
+### I( sin(x)^2 / (sin(x)^3 + 1) )
+n = 3; lim = pi/2;
+cs = cos(2*pi/n); sn = sin(2*pi/n);
+integrate(\(x) sin(x)^2 / (sin(x)^n + 1), 0, lim)
+(int.sinfr(c(0, lim), 1) +
+	+ int.sinfr(c(0, lim), cs + 1i*sn) +
+	+ int.sinfr(c(0, lim), cs - 1i*sn)) / n;
+
+# Note: (cs + 1i*sn)^3 = m^3 = 1;
 
 # Fraction Decomposition:
 x = pi/7; # Test
@@ -101,6 +111,16 @@ cs = cos(2*id*pi/n); sn = sin(2*id*pi/n);
 lim = pi/5
 integrate(\(x) 1 / (sin(x)^3 + 1), 0, lim)
 integrate(\(x) 1 / ((x^3 + 1) * sqrt(1 - x^2)), 0, sin(lim))
+
+###
+# numerical issue => 2 integrals;
+integrate(\(x) (sin(x)^2 + 1) / (sin(x)^3 + 1), 0, pi/2)
+integrate(\(x) 1 / ((x^3 + 1) * sqrt(abs(x^2 - 1))), 0, 1)$value +
+	+ integrate(\(x) 1 / ((x^3 + 1) * sqrt(abs(x^2 - 1))), 1, Inf)$value;
+# =>
+integrate(\(x) (1 - sin(x)^2) / (sin(x)^3 + 1), 0, pi/2)
+integrate(\(x) sqrt(abs(x-1)/(x+1)) / (x^3 + 1), 0, Inf)
+
 
 ###
 n = 5
