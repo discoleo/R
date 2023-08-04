@@ -259,3 +259,22 @@ integrate(\(x) x^p * (x^n - 1)^5 / log(x)^5, 0, 1)
 	+ 10*(3*n+p+1)^4*log(3*n+p+1) - 10*(2*n+p+1)^4*log(2*n+p+1) +
 	+ 5*(n+p+1)^4*log(n+p+1) - (p+1)^4*log(p+1)) / 24;
 
+
+##################
+##################
+
+### I( 1 / (1 - x*log(x)) )
+# Flammable Maths: I bet BPRP can not solve this Integral
+# https://www.youtube.com/watch?v=p1uJkif5zE0
+
+###
+id = seq(0, 30)
+integrate(\(x) 1 / (1 - x*log(x)), 0, 1)
+sum( (-1)^id *gamma(id + 1) / (id + 1)^(id + 1) )
+
+###
+integrate(\(x) 1 / (1 + x*log(x)), 0, 1)
+sum( gamma(id + 1) / (id + 1)^(id + 1) )
+
+# TODO: any closed formulas?
+
