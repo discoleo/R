@@ -290,6 +290,17 @@ integrate(function(x) 2*x * (1/tan(x) - tan(x)), 0, pi/4)
 integrate(function(x) x / tan(x), 0, pi/4)
 pi*log(2)/8 + Catalan/2
 
+
+### on [0, pi/3]
+# - see file: Integrals.Log.Trig.R;
+integrate(\(x) x / tan(x), 0, pi/3)
+pi*log(3)/6 - sqrt(3)/(8*6^2) *
+	( pracma::psi(1, 1/12) - pracma::psi(1, 11/12) +
+	- pracma::psi(1, 5/12) + pracma::psi(1, 7/12) +
+	- 5 * pracma::psi(1, 1/6) + 5 * pracma::psi(1, 5/6) +
+	- 3 * pracma::psi(1, 2/6) + 3 * pracma::psi(1, 4/6));
+
+
 ###
 integrate(function(x) x*(pi-x)*(pi+x) / tan(x), 0, pi)
 - 3/2 * pi * zeta(3)
