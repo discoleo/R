@@ -162,6 +162,26 @@ log(6)/6 - sqrt(3)/(4*36*pi) *
 #    https://www.youtube.com/watch?v=5kN4oH8W1r8
 
 
+############
+
+### I( x^p * log(sin(x)) )
+
+###
+integrate(function(x) x * log(sin(x)), 0, pi/2)
+- 1/8*pi^2*log(2) + 7/16 * pracma::zeta(3)
+
+###
+integrate(function(x) x^2 * log(sin(x)), 0, pi/2)
+- 1/(3*8)*pi^3*log(2) + 3/16 * pi * pracma::zeta(3)
+
+
+### Helper
+x  = pi/7
+id = seq(10000);
+log(sin(x))
+- sum( cos(2*id*x) / id ) - log(2);
+
+
 # Varia:
 integrate(\(x) - log(x) / (x^2 + x + 1), 0, 1)
 (pracma::psi(1, 1/3) - pracma::psi(1, 2/3)) / 9
