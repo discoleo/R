@@ -348,8 +348,8 @@ integrate(function(x) x^2 / sin(x), 0, pi/2)
 
 ###
 integrate(function(x) x^2*(pi - x) / sin(x), 0, pi/2)
-2*pi^2*Catalan - 7/2*pi*zeta(3) +
-	- (pracma::psi(3, 3/4) - pracma::psi(3, 1/4)) / 128 - 3/2*pi^2*Catalan
+1/2*pi^2*Catalan - 7/2*pi*zeta(3) +
+	- (pracma::psi(3, 3/4) - pracma::psi(3, 1/4)) / 128;
 
 ###
 integrate(function(x) x^3*(pi - x) / sin(x), 0, pi/2)
@@ -362,9 +362,30 @@ integrate(function(x) x^2*(pi - x)^2 / sin(x), 0, pi/2)
 - 1/2*7*pi^2*zeta(3) + 3/2*31*zeta(5)
 
 
-### Square:
+### Higher Powers
+
+### I( x^p / sin(x)^2 )
+# Maths 505: A surprisingly fascinating integral
+# https://www.youtube.com/watch?v=8DWa0zIM9lY
+# - see also file: Integrals.Log.Trig.R;
+
+
+### I( x^2 / sin(x)^2 )
 integrate(function(x) x^2 / sin(x)^2, 0, pi/2)
 pi*log(2)
+
+
+###
+integrate(function(x) x^3 / sin(x)^2, 0, pi/2)
+3/4*pi^2*log(2) - 3*7/8 * zeta(3)
+
+
+### I( x^4 / sin(x)^2 )
+integrate(function(x) x^4 / sin(x)^2, 0, pi/2)
+1/2*pi^3*log(2) - 9/4 * pi * pracma::zeta(3)
+
+
+### Varia:
 
 # By Parts:
 integrate(function(x) x^2 / tan(x)^2, 0, pi/2)
