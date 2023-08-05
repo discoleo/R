@@ -100,8 +100,15 @@ pi/8*(2 - 3*exp(-k) + exp(-3*k))
 
 ### I( cos(k*x)/x - exp(-x)/x )
 k = 3
+# upper = Inf; numerical issues;
 pracma::integral(\(x) cos(k*x)/x - exp(-x)/x, 0, 100000, no_=1024)
 - log(k)
+
+###
+k = 3
+# upper = Inf; numerical issues;
+pracma::integral(\(x) cos(k*x)/x^2 - 1/x^2, 0, 200000)
+- k*pi/2
 
 
 ########################
@@ -145,17 +152,31 @@ s = 1 - sqrt(2)
 integrate(\(x) sin(x) / x^(s+1), 0, Inf, subdivisions=128)
 integrate(\(x) sin(x) / x^(s+1), 0, 200000, subdivisions=400000)
 pracma::integral(\(x) sin(x) / x^(s+1), 0, 2^16*pi, no_intervals=1024)
-- gamma(-s)*sin(pi*s/2)
+- gamma(-s) * sin(pi*s/2)
 
 # s in (-1, 1)
 s = 2 - sqrt(2)
 integrate(\(x) sin(x) / x^(s+1), 0, 200000, subdivisions=40000)
-- gamma(-s)*sin(pi*s/2)
+- gamma(-s) * sin(pi*s/2)
 
 # s = 0
 # integrate(\(x) sin(x) / x, 0, Inf, subdivisions=128)
 integrate(\(x) sin(x) / x, 0, 200000, subdivisions=400000)
 pi/2
+
+
+### I( cos(k*x) / x^s )
+# s in (0, 2) (with Gamma-term);
+# but numerically until s = 1.52...;
+s = 2 - sqrt(2); k = 3;
+pracma::integral(\(x) cos(k*x) / x^s - exp(-x)/x^s, 0, 1, no_=1025) +
+	pracma::integral(\(x) cos(k*x) / x^s - exp(-x)/x^s, 1, 200000);
+gamma(1-s) * sin(pi*s/2) * k^(s-1) - gamma(1-s);
+
+# Lim: s -> 1
+s = 1 - 1E-6;
+gamma(1-s) * sin(pi*s/2) * k^(s-1) - gamma(1-s);
+- log(k);
 
 # Note: Compute:
 # lim (gamma(x) * sin(pi*x)) as x -> 0;
