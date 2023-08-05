@@ -96,6 +96,14 @@ pracma::integral(function(x) sin(k*x)^3 / (x*(x^2 + 1)), 0, 100000)
 pi/8*(2 - 3*exp(-k) + exp(-3*k))
 
 
+### Helper:
+
+### I( cos(k*x)/x - exp(-x)/x )
+k = 3
+pracma::integral(\(x) cos(k*x)/x - exp(-x)/x, 0, 100000, no_=1024)
+- log(k)
+
+
 ########################
 
 ### Numerical Stability:
