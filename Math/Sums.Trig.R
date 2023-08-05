@@ -61,3 +61,23 @@ sum(cos(id) / id)
 - log(2*sin(1/2))
 
 
+######################
+######################
+
+### prod( (1 - 1/n^2)^(+/- n) )
+# Michael Penn: a nice product from Ramanujan -- featuring 3 important constants!
+# https://www.youtube.com/watch?v=LG78xvZyRzU
+
+
+### 1 / cos(pi/2 * x)
+x  = 1/7
+id = seq(0, 30000)
+1 / cos(pi/2 * x) # ==
+4/pi * sum( (-1)^id * (2*id+1) / ((2*id+1)^2 - x^2) )
+
+
+###
+id = seq(1200)
+prod( (1 - 1/(2*id+1)^2)^((-1)^id * (2*id+1)) )
+pi/8 * exp(4*Catalan/pi)
+
