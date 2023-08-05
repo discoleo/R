@@ -116,8 +116,10 @@ print(pi/2*exp(-k), 12)
 ### Basic
 
 ### sin(x) / x^(s+1)
-# A RIDICULOUSLY AWESOME INTEGRAL: Ramanujan vs Maths 505
-# https://www.youtube.com/watch?v=_VkRvuSxF18
+# 1. Maths 505: A RIDICULOUSLY AWESOME INTEGRAL: Ramanujan vs Maths 505
+#    https://www.youtube.com/watch?v=_VkRvuSxF18
+# 2. Michael Penn: A nice integral.
+#    https://www.youtube.com/watch?v=nkaZEI_e2SU
 
 # see also:
 # 3Blue1Brown: Researchers thought this was a bug (Borwein integrals)
@@ -217,6 +219,16 @@ integrate(\(x) sin(k*x)^3 / x^p, 32*pi*1000, 32*pi*10000)
 # - already numerical issues;
 integrate(\(x) sin(x) / x * sin(x/3) / x, 0, Inf, rel.tol=1E-6, subdivisions=4000)
 pi/2 / 3
+
+
+################
+### on [0, pi/2]
+
+###
+integrate(\(x) sin(x) / x, 0, pi/2)
+pi/2 - integrate(\(x) x * exp(-pi/2 * x) / (x^2+1), 0, Inf, rel.tol=1E-8)$value
+# TODO: ???
+# Note: Walpha reverses the order of the integrals;
 
 
 ######################
@@ -386,7 +398,7 @@ integrate(function(x) x^2 / sin(x)^2, 0, pi/2)
 pi*log(2)
 
 
-###
+### I( x^3 / sin(x)^2 )
 integrate(function(x) x^3 / sin(x)^2, 0, pi/2)
 3/4*pi^2*log(2) - 3*7/8 * zeta(3)
 
@@ -402,13 +414,16 @@ integrate(function(x) x^4 / sin(x)^2, 0, pi/2)
 integrate(function(x) x^2 / tan(x)^2, 0, pi/2)
 pi*log(2) - pi^3/24
 
-# By Parts:
+# By Parts: => 1/2 * I( x^2 * (1 + 1/tan(x)^2) )
 integrate(function(x) x / tan(x), 0, pi/2)
 pi*log(2)/2
 
 # By Parts:
 integrate(function(x) log(sin(x)), 0, pi/2)
 - pi*log(2)/2
+
+# - for other intervals, see file:
+#   Integrals.Log.Trig.R;
 
 
 #######################
