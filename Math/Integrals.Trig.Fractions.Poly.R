@@ -91,6 +91,11 @@ pracma::integral(function(x) sin(k*x) / (x*(x^2 + 1)), 0, 100000)
 pi/2*(1 - exp(-k))
 
 
+### I( sin(k*x)^3 / (x*(x^2 + 1)) )
+pracma::integral(function(x) sin(k*x)^3 / (x*(x^2 + 1)), 0, 100000)
+pi/8*(2 - 3*exp(-k) + exp(-3*k))
+
+
 ########################
 
 ### Numerical Stability:
