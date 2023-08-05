@@ -77,3 +77,39 @@ plot(sol[, 1:2], type="l", col="green")
 y = sapply(x, \(k) Ipk(k, lim=lim))
 lines(x, y, col="red", lty=2)
 
+
+######################
+
+### y = I( sin(k*z)^2 / (z^2 + 1) )
+# d2y = 4*y + sin(2*c*x)/x - 2*atan(c);
+
+Ipk = function(k, lim=pi/2) integrate(\(x) sin(k*x)^2 / (x^2 + 1), 0, lim)$value;
+
+Ip = function(x, y, pars) {
+	c = pars$lim;
+	# d2y = 4*y[1] - 4*c*sin(c*x)^2 - 2*c*cos(2*c*x) + sin(2*c*x)/x + 2*c - 2*atan(c);
+	d2y = 4*y[1] + sin(2*c*x)/x - 2*atan(c);
+	list(c(y[2], d2y));
+}
+
+
+###
+lim = 5/4 * pi;
+k.start = 0.1; k.end = 1;
+x = seq(k.start, k.end, by = 0.01)
+
+sol <- bvpshoot(
+	yini = c(Ipk(k.start, lim=lim), NA),
+	yend = c(Ipk(k.end, lim=lim), NA),
+	x = x, func = Ip, guess = 0, parms = list(lim=lim))
+
+### Test
+
+plot(sol)
+
+# perfect match
+par(mfrow = c(1, 1))
+plot(sol[, 1:2], type="l", col="green")
+y = sapply(x, \(k) Ipk(k, lim=lim))
+lines(x, y, col="red", lty=2)
+
