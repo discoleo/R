@@ -152,3 +152,11 @@ plot(sol[, 1:2], type="l", col="green")
 y = sapply(x, \(k) Ipk(k, lim=lim))
 lines(x, y, col="red", lty=2)
 
+
+#################
+
+lim = Inf;
+Ip = function(x, y, pars) {
+	d2y = y[1] - 2/3 * gamma(2/3) * sin(pi/3) / x^(2/3);
+	list(c(y[2], d2y));
+}
