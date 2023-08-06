@@ -168,22 +168,25 @@ Ip = function(x, y, pars) {
 # Free Term: Polynomial
 
 Ipk = function(k, lim=Inf) {
+	if(! is.infinite(lim)) warning("Range must be infinite!");
 	# numerical issues:
 	r1 = pracma::quadinf(\(x) sin(k*x^(4/3)) / (x^(8/3) + 1), 0, Inf)$Q;
 	r2 = integrate(\(x) sin(k*x^(5)) / (x^10 + 1), 0, Inf)$value;
+	r3 = pracma::quadinf(\(x) sin(k*x^(3/4)) / (x^(3/2) + 1), 0, Inf)$Q;
 	# Normalization:
-	r1 = r1 / (3/4 * gamma(3/4) * sin(pi*2/3));
+	r1 = r1 / (3/4 * gamma(3/4) * sin(pi*3/8));
 	r2 = r2 / (1/5 * gamma(1/5) * sin(pi/10));
+	r3 = r3 / (4/3 * gamma(4/3) * sin(pi*2/3));
 	# just some factor:
-	b = c(2, 5);
-	r = sum(b * c(r1, r2));
+	b = c(2, 5, -2);
+	r = sum(b * c(r1, r2, r3));
 	return(r);
 }
 
 Ip = function(x, y, pars) {
 	# Note: same factor as above:
-	b = c(2, 5)
-	d2y = y[1] - b[1] / x^(3/4) - b[2] / x^(1/5);
+	b = c(2, 5, -2)
+	d2y = y[1] - b[1] / x^(3/4) - b[2] / x^(1/5) - b[3] / x^(4/3);
 	list(c(y[2], d2y));
 }
 lim = Inf;
