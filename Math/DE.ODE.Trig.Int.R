@@ -164,20 +164,26 @@ Ip = function(x, y, pars) {
 
 #################
 
-### Free Term: Polynomials
+### Composite Example
+# Free Term: Polynomial
 
 Ipk = function(k, lim=Inf) {
 	# numerical issues:
 	r1 = pracma::integral(\(x) sin(k*x^(4/3)) / (x^(8/3) + 1), 0, Inf);
 	r2 = integrate(\(x) sin(k*x^(5)) / (x^10 + 1), 0, Inf)$value;
+	# Normalization:
 	r1 = r1 / (3/4 * gamma(3/4) * sin(pi*2/3));
 	r2 = r2 / (1/5 * gamma(1/5) * sin(pi/10));
 	# just some factor:
-	return(r1 + 2*r2);
+	b = c(2, 5);
+	r = sum(b * c(r1, r2));
+	return(r);
 }
 
 Ip = function(x, y, pars) {
-	d2y = y[1] - 1 / x^(3/4) - 2 / x^(1/5);
+	# Note: same factor as above:
+	b = c(2, 5)
+	d2y = y[1] - b[1] / x^(3/4) - b[2] / x^(1/5);
 	list(c(y[2], d2y));
 }
 lim = Inf;
@@ -196,7 +202,8 @@ sol <- bvpshoot(
 
 plot(sol)
 
-# perfect match
+# almost "perfect" match
+# - possible numerical instabilities in computing the quasi-exact integral;
 par(mfrow = c(1, 1))
 plot(sol[, 1:2], type="l", col="green")
 y = sapply(x, \(k) Ipk(k, lim=lim))
