@@ -202,3 +202,47 @@ plot(sol[, 1:2], type="l", col="green")
 y = sapply(x, \(k) Ipk(k, lim=lim))
 lines(x, y, col="red", lty=2)
 
+
+######################
+######################
+
+### y = k * I( sin(k*z^(5/3)) / (z^(10/3) + 1) )
+# x*d2y = 2*dy + (x^2 - 2)*y - x^(1/3);
+
+# includes dy term;
+
+Ipk = function(k, lim=Inf, subdivisions=4097) {
+	r = integrate(\(x) k * sin(k*x^(5/3)) / (x^(10/3) + 1), 0, lim,
+		subdivisions=subdivisions)$value;
+	r = r / (3/5 * gamma(3/5) * sin(pi/2*3/5));
+	return(r);
+}
+
+Ip = function(x, y, pars) {
+	d2y = 2*y[2]/x + (x - 2/x)*y[1] - 1/x^(2/3);
+	list(c(y[2], d2y));
+}
+lim = Inf;
+
+
+###
+lim = Inf;
+k.start = 0.1; k.end = 1.5;
+x = seq(k.start, k.end, by = 0.01)
+
+sol <- bvpshoot(
+	yini = c(Ipk(k.start, lim=lim), NA),
+	yend = c(Ipk(k.end, lim=lim), NA),
+	x = x, func = Ip, guess = 0, parms = list(lim=lim))
+
+### Test
+
+plot(sol)
+
+# perfect match
+par(mfrow = c(1, 1))
+plot(sol[, 1:2], type="l", col="green")
+y = sapply(x, \(k) Ipk(k, lim=lim))
+lines(x, y, col="red", lty=2)
+
+
