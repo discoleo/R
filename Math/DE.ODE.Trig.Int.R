@@ -169,7 +169,7 @@ Ip = function(x, y, pars) {
 
 Ipk = function(k, lim=Inf) {
 	# numerical issues:
-	r1 = pracma::integral(\(x) sin(k*x^(4/3)) / (x^(8/3) + 1), 0, Inf);
+	r1 = pracma::quadinf(\(x) sin(k*x^(4/3)) / (x^(8/3) + 1), 0, Inf)$Q;
 	r2 = integrate(\(x) sin(k*x^(5)) / (x^10 + 1), 0, Inf)$value;
 	# Normalization:
 	r1 = r1 / (3/4 * gamma(3/4) * sin(pi*2/3));
@@ -212,6 +212,8 @@ lines(x, y, col="red", lty=2)
 
 ######################
 ######################
+
+### y(k) = k * y0
 
 ### y = k * I( sin(k*z^(5/3)) / (z^(10/3) + 1) )
 # x*d2y = 2*dy + (x^2 - 2)*y - x^(1/3);
