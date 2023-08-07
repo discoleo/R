@@ -258,3 +258,55 @@ y = sapply(x, \(k) Ipk(k, lim=lim))
 lines(x, y, col="red", lty=2)
 
 
+######################
+######################
+
+### y(k) = 1/k * y0
+
+# TODO
+
+
+######################
+######################
+
+### d3y = y + P(x)
+
+Ipk = function(k, lim=Inf, n=3) {
+	r = integrate(\(x) exp(-k*x^n) / (x^(3*n) + 1), 0, lim)$value;
+	# Normalization:
+	r = r * n / gamma(1/n);
+	return(r);
+}
+dyIpk = function(k, lim=Inf, n=3) {
+	r = integrate(\(x) - x^n * exp(-k*x^n) / (x^(3*n) + 1), 0, lim)$value;
+	# Normalization:
+	r = r * n / gamma(1/n);
+	return(r);
+}
+
+Ip = function(x, y, pars) {
+	n = pars$n;
+	d3y = y[1] - 1 / x^(1/n);
+	list(c(y[2], y[3], d3y));
+}
+lim = Inf;
+
+n = 3;
+k.start = 0.1; k.end = 1.5;
+x = seq(k.start, k.end, by = 0.01)
+
+sol <- bvpshoot(
+	yini = c(Ipk(k.start, lim=lim, n=n), dyIpk(k.start, lim=lim, n=n), NA),
+	yend = c(Ipk(k.end, lim=lim, n=n), NA, NA),
+	x = x, func = Ip, guess = c(0.1), parms = list(lim=lim, n=n))
+
+### Test
+
+plot(sol)
+
+# perfect match
+par(mfrow = c(1, 1))
+plot(sol[, 1:2], type="l", col="green")
+y = sapply(x, \(k) Ipk(k, lim=lim, n=n))
+lines(x, y, col="red", lty=2)
+
