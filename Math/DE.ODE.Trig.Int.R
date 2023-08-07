@@ -269,7 +269,7 @@ lines(x, y, col="red", lty=2)
 ######################
 ######################
 
-### d3y = y + P(x)
+### d3y = y + P(1/x)
 
 Ipk = function(k, lim=Inf, n=3) {
 	r = integrate(\(x) exp(-k*x^n) / (x^(3*n) + 1), 0, lim)$value;
@@ -314,7 +314,7 @@ lines(x, y, col="red", lty=2)
 ######################
 ######################
 
-### d3y = - y + P(x)
+### d3y = - y + P(1/x)
 
 Ipk = function(k, lim=Inf, n=3, tol=1E-6) {
 	r = integrate(\(x) exp(-k*x^n) / (x^(3*n) - 1), 0, 1 - tol)$value +
@@ -355,5 +355,54 @@ plot(sol)
 par(mfrow = c(1, 1))
 plot(sol[, 1:2], type="l", col="green")
 y = sapply(x, \(k) Ipk(k, lim=lim, n=n))
+lines(x, y, col="red", lty=2)
+
+
+######################
+######################
+
+### d2y = y - 1/(n*x+1) - 1/(n*x+1)^2
+
+# TODO: debug
+
+Ipk = function(k, n=1, lim=1) {
+	r = integrate(\(x)(x^(n*k) - exp(-n*k)) / (log(x) + 1), 0, lim)$value;
+	r = r / n;
+	return(r);
+}
+# dy = 1/(n*k + 1) - y;
+dyIpk = function(k, n=1, lim=1) {
+	r = integrate(\(x)(x^(n*k) - exp(-n*k)) / (log(x) + 1), 0, lim)$value;
+	r = 1/(n*k+1) - r / n;
+	return(r);
+}
+
+Ip = function(x, y, pars) {
+	n = pars$n;
+	d2y = y[2] - 1/(n*x + 1) - 1/(n*x + 1)^2;
+	list(c(y[2], d2y));
+}
+lim = 1;
+
+
+###
+n = 1; # n = 1/3;
+k.start = 0.1; k.end = 1.5;
+x = seq(k.start, k.end, by = 0.005)
+dyIpk(k.start, n=n, lim=lim)
+
+sol <- bvpshoot(
+	yini = c(Ipk(k.start, n=n, lim=lim), NA),
+	yend = c(Ipk(k.end, n=n, lim=lim), NA),
+	x = x, func = Ip, guess = 0.8, parms = list(n=n, lim=lim))
+
+### Test
+
+plot(sol)
+
+# TODO: debug
+par(mfrow = c(1, 1))
+plot(sol[, 1:2], type="l", col="green")
+y = sapply(x, \(k) Ipk(k, n=n, lim=lim))
 lines(x, y, col="red", lty=2)
 
