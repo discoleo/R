@@ -361,48 +361,65 @@ lines(x, y, col="red", lty=2)
 ######################
 ######################
 
-### d2y = y - 1/(n*x+1) - n/(n*x+1)^2
+### d2y = n^2*y - n/(n*x+1) - n/(n*x+1)^2
 
-# TODO: debug
 
 Ipk = function(k, n=1, lim=1) {
-	r = integrate(\(x)(x^(n*k) - exp(-n*k)) / (log(x) + 1), 0, lim)$value;
+	r = integrate(\(x) (x^(n*k) - exp(-n*k)) / (log(x) + 1), 0, lim, rel.tol=1E-8)$value;
 	r = r / n;
+	# Lim: n -> 0 => I/n = k;
 	return(r);
 }
-# dy = 1/(n*k + 1) - y;
+# dy = 1/(n*k + 1) - n * y;
 dyIpk = function(k, n=1, lim=1) {
-	r = integrate(\(x)(x^(n*k) - exp(-n*k)) / (log(x) + 1), 0, lim)$value;
-	r = 1/(n*k+1) - r / n;
+	r = 1/(n*k+1) - n * Ipk(k=k, n=n, lim=lim);
 	return(r);
 }
 
-Ip = function(x, y, pars) {
-	n = pars$n;
-	d2y = y[2] - 1/(n*x + 1) - n/(n*x + 1)^2;
+Ip = function(x, y, parms) {
+	n = parms$n;
+	d2y = n^2*y[1] - n*(1/(n*x + 1) + 1/(n*x + 1)^2);
 	list(c(y[2], d2y));
 }
 lim = 1;
 
 
 ###
-n = 1; # n = 1/3;
+n = 2; # n = 1/3;
 k.start = 0.1; k.end = 1.5;
 x = seq(k.start, k.end, by = 0.005)
+# Guess:
 dyIpk(k.start, n=n, lim=lim)
+
 
 sol <- bvpshoot(
 	yini = c(Ipk(k.start, n=n, lim=lim), NA),
 	yend = c(Ipk(k.end, n=n, lim=lim), NA),
-	x = x, func = Ip, guess = 0.8, parms = list(n=n, lim=lim))
+	x = x, func = Ip, guess = 0.7, parms = list(n=n, lim=lim))
+
 
 ### Test
 
 plot(sol)
 
-# TODO: debug
+#
 par(mfrow = c(1, 1))
 plot(sol[, 1:2], type="l", col="green")
 y = sapply(x, \(k) Ipk(k, n=n, lim=lim))
 lines(x, y, col="red", lty=2)
+
+
+### Test: dy
+n = 2;
+k.start = 0.1; k.end = 1.5;
+xguess = seq(k.start, k.end, by = 0.0005);
+yguess = sapply(xguess, \(k) Ipk(k, n=n, lim=lim))
+# seems a good match:
+plot(xguess[-1], diff(yguess)/diff(xguess), type="l")
+lines(xguess, 1/(n*xguess+1) - n*yguess, col="red", lty=2)
+abline(h=0); abline(v=2/3, col="blue");
+#
+plot(xguess[- 1], diff(dy)/diff(xguess), type="l")
+lines(xguess, - n/(n*xguess+1) - n/(n*xguess+1)^2 + n^2*yguess, col="red", lty=2)
+
 
