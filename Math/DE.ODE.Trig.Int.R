@@ -361,7 +361,7 @@ lines(x, y, col="red", lty=2)
 ######################
 ######################
 
-### d2y = y - 1/(n*x+1) - 1/(n*x+1)^2
+### d2y = y - 1/(n*x+1) - n/(n*x+1)^2
 
 # TODO: debug
 
@@ -379,7 +379,7 @@ dyIpk = function(k, n=1, lim=1) {
 
 Ip = function(x, y, pars) {
 	n = pars$n;
-	d2y = y[2] - 1/(n*x + 1) - 1/(n*x + 1)^2;
+	d2y = y[2] - 1/(n*x + 1) - n/(n*x + 1)^2;
 	list(c(y[2], d2y));
 }
 lim = 1;
