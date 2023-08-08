@@ -207,3 +207,28 @@ integrate(function(x) log(tan(x)), 0, pi/4)
 integrate(\(x) log(cos(x))^2, 0, pi/2)
 pi^3/24 + pi/2 * log(2)^2
 
+
+#########################
+#########################
+
+### Derived Integrals
+
+### I( log(x) / sqrt(2*b*x - x^2) )
+# Maths 505: A nice integral from 1886
+# https://www.youtube.com/watch?v=CbAcyU8gFPw
+
+###
+integrate(\(x) log(x) / sqrt(4*x - x^2), 0, 2)
+- 2*Catalan
+
+###
+integrate(\(x) log(x) / sqrt(6*x - x^2), 0, 3)
+pi/2 *  log(3/2) - 2*Catalan
+
+###
+b = sqrt(5)
+integrate(\(x) log(x) / sqrt(2*b*x - x^2), 0, b)
+pi/2 *  log(b/2) - 2*Catalan
+
+# TODO: log(sin)-interval [0, pi/3];
+
