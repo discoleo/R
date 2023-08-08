@@ -528,9 +528,19 @@ integrate(\(x) x^(1 - p) * (1 - x)^(p - 1), 1/2, 1)
 integrate(\(x) x^(- p) * (1 - x)^p, 1/2, 1)
 (digamma((p + 1)/2) - digamma(p/2)) * p / 2 - 1/2
 
-#
+# Base: Pow = 2
 integrate(\(x) x^p / (x^n + 1)^2, 0, 1)
 (digamma(((p+1)/n + 0)/2) - digamma(((p+1)/n - 1)/2)) * ((p+1)/n - 1) / (2*n) - 1/(2*n)
+
+
+### Special Radicals:
+n = 5
+integrate(\(x) 1 / (x^n + 1)^(1/n), 0, 1)
+integrate(\(x) 1/n * x^(1/n - 1) * (1 - x)^(-1), 0, 1/2)
+#
+- (digamma(1/n) + Euler)/n +
+    + integrate(\(x) x^(n-2) * (x-1) / (x^n - 1), 1, 2^(1/n))$value;
+
 
 ####################
 ####################
