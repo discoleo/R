@@ -441,7 +441,6 @@ Ipk.old = function(k, n=1, lim=1) {
 
 Ipk = function(k, n=1, lim=1) {
 	r = integrate(\(x) x^(n*k) / (n^2*log(x)^2 + 1), 0, lim, rel.tol=1E-8)$value;
-	# Lim: n -> 0 => I/n = k;
 	return(r);
 }
 
@@ -484,7 +483,6 @@ lines(x, y, col="red", lty=2)
 
 Ipk = function(k, n=1, lim=1) {
 	r = integrate(\(x) (x^(n*k) - exp(-k)) / (n^2*log(x)^2 - 1), 0, lim, rel.tol=1E-8)$value;
-	# Lim: n -> 0 => I/n = k;
 	return(r);
 }
 
