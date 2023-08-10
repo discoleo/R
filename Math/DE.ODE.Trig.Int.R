@@ -361,24 +361,23 @@ lines(x, y, col="red", lty=2)
 ######################
 ######################
 
-### d2y = n^2*y - n/(n*x+1) - n/(n*x+1)^2
+### d2y = y - 1/(n*x+1) - n/(n*x+1)^2
 
 
 Ipk = function(k, n=1, lim=1) {
-	r = integrate(\(x) (x^(n*k) - exp(-n*k)) / (log(x) + 1), 0, lim, rel.tol=1E-8)$value;
-	r = r / n;
+	r = integrate(\(x) (x^(n*k) - exp(-k)) / (n*log(x) + 1), 0, lim, rel.tol=1E-8)$value;
 	# Lim: n -> 0 => I/n = k;
 	return(r);
 }
-# dy = 1/(n*k + 1) - n * y;
+# dy = 1/(n*k + 1) - y;
 dyIpk = function(k, n=1, lim=1) {
-	r = 1/(n*k+1) - n * Ipk(k=k, n=n, lim=lim);
+	r = 1/(n*k+1) - Ipk(k=k, n=n, lim=lim);
 	return(r);
 }
 
 Ip = function(x, y, parms) {
 	n = parms$n;
-	d2y = n^2*y[1] - n*(1/(n*x + 1) + 1/(n*x + 1)^2);
+	d2y = y[1] - (1/(n*x + 1) + n/(n*x + 1)^2);
 	list(c(y[2], d2y));
 }
 lim = 1;
@@ -416,10 +415,21 @@ xguess = seq(k.start, k.end, by = 0.0005);
 yguess = sapply(xguess, \(k) Ipk(k, n=n, lim=lim))
 # seems a good match:
 plot(xguess[-1], diff(yguess)/diff(xguess), type="l")
-lines(xguess, 1/(n*xguess+1) - n*yguess, col="red", lty=2)
+lines(xguess, 1/(n*xguess+1) - yguess, col="red", lty=2)
 abline(h=0); abline(v=2/3, col="blue");
 #
+dy = 1/(n*xguess+1) - yguess;
 plot(xguess[- 1], diff(dy)/diff(xguess), type="l")
-lines(xguess, - n/(n*xguess+1) - n/(n*xguess+1)^2 + n^2*yguess, col="red", lty=2)
+lines(xguess, - 1/(n*xguess+1) - n/(n*xguess+1)^2 + yguess, col="red", lty=2)
 
+
+### Varia:
+
+# [old]
+Ipk.old = function(k, n=1, lim=1) {
+	r = integrate(\(x) (x^(n*k) - exp(-n*k)) / (log(x) + 1), 0, lim, rel.tol=1E-8)$value;
+	r = r / n;
+	# Lim: n -> 0 => I/n = k;
+	return(r);
+}
 
