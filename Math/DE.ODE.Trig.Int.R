@@ -475,3 +475,46 @@ plot(sol[, 1:2], type="l", col="green")
 y = sapply(x, \(k) Ipk(k, n=n, lim=lim))
 lines(x, y, col="red", lty=2)
 
+
+######################
+######################
+
+### d2y = y + 1/(n*x+1)
+
+
+Ipk = function(k, n=1, lim=1) {
+	r = integrate(\(x) (x^(n*k) - exp(-k)) / (n^2*log(x)^2 - 1), 0, lim, rel.tol=1E-8)$value;
+	# Lim: n -> 0 => I/n = k;
+	return(r);
+}
+
+Ip = function(x, y, parms) {
+	n = parms$n;
+	d2y = y[1] + 1/(n*x + 1);
+	list(c(y[2], d2y));
+}
+lim = 1;
+
+
+###
+n = 2; # n = 1/3;
+k.start = 0.1; k.end = 1.5;
+x = seq(k.start, k.end, by = 0.005)
+
+
+sol <- bvpshoot(
+	yini = c(Ipk(k.start, n=n, lim=lim), NA),
+	yend = c(Ipk(k.end, n=n, lim=lim), NA),
+	x = x, func = Ip, guess = 0.7, parms = list(n=n, lim=lim))
+
+
+### Test
+
+plot(sol)
+
+#
+par(mfrow = c(1, 1))
+plot(sol[, 1:2], type="l", col="green")
+y = sapply(x, \(k) Ipk(k, n=n, lim=lim))
+lines(x, y, col="red", lty=2)
+
