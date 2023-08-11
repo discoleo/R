@@ -309,6 +309,22 @@ integrate(function(x) log(x)/(x+1)^(6/5), 0, Inf, rel.tol=1E-8)
 ########################
 ########################
 
+### on [0, 1]
+
+### Gen: Simple
+p = - 1/3; q = 1/5; b = 4;
+integrate(function(x) x^p * (b - x)^q * log(x), lower=0, upper=b)
+b^(p+q+1) * gamma(p+1)*gamma(q+1) / gamma(p+q+2) *
+	(digamma(p+1) - digamma(p+q+2) + log(b));
+
+### Base:
+p = 1/3; q = 1/5; b = 4;
+integrate(function(x) x^p * (b - x)^q, lower=0, upper=b)
+b^(p+q+1) * gamma(p+1)*gamma(q+1) / gamma(p+q+2)
+
+
+### True [0,1]-Series
+
 ### I( x * log(x+1) / (x+1)^s )
 s = 1/sqrt(3)
 integrate(\(x) x * log(x+1) / (x+1)^s, 0, 1)
