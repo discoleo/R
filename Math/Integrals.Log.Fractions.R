@@ -585,8 +585,18 @@ pracma::integral(function(x) log(x^n + 1)/x^(p+1), 0, 1)
 pi/(2*p)/sin(pi*(n-p)/n) - log(2)/p + logcos.sh(n, p)/p;
 
 
+###################
+
+### I( log(x^2 + 1) / (x^2 + 1) )
+integrate(\(x) log(x^2 + 1) / (x^2 + 1), 0, 1)
+pi*log(2)/2 - Catalan
+
+
 ########################
 ########################
+
+### I( log(x^(4*k) + 1) / (x^2 + 1) )
+# k = Integer; on [0, Inf]
 
 # qncubed3: Complex Analysis: Fancy Branch Cuts
 # https://www.youtube.com/watch?v=2EnE78LKY3Y
@@ -610,7 +620,7 @@ pi*log(2) + pi*log(2 + 1/sin(pi/8) + sin(2*pi/8))
 
 ###
 k = 3
-integrate(function(x) log(x^(4*k) + 1)/(x^2 + 1), 0, Inf)
+integrate(function(x) log(x^(4*k) + 1) / (x^2 + 1), 0, Inf)
 2*k*pi*log(2) + 2*pi*log(prod(cos(pi/4 - pi * seq(1, 2*k-1, by=2)/(8*k))))
 
 # Derivation:
