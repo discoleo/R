@@ -76,6 +76,8 @@ gamma((p+1)/n) * gamma(k - (p+1)/n) *
 
 
 ### on [0, 1]
+
+### I( x^p * log(x) / (x^n + 1) )
 n = 8
 p = sqrt(2)
 integrate(function(x) x^p * log(x) / (x^n + 1), 0, 1)
@@ -83,7 +85,7 @@ integrate(function(x) x^p * log(x) / (x^n + 1), 0, 1)
 
 
 ### I( x^p * (1 - x)^q * log(x) )
-# - is equivalent to: I( x^p * log(x) / (x^n + 1) ) on [0, Inf];
+# - is equivalent to: I( x^p1 * log(x) / (x^n + 1)^k ) on [0, Inf];
 p = sqrt(2); q = sqrt(3);
 integrate(\(x) x^p * (1 - x)^q * log(x), 0, 1, rel.tol=1E-8)
 gamma(p+1) * gamma(q+1) / gamma(p+q+2) * (digamma(p+1) - digamma(p+q+2))
@@ -179,6 +181,12 @@ integrate(\(x) x^p * (1/(x + b) - (x - b)/(x^2 + 1)) / (b^2 + 1), 0, 1)
 b = sqrt(3); a = sqrt(2)
 integrate(function(x) log(x^2 + a^2) / (x^2 + b^2), lower=0, upper=Inf)
 pi*log(a + b)/b
+
+### I( log(x^2 + a^2) / (x^2 + b^2)^2 )
+b = sqrt(3); a = sqrt(2)
+integrate(function(x) log(x^2 + a^2) / (x^2 + b^2)^2, lower=0, upper=Inf)
+pi*(log(a + b) - b/(a+b)) / (2*b^3)
+
 
 ### Helper
 integrate(function(x) log(x^2 + 1) / (x^2 + 1), lower=0, upper=Inf)
