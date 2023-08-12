@@ -45,6 +45,9 @@ integrate(\(x) (tan(x) + tan(x)^3)/x, 0, pi/4)
 #######################
 #######################
 
+############
+### ATAN ###
+
 ### I( atan(x^n) )
 n = sqrt(5)
 integrate(\(x) atan(x^n), 0, 1)
@@ -78,6 +81,13 @@ integrate(\(x) x^p * atan(x^n) * log(x), 0, 1)
 ########################
 
 ### ATAN-Fractions
+
+
+### I( (atan(x) - pi/4) / (x^2 - 1) )
+integrate(function(x) (atan(x) - pi/4) / (x^2 - 1), 0, 1)
+Catalan / 2
+
+# Extra-Component: pi/8*log(2);
 
 
 ### I( atan(sqrt(x^2 + b^2)) / ((x^2 + 1) * sqrt(x^2 + b^2)) )
