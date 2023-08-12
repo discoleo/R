@@ -82,6 +82,13 @@ integrate(function(x) x^p * log(x) / (x^n + 1), 0, 1)
 (pracma::psi(1, ((p+1)/n + 1)/2) - pracma::psi(1, (p+1)/n/2)) / (4*n^2);
 
 
+### I( x^p * (1 - x)^q * log(x) )
+# - is equivalent to: I( x^p * log(x) / (x^n + 1) ) on [0, Inf];
+p = sqrt(2); q = sqrt(3);
+integrate(\(x) x^p * (1 - x)^q * log(x), 0, 1, rel.tol=1E-8)
+gamma(p+1) * gamma(q+1) / gamma(p+q+2) * (digamma(p+1) - digamma(p+q+2))
+
+
 ####################
 ####################
 
@@ -694,12 +701,15 @@ integrate(function(x) log(x+1) * x / (x + 1)^6, 0, Inf)
 ### p = 1/2
 a = sqrt(2); b = sqrt(3);
 p = 1/2; d = (b - a);
+integrate(function(x) log(x) * ((x - a)*(b - x))^p, a, b)
+# TODO: ???
+
+### [old]
 f = function(x) {
 	tmp = (x - (a+b)/2)*2/d;
 	tmp = round(tmp, 12); # keep between [-1, 1];
 	(d/2)^(2*p + 1)*(tmp*sqrt(1-tmp^2) + asin(tmp))/2;
 }
-integrate(function(x) log(x) * ((x - a)*(b - x))^p, a, b)
 log(b)*f(b) - log(a)*f(a) - integrate(function(x) f(x)/x, a, b)$value
 pi/4*(d/2)^(2*p + 1)*log(a*b) - integrate(function(x) f(x)/x, a, b)$value
 # TODO
