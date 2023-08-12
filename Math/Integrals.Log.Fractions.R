@@ -187,6 +187,11 @@ b = sqrt(3); a = sqrt(2)
 integrate(function(x) log(x^2 + a^2) / (x^2 + b^2)^2, lower=0, upper=Inf)
 pi*(log(a + b) - b/(a+b)) / (2*b^3)
 
+### I( log(x^2 + a^2) / (x^2 + b^2)^3 )
+b = sqrt(3); a = sqrt(2)
+integrate(function(x) log(x^2 + a^2) / (x^2 + b^2)^3, lower=0, upper=Inf)
+pi*(3*log(a + b) - 4*b/(a+b) + a*b/(a+b)^2) / (8*b^5);
+
 
 ### Helper
 integrate(function(x) log(x^2 + 1) / (x^2 + 1), lower=0, upper=Inf)
@@ -229,7 +234,7 @@ Const = - pi/sin(pi/n) / b^(n-1) * (pi*cos(pi/n)/sin(pi/n) / n - log(b));
 ### Explicit Cases:
 
 ### Case: n = 3
-n = 3
+n = 3; # n = hard-coded;
 a = sqrt(3); b = sqrt(5)
 integrate(function(x) log(x^n + a^n) / (x^n + b^n), lower=0, upper=Inf)
 sqrt(3)*pi/3 * log((a^n - b^n)/(a - b)) / b^2 - pi^2/3/b^2 +
