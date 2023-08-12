@@ -6,7 +6,7 @@
 ### Integrals: Logarithms
 ### Log-Fractions
 ###
-### draft v.0.2c
+### draft v.0.2d
 
 
 ##################
@@ -28,6 +28,7 @@ Catalan = 0.915965594177219015054603514;
 # I( x^p * log(x) / (x^n + 1)^k ) on [0, Inf]
 # I( x^p * log(x^n + 1) / (x^n + 1)^k ) on [0, Inf]
 # I( log(x^n + 1) / x^p ) on [0, Inf]
+# I( log(x^n + 1) / x^p ) on [0, 1]
 # I( log(x^n + a^n) / (x^n + b^n) ) on [0, Inf]
 # I( (x^p - 1) / ((x^n + 1) * log(x)) ) on [0, 1]
 ### Diff-Type:
@@ -82,6 +83,12 @@ n = 8
 p = sqrt(2)
 integrate(function(x) x^p * log(x) / (x^n + 1), 0, 1)
 (pracma::psi(1, ((p+1)/n + 1)/2) - pracma::psi(1, (p+1)/n/2)) / (4*n^2);
+
+
+### I( log(x^n + 1) / x^(p+1) )
+n = sqrt(5); p = sqrt(3);
+integrate(function(x) log(x^n + 1) / x^(p+1), 0, 1)
+(digamma(((n-p)/n + 1)/2) - digamma((n-p)/(2*n))) / (2*p) - log(2)/p;
 
 
 ### I( x^p * (1 - x)^q * log(x) )
@@ -545,12 +552,13 @@ logcos.old = function(n, p) {
 
 ### n = ODD or EVEN
 n = 7;
-p = 1; # INTEGER between [1, n-2]!
+p = sqrt(3); # INTEGER between [1, n-2]!
 # [low precision for p = n - 2]
 integrate(function(x) log(x^n + 1)/x^(p+1), 0, 1)
 pracma::integral(function(x) log(x^n + 1)/x^(p+1), 0, 1)
 #
 pi/(2*p)/sin(pi*(n-p)/n) - log(2)/p + logcos.sh(n, p)/p;
+(digamma(((n-p)/n + 1)/2) - digamma((n-p)/n/2)) / (2*p) - log(2)/p;
 
 
 ###
