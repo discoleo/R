@@ -36,6 +36,8 @@
 # required:
 source("Polynomials.Helper.R")
 
+Euler = 0.57721566490153286060651209008240243079;
+
 
 ### Other
 
@@ -529,4 +531,29 @@ sumLogExpM(n, m=nm) * 3
 
 #########################
 #########################
+
+### Digamma / Polygamma
+
+###
+(pracma::psi(-1i) - pracma::psi(1i)) * 1i / 2
+(pi / tan(pi*1i) - 1i) * 1i / 2;
+
+###
+n = sqrt(3);
+(pracma::psi(-1i*n) - pracma::psi(1i*n)) * 1i / 2
+(pi / tan(pi*1i*n) - 1i/n) * 1i / 2;
+
+
+### Sum( 1 / (n^3 + n*k^2) )
+k = 1/sqrt(5)
+id = seq(40000)
+sum( 1 / (id * (id^2 + k^2)) )
+(pracma::psi(-1i*k) + pracma::psi(1i*k) + 2*Euler) / (2*k^2)
+
+
+### Sum( 1 / (n * (n^2 + k^2)^2) )
+k = 1/sqrt(5)
+sum( 1 / (id * (id^2 + k^2)^2) )
+(pracma::psi(1, -1i*k) - pracma::psi(1, 1i*k)) * 1i / (4*k^3) +
+	+ (pracma::psi(-1i*k) + pracma::psi(1i*k) + 2*Euler) / (2*k^4)
 
