@@ -219,6 +219,10 @@ integrate(\(x) x^3 * atan(x) / (x^4 + 1), 0, 1)
 integrate(\(x) atan(x) / x, 0, 1)
 Catalan
 
+# I( atan(x^n) / x )
+n = sqrt(3);
+integrate(\(x) atan(x^n) / x, 0, 1)
+Catalan / n;
 
 ### Fraction Decomposition:
 # u^4 / ((u^2*t^2 + 1) * (u^4 + 1))
@@ -228,4 +232,13 @@ Catalan
 # where Fr0 = 1 / ((u^2*t^2 + 1) * (u^4 + 1));
 # and (u^2*t^2 - 1) / Prod() is decomposable into 2 separate integrals:
 # I( u^2 / (u^4 + 1) )^2 -  I( 1 / (u^4 + 1) )^2;
+
+
+### Note: Lim p -> 0
+p = 1E-4
+integrate(\(x) atan(x^(1/p)) / p, 0, 1)
+pi/(4*p) - integrate(\(x) 1/p^2 * x^(1/p) / (x^(2/p) + 1), 0, 1)$value
+pi/(4*p) - integrate(\(x) 1/p * x^p / (x^2 + 1), 0, 1)$value
+- (pracma::psi(1, 3/4) - pracma::psi(1, 1/4)) / 16
+Catalan
 
