@@ -186,3 +186,46 @@ x = lim
 diff(x * atan(sqrt(x^2 + b^2)) / sqrt(x^2 + b^2) + b*atan(x/b) +
 	- sqrt(b^2 + 1) * atan(x/sqrt(b^2 + 1))) / b^2
 
+
+#######################
+
+### I( atan(tan(x)^2) )
+# Maths 505: An outrageous journey of integration: int 0 to pi/4 arctan(cot^2(x))
+# https://www.youtube.com/watch?v=VUGlU_dSgPY
+
+###
+integrate(\(x) atan(tan(x)^2), 0, pi/4)
+integrate(\(x) atan(x^2) / (x^2 + 1), 0, 1)
+pi^2/16 - (digamma(3/8 + 1/2) - digamma(3/8)) *
+	(digamma(1/8 + 1/2) - digamma(1/8)) / 32;
+
+
+### I( x * atan(x) / (x^4 + 1) )
+integrate(\(x) x * atan(x) / (x^4 + 1), 0, 1)
+(digamma(7/8) - digamma(3/8)) * (digamma(5/8) - digamma(1/8)) / 64;
+
+# Note:
+# - uses double integral: on [0,1] x [0,1]
+#   I(I( u^2 / ((u^2*t^2 + 1) * (u^4 + 1)) ));
+
+
+### I( x^3 * atan(x) / (x^4 + 1) )
+integrate(\(x) x^3 * atan(x) / (x^4 + 1), 0, 1)
+(digamma(3/8 + 1/2) - digamma(3/8))^2 / 128 +
+	- (digamma(1/8 + 1/2) - digamma(1/8))^2 / 128 +
+	+ Catalan/2;
+
+# Helper:
+integrate(\(x) atan(x) / x, 0, 1)
+Catalan
+
+
+### Fraction Decomposition:
+# u^4 / ((u^2*t^2 + 1) * (u^4 + 1))
+# 1 / (u^2*t^2 + 1) - Fr0;
+# =>
+# Fr0 + (u^2*t^2 - 1) / ((u^4 + 1) * (t^4 + 1));
+# where Fr0 = 1 / ((u^2*t^2 + 1) * (u^4 + 1));
+# and (u^2*t^2 - 1) / Prod() is decomposable into 2 separate integrals:
+# I( u^2 / (u^4 + 1) )^2 -  I( 1 / (u^4 + 1) )^2;
+
