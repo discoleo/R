@@ -284,6 +284,10 @@ Catalan = 0.915965594177219015054603514;
 #    https://www.youtube.com/watch?v=TNAtG8gXWuU
 
 
+### I( 1 / sin(x) )
+integrate(function(x) 1 / sin(x) - 1/x, 0, pi/2)
+- log(pi/4)
+
 ###
 integrate(function(x) x / sin(x), 0, pi/2)
 2*Catalan
