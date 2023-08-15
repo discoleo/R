@@ -435,6 +435,13 @@ integrate(function(x) x^2*(pi - x)^2 / sin(x), 0, pi/2)
 # https://www.youtube.com/watch?v=8DWa0zIM9lY
 # - see also file: Integrals.Log.Trig.R;
 
+###
+integrate(function(x) 1 / sin(x)^2 - 1/x^2, 0, pi/2)
+2/pi
+
+### I( x / sin(x)^2 )
+integrate(function(x) x / sin(x)^2 - 1/x, 0, pi/2)
+1 - log(pi/2)
 
 ### I( x^2 / sin(x)^2 )
 integrate(function(x) x^2 / sin(x)^2, 0, pi/2)
