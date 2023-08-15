@@ -371,6 +371,23 @@ gamma(p+1) * gamma(q+1) *
 	( (digamma(p+q+2) - digamma(q+1)) * (digamma(p+q+2) - digamma(p+1)) +
 		- pracma::psi(1, p+q+2) ) / gamma(p+q+2);
 
+### Special Case: q = 0;
+p = - 1/5;
+integrate(function(x) x^p * log(1-x) * log(x), 0, 1)
+( (digamma(p+2) + Euler) / (p+1) - pracma::psi(1, p+2) ) / (p+1);
+# Lim: p -> -1
+integrate(function(x) log(1-x) * log(x) / x, 0, 1)
+pracma::zeta(3)
+# x => y^n =>
+n = sqrt(5)
+integrate(function(x) log(1 - x^n) * log(x) / x, 0, 1)
+pracma::zeta(3) / n^2
+
+# - for a classic approach, see:
+#   Flammable Math: Simple Trig Subs won't Help you here...
+#   https://www.youtube.com/watch?v=Y6yYSS3YbD8
+
+
 ### I( x^p * (1 - x)^q * log(1-x)^2 * log(x) )
 p = - 1/3; q = 1/5;
 integrate(function(x) x^p * (1 - x)^q * log(1-x)^2 * log(x), 0, 1)
