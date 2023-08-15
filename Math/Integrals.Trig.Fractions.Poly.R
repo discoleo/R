@@ -45,14 +45,14 @@ pi/4*(1 + exp(-2))
 ### Helper:
 k = sqrt(3)
 integrate(\(x) cos(k*x) / (x^2 + 1), 0, Inf, subdivisions=4096*2, rel.tol=1E-6)
-pi/2*exp(-k)
+pi/2 * exp(-k)
 
 
 ### I( x * sin(k*x) / (x^2 + 1) )
 k = sqrt(3)
 # Upper = Inf: numerical instability;
 pracma::integral(\(x) x * sin(k*x) / (x^2 + 1), 0, 200000)
-pi/2*exp(-k)
+pi/2 * exp(-k)
 
 
 
@@ -60,7 +60,7 @@ pi/2*exp(-k)
 k = sqrt(3)
 b = sqrt(5)
 integrate(function(x) cos(k*x) / (x^2 + b^2), 0, Inf, subdivisions=4096*2, rel.tol=1E-6)
-pi/2*exp(-k*b)/b
+pi/2 * exp(-k*b)/b
 
 
 ### TODO
@@ -279,6 +279,9 @@ Catalan = 0.915965594177219015054603514;
 ### Refs:
 # 1) Maths 505: Integral of x^2/sin(x) from zero to pi/2
 #    https://www.youtube.com/watch?v=g4aKTQyETZw
+# 2) Maths 505: A cool integral for Apery's constant
+#   (ζ(3)): int 0 to 1 (x(1-x))/sin(πx)
+#    https://www.youtube.com/watch?v=TNAtG8gXWuU
 
 
 ###
@@ -418,6 +421,8 @@ integrate(function(x) x^3*(pi - x) / sin(x), 0, pi/2)
 integrate(function(x) x^2*(pi - x)^2 / sin(x), 0, pi/2)
 - 1/2*7*pi^2*zeta(3) + 3/2*31*zeta(5)
 
+
+#################
 
 ### Higher Powers
 
