@@ -557,3 +557,11 @@ sum( 1 / (id * (id^2 + k^2)^2) )
 (pracma::psi(1, -1i*k) - pracma::psi(1, 1i*k)) * 1i / (4*k^3) +
 	+ (pracma::psi(-1i*k) + pracma::psi(1i*k) + 2*Euler) / (2*k^4)
 
+
+### Sum( 1 / ((n + k1) * (n^2 + k2^2)) )
+k1 = 1/sqrt(3); k2 = 1/sqrt(5)
+id = seq(0, 40000)
+sum( 1 / ((id + k1) * (id^2 + k2^2)) )
+(pracma::psi(-1i*k2) + pracma::psi(1i*k2) - 2*digamma(k1) +
+	+ (pracma::psi(-1i*k2) - pracma::psi(1i*k2)) * 1i * k1/k2) / (2*(k1^2 + k2^2));
+
