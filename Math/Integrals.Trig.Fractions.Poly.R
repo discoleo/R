@@ -458,16 +458,29 @@ integrate(function(x) x^4 / sin(x)^2, 0, pi/2)
 1/2*pi^3*log(2) - 9/4 * pi * pracma::zeta(3)
 
 
+### I( 1 / sin(x)^3 )
+integrate(function(x) 1 / sin(x)^3 - 1/x^3 - 1/(2*x), 0, pi/2)
+log(2)/2 - 1/12 + (2/pi^2 - log(pi/2)/2);
+
+# Note:
+# I( 1 / sin(x)^(2*n+1) ) can be computed on arbitrary intervals;
+
+
 ### on [0, pi/4]
 
 ### I( 1 / sin(x)^2 )
 integrate(function(x) 1 / sin(x)^2 - 1/x^2, 0, pi/4)
 4/pi - 1
+#
+integrate(function(x) 1 / sin(x)^2, pi/4, pi/2)
+1;
 
 ### I( x / sin(x)^2 )
 integrate(function(x) x / sin(x)^2 - 1/x, 0, pi/4)
 1 - pi/4 - 1/2 * log(2) - log(pi/4)
 # Note: log(pi/4) is from 1/x;
+integrate(function(x) x / sin(x)^2, pi/4, pi/2)
+pi/4 + log(2)/2
 
 ### I( x^2 / sin(x)^2 ) on [0, pi/4]
 integrate(function(x) x^2 / sin(x)^2, 0, pi/4)
