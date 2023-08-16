@@ -498,6 +498,24 @@ integrate(function(x) x^2 / sin(x)^2, 0, pi/4)
 - pi^2 / 16 + pi/4 * log(2) + Catalan
 
 
+### Base: I( 1 / sin(k*x)^3 )
+k = pi/7
+integrate(\(x) 1 / sin(k*x)^3 - 1/(k^3*x^3) - 1/(2*k*x), 0, 1)
+(log( (1 - cos(k)) / (1 + cos(k)) ) +
+	+ 1/(cos(k) - 1) + 1/(cos(k) + 1) + 2*log(2) - 1/3) / (4*k) +
+	+ (1/(2*k^3) - log(k)/(2*k));
+
+
+### I( x * cos(k*x) / sin(k*x)^4 )
+k = pi/2 + 1/11;
+integrate(\(x) x * cos(k*x) / sin(k*x)^4 - 1/(k^4*x^3) - 1/(6*k^2*x), 0, 1)
+- (sin(k)/(1 - cos(k)) + sin(k)/(1 + cos(k)) +
+		+ sin(k)/(cos(k) - 1)^2 + sin(k)/(cos(k) + 1)^2) / (12*k) +
+	+ (log( (1 - cos(k)) / (1 + cos(k)) ) +
+		+ 1/(cos(k) - 1) + 1/(cos(k) + 1) + 2*log(2) - 1/3) / (12*k^2) +
+	+ 1/(2*k^4) + 1/(6*k^2) - log(k)/(6*k^2);
+
+
 ### Varia:
 
 # By Parts:
