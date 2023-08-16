@@ -464,6 +464,17 @@ log(2)/2 - 1/12 + (2/pi^2 - log(pi/2)/2);
 
 # Note:
 # I( 1 / sin(x)^(2*n+1) ) can be computed on arbitrary intervals;
+### I( 1 / sin(x)^3 )
+up = pi/5;
+integrate(function(x) 1 / sin(x)^3 - 1/x^3 - 1/(2*x), 0, up)
+(log( (1 - cos(up)) / (1 + cos(up)) ) +
+	+ 1/(cos(up) - 1) + 1/(cos(up) + 1) + 2*log(2) - 1/3) / 4 +
+	+ (1/(2*up^2) - log(up)/2);
+
+# Lim: x -> 0
+x = 1E-3; # but numerical issues!
+(-log(1 - cos(x)) - 1/(cos(x)-1)) / 2 - 1/(x^2) + log(x)
+log(2)/2 + 1/12
 
 
 ### on [0, pi/4]
