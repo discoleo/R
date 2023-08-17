@@ -100,8 +100,32 @@ log(pi)/8 + 9/8 * log(A) - 3/8 * log(2) + Catalan / (4*pi) - 1/4
 ### on [0, z]
 z = 1/sqrt(7);
 integrate(\(x) log(gamma(x + 1 - z/2)), 0, z)
+integrate(\(x) z * log(gamma(z*x + 1 - z/2)), 0, 1)
 integrate(\(x) - 1/pi * log(sin(x)), 0, pi/2 * z)$value +
 	+ log(pi/2 * z) * z/2 - z/2;
+
+# Note:
+# I( log(sin(x)) ) is solvable for z = rational fraction,
+# see file: Integrals.Log.Trig.R;
+
+
+### on [0, 1/4] & [1/4, 1/2]
+integrate(\(x) log(gamma(x/2 + 3/4)), 0, 1/2)
+integrate(\(x) 2 * log(gamma(x + 3/4)), 0, 1/4)
+integrate(\(x) - 2/pi * log(sin(x)), 0, pi/4)$value +
+	+ log(pi) / 4 - log(2)/4 - 9/4 * log(A) - Catalan / (2*pi);
+#
+integrate(\(x) log(gamma(x + 3/4)), 1/4, 1/2)
+log(pi) / 8 - 3/8 * log(2) + 9/8 * log(A) + Catalan / (4*pi) - 1/4;
+
+
+# Derivation:
+integrate(\(x) log(gamma(x/2 + 3/4)), 0, 1)
+integrate(\(x) - 2/pi * log(sin(x)), 0, pi/4)$value +
+	+ log(pi/4) /2 - 1/2;
+#
+integrate(\(x) log(gamma(x/2 + 3/4)), 1/2, 1)
+log(pi)/4 + 9/4 * log(A) - 3/4 * log(2) + Catalan / (2*pi) - 1/2;
 
 
 ###############
