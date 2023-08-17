@@ -7,7 +7,7 @@ Catalan = 0.915965594177219015054603514;
 
 
 int.FrU01 = function(n, p=0) {
-	(digamma(((p+1)/n + 1)/2) - digamma((p+1)/n/2)) / (2*n);
+	(digamma(((p+1)/n + 1)/2) - digamma((p+1)/(2*n))) / (2*n);
 }
 int.FrDU01 = function(n, p=0) {
 	# TODO: p != 0
@@ -140,6 +140,9 @@ print(pi/2*exp(-k), 12)
 #    https://www.youtube.com/watch?v=_VkRvuSxF18
 # 2. Michael Penn: A nice integral.
 #    https://www.youtube.com/watch?v=nkaZEI_e2SU
+# 3. Maths 505: The generalised Dirichlet integral:
+#    Integral of (sinx)^n/x^n from zero to infinity
+#    https://www.youtube.com/watch?v=lLDiIf_BB-I
 
 # see also:
 # 3Blue1Brown: Researchers thought this was a bug (Borwein integrals)
