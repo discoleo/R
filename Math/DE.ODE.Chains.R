@@ -16,8 +16,16 @@ library(bvpSolve)
 
 ### Mult: dy =>
 # dy * d2y = y * dy
-# 1/2 * (dy)^2 = 1/2 * y^2 + 1/2 * c
-# (dy)^2 = y^2 + c;
+# 1/2 * (dy)^2 = 1/2 * y^2 + 1/2 * ct
+# (dy)^2 = y^2 + ct;
+
+### Classic Solutions:
+# y = b1*exp(x) + b2*exp(-x);
+# where 4*b1*b2 = - ct;
+
+# TODO:
+# - Are these solutions unique?
+# - Does the uniqueness generalize to higher orders?
 
 
 ##############
@@ -148,4 +156,7 @@ par(mfrow = c(1, 1))
 plot(sol[, 1:2], type="l", col="green")
 y = sapply(x, \(x) Iyk(x, ke=ke, be=be, k=k, b=b))
 lines(x, y, col="red", lty=2)
+
+
+# TODO: chains with x^p;
 
