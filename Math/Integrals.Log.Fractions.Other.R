@@ -227,6 +227,10 @@ log(n+p+1) - log(p+1)
 integrate(\(x) 1 / ((x+1) * log(x)) + 1/(1-x^2), 0, 1, rel.tol=1E-8)
 - log(gamma(1/2)) - digamma(1/2)/2
 
+### I( (x-1) / ((x+1) * log(x)) )
+integrate(\(x) (x-1) / ((x+1) * log(x)), 0, 1, rel.tol=1E-8)
+log(pi/2)
+
 
 ### I( x^p * (x^n - 1)^2 / log(x)^2 )
 # Maths 505: How Richard Feynman would solve this awesome golden integral
