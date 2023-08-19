@@ -150,6 +150,7 @@ integrate(\(x) x / gamma(x), 0, 1)
 integrate(\(x) log(x) / gamma(x), 0, 1)
 integrate(\(x) sin(x) / gamma(x), 0, 1)
 
+integrate(\(x) gamma(x) - 1/x, 0, 1)
 integrate(\(x) gamma(x) * x, 0, 1)
 integrate(\(x) gamma(x) * sin(x), 0, 1)
 integrate(\(x) gamma(x) * sin(pi*x), 0, 1)
@@ -159,8 +160,12 @@ integrate(\(x) gamma(x) * log(x*exp(x) + 1), 0, 1)
 integrate(\(x) gamma(x) * atan(x), 0, 1)
 integrate(\(x) atan(gamma(x)), 0, 1)
 integrate(\(x) gamma(x) / gamma(1/x), 0,1)
+integrate(\(x) gamma(x) / gamma(1 - x) - 1/x, 0, 1)
 integrate(\(x) gamma(x) / pracma::zeta(x+1), 0, 1)
 integrate(\(x) gamma(x) / pracma::zeta(1-x), 0, 1)
+
+# Varia:
+integrate(\(x) gamma(x)/log(gamma(x)) + 1/(x*log(x)) - (1-Euler)/Euler/(1-x), 0, 1, rel.tol=1E-5)
 
 
 ###
