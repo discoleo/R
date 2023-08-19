@@ -223,6 +223,11 @@ integrate(\(x) x^p * (x^n - 1) / log(x), 0, 1)
 log(n+p+1) - log(p+1)
 
 
+### I( 1 / ((x+1) * log(x)) )
+integrate(\(x) 1 / ((x+1) * log(x)) + 1/(1-x^2), 0, 1, rel.tol=1E-8)
+- log(gamma(1/2)) - digamma(1/2)/2
+
+
 ### I( x^p * (x^n - 1)^2 / log(x)^2 )
 # Maths 505: How Richard Feynman would solve this awesome golden integral
 # https://www.youtube.com/watch?v=g2NPdw4ig5M
