@@ -6,7 +6,7 @@
 ### Integrals: Logarithms
 ### Log-Fractions: Other
 ###
-### draft v.0.2c
+### draft v.0.2d
 
 
 ##################
@@ -199,6 +199,11 @@ log(2) / k^2
 
 ### 1 / LOG()
 
+###
+integrate(\(x) 1/log(x) + 1/(1-x), 0, 1)
+Euler
+
+
 ### I( (x^n - 1) / log(x) )
 # Michael Penn: My favorite way "around" Feynman's trick -- and a challenge for you!
 # https://www.youtube.com/watch?v=EseFhG1QARM
@@ -206,6 +211,11 @@ log(2) / k^2
 n = sqrt(5)
 integrate(\(x) (x^n - 1) / log(x), 0, 1)
 log(n+1)
+
+###
+n = -1/2
+integrate(\(x) x^n / log(x) + 1/(1-x), 0, 1, rel.tol=1E-8)
+log(n+1) + Euler
 
 ###
 n = sqrt(5); p = sqrt(3)
@@ -220,6 +230,12 @@ log(n+p+1) - log(p+1)
 n = sqrt(5)
 integrate(\(x) (x^n - 1)^2 / log(x)^2, 0, 1)
 (2*n+1)*log(2*n+1) - (2*n+2)*log(n+1)
+
+
+### I( 1 / log(x)^2 )
+integrate(\(x) 1 / log(x)^2 - 1/(1-x)^2 + 1/(1-x), 0, 1, rel.tol=1E-6)
+Euler - 1/2
+
 
 ### I( x^p * (x^n - 1)^2 / log(x)^2 )
 n = sqrt(5); p = sqrt(3)
