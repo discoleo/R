@@ -341,11 +341,17 @@ integrate(function(x) log(x)/(x+1)^(4/3), 0, Inf)
 integrate(function(x) log(x)/(x+1)^(6/5), 0, Inf, rel.tol=1E-8)
 - (digamma(1/5) + Euler)*5
 
+###
+n = 1/sqrt(7)
+integrate(function(x) log(x)/(x+1)^(n+1), 0, Inf, rel.tol=1E-8)
+- (digamma(n) + Euler) / n;
+
 
 ########################
 ########################
 
-### on [0, 1]
+#################
+### on [0, 1] ###
 
 ### Gen: Simple
 p = - 1/3; q = 1/5; b = 4;
@@ -375,34 +381,10 @@ integrate(\(x) x^2 * log(x+1) / (x+1)^s, 0, 1)
 	- (2^(3-s)-1)/(3-s)^2 + (2^(3-s)-2)/(2-s)^2 - (2^(1-s)-1)/(1-s)^2;
 
 
-### I( x^p * log(x) / (x + 1)^s ) on [0, 1]
-
-# TODO: truncated Polylog function;
-
-###
-integrate(function(x) log(x)/(x+1)^2, 0, 1)
-- log(2)
-
-###
-integrate(function(x) log(x)/(x+1)^3, 0, 1)
-- log(2)/2 + (1/2 - 1)/2
-
-###
-integrate(function(x) log(x)/(x+1)^4, 0, 1)
-- log(2)/3 + (1/2 + 1/4/2 - 1 - 1/2)/3
-
-###
-integrate(function(x) log(x)/(x+1)^5, 0, 1)
-- log(2)/4 + (1/2 + 1/4/2 + 1/8/3 - 1 - 1/2 - 1/3)/4
-
-###
-integrate(function(x) log(x)/(x+1)^6, 0, 1)
-- log(2)/5 + (1/2 + 1/4/2 + 1/8/3 + 1/16/4 - 1 - 1/2 - 1/3 - 1/4)/5
-
-
-### Radicals
+### Radicals: I( log(x) * (x+1)^s )
 # - have been moved to file:
 #   Integrals.Log.Fractions.Radicals.R
+# - moved also: Pow = Integer;
 
 
 ##################
