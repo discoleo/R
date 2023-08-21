@@ -126,6 +126,9 @@ s = sqrt(7); up = sqrt(5);
 integrate(\(x) log(x+1)^s, 0, up)
 integrate(\(x) x^s * exp(x), 0, log(up + 1))
 
+# TODO:
+# - probably based on exponentials;
+
 
 ####################
 
