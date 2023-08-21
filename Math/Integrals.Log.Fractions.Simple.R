@@ -38,12 +38,20 @@ int.FrUInf = function(n, p=0, pow=1, coeff=1) {
 ###############
 
 ### Simple Log:
+
+### I( x^p * log(x^n + 1) )
 n = sqrt(5)
 integrate(\(x) log(x^n + 1), 0, 1)
 log(2) - n * int.FrU01(n, p = n)
 
-
 ###
+n = sqrt(11);
+p = sqrt(3);
+integrate(function(x) x^p * log(x^n + 1), 0, 1)
+- (digamma((p+1)/(2*n) + 1) - digamma((p+1)/n + 1)) / (p+1);
+
+
+### I( x^p * log(1 - x^n) )
 n = 3
 integrate(\(x) log(1 - x^n), 0, 1)
 log(n) - n - integrate(\(x) 1/(1 - x) - n / (1 - x^n), 0, 1)$value
@@ -53,6 +61,12 @@ log(n) - n - integrate(\(x) 1/(1 - x) - n / (1 - x^n), 0, 1)$value
 n = sqrt(7)
 integrate(\(x) log(1 - x^n), 0, 1)
 - n - digamma(1/n) - Euler
+
+###
+n = sqrt(11);
+p = sqrt(3);
+integrate(function(x) x^p * log(1 - x^n), 0, 1)
+- (digamma((n+p+1)/n) + Euler) / (p+1);
 
 
 ##################
