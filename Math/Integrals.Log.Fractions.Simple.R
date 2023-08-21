@@ -390,6 +390,10 @@ integrate(\(x) x^2 * log(x+1) / (x+1)^s, 0, 1)
 ##################
 ##################
 
+# Note:
+# - in-extenso coverage:
+#   see section further below;
+
 ### I( x^p * log(x) / (x - 1) )
 p = sqrt(3)
 integrate(\(x) x^p * log(x) / (x - 1), 0, 1)
@@ -400,6 +404,24 @@ pracma::psi(1, p+1)
 p = sqrt(3)
 integrate(\(x) x^p * log(x)^2 / (x - 1), 0, 1)
 pracma::psi(2, p+1)
+
+
+### I( x^p * log(x) / (x + 1) )
+p = sqrt(3)
+integrate(\(x) x^p * log(x) / (x + 1), 0, 1)
+pracma::psi(1, p+1) - pracma::psi(1, (p+1)/2) / 2
+
+
+### I( x^p * log(x)^2 / (x + 1) )
+p = sqrt(3)
+integrate(\(x) x^p * log(x)^2 / (x + 1), 0, 1)
+pracma::psi(2, p+1) - pracma::psi(2, (p+1)/2) / 4
+
+#
+p = sqrt(3)
+integrate(\(x) 4*x^(2*p+1) * log(x) / (x^2 - 1), 0, 1)
+integrate(\(x) 2*x^(2*p+1) * log(x) * (1/(x - 1) - 1/(x+1)), 0, 1)
+pracma::psi(1, p+1)
 
 
 ##################
@@ -526,6 +548,9 @@ pi^2 / 12 - log(2)^2 / 2
 ######################
 ######################
 
+##################
+### Elementary ###
+
 ### I( x^p * log(x)^s / (x^n - 1) )
 ### I( x^p * log(x)^s / (x^n + 1) )
 # - on [0, 1];
@@ -559,12 +584,12 @@ pracma::psi(s, 1/n) / n^(s+1) - 2*pracma::psi(s, 1/(2*n)) / (2*n)^(s+1)
 
 ### I( log(x) / (x^n - 1) ) on [0, 1]
 n = sqrt(5)
-integrate(\(x) log(x)/(x^n - 1), 0, 1)
+integrate(\(x) log(x) / (x^n - 1), 0, 1)
 pracma::psi(1, 1/n) / n^2
 
 
 ### Examples:
-integrate(\(x) log(x)/(x - 1), 0, 1)
+integrate(\(x) log(x) / (x - 1), 0, 1)
 pi^2/6
 
 ### Gen: I( log(x)^s / (x - 1) )
