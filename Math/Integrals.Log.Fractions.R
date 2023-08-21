@@ -554,8 +554,8 @@ logcos.old = function(n, p) {
 n = 7;
 p = sqrt(3); # INTEGER between [1, n-2]!
 # [low precision for p = n - 2]
-integrate(function(x) log(x^n + 1)/x^(p+1), 0, 1)
-pracma::integral(function(x) log(x^n + 1)/x^(p+1), 0, 1)
+integrate(function(x) log(x^n + 1) / x^(p+1), 0, 1)
+pracma::integral(function(x) log(x^n + 1) / x^(p+1), 0, 1)
 #
 pi/(2*p)/sin(pi*(n-p)/n) - log(2)/p + logcos.sh(n, p)/p;
 (digamma(((n-p)/n + 1)/2) - digamma((n-p)/n/2)) / (2*p) - log(2)/p;
@@ -579,10 +579,11 @@ pi/(2*p)/sin(pi*(n-p)/n) - log(2)/p + logcos.sh(n, p)/p;
 ###
 n = sqrt(11);
 p = sqrt(3);
-integrate(function(x) log(x^n + 1)/x^(p+1), 0, 1)
-pracma::integral(function(x) log(x^n + 1)/x^(p+1), 0, 1)
+integrate(function(x) log(x^n + 1) / x^(p+1), 0, 1)
+pracma::integral(function(x) log(x^n + 1) / x^(p+1), 0, 1)
 #
 pi/(2*p)/sin(pi*(n-p)/n) - log(2)/p + logcos.sh(n, p)/p;
+(digamma(((n-p)/n + 1)/2) - digamma((n-p)/n/2)) / (2*p) - log(2)/p;
 
 
 ###################
@@ -594,7 +595,7 @@ pi*log(2)/2 + (pracma::psi(1, 3/4) - pracma::psi(1, 1/4)) / (4^2)
 
 
 # TODO: ???
-n = 2
+n = 2; # only n = 2 !!!
 integrate(\(x) log(x^n + 1) / (x^n + 1), 0, 1)
 (digamma(1/(2*n)) - digamma(1/(2*n)+1/2)) * (digamma(1/n) + Euler) / (2*n) +
 	+ (pracma::psi(1, 1/(2*n) + 1/2) - pracma::psi(1, 1/(2*n))) / (4*n^2)
@@ -878,6 +879,25 @@ integrate(\(x) x^p / (x^n - 1), 0, 1 - tol)$value +
 ########################
 ########################
 
+###
+n = sqrt(11);
+p = sqrt(3);
+integrate(function(x) x^p * log(1 - x^n), 0, 1)
+- (digamma((n+p+1)/n) + Euler) / (p+1);
+
+integrate(\(x) - n/(p+1)*x^(n+p) / (1 - x^n) + 1/(p+1) * x^(n+p)/(1-x), 0, 1)
+- (digamma(n+p+1) - digamma((n+p+1)/n) - log(n)) /(p+1);
+
+
+###
+n = sqrt(11);
+p = sqrt(3);
+integrate(function(x) x^p * log(x^n + 1), 0, 1)
+(digamma((p+1)/(2*n) + 1/2) - digamma((p+1)/(2*n) + 1)) / (2*(p+1)) + log(2)/(p+1);
+
+
+### Special Cases:
+
 ### I( log(1 - x^n) / x) )
 integrate(\(x) log(1 - x^3) / x, 0, 1)
 integrate(\(x) 3*x^2*log(x) / (1-x^3), 0, 1)
@@ -893,6 +913,11 @@ integrate(\(x) log(1 - x^n) / x, 0, 1)
 ### Helper:
 integrate(\(x) log(x) / (1-x), 0, 1)
 pi^2/6
+
+
+###
+integrate(\(x) log(1 - x^2) / (1 - x^2) - 1/2*(log(1-x) + log(2)) / (1-x), 0, 1)
+3*log(2)^2/4 - pi^2/12
 
 
 ###
