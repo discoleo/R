@@ -590,6 +590,18 @@ pi/(2*p)/sin(pi*(n-p)/n) - log(2)/p + logcos.sh(n, p)/p;
 ### I( log(x^2 + 1) / (x^2 + 1) )
 integrate(\(x) log(x^2 + 1) / (x^2 + 1), 0, 1)
 pi*log(2)/2 - Catalan
+pi*log(2)/2 + (pracma::psi(1, 3/4) - pracma::psi(1, 1/4)) / (4^2)
+
+
+# TODO: ???
+n = 2
+integrate(\(x) log(x^n + 1) / (x^n + 1), 0, 1)
+(digamma(1/(2*n)) - digamma(1/(2*n)+1/2)) * (digamma(1/n) + Euler) / (2*n) +
+	+ (pracma::psi(1, 1/(2*n) + 1/2) - pracma::psi(1, 1/(2*n))) / (4*n^2)
+
+#
+- gamma(1/n) * gamma(1 - 1/n) * (digamma(1 - 1/n) - digamma(1)) / n +
+	+ (pracma::psi(1, (2/n + 1)/2) - pracma::psi(1, 2/n/2)) / (4*n) + 0;
 
 
 ########################
@@ -861,4 +873,29 @@ tol = 1E-7;
 integrate(\(x) x^p / (x^n - 1), 0, 1 - tol)$value +
 	+ integrate(\(x) x^p / (x^n - 1), 1 + tol, Inf)$value
 - pi / tan(pi*(p+1)/n) / n;
+
+
+########################
+########################
+
+### I( log(1 - x^n) / x) )
+integrate(\(x) log(1 - x^3) / x, 0, 1)
+integrate(\(x) 3*x^2*log(x) / (1-x^3), 0, 1)
+- pi^2/6 + 5/4 + (pracma::psi(1,3) - pracma::psi(1,1)/3)
+- pi^2/18
+
+###
+n = sqrt(5)
+integrate(\(x) log(1 - x^n) / x, 0, 1)
+- pi^2 / (6*n)
+
+
+### Helper:
+integrate(\(x) log(x) / (1-x), 0, 1)
+pi^2/6
+
+
+###
+integrate(\(x) log(1 - x^3)/(1-x) - (log(1-x) + log(3))/(1-x), 0, 1)
+# TODO
 
