@@ -111,6 +111,22 @@ integrate(\(x) log(x+1)^4, 0, 1)
 2*log(2)^4 - 4*(2*log(2)^3 - 3*(2*log(2)^2 - 2*(2*log(2) - 1)))
 
 
+###
+s = 7
+integrate(\(x) log(x+1)^s, 0, 1)
+integrate(\(x) x^s * exp(x), 0, log(2))
+
+### All:
+s = sqrt(7)
+integrate(\(x) log(x+1)^s, 0, 1)
+integrate(\(x) x^s * exp(x), 0, log(2))
+
+### All:
+s = sqrt(7); up = sqrt(5);
+integrate(\(x) log(x+1)^s, 0, up)
+integrate(\(x) x^s * exp(x), 0, log(up + 1))
+
+
 ####################
 
 ### I( log(1 - x^n)^s / x )
