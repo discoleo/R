@@ -209,6 +209,39 @@ pi^3/24 + pi/2 * log(2)^2
 
 
 #########################
+
+### I( log(cos(x)) / tan(x) )
+# Maths 505: A cool log trig integral
+# https://www.youtube.com/watch?v=iPicVw4lOg0
+
+
+### I( log(cos(x)) / tan(x) )
+integrate(\(x) log(cos(x)) / tan(x), 0, pi/2)
+integrate(\(x) 1/2 * log(1 - x^2) / x, 0, 1)
+- pi^2/24
+
+### I( log(cos(x)) / sin(x) )
+integrate(\(x) log(cos(x)) / sin(x), 0, pi/2)
+integrate(\(x) log(x) / (1 - x^2), 0, 1)
+- pi^2/8
+
+### I( log(cos(x)) / cos(x) )
+integrate(\(x) log(cos(x)) / cos(x) - log(pi/2 - x)/(pi/2 - x), 0, pi/2)
+integrate(\(x) pi/2*log(cos(pi/2*x)) / cos(pi/2*x) - (log(pi/2) + log(1-x))/(1 - x), 0, 1)
+# TODO: ???
+
+# equivalent:
+integrate(\(x) 1/2 * log(1 - x^2) / (1 - x^2) - 1/4*(log(1-x) + log(2)) / (1-x), 0, 1)
+3*log(2)^2/8 - pi^2/24
+
+# Lim: x -> 1
+x = 1 - 1E-6;
+log(1 - x^2) / (1 + x) - 1/2*(log(1-x) + log(2))
+log1p(- x^2) / (1 + x) - 1/2*(log1p(-x) + log(2))
+0;
+
+
+#########################
 #########################
 
 ### Derived Integrals
