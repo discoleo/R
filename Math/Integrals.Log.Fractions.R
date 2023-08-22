@@ -740,6 +740,11 @@ integrate(function(x) log(x+1) * x / (x + 1)^5, 0, Inf)
 integrate(function(x) log(x+1) * x / (x + 1)^6, 0, Inf)
 81/5 / factorial(6)
 
+### Gen:
+k = sqrt(7); p = - sqrt(3);
+integrate(function(x) log(x+1) * x^p / (x + 1)^k, 0, Inf)
+gamma(p+1) * gamma(k - (p+1)) / gamma(k) * (digamma(k) - digamma(k - (p+1)));
+
 
 ###########
 ### p = 1/2
@@ -747,6 +752,7 @@ a = sqrt(2); b = sqrt(3);
 p = 1/2; d = (b - a);
 integrate(function(x) log(x) * ((x - a)*(b - x))^p, a, b)
 # TODO: ???
+
 
 ### [old]
 f = function(x) {
@@ -839,7 +845,8 @@ log(2)
 n = sqrt(5)
 p1 = sqrt(3); p2 = sqrt(2)
 integrate(\(x) (x^p1 - 1) * (x^p2 - 1) / (log(x)^2 * (x^n + 1)), 0, 1);
-# TODO:
+
+# TODO: integrate
 # log(gamma((p1+p2+1)/n) / gamma((p1+p2+1)/(2*n))^2) +
 #	- log(gamma((p1+1)/n) / gamma((p1+1)/(2*n))^2) +
 	- p1*p2*log(2)/n;
@@ -921,6 +928,10 @@ integrate(\(x) log(1 - x^2) / (1 - x^2) - 1/2*(log(1-x) + log(2)) / (1-x), 0, 1)
 
 
 ###
-integrate(\(x) log(1 - x^3)/(1-x) - (log(1-x) + log(3))/(1-x), 0, 1)
-# TODO
+integrate(\(x) log(1 - x^3) / (1-x) - (log(1-x) + log(3)) / (1-x), 0, 1)
+integrate(\(x) log(x^2+x+1) / (1-x) - log(3) / (1-x), 0, 1)
+# vs:
+integrate(\(x) log(1 - x^3) / (1-x^3) - 1/3*(log(1-x) + log(3)) / (1-x), 0, 1)
+
+# TODO: is it possible to solvve without Li2?
 
