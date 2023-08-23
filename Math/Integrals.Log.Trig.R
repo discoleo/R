@@ -301,6 +301,11 @@ integrate(\(x) log(cos(x)) * log(sin(x)), 0, pi/2)
 - gamma(1/2)^2 * (pi^2/6 - 4*log(2)^2) / 8
 
 
+### on [0, pi/4]
+integrate(\(x) log(cos(x)) * log(sin(x)), 0, pi/4)
+- gamma(1/2)^2 * (pi^2/6 - 4*log(2)^2) / 16
+
+
 #########################
 #########################
 
