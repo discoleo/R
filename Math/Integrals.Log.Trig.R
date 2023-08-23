@@ -284,8 +284,21 @@ gamma((p+1)/2) * gamma((q+1)/2) *
 	(pracma::psi(1, (q+1)/2) - pracma::psi(1, (p+q+2)/2) +
 	(digamma((q+1)/2) - digamma((p+q+2)/2))^2) / gamma((p+q+2)/2) / 8
 
-# TODO:
-# - higher order & product of logs;
+
+### I( sin(x)^p * cos(x)^q * log(cos(x)) * log(sin(x)) )
+p = -1/3; q = sqrt(5)
+integrate(\(x) sin(x)^p * cos(x)^q * log(cos(x)) * log(sin(x)), 0, pi/2)
+gamma((p+1)/2) * gamma((q+1)/2) *
+	( - pracma::psi(1, (p+q+2)/2) +
+	(digamma((p+1)/2) - digamma((p+q+2)/2)) *
+	(digamma((q+1)/2) - digamma((p+q+2)/2)) ) / gamma((p+q+2)/2) / 8
+
+
+### Special Cases:
+
+### I( log(cos(x)) * log(sin(x)) )
+integrate(\(x) log(cos(x)) * log(sin(x)), 0, pi/2)
+- gamma(1/2)^2 * (pi^2/6 - 4*log(2)^2) / 8
 
 
 #########################
