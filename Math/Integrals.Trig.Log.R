@@ -20,7 +20,7 @@ integrate(\(x) sin(k*x) * log(x) / x^(p+1), 0, 100000, subdivisions=40000)
 
 
 ### Base:
-# s in (-1, 1)
+# p in (-1, 1)
 # see file: Integrals.Trig.Fractions.Poly.R;
 p = 2 - sqrt(2)
 k = sqrt(3)
