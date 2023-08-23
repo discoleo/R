@@ -684,3 +684,62 @@ pi/tan(pi/n/2)/2
 sum(id*sn)
 n/sin(pi/n)/4
 
+
+################
+
+### Higher Power
+
+### I( x^p / (x^n - 1)^2 )
+p = sqrt(3); n = sqrt(7);
+# can be: p > n;
+
+# if: (p - n) != integer or > 0:
+integrate(\(x) x^p / (x^n - 1)^2 - x^p * (1/(x-1)^2 - (n-1)/(x-1)) / n^2, 0, 1)
+(digamma((p-n+1)/n) - digamma(p-n+1) + log(n)) * (p-n+1)/(n^2) +
+	+ (3*n-1) / (2*n^2) + (0) / (2*p*n^3) # - (.../p + ...)/(2*n^2)
+
+# TODO: compute the missing term;
+
+# if: (p - n) == integer < 0
+p = 0; n = sqrt(7);
+integrate(\(x) x^p / (x^n - 1)^2 - x^p * (1/(x-1)^2 - (n-1)/(x-1)) / n^2, 0, 1)
+(digamma((p-n+1)/n) + Euler + log(n)) * (p-n+1)/(n^2) +
+	+ (3*n-1) / (2*n^2) + ifelse(p == 0, 0, (0) / (2*p*n^3))
+
+# TODO: works only for p = 2!
+ff = \() (integrate(\(x) x^p / (x^n - 1)^2 - x^p * (1/(x-1)^2 - (n-1)/(x-1)) / n^2, 0, 1)$value
+	- (digamma((p-n+1)/n) + Euler + log(n)) * (p-n+1)/(n^2) +
+	- (3*n-1)/2/n^2 - p*((5-p)*n - 9)/(4*n^2)) * (n^2)
+
+p = 2; # p = 3;
+n = 4; ff();
+n = 5; ff();
+n = 6; ff();
+n = 7; ff();
+
+x0 = c(1,2,3)
+solve(cbind(x0^2, x0, 1), c(4,6,6 + 1 + 1/4 + 1/16 + 1/64)/ x0) * 96
+
+###
+p = 1/2; n = 3;
+integrate(\(x) x^p / (x^n - 1)^2 - x^p * (1/(x-1)^2 - (n-1)/(x-1)) / n^2, 0, 1)
+(8 - 3*log(3)) / 18
+(2 - 3*log(3)) /(2*n^2) + 3/n^2
+
+
+# Base:
+p = sqrt(3); n = sqrt(7);
+integrate(\(x) x^(p-n) / (x^n - 1) - x^(p-n) / (x-1) / n, 0, 1)
+- (digamma(p-n+1) - digamma((p-n+1)/n) - log(n)) / n;
+
+
+### Lim: x -> 1
+n = sqrt(5)
+x = 1 - 1/2^10
+1/ (x^n - 1)^2 -  (1/(x-1)^2 - (n-1)/(x-1)) / n^2;
+(5*n^2 - 6*n +1) / (12*n^2)
+
+### Lim: x -> 1
+x = 1 - 1/2^10
+(1/(x^n - 1) - 1/n / (x-1))
+1/(2*n) - 1/2;
