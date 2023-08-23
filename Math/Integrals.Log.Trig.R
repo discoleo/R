@@ -249,12 +249,35 @@ log(1 - x^2) / (1 + x) - 1/2*(log(1-x) + log(2))
 log1p(- x^2) / (1 + x) - 1/2*(log1p(-x) + log(2))
 0;
 
-#
+# Derivation:
 integrate(\(x) log(cos(x)) / cos(x) - log(pi/2 - x)/(pi/2 - x), 0, pi/2)
 integrate(\(x) 1/4*(log(1-sin(x)) +
 	+ log(2)) * cos(x) / (1-sin(x)) - log(pi/2 - x)/(pi/2 - x), 0, pi/2)$value +
 	+ (3*log(2)^2/8 - pi^2/24);
 - pi^2/24 + log(2)^2/2 - log(pi/2)^2/ 2;
+
+
+### Extended
+
+### Base:
+p = -1/3; k = sqrt(5)
+integrate(\(x) x^p / (x^2+1)^k, 0, Inf)
+gamma((p+1)/2) * gamma(k - (p+1)/2) / gamma(k) / 2
+
+### Base: Log
+p = -1/3; k = sqrt(5)
+integrate(\(x) x^p * log(x^2+1) / (x^2+1)^k, 0, Inf)
+gamma((p+1)/2) * gamma(k - (p+1)/2) * (digamma(k) - digamma(k - (p+1)/2)) / gamma(k) / 2
+
+
+### I( sin(x)^p * cos(x)^q * log(cos(x) )
+p = -1/3; q = sqrt(5)
+integrate(\(x) sin(x)^p * cos(x)^q * log(cos(x)), 0, pi/2)
+gamma((p+1)/2) * gamma((q+1)/2) *
+	(digamma((q+1)/2) - digamma((p+q+2)/2)) / gamma((p+q+2)/2) / 4
+
+# TODO:
+# - higher order & product of logs;
 
 
 #########################
