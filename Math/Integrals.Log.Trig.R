@@ -270,11 +270,19 @@ integrate(\(x) x^p * log(x^2+1) / (x^2+1)^k, 0, Inf)
 gamma((p+1)/2) * gamma(k - (p+1)/2) * (digamma(k) - digamma(k - (p+1)/2)) / gamma(k) / 2
 
 
-### I( sin(x)^p * cos(x)^q * log(cos(x) )
+### I( sin(x)^p * cos(x)^q * log(cos(x)) )
 p = -1/3; q = sqrt(5)
 integrate(\(x) sin(x)^p * cos(x)^q * log(cos(x)), 0, pi/2)
 gamma((p+1)/2) * gamma((q+1)/2) *
 	(digamma((q+1)/2) - digamma((p+q+2)/2)) / gamma((p+q+2)/2) / 4
+
+
+### I( sin(x)^p * cos(x)^q * log(cos(x))^2 )
+p = -1/3; q = sqrt(5)
+integrate(\(x) sin(x)^p * cos(x)^q * log(cos(x))^2, 0, pi/2)
+gamma((p+1)/2) * gamma((q+1)/2) *
+	(pracma::psi(1, (q+1)/2) - pracma::psi(1, (p+q+2)/2) +
+	(digamma((q+1)/2) - digamma((p+q+2)/2))^2) / gamma((p+q+2)/2) / 8
 
 # TODO:
 # - higher order & product of logs;
