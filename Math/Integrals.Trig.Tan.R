@@ -242,3 +242,16 @@ pi/(4*p) - integrate(\(x) 1/p * x^p / (x^2 + 1), 0, 1)$value
 - (pracma::psi(1, 3/4) - pracma::psi(1, 1/4)) / 16
 Catalan
 
+
+######################
+######################
+
+### I( atan(a*sin(x)) / sin(x) )
+# Maths 505: AN INCREDIBLE CALCULUS RESULT: solution using Feynman's technique
+# https://www.youtube.com/watch?v=WLq2EThghgc
+
+###
+a = sqrt(3)
+integrate(\(x) atan(a*sin(x)) / sin(x), 0, pi/2)
+pi/2 * asinh(a)
+
