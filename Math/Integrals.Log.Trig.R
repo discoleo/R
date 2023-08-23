@@ -236,6 +236,13 @@ integrate(\(x) pi/2*log(cos(pi/2*x)) / cos(pi/2*x) - (log(pi/2) + log(1-x))/(1 -
 integrate(\(x) 1/2 * log(1 - x^2) / (1 - x^2) - 1/4*(log(1-x) + log(2)) / (1-x), 0, 1)
 3*log(2)^2/8 - pi^2/24
 
+### Variant: I( log(x^2+1) / sqrt(x^2+1) )
+# tan(x) = y =>
+# [is also directly computable: polynomial fraction]
+integrate(\(x) log(x^2+1) / sqrt(x^2+1) - 2*log(x+1)/(x+1), 0, Inf)
+- pi^2/12 + log(2)^2
+
+
 # Lim: x -> 1
 x = 1 - 1E-6;
 log(1 - x^2) / (1 + x) - 1/2*(log(1-x) + log(2))
@@ -244,7 +251,8 @@ log1p(- x^2) / (1 + x) - 1/2*(log1p(-x) + log(2))
 
 #
 integrate(\(x) log(cos(x)) / cos(x) - log(pi/2 - x)/(pi/2 - x), 0, pi/2)
-integrate(\(x) 1/4*(log(1-sin(x)) + log(2)) * cos(x) / (1-sin(x)) - log(pi/2 - x)/(pi/2 - x), 0, pi/2)$value +
+integrate(\(x) 1/4*(log(1-sin(x)) +
+	+ log(2)) * cos(x) / (1-sin(x)) - log(pi/2 - x)/(pi/2 - x), 0, pi/2)$value +
 	+ (3*log(2)^2/8 - pi^2/24);
 - pi^2/24 + log(2)^2/2 - log(pi/2)^2/ 2;
 
