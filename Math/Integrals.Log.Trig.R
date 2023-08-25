@@ -182,6 +182,26 @@ log(sin(x))
 - sum( cos(2*id*x) / id ) - log(2);
 
 
+###################
+
+### I( log(|cos(x)|) / x^2 )
+# Maths 505: 2 ridiculously awesome integrals!
+# https://www.youtube.com/watch?v=SwizwPy-GmE
+
+### I( log(|cos(x)|) / x^2 )
+integrate(\(x) log(abs(cos(x))) / x^2, 0, Inf, subdivisions=8029, rel.tol=1e-5)
+- pi/2
+
+### I( log(|sin(x)|) / x^2 )
+integrate(\(x) log(abs(sin(x))) / x^2 - log(x)/x^2, 0, Inf, subdivisions=4029, rel.tol=1e-5)
+- pi/2
+
+
+### Varia:
+integrate(\(x) log(x)/x^2 * (1 - (x + 1)*exp(-x)), 0, Inf, subdivisions=8029, rel.tol=1e-5)
+1 - Euler
+
+
 # Varia:
 integrate(\(x) - log(x) / (x^2 + x + 1), 0, 1)
 (pracma::psi(1, 1/3) - pracma::psi(1, 2/3)) / 9
