@@ -35,9 +35,17 @@ integrate(\(x) 1 / (log(x)^2 + 1), 0, 1)
 ####################
 ####################
 
-# qncubed3:  TWO WAYS to destroy this INSANE integral feat. @maths_505
-# https://www.youtube.com/watch?v=Ry5q4NsZDx0
+### I( sin(x) / (x^2 + 1) )
+# Various variants:
 
+# 1) qncubed3:  TWO WAYS to destroy this INSANE integral feat. @maths_505
+#    https://www.youtube.com/watch?v=Ry5q4NsZDx0
+# 2) Maths 505: INSANE integral solved using 2 different methods
+#    (feat. Feynman's technique and Lobachevsky)
+#    https://www.youtube.com/watch?v=GMcCiR0y3wg
+
+
+###
 integrate(function(x) sin(x)^2 / (x^2*(x^2+1)), 0, Inf)
 pi/4*(1 + exp(-2))
 
@@ -55,7 +63,6 @@ pracma::integral(\(x) x * sin(k*x) / (x^2 + 1), 0, 200000)
 pi/2 * exp(-k)
 
 
-
 ### Gen 1:
 k = sqrt(3)
 b = sqrt(5)
@@ -65,7 +72,10 @@ pi/2 * exp(-k*b)/b
 
 ### TODO
 k = 1
-integrate(function(x) sin(k*x) / (x^2 + 1), 0, Inf, subdivisions=4096*2, rel.tol=1E-5)
+integrate(\(x) sin(k*x) / (x^2 + 1), 0, Inf, subdivisions=4096*2, rel.tol=1E-5)
+integrate(\(x) sapply(x, \(x) {
+	1/(4*pi) * Im(sin(k*x) * (pracma::psi((x + 1i)/(2*pi)) - pracma::psi((x - 1i)/(2*pi))))
+	}), 0, 2*pi)
 
 
 ### Gen 1:
@@ -89,6 +99,12 @@ k = sqrt(3)
 # Upper = Inf: Numeric instability;
 pracma::integral(function(x) sin(k*x) / (x*(x^2 + 1)), 0, 100000)
 pi/2*(1 - exp(-k))
+
+### I( sin(tan(x)) / x )
+# takes very long: upper = Inf
+pracma::integral(\(x) sin(tan(x)) / x, 0, 2000)
+pracma::integral(\(x) sin(x) / (x*(x^2 + 1)), 0, 10000)
+pi/2*(1 - exp(-1))
 
 
 ### I( sin(k*x)^3 / (x*(x^2 + 1)) )
@@ -590,7 +606,7 @@ n = sqrt(5); p = sqrt(3);
 integrate(\(x) x^p * atan(x^n), 0, 1)
 pi/(4*(p+1)) +
 	- (digamma(((p+1)/n + 3)/4) - digamma(((p+1)/n + 1)/4)) / (4*(p+1));
-pi/(4*(p+1)) - n / (p+1) * int.FrU01(2*n, n + p)
+pi/(4*(p+1)) - n / (p+1) * int.FrU01(2*n, n + p);
 
 
 ###
