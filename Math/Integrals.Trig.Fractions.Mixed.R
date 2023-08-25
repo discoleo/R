@@ -2,13 +2,18 @@
 
 ### Trig: Mixed Fractions
 
+
+####################
+
+### Helper Functions
+
 int = function(FUN, upper, lower, rel.tol=1E-8, subdivisions=4097, ...) {
 	r = integrate(FUN, upper, lower, subdivisions=subdivisions, rel.tol=rel.tol, ...);
 	cat(paste0("Err = ", r$abs.error, "; subd = ", r$subdivisions, "\n"));
 	return(r$value);
 }
 
-###############
+####################
 
 ### I( 1 / (x - sin(x)) )
 # Fails:
@@ -47,4 +52,32 @@ int(FUN, 1E+6, 5E+6, rel.tol=1E-6, subd=1025) +
 integrate(\(x) 1 / (x - sin(pi/2*x)) - 1/(1-pi/2)/x - 1/(x-1), 0, 1)
 
 # TODO: ???
+
+
+##################
+
+###
+# Maths 505: 2 ridiculously awesome integrals!
+# https://www.youtube.com/watch?v=SwizwPy-GmE
+
+
+### I( sin(x) / (x * (b + cos(x)^2)) )
+b = 1
+# upper = Inf: numerical issues;
+integrate(\(x) sin(x) / (x * (b + cos(x)^2)), 0, 16000, subdivisions=10029)
+pi/2 / sqrt(b*(b+1))
+
+
+###
+b = sqrt(3)
+# upper = Inf: numerical issues;
+integrate(\(x) sin(x) / (x * (b + cos(x)^2)), 0, 20000, subdivisions=10029)
+pi/2 / sqrt(b*(b+1))
+
+
+### I( sin(x) / (x * (b + cos(x)^2)^2) )
+b = sqrt(3)
+# upper = Inf: numerical issues;
+integrate(\(x) sin(x) / (x * (b + cos(x)^2)^2), 0, 16000, subdivisions=10029)
+pi/4 * (2*b+1) / (b*(b+1))^(3/2)
 
