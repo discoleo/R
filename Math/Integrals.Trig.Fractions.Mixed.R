@@ -75,6 +75,14 @@ integrate(\(x) sin(x) / (x * (b + cos(x)^2)), 0, 20000, subdivisions=10029)
 pi/2 / sqrt(b*(b+1))
 
 
+### I( sin(x^n) / (x * (b + cos(x^n)^2)) )
+b = sqrt(3); n = sqrt(5);
+# upper = Inf: extreme numerical issues;
+# takes 1-2 minutes with pracma;
+pracma::integral(\(x) sin(x^n) / (x * (b + cos(x^n)^2)), 0, 1000)
+pi/(2*n) / sqrt(b*(b+1))
+
+
 ### I( sin(x) / (x * (b + cos(x)^2)^2) )
 b = sqrt(3)
 # upper = Inf: numerical issues;
