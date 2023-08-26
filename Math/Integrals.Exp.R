@@ -1,6 +1,10 @@
 
 
-constEuler = 0.57721566490153286060651209008240243079;
+### Helper
+
+Euler = 0.57721566490153286060651209008240243079;
+constEuler = Euler;
+
 
 ### History
 
@@ -20,6 +24,29 @@ constEuler = 0.57721566490153286060651209008240243079;
 ####################
 
 ### Basics
+
+### on [0, Inf]
+
+### I( exp(-x^n) / x )
+integrate(\(x) exp(- x^2)/x - exp(-x)/x, 0, Inf)
+Euler / 2
+
+###
+integrate(\(x) exp(- x^3)/x - exp(-x)/x, 0, Inf)
+Euler * 2/3
+
+###
+n = sqrt(5)
+integrate(\(x) exp(- x^n)/x - exp(-x)/x, 0, Inf)
+Euler * (1 - 1/n)
+
+
+### Log:
+integrate(\(x) log(x) * exp(- x), 0, Inf)
+- Euler
+
+
+#############
 
 ### on [0, 1]
 
@@ -127,6 +154,25 @@ integrate(\(x) x^p * (exp(-a[1]*x) - exp(-a[2]*x)), 0, Inf)
 gamma(p + 1) * (a[1]^(-p-1) - a[2]^(-p-1))
 
 # TODO: Lim: p -> -1
+
+
+#########################
+#########################
+
+### I( exp(- x^2 - a^2/x^2) )
+# Maths 505: A classic integral solved using Feynman's technique
+# https://www.youtube.com/watch?v=dvRarIKUMSE
+
+
+a = 1/3
+integrate(\(x) exp(- x^2 - a^2/x^2), 0, Inf)
+gamma(1/2) * exp(-2*a) / 2
+
+
+### [hidden x^2]
+a = 1/3
+integrate(\(x) exp(- x^3 - a^3/x^3) * x^(1/2), 0, Inf)
+gamma(1/2) * exp(-2*a^(3/2)) * a
 
 
 #########################
