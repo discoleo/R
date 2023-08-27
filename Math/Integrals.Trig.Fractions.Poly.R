@@ -326,11 +326,16 @@ integrate(function(x) x^4 / sin(x), 0, pi/2)
 
 
 ### Composed: on [0, pi]
+
 # - some terms cancel out when using: x*(pi - x);
 # - for intuition of underlying principle, see e.g:
 #   blackpenredpen: I saw this NTU entrance exam integral on Dcard
 #   and I just had to integrate it
 #   https://www.youtube.com/watch?v=PWGJGnji5Nk
+
+### I( 1 / sin(x) )
+integrate(\(x) 1 / sin(x) - 1/x - 1/(pi-x), 0, pi)
+- 2*log(pi/2)
 
 ### I( x / sin(x) )
 integrate(\(x) x / sin(x) - pi / (pi-x), 0, pi)
@@ -365,6 +370,13 @@ integral(function(x) x^5*(pi - x)*(pi + x) / sin(x), -pi, pi)
 11*7*pi^5*zeta(3) - 90*31*pi^3*zeta(5) + 315/2*127*pi*zeta(7)
 
 
+### on Other Intervals
+
+###
+integrate(function(x) 1 / sin(x) - 1/x, 0, pi/3)
+log(3)/2 - log(pi/2)
+
+
 ########
 ### TAN:
 integrate(function(x) x / tan(x), 0, pi/2)
@@ -385,6 +397,10 @@ pi*log(3)/6 - sqrt(3)/(8*6^2) *
 	- pracma::psi(1, 5/12) + pracma::psi(1, 7/12) +
 	- 5 * pracma::psi(1, 1/6) + 5 * pracma::psi(1, 5/6) +
 	- 3 * pracma::psi(1, 2/6) + 3 * pracma::psi(1, 4/6));
+
+###
+integrate(\(x) x * cos(x) / sin(x)^2 - 1/x, 0, pi/3)
+log(3)/2 - log(pi/2) - pi/3 / sin(pi/3) + 1
 
 
 ###
