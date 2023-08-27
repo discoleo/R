@@ -399,6 +399,10 @@ pi*log(3)/6 - sqrt(3)/(8*6^2) *
 	- 3 * pracma::psi(1, 2/6) + 3 * pracma::psi(1, 4/6));
 
 ###
+integrate(\(x) cos(x) / sin(x)^2 - 1/x^2, 0, pi/3)
+-2/sqrt(3) + 3/pi
+
+### [solvable on any interval]
 integrate(\(x) x * cos(x) / sin(x)^2 - 1/x, 0, pi/3)
 log(3)/2 - log(pi/2) - pi/3 / sin(pi/3) + 1
 
@@ -422,6 +426,13 @@ integrate(function(x) x^3 / tan(x), 0, pi/2)
 ###
 integrate(function(x) x^4 / tan(x), 0, pi/2)
 93/32 * zeta(5) - 9/16 * pi^2 * zeta(3) + 1/16 * pi^4 * log(2)
+
+
+### Helper:
+k = 1/5;
+fk = function(x, k) log((1 - cos(k*x)) / (1 + cos(k*x))) / (2*k);
+integrate(\(x) 1 / sin(k*x), pi/5, pi/3)
+fk(pi/3, k) - fk(pi/5, k)
 
 
 ### Derived
