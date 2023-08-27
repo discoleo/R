@@ -326,7 +326,21 @@ integrate(function(x) x^4 / sin(x), 0, pi/2)
 
 
 ### Composed: on [0, pi]
-# - some terms cancel out;
+# - some terms cancel out when using: x*(pi - x);
+# - for intuition of underlying principle, see e.g:
+#   blackpenredpen: I saw this NTU entrance exam integral on Dcard
+#   and I just had to integrate it
+#   https://www.youtube.com/watch?v=PWGJGnji5Nk
+
+### I( x / sin(x) )
+integrate(\(x) x / sin(x) - pi / (pi-x), 0, pi)
+- pi*log(pi/2)
+
+### I( x^2 / sin(x) )
+integrate(\(x) x^2 / sin(x) - pi^2 / (pi-x), 0, pi)
+- 7*pracma::zeta(3) - pi^2*log(pi/2)
+
+###
 integrate(function(x) x*(pi - x) / sin(x), 0, pi)
 7*zeta(3)
 
