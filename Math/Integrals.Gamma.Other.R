@@ -69,6 +69,14 @@ k = sqrt(5)
 integrate(\(x) log(gamma(2*x + k)), 0, 1)
 ((k+1)*log(k+1) + k*log(k)) / 2 - k + log(2*pi)/2 - 1/2
 
+### Lim: k -> 0
+integrate(\(x) log(gamma(2*x)), 0, 1)
+log(2*pi)/2 - 1/2
+###
+integrate(\(x) log(gamma(3*x)), 0, 1)
+log(2*pi)/2 + 2/3*log(2) - 1
+
+
 ### I( log(gamma(3*x + k)) )
 k = sqrt(5)
 integrate(\(x) log(gamma(3*x + k)), 0, 1)
@@ -166,6 +174,13 @@ integrate(\(x) digamma(k*x) + 1 / (k*x), 0, 1)
 ### I( x * digamma(x) )
 integrate(\(x) x * digamma(x), 0, 1)
 - log(pi*2)/2
+
+###
+k = 3
+integrate(\(x) x * digamma(k*x), 0, 1)
+log(gamma(k))/k - integrate(\(x) 1/k * log(gamma(k*x)), 0, 1)$value
+# TODO
+
 
 ### I( x * psi(1, k*x) )
 k = 1/sqrt(pi)
