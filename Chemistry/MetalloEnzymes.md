@@ -5,10 +5,10 @@
 ## Ribunucleotide Reducatase (RNR)
 
 ### Critical Review:
-: Catherine Drennan (MIT/HHMI) Part 2: Metalloproteins and Medicine
-: https://www.youtube.com/watch?v=dZE0TUTZtpQ
+; Catherine Drennan (MIT/HHMI) Part 2: Metalloproteins and Medicine
+; https://www.youtube.com/watch?v=dZE0TUTZtpQ
 
-: Organism: E. coli
+Organism: E. coli
 
 ### A. Radical Generation
 
