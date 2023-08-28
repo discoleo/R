@@ -153,6 +153,26 @@ integrate(\(x) cos(x) * digamma(x/(2*pi)) + 2*pi/x, 0, 2*pi)
 2*pi*Euler + 2*pi*log(2*pi)
 
 
+### I( digamma(x/(2*pi)) )
+integrate(\(x) digamma(x/(2*pi)) + 2*pi/x, 0, 1)
+2*pi * (log(gamma(1/(2*pi))) - log(2*pi))
+
+### I( digamma(k*x) )
+k = 1 / sqrt(pi)
+integrate(\(x) digamma(k*x) + 1 / (k*x), 0, 1)
+(log(gamma(k)) + log(k)) / k
+
+
+### I( x * digamma(x) )
+integrate(\(x) x * digamma(x), 0, 1)
+- log(pi*2)/2
+
+### I( x * psi(1, k*x) )
+k = 1/sqrt(pi)
+integrate(\(x) x * pracma::psi(1, k*x) - 1 / (k^2*x), 0, 1)
+(k*digamma(k) - log(gamma(k)) - log(k) + 1) / k^2
+
+
 ###############
 
 ### TODO:
@@ -165,7 +185,7 @@ integrate(\(x) log(gamma(x)) / log(x), 0, 1)
 integrate(\(x) log(gamma(x)) / gamma(x), 0, 1)
 integrate(\(x) log(gamma(x)) * log(gamma(1-x)), 0, 1)
 
-integrate(\(x) 1/gamma(x), 0, 1)
+integrate(\(x) 1 / gamma(x), 0, 1)
 integrate(\(x) x / gamma(x), 0, 1)
 integrate(\(x) log(x) / gamma(x), 0, 1)
 integrate(\(x) sin(x) / gamma(x), 0, 1)
