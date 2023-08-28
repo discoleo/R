@@ -258,6 +258,22 @@ integrate(sin.rp, lower = lower, upper = upper, p=p, rel.tol=1E-10)
 ####################
 ####################
 
+### on [0, pi/2]
+
+###
+integrate(\(x) sqrt(sin(x)), 0, pi/2)
+sqrt(2/pi) * gamma(3/4)^2
+
+
+### I( sin(x)^p * cos(x)^q )
+p = 1/3; q = - 1/5;
+integrate(\(x) sin(x)^p * cos(x)^q, 0, pi/2)
+gamma((p+1)/2) * gamma((q+1)/2) / gamma((p+q)/2 + 1) / 2
+
+
+####################
+### on [0, pi/4] ###
+
 ### I( sin(x)^(5/3) / cos(x)^(1/3) )
 integrate(\(x) sin(x)^(5/3) / cos(x)^(1/3), 0, pi/4)
 (beta(1/3, 1/2) - beta(1/3, 1)) / 2^(2 + 2/3)
@@ -265,6 +281,12 @@ integrate(\(x) sin(x)^(5/3) / cos(x)^(1/3), 0, pi/4)
 ###
 integrate(\(x) cos(x)^(5/3) / sin(x)^(1/3), 0, pi/4)
 (beta(1/3, 1/2) + beta(1/3, 1)) / 2^(2 + 2/3)
+
+### I( 1 / (cos(x) * sin(x)^(1/3)) )
+integrate(\(x) 1 / (cos(x) * sin(x)^(1/3)), 0, pi/4)
+- (digamma(1/3) + Euler)/2 + 3/4*log((2^(2/3) + 2^(1/3) + 1)/3) +
+	- sqrt(3)/2 * atan((2^(1/3) + 1/2) * 2/sqrt(3)) +
+	+ sqrt(3)/2 * atan((1 + 1/2) * 2/sqrt(3));
 
 
 ### I( sin(x)^(4/3) / cos(x)^(2/3) )
