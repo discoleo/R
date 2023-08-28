@@ -135,6 +135,26 @@ integrate(\(x) x * log(gamma(x)), 0, 1)
 log(2*pi)/4 - log(A);
 
 
+### I( cos(x) * log(gamma(x/(2*pi))) )
+integrate(\(x) cos(x) * log(gamma(x/(2*pi))), 0, 2*pi)
+pi / 2
+
+### I( sin(x) * log(gamma(x/(2*pi))) )
+integrate(\(x) sin(x) * log(gamma(x/(2*pi))), 0, 2*pi)
+log(2*pi) + Euler
+
+
+### I( sin(x) * digamma(x/(2*pi)) )
+integrate(\(x) sin(x) * digamma(x/(2*pi)), 0, 2*pi)
+- pi^2
+
+### I( cos(x) * digamma(x/(2*pi)) )
+integrate(\(x) cos(x) * digamma(x/(2*pi)) + 2*pi/x, 0, 2*pi)
+2*pi*Euler + 2*pi*log(2*pi)
+
+
+###############
+
 ### TODO:
 integrate(\(x) log(1-x) * log(gamma(x)), 0, 1)
 integrate(\(x) log(x) * log(gamma(x)), 0, 1)
@@ -151,6 +171,7 @@ integrate(\(x) log(x) / gamma(x), 0, 1)
 integrate(\(x) sin(x) / gamma(x), 0, 1)
 
 integrate(\(x) gamma(x) - 1/x, 0, 1)
+integrate(\(x) gamma(x) / x - 1/x^2 + Euler/x, 0, 1)
 integrate(\(x) gamma(x) * x, 0, 1)
 integrate(\(x) gamma(x) * sin(x), 0, 1)
 integrate(\(x) gamma(x) * sin(pi*x), 0, 1)
