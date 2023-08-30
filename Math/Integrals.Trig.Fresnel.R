@@ -214,3 +214,18 @@ p = 2*n + 0.45;
 pracma::integral(\(x) sin(x^n)^2 / x^p, 0, 6000)
 sin(pi*(1/2 - (p-1)/(2*n))) * gamma(1 - (p-1)/n) * 2^((p-1)/n - 1) / (p-1)
 
+
+######################
+######################
+
+### Composite Fresnel-Type
+
+###
+# Maths 505: A RIDICULOUSLY AWESOME INTEGRAL!!!! int 0 to infty (sin(x^2+1/x^2))^3
+# https://www.youtube.com/watch?v=CJOZoV7S2l4
+
+### I( in(x^2 + 1/x^2)^3 )
+# upper = Inf: numerical issues;
+pracma::integral(\(x) sin(x^2 + 1/x^2)^3, 0, 512*pi)
+1/8 * sin(pi/4) * gamma(1/2) * (3*sin(2) + 3*cos(2) - (sin(6) + cos(6))/sqrt(3))
+
