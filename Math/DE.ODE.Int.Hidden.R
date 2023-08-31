@@ -37,8 +37,8 @@ x^2*d2y + (k*n*x^n - 2*p)*x*dy - p*(k*n*x^n - p - 1)*y +
 # F(x) = x^2 + x + 1;
 
 Ipk = function(x, parms) {
-	p = parms$p; n = parms$n; k = parms$k;
-	(x^2 + x + 1) + x^p * integrate(\(x) exp(-k * x^n), 0, pi/2)$value;
+	p = parms$p; n = parms$n; k = parms$k; up = x;
+	(x^2 + x + 1) + x^p * integrate(\(x) exp(-k * x^n), 0, up)$value;
 }
 dyf = function(x, parms) {
 	p = parms$p; n = parms$n; k = parms$k;
@@ -61,7 +61,7 @@ Ip = function(x, y, parms) {
 
 ###
 parms = list(p = 1/2, k = 1/3, n = 4/3);
-x.start = 0.1; x.end = 3; # 1.5;
+x.start = 0.1; x.end = 3; # x.end = 1.5;
 x = seq(x.start, x.end, by = 0.01)
 
 sol <- bvpshoot(
