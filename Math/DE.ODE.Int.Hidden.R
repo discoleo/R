@@ -35,14 +35,17 @@ x^2*d2y + (k*n*x^n - 2*p)*x*dy - p*(k*n*x^n - p - 1)*y +
 ### Tests:
 
 # F(x) = x^2 + x + 1;
+# F(x) = x - x^(1/2) + 1;
 
 Ipk = function(x, parms) {
 	p = parms$p; n = parms$n; k = parms$k; up = x;
-	(x^2 + x + 1) + x^p * integrate(\(x) exp(-k * x^n), 0, up)$value;
+	x - x^(1/2) + 1 + # (x^2 + x + 1) +
+	x^p * integrate(\(x) exp(-k * x^n), 0, up)$value;
 }
 dyf = function(x, parms) {
 	p = parms$p; n = parms$n; k = parms$k;
-	f = x^2 + x + 1; df = 2*x + 1;
+	# f = x^2 + x + 1; df = 2*x + 1;
+	f = x - x^(1/2) + 1; df = 1 - 1/(2*x^(1/2));
 	y = Ipk(x, parms);
 	dy = p*(y - f)/x + x^p * exp(-k*x^n) + df;
 	return(dy);
@@ -51,7 +54,8 @@ dyf = function(x, parms) {
 Ip = function(x, y, parms) {
 	p  = parms$p; n = parms$n; k = parms$k;
 	dy = y[2]; y = y[1];
-	f  = x^2 + x + 1; df = 2*x + 1; d2f = 2;
+	# f  = x^2 + x + 1; df = 2*x + 1; d2f = 2;
+	f  = x - x^(1/2) + 1; df = 1 - 1/(2*x^(1/2)); d2f = 1/(4*x^(3/2));
 	d2y = (k*n*x^n - 2*p)*x*dy - p*(k*n*x^n - p - 1)*y +
 		+ (k*n*x^n - p - 1) * (p*f - x*df) + (p-1)*x*df - x^2*d2f;
 	d2y = - d2y / x^2;
@@ -61,7 +65,7 @@ Ip = function(x, y, parms) {
 
 ###
 parms = list(p = 1/2, k = 1/3, n = 4/3);
-x.start = 0.1; x.end = 3; # x.end = 1.5;
+x.start = 0.1; x.end = 5; # x.end = 1.5;
 x = seq(x.start, x.end, by = 0.01)
 
 sol <- bvpshoot(
