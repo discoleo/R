@@ -6,6 +6,13 @@
 
 library(bvpSolve)
 
+plot.ode = function(m, FUN, parms, dy = NULL, col = c("green", "red")) {
+	# TODO: dy;
+	plot(m[, 1:2], type="l", col=col[1]);
+	y = sapply(m[,1], \(x) FUN(x, parms));
+	lines(m[,1], y, col=col[2], lty=2);
+}
+
 
 #####################
 
@@ -80,9 +87,7 @@ plot(sol)
 
 # perfect match
 par(mfrow = c(1, 1))
-plot(sol[, 1:2], type="l", col="green")
-y = sapply(x, \(x) Ipk(x, parms))
-lines(x, y, col="red", lty=2)
+plot.ode(sol, Ipk, parms = parms)
 
 
 #####################
@@ -95,6 +100,13 @@ lines(x, y, col="red", lty=2)
 # dy = p*(y - f)/x + x^p * log(x^n + 1) / (x + 1) + df;
 x*dy - p*y - x^(p+1) * log(x^n + 1) / (x + 1) + p*f - x*df # = 0
 (x^2 + x)*dy - p*(x + 1)*y - x^(p+1) * log(x^n + 1) + p*(x+1)*f - (x^2 + x)*df # = 0
+
+# TODO
+
+
+#####################
+
+### y = x^p * I( (z^n + 1)^k dz ) + F(x)
 
 # TODO
 
@@ -113,6 +125,7 @@ dy - k1*y - exp(-k2*x^n + k1*x) + k1*f - df # = 0
 ### D2 =>
 d2y - k1*dy + (n*k2*x^(n-1) - k1) * exp(-k2*x^n + k1*x) + k1*df - d2f # = 0
 d2y - k1*dy + (n*k2*x^(n-1) - k1) * (dy - k1*y + k1*f - df) + k1*df - d2f # = 0
+### ODE:
 d2y + (n*k2*x^(n-1) - 2*k1)*dy - k1*(n*k2*x^(n-1) - k1)*y +
 	+ k1*(n*k2*x^(n-1) - k1)*f - (n*k2*x^(n-1) - 2*k1)*df - d2f # = 0
 
@@ -122,5 +135,51 @@ d2y + (n*k2*x^(n-1) - 2*k1)*dy - k1*(n*k2*x^(n-1) - k1)*y +
 d2y + (n*k2*x^(n-1) - 2*k1)*dy - k1*(n*k2*x^(n-1) - k1)*y +
 	+ b*n*k1*k2*x^n - b*n*k2*x^(n-1) - b*k1^2*x + 2*b*k1 # = 0
 
-# TODO: check;
+
+### Tests
+
+# F(x) = - x/3 - x^(1/2) + 1;
+
+Ipk = function(x, parms) {
+	n = parms$n; k1 = parms$k1; k2 = parms$k2; up = x;
+	- 1/3 * x - x^(1/2) + 1 +
+	exp(k1*x) * integrate(\(x) exp(-k2 * x^n), 0, up)$value;
+}
+dyf = function(x, parms) {
+	n = parms$n; k1 = parms$k1; k2 = parms$k2;
+	f = - 1/3 * x - x^(1/2) + 1; df = - 1/3 - 1/(2*x^(1/2));
+	y = Ipk(x, parms);
+	dy = k1*y + exp(-k2*x^n + k1*x) - k1*f + df;
+	return(dy);
+}
+
+Ip = function(x, y, parms) {
+	n = parms$n; k1 = parms$k1; k2 = parms$k2;
+	dy = y[2]; y = y[1];
+	f  = - 1/3 * x - x^(1/2) + 1; df = - 1/3 - 1/(2*x^(1/2)); d2f = 1/(4*x^(3/2));
+	d2y = (n*k2*x^(n-1) - 2*k1)*dy - k1*(n*k2*x^(n-1) - k1)*y +
+		+ k1*(n*k2*x^(n-1) - k1)*f - (n*k2*x^(n-1) - 2*k1)*df - d2f;
+	d2y = - d2y;
+	list(c(dy, d2y));
+}
+
+
+###
+parms = list(k1 = 1/5, k2 = 2, n = 4/3);
+x.start = 0.1; x.end = 14; # x.end = 1.5;
+x = seq(x.start, x.end, by = 0.01)
+
+sol <- bvpshoot(
+	yini = c(Ipk(x.start, parms), NA),
+	yend = c(Ipk(x.end, parms), NA),
+	x = x, func = Ip, guess = dyf(x.start, parms),
+	parms = parms)
+
+### Test
+
+plot(sol)
+
+# perfect match
+par(mfrow = c(1, 1))
+plot.ode(sol, Ipk, parms = parms)
 
