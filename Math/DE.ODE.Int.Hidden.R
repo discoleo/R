@@ -84,3 +84,43 @@ plot(sol[, 1:2], type="l", col="green")
 y = sapply(x, \(x) Ipk(x, parms))
 lines(x, y, col="red", lty=2)
 
+
+#####################
+
+### y = x^p * I( log(z^n + 1) / (z + 1) dz ) + F(x)
+
+### D =>
+# [not run]
+# dy = p*x^(p-1)*I(...) + x^p * log(x^n + 1) / (x + 1) + df;
+# dy = p*(y - f)/x + x^p * log(x^n + 1) / (x + 1) + df;
+x*dy - p*y - x^(p+1) * log(x^n + 1) / (x + 1) + p*f - x*df # = 0
+(x^2 + x)*dy - p*(x + 1)*y - x^(p+1) * log(x^n + 1) + p*(x+1)*f - (x^2 + x)*df # = 0
+
+# TODO
+
+
+######################
+
+### y = exp(k1*x) * I( exp(-k2*z^n) dz ) + F(x)
+
+### D =>
+# [not run]
+# dy = k1*exp(k1*x) * I(...) + exp(-k2*x^n + k1*x) + df;
+# dy = k1*(y - f) + exp(-k2*x^n + k1*x) + df;
+dy - k1*y - exp(-k2*x^n + k1*x) + k1*f - df # = 0
+
+
+### D2 =>
+d2y - k1*dy + (n*k2*x^(n-1) - k1) * exp(-k2*x^n + k1*x) + k1*df - d2f # = 0
+d2y - k1*dy + (n*k2*x^(n-1) - k1) * (dy - k1*y + k1*f - df) + k1*df - d2f # = 0
+d2y + (n*k2*x^(n-1) - 2*k1)*dy - k1*(n*k2*x^(n-1) - k1)*y +
+	+ k1*(n*k2*x^(n-1) - k1)*f - (n*k2*x^(n-1) - 2*k1)*df - d2f # = 0
+
+### Special Cases:
+
+### F(x) = b*x
+d2y + (n*k2*x^(n-1) - 2*k1)*dy - k1*(n*k2*x^(n-1) - k1)*y +
+	+ b*n*k1*k2*x^n - b*n*k2*x^(n-1) - b*k1^2*x + 2*b*k1 # = 0
+
+# TODO: check;
+
