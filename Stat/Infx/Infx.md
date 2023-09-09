@@ -33,6 +33,7 @@
 * pubmed.mineR;
 #### Simulations/Modeling:
 * EpiModel, PandemicLP, babsim.hospital, cif (for ICU), niaidMI, weibull4, covidprobability, bets.covid19;
+* modelSSE: Modelling Infectious Disease Superspreading from Contact Tracing
 #### Genetics/Mutations:
 * CovidMutations, UKB.COVID19, VERSO (phylo, Bioconductor);
 #### Other:
@@ -45,15 +46,27 @@ Note: Bioconductor packages not yet searched;
 
 1. Package deSolve
 Vignette: Solving Initial Value Differential Equations in R.
-https://cran.r-project.org/web/packages/deSolve/vignettes/deSolve.pdf
+> https://cran.r-project.org/web/packages/deSolve/vignettes/deSolve.pdf
 
-2. Package deBInfer
+2. Package FME:
+Vignette: Inverse Modelling, Sensitivity and Monte Carlo Analysis in R Using Package FME
+> https://cran.r-project.org/web/packages/FME/vignettes/FME.pdf
+
+3. Package mosaicCalc
+Vignette: Instructors’ Guide
+> https://cran.r-project.org/web/packages/mosaicCalc/vignettes/Instructors.html
+
+4. Package deBInfer
 Vignette: Bayesian inference for a population growth model of the chytrid fungus.
-https://cran.r-project.org/web/packages/deBInfer/vignettes/chytrid_dede_example.pdf
+> https://cran.r-project.org/web/packages/deBInfer/vignettes/chytrid_dede_example.pdf
 
-3. Package rodeo
+5. Package rodeo
 Vignette: Basic Use and Sample Applications.
-https://cran.r-project.org/web/packages/rodeo/vignettes/rodeoVignette.pdf
+> https://cran.r-project.org/web/packages/rodeo/vignettes/rodeoVignette.pdf
+
+6. Package deBif
+Vignette: A package for bifurcation analysis of ordinary differential equation systems.
+> https://cran.r-project.org/web/packages/deBif/vignettes/deBif-manual.pdf
 
 
 ## Literature
