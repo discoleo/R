@@ -1,5 +1,10 @@
 
 
+### Simulation of "Noisy" ODEs
+
+
+####################
+
 ### Helper Functions
 
 library(bvpSolve)
@@ -29,14 +34,17 @@ solve.ODE.stoch = function(x, ODE, xlim, n = 10, iter = 10, ...) {
 	sol = solve.ODE(x, xlim, ODE = ODE, FUN = stoch.gen(n, xlim, ...));
 	# Plot:
 	ylim = range(sol[,2]) + c(-2,2);
-	plot(sol[, 1:2], type="l", col="green", ylim = ylim);
+	plot(sol[, 1:2], type="l", ylim = ylim, col = "#FF0000");
 	for(i in seq(iter)) {
-		sol2 = solve.ODE(x, xlim, ODE = ODE, FUN = stoch.gen(n, xlim, ...));
+		sol = solve.ODE(x, xlim, ODE = ODE, FUN = stoch.gen(n, xlim, ...));
 		val = 15 * i;
 		hex = as.hexmode(val);
 		if(val < 16) hex = paste0("0", hex);
-		lines(sol2[, 1:2], type="l", lty = 2, col = paste0("#F032", hex));
+		lines(sol[, 1:2], type="l", lty = 2, col = paste0("#F032", hex));
 	}
+	FUN = function(x) 0; # or return the mean?
+	sol = solve.ODE(x, xlim, ODE = ODE, FUN = FUN);
+	lines(sol[, 1:2], type="l", lwd = 2, col = "green");
 	return(invisible(sol));
 }
 
@@ -47,7 +55,9 @@ x.start = 0; x.end = 5;
 x = seq(x.start, x.end, by = 0.01)
 n = 10;
 
-sol = solve.ODE.stoch(x, ODE = Idny, init, n=n, scale = 1.5)
+sol = solve.ODE.stoch(x, ODE = Idny, init, n=n, sd = 1.5)
+
+sol = solve.ODE.stoch(x, ODE = Idny, init, n=n, sd = 1.5, mean = 2)
 
 
 ### Test
