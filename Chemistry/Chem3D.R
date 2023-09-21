@@ -10,16 +10,16 @@ library(rgl)
 
 ### Basic Tetrahedron
 # Note: transparency does NOT work!
-Th4.base = function(fill.plane = "#A0A0A0F0") {
+Th4.base = function(lwd = 2, fill.plane = "#A0A0A064") {
 	pB = list(c(1,0,0), c(-1/2, sqrt(3)/2, 0), c(-1/2, -sqrt(3)/2, 0))
-	pT = c(0,0,sqrt(2));
-	pC = c(0,0, 1/4 * sqrt(2));
+	pT = c(0, 0, sqrt(2));
+	pC = c(0, 0, 1/4 * sqrt(2));
 	for(i in seq(3)) {
 		tmp = pB[[i]];
-		lines3d(c(tmp[1], pC[1]), c(tmp[2], pC[2]), c(tmp[3], pC[3]));
+		lines3d(c(tmp[1], pC[1]), c(tmp[2], pC[2]), c(tmp[3], pC[3]), lwd=lwd);
 	}
 	tmp = pT;
-	lines3d(c(tmp[1], pC[1]), c(tmp[2], pC[2]), c(tmp[3], pC[3]));
+	lines3d(c(tmp[1], pC[1]), c(tmp[2], pC[2]), c(tmp[3], pC[3]), lwd=lwd);
 	# Draw planes:
 	if( ! is.null(fill.plane)) {
 		pB = data.frame(do.call("rbind", pB));
@@ -39,7 +39,7 @@ Th4.base()
 # xyz    = c(a,b,c)
 # center = center of tetrahedron;
 Th4 = function(xyz, center = c(0,0,0), r = 1) {
-	# Eq: a*(x-x0) + b*(y-y0) + c(z-z0) = 0
+	# Eq: a*(x-x0) + b*(y-y0) + c*(z-z0) = 0
 	# TODO
 }
 
