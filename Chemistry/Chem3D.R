@@ -6,6 +6,14 @@ library(rgl)
 
 ###############
 
+### Helper
+
+dist.xyz = function(x, y, z) {
+	sqrt(diff(x)^2 + diff(y)^2 + diff(z)^2);
+}
+
+###############
+
 ### Tetrahedron
 
 ### Basic Tetrahedron
@@ -27,13 +35,14 @@ Th4.base = function(lwd = 2, fill.plane = "#A0A0A064", N = 20, alpha = 0.2) {
 		# Bug in rgl:::triangulateSimple
 		# polygon3d(pB, col = fill.plane);
 		### Transparency: set with alpha!
-		polygon3d(rbind(pB, pB[1,]), col = fill.plane, fill = TRUE, alpha = 0.2);
+		polygon3d(rbind(pB, pB[1,]), col = fill.plane, fill = TRUE, alpha = alpha);
 		# fake transparency:
 		trf = function(x, tt) {
 			x1 = tt * x[1] + (1 - tt) * x[2];
 			x2 = tt * x[1] + (1 - tt) * x[3];
 			x  = c(x1, x2);
 		}
+		if(N > 0)
 		for(tt in seq(0, N - 1)/N) {
 			x = trf(pB$x, tt); y = trf(pB$y, tt); z = c(0, 0);
 			lines3d(x, y, z, lwd = lwd, col = fill.plane);
