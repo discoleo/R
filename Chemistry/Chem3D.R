@@ -10,7 +10,7 @@ library(rgl)
 
 ### Basic Tetrahedron
 # Note: transparency does NOT work!
-Th4.base = function(lwd = 2, fill.plane = "#A0A0A064", N = 20) {
+Th4.base = function(lwd = 2, fill.plane = "#A0A0A064", N = 20, alpha = 0.2) {
 	pB = list(c(1,0,0), c(-1/2, sqrt(3)/2, 0), c(-1/2, -sqrt(3)/2, 0))
 	pT = c(0, 0, sqrt(2));
 	pC = c(0, 0, 1/4 * sqrt(2));
@@ -26,15 +26,15 @@ Th4.base = function(lwd = 2, fill.plane = "#A0A0A064", N = 20) {
 		names(pB) = c("x","y","z");
 		# Bug in rgl:::triangulateSimple
 		# polygon3d(pB, col = fill.plane);
-		### Transparency does NOT work:
-		polygon3d(rbind(pB, pB[1,]), col = fill.plane, fill = FALSE);
+		### Transparency: set with alpha!
+		polygon3d(rbind(pB, pB[1,]), col = fill.plane, fill = TRUE, alpha = 0.2);
 		# fake transparency:
 		trf = function(x, tt) {
 			x1 = tt * x[1] + (1 - tt) * x[2];
 			x2 = tt * x[1] + (1 - tt) * x[3];
 			x  = c(x1, x2);
 		}
-		for(tt in seq(N - 1)/N) {
+		for(tt in seq(0, N - 1)/N) {
 			x = trf(pB$x, tt); y = trf(pB$y, tt); z = c(0, 0);
 			lines3d(x, y, z, lwd = lwd, col = fill.plane);
 		}
