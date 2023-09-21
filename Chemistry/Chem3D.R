@@ -4,13 +4,13 @@
 library(rgl)
 
 
-#############
+###############
 
 ### Tetrahedron
 
 ### Basic Tetrahedron
 # Note: transparency does NOT work!
-Th4.base = function(lwd = 2, fill.plane = "#A0A0A064") {
+Th4.base = function(lwd = 2, fill.plane = "#A0A0A064", N = 20) {
 	pB = list(c(1,0,0), c(-1/2, sqrt(3)/2, 0), c(-1/2, -sqrt(3)/2, 0))
 	pT = c(0, 0, sqrt(2));
 	pC = c(0, 0, 1/4 * sqrt(2));
@@ -24,15 +24,26 @@ Th4.base = function(lwd = 2, fill.plane = "#A0A0A064") {
 	if( ! is.null(fill.plane)) {
 		pB = data.frame(do.call("rbind", pB));
 		names(pB) = c("x","y","z");
-		# bug in rgl:::triangulateSimple
+		# Bug in rgl:::triangulateSimple
 		# polygon3d(pB, col = fill.plane);
-		polygon3d(rbind(pB, pB[1,]), col = fill.plane);
+		### Transparency does NOT work:
+		polygon3d(rbind(pB, pB[1,]), col = fill.plane, fill = FALSE);
+		# fake transparency:
+		trf = function(x, tt) {
+			x1 = tt * x[1] + (1 - tt) * x[2];
+			x2 = tt * x[1] + (1 - tt) * x[3];
+			x  = c(x1, x2);
+		}
+		for(tt in seq(N - 1)/N) {
+			x = trf(pB$x, tt); y = trf(pB$y, tt); z = c(0, 0);
+			lines3d(x, y, z, lwd = lwd, col = fill.plane);
+		}
 	}
 }
 
 close3d()
 open3d()
-Th4.base()
+Th4.base(N = 32)
 
 
 ###
