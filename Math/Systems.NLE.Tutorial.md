@@ -99,3 +99,12 @@ The code is also available on GitHub:
 > - see Section "Supplementary Info";
 > https://github.com/discoleo/R/blob/master/Math/DE.Systems.Lambert.R
 
+
+## References
+
+### Varia
+
+1. Fields Institute: Riemannian Optimization on Embedded Manifolds Using Homotopy Continuation
+> https://www.youtube.com/watch?v=YT-2LvTeud4&list=PLArBKNfJxuun0G_hi4HMq4dH5a9v2jFdB&index=5
+> see from around 14:00;
+
