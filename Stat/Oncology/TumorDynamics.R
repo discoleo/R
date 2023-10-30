@@ -25,8 +25,10 @@
 #    http://doi.org/10.1007/s00285-013-0665-7
 #  - extension of the previous model;
 
-plot.diagram.t0 = function(dL = 0.0125, asp = 4/3, new = TRUE) {
-	if(new) plot.base(xlim = c(-1, 1), ylim = c(0, 1.5), asp = asp)
+plot.diagram.t0 = function(dL = 0.0125, asp = 4/3, new = TRUE,
+		cex = 1.6, cex.axis = cex - 0.1) {
+	if(new) plot.base(xlim = c(-1, 1), ylim = c(0, 1.5),
+		cex.axis = cex.axis, asp = asp);
 	
 	lines(c(-1,0), c(1,0), lwd=3, col = "red")
 	lines(c(-1,0,1), c(0,1,1), lwd=2, col = "#323232")
@@ -38,17 +40,17 @@ plot.diagram.t0 = function(dL = 0.0125, asp = 4/3, new = TRUE) {
 	arrowSimple(c(-0.5, -0.8), c(1.3, 0.9), col = "red",
 		d = -0.1, d.lines = c(-dL,dL), scale = 1/asp)
 	text(-0.5, 1.3, "Density of Tumor Cells", adj = c(-0.05, -0.05),
-		cex = 1.5, col = "red")
+		cex = cex, col = "red")
 	# Boundary:
 	arrowSimple(c(0.3, 0.025), c(1.2, 1.2), col = "green",
 		d = -0.1, d.lines = c(-dL,dL), scale = 1/asp)
 	text(0.35, 1.2, "Boundary:", adj = c(0, 0.5),
-		cex = 1.5, col = "green")
+		cex = cex, col = "green")
 	text(0, 1.1, "Tumor - Normal Tissue", adj = c(-0.05, 0.5),
-		cex = 1.5, col = "green")
+		cex = cex, col = "green")
 	# Title:
 	text(-0.8, 1.45, "Invasion Model:    t = 0", adj = c(0, 0.5),
-		cex = 1.6, col = "blue")
+		cex = cex + 0.2, col = "blue")
 }
 
 # png(file = "Model.Gatenby.T0.png")
