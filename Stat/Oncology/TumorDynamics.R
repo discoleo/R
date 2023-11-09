@@ -16,15 +16,18 @@
 ### Tumor Invasion
 
 ### Gatenby–Gawlinski Model:
-# Ref:
+
+### Ref:
 # 1. Gatenby RA, Gawlinski ET. A reaction-diffusion model of cancer invasion.
 #    Cancer Res. (1996); 56(24):5745–5753;
+#
+### Extension of the initial Gatenby-Gawlinski model:
 # 2. McGillen JB, Gaffney EA, Martin NK, Maini PK.
 #    A general reaction–diffusion model of acidity in cancer invasion.
 #    J. Math. Biol. (2014); 68:1199–1224;
 #    http://doi.org/10.1007/s00285-013-0665-7
-#  - extension of the previous model;
 
+### Time: t = 0
 plot.diagram.t0 = function(dL = 0.0125, asp = 4/3, new = TRUE,
 		cex = 1.6, cex.axis = cex - 0.1) {
 	if(new) plot.base(xlim = c(-1, 1), ylim = c(0, 1.5),
@@ -64,6 +67,21 @@ plot.diagram.t0()
 
 ###################
 ### Sub-Populations
+
+
+### Ref:
+# 2. Martin NK, Gaffney EA, Gatenby RA, Maini PK.
+#    Tumour-stromal interactions in acid-mediated invasion: a mathematical model.
+#    J Theor Biol. 2010 Dec 7;267(3):461-70.
+#    http://doi.org/10.1016/j.jtbi.2010.08.028.
+#    Epub 2010 Sep 8. PMID: 20816684; PMCID: PMC3005191.
+#  - model with ECM-degradation;
+# 3. Strobl MAR, Krause AL, Damaghi M, Gillies R, Anderson ARA, Maini PK.
+#    Mix and Match: Phenotypic Coexistence as a Key Facilitator of Cancer Invasion.
+#    Bull Math Biol. 2020 Jan 17;82(1):15.
+#    http://doi.org/10.1007/s11538-019-00675-0
+#    PMID: 31953602; PMCID: PMC6968991.
+#  - model with 2 sub-populations of tumor cells;
 
 # TODO:
 
