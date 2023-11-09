@@ -5,7 +5,7 @@
 ###
 ### Statistics: Moments
 ###
-### draft v.0.1e
+### draft v.0.1f
 
 
 ### Harmonic Moments
@@ -36,11 +36,23 @@
 # https://www.youtube.com/watch?v=vDwEMC6UgLc
 # - Scatter Statistics vs Power Spectrum vs CNN
 
+### Harmonic Mean Offset:
+# TODO: Ref ...;
+
 
 ####################
 
 ### Harmonic Moments
-moments.h10 = function(x, pow=1) {
+# offset: enables H-Mean for x = 0;
+moments.h10 = function(x, pow = 1, offset = 0) {
+	if(pow != 1) x = x^pow;
+	xm = sum(1 / (x + offset));
+	xm = length(x) / xm - offset;
+	if(pow != 1) xm = xm^(1/pow);
+	return(xm)
+}
+# Note: fails if x == 0;
+moments.h10.old = function(x, pow=1) {
 	if(pow != 1) x = x^pow;
 	xm = sum(1/x);
 	xm = length(x) / xm;
@@ -156,6 +168,23 @@ moments.GH20Log = function(x, pow=1) {
 
 
 ###################
+
+### Examples
+
+# includes 0 values;
+n = 200
+lambda = 4
+x = rpois(n, lambda)
+
+### Harmonic
+mean(x); # lambda
+moments.h10(x, offset = 1)
+moments.h10(x, offset = lambda)
+moments.h10(x, offset = mean(x))
+moments.h10(x, offset = median(x)) # lambda > 0.71
+
+
+####################
 
 ### Examples
 
