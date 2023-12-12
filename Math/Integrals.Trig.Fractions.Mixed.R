@@ -57,8 +57,23 @@ integrate(\(x) 1 / (x - sin(pi/2*x)) - 1/(1-pi/2)/x - 1/(x-1), 0, 1)
 ##################
 
 ###
-# Maths 505: 2 ridiculously awesome integrals!
-# https://www.youtube.com/watch?v=SwizwPy-GmE
+# 1. Maths 505: Feynman's technique is unreasonably OP!
+#    https://www.youtube.com/watch?v=xOtQ8Mh0cvg
+#  => the sub-integral (NOT Feynman);
+# 2. Maths 505: 2 ridiculously awesome integrals!
+#    https://www.youtube.com/watch?v=SwizwPy-GmE
+
+### I( sin(x) / (x * (1 + a*cos(x))) ) on [0, Inf]
+a = sqrt(3)/5;
+# upper = Inf: numerical issues;
+integrate(\(x) sin(x) / (x * (1 + a*cos(x))), 0, 2000, subdivisions = 1025)
+pi/(2*a) + (a-1)*pi/(2*a*sqrt(1-a^2))
+
+# Gen: I( sin(x) / (x * (b + a*cos(x))) )
+a = sqrt(3)/5; b = sqrt(5);
+# upper = Inf;
+integrate(\(x) sin(x) / (x * (b + a*cos(x))), 0, 2000, subdivisions = 1025)
+pi/(2*a) + (a - b)*pi/(2*a*sqrt(b^2 - a^2))
 
 
 ### I( sin(x) / (x * (b + cos(x)^2)) )
