@@ -23,5 +23,21 @@ Some interesting Trp-containing peptides & cyclopeptides:
 
 #### Vertebrates:
 * GI & Metabolism regulation:
- * Relation to 5-HT3?
- * Serotonin reuptake: Does it hint to food uptake?
+  * Relation to 5-HT3?
+  * Serotonin re-uptake: Does it hint to food uptake?
+
+
+## Defensins
+
+- slightly bigger than oligopeptides: 18 - 45 AA;
+- Mammalian defensins: 2 or 3 disulfide bridges;
+
+1. Schneider JJ, Unholzer A, Schaller M, et al. Human defensins. J Mol Med (Berl) (2005)
+> https://doi.org/10.1007/s00109-005-0657-1
+2. Wikipedia. Defensin.
+> https://en.wikipedia.org/wiki/Defensin
+
+
+### Crotamine (42 AA)
+https://en.wikipedia.org/wiki/Crotamine
+
