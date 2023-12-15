@@ -1,6 +1,9 @@
 
 # Biologically Active Peptides
 
+
+
+
 ## Trp-Containing Peptides
 Some interesting Trp-containing peptides & cyclopeptides:
 
@@ -27,6 +30,14 @@ Some interesting Trp-containing peptides & cyclopeptides:
   * Serotonin re-uptake: Does it hint to food uptake?
 
 
+## Antimicrobial Peptide Database
+
+> 1. Antimicrobial Peptide Database
+> https://aps.unmc.edu/
+> 2. Fu J et al. Mechanisms and regulation of defensins in host defense. Signal Transduct Target Ther. (2023)
+> see Section on Defensins
+
+
 ## Defensins
 
 - slightly bigger than oligopeptides: 18 - 45 AA;
@@ -34,7 +45,9 @@ Some interesting Trp-containing peptides & cyclopeptides:
 
 1. Schneider JJ, Unholzer A, Schaller M, et al. Human defensins. J Mol Med (Berl) (2005)
 > https://doi.org/10.1007/s00109-005-0657-1
-2. Wikipedia. Defensin.
+2. Fu J, Zong X, Jin M, Min J, Wang F, Wang Y. Mechanisms and regulation of defensins in host defense. Signal Transduct Target Ther. (2023)
+> https://doi.org/10.1038/s41392-023-01553-x
+3. Wikipedia. Defensin.
 > https://en.wikipedia.org/wiki/Defensin
 
 
