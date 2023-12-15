@@ -6,7 +6,7 @@
 ### Polynomial Systems: S5
 ### Heterogeneous Symmetric
 ###
-### draft v.0.1a
+### draft v.0.1b
 
 
 ####################
@@ -123,6 +123,11 @@ round(poly.calc0(S[seq(1,30, by = 5)]))
 
 err = S^6 - S^5 + 25*S^4 - 47*S^3 + 158*S^2 - 56*S + 320
 round0(err)
+
+###
+S^6 - S^5 - (11*R - 3)*S^4 + (18*R - 11)*S^3 +
+	+ (19*R^2 - 19*R + 44)*S^2 - (17*R^2 + 24*R + 36)*S +
+	-(9*R^3 - 40*R^2 + 28*R - 32) # = 0
 
 
 ### System Transform:
