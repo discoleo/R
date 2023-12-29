@@ -1,7 +1,7 @@
 
 # Thymus
 
-The classic descriptions of thymus function and selection of T cells, including maturation of regulatory T-cells rise numerous doubts. The actual mechanisms of tolerance and T-cell selection may be very different: I will try to take a theoretical-logical approach to this problem.
+The classic descriptions of thymus function and selection of T cells, including maturation of regulatory T-cells rise numerous doubts. The actual mechanisms of tolerance and T-cell selection may be very different: I will try to take a theoretical approach to this problem and apply principles of basic logic in order to devise alternative mechanisms.
 
 - early draft;
 
@@ -23,7 +23,7 @@ Unlike lymph nodes, there are important differences in the organization of the t
 - Histologic sections of the thymus do not show a hypervascular organ either: antigens may not enter or accumulate inside the thymus - despite various lab reports; results of various experiments may have been misinterpreted as well;
 
 2. **NO** folicular zone with extensive apoptosis
-- Immature B-cells undergo extensive apoptosis in the follicular zone of lymph nodes;
+- Immature B-cells undergo extensive proliferation and apoptosis in the follicular zone of lymph nodes;
 - there is nothing comparable in the thymus;
 
 3. Hassel Bodies
@@ -32,6 +32,8 @@ Unlike lymph nodes, there are important differences in the organization of the t
 ### Issues: Promiscuous Gene Expression
 
 Transcribing randonm genes from the genome is both dangerous and unlikely to play any physiologic roles. There are no mechanisms in a eukariotic cell to transcribe some random gene and localize the resulting protein to some impermeable compartment: such randomly-expressed proteins may dysregulate any of the intra-cellular processes (e.g. nuclear transcription, cytoskeleton, metabolic pathways, cell division), thereby severly perturbing the cellular homeostasis. The logical conclusion dictates that the mechanism of promiscuous gene expression does not play any physiologic role.
+
+It may be purely an artifact of the cell preparation procedures or of some other techniques performed in the lab.
 
 
 ## Alternative Mechanisms
@@ -50,6 +52,16 @@ Open questions:
 - Or do they enter lymph nodes and undergo further maturation there?
 - In which stage are the various subtypes, e.g. CD25+ Foxp3+ cells?
 
+### Detailed Mechanism
+
+A more detailed description of possible steps:
+
+1. Step 1: naive-variants of LTs enter the thymus;
+2. Step 2: these naive variants are induced to become Treg and proliferate in the cortical zone of the thymus;
+3. Step 3: induced TLs leave the thymus in order to hone and mature in end organs;
+
+Step 3 proceeds at the interface between the cortical zone and the medulary zone, forming thus the medulla (which is a LT-depleted zone). The Hassel bodies are formed by collapsing of the thymic epitheloid cells (TECs).
+
 
 ## Literature
 
@@ -60,5 +72,5 @@ Open questions:
 > https://doi.org/10.1007/s00281-020-00831-y
 
 3. Derbinski J, Schulte A, Kyewski B, Klein L. Promiscuous gene expression in medullary thymic epithelial cells mirrors the peripheral self. Nat Immunol (2001)
-> https://doi.org/10.1038/ni723
-> Reprint: Pillars Article.  J Immunol (2016)
+> https://doi.org/10.1038/ni723 \
+> also Reprinted as Pillars Article in J Immunol (2016)
