@@ -68,9 +68,17 @@ Step 3 proceeds at the interface between the cortical zone and the medullary zon
 
 The TCR undergoes mutations/recombinations during the maturation of the LTs. These events can affect the functionality of the TCR; consequently, the function of these new TCRs needs to be checked. Furthermore, the LTs are differentiated into CD4+ and CD8+ LTs, while cells with a non-functional TCR (e.g. degraded interaction with the CD4 or CD8 co-receptors) must be eliminated.
 
-**Mechanism:**\
+**Mechanism:**
 - LT: CD4- CD8- => double positive CD4+ CD8+ & TCR recombination;
 - Selection & Filtering: => single positive CD4+ or CD8+;
+
+**Flow Cytometry:**
+
+I would interpret very differently the results of flow-cytometry analysis of Double-Negative lymphocytes (CD4- CD8-):
+- CD25- CD44-: start to express first CD25;
+- CD25+ cells: start expressing CD44, but with some lag;
+- there is a lot of variability in the CD25+ population: CD44 expression is a continuum;
+- CD25- CD44+: small & diffuse population of cells of unknown significance;
 
 
 ## Literature
