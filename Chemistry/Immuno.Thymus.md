@@ -76,9 +76,10 @@ The TCR undergoes mutations/recombinations during the maturation of the LTs. The
 
 I would interpret very differently the results of flow-cytometry analysis of Double-Negative lymphocytes (CD4- CD8-):
 - CD25- CD44-: start to express first CD25;
-- CD25+ cells: start expressing CD44, but with some lag;
-- there is a lot of variability in the CD25+ population: CD44 expression is a continuum;
-- CD25- CD44+: small & diffuse population of cells of unknown significance;
+- CD25+ cells: start expressing CD44, but with some lag and/or only temporary;
+  - there is a lot of variability in the CD25+ population;
+  - CD44 expression levels form a continuum and the significance of its expression is uncertain;
+- CD25- CD44+: small population of cells (and with highly variable expression) of unknown significance;
 
 
 ## Literature
@@ -97,6 +98,7 @@ I would interpret very differently the results of flow-cytometry analysis of Dou
 ## CDs & Other Components
 
 - CD25 = Interleukin 2 Receptor (IL2R);
+- CD44 = binds to ECM (primarily hyaluronic acid);
 - Aire = Autoimmune regulator (transcription factor), expressed by mTEC;
 
 ### Diseases
