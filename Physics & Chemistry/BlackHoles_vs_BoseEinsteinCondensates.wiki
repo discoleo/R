@@ -14,7 +14,7 @@ https://en.wikipedia.org/wiki/Division_by_zero
 
 === Gravity ===
 
-'''Gravity:''' is a mass effect on polarized nuclei. The Higgs boson is also an artifact.
+'''Gravity:''' is a mass effect originating from polarized nuclei. The Higgs boson is also an artifact.
 
 Atomic nuclei carry de facto all mass. Gravity must therefore be directly related to the atomic nucleus. The polarized nuclei can interact in a mass effect that becomes manifest as gravity. This "gravity" obeys a similar law to Gauss' law computed outside a sphere and decreases with R^2.
 
@@ -34,7 +34,7 @@ Although I contacted multiple physicists with these ideas (including the late St
 
 == Black-Body radiation ==
 
-The origin of the 5700 K black-body radiation in the sun is probably '''NOT''' metallic hydrogen (Ref. Robitaille). Instead, it is more likely a true metal like Wolfram or Osmium.
+The origin of the 5700 K black-body radiation in the sun is probably '''NOT''' metallic hydrogen (Ref. Robitaille 1). Instead, it is more likely a true metal like Wolfram or Osmium.
 
 The high melting points of Wolfram and Osmium and the high density of Osmium indicate a large number of metal-bond type "electrons" in the outer shells, which can interact quasi-diffusely with radiation: the black-body effect in the sun is probably produced by such atoms.
 
@@ -51,11 +51,30 @@ Stars may function by extreme fission. These fission reactions split heavy atoms
 These fission events generate large amounts of protons (hydrogen) and helium nucleons. These nucleons may be responsible for the unusual spectral absorption bands, as they arise through extreme fission events and are not merely bystanders.
 
 
-:Ref. Robitaille:
-:Sky Scolar. What is the Sun Made Of? Evidence from the Solar Spectrum!
-[https://www.youtube.com/watch?v=fynuCLQp1TE]
+== Star Formation ==
 
-:PM Robitaille. A Thermodynamic History of the Solar Constitution — II: The Theory of a Gaseous Sun and Jeans’ Failed Liquid Alternative. Progress Physics (2011)
+If fission drives the stars, then any mechanism of gas-cloud collapse makes no sense. An alternative mechanism is presented below. Unlike classic theories (see Ref. Robitaille 4), the nebula is the product of initial low-level fission reactions, not the source of the star.
+
+Everything starts from a massive proto-solid body consisting of heavy nuclei: this body may result from a super-massive "black hole". Extreme gravity maintains the stability of super-heavy atoms.
+
+For some unknown reason the solid body starts to fragment and to disintegrate. The heavy atoms become unstable and start to fission by alpha and beta decay. This process generates large amounts of hydrogen (and possibly some helium) which diffuses away and generates the gas nebula.
+
+The solid-body fragments start separating more and more, which further reduces the gravitational field acting on the body. This step is ambiguous from a physical perspective. However, once fission reaches a critical density, an intensive and sustained fission process is initiated: a star is born.
+
+; Open Questions:
+Why would a massive solid body fragment and what causes the fragments to separate?
+Alternatively: What is the initiating step?
+
+
+
+# PM Robitaille: Sky Scolar. What is the Sun Made Of? Evidence from the Solar Spectrum!
+https://www.youtube.com/watch?v=fynuCLQp1TE
+
+# PM Robitaille. A Thermodynamic History of the Solar Constitution — II: The Theory of a Gaseous Sun and Jeans’ Failed Liquid Alternative. Progress Physics (2011)
 https://www.ptep-online.com/2011/PP-26-06.PDF
 
-:JH Jeans. stronomy and Cosmogony. Cambridge University Press (1928)
+# JH Jeans. Astronomy and Cosmogony. Cambridge University Press (1928)
+
+# PM Robitaille: Sky Scolar. A Star is Born: Gravitational "Collapse" vs Condensation Reactions!
+https://www.youtube.com/watch?v=kJf0MX96ERY
+
