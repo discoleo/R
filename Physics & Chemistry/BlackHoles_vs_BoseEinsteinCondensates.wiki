@@ -48,16 +48,16 @@ The boiling points of Wolfram, Rhenium and Osmium are all around 5700 K: this ma
 
 Stars may function by extreme fission. These fission reactions split heavy atoms into (much) smaller atoms: the fission is much more extensive than fission events performed on earth.
 
-These fission events generate large amounts of protons (hydrogen) and helium nucleons. These nucleons may be responsible for the unusual spectral absorption bands, as they arise through extreme fission events and are not merely bystanders.
+The nuclear fission generates large amounts of protons (hydrogen) and helium nucleons. These nucleons may be responsible for the unusual spectral absorption bands, as they arise through extreme fission events and are not merely bystanders.
 
 
 == Star Formation ==
 
 If fission drives the stars, then any mechanism of gas-cloud collapse makes no sense. An alternative mechanism is presented below. Unlike classic theories (see Ref. Robitaille 4), the nebula is the product of initial low-level fission reactions, not the source of the star.
 
-Everything starts from a massive proto-solid body consisting of heavy nuclei: this body may result from a super-massive "black hole". Extreme gravity maintains the stability of super-heavy atoms. This stage precedes the emergence of the Active Galactic Nucleus (AGN).
+Everything starts from a massive proto-solid body consisting of tightly-packed heavy nuclei: this body may result from a super-massive "black hole". Extreme gravity maintains the stability of super-heavy atoms. This proto-body precedes the emergence of the Active Galactic Nucleus (AGN).
 
-For some unknown reason the solid body starts to fragment and to disintegrate. The heavy atoms become unstable and start to fission by alpha and beta decay. This process generates large amounts of hydrogen (and possibly some helium) which diffuses away and generates the gas nebula, why the core transforms to an AGN. Some fragments are large enough to be relatively stable over longer periods of time.
+For some unknown reason the solid body starts to fragment and to disintegrate. The heavy atoms become unstable and start to fission by alpha and beta decay. This process generates large amounts of hydrogen (and possibly some helium) which diffuses away and generates the gas nebula, while the core transforms into an AGN. Some fragments are large enough to be relatively stable over longer periods of time and move away to form the objects inside the galaxy.
 
 The solid-body fragments start separating more and more, which further reduces the gravitational field acting on the body. This step is ambiguous from a physical perspective. However, once fission reaches a critical density, an intense and sustained fission process is initiated: a star is born.
 
