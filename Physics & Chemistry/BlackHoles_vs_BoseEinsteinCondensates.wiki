@@ -55,26 +55,29 @@ These fission events generate large amounts of protons (hydrogen) and helium nuc
 
 If fission drives the stars, then any mechanism of gas-cloud collapse makes no sense. An alternative mechanism is presented below. Unlike classic theories (see Ref. Robitaille 4), the nebula is the product of initial low-level fission reactions, not the source of the star.
 
-Everything starts from a massive proto-solid body consisting of heavy nuclei: this body may result from a super-massive "black hole". Extreme gravity maintains the stability of super-heavy atoms.
+Everything starts from a massive proto-solid body consisting of heavy nuclei: this body may result from a super-massive "black hole". Extreme gravity maintains the stability of super-heavy atoms. This stage precedes the emergence of the Active Galactic Nucleus (AGN).
 
-For some unknown reason the solid body starts to fragment and to disintegrate. The heavy atoms become unstable and start to fission by alpha and beta decay. This process generates large amounts of hydrogen (and possibly some helium) which diffuses away and generates the gas nebula.
+For some unknown reason the solid body starts to fragment and to disintegrate. The heavy atoms become unstable and start to fission by alpha and beta decay. This process generates large amounts of hydrogen (and possibly some helium) which diffuses away and generates the gas nebula, why the core transforms to an AGN. Some fragments are large enough to be relatively stable over longer periods of time.
 
-The solid-body fragments start separating more and more, which further reduces the gravitational field acting on the body. This step is ambiguous from a physical perspective. However, once fission reaches a critical density, an intensive and sustained fission process is initiated: a star is born.
+The solid-body fragments start separating more and more, which further reduces the gravitational field acting on the body. This step is ambiguous from a physical perspective. However, once fission reaches a critical density, an intense and sustained fission process is initiated: a star is born.
 
 ; Open Questions:
 Why would a massive solid body fragment and what causes the fragments to separate?
 Alternatively: What is the initiating step?
+Separation may be induced by spin, but: What is the cause of the spin?
 
 
 
 # PM Robitaille: Sky Scolar. What is the Sun Made Of? Evidence from the Solar Spectrum!
-https://www.youtube.com/watch?v=fynuCLQp1TE
-
+** https://www.youtube.com/watch?v=fynuCLQp1TE
 # PM Robitaille. A Thermodynamic History of the Solar Constitution — II: The Theory of a Gaseous Sun and Jeans’ Failed Liquid Alternative. Progress Physics (2011)
-https://www.ptep-online.com/2011/PP-26-06.PDF
+** https://www.ptep-online.com/2011/PP-26-06.PDF
 
 # JH Jeans. Astronomy and Cosmogony. Cambridge University Press (1928)
 
 # PM Robitaille: Sky Scolar. A Star is Born: Gravitational "Collapse" vs Condensation Reactions!
-https://www.youtube.com/watch?v=kJf0MX96ERY
+** https://www.youtube.com/watch?v=kJf0MX96ERY
+
+# N Brandt. An Observational Overview of Active Galactic Nuclei (2024) - Lect 01: Introduction and AGN Basics
+** https://www.youtube.com/watch?v=zFv03n_hdfc
 
