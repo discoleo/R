@@ -9,6 +9,8 @@
 
 library(bvpSolve)
 
+# Note: bvpSolve needs to be installed from the CRAN archive;
+
 
 ####################
 
@@ -68,7 +70,7 @@ plot(sol)
 ####################
 ####################
 
-### cumsum
+### Stochastic cumsum
 
 stoch.gen = function(n, lim, ...) {
 	x = seq(lim[1], lim[2], length.out = n);
