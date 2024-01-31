@@ -5,7 +5,7 @@
 ###
 ### Statistics: Moments
 ###
-### draft v.0.1f
+### draft v.0.1g
 
 
 ### Harmonic Moments
@@ -17,9 +17,9 @@
 ### Moments
 
 ### Harmonic
-### H(1, 0) = n / sum(1/x[i])
-### H(2, 0) = sqrt(n / sum(1/(x[i]*x[j])))
-### H(2, 1) = n / sum((x[i]+x[j]) / (x[i]*x[j])))
+# H(1, 0) = n / sum(1/x[i])
+# H(2, 0) = sqrt(n / sum(1/(x[i]*x[j])))
+# H(2, 1) = n / sum((x[i]+x[j]) / (x[i]*x[j])))
 
 
 ### Harmonic Dispersion
@@ -38,6 +38,7 @@
 
 ### Harmonic Mean Offset:
 # TODO: Ref ...;
+# - enables Harmonic mean even when individual values are 0;
 
 
 ####################
@@ -176,12 +177,30 @@ n = 200
 lambda = 4
 x = rpois(n, lambda)
 
-### Harmonic
+### Harmonic (with offset)
 mean(x); # lambda
 moments.h10(x, offset = 1)
 moments.h10(x, offset = lambda)
 moments.h10(x, offset = mean(x))
 moments.h10(x, offset = median(x)) # lambda > 0.71
+
+
+###################
+
+### Examples: Pseudo-Poisson
+# includes 0 values;
+
+n = 200
+lambda = c(3,4)
+x1 = rpois(n, lambda[1]);
+x2 = rpois(n, lambda[2]);
+x = (x1 + 1)*(x2 + 1) - 1;
+
+### Harmonic (with offset)
+mean(x); # > prod(lambda)
+moments.h10(x, offset = 1)
+moments.h10(x, offset = 0.1)
+moments.h10(x, offset = median(x))
 
 
 ####################
