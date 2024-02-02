@@ -31,6 +31,11 @@ MHC class 1 molecules may be far less specific than initially assumed. These mol
 
 TCR **variability** ensures specificity of the recognition. I infer therefore that MHC-1 interacts primarily with the back-bone of the short oligopeptide sequence and **not** with the side chains of those amino acids; the side chains will face the TCR and primarily interact with the surface of the TCR.
 
+Note:
+- **van der Waals** forces are very weak;
+- MHC-1 epitopes are very **heterogenous** (even for the same MHC-1 allele);
+- the only elements in common are the amide bonds in the back-bone;
+
 The binding to the MHC-1 is therefore very non-specific! In addition, the binding energy may be relatively small: the back-bone consists of amide-bonds, but is otherwise not rich in other binding motifs. Highly hydrophilic peptides may dissociate easily from the MHC-1 molecule; peptides which remain bound are probably rich in hydrophobic amino acids, which prevents the dissociation. The "specificity" and "affinity" of the MHC-1 molecules may be therefore a reflection of rapid dissociation and loss of water-soluble epitopes.
 
 ## References
