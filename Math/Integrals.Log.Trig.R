@@ -8,6 +8,7 @@
 
 ### Helper
 
+Euler   = 0.57721566490153286060651209008240243079;
 Catalan = 0.915965594177219015054603514;
 # Note:
 # Catalan = - I(log(x)/(x^2 + 1), lower=0, upper=1)
@@ -166,6 +167,9 @@ log(6)/6 - sqrt(3)/(4*36*pi) *
 
 ### I( x^p * log(sin(x)) )
 
+# Maths 505: ONE TOUGH INTEGRAL BOI: int 0 to pi/2 x ln(1+cos(x))
+# https://www.youtube.com/watch?v=FUY4keujknc
+
 ###
 integrate(function(x) x * log(sin(x)), 0, pi/2)
 - 1/8*pi^2*log(2) + 7/16 * pracma::zeta(3)
@@ -173,6 +177,13 @@ integrate(function(x) x * log(sin(x)), 0, pi/2)
 ###
 integrate(function(x) x^2 * log(sin(x)), 0, pi/2)
 - 1/(3*8)*pi^3*log(2) + 3/16 * pi * pracma::zeta(3)
+
+###
+integrate(function(x) x * log(cos(x)), 0, pi/4)
+(pi*Catalan - 1/4 * pi^2 * log(2) - 21/16 * pracma::zeta(3)) / 8
+#
+integrate(function(x) x * log(sin(x)), 0, pi/4)
+(35/16 * pracma::zeta(3) - 1/4 * pi^2 * log(2) - pi*Catalan) / 8
 
 
 ### Helper
