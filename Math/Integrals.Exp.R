@@ -96,10 +96,13 @@ gamma.p.part(1, n = n/(p+1)) / (p+1)
 integrate(\(x) exp(-x)/x^2 - 1/x^2 + exp(-x)/x, 0, 1)
 - exp(-1)
 
+###
+integrate(\(x) exp(-x)/x^2 - 1/x^2 + 1/x, 0, 1)
+pracma::expint(1) - exp(-1) + Euler
 
-### TODO:
-integrate(\(x) exp(-x)/x^2 - 1/x^2 + 1/x - 1, 0, 1)
-# ???
+###
+integrate(\(x) exp(-x)/x - 1/x, 0, 1)
+- (pracma::expint(1) + Euler)
 
 
 ####################
