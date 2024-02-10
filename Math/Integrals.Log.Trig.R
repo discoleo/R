@@ -307,6 +307,9 @@ integrate(\(x) sin(x)^p * cos(x)^q * log(cos(x)), 0, pi/2)
 gamma((p+1)/2) * gamma((q+1)/2) *
 	(digamma((q+1)/2) - digamma((p+q+2)/2)) / gamma((p+q+2)/2) / 4
 
+### I( sin(x)^p * cos(x)^q * log(sin(x)) )
+# TODO: d(p);
+
 
 ### I( sin(x)^p * cos(x)^q * log(cos(x))^2 )
 p = -1/3; q = sqrt(5)
@@ -331,6 +334,11 @@ gamma((p+1)/2) * gamma((q+1)/2) *
 integrate(\(x) log(cos(x)) * log(sin(x)), 0, pi/2)
 - gamma(1/2)^2 * (pi^2/6 - 4*log(2)^2) / 8
 
+### I( cos(x)^2 * log(sin(x)) )
+# Maths 505: This integral is INSANE beyond measure!
+# https://www.youtube.com/watch?v=Em5R4ckyqk0
+integrate(\(x) cos(x)^2 * log(sin(x)), 0, pi/2)
+- pi*log(2)/4 - pi/8
 
 ### on [0, pi/4]
 integrate(\(x) log(cos(x)) * log(sin(x)), 0, pi/4)
