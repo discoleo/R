@@ -190,6 +190,18 @@ integrate(\(x) x * pracma::psi(1, k*x) - 1 / (k^2*x), 0, 1)
 
 ###############
 
+### I( cos(pi*x)^2 * log(gamma(x)) )
+# Maths 505: This integral is INSANE beyond measure!
+# https://www.youtube.com/watch?v=Em5R4ckyqk0
+integrate(\(x) cos(pi*x)^2 * log(gamma(x)), 0, 1)
+(log(2*pi) + 1/2)/4
+
+integrate(\(x) sin(pi*x)^2 * log(gamma(x)), 0, 1)
+(log(2*pi) - 1/2)/4
+
+
+###############
+
 ### TODO:
 integrate(\(x) log(1-x) * log(gamma(x)), 0, 1)
 integrate(\(x) log(x) * log(gamma(x)), 0, 1)
