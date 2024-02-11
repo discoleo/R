@@ -151,6 +151,12 @@ pi / 2
 integrate(\(x) sin(x) * log(gamma(x/(2*pi))), 0, 2*pi)
 log(2*pi) + Euler
 
+###
+integrate(\(x) cos(x) * log(gamma(x/pi)), 0, 2*pi)
+integrate(\(x) - cos(x) * log(x/pi), 0, pi)
+integrate(\(x) sin(pi*x) / x, 0, 1)
+# TODO
+
 
 ### I( sin(x) * digamma(x/(2*pi)) )
 integrate(\(x) sin(x) * digamma(x/(2*pi)), 0, 2*pi)
