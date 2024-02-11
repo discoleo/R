@@ -346,6 +346,22 @@ integrate(\(x) log(cos(x)) * log(sin(x)), 0, pi/4)
 
 
 #########################
+
+### I( sin(x)/x * log(1 + cos(x)) / cos(x) ) on [0, Inf]
+# Maths 505: Feynman's technique is unreasonably OP!
+# https://www.youtube.com/watch?v=xOtQ8Mh0cvg
+
+# Note: upper = Inf
+integrate(\(x) sin(x)/x * log(1 + cos(x)) / cos(x), 0, 200, subdivisions=4096, rel.tol=1E-5)
+(pi/2 - log(2)) * pi/2
+
+
+###
+integrate(\(x) tan(x) / x - 2/pi / (pi/2 - x), 0, pi/2)
+# TODO
+
+
+#########################
 #########################
 
 ### Derived Integrals
