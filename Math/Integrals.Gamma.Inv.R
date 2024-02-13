@@ -40,7 +40,22 @@ gamma.invN = function(x, x0, lim, ...,
 
 ### Plot
 plot.gamma = function(xlim = c(-6, -1), ylim = c(-1,3), hline = NULL, n = 1000) {
-	curve(gamma(x), from = xlim[1], to = xlim[2], ylim=ylim, n=n);
+	if(length(xlim) < 2) xlim = c(xlim, xlim + 1);
+	# Disconnected segments: manual processing
+	# TODO: x[1] > x[2];
+	x  = floor(xlim);
+	xS = seq(x[1], x[2]);
+	xE = xS + 1;
+	xS[1] = xlim[1];
+	xE[length(xE)] = xlim[2];
+	
+	n = round(n/length(xS));
+	#
+	curve(gamma(x), from = xS[1], to = xE[1], xlim=xlim, ylim=ylim, n=n);
+	#
+	for (i in seq_along(xS)[-1]) {
+		curve(gamma(x), from = xS[i], to = xE[i], add = TRUE, n=n);
+	}
 	if( ! is.null(hline)) abline(h = hline, col = "green");
 }
 
@@ -76,4 +91,11 @@ x = gamma.invN(Euler, -3.5, lim = -3)
 gamma(x) - Euler
 x = gamma.invN(Euler, -3.9, lim = -3)
 gamma(x) - Euler
+
+
+### Example 3:
+
+### Min value of gamma() on (-4, -3)
+x = gamma.invN(0, -3.635, c(-4,-3))
+gamma(x)
 
