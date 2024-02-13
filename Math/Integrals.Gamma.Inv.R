@@ -39,8 +39,8 @@ gamma.invN = function(x, x0, lim, ...,
 }
 
 ### Plot
-plot.gamma = function(x = c(-6, -1), hline = NULL, ylim = c(-1,3), n = 1000) {
-	curve(gamma(x), x[1], x[2], ylim=ylim, n=n);
+plot.gamma = function(xlim = c(-6, -1), ylim = c(-1,3), hline = NULL, n = 1000) {
+	curve(gamma(x), from = xlim[1], to = xlim[2], ylim=ylim, n=n);
 	if( ! is.null(hline)) abline(h = hline, col = "green");
 }
 
