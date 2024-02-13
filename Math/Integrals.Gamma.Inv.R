@@ -63,6 +63,8 @@ plot.gamma = function(xlim = c(-6, -1), ylim = c(-1,3), hline = NULL, n = 1000) 
 	}
 	if( ! is.null(hline)) abline(h = hline, col = "green");
 }
+# see also prototype function by Bill Dunlap:
+# https://stat.ethz.ch/pipermail/r-help/2024-February/478897.html
 
 
 #####################
