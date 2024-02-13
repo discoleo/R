@@ -48,8 +48,13 @@ plot.gamma = function(xlim = c(-6, -1), ylim = c(-1,3), hline = NULL, n = 1000) 
 	xE = xS + 1;
 	xS[1] = xlim[1];
 	xE[length(xE)] = xlim[2];
-	
-	n = round(n/length(xS));
+	#
+	len = length(xS);
+	if(xS[len] >= xE[len]) {
+		xS = xS[-len]; xE = xE[-len];
+		len = len - 1;
+	}
+	n = round(n / len);
 	#
 	curve(gamma(x), from = xS[1], to = xE[1], xlim=xlim, ylim=ylim, n=n);
 	#
