@@ -8,7 +8,10 @@
 
 
 ### Further reading:
-# 1) Package nlstools
+# 1) Package optimx
+# - Vignette: Explaining Gradient Minimizers in R
+# https://cran.r-project.org/web/packages/optimx/vignettes/ExplainGradMinR.pdf
+# 2) Package nlstools
 # - focused on fitting NLS models;
 # https://cran.r-project.org/web/packages/nlstools/vignettes/vignetteJSS.pdf
 #
