@@ -7,6 +7,14 @@
 # gamma(x) = y
 
 
+### Further reading:
+# 1) Package nlstools
+# - focused on fitting NLS models;
+# https://cran.r-project.org/web/packages/nlstools/vignettes/vignetteJSS.pdf
+#
+# TODO
+
+
 ####################
 
 ### Helper Functions
@@ -39,7 +47,8 @@ gamma.invN = function(x, x0, lim, ...,
 }
 
 ### Plot
-plot.gamma = function(xlim = c(-6, -1), ylim = c(-1,3), hline = NULL, n = 1000) {
+plot.gamma = function(xlim = c(-6, -1), ylim = c(-1,3),
+		hline = NULL, col.hline = "#00FF00A0", n = 1000) {
 	if(length(xlim) < 2) xlim = c(xlim, xlim + 1);
 	# Disconnected segments: manual processing
 	# TODO: x[1] > x[2];
@@ -61,8 +70,9 @@ plot.gamma = function(xlim = c(-6, -1), ylim = c(-1,3), hline = NULL, n = 1000) 
 	for (i in seq_along(xS)[-1]) {
 		curve(gamma(x), from = xS[i], to = xE[i], add = TRUE, n=n);
 	}
-	if( ! is.null(hline)) abline(h = hline, col = "green");
+	if( ! is.null(hline)) abline(h = hline, col = col.hline);
 }
+
 # see also prototype function by Bill Dunlap:
 # https://stat.ethz.ch/pipermail/r-help/2024-February/478897.html
 
@@ -84,7 +94,7 @@ gamma(x) - pi
 # gamma(x) = Euler
 
 # Note:
-# - is more problematic, as Euler's constant < 1!
+# - is more problematic, as Euler's constant < min(gamma( on (0, Inf) ))!
 # - gamma.inv fails even with a good starting value!
 # gamma.inv(Euler)
 # gamma.inv(Euler, start = - 3.3)
@@ -105,4 +115,13 @@ gamma(x) - Euler
 ### Min value of gamma() on (-4, -3)
 x = gamma.invN(0, -3.635, c(-4,-3))
 gamma(x)
+
+### Min on (0, Inf)
+x = gamma.invN(0, 1/2, c(0,2))
+gamma(x)
+gamma(x) - gamma(x - 2E-8)
+gamma(x) - gamma(x + 2E-8)
+
+plot.gamma(xlim = c(0,2), hline = gamma(x))
+abline(v = x, col = "red")
 
