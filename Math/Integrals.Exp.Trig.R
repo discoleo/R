@@ -287,6 +287,10 @@ lim/2 - sin(2*lim) / 4
 
 ### Variants: exp() - 1
 
+### I( cos(x) / (exp(x) - 1) )
+integrate(\(x) cos(x) / (exp(x) - 1) - exp(-x)/x, 0, Inf, rel.tol = 1E-9)
+- Re(pracma::psi(1i))
+
 ###
 lim = sqrt(pi)
 integrate(\(x) 1 / (exp(1/x) - 1), -lim, lim)
