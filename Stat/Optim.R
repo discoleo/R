@@ -10,7 +10,8 @@ library(optimx)
 
 # requires also package lbfgs
 
-# Modified functions:
+# Note:
+#   Modified functions;
 #   for-loop => vectorized sum;
 bfn = function(par) {
 	n <- length(par)
@@ -50,10 +51,14 @@ res1 = opm(x0, bfn, bgr, method=mm)
 options(warn = defaultW)
 res1[ , 100:108]
 
-### Test
+### Test: Value Error
 summary(unlist(res1[1, 1:100]) - 1)
 
-### Note: Loss of prcision!
+### Note: Loss of precision!
 # - Methods "bcg" and "Rcgmin" loose precision with these new functions;
+# - Original precision: x closer to 1 & function "value" also better;
+#  -- value for ncg = 4.247862e-24;
+#  -- value for Rcgmin = 2.320238e-26;
+#  -- How is this precision achieved?
 # - Issue with sum(...)?
 
