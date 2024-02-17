@@ -8,7 +8,7 @@
 
 library(optimx)
 
-# requires also package lbfgs
+# Requires also package lbfgs
 
 # Note:
 #   Modified functions;
@@ -43,22 +43,29 @@ bgr = function(par) {
 	grad
 }
 
-x0 = rep(pi, 100)
+n  = 100; # Number of variables
+# Initial guess:
+x0 = rep(pi, n)
 defaultW = getOption("warn")
 options(warn = -1)
 mm   = c("ncg","Rcgmin","lbfgs","L-BFGS-B","Rtnmin")
 res1 = opm(x0, bfn, bgr, method=mm)
 options(warn = defaultW)
-res1[ , 100:108]
+res1[ , seq(n, n +8)]
 
-### Test: Value Error
-summary(unlist(res1[1, 1:100]) - 1)
+### Test
+# All Solutions == 1
+# Error of solutions:
+summary(unlist(res1[1, 1:n]) - 1)
+
 
 ### Note: Loss of precision!
 # - Methods "bcg" and "Rcgmin" loose precision with these new functions;
-# - Original precision: x closer to 1 & function "value" also better;
+# - Original precision: x closer to 1 & function "value" (residual error) also better;
 #  -- value for ncg = 4.247862e-24;
 #  -- value for Rcgmin = 2.320238e-26;
 #  -- How is this precision achieved?
+#  -- Value for ncg drops massively for n = 101 with both versions of the function!
+#     (to 5E-12 ... 5E-14)
 # - Issue with sum(...)?
 
