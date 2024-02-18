@@ -54,6 +54,12 @@ n = sqrt(19); k = sqrt(3); p = sqrt(2);
 integrate(function(x) cosh(p*x) / cosh(n*x)^(1/k), lower=0, upper=100) # BUG: upper = Inf
 gamma(1/(2*k) - p/(2*n)) * gamma(1/(2*k) + p/(2*n)) / gamma(1/k) * 2^(1/k - 2) / n
 
+### I( x * sinh(p*x) / cosh(n*x)^(1/k) )
+n = sqrt(19); k = sqrt(3); p = sqrt(2);
+integrate(function(x) x * sinh(p*x) / cosh(n*x)^(1/k), lower=0, upper=100) # BUG: upper = Inf
+gamma(1/(2*k) - p/(2*n)) * gamma(1/(2*k) + p/(2*n)) *
+	(digamma(1/(2*k) + p/(2*n)) - digamma(1/(2*k) - p/(2*n))) / gamma(1/k) * 2^(1/k - 2) / (2*n^2)
+
 
 ### I( log(x) / cosh(x) )
 # see Vardi Integral
