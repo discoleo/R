@@ -204,7 +204,8 @@ gcd.pm = function(p1, p2, by="x", div.sc=1) {
 	}
 	return(pR);
 }
-gcd.exact.p = function(p1, p2, xn="x", asBigNum=TRUE, doGCD=TRUE, debug=FALSE) {
+gcd.exact.p = function(p1, p2, by = xn, xn = "x",
+		asBigNum = TRUE, doGCD = TRUE, debug = FALSE) {
 	# exact implementation: only univariate polynomials;
 	if( ! doGCD) fact = if(asBigNum) as.bigz(1) else 1;
 	while(TRUE) {

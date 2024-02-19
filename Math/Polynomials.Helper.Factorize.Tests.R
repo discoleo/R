@@ -7,7 +7,7 @@
 ### Multi-Variable Polynomials
 ### Factorize: Tests
 ###
-### draft v.0.1h-comments2
+### draft v.0.1i
 
 
 ### Tests:
@@ -39,18 +39,36 @@ p0 = toPoly.pm("x^2 + b[1]*x + 1")
 p1 = toPoly.pm("x^3 - 4*x^2 - x + 1")
 p2 = toPoly.pm("p0()*p1()")
 
+# basic Test:
 err = eval.pm(p2, roots.pm(p1)[1])
 err
 stopifnot(round0(err) == 0)
 p2
 
-### Factors: "strictly" Symmetric Polynomials
-### P(x) * P(1/x)
+### Factorize
+# p0 is symmetric w respect to Inversion: p0(x) == p0(1/x);
+# (aka "Strictly symmetric")
+pF = gcd.exact.p(p2, rev(p2), asBigNum = FALSE)
+print.pm(pF)
+stopifnot(nrow(diff.pm(p0, pF)) == 0)
+
+
+### Simple Test: Divisibility
+
+###
+div.pm(p2, pF, by = "x")
+
+###
 p2
 rev(p2)
 div.pm(rev(p2), rev(p1), "x")
 
-###
+
+### Factors: "strictly" Symmetric Polynomials
+### P(x) * P(1/x)
+# IF: pF(x) == pF(1/x)
+#  => Prod contains pF^2;
+# - but its much simpler to perform gcd(P(x), P(1/x));
 pX = mult.pm(p2, rev(p2))
 
 # Note: overflows massively;
@@ -148,6 +166,8 @@ div.pm(p, pR, by="x")
 ################
 ################
 
+### Rescale mod p
+
 b = c(8, 2)
 p1 = toPoly.pm("x^2 + b[1]*x + b[2]")
 p2 = toPoly.pm("x^3 - x^2 + 2*x + 1")
@@ -164,8 +184,8 @@ pGCD1 = toPoly.pm(diff.pm(3*pGCD1, 2*pGCD2)) %% 7
 pGCD2 = toPoly.pm(diff.pm(2*pGCD2, pGCD1 * toPoly.pm("x^2 + x"))) %% 7
 pGCD1; pGCD2;
 toPoly.pm((6*pGCD2) %% 7)
-# "6 + 2*x + 6*x^2"
-# "1 + 5*x + x^2" # 6*5 = 30 = 2 (mod 7)
+# "6 + 2*x + 6*x^2" = "- (1 - 2*x + x^2)" (mod 7)
+# "1 + 5*x + x^2" # alternative: *6 => 6*5 = 30 = 2 (mod 7)
 # "6 + 2*x + 6*x^2" # pGCD1 == pGCD2;
 
 # Scaling back to original Polynomial:
