@@ -141,7 +141,7 @@ factorizeByB0.p = function(p, xn=by, by="x", pow=2, max.rows=100, digits=6, debu
 		pF$coeff = pF$coeff / sc^pF[, xn];
 		pF$coeff = pF$coeff * sc^pow;
 		if(digits > 0) pF$coeff = round(pF$coeff, digits=digits);
-		pF = reduce.cpm(pF);
+		pF = reduce.coef.pm(pF);
 		pF = toPoly.pm(pF);
 		return(pF);
 	}

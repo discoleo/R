@@ -93,42 +93,43 @@ factorizeExt.p(p2, xn="x", asBigNum=FALSE, debug=T)
 ###################
 
 ### Anti-Symmetric:
+# F(x) = x^2 + b1*x - 1
+# F(- 1/x) = 1 - b1*x - x^2 = - F(x);
 b  = 3;
 p0 = toPoly.pm("x^2 + b[1]*x - 1")
 p1 = toPoly.pm("x^3 - 4*x^2 - x + 1")
 p2 = toPoly.pm("p0()*p1()")
 #
-pR = factorizeExt.p(p2, xn="x", asBigNum=FALSE, debug=F)
+pR = factorizeExt.p(p2, by = "x", asBigNum=FALSE, debug=F)
 stopifnot( ! is.null(pR[[1]]$GCD))
-print(pR[[1]]$GCD)
-
-### TODO
-b  = 3;
-p0 = toPoly.pm("x^2 + b[1]*x + 1")
-p3 = toPoly.pm("p0() * (x^4 + 5*x^3 + 5*x + 1)")
-pR = factorizeExt.p(p3, xn="x", asBigNum=FALSE, debug=F)
-stopifnot( ! is.null(pR[[1]]$GCD))
-stopifnot( max(pR[[1]]$GCD$x) == 6)
 print(pR[[1]]$GCD)
 
 
 ################
 ################
+
+### Asymmetric
 
 genPoly = function(b) {
 	p0 = toPoly.pm("x^2 + b[1]*x + b[2]");
 	p1 = toPoly.pm("p0() * (x^3 + 2*x^2 - 5*x + b[3])");
 	return(p1);
 }
+
+### Simple Approach
+# Note:
+# - only of type x^2 + b1*x + b0^2;
+# - more robust approach: in sections below;
+
 ### Ex 1:
 b  = c(3, 4, 1);
 p1 = genPoly(b);
-factorizeByB0.p(p1, xn="x")
+factorizeByB0.p(p1, by="x")
 
 ### Ex 2:
 b  = c(3, -9, 4);
 p1 = genPoly(b);
-factorizeByB0.p(p1, xn="x")
+factorizeByB0.p(p1, by="x")
 
 
 ###
@@ -205,12 +206,25 @@ pM
 # gcd.exact.p(pM, pMinv, asBigNum=F)
 
 
-################
-################
+###################
+###################
 
+### Fully Symmetric
+
+### TODO
+b  = 3;
+p0 = toPoly.pm("x^2 + b[1]*x + 1")
+p3 = toPoly.pm("p0() * (x^4 + 5*x^3 + 5*x + 1)")
+pR = factorizeExt.p(p3, by = "x", asBigNum=FALSE, debug=F)
+stopifnot( ! is.null(pR[[1]]$GCD))
+stopifnot( max(pR[[1]]$GCD$x) == 6)
+print(pR[[1]]$GCD)
+
+
+###
 b = c(2,3,5)
 plst = lapply(b, function(b) toPoly.pm("x^2 + b[1]*x + 1"))
-# a symmetric Polynomial:
+# Symmetric Polynomial:
 p = mult.lpm(plst)
 
 # TODO
