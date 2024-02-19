@@ -132,37 +132,43 @@ p1 = genPoly(b);
 factorizeByB0.p(p1, by="x")
 
 
-###
-p = rPoly(10)
+###################
 
-### using BigNumbers
-source("Polynomials.Helper.BigNumbers.R")
-# Note: the code becomes usually incompatible after switching to Bigz; 
-p = toBigz.pm(p);
-factorizeExt.p(p, xn="x", asBigNum=TRUE, debug=T)
-
-
-################
-################
+### Various Methods
+### Even Polynomial Factors
 
 ### Generation of Squares
+# Q = P(1i*x) * P(-1i*x)
+# Note:
+# - very limited and rather inefficient;
+
 b = 3
-p = toPoly.pm("(x^4 + b[1]*x^2 + 2)*(x^3 - 2*x +3)");
+p = toPoly.pm("(x^4 + b[1]*x^2 + 2)*(x^3 - 2*x + 3)");
 #
 p1 = replace.pm(p, toPoly.pm("1i*x"), xn="x")
 p2 = replace.pm(p, toPoly.pm("-1i*x"), xn="x")
+
+# Note:
+# - Direct gcd: more efficient, but still limited usefulness;
+# - gcd(P(x), P(-x)) works as well (see Alternative 2);
+pR = gcd.pm(p1, p2, by = "x")
+mult.pm(pR$Rez, 6)
+
+
+if(FALSE) {
 # with BIGZ:
 p3 = mult.pm(p1, p2);
 p3 = as.bigz.pm(p3);
 pR = factorize.p(p3, "x", asBigNum=TRUE, file=NULL)
 pR[[1]]$GCD # TODO: scale back by i^2;
+}
 
-# alternative:
+# Alternative:
 # - but ugly algorithm, due to complex numbers;
 # - fails in gcd(a, b);
 # gcd.exact.p(p1, p2, asBigNum=FALSE)
 
-# alternative 2:
+# Alternative 2:
 p1 = rescale.pm(p, -1, "x")
 pR = gcd.exact.p(p, p1, asBigNum=FALSE)
 pR
@@ -228,6 +234,17 @@ plst = lapply(b, function(b) toPoly.pm("x^2 + b[1]*x + 1"))
 p = mult.lpm(plst)
 
 # TODO
+
+
+###############
+### Experiments
+p = rPoly(10)
+
+### using BigNumbers
+source("Polynomials.Helper.BigNumbers.R")
+# Note: the code becomes usually incompatible after switching to Bigz; 
+p = toBigz.pm(p);
+factorizeExt.p(p, xn="x", asBigNum=TRUE, debug=T)
 
 
 ################
