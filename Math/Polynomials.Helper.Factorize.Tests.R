@@ -68,24 +68,29 @@ div.pm(rev(p2), rev(p1), "x")
 ### P(x) * P(1/x)
 # IF: pF(x) == pF(1/x)
 #  => Prod contains pF^2;
-# - but its much simpler to perform gcd(P(x), P(1/x));
+# - but it is much simpler to perform gcd(P(x), P(1/x));
 pX = mult.pm(p2, rev(p2))
 
 # Note: overflows massively;
 gcd.exact.p(pX, dp.pm(pX, "x"), "x", asBigNum=FALSE, debug=TRUE)
 
 ### using BigNumbers
+if(FALSE) {
 source("Polynomials.Helper.BigNumbers.R")
 pR = factorize.p(toBigz.pm(pX), xn="x", f.all=FALSE, asBigNum=TRUE, file=NULL)
 str(pR)
 pR[[1]]$GCD
+}
 
 ### faster version
-gcd.exact.p(p2, rev(p2), xn="x", asBigNum=FALSE, debug=TRUE)
+gcd.exact.p(p2, rev(p2), by = "x", asBigNum=FALSE, debug=TRUE)
 
 
 ### Multiple Techniques:
 factorizeExt.p(p2, xn="x", asBigNum=FALSE, debug=T)
+
+
+###################
 
 ### Anti-Symmetric:
 b  = 3;
