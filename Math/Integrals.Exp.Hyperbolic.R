@@ -50,15 +50,24 @@ gamma(s/2)^2 / gamma(s) / 4
 
 ### Full Gen:
 # see file: Integrals.ComplexAnalysis.R;
-n = sqrt(19); k = sqrt(3); p = sqrt(2);
-integrate(function(x) cosh(p*x) / cosh(n*x)^(1/k), lower=0, upper=100) # BUG: upper = Inf
-gamma(1/(2*k) - p/(2*n)) * gamma(1/(2*k) + p/(2*n)) / gamma(1/k) * 2^(1/k - 2) / n
+n = sqrt(19); k = 1/sqrt(3); p = sqrt(2);
+integrate(function(x) cosh(p*x) / cosh(n*x)^k, lower=0, upper=100) # BUG: upper = Inf
+gamma(k/2 - p/(2*n)) * gamma(k/2 + p/(2*n)) / gamma(k) * 2^(k - 2) / n
 
 ### I( x * sinh(p*x) / cosh(n*x)^(1/k) )
-n = sqrt(19); k = sqrt(3); p = sqrt(2);
-integrate(function(x) x * sinh(p*x) / cosh(n*x)^(1/k), lower=0, upper=100) # BUG: upper = Inf
-gamma(1/(2*k) - p/(2*n)) * gamma(1/(2*k) + p/(2*n)) *
-	(digamma(1/(2*k) + p/(2*n)) - digamma(1/(2*k) - p/(2*n))) / gamma(1/k) * 2^(1/k - 2) / (2*n^2)
+n = sqrt(19); k = 1/sqrt(3); p = sqrt(2);
+# BUG: upper = Inf
+integrate(function(x) x * sinh(p*x) / cosh(n*x)^k, lower=0, upper=100)
+gamma(k/2 - p/(2*n)) * gamma(k/2 + p/(2*n)) *
+	(digamma(k/2 + p/(2*n)) - digamma(k/2 - p/(2*n))) / gamma(k) * 2^(k - 2) / (2*n^2)
+
+
+### I( cosh(p*x) * log(cosh(n*x)) / cosh(n*x)^k ) on [0, Inf]
+n = sqrt(19); k = 1/sqrt(3); p = sqrt(2);
+# BUG: upper = Inf
+integrate(function(x) cosh(p*x) * log(cosh(n*x)) / cosh(n*x)^k, lower=0, upper=100)
+gamma(k/2 - p/(2*n)) * gamma(k/2 + p/(2*n)) / gamma(k) * 2^(k - 3) / n *
+	(2*digamma(k) - digamma(k/2 - p/(2*n)) - digamma(k/2 + p/(2*n)) - 2*log(2));
 
 
 ### I( log(x) / cosh(x) )
