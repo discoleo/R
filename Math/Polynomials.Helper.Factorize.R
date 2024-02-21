@@ -37,7 +37,11 @@ source("Polynomials.Helper.Mod.R");
 
 ### Factorize
 # - only univariate Polynomial;
-factorizeExt.p = function(p, by = xn, xn = "x", asBigNum = FALSE, skip.squares = FALSE,
+factorizeExt.p = function(...) {
+	warning("Deprecated! Use function: factorize.ext.p");
+	factorize.ext.p(...);
+}
+factorize.ext.p = function(p, by = xn, xn = "x", asBigNum = FALSE, skip.squares = FALSE,
 		file=NULL, debug=FALSE) {
 	# Level 1:
 	if( ! skip.squares) {
@@ -57,6 +61,19 @@ factorizeExt.p = function(p, by = xn, xn = "x", asBigNum = FALSE, skip.squares =
 	#
 	return(pR);
 }
+
+### Factorize Mod p
+factorize.mod.p = function(p, mod, scale = 1, inv.scale = 1, mult = 1) {
+	pM = rescale.pm(p, scale, mod=mod);
+	pMinv = rev.pm(pM);
+	# GCD:
+	pR = gcd.mod.p(pM, pMinv, mod=mod, scale = inv.scale);
+	if(mult != 1) {
+		pR$coeff = (pR$coeff * mult) %% mod;
+	}
+	return(pR);
+}
+
 ### Factorizing Squares
 factorize.p = function(p, by = xn, xn = "x", f.all=FALSE, asBigNum=TRUE,
 		file="_R.Temp.", debug=FALSE) {
@@ -152,7 +169,7 @@ factorizeByB0.p = function(p, xn=by, by="x", pow=2, max.rows=100, digits=6, debu
 		sc   = prod(f.grid[nr,]);
 		if(debug) cat(paste0("\nScaling = ", sc, "^", pow));
 		ptmp$coeff = ptmp$coeff * sc^ptmp[, xn];
-		pR = factorizeExt.p(ptmp, xn=xn, skip.squares=TRUE, file=NULL);
+		pR = factorize.ext.p(ptmp, xn=xn, skip.squares=TRUE, file=NULL);
 		if(length(pR) > 0 && ! is.null(pR[[1]]$GCD)) {
 			return(scaleBack(pR[[1]]$GCD, sc));
 		}

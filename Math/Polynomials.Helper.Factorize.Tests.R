@@ -13,6 +13,9 @@
 ### Tests:
 ### Factorize Multi-Variable Polynomials
 
+# Note:
+# - existing code covers only univariate polynomials;
+
 
 ######################
 
@@ -40,10 +43,10 @@ p1 = toPoly.pm("x^3 - 4*x^2 - x + 1")
 p2 = toPoly.pm("p0()*p1()")
 
 # basic Test:
+p2
 err = eval.pm(p2, roots.pm(p1)[1])
 err
 stopifnot(round0(err) == 0)
-p2
 
 ### Factorize
 # p0 is symmetric w respect to Inversion: p0(x) == p0(1/x);
@@ -87,7 +90,7 @@ gcd.exact.p(p2, rev(p2), by = "x", asBigNum=FALSE, debug=TRUE)
 
 
 ### Multiple Techniques:
-factorizeExt.p(p2, xn="x", asBigNum=FALSE, debug=T)
+factorize.ext.p(p2, xn="x", asBigNum=FALSE, debug=T)
 
 
 ###################
@@ -100,7 +103,7 @@ p0 = toPoly.pm("x^2 + b[1]*x - 1")
 p1 = toPoly.pm("x^3 - 4*x^2 - x + 1")
 p2 = toPoly.pm("p0()*p1()")
 #
-pR = factorizeExt.p(p2, by = "x", asBigNum=FALSE, debug=F)
+pR = factorize.ext.p(p2, by = "x", asBigNum=FALSE, debug=F)
 stopifnot( ! is.null(pR[[1]]$GCD))
 print(pR[[1]]$GCD)
 
@@ -138,7 +141,8 @@ factorizeByB0.p(p1, by="x")
 ### Even Polynomial Factors
 
 ### Generation of Squares
-# Q = P(1i*x) * P(-1i*x)
+# Q = P(1i*x) * P(-1i*x);
+# Q = P(x) * P(-x) behaves similarly, but still inefficient;
 # Note:
 # - very limited and rather inefficient;
 
@@ -185,31 +189,15 @@ p1 = toPoly.pm("x^2 + b[1]*x + b[2]")
 p2 = toPoly.pm("x^3 - x^2 + 2*x + 1")
 p = toPoly.pm(p1 * p2)
 
+
 # 3^2 = 2 (mod 7)
-pM = rescale.pm(p, 3, mod=7)
-pMinv = rev.pm(pM)
-#
-pGCD1 = toPoly.pm(diff.pm(2*pM, 5*pMinv)) %% 7
-pGCD2 = toPoly.pm(diff.pm(2*pM, 5*pGCD1 * "x")) %% 7
-pGCD2
-pGCD1 = toPoly.pm(diff.pm(3*pGCD1, 2*pGCD2)) %% 7
-pGCD2 = toPoly.pm(diff.pm(2*pGCD2, pGCD1 * toPoly.pm("x^2 + x"))) %% 7
-pGCD1; pGCD2;
-toPoly.pm((6*pGCD2) %% 7)
-# "6 + 2*x + 6*x^2" = "- (1 - 2*x + x^2)" (mod 7)
-# "1 + 5*x + x^2" # alternative: *6 => 6*5 = 30 = 2 (mod 7)
-# "6 + 2*x + 6*x^2" # pGCD1 == pGCD2;
+# 5^2 = 2 (mod 23)
+pR = factorize.mod.p(p, mod = 7, scale = 3, inv.scale = 5)
+print.pm(pR)
+# (x^2 + x + 2) == (x^2 + 8*x + 2) (mod 7)
 
-# Scaling back to original Polynomial:
-# 3*5 = 1 (mod 7)
-pM = toPoly.pm(rescale.pm(pGCD2, 5, mod=7))
-# 4*2 = 1 (mod 7)
-pM = toPoly.pm(2*pM) %% 7
-pM
-# "x^2 + x + 2" # == (x^2 + 8*x + 2) (mod 7)
-
-# TODO: gcd.pm.mod(p1, p2, mod)
-# gcd.exact.p(pM, pMinv, asBigNum=F)
+pR = factorize.mod.p(p, mod = 23, scale = 5, inv.scale = 14, mult = -1)
+print.pm(pR)
 
 
 ###################
@@ -221,7 +209,7 @@ pM
 b  = 3;
 p0 = toPoly.pm("x^2 + b[1]*x + 1")
 p3 = toPoly.pm("p0() * (x^4 + 5*x^3 + 5*x + 1)")
-pR = factorizeExt.p(p3, by = "x", asBigNum=FALSE, debug=F)
+pR = factorize.ext.p(p3, by = "x", asBigNum=FALSE, debug=F)
 stopifnot( ! is.null(pR[[1]]$GCD))
 stopifnot( max(pR[[1]]$GCD$x) == 6)
 print(pR[[1]]$GCD)
@@ -244,7 +232,7 @@ p = rPoly(10)
 source("Polynomials.Helper.BigNumbers.R")
 # Note: the code becomes usually incompatible after switching to Bigz; 
 p = toBigz.pm(p);
-factorizeExt.p(p, xn="x", asBigNum=TRUE, debug=T)
+factorize.ext.p(p, xn="x", asBigNum=TRUE, debug=T)
 
 
 ################
