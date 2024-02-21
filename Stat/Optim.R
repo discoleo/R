@@ -74,11 +74,11 @@ summary(unlist(res1[1, 1:n]) - 1)
 ### Exploration
 
 ### Various n:
-explore.opm = function(n, method) {
+explore.opm = function(n, method, x0 = pi) {
 	defaultW = getOption("warn")
-	options(warn = -1)
+	options(warn = -1);
 	res = lapply(n, function(n) {
-		x0 = rep(pi, n)
+		x0 = rep(x0, n);
 		# mm   = c("ncg","Rcgmin","lbfgs","L-BFGS-B","Rtnmin")
 		res1 = opm(x0, bfn, bgr, method = method)
 		res1 = unlist(res1[ , seq(n, n + 1)])
@@ -103,4 +103,7 @@ n = seq(100, 300)
 # takes ~10 seconds to run;
 res = explore.opm(n, "lbfgs")
 plot(log(abs(res[,2])) / log(10), type = "l")
+
+res = explore.opm(n, "lbfgs", x0 = -pi)
+lines(log(abs(res[,2])) / log(10), col = "#A032E0A0")
 
