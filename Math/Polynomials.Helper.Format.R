@@ -17,6 +17,15 @@
 
 ### General Functions
 
+help.sort.pm = function() {
+	cat("sort.pm.proper: sort variables properly;\n");
+	cat("sort.pm: use do.sum for special sorting;\n");
+	cat(" do.sum = 0: NO sum; MAX has priority, then individual powers;\n");
+	cat(" do.sum = 1: sum has priority, then MAX and individual powers;\n");
+	cat(" do.sum = 2: MAX has priority, then sum and individual powers;\n");
+	cat(" do.sum = 3: only sum of powers of specified variables;\n");
+}
+
 # TODO: analyse efficiency;
 cut.character.int = function(n, w, extend=2) {
 	if(w == 0) {
@@ -63,6 +72,7 @@ order.df = function(x, decreasing=TRUE) {
 #    x^4 > y^4 > x^3*y > x^2*y^2 > x^3;
 # do.sum = 2: MAX has priority, then sum and individual powers;
 #    x^4 > x^3*y*z > x^3*z^2 > x^3*y; (only 1st MAX counts)
+# do.sum = 3: only sum of powers of specified variables;
 sort.pm = function(p, xn=NULL, xn2=NULL, do.sum=1, sort.coeff) {
 	### Special Cols:
 	# TODO: different approach;
@@ -75,7 +85,8 @@ sort.pm = function(p, xn=NULL, xn2=NULL, do.sum=1, sort.coeff) {
 	if(missing(sort.coeff)) {
 		idSort =
 			if(do.sum == 1) { c(1,2); }
-			else if(do.sum == 0) c(2) else c(2,1);
+			else if(do.sum == 0) c(2)
+			else if(do.sum == 3) c(1) else c(2,1);
 		# Sort priorities:
 		sort.coeff = if(isM) c(idSort, seq(10, length.out=length(xn)), 5,6)
 			else if(is.null(xn)) idSort
@@ -367,6 +378,13 @@ format.complex.pm = function(x, sign.invert=FALSE, rm.zero=TRUE, brackets=TRUE, 
 }
 
 ### Other
+
+### Specific Coefficients
+coef.pow.p = function(p, pow, by = "x") {
+	id = which(p[, by] == pow);
+	if(length(id) == 0) return(NA);
+	return(p$coeff[id]);
+}
 
 ### Convert to Coefficients
 # - as list of polynomials or of numeric values;

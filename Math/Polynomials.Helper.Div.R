@@ -204,6 +204,43 @@ gcd.pm = function(p1, p2, by="x", div.sc=1) {
 	}
 	return(pR);
 }
+
+### GCD mod p
+# scale = rescale x;
+gcd.mod.p = function(p1, p2, mod, by = "x", scale = 1, verbose = FALSE) {
+	p1$coeff = p1$coeff %% mod;
+	p2$coeff = p2$coeff %% mod;
+	p1 = reduce.pm(p1); p2 = reduce.pm(p2);
+	n1 = max(p1[, by]);
+	n2 = max(p2[, by]);
+	# Empty:
+	pR = data.frame(x = numeric(0), coeff = numeric(0));
+	names(pR)[1] = by;
+	if(n1 == 0 || n2 == 0) return(pR);
+	if(n2 > n1) { tmp = p1; p1 = p2; p2 = tmp; tmp = n1; n1 = n2; n2 = tmp; tmp = NULL; }
+	while(TRUE) {
+		tmp1 = p1; tmp1$coeff = tmp1$coeff * coef.pow.p(p2, pow = n2);
+		tmp2 = p2; tmp2$coeff = tmp2$coeff * coef.pow.p(p1, pow = n1);
+		if(n2 < n1) tmp2[, by] = tmp2[, by] + (n1 - n2);
+		p1 = diff.pm(tmp1, tmp2);
+		p1$coeff = p1$coeff %% mod;
+		p1 = p1[p1$coeff != 0, ];
+		if(verbose) print.pm(p1);
+		if(nrow(p1) == 0) {
+			if(scale != 1) p2 = rescale.pm(p2, scale, by, mod=mod);
+			sc = gcd.pm(p2);
+			if(sc != 1) p2$coeff = p2$coeff / sc;
+			return(p2);
+		}
+		n1 = max(p1[, by]); n2 = max(p2[, by]);
+		if(n1 == 0 || n2 == 0) break;
+		if(n2 > n1) { tmp = p1; p1 = p2; p2 = tmp; tmp = n1; n1 = n2; n2 = tmp; }
+	}
+	return(pR);
+}
+
+### Exact GCD
+# - NO fp divisions;
 gcd.exact.p = function(p1, p2, by = xn, xn = "x",
 		asBigNum = TRUE, doGCD = TRUE, debug = FALSE) {
 	# exact implementation: only univariate polynomials;
@@ -259,7 +296,8 @@ gcd.exact.p = function(p1, p2, by = xn, xn = "x",
 ### Multivariate Polynomials
 # - initial attempt;
 # - but far more challenging;
-gcd.pm.exact = function(p1, p2, xn="x", asBigNum=NULL, doGCD=TRUE, multi.stop=FALSE,
+gcd.pm.exact = function(...) gcd.exact.pm(...)
+gcd.exact.pm = function(p1, p2, by = xn, xn = "x", asBigNum=NULL, doGCD=TRUE, multi.stop=FALSE,
 			debug=FALSE, MAX.ITER=10) {
 	if(is.null(asBigNum)) asBigNum = inherits(p1$coeff, c("bigz", "bigq"));
 	if( ! doGCD) fact = if(asBigNum) as.bigz(1) else 1;
