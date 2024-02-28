@@ -874,9 +874,11 @@ solve.lpm = function(..., xn, stop.at=NULL, asBigNum=FALSE) {
 	}
 	return(pR);
 }
-solve.pm = function(p1, p2, xn, stop.at=NULL, simplify=TRUE, asBigNum=FALSE, verbose=TRUE) {
-	if(missing(xn)) stop("Missing variable name!");
-	if(is.pm(xn)) stop("Invalid variables: Did you mean to use solve.lpm()?");
+solve.pm = function(p1, p2, by = xn, xn = NULL, stop.at=NULL, simplify=TRUE,
+		asBigNum=FALSE, verbose=TRUE) {
+	if(is.null(by)) stop("Missing variable name!");
+	if(is.pm(by)) stop("Invalid variables: Did you mean to use solve.lpm()?");
+	xn = by;
 	#
 	max1 = max(p1[,xn]); max2 = max(p2[,xn]);
 	if(max2 == 0) stop("No variable!");
