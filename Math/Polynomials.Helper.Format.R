@@ -412,9 +412,19 @@ as.coeff.pm = function(p, xn) {
 }
 
 ### Convert to Coefficients: as string;
-# TODO: check everywhere that x is replaced with xn;
-toCoeff = function(p, xn="x", decreasing=TRUE, print=TRUE, addComments=FALSE,
-		sep=NULL, WIDTH=80) {
+# TODO: check everywhere that x/xn are replaced with "by";
+as.coef = function(p, by, ...) {
+	UseMethod("as.coef");
+}
+toCoeff = function(p, by = xn, xn = "x", decreasing=TRUE, print=TRUE,
+		addComments=FALSE, sep=NULL, WIDTH=80) {
+	# TODO: Deprecated;
+	as.coef.pm(p, by=by, decreasing=decreasing, print=print,
+		addComments=addComments, sep=sep, WIDTH=WIDTH);
+}
+as.coef.pm = function(p, by = xn, xn = "x", decreasing=TRUE, print=TRUE,
+		addComments=FALSE, sep=NULL, WIDTH=80) {
+	xn  = by;
 	idx = match(xn, names(p));
 	if(idx < 0) stop(paste0("No variable ", xn));
 	px = p[,xn]; p = p[, - idx, drop=FALSE];
@@ -429,13 +439,20 @@ toCoeff = function(p, xn="x", decreasing=TRUE, print=TRUE, addComments=FALSE,
 	attr(p.all, "xn") = list(xn = xn, isDesc=decreasing);
 	### Print:
 	if(print) {
-		cat.pm.coeff(p.all, sep=sep, w=WIDTH, addComments=addComments);
+		cat.coef.character(p.all, sep=sep, w=WIDTH, addComments=addComments);
 		# return invisibly: coefficients are already printed;
 		return(invisible(p.all));
 	}
 	return(p.all)
 }
+cat.coef = function(p, sep, ...) {
+	UseMethod("cat.coef");
+}
 cat.pm.coeff = function(p, sep=NULL, w=60, addComments=FALSE) {
+	warning("Deprecated! Use: cat.coef");
+	cat.coef.character(p=p, sep=sep, w=w, addComments=addComments);
+}
+cat.coef.character = function(p, sep=NULL, w=60, addComments=FALSE) {
 	if(is.null(sep)) {
 		LEN = length(p);
 		if(LEN <= 1) { sep = "\n"; }
