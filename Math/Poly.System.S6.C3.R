@@ -78,6 +78,7 @@ source("Polynomials.Helper.R")
 ### Sum:
 A1 + B1 + C1 - sx*sy # = 0
 # C1 = sx*sy - A1 - B1;
+# where A1 = E2a; B1 = E2b; C1 = E2c; see below;
 
 ### E2:
 E2ABC + 3*E2x*E2y - E2y*sx^2 - E2x*sy^2 # = 0
