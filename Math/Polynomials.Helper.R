@@ -514,6 +514,10 @@ pow.pm = function(p, n=2, do.order=TRUE, debug=TRUE) {
 	return(p.r);
 }
 powAll.pm = function(p, n=2, asList=TRUE) {
+	# TODO: Deprecate;
+	pow.all.pm(p, n=n, asList=asList);
+}
+pow.all.pm = function(p, n, asList=TRUE) {
 	if(n == 1) return(if(asList) list(p) else p);
 	if(is.double(n) && (n == round(n))) n = as.integer(n);
 	if( ! is.integer(n)) stop("n must be integer!")
@@ -525,6 +529,34 @@ powAll.pm = function(p, n=2, asList=TRUE) {
 		p.r[[i]] = p.pow;
     }
 	return(p.r);
+}
+
+pow.all = function(x, n, ...) {
+	UseMethod("pow.all");
+}
+pow.all.numeric = function(x, n, start.zero = FALSE) {
+	x = rep(x, n);
+	if(start.zero) x = c(1, x);
+	cumprod(x);
+}
+pow.all.binom = function(n, coeff = c(1,1), names = c("x", "y")) {
+	if(n < 0) stop("Invalid n!");
+	if( ! inherits(n, "integer")) n = as.integer(n);
+	lst = pascal(n);
+	if(length(lst[[1]]) == 1) return(data.frame(coeff = 1));
+	#
+	c1 = rev(pow.all.numeric(coeff[1], n=n, start.zero = TRUE));
+	c2 = pow.all.numeric(coeff[2], n=n, start.zero = TRUE);
+	cc = c1 * c2;
+	nms = c(names, "coeff");
+	lst = lapply(seq(n), function(id) {
+		coeff = lst[[id]] * cc[seq(1, id + 1)];
+		tmp = data.frame(seq(id, 0, by = -1), seq(0, id), coeff = coeff);
+		names(tmp) = nms;
+		class(tmp) = c("pm", class(tmp));
+		return(tmp);
+	});
+	return(lst);
 }
 mult.sc.pm = function(p, s, div=1, coeff.name="coeff") {
 	# Multiplication by scalar
@@ -538,6 +570,21 @@ mult.sc.pm = function(p, s, div=1, coeff.name="coeff") {
 		if(div != 1) p[[coeff.name]] = p[[coeff.name]] / div;
 	} else stop("p must be a polynomial!")
 	return(p);
+}
+
+# Pascal's Triangle
+pascal = function(n) {
+	if(n < 0) stop("Invalid n!");
+	if( ! inherits(n, "integer")) n = as.integer(n);
+	if(n == 0) return(list(1));
+	#
+	lst = list(c(1,1));
+	if(n == 1) return(lst);
+	for(i in seq(2, n)) {
+		tmp = lst[[i - 1]];
+		lst[[i]] = c(0, tmp) + c(tmp, 0);
+	}
+	return(lst);
 }
 
 ### Simplify functions
