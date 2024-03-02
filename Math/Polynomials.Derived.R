@@ -769,6 +769,48 @@ curve(-x^2 + 3/5 * (4/25)^(1/3), add=T, col="red")
 curve(x^2, add=T, col="orange")
 
 
+##############
+
+roots.mDerived = function(r) {
+	n = length(r);
+	r0 = r[seq(n-1)];
+	rr = lapply(seq(n-1), function(id) {
+		r0[id] + r[seq(id+1, n)];
+	});
+	rr = unlist(rr);
+	return(rr);
+}
+
+
+### Base polynomial:
+# x^5 - x - 1
+p = polynomial(c(-1,-1,0,0,0,1))
+p
+
+x0 = solve(p)
+x0
+
+###
+x = roots.mDerived(x0)
+err = -1 + 4*x - 4*x^2 + 11*x^5 + 3*x^6 + x^10
+round0(err)
+
+
+### Base polynomial:
+# x^5 - x - b0
+b = -2
+p = polynomial(c(b,-1,0,0,0,1))
+p
+
+x0 = solve(p)
+x0
+
+###
+x = roots.mDerived(x0)
+err = -b^2 - 4*b*x - 4*x^2 - 11*b*x^5 + 3*x^6 + x^10
+round0(err)
+
+
 #########################
 #########################
 
