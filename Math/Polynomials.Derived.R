@@ -816,7 +816,7 @@ round0(err)
 pF = function(x, b0, b = c(1,0,0,0,3,-11*b0,0,0,-4,-4*b0,-b0^2)) {
 	v = b[1];
 	for(bi in b[-1]) {
-		v = v*x - bi;
+		v = v*x + bi;
 	}
 	return(v);
 }
