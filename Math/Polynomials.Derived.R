@@ -811,6 +811,26 @@ err = -b^2 - 4*b*x - 4*x^2 - 11*b*x^5 + 3*x^6 + x^10
 round0(err)
 
 
+### High Precision
+
+pF = function(x, b0, b = c(1,0,0,0,3,-11*b0,0,0,-4,-4*b0,-b0^2)) {
+	v = b[1];
+	for(bi in b[-1]) {
+		v = v*x - bi;
+	}
+	return(v);
+}
+
+b0 = -1;
+# both pracma & polynom are less precise;
+x  = pracma::roots(c(1,0,0,0,-1,b0));
+x  = solve(polynom::polynomial(c(b0,-1,0,0,0,1)));
+2 * Re(x[3])
+# 40 bits precision:
+x0 = mpfr(2 * 0.18 + c(-0.1,0.1), 400);
+Rmpfr::unirootR(pF, x0, tol = 1E-40, b0 = b0)
+
+
 #########################
 #########################
 
