@@ -64,6 +64,29 @@ source("Polynomials.Helper.R")
 
 ###############
 
+
+# Coefficients:
+coef.p5 = function(b, K) {
+	s1 = b[1]; s2 = b[2]; s3 = b[3]; s4 = b[4];
+	c(- K*s1^5 + K^2*(5*(s1*s2^3*s3 - s1^2*s2*s3^2 - s1^2*s2^2*s4 + s1^3*s3*s4) - s2^5) +
+			+ K^3*(5*(s1*s2*s4^3 - s1*s3^2*s4^2 + s2*s3^3*s4 - s2^2*s3*s4^2) - s3^5) - K^4*s4^5,
+		- 5*K*(K^2*s3*s4^3 + K*(s1*s2*s3*s4 + s1*s3^3 - s1^2*s4^2 - s2^2*s3^2 + s2^3*s4) + s1^3*s2),
+		- 5*K*(s1*s2^2 + s1^2*s3 + K*(s2*s4^2 + s3^2*s4)),
+		- 5*K*(s1*s4 + s2*s3), 0, 1);
+}
+coef.p5K = function(b) {
+	s1 = b[1]; s2 = b[2]; s3 = b[3]; s4 = b[4];
+	c(
+		K  = - 5*(s1*s4 + s2*s3),
+		K2 = - 5*(s2*s4^2 + s3^2*s4), K = - 5*(s1*s2^2 + s1^2*s3),
+		K3 = - 5*s3*s4^3, K2 = -5*(s1*s2*s3*s4 + s1*s3^3 - s1^2*s4^2 - s2^2*s3^2 + s2^3*s4),
+			K = - 5*s1^3*s2,
+		K4 = - s4^5,
+			K3 = (5*(s1*s2*s4^3 - s1*s3^2*s4^2 + s2*s3^3*s4 - s2^2*s3*s4^2) - s3^5),
+			K2 = (5*(s1*s2^3*s3 - s1^2*s2*s3^2 - s1^2*s2^2*s4 + s1^3*s3*s4) - s2^5), K = - s1^5
+	);
+}
+
 ### Other
 mult.p = function(p1, p2) {
 	p.m = outer(p1, p2)
@@ -184,12 +207,13 @@ m = cos(2*pi/5) + 1i * sin(2*pi/5); m = m^seq(0, 4);
 ### Modular Arithmetic
 K = 3; # arbitrary
 s = c(-1,2,-3,1); # fixed
-s1 = s[1]; s2 = s[2]; s3 = s[3]; s4 = s[4];
 #
 k = K^(1/5)
 x = sapply(m, function(m) sum(s*(m*k)^seq(4)));
 round0.p(poly.calc(x))
-x^5 + 35*K*x^3 - 5*K*(11*K - 7)*x^2 + 5*K*(3*K^2 - 4*K + 2)*x - K^4 + 68*K^3 - 7*K^2 + K;
+err = x^5 + 35*K*x^3 - 5*K*(11*K - 7)*x^2 + 5*K*(3*K^2 - 4*K + 2)*x - K^4 + 68*K^3 - 7*K^2 + K;
+round0(err)
+
 ### Mod 2:
 x = 1; # only Test;
 (x^5 + 35*K*x^3 - 5*K*(11*K - 7)*x^2 + 5*K*(3*K^2 - 4*K + 2)*x - K^4 + 68*K^3 - 7*K^2 + K) %% 2
@@ -198,14 +222,16 @@ x = 1; # only Test;
 # which reduces to:
 (x^5 + K*x^3 + K^3*x + K^4) %% 2; # (mod 2)
 
-# TODO: mod 3;
+### Mod 3:
+x = 1; # x = 2; # only Test;
+(x^5 + 35*K*x^3 - 5*K*(11*K - 7)*x^2 + 5*K*(3*K^2 - 4*K + 2)*x - K^4 + 68*K^3 - 7*K^2 + K) %% 3;
+# r = k^4 - k^2 - k (mod 3)
+(x^5 + 5*K*x^3 + 5*K*(K + 1)*x^2 + 5*K*(2*K - 1)*x - K^4 + 5*K^3 - 4*K^2 + K) %% 3;
+# which reduces to:
+(x^5 - K*x^3 - K*(K + 1)*x^2 + K*(K + 1)*x + K^2) %% 3; # (mod 3)
 
-# Coefficients:
-c(- K*s1^5 + K^2*(5*(s1*s2^3*s3 - s1^2*s2*s3^2 - s1^2*s2^2*s4 + s1^3*s3*s4) - s2^5) +
-		+ K^3*(5*(s1*s2*s4^3 - s1*s3^2*s4^2 + s2*s3^3*s4 - s2^2*s3*s4^2) - s3^5) - K^4*s4^5,
-	- 5*K*(K^2*s3*s4^3 + K*(s1*s2*s3*s4 + s1*s3^3 - s1^2*s4^2 - s2^2*s3^2 + s2^3*s4) + s1^3*s2),
-	- 5*K*(s1*s2^2 + s1^2*s3 + K*(s2*s4^2 + s3^2*s4)),
-	- 5*K*(s1*s4 + s2*s3), 0, 1)
+# TODO: mod 4;
+
 
 ###
 # for arbitrary K:
