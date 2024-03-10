@@ -179,6 +179,35 @@ x^5 - 5*K*(K*s^2 + K*s^3 - s + 1)*x^2 + 5*K*(K^2*s^4 + K*s^3 + 3*K*s^2 - K*s - 1
 
 ### Solution to Quintic of Class 1:
 
+m = cos(2*pi/5) + 1i * sin(2*pi/5); m = m^seq(0, 4);
+
+### Modular Arithmetic
+K = 3; # arbitrary
+s = c(-1,2,-3,1); # fixed
+s1 = s[1]; s2 = s[2]; s3 = s[3]; s4 = s[4];
+#
+k = K^(1/5)
+x = sapply(m, function(m) sum(s*(m*k)^seq(4)));
+round0.p(poly.calc(x))
+x^5 + 35*K*x^3 - 5*K*(11*K - 7)*x^2 + 5*K*(3*K^2 - 4*K + 2)*x - K^4 + 68*K^3 - 7*K^2 + K;
+### Mod 2:
+x = 1; # only Test;
+(x^5 + 35*K*x^3 - 5*K*(11*K - 7)*x^2 + 5*K*(3*K^2 - 4*K + 2)*x - K^4 + 68*K^3 - 7*K^2 + K) %% 2
+# r = k^4 + k^3 + k (mod 2)
+(x^5 - 5*K*x^3 - 5*K*(K + 1)*x^2 - 5*K^3*x - K^4 - 6*K^3 + 5*K^2 - K) %% 2;
+# which reduces to:
+(x^5 + K*x^3 + K^3*x + K^4) %% 2; # (mod 2)
+
+# TODO: mod 3;
+
+# Coefficients:
+c(- K*s1^5 + K^2*(5*(s1*s2^3*s3 - s1^2*s2*s3^2 - s1^2*s2^2*s4 + s1^3*s3*s4) - s2^5) +
+		+ K^3*(5*(s1*s2*s4^3 - s1*s3^2*s4^2 + s2*s3^3*s4 - s2^2*s3*s4^2) - s3^5) - K^4*s4^5,
+	- 5*K*(K^2*s3*s4^3 + K*(s1*s2*s3*s4 + s1*s3^3 - s1^2*s4^2 - s2^2*s3^2 + s2^3*s4) + s1^3*s2),
+	- 5*K*(s1*s2^2 + s1^2*s3 + K*(s2*s4^2 + s3^2*s4)),
+	- 5*K*(s1*s4 + s2*s3), 0, 1)
+
+###
 # for arbitrary K:
 # (but polynomials need to be updated)
 K = 3
