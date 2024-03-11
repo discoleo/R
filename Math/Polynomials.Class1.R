@@ -112,6 +112,16 @@ round0.p = function(p, tol=1E-7) {
 	return(p)
 }
 
+###
+expand.grid.mod = function(p, n, K) {
+	n = n - 1;
+	lst = lapply(seq(n), function(id) seq(0, p-1));
+	names(lst) = paste0("s", seq(n));
+	lst$K = K;
+	lst = expand.grid(lst);
+	return(lst);
+}
+
 #####################
 
 #################
@@ -230,8 +240,19 @@ x = 1; # x = 2; # only Test;
 # which reduces to:
 (x^5 - K*x^3 - K*(K + 1)*x^2 + K*(K + 1)*x + K^2) %% 3; # (mod 3)
 
-# TODO: mod 4;
+### Mod 4:
+p = 4;
+s.lst = expand.grid.mod(p, n = 5, K = c(2,3,4,5));
+pp = apply(s.lst, 1, function(x) { b = coef.p5(unlist(x[-5]), K = x[5]) %% p; b = rev(b); c(x, b); } )
+pp = t(pp);
+colnames(pp)[6:11] = paste0("x", seq(5,0,-1));
 
+table(pp[, 8])
+table(pp[, 9])
+pp[ pp[,9] == 3, ]
+
+
+#################
 
 ###
 # for arbitrary K:
