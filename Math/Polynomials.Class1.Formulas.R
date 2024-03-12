@@ -14,14 +14,16 @@
 # - some precomputed formulas;
 
 ### Note:
-# - the P7 has 246 monoms;
+# - the P7 has 246 monomials;
 # - the s0 term has been omitted, because
 #   it is trivial & adds a huge amount of extra monoms;
 
 
 #####################
 
-### helper functions
+### Helper Functions
+
+source("Polynomials.Helper.R")
 
 # see in file: Polynomials.Helper.R;
 # e.g. unity(), rootn();
@@ -32,9 +34,10 @@
 
 ### Orders 4 to 7:
 
-polynom.f = function(K, s, n=length(s) + 1) {
+polynom.f = function(K, s, n=length(s) + 1, doRoots = TRUE) {
 	# - precomputed formulas for the coefficients;
 	# - s = shifts of the root-components;
+	# - Order: s = c(s1, s2, s3, ...);
 	# - does NOT include s0 (as it is a trivial term);
 	if(length(s) + 1 < n) s = c(s, rep(0, n - length(s) - 1))
 	
@@ -54,10 +57,9 @@ polynom.f = function(K, s, n=length(s) + 1) {
 			(- K*s1^5 + 5*K^2*s1*s2^3*s3 - 5*K^2*s1^2*s2*s3^2 - 5*K^2*s1^2*s2^2*s4 + 5*K^2*s1^3*s3*s4 +
 				- K^2*s2^5 + 5*K^3*s1*s2*s4^3 - 5*K^3*s1*s3^2*s4^2 + 5*K^3*s2*s3^3*s4 - 5*K^3*s2^2*s3*s4^2 +
 				- K^3*s3^5 - K^4*s4^5),
-			(- 5*K*s1^3*s2 - 5*K^2*s1*s2*s3*s4 - 5*K^2*s1*s3^3 + 5*K^2*s1^2*s4^2 + 5*K^2*s2^2*s3^2 +
-				- 5*K^2*s2^3*s4 - 5*K^3*s3*s4^3),
-			(- 5*K*s1*s2^2 - 5*K*s1^2*s3 - 5*K^2*s2*s4^2 - 5*K^2*s3^2*s4),
-			(- 5*K*s1*s4 - 5*K*s2*s3), 0, 1)
+			- 5*K*(K^2*s3*s4^3 + K*(s1*s2*s3*s4 + s1*s3^3 - s1^2*s4^2 - s2^2*s3^2 + s2^3*s4) + s1^3*s2),
+			- 5*K*(K*(s2*s4^2 + s3^2*s4) + s1*s2^2 + s1^2*s3),
+			- 5*K*(s1*s4 + s2*s3), 0, 1)
 	}
 	
 	### Order 6:
@@ -87,7 +89,8 @@ polynom.f = function(K, s, n=length(s) + 1) {
 		coeff = coeff.order7.f(K, s);
 	}
 	#
-	class(coeff) = c(class(coeff), "polynomial")
+	class(coeff) = c(class(coeff), "polynomial");
+	if( ! doRoots) return(coeff);
 	### Roots:
 	# all n roots: computed exactly (with radicals)!
 	r = roots.f(K, c(0, s)) # include s0 = 0
