@@ -276,6 +276,22 @@ factorSimple.pm = function(p, by = "x") {
 }
 
 ###################
+
+### P3:
+# - from 1 complex root;
+# - Assumes: P[3] = x^3 + b1*x + b0;
+as.pm.p3Root = function(x, tol.i = 1E-6) {
+	b = Im(x);
+	# NO Complex Root!
+	if(abs(b) < tol.i) return(NULL);
+	a  = Re(x);
+	zz = a*a + b*b
+	E2 = zz - 4*a*a;
+	E3 = - 2*a*zz;
+	return(c(1, 0, E2, - E3));
+}
+
+###################
 ###################
 
 ### Special Cases

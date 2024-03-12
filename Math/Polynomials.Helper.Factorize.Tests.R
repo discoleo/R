@@ -238,6 +238,23 @@ factorize.ext.p(p, xn="x", asBigNum=TRUE, debug=T)
 ################
 ################
 
+### P[3]
+
+### Reconstruct P[3] over Z from 1 complex root;
+
+###
+as.pm.p3Root(pracma::roots(c(1,0,3,1))[1])
+
+###
+as.pm.p3Root(pracma::roots(c(1,0,5,1))[1])
+
+###
+as.pm.p3Root(pracma::roots(c(1,0,5,-2))[1])
+
+
+################
+################
+
 ### Transform Order 3:
 p = toPoly.pm("(x^3 - 3*x + 5)*(x^3 + 4*x + 3)")
 r = roots.pm(p)
