@@ -243,7 +243,7 @@ extract2.pm = function(p, s.warn=NULL) {
 			p1 = p[[1]]; p2 = p[[2]];
 			if( ! is.null(s.warn)) check.f(p, s.warn);
 			return(list(p1, p2));
-		} else return(list(pT[[1]], NULL));
+		} else return(list(p[[1]], NULL));
 	}
 }
 
