@@ -47,7 +47,7 @@
 
 #########################
 
-### Helper functions
+### Helper Functions
 
 # library(pracma)
 # needed for Lambert W;
@@ -464,6 +464,10 @@ line.tan(c((-3:3)/2.2), dx=1/5, p=dy, dp=d2y, pp=pp, m=m, col="orange")
 ### Automatic ###
 #################
 
+### genODE.TrigLog.pm():
+# - Eq: y = p1(x) * sin(log(T(x))) + p2 * cos(log(T(x))) + F0(x);
+# - pDiv used for simplification;
+
 ### Ex 1:
 pT = toPoly.pm("x + b")
 p1 = toPoly.pm("a1");
@@ -488,6 +492,8 @@ print.dpm(pR, do.sort=FALSE)
 ### ODE:
 (x + b)*(k*x^2 + 2*k*b*x + x + k*b^2 + b)*d2y + (x + b)*dy +
 	+ (k^3*x^3 + 3*k^2*x^2 + 3*b*k^3*x^2 + 3*k*x + 6*b*k^2*x + 3*b^2*k^3*x + 1 + 3*b*k + 3*b^2*k^2 + b^3*k^3)*y # = 0
+(x + b)^2 * (k*x + k*b + 1)*d2y + (x + b)*dy +
+	+ (k*x + k*b + 1)^3 * y # = 0
 
 
 ### Ex 3:
@@ -516,6 +522,28 @@ print.dpm(pR, do.sort=FALSE)
 (2*x^5 + 5*b1*x^4 + 4*b0*x^3 + 4*b1^2*x^3 + 6*b0*b1*x^2 + b1^3*x^2 + 2*b0^2*x + 2*b0*b1^2*x + b0^2*b1)*d2y +
 	+ (2*x^4 + 4*b1*x^3 + 3*b1^2*x^2 + b1^3*x - 2*b0^2 + b0*b1^2)*dy +
 	+ (2*x + b1)^3*y - a3*(2*x + b1)^3 # = 0
+
+
+### Ex 5: Simple
+# x^p * y = sin(log(x)) + F0(x);
+
+# D =>
+x^p * dy + p*x^(p-1) * y - cos(log(x)) / x - df0 # = 0
+x^(p+1) * dy + p*x^p * y - cos(log(x)) - x*df0 # = 0
+
+# D2 =>
+x^(p+1) * d2y + (p+1)*x^p * dy + p*x^p * dy + p^2*x^(p-1) * y +
+	+ sin(log(x)) / x - x*d2f0 - df0 # = 0
+x^(p+2) * d2y + (2*p + 1)*x^(p+1) * dy + (p^2 + 1)*x^p * y +
+	- x^2*d2f0 - x*df0 - f0 # = 0
+
+### Ex 5a: F0(x) = x^3
+x^(p+2) * d2y + (2*p + 1)*x^(p+1) * dy + (p^2 + 1)*x^p * y - 10*x^3 # = 0
+
+# Case: p = 1
+genODE.TrigLog.pm(data.frame(x=-1, coeff=1), data.frame(x=0, coeff=0), pT=as.pm("x"), as.pm("x^2"), do.gcd = F)
+# ODE:
+x^2*d2y + 3*x*dy + 2*y - 10*x^2 # = 0
 
 
 #############
@@ -627,6 +655,8 @@ line.tan(px, dx=1.5, p=dy, dp=d2y, FUN.list=p.list, b=b, a=a, col="orange")
 #####################
 
 ### y = P(x) * sin(T1(x))^2 + F0(x);
+
+# Note: sin(T(x))^2 = (1 - cos(2 * T(x))) / 2;
 
 ### D =>
 dy - dp*sin(t1)^2 - 2*p*dt1*sin(t1)*cos(t1) - df0 # = 0 # * p =>

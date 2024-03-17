@@ -94,13 +94,13 @@ genODE.TrigLog.pm = function(p1, p2, pT, f0=NULL, pDiv=NULL, div.by=NULL,
 		hasD = isNZ.pm(df0);
 		if(hasD) {
 			pR[[2]] = diff.pm(pR[[2]], df0);
-			d2f = dp.pm(df0, xn="x");
-			if( ! isNZ.pm(d2f)) d2f = NULL;
+			# d2f = dp.pm(df0, xn="x");
+			# if( ! isNZ.pm(d2f)) d2f = NULL;
 		}
 	}
 	# convert Fractions from: D(log(...))
-	pD2y = mult.pm(pR[[2]], pD$Div);
-	pR[[2]] = pD2y;
+	pDy = mult.pm(pR[[2]], pD$Div);
+	pR[[2]] = pDy;
 	pR = solve.LD.pm(c(pC, pD[c("C1", "C2")]), pR);
 	# lapply(pR, print.data.frame);
 	# D2 =>
@@ -109,14 +109,17 @@ genODE.TrigLog.pm = function(p1, p2, pT, f0=NULL, pDiv=NULL, div.by=NULL,
 	pD2R = mult.pm(pD2$C1, pR$C1); # pD2RC1
 	pD2R = sum.pm(pD2R, mult.pm(pD2$C2, pR$C2)); # pD2RC2
 	# d2y:
-	pD2y = dy.pm(pD2y, yn="y", xn="x");
-	if(! is.null(d2f)) {
-		pD2y = diff.pm(pD2y, d2f);
-	}
+	pD2y = dy.pm(pDy, yn="y", xn="x");
+	# if(! is.null(d2f)) {
+		# pD2y = diff.pm(pD2y, d2f);
+	# }
 	pD2y = mult.pm(pD2y, mult.pm(pD2$Div, pR$Div));
 	pD2R = diff.pm(pD2y, pD2R);
 	if( ! is.null(pDiv)) pD2R = div.pm(pD2R, pDiv, by=div.by)$Rez;
 	#
+	powX = min(pD2R$x);
+	if(powX < 0) pD2R$x = pD2R$x - powX;
+	pD2R = as.pm(pD2R);
 	pD2R = format.dpm(pD2R, y="y", do.gcd=do.gcd);
 	if(print) print(print.dpm(pD2R, do.sort=FALSE));
 	return(pD2R);
