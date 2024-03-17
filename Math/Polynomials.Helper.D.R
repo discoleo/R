@@ -238,14 +238,13 @@ extract2.pm = function(p, s.warn=NULL) {
 	if(inherits(p, "pm")) {
 		return(list(p, NULL));
 	}
-	if(is.list(pT)) {
-		if(length(pT) >= 2) {
+	if(is.list(p)) {
+		if(length(p) >= 2) {
 			p1 = p[[1]]; p2 = p[[2]];
 			if( ! is.null(s.warn)) check.f(p, s.warn);
 			return(list(p1, p2));
 		} else return(list(pT[[1]], NULL));
 	}
-	# TODO: error;
 }
 
 
