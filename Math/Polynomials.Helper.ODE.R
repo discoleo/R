@@ -83,6 +83,8 @@ genODE.Trig.pm = function(p1, p2, pT, f0=NULL, pDiv=NULL, div.by=NULL,
 # where pT = pT0 + log(pT1)
 genODE.TrigLog.pm = function(p1, p2, pT, f0=NULL, pDiv=NULL, div.by=NULL,
 		do.gcd=TRUE, print=FALSE) {
+	if(is.null(p2)) p2 = as.pm(0, x = "x", keep.zero = TRUE);
+	if(is.numeric(p2)) p2 = as.pm(p2, x = "x", keep.zero = TRUE);
 	pC = list(p1, p2);
 	pD = dp.trigLog.pm(pC, pT);
 	# Linear System
@@ -118,10 +120,10 @@ genODE.TrigLog.pm = function(p1, p2, pT, f0=NULL, pDiv=NULL, div.by=NULL,
 	if( ! is.null(pDiv)) pD2R = div.pm(pD2R, pDiv, by=div.by)$Rez;
 	#
 	powX = min(pD2R$x);
-	if(powX < 0) pD2R$x = pD2R$x - powX;
+	if(powX != 0) pD2R$x = pD2R$x - powX;
 	pD2R = as.pm(pD2R);
 	pD2R = format.dpm(pD2R, y="y", do.gcd=do.gcd);
-	if(print) print(print.dpm(pD2R, do.sort=FALSE));
+	if(print) print.dpm(pD2R, do.sort=FALSE);
 	return(pD2R);
 }
 
@@ -170,7 +172,7 @@ genODE.Log.pm = function(p1, p2, pL1, pL2, f0=NULL, pDiv=NULL, div.by=NULL,
 	if( ! is.null(pDiv)) pD2R = div.pm(pD2R, pDiv, by=div.by)$Rez;
 	#
 	pD2R = format.dpm(pD2R, y="y", do.gcd=do.gcd);
-	if(print) print(print.dpm(pD2R, do.sort=FALSE));
+	if(print) print.dpm(pD2R, do.sort=FALSE);
 	return(pD2R);
 }
 
