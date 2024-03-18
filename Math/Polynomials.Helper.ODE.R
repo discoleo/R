@@ -81,14 +81,19 @@ genODE.Trig.pm = function(p1, p2, pT, f0=NULL, pDiv=NULL, div.by=NULL,
 
 # p1*sin(pT) + p2*cos(pT)
 # where pT = pT0 + log(pT1)
-genODE.TrigLog.pm = function(p1, p2, pT, f0=NULL, pDiv=NULL, div.by=NULL,
+genODE.TrigLog.pm = function(p1, p2, pT, f0 = NULL, pMxy = NULL, pDiv=NULL, div.by=NULL,
 		do.gcd=TRUE, print=FALSE) {
 	if(is.null(p2)) p2 = as.pm(0, x = "x", keep.zero = TRUE);
 	if(is.numeric(p2)) p2 = as.pm(p2, x = "x", keep.zero = TRUE);
 	pC = list(p1, p2);
 	pD = dp.trigLog.pm(pC, pT);
 	# Linear System
-	pR  = list(toPoly.pm("y"), toPoly.pm("dy"));
+	# TODO: M(x)*y;
+	if(is.null(pMxy)) {
+		pR = list(toPoly.pm("y"), toPoly.pm("dy"));
+	} else {
+		pR = list(pMxy, dy.pm(pMxy, yn="y", xn="x"));
+	}
 	d2f = NULL;
 	if( ! is.null(f0)) {
 		pR[[1]] = diff.pm(pR[[1]], f0);
@@ -96,8 +101,6 @@ genODE.TrigLog.pm = function(p1, p2, pT, f0=NULL, pDiv=NULL, div.by=NULL,
 		hasD = isNZ.pm(df0);
 		if(hasD) {
 			pR[[2]] = diff.pm(pR[[2]], df0);
-			# d2f = dp.pm(df0, xn="x");
-			# if( ! isNZ.pm(d2f)) d2f = NULL;
 		}
 	}
 	# convert Fractions from: D(log(...))

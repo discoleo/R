@@ -541,7 +541,8 @@ x^(p+2) * d2y + (2*p + 1)*x^(p+1) * dy + (p^2 + 1)*x^p * y +
 x^(p+2) * d2y + (2*p + 1)*x^(p+1) * dy + (p^2 + 1)*x^p * y - 10*x^3 # = 0
 
 # Case: p = 1
-genODE.TrigLog.pm(data.frame(x=-1, coeff=1), 0, pT=as.pm("x"), as.pm("x^2"))
+genODE.TrigLog.pm(data.frame(x=-1, coeff=1), 0, pT=as.pm("x"), f0=as.pm("x^2")) # x^3 / x = x^2;
+genODE.TrigLog.pm(as.pm(1), 0, pT=as.pm("x"), f0=as.pm("x^3"), pMxy = as.pm("x*y"))
 # ODE:
 x^2*d2y + 3*x*dy + 2*y - 10*x^2 # = 0
 
