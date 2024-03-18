@@ -65,6 +65,22 @@ as.pm.polynomial = function(p, xn="x", sort=TRUE, tol=1E-8) {
 	return(pR);
 }
 
+as.pm.numeric = function(p, x = "x", keep.zero = FALSE, ...) {
+	if(length(p) == 1) {
+		if(keep.zero) {
+			p = data.frame(x = 0, coeff = p);
+			names(p)[[1]] = x;
+		} else {
+			p = data.frame(coeff = p);
+		}
+	} else {
+		# TODO
+		print("TODO");
+	}
+	class(p) = c("pm", class(p));
+	return(p);
+}
+
 # Read from Clipboard
 polyClip = function(env=parent.frame(), reduce=FALSE, verbose=FALSE) {
 	p = paste0(readClipboard(), collapse="\n");
