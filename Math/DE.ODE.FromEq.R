@@ -1,20 +1,44 @@
-
-
+########################
+###
+### Leonard Mada
+### [the one and only]
+###
+### Differential Equations
 ### ODE From another Equation
+###
+### draft v.0.2a
+
+# - usually non-linear ODEs;
 
 
-################
+####################
+
+### Helper Functions
+
+source("Polynomials.Helper.ODE.R")
+source("DE.ODE.Helper.R")
+
+
+#########################
+#########################
 
 ### Basic Examples
 # see file: DE.ODE.Polynomial.R
 
+
+### Other Examples:
+# - spread across various files (DE.ODE. ...);
+
+
+####################
 
 ### 2*atan((y + 2) / (1 - x)) - log(y + 2) = Const
 # Example from:
 # Maths 505: A very interesting differential equation
 # https://www.youtube.com/watch?v=zDw4FjmLv0Y
 
-dy - 2*(y + 2)^2 / (y + x + 1)^2 = 0
+### ODE:
+dy - 2*(y + 2)^2 / (y + x + 1)^2 # = 0
 
 
 ##################
@@ -39,4 +63,35 @@ x*(dy + x*y*dy + y^2) * exp(x*y) - (2*x*y*dy + 1) * (y * exp(x*y) - f) - x*df # 
 
 # TODO:
 # - substitute exp(x*y) and check;
+
+
+######################
+######################
+
+### P(x, y) = B(x) * Trig( Log ) + F(x)
+
+### y^2 + x*y = sin(log(x)) + x^3
+genODE.TrigLog.pm(as.pm(1), 0, pT=as.pm("x"), f0=as.pm("x^3"), pMxy = as.pm("y^2 + x*y"))
+# ODE:
+2*x^2*y*d2y + x^3*d2y + 2*x^2*dy^2 + 2*x*y*dy + 3*x^2*dy + y^2 + 2*x*y - 10*x^3 # = 0
+
+# TODO: check;
+
+
+### y^2 + x*y = x * sin(log(x)) + x^3
+genODE.TrigLog.pm(as.pm("x"), 0, pT=as.pm("x"), f0=as.pm("x^3"), pMxy = as.pm("y^2 + x*y"))
+# ODE:
+2*x^2*y*d2y + x^3*d2y + 2*x^2*dy^2 - 2*x*y*dy + x^2*dy + 2*y^2 + x*y - 5*x^3 # = 0
+
+# TODO: check;
+
+
+### y^2 + x*y = (x+1) * sin(log(x+1)) + 1
+tmp = genODE.TrigLog.pm(as.pm("x+1"), 0, pT=as.pm("x+1"), f0=as.pm(1), pMxy = as.pm("y^2 + x*y"))
+print.dpm(div.pm(tmp, "(x+1)^2")$Rez)
+# ODE:
+2*(x + 1)^2*y*d2y + x*(x + 1)^2*d2y + 2*(x + 1)^2*dy^2 +
+	- 2*(x + 1)*y*dy + (x^2 + 3*x + 2)*dy + 2*y^2 + x*y - y - 2 # = 0
+
+# TODO: check;
 
