@@ -95,3 +95,20 @@ print.dpm(div.pm(tmp, "(x+1)^2")$Rez)
 
 # TODO: check;
 
+
+########################
+
+### y + x*tan(y) = F0(x)
+
+# D =>
+dy + tan(y) + x*(1 + tan(y)^2)*dy - df0 # = 0
+x*dy + x*tan(y) + x^2*dy + x^2*tan(y)^2*dy - x*df0 # = 0
+x*dy + f0 - y + x^2*dy + (f0 - y)^2*dy - x*df0 # = 0
+### ODE:
+y^2*dy - 2*f0*y*dy + (f0^2 + x^2)*dy - y - x*df0 + f0 # = 0
+
+# TODO: check;
+
+# Case: f0 = x
+y^2*dy - 2*x*y*dy + 2*x^2*dy - y # = 0
+
