@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODE From another Equation
 ###
-### draft v.0.2a
+### draft v.0.2b
 
 # - usually non-linear ODEs;
 
@@ -111,4 +111,21 @@ y^2*dy - 2*f0*y*dy + (f0^2 + x^2)*dy - y - x*df0 + f0 # = 0
 
 # Case: f0 = x
 y^2*dy - 2*x*y*dy + 2*x^2*dy - y # = 0
+
+
+########################
+
+### y + x*tan(log(y)) = F0(x)
+
+# D =>
+dy + tan(log(y)) + x*(1 + tan(log(y))^2)*dy / y - df0 # = 0
+x*y*dy + x*y*tan(log(y)) + x^2*dy + x^2*tan((log(y)))^2*dy - x*df0*y # = 0
+x*y*dy + (f0 - y)*y + x^2*dy + (f0 - y)^2*dy - x*df0*y # = 0
+### ODE:
+y^2*dy - (2*f0 - x)*y*dy + (f0^2 + x^2)*dy - y^2 - (x*df0 - f0)*y # = 0
+
+# TODO: check;
+
+# Case: f0 = x
+y^2*dy - x*y*dy + 2*x^2*dy - y^2 # = 0
 
