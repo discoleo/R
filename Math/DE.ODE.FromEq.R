@@ -113,6 +113,25 @@ y^2*dy - 2*f0*y*dy + (f0^2 + x^2)*dy - y - x*df0 + f0 # = 0
 y^2*dy - 2*x*y*dy + 2*x^2*dy - y # = 0
 
 
+##########################
+
+### y + x*tan(y^2) = F0(x)
+
+# D =>
+dy + tan(y^2) + 2*x*(1 + tan(y^2)^2)*y*dy - df0 # = 0
+x*dy + x*tan(y^2) + 2*x^2*y*dy + 2*x^2*tan(y^2)^2*y*dy - x*df0 # = 0
+x*dy + f0 - y + 2*x^2*y*dy + 2*(f0 - y)^2*y*dy - x*df0 # = 0
+### ODE:
+2*y^3*dy - 4*f0*y^2*dy + 2*(f0^2 + x^2)*y*dy - y - x*df0 + f0 # = 0
+
+# TODO: check;
+
+# Case: f0 = x
+2*y^3*dy - 4*x*y^2*dy + 4*x^2*y*dy - y # = 0
+# =>
+2*y^2*dy - 4*x*y*dy + 4*x^2*dy - 1 # = 0
+
+
 ########################
 
 ### y + x*tan(log(y)) = F0(x)
