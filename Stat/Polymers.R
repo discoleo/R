@@ -5,7 +5,7 @@
 ###
 ### Polymers
 ###
-### draft v.0.2b
+### draft v.0.2c
 
 ### Polymers
 
@@ -146,11 +146,11 @@ ee.xy = function(FUN = NULL, ..., N = 999) {
 	});
 	r = do.call(rbind, r);
 	r = as.data.frame(r);
-	names(r) = c("x1", "y1", "x2", "y2")
+	names(r) = c("x1", "x2", "y1", "y2")
 	return(r)
 }
 
-### plot
+### Plot
 
 draw.polymer = function(pm, xy0, bckg=1, autoInc=TRUE, col=NULL, add=FALSE) {
 	ph = hinges(pm, xy0, doConnect=F);
@@ -341,10 +341,23 @@ plot(xy[,1], xy[,2], type = "l", asp = 1)
 points(xy[c(1, nrow(xy)), 1:2], col = "red")
 text(jitter(xy[, 1:2]), labels = seq(nrow(xy)), col = "blue")
 
+
 ### End-to-End Distance
 xy = ee.xy(rpolymer.atomic, n = 20, phi = c(2,-2)*pi/3)
 dd = sqrt((xy$x1 - xy$x2)^2 + (xy$y1 - xy$y2)^2)
 
 summary(dd)
 boxplot(dd)
+
+# Length & Direction
+# All positive
+xy$x2 = abs(xy$x2);
+xy$y2 = abs(xy$y2)
+
+plot(range(xy$x1, xy$x2), range(xy$y1, xy$y2))
+tmp = sapply(seq(nrow(xy)), function(id) {
+	x = unlist(xy[id, c("x1","x2")]);
+	y = unlist(xy[id, c("y1","y2")]);
+	lines(x, y);
+})
 
