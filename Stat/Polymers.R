@@ -5,7 +5,7 @@
 ###
 ### Polymers
 ###
-### draft v.0.2a
+### draft v.0.2b
 
 ### Polymers
 
@@ -23,7 +23,7 @@
 ####################
 ####################
 
-### helper Functions
+### Helper Functions
 
 # - toRaster(), print.rs():
 #   see file: Percolation.R;
@@ -61,7 +61,7 @@ rpolymer = function(n, s, alpha.range, d=5, dir0=c(0, 2*pi), both=TRUE, angle.FU
 # Note:
 # - at atomic scale;
 # - 2D & ignores self intersections/overlaps;
-# - n = number of bonds;
+# - n = Number of atoms;
 rpolymer.atomic = function(n, phi = c(2*pi/3, -2*pi/3), phi0 = 0,
 		r = 1, prob = NULL) {
 	dth = sample(phi, n - 1, replace = TRUE, prob=prob);
@@ -132,6 +132,26 @@ polymer.gen = function(pm, xy0, val=1) {
 	ph = hinges(pm, xy0);
 	# TODO
 }
+
+
+### Analysis
+
+# End-to-End
+ee.xy = function(FUN = NULL, ..., N = 999) {
+	args = list(...);
+	r = lapply(seq(N), function(id) {
+		tmp = do.call(FUN, args);
+		tmp = tmp[c(1, nrow(tmp)), c(1,2)];
+		as.vector(tmp);
+	});
+	r = do.call(rbind, r);
+	r = as.data.frame(r);
+	names(r) = c("x1", "y1", "x2", "y2")
+	return(r)
+}
+
+### plot
+
 draw.polymer = function(pm, xy0, bckg=1, autoInc=TRUE, col=NULL, add=FALSE) {
 	ph = hinges(pm, xy0, doConnect=F);
 	m = array(bckg, c(xy0$gr.dim[2], xy0$gr.dim[1], 3))
@@ -298,7 +318,6 @@ draw.polymer(pm.str, xy0);
 #########################
 
 ### End-to-End Vector
-# TODO
 
 ###
 xy = rpolymer.atomic(20)
@@ -321,4 +340,11 @@ xy = rpolymer.atomic(20, phi = c(2,-2,4,-4) * pi /5)
 plot(xy[,1], xy[,2], type = "l", asp = 1)
 points(xy[c(1, nrow(xy)), 1:2], col = "red")
 text(jitter(xy[, 1:2]), labels = seq(nrow(xy)), col = "blue")
+
+### End-to-End Distance
+xy = ee.xy(rpolymer.atomic, n = 20, phi = c(2,-2)*pi/3)
+dd = sqrt((xy$x1 - xy$x2)^2 + (xy$y1 - xy$y2)^2)
+
+summary(dd)
+boxplot(dd)
 
