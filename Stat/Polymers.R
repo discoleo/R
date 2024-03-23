@@ -5,7 +5,7 @@
 ###
 ### Polymers
 ###
-### draft v.0.2c
+### draft v.0.2d
 
 ### Polymers
 
@@ -349,9 +349,18 @@ dd = sqrt((xy$x1 - xy$x2)^2 + (xy$y1 - xy$y2)^2)
 summary(dd)
 boxplot(dd)
 
-# Length & Direction
-# All positive
-xy$x2 = abs(xy$x2);
+### Densities [better]
+plot(range(xy$x1, xy$x2), range(xy$y1, xy$y2), col = "blue")
+points(jitter(xy$x2), jitter(xy$y2))
+
+# TODO: ggplot;
+
+
+### Length & Direction
+# All positive:
+# - when x0 fixed, sign of x[END] is relevant;
+# - when prob = symmetric, sign of y[END] not relevant;
+# xy$x2 = abs(xy$x2);
 xy$y2 = abs(xy$y2)
 
 plot(range(xy$x1, xy$x2), range(xy$y1, xy$y2))
