@@ -5,7 +5,7 @@
 ###
 ### Polymers
 ###
-### draft v.0.1d
+### draft v.0.2a
 
 ### Polymers
 
@@ -33,6 +33,7 @@ xy0.gen = function(n, gr.dim, xy0=c(1,1)) {
 	y0 = runif(n, xy0[2], gr.dim[2]);
 	return(list(x0=x0, y0=y0, gr.dim=gr.dim));
 }
+# Note: at large scale;
 rpolymer = function(n, s, alpha.range, d=5, dir0=c(0, 2*pi), both=TRUE, angle.FUN=NULL) {
 	n.a = s - 1;
 	n.aall = n*n.a;
@@ -56,6 +57,38 @@ rpolymer = function(n, s, alpha.range, d=5, dir0=c(0, 2*pi), both=TRUE, angle.FU
 	alfa = apply(alfa, 2, cumsum); # each col = 1 polymer;
 	return(list(alpha=alfa, s=s, d=d, alpha.range=alpha.range));
 }
+
+# Note:
+# - at atomic scale;
+# - 2D & ignores self intersections/overlaps;
+# - n = number of bonds;
+rpolymer.atomic = function(n, phi = c(2*pi/3, -2*pi/3), phi0 = 0,
+		r = 1, prob = NULL) {
+	dth = sample(phi, n - 1, replace = TRUE, prob=prob);
+	th  = c(phi0 - pi, dth);
+	pi2 = 2*pi;
+	as2pi = function(x) x - pi2 * round(x / pi2);
+	for(i in seq(2, n)) {
+		sg = if(th[i-1] <= pi) 1 else -1;
+		# if(i %% 2 == 0) -1 else 1;
+		th[i] = as2pi(sg*(th[i-1] - pi) + th[i]);
+	}
+	# xy:
+	x = rep(0, n);
+	y = rep(0, n);
+	for(i in seq(2, n)) {
+		thi = th[i-1];
+		x[i] = cos(thi)*r + x[i-1];
+		y[i] = sin(thi)*r + y[i-1];
+	}
+	x[abs(x) < 1E-8] = 0;
+	y[abs(y) < 1E-8] = 0;
+	dth  = round(c(0, dth) * 180 / pi, 2);
+	xyth = cbind(x=x, y=y, th=th, dth=dth);
+	return(xyth)
+}
+
+
 ### Angles:
 set.angle.gen = function(npos, angle) {
 	FUN = function(alfa) {
@@ -259,4 +292,33 @@ avar = pi/10;
 alpha = c(a0 - avar, a0 + avar);
 pm.str = rpolymer(n, s, d=d, alpha.range=alpha, both=FALSE);
 draw.polymer(pm.str, xy0);
+
+
+#########################
+#########################
+
+### End-to-End Vector
+# TODO
+
+###
+xy = rpolymer.atomic(20)
+
+plot(xy[,1], xy[,2], type = "l", asp = 1)
+points(xy[c(1, nrow(xy)), 1:2], col = "red")
+text(jitter(xy[, 1:2]), labels = seq(nrow(xy)), col = "blue")
+
+###
+xy = rpolymer.atomic(20, prob = c(2/3, 1/3))
+
+plot(xy[,1], xy[,2], type = "l", asp = 1)
+points(xy[c(1, nrow(xy)), 1:2], col = "red")
+text(jitter(xy[, 1:2]), labels = seq(nrow(xy)), col = "blue")
+
+###
+xy = rpolymer.atomic(20, phi = c(2,-2,4,-4) * pi /5)
+
+# Note: 6-"cycles" still possible;
+plot(xy[,1], xy[,2], type = "l", asp = 1)
+points(xy[c(1, nrow(xy)), 1:2], col = "red")
+text(jitter(xy[, 1:2]), labels = seq(nrow(xy)), col = "blue")
 
