@@ -19,6 +19,10 @@
 # Bifurcation Points in the Ohta-Kawasaki Model
 # https://www.youtube.com/watch?v=jH63fOA56eA
 
+# George Phillies: Classes in Polymer Dynamics
+# 1. Classes in Polymer Dynamics - 8 Dielectric Relaxation, Part 1.
+#    https://www.youtube.com/watch?v=J7RHjZZybzc&list=PLC50810D2F01969F3&index=7
+
 
 ####################
 ####################
@@ -148,6 +152,12 @@ ee.xy = function(FUN = NULL, ..., N = 999) {
 	r = as.data.frame(r);
 	names(r) = c("x1", "x2", "y1", "y2")
 	return(r)
+}
+
+#
+count.data.frame = function(x) {
+	Freq = rep(1, nrow(x));
+	aggregate( Freq ~ ., data = x, sum);
 }
 
 ### Plot
@@ -343,6 +353,7 @@ text(jitter(xy[, 1:2]), labels = seq(nrow(xy)), col = "blue")
 
 
 ### End-to-End Distance
+N = 999
 xy = ee.xy(rpolymer.atomic, n = 20, phi = c(2,-2)*pi/3)
 dd = sqrt((xy$x1 - xy$x2)^2 + (xy$y1 - xy$y2)^2)
 
@@ -351,9 +362,14 @@ boxplot(dd)
 
 ### Densities [better]
 plot(range(xy$x1, xy$x2), range(xy$y1, xy$y2), col = "blue")
-points(jitter(xy$x2), jitter(xy$y2))
+points(jitter(xy$x2), jitter(xy$y2), col = "#D0000064")
 
-# TODO: ggplot;
+# Library ggplot;
+library(ggplot2)
+
+count.data.frame(xy[, c("x2", "y2")]) |>
+	ggplot(aes(x2, y2, size = Freq)) +
+	geom_point()
 
 
 ### Length & Direction
