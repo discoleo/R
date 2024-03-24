@@ -157,7 +157,7 @@ ee.xy = function(FUN = NULL, ..., N = 999) {
 #
 count.data.frame = function(x) {
 	Freq = rep(1, nrow(x));
-	aggregate( Freq ~ ., data = x, sum);
+	aggregate(Freq ~ ., data = x, sum);
 }
 
 ### Plot
@@ -354,7 +354,7 @@ text(jitter(xy[, 1:2]), labels = seq(nrow(xy)), col = "blue")
 
 ### End-to-End Distance
 N = 999
-xy = ee.xy(rpolymer.atomic, n = 20, phi = c(2,-2)*pi/3)
+xy = ee.xy(rpolymer.atomic, n = 20, phi = c(2,-2)*pi/3, N=N)
 dd = sqrt((xy$x1 - xy$x2)^2 + (xy$y1 - xy$y2)^2)
 
 summary(dd)
@@ -367,7 +367,8 @@ points(jitter(xy$x2), jitter(xy$y2), col = "#D0000064")
 # Library ggplot;
 library(ggplot2)
 
-count.data.frame(xy[, c("x2", "y2")]) |>
+round(xy[, c("x2", "y2")], 4) |>
+	count.data.frame() |>
 	ggplot(aes(x2, y2, size = Freq)) +
 	geom_point()
 
