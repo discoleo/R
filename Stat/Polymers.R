@@ -5,13 +5,13 @@
 ###
 ### Polymers
 ###
-### draft v.0.2d
+### draft v.0.2e
 
 ### Polymers
 
 # - some experiments with random Polymers;
 
-### Github:
+### GitHub:
 # https://github.com/discoleo/R/blob/master/Stat/Polymers.R
 
 
@@ -22,6 +22,8 @@
 # George Phillies: Classes in Polymer Dynamics
 # 1. Classes in Polymer Dynamics - 8 Dielectric Relaxation, Part 1.
 #    https://www.youtube.com/watch?v=J7RHjZZybzc&list=PLC50810D2F01969F3&index=7
+# 2. Classes in Polymer Dynamics - 9 Dielectric Relaxation, Part 2.
+#    https://www.youtube.com/watch?v=blaGXgEcQuI&list=PLC50810D2F01969F3&index=8
 
 
 ####################
@@ -140,6 +142,14 @@ polymer.gen = function(pm, xy0, val=1) {
 
 ### Analysis
 
+# Center
+center.xy = function(x, y = NULL, recycle = TRUE) {
+	xy = xy.coords(x, y, recycle=recycle, setLab = FALSE);
+	xc = mean(xy$x);
+	yc = mean(xy$y);
+	return(c(x = xc, y = yc));
+}
+
 # End-to-End
 ee.xy = function(FUN = NULL, ..., N = 999) {
 	args = list(...);
@@ -155,7 +165,11 @@ ee.xy = function(FUN = NULL, ..., N = 999) {
 }
 
 #
-count.data.frame = function(x) {
+count.data.frame = function(x, digits = NULL) {
+	if( ! is.null(digits)) {
+		isNumeric = sapply(seq(ncol(x)), function(id) is.numeric(x[, id]));
+		x[, isNumeric] = round(x[, isNumeric], digits = digits);
+	}
 	Freq = rep(1, nrow(x));
 	aggregate(Freq ~ ., data = x, sum);
 }
@@ -329,30 +343,35 @@ draw.polymer(pm.str, xy0);
 
 ### End-to-End Vector
 
-###
+### Ex 1:
 xy = rpolymer.atomic(20)
 
 plot(xy[,1], xy[,2], type = "l", asp = 1)
 points(xy[c(1, nrow(xy)), 1:2], col = "red")
 text(jitter(xy[, 1:2]), labels = seq(nrow(xy)), col = "blue")
 
-###
+### Ex 2:
 xy = rpolymer.atomic(20, prob = c(2/3, 1/3))
 
 plot(xy[,1], xy[,2], type = "l", asp = 1)
 points(xy[c(1, nrow(xy)), 1:2], col = "red")
 text(jitter(xy[, 1:2]), labels = seq(nrow(xy)), col = "blue")
 
-###
+### Ex 3:
 xy = rpolymer.atomic(20, phi = c(2,-2,4,-4) * pi /5)
 
 # Note: 6-"cycles" still possible;
 plot(xy[,1], xy[,2], type = "l", asp = 1)
 points(xy[c(1, nrow(xy)), 1:2], col = "red")
 text(jitter(xy[, 1:2]), labels = seq(nrow(xy)), col = "blue")
+points(as.list(center.xy(xy)), col = "green")
 
 
 ### End-to-End Distance
+
+# Library ggplot;
+library(ggplot2)
+
 N = 999
 xy = ee.xy(rpolymer.atomic, n = 20, phi = c(2,-2)*pi/3, N=N)
 dd = sqrt((xy$x1 - xy$x2)^2 + (xy$y1 - xy$y2)^2)
@@ -364,11 +383,9 @@ boxplot(dd)
 plot(range(xy$x1, xy$x2), range(xy$y1, xy$y2), col = "blue")
 points(jitter(xy$x2), jitter(xy$y2), col = "#D0000064")
 
-# Library ggplot;
-library(ggplot2)
-
-round(xy[, c("x2", "y2")], 4) |>
-	count.data.frame() |>
+#
+xy[, c("x2", "y2")] |>
+	count.data.frame(digits = 4) |>
 	ggplot(aes(x2, y2, size = Freq)) +
 	geom_point()
 
