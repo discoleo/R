@@ -43,3 +43,11 @@ integrate(function(x) cos(p*log(x)) /(x^n + 1)^k, lower=0, upper=Inf)
 (pracma::gammaz((1i*p+1)/n) * pracma::gammaz(k - (1i*p+1)/n) +
 	pracma::gammaz((-1i*p+1)/n) * pracma::gammaz(k - (-1i*p+1)/n) ) / (2*n*gamma(k));
 
+
+### Power 2: I( cos(p * log(x))^2) / ... )
+
+p = sqrt(3); n = 5*sqrt(11); k = 1/sqrt(2);
+integrate(function(x) cos(p*log(x))^2 /(x^n + 1)^k, lower=0, upper=Inf)
+(pracma::gammaz((2i*p+1)/n) * pracma::gammaz(k - (2i*p+1)/n) +
+	+ pracma::gammaz((-2i*p+1)/n) * pracma::gammaz(k - (-2i*p+1)/n) +
+	+ 2*gamma(1/n) * gamma(k - 1/n) ) / (4*n*gamma(k));
