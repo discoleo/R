@@ -27,3 +27,19 @@ k = sqrt(3)
 integrate(\(x) sin(k*x) / x^(p+1), 0, 200000, subdivisions=40000)
 - gamma(-p) * sin(pi*p/2) * k^p;
 
+
+#################
+#################
+
+### I( cos(log(x)) / ... )
+
+# Maths 505: A nice integral result
+# https://www.youtube.com/watch?v=b-5f66DSD7g
+
+# Generalization:
+
+p = sqrt(3); n = 5*sqrt(11); k = 1/sqrt(2);
+integrate(function(x) cos(p*log(x)) /(x^n + 1)^k, lower=0, upper=Inf)
+(pracma::gammaz((1i*p+1)/n) * pracma::gammaz(k - (1i*p+1)/n) +
+	pracma::gammaz((-1i*p+1)/n) * pracma::gammaz(k - (-1i*p+1)/n) ) / (2*n*gamma(k));
+
