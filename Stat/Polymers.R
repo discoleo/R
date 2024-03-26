@@ -16,8 +16,13 @@
 
 
 ### TODO: Copolymers
-# Bifurcation Points in the Ohta-Kawasaki Model
-# https://www.youtube.com/watch?v=jH63fOA56eA
+# 1. Bifurcation Points in the Ohta-Kawasaki Model
+#    https://www.youtube.com/watch?v=jH63fOA56eA
+# 2. Brandeis Math Bio Seminar - Jean-Luc Thiffeault (U of Wisconsin -- Madison)
+#    https://www.youtube.com/watch?v=oQZ3Htds8Ts
+# - possibly useful to simulate the motion of the tip of the polymer;
+# - Oblate wiggler: e.g. folding of proteins;
+
 
 # George Phillies: Classes in Polymer Dynamics
 # 1. Classes in Polymer Dynamics - 8 Dielectric Relaxation, Part 1.
@@ -342,6 +347,12 @@ draw.polymer(pm.str, xy0);
 #########################
 
 ### End-to-End Vector
+
+plot.mol = function(xy) {
+	plot(xy[,1], xy[,2], type = "l", asp = 1)
+	points(xy[c(1, nrow(xy)), 1:2], col = "red")
+	text(jitter(as.matrix(xy[, 1:2])), labels = seq(nrow(xy)), col = "blue")
+}
 
 ### Ex 1:
 xy = rpolymer.atomic(20)
