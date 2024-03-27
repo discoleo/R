@@ -149,11 +149,41 @@ integrate(\(x) sin(x) / (exp(k*x) - 1), 0, Inf)
 
 
 ### I( sin(x) / (exp(k*x) + 1) ) on [0, Inf]
+k = sqrt(3)
 integrate(\(x) sin(x) / (exp(k*x) + 1), 0, Inf)
 (pracma::psi(0, 1i/(2*k)) - pracma::psi(0, - 1i/(2*k))) * 1i / (2*k) +
 	- (pracma::psi(0, 1i/k) - pracma::psi(0, - 1i/k)) * 1i / (2*k) + 1;
 
 
+### I( sin(p*x) / (exp(k*x) + 1) ) on [0, Inf]
+p = sqrt(2); k = sqrt(3)
+integrate(\(x) sin(p*x) / (exp(k*x) + 1), 0, Inf)
+(pracma::psi(0, p*1i/(2*k)) - pracma::psi(0, - p*1i/(2*k)) +
+	- pracma::psi(0, p*1i/k) + pracma::psi(0, - p*1i/k)) * 1i / (2*k) + 1/p;
+
+### I( cos(p*x) / (exp(k*x) + 1) ) on [0, Inf]
+p = sqrt(2); k = sqrt(3)
+integrate(\(x) cos(q*x) / (exp(k*x) + 1), 0, Inf)
+integrate(\(x) Re(x^(q*1i)) / x / (x^k + 1), 1, Inf)
+integrate(\(x) Re(x^(q*1i - 1)) - Re(x^(q*1i)) / x / (x^k + 1), 0, 1)
+
+# TODO
+
+### I( x * cos(q*x) / (exp(k*x) + 1) ) on [0, Inf]
+q = sqrt(2); k = sqrt(3)
+integrate(\(x) x * cos(q*x) / (exp(k*x) + 1), 0, Inf)
+- (pracma::psi(1, q*1i/(2*k)) + pracma::psi(1, - q*1i/(2*k)) +
+	- 2*pracma::psi(1, q*1i/k) - 2*pracma::psi(1, - q*1i/k)) / (4*k^2) - 1/q^2;
+
+### I( x^2 * sin(q*x) / (exp(k*x) + 1) ) on [0, Inf]
+q = sqrt(3); k = sqrt(2)
+integrate(\(x) x^2 * sin(q*x) / (exp(k*x) + 1), 0, Inf)
+(pracma::psi(2, q*1i/(2*k)) - pracma::psi(2, - q*1i/(2*k)) +
+	- (pracma::psi(2, q*1i/k) - pracma::psi(2, - q*1i/k)) * 2^p ) * 1i / (2*k)^3 +
+	- 2/q^3;
+
+
+##########
 ### Other:
 integrate(\(x) sin(x) / (exp(x) * (exp(x) - 1)), 0, Inf)
 pi/2 / tanh(pi) - 1
@@ -230,10 +260,10 @@ integrate(\(x) x^n * sin(x)^3 / (exp(k*x) + 1), 0, Inf)
 integrate(\(x) sin(x) / exp(x), 0, Inf)
 1/2
 #
-integrate(\(x) x*sin(x) / exp(x), 0, Inf)
+integrate(\(x) x * sin(x) / exp(x), 0, Inf)
 1/2
 #
-integrate(\(x) x^2*sin(x) / exp(x), 0, Inf)
+integrate(\(x) x^2 * sin(x) / exp(x), 0, Inf)
 1/2
 #
 sapply(seq(9), \(n) round(integrate(\(x) x^p * sin(x) / exp(x), 0, Inf)$value, 3))
