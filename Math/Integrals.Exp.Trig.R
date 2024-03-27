@@ -191,12 +191,21 @@ integrate(\(x) x * cos(q*x) / (exp(k*x) + 1), 0, Inf)
 	- 2*pracma::psi(1, q*1i/k) - 2*pracma::psi(1, - q*1i/k)) / (4*k^2) - 1/q^2;
 
 
+### Variant: x^2
+# see Sections below for the Generalization x^p (p = integer);
+
 ### I( x^2 * sin(q*x) / (exp(k*x) + 1) ) on [0, Inf]
 q = sqrt(3); k = sqrt(2)
 integrate(\(x) x^2 * sin(q*x) / (exp(k*x) + 1), 0, Inf)
 (pracma::psi(2, q*1i/(2*k)) - pracma::psi(2, - q*1i/(2*k)) +
 	- (pracma::psi(2, q*1i/k) - pracma::psi(2, - q*1i/k)) * 2^p ) * 1i / (2*k)^3 +
 	- 2/q^3;
+
+### I( x^2 * cos(q*x) / (exp(k*x) + 1) ) on [0, Inf]
+q = sqrt(2); k = sqrt(3)
+integrate(\(x) x^2 * cos(q*x) / (exp(k*x) + 1), 0, Inf)
+- (pracma::psi(2, (q*1i/k + 1)/2) + pracma::psi(2, (- q*1i/k + 1)/2) +
+	- pracma::psi(2, q*1i/k/2) - pracma::psi(2, - q*1i/k/2)) / (16*k^3);
 
 
 ##########
@@ -224,7 +233,7 @@ integrate(\(x) x * sin(k*x) / (exp(x) - 1), 0, Inf)
 ### Generalization:
 n = sqrt(3); # n >= 0 !!!
 integrate(\(x) x^n * sin(x) / (exp(x) - 1), 0, Inf)
-# TODO: formula for sum();
+# [TODO] formula for sum();
 # [done using polygamma function]
 id = seq(10000)
 gamma(n+1) * sum(sin((n+1)*pi/2 - (n+1)*atan(id)) / (id^2 + 1)^((n + 1)/2))
@@ -238,6 +247,10 @@ integrate(\(x) x^n * sin(x) / (exp(x) - 1), 0, Inf)
 n = 5; k = sqrt(3)
 integrate(\(x) x^n * sin(k*x) / (exp(x) - 1), 0, Inf)
 (pracma::psi(n, 1i*k) - pracma::psi(n, - 1i*k)) * 1i / 2
+#
+n = 5; q = sqrt(5); k = sqrt(3)
+integrate(\(x) x^n * sin(q*x) / (exp(k*x) - 1), 0, Inf)
+(pracma::psi(n, 1i*q/k) - pracma::psi(n, - 1i*q/k)) * 1i / (2*k^(n+1))
 
 
 ### n = EVEN
@@ -248,6 +261,10 @@ integrate(\(x) x^n * sin(x) / (exp(x) - 1), 0, Inf)
 n = 4; k = sqrt(3)
 integrate(\(x) x^n * sin(k*x) / (exp(x) - 1), 0, Inf)
 - (pracma::psi(n, 1i*k + 1) - pracma::psi(n, - 1i*k + 1)) * 1i / 2
+#
+n = 4; q = sqrt(5); k = sqrt(3)
+integrate(\(x) x^n * sin(q*x) / (exp(k*x) - 1), 0, Inf)
+- (pracma::psi(n, 1i*q/k + 1) - pracma::psi(n, - 1i*q/k + 1)) * 1i / (2*k^(n+1))
 
 
 ### Pow of sin
@@ -270,6 +287,8 @@ integrate(\(x) x^n * sin(x)^3 / (exp(k*x) + 1), 0, Inf)
 	- (pracma::psi(n, 1i/(2*k)) - pracma::psi(n, - 1i/(2*k))) * 3i / (4*(2*k)^(n+1)) +
 	+ (pracma::psi(n, 3i/(2*k)) - pracma::psi(n, - 3i/(2*k))) * 1i / (4*(2*k)^(n+1))
 
+
+###############
 
 ### Derivation:
 # Decomposition into sum:
