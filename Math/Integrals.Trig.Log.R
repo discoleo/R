@@ -49,13 +49,28 @@ n = sqrt(5); k = sqrt(7);
 integrate(function(x) x^p * cos(q*log(x)) /(x^n + 1)^k, lower=0, upper=Inf)
 (pracma::gammaz((p+1 + 1i*q)/n) * pracma::gammaz(k - (p+1 + 1i*q)/n) +
 	+ pracma::gammaz((p+1 - 1i*q)/n) * pracma::gammaz(k - (p+1 - 1i*q)/n) ) /
-	(2*n*gamma(k));
+
+### I( x^p * sin(q * log(x)) / ... )
+p = sqrt(2); q = sqrt(3);
+n = sqrt(5); k = sqrt(7);
+integrate(function(x) x^p * sin(q*log(x)) /(x^n + 1)^k, lower=0, upper=Inf)
+(pracma::gammaz((p+1 + 1i*q)/n) * pracma::gammaz(k - (p+1 + 1i*q)/n) +
+	- pracma::gammaz((p+1 - 1i*q)/n) * pracma::gammaz(k - (p+1 - 1i*q)/n) ) /
+	(2i*n*gamma(k));
 
 
-### Power 2: I( cos(p * log(x))^2 / ... )
+### Power 2: I( Trig(p * log(x))^2 / ... )
 
+### cos-Variant
 p = sqrt(3); n = 5*sqrt(11); k = 1/sqrt(2);
 integrate(function(x) cos(p*log(x))^2 /(x^n + 1)^k, lower=0, upper=Inf)
 (pracma::gammaz((2i*p+1)/n) * pracma::gammaz(k - (2i*p+1)/n) +
 	+ pracma::gammaz((-2i*p+1)/n) * pracma::gammaz(k - (-2i*p+1)/n) +
 	+ 2*gamma(1/n) * gamma(k - 1/n) ) / (4*n*gamma(k));
+
+### sin-Variant
+p = sqrt(3); n = 5*sqrt(11); k = 1/sqrt(2);
+integrate(function(x) sin(p*log(x))^2 /(x^n + 1)^k, lower=0, upper=Inf)
+- (pracma::gammaz((2i*p+1)/n) * pracma::gammaz(k - (2i*p+1)/n) +
+	+ pracma::gammaz((-2i*p+1)/n) * pracma::gammaz(k - (-2i*p+1)/n) +
+	- 2*gamma(1/n) * gamma(k - 1/n) ) / (4*n*gamma(k));
