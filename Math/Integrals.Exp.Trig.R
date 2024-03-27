@@ -164,6 +164,10 @@ integrate(\(x) sin(q*x) / (exp(k*x) + 1), 0, Inf)
 ### I( cos(q*x) / (exp(k*x) + 1) ) on [0, Inf]
 q = sqrt(2); k = sqrt(3)
 integrate(\(x) cos(q*x) / (exp(k*x) + 1), 0, Inf)
+- (pracma::psi(0, (q*1i/k + 1)/2) + pracma::psi(0, (- q*1i/k + 1)/2) +
+	- pracma::psi(0, q*1i/k/2) - pracma::psi(0, - q*1i/k/2)) / (4*k)
+
+# Derivation
 integrate(\(x) Re(x^(q*1i)) / x / (x^k + 1), 1, Inf)
 integrate(\(x) Re(x^(q*1i - 1)) - Re(x^(q*1i - 1)) / (x^k + 1), 0, 1)
 - Re(pracma::psi(0, (q*1i/k + 1)/2) - pracma::psi(0, q*1i/k/2)) / (2*k);
@@ -172,11 +176,20 @@ integrate(\(x) Re(x^(q*1i - 1)) - Re(x^(q*1i - 1)) / (x^k + 1), 0, 1)
 	- pracma::psi(0, q*1i/k/2) - pracma::psi(0, - q*1i/k/2)) / (4*k)
 
 
+### I( x * Trig(q*x) / ... )
+
+### I( x * sin(q*x) / (exp(k*x) + 1) ) on [0, Inf]
+q = sqrt(2); k = sqrt(3)
+integrate(\(x) x * sin(q*x) / (exp(k*x) + 1), 0, Inf)
+(pracma::psi(1, (q*1i/k + 1)/2) - pracma::psi(1, (- q*1i/k + 1)/2) +
+	- pracma::psi(1, q*1i/k/2) + pracma::psi(1, - q*1i/k/2)) * 1i / (8*k^2)
+
 ### I( x * cos(q*x) / (exp(k*x) + 1) ) on [0, Inf]
 q = sqrt(2); k = sqrt(3)
 integrate(\(x) x * cos(q*x) / (exp(k*x) + 1), 0, Inf)
 - (pracma::psi(1, q*1i/(2*k)) + pracma::psi(1, - q*1i/(2*k)) +
 	- 2*pracma::psi(1, q*1i/k) - 2*pracma::psi(1, - q*1i/k)) / (4*k^2) - 1/q^2;
+
 
 ### I( x^2 * sin(q*x) / (exp(k*x) + 1) ) on [0, Inf]
 q = sqrt(3); k = sqrt(2)
