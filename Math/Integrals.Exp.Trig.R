@@ -155,19 +155,22 @@ integrate(\(x) sin(x) / (exp(k*x) + 1), 0, Inf)
 	- (pracma::psi(0, 1i/k) - pracma::psi(0, - 1i/k)) * 1i / (2*k) + 1;
 
 
-### I( sin(p*x) / (exp(k*x) + 1) ) on [0, Inf]
-p = sqrt(2); k = sqrt(3)
-integrate(\(x) sin(p*x) / (exp(k*x) + 1), 0, Inf)
-(pracma::psi(0, p*1i/(2*k)) - pracma::psi(0, - p*1i/(2*k)) +
-	- pracma::psi(0, p*1i/k) + pracma::psi(0, - p*1i/k)) * 1i / (2*k) + 1/p;
+### I( sin(q*x) / (exp(k*x) + 1) ) on [0, Inf]
+q = sqrt(2); k = sqrt(3)
+integrate(\(x) sin(q*x) / (exp(k*x) + 1), 0, Inf)
+(pracma::psi(0, q*1i/(2*k)) - pracma::psi(0, - q*1i/(2*k)) +
+	- pracma::psi(0, q*1i/k) + pracma::psi(0, - q*1i/k)) * 1i / (2*k) + 1/q;
 
-### I( cos(p*x) / (exp(k*x) + 1) ) on [0, Inf]
-p = sqrt(2); k = sqrt(3)
+### I( cos(q*x) / (exp(k*x) + 1) ) on [0, Inf]
+q = sqrt(2); k = sqrt(3)
 integrate(\(x) cos(q*x) / (exp(k*x) + 1), 0, Inf)
 integrate(\(x) Re(x^(q*1i)) / x / (x^k + 1), 1, Inf)
-integrate(\(x) Re(x^(q*1i - 1)) - Re(x^(q*1i)) / x / (x^k + 1), 0, 1)
+integrate(\(x) Re(x^(q*1i - 1)) - Re(x^(q*1i - 1)) / (x^k + 1), 0, 1)
+- Re(pracma::psi(0, (q*1i/k + 1)/2) - pracma::psi(0, q*1i/k/2)) / (2*k);
+# direct:
+- (pracma::psi(0, (q*1i/k + 1)/2) + pracma::psi(0, (- q*1i/k + 1)/2) +
+	- pracma::psi(0, q*1i/k/2) - pracma::psi(0, - q*1i/k/2)) / (4*k)
 
-# TODO
 
 ### I( x * cos(q*x) / (exp(k*x) + 1) ) on [0, Inf]
 q = sqrt(2); k = sqrt(3)
