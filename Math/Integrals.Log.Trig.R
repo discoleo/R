@@ -385,3 +385,21 @@ pi/2 *  log(b/2) - 2*Catalan
 
 # TODO: log(sin)-interval [0, pi/3];
 
+
+#########################
+#########################
+
+### I( log(x^2 + log(b*cos(x))^2) )
+# Maths 505: All my favourite advanced calculus tricks in one integral!
+# https://www.youtube.com/watch?v=9cC2jKSclEY
+
+integrate(\(x) log(x^2 + log(cos(x))^2), 0, pi/2)
+pi * log(log(2))
+
+###
+b = 1/5
+integrate(\(x) log(x^2 + log(b*cos(x))^2), 0, pi/2)
+pi * log(log(2/b))
+
+# TODO:
+# - explore derivatives of integral;
