@@ -32,6 +32,16 @@ Catalan = 0.915965594177219015054603514;
 ###################
 ###################
 
+
+### I( |log( (1-x) / (1+x) )|^n ) on [0, 1]
+# Maths 505: This integral is actually one of your favorite constants
+# https://www.youtube.com/watch?v=83mUOaF7G9A
+
+n = sqrt(3)
+integrate(\(x) abs(log((1-x)/(1+x)))^n, 0, 1)
+2*gamma(n+1)*(1 - 2^(1-n)) * pracma::zeta(n)
+
+
 ### I( log((x - 1) / (x + 1)) / x ) on [1, Inf]
 # Maths 505: A RIDICULOUSLY AWESOME LOG INTEGRAL!!!
 # https://www.youtube.com/watch?v=tTu6hedSlm0
