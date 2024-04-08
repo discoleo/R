@@ -39,6 +39,7 @@ Catalan = 0.915965594177219015054603514;
 
 n = sqrt(3)
 integrate(\(x) abs(log((1-x)/(1+x)))^n, 0, 1)
+integrate(\(x) log((1+x)/(1-x))^n, 0, 1)
 2*gamma(n+1)*(1 - 2^(1-n)) * pracma::zeta(n)
 
 
