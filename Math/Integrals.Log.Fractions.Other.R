@@ -65,6 +65,33 @@ integrate(\(x) log(x) * log((1 - x) / (x + 1)), 0, 1)
 2*log(2) - pi^2/12
 
 
+###################
+###################
+
+### Types: log(x +/- 1) / (x^2+1)
+
+# I( x * log(1+x) / (x^2 + 1) ) on [0, 1]
+# I( x * log(1-x) / (x^2 + 1) ) on [0, 1]
+# Cipher: Integrate xln(1-x)/(1 + x^2)dx from 0 to 1
+# https://www.youtube.com/watch?v=CMRvFM2N7sw
+
+###
+integrate(\(x) log(1+x) / (x^2+1), 0, 1)
+pi * log(2)/8
+
+###
+integrate(\(x) log(1-x) / (x^2+1), 0, 1)
+pi*log(2)/8 - Catalan
+
+###
+integrate(\(x) x * log(1+x) / (x^2+1), 0, 1)
+pi^2 / 96 + log(2)^2 / 8
+
+###
+integrate(\(x) x * log(1-x) / (x^2+1), 0, 1)
+- 5/96 * pi^2 + log(2)^2 / 8
+
+
 ################
 ################
 
