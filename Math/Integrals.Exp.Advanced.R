@@ -132,3 +132,14 @@ diff( -1/2 * log(gamma(k*n/(2*pi))) * 2*pi/n +
 # - redundant: atan(k/x) = pi/2 - atan(x/k);
 # - however, still useful as proof of concept of back-integration;
 
+
+###################
+###################
+
+### I( atan(exp(-x)) / x ) on [0, Inf]
+integrate(\(x) atan(exp(-x))/x - pi/4*exp(-x)/x, 0, Inf)
+pi/4 * log(4*pi^3) - pi*log(gamma(1/4)) + pi*Euler/4
+
+###
+pracma::integral(\(x) log(x) / cosh(x), 0, Inf)
+pi/2 * log(4*pi^3) - 2*pi*log(gamma(1/4))
