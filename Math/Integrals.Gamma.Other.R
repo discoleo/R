@@ -1,6 +1,7 @@
 
 
 
+Euler   = 0.577215664901532860606512090;
 Catalan = 0.915965594177219015054603514;
 dzeta2  = -0.937548254316;
 ### Glaisher–Kinkelin Constant:
@@ -237,6 +238,8 @@ integrate(\(x) gamma(x) / gamma(1/x), 0,1)
 integrate(\(x) gamma(x) / gamma(1 - x) - 1/x, 0, 1)
 integrate(\(x) gamma(x) / pracma::zeta(x+1), 0, 1)
 integrate(\(x) gamma(x) / pracma::zeta(1-x), 0, 1)
+integrate(\(x) gamma(gamma(x) - 1/x) + 1 / ((1-x)*(1-Euler)), 0, 1)
+integrate(\(x) (gamma(x) - 1)*(gamma(1-x) - 1), 0, 1)
 
 # Varia:
 integrate(\(x) gamma(x)/log(gamma(x)) + 1/(x*log(x)) - (1-Euler)/Euler/(1-x), 0, 1, rel.tol=1E-5)
