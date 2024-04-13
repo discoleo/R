@@ -122,6 +122,7 @@ log(a[1]/a[2]) * (log(a[1]) + log(a[2]) + 2*Euler)/2
 # https://www.youtube.com/watch?v=qY_sLn8yYLM
 # 2.) Michael Penn: a stylized integral [alternative method]
 # https://www.youtube.com/watch?v=_orPdt5r1Yg
+# Note: generalizations are a few sections below;
 
 
 integrate(\(x) log(x) / (exp(x) + 1), 0, Inf)
@@ -228,7 +229,16 @@ integrate(\(x) x * log(x) / (exp(2*x) + 1), 0, Inf)
 (1 - Euler + dzeta2 * 6/pi^2) * pi^2 / 48;
 
 
-### Gen: I( x^p * log(x) / (exp(k*x) + 1) )
+### Generalizations
+
+### I( x^p * log(x) / (exp(k*x) - 1) )
+p = sqrt(5); k = sqrt(3);
+integrate(\(x) x^p * log(x) / (exp(k*x) - 1), 0, Inf, rel.tol=1E-8)
+((digamma(p+1) - log(k)) * pracma::zeta(p + 1) + dzeta(p+1)) *
+	gamma(p + 1) / k^(p+1)
+
+
+### I( x^p * log(x) / (exp(k*x) + 1) )
 p = sqrt(5); k = sqrt(3);
 integrate(\(x) x^p * log(x) / (exp(k*x) + 1), 0, Inf, rel.tol=1E-8)
 gamma(p + 1) * digamma(p + 1) * pracma::zeta(p + 1) * (1 - 1/2^p) / k^(p + 1) +
