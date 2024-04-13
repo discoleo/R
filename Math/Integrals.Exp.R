@@ -6,6 +6,11 @@ Euler = 0.57721566490153286060651209008240243079;
 constEuler = Euler;
 
 
+### Examples:
+# I( x^p / (exp(k*x) + 1) ) on [0, Inf]
+# I( x^p / (exp(k*x) - 1) ) on [0, Inf]
+
+
 ### History
 
 # - [refactor] moved:
@@ -113,7 +118,12 @@ integrate(\(x) exp(-x)/x - 1/x, 0, 1)
 # https://www.youtube.com/watch?v=heIrFaP05Lk
 
 integrate(\(x) (1 - exp(-x) - exp(-1/x)) / x, 0, 1)
-constEuler
+Euler
+
+
+###
+integrate(\(x) exp(-1/x), 0, 1)
+exp(-1) - pracma::expint(1)
 
 
 ####################
@@ -181,7 +191,7 @@ gamma(1/2) * exp(-2*a^(3/2)) * a
 #########################
 #########################
 
-### I( x^p / (exp(x) + 1) )
+### I( x^p / (exp(k*x) + 1) )
 # Michael Penn: WHY are we finding pi HERE?
 # https://www.youtube.com/watch?v=amL2uBK2buU
 
@@ -210,13 +220,18 @@ integrate(\(x) x^p / (1 + pi^x), 0, Inf, rel.tol=1E-8)
 gamma(p + 1) * pracma::zeta(p + 1) * (1 - 1/2^p) / log(pi)^(p + 1)
 
 
-### I( x^p / (exp(x) - 1) )
+### I( x^p / (exp(k*x) - 1) )
 # Dr Peyam: A gamma zeta integral
 # https://www.youtube.com/watch?v=hqo_-AX4IXg
 
 p = sqrt(5)
 integrate(\(x) x^p / (exp(x) - 1), 0, Inf, rel.tol=1E-8)
 gamma(p + 1) * pracma::zeta(p + 1)
+
+#
+p = sqrt(5); k = sqrt(3);
+integrate(\(x) x^p / (exp(k*x) - 1), 0, Inf, rel.tol=1E-8)
+gamma(p + 1) * pracma::zeta(p + 1) / k^(p+1)
 
 
 #################
