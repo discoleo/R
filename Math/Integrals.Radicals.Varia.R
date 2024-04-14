@@ -7,21 +7,42 @@
 # https://www.youtube.com/watch?v=nGx8j7-KHxI
 # Substitution: x^2 = tan(u);
 
-integrate(\(x) sqrt(1 + sqrt(1 + x^4)), 0, 1)
+integrate(\(x) sqrt(sqrt(x^4 + 1) + 1), 0, 1)
 v = sqrt(tan(pi/8));
 log((1+v)/(1-v))/4 + v/(1 - v^4) + atan(v)/2;
 
 ###
 lim = sqrt(5)
-integrate(\(x) sqrt(1 + sqrt(1 + x^4)), 0, lim)
+integrate(\(x) sqrt(sqrt(x^4 + 1) + 1), 0, lim)
 v = sqrt(tan(atan(lim^2)/2));
 log((1+v)/(1-v))/4 + v/(1 - v^4) + atan(v)/2;
 
 ### Gen:
 b = 5^(1/4)
-integrate(\(x) sqrt(b^2 + sqrt(b^4 + x^4)), 0, 1)
+integrate(\(x) sqrt(sqrt(x^4 + b^4) + b^2), 0, 1)
 v = sqrt(tan(atan(1/b^2)/2));
 b^2 * (log((1+v)/(1-v))/4 + v/(1 - v^4) + atan(v)/2);
+
+
+### Diff-Type
+integrate(\(x) sqrt(sqrt(x^4 + 1) - 1), 0, 1)
+v = sqrt(tan(pi/8));
+log((1-v)/(1+v))/4 + v^3 / (1-v^4) + atan(v)/2;
+
+###
+b = sqrt(3)
+integrate(\(x) sqrt(sqrt(x^4 + b^4) - b^2), 0, 1)
+v = sqrt(tan(atan(1/b^2)/2));
+b^2 * (log((1-v)/(1+v))/4 + v^3 / (1-v^4) + atan(v)/2);
+
+
+### Derived:
+
+### I( sqrt(x^2 + sqrt(x^4 + b^4)) )
+b = sqrt(3)
+integrate(\(x) sqrt(x^2 + sqrt(x^4 + b^4)), 0, 1)
+v = sqrt(tan(atan(1/b^2)/2));
+b^2 * ((v^3 + v) / (1-v^4) + atan(v)) / sqrt(2);
 
 # TODO: D(b)
 
