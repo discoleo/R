@@ -38,11 +38,17 @@ b^2 * (log((1-v)/(1+v))/4 + v^3 / (1-v^4) + atan(v)/2);
 
 ### Derived:
 
-### I( sqrt(x^2 + sqrt(x^4 + b^4)) )
+### I( sqrt(sqrt(x^4 + b^4) + x^2) )
 b = sqrt(3)
-integrate(\(x) sqrt(x^2 + sqrt(x^4 + b^4)), 0, 1)
+integrate(\(x) sqrt(sqrt(x^4 + b^4) + x^2), 0, 1)
 v = sqrt(tan(atan(1/b^2)/2));
 b^2 * ((v^3 + v) / (1-v^4) + atan(v)) / sqrt(2);
+
+### I( sqrt(sqrt(x^4 + b^4) - x^2) )
+b = sqrt(3)
+integrate(\(x) sqrt(sqrt(x^4 + b^4) - x^2), 0, 1)
+v = sqrt(tan(atan(1/b^2)/2));
+- b^2 * (log((1-v)/(1+v))/2 + (v^3 - v) / (1-v^4) ) / sqrt(2);
 
 # TODO: D(b)
 
