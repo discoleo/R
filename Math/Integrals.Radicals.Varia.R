@@ -48,9 +48,48 @@ b^2 * ((v^3 + v) / (1-v^4) + atan(v)) / sqrt(2);
 b = sqrt(3)
 integrate(\(x) sqrt(sqrt(x^4 + b^4) - x^2), 0, 1)
 v = sqrt(tan(atan(1/b^2)/2));
-- b^2 * (log((1-v)/(1+v))/2 + (v^3 - v) / (1-v^4) ) / sqrt(2);
+- b^2 * (log((1-v)/(1+v))/2 + (v^3 - v) / (1-v^4)) / sqrt(2);
 
-# TODO: D(b)
+
+### D(b)
+
+### I( 1 / (sqrt(x^4 + b^4) * sqrt(sqrt(x^4 + b^4) + x^2)) )
+b = sqrt(3)
+integrate(\(x) 1 / (sqrt(x^4 + b^4) * sqrt(sqrt(x^4 + b^4) + x^2)), 0, 1)
+v  = sqrt(tan(atan(1/b^2)/2));
+dv = - (v^4 + 1) / (2*v) * b / (b^4 + 1);
+sqrt(2) * (atan(v) + (v^3 + v) / (1-v^4)) / b^2 +
+	+ (4*(v^2 + 1)/(1-v^4)^2 - (v^2 + 3)/(1-v^4) + 1/(v^2 + 1)) * dv / sqrt(2) / b;
+
+### I( 1 / (sqrt(x^4 + b^4) * sqrt(sqrt(x^4 + b^4) - x^2)) )
+b = sqrt(3)
+integrate(\(x) 1 / (sqrt(x^4 + b^4) * sqrt(sqrt(x^4 + b^4) - x^2)), 0, 1)
+v  = sqrt(tan(atan(1/b^2)/2));
+dv = - (v^4 + 1) / (2*v) * b / (b^4 + 1);
+- sqrt(2) * (log((1-v)/(1+v))/2 + (v^3 - v) / (1-v^4)) / b^2 +
+	- (4*(v^2 - 1)/(1-v^4)^2 - (v^2 - 3)/(1-v^4) + 1/(v^2 - 1)) * dv / sqrt(2) / b;
+
+### Sum =>
+# I( sqrt(sqrt(x^4 + b^4) + b^2) / sqrt(x^4 + b^4) )
+b = sqrt(3)
+integrate(\(x) sqrt(sqrt(x^4 + b^4) + b^2) / sqrt(x^4 + b^4), 0, 1)
+v  = sqrt(tan(atan(1/b^2)/2));
+dv = - (v^4 + 1) / (2*v) * b / (b^4 + 1);
+(atan(v) - log((1-v)/(1+v))/2 + 2*v / (1-v^4)) +
+	+ 2*b * (2/(1-v^4)^2 - 1/(1-v^4)) * dv;
+
+### Diff =>
+# I( sqrt(sqrt(x^4 + b^4) - b^2) / sqrt(x^4 + b^4) )
+b = sqrt(3)
+integrate(\(x) sqrt(sqrt(x^4 + b^4) - b^2) / sqrt(x^4 + b^4), 0, 1)
+v  = sqrt(tan(atan(1/b^2)/2));
+dv = - (v^4 + 1) / (2*v) * b / (b^4 + 1);
+- (atan(v) + log((1-v)/(1+v))/2 + 2*v^3 / (1-v^4)) +
+	- 2*b * v^2 * (2/(1-v^4)^2 - 1/(1-v^4)) * dv;
+
+
+# TODO: more D(b) variants
+
 
 ######################
 ######################
