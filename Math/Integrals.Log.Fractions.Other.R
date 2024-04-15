@@ -92,11 +92,29 @@ integrate(\(x) x * log(1-x) / (x^2+1), 0, 1)
 - 5/96 * pi^2 + log(2)^2 / 8
 
 
+##################
+##################
+
+### I( log((b - x)/(b + x)) / (x * sqrt(1 - x^2)) ) on [0, 1]
+# Maths 505: DESTROYING a MONSTER integral using Feynman's technique
+# https://www.youtube.com/watch?v=PWtzeKvOVEo
+
+b = sqrt(3)
+integrate(\(x) log((b + x)/(b - x)) / (x * sqrt(1 - x^2)), 0, 1)
+pi^2 / 2 - pi*acos(1/b)
+
+### Derived:
+b = sqrt(3)
+integrate(\(x) 1 / ((b^2 - x^2) * sqrt(1 - x^2)), 0, 1)
+pi / sqrt(b^2 - 1) / (2*b)
+
+
 ################
 ################
 
 # TODO: move to Trig
 
+### I( atan(x) * log((1-x)/(1+x)) )
 # Maths 505: Another INSANE integral!
 # https://www.youtube.com/watch?v=KEDEzVqlAYU
 
