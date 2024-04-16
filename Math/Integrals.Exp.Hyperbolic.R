@@ -42,17 +42,19 @@ integrate(\(x) 1 / (2*cosh(x))^(1/3), 0, Inf)
 gamma(1/6)^2 / gamma(1/3) / 4
 
 
-### Gen:
+### Gen: I( 1 / cosh(x)^s )
 s = sqrt(3)/sqrt(5);
-integrate(\(x) 1 / (2*cosh(x))^s, 0, Inf)
-gamma(s/2)^2 / gamma(s) / 4
+integrate(\(x) 1 / cosh(x)^s, 0, Inf)
+gamma(s/2)^2 / gamma(s) * 2^(s-2)
 
 
-### Full Gen:
+### Full Gen: I( cosh(p*x) / cosh(n*x)^k )
 # see file: Integrals.ComplexAnalysis.R;
 n = sqrt(19); k = 1/sqrt(3); p = sqrt(2);
-integrate(function(x) cosh(p*x) / cosh(n*x)^k, lower=0, upper=100) # BUG: upper = Inf
+integrate(\(x) cosh(p*x) / cosh(n*x)^k, lower=0, upper=100) # BUG: upper = Inf
 gamma(k/2 - p/(2*n)) * gamma(k/2 + p/(2*n)) / gamma(k) * 2^(k - 2) / n
+
+### SINH-Variants
 
 ### I( x * sinh(p*x) / cosh(n*x)^(1/k) )
 n = sqrt(19); k = 1/sqrt(3); p = sqrt(2);
@@ -61,6 +63,45 @@ integrate(function(x) x * sinh(p*x) / cosh(n*x)^k, lower=0, upper=100)
 gamma(k/2 - p/(2*n)) * gamma(k/2 + p/(2*n)) *
 	(digamma(k/2 + p/(2*n)) - digamma(k/2 - p/(2*n))) / gamma(k) * 2^(k - 2) / (2*n^2)
 
+
+### Simple:
+
+### I( 1 / sinh(x) )
+# BUG: upper = Inf;
+integrate(\(x) 1 / sinh(x) - exp(-x)/x, 0, 20)
+log(2) + Euler
+
+###
+b = 3
+# BUG: upper = Inf;
+integrate(\(x) 1 / sinh(b*x) - exp(-b*x)/(b*x), 0, 10)
+(log(2) + Euler) / b
+
+
+### I( sinh(b*x) * cos(w*x) / sinh(x) )
+b = sqrt(3); w = sqrt(2);
+# BUG: upper = Inf;
+integrate(\(x) sinh(b*x) * cos(w*x) / sinh(pi*x), 0, 40)
+1/2 * sin(b) / (cosh(w) + cos(b))
+
+###
+b = sqrt(3) / pi; w = sqrt(2);
+# BUG: upper = Inf;
+integrate(\(x) sinh(b*x) * cos(w*x) / sinh(x), 0, 40)
+pi/2 * sin(pi*b) / (cosh(pi*w) + cos(pi*b))
+
+
+### x-Variants
+
+### I( x * sinh(b*x) * sin(w*x) / sinh(x) )
+b = 1 / sqrt(3); w = sqrt(2);
+# BUG: upper = Inf;
+integrate(\(x) x * sinh(b*x) * sin(w*x) / sinh(x), 0, 40)
+pi^2/2 * sinh(pi*w) * sin(pi*b) / (cosh(pi*w) + cos(pi*b))^2
+
+
+####################
+### Log-Variants ###
 
 ### I( cosh(p*x) * log(cosh(n*x)) / cosh(n*x)^k ) on [0, Inf]
 n = sqrt(19); k = 1/sqrt(3); p = sqrt(2);
