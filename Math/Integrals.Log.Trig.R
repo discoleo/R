@@ -352,14 +352,22 @@ integrate(\(x) log(cos(x)) * log(sin(x)), 0, pi/4)
 # https://www.youtube.com/watch?v=xOtQ8Mh0cvg
 
 # Note: upper = Inf
+# but integral behaves very badly;
 integrate(\(x) sin(x)/x * log(1 + cos(x)) / cos(x), 0, 200, subdivisions=4096, rel.tol=1E-5)
 (pi/2 - log(2)) * pi/2
 
 
 ###
+integrate(\(x) cos(x) / x - 1/x, 0, pi/2, rel.tol=1E-6)
+- sum(pracma::expint(pi/2*1i*c(-1,1)))/2 - log(pi/2) - Euler
+
+###
 integrate(\(x) tan(x) / x - 2/pi / (pi/2 - x), 0, pi/2)
 # TODO
 
+# Note:
+# lim( tan(x) / x - 2/pi / (pi/2 - x) ) = 4/pi^2
+# for x -> pi/2;
 
 #########################
 #########################
@@ -401,5 +409,25 @@ b = 1/5
 integrate(\(x) log(x^2 + log(b*cos(x))^2), 0, pi/2)
 pi * log(log(2/b))
 
+
+### Derivatives:
+
+b = 1/5
+integrate(\(x) log(b*cos(x)) / (x^2 + log(b*cos(x))^2), 0, pi/2)
+- pi/2 / log(2/b)
+
 # TODO:
-# - explore derivatives of integral;
+# - explore more derivatives of integral;
+
+
+#######################
+#######################
+
+### I( cos(2*x) / (log(tan(x)) * cos(x)^4 )
+# Maths 505: A nasty looking trigonometric integral
+# https://www.youtube.com/watch?v=wxSVkD9MQ-c
+# Intermediate: I( (1 - z^2) / log(z) ) on [0, 1];
+
+integrate(\(x) cos(2*x) / (log(tan(x)) * cos(x)^4), 0, pi/4)
+- log(3)
+
