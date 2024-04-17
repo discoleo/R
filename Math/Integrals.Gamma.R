@@ -4,12 +4,13 @@
 ### Gamma(1/n)
 ### Relations between the G(1/n) functions
 ###
-### draft 0.3b-ext
+### draft 0.4a
 
 # including:
 # - Gamma(1/ (2*n)) = f(Gamma(1/n))
 # - explicit formulas for G(1/6), G(1/10), G(1/12), G(1/14);
 # - R code to test these relationships;
+# - Complex Gamma;
 
 # Derivation:
 # - formulas can be derived
@@ -172,7 +173,7 @@ gamma(1/9)
 ###
 gamma(1/9)*gamma(4/9) / gamma(2/9) # ==
 gamma(1/3) * 2 * 3^(1/6) * sin(2*pi/9)
-# 3 more eq. needed!
+# 2 more eq. needed!
 
 
 ###########
@@ -214,8 +215,11 @@ n = 7
 ### Beta
 library(pracma)
 
+
+### B(1/3, 1/3)
 m = complex(re=cos(2*pi/3), im=sin(2*pi/3))
 
+beta(1/3, 1/3) / 10;
 integrate(function(x) x^(1/3)*(1-x)^(1/3), lower=0, upper=1)
 integrate(function(x) (1-x^2)^(1/3), lower=0, upper=1)$value / 2^(2/3)
 integrate(function(x) x^(5/3)*(1-x^2)^(-1/2), lower=0, upper=1)$value / 2^(2/3)
@@ -247,4 +251,16 @@ integrate(function(x) x^5*(1-x^5)^(-1/2), lower=0, upper=1)$value * 5/2 / 2^(2/5
 	line_integral(function(x) x^5*(1-x^5)^(-1/2), c(1, m5^4))) * -1/2 / 2^(2/5)
 line_integral(function(x) x^5*(1-x^5)^(-1/2), c(m5, m5^4)) * 1/2 / 2^(2/5) * (m5-m5^4) +
 	line_integral(function(x) x^5*(1-x^5)^(-1/2), c(m5^2, m5^3)) * 1/2 / 2^(2/5) * (m5^2-m5^3)
+
+
+
+#####################
+#####################
+
+#####################
+### Complex Gamma ###
+
+### Gamma(1i/2)
+- (pracma::gammaz(1i/2) + pracma::gammaz(-1i/2))
+log(gamma(1/4)/gamma(3/4)) - log(pi)/4
 
