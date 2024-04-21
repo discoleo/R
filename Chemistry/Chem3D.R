@@ -16,6 +16,17 @@ dist.xyz = function(x, y, z) {
 	sqrt(diff(x)^2 + diff(y)^2 + diff(z)^2);
 }
 
+center.xyz = function(x, y, z) {
+	if(missing(y)) {
+		y = x[,2]; z = x[,3]; x = x[,1];
+	}
+	len = length(x);
+	x = sum(x) / len;
+	y = sum(y) / len;
+	z = sum(z) / len;
+	return(c(x,y,z));
+}
+
 ###############
 
 ### Tetrahedron
@@ -23,7 +34,7 @@ Th4 = function(r = 1, center = c(0,0,0), phi = 0) {
 	# Base Triangle:
 	pB = if(phi == 0) {
 			r2 = - r/2; r3 = - r2 * sqrt(3);
-			cbind(c(r,r2,r2), c(0,r3,-r3), 0);
+			cbind(c(r,r2,r2) + center[1], c(0,r3,-r3) + center[2], center[3]);
 		} else {
 			phi3 = c(0, 2*pi/3, 4*pi/3) + phi;
 			x = r * cos(phi3) + center[1];
