@@ -31,6 +31,7 @@ center.xyz = function(x, y, z) {
 
 ### Tetrahedron
 Th4 = function(r = 1, center = c(0,0,0), phi = 0) {
+	rT = r; r = r * 2 * sqrt(2) / 3;
 	# Base Triangle:
 	pB = if(phi == 0) {
 			r2 = - r/2; r3 = - r2 * sqrt(3);
@@ -44,7 +45,7 @@ Th4 = function(r = 1, center = c(0,0,0), phi = 0) {
 	pT = c(0, 0, r * sqrt(2)) + center; # Top
 	pV = rbind(pB, pT);
 	pC = c(0, 0, r/4 * sqrt(2)) + center; # Center
-	return(list(V = pV, C = pC, R = r));
+	return(list(V = pV, C = pC, R = rT));
 }
 
 plot.Th4 = function(v, lwd = 2, id.base = NULL,
@@ -59,7 +60,9 @@ plot.Th4 = function(v, lwd = 2, id.base = NULL,
 	# Draw Base-plane:
 	if( ! is.null(id.base)) {
 		# TODO:
-		id = c(1,2,3);
+		id = if(id.base == 1) c(1,2,3)
+			else if(id.base == 2) c(1,2,4)
+			else if(id.base == 2) c(1,3,4) else c(2,3,4);
 		pB = as.data.frame(pV[id, ]);
 		names(pB) = c("x","y","z");
 		### Transparency: set with alpha!
