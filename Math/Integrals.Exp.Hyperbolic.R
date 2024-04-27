@@ -113,5 +113,14 @@ gamma(k/2 - p/(2*n)) * gamma(k/2 + p/(2*n)) / gamma(k) * 2^(k - 3) / n *
 
 ### I( log(x) / cosh(x) )
 # see Vardi Integral
-pracma::integral(\(x) log(x) / cosh(x), 0, Inf)
-- log(gamma(1/4) / (gamma(3/4) * gamma(1/2) * sqrt(2))) * pi
+integrate(\(x) log(x) / cosh(x), 0, Inf, rel.tol=1E-8)
+- log(gamma(1/4) / (gamma(3/4) * sqrt(2*pi))) * pi
+
+
+### I( log(x^2 + b^2) / cosh(x) )
+# Generalization of Vardi Integral
+# see additional details in Integrals.Exp.Log.R;
+b = sqrt(5);
+integrate(\(x) log(x^2 + b^2) / cosh(x), 0, Inf)
+2*pi * log(gamma(b/(2*pi) + 3/4) / gamma(b/(2*pi) + 1/4) * sqrt(2*pi))
+
