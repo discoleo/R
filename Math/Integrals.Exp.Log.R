@@ -308,9 +308,19 @@ pracma::integral(\(x) x^2 * log(x) / (exp(k*x) + 1)^2, 0, 100)
 # by contour integration methods and some related results.
 # Ramanujan J (2014) 35:21–110; DOI: I 10.1007/s11139-013-9528-5
 
-### I( log(x^2 + b^2) / cosh(x) )
+### I( log(x^2 + b^2) / cosh(x) ) on [0, Inf]
 # see page 12 of article;
 b = sqrt(5);
 integrate(\(x) log(x^2 + b^2) / cosh(x), 0, Inf)
 2*pi * log(gamma(b/(2*pi) + 3/4) / gamma(b/(2*pi) + 1/4) * sqrt(2*pi))
+
+### I( 1 / ((x^2 + b^2) * cosh(x)) ) on [0, Inf]
+#- Derived I();
+b = sqrt(5);
+integrate(\(x) 1 / ((x^2 + b^2) * cosh(x)), 0, Inf)
+(digamma(b/(2*pi) + 3/4) - digamma(b/(2*pi) + 1/4)) / (2*b)
+
+#
+integrate(\(x) 1 / ((x^2 + 1) * (log(x)^2 + b^2)), 1, Inf)
+(digamma(b/(2*pi) + 3/4) - digamma(b/(2*pi) + 1/4)) / (4*b)
 
