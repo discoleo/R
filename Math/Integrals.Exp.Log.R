@@ -249,11 +249,13 @@ gamma(p + 1) * digamma(p + 1) * pracma::zeta(p + 1) * (1 - 1/2^p) / k^(p + 1) +
 
 ### Special Case:
 # I( x^2 * log(x) / (exp(k*x) + 1) )
-p = sqrt(5); k = sqrt(3);
+k = sqrt(3);
 integrate(\(x) x^2 * log(x) / (exp(k*x) + 1), 0, Inf, rel.tol=1E-8)
 (3*digamma(3) + log(2) - 3*log(k)) * pracma::zeta(3) / (2*k^3) +
 	+ 3/2 * dzeta(3) / k^3;
 
+
+### Pow: ()^2
 
 ### I( x^p * log(x) / (exp(k*x) + 1)^2 )
 k = sqrt(3) - sqrt(2); p = sqrt(5);
@@ -296,4 +298,19 @@ pracma::integral(\(x) x^2 * log(x) / (exp(k*x) + 1)^2, 0, 100)
 	- ((3/2 - Euler)*pi^2/6 + dzeta2 - 3/2*dzeta(3)) / k^3 +
 	+ pi^2 * log(k/2) / (6*k^3);
 # Note: digamma(3) = 3/2 - Euler;
+
+
+#######################
+#######################
+
+###
+# Blagouchine IV. Rediscovery of Malmsten’s integrals, their evaluation
+# by contour integration methods and some related results.
+# Ramanujan J (2014) 35:21–110; DOI: I 10.1007/s11139-013-9528-5
+
+### I( log(x^2 + b^2) / cosh(x) )
+# see page 12 of article;
+b = sqrt(5);
+integrate(\(x) log(x^2 + b^2) / cosh(x), 0, Inf)
+2*pi * log(gamma(b/(2*pi) + 3/4) / gamma(b/(2*pi) + 1/4) * sqrt(2*pi))
 
