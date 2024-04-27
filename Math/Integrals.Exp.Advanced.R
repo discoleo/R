@@ -89,6 +89,8 @@ integrate(\(x) atan(x/k) / (exp(n*x) - 1), 0, Inf)
 log(gamma(k*n/(2*pi))) * pi/n + (k - pi/n)/2*log(2*pi/(k*n)) - log(2*pi) * pi/(2*n) + k/2;
 
 
+### I( x / (x^2 + b^2) * ... )
+
 ### I( x / (x^2 + k^2) * 1/(exp(n*x) - 1) )
 n = sqrt(3); k = sqrt(5);
 integrate(\(x) x / (x^2 + k^2) *  1/(exp(n*x) - 1), 0, Inf)
@@ -116,6 +118,20 @@ digamma(k*n/pi) - 1/2 * digamma(k*n/(2*pi)) +
 n = 1/sqrt(3); k = 1/sqrt(5);
 integrate(\(x) x / (x^2+k^2)^2 / (exp(n*x) + 1), 0, Inf)
 (pracma::psi(1, k*n/(2*pi)) - 4*pracma::psi(1, k*n/pi)) * n / (8*pi*k) + 1/(4*k^2);
+
+
+### I( 1 / (x^2 + b^2) * ... )
+
+### I( 1 / ((x^2 + b^2) * cosh(x)) ) on [0, Inf]
+# - see Integrals.Exp.Log.R;
+b = sqrt(5);
+integrate(\(x) 1 / ((x^2 + b^2) * cosh(x)), 0, Inf)
+(digamma(b/(2*pi) + 3/4) - digamma(b/(2*pi) + 1/4)) / (2*b)
+
+### Gen: I( 1 / ((x^2 + b^2) * cosh(n*x)) )
+b = sqrt(5); n = sqrt(3);
+integrate(\(x) 1 / ((x^2 + b^2) * cosh(n*x)), 0, Inf)
+(digamma(b*n/(2*pi) + 3/4) - digamma(b*n/(2*pi) + 1/4)) / (2*b)
 
 
 ### Other:
