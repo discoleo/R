@@ -53,6 +53,11 @@ p = sqrt(3); a = sqrt(5) - sqrt(2); k = sqrt(3);
 integrate(\(x) x^p * cos(k*x) / exp(a*x), 0, Inf)
 gamma(p + 1) * Re(1 / (a - k*1i)^(p + 1))
 
+### Case: p = -1
+a = sqrt(5) - sqrt(2); k = sqrt(3);
+integrate(\(x) (exp(-x) - cos(k*x) * exp(-a*x)) / x, 0, Inf)
+log(a^2 + k^2) / 2
+
 
 ##########
 ### Simple
