@@ -88,6 +88,7 @@ n = sqrt(3); k = sqrt(5);
 integrate(\(x) atan(x/k) / (exp(n*x) - 1), 0, Inf)
 log(gamma(k*n/(2*pi))) * pi/n + (k - pi/n)/2*log(2*pi/(k*n)) - log(2*pi) * pi/(2*n) + k/2;
 
+### Derived:
 
 ### I( x / (x^2 + b^2) * ... )
 
@@ -120,6 +121,14 @@ integrate(\(x) x / (x^2+k^2)^2 / (exp(n*x) + 1), 0, Inf)
 (pracma::psi(1, k*n/(2*pi)) - 4*pracma::psi(1, k*n/pi)) * n / (8*pi*k) + 1/(4*k^2);
 
 
+### Series: sinh()
+
+### I( x / (x^2 + b^2) * 1/sinh(n*x) )
+n = sqrt(3); b = 1 / sqrt(5);
+integrate(\(x) x / (x^2 + b^2) *  1/sinh(n*x), 0, Inf)
+digamma(b*n/pi) - digamma(b*n/(2*pi)) - log(2) - pi/(2*b*n);
+
+
 ### I( 1 / (x^2 + b^2) * ... )
 
 ### I( 1 / ((x^2 + b^2) * cosh(x)) ) on [0, Inf]
@@ -132,6 +141,11 @@ integrate(\(x) 1 / ((x^2 + b^2) * cosh(x)), 0, Inf)
 b = sqrt(5); n = sqrt(3);
 integrate(\(x) 1 / ((x^2 + b^2) * cosh(n*x)), 0, Inf)
 (digamma(b*n/(2*pi) + 3/4) - digamma(b*n/(2*pi) + 1/4)) / (2*b)
+
+###
+integrate(\(x) 1 / ((x^2 + b^2) * sinh(n*x)) - exp(-x)/x/(n*b^2), 0, Inf)
+# TODO
+# Note: + Euler;
 
 
 ### Other:
