@@ -19,5 +19,6 @@ pi / sqrt(27)
 
 ### Sum( gamma(n)^2 / gamma(2*n+1) )
 sum( gamma(id)^2 / gamma(2*id+1) )
-pi^2/6 - (pracma::psi(1,3) - pracma::psi(1,1)/3) - 5/4
+pracma::psi(1,1)/3
+pi^2/18
 
