@@ -114,7 +114,7 @@ integrate(\(x) sin(x)^9 / exp(t*x), 0, Inf)
 9/4^4 * (1/(t^2 + 81) - 7/(t^2 + 49) + 20/(t^2 + 25) - 28/(t^2 + 9) + 14/(t^2 + 1))
 
 
-### I[n]( atan(...) )
+### I(I(...)): I[n]( atan(...) )
 # x/a * atan(x/a) - 1/2*log(x^2 + a^2)
 a = sqrt(3)
 integrate(\(x) 1/a * atan(x/a), 0, 1)
@@ -130,11 +130,11 @@ integrate(\(x) x/a * atan(x/a) - 1/2*log(x^2 + a^2), 0, 1)
 #####################
 #####################
 
-### I( sin(x) / (exp(x) - 1))
+### I( sin(x) / (exp(k*x) - 1))
 # Maths 505: One of the coolest integrals on YouTube!
 # https://www.youtube.com/watch?v=I7a-6VwKhgo
 
-###
+### I( sin(x) / (exp(x) - 1))
 integrate(\(x) sin(x) / (exp(x) - 1), 0, Inf)
 - (pracma::psi(0, 1i + 1) - pracma::psi(0, - 1i + 1)) * 1i / 2
 #
@@ -142,16 +142,22 @@ pi/2 / tanh(pi) - 1/2
 (digamma((1/2+1)/2) - digamma(1/4))/2 - 1/2
 - (pracma::psi(0, 1i) - pracma::psi(0, - 1i)) * 1i / 2 - 1
 
+### I( cos(x) / (exp(x) - 1) )
+integrate(\(x) cos(x) / (exp(x) - 1) - exp(-x)/x, 0, Inf, rel.tol = 1E-9)
+- Re(pracma::psi(1i))
+
+
 ### I( sin(k*x) / (exp(x) - 1) ) on [0, Inf]
 k = sqrt(3)
 integrate(\(x) sin(k*x) / (exp(x) - 1), 0, Inf)
 - (pracma::psi(0, 1i*k + 1) - pracma::psi(0, - 1i*k + 1)) * 1i / 2;
 - (pracma::psi(0, 1i*k) - pracma::psi(0, - 1i*k)) * 1i / 2 - 1/k;
 
+### Gen:
+
 ### I( sin(x) / (exp(k*x) - 1) ) on [0, Inf]
 integrate(\(x) sin(x) / (exp(k*x) - 1), 0, Inf)
 - (pracma::psi(0, 1i/k) - pracma::psi(0, - 1i/k)) * 1i / (2*k) - 1;
-
 
 ### I( sin(x) / (exp(k*x) + 1) ) on [0, Inf]
 k = sqrt(3)
@@ -243,6 +249,8 @@ integrate(\(x) x^n * sin(x) / (exp(x) - 1), 0, Inf)
 id = seq(10000)
 gamma(n+1) * sum(sin((n+1)*pi/2 - (n+1)*atan(id)) / (id^2 + 1)^((n + 1)/2))
 
+# Note:
+# pracma::psi(n, ...): n must be integer;
 
 ### n = ODD
 n = 3;
@@ -306,8 +314,8 @@ integrate(\(x) x * sin(x) / exp(x), 0, Inf)
 integrate(\(x) x^2 * sin(x) / exp(x), 0, Inf)
 1/2
 #
-sapply(seq(9), \(n) round(integrate(\(x) x^p * sin(x) / exp(x), 0, Inf)$value, 3))
-sapply(seq(9), \(n) Im(gamma(p + 1)/(1-1i)^(p + 1)))
+sapply(seq(9), \(p) round(integrate(\(x) x^p * sin(x) / exp(x), 0, Inf)$value, 3))
+sapply(seq(9), \(p) Im(gamma(p + 1)/(1-1i)^(p + 1)))
 #
 sapply(seq(9), \(n) round(integrate(\(x) x * sin(x) / exp(n*x), 0, Inf)$value, 5))
 sapply(seq(9), \(n) round(Im(gamma(2)/(n - 1i)^(1 + 1)), 5))
@@ -356,10 +364,6 @@ lim/2 - sin(2*lim) / 4
 
 
 ### Variants: exp() - 1
-
-### I( cos(x) / (exp(x) - 1) )
-integrate(\(x) cos(x) / (exp(x) - 1) - exp(-x)/x, 0, Inf, rel.tol = 1E-9)
-- Re(pracma::psi(1i))
 
 ###
 lim = sqrt(pi)
