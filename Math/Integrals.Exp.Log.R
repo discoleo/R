@@ -315,7 +315,7 @@ integrate(\(x) log(x^2 + b^2) / cosh(x), 0, Inf)
 2*pi * log(gamma(b/(2*pi) + 3/4) / gamma(b/(2*pi) + 1/4) * sqrt(2*pi))
 
 ### I( 1 / ((x^2 + b^2) * cosh(x)) ) on [0, Inf]
-#- Derived I();
+# - Derived I();
 b = sqrt(5);
 integrate(\(x) 1 / ((x^2 + b^2) * cosh(x)), 0, Inf)
 (digamma(b/(2*pi) + 3/4) - digamma(b/(2*pi) + 1/4)) / (2*b)
@@ -323,4 +323,38 @@ integrate(\(x) 1 / ((x^2 + b^2) * cosh(x)), 0, Inf)
 #
 integrate(\(x) 1 / ((x^2 + 1) * (log(x)^2 + b^2)), 1, Inf)
 (digamma(b/(2*pi) + 3/4) - digamma(b/(2*pi) + 1/4)) / (4*b)
+
+
+### I( log(x^2 + b^2) / (exp(x) + exp(-x) - 1) ) on [0, Inf]
+# - see on page 48 of article (28 in pdf);
+b = sqrt(5);
+integrate(\(x) log(x^2 + b^2) / (exp(x) + exp(-x) - 1), 0, Inf)
+4/3 * pi * sin(pi/3) * log(gamma(b/(2*pi) + 5/6) / gamma(b/(2*pi) + 1/6)) +
+	+ 4*pi/3 / tan(pi/3) * log(2*pi);
+
+
+### I( log(x^2 + b^2) / (exp(x) + exp(-x) + 1) ) on [0, Inf]
+b = sqrt(5);
+integrate(\(x) log(x^2 + b^2) / (exp(x) + exp(-x) + 1), 0, Inf)
+4/3 * pi * sin(pi/3) * log(gamma(b/(2*pi) + 1 - 1/3) / gamma(b/(2*pi) + 1/3)) +
+	+ 2*pi/3 / tan(pi/3) * log(2*pi);
+
+
+# Derivation:
+integrate(\(x) log(x^2 + b^2) / (exp(x*2*pi/3) + exp(-x*2*pi/3) + 1), 0, Inf)
+integrate(\(x) 3/pi * (log(x^2 + (b*pi/3)^2) - 2*log(pi/3)) / (exp(2*x) + exp(-2*x) + 1), 0, Inf)
+integrate(\(x) 3/pi * log(x^2 + (b*pi/3)^2) / (exp(2*x) + exp(-2*x) + 1), 0, Inf)$value +
+	- log(pi/3) / tan(pi/3);
+tan(pi/6)*log(3) + 2*sin(pi/3) * log(gamma(1 - 1/3 + b/3) / gamma((b+1)/3))
+
+
+###
+integrate(\(x) log(x^2 + b^2) / (exp(2*x) + exp(x) + exp(-x) + exp(-2*x) + 1), 0, Inf)
+4/5 * pi * sin(pi/5) * log(gamma(1 - 1/5 + b/(2*pi)) / gamma(b/(2*pi) + 1/5)) +
+	- 4/5 * pi * sin(2*pi/5) * log(gamma(1 - 2/5 + b/(2*pi)) / gamma(b/(2*pi) + 2/5)) +
+	+ 2*pi/5 / tan(2*pi/5) * log(2*pi);
+
+#
+integrate(\(x) 1 / (exp(2*x)+exp(x) + exp(-x) + exp(-2*x) + 1), 0, Inf)
+pi/5 / tan(2*pi/5)
 
