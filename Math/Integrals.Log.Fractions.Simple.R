@@ -34,7 +34,9 @@ zeta = function(n) {
 }
 
 ### Fractions: Polynomials
+# I( x^p / (x^n + 1)^pow ) on [0, Inf]
 int.FrUInf = function(n, p=0, pow=1, coeff=1) {
+	if(length(n) != 1) stop("Only numerator can be polynomial!");
 	k = 1/pow;
 	tmp = sapply(p, function(p) {
 		gamma((p+1)/n) * gamma(1/k - (p+1)/n) / gamma(1/k) / n;
@@ -58,6 +60,11 @@ n = sqrt(11);
 p = sqrt(3);
 integrate(\(x) x^p * log(x^n + 1), 0, 1)
 - (digamma((p+1)/(2*n) + 1) - digamma((p+1)/n + 1)) / (p+1);
+
+### Special Case: p = -1
+n = sqrt(11);
+integrate(\(x) log(x^n + 1) / x, 0, 1)
+pi^2 / (12*n)
 
 
 ### I( x^p * log(1 - x^n) )
@@ -477,10 +484,11 @@ integrate(\(x) 3 * x * log(1 + x^3), 0, 1)
 
 ### Generalization
 
-### p < 1
+### p < 1 (p < 2)
 p = 1/5; # but can be negative;
 integrate(\(x) log(1 + x) / x^p, 0, 1)
 log(2)/(1 - p) - 1/(p*(1-p)) * int.FrU01(1/p, p = 2/p - 2)
+# for p = 1: pi^2 / 12;
 
 ###
 p = 1/sqrt(5)
