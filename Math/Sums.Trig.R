@@ -1,9 +1,17 @@
 
 
+### Helper Constants
 
-### Finite Sums
+Euler   = 0.57721566490153286060651209008240243079;
+Catalan = 0.915965594177219015054603514;
 
-### ODD:
+
+###################
+
+###################
+### Finite Sums ###
+
+### ODD
 n = 9
 id = seq(1, floor(n/2));
 sn = sin(2*pi*id/n);
@@ -14,10 +22,33 @@ sum(sn)
 sum(id*sn)
 n/sin(pi/n) / 4
 
+### EVEN
+n = 8 # n = 14
+id = seq(1, n-1);
+sn = sin(pi*id/n);
+#
+sum(sn)
+1/tan(pi/n/2)
+#
+sum(id*sn)
+# ???
 
-#########################
 
-### Infinite Sums
+################
+
+###
+n = 9; m = 4;
+# n,m = Integers
+id = seq(n-1)
+sum(cos(2*pi*id*m/n) * digamma(id/n))
+n*log(2*sin(pi*m/n)) + Euler
+
+
+#####################
+#####################
+
+#####################
+### Infinite Sums ###
 
 ### sum( cos(2*n*x) / n )
 # Maths 505:  My take on this on wonderful infinite series from @drpeyam
@@ -65,8 +96,10 @@ sum(cos(id) / id)
 ######################
 
 ### prod( (1 - 1/n^2)^(+/- n) )
-# Michael Penn: a nice product from Ramanujan -- featuring 3 important constants!
-# https://www.youtube.com/watch?v=LG78xvZyRzU
+# 1. Michael Penn: a nice product from Ramanujan -- featuring 3 important constants!
+#    https://www.youtube.com/watch?v=LG78xvZyRzU
+# 2. Michael Penn: amazing techniques for uncovering this series.
+#    https://www.youtube.com/watch?v=eZD7uHlSWfc
 
 
 ### 1 / cos(pi/2 * x)
