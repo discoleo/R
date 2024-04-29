@@ -366,3 +366,11 @@ integrate(\(x) log(x^2 + b^2) / (exp(x) + exp(-x) + 2), 0, Inf)
 integrate(\(x) 1/2 * log(x^2 + b^2) / (cosh(x) + 1), 0, Inf)
 digamma(b/(2*pi) + 1/2) + log(2*pi);
 
+
+### Gen: I( log(x^2 + b^2) / (cosh(k*x) + cos(phi)) ) on [0, Inf]
+# - see Exercise 2 on page 50 of article (page 30 in pdf);
+b = sqrt(5); k = sqrt(3); phi = 1/3;
+integrate(\(x) log(x^2 + b^2) / (cosh(k*x) + cos(phi)), 0, Inf)
+2*pi/(k*sin(phi)) * log(gamma((k*b + phi)/(2*pi) + 1/2) / gamma((k*b - phi)/(2*pi) + 1/2)) +
+	+ 2*phi/(k*sin(phi)) * log(2*pi/k);
+
