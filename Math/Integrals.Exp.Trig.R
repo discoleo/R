@@ -18,14 +18,14 @@ k / (a^2 + k^2)
 ###
 p = sqrt(3)
 integrate(\(x) x^p * sin(x) / exp(x), 0, Inf)
-Im(gamma(p + 1) / (1-1i)^(p + 1))
+gamma(p + 1) * Im(1 / (1-1i)^(p + 1))
 
 ###
 p = sqrt(3); a = sqrt(5);
 integrate(\(x) x^p * sin(x) / exp(a*x), 0, Inf)
 gamma(p + 1) * Im(1 / (a - 1i)^(p + 1))
 
-###
+### Gen:
 p = sqrt(3); a = sqrt(5) - sqrt(2); k = sqrt(3);
 integrate(\(x) x^p * sin(k*x) / exp(a*x), 0, Inf)
 gamma(p + 1) * Im(1 / (a - k*1i)^(p + 1))
@@ -331,6 +331,25 @@ k = sqrt(5); n = sqrt(3)
 integrate(\(x) x^n * sin(x) / exp(k*x), 0, Inf)
 Im(gamma(n+1)/(k - 1i)^(n + 1))
 gamma(n+1) / (k^2 + 1)^((n + 1)/2) * sin((n+1)*pi/2 - (n+1)*atan(k))
+
+
+#########################
+#########################
+
+### I( cos(m*x) / (cosh(k*x) + cos(phi)) ) on [0, Inf]
+# Blagouchine IV. Rediscovery of Malmsten’s integrals, their evaluation
+# by contour integration methods and some related results.
+# Ramanujan J (2014) 35:21–110; DOI: I 10.1007/s11139-013-9528-5
+
+# - see intermediate I for Exercise 2 (p 50 of article);
+k = sqrt(5); m = sqrt(3); phi = 1/3;
+integrate(\(x) cos(m*x) / (cosh(k*x) + cos(phi)), 0, Inf)
+pi / (k*sin(phi)) * sinh(phi*m/k) / sinh(pi*m/k);
+
+### Special Case: m = 0
+k = sqrt(5); phi = 1/3;
+integrate(\(x) 1 / (cosh(k*x) + cos(phi)), 0, Inf)
+phi / (k*sin(phi))
 
 
 #########################
