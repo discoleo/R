@@ -358,3 +358,11 @@ integrate(\(x) log(x^2 + b^2) / (exp(2*x) + exp(x) + exp(-x) + exp(-2*x) + 1), 0
 integrate(\(x) 1 / (exp(2*x)+exp(x) + exp(-x) + exp(-2*x) + 1), 0, Inf)
 pi/5 / tan(2*pi/5)
 
+
+### I( log(x^2 + b^2) / (exp(x) + exp(-x) + 2) ) on [0, Inf]
+# - see on page 49 of article (page 29 in pdf);
+b = sqrt(5);
+integrate(\(x) log(x^2 + b^2) / (exp(x) + exp(-x) + 2), 0, Inf)
+integrate(\(x) 1/2 * log(x^2 + b^2) / (cosh(x) + 1), 0, Inf)
+digamma(b/(2*pi) + 1/2) + log(2*pi);
+
