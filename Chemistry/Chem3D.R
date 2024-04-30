@@ -27,6 +27,69 @@ center.xyz = function(x, y, z) {
 	return(c(x,y,z));
 }
 
+##########################
+
+### Orthogonal Projection/Rotation
+
+# p = point which will be rotated by pi/2;
+# (x,y,z) = coordinates of 2 points defining line;
+### Out:
+# T1,T2 = rotated point (2 solutions);
+# P = projected point on line;
+
+rotate.ortho3d = function(p, x, y = NULL, z = NULL) {
+	if(is.null(y)) {
+		y = x[,2]; z = x[,3]; x = x[,1];
+	}
+	# pP = Projection of P on the line;
+	# pP = proj.line3d(p, x, y, z);
+	# Inline variant:
+	dx = x[2] - x[1]; dx0 = p[1] - x[1];
+	dy = y[2] - y[1]; dy0 = p[2] - y[1];
+	dz = z[2] - z[1]; dz0 = p[3] - z[1];
+	tt = (dx*dx0 + dy*dy0 + dz*dz0);
+	tt = tt / (dx^2 + dy^2 + dz^2);
+	t1 = 1 - tt;
+	px = t1*x[1] + tt*x[2];
+	py = t1*y[1] + tt*y[2];
+	pz = t1*z[1] + tt*z[2];
+	# Rotation:
+	dx0 = p[1] - px; dx1 = x[1] - px;
+	dy0 = p[2] - py; dy1 = y[1] - py;
+	dz0 = p[3] - pz; dz1 = z[1] - pz;
+	R = sqrt(dx0^2 + dy0^2 + dz0^2);
+	dxy = dx0*dy1 - dx1*dy0;
+	dxz = dx0*dz1 - dx1*dz0;
+	dyz = dy0*dz1 - dy1*dz0;
+	div = sqrt(dxy^2 + dxz^2 + dyz^2);
+	# Note: both roots of "R" are valid;
+	# TODO: check if dyz = 0, 
+	dxT = dyz * R / div;
+	dyT = - dxz * dxT / dyz;
+	dzT =   dxy * dxT / dyz;
+	# =>
+	# Note: - dT is also a valid solution;
+	xT1 = px + dxT; yT1 = py + dyT; zT1 = pz + dzT;
+	xT2 = px - dxT; yT2 = py - dyT; zT2 = pz - dzT;
+	lst = list(T1 = c(xT1,yT1,zT1), T2 = c(xT2,yT2,zT2),
+		P = c(px,py,pz));
+	return(lst);
+}
+
+# TODO: check;
+
+p = c(1,5,7)
+pL = matrix(c(-4,6,-5,8,-3,8), nrow=2)
+
+pR = rotate.ortho3d(p, pL)
+
+lines3d(pL)
+lines3d(rbind(p, pR$P), col = "blue")
+lines3d(rbind(pR$T1, pR$P), col = "red")
+points3d(p, col = "orange", size = 6)
+points3d(pR$T1, col = "orange", size = 6)
+
+
 ###############
 
 ### Tetrahedron
@@ -170,24 +233,4 @@ close3d()
 open3d()
 cycloCylinder(19)
 
-
-#####################
-#####################
-
-### Orthogonal Projection/Rotation
-
-# p1, p2 = points defining line;
-# p0 = point which will be rotated by pi/2;
-# pP = projected point on line;
-# pT = rotated point;
-# pR = point between (p1, p2) such that ||pR - pP|| = ||p0 - pP||;
-# (used only during intermediary computations)
-
-### Equations:
-R^2 - (x0 - xP)^2 + (y0 - yP)^2 + (z0 - zP)^2 # = 0; # R = computable;
-(x0 - xP)*(xT - xP) + (y0 - yP)*(yT - yP) + (z0 - zP)*(zT - zP) # = 0
-(x1 - xP)*(xT - xP) + (y1 - yP)*(yT - yP) + (z1 - zP)*(zT - zP) # = 0
-(xT - xP)^2 + (yT - yP)^2 + (zT - zP)^2 - R^2 # = 0
-
-# TODO: Solve for (xT, yT, zT);
 
