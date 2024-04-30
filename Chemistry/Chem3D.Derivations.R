@@ -16,7 +16,7 @@ R^2 - (x0 - xP)^2 + (y0 - yP)^2 + (z0 - zP)^2 # = 0; # R = computable;
 (x1 - xP)*(xT - xP) + (y1 - yP)*(yT - yP) + (z1 - zP)*(zT - zP) # = 0
 (xT - xP)^2 + (yT - yP)^2 + (zT - zP)^2 - R^2 # = 0
 
-# TODO: Solve for (xT, yT, zT);
+# Solve for (xT, yT, zT);
 # dx0 = x0 - xP; dx1 = x1 - xP; dxT = xT - xP;
 dx0*dxT + dy0*dyT + dz0*dzT # = 0
 dx1*dxT + dy1*dyT + dz1*dzT # = 0
@@ -28,9 +28,11 @@ p2 = as.pm("dxT^2 + dyT^2 + dzT^2 - R^2")
 pR = solve.lpm(p0,p1,p2, xn = c("dzT", "dyT"))
 print.pm(pR[[2]]$Rez, leading = "dxT")
 
+### Eq:
 ((dx0*dy1 - dx1*dy0)^2 + (dx0*dz1 - dx1*dz0)^2 + (dy0*dz1 - dy1*dz0)^2) * dxT^2 +
  - (dy0*dz1 - dy1*dz0)^2*R^2 # = 0
 
+### Solutions:
 dyT = - (dx0*dz1 - dx1*dz0)*dxT / (dy0*dz1 - dy1*dz0);
 dzT = - (dyT*dy0 + dxT*dx0) / dz0;
 dzT =   (dx0*dy1 - dx1*dy0)*dxT / (dy0*dz1 - dy1*dz0);
