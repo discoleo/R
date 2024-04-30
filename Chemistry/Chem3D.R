@@ -170,3 +170,24 @@ close3d()
 open3d()
 cycloCylinder(19)
 
+
+#####################
+#####################
+
+### Orthogonal Projection/Rotation
+
+# p1, p2 = points defining line;
+# p0 = point which will be rotated by pi/2;
+# pP = projected point on line;
+# pT = rotated point;
+# pR = point between (p1, p2) such that ||pR - pP|| = ||p0 - pP||;
+# (used only during intermediary computations)
+
+### Equations:
+R^2 - (x0 - xP)^2 + (y0 - yP)^2 + (z0 - zP)^2 # = 0; # R = computable;
+(x0 - xP)*(xT - xP) + (y0 - yP)*(yT - yP) + (z0 - zP)*(zT - zP) # = 0
+(x1 - xP)*(xT - xP) + (y1 - yP)*(yT - yP) + (z1 - zP)*(zT - zP) # = 0
+(xT - xP)^2 + (yT - yP)^2 + (zT - zP)^2 - R^2 # = 0
+
+# TODO: Solve for (xT, yT, zT);
+
