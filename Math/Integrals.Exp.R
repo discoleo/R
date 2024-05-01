@@ -389,4 +389,20 @@ int = - n/(n-1) * integrate(\(x) exp(x^(n/(n-1))), 0, 1, rel.tol = 1E-8)$value;
 ### exp(1) * Ei(-1)
 integrate(\(x) exp(-x) / (x + 1), 0, Inf)
 integrate(\(x) exp(1 - exp(x)), 0, Inf)
+exp(1) * pracma::expint(1)
+
+integrate(\(x) exp(1-x)/x - 1 / (x*(x+1)), 1, Inf)
+exp(1) * pracma::expint(1) - log(2)
+
+integrate(\(x) exp(1-x)/x - 1 / (x*(x+1)), 1/2, Inf)
+exp(1) * pracma::expint(1/2) - log(3)
+
+integrate(\(x) exp(x)/x - 1/x/(x+1), 0, 1/2)
+- Re(pracma::expint(-1/2)) - Euler + log(3)
+
+integrate(\(x) exp(1/2-abs(x))/(1/2+x) - 1 / ((1/2+x)*(x+3/2)), -1/2, Inf)
+exp(1) * pracma::expint(1/2) - Re(pracma::expint(-1/2)) - Euler
+
+integrate(\(x) exp(1/2-abs(x))/(1/2+x) + 1 / ((x+1/2)*(x-1/2)), -Inf, -1/2)
+Euler
 
