@@ -33,9 +33,9 @@ expand.polygon3d = function(d, x, y, z, is.rel = TRUE) {
 	}
 	cx = mean(x); cy = mean(y); cz = mean(z);
 	if( ! is.rel) {
-		dx  = d*(x - cx); dy = d*(y - cy); dz = d*(z - cz);
+		dx  = x - cx; dy = y - cy; dz = z - cz;
 		div = sqrt(dx^2 + dy^2 + dz*2);
-		d = d / div;
+		d = d / div + 1; # 1 unit from centre by default;
 	}
 	x = d*x + (1-d)*cx;
 	y = d*y + (1-d)*cy;
