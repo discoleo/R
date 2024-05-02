@@ -27,6 +27,24 @@ center.xyz = function(x, y, z) {
 	return(c(x,y,z));
 }
 
+expand.polygon3d = function(d, x, y, z, is.rel = TRUE) {
+	if(missing(y)) {
+		y = x[,2]; z = x[,3]; x = x[,1];
+	}
+	cx = mean(x); cy = mean(y); cz = mean(z);
+	if( ! is.rel) {
+		dx  = d*(x - cx); dy = d*(y - cy); dz = d*(z - cz);
+		div = sqrt(dx^2 + dy^2 + dz*2);
+		d = d / div;
+	}
+	x = d*x + (1-d)*cx;
+	y = d*y + (1-d)*cy;
+	z = d*z + (1-d)*cz;
+	p = cbind(x=x, y=y, z=z);
+	return(p);
+}
+
+
 ##########################
 
 ### Orthogonal Projection/Rotation
@@ -117,13 +135,17 @@ points3d(pR$T1, col = "orange", size = 6)
 
 ### Shift Triangle
 p3 = matrix(c(1,-4,6, 5,-5,8, 7,-3,8), nrow=3)
-d = 4
+d = 3 * seq(4)
 
 pN = eigen.plane(p3)
-pS = p3 + d*rep(pN$N, each = 3)
 
+pExp = expand.polygon3d(2, p3) - 0.25*rep(pN$N, each = 3);
+polygon3d(pExp, col = "#3296FF", alpha = 0.25)
 polygon3d(p3, col = "blue", alpha = 0.75)
-polygon3d(pS, col = "red", alpha = 0.75)
+for(di in d) {
+	pS = p3 + di*rep(pN$N, each = 3)
+	polygon3d(pS, col = "red", alpha = 0.75)
+}
 
 
 ###############
