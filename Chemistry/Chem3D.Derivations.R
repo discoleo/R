@@ -7,7 +7,11 @@
 # pP = projected point on line;
 # pT = rotated point;
 # pR = point between (p1, p2) such that ||pR - pP|| = ||p0 - pP||;
-# (used only during intermediary computations)
+# (may be useful in other computations)
+
+# Note: Fraction for pR:
+# pR = tR*pP + (1-tR)*p1;
+tR = 1 - R / sqrt((x1 - xP)^2 + (y1 - yP)^2 + (z1 - zP)^2);
 
 
 ### Equations:

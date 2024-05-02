@@ -37,9 +37,13 @@ center.xyz = function(x, y, z) {
 # T1,T2 = rotated point (2 solutions);
 # P = projected point on line;
 
-rotate.ortho3d = function(p, x, y = NULL, z = NULL) {
+eigen.plane = function(x, y = NULL, z = NULL, normalize = TRUE) {
 	if(is.null(y)) {
+		p = x[1,]; x = x[-1,];
 		y = x[,2]; z = x[,3]; x = x[,1];
+	} else {
+		p = c(x[1], y[1], z[1]);
+		x = x[-1]; y = y[-1]; z = z[-1];
 	}
 	# pP = Projection of P on the line;
 	# pP = proj.line3d(p, x, y, z);
@@ -67,7 +71,27 @@ rotate.ortho3d = function(p, x, y = NULL, z = NULL) {
 	dxT = dyz * R / div;
 	dyT = - dxz * dxT / dyz;
 	dzT =   dxy * dxT / dyz;
-	# =>
+	# Note: - dT is also a valid solution;
+	N = c(dxT, dyT, dzT);
+	if(normalize) {
+		# TODO: check;
+		d = sqrt(dxT^2 + dyT^2 + dzT^2);
+		N = N / d;
+	}
+	lst = list(N = N, P = c(px,py,pz));
+	return(lst);
+}
+
+rotate.ortho3d = function(p, x, y = NULL, z = NULL) {
+	if(is.null(y)) {
+		xyz = x;
+	} else {
+		xyz = cbind(x,y,z);
+	}
+	xyz = rbind(p, xyz);
+	N  = eigen.plane(xyz, normalize = FALSE);
+	pp = N$P; px = pp[1]; py = pp[2]; pz = pp[3];
+	dT = N$N; dxT = dT[1]; dyT = dT[2]; dzT = dT[3];
 	# Note: - dT is also a valid solution;
 	xT1 = px + dxT; yT1 = py + dyT; zT1 = pz + dzT;
 	xT2 = px - dxT; yT2 = py - dyT; zT2 = pz - dzT;
@@ -78,6 +102,7 @@ rotate.ortho3d = function(p, x, y = NULL, z = NULL) {
 
 # TODO: check;
 
+###
 p = c(1,5,7)
 pL = matrix(c(-4,6,-5,8,-3,8), nrow=2)
 
@@ -88,6 +113,17 @@ lines3d(rbind(p, pR$P), col = "blue")
 lines3d(rbind(pR$T1, pR$P), col = "red")
 points3d(p, col = "orange", size = 6)
 points3d(pR$T1, col = "orange", size = 6)
+
+
+### Shift Triangle
+p3 = matrix(c(1,-4,6, 5,-5,8, 7,-3,8), nrow=3)
+d = 4
+
+pN = eigen.plane(p3)
+pS = p3 + d*rep(pN$N, each = 3)
+
+polygon3d(p3, col = "blue", alpha = 0.75)
+polygon3d(pS, col = "red", alpha = 0.75)
 
 
 ###############
