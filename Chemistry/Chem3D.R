@@ -99,6 +99,37 @@ eigen.plane = function(x, y = NULL, z = NULL, normalize = TRUE) {
 	lst = list(N = N, P = c(px,py,pz));
 	return(lst);
 }
+eigen.xy3D = function(p, x, y = NULL, z = NULL, normalize = TRUE) {
+	if(is.null(y)) {
+		xyz = x;
+	} else {
+		xyz = cbind(x,y,z);
+	}
+	xyz = rbind(p, xyz);
+	N = eigen.plane(xyz, normalize=normalize);
+	pP = N$P;
+	Nx = pP - p;
+	if(normalize) {
+		Nx = Nx / sqrt(sum(Nx^2));
+	}
+	lst = list(Ny = N$N, Nx = Nx, P = pP);
+	return(lst);
+}
+
+### Rotate by angle phi
+rotate.point3d = function(p, phi, x, y = NULL, z = NULL) {
+	N = eigen.xy3D(p=p, x=x, y=y, z=z, normalize = FALSE);
+	pP = N$P; # Projection of p on line;
+	pR = pP + cos(phi) * r * N$Nx + sin(phi) * r * N$Ny;
+	return(pR);
+}
+### Rotate by angle phi
+# N = Normals given;
+rotate.point3dN2 = function(p, r, phi, N) {
+	pP = N$P; # Projection of p on line;
+	pR = pP + cos(phi) * r * N$Nx + sin(phi) * r * N$Ny;
+	return(pR);
+}
 
 rotate.ortho3d = function(p, x, y = NULL, z = NULL) {
 	if(is.null(y)) {
@@ -145,6 +176,21 @@ polygon3d(p3, col = "blue", alpha = 0.75)
 for(di in d) {
 	pS = p3 + di*rep(pN$N, each = 3)
 	polygon3d(pS, col = "red", alpha = 0.75)
+}
+
+### Rotate point
+p = c(2,-3,17)
+pL = matrix(c(-4,6,-5,8,-3,8), nrow=2)
+
+lines3d(pL)
+N  = eigen.xy3D(p, pL)
+r  = sqrt(sum((p - N$P)^2))
+th = seq(0, 2*pi, length.out = 32)
+for(phi in th) {
+	pR = rotate.point3dN2(p, r=r, phi=phi, N=N);
+	pR = rbind(N$P, pR);
+	lines3d(pR, col = "blue");
+	points3d(pR, size = 4, col = "red");
 }
 
 
