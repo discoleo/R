@@ -196,6 +196,41 @@ for(phi in th) {
 
 ###############
 
+### Cylinder
+
+# Note:
+# - rgl::cylinder3d already implements the cylinder,
+#   including proper orientation based on centre-points;
+# C = Center-point from where it starts;
+cylinder.line3d = function(r, x, y = NULL, z = NULL) {
+	if(is.null(y)) {
+		y = x[,2]; z = x[,3]; x = x[,1];
+	}
+	N = c(x[2] - x[1], y[2] - y[1], z[2] - z[1]);
+	d = sqrt(sum(N^2));
+	N = N / d;
+	lst = list(R = r, L = d, N = N, C = c(x[1],y[1],z[1]));
+	return(lst);
+}
+
+test.cylinder.line3d = function(r, x, y = NULL, z = NULL,
+		col = "#8032B2", sides = 16, alpha = 0.5, lwd.line = 4) {
+	# cyl = cylinder.line3d(r=r, x=x, y=y, z=z);
+	if(lwd.line > 0) {
+		lines3d(x, y, z, lwd = lwd.line, size = lwd.line);
+	}
+	if( ! is.null(y)) {
+		x = cbind(x=x, y=y, z=z);
+	}
+	shade3d(cylinder3d(center = x, radius = r,
+		col=col, sides=sides, alpha=alpha))
+}
+
+p = matrix(c(1,5,1,3,2,3), nrow=2)
+colnames(p) = c("x", "y", "z")
+test.cylinder.line3d(1, p)
+
+
 ### Tetrahedron
 Th4 = function(r = 1, center = c(0,0,0), phi = 0) {
 	rT = r; r = r * 2 * sqrt(2) / 3;
