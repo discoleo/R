@@ -126,13 +126,17 @@ eigen.lineAny = function(x, y = NULL, z = NULL, normalize = TRUE) {
 		nx = nx/d; ny = ny/d; nz = nz/d;
 	}
 	dn1 = nx - nz; dn2 = ny - nz;
-	if(abs(dn1) < 1E-8 || abs(dn2) < 1E-8) {
-		# TODO
-		stop("Special Case: Div by 0!");
+	if(abs(dn1) < 1E-8) {
+		# stop("Special Case: Div by 0!");
+		cat("Special Case\n");
+		# Normalized: if normalize == TRUE;
+		fr = list(N = c(- nx, ny, nz));
+		return(fr);
 	}
 	# Arbitrary Normal:
 	div = sqrt(dn1^2 + dn2^2 - dn1*dn2);
-	fx = dn1 * sqrt(2) / div;
+	if(normalize) div = div * sqrt(2);
+	fx = dn1 / div;
 	fy = - fx * dn2 / dn1;
 	fz = - (fx + fy);
 	fr = list(N = c(fx, fy, fz));
@@ -172,6 +176,34 @@ rotate.ortho3d = function(p, x, y = NULL, z = NULL) {
 	return(lst);
 }
 
+### Tests
+
+test.rotate.point = function(p, pL, r = 1, n = 32,
+		col.line = "blue", col.point = "red", size.point = 4) {
+	lines3d(pL);
+	N  = eigen.xy3D(p, pL);
+	r  = sqrt(sum((p - N$P)^2));
+	th = seq(0, 2*pi, length.out = n);
+	for(phi in th) {
+		pR = rotate.point3dN2(p, r=r, phi=phi, N=N);
+		pR = rbind(N$P, pR);
+		lines3d(pR, col = col.line);
+		points3d(pR, size = size.point, col = col.point);
+	}
+	invisible(N);
+}
+
+test.eigen.lineAny = function(p, d = 1, rev = FALSE,
+		col.point = "red", size.point = 6) {
+	N  = eigen.lineAny(p);
+	if(rev) N$N = - N$N;
+	pL = rbind(p[1,], p[1,] + d * N$N);
+	lines3d(p);
+	lines3d(pL, col = "blue");
+	points3d(p[1,], col = col.point, size = size.point);
+	invisible(N);
+}
+
 # TODO: check;
 
 ###
@@ -205,32 +237,34 @@ for(di in d) {
 p = c(2,-3,17)
 pL = matrix(c(-4,6,-5,8,-3,8), nrow=2)
 
-lines3d(pL)
-N  = eigen.xy3D(p, pL)
-r  = sqrt(sum((p - N$P)^2))
-th = seq(0, 2*pi, length.out = 32)
-for(phi in th) {
-	pR = rotate.point3dN2(p, r=r, phi=phi, N=N);
-	pR = rbind(N$P, pR);
-	lines3d(pR, col = "blue");
-	points3d(pR, size = 4, col = "red");
-}
+test.rotate.point(p, pL)
+test.rotate.point(c(1,1,-10), pL)
 
 
 ### Arbitrary Normal
 pL = matrix(c(-4,6,-5,8,-3,8), nrow=2)
 d  = 3;
-N  = eigen.lineAny(pL);
-pLn = rbind(pL[1,], pL[1,] + d * N$N);
+test.eigen.lineAny(pL, d=d)
+test.eigen.lineAny(pL[2:1,], d=d, rev = TRUE)
 
-lines3d(pL)
-lines3d(pLn, col = "blue");
-points3d(pL[1,], col = "red")
+###
+pL = matrix(c(-4,4,-5,8,-5,3), nrow=2)
+d  = 3;
+test.eigen.lineAny(pL, d=d)
+test.eigen.lineAny(pL[2:1,], d=d, rev = TRUE)
+
+###
+pL = matrix(c(-4,1,-5,3,-5,3), nrow=2)
+d  = 3;
+test.eigen.lineAny(pL, d=d)
+N = test.eigen.lineAny(pL[2:1,], d=d, rev = TRUE)
+lines3d(pL + rep(d*N$N, each=2), col = "green")
 
 
-###############
+################
 
-### Cylinder
+################
+### Cylinder ###
 
 # Note:
 # - rgl::cylinder3d already implements the cylinder,
