@@ -115,6 +115,29 @@ eigen.xy3D = function(p, x, y = NULL, z = NULL, normalize = TRUE) {
 	lst = list(Ny = N$N, Nx = Nx, P = pP);
 	return(lst);
 }
+# Any Normal
+eigen.lineAny = function(x, y = NULL, z = NULL, normalize = TRUE) {
+	if(is.null(y)) {
+		y = x[,2]; z = x[,3]; x = x[,1];
+	}
+	nx = x[2] - x[1]; ny = y[2] - y[1]; nz = z[2] - z[1];
+	if(normalize) {
+		d  = sqrt(nx*nx + ny*ny + nz*nz);
+		nx = nx/d; ny = ny/d; nz = nz/d;
+	}
+	dn1 = nx - nz; dn2 = ny - nz;
+	if(abs(dn1) < 1E-8 || abs(dn2) < 1E-8) {
+		# TODO
+		stop("Special Case: Div by 0!");
+	}
+	# Arbitrary Normal:
+	div = sqrt(dn1^2 + dn2^2 - dn1*dn2);
+	fx = dn1 * sqrt(2) / div;
+	fy = - fx * dn2 / dn1;
+	fz = - (fx + fy);
+	fr = list(N = c(fx, fy, fz));
+	return(fr);
+}
 
 ### Rotate by angle phi
 rotate.point3d = function(p, phi, x, y = NULL, z = NULL) {
@@ -192,6 +215,17 @@ for(phi in th) {
 	lines3d(pR, col = "blue");
 	points3d(pR, size = 4, col = "red");
 }
+
+
+### Arbitrary Normal
+pL = matrix(c(-4,6,-5,8,-3,8), nrow=2)
+d  = 3;
+N  = eigen.lineAny(pL);
+pLn = rbind(pL[1,], pL[1,] + d * N$N);
+
+lines3d(pL)
+lines3d(pLn, col = "blue");
+points3d(pL[1,], col = "red")
 
 
 ###############
