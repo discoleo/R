@@ -134,9 +134,11 @@ eigen.lineAny = function(x, y = NULL, z = NULL, normalize = TRUE) {
 		return(fr);
 	}
 	# Arbitrary Normal:
-	div = sqrt(dn1^2 + dn2^2 - dn1*dn2);
-	if(normalize) div = div * sqrt(2);
-	fx = dn1 / div;
+	if(normalize) {
+		div = sqrt(2 * (dn1^2 + dn2^2 - dn1*dn2));
+		fx  = dn1 / div;
+	} else fx = dn1;
+	# fx = dn1 / div;
 	fy = - fx * dn2 / dn1;
 	fz = - (fx + fy);
 	fr = list(N = c(fx, fy, fz));
@@ -193,14 +195,24 @@ test.rotate.point = function(p, pL, r = 1, n = 32,
 	invisible(N);
 }
 
-test.eigen.lineAny = function(p, d = 1, rev = FALSE,
-		col.point = "red", size.point = 6) {
-	N  = eigen.lineAny(p);
+test.eigen.lineAny = function(p, d = 1, both = TRUE, rev = FALSE,
+		normalize = TRUE, col.point = "red", size.point = 6) {
+	N  = eigen.lineAny(p, normalize=normalize);
 	if(rev) N$N = - N$N;
 	pL = rbind(p[1,], p[1,] + d * N$N);
 	lines3d(p);
 	lines3d(pL, col = "blue");
 	points3d(p[1,], col = col.point, size = size.point);
+	if(both) {
+		test.eigen.lineAny(p[2:1,], d=d, normalize=normalize,
+			both = FALSE, rev = ! rev);
+		# Note: same N is added to both ends;
+		pL2 = p + rep(d*N$N, each=2);
+		lines3d(pL2, col = "green");
+		if(abs(dist.xyz(pL2) - dist.xyz(p)) > 1E-8) {
+			cat("Error: Distances differ!");
+		}
+	}
 	invisible(N);
 }
 
@@ -242,23 +254,30 @@ test.rotate.point(c(1,1,-10), pL)
 
 
 ### Arbitrary Normal
-pL = matrix(c(-4,6,-5,8,-3,8), nrow=2)
-d  = 3;
-test.eigen.lineAny(pL, d=d)
-test.eigen.lineAny(pL[2:1,], d=d, rev = TRUE)
 
 ###
+pL = matrix(c(-4,6,-5,8,-3,8), nrow=2)
+d  = 3;
+N = test.eigen.lineAny(pL, d=d, normalize = FALSE)
+N = test.eigen.lineAny(pL, d=d)
+
+### Special Case:
 pL = matrix(c(-4,4,-5,8,-5,3), nrow=2)
 d  = 3;
-test.eigen.lineAny(pL, d=d)
-test.eigen.lineAny(pL[2:1,], d=d, rev = TRUE)
+N = test.eigen.lineAny(pL, d=d, normalize = FALSE)
+N = test.eigen.lineAny(pL, d=d)
+
+### Special Case:
+pL = matrix(c(-4,4,-5,1,-5,3), nrow=2)
+d  = 3;
+N = test.eigen.lineAny(pL, d=d, normalize = FALSE)
+N = test.eigen.lineAny(pL, d=d)
 
 ###
 pL = matrix(c(-4,1,-5,3,-5,3), nrow=2)
 d  = 3;
-test.eigen.lineAny(pL, d=d)
-N = test.eigen.lineAny(pL[2:1,], d=d, rev = TRUE)
-lines3d(pL + rep(d*N$N, each=2), col = "green")
+N = test.eigen.lineAny(pL, d=d, normalize = FALSE)
+N = test.eigen.lineAny(pL, d=d)
 
 
 ################
