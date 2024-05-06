@@ -180,6 +180,18 @@ rotate.ortho3d = function(p, x, y = NULL, z = NULL) {
 
 ### Tests
 
+test.rotate.ortho = function(p, pL, size.point = 6, col.point = "orange") {
+	pR = rotate.ortho3d(p, pL);
+	# Plot:
+	lines3d(pL);
+	# Lines: Projection & Orthogonal Rotation
+	lines3d(rbind(p, pR$P), col = "blue");
+	lines3d(rbind(pR$T1, pR$P), col = "red");
+	points3d(p, col = col.point, size = size.point);
+	points3d(pR$T1, col = col.point, size = size.point);
+	invisible(pR);
+}
+
 test.rotate.point = function(p, pL, r = 1, n = 32,
 		col.line = "blue", col.point = "red", size.point = 4) {
 	lines3d(pL);
@@ -216,19 +228,13 @@ test.eigen.lineAny = function(p, d = 1, both = TRUE, rev = FALSE,
 	invisible(N);
 }
 
-# TODO: check;
+### Examples:
 
 ###
-p = c(1,5,7)
+p1 = c(1,5,7); p2 = c(3,5,7);
 pL = matrix(c(-4,6,-5,8,-3,8), nrow=2)
-
-pR = rotate.ortho3d(p, pL)
-
-lines3d(pL)
-lines3d(rbind(p, pR$P), col = "blue")
-lines3d(rbind(pR$T1, pR$P), col = "red")
-points3d(p, col = "orange", size = 6)
-points3d(pR$T1, col = "orange", size = 6)
+test.rotate.ortho(p1, pL)
+test.rotate.ortho(p2, pL, col.point = "#D68016")
 
 
 ### Shift Triangle
