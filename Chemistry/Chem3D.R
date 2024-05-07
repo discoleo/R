@@ -215,6 +215,22 @@ rotate.ortho3d = function(p, x, y = NULL, z = NULL) {
 
 ### Tests
 
+# p = PolygonL the first 3 points are used;
+test.shift.poly = function(d, p, expand = 2, alpha = 0.75,
+		alpha.expand = 0.25, shift.expand = 0.25) {
+	pN  = eigen.plane(p[1:3, ]);
+	len = nrow(p);
+	# Expand base:
+	pExp = expand.polygon3d(expand, p) - shift.expand*rep(pN$N, each = len);
+	polygon3d(pExp, col = "#3296FF", alpha = alpha.expand);
+	polygon3d(p, col = "blue", alpha = alpha);
+	for(di in d) {
+		pS = p + di*rep(pN$N, each = len);
+		polygon3d(pS, col = "red", alpha = alpha);
+	}
+	invisible(pN);
+}
+
 test.rotate.ortho = function(p, pL, size.point = 6, col.point = "orange") {
 	pR = rotate.ortho3d(p, pL);
 	# Plot:
@@ -470,12 +486,4 @@ cycloCylinder = function(n, R = 3) {
 	})
 	invisible()
 }
-
-
-# Top NMR specialists have gathered in an emergency
-# to clarify which conformation is adopted: chair or boat?
-close3d()
-open3d()
-cycloCylinder(19)
-
 

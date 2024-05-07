@@ -7,7 +7,7 @@ source("Chem3D.R")
 
 ### Basic Math & Transformations
 
-###
+### Normal
 p1 = c(1,5,7); p2 = c(3,5,7);
 pL = matrix(c(-4,6,-5,8,-3,8), nrow=2)
 test.rotate.ortho(p1, pL)
@@ -17,16 +17,15 @@ test.rotate.ortho(p2, pL, col.point = "#D68016")
 ### Shift Triangle
 p3 = matrix(c(1,-4,6, 5,-5,8, 7,-3,8), nrow=3)
 d = 3 * seq(4)
+test.shift.poly(d, p3)
 
-pN = eigen.plane(p3)
+###
+p4 = matrix(c(1,-4,-3, 5,-5,-6, 7,-3,1), nrow=3)
+p4 = rbind(p4, cbind(0.8,-0.4,0.6) %*% p4)
+d = 3 * seq(4)
+test.shift.poly(d, p4)
 
-pExp = expand.polygon3d(2, p3) - 0.25*rep(pN$N, each = 3);
-polygon3d(pExp, col = "#3296FF", alpha = 0.25)
-polygon3d(p3, col = "blue", alpha = 0.75)
-for(di in d) {
-	pS = p3 + di*rep(pN$N, each = 3)
-	polygon3d(pS, col = "red", alpha = 0.75)
-}
+
 
 ### Rotate point
 p = c(2,-3,17)
@@ -97,4 +96,15 @@ test.cylinder.line3d(1, p)
 close3d()
 open3d()
 Th4.base(N = 32)
+
+
+##################
+
+### Torus: Cyclo-6
+
+# Top NMR specialists have gathered in an emergency
+# to clarify which conformation is adopted: chair or boat?
+close3d()
+open3d()
+cycloCylinder(19)
 
