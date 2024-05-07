@@ -49,6 +49,26 @@ expand.polygon3d = function(d, x, y, z, is.rel = TRUE) {
 
 ### Orthogonal Projection/Rotation
 
+# Both Normals: but starting in arbitrary direction;
+# Out: P = projection of p0 (identical to p1);
+eigen.lineAnyN2 = function(x, y = NULL, z = NULL, normalize = TRUE) {
+	if(is.null(y)) {
+		y = x[,2]; z = x[,3]; x = x[,1];
+	}
+	# Normals:
+	N1 = eigen.lineAny(x=x, y=y, z=z, normalize=normalize);
+	N1 = N1$N;
+	p1 = c(x[1], y[1], z[1]);
+	p0 = p1 + N1;
+	p2 = c(x[2], y = y[2], z = z[2]);
+	N2 = eigen.projPoint(p0, p1, x = p2);
+	N2 = N2$N;
+	#
+	lst = list(N1 = N1, N2 = N2, P0 = p0, P = p1);
+	return(lst);
+}
+
+
 # p = point which will be rotated by pi/2;
 # (x,y,z) = coordinates of 2 points defining line;
 ### Out:
@@ -70,7 +90,7 @@ eigen.plane = function(x, y = NULL, z = NULL, normalize = TRUE) {
 	dy = y[2] - y[1]; dy0 = p[2] - y[1];
 	dz = z[2] - z[1]; dz0 = p[3] - z[1];
 	tt = (dx*dx0 + dy*dy0 + dz*dz0);
-	tt = tt / (dx^2 + dy^2 + dz^2);
+	tt = tt / (dx*dx + dy*dy + dz*dz);
 	t1 = 1 - tt;
 	px = t1*x[1] + tt*x[2];
 	py = t1*y[1] + tt*y[2];
@@ -116,6 +136,7 @@ eigen.xy3D = function(p, x, y = NULL, z = NULL, normalize = TRUE) {
 	return(lst);
 }
 # Projection Point: given
+# - p0 projects on pP;
 eigen.projPoint = function(p0, pP, x, y = NULL, z = NULL,
 		normalize = TRUE, verbose = TRUE) {
 	if(is.null(y)) {
@@ -312,11 +333,9 @@ mesh.cylinder = function(r, x, y = NULL, z = NULL, nL = 12, nR = 16) {
 	tt = cbind(1 - tt, tt);
 	pC = tt %*% xyz;
 	# Normals:
-	N1 = eigen.lineAny(xyz, normalize = TRUE);
-	N1 = N1$N;
-	p0 = xyz[1,] + N1;
-	N2 = eigen.projPoint(p0, xyz[1,], x = xyz[2,]);
-	N2 = N2$N;
+	N = eigen.lineAnyN2(xyz, normalize = TRUE);
+	N1 = N$N1;
+	N2 = N$N2;
 	# Start:
 	phi1 = seq(0, 2*pi, length.out = nR + 1);
 	cyl1 = lapply(seq(1, nL + 1, by = 2), function(id) {
