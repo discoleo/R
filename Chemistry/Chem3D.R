@@ -115,6 +115,40 @@ eigen.xy3D = function(p, x, y = NULL, z = NULL, normalize = TRUE) {
 	lst = list(Ny = N$N, Nx = Nx, P = pP);
 	return(lst);
 }
+# Projection Point: given
+eigen.projPoint = function(p0, pP, x, y = NULL, z = NULL,
+		normalize = TRUE, verbose = TRUE) {
+	if(is.null(y)) {
+		if(inherits(x, "matrix")) x = x[1,];
+		y = x[2]; z = x[3]; x = x[1];
+	}
+	# Rotation:
+	dx0 = p0[1] - pP[1]; dx1 = x[1] - pP[1];
+	dy0 = p0[2] - pP[2]; dy1 = y[1] - pP[2];
+	dz0 = p0[3] - pP[3]; dz1 = z[1] - pP[3];
+	R = sqrt(dx0^2 + dy0^2 + dz0^2);
+	dxy = dx0*dy1 - dx1*dy0;
+	dxz = dx0*dz1 - dx1*dz0;
+	dyz = dy0*dz1 - dy1*dz0;
+	div = sqrt(dxy^2 + dxz^2 + dyz^2);
+	# Note: both roots of "R" are valid;
+	# TODO: check if dyz = 0; (already solved ?)
+	NN = R / div;
+	dxT =   dyz * NN;
+	dyT = - dxz * NN;
+	dzT =   dxy * NN;
+	# Note: - dT is also a valid solution;
+	N = c(dxT, dyT, dzT);
+	if(normalize) {
+		# TODO: may be already normalized; (check)
+		d = sqrt(dxT^2 + dyT^2 + dzT^2);
+		if(verbose) cat("Normalize by: ", d, "\n");
+		N = N / d;
+	}
+	lst = list(N = N);
+	return(lst);
+}
+
 # Any Normal
 eigen.lineAny = function(x, y = NULL, z = NULL, normalize = TRUE) {
 	if(is.null(y)) {
@@ -126,20 +160,21 @@ eigen.lineAny = function(x, y = NULL, z = NULL, normalize = TRUE) {
 		nx = nx/d; ny = ny/d; nz = nz/d;
 	}
 	dn1 = nx - nz; dn2 = ny - nz;
-	if(abs(dn1) < 1E-8) {
+	if(abs(dn2) < 1E-8) {
 		# stop("Special Case: Div by 0!");
 		cat("Special Case\n");
 		# Normalized: if normalize == TRUE;
-		fr = list(N = c(- nx, ny, nz));
+		# TODO: check normalization;
+		fr = list(N = c(0, - ny, nz));
 		return(fr);
 	}
 	# Arbitrary Normal:
 	if(normalize) {
 		div = sqrt(2 * (dn1^2 + dn2^2 - dn1*dn2));
-		fx  = dn1 / div;
-	} else fx = dn1;
+		fx  = dn2 / div;
+	} else fx = dn2;
 	# fx = dn1 / div;
-	fy = - fx * dn2 / dn1;
+	fy = - fx * dn1 / dn2;
 	fz = - (fx + fy);
 	fr = list(N = c(fx, fy, fz));
 	return(fr);
@@ -215,15 +250,18 @@ test.eigen.lineAny = function(p, d = 1, both = TRUE, rev = FALSE,
 	lines3d(p);
 	lines3d(pL, col = "blue");
 	points3d(p[1,], col = col.point, size = size.point);
+	# Test:
+	dd = sum((p[1,] + N$N - p[2,])^2, - N$N^2, - (p[1,] - p[2,])^2);
+	if(abs(dd) > 1E-8) {
+		cat("Error: Not Orthogonal! Diff = ", dd, "\n");
+	}
+	#
 	if(both) {
 		test.eigen.lineAny(p[2:1,], d=d, normalize=normalize,
 			both = FALSE, rev = ! rev);
 		# Note: same N is added to both ends;
 		pL2 = p + rep(d*N$N, each=2);
 		lines3d(pL2, col = "green");
-		if(abs(dist.xyz(pL2) - dist.xyz(p)) > 1E-8) {
-			cat("Error: Distances differ!");
-		}
 	}
 	invisible(N);
 }
@@ -262,25 +300,31 @@ test.rotate.point(c(1,1,-10), pL)
 ### Arbitrary Normal
 
 ###
+p = matrix(c(1,5,1,3,2,-3), nrow=2)
+d  = 3;
+N = test.eigen.lineAny(pL, d=d, normalize = FALSE)
+N = test.eigen.lineAny(pL, d=d)
+
+###
 pL = matrix(c(-4,6,-5,8,-3,8), nrow=2)
 d  = 3;
 N = test.eigen.lineAny(pL, d=d, normalize = FALSE)
 N = test.eigen.lineAny(pL, d=d)
 
 ### Special Case:
-pL = matrix(c(-4,4,-5,8,-5,3), nrow=2)
+pL = matrix(c(-4,4,-1,8,-5,4), nrow=2)
 d  = 3;
 N = test.eigen.lineAny(pL, d=d, normalize = FALSE)
 N = test.eigen.lineAny(pL, d=d)
 
 ### Special Case:
-pL = matrix(c(-4,4,-5,1,-5,3), nrow=2)
+pL = matrix(c(-4,1,-1,5,-5,1), nrow=2)
 d  = 3;
 N = test.eigen.lineAny(pL, d=d, normalize = FALSE)
 N = test.eigen.lineAny(pL, d=d)
 
 ###
-pL = matrix(c(-4,1,-5,3,-5,3), nrow=2)
+pL = matrix(c(-4,1,-5,3,-5,2), nrow=2)
 d  = 3;
 N = test.eigen.lineAny(pL, d=d, normalize = FALSE)
 N = test.eigen.lineAny(pL, d=d)
@@ -306,6 +350,45 @@ cylinder.line3d = function(r, x, y = NULL, z = NULL) {
 	return(lst);
 }
 
+mesh.cylinder = function(r, x, y = NULL, z = NULL, nL = 12, nR = 16) {
+	if( ! is.null(y)) {
+		xyz = cbind(x, y, z);
+	} else xyz = x;
+	# Centers
+	tt = seq(0, 1, length.out = nL + 1);
+	tt = cbind(1 - tt, tt);
+	pC = tt %*% xyz;
+	# Normals:
+	N1 = eigen.lineAny(xyz, normalize = TRUE);
+	N1 = N1$N;
+	p0 = xyz[1,] + N1;
+	N2 = eigen.projPoint(p0, xyz[1,], x = xyz[2,]);
+	N2 = N2$N;
+	# Start:
+	phi1 = seq(0, 2*pi, length.out = nR + 1);
+	cyl1 = lapply(seq(1, nL + 1, by = 2), function(id) {
+		cc = pC[id, ];
+		dx = r*(cos(phi1) * N1[1] + sin(phi1) * N2[1]) + cc[1];
+		dy = r*(cos(phi1) * N1[2] + sin(phi1) * N2[2]) + cc[2];
+		dz = r*(cos(phi1) * N1[3] + sin(phi1) * N2[3]) + cc[3];
+		cbind(dx, dy, dz);
+	});
+	cyl1 = do.call(rbind, cyl1);
+	#
+	phi2 = phi1 + pi / nR;
+	cyl2 = lapply(seq(2, nL + 1, by = 2), function(id) {
+		cc = pC[id, ];
+		dx = r*(cos(phi2) * N1[1] + sin(phi2) * N2[1]) + cc[1];
+		dy = r*(cos(phi2) * N1[2] + sin(phi2) * N2[2]) + cc[2];
+		dz = r*(cos(phi2) * N1[3] + sin(phi2) * N2[3]) + cc[3];
+		cbind(dx, dy, dz);
+	});
+	cyl2 = do.call(rbind, cyl2);
+	V = rbind(cyl1, cyl2);
+	# TODO: Mesh;
+	return(list(V = V, N1 = N1, N2 = N2));
+}
+
 test.cylinder.line3d = function(r, x, y = NULL, z = NULL,
 		col = "#8032B2", sides = 16, alpha = 0.5, lwd.line = 4) {
 	# cyl = cylinder.line3d(r=r, x=x, y=y, z=z);
@@ -319,10 +402,26 @@ test.cylinder.line3d = function(r, x, y = NULL, z = NULL,
 		col=col, sides=sides, alpha=alpha))
 }
 
+### Examples
+
+###
+p = matrix(c(1,5,1,3,2,-3), nrow=2)
+m = mesh.cylinder(1, p)
+points3d(m$V)
+lines3d(p, col = "blue")
+lines3d(rbind(p[1,], p[1,] + m$N1 * 5), col = "red")
+lines3d(rbind(p[1,], p[1,] + m$N2 * 5), col = "purple")
+
+# TODO: mesh with higher resolution near boundary;
+
+
+###
 p = matrix(c(1,5,1,3,2,3), nrow=2)
 colnames(p) = c("x", "y", "z")
 test.cylinder.line3d(1, p)
 
+
+###############
 
 ### Tetrahedron
 Th4 = function(r = 1, center = c(0,0,0), phi = 0) {
