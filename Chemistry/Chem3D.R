@@ -325,6 +325,33 @@ cylinder.line3d = function(r, x, y = NULL, z = NULL) {
 }
 
 mesh.cylinder = function(r, x, y = NULL, z = NULL, nL = 12, nR = 16) {
+	V = mesh.vertex.cylinder(r=r, x=x, y=y, z=z, nL=nL, nR=nR);
+	# TODO: Mesh;
+	len = attr(V$V, "length");
+	isOdd = len[1] > len[2];
+	# Note: Circle has nR+1 points;
+	idS2  = len[1] * (nR + 1);
+	idM = matrix(0, nrow = 3, ncol = 2*nR*len[2]);
+	for(id in seq(len[2])) {
+		id2 = 2*(id - 1);
+		idS = id2 * nR + 1;
+		idE = idS + nR - 1;
+		idSlice = idS:idE;
+		# Note: Circle has nR+1 points;
+		idV = (id - 1)*(nR + 1) + 1;
+		idV = idV:(idV + nR - 1);
+		idM[, idSlice] = rbind(idV, idV + 1, idV + idS2);
+		print("OK")
+		idSlice = idSlice + nR;
+		idM[, idSlice] = rbind(idV + 1, idV + idS2 + 1, idV + idS2);
+		print("OK2")
+	}
+	V$M = idM;
+	return(V);
+}
+
+# Vertex:
+mesh.vertex.cylinder = function(r, x, y = NULL, z = NULL, nL = 12, nR = 16) {
 	if( ! is.null(y)) {
 		xyz = cbind(x, y, z);
 	} else xyz = x;
@@ -345,6 +372,7 @@ mesh.cylinder = function(r, x, y = NULL, z = NULL, nL = 12, nR = 16) {
 		dz = r*(cos(phi1) * N1[3] + sin(phi1) * N2[3]) + cc[3];
 		cbind(dx, dy, dz);
 	});
+	len1 = length(cyl1);
 	cyl1 = do.call(rbind, cyl1);
 	#
 	phi2 = phi1 + pi / nR;
@@ -355,9 +383,10 @@ mesh.cylinder = function(r, x, y = NULL, z = NULL, nL = 12, nR = 16) {
 		dz = r*(cos(phi2) * N1[3] + sin(phi2) * N2[3]) + cc[3];
 		cbind(dx, dy, dz);
 	});
+	len2 = length(cyl2);
 	cyl2 = do.call(rbind, cyl2);
 	V = rbind(cyl1, cyl2);
-	# TODO: Mesh;
+	attr(V, "length") = c(len1, len2);
 	return(list(V = V, N1 = N1, N2 = N2));
 }
 

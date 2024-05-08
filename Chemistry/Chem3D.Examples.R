@@ -80,6 +80,9 @@ lines3d(p, col = "blue")
 lines3d(rbind(p[1,], p[1,] + m$N1 * 5), col = "red")
 lines3d(rbind(p[1,], p[1,] + m$N2 * 5), col = "purple")
 
+###
+wire3d(mesh3d(vertices = t(m$V), triangles = m$M))
+
 # TODO: mesh with higher resolution near boundary;
 
 
