@@ -1,4 +1,9 @@
 
+### Chem 3D
+# - Exploratory / Experimental code;
+# - Intended to be used within Rpdb:
+#   https://github.com/discoleo/Rpdb
+
 
 library(rgl)
 
@@ -327,13 +332,22 @@ cylinder.line3d = function(r, x, y = NULL, z = NULL) {
 	return(lst);
 }
 
-mesh.cylinder = function(r, x, y = NULL, z = NULL, nL = 12, nR = 16) {
+# Vertexes & Mesh:
+mesh.cylinder = function(r, x, y = NULL, z = NULL, nL = 12, nR = 16,
+		type = c("Full", "Alternating")) {
 	V = mesh.vertex.cylinder(r=r, x=x, y=y, z=z, nL=nL, nR=nR);
+	M = mesh.cylinder.vset(V, nL=nL, nR=nR, type=type);
+	invisible(M);
+}
+
+mesh.cylinder.vset = function(V, nL = 12, nR = 16,
+		type = c("Full", "Alternating")) {
 	# TODO: Mesh;
 	len = attr(V$V, "length");
 	isOdd = len[1] > len[2];
+	type = match.arg(type);
 	# Note: Circle has nR+1 points;
-	idS2  = len[1] * (nR + 1);
+	idS2 = len[1] * (nR + 1);
 	idM = matrix(0, nrow = 3, ncol = 2*nR*len[2]);
 	for(id in seq(len[2])) {
 		id2 = 2*(id - 1);
@@ -344,16 +358,35 @@ mesh.cylinder = function(r, x, y = NULL, z = NULL, nL = 12, nR = 16) {
 		idV = (id - 1)*(nR + 1) + 1;
 		idV = idV:(idV + nR - 1);
 		idM[, idSlice] = rbind(idV, idV + 1, idV + idS2);
-		print("OK")
 		idSlice = idSlice + nR;
 		idM[, idSlice] = rbind(idV + 1, idV + idS2 + 1, idV + idS2);
-		print("OK2")
+	}
+	if(type == "Full") {
+		last = len[2];
+		# if(isOdd) last = last - 1;
+		idM2 = matrix(0, nrow = 3, ncol = 2*nR*last);
+		idS2 = idS2 - nR - 1; # previous Circle;
+		for(id in seq(last)) {
+			id2 = 2*(id - 1);
+			idS = id2 * nR + 1;
+			idE = idS + nR - 1;
+			idSlice = idS:idE;
+			# Note: Circle has nR+1 points;
+			idV = (id - 1)*(nR + 1) + nR + 2;
+			idV = idV:(idV + nR - 1);
+			# print("St1"); print(idSlice)
+			idM2[, idSlice] = rbind(idV + 1, idV + idS2 + 1, idV + idS2);
+			idSlice = idSlice + nR;
+			# print("St2"); print(idSlice)
+			idM2[, idSlice] = rbind(idV, idV + 1, idV + idS2);
+		}
+		idM = cbind(idM, idM2);
 	}
 	V$M = idM;
 	return(V);
 }
 
-# Vertex:
+# Vertexes:
 mesh.vertex.cylinder = function(r, x, y = NULL, z = NULL, nL = 12, nR = 16) {
 	if( ! is.null(y)) {
 		xyz = cbind(x, y, z);
