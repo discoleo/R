@@ -401,23 +401,31 @@ mesh.vertex.cylinder = function(r, x, y = NULL, z = NULL, nL = 12, nR = 16) {
 	N2 = N$N2;
 	# Start:
 	phi1 = seq(0, 2*pi, length.out = nR + 1);
+	cs = cos(phi1); sn = sin(phi1);
+	rx = r*(cs * N1[1] + sn * N2[1]);
+	ry = r*(cs * N1[2] + sn * N2[2]);
+	rz = r*(cs * N1[3] + sn * N2[3]);
 	cyl1 = lapply(seq(1, nL + 1, by = 2), function(id) {
 		cc = pC[id, ];
-		dx = r*(cos(phi1) * N1[1] + sin(phi1) * N2[1]) + cc[1];
-		dy = r*(cos(phi1) * N1[2] + sin(phi1) * N2[2]) + cc[2];
-		dz = r*(cos(phi1) * N1[3] + sin(phi1) * N2[3]) + cc[3];
-		cbind(dx, dy, dz);
+		x = rx + cc[1];
+		y = ry + cc[2];
+		z = rz + cc[3];
+		cbind(x, y, z);
 	});
 	len1 = length(cyl1);
 	cyl1 = do.call(rbind, cyl1);
 	#
 	phi2 = phi1 + pi / nR;
+	cs = cos(phi2); sn = sin(phi2);
+	rx = r*(cs * N1[1] + sn * N2[1]);
+	ry = r*(cs * N1[2] + sn * N2[2]);
+	rz = r*(cs * N1[3] + sn * N2[3]);
 	cyl2 = lapply(seq(2, nL + 1, by = 2), function(id) {
 		cc = pC[id, ];
-		dx = r*(cos(phi2) * N1[1] + sin(phi2) * N2[1]) + cc[1];
-		dy = r*(cos(phi2) * N1[2] + sin(phi2) * N2[2]) + cc[2];
-		dz = r*(cos(phi2) * N1[3] + sin(phi2) * N2[3]) + cc[3];
-		cbind(dx, dy, dz);
+		x = rx + cc[1];
+		y = ry + cc[2];
+		z = rz + cc[3];
+		cbind(x, y, z);
 	});
 	len2 = length(cyl2);
 	cyl2 = do.call(rbind, cyl2);
