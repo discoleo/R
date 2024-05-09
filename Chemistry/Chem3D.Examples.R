@@ -105,9 +105,9 @@ Th4.base(N = 32)
 
 ### Torus: Cyclo-6
 
-# Top NMR specialists have gathered in an emergency
+# Top NMR specialists have gathered in an emergency meeting
 # to clarify which conformation is adopted: chair or boat?
 close3d()
 open3d()
-cycloCylinder(19)
+test.cyclo.cylinder(19)
 

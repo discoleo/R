@@ -4,6 +4,9 @@ library(rgl)
 
 # rgl >= 1.3.1
 
+# Math functions: are independent of rgl;
+# Plot & Test functions: require rgl;
+
 
 ###############
 
@@ -510,7 +513,8 @@ Th4 = function(xyz, center = c(0,0,0), r = 1) {
 ##################
 
 ### Torus: Cyclo-6
-cycloCylinder = function(n, R = 3) {
+# Poly-cyclic compound around a cylinder;
+cyclo.cylinder = function(n, R = 3) {
 	# Th:
 	# th = pi - atan(4); cs = - 1/sqrt(17);
 	# hb = dh / (1 + 1/sqrt(17));
@@ -526,12 +530,18 @@ cycloCylinder = function(n, R = 3) {
 	asV = function(x, xB, xS, id) {
 		c(x[id], x[id], xB[id], x[id + 1], x[id + 1], xS[id], x[id]);
 	}
-	tmp = lapply(seq(n), function(id) {
-		lines3d(
+	obj = lapply(seq(n), function(id) {
+		cbind(
 			x = asV(x1, xB, xS, id=id),
 			y = asV(y1, yB, yS, id=id),
-			z = c(0, dz, dz + ds, dz, 0, - ds));
-	})
-	invisible()
+			z = c(0, dz, dz + ds, dz, 0, - ds, 0));
+	});
+	invisible(obj);
+}
+
+test.cyclo.cylinder = function(n = 15, R = 3) {
+	obj = cyclo.cylinder(n=n, R=R);
+	lapply(obj, function(obj) lines3d(obj));
+	invisible(obj);
 }
 
