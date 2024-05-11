@@ -448,6 +448,90 @@ test.cylinder.line3d = function(r, x, y = NULL, z = NULL,
 }
 
 
+helix = function(r, x, y = NULL, z = NULL, d = 0.25) {
+	if( ! is.null(y)) {
+		xyz = cbind(x, y, z);
+	} else xyz = x;
+	# Normals:
+	N = eigen.lineAnyN2(xyz, normalize = TRUE);
+	N1 = N$N1;
+	N2 = N$N2;
+	N0 = xyz[2,] - xyz[1,];
+	d  = sqrt(sum(N0^2));
+	N0 = N0 / d;
+	# TODO: better concept;
+	Ns = N2 + N0; # Helix Step
+	p3 = rbind(xyz[1,] + Ns, xyz[1,], xyz[1,] + N1 + Ns);
+	Nw = eigen.plane(p3);
+	N$Nw = Nw$N; N$N0 = N0; N$d = d;
+	return(N);
+}
+
+# Simple Ribbon:
+helix.ribbon = function(p, N, helix = 4, r = 1, col = NULL, alpha = 1,
+		type = c("Simple", "Screw"), dashed = TRUE,
+		n.points = 32, dth = pi/7, scale.screw = 1.5) {
+	np = helix * n.points;
+	type = match.arg(type);
+	hasC = FALSE;
+	if(is.null(dim(p))) {
+		p1 = p;
+	} else {
+		p1 = p[1,];
+		if(dim(p)[1] > 1) hasC = TRUE;
+	}
+	phi0 = seq(0, np) * 2*pi / n.points;
+	dth  = c(0, -dth, dth);
+	if(type == "Screw") {
+		smR = r * cos(dth[3] / scale.screw);
+		r = c(r, smR, smR);
+	} else {
+		r = c(r,r,r);
+	}
+	if(dashed) {
+		# Note: more efficient than drawing each line-segment individually;
+		alpha = rep(c(alpha, 0), np %/% 2);
+		if(np %% 2 == 1) alpha = c(alpha, alpha[1]);
+	}
+	pp = lapply(seq(3), function(idRibbons) {
+		th = dth[idRibbons];
+		rr = r[idRibbons];
+		pp = lapply(seq(np + 1), function(id) {
+			phi = phi0[id] + th;
+			pp = rr * (cos(phi)*N$N2 - sin(phi)*N$N1) +
+				+ N$N0*N$d*(id - 1)/np + p1;
+			return(pp);
+		})
+		pp = do.call(rbind, pp);
+		list(V = pp, col=col, alpha=alpha);
+	});
+	pp = list(Ribbon = pp);
+	if(hasC) pp$P = p;
+	invisible(pp);
+}
+
+plot.helix.ribbon = function(v, col = NULL) {
+	isColNull = is.null(col);
+	if( ! is.null(v$P)) {
+		lines3d(v$P);
+	}
+	vR = v$Ribbon;
+	lapply(vR, function(v) {
+		colRib = v$col;
+		if(is.null(colRib)) {
+			if(isColNull) {
+				lines3d(v$V, alpha = v$alpha);
+			} else {
+				lines3d(v$V, alpha = v$alpha, col=col);
+			}
+		} else {
+			lines3d(v$V, alpha = v$alpha, col = colRib);
+		}
+	});
+	invisible();
+}
+
+
 ###############
 
 ### Tetrahedron
