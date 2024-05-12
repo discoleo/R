@@ -434,6 +434,68 @@ mesh.vertex.cylinder = function(r, x, y = NULL, z = NULL, nL = 12, nR = 16) {
 	return(list(V = V, N1 = N1, N2 = N2));
 }
 
+
+# Vertexes:
+# p = line segment forming the long diameter of torus;
+mesh.vertex.torus = function(p, r = 1, phi = c(0, 2*pi),
+		nL = 16L, nR = 16L) {
+	center = (p[1,] + p[2,]) / 2;
+	N1 = p[2,] - p[1,];
+	R  = sqrt(sum(N1^2));
+	N1 = N1 / R; R = R / 2;
+	# Arbitrary N as Axis of Torus:
+	N = eigen.lineAnyN2(p);
+	N = list(Na = N$N1, N1 = N1, N2 = N$N2);
+	v = mesh.vertex.torusN(r=r, R=R, N=N, center=center, phi=phi,
+		nL=nL, nR=nR);
+	invisible(v);
+}
+mesh.vertex.torusN = function(r, R, N, center = c(0,0,0), phi = c(0, 2*pi),
+		nL = 16L, nR = 16L) {
+	if(inherits(N, "matrix")) N = list(Na = N[1,], N1 = N[2,], N2 = N[3,]);
+	# Centers
+	th = seq(phi[1], phi[2], length.out = nL);
+	sc = cbind(sin(th), cos(th));
+	# N2 is normalized if (N1, N2) are true normals;
+	N2 = sc %*% rbind(N$N1, N$N2);
+	pC = R * N2 + rep(center, each = nL);
+	# Start:
+	phi1 = seq(0, 2*pi, length.out = nR + 1);
+	cs = cos(phi1); sn = sin(phi1);
+	N1 = N$Na; rsn = r*sn;
+	rx = r * cs * N1[1];
+	ry = r * cs * N1[2];
+	rz = r * cs * N1[3];
+	cyl1 = lapply(seq(1, nL, by = 2), function(id) {
+		cc = pC[id, ];
+		x = rx + rsn * N2[id, 1] + cc[1];
+		y = ry + rsn * N2[id, 2] + cc[2];
+		z = rz + rsn * N2[id, 3] + cc[3];
+		cbind(x, y, z);
+	});
+	len1 = length(cyl1);
+	cyl1 = do.call(rbind, cyl1);
+	#
+	phi2 = phi1 + pi / nR;
+	cs = cos(phi2); sn = sin(phi2); rsn = r*sn;
+	rx = r * cs * N1[1];
+	ry = r * cs * N1[2];
+	rz = r * cs * N1[3];
+	cyl2 = lapply(seq(2, nL, by = 2), function(id) {
+		cc = pC[id, ];
+		x = rx + rsn * N2[id, 1] + cc[1];
+		y = ry + rsn * N2[id, 2] + cc[2];
+		z = rz + rsn * N2[id, 3] + cc[3];
+		cbind(x, y, z);
+	});
+	len2 = length(cyl2);
+	cyl2 = do.call(rbind, cyl2);
+	V = rbind(cyl1, cyl2);
+	attr(V, "length") = c(len1, len2);
+	return(list(V = V, Na = N$Na, N1 = N$N1, N2 = N$N2));
+}
+
+### Tests:
 test.cylinder.line3d = function(r, x, y = NULL, z = NULL,
 		col = "#8032B2", sides = 16, alpha = 0.5, lwd.line = 4) {
 	# cyl = cylinder.line3d(r=r, x=x, y=y, z=z);

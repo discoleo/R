@@ -100,6 +100,36 @@ test.cylinder.line3d(1, p)
 
 
 #############
+### Torus ###
+
+###
+p = rbind(c(1,-1,3), c(4,1,1))
+v = mesh.vertex.torus(p, r = 1/2)
+points3d(v$V)
+lines3d(p, col = "red")
+points3d(p, col = "orange", size = 6)
+
+###
+p = rbind(c(1,3,3), c(4,5,1))
+v = mesh.vertex.torus(p, phi = c(-2*pi/3, 2*pi/3))
+points3d(v$V)
+lines3d(p, col = "red")
+points3d(p, col = "orange", size = 6)
+
+
+#############
+### Helix ###
+
+###
+p = matrix(c(1,5,1,3,2,-3), nrow=2)
+N = helix(r = 1, p) # TODO
+
+# Simple Helix Ribbon/Strands
+v = helix.ribbon(p, N, type = "Screw", dash=F)
+plot.helix.ribbon(v, col = "blue")
+
+
+#############
 
 ### Examples: Tetrahedron
 
