@@ -450,6 +450,21 @@ mesh.vertex.torus = function(p, r = 1, phi = c(0, 2*pi),
 		nL=nL, nR=nR);
 	invisible(v);
 }
+# p = central axis of torus;
+# t = position of torus-centre on line p;
+mesh.vertex.torusAxis = function(p, R, r = 1, t = 1/2, phi = c(0, 2*pi),
+		nL = 16L, nR = 16L) {
+	center = (1 - t)*p[1,] + t * p[2,];
+	Na = p[2,] - p[1,];
+	dd = sqrt(sum(Na^2));
+	Na = Na / dd;
+	# Arbitrary N as Axis of Torus:
+	N = eigen.lineAnyN2(p);
+	N = list(Na = Na, N1 = N$N1, N2 = N$N2);
+	v = mesh.vertex.torusN(r=r, R=R, N=N, center=center, phi=phi,
+		nL=nL, nR=nR);
+	invisible(v);
+}
 mesh.vertex.torusN = function(r, R, N, center = c(0,0,0), phi = c(0, 2*pi),
 		nL = 16L, nR = 16L) {
 	if(inherits(N, "matrix")) N = list(Na = N[1,], N1 = N[2,], N2 = N[3,]);

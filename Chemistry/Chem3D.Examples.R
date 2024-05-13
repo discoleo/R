@@ -104,17 +104,27 @@ test.cylinder.line3d(1, p)
 
 ###
 p = rbind(c(1,-1,3), c(4,1,1))
-v = mesh.vertex.torus(p, r = 1/2)
+v = mesh.vertex.torus(p, r = 1/3, nL = 40)
 points3d(v$V)
 lines3d(p, col = "red")
 points3d(p, col = "orange", size = 6)
 
 ###
-p = rbind(c(1,3,3), c(4,5,1))
-v = mesh.vertex.torus(p, phi = c(-2*pi/3, 2*pi/3))
+p = p + 2 * rep(v$N2, each = 2)
+v = mesh.vertex.torusAxis(p, R = -2, r = 1/2, t = 1/2, phi = c(-2*pi/3, 2*pi/3))
+points3d(v$V)
+lines3d(p, col = "#F08032")
+
+
+### Common Axis
+p = rbind(c(1,3,3), c(14,15,1))
+v = mesh.vertex.torusAxis(p, R = 4, t = 1/4, phi = c(0, 2*pi/3))
+points3d(v$V)
+v = mesh.vertex.torusAxis(p, R = 4, t = 1/2, phi = c(pi/3, pi))
+points3d(v$V)
+v = mesh.vertex.torusAxis(p, R = 4, t = 3/4, phi = c(2*pi/3, 4*pi/3))
 points3d(v$V)
 lines3d(p, col = "red")
-points3d(p, col = "orange", size = 6)
 
 
 #############
