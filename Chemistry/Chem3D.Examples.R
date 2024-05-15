@@ -115,6 +115,10 @@ v = mesh.vertex.torusAxis(p, R = -2, r = 1/2, t = 1/2, phi = c(-2*pi/3, 2*pi/3))
 points3d(v$V)
 lines3d(p, col = "#F08032")
 
+#
+rotate.xz(0.7)
+rotate.xy(0.25)
+
 
 ### Common Axis
 p = rbind(c(1,3,3), c(14,15,1))

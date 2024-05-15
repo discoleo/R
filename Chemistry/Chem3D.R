@@ -52,6 +52,28 @@ expand.polygon3d = function(d, x, y, z, is.rel = TRUE) {
 	return(p);
 }
 
+### Rotations
+
+rotate.xz = function(alpha = pi/2) {
+	m = matrix(c(cos(alpha),0,sin(alpha),0,
+		0,1,0,0,
+		-sin(alpha),0,cos(alpha),0,
+		0,0,0,1), nrow = 4);
+	old = par3d("userMatrix");
+	par3d(userMatrix = m %*% old);
+	highlevel();
+	invisible(old);
+}
+rotate.xy = function(alpha = pi/6) {
+	m = matrix(c(cos(alpha),sin(alpha),0,0,
+		-sin(alpha),cos(alpha),0,0,
+		0,0,1,0, 0,0,0,1), nrow = 4);
+	old = par3d("userMatrix");
+	par3d(userMatrix = m %*% old);
+	highlevel();
+	invisible(old);
+}
+
 
 ##########################
 
