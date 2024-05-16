@@ -53,7 +53,7 @@ solve.exp2 = function(b, x0, ...) {
 	}
 	if(b0 == 0) {
 		# exp(2*x^2) = b1^2*x^2;
-		# W(-2): NO real solution!
+		# W(-2/b1^2): NO real solution!
 		if(any(Im(x0) == 0)) warning("Unlikely to find solution!");
 		sol = solve.all(FUN, x0=x0, ...);
 		return(sol);
@@ -77,4 +77,43 @@ x0 = - sqrt((-0.79402363 + 0.77011175i) / -2);
 x0 = rbind(-1 - 1i, -1 + 1i); # works as well
 sol = solve.exp2(b, x0=x0)
 test.exp2(sol, b=b)
+
+
+###################
+###################
+
+### System:
+# exp(x) = b*y + R
+# exp(y) = b*z + R
+# exp(z) = b*x + R
+
+# the actual NLS:
+solve.SExp = function(x, R, bb=1) {
+	x = matrix(x, nr=2); xc = x[2,]; x = x[1,] + 1i * xc;
+	y = exp(x) - bb*x[c(2,3,1)] - R;
+	y = rbind(Re(y), Im(y));
+	return(y);
+}
+
+# Parameters:
+b = 1;
+R = 2;
+	
+### Step 1:
+	
+# - choosing some non-standard values may help;
+# - Note: exponentials may easily blow up;
+x0 = c(2,2,1/3) + 1i*sqrt(2)*c(-2, 2, -1/4);
+R0 = exp(x0) - b*x0[c(2,3,1)]
+# create a seq from Rstart to Rend;
+path = expand.path(R0, R)
+
+### Step 2:
+x = solve.path(solve.SExp, x0, path=path, bb=b)
+
+### Test
+exp(x) - b*x[c(2,3,1)]
+
+# Non-Trivial Solution:
+print(x)
 
