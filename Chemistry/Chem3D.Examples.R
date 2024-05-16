@@ -152,6 +152,14 @@ open3d()
 Th4.base(N = 32)
 
 
+###################
+
+### Icosahedron ###
+
+p = rbind(c(1,1,2), c(3,4,6))
+v = test.icosa(p)
+
+
 ##################
 
 ### Torus: Cyclo-6

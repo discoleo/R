@@ -23,6 +23,15 @@ dist.xyz = function(x, y, z) {
 	}
 	sqrt(diff(x)^2 + diff(y)^2 + diff(z)^2);
 }
+dist.l3d = function(x) {
+	# TODO: process each segment of line;
+	d = x[1:3] - x[4:6];
+	sqrt(sum(d^2));
+}
+dist.p3d = function(p1, p2) {
+	d = p2 - p1;
+	sqrt(sum(d^2));
+}
 
 center.xyz = function(x, y, z) {
 	if(missing(y)) {
@@ -33,6 +42,10 @@ center.xyz = function(x, y, z) {
 	y = sum(y) / len;
 	z = sum(z) / len;
 	return(c(x,y,z));
+}
+center.p3d = function(x) {
+	dim(x) = c(3, length(x) / 3);
+	apply(x, 1, mean);
 }
 
 expand.polygon3d = function(d, x, y, z, is.rel = TRUE) {
@@ -53,6 +66,9 @@ expand.polygon3d = function(d, x, y, z, is.rel = TRUE) {
 }
 
 ### Rotations
+
+# Rotations of Viewport
+# (non-destructive rotations)
 
 rotate.xz = function(alpha = pi/2) {
 	m = matrix(c(cos(alpha),0,sin(alpha),0,
@@ -335,6 +351,20 @@ test.eigen.lineAny = function(p, d = 1, both = TRUE, rev = FALSE,
 
 
 ################
+
+################
+### Polygons ###
+
+# N = list with 2 Normals (N1, N2);
+vertex.ngon = function(n, N, r = 1, center = c(0,0,0), phi = 0) {
+	n2 = 2*n - 2;
+	cs = cos(seq(0, n2, length.out = n)*pi/n + phi);
+	sn = sin(seq(0, n2, length.out = n)*pi/n + phi);
+	x = r*(N$N1[1]*cs + N$N2[1]*sn) + center[1];
+	y = r*(N$N1[2]*cs + N$N2[2]*sn) + center[2];
+	z = r*(N$N1[3]*cs + N$N2[3]*sn) + center[3];
+	return(cbind(x=x, y=y, z=z));
+}
 
 ################
 ### Cylinder ###
@@ -732,6 +762,80 @@ Th4 = function(xyz, center = c(0,0,0), r = 1) {
 	# Eq: a*(x-x0) + b*(y-y0) + c*(z-z0) = 0
 	# TODO
 }
+
+
+###################
+
+###################
+### Icosahedron ###
+
+# p  = points defining Axis;
+# d  = side-length; default = based on ||p||;
+# dH = distance between 2 pentagon-planes;
+# dV = distance between vertex and pentagon;
+# Note: changing dH or dV generates a non-regular Icosahedron;
+icosa = function(p, d = NULL, dH = NULL, dV = NULL, phi = 0, detailed = FALSE) {
+	### Formulas:
+	# Rp = r of poly(5);
+	# d  = 2*Rp*sin(pi/5);
+	# d0 = dist(topV, bottomV);
+	# dd = dist(Vertex, Diagonal);
+	d0  = dist.xyz(p);
+	thi = 1/tan(pi/5);
+	dd  = (1/sin(pi/5) - thi) / 2;
+	dH1 = sqrt(3/4 - dd^2);
+	dV1 = sqrt(3/4 - thi^2/4);
+	isNH = is.null(dH);
+	isNV = is.null(dV);
+	# TODO: check concept & combinations;
+	# - may require different concept if some of the values are given;
+	if(isNH) dH = dH1;
+	if(isNV) dV = dV1;
+	if(is.null(d)) {
+		d = d0 / (dH + 2*dV);
+	}
+	if(isNH) dH = dH * d;
+	if(isNV) dV = dV * d;
+	# Centres:
+	t1 = dV / d0;
+	t2 = 1 - t1;
+	c1 = t2 * p[1,] + t1 * p[2,];
+	c2 = t1 * p[1,] + t2 * p[2,];
+	# Pentagons:
+	N  = eigen.lineAnyN2(p);
+	rp = d / (2*sin(pi/5));
+	v1 = vertex.ngon(5, N=N, r = rp, center = c1, phi = phi);
+	v2 = vertex.ngon(5, N=N, r = rp, center = c2, phi = phi + pi/5);
+	v  = rbind(v1, v2, p);
+	if(detailed) {
+		attr(v, "details") = list(t = c(t1, t2), C = rbind(c1, c2));
+	}
+	return(v);
+}
+
+test.icosa = function(p, dH = NULL, dV = NULL, test.dist = TRUE,
+		col.line = "blue", col.p = c("red", "orange"), size = 5) {
+	ic = icosa(p, dH=dH, dV=dV, detailed = TRUE);
+	points3d(ic)
+	lines3d(ic[c(1:5, 1),])
+	lines3d(ic[c(6:10, 6),])
+	lines3d(p, col = col.line)
+	points3d(p, col = col.p[[1]], size=size)
+	points3d(attr(ic, "details")$C, col = col.p[[2]], size=size);
+	# Test:
+	if(test.dist) {
+		d = ic[c(1:5, 1:5),] - ic[c(6:10, 10, 6:9),];
+		d = rbind(d, ic[1:5, ] - rep(ic[11,], each=5));
+		d = rbind(d, ic[6:10,] - rep(ic[12,], each=5));
+		d = apply(d, 1, function(d) sqrt(sum(d^2)));
+		d = matrix(d, ncol = 5, byrow = TRUE);
+		rownames(d) = c("Lat 1", "Lat 2", "Top", "Bottom");
+		cat("Sides:\n"); print(d);
+	}
+	invisible(ic)
+}
+
+# TODO: regular anti-prism;
 
 
 ##################
