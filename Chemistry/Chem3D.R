@@ -813,26 +813,80 @@ icosa = function(p, d = NULL, dH = NULL, dV = NULL, phi = 0, detailed = FALSE) {
 	return(v);
 }
 
+# r = radius of circumscribed sphere;
+# N = Normal of main (user defined) axis;
+vertex.icosa.r = function(r, N, center = c(0,0,0), phi = 0, detailed = TRUE) {
+	lst = math.icosa.r(r);
+	rp  = lst$dS / (2*sin(pi/5));
+	# Centres:
+	p1 = center - r*N;
+	p2 = center + r*N;
+	t1 = lst$t1; t2 = lst$t2;
+	c1 = t2 * p1 + t1 * p2;
+	c2 = t1 * p1 + t2 * p2;
+	# Pentagons:
+	N2 = eigen.lineAnyN2(rbind(c(0,0,0), N));
+	v1 = vertex.ngon(5, N = N2, r = rp, center = c1, phi = phi);
+	v2 = vertex.ngon(5, N = N2, r = rp, center = c2, phi = phi + pi/5);
+	v  = rbind(v1, v2, p1, p2);
+	if(detailed) {
+		attr(v, "details") = list(t = c(t1, t2), C = rbind(c1, c2));
+	}
+	return(v);
+}
+math.icosa.r = function(r) {
+	thi = 1/tan(pi/5);
+	dd =  1/sin(pi/5) - thi;
+	dH = sqrt(3 - dd^2) / 2;
+	dV = sqrt(3 - thi^2) / 2;
+	r2 = 2*r;
+	d  = r2 / (dH + 2*dV);
+	dH = dH * d;
+	dV = dV * d;
+	# Centres:
+	t1 = dV / r2;
+	t2 = 1 - t1;
+	# Result:
+	lst = list(R = r, dS = d, dH=dH, dV=dV, t1=t1, t2=t2);
+}
+
+### Plot:
+plot.bb.icosa = function(v, p = NULL,
+		col.line = "blue", col.p = c("red", "orange"), size = 5) {
+	# Main (custom) Axis:
+	if(is.null(p)) p = v[c(11,12), ];
+	points3d(v);
+	lines3d(v[c(1:5, 1),]);
+	lines3d(v[c(6:10, 6),]);
+	lines3d(p, col = col.line);
+	points3d(p, col = col.p[[1]], size=size);
+	C = attr(v, "details")$C;
+	if( ! is.null(C)) {
+		points3d(C, col = col.p[[2]], size=size);
+	}
+	invisible(v);
+}
+
+### Tests:
 test.icosa = function(p, dH = NULL, dV = NULL, test.dist = TRUE,
 		col.line = "blue", col.p = c("red", "orange"), size = 5) {
 	ic = icosa(p, dH=dH, dV=dV, detailed = TRUE);
-	points3d(ic)
-	lines3d(ic[c(1:5, 1),])
-	lines3d(ic[c(6:10, 6),])
-	lines3d(p, col = col.line)
-	points3d(p, col = col.p[[1]], size=size)
-	points3d(attr(ic, "details")$C, col = col.p[[2]], size=size);
+	plot.bb.icosa(ic, p=p, col.line=col.line, col.p=col.p, size=size);
 	# Test:
 	if(test.dist) {
-		d = ic[c(1:5, 1:5),] - ic[c(6:10, 10, 6:9),];
-		d = rbind(d, ic[1:5, ] - rep(ic[11,], each=5));
-		d = rbind(d, ic[6:10,] - rep(ic[12,], each=5));
-		d = apply(d, 1, function(d) sqrt(sum(d^2)));
-		d = matrix(d, ncol = 5, byrow = TRUE);
-		rownames(d) = c("Lat 1", "Lat 2", "Top", "Bottom");
+		d = test.math.icosa(ic);
 		cat("Sides:\n"); print(d);
 	}
 	invisible(ic)
+}
+test.math.icosa = function(v) {
+	d = v[c(1:5, 1:5),] - v[c(6:10, 10, 6:9),];
+	d = rbind(d, v[1:5, ] - rep(v[11,], each=5));
+	d = rbind(d, v[6:10,] - rep(v[12,], each=5));
+	d = apply(d, 1, function(d) sqrt(sum(d^2)));
+	d = matrix(d, ncol = 5, byrow = TRUE);
+	rownames(d) = c("Lat 1", "Lat 2", "Top", "Bottom");
+	return(d);
 }
 
 # TODO: regular anti-prism;

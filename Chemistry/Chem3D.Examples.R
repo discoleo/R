@@ -159,6 +159,12 @@ Th4.base(N = 32)
 p = rbind(c(1,1,2), c(3,4,6))
 v = test.icosa(p)
 
+###
+r = 1.5
+v = vertex.icosa.r(r = r, N = c(1, 1, sqrt(2))/2, center = c(1,1,2))
+plot.bb.icosa(v)
+test.math.icosa(v)
+
 
 ##################
 
