@@ -166,6 +166,13 @@ plot.bb.icosa(v)
 test.math.icosa(v)
 
 
+###
+close3d()
+p = rbind(c(1,1,2), c(3,4,6))
+v = icosa(p)
+test.icosa.vset(v)
+
+
 ##################
 
 ### Torus: Cyclo-6

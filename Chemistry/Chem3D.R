@@ -769,6 +769,45 @@ Th4 = function(xyz, center = c(0,0,0), r = 1) {
 ###################
 ### Icosahedron ###
 
+mesh.icosa.vset = function(v) {
+	m = cbind(
+		rbind(1:5,  c(2:5, 1),   6:10),
+		rbind(1:5,    6:10,   c(10, 6:9)),
+		rbind(1:5,  c(2:5, 1),  11),
+		rbind(6:10, c(7:10, 6), 12)
+	);
+	v = list(V = v, M = m);
+	invisible(v);
+}
+
+
+test.icosa.vset = function(m, r.ball = 0.75, lwd.line = 4, size.points = 4,
+		col = "#8032B2", col.balls = "#F03244", col.fill = "#808080",
+		alpha = c(0.75, 0.5)) {
+	m = mesh.icosa.vset(v);
+	test.icosa.mesh(m, r.ball=r.ball, lwd.line=lwd.line, size.points=size.points,
+		col=col, col.balls=col.balls, col.fill=col.fill, alpha=alpha);
+	invisible(m);
+}
+test.icosa.mesh = function(m, r.ball = 0.75, lwd.line = 4, size.points = 4,
+		col = "#8032B2", col.balls = "#F03244", col.fill = "#808080",
+		alpha = c(0.75, 0.5)) {
+	# Sides:
+	if( ! is.null(col.fill)) {
+		shade3d(mesh3d(vertices = t(m$V), triangles = m$M),
+			col = col.fill, alpha=alpha[2]);
+	}
+	# BackBone:
+	wire3d(mesh3d(vertices = t(m$V), triangles = m$M), col=col, size = lwd.line);
+	# Balls:
+	if(r.ball == 0) {
+		points3d(m$V, col = col.balls, size = size.points);
+	} else {
+		spheres3d(x = m$V, radius = r.ball,
+			color = col.balls, alpha=alpha[1]);
+	}
+}
+
 # p  = points defining Axis;
 # d  = side-length; default = based on ||p||;
 # dH = distance between 2 pentagon-planes;
