@@ -117,3 +117,32 @@ exp(x) - b*x[c(2,3,1)]
 # Non-Trivial Solution:
 print(x)
 
+# Note:
+# - the following are invariant under a cyclic permutation:
+#   (but utility is unknown)
+sum(x)        # 4.611009-7.734023i
+sum(exp(x))   # 10.61101-7.734022i
+sum(x*exp(x)) # 7.137972-40.74982i
+
+
+### Example 2:
+b = 1;
+R = 3;
+
+# Step 1:
+x0 = c(1/2,2,-1/3) + 1i*sqrt(2)*c(-2, 2, 1/2);
+# Iteration 2:
+x0 = c(1.5+6i, 1.6+0.2i, 2+1i);
+R0 = exp(x0) - b*x0[c(2,3,1)]
+# create a seq from Rstart to Rend;
+path = expand.path(R0, R)
+
+### Step 2:
+x = solve.path(solve.SExp, x0, path=path, bb=b)
+
+### Test
+exp(x) - b*x[c(2,3,1)]
+
+# Non-Trivial Solution:
+print(x)
+
