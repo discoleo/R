@@ -95,6 +95,12 @@ rotate.xy = function(alpha = pi/6) {
 
 ### Orthogonal Projection/Rotation
 
+eigen.lineN2 = function(p, x, y = NULL, z = NULL, normalize = TRUE) {
+	N = eigen.xy3D(p, x=x, y=y, z=z, normalize=normalize);
+	N = list(N1 = N$Nx, N2 = N$Ny, P = N$P);
+	return(N);
+}
+
 # Both Normals: but starting in arbitrary direction;
 # Out: P = projection of p0 (identical to p1);
 eigen.lineAnyN2 = function(x, y = NULL, z = NULL, normalize = TRUE) {
@@ -561,6 +567,43 @@ mesh.vertex.torusN = function(r, R, N, center = c(0,0,0), phi = c(0, 2*pi),
 	attr(V, "length") = c(len1, len2);
 	return(list(V = V, Na = N$Na, N1 = N$N1, N2 = N$N2));
 }
+
+
+### Cylinder: Diagonal Section
+# - very basic implementation;
+
+# p = 2 points defining central axis;
+cylinder.section.p2 = function(px, p, r, nC = 32, nL = 17, phi = 0) {
+	N = eigen.lineN2(px, p);
+	lst = cylinder.section(p=p, r=r, N=N, nC=nC, nL=nL, phi=phi);
+	invisible(lst);
+}
+
+# p = 2 points defining central axis;
+cylinder.section = function(p, r, N, nC = 32, nL = 17, phi = 0) {
+	# Half of Cylinder = Centre of Diagonal;
+	p[2,] = (p[1,] + p[2,])/2;
+	t0 = seq(0, 1, length.out = nL);
+	ct = cbind(1 - t0, t0) %*% p;
+	dp = p[2,] - p[1,];
+	d2 = sum(dp^2);
+	rt = sqrt(r^2 + d2*t0^2);
+	Nt = lapply(seq_along(t0), function(id) {
+		(t0[id] * dp + r*N$N1) / rt[id];
+	});
+	Nt = do.call(rbind, Nt);
+	tc = seq(0, 2*pi, length.out = nC) + phi;
+	pp = lapply(seq_along(t0), function(id) {
+		x = rt[id] * cos(tc) * Nt[id,1] + r * sin(tc) * N$N2[1] + ct[id,1];
+		y = rt[id] * cos(tc) * Nt[id,2] + r * sin(tc) * N$N2[2] + ct[id,2];
+		z = rt[id] * cos(tc) * Nt[id,3] + r * sin(tc) * N$N2[3] + ct[id,3];
+		cbind(x,y,z);
+	});
+	pp = do.call(rbind, pp);
+	invisible(pp);
+}
+
+##########
 
 ### Tests:
 test.cylinder.line3d = function(r, x, y = NULL, z = NULL,

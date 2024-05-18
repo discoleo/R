@@ -99,6 +99,15 @@ colnames(p) = c("x", "y", "z")
 test.cylinder.line3d(1, p)
 
 
+### Cylinder: Diagonal Section
+
+###
+p  = rbind(c(1,2,3), c(1,2,5));
+px = c(1,1,-3)
+points3d(cylinder.section.p2(px, p, r = 0.5))
+rotate.xz(- pi/2); rotate.xy(-pi/2)
+
+
 #############
 ### Torus ###
 
