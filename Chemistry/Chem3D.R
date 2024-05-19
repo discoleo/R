@@ -578,6 +578,11 @@ cylinder.section.p2 = function(px, p, r, nC = 32, nL = 17, phi = 0) {
 	lst = cylinder.section(p=p, r=r, N=N, nC=nC, nL=nL, phi=phi);
 	invisible(lst);
 }
+cylinder.section.p2.new = function(px, p, r, nC = 32, nL = 17, phi = 0) {
+	N = eigen.lineN2(px, p);
+	lst = cylinder.section.new(p=p, r=r, N=N, nC=nC, nL=nL, phi=phi);
+	invisible(lst);
+}
 
 # p = 2 points defining central axis;
 cylinder.section = function(p, r, N, nC = 32, nL = 17, phi = 0) {
@@ -597,6 +602,35 @@ cylinder.section = function(p, r, N, nC = 32, nL = 17, phi = 0) {
 		x = rt[id] * cos(tc) * Nt[id,1] + r * sin(tc) * N$N2[1] + ct[id,1];
 		y = rt[id] * cos(tc) * Nt[id,2] + r * sin(tc) * N$N2[2] + ct[id,2];
 		z = rt[id] * cos(tc) * Nt[id,3] + r * sin(tc) * N$N2[3] + ct[id,3];
+		cbind(x,y,z);
+	});
+	pp = do.call(rbind, pp);
+	invisible(pp);
+}
+
+# TODO:
+cylinder.section.new = function(p, r, N, nC = 32, nL = 17, phi = 0) {
+	dp = p[2,] - p[1,];
+	d2 = sum(dp^2);
+	rt = sqrt(r^2 + d2/4);
+	# Nt = (dp/2 + r*N$N1) / rt;
+	# Intersection: Circles w Ellipse
+	t0 = seq(0, 1, length.out = nL);
+	yr = 2 * sqrt(t0*(1 - t0));
+	th = acos(yr);
+	th[t0 <= 1/2] = th[t0 <= 1/2] + pi/2;
+	th[t0 > 1/2]  = pi/2 - th[t0 > 1/2];
+	ct = cbind(1 - t0, t0) %*% p;
+	# Note: tc can be made with alternating phase;
+	tc = seq(0, 2*pi, length.out = nC) + phi;
+	pp = lapply(seq_along(t0), function(id) {
+		tc = tc[tc < th[id]];
+		# add boundary point:
+		tc = c(tc, th[id]);
+		tc = c(tc, - tc);
+		x = r * (cos(tc) * N$N1[1] + sin(tc) * N$N2[1]) + ct[id,1];
+		y = r * (cos(tc) * N$N1[2] + sin(tc) * N$N2[2]) + ct[id,2];
+		z = r * (cos(tc) * N$N1[3] + sin(tc) * N$N2[3]) + ct[id,3];
 		cbind(x,y,z);
 	});
 	pp = do.call(rbind, pp);

@@ -107,6 +107,9 @@ px = c(1,1,-3)
 points3d(cylinder.section.p2(px, p, r = 0.5))
 rotate.xz(- pi/2); rotate.xy(-pi/2)
 
+#
+points3d(cylinder.section.p2.new(px, p, r = 0.5, nL = 65, nC = 37))
+
 
 #############
 ### Torus ###
