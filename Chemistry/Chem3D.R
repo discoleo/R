@@ -71,7 +71,7 @@ expand.polygon3d = function(d, x, y, z, is.rel = TRUE) {
 rm.vertex.mesh = function(id, data) {
 	if(length(id) > 1) {
 		tmp = rm.vertex.mesh.any(id, data=data);
-		return(tmp);
+		return(invisible(tmp));
 	}
 	data$V = data$V[- id, ];
 	isE = apply(data$M, 2, function(x) any(x == id));

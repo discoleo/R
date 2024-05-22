@@ -189,6 +189,8 @@ test.icosa.vset(v)
 
 #
 close3d()
+v = icosa(p)
+m = mesh.icosa.vset(v)
 test.icosa.mesh(rm.vertex.mesh(c(1,2), m))
 
 
