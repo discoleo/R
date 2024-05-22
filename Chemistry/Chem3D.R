@@ -762,6 +762,42 @@ cone.vertex.alternating = function(r, p, nL = 16, nC = 32, phi = 0) {
 	invisible(vv);
 }
 
+cone.vertex.adaptive = function(r, p, nL = 16, nC = 32, phi = 0,
+		options = list(min = 6, limit = 6, shift.fr = 1)) {
+	# Arbitrary N to Axis of Cone:
+	N = eigen.lineAnyN2(p);
+	# Axis:
+	Na = p[2,] - p[1,];
+	dd = sqrt(sum(Na^2));
+	Na = Na / dd;
+	# Centres:
+	tp = seq(0, 1, length.out = nL);
+	ti = 1 - tp;
+	ct = cbind(tp, ti) %*% p;
+	# Circles
+	nt = ceiling(nC * ti);
+	# Very small circles:
+	nt[nt < options$limit] = options$min;
+	nt[length(nt)] = 1;
+	#
+	dShift = options$shift.fr;
+	vv = lapply(seq_along(tp), function(id) {
+		tc = seq(0, 2*pi, length.out = nt[id]) + phi;
+		if(id %% 2 == 0) {
+			# TODO: best phase shift ???
+			tc = tc + pi / (nt[id] + dShift);
+		}
+		sc = cbind(cos(tc), sin(tc));
+		r = r * ti[id];
+		x = r * (sc[,1] * N$N1[1] + sc[,2] * N$N2[1]) + ct[id,1];
+		y = r * (sc[,1] * N$N1[2] + sc[,2] * N$N2[2]) + ct[id,2];
+		z = r * (sc[,1] * N$N1[3] + sc[,2] * N$N2[3]) + ct[id,3];
+		cbind(x,y,z);
+	});
+	vv = do.call(rbind, vv);
+	invisible(vv);
+}
+
 cone.vertex.simple = function(r, p, nL = 16, nC = 32, phi = 0) {
 	# Arbitrary N to Axis of Cone:
 	N = eigen.lineAnyN2(p);

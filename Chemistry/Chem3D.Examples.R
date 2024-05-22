@@ -123,6 +123,10 @@ points3d(cone.vertex.alternating(3, p), col = "red", alpha = 0.75)
 points3d(cone.vertex.alternating(3 - 0.1, p, phi = 0.01), alpha = 0.6)
 
 
+###
+points3d(cone.vertex.adaptive(3, p, nC = 47))
+
+
 #############
 ### Torus ###
 
