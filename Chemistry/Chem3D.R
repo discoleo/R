@@ -65,6 +65,36 @@ expand.polygon3d = function(d, x, y, z, is.rel = TRUE) {
 	return(p);
 }
 
+### Operations
+
+# Remove Vertex
+rm.vertex.mesh = function(id, data) {
+	if(length(id) > 1) {
+		tmp = rm.vertex.mesh.any(id, data=data);
+		return(tmp);
+	}
+	data$V = data$V[- id, ];
+	isE = apply(data$M, 2, function(x) any(x == id));
+	data$M = data$M[, ! isE];
+	# Correct Edges:
+	if(nrow(data$V) >= id) {
+		isE = data$M > id;
+		data$M[isE] = data$M[isE] - 1;
+	}
+	invisible(data);
+}
+rm.vertex.mesh.any = function(id, data) {
+	data$V = data$V[- id, ];
+	id  = sort(id);
+	isE = apply(data$M, 2, function(x) any(x %in% id));
+	data$M = data$M[, ! isE];
+	for(ii in id) {
+		isE = data$M >= ii;
+		data$M[isE] = data$M[isE] - 1;
+	}
+	invisible(data);
+}
+
 ### Rotations
 
 # Rotations of Viewport

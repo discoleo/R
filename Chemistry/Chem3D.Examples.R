@@ -187,6 +187,10 @@ p = rbind(c(1,1,2), c(3,4,6))
 v = icosa(p)
 test.icosa.vset(v)
 
+#
+close3d()
+test.icosa.mesh(rm.vertex.mesh(c(1,2), m))
+
 
 ##################
 
