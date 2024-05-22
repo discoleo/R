@@ -99,7 +99,8 @@ colnames(p) = c("x", "y", "z")
 test.cylinder.line3d(1, p)
 
 
-### Cylinder: Diagonal Section
+### Cylinder:
+### Diagonal Section
 
 ###
 p  = rbind(c(1,2,3), c(1,2,5));
@@ -112,6 +113,14 @@ points3d(cylinder.section.p2(px, p, r = 0.5, type = "Simple", nL = 65, nC = 37))
 
 #
 points3d(cylinder.section.p2(px, p, r = 0.5, nL = 65, nC = 37))
+
+
+############
+### Cone ###
+
+p = rbind(c(1,1,2), c(3,4,6))
+points3d(cone.vertex.alternating(3, p), col = "red", alpha = 0.75)
+points3d(cone.vertex.alternating(3 - 0.1, p, phi = 0.01), alpha = 0.6)
 
 
 #############

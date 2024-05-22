@@ -721,6 +721,72 @@ cylinder.section.alternating = function(p, r, N,
 	invisible(pp);
 }
 
+
+############
+### Cone ###
+
+cone.vertex.alternating = function(r, p, nL = 16, nC = 32, phi = 0) {
+	# Arbitrary N to Axis of Cone:
+	N = eigen.lineAnyN2(p);
+	# Axis:
+	Na = p[2,] - p[1,];
+	dd = sqrt(sum(Na^2));
+	Na = Na / dd;
+	# Centres:
+	tp = seq(0, 1, length.out = nL);
+	ti = 1 - tp;
+	ct = cbind(tp, ti) %*% p;
+	# Circles
+	tc = seq(0, 2*pi, length.out = nC) + phi;
+	sc = cbind(cos(tc), sin(tc));
+	v1 = lapply(seq(1, nL, by=2), function(id) {
+		r = r * ti[id];
+		x = r * (sc[,1] * N$N1[1] + sc[,2] * N$N2[1]) + ct[id,1];
+		y = r * (sc[,1] * N$N1[2] + sc[,2] * N$N2[2]) + ct[id,2];
+		z = r * (sc[,1] * N$N1[3] + sc[,2] * N$N2[3]) + ct[id,3];
+		cbind(x,y,z);
+	});
+	v1 = do.call(rbind, v1);
+	#
+	tc = tc + pi / nC;
+	sc = cbind(cos(tc), sin(tc));
+	v2 = lapply(seq(2, nL, by=2), function(id) {
+		r = r * ti[id];
+		x = r * (sc[,1] * N$N1[1] + sc[,2] * N$N2[1]) + ct[id,1];
+		y = r * (sc[,1] * N$N1[2] + sc[,2] * N$N2[2]) + ct[id,2];
+		z = r * (sc[,1] * N$N1[3] + sc[,2] * N$N2[3]) + ct[id,3];
+		cbind(x,y,z);
+	});
+	v2 = do.call(rbind, v2);
+	vv = rbind(v1, v2);
+	invisible(vv);
+}
+
+cone.vertex.simple = function(r, p, nL = 16, nC = 32, phi = 0) {
+	# Arbitrary N to Axis of Cone:
+	N = eigen.lineAnyN2(p);
+	# Axis:
+	Na = p[2,] - p[1,];
+	dd = sqrt(sum(Na^2));
+	Na = Na / dd;
+	# Centres:
+	tp = seq(0, 1, length.out = nL);
+	ti = 1 - tp;
+	ct = cbind(tp, ti) %*% p;
+	# Circles
+	tc = seq(0, 2*pi, length.out = nC) + phi;
+	sc = cbind(cos(tc), sin(tc));
+	vv = lapply(seq_along(tp), function(id) {
+		r = r * ti[id];
+		x = r * (sc[,1] * N$N1[1] + sc[,2] * N$N2[1]) + ct[id,1];
+		y = r * (sc[,1] * N$N1[2] + sc[,2] * N$N2[2]) + ct[id,2];
+		z = r * (sc[,1] * N$N1[3] + sc[,2] * N$N2[3]) + ct[id,3];
+		cbind(x,y,z);
+	});
+	vv = do.call(rbind, vv);
+	invisible(vv);
+}
+
 ##########
 
 ### Tests:
