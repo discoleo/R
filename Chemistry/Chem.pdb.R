@@ -58,7 +58,12 @@ dist.atoms = function(p, data) {
 
 pp = dist.atoms(bbP, x)
 # Distance from GDP-Channel
-plot(pp$d, pp$t)
+isWater = x$atoms$resname == "HOH"
+isProt  = ! (isWater | isGDP)
+plot(pp$d[isProt], pp$t[isProt])
+points(pp$d[isWater], pp$t[isWater], col="#A032C096")
+points(pp$d[isGDP], pp$t[isGDP], col="#FF0000A0")
+
 
 ### Plot 3D
 
