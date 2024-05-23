@@ -21,6 +21,23 @@
 # devtools::document(path)
 # devtools::load_all(path)
 
+dist.atoms = function(p, data) {
+	if(nrow(p) != 2) stop("p must be a line segment!");
+	data = data$atoms[, c("x1", "x2", "x3")];
+	pp = proj.line3d.matrix(data, p);
+	dx = pp$x - data$x1;
+	dy = pp$y - data$x2;
+	dz = pp$z - data$x3;
+	dd = sqrt(dx*dx + dy*dy + dz*dz);
+	pp$d = dd;
+	return(pp);
+}
+
+residuals.pdb = function(x, filter, sep = "", ...) {
+	tmp = paste(x$atoms$resname[filter], x$atoms$resid[filter], sep=sep);
+	return(unique(tmp));
+}
+
 ######################
 
 ### PDB Files
@@ -34,7 +51,7 @@ x = read.pdb("4q02.pdb")
 # GDP is a residue
 unique(x$atoms$resname)
 
-# Range:
+# Bounding Box:
 isGDP = x$atoms$resname == "GDP"
 bb = lapply(x$atoms[isGDP, c("x1", "x2", "x3")], range)
 print(bb)
@@ -43,20 +60,10 @@ print(bb)
 isP = isGDP & (x$atoms$elename %in% c("PA", "PB"))
 bbP = x$atoms[isP, c("x1", "x2", "x3")];
 
+### Ex 1:
 ### Distance from GDP-Channel
-dist.atoms = function(p, data) {
-	if(nrow(p) != 2) stop("p must be a line segment!");
-	data = data$atoms[, c("x1", "x2", "x3")];
-	pp = proj.line3d.matrix(data, p);
-	dx = pp$x - data$x1;
-	dy = pp$y - data$x2;
-	dz = pp$z - data$x3;
-	dd = sqrt(dx*dx + dy*dy + dz*dz);
-	pp$d = dd;
-	return(pp);
-}
-
 pp = dist.atoms(bbP, x)
+
 # Distance from GDP-Channel
 isWater = x$atoms$resname == "HOH"
 isProt  = ! (isWater | isGDP)
@@ -65,15 +72,44 @@ points(pp$d[isWater], pp$t[isWater], col="#A032C096")
 points(pp$d[isGDP], pp$t[isGDP], col="#FF0000A0")
 
 
-### Plot 3D
-
-# TODO: better visualization;
-
+### Neighbourhood:
 isWater = x$atoms$resname == "HOH"
 isClose = pp$d <= 7 & (pp$t > -4 & pp$t < 4) & ! isGDP & ! isWater;
 atoms = x$atoms[isClose, c("x1", "x2", "x3")];
+resid(x, isClose)
+
+### Plot 3D
+close3d()
 # Phosphate P:
 points3d(bbP, col = "blue", size = 9)
 points3d(x$atoms[isGDP, c("x1", "x2", "x3")], size = 6, col = "red")
 points3d(atoms)
 
+# TODO: better visualization;
+
+### Ex 2: G-Axis
+isN = isGDP & x$atoms$elename %in% c("N1", "C2", "C8")
+pG  = x$atoms[isN, c("x1", "x2", "x3")];
+#
+close3d()
+points3d(x$atoms[isGDP & ! isN, c("x1", "x2", "x3")], size = 6, col = "red")
+points3d(pG, size = 6, col = "blue")
+#
+pG[2,] = (pG[2,] + pG[3,]) / 2;
+pG = pG[c(1,2),]
+
+pp = dist.atoms(pG, x)
+
+### Neighbourhood:
+isWater = x$atoms$resname == "HOH"
+isClose = pp$d <= 7 & (pp$t > -2 & pp$t < 2) & ! isGDP & ! isWater;
+atoms = x$atoms[isClose, c("x1", "x2", "x3")];
+resid(x, isClose)
+
+### Plot 3D
+# Phosphate P:
+close3d()
+points3d(bbP, col = "blue", size = 9)
+points3d(x$atoms[isGDP, c("x1", "x2", "x3")], size = 6, col = "red")
+points3d(atoms)
+lines3d(pG, col = "purple", alpha = 0.75)
