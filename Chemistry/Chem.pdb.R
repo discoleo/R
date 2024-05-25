@@ -30,7 +30,22 @@ dist.atoms = function(p, data) {
 	dz = pp$z - data$x3;
 	dd = sqrt(dx*dx + dy*dy + dz*dz);
 	pp$d = dd;
+	attr(pp, "d") = sqrt(sum((p[2,] - p[1,])^2));
 	return(pp);
+}
+
+select.distLine = function(x, d, t, t.abs = TRUE) {
+	# Note: the line-segment has t = c(0, 1);
+	if(length(t) == 1) t = c(-t, t+1);
+	if(t.abs) {
+		d0 = attr(x, "d");
+		if( ! is.null(d0)) {
+			# Normalize: actual distance;
+			t = t / d0;
+		}
+	}
+	isOK = x$d <= d & (x$t >= t[1] & x$t <= t[2]);
+	return(isOK);
 }
 
 residuals.pdb = function(x, filter, sep = "", ...) {
@@ -74,7 +89,7 @@ points(pp$d[isGDP], pp$t[isGDP], col="#FF0000A0")
 
 ### Neighbourhood:
 isWater = x$atoms$resname == "HOH"
-isClose = pp$d <= 7 & (pp$t > -4 & pp$t < 4) & ! isGDP & ! isWater;
+isClose = select.distLine(pp, d=7, t=6) & ! isGDP & ! isWater;
 atoms = x$atoms[isClose, c("x1", "x2", "x3")];
 resid(x, isClose)
 
@@ -87,10 +102,11 @@ points3d(atoms)
 
 # TODO: better visualization;
 
+
 ### Ex 2: G-Axis
 isN = isGDP & x$atoms$elename %in% c("N1", "C2", "C8")
 pG  = x$atoms[isN, c("x1", "x2", "x3")];
-#
+# GDP:
 close3d()
 points3d(x$atoms[isGDP & ! isN, c("x1", "x2", "x3")], size = 6, col = "red")
 points3d(pG, size = 6, col = "blue")
@@ -102,7 +118,7 @@ pp = dist.atoms(pG, x)
 
 ### Neighbourhood:
 isWater = x$atoms$resname == "HOH"
-isClose = pp$d <= 7 & (pp$t > -2 & pp$t < 2) & ! isGDP & ! isWater;
+isClose = select.distLine(pp, d=7, t=7) & ! isGDP & ! isWater;
 atoms = x$atoms[isClose, c("x1", "x2", "x3")];
 resid(x, isClose)
 
