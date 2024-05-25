@@ -34,15 +34,12 @@ dist.atoms = function(p, data) {
 	return(pp);
 }
 
-select.distLine = function(x, d, t, t.abs = TRUE) {
+select.distLine = function(x, d, t, t.norm = attr(x, "d")) {
 	# Note: the line-segment has t = c(0, 1);
 	if(length(t) == 1) t = c(-t, t+1);
-	if(t.abs) {
-		d0 = attr(x, "d");
-		if( ! is.null(d0)) {
-			# Normalize: actual distance;
-			t = t / d0;
-		}
+	if( ! is.null(t.norm)) {
+		# Normalize: actual distance;
+		t = t / t.norm;
 	}
 	isOK = x$d <= d & (x$t >= t[1] & x$t <= t[2]);
 	return(isOK);
