@@ -394,3 +394,15 @@ lim = sqrt(pi)
 integrate(\(x) cos(x) / (exp(1/x) - 1), -lim, lim)
 - sin(lim)
 
+
+##################
+##################
+
+### I( exp(sin(2*x)/2) * cos(cos(x)^2) )
+# Maths 505: A (literally) complex integral
+# https://www.youtube.com/watch?v=4I6UgSwWkIA
+# (intermediate transformation)
+
+integrate(\(x) exp(sin(2*x)/2) * cos(cos(x)^2), 0, pi)
+pi * cos(1/2)
+
