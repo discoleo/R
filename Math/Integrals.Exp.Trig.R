@@ -398,6 +398,14 @@ integrate(\(x) cos(x) / (exp(1/x) - 1), -lim, lim)
 ##################
 ##################
 
+### I( exp(2*cos(x)) ) on [0, pi]
+# Maths 505: A surprisingly interesting integral
+# https://www.youtube.com/watch?v=81qExKEYzo0
+
+integrate(\(x) exp(2*cos(x)), 0, pi)
+pi * sum(1 / factorial(seq(0, 15))^2)
+
+
 ### I( exp(sin(2*x)/2) * cos(cos(x)^2) )
 # Maths 505: A (literally) complex integral
 # https://www.youtube.com/watch?v=4I6UgSwWkIA
