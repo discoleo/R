@@ -5,6 +5,13 @@
 # erf(1) = 2 * (pnorm(sqrt(2)) - 0.5);
 # I(exp(-x^2), 0, 1) = erf(1) * sqrt(pi)/2;
 
+# Note: I(exp(-x^(2/3))) = 3 * D( I(exp(-x^2)) )/D_k
+f = \(k, n=2) integrate(\(x) exp(-k*x^n), 0, 1)$value
+eps = 1E-6;
+# d(I) / d(k)
+f(1, 2/3) / 3;
+- (f(1+eps) - f(1)) / eps;
+
 
 ################
 
