@@ -124,7 +124,7 @@ pi^2/16 - pi/4*log(2) - Catalan;
 
 # Gen 1: TODO
 k = 2
-integrate(function(x) atan(x)*log((k - x)/(k + x)), 0, 1)
+integrate(function(x) atan(x) * log((k - x)/(k + x)), 0, 1)
 (pi/4 - log(2)/2)*log((k-1)/(k+1)) +
 	+ integrate(function(x) (x*atan(x) - log(x^2+1)/2)*(1/(k - x) + 1/(k + x)), 0, 1)$value
 (pi/4 - log(2)/2)*log((k-1)/(k+1)) +
@@ -344,7 +344,7 @@ integrate(\(x) x^p * (x^n - 1)^5 / log(x)^5, 0, 1)
 ##################
 ##################
 
-### I( 1 / (1 - x*log(x)) )
+### I( 1 / (1 - x*log(x)) ) on [0, 1]
 # Flammable Maths: I bet BPRP can not solve this Integral
 # https://www.youtube.com/watch?v=p1uJkif5zE0
 
@@ -358,4 +358,30 @@ integrate(\(x) 1 / (1 + x*log(x)), 0, 1)
 sum( gamma(id + 1) / (id + 1)^(id + 1) )
 
 # TODO: any closed formulas?
+
+
+##################
+##################
+
+### I( 1 / ((x+1) * (|log(x)|^n + b)) )
+# Maths 505: A fun little integral exploration
+# https://www.youtube.com/watch?v=Hl_ko1RSO3I
+
+b = sqrt(3)
+n = 6
+integrate(\(x) 1 / ((x+1) * (abs(log(x))^n + b)), 0, Inf)
+pi/n * b^(1/n-1) / sin(pi/n)
+
+#
+b = sqrt(5)
+n = sqrt(7)
+# accuracy issues with small n;
+integrate(\(x) 1 / ((x+1) * (abs(log(x))^n + b)), 0, Inf, rel.tol = 1E-8, subdivisions = 1025)
+pi/n * b^(1/n-1) / sin(pi/n)
+
+#
+b = 5
+n = sqrt(7)
+integrate(\(x) 1 / ((x+1) * (abs(log(x))^n + b)), 0, Inf, rel.tol = 1E-8, subdivisions = 1025)
+pi/n * b^(1/n-1) / sin(pi/n)
 
