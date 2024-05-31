@@ -6,10 +6,12 @@
 # I(exp(-x^2), 0, 1) = erf(1) * sqrt(pi)/2;
 
 # Note: I(exp(-x^(2/3))) = 3 * D( I(exp(-x^2)) )/D_k
+# TODO: ODE;
 f = \(k, n=2) integrate(\(x) exp(-k*x^n), 0, 1)$value
 eps = 1E-6;
 # d(I) / d(k)
 f(1, 2/3) / 3;
+(f(1) - exp(-1)) / 2;
 - (f(1+eps) - f(1)) / eps;
 
 
