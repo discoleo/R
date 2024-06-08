@@ -23,9 +23,9 @@ as.variables = function(x, n=4) {
 
 ### System 3x3 Ht
 
-# x1^2 + x2^2 + x3^2 = R1
-# y1^2 + y2^2 + y3^2 = R1
-# z1^2 + z2^2 + z3^2 = R1
+# x1^n + x2^n + x3^n = R1
+# y1^n + y2^n + y3^n = R1
+# z1^n + z2^n + z3^n = R1
 #
 # x1^2 + y1^2 + z1^2 = R2
 # x2^2 + y2^2 + z2^2 = R2
@@ -40,8 +40,10 @@ as.variables = function(x, n=4) {
 # - then any simultaneous cyclic permutation of
 #   the rows or the columns or the diagonals are also a solution;
 # => 9 permutations;
-# - this particular order & type: (-1) * solutions is also solution;
+# - this particular type & n = even: (-1) * solutions is also solution;
 
+# If n = 2: => R1 = R2, but system is indeterminate;
+# Aux eq: x1*y1*z1 + x2*y2*z2 + x3*y3*z3 = R4
 
 # TODO: solve;
 
