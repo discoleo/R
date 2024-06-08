@@ -8,6 +8,62 @@
 
 ### Helper Functions
 
+# library(rootSolve)
+
+source("Polynomials.Helper.Solvers.Num.R")
+
+###
+test.S3x3.Simple = function(sol, R = NULL, n = c(1,2), round0 = FALSE, warn = TRUE) {
+	if(warn) {
+		warn.S3x3(n=n, R=R);
+	}
+	if( ! inherits(sol, "matrix")) {
+		sol = matrix(sol, nrow = 3, ncol = 3, byrow = FALSE);
+	}
+	#
+	err1 = apply(sol^n[1], 1, sum);
+	err2 = apply(sol^n[2], 2, sum);
+	#
+	tmp = lapply(seq(3), function(i) {
+		nc = if(i == 1) c(1,2,3)
+			else if(i == 2) c(2,3,1) else c(3,1,2);
+		sol[i, nc];
+	});
+	tmp = do.call(rbind, tmp);
+	err3 = apply(tmp, 2, function(x) {
+		x[1]*x[2] + x[3]*(x[1] + x[2]);
+	});
+	if(! is.null(R)) {
+		err1 = err1 - R[1];
+		err2 = err2 - R[2];
+		err3 = err3 - R[3];
+	}
+	err = cbind(err1, err2, err3);
+	if(round0) err = round0(err);
+	return(err);
+}
+warn.S3x3 = function(n, R = null) {
+	if(n[1] == n[2]) {
+		if( ! is.null(R)) {
+			if(R[1] != R[2]) warning("No solution!");
+		}
+	}
+}
+
+### Complex Solutions
+wrap.D2 = function(FUN) {
+	FUN = FUN;
+	wF = function(x, start, R = NULL, ...) {
+		if(is.null(R)) R = start;
+		x = matrix(x, nrow=2); xc = x[2,]; x = x[1,] + 1i * xc;
+		R = matrix(R, nrow=2); Rc = R[2,]; R = R[1,] + 1i * Rc;
+		y = FUN(x, R=R, ...);
+		y = rbind(Re(y), Im(y));
+		return(y);
+	}
+	return(wF);
+}
+
 as.variables = function(x, n=4) {
 	tmp = which(x != 0);
 	id1 = (tmp - 1) %/% n + 1;
@@ -46,6 +102,30 @@ as.variables = function(x, n=4) {
 # Aux eq: x1*y1*z1 + x2*y2*z2 + x3*y3*z3 = R4
 
 # TODO: solve;
+
+### Debug
+
+R = c(1,2,3)
+x0 = seq(9) / 11 + seq(9,1) * 1i/3;
+#
+xm = matrix(x0, ncol=3)
+R0 = test.S3x3.Simple(xm)
+Rp = expand.path(R0, rep(R, each=3))
+
+# Solver: fails directly;
+sol = solve.path(wrap(test.S3x3.Simple), x0, path=Rp)
+x0 = c(1.0758-0.6126i, 1.2275+0.5367i, 2e-04+1.0003i,
+	-1.1516+0i, -0.2277+0.4636i, -0.2277-0.4636i,
+	1.0758+0.6126i, 2e-04-1.0003i, 1.2275-0.5367i);
+#
+xc = rbind(Re(x0), Im(x0));
+
+maxiter = 32;
+sol = multiroot(wrap(test.S3x3.Simple), start = xc, R=R, n = c(1,2), maxiter=maxiter);
+x0 = matrix(sol$root, nrow = 2);
+x0 = x0[1,] + 1i*x0[2,];
+
+test.S3x3.Simple(x0, n = c(1,2), round0 = TRUE)
 
 
 #####################
