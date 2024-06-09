@@ -34,9 +34,15 @@ test.S3x3.Simple = function(sol, R = NULL, n = c(1,2), round0 = FALSE, warn = TR
 		x[1]*x[2] + x[3]*(x[1] + x[2]);
 	});
 	if(! is.null(R)) {
-		err1 = err1 - R[1];
-		err2 = err2 - R[2];
-		err3 = err3 - R[3];
+		if(length(R) == 9) {
+			err1 = err1 - R[1:3];
+			err2 = err2 - R[4:6];
+			err3 = err3 - R[7:9];
+		} else {
+			err1 = err1 - R[1];
+			err2 = err2 - R[2];
+			err3 = err3 - R[3];
+		}
 	}
 	err = cbind(err1, err2, err3);
 	if(round0) err = round0(err);
@@ -105,27 +111,32 @@ as.variables = function(x, n=4) {
 
 ### Debug
 
+n = c(1,2)
 R = c(1,2,3)
-x0 = seq(9) / 11 + seq(9,1) * 1i/3;
+#
+x0 = c(1.0758-0.6126i, 1.2275+0.5367i, 2e-04+1.0003i,
+	-1.1516+0i, -0.2277+0.4636i, -0.2277-0.4636i,
+	1.0758+0.6126i, 2e-04-1.0003i, 1.2275-0.5367i);
+# x0 = seq(9) / 11 + seq(9,1) * 1i/3;
+# x0 = c(-5,-1, seq(6), -6) / 3 + seq(-3,5) * 1i/3;
 #
 xm = matrix(x0, ncol=3)
 R0 = test.S3x3.Simple(xm)
 Rp = expand.path(R0, rep(R, each=3))
 
 # Solver: fails directly;
-sol = solve.path(wrap(test.S3x3.Simple), x0, path=Rp)
-x0 = c(1.0758-0.6126i, 1.2275+0.5367i, 2e-04+1.0003i,
-	-1.1516+0i, -0.2277+0.4636i, -0.2277-0.4636i,
-	1.0758+0.6126i, 2e-04-1.0003i, 1.2275-0.5367i);
-#
+sol = solve.path(wrap(test.S3x3.Simple), x0, path=Rp, n=n)
+x0 = round(sol[1,], 4);
 xc = rbind(Re(x0), Im(x0));
 
 maxiter = 32;
-sol = multiroot(wrap(test.S3x3.Simple), start = xc, R=R, n = c(1,2), maxiter=maxiter);
+sol = multiroot(wrap(test.S3x3.Simple), start = xc, R=R, n=n, maxiter=maxiter);
 x0 = matrix(sol$root, nrow = 2);
 x0 = x0[1,] + 1i*x0[2,];
+x0 = matrix(x0, nrow=3)
 
-test.S3x3.Simple(x0, n = c(1,2), round0 = TRUE)
+test.S3x3.Simple(x0, n=n, round0 = TRUE)
+prod(x0)
 
 
 #####################
