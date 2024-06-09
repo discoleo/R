@@ -109,7 +109,24 @@ as.variables = function(x, n=4) {
 
 # TODO: solve;
 
+
 ### Debug
+
+solve.S3x3.byPath = function(x0, R, n = c(1,2), maxiter = 32) {
+	xm = matrix(x0, ncol=3)
+	R0 = test.S3x3.Simple(xm)
+	Rp = expand.path(R0, rep(R, each=3))
+	# Solver: fails directly for some starting values;
+	sol = solve.path(wrap(test.S3x3.Simple), x0, path=Rp, n=n)
+	x0 = round(sol[1,], 4);
+	xc = rbind(Re(x0), Im(x0));
+	#
+	sol = multiroot(wrap(test.S3x3.Simple), start = xc, R=R, n=n, maxiter=maxiter);
+	x0 = matrix(sol$root, nrow = 2);
+	x0 = x0[1,] + 1i*x0[2,];
+	x0 = matrix(x0, nrow=3);
+	return(x0)
+}
 
 n = c(1,2)
 R = c(1,2,3)
@@ -120,23 +137,12 @@ x0 = c(1.0758-0.6126i, 1.2275+0.5367i, 2e-04+1.0003i,
 # x0 = seq(9) / 11 + seq(9,1) * 1i/3;
 # x0 = c(-5,-1, seq(6), -6) / 3 + seq(-3,5) * 1i/3;
 #
-xm = matrix(x0, ncol=3)
-R0 = test.S3x3.Simple(xm)
-Rp = expand.path(R0, rep(R, each=3))
+x = solve.S3x3.byPath(x0, R=R, n=n)
 
-# Solver: fails directly;
-sol = solve.path(wrap(test.S3x3.Simple), x0, path=Rp, n=n)
-x0 = round(sol[1,], 4);
-xc = rbind(Re(x0), Im(x0));
+test.S3x3.Simple(x, n=n, round0 = TRUE)
+prod(x)
 
-maxiter = 32;
-sol = multiroot(wrap(test.S3x3.Simple), start = xc, R=R, n=n, maxiter=maxiter);
-x0 = matrix(sol$root, nrow = 2);
-x0 = x0[1,] + 1i*x0[2,];
-x0 = matrix(x0, nrow=3)
-
-test.S3x3.Simple(x0, n=n, round0 = TRUE)
-prod(x0)
+# there seems to be only 2 distinct solutions?
 
 
 #####################
