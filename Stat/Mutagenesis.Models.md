@@ -9,12 +9,13 @@ Ideas how to model the genetic drift in a population.
 - Diploid organism: 23 pairs of chromosomes;
 - Females are XX, males are XY;
 - assuming equal size of all chromosomes and equal risk of mutation;
-- chromosomal recombination can happen: chromosomes are split on average in 5 segments which can be swapped;
+- assuming chromosomes very large in size: all mutations are distinct;
+- chromosomal recombination happens for each offspring: chromosomes are split on average in a number of segments which can be swapped (e.g. constant 5, or a Poisson process);
 - Note: different variants of models can be simulated;
 
 ## Fitness
 
-- individuals without any mutation are considered fir;
+- individuals without any mutation are considered fit;
 - lifespan of fit individuals: 40 years;
 - fitness decreases with number of mutations: e.g. decreased lifespan;
 - TODO: various subtypes of fitness functions;
@@ -37,7 +38,7 @@ Ideas how to model the genetic drift in a population.
 ## Questions
 
 1. What is the dynamics of mutations in this population?
-2. Do spatially distant populations drift away?
+2. Do spatially distant populations drift genetically away?
 3. Beyond what distance and over what time-scales are speciation events likely to happen?
 4. Define a meaningful measure of a speciation event: proportion of offspring death (e.g. 50% death rate)?
 
@@ -48,3 +49,13 @@ Ideas how to model the genetic drift in a population.
 
 1. Matthias Birkner: Coalescence times of ancestral lineages in two-dimensional logistic branching random walks
   > https://www.youtube.com/watch?v=VQMt9tsq-9g
+
+
+### Genetic Drift & Shift in Bacteria & Microorganisms
+
+1. Jason Schweinsberg: Speciation induced by dormancy in a model with changing environment
+  > https://www.youtube.com/watch?v=C89sRQ0YqY8
+Model:
+- 2 seasons per year;
+- mutations: + or - for dormancy in winter; 
+- very high rate of proliferation: 250 generations per season;
