@@ -17,14 +17,19 @@ Ideas how to model the genetic drift in a population.
 
 - individuals without any mutation are considered fit;
 - lifespan of fit individuals: 40 years;
-- fitness decreases with number of mutations: e.g. decreased lifespan;
+- fitness decreases with number of mutations: e.g. decreased lifespan, decreased mobility;
 - TODO: various subtypes of fitness functions;
 
 ## Habitat
 
 - population is spread over a 2D area of a certain (large) size;
 - population is considered mainly sedentary with a constant density;
-- TODO: find/describe mechanism which maintains constant density: e.g. spreading outwards?
+- offspring diffuse locally (random walk) at a maximal distance d;
+
+**TODO:**\
+Find/describe mechanism which maintains constant density. e.g:
+ - spreading outwards?
+ - random walk with probability inverse proportional to population density?
 
 ## Breeding
 
