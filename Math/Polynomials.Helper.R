@@ -881,7 +881,8 @@ eval.pm.sol = function(p, sol, ..., round0=TRUE, tol=1E-7) {
 # - list of polynomials is usually in ascending order of powers of substituted variables;
 # - xn = vector of variables which are sequentially eliminated;
 #   -- can be shorter than (number of polynomials - 1);
-solve.lpm = function(..., xn, stop.at=NULL, asBigNum=FALSE) {
+solve.lpm = function(..., by = NUll, xn, stop.at=NULL, asBigNum=FALSE) {
+	if( ! is.null(by)) xn = by;
 	pL  = list(...);
 	len = length(pL);
 	if(len < 2) {
@@ -903,9 +904,11 @@ solve.lpm = function(..., xn, stop.at=NULL, asBigNum=FALSE) {
 			tmp = solve.pm(pL[[id+1]], pL[[id]], xn=xn[[id]], stop.at=stop.at, asBigNum=asBigNum);
 		} else {
 			tmp = solve.pm(pL[[id+1]], pL[[id]], xn=xn[[id]], asBigNum=asBigNum);
+			cat("Finished partial step\n");
 		}
 		pR[[id]] = tmp;
 		pL[[id+1]] = tmp$Rez;
+		# Substitute xn[id]:
 		idS = id + 2;
 		if(idS > len) next;
 		for(id2 in seq(idS, len)) {
@@ -929,9 +932,26 @@ solve.pm = function(p1, p2, by = xn, xn = NULL, stop.at=NULL, simplify=TRUE,
 	if(is.pm(by)) stop("Invalid variables: Did you mean to use solve.lpm()?");
 	xn = by;
 	#
-	max1 = max(p1[,xn]); max2 = max(p2[,xn]);
+	id1  = which(names(p1) == xn);
+	max1 = if(length(id1) == 0) 0 else max(p1[, id1]);
+	max2 = max(p2[,xn]);
 	if(max2 == 0) stop("No variable!");
+	split.pm = function(p, pow) {
+		px = p[,xn];
+		p2 = p[, - match(xn, names(p)), drop=FALSE];
+		p2x = p2[px == pow, , drop=FALSE];
+		p20 = p2[px != pow, , drop=FALSE]; # changed to (- coeff) in max2-section;
+		return(list(p20, p2x));
+	}
 	if(max1 == 0) {
+		if(max2 == 1) {
+			lp2 = split.pm(p2, max2);
+			if(nrow(lp2[[1]]) == 0) {
+				print("Warning: x == 0!");
+			}
+			lp2[[2]]$coeff = - lp2[[2]]$coeff; # "-" !!!
+			return(list(Rez=p1, x0=lp2[[1]], div=lp2[[2]], xn=xn));
+		}
 		# stop("No variable!");
 		warning("No variable!");
 		# Result may still be useful!
@@ -945,13 +965,6 @@ solve.pm = function(p1, p2, by = xn, xn = NULL, stop.at=NULL, simplify=TRUE,
 	}
 	# for debugging:
 	if( ! is.null(stop.at) && max2 == stop.at) return(list(p1, p2));
-	split.pm = function(p, pow) {
-		px = p[,xn];
-		p2 = p[, - match(xn, names(p)), drop=FALSE];
-		p2x = p2[px == pow, , drop=FALSE];
-		p20 = p2[px != pow, , drop=FALSE]; # changed to (- coeff) in max2-section;
-		return(list(p20, p2x));
-	}
 	if(max2 == 1) {
 		lp2 = split.pm(p2, max2);
 		if(nrow(lp2[[1]]) == 0) {
