@@ -24,7 +24,7 @@
 
 source("Polynomials.Helper.R")
 
-gen.p15 = function(x) {
+gen.p15 = function(x, collapse = FALSE) {
 	xn = lapply(seq(2,6), function(id) {
 		s1 = x[1] + x[id];
 		x  = x[c(-1, -id)];
@@ -37,6 +37,9 @@ gen.p15 = function(x) {
 		s2 = x[1] + x[4];
 		s3 = x[2] + x[3];
 		p2s = c(p2s, s1*(s2+s3) + s2*s3);
+		if(collapse) {
+			p2s = sum(p2s);
+		}
 		return(p2s)
 	});
 	xn = unlist(xn);
@@ -57,3 +60,8 @@ poly.calc0(x, digits=8)
 x^15 - 42*x^12 + 21*x^10 + 453*x^9 - 288*x^7 - 1232*x^6 - 353*x^5 + 96*x^4 +
 	- 1728*x^3 + 792*x^2 - 1296*x - 32
 
+
+###
+x = gen.p15(x0, collapse = TRUE)
+# Note: roots are complex conjugates;
+poly.calc0(x, digits=11)
