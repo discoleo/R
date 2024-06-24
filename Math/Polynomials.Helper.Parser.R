@@ -53,18 +53,20 @@ as.pm.default = function(p, ...) {
 
 # Class polynomial => "pm"
 # - from package polynom;
-as.pm.polynomial = function(p, xn="x", sort=TRUE, tol=1E-8) {
+as.pm.polynomial = function(p, xn="x", sort=TRUE, simplify=TRUE, tol=1E-8) {
 	if(length(xn) != 1) stop("Only univariate polynomials are supported!");
 	p = unclass(p);
 	if(tol != 0) p = round0(p, tol=tol);
 	len = length(p);
 	pR  = data.frame(x = seq(0, len-1), coeff = p);
 	names(pR)[1] = xn;
+	if(simplify) pR = pR[pR$coeff != 0, ];
 	if( ! is.null(sort)) pR = sort.pm(pR, xn);
 	class(pR) = c("pm", class(pR));
 	return(pR);
 }
 
+# keep.zero = keep col x^0 for Order(0) poly;
 as.pm.numeric = function(p, x = "x", keep.zero = FALSE, ...) {
 	if(length(p) == 1) {
 		if(keep.zero) {

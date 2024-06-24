@@ -237,7 +237,8 @@ poly.calc0 = function(x, toReal=TRUE, tol=1E-8, digits=0, as.pm=TRUE, warn=TRUE)
 	}
 	return(polynomial(p, tol=tol, digits=digits, toReal=toReal, as.pm=as.pm, warn=warn));
 }
-polynomial = function(coef = c(0, 1), tol=1E-8, digits=0, toReal=TRUE, as.pm=TRUE, warn=TRUE) {
+polynomial = function(coef = c(0, 1), tol=1E-8, digits=0, toReal=TRUE,
+		simplify = TRUE, as.pm=TRUE, warn=TRUE) {
 	b   = round0(coef, tol=tol);
 	isC = Im(b) != 0;
 	if(warn && any(isC)) {
@@ -254,7 +255,7 @@ polynomial = function(coef = c(0, 1), tol=1E-8, digits=0, toReal=TRUE, as.pm=TRU
 		b = b[seq(1, npos)];
 	}
 	if(as.pm) {
-		return(as.pm.polynomial(b));
+		return(as.pm.polynomial(b, tol=0, simplify=simplify));
 	}
 	structure(b, class = "polynomial");
 }
@@ -513,6 +514,11 @@ pow.pm = function(p, n=2, do.order=TRUE, debug=TRUE) {
 	}
 	return(p.r);
 }
+
+### All Powers:
+pow.all = function(x, n, ...) {
+	UseMethod("pow.all");
+}
 powAll.pm = function(p, n=2, asList=TRUE) {
 	# TODO: Deprecate;
 	pow.all.pm(p, n=n, asList=asList);
@@ -529,10 +535,6 @@ pow.all.pm = function(p, n, asList=TRUE) {
 		p.r[[i]] = p.pow;
     }
 	return(p.r);
-}
-
-pow.all = function(x, n, ...) {
-	UseMethod("pow.all");
 }
 pow.all.numeric = function(x, n, start.zero = FALSE) {
 	x = rep(x, n);
