@@ -24,6 +24,7 @@
 
 source("Polynomials.Helper.R")
 
+### P[15]
 gen.p15 = function(x, collapse = FALSE) {
 	xn = lapply(seq(2,6), function(id) {
 		s1 = x[1] + x[id];
@@ -45,23 +46,53 @@ gen.p15 = function(x, collapse = FALSE) {
 	xn = unlist(xn);
 	return(xn)
 }
+### P[10]
+gen.p10 = function(x) {
+	S = sum(x);
+	xn = lapply(seq(10), function(id) {
+		if(id <= 4) {
+			s1 = x[1] + x[2] + x[id + 2];
+		} else if(id <= 7) {
+			s1 = x[1] + x[3] + x[id - 1];
+		} else if(id != 10) {
+			s1 = x[1] + x[4] + x[id - 3];
+		} else {
+			s1 = x[1] + x[5] + x[6];
+		}
+		s2 = S - s1;
+		p2s = s1*s2;
+		return(p2s)
+	});
+	xn = unlist(xn);
+	return(xn)
+}
 
 ###################
 
+### Examples:
+
+###
 b  = c(1,0,0,0,0,-1,-1)
 x0 = roots(b)
 
 err = x0^6 - x0 - 1
 round0(err)
 
+### P[15]
 x = gen.p15(x0)
 poly.calc0(x, digits=8)
 
 x^15 - 42*x^12 + 21*x^10 + 453*x^9 - 288*x^7 - 1232*x^6 - 353*x^5 + 96*x^4 +
 	- 1728*x^3 + 792*x^2 - 1296*x - 32
 
+### P[10]
+x = gen.p10(x0)
+poly.calc0(x, digits=8)
 
-###
+x^10 + 66*x^7 + 123*x^5 + 129*x^4 - 66*x^2 + 64*x + 1
+
+
+### Other
 x = gen.p15(x0, collapse = TRUE)
 # Note: roots are complex conjugates;
 poly.calc0(x, digits=11)
