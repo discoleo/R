@@ -207,6 +207,7 @@ toMonom.pm = function(e, xsign = 1, env=NULL, verbose=TRUE) {
 							pow = NA;
 						}
 					}
+					if(length(pow) > 1) warning("Too many powers!");
 					if(is.numeric(e[[2]]) || is.complex(e[[2]])) {
 						m[, "coeff"] = m[, "coeff"] * e[[2]]^pow;
 					} else if(is.language(e[[2]]) && ! is.symbol(e[[2]])) {
