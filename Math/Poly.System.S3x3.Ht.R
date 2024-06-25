@@ -140,10 +140,14 @@ x0 = c(1.0758-0.6126i, 1.2275+0.5367i, 2e-04+1.0003i,
 x = solve.S3x3.byPath(x0, R=R, n=n)
 
 test.S3x3.Simple(x, n=n, round0 = TRUE)
-prod(x)
+sp = sum(apply(x, 1, prod))
+prod(x); print(sp)
 
 # there seems to be only 2 distinct solution-sets?
 
+# spall = c(spall, sp);
+# sum(spall) * 7*8; # - 117
+# 
 # xall = c(xall, x);
 # poly.calc0(xall) * 7*8
 
@@ -176,6 +180,40 @@ pR[[1]] = pR[[1]]$Rez
 
 sapply(pR, function(p) max(p$y2))
 # but last poly has already 272 monomials;
+
+# Simplified:
+# - still NO progress;
+n = 1; 
+R = c(1,2,3)
+
+p1 = as.pm("x1^n + x2^n + x3^n - R[1]")
+p2 = as.pm("y1^n + y2^n + y3^n - R[1]")
+p3 = as.pm("z1^n + z2^n + z3^n - R[1]")
+#
+p4 = as.pm("x1^2 + y1^2 + z1^2 - R[2]")
+p5 = as.pm("x2^2 + y2^2 + z2^2 - R[2]")
+p6 = as.pm("x3^2 + y3^2 + z3^2 - R[2]")
+#
+p7 = as.pm("x1*y2 + y2*z3 + z3*x1 - R[3]")
+p8 = as.pm("x2*y3 + y3*z1 + z1*x2 - R[3]")
+p9 = as.pm("x3*y1 + y1*z2 + z2*x3 - R[3]")
+
+pR = solve.lpm(p1,p2,p3, p4,p5,p6, p7,p8,p9, by = c("x3","y3","z3"))
+pR = pR[3:8]
+pR[[1]] = pR[[1]]$Rez;
+pR = pR[c(4,5,6,1,2,3)]
+pR$by = c("z2","z1")
+pR = do.call(solve.lpm, pR)
+pR = pR[2:5]
+pR[[1]] = pR[[1]]$Rez
+# lapply(pR, \(p) table(p$y2))
+pR$by = c("y2")
+pR = do.call(solve.lpm, pR)
+pR[[1]] = pR[[1]]$Rez;
+
+# FAILURE: huge (484, 7714, 2577 monomials);
+lapply(pR, \(p) table(p$y1))
+lapply(pR, \(p) max(abs(p$coeff)))
 
 
 #####################
