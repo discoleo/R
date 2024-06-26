@@ -41,6 +41,57 @@ library(Rmpfr)
 ########################
 ########################
 
+### Matrix
+
+# Solve:
+# - rather naive, but probably sufficiently robust
+#   by increasing slightly the number of bits;
+solve.mpfr = function(b, y, transpose = TRUE) {
+	if(transpose) b = t(b);
+	mdim = dim(b);
+	if(mdim[1] != mdim[2]) stop("Please provide a Square Matrix!");
+	if(mdim[1] == 0) return(NULL);
+	prec = getPrec(b[1,1]);
+	b0 = b;
+	z0 = mpfr(0, precBits = prec);
+	LU = list();
+	# Determinant:
+	# - but NOT really needed;
+	# TODO: move to new function;
+	for(nr in seq(mdim[1] - 1)) {
+		Tr = rep(z0, dim = mdim[2] - nr);
+		b1 = b[nr, nr];
+		for(nc in seq(nr + 1, mdim[2])) {
+			b2 = b[nr, nc];
+			if(b2 != z0) {
+				ff = - b2 / b1;
+				Tr[nc - nr] = ff;
+				b[, nc] = b[, nc] + ff * b[, nr];
+			}
+		}
+		LU[[nr]] = Tr;
+	}
+	det = prod(diag(b));
+	# Solution:
+	for(nr in seq(2, mdim[1])) {
+		ff = LU[[nr - 1]];
+		y[seq(nr, mdim[1])]  = y[seq(nr, mdim[1])] + ff * y[nr - 1];
+	}
+	# Lower: Backwards!
+	for(nr in seq(mdim[1], 2)) {
+		b1 = b[nr, nr];
+		for(nc in seq(nr - 1, 1)) {
+			b2 = b[nr, nc];
+			ff = - b2 / b1;
+			y[nc] = y[nc] + ff*y[nr];
+		}
+	}
+	Sol = y / diag(b);
+	#
+	sol = list(Sol = Sol, Tr = LU, det = det);
+	return(sol);
+}
+
 
 ### Compute Polynomials
 
@@ -348,7 +399,7 @@ log.cmpfr = function(x, bits=120) {
 	r1 = log(x[,1]);
 	r2 = x[,2];
 	r = cbind(r1, r2);
-	len = if(inherits(x, "mpfrMatrix")) c(nrow(x), 2) else c(2); print(len)
+	len = if(inherits(x, "mpfrMatrix")) c(nrow(x), 2) else c(2);
 	r = mpfr2array(r, len);
 	return(r);
 }
