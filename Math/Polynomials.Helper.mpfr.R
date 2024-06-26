@@ -92,6 +92,30 @@ solve.mpfr = function(b, y, transpose = TRUE) {
 	return(sol);
 }
 
+# O(N^3 * bits)
+det.mpfr = function(x) {
+	nn = dim(x);
+	if(nn[1] != nn[2]) stop("Please provide a Square Matrix!");
+	if(nn[1] == 0) return(NULL);
+	prec = getPrec(x[1,1]);
+	z0 = mpfr(0, precBits = prec);
+	nn = nn[1];
+	# Determinant:
+	for(nr in seq(nn - 1)) {
+		b1 = x[nr, nr];
+		for(nc in seq(nr + 1, nn)) {
+			b2 = x[nr, nc];
+			if(b2 != z0) {
+				ff = - b2 / b1;
+				# another O(N) here;
+				x[, nc] = x[, nc] + ff * x[, nr];
+			}
+		}
+	}
+	rez = prod(diag(x));
+	return(rez);
+}
+
 
 ### Compute Polynomials
 
