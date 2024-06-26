@@ -116,6 +116,39 @@ dp.pm.all = function(p, by, reduce=TRUE, warn=TRUE) {
 	return(p);
 }
 
+### Jacobian
+jacobian.lpm = function(..., by, as.poly = FALSE) {
+	p = list(...);
+	if(length(p) == 1) {
+		if( ! is.pm(p[[1]])) {
+			if(is.list(p[[1]])) { p = p[[1]]; }
+			else stop("Please provide a list of polynomials!");
+		}
+	} # ELSE check all polys in list;
+	#
+	tmp = lapply(p, function(p) {
+		tmp = lapply(by, function(xn) {
+			dp.pm(p, by=xn);
+		});
+		names(tmp) = by;
+		return(tmp);
+	});
+	names(tmp) = paste0("p", seq(length(p)));
+	tmp = unlist(tmp, recursive = FALSE);
+	if(as.poly) {
+		isNum = sapply(tmp, function(p) {
+			is.numeric(p) || is.complex(p) ||
+				inherits(p, "bigz");
+		});
+		id = which(isNum);
+		for(id in id) {
+			tmp[[id]] = as.pm(data.frame(coeff = tmp[[id]]));
+		}
+	}
+	attr(tmp, "dim.jac") = c(length(by), length(p));
+	return(tmp);
+}
+
 ### Specific Derivatives
 
 # D( p$Poly * exp(p$Exp) )
