@@ -6,7 +6,7 @@
 ### Polynomials: Helper Functions
 ### mpfr Functions
 ###
-### draft v.0.2a
+### draft v.0.2b
 
 
 ### fast load:
@@ -130,9 +130,67 @@ det.mpfr = function(x) {
 	if(sg < 0) rez = - rez;
 	return(rez);
 }
+# Complex:
+# TODO: Test thoroughly!
+det.complex.mpfr = function(x, xi) {
+	nn = dim(x);
+	ni = dim(xi);
+	if(nn[1] != nn[2] || ni[1] != ni[2]) stop("Please provide a Square Matrix!");
+	if(nn[1] != ni[1]) stop("The 2 matrixes must have the same dimensions!");
+	if(nn[1] == 0) return(NULL);
+	prec = getPrec(x[1,1]);
+	z0 = mpfr(0, precBits = prec);
+	nn = nn[1];
+	sg = 1;
+	# Determinant:
+	for(nr in seq(nn - 1)) {
+		b1 = x[nr, nr];
+		bi = xi[nr, nr];
+		if(b1 == z0 && bi == z0) {
+			# Swap columns:
+			isZero = TRUE;
+			for(i in seq(nr + 1, nn)) {
+				if(x[nr, i] != z0 || xi[nr, i] != z0) {
+					isZero = FALSE; break;
+				}
+			}
+			if(isZero) return(z0);
+			sg  = - sg;
+			tmp = x[, nr]; x[, nr] = x[, i]; x[, i] = tmp;
+			tmp = xi[, nr]; xi[, nr] = xi[, i]; xi[, i] = tmp;
+			b1  = x[nr, nr];
+			bi  = xi[nr, nr];
+		}
+		div  = b1^2 + bi^2;
+		invr = b1 / div;
+		invi = - bi / div;
+		for(nc in seq(nr + 1, nn)) {
+			b2 = x[nr, nc];
+			b2i = xi[nr, nc];
+			ff = - b2 * invr + b2i * invi;
+			fi = - b2 * invi - b2i * invr;
+			# another O(N) here;
+			tmpr = x[, nc] + ff * x[, nr] - fi * xi[, nr];
+			tmpi = xi[, nc] + ff * xi[, nr] + fi * x[, nr];
+			x[, nc]  = tmpr;
+			xi[, nc] = tmpi;
+		}
+	}
+	# rez = prod(diag(x));
+	rr = x[1,1]; ri = xi[1,1];
+	for(i in seq(2, nn)) {
+		b = x[i,i]; bi = xi[i,i];
+		tmpr = rr*b - ri*bi;
+		tmpi = rr*bi + ri*b;
+		rr = tmpr; ri = tmpi;
+	}
+	if(sg < 0) { rr = - rr; ri = - ri; }
+	return(list(Re = rr, Im = ri));
+}
 
 
-### Compute Polynomials
+###################
+### Polynomials ###
 
 # Compute polynomial from Roots:
 poly.calc.mpfr = function(x, bits=120, tol=1E-7) {
