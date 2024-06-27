@@ -6,7 +6,7 @@
 ### Polynomials: Helper Functions
 ### mpfr Functions
 ###
-### draft v.0.2b
+### draft v.0.2c
 
 
 ### fast load:
@@ -130,7 +130,8 @@ det.mpfr = function(x) {
 	if(sg < 0) rez = - rez;
 	return(rez);
 }
-# Complex:
+
+# Complex: det(x + 1i*xi)
 # TODO: Test thoroughly!
 det.complex.mpfr = function(x, xi) {
 	nn = dim(x);
@@ -186,6 +187,39 @@ det.complex.mpfr = function(x, xi) {
 	}
 	if(sg < 0) { rr = - rr; ri = - ri; }
 	return(list(Re = rr, Im = ri));
+}
+
+### Matrix Generators
+# e.g. to test Determinants
+
+vandermond.mpfr = function(x) {
+	warning("The correct name is: vandermonde!");
+	vandermonde.mpfr(x);
+}
+vandermonde.mpfr = function(x) {
+	n = length(x);
+	prec = getPrec(x[1]);
+	m = mpfrArray(1, prec, dim = c(n,n));
+	tmp = x;
+	for(id in seq(2, n)) {
+		m[,id] = tmp;
+		tmp = tmp * x;
+	}
+	return(m);
+}
+det.vandermonde.mpfr = function(x) {
+	dim = dim(x);
+	if( ! is.null(dim)) {
+		x = x[,2];
+	}
+	n = length(x);
+	rez = mpfr(1, precBits = getPrec(x[1]));
+	for(i in seq(1, n-1)) {
+		tmp = x[i] - x[seq(i+1, n)];
+		rez = rez * prod(tmp);
+	}
+	if(n %% 2 == 0) rez = - rez;
+	return(rez);
 }
 
 
