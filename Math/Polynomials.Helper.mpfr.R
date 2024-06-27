@@ -6,7 +6,7 @@
 ### Polynomials: Helper Functions
 ### mpfr Functions
 ###
-### draft v.0.1c
+### draft v.0.2a
 
 
 ### fast load:
@@ -100,9 +100,23 @@ det.mpfr = function(x) {
 	prec = getPrec(x[1,1]);
 	z0 = mpfr(0, precBits = prec);
 	nn = nn[1];
+	sg = 1;
 	# Determinant:
 	for(nr in seq(nn - 1)) {
 		b1 = x[nr, nr];
+		if(b1 == z0) {
+			# Swap columns:
+			isZero = TRUE;
+			for(i in seq(nr + 1, nn)) {
+				if(x[nr, i] != 0) {
+					isZero = FALSE; break;
+				}
+			}
+			if(isZero) return(z0);
+			sg  = - sg;
+			tmp = x[, nr]; x[, nr] = x[, i]; x[, i] = tmp;
+			b1  = x[nr, nr];
+		}
 		for(nc in seq(nr + 1, nn)) {
 			b2 = x[nr, nc];
 			if(b2 != z0) {
@@ -113,6 +127,7 @@ det.mpfr = function(x) {
 		}
 	}
 	rez = prod(diag(x));
+	if(sg < 0) rez = - rez;
 	return(rez);
 }
 
