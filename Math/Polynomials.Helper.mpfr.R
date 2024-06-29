@@ -30,7 +30,7 @@ library(Rmpfr)
 
 
 ### draft v.0.2:
-# - det,mpfr, det.complex.mpfr;
+# - det.mpfr, det.complex.mpfr;
 # - generate mpfr Vandermonde determinants;
 ### draft v.0.1c:
 # - various fixes;
@@ -118,8 +118,48 @@ solve.mpfr = function(b, y, transpose = TRUE) {
 	return(sol);
 }
 
+# O(N^3)
+determinant.complex = function(x, ...) {
+	nn = dim(x);
+	if(nn[1] != nn[2]) stop("Please provide a Square Matrix!");
+	if(nn[1] == 0) return(NULL);
+	nn = nn[1];
+	sg = 1;
+	# Determinant:
+	for(nr in seq(nn - 1)) {
+		b1 = x[nr, nr];
+		if(b1 == 0) {
+			# Swap columns:
+			isZero = TRUE;
+			for(i in seq(nr + 1, nn)) {
+				if(x[nr, i] != 0) {
+					isZero = FALSE; break;
+				}
+			}
+			if(isZero) return(0);
+			sg  = - sg;
+			tmp = x[, nr]; x[, nr] = x[, i]; x[, i] = tmp;
+			b1  = x[nr, nr];
+		}
+		for(nc in seq(nr + 1, nn)) {
+			b2 = x[nr, nc];
+			if(b2 != 0) {
+				ff = - b2 / b1;
+				# another O(N) here;
+				x[, nc] = x[, nc] + ff * x[, nr];
+			}
+		}
+	}
+	rez = prod(diag(x));
+	if(sg < 0) rez = - rez;
+	return(rez);
+}
+
 # O(N^3 * bits)
 det.mpfr = function(x) {
+	return(determinant.mpfr(x))
+}
+determinant.mpfr = function(x, ...) {
 	nn = dim(x);
 	if(nn[1] != nn[2]) stop("Please provide a Square Matrix!");
 	if(nn[1] == 0) return(NULL);
@@ -260,7 +300,9 @@ det.vandermonde.mpfr = function(x) {
 		tmp = x[i] - x[seq(i+1, n)];
 		rez = rez * prod(tmp);
 	}
-	if(n %% 2 == 0) rez = - rez;
+	# Square free:
+	n4 = n %% 4;
+	if(n4 != 0 && n4 != 1) rez = - rez;
 	return(rez);
 }
 # Complex Vandermonde:
@@ -287,7 +329,9 @@ det.vandermonde.complex.mpfr = function(Re, Im) {
 		tmp  = prod.complex.mpfr(rezr, rezi);
 		rezr = tmp$Re; rezi = tmp$Im;
 	}
-	if(n %% 2 == 0) { rezr = - rezr; rezi = - rezi; }
+	# Square free:
+	n4 = n %% 4;
+	if(n4 != 0 && n4 != 1) rez = - rez;
 	return(list(Re = rezr, Im = rezi));
 }
 
