@@ -6,7 +6,7 @@
 ### Polynomials: Helper Functions
 ### mpfr Functions
 ###
-### draft v.0.2c
+### draft v.0.2d
 
 
 ### fast load:
@@ -29,6 +29,9 @@ library(Rmpfr)
 ###############
 
 
+### draft v.0.2:
+# - det,mpfr, det.complex.mpfr;
+# - generate mpfr Vandermonde determinants;
 ### draft v.0.1c:
 # - various fixes;
 ### draft v.0.1a - v.0.1b:
@@ -37,9 +40,32 @@ library(Rmpfr)
 #   Polynomials.Helper.R;
 #   Polynomials.Class1.R;
 
+# TODO: complex.mpfr vs cmpfr;
+
 
 ########################
 ########################
+
+prod.complex.mpfr = function(Re, Im) {
+	x = Re; xi = Im;
+	n = length(x);
+	m = length(xi);
+	if(n != m) {
+		if(m == 1) {
+			xi = rep(xi, n);
+		} else stop("Wrong length!");
+	}
+	# Prod:
+	rezr = x[1];
+	rezi = xi[1];
+	for(i in seq(2, n)) {
+		tmp  = rezr * x[i] - rezi * xi[i];
+		rezi = rezr * xi[i] + rezi * x[i];
+		rezr = tmp;
+	}
+	return(list(Re = rezr, Im = rezi));
+}
+
 
 ### Matrix
 
@@ -207,6 +233,22 @@ vandermonde.mpfr = function(x) {
 	}
 	return(m);
 }
+vandermonde.complex.mpfr = function(Re, Im) {
+	x = Re; xi = Im;
+	n = length(x);
+	prec = getPrec(x[1]);
+	mr = mpfrArray(1, prec, dim = c(n,n));
+	mi = mpfrArray(0, prec, dim = c(n,n));
+	tmpr = x; tmpi = xi;
+	for(id in seq(2, n)) {
+		mr[,id] = tmpr;
+		mi[,id] = tmpi;
+		tmp  = tmpr * x - tmpi * xi;
+		tmpi = tmpr * xi + tmpi * x;
+		tmpr = tmp;
+	}
+	return(list(Re = mr, Im = mi));
+}
 det.vandermonde.mpfr = function(x) {
 	dim = dim(x);
 	if( ! is.null(dim)) {
@@ -220,6 +262,33 @@ det.vandermonde.mpfr = function(x) {
 	}
 	if(n %% 2 == 0) rez = - rez;
 	return(rez);
+}
+# Complex Vandermonde:
+det.vandermonde.complex.mpfr = function(Re, Im) {
+	x = Re; y = Im;
+	dimx = dim(x); dimy = dim(y);
+	if( ! is.null(dimx)) {
+		x = x[,2];
+	}
+	if( ! is.null(dimy)) {
+		y = y[,2];
+	}
+	n = length(x);
+	m = length(y);
+	if(n != m) stop("Non-equal dimensions!");
+	#
+	rezr = mpfr(1, precBits = getPrec(x[1]));
+	rezi = mpfr(0, precBits = getPrec(x[1]));
+	for(i in seq(1, n-1)) {
+		tmpr = x[i] - x[seq(i+1, n)];
+		tmpi = y[i] - y[seq(i+1, n)];
+		rezr = c(rezr, tmpr);
+		rezi = c(rezi, tmpi);
+		tmp  = prod.complex.mpfr(rezr, rezi);
+		rezr = tmp$Re; rezi = tmp$Im;
+	}
+	if(n %% 2 == 0) { rezr = - rezr; rezi = - rezi; }
+	return(list(Re = rezr, Im = rezi));
 }
 
 
