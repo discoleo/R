@@ -289,12 +289,24 @@ vandermonde.complex.mpfr = function(Re, Im) {
 	}
 	return(list(Re = mr, Im = mi));
 }
-det.vandermonde.mpfr = function(x) {
-	dim = dim(x);
-	if( ! is.null(dim)) {
-		x = x[,2];
+# x = Square Matrix or
+#     Vector corresponding to the pow = 1 column;
+det.vandermonde.mpfr = function(x, byRow = FALSE) {
+	# Checks:
+	dimx = dim(x);
+	if( ! is.null(dimx)) {
+		if(dimx[1] != dimx[2]) stop("Not a square matrix!");
+		if(dimx[1] == 1) {
+			if(x[1,1] != 1) warning("Not a Vandermonde matrix!");
+			return(x[1,1]);
+		}
+		x = if(byRow) x[2,] else x[,2];
 	}
 	n = length(x);
+	if(n == 1) {
+		stop("Not a Vandermonde matrix!");
+	}
+	#
 	rez = mpfr(1, precBits = getPrec(x[1]));
 	for(i in seq(1, n-1)) {
 		tmp = x[i] - x[seq(i+1, n)];
@@ -308,8 +320,16 @@ det.vandermonde.mpfr = function(x) {
 # Complex Vandermonde:
 det.vandermonde.complex.mpfr = function(Re, Im) {
 	x = Re; y = Im;
+	if(is.null(y)) return(det.vandermonde.mpfr(x));
+	# Checks:
 	dimx = dim(x); dimy = dim(y);
 	if( ! is.null(dimx)) {
+		if(dimx[1] != dimx[2]) stop("Not a square matrix!");
+		if(dimx[1] == 1) {
+			if(x[1,1] != 1) warning("Not a Vandermonde matrix!");
+			if(y[1,1] != 0) warning("Not a Vandermonde matrix!");
+			return(list(Re = x[1,1], Im = y[1,1]));
+		}
 		x = x[,2];
 	}
 	if( ! is.null(dimy)) {
