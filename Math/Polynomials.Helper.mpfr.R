@@ -156,17 +156,34 @@ determinant.complex = function(x, ...) {
 }
 
 # O(N^3 * bits)
-det.mpfr = function(x) {
-	return(determinant.mpfr(x))
+# normalize = may sometimes improve the precision,
+#  but only slightly and inconsistently;
+det.mpfr = function(x, normalize = FALSE) {
+	return(determinant.mpfr(x, normalize=normalize));
 }
-determinant.mpfr = function(x, ...) {
+determinant.mpfr = function(x, normalize = FALSE, ...) {
 	nn = dim(x);
 	if(nn[1] != nn[2]) stop("Please provide a Square Matrix!");
 	if(nn[1] == 0) return(NULL);
 	prec = getPrec(x[1,1]);
 	z0 = mpfr(0, precBits = prec);
+	z1 = mpfr(1, precBits = prec);
 	nn = nn[1];
 	sg = 1;
+	# Normalization
+	if(normalize) {
+		# mean, median: do NOT work very well;
+		# TODO: optimal strategy?
+		minz = apply(x, 2, function(x) min(abs(x)));
+		idBig = which(minz > 2);
+		norm = z1;
+		if(length(idBig) > 0) {
+			norm = prod(minz[idBig]);
+			for(id in idBig) {
+				x[, id] = x[, id] / minz[id];
+			}
+		}
+	}
 	# Determinant:
 	for(nr in seq(nn - 1)) {
 		b1 = x[nr, nr];
@@ -194,6 +211,7 @@ determinant.mpfr = function(x, ...) {
 	}
 	rez = prod(diag(x));
 	if(sg < 0) rez = - rez;
+	if(normalize) rez = rez * norm;
 	return(rez);
 }
 

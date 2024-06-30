@@ -6,7 +6,7 @@
 ### Polynomials: Helper Functions
 ### mpfr Functions: Tests
 ###
-### draft v.0.1a
+### draft v.0.1b
 
 
 ### fast load:
@@ -31,6 +31,46 @@ source("Polynomials.Helper.mpfr.R")
 #############
 ### Tests ###
 #############
+
+
+##############
+### Matrix ###
+##############
+
+###
+pow = 0.5
+x = c(2,3,5,7,13,11,4,6,8,9,10,12)
+x = (mpfr(x, 200))^pow
+
+mv = vandermonde.mpfr(x)
+det.mpfr(mv, normalize = FALSE)
+det.mpfr(mv, normalize = TRUE) # OK
+det.vandermonde.mpfr(mv)
+
+
+###
+x = 2:35
+x = (mpfr(x, 200))^0.5
+
+mv = vandermonde.mpfr(x)
+det.mpfr(mv, normalize = FALSE)
+det.mpfr(mv, normalize = TRUE) # minimal
+det.vandermonde.mpfr(mv)
+
+
+###
+x = 2:35
+x = (mpfr(x, 240))^0.5
+
+mv = vandermonde.mpfr(x)
+det.mpfr(mv, normalize = FALSE)
+det.mpfr(mv, normalize = TRUE) # NO effect
+det.vandermonde.mpfr(mv)
+
+
+###################
+### Polynomials ###
+###################
 
 ###
 K = 3
