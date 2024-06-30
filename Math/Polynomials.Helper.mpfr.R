@@ -369,7 +369,7 @@ det.vandermonde.complex.mpfr = function(Re, Im) {
 	}
 	# Square free:
 	n4 = n %% 4;
-	if(n4 != 0 && n4 != 1) rez = - rez;
+	if(n4 != 0 && n4 != 1) { rezr = - rezr; rezi = - rezi; }
 	return(list(Re = rezr, Im = rezi));
 }
 

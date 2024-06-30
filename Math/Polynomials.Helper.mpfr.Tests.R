@@ -68,6 +68,26 @@ det.mpfr(mv, normalize = TRUE) # NO effect
 det.vandermonde.mpfr(mv)
 
 
+### Complex
+
+###
+x0 = c(2,3,5,7,11,7,2,13,15,14)
+xi0 = c(5,3,7,2,2,3,4,5,0,2)
+
+prec = 200
+x  = mpfr(x0, prec)
+xi = mpfr(xi0, prec)
+x  = sqrt(x); xi = sqrt(xi)
+
+m  = vandermonde.complex.mpfr(x, xi)
+m0 = as.numeric(m$Re) + 1i*as.numeric(m$Im);
+dim(m0) = dim(m$Re)
+
+determinant.complex(m0)
+det.complex.mpfr(m$Re, m$Im)
+det.vandermonde.complex.mpfr(x, xi)
+
+
 ###################
 ### Polynomials ###
 ###################
