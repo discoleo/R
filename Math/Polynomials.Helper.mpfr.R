@@ -225,22 +225,34 @@ determinant.seq.mpfr = function(x, ...) {
 	z0 = mpfr(0, precBits = prec);
 	# z1 = mpfr(1, precBits = prec);
 	nn = nn[1];
-	sg = 1;
+	sg = 1; # not needed;
 	# Determinant:
 	for(nr in seq(nn - 1)) {
 		for(nc in seq(nn, nr + 1)) {
-			b1 = x[nr, nc - 1];
+			nc.prev = nc - 1;
+			b1 = x[nr, nc.prev];
 			if(b1 == z0) {
-				# TODO: swap
-				warning("TODO: swap!");
-				sg = - sg;
-				next;
+				# Pseudo-Swap columns:
+				isZero = TRUE;
+				for(i in seq(nc - 1, nr)) {
+					if(x[nr, i] != 0) {
+						isZero = FALSE; break;
+					}
+				}
+				# TODO: check;
+				if(isZero) {
+					if(x[nr, nc] == 0) return(z0);
+					tmp = x[, nr]; x[, nr] = x[, nc]; x[, nc] = tmp;
+					next;
+				}
+				b1 = x[nr, i];
+				nc.prev = i;
 			}
 			b2 = x[nr, nc];
 			if(b2 != z0) {
 				ff = - b2 / b1;
 				# another O(N) here;
-				x[, nc] = x[, nc] + ff * x[, nc - 1];
+				x[, nc] = x[, nc] + ff * x[, nc.prev];
 			}
 		}
 	}
