@@ -37,6 +37,11 @@ source("Polynomials.Helper.mpfr.R")
 ### Matrix ###
 ##############
 
+# Note: Scale by k[j]
+# - should NOT have any relevant impact on precision,
+#   as all entries affecting column j get scaled by k[j];
+# => x[i,j] = k[j]*(x[i,j] - x[i,1]*x[1,j]/x[1,1]);
+
 ###
 pow = 0.5
 x = c(2,3,5,7,13,11,4,6,8,9,10,12)
@@ -44,17 +49,20 @@ x = (mpfr(x, 200))^pow
 
 mv = vandermonde.mpfr(x)
 det.mpfr(mv, normalize = FALSE)
-det.mpfr(mv, normalize = TRUE) # OK
+det.mpfr(mv, normalize = TRUE) # OK: but why?
+determinant.seq.mpfr(mv)
 det.vandermonde.mpfr(mv)
 
 
 ###
+prec = 200
 x = 2:35
-x = (mpfr(x, 200))^0.5
+x = (mpfr(x, prec))^0.5
 
 mv = vandermonde.mpfr(x)
 det.mpfr(mv, normalize = FALSE)
 det.mpfr(mv, normalize = TRUE) # minimal
+determinant.seq.mpfr(mv) # slight improvement;
 det.vandermonde.mpfr(mv)
 
 
