@@ -6,7 +6,7 @@
 ### Polynomials: Helper Functions
 ### mpfr Functions
 ###
-### draft v.0.2d
+### draft v.0.2e
 
 
 ### fast load:
@@ -122,8 +122,11 @@ solve.mpfr = function(b, y, transpose = TRUE) {
 determinant.complex = function(x, ...) {
 	nn = dim(x);
 	if(nn[1] != nn[2]) stop("Please provide a Square Matrix!");
-	if(nn[1] == 0) return(NULL);
+	# Special Cases:
 	nn = nn[1];
+	if(nn == 0) return(NULL);
+	if(nn == 1) return(x[1,1]);
+	if(nn == 2) return(x[1,1]*x[2,2] - x[2,1]*x[1,2]);
 	sg = 1;
 	# Determinant:
 	for(nr in seq(nn - 1)) {
@@ -164,11 +167,15 @@ det.mpfr = function(x, normalize = FALSE) {
 determinant.mpfr = function(x, normalize = FALSE, ...) {
 	nn = dim(x);
 	if(nn[1] != nn[2]) stop("Please provide a Square Matrix!");
-	if(nn[1] == 0) return(NULL);
+	# Special Cases:
+	nn = nn[1];
+	if(nn == 0) return(NULL);
+	if(nn == 1) return(x[1,1]);
+	if(nn == 2) return(x[1,1]*x[2,2] - x[2,1]*x[1,2]);
+	#
 	prec = getPrec(x[1,1]);
 	z0 = mpfr(0, precBits = prec);
 	z1 = mpfr(1, precBits = prec);
-	nn = nn[1];
 	sg = 1;
 	# Normalization
 	if(normalize) {
@@ -220,11 +227,14 @@ determinant.mpfr = function(x, normalize = FALSE, ...) {
 determinant.seq.mpfr = function(x, ...) {
 	nn = dim(x);
 	if(nn[1] != nn[2]) stop("Please provide a Square Matrix!");
-	if(nn[1] == 0) return(NULL);
+	# Special Cases:
+	nn = nn[1];
+	if(nn == 0) return(NULL);
+	if(nn == 1) return(x[1,1]);
+	if(nn == 2) return(x[1,1]*x[2,2] - x[2,1]*x[1,2]);
+	#
 	prec = getPrec(x[1,1]);
 	z0 = mpfr(0, precBits = prec);
-	# z1 = mpfr(1, precBits = prec);
-	nn = nn[1];
 	sg = 1; # not needed;
 	# Determinant:
 	for(nr in seq(nn - 1)) {
