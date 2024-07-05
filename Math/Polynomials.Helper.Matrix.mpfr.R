@@ -5,7 +5,7 @@
 ###
 ### Matrix Functions: mpfr
 ###
-### draft v.0.2f
+### draft v.0.2g
 
 # Matrix Operations using mpfr;
 
@@ -15,6 +15,8 @@
 
 ### Load ALL files:
 # source("Polynomials.Helper.mpfr.R")
+# this file:
+# source("Polynomials.Helper.Matrix.mpfr.R")
 
 ####################
 
@@ -22,6 +24,12 @@
 
 # Required libraries:
 # library(Rmpfr)
+
+as.matrix.mpfrMatrix = function(x) {
+	n = dim(x);
+	x = matrix(as.numeric(x), nrow = n[1], ncol = n[2]);
+	return(x);
+}
 
 # Note:
 # - also defined in file:
@@ -57,6 +65,61 @@ prod.complex.mpfr = function(Re, Im) {
 # - rather naive, but probably sufficiently robust
 #   by increasing slightly the number of bits;
 solve.mpfr = function(b, y, transpose = TRUE) {
+	if(transpose) b = t(b);
+	mdim = dim(b);
+	nn = mdim[1];
+	if(nn != mdim[2]) stop("Please provide a Square Matrix!");
+	if(nn == 0) return(NULL);
+	#
+	prec = getPrec(b[1,1]);
+	if(is.numeric(y)) {
+		y = mpfr(y, precBits = prec);
+	}
+	if(nn == 1) {
+		sol = y / b;
+		return(sol);
+	}
+	# Upper:
+	z0 = mpfr(0, precBits = prec);
+	for(nr in seq(nn - 1)) {
+		b1 = b[nr, nr];
+		if(b1 == z0) {
+			# Swap columns:
+			isZero = TRUE;
+			for(i in seq(nr + 1, nn)) {
+				if(x[nr, i] != 0) {
+					isZero = FALSE; break;
+				}
+			}
+			if(isZero) return(NULL);
+			# sg  = - sg;
+			tmp = x[, nr]; x[, nr] = x[, i]; x[, i] = tmp;
+			tmp = y[nr]; y[nr] = y[i]; y[i] = tmp;
+			b1  = x[nr, nr];
+		}
+		for(nc in seq(nr + 1, nn)) {
+			b2 = b[nr, nc];
+			if(b2 != z0) {
+				ff = - b2 / b1;
+				y[nc] = y[nc] + ff * y[nr];
+				b[, nc] = b[, nc] + ff * b[, nr];
+			}
+		}
+	}
+	# det = prod(diag(b));
+	# Lower: Backwards!
+	for(nr in seq(nn, 2)) {
+		b1 = b[nr, nr];
+		for(nc in seq(nr - 1, 1)) {
+			b2 = b[nr, nc];
+			ff = - b2 / b1;
+			y[nc] = y[nc] + ff*y[nr];
+		}
+	}
+	sol = y / diag(b);
+	return(sol);
+}
+solve.old.mpfr = function(b, y, transpose = TRUE) {
 	if(transpose) b = t(b);
 	mdim = dim(b);
 	if(mdim[1] != mdim[2]) stop("Please provide a Square Matrix!");
