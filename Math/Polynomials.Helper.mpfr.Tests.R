@@ -96,6 +96,25 @@ det.complex.mpfr(m$Re, m$Im)
 det.vandermonde.complex.mpfr(x, xi)
 
 
+#############
+### Solve ###
+
+prec = 200;
+x = mpfr(2:7, prec);
+x = sqrt(x);
+b = vandermonde.mpfr(x)
+
+#
+y = 1:6;
+solve.mpfr(b, y)
+solve(as.matrix(b), y)
+
+#
+y = c(1,3,7,5,2,2);
+solve.mpfr(b, y)
+solve(as.matrix(b), y)
+
+
 ###################
 ### Polynomials ###
 ###################

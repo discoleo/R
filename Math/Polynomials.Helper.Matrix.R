@@ -61,7 +61,6 @@ det.mpm = function(p, verbose=FALSE) {
 			if(verbose) print("Started D3");
 			pR = if(is.zero.pm(p[[1]])) 0 else mult.pm(p[[1]], det2(p[c(5,6,8,9)]));
 			if( ! is.zero.pm(p[[2]])) {
-				tmp = det2(p[c(4,5,7,8)]);
 				pR = diff.pm(pR, mult.pm(p[[2]], det2(p[c(4,6,7,9)])));
 			}
 			if( ! is.zero.pm(p[[3]])) {
