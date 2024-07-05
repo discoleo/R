@@ -99,18 +99,18 @@ det.vandermonde.complex.mpfr(x, xi)
 #############
 ### Solve ###
 
-prec = 200;
-x = mpfr(2:7, prec);
+prec = 200; xup = 7;
+x = mpfr(2:xup, prec);
 x = sqrt(x);
 b = vandermonde.mpfr(x)
 
 #
-y = 1:6;
+y = seq(length(x));
 solve.mpfr(b, y)
 solve(as.matrix(b), y)
 
 #
-y = c(1,3,7,5,2,2);
+y = c(1,3,7,5,2,2, sample(1:100, length(x) - 6, TRUE));
 solve.mpfr(b, y)
 solve(as.matrix(b), y)
 
