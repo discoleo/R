@@ -43,9 +43,9 @@ source("Polynomials.Helper.mpfr.R")
 # => x[i,j] = k[j]*(x[i,j] - x[i,1]*x[1,j]/x[1,1]);
 
 ###
-pow = 0.5
-x = c(2,3,5,7,13,11,4,6,8,9,10,12)
-x = (mpfr(x, 200))^pow
+pd = 2
+x0 = c(2,3,5,7,13,11,4,6,8,9,10,12)
+x = as.pow.mpfr(x0, 200, pow.div = pd)
 
 mv = vandermonde.mpfr(x)
 det.mpfr(mv, normalize = FALSE)
@@ -55,9 +55,9 @@ det.vandermonde.mpfr(mv)
 
 
 ###
-prec = 200
-x = 2:35
-x = (mpfr(x, prec))^0.5
+pd = 2; prec = 200;
+x0 = 2:35;
+x = as.pow.mpfr(x0, prec, pow.div = pd)
 
 mv = vandermonde.mpfr(x)
 det.mpfr(mv, normalize = FALSE)
@@ -67,13 +67,27 @@ det.vandermonde.mpfr(mv)
 
 
 ###
-x = 2:35
-x = (mpfr(x, 240))^0.5
+pd = 2; prec = 240;
+x0 = 2:35
+x = as.pow.mpfr(x, prec, pow.div = pd)
 
 mv = vandermonde.mpfr(x)
 det.mpfr(mv, normalize = FALSE)
 det.mpfr(mv, normalize = TRUE) # NO effect
 det.vandermonde.mpfr(mv)
+
+
+###
+pd = 3; prec = 220;
+x0 = 2:35 * rep(c(1,-1), 17)
+x = as.pow.mpfr(x0, prec, pow.div = pd)
+
+mv = vandermonde.mpfr(x)
+det.mpfr(mv, normalize = FALSE)
+det.mpfr(mv, normalize = TRUE) # NO effect
+determinant.seq.mpfr(mv) # NO effect
+det.vandermonde.mpfr(mv) # Maths formula
+det(as.matrix(mv)) # leading digit wrong;
 
 
 ### Complex
@@ -99,9 +113,11 @@ det.vandermonde.complex.mpfr(x, xi)
 #############
 ### Solve ###
 
-prec = 200; xup = 7;
+prec = 200;
+xup = 7; div = 2;
+pow = mpfr(1, prec) / div;
 x = mpfr(2:xup, prec);
-x = sqrt(x);
+x = x^pow;
 b = vandermonde.mpfr(x)
 
 #

@@ -31,6 +31,22 @@ as.matrix.mpfrMatrix = function(x) {
 	return(x);
 }
 
+as.pow.mpfr = function(x, precBits, pow = 1, pow.div = 2) {
+	z = mpfr(x, precBits=precBits);
+	p = mpfr(pow, precBits=precBits) / pow.div;
+	isOdd = pow.div %% 2 == 1;
+	isNeg = FALSE;
+	if(isOdd) {
+		idNeg = which(x < 0);
+		if(length(idNeg) > 0) isNeg = TRUE;
+		if(isNeg) z[idNeg] = - z[idNeg];
+		if(pow %% 2 == 0) isNeg = FALSE;
+	}
+	z = z^p;
+	if(isNeg) z[idNeg] = - z[idNeg];
+	return(z);
+}
+
 # Note:
 # - also defined in file:
 #   Polynomials.Helper.mpfr.R;
