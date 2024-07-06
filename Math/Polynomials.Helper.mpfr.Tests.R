@@ -114,10 +114,9 @@ det.vandermonde.complex.mpfr(x, xi)
 ### Solve ###
 
 prec = 200;
-xup = 7; div = 2;
-pow = mpfr(1, prec) / div;
-x = mpfr(2:xup, prec);
-x = x^pow;
+xup = 8;
+div = 2; # div = 3; # x^2 vs x^3;
+x = as.pow.mpfr(2:xup, prec, pow.div = div)
 b = vandermonde.mpfr(x)
 
 #
@@ -125,7 +124,11 @@ y = seq(length(x));
 solve.mpfr(b, y)
 solve(as.matrix(b), y)
 
-#
+# Pow: (x^div - 1)^2
+solve.mpfr(b, y^2)
+solve(as.matrix(b), y^2)
+
+# just some values:
 y = c(1,3,7,5,2,2, sample(1:100, length(x) - 6, TRUE));
 solve.mpfr(b, y)
 solve(as.matrix(b), y)
