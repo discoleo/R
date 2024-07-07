@@ -5,7 +5,7 @@
 ###
 ### Matrix Functions: mpfr
 ###
-### draft v.0.2g
+### draft v.0.2h
 
 # Matrix Operations using mpfr;
 
@@ -207,11 +207,12 @@ solve.complex.mpfr = function(b, bIm, y, yIm, transpose = TRUE) {
 	}
 	# Upper:
 	z0 = mpfr(0, precBits = prec);
-	z1 = mpfr(1, precBits = prec);
+	# z1 = mpfr(1, precBits = prec);
 	for(nr in seq(nn - 1)) {
 		b1  = b[nr, nr];
 		b1i = bIm[nr, nr];
 		if(b1 == z0 && b1i == z0) {
+			print("Swap");
 			# Swap columns:
 			isZero = TRUE;
 			for(i in seq(nr + 1, nn)) {
@@ -233,26 +234,40 @@ solve.complex.mpfr = function(b, bIm, y, yIm, transpose = TRUE) {
 			b2  = b[nr, nc];
 			b2i = bIm[nr, nc];
 			if(b2 != z0 || b2i != z0) {
-				fr = - (b2*b1 - b2i*b1i) / div;
-				fi = - (b2*b1i + b2i*b1) / div;
-				y[nc] = y[nc] + fr * y[nr];
-				tmp = b[, nc] + fr * b[, nr] - fi * bIm[, nr];
-				bIm[, nc] = bIm[, nc] + fi * b[, nr] + fr * bIm[, nr];
-				b[, nc] = tmp;
+				# - (b1 - b1i * 1i)*(b2 + b2i * 1i)
+				fr  = - (b2*b1 + b2i*b1i) / div;
+				fi  = - (b2i*b1 - b2*b1i) / div;
+				tmp = yIm[nc] + fr*yIm[nr] + fi*y[nr];
+				y[nc]   = y[nc] + fr*y[nr] - fi*yIm[nr];
+				yIm[nc] = tmp;
+				tmp = bIm[, nc] + fi*b[, nr] + fr*bIm[, nr];
+				b[, nc]   = b[, nc] + fr*b[, nr] - fi*bIm[, nr];
+				bIm[, nc] = tmp;
 			}
 		}
 	}
 	# det = prod(diag(b));
 	# Lower: Backwards!
 	for(nr in seq(nn, 2)) {
-		b1 = b[nr, nr];
+		b1  = b[nr, nr];
+		b1i = bIm[nr, nr];
+		div = b1*b1 + b1i*b1i;
 		for(nc in seq(nr - 1, 1)) {
-			b2 = b[nr, nc];
-			ff = - b2 / b1;
-			y[nc] = y[nc] + ff*y[nr];
+			b2  = b[nr, nc];
+			b2i = bIm[nr, nc];
+			# - (b1 - b1i * 1i)*(b2 + b2i * 1i)
+			fr  = - (b1*b2 + b1i*b2i) / div;
+			fi  = - (b1*b2i - b1i*b2) / div;
+			tmp = y[nc] + fr*y[nr] - fi*yIm[nr];
+			yIm[nc] = yIm[nc] + fr*yIm[nr] + fi*y[nr];
+			y[nc]   = tmp;
 		}
 	}
-	sol = y / diag(b);
+	ddr = diag(b); ddi = diag(bIm);
+	div = ddr*ddr + ddi*ddi;
+	sRe = (y*ddr + yIm*ddi) / div;
+	sIm = (yIm*ddr - y*ddi) / div;
+	sol = list(Re = sRe, Im = sIm);
 	return(sol);
 }
 

@@ -6,7 +6,7 @@
 ### Polynomials: Helper Functions
 ### mpfr Functions: Tests
 ###
-### draft v.0.1b
+### draft v.0.2a
 
 
 ### fast load:
@@ -145,6 +145,20 @@ b[1:7, 5] = b[1:7, 4] = b[1:7, 3]; # force swap columns;
 y = c(1,3,7,5,2,2, sample(1:100, length(x) - 6, TRUE));
 solve.mpfr(b, y)
 solve(as.matrix(b), y)
+
+
+### Complex
+prec = 200;
+xup = 8;
+div = 3;
+xr = as.pow.mpfr(2:xup, prec, pow.div = div)
+xi = as.pow.mpfr((xup:2) * sample(c(-1,1), length(xr), TRUE), prec, pow.div = div)
+b  = vandermonde.complex.mpfr(xr, xi)
+
+#
+yr = -2 + 1.5 * b$Re[,2] - 3*b$Re[,3] + b$Re[,4];
+yi = -4 + 1.5 * b$Im[,2] - 3*b$Im[,3] + b$Im[,4];
+solve.complex.mpfr(b$Re, b$Im, yr, yi)
 
 
 ###################
