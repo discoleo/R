@@ -134,6 +134,19 @@ solve.mpfr(b, y)
 solve(as.matrix(b), y)
 
 
+### Test: Swap columns
+prec = 200;
+xup = 12;
+div = 2; # div = 3;
+x = as.pow.mpfr(2:xup, prec, pow.div = div)
+b = vandermonde.mpfr(x)
+b[1:7, 5] = b[1:7, 4] = b[1:7, 3]; # force swap columns;
+
+y = c(1,3,7,5,2,2, sample(1:100, length(x) - 6, TRUE));
+solve.mpfr(b, y)
+solve(as.matrix(b), y)
+
+
 ###################
 ### Polynomials ###
 ###################

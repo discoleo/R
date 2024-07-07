@@ -81,11 +81,11 @@ prod.complex.mpfr = function(Re, Im) {
 # - rather naive, but probably sufficiently robust
 #   by increasing slightly the number of bits;
 solve.mpfr = function(b, y, transpose = TRUE) {
-	if(transpose) b = t(b);
 	mdim = dim(b);
 	nn = mdim[1];
 	if(nn != mdim[2]) stop("Please provide a Square Matrix!");
 	if(nn == 0) return(NULL);
+	if(transpose) b = t(b);
 	#
 	prec = getPrec(b[1,1]);
 	if(is.numeric(y)) {
@@ -103,15 +103,15 @@ solve.mpfr = function(b, y, transpose = TRUE) {
 			# Swap columns:
 			isZero = TRUE;
 			for(i in seq(nr + 1, nn)) {
-				if(x[nr, i] != 0) {
+				if(b[nr, i] != 0) {
 					isZero = FALSE; break;
 				}
 			}
 			if(isZero) return(NULL);
 			# sg  = - sg;
-			tmp = x[, nr]; x[, nr] = x[, i]; x[, i] = tmp;
+			tmp = b[, nr]; b[, nr] = b[, i]; b[, i] = tmp;
 			tmp = y[nr]; y[nr] = y[i]; y[i] = tmp;
-			b1  = x[nr, nr];
+			b1  = b[nr, nr];
 		}
 		for(nc in seq(nr + 1, nn)) {
 			b2 = b[nr, nc];
@@ -150,6 +150,7 @@ solve.old.mpfr = function(b, y, transpose = TRUE) {
 	for(nr in seq(mdim[1] - 1)) {
 		Tr = rep(z0, dim = mdim[2] - nr);
 		b1 = b[nr, nr];
+		# Note: lacks code for b1 == 0!
 		for(nc in seq(nr + 1, mdim[2])) {
 			b2 = b[nr, nc];
 			if(b2 != z0) {
@@ -178,6 +179,80 @@ solve.old.mpfr = function(b, y, transpose = TRUE) {
 	Sol = y / diag(b);
 	#
 	sol = list(Sol = Sol, Tr = LU, det = det);
+	return(sol);
+}
+
+# Complex:
+solve.complex.mpfr = function(b, bIm, y, yIm, transpose = TRUE) {
+	mdim = dim(b);
+	nn = mdim[1];
+	if(nn != mdim[2]) stop("Please provide a Square Matrix!");
+	if(nn == 0) return(NULL);
+	if(transpose) { b = t(b); bIm = t(bIm); }
+	#
+	prec = getPrec(b[1,1]);
+	if(is.numeric(y)) {
+		y = mpfr(y, precBits = prec);
+	}
+	if(is.numeric(yIm)) {
+		yIm = mpfr(yIm, precBits = prec);
+	}
+	if(length(yIm) == 1) yIm = rep(yIm, nn);
+	#
+	if(nn == 1) {
+		div = b*b + bIm*bIm;
+		re = (b*y - bIm*yIm) / div;
+		im = (bIm*y + b*yIm) / div;
+		return(list(Re = re, Im = im));
+	}
+	# Upper:
+	z0 = mpfr(0, precBits = prec);
+	z1 = mpfr(1, precBits = prec);
+	for(nr in seq(nn - 1)) {
+		b1  = b[nr, nr];
+		b1i = bIm[nr, nr];
+		if(b1 == z0 && b1i == z0) {
+			# Swap columns:
+			isZero = TRUE;
+			for(i in seq(nr + 1, nn)) {
+				if(b[nr, i] != 0 || bIm[nr, i] != 0) {
+					isZero = FALSE; break;
+				}
+			}
+			if(isZero) return(NULL);
+			# sg  = - sg;
+			tmp = b[, nr]; b[, nr] = b[, i]; b[, i] = tmp;
+			tmp = bIm[, nr]; bIm[, nr] = bIm[, i]; bIm[, i] = tmp;
+			tmp = y[nr]; y[nr] = y[i]; y[i] = tmp;
+			tmp = yIm[nr]; yIm[nr] = yIm[i]; yIm[i] = tmp;
+			b1  = b[nr, nr];
+			b1i = bIm[nr, nr];
+		}
+		div = b1*b1 + b1i*b1i;
+		for(nc in seq(nr + 1, nn)) {
+			b2  = b[nr, nc];
+			b2i = bIm[nr, nc];
+			if(b2 != z0 || b2i != z0) {
+				fr = - (b2*b1 - b2i*b1i) / div;
+				fi = - (b2*b1i + b2i*b1) / div;
+				y[nc] = y[nc] + fr * y[nr];
+				tmp = b[, nc] + fr * b[, nr] - fi * bIm[, nr];
+				bIm[, nc] = bIm[, nc] + fi * b[, nr] + fr * bIm[, nr];
+				b[, nc] = tmp;
+			}
+		}
+	}
+	# det = prod(diag(b));
+	# Lower: Backwards!
+	for(nr in seq(nn, 2)) {
+		b1 = b[nr, nr];
+		for(nc in seq(nr - 1, 1)) {
+			b2 = b[nr, nc];
+			ff = - b2 / b1;
+			y[nc] = y[nc] + ff*y[nr];
+		}
+	}
+	sol = y / diag(b);
 	return(sol);
 }
 
