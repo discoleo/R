@@ -588,6 +588,27 @@ pascal = function(n) {
 	}
 	return(lst);
 }
+pascal.mpfr = function(n, precBits = NULL) {
+	# see also gmp::chooseZ;
+	if(is.null(precBits)) {
+		prec = getPrec(n);
+	} else prec = precBits;
+	if(n < 0) stop("Invalid n!");
+	if( ! inherits(n, "integer")) n = as.integer(n);
+	#
+	z0 = mpfr(0, prec);
+	z1 = mpfr(1, prec);
+	if(n == 0) return(list(z1));
+	#
+	lst = list(c(z1, z1));
+	if(n == 1) return(lst);
+	#
+	for(i in seq(2, n)) {
+		tmp = lst[[i - 1]];
+		lst[[i]] = c(z0, tmp) + c(tmp, z0);
+	}
+	return(lst);
+}
 
 ### Simplify functions
 
