@@ -48,6 +48,21 @@ library(Rmpfr)
 ########################
 ########################
 
+format.mpfr = function (x, digits = NULL, drop0trailing = TRUE, right = TRUE, 
+		max.digits = getOption("Rmpfr.print.max.digits", 999L),
+		exponent.plus = getOption("Rmpfr.print.exponent.plus", TRUE), ...) {
+	stopifnot(is.mpfr(x), is.null(digits) || digits >= 1);
+	n = length(x);
+	if (n >= 1) {
+		lFormat = function(x, na.print, print.gap, max, useSource, ...)
+			format(x, digits = digits, max.digits = max.digits, 
+				drop0trailing = drop0trailing, exponent.plus = exponent.plus, 
+				...);
+		x = lFormat(x, ...);
+    }
+    invisible(x);
+}
+
 prod.complex.mpfr = function(Re, Im) {
 	x = Re; xi = Im;
 	n = length(x);
@@ -66,6 +81,82 @@ prod.complex.mpfr = function(Re, Im) {
 		rezr = tmp;
 	}
 	return(list(Re = rezr, Im = rezi));
+}
+
+# (a + 1i*b)^n
+pascal.complex.mpfr = function(n, precBits, as.pm  = TRUE) {
+	b  = pascal.mpfr(n, precBits);
+	if(as.pm) {
+		lst = split.cpm.pascal(b);
+	} else {
+		lst = split.complex.pascal(b);
+	}
+	return(lst);
+}
+split.complex.pascal = function(x) {
+	re = lapply(x, function(x) {
+		re  = x[seq(1, length(x), by = 2)];
+		len = length(re);
+		if(len < 2) return(re);
+		id = seq(2, len, by = 2);
+		re[id] = - re[id];
+		return(re);
+	});
+	im = lapply(x, function(x) {
+		im  = x[seq(2, length(x), by = 2)];
+		len = length(im);
+		if(len < 2) return(im);
+		id = seq(2, len, by = 2);
+		im[id] = - im[id];
+		return(im);
+	});
+	lst = list(Re = re, Im = im);
+	return(lst);
+}
+split.cpm.pascal = function(x) {
+	re = lapply(x, function(x) {
+		re  = x[seq(1, length(x), by = 2)];
+		len = length(re);
+		if(len < 2) {
+			# TODO: len == 0;
+			tmp = data.frame(a = 1, b = 0);
+			tmp$coeff = re;
+			return(tmp);
+		}
+		id = seq(2, len, by = 2);
+		re[id] = - re[id];
+		len = length(x) - 1;
+		tmp = data.frame(
+			a = seq(len, 0, by = -2),
+			b = seq(0, len, by=2));
+		tmp$coeff = re;
+		return(tmp);
+	});
+	im = lapply(x, function(x) {
+		len = length(x);
+		im  = x[seq(2, len, by = 2)];
+		if(len <= 3) {
+			# TODO: len == 0;
+			if(len == 2) {
+				tmp = data.frame(a = 0, b = 1);
+			} else if(len == 3) {
+				tmp = data.frame(a = 1, b = 1);
+			}
+			tmp$coeff = im;
+			return(tmp);
+		}
+		len = length(im);
+		id = seq(2, len, by = 2);
+		im[id] = - im[id];
+		len = length(x) - 1;
+		tmp = data.frame(
+			a = seq(len - 1, 0, by = -2),
+			b = seq(1, len, by=2));
+		tmp$coeff = im;
+		return(tmp);
+	});
+	lst = list(Re = re, Im = im);
+	return(lst);
 }
 
 
@@ -92,6 +183,31 @@ poly.calc.mpfr = function(x, bits=120, tol=1E-7) {
 	}
 	p = round0(p, tol=tol);
 	return(p);
+}
+
+split.cmpfr.pm = function(p, precBits = NULL) {
+	nc = ncol(p);
+	if(nc > 2) warning("Only univariate polynomials!");
+	if(is.numeric(p$coeff)) {
+		p$coeff = mpfr(p$coeff, precBits=precBits);
+		prec = precBits;
+	} else prec = getPrec(p$coeff);
+	#
+	z0 = mpfr(0, prec);
+	z1 = mpfr(1, prec);
+	idX = which(names(p) != "coeff")[1];
+	pMax = max(p[idX]);
+	if(pMax == 0) return(list(Re = p, Im = data.frame(coeff = z0)));
+	if(pMax == 1) {
+		pC = p[p[idX] == 1,, drop = FALSE];
+		names(p)[idX] = "a";
+		names(pC)[idX] = "b";
+		lst = list(Re = p, Im = pC);
+		return(lst);
+	}
+	# Binomial Expansion:
+	b = pascal.complex.mpfr(pMax, precBits = prec);
+	# TODO
 }
 
 ### Generate specific Roots
