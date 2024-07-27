@@ -165,6 +165,24 @@ solve.complex.mpfr(b$Re, b$Im, yr, yi)
 ### Polynomials ###
 ###################
 
+### Roots
+
+b = 1; # b = 2;
+p = as.pm("(x^5 - x - b[1])^3")
+
+#
+prec = 200;
+x = roots.mpfr(p, -0.1, -0.2, it = 160, prec = prec)
+xx = pow.all.complex.mpfr(x$Re, x$Im, 5); xx$Re[5] - xx$Re[1]; xx$Im[5] - xx$Im[1]
+
+#
+prec = 240;
+x = roots.mpfr(p, -0.1, -0.2, it = 160, prec = prec)
+xx = pow.all.complex.mpfr(x$Re, x$Im, 5); xx$Re[5] - xx$Re[1]; xx$Im[5] - xx$Im[1]
+
+
+#############
+
 ###
 K = 3
 x = roots.Class1.mpfr(K, c(1,-K,0,1))
