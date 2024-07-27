@@ -186,6 +186,63 @@ split.cpm.pascal = function(x) {
 ###################
 ### Polynomials ###
 
+### Roots
+
+# Complex Root:
+# - only 1 Root!
+roots.mpfr = function(p, x0, x0i, precBits = 200, iter = 24) {
+	if(ncol(p) > 2) stop("Polynomial must be univariate");
+	if(is.complex(p$coeff)) stop("Complex polynomials not yet implemented!");
+	#
+	isMpfr = inherits(x0, "mpfr");
+	if(isMpfr) {
+		precBits = getPrec(x0);
+	}
+	if(is.pm(p)) {
+		if(inherits(p$coeff, "mpfr")) {
+			precBits = getPrec(p$coeff);
+		} else {
+			p$coeff = mpfr(p$coeff, precBits=precBits);
+		}
+	}
+	if( ! isMpfr) {
+		x0  = mpfr(x0,  precBits=precBits);
+		x0i = mpfr(x0i, precBits=precBits);
+	}
+	dd0 = mpfr(paste0("1E-", round(precBits/3)), precBits=precBits);
+	idX = which(names(p) != "coeff");
+	xn = names(p)[idX];
+	dp = dp.pm(p, by = xn);
+	nn = max(p[, xn]);
+	id = p[, xn] + 1; idD = dp[, xn] + 1;
+	for(i in seq(iter)) {
+		xpow = pow.all.complex.mpfr(x0, x0i, n = nn, start.zero = TRUE);
+		pval = sum(xpow$Re[id] * p$coeff);
+		pvi  = sum(xpow$Im[id] * p$coeff);
+		dval = sum(xpow$Re[idD] * dp$coeff);
+		dvi  = sum(xpow$Im[idD] * dp$coeff);
+		### Div:
+		# TODO: dp == 0
+		div  = dval*dval + dvi*dvi;
+		if(div <= dd0) {
+			warning("Division by 0!");
+			sol = list(Re = x0, Im = x0i);
+			return(sol);
+		}
+		dval = dval / div;
+		dvi  = - dvi / div;
+		# Newton-Raphson:
+		x0  = x0 - pval*dval + pvi*dvi;
+		x0i = x0i - pval*dvi - pvi*dval;
+	}
+	# TODO: test residual / convergence
+	sol = list(Re = x0, Im = x0i);
+	return(sol);
+}
+
+
+### Generators
+
 # Compute polynomial from Roots:
 poly.calc.mpfr = function(x, bits=120, tol=1E-7) {
 	one  = mpfr(1, precBits=bits);
