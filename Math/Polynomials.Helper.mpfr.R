@@ -83,7 +83,41 @@ prod.complex.mpfr = function(Re, Im) {
 	return(list(Re = rezr, Im = rezi));
 }
 
+# Note: should be numerically more robust;
 pow.all.complex.mpfr = function(Re, Im, n, start.zero = FALSE) {
+	x = Re; xi = Im;
+	prec = getPrec(x);
+	z0 = mpfr(0, prec);
+	z1 = mpfr(1, prec);
+	if(n == 0) {
+		if(start.zero) return(list(Re = z1, Im = z0));
+		return(NULL);
+	}
+	y  = rep(x, n);
+	yi = rep(xi, n);
+	if(n == 1) {
+		if(start.zero) { y = c(z1, y); yi = c(z0, yi); }
+		return(list(Re = y, Im = yi));
+	}
+	# Powers:
+	i1 = 1L;
+	i2 = integer(0);
+	# Powers of 2:
+	while((tmp <- i1 + i1) <= n) {
+		y[tmp]  = y[i1] * y[i1] - yi[i1] * yi[i1];
+		yi[tmp] = 2 * y[i1] * yi[i1];
+		i1 = tmp;
+		i2 = c(i2, tmp);
+	}
+	for(i in i2) {
+		id = seq(i-1);
+		y[i + id]  = y[i] * y[id] - yi[i] * yi[id];
+		yi[i + id] = y[i] * yi[id] + yi[i] * y[id];
+	}
+	if(start.zero) { y = c(z1, y); yi = c(z0, yi); }
+	return(list(Re = y, Im = yi));
+}
+pow.all.complex.old.mpfr = function(Re, Im, n, start.zero = FALSE) {
 	x = Re; xi = Im;
 	prec = getPrec(x);
 	z0 = mpfr(0, prec);

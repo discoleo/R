@@ -167,6 +167,21 @@ solve.complex.mpfr(b$Re, b$Im, yr, yi)
 
 ### Roots
 
+
+###
+b = 2; # b = 1;
+n = 17;
+p = as.pm("x^n - x - b[1]")
+
+# Note: very sensitive to x0 & x0i!
+x0i = - 0.2; # for b = 2;
+# x0i = - 0.3; # for b = 1;
+x = roots.mpfr(p, 1, x0i, it = 64, prec = prec)
+xx = pow.all.complex.mpfr(x$Re, x$Im, 17);
+xx$Re[n] - xx$Re[1]; xx$Im[n] - xx$Im[1]
+
+
+### Multiplicity
 b = 1; # b = 2;
 p = as.pm("(x^5 - x - b[1])^3")
 
