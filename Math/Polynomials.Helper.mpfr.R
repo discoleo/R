@@ -196,11 +196,11 @@ roots.mpfr = function(p, x0, x0i, precBits = 200, iter = 24) {
 	#
 	isMpfr = inherits(x0, "mpfr");
 	if(isMpfr) {
-		precBits = getPrec(x0);
+		precBits = getPrec(x0)[1];
 	}
 	if(is.pm(p)) {
 		if(inherits(p$coeff, "mpfr")) {
-			precBits = getPrec(p$coeff);
+			precBits = getPrec(p$coeff)[1];
 		} else {
 			p$coeff = mpfr(p$coeff, precBits=precBits);
 		}
@@ -209,7 +209,8 @@ roots.mpfr = function(p, x0, x0i, precBits = 200, iter = 24) {
 		x0  = mpfr(x0,  precBits=precBits);
 		x0i = mpfr(x0i, precBits=precBits);
 	}
-	dd0 = mpfr(paste0("1E-", round(precBits/3)), precBits=precBits);
+	ddh = mpfr(paste0("1E-", round(precBits/6)), precBits=precBits);
+	dd0 = ddh*ddh;
 	idX = which(names(p) != "coeff");
 	xn = names(p)[idX];
 	dp = dp.pm(p, by = xn);
@@ -225,6 +226,12 @@ roots.mpfr = function(p, x0, x0i, precBits = 200, iter = 24) {
 		# TODO: dp == 0
 		div  = dval*dval + dvi*dvi;
 		if(div <= dd0) {
+			ddh = 2*ddh;
+			if(abs(pval) <= ddh && abs(pvi) <= ddh) {
+				warning("Multiplicity!");
+				sol = roots.mpfr(dp, x0, x0i, iter = max(24, iter - 8));
+				return(sol);
+			}
 			warning("Division by 0!");
 			sol = list(Re = x0, Im = x0i);
 			return(sol);
