@@ -110,7 +110,7 @@ pow.all.complex.mpfr = function(Re, Im, n, start.zero = FALSE) {
 		i2 = c(i2, tmp);
 	}
 	for(i in i2) {
-		id = seq(i-1);
+		id = seq(min(i-1, n - i));
 		y[i + id]  = y[i] * y[id] - yi[i] * yi[id];
 		yi[i + id] = y[i] * yi[id] + yi[i] * y[id];
 	}
