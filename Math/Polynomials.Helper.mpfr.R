@@ -83,6 +83,29 @@ prod.complex.mpfr = function(Re, Im) {
 	return(list(Re = rezr, Im = rezi));
 }
 
+pow.all.complex.mpfr = function(Re, Im, n, start.zero = FALSE) {
+	x = Re; xi = Im;
+	prec = getPrec(x);
+	z0 = mpfr(0, prec);
+	z1 = mpfr(1, prec);
+	if(n == 0) {
+		if(start.zero) return(list(Re = z1, Im = z0));
+		return(NULL);
+	}
+	y  = rep(x, n);
+	yi = rep(xi, n);
+	if(n == 1) {
+		if(start.zero) { y = c(z1, y); yi = c(z0, yi); }
+		return(list(Re = y, Im = yi));
+	}
+	for(i in seq(2, n)) {
+		y[i]  = y[i-1] * Re - yi[i-1]*Im;
+		yi[i] = y[i-1] * Im + yi[i-1]*Re;
+	}
+	if(start.zero) { y = c(z1, y); yi = c(z0, yi); }
+	return(list(Re = y, Im = yi));
+}
+
 # (a + 1i*b)^n
 pascal.complex.mpfr = function(n, precBits, as.pm  = TRUE) {
 	b  = pascal.mpfr(n, precBits);
