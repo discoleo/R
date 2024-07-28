@@ -181,6 +181,20 @@ xx = pow.all.complex.mpfr(x$Re, x$Im, n);
 xx$Re[n] - xx$Re[1]; xx$Im[n] - xx$Im[1]
 
 
+###
+b = c(-1, -2); # b = c(-2, -2)
+# b = c(-1,-1)
+p = as.pm("x^17 + x^15 + b[2]*x + b[1]")
+
+prec = 200
+# Note: very sensitive to x0 & x0i!
+x0i = - 0.4; # x0i = - 0.8; # all 3 variants;
+x = roots.mpfr(p, 1, x0i, it = 64, prec = prec)
+xx = pow.all.complex.mpfr(x$Re, x$Im, 17);
+xx$Re[17] + xx$Re[15] + b[2]*xx$Re[1];
+xx$Im[17] + xx$Im[15] + b[2]*xx$Im[1];
+
+
 ### Multiplicity
 b = 1; # b = 2;
 p = as.pm("(x^5 - x - b[1])^3")
