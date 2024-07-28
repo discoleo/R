@@ -203,6 +203,15 @@ p = as.pm("(x^5 - x - b[1])^3")
 prec = 200;
 x = roots.mpfr(p, -0.1, -0.2, it = 160, prec = prec)
 xx = pow.all.complex.mpfr(x$Re, x$Im, 5); xx$Re[5] - xx$Re[1]; xx$Im[5] - xx$Im[1]
+# NO additional precision
+x = roots.mpfr(p, -0.1, -0.2, it = 120, prec = prec, multi=2)
+xx = pow.all.complex.mpfr(x$Re, x$Im, 5); xx$Re[5] - xx$Re[1]; xx$Im[5] - xx$Im[1]
+# Faster & same precision:
+x = roots.mpfr(p, -0.1, -0.2, it = 80, prec = prec, multi=2)
+xx = pow.all.complex.mpfr(x$Re, x$Im, 5); xx$Re[5] - xx$Re[1]; xx$Im[5] - xx$Im[1]
+# Exact: but needs exact Multiplicity
+x = roots.mpfr(p, -0.1, -0.2, it = 80, prec = prec, multi=3)
+xx = pow.all.complex.mpfr(x$Re, x$Im, 5); xx$Re[5] - xx$Re[1]; xx$Im[5] - xx$Im[1]
 
 #
 prec = 240;

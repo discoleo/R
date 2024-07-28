@@ -224,10 +224,12 @@ split.cpm.pascal = function(x) {
 
 # Complex Root:
 # - only 1 Root!
-roots.mpfr = function(p, x0, x0i, precBits = 200, iter = 24) {
-	if(ncol(p) > 2) stop("Polynomial must be univariate");
+roots.mpfr = function(p, x0, x0i, precBits = 200, iter = 24,
+		multiplicity = 1, warn.multiplicity = TRUE, verbose = TRUE) {
+	if(multiplicity < 1) stop("Invalid multiplicity!")
+	if(ncol(p) > 2) stop("Polynomial must be univariate!");
 	if(is.complex(p$coeff)) stop("Complex polynomials not yet implemented!");
-	#
+	# Precision:
 	isMpfr = inherits(x0, "mpfr");
 	if(isMpfr) {
 		precBits = getPrec(x0)[1];
@@ -250,6 +252,8 @@ roots.mpfr = function(p, x0, x0i, precBits = 200, iter = 24) {
 	dp = dp.pm(p, by = xn);
 	nn = max(p[, xn]);
 	id = p[, xn] + 1; idD = dp[, xn] + 1;
+	if(multiplicity > 1) p$coeff = multiplicity * p$coeff;
+	# Iterations:
 	for(i in seq(iter)) {
 		xpow = pow.all.complex.mpfr(x0, x0i, n = nn, start.zero = TRUE);
 		pval = sum(xpow$Re[id] * p$coeff);
@@ -262,8 +266,11 @@ roots.mpfr = function(p, x0, x0i, precBits = 200, iter = 24) {
 		if(div <= dd0) {
 			ddh = 2*ddh;
 			if(abs(pval) <= ddh && abs(pvi) <= ddh) {
-				warning("Multiplicity!");
-				sol = roots.mpfr(dp, x0, x0i, iter = max(24, iter - 8));
+				if(warn.multiplicity) warning("Multiplicity!");
+				if(verbose) cat("Iteration: ", i, "\n");
+				if(multiplicity > 1) multiplicity = multiplicity - 1;
+				sol = roots.mpfr(dp, x0, x0i, iter = max(24, iter - 8),
+					multiplicity=multiplicity);
 				return(sol);
 			}
 			warning("Division by 0!");
