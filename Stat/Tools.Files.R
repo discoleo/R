@@ -9,7 +9,7 @@ match.dir = function(path1, path2, pattern = NULL) {
 	x2 = list.files(path2, pattern=pattern, no.. = TRUE);
 	cat("Finished Dir 2\n");
 	f1 = file.size(paste0(path1, "/", x1));
-	f2 = file.size(paste0(path1, "/", x2));
+	f2 = file.size(paste0(path2, "/", x2));
 	s1 = paste0(f1, "\t", x1);
 	s2 = paste0(f2, "\t", x2);
 	idMatch = match(s1, s2);
