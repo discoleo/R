@@ -4,12 +4,25 @@
 # - file name & file size;
 # - TODO: option for hash;
 match.dir = function(path1, path2, pattern = NULL, verbose = TRUE) {
-	x1 = list.files(path1, pattern=pattern, no.. = TRUE);
+	# Note: NO easy way to exclude directories!
+	x1 = list.files(path1, pattern=pattern, no.. = TRUE,
+		include.dirs = FALSE);
 	if(verbose) cat("Finished Dir 1\n");
-	x2 = list.files(path2, pattern=pattern, no.. = TRUE);
+	x2 = list.files(path2, pattern=pattern, no.. = TRUE,
+		include.dirs = FALSE);
 	if(verbose) cat("Finished Dir 2\n");
-	f1 = file.size(paste0(path1, "/", x1));
+	# Filter Dirs:
+	# f1 = file.size(paste0(path1, "/", x1));
+	f1 = file.info(paste0(path1, "/", x1), extra_cols = FALSE);
+	isFile = ! f1$isdir;
+	f1 = f1$size;
+	if(verbose) {
+		cat("Excluded ", length(isFile) - sum(isFile), " dirs.\n");
+	}
+	x1 = x1[isFile];
+	f1 = f1[isFile];
 	f2 = file.size(paste0(path2, "/", x2));
+	# Match:
 	s1 = paste0(f1, "\t", x1);
 	s2 = paste0(f2, "\t", x2);
 	idMatch = match(s1, s2);
@@ -28,7 +41,15 @@ diff.dir = function(path1, path2, pattern = NULL, swap = FALSE,
 	FILES = match.dir(path1, path2, pattern=pattern, verbose=verbose);
 	FILES = FILES[is.na(FILES$Match), ];
 	if(copy) {
-		# TODO
+		fN = paste0(path1, "/", FILES$Name);
+		# Manual overwrite!
+		r1 = file.copy(fN, path2, overwrite = FALSE, recursive = FALSE,
+			copy.mode = FALSE, copy.date = TRUE);
+		fFAIL = FILES[ ! r1, ];
+		if(nrow(fFAIL) > 0) {
+			cat("Failed to copy:\n");
+			print(fFAIL);
+		}
 	}
 	return(FILES);
 }
