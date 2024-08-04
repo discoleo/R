@@ -1346,11 +1346,46 @@ circles.InFixedCircle = function(n, r, N, center = c(0,0,0), phi=0) {
 	return(xyz);
 }
 
-plot.spheres.chain = function(obj, ...) {
-	cc  = obj$center;
+### Outer Bearing
+bearing = function(r, N, center = c(0,0,0), n = 15,
+		h.scale = 0.75, phi = 0) {
+	N3 = N[3,];
+	bb = circles.InFixedCircle(n=n, r=r, N=N, center=center, phi=phi);
+	# Inner wall:
+	rb = bb$r;
+	ri = bb$R - rb; # inner radius
+	pp = rbind(center - rb*N3, center + rb*N3);
+	bt = mesh.cylinder(r = ri, pp);
+	# Lateral walls:
+	hh = (1+h.scale) * rb;
+	rw = if(h.scale > 0) c(ri + hh, ri + rb, ri) else c(ri + hh, ri);
+	w1 = mesh.ring(r = rw, N, center = pp[1,]);
+	w2 = mesh.ring(r = rw, N, center = pp[2,]);
+	# Outer wall:
+	# TODO
+	# Bearing:
+	lst = list(Balls = bb, Base = bt, Wall1 = w1, Wall2 = w2);
+	invisible(lst);
+}
+
+plot.spheres.chain = function(x, ...) {
+	cc  = x$center;
 	len = nrow(cc);
 	for(id in seq(len)) {
-		spheres3d(cc[id,], y = NULL, z = NULL, radius = obj$r, ...);
+		spheres3d(cc[id,], y = NULL, z = NULL, radius = x$r, ...);
 	}
 	invisible();
+}
+
+plot.bearing = function(x, col = c("#323232", "#969696", "#A0A0A0"),
+		alpha = c(1, 0.8, 0.6, 0.6), ...) {
+	if(length(col) == 3) col = c(col, col[[3]]);
+	plot.spheres.chain(x$Balls, col = col[[1]], alpha = alpha[[1]]);
+	mCyl = mesh3d(vertices = t(x$Base$V), triangles = x$Base$M)
+	shade3d(mCyl, col = col[[2]], alpha = alpha[[2]]);
+	# Lateral Walls:
+	mW1 = mesh3d(vertices = t(x$Wall1$V), triangles = x$Wall1$M);
+	mW2 = mesh3d(vertices = t(x$Wall2$V), triangles = x$Wall2$M);
+	shade3d(mW1, col = col[[3]], alpha = alpha[[3]]);
+	shade3d(mW2, col = col[[4]], alpha = alpha[[4]]);
 }

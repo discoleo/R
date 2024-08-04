@@ -234,7 +234,15 @@ test.cyclo.cylinder(19)
 ### Ball Bearings
 
 # the Balls:
-p = matrix(c(1,0,0, 0,1,0), nrow=2, byrow=T)
-s = circles.InFixedCircle(13, 5, p)
+N = matrix(c(1,0,0, 0,1,0), ncol=3, byrow=T)
+s = circles.InFixedCircle(13, 5, N)
 plot.spheres.chain(s)
+
+
+# Bearing:
+# - Intended to run inside a tube;
+r = 5
+N = matrix(c(1,0,0, 0,1,0, 0,0,1), ncol=3, byrow=T)
+b = bearing(r, N)
+plot.bearing(b)
 
