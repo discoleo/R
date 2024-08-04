@@ -402,6 +402,98 @@ vertex.ngon = function(n, N, r = 1, center = c(0,0,0), phi = 0) {
 	return(cbind(x=x, y=y, z=z));
 }
 
+############
+### Ring ###
+
+# N = list/matrix with 2 normals defining plane of ring;
+# n = number of segments to partition the circle;
+# length(r) = internal sub-rings;
+# phi = shift of mesh;
+# Note:
+# - visually pleasing, but may be suboptimal
+#   for engineering applications;
+# - it may be better to bind rings
+#   with different number of segments;
+vertex.ring = function(r, N, center = c(0,0,0), n = 32, phi = 0) {
+	if(length(r) == 1) {
+		# TODO: optimized version
+		r = c(r, 0);
+	}
+	#
+	if(inherits(N, "list")) {
+		N1 = N[[1]];
+		N2 = N[[2]];
+	} else if(inherits(N, "matrix")) {
+		N1 = N[1,];
+		N2 = N[2,];
+	} else stop("Please provide the Normals!");
+	pi2 = 2*pi;
+	ph1 = seq(0, n-1) * pi2 / n + phi;
+	ph2 = ph1 + pi/n;
+	sn1 = sin(ph1); cs1 = cos(ph1);
+	sn2 = sin(ph2); cs2 = cos(ph2);
+	len = length(r);
+	isF = rep(c(TRUE, FALSE), len %/% 2);
+	if(len %% 2 == 1) isF = c(isF, TRUE);
+	# Vertex
+	lst = lapply(seq(len), function(id) {
+		isF = isF[id];
+		cs = if(isF) cs1 else cs2;
+		sn = if(isF) sn1 else sn2;
+		x = r[id]*(cs*N1[1] + sn*N2[1]) + center[1];
+		y = r[id]*(cs*N1[2] + sn*N2[2]) + center[2];
+		z = r[id]*(cs*N1[3] + sn*N2[3]) + center[3];
+		cbind(x, y, z);
+	});
+	v = do.call(rbind, lst);
+	attr(v, "dim.ring") = c(n, len);
+	invisible(v);
+}
+mesh.ring = function(r, N, center = c(0,0,0), n = 32, phi = 0) {
+	V = vertex.ring(r=r, N=N, center=center, n=n, phi=phi);
+	M = mesh.ring.vertex(V);
+	lst = list(V = V, M = M);
+	invisible(lst);
+}
+mesh.ring.vertex = function(V) {
+	dim = attr(V, "dim.ring");
+	n = dim[1]; len = dim[2];
+	# Mesh
+	n2  = 2*n;
+	len = len - 1;
+	idM = matrix(0, nrow = 3, ncol = n2*len);
+	for(id in seq(len)) {
+		id0 = n2*(id - 1);
+		id1 = n*(id - 1);
+		id2 = id1 + n;
+		idM[, id0 + seq(n)] = rbind(
+			id1 + seq(n),
+			id1 + c(seq(2, n), 1),
+			id2 + seq(n));
+		if(id %% 2 == 1) {
+			idM[, id0 + seq(n)] = rbind(
+				id1 + seq(n),
+				id1 + c(seq(2, n), 1),
+				id2 + seq(n));
+			idM[, id0 + n + seq(n)] = rbind(
+				id2 + seq(n),
+				id2 + c(seq(2, n), 1),
+				id1 + c(seq(2, n), 1));
+		} else {
+			idM[, id0 + seq(n)] = rbind(
+				id1 + seq(n),
+				id1 + c(seq(2, n), 1),
+				id2 + c(seq(2, n), 1));
+			idM[, id0 + n + seq(n)] = rbind(
+				id2 + seq(n),
+				id2 + c(seq(2, n), 1),
+				id1 + seq(n));
+		}
+	};
+	invisible(idM);
+}
+
+
 ################
 ### Cylinder ###
 

@@ -68,6 +68,16 @@ N = test.eigen.lineAny(pL, d=d, normalize = FALSE)
 N = test.eigen.lineAny(pL, d=d)
 
 
+##################
+##################
+
+### Examples: Ring
+
+###
+p = matrix(c(1,0,0, 0,1,0), nrow=2, byrow=T)
+m = mesh.ring(c(2, 1.6, 1.2, 1), p)
+wire3d(mesh3d(vertices = t(m$V), triangles = m$M))
+
 #############
 
 ### Examples: Cylinder
