@@ -227,3 +227,14 @@ close3d()
 open3d()
 test.cyclo.cylinder(19)
 
+
+#####################
+#####################
+
+### Ball Bearings
+
+# the Balls:
+p = matrix(c(1,0,0, 0,1,0), nrow=2, byrow=T)
+s = circles.InFixedCircle(13, 5, p)
+plot.spheres.chain(s)
+

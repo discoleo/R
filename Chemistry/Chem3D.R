@@ -1321,3 +1321,36 @@ test.cyclo.cylinder = function(n = 15, R = 3) {
 	invisible(obj);
 }
 
+
+###################
+###################
+
+### Spheres Inside a Circle
+# - 3D version: inside larger circle of given radius;
+# - Initial code in pseudo-package BioShapes, see:
+#   Graphic.Helper.Circles.Chains.R;
+circles.InFixedCircle = function(n, r, N, center = c(0,0,0), phi=0) {
+	if(inherits(N, "list")) {
+		N1 = N[[1]]; N2 = N[[2]];
+	} else if(inherits(N, "matrix")) {
+		N1 = N[1,]; N2 = N[2,];
+	} else stop("Please provide valid Normals!");
+	r1 = r / (1 + 1/sin(pi/n));
+	R  = r - r1;
+	th = seq(0, n-1) * 2*pi / n + phi;
+	sn = sin(th); cs = cos(th);
+	x = R*(cs*N1[1] + sn*N2[1]) + center[1];
+	y = R*(cs*N1[2] + sn*N2[2]) + center[2];
+	z = R*(cs*N1[3] + sn*N2[3]) + center[3];
+	xyz = list(center = cbind(x,y,z), r = r1, R = R);
+	return(xyz);
+}
+
+plot.spheres.chain = function(obj, ...) {
+	cc  = obj$center;
+	len = nrow(cc);
+	for(id in seq(len)) {
+		spheres3d(cc[id,], y = NULL, z = NULL, radius = obj$r, ...);
+	}
+	invisible();
+}
