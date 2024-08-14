@@ -260,7 +260,38 @@ line_integral(function(x) x^5*(1-x^5)^(-1/2), c(m5, m5^4)) * 1/2 / 2^(2/5) * (m5
 #####################
 ### Complex Gamma ###
 
+### Gamma(1i)
+# 1. Maths 505: Let's calculate i factorial
+#    https://www.youtube.com/watch?v=f4ORnke4rd8
+# 2. BriTheMathGuy: |i Factorial| You Won't Believe The Outcome
+#    https://www.youtube.com/watch?v=R7djflEwPwQ
+#  - very introductory;
+# 3. Wikipedia
+#    https://en.wikipedia.org/wiki/Particular_values_of_the_gamma_function
+
+abs(pracma::gammaz(1i))
+sqrt(pi / sinh(pi))
+
+
 ### Gamma(1i/2)
+abs(pracma::gammaz(1i/2))
+sqrt(2*pi / sinh(pi/2))
+
+# Derivation:
+2 * sqrt(pi / sin(pi/2*1i))
+2 * sqrt(-1i * pi / sinh(pi/2))
+sqrt(pi / sinh(pi/2)) * sqrt(2)
+
+#
 - (pracma::gammaz(1i/2) + pracma::gammaz(-1i/2))
 log(gamma(1/4)/gamma(3/4)) - log(pi)/4
 
+# TODO: verify & develop
+
+
+### Gamma(1i / k)
+k = sqrt(7)
+abs(pracma::gammaz(1i/k))
+sqrt(k*pi / sinh(pi/k))
+
+# TODO
