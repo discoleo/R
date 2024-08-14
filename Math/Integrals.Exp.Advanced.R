@@ -173,3 +173,19 @@ pi/4 * log(4*pi^3) - pi*log(gamma(1/4)) + pi*Euler/4
 ###
 pracma::integral(\(x) log(x) / cosh(x), 0, Inf)
 pi/2 * log(4*pi^3) - 2*pi*log(gamma(1/4))
+
+
+####################
+####################
+
+### I( exp(cos(x)) * cos(sin(x)) / (x^2 + 1) )
+# Maths 505: MESMERIZING integral result! int 0 to infty e^(cos(x))cos(sin(x))/(1+x^2)
+# https://www.youtube.com/watch?v=hxmCDKuZLsU
+
+Int = function(FUN, lower, upper, subdiv = 1024, rel.tol=1E-6) {
+	integrate(FUN, lower, upper,
+		subdivisions = subdiv, rel.tol=rel.tol);
+}
+Int(\(x) exp(cos(x)) * cos(sin(x)) / (x^2 + 1), 0, Inf, 4400)
+pi/2 * exp(exp(-1))
+
