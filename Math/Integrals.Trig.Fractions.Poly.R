@@ -535,6 +535,9 @@ integrate(function(x) 1 / sin(x)^3 - 1/x^3 - 1/(2*x), 0, pi/2)
 ###
 integrate(function(x) 1 / sin(x)^2 - 1/x^2, 0, pi/2)
 2/pi
+#
+integrate(function(x) 1 / sin(x)^2 - 1/x^2, 0, pi/4)
+4/pi - 1
 
 ### I( x / sin(x)^2 )
 integrate(function(x) x / sin(x)^2 - 1/x, 0, pi/2)
@@ -547,7 +550,7 @@ pi*log(2)
 
 ### I( x^3 / sin(x)^2 )
 integrate(function(x) x^3 / sin(x)^2, 0, pi/2)
-3/4*pi^2*log(2) - 3*7/8 * zeta(3)
+3/4*pi^2*log(2) - 3*7/8 * pracma::zeta(3)
 
 
 ### I( x^4 / sin(x)^2 )
@@ -622,6 +625,11 @@ integrate(\(x) cos(k*x) / sin(k*x)^3 - 1/(k^3*x^3), 0, 1)
 k = pi/7
 integrate(\(x) x / sin(k*x)^2 - 1/(k^2*x), 0, 1)
 - cos(k) / (k * sin(k)) + log(sin(k)) / k^2 - log(k) / k^2 + 1/k^2;
+
+### I( x / tan(k*x)^2 )
+k = pi/7
+integrate(function(x) x/tan(k*x)^2 - 1/(k^2*x), 0, 1)
+(log(sin(k)) - log(k) - k/tan(k) + 1) / k^2 - 1/2
 
 
 ### I( x * cos(k*x) / sin(k*x)^4 )
