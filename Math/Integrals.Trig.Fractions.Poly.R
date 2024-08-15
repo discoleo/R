@@ -29,6 +29,7 @@ zeta = function(x) {
 # Upper = Inf: numeric instability;
 pracma::integral(\(x) sin(x) / (x + 1), 0, 1000000)
 integrate(\(x) 1 / (log(x)^2 + 1), 0, 1)
+integrate(\(x) exp(-x) / (x^2 + 1), 0, Inf)
 # TODO: ???
 
 
@@ -76,6 +77,22 @@ integrate(\(x) sin(k*x) / (x^2 + 1), 0, Inf, subdivisions=4096*2, rel.tol=1E-5)
 integrate(\(x) sapply(x, \(x) {
 	1/(4*pi) * Im(sin(k*x) * (pracma::psi((x + 1i)/(2*pi)) - pracma::psi((x - 1i)/(2*pi))))
 	}), 0, 2*pi)
+(exp(2)*pracma::expint(1) - pracma::expint(-1) - 1i*pi) / (2*exp(1))
+# TODO
+
+###
+k = sqrt(5)
+integrate(\(x) sin(k*x) / (x^2 + 1), 0, Inf, subdivisions=4096*2, rel.tol=1E-5)
+integrate(\(x) sin(k*x) / (x^2 + 1), 0, 2000, subdivisions=4096, rel.tol=1E-6)
+(exp(2*k)*pracma::expint(k) - pracma::expint(-k) - 1i*pi) / (2*exp(k))
+
+
+### I( x * cos(x) / (x^2 + 1) )
+# upper = Inf; # numerical instability!
+integrate(\(x) x * cos(x) / (x^2 + 1), 0, 1E+5, subdivisions = 8000)
+- Re(exp(2)*pracma::expint_Ei(-1) + pracma::expint_Ei(1)) / (2*exp(1))
+(exp(2)*pracma::expint_E1(1) - pracma::expint_Ei(1)) / (2*exp(1))
+(exp(2)*pracma::expint(1) + pracma::expint(-1) + 1i*pi) / (2*exp(1))
 
 
 ### Gen 1:
@@ -379,6 +396,20 @@ log(3)/2 - log(pi/2)
 
 ########
 ### TAN:
+integrate(function(x) 1/tan(x) - 1/x, 0, pi/2)
+- log(pi/2)
+
+###
+integrate(function(x) 1/tan(x) - 1/x, 0, pi/4)
+- log(2)/2 - log(pi/4)
+
+###
+k = pi/5
+integrate(function(x) 1/tan(x) - 1/x, 0, k)
+log(sin(k)) - log(k)
+
+
+###
 integrate(function(x) x / tan(x), 0, pi/2)
 pi*log(2)/2
 #
@@ -494,6 +525,12 @@ integrate(function(x) x^2*(pi - x)^2 / sin(x), 0, pi/2)
 # Maths 505: A surprisingly fascinating integral
 # https://www.youtube.com/watch?v=8DWa0zIM9lY
 # - see also file: Integrals.Log.Trig.R;
+
+###
+integrate(function(x) 1 / sin(x)^3 - 1/x^3 - 1/(2*x), 0, pi/2)
+1/(2*pi^2/4) + log(2)/2 - log(pi/2)/2 - 1/12
+2/pi^2 + log(2) - log(pi)/2 - 1/12
+# Note: for arbitrary interval, see a few paragraphs below;
 
 ###
 integrate(function(x) 1 / sin(x)^2 - 1/x^2, 0, pi/2)
