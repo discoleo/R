@@ -53,3 +53,28 @@ diff.dir = function(path1, path2, pattern = NULL, swap = FALSE,
 	}
 	return(FILES);
 }
+
+
+diff.dirs = function(x, path1, path2, verbose = c("Top", "Full", "None")) {
+	verbose  = match.arg(verbose);
+	verb.all = verbose == "Full";
+	verb.dir = verbose != "None";
+	xn = nchar(x)
+	isNotRoot = xn > 0;
+	p1[isNotRoot] = paste0(path1, "/", x[isNotRoot]);
+	p2[isNotRoot] = paste0(path2, "/", x[isNotRoot]);
+	#
+	lst.diff = lapply(seq_along(x), function(id) {
+		dd = diff.dir(p1[id], p2[id], verbose = verb.all);
+		if(verb.dir) {
+			cat("Dir: ", x[id], "\n");
+			if(nrow(dd) > 0) { print(dd); }
+			else {
+				cat("   EQUAL!\n");
+			}
+		}
+		return(dd);
+	});
+	invisible(lst.diff);
+}
+
