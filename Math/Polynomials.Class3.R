@@ -13,6 +13,35 @@ source("Polynomials.Helper.R")
 ####################
 ####################
 
+### Order 4
+
+### Based on cos(2*pi/9)
+r = 2*cos(2*pi*seq(4) / 9)
+# Note: 1 trivial integer root;
+
+x = r; poly.calc0(x, digits = 5)
+x^4 + x^3 - 3*x^2 - 2*x + 1
+
+x = r^2 + 2*r; poly.calc0(x, digits = 5)
+x^4 - 5*x^3 - 3*x^2 + 4*x + 1
+
+
+### Based on cos(2*pi/15)
+r = 2*cos(2*pi*c(1,2,4,7)/15)
+
+x = r; poly.calc0(x, digits = 5)
+x^4 - x^3 - 4*x^2 + 4*x + 1
+
+x = r^2 - r; poly.calc0(x, digits = 5)
+x^4 - 8*x^3 + 14*x^2 - 7*x + 1
+
+x = r^3 - r - 1; poly.calc0(x, digits = 5)
+x^4 + 4*x^3 - 19*x^2 - 16*x + 1
+
+
+###################
+###################
+
 ### Order 6
 # Examples
 
