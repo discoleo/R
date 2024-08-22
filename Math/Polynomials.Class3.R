@@ -70,8 +70,34 @@ x^4 - 10*x^3 + 23*x^2 - 10*x + 1
 ###################
 ###################
 
+### Order 5
+
+### Based on cos(2*pi/11)
+r = 2*cos(2*pi*seq(5)/11)
+
+#
+x = r; poly.calc0(x, digits = 5)
+x^5 + x^4 - 4*x^3 - 3*x^2 + 3*x + 1
+
+x = r^2 - r; poly.calc0(x, digits = 5)
+x^5 - 10*x^4 + 29*x^3 - 25*x^2 + 3*x + 1
+
+x = r^2 + r; poly.calc0(x, digits = 5)
+x^5 - 8*x^4 + 19*x^3 - 15*x^2 + x + 1
+
+x = r^2 + 2*r; poly.calc0(x, digits = 5)
+x^5 - 7*x^4 + 2*x^3 + 17*x^2 + 9*x + 1
+
+
+###################
+###################
+
 ### Order 6
-# Examples
+
+# Variants based on:
+# Type sq-free: cos(2*pi/13), cos(2*pi/21);
+# Type sq: cos(pi/7), cos(pi/8), cos(pi/9), cos(pi/12);
+# Other: from cos(pi/10);
 
 ### Based on cos(2*pi/13)
 r = 2*cos(2*pi*seq(6)/13)
@@ -147,6 +173,20 @@ x = (r + 1)^2 - (r^2 + r)^2; poly.calc0(x, digits = 5)
 x^6 + 20*x^5 + 38*x^4 - 70*x^3 - 107*x^2 + 26*x + 1
 
 
+### Based on cos(pi/8)
+id = seq(7)[-4]
+r = 2*cos(pi*id/8)
+
+# Trivial Poly
+x = r; poly.calc0(x)
+x^6 - 6*x^4 + 10*x^2 - 4
+
+# Less-Trivial
+x = r^2 + r - 1; poly.calc0(x)
+x^6 - 6*x^5 + 5*x^4 + 12*x^3 - 7*x^2 - 2*x + 1
+(x^2 - 2*x - 1) * (x^4 - 4*x^3 - 2*x^2 + 4*x - 1)
+
+
 ### Based on cos(pi/9)
 id = seq(8)[ - c(3,6)]
 r = 2*cos(pi*id/9)
@@ -171,6 +211,31 @@ x = (r^2 - r - 1)^2; poly.calc0(x, digits = 5)
 x^6 - 30*x^5 + 225*x^4 - 398*x^3 + 210*x^2 - 36*x + 1
 
 
+### Derived from cos(pi/10)
+id = seq(9)[-5]
+r0 = 2*cos(pi*id/10)
+r = r0[ - c(2,5)]
+
+x = r^2 - r; poly.calc0(x, digits = 5)
+x^6 - 14*x^5 + 69*x^4 - 140*x^3 + 95*x^2 + 10*x - 5
+
+x = r^3 - r^2 - r + 1; poly.calc0(x, digits = 5)
+x^6 + 10*x^5 + 9*x^4 - 76*x^3 - 41*x^2 + 18*x - 1
+
+
+### Based on cos(pi/12)
+id = c(1,2,5,7,10,11)
+r = 2*cos(pi*id/12)
+
+# Trivial Poly
+x = r; poly.calc0(x)
+x^6 - 7*x^4 + 13*x^2 - 3
+
+# Non-Trivial
+x = r^2 + r - 1; poly.calc0(x)
+x^6 - 8*x^5 + 13*x^4 + 16*x^3 - 19*x^2 + 1
+
+
 ####################
 ####################
 
@@ -192,7 +257,16 @@ x^7 - 7*x^5 + 14*x^3 - 7*x + 1
 
 ### Order 8
 
-# TODO: basic types;
+### Based on cos(2*pi/17)
+r = 2*cos(2*pi*seq(8)/17)
+
+x = r; poly.calc0(x, digits = 5)
+x^8 + x^7 - 7*x^6 - 6*x^5 + 15*x^4 + 10*x^3 - 10*x^2 - 4*x + 1
+
+x = r^2 - r; poly.calc0(x, digits = 5)
+x^8 - 16*x^7 + 95*x^6 - 261*x^5 + 338*x^4 - 177*x^3 + 7*x^2 + 13*x + 1
+
+# TODO: other types;
 
 
 ### Based on cos(pi/10)
