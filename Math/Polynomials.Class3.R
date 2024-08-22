@@ -146,3 +146,107 @@ x^6 - 16*x^5 + 82*x^4 - 154*x^3 + 101*x^2 - 22*x + 1
 x = (r + 1)^2 - (r^2 + r)^2; poly.calc0(x, digits = 5)
 x^6 + 20*x^5 + 38*x^4 - 70*x^3 - 107*x^2 + 26*x + 1
 
+
+### Based on cos(pi/9)
+id = seq(8)[ - c(3,6)]
+r = 2*cos(pi*id/9)
+
+# Trivial Poly
+x = r; poly.calc0(x)
+x^6 - 6*x^4 + 9*x^2 - 1
+
+# Non/Less-Trivial
+x = (r + 1)^2; poly.calc0(x, digits = 5)
+x^6 - 18*x^5 + 105*x^4 - 226*x^3 + 198*x^2 - 72*x + 9
+# Note: "Squared" Poly;
+x = sqrt(x); # P(x^2) is a shifted trivial poly;
+(x^6 + 9*x^4 - 12*x^2 + 3)^2 - (6*x^5 - 4*x^3)^2
+
+#
+x = - r^3 + r^2 + 3*r - 1; poly.calc0(x, digits = 5)
+x^6 - 6*x^5 + 6*x^4 + 18*x^3 - 33*x^2 + 12*x - 1
+
+#
+x = (r^2 - r - 1)^2; poly.calc0(x, digits = 5)
+x^6 - 30*x^5 + 225*x^4 - 398*x^3 + 210*x^2 - 36*x + 1
+
+
+####################
+####################
+
+### Order 7
+
+# TODO
+
+### Based on cos(2*pi/21)
+# Trivial Root: see also Order 6;
+id = seq(10)[ - c(3,6,9)]
+r = 2*cos(2*pi*id/21)
+
+x = r; poly.calc0(x, digits = 5)
+x^7 - 7*x^5 + 14*x^3 - 7*x + 1
+
+
+####################
+####################
+
+### Order 8
+
+# TODO: basic types;
+
+
+### Based on cos(pi/10)
+id = seq(9)[-5]
+r = 2*cos(pi*id/10)
+
+# Trivial Poly
+x = r; poly.calc0(x)
+x^8 - 8*x^6 + 21*x^4 - 20*x^2 + 5
+
+x = (r+1)^2; poly.calc0(x, digits = 5)
+x^8 - 24*x^7 + 214*x^6 - 876*x^5 + 1655*x^4 - 1316*x^3 + 414*x^2 - 44*x + 1
+
+
+### Based on cos(pi/15)
+id = seq(14)[ - c(3,5,6,9,10,12)]
+r = 2*cos(pi*id/15)
+
+# Trivial Poly
+x = r; poly.calc0(x, digits = 5)
+x^8 - 9*x^6 + 26*x^4 - 24*x^2 + 1
+
+# Non-Trivial:
+x = r^2 - 2*r; poly.calc0(x, digits = 5)
+x^8 - 18*x^7 + 97*x^6 - 100*x^5 - 274*x^4 - 50*x^3 + 48*x^2 + 16*x + 1
+
+
+####################
+####################
+
+### Order 9
+
+### Based on cos(2*pi/19)
+r = 2*cos(2*pi * seq(9) / 19)
+
+#
+x = r; poly.calc0(x, digits = 5)
+x^9 + x^8 - 8*x^7 - 7*x^6 + 21*x^5 + 15*x^4 - 20*x^3 - 10*x^2 + 5*x + 1
+
+x = r^2 - r; poly.calc0(x, digits = 5)
+x^9 - 18*x^8 + 125*x^7 - 425*x^6 + 743*x^5 - 631*x^4 + 189*x^3 + 28*x^2 - 14*x + 1
+
+
+# TODO: remaining types;
+
+
+### Based on cos(2*pi/27)
+id = seq(13)[ - c(3,6,9,12)]
+r = 2*cos(2*pi*id/27)
+
+#
+x = r; poly.calc0(x, digits = 5)
+x^9 - 9*x^7 + 27*x^5 - 30*x^3 + 9*x + 1
+
+x = r^2 - r; poly.calc0(x, digits = 5)
+x^9 - 18*x^8 + 126*x^7 - 438*x^6 + 801*x^5 - 747*x^4 + 300*x^3 - 18*x^2 - 9*x + 1
+
