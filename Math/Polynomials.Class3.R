@@ -3,6 +3,14 @@
 ## Roots: All Real
 
 
+### Various Examples
+
+# Based on:
+# => cos(2*pi / (2*n+1));
+# => subset of 2 * cos(2*pi / higher);
+# => cos(pi / (n+1));
+
+
 ###################
 
 ### Helper Functions
@@ -37,6 +45,26 @@ x^4 - 8*x^3 + 14*x^2 - 7*x + 1
 
 x = r^3 - r - 1; poly.calc0(x, digits = 5)
 x^4 + 4*x^3 - 19*x^2 - 16*x + 1
+
+
+### Based on cos(pi/5)
+r = 2*cos(pi*seq(4)/5)
+
+# Trivial Poly:
+x = r; poly.calc0(x, digits = 5)
+x^4 - 3*x^2 + 1
+
+# Trivial Roots:
+x = r^2 + r; poly.calc0(x, digits = 5)
+x^4 - 6*x^3 + 8*x^2 - 2*x - 1
+
+x = r*3 + r^2 - 2*r; poly.calc0(x, digits = 5)
+x^4 - 6*x^3 + 8*x^2 - 2*x - 1
+
+# Less-Trivial:
+x = r^2 + 2*r + 1; poly.calc0(x, digits = 5)
+x^4 - 10*x^3 + 23*x^2 - 10*x + 1
+(x^2 - 5*x + 1)^2 - 4*x^2
 
 
 ###################
@@ -99,4 +127,22 @@ x^6 - 16*x^5 + 74*x^4 - 57*x^3 - 180*x^2 + 10*x + 1
 
 x = r^4 - r^2 + r - 1; poly.calc0(x)
 x^6 - 23*x^5 + 158*x^4 - 225*x^3 - 579*x^2 - 214*x + 1
+
+
+### Based on cos(pi/7)
+r = 2*cos(pi*seq(6)/7)
+
+# Trivial Poly:
+x = r; poly.calc0(x)
+x^6 - 5*x^4 + 6*x^2 - 1
+
+# Non-Trivial:
+x = r^2 + r; poly.calc0(x, digits = 5)
+x^6 - 10*x^5 + 32*x^4 - 38*x^3 + 13*x^2 + 2*x - 1
+
+x = r^2 + 2*r + 1; poly.calc0(x, digits = 5)
+x^6 - 16*x^5 + 82*x^4 - 154*x^3 + 101*x^2 - 22*x + 1
+
+x = (r + 1)^2 - (r^2 + r)^2; poly.calc0(x, digits = 5)
+x^6 + 20*x^5 + 38*x^4 - 70*x^3 - 107*x^2 + 26*x + 1
 
