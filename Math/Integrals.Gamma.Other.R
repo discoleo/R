@@ -26,20 +26,20 @@ A = exp((log(2*pi) + Euler - 6*dzeta2/pi^2)/12);
 # https://www.youtube.com/watch?v=sdWpmwutSHE
 
 ###
-integrate(\(x) exp(-x^2) / (x^2+1), 0, Inf)
+integrate(\(x) exp(-x^2) / (x^2 + 1), 0, Inf)
 erf1 = integrate(\(x) exp(-x^2), 0, 1)$value;
 gamma(1/2) * (gamma(1/2)/2 - erf1) * exp(1)
 
 
 ###
-integrate(\(x) exp(-x^3) / (x^3+1), 0, Inf)
+integrate(\(x) exp(-x^3) / (x^3 + 1), 0, Inf)
 erf1 = integrate(\(x) x*exp(-x^3), 0, 1)$value;
 gamma(1/3) * (gamma(2/3)/3 - erf1) * exp(1)
 
 
 ### Generalization:
 p = sqrt(5)
-integrate(\(x) exp(-x^p) / (x^p+1), 0, Inf)
+integrate(\(x) exp(-x^p) / (x^p + 1), 0, Inf)
 erf1 = integrate(\(x) x^(p-2)*exp(-x^p), 0, 1)$value;
 gamma(1/p) * (gamma(1-1/p)/p - erf1) * exp(1)
 
@@ -214,6 +214,7 @@ integrate(\(x) log(1-x) * log(gamma(x)), 0, 1)
 integrate(\(x) log(x) * log(gamma(x)), 0, 1)
 
 integrate(\(x) log(gamma(x)) / (x + 1), 0, 1)
+integrate(\(x) log(gamma(x)) / (1 - x), 0, 1)
 integrate(\(x) log(gamma(x)) / (x^2 + 1), 0, 1)
 integrate(\(x) log(gamma(x)) / log(x), 0, 1)
 integrate(\(x) log(gamma(x)) / gamma(x), 0, 1)
@@ -236,10 +237,16 @@ integrate(\(x) gamma(x) * atan(x), 0, 1)
 integrate(\(x) atan(gamma(x)), 0, 1)
 integrate(\(x) gamma(x) / gamma(1/x), 0,1)
 integrate(\(x) gamma(x) / gamma(1 - x) - 1/x, 0, 1)
+integrate(\(x) gamma(log(x+1)) - 1/x, 0, 1)
+integrate(\(x) gamma(log(x+1)) - 1/x, 0, exp(1)-1)
 integrate(\(x) gamma(x) / pracma::zeta(x+1), 0, 1)
 integrate(\(x) gamma(x) / pracma::zeta(1-x), 0, 1)
 integrate(\(x) gamma(gamma(x) - 1/x) + 1 / ((1-x)*(1-Euler)), 0, 1)
 integrate(\(x) (gamma(x) - 1)*(gamma(1-x) - 1), 0, 1)
+
+integrate(\(x) - gamma(x) / (1-x) + 1/(x*(1-x)), 0, 1)
+# =>
+integrate(\(x) gamma(x) - 1/x + 1/(x+1), -1, 0)
 
 # Varia:
 integrate(\(x) gamma(x)/log(gamma(x)) + 1/(x*log(x)) - (1-Euler)/Euler/(1-x), 0, 1, rel.tol=1E-5)
@@ -248,6 +255,10 @@ integrate(\(x) gamma(x)/log(gamma(x)) + 1/(x*log(x)) - (1-Euler)/Euler/(1-x), 0,
 ###
 integrate(\(x) x * log(gamma(x)*gamma(1-x)), 0, 1)
 log(2*pi)/2
+
+###
+integrate(\(x) gamma(x) * gamma(1-x) - 1/x - 1/(1-x), 0, 1)
+- 2 * log(pi/2)
 
 integrate(\(x) x * log(sin(x)), 0, pi)
 - pi^2 * log(2)/2
