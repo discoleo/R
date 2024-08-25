@@ -70,3 +70,32 @@ pi^2 / (4*sqrt(3))
 integrate(\(x) x / (9 - cos(x)^2), 0, pi)
 pi^2 / (6*sqrt(8))
 
+
+###
+b = sqrt(5);
+integrate(\(x) x * cos(x) / (b^2 - cos(x)^2), 0, pi)
+- 1/sqrt(b^2 - 1) * integrate(\(x) atan(sin(x) / sqrt(b^2 - 1)), 0, pi)$value
+
+# TODO
+
+
+###
+b = sqrt(5); up = pi / 5
+integrate(\(x) cos(x) / (b^2 - cos(x)^2), 0, up)
+integrate(\(x) 1 / (x^2 + b^2 - 1), 0, sin(up))
+1/sqrt(b^2 - 1) * atan(sin(up) / sqrt(b^2 - 1))
+
+###
+b = sqrt(7)
+integrate(\(x) atan(sin(x) / sqrt(b^2 - 1)), 0, pi)
+# Weierstrass:
+integrate(\(x) 2 * atan(2*x / (sqrt(b^2 - 1) * (x^2+1))) / (x^2 + 1), 0, Inf)
+
+# Alternative:
+# - but may be circular;
+k = sqrt(3); # k = sqrt(3) + 1E-4
+integrate(\(x) atan(k * sin(x) / sqrt(b^2 - 1)), 0, pi)
+# dk =>
+sqrt(b^2 - 1) * integrate(\(x) sin(x) / (k^2*sin(x)^2 + b^2 - 1), 0, pi)$value
+
+# TODO
