@@ -18,6 +18,12 @@ atan((3*x - x^3) / (1 - 3*x^2))
 atan((1 - 3*x^2) / (3*x - x^3))
 3/2*pi - 3 * atan(x)
 
+# Transforms:
+atan((2*x^3 - 3*x + 1) / (2*x^3 - 6*x^2 + 3*x))
+- 3 * atan(1 - 1/x)
+# TODO: more;
+
+
 ### 1/3 Angle:
 x = pi/7
 cos(x/3) # ==
