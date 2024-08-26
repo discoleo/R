@@ -19,8 +19,13 @@ atan((1 - 3*x^2) / (3*x - x^3))
 3/2*pi - 3 * atan(x)
 
 # Transforms:
+x = sqrt(5)
 atan((2*x^3 - 3*x + 1) / (2*x^3 - 6*x^2 + 3*x))
 - 3 * atan(1 - 1/x)
+#
+atan((2*x^3 - 3*x - 1) / (2*x^3 + 6*x^2 + 3*x))
+3 * atan(x/(x+1)) - pi/2;
+
 # TODO: more;
 
 
