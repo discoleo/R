@@ -1,7 +1,7 @@
 
 
 
-### Trig: TAN
+### Trig: TAN & ATAN
 
 
 ### Helper Constants
@@ -41,6 +41,10 @@ integrate(\(x) (tan(x) + tan(x)^3)/x, 0, pi/4)
 
 # TODO: ???
 
+###
+integrate(\(x) (tan(x) - tan(x)^3) / x, 0, pi/4)
+# TODO: ???
+
 
 #######################
 #######################
@@ -73,15 +77,36 @@ Catalan / n;
 n = sqrt(5); p = sqrt(3);
 # works only for n > 0;
 integrate(\(x) x^p * atan(x^n) * log(x), 0, 1)
-- pi/(4*(p+1)^2) + (digamma(((p+1)/n + 3)/4) - digamma(((p+1)/n + 1)/4)) / (4*(p+1)^2) +
-	- (pracma::psi(1, ((p+1)/n + 3)/4) - pracma::psi(1, ((p+1)/n + 1)/4)) / (16*n*(p+1))
+- (pracma::psi(1, ((p+1)/n + 3)/4) - pracma::psi(1, ((p+1)/n + 1)/4)) / (16*n*(p+1)) +
+	+ (digamma(((p+1)/n + 3)/4) - digamma(((p+1)/n + 1)/4)) / (4*(p+1)^2) +
+	- pi/(4*(p+1)^2);
 
 
-########################
-########################
+### Special Case:
+integrate(\(x) log(x) * atan(x), 0, 1)
+pi^2 / 48 - pi/4 + log(2)/2
 
-### ATAN-Fractions
 
+integrate(\(x) log(x) * atan(x) / x, 0, 1)
+- pi^3 / 32
+
+
+####################
+####################
+
+####################
+### ATAN: Powers ###
+
+integrate(\(x) atan(x)^3, 0, 1)
+(pi/4)^3 + 63/64 * zeta(3) + 3/32 * pi^2 * log(2) - 3/4 * pi * Catalan
+
+# see x^2 * tan(x):
+integrate(\(x) x * atan(x)^2 / (x^2 + 1), 0, 1)
+- 21/64 * zeta(3) - 1/32 * pi^2 * log(2) + pi/4 * Catalan
+
+
+###################
+### ATAN: Fractions
 
 ### I( (atan(x) - pi/4) / (x^2 - 1) )
 integrate(function(x) (atan(x) - pi/4) / (x^2 - 1), 0, 1)
