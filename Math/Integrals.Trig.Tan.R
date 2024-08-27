@@ -214,6 +214,9 @@ diff(x * atan(sqrt(x^2 + b^2)) / sqrt(x^2 + b^2) + b*atan(x/b) +
 
 #######################
 
+##############
+### ATAN: Trig
+
 ### I( atan(tan(x)^2) )
 # Maths 505: An outrageous journey of integration: int 0 to pi/4 arctan(cot^2(x))
 # https://www.youtube.com/watch?v=VUGlU_dSgPY
@@ -279,4 +282,22 @@ Catalan
 a = sqrt(3)
 integrate(\(x) atan(a*sin(x)) / sin(x), 0, pi/2)
 pi/2 * asinh(a)
+
+
+### I( atan(2*cos(x)^2) / cos(x)^2 )
+# Maths 505: A RIDICULOUSLY AWESOME INTEGRAL FEAT. φ & π
+# https://www.youtube.com/watch?v=6CJ_Sal55uM
+
+integrate(\(x) atan(2*cos(x)^2) / cos(x)^2, 0, pi/2)
+integrate(\(x) 4 * sin(x)^2 / (4*cos(x)^4 + 1), 0, pi/2)
+integrate(\(x) 4 / (4*x^4 + (x^2+1)^2), 0, Inf)
+pi / sqrt((sqrt(5) + 1) / 2)
+
+
+# Alternatives:
+integrate(\(x) (1 - cos(x)) / (cos(x)^2 + 2*cos(x) + 2), 0, pi)
+# Alt: Weierstrass;
+integrate(\(x) (1 - cos(x)) / (cos(x)^2 + 2*cos(x) + 2) +
+	(1 + cos(x)) / (cos(x)^2 - 2*cos(x) + 2), 0, pi/2)
+integrate(\(x) (6*cos(x)^2 + 4) / (cos(x)^4 + 4), 0, pi/2)
 
