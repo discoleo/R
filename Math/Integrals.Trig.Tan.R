@@ -1,11 +1,37 @@
+###################
+##
+## Trig: TAN & ATAN
 
 
-
-### Trig: TAN & ATAN
-
+####################
 
 ### Helper Constants
 Catalan = 0.915965594177219015054603514;
+
+### Helper Functions
+
+polylog2 = function (z, n = 2) {
+	# Bug in pracma::polylog;
+    stopifnot(is.numeric(z), is.numeric(n));
+	if(z == 1) {
+		if(n == 2) return(pi^2/6);
+	}
+	if(z < 0) {
+		if(n != 2) stop("Not yet implemented!");
+		y = polylog2(z^2, n=n)/2 - polylog2(-z, n=n);
+		return(y);
+	}
+	if(z > 1) {
+		if(n != 2) stop("Not yet implemented!");
+		y = - pi^2/6 - log(0i - z)^2/2 - polylog2(1/z, n=n);
+		return(y);
+	} else if(z >= 0.55) {
+		if(n != 2) stop("Not yet implemented!");
+		y = pi^2/6 - log(z)*log(1-z) - pracma::polylog(1 - z, n=n);
+		return(y);
+	}
+	return(pracma::polylog(z, n=n));
+}
 
 
 ##################
@@ -284,6 +310,22 @@ integrate(\(x) atan(a*sin(x)) / sin(x), 0, pi/2)
 pi/2 * asinh(a)
 
 
+### I( atan(k*sin(x)) )
+# Maths 505: A surprisingly difficult integral:
+#  int 0 to π/2 arctan(2sin(x)) solution using Feynman's trick
+# https://www.youtube.com/watch?v=iawTwy_Gvkw
+
+integrate(\(x) atan(2*sin(x)), 0, pi/2)
+polylog2(2/(sqrt(5)+1), 2) - polylog2(-2/(sqrt(5)+1), 2)
+
+###
+k = sqrt(3);
+kk = k / sqrt(k^2 + 1);
+integrate(\(x) atan(k*sin(x)), 0, pi/2)
+polylog2(tan(asin(kk)/2), 2) - polylog2(- tan(asin(kk)/2), 2)
+polylog2(tan(atan(k)/2), 2) - polylog2(- tan(atan(k)/2), 2)
+
+
 ### I( atan(2*cos(x)^2) / cos(x)^2 )
 # Maths 505: A RIDICULOUSLY AWESOME INTEGRAL FEAT. φ & π
 # https://www.youtube.com/watch?v=6CJ_Sal55uM
@@ -300,4 +342,13 @@ integrate(\(x) (1 - cos(x)) / (cos(x)^2 + 2*cos(x) + 2), 0, pi)
 integrate(\(x) (1 - cos(x)) / (cos(x)^2 + 2*cos(x) + 2) +
 	(1 + cos(x)) / (cos(x)^2 - 2*cos(x) + 2), 0, pi/2)
 integrate(\(x) (6*cos(x)^2 + 4) / (cos(x)^4 + 4), 0, pi/2)
+
+
+#################
+
+#################
+### ATAN: Exp ###
+
+integrate(\(x) atan(exp(-x))/x - pi/4*exp(-x)/x, 0, Inf)
+pi/4 * log(4*pi^3) - pi*log(gamma(1/4)) + pi*Euler/4
 
