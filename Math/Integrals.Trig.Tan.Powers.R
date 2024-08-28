@@ -4,8 +4,10 @@
 ## Powers
 
 
-# For Polynomial Fractions:
-# see file Integrals.Fractions.Unity.R;
+# - For decomposition of Polynomial Fractions,
+#   see file: Integrals.Fractions.Unity.R;
+# - For initial Derivation of tan(x)^(1/n),
+#   see file: Integrals.Fractions.Unity.Derived.R;
 
 ##################
 
@@ -40,9 +42,16 @@ integrate(\(x) 1/n * x^(1/n) / (x^(2/n) + 1), 0, 1)
 (digamma((n+3)/4) - digamma((n+1)/4)) / 4
 
 
+### on [0, pi/2]
+
+n = 1/sqrt(5)
+integrate(\(x) tan(x)^n, 0, pi/2)
+pi / sin(pi*(n+1)/2) / 2
+
+
 ### Derived Variants
 
-
+### on [0, pi/4]
 n = 1/sqrt(3)
 integrate(\(x) tan(x)^n * log(tan(x)), 0, pi/4)
 (pracma::psi(1, (n+3)/4) - pracma::psi(1, (n+1)/4)) / 16
@@ -51,4 +60,10 @@ integrate(\(x) tan(x)^n * log(tan(x)), 0, pi/4)
 n = 1/sqrt(3)
 integrate(\(x) tan(x)^n * log(tan(x))^2, 0, pi/4)
 (pracma::psi(2, (n+3)/4) - pracma::psi(2, (n+1)/4)) / 64
+
+
+### on [0, pi/2]
+n = 1/sqrt(5)
+integrate(\(x) tan(x)^n * log(tan(x)), 0, pi/2)
+- pi^2 * cos(pi*(n+1)/2) / sin(pi*(n+1)/2)^2 / 4
 
