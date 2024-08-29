@@ -369,6 +369,13 @@ integrate(function(x) x^3 / cos(x) - (pi/2)^3 / (pi/2 - x), 0, pi/2)
 - (pracma::psi(3, 3/4) - pracma::psi(3, 1/4)) / 128 +
 	- 21/4*pi*pracma::zeta(3) - (pi/2)^3 * log(pi/4);
 
+# Note:
+7/4 * zeta(3) # ==
+- (pracma::psi(2, 3/4) + pracma::psi(2, 1/4)) / 64;
+# while:
+pi^3 / 16 # ==
+(pracma::psi(2, 3/4) - pracma::psi(2, 1/4)) / 64;
+
 
 ### Composed: on [0, pi]
 
