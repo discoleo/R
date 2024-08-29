@@ -12,7 +12,7 @@ Catalan = 0.915965594177219015054603514;
 
 polylog2 = function (z, n = 2) {
 	# Bug in pracma::polylog;
-    stopifnot(is.numeric(z), is.numeric(n));
+	stopifnot(is.numeric(z), is.numeric(n));
 	if(z == 1) {
 		if(n == 2) return(pi^2/6);
 	}
@@ -46,9 +46,13 @@ integrate(\(x) x^2 * tan(x)^2, 0, pi/4)
 - 1/3*(pi/4)^3 + pi^2 / 16 + 1/4 * pi*log(2) - Catalan
 
 
-###
+### I( x^2 * tan(x) ) on [0, pi/4]
 integrate(\(x) x^2 * tan(x), 0, pi/4)
 - 21/64 * zeta(3) - 1/32 * pi^2 * log(2) + 1/4 * pi * Catalan
+
+### I( x^2 * tan(x) ) on [0, pi/2]
+integrate(\(x) (x - pi/2)*(x + pi/2) * tan(x), 0, pi/2)
+- 7/8 * pracma::zeta(3) - 1/4 * pi^2 * log(2)
 
 ### [by Parts]
 integrate(\(x) x^3 * tan(x)^2, 0, pi/4)
