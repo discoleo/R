@@ -341,6 +341,10 @@ integrate(function(x) x^4 / sin(x), 0, pi/2)
 3/2*31*zeta(5) + pi^3*Catalan +
 	+ pi*(pracma::psi(3, 3/4) - pracma::psi(3, 1/4)) / 64;
 
+### cos(x)
+integrate(function(x) x^2 * (pi^2/4 - x^2) / cos(x), 0, pi/2)
+- 3*31/2*zeta(5) + 35/8 * pi^2 * pracma::zeta(3);
+
 
 ### Composed: on [0, pi]
 
