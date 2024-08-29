@@ -341,9 +341,33 @@ integrate(function(x) x^4 / sin(x), 0, pi/2)
 3/2*31*zeta(5) + pi^3*Catalan +
 	+ pi*(pracma::psi(3, 3/4) - pracma::psi(3, 1/4)) / 64;
 
+
 ### cos(x)
+
+###
+integrate(function(x) (pi^2/4 - x^2) / cos(x), 0, pi/2)
+7/2*pracma::zeta(3)
+
+###
+integrate(function(x) x^2 * (pi/2 - x) / cos(x), 0, pi/2)
+(pracma::psi(3, 3/4) - pracma::psi(3, 1/4)) / 128 +
+	+ 7/2*pi*pracma::zeta(3);
+
+###
 integrate(function(x) x^2 * (pi^2/4 - x^2) / cos(x), 0, pi/2)
 - 3*31/2*zeta(5) + 35/8 * pi^2 * pracma::zeta(3);
+
+
+# Alternative Forms:
+integrate(function(x) x / cos(x) - (pi/2) / (pi/2 - x), 0, pi/2)
+- pi/2 * log(pi/4) - 2*Catalan;
+
+integrate(function(x) x^2 / cos(x) - (pi/2)^2 / (pi/2 - x), 0, pi/2)
+- 7/2*pracma::zeta(3) - (pi/2)^2 * log(pi/4);
+
+integrate(function(x) x^3 / cos(x) - (pi/2)^3 / (pi/2 - x), 0, pi/2)
+- (pracma::psi(3, 3/4) - pracma::psi(3, 1/4)) / 128 +
+	- 21/4*pi*pracma::zeta(3) - (pi/2)^3 * log(pi/4);
 
 
 ### Composed: on [0, pi]
