@@ -18,6 +18,11 @@ test.lines.minDist.Special2()
 test.lines.minDist.Special2(z = c(1/2, 3/2), col = "#6428E0", add = TRUE)
 
 
+### Special: Orthogonal
+test.lines.minDist.SpecialOrtho()
+test.lines.minDist.SpecialOrtho(z = c(1/2, 3/2), col = "#6428E0", add = TRUE)
+
+
 ##############
 
 ### Basic Math & Transformations
