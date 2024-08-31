@@ -422,7 +422,7 @@ test.eigen.lineAny = function(p, d = 1, both = TRUE, rev = FALSE,
 
 ### Intersections
 
-dist.lines3d = function(xyz, xyz0, tol = 1E-6, verbose = TRUE) {
+dist.lines3d = function(xyz, xyz0, tol = 1E-8, verbose = TRUE) {
 	p1 = proj.line3d(xyz[1,], xyz0);
 	d1 = sqrt(sum((xyz[1,] - p1$P)^2));
 	if(d1 <= tol) {
@@ -487,7 +487,7 @@ dist.lines3d = function(xyz, xyz0, tol = 1E-6, verbose = TRUE) {
 
 # Shortest Distance between 2 lines
 # including points delimiting that line segment;
-proj.lines3d = function(xyz, xyz0, tol = 1E-6) {
+proj.lines3d = function(xyz, xyz0, tol = 1E-8) {
 	p1 = proj.line3d(xyz[1,], xyz0);
 	d = sqrt(sum((xyz[1,] - p$P)^2));
 	if(d <= tol) {
@@ -521,7 +521,7 @@ test.rect.simple = function(L, d = 1, t.extend = c(-1, 2),
 }
 test.lines.minDist.Special1 = function(L = NULL, z = c(1,-1),
 		col = c("#D03232"),
-		add = FALSE, verbose = TRUE) {
+		add = FALSE, verbose = TRUE, tol = 1E-8) {
 	if(is.null(L)) {
 		L1 = rbind(c(0,0,0), c(2,0,0));
 	} else L1 = L;
@@ -532,26 +532,26 @@ test.lines.minDist.Special1 = function(L = NULL, z = c(1,-1),
 	if(add == FALSE) { close3d(); test.rect.simple(L1); }
 	#
 	L2 = rbind(c(0,0,pz), c(0,0,pz2))
-	d[1] = dist.lines3d(L1, L2, verbose = verbose)
+	d[1] = dist.lines3d(L1, L2, tol=tol, verbose = verbose)
 	lines3d(L2, col = col[1])
 	#
 	L2 = rbind(c(1,0,pz), c(1,0,pz2))
-	d[3] = dist.lines3d(L1, L2, verbose = verbose)
+	d[3] = dist.lines3d(L1, L2, tol=tol, verbose = verbose)
 	lines3d(L2, col = col[2])
 	#
 	L2 = rbind(c(2,0,pz), c(2,0,pz2))
-	d[2] = dist.lines3d(L1, L2, verbose = verbose)
+	d[2] = dist.lines3d(L1, L2, tol=tol, verbose = verbose)
 	lines3d(L2, col = col[3])
 	#
 	L2 = rbind(c(-1,0,pz), c(-1,0,pz2))
-	d[4] = dist.lines3d(L1, L2, verbose = verbose)
+	d[4] = dist.lines3d(L1, L2, tol=tol, verbose = verbose)
 	lines3d(L2, col = col[4])
 	#
 	return(d);
 }
 test.lines.minDist.Special2 = function(L = NULL, z = c(1,-1),
 		col = c("#D03232"),
-		add = FALSE, verbose = TRUE) {
+		add = FALSE, verbose = TRUE, tol = 1E-8) {
 	if(is.null(L)) {
 		L1 = rbind(c(0,0,0), c(2,0,0));
 	} else L1 = L;
@@ -562,19 +562,19 @@ test.lines.minDist.Special2 = function(L = NULL, z = c(1,-1),
 	if(add == FALSE) { close3d(); test.rect.simple(L1); }
 	#
 	L2 = rbind(c(1,0,pz), c(-1,0,pz2))
-	d[1] = dist.lines3d(L1, L2, verbose = verbose)
+	d[1] = dist.lines3d(L1, L2, tol=tol, verbose = verbose)
 	lines3d(L2, col = col[1]);
 	#
 	L2 = rbind(c(2,0,pz), c(1,0,pz2))
-	d[2] = dist.lines3d(L1, L2, verbose = verbose)
+	d[2] = dist.lines3d(L1, L2, tol=tol, verbose = verbose)
 	lines3d(L2, col = col[2]);
 	#
 	L2 = rbind(c(3,0,pz), c(-1,0,pz2))
-	d[3] = dist.lines3d(L1, L2, verbose = verbose)
+	d[3] = dist.lines3d(L1, L2, tol=tol, verbose = verbose)
 	lines3d(L2, col = col[3]);
 	#
 	L2 = rbind(c(3,0,pz), c(1,0,pz2));
-	d[4] = dist.lines3d(L1, L2, verbose = verbose);
+	d[4] = dist.lines3d(L1, L2, tol=tol, verbose = verbose);
 	lines3d(L2, col = col[4]);
 	#
 	return(d);
