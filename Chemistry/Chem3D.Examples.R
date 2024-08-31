@@ -23,6 +23,12 @@ test.lines.minDist.SpecialOrtho()
 test.lines.minDist.SpecialOrtho(z = c(1/2, 3/2), col = "#6428E0", add = TRUE)
 
 
+### General Case:
+test.lines.minDist.General()
+test.lines.minDist.General(z = c(1, -3/2), col = "#6428E0", add = TRUE)
+test.lines.minDist.General(z = c(1/2, 3/2), col = "#64A0E0", add = TRUE)
+
+
 ##############
 
 ### Basic Math & Transformations
