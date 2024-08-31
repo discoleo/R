@@ -5,6 +5,15 @@ source("Chem3D.R")
 
 ### Examples
 
+### Distance between 2 Lines
+
+### Special: Intersect & Orthogonal
+test.lines.minDist.Special1()
+test.lines.minDist.Special1(z = c(1/2, 3/2), col = "#6428E0", add = TRUE)
+
+
+##############
+
 ### Basic Math & Transformations
 
 ### Normal

@@ -499,12 +499,48 @@ proj.lines3d = function(xyz, xyz0, tol = 1E-6) {
 ### Test Functions
 
 # Minimal Rectangle
-test.rect = function(L, d = 1,
-		col = c("#000000", "#64D032", "#D032D0")) {
-	lines3d(L, col = col[[1]]);
-	lines3d(L1 + c(0,0,d,d,0,0), col = col[[2]]);
-	lines3d(L1 + c(0,0,d,d,d,d), col = col[[2]]);
-	lines3d(L1 + c(0,0,0,0,d,d), col = col[[3]]);
+test.rect.simple = function(L, d = 1, t.extend = c(-1, 2),
+		col = c("#000000", "#64D032", "#D032D0"), alpha = c(1, 0.5)) {
+	lines3d(L, col = col[[1]], alpha = alpha[[1]]);
+	lines3d(L + c(0,0,d,d,0,0), col = col[[2]], alpha = alpha[[1]]);
+	lines3d(L + c(0,0,d,d,d,d), col = col[[2]], alpha = alpha[[1]]);
+	lines3d(L + c(0,0,0,0,d,d), col = col[[3]], alpha = alpha[[1]]);
+	if(! is.null(t.extend)) {
+		Lext = L;
+		Lext[1,] = (1 - t.extend[1]) * L[1,] + t.extend[1] * L[2,];
+		Lext[2,] = (1 - t.extend[2]) * L[1,] + t.extend[2] * L[2,];
+		test.rect.simple(Lext, d=d, t.extend = NULL, col=col, alpha = alpha[[2]]);
+	}
+}
+test.lines.minDist.Special1 = function(L = NULL, z = c(1,-1),
+		col = c("#D03232"),
+		add = FALSE, verbose = TRUE) {
+	if(is.null(L)) {
+		L1 = rbind(c(0,0,0), c(2,0,0));
+	} else L1 = L;
+	if(length(col) == 1) col = rep(col, 4);
+	pz = z[1]; pz2 = z[2];
+	d  = rep(NA, 4);
+	#
+	if(add == FALSE) { close3d(); test.rect.simple(L1); }
+	#
+	L2 = rbind(c(0,0,pz), c(0,0,pz2))
+	d[1] = dist.lines3d(L1, L2, verbose = verbose)
+	lines3d(L2, col = col[1])
+	#
+	L2 = rbind(c(1,0,pz), c(1,0,pz2))
+	d[3] = dist.lines3d(L1, L2, verbose = verbose)
+	lines3d(L2, col = col[2])
+	#
+	L2 = rbind(c(2,0,pz), c(2,0,pz2))
+	d[2] = dist.lines3d(L1, L2, verbose = verbose)
+	lines3d(L2, col = col[3])
+	#
+	L2 = rbind(c(-1,0,pz), c(-1,0,pz2))
+	d[4] = dist.lines3d(L1, L2, verbose = verbose)
+	lines3d(L2, col = col[4])
+	#
+	return(d);
 }
 
 ################
