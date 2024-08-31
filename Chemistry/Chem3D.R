@@ -427,14 +427,14 @@ dist.lines3d = function(xyz, xyz0, tol = 1E-6, verbose = TRUE) {
 	d1 = sqrt(sum((xyz[1,] - p1$P)^2));
 	if(d1 <= tol) {
 		# Lines intersect
-		if(verbose) print("Lines intersect at P1.");
+		if(verbose) cat("Lines intersect at P1.\n");
 		return(0);
 	}
 	p2 = proj.line3d(xyz[2,], xyz0);
 	d2 = sqrt(sum((xyz[2,] - p2$P)^2));
 	if(d2 <= tol) {
 		# Lines intersect
-		if(verbose) print("Lines intersect at P2.");
+		if(verbose) cat("Lines intersect at P2.\n");
 		return(0);
 	}
 	# Special Cases:
@@ -447,10 +447,10 @@ dist.lines3d = function(xyz, xyz0, tol = 1E-6, verbose = TRUE) {
 		dO = sqrt(sum((p1$P - pO$P)^2));
 		if(dO <= tol) {
 			# Lines intersect
-			if(verbose) print("Lines intersect midway.");
+			if(verbose) cat("Lines intersect midway.\n");
 			return(0);
 		}
-		if(verbose) print("Lines are orthogonal.");
+		if(verbose) cat("Lines are orthogonal.\n");
 		return(dO);
 	}
 	# Equidistant Projections
@@ -460,12 +460,12 @@ dist.lines3d = function(xyz, xyz0, tol = 1E-6, verbose = TRUE) {
 		dO = sqrt(sum((pM - pO$P)^2));
 		if(dO <= tol) {
 			# Lines intersect
-			if(verbose) print("Lines intersect midway.");
+			if(verbose) cat("Lines intersect midway.\n");
 			return(0);
 		}
 		# Note: lines may be parallel,
 		# but is not essential for distance;
-		if(verbose) print("Special Lines but NO intersection.");
+		if(verbose) cat("Special Lines but NO intersection.\n");
 		return(dO);
 	}
 	# General Case: Minimize d
@@ -478,6 +478,10 @@ dist.lines3d = function(xyz, xyz0, tol = 1E-6, verbose = TRUE) {
 	pL1 = tt * xyz[1,] + tt1 * xyz[2,];
 	pL2 = tt * p1$P + tt1 * p2$P;
 	d = sqrt(sum((pL1 - pL2)^2));
+	if(d <= tol) {
+		if(verbose) cat("Intersection: General case.\n");
+		d = 0;
+	} else if(verbose) cat("General case.\n");
 	return(d);
 }
 
@@ -500,16 +504,19 @@ proj.lines3d = function(xyz, xyz0, tol = 1E-6) {
 
 # Minimal Rectangle
 test.rect.simple = function(L, d = 1, t.extend = c(-1, 2),
-		col = c("#000000", "#64D032", "#D032D0"), alpha = c(1, 0.5)) {
+		col = c("#000000", "#64D032", "#64D032", "#D032D0"),
+		alpha = c(1, 0.5), size.points = 4) {
+	if(size.points > 0) points3d(L, col = col[[1]], size = size.points)
 	lines3d(L, col = col[[1]], alpha = alpha[[1]]);
 	lines3d(L + c(0,0,d,d,0,0), col = col[[2]], alpha = alpha[[1]]);
-	lines3d(L + c(0,0,d,d,d,d), col = col[[2]], alpha = alpha[[1]]);
-	lines3d(L + c(0,0,0,0,d,d), col = col[[3]], alpha = alpha[[1]]);
+	lines3d(L + c(0,0,d,d,d,d), col = col[[3]], alpha = alpha[[1]]);
+	lines3d(L + c(0,0,0,0,d,d), col = col[[4]], alpha = alpha[[1]]);
 	if(! is.null(t.extend)) {
 		Lext = L;
 		Lext[1,] = (1 - t.extend[1]) * L[1,] + t.extend[1] * L[2,];
 		Lext[2,] = (1 - t.extend[2]) * L[1,] + t.extend[2] * L[2,];
-		test.rect.simple(Lext, d=d, t.extend = NULL, col=col, alpha = alpha[[2]]);
+		test.rect.simple(Lext, d=d, t.extend = NULL, size.points = 0,
+			col=col, alpha = alpha[[2]]);
 	}
 }
 test.lines.minDist.Special1 = function(L = NULL, z = c(1,-1),
@@ -539,6 +546,36 @@ test.lines.minDist.Special1 = function(L = NULL, z = c(1,-1),
 	L2 = rbind(c(-1,0,pz), c(-1,0,pz2))
 	d[4] = dist.lines3d(L1, L2, verbose = verbose)
 	lines3d(L2, col = col[4])
+	#
+	return(d);
+}
+test.lines.minDist.Special2 = function(L = NULL, z = c(1,-1),
+		col = c("#D03232"),
+		add = FALSE, verbose = TRUE) {
+	if(is.null(L)) {
+		L1 = rbind(c(0,0,0), c(2,0,0));
+	} else L1 = L;
+	if(length(col) == 1) col = rep(col, 4);
+	pz = z[1]; pz2 = z[2];
+	d  = rep(NA, 4);
+	#
+	if(add == FALSE) { close3d(); test.rect.simple(L1); }
+	#
+	L2 = rbind(c(1,0,pz), c(-1,0,pz2))
+	d[1] = dist.lines3d(L1, L2, verbose = verbose)
+	lines3d(L2, col = col[1]);
+	#
+	L2 = rbind(c(2,0,pz), c(1,0,pz2))
+	d[2] = dist.lines3d(L1, L2, verbose = verbose)
+	lines3d(L2, col = col[2]);
+	#
+	L2 = rbind(c(3,0,pz), c(-1,0,pz2))
+	d[3] = dist.lines3d(L1, L2, verbose = verbose)
+	lines3d(L2, col = col[3]);
+	#
+	L2 = rbind(c(3,0,pz), c(1,0,pz2));
+	d[4] = dist.lines3d(L1, L2, verbose = verbose);
+	lines3d(L2, col = col[4]);
 	#
 	return(d);
 }

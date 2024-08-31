@@ -8,8 +8,14 @@ source("Chem3D.R")
 ### Distance between 2 Lines
 
 ### Special: Intersect & Orthogonal
+# Note: intersection points refer to L1!
 test.lines.minDist.Special1()
 test.lines.minDist.Special1(z = c(1/2, 3/2), col = "#6428E0", add = TRUE)
+
+
+### Special: Intersect (Non-Orthogonal)
+test.lines.minDist.Special2()
+test.lines.minDist.Special2(z = c(1/2, 3/2), col = "#6428E0", add = TRUE)
 
 
 ##############
