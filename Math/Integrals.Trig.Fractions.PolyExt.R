@@ -125,3 +125,26 @@ integrate(\(x) atan(k * sin(x) / sqrt(b^2 - 1)), 0, pi)
 sqrt(b^2 - 1) * integrate(\(x) sin(x) / (k^2*sin(x)^2 + b^2 - 1), 0, pi)$value
 
 # TODO
+
+
+###################
+###################
+
+### I( x * sin(x/2) / sqrt(cos(x) - cos(up)) )
+# Maths 505: "advanced" calculus integral
+# https://www.youtube.com/watch?v=WEJ0bAYaTbA
+
+up = pi/5;
+integrate(\(x) x * sin(x/2) / sqrt(cos(x) - cos(up)), 0, up)
+- pi*sqrt(2) * log(cos(up/2))
+
+### Parametric on [0,1]
+k = pi/5;
+integrate(\(x) x * sin(k*x/2) / sqrt(cos(k*x) - cos(k)), 0, 1)
+- pi*sqrt(2) * log(cos(k/2)) / k^2
+
+###
+k = pi/5;
+integrate(\(x) x * sin(k*x) / sqrt(cos(k*x)^2 - cos(k)^2), 0, 1)
+- pi/2 * log(cos(k)) / k^2
+
