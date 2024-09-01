@@ -4,7 +4,7 @@
 ### Integrals: Trig Fractions
 
 ### Note:
-# - Fractions of type: 1 / (sin(x)^n + cos(x)^m)
+# - Fractions of type: 1 / (sin(x)^n + cos(x)^n)
 #   are in file: Integrals.Fractions.Trig.R;
 
 
@@ -13,6 +13,7 @@
 ### Helper Functions
 
 ### I( 1 / (sin(x) + a) )
+# - evaluated at x;
 int.sinfr = function(x, a, sg = NULL) {
 	if(a == 1) {
 		r = 2*sin(x/2) / (sin(x/2) + cos(x/2));
@@ -128,4 +129,22 @@ lim = 1/7
 integrate(\(x) 1 / (sin(x)^n + 1), 0, lim)
 integrate(\(x) 1 / ((x^n + 1) * sqrt(1 - x^2)), 0, sin(lim))
 
+
+########################
+########################
+
+### I( sin(x) / sqrt(1 + sqrt(sin(2*x))) )
+# Maths 505: An interesting nested roots trigonometric integral
+# https://www.youtube.com/watch?v=TcIRnETSFrs
+# Substitution: u = sin(x) - cos(x)
+# => sin(2*x) = 1 - u^2;
+
+integrate(\(x) sin(x) / sqrt(1 + sqrt(sin(2*x))), 0, pi/2)
+integrate(\(x) cos(x) / sqrt(1 + sqrt(sin(2*x))), 0, pi/2)
+2 - sqrt(2)*log(sqrt(2) + 1)
+
+# Note: Weierstrass Substitution
+integrate(\(x) x / ((x^2+1)^(3/2) * sqrt(x^2 + 1 + 2*sqrt(x*(1-x^2)))), 0, 1)
+integrate(\(x) 1/2 / ((x+1)^(3/2) * sqrt(x + 1 + 2*sqrt((1-x)*sqrt(x)))), 0, 1)
+1/2 - sqrt(2)/4 * log(sqrt(2) + 1)
 
