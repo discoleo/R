@@ -519,126 +519,86 @@ test.rect.simple = function(L, d = 1, t.extend = c(-1, 2),
 			col=col, alpha = alpha[[2]]);
 	}
 }
-test.lines.minDist.Special1 = function(L = NULL, z = c(1,-1),
-		col = c("#D03232"),
-		add = FALSE, verbose = TRUE, tol = 1E-8) {
-	if(is.null(L)) {
+test.lines.minDist.base = function(L, L0 = NULL, add = FALSE,
+		col = c("#D03232"), verbose = TRUE, tol = 1E-8) {
+	L2 = L;
+	if(is.null(L0)) {
 		L1 = rbind(c(0,0,0), c(2,0,0));
-	} else L1 = L;
-	if(length(col) == 1) col = rep(col, 4);
-	pz = z[1]; pz2 = z[2];
-	d  = rep(NA, 4);
+	} else L1 = L0;
+	LEN = length(L2);
+	if(LEN > 1 && length(col) == 1) col = rep(col, LEN);
 	#
 	if(add == FALSE) { close3d(); test.rect.simple(L1); }
+	if(LEN == 0) return();
 	#
-	L2 = rbind(c(0,0,pz), c(0,0,pz2));
-	d[1] = dist.lines3d(L1, L2, tol=tol, verbose = verbose);
-	lines3d(L2, col = col[1]);
-	#
-	L2 = rbind(c(1,0,pz), c(1,0,pz2))
-	d[3] = dist.lines3d(L1, L2, tol=tol, verbose = verbose)
-	lines3d(L2, col = col[2]);
-	#
-	L2 = rbind(c(2,0,pz), c(2,0,pz2))
-	d[2] = dist.lines3d(L1, L2, tol=tol, verbose = verbose)
-	lines3d(L2, col = col[3]);
-	#
-	L2 = rbind(c(-1,0,pz), c(-1,0,pz2))
-	d[4] = dist.lines3d(L1, L2, tol=tol, verbose = verbose)
-	lines3d(L2, col = col[4]);
+	d = sapply(seq_along(L2), function(id) {
+		L2 = L2[[id]];
+		d = dist.lines3d(L1, L2, tol=tol, verbose = verbose);
+		lines3d(L2, col = col[id]);
+		return(d);
+	});
 	#
 	return(d);
 }
+# Special: Orthogonal Intersection
+test.lines.minDist.Special1 = function(L = NULL, z = c(1,-1),
+		col = c("#D03232"),
+		add = FALSE, verbose = TRUE, tol = 1E-8) {
+	pz = z[1]; pz2 = z[2];
+	L2 = list(
+		rbind(c(0,0,pz), c(0,0,pz2)),
+		rbind(c(1,0,pz), c(1,0,pz2)),
+		rbind(c(2,0,pz), c(2,0,pz2)),
+		rbind(c(-1,0,pz), c(-1,0,pz2))
+	);
+	d = test.lines.minDist.base(L2, L, add=add, col=col,
+		verbose=verbose, tol=tol);
+	return(d);
+}
+# Special: Intersection, but NOT Orthogonal
 test.lines.minDist.Special2 = function(L = NULL, z = c(1,-1),
 		col = c("#D03232"),
 		add = FALSE, verbose = TRUE, tol = 1E-8) {
-	if(is.null(L)) {
-		L1 = rbind(c(0,0,0), c(2,0,0));
-	} else L1 = L;
-	if(length(col) == 1) col = rep(col, 4);
 	pz = z[1]; pz2 = z[2];
-	d  = rep(NA, 4);
-	#
-	if(add == FALSE) { close3d(); test.rect.simple(L1); }
-	#
-	L2 = rbind(c(1,0,pz), c(-1,0,pz2))
-	d[1] = dist.lines3d(L1, L2, tol=tol, verbose = verbose)
-	lines3d(L2, col = col[1]);
-	#
-	L2 = rbind(c(2,0,pz), c(1,0,pz2))
-	d[2] = dist.lines3d(L1, L2, tol=tol, verbose = verbose)
-	lines3d(L2, col = col[2]);
-	#
-	L2 = rbind(c(3,0,pz), c(-1,0,pz2))
-	d[3] = dist.lines3d(L1, L2, tol=tol, verbose = verbose)
-	lines3d(L2, col = col[3]);
-	#
-	L2 = rbind(c(3,0,pz), c(1,0,pz2));
-	d[4] = dist.lines3d(L1, L2, tol=tol, verbose = verbose);
-	lines3d(L2, col = col[4]);
-	#
+	L2 = list(
+		rbind(c(1,0,pz), c(-1,0,pz2)),
+		rbind(c(2,0,pz), c(1,0,pz2)),
+		rbind(c(3,0,pz), c(-1,0,pz2)),
+		rbind(c(3,0,pz), c(1,0,pz2))
+	);
+	d = test.lines.minDist.base(L2, L, add=add, col=col,
+		verbose=verbose, tol=tol);
 	return(d);
 }
 ### Special: Ortho
 test.lines.minDist.SpecialOrtho = function(L = NULL, z = c(1,-1),
 		col = c("#D03232"),
 		add = FALSE, verbose = TRUE, tol = 1E-8) {
-	if(is.null(L)) {
-		L1 = rbind(c(0,0,0), c(2,0,0));
-	} else L1 = L;
-	if(length(col) == 1) col = rep(col, 4);
 	pz = z[1]; pz2 = z[2];
-	d  = rep(NA, 4);
-	#
-	if(add == FALSE) { close3d(); test.rect.simple(L1); }
-	#
-	L2 = rbind(c(0,1,pz), c(0,1,pz2));
-	d[1] = dist.lines3d(L1, L2, tol=tol, verbose = verbose);
-	lines3d(L2, col = col[1]);
-	#
-	L2 = rbind(c(1,1,pz), c(1,1,pz2));
-	d[2] = dist.lines3d(L1, L2, tol=tol, verbose = verbose);
-	lines3d(L2, col = col[2]);
-	#
-	L2 = rbind(c(2,1,pz), c(2,1,pz2));
-	d[3] = dist.lines3d(L1, L2, tol=tol, verbose = verbose);
-	lines3d(L2, col = col[3]);
-	#
-	L2 = rbind(c(2.5,1,pz), c(2.5,1,pz2));
-	d[4] = dist.lines3d(L1, L2, tol=tol, verbose = verbose);
-	lines3d(L2, col = col[4]);
-	#
+	L2 = list(
+		rbind(c(0,1,pz), c(0,1,pz2)),
+		rbind(c(1,1,pz), c(1,1,pz2)),
+		rbind(c(2,1,pz), c(2,1,pz2)),
+		rbind(c(2.5,1,pz), c(2.5,1,pz2))
+	);
+	d = test.lines.minDist.base(L2, L, add=add, col=col,
+		verbose=verbose, tol=tol);
 	return(d);
 }
 ### General Case
 test.lines.minDist.General = function(L = NULL, z = c(1,-1),
 		col = c("#D03232"),
 		add = FALSE, verbose = TRUE, tol = 1E-8) {
-	if(is.null(L)) {
-		L1 = rbind(c(0,0,0), c(2,0,0));
-	} else L1 = L;
-	if(length(col) == 1) col = rep(col, 4);
 	pz = z[1]; pz2 = z[2];
-	d  = rep(NA, 4);
-	#
-	if(add == FALSE) { close3d(); test.rect.simple(L1); }
-	#
-	L2 = rbind(c(1,1,pz), c(-3/2,1,pz2));
-	d[1] = dist.lines3d(L1, L2, tol=tol, verbose = verbose);
-	lines3d(L2, col = col[1]);
-	#
-	L2 = rbind(c(3/2,1,pz), c(-1,1,pz2))
-	d[2] = dist.lines3d(L1, L2, tol=tol, verbose = verbose)
-	lines3d(L2, col = col[2]);
-	# Interesting case:
-	L2 = rbind(c(2,1,pz), c(-1/2,1,pz2));
-	d[3] = dist.lines3d(L1, L2, tol=tol, verbose = verbose)
-	lines3d(L2, col = col[3]);
-	#
-	L2 = rbind(c(2,1,pz), c(4,1,pz2));
-	d[4] = dist.lines3d(L1, L2, tol=tol, verbose = verbose)
-	lines3d(L2, col = col[4]);
-	#
+	L2 = list(
+		rbind(c(1,1,pz), c(-3/2,1,pz2)),
+		rbind(c(3/2,1,pz), c(-1,1,pz2)),
+		# Interesting case:
+		rbind(c(2,1,pz), c(-1/2,1,pz2)),
+		rbind(c(2,1,pz), c(4,1,pz2))
+	);
+	d = test.lines.minDist.base(L2, L, add=add, col=col,
+		verbose=verbose, tol=tol);
 	return(d);
 }
 
