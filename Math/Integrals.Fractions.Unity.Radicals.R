@@ -82,7 +82,10 @@ n = sqrt(11); # n > 3;
 integrate(\(x) (x^n + 1)^(2/n) - x^2, 0, Inf)
 gamma(-3/n) / gamma(-2/n) * gamma(1/n) / n
 
-### Special Case: n = 3;
+
+### Special Cases:
+
+### n = 3
 integrate(\(x) (x^3 + 1)^(2/3) - x^2 - 2/3 / (x+1), 0, Inf)
 - (digamma(-2/3) + Euler - 5/2) * 2/9
 pi*sqrt(3) / 27 + log(3) / 3 + 2/9;
@@ -91,6 +94,22 @@ integrate(\(x) {
 	x = mpfr(x, 240); f23 = mpfr(2, 240) / 3;
 	y = (x^3 + 1)^f23 - x^2 - f23 / (x+1);
 	as.numeric(y); }, 0, Inf, subdivisions=1024)
+- (digamma(-2/3) + Euler - 1) * 2/9 + 1/3;
+
+### n = 4
+integrate(\(x) {
+	x = mpfr(x, 240);
+	y = (x^4 + 1)^(3/4) - x^3 - 3/4 / (x+1);
+	as.numeric(y); }, 0, Inf)
+- (digamma(-3/4) + Euler - 1) * 3/16 + 1/4;
+
+### n = 5
+n = 5; # n = sqrt(7); # OK
+integrate(\(x, n) {
+	x = mpfr(x, 240); ni = 1 - mpfr(1, 240)/n;
+	y = (x^n + 1)^ni - x^(n - 1) - ni / (x+1);
+	as.numeric(y); }, 0, Inf, n=n)
+- (digamma(1/n - 1) + Euler - 1) * (n-1)/n^2 + 1/n;
 
 
 ###############
