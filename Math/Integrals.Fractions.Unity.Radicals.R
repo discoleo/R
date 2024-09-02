@@ -67,6 +67,16 @@ integrate(function(x) x^p / (x^n+1)^(1/k), lower=0, upper=Inf)
 gamma((p+1)/n)*gamma(1/k - (p+1)/n) / gamma(1/k) / n
 
 
+###
+integrate(\(x) (x^3 + 1)^(1/3) - x, 0, Inf)
+gamma(-1/3 - 1/3) / gamma(-1/3) * gamma(1/3) / 3
+
+### I( (x^n + 1)^(1/n) ) on [0, Inf]
+n = sqrt(5)
+integrate(\(x) (x^n + 1)^(1/n) - x, 0, Inf)
+gamma(-2/n) / gamma(-1/n) * gamma(1/n) / n
+
+
 ###############
 
 ### [0, 1]
