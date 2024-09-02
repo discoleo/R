@@ -24,9 +24,10 @@ test.lines.minDist.SpecialOrtho(z = c(1/2, 3/2), col = "#6428E0", add = TRUE)
 
 
 ### General Case:
-test.lines.minDist.General()
-test.lines.minDist.General(z = c(1, -3/2), col = "#6428E0", add = TRUE)
-test.lines.minDist.General(z = c(1/2, 3/2), col = "#64A0E0", add = TRUE)
+y = 1
+test.lines.minDist.General(y=y)
+test.lines.minDist.General(z = c(1, -3/2), y=y, col = "#6428E0", add = TRUE)
+test.lines.minDist.General(z = c(1/2, 3/2), y=y, col = "#64A0E0", add = TRUE)
 
 
 ##############

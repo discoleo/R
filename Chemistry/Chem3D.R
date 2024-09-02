@@ -503,24 +503,24 @@ proj.lines3d = function(xyz, xyz0, tol = 1E-8) {
 ### Test Functions
 
 # Minimal Rectangle
-test.rect.simple = function(L, d = 1, t.extend = c(-1, 2),
+test.rect.simple = function(L, d = 1, y = d, t.extend = c(-1, 2),
 		col = c("#000000", "#64D032", "#64D032", "#D032D0"),
 		alpha = c(1, 0.5), size.points = 4) {
 	if(size.points > 0) points3d(L, col = col[[1]], size = size.points)
 	lines3d(L, col = col[[1]], alpha = alpha[[1]]);
-	lines3d(L + c(0,0,d,d,0,0), col = col[[2]], alpha = alpha[[1]]);
-	lines3d(L + c(0,0,d,d,d,d), col = col[[3]], alpha = alpha[[1]]);
+	lines3d(L + c(0,0,y,y,0,0), col = col[[2]], alpha = alpha[[1]]);
+	lines3d(L + c(0,0,y,y,d,d), col = col[[3]], alpha = alpha[[1]]);
 	lines3d(L + c(0,0,0,0,d,d), col = col[[4]], alpha = alpha[[1]]);
 	if(! is.null(t.extend)) {
 		Lext = L;
 		Lext[1,] = (1 - t.extend[1]) * L[1,] + t.extend[1] * L[2,];
 		Lext[2,] = (1 - t.extend[2]) * L[1,] + t.extend[2] * L[2,];
-		test.rect.simple(Lext, d=d, t.extend = NULL, size.points = 0,
+		test.rect.simple(Lext, d=d, y=y, t.extend = NULL, size.points = 0,
 			col=col, alpha = alpha[[2]]);
 	}
 }
 test.lines.minDist.base = function(L, L0 = NULL, add = FALSE,
-		col = c("#D03232"), verbose = TRUE, tol = 1E-8) {
+		col = c("#D03232"), verbose = TRUE, y.rect = 1, tol = 1E-8) {
 	L2 = L;
 	if(is.null(L0)) {
 		L1 = rbind(c(0,0,0), c(2,0,0));
@@ -528,7 +528,7 @@ test.lines.minDist.base = function(L, L0 = NULL, add = FALSE,
 	LEN = length(L2);
 	if(LEN > 1 && length(col) == 1) col = rep(col, LEN);
 	#
-	if(add == FALSE) { close3d(); test.rect.simple(L1); }
+	if(add == FALSE) { close3d(); test.rect.simple(L1, y = y.rect); }
 	if(LEN == 0) return();
 	#
 	d = sapply(seq_along(L2), function(id) {
@@ -586,19 +586,19 @@ test.lines.minDist.SpecialOrtho = function(L = NULL, z = c(1,-1),
 	return(d);
 }
 ### General Case
-test.lines.minDist.General = function(L = NULL, z = c(1,-1),
+test.lines.minDist.General = function(L = NULL, z = c(1,-1), y = 1,
 		col = c("#D03232"),
 		add = FALSE, verbose = TRUE, tol = 1E-8) {
-	pz = z[1]; pz2 = z[2];
+	pz = z[1]; pz2 = z[2]; y1 = y[1];
 	L2 = list(
-		rbind(c(1,1,pz), c(-3/2,1,pz2)),
-		rbind(c(3/2,1,pz), c(-1,1,pz2)),
+		rbind(c(1,y1,pz), c(-3/2,y1,pz2)),
+		rbind(c(3/2,y1,pz), c(-1,y1,pz2)),
 		# Interesting case:
-		rbind(c(2,1,pz), c(-1/2,1,pz2)),
-		rbind(c(2,1,pz), c(4,1,pz2))
+		rbind(c(2,y1,pz), c(-1/2,y1,pz2)),
+		rbind(c(2,y1,pz), c(4,y1,pz2))
 	);
 	d = test.lines.minDist.base(L2, L, add=add, col=col,
-		verbose=verbose, tol=tol);
+		verbose=verbose, tol=tol, y.rect = y1);
 	return(d);
 }
 
