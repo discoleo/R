@@ -59,6 +59,20 @@ integrate(function(x) x^p * sin(q*log(x)) /(x^n + 1)^k, lower=0, upper=Inf)
 	(2i*n*gamma(k));
 
 
+### I( x^p * cos(q*log(x^n + 1)) / (x^n + 1)^k )
+p = 1/sqrt(3); q = sqrt(pi); n = sqrt(5); # k = 1;
+integrate(function(x) x^p * cos(q*log(x^n + 1)) / (x^n + 1), lower=0, upper=Inf)
+Re(pracma::gammaz(1 - 1i*q - (p+1)/n) / pracma::gammaz(1 - 1i*q)) *
+	gamma((p+1)/n) / n;
+
+
+integrate(function(x) x^p * sin(q*log(x^n + 1)) / (x^n + 1), lower=0, upper=Inf)
+Im(pracma::gammaz(1 - 1i*q - (p+1)/n) / pracma::gammaz(1 - 1i*q)) *
+	gamma((p+1)/n) / n;
+
+# TODO: Generalize k;
+
+
 ### Power 2: I( Trig(p * log(x))^2 / ... )
 
 ### cos-Variant
@@ -74,3 +88,4 @@ integrate(function(x) sin(p*log(x))^2 /(x^n + 1)^k, lower=0, upper=Inf)
 - (pracma::gammaz((2i*p+1)/n) * pracma::gammaz(k - (2i*p+1)/n) +
 	+ pracma::gammaz((-2i*p+1)/n) * pracma::gammaz(k - (-2i*p+1)/n) +
 	- 2*gamma(1/n) * gamma(k - 1/n) ) / (4*n*gamma(k));
+
