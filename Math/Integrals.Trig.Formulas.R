@@ -72,3 +72,29 @@ integrate(\(x) (-3*atan(1 - 1/x) - 3*pi/2) / x, 0, 1/2)
 integrate(\(x) 3 * (atan(x - 1) - pi/2) / x, 2, Inf)
 3/8 * pi*log(2) - 3*Catalan
 
+
+#############
+
+### Trig(5*x)
+x = pi/7
+cos(5*x) - (16*cos(x)^4 - 20*cos(x)^2 + 5)*cos(x)
+sin(5*x) - (16*sin(x)^4 - 20*sin(x)^2 + 5)*sin(x)
+
+tan(5*x) - (tan(x)^4 - 10*tan(x)^2 + 5)*tan(x) /
+	(1 - 10*tan(x)^2 + 5*tan(x)^4);
+
+
+### Examples:
+x = atan(3) / 5;
+tan(x)^5 - 10*tan(x)^3 + 5*tan(x) +
+	- tan(5*x) * (5*tan(x)^4 - 10*tan(x)^2 + 1)
+# Polynomial:
+x = tan(atan(5) / 5 + seq(0,4) * 2*pi/5);
+x^5 - 10*x^3 + 5*x - 5 * (5*x^4 - 10*x^2 + 1) # = 0
+
+#
+x = tan(atan(6) / 5 + seq(0,4) * 2*pi/5);
+x^5 - 10*x^3 + 5*x - 6 * (5*x^4 - 10*x^2 + 1) # = 0
+
+# TODO: Transforms
+
