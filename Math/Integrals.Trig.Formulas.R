@@ -103,9 +103,38 @@ x^5 + 10*x^3 + 5*x - 6 * (5*x^4 + 10*x^2 + 1) # = 0
 round0(x)
 
 #
-x = tan(atan(7i) / 5 + seq(0,4) * 2*pi/5) / 1i;
-x^5 + 10*x^3 + 5*x - 7 * (5*x^4 + 10*x^2 + 1) # = 0
+tn = 7;
+x = tan(atan(tn * 1i) / 5 + seq(0,4) * 2*pi/5) / 1i;
+x^5 + 10*x^3 + 5*x - tn * (5*x^4 + 10*x^2 + 1) # = 0
 round0(x)
 
+# Shift =>
+tn = 7;
+x = tan(atan(tn * 1i) / 5 + seq(0,4) * 2*pi/5) / 1i - tn;
+x^5 - 10*(tn^2 - 1)*x^3 - 20*tn*(tn^2 - 1)*x^2 +
+	- 5*(tn^2 - 1)*(3*tn^2 + 1)*x - 4*tn*(tn^4 - 1) # = 0
+round0(x)
+
+# Special Case:
+x = tan(atan(3i) / 5 + seq(0,4) * 2*pi/5) / 2i - 3/2;
+x^5 - 20*x^3 - 60*x^2 - 70*x - 30 # = 0
+round0(x)
+
+
 # TODO: Transforms
+
+
+### Examples
+integrate(\(x) atan((x^5 - 10*x^3 + 5*x) / (5*x^4 - 10*x^2 + 1)), 0, 1)
+integrate(\(x) atan(tan(5*x)) * (1 + tan(x)^2), 0, pi/4)
+pi*tan(pi/10) + pi/4 - 5/2 * log(2)
+
+# Derivation:
+# Note: with Interval splitting;
+integrate(\(x) 5*x * (1 + tan(x)^2), 0, pi/4)$value +
+	- pi*(tan(pi/4) - tan(pi/10));
+integrate(\(x) 5 * atan(x), 0, 1)$value +
+	- pi*(tan(pi/4) - tan(pi/10));
+- pi*(tan(pi/4) - tan(pi/10)) + 5*pi/4 - 5/2 * log(2)
+pi*tan(pi/10) + pi/4 - 5/2 * log(2)
 
