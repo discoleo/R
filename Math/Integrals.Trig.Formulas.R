@@ -73,8 +73,18 @@ integrate(\(x) 3 * (atan(x - 1) - pi/2) / x, 2, Inf)
 3/8 * pi*log(2) - 3*Catalan
 
 
+### Ex 3:
+integrate(\(x) atan(- (x^3 - 3*x) / (1 - 3*x^2)), 0, 1)
+# strange Bug:
+integrate(\(x) atan(tan(3*x)) * (1 + tan(x)^2), 0, pi/6)$value +
+	integrate(\(x) atan(tan(3*x)) * (1 + tan(x)^2), pi/6, pi/4)$value
+pi*tan(pi/6) - pi + 3*pi/4 - 3/2 * log(2)
+pi*tan(pi/6) - pi/4 - 3/2 * log(2)
+
+
 #############
 
+#############
 ### Trig(5*x)
 x = pi/7
 cos(5*x) - (16*cos(x)^4 - 20*cos(x)^2 + 5)*cos(x)
@@ -137,4 +147,12 @@ integrate(\(x) 5 * atan(x), 0, 1)$value +
 	- pi*(tan(pi/4) - tan(pi/10));
 - pi*(tan(pi/4) - tan(pi/10)) + 5*pi/4 - 5/2 * log(2)
 pi*tan(pi/10) + pi/4 - 5/2 * log(2)
+
+
+###############
+
+### Gen:
+k = pi + 1; # k >= 2!
+integrate(\(x) atan(tan(k*x)) * (1 + tan(x)^2), 0, pi/4)
+pi*tan(pi/(2*k)) - pi + k*pi/4 - k/2 * log(2)
 
