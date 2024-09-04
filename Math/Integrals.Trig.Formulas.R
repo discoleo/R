@@ -22,6 +22,7 @@ sin(3*x) + 4*sin(x)^3 - 3*sin(x)
 #
 tan(3*x) + (4*sin(x)^3 - 3*sin(x)) / (4*cos(x)^3 - 3*cos(x))
 tan(3*x) + (tan(x)^3 - 3*tan(x)) / (1 - 3*tan(x)^2)
+# x * (x^2 - 3) / (3*x^2 - 1)
 
 ### ATAN
 x = sqrt(5)
@@ -40,6 +41,12 @@ atan((2*x^3 - 3*x + 1) / (2*x^3 - 6*x^2 + 3*x))
 #
 atan((2*x^3 - 3*x - 1) / (2*x^3 + 6*x^2 + 3*x))
 3 * atan(x/(x+1)) - pi/2;
+
+# (1 - x)/(1 + x)
+th = pi/11;
+x  = (1 - tan(th)) / (1 + tan(th));
+(x^3 + 3*x^2 - 3*x - 1) / (x^3 - 3*x^2 - 3*x + 1)
+tan(3*th)
 
 # TODO: more;
 
@@ -80,6 +87,14 @@ integrate(\(x) atan(tan(3*x)) * (1 + tan(x)^2), 0, pi/6)$value +
 	integrate(\(x) atan(tan(3*x)) * (1 + tan(x)^2), pi/6, pi/4)$value
 pi*tan(pi/6) - pi + 3*pi/4 - 3/2 * log(2)
 pi*tan(pi/6) - pi/4 - 3/2 * log(2)
+
+
+### Ex 4:
+integrate(\(x) atan( (x^3 + 3*x^2 - 3*x - 1) / (x^3 - 3*x^2 - 3*x + 1) ), 0, 1)
+integrate(\(x) 6*atan(x) / (x+1)^2, 0, 1)$value +
+	+ integrate(\(x) - 2*pi / (x+1)^2, tan(pi/6), 1)$value
+integrate(\(x) 6*atan(x) / (x+1)^2 + pi*(1 - 2/(1 + tan(pi/6))), 0, 1)
+pi - 2*pi/(1 + tan(pi/6)) + 3*log(2)/2 
 
 
 #############
