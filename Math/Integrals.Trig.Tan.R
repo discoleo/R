@@ -59,6 +59,10 @@ integrate(\(x) x^3 * tan(x)^2, 0, pi/4)
 (pi/4)^3 - 1/4*(pi/4)^4 + 63/64 * zeta(3) +
 	+ 3/32 * pi^2 * log(2) - 3/4 * pi * Catalan;
 
+###
+integrate(\(x) x * (pi/2 - x)*(pi/2 + x) * tan(x), 0, pi/2)
+# TODO: ?
+
 
 ###
 integrate(\(x) tan(x) / x, 0, pi/4)
@@ -125,6 +129,11 @@ integrate(\(x) log(x) * atan(x) / x, 0, 1)
 ####################
 
 ####################
+### ATAN: Simple ###
+
+
+
+####################
 ### ATAN: Powers ###
 
 integrate(\(x) atan(x)^3, 0, 1)
@@ -137,6 +146,34 @@ integrate(\(x) x * atan(x)^2 / (x^2 + 1), 0, 1)
 
 ###################
 ### ATAN: Fractions
+
+### Simple Fractions
+
+###
+integrate(\(x) atan(x) / (x+1), 0, 1)
+pi * log(2)/8
+
+###
+integrate(\(x) atan(x) / (x+1)^2, 0, 1)
+log(2)/4
+
+
+###
+integrate(\(x) atan(x) / (x+1)^3, 0, 1)
+- pi/32 + log(2)/8 + 1/8
+
+
+###
+integrate(\(x) (atan(x) - pi/4) / (x - 1), 0, 1)
+- pi*log(2)/8 + Catalan
+
+###
+integrate(\(x) (atan(x) - pi/4) / (x - 1)^2 + 1/(2*x), 0, 1)
+integrate(\(x) 1 / ((x^2 + 1)*(x - 1)) + 1/(2*x) + pi/4 - 1/2, 0, 1)
+-log(2)/4 + pi/8 - 1/2
+
+
+### Other
 
 ### I( (atan(x) - pi/4) / (x^2 - 1) )
 integrate(function(x) (atan(x) - pi/4) / (x^2 - 1), 0, 1)
@@ -319,6 +356,7 @@ pi/2 * asinh(a)
 #  int 0 to π/2 arctan(2sin(x)) solution using Feynman's trick
 # https://www.youtube.com/watch?v=iawTwy_Gvkw
 
+# library(pracma)
 integrate(\(x) atan(2*sin(x)), 0, pi/2)
 polylog2(2/(sqrt(5)+1), 2) - polylog2(-2/(sqrt(5)+1), 2)
 
