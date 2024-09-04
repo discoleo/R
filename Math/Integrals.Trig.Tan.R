@@ -80,6 +80,17 @@ integrate(\(x) (tan(x) - tan(x)^3) / x, 0, pi/4)
 # TODO: ???
 
 
+###
+integrate(\(x) tan(x)^2 / x, 0, pi/4)
+integrate(\(x) 1/atan(x) - 1/atan(x) / (x^2+1), 0, 1)
+integrate(\(x) 1/atan(x) - 1/x, 0, 1)$value - log(pi/4)
+# TODO
+
+# I( 1 / ((x^2+1)*atan(x)) )
+integrate(\(x) 1/atan(x) / (x^2+1) - 1/x, 0, 1)
+log(pi/4)
+
+
 #######################
 #######################
 
