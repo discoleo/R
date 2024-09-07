@@ -158,6 +158,23 @@ integrate(\(x) x * atan(x)^2 / (x^2 + 1), 0, 1)
 ###################
 ### ATAN: Fractions
 
+
+### Atan of Fractions
+
+### I( atan((x^n - 1)/(x^n + 1)) )
+integrate(\(x) atan((x^3 - 1)/(x^3 + 1)), 0, 1)
+integrate(\(x) -3*x^3 / (x^6 + 1), 0, 1)
+(digamma(4/12) - digamma(1/2 + 4/12)) / 4
+(digamma(1/3) - digamma(5/6)) / 4
+
+
+### Gen:
+n = sqrt(5)
+integrate(\(x) atan((x^n - 1)/(x^n + 1)), 0, 1)
+integrate(\(x) -n*x^n / (x^(2*n) + 1), 0, 1)
+(digamma(1/4 + 1/(4*n)) - digamma(3/4 + 1/(4*n))) / 4
+
+
 ### Simple Fractions
 
 ###
