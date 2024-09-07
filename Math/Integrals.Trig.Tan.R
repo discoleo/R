@@ -168,7 +168,9 @@ integrate(\(x) x * atan(x)^2 / (x^2 + 1), 0, 1)
 
 ### Atan of Fractions
 
-# see also file: 
+# - see also file:
+#   Integrals.Trig.Formulas.R;
+
 
 ### I( atan((x^n - 1)/(x^n + 1)) )
 integrate(\(x) atan((x^3 - 1)/(x^3 + 1)), 0, 1)
