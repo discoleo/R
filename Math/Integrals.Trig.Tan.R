@@ -142,6 +142,13 @@ integrate(\(x) log(x) * atan(x) / x, 0, 1)
 ####################
 ### ATAN: Simple ###
 
+###
+integrate(\(x) atan(2*tan(x)), 0, pi/2)
+pi^2/4 - integrate(\(x) 2 * atan(x) / (4*x^2 + 1), 0, Inf)$value
+integrate(\(x) 2 * atan(x) / (x^2 + 4), 0, Inf)
+# Note: Int by parts & (half) Residue (for x^2 + 4);
+# TODO: ???
+# - without the Lerch zeta function;
 
 
 ####################
@@ -160,6 +167,8 @@ integrate(\(x) x * atan(x)^2 / (x^2 + 1), 0, 1)
 
 
 ### Atan of Fractions
+
+# see also file: 
 
 ### I( atan((x^n - 1)/(x^n + 1)) )
 integrate(\(x) atan((x^3 - 1)/(x^3 + 1)), 0, 1)
