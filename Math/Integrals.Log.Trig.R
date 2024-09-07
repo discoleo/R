@@ -345,6 +345,59 @@ integrate(\(x) log(cos(x)) * log(sin(x)), 0, pi/4)
 - gamma(1/2)^2 * (pi^2/6 - 4*log(2)^2) / 16
 
 
+####################
+
+###
+# Maths 505: Supreme integral solved using Feynman's trick (GONE WRONG!)
+# https://www.youtube.com/watch?v=KpIplB9s9KM
+
+### Helper:
+# I( log(b^n + cos(x)^n) ) & Other
+
+###
+b = 7
+integrate(\(x) log(b + cos(x)), 0, pi)
+pi * acosh(b) - pi*log(2)
+
+###
+integrate(\(x) log(b^2 + cos(x)^2), 0, pi)
+integrate(\(x) Re(log(b*1i + cos(x)) + log(- b*1i + cos(x))), 0, pi)
+2*pi * Re(acosh(b * 1i)) - 2*pi*log(2)
+
+### I( log(b^3 + cos(x)^3) )
+b = sqrt(5)
+integrate(\(x) log(b^2 + b*cos(x) + cos(x)^2), 0, pi)
+2*pi * Re(acosh(b * (cos(pi/3) + 1i*sin(pi/3)))) - 2*pi*log(2)
+#
+integrate(\(x) log(b^3 + cos(x)^3), 0, pi)
+2*pi * Re(acosh(b * (cos(pi/3) + 1i*sin(pi/3)))) +
+	+ pi * acosh(b) - 3*pi*log(2)
+
+### I( log(b^5 + cos(x)^5) )
+b = sqrt(5)
+integrate(\(x) log(b^5 + cos(x)^5), 0, pi)
+2*pi * Re(acosh(b * (cos(pi/5) + 1i*sin(pi/5)))) +
+2*pi * Re(acosh(b * (cos(3*pi/5) + 1i*sin(3*pi/5)))) +
+	+ pi * acosh(b) - 5*pi*log(2)
+
+
+### Compound:
+integrate(\(x) log(1/cos(x)^2 + tan(x)^4), 0, pi/2)
+pi * Im(acos(2 + 0i))
+pi * log(sqrt(3) + 2)
+pi/2 * acosh(7)
+
+# Various forms of "same" Integral:
+integrate(\(x) log(cos(x)^2 + sin(x)^4), 0, pi/2)
+pi * log((sqrt(3) + 2) / 4)
+
+integrate(\(x) log(1 + sin(x)^4/cos(x)^2), 0, pi/2)
+pi * log((sqrt(3) + 2) / 2)
+
+integrate(\(x) log(4 - sin(2*x)^2), 0, pi/2)
+pi * log((sqrt(3) + 2) / 2)
+
+
 #########################
 
 ### I( sin(x)/x * log(1 + cos(x)) / cos(x) ) on [0, Inf]
