@@ -398,6 +398,21 @@ integrate(\(x) log(4 - sin(2*x)^2), 0, pi/2)
 pi * log((sqrt(3) + 2) / 2)
 
 
+### Polynomial
+id = 2*pi * seq(5) / 11
+r = 2*cos(id)
+x = r^2 + 2*r - 1;
+# poly.calc0(x)
+x^5 - 2*x^4 - 16*x^3 - 9*x^2 + 26*x + 23
+#
+integrate(\(x) {
+	x = cos(x);
+	log(x^5 - 2*x^4 - 16*x^3 - 9*x^2 + 26*x + 23);
+	}, 0, pi)
+pi * sum(abs(Re(acosh(-x + 0i)))) +
+	- 5*pi*log(2)
+
+
 #########################
 
 ### I( sin(x)/x * log(1 + cos(x)) / cos(x) ) on [0, Inf]
