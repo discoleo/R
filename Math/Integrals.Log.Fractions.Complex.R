@@ -54,11 +54,7 @@ integrate(\(x) x^p * log(x^n + a^n) / (x^n + b^n)^k, 0, Inf)
 ### I( x^p * atan(x) / (x^2 + 1) )
 p = - 1/sqrt(3);
 integrate(\(x) x^p * atan(x) / (x^2 + 1), 0, Inf)
-pi^2/4 / cos(pi*p/2) +
-	+ pi/4 / sin(pi*p/2) * (digamma(-p/2) + Euler) +
-	- pi / sin(pi*p) *
-	((digamma(-p) + Euler) * cosh(pi/2*1i*p) +
-		- 1i*pi/2 * sinh(pi/2*1i*p));
+pi/4 / sin(pi*p/2) * (digamma(-p/2) - 2*digamma(-p) - Euler);
 
 # Derivation:
 pi/4 * gamma((p+1)/2) * gamma(1 - (p+1)/2) +
