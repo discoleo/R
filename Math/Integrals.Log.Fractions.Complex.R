@@ -18,6 +18,19 @@ gamma((p+1)/n) * gamma(k - (p+1)/n)*
 #################
 
 ###
+n = 2; k = 1; # !!!
+p = - 1/sqrt(3);
+integrate(\(x) Re(x^p * log(x^2 + 1) / (x + 1i)), 0, Inf)
+integrate(\(x) Im(x^p * log(x^2 + 1) / (x + 1i)), 0, Inf)
+(gamma((p+1 + k)/n) * gamma(k - (p+1 + k)/n)*
+	(digamma(k) - digamma(k - (p+1 + k)/n)) +
+	- 1i*(gamma((p+1)/n) * gamma(k - (p+1)/n)*
+	(digamma(k) - digamma(k - (p+1)/n)))) / gamma(k) / n
+
+# TODO: log(x - 1i) / (x + 1i)
+
+
+###
 n = 4; k = 1; # !!!
 p = 1/sqrt(3);
 integrate(\(x) Re(x^p * log(x^4 + 1) / (x^2 + 1i)), 0, Inf)
