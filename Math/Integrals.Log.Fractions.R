@@ -152,13 +152,16 @@ a = sqrt(5); b = sqrt(3)
 integrate(function(x) log(x + a) / (x^2 + b^2), lower=0, upper=Inf)
 pi*log(a^2 + b^2)/(4*b) + log(b)*atan(a/b)/b +
 	- integrate(function(x) log(x) / (x^2 + b^2), 0, a)$value;
+pi*log(a^2 + b^2)/(4*b) +
+	- integrate(function(x) 1/b * log(x) / (x^2 + 1), 0, a/b)$value;
+
 
 ### TODO:
 integrate(function(x) x^(1/2) * log(x + 1) / (x^2 + 1), 0, 1)
 integrate(function(x) 2 * x^2 * log(x^2 + 1) / (x^4 + 1), 0, 1)
 integrate(\(b) 4*b^2 / (b^4 + 1) * atan(b), 0, 1)$value +
 	+ (pracma::psi(1, 7/8) - pracma::psi(1, 3/8)) / 16 +
-	- pi * (digamma(7/8) - digamma(3/8)) / 4 +
+	- (digamma(7/8) - digamma(3/8)) * pi/4 +
 	+ (digamma(5/8) - digamma(1/8)) / 4 * pi/4 +
 	+ (digamma(7/8) - digamma(3/8)) / 8 * log(2);
 
@@ -514,10 +517,25 @@ integrate(function(x) log(x^n + 1)/x^(p+1), 0, Inf)
 1/p*pi/sin(pi*p/n)
 
 
-##############
-##############
+#################
+#################
 
-### on [0, 1]
+#################
+### on [0, 1] ###
+
+### Special Cases:
+
+integrate(function(x) x*log(x) / (x^2 + 1), 0, 1)
+- pi^2 / 48
+
+integrate(function(x) (x*log(x) - x) / (x^2 + 1), 0, 1)
+- pi^2 / 48 - log(2)/2
+
+integrate(function(x) log(x) * atan(x), 0, 1)
+pi^2 / 48 - pi/4 + log(2)/2
+
+
+### Other Cases:
 
 # Note: formula based on Digamma available!
 logcos.sh = function(n, p) {
@@ -616,6 +634,7 @@ integrate(\(x) log(x^n + 1) / (x^n + 1), 0, 1)
 
 integrate(function(x) log(x^4 + 1)/(x^2 + 1), 0, Inf)
 pi*log(2 + sqrt(2))
+2*pi * log(2*cos(pi/8))
 
 ### Gen 1:
 integrate(function(x) log(x^(4*2) + 1)/(x^2 + 1), 0, Inf)
@@ -640,6 +659,76 @@ integrate(function(x) log(x^(4*k) + 1) / (x^2 + 1), 0, Inf)
 k*pi*log(2) + pi*log(prod(1 + sin(pi * seq(1, 2*k-1, by=2)/(4*k))))
 k*pi*log(2) + pi*log(prod(1 + cos(pi/2 - pi * seq(1, 2*k-1, by=2)/(4*k))))
 2*k*pi*log(2) + 2*pi*log(prod(cos(pi/4 - pi * seq(1, 2*k-1, by=2)/(8*k))))
+
+
+#################
+
+### I( log(x^2 + b^2) / (x^4 + 1) )
+# Maths 505: An absolute beast of an integral solved
+#   using Feynman's awesome technique
+# https://www.youtube.com/watch?v=XC8obecfpY0
+# - using Feynman technique;
+integrate(\(x) log(x^2 + 1) / (x^4 + 1), 0, Inf)
+sqrt(2)*pi/8 * (2*atan(1) + log(2)) +
+	+ pi/8 * (digamma(3/8) - digamma(7/8));
+
+
+### Gen 1:
+k = sqrt(3)
+integrate(\(x) log(k^2*x^2 + 1) / (x^4 + 1), 0, Inf)
+sqrt(2)*pi/8 * (2*atan(k^2) + log(k^4 + 1)) +
+	- integrate(\(x) pi*x^2 / (x^4+1), 0, k)$value;
+# Fraction Decomposition:
+sqrt(2)*pi/8 * (2*atan(k^2) + log(k^4 + 1)) +
+	- integrate(\(x) pi/2 * Re(1/(x^2-1i) + 1/(x^2+1i)), 0, k)$value;
+sqrt(2)*pi/8 * (2*atan(k^2) + log(k^4 + 1)) +
+	- pi/2 * (atan(k*exp(1i*pi/4))*exp(1i*pi/4) +
+		+ atan(k*exp(-1i*pi/4))*exp(-1i*pi/4));
+
+###
+b = sqrt(3)
+integrate(\(x) log(x^2 + b^2) / (x^4 + 1), 0, Inf)
+sqrt(2)*pi/8 * (2*atan(1/b^2) + log(b^4 + 1)) +
+	- pi/2 * (atan(1/b*exp(1i*pi/4))*exp(1i*pi/4) +
+		+ atan(1/b*exp(-1i*pi/4))*exp(-1i*pi/4));
+
+### I( atan(x^2)) / (x^4 + 1) )
+integrate(\(x) (pi/2 - atan(x^2)) / (x^4 + 1), 0, Inf)
+# TODO
+
+# Limit:
+b = exp(c(1i,-1i) * pi/4) + c(-1i,1i)*1E-4;
+- pi/2 * diff(sqrt(2)/4 * (log(b^4 + 1) - 2*atan(b^2)) +
+	+ (atan(b*exp(-1i*pi/4))*exp(1i*pi/4) +
+		+ atan(b*exp(1i*pi/4))*exp(-1i*pi/4)) ) / 2i;
+pi/2 * (sqrt(2)/4 * (log(1 - exp(-4*eps)) - 2*atan(1i*exp(- 2*eps))) +
+	+ (atan(exp(- eps))*exp(1i*pi/4) + atan(1i*exp(- eps))*exp(-1i*pi/4)) )
+
+# Limit:
+eps = 1E-5 + 0i;
+# Converge: log(2) * ...;
+	- 1i*log(exp(eps) + 1i) * (exp(1i*pi/4)/2 + sqrt(2)/4) +
+	- log(exp(eps) + 1) * exp(-1i*pi/4)/2
+# pi/2 * Im(...) => I(...);
+sqrt(2)/4 * log(1 - exp(4*eps)) +
+	+ 1i*log(exp(eps) - 1i) * (exp(1i*pi/4)/2 - sqrt(2)/4) +
+	+ log(exp(eps) - 1) * (exp(-1i*pi/4)/2 + 1i*sqrt(2)/4) +
+	+ pi/2 * exp(-1i*pi/4) + sqrt(2)/4 * 1i*log(2) +
+	- 1i*(log(2)/2 + pi/4*1i) * (exp(1i*pi/4)/2 + sqrt(2)/4) +
+	- log(2) * exp(-1i*pi/4)/2
+
+# TODO: compute limit;
+
+integrate(\(x) {
+	x = mpfr(x, 240);
+	y = (Const("pi",240)/2 - atan(x^2)) / (x^4 + 1);
+	as.numeric(y);}, 0, Inf, rel.tol=1E-10)
+
+
+### Gen 2:
+integrate(\(x) log(x^3 + 1) / (x^6 + 1), 0, Inf)
+# TODO: ... + # also check pi-factor;
+	+ pi*(digamma(4/12) - digamma(10/12))/12;
 
 
 #################
@@ -933,5 +1022,12 @@ integrate(\(x) log(x^2+x+1) / (1-x) - log(3) / (1-x), 0, 1)
 # vs:
 integrate(\(x) log(1 - x^3) / (1-x^3) - 1/3*(log(1-x) + log(3)) / (1-x), 0, 1)
 
-# TODO: is it possible to solvve without Li2?
+# TODO: is it possible to solve without Li2?
+
+
+### on [0, 1/2]
+
+###
+integrate(\(x) log(1 - x) / x, 0, 1/2)
+- pi^2/12 + log(2)^2/2
 
