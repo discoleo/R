@@ -198,3 +198,31 @@ integrate(\(x)
 # prod(r[i] - r[-i]) == - (r^2 - 18*r - 3)/r
 # sum(- r/(3*r^2 - 6*r - 1) ) == -1/7
 # TODO
+
+####################
+####################
+
+### on [0, pi/2]
+
+### Base:
+p = sqrt(2); n = sqrt(5); k = sqrt(3);
+integrate(\(x) x^p / (x^n + 1)^k, 0, Inf)
+gamma((p+1)/n) * gamma(k - (p+1)/n) / gamma(k) / n
+
+###
+p = sqrt(2); n = sqrt(5); k = sqrt(3);
+integrate(\(x) sin(x)^p * cos(x)^(n*k-p-2) / (sin(x)^n + cos(x)^n)^k, 0, pi/2)
+gamma((p+1)/n) * gamma(k - (p+1)/n) / gamma(k) / n
+
+###
+p = sqrt(2); q = sqrt(3); n = sqrt(5);
+integrate(\(x) sin(x)^p * cos(x)^q / (sin(x)^n + cos(x)^n)^((p+q+2)/n), 0, pi/2)
+gamma((p+1)/n) * gamma((q+1)/n) / gamma((p+q+2)/n) / n
+
+###
+p = sqrt(2); q = sqrt(3); n = sqrt(5); k = sqrt(3) - sqrt(2);
+integrate(\(x) sin(x)^p * cos(x)^q / (sin(x)^n + cos(x)^n)^k, 0, pi/2)
+integrate(\(x) x^p / ((x^n + 1)^k * (x^2 + 1)^((p+q-n*k+2)/2)), 0, Inf)
+
+# TODO: ???
+
