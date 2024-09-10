@@ -223,6 +223,9 @@ integrate(\(x) x^2 * cos(q*x) / (exp(k*x) + 1), 0, Inf)
 ### Other:
 integrate(\(x) sin(x) / (exp(x) * (exp(x) - 1)), 0, Inf)
 pi/2 / tanh(pi) - 1
+#
+integrate(\(x) cos(x) / (exp(x) * (exp(x) - 1)) - exp(-x) / x, 0, Inf)
+- Re(pracma::psi(1i)) - Re(1/(1i+1))
 
 ### x^p
 integrate(\(x) x * sin(x) / (exp(x) - 1), 0, Inf)
@@ -358,13 +361,21 @@ phi / (k*sin(phi))
 ### Trig - Exp
 
 ### I( cos(x) / (exp(1/x) + 1) )
-# Michael Penn: is this integration trick TOO POWERFUL?
-# https://www.youtube.com/watch?v=PX2QXILRgsc
+# 1. Michael Penn: is this integration trick TOO POWERFUL?
+#    https://www.youtube.com/watch?v=PX2QXILRgsc
+# 2. Maths 505: This OP trick solves IMPOSSIBLE integrals!
+#    https://www.youtube.com/watch?v=25dQUgpeX74
+# Note: only trick;
 
 ###
 lim = 1
 integrate(\(x) cos(x) / (exp(1/x) + 1), -lim, lim)
 sin(lim)
+
+###
+lim = 1; k = 1/5;
+integrate(\(x) cos(k*x) / (exp(1/x) + 1), -lim, lim)
+sin(k*lim) / k;
 
 ### Various Variants:
 lim = sqrt(pi)
@@ -404,6 +415,19 @@ integrate(\(x) cos(x) / (exp(1/x) - 1), -lim, lim)
 
 integrate(\(x) exp(2*cos(x)), 0, pi)
 pi * sum(1 / factorial(seq(0, 15))^2)
+
+# TODO: closed formula?
+
+integrate(\(x) Re(exp(2*exp(x*1i))), 0, pi)
+pi
+
+integrate(\(x) Im(exp(2*exp(x*1i))), 0, pi)
+# TODO: ?
+
+integrate(\(x) {
+	x = mpfr(x, 240);
+	y = exp(2*cos(x)) * sin(2*sin(x));
+	as.numeric(y); }, 0, pi, rel.tol=1E-8)
 
 
 ### I( exp(sin(2*x)/2) * cos(cos(x)^2) )
