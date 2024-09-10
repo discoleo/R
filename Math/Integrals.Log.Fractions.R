@@ -692,10 +692,13 @@ sqrt(2)*pi/8 * (2*atan(1/b^2) + log(b^4 + 1)) +
 	- pi/2 * (atan(1/b*exp(1i*pi/4))*exp(1i*pi/4) +
 		+ atan(1/b*exp(-1i*pi/4))*exp(-1i*pi/4));
 
-### I( atan(x^2)) / (x^4 + 1) )
-integrate(\(x) (pi/2 - atan(x^2)) / (x^4 + 1), 0, Inf)
-# TODO
 
+### I( atan(x^2)) / (x^4 + 1) )
+integrate(\(x) atan(x^2) / (x^4 + 1), 0, Inf)
+pi*(pi - 2*log(2)) * sqrt(2) / 16
+
+
+integrate(\(x) (pi/2 - atan(x^2)) / (x^4 + 1), 0, Inf)
 # Limit:
 b = exp(c(1i,-1i) * pi/4) + c(-1i,1i)*1E-4;
 - pi/2 * diff(sqrt(2)/4 * (log(b^4 + 1) - 2*atan(b^2)) +
