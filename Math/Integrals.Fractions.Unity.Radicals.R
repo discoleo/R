@@ -537,11 +537,19 @@ integrate(\(x) sqrt(1 - x^4) / (x^4 + 1), 0, 1)
 integrate(\(x) sqrt(1/tan(x) - tan(x)) / 2, 0, pi/4)
 pi/4
 
-###
+
+### I( x^2 * (1 - x^8)^(1/4) / (x^8 + 1) )
+integrate(\(x) x^2 * (1 - x^8)^(1/4) / (x^8 + 1), 0, 1)
+integrate(\(x) (1/tan(x) - tan(x))^(1/4) * 1/4, 0, pi/4)
+2^(1/4)/16 * beta(5/8, 3/8)
+
+
+### I( (1 - x^8)^(1/4) / (x^4 + 1) )
 integrate(\(x) (1 - x^8)^(1/4) / (x^4 + 1), 0, 1)
 integrate(\(x) (1/tan(x)^2 - tan(x)^2)^(1/4) / 2, 0, pi/4)
 integrate(\(x) sqrt(2)/4 * (cos(x) / sin(x)^2)^(1/4), 0, pi/2)
 sqrt(2)/8 * beta(5/8, 1/4)
 
 # but does NOT generalize nicely;
+# (except for the outer radical in the tan(x)-variant)
 
