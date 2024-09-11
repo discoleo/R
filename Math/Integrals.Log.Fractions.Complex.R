@@ -173,3 +173,15 @@ sum(sqrt(2)*pi/8 * (2*atan(1/b^2) + log(b^4 + 1)) +
 	- pi/2 * (atan(1/b*exp(1i*pi/4))*exp(1i*pi/4) +
 		+ atan(1/b*exp(-1i*pi/4))*exp(-1i*pi/4)) );
 
+
+### I( log(Poly(x^2)) / (x^4 + 1) )
+integrate(\(x) log(x^10 + 9*x^8 + 28*x^6 + 35*x^4 + 15*x^2 + 1) / (x^4 + 1), 0, Inf)
+cs = 2*cos(2*seq(5)*pi/11);
+b  = abs(cs);
+sum(sqrt(2)*pi/8 * (2*atan(1/b^2) + log(b^4 + 1)) +
+	- pi/2 * (atan(1/b*exp(1i*pi/4))*exp(1i*pi/4) +
+		+ atan(1/b*exp(-1i*pi/4))*exp(-1i*pi/4)) );
+# Test:
+x = - cs^2;
+x^5 + 9*x^4 + 28*x^3 + 35*x^2 + 15*x + 1 # == 0
+
