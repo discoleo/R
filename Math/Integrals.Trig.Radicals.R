@@ -336,3 +336,30 @@ integrate(\(x) cos(x)^(-2/3) - sin(x)*cos(x)^(-2/3), 0, pi/2)
 (beta(1/6, 1/2) - beta(1/6, 1))/2
 # - alternative method: sum & diff;
 
+
+####################
+####################
+
+### Other
+
+### I( (1/tan(x)^2 - tan(x)^2)^(1/4) )
+# Maths 505: An awesome calculus result I cooked up
+# https://www.youtube.com/watch?v=WoxHJyOOma4
+
+### Pow = 1
+integrate(\(x) sqrt(1/tan(x) - tan(x)) / 2, 0, pi/4)
+integrate(\(x) sqrt(1 - x^4) / (x^4 + 1), 0, 1) # varia
+pi/4
+
+### Pow = 2
+integrate(\(x) (1/tan(x)^2 - tan(x)^2)^(1/4), 0, pi/4)
+integrate(\(x) 1/sqrt(2) * (cos(x) / sin(x)^2)^(1/4), 0, pi/2)
+sqrt(2)/4 * beta(5/8, 1/4)
+
+### Pow = 1/2
+integrate(\(x) sqrt(1/tan(x)) - sqrt(tan(x)), 0, pi/4)
+integrate(\(x) sqrt(1 - sin(x)) / sqrt(sin(x)) * sqrt(2)/2, 0, pi/2)
+integrate(\(x) sqrt(1 - cos(x)) / sqrt(cos(x)) * sqrt(2)/2, 0, pi/2)
+integrate(\(x) sin(x/2) / sqrt(cos(x)), 0, pi/2)
+log(3 + 2*sqrt(2)) * sqrt(2)/2
+
