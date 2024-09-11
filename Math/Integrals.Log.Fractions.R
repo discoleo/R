@@ -697,7 +697,14 @@ sqrt(2)*pi/8 * (2*atan(1/b^2) + log(b^4 + 1)) +
 integrate(\(x) atan(x^2) / (x^4 + 1), 0, Inf)
 pi*(pi - 2*log(2)) * sqrt(2) / 16
 
+### I( x^2 * atan(x^2)) / (x^4 + 1) )
+integrate(\(x) x^2 * atan(x^2) / (x^4 + 1), 0, Inf)
+pi*(pi + 2*log(2)) * sqrt(2) / 16
 
+
+# Derivation:
+# - alternative method: based on result of logarithm;
+# - but requires challenging limits;
 integrate(\(x) (pi/2 - atan(x^2)) / (x^4 + 1), 0, Inf)
 # Limit:
 b = exp(c(1i,-1i) * pi/4) + c(-1i,1i)*1E-4;
@@ -719,8 +726,10 @@ sqrt(2)/4 * log(1 - exp(4*eps)) +
 	+ pi/2 * exp(-1i*pi/4) + sqrt(2)/4 * 1i*log(2) +
 	- 1i*(log(2)/2 + pi/4*1i) * (exp(1i*pi/4)/2 + sqrt(2)/4) +
 	- log(2) * exp(-1i*pi/4)/2
+# Im:
+pi/4/sin(pi/4) - (pi - 2*log(2)) * sqrt(2)/8
+(pi + 2*log(2)) * sqrt(2)/8
 
-# TODO: compute limit;
 
 integrate(\(x) {
 	x = mpfr(x, 240);
