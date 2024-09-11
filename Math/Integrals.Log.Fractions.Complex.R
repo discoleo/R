@@ -164,3 +164,12 @@ sum(sqrt(2)*pi/8 * (2*atan(1/b^2) + log(b^4 + 1)) +
 	- pi/2 * (atan(1/b*exp(1i*pi/4))*exp(1i*pi/4) +
 		+ atan(1/b*exp(-1i*pi/4))*exp(-1i*pi/4)) );
 
+
+### Gen: I( log(x^4 + 2*cos(a)*x^2 + 1) / (x^4 + 1) )
+a = 1/pi;
+integrate(\(x) log(x^4 + 2*cos(a)*x^2 + 1) / (x^4 + 1), 0, Inf)
+b = cos(a/2) + c(1i,-1i)*sin(a/2);
+sum(sqrt(2)*pi/8 * (2*atan(1/b^2) + log(b^4 + 1)) +
+	- pi/2 * (atan(1/b*exp(1i*pi/4))*exp(1i*pi/4) +
+		+ atan(1/b*exp(-1i*pi/4))*exp(-1i*pi/4)) );
+
