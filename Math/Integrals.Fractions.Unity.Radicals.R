@@ -6,7 +6,7 @@
 ### Exact Integration
 ### Polynomial Radicals
 ###
-### draft v.0.1d-check
+### draft v.0.2a
 
 
 ### Types:
@@ -369,6 +369,10 @@ integrate(\(x) 1 / (x^(6/5) + 1)^(5/3), 0, 1)
 integrate(\(x) 5*x^4 / (x^6 + 1)^(5/3), 0, 1)
 gamma(5/6)^2 / gamma(5/3) / (6/5)/2
 
+###
+integrate(\(x) 1 / (x^8 + 1)^(1/4), 0, 1)
+gamma(1/8)^2 / gamma(1/4) / 16
+
 
 #######################
 #######################
@@ -552,4 +556,20 @@ sqrt(2)/8 * beta(5/8, 1/4)
 
 # but does NOT generalize nicely;
 # (except for the outer radical in the tan(x)-variant)
+
+
+### I( x^4 / (x^8 + 1)^(3/4) )
+integrate(\(x) x^4 / (x^8 + 1)^(3/4), 0, 1)
+sqrt(2)/16i * beta(5/8, 1/4) * sinh(1i*pi/8)
+
+### I( 1 / (x^8 + 1)^(3/4) )
+integrate(\(x) 1 / (x^8 + 1)^(3/4), 0, 1)
+gamma(1/8)*gamma(3/4 - 1/8) / gamma(3/4) / 8 +
+	- sqrt(2)/16i * beta(5/8, 1/4) * sinh(1i*pi/8);
+beta(1/8, 5/8) / 8 - sqrt(2)/16i * beta(1/4, 5/8) * sinh(1i*pi/8);
+
+### I( 1 / (x^8 + 1)^(1/4) )
+# see section above:
+integrate(\(x) 1 / (x^8 + 1)^(1/4), 0, 1)
+gamma(1/8)^2 / gamma(1/4) / 16
 
