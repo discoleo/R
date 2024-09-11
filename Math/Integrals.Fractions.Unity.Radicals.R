@@ -523,3 +523,25 @@ p = sqrt(3); n = sqrt(7); a = sqrt(5);
 integrate(function(x) x^p / (x^n + a)^((p+1)/n + 1), lower=0, upper=1)
 1/(a+1)^((p+1)/n) / (a*(p+1))
 
+
+##########################
+##########################
+
+### Mixed Types
+
+### I( (1 - x^8)^(1/4) / (x^4 + 1) )
+# Maths 505: An awesome calculus result I cooked up
+# https://www.youtube.com/watch?v=WoxHJyOOma4
+
+integrate(\(x) sqrt(1 - x^4) / (x^4 + 1), 0, 1)
+integrate(\(x) sqrt(1/tan(x) - tan(x)) / 2, 0, pi/4)
+pi/4
+
+###
+integrate(\(x) (1 - x^8)^(1/4) / (x^4 + 1), 0, 1)
+integrate(\(x) (1/tan(x)^2 - tan(x)^2)^(1/4) / 2, 0, pi/4)
+integrate(\(x) sqrt(2)/4 * (cos(x) / sin(x)^2)^(1/4), 0, pi/2)
+sqrt(2)/8 * beta(5/8, 1/4)
+
+# but does NOT generalize nicely;
+
