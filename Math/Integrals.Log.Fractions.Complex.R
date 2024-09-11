@@ -124,3 +124,43 @@ integrate(\(x) Im(x^p * log(x^4 + 1) / (x^2 + 1i)), 0, Inf)
 	- 1i*(gamma((p+1)/n) * gamma(k - (p+1)/n)*
 	(digamma(k) - digamma(k - (p+1)/n)))) / gamma(k) / n
 
+
+#############
+
+###
+integrate(function(x) Im(log(x^2 + 1i)) / (x^2 + 1), 0, Inf)
+pi^2 / 8
+integrate(function(x) Re(log(x^2 + 1i)) / (x^2 + 1), 0, Inf)
+pi*log(2*cos(pi/8))
+
+# Derivation:
+integrate(function(x) atan(x^2)/(x^2 + 1), 0, Inf)
+pi^2 / 8
+integrate(function(x) Im(log((x^2 + 1i)/(x^2 - 1i))) / (x^2 + 1), 0, Inf)
+pi^2 / 4
+
+integrate(function(x) log(x^4 + 1)/(x^2 + 1), 0, Inf)
+2*pi*log(2*cos(pi/8))
+
+integrate(function(x) atan(x^4)/(x^2 + 1), 0, Inf)
+pi^2 / 8
+
+#################
+#################
+
+### Base:
+# see file: Integrals.Log.Fractions.R;
+b = sqrt(3)
+integrate(\(x) log(x^2 + b^2) / (x^4 + 1), 0, Inf)
+sqrt(2)*pi/8 * (2*atan(1/b^2) + log(b^4 + 1)) +
+	- pi/2 * (atan(1/b*exp(1i*pi/4))*exp(1i*pi/4) +
+		+ atan(1/b*exp(-1i*pi/4))*exp(-1i*pi/4));
+
+
+### I( log(x^4 - x^2 + 1) / (x^4 + 1) )
+integrate(\(x) log(x^4 - x^2 + 1) / (x^4 + 1), 0, Inf)
+b = cos(pi/3) + c(1i,-1i)*sin(pi/3);
+sum(sqrt(2)*pi/8 * (2*atan(1/b^2) + log(b^4 + 1)) +
+	- pi/2 * (atan(1/b*exp(1i*pi/4))*exp(1i*pi/4) +
+		+ atan(1/b*exp(-1i*pi/4))*exp(-1i*pi/4)) );
+
