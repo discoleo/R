@@ -536,17 +536,33 @@ integrate(function(x) x^p / (x^n + a)^((p+1)/n + 1), lower=0, upper=1)
 ### I( (1 - x^8)^(1/4) / (x^4 + 1) )
 # Maths 505: An awesome calculus result I cooked up
 # https://www.youtube.com/watch?v=WoxHJyOOma4
+# Note: substitution tan(x) = y^n;
 
+### Tan Pow: 1
+
+### I( (1 - x^4)^(1/2) / (x^4 + 1) )
 integrate(\(x) sqrt(1 - x^4) / (x^4 + 1), 0, 1)
 integrate(\(x) sqrt(1/tan(x) - tan(x)) / 2, 0, pi/4)
 pi/4
-
 
 ### I( x^2 * (1 - x^8)^(1/4) / (x^8 + 1) )
 integrate(\(x) x^2 * (1 - x^8)^(1/4) / (x^8 + 1), 0, 1)
 integrate(\(x) (1/tan(x) - tan(x))^(1/4) * 1/4, 0, pi/4)
 2^(1/4)/16 * beta(5/8, 3/8)
 
+### I( (1 - x^3)^(1/3) / (x^3 + 1) )
+integrate(\(x) 1/2 * (1 - x^3)^(1/3) / (x^3 + 1), 0, 1)
+integrate(\(x) x * (1 - x^6)^(1/3) / (x^6 + 1), 0, 1)
+integrate(\(x) 1/3 * (1/tan(x) - tan(x))^(1/3), 0, pi/4)
+2^(1/3)/12 * beta(2/3, 1/3)
+
+### I( (1 - x^6)^(1/3) / (x^6 + 1) )
+integrate(\(x) (1 - x^6)^(2/3) / (x^6 + 1), 0, 1)
+integrate(\(x) 1/3 * (1/tan(x) - tan(x))^(2/3), 0, pi/4)
+2^(2/3)/12 * beta(5/6, 1/6)
+
+
+### Tan Pow: 2
 
 ### I( (1 - x^8)^(1/4) / (x^4 + 1) )
 integrate(\(x) (1 - x^8)^(1/4) / (x^4 + 1), 0, 1)
