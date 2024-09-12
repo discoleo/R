@@ -1,5 +1,5 @@
 
-
+### Exp: Cosh & Sinh Variants
 
 
 ### I( x^2 / cosh(x^2)^2 )
@@ -10,19 +10,48 @@ integrate(\(x) x^2 / cosh(x^2)^2, 0, Inf)
 sqrt(pi/8)*(1 - sqrt(2)) * pracma::zeta(1/2)
 
 
-###
+### Gen:
 p = sqrt(5)
 integrate(\(x) x^p / cosh(x^2)^2, 0, Inf)
 gamma(p/2 + 1/2) * pracma::zeta(p/2 - 1/2) * (1 - 2^(3/2 - p/2)) / 2^(p/2 - 1/2)
 
 
-###
+### I( x^p / cosh(x^n)^2 )
 p = sqrt(5)
 n = sqrt(3)
 integrate(\(x) x^p / cosh(x^n)^2, 0, Inf)
-gamma((p + 1)/n) * pracma::zeta((p + 1)/n - 1) * (1 - 2^(2 - (p + 1)/n)) / 2^((p + 1)/n - 1) * 2/n
+gamma((p+1)/n) * pracma::zeta((p+1)/n - 1) *
+	(1 - 2^(2 - (p+1)/n)) / 2^((p+1)/n - 1) * 2/n
 
 # TODO: even more generalizations
+
+
+# Maths 505: A RIDICULOUSLY AWESOME INTEGRAL
+# https://www.youtube.com/watch?v=bbx1L09CJn8
+# Note:
+# - series expansion of 1 / (z+1)^2;
+# - basically the same as the previous one!
+
+integrate(\(x) x^2 / (exp(x^2) + exp(-x^2))^2, 0, Inf)
+integrate(\(x) x^2 * exp(-2*x^2) / (1 + exp(-2*x^2))^2, 0, Inf)
+sqrt(2)/16 * (1 - 2^(1/2)) * gamma(1/2) * pracma::zeta(1/2)
+
+
+###
+integrate(\(x) x^3 / (exp(x^3) + exp(-x^3))^2, 0, Inf)
+2^(2/3)/(4*9) * (1 - 2^(1 - 1/3)) * gamma(1/3) * pracma::zeta(1/3)
+
+
+### Gen:
+n = sqrt(3)
+integrate(\(x) x^n / (exp(x^n) + exp(-x^n))^2, 0, Inf)
+2^(1-1/n)/(4*n^2) * (1 - 2^(1 - 1/n)) * gamma(1/n) * pracma::zeta(1/n)
+
+###
+n = sqrt(3); p = sqrt(2);
+integrate(\(x) x^p / (exp(x^n) + exp(-x^n))^2, 0, Inf)
+2^(-(p+1)/n) * (1 - 2^(2 - (p+1)/n)) / n *
+	gamma((p+1)/n) * pracma::zeta((p+1)/n - 1)
 
 
 ######################
