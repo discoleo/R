@@ -655,3 +655,16 @@ integrate(\(x) (1 - x^5)^(1/5) / (x^5 + 1)^(3/5), 0, 1)
 integrate(\(x) 2/5 * (1/tan(x)^3 + 1/tan(x) - tan(x) - tan(x)^3)^(1/5), 0, pi/4)
 2^(-2/5) / 5 * beta(3/5, 1/5)
 
+
+### Variant: cos^2
+p = 1/5; n = 5/2;
+integrate(\(x) x^(n*(1-3*p)-1) * (1 - x^(2*n))^(2*p) / (x^(2*n) + 1)^(1-p), 0, 1)
+integrate(\(x) 1/n * (1/tan(x)^3 - 1/tan(x) - tan(x) + tan(x)^3)^p, 0, pi/4)
+integrate(\(x) 2^(3*p-1) / n * (cos(x)^2 / sin(x)^3)^p, 0, pi/2)
+2^(3*p-2) / n * beta(p+1/2, (1-3*p)/2)
+
+### I( (1 - x^5)^(2/5) / (x^5 + 1)^(4/5) )
+integrate(\(x) (1 - x^5)^(2/5) / (x^5 + 1)^(4/5), 0, 1)
+integrate(\(x) 2/5 * (1/tan(x)^3 - 1/tan(x) - tan(x) + tan(x)^3)^(1/5), 0, pi/4)
+2^(-2/5) / 5 * beta(7/10, 1/5)
+
