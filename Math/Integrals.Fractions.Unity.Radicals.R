@@ -6,7 +6,7 @@
 ### Exact Integration
 ### Polynomial Radicals
 ###
-### draft v.0.2a
+### draft v.0.2b
 
 
 ### Types:
@@ -572,8 +572,9 @@ integrate(\(x) 1/3 * (1/tan(x) - tan(x))^(2/3), 0, pi/4)
 
 ### Tan Pow: 2
 
-# but does NOT generalize nicely for higher powers;
-# (except for the outer radical in the tan(x)-variant)
+# - can be generalized based on the cos/sin-integral:
+#   the TAN-subintegral can be actually skipped;
+
 
 ### I( (1 - x^8)^(1/4) / (x^4 + 1) )
 integrate(\(x) (1 - x^8)^(1/4) / (x^4 + 1), 0, 1)
@@ -687,4 +688,18 @@ integrate(\(x) 2^(4*p-1) / n * (cos(x) / sin(x)^4)^p, 0, pi/2)
 # p = 1/5; n = 5;
 integrate(\(x) (1 - x^10)^(1/5) / (x^10 + 1)^(2/5), 0, 1)
 2^(-6/5) / 5 * beta(3/5, 1/10)
+
+
+### Variant: cos^3
+p = 1/5; n = 5;
+integrate(\(x) x^(n*(1-4*p)-1) * (1 - x^(2*n))^(3*p) / (x^(2*n) + 1)^(1-p), 0, 1)
+integrate(\(x) ((cos(x)^2 - sin(x)^2)^3 * (cos(x)^2 + sin(x)^2))^p *
+	2^(4*p) / n / sin(2*x)^(4*p), 0, pi/4)
+integrate(\(x) 2^(4*p-1) / n * (cos(x)^3 / sin(x)^4)^p, 0, pi/2)
+2^(4*p-2) / n * beta((3*p+1)/2, (1-4*p)/2)
+
+### I( (1 - x^10)^(3/5) / (x^10 + 1)^(4/5) )
+# p = 1/5; n = 5;
+integrate(\(x) (1 - x^10)^(3/5) / (x^10 + 1)^(4/5), 0, 1)
+2^(-6/5) / 5 * beta(4/5, 1/10)
 
