@@ -564,19 +564,21 @@ integrate(\(x) 1/3 * (1/tan(x) - tan(x))^(2/3), 0, pi/4)
 
 ### Tan Pow: 2
 
+# but does NOT generalize nicely for higher powers;
+# (except for the outer radical in the tan(x)-variant)
+
 ### I( (1 - x^8)^(1/4) / (x^4 + 1) )
 integrate(\(x) (1 - x^8)^(1/4) / (x^4 + 1), 0, 1)
 integrate(\(x) (1/tan(x)^2 - tan(x)^2)^(1/4) / 2, 0, pi/4)
 integrate(\(x) sqrt(2)/4 * (cos(x) / sin(x)^2)^(1/4), 0, pi/2)
 sqrt(2)/8 * beta(5/8, 1/4)
 
-# but does NOT generalize nicely;
-# (except for the outer radical in the tan(x)-variant)
-
+### Sum
 
 ### I( x^4 / (x^8 + 1)^(3/4) )
 integrate(\(x) x^4 / (x^8 + 1)^(3/4), 0, 1)
 sqrt(2)/16i * beta(5/8, 1/4) * sinh(1i*pi/8)
+sqrt(2)/16 * beta(5/8, 1/4) * sin(pi/8)
 
 ### I( 1 / (x^8 + 1)^(3/4) )
 integrate(\(x) 1 / (x^8 + 1)^(3/4), 0, 1)
@@ -588,4 +590,44 @@ beta(1/8, 5/8) / 8 - sqrt(2)/16i * beta(1/4, 5/8) * sinh(1i*pi/8);
 # see section above:
 integrate(\(x) 1 / (x^8 + 1)^(1/4), 0, 1)
 gamma(1/8)^2 / gamma(1/4) / 16
+
+########
+
+### I( (1 - x^12)^(1/3) / (x^6 + 1) )
+integrate(\(x) (1 - x^12)^(1/3) / (x^6 + 1), 0, 1)
+integrate(\(x) (1/tan(x)^2 - tan(x)^2)^(1/3) / 3, 0, pi/4)
+integrate(\(x) 2^(2/3)/6 * (cos(x) / sin(x)^2)^(1/3), 0, pi/2)
+2^(2/3)/12 * beta(2/3, 1/6)
+
+### I( x^6 * (1 - x^12)^(1/3) / ((x^6 + 1) * (1 - x^12)) )
+integrate(\(x) x^6 * (1 - x^12)^(-2/3) / (x^6 + 1), 0, 1)
+integrate(\(x) (1/tan(x)^2 - tan(x)^2)^(-2/3) / 3, 0, pi/4)
+integrate(\(x) 2^(-4/3)/6 * (cos(x) / sin(x)^2)^(-2/3), 0, pi/2)
+2^(-1/3)/24 * beta(7/6, 1/6)
+
+### I( 1 / (1 - x^12)^(2/3) )
+integrate(\(x) 1 / (1 - x^12)^(2/3), 0, 1)
+2^(2/3)/12 * beta(2/3, 1/6) * sin(5*pi/12) / cos(3*pi/12)
+
+### I( 1 / ((x^6 + 1) * (1 - x^12)^(2/3)) )
+integrate(\(x) 1 / ((x^6 + 1) * (1 - x^12)^(2/3)), 0, 1)
+2^(2/3)/12 * beta(2/3, 1/6) * sin(5*pi/12) / cos(3*pi/12) +
+	- 2^(-1/3)/24 * beta(7/6, 1/6);
+
+### I( x^6 / (1 - x^12)^(2/3) )
+integrate(\(x) x^6 / (1 - x^12)^(2/3), 0, 1)
+2^(2/3)/24 * beta(2/3, 1/6) * sin(3*pi/12) / cos(1*pi/12)
+
+### I( (1 - x^12)^(1/3) / (1 - x^6) )
+integrate(\(x) (1 - x^12)^(1/3) / (1 - x^6), 0, 1)
+2^(2/3)/12 * beta(2/3, 1/6) * (2*sin(5*pi/12) / cos(3*pi/12) - 1)
+
+### I( x^6 * (1 - x^12)^(1/3) / (1 - x^6) )
+integrate(\(x) x^6 * (1 - x^12)^(1/3) / (1 - x^6), 0, 1)
+# TODO
+
+
+### I( 1 / (x^12 + 1)^(2/3) )
+integrate(\(x) 1 / (x^12 + 1)^(2/3), 0, 1)
+# TODO
 
