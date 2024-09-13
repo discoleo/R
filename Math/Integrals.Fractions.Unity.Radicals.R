@@ -667,4 +667,24 @@ integrate(\(x) 2^(3*p-1) / n * (cos(x)^2 / sin(x)^3)^p, 0, pi/2)
 integrate(\(x) (1 - x^5)^(2/5) / (x^5 + 1)^(4/5), 0, 1)
 integrate(\(x) 2/5 * (1/tan(x)^3 - 1/tan(x) - tan(x) + tan(x)^3)^(1/5), 0, pi/4)
 2^(-2/5) / 5 * beta(7/10, 1/5)
+# TODO
+
+
+#######
+### Tan Pow: 4
+
+### Gen:
+p = 1/5; n = 5;
+integrate(\(x) x^(n*(1-4*p)-1) * (1 - x^(2*n))^p / (x^(2*n) + 1)^(1-3*p), 0, 1)
+integrate(\(x) 1/n * (1/tan(x)^4 + 2/tan(x)^2 +
+	- 2*tan(x)^2 - tan(x)^4)^p, 0, pi/4)
+integrate(\(x) ((cos(x)^2 - sin(x)^2) * (cos(x)^2 + sin(x)^2)^3)^p *
+	2^(4*p) / n / sin(2*x)^(4*p), 0, pi/4)
+integrate(\(x) 2^(4*p-1) / n * (cos(x) / sin(x)^4)^p, 0, pi/2)
+2^(4*p-2) / n * beta((p+1)/2, (1-4*p)/2)
+
+### I( (1 - x^10)^(1/5) / (x^10 + 1)^(2/5) )
+# p = 1/5; n = 5;
+integrate(\(x) (1 - x^10)^(1/5) / (x^10 + 1)^(2/5), 0, 1)
+2^(-6/5) / 5 * beta(3/5, 1/10)
 
