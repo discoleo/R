@@ -540,6 +540,14 @@ integrate(function(x) x^p / (x^n + a)^((p+1)/n + 1), lower=0, upper=1)
 
 ### Tan Pow: 1
 
+### Gen: Pow 1
+p = 2/5; n = 5;
+# p = 3/5; n = 5/2; # x^0
+integrate(\(x) x^(n*(1-p)-1) * (1 - x^(2*n))^p / (x^(2*n) + 1), 0, 1)
+integrate(\(x) (1/tan(x) - tan(x))^p / n, 0, pi/4)
+2^p / (4*n) * beta((p+1)/2, (1-p)/2)
+
+
 ### I( (1 - x^4)^(1/2) / (x^4 + 1) )
 integrate(\(x) sqrt(1 - x^4) / (x^4 + 1), 0, 1)
 integrate(\(x) sqrt(1/tan(x) - tan(x)) / 2, 0, pi/4)
@@ -630,4 +638,20 @@ integrate(\(x) x^6 * (1 - x^12)^(1/3) / (1 - x^6), 0, 1)
 ### I( 1 / (x^12 + 1)^(2/3) )
 integrate(\(x) 1 / (x^12 + 1)^(2/3), 0, 1)
 # TODO
+
+
+#######
+### Tan Pow: 3
+
+### Gen:
+p = 1/5; n = 5/2;
+integrate(\(x) x^(n*(1-3*p)-1) * (1 - x^(2*n))^p / (x^(2*n) + 1)^(1-2*p), 0, 1)
+integrate(\(x) 1/n * (1/tan(x)^3 + 1/tan(x) - tan(x) - tan(x)^3)^p, 0, pi/4)
+integrate(\(x) 2^(3*p-1) / n * (cos(x) / sin(x)^3)^p, 0, pi/2)
+2^(3*p-2) / n * beta((p+1)/2, (1-3*p)/2)
+
+### I( (1 - x^5)^(1/5) / (x^5 + 1)^(3/5) )
+integrate(\(x) (1 - x^5)^(1/5) / (x^5 + 1)^(3/5), 0, 1)
+integrate(\(x) 2/5 * (1/tan(x)^3 + 1/tan(x) - tan(x) - tan(x)^3)^(1/5), 0, pi/4)
+2^(-2/5) / 5 * beta(3/5, 1/5)
 
