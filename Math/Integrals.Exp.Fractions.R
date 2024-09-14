@@ -119,3 +119,55 @@ exp(1) * pracma::expint(1/2) - Re(pracma::expint(-1/2)) - Euler
 integrate(\(x) exp(1/2-abs(x))/(1/2+x) + 1 / ((x+1/2)*(x-1/2)), -Inf, -1/2)
 Euler
 
+
+######################
+######################
+
+### I( x * exp(-x) / (k*x + k-1)^(1/k) )
+# Maths 505: A tricky integral from MIT
+# https://www.youtube.com/watch?v=TbVgTqI7_Qk
+
+integrate(\(x) exp(-x^2) / (x^2 + 1/2)^2, 0, Inf)
+sqrt(pi)
+
+# Helper: tricky cancellation;
+integrate(\(x) x * exp(-x) / sqrt(2*x + 1), 0, Inf)
+1/2
+
+###
+integrate(\(x) x * exp(-x) / (3*x + 2)^(1/3), 0, Inf)
+2^(2/3) / 3
+
+### Gen:
+k = sqrt(5)
+integrate(\(x) x * exp(-x) / (k*x + k-1)^(1/k), 0, Inf)
+(k-1)^(1 - 1/k) / k
+
+#
+integrate(\(x) exp(-x) / (k*x + k-1)^(1/k), 0, Inf)
+# TODO
+
+#
+integrate(\(x) (x+1) * exp(-x) / (k*x + k-1)^(1 + 1/k), 0, Inf)
+(k-1)^(-1/k) - (k-1)^(1 - 1/k) / k
+
+#
+integrate(\(x) exp(-x) / (k*x + k-1)^(1 + 1/k), 0, Inf)
+# TODO
+
+# D:
+integrate(\(x) x * exp(-x) * (1/(k*x + k-1) +
+	- log(k*x + k-1)) / (k*x + k-1)^(1/k), 0, Inf)
+- (k-1)^(1 - 1/k)/k * log(k-1) - (k-1)^(1 - 1/k) / k
+
+### Special Case: k = 2
+integrate(\(x) exp(-x) / (2*x + 1)^(1/2), 0, Inf)
+sqrt(pi/2)*exp(1/2) * Rmpfr::erfc(1/sqrt(2))
+#
+integrate(\(x) exp(-x) / (2*x + 1)^(3/2), 0, Inf)
+1 - sqrt(pi/2)*exp(1/2) * Rmpfr::erfc(1/sqrt(2))
+
+### I( x * exp(-x) * log(2*x+1) / ... )
+integrate(\(x) x * exp(-x) * log(2*x + 1) / (2*x + 1)^(1/2), 0, Inf)
+sqrt(pi/2)*exp(1/2) * Rmpfr::erfc(1/sqrt(2))
+
