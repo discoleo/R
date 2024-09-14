@@ -67,9 +67,12 @@ integrate(function(x) x^p / (x^n+1)^(1/k), lower=0, upper=Inf)
 gamma((p+1)/n)*gamma(1/k - (p+1)/n) / gamma(1/k) / n
 
 
+### "Divergent Radicals"
+
 ###
 integrate(\(x) (x^3 + 1)^(1/3) - x, 0, Inf)
 gamma(-1/3 - 1/3) / gamma(-1/3) * gamma(1/3) / 3
+
 
 ### I( (x^n + 1)^(1/n) ) on [0, Inf]
 n = sqrt(5)
@@ -90,6 +93,7 @@ integrate(\(x) (x^3 + 1)^(2/3) - x^2 - 2/3 / (x+1), 0, Inf)
 - (digamma(-2/3) + Euler - 5/2) * 2/9
 pi*sqrt(3) / 27 + log(3) / 3 + 2/9;
 
+# library(Rmpfr)
 integrate(\(x) {
 	x = mpfr(x, 240); f23 = mpfr(2, 240) / 3;
 	y = (x^3 + 1)^f23 - x^2 - f23 / (x+1);
@@ -175,6 +179,7 @@ integrate(\(x) x / (x^5 + 1)^(2/5), 0, 1)
 integrate(\(x) x^2 / (x^5 + 1)^(2/5), 0, 1)
 2^(3/5) - gamma(4/5) * gamma(3/5) / gamma(2/5) +
 	- integrate(\(x) 2 * x^3 / (x^5 + 1)^(2/5), 0, 1)$value;
+# TODO
 
 
 ### I( x^2 / (x^5 + 1)^(3/5) )
@@ -271,7 +276,7 @@ gamma((p+1)/n) * gamma(1/k - (p+1)/n) / gamma(1/k) / n - gamma(p+1) - gamma(p+2)
 integrate(\(x) (1/x^2 + 1/x) * exp(-x) - 1/x^2, 0, Inf)
 -1;
 
-#
+# Unsolved:
 integrate(\(x) -1 / (x^5 + 1)^(1/5) / x^2 + 1/x^2, 0, 1)
 integrate(\(x) (1 - 1/(x^5 + 1)^(1/5)) / x^2, 0, 1)
 integrate(\(x) 1/5 * (1 - 1/(x + 1)^(1/5)) / x^(6/5), 0, 1)
@@ -401,6 +406,8 @@ integrate(function(x) 1/(x^3 + 1)^6, 0, 1, rel.tol=1E-8)
 
 #############
 
+### [old]
+
 ### Radicals:
 
 ###
@@ -482,6 +489,26 @@ curve(fg(x), add=TRUE, col="red", lty=2)
 p = sqrt(7); n = 1/sqrt(5)
 integrate(function(x) x^p / (1 - x) - n * x^p / (1 - x^n), lower=0, upper=1)
 digamma((p+1)/n) - digamma((p+1)) + log(n);
+
+
+### Special Variant:
+p = sqrt(7); r = 1/sqrt(3); n = 1/sqrt(5)
+integrate(function(x) x^p * (1 - x^n)^(1-r) / (1 + x^n)^r, 0, 1)
+gamma(1-r)	/ (2*n) * (gamma((p+1)/(2*n)) / gamma((p+1)/(2*n) - r + 1) +
+	- gamma((p+1)/(2*n) + 1/2) / gamma((p+1)/(2*n) - r + 3/2) );
+(beta(1-r, (p+1)/(2*n)) - beta(1-r, (p+1)/(2*n) + 1/2)) / (2*n)
+
+###
+p = sqrt(7); r = 1/sqrt(3); n = 1/sqrt(5)
+integrate(function(x) x^p * (1 + x^n)^(1-r) / (1 - x^n)^r, 0, 1)
+gamma(1-r)	/ (2*n) * (gamma((p+1)/(2*n)) / gamma((p+1)/(2*n) - r + 1) +
+	+ gamma((p+1)/(2*n) + 1/2) / gamma((p+1)/(2*n) - r + 3/2) );
+(beta(1-r, (p+1)/(2*n)) + beta(1-r, (p+1)/(2*n) + 1/2)) / (2*n)
+
+
+# Note:
+# - Variants derived from (1 - x^n)^p / (1 + x^n)^q
+#   are presented in a section below;
 
 
 #####################
@@ -702,4 +729,22 @@ integrate(\(x) 2^(4*p-1) / n * (cos(x)^3 / sin(x)^4)^p, 0, pi/2)
 # p = 1/5; n = 5;
 integrate(\(x) (1 - x^10)^(3/5) / (x^10 + 1)^(4/5), 0, 1)
 2^(-6/5) / 5 * beta(4/5, 1/10)
+
+
+###################
+
+### Generalization:
+# - Simple Case: see a section above;
+p = sqrt(7); r = 1/sqrt(3); n = 1/sqrt(5)
+integrate(function(x) x^p * (1 - x^n)^(1-r) / (1 + x^n)^r, 0, 1)
+gamma(1-r)	/ (2*n) * (gamma((p+1)/(2*n)) / gamma((p+1)/(2*n) - r + 1) +
+	- gamma((p+1)/(2*n) + 1/2) / gamma((p+1)/(2*n) - r + 3/2) );
+(beta(1-r, (p+1)/(2*n)) - beta(1-r, (p+1)/(2*n) + 1/2)) / (2*n)
+
+###
+p = sqrt(7); r = 1/sqrt(3); n = 1/sqrt(5)
+integrate(function(x) x^p * (1 + x^n)^(1-r) / (1 - x^n)^r, 0, 1)
+gamma(1-r)	/ (2*n) * (gamma((p+1)/(2*n)) / gamma((p+1)/(2*n) - r + 1) +
+	+ gamma((p+1)/(2*n) + 1/2) / gamma((p+1)/(2*n) - r + 3/2) );
+(beta(1-r, (p+1)/(2*n)) + beta(1-r, (p+1)/(2*n) + 1/2)) / (2*n)
 
