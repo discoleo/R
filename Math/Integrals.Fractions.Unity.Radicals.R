@@ -627,6 +627,38 @@ beta(1/8, 5/8) / 8 - sqrt(2)/16i * beta(1/4, 5/8) * sinh(1i*pi/8);
 integrate(\(x) 1 / (x^8 + 1)^(1/4), 0, 1)
 gamma(1/8)^2 / gamma(1/4) / 16
 
+
+### Pow-Series: 1/8
+integrate(\(x) (1 - x^8)^(3/8) / (x^8 + 1)^(5/8), 0, 1)
+2^(3/4-2)/4 * beta(11/16, 1/8)
+
+###
+integrate(\(x) x^2 * (1 - x^8)^(1/8) / (x^8 + 1)^(7/8), 0, 1)
+2^(1/4-2)/4 * beta(9/16, 3/8)
+
+###
+integrate(\(x) x^4 / (1 - x^16)^(1/8) / (x^8 + 1), 0, 1)
+2^(-1/4-2)/4 * beta(7/16, 5/8)
+#
+integrate(\(x) x^4 * (1 - x^16)^(1/8) / (x^8 + 1), 0, 1)
+# TODO
+
+
+# based on Pow 3 & Higher:
+integrate(\(x) x^4 * (1 - x^16)^(1/8) / (x^16 + 1)^(3/4), 0, 1)
+2^(3/8-5) * beta(9/16, 5/16)
+
+integrate(\(x) x * (1 - x^8)^(3/8) / (x^8 + 1)^(7/8), 0, 1)
+2^(1/2-4) * beta(11/16, 1/4)
+
+integrate(\(x) (1 - x^8)^(1/8) / (x^8 + 1)^(3/8), 0, 1)
+2^(-1/4-3) * beta(9/16, 1/8)
+
+integrate(\(x) (1 - x^16)^(1/8) / x^2 - 1/x^2, 0, 1)
+# 1 + 2^(-3/4 - 2) * beta(9/16, -1/8)
+1 + 2^(-3/4 - 2) * gamma(9/16) * gamma(- 1/8) / gamma(7/16)
+
+
 ########
 
 ### I( (1 - x^12)^(1/3) / (x^6 + 1) )
@@ -666,6 +698,14 @@ integrate(\(x) x^6 * (1 - x^12)^(1/3) / (1 - x^6), 0, 1)
 ### I( 1 / (x^12 + 1)^(2/3) )
 integrate(\(x) 1 / (x^12 + 1)^(2/3), 0, 1)
 # TODO
+
+
+### Gen Tan^2
+p = 1/8; n = 4;
+integrate(\(x) x^(n*(1-2*p)-1) * (1 - x^(2*n))^p / (x^(2*n) + 1)^(1-p), 0, 1)
+integrate(\(x) 2^(2*p)/n * ((cos(x)^2 - sin(x)^2) / sin(2*x)^2)^p, 0, pi/4)
+integrate(\(x) 2^(2*p-1)/n * (cos(x) / sin(x)^2)^p, 0, pi/2)
+2^(2*p-2)/n * beta((p+1)/2, 1/2 - p)
 
 
 #######
@@ -734,7 +774,15 @@ integrate(\(x) (1 - x^10)^(3/5) / (x^10 + 1)^(4/5), 0, 1)
 ###################
 
 ### Generalization:
-# - Simple Case: see a section above;
+p = 1/8; q = 5/8; n = 3;
+integrate(\(x) x^(n*(q-p)-1) * (1 - x^(2*n))^p / (x^(2*n) + 1)^q, 0, 1)
+integrate(\(x) 2^(p-q+1) / n * (cos(x)^2 - sin(x)^2)^p / sin(2*x)^(1+p-q), 0, pi/4)
+integrate(\(x) 2^(p-q) / n * cos(x)^p / sin(x)^(1+p-q), 0, pi/2)
+2^(p-q-1) / n * beta((p+1)/2, (q-p)/2)
+
+
+### Generalization: Simple Case (1-r) vs r;
+# - see a section above for details;
 p = sqrt(7); r = 1/sqrt(3); n = 1/sqrt(5)
 integrate(function(x) x^p * (1 - x^n)^(1-r) / (1 + x^n)^r, 0, 1)
 gamma(1-r)	/ (2*n) * (gamma((p+1)/(2*n)) / gamma((p+1)/(2*n) - r + 1) +
