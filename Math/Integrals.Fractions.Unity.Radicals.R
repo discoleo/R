@@ -609,23 +609,33 @@ integrate(\(x) (1/tan(x)^2 - tan(x)^2)^(1/4) / 2, 0, pi/4)
 integrate(\(x) sqrt(2)/4 * (cos(x) / sin(x)^2)^(1/4), 0, pi/2)
 sqrt(2)/8 * beta(5/8, 1/4)
 
-### Sum
+### Derived:
 
 ### I( x^4 / (x^8 + 1)^(3/4) )
 integrate(\(x) x^4 / (x^8 + 1)^(3/4), 0, 1)
 sqrt(2)/16i * beta(5/8, 1/4) * sinh(1i*pi/8)
 sqrt(2)/16 * beta(5/8, 1/4) * sin(pi/8)
 
+### I( x^2 / (x^8 + 1)^(3/4) )
+integrate(\(x) x^2 / (x^8 + 1)^(3/4), 0, 1)
+beta(3/8, 3/8) / 16
+
 ### I( 1 / (x^8 + 1)^(3/4) )
 integrate(\(x) 1 / (x^8 + 1)^(3/4), 0, 1)
 gamma(1/8)*gamma(3/4 - 1/8) / gamma(3/4) / 8 +
 	- sqrt(2)/16i * beta(5/8, 1/4) * sinh(1i*pi/8);
-beta(1/8, 5/8) / 8 - sqrt(2)/16i * beta(1/4, 5/8) * sinh(1i*pi/8);
+beta(1/8, 5/8) / 8 - sqrt(2)/16 * beta(1/4, 5/8) * sin(pi/8);
+
+###
+integrate(\(x) 1 / (x^8 + 1)^(3/4) / x^2 - 1/x^2 + 1, 0, 1)
+# TODO
+
 
 ### I( 1 / (x^8 + 1)^(1/4) )
 # see section above:
 integrate(\(x) 1 / (x^8 + 1)^(1/4), 0, 1)
 gamma(1/8)^2 / gamma(1/4) / 16
+beta(1/8, 1/8) / 16
 
 
 ### Pow-Series: 1/8
@@ -644,9 +654,17 @@ integrate(\(x) x^4 * (1 - x^16)^(1/8) / (x^8 + 1), 0, 1)
 # TODO
 
 
-# based on Pow 3 & Higher:
+# Based on Pow 3 & Higher:
+integrate(\(x) x^6 * (1 - x^16)^(1/8) / (x^16 + 1), 0, 1)
+2^(1/8-5) * beta(9/16, 7/16)
+
 integrate(\(x) x^4 * (1 - x^16)^(1/8) / (x^16 + 1)^(3/4), 0, 1)
 2^(3/8-5) * beta(9/16, 5/16)
+
+# I( 1 / (x^16 + 1)^(1/8) )
+integrate(\(x) 1 / (x^16 + 1)^(1/8), 0, 1)
+beta(1/16, 1/8 - 1/16) / 32
+
 
 integrate(\(x) x * (1 - x^8)^(3/8) / (x^8 + 1)^(7/8), 0, 1)
 2^(1/2-4) * beta(11/16, 1/4)
@@ -795,4 +813,44 @@ integrate(function(x) x^p * (1 + x^n)^(1-r) / (1 - x^n)^r, 0, 1)
 gamma(1-r)	/ (2*n) * (gamma((p+1)/(2*n)) / gamma((p+1)/(2*n) - r + 1) +
 	+ gamma((p+1)/(2*n) + 1/2) / gamma((p+1)/(2*n) - r + 3/2) );
 (beta(1-r, (p+1)/(2*n)) + beta(1-r, (p+1)/(2*n) + 1/2)) / (2*n)
+
+
+###################
+###################
+
+#############
+### Varia ###
+
+### I( sqrt(sqrt(1 + x^4) + 1) )
+# Maths 505: A deceivingly tough integral
+# https://www.youtube.com/watch?v=nGx8j7-KHxI
+# Subst: x = sqrt(tan(x));
+
+integrate(\(x) sqrt(sqrt(x^4 + 1) + 1), 0, 1)
+integrate(\(x) (1 + x^4) / (1 - x^4)^2 * 2, 0, sqrt(tan(pi/8)))
+integrate(\(x) 1/(1-x^2)^2 + 1/(1+x^2)^2, 0, sqrt(tan(pi/8)))
+z = sqrt(tan(pi/8))
+z/(1-z^4) + atan(z)/2 + log((1+z)/(1-z)) / 4
+z/(1-z^4) + atan(z)/2 + atan(1i*z) / 2i
+
+
+### I( sqrt(sqrt(1 + x^4) - 1) )
+integrate(\(x) sqrt(sqrt(x^4 + 1) - 1), 0, 1)
+integrate(\(x) sqrt((1-cos(x))/sin(x)) / cos(x)^2 / 2, 0, pi/4)
+integrate(\(x) sqrt(sin(x/2)/cos(x/2)) / cos(x)^2 / 2, 0, pi/4)
+integrate(\(x) 2 * x^2 * (1 + x^4)/(1-x^4)^2, 0, sqrt(tan(pi/8)))
+integrate(\(x) x^2/(1-x^2)^2 + 1/(1+x^2) - 1/(1+x^2)^2, 0, sqrt(tan(pi/8)))
+z = sqrt(tan(pi/8))
+z^3/(1-z^4) + atan(z)/2 - atan(1i*z) / 2i
+
+
+###
+integrate(\(x) sqrt(sqrt(x^4 + 1) + x^2), 0, 1)
+z = sqrt(tan(pi/8))
+(z/(1-z^2) + atan(z)) / sqrt(2)
+
+###
+integrate(\(x) sqrt(sqrt(x^4 + 1) - x^2), 0, 1)
+z = sqrt(tan(pi/8))
+(z/(1+z^2) + atan(1i*z) / 1i) / sqrt(2)
 
