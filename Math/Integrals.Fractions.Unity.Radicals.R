@@ -6,13 +6,15 @@
 ### Exact Integration
 ### Polynomial Radicals
 ###
-### draft v.0.2b
+### draft v.0.2c
 
 
 ### Types:
 
 # I( x^p / (x^n + 1)^k ) on [0, Inf]
 # I( x^p / (x^n + 1)^k ) on [0, 1]
+# I( x^[p]  * (x^n - 1)^k1 / (x^n + 1)^k2 ) on [0, 1]
+#   where p,n,k = integers (and not yet independent);
 
 
 ### History
@@ -20,6 +22,8 @@
 # - moved Integrals with Radicals
 #   to this file from file:
 #   Integrals.Fractions.Unity.Definite.R;
+# - moved other variants to new file:
+#   Integrals.Fractions.Unity.Radicals.Other.R;
 
 
 ######################
@@ -813,44 +817,4 @@ integrate(function(x) x^p * (1 + x^n)^(1-r) / (1 - x^n)^r, 0, 1)
 gamma(1-r)	/ (2*n) * (gamma((p+1)/(2*n)) / gamma((p+1)/(2*n) - r + 1) +
 	+ gamma((p+1)/(2*n) + 1/2) / gamma((p+1)/(2*n) - r + 3/2) );
 (beta(1-r, (p+1)/(2*n)) + beta(1-r, (p+1)/(2*n) + 1/2)) / (2*n)
-
-
-###################
-###################
-
-#############
-### Varia ###
-
-### I( sqrt(sqrt(1 + x^4) + 1) )
-# Maths 505: A deceivingly tough integral
-# https://www.youtube.com/watch?v=nGx8j7-KHxI
-# Subst: x = sqrt(tan(x));
-
-integrate(\(x) sqrt(sqrt(x^4 + 1) + 1), 0, 1)
-integrate(\(x) (1 + x^4) / (1 - x^4)^2 * 2, 0, sqrt(tan(pi/8)))
-integrate(\(x) 1/(1-x^2)^2 + 1/(1+x^2)^2, 0, sqrt(tan(pi/8)))
-z = sqrt(tan(pi/8))
-z/(1-z^4) + atan(z)/2 + log((1+z)/(1-z)) / 4
-z/(1-z^4) + atan(z)/2 + atan(1i*z) / 2i
-
-
-### I( sqrt(sqrt(1 + x^4) - 1) )
-integrate(\(x) sqrt(sqrt(x^4 + 1) - 1), 0, 1)
-integrate(\(x) sqrt((1-cos(x))/sin(x)) / cos(x)^2 / 2, 0, pi/4)
-integrate(\(x) sqrt(sin(x/2)/cos(x/2)) / cos(x)^2 / 2, 0, pi/4)
-integrate(\(x) 2 * x^2 * (1 + x^4)/(1-x^4)^2, 0, sqrt(tan(pi/8)))
-integrate(\(x) x^2/(1-x^2)^2 + 1/(1+x^2) - 1/(1+x^2)^2, 0, sqrt(tan(pi/8)))
-z = sqrt(tan(pi/8))
-z^3/(1-z^4) + atan(z)/2 - atan(1i*z) / 2i
-
-
-###
-integrate(\(x) sqrt(sqrt(x^4 + 1) + x^2), 0, 1)
-z = sqrt(tan(pi/8))
-(z/(1-z^2) + atan(z)) / sqrt(2)
-
-###
-integrate(\(x) sqrt(sqrt(x^4 + 1) - x^2), 0, 1)
-z = sqrt(tan(pi/8))
-(z/(1+z^2) + atan(1i*z) / 1i) / sqrt(2)
 
