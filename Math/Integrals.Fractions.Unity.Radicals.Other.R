@@ -52,12 +52,22 @@ z = sqrt(tan(pi/8))
 ##############
 
 ### Pow 2/3
+
+### I( (sqrt(x^6 + 1) + 1)^(2/3) )
 integrate(\(x) (sqrt(x^6 + 1) + 1)^(2/3), 0, 1)
 integrate(\(x) 1/3 * (cos(x/2)/sin(x/2))^(2/3) / cos(x)^2, 0, pi/4)
 integrate(\(x) 2/3 * x^(-2/3) * (1 + 4*x^2/(1-x^2)^2) / (1+x^2), 0, tan(pi/8))
 integrate(\(x) 2/3 * x^(-2/3) * (1+x^2) / (1-x^2)^2, 0, tan(pi/8))
 integrate(\(x) 2 * (1+x^6) / (1-x^6)^2, 0, (tan(pi/8))^(1/3))
-# TODO
+z = (tan(pi/8))^(1/3);
+integrate(\(x) 2/3 /(1-x^3) + 2/3 /(1+x^3), 0, z)$value +
+	+ 2/3 * z / (1-z^6);
+1/9 * (log(z^2+z+1) + 2*sqrt(3)*atan((2*z+1)/sqrt(3)) - 4i*atan(1i*z) +
+	- log(z^2-z+1) + 2*sqrt(3)*atan((2*z-1)/sqrt(3)) ) +
+	+ 2/3 * z / (1-z^6);
+1/9 * (log(z^2+z+1) - log(z^2-z+1) +
+	+ 2*sqrt(3) * atan(sqrt(3)*z / (1 - z^2)) - 4i*atan(1i*z) ) +
+	+ 2/3 * z / (1-z^6);
 
 
 ###
@@ -67,4 +77,27 @@ integrate(\(x) 2/3 * x^(2/3) * (1 + 4*x^2/(1-x^2)^2) / (1+x^2), 0, tan(pi/8))
 integrate(\(x) 2/3 * x^(2/3) * (1+x^2) / (1-x^2)^2, 0, tan(pi/8))
 integrate(\(x) 2 * x^4 * (1+x^6) / (1-x^6)^2, 0, (tan(pi/8))^(1/3))
 # TODO
+
+# Fraction Decomposition
+up = (tan(pi/8))^(1/3);
+integrate(\(x) 2 * (1+x^6) / (1-x^6)^2, 0, up)
+integrate(\(x) -2/(1-x^6) + 4 / (1-x^6)^2, 0, up)
+integrate(\(x) -2/(1-x^6) + (1/(1-x^3) + 1/(1+x^3))^2, 0, up)
+integrate(\(x) 1/(1-x^3)^2 + 1/(1+x^3)^2, 0, up)
+# =>
+x = c(0,up);
+integrate(\(x) 2/3 /(1-x^3) + 2/3 /(1+x^3), 0, up)$value +
+	+ diff(x/(1-x^3) + x/(1+x^3)) / 3;
+
+
+# Integration by Parts:
+x = c(0,up);
+integrate(\(x) 1/(1-x^3), 0, up)
+diff(x/(1-x^3)) - integrate(\(x) 3*x^3/(1-x^3)^2, 0, up)$value
+diff(x/(1-x^3)) + integrate(\(x) 3/(1-x^3) - 3/(1-x^3)^2, 0, up)$value
+
+#
+integrate(\(x) 1/(1+x^3), 0, up)
+diff(x/(1+x^3)) + integrate(\(x) 3*x^3/(1+x^3)^2, 0, up)$value
+diff(x/(1+x^3)) + integrate(\(x) 3/(1+x^3) - 3/(1+x^3)^2, 0, up)$value
 
