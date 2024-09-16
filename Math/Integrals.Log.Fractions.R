@@ -538,6 +538,7 @@ pi^2 / 48 - pi/4 + log(2)/2
 ### Other Cases:
 
 # Note: formula based on Digamma available!
+# [was based on old code]
 logcos.sh = function(n, p) {
 	# shifted: p => n - p - 1;
 	if(p == 0) {
@@ -621,6 +622,50 @@ integrate(\(x) log(x^n + 1) / (x^n + 1), 0, 1)
 #
 - gamma(1/n) * gamma(1 - 1/n) * (digamma(1 - 1/n) - digamma(1)) / n +
 	+ (pracma::psi(1, (2/n + 1)/2) - pracma::psi(1, 2/n/2)) / (4*n) + 0;
+
+
+#################
+
+### Gen:
+
+### I( log(x^2 - 2*cos(th)*x + 1) / x )
+# Maths 505: A beautifully unusual integral calculation
+# https://www.youtube.com/watch?v=Na5kpJY0s9g
+# Note: Feynman technique on theta;
+
+### I( log(x^2 - 2*cos(th)*x + 1) / x )
+th = pi/11;
+integrate(\(x) log(x^2 - 2*cos(th)*x + 1) / x, 0, 1)
+- th^2 / 2 + pi*th - pi^2/3
+
+###
+integrate(\(x) log((x^2 - sqrt(2)*x + 1) / (x^2 - sqrt(3)*x + 1)) / x, 0, 1)
+th = acos(sqrt(c(3,2))/2)
+- diff(th^2 / 2 - pi*th)
+
+### Special cases
+b = sqrt(3/5)
+integrate(\(x) log((x^2 - b*x + 1) / (x^2 + b*x + 1)) / x, 0, 1)
+th = acos(b/2);
+pi*th - pi^2/2;
+
+
+### Examples:
+
+### I( log(x^n + 1) / x )
+n = sqrt(7);
+integrate(\(x) log(x^n + 1) / x, 0, 1)
+pi^2 / (12*n);
+
+n = 5; # Integer!
+# Note: but final formula works for every n;
+integrate(\(x) log(x^n + 1) / x, 0, 1)
+id = seq(1, 2*n, by=2); th = pi*id / n;
+sum( - (th^2 / 2 - pi*th + pi^2/3) ) / 2;
+- pi^2/2 * sum( (id^2 / (2*n^2) - id/n + 1/3) );
+pi^2 / (12*n);
+
+# TODO: based on digamma-limit;
 
 
 ########################
@@ -745,6 +790,8 @@ integrate(\(x) log(x^3 + 1) / (x^6 + 1), 0, Inf)
 
 #################
 #################
+
+### on [0, 1]
 
 ### Michael Penn: Can you guess the trick for this integral?
 # https://www.youtube.com/watch?v=8R0MiRYmjbk
