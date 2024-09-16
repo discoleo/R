@@ -171,3 +171,50 @@ k = pi + 1; # k >= 2!
 integrate(\(x) atan(tan(k*x)) * (1 + tan(x)^2), 0, pi/4)
 pi*tan(pi/(2*k)) - pi + k*pi/4 - k/2 * log(2)
 
+
+################
+################
+
+### ATAN
+
+###
+x = 1/sqrt(7)
+atan(1+x) + atan(1-x)
+pi/2 - atan(x^2/2)
+
+###
+x = 1/sqrt(7)
+atan(1 + x*sqrt(2)) + atan(1 - x*sqrt(2))
+pi/2 - atan(x^2)
+
+###
+x = 1/sqrt(7)
+atan(1 + 2*x) + atan(1 - 2*x)
+pi/2 - atan(2*x^2)
+
+###
+x = 1/sqrt(7); k = sqrt(5);
+atan(1 + sqrt(2*k)*x) + atan(1 - sqrt(2*k)*x)
+pi/2 - atan(k*x^2)
+
+
+### Varia:
+x = 1/sqrt(7)
+atan(x - 1/2) + atan(x - 3/2)
+- pi/2 + atan((4*x^2 - 8*x - 1) / (x-1) / 8)
+
+###
+x = 1/sqrt(7)
+atan(x/(x-1)) + atan(x/(x+1))
+- atan(2*x^2)
+#
+x = sqrt(3)
+atan(x/(x-1)) + atan(x/(x+1))
+pi - atan(2*x^2)
+
+###
+curve(atan(x/(x-1)) + atan(x/(x+1)), -6, 6, ylim = c(-3/4*pi, pi))
+curve(- atan(2*x^2), add = TRUE, col = "red", lty=2)
+curve(pi - atan(2*x^2), add = TRUE, col = "green", lty=2)
+abline(v = c(-1,1), col = "orange", lty=2)
+
