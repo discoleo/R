@@ -297,6 +297,22 @@ integrate(function(x) x^3/(x^n + 1), lower=0, upper=Inf)
 pi / sin(3*pi/n) / n
 
 
+### Special Cases:
+n = sqrt(7); k = 1/3;
+integrate(\(x) 1 / x / (x^n+1)^k - exp(-x)/x, 0, Inf, rel.tol=1E-8)
+(-digamma(k) - Euler)/n + Euler
+
+# Note: for k = 1 => Euler;
+
+# library(Rmpfr)
+integrate(\(x) {
+	x = mpfr(x, 240);
+	y = 1 / x / (x^2+1)^(1/3) - exp(-x)/x;
+	as.numeric(y); }, 0, Inf, rel.tol=1E-8)
+
+(-digamma(1/3) - Euler)/2 + Euler
+
+
 ####################
 
 ### Radicals
@@ -306,7 +322,7 @@ pi / sin(3*pi/n) / n
 
 # Derivation:
 # - see file: Integrals.ComplexAnalysis.R;
-#   [but is based on beta-function]
+# Note: is based on beta-function;
 
 p = sqrt(2); n = 5*sqrt(11); k = 2 + sqrt(3);
 integrate(function(x) x^p/(x^n + 1)^(1/k), lower=0, upper=Inf)
