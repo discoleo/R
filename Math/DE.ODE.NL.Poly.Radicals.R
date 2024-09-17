@@ -7,7 +7,7 @@
 ## NL ODEs: Polynomial types
 ## with Radicals
 ##
-## draft v.0.1a
+## draft v.0.1c
 
 
 
@@ -27,6 +27,10 @@
 source("Polynomials.Helper.R")
 source("DE.ODE.Helper.R")
 
+dya = function(x, FUN, eps = 1E-4) {
+	(FUN(x + eps) - FUN(x)) / eps;
+}
+
 
 ################
 ################
@@ -37,9 +41,36 @@ source("DE.ODE.Helper.R")
 
 ### Simple Radicals
 
+### y = (x^n + 1)^(1/k) + f0
+
+# Test
+x = sqrt(5); n = 2; k = 3;
+f0x = \(x) 2*x; f0 = f0x(x); df0 = 2;
+yf  = \(x) (x^n + 1)^(1/k) + f0x(x);
+y = yf(x); dy = dya(x, yf);
+
+
+### D()
+dy - n/k * x^(n-1) * (y - f0) / (x^n + 1) - df0 # = 0
+
+### ODE:
+(x^n + 1)*dy - n/k * x^(n-1) * y +
+	+ n/k * x^(n-1)*f0 - (x^n + 1)*df0 # = 0
+
+### Special Cases:
+
+### Case: n = k
+(x^n + 1)*dy - x^(n-1) * y + x^(n-1)*f0 - (x^n + 1)*df0 # = 0
+# Partial Double Entanglement:
+x*(x^n + 1)*dy + f0*(y-f0)^k - x^n * y - f0 - x*(x^n + 1)*df0 # = 0
+
+
+### Case: k = 2
+
 ### y = sqrt(x^n + 1)
 # dy = n/2 * x^(n-1) / y # * x
 # 2*x*dy = n * x^n / y
+# Double Entanglement:
 # 2*x*y*dy = n * (y^2 - 1)
 
 ### D() =>
