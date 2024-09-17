@@ -111,12 +111,50 @@ pi/(4*(p+1)) - integrate(\(x) n/(p+1) * x^(n+p) / (x^(2*n) + 1), 0, 1)$value
 pi/(4*(p+1)) - (digamma(((n+p+1)/(2*n) + 1)/2) - digamma((n+p+1)/(4*n))) / (4*(p+1))
 pi/(4*(p+1)) - (digamma(((p+1)/n + 3)/4) - digamma(((p+1)/n + 1)/4)) / (4*(p+1))
 
+### Simple:
+p = sqrt(3)
+integrate(\(x) x^p * atan(x), 0, 1)
+(digamma((p+2)/4) - digamma(p/4 + 1) + pi) / (4*(p+1))
+
 
 ### Lim: p -> -1
 n = 1/sqrt(3)
 integrate(\(x) atan(x^n) / x, 0, 1)
 Catalan / n;
 
+
+###################
+
+### I( x^p * log(x) * atan(x) )
+# Maths 505: A cool result: int (0,1) arctan(x)ln(x)
+# https://www.youtube.com/watch?v=zL169U85SZc
+# Note: uses series expansion of atan,
+#   but method based on D(digamma) is more powerful;
+
+
+###
+p = sqrt(3)
+integrate(\(x) x^p * log(x) * atan(x), 0, 1)
+(pracma::psi(1, (p+2)/4) - pracma::psi(1, p/4 + 1)) / (16*(p+1)) +
+	- (digamma((p+2)/4) - digamma(p/4 + 1) + pi) / (4*(p+1)^2);
+
+### Example:
+integrate(\(x) log(x) * atan(x), 0, 1)
+pi^2 / 48 - pi/4 + log(2)/2
+
+
+### Base:
+p = sqrt(3)
+integrate(\(x) x^p * log(x) / (x^2 + 1), 0, 1)
+(pracma::psi(1, (p+1)/4 + 1/2) - pracma::psi(1, (p+1)/4)) / 16
+
+###
+p = sqrt(3)
+integrate(\(x) x^p * log(x)^2 / (x^2 + 1), 0, 1)
+(pracma::psi(2, (p+1)/4 + 1/2) - pracma::psi(2, (p+1)/4)) / 64
+
+
+### Full:
 
 ### I( x^p * atan(x^n) * log(x) )
 n = sqrt(5); p = sqrt(3);
