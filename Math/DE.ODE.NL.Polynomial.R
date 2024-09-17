@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs: Polynomial types
 ###
-### draft v.0.4g
+### draft v.0.4g-rename
 
 
 ### TODO:
@@ -63,9 +63,9 @@
 #   the introduction of 1 degree of freedom;
 ### draft v.0.2-pre-a: [31-10-2020]
 # - moved section Exponentials/Lambert
-#   to seprate file: DE.ODE.Fractions.Lambert.R;
+#   to separate file: DE.ODE.Fractions.Lambert.R;
 ### draft v.0.1f - v.0.1f-2: [30-10-2020]
-#   [moved now to seprate file]
+#   [moved now to separate file]
 # - Lambert-type equations (not simple polynomial)!
 # - solved: x*y*dy + x*(x+1)*dy - 2*y = x;
 #   (a Lambert snack)
@@ -171,6 +171,7 @@ n*P*dy - y*D(P) # = 0;
 ### helper functions
 
 # include: DE.ODE.Helper.R;
+source("Polynomials.Helper.R")
 source("DE.ODE.Helper.R")
 
 
@@ -244,7 +245,7 @@ h*y*dy + f*dy - 1/2*dh*y^2 - 1/3*df*y = 0
 # 1/2*D(y^2/h) + (f*dy - 1/3*df*y)/h^2 = 0
 
 ### T.A.2: Substitute y
-# - can replace one occurence or multiple occurances;
+# - can replace one occurrence or multiple procurances;
 y^2*dy - h*dy - y*dh - 2/3*df = 0 # *h
 h*y^2*dy - h^2*dy - h*y*dh - 2/3*h*df = 0
 h*y^2*dy - h^2*dy - 1/3*(y^3 - 2*f)*dh - 2/3*h*df = 0
@@ -252,7 +253,7 @@ h*y^2*dy - h^2*dy - 1/3*y^3*dh + 2/3*f*dh - 2/3*h*df = 0
 # 1/3*(3/h*y^2*dy - y^3*dh/h^2) - dy - 2/3*D(f/h) = 0
 # 1/3*D(y^3/h) - dy - 2/3*D(f/h) = 0
 
-### T.A.3: "Liniar" Combinations
+### T.A.3: "Linear" Combinations
 h*y^2*dy - h^2*dy - 1/3*y^3*dh + 2/3*f*dh - 2/3*h*df +
  + b*(2*h*y*dy + 2*f*dy - y^2*dh - 2/3*df*y) = 0
 
@@ -329,6 +330,7 @@ y^3*dy - 3*h*y*dy + 2*(3*y^2*dy^2 + y^3*d2y - 3*dh*y*dy - 3/2*d2h*y^2 - d2f*y) =
 y^2*dy - h*dy - y*dh - 2/3*df = 0
 y^2*dy - x*dy - y - 2*x^2 = 0
 # y^2*dy - D(x*y) = 2*x^2
+
 ### Solution & Plot:
 # y = (f + sqrt(f^2 - h^3))^(1/3) + (f - sqrt(f^2 - h^3))^(1/3)
 y = function(x, n=3) {
@@ -1201,9 +1203,9 @@ curve(y(x, a=a), from=a-2, to=a+3)
 line.tan(c(a-(4:1)/3, a+(1:6)/3), dx=3, p=y, dp=dy, a=a)
 
 
-##########################
-### Cardan-Polynomials ###
-##########################
+###########################
+### Cardano-Polynomials ###
+###########################
 
 ### System:
 # p^n + q^n = 2*f(x)
@@ -1384,7 +1386,7 @@ sapply(c(0.001, (1:3)/6), line.tan, dx=2)
 # h(x) = 1/(x^2 + 1)
 # f(x) = 3/2 * log(x^2 + 1)
 p^6*dp - h^3*dp - 2/3 * p^4 * df + h^2*p*dh = 0
-(x^2 + 1)^4 * p^6*dp - (x^2 + 1)*dp - 2*x*(x^2 + 1)^3 * p^4 - 2*x*p = 0
+(x^2 + 1)^4 * p^6 * dp - (x^2 + 1)*dp - 2*x*(x^2 + 1)^3 * p^4 - 2*x*p = 0
 # p = (f + sqrt(f^2 - h^3))^(1/3)
 p = function(x, n=3) {
 	r = (3/2 * log(x^2+1) + sqrt(9/4 * log(x^2+1)^2 - 1/(x^2+1)^n))
@@ -1416,6 +1418,8 @@ sapply(c(-(1:4), 1:4), line.tan, dx=3)
 ### y^3 - 3*c*y - 2*f = 0
 # [not run]
 c*y*d2y + f*d2y + c*dy^2 + 2/3*df*dy - 1/2*d2c*y^2 - 1/3*d2f*y # = 0
+
+### Special Cases:
 # c = constant; f = x^3 - 1
 x^2*(x^3-1)*d2y - c^2*dy^3 - c*x^2*dy^2 + 2*x*dy # = 0
 # z = dy; dz = d2y;
