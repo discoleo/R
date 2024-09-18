@@ -218,3 +218,33 @@ curve(- atan(2*x^2), add = TRUE, col = "red", lty=2)
 curve(pi - atan(2*x^2), add = TRUE, col = "green", lty=2)
 abline(v = c(-1,1), col = "orange", lty=2)
 
+
+###############
+### Complex ###
+
+###
+x = sqrt(5)
+atan(x + 1i) + atan(x - 1i)
+pi/2 + atan(x/2)
+
+###
+x = sqrt(5)
+atan(sqrt(2) + x * 1i) + atan(sqrt(2) - x * 1i)
+pi/2 + atan((x^2 + 1) / sqrt(8))
+
+
+###
+x = sqrt(5)
+a = sqrt(2) + 1; b = sqrt(2*a); # fixed;
+atan(a + x*b*1i) + atan(a - x*b*1i)
+pi/2 + atan(x^2 + 1)
+#
+atan(a + x*b*1i) - atan(a - x*b*1i)
+atan(1i * sqrt(a/2) * (x^2 + sqrt(2)) / x) - pi/2
+
+
+###
+x = sqrt(5)
+atan((x + 1i*sqrt(3))/2) + atan((x - 1i*sqrt(3))/2)
+pi/2 + atan((x^2 - 1) / (4*x))
+
