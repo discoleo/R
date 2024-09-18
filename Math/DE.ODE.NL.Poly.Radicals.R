@@ -7,7 +7,7 @@
 ## NL ODEs: Polynomial types
 ## with Radicals
 ##
-## draft v.0.1c
+## draft v.0.1d
 
 
 
@@ -183,9 +183,31 @@ f0  = \(x) x^2; df0 = \(x) 2*x;
 yf  = \(x) (sqrt(x^6 + 1) + 1)^(2/3) + (sqrt(x^6 + 1) - 1)^(2/3) + f0(x);
 dyf = \(x) 2 * x^5 / sqrt(x^6 + 1) * 
 	((sqrt(x^6 + 1) + 1)^(-1/3) + (sqrt(x^6 + 1) - 1)^(-1/3)) + df0(x);
-dya = \(x, eps = 1E-4) (yf(x + eps) - yf(x)) / eps;
 
 x = c(1/3, 1/2, 1, 3/2);
-dyf(x); dya(x);
+dyf(x); dya(x, yf);
 
+
+############
+### Variant: Pow (1/3)
+
+f0 = 0; df0 = 0; # for simplicity
+x = sqrt(3); # Test
+
+y = (sqrt(x^6 + 1) + 1)^(1/3) + (sqrt(x^6 + 1) - 1)^(1/3) + f0;
+dy = x^5 / sqrt(x^6 + 1) * 
+	((sqrt(x^6 + 1) + 1)^(-2/3) + (sqrt(x^6 + 1) - 1)^(-2/3)) + df0;
+
+### ODE:
+dy - x / sqrt(x^6 + 1) * ((y - f0)^2 - 2*x^2) - df0 # = 0
+
+
+### Test:
+f0  = \(x) x^2; df0 = \(x) 2*x;
+yf  = \(x) (sqrt(x^6 + 1) + 1)^(1/3) + (sqrt(x^6 + 1) - 1)^(1/3) + f0(x);
+dyf = \(x) x^5 / sqrt(x^6 + 1) * 
+	((sqrt(x^6 + 1) + 1)^(-2/3) + (sqrt(x^6 + 1) - 1)^(-2/3)) + df0(x);
+
+x = c(1/3, 1/2, 1, 3/2);
+dyf(x); dya(x, yf);
 
