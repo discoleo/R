@@ -303,7 +303,7 @@ pracma::integral(\(x) x^2 * log(x) / (exp(k*x) + 1)^2, 0, 100)
 #######################
 #######################
 
-###
+### I( log(x^2 + b^2) / HYP )
 # Blagouchine IV. Rediscovery of Malmsten’s integrals, their evaluation
 # by contour integration methods and some related results.
 # Ramanujan J (2014) 35:21–110; DOI: I 10.1007/s11139-013-9528-5
@@ -313,6 +313,13 @@ pracma::integral(\(x) x^2 * log(x) / (exp(k*x) + 1)^2, 0, 100)
 b = sqrt(5);
 integrate(\(x) log(x^2 + b^2) / cosh(x), 0, Inf)
 2*pi * log(gamma(b/(2*pi) + 3/4) / gamma(b/(2*pi) + 1/4) * sqrt(2*pi))
+
+### I( log(x^4 + b^4) / cosh(x) )
+b = sqrt(5)
+integrate(\(x) log(x^4 + b^4) / cosh(x), 0, Inf)
+4*pi * Re(log(pracma::gammaz(b * exp(pi/4*1i)/(2*pi) + 3/4) /
+	pracma::gammaz(b * exp(pi/4*1i)/(2*pi) + 1/4) * sqrt(2*pi)) );
+
 
 ### I( 1 / ((x^2 + b^2) * cosh(x)) ) on [0, Inf]
 # - Derived I();
@@ -373,4 +380,36 @@ b = sqrt(5); k = sqrt(3); phi = 1/3;
 integrate(\(x) log(x^2 + b^2) / (cosh(k*x) + cos(phi)), 0, Inf)
 2*pi/(k*sin(phi)) * log(gamma((k*b + phi)/(2*pi) + 1/2) / gamma((k*b - phi)/(2*pi) + 1/2)) +
 	+ 2*phi/(k*sin(phi)) * log(2*pi/k);
+
+
+### Gen: I( log(x^2 + b^2) / (sinh(k*x) + sinh(phi)) ) on [0, Inf]
+# - see Exercise 4a on page 50 of article (page 30 in pdf);
+# - formula for principal value;
+
+# TODO:
+
+# library(Rmpfr)
+b = sqrt(mpfr(3, 240)); phi = 4/mpfr(7, 240);
+#
+integrate(\(x) as.numeric(log(x^2 + b^2) / (sinh(x) + sinh(phi))),
+	0, 150, rel.tol=1E-8)$value +
+integrate(\(x) {
+	x = mpfr(x, 240);
+	y = log(x^2 + b^2) * 2*exp(x) / (1 - exp(x-phi)) / (1 + exp(x+phi)) +
+		+ log(b^2 + phi^2) / cosh(phi) / (exp(abs(x - phi)) - 1);
+	as.numeric(y); },
+	phi, 150, rel.tol=1E-8)$value +
+integrate(\(x) {
+	x = mpfr(x, 240);
+	y = log(x^2 + b^2) * 2*exp(x)/(1 - exp(x-phi)) / (1 + exp(x+phi)) +
+		- log(b^2 + phi^2) / cosh(phi) / (exp(abs(x - phi)) - 1);
+	as.numeric(y); }, 0, phi)$value
+
+# OK
+b = as.numeric(b); phi = as.numeric(phi);
+4*pi/cosh(phi) * Im( log(pracma::gammaz((b + phi*1i)/(2*pi)) /
+		pracma::gammaz((b - phi*1i)/(2*pi) + 1/2)) ) +
+	+ 2*pi/cosh(phi) * (pi/2 - atan(b/phi)) + 4*phi*log(2*pi)/cosh(phi) +
+	# Extra Limit-Terms:
+	- log(b^2 + phi^2) / cosh(phi) * (log(exp(phi) - 1) - phi);
 
