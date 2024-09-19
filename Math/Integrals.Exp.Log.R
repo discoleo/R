@@ -3,7 +3,21 @@
 ### Integrals: Log & Exp
 
 
-### Helper
+### Examples:
+
+### on [0, Inf]
+# I( x^p * log(x) / (exp(k*x) - 1) )
+# I( x^p * log(x) / (exp(k*x) + 1) )
+# I( x^p * log(x) * (exp(-a1*x) - exp(-a2*x)) )
+# I( log(x^2 + b^2) / cosh(x) ) & Variants:
+#   I( log(x^4 + b^2*x^2 + b^4) / cosh(x) )
+#   I( log(x^4 - b^2*x^2 + b^4) / cosh(x) )
+# I( log(x^2 + b^2) / (cosh(k*x) + cos(phi)) )
+
+
+####################
+
+### Helper Functions
 
 Euler   = 0.57721566490153286060651209008240243079;
 Catalan = 0.915965594177219015054603514;
@@ -145,12 +159,12 @@ log(2)*(pi^2/6 - Euler^2) + Euler*log(2)^2 +
 
 
 ### Gen 2: I( log(x) / (exp(k*x) + 1) )
-integrate(\(x) log(x)/(exp(2*x) + 1), 0, Inf)
+integrate(\(x) log(x) / (exp(2*x) + 1), 0, Inf)
 - log(2)^2 * 3/4
 
 ###
 k = 3
-integrate(\(x) log(x)/(exp(k*x) + 1), 0, Inf)
+integrate(\(x) log(x) / (exp(k*x) + 1), 0, Inf)
 - log(2)^2/(2*k) - log(2)*log(k)/k
 
 ###
@@ -229,7 +243,8 @@ integrate(\(x) x * log(x) / (exp(2*x) + 1), 0, Inf)
 (1 - Euler + dzeta2 * 6/pi^2) * pi^2 / 48;
 
 
-### Generalizations
+#######################
+### Generalizations ###
 
 ### I( x^p * log(x) / (exp(k*x) - 1) )
 p = sqrt(5); k = sqrt(3);
@@ -314,11 +329,26 @@ b = sqrt(5);
 integrate(\(x) log(x^2 + b^2) / cosh(x), 0, Inf)
 2*pi * log(gamma(b/(2*pi) + 3/4) / gamma(b/(2*pi) + 1/4) * sqrt(2*pi))
 
+
+### Variants:
+
 ### I( log(x^4 + b^4) / cosh(x) )
 b = sqrt(5)
 integrate(\(x) log(x^4 + b^4) / cosh(x), 0, Inf)
 4*pi * Re(log(pracma::gammaz(b * exp(pi/4*1i)/(2*pi) + 3/4) /
 	pracma::gammaz(b * exp(pi/4*1i)/(2*pi) + 1/4) * sqrt(2*pi)) );
+
+### I( log(x^4 + b^2*x^2 + b^4) / cosh(x) )
+b = sqrt(5)
+integrate(\(x) log(x^4 + b^2*x^2 + b^4) / cosh(x), 0, Inf)
+4*pi * Re(log(pracma::gammaz(b * exp(pi/6*1i)/(2*pi) + 3/4) /
+	pracma::gammaz(b * exp(pi/6*1i)/(2*pi) + 1/4) * sqrt(2*pi)) );
+
+### I( log(x^4 - b^2*x^2 + b^4) / cosh(x) )
+b = sqrt(5)
+integrate(\(x) log(x^4 - b^2*x^2 + b^4) / cosh(x), 0, Inf)
+4*pi * Re(log(pracma::gammaz(b * exp(pi/3*1i)/(2*pi) + 3/4) /
+	pracma::gammaz(b * exp(pi/3*1i)/(2*pi) + 1/4) * sqrt(2*pi)) );
 
 
 ### I( 1 / ((x^2 + b^2) * cosh(x)) ) on [0, Inf]
