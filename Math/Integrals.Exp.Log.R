@@ -408,9 +408,27 @@ digamma(b/(2*pi) + 1/2) + log(2*pi);
 # - see Exercise 2 on page 50 of article (page 30 in pdf);
 b = sqrt(5); k = sqrt(3); phi = 1/3;
 integrate(\(x) log(x^2 + b^2) / (cosh(k*x) + cos(phi)), 0, Inf)
-2*pi/(k*sin(phi)) * log(gamma((k*b + phi)/(2*pi) + 1/2) / gamma((k*b - phi)/(2*pi) + 1/2)) +
+2*pi/(k*sin(phi)) * log(gamma((k*b + phi)/(2*pi) + 1/2) /
+		gamma((k*b - phi)/(2*pi) + 1/2)) +
 	+ 2*phi/(k*sin(phi)) * log(2*pi/k);
 
+# [Practice] Variants:
+b = sqrt(5); k = sqrt(3); phi = 1/3;
+integrate(\(x) log(x^2 + b^2) / (cosh(2*k*x) + cosh(k*x) + cos(phi)), 0, Inf)
+dd = sqrt(1/4 + 4/2 - 4/2*cos(phi) + 0i); phi0 = acos(1/4 + c(1,-1)*dd / 2);
+diff( 2*pi/(k*sin(phi0)) * log(pracma::gammaz((k*b + phi0)/(2*pi) + 1/2) /
+		pracma::gammaz((k*b - phi0)/(2*pi) + 1/2)) +
+	+ 2*phi0/(k*sin(phi0)) * log(2*pi/k) ) / (2*dd);
+# Upper = Inf; # Numeric instability!
+integrate(\(x) log(x^2 + b^2) / (cosh(2*k*x) - cosh(k*x) + cos(phi)), 0, 120)
+integrate(\(x) log(x^2 + b^2) / (sinh(3/2*k*x) * sinh(k/2*x) * 2 + cos(phi)), 0, 120)
+dd = sqrt(1/4 + 4/2 - 4/2*cos(phi) + 0i); phi0 = acos(-1/4 + c(1,-1)*dd / 2);
+diff( 2*pi/(k*sin(phi0)) * log(pracma::gammaz((k*b + phi0)/(2*pi) + 1/2) /
+		pracma::gammaz((k*b - phi0)/(2*pi) + 1/2)) +
+	+ 2*phi0/(k*sin(phi0)) * log(2*pi/k) ) / (2*dd);
+
+
+### SINH:
 
 ### Gen: I( log(x^2 + b^2) / (sinh(k*x) + sinh(phi)) ) on [0, Inf]
 # - see Exercise 4a on page 50 of article (page 30 in pdf);
@@ -420,7 +438,7 @@ integrate(\(x) log(x^2 + b^2) / (cosh(k*x) + cos(phi)), 0, Inf)
 
 # library(Rmpfr)
 b = sqrt(mpfr(3, 240)); phi = 4/mpfr(7, 240);
-#
+# Upper = Inf; # Numerical issues!
 integrate(\(x) as.numeric(log(x^2 + b^2) / (sinh(x) + sinh(phi))),
 	0, 150, rel.tol=1E-8)$value +
 integrate(\(x) {
