@@ -13,6 +13,7 @@
 #   I( log(x^4 + b^2*x^2 + b^4) / cosh(x) )
 #   I( log(x^4 - b^2*x^2 + b^4) / cosh(x) )
 # I( log(x^2 + b^2) / (cosh(k*x) + cos(phi)) )
+# I( log(x^2 + 1) / (sinh(3*k*x) * sinh(k*x)) )
 
 
 ####################
@@ -437,6 +438,18 @@ phi0 = 2/3 * pi; # acos(-1/2); dd = 3/2;
 		pracma::gammaz((k*b - phi0)/(2*pi) + 1/2)) +
 	+ 2/3 * phi0/(k*sin(phi0)) * log(2*pi/k) +
 	- 1/3 * (2*digamma(k*b/(2*pi) + 1/2) / k + 2/k * log(2*pi/k));
+
+
+### I( log(x^2 + 1) / (sinh(3*k*x) * sinh(k*x)) )
+# Special Case: Limit phi = pi/2 & b = 1;
+k = sqrt(3) - sqrt(2);
+integrate(\(x) log(x^2 + 1) / (sinh(3*k*x) * sinh(k*x)), 0, Inf)
+integrate(\(x) log(x^2 + 1) / (cosh(4*k*x) - cosh(2*k*x)) * 2, 0, Inf)
+# dd = 3/2; phi0 = c(pi, pi/3);
+(2*pi * log(pracma::gammaz(k/pi + 1/3) / pracma::gammaz(k/pi + 2/3)) +
+	+ 2*pi/3 * log(k/pi)) / (3*k*sin(pi/3)) +
+	- 2*(digamma(k/pi) + pi/(2*k) + log(pi/k)) / (3*k);
+
 
 
 ### SINH:
