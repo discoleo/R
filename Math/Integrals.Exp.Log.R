@@ -428,6 +428,17 @@ diff( 2*pi/(k*sin(phi0)) * log(pracma::gammaz((k*b + phi0)/(2*pi) + 1/2) /
 	+ 2*phi0/(k*sin(phi0)) * log(2*pi/k) ) / (2*dd);
 
 
+### I( log(x^2 + b^2) / (cosh(3*k*x) * cosh(k*x)) )
+# Special Case: Limit phi = pi/2
+integrate(\(x) log(x^2 + b^2) / (cosh(2*k*x) + cosh(k*x)), 0, Inf)
+integrate(\(x) log(x^2 + b^2) / (cosh(3/2*k*x) * cosh(k/2*x)) / 2, 0, Inf)
+phi0 = 2/3 * pi; # acos(-1/2); dd = 3/2;
+2/3 * pi/(k*sin(phi0)) * log(pracma::gammaz((k*b + phi0)/(2*pi) + 1/2) /
+		pracma::gammaz((k*b - phi0)/(2*pi) + 1/2)) +
+	+ 2/3 * phi0/(k*sin(phi0)) * log(2*pi/k) +
+	- 1/3 * (2*digamma(k*b/(2*pi) + 1/2) / k + 2/k * log(2*pi/k));
+
+
 ### SINH:
 
 ### Gen: I( log(x^2 + b^2) / (sinh(k*x) + sinh(phi)) ) on [0, Inf]
