@@ -1,8 +1,17 @@
 
+
+### Examples:
+# I( atan(x) / (exp(k*x) - 1) )
+# I( atan(x) / (exp(k*x) + 1) )
+# I( atan(x^2) / cosh(k*x) )
+# I( atan(x^4) / cosh(k*x) )
+# I( atan(exp(-x)) / x )
+
+
 #######################
 #######################
 
-### I( atan(x) / (exp(x) - 1) )
+### I( atan(x) / (exp(k*x) - 1) )
 # Flammable Maths: A ""-relaxing Integral Experience
 # https://www.youtube.com/watch?v=QVgfL8Le0I0
 # Flammable Maths:: One Spicy Class of Integrals.
@@ -78,6 +87,28 @@ pi*log( gamma(1/(2*pi)) / gamma(1/pi) ) +
 
 # TODO:
 # - find any utility?
+
+
+#####################
+
+### ATAN(x^2)
+
+### I( atan(x^2) / cosh(k*x) )
+# - for Nase-formula, see file:
+#   Integrals.Exp.Log.R;
+k = sqrt(3)
+integrate(\(x) atan(x^2) / cosh(k*x), 0, Inf)
+b = exp(c(1i,-1i) * pi / 4)
+pi^2/(4*k) - diff( log(pracma::gammaz(k*b/(2*pi) + 3/4) /
+	pracma::gammaz(k*b/(2*pi) + 1/4)) ) * pi/k * 1i;
+
+
+### I( atan(x^4) / cosh(k*x) )
+k = sqrt(3)
+integrate(\(x) atan(x^4) / cosh(k*x), 0, Inf)
+b = exp(c(1i,-1i,3i,-3i) * pi / 8)
+pi^2/(4*k) - sum( c(1,-1,-1,1) * log(pracma::gammaz(k*b/(2*pi) + 3/4) /
+	pracma::gammaz(k*b/(2*pi) + 1/4)) ) * pi/k * 1i;
 
 
 #####################
