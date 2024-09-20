@@ -330,6 +330,11 @@ b = sqrt(5);
 integrate(\(x) log(x^2 + b^2) / cosh(x), 0, Inf)
 2*pi * log(gamma(b/(2*pi) + 3/4) / gamma(b/(2*pi) + 1/4) * sqrt(2*pi))
 
+###
+b = sqrt(5); k = sqrt(5);
+integrate(\(x) log(x^2 + b^2) / cosh(k*x), 0, Inf)
+2*pi/k * log(gamma(k*b/(2*pi) + 3/4) / gamma(k*b/(2*pi) + 1/4) * sqrt(2*pi/k));
+
 
 ### Variants:
 
@@ -415,7 +420,9 @@ integrate(\(x) log(x^2 + b^2) / (cosh(k*x) + cos(phi)), 0, Inf)
 
 # [Practice] Variants:
 b = sqrt(5); k = sqrt(3); phi = 1/3;
+#
 integrate(\(x) log(x^2 + b^2) / (cosh(2*k*x) + cosh(k*x) + cos(phi)), 0, Inf)
+integrate(\(x) log(x^2 + b^2) / (cosh(3/2*k*x) * cosh(k/2*x) * 2 + cos(phi)), 0, Inf)
 dd = sqrt(1/4 + 4/2 - 4/2*cos(phi) + 0i); phi0 = acos(1/4 + c(1,-1)*dd / 2);
 diff( 2*pi/(k*sin(phi0)) * log(pracma::gammaz((k*b + phi0)/(2*pi) + 1/2) /
 		pracma::gammaz((k*b - phi0)/(2*pi) + 1/2)) +
@@ -451,7 +458,7 @@ integrate(\(x) log(x^2 + 1) / (cosh(4*k*x) - cosh(2*k*x)) * 2, 0, Inf)
 	- 2*(digamma(k/pi) + pi/(2*k) + log(pi/k)) / (3*k);
 
 
-
+#########
 ### SINH:
 
 ### Gen: I( log(x^2 + b^2) / (sinh(k*x) + sinh(phi)) ) on [0, Inf]
@@ -484,4 +491,29 @@ b = as.numeric(b); phi = as.numeric(phi);
 	+ 2*pi/cosh(phi) * (pi/2 - atan(b/phi)) + 4*phi*log(2*pi)/cosh(phi) +
 	# Extra Limit-Terms:
 	- log(b^2 + phi^2) / cosh(phi) * (log(exp(phi) - 1) - phi);
+
+
+####################
+####################
+
+### I( log(x/b) / (sinh(x)^2 - sinh(b)^2) )
+# Exercise 5 in Blagouchine
+
+b = sqrt(5)
+integrate(\(x) log(x/b) / (sinh(x)^2 - sinh(b)^2), 0, Inf)
+- 2*pi / sinh(2*b) * Im(log(pracma::gammaz(1i*b/(2*pi)) /
+		pracma::gammaz(1/2 - 1i*b/(2*pi)))) +
+	+ (2*b*log(b / (2*pi)) - pi^2/2) / sinh(2*b);
+
+
+####################
+
+### Higher Powers:
+
+### I( log(x^2 + b^2) / cosh(k*x)^2 )
+# Exercise 6 in Blagouchine
+
+b = sqrt(5); k = sqrt(3);
+integrate(\(x) log(x^2 + b^2) / cosh(k*x)^2, 0, Inf)
+2/k * (log(pi/k) + digamma(b*k/pi + 1/2))
 
