@@ -7,7 +7,16 @@
 # I( atan(x^2) / cosh(k*x) )
 # I( atan(x^4) / cosh(k*x) )
 # I( atan(x^6) / cosh(k*x) )
+# I( atan(x^2 + 1) / cosh(k*x) )
 # I( atan(exp(-x)) / x )
+
+
+####################
+
+### Helper Functions
+
+Euler   = 0.57721566490153286060651209008240243079;
+constEuler = Euler;
 
 
 #######################
@@ -72,6 +81,15 @@ integrate(\(x) log(exp(x) - 1) / (x^2 + 1) - exp(-1/x)/x, 0, Inf)
 # numerically problematic:
 integrate(\(x) log(exp(x) - 1) / (x^2 + 1) - exp(-x)/x, 0, Inf)
 
+# library(Rmpfr)
+ff = \(x) {
+	x = mpfr(x, 240);
+	y = log(exp(x) - 1) / (x^2 + 1) - exp(-x)/x;
+	as.numeric(y);
+}
+# very crude:
+integrate(ff, 1/500, 1)$value + integrate(ff, 1, 500)$value
+
 
 ###
 # x => log(y)
@@ -125,6 +143,18 @@ integrate(\(x) atan(x^6) / cosh(k*x), 0, Inf)
 b  = exp(c(1,3,5,-5,-3,-1) * 1i * pi / 12);
 sg = c(-1,1,-1,1,-1,1);
 pi^2/(4*k) - sum( sg * log(pracma::gammaz(k*b/(2*pi) + 3/4) /
+	pracma::gammaz(k*b/(2*pi) + 1/4)) ) * pi/k * 1i;
+
+
+### Exercises:
+
+# Tough Exercise for students:
+#   "Prove the following results,
+#    where k is a parameter:"
+k = sqrt(3) - sqrt(2);
+integrate(\(x) atan(x^2 + 1) / cosh(k*x), 0, Inf)
+b = sqrt(1 + c(1i,-1i));
+pi^2/(4*k) - diff( log(pracma::gammaz(k*b/(2*pi) + 3/4) /
 	pracma::gammaz(k*b/(2*pi) + 1/4)) ) * pi/k * 1i;
 
 
