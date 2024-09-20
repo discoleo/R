@@ -3,8 +3,10 @@
 ### Examples:
 # I( atan(x) / (exp(k*x) - 1) )
 # I( atan(x) / (exp(k*x) + 1) )
+# I( atan(x) / sinh(k*x) )
 # I( atan(x^2) / cosh(k*x) )
 # I( atan(x^4) / cosh(k*x) )
+# I( atan(x^6) / cosh(k*x) )
 # I( atan(exp(-x)) / x )
 
 
@@ -36,6 +38,12 @@ n = sqrt(3)
 integrate(\(x) atan(x) / (exp(n*x) + 1), 0, Inf)
 log( gamma(n/(2*pi)) / gamma(n/pi) ) * pi/n +
 	- 1/2*log(pi/n) + (1 - pi/n)/2*log(2) - 1/2;
+
+### I( atan(x) / sinh(k*x) )
+k = sqrt(3)
+integrate(\(x) atan(x) / sinh(k*x), 0, Inf)
+log( gamma(k/(2*pi))^2 / gamma(k/pi) / pi ) * pi/k +
+	+ pi/(2*k) * log(k/2) + (1 - pi/k)*log(2);
 
 
 ### Transformations
@@ -94,7 +102,7 @@ pi*log( gamma(1/(2*pi)) / gamma(1/pi) ) +
 ### ATAN(x^2)
 
 ### I( atan(x^2) / cosh(k*x) )
-# - for Nase-formula, see file:
+# - for Base-formula, see file:
 #   Integrals.Exp.Log.R;
 k = sqrt(3)
 integrate(\(x) atan(x^2) / cosh(k*x), 0, Inf)
@@ -108,6 +116,15 @@ k = sqrt(3)
 integrate(\(x) atan(x^4) / cosh(k*x), 0, Inf)
 b = exp(c(1i,-1i,3i,-3i) * pi / 8)
 pi^2/(4*k) - sum( c(1,-1,-1,1) * log(pracma::gammaz(k*b/(2*pi) + 3/4) /
+	pracma::gammaz(k*b/(2*pi) + 1/4)) ) * pi/k * 1i;
+
+
+### I( atan(x^6) / cosh(k*x) )
+k = sqrt(3)
+integrate(\(x) atan(x^6) / cosh(k*x), 0, Inf)
+b  = exp(c(1,3,5,-5,-3,-1) * 1i * pi / 12);
+sg = c(-1,1,-1,1,-1,1);
+pi^2/(4*k) - sum( sg * log(pracma::gammaz(k*b/(2*pi) + 3/4) /
 	pracma::gammaz(k*b/(2*pi) + 1/4)) ) * pi/k * 1i;
 
 
