@@ -134,6 +134,10 @@ integrate(\(x) 1 / (x^3 + 1)^(1/3), 0, 1)
 - (digamma(1/3) + Euler)/3 + 1/2*log((2^(2/3) + 2^(1/3) + 1)/3) +
 	- 1/sqrt(3) * atan((2^(1/3) + 1/2) * 2/sqrt(3)) +
 	+ 1/sqrt(3) * atan((1 + 1/2) * 2/sqrt(3));
+# Simplification:
+- (digamma(1/3) + Euler)/3 + 1/2*log((2^(2/3) + 2^(1/3) + 1)/3) +
+	- 1/sqrt(3) * atan(1/sqrt(3) * (2^(1/3) - 1) / (2^(1/3) + 1));
+
 
 ### I( x / (x^3 + 1)^(1/3) )
 # - based on simplified formula: see below;
@@ -148,7 +152,9 @@ gamma(1/3)^2/gamma(2/3) / 6
 ### I( x / (x^3 + 1)^(2/3) )
 integrate(\(x) x / (x^3 + 1)^(2/3), 0, 1)
 - (digamma(2/3) + Euler)/3 +
-	+ integrate(\(x) (x^2 - 1) / (x^3 - 1), 1, 2^(1/3))$value
+	+ integrate(\(x) (x^2 - 1) / (x^3 - 1), 1, 2^(1/3))$value;
+- (digamma(2/3) + Euler)/3 + 1/2*log((2^(2/3) + 2^(1/3) + 1)/3) +
+	+ 1/sqrt(3) * atan(1/sqrt(3) * (2^(1/3) - 1) / (2^(1/3) + 1));
 
 
 ### Pow = 5
@@ -729,6 +735,7 @@ integrate(\(x) (x^12 + 1)^(1/3), 0, 1)
 
 integrate(\(x) 1 / (x^12 + 1)^(2/3), 0, 1)
 integrate(\(x) 5/4 * (x^12 + 1)^(1/3) - 2^(1/3-2), 0, 1)
+integrate(\(x) (1 - x)^(-5/12) * x^(-11/12) * 1/12, 0, 1/2)
 
 # TODO
 
