@@ -47,6 +47,7 @@ int.FrDU01 = function(n, p=0) {
 }
 
 ### I on [0, Inf]
+# I( Polynomial(x as x^p) / (x^n + 1)^k )
 int.FrUInf = function(n, p=0, pow=1, coeff=1) {
 	k = 1/pow;
 	tmp = sapply(p, function(p) {
@@ -90,9 +91,17 @@ integrate(\(x) (x^n + 1)^(2/n) - x^2, 0, Inf)
 gamma(-3/n) / gamma(-2/n) * gamma(1/n) / n
 
 
+### I( 1 / (x^n + 1)^(1/n) ) on [0, Inf]
+# OK for any n > 0;
+n = 6 # n = sqrt(3);
+integrate(\(x) 1 / (x^n + 1)^(1/n) - 1/(x+1), 0, Inf)
+- (digamma(1/n) + Euler) / n
+
+
 ### Special Cases:
 
 ### n = 3
+# Convergence: more complicated;
 integrate(\(x) (x^3 + 1)^(2/3) - x^2 - 2/3 / (x+1), 0, Inf)
 - (digamma(-2/3) + Euler - 5/2) * 2/9
 pi*sqrt(3) / 27 + log(3) / 3 + 2/9;
