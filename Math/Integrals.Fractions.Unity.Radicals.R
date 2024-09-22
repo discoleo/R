@@ -157,12 +157,20 @@ integrate(\(x) x / (x^3 + 1)^(2/3), 0, 1)
 	+ 1/sqrt(3) * atan(1/sqrt(3) * (2^(1/3) - 1) / (2^(1/3) + 1));
 
 
+###########
 ### Pow = 5
 
 ### I( 1 / (x^5 + 1)^(1/5) )
 integrate(\(x) 1 / (x^5 + 1)^(1/5), 0, 1)
 - (digamma(1/5) + Euler)/5 +
 	+ integrate(\(x) x^3 * (x-1) / (x^5 - 1), 1, 2^(1/5))$value;
+x = 2^(1/5); cs = cos(c(2,4)*pi/5); sn = sin(c(2,4)*pi/5);
+- (digamma(1/5) + Euler)/5 + sum(
+	+ 1/5 * (1 - cs) * log(x^2 - 2*cs*x + 1) +
+	- 1/5 * (1 - cs) * log(2 - 2*cs) +
+	- 2/5 * sn * atan((x - cs) / sn) +
+	+ 2/5 * sn * atan((1 - cs) / sn) );
+
 
 ### I( x / (x^5 + 1)^(1/5) )
 integrate(\(x) x / (x^5 + 1)^(1/5), 0, 1)
@@ -217,6 +225,12 @@ integrate(\(x) x^3 / (x^5 + 1)^(4/5), 0, 1)
 integrate(\(x) 1 / (x^7 + 1)^(1/7), 0, 1)
 - (digamma(1/7) + Euler)/7 +
 	+ integrate(\(x) x^5 * (x - 1) / (x^7 - 1), 1, 2^(1/7))$value
+x = 2^(1/7); cs = cos(c(2,4,6)*pi/7); sn = sin(c(2,4,6)*pi/7);
+- (digamma(1/7) + Euler)/7 + sum(
+	+ 1/7 * (1 - cs) * log(x^2 - 2*cs*x + 1) +
+	- 1/7 * (1 - cs) * log(2 - 2*cs) +
+	- 2/7 * sn * atan((x - cs) / sn) +
+	+ 2/7 * sn * atan((1 - cs) / sn) );
 
 
 ### Higher Powers
@@ -229,9 +243,17 @@ integrate(\(x) 1 / (x^n + 1)^(1/n), 0, 1)
 
 ### I( 1 / (x^9 + 1)^(1/9) )
 n = 9
+# Note: n = ODD for explicit formula!
 integrate(\(x) 1 / (x^n + 1)^(1/n), 0, 1)
 - (digamma(1/n) + Euler)/n +
 	+ integrate(\(x) x^(n-2) * (x - 1) / (x^n - 1), 1, 2^(1/n))$value
+id = seq(2, n-1, by = 2)
+x = 2^(1/n); cs = cos(id*pi/n); sn = sin(id*pi/n);
+- (digamma(1/n) + Euler)/n + sum(
+	+ 1/n * (1 - cs) * log(x^2 - 2*cs*x + 1) +
+	- 1/n * (1 - cs) * log(2 - 2*cs) +
+	- 2/n * sn * atan((x - cs) / sn) +
+	+ 2/n * sn * atan((1 - cs) / sn) );
 
 ###
 n = sqrt(5)
@@ -269,13 +291,51 @@ integrate(\(x) x / (x^2 + x + 1), 1, 2^(1/3))
 - 1/sqrt(3) * atan((2^(1/3) - 1) / (2^(1/3) + 1) / sqrt(3));
 
 
-### Derivation:
+### Derivation: Pow = 5
 integrate(\(x) x / (x^5 + 1)^(1/5), 0, 1)
 1 - gamma(4/5) * gamma(2/5) / gamma(1/5) +
 	- integrate(\(x) 1/(x^5 + 1)^(1/5) / x^2 - 1/x^2, 0, 1)$value;
 1 - gamma(4/5) * gamma(2/5) / gamma(1/5) +
 	+ integrate(\(x) x^3 * (x - 1) / (x^5 - 1)^(6/5), 1, 2^(1/5))$value;
-	
+
+# Fraction decomposition:
+integrate(\(x) x^3 * (x-1) / (x^5 - 1), 1, 2^(1/5))
+integrate(\(x) x^3 * (x-1) * (1/(x-1) +
+	+ 2*(cos(2*pi/5)*x - 1) / (x^2 - 2*cos(2*pi/5)*x + 1) +
+	+ 2*(cos(4*pi/5)*x - 1) / (x^2 - 2*cos(4*pi/5)*x + 1) ) / 5, 1, 2^(1/5));
+cs = cos(c(2,4)*pi/5); sn = sin(c(2,4)*pi/5);
+integrate(\(x) x^3 / 5 +
+	+ x^3 * (x-1) * (2*(cs[1]*x - 1) / (x^2 - 2*cs[1]*x + 1) +
+	+ 2*(cs[2]*x - 1) / (x^2 - 2*cs[2]*x + 1) ) / 5, 1, 2^(1/5));
+integrate(\(x) x^3 / 5 +
+	+ (2 * (cs[1]*x^3 - x^2 + 2*cs[1]^2*x^2 - cs[1]*x^2 +
+		+ (4*cs[1]^3 - 2*cs[1]^2 - 3*cs[1] + 1)*x) +
+		+ 2*(8*cs[1]^4 - 4*cs[1]^3 - 8*cs[1]^2 + 3*cs[1] + 1)) / 5 +
+	# LOG:
+	# + ((16*cs[1]^5 - 8*cs[1]^4 - 20*cs[1]^3 + 8*cs[1]^2 + 5*cs[1] - 1) *
+	#	2*(x - cs[1]) / (x^2 - 2*cs[1]*x + 1) +
+	+ ((1 - cs[1]) * 2*(x - cs[1]) / (x^2 - 2*cs[1]*x + 1) +
+	# + 2*(cs[1]^2 - 1) * (16*cs[1]^4 - 8*cs[1]^3 - 12*cs[1]^2 + 4*cs[1] + 1) /
+	#   (x^2 - 2*cs[1]*x + 1) + # Parenth == 1;
+	+ 2*(cs[1]^2 - 1) / (x^2 - 2*cs[1]*x + 1) +
+	+ 2*(cs[2]*x - 1) * x^4 / (x^2 - 2*cs[2]*x + 1) +
+	- 2*(cs[2]*x^4 - x^3) / (x^2 - 2*cs[2]*x + 1) ) / 5, 1, 2^(1/5));
+x = 2^(1/5);
+sum(
+	+ 1/5 * (1 - cs) * log(x^2 - 2*cs*x + 1) +
+	- 1/5 * (1 - cs) * log(2 - 2*cs) +
+	- 2/5 * sn * atan((x - cs) / sn) +
+	+ 2/5 * sn * atan((1 - cs) / sn) );
+
+# Note: == 0
+x^4 / 20 - 1/20 + 2*(- 2/5 *(x^3/3 - x^2/2 - x - 1/3 + 1/2 + 1)) +
+	+ sum(
+	+ 2/5 * (cs*x^4/4 + 2*cs^2*x^3/3 +
+		- (cs*x^3/3 + 2*cs^2*x^2/2 + 4*cs^3*x - 3*cs*x) +
+		- 3*cs*x^2/2 + 4*cs^3*x^2/2 + (8*cs^4 - 8*cs^2)*x) +
+	- 2/5 * (cs/4 + 2*cs^2/3 - (cs/3 + 2*cs^2/2 + 4*cs^3 - 3*cs) +
+		- 3*cs/2 + 4*cs^3/2 + (8*cs^4 - 8*cs^2)) );
+
 #
 integrate(\(x) 1/(x^5 + 1)^(1/5) / x^2 - (1/x^2 + 1/x) * exp(-x), 0, Inf)
 n = 5; p = -2 + 1E-6; k = 5;
