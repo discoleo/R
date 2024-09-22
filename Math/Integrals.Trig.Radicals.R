@@ -8,7 +8,7 @@
 ###   Integral( 1 / tan(x)^(1/p) ) dx
 ###   Integral( tan(x)^(1/p) ) dx
 ###
-### draft v.0.1h
+### draft v.0.2a
 
 
 ###############
@@ -388,6 +388,32 @@ integrate(\(x) 2^(4/3 - 1) * sin(x/2)^(4/3 - 2) * cos(x/2)^(4/3) *
 # TODO: try to isolate components;
 
 
+### Fraction Rationalization
+
+p = 1/3
+integrate(\(x) sin(x)^p / (cos(x)^(2/3) - 2*cos(x)^(1/3) + 2), 0, pi/2)
+integrate(\(x) sin(x)^p *
+	(cos(x)^(4/3) + 2*cos(x) + 2*cos(x)^(2/3) + 4*cos(x)^(1/3) + 4) /
+	(cos(x)^2 + 4*cos(x) + 8), 0, pi/2)
+# can be split now into 5 separate integrals;
+# TODO
+
+
+# Derivation:
+
+# source("Polynomials.Helper.R")
+p = mult.pm(as.pm("x^2 - 2*x + 2"),
+	as.pm("x^4 + b3*x^3 + b2*x^2 + b1*x + b0"));
+tmp = lapply(as.coeff.pm(p, "x"), print.pm)
+
+# Test:
+b = c(4, 4, 2, 2);
+p = mult.pm(as.pm("x^2 - 2*x + 2"),
+	as.pm("x^4 + b[4]*x^3 + b[3]*x^2 + b[2]*x + b[1]"))
+print.pm(p, lead = "x")
+# x^6 + 4*x^3 + 8
+
+
 ####################
 ####################
 
@@ -396,6 +422,9 @@ integrate(\(x) 2^(4/3 - 1) * sin(x/2)^(4/3 - 2) * cos(x/2)^(4/3) *
 ### I( (1/tan(x)^2 - tan(x)^2)^(1/4) )
 # Maths 505: An awesome calculus result I cooked up
 # https://www.youtube.com/watch?v=WoxHJyOOma4
+# - see also similar section in file:
+#   Integrals.Fractions.Unity.Radicals.R;
+# - that section is much more extensive;
 
 ### Pow = 1
 integrate(\(x) sqrt(1/tan(x) - tan(x)) / 2, 0, pi/4)
