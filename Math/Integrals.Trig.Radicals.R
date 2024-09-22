@@ -337,6 +337,57 @@ integrate(\(x) cos(x)^(-2/3) - sin(x)*cos(x)^(-2/3), 0, pi/2)
 # - alternative method: sum & diff;
 
 
+###################
+###################
+
+### I( 1 / (1 + cos(x)^(1/n)) )
+# Maths 505: One of my favorite integrals (so far)
+# https://www.youtube.com/watch?v=FRfpBNhfHFc
+# Note: Rationalization => 3 integrals;
+# - can be extended to all integer fractions;
+# - see also: Fractions.Rationalisation.R;
+
+
+### I( 1 / (1 + cos(x)^(1/n)) )
+integrate(\(x) 1 / (1 + sin(x)^(1/3)), 0, pi/2)
+integrate(\(x) 1 / (1 + cos(x)^(1/3)), 0, pi/2)
+1/2 * gamma(-1/2) * (gamma(5/6) / gamma(1/3) + gamma(7/6) / gamma(2/3) +
+	- gamma(4/3) / gamma(5/6) - gamma(2/3) / gamma(1/6)) + 1;
+
+### Helper:
+integrate(\(x) cos(x)^(1/3) / (1 + cos(x)), 0, pi/2)
+integrate(\(x) (cos(x)^(1/3) - cos(x)^(4/3)) / sin(x)^2, 0, pi/2)
+# 1/2 * beta(2/3, -1/2) - 1/2 * beta(7/6, -1/2)
+1/2 * gamma(-1/2) * (gamma(2/3) / gamma(1/6) - gamma(7/6) / gamma(2/3))
+
+#
+integrate(\(x) cos(x)^(2/3) / (1 + cos(x)), 0, pi/2)
+integrate(\(x) (cos(x)^(2/3) - cos(x)^(5/3)) / sin(x)^2, 0, pi/2)
+# 1/2 * beta(5/6, -1/2) - 1/2 * beta(4/3, -1/2)
+1/2 * gamma(-1/2) * (gamma(5/6) / gamma(1/3) - gamma(4/3) / gamma(5/6))
+
+#
+integrate(\(x) 1 / (1 + cos(x)), 0, pi/2)
+1;
+
+
+### I( sin(x)^p / (1 - cos(x)^(1/3)) )
+p = 4/3
+integrate(\(x) sin(x)^p / (1 - cos(x)^(1/3)), 0, pi/2)
+integrate(\(x) sin(x)^(p - 2) * (1 + cos(x)) *
+	(cos(x)^(2/3) + cos(x)^(1/3) + 1), 0, pi/2);
+1/2 * gamma((p-1)/2) * (
+	gamma(5/6) / gamma(p/2 + 1/3) + gamma(4/3) / gamma(p/2 + 5/6) +
+	+ gamma(2/3) / gamma(p/2 + 1/6) + gamma(7/6) / gamma(p/2 + 2/3) +
+	+ gamma(1/2) / gamma(p/2) + 1 / gamma((p+1)/2)
+)
+
+# Note: same value;
+integrate(\(x) 2^(4/3 - 1) * sin(x/2)^(4/3 - 2) * cos(x/2)^(4/3) *
+	(cos(x)^(2/3) + cos(x)^(1/3) + 1), 0, pi/2)
+# TODO: try to isolate components;
+
+
 ####################
 ####################
 
