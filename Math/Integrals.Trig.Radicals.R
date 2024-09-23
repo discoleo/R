@@ -390,6 +390,7 @@ integrate(\(x) 2^(4/3 - 1) * sin(x/2)^(4/3 - 2) * cos(x/2)^(4/3) *
 
 ### Fraction Rationalization
 
+### Ex 1:
 p = 1/3
 integrate(\(x) sin(x)^p / (cos(x)^(2/3) - 2*cos(x)^(1/3) + 2), 0, pi/2)
 integrate(\(x) sin(x)^p *
@@ -402,16 +403,42 @@ integrate(\(x) sin(x)^p *
 # Derivation:
 
 # source("Polynomials.Helper.R")
-p = mult.pm(as.pm("x^2 - 2*x + 2"),
+pp = mult.pm(as.pm("x^2 - 2*x + 2"),
 	as.pm("x^4 + b3*x^3 + b2*x^2 + b1*x + b0"));
-tmp = lapply(as.coeff.pm(p, "x"), print.pm)
+tmp = lapply(as.coeff.pm(pp, "x"), print.pm)
 
 # Test:
 b = c(4, 4, 2, 2);
-p = mult.pm(as.pm("x^2 - 2*x + 2"),
+pp = mult.pm(as.pm("x^2 - 2*x + 2"),
 	as.pm("x^4 + b[4]*x^3 + b[3]*x^2 + b[2]*x + b[1]"))
-print.pm(p, lead = "x")
+print.pm(pp, lead = "x")
 # x^6 + 4*x^3 + 8
+
+
+### Ex 2:
+p = 1/3
+integrate(\(x) sin(x)^p / (cos(x) - cos(x)^(2/3) - cos(x)^(1/3) + 2), 0, pi/2)
+integrate(\(x) sin(x)^p *
+	(cos(x)^2 + cos(x)^(5/3) + 2*cos(x)^(4/3) + 3*cos(x) +
+		+ 3*cos(x)^(2/3) + 2*cos(x)^(1/3) + 4) /
+	(cos(x)^3 + 2*cos(x)^2 + 5*cos(x) + 8), 0, pi/2)
+# can be split now into 7 separate integrals;
+# TODO
+
+
+# Derivation:
+
+# source("Polynomials.Helper.R")
+pp = mult.pm(as.pm("x^3 - x^2 - x + 2"),
+	as.pm("x^6 + b5*x^5 + b4*x^4 + b3*x^3 + b2*x^2 + b1*x + b0"));
+tmp = lapply(as.coeff.pm(pp, "x"), print.pm)
+
+# Test:
+b = c(4,2,3,3,2,1)
+pp = mult.pm(as.pm("x^3 - x^2 - x + 2"),
+	as.pm("x^6 + b[6]*x^5 + b[5]*x^4 + b[4]*x^3 + b[3]*x^2 + b[2]*x + b[1]"))
+print.pm(pp, lead = "x")
+# x^9 + 2*x^6 + 5*x^3 + 8
 
 
 ####################
