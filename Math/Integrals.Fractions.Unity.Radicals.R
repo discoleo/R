@@ -6,7 +6,7 @@
 ### Exact Integration
 ### Polynomial Radicals
 ###
-### draft v.0.2c
+### draft v.0.2d
 
 
 ### Types:
@@ -807,6 +807,52 @@ integrate(\(x) 5/4 * (x^12 + 1)^(1/3) - 2^(1/3-2), 0, 1)
 integrate(\(x) (1 - x)^(-5/12) * x^(-11/12) * 1/12, 0, 1/2)
 
 # TODO
+
+
+### I( x^4 * (1 - x^12)^(-5/12) )
+integrate(\(x) x^4 * (1 - x^12)^(-5/12), 0, 1)
+integrate(\(x) 1/6 * tan(x)^(-1/6), 0, pi/2)
+integrate(\(x) 1/6 * x^(-1/6) / (1 + x^2), 0, Inf)
+beta(5/12, 7/12) / 12;
+
+
+### Various intervals:
+integrate(\(x) x^4 / (1 - x^12)^(5/12), 0, 2^(-1/12))
+integrate(\(x) 1/6 * tan(x)^(-1/6), 0, pi/4)
+integrate(\(x) 1/6 * x^(-1/6) / (1 + x^2), 0, 1)
+(digamma(17/24) - digamma(5/24)) / 24
+# Derived =>
+integrate(\(x) x^(-1) / (x^12 - 1)^(5/12), 2^(1/12), Inf)
+# =>
+integrate(\(x) x^(-1) / (x^12 - 1)^(5/12), 1, 2^(1/12))
+beta(5/12, 7/12) / 12 +
+	- (digamma(17/24) - digamma(5/24)) / 24;
+
+### I( x^(-1) / (1 - x^12)^(5/12) )
+integrate(\(x) x^(-1) / (1 - x^12)^(5/12) - 1/x, 0, 1)
+integrate(\(x) x^4 / (x^12 - 1)^(5/12) - 1/x, 1, Inf)
+integrate(\(x) 1/12 * x^(-1) * (1 - x)^(-5/12) - 1/12/x, 0, 1)
+- (digamma(7/12) + Euler) / 12;
+pi*(sqrt(3) - 2)/24 + log(3)/8 + log(2) / 4 - sqrt(3)/6 * acoth(sqrt(3))
+
+# Limit:
+eps = 1E-5;
+gamma(7/12) * (gamma(eps) / gamma(7/12 + eps) +
+	- 1/gamma(7/12) / eps) / 12
+(beta(eps, 7/12) - 1/eps) / 12
+eps = mpfr("1E-12", 240)
+gamma(7/12) * (gamma(eps) / gamma(mpfr(7, 240)/12 + eps) +
+	- 1/gamma(mpfr(7, 240)/12) / eps) / 12;
+
+#
+ff = \(x) x^4 / abs(1 - x^12)^(5/12) - 1/x + exp(-x)/x;
+integrate(ff, 0, 1, rel.tol=1E-8)$value +
+integrate(ff, 1, Inf, rel.tol=1E-8)$value;
+(beta(5/12, 7/12) - digamma(7/12) - Euler) / 12 - Euler;
+
+#
+integrate(\(x) x^4 / (1 - x^12)^(5/12) - 1/x + exp(-x)/x, 0, 1)
+beta(5/12, 7/12) / 12 - pracma::expint(1) - Euler;
 
 
 #############
