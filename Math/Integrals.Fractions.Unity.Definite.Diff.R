@@ -7,7 +7,7 @@
 ## Polynomial Fractions: Unity
 ## Definite Integrals: Difference-Type
 ##
-## draft v.0.1a
+## draft v.0.1b
 
 
 
@@ -20,15 +20,17 @@ Euler = constEuler;
 
 
 ### I on [0, 1]
-# I( x^p / (x^n + 1))
 
 # - code based on the Digamma function:
 #   enables continuous values of n & p;
 int.FrU01 = function(n, p=0) {
+	# I( x^p / (x^n + 1))
 	(digamma(((p+1)/n + 1)/2) - digamma((p+1)/n/2)) / (2*n);
 }
+
 ### Diff Type
 int.FrDU01 = function(n, p=0) {
+	# I( x^p/(1 - x) -  n*x^p / (1 - x^n) )
 	if( p!= 0) {
 		# r = int.FrDU01(1, p) - int.FrDU01(n, p);
 		r = digamma((p+1)) - digamma((p+1)/n) - log(n);
@@ -61,6 +63,19 @@ p = sqrt(3); n = sqrt(5)
 integrate(\(x) (1 - x^p) / (1 - x^n), 0, 1)
 (digamma((p+1)/n) - digamma(1/n)) / n;
 
+### Gen: I( x^p * (1 - x^q) / (1 - x^n) )
+p = sqrt(3); q = sqrt(2); n = sqrt(5)
+integrate(\(x) x^p * (1 - x^q) / (1 - x^n), 0, 1)
+(digamma((p+q+1)/n) - digamma((p+1)/n)) / n;
+
+
+### Derived: log
+p = sqrt(3); q = sqrt(2); n = sqrt(5)
+integrate(\(x) x^p * (1 - x^q) * log(x) / (1 - x^n), 0, 1)
+(pracma::psi(1, (p+q+1)/n) - pracma::psi(1, (p+1)/n)) / n^2;
+
+
+### [old]
 
 ### 1 / (x^n - 1)
 
