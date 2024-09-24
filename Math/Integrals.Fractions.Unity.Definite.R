@@ -54,6 +54,7 @@ Euler = constEuler;
 int.FrU01 = function(n, p=0) {
 	(digamma(((p+1)/n + 1)/2) - digamma((p+1)/n/2)) / (2*n);
 }
+### Diff Type
 int.FrDU01 = function(n, p=0) {
 	if( p!= 0) {
 		# r = int.FrDU01(1, p) - int.FrDU01(n, p);
@@ -61,6 +62,10 @@ int.FrDU01 = function(n, p=0) {
 		return(r);
 	}
 	digamma(1/n) + Euler + log(n);
+}
+int.FrDUp1 = function(n, p=0) {
+	# integrate(\(x) (1 - x^p) / (1 - x^n), 0, 1)
+	(digamma((p+1)/n) - digamma(1/n)) / n;
 }
 
 ### I on [0, Inf]
@@ -565,6 +570,19 @@ integrate(\(x) 1/n * x^(1/n - 1) * (1 - x)^(-1), 0, 1/2)
 ### Diff Type ###
 #################
 
+### Simple Case:
+# - see section below;
+p = sqrt(3)
+integrate(\(x) (1 - x^p) / (1-x), 0, 1)
+(digamma(p) - digamma(1)) + 1/p;
+(digamma(p+1) - digamma(1));
+
+### Gen: I( (1 - x^p) / (1 - x^n) )
+p = sqrt(3); n = sqrt(5)
+integrate(\(x) (1 - x^p) / (1 - x^n), 0, 1)
+(digamma((p+1)/n) - digamma(1/n)) / n;
+
+
 ### 1 / (x^n - 1)
 
 # I() on [0, 1]
@@ -670,6 +688,7 @@ p = sqrt(3); n = sqrt(11);
 integrate(\(x) x^p/(x-1) - n*x^p/(x^n - 1), 0, 1)
 int.FrDU01(n, p)
 
+### [old]
 
 # [alternative] [n = 5]
 pi/tan(pi/n)/2 + 1/4*log(n) + sqrt(5)/2*atanh(1/sqrt(5))
