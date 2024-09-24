@@ -4,7 +4,7 @@
 ### [the one and only]
 ###
 ### Derived Polynomials
-### v.0.4d
+### v.0.4e
 
 ### Note:
 # This is the 1st part towards:
@@ -19,7 +19,7 @@
 ###############
 
 ### draft v.0.4d:
-# - [cleanup] moved section on special P[5]
+# - [clean-up] moved section on special P[5]
 #   to new file: Polynomials.P5.R;
 ### v.0.4b - v.0.4c:
 # - [started] parametric P[5] derived from:
@@ -313,7 +313,65 @@ poly.calc(x)
 - x^11 + x^12 + x^13 + x^14 + x^15 + x^16 + x^18 - x^19 + x^20
 
 
-##########################
+####################
+
+### Other Symmetries
+
+###
+r = roots(c(1,0,0,0,-1,-1))
+x = r; x^ 5 - x - 1 # = 0
+
+### Ex 1:
+# - 10 new Roots based on initial roots;
+x = lapply(seq(4), \(id) {
+	rinv = r[seq(id+1, 5)];
+	r[id] / rinv + rinv / r[id]
+})
+x = unlist(x)
+poly.calc0(x, digits = 6)
+#
+err = x^10 + 5*x^9 + 5*x^8 - 10*x^7 - 16*x^6 + 7*x^5 +
+	+ 11*x^4 - 10*x^3 - 5*x^2 + 5*x - 1;
+round0(err)
+
+
+### Ex 2:
+# - still 10 new Roots;
+idc = combn(5,3)
+x = sapply(seq(ncol(idc)), \(id) {
+	sum(r[idc[, id]]);
+})
+poly.calc0(x, digits = 6)
+#
+err = x^10 + 3*x^6 - 11*x^5 - 4*x^2 - 4*x - 1
+round0(err)
+
+
+### Ex 3:
+idc = combn(5,3)
+x = sapply(seq(ncol(idc)), \(id) {
+	r = r[idc[, id]];
+	r[1]*(r[2] + r[3]) + r[2]*r[3];
+})
+poly.calc0(x, digits = 6)
+#
+err = x^10 - x^8 - 2*x^6 - 11*x^5 + 2*x^4 + 18*x^3 + x^2 - 7*x - 2;
+round0(err)
+
+
+### Ex 4:
+idc = combn(5,2)
+x = sapply(seq(ncol(idc)), \(id) {
+	r = r[idc[, id]];
+	prod(r);
+})
+poly.calc0(x, digits = 6)
+#
+err = x^10 + x^8 - x^6 - 2*x^5 - x^4 - x^3 + 1;
+round0(err)
+
+
+####################
 
 ##################
 ### Parametric ###
@@ -828,7 +886,7 @@ x  = solve(polynom::polynomial(c(b0,-1,0,0,0,1)));
 2 * Re(x[3])
 # 40 bits precision:
 x0 = mpfr(2 * 0.18 + c(-0.1,0.1), 400);
-Rmpfr::unirootR(pF, x0, tol = 1E-40, b0 = b0)
+Rmpfr::unirootR(pF, x0, tol = 1E-120, b0 = b0)
 
 
 #########################
