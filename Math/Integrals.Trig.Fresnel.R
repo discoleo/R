@@ -229,7 +229,8 @@ sin(pi*(1/2 - (p-1)/(2*n))) * gamma(1 - (p-1)/n) * 2^((p-1)/n - 1) / (p-1)
 ### Composite Fresnel-Type
 
 ###
-# Maths 505: A RIDICULOUSLY AWESOME INTEGRAL!!!! int 0 to infty (sin(x^2+1/x^2))^3
+# Maths 505: A RIDICULOUSLY AWESOME INTEGRAL!!!!
+# int 0 to infty (sin(x^2+1/x^2))^3
 # https://www.youtube.com/watch?v=CJOZoV7S2l4
 
 ### I( sin(x^2 + 1/x^2)^3 )
@@ -238,14 +239,26 @@ pracma::integral(\(x) sin(x^2 + 1/x^2)^3, 0, 512*pi)
 1/8 * sin(pi/4) * gamma(1/2) * (3*sin(2) + 3*cos(2) - (sin(6) + cos(6))/sqrt(3))
 
 
-###
+### I( sin(x^4 + 1/x^4)^3 )
 # upper = Inf: + workarounds for numerical issues;
+# Note: Fractions are more robust;
 # pracma::integral(\(x) sin(x^4 + 1/x^4)^3, 0, 256*pi)
-pracma::integral(\(x) 1/4 * sin(x + 1/x)^3 / x^(3/4), 1, 65536*pi) +
-	pracma::integral(\(x) 1/4 * sin(x + 1/x)^3 / x^(3/4), pi/(2*4096), 1)
+ff = \(x) 1/4 * sin(x + 1/x)^3 / x^(3/4);
+pracma::integral(ff, 1, 4096*pi) + pracma::integral(ff, 1/(4096*pi), 1);
 # pracma::integral(\(x) sin(x^4 + 4*x^2 + 2)^3, 0, 256*pi)
 pracma::integral(\(x) 1/2 * sin(x^2 + 4*x + 2)^3 / x^(1/2), 0, 1024*pi)
-# TODO: sin(x)^3 = (3*sin(x) - sin(3*x))/4
+
+# =>
+# sin(x)^3 = (3*sin(x) - sin(3*x))/4
+# Note: on [0,1] == on [1, Inf]; # but NOT the version with fractions;
+# pracma::integral(\(x) 2/4*(3*sin(x^4 + 1/x^4) - sin(3*x^4 + 3/x^4)), 1, 256*pi)
+ff = \(x) 1/16 * (3*sin(x + 1/x) - sin(3*x + 3/x)) / x^(3/4);
+pracma::integral(ff, 1, 1024*pi) + pracma::integral(ff, 1/(1024*pi), 1);
+# Note: from -Inf to + Inf => 2 * I on [0, Inf];
+ff = \(x) 1/8 * (3*sin(x^2 + 4*x + 2) - sin(3*(x^2 + 4*x + 2))) / x^(1/2);
+pracma::integral(ff, 0, 1024*pi);
+# TODO: ?
+
 
 # vs:
 # pracma::integral(\(x) sin(x^4 - 4*x^2 - 4/x + 1/x^4)^3, 0, 256*pi)
@@ -262,18 +275,20 @@ pracma::integral(\(x) sqrt(2) * sin(4*(x^2 + 1)^2)*cos(2) +
 
 
 ##################
+##################
 
 ### I( sin(a^2*x^2 + b^2/x^2) )
 # Maths 505: A surprising integral result
 # https://www.youtube.com/watch?v=P4ROv4iiK-4
-# - Substitution: x = b/a / y => new I ;
-#   then a * I + b * new I: t = a*x - b/x;
+# - Substitution: x = b/a / y => new I = same value as I;
+#   then a * I + a * new I: t = a*x - b/x;
 
 a = 2; b = 3;
 # Note: on [0, Inf] but numerically extremely problematic!
 integrate(\(x) sin(a^2*x^2 + b^2/x^2), 1/(4*pi), 4*pi, subdivisions = 529)
 integrate(\(x) sin(x^2 + 2*a*b) / a, 1/(4*pi), 4*pi)
 (sin(2*a*b) +  cos(2*a*b)) * sin(pi/4) * gamma(1/2) / (2*a);
+sin(2*a*b + pi/4) * gamma(1/2) / (2*a);
 
 
 # library(Rmpfr)
@@ -287,4 +302,15 @@ integrate(\(x) {
 	y = sin(a^2*x^2 + b^2/x^2);
 	as.numeric(y);
 	}, 2*sqrt(pi), 32*sqrt(pi), subdivisions = 5025)$value;
-	
+
+
+#################
+#################
+
+### Other
+
+# upper = Inf
+pracma::integral(\(x) sin(x^2) * sin(x), 0, 1000)
+pracma::integral(\(x) cos(x^2)*cos(1/4) + sin(x^2)*sin(1/4), 0, 1/2)
+# TODO: ?
+
