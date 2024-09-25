@@ -427,8 +427,43 @@ pracma::psi(1,1)*pracma::psi(2,1)*2 - pracma::psi(4,1)/3
 
 
 ####################
+####################
+
+### I( log((1-x)/(1+x))^p )
+# Maths 505: This integral is actually one of your favorite constants
+# https://www.youtube.com/watch?v=83mUOaF7G9A
+# Subst: (1-x)/(1+x) = y;
+
+###
+integrate(\(x) log((1-x)/(1+x))^3, 0, 1)
+- 12 * (1 - 2^(1-3)) * pracma::zeta(3)
+
+### Gen: I( log((1-x)/(1+x))^p )
+p = sqrt(3)
+integrate(\(x) abs(log((1-x)/(1+x)))^p, 0, 1)
+gamma(p+1) * (2 - 2^(2-p)) * pracma::zeta(p)
+
+
+### Derived:
+
+### I( log(1-x) * log(1+x) * (log(1-x) - log(1+x)) )
+integrate(\(x) log(1-x) * log(1+x) * (log(1-x) - log(1+x)), 0, 1)
+3 * pracma::zeta(3) - 2/3*log(2)^3 + 2*log(2)^2 - 4*log(2)
+
+###
+integrate(\(x) log(1-x) * log(1+x)^2, 0, 1)
+# TODO
+
+###
+integrate(\(x) log(1-x)^2 * log(1+x), 0, 1)
+# TODO
+
+
+####################
+####################
 
 ### I( (1 + x)^p * (1 - x)^q * log(1+x) * log(1-x) )
+# on [-1, 1]
 
 ###
 p = 1/5; q = - 1/7;
