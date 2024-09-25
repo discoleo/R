@@ -6,7 +6,7 @@
 ### Integrals: Trigonometric
 ### Fresnel Integrals
 ###
-### draft v.0.2c
+### draft v.0.2d
 
 
 
@@ -89,7 +89,7 @@ test.fresnel = function(n=2, iter=c(1E4, 2E4), doWeights=TRUE, plot=TRUE, length
 # Note:
 # - numerically very problematic!
 
-###
+### I( sin(k*x^n) ) on [0, Inf]
 n = 2
 fresnel(n, iter=20000)
 1/n * sin(pi/(2*n)) * gamma(1/n)
@@ -103,6 +103,14 @@ fresnel(n)
 n = 4
 fresnel(n)
 1/n * sin(pi/(2*n)) * gamma(1/n)
+
+### n -> Inf
+# x = y^(1/p) & p -> 0;
+# upper = Unf;
+integrate(\(x) sin(x) / x, 0, 10000, subdivisions = 1025)
+n = 2000
+sin(pi/(2*n)) * gamma(1/n)
+pi / 2
 
 
 ### Weighted:
@@ -164,7 +172,7 @@ n = 3
 p = - 3/4; # - (n+1) < p < 0;
 # Upper = Inf: very slow!
 pracma::integral(\(x) x^p * log(x) * sin(x^n), 0, 100)
-gamma((p+1)/n)* (digamma((p+1)/n) * sin(pi*(p+1)/(2*n)) +
+gamma((p+1)/n) * (digamma((p+1)/n) * sin(pi*(p+1)/(2*n)) +
 	pi/2 * cos(pi*(p+1)/(2*n))) / n^2
 
 
@@ -224,8 +232,59 @@ sin(pi*(1/2 - (p-1)/(2*n))) * gamma(1 - (p-1)/n) * 2^((p-1)/n - 1) / (p-1)
 # Maths 505: A RIDICULOUSLY AWESOME INTEGRAL!!!! int 0 to infty (sin(x^2+1/x^2))^3
 # https://www.youtube.com/watch?v=CJOZoV7S2l4
 
-### I( in(x^2 + 1/x^2)^3 )
+### I( sin(x^2 + 1/x^2)^3 )
 # upper = Inf: numerical issues;
 pracma::integral(\(x) sin(x^2 + 1/x^2)^3, 0, 512*pi)
 1/8 * sin(pi/4) * gamma(1/2) * (3*sin(2) + 3*cos(2) - (sin(6) + cos(6))/sqrt(3))
 
+
+###
+# upper = Inf: + workarounds for numerical issues;
+# pracma::integral(\(x) sin(x^4 + 1/x^4)^3, 0, 256*pi)
+pracma::integral(\(x) 1/4 * sin(x + 1/x)^3 / x^(3/4), 1, 65536*pi) +
+	pracma::integral(\(x) 1/4 * sin(x + 1/x)^3 / x^(3/4), pi/(2*4096), 1)
+# pracma::integral(\(x) sin(x^4 + 4*x^2 + 2)^3, 0, 256*pi)
+pracma::integral(\(x) 1/2 * sin(x^2 + 4*x + 2)^3 / x^(1/2), 0, 1024*pi)
+# TODO: sin(x)^3 = (3*sin(x) - sin(3*x))/4
+
+# vs:
+# pracma::integral(\(x) sin(x^4 - 4*x^2 - 4/x + 1/x^4)^3, 0, 256*pi)
+
+
+###
+# upper = Inf: numerical issues;
+# pracma::integral(\(x) sin(x^4 + 4*x^2 + 2), 0, 256*pi)
+pracma::integral(\(x) 1/2 * sin(x^2 + 4*x + 2) / x^(1/2), 0, 1024*pi)
+pracma::integral(\(x) sin((x^2 + 2)^2)*cos(2) - cos((x^2 + 2)^2)*sin(2), 0, 256*pi)
+pracma::integral(\(x) sqrt(2) * sin(4*(x^2 + 1)^2)*cos(2) +
+	- sqrt(2) * cos(4*(x^2 + 1)^2)*sin(2), 0, 256*pi)
+# TODO: ???
+
+
+##################
+
+### I( sin(a^2*x^2 + b^2/x^2) )
+# Maths 505: A surprising integral result
+# https://www.youtube.com/watch?v=P4ROv4iiK-4
+# - Substitution: x = b/a / y => new I ;
+#   then a * I + b * new I: t = a*x - b/x;
+
+a = 2; b = 3;
+# Note: on [0, Inf] but numerically extremely problematic!
+integrate(\(x) sin(a^2*x^2 + b^2/x^2), 1/(4*pi), 4*pi, subdivisions = 529)
+integrate(\(x) sin(x^2 + 2*a*b) / a, 1/(4*pi), 4*pi)
+(sin(2*a*b) +  cos(2*a*b)) * sin(pi/4) * gamma(1/2) / (2*a);
+
+
+# library(Rmpfr)
+integrate(\(x) {
+	x = mpfr(x, 240);
+	y = sin(a^2*x^2 + b^2/x^2);
+	as.numeric(y);
+	}, 1/(32*sqrt(pi)), 2*sqrt(pi), subdivisions = 5025)$value +
+integrate(\(x) {
+	x = mpfr(x, 240);
+	y = sin(a^2*x^2 + b^2/x^2);
+	as.numeric(y);
+	}, 2*sqrt(pi), 32*sqrt(pi), subdivisions = 5025)$value;
+	
