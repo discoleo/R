@@ -443,6 +443,16 @@ p = sqrt(3)
 integrate(\(x) abs(log((1-x)/(1+x)))^p, 0, 1)
 gamma(p+1) * (2 - 2^(2-p)) * pracma::zeta(p)
 
+### I( x * abs(log(1-x))^p )
+p = sqrt(3)
+integrate(\(x) x * abs(log(1-x))^p, 0,1)
+gamma(p+1)*(1 - 2^(-p-1))
+
+### I( x^2 * abs(log(1-x))^p )
+p = sqrt(3)
+integrate(\(x) x^2 * abs(log(1-x))^p, 0,1)
+gamma(p+1) * (1 - 2^(-p) + 3^(-p-1))
+
 
 ### Derived:
 
