@@ -453,6 +453,11 @@ p = sqrt(3)
 integrate(\(x) x^2 * abs(log(1-x))^p, 0,1)
 gamma(p+1) * (1 - 2^(-p) + 3^(-p-1))
 
+### I( x^3 * abs(log(1-x))^p )
+p = sqrt(3)
+integrate(\(x) x^3 * abs(log(1-x))^p, 0,1)
+gamma(p+1) * (1 - 3*2^(-p-1) + 3*3^(-p-1) - 4^(-p-1))
+
 
 ### Derived:
 
