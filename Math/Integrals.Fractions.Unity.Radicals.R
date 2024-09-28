@@ -49,7 +49,7 @@ int.FrDU01 = function(n, p=0) {
 ### I on [0, Inf]
 # I( Polynomial(x as x^p) / (x^n + 1)^k )
 int.FrUInf = function(n, p=0, pow=1, coeff=1) {
-	k = 1/pow;
+	k = 1/pow; # actually (x^n + 1)^(1/k);
 	tmp = sapply(p, function(p) {
 		gamma((p+1)/n) * gamma(1/k - (p+1)/n) / gamma(1/k) / n;
 	});
@@ -70,6 +70,7 @@ n = sqrt(11)
 k = sqrt(3)
 integrate(function(x) x^p / (x^n+1)^(1/k), lower=0, upper=Inf)
 gamma((p+1)/n)*gamma(1/k - (p+1)/n) / gamma(1/k) / n
+beta((p+1)/n, 1/k - (p+1)/n) / n
 
 
 ### "Divergent Radicals"
@@ -258,6 +259,13 @@ integrate(\(x) 1 / (x^n + 1)^(1/n), 0, 1)
 	+ integrate(\(x) x^(n-2) * (x - 1) / (x^n - 1), 1, 2^(1/n))$value
 id = seq(2, n-1, by = 2)
 x = 2^(1/n); cs = cos(id*pi/n); sn = sin(id*pi/n);
+pi/(2*n) / tan(pi/n) + pi/(2*n) / sin(pi/n) +
++ sum(
+	+ 1/n * (1 - cs) * log(x^2 - 2*cs*x + 1) +
+	- 2/n * sn * atan((x - cs) / sn) );
+
+
+# [old]
 - (digamma(1/n) + Euler)/n + sum(
 	+ 1/n * (1 - cs) * log(x^2 - 2*cs*x + 1) +
 	- 1/n * (1 - cs) * log(2 - 2*cs) +
