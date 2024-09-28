@@ -969,9 +969,27 @@ gamma(1-r)	/ (2*n) * (gamma((p+1)/(2*n)) / gamma((p+1)/(2*n) - r + 1) +
 # https://www.youtube.com/watch?v=vPWTmwjYM8s
 # Euler subst: sqrt(x - x^2) = x*y => x = 1/(1 + y^2);
 
+### I( x^2 * sqrt(1 - x^2) / (x^4 + 1) )
+integrate(\(x) 2 * x^2 * sqrt(1 - x^2) / (x^4 + 1), 0, 1)
 integrate(\(x) sqrt(x * (1 - x)) / (x^2 + 1), 0, 1)
 integrate(\(x) sqrt(tan(x) * (1 - tan(x))), 0, pi/4); # initial I;
 - pi + pi * 2^(1/4) * sin(3*pi/8)
+
+### I( x^2 * sqrt(1 + x^2) / (x^4 + 1) ) on [0, 1]
+integrate(\(x) x^2 * sqrt(1 + x^2) / (x^4 + 1), 0, 1)
+integrate(\(x) 1/2 * sqrt(x + 1) / x / (x^2 + 1), 1, Inf)
+integrate(\(x) sin(x)/(1 - cos(x)^2) / cos(x)^2 / (tan(x)^4 + 1), pi/4, pi/2)
+integrate(\(x) x^2 / (1 - x^2) / (2*x^4 - 2*x^2 + 1), 0, 1/sqrt(2))
+integrate(\(x) x^2 / (x^2 - 1) / (x^4 - 2*x^2 + 2), sqrt(2), Inf)
+integrate(\(x) 1/2 * Im((1+1i)/(x^2 - 1) - (1+1i)/(x^2 - 1 + 1i) +
+	- (1-1i)/(x^2 - 1) + (1-1i)/(x^2 - 1 - 1i)), sqrt(2), Inf)
+integrate(\(x) 1/(x^2 - 1) + 1/2 * Im(
+	- (1+1i)/(x^2 - 1 + 1i) +
+	+ (1-1i)/(x^2 - 1 - 1i) ), sqrt(2), Inf)
+1/2 * log((sqrt(2)+1)/(sqrt(2)-1)) - 1/4 * Im(
+	(1+1i)/sqrt(1-1i) * log((sqrt(2) + sqrt(1-1i))/(sqrt(2) - sqrt(1-1i))) +
+	+ (1-1i)/sqrt(1+1i) * log((sqrt(2) - sqrt(1+1i))/(sqrt(2) + sqrt(1+1i))));
+
 
 # Derivation:
 integrate(\(x) sqrt(x * (1 - x)) / (x^2 + 1), 0, 1)
