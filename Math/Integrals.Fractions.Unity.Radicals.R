@@ -964,7 +964,7 @@ gamma(1-r)	/ (2*n) * (gamma((p+1)/(2*n)) / gamma((p+1)/(2*n) - r + 1) +
 ####################
 ####################
 
-### I( sqrt(x * (1 - x)) / (x^2 + 1) ) on [0,1]
+### I( sqrt(x * (1 - x)) / (x^2 + 1) ) on [0, 1]
 # Maths 505: Why this integral is MUCH harder than it looks
 # https://www.youtube.com/watch?v=vPWTmwjYM8s
 # Euler subst: sqrt(x - x^2) = x*y => x = 1/(1 + y^2);
@@ -987,7 +987,16 @@ integrate(\(x) -2/(x^2 + 1) +
 - pi + pi * 2^(1/4) * sin(3*pi/8)
 
 
-### I( sqrt(x * (1 - x)) / (x^2 + 1) ) on [0,1/2]
+### I( x^2 * sqrt(1 - x^2) / (x^4 + 1) ) on [0, 1/2]
+integrate(\(x) x^2 * sqrt(1 - x^2) / (x^4 + 1), 0, 1/2)
+integrate(\(x) 1/2 * sqrt(x * (1 - x)) / (x^2 + 1), 0, 1/4)
+integrate(\(x) x^2 / ((x^2 + 1)*(x^4 + 2*x^2 + 2)), sqrt(3), Inf)
+- pi/2 + pi * 2^(-3/4) * sin(3*pi/8) + atan(sqrt(3)) +
+	+ 2^(-3/4) * Im(exp(-3i*pi/8) * atan(sqrt(3)/sqrt(1+1i)) +
+	- exp(3i*pi/8) * atan(sqrt(3)/sqrt(1-1i)));
+
+
+### I( sqrt(x * (1 - x)) / (x^2 + 1) ) on [0, 1/2]
 integrate(\(x) sqrt(x * (1 - x)) / (x^2 + 1), 0, 1/2)
 integrate(\(x) sqrt(tan(x) * (1 - tan(x))), 0, atan(1/2)) # as initial I;
 - pi/2 + pi * 2^(1/4) * sin(3*pi/8) +
