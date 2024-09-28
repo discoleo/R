@@ -960,3 +960,48 @@ gamma(1-r)	/ (2*n) * (gamma((p+1)/(2*n)) / gamma((p+1)/(2*n) - r + 1) +
 	+ gamma((p+1)/(2*n) + 1/2) / gamma((p+1)/(2*n) - r + 3/2) );
 (beta(1-r, (p+1)/(2*n)) + beta(1-r, (p+1)/(2*n) + 1/2)) / (2*n)
 
+
+####################
+####################
+
+### I( sqrt(x * (1 - x)) / (x^2 + 1) ) on [0,1]
+# Maths 505: Why this integral is MUCH harder than it looks
+# https://www.youtube.com/watch?v=vPWTmwjYM8s
+# Euler subst: sqrt(x - x^2) = x*y => x = 1/(1 + y^2);
+
+integrate(\(x) sqrt(x * (1 - x)) / (x^2 + 1), 0, 1)
+integrate(\(x) sqrt(tan(x) * (1 - tan(x))), 0, pi/4); # initial I;
+- pi + pi * 2^(1/4) * sin(3*pi/8)
+
+# Derivation:
+integrate(\(x) sqrt(x * (1 - x)) / (x^2 + 1), 0, 1)
+integrate(\(x) 2*x^2 / ((x^2 + 1)*(x^4 + 2*x^2 + 2)), 0, Inf)
+integrate(\(x) 1 / (x^2 + 1) *
+	Re((1-1i)/(x^2 + 1 + 1i) + (1+1i)/(x^2 + 1 - 1i)), 0, Inf)
+integrate(\(x) Im((1-1i)/(x^2 + 1) - (1-1i)/(x^2 + 1 + 1i) +
+	- (1+1i)/(x^2 + 1) + (1+1i)/(x^2 + 1 - 1i)), 0, Inf)
+integrate(\(x) -2/(x^2 + 1) +
+	- Im((1-1i)/(x^2 + 1 + 1i) - (1+1i)/(x^2 + 1 - 1i)), 0, Inf)
+- pi - pi/2 * Im((1-1i)/sqrt(1+1i) - ((1+1i)/sqrt(1-1i)))
+- pi - pi/2 * 2^(1/4) * Im(exp(-3i*pi/8) - exp(3i*pi/8))
+- pi + pi * 2^(1/4) * sin(3*pi/8)
+
+
+### I( sqrt(x * (1 - x)) / (x^2 + 1) ) on [0,1/2]
+integrate(\(x) sqrt(x * (1 - x)) / (x^2 + 1), 0, 1/2)
+integrate(\(x) sqrt(tan(x) * (1 - tan(x))), 0, atan(1/2)) # as initial I;
+- pi/2 + pi * 2^(1/4) * sin(3*pi/8) +
+	+ Im((1-1i)/sqrt(1+1i)*atan(1/sqrt(1+1i)) +
+	- (1+1i)/sqrt(1-1i)*atan(1/sqrt(1-1i)));
+
+###
+integrate(\(x) sqrt(tan(x) * (1 - tan(x))), atan(1/2), pi/4)
+integrate(\(x) sqrt(x * (1 - x)) / (x^2 + 1), 1/2, 1)
+- pi/2 - Im((1-1i)/sqrt(1+1i)*atan(1/sqrt(1+1i)) +
+	- (1+1i)/sqrt(1-1i)*atan(1/sqrt(1-1i)))
+- pi/2 - 2^(1/4) * Im(exp(-3i*pi/8) * atan(1/sqrt(1+1i)) +
+	- exp(3i*pi/8) * atan(1/sqrt(1-1i)))
+- pi/2 + pi * 2^(1/4) * sin(3*pi/8) +
+	- 2^(-3/4) * exp(-3i*pi/8) * log((1 + 1i*sqrt(1+1i)) / (1 - 1i*sqrt(1+1i))) +
+	+ 2^(-3/4) * exp(3i*pi/8) * log((1 + 1i*sqrt(1-1i)) / (1 - 1i*sqrt(1-1i)));
+
