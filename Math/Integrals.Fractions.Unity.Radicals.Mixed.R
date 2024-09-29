@@ -35,10 +35,10 @@
 # Euler subst: sqrt(x - x^2) = x*y => x = 1/(1 + y^2);
 
 ### I( x^2 * sqrt(1 - x^2) / (x^4 + 1) )
-integrate(\(x) 2 * x^2 * sqrt(1 - x^2) / (x^4 + 1), 0, 1)
-integrate(\(x) sqrt(x * (1 - x)) / (x^2 + 1), 0, 1)
-integrate(\(x) sqrt(tan(x) * (1 - tan(x))), 0, pi/4); # initial I;
-- pi + pi * 2^(1/4) * sin(3*pi/8)
+integrate(\(x) x^2 * sqrt(1 - x^2) / (x^4 + 1), 0, 1)
+integrate(\(x) 1/2 * sqrt(x * (1 - x)) / (x^2 + 1), 0, 1)
+integrate(\(x) 1/2 * sqrt(tan(x) * (1 - tan(x))), 0, pi/4); # initial I;
+pi/2 * (-1 + 2^(1/4) * sin(3*pi/8))
 
 ### I( x^2 * sqrt(1 + x^2) / (x^4 + 1) ) on [0, 1]
 integrate(\(x) x^2 * sqrt(1 + x^2) / (x^4 + 1), 0, 1)
@@ -116,7 +116,15 @@ integrate(\(x) 1/3 * (x*(1-x)^2)^(1/3) / (x^2 + 1), 0, 1)
 integrate(\(x) x^3 / (1 + x^3)^3 / ((x^3/(1+x^3))^2 + 1), 0, Inf)
 integrate(\(x) x^3 / (1 + x^3) / (2*x^6 + 2*x^3 + 1), 0, Inf)
 integrate(\(x) x^4 / (x^3 + 1) / (x^6 + 2*x^3 + 2), 0, Inf)
-# TODO
+# Fraction decomposition:
+bp = (1+1i)^(1/3); bn = (1-1i)^(1/3);
+integrate(\(x) 1/3 * (1/(x+1) - (x+1)/(x^2 - x + 1)) +
+	- 1/6 * Re(bp^2 / (x+bp) + bn^2 / (x+bn) +
+	- bp^2 * (x+bp) / (x^2 - bp*x + bp^2) +
+	- bn^2 * (x+bn) / (x^2 - bn*x + bn^2) ), 0, Inf)
+beta(2/3,1/3) / 3 * (-1 + 1/2*(bp^2 + bn^2))
+beta(2/3,1/3) / 3 * (-1 + 2^(1/3) * cos(pi/6))
+
 
 # Derivation:
 
@@ -155,4 +163,12 @@ x / (x^3 - b^3)
 x * (1/(x-b) - (x + 2*b)/(x^2 + b*x + b^2)) / (3*b^2)
 (1/(x-b) - (x-b)/(x^2 + b*x + b^2)) / (3*b)
 # Note: x = b*y is an alternative;
+
+
+###############
+
+### I( x^5 * (1 - x^5)^(4/5) / (x^10 + 1) )
+integrate(\(x) x^5 * (1 - x^5)^(4/5) / (x^10 + 1), 0, 1)
+integrate(\(x) x^8 / (x^5 + 1) / (x^10 + 2*x^5 + 2), 0, Inf)
+beta(1/5, 4/5) / 5 * (-1 + 2^(2/5) * cos(2*pi/10))
 
