@@ -7,7 +7,7 @@
 ##   Polynomial Fractions:
 ##   Mixed Radicals
 ##
-## draft v.0.1a
+## draft v.0.1b
 
 
 ### Mixed Radicals
@@ -15,6 +15,8 @@
 ### Examples
 # I( x^2 * sqrt(1 - x^2) / (x^4 + 1) )
 # I( x^2 * sqrt(1 + x^2) / (x^4 + 1) )
+# I( x^3 * (1 + x^3)^(2/3) / (x^6 + 1) )
+# I( x^3 * (1 - x^3)^(2/3) / (x^6 + 1) )
 
 
 ### History
@@ -26,9 +28,10 @@
 ########################
 ########################
 
-### I( sqrt(x * (1 - x)) / (x^2 + 1) ) on [0, 1]
+### I( x^2 * sqrt(1 + x^2) / (x^4 + 1) )
 # Maths 505: Why this integral is MUCH harder than it looks
 # https://www.youtube.com/watch?v=vPWTmwjYM8s
+# Initial: I( sqrt(x * (1 - x)) / (x^2 + 1) ) on [0, 1]
 # Euler subst: sqrt(x - x^2) = x*y => x = 1/(1 + y^2);
 
 ### I( x^2 * sqrt(1 - x^2) / (x^4 + 1) )
@@ -93,4 +96,29 @@ integrate(\(x) sqrt(x * (1 - x)) / (x^2 + 1), 1/2, 1)
 - pi/2 + pi * 2^(1/4) * sin(3*pi/8) +
 	- 2^(-3/4) * exp(-3i*pi/8) * log((1 + 1i*sqrt(1+1i)) / (1 - 1i*sqrt(1+1i))) +
 	+ 2^(-3/4) * exp(3i*pi/8) * log((1 + 1i*sqrt(1-1i)) / (1 - 1i*sqrt(1-1i)));
+
+
+##################
+##################
+
+### Radical Pow: 3
+
+### I( x^3 * (x^3 + 1)^(2/3) / (x^6 + 1) )
+integrate(\(x) x^3 * (x^3 + 1)^(2/3) / (x^6 + 1), 0, 1)
+integrate(\(x) 1/3 * (x*(x+1)^2)^(1/3) / (x^2 + 1), 0, 1)
+# rev of: y = x^3 / (1-x^3) => x^3 = 1 - 1/(y+1);
+integrate(\(x) x^3 / (1 - x^3)^3 / ((x^3/(1-x^3))^2 + 1), 0, 2^(-1/3))
+integrate(\(x) x^3 / (1 - x^3) / (2*x^6 - 2*x^3 + 1), 0, 2^(-1/3))
+integrate(\(x) x^4 / (x^3 - 1) / (x^6 - 2*x^3 + 2), 2^(1/3), Inf)
+# TODO: Fraction decomposition;
+
+
+### I( x^3 * (1 - x^3)^(2/3) / (x^6 + 1) )
+integrate(\(x) x^3 * (1 - x^3)^(2/3) / (x^6 + 1), 0, 1)
+integrate(\(x) 1/3 * (x*(1-x)^2)^(1/3) / (x^2 + 1), 0, 1)
+# y = x^3 / (1+x^3) => x^3 = 1/(1-y) - 1;
+integrate(\(x) x^3 / (1 + x^3)^3 / ((x^3/(1+x^3))^2 + 1), 0, Inf)
+integrate(\(x) x^3 / (1 + x^3) / (2*x^6 + 2*x^3 + 1), 0, Inf)
+integrate(\(x) x^4 / (x^3 + 1) / (x^6 + 2*x^3 + 2), 0, Inf)
+# TODO
 
