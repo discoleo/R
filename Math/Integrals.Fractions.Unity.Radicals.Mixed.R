@@ -105,12 +105,8 @@ integrate(\(x) sqrt(x * (1 - x)) / (x^2 + 1), 1/2, 1)
 
 ### I( x^3 * (x^3 + 1)^(2/3) / (x^6 + 1) )
 integrate(\(x) x^3 * (x^3 + 1)^(2/3) / (x^6 + 1), 0, 1)
-integrate(\(x) 1/3 * (x*(x+1)^2)^(1/3) / (x^2 + 1), 0, 1)
-# rev of: y = x^3 / (1-x^3) => x^3 = 1 - 1/(y+1);
-integrate(\(x) x^3 / (1 - x^3)^3 / ((x^3/(1-x^3))^2 + 1), 0, 2^(-1/3))
-integrate(\(x) x^3 / (1 - x^3) / (2*x^6 - 2*x^3 + 1), 0, 2^(-1/3))
 integrate(\(x) x^4 / (x^3 - 1) / (x^6 - 2*x^3 + 2), 2^(1/3), Inf)
-# TODO: Fraction decomposition;
+# Fraction decomposition: see below;
 
 
 ### I( x^3 * (1 - x^3)^(2/3) / (x^6 + 1) )
@@ -121,4 +117,42 @@ integrate(\(x) x^3 / (1 + x^3)^3 / ((x^3/(1+x^3))^2 + 1), 0, Inf)
 integrate(\(x) x^3 / (1 + x^3) / (2*x^6 + 2*x^3 + 1), 0, Inf)
 integrate(\(x) x^4 / (x^3 + 1) / (x^6 + 2*x^3 + 2), 0, Inf)
 # TODO
+
+# Derivation:
+
+###
+integrate(\(x) x^3 * (x^3 + 1)^(2/3) / (x^6 + 1), 0, 1)
+integrate(\(x) 1/3 * (x*(x+1)^2)^(1/3) / (x^2 + 1), 0, 1)
+# rev of: y = x^3 / (1-x^3) => x^3 = 1 - 1/(y+1);
+integrate(\(x) x^3 / (1 - x^3)^3 / ((x^3/(1-x^3))^2 + 1), 0, 2^(-1/3))
+integrate(\(x) x^3 / (1 - x^3) / (2*x^6 - 2*x^3 + 1), 0, 2^(-1/3))
+integrate(\(x) x^4 / (x^3 - 1) / (x^6 - 2*x^3 + 2), 2^(1/3), Inf)
+# Fraction decomposition;
+integrate(\(x) 1/2 * x^4 / (x^3 - 1) *
+	Im(1/(x^3 - (1+1i)) - 1/(x^3 - (1-1i))), 2^(1/3), Inf)
+integrate(\(x) 1/2 * x^4 * Re(2/(x^3 - 1) +
+	- 1/(x^3 - (1+1i)) - 1/(x^3 - (1-1i))), 2^(1/3), Inf)
+integrate(\(x) x^4/(x^3 - 1) - 1/2 * x^4 *
+	Re(1/(x^3 - (1+1i)) + 1/(x^3 - (1-1i))), 2^(1/3), Inf)
+integrate(\(x) x/(x^3 - 1) - 1/2 * x *
+	Re((1+1i)/(x^3 - (1+1i)) + (1-1i)/(x^3 - (1-1i))), 2^(1/3), Inf)
+bp = (1+1i)^(1/3); bn = (1-1i)^(1/3);
+integrate(\(x) 1/3 * (1/(x-1) - (x-1)/(x^2 + x + 1)) +
+	- 1/6 * Re((1+1i)/bp / (x-bp) + (1-1i)/bn / (x-bn) +
+	- (1+1i)/bp * (x-bp) / (x^2 + bp*x + bp^2) +
+	- (1-1i)/bn * (x-bn) / (x^2 + bn*x + bn^2) ), 2^(1/3), Inf)
+# TODO
+
+
+x = sqrt(7)
+x / (x^3 - 1)
+x * (1/(x-1) - (x+2)/(x^2 + x + 1)) / 3
+(1/(x-1) - (x-1)/(x^2 + x + 1)) / 3
+
+
+x = sqrt(7); b = (sqrt(2) + 1i)^(1/3);
+x / (x^3 - b^3)
+x * (1/(x-b) - (x + 2*b)/(x^2 + b*x + b^2)) / (3*b^2)
+(1/(x-b) - (x-b)/(x^2 + b*x + b^2)) / (3*b)
+# Note: x = b*y is an alternative;
 
