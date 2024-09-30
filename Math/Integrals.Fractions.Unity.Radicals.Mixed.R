@@ -177,8 +177,71 @@ beta(1/4, 3/4) / 4 * (-1 + 2^(3/8) * sin(5*pi/16))
 
 ###############
 
+### I( x^6 * (1 - x^6)^(5/6) / (x^12 + 1) )
+integrate(\(x) x^6 * (1 - x^6)^(5/6) / (x^12 + 1), 0, 1)
+integrate(\(x) x^10 / ((x^6 + 1)*(x^12 + 2*x^6 + 2)), 0, Inf)
+beta(1/6, 5/6) / 6 * (-1 + 2^(5/12) * sin(7*pi/24))
+
+
+###############
+
 ### I( x^5 * (1 - x^5)^(4/5) / (x^10 + 1) )
 integrate(\(x) x^5 * (1 - x^5)^(4/5) / (x^10 + 1), 0, 1)
 integrate(\(x) x^8 / (x^5 + 1) / (x^10 + 2*x^5 + 2), 0, Inf)
 beta(1/5, 4/5) / 5 * (-1 + 2^(2/5) * cos(2*pi/10))
+
+
+### I( x^5 * (1 + x^5)^(4/5) / (x^10 + 1) )
+integrate(\(x) x^5 * (1 + x^5)^(4/5) / (x^10 + 1), 0, 1)
+integrate(\(x) x^8 / (x^5 - 1) / (x^10 - 2*x^5 + 2), 2^(1/5), Inf)
+# TODO
+
+# Derivation:
+integrate(\(x) x^8 / (x^5 - 1) / (x^10 - 2*x^5 + 2), 2^(1/5), Inf)
+integrate(\(x) 1/2 * x^3 * Re(2/(x^5 - 1) +
+	- (1+1i)/(x^5 - (1+1i)) - (1-1i)/(x^5 - (1-1i))), 2^(1/5), Inf)
+#
+cs = cos(c(2,4)*pi/5); sn = sin(c(2,4)*pi/5);
+integrate(\(x) 1/5 /(1-x) - 2/5 * (cs[1]*x-1) / (x^2 - 2*cs[1]*x + 1) +
+	- 2/5*(cs[2]*x-1) / (x^2 - 2*cs[2]*x + 1), 0, 2^(-1/5))$value +
+integrate(\(x) - 1/2 * x^3 * Re(
+	(1+1i)/(x^5 - (1+1i)) + (1-1i)/(x^5 - (1-1i))), 2^(1/5), Inf)$value;
+
+# Sub-integral 1:
+# Note: atan(cs/sn) does NOT transform as nicely;
+integrate(\(x) 1/(1 - x^5), 0, 2^(-1/5))
+- log(1 - 2^(-1/5))/5 +
+	- 1/5 * sum(cs*log(2^(-2/5) - 2^(4/5)*cs + 1) +
+	- 2*sn * (atan((2^(-1/5) - cs)/sn) + pi/2*c(1,-1) - atan(sn/cs)));
+- log(1 - 2^(-1/5))/5 +
+	- 1/5 * sum(cs*log(2^(-2/5) - 2^(4/5)*cs + 1) +
+	- 2*sn * (atan((2^(-1/5) - cs)/sn) + pi/2*c(1,-3)/5));
+
+
+# Fraction decomposition:
+x = 3^(1/7)
+x^8 / (x^5 - 1) / (x^10 - 2*x^5 + 2)
+x^8 / (x^5 - 1) * (1/(x^5 - (1+1i)) - 1/(x^5 - (1-1i))) / 2i
+1/2 * x^3 * (2/(x^5 - 1) - (1+1i)/(x^5 - (1+1i)) - (1-1i)/(x^5 - (1-1i)))
+
+
+cs = cos(c(2,4)*pi/5); sn = sin(c(2,4)*pi/5);
+1/(x^5 - 1)
+(1/(x-1) + sum((2*cs*x-2)/(x^2 - 2*cs*x + 1))) / 5
+#
+x^3/(x^5 - 1)
+(x^2 + x + 1 + 1/(x-1) + 2 * x^3 * sum((cs*x - 1)/(x^2 - 2*cs*x + 1))) / 5;
+(x^2 + x + 1 + 1/(x-1) + 2 * sum(cs*x^2 - x + 2*cs^2*x - 3*cs + 4*cs^3 +
+	+ (x - 8*cs^2*x + 8*cs^4*x + 3*cs - 4*cs^3)/(x^2 - 2*cs*x + 1))) / 5;
+(1/(x-1) + 2 * sum(
+	+ (cs*x + 3*cs - 4*cs^3)/(x^2 - 2*cs*x + 1))) / 5;
+
+# source("Polynomials.Helper.R")
+
+p1 = as.pm("cs*x^4 - x^3")
+p2 = as.pm("x^2 - 2*cs*x + 1")
+tmp = div.pm(p1, p2, by = "x")
+print.pm(tmp$Rez, lead="x")
+print.pm(tmp$Rem, lead="x")
+
 
