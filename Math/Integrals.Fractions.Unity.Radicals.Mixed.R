@@ -194,7 +194,7 @@ beta(1/5, 4/5) / 5 * (-1 + 2^(2/5) * cos(2*pi/10))
 ### I( x^5 * (1 + x^5)^(4/5) / (x^10 + 1) )
 integrate(\(x) x^5 * (1 + x^5)^(4/5) / (x^10 + 1), 0, 1)
 integrate(\(x) x^8 / (x^5 - 1) / (x^10 - 2*x^5 + 2), 2^(1/5), Inf)
-# TODO
+# see Solution in the Derivation section;
 
 # Derivation:
 integrate(\(x) x^8 / (x^5 - 1) / (x^10 - 2*x^5 + 2), 2^(1/5), Inf)
@@ -206,6 +206,17 @@ integrate(\(x) 1/5 /(1-x) - 2/5 * (cs[1]*x-1) / (x^2 - 2*cs[1]*x + 1) +
 	- 2/5*(cs[2]*x-1) / (x^2 - 2*cs[2]*x + 1), 0, 2^(-1/5))$value +
 integrate(\(x) - 1/2 * x^3 * Re(
 	(1+1i)/(x^5 - (1+1i)) + (1-1i)/(x^5 - (1-1i))), 2^(1/5), Inf)$value;
+# Solution:
+x1 = 2^(-1/5) * (1+1i)^(1/5); x2 = 2^(-1/5) * (1-1i)^(1/5);
+- log(1 - 2^(-1/5))/5 +
+	- 1/5 * sum(cs*log(2^(-2/5) - 2^(4/5)*cs + 1) +
+	- 2*sn * (atan((2^(-1/5) - cs)/sn) + pi/2*c(1,-3)/5)) +
+	+ 1/2 * Re(log(1 - x1) * (1+1i)^(4/5)/5 +
+		+ (1+1i)^(4/5)/5 * sum(cs*log(x1^2 - 2*cs*x1 + 1) +
+		- 2*sn * (atan((x1 - cs)/sn) + atan(cs/sn))) +
+		+ log(1 - x2) * (1-1i)^(4/5)/5 +
+		+ (1-1i)^(4/5)/5 * sum(cs*log(x2^2 - 2*cs*x2 + 1) +
+		- 2*sn * (atan((x2 - cs)/sn) + atan(cs/sn))));
 
 # Sub-integral 1:
 # Note: atan(cs/sn) does NOT transform as nicely;
@@ -216,6 +227,18 @@ integrate(\(x) 1/(1 - x^5), 0, 2^(-1/5))
 - log(1 - 2^(-1/5))/5 +
 	- 1/5 * sum(cs*log(2^(-2/5) - 2^(4/5)*cs + 1) +
 	- 2*sn * (atan((2^(-1/5) - cs)/sn) + pi/2*c(1,-3)/5));
+
+#
+integrate(\(x) x^3 * Re((1+1i)/(x^5 - (1+1i))), 2^(1/5), Inf)
+# (1+1i)^(4/5) * x^3 / (x^5 - 1) on: [2^(1/5), Inf] / (1+1i)^(1/5);
+# (1+1i)^(4/5) / (1 - x^5) on: [0, 2^(-1/5)] * (1+1i)^(1/5);
+Re(pracma::line_integral(
+	\(x) (1+1i)^(4/5)/(1 - x^5), c(0, 2^(-1/5)) * (1+1i)^(1/5)) )
+x = 2^(-1/5) * (1+1i)^(1/5);
+cs = cos(c(2,4)*pi/5); sn = sin(c(2,4)*pi/5);
+- Re(log(1 - x) * (1+1i)^(4/5)/5 +
+	+ (1+1i)^(4/5)/5 * sum(cs*log(x^2 - 2*cs*x + 1) +
+	- 2*sn * (atan((x - cs)/sn) + atan(cs/sn))) );
 
 
 # Fraction decomposition:
