@@ -268,3 +268,16 @@ print.pm(tmp$Rez, lead="x")
 print.pm(tmp$Rem, lead="x")
 
 
+####################
+####################
+
+### Other
+
+### I( x^5 * (1 - x^5)^(4/5) / (x^15 + 1) )
+integrate(\(x) x^5 * (1 - x^5)^(4/5) / (x^15 + 1), 0, 1)
+integrate(\(x) 1/5 * (x * (1 - x)^4)^(1/5) / (x^3 + 1), 0, 1)
+integrate(\(x) x^5 / (1+x^5)^3 / ((x^5/(1+x^5))^3 + 1), 0, Inf)
+integrate(\(x) x^5 / ((x^5 + 1)^3 + x^15), 0, Inf)
+integrate(\(x) x^8 / ((x^5 + 1)^3 + 1), 0, Inf)
+# TODO
+
