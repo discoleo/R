@@ -225,7 +225,7 @@ x1 = 2^(-1/5) * (1+1i)^(1/5); x2 = 2^(-1/5) * (1-1i)^(1/5);
 integrate(\(x) 1/(1 - x^5), 0, 2^(-1/5))
 - log(1 - 2^(-1/5))/5 +
 	- 1/5 * sum(cs*log(2^(-2/5) - 2^(4/5)*cs + 1) +
-	- 2*sn * (atan((2^(-1/5) - cs)/sn) + pi/2*c(1,-1) - atan(sn/cs)));
+	- 2*sn * (atan((2^(-1/5) - cs)/sn) + atan(cs/sn)));
 - log(1 - 2^(-1/5))/5 +
 	- 1/5 * sum(cs*log(2^(-2/5) - 2^(4/5)*cs + 1) +
 	- 2*sn * (atan((2^(-1/5) - cs)/sn) + pi/2*c(1,-3)/5));
@@ -281,6 +281,27 @@ integrate(\(x) 1/2 * x^(n-2) * Re(2/(x^n - 1) +
 # Solution:
 id = seq(2, n-1, by=2); cs = cos(id*pi/n); sn = sin(id*pi/n);
 x = 2^(-1/n); x1 = x * (1+1i)^(1/n); x2 = x * (1-1i)^(1/n);
+- log(1 - x)/n +
+	- 1/n * sum(cs*log(x^2 - 2*cs*x + 1) +
+	- 2*sn * (atan((x - cs)/sn) + atan(cs/sn))) +
+	+ 1/2 * Re(log(1 - x1) * (1+1i)^(1-1/n)/n +
+		+ (1+1i)^(1-1/n)/n * sum(cs*log(x1^2 - 2*cs*x1 + 1) +
+		- 2*sn * (atan((x1 - cs)/sn) + atan(cs/sn))) +
+		+ log(1 - x2) * (1-1i)^(1-1/n)/n +
+		+ (1-1i)^(1-1/n)/n * sum(cs*log(x2^2 - 2*cs*x2 + 1) +
+		- 2*sn * (atan((x2 - cs)/sn) + atan(cs/sn))));
+
+
+### Gen: Arbitrary Interval
+lim = 4/5;
+n = 7; # ODD Integer
+ylim = (1 - 1/(lim^n + 1))^(-1/n);
+integrate(\(x) x^n * (1 + x^n)^(1 - 1/n) / (x^(2*n) + 1), 0, lim)
+integrate(\(x) 1/2 * x^(n-2) * Re(2/(x^n - 1) +
+	- (1+1i)/(x^n - (1+1i)) - (1-1i)/(x^n - (1-1i))), ylim, Inf)
+# Solution:
+id = seq(2, n-1, by=2); cs = cos(id*pi/n); sn = sin(id*pi/n);
+x = 1 / ylim; x1 = x * (1+1i)^(1/n); x2 = x * (1-1i)^(1/n);
 - log(1 - x)/n +
 	- 1/n * sum(cs*log(x^2 - 2*cs*x + 1) +
 	- 2*sn * (atan((x - cs)/sn) + atan(cs/sn))) +
