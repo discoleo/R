@@ -7,7 +7,7 @@
 ##   Polynomial Fractions:
 ##   Mixed Radicals
 ##
-## draft v.0.1c
+## draft v.0.1d
 
 
 ### Mixed Radicals
@@ -318,9 +318,20 @@ x = 1 / ylim; x1 = x * (1+1i)^(1/n); x2 = x * (1-1i)^(1/n);
 
 ### Other
 
+### I( x^3 * (1 - x^3)^(2/3) / (x^9 + 1) )
+integrate(\(x) x^3 * (1 - x^3)^(2/3) / (x^9 + 1), 0, 1)
+beta(1/3, 2/3) / 9 * (- 2^(2/3) + 2*cos(pi/9));
+# see below for technique;
+
 ### I( x^5 * (1 - x^5)^(4/5) / (x^15 + 1) )
 integrate(\(x) x^5 * (1 - x^5)^(4/5) / (x^15 + 1), 0, 1)
-beta(1/5,4/5) / 15 * (- 2^(4/5) + 2*cos(pi/15));
+beta(1/5, 4/5) / 15 * (- 2^(4/5) + 2*cos(pi/15));
+
+### Gen: I( x^n * (1 - x^n)^(1-1/n) / (x^(3*n) + 1) )
+n = sqrt(5)
+integrate(\(x) x^n * (1 - x^n)^(1-1/n) / (x^(3*n) + 1), 0, 1)
+beta(1/n, 1-1/n) / (3*n) * (- 2^(1-1/n) + 2*cos(pi/(3*n)));
+
 
 # Derivation:
 integrate(\(x) 1/5 * (x * (1 - x)^4)^(1/5) / (x^3 + 1), 0, 1)
