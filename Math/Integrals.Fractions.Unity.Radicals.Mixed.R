@@ -335,7 +335,14 @@ beta(1/n, 1-1/n) / (3*n) * (- 2^(1-1/n) + 2*cos(pi/(3*n)));
 
 ### I( x^5 * (1 + x^5)^(4/5) / (x^15 + 1) )
 integrate(\(x) x^5 * (1 + x^5)^(4/5) / (x^15 + 1), 0, 1)
-# TODO
+# Solution:
+id = c(2,4); cs5 = cos(id*pi/5); sn5 = sin(id*pi/5);
+m  = cos(2*pi/3) + c(1i, -1i)*sin(2*pi/3); x = 2^(-1/5) * (1 - m)^(1/5);
+1i/(10*sn) * (diff((1 - m)^(-1/5) * log(1-x)) +
+	- (1 - m[1])^(-1/5) * sum(cs5*log(x[1]^2 - 2*cs5*x[1] + 1) +
+		- 2*sn5 * (atan((x[1] - cs5)/sn5) + atan(cs5/sn5))) +
+	+ (1 - m[2])^(-1/5) * sum(cs5*log(x[2]^2 - 2*cs5*x[2] + 1) +
+		- 2*sn5 * (atan((x[2] - cs5)/sn5) + atan(cs5/sn5))) );
 
 
 # Derivation: Variant (1 - x^5)
@@ -371,7 +378,20 @@ integrate(\(x) -1/(2*sn) * x^3 *
 	Im(1/(x^5 - 1 + m[1]) - 1/(x^5 - 1 + m[2])), 2^(1/5), Inf)
 pracma::line_integral(\(x) - 1i/(2*sn) * (1 - m[1])^(-1/5) /(x^5 - 1), c(0, lz[1])) +
 pracma::line_integral(\(x) 1i/(2*sn) * (1 - m[2])^(-1/5) /(x^5 - 1), c(0, lz[2]))
-# TODO
+#
+x = lz;
+1i/(10*sn) * (diff((1 - m)^(-1/5) * log(1-x)) +
+	- (1 - m[1])^(-1/5) * sum(cs5*log(x[1]^2 - 2*cs5*x[1] + 1) +
+		- 2*sn5 * (atan((x[1] - cs5)/sn5) + atan(cs5/sn5))) +
+	+ (1 - m[2])^(-1/5) * sum(cs5*log(x[2]^2 - 2*cs5*x[2] + 1) +
+		- 2*sn5 * (atan((x[2] - cs5)/sn5) + atan(cs5/sn5))) );
+# Variant:
+1i/(10*sn) * (diff((1 - m)^(-1/5) * log(1-x)) +
+	+ 1i * 2^(9/5) * sin(pi/30) / sin(pi/3)^(1/5) * sum(sn5 * atan(cs5/sn5)) +
+	- (1 - m[1])^(-1/5) * sum(cs5*log(x[1]^2 - 2*cs5*x[1] + 1) +
+		- 2*sn5 * atan((x[1] - cs5)/sn5)) +
+	+ (1 - m[2])^(-1/5) * sum(cs5*log(x[2]^2 - 2*cs5*x[2] + 1) +
+		- 2*sn5 * atan((x[2] - cs5)/sn5)) );
 
 
 # Fraction Decomposition:
