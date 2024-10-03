@@ -450,3 +450,67 @@ x^8 / ((x^5 + 1)^3 + 1)
 	+ m[2]*(1+m[2])/(x^5 + 1 + m[2]));
 
 
+#################
+#################
+
+### Simple
+
+### I( x^5 * (1 + x^5)^(4/5) / (x^5 + 1) )
+integrate(\(x) x^5 * (1 + x^5)^(4/5) / (x^5 + 1), 0, 1)
+# Solution:
+x = 2^(-1/5); id = c(2,4); cs = cos(id*pi/5); sn = sin(id*pi/5);
+1/5 * x / (1 - x^5) + 1/25*(log(1-x) +
+	+ sum(cs*log(x^2 - 2*cs*x + 1) +
+	- 2*sn * (atan((x - cs)/sn) + atan(cs/sn))));
+# Simplified formula for [0,1] is available in file:
+# Integrals.Fractions.Unity.Radicals.R;
+
+
+### Arbitrary Interval:
+lim = 4/5
+integrate(\(x) x^5 * (1 + x^5)^(4/5) / (x^5 + 1), 0, lim)
+# Solution:
+x = lim/(lim^5 + 1)^(1/5);
+id = c(2,4); cs = cos(id*pi/5); sn = sin(id*pi/5);
+1/5 * x / (1 - x^5) + 1/25*(log(1-x) +
+	+ sum(cs*log(x^2 - 2*cs*x + 1) +
+	- 2*sn * (atan((x - cs)/sn) + atan(cs/sn))));
+
+### I( 1 / (x^5 + 1)^(1/5) )
+lim = 4/5
+integrate(\(x) 1 / (x^5 + 1)^(1/5), 0, lim)
+x = lim/(lim^5 + 1)^(1/5);
+id = c(2,4); cs = cos(id*pi/5); sn = sin(id*pi/5);
+lim*(1 + lim^5)^(4/5) - x / (1 - x^5) - 1/5*(log(1-x) +
+	+ sum(cs*log(x^2 - 2*cs*x + 1) +
+	- 2*sn * (atan((x - cs)/sn) + atan(cs/sn))));
+
+
+# Derivation: Variant (1 + x^5)
+integrate(\(x) x^5 * (1 + x^5)^(4/5) / (x^5 + 1), 0, 1)
+integrate(\(x) 1/5 * (x * (1 + x)^4)^(1/5) / (x + 1), 0, 1)
+integrate(\(x) x^5 / (1-x^5)^3 / ((x^5/(1-x^5)) + 1), 0, 2^(-1/5))
+integrate(\(x) x^5 / (1 - x^5)^2 / ((1 - x^5) + x^5), 0, 2^(-1/5))
+integrate(\(x) 1 / (1 - x^5)^2 - 1 / (1 - x^5), 0, 2^(-1/5))
+x = 2^(-1/5); id = c(2,4); cs = cos(id*pi/5); sn = sin(id*pi/5);
+1/5 * x / (1 - x^5) + 1/25*(log(1-x) +
+	+ sum(cs*log(x^2 - 2*cs*x + 1) +
+	- 2*sn * (atan((x - cs)/sn) + atan(cs/sn))));
+
+
+x = 2^(-1/5);
+integrate(\(x) 1 / (1 - x^5), 0, x)
+x / (1 - x^5) - integrate(\(x) 5*x^5 / (1 - x^5)^2, 0, x)$value
+x / (1 - x^5) - integrate(\(x) 5/(1 - x^5)^2 - 5/ (1 - x^5), 0, x)$value
+# =>
+integrate(\(x) 1/(1 - x^5)^2, 0, x)
+1/5 * x / (1 - x^5) + integrate(\(x) 4/5 / (1 - x^5), 0, x)$value
+
+#
+x = 2^(-1/5);
+integrate(\(x) (1 + x^5)^(4/5), 0, x)
+x*(1 + x^5)^(4/5) - integrate(\(x) 4*x^5 / (1 + x^5)^(1/5), 0, x)$value
+# =>
+integrate(\(x) (1 + x^5)^(4/5), 0, x)
+1/5 * x*(1 + x^5)^(4/5) + integrate(\(x) 4/5 / (1 + x^5)^(1/5), 0, x)$value
+
