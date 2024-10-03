@@ -333,14 +333,20 @@ integrate(\(x) x^n * (1 - x^n)^(1-1/n) / (x^(3*n) + 1), 0, 1)
 beta(1/n, 1-1/n) / (3*n) * (- 2^(1-1/n) + 2*cos(pi/(3*n)));
 
 
-# Derivation:
+### I( x^5 * (1 + x^5)^(4/5) / (x^15 + 1) )
+integrate(\(x) x^5 * (1 + x^5)^(4/5) / (x^15 + 1), 0, 1)
+# TODO
+
+
+# Derivation: Variant (1 - x^5)
+integrate(\(x) x^5 * (1 - x^5)^(4/5) / (x^15 + 1), 0, 1)
 integrate(\(x) 1/5 * (x * (1 - x)^4)^(1/5) / (x^3 + 1), 0, 1)
 integrate(\(x) x^5 / (1+x^5)^3 / ((x^5/(1+x^5))^3 + 1), 0, Inf)
 integrate(\(x) x^5 / ((x^5 + 1)^3 + x^15), 0, Inf)
 integrate(\(x) x^8 / ((x^5 + 1)^3 + 1), 0, Inf)
 #
 cs = cos(2*pi/3); sn = sin(2*pi/3);
-m  = cs + c(-1i, 1i)*sn;
+m  = cs + c(1i, -1i)*sn;
 integrate(\(x) -2/3 * x^3 / (x^5 + 2) +
 	+ 1/3 * x^3 * Re(1/(x^5 + 1 + m[1]) +
 	+ 1/(x^5 + 1 + m[2])), 0, Inf)
@@ -351,6 +357,23 @@ beta(1/5,4/5) / 15 * (- 2^(4/5) + (1+m[1])^(-1/5) + (1+m[2])^(-1/5));
 beta(1/5,4/5) / 15 * (- 2^(4/5) + 2*cos(pi/15));
 
 
+# Derivation: Variant (1 + x^5)
+integrate(\(x) x^5 * (1 + x^5)^(4/5) / (x^15 + 1), 0, 1)
+integrate(\(x) 1/5 * (x * (1 + x)^4)^(1/5) / (x^3 + 1), 0, 1)
+integrate(\(x) x^5 / (1-x^5)^3 / ((x^5/(1-x^5))^3 + 1), 0, 2^(-1/5))
+integrate(\(x) x^5 / ((1 - x^5)^3 + x^15), 0, 2^(-1/5))
+integrate(\(x) x^8 / ((x^5 - 1)^3 + 1), 2^(1/5), Inf)
+#
+cs = cos(2*pi/3); sn = sin(2*pi/3);
+id = c(2,4); cs5 = cos(id*pi/5); sn5 = sin(id*pi/5);
+m  = cs + c(1i, -1i)*sn; lim = 2^(-1/5); lz = lim * (1 - m)^(1/5);
+integrate(\(x) -1/(2*sn) * x^3 *
+	Im(1/(x^5 - 1 + m[1]) - 1/(x^5 - 1 + m[2])), 2^(1/5), Inf)
+pracma::line_integral(\(x) - 1i/(2*sn) * (1 - m[1])^(-1/5) /(x^5 - 1), c(0, lz[1])) +
+pracma::line_integral(\(x) 1i/(2*sn) * (1 - m[2])^(-1/5) /(x^5 - 1), c(0, lz[2]))
+# TODO
+
+
 # Fraction Decomposition:
 x = 1/5^(1/7)
 cs = cos(2*pi/3); sn = sin(2*pi/3);
@@ -359,6 +382,12 @@ m  = cs + c(-1i, 1i)*sn;
 1/(x^5 + 2) * (1/(x^5 + 1 + m[1]) - 1/(x^5 + 1 + m[2])) / (2i*sn)
 diff((1/(x^5 + 2) - 1/(x^5 + 1 + m)) / (2i*sn*(1-m)))
 sum(-1/3 * m * (1/(x^5 + 2) - 1/(x^5 + 1 + m)))
+
+# Variant: (x^5 - 1)
+1 / ((x^5 - 1)^3 + 1)
+1/x^5 * (1/(x^5 - 1 + m[1]) - 1/(x^5 - 1 + m[2])) / (2i*sn)
+diff((1/x^5 - 1/(x^5 - 1 + m)) / (2i*sn*(1-m)))
+sum(-1/3 * m * (1/x^5 - 1/(x^5 - 1 + m))) # not used;
 
 #
 x^8 / ((x^5 + 1)^3 + 1)
