@@ -7,7 +7,7 @@
 ##   Polynomial Fractions:
 ##   Mixed Radicals
 ##
-## draft v.0.1g
+## draft v.0.1h
 
 
 ### Mixed Radicals
@@ -516,7 +516,7 @@ lim = 4/5; # Arbitrary Interval: can be > 1;
 integrate(\(x) 1 / (x^6 + 1)^(1/6), 0, lim)
 x  = lim / (lim^6 + 1)^(1/6);
 id = c(2,4); cs = cos(id*pi/6); sn = sin(id*pi/6);
-lim*(1 + lim^6)^(1-1/6) - x / (1 - x^6) - 1/6*(log((1-x)/(1+x)) +
+- 1/6*(log((1-x)/(1+x)) +
 	+ sum(cs*log(x^2 - 2*cs*x + 1) +
 	- 2*sn * (atan((x - cs)/sn) + atan(cs/sn))));
 
@@ -529,10 +529,22 @@ lim = 4/5; # Arbitrary Interval: can be > 1;
 integrate(\(x) 1 / (x^n + 1)^(1/n), 0, lim)
 x  = lim / (lim^n + 1)^(1/n);
 id = seq(2, n-1, by=2); cs = cos(id*pi/n); sn = sin(id*pi/n);
-lim*(1 + lim^n)^(1-1/n) - x / (1 - x^n) - 1/n*(log(1-x) +
+- 1/n*(log(1-x) +
 	+ sum(cs*log(x^2 - 2*cs*x + 1) +
 	- 2*sn * (atan((x - cs)/sn) + atan(cs/sn))));
 
+### I( 1 / (x^n + 1)^(1/n) )
+n = 8; # EVEN Integer
+lim = 6/7; # Arbitrary Interval: can be > 1;
+integrate(\(x) 1 / (x^n + 1)^(1/n), 0, lim)
+x  = lim / (lim^n + 1)^(1/n);
+id = seq(2, n-2, by=2); cs = cos(id*pi/n); sn = sin(id*pi/n);
+- 1/n*(log((1-x)/(1+x)) +
+	+ sum(cs*log(x^2 - 2*cs*x + 1) +
+	- 2*sn * (atan((x - cs)/sn) + atan(cs/sn))));
+
+# Note:
+lim*(1 + lim^n)^(1-1/n) - x / (1 - x^n) # == 0!
 
 # Derivation: Variant (1 + x^5)
 integrate(\(x) x^5 * (1 + x^5)^(4/5) / (x^5 + 1), 0, 1)
@@ -571,4 +583,10 @@ x*(1 + x^5)^(4/5) - integrate(\(x) 4*x^5 / (1 + x^5)^(1/5), 0, x)$value
 # =>
 integrate(\(x) (1 + x^5)^(4/5), 0, x)
 1/5 * x*(1 + x^5)^(4/5) + integrate(\(x) 4/5 / (1 + x^5)^(1/5), 0, x)$value
+
+
+#
+n = 6; lim = 4/5;
+x = lim / (lim^n + 1)^(1/n);
+lim*(1 + lim^n)^(1-1/n) - x / (1 - x^n) # == 0!
 
