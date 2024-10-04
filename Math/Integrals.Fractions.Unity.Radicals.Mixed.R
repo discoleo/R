@@ -7,7 +7,7 @@
 ##   Polynomial Fractions:
 ##   Mixed Radicals
 ##
-## draft v.0.1f
+## draft v.0.1g
 
 
 ### Mixed Radicals
@@ -457,6 +457,8 @@ x^8 / ((x^5 + 1)^3 + 1)
 
 ### Simple
 
+### Pow = 5
+
 ### I( x^5 * (1 + x^5)^(4/5) / (x^5 + 1) )
 integrate(\(x) x^5 * (1 + x^5)^(4/5) / (x^5 + 1), 0, 1)
 # Solution:
@@ -489,6 +491,8 @@ lim*(1 + lim^5)^(4/5) - x / (1 - x^5) - 1/5*(log(1-x) +
 	- 2*sn * (atan((x - cs)/sn) + atan(cs/sn))));
 
 
+### Pow 6
+
 ### I( x^6 * (1 + x^6)^(5/6) / (x^6 + 1) )
 integrate(\(x) x^6 * (1 + x^6)^(5/6) / (x^6 + 1), 0, 1)
 # Solution:
@@ -504,6 +508,15 @@ integrate(\(x) x^6 * (1 + x^6)^(5/6) / (x^6 + 1), 0, lim)
 x  = lim / (lim^6 + 1)^(1/6);
 id = c(2,4); cs = cos(id*pi/6); sn = sin(id*pi/6);
 1/6 * x / (1 - x^6) + 1/36*(log((1-x)/(1+x)) +
+	+ sum(cs*log(x^2 - 2*cs*x + 1) +
+	- 2*sn * (atan((x - cs)/sn) + atan(cs/sn))));
+
+### I( 1 / (x^6 + 1)^(1/6) )
+lim = 4/5; # Arbitrary Interval: can be > 1;
+integrate(\(x) 1 / (x^6 + 1)^(1/6), 0, lim)
+x  = lim / (lim^6 + 1)^(1/6);
+id = c(2,4); cs = cos(id*pi/6); sn = sin(id*pi/6);
+lim*(1 + lim^6)^(1-1/6) - x / (1 - x^6) - 1/6*(log((1-x)/(1+x)) +
 	+ sum(cs*log(x^2 - 2*cs*x + 1) +
 	- 2*sn * (atan((x - cs)/sn) + atan(cs/sn))));
 
