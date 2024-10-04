@@ -7,7 +7,7 @@
 ##   Polynomial Fractions:
 ##   Mixed Radicals
 ##
-## draft v.0.1h
+## draft v.0.1i
 
 
 ### Mixed Radicals
@@ -19,6 +19,7 @@
 # I( x^3 * (1 - x^3)^(2/3) / (x^6 + 1) )
 # I( x^4 * (1 - x^4)^(3/4) / (x^8 + 1) )
 # I( x^5 * (1 - x^5)^(4/5) / (x^10 + 1) )
+# I( x^6 * (1 - x^5)^(3/5) / (x^5 + 1) )
 ### Pow: 3*n
 # I( x^3 * (1 + x^3)^(2/3) / (x^9 + 1) )
 # I( x^5 * (1 + x^5)^(4/5) / (x^15 + 1) )
@@ -567,7 +568,7 @@ x = 2^(-1/6); id = c(2,4); cs = cos(id*pi/6); sn = sin(id*pi/6);
 	+ sum(cs*log(x^2 - 2*cs*x + 1) +
 	- 2*sn * (atan((x - cs)/sn) + atan(cs/sn))));
 
-#
+# Reduction: Pow = 2
 x = 2^(-1/5);
 integrate(\(x) 1 / (1 - x^5), 0, x)
 x / (1 - x^5) - integrate(\(x) 5*x^5 / (1 - x^5)^2, 0, x)$value
@@ -575,6 +576,11 @@ x / (1 - x^5) - integrate(\(x) 5/(1 - x^5)^2 - 5/ (1 - x^5), 0, x)$value
 # =>
 integrate(\(x) 1/(1 - x^5)^2, 0, x)
 1/5 * x / (1 - x^5) + integrate(\(x) 4/5 / (1 - x^5), 0, x)$value
+
+# Reduction: Pow = 2
+x = 2^(-1/5);
+integrate(\(x) 1/(1 + x^5)^2, 0, x)
+1/5 * x / (1 + x^5) + integrate(\(x) 4/5 / (1 + x^5), 0, x)$value
 
 #
 x = 2^(-1/5);
@@ -595,11 +601,24 @@ lim*(1 + lim^n)^(1-1/n) - x / (1 - x^n) # == 0!
 
 ### Simple: Power Set [2, n-2]
 
-###
+### I( x^6 * (1 - x^5)^(3/5) / (x^5 + 1) )
+integrate(\(x) x^6 * (1 - x^5)^(3/5) / (x^5 + 1), 0, 1)
+(2 - 2/5 - 2^(3/5)) * beta(2/5, 3/5) / 5
+
+# Derivation:
 integrate(\(x) x^6 * (1 - x^5)^(3/5) / (x^5 + 1), 0, 1)
 integrate(\(x) 1/5 * (x^2 * (1 - x)^3)^(1/5) / (x + 1), 0, 1)
 integrate(\(x) x^6 / (1+x^5)^3 / ((x^5/(1+x^5)) + 1), 0, Inf)
 integrate(\(x) x^6 / (1+x^5)^2 / (2*x^5 + 1), 0, Inf)
 integrate(\(x) x^7 / (x^5 + 1)^2 / (x^5 + 2), 0, Inf)
-# TODO
+integrate(\(x) x^2 * (2/(x^5 + 1) - 1/(x^5 + 1)^2 - 2/(x^5 + 2)), 0, Inf)
+# Simplification on [0, Inf];
+integrate(\(x) x^2 * ((2 - 2^(3/5))/(x^5 + 1) - 1/(x^5 + 1)^2), 0, Inf)
+integrate(\(x) (2 - 2/5 - 2^(3/5)) * x^2 / (x^5 + 1), 0, Inf)
+(2 - 2/5 - 2^(3/5)) * beta(2/5, 3/5) / 5
+
+# Reduction: Pow = 2
+x = 2^(-1/5);
+integrate(\(x) x^2 / (x^5 + 1)^2, 0, x)
+1/5 * x^3 / (x^5 + 1) + integrate(\(x) 2/5 * x^2 / (x^5 + 1), 0, x)$value
 
