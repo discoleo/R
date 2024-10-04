@@ -7,7 +7,7 @@
 ##   Polynomial Fractions:
 ##   Mixed Radicals
 ##
-## draft v.0.1e
+## draft v.0.1f
 
 
 ### Mixed Radicals
@@ -22,6 +22,8 @@
 ### Pow: 3*n
 # I( x^3 * (1 + x^3)^(2/3) / (x^9 + 1) )
 # I( x^5 * (1 + x^5)^(4/5) / (x^15 + 1) )
+### Simple:
+# I( 1 / (x^n + 1)^(1/n) )
 
 
 ### History
@@ -462,6 +464,7 @@ x = 2^(-1/5); id = c(2,4); cs = cos(id*pi/5); sn = sin(id*pi/5);
 1/5 * x / (1 - x^5) + 1/25*(log(1-x) +
 	+ sum(cs*log(x^2 - 2*cs*x + 1) +
 	- 2*sn * (atan((x - cs)/sn) + atan(cs/sn))));
+
 # Simplified formula for [0,1] is available in file:
 # Integrals.Fractions.Unity.Radicals.R;
 
@@ -477,11 +480,22 @@ id = c(2,4); cs = cos(id*pi/5); sn = sin(id*pi/5);
 	- 2*sn * (atan((x - cs)/sn) + atan(cs/sn))));
 
 ### I( 1 / (x^5 + 1)^(1/5) )
-lim = 4/5
+lim = 4/5; # Arbitrary Interval: can be > 1;
 integrate(\(x) 1 / (x^5 + 1)^(1/5), 0, lim)
-x = lim/(lim^5 + 1)^(1/5);
+x  = lim / (lim^5 + 1)^(1/5);
 id = c(2,4); cs = cos(id*pi/5); sn = sin(id*pi/5);
 lim*(1 + lim^5)^(4/5) - x / (1 - x^5) - 1/5*(log(1-x) +
+	+ sum(cs*log(x^2 - 2*cs*x + 1) +
+	- 2*sn * (atan((x - cs)/sn) + atan(cs/sn))));
+
+
+### I( 1 / (x^n + 1)^(1/n) )
+n = 7; # ODD Integer
+lim = 4/5; # Arbitrary Interval: can be > 1;
+integrate(\(x) 1 / (x^n + 1)^(1/n), 0, lim)
+x  = lim / (lim^n + 1)^(1/n);
+id = seq(2, n-1, by=2); cs = cos(id*pi/n); sn = sin(id*pi/n);
+lim*(1 + lim^n)^(1-1/n) - x / (1 - x^n) - 1/n*(log(1-x) +
 	+ sum(cs*log(x^2 - 2*cs*x + 1) +
 	- 2*sn * (atan((x - cs)/sn) + atan(cs/sn))));
 
