@@ -489,6 +489,27 @@ lim*(1 + lim^5)^(4/5) - x / (1 - x^5) - 1/5*(log(1-x) +
 	- 2*sn * (atan((x - cs)/sn) + atan(cs/sn))));
 
 
+### I( x^6 * (1 + x^6)^(5/6) / (x^6 + 1) )
+integrate(\(x) x^6 * (1 + x^6)^(5/6) / (x^6 + 1), 0, 1)
+# Solution:
+x = 2^(-1/6); id = c(2,4); cs = cos(id*pi/6); sn = sin(id*pi/6);
+1/6 * x / (1 - x^6) + 1/36*(log((1-x)/(1+x)) +
+	+ sum(cs*log(x^2 - 2*cs*x + 1) +
+	- 2*sn * (atan((x - cs)/sn) + atan(cs/sn))));
+
+### I( x^6 * (1 + x^6)^(5/6) / (x^6 + 1) )
+lim = 4/5; # Arbitrary Interval: can be > 1;
+integrate(\(x) x^6 * (1 + x^6)^(5/6) / (x^6 + 1), 0, lim)
+# Solution:
+x  = lim / (lim^6 + 1)^(1/6);
+id = c(2,4); cs = cos(id*pi/6); sn = sin(id*pi/6);
+1/6 * x / (1 - x^6) + 1/36*(log((1-x)/(1+x)) +
+	+ sum(cs*log(x^2 - 2*cs*x + 1) +
+	- 2*sn * (atan((x - cs)/sn) + atan(cs/sn))));
+
+
+### Generalization:
+
 ### I( 1 / (x^n + 1)^(1/n) )
 n = 7; # ODD Integer
 lim = 4/5; # Arbitrary Interval: can be > 1;
@@ -512,6 +533,16 @@ x = 2^(-1/5); id = c(2,4); cs = cos(id*pi/5); sn = sin(id*pi/5);
 	- 2*sn * (atan((x - cs)/sn) + atan(cs/sn))));
 
 
+# Derivation: Variant (1 + x^6)
+integrate(\(x) x^6 * (1 + x^6)^(5/6) / (x^6 + 1), 0, 1)
+integrate(\(x) x^6 / (1 - x^6)^2 / ((1 - x^6) + x^6), 0, 2^(-1/6))
+integrate(\(x) 1 / (1 - x^6)^2 - 1 / (1 - x^6), 0, 2^(-1/6))
+x = 2^(-1/6); id = c(2,4); cs = cos(id*pi/6); sn = sin(id*pi/6);
+1/6 * x / (1 - x^6) + 1/36*(log((1-x)/(1+x)) +
+	+ sum(cs*log(x^2 - 2*cs*x + 1) +
+	- 2*sn * (atan((x - cs)/sn) + atan(cs/sn))));
+
+#
 x = 2^(-1/5);
 integrate(\(x) 1 / (1 - x^5), 0, x)
 x / (1 - x^5) - integrate(\(x) 5*x^5 / (1 - x^5)^2, 0, x)$value
