@@ -590,3 +590,16 @@ n = 6; lim = 4/5;
 x = lim / (lim^n + 1)^(1/n);
 lim*(1 + lim^n)^(1-1/n) - x / (1 - x^n) # == 0!
 
+
+#####################
+
+### Simple: Power Set [2, n-2]
+
+###
+integrate(\(x) x^6 * (1 - x^5)^(3/5) / (x^5 + 1), 0, 1)
+integrate(\(x) 1/5 * (x^2 * (1 - x)^3)^(1/5) / (x + 1), 0, 1)
+integrate(\(x) x^6 / (1+x^5)^3 / ((x^5/(1+x^5)) + 1), 0, Inf)
+integrate(\(x) x^6 / (1+x^5)^2 / (2*x^5 + 1), 0, Inf)
+integrate(\(x) x^7 / (x^5 + 1)^2 / (x^5 + 2), 0, Inf)
+# TODO
+
