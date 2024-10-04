@@ -165,7 +165,34 @@ fresnel(n=n, p=p, k=1)
 1/n * sin(pi*(p+1)/(2*n)) * gamma((p+1)/n)
 
 
-### Log
+### Special Cases:
+
+### I( sin(1/x^2) )
+# Note: computable using n = 2; p = -2;
+# Upper = Inf; # Numerically very problematic!
+integrate(\(x) sin(1/x^2), 0, 1000)
+integrate(\(x) sin(x^2) / x^2, 0, 1000)
+integrate(\(x) sin(x) / x^(3/2), 0, 1000)
+# Classic approach:
+integrate(\(x) 2*cos(x) / sqrt(x), 0, 1000)
+sqrt(2) * gamma(1/2)
+
+# For Classic transformations, see:
+# blackpenredpen: What if we changed a Fresnel's integral?
+# https://www.youtube.com/watch?v=FwwJ1LgJp_w
+
+# library(Rmpfr)
+FUN = \(x) {
+	x = mpfr(x, 240);
+	y = 2*cos(x) / sqrt(x);
+	as.numeric(y);
+}
+integrate(FUN, 0, 1000)$value + integrate(FUN, 1000, 640*pi)$value
+sqrt(2) * gamma(1/2)
+
+
+###########
+### Log ###
 
 ### I( x^p * log(x) * sin(x^n) )
 n = 3
