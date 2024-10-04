@@ -170,12 +170,12 @@ fresnel(n=n, p=p, k=1)
 ### I( sin(1/x^2) )
 # Note: computable using n = 2; p = -2;
 # Upper = Inf; # Numerically very problematic!
-integrate(\(x) sin(1/x^2), 0, 1000)
+integrate(\(x) sin(1/x^2), 0, 100, subdivisions = 4000)
 integrate(\(x) sin(x^2) / x^2, 0, 1000)
-integrate(\(x) sin(x) / x^(3/2), 0, 1000)
+integrate(\(x) 1/2 * sin(x) / x^(3/2), 0, 1000)
 # Classic approach:
-integrate(\(x) 2*cos(x) / sqrt(x), 0, 1000)
-sqrt(2) * gamma(1/2)
+integrate(\(x) cos(x) / sqrt(x), 0, 1000)
+gamma(1/2) / sqrt(2)
 
 # For Classic transformations, see:
 # blackpenredpen: What if we changed a Fresnel's integral?
@@ -184,11 +184,11 @@ sqrt(2) * gamma(1/2)
 # library(Rmpfr)
 FUN = \(x) {
 	x = mpfr(x, 240);
-	y = 2*cos(x) / sqrt(x);
+	y = cos(x) / sqrt(x);
 	as.numeric(y);
 }
 integrate(FUN, 0, 1000)$value + integrate(FUN, 1000, 640*pi)$value
-sqrt(2) * gamma(1/2)
+gamma(1/2) / sqrt(2)
 
 
 ###########
