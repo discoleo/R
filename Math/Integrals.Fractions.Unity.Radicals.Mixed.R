@@ -710,3 +710,48 @@ x = 2^(-1/5);
 integrate(\(x) x / (x^5 + 1)^2, 0, x)
 1/5 * x^2 / (x^5 + 1) + integrate(\(x) 3/5 * x / (x^5 + 1), 0, x)$value
 
+
+#################
+
+### Quasi-Trivial
+
+### I( x^5 * (1 - x^5)^(4/5) )
+lim = 6/7; # Arbitrary interval
+integrate(\(x) x^5 * (1 - x^5)^(4/5), 0, lim)
+# Solution:
+x = lim/(1 - lim^5)^(1/5);
+id = c(2,4); cs = cos(id*pi/5); sn = sin(id*pi/5);
+1/50 * x/(x^5 + 1) - 1/10 * x/(x^5 + 1)^2 +
+	+ 2/125 * (log(x+1) + sum(cs * log(x^2 + 2*cs*x + 1) +
+	+ 2*sn * (atan((x + cs)/sn) - atan(cs/sn))));
+
+
+# Derivation:
+lim = 6/7; x = lim/(1 - lim^5)^(1/5);
+integrate(\(x) x^5 * (1 - x^5)^(4/5), 0, lim)
+integrate(\(x) 1/5 * (x * (1 - x)^4)^(1/5), 0, lim^5)
+integrate(\(x) x^5 / (1+x^5)^3, 0, x)
+integrate(\(x) 1/(1+x^5)^2 - 1/(1+x^5)^3, 0, x)
+(1/5 - 9/50) * x/(x^5 + 1) - 1/10 * x/(x^5 + 1)^2 +
+	+ integrate(\(x) (4/5 - 18/25) / (x^5 + 1), 0, x)$value
+1/50 * x/(x^5 + 1) - 1/10 * x/(x^5 + 1)^2 +
+	+ integrate(\(x) 2/25 / (x^5 + 1), 0, x)$value
+# Solution:
+id = c(2,4); cs = cos(id*pi/5); sn = sin(id*pi/5);
+1/50 * x/(x^5 + 1) - 1/10 * x/(x^5 + 1)^2 +
+	+ 2/125 * (log(x+1) + sum(cs * log(x^2 + 2*cs*x + 1) +
+	+ 2*sn * (atan((x + cs)/sn) - atan(cs/sn))));
+
+
+# Reduction: Pow = 2
+x = 6/7
+integrate(\(x) 1/(x^5 + 1)^2, 0, x)
+1/5 * x/(x^5 + 1) + integrate(\(x) 4/5 / (x^5 + 1), 0, x)$value
+
+# Reduction: Pow = 3
+x = 6/7
+integrate(\(x) 1/(x^5 + 1)^3, 0, x)
+1/10 * x/(x^5 + 1)^2 + integrate(\(x) 9/10 / (x^5 + 1)^2, 0, x)$value
+1/10 * x/(x^5 + 1)^2 + 9/50 * x/(x^5 + 1) +
+	+ integrate(\(x) 18/25 / (x^5 + 1), 0, x)$value
+
