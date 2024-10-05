@@ -29,6 +29,7 @@
 # I( x^5 * (1 + x^5)^(4/5) / (x^15 + 1) )
 ### Simple:
 # I( 1 / (x^n + 1)^(1/n) )
+# I( (1 - x^n)^(1 - 1/n) )
 
 
 ### History
@@ -726,6 +727,42 @@ id = c(2,4); cs = cos(id*pi/5); sn = sin(id*pi/5);
 	+ 2*sn * (atan((x + cs)/sn) - atan(cs/sn))));
 
 
+### I( (1 - x^5)^(4/5) )
+x = 6/7; # Arbitrary interval
+integrate(\(x) (1 - x^5)^(4/5), 0, x)
+x*(1 - x^5)^(9/5) + integrate(\(x) 10 * x^5 * (1 - x^5)^(4/5), 0, x)$value
+
+
+### I( (1 - x^5)^(9/5) )
+x = 6/7; # Arbitrary interval
+integrate(\(x) (1 - x^5)^(9/5), 0, x)
+x*(1 - x^5)^(9/5) + integrate(\(x) 9 * x^5 * (1 - x^5)^(4/5), 0, x)$value
+
+
+### Generalization:
+
+### I( (1 - x^n)^(1 - 1/n) )
+# n = Positive real;
+# Note: 2nd integral is exactly solvable only for n = Integer;
+n = 7;
+x = 11/13; # Arbitrary interval
+integrate(\(x) (1 - x^n)^(1-1/n), 0, x)
+x*(1 - x^n)^(2-1/n) + integrate(\(x) 2*n * x^n * (1 - x^n)^(1-1/n), 0, x)$value
+
+
+### I( x^n * (1 - x^n)^(1 - 1/n) )
+n = 7; # ODD Integer;
+lim = 6/7; # Arbitrary interval
+integrate(\(x) x^n * (1 - x^n)^(1-1/n), 0, lim)
+# Solution:
+x = lim/(1 - lim^n)^(1/n);
+id = seq(2, n-1, by=2); cs = cos(id*pi/n); sn = sin(id*pi/n);
+1/(2*n^2) * x/(x^n + 1) - 1/(2*n) * x/(x^n + 1)^2 +
+	+ (n-1)/(2*n^3) * (log(x+1) + sum(cs * log(x^2 + 2*cs*x + 1) +
+	+ 2*sn * (atan((x + cs)/sn) - atan(cs/sn))));
+
+
+#############
 # Derivation:
 lim = 6/7; x = lim/(1 - lim^5)^(1/5);
 integrate(\(x) x^5 * (1 - x^5)^(4/5), 0, lim)
@@ -748,10 +785,22 @@ x = 6/7
 integrate(\(x) 1/(x^5 + 1)^2, 0, x)
 1/5 * x/(x^5 + 1) + integrate(\(x) 4/5 / (x^5 + 1), 0, x)$value
 
+#
+n = 7;
+integrate(\(x) 1/(x^n + 1)^2, 0, x)
+1/n * x/(x^n + 1) + integrate(\(x) (1-1/n) / (x^n + 1), 0, x)$value
+
 # Reduction: Pow = 3
 x = 6/7
 integrate(\(x) 1/(x^5 + 1)^3, 0, x)
 1/10 * x/(x^5 + 1)^2 + integrate(\(x) 9/10 / (x^5 + 1)^2, 0, x)$value
 1/10 * x/(x^5 + 1)^2 + 9/50 * x/(x^5 + 1) +
 	+ integrate(\(x) 18/25 / (x^5 + 1), 0, x)$value
+
+#
+n = 7;
+integrate(\(x) 1/(x^n + 1)^3, 0, x)
+1/(2*n) * x/(x^n + 1)^2 + integrate(\(x) (1-1/(2*n)) / (x^n + 1)^2, 0, x)$value
+1/(2*n) * x/(x^n + 1)^2 + (2*n-1) / (2*n^2) * x/(x^n + 1) +
+	+ integrate(\(x) (n-1)*(2*n-1) / (2*n^2) / (x^n + 1), 0, x)$value
 
