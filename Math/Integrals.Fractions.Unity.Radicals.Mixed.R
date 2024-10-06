@@ -30,6 +30,7 @@
 ### Pow: 3*n
 # I( x^3 * (1 + x^3)^(2/3) / (x^9 + 1) )
 # I( x^5 * (1 + x^5)^(4/5) / (x^15 + 1) )
+# I( x^n * (1 + x^n)^(1-1/n) / (x^(3*n) + 1) )
 ### Simple:
 # I( 1 / (x^n + 1)^(1/n) )
 # I( (1 - x^n)^(1 - 1/n) )
@@ -342,7 +343,8 @@ x = 1 / ylim; x1 = x * (1+1i)^(1/n); x2 = x * (1-1i)^(1/n);
 ####################
 ####################
 
-### Pow: 3*n
+################
+### Pow: 3*n ###
 
 ### Diff-Type
 
@@ -399,6 +401,21 @@ m  = cos(2*pi/3) + c(1i, -1i)*sin(2*pi/3); x = 2^(-1/n) * (1 - m)^(1/n);
 	+ (1 - m[2])^(-1/n) * sum(csn*log(x[2]^2 - 2*csn*x[2] + 1) +
 		- 2*snn * (atan((x[2] - csn)/snn) + atan(csn/snn))) );
 
+
+###
+n = 6; # EVEN Integer;
+integrate(\(x) x^n * (1 + x^n)^(1-1/n) / (x^(3*n) + 1), 0, 1)
+# Solution:
+id = seq(2, n-1, by=2); csn = cos(id*pi/n); snn = sin(id*pi/n);
+m  = cos(2*pi/3) + c(1i, -1i)*sin(2*pi/3); x = 2^(-1/n) * (1 - m)^(1/n);
+1i/(2*n*sn) * (diff((1 - m)^(-1/n) * log((1-x)/(1+x))) +
+	- (1 - m[1])^(-1/n) * sum(csn*log(x[1]^2 - 2*csn*x[1] + 1) +
+		- 2*snn * (atan((x[1] - csn)/snn) + atan(csn/snn))) +
+	+ (1 - m[2])^(-1/n) * sum(csn*log(x[2]^2 - 2*csn*x[2] + 1) +
+		- 2*snn * (atan((x[2] - csn)/snn) + atan(csn/snn))) );
+
+
+### Derivation:
 
 # Derivation: Variant (1 - x^5)
 integrate(\(x) x^5 * (1 - x^5)^(4/5) / (x^15 + 1), 0, 1)
