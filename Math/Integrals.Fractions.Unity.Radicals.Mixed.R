@@ -7,7 +7,7 @@
 ##   Polynomial Fractions:
 ##   Mixed Radicals
 ##
-## draft v.0.1k
+## draft v.0.1L
 
 
 ### Mixed Radicals
@@ -30,6 +30,7 @@
 ### Sum/Simple:
 # I( x^5 * (1 + x^5)^(4/5) / (x^5 + 1) )
 # I( x^6 * (1 + x^5)^(3/5) / (x^5 + 1) )
+# I( x^p / (1 + x^5)^((p+1)/5) )  &  I( x^(p+5) / (1 + x^5)^((p+1)/5) )
 ### Pow: 3*n
 # I( x^3 * (1 + x^3)^(2/3) / (x^9 + 1) )
 # I( x^5 * (1 + x^5)^(4/5) / (x^15 + 1) )
@@ -37,6 +38,8 @@
 ### Simple:
 # I( 1 / (x^n + 1)^(1/n) )
 # I( (1 - x^n)^(1 - 1/n) )
+
+# Note: n, p = usually integers;
 
 
 ### History
@@ -629,6 +632,41 @@ sn = sin(id*pi/5); sn2 = sin(2*id*pi/5);
 1/5 * x^2 / (1 - x^5) + 2/25*(log(1-x) +
 	+ sum(cs2*log(x^2 - 2*cs*x + 1) +
 	- 2*sn2 * (atan((x - cs)/sn) + atan(cs/sn))));
+
+### I( x^(p+5) * (1 + x^5)^(1 - (p+1)/5) / (x^5 + 1) )
+p = 2; # only Integer in [0, 4]!
+integrate(\(x) x^(p+5) * (1 + x^5)^(1 - (p+1)/5) / (x^5 + 1), 0, 1)
+# Solution:
+x = 2^(-1/5); id = seq(2, 4, by=2);
+cs = cos(id*pi/5); csp = cos((p+1)*id*pi/5);
+sn = sin(id*pi/5); snp = sin((p+1)*id*pi/5);
+1/5 * x^(p+1) / (1 - x^5) + (p+1)/25*(log(1-x) +
+	+ sum(csp*log(x^2 - 2*cs*x + 1) +
+	- 2*snp * (atan((x - cs)/sn) + atan(cs/sn))));
+
+
+### Simple:
+
+### I( x / (1 + x^5)^(2/5) )
+integrate(\(x) x * (1 + x^5)^(3/5) / (x^5 + 1), 0, 1)
+# Solution:
+x = 2^(-1/5); id = seq(2, 4, by=2);
+cs = cos(id*pi/5); cs2 = cos(2*id*pi/5);
+sn = sin(id*pi/5); sn2 = sin(2*id*pi/5);
+- 1/5*(log(1-x) +
+	+ sum(cs2*log(x^2 - 2*cs*x + 1) +
+	- 2*sn2 * (atan((x - cs)/sn) + atan(cs/sn))));
+
+### Gen: I( x^p / (1 + x^5)^((p+1)/5) )
+p = 2; # only Integer in [0, 4]!
+integrate(\(x) x^p * (1 + x^5)^(1 - (p+1)/5) / (x^5 + 1), 0, 1)
+# Solution:
+x = 2^(-1/5); id = seq(2, 4, by=2);
+cs = cos(id*pi/5); csp = cos((p+1)*id*pi/5);
+sn = sin(id*pi/5); snp = sin((p+1)*id*pi/5);
+- 1/5*(log(1-x) +
+	+ sum(csp*log(x^2 - 2*cs*x + 1) +
+	- 2*snp * (atan((x - cs)/sn) + atan(cs/sn))));
 
 
 # Derivation: Variant (1 + x^5)
