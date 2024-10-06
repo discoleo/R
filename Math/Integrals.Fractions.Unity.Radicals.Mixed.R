@@ -27,6 +27,9 @@
 # I( x^7 * (1 - x^5)^(2/5) / (x^5 + 1) )
 # I( x^8 * (1 - x^5)^(1/5) / (x^5 + 1) )
 # I( x^p * (1 - x^n)^(1 - (p+1)/n) / (x^n + 1) )
+### Sum/Simple:
+# I( x^5 * (1 + x^5)^(4/5) / (x^5 + 1) )
+# I( x^6 * (1 + x^5)^(3/5) / (x^5 + 1) )
 ### Pow: 3*n
 # I( x^3 * (1 + x^3)^(2/3) / (x^9 + 1) )
 # I( x^5 * (1 + x^5)^(4/5) / (x^15 + 1) )
@@ -614,6 +617,20 @@ id = seq(2, n-2, by=2); cs = cos(id*pi/n); sn = sin(id*pi/n);
 # Note:
 lim*(1 + lim^n)^(1-1/n) - x / (1 - x^n) # == 0!
 
+
+### Variants:
+
+### I( x^6 * (1 + x^5)^(3/5) / (x^5 + 1) )
+integrate(\(x) x^6 * (1 + x^5)^(3/5) / (x^5 + 1), 0, 1)
+# Solution:
+x = 2^(-1/5); id = seq(2, 4, by=2);
+cs = cos(id*pi/5); cs2 = cos(2*id*pi/5);
+sn = sin(id*pi/5); sn2 = sin(2*id*pi/5);
+1/5 * x^2 / (1 - x^5) + 2/25*(log(1-x) +
+	+ sum(cs2*log(x^2 - 2*cs*x + 1) +
+	- 2*sn2 * (atan((x - cs)/sn) + atan(cs/sn))));
+
+
 # Derivation: Variant (1 + x^5)
 integrate(\(x) x^5 * (1 + x^5)^(4/5) / (x^5 + 1), 0, 1)
 integrate(\(x) 1/5 * (x * (1 + x)^4)^(1/5) / (x + 1), 0, 1)
@@ -624,6 +641,20 @@ x = 2^(-1/5); id = c(2,4); cs = cos(id*pi/5); sn = sin(id*pi/5);
 1/5 * x / (1 - x^5) + 1/25*(log(1-x) +
 	+ sum(cs*log(x^2 - 2*cs*x + 1) +
 	- 2*sn * (atan((x - cs)/sn) + atan(cs/sn))));
+
+# Derivation: Variant (1 + x^5)^(3/5)
+integrate(\(x) x^6 * (1 + x^5)^(3/5) / (x^5 + 1), 0, 1)
+integrate(\(x) 1/5 * (x^2 * (1 + x)^3)^(1/5) / (x + 1), 0, 1)
+integrate(\(x) x^6 / (1-x^5)^3 / ((x^5/(1-x^5)) + 1), 0, 2^(-1/5))
+integrate(\(x) x^6 / (1 - x^5)^2 / ((1 - x^5) + x^5), 0, 2^(-1/5))
+integrate(\(x) x / (1 - x^5)^2 - x / (1 - x^5), 0, 2^(-1/5))
+x = 2^(-1/5);
+id = seq(2, 4, by=2); cs = cos(id*pi/5); sn = sin(id*pi/5);
+cs2 = cos(2*id*pi/5); sn2 = sin(2*id*pi/5);
+1/5 * x^2 / (1 - x^5) - integrate(\(x) 2/5 * x / (1 - x^5), 0, x)$value
+1/5 * x^2 / (1 - x^5) + 2/25*(log(1-x) +
+	+ sum(cs2*log(x^2 - 2*cs*x + 1) +
+	- 2*sn2 * (atan((x - cs)/sn) + atan(cs/sn))));
 
 
 # Derivation: Variant (1 + x^6)
@@ -662,6 +693,16 @@ integrate(\(x) (1 + x^5)^(4/5), 0, x)
 n = 6; lim = 4/5;
 x = lim / (lim^n + 1)^(1/n);
 lim*(1 + lim^n)^(1-1/n) - x / (1 - x^n) # == 0!
+
+
+# Fraction Decomposition:
+x = 2^(-3/5)
+id = c(2,4); cs = cos(pi*id/5); sn = sin(pi*id/5);
+cs2 = cos(2*pi*id/5); sn2 = sin(2*pi*id/5);
+x / (1 - x^5)
+1/5 * x / (1-x) - 1/5 * sum(x * (2*cs*x - 2) / (x^2 - 2*cs*x + 1))
+1/5 / (1-x) - 1/5 * sum((2*(cs^2-sn^2)*x - 2*cs) / (x^2 - 2*cs*x + 1))
+1/5 / (1-x) - 1/5 * sum((2*cs2*x - 2*cs*cs2 - 2*sn*sn2) / (x^2 - 2*cs*x + 1))
 
 
 #####################
