@@ -414,6 +414,36 @@ m  = cos(2*pi/3) + c(1i, -1i)*sin(2*pi/3); x = 2^(-1/n) * (1 - m)^(1/n);
 	+ (1 - m[2])^(-1/n) * sum(csn*log(x[2]^2 - 2*csn*x[2] + 1) +
 		- 2*snn * (atan((x[2] - csn)/snn) + atan(csn/snn))) );
 
+### Gen: Arbitrary Interval
+
+###
+lim = sqrt(3)
+n = 7; # ODD Integer;
+integrate(\(x) x^n * (1 + x^n)^(1-1/n) / (x^(3*n) + 1), 0, lim)
+# Solution:
+id = seq(2, n-1, by=2); csn = cos(id*pi/n); snn = sin(id*pi/n);
+x0 = lim/(lim^n + 1)^(1/n);
+m  = cos(2*pi/3) + c(1i, -1i)*sin(2*pi/3); x = x0 * (1 - m)^(1/n);
+1i/(2*n*sn) * (diff((1 - m)^(-1/n) * log(1-x)) +
+	- (1 - m[1])^(-1/n) * sum(csn*log(x[1]^2 - 2*csn*x[1] + 1) +
+		- 2*snn * (atan((x[1] - csn)/snn) + atan(csn/snn))) +
+	+ (1 - m[2])^(-1/n) * sum(csn*log(x[2]^2 - 2*csn*x[2] + 1) +
+		- 2*snn * (atan((x[2] - csn)/snn) + atan(csn/snn))) );
+
+###
+lim = sqrt(3)
+n = 6; # EVEN Integer;
+integrate(\(x) x^n * (1 + x^n)^(1-1/n) / (x^(3*n) + 1), 0, lim)
+# Solution:
+id = seq(2, n-1, by=2); csn = cos(id*pi/n); snn = sin(id*pi/n);
+x0 = lim/(lim^n + 1)^(1/n);
+m  = cos(2*pi/3) + c(1i, -1i)*sin(2*pi/3); x = x0 * (1 - m)^(1/n);
+1i/(2*n*sn) * (diff((1 - m)^(-1/n) * log((1-x)/(1+x))) +
+	- (1 - m[1])^(-1/n) * sum(csn*log(x[1]^2 - 2*csn*x[1] + 1) +
+		- 2*snn * (atan((x[1] - csn)/snn) + atan(csn/snn))) +
+	+ (1 - m[2])^(-1/n) * sum(csn*log(x[2]^2 - 2*csn*x[2] + 1) +
+		- 2*snn * (atan((x[2] - csn)/snn) + atan(csn/snn))) );
+
 
 ### Derivation:
 
