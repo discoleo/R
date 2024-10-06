@@ -7,7 +7,7 @@
 ##   Polynomial Fractions:
 ##   Mixed Radicals
 ##
-## draft v.0.1L
+## draft v.0.1m
 
 
 ### Mixed Radicals
@@ -31,6 +31,7 @@
 # I( x^5 * (1 + x^5)^(4/5) / (x^5 + 1) )
 # I( x^6 * (1 + x^5)^(3/5) / (x^5 + 1) )
 # I( x^p / (1 + x^5)^((p+1)/5) )  &  I( x^(p+5) / (1 + x^5)^((p+1)/5) )
+# I( x^p / (x^n + 1)^((p+1)/n) )
 ### Pow: 3*n
 # I( x^3 * (1 + x^3)^(2/3) / (x^9 + 1) )
 # I( x^5 * (1 + x^5)^(4/5) / (x^15 + 1) )
@@ -619,6 +620,34 @@ id = seq(2, n-2, by=2); cs = cos(id*pi/n); sn = sin(id*pi/n);
 
 # Note:
 lim*(1 + lim^n)^(1-1/n) - x / (1 - x^n) # == 0!
+
+
+### Gen 2: Factor x^p
+
+### I( x^p / (x^n + 1)^((p+1)/n) )
+n = 7; # ODD Integer
+p = 3; # Integer in [0, n-1]
+lim = 4/5; # Arbitrary Interval: can be > 1;
+integrate(\(x) x^p / (x^n + 1)^((p+1)/n), 0, lim)
+id = seq(2, n-1, by=2); x = lim / (lim^n + 1)^(1/n); 
+cs = cos(id*pi/n); csp = cos(id*(p+1)*pi/n);
+sn = sin(id*pi/n); snp = sin(id*(p+1)*pi/n);
+- 1/n*(log(1-x) +
+	+ sum(csp*log(x^2 - 2*cs*x + 1) +
+	- 2*snp * (atan((x - cs)/sn) + atan(cs/sn))));
+
+###
+n = 8; # EVEN Integer
+p = 3; # Integer in [0, n-1]
+lim = 4/5; # Arbitrary Interval: can be > 1;
+integrate(\(x) x^p / (x^n + 1)^((p+1)/n), 0, lim)
+nn = if(p %% 2 == 0) n-2 else n;
+id = seq(2, nn, by=2); x = lim / (lim^n + 1)^(1/n); 
+cs = cos(id*pi/n); csp = cos(id*(p+1)*pi/n);
+sn = sin(id*pi/n); snp = sin(id*(p+1)*pi/n);
+- 1/n*(log((1-x)/(1+x)) +
+	+ sum(csp*log(x^2 - 2*cs*x + 1) +
+	- 2*snp * (atan((x - cs)/sn) + atan(cs/sn))));
 
 
 ### Variants:
