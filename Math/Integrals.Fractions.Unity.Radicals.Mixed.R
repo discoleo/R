@@ -7,7 +7,7 @@
 ##   Polynomial Fractions:
 ##   Mixed Radicals
 ##
-## draft v.0.1j
+## draft v.0.1k
 
 
 ### Mixed Radicals
@@ -641,6 +641,21 @@ integrate(\(x) x^3 * (1 - x^5)^(1/5) / (x^5 + 1), 0, 1)
 (2^(1/5) - 1) * beta(1/5, 4/5) / 5
 
 
+### Gen:
+
+### I( x^p * (1 - x^5)^((4 - p)/5) / (x^5 + 1) )
+p = sqrt(3)
+integrate(\(x) x^p * (1 - x^5)^((4 - p)/5) / (x^5 + 1), 0, 1)
+(2^((4-p)/5) - 1) * beta((p+1)/5, (4-p)/5) / 5
+
+### I( x^p * (1 - x^n)^(1 - (p+1)/n) / (x^n + 1) )
+n = sqrt(11); p = sqrt(3)
+integrate(\(x) x^p * (1 - x^n)^(1 - (p+1)/n) / (x^n + 1), 0, 1)
+(2^(1 - (p+1)/n) - 1) * beta((p+1)/n, 1 - (p+1)/n) / n
+
+
+### Simple:
+
 ### I( (1 - x^5)^(4/5) )
 integrate(\(x) (1 - x^5)^(4/5), 0, 1)
 integrate(\(x) 1/5 * x^(1/5-1) * (1 - x)^(4/5), 0, 1)
@@ -803,4 +818,12 @@ integrate(\(x) 1/(x^n + 1)^3, 0, x)
 1/(2*n) * x/(x^n + 1)^2 + integrate(\(x) (1-1/(2*n)) / (x^n + 1)^2, 0, x)$value
 1/(2*n) * x/(x^n + 1)^2 + (2*n-1) / (2*n^2) * x/(x^n + 1) +
 	+ integrate(\(x) (n-1)*(2*n-1) / (2*n^2) / (x^n + 1), 0, x)$value
+
+
+##################
+##################
+
+##################
+### Transforms ###
+
 
