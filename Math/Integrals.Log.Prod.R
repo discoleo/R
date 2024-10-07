@@ -227,6 +227,23 @@ integrate(\(x) log((1 - x) / (x + 1)), 0, 1)
 integrate(\(x) log(x) * log((1 - x) / (x + 1)), 0, 1)
 2*log(2) - pi^2/12
 
+###
+integrate(\(x) log(x)^2 * log((1 - x) / (x + 1)), 0, 1)
+pracma::zeta(3)/2 + pi^2/6 - 4*log(2)
+# 1/2 * pracma::zeta(3) - 2*Iprev;
+
+###
+integrate(\(x) log(x)^3 * log((1 - x) / (x + 1)), 0, 1)
+Iprev = pracma::zeta(3)/2 + pi^2/6 - 4*log(2);
+-3/4 * pracma::zeta(4) - 3*Iprev;
+
+###
+integrate(\(x) log(x)^4 * log((1 - x) / (x + 1)), 0, 1)
+Iprev = -3/4 * pracma::zeta(4)- 3*(pracma::zeta(3)/2 + pi^2/6 - 4*log(2));
+3/2 * pracma::zeta(5) - 4*Iprev;
+
+# Note: next factor = - 15/4;
+
 
 ####################
 ####################
@@ -348,7 +365,7 @@ integrate(\(x) log(1 - x) * log(1 + x) / x, 0, 1)
 
 ### I( x^p * (1 - x)^q * log(1-x) * log(x) )
 
-###
+### Base:
 p = 1/3; q = 1/5;
 integrate(function(x) x^p * (1 - x)^q, 0, 1)
 gamma(p+1)*gamma(q+1) / gamma(p+q+2)
@@ -363,8 +380,16 @@ p = -1/5;
 integrate(function(x) x^p * log(1-x), 0, 1)
 - (digamma(p+2) + Euler) / (p+1)
 
+### Gen: 1 LOG (Simple-variant)
+p = -1/3; n = sqrt(3)
+integrate(function(x) x^p * log(1 - x^n), 0, 1)
+- (digamma((p+1)/n + 1) + Euler) / (p+1)
+#
+integrate(function(x) x^p * log(1 + x^n), 0, 1)
+(digamma((p+1)/n + 1) - digamma((p+1)/(2*n) + 1)) / (p+1)
 
-###
+
+### Prod( LOG )
 p = - 1/3; q = 1/5;
 integrate(function(x) x^p * (1 - x)^q * log(1-x) * log(x), 0, 1)
 gamma(p+1) * gamma(q+1) *
