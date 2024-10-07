@@ -87,12 +87,12 @@ n = 7 # e.g. 7, 9, 11;
 ### Roots of unity
 # m = complex(re=cos(2*pi/n), im=sin(2*pi/n))
 len = (n-1)/2;
-c1 = 2*cos(2*seq(len)*pi/n);
+cs = cos(2*seq(len)*pi/n); c1 = 2*cs;
 ### Coefficients
 b0 = 1/n;
 b  = 2*b0; a = b0 * c1;
 ### Tests
-x = 3 # e.g. 2, 3, pi, 4 # some arbitrary value for testing
+x = sqrt(3) # e.g. 2, 3, pi, 4 # some arbitrary value for testing
 
 ### Partial Fractions
 1/(x^n - 1) # ==
@@ -112,25 +112,30 @@ b0/(x + 1) + sum( (a*x + b) / (x^2 + c1*x + 1) )
 n = 10
 n.2 = n/2 - 1;
 # m = complex(re=cos(2*pi/n), im=sin(2*pi/n))
-c1 = 2*cos(2*seq(n.2)*pi/n)
-b = -2/n; a = 1/n;
+cs = cos(2*seq(n.2)*pi/n); c1 = 2*cs;
+b  = 2/n; a = 1/n;
 ### Test
-x = 2 # any value;
+x = sqrt(2) # any value;
 # used to test the fraction decomposition;
 1/(x^n - 1) # ==
-sum((a*c1*x + b) / (x^2 - c1*x + 1)) - b/(x^2-1)
+b/(x^2-1) + sum((a*c1*x - b) / (x^2 - c1*x + 1))
+1/n * (2/(x^2-1) + sum(2*(cs*x - 1) / (x^2 - 2*cs*x + 1)))
 
 ###
-x = 3^(1/5)
-n = 3; # but for (4*n)!
-c1 = 2*cos(seq(1, 4*n, by=2)*pi/(4*n));
+n  = 3; # but for (4*n)!
+cs = cos(seq(1, 4*n, by=2)*pi/(4*n)); c1 = 2*cs;
+x = 3^(1/5); # Test
 1/(x^(4*n) + 1) # ==
 sum((c1*x + 2) / (x^2 + c1*x + 1)) / (4*n)
+sum(2*(cs*x + 1) / (x^2 + 2*cs*x + 1)) / (4*n)
 
 
-### Integrals
+#################
+### Integrals ###
 
 ### I( x^p / (x^n + 1) )
+
+###
 n = 7; # ODD Integer
 p = 3; # Integer in [0, n-1]
 lim = 4/5; # Arbitrary Interval: can be > 1;
@@ -154,6 +159,39 @@ sn = sin(id*pi/n); snp = sin(id*(p+1)*pi/n);
 sg/n * sum(csp*log(x^2 + 2*cs*x + 1) +
 	+ 2*snp * (atan((x + cs)/sn) - atan(cs/sn)));
 
+
+### I( x^p / (1 - x^n) )
+
+# Note:
+# - Interval > 1 requires log(abs(...));
+
+###
+n = 7; # ODD Integer
+p = 3; # Integer in [0, n-1]
+lim = 4/5; # Arbitrary Interval < 1;
+integrate(\(x) x^p / (1 - x^n), 0, lim)
+id = seq(2, n-1, by=2); x = lim;
+cs = cos(id*pi/n); csp = cos(id*(p+1)*pi/n);
+sn = sin(id*pi/n); snp = sin(id*(p+1)*pi/n);
+-1/n * (log(1 - x) +
+	+ sum(csp*log(x^2 - 2*cs*x + 1) +
+	- 2*snp * (atan((x - cs)/sn) + atan(cs/sn))));
+
+###
+n = 8; # EVEN Integer
+p = 3; # Integer in [0, n-1]
+lim = 4/5; # Arbitrary Interval < 1;
+integrate(\(x) x^p / (1 - x^n), 0, lim)
+nn = if(p %% 2 == 0) n else n-2;
+id = seq(2, nn, by=2); x = lim;
+cs = cos(id*pi/n); csp = cos(id*(p+1)*pi/n);
+sn = sin(id*pi/n); snp = sin(id*(p+1)*pi/n);
+-1/n * (log(1 - x^2) +
+	+ sum(csp*log(x^2 - 2*cs*x + 1) +
+	- 2*snp * (atan((x - cs)/sn) + atan(cs/sn))));
+
+
+######################
 
 ### Infinite Integrals
 # - shortcut formulas are available;
@@ -196,6 +234,15 @@ pi / sin(3*pi/n) / n
 
 ### Helper Functions ###
 
+# Note:
+# !!! very OLD !!!
+# - Initial approach was focused on the roots of unity;
+#   (m^n = 1 seemed the important concept)
+# - However, the Trigonometric functions (cos, sin)
+#   are the really important components!
+
+
+# [OLD]
 # Fraction Decomposition: 1/(x^n - 1)
 decompose.fr = function(n, type=c("U+", "U-")) {
 	### v 2.0
