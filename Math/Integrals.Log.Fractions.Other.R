@@ -43,6 +43,18 @@ integrate(\(x) log((1+x)/(1-x))^n, 0, 1)
 2*gamma(n+1)*(1 - 2^(1-n)) * pracma::zeta(n)
 
 
+### I( x * log((1+x)/(1-x))^2 / (1-x^2) )
+integrate(\(x) x * log((1+x)/(1-x))^2 / (1-x^2) - 1/2 * log((1-x)/2)^2/(1-x), 0, 1)
+- 1/3 * gamma(4)*(1 - 1/4) * pracma::zeta(3) + log(2)^3 / 6
+
+# library(Rmpfr)
+x = integrate(\(x) {
+	x = mpfr(x, 240);
+	y = x * log((1+x)/(1-x))^(n-1) / (1-x^2) - 1/2*log((1-x)/2)^2/(1-x);
+	as.numeric(y); }, 0, 1, rel.tol=1E-8)
+x$value + 1/3 * gamma(4)*(1 - 1/4) * pracma::zeta(3) - log(2)^3 / 6
+
+
 ### I( log((x - 1) / (x + 1)) / x ) on [1, Inf]
 # Maths 505: A RIDICULOUSLY AWESOME LOG INTEGRAL!!!
 # https://www.youtube.com/watch?v=tTu6hedSlm0
@@ -302,6 +314,11 @@ integrate(\(x) 1 / log(x)^2 - 1/(1-x)^2 + 1/(1-x), 0, 1, rel.tol=1E-6)
 Euler - 1/2
 
 
+### I( x^p / log(x)^2 )
+p = sqrt(3)
+integrate(\(x) x^p / log(x)^2 - 1/log(x)^2 - p/log(x), 0, 1)
+(p+1)*log(p+1) - p;
+
 ### I( x^p * (x^n - 1)^2 / log(x)^2 )
 n = sqrt(5); p = sqrt(3)
 integrate(\(x) x^p * (x^n - 1)^2 / log(x)^2, 0, 1)
@@ -351,7 +368,7 @@ integrate(\(x) x^p * (x^n - 1)^5 / log(x)^5, 0, 1)
 ###
 id = seq(0, 30)
 integrate(\(x) 1 / (1 - x*log(x)), 0, 1)
-sum( (-1)^id *gamma(id + 1) / (id + 1)^(id + 1) )
+sum( (-1)^id * gamma(id + 1) / (id + 1)^(id + 1) )
 
 ###
 integrate(\(x) 1 / (1 + x*log(x)), 0, 1)
