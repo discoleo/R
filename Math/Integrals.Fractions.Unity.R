@@ -130,7 +130,7 @@ sum((c1*x + 2) / (x^2 + c1*x + 1)) / (4*n)
 
 ### Integrals
 
-### I( x^p / (x^n + 1)^((p+1)/n) )
+### I( x^p / (x^n + 1) )
 n = 7; # ODD Integer
 p = 3; # Integer in [0, n-1]
 lim = 4/5; # Arbitrary Interval: can be > 1;
@@ -141,6 +141,18 @@ sn = sin(id*pi/n); snp = sin(id*(p+1)*pi/n);
 sg/n * (log(x+1) +
 	+ sum(csp*log(x^2 + 2*cs*x + 1) +
 	+ 2*snp * (atan((x + cs)/sn) - atan(cs/sn))));
+
+###
+n = 8; # EVEN Integer: both 0 (mod 4) & 2 (mod 4);
+p = 3; # Integer in [0, n-1]
+lim = 4/5; # Arbitrary Interval: can be > 1;
+integrate(\(x) x^p / (x^n + 1), 0, lim)
+sg = if(p %% 2 == 0) 1 else -1;
+id = seq(1, n, by=2); x = lim;
+cs = cos(id*pi/n); csp = cos(id*(p+1)*pi/n);
+sn = sin(id*pi/n); snp = sin(id*(p+1)*pi/n);
+sg/n * sum(csp*log(x^2 + 2*cs*x + 1) +
+	+ 2*snp * (atan((x + cs)/sn) - atan(cs/sn)));
 
 
 ### Infinite Integrals
