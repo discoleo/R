@@ -423,6 +423,27 @@ integrate(\(x) x^3 * atan(x) / (x^4 + 1), 0, 1)
 	- (digamma(1/8 + 1/2) - digamma(1/8))^2 / 128 +
 	+ Catalan/2;
 
+### on [0, Inf]
+integrate(\(x) x^3 * atan(x) / (x^4 + 1) - pi/2/(x+1), 0, Inf)
+- pi * log(2*cos(pi/8)) / 2
+
+### on [0, Inf]
+integrate(\(x) x * atan(x) / (x^4 + 1), 0, Inf)
+integrate(\(x) x * (pi/2 - atan(x)) / (x^4 + 1), 0, Inf)
+pi^2/16
+
+### I( atan(x) / (x^4 + 1) )
+integrate(\(x) atan(x) / (x^4 + 1), 0, Inf)
+(pracma::psi(1, 7/8) - pracma::psi(1, 3/8)) / 64 +
+	+ pi/32 * (digamma(5/8) - digamma(1/8));
+
+### I( x^2 * atan(x) / (x^4 + 1) )
+integrate(\(x) x^2 * atan(x) / (x^4 + 1), 0, Inf)
+integrate(\(x) (pi/2 - atan(x)) / (x^4 + 1), 0, Inf)
+(pracma::psi(1, 3/8) - pracma::psi(1, 7/8)) / 64 +
+	+ pi/32 * (digamma(1/8) - digamma(5/8)) + pi^2/8 / sin(pi/4);
+
+
 # Helper:
 integrate(\(x) atan(x) / x, 0, 1)
 Catalan
