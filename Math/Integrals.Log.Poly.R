@@ -7,10 +7,18 @@
 ################
 
 ###
+
+# Maths 505: A RIDICULOUSLY AWESOME INTEGRAL:
+#   int (0,infty) ln^2(x) (1+x^2)/(1+x^4)
 # https://www.youtube.com/watch?v=9DV0R5W9feA
+# - this is actually a trivial integral;
+#   (I misinterpreted the formula in the thumbnail)
+# - below are a few more interesting types;
 
+
+###
+integrate(\(x) log(x^2*(x^2+1) / (x^4 + 1))^2, 0, Inf)
 # TODO
-
 
 ### Varia:
 
@@ -40,6 +48,20 @@ n = sqrt(3)
 integrate(\(x) log(x^n * (x^n+1) / (x^(2*n) + 1)), 0, Inf)
 pi*(1/sin(pi/n) - 1/sin(pi/(2*n)))
 
+
+### I( log((x^2+1)^2 / (x^4 + 1)) )
+integrate(\(x) log((x^2+1)^2 / (x^4 + 1)), 0, Inf)
+gamma(1/4) * gamma(- 1/4)/4 - gamma(1/2) * gamma(- 1/2)
+pi*(2/sin(pi/2) - 1/sin(pi/4))
+
+
+### I( log((x^n+1)^2 / (x^(2*n) + 1)) )
+n = sqrt(3)
+integrate(\(x) log((x^n + 1)^2 / (x^(2*n) + 1)), 0, Inf)
+pi*(2/sin(pi/n) - 1/sin(pi/(2*n)))
+
+
+### Derivations:
 
 ### Limit: k -> 0
 # Note: n = 3 for both log(x) & log(x^3 + 1);
