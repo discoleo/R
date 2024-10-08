@@ -129,6 +129,15 @@ x = 3^(1/5); # Test
 sum((c1*x + 2) / (x^2 + c1*x + 1)) / (4*n)
 sum(2*(cs*x + 1) / (x^2 + 2*cs*x + 1)) / (4*n)
 
+###
+n  = 3; # but for (4*n + 2)!
+nn = 4*n + 2;
+id = seq(1, nn, by=2); id = id[-(n+1)];
+cs = cos(id*pi/nn);
+x = 3^(1/5); # Test
+1/(x^nn + 1) # ==
+(2/(x^2+1) + sum(2*(cs*x + 1) / (x^2 + 2*cs*x + 1)) ) / nn
+
 
 #################
 ### Integrals ###
