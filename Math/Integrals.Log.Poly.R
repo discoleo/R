@@ -75,34 +75,8 @@ gamma(1/3) * gamma(k - 1/3) / gamma(k) / 3 *
 - gamma(1/6) * gamma(k - 1/6) / gamma(k) / 6 *
 	(digamma(k) - digamma(k - 1/6));
 
-
-### Helper:
-p = sqrt(3); n = sqrt(7); k = sqrt(5);
-integrate(\(x) x^p / (x^n + 1)^k, 0, Inf)
-gamma((p+1)/n) * gamma(k - (p+1)/n) / gamma(k) / n
-# D(p)
-integrate(\(x) x^p * log(x) / (x^n + 1)^k, 0, Inf)
-gamma((p+1)/n) * gamma(k - (p+1)/n) * (digamma((p+1)/n) - digamma(k - (p+1)/n)) / gamma(k) / n^2
-# D2(p)
-integrate(\(x) x^p * log(x)^2 / (x^n + 1)^k, 0, Inf)
-gamma((p+1)/n) * gamma(k - (p+1)/n) / gamma(k) / n^3 *
-	(pracma::psi(1, (p+1)/n) + pracma::psi(1, k - (p+1)/n) +
-	+ (digamma((p+1)/n) - digamma(k - (p+1)/n))^2)
-# D3(p)
-integrate(\(x) x^p * log(x)^3 / (x^n + 1)^k, 0, Inf)
-gamma((p+1)/n) * gamma(k - (p+1)/n) / gamma(k) / n^4 *
-	(pracma::psi(2, (p+1)/n) - pracma::psi(2, k - (p+1)/n) +
-	3*(pracma::psi(1, (p+1)/n) + pracma::psi(1, k - (p+1)/n)) *
-	(digamma((p+1)/n) - digamma(k - (p+1)/n)) +
-	+ (digamma((p+1)/n) - digamma(k - (p+1)/n))^3)
-
-# D(k)
-integrate(\(x) x^p * log(x^n + 1) / (x^n + 1)^k, 0, Inf)
-gamma((p+1)/n) * gamma(k - (p+1)/n) / gamma(k) / n *
-	(digamma(k) - digamma(k - (p+1)/n))
-# Case: p = 0
-gamma(1/n) * gamma(k - 1/n) / gamma(k) / n *
-	(digamma(k) - digamma(k - 1/n))
+# Base-Formulas moved to file:
+# Integrals.Log.Poly.Base.R;
 
 
 ################
