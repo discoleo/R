@@ -40,11 +40,28 @@ gamma((p+1)/n) * gamma(k - (p+1)/n) / gamma(k) / n^4 *
 	(digamma((p+1)/n) - digamma(k - (p+1)/n)) +
 	+ (digamma((p+1)/n) - digamma(k - (p+1)/n))^3)
 
-# D(k)
+
+### D(k)
+p = sqrt(3); n = sqrt(7); k = sqrt(5);
 integrate(\(x) x^p * log(x^n + 1) / (x^n + 1)^k, 0, Inf)
 gamma((p+1)/n) * gamma(k - (p+1)/n) / gamma(k) / n *
-	(digamma(k) - digamma(k - (p+1)/n))
+	(digamma(k) - digamma(k - (p+1)/n));
+
 # Case: p = 0
+integrate(\(x) log(x^n + 1) / (x^n + 1)^k, 0, Inf)
 gamma(1/n) * gamma(k - 1/n) / gamma(k) / n *
 	(digamma(k) - digamma(k - 1/n))
+
+
+### D2(k)
+integrate(\(x) x^p * log(x^n + 1)^2 / (x^n + 1)^k, 0, Inf)
+gamma((p+1)/n) * gamma(k - (p+1)/n) / gamma(k) / n *
+	(pracma::psi(1, k - (p+1)/n) - pracma::psi(1, k) +
+	+ (digamma(k) - digamma(k - (p+1)/n))^2);
+
+# Case: p = 0
+integrate(\(x) log(x^n + 1)^2 / (x^n + 1)^k, 0, Inf)
+gamma(1/n) * gamma(k - 1/n) / gamma(k) / n *
+	(pracma::psi(1, k - 1/n) - pracma::psi(1, k) +
+	+ (digamma(k) - digamma(k - 1/n))^2)
 
