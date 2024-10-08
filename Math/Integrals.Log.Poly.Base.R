@@ -15,6 +15,8 @@
 # - are based on formulas in file:
 #   Integrals.Fractions.Unity.Definite.R;
 #   (but this is a better reference)
+# - see also file:
+#   Integrals.Log.Prod.R;
 
 
 #########################
@@ -64,4 +66,19 @@ integrate(\(x) log(x^n + 1)^2 / (x^n + 1)^k, 0, Inf)
 gamma(1/n) * gamma(k - 1/n) / gamma(k) / n *
 	(pracma::psi(1, k - 1/n) - pracma::psi(1, k) +
 	+ (digamma(k) - digamma(k - 1/n))^2)
+
+
+### D(p) D(k)
+p = sqrt(3); n = sqrt(7); k = sqrt(5);
+integrate(\(x) x^p * log(x) * log(x^n + 1) / (x^n + 1)^k, 0, Inf)
+gamma((p+1)/n) * gamma(k - (p+1)/n) / gamma(k) / n^2 *
+	((digamma((p+1)/n) - digamma(k - (p+1)/n)) *
+	(digamma(k) - digamma(k - (p+1)/n)) +
+	+ pracma::psi(1, k - (p+1)/n));
+
+# Case: p = 0
+integrate(\(x) log(x) * log(x^n + 1) / (x^n + 1)^k, 0, Inf)
+gamma(1/n) * gamma(k - 1/n) / gamma(k) / n^2 *
+	((digamma(1/n) - digamma(k - 1/n)) *
+	(digamma(k) - digamma(k - 1/n)) + pracma::psi(1, k - 1/n));
 
