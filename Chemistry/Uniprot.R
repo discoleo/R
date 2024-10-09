@@ -1,6 +1,6 @@
 
 list.fasta = function(path, pattern="\\.fasta$") {
-	list.files(path, pattern=".fasta", no.. = TRUE,
+	list.files(path, pattern=pattern, no.. = TRUE,
 		include.dirs = FALSE);
 }
 
