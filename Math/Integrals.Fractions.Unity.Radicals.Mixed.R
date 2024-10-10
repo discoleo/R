@@ -7,7 +7,7 @@
 ##   Polynomial Fractions:
 ##   Mixed Radicals
 ##
-## draft v.0.1n
+## draft v.0.1p
 
 
 ### Mixed Radicals
@@ -1118,6 +1118,41 @@ ff = c(1, - c(-1i,1i)/sqrt(3) * m3 * m9^2) / 3;
 cs2 = cos(4*pi/3); sn2 = sin(4*pi/3);
 sum(ff * (log(x+1) + cs2*log(x^2 + 2*cs*x + 1) +
 	+ 2*sn2*atan((x+cs)/sn) - 2*sn2*atan(cs/sn)));
+
+
+### Pow = 5
+
+### I( x^5 * (1 - x^5)^(4/5) / (x^10 - x^5 + 1) )
+lim = 3/4
+integrate(\(x) x^5 * (1 - x^5)^(4/5) / (x^10 - x^5 + 1), 0, lim)
+# Solution:
+m3 = exp(c(1,-1)*pi*1i/3); m = exp(c(1,-1)*pi*1i/15);
+x  = lim/(1 - lim^5)^(1/5) / c(1, m);
+ff = c(-1, c(-1i,1i)/(2*sin(2*pi/3)) * m3 * m) / 5;
+cs = cos(c(2,4)*pi/5); sn = sin(c(2,4)*pi/5); csp = cs; snp = sn;
+fx = function(x) {
+	log(x+1) + sum(csp*log(x^2 + 2*cs*x + 1) +
+	+ 2*snp*atan((x+cs)/sn) - 2*snp*atan(cs/sn));
+}
+sum(ff * c(fx(x[1]), fx(x[2]), fx(x[3])));
+
+
+### I( x^(p+5) * (1 - x^5)^(1 - (p+1)/5) / (x^10 - x^5 + 1) )
+lim = 5/6
+p = 1; # Integer in [0, n-1];
+integrate(\(x) x^(p+5) * (1 - x^5)^(1 - (p+1)/5) / (x^10 - x^5 + 1), 0, lim)
+# Solution:
+m3 = exp(c(1,-1)*pi*1i/3); m = exp(c(1,-1)*pi*1i/15);
+x  = lim/(1 - lim^5)^(1/5) / c(1, m);
+ff = c(-1, c(-1i,1i)/(2*sin(2*pi/3)) * m3 * m^(p+1)) / 5;
+sg = if(p %% 2 == 0) 1 else -1;
+cs = cos(c(2,4)*pi/5); sn = sin(c(2,4)*pi/5);
+csp = cos(c(2,4)*(p+1)*pi/5); snp = sin(c(2,4)*(p+1)*pi/5);
+fx = function(x) {
+	log(x+1) + sum(csp*log(x^2 + 2*cs*x + 1) +
+	+ 2*snp*atan((x+cs)/sn) - 2*snp*atan(cs/sn));
+}
+sg * sum(ff * c(fx(x[1]), fx(x[2]), fx(x[3])));
 
 
 # Derivation:
