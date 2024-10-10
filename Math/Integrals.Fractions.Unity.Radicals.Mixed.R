@@ -1139,7 +1139,7 @@ sum(ff * c(fx(x[1]), fx(x[2]), fx(x[3])));
 
 ### I( x^(p+5) * (1 - x^5)^(1 - (p+1)/5) / (x^10 - x^5 + 1) )
 lim = 5/6
-p = 1; # Integer in [0, n-1];
+p = 1; # Integer in [-n, n-1]; (n = 5)
 integrate(\(x) x^(p+5) * (1 - x^5)^(1 - (p+1)/5) / (x^10 - x^5 + 1), 0, lim)
 # Solution:
 m3 = exp(c(1,-1)*pi*1i/3); m = exp(c(1,-1)*pi*1i/15);
