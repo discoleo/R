@@ -1094,6 +1094,27 @@ integrate(\(x) (-1 + 2/sqrt(3)*sin(4*pi/9)) / (x^3 + 1), 0, Inf)
 beta(1/3,2/3) / 3 * (-1 + 2/sqrt(3)*sin(4*pi/9))
 
 
+### Arbitrary Interval
+lim = 3/4
+integrate(\(x) x^3 * (1 - x^3)^(2/3) / (x^6 - x^3 + 1), 0, lim)
+integrate(\(x) 1/3 * (x*(1-x)^2)^(1/3) / (x^2 - x + 1), 0, lim^3)
+# y = x^3 / (1+x^3) # => x^3 = 1/(1-y) - 1;
+x = lim/(1 - lim^3)^(1/3);
+integrate(\(x) x^3 / (1 + x^3)^3 / ((x^3/(1+x^3))^2 - x^3/(1+x^3) + 1), 0, x)
+m3 = exp(c(1,-1)*pi*1i/3);
+m9 = exp(c(1,-1)*pi*1i/9);
+integrate(\(x) - 1 / (x^3 + 1) + 1/sqrt(3) *
+	Im(m3[1]^2/(x^3 + m3[1]) - m3[2]^2/(x^3 + m3[2])), 0, x);
+integrate(\(x) - 1 / (x^3 + 1), 0, x)$value +
+pracma::line_integral(\(x) -1i/sqrt(3) * m3[1]*m9[1]/(x^3 + 1), c(0, x/m9[1])) +
+pracma::line_integral(\(x)  1i/sqrt(3) * m3[2]*m9[2]/(x^3 + 1), c(0, x/m9[2]));
+cs = cos(2*pi/3); sn = sin(2*pi/3);
+x  = lim/(1 - lim^3)^(1/3) / c(1, m9);
+ff = c(-1, c(-1i,1i)/sqrt(3) * m3 * m9) / 3;
+sum(ff * (log(x+1) + cs*log(x^2 + 2*cs*x + 1) +
+	+ 2*sn*atan((x+cs)/sn) - 2*sn*atan(cs/sn)));
+
+
 ##################
 
 ##################
