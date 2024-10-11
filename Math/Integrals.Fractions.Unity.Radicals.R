@@ -212,6 +212,18 @@ cs4 = cos(c(2,4)*pi); sn4 = sin(c(2,4)*pi);
 	+ sum((cs4-cs2) * log((x^2 - 2*cs*x + 1) / (2-2*cs)) +
 	- 2*(sn4-sn2) * (atan((x - cs)/sn) - atan((1-cs)/sn)) ) / 5;
 
+# Alternative formula with Arbitrary Interval, see file:
+# Integrals.Fractions.Unity.Radicals.Mixed.R
+n = 5; p = 1; # Integer in [0, n-1]
+lim = 4/5; # Arbitrary Interval: can be > 1;
+integrate(\(x) x^p / (x^n + 1)^((p+1)/n), 0, lim)
+id = seq(2, n-1, by=2); x = lim / (lim^n + 1)^(1/n); 
+cs = cos(id*pi/n); csp = cos(id*(p+1)*pi/n);
+sn = sin(id*pi/n); snp = sin(id*(p+1)*pi/n);
+- 1/n*(log(1-x) +
+	+ sum(csp*log(x^2 - 2*cs*x + 1) +
+	- 2*snp * (atan((x - cs)/sn) + atan(cs/sn))));
+
 
 ### I( x^2 / (x^5 + 1)^(2/5) ) &
 ### I( x^3 / (x^5 + 1)^(2/5) )
