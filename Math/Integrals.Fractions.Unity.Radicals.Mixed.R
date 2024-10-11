@@ -22,6 +22,7 @@
 # I( x^5 * (1 - x^5)^(4/5) / (x^10 + 1) )
 # I( x^n * (1 + x^n)^(1 - 1/n) / (x^(2*n) + 1) )
 ### Diff/Simple:
+# I( x^3 * (1 - x^5)^(1/5) / (x^5 + 1) )
 # I( x^5 * (1 - x^5)^(4/5) / (x^5 + 1) )
 # I( x^6 * (1 - x^5)^(3/5) / (x^5 + 1) )
 # I( x^7 * (1 - x^5)^(2/5) / (x^5 + 1) )
@@ -43,6 +44,7 @@
 ### Simple:
 # I( 1 / (x^n + 1)^(1/n) )
 # I( (1 - x^n)^(1 - 1/n) )
+# I( x^p * (1 - x^n)^(1 - (p+1)/n) )
 
 # Note: n, p = usually integers;
 
@@ -784,6 +786,8 @@ x / (1 - x^5)
 integrate(\(x) x^3 * (1 - x^3)^(2/3) / (x^3 + 1), 0, 1)
 (2 - 1/3 - 2^(2/3)) * beta(1/3, 2/3) / 3
 
+### Pow = 5
+
 ### I( x^5 * (1 - x^5)^(4/5) / (x^5 + 1) )
 integrate(\(x) x^5 * (1 - x^5)^(4/5) / (x^5 + 1), 0, 1)
 (2 - 1/5 - 2^(4/5)) * beta(1/5, 4/5) / 5
@@ -854,6 +858,18 @@ integrate(\(x) x^3 * (1 - x^5)^(1/5), 0, 1)
 integrate(\(x) 1/5 * x^(4/5-1) * (1 - x)^(1/5), 0, 1)
 beta(4/5, 6/5) / 5
 
+### Gen: I( x^p * (1 - x^5)^(1 - (p+1)/5) )
+# Note: can be computed on an Arbitrary Interval!
+# - see also Quasi-Trivial Section;
+p = sqrt(3)
+integrate(\(x) x^p * (1 - x^5)^(1 - (p+1)/5), 0, 1)
+beta((p+1)/5, 2 - (p+1)/5) / 5
+
+### Gen: I( x^p * (1 - x^n)^(1 - (p+1)/n) )
+p = sqrt(3); n = sqrt(5);
+integrate(\(x) x^p * (1 - x^n)^(1 - (p+1)/n), 0, 1)
+beta((p+1)/n, 2 - (p+1)/n) / n;
+
 
 # Derivation:
 integrate(\(x) x^6 * (1 - x^5)^(3/5) / (x^5 + 1), 0, 1)
@@ -905,6 +921,16 @@ integrate(\(x) x / (x^5 + 1)^2, 0, x)
 1/5 * x^2 / (x^5 + 1) + integrate(\(x) 3/5 * x / (x^5 + 1), 0, x)$value
 
 
+# Derivation: Fraction-Type
+# - alternative way to compute the Simplified-variants;
+integrate(\(x) x^3 * (1 - x^5)^(1/5) / (x^5 + 1), 0, 1)
+integrate(\(x) 1/5 * ((1-x)/x)^(1/5) / (x + 1), 0, 1)
+integrate(\(x) x^5 / (x^5+1)^2 / (1/(x^5+1) + 1), 0, Inf)
+integrate(\(x) x^5 / (x^5+1) / (x^5 + 2), 0, Inf)
+integrate(\(x) x^5 * (1/(x^5+1) - 1/(x^5 + 2)), 0, Inf)
+integrate(\(x) 2/(x^5 + 2) - 1/(x^5+1), 0, Inf)
+beta(1/5, 4/5) / 5 * (-1 + 2^(1/5))
+
 #################
 
 ### Quasi-Trivial
@@ -954,6 +980,20 @@ id = seq(2, n-1, by=2); cs = cos(id*pi/n); sn = sin(id*pi/n);
 	+ (n-1)/(2*n^3) * (log(x+1) + sum(cs * log(x^2 + 2*cs*x + 1) +
 	+ 2*sn * (atan((x + cs)/sn) - atan(cs/sn))));
 
+###
+n = 7; # ODD integer;
+p = 3; # Integer in [0, n-1]
+integrate(\(x) x^(n+p) * (1 - x^n)^(1 - (p+1)/n), 0, lim)
+# Solution:
+x = lim/(1 - lim^n)^(1/n);
+sg = if(p %% 2 == 0) 1 else -1;
+id = seq(2, n-1, by=2); cs = cos(id*pi/n); sn = sin(id*pi/n);
+csp = cos(id*(p+1)*pi/n); snp = sin(id*(p+1)*pi/n);
+(p+1)/(2*n^2) * x^(p+1)/(x^n + 1) - 1/(2*n) * x^(p+1)/(x^n + 1)^2 +
+	+ sg*(n-p-1)*(p+1)/(2*n^3) *
+	(log(x+1) + sum(csp * log(x^2 + 2*cs*x + 1) +
+	+ 2*snp * (atan((x + cs)/sn) - atan(cs/sn))));
+
 
 #############
 # Derivation:
@@ -983,6 +1023,10 @@ n = 7;
 integrate(\(x) 1/(x^n + 1)^2, 0, x)
 1/n * x/(x^n + 1) + integrate(\(x) (1-1/n) / (x^n + 1), 0, x)$value
 
+integrate(\(x) x/(x^n + 1)^2, 0, x)
+1/n * x^2/(x^n + 1) + integrate(\(x) (1-2/n) * x / (x^n + 1), 0, x)$value
+
+
 # Reduction: Pow = 3
 x = 6/7
 integrate(\(x) 1/(x^5 + 1)^3, 0, x)
@@ -996,6 +1040,14 @@ integrate(\(x) 1/(x^n + 1)^3, 0, x)
 1/(2*n) * x/(x^n + 1)^2 + integrate(\(x) (1-1/(2*n)) / (x^n + 1)^2, 0, x)$value
 1/(2*n) * x/(x^n + 1)^2 + (2*n-1) / (2*n^2) * x/(x^n + 1) +
 	+ integrate(\(x) (n-1)*(2*n-1) / (2*n^2) / (x^n + 1), 0, x)$value
+
+#
+integrate(\(x) x^p/(x^n + 1)^3, 0, x)
+1/(2*n) * x^(p+1)/(x^n + 1)^2 +
+	integrate(\(x) (1-(p+1)/(2*n)) * x^p / (x^n + 1)^2, 0, x)$value;
+1/(2*n) * x^(p+1)/(x^n + 1)^2 + (2*n-p-1) / (2*n^2) * x^(p+1)/(x^n + 1) +
+	+ integrate(\(x) (n-p-1)*(2*n-p-1) / (2*n^2) * x^p / (x^n + 1), 0, x)$value
+
 
 
 ##################
