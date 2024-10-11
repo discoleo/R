@@ -203,6 +203,15 @@ gamma(1/5)^2/gamma(2/5) / 10
 integrate(\(x) x / (x^5 + 1)^(2/5), 0, 1)
 - (digamma(2/5) + Euler)/5 +
 	+ integrate(\(x) (x^4 - x^2) / (x^5 - 1), 1, 2^(1/5))$value;
+# Solution:
+x = 2^(1/5)
+cs = cos(c(2,4)*pi/5); cs2 = cos(c(2,4)*3*pi/5);
+sn = sin(c(2,4)*pi/5); sn2 = sin(c(2,4)*3*pi/5);
+cs4 = cos(c(2,4)*pi); sn4 = sin(c(2,4)*pi);
+- (digamma(2/5) + Euler)/5 +
+	+ sum((cs4-cs2) * log((x^2 - 2*cs*x + 1) / (2-2*cs)) +
+	- 2*(sn4-sn2) * (atan((x - cs)/sn) - atan((1-cs)/sn)) ) / 5;
+
 
 ### I( x^2 / (x^5 + 1)^(2/5) ) &
 ### I( x^3 / (x^5 + 1)^(2/5) )
@@ -354,6 +363,24 @@ x^4 / 20 - 1/20 + 2*(- 2/5 *(x^3/3 - x^2/2 - x - 1/3 + 1/2 + 1)) +
 		- 3*cs*x^2/2 + 4*cs^3*x^2/2 + (8*cs^4 - 8*cs^2)*x) +
 	- 2/5 * (cs/4 + 2*cs^2/3 - (cs/3 + 2*cs^2/2 + 4*cs^3 - 3*cs) +
 		- 3*cs/2 + 4*cs^3/2 + (8*cs^4 - 8*cs^2)) );
+
+#
+x = 2^(1/5)
+integrate(\(x) (x^4 - x^2) / (x^5 - 1), 1, x)
+cs = cos(c(2,4)*pi/5); sn = sin(c(2,4)*pi/5);
+cs2 = cos(c(2,4)*3*pi/5); sn2 = sin(c(2,4)*3*pi/5);
+cs4 = cos(c(2,4)*pi); sn4 = sin(c(2,4)*pi);
+integrate(\(x) 1/5 * (x^3 + x^2) +
+	+ (x^4 - x^2) * 2*(cs[1]*x-1) / (x^2 - 2*cs[1]*x + 1) / 5 +
+	+ (x^4 - x^2) * 2*(cs[2]*x-1) / (x^2 - 2*cs[2]*x + 1) / 5, 1, x)
+integrate(\(x)
+	+ (2*(cs4[1]-cs2[1])*(x-cs[1]) - 2*(sn4[1]-sn2[1])*sn[1]) /
+		(x^2 - 2*cs[1]*x + 1) / 5 +
+	+ (2*(cs4[2]-cs2[2])*(x-cs[2]) - 2*(sn4[2]-sn2[2])*sn[2]) /
+		(x^2 - 2*cs[2]*x + 1) / 5, 1, x)
+sum((cs4-cs2) * log((x^2 - 2*cs*x + 1) / (2-2*cs)) +
+	- 2*(sn4-sn2) * (atan((x - cs)/sn) - atan((1-cs)/sn)) ) / 5
+
 
 #
 integrate(\(x) 1/(x^5 + 1)^(1/5) / x^2 - (1/x^2 + 1/x) * exp(-x), 0, Inf)
