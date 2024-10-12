@@ -775,12 +775,14 @@ integrate(\(x) (1 - x^8)^(3/8) / (x^8 + 1)^(5/8), 0, 1)
 integrate(\(x) x^2 * (1 - x^8)^(1/8) / (x^8 + 1)^(7/8), 0, 1)
 2^(1/4-2)/4 * beta(9/16, 3/8)
 
-###
+### Div: I( x^4 / (1 - x^16)^(1/8) / (x^8 + 1) )
 integrate(\(x) x^4 / (1 - x^16)^(1/8) / (x^8 + 1), 0, 1)
 2^(-1/4-2)/4 * beta(7/16, 5/8)
-#
+### Prod: I ( x^4 * (1 - x^16)^(1/8) / (x^8 + 1) )
 integrate(\(x) x^4 * (1 - x^16)^(1/8) / (x^8 + 1), 0, 1)
-# TODO
+p = 4; n = 8; r = 7/8;
+(beta(1-r, (p+1)/(2*n)) - beta(1-r, (p+1)/(2*n) + 1/2)) / (2*n);
+(beta(1/8, 5/16) - beta(1/8, 13/16)) / 16
 
 
 # Based on Pow 3 & Higher:
@@ -896,6 +898,7 @@ eps = 1E-5;
 gamma(7/12) * (gamma(eps) / gamma(7/12 + eps) +
 	- 1/gamma(7/12) / eps) / 12
 (beta(eps, 7/12) - 1/eps) / 12
+# library(Rmpfr)
 eps = mpfr("1E-12", 240)
 gamma(7/12) * (gamma(eps) / gamma(mpfr(7, 240)/12 + eps) +
 	- 1/gamma(mpfr(7, 240)/12) / eps) / 12;
