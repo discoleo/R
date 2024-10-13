@@ -228,6 +228,11 @@ integrate(\(x) 2 * atan(x) / (x^2 + 4), 0, Inf)
 ####################
 ### ATAN: Powers ###
 
+### I( atan(x)^2 )
+integrate(\(x) atan(x)^2, 0, 1)
+(pi/4)^2 + pi*log(2)/4 - Catalan
+
+### I( atan(x)^3 )
 integrate(\(x) atan(x)^3, 0, 1)
 (pi/4)^3 + 63/64 * zeta(3) + 3/32 * pi^2 * log(2) - 3/4 * pi * Catalan
 
@@ -444,6 +449,14 @@ integrate(\(x) (pi/2 - atan(x)) / (x^4 + 1), 0, Inf)
 	+ pi/32 * (digamma(1/8) - digamma(5/8)) + pi^2/8 / sin(pi/4);
 
 
+### Pow: 6
+
+###
+integrate(\(x) x^2 * atan(x) / (x^6 + 1), 0, Inf)
+integrate(\(x) x^2 * (pi/2 - atan(x)) / (x^6 + 1), 0, Inf)
+pi^2 / 24;
+
+
 # Helper:
 integrate(\(x) atan(x) / x, 0, 1)
 Catalan
@@ -470,6 +483,42 @@ pi/(4*p) - integrate(\(x) 1/p^2 * x^(1/p) / (x^(2/p) + 1), 0, 1)$value
 pi/(4*p) - integrate(\(x) 1/p * x^p / (x^2 + 1), 0, 1)$value
 - (pracma::psi(1, 3/4) - pracma::psi(1, 1/4)) / 16
 Catalan
+
+
+##############
+
+### I( atan(x) / (x*(x+1)*(x^2+1)) )
+# Maths 505: A MONSTER INTEGRAL!!!
+# int 0 to infty arctan(x)/(x(x+1)(x^2+1))
+# https://www.youtube.com/watch?v=u-FKjn_83l8
+
+### on [0, Inf]
+integrate(\(x) atan(x) / (x*(x+1)*(x^2+1)), 0, Inf)
+integrate(\(x) x / (tan(x) * (tan(x)+1)), 0, pi/2)
+integrate(\(x) x / tan(x) - x / (tan(x)+1), 0, pi/2)
+3/8 * pi*log(2) - pi^2/16 + Catalan/2
+
+### on [0, 1]
+integrate(\(x) atan(x) / (x*(x+1)*(x^2+1)), 0, 1)
+- pi^2/64 + 3/4 * Catalan
+
+
+# Helper: I( x * cos(x) / (cos(x) + sin(x)) )
+x = pi/5
+integrate(\(x) x * cos(x) / (cos(x) + sin(x)), 0, x)
+x*log(cos(x) + sin(x)) / 2 + x^2/4 +
+	- integrate(\(x) 1/2 * log(cos(x) + sin(x)), 0, x)$value
+x*log(cos(x) + sin(x)) / 2 + x^2/4 - x*log(2)/4 +
+	- integrate(\(x) 1/2 * log(sin(x)), pi/4, x+pi/4)$value
+
+# on [0, pi/4]
+integrate(\(x) x * cos(x) / (cos(x) + sin(x)), 0, pi/4)
+pi^2/64 + pi*log(2)/8 - Catalan/4
+
+#
+x = pi/5
+integrate(\(x) cos(x) / (cos(x) + sin(x)), 0, x)
+(log(cos(x) + sin(x)) + x) / 2;
 
 
 ######################
