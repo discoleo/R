@@ -189,7 +189,7 @@ x = 2^(1/5); cs = cos(c(2,4)*pi/5); sn = sin(c(2,4)*pi/5);
 integrate(\(x) x / (x^5 + 1)^(1/5), 0, 1)
 2^(4/5) - gamma(4/5) * gamma(2/5) / gamma(1/5) +
 	- integrate(\(x) 3 * x^3 / (x^5 + 1)^(1/5), 0, 1)$value;
-# TODO
+# TODO: ???
 
 ### I( x^2 / (x^5 + 1)^(1/5) )
 integrate(\(x) x^2 / (x^5 + 1)^(1/5), 0, 1)
@@ -231,17 +231,24 @@ sn = sin(id*pi/n); snp = sin(id*(p+1)*pi/n);
 integrate(\(x) x^2 / (x^5 + 1)^(2/5), 0, 1)
 2^(3/5) - gamma(4/5) * gamma(3/5) / gamma(2/5) +
 	- integrate(\(x) 2 * x^3 / (x^5 + 1)^(2/5), 0, 1)$value;
-# TODO
+# TODO: ???
 
 
 ### I( x^2 / (x^5 + 1)^(3/5) )
 integrate(\(x) x^2 / (x^5 + 1)^(3/5), 0, 1)
 - (digamma(3/5) + Euler)/5 +
 	+ integrate(\(x) (x^4 - x) / (x^5 - 1), 1, 2^(1/5))$value;
+# Solution:
+# Note: for Arbitrary Interval, see a few paragraphs below;
+cs = cos(c(2,4)*pi/5); csp = cos(3*c(2,4)*pi/5);
+sn = sin(c(2,4)*pi/5); snp = sin(3*c(2,4)*pi/5); x = 2^(-1/5);
+-1/5 * log(1-x) - sum(csp*log(x^2 - 2*cs*x + 1) +
+	- 2*snp*(atan((x - cs)/sn) + atan(cs/sn))) / 5;
 
 ### I( x^3 / (x^5 + 1)^(3/5) )
 integrate(\(x) x^3 / (x^5 + 1)^(3/5), 0, 1)
 1/2^(3/5) - gamma(4/5)^2/gamma(3/5) / 2
+
 
 ### I( x / (x^5 + 1)^(4/5) )
 integrate(\(x) x / (x^5 + 1)^(4/5), 0, 1)
@@ -251,6 +258,7 @@ gamma(2/5)^2/gamma(4/5) / 10
 integrate(\(x) x^3 / (x^5 + 1)^(4/5), 0, 1)
 - (digamma(4/5) + Euler)/5 +
 	+ integrate(\(x) (x^4 - 1) / (x^5 - 1), 1, 2^(1/5))$value;
+# TODO: compute;
 
 
 ### Pow = 7
@@ -338,6 +346,22 @@ integrate(\(x) x / (x^5 + 1)^(1/5), 0, 1)
 	- integrate(\(x) 1/(x^5 + 1)^(1/5) / x^2 - 1/x^2, 0, 1)$value;
 1 - gamma(4/5) * gamma(2/5) / gamma(1/5) +
 	+ integrate(\(x) x^3 * (x - 1) / (x^5 - 1)^(6/5), 1, 2^(1/5))$value;
+# TODO: ???
+
+### Derivation: on Arbitrary Interval;
+# - for technique, see:
+#   Integrals.Fractions.Unity.Radicals.Mixed.R;
+lim = 3/4
+integrate(\(x) x^2 / (x^5 + 1)^(3/5), 0, lim)
+integrate(\(x) 1/5 / (x^2 * (x + 1)^3)^(1/5), 0, lim^5)
+x = 1 / (1/lim^5 + 1)^(1/5);
+integrate(\(x) x / (x^5 - 1), 1/x, Inf)
+integrate(\(x) x^2 / (1 - x^5), 0, x)
+cs = cos(c(2,4)*pi/5); csp = cos(3*c(2,4)*pi/5);
+sn = sin(c(2,4)*pi/5); snp = sin(3*c(2,4)*pi/5);
+-1/5 * log(1-x) - sum(csp*log(x^2 - 2*cs*x + 1) +
+	- 2*snp*(atan((x - cs)/sn) + atan(cs/sn))) / 5;
+
 
 # Fraction decomposition:
 integrate(\(x) x^3 * (x-1) / (x^5 - 1), 1, 2^(1/5))
@@ -755,9 +779,26 @@ gamma(1/8)*gamma(3/4 - 1/8) / gamma(3/4) / 8 +
 	- sqrt(2)/16i * beta(5/8, 1/4) * sinh(1i*pi/8);
 beta(1/8, 5/8) / 8 - sqrt(2)/16 * beta(1/4, 5/8) * sin(pi/8);
 
+### I( (x^8 + 1)^(1/4) )
+integrate(\(x) (x^8 + 1)^(1/4), 0, 1)
+2^(1/4)/3 + 1/12*(beta(1/8, 5/8) - sqrt(2)/2 * beta(1/4, 5/8) * sin(pi/8));
+
+### I( x^8 / (x^8 + 1)^(3/4) )
+integrate(\(x) x^8 / (x^8 + 1)^(3/4), 0, 1)
+2^(1/4)/3 - 1/24*(beta(1/8, 5/8) - sqrt(2)/2 * beta(1/4, 5/8) * sin(pi/8));
+
+###
+integrate(\(x) x^6 / (x^8 + 1)^(3/4), 0, 1)
+# TODO
+
 ###
 integrate(\(x) 1 / (x^8 + 1)^(3/4) / x^2 - 1/x^2 + 1, 0, 1)
 # TODO
+
+###
+integrate(\(x) x^6 / (x^8 + 1)^(3/4) - 1, 0, Inf)
+gamma(7/8) * gamma(3/4-7/8) / gamma(3/4) / 8
+
 
 
 ### I( 1 / (x^8 + 1)^(1/4) )
@@ -778,6 +819,7 @@ p = 0; n = 8; r = 7/8;
 ### I( x^2 * (1 - x^16)^(1/8) / (x^8 + 1) )
 integrate(\(x) x^2 * (1 - x^8)^(1/8) / (x^8 + 1)^(7/8), 0, 1)
 2^(1/4-2)/4 * beta(9/16, 3/8)
+(beta(1/8, 3/16) - beta(1/8, 11/16)) / 16
 
 ### Div: I( x^4 / (1 - x^16)^(1/8) / (x^8 + 1) )
 integrate(\(x) x^4 / (1 - x^16)^(1/8) / (x^8 + 1), 0, 1)
