@@ -10,6 +10,13 @@ extract.fname = function(x, pattern = "\\.Chr[^.]++(?=\\.)", offset = 5) {
 	sTk = extract.reg(x, pattern=pattern, offset=offset);
 	return(sTk);
 }
+
+trim = function(x) {
+	sub("^[ \t\n\r]+", "",
+		sub("[ \t\n\r]+$", "", x));
+}
+
+# Regex:
 extract.reg = function(x, pattern, offset = c(0,0), perl = TRUE) {
 	npos = regexpr(pattern, x, perl=perl);
 	hasStr = npos > 0;
@@ -22,16 +29,30 @@ extract.reg = function(x, pattern, offset = c(0,0), perl = TRUE) {
 	sTk[hasStr] = substr(x[hasStr], posS + offset[1], posE + offset[2]);
 	return(sTk);
 }
+extract.uptoreg = function(x, pattern, offset = c(0,0), perl = TRUE) {
+	npos = regexpr(pattern, x, perl=perl);
+	hasStr = npos > 0;
+	sTk = rep("", length(x));
+	if( ! any(hasStr)) return(sTk);
+	posE = npos[hasStr];
+	#
+	sTk[hasStr] = substr(x[hasStr], offset[1], posE + offset[2]);
+	return(sTk);
+}
 
 # more: extract protein abbreviation;
+# Output:
+# - Start = first line with AA;
+# - End   = last line with AA;
 read.fasta = function(file, path = "", more = TRUE, print.lines = NULL) {
 	fn = file;
-	if(nchar(path) > 0) fn = paste0(path, "/", file)
+	if(nchar(path) > 0) fn = paste0(path, "/", file);
 	x  = readLines(fn);
+	# Names:
 	id = which(grepl("^>", x));
 	sNms = x[id];
 	# Seq ID:
-	sPr  = extract.reg(sNms, "^>sp[|][^| ]*+", offset = c(4,0));
+	sPr  = extract.reg(sNms, "^>(?:sp|tr)[|][^| ]*+", offset = c(4,0));
 	lst  = data.frame(IDP = sPr, Start = id + 1, End = c(id[-1] - 1, length(x)));
 	lst$hasSeq = (lst$End - lst$Start >= 0);
 	# Seq-Length
@@ -42,9 +63,13 @@ read.fasta = function(file, path = "", more = TRUE, print.lines = NULL) {
 	lst$Len = nAA;
 	# Protein abbreviation
 	if(more) {
-		len = nchar(lst$IDP);
-		tmp = substr(sNms, len + 6, nchar(sNms));
+		len = nchar(lst$IDP) + 6;
+		tmp = substr(sNms, len, nchar(sNms));
 		PrA = extract.reg(tmp, "^[^ \t]++", offset = c(0,0));
+		# Protein Name:
+		len = len + nchar(PrA) + 1;
+		tmp = substr(sNms, len, nchar(sNms));
+		PrN = extract.uptoreg(tmp, " OS=", offset = c(0,-1));
 	}
 	# Gene-Name
 	sG = extract.reg(sNms, "(?<=[ \t|])GN=[^| \t]++", offset = c(3,0));
@@ -60,9 +85,17 @@ read.fasta = function(file, path = "", more = TRUE, print.lines = NULL) {
 		sG[idNoG] = extract.reg(tmp, "^[^ \t]++", offset = c(0,0));
 	}
 	lst$Gene = sG;
-	if(more) lst$PrAbbr = PrA;
+	if(more) {
+		lst$PrAbbr = PrA;
+		lst$PrN = PrN;
+	}
 	# Debug:
-	if( ! is.null(print.lines)) print(x[print.lines]);
+	if( ! is.null(print.lines)) {
+		if(is.logical(print.lines) && length(print.lines) == 1) {
+			print.lines = if(print.lines) 1:10 else numeric(0);
+		}
+		print(x[print.lines]);
+	}
 	return(lst)
 }
 
