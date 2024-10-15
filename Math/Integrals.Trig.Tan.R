@@ -257,6 +257,20 @@ integrate(\(x) (1-x)*log(1-x) / (x^2+1) - pi/4 + log(2)/2, 0, 1)
 integrate(\(x) atan(x) / (1-x) - pi/4/(1-x), 0, 1)
 pi*log(2)/8 - Catalan
 
+### I( log(x^2+1) * log(1-x) )
+integrate(\(x) log(x^2+1) * log(1-x), 0, 1)
+integrate(\(x) (1-x)*log(1-x) * 2*x/(x^2+1) + 2 - pi/2 - log(2), 0, 1)
+integrate(\(x) 2*(x+1)*log(1-x) / (x^2+1) + 4 - pi/2 - log(2), 0, 1)
+-5/48 * pi^2 + log(2)^2 / 4 + pi*log(2)/4 - 2*Catalan - pi/2 - log(2) + 4;
+
+# Complex:
+integrate(\(x) Re(log(x + 1i)) * log(1-x), 0, 1)
+-5/96 * pi^2 + log(2)^2 / 8 + pi*log(2)/8 - Catalan - pi/4 - log(2)/2 + 2;
+#
+integrate(\(x) Im(log(x + 1i)) * log(1-x), 0, 1)
+- (5/96 * pi^2 - log(2)^2 / 8 + pi*log(2)/8 - Catalan + pi/4 + log(2)/2);
+
+
 ###
 integrate(\(x) atan(x)^2 * log(x), 0, 1)
 # TODO
