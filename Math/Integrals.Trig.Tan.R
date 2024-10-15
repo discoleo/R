@@ -241,6 +241,27 @@ integrate(\(x) x * atan(x)^2 / (x^2 + 1), 0, 1)
 - 21/64 * zeta(3) - 1/32 * pi^2 * log(2) + pi/4 * Catalan
 
 
+### Atan * Log
+
+### I( atan(x) * log(x) )
+integrate(\(x) atan(x) * log(x), 0, 1)
+- pi^2 / 48 + pi/4 - log(2)/2
+
+### I( atan(x) * log(1-x) )
+integrate(\(x) atan(x) * log(1-x), 0, 1)
+integrate(\(x) ((1-x)*log(1-x) + x) / (x^2+1) - pi/4, 0, 1)
+integrate(\(x) (1-x)*log(1-x) / (x^2+1) - pi/4 + log(2)/2, 0, 1)
+5/96 * pi^2 - log(2)^2 / 8 + pi*log(2)/8 - Catalan - pi/4 + log(2)/2;
+
+### I( atan(x) / (1-x) )
+integrate(\(x) atan(x) / (1-x) - pi/4/(1-x), 0, 1)
+pi*log(2)/8 - Catalan
+
+###
+integrate(\(x) atan(x)^2 * log(x), 0, 1)
+# TODO
+
+
 ###################
 ### ATAN: Fractions
 
@@ -406,7 +427,7 @@ diff(x * atan(sqrt(x^2 + b^2)) / sqrt(x^2 + b^2) + b*atan(x/b) +
 # Maths 505: An outrageous journey of integration: int 0 to pi/4 arctan(cot^2(x))
 # https://www.youtube.com/watch?v=VUGlU_dSgPY
 
-###
+### I( atan(x^2) / (x^2 + 1) )
 integrate(\(x) atan(tan(x)^2), 0, pi/4)
 integrate(\(x) atan(x^2) / (x^2 + 1), 0, 1)
 pi^2/16 - (digamma(3/8 + 1/2) - digamma(3/8)) *
@@ -452,9 +473,19 @@ integrate(\(x) (pi/2 - atan(x)) / (x^4 + 1), 0, Inf)
 ### Pow: 6
 
 ###
+# x => 1/x;
 integrate(\(x) x^2 * atan(x) / (x^6 + 1), 0, Inf)
 integrate(\(x) x^2 * (pi/2 - atan(x)) / (x^6 + 1), 0, Inf)
 pi^2 / 24;
+
+###
+integrate(\(x) (x^4 + 1) * atan(x) / (x^6 + 1), 0, Inf)
+pi^2 / 6
+
+###
+integrate(\(x) (x^3 + x) * atan(x) / (x^6 + 1), 0, Inf)
+pi^2 / 12 / sin(2*pi/3)
+pi^2 / (6*sqrt(3))
 
 
 # Helper:
@@ -486,6 +517,28 @@ Catalan
 
 
 ##############
+
+### Simple Fractions
+
+### I( atan(x) / (x*(x^2+1)) )
+integrate(\(x) atan(x) / (x*(x^2+1)), 0, Inf)
+pi*log(2)/2
+
+### on [0, 1]
+integrate(\(x) atan(x) / (x*(x^2+1)), 0, 1)
+pi*log(2)/8 + Catalan/2
+
+
+### I( atan(x) / ((x+1) * (x^2+1)) )
+integrate(\(x) atan(x) / ((x+1) * (x^2+1)), 0, Inf)
+1/8 * pi*log(2) + pi^2/16 - Catalan/2
+
+### on [0, 1]
+integrate(\(x) atan(x) / ((x+1) * (x^2+1)), 0, 1)
+pi*log(2)/8 + pi^2/64 - 1/4 * Catalan
+
+# Note: see next section;
+
 
 ### I( atan(x) / (x*(x+1)*(x^2+1)) )
 # Maths 505: A MONSTER INTEGRAL!!!
