@@ -37,8 +37,20 @@ int.sinfr = function(x, a, sg = NULL) {
 }
 
 
-########################
+##################
 
+### I( 1/ sin(x) )
+integrate(\(x) 1/sin(x) - 1/x, 0, pi/4)
+integrate(\(x) sin(x) + cos(x)^2/sin(x) - 1/x, 0, pi/4)
+log(2-sqrt(2)) - log(pi/4) + log(2)/2
+
+# Helper:
+# Note: - log(acos(x)) + 1/2 * log(1-x)
+integrate(\(x) 1/acos(x) / sqrt(1-x^2) - 1/2/(1-x), 1, 1/sqrt(2))
+log(2-sqrt(2)) / 2 - log(pi/4)
+
+
+###########################
 ### I( 1 / (sin(x)^n + 1) )
 
 ### n = 3
