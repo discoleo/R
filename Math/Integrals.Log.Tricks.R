@@ -6,7 +6,7 @@
 ### Integrals: Logarithms
 ### Various Tricks
 ###
-### draft v.0.4a-Ref2
+### draft v.0.4b
 
 # TODO: refactor & cleanup;
 
@@ -230,7 +230,7 @@ gamma(n+1) / (a+1)^(n+1)
 ### sin(log(x))
 a = 3
 b = 3
-integrate(function(x) sin(log(x)) / (x^2+b*x+1), lower=1/a, upper=a)
+integrate(function(x) sin(log(x)) / (x^2 + b*x + 1), lower=1/a, upper=a)
 # 0
 integrate(function(x) cos(log(exp(pi/2)/x)) / (x^2+b*x+1), lower=1/a, upper=a)
 integrate(function(x) cos(log(exp(pi/2)*x)) / (x^2+b*x+1), lower=1/a, upper=a)
@@ -248,7 +248,7 @@ integrate(function(x) sin(log(x)) / sqrt(x^4+b*x^3+b*x+1), lower=1/a, upper=a)
 a = 3
 integrate(function(x) atan(x) / x, lower=1/a, upper=a)
 integrate(function(x) pi/4 / x, lower=1/a, upper=a)
-pi/2*log(a)
+pi/2 * log(a)
 
 
 a = 3
@@ -267,17 +267,31 @@ integrate(function(x) pi/4 * x / (x^4+b*x^3+b*x+1), lower=1/a, upper=a)
 a = 3
 integrate(function(x) atan(sqrt(x)) / x, lower=1/a, upper=a)
 integrate(function(x) pi/4 / x, lower=1/a, upper=a)
+pi/2 * log(a)
 
 a = 3
 b = 3
 integrate(function(x) atan(sqrt(x)) / (x^2+b*x+1), lower=1/a, upper=a)
 integrate(function(x) pi/4 / (x^2+b*x+1), lower=1/a, upper=a)
+d = sqrt(b^2 - 4);
+pi/(4*d) * log((2*a + b - d)/(2*a + b + d)*(2/a + b + d)/(2/a + b - d))
 
 
+###
 a = 3
-integrate(function(x) atan(x) * sqrt(x+1/x) / x, lower=1/a, upper=a)
-integrate(function(x) pi/4 * sqrt(x+1/x) / x, lower=1/a, upper=a)
-integrate(function(x) pi/2 * sqrt(x^4+1) / x^2, lower=1/sqrt(a), upper=sqrt(a))
+integrate(\(x) atan(x) * sqrt(x+1/x) / x, lower=1/a, upper=a)
+integrate(\(x) pi/4 * sqrt(x+1/x) / x, lower=1/a, upper=a)
+integrate(\(x) pi/2 * sqrt(x^4+1) / x^2, lower=1/sqrt(a), upper=sqrt(a))
+
+### I( atan(x) * sqrt(x + 1/x) / x )
+integrate(\(x) atan(x) * sqrt(x + 1/x) / x - pi/2 / x^(1/2), 0, Inf)
+integrate(\(x) pi/2 * sqrt(x^4+1) / x^2 - pi/2 / x^2 - pi/2, 0, Inf)
+pi * gamma(-1/4)*gamma(1/2 + 1/4) / gamma(1/2) / 4;
+
+### on [0, 1]
+integrate(\(x) atan(x) * sqrt(x + 1/x) / x, 0, 1)
+integrate(\(x) 2^(-1/2) * x / sin(x)^(3/2), 0, pi/2)
+# TODO
 
 
 a = 3
