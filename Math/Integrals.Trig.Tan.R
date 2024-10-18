@@ -216,13 +216,28 @@ integrate(\(x) log(x) * atan(x) / x, 0, 1)
 ####################
 ### ATAN: Simple ###
 
-###
+### I( atan(2*tan(x)) )
+integrate(\(x) atan(2*tan(x)), 0, pi/2)
+5/24 * pi^2 + pracma::polylog(-1/2, 2)/2 + (log(3/2)^2 - log(3)^2)/4;
+
+
+# Derivation:
+# - without the Lerch zeta function;
 integrate(\(x) atan(2*tan(x)), 0, pi/2)
 pi^2/4 - integrate(\(x) 2 * atan(x) / (4*x^2 + 1), 0, Inf)$value
 integrate(\(x) 2 * atan(x) / (x^2 + 4), 0, Inf)
-# Note: Int by parts & (half) Residue (for x^2 + 4);
-# TODO: ???
-# - without the Lerch zeta function;
+integrate(\(x) log((1+x)/(1-x)) / (1 + 2*x), 0, 1)$value +
+integrate(\(x) log((1+x)/(x-1)) / (1 + 2*x), 1, Inf)$value;
+5/24 * pi^2 + pracma::polylog(-1/2, 2)/2 + (log(3/2)^2 - log(3)^2)/4;
+
+#
+integrate(\(x) log((1+x)/x) / (1 + 2*x), 0, Inf)
+pi^2 / 8;
+
+#
+integrate(\(x) log((1-x)/x) / (1 + 2*x), 0, 1)$value +
+integrate(\(x) log(abs(1-x)/x) / (1 + 2*x), 1, Inf)$value;
+- pracma::polylog(-1/2, 2)/2 - pi^2/12 - (log(3/2)^2 - log(3)^2)/4;
 
 
 ####################
