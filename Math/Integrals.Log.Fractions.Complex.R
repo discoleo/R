@@ -51,6 +51,26 @@ integrate(\(x) x^p * log(x^n + a^n) / (x^n + b^n)^k, 0, Inf)
 #################
 #################
 
+### Simple:
+
+### I( log(x + 1i)/(x - 1i)) )
+integrate(\(x) Re(log(x + 1i)/(x - 1i)), 0, 1)
+integrate(\(x) Im(log(x + 1i)/(x - 1i)), 0, 1)
+-3/32*pi^2 + log(2)^2/8 + 1i*(5/8*pi*log(2) - Catalan);
+
+# Helper:
+
+# Li2((1−i)/2) # =
+5*pi^2/96 - log(2)^2/8 + 1i*(pi/8*log(2) - Catalan);
+
+# Li2((1+i)/2) # =
+5*pi^2/96 - log(2)^2/8 - 1i*(pi/8*log(2) - Catalan);
+
+
+####################
+
+### Generalised:
+
 ### I( x^p * atan(x) / (x^2 + 1) )
 p = - 1/sqrt(3);
 integrate(\(x) x^p * atan(x) / (x^2 + 1), 0, Inf)
