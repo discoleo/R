@@ -805,11 +805,12 @@ integrate(\(x) x^6 / (x^8 + 1)^(3/4), 0, 1)
 integrate(\(x) 1 / (x^8 + 1)^(3/4) / x^2 - 1/x^2 + 1, 0, 1)
 gamma(7/8) * gamma(3/4-7/8) / gamma(3/4) / 8 +
 	+ 6*beta(7/8, 7/8) / 16 - 2^(-3/4) + 2;
+-3/8 * beta(7/8, 7/8) - 2^(-3/4) + 2;
+
 
 ### Helper:
 integrate(\(x) x^6 / (x^8 + 1)^(3/4) - 1, 0, Inf)
 gamma(7/8) * gamma(3/4-7/8) / gamma(3/4) / 8
-
 
 
 ### I( 1 / (x^8 + 1)^(1/4) )
@@ -817,6 +818,11 @@ gamma(7/8) * gamma(3/4-7/8) / gamma(3/4) / 8
 integrate(\(x) 1 / (x^8 + 1)^(1/4), 0, 1)
 gamma(1/8)^2 / gamma(1/4) / 16
 beta(1/8, 1/8) / 16
+
+# Note: there are 2 trivial variants for even power;
+integrate(\(x) x^4 / (x^8 + 1)^(5/4), 0, 1)
+beta(5/8, 5/4 - 5/8) / 16
+
 
 
 ### Pow-Series: 1/8
