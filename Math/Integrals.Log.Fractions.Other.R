@@ -104,6 +104,39 @@ integrate(\(x) x * log(1-x) / (x^2+1), 0, 1)
 - 5/96 * pi^2 + log(2)^2 / 8
 
 
+### I( log(1+x) / (x^2 + x + 1) )
+integrate(\(x) log(1+x) / (x^2+x+1), 0, 1)
+(pracma::psi(1, 1/3) - pracma::psi(1, 2/3)) / 36
+
+### I( log(1-x) / (x^2 - x + 1) )
+integrate(\(x) log(1-x) / (x^2-x+1), 0, 1)
+- (pracma::psi(1, 1/3) - pracma::psi(1, 2/3)) / 6
+
+### I( x * log(1+x) / (x^2 + x + 1) )
+integrate(\(x) x * log(1+x) / (x^2+x+1), 0, 1)
+# TODO
+
+### I( x * log(1-x) / (x^2 - x + 1) )
+integrate(\(x) x * log(1-x) / (x^2-x+1), 0, 1)
+pi^2/12 - pracma::psi(1, 1/3) / 6
+
+
+### I( log(1-x) / (x^3 + 1) )
+integrate(\(x) log(1-x) / (x^3 + 1), 0, 1)
+- pi^2/18 + log(2)^2/6 +
+	- pracma::psi(1, 1/3) / 18 + pracma::psi(1, 2/3) / 9;
+
+
+### Li2(1/2)
+integrate(\(x) log(1+x) / (1-x) - log(2)/(1-x), 0, 1)
+- pi^2/12 + log(2)^2/2
+
+#
+integrate(\(x) log(1+x) * (x^2 + 2) / (1-x^3) - log(2)/(1-x), 0, 1)
+(pracma::psi(1, 1/3) - pracma::psi(1, 2/3)) / 36 +
+	- pi^2/12 + log(2)^2/2;
+
+
 ##################
 ##################
 
