@@ -130,11 +130,34 @@ integrate(\(x) log(1-x) / (x^3 + 1), 0, 1)
 ### Li2(1/2)
 integrate(\(x) log(1+x) / (1-x) - log(2)/(1-x), 0, 1)
 - pi^2/12 + log(2)^2/2
+#
+integrate(\(x) log(1-x) / (x+1), 0, 1)
+- pi^2/12 + log(2)^2/2
 
 #
 integrate(\(x) log(1+x) * (x^2 + 2) / (1-x^3) - log(2)/(1-x), 0, 1)
 (pracma::psi(1, 1/3) - pracma::psi(1, 2/3)) / 36 +
 	- pi^2/12 + log(2)^2/2;
+
+
+### Pow = 4
+
+###
+integrate(\(x) log(1-x) / (x^4+1), 0, 1)
+
+###
+integrate(\(x) x * log(1-x) / (x^4+1), 0, 1)
+
+###
+integrate(\(x) x^2 * log(1-x) / (x^4+1), 0, 1)
+
+### Helper
+integrate(\(x) x * log(1-x^4) / (x^4+1), 0, 1)
+pi*log(2)/8 - Catalan / 2
+
+#
+integrate(\(x) x * log(1-x^2) / (x^4+1), 0, 1)
+pi*log(2)/16 - Catalan/2
 
 
 ##################
@@ -163,8 +186,18 @@ pi / sqrt(b^2 - 1) / (2*b)
 # Maths 505: Another INSANE integral!
 # https://www.youtube.com/watch?v=KEDEzVqlAYU
 
-integrate(function(x) atan(x) * log((1-x)/(1+x)), 0, 1)
+integrate(\(x) atan(x) * log((1-x)/(1+x)), 0, 1)
 pi^2/16 - pi/4*log(2) - Catalan;
+
+
+### I( atan(x) * log(1-x) )
+integrate(\(x) atan(x) * log(1-x), 0, 1)
+integrate(\(x) ((1-x)*log(1-x) + x) / (x^2+1) - pi/4, 0, 1)
+5/96*pi^2 + pi*log(2)/8 - log(2)^2 / 8 + log(2)/2 - pi/4 - Catalan;
+
+### I( atan(x) * log(1+x) )
+integrate(\(x) atan(x) * log(1+x), 0, 1)
+-1/96*pi^2 + 3/8*pi*log(2) - log(2)^2 / 8 + log(2)/2 - pi/4;
 
 
 # Gen 1: TODO
