@@ -205,3 +205,28 @@ sum(sqrt(2)*pi/8 * (2*atan(1/b^2) + log(b^4 + 1)) +
 x = - cs^2;
 x^5 + 9*x^4 + 28*x^3 + 35*x^2 + 15*x + 1 # == 0
 
+
+####################
+####################
+
+### on [0, 1]
+
+### I( x^2 * log(x + 1i) / (x^4 + 1) )
+
+# Base: see file: Integrals.Log.Fractions.R;
+integrate(function(x) x^2 * log(x^2 + 1) / (x^4 + 1), 0, 1)
+integrate(\(x) 2*x^2 / (x^4 + 1) * atan(x), 0, 1)$value +
+	+ (pracma::psi(1, 7/8) - pracma::psi(1, 3/8)) / 32 +
+	- (digamma(7/8) - digamma(3/8)) * pi / 8 +
+	+ (digamma(5/8) - digamma(1/8)) * pi / 32 +
+	+ (digamma(7/8) - digamma(3/8)) * log(2) / 16;
+
+# =>
+integrate(function(x) x^2 * Re((1-1i) * log(x + 1i)) / (x^4 + 1), 0, 1)
+(pracma::psi(1, 7/8) - pracma::psi(1, 3/8)) / 64 +
+	+ (digamma(5/8) - digamma(1/8)) * pi / 64 +
+	+ (digamma(7/8) - digamma(3/8)) * log(2) / 32;
+
+#
+integrate(function(x) x^2 * Im((1-1i) * log(x + 1i)) / (x^4 + 1), 0, 1)
+# TODO
