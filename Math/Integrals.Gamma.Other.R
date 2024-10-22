@@ -200,14 +200,39 @@ integrate(\(x) x * pracma::psi(1, k*x) - 1 / (k^2*x), 0, 1)
 ### I( cos(pi*x)^2 * log(gamma(x)) )
 # Maths 505: This integral is INSANE beyond measure!
 # https://www.youtube.com/watch?v=Em5R4ckyqk0
+# Note: uses Reflection of Gamma;
+
+### I( cos(pi*x)^2 * log(gamma(x)) )
 integrate(\(x) cos(pi*x)^2 * log(gamma(x)), 0, 1)
 (log(2*pi) + 1/2)/4
 
+
+### I( sin(pi*x)^2 * log(gamma(x)) )
 integrate(\(x) sin(pi*x)^2 * log(gamma(x)), 0, 1)
 (log(2*pi) - 1/2)/4
 
 
-###############
+### I( log(gamma(x)) * tan(pi/2*x) )
+# Note: Reflection does NOT work;
+integrate(\(x) log(gamma(x)) * tan(pi/2*x), 0, 1)
+# TODO
+
+### I( log(gamma(x)) * tan(pi*x) )
+# TODO
+
+# library(Rmpfr)
+FUN = \(x) {
+	x = mpfr(x, 240);
+	y = log(gamma(x)) * tan(pi*x);
+	as.numeric(y);
+}
+eps = 1E-7;
+integrate(FUN, 0, 1/2 - eps, rel.tol=1E-9)$value +
+integrate(FUN, 1/2 + eps, 1, rel.tol=1E-9)$value;
+
+
+##############
+##############
 
 ### TODO:
 integrate(\(x) log(1-x) * log(gamma(x)), 0, 1)
