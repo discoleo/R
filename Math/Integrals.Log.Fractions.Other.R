@@ -114,7 +114,19 @@ integrate(\(x) log(1-x) / (x^2-x+1), 0, 1)
 
 ### I( x * log(1+x) / (x^2 + x + 1) )
 integrate(\(x) x * log(1+x) / (x^2+x+1), 0, 1)
+integrate(\(x) - 1/2 * log(x^2+x+1) / (x+1), 0, 1)$value +
+	log(2)*log(3)/2 - (pracma::psi(1, 1/3) - pracma::psi(1, 2/3)) / 72;
+integrate(\(x) - 1/2 * log(1-x^3) / (x+1), 0, 1)$value +
+	+ log(2)*log(3)/2 - (pi^2/12 - log(2)^2/2)/2 +
+	- (pracma::psi(1, 1/3) - pracma::psi(1, 2/3)) / 72;
 # TODO
+
+# polylog2: see file Integrals.Trig.Tan.R; (but NOT complex)
+
+#
+integrate(\(x) log(x) / (x^3 - 1), 1, Inf)
+pracma::psi(1, 2/3) / 9
+
 
 ### I( x * log(1-x) / (x^2 - x + 1) )
 integrate(\(x) x * log(1-x) / (x^2-x+1), 0, 1)
@@ -198,6 +210,22 @@ integrate(\(x) ((1-x)*log(1-x) + x) / (x^2+1) - pi/4, 0, 1)
 ### I( atan(x) * log(1+x) )
 integrate(\(x) atan(x) * log(1+x), 0, 1)
 -1/96*pi^2 + 3/8*pi*log(2) - log(2)^2 / 8 + log(2)/2 - pi/4;
+
+
+###
+integrate(\(x) atan(x) * atan(1-x), 0, 1)
+integrate(\(x) (1-2*x) * atan(1-x) / (x^2+1), 0, 1)
+# TODO
+
+#
+integrate(\(x) atan(1-x) / (x^2+1), 0, 1)
+1.393582/2 + # (Li2((3-1i)/5) + Li2((3+1i)/5)) / 2 +
+	+ (log(5)*log(5/4)/4 - pi^2/8  + pi/4*atan(1/2) + atan(1/2)*atan(1/3))/2;
+
+#
+integrate(\(x) x * atan(1-x) / (x^2+1), 0, 1)
+-0.59849679 * 1i/2i + # (Li2((3-1i)/5) - Li2((3+1i)/5)) / 2i +
+	+ (2*log(2)*atan(1/2) + log(5)*(pi/4 + atan(1/3) - atan(1/2))) / 4;
 
 
 # Gen 1: TODO
