@@ -211,7 +211,32 @@ x^5 + 9*x^4 + 28*x^3 + 35*x^2 + 15*x + 1 # == 0
 
 ### on [0, 1]
 
+### I( x^p * log(x + 1i) / (x^4 + 1) )
+
+### I( log(x + 1i) / (x^4 + 1) )
+integrate(function(x) Re((1+1i) * log(x + 1i)) / (x^4 + 1), 0, 1)
+(pracma::psi(1, 5/8) - pracma::psi(1, 1/8)) / 64 +
+	- (digamma(3/4) - digamma(1/4)) *
+		(digamma(7/8) - digamma(3/8)) / 64 +
+	+ (digamma(5/8) - digamma(1/8)) * log(2) / 32;
+
+
 ### I( x^2 * log(x + 1i) / (x^4 + 1) )
+integrate(function(x) x^2 * Re((1-1i) * log(x + 1i)) / (x^4 + 1), 0, 1)
+(pracma::psi(1, 7/8) - pracma::psi(1, 3/8)) / 64 +
+	+ (digamma(5/8) - digamma(1/8)) * pi / 64 +
+	+ (digamma(7/8) - digamma(3/8)) * log(2) / 32;
+
+### Im()
+
+integrate(function(x) x^2 * Im((1-1i) * log(x + 1i)) / (x^4 + 1), 0, 1)
+# TODO
+
+#
+integrate(function(x) Im((1+1i) * log(x + 1i)) / (x^4 + 1), 0, 1)
+# TODO
+
+### Derivation:
 
 # Base: see file: Integrals.Log.Fractions.R;
 integrate(function(x) x^2 * log(x^2 + 1) / (x^4 + 1), 0, 1)
@@ -220,13 +245,49 @@ integrate(\(x) 2*x^2 / (x^4 + 1) * atan(x), 0, 1)$value +
 	- (digamma(7/8) - digamma(3/8)) * pi / 8 +
 	+ (digamma(5/8) - digamma(1/8)) * pi / 32 +
 	+ (digamma(7/8) - digamma(3/8)) * log(2) / 16;
+# [duplicate] slightly different formula;
+# (digamma(3/4) - digamma(1/4)) == pi;
+integrate(\(x) x^2 * log(x^2+1) / (x^4+1), 0, 1)
+integrate(\(x) 2*x^2 * atan(x) / (x^4+1), 0, 1)$value +
+	+ (pracma::psi(1, 7/8) - pracma::psi(1, 3/8)) / 32 +
+	- (digamma(7/8) - digamma(3/8)) * pi/8 +
+	+ (digamma(3/4) - digamma(1/4)) *
+		(digamma(5/8) - digamma(1/8)) / 32 +
+	+ (digamma(7/8) - digamma(3/8)) * log(2) / 16;
 
-# =>
-integrate(function(x) x^2 * Re((1-1i) * log(x + 1i)) / (x^4 + 1), 0, 1)
-(pracma::psi(1, 7/8) - pracma::psi(1, 3/8)) / 64 +
-	+ (digamma(5/8) - digamma(1/8)) * pi / 64 +
-	+ (digamma(7/8) - digamma(3/8)) * log(2) / 32;
+###
+integrate(\(x) log(x^2+1) / (x^4+1), 0, 1)
+integrate(\(x) -2*atan(x) / (x^4+1), 0, 1)$value +
+	+ (pracma::psi(1, 5/8) - pracma::psi(1, 1/8)) / 32 +
+	+ (digamma(5/8) - digamma(1/8)) * pi/8 +
+	- (digamma(3/4) - digamma(1/4)) *
+		(digamma(7/8) - digamma(3/8)) / 32 +
+	+ (digamma(5/8) - digamma(1/8)) * log(2) / 16;
 
-#
-integrate(function(x) x^2 * Im((1-1i) * log(x + 1i)) / (x^4 + 1), 0, 1)
-# TODO
+
+### Helper:
+b = sqrt(3)
+# Note: factor * 2*b NOT included;
+integrate(\(x) x^2 / (x^2+b^2) / (x^4+1), 0, 1)
+integrate(\(x) (-b^2/(x^2+b^2) + (b^2*x^2 + 1)/(x^4+1)) / (b^4 + 1), 0, 1)
+(-b*atan(1/b) + (digamma(5/8) - digamma(1/8))/8 +
+	+ b^2*(digamma(7/8) - digamma(3/8))/8) / (b^4 + 1);
+(b*atan(b) - b*pi/2 + (digamma(5/8) - digamma(1/8))/8 +
+	+ b^2*(digamma(7/8) - digamma(3/8))/8) / (b^4 + 1);
+
+###
+b = sqrt(3)
+# Note: factor * 2*b NOT included;
+integrate(\(x) 1 / (x^2+b^2) / (x^4+1), 0, 1)
+integrate(\(x) (1/(x^2+b^2) - (x^2 - b^2)/(x^4+1)) / (b^4 + 1), 0, 1)
+(atan(1/b)/b - (digamma(7/8) - digamma(3/8))/8 +
+	+ b^2*(digamma(5/8) - digamma(1/8))/8) / (b^4 + 1);
+(pi/2 / b - atan(b)/b - (digamma(7/8) - digamma(3/8))/8 +
+	+ b^2*(digamma(5/8) - digamma(1/8))/8) / (b^4 + 1);
+
+
+### Other
+integrate(function(x) Re((1-1i) * log(x + 1i)) / (x^4 + 1), 0, 1)
+integrate(function(x) (log(x^2 + 1)/2 - atan(x)) / (x^4 + 1), 0, 1)$value +
+	+ (digamma(5/8) - digamma(1/8)) * pi / 16;
+# TODO: ?
