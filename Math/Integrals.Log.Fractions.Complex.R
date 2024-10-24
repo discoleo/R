@@ -216,7 +216,7 @@ x^5 + 9*x^4 + 28*x^3 + 35*x^2 + 15*x + 1 # == 0
 ### I( log(x + 1i) / (x^4 + 1) )
 integrate(function(x) Re((1+1i) * log(x + 1i)) / (x^4 + 1), 0, 1)
 (pracma::psi(1, 5/8) - pracma::psi(1, 1/8)) / 64 +
-	- (digamma(3/4) - digamma(1/4)) *
+	- (digamma(3/4) - digamma(1/4)) * # == pi
 		(digamma(7/8) - digamma(3/8)) / 64 +
 	+ (digamma(5/8) - digamma(1/8)) * log(2) / 32;
 
@@ -229,12 +229,13 @@ integrate(function(x) x^2 * Re((1-1i) * log(x + 1i)) / (x^4 + 1), 0, 1)
 
 ### Im()
 
-integrate(function(x) x^2 * Im((1-1i) * log(x + 1i)) / (x^4 + 1), 0, 1)
-# TODO
-
 #
 integrate(function(x) Im((1+1i) * log(x + 1i)) / (x^4 + 1), 0, 1)
 # TODO
+
+integrate(function(x) x^2 * Im((1-1i) * log(x + 1i)) / (x^4 + 1), 0, 1)
+# TODO
+
 
 ### Derivation:
 
@@ -264,6 +265,14 @@ integrate(\(x) -2*atan(x) / (x^4+1), 0, 1)$value +
 		(digamma(7/8) - digamma(3/8)) / 32 +
 	+ (digamma(5/8) - digamma(1/8)) * log(2) / 16;
 
+### I( x * log(x+1) / (x^4+1) )
+integrate(\(x) x * log(x+1) / (x^4+1), 0, 1)
+(pracma::psi(1, 3/4) - pracma::psi(1, 1/4)) / 64 +
+	+ (digamma(3/4) - digamma(1/4)) * log(2) / 64 +
+	- (digamma(7/8) - digamma(3/8))^2 / 128 +
+	+ (digamma(3/4) - digamma(1/4)) * log(2) / 64 +
+	+ (digamma(5/8) - digamma(1/8))^2 / 128;
+
 
 ### Helper:
 b = sqrt(3)
@@ -291,3 +300,26 @@ integrate(function(x) Re((1-1i) * log(x + 1i)) / (x^4 + 1), 0, 1)
 integrate(function(x) (log(x^2 + 1)/2 - atan(x)) / (x^4 + 1), 0, 1)$value +
 	+ (digamma(5/8) - digamma(1/8)) * pi / 16;
 # TODO: ?
+
+
+### from log(x+b) / (x^4 + 1)
+b = sqrt(3)
+integrate(\(x) 1 / (x+b) / (x^4+1), 0, 1)
+integrate(\(x) (1/(x+b) - (x - b)*(x^2 + b^2)/(x^4+1)) / (b^4 + 1), 0, 1)
+integrate(\(x) (1/(x+b) - (x^3 - b*x^2 + b^2*x - b^3)/(x^4+1)) / (b^4 + 1), 0, 1)
+(log(b+1) - log(b) - log(2)/4 +
+	+ (digamma(7/8) - digamma(3/8)) * b / 8 +
+	- (digamma(3/4) - digamma(1/4)) * b^2 / 8 +
+	+ (digamma(5/8) - digamma(1/8)) * b^3 / 8 ) / (b^4 + 1);
+
+
+### from x * log(x+b) / (x^4 + 1)
+b = sqrt(3)
+integrate(\(x) x / (x+b) / (x^4+1), 0, 1)
+integrate(\(x) (x/(x+b) - x*(x^3 - b*x^2 + b^2*x - b^3)/(x^4+1)) / (b^4 + 1), 0, 1)
+integrate(\(x) (-b/(x+b) + (b*x^3 - b^2*x^2 + b^3*x + 1)/(x^4+1)) / (b^4 + 1), 0, 1)
+(-b*log(b+1) + b*log(b) + b*log(2)/4 +
+	- (digamma(7/8) - digamma(3/8)) * b^2 / 8 +
+	+ (digamma(3/4) - digamma(1/4)) * b^3 / 8 +
+	+ (digamma(5/8) - digamma(1/8)) / 8 ) / (b^4 + 1);
+
