@@ -265,13 +265,21 @@ integrate(\(x) -2*atan(x) / (x^4+1), 0, 1)$value +
 		(digamma(7/8) - digamma(3/8)) / 32 +
 	+ (digamma(5/8) - digamma(1/8)) * log(2) / 16;
 
+
 ### I( x * log(x+1) / (x^4+1) )
 integrate(\(x) x * log(x+1) / (x^4+1), 0, 1)
 (pracma::psi(1, 3/4) - pracma::psi(1, 1/4)) / 64 +
-	+ (digamma(3/4) - digamma(1/4)) * log(2) / 64 +
+	+ (digamma(3/4) - digamma(1/4)) * log(2) / 32 + # pi*log(2)
 	- (digamma(7/8) - digamma(3/8))^2 / 128 +
-	+ (digamma(3/4) - digamma(1/4)) * log(2) / 64 +
 	+ (digamma(5/8) - digamma(1/8))^2 / 128;
+
+### I( x^3 * log(x+1) / (x^4+1) )
+integrate(\(x) x^3 * log(x+1) / (x^4+1), 0, 1)
+(pracma::psi(1, 1) - pracma::psi(1, 1/2)) / 64 +
+	+ log(2)^2 / 32 +
+	+ (digamma(5/8) - digamma(1/8)) *
+		(digamma(7/8) - digamma(3/8)) / 64 +
+	- (digamma(3/4) - digamma(1/4))^2 / 128;
 
 
 ### Helper:
@@ -323,3 +331,15 @@ integrate(\(x) (-b/(x+b) + (b*x^3 - b^2*x^2 + b^3*x + 1)/(x^4+1)) / (b^4 + 1), 0
 	+ (digamma(3/4) - digamma(1/4)) * b^3 / 8 +
 	+ (digamma(5/8) - digamma(1/8)) / 8 ) / (b^4 + 1);
 
+
+### from x^3 * log(x+b) / (x^4 + 1)
+b = sqrt(3)
+integrate(\(x) x^3 / (x+b) / (x^4+1), 0, 1)
+integrate(\(x) (x^3/(x+b) +
+	- (x^6 - b*x^5 + b^2*x^4 - b^3*x^3)/(x^4+1)) / (b^4 + 1), 0, 1)
+integrate(\(x) (- b^3/(x+b) +
+	+ (b^3*x^3 + x^2 - b*x + b^2)/(x^4+1)) / (b^4 + 1), 0, 1)
+(-b^3*log(b+1) + b^3*log(b) + b^3*log(2)/4 +
+	+ (digamma(7/8) - digamma(3/8)) / 8 +
+	- (digamma(3/4) - digamma(1/4)) * b / 8 +
+	+ (digamma(5/8) - digamma(1/8)) * b^2 / 8) / (b^4 + 1);
