@@ -154,7 +154,7 @@ integrate(function(x) Re(log(x^2 + 1i)) / (x^2 + 1), 0, Inf)
 pi*log(2*cos(pi/8))
 
 # Derivation:
-integrate(function(x) atan(x^2)/(x^2 + 1), 0, Inf)
+integrate(function(x) atan(x^2) / (x^2 + 1), 0, Inf)
 pi^2 / 8
 integrate(function(x) Im(log((x^2 + 1i)/(x^2 - 1i))) / (x^2 + 1), 0, Inf)
 pi^2 / 4
@@ -170,11 +170,19 @@ pi^2 / 8
 
 ### Base:
 # see file: Integrals.Log.Fractions.R;
-b = sqrt(3)
+b = sqrt(pi)
 integrate(\(x) log(x^2 + b^2) / (x^4 + 1), 0, Inf)
 sqrt(2)*pi/8 * (2*atan(1/b^2) + log(b^4 + 1)) +
 	- pi/2 * (atan(1/b*exp(1i*pi/4))*exp(1i*pi/4) +
 		+ atan(1/b*exp(-1i*pi/4))*exp(-1i*pi/4));
+
+###
+b = sqrt(5)
+integrate(\(x) x^2 * log(x^2 + b^2) / (x^4 + 1), 0, Inf)
+sqrt(2)*pi/8 * (2*atan(b^2) + log(b^4 + 1)) +
+	- pi^2*cos(3*pi/4)/sin(3*pi/4)^2 / 8 +
+	- pi/2 * (atan(b*exp(1i*pi/4))*exp(1i*pi/4) +
+		+ atan(b*exp(-1i*pi/4))*exp(-1i*pi/4));
 
 
 ### I( log(x^4 - x^2 + 1) / (x^4 + 1) )
@@ -240,7 +248,7 @@ integrate(function(x) x^2 * Im((1-1i) * log(x + 1i)) / (x^4 + 1), 0, 1)
 ### Derivation:
 
 # Base: see file: Integrals.Log.Fractions.R;
-integrate(function(x) x^2 * log(x^2 + 1) / (x^4 + 1), 0, 1)
+integrate(\(x) x^2 * log(x^2 + 1) / (x^4 + 1), 0, 1)
 integrate(\(x) 2*x^2 / (x^4 + 1) * atan(x), 0, 1)$value +
 	+ (pracma::psi(1, 7/8) - pracma::psi(1, 3/8)) / 32 +
 	- (digamma(7/8) - digamma(3/8)) * pi / 8 +
@@ -264,6 +272,17 @@ integrate(\(x) -2*atan(x) / (x^4+1), 0, 1)$value +
 	- (digamma(3/4) - digamma(1/4)) *
 		(digamma(7/8) - digamma(3/8)) / 32 +
 	+ (digamma(5/8) - digamma(1/8)) * log(2) / 16;
+
+### I( (x^2 + 1) * log(x^2 + 1) / (x^4 + 1) )
+integrate(\(x) (x^2 + 1) * log(x^2 + 1) / (x^4 + 1), 0, 1)
+sqrt(2)*pi/8 * (pi/2 + log(2)) +
+	+ 2*(pracma::psi(1,7/8) - pracma::psi(1,3/8)) / 64 +
+	- pi/2 * (atan(exp(1i*pi/4))*exp(1i*pi/4) +
+		+ atan(exp(-1i*pi/4))*exp(-1i*pi/4));
+
+# Note:
+sum(atan(exp(c(1i,-1i)*pi/4))*exp(c(1i,-1i)*pi/4)) # ==
+(digamma(7/8) - digamma(3/8)) / 4
 
 
 ### I( x * log(x+1) / (x^4+1) )
