@@ -376,3 +376,25 @@ integrate(\(x) ((x^4 - b^2*x^2 + b^4)/(x^6+1) +
 	- (digamma(3/4) - digamma(1/4)) * b^2 / 12 +
 	+ (digamma(7/12) - digamma(1/12)) * b^4 / 12) / (b^6 - 1)
 
+
+### ATAN
+
+### I( (atan(x) - pi/4) / (x^2 - 1) )
+integrate(\(x) (atan(x) - pi/4) / (x^2 - 1), 0, 1)
+Catalan / 2
+
+
+### I( (atan(x) - pi/4) / (x^4 - 1) )
+integrate(\(x) (atan(x) - pi/4) / (x^4 - 1), 0, 1)
+pi^2/64 + Catalan/4
+
+
+### I( (atan(x) - pi/4) / (x^6 - 1) )
+integrate(\(x) (atan(x) - pi/4) / (x^6 - 1), 0, 1)
+integrate(\(x) Catalan/6 - 1/3 * (atan(x) - pi/4) * (x^2+2) / (x^4 + x^2 + 1), 0, 1)
+integrate(\(x) - 1/3 * atan(x) * (x^2+2) / (x^4 + x^2 + 1), 0, 1)$value +
+	+ Catalan/6 + pi/12 * (
+		(digamma(5/6) - digamma(1/6)) / 6 +
+		(digamma(1/2) - digamma(1/6)) / 6 );
+# TODO
+
