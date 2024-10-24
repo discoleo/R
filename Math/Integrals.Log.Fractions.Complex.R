@@ -343,3 +343,36 @@ integrate(\(x) (- b^3/(x+b) +
 	+ (digamma(7/8) - digamma(3/8)) / 8 +
 	- (digamma(3/4) - digamma(1/4)) * b / 8 +
 	+ (digamma(5/8) - digamma(1/8)) * b^2 / 8) / (b^4 + 1);
+
+
+#################
+
+### Pow = 6
+
+### I( log(x^2+1) / (x^6+1) )
+integrate(\(x) log(x^2+1) / (x^6+1), 0, 1)
+integrate(\(x) 2 * (atan(x) - pi/4) / (x^6 - 1), 0, 1)$value +
+(pracma::psi(1, 7/12) - pracma::psi(1, 1/12)) / 72 +
+	+ (digamma(1/3) - digamma(1/6)) *
+		(digamma(11/12) - digamma(5/12)) / 36 +
+	- (digamma(2/3) - digamma(1/6)) *
+		(digamma(3/4) - digamma(1/4)) / 36 +
+	+ (digamma(1) - digamma(1/6)) *
+		(digamma(7/12) - digamma(1/12)) / 36;
+
+
+# Note: I( (1 - x^p) / (1 - x^n) ) on [0,1]
+# (digamma((p+1)/n) - digamma(1/n)) / n;
+
+
+### from log(x^2+b^2) / (x^6 + 1)
+# Note: does NOT include the factor * 2*b;
+b = sqrt(3)
+integrate(\(x) 1 / (x^2+b^2) / (x^6+1), 0, 1)
+integrate(\(x) ((x^4 - b^2*x^2 + b^4)/(x^6+1) +
+	- 1/(x^2+b^2)) / (b^6 - 1), 0, 1)
+(- pi/(2*b) + atan(b)/b +
+	+ (digamma(11/12) - digamma(5/12)) / 12 +
+	- (digamma(3/4) - digamma(1/4)) * b^2 / 12 +
+	+ (digamma(7/12) - digamma(1/12)) * b^4 / 12) / (b^6 - 1)
+
