@@ -284,6 +284,9 @@ sqrt(2)*pi/8 * (pi/2 + log(2)) +
 # Note:
 sum(atan(exp(c(1i,-1i)*pi/4))*exp(c(1i,-1i)*pi/4)) # ==
 (digamma(7/8) - digamma(3/8)) / 4
+#
+sum(atan(exp(c(1i,-1i)*pi/4))*exp(c(-1i,1i)*pi/4)) # ==
+(digamma(5/8) - digamma(1/8)) / 4
 
 
 ### I( x * log(x+1) / (x^4+1) )
@@ -300,6 +303,13 @@ integrate(\(x) x^3 * log(x+1) / (x^4+1), 0, 1)
 	+ (digamma(5/8) - digamma(1/8)) *
 		(digamma(7/8) - digamma(3/8)) / 64 +
 	- (digamma(3/4) - digamma(1/4))^2 / 128;
+
+### I( log(1-x) / (x^4+1) )
+integrate(\(x) log(1-x) / (x^4+1), 0, 1)
+(pracma::psi(1, 5/8) - pracma::psi(1, 1/8)) / 64 +
+	+ (digamma(5/8) - digamma(1/8)) * log(2) / 32 +
+	+ (digamma(7/8) - digamma(3/8)) *
+		(digamma(3/4) - digamma(1/4)) / 64;
 
 
 ### Helper:
