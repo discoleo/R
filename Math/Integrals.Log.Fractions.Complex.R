@@ -222,7 +222,7 @@ x^5 + 9*x^4 + 28*x^3 + 35*x^2 + 15*x + 1 # == 0
 ### I( x^p * log(x + 1i) / (x^4 + 1) )
 
 ### I( log(x + 1i) / (x^4 + 1) )
-integrate(function(x) Re((1+1i) * log(x + 1i)) / (x^4 + 1), 0, 1)
+integrate(\(x) Re((1+1i) * log(x + 1i)) / (x^4 + 1), 0, 1)
 (pracma::psi(1, 5/8) - pracma::psi(1, 1/8)) / 64 +
 	- (digamma(3/4) - digamma(1/4)) * # == pi
 		(digamma(7/8) - digamma(3/8)) / 64 +
@@ -230,7 +230,7 @@ integrate(function(x) Re((1+1i) * log(x + 1i)) / (x^4 + 1), 0, 1)
 
 
 ### I( x^2 * log(x + 1i) / (x^4 + 1) )
-integrate(function(x) x^2 * Re((1-1i) * log(x + 1i)) / (x^4 + 1), 0, 1)
+integrate(\(x) x^2 * Re((1-1i) * log(x + 1i)) / (x^4 + 1), 0, 1)
 (pracma::psi(1, 7/8) - pracma::psi(1, 3/8)) / 64 +
 	+ (digamma(5/8) - digamma(1/8)) * pi / 64 +
 	+ (digamma(7/8) - digamma(3/8)) * log(2) / 32;
@@ -238,11 +238,19 @@ integrate(function(x) x^2 * Re((1-1i) * log(x + 1i)) / (x^4 + 1), 0, 1)
 ### Im()
 
 #
-integrate(function(x) Im((1+1i) * log(x + 1i)) / (x^4 + 1), 0, 1)
+integrate(\(x) Im((1+1i) * log(x + 1i)) / (x^4 + 1), 0, 1)
 # TODO
 
-integrate(function(x) x^2 * Im((1-1i) * log(x + 1i)) / (x^4 + 1), 0, 1)
+integrate(\(x) x^2 * Im((1-1i) * log(x + 1i)) / (x^4 + 1), 0, 1)
 # TODO
+
+integrate(\(x) (x^2 - 1) * Im(log(x + 1i)) / (x^4 + 1), 0, 1)
+(pracma::psi(1, 5/8) - pracma::psi(1, 1/8)) / 64 +
+	+ (digamma(7/8) - digamma(3/8)) * pi * 3/64 +
+	+ (digamma(5/8) - digamma(1/8)) * pi / 64 +
+	+ (digamma(7/8) - digamma(3/8)) * log(2) / 32 +
+	+ (digamma(5/8) - digamma(1/8)) * log(2) / 32 +
+	- sqrt(2)*pi/16 * (pi/2 + log(2));
 
 
 ### Derivation:
