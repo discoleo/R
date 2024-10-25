@@ -256,18 +256,11 @@ integrate(\(x) (x^2 - 1) * Im(log(x + 1i)) / (x^4 + 1), 0, 1)
 ### Derivation:
 
 # Base: see file: Integrals.Log.Fractions.R;
-integrate(\(x) x^2 * log(x^2 + 1) / (x^4 + 1), 0, 1)
-integrate(\(x) 2*x^2 / (x^4 + 1) * atan(x), 0, 1)$value +
-	+ (pracma::psi(1, 7/8) - pracma::psi(1, 3/8)) / 32 +
-	- (digamma(7/8) - digamma(3/8)) * pi / 8 +
-	+ (digamma(5/8) - digamma(1/8)) * pi / 32 +
-	+ (digamma(7/8) - digamma(3/8)) * log(2) / 16;
-# [duplicate] slightly different formula;
-# (digamma(3/4) - digamma(1/4)) == pi;
+# Note: (digamma(3/4) - digamma(1/4)) == pi;
 integrate(\(x) x^2 * log(x^2+1) / (x^4+1), 0, 1)
 integrate(\(x) 2*x^2 * atan(x) / (x^4+1), 0, 1)$value +
 	+ (pracma::psi(1, 7/8) - pracma::psi(1, 3/8)) / 32 +
-	- (digamma(7/8) - digamma(3/8)) * pi/8 +
+	- (digamma(7/8) - digamma(3/8)) * pi / 8 +
 	+ (digamma(3/4) - digamma(1/4)) *
 		(digamma(5/8) - digamma(1/8)) / 32 +
 	+ (digamma(7/8) - digamma(3/8)) * log(2) / 16;
@@ -310,6 +303,8 @@ integrate(\(x) x^3 * log(x+1) / (x^4+1), 0, 1)
 
 
 ### Helper:
+
+### from x^2 * log(x^2+b^2) / (x^4+1)
 b = sqrt(3)
 # Note: factor * 2*b NOT included;
 integrate(\(x) x^2 / (x^2+b^2) / (x^4+1), 0, 1)
@@ -319,7 +314,7 @@ integrate(\(x) (-b^2/(x^2+b^2) + (b^2*x^2 + 1)/(x^4+1)) / (b^4 + 1), 0, 1)
 (b*atan(b) - b*pi/2 + (digamma(5/8) - digamma(1/8))/8 +
 	+ b^2*(digamma(7/8) - digamma(3/8))/8) / (b^4 + 1);
 
-###
+### from log(x^2+b^2) / (x^4+1)
 b = sqrt(3)
 # Note: factor * 2*b NOT included;
 integrate(\(x) 1 / (x^2+b^2) / (x^4+1), 0, 1)
@@ -329,6 +324,14 @@ integrate(\(x) (1/(x^2+b^2) - (x^2 - b^2)/(x^4+1)) / (b^4 + 1), 0, 1)
 (pi/2 / b - atan(b)/b - (digamma(7/8) - digamma(3/8))/8 +
 	+ b^2*(digamma(5/8) - digamma(1/8))/8) / (b^4 + 1);
 
+# [duplicate]
+integrate(\(x) (Re(log(x+1i)) - Im(log(x+1i))) / (x^4 + 1), 0, 1)
+integrate(\(x) Re((1+1i) * log(x + 1i)) / (x^4 + 1), 0, 1) # same as previous;
+integrate(\(x) (Im(log(x+1i)) - Re(log(x+1i))) / (x^4 + 1), 0, 1) # * 1i
+( (pracma::psi(1, 5/8) - pracma::psi(1, 1/8)) / 64 +
++ (digamma(5/8) - digamma(1/8)) * log(2) / 32 +
+- (digamma(7/8) - digamma(3/8)) *
+	(digamma(3/4) - digamma(1/4)) / 64) * (1-1i);
 
 ### Other
 integrate(function(x) Re((1-1i) * log(x + 1i)) / (x^4 + 1), 0, 1)
@@ -346,6 +349,8 @@ integrate(\(x) (1/(x+b) - (x^3 - b*x^2 + b^2*x - b^3)/(x^4+1)) / (b^4 + 1), 0, 1
 	+ (digamma(7/8) - digamma(3/8)) * b / 8 +
 	- (digamma(3/4) - digamma(1/4)) * b^2 / 8 +
 	+ (digamma(5/8) - digamma(1/8)) * b^3 / 8 ) / (b^4 + 1);
+# Note: back-integration over [0, 1i] is redundant;
+# (see duplicated result above)
 
 
 ### from x * log(x+b) / (x^4 + 1)
