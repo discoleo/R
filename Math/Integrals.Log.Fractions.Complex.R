@@ -311,6 +311,13 @@ integrate(\(x) log(1-x) / (x^4+1), 0, 1)
 	+ (digamma(7/8) - digamma(3/8)) *
 		(digamma(3/4) - digamma(1/4)) / 64;
 
+### I( x^2 * log(1-x) / (x^4+1) )
+integrate(\(x) x^2 * log(1-x) / (x^4+1), 0, 1)
+(pracma::psi(1, 7/8) - pracma::psi(1, 3/8)) / 64 +
+	+ (digamma(7/8) - digamma(3/8)) * log(2) / 32 +
+	- (digamma(5/8) - digamma(1/8)) *
+		(digamma(3/4) - digamma(1/4)) / 64;
+
 
 ### Helper:
 
@@ -359,8 +366,21 @@ integrate(\(x) (1/(x+b) - (x^3 - b*x^2 + b^2*x - b^3)/(x^4+1)) / (b^4 + 1), 0, 1
 	+ (digamma(7/8) - digamma(3/8)) * b / 8 +
 	- (digamma(3/4) - digamma(1/4)) * b^2 / 8 +
 	+ (digamma(5/8) - digamma(1/8)) * b^3 / 8 ) / (b^4 + 1);
-# Note: back-integration over [0, 1i] is redundant;
-# (see duplicated result above)
+# Note:
+# - back-integration over [0, 1i] is redundant;
+#   (see duplicated result above)
+# - back-integration over [-1, 0] generates variant log(1-x);
+
+
+### from x^2 * log(x+b) / (x^4 + 1)
+b = sqrt(5)
+integrate(\(x) x^2 / (x+b) / (x^4+1), 0, 1)
+integrate(\(x) x^2 * (1/(x+b) - (x - b)*(x^2 + b^2)/(x^4+1)) / (b^4 + 1), 0, 1)
+integrate(\(x) (b^2/(x+b) - (b^2*x^3 - b^3*x^2 - x + b)/(x^4+1)) / (b^4 + 1), 0, 1)
+(b^2*log(b+1) - b^2*log(b) - log(2) * b^2 / 4 +
+	+ (digamma(7/8) - digamma(3/8)) * b^3 / 8 +
+	+ (digamma(3/4) - digamma(1/4)) / 8 +
+	- (digamma(5/8) - digamma(1/8)) * b / 8 ) / (b^4 + 1);
 
 
 ### from x * log(x+b) / (x^4 + 1)
