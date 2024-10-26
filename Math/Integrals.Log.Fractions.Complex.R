@@ -219,6 +219,43 @@ x^5 + 9*x^4 + 28*x^3 + 35*x^2 + 15*x + 1 # == 0
 
 ### on [0, 1]
 
+### Pow = 2
+
+### I( log(x+1i) / (x^2+1) )
+integrate(\(x) Re(log(x+1i)) / (x^2+1), 0, 1)
+integrate(\(x) Im(log(x+1i)) / (x^2+1), 0, 1)
+(pracma::psi(1, 3/4) - pracma::psi(1, 1/4)) / 32 +
+	+ (digamma(1) - digamma(1/2)) * pi/8 +
+	+ pracma::psi(1, 1/2) * 3/16 * 1i;
+
+# Note:
+# (pracma::psi(1, 3/4) - pracma::psi(1, 1/4)) / 16 == Catalan;
+# (digamma(1) - digamma(1/2)) == 2*log(2);
+# I( log(x - 1i) ... ) = complex conjugate;
+
+
+### I( log(x^2+1) / (x^2+1) )
+integrate(\(x) log(x^2+1) / (x^2+1), 0, 1)
+(pracma::psi(1, 3/4) - pracma::psi(1, 1/4)) / 16 + pi*log(2)/2;
+
+###
+integrate(\(x) log(x+1) / (x^2+1), 0, 1)
+pi * log(2)/8
+
+###
+integrate(\(x) log(1-x) / (x^2+1), 0, 1)
+(pracma::psi(1, 3/4) - pracma::psi(1, 1/4)) / 16 + pi*log(2)/8;
+
+
+### from log(x+b) / (x^2+1)
+b = sqrt(5)
+integrate(\(x) 1 / (x+b) / (x^2+1), 0, 1)
+integrate(\(x) (1/(x+b) - (x-b)/(x^2+1)) / (b^2+1), 0, 1)
+(log(b+1) - log(b) - log(2)/2 + pi/4 * b) / (b^2+1)
+
+
+########################
+
 ### I( x^p * log(x + 1i) / (x^4 + 1) )
 
 ### I( log(x + 1i) / (x^4 + 1) )
