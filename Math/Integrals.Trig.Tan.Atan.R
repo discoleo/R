@@ -1,6 +1,18 @@
+##################
+##
+## Leonard Mada
+##
+## Integrals: Trig
+## Variants: ATAN
 
 
+####################
 
+### Helper Constants
+Euler   = 0.577215664901532860606512090;
+Catalan = 0.915965594177219015054603514;
+
+#####################
 #####################
 
 ### Basic Integrals
@@ -116,4 +128,23 @@ pi^3 / 16
 ###
 integrate(\(x) log(x^2 + 1) / x, 0, 1)
 pi^2/24
+
+
+###############
+###############
+
+### Experiments
+
+FUN = function(x) {
+	sapply(x, \(lim) {
+			integrate(\(x) atan(x) * atan(lim - x), 0, lim)$value;
+	});
+}
+
+#
+up = 3; # up = 10; # up = 50;
+curve(FUN(x), 0, up)
+curve(exp(x) - 1, add=TRUE, col="red")
+curve(tan(pi/2 * x/up), add=TRUE, col="green")
+curve(eval(x), add=TRUE, col="purple")
 
