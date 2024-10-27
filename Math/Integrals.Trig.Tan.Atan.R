@@ -135,10 +135,12 @@ pi^2/24
 
 ### Experiments
 
-FUN = function(x) {
-	sapply(x, \(lim) {
+FUN = function(x, normalize = FALSE) {
+	y = sapply(x, \(lim) {
 			integrate(\(x) atan(x) * atan(lim - x), 0, lim)$value;
 	});
+	if(normalize) y = y / x;
+	return(y);
 }
 
 #
@@ -147,4 +149,19 @@ curve(FUN(x), 0, up)
 curve(exp(x) - 1, add=TRUE, col="red")
 curve(tan(pi/2 * x/up), add=TRUE, col="green")
 curve(eval(x), add=TRUE, col="purple")
+curve(eval(pi/2*x), add=TRUE, col="pink")
+
+#
+up = 10; # up = 30; # up = 500;
+curve(FUN(x, normalize = T), 0, up)
+curve(atan(x), add=TRUE, col="pink")
+
+# library(Rmpfr)
+lim = mpfr("1E+8", 240)
+integrate(\(x) {
+	x = mpfr(x, 240);
+	y = atan(x) * atan(lim - x) / lim;
+	as.numeric(y);
+}, 0, as.numeric(lim))
+pi^2 / 4
 
