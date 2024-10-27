@@ -17,7 +17,7 @@ Catalan = 0.915965594177219015054603514;
 
 ### Basic Integrals
 
-###
+### I( atan(x) / x )
 integrate(\(x) atan(x) / x, 0, 1)
 Catalan
 
@@ -25,6 +25,11 @@ Catalan
 x = exp(pracma::lambertWp(exp(-1)) / 2 + 1/2)
 # Maximum of function:
 log(x) / (x^2 + 1)
+
+
+### I( atan(x) / x^2 )
+integrate(\(x) - (atan(x) / x^2 - 1/x), 0, 1)
+pi/4 + log(2)/2 - 1
 
 
 ####################
@@ -156,6 +161,7 @@ up = 10; # up = 30; # up = 500;
 curve(FUN(x, normalize = T), 0, up)
 curve(atan(x), add=TRUE, col="pink")
 
+# Limit: lim -> Inf
 # library(Rmpfr)
 lim = mpfr("1E+8", 240)
 integrate(\(x) {
@@ -164,4 +170,6 @@ integrate(\(x) {
 	as.numeric(y);
 }, 0, as.numeric(lim))
 pi^2 / 4
+
+# Note: the proof is left as an exercise for the reader;
 
