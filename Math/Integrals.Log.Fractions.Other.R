@@ -104,6 +104,8 @@ integrate(\(x) x * log(1-x) / (x^2+1), 0, 1)
 - 5/96 * pi^2 + log(2)^2 / 8
 
 
+### Pow = 3
+
 ### I( log(1+x) / (x^2 + x + 1) )
 integrate(\(x) log(1+x) / (x^2+x+1), 0, 1)
 (pracma::psi(1, 1/3) - pracma::psi(1, 2/3)) / 36
@@ -138,6 +140,22 @@ integrate(\(x) log(1-x) / (x^3 + 1), 0, 1)
 - pi^2/18 + log(2)^2/6 +
 	- pracma::psi(1, 1/3) / 18 + pracma::psi(1, 2/3) / 9;
 
+###
+integrate(\(x) x * log(1+x) / (x^3 + 1), 0, 1)
+integrate(\(x) (log(1+x) - log(2)) / (x^3 - 1), 0, 1)$value +
+(pracma::psi(1, 5/6) - pracma::psi(1, 2/3)) / 36 +
+	- pracma::psi(1, 2/3) / 9 +
+	- (digamma(2/3) - digamma(1/3)) * log(2) / 9 +
+	+ (digamma(5/6) - digamma(1/3)) *
+		(digamma(1) - digamma(1/3)) / 18;
+# TODO
+
+###
+integrate(\(x) (log(1+x) - log(2)) / (x^3 - 1), 0, 1)
+integrate(\(x) log(1+x)/(x^3 - 1) - log(2)/3/(x-1), 0, 1)$value +
+	+ (digamma(1) - digamma(1/3) - log(3)) * log(2) / 3;
+# TODO
+
 
 ### Li2(1/2)
 integrate(\(x) log(1+x) / (1-x) - log(2)/(1-x), 0, 1)
@@ -151,8 +169,18 @@ integrate(\(x) log(1+x) * (x^2 + 2) / (1-x^3) - log(2)/(1-x), 0, 1)
 (pracma::psi(1, 1/3) - pracma::psi(1, 2/3)) / 36 +
 	- pi^2/12 + log(2)^2/2;
 
+# from x * log(x + b) / (x^3 + 1)
+b = sqrt(5)
+integrate(\(x) x / (x+b) / (x^3+1), 0, 1)
+integrate(\(x) x * ((x^2-b*x+b^2)/(x^3+1) - 1/(x+b)) / (b^3-1), 0, 1)
+integrate(\(x) (b/(x+b) - (b*x^2-b^2*x+1)/(x^3+1)) / (b^3-1), 0, 1)
+(b*log(b+1) - b*log(b) - b*log(2) / 3 +
+	+ (digamma(5/6) - digamma(1/3)) * b^2 / 6 +
+	- (digamma(2/3) - digamma(1/6)) / 6) / (b^3 - 1);
+
 
 ### Pow = 4
+# see also Integrals.Log.Fractions.Complex.R;
 
 ###
 integrate(\(x) log(1-x) / (x^4+1), 0, 1)
