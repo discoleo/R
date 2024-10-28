@@ -35,6 +35,49 @@ pi/4 + log(2)/2 - 1
 ####################
 ####################
 
+### Fractions
+
+# Note:
+# - see also file: Integrals.Log.Fractions.Complex.R;
+
+
+### I( atan(x^2) / (x^2 + 1) )
+integrate(function(x) atan(x^2) / (x^2 + 1), 0, Inf)
+pi^2 / 8
+
+### I( atan(x^n) / (x^2 + 1) )
+n = sqrt(3) # independent of n;
+integrate(function(x) atan(x^n) / (x^2 + 1), 0, Inf)
+pi^2 / 8
+
+
+### I( atan(x^2) / (x^4 + 1) )
+integrate(\(x) atan(x^2) / (x^4 + 1), 0, Inf, rel.tol=1E-9)
+pi*(pi - 2*log(2)) * sqrt(2) / 16
+
+
+### I( atan(x^4) / (x^4 + 1) )
+integrate(\(x) atan(x^4) / (x^4 + 1), 0, Inf, rel.tol=1E-9)
+pi^2 / sin(pi/4) / 8 - pi * (
+	(digamma(13/16) - digamma(5/16)) / sin(pi/8) +
+	(digamma(9/16) - digamma(1/16)) / sin(5*pi/8) +
+	- (digamma(3/4) - digamma(1/4)) / sin(pi/4) * 2) / 32;
+
+
+# Derivation:
+b = 5^(1/8) # does NOT include factor * 4*b^3
+integrate(\(x) x^4/(x^8 + b^8) / (x^4 + 1), 0, Inf, rel.tol=1E-9)
+integrate(\(x) ((x^4+b^8)/(x^8 + b^8) - 1/(x^4+1)) / (b^8 + 1), 0, Inf)
+pi * (1/sin(pi/8) * b + 1/sin(5*pi/8) / b^3 - 2/sin(pi/4)) / 8 / (b^8+1)
+
+# Note:
+# (digamma(3/4) - digamma(1/4)) == pi;
+# (allows slight simplification)
+
+
+####################
+####################
+
 ### Log-Combinations
 
 ### I( atan(x) * log((1-x)/(1+x)) )
