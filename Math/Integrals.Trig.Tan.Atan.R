@@ -64,11 +64,27 @@ pi^2 / sin(pi/4) / 8 - pi * (
 	- (digamma(3/4) - digamma(1/4)) / sin(pi/4) * 2) / 32;
 
 
+### I( x^2 * atan(x^4) / (x^4 + 1) )
+integrate(\(x) x^2 * atan(x^4) / (x^4 + 1), 0, Inf, rel.tol=1E-9)
+pi^2 / sin(3*pi/4) / 8 - pi * (
+	(digamma(15/16) - digamma(7/16)) / sin(3*pi/8) +
+	(digamma(11/16) - digamma(3/16)) / sin(7*pi/8) +
+	- (digamma(3/4) - digamma(1/4)) / sin(3*pi/4) * 2) / 32;
+
+
 # Derivation:
+
+# from atan(x^4) / (x^4 + 1)
 b = 5^(1/8) # does NOT include factor * 4*b^3
 integrate(\(x) x^4/(x^8 + b^8) / (x^4 + 1), 0, Inf, rel.tol=1E-9)
 integrate(\(x) ((x^4+b^8)/(x^8 + b^8) - 1/(x^4+1)) / (b^8 + 1), 0, Inf)
 pi * (1/sin(pi/8) * b + 1/sin(5*pi/8) / b^3 - 2/sin(pi/4)) / 8 / (b^8+1)
+
+# from x^2 * atan(x^4) / (x^4 + 1)
+b = 5^(1/8) # does NOT include factor * 4*b^3
+integrate(\(x) x^6/(x^8 + b^8) / (x^4 + 1), 0, Inf, rel.tol=1E-9)
+integrate(\(x) x^2 * ((x^4+b^8)/(x^8 + b^8) - 1/(x^4+1)) / (b^8 + 1), 0, Inf)
+pi * (1/sin(3*pi/8) * b^3 + 1/sin(7*pi/8) / b - 2/sin(3*pi/4)) / 8 / (b^8+1)
 
 # Note:
 # (digamma(3/4) - digamma(1/4)) == pi;
