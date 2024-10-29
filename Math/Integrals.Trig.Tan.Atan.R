@@ -89,6 +89,23 @@ pi^2 / sin(pi/4) / 8 - pi*(
 		+ 2*sn3 * (atan((x + cs)/sn) - atan(cs/sn))) * 2 / sin(pi/4)) / 16;
 
 
+### Gen: I( x^2 * atan(x^4 / b^4) / (x^4 + 1) )
+b = 3^(1/4)
+integrate(\(x) x^2 * atan(x^4 / b^4) / (x^4 + 1), 0, Inf, rel.tol=1E-9)
+# Solution:
+pfr = seq(1, 8, by=2) * pi / 8; cs = cos(pfr); sn = sin(pfr);
+cs6 = cos(7*pfr); sn6 = sin(7*pfr); x = b;
+cs3 = cos(4*pfr); sn3 = sin(4*pfr);
+cs2 = cos(3*pfr); sn2 = sin(3*pfr);
+pi^2 / sin(pi/4) / 8 - pi*(
+	+ sum(cs6*log(x^2 + 2*cs*x + 1) +
+		+ 2*sn6 * (atan((x + cs)/sn) - atan(cs/sn))) / sin(3*pi/8) +
+	+ sum(cs2*log(x^2 + 2*cs*x + 1) +
+		+ 2*sn2 * (atan((x + cs)/sn) - atan(cs/sn))) / sin(7*pi/8) +
+	+ sum(cs3*log(x^2 + 2*cs*x + 1) +
+		+ 2*sn3 * (atan((x + cs)/sn) - atan(cs/sn))) * 2 / sin(3*pi/4)) / 16;
+
+
 # Derivation:
 
 # from atan(x^4) / (x^4 + 1)
