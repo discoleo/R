@@ -6,6 +6,18 @@
 ## Variants: ATAN
 
 
+### Atan-Fractions
+
+
+### Examples:
+
+### on [0, Inf]
+# I( atan(k * x^2) / (x^4 + 1) )
+# I( x^2 * atan(k * x^2) / (x^4 + 1) )
+# I( atan(k * x^4) / (x^4 + 1) )
+# I( x^2 * atan(k * x^4) / (x^4 + 1) )
+
+
 ####################
 
 ### Helper Constants
@@ -64,7 +76,7 @@ x = 1/k^(1/2);
 pi^2 / sin(pi/4) / 8 +
 	+ (log(x^2 + 1) - 2*log(x + 1) - 2*atan(x)) * pi / sin(pi/4) / 8;
 
-# Solution: Explicit formula
+# Solution: Detailed formula
 id = c(2,4) * pi/4; x = 1/k^(1/2);
 cs = cos(id); cs1 = cs[1]; csp = cos(pi);
 sn = sin(id); sn1 = sn[1]; snp = sin(pi);
@@ -74,6 +86,23 @@ pi^2 / sin(pi/4) / 8 +
 - (sum(cs*log(x^2 - 2*cs*x + 1) +
 	- 2*sn * (atan((x - cs)/sn) + atan(cs/sn))))) * pi / sin(pi/4) / 8;
 
+
+### Gen: I( x^2 * atan(k * x^2) / (x^4 + 1) )
+k = 5^(1/3)
+integrate(\(x) x^2 * atan(k * x^2) / (x^4 + 1), 0, Inf, rel.tol=1E-9)
+x = 1/k^(1/2);
+pi^2 / sin(3*pi/4) / 8 +
+	+ (2*log(x + 1) - log(x^2 + 1) - 2*atan(x)) * pi / sin(pi/4) / 8;
+
+#  Solution: Detailed formula:
+id = c(2,4) * pi/4; x = 1/k^(1/2);
+cs = cos(id); cs1 = cs[1]; csp2 = cos(3*id); csp1 = cos(pi);
+sn = sin(id); sn1 = sn[1]; snp2 = sin(3*id); snp1 = sin(pi);
+pi^2 / sin(3*pi/4) / 8 +
+- (sum(csp2*log(x^2 - 2*cs*x + 1) +
+	- 2*snp2 * (atan((x - cs)/sn) + atan(cs/sn))) +
+- (sum(csp1*log(x^2 - 2*cs1*x + 1) +
+	- 2*snp1 * (atan((x - cs1)/sn1) + atan(cs1/sn1))))) * pi / sin(pi/4) / 8;
 
 
 ### ATAN-Pow: 4
@@ -142,6 +171,12 @@ b = 5^(1/8) # does NOT include factor * 2*b
 integrate(\(x) x^2/(x^4 + b^4) / (x^4 + 1), 0, Inf, rel.tol=1E-9)
 integrate(\(x) x^2 * (1/(x^4+1) - 1/(x^4 + b^4)) / (b^4 - 1), 0, Inf)
 pi * (1/sin(3*pi/4) - 1/sin(pi/4) / b) / 4 / (b^4 - 1)
+
+# from x^2 * atan(x^2 / b^2) / (x^4 + 1)
+b = 5^(1/8) # does NOT include factor * 2*b
+integrate(\(x) x^4/(x^4 + b^4) / (x^4 + 1), 0, Inf, rel.tol=1E-9)
+integrate(\(x) (b^4/(x^4 + b^4) - 1/(x^4+1)) / (b^4 - 1), 0, Inf)
+pi * (b/sin(pi/4) - 1/sin(pi/4)) / 4 / (b^4 - 1)
 
 
 # from atan(x^4 / b^4) / (x^4 + 1)
