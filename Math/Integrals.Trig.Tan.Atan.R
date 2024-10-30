@@ -63,6 +63,29 @@ integrate(function(x) atan(x^n) / (x^2 + 1), 0, Inf)
 pi^2 / 8
 
 
+### Pow = 4
+
+### I( x * atan(k*x) / (x^4 + 1) )
+k = 5^(1/3)
+integrate(\(x) x * atan(k*x) / (x^4 + 1), 0, Inf, rel.tol=1E-9)
+cs = cos(pi/4); sn = sin(pi/4);
+pi^2 / 8 - (atan((1/k + cs)/sn) - atan(cs/sn)) * pi/2;
+
+# Solution: Detailed formula
+id = seq(1, 4, by=2) * pi/4; x = 1/k;
+cs = cos(id); cs2 = cos(3*id); cs1 = cos(2*id);
+sn = sin(id); sn2 = sin(3*id); sn1 = sin(2*id);
+pi^2 / sin(2*pi/4) / 8 +
+- (sum(cs2*log(x^2 + 2*cs*x + 1) +
+	+ 2*sn2 * (atan((x + cs)/sn) - atan(cs/sn))) / sin(3*pi/4) +
+sum(cs*log(x^2 + 2*cs*x + 1) +
+	+ 2*sn * (atan((x + cs)/sn) - atan(cs/sn))) / sin(pi/4) +
+sum(cs1*log(x^2 + 2*cs*x + 1) +
+	+ 2*sn1 * (atan((x + cs)/sn) - atan(cs/sn))) * 2) * pi / 16;
+
+
+### ATAN-Pow: 2
+
 ### I( atan(x^2) / (x^4 + 1) )
 integrate(\(x) atan(x^2) / (x^4 + 1), 0, Inf, rel.tol=1E-9)
 pi^2 / sin(pi/4) / 8 - pi * (digamma(1/2) - digamma(1/4)) / sin(pi/4) / 8
@@ -165,6 +188,33 @@ pi^2 / sin(pi/4) / 8 - pi*(
 
 
 # Derivation:
+
+# Base:
+b = 5^(1/8)
+integrate(\(x) 1/(x^2 + b^2) / (x^4 + 1), 0, Inf, rel.tol=1E-9)
+integrate(\(x) (1/(x^2 + b^2) - (x^2-b^2)/(x^4+1)) / (b^4 + 1), 0, Inf)
+pi * (2/b + b^2/sin(pi/4) - 1/sin(3*pi/4)) / 4 / (b^4 + 1)
+
+# from atan(x / b) / (x^4 + 1)
+b = 5^(1/8)
+integrate(\(x) x/(x^2 + b^2) / (x^4 + 1), 0, Inf, rel.tol=1E-9)
+integrate(\(x) (x/(x^2 + b^2) - (x^3 - b^2*x)/(x^4+1)) / (b^4 + 1), 0, Inf)
+pi*b^2/sin(2*pi/4) / 4 / (b^4 + 1) - log(b) / (b^4 + 1)
+
+# from x * atan(x / b) / (x^4 + 1)
+b = 5^(1/8)
+integrate(\(x) x^2/(x^2 + b^2) / (x^4 + 1), 0, Inf, rel.tol=1E-9)
+integrate(\(x) ((b^2*x^2 + 1)/(x^4+1) - b^2/(x^2 + b^2)) / (b^4 + 1), 0, Inf)
+pi * (b^2/sin(3*pi/4) + 1/sin(pi/4) - 2*b) / 4 / (b^4 + 1)
+
+# from x^2 * atan(x / b) / (x^4 + 1)
+b = 5^(1/8)
+integrate(\(x) x^3/(x^2 + b^2) / (x^4 + 1), 0, Inf, rel.tol=1E-9)
+integrate(\(x) ((b^2*x^3 + x)/(x^4+1) - b^2*x/(x^2 + b^2)) / (b^4 + 1), 0, Inf)
+pi/sin(2*pi/4) / 4 / (b^4 + 1) + b^2 * log(b) / (b^4 + 1)
+
+
+### Higher Powers:
 
 # from atan(x^2 / b^2) / (x^4 + 1)
 b = 5^(1/8) # does NOT include factor * 2*b
