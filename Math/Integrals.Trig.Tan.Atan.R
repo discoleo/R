@@ -63,6 +63,12 @@ integrate(function(x) atan(x^n) / (x^2 + 1), 0, Inf)
 pi^2 / 8
 
 
+### I( x^p * atan(x) / (x^2 + 1) )
+p = - 1/sqrt(5);
+integrate(\(x) x^p * atan(x) / (x^2 + 1), 0, Inf)
+pi/4 / sin(pi*p/2) * (digamma(-p/2) - 2*digamma(-p) - Euler);
+
+
 ### Pow = 4
 
 ### I( x * atan(k*x) / (x^4 + 1) )
@@ -70,6 +76,7 @@ k = 5^(1/3)
 integrate(\(x) x * atan(k*x) / (x^4 + 1), 0, Inf, rel.tol=1E-9)
 cs = cos(pi/4); sn = sin(pi/4);
 pi^2 / 8 - (atan((1/k + cs)/sn) - atan(cs/sn)) * pi/2;
+pi^2 / 4 - pi/2 * atan((1/k + cs)/sn);
 
 # Solution: Detailed formula
 id = seq(1, 4, by=2) * pi/4; x = 1/k;
@@ -91,6 +98,11 @@ integrate(\(x) atan(x^2) / (x^4 + 1), 0, Inf, rel.tol=1E-9)
 pi^2 / sin(pi/4) / 8 - pi * (digamma(1/2) - digamma(1/4)) / sin(pi/4) / 8
 pi*(pi - 2*log(2)) * sqrt(2) / 16
 
+
+### Gen: I( x^p * atan(x^2) / (x^4 + 1) )
+p = 1/sqrt(5); # p != 1;
+integrate(\(x) x^p * atan(x^2) / (x^4 + 1), 0, Inf)
+pi/8 / sin(pi*(p-1)/4) * (digamma((1-p)/4) - 2*digamma((1-p)/2) - Euler);
 
 ### Gen: I( atan(k * x^2) / (x^4 + 1) )
 k = 5^(1/3)

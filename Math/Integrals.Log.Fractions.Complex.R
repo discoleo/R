@@ -214,12 +214,41 @@ x = - cs^2;
 x^5 + 9*x^4 + 28*x^3 + 35*x^2 + 15*x + 1 # == 0
 
 
+############
+
+############
+### ATAN ###
+
+# Note:
+# - see also Integrals.Trig.Tan.Atan.R;
+
+
+### I( atan(k * x^2) / (x^2 + 1i) )
+k = 5^(1/3)
+integrate(\(x) Re(atan(k*x^2) / (x^2 + 1i)), 0, Inf, rel.tol=1E-9)
+integrate(\(x) Im(atan(k*x^2) / (x^2 + 1i)), 0, Inf, rel.tol=1E-9)
+x = 1/k^(1/2);
+pi^2 / sin(3*pi/4) / 8 +
+	+ (2*log(x + 1) - log(x^2 + 1) - 2*atan(x)) * pi / sin(pi/4) / 8 +
+	- 1i * pi^2 / sin(pi/4) / 8 +
+	- 1i * (log(x^2 + 1) - 2*log(x + 1) - 2*atan(x)) * pi / sin(pi/4) / 8;
+
+
 ####################
 ####################
 
 ### on [0, 1]
 
-### Pow = 2
+### I( log(x) * log(1-x) )
+integrate(\(x) log(x) * log(1-x), 0, 1)
+2 - pi^2/6
+
+###
+integrate(\(x) atan(x) * atan(1-x), 0, 1)
+# TODO
+
+
+### Fractions: Pow = 2
 
 ### I( log(x+1i) / (x^2+1) )
 integrate(\(x) Re(log(x+1i)) / (x^2+1), 0, 1)
@@ -252,6 +281,20 @@ b = sqrt(5)
 integrate(\(x) 1 / (x+b) / (x^2+1), 0, 1)
 integrate(\(x) (1/(x+b) - (x-b)/(x^2+1)) / (b^2+1), 0, 1)
 (log(b+1) - log(b) - log(2)/2 + pi/4 * b) / (b^2+1)
+
+
+##############
+
+### Pow = 3
+# see also Integrals.Log.Fractions.Other.R;
+
+### I( log(1-x) / (x^2-x+1) )
+integrate(\(x) log(1-x) / (x^2-x+1), 0, 1)
+- (pracma::psi(1, 1/3) - pracma::psi(1, 2/3)) / 6
+
+### I( log(1+x) / (x^2-x+1) )
+integrate(\(x) log(1+x) / (x^2-x+1), 0, 1)
+# TODO
 
 
 ########################
