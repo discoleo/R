@@ -91,6 +91,23 @@ sum(cs1*log(x^2 + 2*cs*x + 1) +
 	+ 2*sn1 * (atan((x + cs)/sn) - atan(cs/sn))) * 2) * pi / 16;
 
 
+### I( x^3 * atan(k*x) / (x^4 + 1) )
+k = 3^(1/3); # k = - 1/5^(1/3);
+integrate(\(x) x^3 * atan(k*x) / (x^4 + 1) - sign(k)*pi/2/(x+1), 0, Inf, rel.tol=1E-9)
+(4*log(abs(k)) - log(k^4+1)) * sign(k) * pi/8 +
+	+ log((k^2 - sqrt(2)*k + 1)/(k^2 + sqrt(2)*k + 1)) * pi/8;
+
+# Detailed formula:
+id = seq(1, 4, by=2) * pi/4; x = 1/k;
+cs = cos(id); cs2 = cos(3*id);
+sn = sin(id); sn2 = sin(3*id);
+- log(x^4+1) * pi/8 +
+(sum(cs2*log(x^2 + 2*cs*x + 1) +
+	+ 2*sn2 * (atan((x + cs)/sn) - atan(cs/sn))) / sin(3*pi/4) +
+- sum(cs*log(x^2 + 2*cs*x + 1) +
+	+ 2*sn * (atan((x + cs)/sn) - atan(cs/sn))) / sin(pi/4) ) * pi/16;
+
+
 ### ATAN-Pow: 2
 
 ### I( atan(x^2) / (x^4 + 1) )
@@ -224,6 +241,12 @@ b = 5^(1/8)
 integrate(\(x) x^3/(x^2 + b^2) / (x^4 + 1), 0, Inf, rel.tol=1E-9)
 integrate(\(x) ((b^2*x^3 + x)/(x^4+1) - b^2*x/(x^2 + b^2)) / (b^4 + 1), 0, Inf)
 pi/sin(2*pi/4) / 4 / (b^4 + 1) + b^2 * log(b) / (b^4 + 1)
+
+# from x^3 * atan(x / b) / (x^4 + 1)
+b = 5^(1/8)
+integrate(\(x) x^4/(x^2 + b^2) / (x^4 + 1), 0, Inf, rel.tol=1E-9)
+integrate(\(x) ((x^2 - b^2)/(x^4+1) + b^4/(x^2 + b^2)) / (b^4 + 1), 0, Inf)
+pi * (1/sin(3*pi/4)- b^2/sin(pi/4) + 2*b^3) / 4 / (b^4 + 1)
 
 
 ### Higher Powers:
