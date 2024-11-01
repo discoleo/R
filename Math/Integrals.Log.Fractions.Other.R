@@ -224,14 +224,19 @@ integrate(\(x) ((b^2*x^2-x+b)/(x^3+1) - b^2/(x+b)) / (b^3-1), 0, 1)
 ### Pow = 4
 # see also Integrals.Log.Fractions.Complex.R;
 
-###
+### I( log(1-x) / (x^4+1) )
 integrate(\(x) log(1-x) / (x^4+1), 0, 1)
+(pracma::psi(1, 5/8) - pracma::psi(1, 1/8)) / 64 +
+	+ (digamma(3/4) - digamma(1/4)) * # == pi
+		(digamma(7/8) - digamma(3/8)) / 64 +
+	+ (digamma(5/8) - digamma(1/8)) * log(2) / 32;
 
 ###
 integrate(\(x) x * log(1-x) / (x^4+1), 0, 1)
 
 ###
 integrate(\(x) x^2 * log(1-x) / (x^4+1), 0, 1)
+
 
 ### Helper
 integrate(\(x) x * log(1-x^4) / (x^4+1), 0, 1)
@@ -257,6 +262,19 @@ pi^2 / 2 - pi*acos(1/b)
 b = sqrt(3)
 integrate(\(x) 1 / ((b^2 - x^2) * sqrt(1 - x^2)), 0, 1)
 pi / sqrt(b^2 - 1) / (2*b)
+
+
+##################
+
+### I( log(1 + (x/(1-x))^phi) / x )
+# Maths 505: A golden ratio integral
+# https://www.youtube.com/watch?v=xSfPruD0S5o
+# (x/(1-x))^phi = y & split int [0,1] + [1, Inf];
+
+phi = (1 + sqrt(5))/2;
+integrate(\(x) log(1 + (x/(1-x))^phi) / x, 0, 1)
+integrate(\(x) log(1 + (x/(1-x))^(phi-1)) / x, 0, 1)
+pi^2 * (phi^2 + 1)/(12*phi);
 
 
 ######################
