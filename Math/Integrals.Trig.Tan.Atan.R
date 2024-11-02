@@ -30,8 +30,13 @@ Catalan = 0.915965594177219015054603514;
 ### Basic Integrals
 
 ### I( atan(x) / x )
+integrate(\(x) atan(x) / x - pi/2 / (x+1), 0, Inf)
+0;
+
+### on [0, 1]
 integrate(\(x) atan(x) / x, 0, 1)
 Catalan
+
 
 # Varia:
 x = exp(pracma::lambertWp(exp(-1)) / 2 + 1/2)
@@ -42,6 +47,11 @@ log(x) / (x^2 + 1)
 ### I( atan(x) / x^2 )
 integrate(\(x) - (atan(x) / x^2 - 1/x), 0, 1)
 pi/4 + log(2)/2 - 1
+
+
+### I( atan(1-x) / x )
+integrate(\(x) atan(1-x) / x - pi/4 / x, 0, 1)
+pi*log(2)/8 - Catalan
 
 
 ####################
