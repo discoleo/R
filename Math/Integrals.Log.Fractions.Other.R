@@ -49,6 +49,19 @@ integrate(\(x) abs(log(1-x))^p / x, 0, 1, rel.tol=1E-8)
 gamma(p+1) * pracma::zeta(p+1)
 
 
+### Other Intervals
+
+### on [0, 1/2]
+integrate(\(x) log(1 - x) / x, 0, 1/2)
+- pi^2/12 + log(2)^2/2
+
+### on [0, 1/3]
+integrate(\(x) log(1 - x) / x, 0, 1/3)
+- pracma::polylog(1/3, 2)
+
+# TODO: closed formula;
+
+
 ####################
 
 ### I( |log( (1-x) / (1+x) )|^n ) on [0, 1]
@@ -102,8 +115,10 @@ integrate(\(x) log(x) * log((1 - x) / (x + 1)), 0, 1)
 
 # I( x * log(1+x) / (x^2 + 1) ) on [0, 1]
 # I( x * log(1-x) / (x^2 + 1) ) on [0, 1]
-# Cipher: Integrate xln(1-x)/(1 + x^2)dx from 0 to 1
-# https://www.youtube.com/watch?v=CMRvFM2N7sw
+# 1. Cipher: Integrate xln(1-x)/(1 + x^2)dx from 0 to 1
+#    https://www.youtube.com/watch?v=CMRvFM2N7sw
+# 2. Maths 505: ONE BALLER INTEGRAL: int(0, π/4) ln(1-tan(θ))/tan(θ)
+#    https://www.youtube.com/watch?v=mqJYMoABUZs
 
 ###
 integrate(\(x) log(1+x) / (x^2+1), 0, 1)
@@ -112,6 +127,20 @@ pi * log(2)/8
 ###
 integrate(\(x) log(1-x) / (x^2+1), 0, 1)
 pi*log(2)/8 - Catalan
+
+### I( 1/x * log(1+x) / (x^2+1) )
+integrate(\(x) 1/x * log(1+x) / (x^2+1), 0, 1)
+integrate(\(x) log(1 + x)/x -  log(1 + x) * x / (1 + x^2), 0, 1)
+integrate(\(x) pi^2/12 -  log(1 + x) * x / (1 + x^2), 0, 1)
+pi^2 * 7/96 - log(2)^2 / 8;
+
+### I( 1/x * log(1-x) / (x^2+1) )
+integrate(\(x) 1/x * log(1-x) / (x^2+1), 0, 1)
+- pi^2 * 11/96 - log(2)^2 / 8;
+
+#
+integrate(\(x) 1/x * log(1-x^2) / (x^2+1), 0, 1, rel.tol=1E-12)
+- pi^2/24 - log(2)^2/4
 
 ###
 integrate(\(x) x * log(1+x) / (x^2+1), 0, 1)
