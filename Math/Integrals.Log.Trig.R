@@ -74,12 +74,14 @@ integrate(function(x) log(cos(x)), 0, pi/8)
 ###
 integrate(\(x) log(cos(x)), 0, pi/3)
 - pi*log(2)/3 + sqrt(3)/(4*36) *
-	(pracma::psi(1, 1/6) - pracma::psi(1, 5/6) + pracma::psi(1, 1/3) - pracma::psi(1, 2/3))
+	(pracma::psi(1, 1/6) - pracma::psi(1, 5/6) +
+	+ pracma::psi(1, 1/3) - pracma::psi(1, 2/3))
 
 ###
 integrate(\(x) log(sin(x)), 0, pi/6)
 - pi*log(2)/6 - sqrt(3)/(4*36) *
-	(pracma::psi(1, 1/6) - pracma::psi(1, 5/6) + pracma::psi(1, 1/3) - pracma::psi(1, 2/3))
+	(pracma::psi(1, 1/6) - pracma::psi(1, 5/6) +
+	+ pracma::psi(1, 1/3) - pracma::psi(1, 2/3))
 
 ### I( log(sin(x)) )
 integrate(\(x) log(sin(x)), 0, pi/3)
@@ -95,7 +97,8 @@ integrate(\(x) log(sin(x)), 0, pi/3)
 id = seq(0, 40000)
 - pi*log(2)/3 + sqrt(3)/4 * sum(1/(6*id+1)^2, -1/(6*id+5)^2, 1/(6*id+2)^2, - 1/(6*id+4)^2)
 - pi*log(2)/3 + sqrt(3)/(4*36) *
-	(pracma::psi(1, 1/6) - pracma::psi(1, 5/6) + pracma::psi(1, 2/6) - pracma::psi(1, 4/6))
+	(pracma::psi(1, 1/6) - pracma::psi(1, 5/6) +
+	+ pracma::psi(1, 2/6) - pracma::psi(1, 4/6))
 
 
 ### on [0, pi/5]
@@ -298,7 +301,8 @@ gamma((p+1)/2) * gamma(k - (p+1)/2) / gamma(k) / 2
 ### Base: Log
 p = -1/3; k = sqrt(5)
 integrate(\(x) x^p * log(x^2+1) / (x^2+1)^k, 0, Inf)
-gamma((p+1)/2) * gamma(k - (p+1)/2) * (digamma(k) - digamma(k - (p+1)/2)) / gamma(k) / 2
+gamma((p+1)/2) * gamma(k - (p+1)/2) *
+	(digamma(k) - digamma(k - (p+1)/2)) / gamma(k) / 2;
 
 
 ### I( sin(x)^p * cos(x)^q * log(cos(x)) )
@@ -308,7 +312,10 @@ gamma((p+1)/2) * gamma((q+1)/2) *
 	(digamma((q+1)/2) - digamma((p+q+2)/2)) / gamma((p+q+2)/2) / 4
 
 ### I( sin(x)^p * cos(x)^q * log(sin(x)) )
-# TODO: d(p);
+p = -1/3; q = sqrt(5)
+integrate(\(x) sin(x)^p * cos(x)^q * log(sin(x)), 0, pi/2)
+gamma((p+1)/2) * gamma((q+1)/2) *
+	(digamma((p+1)/2) - digamma((p+q+2)/2)) / gamma((p+q+2)/2) / 4
 
 
 ### I( sin(x)^p * cos(x)^q * log(cos(x))^2 )
@@ -343,15 +350,41 @@ gamma((p+1)/2) * gamma((q+1)/2) *
 
 ### Special Cases:
 
+### I( log(sin(x)) )
+integrate(\(x) log(sin(x)), 0, pi/2)
+integrate(\(x) log(cos(x)), 0, pi/2)
+gamma(1/2)^2 * (digamma(1/2) + Euler) / 4
+- pi*log(2)/2
+
 ### I( log(cos(x)) * log(sin(x)) )
 integrate(\(x) log(cos(x)) * log(sin(x)), 0, pi/2)
 - gamma(1/2)^2 * (pi^2/6 - 4*log(2)^2) / 8
 
+### on [0, pi/4]
+integrate(\(x) log(cos(x)) * log(sin(x)), 0, pi/4)
+- gamma(1/2)^2 * (pi^2/6 - 4*log(2)^2) / 16
+
+
 ### I( cos(x)^2 * log(sin(x)) )
 # Maths 505: This integral is INSANE beyond measure!
 # https://www.youtube.com/watch?v=Em5R4ckyqk0
+
+### I( cos(x)^2 * log(sin(x)) )
 integrate(\(x) cos(x)^2 * log(sin(x)), 0, pi/2)
 - pi*log(2)/4 - pi/8
+
+### I( sin(x)^2 * log(sin(x)) )
+integrate(\(x) sin(x)^2 * log(sin(x)), 0, pi/2)
+gamma(1/2)^2 * (digamma(1/2) + Euler) / 4 + pi*log(2)/4 + pi/8;
+- pi*log(2)/4 + pi/8;
+
+
+### Log-Powers:
+
+### I( log(cos(x))^2 )
+integrate(\(x) log(cos(x))^2, 0, pi/2)
+pi^3 / 24 + pi*log(2)^2 / 2
+
 
 ### I( log(cos(x))^3 )
 integrate(\(x) log(cos(x))^3, 0, pi/2)
@@ -363,16 +396,29 @@ gamma(1/2)^2 * (
 ### on [0, pi/4]
 integrate(\(x) log(cos(x)) * log(sin(x)), 0, pi/4)
 - gamma(1/2)^2 * (pi^2/6 - 4*log(2)^2) / 16
+- pi^3 / 96 + pi*log(2)^2 / 4;
 
 
 ### Other: I( log(1 + sin(x)) * log(1 - sin(x)) )
 # Maths 505: THE COOLEST LOG TRIG INTEGRAL ON YOUTUBE!
 # https://www.youtube.com/watch?v=lS3yp-3QHRI
-integrate(\(x) log(1 + sin(x)) * log(1 - sin(x)), 0, pi/2)
-- pi^3/12 + pi/2 * log(2)^2
 
+integrate(\(x) log(1 - sin(x)) * log(1 + sin(x)), 0, pi/2)
+integrate(\(x) log(1 - sin(x)^2)^2 / 2, 0, pi/2)$value +
+integrate(\(x) - log(1 - sin(x))^2 / 2 - log(1 + sin(x))^2 / 2, 0, pi/2)$value
+- pi^3 / 12 + pi*log(2)^2 / 2;
+
+### Helper
 integrate(\(x) log(cos(x))^2 + log(sin(x))^2, 0, pi/4)
-pi^3/24 + pi/2 * log(2)^2
+integrate(\(x) (log(cos(x))^2 + log(sin(x))^2) / 2, 0, pi/2)
+integrate(\(x) log(cos(x))^2, 0, pi/2)
+pi^3 / 24 + pi*log(2)^2 / 2
+
+###
+integrate(\(x) (log(1 - sin(x))^2 + log(1 + sin(x))^2) / 2, 0, pi/2)
+integrate(\(x) log(2*cos(x)^2)^2 + log(2*sin(x)^2)^2, 0, pi/4)
+pi^3 / 6 + pi*log(2)^2/2
+
 
 # Weierstrass =>
 integrate(\(x) 2*(2*log(1 + x)*log(1 - x) - log(1 + x^2)*log(1 - x^2)) / (x^2 + 1) +
@@ -386,13 +432,18 @@ integrate(\(x) 4*log(cos(x))^2, 0, pi/4)
 
 #
 integrate(\(x) log(sin(x))^2 - log(cos(x))^2, 0, pi/4)
+integrate(\(x) log(sin(x)/(cos(x)+1)) * log(sin(x)/2) / 2, 0, pi/2)
 integrate(\(x) log(tan(x)) * log(sin(2*x)), 0, pi/4)$value + Catalan*log(2);
+integrate(\(x) - log(x) * log(x^2+1) / (x^2+1), 0, 1)$value + pi^3/16;
 #
 integrate(\(x) 1/2 * log(tan(x/2)) * log(sin(x)), 0, pi/2)
 integrate(\(x) log(x) * log(2*x/(x^2+1)) / (x^2+1), 0, 1)
 integrate(\(x) - log(x) * log(x^2+1) / (x^2+1), 0, 1)$value +
 	+ log(2)*(pracma::psi(1,3/4) - pracma::psi(1,1/4)) / 16 +
 	+ (pracma::psi(2,3/4) - pracma::psi(2,1/4)) / 64;
+integrate(\(x) - log(x) * log(x^2+1) / (x^2+1), 0, 1)$value +
+	- log(2)*Catalan + pi^3/16;
+
 # TODO: ?
 
 
