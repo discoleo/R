@@ -74,7 +74,23 @@ integrate(\(x) sapply(x, \(y) {
 # TODO
 
 
-### ATAN
+### I( log(x^2-x*y+y^2) / (x*y+1) )
+integrate(\(x) sapply(x, \(y)
+	integrate(\(x) log(x^2-x*y+y^2) / (x*y+1), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+# TODO
+
+
+### I( log(x^2-x*y+y^2) / (1 - x*y) )
+integrate(\(x) sapply(x, \(y)
+	integrate(\(x) log(x^2-x*y+y^2) / (1-x*y), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+# TODO
+
+
+###############
+###############
+
+############
+### ATAN ###
 
 ### I( atan(x*y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x*y), 0, 1)$value), 0, 1)
@@ -98,6 +114,13 @@ integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x*y) / (x+y), 0, 1)$value), 0,
 integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x+y) / (1-x*y), 0, 1)$value), 0, 1)
 # TODO
 
+### I( atan(x/y) / (x*y+1) )
+integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x/y) / (1+x*y), 0, 1)$value), 0, 1)
+pi^3 / 48
+
+
+##############
+##############
 
 ###########
 ### Exp ###
