@@ -34,6 +34,22 @@ Catalan = 0.915965594177219015054603514;
 ###################
 ###################
 
+### I( log(1-x)^2 / x )
+integrate(\(x) log(1-x)^2 / x, 0, 1, rel.tol=1E-8)
+2 * pracma::zeta(3)
+
+### I( log(1-x)^3 / x )
+integrate(\(x) log(1-x)^3 / x, 0, 1, rel.tol=1E-8)
+gamma(4) * pracma::zeta(4)
+
+
+### Gen: I( log(1-x)^p / x )
+p = sqrt(5)
+integrate(\(x) abs(log(1-x))^p / x, 0, 1, rel.tol=1E-8)
+gamma(p+1) * pracma::zeta(p+1)
+
+
+####################
 
 ### I( |log( (1-x) / (1+x) )|^n ) on [0, 1]
 # Maths 505: This integral is actually one of your favorite constants
@@ -231,11 +247,24 @@ integrate(\(x) log(1-x) / (x^4+1), 0, 1)
 		(digamma(7/8) - digamma(3/8)) / 64 +
 	+ (digamma(5/8) - digamma(1/8)) * log(2) / 32;
 
+# on [1, Inf]
+integrate(\(x) log(x-1) / (x^4+1), 1, Inf)
+(pracma::psi(1, 7/8) - pracma::psi(1, 3/8)) / 64 +
+- (pracma::psi(1, 5/8) - pracma::psi(1, 1/8)) / 64 +
+	+ (digamma(7/8) - digamma(3/8)) * log(2) / 32 +
+	- (digamma(5/8) - digamma(1/8)) *
+		(digamma(3/4) - digamma(1/4)) / 64 +
+	+ (digamma(1/4) - digamma(3/4)) / sin(pi/4) * pi/16;
+
 ###
 integrate(\(x) x * log(1-x) / (x^4+1), 0, 1)
 
 ###
 integrate(\(x) x^2 * log(1-x) / (x^4+1), 0, 1)
+(pracma::psi(1, 7/8) - pracma::psi(1, 3/8)) / 64 +
+	+ (digamma(7/8) - digamma(3/8)) * log(2) / 32 +
+	- (digamma(5/8) - digamma(1/8)) *
+		(digamma(3/4) - digamma(1/4)) / 64;
 
 
 ### Helper
