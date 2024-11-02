@@ -284,6 +284,24 @@ pi * (1/sin(3*pi/8) * b^3 + 1/sin(7*pi/8) / b - 2/sin(3*pi/4)) / 8 / (b^8+1)
 ####################
 ####################
 
+### on [0, 1]
+
+### Pow = 4
+
+### I( x * atan(x) / (x^4+1) )
+integrate(\(x) x * atan(x) / (x^4+1), 0, 1)
+(digamma(7/8) - digamma(3/8)) *
+	(digamma(5/8) - digamma(1/8)) / 64
+
+
+### I( x^3 * atan(x) / (x^4+1) )
+integrate(\(x) x^3 * atan(x) / (x^4+1), 0, 1)
+(digamma(7/8) - digamma(3/8))^2 / 128 +
+	- (digamma(5/8) - digamma(1/8))^2 / 128 + Catalan/2;
+
+
+####################
+
 ### Log-Combinations
 
 ### I( atan(x) * log((1-x)/(1+x)) )
