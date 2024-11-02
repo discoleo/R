@@ -119,3 +119,29 @@ integrate(\(x) sapply(x, \(y) integrate(\(x) log(exp(1) - exp(x*y)), 0, 1)$value
 integrate(\(x) sapply(x, \(y) integrate(\(x) log(exp(x*y) - 1), 0, 1)$value), 0, 1)
 # TODO
 
+
+#################
+
+### I( log(tan(x) + tan(y)) )
+# Maths 505: A brutal iterated integral!
+# https://www.youtube.com/watch?v=UwEgcCZ_SqU
+
+# on [0, pi/4]^2
+integrate(\(x) sapply(x, \(y) integrate(\(x) log(tan(x) + tan(y)), 0, pi/4)$value), 0, pi/4)
+7/64 * pracma::zeta(3) + pi^2 * log(2)/16 - pi/4 * Catalan
+
+
+### I( log(sin(x+y)) )
+integrate(\(x) sapply(x, \(y) integrate(\(x) log(sin(x+y)), 0, pi/4)$value), 0, pi/4)
+7/64 * pracma::zeta(3) - pi^2 * log(2)/16
+
+
+### I( log(tan(x+y)) )
+integrate(\(x) sapply(x, \(y) integrate(\(x) log(tan(x+y)), 0, pi/4)$value), 0, pi/4)
+0
+
+
+###
+integrate(\(x) sapply(x, \(y) integrate(\(x) log(tan(pi/4*x*y)), 0, 1)$value), 0, 1)
+# TODO
+
