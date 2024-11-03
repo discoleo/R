@@ -584,7 +584,7 @@ integrate(function(x) 1 / sin(x)^3 - 1/x^3 - 1/(2*x), 0, pi/2)
 2/pi^2 + log(2) - log(pi)/2 - 1/12
 # Note: for arbitrary interval, see a few paragraphs below;
 
-###
+### I( 1 / sin(x)^2 )
 integrate(function(x) 1 / sin(x)^2 - 1/x^2, 0, pi/2)
 2/pi
 #
@@ -594,6 +594,10 @@ integrate(function(x) 1 / sin(x)^2 - 1/x^2, 0, pi/4)
 ### I( x / sin(x)^2 )
 integrate(function(x) x / sin(x)^2 - 1/x, 0, pi/2)
 1 - log(pi/2)
+#
+integrate(function(x) x / sin(x)^2 - 1/x, 0, pi/4)
+3/2*log(2) - pi/4 + 1 - log(pi)
+
 
 ### I( x^2 / sin(x)^2 )
 integrate(function(x) x^2 / sin(x)^2, 0, pi/2)
