@@ -54,6 +54,25 @@ integrate(\(x) atan(1-x) / x - pi/4 / x, 0, 1)
 pi*log(2)/8 - Catalan
 
 
+#################
+#################
+
+##############
+### Powers ###
+
+### I( atan(x)^2 )
+integrate(\(x) atan(x)^2, 0, 1)
+(pi/4)^2 + pi*log(2)/4 - Catalan
+
+### I( atan(x)^3 )
+integrate(\(x) atan(x)^3, 0, 1)
+(pi/4)^3 + 63/64 * zeta(3) + 3/32 * pi^2 * log(2) - 3/4 * pi * Catalan
+
+# see x^2 * tan(x):
+integrate(\(x) x * atan(x)^2 / (x^2 + 1), 0, 1)
+- 21/64 * zeta(3) - 1/32 * pi^2 * log(2) + pi/4 * Catalan
+
+
 ####################
 ####################
 
@@ -350,13 +369,19 @@ integrate(\(x) x * atan(1-x) / (x^2+1), 0, 1)
 
 # Gen 1: TODO
 k = 2
-integrate(function(x) atan(x) * log((k - x)/(k + x)), 0, 1)
+integrate(\(x) atan(x) * log((k - x)/(k + x)), 0, 1)
 (pi/4 - log(2)/2)*log((k-1)/(k+1)) +
 	+ integrate(function(x) (x*atan(x) - log(x^2+1)/2)*(1/(k - x) + 1/(k + x)), 0, 1)$value
 (pi/4 - log(2)/2)*log((k-1)/(k+1)) +
 	+ integrate(function(x) k*atan(x)*(1/(k-x) - 1/(x+k)), 0, 1)$value +
 	- integrate(function(x) log(x^2+1)/2*(1/(k - x) + 1/(k + x)), 0, 1)$value
 
+
+###
+integrate(\(x) atan(x) * log((1-x^2)/(1+x^2)) / (x^2+1), 0, tan(pi/8))
+(pi*Catalan - 1/4 * pi^2 * log(2) - 21/16 * pracma::zeta(3)) / 32
+
+# Weierstrass substitution, see file Integrals.Log.Trig.R;
 
 ####################
 ####################
@@ -410,6 +435,12 @@ pi^3 / 16
 ###
 integrate(\(x) log(x^2 + 1) / x, 0, 1)
 pi^2/24
+
+###############
+
+### I( log(x^2 + 1) * atan(x) )
+integrate(\(x) log(x^2 + 1) * atan(x), 0, 1)
+3/48*pi^2 + pi*log(2)/4 - log(2)^2 / 4 + log(2) - pi/2
 
 
 ###############
