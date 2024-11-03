@@ -376,6 +376,23 @@ integrate(function(x) x^3 / cos(x) - (pi/2)^3 / (pi/2 - x), 0, pi/2)
 pi^3 / 16 # ==
 (pracma::psi(2, 3/4) - pracma::psi(2, 1/4)) / 64;
 
+#
+13/16 * zeta(3) # ==
+- (pracma::psi(2, 2/3) + pracma::psi(2, 1/3)) / 64;
+91/16 * zeta(3) # ==
+- (pracma::psi(2, 5/6) + pracma::psi(2, 1/6)) / 64;
+
+###
+45/4 * zeta(4) # == 2 * pi^4 ==
+(pracma::psi(3, 3/4) + pracma::psi(3, 1/4)) / 128;
+
+###
+93 * zeta(5) # ==
+- (pracma::psi(4, 3/4) + pracma::psi(4, 1/4)) / 256;
+# while:
+5/16 * pi^5 # ==
+(pracma::psi(4, 3/4) - pracma::psi(4, 1/4)) / 256;
+
 
 ### Composed: on [0, pi]
 
@@ -699,6 +716,25 @@ integrate(function(x) log(sin(x)), 0, pi/2)
 
 # - for other intervals, see file:
 #   Integrals.Log.Trig.R;
+
+
+#######################
+
+### I( x / (1 - cos(x)) )
+integrate(\(x) x / (1 - cos(x)) - 2/x, 0, pi)
+2*log(2) + 2 - 2*log(pi);
+
+### on [0, pi/2]
+integrate(\(x) x / (1 - cos(x)) - 2/x, 0, pi/2)
+3*log(2) - pi/2 + 2 - 2*log(pi)
+
+
+# Base:
+integrate(\(x) x / (1 - cos(x)) - 2/x + 2*log(pi)/pi, 0, pi)
+2*log(2) + 2
+
+integrate(\(x) x / (1 - cos(x)) - 2/x + 4*log(pi/2)/pi, 0, pi/2)
+log(2) - pi/2 + 2
 
 
 #######################
