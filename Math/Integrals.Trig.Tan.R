@@ -241,19 +241,9 @@ integrate(\(x) log(abs(1-x)/x) / (1 + 2*x), 1, Inf)$value;
 
 
 ####################
-### ATAN: Powers ###
 
-### I( atan(x)^2 )
-integrate(\(x) atan(x)^2, 0, 1)
-(pi/4)^2 + pi*log(2)/4 - Catalan
-
-### I( atan(x)^3 )
-integrate(\(x) atan(x)^3, 0, 1)
-(pi/4)^3 + 63/64 * zeta(3) + 3/32 * pi^2 * log(2) - 3/4 * pi * Catalan
-
-# see x^2 * tan(x):
-integrate(\(x) x * atan(x)^2 / (x^2 + 1), 0, 1)
-- 21/64 * zeta(3) - 1/32 * pi^2 * log(2) + pi/4 * Catalan
+### ATAN: Powers
+# moved to file: Integrals.Trig.Tan.Atan.R;
 
 
 ### Atan * Log
@@ -649,13 +639,5 @@ integrate(\(x) (1 - cos(x)) / (cos(x)^2 + 2*cos(x) + 2), 0, pi)
 integrate(\(x) (1 - cos(x)) / (cos(x)^2 + 2*cos(x) + 2) +
 	(1 + cos(x)) / (cos(x)^2 - 2*cos(x) + 2), 0, pi/2)
 integrate(\(x) (6*cos(x)^2 + 4) / (cos(x)^4 + 4), 0, pi/2)
-
-
-#################
-
-#################
-### ATAN: Exp ###
-
-integrate(\(x) atan(exp(-x))/x - pi/4*exp(-x)/x, 0, Inf)
-pi/4 * log(4*pi^3) - pi*log(gamma(1/4)) + pi*Euler/4
+pi / sqrt((sqrt(5) + 1) / 2)
 
