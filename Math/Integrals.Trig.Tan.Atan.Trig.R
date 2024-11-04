@@ -39,6 +39,45 @@ integrate(\(x) log(abs(1-x)/x) / (1 + 2*x), 1, Inf)$value;
 - pracma::polylog(-1/2, 2)/2 - pi^2/12 - (log(3/2)^2 - log(3)^2)/4;
 
 
+#####################
+
+### I( atan(3*tan(x)) )
+integrate(\(x) atan(3*tan(x)), 0, pi/2)
+pi^2/4 - integrate(\(x) 3 * atan(x) / (9*x^2 + 1), 0, Inf)$value
+integrate(\(x) 3 * atan(x) / (x^2 + 9), 0, Inf)
+pi^2/4 - log(3)*log(2)/2 +
+	- (pracma::polylog(1/4, 2) - pracma::polylog(-1/2, 2)) / 2 +
+	- (log(4/3)^2 - log(3/2)^2) / 4;
+
+
+### I( atan(tan(x)/3) )
+integrate(\(x) atan(tan(x)/3), 0, pi/2)
+pi^2 / 4 - integrate(\(x) atan(3*tan(x)), 0, pi/2)$value
+log(3)*log(2)/2 +
+	+ (pracma::polylog(1/4, 2) - pracma::polylog(-1/2, 2)) / 2 +
+	+ (log(4/3)^2 - log(3/2)^2) / 4;
+
+
+# Derivation:
+
+# from atan(x/b) / (x^2 + 9)
+b = 5^(1/3)
+integrate(\(x) x / (x^2 + b^2) / (x^2 + 9), 0, Inf)
+integrate(\(x) x * (1/(x^2 + 9) - 1/(x^2 + b^2)) / (b^2 - 9), 0, Inf)
+log(b/3) / (b^2 - 9)
+
+# I( ... db )
+integrate(\(x) atan(x) / (x^2 + 9), 0, Inf)
+pi^2/12 - log(3)*log(2)/6 +
+	- (pracma::polylog(1/4, 2) - pracma::polylog(-1/2, 2)) / 6 +
+	- (log(4/3)^2 - log(3/2)^2) / 12
+
+#
+integrate(\(b) log(b) / (b^2 - 9), 0, 1)
+(pracma::polylog(1/4, 2) - pracma::polylog(-1/2, 2)) / 6 +
+	+ (log(4/3)^2 - log(3/2)^2) / 12;
+
+
 ######################
 ######################
 
