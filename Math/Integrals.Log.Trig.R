@@ -157,7 +157,8 @@ Ap = function(p, iter=10000) {
 #
 Ap(6) - Ap(-6)
 log(6)/6 - sqrt(3)/(4*36*pi) *
-	(pracma::psi(1, 1/6) - pracma::psi(1, 5/6) + pracma::psi(1, 1/3) - pracma::psi(1, 2/3))
+	(pracma::psi(1, 1/6) - pracma::psi(1, 5/6) +
+	+ pracma::psi(1, 1/3) - pracma::psi(1, 2/3))
 
 
 ### Varia: Clausen Function
@@ -192,7 +193,7 @@ integrate(function(x) x * log(sin(x)), 0, pi/4)
 ### Helper
 x  = pi/7
 id = seq(10000);
-log(sin(x))
+log(sin(x)) # ==
 - sum( cos(2*id*x) / id ) - log(2);
 
 
@@ -248,6 +249,8 @@ pi^3/24 + pi/2 * log(2)^2
 # Maths 505: A cool log trig integral
 # https://www.youtube.com/watch?v=iPicVw4lOg0
 
+# Note:
+# Full Generalization at the end of this section;
 
 ### I( log(cos(x)) / tan(x) )
 integrate(\(x) log(cos(x)) / tan(x), 0, pi/2)
@@ -291,7 +294,7 @@ integrate(\(x) 1/4*(log(1-sin(x)) +
 - pi^2/24 + log(2)^2/2 - log(pi/2)^2/ 2;
 
 
-### Extended
+### Generalisation
 
 ### Base:
 p = -1/3; k = sqrt(5)
