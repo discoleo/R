@@ -80,6 +80,17 @@ integrate(\(x) 4 / (4*x^4 + (x^2+1)^2), 0, Inf)
 pi / sqrt((sqrt(5) + 1) / 2)
 
 
+### I( atan(3*cos(x)^2) / cos(x)^2 )
+integrate(\(x) atan(3*cos(x)^2) / cos(x)^2, 0, pi/2)
+integrate(\(x) 6 * sin(x)^2 / (9*cos(x)^4 + 1), 0, pi/2)
+integrate(\(x) 6 / (9*x^4 + (x^2+1)^2), 0, Inf)
+integrate(\(x) 6*x^2 / (9 + (x^2+1)^2), 0, Inf)
+integrate(\(x) x^2 * Im(1/(x^2 + 1-3i) - 1/(x^2 + 1+3i)), 0, Inf)
+integrate(\(x) Im((1+3i)/(x^2 + 1+3i) - (1-3i)/(x^2 + 1-3i)), 0, Inf)
+integrate(\(x) Im((1+3i)^(1/2)/(x^2 + 1) - (1-3i)^(1/2)/(x^2 + 1)), 0, Inf)
+pi/2 * Im((1+3i)^(1/2) - (1-3i)^(1/2))
+
+
 # Alternatives:
 integrate(\(x) (1 - cos(x)) / (cos(x)^2 + 2*cos(x) + 2), 0, pi)
 # Alt: Weierstrass;
