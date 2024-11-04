@@ -14,6 +14,11 @@
 integrate(\(x) atan(2*tan(x)), 0, pi/2)
 5/24 * pi^2 + pracma::polylog(-1/2, 2)/2 + (log(3/2)^2 - log(3)^2)/4;
 
+### I( atan(tan(x)/2) )
+integrate(\(x) atan(tan(x)/2), 0, pi/2)
+pi^2/4 - integrate(\(x) 2 * atan(x) / (x^2 + 4), 0, Inf)$value
+1/24 * pi^2 - pracma::polylog(-1/2, 2)/2 - (log(3/2)^2 - log(3)^2)/4
+
 
 # Derivation:
 # - without the Lerch zeta function;
