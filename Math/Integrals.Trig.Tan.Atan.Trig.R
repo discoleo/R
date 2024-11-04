@@ -65,15 +65,16 @@ polylog2(tan(atan(k)/2), 2) - polylog2(- tan(atan(k)/2), 2)
 # https://www.youtube.com/watch?v=WLq2EThghgc
 
 ###
-a = sqrt(3)
-integrate(\(x) atan(a*sin(x)) / sin(x), 0, pi/2)
-pi/2 * asinh(a)
+k = sqrt(3)
+integrate(\(x) atan(k*sin(x)) / sin(x), 0, pi/2)
+pi/2 * asinh(k)
 
 
-### I( atan(2*cos(x)^2) / cos(x)^2 )
+### I( atan(k*cos(x)^2) / cos(x)^2 )
 # Maths 505: A RIDICULOUSLY AWESOME INTEGRAL FEAT. φ & π
 # https://www.youtube.com/watch?v=6CJ_Sal55uM
 
+### I( atan(2*cos(x)^2) / cos(x)^2 )
 integrate(\(x) atan(2*cos(x)^2) / cos(x)^2, 0, pi/2)
 integrate(\(x) 4 * sin(x)^2 / (4*cos(x)^4 + 1), 0, pi/2)
 integrate(\(x) 4 / (4*x^4 + (x^2+1)^2), 0, Inf)
@@ -88,7 +89,14 @@ integrate(\(x) 6*x^2 / (9 + (x^2+1)^2), 0, Inf)
 integrate(\(x) x^2 * Im(1/(x^2 + 1-3i) - 1/(x^2 + 1+3i)), 0, Inf)
 integrate(\(x) Im((1+3i)/(x^2 + 1+3i) - (1-3i)/(x^2 + 1-3i)), 0, Inf)
 integrate(\(x) Im((1+3i)^(1/2)/(x^2 + 1) - (1-3i)^(1/2)/(x^2 + 1)), 0, Inf)
-pi/2 * Im((1+3i)^(1/2) - (1-3i)^(1/2))
+pi/2 * Im((1+3i)^(1/2) - (1-3i)^(1/2));
+pi/2i * sqrt(2 - 2*sqrt(3^2 + 1) + 0i);
+
+
+### Gen: I( atan(k*cos(x)^2) / cos(x)^2 )
+k = 5^(1/3)
+integrate(\(x) atan(k*cos(x)^2) / cos(x)^2, 0, pi/2)
+pi/2i * sqrt(2 - 2*sqrt(k^2 + 1) + 0i);
 
 
 # Alternatives:
