@@ -266,6 +266,7 @@ integrate(\(x) ((b^2*x^2-x+b)/(x^3+1) - b^2/(x+b)) / (b^3-1), 0, 1)
 	+ (digamma(2/3) - digamma(1/6)) * b / 6) / (b^3 - 1);
 
 
+###########
 ### Pow = 4
 # see also Integrals.Log.Fractions.Complex.R;
 
@@ -287,13 +288,49 @@ integrate(\(x) log(x-1) / (x^4+1), 1, Inf)
 
 ###
 integrate(\(x) x * log(1-x) / (x^4+1), 0, 1)
+# TODO
 
-###
+### I( x^2 * log(1-x) / (x^4 + 1) )
 integrate(\(x) x^2 * log(1-x) / (x^4+1), 0, 1)
 (pracma::psi(1, 7/8) - pracma::psi(1, 3/8)) / 64 +
 	+ (digamma(7/8) - digamma(3/8)) * log(2) / 32 +
 	- (digamma(5/8) - digamma(1/8)) *
 		(digamma(3/4) - digamma(1/4)) / 64;
+
+
+### I( log(1+x) / (x^4 + 1) )
+integrate(\(x) log(1+x) / (x^4 + 1), 0, Inf)
+- (pracma::psi(1, 5/8) - pracma::psi(1, 1/8)) / 64 +
+	- (digamma(3/4) - digamma(1/4)) / sin(pi/4) * pi / 16 +
+	+ (digamma(3/4) - digamma(1/4)) / sin(3*pi/4) * pi / 32 +
+	- (digamma(7/8) - digamma(3/8)) * pi / 32 +
+	+ log(2) / sin(pi/4) * pi / 16;
+
+
+### Other
+
+### I( log(x) / ((x-1)^4 + 1) )
+integrate(\(x) log(x) / ((x-1)^4 + 1), 1, Inf)
+integrate(\(x) log(1+x) / (x^4 + 1), 0, Inf)
+# Note: see previous integral;
+# Variation =>
+integrate(\(x) - x^2 * log(x) / (x^4 + (x-1)^4), 0, 1)
+
+###
+integrate(\(x) log(x) / ((x-1)^4 + 1), 0, 1)
+integrate(\(x) log(1-x) / (x^4+1), 0, 1)
+(pracma::psi(1, 5/8) - pracma::psi(1, 1/8)) / 64 +
+	+ (digamma(5/8) - digamma(1/8)) * log(2) / 32 +
+	+ (digamma(7/8) - digamma(3/8)) *
+		(digamma(3/4) - digamma(1/4)) / 64;
+# see Log.Complex.R;
+
+# Derivation:
+
+# from log(x+b) / (x^4 + 1)
+integrate(\(x) 1/(x+b) / (1 + x^4), 0, Inf)
+integrate(\(x) (1/(x+b) - (x^3-b*x^2+b^2*x-b^3)/ (1 + x^4)) / (b^4+1), 0, Inf)
+(-log(b) + pi*(b/sin(3*pi/4) - b^2 + b^3/sin(pi/4))/4) / (b^4+1)
 
 
 ### Helper
