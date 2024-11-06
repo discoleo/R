@@ -30,7 +30,7 @@ integrate(\(x) x / (tan(x) + 1), 0, pi/2)
 pi^2/16 + pi*log(2)/8 - Catalan/2
 
 
-###
+### on [0, pi/2]
 integrate(function(x) log(sin(x)), 0, pi/2)
 integrate(function(x) log(cos(x)), 0, pi/2)
 - pi/2*log(2)
@@ -39,7 +39,7 @@ integrate(\(x) log(1 + cos(x)), 0, pi/2)
 integrate(\(x) log(1 + sin(x)), 0, pi/2)
 - pi/2*log(2) + 2*Catalan
 
-###
+### on [0, pi/4]
 integrate(function(x) log(sin(x)), 0, pi/4)
 - pi/4*log(2) - Catalan/2
 
@@ -47,7 +47,8 @@ integrate(function(x) log(sin(x)), 0, pi/4)
 integrate(function(x) log(cos(x)), 0, pi/4)
 - pi/4*log(2) + Catalan/2
 
-###
+
+### Varia:
 integrate(function(x) log(cos(x) + sin(x)), 0, pi/2)
 - pi/4*log(2) + Catalan
 #
@@ -175,14 +176,32 @@ log(6)/6 - sqrt(3)/(4*36*pi) *
 # https://www.youtube.com/watch?v=FUY4keujknc
 
 ###
-integrate(function(x) x * log(sin(x)), 0, pi/2)
+integrate(\(x) x * log(sin(x)), 0, pi/2)
 - 1/8*pi^2*log(2) + 7/16 * pracma::zeta(3)
 
-###
-integrate(function(x) x^2 * log(sin(x)), 0, pi/2)
+### I( x^2 * log(sin(x)) )
+integrate(\(x) x^2 * log(sin(x)), 0, pi/2)
 - 1/(3*8)*pi^3*log(2) + 3/16 * pi * pracma::zeta(3)
 
-###
+### I( x^2 * log(cos(x)) )
+integrate(\(x) x^2 * log(cos(x)), 0, pi/2)
+-1/4 * pi * pracma::zeta(3) - pi^3*log(2) / 24;
+
+
+# Helper
+integrate(\(x) x^2 * log(sin(x)), pi/2, pi)
+integrate(\(x) (pi - x)^2 * log(sin(x)), 0, pi/2)
+- pi^2 * pi/2*log(2) +
+	- 2*pi*(- 1/8*pi^2*log(2) + 7/16 * pracma::zeta(3)) +
+	- 1/(3*8)*pi^3*log(2) + 3/16 * pi * pracma::zeta(3);
+- 7/24 * pi^3*log(2) - 11/16 * pi * pracma::zeta(3);
+
+# on [0, pi]
+integrate(\(x) x^2 * log(sin(x)), 0, pi)
+- 1/3*pi^3*log(2) - 1/2 * pi * pracma::zeta(3);
+
+
+### on [0, pi/4]
 integrate(function(x) x * log(cos(x)), 0, pi/4)
 (pi*Catalan - 1/4 * pi^2 * log(2) - 21/16 * pracma::zeta(3)) / 8
 #
