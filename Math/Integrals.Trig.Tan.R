@@ -68,7 +68,13 @@ polylog2(0.6, 3) - li3_06;
 ##################
 ##################
 
-###
+### I( x * tan(x) )
+
+### on [0, pi/2]
+integrate(\(x) (pi/2 - x) * tan(x), 0, pi/2)
+pi*log(2)/2
+
+### on [0, pi/4]
 integrate(\(x) x * tan(x), 0, pi/4)
 Catalan / 2 - 1/8 * pi*log(2)
 
@@ -133,6 +139,23 @@ integrate(\(x) 1/atan(x) - 1/x, 0, 1)$value - log(pi/4)
 # I( 1 / ((x^2+1)*atan(x)) )
 integrate(\(x) 1/atan(x) / (x^2+1) - 1/x, 0, 1)
 log(pi/4)
+
+
+############
+
+# Maths 505: A MONSTER INTEGRAL!!!
+# int from 0 to infty arctan(x)/(x(x+1)(x^2+1))
+# https://www.youtube.com/watch?v=u-FKjn_83l8
+# Note: Intermediate integral
+# - see Integrals.Log.Trig.R for solutions to LOG( Trig );
+
+integrate(\(x) x / (tan(x) + 1), 0, pi/2)
+pi^2/16 + pi*log(2)/8 - Catalan/2
+
+# Derivation:
+integrate(\(x) 2 * x / (tan(x) + 1), 0, pi/2)
+integrate(\(x) - log(tan(x) + 1), 0, pi/2)$value +
+	+ pi*log(2)/2 + pi^2 / 8;
 
 
 #######################

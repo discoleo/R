@@ -20,19 +20,15 @@ Catalan = 0.915965594177219015054603514;
 
 ### I( log(sin(x)) ) on various intervals
 
-# see e.g.:
-# Maths 505: see 2nd & 3rd intermediate integrals;
-# A MONSTER INTEGRAL!!! int from 0 to infty arctan(x)/(x(x+1)(x^2+1))
+# Maths 505: A MONSTER INTEGRAL!!!
+# int from 0 to infty arctan(x)/(x(x+1)(x^2+1))
 # https://www.youtube.com/watch?v=u-FKjn_83l8
-
-# TODO: move to Trig;
-integrate(\(x) x / (tan(x) + 1), 0, pi/2)
-pi^2/16 + pi*log(2)/8 - Catalan/2
+# Note: see 2nd & 3rd intermediate integrals;
 
 
 ### on [0, pi/2]
-integrate(function(x) log(sin(x)), 0, pi/2)
-integrate(function(x) log(cos(x)), 0, pi/2)
+integrate(\(x) log(sin(x)), 0, pi/2)
+integrate(\(x) log(cos(x)), 0, pi/2)
 - pi/2*log(2)
 #
 integrate(\(x) log(1 + cos(x)), 0, pi/2)
@@ -79,10 +75,9 @@ sn = sin(2*pi*c(1,2,3) / 8); dd = 512; # dd = 8*n^2;
 	- sn[1] * (pracma::psi(1, 7/16) - pracma::psi(1,  9/16)) / dd;
 
 # Derivation:
-n = 8;
+n = 8; # n = 10; # EVEN integer;
 integrate(\(x) log(cos(x)), 0, pi/n)
-n2 = 2*n; ni = 0:1000; id = seq(round(n/2));
-ns = round(n/2);
+n2 = 2*n; ns = round(n/2); id = seq(ns); ni = 0:1000;
 sn = sin(2*pi*id / n); sg = - (-1)^id;
 - pi*log(2)/n + 1/2 * sum(sapply(id,
 	\(id0) sg[id0]*sn[id0] / (n2*ni + id[id0])^2 +
