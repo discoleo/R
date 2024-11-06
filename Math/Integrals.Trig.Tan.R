@@ -86,7 +86,7 @@ integrate(\(x) (x - pi/2)*(x + pi/2) * tan(x), 0, pi/2)
 - 7/8 * pracma::zeta(3) - 1/4 * pi^2 * log(2)
 
 # [variant]
-integrate(\(x) (x - pi/2)*x * tan(x), 0, pi/2)
+integrate(\(x) x * (x - pi/2) * tan(x), 0, pi/2)
 - 7/8 * pracma::zeta(3)
 
 ### [by Parts]
@@ -94,16 +94,18 @@ integrate(\(x) x^3 * tan(x)^2, 0, pi/4)
 (pi/4)^3 - 1/4*(pi/4)^4 + 63/64 * zeta(3) +
 	+ 3/32 * pi^2 * log(2) - 3/4 * pi * Catalan;
 
+
 ### I( x^3 * tan(x) )
 integrate(\(x) x * (pi/2 - x)*(pi/2 + x) * tan(x), 0, pi/2)
 integrate(\(x) x^2 * log(cos(x)), 0, pi/2)$value +
 	+ pracma::zeta(3) * pi + pi^3*log(2)/24;
-# TODO: ?
+3/4 * pi * pracma::zeta(3);
 
 # [variant]
 integrate(\(x) x^2 * (pi/2 - x) * tan(x), 0, pi/2)
 integrate(\(x) x^2 * log(cos(x)), 0, pi/2)$value +
 	+ 9/16 * pracma::zeta(3) * pi + pi^3*log(2)/24;
+5/16 * pi * pracma::zeta(3);
 
 
 ###
