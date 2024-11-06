@@ -175,20 +175,32 @@ log(6)/6 - sqrt(3)/(4*36*pi) *
 # Maths 505: ONE TOUGH INTEGRAL BOI: int 0 to pi/2 x ln(1+cos(x))
 # https://www.youtube.com/watch?v=FUY4keujknc
 
-###
+### I( x * log(sin(x)) )
 integrate(\(x) x * log(sin(x)), 0, pi/2)
-- 1/8*pi^2*log(2) + 7/16 * pracma::zeta(3)
+- 1/8 * pi^2 * log(2) + 7/16 * pracma::zeta(3)
+
+### I( x * log(cos(x)) )
+integrate(\(x) x * log(cos(x)), 0, pi/2)
+- 1/8 * pi^2 * log(2) - 7/16 * pracma::zeta(3)
+
 
 ### I( x^2 * log(sin(x)) )
 integrate(\(x) x^2 * log(sin(x)), 0, pi/2)
-- 1/(3*8)*pi^3*log(2) + 3/16 * pi * pracma::zeta(3)
+- 1/24 * pi^3*log(2) + 3/16 * pi * pracma::zeta(3)
 
 ### I( x^2 * log(cos(x)) )
 integrate(\(x) x^2 * log(cos(x)), 0, pi/2)
 -1/4 * pi * pracma::zeta(3) - pi^3*log(2) / 24;
 
 
-# Helper
+### Helper
+
+# on [pi/2, pi]
+integrate(\(x) x * log(sin(x)), pi/2, pi)
+integrate(\(x) (pi - x) * log(sin(x)), 0, pi/2)
+-3/8 * pi^2*log(2) - 7/16 * pracma::zeta(3);
+
+#
 integrate(\(x) x^2 * log(sin(x)), pi/2, pi)
 integrate(\(x) (pi - x)^2 * log(sin(x)), 0, pi/2)
 - pi^2 * pi/2*log(2) +
@@ -196,7 +208,12 @@ integrate(\(x) (pi - x)^2 * log(sin(x)), 0, pi/2)
 	- 1/(3*8)*pi^3*log(2) + 3/16 * pi * pracma::zeta(3);
 - 7/24 * pi^3*log(2) - 11/16 * pi * pracma::zeta(3);
 
+
 # on [0, pi]
+integrate(\(x) x * log(sin(x)), 0, pi)
+- 1/2 * pi^2*log(2);
+
+#
 integrate(\(x) x^2 * log(sin(x)), 0, pi)
 - 1/3*pi^3*log(2) - 1/2 * pi * pracma::zeta(3);
 
