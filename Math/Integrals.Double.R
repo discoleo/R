@@ -33,6 +33,30 @@ integrate(\(x) sapply(x, \(y) integrate(\(x) 1 / (1+x*y), 0, 1)$value), 0, 1)
 pi^2/12
 
 
+### Radicals
+
+### I( (x^p + y^p) / (1-x*y) / (x*y)^q )
+# Maths 505: A surprisingly interesting integral
+# https://www.youtube.com/watch?v=BNzVNcZrbfA
+# Note: Series expansion of 1/(1 - x*y)
+
+integrate(\(x) sapply(x, \(y)
+	integrate(\(x) (sqrt(x) + sqrt(y)) / (1-x*y) / (x*y)^(1/4), 0, 1)$value), 0, 1)
+(digamma(5/4) - digamma(3/4)) * 4
+
+
+### Gen: I( (x^p + y^p) / (1-x*y) / (x*y)^q )
+p = sqrt(3); q = sqrt(5) - 2;
+integrate(\(x) sapply(x, \(y)
+	integrate(\(x) (x^p + y^p) / (1-x*y) / (x*y)^q, 0, 1)$value), 0, 1)
+(digamma(1+p-q) - digamma(1-q)) * 2 / p
+
+
+###########
+
+###########
+### Log ###
+
 ### I( log(1 - x*y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) log(1-x*y), 0, 1)$value), 0, 1)
 2 - pi^2/6
@@ -71,6 +95,9 @@ integrate(\(x) sapply(x, \(y) {
 integrate(\(x) sapply(x, \(y) {
 	integrate(\(x) (x+y)*log(x+y) / (1-x*y), 0, 1, rel.tol=1E-12)$value
 	}), 0, 1, rel.tol=1E-12)
+integrate(\(x) sapply(x, \(y) integrate(\(x) 2 * log(1-x*y) / (x+y),
+	0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)$value +
+	- 2*log(2)^2 + 4*log(2) + pi^2/3 - 4;
 # TODO
 
 
@@ -141,6 +168,27 @@ integrate(\(x) sapply(x, \(y) integrate(\(x) log(exp(1) - exp(x*y)), 0, 1)$value
 ###
 integrate(\(x) sapply(x, \(y) integrate(\(x) log(exp(x*y) - 1), 0, 1)$value), 0, 1)
 # TODO
+
+
+############
+
+############
+### Trig ###
+
+### I( sin(pi/2*(x+y)) / (1 + x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x) sin(pi/2*(x+y)) / (1 + x*y), 0, 1)$value), 0, 1)
+
+### I( sin(x+y) / (1 + x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x) sin(x+y) / (1 + x*y), 0, pi/2)$value), 0, pi/2)
+
+
+### I( cos(x+y) / (1 + x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x) cos(x+y) / (1 + x*y), 0, pi/2)$value), 0, pi/2)
+
+
+### I( sin(pi/2*(x+y)) / (1 - x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x) sin(pi/2*(x+y)) / (1 - x*y), 0, 1)$value), 0, 1)
+
 
 
 #################
