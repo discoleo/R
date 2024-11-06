@@ -60,14 +60,35 @@ integrate(function(x) log(cos(x) + sin(x)), 0, pi/4)
 
 
 ### I( log(sin(x)) ) on [0, pi/8]
-# TODO: C8;
 C8 = integrate(\(x) log(x) / (x^2 + 1), 0, tan(pi/8))$value
+# Note: see the sum(psi());
+# C8 = - Catalan / 4 - 2*sum(psi);
 #
-integrate(function(x) log(sin(x)), 0, pi/8)
+integrate(\(x) log(sin(x)), 0, pi/8)
 - pi/8*log(2) - Catalan/8 + C8/2
 #
-integrate(function(x) log(cos(x)), 0, pi/8)
-- pi/8*log(2) - Catalan/8 - C8/2
+integrate(\(x) log(cos(x)), 0, pi/8)
+- pi*log(2) / 8 - Catalan/8 - C8/2;
+sn = sin(2*pi*c(1,2,3) / 8); dd = 512; # dd = 8*n^2;
+- pi*log(2) / 8 +
+	+ sn[1] * (pracma::psi(1, 1/16) - pracma::psi(1, 15/16)) / dd +
+	- sn[2] * (pracma::psi(1, 2/16) - pracma::psi(1, 14/16)) / dd +
+	+ sn[3] * (pracma::psi(1, 3/16) - pracma::psi(1, 13/16)) / dd +
+	- sn[3] * (pracma::psi(1, 5/16) - pracma::psi(1, 11/16)) / dd +
+	+ sn[2] * (pracma::psi(1, 6/16) - pracma::psi(1, 10/16)) / dd +
+	- sn[1] * (pracma::psi(1, 7/16) - pracma::psi(1,  9/16)) / dd;
+
+# Derivation:
+n = 8;
+integrate(\(x) log(cos(x)), 0, pi/n)
+n2 = 2*n; ni = 0:1000; id = seq(round(n/2));
+ns = round(n/2);
+sn = sin(2*pi*id / n); sg = - (-1)^id;
+- pi*log(2)/n + 1/2 * sum(sapply(id,
+	\(id0) sg[id0]*sn[id0] / (n2*ni + id[id0])^2 +
+		- sg[id0]*sn[id0] / (n2*ni + n2 - id[id0])^2 +
+		- sg[id0]*sn[id0] / (n2*ni + n - id[id0])^2 +
+		+ sg[id0]*sn[id0] / (n2*ni + n + id[id0])^2) )
 
 
 ### on [0, pi/3]
