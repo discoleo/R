@@ -35,12 +35,13 @@ integrate(\(x) log(1 + cos(x)), 0, pi/2)
 integrate(\(x) log(1 + sin(x)), 0, pi/2)
 - pi/2*log(2) + 2*Catalan
 
+
 ### on [0, pi/4]
-integrate(function(x) log(sin(x)), 0, pi/4)
+integrate(\(x) log(sin(x)), 0, pi/4)
 - pi/4*log(2) - Catalan/2
 
 ###
-integrate(function(x) log(cos(x)), 0, pi/4)
+integrate(\(x) log(cos(x)), 0, pi/4)
 - pi/4*log(2) + Catalan/2
 
 
@@ -58,14 +59,18 @@ integrate(function(x) log(cos(x) + sin(x)), 0, pi/4)
 ### I( log(sin(x)) ) on [0, pi/8]
 C8 = integrate(\(x) log(x) / (x^2 + 1), 0, tan(pi/8))$value
 # Note: see the sum(psi());
-# C8 = - Catalan / 4 - 2*sum(psi);
+# C8 = - Catalan/4 - 2*sum(psi);
 #
 integrate(\(x) log(sin(x)), 0, pi/8)
-- pi/8*log(2) - Catalan/8 + C8/2
-#
+- pi/8*log(2) - Catalan/8 + C8/2;
+integrate(\(x) - log(cos(x)), 0, pi/8)$value + # see next;
+	- pi*log(2)/4 - Catalan/4;
+
+### I( log(cos(x)) )
 integrate(\(x) log(cos(x)), 0, pi/8)
 - pi*log(2) / 8 - Catalan/8 - C8/2;
-sn = sin(2*pi*c(1,2,3) / 8); dd = 512; # dd = 8*n^2;
+dd = 512; # n = 8; dd = 8*n^2;
+sn = sin(2*pi*c(1,2,3) / 8);
 - pi*log(2) / 8 +
 	+ sn[1] * (pracma::psi(1, 1/16) - pracma::psi(1, 15/16)) / dd +
 	- sn[2] * (pracma::psi(1, 2/16) - pracma::psi(1, 14/16)) / dd +
@@ -74,16 +79,19 @@ sn = sin(2*pi*c(1,2,3) / 8); dd = 512; # dd = 8*n^2;
 	+ sn[2] * (pracma::psi(1, 6/16) - pracma::psi(1, 10/16)) / dd +
 	- sn[1] * (pracma::psi(1, 7/16) - pracma::psi(1,  9/16)) / dd;
 
+
 # Derivation:
-n = 8; # n = 10; # EVEN integer;
+n = 8; # n = 10; # any integer >= 2;
 integrate(\(x) log(cos(x)), 0, pi/n)
-n2 = 2*n; ns = round(n/2); id = seq(ns); ni = 0:1000;
-sn = sin(2*pi*id / n); sg = - (-1)^id;
+n2 = 2*n; isEven = (n %% 2 == 0);
+ns = if(isEven) (n-1) / 2 else n/2; id = seq(ns);
+sn = sin(2*pi*id / n); ni = 0:1000;
+sg = - (-1)^id; sg2 = if(isEven) sg else -sg;
 - pi*log(2)/n + 1/2 * sum(sapply(id,
 	\(id0) sg[id0]*sn[id0] / (n2*ni + id[id0])^2 +
-		- sg[id0]*sn[id0] / (n2*ni + n2 - id[id0])^2 +
-		- sg[id0]*sn[id0] / (n2*ni + n - id[id0])^2 +
-		+ sg[id0]*sn[id0] / (n2*ni + n + id[id0])^2) )
+		-  sg[id0]*sn[id0] / (n2*ni + n2 - id[id0])^2 +
+		- sg2[id0]*sn[id0] / (n2*ni + n - id[id0])^2 +
+		+ sg2[id0]*sn[id0] / (n2*ni + n + id[id0])^2) )
 
 
 ### on [0, pi/3]
@@ -484,6 +492,7 @@ integrate(\(x) 2*(2*log(1 + x)*log(1 - x) - log(1 + x^2)*log(1 - x^2)) / (x^2 + 
 integrate(\(x) log(x^2 + 1)^2 / (x^2 + 1), 0, 1)
 integrate(\(x) 4*log(cos(x))^2, 0, pi/4)
 # TODO
+
 
 #
 integrate(\(x) log(sin(x))^2 - log(cos(x))^2, 0, pi/4)
