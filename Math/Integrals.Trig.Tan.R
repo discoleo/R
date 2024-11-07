@@ -114,6 +114,17 @@ integrate(\(x) x^2 * log(cos(x)), 0, pi/2)$value +
 5/16 * pi * pracma::zeta(3);
 
 
+### on [0, pi/4]
+integrate(\(x) x^3 * tan(x), 0, pi/4)
+integrate(\(x) 3*x^2 * log(cos(x)), 0, pi/4)$value +
+	- (pi/4)^3 * log(cos(pi/4));
+- 1/128 * pi^3*log(2) + 3/32 * pi^2*Catalan +
+	+ 9/256 * pi * pracma::zeta(3) +
+	- (pracma::psi(3, 1/4) - pracma::psi(3, 3/4)) / 8 / 4^4;
+
+
+##############
+
 ###
 integrate(\(x) tan(x) / x, 0, pi/4)
 # TODO: ???
