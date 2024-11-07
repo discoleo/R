@@ -214,7 +214,18 @@ integrate(\(x) x^2 * log(sin(x)), 0, pi/2)
 
 ### I( x^2 * log(cos(x)) )
 integrate(\(x) x^2 * log(cos(x)), 0, pi/2)
--1/4 * pi * pracma::zeta(3) - pi^3*log(2) / 24;
+- 1/24 * pi^3*log(2) - 1/4 * pi * pracma::zeta(3);
+
+
+### on [0, pi/4]
+
+### I( x * log(sin(x)) )
+integrate(\(x) x * log(sin(x)), 0, pi/4)
+- 1/32 * pi^2 * log(2) - pi * Catalan / 8 + 35/128 * pracma::zeta(3)
+
+### I( x * log(cos(x)) )
+integrate(\(x) x * log(cos(x)), 0, pi/4)
+- 1/32 * pi^2 * log(2) + pi * Catalan / 8 - 21/128 * pracma::zeta(3)
 
 
 ### Helper
@@ -248,6 +259,12 @@ integrate(function(x) x * log(cos(x)), 0, pi/4)
 #
 integrate(function(x) x * log(sin(x)), 0, pi/4)
 (35/16 * pracma::zeta(3) - 1/4 * pi^2 * log(2) - pi*Catalan) / 8
+
+### from [0, pi/2]
+integrate(\(x) x * log(tan(x)), pi/4, pi/2)
+integrate(\(x) - x * log(cos(x)), 0, pi/2)$value +
+integrate(\(x) pi/4 * log(cos(x+pi/4)), -pi/4, pi/4)$value +
+integrate(\(x) pi/4 * log(tan(x)), pi/4, pi/2)$value;
 
 
 ### Helper
