@@ -51,6 +51,21 @@ pi/3 * log(tan(pi/3)) + sqrt(3)/(8*36) *
 	- pracma::psi(1, 1/12) + pracma::psi(1, 11/12) +
 	+ pracma::psi(1, 5/12) - pracma::psi(1, 7/12) );
 
+### on [0, tan(pi/6)]
+integrate(\(x) atan(x) / x, 0, tan(pi/6))
+integrate(\(x) log(cos(x)) - log(sin(x)), 0, pi/6)$value +
+	+ pi/6 * log(tan(pi/6));
+pi/6 * log(tan(pi/6)) + sqrt(3)/(4*12^2) *
+	( pracma::psi(1, 1/12) - pracma::psi(1, 11/12) +
+	- pracma::psi(1, 5/12) + pracma::psi(1,  7/12) +
+	+ 3 * pracma::psi(1, 1/6) - 3 * pracma::psi(1, 5/6) +
+	+ 5 * pracma::psi(1, 1/3) - 5 * pracma::psi(1, 2/3) );
+
+
+### I( atan(x) / (1 - x) )
+integrate(\(x) atan(x) / (1 - x) - pi/4 / (1-x), 0, 1)
+pi*log(2)/8 - Catalan
+
 
 # Varia:
 x = exp(pracma::lambertWp(exp(-1)) / 2 + 1/2)
