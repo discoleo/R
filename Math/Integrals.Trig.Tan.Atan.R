@@ -17,6 +17,10 @@
 # I( atan(k * x^4) / (x^4 + 1) )
 # I( x^2 * atan(k * x^4) / (x^4 + 1) )
 
+# Note:
+# - various examples are still in file:
+#   Integrals.Trig.Tan.R;
+
 
 ####################
 
@@ -37,6 +41,16 @@ integrate(\(x) atan(x) / x - pi/2 / (x+1), 0, Inf)
 integrate(\(x) atan(x) / x, 0, 1)
 Catalan
 
+### on [0, tan(pi/3)]
+integrate(\(x) atan(x) / x, 0, tan(pi/3))
+integrate(\(x) log(cos(x)) - log(sin(x)), 0, pi/3)$value +
+	+ pi/3 * log(tan(pi/3));
+pi/3 * log(tan(pi/3)) + sqrt(3)/(8*36) *
+	( 7 * pracma::psi(1, 1/6) - 7 * pracma::psi(1, 5/6) +
+	+ 5 * pracma::psi(1, 1/3) - 5 * pracma::psi(1, 2/3) +
+	- pracma::psi(1, 1/12) + pracma::psi(1, 11/12) +
+	+ pracma::psi(1, 5/12) - pracma::psi(1, 7/12) );
+
 
 # Varia:
 x = exp(pracma::lambertWp(exp(-1)) / 2 + 1/2)
@@ -52,6 +66,10 @@ pi/4 + log(2)/2 - 1
 ### I( atan(1-x) / x )
 integrate(\(x) atan(1-x) / x - pi/4 / x, 0, 1)
 pi*log(2)/8 - Catalan
+
+### I( atan(x) / (x+1) )
+integrate(\(x) atan(x) / (x+1), 0, 1)
+pi * log(2)/8
 
 
 #################
