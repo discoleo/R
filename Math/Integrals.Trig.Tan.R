@@ -83,17 +83,19 @@ integrate(\(x) x^2 * tan(x)^2, 0, pi/4)
 - 1/3*(pi/4)^3 + pi^2 / 16 + 1/4 * pi*log(2) - Catalan
 
 
-### I( x^2 * tan(x) ) on [0, pi/4]
-integrate(\(x) x^2 * tan(x), 0, pi/4)
-- 21/64 * zeta(3) - 1/32 * pi^2 * log(2) + 1/4 * pi * Catalan
+### I( x^2 * tan(x) )
 
-### I( x^2 * tan(x) ) on [0, pi/2]
+### on [0, pi/2]
+integrate(\(x) x * (x - pi/2) * tan(x), 0, pi/2)
+- 7/8 * pracma::zeta(3)
+
+# [variant]
 integrate(\(x) (x - pi/2)*(x + pi/2) * tan(x), 0, pi/2)
 - 7/8 * pracma::zeta(3) - 1/4 * pi^2 * log(2)
 
-# [variant]
-integrate(\(x) x * (x - pi/2) * tan(x), 0, pi/2)
-- 7/8 * pracma::zeta(3)
+### on [0, pi/4]
+integrate(\(x) x^2 * tan(x), 0, pi/4)
+- 21/64 * zeta(3) - 1/32 * pi^2 * log(2) + 1/4 * pi * Catalan
 
 ### [by Parts]
 integrate(\(x) x^3 * tan(x)^2, 0, pi/4)
@@ -102,6 +104,8 @@ integrate(\(x) x^3 * tan(x)^2, 0, pi/4)
 
 
 ### I( x^3 * tan(x) )
+
+### on [0, pi/2]
 integrate(\(x) x * (pi/2 - x)*(pi/2 + x) * tan(x), 0, pi/2)
 integrate(\(x) x^2 * log(cos(x)), 0, pi/2)$value +
 	+ pracma::zeta(3) * pi + pi^3*log(2)/24;
@@ -113,8 +117,29 @@ integrate(\(x) x^2 * log(cos(x)), 0, pi/2)$value +
 	+ 9/16 * pracma::zeta(3) * pi + pi^3*log(2)/24;
 5/16 * pi * pracma::zeta(3);
 
-
 ### on [0, pi/4]
+integrate(\(x) x^3 * tan(x), 0, pi/4)
+- 1/128 * pi^3*log(2) + 3/32 * pi^2*Catalan +
+	+ 9/256 * pi * pracma::zeta(3) +
+	- (pracma::psi(3, 1/4) - pracma::psi(3, 3/4)) / 8 / 4^4;
+
+
+################
+### on [0, pi/4]
+
+### I( x * tan(x) )
+integrate(\(x) x * tan(x), 0, pi/4)
+integrate(\(x) log(cos(x)), 0, pi/4)$value +
+	- (pi/4) * log(cos(pi/4));
+- 1/8 * pi*log(2) + Catalan/2;
+
+### I( x^2 * tan(x) )
+integrate(\(x) x^2 * tan(x), 0, pi/4)
+integrate(\(x) 2*x * log(cos(x)), 0, pi/4)$value +
+	- (pi/4)^2 * log(cos(pi/4));
+- 1/32 * pi^2 * log(2) + pi * Catalan / 4 - 21/64 * pracma::zeta(3);
+
+### I( x^3 * tan(x) )
 integrate(\(x) x^3 * tan(x), 0, pi/4)
 integrate(\(x) 3*x^2 * log(cos(x)), 0, pi/4)$value +
 	- (pi/4)^3 * log(cos(pi/4));
@@ -124,6 +149,11 @@ integrate(\(x) 3*x^2 * log(cos(x)), 0, pi/4)$value +
 
 
 ##############
+
+###
+integrate(\(x) x / tan(x), 0, pi/4)
+pi*log(2)/8 + Catalan/2
+
 
 ###
 integrate(\(x) tan(x) / x, 0, pi/4)
