@@ -135,6 +135,21 @@ sn = sin(2*pi/5 * c(1,2));
 	- sn[2] * (pracma::psi(1, 2/10) - pracma::psi(1, 8/10) +
 		+ pracma::psi(1, 3/10) - pracma::psi(1, 7/10))) / (2*100);
 
+###
+integrate(\(x) log(sin(x)), 0, pi/5)
+integrate(\(x) - log(cos(x)), 0, pi * 3/10)$value - pi*log(2)/2;
+sn = sin(6*pi/10 * c(1,2,3,4));
+- pi*log(2)/2 - (- pi*log(2) * 3/10 +
+	+ (sn[1] * (pracma::psi(1, 1/20) - pracma::psi(1, 19/20) +
+		- pracma::psi(1, 9/20) + pracma::psi(1, 11/20)) +
+	- sn[2] * (pracma::psi(1, 2/20) - pracma::psi(1, 18/20) +
+		- pracma::psi(1, 8/20) + pracma::psi(1, 12/20)) +
+	+ sn[3] * (pracma::psi(1, 3/20) - pracma::psi(1, 17/20) +
+		- pracma::psi(1, 7/20) + pracma::psi(1, 13/20)) +
+	- sn[4] * (pracma::psi(1, 4/20) - pracma::psi(1, 16/20) +
+		- pracma::psi(1, 6/20) + pracma::psi(1, 14/20))
+	) / (2*20^2));
+
 # Note: also alternating signs;
 - pi*log(2)/5 + 1/2 * sum(
 	sn[1]/(10*id+1)^2, - sn[1]/(10*id+9)^2, - sn[2]/(10*id+2)^2, sn[2]/(10*id+8)^2,
@@ -149,6 +164,21 @@ sn = sin(2*pi/5 * c(2,4));
 		+ pracma::psi(1, 4/10) - pracma::psi(1, 6/10)) +
 	- sn[2] * (pracma::psi(1, 2/10) - pracma::psi(1, 8/10) +
 		+ pracma::psi(1, 3/10) - pracma::psi(1, 7/10))) / (2*100);
+
+###
+integrate(\(x) log(sin(x)), 0, 2*pi/5)
+integrate(\(x) - log(cos(x)), 0, pi/10)$value - pi*log(2)/2;
+sn = sin(2*pi/10 * c(1,2,3,4));
+- pi*log(2)/2 - (- pi*log(2) * 1/10 +
+	+ (sn[1] * (pracma::psi(1, 1/20) - pracma::psi(1, 19/20) +
+		- pracma::psi(1, 9/20) + pracma::psi(1, 11/20)) +
+	- sn[2] * (pracma::psi(1, 2/20) - pracma::psi(1, 18/20) +
+		- pracma::psi(1, 8/20) + pracma::psi(1, 12/20)) +
+	+ sn[3] * (pracma::psi(1, 3/20) - pracma::psi(1, 17/20) +
+		- pracma::psi(1, 7/20) + pracma::psi(1, 13/20)) +
+	- sn[4] * (pracma::psi(1, 4/20) - pracma::psi(1, 16/20) +
+		- pracma::psi(1, 6/20) + pracma::psi(1, 14/20))
+	) / (2*20^2));
 
 # Derivation:
 - pi*log(2) * 2/5 + 1/2 * sum(
@@ -226,6 +256,24 @@ integrate(\(x) x * log(sin(x)), 0, pi/4)
 ### I( x * log(cos(x)) )
 integrate(\(x) x * log(cos(x)), 0, pi/4)
 - 1/32 * pi^2 * log(2) + pi * Catalan / 8 - 21/128 * pracma::zeta(3)
+
+
+### I( x^2 * log(sin(x)) )
+integrate(\(x) x^2 * log(sin(x)), 0, pi/4)
+- pi^2 * (pi*log(2) + 6*Catalan) / (3*64) +
+	+ 3/2^8 * pi*pracma::zeta(3) +
+	+ (pracma::psi(3, 1/4) - pracma::psi(3, 3/4)) / 24 / 4^4;
+
+
+### I( x^2 * log(cos(x)) )
+integrate(\(x) x^2 * log(cos(x)), 0, pi/4)
+integrate(\(x) 1/3 * x^3 * tan(x), 0, pi/4)$value +
+	+ 1/3 * (pi/4)^3 * log(cos(pi/4));
+- 1/(3*64) * pi^3*log(2) + pi^2*Catalan / 32 +
+	+ 3/256 * pi * pracma::zeta(3) +
+	- (pracma::psi(3, 1/4) - pracma::psi(3, 3/4)) / 24 / 4^4;
+# Note: from Wolframalpha;
+# TODO: work out;
 
 
 ### Helper
