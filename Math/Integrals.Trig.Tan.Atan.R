@@ -80,7 +80,30 @@ pi/5 * log(tan(pi/5)) +
 		- pracma::psi(1, 7/20) + pracma::psi(1, 13/20)) +
 	- sn3[4] * (pracma::psi(1, 4/20) - pracma::psi(1, 16/20) +
 		- pracma::psi(1, 6/20) + pracma::psi(1, 14/20)) ) / (2*20^2);
+# TODO: simplify;
 
+### on [0, tan(2/5 * pi)]
+integrate(\(x) atan(x) / x, 0, tan(pi*2/5))
+integrate(\(x) log(cos(x)) - log(sin(x)), 0, pi*2/5)$value +
+	+ pi*2/5 * log(tan(pi*2/5));
+sn2 = sin(4*pi/5 * c(1,2));
+sn1 = sin(2*pi/10 * c(1,2,3,4));
+pi*2/5 * log(tan(pi*2/5)) +
+	+ (sn2[1] * (pracma::psi(1, 1/10) - pracma::psi(1, 9/10) +
+		+ pracma::psi(1, 4/10) - pracma::psi(1, 6/10)) +
+	- sn2[2] * (pracma::psi(1, 2/10) - pracma::psi(1, 8/10) +
+		+ pracma::psi(1, 3/10) - pracma::psi(1, 7/10)) ) / (2*100) +
+	+ (sn1[1] * (pracma::psi(1, 1/20) - pracma::psi(1, 19/20) +
+		- pracma::psi(1, 9/20) + pracma::psi(1, 11/20)) +
+	- sn1[2] * (pracma::psi(1, 2/20) - pracma::psi(1, 18/20) +
+		- pracma::psi(1, 8/20) + pracma::psi(1, 12/20)) +
+	+ sn1[3] * (pracma::psi(1, 3/20) - pracma::psi(1, 17/20) +
+		- pracma::psi(1, 7/20) + pracma::psi(1, 13/20)) +
+	- sn1[4] * (pracma::psi(1, 4/20) - pracma::psi(1, 16/20) +
+		- pracma::psi(1, 6/20) + pracma::psi(1, 14/20)) ) / (2*20^2);
+
+
+### Other
 
 ### I( atan(x) / (1 - x) )
 integrate(\(x) atan(x) / (1 - x) - pi/4 / (1-x), 0, 1)
