@@ -96,7 +96,7 @@ sg = - (-1)^id; sg2 = if(isEven) sg else -sg;
 
 ### on [0, pi/3]
 
-###
+### I( log(cos(x)) )
 integrate(\(x) log(cos(x)), 0, pi/3)
 - pi*log(2)/3 + sqrt(3)/(4*36) *
 	(pracma::psi(1, 1/6) - pracma::psi(1, 5/6) +
@@ -115,6 +115,14 @@ integrate(\(x) log(sin(x)), 0, pi/3)
 	- pracma::psi(1, 5/12) + pracma::psi(1, 7/12) +
 	- 5 * pracma::psi(1, 1/6) + 5 * pracma::psi(1, 5/6) +
 	- 3 * pracma::psi(1, 2/6) + 3 * pracma::psi(1, 4/6));
+
+### I( log(tan(x)) )
+integrate(\(x) log(tan(x)), 0, pi/3)
+sin(pi/3)/(4*6^2) *
+	( pracma::psi(1, 1/12) - pracma::psi(1, 11/12) +
+	- pracma::psi(1, 5/12) + pracma::psi(1, 7/12) 
+	- 7 * pracma::psi(1, 1/6) + 7 * pracma::psi(1, 5/6) +
+	- 5 * pracma::psi(1, 1/3) + 5 * pracma::psi(1, 2/3) );
 
 
 # Derivation:
@@ -217,6 +225,30 @@ sn = sin(2*pi/6 * c(1,2,3));
 - pi*log(2)/6 + 1/2 * sum(
 	sn[1]/(12*id+1)^2, - sn[1]/(12*id+11)^2, - sn[2]/(12*id+2)^2, sn[2]/(12*id+10)^2,
 	sn[1]/(12*id+4)^2, - sn[1]/(12*id+8)^2, - sn[2]/(12*id+5)^2, + sn[2]/(12*id+7)^2)
+
+
+### on [0, pi/12]
+integrate(\(x) log(cos(x)), 0, pi/12)
+id = seq(5); sn = sin(2*id*pi/12); sg = - (-1)^id;
+- pi*log(2)/12 + sum(sg * sn *
+	(pracma::psi(1, id/24) - pracma::psi(1, 1 - id/24) +
+	- pracma::psi(1, 1/2 - id/24) + pracma::psi(1, 1/2 + id/24)) ) / (2*24^2);
+
+
+### on [0, 5/12 * pi]
+integrate(\(x) log(cos(x)), 0, pi * 5/12)
+id = seq(5); sn = sin(2*5*id*pi/12); sg = - (-1)^id;
+- pi*log(2)*5/12 + sum(sg * sn *
+	(pracma::psi(1, id/24) - pracma::psi(1, 1 - id/24) +
+	- pracma::psi(1, 1/2 - id/24) + pracma::psi(1, 1/2 + id/24)) ) / (2*24^2);
+
+
+### on [0, pi/24]
+integrate(\(x) log(cos(x)), 0, pi/24)
+n = 24; id = seq((n-1)/2); sn = sin(2*id*pi/n); sg = - (-1)^id; dv = 2*n;
+- pi*log(2)/n + sum(sg * sn *
+	(pracma::psi(1, id/dv) - pracma::psi(1, 1 - id/dv) +
+	- pracma::psi(1, 1/2 - id/dv) + pracma::psi(1, 1/2 + id/dv)) ) / (8*n^2);
 
 
 ### Ap / Cp Constants
