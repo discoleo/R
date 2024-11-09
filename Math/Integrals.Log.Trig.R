@@ -228,9 +228,26 @@ sn = sin(2*pi/6 * c(1,2,3));
 
 
 ### on [0, pi/12]
+
+### I( log(cos(x)) )
 integrate(\(x) log(cos(x)), 0, pi/12)
 id = seq(5); sn = sin(2*id*pi/12); sg = - (-1)^id;
 - pi*log(2)/12 + sum(sg * sn *
+	(pracma::psi(1, id/24) - pracma::psi(1, 1 - id/24) +
+	- pracma::psi(1, 1/2 - id/24) + pracma::psi(1, 1/2 + id/24)) ) / (2*24^2);
+
+### I( log(sin(x)) )
+integrate(\(x) log(sin(x)), 0, pi/12)
+integrate(\(x) log(cos(x)), pi * 5/12, pi/2)
+id = seq(5); sn = sin(2*5*id*pi/12); sg = - (-1)^id;
+- pi*log(2)/12 - sum(sg * sn *
+	(pracma::psi(1, id/24) - pracma::psi(1, 1 - id/24) +
+	- pracma::psi(1, 1/2 - id/24) + pracma::psi(1, 1/2 + id/24)) ) / (2*24^2);
+
+### I( log(tan(x)) )
+integrate(\(x) log(tan(x)), 0, pi/12)
+id = seq(5); sn = sin(2*id*pi/12) + sin(10*id*pi/12); sg = - (-1)^id;
+- sum(sg * sn *
 	(pracma::psi(1, id/24) - pracma::psi(1, 1 - id/24) +
 	- pracma::psi(1, 1/2 - id/24) + pracma::psi(1, 1/2 + id/24)) ) / (2*24^2);
 
