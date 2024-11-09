@@ -272,8 +272,10 @@ integrate(\(x) 1/3 * x^3 * tan(x), 0, pi/4)$value +
 - 1/(3*64) * pi^3*log(2) + pi^2*Catalan / 32 +
 	+ 3/256 * pi * pracma::zeta(3) +
 	- (pracma::psi(3, 1/4) - pracma::psi(3, 3/4)) / 24 / 4^4;
-# Note: from Wolframalpha;
-# TODO: work out;
+# Note:
+# - see I( x^3 / cos(x) ) in file:
+#   Integrals.Trig.Fractions.Poly.R;
+# - see also below ( x^2 * log(tan(x)) ) & Wolframalpha;
 
 
 ### Helper
@@ -302,17 +304,41 @@ integrate(\(x) x^2 * log(sin(x)), 0, pi)
 
 
 ### on [0, pi/4]
-integrate(function(x) x * log(cos(x)), 0, pi/4)
+integrate(\(x) x * log(cos(x)), 0, pi/4)
 (pi*Catalan - 1/4 * pi^2 * log(2) - 21/16 * pracma::zeta(3)) / 8
 #
-integrate(function(x) x * log(sin(x)), 0, pi/4)
+integrate(\(x) x * log(sin(x)), 0, pi/4)
 (35/16 * pracma::zeta(3) - 1/4 * pi^2 * log(2) - pi*Catalan) / 8
+
+### I( x^2 * log(tan(x)) )
+integrate(\(x) x^2 * log(tan(x)), 0, pi/4)
+- ((pracma::psi(3, 3/4) - pracma::psi(3, 1/4)) / 128 +
+	+ 3/2*pi^2 * Catalan) / 24;
+
+# =>
+
+integrate(\(x) x^2 * log(sin(x)), 0, pi/4)
+- (pracma::psi(3, 3/4) - pracma::psi(3, 1/4)) / (48*128) +
+	- pi^2 * Catalan * 3/96 +
+	+ (- 1/12 * pi^3*log(2) + 3/16 * pi * pracma::zeta(3)) / 16;
+
+
+# Derivation:
 
 ### from [0, pi/2]
 integrate(\(x) x * log(tan(x)), pi/4, pi/2)
 integrate(\(x) - x * log(cos(x)), 0, pi/2)$value +
 integrate(\(x) pi/4 * log(cos(x+pi/4)), -pi/4, pi/4)$value +
 integrate(\(x) pi/4 * log(tan(x)), pi/4, pi/2)$value;
+
+
+# on [0, pi/4]
+integrate(\(x) x^2 * (pi/2 - x) / cos(x), 0, pi/2)
+(pracma::psi(3, 3/4) - pracma::psi(3, 1/4)) / 128 +
+	+ 7/2*pi*pracma::zeta(3);
+# by parts =>
+integrate(\(x) 1/2 * (pi*x - 3*x^2) * log((1-sin(x))/(1+sin(x))), 0, pi/2)
+integrate(\(x) -2*(12*x^2-4*pi*x+pi^2/4) * log(tan(x)), 0, pi/4)
 
 
 ### Helper
