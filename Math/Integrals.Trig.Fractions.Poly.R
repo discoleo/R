@@ -344,18 +344,34 @@ integrate(function(x) x^4 / sin(x), 0, pi/2)
 
 ### cos(x)
 
-###
+# Note:
+# - can be used to derive I( x^p * tan(x) )
+
+### I( 1 / cos(x) )
+integrate(function(x) 1/cos(x) - 1/(pi/2-x), 0, pi/2)
+- log(pi/4)
+
+### x^1
+integrate(function(x) (pi/2 - x) / cos(x), 0, pi/2)
+2 * Catalan
+
+### x^2
 integrate(function(x) (pi^2/4 - x^2) / cos(x), 0, pi/2)
 7/2*pracma::zeta(3)
 
-###
+### x^3
 integrate(function(x) x^2 * (pi/2 - x) / cos(x), 0, pi/2)
 (pracma::psi(3, 3/4) - pracma::psi(3, 1/4)) / 128 +
 	+ 7/2*pi*pracma::zeta(3);
 
-###
+### x^4
 integrate(function(x) x^2 * (pi^2/4 - x^2) / cos(x), 0, pi/2)
-- 3*31/2*zeta(5) + 35/8 * pi^2 * pracma::zeta(3);
+- 3*31/2*pracma::zeta(5) + 35/8 * pi^2 * pracma::zeta(3);
+
+# Variant:
+integrate(function(x) x^3 * (pi/2 - x) / cos(x), 0, pi/2)
+- 3*31/2 * pracma::zeta(5) + 21/8 * pi^2 * pracma::zeta(3) +
+- (pracma::psi(3, 3/4) - pracma::psi(3, 1/4)) * pi / 256;
 
 
 # Alternative Forms:
@@ -698,7 +714,7 @@ integrate(\(x) x / sin(k*x)^2 - 1/(k^2*x), 0, 1)
 
 ### I( x / tan(k*x)^2 )
 k = pi/7
-integrate(function(x) x / tan(k*x)^2 - 1/(k^2*x), 0, 1)
+integrate(\(x) x / tan(k*x)^2 - 1/(k^2*x), 0, 1)
 (log(sin(k)) - log(k) - k/tan(k) + 1) / k^2 - 1/2
 
 
