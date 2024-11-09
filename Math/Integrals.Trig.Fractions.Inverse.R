@@ -28,8 +28,6 @@ Catalan = 0.915965594177219015054603514;
 
 library(pracma)
 
-Catalan = 0.915965594177219015054603514;
-
 ### Refs:
 # 1) Maths 505: Integral of x^2/sin(x) from zero to pi/2
 #    https://www.youtube.com/watch?v=g4aKTQyETZw
@@ -175,36 +173,70 @@ integral(\(x) x^5*(pi - x)*(pi + x) / sin(x), -pi, pi)
 11*7*pi^5*zeta(3) - 90*31*pi^3*zeta(5) + 315/2*127*pi*zeta(7)
 
 
-### on Other Intervals
+### Other Intervals
 
-###
+### on [0, pi/3]
+
+### I( 1 / sin(x) )
 integrate(\(x) 1 / sin(x) - 1/x, 0, pi/3)
 log(3)/2 - log(pi/2)
 
+### I( x / sin(x) )
+integrate(\(x) x / sin(x), 0, pi/3)
+pi/3 * log(tan(pi/6)) + sin(pi/3) / 12^2 *
+	( 3 * pracma::psi(1, 1/6) - 3 * pracma::psi(1, 5/6) +
+	+ 5 * pracma::psi(1, 1/3) - 5 * pracma::psi(1, 2/3) +
+	+ pracma::psi(1, 1/12) - pracma::psi(1, 11/12) +
+	- pracma::psi(1, 5/12) + pracma::psi(1,  7/12) );
 
-########
-### TAN:
-integrate(function(x) 1/tan(x) - 1/x, 0, pi/2)
+
+# Derivation:
+
+# on [0, pi/3]
+integrate(\(x) log(tan(x)), 0, pi/6)
+- sin(pi/3)/(2*12^2) *
+	( 3 * pracma::psi(1, 1/6) - 3 * pracma::psi(1, 5/6) +
+	+ 5 * pracma::psi(1, 1/3) - 5 * pracma::psi(1, 2/3) +
+	+ pracma::psi(1, 1/12) - pracma::psi(1, 11/12) +
+	- pracma::psi(1, 5/12) + pracma::psi(1,  7/12) );
+# by parts =>
+integrate(\(x) x / (cos(x)*sin(x)), 0, pi/6)
+integrate(\(x) 1/2 * x / sin(x), 0, pi/3)
+pi/6 * log(tan(pi/6)) + sin(pi/3)/(2*12^2) *
+	( 3 * pracma::psi(1, 1/6) - 3 * pracma::psi(1, 5/6) +
+	+ 5 * pracma::psi(1, 1/3) - 5 * pracma::psi(1, 2/3) +
+	+ pracma::psi(1, 1/12) - pracma::psi(1, 11/12) +
+	- pracma::psi(1, 5/12) + pracma::psi(1,  7/12) );
+
+
+##############
+
+###########
+### TAN ###
+###########
+
+###
+integrate(\(x) 1/tan(x) - 1/x, 0, pi/2)
 - log(pi/2)
 
 ###
-integrate(function(x) 1/tan(x) - 1/x, 0, pi/4)
+integrate(\(x) 1/tan(x) - 1/x, 0, pi/4)
 - log(2)/2 - log(pi/4)
 
 ###
 k = pi/5
-integrate(function(x) 1/tan(x) - 1/x, 0, k)
+integrate(\(x) 1/tan(x) - 1/x, 0, k)
 log(sin(k)) - log(k)
 
 
 ###
-integrate(function(x) x / tan(x), 0, pi/2)
+integrate(\(x) x / tan(x), 0, pi/2)
 pi*log(2)/2
 #
-integrate(function(x) 2*x * (1/tan(x) - tan(x)), 0, pi/4)
+integrate(\(x) 2*x * (1/tan(x) - tan(x)), 0, pi/4)
 
 # =>
-integrate(function(x) x / tan(x), 0, pi/4)
+integrate(\(x) x / tan(x), 0, pi/4)
 pi*log(2)/8 + Catalan/2
 
 

@@ -341,15 +341,6 @@ integrate(\(x) x^2 * log(sin(x)), 0, pi/4)
 	+ (- 1/12 * pi^3*log(2) + 3/16 * pi * pracma::zeta(3)) / 16;
 
 
-### on [0, pi/3]
-integrate(\(x) x / sin(x), 0, pi/3)
-pi/3 * log(tan(pi/6)) + sin(pi/3) / 12^2 *
-	( 3 * pracma::psi(1, 1/6) - 3 * pracma::psi(1, 5/6) +
-	+ 5 * pracma::psi(1, 1/3) - 5 * pracma::psi(1, 2/3) +
-	+ pracma::psi(1, 1/12) - pracma::psi(1, 11/12) +
-	- pracma::psi(1, 5/12) + pracma::psi(1,  7/12) );
-
-
 # Derivation:
 
 ### from [0, pi/2]
@@ -366,23 +357,6 @@ integrate(\(x) x^2 * (pi/2 - x) / cos(x), 0, pi/2)
 # by parts =>
 integrate(\(x) 1/2 * (pi*x - 3*x^2) * log((1-sin(x))/(1+sin(x))), 0, pi/2)
 integrate(\(x) -2*(12*x^2-4*pi*x+pi^2/4) * log(tan(x)), 0, pi/4)
-
-
-# on [0, pi/3]
-integrate(\(x) log(tan(x)), 0, pi/6)
-- sin(pi/3)/(2*12^2) *
-	( 3 * pracma::psi(1, 1/6) - 3 * pracma::psi(1, 5/6) +
-	+ 5 * pracma::psi(1, 1/3) - 5 * pracma::psi(1, 2/3) +
-	+ pracma::psi(1, 1/12) - pracma::psi(1, 11/12) +
-	- pracma::psi(1, 5/12) + pracma::psi(1,  7/12) );
-# by parts =>
-integrate(\(x) x / (cos(x)*sin(x)), 0, pi/6)
-integrate(\(x) 1/2 * x / sin(x), 0, pi/3)
-pi/6 * log(tan(pi/6)) + sin(pi/3)/(2*12^2) *
-	( 3 * pracma::psi(1, 1/6) - 3 * pracma::psi(1, 5/6) +
-	+ 5 * pracma::psi(1, 1/3) - 5 * pracma::psi(1, 2/3) +
-	+ pracma::psi(1, 1/12) - pracma::psi(1, 11/12) +
-	- pracma::psi(1, 5/12) + pracma::psi(1,  7/12) );
 
 
 ### Helper
