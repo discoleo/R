@@ -412,12 +412,17 @@ integrate(\(x) cos(x) / (exp(1/x) - 1), -lim, lim)
 ### I( exp(2*cos(x)) ) on [0, pi]
 # Maths 505: A surprisingly interesting integral
 # https://www.youtube.com/watch?v=81qExKEYzo0
+# Note: Series expansion + Contour on half of Unit Circle;
+# Pole of order k: Res = 1/k!;
 
 integrate(\(x) exp(2*cos(x)), 0, pi)
+integrate(\(x) exp(2*cos(x)) / 2, -pi, pi)
 pi * sum(1 / factorial(seq(0, 15))^2)
 
 # TODO: closed formula?
 
+
+###
 integrate(\(x) Re(exp(2*exp(x*1i))), 0, pi)
 pi
 
