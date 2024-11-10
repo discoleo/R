@@ -415,6 +415,26 @@ log(sin(x)) # ==
 - sum( cos(2*id*x) / id ) - log(2);
 
 
+#####################
+
+### Non-Trig Interval
+
+### I( x * log(sin(x)) )
+# Maths 505: More complex than I imagined
+# https://www.youtube.com/watch?v=wUtFgYjis_0
+# Note: convert sin(x) = sinh(1i*x) / 1i;
+
+integrate(\(x) x * log(sin(x)), 0, 1)
+integrate(\(x) x * Re(log(1i * exp(-1i*x) * (1 - exp(2i*x)) / 2)), 0, 1)
+log(1i/2) / 2 - 1i/3 + integrate(\(x) x * Re(log(1 - exp(2i*x))), 0, 1)$value
+log(1i/2) / 2 - 1i/3 + zeta(3)/4 + 1i/2 * Li2(exp(2i)) - Li3(exp(2i))/4
+
+# TODO:
+# - polylog2: implement polylog( COMPLEX );
+# - alternative formula;
+
+
+###################
 ###################
 
 ### I( log(|cos(x)|) / x^2 )
