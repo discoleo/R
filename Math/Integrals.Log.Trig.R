@@ -392,6 +392,14 @@ integrate(\(x) x^2 * log(sin(x)), 0, pi/4)
 
 ### on [0, pi/3]
 
+### I( x * log(sin(x)) )
+integrate(\(x) x * log(sin(x)), 0, pi/3)
+cs = cos(2*pi/3); sn = sin(2*pi/3);
+pracma::zeta(3)/4 - pracma::zeta(3) / (4*3^3) - (pi/3)^2 * log(2)/2 +
+	+ sum(cs * (pracma::psi(2, 1/3) + pracma::psi(2, 1 - 1/3))) / (8*3^3) +
+	- sum(sn * (pracma::psi(1, 1/3) - pracma::psi(1, 1 - 1/3))
+		) * pi / (2*3^3);
+
 ### I( x * log(cos(x)) )
 integrate(\(x) x * log(cos(x)), 0, pi/3)
 integrate(\(x) (pi/2 - x) * log(sin(x)), pi/6, pi/2)
@@ -413,7 +421,19 @@ id = 1:2; ic = 1:3; sn = sin(2*pi*id/6); cs = cos(2*pi*ic/6);
 pracma::zeta(3)/4 - (pi/6)^2 * log(2)/2 +
 	+ sum(cs * (pracma::psi(2, ic/6) - pracma::psi(2, 1/2 + ic/6))) / (8*6^3) +
 	- sum(sn * (pracma::psi(1, id/6) - pracma::psi(1, 1 - id/6))
-		) * pi / (12*6^2);
+		) * pi / (2*6^3);
+
+### I( x * log(cos(x)) )
+integrate(\(x) x * log(cos(x)), 0, pi/6)
+id = 1:2; ic = 1:3; sn = sin(2*pi*id/6); cs = cos(2*pi*ic/6);
+- pracma::zeta(3) * 3/16 - pracma::zeta(3) / (16*3^3) +
+- (pi/6)^2 * log(2) / 2 +
+	+ sum(cos(2*pi/3) * (pracma::psi(2, 1/3) + pracma::psi(2, 1 - 1/3)) / 32 +
+		- sin(2*pi/3) * (pracma::psi(1, 1/3) - pracma::psi(1, 1 - 1/3)) * pi / 8
+	) / 3^3 +
+	- sum(cs * (pracma::psi(2, ic/6) - pracma::psi(2, 1/2 + ic/6))) / (8*6^3) +
+	+ sum(sn * (pracma::psi(1, id/6) - pracma::psi(1, 1 - id/6))
+		) * pi / (2*6^3);
 
 
 # Derivation:
@@ -455,7 +475,21 @@ sn = sin(2*pi*id/6); cs = cos(2*pi*ic/6);
 pracma::zeta(3)/4 - (pi/6)^2 * log(2)/2 +
 	+ sum(cs * (pracma::psi(2, ic/6) - pracma::psi(2, 1/2 + ic/6))) / (8*6^3) +
 	- sum(sn * (pracma::psi(1, id/6) - pracma::psi(1, 1 - id/6))
-	) * pi / (12*6^2);
+		) * pi / (12*6^2);
+
+# on [0, pi/3]
+integrate(\(x) x * log(sin(x)), 0, pi/3)
+integrate(\(x) sapply(x, \(x) - sum( cos(2*iN*x) / iN )*x - log(2)*x), 0, pi/3)
+integrate(\(x) sapply(x, \(x) sum( sin(2*iN*x) / iN^2 )) / 2, 0, pi/3)$value +
+	- sum( sin(2*iN*pi/3) / iN^2 ) * pi/6 - (pi/3)^2 * log(2)/2;
+sum( 1 / iN^3 ) / 4 - sum( cos(2*iN*pi/3) / iN^3 ) / 4 +
+	- sum( sin(2*iN*pi/3) / iN^2 ) * pi/6 - (pi/3)^2 * log(2)/2;
+cs = cos(2*pi/3); sn = sin(2*pi/3);
+pracma::zeta(3)/4 - (pi/3)^2 * log(2)/2 + pracma::psi(2, 1) / (8*3^3) +
+	+ sum(cs * (pracma::psi(2, 1/3) + pracma::psi(2, 1 - 1/3))) / (8*3^3) +
+	- sum(sn * (pracma::psi(1, 1/3) - pracma::psi(1, 1 - 1/3))
+		) * pi / (2*3^3);
+
 
 # Note:
 ((pracma::psi(2, 3/6) - pracma::psi(2, 1/2 + 3/6))) / (6^3) # ==
