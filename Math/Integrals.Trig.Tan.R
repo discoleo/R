@@ -70,6 +70,9 @@ polylog2(0.6, 3) - li3_06;
 
 ### I( x * tan(x) )
 
+# - see Integrals.Log.Trig for the Base-Integrals:
+#   I( log(cos(x)) );
+
 ### on [0, pi/2]
 integrate(\(x) (pi/2 - x) * tan(x), 0, pi/2)
 pi*log(2)/2
@@ -83,6 +86,23 @@ integrate(\(x) x^2 * tan(x)^2, 0, pi/4)
 - 1/3*(pi/4)^3 + pi^2 / 16 + 1/4 * pi*log(2) - Catalan
 
 
+### on [0, pi/6]
+integrate(\(x) x * tan(x), 0, pi/6)
+- pi*log(2)/6 - pi/6*log(cos(pi/6)) + sqrt(3)/(4*12^2) *
+	( pracma::psi(1, 1/12) - pracma::psi(1, 11/12) +
+	- pracma::psi(1, 5/12) + pracma::psi(1,  7/12) +
+	- pracma::psi(1, 1/6) + pracma::psi(1, 5/6) +
+	+ pracma::psi(1, 2/6) - pracma::psi(1, 4/6));
+
+###
+integrate(\(x) x / tan(x), 0, pi/6)
+pi*log(2)/6 + pi/6 * log(sin(pi/6)) + sqrt(3)/(4*36) *
+	(pracma::psi(1, 1/6) - pracma::psi(1, 5/6) +
+	+ pracma::psi(1, 1/3) - pracma::psi(1, 2/3));
+
+
+#####################
+
 ### I( x^2 * tan(x) )
 
 ### on [0, pi/2]
@@ -90,6 +110,11 @@ integrate(\(x) x * (x - pi/2) * tan(x), 0, pi/2)
 - 7/8 * pracma::zeta(3)
 
 # [variant]
+integrate(\(x) x^2 * tan(x) - (pi/2)^2/(pi/2-x), 0, pi/2)
+- 7/8 * pracma::zeta(3) - (pi/2)^2*log(2) - (pi/2)^2*log(pi/2);
+- 7/8 * pracma::zeta(3) - (pi/2)^2*log(pi);
+
+#
 integrate(\(x) (x - pi/2)*(x + pi/2) * tan(x), 0, pi/2)
 - 7/8 * pracma::zeta(3) - 1/4 * pi^2 * log(2)
 
@@ -116,6 +141,11 @@ integrate(\(x) x^2 * (pi/2 - x) * tan(x), 0, pi/2)
 integrate(\(x) x^2 * log(cos(x)), 0, pi/2)$value +
 	+ 9/16 * pracma::zeta(3) * pi + pi^3*log(2)/24;
 5/16 * pi * pracma::zeta(3);
+
+# Base-variant:
+integrate(\(x) - x^3 * tan(x) / 8 + pi^3/64 / (pi/2 - x), 0, pi/2)
+(pi^3/8 * log(pi) + 3/4 * pi * pracma::zeta(3)) / 8
+
 
 ### on [0, pi/4]
 integrate(\(x) x^3 * tan(x), 0, pi/4)
