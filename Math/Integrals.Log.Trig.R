@@ -390,6 +390,17 @@ integrate(\(x) x^2 * log(sin(x)), 0, pi/4)
 	+ (- 1/12 * pi^3*log(2) + 3/16 * pi * pracma::zeta(3)) / 16;
 
 
+### on [0, pi/6]
+
+### I( x * log(sin(x)) )
+integrate(\(x) x * log(sin(x)), 0, pi/6)
+id = 1:2; ic = 1:3; sn = sin(2*pi*id/6); cs = cos(2*pi*ic/6);
+pracma::zeta(3)/4 - (pi/6)^2 * log(2)/2 +
+	+ sum(cs * (pracma::psi(2, ic/6) - pracma::psi(2, 1/2 + ic/6))) / (8*6^3) +
+	- sum(sn * (pracma::psi(1, id/6) - pracma::psi(1, 1 - id/6))
+	) * pi / (12*6^2);
+
+
 # Derivation:
 
 ### from [0, pi/2]
@@ -410,9 +421,30 @@ integrate(\(x) -2*(12*x^2-4*pi*x+pi^2/4) * log(tan(x)), 0, pi/4)
 
 ### Helper
 x  = pi/7
-id = seq(10000);
+iN = seq(10000);
 log(sin(x)) # ==
-- sum( cos(2*id*x) / id ) - log(2);
+- sum( cos(2*iN*x) / iN ) - log(2);
+
+
+### I( x * log(sin(x)) )
+
+iN = seq(10000);
+integrate(\(x) x * log(sin(x)), 0, pi/6)
+integrate(\(x) sapply(x, \(x) - sum( cos(2*iN*x) / iN )*x - log(2)*x), 0, pi/6)
+integrate(\(x) sapply(x, \(x) sum( sin(2*iN*x) / iN^2 )) / 2, 0, pi/6)$value +
+	- sum( sin(2*iN*pi/6) / iN^2 ) * pi/12 - (pi/6)^2 * log(2)/2;
+sum( 1 / iN^3 ) / 4 - sum( cos(2*iN*pi/6) / iN^3 ) / 4 +
+	- sum( sin(2*iN*pi/6) / iN^2 ) * pi/12 - (pi/6)^2 * log(2)/2;
+id = 1:2; ic = 1:3;
+sn = sin(2*pi*id/6); cs = cos(2*pi*ic/6);
+pracma::zeta(3)/4 - (pi/6)^2 * log(2)/2 +
+	+ sum(cs * (pracma::psi(2, ic/6) - pracma::psi(2, 1/2 + ic/6))) / (8*6^3) +
+	- sum(sn * (pracma::psi(1, id/6) - pracma::psi(1, 1 - id/6))
+	) * pi / (12*6^2);
+
+# Note:
+((pracma::psi(2, 3/6) - pracma::psi(2, 1/2 + 3/6))) / (6^3) # ==
+- pracma::zeta(3) / 18
 
 
 #####################
