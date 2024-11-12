@@ -130,6 +130,39 @@ integrate(\(x) atan(x) / (x+1), 0, 1)
 pi * log(2)/8
 
 
+### I( atan(x)^2 / x )
+
+### on [0, 1]
+# Note: log(tan(pi/4)) == 0;
+integrate(\(x) atan(x)^2 / x, 0, 1)
+- 7/8 * pracma::zeta(3) + pi * Catalan / 2;
+
+
+### on [0, tan(pi/3)]
+integrate(\(x) atan(x)^2 / x, 0, tan(pi/3))
+id = 1:2; ic = 1:3; sn = sin(2*pi*id/6); cs = cos(2*pi*ic/6);
+(pi/3)^2 * log(tan(pi/3)) - pracma::zeta(3) * (7/8 - 1 / (2*3^3)) +
+	- sum(cos(2*pi/3) * (pracma::psi(2, 1/3) + pracma::psi(2, 1 - 1/3))) / (4*3^3) +
+	+ pi * sin(2*pi/3) * (pracma::psi(1, 1/3) - pracma::psi(1, 2/3)) / (3^3) +
+	+ pi * sin(2*pi/3)/(2*36) *
+	( pracma::psi(1, 1/6) - pracma::psi(1, 5/6) +
+	+ pracma::psi(1, 1/3) - pracma::psi(1, 2/3) ) +
+	+ sum(cs * (pracma::psi(2, ic/6) - pracma::psi(2, 1/2 + ic/6))) / (4*6^3) +
+	- sum(sn * (pracma::psi(1, id/6) - pracma::psi(1, 1 - id/6))) * pi / (6^3);
+
+
+### on [0, tan(pi/6)]
+integrate(\(x) atan(x)^2 / x, 0, tan(pi/6))
+ic = 1:3; id = 1:2; cs = cos(2*pi*ic/6); sn = sin(2*pi*id/6);
+(pi/6)^2 * log(tan(pi/6)) +
+- pracma::zeta(3) * (7/8 + 1 / (8*3^3)) +
+	- sum(cs * (pracma::psi(2, ic/6) - pracma::psi(2, 1/2 + ic/6))) / (2*6^3) +
+	+ sum(sn * (pracma::psi(1, id/6) - pracma::psi(1, 1 - id/6))) * 2*pi / (6^3) +
+	+ sum(cos(2*pi/3) * (pracma::psi(2, 1/3) + pracma::psi(2, 2/3)) / 4 +
+		- sin(2*pi/3) * (pracma::psi(1, 1/3) - pracma::psi(1, 2/3)) * pi
+	) / (4*3^3);
+
+
 #################
 #################
 
