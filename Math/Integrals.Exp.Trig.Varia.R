@@ -19,8 +19,9 @@
 integrate(\(x) exp(2*cos(x)), 0, pi)
 integrate(\(x) exp(2*cos(x)) / 2, -pi, pi)
 pi * sum(1 / factorial(seq(0, 15))^2)
+pi * besselI(2,0)
 
-# TODO: closed formula?
+# TODO: closed formula for Bessel?
 
 
 ###
