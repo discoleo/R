@@ -412,6 +412,19 @@ id = 1:2; ic = 1:3; sn = sin(2*pi*id/6); cs = cos(2*pi*ic/6);
 	- sum(sn * (pracma::psi(1, id/6) - pracma::psi(1, 1 - id/6))
 		) * pi / (2*6^3);
 
+### I( x * log(tan(x)) )
+integrate(\(x) x * log(tan(x)), 0, pi/3)
+id = 1:2; ic = 1:3; sn = sin(2*pi*id/6); cs = cos(2*pi*ic/6);
+pracma::zeta(3) * (7/16 - 1 / (4*3^3)) +
+	+ sum(cos(2*pi/3) * (pracma::psi(2, 1/3) + pracma::psi(2, 1 - 1/3))) / (8*3^3) +
+	- pi * sin(2*pi/3) * (pracma::psi(1, 1/3) - pracma::psi(1, 2/3)) / (2*3^3) +
+	- pi * sin(2*pi/3)/(4*36) *
+	( pracma::psi(1, 1/6) - pracma::psi(1, 5/6) +
+	+ pracma::psi(1, 1/3) - pracma::psi(1, 2/3) ) +
+	- sum(cs * (pracma::psi(2, ic/6) - pracma::psi(2, 1/2 + ic/6))) / (8*6^3) +
+	+ sum(sn * (pracma::psi(1, id/6) - pracma::psi(1, 1 - id/6))
+		) * pi / (2*6^3);
+
 
 ### on [0, pi/6]
 
@@ -426,7 +439,7 @@ pracma::zeta(3)/4 - (pi/6)^2 * log(2)/2 +
 ### I( x * log(cos(x)) )
 integrate(\(x) x * log(cos(x)), 0, pi/6)
 id = 1:2; ic = 1:3; sn = sin(2*pi*id/6); cs = cos(2*pi*ic/6);
-- pracma::zeta(3) * 3/16 - pracma::zeta(3) / (16*3^3) +
+- pracma::zeta(3) * (3/16 + 1 / (16*3^3)) +
 - (pi/6)^2 * log(2) / 2 +
 	+ sum(cos(2*pi/3) * (pracma::psi(2, 1/3) + pracma::psi(2, 1 - 1/3)) / 32 +
 		- sin(2*pi/3) * (pracma::psi(1, 1/3) - pracma::psi(1, 1 - 1/3)) * pi / 8
@@ -434,6 +447,16 @@ id = 1:2; ic = 1:3; sn = sin(2*pi*id/6); cs = cos(2*pi*ic/6);
 	- sum(cs * (pracma::psi(2, ic/6) - pracma::psi(2, 1/2 + ic/6))) / (8*6^3) +
 	+ sum(sn * (pracma::psi(1, id/6) - pracma::psi(1, 1 - id/6))
 		) * pi / (2*6^3);
+
+### I( x * log(tan(x)) )
+integrate(\(x) x * log(tan(x)), 0, pi/6)
+ic = 1:3; id = 1:2; cs = cos(2*pi*ic/6); sn = sin(2*pi*id/6);
+pracma::zeta(3) * (7/16 + 1 / (16*3^3)) +
+	+ sum(cs * (pracma::psi(2, ic/6) - pracma::psi(2, 1/2 + ic/6))) / (4*6^3) +
+	- sum(sn * (pracma::psi(1, id/6) - pracma::psi(1, 1 - id/6))) * pi / (6^3) +
+	- sum(cos(2*pi/3) * (pracma::psi(2, 1/3) + pracma::psi(2, 2/3)) / 4 +
+		- sin(2*pi/3) * (pracma::psi(1, 1/3) - pracma::psi(1, 2/3)) * pi
+	) / (8*3^3);
 
 
 # Derivation:
