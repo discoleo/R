@@ -13,7 +13,8 @@
 ### I( exp(2*cos(x)) ) on [0, pi]
 # Maths 505: A surprisingly interesting integral
 # https://www.youtube.com/watch?v=81qExKEYzo0
-# Note: Series expansion + Contour on half of Unit Circle;
+# Note: Series expansion of exp(exp(-1i*x));
+# + Contour on half of Unit Circle;
 # Pole of order k: Res = 1/k!;
 
 integrate(\(x) exp(2*cos(x)), 0, pi)
@@ -23,7 +24,18 @@ pi * besselI(2,0)
 
 # TODO: closed formula for Bessel?
 
+### I( exp(2i*sin(x)) )
+integrate(\(x) Re(exp(2i*sin(x))), 0, pi)
+pi * besselJ(2,0)
+
+###
+integrate(\(x) Im(exp(2i*sin(x))), 0, pi)
+# TODO
+
 # Note:
+sum(1 / factorial(seq(0, 15))^2);
+besselI(2,0)
+#
 sum((-1)^seq(0, 15) / factorial(seq(0, 15))^2);
 besselJ(2,0)
 
