@@ -23,6 +23,10 @@ pi * besselI(2,0)
 
 # TODO: closed formula for Bessel?
 
+# Note:
+sum((-1)^seq(0, 15) / factorial(seq(0, 15))^2);
+besselJ(2,0)
+
 
 ###
 integrate(\(x) Re(exp(2*exp(x*1i))), 0, pi)
