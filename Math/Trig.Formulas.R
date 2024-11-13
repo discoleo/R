@@ -12,6 +12,19 @@
 
 #################
 
+### PROD( TRIG )
+# 1. Michael Penn: do you know the value of this product??
+#    https://www.youtube.com/watch?v=k0bvmRSEIvQ
+
+### Prod( COS )
+n = 8
+id = seq(n);
+cs = cos(pi * id / (2*n+1));
+#
+prod(cs)
+2^(-n)
+
+
 ### Prod( SIN )
 n = 7 # ODD
 nh = (n - 1)/2; id = seq(nh);
@@ -20,6 +33,8 @@ sn = sin(pi * id / n);
 prod(sn)
 sqrt(n) / 2^nh;
 
+
+### SUM
 
 ### Sum( n * SIN() )
 n = 11 # ODD
