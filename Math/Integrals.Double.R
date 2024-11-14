@@ -101,9 +101,21 @@ integrate(\(x) sapply(x, \(y) integrate(\(x) 2 * log(1-x*y) / (x+y),
 # TODO
 
 
-### I( log(x^2-x*y+y^2) / (x*y+1) )
+### I( log(x^2+y^2) / (1 + x*y) )
 integrate(\(x) sapply(x, \(y)
-	integrate(\(x) log(x^2-x*y+y^2) / (x*y+1), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+	integrate(\(x) log(x^2+y^2) / (1+x*y), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+# TODO
+
+
+### I( log(x^2+y^2) / (1 - x*y) )
+integrate(\(x) sapply(x, \(y)
+	integrate(\(x) log(x^2+y^2) / (1-x*y), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+# TODO
+
+
+### I( log(x^2-x*y+y^2) / (1 + x*y) )
+integrate(\(x) sapply(x, \(y)
+	integrate(\(x) log(x^2-x*y+y^2) / (1+x*y), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 # TODO
 
 
@@ -111,6 +123,44 @@ integrate(\(x) sapply(x, \(y)
 integrate(\(x) sapply(x, \(y)
 	integrate(\(x) log(x^2-x*y+y^2) / (1-x*y), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 # TODO
+
+
+### I( log(1 + x+y) / (x^2 + y^2) )
+integrate(\(x) sapply(x, \(y)
+	integrate(\(x) log(x+y+1) / (x^2 + y^2), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+
+
+### I( log(1 + x*y) / (x^2 + y^2) )
+integrate(\(x) sapply(x, \(y)
+	integrate(\(x) log(1 + x*y) / (x^2 + y^2), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+
+
+### I( log(1 - x*y) / (x^2 + y^2) )
+integrate(\(x) sapply(x, \(y)
+	integrate(\(x) log(1 - x*y) / (x^2 + y^2), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+
+
+### Prod( LOG )
+
+### I( log(x) * log(y) * log(1 - x*y) )
+# Maths 505: A mesmerizing result
+# https://www.youtube.com/watch?v=QqVhd_xfjnc
+# Note: series expansion of log(1 - x*y);
+
+integrate(\(x) sapply(x, \(y)
+	integrate(\(x) log(x) * log(y) * log(1 - x*y), 0, 1, rel.tol=1E-12)$value
+	), 0, 1, rel.tol=1E-12)
+pracma::zeta(2) + pracma::zeta(3) + pracma::zeta(4) - 4
+
+
+### I( log(x) * log(y) * log(z) * log(1 - x*y*z) )
+# Note: rather slow (5 - 10 s);
+integrate(\(x) sapply(x, \(y)
+	integrate(\(x) sapply(x, \(z)
+	integrate(\(x) log(x) * log(y) * log(z) * log(1 - x*y*z),
+		0, 1, rel.tol=1E-12)$value
+	), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+6 - sum(pracma::zeta(2:6));
 
 
 ###############
