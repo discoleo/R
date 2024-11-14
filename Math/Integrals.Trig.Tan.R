@@ -128,6 +128,31 @@ integrate(\(x) x^3 * tan(x)^2, 0, pi/4)
 	+ 3/32 * pi^2 * log(2) - 3/4 * pi * Catalan;
 
 
+### Gen:
+
+### I( x^2 * tan(x) )
+n = 5; # ODD Integer
+integrate(\(x) x^2 * tan(x), 0, pi/n)
+id = seq((n-1)/2); idp = 2*id*pi/n;
+cs = cos(idp); cs2 = cos(2*idp);
+sn = sin(idp); sn2 = sin(2*idp);
+- pracma::zeta(3) * (3/4 - 3/4 / n^3) / 2 +
+	- (pi/n)^2 * log(2) - (pi/n)^2 * log(cos(pi/n)) +
+	- sum((cs - cs2/4) * (pracma::psi(2, id/n) + pracma::psi(2, 1 - id/n))
+		) / (4*n^3) +
+	+ sum((sn - sn2/2) * (pracma::psi(1, id/n) - pracma::psi(1, 1 - id/n))
+		) * pi / (n^3);
+
+### I( x^2 / tan(x) )
+n = 5; # ODD Integer
+integrate(\(x) x^2 / tan(x), 0, pi/n)
+id = seq((n-1)/2); idp = 2*id*pi/n; cs = cos(idp); sn = sin(idp);
+- pracma::zeta(3)/2 - pracma::psi(2, 1) / (4*n^3) +
+	+ (pi/n)^2 * log(2) + (pi/n)^2 * log(sin(pi/n)) +
+	- sum(cs * (pracma::psi(2, id/n) + pracma::psi(2, 1 - id/n))) / (4*n^3) +
+	+ sum(sn * (pracma::psi(1, id/n) - pracma::psi(1, 1 - id/n))) * pi / n^3;
+
+
 ### I( x^3 * tan(x) )
 
 ### on [0, pi/2]
