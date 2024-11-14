@@ -323,6 +323,10 @@ integrate(\(x) x * log(sin(x)), 0, pi/4)
 integrate(\(x) x * log(cos(x)), 0, pi/4)
 - 1/32 * pi^2 * log(2) + pi * Catalan / 8 - 21/128 * pracma::zeta(3)
 
+### I( x * log(tan(x)) )
+integrate(\(x) x * log(tan(x)), 0, pi/4)
+7/16 * pracma::zeta(3) - pi * Catalan / 4;
+
 
 ### I( x^2 * log(sin(x)) )
 integrate(\(x) x^2 * log(sin(x)), 0, pi/4)
@@ -459,7 +463,57 @@ pracma::zeta(3) * (7/16 + 1 / (16*3^3)) +
 	) / (8*3^3);
 
 
-# Derivation:
+### on [0, pi/5]
+
+### I( x * log(sin(x)) )
+integrate(\(x) x * log(sin(x)), 0, pi/5)
+id = 1:2; idp = 2*id*pi/5; cs = cos(idp); sn = sin(idp);
+pracma::zeta(3)/4 - (pi/5)^2 * log(2)/2 +
+	+ pracma::psi(2, 1) / (8*5^3) +
+	+ sum(cs * (pracma::psi(2, id/5) + pracma::psi(2, 1 - id/5))) / (8*5^3) +
+	- sum(sn * (pracma::psi(1, id/5) - pracma::psi(1, 1 - id/5))
+		) * pi / (2*5^3);
+
+### I( x * log(cos(x)) )
+integrate(\(x) x * log(cos(x)), 0, pi/5)
+id = 1:2; idp = 2*id*pi/5;
+cs = cos(idp); cs2 = cos(2*idp);
+sn = sin(idp); sn2 = sin(2*idp);
+- pracma::zeta(3) * (3/4 - 3/4 / 5^3) / 4 +
+	- (pi/5)^2 * log(2)/2 +
+	- sum((cs - cs2/4) * (pracma::psi(2, id/5) + pracma::psi(2, 1 - id/5))
+		) / (8*5^3) +
+	+ sum((sn - sn2/2) * (pracma::psi(1, id/5) - pracma::psi(1, 1 - id/5))
+		) * pi / (2*5^3);
+
+### I( x * log(tan(x)) )
+integrate(\(x) x * log(tan(x)), 0, pi/5)
+id = 1:2; idp = 2*id*pi/5;
+cs = cos(idp); cs2 = cos(2*idp);
+sn = sin(idp); sn2 = sin(2*idp);
+pracma::zeta(3) * (1 + 3/4 - 3/4/5^3)/4 +
+	+ pracma::psi(2, 1) / (8*5^3) +
+	+ sum((cs - cs2/8) * (pracma::psi(2, id/5) + pracma::psi(2, 1 - id/5))
+		) / (4*5^3) +
+	- sum((sn - sn2/4) * (pracma::psi(1, id/5) - pracma::psi(1, 1 - id/5))
+		) * pi / (5^3);
+
+
+### Gen: on [0, pi/n]
+n = 7 # ODD
+integrate(\(x) x * log(tan(x)), 0, pi/n)
+id = seq((n-1)/2); idp = 2*id*pi/n;
+cs = cos(idp); cs2 = cos(2*idp);
+sn = sin(idp); sn2 = sin(2*idp);
+pracma::zeta(3) * (1 + 3/4 - 3/4/n^3)/4 +
+	+ pracma::psi(2, 1) / (8*n^3) +
+	+ sum((cs - cs2/8) * (pracma::psi(2, id/n) + pracma::psi(2, 1 - id/n))
+		) / (4*n^3) +
+	- sum((sn - sn2/4) * (pracma::psi(1, id/n) - pracma::psi(1, 1 - id/n))
+		) * pi / (n^3);
+
+
+### Derivation:
 
 ### from [0, pi/2]
 integrate(\(x) x * log(tan(x)), pi/4, pi/2)
@@ -479,13 +533,17 @@ integrate(\(x) -2*(12*x^2-4*pi*x+pi^2/4) * log(tan(x)), 0, pi/4)
 
 ### Helper
 x  = pi/7
-iN = seq(10000);
+iN = seq(20000);
 log(sin(x)) # ==
 - sum( cos(2*iN*x) / iN ) - log(2);
+#
+log(cos(x)) # ==
+- log(2) - sum( (-1)^iN * cos(2*iN*x) / iN )
 
 
-### I( x * log(sin(x)) )
+### Derivation: I( x * log(sin(x)) )
 
+# on [0, pi/6]
 iN = seq(10000);
 integrate(\(x) x * log(sin(x)), 0, pi/6)
 integrate(\(x) sapply(x, \(x) - sum( cos(2*iN*x) / iN )*x - log(2)*x), 0, pi/6)
@@ -513,10 +571,42 @@ pracma::zeta(3)/4 - (pi/3)^2 * log(2)/2 + pracma::psi(2, 1) / (8*3^3) +
 	- sum(sn * (pracma::psi(1, 1/3) - pracma::psi(1, 1 - 1/3))
 		) * pi / (2*3^3);
 
-
 # Note:
 ((pracma::psi(2, 3/6) - pracma::psi(2, 1/2 + 3/6))) / (6^3) # ==
 - pracma::zeta(3) / 18
+
+
+# on [0, pi/5]
+iN = seq(10000);
+integrate(\(x) x * log(sin(x)), 0, pi/5)
+sum( 1 / iN^3 ) / 4 - sum( cos(2*iN*pi/5) / iN^3 ) / 4 +
+	- sum( sin(2*iN*pi/5) / iN^2 ) * pi/10 - (pi/5)^2 * log(2)/2;
+id = c(1,2); cs = cos(2*id*pi/5); sn = sin(2*id*pi/5);
+pracma::zeta(3)/4 - (pi/5)^2 * log(2)/2 + pracma::psi(2, 1) / (8*5^3) +
+	+ sum(cs * (pracma::psi(2, id/5) + pracma::psi(2, 1 - id/5))) / (8*5^3) +
+	- sum(sn * (pracma::psi(1, id/5) - pracma::psi(1, 1 - id/5))
+		) * pi / (2*5^3);
+
+#
+iN = seq(10000); sg = rep(c(1,-1), length(iN)/2);
+integrate(\(x) x * log(cos(x)), 0, pi/5)
+integrate(\(x) sapply(x, \(x) sum( sg*cos(2*iN*x) / iN )*x - log(2)*x), 0, pi/5)
+integrate(\(x) sapply(x, \(x) - sum( sg*sin(2*iN*x) / iN^2 )) / 2, 0, pi/5)$value +
+	- sum( sin(4*iN*pi/5) / (2*iN)^2 ) * 2*pi/10 +
+	+ sum( sin(2*iN*pi/5) / iN^2 ) * pi/10 - (pi/5)^2 * log(2)/2;
+- pracma::zeta(3) * 3/4 / 4 + sum( cos(2*iN*pi/5) / iN^3 ) / 4 +
+	- sum( cos(4*iN*pi/5) / iN^3 ) / 16 +
+	- sum( sin(4*iN*pi/5) / iN^2 ) * pi/20 +
+	+ sum( sin(2*iN*pi/5) / iN^2 ) * pi/10 - (pi/5)^2 * log(2)/2;
+id = 1:2; idp = 2*id*pi/5;
+cs = cos(idp); cs2 = cos(2*idp);
+sn = sin(idp); sn2 = sin(2*idp);
+- pracma::zeta(3) * 3/4 / 4 - (pi/5)^2 * log(2)/2 +
+	+ (1 - 1/4) * pracma::zeta(3) / (4*5^3) +
+	- sum((cs - cs2/4) * (pracma::psi(2, id/5) + pracma::psi(2, 1 - id/5))
+		) / (8*5^3) +
+	+ sum((sn - sn2/2) * (pracma::psi(1, id/5) - pracma::psi(1, 1 - id/5))
+		) * pi / (2*5^3);
 
 
 #####################
