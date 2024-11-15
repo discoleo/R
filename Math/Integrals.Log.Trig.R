@@ -70,14 +70,10 @@ integrate(\(x) - log(cos(x)), 0, pi/8)$value + # see next;
 integrate(\(x) log(cos(x)), 0, pi/8)
 - pi*log(2) / 8 - Catalan/8 - C8/2;
 dd = 512; # n = 8; dd = 8*n^2;
-sn = sin(2*pi*c(1,2,3) / 8);
-- pi*log(2) / 8 +
-	+ sn[1] * (pracma::psi(1, 1/16) - pracma::psi(1, 15/16)) / dd +
-	- sn[2] * (pracma::psi(1, 2/16) - pracma::psi(1, 14/16)) / dd +
-	+ sn[3] * (pracma::psi(1, 3/16) - pracma::psi(1, 13/16)) / dd +
-	- sn[3] * (pracma::psi(1, 5/16) - pracma::psi(1, 11/16)) / dd +
-	+ sn[2] * (pracma::psi(1, 6/16) - pracma::psi(1, 10/16)) / dd +
-	- sn[1] * (pracma::psi(1, 7/16) - pracma::psi(1,  9/16)) / dd;
+id = 1:3; sn = sin(2*pi*id / 8); sg = c(1,-1,1);
+- pi*log(2) / 8 + sum(
+	+ sg*sn * (pracma::psi(1, id/16) - pracma::psi(1, 1 - id/16)) +
+	- sg*sn * (pracma::psi(1, 1/2 - id/16) - pracma::psi(1, 1/2 + id/16)) ) / dd;
 
 
 # Derivation:
@@ -255,8 +251,16 @@ id = seq(5); sn = sin(2*id*pi/12) + sin(10*id*pi/12); sg = - (-1)^id;
 ### on [0, 5/12 * pi]
 integrate(\(x) log(cos(x)), 0, pi * 5/12)
 id = seq(5); sn = sin(2*5*id*pi/12); sg = - (-1)^id;
-- pi*log(2)*5/12 + sum(sg * sn *
-	(pracma::psi(1, id/24) - pracma::psi(1, 1 - id/24) +
+- pi*log(2)*5/12 + sum(sg * sn * (
+	+ pracma::psi(1, id/24) - pracma::psi(1, 1 - id/24) +
+	- pracma::psi(1, 1/2 - id/24) + pracma::psi(1, 1/2 + id/24)) ) / (2*24^2);
+
+###
+integrate(\(x) log(sin(x)), 0, pi * 5/12)
+integrate(\(x) - log(cos(x)), 0, pi/12)$value - pi/2*log(2);
+id = seq(5); sn = sin(2*id*pi/12); sg = - (-1)^id;
+- pi*log(2) * 5/12 - sum(sg * sn * (
+	+ pracma::psi(1, id/24) - pracma::psi(1, 1 - id/24) +
 	- pracma::psi(1, 1/2 - id/24) + pracma::psi(1, 1/2 + id/24)) ) / (2*24^2);
 
 
@@ -385,7 +389,7 @@ integrate(\(x) x^2 * log(tan(x)), 0, pi/4)
 - ((pracma::psi(3, 3/4) - pracma::psi(3, 1/4)) / 128 +
 	+ 3/2*pi^2 * Catalan) / 24;
 
-# sum( log(sin(x)) on [0,pi/2], log(tan(x)) )
+# sum( log(sin(x)) on [0, pi/2], log(tan(x)) )
 # =>
 
 integrate(\(x) x^2 * log(sin(x)), 0, pi/4)
@@ -513,6 +517,36 @@ pracma::zeta(3) * (1 + 3/4 - 3/4/n^3)/4 +
 		) * pi / (n^3);
 
 
+### ODD Integer:
+n = 7; k = 2; # k = ANY Integer;
+integrate(\(x) x * log(sin(x)), 0, pi * k/n)
+id = seq((n-1)/2); sn = sin(2*pi*k*id/n); cs = cos(2*pi*k*id/n);
+pracma::zeta(3) * (1 - 1/n^3)/4 - (pi*k/n)^2 * log(2)/2 +
+	+ sum(cs * (pracma::psi(2, id/n) + pracma::psi(2, 1 - id/n))) / (8*n^3) +
+	- sum(sn * (pracma::psi(1, id/n) - pracma::psi(1, 1 - id/n))
+		) * pi * k / (2*n^3);
+
+### EVEN Integer:
+n = 12;
+integrate(\(x) x * log(sin(x)), 0, pi/n)
+id = seq(n/2 - 1); sn = sin(2*pi*id/n); cs = cos(2*pi*id/n);
+pracma::zeta(3) * (1/2 + 3/n^3)/2 - (pi/n)^2 * log(2)/2 +
+	+ sum(cs * (pracma::psi(2, id/n) + pracma::psi(2, 1 - id/n))) / (8*n^3) +
+	- sum(sn * (pracma::psi(1, id/n) - pracma::psi(1, 1 - id/n))
+		) * pi / (2*n^3);
+
+### Gen: on [0, pi * k/n]
+n = 12; # EVEN integer;
+k =  5;
+integrate(\(x) x * log(sin(x)), 0, pi * k/n)
+id = seq(n/2 - 1); sn = sin(2*pi*k*id/n); cs = cos(2*pi*k*id/n);
+zf = if(k %% 2 == 0) -8 else 6;
+pracma::zeta(3) * (1 + zf/n^3)/4 - (pi*k/n)^2 * log(2)/2 +
+	+ sum(cs * (pracma::psi(2, id/n) + pracma::psi(2, 1 - id/n))) / (8*n^3) +
+	- sum(sn * (pracma::psi(1, id/n) - pracma::psi(1, 1 - id/n))
+		) * pi * k / (2*n^3);
+
+
 ### Derivation:
 
 ### from [0, pi/2]
@@ -532,13 +566,13 @@ integrate(\(x) -2*(12*x^2-4*pi*x+pi^2/4) * log(tan(x)), 0, pi/4)
 
 
 ### Helper
-x  = pi/7
+x  = pi/7; # Test
 iN = seq(20000);
 log(sin(x)) # ==
 - sum( cos(2*iN*x) / iN ) - log(2);
 #
 log(cos(x)) # ==
-- log(2) - sum( (-1)^iN * cos(2*iN*x) / iN )
+- sum( (-1)^iN * cos(2*iN*x) / iN ) - log(2);
 
 
 ### Derivation: I( x * log(sin(x)) )
