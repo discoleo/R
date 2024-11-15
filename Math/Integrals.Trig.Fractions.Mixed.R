@@ -104,3 +104,56 @@ b = sqrt(3)
 integrate(\(x) sin(x) / (x * (b + cos(x)^2)^2), 0, 16000, subdivisions=10029)
 pi/4 * (2*b+1) / (b*(b+1))^(3/2)
 
+
+###############
+###############
+
+### I( x^2 / (cos(x) + sin(x) + 1) )
+# Maths 505: A deceivingly difficult integral
+# https://www.youtube.com/watch?v=Ebn2enuBr60
+
+integrate(\(x) x^2 / (cos(x) + sin(x) + 1), 0, pi/2)
+integrate(\(x) - 2*x * log(tan(x/2) + 1), 0, pi/2)$value +
+	+ (pi/2)^2 * log(tan(pi/4) + 1)
+pi^2*log(2)/8 + pi*Catalan - 21/8*pracma::zeta(3)
+
+
+### on [0, pi/3]
+integrate(\(x) x^2 / (cos(x) + sin(x) + 1), 0, pi/3)
+# Solution:
+id = 1:2; id12 = seq(5); id5 = 5*id12; sg12 = - (-1)^id12;
+sn = sin(2*pi*id/6); sn5 = sin(2*pi*id5/12); sn12 = sin(2*id12*pi/12);
+cs = cos(2*pi*id/6); cs5 = cos(2*pi*id5/12);
+- pracma::zeta(3) * (1 + 1/12^2 + 5/16 + 1 / (2*3^2) + 1 / (2*3^3)) +
+	- sum(sg12 * sn12 * (
+	+ pracma::psi(1, id12/24) - pracma::psi(1, 1 - id12/24) +
+	- pracma::psi(1, 1/2 - id12/24) + pracma::psi(1, 1/2 + id12/24))
+	) * pi / (24^2) + (
+	- sum(cs5 * (pracma::psi(2, id12/12) + pracma::psi(2, 1 - id12/12))) +
+	+ sum(sn5 * (pracma::psi(1, id12/12) - pracma::psi(1, 1 - id12/12))) * 20*pi
+	) / 12^3 +
+	+ sum(cos(2*pi/3) * (pracma::psi(2, 1/3) + pracma::psi(2, 1 - 1/3)) / 4 +
+		- sin(2*pi/3) * (pracma::psi(1, 1/3) - pracma::psi(1, 1 - 1/3)) * pi
+	) / 3^3 +
+	- sum(cs * (pracma::psi(2, id/6) + pracma::psi(2, 1 - id/6))) / (6^3) +
+	+ sum(sn * (pracma::psi(1, id/6) - pracma::psi(1, 1 - id/6))
+		) * pi * 4 / (6^3) +
+	+ (pi/3)^2 * log(tan(pi/6) + 1) + (pi*5/6)^2 * log(2)+
+	+ (pi/2)^2*log(2) - pi^2*log(2);
+
+
+### Derivation:
+
+# - for I( log(TRIG) ) see file:
+#   Integrals.Log.Trig.R;
+
+integrate(\(x) x^2 / (cos(x) + sin(x) + 1), 0, pi/3)
+integrate(\(x) - 2*x * log(tan(x/2) + 1), 0, pi/3)$value +
+	+ (pi/3)^2 * log(tan(pi/6) + 1);
+integrate(\(x) - 8*x * log(tan(x) + 1), 0, pi/6)$value +
+	+ (pi/3)^2 * log(tan(pi/6) + 1);
+integrate(\(x) - 8*(x-pi/4) * log(sin(x)), pi/4, pi*5/12)$value +
+integrate(\(x) 8*x * log(cos(x)), 0, pi/6)$value +
+	+ (pi/3)^2 * log(tan(pi/6) + 1) - 2*(pi/6)^2*log(2);
+# see above the full solution;
+
