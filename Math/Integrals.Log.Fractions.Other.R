@@ -286,9 +286,11 @@ integrate(\(x) log(x-1) / (x^4+1), 1, Inf)
 		(digamma(3/4) - digamma(1/4)) / 64 +
 	+ (digamma(1/4) - digamma(3/4)) / sin(pi/4) * pi/16;
 
-###
+
+### I( x * log(1-x) / (x^4+1) )
 integrate(\(x) x * log(1-x) / (x^4+1), 0, 1)
 # TODO
+
 
 ### I( x^2 * log(1-x) / (x^4 + 1) )
 integrate(\(x) x^2 * log(1-x) / (x^4+1), 0, 1)
@@ -297,10 +299,37 @@ integrate(\(x) x^2 * log(1-x) / (x^4+1), 0, 1)
 	- (digamma(5/8) - digamma(1/8)) *
 		(digamma(3/4) - digamma(1/4)) / 64;
 
+# on [1, Inf]
+integrate(\(x) x^2 * log(x-1) / (x^4+1), 1, Inf)
+(pracma::psi(1, 5/8) - pracma::psi(1, 1/8)) / 64 +
+- (pracma::psi(1, 7/8) - pracma::psi(1, 3/8)) / 64 +
+	- pi^2 * cos(3*pi/4) / sin(3*pi/4)^2 / 16 +
+	+ (digamma(3/4) - digamma(1/4)) * # == pi
+		(digamma(7/8) - digamma(3/8)) / 64 +
+	+ (digamma(5/8) - digamma(1/8)) * log(2) / 32;
+
+
+### Log(1 + x)
 
 ### I( log(1+x) / (x^4 + 1) )
 integrate(\(x) log(1+x) / (x^4 + 1), 0, Inf)
 - (pracma::psi(1, 5/8) - pracma::psi(1, 1/8)) / 64 +
+	- (digamma(3/4) - digamma(1/4)) / sin(pi/4) * pi / 16 +
+	+ (digamma(3/4) - digamma(1/4)) / sin(3*pi/4) * pi / 32 +
+	- (digamma(7/8) - digamma(3/8)) * pi / 32 +
+	+ log(2) / sin(pi/4) * pi / 16;
+
+### I( x * log(1+x) / (x^4 + 1) )
+integrate(\(x) x * log(x+1) / (x^4+1), 0, Inf)
+(pracma::psi(1, 3/4) - pracma::psi(1, 1/4)) / 64 +
+	+ (digamma(3/4) - digamma(1/4)) * log(2) / 16 + # pi*log(2)
+	- (digamma(7/8) - digamma(3/8))^2 / 64 +
+	+ (digamma(5/8) - digamma(1/8))^2 / 64;
+
+### I( x^2 * log(1+x) / (x^4 + 1) )
+integrate(\(x) x^2 * log(1+x) / (x^4 + 1), 0, Inf)
+- (pracma::psi(1, 5/8) - pracma::psi(1, 1/8)) / 64 +
+	- pi^2 * cos(3*pi/4) / sin(3*pi/4)^2 / 16 +
 	- (digamma(3/4) - digamma(1/4)) / sin(pi/4) * pi / 16 +
 	+ (digamma(3/4) - digamma(1/4)) / sin(3*pi/4) * pi / 32 +
 	- (digamma(7/8) - digamma(3/8)) * pi / 32 +
