@@ -125,7 +125,7 @@ integrate(\(x) sapply(x, \(y)
 # TODO
 
 
-### I( log(1 + x+y) / (x^2 + y^2) )
+### I( log(x+y+1) / (x^2 + y^2) )
 integrate(\(x) sapply(x, \(y)
 	integrate(\(x) log(x+y+1) / (x^2 + y^2), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 
@@ -218,6 +218,56 @@ integrate(\(x) sapply(x, \(y) integrate(\(x) log(exp(1) - exp(x*y)), 0, 1)$value
 ###
 integrate(\(x) sapply(x, \(y) integrate(\(x) log(exp(x*y) - 1), 0, 1)$value), 0, 1)
 # TODO
+
+
+### I( 1 / ((exp(x)+1) * (exp(y)+1) * (exp(x) + exp(y))) )
+# Maths 505: This double integral will make you love calculus
+# https://www.youtube.com/watch?v=-Nm5BofLiS4
+
+
+### on [0, Inf]^2
+integrate(\(x) sapply(x, \(y)
+	integrate(\(x) 1 / ((exp(x)+1) * (exp(y)+1) * (exp(x) + exp(y))),
+		0, Inf, rel.tol=1E-12)$value), 0, Inf, rel.tol=1E-12)
+integrate(\(x) sapply(x, \(y)
+	integrate(\(x) 1 / ((x+1) * (y+1) * (1/x + 1/y)),
+		0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12);
+2*log(2) - log(2)^2 - pi^2/12;
+
+
+### on [0,1]^2
+integrate(\(x) sapply(x, \(y)
+	integrate(\(x) 1 / ((exp(x)+1) * (exp(y)+1) * (exp(x)+exp(y))),
+		0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+integrate(\(x) sapply(x, \(y)
+	integrate(\(x) 1 / ((x+1) * (y+1) * (1/x + 1/y)),
+		exp(-1), 1, rel.tol=1E-12)$value), exp(-1), 1, rel.tol=1E-12)
+integrate(\(x) sapply(x, \(y)
+	integrate(\(x) x / ((x+1) * (x+y)),
+		exp(-1), 1, rel.tol=1E-12)$value), exp(-1), 1, rel.tol=1E-12)$value +
+	- log(2/(1+exp(-1)))^2 / 2;
+integrate(\(x) - x * log(x + exp(-1)) / (x+1), exp(-1), 1)$value +
+2*log(2) - log(2)^2 + exp(-1) - 1 +
+	- (1+exp(-1) - log(2))*log(1+exp(-1));
+polylog2(-1 - 2/(exp(1)-1)) - polylog2(-2/(exp(1)-1)) +
+	+ log(exp(2)-1) * log(2) - 2*log(exp(1)+1)*exp(-1) +
+	- log(exp(1)-1) * log(exp(1)+1) +
+	+ 2*log(2)*exp(-1) - log(2)^2 + 1;
+# TODO: closed formula for Li2?
+
+
+# Helper:
+integrate(\(x) x * log(x + 1) / (x+1), exp(-1), 1)
+2*log(2) - log(2)^2/2 - 1 - (exp(-1)+1)*log(exp(-1)+1) +
+	+ exp(-1) + log(exp(-1)+1)^2/2
+
+# Note:
+# - for function polylog2, see file:
+#   Integrals.Trig.Tan.R;
+integrate(\(x) x * log(x + exp(-1)) / (x+1), exp(-1), 1)
+polylog2(-2/(exp(1)-1)) - polylog2(-1 - 2/(exp(1)-1)) +
+	+ 2*(1 - log(2))*exp(-1) - 1 + log(exp(1)+1)*exp(-1) +
+	+ (log(exp(1)-1) - 1) * log((exp(1)+1)/2);
 
 
 ############
