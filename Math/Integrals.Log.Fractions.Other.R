@@ -320,7 +320,7 @@ integrate(\(x) log(1+x) / (x^4 + 1), 0, Inf)
 	+ log(2) / sin(pi/4) * pi / 16;
 
 ### I( x * log(1+x) / (x^4 + 1) )
-integrate(\(x) x * log(x+1) / (x^4+1), 0, Inf)
+integrate(\(x) x * log(1+x) / (x^4+1), 0, Inf)
 (pracma::psi(1, 3/4) - pracma::psi(1, 1/4)) / 64 +
 	+ (digamma(3/4) - digamma(1/4)) * log(2) / 16 + # pi*log(2)
 	- (digamma(7/8) - digamma(3/8))^2 / 64 +
@@ -335,8 +335,42 @@ integrate(\(x) x^2 * log(1+x) / (x^4 + 1), 0, Inf)
 	- (digamma(7/8) - digamma(3/8)) * pi / 32 +
 	+ log(2) / sin(pi/4) * pi / 16;
 
+### I( log(1+x) / x / (x^4+1) )
+integrate(\(x) log(1+x) / x / (x^4+1), 0, Inf)
+pi^2 / (6*32) + pi^2 / 12;
+pi^2 * 17/(3*64);
+
+### on [0, 1]
+integrate(\(x) log(1+x) / x / (x^4+1), 0, 1)
+- (pracma::psi(1, 1) - pracma::psi(1, 1/2)) / 64 +
+	+ pi^2 / 12 - log(2)^2 / 32 +
+	- (digamma(5/8) - digamma(1/8)) *
+		(digamma(7/8) - digamma(3/8)) / 64 +
+	+ (digamma(3/4) - digamma(1/4))^2 / 128;
+
+### Helper:
+integrate(\(x) log(1+x) / x, 0, 1)
+pi^2 / 12
+
+# Limit:
+e = 1E-4
+integrate(\(x) log(x) / x / (x^4+1), 1, Inf)
+(pracma::psi(1, e/8) - pracma::psi(1, (e+4)/8)) / 64 +
+	- pi^2 * cos(e*pi/4) / sin(e*pi/4)^2 / 16;
+(16/e^2 - pi^2 * cos(e*pi/4) / sin(e*pi/4)^2) / 32;
+pi^2 / (6*32)
+
 
 ### Other
+
+### I( log(1+x^n) / x / (x^(4*n)+1) )
+n = sqrt(3);
+integrate(\(x) log(1+x^n) / x / (x^(4*n)+1), 0, 1)
+((pracma::psi(1, 1/2) - pracma::psi(1, 1)) / 64 +
+	+ pi^2 / 12 - log(2)^2 / 32 +
+	- (digamma(5/8) - digamma(1/8)) *
+		(digamma(7/8) - digamma(3/8)) / 64 +
+	+ (digamma(3/4) - digamma(1/4))^2 / 128 ) / n;
 
 ### I( log(x) / ((x-1)^4 + 1) )
 integrate(\(x) log(x) / ((x-1)^4 + 1), 1, Inf)
