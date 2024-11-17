@@ -289,7 +289,16 @@ integrate(\(x) log(x-1) / (x^4+1), 1, Inf)
 
 ### I( x * log(1-x) / (x^4+1) )
 integrate(\(x) x * log(1-x) / (x^4+1), 0, 1)
-# TODO
+(pracma::psi(1, 3/4) - pracma::psi(1, 1/4)) / 64 + # Catalan / 4
+	+ (digamma(3/4) - digamma(1/4)) * log(2) / 32 + # pi*log(2)
+	+ (digamma(7/8) - digamma(3/8))^2 / 128 +
+	- (digamma(5/8) - digamma(1/8))^2 / 128;
+
+# on [1, Inf]
+integrate(\(x) x * log(x-1) / (x^4+1), 1, Inf)
+(digamma(3/4) - digamma(1/4)) * log(2) / 32 + # pi*log(2)
+	+ (digamma(7/8) - digamma(3/8))^2 / 128 +
+	- (digamma(5/8) - digamma(1/8))^2 / 128;
 
 
 ### I( x^2 * log(1-x) / (x^4 + 1) )
@@ -408,6 +417,19 @@ pi*log(2)/8 - Catalan / 2
 #
 integrate(\(x) x * log(1-x^2) / (x^4+1), 0, 1)
 pi*log(2)/16 - Catalan/2
+# Diff( x*log(1-x^2), x*log(1+x) )
+# => I( x*log(1-x) / ... );
+
+
+# from x * log(x - b) / (x^4 + 1)
+b = 1 / sqrt(3)
+integrate(\(x) x * 1/(x - b) / (x^4+1), 1, Inf)
+integrate(\(x) x * (1/(x - b) - (x+b)*(x^2+b^2)/ (x^4+1)) / (b^4+1), 1, Inf)
+integrate(\(x) (b/(x - b) - (b*x^3+b^2*x^2+b^3*x-1)/ (x^4+1)) / (b^4+1), 1, Inf)
+(- b*(log(1-b) - log(2)/4) +
+	- b^2*pi/sin(3*pi/4)/4 + b^2*(digamma(7/8) - digamma(3/8)) / 8 +
+	- b^3*pi/4 + b^3*(digamma(3/4) - digamma(1/4)) / 8 +
+	+ pi/sin(pi/4)/4 - (digamma(5/8) - digamma(1/8)) / 8) / (b^4+1);
 
 
 ##################
