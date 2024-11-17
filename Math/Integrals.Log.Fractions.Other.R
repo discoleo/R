@@ -317,10 +317,28 @@ integrate(\(x) x^2 * log(x-1) / (x^4+1), 1, Inf)
 		(digamma(7/8) - digamma(3/8)) / 64 +
 	+ (digamma(5/8) - digamma(1/8)) * log(2) / 32;
 
+
+### I( x^3 * log(1-x) / (x^4 + 1) )
+integrate(\(x) x^3 * log(1-x) / (x^4+1), 0, 1)
+- (pracma::psi(1, 1) - pracma::psi(1, 1/2)) / 64 +
+	- 5/(3*64) * pi^2 + log(2)^2 / 32 +
+	- (digamma(5/8) - digamma(1/8)) *
+		(digamma(7/8) - digamma(3/8)) / 64 +
+	+ (digamma(3/4) - digamma(1/4))^2 / 128;
+
+
 ### I( log(1-x) / x / (x^4+1) )
 integrate(\(x) log(abs(1-x)) / x / (x^4+1), 0, 1)$value +
 integrate(\(x) log(abs(1-x)) / x / (x^4+1), 1, Inf)$value;
-- pi^2 * 31 / (3*64)
+- pi^2 * 31 / (3*64);
+
+# on [0, 1]
+integrate(\(x) log(abs(1-x)) / x / (x^4+1), 0, 1)
+(pracma::psi(1, 1) - pracma::psi(1, 1/2)) / 64 +
+	- pi^2 * 9/64 - log(2)^2 / 32 +
+	+ (digamma(5/8) - digamma(1/8)) *
+		(digamma(7/8) - digamma(3/8)) / 64 +
+	- (digamma(3/4) - digamma(1/4))^2 / 128;
 
 
 ### Log(1 + x)
@@ -419,6 +437,10 @@ integrate(\(x) x * log(1-x^2) / (x^4+1), 0, 1)
 pi*log(2)/16 - Catalan/2
 # Diff( x*log(1-x^2), x*log(1+x) )
 # => I( x*log(1-x) / ... );
+
+#
+integrate(\(x) x^3 * log(1-x^2) / (x^4+1), 0, 1)
+-5/(3*64) * pi^2 + log(2)^2 / 16;
 
 
 # from x * log(x - b) / (x^4 + 1)
