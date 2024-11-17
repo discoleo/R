@@ -226,6 +226,27 @@ integrate(\(x) log(1+x)/(x^3 - 1) - log(2)/3/(x-1), 0, 1)$value +
 # TODO
 
 
+### I( log(1+x) / x / (x^3 + 1) )
+integrate(\(x) log(1+x) / x / (x^3 + 1), 0, Inf)
+pi^2 * 5 / (2*27);
+
+### I( log(1-x) / x / (x^3 + 1) )
+integrate(\(x) log(abs(1-x)) / x / (x^3 + 1), 0, 1)$value +
+integrate(\(x) log(abs(1-x)) / x / (x^3 + 1), 1, Inf)$value;
+- pi^2 * 17 / (4*27);
+
+
+### Helper
+
+###
+integrate(\(x) log(1+x^3) / x / (x^3 + 1), 0, Inf)
+pi^2/18
+
+###
+integrate(\(x) log(abs(1-x^3)) / x / (x^3 + 1), 0, 1)$value +
+integrate(\(x) log(abs(1-x^3)) / x / (x^3 + 1), 1, Inf)$value;
+pi^2/36
+
 ### Li2(1/2)
 integrate(\(x) log(1+x) / (1-x) - log(2)/(1-x), 0, 1)
 - pi^2/12 + log(2)^2/2
