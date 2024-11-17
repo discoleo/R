@@ -308,6 +308,11 @@ integrate(\(x) x^2 * log(x-1) / (x^4+1), 1, Inf)
 		(digamma(7/8) - digamma(3/8)) / 64 +
 	+ (digamma(5/8) - digamma(1/8)) * log(2) / 32;
 
+### I( log(1-x) / x / (x^4+1) )
+integrate(\(x) log(abs(1-x)) / x / (x^4+1), 0, 1)$value +
+integrate(\(x) log(abs(1-x)) / x / (x^4+1), 1, Inf)$value;
+- pi^2 * 31 / (3*64)
+
 
 ### Log(1 + x)
 
