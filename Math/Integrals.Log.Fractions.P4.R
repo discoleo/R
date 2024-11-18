@@ -1,0 +1,228 @@
+########################
+##
+## Leonard Mada
+## [the one and only]
+##
+## Integrals: Logarithms
+## Log-Fractions: Power = 4
+##
+## draft v.0.1a
+
+
+##################
+### Logarithms ###
+
+### Fractions: Power = 4
+
+# I( x^p * log(1 + x) / (x^4 + 1) )
+# I( x^p * log(1 - x) / (x^4 + 1) )
+
+
+### History:
+
+# [refactor]
+# - moved Pow = 4 to this file from file:
+#   Integrals.Log.Fractions.Other.R;
+# - TODO: move also variants from:
+#   Integrals.Log.Fractions.Complex.R;
+
+####################
+
+### Helper Constants
+Catalan = 0.915965594177219015054603514;
+
+
+##################
+
+##################
+### Log(1 - x) ###
+
+### I( log(1-x) / (x^4+1) )
+integrate(\(x) log(1-x) / (x^4+1), 0, 1)
+(pracma::psi(1, 5/8) - pracma::psi(1, 1/8)) / 64 +
+	+ (digamma(3/4) - digamma(1/4)) * # == pi
+		(digamma(7/8) - digamma(3/8)) / 64 +
+	+ (digamma(5/8) - digamma(1/8)) * log(2) / 32;
+
+# on [1, Inf]
+integrate(\(x) log(x-1) / (x^4+1), 1, Inf)
+(pracma::psi(1, 7/8) - pracma::psi(1, 3/8)) / 64 +
+- (pracma::psi(1, 5/8) - pracma::psi(1, 1/8)) / 64 +
+	+ (digamma(7/8) - digamma(3/8)) * log(2) / 32 +
+	- (digamma(5/8) - digamma(1/8)) *
+		(digamma(3/4) - digamma(1/4)) / 64 +
+	+ (digamma(1/4) - digamma(3/4)) / sin(pi/4) * pi/16;
+
+
+### I( x * log(1-x) / (x^4+1) )
+integrate(\(x) x * log(1-x) / (x^4+1), 0, 1)
+(pracma::psi(1, 3/4) - pracma::psi(1, 1/4)) / 64 + # Catalan / 4
+	+ (digamma(3/4) - digamma(1/4)) * log(2) / 32 + # pi*log(2)
+	+ (digamma(7/8) - digamma(3/8))^2 / 128 +
+	- (digamma(5/8) - digamma(1/8))^2 / 128;
+
+# on [1, Inf]
+integrate(\(x) x * log(x-1) / (x^4+1), 1, Inf)
+(digamma(3/4) - digamma(1/4)) * log(2) / 32 + # pi*log(2)
+	+ (digamma(7/8) - digamma(3/8))^2 / 128 +
+	- (digamma(5/8) - digamma(1/8))^2 / 128;
+
+
+### I( x^2 * log(1-x) / (x^4 + 1) )
+integrate(\(x) x^2 * log(1-x) / (x^4+1), 0, 1)
+(pracma::psi(1, 7/8) - pracma::psi(1, 3/8)) / 64 +
+	+ (digamma(7/8) - digamma(3/8)) * log(2) / 32 +
+	- (digamma(5/8) - digamma(1/8)) *
+		(digamma(3/4) - digamma(1/4)) / 64;
+
+# on [1, Inf]
+integrate(\(x) x^2 * log(x-1) / (x^4+1), 1, Inf)
+(pracma::psi(1, 5/8) - pracma::psi(1, 1/8)) / 64 +
+- (pracma::psi(1, 7/8) - pracma::psi(1, 3/8)) / 64 +
+	- pi^2 * cos(3*pi/4) / sin(3*pi/4)^2 / 16 +
+	+ (digamma(3/4) - digamma(1/4)) * # == pi
+		(digamma(7/8) - digamma(3/8)) / 64 +
+	+ (digamma(5/8) - digamma(1/8)) * log(2) / 32;
+
+
+### I( x^3 * log(1-x) / (x^4 + 1) )
+integrate(\(x) x^3 * log(1-x) / (x^4+1), 0, 1)
+- (pracma::psi(1, 1) - pracma::psi(1, 1/2)) / 64 +
+	- 5/(3*64) * pi^2 + log(2)^2 / 32 +
+	- (digamma(5/8) - digamma(1/8)) *
+		(digamma(7/8) - digamma(3/8)) / 64 +
+	+ (digamma(3/4) - digamma(1/4))^2 / 128;
+
+
+### I( log(1-x) / x / (x^4+1) )
+integrate(\(x) log(abs(1-x)) / x / (x^4+1), 0, 1)$value +
+integrate(\(x) log(abs(1-x)) / x / (x^4+1), 1, Inf)$value;
+- pi^2 * 31 / (3*64);
+
+# on [0, 1]
+integrate(\(x) log(abs(1-x)) / x / (x^4+1), 0, 1)
+(pracma::psi(1, 1) - pracma::psi(1, 1/2)) / 64 +
+	- pi^2 * 9/64 - log(2)^2 / 32 +
+	+ (digamma(5/8) - digamma(1/8)) *
+		(digamma(7/8) - digamma(3/8)) / 64 +
+	- (digamma(3/4) - digamma(1/4))^2 / 128;
+
+
+##################
+### Log(1 + x) ###
+
+### on [0, Inf]
+
+### I( log(1+x) / (x^4 + 1) )
+integrate(\(x) log(1+x) / (x^4 + 1), 0, Inf)
+- (pracma::psi(1, 5/8) - pracma::psi(1, 1/8)) / 64 +
+	- (digamma(3/4) - digamma(1/4)) / sin(pi/4) * pi / 16 +
+	+ (digamma(3/4) - digamma(1/4)) / sin(3*pi/4) * pi / 32 +
+	- (digamma(7/8) - digamma(3/8)) * pi / 32 +
+	+ log(2) / sin(pi/4) * pi / 16;
+
+### I( x * log(1+x) / (x^4 + 1) )
+integrate(\(x) x * log(1+x) / (x^4+1), 0, Inf)
+(pracma::psi(1, 3/4) - pracma::psi(1, 1/4)) / 64 +
+	+ (digamma(3/4) - digamma(1/4)) * log(2) / 16 + # pi*log(2)
+	- (digamma(7/8) - digamma(3/8))^2 / 64 +
+	+ (digamma(5/8) - digamma(1/8))^2 / 64;
+
+### I( x^2 * log(1+x) / (x^4 + 1) )
+integrate(\(x) x^2 * log(1+x) / (x^4 + 1), 0, Inf)
+- (pracma::psi(1, 5/8) - pracma::psi(1, 1/8)) / 64 +
+	- pi^2 * cos(3*pi/4) / sin(3*pi/4)^2 / 16 +
+	- (digamma(3/4) - digamma(1/4)) / sin(pi/4) * pi / 16 +
+	+ (digamma(3/4) - digamma(1/4)) / sin(3*pi/4) * pi / 32 +
+	- (digamma(7/8) - digamma(3/8)) * pi / 32 +
+	+ log(2) / sin(pi/4) * pi / 16;
+
+### I( log(1+x) / x / (x^4+1) )
+integrate(\(x) log(1+x) / x / (x^4+1), 0, Inf)
+pi^2 / (6*32) + pi^2 / 12;
+pi^2 * 17/(3*64);
+
+### on [0, 1]
+integrate(\(x) log(1+x) / x / (x^4+1), 0, 1)
+- (pracma::psi(1, 1) - pracma::psi(1, 1/2)) / 64 +
+	+ pi^2 / 12 - log(2)^2 / 32 +
+	- (digamma(5/8) - digamma(1/8)) *
+		(digamma(7/8) - digamma(3/8)) / 64 +
+	+ (digamma(3/4) - digamma(1/4))^2 / 128;
+
+
+### Helper:
+integrate(\(x) log(1+x) / x, 0, 1)
+pi^2 / 12
+
+# Limit:
+e = 1E-4
+integrate(\(x) log(x) / x / (x^4+1), 1, Inf)
+(pracma::psi(1, e/8) - pracma::psi(1, (e+4)/8)) / 64 +
+	- pi^2 * cos(e*pi/4) / sin(e*pi/4)^2 / 16;
+(16/e^2 - pi^2 * cos(e*pi/4) / sin(e*pi/4)^2) / 32;
+pi^2 / (6*32)
+
+
+### Other
+
+### I( log(1+x^n) / x / (x^(4*n)+1) )
+n = sqrt(3);
+integrate(\(x) log(1+x^n) / x / (x^(4*n)+1), 0, 1)
+((pracma::psi(1, 1/2) - pracma::psi(1, 1)) / 64 +
+	+ pi^2 / 12 - log(2)^2 / 32 +
+	- (digamma(5/8) - digamma(1/8)) *
+		(digamma(7/8) - digamma(3/8)) / 64 +
+	+ (digamma(3/4) - digamma(1/4))^2 / 128 ) / n;
+
+
+### I( log(x) / ((x-1)^4 + 1) )
+integrate(\(x) log(x) / ((x-1)^4 + 1), 1, Inf)
+integrate(\(x) log(1+x) / (x^4 + 1), 0, Inf)
+# Note: see previous integral;
+# Variation =>
+integrate(\(x) - x^2 * log(x) / (x^4 + (x-1)^4), 0, 1)
+
+###
+integrate(\(x) log(x) / ((x-1)^4 + 1), 0, 1)
+integrate(\(x) log(1-x) / (x^4+1), 0, 1)
+(pracma::psi(1, 5/8) - pracma::psi(1, 1/8)) / 64 +
+	+ (digamma(5/8) - digamma(1/8)) * log(2) / 32 +
+	+ (digamma(7/8) - digamma(3/8)) *
+		(digamma(3/4) - digamma(1/4)) / 64;
+# see Log.Complex.R;
+
+
+# Derivation:
+
+# from log(x+b) / (x^4 + 1)
+integrate(\(x) 1/(x+b) / (1 + x^4), 0, Inf)
+integrate(\(x) (1/(x+b) - (x^3-b*x^2+b^2*x-b^3)/ (1 + x^4)) / (b^4+1), 0, Inf)
+(-log(b) + pi*(b/sin(3*pi/4) - b^2 + b^3/sin(pi/4))/4) / (b^4+1)
+
+
+### Helper
+integrate(\(x) x * log(1-x^4) / (x^4+1), 0, 1)
+pi*log(2)/8 - Catalan / 2
+
+#
+integrate(\(x) x * log(1-x^2) / (x^4+1), 0, 1)
+pi*log(2)/16 - Catalan/2
+# Diff( x*log(1-x^2), x*log(1+x) )
+# => I( x*log(1-x) / ... );
+
+#
+integrate(\(x) x^3 * log(1-x^2) / (x^4+1), 0, 1)
+-5/(3*64) * pi^2 + log(2)^2 / 16;
+
+
+# from x * log(x - b) / (x^4 + 1)
+b = 1 / sqrt(3)
+integrate(\(x) x * 1/(x - b) / (x^4+1), 1, Inf)
+integrate(\(x) x * (1/(x - b) - (x+b)*(x^2+b^2)/ (x^4+1)) / (b^4+1), 1, Inf)
+integrate(\(x) (b/(x - b) - (b*x^3+b^2*x^2+b^3*x-1)/ (x^4+1)) / (b^4+1), 1, Inf)
+(- b*(log(1-b) - log(2)/4) +
+	- b^2*pi/sin(3*pi/4)/4 + b^2*(digamma(7/8) - digamma(3/8)) / 8 +
+	- b^3*pi/4 + b^3*(digamma(3/4) - digamma(1/4)) / 8 +
+	+ pi/sin(pi/4)/4 - (digamma(5/8) - digamma(1/8)) / 8) / (b^4+1);
+
