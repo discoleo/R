@@ -188,6 +188,50 @@ integrate(\(x) log(x) / x / (x^4+1), 1, Inf)
 pi^2 / (6*32)
 
 
+###################
+
+### I( log(x^2 + 1) / (x^4 + 1) )
+
+### I( log(x^2 + 1) / (x^4 + 1) )
+integrate(\(x) log(x^2+1) / (x^4+1), 0, 1)
+integrate(\(x) -2*atan(x) / (x^4+1), 0, 1)$value +
+	+ (pracma::psi(1, 5/8) - pracma::psi(1, 1/8)) / 32 +
+	+ (digamma(5/8) - digamma(1/8)) * pi/8 +
+	- (digamma(3/4) - digamma(1/4)) *
+		(digamma(7/8) - digamma(3/8)) / 32 +
+	+ (digamma(5/8) - digamma(1/8)) * log(2) / 16;
+# TODO
+
+### I( x^2 * log(x^2 + 1) / (x^4 + 1) )
+integrate(\(x) x^2 * log(x^2+1) / (x^4+1), 0, 1)
+integrate(\(x) 2*x^2 * atan(x) / (x^4+1), 0, 1)$value +
+	+ (pracma::psi(1, 7/8) - pracma::psi(1, 3/8)) / 32 +
+	- (digamma(7/8) - digamma(3/8)) * pi / 8 +
+	+ (digamma(3/4) - digamma(1/4)) *
+		(digamma(5/8) - digamma(1/8)) / 32 +
+	+ (digamma(7/8) - digamma(3/8)) * log(2) / 16;
+# TODO
+
+### I( (x^2 + 1) * log(x^2 + 1) / (x^4 + 1) )
+integrate(\(x) (x^2 + 1) * log(x^2 + 1) / (x^4 + 1), 0, 1)
+sqrt(2)*pi/8 * (pi/2 + log(2)) +
+	+ 2*(pracma::psi(1, 7/8) - pracma::psi(1, 3/8)) / 64 +
+	- pi/2 * (atan(exp(1i*pi/4))*exp(1i*pi/4) +
+		+ atan(exp(-1i*pi/4))*exp(-1i*pi/4));
+
+
+# Note:
+(digamma(3/4) - digamma(1/4)) # == pi;
+#
+sum(atan(exp(c(1i,-1i)*pi/4))*exp(c(1i,-1i)*pi/4)) # ==
+(digamma(7/8) - digamma(3/8)) / 4
+#
+sum(atan(exp(c(1i,-1i)*pi/4))*exp(c(-1i,1i)*pi/4)) # ==
+(digamma(5/8) - digamma(1/8)) / 4
+
+
+#############
+
 ##########
 ### Other:
 
@@ -215,7 +259,6 @@ integrate(\(x) log(1-x) / (x^4+1), 0, 1)
 	+ (digamma(5/8) - digamma(1/8)) * log(2) / 32 +
 	+ (digamma(7/8) - digamma(3/8)) *
 		(digamma(3/4) - digamma(1/4)) / 64;
-# see Log.Complex.R;
 
 
 ###############
@@ -238,12 +281,20 @@ sqrt(2)*pi/8 * (2*atan(b^2) + log(b^4 + 1)) +
 		+ atan(b*exp(-1i*pi/4))*exp(-1i*pi/4));
 
 
-
+### on [0, Inf]
 # from log(x+b) / (x^4 + 1)
 integrate(\(x) 1/(x+b) / (1 + x^4), 0, Inf)
 integrate(\(x) (1/(x+b) - (x^3-b*x^2+b^2*x-b^3)/ (1 + x^4)) / (b^4+1), 0, Inf)
 (-log(b) + pi*(b/sin(3*pi/4) - b^2 + b^3/sin(pi/4))/4) / (b^4+1)
 
+### on [0, 1]
+# from log(x^2+b^2) / (x^4 + 1)
+# Note: does NOT include factor * 2*b;
+b = sqrt(5)
+integrate(\(x) 1/(x^2 + b^2) / (x^4 + 1), 0, 1)
+integrate(\(x) (1/(x^2 + b^2) - (x^2-b^2)/ (x^4 + 1)) / (b^4+1), 0, 1)
+(pi/(2*b) - atan(b)/b - (digamma(7/8) - digamma(3/8))/8 +
+	+ b^2 * (digamma(5/8) - digamma(1/8)) / 8) / (b^4+1);
 
 ### Helper
 integrate(\(x) x * log(1-x^4) / (x^4+1), 0, 1)
