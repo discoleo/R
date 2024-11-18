@@ -207,7 +207,19 @@ integrate(\(x) x^p * atan(x) / (x^2 + 1), 0, Inf)
 pi/4 / sin(pi*p/2) * (digamma(-p/2) - 2*digamma(-p) - Euler);
 
 
+###########
 ### Pow = 4
+
+### I( atan(x) / (x^4 + 1) )
+integrate(\(x) atan(x) / (x^4 + 1), 0, Inf, rel.tol=1E-9)
+(pracma::psi(1, 7/8) - pracma::psi(1, 3/8)) / 64 +
+	+ (digamma(5/8) - digamma(1/8)) * pi / 32;
+
+### I( x^2 * atan(x) / (x^4 + 1) )
+integrate(\(x) x^2 * atan(x) / (x^4 + 1), 0, Inf, rel.tol=1E-9)
+(pracma::psi(1, 3/8) - pracma::psi(1, 7/8)) / 64 +
+	- (digamma(5/8) - digamma(1/8)) * pi / 32 + pi^2 / sin(3*pi/4) / 8;
+
 
 ### I( x * atan(k*x) / (x^4 + 1) )
 k = 5^(1/3)
@@ -258,6 +270,11 @@ pi*(pi - 2*log(2)) * sqrt(2) / 16
 p = 1/sqrt(5); # p != 1;
 integrate(\(x) x^p * atan(x^2) / (x^4 + 1), 0, Inf)
 pi/8 / sin(pi*(p-1)/4) * (digamma((1-p)/4) - 2*digamma((1-p)/2) - Euler);
+
+# Special Case:
+integrate(\(x) atan(x^2) / (x * (x^4 + 1)), 0, Inf)
+pi*log(2)/4;
+
 
 ### Gen: I( atan(k * x^2) / (x^4 + 1) )
 k = 5^(1/3)
