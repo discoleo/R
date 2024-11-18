@@ -6,7 +6,7 @@
 ## Integrals: Logarithms
 ## Log-Fractions: Power = 4
 ##
-## draft v.0.1a
+## draft v.0.1b
 
 
 ##################
@@ -23,8 +23,9 @@
 # [refactor]
 # - moved Pow = 4 to this file from file:
 #   Integrals.Log.Fractions.Other.R;
-# - TODO: move also variants from:
+# - moved specific variants from:
 #   Integrals.Log.Fractions.Complex.R;
+# - TODO: move also the Derivation;
 
 ####################
 
@@ -112,7 +113,7 @@ integrate(\(x) log(abs(1-x)) / x / (x^4+1), 0, 1)
 ##################
 ### Log(1 + x) ###
 
-### on [0, Inf]
+### on [0, Inf] & [0. 1]
 
 ### I( log(1+x) / (x^4 + 1) )
 integrate(\(x) log(1+x) / (x^4 + 1), 0, Inf)
@@ -122,12 +123,24 @@ integrate(\(x) log(1+x) / (x^4 + 1), 0, Inf)
 	- (digamma(7/8) - digamma(3/8)) * pi / 32 +
 	+ log(2) / sin(pi/4) * pi / 16;
 
+# on [0, 1]
+# TODO
+
+
 ### I( x * log(1+x) / (x^4 + 1) )
 integrate(\(x) x * log(1+x) / (x^4+1), 0, Inf)
 (pracma::psi(1, 3/4) - pracma::psi(1, 1/4)) / 64 +
 	+ (digamma(3/4) - digamma(1/4)) * log(2) / 16 + # pi*log(2)
 	- (digamma(7/8) - digamma(3/8))^2 / 64 +
 	+ (digamma(5/8) - digamma(1/8))^2 / 64;
+
+# on [0, 1]
+integrate(\(x) x * log(1+x) / (x^4+1), 0, 1)
+(pracma::psi(1, 3/4) - pracma::psi(1, 1/4)) / 64 +
+	+ (digamma(3/4) - digamma(1/4)) * log(2) / 32 + # pi*log(2)
+	- (digamma(7/8) - digamma(3/8))^2 / 128 +
+	+ (digamma(5/8) - digamma(1/8))^2 / 128;
+
 
 ### I( x^2 * log(1+x) / (x^4 + 1) )
 integrate(\(x) x^2 * log(1+x) / (x^4 + 1), 0, Inf)
@@ -137,6 +150,16 @@ integrate(\(x) x^2 * log(1+x) / (x^4 + 1), 0, Inf)
 	+ (digamma(3/4) - digamma(1/4)) / sin(3*pi/4) * pi / 32 +
 	- (digamma(7/8) - digamma(3/8)) * pi / 32 +
 	+ log(2) / sin(pi/4) * pi / 16;
+
+
+### I( x^3 * log(x+1) / (x^4+1) )
+integrate(\(x) x^3 * log(x+1) / (x^4+1), 0, 1)
+(pracma::psi(1, 1) - pracma::psi(1, 1/2)) / 64 +
+	+ log(2)^2 / 32 +
+	+ (digamma(5/8) - digamma(1/8)) *
+		(digamma(7/8) - digamma(3/8)) / 64 +
+	- (digamma(3/4) - digamma(1/4))^2 / 128;
+
 
 ### I( log(1+x) / x / (x^4+1) )
 integrate(\(x) log(1+x) / x / (x^4+1), 0, Inf)

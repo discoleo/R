@@ -253,7 +253,10 @@ integrate(\(x) log(1+x) / (x^2-x+1), 0, 1)
 # TODO
 
 
-########################
+##############
+
+### Pow = 4
+# see also Integrals.Log.Fractions.P4.R;
 
 ### I( x^p * log(x + 1i) / (x^4 + 1) )
 
@@ -324,35 +327,9 @@ sum(atan(exp(c(1i,-1i)*pi/4))*exp(c(1i,-1i)*pi/4)) # ==
 sum(atan(exp(c(1i,-1i)*pi/4))*exp(c(-1i,1i)*pi/4)) # ==
 (digamma(5/8) - digamma(1/8)) / 4
 
-
-### I( x * log(x+1) / (x^4+1) )
-integrate(\(x) x * log(x+1) / (x^4+1), 0, 1)
-(pracma::psi(1, 3/4) - pracma::psi(1, 1/4)) / 64 +
-	+ (digamma(3/4) - digamma(1/4)) * log(2) / 32 + # pi*log(2)
-	- (digamma(7/8) - digamma(3/8))^2 / 128 +
-	+ (digamma(5/8) - digamma(1/8))^2 / 128;
-
-### I( x^3 * log(x+1) / (x^4+1) )
-integrate(\(x) x^3 * log(x+1) / (x^4+1), 0, 1)
-(pracma::psi(1, 1) - pracma::psi(1, 1/2)) / 64 +
-	+ log(2)^2 / 32 +
-	+ (digamma(5/8) - digamma(1/8)) *
-		(digamma(7/8) - digamma(3/8)) / 64 +
-	- (digamma(3/4) - digamma(1/4))^2 / 128;
-
-### I( log(1-x) / (x^4+1) )
-integrate(\(x) log(1-x) / (x^4+1), 0, 1)
-(pracma::psi(1, 5/8) - pracma::psi(1, 1/8)) / 64 +
-	+ (digamma(5/8) - digamma(1/8)) * log(2) / 32 +
-	+ (digamma(7/8) - digamma(3/8)) *
-		(digamma(3/4) - digamma(1/4)) / 64;
-
-### I( x^2 * log(1-x) / (x^4+1) )
-integrate(\(x) x^2 * log(1-x) / (x^4+1), 0, 1)
-(pracma::psi(1, 7/8) - pracma::psi(1, 3/8)) / 64 +
-	+ (digamma(7/8) - digamma(3/8)) * log(2) / 32 +
-	- (digamma(5/8) - digamma(1/8)) *
-		(digamma(3/4) - digamma(1/4)) / 64;
+# Note:
+# - Real-variants moved to file:
+#   Integrals.Log.Fractions.P4.R;
 
 
 ### Helper:
