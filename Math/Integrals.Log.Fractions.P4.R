@@ -29,6 +29,7 @@
 ####################
 
 ### Helper Constants
+
 Catalan = 0.915965594177219015054603514;
 
 
@@ -164,7 +165,8 @@ integrate(\(x) log(x) / x / (x^4+1), 1, Inf)
 pi^2 / (6*32)
 
 
-### Other
+##########
+### Other:
 
 ### I( log(1+x^n) / x / (x^(4*n)+1) )
 n = sqrt(3);
@@ -193,7 +195,26 @@ integrate(\(x) log(1-x) / (x^4+1), 0, 1)
 # see Log.Complex.R;
 
 
-# Derivation:
+###############
+### Derivation:
+
+### Base:
+# see file: Integrals.Log.Fractions.R;
+b = sqrt(pi)
+integrate(\(x) log(x^2 + b^2) / (x^4 + 1), 0, Inf)
+sqrt(2)*pi/8 * (2*atan(1/b^2) + log(b^4 + 1)) +
+	- pi/2 * (atan(1/b*exp(1i*pi/4))*exp(1i*pi/4) +
+		+ atan(1/b*exp(-1i*pi/4))*exp(-1i*pi/4));
+
+###
+b = sqrt(5)
+integrate(\(x) x^2 * log(x^2 + b^2) / (x^4 + 1), 0, Inf)
+sqrt(2)*pi/8 * (2*atan(b^2) + log(b^4 + 1)) +
+	- pi^2*cos(3*pi/4)/sin(3*pi/4)^2 / 8 +
+	- pi/2 * (atan(b*exp(1i*pi/4))*exp(1i*pi/4) +
+		+ atan(b*exp(-1i*pi/4))*exp(-1i*pi/4));
+
+
 
 # from log(x+b) / (x^4 + 1)
 integrate(\(x) 1/(x+b) / (1 + x^4), 0, Inf)
@@ -225,4 +246,38 @@ integrate(\(x) (b/(x - b) - (b*x^3+b^2*x^2+b^3*x-1)/ (x^4+1)) / (b^4+1), 1, Inf)
 	- b^2*pi/sin(3*pi/4)/4 + b^2*(digamma(7/8) - digamma(3/8)) / 8 +
 	- b^3*pi/4 + b^3*(digamma(3/4) - digamma(1/4)) / 8 +
 	+ pi/sin(pi/4)/4 - (digamma(5/8) - digamma(1/8)) / 8) / (b^4+1);
+
+
+#####################
+#####################
+
+### Variants: Pow = 4
+
+### I( log(x^4 - x^2 + 1) / (x^4 + 1) )
+integrate(\(x) log(x^4 - x^2 + 1) / (x^4 + 1), 0, Inf)
+b = cos(pi/3) + c(1i,-1i)*sin(pi/3);
+sum(sqrt(2)*pi/8 * (2*atan(1/b^2) + log(b^4 + 1)) +
+	- pi/2 * (atan(1/b*exp(1i*pi/4))*exp(1i*pi/4) +
+		+ atan(1/b*exp(-1i*pi/4))*exp(-1i*pi/4)) );
+
+
+### Gen: I( log(x^4 + 2*cos(a)*x^2 + 1) / (x^4 + 1) )
+a = 1/pi;
+integrate(\(x) log(x^4 + 2*cos(a)*x^2 + 1) / (x^4 + 1), 0, Inf)
+b = cos(a/2) + c(1i,-1i)*sin(a/2);
+sum(sqrt(2)*pi/8 * (2*atan(1/b^2) + log(b^4 + 1)) +
+	- pi/2 * (atan(1/b*exp(1i*pi/4))*exp(1i*pi/4) +
+		+ atan(1/b*exp(-1i*pi/4))*exp(-1i*pi/4)) );
+
+
+### I( log(Poly(x^2)) / (x^4 + 1) )
+integrate(\(x) log(x^10 + 9*x^8 + 28*x^6 + 35*x^4 + 15*x^2 + 1) / (x^4 + 1), 0, Inf)
+cs = 2*cos(2*seq(5)*pi/11);
+b  = abs(cs);
+sum(sqrt(2)*pi/8 * (2*atan(1/b^2) + log(b^4 + 1)) +
+	- pi/2 * (atan(1/b*exp(1i*pi/4))*exp(1i*pi/4) +
+		+ atan(1/b*exp(-1i*pi/4))*exp(-1i*pi/4)) );
+# Test:
+x = - cs^2;
+x^5 + 9*x^4 + 28*x^3 + 35*x^2 + 15*x + 1 # == 0
 
