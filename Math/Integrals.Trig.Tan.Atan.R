@@ -403,6 +403,10 @@ integrate(\(x) x^4/(x^2 + b^2) / (x^4 + 1), 0, Inf, rel.tol=1E-9)
 integrate(\(x) ((x^2 - b^2)/(x^4+1) + b^4/(x^2 + b^2)) / (b^4 + 1), 0, Inf)
 pi * (1/sin(3*pi/4)- b^2/sin(pi/4) + 2*b^3) / 4 / (b^4 + 1)
 
+# Helper:
+integrate(\(b) log(b) / (b^4 + 1), 0, 1)
+(pracma::psi(1, 5/8) - pracma::psi(1, 1/8)) / 64;
+
 
 ### Higher Powers:
 
@@ -443,6 +447,17 @@ pi * (1/sin(3*pi/8) * b^3 + 1/sin(7*pi/8) / b - 2/sin(3*pi/4)) / 8 / (b^8+1)
 
 ### Pow = 4
 
+### I( atan(x) / (x^4+1) )
+integrate(\(x) atan(x) / (x^4+1), 0, 1)
+integrate(\(x) -1/2 * log(x^2 + 1) / (x^4+1), 0, 1)$value +
+(pracma::psi(1, 5/8) - pracma::psi(1, 1/8)) / 64 +
+	+ (digamma(5/8) - digamma(1/8)) * pi / 16 +
+	+ (digamma(5/8) - digamma(1/8)) * log(2) / 32 +
+	- (digamma(3/4) - digamma(1/4)) *
+		(digamma(7/8) - digamma(3/8)) / 64 +0;
+# TODO
+
+
 ### I( x * atan(x) / (x^4+1) )
 integrate(\(x) x * atan(x) / (x^4+1), 0, 1)
 (digamma(7/8) - digamma(3/8)) *
@@ -453,6 +468,17 @@ integrate(\(x) x * atan(x) / (x^4+1), 0, 1)
 integrate(\(x) x^3 * atan(x) / (x^4+1), 0, 1)
 (digamma(7/8) - digamma(3/8))^2 / 128 +
 	- (digamma(5/8) - digamma(1/8))^2 / 128 + Catalan/2;
+
+
+### Derivation:
+
+# from atan(x/b) / (x^4 + 1)
+b = sqrt(5)
+integrate(\(x) x / (x^2+b^2) / (x^4+1), 0, 1)
+integrate(\(x) x * (1/(x^2+b^2) - (x^2-b^2)/(x^4+1)) / (b^4+1), 0, 1)
+integrate(\(x) (x/(x^2+b^2) - (x^3-b^2*x)/(x^4+1)) / (b^4+1), 0, 1)
+(log(b^2 + 1)/2 - log(b) - log(2)/4 +
+	+ b^2*(digamma(3/4) - digamma(1/4)) / 8) / (b^4+1)
 
 
 ####################
