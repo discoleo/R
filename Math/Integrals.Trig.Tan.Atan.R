@@ -265,6 +265,10 @@ integrate(\(x) atan(x^2) / (x^4 + 1), 0, Inf, rel.tol=1E-9)
 pi^2 / sin(pi/4) / 8 - pi * (digamma(1/2) - digamma(1/4)) / sin(pi/4) / 8
 pi*(pi - 2*log(2)) * sqrt(2) / 16
 
+### I( x^2 * atan(x^2) / (x^4 + 1) )
+integrate(\(x) x^2 * atan(x^2) / (x^4 + 1), 0, Inf)
+pi/8 / sin(pi/4) * (digamma(-1/4) - 2*digamma(-1/2) - Euler);
+
 
 ### Gen: I( x^p * atan(x^2) / (x^4 + 1) )
 p = 1/sqrt(5); # p != 1;
@@ -438,6 +442,16 @@ pi * (1/sin(3*pi/8) * b^3 + 1/sin(7*pi/8) / b - 2/sin(3*pi/4)) / 8 / (b^8+1)
 # Note:
 # (digamma(3/4) - digamma(1/4)) == pi;
 # (allows slight simplification)
+
+##################
+
+### I( atan(x^3) / (x^6 + 1) )
+integrate(\(x) atan(x^3) / (x^6 + 1), 0, Inf)
+- pi/12 / sin(pi/3) * (digamma(1/3) - 2*digamma(2/3) - Euler);
+
+### I( x^3 * atan(x^3) / (x^6 + 1) )
+integrate(\(x) x^3 * atan(x^3) / (x^6 + 1), 0, Inf)
+pi/12 / sin(pi/6) * (digamma(-1/6) - 2*digamma(-1/3) - Euler);
 
 
 ####################
