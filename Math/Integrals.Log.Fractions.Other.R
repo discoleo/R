@@ -70,6 +70,8 @@ integrate(\(x) log(1 - x) / x, 0, 1/3)
 # Maths 505: This integral is actually one of your favorite constants
 # https://www.youtube.com/watch?v=83mUOaF7G9A
 
+
+### Gen:
 n = sqrt(3)
 integrate(\(x) abs(log((1-x)/(1+x)))^n, 0, 1)
 integrate(\(x) log((1+x)/(1-x))^n, 0, 1)
@@ -89,16 +91,46 @@ x$value + 1/3 * gamma(4)*(1 - 1/4) * pracma::zeta(3) - log(2)^3 / 6
 
 
 ### I( log((x - 1) / (x + 1)) / x ) on [1, Inf]
-# Maths 505: A RIDICULOUSLY AWESOME LOG INTEGRAL!!!
-# https://www.youtube.com/watch?v=tTu6hedSlm0
+# 1. Maths 505: A RIDICULOUSLY AWESOME LOG INTEGRAL!!!
+#    https://www.youtube.com/watch?v=tTu6hedSlm0
+# 2. Maths 505: A satisfying integral
+#    https://www.youtube.com/watch?v=QXptzDZveTQ
 
 # numerical issue:
 integrate(\(x) log((exp(x) - 1) / (exp(x) + 1)), 0, Inf)
 integrate(\(x) log((exp(x) - 1) / (exp(x) + 1)), 0, 100)
+# robust:
+integrate(\(x) log((1 - exp(-x)) / (1 + exp(-x))), 0, Inf, rel.tol=1E-9)
 # alternative:
 integrate(\(x) log((x - 1) / (x + 1)) / x, 1, Inf)
 integrate(\(x) log((1 - x) / (x + 1)) / x, 0, 1)
 - pi^2/4
+
+
+### Pow = 2
+integrate(\(x) log((exp(x)+1) / (exp(x)-1))^2, 0, Inf) # numerical issues
+integrate(\(x) log((1+exp(-x)) / (1 - exp(-x)))^2, 0, Inf, rel.tol=1E-9)
+integrate(\(x) log((1-x)/(1+x))^2 / x, 0, 1)
+integrate(\(x) 2 * log(x)^2 / (1 - x^2), 0, 1)
+7/2 * pracma::zeta(3)
+
+### Pow = 3
+# see Fractions.Unity: => psi(n, 1/2);
+integrate(\(x) log((1-x)/(1+x))^3 / x, 0, 1)
+integrate(\(x) 2 * log(x)^3 / (1 - x^2), 0, 1)
+- 45/4 * pracma::zeta(4);
+pracma::psi(3, 1/2) / 2^3;
+
+
+### Gen: I( log((1-x)/(1+x))^n / x )
+n = sqrt(5)
+integrate(\(x) abs(log((1-x)/(1+x)))^n / x, 0, 1)
+integrate(\(x) 2 * log(1/x)^n / (1 - x^2), 0, 1)
+gamma(n+1) * (2-1/2^n) * pracma::zeta(n+1)
+
+# Note: pracma::psi requires n = Integer;
+# - may be correct only for integers!
+pracma::psi(n, 1/2) / 2^n;
 
 
 ### Simple:
