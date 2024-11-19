@@ -569,6 +569,25 @@ p = sqrt(5)
 integrate(\(x) log(x) * atan(x^p) / x, 0, 1)
 - pi^3 / (32 * p^2)
 
+###############
+
+### I( log(x^2 + 1) * atan(x) )
+integrate(\(x) log(x^2+1) * atan(x), 0, 1)
+3/48*pi^2 + pi*log(2)/4 - log(2)^2 / 4 + log(2) - pi/2
+
+### I( log(x^2 + 1) * atan(x) / (x^2+1) )
+integrate(\(x) log(x^2+1) * atan(x) / (x^2+1), 0, 1)
+(pi/4)^2 * log(2) + 21/64 * pracma::zeta(3) - pi * Catalan/4;
+
+### I( x * log(x^2 + 1) * atan(x) / (x^2+1) )
+integrate(\(x) x * log(x^2+1) * atan(x) / (x^2+1), 0, 1)
+integrate(\(x) -1/4 * log(x^2+1)^2 / (x^2+1), 0, 1)$value +
+	+ log(2)^2 * pi/16;
+integrate(\(x) -1/24 * log(x^2+1)^3 / x^2, 0, 1)$value +
+	+ log(2)^2 * pi/16 - log(2)^3 / 24;
+# TODO
+
+
 ### Other:
 integrate(\(x) log(x) * x / (x^2 + 1), 0, 1)
 - pi^2/48
@@ -587,13 +606,6 @@ pi^3 / 16
 ###
 integrate(\(x) log(x^2 + 1) / x, 0, 1)
 pi^2/24
-
-###############
-
-### I( log(x^2 + 1) * atan(x) )
-integrate(\(x) log(x^2 + 1) * atan(x), 0, 1)
-3/48*pi^2 + pi*log(2)/4 - log(2)^2 / 4 + log(2) - pi/2
-
 
 ###############
 ###############
