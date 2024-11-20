@@ -57,6 +57,21 @@ integrate(\(x) sapply(x, \(y)
 ###########
 ### Log ###
 
+### Simple Logs
+
+### I( x * log(x) * log(y)^2 / (1 - x*y) )
+# Maths 505: A very interesting double integral with a beautiful result
+# https://www.youtube.com/watch?v=lWVBnWCz63I
+# - series expansion of 1/(1 - x*y);
+
+integrate(\(x) sapply(x, \(y)
+	integrate(\(x) x * log(x) * log(y)^2 / (1 - x*y), 0, 1)$value), 0, 1)
+# - 2 * sum(1/j^3 * 1/(j+1)^2); j >= 1;
+- 2*pracma::zeta(3) + 6*pracma::zeta(2) - 8;
+
+
+### Mixed Logs
+
 ### I( log(1 - x*y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) log(1-x*y), 0, 1)$value), 0, 1)
 2 - pi^2/6
