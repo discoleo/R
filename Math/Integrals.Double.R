@@ -70,6 +70,15 @@ integrate(\(x) sapply(x, \(y)
 - 2*pracma::zeta(3) + 6*pracma::zeta(2) - 8;
 
 
+### I( x * log(x)^2 * log(y) / (1 - x*y) )
+integrate(\(x) sapply(x, \(y)
+	integrate(\(x) x * log(x)^2 * log(y) / (1 - x*y), 0, 1)$value), 0, 1)
+# - 2 * sum(1/j^2 * 1/(j+1)^3); j >= 1;
+- 2*pracma::zeta(3) - 6*pracma::zeta(2) + 12;
+
+# TODO: more variants;
+
+
 ### Mixed Logs
 
 ### I( log(1 - x*y) )
