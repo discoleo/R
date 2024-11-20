@@ -129,7 +129,7 @@ integrate(\(x) 2 * log(1/x)^n / (1 - x^2), 0, 1)
 gamma(n+1) * (2-1/2^n) * pracma::zeta(n+1)
 
 # Note: pracma::psi requires n = Integer;
-# - may be correct only for integers!
+# - may be correct only for integers anyway!
 pracma::psi(n, 1/2) / 2^n;
 
 
@@ -298,6 +298,8 @@ integrate(\(x) log(1+x) * (x^2 + 2) / (1-x^3) - log(2)/(1-x), 0, 1)
 	- pi^2/12 + log(2)^2/2;
 
 
+### Derivation:
+
 # from log(x + b) / (x^3 + 1)
 b = sqrt(5)
 integrate(\(x) 1 / (x+b) / (x^3+1), 0, 1)
@@ -323,6 +325,42 @@ integrate(\(x) ((b^2*x^2-x+b)/(x^3+1) - b^2/(x+b)) / (b^3-1), 0, 1)
 (b^2*log(b) - b^2*log(b+1) + b^2*log(2) / 3 +
 	- (digamma(5/6) - digamma(1/3)) / 6 +
 	+ (digamma(2/3) - digamma(1/6)) * b / 6) / (b^3 - 1);
+
+
+# from log(x^3+b^3) / (x^3+1)
+# Note: does NOT include factor * 3*b^2;
+b = sqrt(5)
+integrate(\(x) 1/(x^3+b^3) / (x^3+1), 0, 1)
+integrate(\(x) - (1/(x^3+b^3) - 1/(x^3+1)) / (b^3-1), 0, 1)
+((digamma(2/3) - digamma(1/6)) * b^2 / 2 +
+	- log(b+1) + log(b^2-b+1)/2 - sin(2*pi/3)*pi/3 +
+	- 2*sin(2*pi/3)*atan((1/b + cos(2*pi/3))/sin(2*pi/3))) / (3*b^2) / (b^3-1)
+
+# Helper:
+integrate(\(x) 1/(x^3+b^3), 0, 1)
+integrate(\(x) 1/(x^3+1) / b^2, 0, 1/b)
+(log(b+1) + cos(2*pi/3)*log(b^2-b+1) +
+	- log(b) - 2*cos(2*pi/3)*log(b) +
+	+ 2*sin(2*pi/3)*atan((1/b + cos(2*pi/3))/sin(2*pi/3)) +
+	+ sin(2*pi/3)*pi/3) / (3*b^2)
+
+### I( log(x+1) / (x^3-1) )
+integrate(\(x) (log(x+1) - log(2)) / (x^3-1), 0, 1)
+integrate(\(x) log(x+1) / (x^3-1) - log(2)/3/(x-1), 0, 1)$value +
+	+ (digamma(1) - digamma(1/3) - log(3)) * log(2) / 3;
+integrate(\(x) -1/3 * x * log(x+1) / (x^2+x+1), 0, 1)$value +
+	- (pracma::psi(1, 1/3) - pracma::psi(1, 2/3)) / 54 +
+	+ (digamma(1) - digamma(1/3) - log(3)) * log(2) / 3 +
+	+ (pi^2/12 - log(2)^2/2) / 3;
+# TODO: ?
+
+#
+integrate(\(x) log(x+1) / (x-1) - log(2)/(x-1), 0, 1)
+pi^2/12 - log(2)^2/2 # Li(1/2)
+
+#
+integrate(\(x) Im(log(x+1) / (x + 1/2+1i*sqrt(3)/2)), 0, 1)
+- (pracma::psi(1, 1/3) - pracma::psi(1, 2/3)) * sqrt(3) / 72;
 
 
 ###########
