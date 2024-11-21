@@ -76,6 +76,15 @@ integrate(\(x) sapply(x, \(y)
 # - 2 * sum(1/j^2 * 1/(j+1)^3); j >= 1;
 - 2*pracma::zeta(3) - 6*pracma::zeta(2) + 12;
 
+
+### I( x^2 * log(x)^2 * log(y) / (1 - x*y) )
+integrate(\(x) sapply(x, \(y)
+	integrate(\(x) x^2 * log(x)^2 * log(y) / (1 - x*y), 0, 1)$value), 0, 1)
+# - 2 * sum(1/j^2 * 1/(j+2)^3); j >= 1;
+- pracma::zeta(3)/2 - 3/4*pracma::zeta(2) + 3/8 * (1+1/2) + 1/2*(2+1/4+1/8);
+- pracma::zeta(3)/2 - 3/4*pracma::zeta(2) + 1 + 3/4;
+
+
 # TODO: more variants;
 
 
@@ -88,6 +97,9 @@ integrate(\(x) sapply(x, \(y) integrate(\(x) log(1-x*y), 0, 1)$value), 0, 1)
 ### I( log(1 + x*y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) log(1+x*y), 0, 1)$value), 0, 1)
 pi^2/12 + 2*log(2) - 2
+
+### I( log(1 - x^2*y^2) )
+integrate(\(x) sapply(x, \(y) integrate(\(x) log(1-x^2*y^2), 0, 1)$value), 0, 1)
 
 
 ### I( log(1-x*y) / (x+y) )
