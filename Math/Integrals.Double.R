@@ -98,6 +98,37 @@ integrate(\(x) sapply(x, \(y) integrate(\(x) log(1-x*y), 0, 1)$value), 0, 1)
 integrate(\(x) sapply(x, \(y) integrate(\(x) log(1+x*y), 0, 1)$value), 0, 1)
 pi^2/12 + 2*log(2) - 2
 
+
+### I( log(1 + x + x*y) )
+# Maths 505: 
+# https://www.youtube.com/watch?v=xiSw7Ou4RIY
+
+### I( log(1 + x + x*y) )
+integrate(\(x) sapply(x, \(y)
+	integrate(\(x) log(1 + x + x*y), 0, 1)$value), 0, 1)
+3*log(3) - 2*log(2) + polylog2(-1) - polylog2(-2) - 2;
+3*log(3) - 2*log(2) - pi^2/12 - polylog2(-2) - 2;
+
+
+### I( log(1 - x + x*y) )
+integrate(\(x) sapply(x, \(y)
+	integrate(\(x) log(1 - x + x*y), 0, 1)$value), 0, 1)
+pi^2/6 - 2
+
+
+### I(x, y, z)
+# Fails numerically: but trivial extension of above integral;
+# library(Rmpfr)
+integrate(\(x) sapply(x, \(y)
+	integrate(\(x) sapply(x, \(z)
+	integrate(\(x) {
+		x = mpfr(x, 240); y = mpfr(y, 240);
+		as.numeric(log(x) + log(1 + y + y*z));
+	}, 0, 1, rel.tol=1E-12)$value),
+	0, 1, rel.tol=1E-10)$value), 0, 1)
+3*log(3) - 2*log(2) - pi^2/12 - polylog2(-2) - 3;
+
+
 ### I( log(1 - x^2*y^2) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) log(1-x^2*y^2), 0, 1)$value), 0, 1)
 
