@@ -63,6 +63,40 @@ print.dpm = function(p, y="y", x="x", do.sort=TRUE) {
 
 ### D
 
+### Eval
+
+### Eval dp at the roots of the polynomial;
+eval.dpAtRoots = function(x) {
+	n = length(x);
+	if(n <= 1) return(0);
+	sapply(seq(n), function(id) {
+		prod(x[id] - x[-id]);
+	})
+}
+### Eval dp at x
+# r = roots of original polynomial;
+# - dp is based on roots of polynomial;
+eval.dpBasedOnRoots = function(x, r) {
+	n = length(r);
+	if(n <= 1) return(0);
+	if(length(x) > 1) {
+		# TODO
+		stop("Not yet implemented!");
+	}
+	dx = x - r;
+	# x == Root
+	id = which(dx == 0);
+	if(length(id) > 0) {
+		if(length(id) >= 2) return(0);
+		return(prod(dx[-id]));
+	}
+	# ELSE:
+	prod(dx) * sum(1/dx);
+}
+
+
+### Derivative
+
 # D( p(x) )
 dp.pm = function(p, by="x", xn=by) {
 	nc = match(xn, names(p));
