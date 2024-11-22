@@ -75,11 +75,13 @@ polylog2(0.6, 3) - li3_06;
 
 
 ### Test:
-x = 1/3; # ugly value!
+x = 1/3; # value behaves badly!
+# Note:
+# - in practice, one may know only the z value and NOT x;
 z = exp(1i*x);
-integrate(\(x) Re(log(1- exp(1i*x))), 0, x)
+integrate(\(x) Re(log(1- exp(1i*x))), 0, x) # OK
 # Approximations: both fail!
-thz = Im(log(z));
+thz = Im(log(z)); # recompute x;
 integrate(\(x) Re(log(1- exp(1i*x))), 0, thz)
 #
 thz = Im(log(z))/2;
