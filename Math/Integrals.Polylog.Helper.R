@@ -73,6 +73,19 @@ if(FALSE) {
 li3_06 = 0.6560025136329806832346611928113322291802755981380034005592;
 polylog2(0.6, 3) - li3_06;
 
+### Rmpfr:Li2
+# Note: package Rmpfr implements Li2 (over reals);
+polylog2(1/3) - Rmpfr::Li2(1/3)
+# some drop in precision of pracma::polylog
+polylog2(1/2) - Rmpfr::Li2(1/2)
+polylog2(0.525) - Rmpfr::Li2(0.525)
+polylog2(2/3) - Rmpfr::Li2(2/3) # quit good;
+polylog2(4/5) - Rmpfr::Li2(4/5)
+polylog2(1) - Rmpfr::Li2(1)
+Re(polylog2(1.5)) - Rmpfr::Li2(1.5)
+Re(polylog2(2)) - Rmpfr::Li2(2)
+Re(polylog2(7/3)) - Rmpfr::Li2(mpfr(7, 240) / 3)
+
 
 ### Test:
 x = 1/3; # value behaves badly!
