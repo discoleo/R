@@ -4,18 +4,32 @@
 polylog2 = function (z, n = 2) {
 	# Bug in pracma::polylog;
 	stopifnot(is.numeric(n));
-	if(is.complex(z) && n == 2) {
+	if(is.complex(z)) {
 		if(Im(z) == 0) { z = Re(z); }
 		else {
 			warning("Complex not yet implemented!");
 			if(abs(abs(z) - 1) > 1E-8) warning("Result will be incorrect!");
-			# TODO: only Real-part:
-			y = - (pi^2/3 + Re(log(-z)^2)) / 4;
+			if(n == 2) {
+				y  = - (pi^2/3 + Re(log(-z)^2)) / 4;
+				# TODO: complex-part properly;
+				thz = Im(log(z));
+				yi = integrate(\(x) Re(log(1- exp(1i*x))), 0, thz)$value;
+				# thz = Im(log(z))/2;
+				# yi = integrate(\(x) 2*log(abs(2*sin(x))), 0, thz)$value;
+				y  = y - 1i*yi;
+			} else if(n == 3) {
+				# TODO: compute real-part;
+				x = log(z) / (2*pi);
+				y = (4*pi^3/3 * (- x^3 + 3i/2*x^2 + x/2)) / 2;
+			} else stop("Not yet implemented!");
 			return(y);
 		}
 	}
 	if(z == 1) {
 		return(pracma::zeta(n));
+	}
+	if(z == -1) {
+		return(pracma::zeta(n) * (1/2^(n-1) - 1));
 	}
 	if(z < 0) {
 		if(n == 2) {
@@ -52,10 +66,23 @@ polylog2 = function (z, n = 2) {
 
 ### Tests
 
+if(FALSE) {
+
 # Test: 1 / (0.6 / (1-0.6)) == 2/3 > 0.55;
 # - requires 2 iterations;
-if(FALSE) {
 li3_06 = 0.6560025136329806832346611928113322291802755981380034005592;
 polylog2(0.6, 3) - li3_06;
+
+
+### Test:
+x = 1/3; # ugly value!
+z = exp(1i*x);
+integrate(\(x) Re(log(1- exp(1i*x))), 0, x)
+# Approximations: both fail!
+thz = Im(log(z));
+integrate(\(x) Re(log(1- exp(1i*x))), 0, thz)
+#
+thz = Im(log(z))/2;
+integrate(\(x) 2*log(abs(2*sin(x))), 0, thz)
 }
 
