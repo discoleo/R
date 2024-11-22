@@ -8,65 +8,19 @@
 ### Helper Constants
 Catalan = 0.915965594177219015054603514;
 
-### Helper Functions
-
-polylog2 = function (z, n = 2) {
-	# Bug in pracma::polylog;
-	stopifnot(is.numeric(n));
-	if(is.complex(z) && n == 2) {
-		if(Im(z) == 0) { z = Re(z); }
-		else {
-			warning("Complex not yet implemented!");
-			if(abs(z) != 1) warning("Result will be incorrect!");
-			# TODO: only Real-part:
-			y = - (pi^2/6 + Re(log(-z)^2)/2) / 2;
-			return(y);
-		}
-	}
-	if(z == 1) {
-		return(pracma::zeta(n));
-	}
-	if(z < 0) {
-		if(n == 2) {
-			y = polylog2(z^2, n=n)/2 - polylog2(-z, n=n);
-		} else {
-			y = polylog2(z^2, n=n) * 2^(1-n) - polylog2(-z, n=n);
-		}
-		return(y);
-	}
-	if(z > 1) {
-		if(n == 2) {
-			y = - pi^2/6 - log(0i - z)^2/2 - polylog2(1/z, n=n);
-		} else if(n == 3) {
-			x = log(z) / (2*pi);
-			y = 4*pi^3/3 * (- x^3 + 3i/2*x^2 + x/2) + polylog2(1/z, n=n);
-		} else stop("Not yet implemented!");
-		return(y);
-	} else if(z >= 0.55) {
-		# pracma::polylog FAILS!
-		if(n == 2) {
-			y = pi^2/6 - log(z)*log(1-z) - pracma::polylog(1 - z, n=n);
-		} else if(n == 3) {
-			# see Ref;
-			y = log(1-z)^3 / 6 - log(z)*log(1-z)^2/2 + pi^2/6 * log(1-z) +
-				+ pracma::zeta(3) - polylog(1-z, 3) - polylog2(z/(z-1), n=3);
-		} else stop("Not yet implemented!");
-		return(y);
-	}
-	return(pracma::polylog(z, n=n));
-}
-# Ref:
-# https://math.stackexchange.com/questions/942796/compute-polylog-of-order-3-at-frac12
-
-
-# Test: 1 / (0.6 / (1-0.6)) == 2/3 > 0.55;
-# - requires 2 iterations;
-li3_06 = 0.6560025136329806832346611928113322291802755981380034005592;
-polylog2(0.6, 3) - li3_06;
+# Note:
+# - function polylog2 moved to file:
+#   Integrals.Polylog.Helper.R;
 
 
 ##################
 ##################
+
+
+### Base: I( tan(x) )
+integrate(\(x) tan(x) - 1/(pi/2-x), 0, pi/2)
+- log(pi/2)
+
 
 ### I( x * tan(x) )
 
