@@ -56,6 +56,16 @@ Furthermore, the claim of over 14 million registered users seems also highly unr
 > https://en.wikipedia.org/wiki/ORCID
 
 
+## Alternative Models
+
+**Digital Author Identifier (DAI):** used in the Netherlands.
+1. DAI: https://wiki.surfnet.nl/display/standards/DAI
+2. Wikipedia: DAI. https://en.wikipedia.org/wiki/Digital_Author_Identifier
+3. Author identification: https://repinf.pbworks.com/w/page/13779410/Author%20identification
+
+
 ## TODO
 
-More analysis...
+- More analysis...
+- Academic ID (ACID): new proposal
+
