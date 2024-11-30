@@ -6,7 +6,7 @@
 ## Differential Equations
 ## ODEs: Bessel Functions
 ##
-## draft v.0.1b
+## draft v.0.1c
 
 
 ### Bessel Functions
@@ -102,4 +102,18 @@ d2y = exp(k*x) * (tmp$d2y + k*tmp$dy) + k*dy;
 
 ### ODE:
 x^2*d2y - (2*k*x^2 - x)*dy + ((k^2+1)*x^2 - k*x - n^2)*y # = 0
+
+
+
+### EXP(x^n)
+
+### Ex 1: Exp(x^2) * Bessel(x)
+n = sqrt(2); x = sqrt(3);
+tmp = d2BesselJ.all(x, n=n);
+y  = exp(x^2) * tmp$y;
+dy = exp(x^2) * tmp$dy + 2*x*y;
+d2y = exp(x^2) * (tmp$d2y + 2*x*tmp$dy) + 2*x*dy + 2*y;
+
+### ODE:
+x^2*d2y - x*(4*x^2 - 1)*dy + (4*x^4 - 3*x^2 - n^2)*y # = 0
 
