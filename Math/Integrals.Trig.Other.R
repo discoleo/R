@@ -11,6 +11,47 @@
 
 
 #####################
+
+### I( Trig(Trig) )
+# Maths 505: The coolest trig integral!
+# https://www.youtube.com/watch?v=4pvK0DTPPg8
+# Note: series expansion of cos(t);
+# => Beta function & Duplication formula for Gamma & Bessel J;
+
+integrate(\(x) cos(cos(x)) + sin(sin(x)), 0, pi)
+# TODO
+
+### I( cos(cos(x)) )
+integrate(\(x) cos(cos(x)), 0, pi)
+integrate(\(x) 2 * cos(cos(x)), 0, pi/2)
+pi * besselJ(1, 0)
+
+### I( sin(sin(x)) )
+integrate(\(x) sin(sin(x)), 0, pi)
+integrate(\(x) 2 * sin(sin(x)), 0, pi/2)
+# Struve function:
+id = seq(0, 100)
+pi * sum((-1)^id * (1/2)^(2*id+1) / factorial(id+1/2)^2)
+# TODO: closed formula;
+
+
+### Struve Function
+# https://en.wikipedia.org/wiki/Struve_function
+x = 1/3; n = 1;
+id = seq(0, 100)
+#
+sum((-1)^id * (x/2)^(2*id+n+1) / gamma(id+3/2) / gamma(id+3/2+n))
+
+
+### Bessel J
+x = 1/3; n = 1;
+id = seq(0, 100)
+#
+besselJ(x, n)
+sum((-1)^id * (x/2)^(2*id+n) / factorial(id) / factorial(id+n))
+
+
+#####################
 #####################
 
 ### I( atan(1/x0^n) )
