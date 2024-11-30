@@ -6,10 +6,13 @@
 ## Differential Equations
 ## ODEs: Bessel Functions
 ##
-## draft v.0.1a
+## draft v.0.1b
 
 
 ### Bessel Functions
+
+# - see e.g. Wikipedia:
+#   https://en.wikipedia.org/wiki/Bessel_function
 
 
 ####################
@@ -17,13 +20,28 @@
 ### Helper Functions
 
 
-dBesselJ = function(x, n, eps = 1E-5) {
-	(besselJ(x+eps, n) - besselJ(x, n)) / eps;
+dBesselJ = function(x, n) {
+	# (besselJ(x+eps, n) - besselJ(x, n)) / eps;
+	id  = 0:49; id1 = id+1;
+	idn = 2*id + n;
+	sg = rep(c(1,-1), 25);
+	sum(sg * idn / gamma(id1) / gamma(id1+n) * (x/2)^(idn-1)) / 2;
 }
-d2BesselJ = function(x, n, eps = 1E-5) {
-	(besselJ(x+2*eps, n) + besselJ(x, n) - 2*besselJ(x+eps, n)) / eps^2;
+d2BesselJ = function(x, n) {
+	# (besselJ(x+2*eps, n) + besselJ(x, n) - 2*besselJ(x+eps, n)) / eps^2;
+	id  = 0:49; id1 = id+1;
+	sg = rep(c(1,-1), 25);
+	idn = 2*id + n;
+	sum(sg * idn*(idn-1) / gamma(id1) / gamma(id1+n) * (x/2)^(idn-2)) / 4;
 }
 d2BesselJ.all = function(x, n, eps = 1E-5) {
+	# eps: is not used;
+	y  = besselJ(x, n);
+	dy = dBesselJ(x, n);
+	d2y = d2BesselJ(x, n);
+	list(y=y, dy=dy, d2y=d2y);
+}
+d2BesselJ.all.old = function(x, n, eps = 1E-5) {
 	y  = besselJ(x, n);
 	y1 = besselJ(x+eps, n);
 	y2 = besselJ(x+2*eps, n);
@@ -37,8 +55,8 @@ d2BesselJ.all = function(x, n, eps = 1E-5) {
 ####################
 
 ### Basic:
-n = sqrt(2); x = sqrt(3); eps = 1E-5;
-tmp = d2BesselJ.all(x, n=n, eps=eps);
+n = sqrt(2); x = sqrt(3);
+tmp = d2BesselJ.all(x, n=n);
 y = tmp$y; dy = tmp$dy; d2y = tmp$d2y;
 
 ### ODE:
@@ -52,7 +70,7 @@ x^2*d2y + x*dy + (x^2 - n^2)*y # = 0
 
 ### Ex 1:
 n = sqrt(2); x = sqrt(3);
-tmp = d2BesselJ.all(x, n=n, eps=eps);
+tmp = d2BesselJ.all(x, n=n);
 y  = exp(x) * tmp$y;
 dy = exp(x) * tmp$dy + y;
 d2y = exp(x) * (tmp$d2y + tmp$dy) + dy;
@@ -64,7 +82,7 @@ x^2*d2y - (2*x^2 - x)*dy + (2*x^2 - x - n^2)*y # = 0
 #########
 ### Ex 2:
 n = sqrt(2); x = sqrt(3);
-tmp = d2BesselJ.all(x, n=n, eps=eps);
+tmp = d2BesselJ.all(x, n=n);
 y  = exp(2*x) * tmp$y;
 dy = exp(2*x) * tmp$dy + 2*y;
 d2y = exp(2*x) * (tmp$d2y + 2*tmp$dy) + 2*dy;
@@ -77,7 +95,7 @@ x^2*d2y - (4*x^2 - x)*dy + (5*x^2 - 2*x - n^2)*y # = 0
 ### Ex 3:
 n = sqrt(2); k = 1/3;
 x = sqrt(3);
-tmp = d2BesselJ.all(x, n=n, eps=eps);
+tmp = d2BesselJ.all(x, n=n);
 y  = exp(k*x) * tmp$y;
 dy = exp(k*x) * tmp$dy + k*y;
 d2y = exp(k*x) * (tmp$d2y + k*tmp$dy) + k*dy;
