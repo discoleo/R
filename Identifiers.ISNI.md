@@ -60,7 +60,7 @@ Furthermore, the claim of over 14 million registered users seems also highly unr
 1. Wikipedia: ORCID
 > https://en.wikipedia.org/wiki/ORCID
 2. GitHub: ORCID code base
-> 
+> https://github.com/ORCID/
 
 
 ## Alternative Models
@@ -71,16 +71,19 @@ Furthermore, the claim of over 14 million registered users seems also highly unr
 3. Author identification: https://repinf.pbworks.com/w/page/13779410/Author%20identification
 
 
-## Proposal: Academic IDs (ACID)
+## Proposal: Academic ID (ACID)
 
 ### Character Set
 
 The proposal is to use the upper-case ASCI letters:
 - A - Z (26 variants);
-- Digits: 1 - 9 could be added in the future; digit 0 is omitted as it could be misinterpreted with the letter "O".
+- Digits: 1 - 9 could be added in the future; digit 0 is omitted as it could be misidentified with the letter "O".
 - Additional characters: can be used inside the string to separate 2 tokens, e.g."-", "+", "\*", "%", "#", "@";
 - Validation code: could also use "$" and/or "!";
 - Example: "AZYY+AUG_", where "_" stands for the validation code;
+- Tokens are formed of 4 characters and are separated by one of the special characters;
+- The initial acid codes would be formed by 2 tokens of 4 characters separated by one special character; they could be extended to the left with more tokens.
+
 
 ### Non-Latin Character Sets
 
@@ -95,21 +98,25 @@ The last character is the validation code. The purpose of the validation code is
 - Validation code = sum(position from end \* numeric equivalent of character) (mod p);
 - Note: Simple sum: does not identify character inversions; multiplying each character with its position should be more robust.
 - Note: gcd(consecutive numbers) = 1;
+- Multiplication vector: could be reinitialized for each token with the values {4, 3, 2, 1}; the last token is an exception as it skips the validation character (the last character). Token separators could be multiplied by 5.
 
 **Prime p:**
 - Using a prime is more robust: ensures uniqueness even in the multiplicative version;
 - p > character set used: the mutation of a single character will always generate an invalid validation code!
-- Example: 26 (for A-Z) + 9 (for 0-9) = 35;
+- Example: 26 (for A-Z) + 9 (for 1-9) = 35;
 - p = 41 is a good candidate, which will accommodate other characters as well.
 - The validation code needs therefore 41 characters!
 
 **Encoding:**
 - Each character is encoded using a numeric value starting at 1;
 - Zero is NOT encoded by any of the characters: this will catch errors due to missing characters.
-- Only blank characters are 0: the ACID code can be extended to the left with more characters, and the old validation codes still remain valid.
+- Only blank characters are 0: the ACID code can be extended to the left with more characters/tokens, and the old validation codes still remain valid.
 - Note: extension to left requires multiplication with position from end of string.
+- Token separators: the special characters could be mapped to the same values as some of the "A-Z" characters; or they could be encoded with values beyond "A-Z"; both options will give more variants of IDs.
 
-A variant (of this code) could use the first character to encode the region and/or country.
+The simple design (2 tokens of letters; last token only 3 coding characters) offers 26^7 = slightly above 8 billion IDs. Adding 4 characters as separators increases this to 32 billion IDs. Including the digits 1-9 in the character set increases the number to over 257 billion IDs.
+
+A design-variant (of this code) could use the first character to encode the region and/or country where the code was registered.
 
 
 ## TODO
