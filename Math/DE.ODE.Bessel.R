@@ -117,3 +117,38 @@ d2y = exp(x^2) * (tmp$d2y + 2*x*tmp$dy) + 2*x*dy + 2*y;
 ### ODE:
 x^2*d2y - x*(4*x^2 - 1)*dy + (4*x^4 - 3*x^2 - n^2)*y # = 0
 
+
+#########
+### Ex 2: Exp(2*x^2) * Bessel(x)
+n = sqrt(2); x = sqrt(3);
+tmp = d2BesselJ.all(x, n=n);
+y  = exp(2*x^2) * tmp$y;
+dy = exp(2*x^2) * tmp$dy + 4*x*y;
+d2y = exp(2*x^2) * (tmp$d2y + 4*x*tmp$dy) + 4*x*dy + 4*y;
+
+### ODE:
+x^2*d2y - x*(8*x^2 - 1)*dy + (16*x^4 - 7*x^2 - n^2)*y # = 0
+
+
+#########
+### Ex 3: Exp(k*x^2) * Bessel(x)
+n = sqrt(2); x = sqrt(3); k = 1/3;
+tmp = d2BesselJ.all(x, n=n);
+y  = exp(k*x^2) * tmp$y;
+dy = exp(k*x^2) * tmp$dy + 2*k*x*y;
+d2y = exp(k*x^2) * (tmp$d2y + 2*k*x*tmp$dy) + 2*k*x*dy + 2*k*y;
+
+### ODE:
+x^2*d2y - x*(4*k*x^2 - 1)*dy + (4*k^2*x^4 - (4*k-1)*x^2 - n^2)*y # = 0
+
+
+# Special Case: k = 1/4
+n = sqrt(2); x = sqrt(3);
+tmp = d2BesselJ.all(x, n=n);
+y  = exp(x^2 / 4) * tmp$y;
+dy = exp(x^2 / 4) * tmp$dy + x*y/2;
+d2y = exp(x^2 / 4) * (tmp$d2y + 1/2*x*tmp$dy) + x*dy/2 + y/2;
+
+### ODE:
+4*x^2*d2y - 4*x*(x^2 - 1)*dy + (x^4 - 4*n^2)*y # = 0
+
