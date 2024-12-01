@@ -1,7 +1,8 @@
 
 # International Standard Name Identifier (ISNI)
 
-This document is a brief analysis of ISNI to uniquely identify researchers as used in ORCID codes. This analysis is focused entirely on the academic & research community. It will actually favour alternative ways to uniquely identify researchers.
+This document is a brief analysis of ISNI codes, which are intended to uniquely identify researchers as used in ORCID codes. This analysis is focused entirely on the academic & research community. It will describe various shortcomings of ISNI and will ultimately favour alternative ways to uniquely identify researchers.
+
 
 1. ISNI, https://isni.org/
 
@@ -20,12 +21,16 @@ Unfortunately, the standard is not open source and I did not have any incentive 
 
 ISNI seems to resemble (at least superficially) the ISBN coding system. Although I did not perform a detailed research on the technical aspects - the available details and the nature of ISNI and of the publishing community which is behind ISNI support this view.
 
-ISBNs are a very simple method to identify uniquely a book. It is not meaningful to have a set of different books under the same ISBN.
+ISBNs are a very simple method to identify uniquely a book. It is not meaningful to have a set of different books under the same ISBN. Each book has assigned a single ISBN code.
 
 Similarly, ISNI identifies one individual (or one organization): unlike ISBNs, it is intended to identify a collection of works published "under"/"by" the same ISNI. The ISBN-model may not be the ideal technical solution for this scenario.
 
+Furthermore, most articles are written by a group of authors: there are rarely only 1 or 2 authors; most often there are more than 4-5 authors. Using 16 digits codes for each author wastes a lot of space. An alternative solution will be presented below.
+
 
 ## Academic Community
+
+### Registrars
 
 Most researchers have their first contact with academic research when they enrol as students in a university. The academic activity increases during the PhD: therefore, either the PhD school and/or the universities should be the primary registrars.
 
@@ -52,8 +57,10 @@ The ORCID seems to be based on ISNIs. However, the official suggestion is to use
 
 Furthermore, the claim of over 14 million registered users seems also highly unrealistic and indicates a total lack of mechanisms to validate the researchers.
 
-> Wikipedia: ORCID
+1. Wikipedia: ORCID
 > https://en.wikipedia.org/wiki/ORCID
+2. GitHub: ORCID code base
+> 
 
 
 ## Alternative Models
@@ -64,8 +71,49 @@ Furthermore, the claim of over 14 million registered users seems also highly unr
 3. Author identification: https://repinf.pbworks.com/w/page/13779410/Author%20identification
 
 
+## Proposal: Academic IDs (ACID)
+
+### Character Set
+
+The proposal is to use the upper-case ASCI letters:
+- A - Z (26 variants);
+- Digits: 1 - 9 could be added in the future; digit 0 is omitted as it could be misinterpreted with the letter "O".
+- Additional characters: can be used inside the string to separate 2 tokens, e.g."-", "+", "\*", "%", "#", "@";
+- Validation code: could also use "$" and/or "!";
+- Example: "AZYY+AUG_", where "_" stands for the validation code;
+
+### Non-Latin Character Sets
+
+Countries using non-Latin character sets could provide mappings to numeric codes or the ASCI set. The characters used should be visually easily identifiable. Simple mappings could be provided for Greek => ASCI, Cyrillic => ASCI, Chinese symbols => ASCI, Japanese Katakana => ASCI, etc. A user having access only to a printed material could easily map manually/visually the non-ASCI codes to their ASCI counterpart.
+
+
+### Validation Codes
+
+The last character is the validation code. The purpose of the validation code is to ensure the correctness of the entire string:
+
+**Computation:**
+- Validation code = sum(position from end \* numeric equivalent of character) (mod p);
+- Note: Simple sum: does not identify character inversions; multiplying each character with its position should be more robust.
+- Note: gcd(consecutive numbers) = 1;
+
+**Prime p:**
+- Using a prime is more robust: ensures uniqueness even in the multiplicative version;
+- p > character set used: the mutation of a single character will always generate an invalid validation code!
+- Example: 26 (for A-Z) + 9 (for 0-9) = 35;
+- p = 41 is a good candidate, which will accommodate other characters as well.
+- The validation code needs therefore 41 characters!
+
+**Encoding:**
+- Each character is encoded using a numeric value starting at 1;
+- Zero is NOT encoded by any of the characters: this will catch errors due to missing characters.
+- Only blank characters are 0: the ACID code can be extended to the left with more characters, and the old validation codes still remain valid.
+- Note: extension to left requires multiplication with position from end of string.
+
+A variant (of this code) could use the first character to encode the region and/or country.
+
+
 ## TODO
 
 - More analysis...
-- Academic ID (ACID): new proposal
+- Academic ID (ACID): extend/refine new proposal;
 
