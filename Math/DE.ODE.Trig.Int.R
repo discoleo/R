@@ -506,6 +506,52 @@ y = sapply(x, \(k) Ipk(k, n=n, lim=lim))
 lines(x, y, col="red", lty=2)
 
 
+####################
+
+### Composite:
+### d2y = - y + sum( b[i] / (n[i]*x+1) )
+
+Ipk = function(k, n = NULL, b = NULL, lim=1) {
+	r = sapply(n, \(n) {
+		integrate(\(x) x^(n*k) / (n^2*log(x)^2 + 1), 0, lim, rel.tol=1E-8)$value;
+	});
+	r = sum(b * r);
+	return(r);
+}
+
+Ip = function(x, y, parms) {
+	n = parms$n;
+	b = parms$b;
+	d2y = - y[1] + sum(b/(n*x + 1));
+	list(c(y[2], d2y));
+}
+lim = 1;
+
+
+###
+n = c(2,3,5); b = c(2.5, 2, -7);
+k.start = 0.1; k.end = 3;
+x = seq(k.start, k.end, by = 0.005)
+
+
+sol <- bvpshoot(
+	yini = c(Ipk(k.start, n=n, b=b, lim=lim), NA),
+	yend = c(Ipk(k.end, n=n, b=b, lim=lim), NA),
+	x = x, func = Ip, guess = 0.7, parms = list(n=n, b=b, lim=lim))
+
+
+### Test
+
+plot(sol)
+
+#
+par(mfrow = c(1, 1))
+plot(sol[, 1:2], type="l", col="green")
+y = sapply(x, \(k) Ipk(k, n=n, b=b, lim=lim))
+lines(x, y, col="red", lty=2)
+
+
+
 ######################
 ######################
 
@@ -553,7 +599,7 @@ lines(x, y, col="red", lty=2)
 ######################
 
 ### Composite:
-### d2y = y + sum( b[i] /(n*x+1) )
+### d2y = y + sum( b[i] / (n[i]*x+1) )
 
 # - theoretically its possible to add also
 #   the terms: 1/(n*x + 1)^2 & 1/x^p;
