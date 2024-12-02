@@ -1,10 +1,28 @@
 
 
+
+### Examples:
+
+# d2y = y + sum( b[i] / x^n[i] )
+# d2y = y + 1/(n*x+1)
+# d2y = y + sum( b[i] / (n[i]*x+1) )
+# d2y = - y + 1/(n*x+1)
+# d2y = - y + sum( b[i] / (n[i]*x+1) )
+
+
+####################
+
+### Helper Functions
+
 library(bvpSolve)
 
 
-##############
+####################
+####################
 
+# Note:
+# - more complicated example;
+# - Basic examples are in the sections further below;
 
 ### y(k) = I( z^p * sin(k*z) )
 # Note: on [0, pi/2]
@@ -129,7 +147,7 @@ Ip = function(x, y, pars) {
 }
 
 # TODO: complicated;
-# upper = Inf may work;
+# upper = Inf may work; (see next section)
 
 
 ###
@@ -162,10 +180,18 @@ Ip = function(x, y, pars) {
 }
 
 
-#################
+#####################
+#####################
 
 ### Composite Example
 # Free Term: Polynomial
+
+### Base:
+# y(k) = I( sin(k*z^p) / (z^(2*p) + 1) )
+
+### ODE:
+# d2y = y - b1/x^(3/4) - b2/x^(1/5) - b3/x^(4/3);
+
 
 Ipk = function(k, lim=Inf) {
 	if(! is.infinite(lim)) warning("Range must be infinite!");
@@ -271,6 +297,9 @@ lines(x, y, col="red", lty=2)
 
 ### d3y = y + P(1/x)
 
+### Example:
+# d3y = y - b/x^(1/n);
+
 Ipk = function(k, lim=Inf, n=3) {
 	r = integrate(\(x) exp(-k*x^n) / (x^(3*n) + 1), 0, lim)$value;
 	# Normalization:
@@ -286,6 +315,7 @@ dyIpk = function(k, lim=Inf, n=3) {
 
 Ip = function(x, y, pars) {
 	n = pars$n;
+	# Note: y[1] = y; y[2] = dy; y[3] = d2y;
 	d3y = y[1] - 1 / x^(1/n);
 	list(c(y[2], y[3], d3y));
 }
@@ -438,6 +468,7 @@ Ipk.old = function(k, n=1, lim=1) {
 
 ### d2y = - y + 1/(n*x+1)
 
+# y(k) = I( x^(n*k) / (n^2*log(x)^2 + 1) )
 
 Ipk = function(k, n=1, lim=1) {
 	r = integrate(\(x) x^(n*k) / (n^2*log(x)^2 + 1), 0, lim, rel.tol=1E-8)$value;
@@ -480,6 +511,7 @@ lines(x, y, col="red", lty=2)
 
 ### d2y = y + 1/(n*x+1)
 
+# y(k) = I( (x^(n*k) - exp(-k)) / (n^2*log(x)^2 - 1) )
 
 Ipk = function(k, n=1, lim=1) {
 	r = integrate(\(x) (x^(n*k) - exp(-k)) / (n^2*log(x)^2 - 1), 0, lim, rel.tol=1E-8)$value;
