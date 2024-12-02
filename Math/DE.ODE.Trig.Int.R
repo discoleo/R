@@ -3,6 +3,7 @@
 
 ### Examples:
 
+# d2y = y + b/x^n
 # d2y = y + sum( b[i] / x^n[i] )
 # d2y = y + 1/(n*x+1)
 # d2y = y + sum( b[i] / (n[i]*x+1) )
@@ -24,17 +25,39 @@ library(bvpSolve)
 # d2y = y - b/x^(2/3);
 
 
-Ipk = function(k, lim=Inf) integrate(\(x) sin(k*x^(3/2)) / (x^3 + 1), 0, lim)$value;
+Ipk = function(k, lim=Inf, b=1) {
+	y = integrate(\(x) sin(k*x^(3/2)) / (x^3 + 1), 0, lim)$value;
+	# Normalization:
+	y = b * y / (2/3 * gamma(2/3) * sin(pi/3));
+	return(y);
+}
 
 Ip = function(x, y, pars) {
-	d2y = y[1] - 2/3 * gamma(2/3) * sin(pi/3) / x^(2/3);
+	b = pars$b;
+	d2y = y[1] - b / x^(2/3);
 	list(c(y[2], d2y));
 }
 
 
-lim = Inf;
+lim = Inf; # fixed
+b = -1/3;
+k.start = 0.1; k.end = 1;
+x = seq(k.start, k.end, by = 0.01)
 
-# TODO
+sol <- bvpshoot(
+	yini = c(Ipk(k.start, lim=lim, b=b), NA),
+	yend = c(Ipk(k.end, lim=lim, b=b), NA),
+	x = x, func = Ip, guess = 0, parms = list(lim=lim, b=b))
+
+### Test
+
+plot(sol)
+
+# perfect match
+par(mfrow = c(1, 1))
+plot(sol[, 1:2], type="l", col="green")
+y = sapply(x, \(k) Ipk(k, lim=lim, b=b))
+lines(x, y, col="red", lty=2)
 
 
 #####################
