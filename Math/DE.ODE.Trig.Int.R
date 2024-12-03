@@ -10,6 +10,9 @@
 # d2y = - y + 1/(n*x+1)
 # d2y = - y + sum( b[i] / (n[i]*x+1) )
 
+### Exp:
+# d2y = 2*dy - b*exp(x) / x^(2/3)
+
 
 ####################
 
@@ -170,6 +173,72 @@ lines(x, y, col="red", lty=2)
 ### y(k) = 1/k * y0
 
 # TODO
+
+
+######################
+
+### y(x) = exp(x) * y0
+
+### ODE:
+# d2y = 2*dy - b*exp(x) / x^(2/3);
+
+# TODO: incomplete Gamma function;
+
+# y(k)
+Ipk = function(k, lim=Inf, b=1) {
+	y = integrate(\(x) sin(k*x^(3/2)) / (x^3 + 1), 0, lim)$value;
+	y = exp(k) * y;
+	# Normalization:
+	y = b * y / (2/3 * gamma(2/3) * sin(pi/3));
+	return(y);
+}
+# dy(k)
+Idy = function(k, lim=Inf, b=1) {
+	# Note: various numerical issues!
+	if(lim == Inf) lim = 2000 * pi;
+	dy = integrate(\(x) {
+		xx = x^(2/3); # x = z^(2/3); dx = 2/3 * z^(-1/3) dz;
+		xx * cos(k*x) / (x*x + 1);
+	}, 0, lim, subdivisions = 43570)$value;
+	# Normalization:
+	# dy = 2/3 * b * dy / (2/3 * gamma(2/3) * sin(pi/3));
+	dy = b * dy / (gamma(2/3) * sin(pi/3));
+	dy = dy * exp(k) + Ipk(k, lim=lim, b=b);
+	return(dy);
+}
+
+Ip = function(x, y, pars) {
+	b = pars$b;
+	d2y = 2*y[2] - b * exp(x) / x^(2/3);
+	list(c(y[2], d2y));
+}
+
+
+lim = Inf; # fixed
+b = 1/3;
+k.start = 0.4; k.end = 1.90;
+x = seq(k.start, k.end, by = 0.01)
+
+sol <- bvpshoot(
+	yini = c(Ipk(k.start, lim=lim, b=b), NA),
+	yend = c(Ipk(k.end, lim=lim, b=b), NA),
+	x = x, func = Ip, guess = 0, parms = list(lim=lim, b=b))
+
+### Test
+
+plot(sol)
+
+# Plot y: perfect match
+par(mfrow = c(1, 1))
+plot(sol[, 1:2], type="l", col="green")
+y = sapply(x, \(k) Ipk(k, lim=lim, b=b))
+lines(x, y, col="red", lty=2)
+
+# Plot dy:
+par(mfrow = c(1, 1))
+plot(sol[, c(1,3)], type="l", col="green")
+dy = sapply(x, \(k) Idy(k, lim=lim, b=b))
+lines(x, dy, col="red", lty=2)
 
 
 ######################
