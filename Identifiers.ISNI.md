@@ -78,10 +78,10 @@ Furthermore, the claim of over 14 million registered users seems also highly unr
 The proposal is to use the upper-case ASCI letters:
 - A - Z (26 variants);
 - Digits: 1 - 9 could be added in the future; digit 0 is omitted as it could be misidentified with the letter "O".
-- Additional characters: can be used inside the string to separate 2 tokens, e.g."-", "+", "\*", "%", "#", "@";
+- Additional characters: can be used inside the string to separate 2 tokens, e.g."-", "+", "\*", "\\", "@", "%", "#";
 - Validation code: could also use "$" and/or "!";
 - Example: "AZYY+AUG_", where "_" stands for the validation code;
-- Tokens are formed of 4 characters and are separated by one of the special characters;
+- Tokens are formed by 4 characters and are separated by one of the special characters;
 - The initial acid codes would be formed by 2 tokens of 4 characters separated by one special character; they could be extended to the left with more tokens.
 
 
@@ -95,10 +95,15 @@ Countries using non-Latin character sets could provide mappings to numeric codes
 The last character is the validation code. The purpose of the validation code is to ensure the correctness of the entire string:
 
 **Computation:**
-- Validation code = sum(position from end \* numeric equivalent of character) (mod p);
+- Validation code = sum(position from right-end \* numeric equivalent of character) (mod p);
 - Note: Simple sum: does not identify character inversions; multiplying each character with its position should be more robust.
 - Note: gcd(consecutive numbers) = 1;
-- Multiplication vector: could be reinitialized for each token with the values {4, 3, 2, 1}; the last token is an exception as it skips the validation character (the last character). Token separators could be multiplied by 5.
+- Multiplication vector: could be reinitialized for each token with the values {4, 3, 2, 1}; the last token is an exception as it skips the validation character (the last character).
+- Token separators could be multiplied by 5. Alternatively, they could be added as is (i.e. multiplied by 1) and a simple character mask applied on the input string.
+
+Note:
+- ISBN-13 uses the complement (mod n) as the validation code. Computing the sum over all characters yields therefore 0 (mod n). However, I feel that the benefits of such an approach are marginal.
+- ISBN-13 uses n = 10 to avoid the necessity for an "X" character: however, this is coupled with a loss in robustness!
 
 **Prime p:**
 - Using a prime is more robust: ensures uniqueness even in the multiplicative version;
@@ -111,8 +116,12 @@ The last character is the validation code. The purpose of the validation code is
 - Each character is encoded using a numeric value starting at 1;
 - Zero is NOT encoded by any of the characters: this will catch errors due to missing characters.
 - Only blank characters are 0: the ACID code can be extended to the left with more characters/tokens, and the old validation codes still remain valid.
-- Note: extension to left requires multiplication with position from end of string.
-- Token separators: the special characters could be mapped to the same values as some of the "A-Z" characters; or they could be encoded with values beyond "A-Z"; both options will give more variants of IDs.
+- Note: extension to left requires multiplication with position from right-end of string.
+- Token separators:
+  - the special characters could be mapped to the same values as some of the "A-Z" characters;
+  - or they could be encoded with values beyond "A-Z";
+  - both options will give more variants of IDs.
+  - there is NO risk of inversions: it is possible to use a simple character mask for the input string;
 
 The simple design (2 tokens of letters; last token only 3 coding characters) offers 26^7 = slightly above 8 billion IDs. Adding 4 characters as separators increases this to 32 billion IDs. Including the digits 1-9 in the character set increases the number to over 257 billion IDs.
 
