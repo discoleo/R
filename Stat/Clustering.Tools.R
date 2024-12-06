@@ -36,7 +36,7 @@
 ####################
 ####################
 
-### Helper functions
+### Helper Functions
 
 library(LaplacesDemon)
 library(ggplot2)
@@ -50,6 +50,8 @@ rmeans = function(n, dim=2, lim=c(0, 10)) {
 	m = runif(len, lim[1], lim[2]);
 	matrix(m, nrow=dim, ncol=n);
 }
+# n  = number of items in the cluster;
+# cl = number of clusters;
 rcluster = function(n, cl, mu=NULL, dim=2, sigma=NULL, add.id=TRUE,
 		seed=NULL, id.offset=0) {
 	len = length(n);
@@ -146,7 +148,7 @@ plot.cluster.2D = function(x, levels.contour=NULL, type="Gaussian", contour.col=
 			if(length(lvls) == 1 && is.na(lvls)) lvls = c(0.5, 0.95);
 			lns = car::dataEllipse(x$v1, x$v2, as.factor(x$ID),
 				levels=lvls, draw=FALSE);
-			xy = as.data.frame(as.matrix.list(lns, id.name="ID"));
+			xy = as.data.frame(as.matrix.list.list(lns, id.name="ID"));
 			xy$ID = as.factor(xy$ID);
 			xy$group = paste(xy$ID, xy$group);
 			g = g + geom_path(data = xy,
@@ -172,7 +174,7 @@ plot.cluster.3D = function(x, radius=0.2, col=NULL, add=FALSE) {
 	col = col[x$ID];
 	plot3d(x[, 1:3], type="s", radius=radius, col=col, add=add);
 }
-as.matrix.list = function(x, id.name="id") {
+as.matrix.list.list = function(x, id.name="id") {
 	FUN = function(id, lst, idGr) {
 		x = cbind(lst[[id]], group=as.numeric(names(lst)[[id]]), id=idGr);
 		nms = colnames(x);
@@ -220,7 +222,7 @@ x = rcluster(100, cl=5)
 plot.cluster.2D(x, levels.contour=c(0.1, 0.05), type="Kernel")
 # Gaussian Densities:
 # [but needs an open Graphic Device!]
-plot.new();
+dev.new(); plot.new();
 plot.cluster.2D(x, levels.contour=c(0.5, 0.95), type="Gaussian")
 
 
@@ -228,6 +230,7 @@ plot.cluster.2D(x, levels.contour=c(0.5, 0.95), type="Gaussian")
 
 library(car)
 library(cluster)
+# Package car has a function ellipse() as well;
 library(ellipse)
 
 # Note: cannot be mixed with ggplot!
@@ -237,11 +240,16 @@ library(ellipse)
 dataEllipse(x$v1, x$v2, as.factor(x$ID), levels=c(0.5, 0.75, 0.95))
 
 cov.m = cov.wt(data.frame(x$v1, x$v2)[x$ID == 1, ]);
-# robust covariance:
+# Robust covariance:
 # MASS::cov.rob(data.frame(x$v1, x$v2)[x$ID == 1, ]);
+# Note:
+# - both stats::cov.wt and MASS::cov.rob:
+#   return only a simple list; NO specialized class;
+# - used to compute both cov and the mean:
+#   apply(..., 2, mean);
 
 
-### cluster-package:
+### Package cluster:
 n.obs = sum(x$ID == 1);
 # - depending on Distribution:
 qVal = qchisq(0.99, df=2);
@@ -249,8 +257,9 @@ qVal = qchisq(0.99, df=2);
 lines(ellipsoidPoints(cov.m$cov, qVal, loc=cov.m$center), col="green")
 
 
-### ellipse-package:
-# variance computed based on the data:
+### Package ellipse:
+# - Note: Package car also has a function ellipse;
+# Variance computed based on the data:
 sc = diag(cov.m$cov);
 lines(ellipse(cov.m$cov, scale=sc, centre=cov.m$center, level=c(0.90)), col="red")
 # with known population variance:
