@@ -4,8 +4,28 @@
 ### (C) Leonard Mada
 ### draft 0.2
 ###
-### Cardan-type Polynomials:
+### Cardano-type Polynomials:
 ### theory developed during 2018-2019
+
+
+### Related / Useful Materials:
+
+# 1. Ecological Forecasting: Statistical Methods Series:
+#    wsyn: Wavelet approaches to Studies of Synchrony in Ecology
+#    https://www.youtube.com/watch?v=sxVHFwAkhdA
+# 2. Package wsyn: Wavelet Approaches to Studies of Synchrony
+#    in Ecology and Other Fields
+#    https://cran.r-project.org/web/packages/wsyn/index.html
+# 3. Sheppard LW, Defriez EJ, Reid PC, Reuman DC.
+#    Synchrony is more than its top-down and climatic parts:
+#    interacting Moran effects on phytoplankton in British seas.
+#    PLoS Comput Biol 2019; 15(3): e1006744.
+#    https://doi.org/10.1371/journal.pcbi.1006744
+
+
+############
+
+### History:
 
 # draft 0.2: 2020-05-27
 # - generating code;
@@ -20,7 +40,7 @@
 
 ### TODO:
 # - prepare some brief material for:
-#   Generalization of the Cardan formula;
+#   Generalization of the Cardano formula;
 # - disseminate material to enable proper presentations
 #   e.g. Two Brilliant Ways to Solve This Non Factorable Cubic Equation
 #   https://www.youtube.com/watch?v=Jz-Z0jfs2V4
@@ -109,8 +129,8 @@ lapply(f.all, function(x) x(-2))
 
 ##################
 
-#################
-### Properies ###
+##################
+### Properties ###
 
 # These polynomials have very interesting properties:
 # 1.) P(0) = -2*d;
@@ -207,7 +227,7 @@ plot(x.dwt)
 ###
 start = c(0)
 end = c()
-seq.seq = c(start, seq(-2,0, by=0.1), end)
+seq.seq = c(start, seq(-2, 0, by=0.1), end)
 f5.flt = - f5(seq.seq) / 4
 f7.flt = - f7(seq.seq) / 4
 f9.flt = - f9(seq.seq) / 4
