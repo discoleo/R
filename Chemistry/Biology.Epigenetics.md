@@ -30,3 +30,10 @@ As the tree grows, it accumulates many mutations and epigenetic DNA-modification
 
 1. Ecological Forecasting: Statistical Methods Series: Modeling Stopped Random Walks with R and Stan
 > https://www.youtube.com/watch?v=uC6j7F8MoQg
+
+2. Package spphpr: Spring Phenological Prediction
+> https://cran.r-project.org/web/packages/spphpr/index.html
+
+3. Peijian Shi, Zhenghong Chen, Gadi V.P. Reddy, et al. Timing of cherry tree blooming: Contrasting effects of rising winter low temperatures and early spring temperatures. Agric For Meteorol. 2017;240–241:78-89.
+> https://doi.org/10.1016/j.agrformet.2017.04.001
+
