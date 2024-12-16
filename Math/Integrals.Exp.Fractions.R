@@ -1,6 +1,6 @@
 
 
-# Note:
+### Note:
 # erf(1) = 2 * (pnorm(1, sd = 1/sqrt(2)) - 0.5);
 # erf(1) = 2 * (pnorm(sqrt(2)) - 0.5);
 # I(exp(-x^2), 0, 1) = erf(1) * sqrt(pi)/2;
@@ -13,6 +13,31 @@ eps = 1E-6;
 f(1, 2/3) / 3;
 (f(1) - exp(-1)) / 2;
 - (f(1+eps) - f(1)) / eps;
+
+
+#########################
+#########################
+
+### I( exp(-x^p) / (x^n + 1) ) on [0, Inf]
+# - alternative approaches;
+
+
+### I( exp(-x) / (x^2 + 1) )
+integrate(\(x) exp(-x) / (x^2 + 1), 0, Inf)
+- sin(1) * Re(pracma::expint(1i)) - cos(1) * Im(pracma::expint(1i))
+
+# alternative Derivation:
+id = seq(0, 19); sg = rep(c(1,-1), 10);
+isNZ = rep(c(T,F), 10); id = id[isNZ]; sg = sg[isNZ];
+pi/2 * sum(sg/sin(pi*(id+1)/n) / factorial(id)) +
+	+ pracma::Ci(1) * sin(1) - pracma::Si(1) * cos(1);
+pi/2 * cos(1) + pracma::Ci(1) * sin(1) - pracma::Si(1) * cos(1);
+
+
+### Helper:
+id = seq(0, 22, by = 2); sg = rep(c(1,-1), 6)
+sum(sg / factorial(id))
+cos(1)
 
 
 ################
