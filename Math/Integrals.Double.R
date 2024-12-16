@@ -337,6 +337,32 @@ polylog2(-2/(exp(1)-1)) - polylog2(-1 - 2/(exp(1)-1)) +
 	+ (log(exp(1)-1) - 1) * log((exp(1)+1)/2);
 
 
+###########
+
+### I( log(2^x + 2^y + 1) / (2^(x+y) * (2^x + 2^y)) )
+# Dr Peyam: A surprisingly elegant double integral
+# https://www.youtube.com/watch?v=q17ezsqKRis
+# Note: => triple integral:
+# I( 1 / 2^(x+y) / (z*(2^x + 2^y) + 1) ) with z on [0,1] =>
+# I( x*y / (x*y + x*z + y*z) ) / log(2)^2 on [0,1]^3;
+
+
+# Note: numeric instability: upper = Inf;
+integrate(\(x) sapply(x, \(y)
+	integrate(\(x) log(2^x + 2^y + 1) / (2^(x+y) * (2^x + 2^y)),
+		0, 100, rel.tol=1E-10)$value), 0, 100, rel.tol=1E-8)
+1/3 / log(2)^2
+
+
+# library(Rmpfr)
+integrate(\(x) sapply(x, \(y)
+	integrate(\(x) {
+		x = mpfr(x, 240); y = mpfr(y, 240);
+		v = log(2^x + 2^y + 1) / (2^(x+y) * (2^x + 2^y));
+		as.numeric(v);
+		}, 0, Inf, rel.tol=1E-10)$value), 0, Inf, rel.tol=1E-10)
+
+
 ############
 
 ############
