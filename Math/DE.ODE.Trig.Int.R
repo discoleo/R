@@ -1,4 +1,12 @@
-
+#####################
+##
+## Leonard Mada
+## (the one and only)
+##
+## Integrals:
+## Derived from I( Trig-Fractions )
+##
+## v.0.2a
 
 
 ### Examples:
@@ -125,9 +133,9 @@ lines(x, y, col="red", lty=2)
 ######################
 ######################
 
-### y(k) = k * y0
+### y(x) = x * y0
 
-### y = k * I( sin(k*z^(5/3)) / (z^(10/3) + 1) )
+### y = x * I( sin(x*z^(5/3)) / (z^(10/3) + 1) )
 # x*d2y = 2*dy + (x^2 - 2)*y - x^(1/3);
 
 # includes dy term;
@@ -170,7 +178,7 @@ lines(x, y, col="red", lty=2)
 ######################
 ######################
 
-### y(k) = 1/k * y0
+### y(x) = 1/x * y0
 
 # TODO
 
@@ -237,6 +245,90 @@ lines(x, y, col="red", lty=2)
 # Plot dy:
 par(mfrow = c(1, 1))
 plot(sol[, c(1,3)], type="l", col="green")
+dy = sapply(x, \(k) Idy(k, lim=lim, b=b))
+lines(x, dy, col="red", lty=2)
+
+
+#########################
+
+### y(x) = exp(-1/x) * y0
+
+### ODE:
+# x^4*d2y = 2*x^2*dy + (x^4-2*x-1)*y - b*x^(10/3)*exp(-1/x)
+
+# dy  = (dy0 + 1/x^2*y0) * exp(-1/x)
+# d2y = (d2y0 + 2/x^2*dy0 + (1/x^4-2/x^3)*y0)*exp(-1/x)
+# d2y = 2/x^2*dy + (1-2/x^3-1/x^4)*y - b/x^(2/3)*exp(-1/x)
+# where d2y0 = y0 - b/x^(2/3)
+
+
+# y(k)
+Ipk = function(k, b=1, lim=Inf) {
+	FUN = function(k)
+		integrate(\(x) sin(k*x^(3/2)) / (x^3 + 1), 0, lim,
+			subdivisions = 1025)$value;
+	y = try( FUN(k) );
+	if(inherits(y, "try-error")) {
+		cat("y(x): x = ", k, "\n");
+		y = FUN(k + 0.001);
+	}
+	y = exp(-1/k) * y;
+	# Normalization:
+	y = b * y / (2/3 * gamma(2/3) * sin(pi/3));
+	return(y);
+}
+# dy(k)
+Idy = function(k, b=1, lim=Inf, up.scale = 2000) {
+	# Note: various numerical issues!
+	if(lim == Inf) lim = up.scale * pi;
+	FUN = function(k) integrate(\(x) {
+		xx = x^(2/3); # x = z^(2/3); dx = 2/3 * z^(-1/3) dz;
+		xx * cos(k*x) / (x*x + 1);
+	}, 0, lim, subdivisions = 43570)$value;
+	dy = try( FUN(k) ); # print(str(dy))
+	if(inherits(dy, "try-error")) {
+		cat("x = ", k, "\n");
+		dy = FUN(k + 0.001);
+	}
+	# Normalization:
+	# dy = 2/3 * b * dy / (2/3 * gamma(2/3) * sin(pi/3));
+	dy = b * dy / (gamma(2/3) * sin(pi/3));
+	dy = dy * exp(-1/k) + Ipk(k, lim=lim, b=b) / k^2;
+	return(dy);
+}
+
+Ip = function(x, y, pars) {
+	b = pars$b;
+	# y[2] = dy;
+	d2y = 2/x^2*y[2] + (x^4-2*x-1)/x^4 * y[1] - b*exp(-1/x)/x^(2/3);
+	list(c(y[2], d2y));
+}
+
+
+lim = Inf; # fixed
+b = 4/3;
+k.start = 0.4; k.end = 2.15;
+x = seq(k.start, k.end, by = 0.01)
+
+# bvptwp # bvpshoot(guess = 0)
+sol <- bvptwp(
+	yini = c(Ipk(k.start, b=b, lim=lim), NA),
+	yend = c(Ipk(k.end, b=b, lim=lim), NA),
+	x = x, func = Ip, parms = list(b=b, lim=lim))
+
+### Test
+
+plot(sol)
+
+# Plot y: perfect match;
+par(mfrow = c(1, 1))
+plot(sol[, 1:2], type="l", col="green")
+y = sapply(x, \(k) Ipk(k, lim=lim, b=b))
+lines(x, y, col="red", lty=2)
+
+# Plot dy:
+par(mfrow = c(1, 1)); ylim = range(sol[,3]) + c(-0.075, 0.025);
+plot(sol[, c(1,3)], type="l", col="green", ylim=ylim)
 dy = sapply(x, \(k) Idy(k, lim=lim, b=b))
 lines(x, dy, col="red", lty=2)
 
