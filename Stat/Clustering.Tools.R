@@ -61,6 +61,10 @@ rcluster = function(n, cl, mu=NULL, dim=2, sigma=NULL, add.id=TRUE,
 	### Parameters
 	if(is.null(mu)) {
 		mu = rmeans(ncl, dim=dim);
+	} else if(is.null(dim(mu))) {
+		if(ncl == 1) {
+			mu = matrix(mu, nc = 1);
+		} else stop("Mu must be a matrix!");
 	}
 	# Covariance:
 	if(is.null(sigma)) sigma = diag(dim);
@@ -136,10 +140,14 @@ rmatrix.sigma = function(d=c(1), dim=2, sc=0.9) {
 }
 
 ### Graphic
-plot.cluster.2D = function(x, levels.contour=NULL, type="Gaussian", contour.col="blue", alpha=0.9) {
+plot.cluster.2D = function(x, levels.contour=NULL, type="Gaussian",
+		col = NULL, contour.col="blue", alpha=0.9) {
 	x$ID = as.factor(x$ID);
 	g = ggplot(x, aes(x=v1, y=v2, fill=ID, col=ID)) +
 		geom_point(alpha = alpha);
+	if(! is.null(col)) {
+		g = g + scale_colour_manual(values = alpha(col, alpha));
+	}
 	if( ! is.null(levels.contour)) {
 		type = pmatch(type, c("Gaussian", "Kernel Density"));
 		if(type == 1) {
@@ -166,13 +174,18 @@ plot.cluster.2D = function(x, levels.contour=NULL, type="Gaussian", contour.col=
 	}
 	return(g);
 }
-plot.cluster.3D = function(x, radius=0.2, col=NULL, add=FALSE) {
+plot.cluster.3D = function(x, radius=0.2, col=NULL, add=FALSE, alpha = NULL) {
 	if(is.null(col)) {
 		col = length(unique(x$ID));
-		col = colorRampPalette(c("#F0F020", "#F080F0", "#20F0F0"), space = "rgb")(col);
+		ccc = c("#F0F020", "#F080F0", "#20F0F0");
+		col = colorRampPalette(ccc, space = "rgb")(col);
 	}
 	col = col[x$ID];
-	plot3d(x[, 1:3], type="s", radius=radius, col=col, add=add);
+	if(is.null(alpha)) {
+		plot3d(x[, 1:3], type="s", radius=radius, col=col, add=add);
+	} else {
+		plot3d(x[, 1:3], type="s", radius=radius, col=col, add=add, alpha=alpha);
+	}
 }
 as.matrix.list.list = function(x, id.name="id") {
 	FUN = function(id, lst, idGr) {
@@ -216,22 +229,26 @@ polygon.reg = function(n, r=1, a.offset = 0, clockwise=FALSE, closed=FALSE) {
 
 ### Examples
 
+# - used for explicit Density-Contours;
+library(car)
+library(cluster)
+# Package car has a function ellipse() as well;
+library(ellipse)
+
+
 ### Ex 1:
 x = rcluster(100, cl=5)
 
+### Kernel Density:
 plot.cluster.2D(x, levels.contour=c(0.1, 0.05), type="Kernel")
-# Gaussian Densities:
+
+### Gaussian Densities:
 # [but needs an open Graphic Device!]
 dev.new(); plot.new();
 plot.cluster.2D(x, levels.contour=c(0.5, 0.95), type="Gaussian")
 
 
 ### Density-Contours:
-
-library(car)
-library(cluster)
-# Package car has a function ellipse() as well;
-library(ellipse)
 
 # Note: cannot be mixed with ggplot!
 # [Base-R Graphics]
@@ -245,7 +262,7 @@ cov.m = cov.wt(data.frame(x$v1, x$v2)[x$ID == 1, ]);
 # Note:
 # - both stats::cov.wt and MASS::cov.rob:
 #   return only a simple list; NO specialized class;
-# - used to compute both cov and the mean:
+# - cov.wt used to compute both cov and the mean:
 #   apply(..., 2, mean);
 
 
@@ -254,17 +271,20 @@ n.obs = sum(x$ID == 1);
 # - depending on Distribution:
 qVal = qchisq(0.99, df=2);
 # qVal = (2*qf(0.99, 2, n.obs - 1));
-lines(ellipsoidPoints(cov.m$cov, qVal, loc=cov.m$center), col="green")
+lines(ellipsoidPoints(cov.m$cov, qVal, loc=cov.m$center), col="darkgreen")
 
 
 ### Package ellipse:
 # - Note: Package car also has a function ellipse;
+r = sqrt(2 * qf(0.90, 2, cov.m$n - 1))
+car::ellipse(cov.m$center, shape = cov.m$cov, radius = r, col="#F09064A0", lwd=4)
+
 # Variance computed based on the data:
 sc = diag(cov.m$cov);
 lines(ellipse(cov.m$cov, scale=sc, centre=cov.m$center, level=c(0.90)), col="red")
-# with known population variance:
-sc = c(1, 1)
-lines(ellipse(cov.m$cov, scale=sc, centre=cov.m$center, level=c(0.90)), col="green")
+# Population variance: known
+scPop = c(1, 1); # some given variance;
+lines(ellipse(cov.m$cov, scale=scPop, centre=cov.m$center, level=c(0.90)), col="green")
 
 
 # explicitly construct the Ellipse:
@@ -416,4 +436,17 @@ plot.cluster.3D(x)
 
 ### packages:
 # - mixreg, mixdist;
+
+
+###
+sc = matrix(c(1,0.7,0.7,1), 2)
+su = matrix(c(1,0.1,0.1,1.2), 2)
+x1 = rcluster(2000, 1, mu = c(3,2), sigma = sc)
+x2 = rcluster(2500, 1, mu = c(5,4), sigma = su, id.offset=1)
+x  = rbind(x1, x2)
+col = c("#F544A0", "#A080F0")
+col = c("#F544A0", "#A0F064")
+
+plot.cluster.2D(x, levels.contour=c(0.1, 0.05), type="Kernel", col=col, alpha = 0.25)
+
 
