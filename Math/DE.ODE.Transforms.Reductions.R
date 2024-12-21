@@ -6,7 +6,7 @@
 ## Integrals: Transforms
 ## Order Reduction
 ##
-## v.0.1d
+## v.0.1e
 
 
 ### Order Reduction of ODEs
@@ -156,7 +156,8 @@ lines(sol[, 1:2], col="red", lty=2)
 ### Gen:
 
 ### Base ODE:
-# TODO
+# x^2 * d2z = (k1*n1*x^n1 + k2*n2*x^n2 + 1) * (k1*n1*x^n1 + k2*n2*x^n2) * z +
+#	- (k1*n1^2*x^n1 + k2*n2^2*x^n2) * z + x^2 * f0(x);
 
 
 ### Transform: Exp(k1*x^n1 + k2*x^n2)
@@ -170,9 +171,64 @@ x^2 * d2z * exp(k1*x^n1 + k2*x^n2) +
 	- (k1*n1*x^n1 + k2*n2*x^n2 + 1) * (k1*n1*x^n1 + k2*n2*x^n2) * y +
 	+ (k1*n1^2*x^n1 + k2*n2^2*x^n2) * y;
 
-
 ### Order Reduction
 # =>
-# TODO
+d2y - 2*(k1*n1*x^n1 + k2*n2*x^n2) / x * dy +
+	- f0 * exp(k1*x^n1 + k2*x^n2) # = 0
 
+
+### Example
+
+# Base ODE:
+Ip0 = function(x, y, pars) {
+	ff = pars$FUN;
+	n1 = pars$n[1]; n2 = pars$n[2];
+	k1 = pars$k[1]; k2 = pars$k[2];
+	z = y[1];
+	d2y = (k1*n1*x^n1 + k2*n2*x^n2 + 1) * (k1*n1*x^n1 + k2*n2*x^n2) * z +
+		- (k1*n1^2*x^n1 + k2*n2^2*x^n2) * z + x^2 * ff(x);
+	d2y = d2y / x^2;
+	list(c(y[2], d2y));
+}
+# Transformed ODE:
+Ip = function(x, y, pars) {
+	ff = pars$FUN;
+	n1 = pars$n[1]; n2 = pars$n[2];
+	k1 = pars$k[1]; k2 = pars$k[2];
+	dy = y[2];
+	d2y = 2*(k1*n1*x^n1 + k2*n2*x^n2) / x * dy +
+		+ ff(x) * exp(k1*x^n1 + k2*x^n2) # = 0
+	list(c(dy, d2y));
+}
+
+###
+x.start = 0.2; x.end = 3;
+x = seq(x.start, x.end, by = 0.01)
+y = c(1, 5)
+n = c(1/2, 4/3);
+k = c(4/3, -2/5); # k = c(7/3, -6/5);
+FUN = function(x) x * exp(-x^2/3);
+parms = list(FUN=FUN, n=n, k=k);
+
+# bvptwp # bvpshoot(guess = 0)
+sol0 <- bvptwp(
+	yini = c(y[1], NA),
+	yend = c(y[2], NA),
+	x = x, func = Ip0, parms = parms)
+fs = exp(k[2]*x[1]^n[2] + k[1]*x[1]^n[1]);
+xe = x[length(x)]; fe = exp(k[2]*xe^n[2] + k[1]*xe^n[1]);
+sol <- bvptwp(
+	yini = c(fs * y[1], NA),
+	yend = c(fe * y[2], NA),
+	x = x, func = Ip, parms = parms)
+
+### Test
+
+plot(sol)
+par(mfrow = c(1, 1))
+
+# Plot y vs y0: perfect match;
+y.tmp = sol0[,2] * exp(k[2]*x^n[2] + k[1]*x^n[1]);
+plot(sol0[, 1], y.tmp, type="l", col="green")
+lines(sol[, 1:2], col="red", lty=2)
 
