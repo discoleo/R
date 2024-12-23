@@ -1,9 +1,27 @@
 
+### List Sub-Directories
+list.dirs = function(path, pattern = NULL, all.cols = FALSE, verbose = FALSE) {
+	x = list.files(path, pattern=pattern, no.. = TRUE,
+		include.dirs = TRUE);
+	if(verbose) cat("Finished Dir!\n");
+	fd = file.info(paste0(path, "/", x), extra_cols = FALSE);
+	fd = fd[fd$isdir, ];
+	if(! all.cols) {
+		id = match(c("mode", "ctime", "atime"), names(fd));
+		id = id[! is.na(id)];
+		fd = fd[, - id];
+	}
+	return(fd);
+}
 
 ### Compare 2 Directories
 # - file name & file size;
 # - TODO: option for hash;
-match.dir = function(path1, path2, pattern = NULL, verbose = TRUE) {
+match.dir = function(path1, path2, sub.path = NULL, pattern = NULL, verbose = TRUE) {
+	if(! is.null(sub.path)) {
+		path1 = paste0(path1, "/", sub.path);
+		path2 = paste0(path2, "/", sub.path);
+	}
 	# Note: NO easy way to exclude directories!
 	x1 = list.files(path1, pattern=pattern, no.. = TRUE,
 		include.dirs = FALSE);
