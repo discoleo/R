@@ -5,7 +5,7 @@
 ###
 ### Code Tools
 ###
-### draft v.0.2f
+### draft v.0.2g
 
 
 ### Tools to Process Formulas & Expressions
@@ -31,6 +31,100 @@
 
 ########################
 
+# List files of type ".R"
+list.filesR = function(path, pattern = NULL, full.names = FALSE,
+		case.sens = FALSE, perl = TRUE, file.ext = "\\.[Rr]$") {
+	x   = list.files(path, full.names = full.names);
+	isR = grep(file.ext, x);
+	x   = x[isR];
+	if(is.null(pattern)) return(x);
+	if(length(x) == 0) return(character(0));
+	#
+	tmp = if(full.names) basename(x) else x;
+	if(! case.sens) pattern = paste0("(?i)", pattern);
+	isP = grepl(pattern, tmp, perl=perl);
+	x = x[isP];
+	return(x);
+}
+# List files in R-directory
+# - based on package pkgGraphR;
+list.filesInR = function(path, pattern = NULL, case.sens = FALSE, perl = TRUE,
+		dirR = FALSE) {
+	stopifnot(is.character(path), length(path) == 1);
+	x = normalizePath(path);
+	if(dir.exists(x)) {
+		isR = grep("^R$", list.dirs(x, full.names = FALSE));
+		if(any(isR)) {
+			x = paste0(x, "/R");
+		} else if(dirR) {
+			# Force R-dir:
+			stop("The path does not contain an R directory!");
+		}
+		fR = list.filesR(x, full.names = TRUE,
+			pattern=pattern, case.sens=case.sens, perl=perl);
+		if(length(fR) == 0) {
+			stop("Path does not contain any .R files!");
+		}
+	} else if(file.exists(x)) {
+        fR = grep(".[Rr]$", x, value = TRUE);
+		if(length(fR) == 0){
+			stop("'path' is a file, but not an .R file.");
+		}
+	} else {
+		stop("Path must be a valid file or directory");
+	}
+	return(fR);
+}
+
+list.functions = function(path, pattern = NULL, ...) {
+	fR = list.filesInR(path, pattern=pattern, ...);
+	allFx = sapply(fR, function(x) {
+        pR  = parse(x, keep.source = TRUE);
+        pRD = utils::getParseData(pR) |>
+			dplyr::filter(token != "COMMENT", terminal != FALSE);
+        return(findFunNames(pRD));
+    }, simplify = FALSE, USE.NAMES = TRUE);
+	hasR  = sapply(allFx, function(x) nrow(x) > 0);
+	allFx = allFx[hasR];
+	# allFx = do.call(rbind, allFx);
+	allFx = lapply(allFx, function(x) {
+		isFxName = ! grepl("[]$:<[`-]", x$name);
+		return(x[isFxName, ]);
+	});
+    return(allFx)
+}
+
+findFunNames = function(x) {
+	len = nrow(x) - 2;
+	EMPTY = function() {
+		return(data.frame(line = numeric(0), name = character(0)));
+	}
+	if(len <= 0) return(EMPTY());
+	# res = lapply(seq(len), function(i) {
+	#	if(x$token[i] == "SYMBOL" && (
+	#		x$token[i+1] == "LEFT_ASSIGN" ||
+	#		x$token[i+1] == "EQ_ASSIGN") &&
+	#		x$token[i+2] == "FUNCTION") {
+	#			return(data.frame(line = x$line1[i], name = x$text[i]));
+	#		}
+	# });
+	# res = do.call(rbind, res);
+	idF = which(x$token == "FUNCTION");
+	idF = idF[idF >= 3];
+	if(length(idF) == 0) return(EMPTY());
+	tmp = x$token[idF - 1];
+	idF = idF[tmp == "LEFT_ASSIGN" | tmp == "EQ_ASSIGN"];
+	if(length(idF) == 0) return(EMPTY());
+	tmp = x$token[idF - 2];
+	idF = idF[tmp == "SYMBOL"];
+	if(length(idF) == 0) return(EMPTY());
+	idF = idF - 2;
+	res = data.frame(line = x$line1[idF], name = x$text[idF]);
+	return(res);
+}
+
+### Packages
+
 ### List All Packages
 ls.pkg = function(pkg=NULL, more.fields=FALSE, fields=c("Repository", "Description", "Imports")) {
 	if(is.null(pkg)) {
@@ -53,6 +147,7 @@ ls.pkg = function(pkg=NULL, more.fields=FALSE, fields=c("Repository", "Descripti
 
 ### List all Functions in a package
 ls.fun = function(pkg, exclude.C = TRUE) {
+	pkg = as.character(match.call()[[2]]);
 	nms = ls(getNamespace(pkg));
 	if(exclude.C) {
 		isC = sapply(nms, is.call.C, pkg=pkg);
@@ -79,6 +174,14 @@ is.function.generic = function(name) {
 	# - this version is a little bit ugly;
 	# - S4: if(isGeneric(name));
 	length(do.call(.S3methods, list(name))) > 0;
+}
+
+class.fun = function(fn, pkg) {
+	fn = as.symbol(fn); pkg = as.symbol(pkg);
+	fn = list(substitute(pkg ::: fn));
+	# deparse
+	s = do.call(class, fn);
+	return(s)
 }
 
 # much faster!
@@ -290,13 +393,6 @@ deparse.fun = function(fn, pkg, collapse="\n", width.cutoff=160) {
 	fn = list(substitute(pkg ::: fn), width.cutoff=width.cutoff);
 	# deparse
 	s = paste0(do.call(deparse, fn), collapse=collapse);
-	return(s)
-}
-class.fun = function(fn, pkg) {
-	fn = as.symbol(fn); pkg = as.symbol(pkg);
-	fn = list(substitute(pkg ::: fn));
-	# deparse
-	s = do.call(class, fn);
 	return(s)
 }
 
