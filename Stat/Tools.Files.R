@@ -1,15 +1,36 @@
 
 ### List Sub-Directories
-list.dirs = function(path, pattern = NULL, all.cols = FALSE, verbose = FALSE) {
+# - alternative to R's native list.dirs;
+list.dirs0 = function(path = ".", pattern = NULL, recursive = FALSE,
+		verbose = FALSE, ignore.case = FALSE, perl = TRUE) {
+	d = list.dirs(path, recursive = recursive, full.names = FALSE);
+	if(! is.null(pattern)) {
+		isP = grepl(pattern, d, ignore.case = ignore.case, perl=perl);
+		d   = d[isP];
+	}
+	return(d);
+}
+# Note:
+# - includes also "Date modified";
+# - size: is NOT the size of its contents;
+# - probably slow if many files:
+#   alternative list.dirs & process only the dirs;
+list.dirsAlt = function(path, pattern = NULL, all.cols = FALSE,
+		full.names = FALSE, verbose = FALSE) {
 	x = list.files(path, pattern=pattern, no.. = TRUE,
 		include.dirs = TRUE);
 	if(verbose) cat("Finished Dir!\n");
 	fd = file.info(paste0(path, "/", x), extra_cols = FALSE);
-	fd = fd[fd$isdir, ];
+	isDir = fd$isdir;
+	fd    = fd[isDir, ];
 	if(! all.cols) {
 		id = match(c("mode", "ctime", "atime"), names(fd));
 		id = id[! is.na(id)];
 		fd = fd[, - id];
+	}
+	if(! full.names) {
+		rownames(fd) = NULL;
+		fd = cbind(Dir = x[isDir], fd);
 	}
 	return(fd);
 }
@@ -18,6 +39,37 @@ list.dirs = function(path, pattern = NULL, all.cols = FALSE, verbose = FALSE) {
 # - file name & file size;
 # - TODO: option for hash;
 match.dir = function(path1, path2, sub.path = NULL, pattern = NULL, verbose = TRUE) {
+	if(! is.null(sub.path)) {
+		path1 = paste0(path1, "/", sub.path);
+		path2 = paste0(path2, "/", sub.path);
+	}
+	# Note: NO easy way to exclude directories!
+	x1 = list.files(path1, pattern=pattern, no.. = TRUE,
+		include.dirs = FALSE);
+	if(verbose) cat("Finished Dir 1\n");
+	x2 = list.files(path2, pattern=pattern, no.. = TRUE,
+		include.dirs = FALSE);
+	if(verbose) cat("Finished Dir 2\n");
+	# Filter Dirs:
+	d1 = list.dirs(path1, recursive = FALSE, full.names = FALSE);
+	x1 = setdiff(x1, d1);
+	if(verbose) {
+		cat("Excluded ", length(d1), " dirs.\n");
+	}
+	f1 = file.size(paste0(path1, "/", x1));
+	f2 = file.size(paste0(path2, "/", x2));
+	# Match:
+	s1 = paste0(f1, "\t", x1);
+	s2 = paste0(f2, "\t", x2);
+	idMatch = match(s1, s2);
+	#
+	f1 = data.frame(Name = x1, Size = f1);
+	# f2 = data.frame(Name = x2, Size = f2);
+	# dd = setdiff(f1, f2);
+	f1$Match = idMatch;
+	return(f1);
+}
+match.dir.old = function(path1, path2, sub.path = NULL, pattern = NULL, verbose = TRUE) {
 	if(! is.null(sub.path)) {
 		path1 = paste0(path1, "/", sub.path);
 		path2 = paste0(path2, "/", sub.path);
