@@ -77,8 +77,11 @@ list.filesInR = function(path, pattern = NULL, case.sens = FALSE, perl = TRUE,
 }
 
 list.functions = function(path, pattern = NULL, ...) {
-	fR = list.filesInR(path, pattern=pattern, ...);
-	allFx = sapply(fR, function(x) {
+	filesR = list.filesInR(path, pattern=pattern, ...);
+    return(list.functions.files(filesR));
+}
+list.functions.files = function(files, ...) {
+	allFx = sapply(files, function(x) {
         pR  = parse(x, keep.source = TRUE);
         pRD = utils::getParseData(pR) |>
 			dplyr::filter(token != "COMMENT", terminal != FALSE);
@@ -91,7 +94,33 @@ list.functions = function(path, pattern = NULL, ...) {
 		isFxName = ! grepl("[]$:<[`-]", x$name);
 		return(x[isFxName, ]);
 	});
+	class(allFx) = c("listFx", "list");
     return(allFx)
+}
+
+fun.calls = function(x) {
+	stopifnot(is.character(x), length(x) == 1);
+	### Functions:
+	funs = list.functions(x);
+	allFuns = lapply(funs, function(x) x$name);
+	names(allFuns) = NULL;
+	allFuns = unique(unlist(allFuns));
+	#
+	res = lapply(names(funs), function(z) {
+		findFunCalls(z, funs, fun.names = allFuns);
+	});
+	res = unlist(res);
+	res = list(Calls = res, Fun = allFuns);
+	class(res) = c("listCalls", "list");
+	return(res);
+}
+
+duplicated.listFx = function(x, fromLast = FALSE) {
+	fx = lapply(x, function(x) x$name);
+	fx = unlist(fx);
+	isDupl = duplicated(fx, fromLast = fromLast);
+	fd = fx[isDupl];
+	return(fd);
 }
 
 findFunNames = function(x) {
@@ -123,7 +152,57 @@ findFunNames = function(x) {
 	return(res);
 }
 
-### Packages
+# list.fun = list with info about function definitions;
+findFunCalls = function(x, list.fun, fun.names) {
+	if(! inherits(x, "parseData")) {
+		pR = parse(x, keep.source = TRUE);
+		pR = utils::getParseData(pR);
+	} else pR = x;
+	isCall = pR$token == "SYMBOL_FUNCTION_CALL";
+	pRD = pR[isCall, ];
+	# TODO: do.call
+	isDoCall = pRD$text == "do.call";
+	pRDDC = pRD[isDoCall, ];
+	pRD = pRD[! isDoCall, ];
+	#
+	if(is.null(fun.names)) {
+		# TODO: extract from list.fun;
+	}
+	id  = match(pRD$text, fun.names);
+	isC = ! is.na(id);
+	pRD = pRD[isC, ];
+	if(nrow(pRD) == 0) return(character(0));
+	# Parent Fx:
+	# Note: line1 is NOT robust!
+	fD = list.fun[[x]];
+	ii = findInterval(pRD$line1, fD$line);
+	funParent = fD$name[ii];
+	funCalls  = setNames(pRD$text, funParent);
+	return(funCalls);
+}
+
+buildPackageGraph = function(x, unique.edges = TRUE, only.connected = FALSE) 
+{
+	stopifnot(is.logical(unique.edges), length(unique.edges) == 1);
+	stopifnot(inherits(x, "listCalls"));
+	res = x$Calls; allFuns = x$Fun;
+	### Graph
+    edges <- dplyr::filter(data.frame(from = unname(res), to = names(res)), 
+        !is.na(from), !is.na(to))
+    res <- list(nodes = allFuns, edges = edges)
+    if (unique.edges) {
+        res$edges <- dplyr::distinct(res$edges)
+    }
+    if (only.connected) {
+        drop <- setdiff(res$nodes, unique(c(res$edges$from, res$edges$to)))
+        res$nodes <- setdiff(res$nodes, drop)
+    }
+    return(res)
+}
+
+
+################
+### Packages ###
 
 ### List All Packages
 ls.pkg = function(pkg=NULL, more.fields=FALSE, fields=c("Repository", "Description", "Imports")) {
