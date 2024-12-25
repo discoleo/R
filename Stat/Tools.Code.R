@@ -78,7 +78,7 @@ list.filesInR = function(path, pattern = NULL, case.sens = FALSE, perl = TRUE,
 
 list.functions = function(path, pattern = NULL, ...) {
 	filesR = list.filesInR(path, pattern=pattern, ...);
-    return(list.functions.files(filesR));
+	return(list.functions.files(filesR));
 }
 list.functions.files = function(files, ...) {
 	allFx = sapply(files, function(x) {
@@ -95,7 +95,7 @@ list.functions.files = function(files, ...) {
 		return(x[isFxName, ]);
 	});
 	class(allFx) = c("listFx", "list");
-    return(allFx)
+	return(allFx)
 }
 
 fun.calls = function(x) {
@@ -148,7 +148,31 @@ findFunNames = function(x) {
 	idF = idF[tmp == "SYMBOL"];
 	if(length(idF) == 0) return(EMPTY());
 	idF = idF - 2;
-	res = data.frame(line = x$line1[idF], name = x$text[idF]);
+	res = data.frame(line = x$line1[idF], name = x$text[idF],
+		parent = x$parent[idF+2]);
+	# Formals
+	formE = sapply(seq(nrow(res)), function(id) {
+		idF = res$parent[id];
+		ids = which(x$parent == idF);
+		tmp = x[ids, c("id", "token", "text")];
+		tmp = tmp$id[tmp$text == ")"];
+		if(length(tmp) == 0) return(NA); # some Error
+		return(tail(tmp,1));
+	});
+	res$idFormE = formE;
+	# Function Body:
+	fbSE = sapply(res$idFormE, function(id) {
+		if(is.na(id)) return(c(NA, NA));
+		idB = which(x$id == id) + 1;
+		if(x$token[idB] != "'{'") return(c(x$id[idB], NA));
+		idP = x$parent[idB];
+		ids = which(x$parent == idP);
+		return(x$id[c(idB, tail(ids,1))]);
+	});
+	res$idBS = fbSE[1,];
+	res$idBE = fbSE[2,];
+	# Inline Functions:
+	# TODO
 	return(res);
 }
 
