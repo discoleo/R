@@ -149,7 +149,7 @@ findFunNames = function(x) {
 	if(length(idF) == 0) return(EMPTY());
 	idF = idF - 2;
 	res = data.frame(line = x$line1[idF], name = x$text[idF],
-		parent = x$parent[idF+2]);
+		parent = x$parent[idF+2], Assign = x$parent[idF+1]);
 	# Formals
 	formE = sapply(seq(nrow(res)), function(id) {
 		idF = res$parent[id];
@@ -164,13 +164,24 @@ findFunNames = function(x) {
 	fbSE = sapply(res$idFormE, function(id) {
 		if(is.na(id)) return(c(NA, NA));
 		idB = which(x$id == id) + 1;
-		if(x$token[idB] != "'{'") return(c(x$id[idB], NA));
+		if(x$token[idB] != "'{'") {
+			return(c(x$id[idB], NA));
+		}
 		idP = x$parent[idB];
 		ids = which(x$parent == idP);
 		return(x$id[c(idB, tail(ids,1))]);
 	});
 	res$idBS = fbSE[1,];
 	res$idBE = fbSE[2,];
+	res$hasBody = ! is.na(res$idBE);
+	# End of Body: special case
+	ids = which(! res$hasBody & ! is.na(res$idBS));
+	idBE = sapply(ids, function(id) {
+		idA = res$Assign[id];
+		idE = x$id[x$parent < idA];
+		return(tail(idE, 1));
+	});
+	res$idBE[ids] = idBE;
 	# Inline Functions:
 	# TODO
 	return(res);
