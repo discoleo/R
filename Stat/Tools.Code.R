@@ -5,7 +5,7 @@
 ###
 ### Code Tools
 ###
-### draft v.0.2g
+### draft v.0.2h
 
 
 ### Tools to Process Formulas & Expressions
@@ -123,6 +123,8 @@ duplicated.listFx = function(x, fromLast = FALSE) {
 	return(fd);
 }
 
+# - see also Issues:
+#   https://github.com/discoleo/R/issues/1
 findFunNames = function(x) {
 	len = nrow(x) - 2;
 	EMPTY = function() {
@@ -233,6 +235,29 @@ buildPackageGraph = function(x, unique.edges = TRUE, only.connected = FALSE)
         res$nodes <- setdiff(res$nodes, drop)
     }
     return(res)
+}
+graph.viz = function(x, sep = "\uB7", width = 800, height = 10000) {
+	# sep can be one of, e.g.:
+	# c("\uA0", "\uA4", "\uA6", "\uB0", "\uB7")
+	graph = x;
+	graph$nodes = gsub("\\.", sep, graph$nodes);
+	graph$edges$from = gsub("\\.", sep, graph$edges$from);
+	graph$edges$to   = gsub("\\.", sep, graph$edges$to);
+	#
+	gg = sapply(1:nrow(graph$edges), function(i) {
+		paste0(graph$edges$from[i], " -> ", graph$edges$to[i])
+	});
+	edges = paste0(gg, collapse = "\n");
+	nodes = paste0(graph$nodes, collapse = ";");
+	graph.init = paste0("digraph{", "\n", "graph[rankdir = LR]", "\n",
+		"node[shape = box, style = rounded, fontname = Helvetica]", "\n");
+	fullGraph = paste0(graph.init, nodes, edges, "\n", "}");
+	if(is.null(height)) {
+		tmp = DiagrammeR::grViz(fullGraph);
+	} else {
+		tmp = DiagrammeR::grViz(fullGraph, width=width, height=height);
+	}
+	return(tmp);
 }
 
 
