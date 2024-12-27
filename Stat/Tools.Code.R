@@ -284,9 +284,10 @@ buildPackageGraph = function(x, unique.edges = TRUE, only.connected = FALSE,
 	# - e.g. an extensively connected node;
 	# TODO: do NOT replicate if called in the same function;
 	if(! is.null(rep.node)) {
-		ids = which(res == rep.node);
-		if(length(ids) > 1) {
-			repFx = paste0(rep.node, ".", seq(length(ids)));
+		for(sNode in rep.node) {
+			ids = which(res == sNode);
+			if(length(ids) <= 1) next;
+			repFx = paste0(sNode, ".", seq(length(ids)));
 			res[ids] = repFx;
 			allFuns  = c(allFuns, repFx);
 		}
