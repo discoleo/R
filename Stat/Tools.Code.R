@@ -76,11 +76,13 @@ list.filesInR = function(path, pattern = NULL, case.sens = FALSE, perl = TRUE,
 	return(fR);
 }
 
-list.functions = function(path, pattern = NULL, ...) {
+list.functions = function(path, pattern = NULL,
+		exclude = "[]$:<[`-]", verbose = FALSE, ...) {
 	filesR = list.filesInR(path, pattern=pattern, ...);
-	return(list.functions.files(filesR));
+	return(list.functions.files(filesR, exclude=exclude, verbose=verbose));
 }
-list.functions.files = function(files, ...) {
+list.functions.files = function(files,
+		exclude = "[]$:<[`-]", verbose = FALSE, ...) {
 	allFx = sapply(files, function(x) {
         pR  = parse(x, keep.source = TRUE);
         pRD = utils::getParseData(pR) |>
@@ -90,10 +92,21 @@ list.functions.files = function(files, ...) {
 	hasR  = sapply(allFx, function(x) nrow(x) > 0);
 	allFx = allFx[hasR];
 	# allFx = do.call(rbind, allFx);
-	allFx = lapply(allFx, function(x) {
-		isFxName = ! grepl("[]$:<[`-]", x$name);
-		return(x[isFxName, ]);
-	});
+	if(! is.null(exclude)) {
+		if(verbose) {
+			tmp = lapply(allFx, function(x) x$name);
+			tmp = unlist(tmp);
+			fxExcluded = grepl(exclude, tmp);
+			tmp = tmp[fxExcluded];
+			cat("Excluded functions:");
+			if(length(tmp) == 0) { cat(" 0;\n"); }
+			else { cat("\n"); print(tmp); }
+		}
+		allFx = lapply(allFx, function(x) {
+			isFxName = ! grepl(exclude, x$name);
+			return(x[isFxName, ]);
+		});
+	}
 	class(allFx) = c("listFx", "list");
 	return(allFx)
 }
@@ -123,6 +136,9 @@ duplicated.listFx = function(x, fromLast = FALSE) {
 	return(fd);
 }
 
+# nrParent:
+#  0 = top-tier Function;
+#  n = row of data.frame (with the parent function);
 # - see also Issues:
 #   https://github.com/discoleo/R/issues/1
 findFunNames = function(x) {
@@ -183,10 +199,38 @@ findFunNames = function(x) {
 		idE = x$id[x$parent < idA];
 		return(tail(idE, 1));
 	});
-	res$idBE[ids] = idBE;
+	res$idBE[ids] = unlist(idBE); # some Error?
 	# Inline Functions:
-	# TODO
+	res = parent.default(res);
 	return(res);
+}
+# x = list of data.frames with parse-info;
+parent.list = function(x) {
+	for(idFile in seq_along(x)) {
+		x[[idFile]]$nrParent =
+			which.parent.default(x[[idFile]]);
+	}
+}
+# x = data.frame with parse-info;
+parent.default = function(x) {
+	x$nrParent = which.parent(x);
+	return(x);
+}
+which.parent = function(x) {
+	len = nrow(x);
+	if(len == 0) return(numeric(0));
+	lenFx  = x$idBE - x$idBS;
+	parent = sapply(seq(len), function(id) {
+		idP  = x$parent[id];
+		idPF = which(x$idBS < idP & x$idBE > idP);
+		if(length(idPF) == 0) return(0);
+		if(length(idPF) == 1) return(idPF);
+		lenP = lenFx[idPF];
+		idP0 = which(lenP == min(lenP));
+		idPF = idPF[idP0];
+		return(idPF);
+	});
+	return(parent);
 }
 
 # list.fun = list with info about function definitions;
