@@ -5,7 +5,7 @@
 ###
 ### Code Tools
 ###
-### draft v.0.2h
+### draft v.0.2i
 
 
 ### Tools to Process Formulas & Expressions
@@ -111,15 +111,22 @@ list.functions.files = function(files,
 	return(allFx)
 }
 
-fun.calls = function(x) {
+fun.calls = function(x, inline.exclude = FALSE) {
 	stopifnot(is.character(x), length(x) == 1);
 	### Functions:
 	funs = list.functions(x);
+	# very rudimentary mechanism;
+	if(inline.exclude) {
+		funs = lapply(funs, function(x) {
+			x[x$nrParent == 0, ];
+		});
+	}
 	allFuns = lapply(funs, function(x) x$name);
 	names(allFuns) = NULL;
 	allFuns = unique(unlist(allFuns));
 	#
-	res = lapply(names(funs), function(z) {
+	nms = names(funs);
+	res = lapply(nms, function(z) {
 		findFunCalls(z, funs, fun.names = allFuns);
 	});
 	res = unlist(res);
@@ -208,7 +215,7 @@ findFunNames = function(x) {
 parent.list = function(x) {
 	for(idFile in seq_along(x)) {
 		x[[idFile]]$nrParent =
-			which.parent.default(x[[idFile]]);
+			which.parent(x[[idFile]]);
 	}
 }
 # x = data.frame with parse-info;
@@ -262,11 +269,28 @@ findFunCalls = function(x, list.fun, fun.names) {
 	return(funCalls);
 }
 
-buildPackageGraph = function(x, unique.edges = TRUE, only.connected = FALSE) 
+buildPackageGraph = function(x, unique.edges = TRUE, only.connected = FALSE,
+		rep.node = NULL, unique = TRUE) 
 {
 	stopifnot(is.logical(unique.edges), length(unique.edges) == 1);
 	stopifnot(inherits(x, "listCalls"));
 	res = x$Calls; allFuns = x$Fun;
+	# Unique Calls
+	if(unique) {
+		isDupl = duplicated(cbind(res, names(res)));
+		res = res[! isDupl];
+	}
+	# Duplicate node:
+	# - e.g. an extensively connected node;
+	# TODO: do NOT replicate if called in the same function;
+	if(! is.null(rep.node)) {
+		ids = which(res == rep.node);
+		if(length(ids) > 1) {
+			repFx = paste0(rep.node, ".", seq(length(ids)));
+			res[ids] = repFx;
+			allFuns  = c(allFuns, repFx);
+		}
+	}
 	### Graph
     edges <- dplyr::filter(data.frame(from = unname(res), to = names(res)), 
         !is.na(from), !is.na(to))
@@ -280,7 +304,7 @@ buildPackageGraph = function(x, unique.edges = TRUE, only.connected = FALSE)
     }
     return(res)
 }
-graph.viz = function(x, sep = "\uB7", width = 800, height = 10000) {
+graph.viz = function(x, sep = "\uB7", width = 800, height = 8000) {
 	# sep can be one of, e.g.:
 	# c("\uA0", "\uA4", "\uA6", "\uB0", "\uB7")
 	graph = x;
