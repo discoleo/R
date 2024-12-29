@@ -3,7 +3,54 @@
 source("Tools.Code.R")
 
 
-###########
+####################
+
+### Tools: Functions
+
+### Nested/Inline
+# - see also Issue:
+#   https://github.com/discoleo/R/issues/1
+x = "abc = function(x, y = NULL, ...) {
+	FUN1 = function(x) sum(x,1);
+	FUN2 = function(x) x + FUN1(y); x = FUN1(x); print(\"Call\");
+	FUN3 = function(x) { FUNi = function() x + FUN1(y); FUNi(); }
+	FUN1(FUN2(x));
+	do.call(FUN1, list(x = x));
+}"
+pR  = parse(text = x, keep.source = TRUE);
+pRD = utils::getParseData(pR)
+pRD = pRD[pRD$terminal, ]
+findFunNames(pRD)
+
+
+### Formals vs Body
+# TODO:
+# - Process FUN inside formals:
+#   Any reason to distinguish formals vs body?
+x = "abc = function(x, y = function() x + 1, ...) {
+	x = y();
+	y = function(x) x + 2; y(x+2);
+}"
+pR  = parse(text = x, keep.source = TRUE);
+pRD = utils::getParseData(pR)
+pRD = pRD[pRD$terminal, ]
+findFunNames(pRD)
+
+
+### Graph of BioShapes
+
+graph.BioShapes = function(path, rep.node = c("plot.base", "as.bioshape")) {
+	ff = fun.calls(path, inline = TRUE);
+	fg = buildPackageGraph(ff, rep.node = rep.node);
+	graph.viz(fg);
+}
+
+# see: https://github.com/discoleo/BioShapes
+# path = ".../BioShapes"
+
+
+#################
+#################
 
 ### Example
 

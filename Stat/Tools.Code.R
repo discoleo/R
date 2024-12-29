@@ -209,6 +209,8 @@ findFunNames = function(x) {
 	res$idBE[ids] = unlist(idBE); # some Error?
 	# Inline Functions:
 	res = parent.default(res);
+	# Top Parent
+	res$TopParent = which.parent.top(res$nrParent);
 	return(res);
 }
 # x = list of data.frames with parse-info;
@@ -238,6 +240,33 @@ which.parent = function(x) {
 		return(idPF);
 	});
 	return(parent);
+}
+# Top Parent (Root)
+which.parent.top = function(x) {
+	topParent = x;
+	notR   = topParent > 0;
+	isRoot = ! notR; # has reached Root;
+	idHasP = which(notR);
+	idRoot = which(isRoot); # as valid ids;
+	topParent[idRoot] = idRoot; # all are valid ids;
+	iter = length(topParent);
+	while(length(idHasP) > 0 && iter > 0) {
+		iter = iter - 1;
+		idP1 = topParent[idHasP];
+		topParent[idHasP] = topParent[idP1];
+		idT1 = which(isRoot[idP1]);
+		if(length(idT1) > 0) {
+			tmp_id = idHasP[idT1];
+			idHasP = idHasP[- idT1];
+			isRoot[tmp_id] = TRUE;
+			# topParent[tmp_id] = topParent[idP1[idT1]];
+		}
+	}
+	if(length(idHasP) > 0) {
+		warning("Data contains cycles!");
+		print(idHasP);
+	}
+	return(topParent);
 }
 
 # list.fun = list with info about function definitions;
