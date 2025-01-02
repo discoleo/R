@@ -51,16 +51,23 @@ a^5 - 10*a^3*b^2 + 5*a*b^4 - a - R # = 0
 # =>
 ad^10 + 3*ad^6 + 11*R*ad^5 - 4*ad^2 + 4*R*ad - R^2 # = 0
 
+# 2 of the roots are known (based on the original P[5]):
+# c(2*a1, 2*a2, ...);
 xx = roots(c(1, 0,0,0, 3, 11*R, 0,0,-4,4*R,-R^2))
-bp = (3*xx^5 - 8*xx + 4*R) / (20*xx^3); # b^2;
+bp = (3*xx^5 - 8*xx + 4*R) / (20*xx^3); # bp = b^2;
 tmp = poly.calc0(c(xx/2 + sqrt(bp)*1i, xx/2 - sqrt(bp)*1i), digits=4)
-(x^5 - x - 1)^4
+# as.pm("x^5 - x - R[])^4")
 # TODO: explore ways to use this fact;
 
 # Test:
 print.pm(div.pm(tmp, as.pm("x^5 - x - 1"), by="x"))
 -(x+1)^3 + 3*x^5*(x+1)^2 - 3*x^10*(x+1) + x^15
 (x^5 - x - 1)^3
+
+# Relations to original P[5]:
+id = c(2,1,2,5,4,2,4,4,1,2)
+5*xx^3*(2*x[id] - xx)^2 + 3*xx^5 - 8*xx + 4*R # = 0
+2*xx^5 - 5*xx^4*x[id] + 5*xx^3*x[id]^2 - 2*xx + R # = 0
 
 
 # Derivation:
