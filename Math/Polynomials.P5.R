@@ -4,7 +4,7 @@
 ### [the one and only]
 ###
 ### Polynomials: P[5]
-### v.0.1a
+### v.0.1b
 
 
 ### Experimental Approaches to P[5]
@@ -19,6 +19,12 @@
 # - moved to this file from file:
 #   Polynomials.Derived.R;
 
+####################
+
+### Helper Functions
+
+source("Polynomials.Helper.R")
+
 
 #########################
 #########################
@@ -31,6 +37,39 @@ a2 = Re(x[4]); b2 = Im(x[4]);
 
 ### Real root
 a3 = -2*(a1+a2);
+
+### Split Complex
+a = a1; b = b1; bb = b*b; ad = 2*a;
+a^5 - 10*a^3*b^2 + 5*a*b^4 - a - R # = 0
+5*a^4 - 10*a^2*b^2 + b^4 - 1 # = 0
+
+# =>
+24*a^5 - 40*a^3*bb - 4*a + R # = 0
+5*a^4 - 10*a^2*bb + bb^2 - 1 # = 0
+# =>
+1024*a^10 + 192*a^6 + 352*R*a^5 - 16*a^2 + 8*R*a - R^2 # = 0
+# =>
+ad^10 + 3*ad^6 + 11*R*ad^5 - 4*ad^2 + 4*R*ad - R^2 # = 0
+
+xx = roots(c(1, 0,0,0, 3, 11*R, 0,0,-4,4*R,-R^2))
+bp = (3*xx^5 - 8*xx + 4*R) / (20*xx^3); # b^2;
+tmp = poly.calc0(c(xx/2 + sqrt(bp)*1i, xx/2 - sqrt(bp)*1i), digits=4)
+(x^5 - x - 1)^4
+# TODO: explore ways to use this fact;
+
+# Test:
+print.pm(div.pm(tmp, as.pm("x^5 - x - 1"), by="x"))
+-(x+1)^3 + 3*x^5*(x+1)^2 - 3*x^10*(x+1) + x^15
+(x^5 - x - 1)^3
+
+
+# Derivation:
+p1 = as.pm("24*a^5 - 40*a^3*bb - 4*a + R")
+p2 = as.pm("5*a^4 - 10*a^2*bb + bb^2 - 1")
+pR = solve.pm(p1, p2, by="bb")
+
+
+################
 
 ### E2
 (a1^2 + b1^2) + (a2^2 + b2^2) - a3^2 + 4*a1*a2 # = 0
