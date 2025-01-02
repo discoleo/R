@@ -56,11 +56,11 @@ ad^10 + 3*ad^6 + 11*R*ad^5 - 4*ad^2 + 4*R*ad - R^2 # = 0
 xx = roots(c(1, 0,0,0, 3, 11*R, 0,0,-4,4*R,-R^2))
 bp = (3*xx^5 - 8*xx + 4*R) / (20*xx^3); # bp = b^2;
 tmp = poly.calc0(c(xx/2 + sqrt(bp)*1i, xx/2 - sqrt(bp)*1i), digits=4)
-# as.pm("x^5 - x - R[])^4")
-# TODO: explore ways to use this fact;
+# as.pm("(x^5 - x - R[])^4")
+# TODO: explore ways to use this property;
 
 # Test:
-print.pm(div.pm(tmp, as.pm("x^5 - x - 1"), by="x"))
+print.pm(div.pm(tmp, as.pm("x^5 - x - R[]"), by="x"))
 -(x+1)^3 + 3*x^5*(x+1)^2 - 3*x^10*(x+1) + x^15
 (x^5 - x - 1)^3
 
