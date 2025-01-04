@@ -4,7 +4,7 @@
 ### [the one and only]
 ###
 ### Polynomials: P[4]
-### v.0.1c
+### v.0.1d
 
 
 ### Solve Method for P[4]
@@ -21,16 +21,23 @@
 #   the C2-decomposition:
 #   (x1, _, x3, _), (x3, _, x1, _) = 4 permutations;
 #   (x2, _, x4, _), (x4, _, x2, _) = 4 permutations;
+#   Note: "_" = any of the remaining roots;
 # => Total = 8 permutations;
 # - Count solutions of initial S4 system = 4! = 24;
 # => Transformed system:
 #    Invariant = 4! / 8 = 3 distinct values;
-# => Characteristic polynomial = Order 3 (e.g. in ps);
+# => Characteristic polynomial = Order 3
+#    (e.g. in ps; see below definition of ps);
+# Note:
+# - this method is generalizable to a whole class
+#   of polynomial systems;
 
 
 ####################
 
 ### Helper Functions
+
+source("Polynomials.Helper.R")
 
 test.P4 = function(sol, R=NULL) {
 	err1 = apply(sol, 1, sum);
@@ -141,6 +148,36 @@ sol = solve.P4(R)
 
 test.P4(sol)
 
+#######################
+#######################
+
+### Derived Polynomials
+
+R = 2; b1 = -2; b2 = 1;
+x = roots(c(1,0, b2, b1, R));
+zr1 = Re(x[1]); zi1 = Im(x[1]);
+zr2 = Re(x[3]); zi2 = Im(x[3]);
+
+print(x)
+zr1 + zr2; # == b3/2;
+
+### Split Complex
+z = zr1; zi = zi1; zs = zi*zi; z2 = 2*z;
+z^4 - 6*z^2*zi^2 + zi^4 + b2*(z^2 - zi^2) + b1*z + R # = 0
+4*z^3 - 4*z*zi^2 + 2*b2*z + b1 # = 0
+
+# =>
+z^4 - 6*z^2*zs + zs^2 + b2*z^2 + b1*z - b2*zs + R # = 0
+4*z^3 - 4*z*zs + 2*b2*z + b1 # = 0
+# =>
+64*z^6 + 32*b2*z^4 + 4*(b2^2 - 4*R)*z^2 - b1^2 # = 0
+z2^6 + 2*b2*z2^4 + (b2^2 - 4*R)*z2^2 - b1^2 # = 0
+
+# P[4] => P[6];
+# - not yet interesting;
+# - for P[5] => P[10] see file:
+#   Polynomials.P5.R;
+
 
 ######################
 ######################
@@ -223,14 +260,19 @@ x^4 - 8*s*K*y*x - 256*K + 64*K*y - K*y^2
 #######################
 #######################
 
+# only some old Experiment:
+
 x = roots(c(1,0,0,3,3))
 y = 1/x
 
 x^4 + 3*x + 3 # = 0
 3*y^4 + 3*y^3 + 1 # = 0
 
+#
+3*y^3 + 3*y^2 + x # = 0
+# =>
+x^4 + 6*x + 3 + 3*(3*y^3 + 3*y^2) # = 0
 x^4 + 6*x + 6 + 9*(y^4 + 2*y^3 + y^2) # = 0
-x + 3*y^3 + 3*y^2 # = 0
 
 x^3 + 3 + 3*y # = 0
 
