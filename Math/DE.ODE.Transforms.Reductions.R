@@ -22,9 +22,18 @@ library(bvpSolve)
 ####################
 ####################
 
+### Integrating Factors
+
+### Note:
+# - for the direct approach using Laplace transforms, see:
+#   Dr Peyam: Convolution and ODE
+#   https://www.youtube.com/watch?v=OWxZ7frYiUo
+# - but see below for generalization of this approach, e.g.:
+#   d2y = 4*k^2*x^2*y + f0;
+
+
 ### Base ODE:
 # d2y = y + f0
-
 
 ### Transform: Exp(x)
 # y = z * exp(x)
@@ -62,6 +71,7 @@ library(bvpSolve)
 ### Order Reduction
 # =>
 # d2z + 4*k*x*dz = f0 * exp(-k*x^2)
+# D(exp(2*k*x^2) * dz) = f0 * exp(k*x^2);
 
 
 ###################
