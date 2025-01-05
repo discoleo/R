@@ -6,7 +6,7 @@
 ## Integrals: Transforms
 ## Order Reduction
 ##
-## v.0.1e
+## v.0.1f
 
 
 ### Order Reduction of ODEs
@@ -242,6 +242,71 @@ par(mfrow = c(1, 1))
 
 # Plot y vs y0: perfect match;
 y.tmp = sol0[,2] * exp(k[2]*x^n[2] + k[1]*x^n[1]);
+plot(sol0[, 1], y.tmp, type="l", col="green")
+lines(sol[, 1:2], col="red", lty=2)
+
+
+#################
+#################
+
+### Base ODE:
+# x*d2y = (x+2)*y + x*f0
+
+### Transform: x * Exp(x)
+# y = z * x * exp(x)
+# dy  = (x*dz + z) * exp(x) + y;
+# d2y = (x*d2z + 2*(x+1)*dz) * exp(x) + (x+2)/x * y;
+
+### Order Reduction
+# =>
+# x*d2z + 2*(x+1)*dz = f0 * exp(-x);
+# D(x^2 * exp(2*x) * dz) = x * f0 * exp(x);
+
+
+### Example
+
+# Base ODE:
+Ip0 = function(x, y, pars) {
+	ff = pars$FUN;
+	z = y[1];
+	d2y = (2/x + 1) * z + ff(x);
+	list(c(y[2], d2y));
+}
+# Transformed ODE:
+Ip = function(x, y, pars) {
+	ff = pars$FUN;
+	dy = y[2];
+	d2y = -2*(x+1)*dy + ff(x) * exp(-x);
+	d2y = d2y / x;
+	list(c(dy, d2y));
+}
+
+###
+x.start = 0.2; x.end = 3;
+x = seq(x.start, x.end, by = 0.01)
+y = c(1, 4)
+FUN = function(x) 2*x - exp(x^2);
+parms = list(FUN=FUN);
+
+# bvptwp # bvpshoot(guess = 0)
+sol0 <- bvptwp(
+	yini = c(y[1], NA),
+	yend = c(y[2], NA),
+	x = x, func = Ip0, parms = parms)
+fs = x[1] * exp(x[1]); xe = x[length(x)];
+fe = xe * exp(xe);
+sol <- bvptwp(
+	yini = c(y[1] / fs, NA),
+	yend = c(y[2] / fe, NA),
+	x = x, func = Ip, parms = parms)
+
+### Test
+
+plot(sol)
+par(mfrow = c(1, 1))
+
+# Plot y vs y0: perfect match;
+y.tmp = sol0[,2] / (x * exp(x));
 plot(sol0[, 1], y.tmp, type="l", col="green")
 lines(sol[, 1:2], col="red", lty=2)
 
