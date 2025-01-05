@@ -60,13 +60,13 @@ library(bvpSolve)
 ###################
 
 ### Base ODE:
-# d2y = 4*k^2*x^2*y + f0
+# d2y = (4*k^2*x^2 + 2*k)*y + f0
 
 
 ### Transform: Exp(k*x^2)
-# y = z * exp(k*x^2)
-# dy = (dz + 2*k*x*z) * exp(k*x^2)
-# d2y = (d2z + 4*k*x*dz + 4*k^2*x^2*z) * exp(k*x^2)
+# y   = z * exp(k*x^2)
+# dy  = (dz + 2*k*x*z) * exp(k*x^2)
+# d2y = (d2z + 4*k*x*dz + (4*k^2*x^2 + 2*k)*z) * exp(k*x^2)
 
 ### Order Reduction
 # =>
@@ -79,17 +79,19 @@ library(bvpSolve)
 ### Gen: x^n * y
 
 ### Base ODE:
-# d2y = (n*k)^2 * x^(2*n-2)*y + f0
+# d2y = ((n*k)^2 * x^n + k*n*(n-1))*x^(n-2)*y + f0
 
 
 ### Transform: Exp(k*x^n)
 # y = z * exp(k*x^n)
 # dy = (dz + n*k*x^(n-1)*z) * exp(k*x^n)
-# d2y = (d2z + 2*n*k*x^(n-1)*dz + n^2*k^2*x^(2*n-2)*z) * exp(k*x^n)
+# d2y = (d2z + 2*n*k*x^(n-1)*dz +
+#     + n^2*k^2*x^(2*n-2)*z + n*(n-1)*k*x^(n-2)*z) * exp(k*x^n);
 
 ### Order Reduction
 # =>
 # d2z + 2*n*k*x^(n-1)*dz = f0 * exp(-k*x^n)
+# D(exp(2*k*x^n) * dz) = f0 * exp(k*x^n);
 
 
 #################
@@ -110,6 +112,7 @@ d2z * exp(k2*x^2 + k1*x) +
 
 # Order reduction:
 # d2y = 2*(2*k2*x + k1) * dy + f0 * exp(k2*x^2 + k1*x);
+# D(exp(-2*k2*x^2 - 2*k1*x) * dy) = f0 * exp(-k2*x^2 - k1*x);
 
 
 ### Example
