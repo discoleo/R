@@ -5,7 +5,7 @@
 ###
 ### Code Tools
 ###
-### draft v.0.2i
+### draft v.0.2j
 
 
 ### Tools to Process Formulas & Expressions
@@ -76,6 +76,10 @@ list.filesInR = function(path, pattern = NULL, case.sens = FALSE, perl = TRUE,
 	return(fR);
 }
 
+### List Functions
+# - lists all functions defined in the source files;
+# path    = path to a file or directory;
+# pattern = filter list of files;
 list.functions = function(path, pattern = NULL,
 		exclude = "[]$:<[`-]", verbose = FALSE, ...) {
 	filesR = list.filesInR(path, pattern=pattern, ...);
@@ -111,6 +115,7 @@ list.functions.files = function(files,
 	return(allFx)
 }
 
+# Extract calls to functions
 fun.calls = function(x, inline.exclude = FALSE) {
 	stopifnot(is.character(x), length(x) == 1);
 	### Functions:
@@ -143,9 +148,13 @@ duplicated.listFx = function(x, fromLast = FALSE) {
 	return(fd);
 }
 
+
+### Function Definitions: Info
+### Out:
 # nrParent:
 #  0 = top-tier Function;
 #  n = row of data.frame (with the parent function);
+# TopParent: row of data.frame where the top parent is defined;
 # - see also Issues:
 #   https://github.com/discoleo/R/issues/1
 findFunNames = function(x) {
@@ -176,6 +185,7 @@ findFunNames = function(x) {
 	res = data.frame(line = x$line1[idF], name = x$text[idF],
 		parent = x$parent[idF+2], Assign = x$parent[idF+1]);
 	# Formals
+	res$idFormS = x[idF + 3, "id"];
 	formE = sapply(seq(nrow(res)), function(id) {
 		idF = res$parent[id];
 		ids = which(x$parent == idF);
@@ -290,6 +300,7 @@ findFunCalls = function(x, list.fun, fun.names) {
 	pRD = pRD[isC, ];
 	if(nrow(pRD) == 0) return(character(0));
 	# Parent Fx:
+	# TODO:
 	# Note: line1 is NOT robust!
 	fD = list.fun[[x]];
 	ii = findInterval(pRD$line1, fD$line);
@@ -298,6 +309,7 @@ findFunCalls = function(x, list.fun, fun.names) {
 	return(funCalls);
 }
 
+### Graph
 buildPackageGraph = function(x, unique.edges = TRUE, only.connected = FALSE,
 		rep.node = NULL, unique = TRUE) 
 {

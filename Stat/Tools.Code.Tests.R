@@ -37,6 +37,20 @@ pRD = pRD[pRD$terminal, ]
 findFunNames(pRD)
 
 
+### Formals: Advanced
+# TODO:
+# - Identify external FUN if passed through formals;
+x = "FUN1 = function(x) x+1;
+	abc = function(x, y = FUN1, ...) {
+	x = y(x);
+	y = function(x) x + 2; y(x+2);
+}"
+pR  = parse(text = x, keep.source = TRUE);
+pRD = utils::getParseData(pR)
+pRD = pRD[pRD$terminal, ]
+findFunNames(pRD)
+
+
 ### Graph of BioShapes
 
 graph.BioShapes = function(path, rep.node = c("plot.base", "as.bioshape")) {
