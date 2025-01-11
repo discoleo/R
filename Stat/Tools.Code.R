@@ -376,16 +376,20 @@ graph.viz = function(x, sep = "\uB7", width = 800, height = 8000) {
 
 ### List All Packages
 ls.pkg = function(pkg=NULL, more.fields=FALSE, fields=c("Repository", "Description", "Imports")) {
-	if(is.null(pkg)) {
-		if(more.fields) {
-			pkg = installed.packages(fields=fields);
-		} else {
-			pkg = installed.packages();
-			fields = NULL;
-		}
+	if(more.fields) {
+		all.pkg = installed.packages(fields=fields);
 	} else {
 		all.pkg = installed.packages();
-		pkg = all.pkg[all.pkg[,1] %in% pkg, ];
+		fields = NULL;
+	}
+	if(is.null(pkg)) {
+		pkg = all.pkg;
+	} else {
+		pkg = all.pkg[all.pkg[,1] %in% pkg, , drop = FALSE];
+	}
+	if(nrow(pkg) == 0) {
+		warning("No packages!");
+		return(data.frame("Package" = character(0)));
 	}
 	p = pkg;
 	p = as.data.frame(p);
