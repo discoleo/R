@@ -310,3 +310,21 @@ y.tmp = sol0[,2] / (x * exp(x));
 plot(sol0[, 1], y.tmp, type="l", col="green")
 lines(sol[, 1:2], col="red", lty=2)
 
+
+#####################
+#####################
+
+### Duals: ODE / Integrals
+
+### d2y = k^2 * x^(2*p-2) * y + f0(x)
+d2y - k^2 * x^(2*p-2) * y - f0 # = 0
+d2y + k*x^(p-1)*dy - k*x^(p-1)*dy - k^2*x^(2*p-2)*y - f0 # = 0
+exp(k/p*x^p)*(d2y + k*x^(p-1)*dy - k*x^(p-1)*(dy + k*x^(p-1)*y)) +
+	- f0*exp(k/p*x^p) # = 0
+# D(exp(k/p*x^p)*(dy - k*x^(p-1)*y)) = f0*exp(k/p*x^p);
+# dy - k*x^(p-1)* y  = exp(-k/p*x^p) * I( f0*exp(k/p*x^p) );
+# D(exp(-k/p*x^p)*y) = exp(-2*k/p*x^p) * I( f0*exp(k/p*x^p) );
+# y = exp(k/p*x^p) * I( exp(-2*k/p*x^p) * I( f0*exp(k/p*x^p) ) );
+
+# TODO: check;
+
