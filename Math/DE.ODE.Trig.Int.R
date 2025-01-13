@@ -6,7 +6,7 @@
 ## Integrals:
 ## Derived from I( Trig-Fractions )
 ##
-## v.0.2a
+## v.0.2b
 
 
 ### Examples:
@@ -683,4 +683,40 @@ par(mfrow = c(1, 1))
 plot(sol[, 1:2], type="l", col="green")
 y = sapply(x, \(k) Ipk(k, n=n, b=b, lim=lim))
 lines(x, y, col="red", lty=2)
+
+
+###################
+###################
+
+### Solutions
+
+# - using Reductions / Integrating factor;
+# - for more examples, see file:
+#   DE.ODE.Transforms.Reductions.R;
+
+### d2y = y + f0(x)
+d2y - y - f0 # = 0
+d2y + dy - dy - y - f0 # = 0
+exp(x)*(d2y + dy - dy - y) - f0*exp(x) # = 0
+# =>
+# D(exp(x)*(dy - y)) = f0*exp(x);
+# exp(x) * (dy - y)  = I( f0 * exp(x) );
+# exp(-x) * (dy - y) = exp(-2*x) * I( f0 * exp(x) );
+# D(exp(-x)*y) = exp(-2*x) * I( f0 * exp(x) );
+# y = exp(x) * I( exp(-2*x) * I( f0 * exp(x) ) );
+
+# TODO:
+# - simplification using Integration by parts;
+
+
+
+### d2y = k^2 * y + f0(x)
+d2y - k^2 * y - f0 # = 0
+d2y + k*dy - k*dy - k^2*y - f0 # = 0
+exp(k*x)*(d2y + k*dy - k*(dy + k*y)) - f0*exp(k*x) # = 0
+# =>
+# D(exp(k*x)*(dy - k*y)) = f0*exp(k*x);
+# exp(k*x) * (dy - k*y)  = I( f0 * exp(k*x) );
+# D(exp(-k*x)*y) = exp(-2*k*x) * I( f0 * exp(k*x) );
+# y = exp(k*x) * I( exp(-2*k*x) * I( f0 * exp(k*x) ) );
 
