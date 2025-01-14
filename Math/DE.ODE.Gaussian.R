@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs - Gaussian
 ###
-### draft v.0.4f
+### draft v.0.4g
 
 #############
 ### Types ###
@@ -1147,7 +1147,68 @@ curve(dy(x, m=m, k=k, a=a), add=T, col="green")
 sapply(px, line.tan, dx=3, p=dy, dp=d2y, m=m, k=k, a=a, col="orange")
 
 
+####################
 
+# y = exp(1/(x+b)) + exp(-1/(x+b)) + f0(x)
+
+# D =>
+(x+b)^2 * dy + (exp(1/(x+b)) - exp(-1/(x+b))) - (x+b)^2 * df0 # = 0
+
+# System: (but not needed)
+# 2*exp(1/(x+b)) =
+-(x+b)^2 * dy + y + (x+b)^2 * df0 - f0;
+# 2*exp(-1/(x+b)) =
+(x+b)^2 * dy + y - (x+b)^2 * df0 - f0;
+
+### ODE:
+(x+b)^4 * d2y + 2*(x+b)^3 * dy - y +
+	- (x+b)^4 * d2f0 - 2*(x+b)^3 * df0 + f0 # = 0
+
+
+### Solution & Plot:
+y = function(x, b = sqrt(5), FUN = NULL) {
+	xi = 1 / (x + b);
+	y = exp(xi) + exp(- xi) + FUN(x);
+	return(y)
+}
+dy = function(x, b = sqrt(5), FUN = NULL) {
+	xb = x + b; xi = 1 / xb;
+	div = xb^2;
+	dy = exp(- xi) - exp(xi) + div * FUN(x);
+	dy = dy / div;
+	# dy = ifelse(div != 0, dy / div, dy(x + 1E-3, b=b, FUN=FUN));
+	return(dy)
+}
+d2y = function(x, b = sqrt(5), FUN = NULL, DFUN = NULL, D2FUN) {
+	# (x+b)^4 * d2y + 2*(x+b)^3 * dy - y +
+	# - (x+b)^4 * d2f0 - 2*(x+b)^3 * df0 + f0 # = 0
+	y  =  y(x, b=b, FUN=FUN);
+	dy = dy(x, b=b, FUN=DFUN);
+	xb = x + b; xb3 = xb^3;
+	div = xb^4;
+	dp  = - 2*xb3 * dy + y +
+		+ div * D2FUN(x) + 2*xb3 * DFUN(x) - FUN(x);
+	dp = dp / div;
+	# dp = ifelse(div != 0, dp / div, d2y(x + 1E-2, ...);
+	return(dp)
+}
+### Plot:
+b = sqrt(5);
+FUN   = \(x) x*exp(-x^2 / 3);
+DFUN  = \(x) -1/3 * (2*x^2 - 3)*exp(-x^2 / 3);
+D2FUN = \(x)  1/9 * (4*x^3 - 6*x - 12*x)*exp(-x^2 / 3);
+yf   = \(...)   y(..., FUN=FUN);
+dyf  = \(...)  dy(..., FUN=DFUN);
+d2yf = \(...) d2y(..., FUN=FUN, DFUN=DFUN, D2FUN=D2FUN);
+px = c(-0.75, 0:4);
+curve(y(x, b=b, FUN=FUN), from= -1, to = 4.5, ylim=c(-1.5, 4.5))
+sapply(px, line.tan, dx=3, p=yf, dp=dyf, b=b)
+#
+curve(dy(x, b=b, FUN = DFUN), add=T, col="green")
+sapply(px, line.tan, dx=3, p=dyf, dp=d2yf, b=b, col="orange")
+
+
+###########################
 ###########################
 ###########################
 
