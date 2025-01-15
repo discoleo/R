@@ -33,6 +33,12 @@ cat.QPhtml = function(x) {
 	tmp = lapply(x, cat, sep = "\n");
 	invisible(x);
 }
+cat.base64html = function(x) {
+	x = as.base64char(x);
+	x = strsplit(x, "(?<=[>])(?=[<])", perl=TRUE);
+	tmp = lapply(x, cat, sep = "\n");
+	invisible(x);
+}
 
 ### QP: Quoted Printable
 decode.QPcode = function(x) {
@@ -45,4 +51,10 @@ decode.QPcode = function(x) {
 }
 as.QPchar = function(x) {
 	rawToChar(decode.QPcode(x));
+}
+
+### Base64
+as.base64char = function(x) {
+	tmp = openssl::base64_decode(x);
+	invisible(rawToChar(tmp));
 }
