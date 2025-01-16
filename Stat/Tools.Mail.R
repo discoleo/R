@@ -33,11 +33,19 @@ cat.QPhtml = function(x) {
 	tmp = lapply(x, cat, sep = "\n");
 	invisible(x);
 }
-cat.base64html = function(x) {
-	x = as.base64char(x);
+cat.b64html = function(x) {
+	x = as.b64char(x);
 	x = strsplit(x, "(?<=[>])(?=[<])", perl=TRUE);
 	tmp = lapply(x, cat, sep = "\n");
 	invisible(x);
+}
+
+### Save Base64 Attachments
+# x = Base64-encoded text string
+#     (must be extracted manually);
+write.b64file = function(x, file) {
+	x = openssl::base64_decode(x);
+	writeBin(x, con = file);
 }
 
 ### QP: Quoted Printable
@@ -54,7 +62,7 @@ as.QPchar = function(x) {
 }
 
 ### Base64
-as.base64char = function(x) {
+as.b64char = function(x) {
 	tmp = openssl::base64_decode(x);
 	invisible(rawToChar(tmp));
 }
