@@ -16,6 +16,21 @@
 ################
 ################
 
+### Split
+# Solve Linear Eq: p("by") = 0;
+# p == Div * "by" - Rez;
+split.pm = function(p, by = "x", pow = 1, invert = TRUE) {
+	id = match(by, names(p));
+	if(is.na(id)) return(NULL);
+	px = p[, id];
+	p2 = p[, - id, drop=FALSE];
+	p2x = p2[px == pow, , drop=FALSE];
+	p20 = p2[px != pow, , drop=FALSE];
+	if(invert) p20$coeff = - p20$coeff;
+	return(list(Rez = p20, Div = p2x));
+}
+
+
 ################
 ### Division ###
 ################
