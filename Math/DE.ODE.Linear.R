@@ -48,7 +48,7 @@ dy - (x^2 + b1)^(1/2) - x^2 / (x^2 + b1)^(1/2) - x^2 / (x^3 + b2)^(2/3) - df0 # 
 # (x^2 + b1)^(1/2) * ((x^5 + b1*x^3) - (2*x^2 + b1)*(x^3 + b2)) =
 (x^2 + b1)*(x^2*y - (x^3 + b2) * dy - x^2*f0 + (x^3 + b2) * df0)
 # (x^3 + b2)^(1/3) * ((2*x^2 + b1)*(x^3 + b2) - (x^5 + b1*x^3)) =
-((2*x^2 + b1)*(x^3 + b2)*(y - f0) - x*dy + x*(x^2 + b1)*(x^3 + b2) * df0);
+(2*x^2 + b1)*(x^3 + b2)*(y - f0) - x*(x^2 + b1)*(x^3 + b2) * (dy - df0);
 
 # D2 =>
 # # (x^2 + b1)*(x^3 + b2) * d2y + (5*x^4 + 3*b1*x^2 + 2*b2*x) * dy =
@@ -126,7 +126,9 @@ ode.gen = function(b1, b2, f0, n, a = 1) {
 	r2s = split.pm(yp, by = "r2", pow = 1, invert = TRUE);
 	r1p = replace.fr.pm(d1p, r2s$Rez, r2s$Div, xn = "r2");
 	r1s = split.pm(r1p, by = "r1", pow = 1, invert = TRUE);
-	return(r1s);
+	r2p = replace.fr.pm(yp, r1s$Rez, r1s$Div, xn = "r1");
+	r2s = split.pm(r2p, by = "r2", pow = 1, invert = TRUE);
+	return(list(R1 = r1s, R2 = r2s));
 	# TODO
 }
 
