@@ -166,10 +166,11 @@ replace.pm.numeric = function(p1, p2, xn, pow=1, simplify=TRUE, tol=1E-10) {
 	if(simplify) p = reduce.var.pm(p);
 	return(p)
 }
-replace.pm = function(p1, p2, xn, pow=1, sequential=TRUE) {
+replace.pm = function(p1, p2, xn, pow=1, sequential=TRUE, verbose=TRUE) {
 	# replace x^pow by p2;
 	if(is.numeric(p2) || is.complex(p2)) return(replace.pm.numeric(p1, p2=p2, xn=xn, pow=pow));
-	if(is.character(p2)) return(replace.pm.character(p1, p2=p2, xn=xn, pow=pow, sequential=sequential));
+	if(is.character(p2)) return(replace.pm.character(p1, p2=p2, xn=xn, pow=pow,
+		sequential=sequential, verbose=verbose));
 	if(inherits(p2, c("bigz", "bigq"))) return(replace.pm.numeric(p1, p2=p2, xn=xn, pow=pow));
 	# Checks
 	stop.f = function() stop("Missing variable name!");
@@ -222,7 +223,9 @@ replace.pm = function(p1, p2, xn, pow=1, sequential=TRUE) {
 	return(reduce.var.pm(pR));
 }
 # Replace variable with another Variable
-replace.pm.character = function(p1, p2, xn, pow=1, sequential=TRUE, na.stop=TRUE) {
+# na.stop = not yet used;
+replace.pm.character = function(p1, p2, xn, pow=1, sequential=TRUE,
+		na.stop=TRUE, verbose=TRUE) {
 	len = length(p2);
 	lenpow = length(pow); lenx = length(xn);
 	if(len > 1) {
@@ -251,7 +254,7 @@ replace.pm.character = function(p1, p2, xn, pow=1, sequential=TRUE, na.stop=TRUE
 	if(any(pow > 1))
 		return(replaceByPow.pm.character(p1, p2, xn=xn, pow=pow, sequential=sequential));
 	# same Power:
-	return(replaceNames.pm(p1, p2, xn=xn, sequential=sequential));
+	return(replace.names.pm(p1, p2, xn=xn, sequential=sequential, verbose=verbose));
 }
 ### Replace simple monomial m with xn;
 # m = character vector with the names of the variables;
@@ -293,6 +296,9 @@ replace.pm.m = function(p, m, xn, warn=TRUE, simplify=TRUE) {
 ### Rename vars in p1 with those in p2
 # xn = old names;
 replaceNames.pm = function(p1, p2, xn, sequential=FALSE, debug=TRUE) {
+	replace.names.pm(p1=p1, p2=p2, sequential=sequential, verbose=debug);
+}
+replace.names.pm = function(p1, p2, xn, sequential=FALSE, verbose=TRUE) {
 	len = length(xn);
 	nms = dimnames.pm(p1);
 	if(sequential) {
@@ -311,7 +317,7 @@ replaceNames.pm = function(p1, p2, xn, sequential=FALSE, debug=TRUE) {
 		}
 		nms[id] = p2;
 	}
-	if(debug) print(paste0("New names: ", paste0(nms, collapse=", ")));
+	if(verbose) print(paste0("New names: ", paste0(nms, collapse=", ")));
 	# set new names:
 	idCoeff = which(names(p1) == "coeff");
 	names(p1)[ - idCoeff] = nms;
