@@ -62,3 +62,76 @@ dy - (x^2 + b1)^(1/2) - x^2 / (x^2 + b1)^(1/2) - x^2 / (x^3 + b2)^(2/3) - df0 # 
 ### ODE:
 # TODO
 
+
+# Convert to format of ODE Generator
+replace.asODE.pm = function(p, f0, bn = c("c1", "c2"), verbose = FALSE) {
+	p = replace.pm(p, bn[1], xn = "b1", verbose=verbose);
+	p = replace.pm(p, bn[2], xn = "b2", verbose=verbose);
+	p = replace.pm(p, f0, xn = "f0");
+	df0 = dp.pm(f0, by="x");
+	p = replace.pm(p, df0, xn = "df0");
+	return(p);
+}
+
+# TODO:
+# a*y = b1*(x^n1+c1)^(1/n1) + b2*(x^n2+c2)^(1/n2) + f0;
+ode.gen = function(b1, b2, f0, n, a = 1) {
+	isLeadPoly = inherits(a, "data.frame");
+	if(isLeadPoly) {
+		da = dp.pm(a, by = "x");
+		dp = a;
+		da$y  = 1;
+		dp$dy = 1;
+		dyP = sum.pm(dp, da);
+	} else {
+		dyP = data.frame(y=0, dy=1, coeff = a);
+	}
+	incx = function(z, n) {
+		if(is.null(z$x)) { z$x = n; }
+		else z$x = z$x + n;
+		return(z);
+	}
+	r1x = data.frame(x = c(n[1], 0), c1 = c(0,1), coeff = 1);
+	r2x = data.frame(x = c(n[2], 0), c2 = c(0,1), coeff = 1);
+	# D1:
+	rpr = prod.pm(r1x, r2x);
+	dyP = prod.pm(dyP, rpr);
+	df0 = dp.pm(f0, by = "x");
+	db1 = dp.pm(b1, by = "x");
+	db2 = dp.pm(b2, by = "x");
+	dr1 = prod.pm(db1, rpr);
+	b1x = incx(b1, n[1] - 1);
+	dr1 = sum.pm(dr1, prod.pm(b1x, r2x));
+	dr2 = prod.pm(db2, rpr);
+	b2x = incx(b2, n[2] - 1);
+	dr2 = sum.pm(dr2, prod.pm(b2x, r1x));
+	dr1$r1 = 1; dr2$r2 = 1;
+	drr = sum.pm(dr1, dr2);
+	dfp = prod.pm(df0, rpr);
+	drr = sum.pm(drr, dfp);
+	d1p = diff.pm(dyP, drr);
+	# Base:
+	if(isLeadPoly) {
+		yp   = a;
+		yp$y = 1;
+	} else {
+		yp = data.frame(y=1, coeff = a);
+	}
+	r1 = b1; r1$r1 = 1;
+	r2 = b2; r2$r2 = 1;
+	rr = sum.pm(r1, r2);
+	rr = sum.pm(rr, f0);
+	yp = diff.pm(yp, rr);
+	# Solve:
+	r2s = split.pm(yp, by = "r2", pow = 1, invert = TRUE);
+	r1p = replace.fr.pm(d1p, r2s$Rez, r2s$Div, xn = "r2");
+	r1s = split.pm(r1p, by = "r1", pow = 1, invert = TRUE);
+	return(r1s);
+	# TODO
+}
+
+tmp = ode.gen(as.pm("x"), as.pm("1"), as.pm("x^2+1"), c(2,3))
+
+tmp = ode.gen(as.pm("x^2"), as.pm("x"), as.pm("x^2+1"), c(2,3))
+
+
