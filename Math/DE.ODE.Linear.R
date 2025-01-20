@@ -52,7 +52,7 @@ dy - (x^2 + b1)^(1/2) - x^2 / (x^2 + b1)^(1/2) - x^2 / (x^3 + b2)^(2/3) - df0 # 
 
 # D2 =>
 # # (x^2 + b1)*(x^3 + b2) * d2y + (5*x^4 + 3*b1*x^2 + 2*b2*x) * dy =
-(5*x^4 + 3*b1*x^2 + 2*b2*x)*(x^2 + b1)^(1/2) +
+(10*x^4 + 3*b1*x^2 + 4*b2*x)*(x^2 + b1)^(1/2) +
 	+ x * (2*x^2 + b1)*(x^3 + b2)*(x^2 + b1)^(-1/2) +
 	+ (4*x^3 + 2*b1*x)*(x^3 + b2)^(1/3) +
 	+ x^2 * (x^4 + b1*x^2)*(x^3 + b2)^(-2/3) +
@@ -128,8 +128,23 @@ ode.gen = function(b1, b2, f0, n, a = 1) {
 	r1s = split.pm(r1p, by = "r1", pow = 1, invert = TRUE);
 	r2p = replace.fr.pm(yp, r1s$Rez, r1s$Div, xn = "r1");
 	r2s = split.pm(r2p, by = "r2", pow = 1, invert = TRUE);
-	return(list(R1 = r1s, R2 = r2s));
-	# TODO
+	### D2:
+	# D(prod(r) * D(a*y))
+	d2yP = dp.pm(dyP, by="dy"); d2yP$d2y = 1;
+	d2yP = sum.pm(d2yP, dp.pm(dyP, by="x"));
+	if(isLeadPoly) d2yP = sum.pm(d2yP, dp.pm(dyP, by="y"));
+	# D(prod(r) * D(f0)) <= dfp is already in drr;
+	# d2fP = dp.pm(dfp, by="x");
+	d2r  = dp.pm(drr, by="x");
+	d2yP = diff.pm(d2yP, d2r);
+	d2yP = prod.pm(d2yP, rpr);
+	# d2r
+	d2r1 = incx(prod.pm(dr1, r2x), n[1]-1);
+	d2r2 = incx(prod.pm(dr2, r1x), n[2]-1);
+	d2r  = sum.pm(d2r1, d2r2);
+	d2yP = diff.pm(d2yP, d2r);
+	# TODO: substitution
+	return(list(ODE = d2yP, R1 = r1s, R2 = r2s));
 }
 
 tmp = ode.gen(as.pm("x"), as.pm("1"), as.pm("x^2+1"), c(2,3))
