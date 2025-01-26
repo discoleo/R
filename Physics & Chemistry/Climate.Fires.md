@@ -25,9 +25,25 @@ Burning trees, especially when the trees are in larger amounts and when they wer
 Furthermore, if the forest is on a sloped hill or mountain, then most of the dropped water is not retained by the soil either. It either evaporates or flows down the hill. This makes burning forests very difficult to extinguish.
 
 
-### Scientific Approach
+## Scientific Approach
 
-More data is needed on the fire micro-environment, including how such fire-fighter actions impact the fire micro-environment.
+Gathering more data on the fire micro-environment should enable a more detailed analysis of the fire, including how the various fire-fighter actions impact the fire micro-environment.
 
-Data may include the temperature before the water drop and during the water drop, measured at various spots in the fire. ...
+### Temperature
+
+Data may include the temperature before the water drop and during the water drop, measured at various spots in the fire.
+
+Temperature sensors can be mounted on a thermo-isolated / thermo-resistant rod. The bottom of the rod contains the recording device and is buried 50 cm below the ground.
+
+Support personnel can rapidly dig a circular hole 50 - 60 cm deep using a circular screw-type digging tool. The bottom is buried in the hole and covered with a poorly-conducting heat material. The remaining rod with the temperature sensors points upwards.
+
+The rod can be equipped with multiple temperature sensors: 5-10 cm below ground, at ground level, 10 cm, 20 cm, 50 cm, 1 m, 1.5 m and 2 m above ground.
+
+Temperature can be averaged over 5 s or 10 s, or the maximum temperature over that interval can be recorded.
+
+Support personnel can plant 10 - 30 such devices in a region that will be directly hit by fire (depending on the available time and number of available devices).
+
+The individual devices should be somehow identifiable in order to document the exact position of the recordings.
+
+The rods should be planted orthonormal to the ground: on slanted slopes they should lie perpendicular to the slope/ground; this standardizes the measurements.
 
