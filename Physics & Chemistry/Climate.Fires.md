@@ -47,3 +47,8 @@ The individual devices should be somehow identifiable in order to document the e
 
 The rods should be planted orthonormal to the ground: on slanted slopes they should lie perpendicular to the slope/ground; this standardizes the measurements.
 
+
+### Water
+
+Water dropped by firefighters can be similarly collected through some funnels located at specific heights (ground level, 10 cm or 50 cm above ground). The amount of water collected can be weighted and recorded by the underground recorder (see section on Temperature sensors).
+
