@@ -47,6 +47,12 @@ The individual devices should be somehow identifiable in order to document the e
 
 The rods should be planted orthonormal to the ground: on slanted slopes they should lie perpendicular to the slope/ground; this standardizes the measurements.
 
+**Design Details:**
+- the bottom of the recording device (deep inside the earth) can include a radiator which dissipates any heat from above to the ground; the earth 50 cm under the ground should remain relatively cool during the fire;
+- wires from the sensors could pass through a ceramic or mica block at the top of the recording device;
+- the inner surface of this ceramic or mica block can be in contact with a metallic plate which is connected to the radiator at the bottom; the purpose of this construction is to allow any heat transmitted through the wires to be dissipated efficiently;
+- above and below this block can be additional insulating strata;
+
 
 ### Water
 
