@@ -1,14 +1,17 @@
 
 = Volcanoes =
 
-'''The exploration of Volcanoes'''
+'''The Exploration of Volcanoes'''
 
 
-== Perfusion / Diffusion Studies ==
+== A. Perfusion / Diffusion Studies ==
 
 === Principle ===
 
-A tracer material is introduced into an active volcano. The tracer is then ejected gradually with the lava flow. Rocks sampled on the surface are analysed for the tracer material.
+A tracer material is introduced into an active volcano. The tracer melts and diffuses through the magma. The tracer is then ejected gradually with the lava flow. Rocks sampled on the surface are analysed for the tracer material.
+
+Monitoring the amount of tracer and distribution of tracer in the ejected magma can give insights into the size of the magma chamber and dynamics of the magma.
+
 
 === Transport Vehicle ===
 
@@ -50,7 +53,7 @@ The samples can be dissolved in various acids and the tracer quantified using ch
 
 
 
-== Exploration Vehicle ==
+== B. Active Exploration of Volcanos ==
 
 '''Design of a Submersible Vehicle'''
 
@@ -62,3 +65,27 @@ The samples can be dissolved in various acids and the tracer quantified using ch
 
 1. Mantooth A, et al. Venus Calling Silicon Carbide Radio Circuits Can Take The Heat Needed To Phone Home From Our Hellish Sister Planet. IEEE Spectrum 58 (2021). DOI:  http://dx.doi.org/10.1109/MSPEC.2021.9423815
 2. Anthony S. We finally have a computer that can survive the surface of Venus. AIP Advances (2017). DOI: http://dx.doi.org/10.1063/1.4973429
+
+
+== C. Actively-Induced Expulsion of Magma ==
+
+The activity of a volcano can increase significantly and culminate with a catastrophic eruption, which will pose a major threat to nearby communities.
+
+Specific actions may  be initiated to deplete the magma chamber of magma or to expand the ejection tract in order to avoid catastrophic eruptions.
+
+=== Controlled Ejection ===
+
+One possible action is to induce a controlled ejection of magma. It is possible to introduce sodium metal or potassium metal into the magma. The sodium or potassium block sinks into the magma and melts/dissolves inside the volcano chamber or tract.
+
+Sodium and potassium would react with the various oxides which compose the magma. The energy released heats the magma further and may induce smaller eruptions. These eruptions may have enough energy to widen the expulsion tract.
+
+The amount of sodium or potassium used can be titrated upward, e.g. start initially with 10 kk, 50 kg, 100 kg of pure metal.
+
+The metal-block can be enclosed air-tightly into another carrier metal (e.g. zinc, melting point 420 Celsius) or sealed tightly into a glass block.
+
+The density of magma is around 2000 - 3000 kg / m^3. The densities of sodium and potassium are slightly lower than 1000 kg / m^3. The metal block could be augmented with a heavier weight in order to induce the sinking of the block (e.g. iron as it is relatively cheap).
+
+As the temperature rises, both the zinc enclosing the sodium/potassium block and the alkaline metals inside melt, releasing the molten metals into the magma. The exothermic reaction with the oxides inside the magma will induce a magma burst and may also explosively enlarge the outflow tract.
+
+Note: the initially formed sodium oxide or potassium oxide will react with water vapour once the magma is ejected. This reaction is in itself exothermic, but it is deemed acceptable considering the limited amount of alkaline metal.
+
