@@ -1,4 +1,7 @@
 
+### FASTA Tools
+
+
 list.fasta = function(path, pattern="\\.fasta$") {
 	list.files(path, pattern=pattern, no.. = TRUE,
 		include.dirs = FALSE);
@@ -44,6 +47,8 @@ extract.uptoreg = function(x, pattern, offset = c(0,0), perl = TRUE) {
 # Output:
 # - Start = first line with AA;
 # - End   = last line with AA;
+# Side-Effects:
+# - print.lines: Which lines of AA-seq to print; can be logical;
 read.fasta = function(file, path = "", more = TRUE, print.lines = NULL) {
 	fn = file;
 	if(nchar(path) > 0) fn = paste0(path, "/", file);
@@ -99,11 +104,79 @@ read.fasta = function(file, path = "", more = TRUE, print.lines = NULL) {
 	return(lst)
 }
 
+read.fasta.pr = function(file, path = "", clean.data = TRUE) {
+	fn = file;
+	if(nchar(path) > 0) fn = paste0(path, "/", file);
+	x  = readLines(fn);
+	# Names:
+	id = which(grepl("^>", x));
+	sNms = x[id];
+	# Seq ID:
+	sPr = extract.reg(sNms, "^>(?:sp|tr)[|][^| ]*+", offset = c(4,0));
+	lst = data.frame(IDP = sPr, Start = id + 1, End = c(id[-1] - 1, length(x)));
+	lst$hasSeq = (lst$End - lst$Start >= 0);
+	lst = lst[lst$hasSeq, ];
+	if(nrow(lst) == 0) return(character(0));
+	aa = sapply(seq(nrow(lst)), function(nr) {
+		tmp = x[seq(lst$Start[nr], lst$End[nr])];
+		tmp = paste0(tmp, collapse = "");
+		return(tmp);
+	});
+	if(clean.data) aa = gsub("[ \n\r\t]+", "", aa);
+	invisible(aa);
+}
+
 
 ### Search-Tools
 
 # data = data.frame with a Gene column;
 which.gene = function(pattern, data) {
 	which(grepl(pattern, data$Gene));
+}
+
+
+#################
+
+### Quasi-BLAST
+
+blast.quasi = function(x, data, print = TRUE, clean.data = TRUE) {
+	len = nchar(x);
+	if(len == 0) {
+		warning("Nothing to search!");
+		return(c(0,0));
+	}
+	if(length(data) > 1) {
+		tmp = lapply(data, function(data) blast.quasi(x, data=data, print = FALSE));
+		if(print) {
+			lapply(seq_along(tmp), function(id) {
+				tmp = tmp[[id]];
+				if(length(tmp) > 1) {
+					txt = paste0(tmp[-1], collapse=", ");
+					txt = paste0(tmp[1], " => ", txt);
+				} else txt = "";
+				cat(id, ": ", txt, "\n", sep = "");
+			});
+		}
+		return(invisible(tmp));
+	}
+	if(clean.data) {
+		data = gsub("[ \r\n\t]+", "", data);
+	}
+	# to int:
+	rX = charToRaw(x);
+	rD = charToRaw(data);
+	if(length(rD) < len) {
+		warning("Not yet implemented!");
+		return(c(0,1));
+	}
+	len1 = len - 1;
+	LAST = length(rD) - len1;
+	m = sapply(seq(1, LAST), function(id) {
+		sum(rX == rD[seq(id, id + len1)]);
+	});
+	MAX = max(m);
+	if(MAX == 0) return(c(0, 0));
+	ids = which(m == MAX);
+	return(c(MAX, ids));
 }
 
