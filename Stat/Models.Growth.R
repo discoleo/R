@@ -43,6 +43,22 @@ plot.curve = function() {
 ####################
 ####################
 
+### Introduction
+
+# Animal models are often used to study malignant processes.
+# Experimental models are often based on mice or rats.
+# Models include spontaneous or induced tumour models,
+# transgenic tumours as well as transplanted tumours.
+
+# Measuring tumour sizes in living animals is often plagued
+# by variability and measurement errors. However, the rate of growth
+# of the tumour may impact the response to therapeutic interventions.
+
+# 1) Y. Zhou et al. Experimental mouse models for translational
+#    human cancer research. Front Immunol. 2023 Mar 10;14:1095388.
+#    https://doi.org/10.3389/fimmu.2023.1095388. PMID: 36969176;
+
+
 ### Model Types
 
 ### NLS:
