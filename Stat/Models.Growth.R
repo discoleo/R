@@ -24,6 +24,7 @@ library(dplyr)
 library(ggplot2)
 
 
+### Eval Formulas:
 eval.Fun = function(x, nm, FUN, params) {
 	sapply(x, function(x) {
 		params[[nm]] = x;
@@ -35,6 +36,16 @@ eval.Exp = function(x, nm, e, params) {
 		params[[nm]] = x;
 		eval(e, params);
 	})
+}
+
+### Plot:
+curve.ref = function(col = "#F02424E2", params = NULL, Vmax = 2,
+		col.h = "#FF3224B0") {
+	ylim = c(0, Vmax + 0.1);
+	if(is.null(params)) params = list(Vmax = Vmax, b = 1, n = 1);
+	curve(eval.Exp(x, "t", MM.eq, params), col = col,
+		xlim=xlim, ylim=ylim, ylab = "Growth");
+	abline(h = Vmax, col = col.h);
 }
 plot.curve = function() {
 	# TODO
@@ -59,16 +70,22 @@ plot.curve = function() {
 #    https://doi.org/10.3389/fimmu.2023.1095388. PMID: 36969176;
 
 
+### Effects of Growth Rate
+# T50, T75: time to reach 50% or 75% of final volume;
+
+
 ### Model Types
 
 ### NLS:
 
 ### Michaelis-Menten type:
-# V = Vmax * t / (1 + b*t)
+# V = Vmax * t^n / (b + t^n)
 ### Saturated Exponential:
-# V = Vmax * (1 - exp(-b*t))
+# V = Vmax * (1 - exp(-k*t))
 ### Exponential Fractions:
 # V = Vmax * (1/(k + exp(- b*t)) - 1/(k + 1)) * k*(k+1);
+### Atan type:
+# V = Vmax * atan(k*x^p) * 2/pi;
 
 
 ### ODE:
@@ -88,18 +105,32 @@ plot.curve = function() {
 #################
 
 ### Michaelis-Menten type:
-# V = Vmax * t^n / (1 + b*t^n)
+# V = Vmax * t^n / (b + t^n)
 
 xlim = c(0, 15); ylim = c(0, 2.1);
+# xlim = c(0, 100);  ylim = c(0, 2.1);
+# xlim = c(0, 1000); ylim = c(0, 2.1);
 #
 MM.eq = expression(Vmax * t^n / (b + t^n))
-col = c("#0000FFA0", "#2496F2A0", "#9664F8A0")
+col = c("#0000FFC0", "#72A2FAA0", "#A888FAA0", "#88A8FAA0")
 params = list(Vmax = 2, b = 1, n = 1)
-curve(eval.Exp(x, "t", MM.eq, params), col = col[1], xlim=xlim, ylim=ylim)
+# curve(eval.Exp(x, "t", MM.eq, params), col = col[1], xlim=xlim, ylim=ylim)
+curve.ref(params = params, col = col[1]);
 params = list(Vmax = 2, b = 2/5, n = 1)
 curve(eval.Exp(x, "t", MM.eq, params), add = T, col = col[2])
-params = list(Vmax = 2, b = 3, n = 1)
+params = list(Vmax = 2, b = 2, n = 1)
 curve(eval.Exp(x, "t", MM.eq, params), add = T, col = col[3])
+params = list(Vmax = 2, b = 3, n = 1)
+curve(eval.Exp(x, "t", MM.eq, params), add = T, col = col[4])
+legend(12, 0.5, legend = paste0("MM", 1:4), fill = col)
+#
+col = c("#0000FFC0", "#F8A2A2A0", "#F864B4A0", "#F8B464A0")
+params = list(Vmax = 2, b = 1/2, n = 1/2)
+curve(eval.Exp(x, "t", MM.eq, params), add = T, col = col[2])
+params = list(Vmax = 2, b = 1, n = 1/2)
+curve(eval.Exp(x, "t", MM.eq, params), add = T, col = col[3])
+params = list(Vmax = 2, b = 2, n = 1/2)
+curve(eval.Exp(x, "t", MM.eq, params), add = T, col = col[4])
 
 
 ### Saturated Exponential type:
