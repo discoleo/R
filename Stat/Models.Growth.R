@@ -70,8 +70,9 @@ plot.curve = function() {
 #    https://doi.org/10.3389/fimmu.2023.1095388. PMID: 36969176;
 
 
-### Effects of Growth Rate
-# T50, T75: time to reach 50% or 75% of final volume;
+### Evaluation of Growth Rate
+# - T25, T50, T75: time to reach 25%, 50% or 75% of final volume;
+# - Ratios of the various Txx parameters;
 
 
 ### Model Types
@@ -106,8 +107,9 @@ plot.curve = function() {
 
 col.blue    = c("#0000FFC0", "#72A2FAA0", "#A888FAA0", "#88A8FAA0");
 col.magenta = c("#F000FFC0", "#F8A2A2A0", "#F864B4A0", "#F8B4FFA0");
-col.green   = c("#00FF00A0", "#32FC90A0", "#64FC90A0", "#90FE64A0");
+col.green   = c("#00FF00A0", "#90FE64A0", "#32FC90A0", "#64FC90A0");
 col.brown   = c("#F8B464A0");
+# c("#FF0000A0", "#FC2490A0", "#FC9064A0", "#FE8090A0")
 
 
 ### Michaelis-Menten type:
@@ -163,6 +165,34 @@ curve(eval.Exp(x, "t", exps.eq, params), add = T, col = col[2], lwd=lwd)
 params = list(Vmax = 2, b = 1/2, n = 1, k = 1)
 curve(eval.Exp(x, "t", exps.eq, params), add = T, col = col[3], lwd=lwd)
 params = list(Vmax = 2, b = 1/5, n = 1, k = 1)
+curve(eval.Exp(x, "t", exps.eq, params), add = T, col = col[4], lwd=lwd)
+
+
+### Variation of n:
+curve.MM(col.blue, lwd=lwd)
+#
+col = col.green;
+params = list(Vmax = 2, b = 1, n = 1, k = 1)
+curve(eval.Exp(x, "t", exps.eq, params), add = T, col = col[1], lwd=lwd)
+params = list(Vmax = 2, b = 1, n = 1/2, k = 1)
+curve(eval.Exp(x, "t", exps.eq, params), add = T, col = col[2], lwd=lwd)
+params = list(Vmax = 2, b = 1, n = 1/3, k = 1)
+curve(eval.Exp(x, "t", exps.eq, params), add = T, col = col[3], lwd=lwd)
+params = list(Vmax = 2, b = 1, n = 1/4, k = 1)
+curve(eval.Exp(x, "t", exps.eq, params), add = T, col = col[4], lwd=lwd)
+
+
+### Variation of b:
+curve.MM(col.blue, lwd=lwd)
+#
+col = col.green;
+params = list(Vmax = 2, b = 1, n = 1, k = 1)
+curve(eval.Exp(x, "t", exps.eq, params), add = T, col = col[1], lwd=lwd)
+params = list(Vmax = 2, b = 1/2, n = 1, k = 1)
+curve(eval.Exp(x, "t", exps.eq, params), add = T, col = col[2], lwd=lwd)
+params = list(Vmax = 2, b = 1/3.5, n = 1, k = 1)
+curve(eval.Exp(x, "t", exps.eq, params), add = T, col = col[3], lwd=lwd)
+params = list(Vmax = 2, b = 1/5.5, n = 1, k = 1)
 curve(eval.Exp(x, "t", exps.eq, params), add = T, col = col[4], lwd=lwd)
 
 
