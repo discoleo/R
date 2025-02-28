@@ -36,7 +36,9 @@ eval.Exp = function(x, nm, e, params) {
 		eval(e, params);
 	})
 }
-plot.curve = function()
+plot.curve = function() {
+	# TODO
+}
 
 ####################
 ####################
@@ -125,4 +127,38 @@ params = list(Vmax = 2, p = 1/3, n = 3)
 curve(eval.Fun(x, "up", frI, params), col = col[3], add = T)
 params = list(Vmax = 2, p = 4/3, n = 3)
 curve(eval.Fun(x, "up", frI, params), col = col[3], add = T)
+
+
+###################
+###################
+
+### ODE
+
+### Logistic Growth
+
+log.eq = V ~ k * V^p * (Vmax-V)
+
+# Ref:
+params = list(Vmax = 2, b = 1, n = 1)
+curve(eval.Exp(x, "t", MM.eq, params), col = "#909090B0",
+	xlim=xlim, ylim=ylim, ylab = "Growth")
+#
+params = list(Vmax = 2, k = 1, p = 1)
+sol = rk4(log.eq, c(V=0.1), param = params, deltaT=0.1, n_steps = 160)
+lines(sol, col = col[2])
+params = list(Vmax = 2, k = 1, p = 1/3)
+sol = rk4(log.eq, c(V=0.1), param = params, deltaT=0.1, n_steps = 160)
+lines(sol, col = col[3])
+params = list(Vmax = 2, k = 1, p = 1.5)
+sol = rk4(log.eq, c(V=0.1), param = params, deltaT=0.1, n_steps = 160)
+lines(sol, col = col[3])
+
+
+log2.eq = V ~ k * V^p * (Vmax^(1/2) - V^(1/2))
+#
+params = list(Vmax = 2, k = 1, p = 1)
+sol = rk4(log2.eq, c(V=0.1), param = params, deltaT=0.1, n_steps = 160)
+lines(sol, col = "blue")
+
+# TODO
 
