@@ -59,3 +59,28 @@ eval(Pt, params) * 2 / D;
 2*exp(-x^2/(D2 * t)) * (2*x^2 - D2*t)/(D2 * t)^2 / sqrt(D2 * t);
 exp(-x^2/(2*D * t)) * (x^2 - D*t)/(D * t)^2 / sqrt(2*D * t);
 
+
+###################
+###################
+
+### t * Pt + 1/3 * x * Px = 0
+
+Pt  = D.expr(x * exp(-x^3 / (D*t)) / (D*t)^(1/3), "t")
+Px  = D.expr(x * exp(-x^3 / (D*t)) / (D*t)^(1/3), "x")
+
+### Test:
+# t * Pt = - 1/3 * x * Px
+x = sqrt(2); D = sqrt(5); # just a Test;
+t = sqrt(3); # t = 1/13;
+params = list(x=x, D=D, t=t);
+eval(Pt, params)
+- eval(Px, params) * x/(3*t);
+
+# Px:
+- exp(-x^3/(D * t)) * (3*x^3/(D * t) - 1) / (D * t)^(1/3)
+
+# Pt:
+1/3 * x/t * exp(-x^3/(D * t)) * (3*x^3/(D * t) - 1) / (D * t)^(1/3)
+
+
+
