@@ -114,6 +114,26 @@ integrate(\(x) atan(k*sin(x)) / sin(x), 0, pi/2)
 pi/2 * asinh(k)
 
 
+### I( sin(2*x) * atan(b*sin(2*x)) )
+# Maths 505: A captivating integral problem
+# https://www.youtube.com/watch?v=hqC_wLN7UYo
+# Subst: x => sin(y)^2 & Feynman;
+
+integrate(\(x) atan(sqrt(x*(1-x))), 0, 1)
+pi/2*(sqrt(5) - 2)
+
+###
+b = 1/3
+integrate(\(x) sin(2*x) * atan(b*sin(2*x)), 0, pi/2)
+pi/2*(sqrt(b^2+1) - 1) / b
+
+###
+b = 1/3
+integrate(\(x) sin(2*x) * atan(b/sin(2*x)), 0, pi/2)
+pi/2*(b + 1 - sqrt(b^2+1))
+
+
+
 ### I( atan(k*cos(x)^2) / cos(x)^2 )
 # Maths 505: A RIDICULOUSLY AWESOME INTEGRAL FEAT. φ & π
 # https://www.youtube.com/watch?v=6CJ_Sal55uM
