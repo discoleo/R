@@ -5,6 +5,27 @@
 # Tools for Symbolic Differentiation
 
 
+### Differentiate
+
+# Inline Expression
+D.expr = function(x, by) {
+	y = substitute(expression(x));
+	y = y[[2]];
+	dx = lapply(by, function(nm) {
+		D(y, nm);
+	})
+	return(dx)
+}
+# Formula
+D.form = function(x, by) {
+	if(length(x) == 3) {
+		x = x[[3]];
+	} else x = x[[2]];
+	D(x, by);
+}
+
+########################
+
 ### Simplify Expressions
 simplify = function(x) {
 	isFrNum = function(x) {
