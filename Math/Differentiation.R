@@ -24,6 +24,22 @@ D.form = function(x, by) {
 	D(x, by);
 }
 
+# Partial evaluation:
+eval.part = function(x, parameters) {
+	do.call(substitute, list(x, parameters));
+}
+
+### Jacobian
+# x = Formula;
+jac.f = function(x, by) {
+	ids = expand.grid(by, seq_along(x), stringsAsFactors = FALSE);
+	LEN = nrow(ids);
+	if(LEN == 0) return();
+	lapply(seq(LEN), function(id) {
+		D.form(x[[ids[id,2]]], ids[id,1]);
+	})
+}
+
 ########################
 
 ### Simplify Expressions
