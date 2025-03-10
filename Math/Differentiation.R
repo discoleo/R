@@ -84,7 +84,8 @@ simplifyDif = function(e) {
 		return(FALSE);
 	}
 	len = length(e[[2]]);
-	if(len == 1 && is.numeric(e[[2]])) {
+	if(len == 1) {
+		if(! is.numeric(e[[2]])) return(e);
 		len2 = length(e[[3]]);
 		if(len2 == 1) {
 			# Type: a - b
@@ -99,16 +100,22 @@ simplifyDif = function(e) {
 				e = e[[3]];
 			}
 		}
-	} else if(len == 3 && e[[2]][[1]] == "/") {
+	} else if(len == 3) {
+		if(! isFrNum(e[[2]])) return(e);
 		tmp = e[[2]];
 		div = tmp[[3]];
 		# Type: a/b - c
-		if(is.numeric(div) && is.numeric(tmp[[2]])) {
+		if(is.numeric(e[[3]])) {
 			tmp[[2]] = tmp[[2]] - div * e[[3]];
 			e = tmp;
+		} else if(isFrNum(e[[3]])) {
+			# Type: a/b - c/d
+			# TODO: 2 fractions;
+			div2 = e[[3]][[3]];
+			e[[1]] = as.symbol("/");
+			e[[2]] = tmp[[2]]*div2 - div*e[[3]][[2]];
+			e[[3]] = div * div2;
 		}
-		# TODO: 2 fractions;
-		# Type: a/b - c/d
 	}
 	return(e)
 }
@@ -123,6 +130,22 @@ simplify(z)
 
 z = expression(2 - 1/3)[[1]]
 simplify(z)
+
+z = expression(1/2 - 1/3)[[1]]
+simplify(z)
+z = expression(3/4 - 2/3)[[1]]
+simplify(z)
+
+# Excluded:
+z = expression(3 - x)[[1]]
+simplify(z)
+
+z = expression(3 - x/2)[[1]]
+simplify(z)
+
+z = expression(3 - 2/x)[[1]]
+simplify(z)
+
 
 ### Pow:
 z = expression((x^(1/3))^2)[[1]]
