@@ -44,43 +44,6 @@ jac.f = function(x, by) {
 
 ### Simplify Expressions
 simplify = function(x) {
-	isFrNum = function(x) {
-		if(x[[1]] != "/") return(FALSE);
-		if(length(x) != 3) return(FALSE);
-		if(is.numeric(x[[2]]) && is.numeric(x[[3]])) return(TRUE);
-		return(FALSE);
-	}
-	# Simplify Sum
-	simplifyDif = function(x) {
-		len = length(x[[2]]);
-		if(len == 1 && is.numeric(x[[2]])) {
-			len2 = length(x[[3]]);
-			if(len2 == 1) {
-				# Type: a - b
-				if(is.numeric(x[[3]])) {
-					x = x[[2]] - x[[3]];
-				}
-			} else if(len2 == 3) {
-				# Type: a - b/c
-				if(isFrNum(x[[3]])) {
-					fr = x[[3]];
-					x[[3]][[2]] = x[[2]] * fr[[3]] - fr[[2]];
-					x = x[[3]];
-				}
-			}
-		} else if(len == 3 && x[[2]][[1]] == "/") {
-			tmp = x[[2]];
-			div = tmp[[3]];
-			# Type: a/b - c
-			if(is.numeric(div) && is.numeric(tmp[[2]])) {
-				tmp[[2]] = tmp[[2]] - div * x[[3]];
-				x = tmp;
-			}
-			# TODO: 2 fractions;
-			# Type: a/b - c/d
-		}
-		return(x)
-	}
 	# Simplify Power:
 	simplifyPow = function(x) {
 		if(x[[2]][[1]] == "(") {
@@ -112,6 +75,44 @@ simplify = function(x) {
 	}
 }
 
+# Simplify Sum
+simplifyDif = function(e) {
+	isFrNum = function(x) {
+		if(x[[1]] != "/") return(FALSE);
+		if(length(x) != 3) return(FALSE);
+		if(is.numeric(x[[2]]) && is.numeric(x[[3]])) return(TRUE);
+		return(FALSE);
+	}
+	len = length(e[[2]]);
+	if(len == 1 && is.numeric(e[[2]])) {
+		len2 = length(e[[3]]);
+		if(len2 == 1) {
+			# Type: a - b
+			if(is.numeric(e[[3]])) {
+				e = e[[2]] - e[[3]];
+			}
+		} else if(len2 == 3) {
+			# Type: a - b/c
+			if(isFrNum(e[[3]])) {
+				fr = e[[3]];
+				e[[3]][[2]] = e[[2]] * fr[[3]] - fr[[2]];
+				e = e[[3]];
+			}
+		}
+	} else if(len == 3 && e[[2]][[1]] == "/") {
+		tmp = e[[2]];
+		div = tmp[[3]];
+		# Type: a/b - c
+		if(is.numeric(div) && is.numeric(tmp[[2]])) {
+			tmp[[2]] = tmp[[2]] - div * e[[3]];
+			e = tmp;
+		}
+		# TODO: 2 fractions;
+		# Type: a/b - c/d
+	}
+	return(e)
+}
+
 ### Tests:
 
 z = expression(3 - 1)[[1]]
@@ -123,5 +124,6 @@ simplify(z)
 z = expression(2 - 1/3)[[1]]
 simplify(z)
 
+### Pow:
 z = expression((x^(1/3))^2)[[1]]
 simplify(z)
