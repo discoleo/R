@@ -154,15 +154,24 @@ simplify(z)
 ###############
 
 split.expr = function(e) {
-	eNum = 0; # TODO: NULL;
-	eSym = 0;
-	eFun = 0;
+	if(FALSE) {
+	eNum = list(E = NULL, S = logical(0));
+	eSym = list(E = NULL, S = logical(0));
+	eFun = list(E = NULL, S = logical(0));
+	} else {
+		eNum = 0; eSym = 0; eFun = 0;
+	}
 	add.expr = function(e, add, isSum) {
 		x = if(isSum) expression(1+2) else expression(1-2);
 		x = x[[1]];
 		x[[2]] = e;
 		x[[3]] = add;
 		return(x);
+	}
+	add.expr.new = function(e, add, isSum) {
+		e$E = c(e$E, add);
+		e$S = c(e$S, isSum);
+		return(e);
 	}
 	# Init:
 	e = list(e); isSumL = TRUE;
@@ -176,6 +185,9 @@ split.expr = function(e) {
 		} else if(is.symbol(tmp)) {
 			eSym = add.expr(eSym, tmp, isSum);
 		} else if(tmp[[1]] == "+" || tmp[[1]] == "-") {
+			if(length(tmp) == 2) {
+				if(tmp[[1]] == "-") isSum = ! isSum;
+			}
 			if(is.numeric(tmp[[2]])) {
 				eNum = add.expr(eNum, tmp[[2]], isSum);
 			} else if(is.symbol(tmp[[2]])) {
@@ -193,10 +205,12 @@ split.expr = function(e) {
 					# print(str(tmp[[2]]));
 				}
 			}
-			e = c(e, tmp[[3]]);
-			LEN = LEN + 1;
-			isSum = tmp[[1]] == "+";
-			isSumL = c(isSumL, isSum);
+			if(length(tmp) == 3) {
+				e = c(e, tmp[[3]]);
+				LEN = LEN + 1;
+				isSum = tmp[[1]] == "+";
+				isSumL = c(isSumL, isSum);
+			}
 		} else {
 			if(is.call(tmp)) {
 				eFun = add.expr(eFun, tmp, isSum);
@@ -208,13 +222,18 @@ split.expr = function(e) {
 }
 
 ### Test:
-x = expression(4+2+3)[[1]]
+x = expression(4+2 + +3)[[1]]
+split.expr(x)
+x = expression(4+2 + -3)[[1]]
+split.expr(x)
+x = expression(4+2 - -3)[[1]]
 split.expr(x)
 
 x = expression(5+sin(x)+2+3)[[1]]
 split.expr(x)
 
-x = expression(5+sin(x) + x + y^2 + 3*x + x/2 + pi + 2*6 + 1/5 +2+3)[[1]]
+x = expression(5 + sin(x) + x + y^2 + 3*x - 5 - x/2 + pi +
+	+ 2*6 + 1/5 +2+3 + sqrt(2))[[1]]
 split.expr(x)
 
 # TODO: split Calls;
