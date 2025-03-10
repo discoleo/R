@@ -110,7 +110,6 @@ simplifyDif = function(e) {
 			e = tmp;
 		} else if(isFrNum(e[[3]])) {
 			# Type: a/b - c/d
-			# TODO: 2 fractions;
 			div2 = e[[3]][[3]];
 			e[[1]] = as.symbol("/");
 			e[[2]] = tmp[[2]]*div2 - div*e[[3]][[2]];
@@ -150,3 +149,74 @@ simplify(z)
 ### Pow:
 z = expression((x^(1/3))^2)[[1]]
 simplify(z)
+
+
+###############
+
+split.expr = function(e) {
+	eNum = 0; # TODO: NULL;
+	eSym = 0;
+	eFun = 0;
+	add.expr = function(e, add, isSum) {
+		x = if(isSum) expression(1+2) else expression(1-2);
+		x = x[[1]];
+		x[[2]] = e;
+		x[[3]] = add;
+		return(x);
+	}
+	# Init:
+	e = list(e); isSumL = TRUE;
+	LEN = length(e);
+	while(LEN > 0) {
+		tmp = e[[LEN]]; e[[LEN]] = NULL;
+		isSum  = isSumL[[LEN]];
+		isSumL = isSumL[-LEN]; LEN = LEN - 1;
+		if(is.numeric(tmp)) {
+			eNum = add.expr(eNum, tmp, isSum);
+		} else if(is.symbol(tmp)) {
+			eSym = add.expr(eSym, tmp, isSum);
+		} else if(tmp[[1]] == "+" || tmp[[1]] == "-") {
+			if(is.numeric(tmp[[2]])) {
+				eNum = add.expr(eNum, tmp[[2]], isSum);
+			} else if(is.symbol(tmp[[2]])) {
+				eSym = add.expr(eSym, tmp[[2]], isSum);
+			} else {
+				tmp2 = tmp[[2]];
+				if(tmp2[[1]] == "+" || tmp2[[1]] == "-") {
+					e = c(e, tmp2[[2]], tmp2[[3]]);
+					isSum2 = tmp2[[1]] == "+";
+					isSumL = c(isSumL, isSum, isSum2);
+					LEN = LEN + 2;
+				} else {
+					e = c(e, tmp2); isSumL = c(isSumL, isSum);
+					LEN = LEN + 1;
+					# print(str(tmp[[2]]));
+				}
+			}
+			e = c(e, tmp[[3]]);
+			LEN = LEN + 1;
+			isSum = tmp[[1]] == "+";
+			isSumL = c(isSumL, isSum);
+		} else {
+			if(is.call(tmp)) {
+				eFun = add.expr(eFun, tmp, isSum);
+			} else print(str(tmp));
+		}
+	}
+	lst = list(eNum, eSym, eFun);
+	return(lst);
+}
+
+### Test:
+x = expression(4+2+3)[[1]]
+split.expr(x)
+
+x = expression(5+sin(x)+2+3)[[1]]
+split.expr(x)
+
+x = expression(5+sin(x) + x + y^2 + 3*x + x/2 + pi + 2*6 + 1/5 +2+3)[[1]]
+split.expr(x)
+
+# TODO: split Calls;
+
+
