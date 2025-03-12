@@ -288,9 +288,10 @@ eval.numeric.part = function(e) {
 			if(is.numeric.expr(e[[2]])) {
 				return(eval(e));
 			}
-			e[[2]] = eval.numeric.part(e[[2]]);
-			if(op == "-") return(e);
-			return(e[[2]])
+			tmp = eval.numeric.part(e[[2]]);
+			if(op == "+") return(tmp);
+			e[[2]] = tmp;
+			return(e);
 		}
 		e[[2]] = eval.numeric.part(e[[2]]);
 		return(e);
@@ -323,7 +324,7 @@ eval.numeric.part = function(e) {
 		# Bubble up:
 		if(op == "*") {
 			if(isNumE2) {
-				# ! isNumE1
+				# ! isNumE1: Sort: 1st Numeric
 				tmp = e[[2]]; e[[2]] = e[[3]]; e[[3]] = tmp;
 				isNumE1 = TRUE; isNumE2 = FALSE;
 				e3 = e[[3]];
@@ -337,7 +338,28 @@ eval.numeric.part = function(e) {
 						e[[3]] = e[[3]][[2]];
 					}
 				}
-			}
+			} else {
+				if(! is.symbol(e[[3]])) {
+				if(e[[3]][[1]] == "(" && length(e[[3]]) == 2) {
+					# ... * (...)
+					ep = e[[3]][[2]];
+					# Swap Multiplication:
+					if(! is.symbol(ep) && ep[[1]] == "*") {
+						e1 = e[[2]]; e2 = ep[[2]]; e3 = ep[[3]];
+						if(is.numeric(e1) && is.numeric(e2)) {
+							e1 = e1 * e2;
+							e[[2]] = e1; e[[3]] = e3;
+						} else {
+							if(is.numeric(e2)) {
+								tmp = e1; e1 = e2; e2 = tmp;
+							}
+							ep[[2]] = e1;
+							ep[[3]] = e2;
+							e[[2]] = ep; e[[3]] = e3;
+						}
+					}
+				}
+			}}
 		} else if(! isNumE2 && (op == "+" || op == "-")) {
 			# if(e[[3]]... < 0): switch Operator;
 			tmp = e[[3]];
@@ -351,6 +373,9 @@ eval.numeric.part = function(e) {
 	}
 	return(e);
 }
+
+e = expression(x*(2*y))[[1]]
+eval.numeric.part(e)
 
 
 ### Tests:
@@ -366,6 +391,9 @@ e = expression(x*-2*-3*-4)[[1]]
 eval.numeric.part(e)
 
 e = expression(2 + x*-2*-3*-4)[[1]]
+eval.numeric.part(e)
+
+e = expression(x*(2*y))[[1]]
 eval.numeric.part(e)
 
 
