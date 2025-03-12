@@ -298,24 +298,76 @@ eval.numeric.part = function(e) {
 	isOpMath = function(op) {
 		op == "+" || op == "-" || op == "*" || op == "/" || op == "^";
 	}
+	# LEN == 3
 	op = e[[1]];
 	if(isOpMath(op)) {
 		isNumE1 = is.numeric.expr(e[[2]]);
-		if(isNumE1) e[[2]] = eval(e[[2]]);
+		if(isNumE1) {
+			e[[2]] = eval(e[[2]]);
+		}
 		isNumE2 = is.numeric.expr(e[[3]]);
-		if(isNumE2) e[[3]] = eval(e[[3]]);
+		if(isNumE2) {
+			val = eval(e[[3]]);
+			if(val < 0) {
+				if(op == "+") { val = - val; e[[1]] = as.symbol("-"); }
+				if(op == "-") { val = - val; e[[1]] = as.symbol("+"); }
+			} 
+			e[[3]] = val;
+		}
 		if(isNumE1 && isNumE2) {
 			e = eval(e); return(e);
 		}
 		# Recursion:
 		if(! isNumE1) e[[2]] = eval.numeric.part(e[[2]]);
 		if(! isNumE2) e[[3]] = eval.numeric.part(e[[3]]);
+		# Bubble up:
+		if(op == "*") {
+			if(isNumE2) {
+				# ! isNumE1
+				tmp = e[[2]]; e[[2]] = e[[3]]; e[[3]] = tmp;
+				isNumE1 = TRUE; isNumE2 = FALSE;
+				e3 = e[[3]];
+				if(! is.symbol(e3)) {
+					if(e3[[1]] == "*" && is.numeric(e3[[2]])) {
+						e[[2]] = e[[2]] * e3[[2]];
+						e[[3]] = e3[[3]];
+					} else if(e3[[1]] == "-") {
+						# Swap Sign:
+						e[[2]] = - e[[2]];
+						e[[3]] = e[[3]][[2]];
+					}
+				}
+			}
+		} else if(! isNumE2 && (op == "+" || op == "-")) {
+			# if(e[[3]]... < 0): switch Operator;
+			tmp = e[[3]];
+			if(! is.symbol(tmp) && (tmp[[1]] == "*" || tmp[[1]] == "/")) {
+				if(is.numeric(tmp[[2]]) && tmp[[2]] < 0) {
+					e[[3]][[2]] = - tmp[[2]];
+					e[[1]] = if(op == "+") as.symbol("-") else as.symbol("+");
+				}
+			}
+		}
 	}
 	return(e);
 }
 
 
 ### Tests:
+
+### Bubble Up Sign:
+e = expression(2 + -2*x + -x*3)[[1]]
+eval.numeric.part(e)
+
+e = expression(2 + 2*x*-2 + x + -3)[[1]]
+eval.numeric.part(e)
+
+e = expression(x*-2*-3*-4)[[1]]
+eval.numeric.part(e)
+
+e = expression(2 + x*-2*-3*-4)[[1]]
+eval.numeric.part(e)
+
 
 ### Eval:
 e = expression((3 - 2 - 2 * 1))[[1]]
