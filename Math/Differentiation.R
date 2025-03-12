@@ -275,7 +275,67 @@ is.numeric.expr = function(e) {
 	return(TRUE);
 }
 
+# Eval Numeric Parts:
+# - Uses Recursion;
+# - Does NOT reorder terms: fails on 1 + x + 2;
+# - Does NOT preserve fractions;
+eval.numeric.part = function(e) {
+	LEN = length(e);
+	if(LEN == 1) return(e);
+	if(LEN == 2) {
+		op = e[[1]];
+		if(op == "-" || op == "+" || op == "(") {
+			if(is.numeric.expr(e[[2]])) {
+				return(eval(e));
+			}
+			e[[2]] = eval.numeric.part(e[[2]]);
+			if(op == "-") return(e);
+			return(e[[2]])
+		}
+		e[[2]] = eval.numeric.part(e[[2]]);
+		return(e);
+	}
+	isOpMath = function(op) {
+		op == "+" || op == "-" || op == "*" || op == "/" || op == "^";
+	}
+	op = e[[1]];
+	if(isOpMath(op)) {
+		isNumE1 = is.numeric.expr(e[[2]]);
+		if(isNumE1) e[[2]] = eval(e[[2]]);
+		isNumE2 = is.numeric.expr(e[[3]]);
+		if(isNumE2) e[[3]] = eval(e[[3]]);
+		if(isNumE1 && isNumE2) {
+			e = eval(e); return(e);
+		}
+		# Recursion:
+		if(! isNumE1) e[[2]] = eval.numeric.part(e[[2]]);
+		if(! isNumE2) e[[3]] = eval.numeric.part(e[[3]]);
+	}
+	return(e);
+}
+
+
 ### Tests:
+
+### Eval:
+e = expression((3 - 2 - 2 * 1))[[1]]
+eval.numeric.part(e)
+
+e = expression(2+3+4*(3-1)^(2*2-3)*(3-2-2*1))[[1]]
+eval.numeric.part(e)
+
+
+e = expression(2+3 + 2/5 - +4*(3-1)*(3-2-2*1/7))[[1]]
+eval.numeric.part(e)
+
+e = expression(2+3 + x/5 - +4*(3-1)*(3-2-2*1/7))[[1]]
+eval.numeric.part(e)
+
+e = expression(2+3 + 2/5 - +4*(3-x)*(3-2-2*1/7))[[1]]
+eval.numeric.part(e)
+
+
+###
 e = expression((3 - 2 - 2 * 1))[[1]]
 is.numeric.expr(e)
 
@@ -302,3 +362,4 @@ is.numeric.expr(e)
 
 e = expression(2+3 + 2^x - +4*(3-1)*(3-2-2*1/7))[[1]]
 is.numeric.expr(e)
+
