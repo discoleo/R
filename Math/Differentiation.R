@@ -239,3 +239,66 @@ split.expr(x)
 # TODO: split Calls;
 
 
+################
+
+# Tool: check if Expression is numeric
+is.numeric.expr = function(e) {
+	lst = list(e);
+	# Stack instead of recursion;
+	while((LEN <- length(lst)) > 0) {
+		tmp = lst[[LEN]]; lst = lst[-LEN];
+		len = length(tmp);
+		if(len == 1) {
+			if(is.numeric(tmp)) next;
+			return(FALSE);
+		}
+		if(len == 2) {
+			op = tmp[[1]];
+			if(op == "+" || op == "-" || op == "(") {
+				if(length(tmp[[2]]) == 1) {
+					if(is.numeric(tmp[[2]])) next;
+					return(FALSE);
+				}
+				lst = c(lst, tmp[[2]]); next;
+			}
+			return(FALSE);
+		}
+		# len == 3:
+		# TODO: check if tmp[[1]] is accepted Operator;
+		if(! is.numeric(tmp[[2]])) {
+			lst = c(lst, tmp[[2]]);
+		}
+		if(! is.numeric(tmp[[3]])) {
+			lst = c(lst, tmp[[3]]);
+		}
+	}
+	return(TRUE);
+}
+
+### Tests:
+e = expression((3 - 2 - 2 * 1))[[1]]
+is.numeric.expr(e)
+
+e = expression(2+3+4*(3-1)*(3-2-2*1))[[1]]
+is.numeric.expr(e)
+
+e = expression(2+3 + 2/5 - +4*(3-1)*(3-2-2*1/7))[[1]]
+is.numeric.expr(e)
+
+e = expression(2+3 + x/5 - +4*(3-1)*(3-2-2*1/7))[[1]]
+is.numeric.expr(e)
+
+e = expression(2+3 + 2/5 - +4*(3-x)*(3-2-2*1/7))[[1]]
+is.numeric.expr(e)
+
+# Pow:
+e = expression(2+3 + 2^5 - +4*(3-1)*(3-2-2*1/7))[[1]]
+is.numeric.expr(e)
+e = expression(2+3 + 2^(-3) - +4*(3-1)*(3-2-2*1/7))[[1]]
+is.numeric.expr(e)
+
+e = expression(2+3 + x^5 - +4*(3-1)*(3-2-2*1/7))[[1]]
+is.numeric.expr(e)
+
+e = expression(2+3 + 2^x - +4*(3-1)*(3-2-2*1/7))[[1]]
+is.numeric.expr(e)
