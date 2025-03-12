@@ -15,6 +15,7 @@ subst.part = function(x, param) {
 	do.call(substitute, list(x, param));
 }
 
+
 ##########################
 
 ### Simple Coupled Systems
@@ -152,4 +153,35 @@ pracma::roots(c(1,-11,-2,1))
 
 # TODO:
 # Example with more sensible coefficients;
+
+
+#########
+### Ex 2:
+
+bb = c( 1, 2,-3)
+cc = c(-1, 3,-5)
+ee = c( 2,-5, 2)
+names(bb) = paste0("b", 1:3)
+names(cc) = paste0("c", 1:3)
+names(ee) = paste0("e", 1:3)
+params = c(bb, cc, ee)
+
+eq3 = expression(e1*y1 + e2*y2 + e3*y3 + f3 - dy3)[[1]]
+subst.part(eq3, params)
+
+
+### Transformed System:
+ 2 * y1 -  5 * y2 +  2 * y3 + f3 - dy3 # = 0
+ 7 * y1 - 11 * y2 + 19 * y3 +
+	+ 2 * f1 - 5 * f2 + df3 - d2y3 + 2 * dy3 # = 0
+18 * y1 - 19 * y2 + 34 * y3 +
+	+ d2f3 + 2 * df1 + 7 * f1 - 5 * df2 - 11 * f2 +
+	- d3y3 + 2 * d2y3 + 19 * dy3 # = 0
+
+### ODE:
+d3y3 - 6*d2y3 - 6*dy3 + 32*y3 +
+	- d2f3 + 4*df3 - 5*f3 - 2*df1 + f1 + 5*df2 - 9*f2 # = 0
+
+rr = pracma::roots(c(1,-6,-6,32))
+print(rr)
 
