@@ -4,6 +4,17 @@
 # Conversion of a linear system of ODEs to *one* ODE
 
 
+####################
+
+### Helper Functions
+
+# source("Polynomials.Helper.R")
+
+subst.part = function(x, param) {
+	if(! inherits(param, "list")) param = as.list(param);
+	do.call(substitute, list(x, param));
+}
+
 ##########################
 
 ### Simple Coupled Systems
@@ -108,3 +119,37 @@ e1*dy2 - c1*dy3 + c1*(e2*y2 + e3*y3) +
 d3y3 - (b1 + e3)*d2y3 - e2*d2y2 +
 	+ b1*(e2*dy2 + e3*dy3) - e1*(b2*dy2 + b3*dy3) +
 	+ b1*df3 - e1*df1 - d2f3 # = 0
+
+###############
+### Example ###
+
+bb = c(1,2,3)
+cc = c(1,3,5)
+ee = c(2,5,7)
+names(bb) = paste0("b", 1:3)
+names(cc) = paste0("c", 1:3)
+names(ee) = paste0("e", 1:3)
+params = c(bb, cc, ee)
+
+eq3 = expression(e1*y1 + e2*y2 + e3*y3 + f3 - dy3)[[1]]
+subst.part(eq3, params)
+
+
+### Transformed System:
+ 2 * y1 +  5 * y2 +   7 * y3 + f3 - dy3 # = 0
+ 7 * y1 + 19 * y2 +  31 * y3 + 2 * f1 + 5 * f2 - df3 - d2y3 + 7 * dy3 # = 0
+26 * y1 + 71 * y2 + 116 * y3 +
+	+ d2f3 + 2 * df1 + 5 * df2 + 7 * f1 + 19 * f2 +
+	- d3y3 + 7 * d2y3 + 31 * dy3 # = 0
+
+### ODE:
+d3y3 - 11*d2y3 - 2*dy3 + y3 - d2f3 - 4*df3 - f3 - 2*df1 + f1 - 5*df2 + f2 # = 0
+
+pracma::roots(c(1,-11,-2,1))
+# - for exact solution, see file:
+#   Polynomials.CardanGeneralisation.R;
+
+
+# TODO:
+# Example with more sensible coefficients;
+

@@ -1,5 +1,5 @@
 
-### Generalisation of Cardan's Formula
+### Generalisation of Cardano's Formula
 ### to Higher Order Polynomials
 ###
 ### (C) Leonard Mada
@@ -7,7 +7,7 @@
 ###
 
 ### Citation:
-### Leonard Mada. Generalisation of Cardan's Formula to Higher Order Polynomials.
+### Leonard Mada. Generalisation of Cardano's Formula to Higher Order Polynomials.
 ### https://github.com/discoleo/R/blob/master/Math/Polynomials.CardanGeneralisation.R
 ### [I am open to collaboration, if anyone wants to publish properly]
 
@@ -16,16 +16,16 @@
 # draft v.0.2:
 # - renamed root() to solve.crd();
 # - added section on Special cases: Bugs;
-# Theory for Cardan-type Polynomials:
+# Theory for Cardano-type Polynomials:
 # - consistent theory developed during 2018-2019;
-# - disseminated, but never oficially published;
+# - disseminated, but never officially published;
 
 ####################
 
 ####################
 ### Introduction ###
 
-# Cardan type polynomials:
+# Cardano-type polynomials:
 # - can be easily solved (see below);
 # - have very nice properties:
 #  -- see Polynomial wavelets:
@@ -78,7 +78,7 @@
 # where m^n = 1, m = root of unity of order n;
 
 # Note:
-# - this is how Cardan's formula should be tought!
+# - this is how Cardano's formula should be taught!
 # - it is fully generalisable;
 # - all roots are properly covered & easily computable;
 
@@ -91,7 +91,7 @@
 
 ### Examples:
 
-### "Quadratic" / Cardan-type Polynomials
+### "Quadratic" / Cardano-type Polynomials
 # Odd-Order
 f3  = function(x) x^3 - 3*c*x - 2*d
 f5  = function(x) x^5 - 5*c*x^3 + 5*c^2*x - 2*d
@@ -105,9 +105,9 @@ f2 = function(x) x^2 - 2*c - 2*d
 f4 = function(x) x^4 - 4*c*x^2 + 2*c^2 - 2*d
 f6 = function(x) x^6 - 6*c*x^4 + 9*c^2*x^2 - 2*c^3 - 2*d
 f8 = function(x) x^8 - 8*c*x^6 + 20*c^2*x^4 - 16*c^3*x^2 + 2*c^4 - 2*d
-f10 = function(x) x^10 - 10*c*x^8 + 35*c^2*x^6 - 50*c^3*x^4 + 25*c^4*x^2 -2*c^6 - 2*d
+f10 = function(x) x^10 - 10*c*x^8 + 35*c^2*x^6 - 50*c^3*x^4 + 25*c^4*x^2 - 2*c^5 - 2*d
 f12 = function(x) x^12 - 12*c*x^10 + 54*c^2*x^8 - 112*c^3*x^6 + 105*c^4*x^4 - 36*c^5*x^2 + 2*c^6 - 2*d
-f14 = function(x) x^14 - 14*c*x^12 + 77*c^2*x^10 - 210*c^3*x^8 + 294*c^4*x^6 - 196*c^5*x^4 + 49*c^6*x^2 -2*c^7 - 2*d
+f14 = function(x) x^14 - 14*c*x^12 + 77*c^2*x^10 - 210*c^3*x^8 + 294*c^4*x^6 - 196*c^5*x^4 + 49*c^6*x^2 - 2*c^7 - 2*d
 
 ### Roots:
 
@@ -188,7 +188,7 @@ err = f3(x)
 round0(err) # tol < 1E-12
 
 # Note:
-# - Cardan's solution covers the entire polynomial space for polynomials of order 3;
+# - Cardano's solution covers the entire polynomial space for polynomials of order 3;
 # - it only covers a special subclass for polynomials of higher order;
 # - TODO:
 #   presentation of Class 1 polynomials (which is a generalisation);
