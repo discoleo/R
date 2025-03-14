@@ -242,6 +242,9 @@ split.expr(x)
 ################
 
 # Tool: check if Expression is numeric
+# Note:
+# - (x * 0) cannot be evaluated automatically;
+# - does NOT bubble up (x * 0);
 is.numeric.expr = function(e) {
 	lst = list(e);
 	# Stack instead of recursion;
@@ -273,6 +276,16 @@ is.numeric.expr = function(e) {
 		}
 	}
 	return(TRUE);
+}
+isZero.expr = function(e) {
+	if(is.numeric(e)) {
+		return(e == 0);
+	}
+	if(is.symbol(e)) return(FALSE);
+	if(e[[1]] == "(") {
+		return(e[[2]] == 0);
+	}
+	return(FALSE);
 }
 
 # Eval Numeric Parts:
@@ -323,6 +336,9 @@ eval.numeric.part = function(e) {
 		if(! isNumE2) e[[3]] = eval.numeric.part(e[[3]]);
 		# Bubble up:
 		if(op == "*") {
+			# Note: isNumE[] may be FALSE;
+			if(isZero.expr(e[[2]])) return(0); # ZERO
+			if(isZero.expr(e[[3]])) return(0); # ZERO
 			if(isNumE2) {
 				# ! isNumE1: Sort: 1st Numeric
 				tmp = e[[2]]; e[[2]] = e[[3]]; e[[3]] = tmp;
@@ -335,7 +351,7 @@ eval.numeric.part = function(e) {
 					} else if(e3[[1]] == "-") {
 						# Swap Sign:
 						e[[2]] = - e[[2]];
-						e[[3]] = e[[3]][[2]];
+						e[[3]] = e[[3]][[2]]; # e3[[2]];
 					}
 				}
 			} else {
@@ -361,8 +377,11 @@ eval.numeric.part = function(e) {
 				}
 			}}
 		} else if(! isNumE2 && (op == "+" || op == "-")) {
-			# if(e[[3]]... < 0): switch Operator;
 			tmp = e[[3]];
+			if(tmp == 0) {
+				e = e[[2]]; return(e); # x + 0;
+			}
+			# if(e[[3]]... < 0): switch Operator;
 			if(! is.symbol(tmp) && (tmp[[1]] == "*" || tmp[[1]] == "/")) {
 				if(is.numeric(tmp[[2]]) && tmp[[2]] < 0) {
 					e[[3]][[2]] = - tmp[[2]];
@@ -374,11 +393,22 @@ eval.numeric.part = function(e) {
 	return(e);
 }
 
-e = expression(x*(2*y))[[1]]
+### Tests:
+
+### M * 0
+e = expression((3*x + 1)*(2-2))[[1]]
+eval.numeric.part(e)
+e = expression(1 + (3*x + 1)*(2-2))[[1]]
+eval.numeric.part(e)
+e = expression((2-2)*(3*x + 1))[[1]]
+eval.numeric.part(e)
+e = expression((1+2*x)*(2-2)*(3*x + 1))[[1]]
 eval.numeric.part(e)
 
+# TODO:
+e = expression(1 + (2-2)*(3*x + 1) + 3)[[1]]
+eval.numeric.part(e)
 
-### Tests:
 
 ### Bubble Up Sign:
 e = expression(2 + -2*x + -x*3)[[1]]
@@ -393,20 +423,21 @@ eval.numeric.part(e)
 e = expression(2 + x*-2*-3*-4)[[1]]
 eval.numeric.part(e)
 
+# Swap:
 e = expression(x*(2*y))[[1]]
 eval.numeric.part(e)
 
 
 ### Eval:
 e = expression((3 - 2 - 2 * 1))[[1]]
-eval.numeric.part(e)
+eval.numeric.part(e); -1;
 
 e = expression(2+3+4*(3-1)^(2*2-3)*(3-2-2*1))[[1]]
-eval.numeric.part(e)
+eval.numeric.part(e); -3;
 
 
 e = expression(2+3 + 2/5 - +4*(3-1)*(3-2-2*1/7))[[1]]
-eval.numeric.part(e)
+eval.numeric.part(e); 2/5 - 5/7;
 
 e = expression(2+3 + x/5 - +4*(3-1)*(3-2-2*1/7))[[1]]
 eval.numeric.part(e)
