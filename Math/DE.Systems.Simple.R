@@ -178,6 +178,7 @@ subst.part(eq3, params)
 	+ d2f3 + 2 * df1 + 7 * f1 - 5 * df2 - 11 * f2 +
 	- d3y3 + 2 * d2y3 + 19 * dy3 # = 0
 
+
 ### ODE:
 d3y3 - 6*d2y3 - 6*dy3 + 32*y3 +
 	- d2f3 + 4*df3 - 5*f3 - 2*df1 + f1 + 5*df2 - 9*f2 # = 0
@@ -185,3 +186,36 @@ d3y3 - 6*d2y3 - 6*dy3 + 32*y3 +
 rr = pracma::roots(c(1,-6,-6,32))
 print(rr)
 
+
+#####################
+#####################
+
+### NLS
+
+# dy1 = b2*y1^2 + b1*y1 + c1*y2 + f1;
+# dy2 = d1*y1 + d2*y2 + d3*y2^2 + f2;
+
+# Case: Coefficients = constant
+# (for simplicity)
+
+### D(Eq 3)
+d2y2 - d1*dy1 - d2*dy2 - 2*d3*y2*dy2 - df2 # = 0
+# Substitution =>
+d2y2 - d1*(b2*y1^2 + b1*y1) +
+	- 2*d3*y2*dy2 - d2*dy2 - c1*d1*y2 - df2 - d1*f1 # = 0
+
+### Gaussian Elimination:
+# Eq 3 & Eq 3b:
+
+### ODE:
+d1*d2y2 - b2*dy2^2 + 2*d3*b2*y2^2*dy2 + 2*(d2*b2 - d3*d1)*y2*dy2 +
+	- (d2*d1 + d1*b1 + 2*f2*b2)*dy2 +
+	- d3^2*b2*y2^4 - 2*d3*d2*b2*y2^3 +
+	+ (d3*d1*b1 - d2^2*b2 - 2*f2*d3*b2)*y2^2 +
+	+ (d2*d1*b1 - d1^2*c1 - 2*f2*d2*b2)*y2 +
+	- d1^2*f1 - d1*df2 + d1*b1*f2 - b2*f2^2 # = 0
+
+
+# p1 = as.pm("d1*y1 + d2*y2 + d3*y2^2 + f2 - dy2")
+# p2 = as.pm(...)
+# pR = solve.pm(p1, p2, by="y1")
