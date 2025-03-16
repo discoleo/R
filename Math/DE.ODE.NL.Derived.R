@@ -5,6 +5,8 @@
 
 source("Polynomials.Helper.R")
 
+library(deSolve)
+
 
 subst.part = function(x, param) {
 	if(! inherits(param, "list")) param = as.list(param);
@@ -67,5 +69,40 @@ d2y - 2*x^2 * y^3 - (6*x^2 + 9*x + 1) * y^2 +
 # Initial ODE:
 dy - x*y^2 - 2*x*y - 3*y - fx # = 0
 
-# TODO: check;
+### Solve:
+ord1.f = function(t, y, parms, ...) {
+	x  = t;
+	fx = parms$FUN(x);
+	dy = x*y^2 + 2*x*y + 3*y + fx;
+	return(list(dy));
+}
+ord2.f = function(t, y, parms, ...) {
+	x  = t; dy = y[2]; y = y[1];
+	fx = parms$FUN(x); dfx = params$DFUN(x);
+	d2y = 2*x^2 * y^3 + (6*x^2 + 9*x + 1) * y^2 +
+		+ (4*x^2 + 2*x*fx + 12*x + 11) * y +
+		+ 2*x*fx + 3*fx + dfx;
+	return(list(c(dy, d2y)));
+}
+
+### Test:
+params = list(
+	FUN  = \(x) - x^2/3 - 3*x - 1,
+	DFUN = \(x) - 2/3*x - 3);
+x  = seq(0, 4, by = 1/4096 / 4);
+y  = c(y = -1/2); # y = c(y = -2/7);
+y2 = c(y = y, dy = 3*y + params$FUN(0))
+
+sol1 = ode(y,  x, func = ord1.f, parms = params)
+sol2 = ode(y2, x, func = ord2.f, parms = params, type="rk4")
+col = "#FF6432A0"
+matplot(sol1[,1], sol1[,-1], type = "l", lwd=2)
+matplot(sol2[,1], sol2[, 2], type = "l", lwd=3, col=col, add=T)
+
+
+# TODO:
+# Check what happens for x > 2?
+# Just numerical instabilities?
+
+
 
