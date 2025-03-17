@@ -5,6 +5,36 @@ source("Chem3D.R")
 
 ### Examples
 
+### Projection on Plane:
+
+###
+xyz = cbind(x = c(0,3,2), y = c(0,0,6), z = c(0,0,0))
+p   = c(2,1,3)
+tmp = test.proj.plane(p, xyz)
+points3d(p[1], p[2], 0, col = "green", size=7, alpha = 0.5)
+
+### Special Case:
+xyz = cbind(x = c(0,3,3), y = c(0,0,5), z = c(0,0,0))
+p   = c(2,1,4)
+tmp = test.proj.plane(p, xyz)
+
+###
+xyz = cbind(x = c(0,5,2), y = c(0,1,6), z = c(0,0,1))
+p   = c(2,1,4)
+tmp = test.proj.plane(p, xyz)
+
+###
+xyz = cbind(x = c(0,5,2), y = c(0,1,6), z = c(0,0,1))
+p   = c(5,2,4)
+tmp = test.proj.plane(p, xyz)
+
+### Special Case:
+# Proj(p on 1,2) = p2
+xyz = cbind(x = c(0,5,2), y = c(0,1,6), z = c(0,0,1))
+p   = c(5,1,4)
+tmp = test.proj.plane(p, xyz)
+
+
 ### Distance between 2 Lines
 
 ### Special: Intersect & Orthogonal

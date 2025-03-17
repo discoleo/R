@@ -17,6 +17,7 @@ library(rgl)
 
 ### Helper
 
+### Distances
 dist.xyz = function(x, y, z) {
 	if(missing(y)) {
 		y = x[,2]; z = x[,3]; x = x[,1];
@@ -33,6 +34,7 @@ dist.p3d = function(p1, p2) {
 	sqrt(sum(d^2));
 }
 
+### Center
 center.xyz = function(x, y, z) {
 	if(missing(y)) {
 		y = x[,2]; z = x[,3]; x = x[,1];
@@ -125,7 +127,7 @@ rotate.xy = function(alpha = pi/6) {
 
 ### Orthogonal Projection/Rotation
 
-### Projection
+### Projection of Point on Line
 # p = point which will be projected on (x,y,z) line;
 proj.line3d = function(p, x, y, z) {
 	if(missing(y)) {
@@ -145,6 +147,65 @@ proj.line3d = function(p, x, y, z) {
 	lst = list(P = c(px, py, pz), t = tt);
 	return(lst);
 }
+
+### Projection of Point on Plane
+# p = 3D Point;
+# (x, y, z) = 3 points defining the plane;
+proj.plane3d = function(p, x, y, z, verbose = FALSE, tol = 1E-8) {
+	if(missing(y)) {
+		y = x[,2]; z = x[,3]; x = x[,1];
+	}
+	len = c(length(x), length(y), length(z));
+	stopifnot(len == 3);
+	#
+	id = c(1,2);
+	p1 = proj.line3d(p, x[id], y[id], z[id]);
+	t1 = p1$t;
+	p1 = p1$P;
+	pC = c(x[3], y[3], z[3]);
+	pT = proj.line3d(pC, x[id], y[id], z[id]);
+	tT = pT$t; dT = 1 - tT;
+	if(abs(dT) < tol) {
+		if(verbose) print("Case: Div 0!");
+		p2 = pC * t1 + c(x[1], y[1], z[1]) * (1-t1);
+	} else if(abs(t1 - 1) < tol) {
+		if(verbose) print("Case: Special!");
+		p2 = pC + c(x[2], y[2], z[2]) - pT$P;
+	} else {
+		tt = (1 - t1) / dT;
+		p2 = pC * tt + c(x[2], y[2], z[2]) * (1-tt);
+	}
+	pp = proj.line3d(p, rbind(p1, p2));
+	return(list(P = pp$P, pP12 = p1));
+}
+
+test.proj.plane = function(p, x, y, z,
+		col = c("#9664D6", "#4464E8", "#FF6432", "#F2E248"),
+		size = c(5,6), alpha = c(0.5, 0.325), scale = 1.5,
+		test.math = TRUE, verbose = TRUE, tol = 1E-8) {
+	if(missing(y)) {
+		y = x[,2]; z = x[,3]; x = x[,1];
+	}
+	pp = proj.plane3d(p, x=x, y=y, z=z, verbose=verbose);
+	p2 = rbind(p, pp$P);
+	# Test:
+	if(test.math) {
+		pA = c(x[1], y[1], z[1]);
+		d2 = dist.xyz(p2)^2 + dist.xyz(rbind(pp$P, pA))^2;
+		d2 = d2 - dist.xyz(rbind(p, pA))^2;
+		if(abs(d2) > tol) warning("Not right triangle: ", d2);
+	}
+	# Plot:
+	polygon3d(x, y, z, col = col[1], alpha = alpha[1]);
+	if(scale != 1) {
+		xyz = expand.polygon3d(scale, x, y, z);
+		polygon3d(xyz, col = col[4], alpha = alpha[2]);
+	}
+	lines3d(p2, size = size[1], col = col[2]);
+	points3d(p2, size = size[2], col = col[3]);
+	invisible(pp);
+}
+
 
 ### Decompositions into Normals
 
