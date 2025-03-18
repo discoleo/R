@@ -38,30 +38,37 @@ tmp = test.proj.plane(p, xyz)
 
 ### Distance between 2 Lines
 
+# Black: Base-segment;
+# Green: create perspective;
+# Red: 1st set of line segments;
+# Blue: 2nd set of segments (only virtual intersection);
+#   (does NOT include the point of minimal distance)
+
+
 ### Special: Intersect & Orthogonal
 # Note: intersection points refer to L1!
 test.lines.minDist.Special1()
-test.lines.minDist.Special1(z = c(1/2, 3/2), col = "#6428E0", add = TRUE)
+test.lines.minDist.Special1(z = c(1/2, 3/2), col = "#4428E0", add = TRUE)
 
 
 ### Special: Intersect (Non-Orthogonal)
 test.lines.minDist.Special2()
-test.lines.minDist.Special2(z = c(1/2, 3/2), col = "#6428E0", add = TRUE)
+test.lines.minDist.Special2(z = c(1/2, 3/2), col = "#4428E0", add = TRUE)
 
 
 ### Special: Orthogonal
 test.lines.minDist.SpecialOrtho()
-test.lines.minDist.SpecialOrtho(z = c(1/2, 3/2), col = "#6428E0", add = TRUE)
+test.lines.minDist.SpecialOrtho(z = c(1/2, 3/2), col = "#4428E0", add = TRUE)
 
 
 ### General Case:
 y = 1
 test.lines.minDist.General(y=y)
-test.lines.minDist.General(z = c(1, -3/2), y=y, col = "#6428E0", add = TRUE)
-test.lines.minDist.General(z = c(1/2, 3/2), y=y, col = "#64A0E0", add = TRUE)
+test.lines.minDist.General(z = c(1, -3/2), y=y, col = "#D428B0", add = TRUE)
+test.lines.minDist.General(z = c(1/2, 3/2), y=y, col = "#44A0E0", add = TRUE)
 
 
-##############
+###############
 
 ### Basic Maths & Transformations
 
