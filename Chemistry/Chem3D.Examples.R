@@ -1,6 +1,7 @@
 
 
 source("Chem3D.R")
+source("Chem3D.Tests.R")
 
 
 ### Examples
@@ -62,7 +63,7 @@ test.lines.minDist.General(z = c(1/2, 3/2), y=y, col = "#64A0E0", add = TRUE)
 
 ##############
 
-### Basic Math & Transformations
+### Basic Maths & Transformations
 
 ### Normal
 p1 = c(1,5,7); p2 = c(3,5,7);
