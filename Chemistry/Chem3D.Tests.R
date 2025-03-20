@@ -16,10 +16,11 @@
 
 ### Projection of Point on Plane
 
-test.proj.plane = function(p, x, y, z,
-		col = c("#9664D6", "#4464E8", "#FF6432", "#F2E248"),
-		size = c(5,6), alpha = c(0.5, 0.325), scale = 1.5,
-		test.math = TRUE, verbose = TRUE, tol = 1E-8) {
+test.proj.plane = function(p, x, y, z, col.line = "#9664D6",
+		col = c("#4464E8", "#FF6432", "#F2E248"),
+		lwd = c(2,6), alpha = c(0.5, 0.325), scale = 1.5,
+		test.math = TRUE, verbose = TRUE, add = FALSE,
+		..., tol = 1E-8) {
 	if(missing(y)) {
 		y = x[,2]; z = x[,3]; x = x[,1];
 	}
@@ -33,13 +34,15 @@ test.proj.plane = function(p, x, y, z,
 		if(abs(d2) > tol) warning("Not right triangle: ", d2);
 	}
 	# Plot:
-	polygon3d(x, y, z, col = col[1], alpha = alpha[1]);
-	if(scale != 1) {
-		xyz = expand.polygon3d(scale, x, y, z);
-		polygon3d(xyz, col = col[4], alpha = alpha[2]);
+	if(! add) {
+		polygon3d(x, y, z, col = col[2], alpha = alpha[1]);
+		if(scale != 1) {
+			xyz = expand.polygon3d(scale, x, y, z);
+			polygon3d(xyz, col = col[3], alpha = alpha[2]);
+		}
 	}
-	lines3d(p2, size = size[1], col = col[2]);
-	points3d(p2, size = size[2], col = col[3]);
+	lines3d(p2, lwd = lwd[1], col = col.line, ...);
+	points3d(p2, size = lwd[2], col = col[1]);
 	invisible(pp);
 }
 

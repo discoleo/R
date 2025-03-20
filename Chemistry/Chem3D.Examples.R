@@ -12,7 +12,11 @@ source("Chem3D.Tests.R")
 xyz = cbind(x = c(0,3,2), y = c(0,0,6), z = c(0,0,0))
 p   = c(2,1,3)
 tmp = test.proj.plane(p, xyz)
+# tmp$p == c(p[1], p[2], 0)
 points3d(p[1], p[2], 0, col = "green", size=7, alpha = 0.5)
+tmp = test.proj.plane(c(1,2,3), xyz, add = TRUE)
+tmp = test.proj.plane(c(2,2,4), xyz, add = TRUE, col.line = "#C2D632")
+
 
 ### Special Case:
 xyz = cbind(x = c(0,3,3), y = c(0,0,5), z = c(0,0,0))
