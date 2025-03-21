@@ -8,12 +8,19 @@
 
 ### Helper Functions
 
+
+library(deSolve)
+
 # source("Polynomials.Helper.R")
 
 subst.part = function(x, param) {
 	if(! inherits(param, "list")) param = as.list(param);
 	do.call(substitute, list(x, param));
 }
+
+# Note:
+# - Functions to simplify the expressions are in file:
+#   Differentiation.R;
 
 
 ##########################
@@ -35,8 +42,8 @@ d2y2 - c1*dy1 - c2*dy2 - df2 # = 0
 d2y2 - (b1 + c2)*dy2 + (b1*c2 - b2*c1)*y2 - c1*f1 + b1*f2 - df2 # = 0
 
 # => Solve ODE of Order 2;
+# see Examples below;
 
-# TODO: check;
 
 ### Case: b, c = f(x)
 d2y2 - c1*dy1 - dc1*y1 - c2*dy2 - dc2*y2 - df2 # = 0
@@ -47,6 +54,58 @@ c1*d2y2 - c1*(b1 + c2)*dy2 - dc1*dy2 +
 	- c1^2*f1 + b1*c1*f2 - c1*df2 + dc1*f2 # = 0
 
 # TODO: check;
+
+### Test:
+
+b = c(1,-2,-3,2)
+names(b) = c("b1","b2","c1","c2");
+
+### ODE:
+d2y2 - 3*dy2 - 4*y2 + 3*f1 + f2 - df2 # = 0
+
+
+### Solve:
+ode.sys = function(t, y, parms, ...) {
+	y1 = y[1]; y2 = y[2]; x = t;
+	with(as.list(parms), {
+		dy1 = b1*y1 + b2*y2 + f1(x);
+		dy2 = c1*y1 + c2*y2 + f2(x);
+		return(list(c(dy1, dy2)));
+	});
+}
+ode.f = function(t, y, parms, ...) {
+	y2 = y[1]; dy2 = y[2]; x = t;
+	with(as.list(parms), {
+		d2y2 = - (b1 + c2)*dy2 + (b1*c2 - b2*c1)*y2 +
+			- c1*f1(x) + b1*f2(x) - df2(x);
+		d2y2 = - d2y2;
+		return(list(c(dy2, d2y2)));
+	});
+}
+
+### Test:
+params.f = list(
+	f1  = \(x)  5/3*x - 1/2,
+	f2  = \(x) -1/5*x + 251/257,
+	df2 = \(x) -1/5 );
+
+b = c(-3,1,-5,2)
+# b = c(1,-4,-3,1); # b = c(1,-2,-3,2);
+names(b) = c("b1","b2","c1","c2");
+params = c(params.f, as.list(b));
+
+x  = seq(0, 4, by = 1/128);
+y1 = 1/2; y2 = 1/5;
+# y1 = -2/7; y2 = -1/5;
+ys = c(y1, y2);
+ye = c(y2 = y2, dy2 = b[3]*y1 + b[4]*y2 + params$f2(x[1]));
+
+sols = ode(ys, x, func = ode.sys, parms = params)
+sole = ode(ye, x, func = ode.f,   parms = params)
+col = c("#2472E6A0", "#FF643290")
+matplot(sols[,1], sols[, 3], type = "l", lwd=2, col=col[1])
+matplot(sole[,1], sole[, 2], type = "l", lwd=3, col=col[2], lty=2, add=T)
+
 
 
 #####################
@@ -198,14 +257,14 @@ print(rr)
 # Case: Coefficients = constant
 # (for simplicity)
 
-### D(Eq 3)
+### D(Eq 2)
 d2y2 - d1*dy1 - d2*dy2 - 2*d3*y2*dy2 - df2 # = 0
 # Substitution =>
 d2y2 - d1*(b2*y1^2 + b1*y1) +
 	- 2*d3*y2*dy2 - d2*dy2 - c1*d1*y2 - df2 - d1*f1 # = 0
 
 ### Gaussian Elimination:
-# Eq 3 & Eq 3b:
+# Eq 2 & Eq 2b:
 
 ### ODE:
 d1*d2y2 - b2*dy2^2 + 2*d3*b2*y2^2*dy2 + 2*(d2*b2 - d3*d1)*y2*dy2 +
