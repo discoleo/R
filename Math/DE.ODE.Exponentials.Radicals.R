@@ -25,6 +25,40 @@ source("DE.ODE.Helper.R")
 
 ### Simple: SQRT
 
+### y = exp(x + k*sqrt(x + b0))
+
+x = sqrt(3); k = -1/5; b0 = 2/3; params = list(x=x, k=k, b0=b0);
+e = expression(exp(x + k*sqrt(x + b0)))[[1]];
+#
+y   = exp(x + k*sqrt(x + b0))
+dy  = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
+
+
+# D =>
+2*dy - (2 + k/sqrt(x + b0)) * y # = 0
+
+# D2 =>
+4*d2y - 2*(2 + k/sqrt(x + b0)) * dy +
+	+ k/(x + b0) / sqrt(x + b0) * y # = 0
+4*d2y - 8*dy + (4 - k^2/(x+b0)) * y +
+	+ k/(x + b0) / sqrt(x + b0) * y # = 0
+
+### ODE:
+4*(x + b0)*d2y - (8*x + 8*b0 - 2)*dy +
+	+ (4*x - k^2 + 4*b0 - 2) * y # = 0
+
+### Special Cases:
+
+### k = sqrt(4*b0-2)
+x = sqrt(3); b0 = 2/3; k = sqrt(4*b0-2);
+params = list(x=x, k=k, b0=b0);
+# Re-run assignments from above;
+4*(x + b0)*d2y - (8*x + 8*b0 - 2)*dy + 4*x*y # = 0
+
+
+##############################
+
 ### y = exp(x + sqrt(x^2 + k))
 
 x = - sqrt(3); k = -1/5; params = list(x=x, k=k);
