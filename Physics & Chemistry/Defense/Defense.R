@@ -1,15 +1,15 @@
 
-### Defense  Technologies
+### Defence  Technologies
 
-# Technological improvements to reduce the impact/effectiveness
-# of hand-fired anti-tank missiles:
+# A. Technological improvements to reduce the impact/effectiveness
+#    of hand-fired anti-tank missiles:
 # - such missiles may motivate fighters to choose urban areas as combat zones,
 #   as it is easy to hide from tanks/armored vehicles;
 # - the existence of effective defense strategies would reduce the willingness
 #   to choose urban locations for combat;
 
 
-### Defense against High-Kinetic Projectiles
+### Defence against High-Kinetic Projectiles
 
 # - interlacing armored plates;
 # - interlacing distance less than the diameter of the penetrating projectile;
@@ -24,6 +24,10 @@
 ##############
 
 library(shape)
+
+### Quasi-Package BioShapes
+# path = "..."
+# devtools::load_all(path)
 
 
 ##############
@@ -112,6 +116,8 @@ kineticMissile()
 
 library(rgl)
 
+### Interlaced Armour
+
 m = matrix(c(3,0,0,0,2,0,0,0,1/2), ncol=3)
 col0 = "#326432"
 dy = 2
@@ -127,4 +133,58 @@ shade3d(translate3d(cube3d(m, col=col0), 0, 0, 6))
 shade3d(translate3d(cube3d(m, col=col0), 0, dy, 1))
 shade3d(translate3d(cube3d(m, col=col0), 0, dy, 3))
 shade3d(translate3d(cube3d(m, col=col0), 0, dy, 5))
+
+
+######################
+
+######################
+### Robust Bunkers ###
+######################
+
+### Bunker Walls
+# - Resistant to kinetic penetrators;
+
+### Principle:
+# - Add an inhomogeneous wall that interferes with
+#   the path of the missile;
+# - Inhomogeneities consist of sufficiently large blocks
+#   of hard rock or of other very hard materials;
+# - Hard material is glued together using weak cement / concrete;
+
+### External Wall:
+x = c(0,6); y = c(0,8);
+wall = grid.squareREC(x, y, r = c(2/5, 1/3), fill = "#324464A0", type = "i")
+
+# png("Defense.Bunker.Wall.png")
+plot.base(axt = NULL)
+lines(rect0(x, c(0,8), lwd=3, fill = "#A0A0A024"))
+lines(wall)
+
+# Solid Rock
+arrowSimple(c(-2, 2.25), c(-1, 3.25), lwd = 4, col = "#883264B2")
+text(-2.5, -1.2, "Solid rock / Hard concrete", cex = 1.5, adj = c(0,1))
+
+# Weak Cement
+arrowSimple(c(3, 1.85), c(-0.5, 0.7), lwd = 4, col = "#927248B2")
+text(3, -0.4, "Weak concrete", cex = 1.5, adj = c(-0.05, 0.75))
+
+# Elastic Wall
+lines(rect0(x[2] + c(0,1), y, lwd=3, fill = "#9090A0B6"))
+arrowSimple(c(-0.5, x[2] + 0.5), y[2] + c(1, -0.5), lwd = 4, col = "#927248B2")
+text(-0.5, y[2] + 1, "Elastic\nreinforced concrete", cex = 1.5, adj = c(0.3, -0.1))
+
+# Fill
+lines(rect0(x[2] + c(1,2), y, lwd=3, fill = "#B2B2A0A2"))
+arrowSimple(x[2] + c(1.5,1.5), c(-1.5, 0.7), lwd = 4, col = "#727272B2")
+text(x[2] + 1.5, -1.5, "Filler / Sand", cex = 1.5, adj = c(0.5, 1.1))
+
+# Proper Wall
+lines(rect0(x[2] + c(2,4), y, lwd=3, fill = "#8080A0B2"))
+arrowSimple(x[2] + c(2.7,2.7),y[2] + c(0.5, -1), lwd = 4, col = "#6060A0B2")
+text(x[2] + 2.7, y[2] + 0.5, "Proper\nWall", cex = 1.5, adj = c(0.5, -0.25))
+
+# Missile:
+arrowSimple(c(-2, 0.5), c(4,4), d.lines = c(-1,1)/8, lwd = 2)
+
+# dev.off()
 
