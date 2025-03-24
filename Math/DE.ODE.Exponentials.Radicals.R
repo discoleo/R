@@ -100,33 +100,65 @@ params = list(x=x, k=k, b0=b0);
 x^2*(4*x - 3)*d2y - 2*x*(4*x^2 - 3) * dy + (4*x^3 - 6) * y # = 0
 
 
-##############################
+#################
 
-### y = exp(x + sqrt(x^2 + k))
+### y = exp(1/x + k*sqrt(x + b0))
 
-x = - sqrt(3); k = -1/5; params = list(x=x, k=k);
-e = expression(exp(x + sqrt(x^2 + k)))[[1]];
+x = sqrt(3); k = -1/5; b0 = 2/3; params = list(x=x, k=k, b0=b0);
+e = expression(exp(1/x + k*sqrt(x + b0)))[[1]];
 #
-y   = exp(x + sqrt(x^2 + k))
+y   = eval(e, params)
 dy  = eval(D(e, "x"), params);
 d2y = eval(D(D(e, "x"), "x"), params);
 
 
 # D =>
-dy - (1 + x/sqrt(x^2 + k)) * y # = 0
+2*x^2*dy + (2 - k*x^2/sqrt(x + b0)) * y # = 0
 
 # D2 =>
-d2y - (1 + x/sqrt(x^2 + k)) * dy +
-	- (1 - x^2/(x^2 + k)) / sqrt(x^2 + k) * y # = 0
-d2y - 2*dy + k/(x^2 + k) * y +
-	- (1 - x^2/(x^2 + k)) / sqrt(x^2 + k) * y # = 0
-d2y - 2*dy + k/(x^2 + k) * y +
-	- k/(x^2 + k) / sqrt(x^2 + k) * y # = 0
-x*d2y - 2*x*dy + k*x/(x^2 + k) * y +
-	- k/(x^2 + k) * (dy - y) # = 0
+4*x^2*d2y + 8*x*dy + (4 - 2*k*x^2/sqrt(x + b0)) * dy +
+	- (3*k*x + k*b0 - k*b0^2 / (x + b0)) / sqrt(x + b0) * y # = 0
+4*x^4*(x + b0)*d2y + 8*x^3*(x + b0)*dy +
+	- x^2 * (3*k*x^2 + 4*k*b0*x - 4*k*x - 4*k*b0) / sqrt(x + b0) * y +
+	- (k^2*x^4 + 4*x + 4*b0) * y # = 0
 
 ### ODE:
-x*(x^2 + k)*d2y - (2*x*(x^2 + k) + k)*dy + k*(x+1)*y # = 0
+4*x^4*(x + b0)*d2y + 2*x^2*(x^2 + 4*x + 4*b0)*dy +
+	- (k^2*x^4 + 6*x^2 + (8*b0-4)*x - 4*b0) * y # = 0
+
+### Special Case: b0 = 1;
+x = sqrt(3); k = -3/5; params = list(x=x, k = 2*k, b0 = 1);
+# Re-run assignments from above;
+2*x^4*(x + 1)*d2y + x^2*(x + 2)^2*dy - (2*k^2*x^4 + 3*x^2 + 2*x - 2) * y # = 0
+
+
+##############################
+
+### y = exp(x + sqrt(x^2 + b0))
+
+x = - sqrt(3); b0 = -3/5; params = list(x=x, b0=b0);
+e = expression(exp(x + sqrt(x^2 + b0)))[[1]];
+#
+y   = eval(e, params);
+dy  = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
+
+
+# D =>
+dy - (1 + x/sqrt(x^2 + b0)) * y # = 0
+
+# D2 =>
+d2y - (1 + x/sqrt(x^2 + b0)) * dy +
+	- (1 - x^2/(x^2 + b0)) / sqrt(x^2 + b0) * y # = 0
+d2y - 2*dy + b0/(x^2 + b0) * y +
+	- (1 - x^2/(x^2 + b0)) / sqrt(x^2 + b0) * y # = 0
+d2y - 2*dy + b0/(x^2 + b0) * y +
+	- b0/(x^2 + b0) / sqrt(x^2 + b0) * y # = 0
+x*d2y - 2*x*dy + b0*x/(x^2 + b0) * y +
+	- b0/(x^2 + b0) * (dy - y) # = 0
+
+### ODE:
+x*(x^2 + b0)*d2y - (2*x*(x^2 + b0) + b0)*dy + b0*(x+1)*y # = 0
 
 
 ###################
