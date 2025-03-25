@@ -6,7 +6,7 @@
 ## Differential Equations
 ## ODEs - Exponentials w. Radicals
 ##
-## draft v.0.1a
+## draft v.0.1c
 
 
 
@@ -133,6 +133,7 @@ x = sqrt(3); k = -3/5; params = list(x=x, k = 2*k, b0 = 1);
 
 
 ##############################
+##############################
 
 ### y = exp(x + sqrt(x^2 + b0))
 
@@ -196,4 +197,61 @@ x*(x^2 + k)*d2y - (4*x^2*(x^2 + k) + k)*dy +
 x = - sqrt(3); k = 3/4; params = list(x=x, k=k);
 # Re-run assignments above;
 x*(4*x^2 + 3)*d2y - (16*x^4 + 12*x^2 + 3)*dy + 16*x^5*y # = 0
-	
+
+
+########
+### Gen:
+
+### y = exp(x + k*sqrt(x^2 + b1*x + b0))
+
+x = sqrt(3); k = - sqrt(2); b0 = -3/5; b1 = 2/3;
+params = list(x=x, k=k, b0=b0, b1=b1);
+e = expression(exp(x + k*sqrt(x^2 + b1*x + b0)))[[1]];
+#
+y   = eval(e, params);
+dy  = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
+
+
+# D =>
+2*dy - (2 + k*(2*x + b1)/sqrt(x^2 + b1*x + b0)) * y # = 0
+
+# D2 =>
+4*d2y - (2 + k*(2*x + b1)/sqrt(x^2 + b1*x + b0))^2 * y +
+	- 4*k / sqrt(x^2 + b1*x + b0) * y +
+	+ k*(2*x + b1)^2 / sqrt(x^2 + b1*x + b0)^3 * y # = 0
+4*(x^2 + b1*x + b0)*d2y +
+	- k*(8*x^3 + 12*b1*x^2 + (4*b1^2 + 8*b0)*x +
+		- b1^2 + 4*b0*b1 + 4*b0) / sqrt(x^2 + b1*x + b0) * y +
+	- (4*(k^2 + 1)*x^2 + 4*b1*(k^2+1)*x + k^2*b1^2 + 4*b0) * y # = 0
+
+### ODE:
+4*(2*x + b1)*(x^2 + b1*x + b0)*d2y +
+	- 2*(8*x^3 + 12*b1*x^2 + (4*b1^2 + 8*b0)*x +
+		- b1^2 + 4*b0*b1 + 4*b0) * dy +
+	- (8*(k^2-1)*x^3 + 12*(k^2-1)*b1*x^2 + (6*k^2*b1^2 - 4*b1^2 - 8*b0)*x +
+		+ k^2*b1^3 + 2*b1^2 - 4*b0*b1 - 8*b0) * y # = 0
+
+
+### Special Cases:
+
+### Case: k = 1; b0 = 0;
+# b1 => 2*b1;
+x = sqrt(3); b1 = 2/5; params = list(x=x, b1 = 2*b1, k = 1, b0 = 0);
+# Re-run assignments above;
+x*(x + b1)*(x + 2*b1)*d2y +
+	- (2*x^3 + 6*b1*x^2 + 4*b1^2*x - b1^2) * dy +
+	- b1^2*(x + b1 + 1) * y # = 0
+
+### Case: b1 = -1;
+x*(x - 1)*(x - 2)*d2y +
+	- (2*x^3 - 6*x^2 + 4*x - 1) * dy - x*y # = 0
+
+
+############
+### Variant:
+
+### y = exp(k*sqrt(x^2 + b1*x + b0))
+
+# TODO
+
