@@ -34,6 +34,7 @@ source("DE.ODE.Helper.R")
 # [not run]
 dy  = -2*a2*x*exp(-x^2) - 3*a3*x^2*exp(-x^3)
 d2y = 4*a2*x^2*exp(-x^2) - 2*a2*exp(-x^2) + 9*a3*x^4*exp(-x^3) - 6*a3*x*exp(-x^3)
+# Quasi-Linear System:
 # e^(-x^2) = (dy + 3*x^2*y) / (a2*(3*x^2 - 2*x))
 # e^(-x^3) = - (dy + 2*x*y) / (a3*(3*x^2 - 2*x))
 # =>
@@ -87,7 +88,17 @@ points(px, dy(px, a=a), col = "#FF3232B2")
 ### (part)         ###
 
 ### y = a1*e^(-(x^n + b1*x)) + a2*e^(-(x^n + b2*x))
-# [not run]
+
+# Check:
+z = sqrt(c(2,3,5,7)); n = 1/3; x = 1/sqrt(5);
+a1 = z[1]; a2 = z[2]; b1 = z[3]; b2 = z[4];
+#
+params = list(x=x, a1=a1, a2=a2, b1=b1, b2=b2, n=n);
+e   = expression(a1*exp(-(x^n + b1*x)) + a2*exp(-(x^n + b2*x)))[[1]];
+y   = eval(e, params);
+dy  = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
+
 dy = - a1*(n*x^(n-1) + b1)*exp(-(x^n + b1*x)) +
      - a2*(n*x^(n-1) + b2)*exp(-(x^n + b2*x))
 d2y = a1*(n*x^(n-1) + b1)^2 * exp(-(x^n + b1*x)) +
@@ -104,6 +115,7 @@ d2y = a1*(n*x^(n-1) + b1)^2 * exp(-(x^n + b1*x)) +
 (b2 - b1)*d2y - (n*x^(n-1) + b1)^2 * (dy + (n*x^(n-1) + b2)*y) +
   + (n*x^(n-1) + b2)^2 * (dy + (n*x^(n-1) + b1)*y) +
   - n*(n-1)*(b1 - b2)*x^(n-2)*y # = 0
+
 ### ODE:
 d2y + (2*n*x^(n-1) + b1 + b2)*dy +
   + (n^2*x^(2*n-2) + n*(b1 + b2)*x^(n-1) + n*(n-1)*x^(n-2) + b1*b2)*y # = 0
@@ -164,18 +176,23 @@ sapply(c(-3:3 * 1/7, 1, 3/2, 2), line.tan, dx=3, p=dy, dp=d2y, a=a, n=n, col="or
 
 #################
 
-### Variant:
+### Simple Variant:
 ### y = a1*e^(x^n) + a2*e^(-x^n)
-# [not run]
+
+# Check:
+x  = 1/sqrt(3); n = sqrt(2); a1 = 5/4; a2 = -1/5;
+y  = a1*exp(x^n) + a2*exp(-x^n);
+# D =>
 dy = a1*n*x^(n-1) * exp(x^n) - a2*n*x^(n-1) * exp(-x^n)
 ### D2 =>
 d2y = a1*n^2*x^(2*n-2) * exp(x^n) + a1*n*(n-1)*x^(n-2) * exp(x^n) +
 	+ a2*n^2*x^(2*n-2) * exp(-x^n) - a2*n*(n-1)*x^(n-2) * exp(-x^n)
 ### Linear system:
-exp(x^n)  = ( dy + n*x^(n-1)*y) / (2*a1*n*x^(n-1))
-exp(-x^n) = (-dy + n*x^(n-1)*y) / (2*a2*n*x^(n-1))
+exp(x^n)  - ( dy + n*x^(n-1)*y) / (2*a1*n*x^(n-1)) # = 0
+exp(-x^n) - (-dy + n*x^(n-1)*y) / (2*a2*n*x^(n-1)) # = 0
 # =>
-2*x*d2y = (n*x^n + (n-1))*(dy + n*x^(n-1)*y) - (n*x^n - (n-1))*(dy - n*x^(n-1)*y)
+2*x*d2y # =
+(n*x^n + (n-1))*(dy + n*x^(n-1)*y) - (n*x^n - (n-1))*(dy - n*x^(n-1)*y)
 
 ### ODE:
 x*d2y - (n-1)*dy - n^2*x^(2*n-1)*y # = 0
