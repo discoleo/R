@@ -80,7 +80,62 @@ d2y = eval(D(D(e, "x"), "x"), params);
 x^3*y*dy*d2y - x^3*dy^3 + x^2*y*dy^2 - k^2*y^3 # = 0
 
 
-#############################
+########
+### Gen:
+
+### y = exp(sqrt(log(x + b)) / k)
+
+x = sqrt(5); k = sqrt(2); b = sqrt(2);
+params = list(x=x);
+e = expression(exp(sqrt(log(x + b)) / k))[[1]];
+#
+y   = eval(e, params);
+dy  = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
+
+# D =>
+2*(x + b)*dy - 1/k / sqrt(log(x + b)) * y # = 0
+
+# D2 =>
+4*(x+b)^2*d2y + 4*(x+b)*dy - 1/k^2 / log(x+b) * y + 1/k / sqrt(log(x+b))^3 * y # = 0
+
+
+### ODE:
+(x+b)*y^2*d2y + 2*k^2*(x+b)^2*dy^3 - (x+b)*y*dy^2 + y^2*dy # = 0
+
+
+################
+### Gen Order 2:
+
+### y = exp(sqrt(log(x^2 + b)) / k)
+
+x = sqrt(5); k = sqrt(2); b = sqrt(2);
+params = list(x=x, k=k, b=b);
+e = expression(exp(sqrt(log(x^2 + b)) / k))[[1]];
+#
+y   = eval(e, params);
+dy  = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
+
+# D =>
+(x^2 + b)*dy - x/k / sqrt(log(x^2 + b)) * y # = 0
+
+# D2 =>
+(x^2+b)^2*y*d2y + 2*x*(x^2+b)*y*dy - (x^2+b)^2 * dy^2 +
+	- (x^2+b)/k / sqrt(log(x^2 + b)) * y^2 + x^2/k / sqrt(log(x^2+b))^3 * y^2 # = 0
+x*(x^2+b)^2*y^2*d2y + k^2*(x^2 + b)^3 * dy^3 +
+	- x*(x^2+b)^2 * y*dy^2 + (x^2-b)*(x^2+b) * y^2*dy # = 0
+
+### ODE:
+x*(x^2+b) * y^2*d2y + k^2*(x^2 + b)^2 * dy^3 +
+	- x*(x^2+b) * y*dy^2 + (x^2-b) * y^2*dy # = 0
+
+
+################
+################
+
+################
+### Variants ###
 
 ### y = exp(x * sqrt(log(x)))
 
