@@ -182,7 +182,7 @@ sapply(c(-3:3 * 1/7, 1, 3/2, 2), line.tan, dx=3, p=dy, dp=d2y, a=a, n=n, col="or
 # Check:
 x  = 1/sqrt(3); n = sqrt(2); a1 = 5/4; a2 = -1/5;
 y  = a1*exp(x^n) + a2*exp(-x^n);
-# D =>
+### D =>
 dy = a1*n*x^(n-1) * exp(x^n) - a2*n*x^(n-1) * exp(-x^n)
 ### D2 =>
 d2y = a1*n^2*x^(2*n-2) * exp(x^n) + a1*n*(n-1)*x^(n-2) * exp(x^n) +
@@ -239,7 +239,7 @@ sapply(c(-3:3 * 2/7), line.tan, dx=3, p=dy, dp=d2y, a=a, n=n, col="orange")
 ### D(y)
 (3*x^4 + 2*x)*e^(x^3) + (2*x^4 + 3*x^2)*e^(x^2) + df0
 
-### Solve liniar system:
+### Solve linear system:
 div = (2*x^4 + 3*x^2)*x^2 - x^3*(3*x^4 + 2*x)
 div = -3*x^7 + 2*x^6 + x^4;
 e^(x^3) = ((2*x^4 + 3*x^2)*(y - f0) - x^3*(dy - df0)) / div;
@@ -395,6 +395,15 @@ sapply(px, line.tan, dx=3, p=dy, dp=d2y, m=m, k=k, a=a, col="orange")
 ####################
 
 # y = exp(1/(x+b)) + exp(-1/(x+b)) + f0(x)
+
+# Check:
+x = sqrt(3); b = 1/sqrt(5); f0 = df0 = d2f0 = 0;
+params = list(x=x, b=b);
+#
+e   = expression(exp(1/(x+b)) + exp(-1/(x+b)))[[1]];
+y   = eval(e, params);
+dy  = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
 
 # D =>
 (x+b)^2 * dy + (exp(1/(x+b)) - exp(-1/(x+b))) - (x+b)^2 * df0 # = 0
