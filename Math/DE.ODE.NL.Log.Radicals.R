@@ -62,6 +62,23 @@ z = dy; dz = d2y; d2z = d3y;
 2*(x + b0)^2*d2z + 4*(x+b0)^2*z*dz + (x + b0)*dz - z # = 0
 
 
+# Alternative:
+
+# D =>
+2*dy - 1/(sqrt(x + b0) + d) /sqrt(x + b0) # = 0
+2*dy - (x + b0 - d*sqrt(x + b0))/(x + b0 - d^2) / (x + b0) # = 0
+2*(x + b0)*(x + b0 - d^2)*dy - (x + b0 - d*sqrt(x + b0)) # = 0
+
+# D2 =>
+4*(x + b0)*(x + b0 - d^2)*d2y + 4*(2*x + 2*b0 - d^2)*dy +
+	- (2 - d/sqrt(x + b0)) # = 0
+4*(x + b0)^2*(x + b0 - d^2)*d2y + 4*(x + b0)*(2*x + 2*b0 - d^2)*dy +
+	- (2*(x + b0) - d*sqrt(x + b0)) # = 0
+4*(x + b0)*(x + b0 - d^2)*d2y + 2*(3*x + 3*b0 - d^2)*dy - 1 # = 0
+
+# TODO: move to Linear ODE;
+
+
 #####################
 
 ### y = x * log(sqrt(x + b0) + d)
