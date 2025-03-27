@@ -6,7 +6,7 @@
 ## Differential Equations
 ## NL ODEs - Log w. Radicals
 ##
-## draft v.0.1a
+## draft v.0.1b
 
 
 
@@ -62,7 +62,13 @@ z = dy; dz = d2y; d2z = d3y;
 2*(x + b0)^2*d2z + 4*(x+b0)^2*z*dz + (x + b0)*dz - z # = 0
 
 
-# Alternative:
+### Linear Alternative:
+
+# Note:
+# - Linear ODEs moved to file:
+#   DE.ODE.Log.Radicals.R;
+
+# [minimal example]
 
 # D =>
 2*dy - 1/(sqrt(x + b0) + d) /sqrt(x + b0) # = 0
@@ -74,9 +80,9 @@ z = dy; dz = d2y; d2z = d3y;
 	- (2 - d/sqrt(x + b0)) # = 0
 4*(x + b0)^2*(x + b0 - d^2)*d2y + 4*(x + b0)*(2*x + 2*b0 - d^2)*dy +
 	- (2*(x + b0) - d*sqrt(x + b0)) # = 0
-4*(x + b0)*(x + b0 - d^2)*d2y + 2*(3*x + 3*b0 - d^2)*dy - 1 # = 0
 
-# TODO: move to Linear ODE;
+### ODE:
+4*(x + b0)*(x + b0 - d^2)*d2y + 2*(3*x + 3*b0 - d^2)*dy - 1 # = 0
 
 
 #####################
