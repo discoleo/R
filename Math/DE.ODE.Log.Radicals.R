@@ -6,7 +6,7 @@
 ## Differential Equations
 ## Linear ODEs - Log w. Radicals
 ##
-## draft v.0.1c
+## draft v.0.1d
 
 
 
@@ -144,4 +144,47 @@ x = sqrt(3); b0 = sqrt(2); d = - 2^(1/4);
 params = list(x=x, b0=b0, d=d);
 # Re-run assignments above:
 x*(x^2 + b0)*d2y + (2*x^2 + b0)*dy - x # = 0
+
+
+####################
+
+### y = x * log(sqrt(x^2 + b0) + d)
+
+# Check:
+x = sqrt(3); b0 = -sqrt(2); d = 1/3; params = list(x=x, b0=b0, d=d);
+e = expression(x * log(sqrt(x^2 + b0) + d))[[1]];
+#
+y   = eval(e, params);
+dy  = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
+
+
+# D =>
+x*dy - y - x^3/(sqrt(x^2 + b0) + d) /sqrt(x^2 + b0) # = 0
+x*dy - y - x^3*(x^2 + b0 - d*sqrt(x^2 + b0))/(x^2 + b0 - d^2) / (x^2 + b0) # = 0
+x*(x^2 + b0)*(x^2 + b0 - d^2)*dy +
+	- (x^2 + b0)*(x^2 + b0 - d^2)*y +
+	- x^3*(x^2 + b0 - d*sqrt(x^2 + b0)) # = 0
+
+# D2 =>
+x*(x^2 + b0)*(x^2 + b0 - d^2)*d2y +
+	+ 2*x^2*(2*x^2 + 2*b0 - d^2) * dy +
+	- 2*x*(2*x^2 + 2*b0 - d^2)*y +
+	+ (4 - b0/(x^2 + b0)) * x^2 * d*sqrt(x^2 + b0) +
+	- x^2*(5*x^2 + 3*b0) # = 0
+
+
+### ODE:
+x^2*(x^2 + b0)*(x^2 + b0 - d^2)*d2y +
+	- x*((3*b0 - 2*d^2)*x^2 + 3*b0^2 - 3*d^2*b0) * dy +
+	+ ((3*b0 - 2*d^2)*x^2 + 3*b0^2 - 3*d^2*b0) * y - x^5 # = 0
+
+
+### Special Cases:
+
+### b0 = d^2
+x = sqrt(3); b0 = sqrt(2); d = - sqrt(b0);
+params = list(x=x, b0=b0, d=d);
+# Re-run assignments above:
+x^2*(x^2 + b0)*d2y - b0*x*dy + b0*y - x^3 # = 0
 
