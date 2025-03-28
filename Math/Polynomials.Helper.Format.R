@@ -273,7 +273,7 @@ print.df.pm = function(p, n=100) {
 # - do.rev  = order "leading" variables in reverse order;
 # - sort.order = default descending;
 as.character.pm = function(p, leading=NA, do.sort=TRUE, do.rev=FALSE, sort.order=TRUE,
-		width=100, simplify.complex=TRUE, brackets.complex=TRUE) {
+		width=100, digits = NULL, simplify.complex=TRUE, brackets.complex=TRUE) {
 	if(inherits(p, "pm.div")) {
 		if(nrow(p$Rem) > 0) warning("The Remainder of division is NOT printed!");
 		p = p$Rez;
@@ -305,6 +305,8 @@ as.character.pm = function(p, leading=NA, do.sort=TRUE, do.rev=FALSE, sort.order
 	}
 	if( ! is.null(dim(p.str))) p.str = apply(p.str, 1, paste.nonempty)
 	else p.str = paste.nonempty(p.str);
+	### Round
+	if(! is.null(digits)) coeff = round(coeff, digits=digits);
 	### Sign: 0 treated as "+" through Im(coeff) >= 0;
 	isPlus = if(inherits(coeff, c("bigz", "bigq"))) (coeff >= 0)
 		else (Re(coeff) > 0) | (Re(coeff) == 0 & Im(coeff) >= 0);
