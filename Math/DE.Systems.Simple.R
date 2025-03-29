@@ -1,7 +1,18 @@
+########################
+##
+## Leonard Mada
+## [the one and only]
+##
+## Systems of Differential Equations
+## Conversion to 1 ODE
+##
+## draft v.0.1c
+
+
 
 ### Transformations
-
-# Conversion of a linear system of ODEs to *one* ODE
+# A. Conversion of a linear system of ODEs to *one* ODE
+# B. Conversion of a non-linear system of ODEs to *one* ODE
 
 
 ####################
@@ -243,14 +254,18 @@ d3y3 - 6*d2y3 - 6*dy3 + 32*y3 +
 	- d2f3 + 4*df3 - 5*f3 - 2*df1 + f1 + 5*df2 - 9*f2 # = 0
 
 rr = pracma::roots(c(1,-6,-6,32))
+eigen(matrix(params, ncol=3, byrow=TRUE))
 print(rr)
 
 
 #####################
 #####################
 
-### NLS
+##################
+### Non-Linear ###
+##################
 
+### Example 1:
 # dy1 = b2*y1^2 + b1*y1 + c1*y2 + f1;
 # dy2 = d1*y1 + d2*y2 + d3*y2^2 + f2;
 
@@ -278,3 +293,39 @@ d1*d2y2 - b2*dy2^2 + 2*d3*b2*y2^2*dy2 + 2*(d2*b2 - d3*d1)*y2*dy2 +
 # p1 = as.pm("d1*y1 + d2*y2 + d3*y2^2 + f2 - dy2")
 # p2 = as.pm(...)
 # pR = solve.pm(p1, p2, by="y1")
+
+
+#################
+
+### Example 2:
+# dy1 = b1*y1 + b2*y2^2;
+# dy2 = c1*y2 + c2*y1^2;
+
+# Case: Coefficients = constant
+# (for simplicity)
+
+# D(Eq 2) =>
+d2y2 - c1*dy2 - 2*c2*y1*dy1 # = 0
+# Subst =>
+d2y2 - c1*dy2 - 2*c2*y1*(b1*y1 + b2*y2^2) # = 0
+
+### Transformed System:
+dy2  - c1*y2  - c2*y1^2 # = 0
+d2y2 - c1*dy2 - 2*b1*c2*y1^2 - 2*b2*c2*y1*y2^2 # = 0
+
+
+### ODE:
+d2y2^2 - (4*b1 + 2*c1)*dy2*d2y2 + 4*b1*c1*y2*d2y2 +
+	+ (4*b1^2 + 4*b1*c1 + c1^2)*dy2^2 +
+	- 4*c2*b2^2*y2^4*dy2 - 4*b1*c1*(2*b1 + c1)*y2*dy2 +
+	+ 4*b2^2*c1*c2*y2^5 + 4*b1^2*c1^2*y2^2 # = 0
+
+# TODO: check;
+
+
+# p1 = as.pm("c1*y2  + c2*y1^2 - dy2")
+# p2 = as.pm(...)
+# pR = solve.pm(p1, p2, by="y1")
+# print.pm(sort.dpm(pR$Rez, y = "y2", x = NULL), lead = NA)
+
+
