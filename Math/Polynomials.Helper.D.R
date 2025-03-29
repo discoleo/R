@@ -45,7 +45,10 @@
 sort.dpm = function(p, y="y", x="x") {
 	# TODO: "dny"
 	nms = if(length(y) > 1) y else paste0(c("d2", "d", ""), y);
-	nms = c(nms, x);
+	if(! is.null(x)) {
+		x   = x[! is.na(x)];
+		nms = c(nms, x);
+	}
 	# Valid names:
 	idSort = nms %in% names(p);
 	nms = nms[idSort];
