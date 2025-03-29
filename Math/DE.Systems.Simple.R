@@ -6,7 +6,7 @@
 ## Systems of Differential Equations
 ## Conversion to 1 ODE
 ##
-## draft v.0.1c
+## draft v.0.1d
 
 
 
@@ -328,4 +328,60 @@ d2y2^2 - (4*b1 + 2*c1)*dy2*d2y2 + 4*b1*c1*y2*d2y2 +
 # pR = solve.pm(p1, p2, by="y1")
 # print.pm(sort.dpm(pR$Rez, y = "y2", x = NULL), lead = NA)
 
+### Alternative Eq 2:
+d2y2 - c1*(c1*y2  + c2*y1^2) - 2*b1*c2*y1^2 - 2*b2*c2*y1*y2^2 # = 0
+# Note: generates same ODE;
+
+
+### Solve:
+ode.sys = function(t, y, parms, ...) {
+	with(as.list(parms), {
+		y1  = y[1]; y2 = y[2]; x = t;
+		dy1 = b1*y1 + b2*y2^2;
+		dy2 = c1*y2 + c2*y1^2;
+		return(list(c(dy1, dy2)));
+	});
+}
+ode.f = function(t, y, parms, ...) {
+	with(as.list(parms), {
+		x  = t;
+		y2 = y[1]; dy2 = y[2]; d2y2 = y[3];
+		# Based on D3:
+		div  = 2*d2y2 - (4*b1 + 2*c1)*dy2 + 4*b1*c1*y2;
+		d3y2 = - (4*b1 + 2*c1)*d2y2^2 +
+			+ 4*b1*c1*dy2*d2y2 + 2*(4*b1^2 + 4*b1*c1 + c1^2)*dy2*d2y2 +
+			- 4*c2*b2^2*y2^4*d2y2 - 4*b1*c1*(2*b1 + c1)*y2*d2y2 +
+			- 16*c2*b2^2*y2^3*dy2^2 - 4*b1*c1*(2*b1 + c1)*dy2^2 +
+			+ 20*b2^2*c1*c2*y2^4*dy2 + 8*b1^2*c1^2*y2*dy2;
+		d3y2 = - d3y2 / div;
+		return(list(c(dy2, d2y2, d3y2)));
+	});
+}
+d2y2.f = function(x, y, params) {
+	y1 = y[1]; y2 = y[2];
+	with(params, {
+		dy2  = c1*y2 + c2*y1^2;
+		d2y2 = - c1*dy2 - 2*b1*c2*y1^2 - 2*b2*c2*y1*y2^2;
+		d2y2 = - d2y2;
+		return(c(dy2 = dy2, d2y2 = d2y2));
+	});
+}
+
+### Example:
+b = c(1/3,-2,-1/2,2)
+# b = c(1,-4,-3,1); # b = c(1,-2,-3,2);
+names(b) = c("b1","b2","c1","c2");
+params = as.list(b);
+
+x  = seq(0, 4, by = 1/512);
+y1 = 1/2; y2 = 1/5;
+# x  = seq(0, 2, by = 1/512); y1 = 4/5; y2 = 1/7;
+ys = c(y1, y2);
+ye = c(y2 = y2, d2y2.f(x[1], ys, params));
+
+sols = ode(ys, x, func = ode.sys, parms = params)
+sole = ode(ye, x, func = ode.f,   parms = params)
+col = c("#2472E6A0", "#FF643290")
+matplot(sole[,1], sole[, 2], type = "l", lwd=3, col=col[2], lty=2)
+matplot(sols[,1], sols[, 3], type = "l", lwd=2, col=col[1], add=T)
 
