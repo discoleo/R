@@ -6,7 +6,7 @@
 ## Differential Equations
 ## Linear ODEs - Log w. Radicals
 ##
-## draft v.0.1d
+## draft v.0.1e
 
 
 
@@ -100,9 +100,39 @@ params = list(x=x, b0=b0, d=d);
 
 ### y = sqrt(x + b0) * log(sqrt(x + b0) + d)
 
-# TODO
+# Check:
+x = sqrt(3); b0 = - sqrt(2); d = 1/3;
+params = list(x=x, b0=b0, d=d);
+e = expression(sqrt(x + b0) * log(sqrt(x + b0) + d))[[1]];
+#
+y   = eval(e, params);
+dy  = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
+
+# D =>
+2*dy - y / (x+b0) - 1/(sqrt(x + b0) + d) # = 0
+2*(x+b0)*(x + b0 - d^2)*dy - (x + b0 - d^2)*y - (x+b0)*(sqrt(x + b0) - d) # = 0
+
+# D2 =>
+4*(x+b0)*(x + b0 - d^2)*d2y + 2*(3*x + 3*b0 - d^2)*dy +
+	- 2*y - 3*sqrt(x + b0) + 2*d # = 0
 
 
+### ODE:
+4*(x+b0)^2*(x + b0 - d^2)*d2y + 4*d^2*(x+b0)*dy +
+	+ (x + b0 - 3*d^2)*y - d*(x+b0) # = 0
+
+
+### Special Cases:
+
+### b0 = d = 1
+b0 = 1; d = 1;
+params = list(x=x, b0=b0, d=d);
+# Re-run assignments above:
+4*x*(x+1)^2*d2y + 4*(x+1)*dy + (x - 2)*y - (x+1) # = 0
+
+
+####################
 ####################
 
 ### y = log(sqrt(x^2 + b0) + d)
