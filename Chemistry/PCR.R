@@ -28,8 +28,26 @@ split.s2 = function(x) {
 
 # nc = Oligonucleotide concentration;
 Tm = function(x, nc = 0.5, cNa = 0.05) {
-	s3 = split.s2(x);
-	id = match(s3, Tm.data$nn);
+	s2 = split.s2(x);
+	id = match(s2, Tm.data$nn);
+	dH = sum(Tm.data$dH[id]);
+	dS = sum(Tm.data$dS[id]);
+	# Scaled by 1/1000;
+	A = -0.0108;  # dS for Initiation
+	R = 0.001987; # Gas Constant
+	# 16.6 / log(10) = 7.2093
+	cNc = nc * 1E-6; # in mol / l;
+	div = A + dS + R*log(cNc/4);
+	Tm  = dH / div - 273.15 + 7.2093 * log(cNa);
+	return(Tm);
+}
+# Seq of Nucleotides
+Tm.nnSeq = function(x, nc = 0.5, cNa = 0.05) {
+	LEN = length(x);
+	if(LEN == 0) return(numeric(0));
+	if(LEN == 1) return(NA);
+	s2 = paste0(x[-LEN], x[-1]);
+	id = match(s2, Tm.data$nn);
 	dH = sum(Tm.data$dH[id]);
 	dS = sum(Tm.data$dS[id]);
 	# Scaled by 1/1000;
@@ -42,6 +60,32 @@ Tm = function(x, nc = 0.5, cNa = 0.05) {
 	return(Tm);
 }
 
+### Simulations
+simTm = function(n, iter = 2000, probs = c(1/4,1/4,1/4,1/4),
+		nn.seq = c("A","T","G","C")) {
+	replicate(iter, {
+		nn = sample(nn.seq, n, replace = TRUE, prob = probs);
+		Tm.nnSeq(nn);
+	});
+}
+### Sequence = exactly same composition;
+simTm.nnSeq = function(nn.seq, iter = 2000) {
+	replicate(iter, {
+		LEN = length(nn.seq);
+		nn  = sample(nn.seq, LEN);
+		Tm.nnSeq(nn);
+	});
+}
+
+
+### Tests
 Tm("AAAAACCCCCGGGGGTTTTT")
+Tm.nnSeq(strsplit("AAAAACCCCCGGGGGTTTTT", "", fixed=TRUE)[[1]])
 # 69.67
+
+### Simulations
+nn = rep(c("A","T","G","C"), c(4,4,4,4))
+tm = simTm.nnSeq(nn)
+hist(tm, breaks = 20)
+summary(tm)
 
