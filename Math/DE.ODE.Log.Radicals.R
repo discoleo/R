@@ -6,7 +6,7 @@
 ## Differential Equations
 ## Linear ODEs - Log w. Radicals
 ##
-## draft v.0.1f
+## draft v.0.1g
 
 
 
@@ -258,4 +258,46 @@ params = list(x=x, b0=b0, d=d);
 # Re-run assignments above:
 x*(x^2 + d^2)^2*d2y - (x^2 + d^2)*(x^2 - d^2)*dy +
 	+ x*(x^2 - 2*d^2)*y - d*x*(x^2 + d^2) # = 0
+
+
+####################
+
+### Gen: y = x * log(sqrt(x^2 + b1*x + b0) + d)
+
+# Check:
+x = sqrt(5); b1 = - sqrt(3); b0 = sqrt(2); d = 1/3;
+params = list(x=x, b0=b0, d=d);
+e = expression(x * log(sqrt(x^2 + b1*x + b0) + d))[[1]];
+#
+y   = eval(e, params);
+dy  = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
+
+
+# D =>
+2*x*dy - 2*y - x^2*(2*x + b1)/(sqrt(x^2 + b1*x + b0) + d) /sqrt(x^2 + b1*x + b0) # = 0
+2*x*dy - 2*y - x^2*(2*x + b1)*
+	(x^2 + b1*x + b0 - d*sqrt(x^2 + b1*x + b0))/(x^2 + b1*x + b0 - d^2) / (x^2 + b1*x + b0) # = 0
+2*x*(x^2 + b1*x + b0)*(x^2 + b1*x + b0 - d^2)*dy +
+	- 2*(x^2 + b1*x + b0)*(x^2 + b1*x + b0 - d^2)*y +
+	- x^2*(2*x + b1)*(x^2 + b1*x + b0 - d*sqrt(x^2 + b1*x + b0)) # = 0
+
+# D2 =>
+4*x*(x^2 + b1*x + b0)*(x^2 + b1*x + b0 - d^2)*d2y +
+	+ 4*x*(2*x + b1)*(2*x^2 + 2*b1*x + 2*b0 - d^2)*dy +
+	- 4*(2*x + b1)*(2*x^2 + 2*b1*x + 2*b0 - d^2)*y +
+	+ 4*x*(3*x + b1) * d*sqrt(x^2 + b1*x + b0) +
+		+ x^2*(2*x + b1)^2 * d*sqrt(x^2 + b1*x + b0) / (x^2 + b1*x + b0) +
+	- 2*(10*x^4 + 12*b1*x^3 + 6*b0*x^2 + 3*b1^2*x^2 + 2*b0*b1*x) # = 0
+
+4*x^2*(2*x + b1)*(x^2 + b1*x + b0)*(x^2 + b1*x + b0 - d^2)*d2y +
+	+ 4*x^2*(2*x + b1)^2*(2*x^2 + 2*b1*x + 2*b0 - d^2)*dy +
+	- 2*x*(4*(3*x + b1)*(x^2 + b1*x + b0) + x*(2*x + b1)^2) *
+		(x^2 + b1*x + b0 - d^2)*dy +
+	+ 2*(4*b1*x^4 + (5*b1^2 + 12*b0 - 8*d^2)*x^3 + b1*(b1^2 + 20*b0 - 12*d^2)*x^2 +
+		+ 12*b0^2*x - 12*d^2*b0*x + 5*b0*b1^2*x - 3*d^2*b1^2*x +
+		+ 4*b0*b1*(b0 - d^2))*y +
+	- x^3*(2*x + b1)*(4*x^2 + 4*b1*x + b1^2) # = 0
+
+# TODO: simplify;
 
