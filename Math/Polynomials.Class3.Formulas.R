@@ -23,32 +23,32 @@ source("Polynomials.Helper.EP.R")
 ###############
 
 r = 2*cos(2*pi*seq(5)/11)
-x = r;
 
-#
+### Example:
 cc = c(1,-2,3,-4)
 
-### Coeff b4
-# Direct Formula:
-sum(c(5, -1, 9, -4, 25) * c(0, cc))
-
-###
-# b4 = - sum(cc * S);
-x  = r;
-s1 = sum(x)
-s2 = sum(x^2)
-s3 = sum(x^3)
-s4 = sum(x^4)
-Sn = round(c(s1,s2,s3,s4))
+### Init:
+# x  = r;
+# s1 = sum(x); s2 = sum(x^2)
+# s3 = sum(x^3); s4 = sum(x^4)
+# Sn = round(c(s1,s2,s3,s4))
+Sn = sapply(1:4, \(pow) sum(r^pow));
 S  = Sn[1];
-b4 = - sum(cc * Sn)
-print(Sn); print(b4)
+print(Sn);
+# Sn = -1  9 -4 25
 
 # General:
 E2 = (S^2 - s2)/2;
 E3 = - (S^3 - s3 - 3*E2*S)/3;
 E4 = (S^4 - s4 - 4*S^2*E2 + 2*E2^2 + 4*S*E3)/4;
-E5 = prod(x);
+E5 = prod(r);
+
+
+### Coeff b4
+# Direct Formula:
+sum(- c(5, -1, 9, -4, 25) * c(0, cc))
+b4 = - sum(cc * Sn)
+print(b4)
 
 ### Coeff b3
 sum(c(100,-9,147,-36,184) * cc[4] * c(0, cc),
@@ -85,14 +85,14 @@ print(b3)
 # TODO
 
 
-###
+### Ex 1:
 cc = c(1,-2,3,-4)
 x = rbind(cc) %*% rbind(r,r^2,r^3,r^4);
 poly.calc0(x)
 x^5 + 131*x^4 + 4484*x^3 + 48403*x^2 + 56433*x + 17071
 
 
-###
+### Ex 2:
 cc = c(5,-1,0,1)
 x = rbind(cc) %*% rbind(r,r^2,r^3,r^4);
 poly.calc0(x, digits = 3)
