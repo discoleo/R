@@ -6,7 +6,7 @@
 ## Differential Equations
 ## ODEs - Exponentials w. Radicals
 ##
-## draft v.0.1d
+## draft v.0.1e
 
 
 ### Types:
@@ -297,7 +297,74 @@ params = list(x=x, k=k, b0=b0, b1 = 2*b1);
 # Note: Case b0 = b1^2 is trivial;
 
 
-####################
+###################
+
+### y = exp(k*sqrt(x^2 + b1*x + b0) + x)
+
+x = sqrt(3); k = -1/5; b0 = 2/3; b1 = -1/sqrt(5);
+params = list(x=x, k=k, b0=b0, b1=b1);
+e = expression(exp(k*sqrt(x^2 + b1*x + b0) + x))[[1]];
+#
+y   = eval(e, params);
+dy  = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
+
+
+### D =>
+2*dy - k*(2*x + b1) / sqrt(x^2 + b1*x + b0) * y - 2*y # = 0
+# =>
+2*sqrt(x^2 + b1*x + b0)*(dy - y) - k*(2*x + b1)*y # = 0
+
+### D2 =>
+4*(x^2 + b1*x + b0)*(d2y - dy) - k^2*(2*x + b1)^2*y  +
+	- 2*k*(2*x + b1) * sqrt(x^2 + b1*x + b0) * y +
+	- k*(4*b0 - b1^2) / sqrt(x^2 + b1*x + b0) * y # = 0
+4*(x^2 + b1*x + b0)*(d2y - dy) - k^2*(2*x + b1)^2 * y  +
+	- 2*((4*b0 - b1^2) + 2*(2*x + b1)*(x^2 + b1*x + b0)) *
+		(dy - y) / (2*x + b1) # = 0
+
+### ODE:
+4*(2*x + b1)*(x^2 + b1*x + b0)*d2y +
+	- 2*(8*x^3 + 12*b1*x^2 + 4*(b1^2 + 2*b0)*x +
+		- b1^2 + 4*b0*b1 + 4*b0) * dy +
+	- (8*(k^2 - 1)*x^3 + 12*b1*(k^2 - 1)*x^2 +
+		+ 6*b1^2*(k^2 - 1)*x + 2*(b1^2 - 4*b0)*x +
+		+ b1^3*k^2 + 2*b1^2 - 4*b0*(b1 + 2)) * y # = 0
+
+
+### Special Cases:
+
+### k = +/- 1; b1 = -2;
+params = list(x=x, b0=b0, b1 = -2, k = 1);
+# Re-run assignments above;
+(x - 1)*(x^2 - 2*x + b0)*d2y +
+	- (2*x^3 - 6*x^2 + 2*(b0 + 2)*x - (b0 + 1)) * dy +
+	+ (b0 - 1)*x*y # = 0
+
+# Shift: z = x - 1;
+z = x - 1;
+z*(z^2 + b0 - 1)*d2y +
+	- (2*z^3 + 2*(b0 - 1)*z + b0 - 1) * dy +
+	+ (b0 - 1)*(z + 1)*y # = 0
+# b0 = 7/8 & Shift:
+params = list(x = x+1, b0 = 7/8, b1 = -2, k = 1);
+# Re-run assignments above;
+x*(8*x^2 - 1)*d2y - (2*x - 1)*(8*x^2 + 4*x + 1)*dy - (x+1)*y # = 0
+
+
+### b0 = 0
+params = list(x=x, k=k, b1=b1, b0 = 0);
+# Re-run assignments above;
+4*x*(2*x + b1)*(x + b1)*d2y +
+	- 2*(8*x^3 + 12*b1*x^2 + 4*b1^2*x - b1^2) * dy +
+	- ((k^2 - 1)*(8*x^3 + 12*b1*x^2 + 6*b1^2*x) +
+		+ 2*b1^2 * x + b1^3*k^2 + 2*b1^2) * y # = 0
+
+
+###################
+
+###################
+### Double SQRT ###
 
 ### y = sqrt(x + b0) * exp(k*sqrt(x + b0))
 
