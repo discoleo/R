@@ -9,6 +9,16 @@
 ## draft v.0.1d
 
 
+### Types:
+
+# 1. Simple SQRT:
+#    y = G(x) * exp(B(x) * sqrt(P(x)) + B0(x));
+# 2. Double SQRT:
+#    y = G(x) * sqrt(P(x)) * exp(B(x) * sqrt(P(x) + B0(x));
+# Note:
+# - sqrt(P(x)) is the same with the one in the exponential;
+# - P, B, G: polynomials;
+
 
 ####################
 
@@ -253,8 +263,38 @@ x*(x - 1)*(x - 2)*d2y +
 
 ### y = exp(k*sqrt(x^2 + b1*x + b0))
 
-# TODO
+x = sqrt(3); k = -1/5; b0 = 2/3; b1 = -1/sqrt(5);
+params = list(x=x, k=k, b0=b0, b1=b1);
+e = expression(exp(k*sqrt(x^2 + b1*x + b0)))[[1]];
+#
+y   = eval(e, params);
+dy  = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
 
+
+### D =>
+2*dy - k*(2*x + b1) / sqrt(x^2 + b1*x + b0) * y # = 0
+# =>
+2*sqrt(x^2 + b1*x + b0)*dy - k*(2*x + b1)*y # = 0
+
+### D2 =>
+4*(x^2 + b1*x + b0)*d2y - 2*k*(2*x + b1) * sqrt(x^2 + b1*x + b0) * dy +
+	- k * (4*b0 - b1^2) / sqrt(x^2 + b1*x + b0) * y # = 0
+4*(x^2 + b1*x + b0)*d2y - k^2*(2*x + b1)^2*y +
+	- k * (4*b0 - b1^2) / sqrt(x^2 + b1*x + b0) * y # = 0
+
+
+### ODE:
+4*(2*x + b1)*(x^2 + b1*x + b0)*d2y - 2*(4*b0 - b1^2)*dy +
+	- k^2*(2*x + b1)^3*y # = 0
+
+# b1 => 2*b1;
+params = list(x=x, k=k, b0=b0, b1 = 2*b1);
+# Re-run assignments above;
+(x + b1)*(x^2 + 2*b1*x + b0)*d2y - (b0 - b1^2)*dy +
+	- k^2*(x + b1)^3*y # = 0
+
+# Note: Case b0 = b1^2 is trivial;
 
 
 ####################
