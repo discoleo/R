@@ -255,3 +255,27 @@ x*(x - 1)*(x - 2)*d2y +
 
 # TODO
 
+
+
+######################
+
+### y = sqrt(x + b0) * exp(k*sqrt(x + b0))
+
+x = sqrt(3); k = -1/5; b0 = 2/3; params = list(x=x, k=k, b0=b0);
+e = expression(sqrt(x + b0) * exp(k*sqrt(x + b0)))[[1]];
+#
+y   = eval(e, params);
+dy  = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
+
+
+### D =>
+2*dy - y / (x+b0) - k * exp(k*sqrt(x + b0)) # = 0
+
+
+### D2 =>
+4*(x+b0)^2*d2y - 2*(x+b0)*dy - (k^2*(x+b0) - 2) * y # = 0
+
+### ODE:
+4*(x+b0)^2*d2y - 2*(x+b0)*dy - (k^2*(x+b0) - 2) * y # = 0
+
