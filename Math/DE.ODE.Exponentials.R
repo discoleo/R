@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs - Exponentials
 ###
-### draft v.0.2e
+### draft v.0.2f
 
 
 ### ODEs Derived from Exponentials
@@ -22,9 +22,13 @@
 ###############
 
 
-### draft v.0.2d:
+### draft v.0.2f:
+# - [Refactor] moved Trig(EXP) to new file:
+#   DE.ODE.NL.Trig.Exp.R;
+### draft v.0.2d - v.0.2e:
 # - Exponential extensions:
-#   exp(k*x)*y^n = n*p1*y + n*f0;
+#   exp(k*x) * y^n = n*p1*y + n*f0;
+#   e^(e^y) = y + P(x);
 ### draft v.0.2c:
 # - from I( exp(exp(x)) ):
 #   k*y*d2y - k*dy^2 + y^2*dy - k*y*dy - y^3  = 0;
@@ -48,9 +52,9 @@
 # - [started] derived from another ODE;
 
 
-#########################
+####################
 
-### Helper functions
+### Helper Functions
 
 # library(pracma)
 # - may be needed to solve various equations;
@@ -276,121 +280,6 @@ line.tan(px, dx=2, p=y, dp=dy, n=n, k=k, FF0=F0, FP1=P1)
 ########################
 ### Section D:
 ### Non-Linear ODEs
-### Trigonometric-Type
-########################
-
-### P1(x)*exp(x)*y = sin(P2(x)*exp(x))
-
-### Simple Homogeneous:
-### exp(x)*y = sin(exp(x))
-
-### D =>
-dy + y - cos(exp(x)) # = 0
-
-### D2 =>
-d2y + dy + exp(x)*sin(exp(x)) # = 0
-y*d2y + y*dy + sin(exp(x))^2 # = 0
-y*d2y + y*dy + (1 - cos(exp(x))^2) # = 0
-y*d2y + y*dy - (dy + y)^2 + 1 # = 0
-
-### ODE:
-y*d2y - dy^2 - y*dy - y^2 + 1 # = 0
-
-
-### Extended Homogeneous:
-### exp(x)*y = sin(p*exp(x))
-
-### D =>
-dy + y - (p+dp)*cos(p*exp(x)) # = 0
-
-### D2 =>
-d2y + dy + (p+dp)^2*exp(x)*sin(p*exp(x)) +
-	- (dp+d2p)*cos(p*exp(x)) # = 0
-(p+dp)*d2y + (p+dp)*dy + (p+dp)^3*exp(x)*sin(p*exp(x)) +
-	- (dp+d2p)*(dy + y) # = 0
-(p+dp)*d2y + (p-d2p)*dy - (dp+d2p)*y +
-	+ (p+dp)^3*exp(x)*sin(p*exp(x)) # = 0
-(p+dp)*y*d2y + (p-d2p)*y*dy - (dp+d2p)*y^2 +
-	+ (p+dp)^3*sin(p*exp(x))^2 # = 0
-(p+dp)*y*d2y + (p-d2p)*y*dy - (dp+d2p)*y^2 +
-	+ (p+dp)^3*(1 - cos(p*exp(x))^2) # = 0
-(p+dp)*y*d2y + (p-d2p)*y*dy - (dp+d2p)*y^2 +
-	- (p+dp)*(dy + y)^2 + (p+dp)^3 # = 0
-### ODE:
-(p+dp)*y*d2y - (p+dp)*dy^2 - (p + 2*dp + d2p)*y*dy +
-	- (p + 2*dp + d2p)*y^2 + (p+dp)^3 # = 0
-
-### Special Case:
-# p = k; dp = 0;
-y*d2y - dy^2 - y*dy - y^2 + k^2 # = 0
-# p = x + k - 1; dp = 1; p + dp = x + k;
-(x+k)*y*d2y - (x+k)*dy^2 - (x+k+1)*y*dy - (x+k+1)*y^2 + (x+k)^3 # = 0
-
-
-### Solution & Plot:
-y = function(x, PFUN, n=1) {
-	xe = exp(x^n);
-	fx = eval.FUN(x, PFUN);
-	val = sin(fx*xe) / xe;
-	return(val)
-}
-dy = function(x, PFUN, n=1) {
-	yx = y(x, PFUN=PFUN, n=n);
-	xe = exp(x^n);
-	fx = eval.FUN(x, PFUN);
-	df  = dp.pm(PFUN, xn="x");
-	dfx = eval.FUN(x, df);
-	dp =  - yx + (fx+dfx)*cos(fx*exp(x));
-	return(dp)
-}
-d2y = function(x, PFUN, n=1) {
-	px  = eval.FUN(x, PFUN);
-	dp  = dp.pm(PFUN, xn="x");
-	dpx = eval.FUN(x, dp); ps = px + dpx;
-	d2p = dp.pm(dp, xn="x");
-	d2px = eval.FUN(x, d2p);
-	dps = dpx + d2px; sall = ps + dps;
-	yx  = y(x, PFUN=PFUN, n=n);
-	dyx = dy(x, PFUN=PFUN, n=n);
-	d2y = ps*dyx^2 + sall*yx*dyx + sall*yx^2 - ps^3;
-	div = ps*yx;
-	d2y = ifelse(div != 0, d2y / div, 1) # TODO
-	return(d2y)
-}
-### Plot:
-f = toPoly.pm("x^2 - 3*x + 5")
-px = c(0.2, 0.55, 0.7, (5:10)*3/17) + 1/13;
-curve(y(x, PFUN=f), from = 0, to = 2.5, n=512)
-line.tan(px, dx=3, p=y, dp=dy, PFUN=f)
-# damped sinusoidal
-curve(dy(x, PFUN=f), add=T, col="green")
-line.tan(px, dx=1.6, p=dy, dp=d2y, PFUN=f, col="orange")
-
-###
-px = c(0.2, 0.55, 0.7, (5:6)*3/17) + 1/13; px = c(px, 1.5 + (1:10)/13);
-xlim = c(0, 2.5); # xlim = c(1, 2.5)
-curve(y(x, PFUN=f), from = xlim[1], to = xlim[2], n=512, ylim=c(-2, 4))
-line.tan(px, dx=1.3, p=y, dp=dy, PFUN=f)
-# damped sinusoidal
-curve(dy(x, PFUN=f), add=T, col="green")
-line.tan(px, dx=1.6, p=dy, dp=d2y, PFUN=f, col="orange")
-
-
-##################
-### Fully-Extended Homogeneous:
-### p1*exp(x)*y = sin(p2*exp(x))
-
-### D =>
-p1*dy + (p1+dp1)*y - (p2+dp2)*cos(p2*exp(x)) # = 0
-
-### D2 =>
-# TODO
-
-
-
-########################
-### Section D:
-### Non-Linear ODEs
 ### Product-Type
 ########################
 
@@ -557,7 +446,7 @@ curve(Ip.int(x, upper=1/4, diff=3/4), add=T, col="green")
 (d2y*(y - x) + dy^2 - 1)*log(y - x) + (d2y*(y + x) + dy^2 - 1)*log(y + x) +
 	+ 2*dy^2 - 2 - 2*(y*dy - 2*x)*dp - (y^2 - x^2)*d2p # = 0
 
-### Solve liniar system:
+### Solve linear system:
 log(y + x) = - ... /2 / (y^2*d2y - x^2*d2y - x*dy^3 + y*dy^2 + x*dy - y)
 log(y - x) = ... /2 / (y^2*d2y - x^2*d2y - x*dy^3 + y*dy^2 + x*dy - y)
 
