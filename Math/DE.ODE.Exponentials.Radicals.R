@@ -6,7 +6,7 @@
 ## Differential Equations
 ## ODEs - Exponentials w. Radicals
 ##
-## draft v.0.1e
+## draft v.0.1f
 
 
 ### Types:
@@ -17,7 +17,7 @@
 #    y = G(x) * sqrt(P(x)) * exp(B(x) * sqrt(P(x) + B0(x));
 # Note:
 # - sqrt(P(x)) is the same with the one in the exponential;
-# - P, B, G: polynomials;
+# - P, B, G: polynomials (or polynomial fractions);
 
 
 ####################
@@ -40,7 +40,7 @@ source("DE.ODE.Helper.R")
 x = sqrt(3); k = -1/5; b0 = 2/3; params = list(x=x, k=k, b0=b0);
 e = expression(exp(x + k*sqrt(x + b0)))[[1]];
 #
-y   = exp(x + k*sqrt(x + b0))
+y   = eval(e, params);
 dy  = eval(D(e, "x"), params);
 d2y = eval(D(D(e, "x"), "x"), params);
 
@@ -407,4 +407,27 @@ d2y = eval(D(D(e, "x"), "x"), params);
 
 ### ODE:
 4*(x+b0)*d2y + 6*dy - k^2*y # = 0
+
+
+####################
+
+### y = sqrt(x + b0) * exp(k / sqrt(x + b0))
+
+x = sqrt(3); k = -1/5; b0 = 2/3; params = list(x=x, k=k, b0=b0);
+e = expression(sqrt(x + b0) * exp(k / sqrt(x + b0)))[[1]];
+#
+y   = eval(e, params);
+dy  = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
+
+
+### D =>
+2*(x+b0)*dy - y + k * exp(k / sqrt(x + b0)) # = 0
+
+### D2 =>
+4*(x+b0)*d2y + 2*dy - k^2 / (x+b0)^2 * y # = 0
+
+
+### ODE:
+4*(x+b0)^3 * d2y + 2*(x+b0)^2 * dy - k^2 * y # = 0
 
