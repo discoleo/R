@@ -150,9 +150,42 @@ line.tan(px, dx=1.6, p=dy, dp=d2y, PFUN=f, col="orange")
 ### Fully-Extended Homogeneous:
 ### p1*exp(x)*y = sin(p2*exp(x))
 
+# Check:
+e = expression(sin(k1 * x^2 * exp(x)) * exp(-x) / (x+b0));
+x = sqrt(3); k1 = sqrt(5); b0 = sqrt(2);
+p1 = x + b0; dp1 = 1; d2p1 = 0;
+p2 = k1*x^2; dp2 = 2*k1*x; d2p2 = 2*k1;
+parf = list(p1=p1, dp1=dp1, d2p=d2p);
+parf = c(parf, list(p2=p2, dp2=dp2, d2p2=d2p2));
+params = c(parf, list(x=x, k1=k1, b0=b0));
+#
+y   = eval(e, params);
+dy  = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
+
 ### D =>
 p1*dy + (p1+dp1)*y - (p2+dp2)*cos(p2*exp(x)) # = 0
+#
+(p1*dy + (p1+dp1)*y)^2 + p1^2*(p2+dp2)^2*exp(2*x)*y^2 - (p2+dp2)^2 # = 0
+
 
 ### D2 =>
-# TODO
+p1*d2y + (p1 + 2*dp1)*dy + (dp1+d2p1)*y +
+	- (dp2+d2p2)*cos(p2*exp(x)) +
+	+ (p2+dp2)*(dp2 + p2)*exp(x)*sin(p2*exp(x)) # = 0
+p1*(p2+dp2)*d2y +
+	+ ((p1 + 2*dp1)*(p2+dp2) - p1*(dp2+d2p2))*dy +
+	+ ((dp1+d2p1)*(p2+dp2) - (dp2+d2p2)*(p1+dp1))*y +
+	+ (p2+dp2)^2*(dp2 + p2)*exp(x)*sin(p2*exp(x)) # = 0
+p1*(p2+dp2)*d2y +
+	+ ((p1 + 2*dp1)*(p2+dp2) - p1*(dp2+d2p2))*dy +
+	+ ((dp1+d2p1)*(p2+dp2) - (dp2+d2p2)*(p1+dp1))*y +
+	+ p1*(p2+dp2)^2*(p2+dp2)*exp(2*x)*y # = 0
+p1^2*(p2+dp2)*y*d2y +
+	+ p1*((p1 + 2*dp1)*(p2+dp2) - p1*(dp2+d2p2))*y*dy +
+	+ p1*((dp1+d2p1)*(p2+dp2) - (dp2+d2p2)*(p1+dp1))*y^2 +
+	- (p2+dp2) * ((p1*dy + (p1+dp1)*y)^2) +
+	+ (p2+dp2)^3 # = 0
+
+# TODO: simplify;
 
