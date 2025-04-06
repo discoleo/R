@@ -168,6 +168,11 @@ d2y = eval(D(D(e, "x"), "x"), params);
 	- k1*(k1^2*p + 2*k1*dp + d2p)*y^2 + (k1*p + dp)^3 # = 0
 
 ### Special Cases:
+
+### k1*p + dp = x^n
+x*y*d2y - x*dy^2 - (k1*x + n)*y*dy +
+	- k1*(k1*x + n)*y^2 + x^(2*n+1) # = 0
+
 # TODO
 
 
