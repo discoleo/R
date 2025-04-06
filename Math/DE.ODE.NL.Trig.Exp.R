@@ -1,12 +1,13 @@
 ########################
-###
-### Leonard Mada
-### [the one and only]
-###
-### Differential Equations
-### NL ODEs - Trig( Exp )
-###
-### draft v.0.1a
+##
+## Leonard Mada
+## [the one and only]
+##
+## Differential Equations
+## NL ODEs - Trig( Exp )
+##
+## draft v.0.1b
+
 
 ### NL ODEs: Trigonometric-Type
 #   Subtype: Trig( EXP )
@@ -146,8 +147,53 @@ curve(dy(x, PFUN=f), add=T, col="green")
 line.tan(px, dx=1.6, p=dy, dp=d2y, PFUN=f, col="orange")
 
 
-##################
-### Fully-Extended Homogeneous:
+#########################
+
+### Extended Homogeneous:
+### exp(k1*x) * y = sin(p * exp(k1*x))
+
+# Check:
+e = expression(sin(k2 * x^2 * exp(k1*x)) * exp(-k1*x));
+x = sqrt(3); k1 = sqrt(2); k2 = sqrt(5);
+p = k2*x^2; dp = 2*k2*x; d2p = 2*k2;
+params = list(x=x, p=p, dp=dp, d2p=d2p, k1=k1, k2=k2);
+#
+y   = eval(e, params);
+dy  = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
+
+### ODE:
+(k1*p + dp)*y*d2y - (k1*p + dp)*dy^2 +
+	- (k1^2*p + 2*k1*dp + d2p)*y*dy +
+	- k1*(k1^2*p + 2*k1*dp + d2p)*y^2 + (k1*p + dp)^3 # = 0
+
+### Special Cases:
+# TODO
+
+
+### Derivation:
+
+### D =>
+dy + k1*y - (k1*p + dp)*cos(p*exp(k1*x)) # = 0
+# =>
+(k1*p + dp)^2 * exp(2*k1*x) * y^2 + (dy + k1*y)^2 - (k1*p + dp)^2 # = 0
+
+### D2 =>
+d2y + k1*dy +
+	+ (k1*p + dp)^2*sin(p*exp(k1*x))*exp(k1*x) +
+	- (k1*dp + d2p)*cos(p*exp(k1*x)) # = 0
+(k1*p + dp)*d2y + k1*(k1*p + dp)*dy +
+	- (k1*dp + d2p)*(dy + k1*y) +
+	+ (k1*p + dp)^3*exp(2*k1*x)*y # = 0
+(k1*p + dp)*y*d2y + k1*(k1*p + dp)*y*dy +
+	- (k1*dp + d2p)*(dy + k1*y)*y +
+	- (k1*p + dp) * (dy + k1*y)^2 + (k1*p + dp)^3 # = 0
+
+
+#######################
+#######################
+
+### Gen: Fully-Extended Homogeneous:
 ### p1*exp(x)*y = sin(p2*exp(x))
 
 # Check:
