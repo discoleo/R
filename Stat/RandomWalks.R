@@ -106,6 +106,8 @@ plot.rw = function(x, col = NULL, alpha = 0.75, base = TRUE, ..., sc = 2) {
 	invisible();
 }
 
+# TODO: plot using more colours;
+
 ################
 
 ### Examples
@@ -144,4 +146,7 @@ y = c(-1,2); yprob = c(2,1)/3;
 walk = rwalk.2D8N(n, x, y, xprob, yprob, iter = 400);
 th = quantile.rwth(atan.rw(walk));
 matplot(th$t, th[names(th) != "t"], type = "l")
+
+# Note:
+# - Resembles fast waves in an Electroencephalogram;
 
