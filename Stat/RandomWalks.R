@@ -5,7 +5,7 @@
 
 ## Leonard Mada
 ##
-## draft v.0.1b
+## draft v.0.1c
 
 # 1. Initial code for this module started as an issue:
 #    https://github.com/jmzobitz/ModelingWithR/issues/22
@@ -142,11 +142,24 @@ plot(walk8, col = "red", alpha = 0.6, base = FALSE)
 ### Phase:
 n = 120;
 x = c(-2,-1,0,1); xprob = c(2,1,1,5)/9;
+# x = c(-3,-2,-1,0,1); xprob = c(1,1,2,1,7)/12;
+# x = c(-3,-2,-1,0,1,2,3); xprob = c(1,1,2,1,2,1,1)/9;
 y = c(-1,2); yprob = c(2,1)/3;
 walk = rwalk.2D8N(n, x, y, xprob, yprob, iter = 400);
 th = quantile.rwth(atan.rw(walk));
 matplot(th$t, th[names(th) != "t"], type = "l")
 
-# Note:
-# - Resembles fast waves in an Electroencephalogram;
+
+### Note: EEG
+# - Phase resembles the fast waves (e.g. beta waves)
+#   in an Electroencephalogram (EEG);
+# - Other wave types may be possible to generate
+#   using different values for the random walk;
+# - EEG may be actually the ensemble average
+#   of hundreds of basic neuron-units;
+# - Random walk may represent either the activation
+#   of neurons at a distance proportional to the walk,
+#   or the number of neurons activated by one input neuron;
+# - Both values may be actually correlated: if the signal
+#   travels further outwards, more neurons get activated;
 
