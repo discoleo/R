@@ -5,7 +5,7 @@
 
 ## Leonard Mada
 ##
-## draft v.0.1c
+## draft v.0.1d
 
 # 1. Initial code for this module started as an issue:
 #    https://github.com/jmzobitz/ModelingWithR/issues/22
@@ -83,23 +83,40 @@ quantile.rwth = function(x, quantiles = c(0.25, 0.5, 0.75), na.rm = TRUE) {
 
 ### Plot:
 # sc = scale Base-Square by sc * sqrt(n);
-plot.rw = function(x, col = NULL, alpha = 0.75, base = TRUE, ..., sc = 2) {
+plot.rw = function(x, col = 1:4, alpha = 0.75, b.alpha = 0.6,
+		type = c("4", "2", "A4", "A2", "Custom"),
+		base = TRUE, ..., sc = 2) {
 	n  = attr(x, "n");
 	n2 = n %/% 2;
+	type  = match.arg(type);
+	doCol = type != "Custom";
+	if(doCol) {
+		if(length(col) == 1) { col = rep(col, 4); }
+		else if(length(col) == 2) {col = rep(col, 2); }
+	}
 	### Plot:
 	# Base:
 	if(base) {
 		sc = sc * sqrt(n);
 		polygon3d(rep(0,4), c(1,1,-1,-1)*sc, c(1,-1,-1,1)*sc,
-			alpha = 0.6, col = "red");
+			alpha = b.alpha, col = "red");
 	}
 	# Walk:
-	doCol = is.null(col);
 	x   = split(x, x$id);
 	tmp = lapply(x, function(x) {
 		if(doCol) {
-			col = if(x$x[n2] < 0) "black" else "red";
-			# col = if(x$id %% 2 == 1) "black" else "red";
+			if(type == "4") {
+				idCol = (x$x[n2] < 0) * 2 + (x$y[n2] < 0) + 1;
+			} else if(type == "2") {
+				idCol = if(x$x[n2] < 0) "black" else "red";
+			} else if(type == "A4") {
+				# Alternating 4 cols:
+				idCol = (x$id %% 4) + 1;
+			} else {
+				# Alternating 2 cols:
+				idCol = (x$id %% 2) + 1;
+			}
+			col = col[idCol];
 		}
 		lines3d(x$t, x$x, x$y, col=col, alpha=alpha, ...);
 	});
@@ -135,8 +152,8 @@ x = c(-2,-1,0,1,2); xprob = c(1,2,1,2,1)/7;
 y = c(-1,1); yprob = c(1,1)/2;
 walk4 = rwalk.2D4N(n, x, y, xprob, yprob)
 walk8 = rwalk.2D8N(n, x, y, xprob, yprob)
-plot(walk4, col = "green", alpha = 0.6)
-plot(walk8, col = "red", alpha = 0.6, base = FALSE)
+plot(walk4, col = c("#12E844", "#B2FF44"), alpha = 0.6)
+plot(walk8, col = c("red", "#FF4496"), alpha = 0.6, base = FALSE)
 
 
 ### Phase:
@@ -147,7 +164,7 @@ x = c(-2,-1,0,1); xprob = c(2,1,1,5)/9;
 y = c(-1,2); yprob = c(2,1)/3;
 walk = rwalk.2D8N(n, x, y, xprob, yprob, iter = 400);
 th = quantile.rwth(atan.rw(walk));
-matplot(th$t, th[names(th) != "t"], type = "l")
+matplot(th$t, th[names(th) != "t"], type = "l", lty = 1, ylab = "Phase")
 
 
 ### Note: EEG
