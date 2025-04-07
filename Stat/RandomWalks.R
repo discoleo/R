@@ -5,7 +5,7 @@
 
 ## Leonard Mada
 ##
-## draft v.0.1a
+## draft v.0.1b
 
 # 1. Initial code for this module started as an issue:
 #    https://github.com/jmzobitz/ModelingWithR/issues/22
@@ -61,6 +61,26 @@ rwalk.2D4N = function(n, x, y, xprob = NULL, yprob = NULL, iter = 100) {
 	invisible(r);
 }
 
+### Analysis
+atan.rw = function(x) {
+	th = atan2(x$y, x$x);
+	th = data.frame(th=th, id = x$id, t = x$t);
+	attr(th, "n") = n;
+	class(th) = c("rwth", class(th));
+	invisible(th);
+}
+quantile.rwth = function(x, quantiles = c(0.25, 0.5, 0.75), na.rm = TRUE) {
+	r = tapply(x$th, x$t, function(x) {
+		as.data.frame(as.list(
+			quantile(x, probs = quantiles, na.rm=na.rm)));
+	});
+	r = do.call(rbind, r);
+	names(r) = paste0("q", quantiles);
+	r$t = sort(unique(x$t));
+	attr(r, "quantiles") = quantiles;
+	invisible(r);
+}
+
 ### Plot:
 # sc = scale Base-Square by sc * sqrt(n);
 plot.rw = function(x, col = NULL, alpha = 0.75, base = TRUE, ..., sc = 2) {
@@ -104,13 +124,24 @@ y = c(-1,1); yprob = c(1,1)/2;
 walk = rwalk.2D4N(n, x, y, xprob, yprob)
 plot(walk, alpha = 0.6)
 
-###
+
+### Difference: 4N vs 8N
+# Walk in 4N is delayed compared to 8N;
 close3d()
-n = 121;
+n = 120;
 x = c(-2,-1,0,1,2); xprob = c(1,2,1,2,1)/7;
 y = c(-1,1); yprob = c(1,1)/2;
 walk4 = rwalk.2D4N(n, x, y, xprob, yprob)
 walk8 = rwalk.2D8N(n, x, y, xprob, yprob)
 plot(walk4, col = "green", alpha = 0.6)
 plot(walk8, col = "red", alpha = 0.6, base = FALSE)
+
+
+### Phase:
+n = 120;
+x = c(-2,-1,0,1); xprob = c(2,1,1,5)/9;
+y = c(-1,2); yprob = c(2,1)/3;
+walk = rwalk.2D8N(n, x, y, xprob, yprob, iter = 400);
+th = quantile.rwth(atan.rw(walk));
+matplot(th$t, th[names(th) != "t"], type = "l")
 
