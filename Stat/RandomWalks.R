@@ -1,0 +1,116 @@
+
+####################
+### Random Walks ###
+####################
+
+## Leonard Mada
+##
+## draft v.0.1a
+
+# 1. Initial code for this module started as an issue:
+#    https://github.com/jmzobitz/ModelingWithR/issues/22
+# 2. Related Topics: Percolation
+#    https://github.com/discoleo/Percolation
+
+
+####################
+
+### 2D
+
+library(rgl)
+
+### 8 Neighbours
+# - can move on Diagonals as well;
+rwalk.2D8N = function(n, x, y, xprob = NULL, yprob = NULL, iter = 100) {
+	n = n + 1; # for Time = 0;
+	r = lapply(seq(iter), function(id) {
+		x = sample(x, n, prob = xprob, replace = TRUE);
+		y = sample(y, n, prob = yprob, replace = TRUE);
+		x[1] = 0; y[1] = 0; # Start Position
+		x = cumsum(x); y = cumsum(y);
+		tt = seq(0, by=1, length.out = n)
+		data.frame(t = tt, x=x, y=y, id=id);
+	});
+	r = do.call(rbind, r);
+	attr(r, "n") = n;
+	class(r) = c("rw", class(r));
+	invisible(r);
+}
+
+### 4 Neighbours
+# - will NOT move on Diagonals;
+rwalk.2D4N = function(n, x, y, xprob = NULL, yprob = NULL, iter = 100) {
+	xw = x; yw = y;
+	n = n + 1; # for Time = 0;
+	r = lapply(seq(iter), function(id) {
+		isX = sample(c(TRUE, FALSE), n, replace = TRUE);
+		nX = sum(isX);
+		x  = rep(0, n);
+		x[isX] = sample(xw, nX, prob = xprob, replace = TRUE);
+		nY = n - nX;
+		y  = rep(0, n);
+		y[! isX] = sample(yw, nY, prob = yprob, replace = TRUE);
+		x[1] = 0; y[1] = 0; # Start Position
+		x = cumsum(x); y = cumsum(y);
+		tt = seq(0, by=1, length.out = n)
+		data.frame(t = tt, x=x, y=y, id=id);
+	});
+	r = do.call(rbind, r);
+	attr(r, "n") = n;
+	class(r) = c("rw", class(r));
+	invisible(r);
+}
+
+### Plot:
+# sc = scale Base-Square by sc * sqrt(n);
+plot.rw = function(x, col = NULL, alpha = 0.75, base = TRUE, ..., sc = 2) {
+	n  = attr(x, "n");
+	n2 = n %/% 2;
+	### Plot:
+	# Base:
+	if(base) {
+		sc = sc * sqrt(n);
+		polygon3d(rep(0,4), c(1,1,-1,-1)*sc, c(1,-1,-1,1)*sc,
+			alpha = 0.6, col = "red");
+	}
+	# Walk:
+	doCol = is.null(col);
+	x   = split(x, x$id);
+	tmp = lapply(x, function(x) {
+		if(doCol) {
+			col = if(x$x[n2] < 0) "black" else "red";
+			# col = if(x$id %% 2 == 1) "black" else "red";
+		}
+		lines3d(x$t, x$x, x$y, col=col, alpha=alpha, ...);
+	});
+	invisible();
+}
+
+################
+
+### Examples
+n = 121;
+x = c(-2,-1,0,1,2); xprob = c(1,2,1,2,1)/7;
+y = c(-1,1); yprob = c(1,1)/2;
+walk = rwalk.2D8N(n, x, y, xprob, yprob)
+plot(walk, alpha = 0.6)
+
+
+###
+close3d()
+n = 121;
+x = c(-2,-1,0,1,2); xprob = c(1,2,1,2,1)/7;
+y = c(-1,1); yprob = c(1,1)/2;
+walk = rwalk.2D4N(n, x, y, xprob, yprob)
+plot(walk, alpha = 0.6)
+
+###
+close3d()
+n = 121;
+x = c(-2,-1,0,1,2); xprob = c(1,2,1,2,1)/7;
+y = c(-1,1); yprob = c(1,1)/2;
+walk4 = rwalk.2D4N(n, x, y, xprob, yprob)
+walk8 = rwalk.2D8N(n, x, y, xprob, yprob)
+plot(walk4, col = "green", alpha = 0.6)
+plot(walk8, col = "red", alpha = 0.6, base = FALSE)
+
