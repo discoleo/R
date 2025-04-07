@@ -92,7 +92,7 @@ plot.rw = function(x, col = 1:4, alpha = 0.75, b.alpha = 0.6,
 	doCol = type != "Custom";
 	if(doCol) {
 		if(length(col) == 1) { col = rep(col, 4); }
-		else if(length(col) == 2) {col = rep(col, 2); }
+		else if(length(col) == 2) { col = rep(col, 2); }
 	}
 	### Plot:
 	# Base:
@@ -108,7 +108,7 @@ plot.rw = function(x, col = 1:4, alpha = 0.75, b.alpha = 0.6,
 			if(type == "4") {
 				idCol = (x$x[n2] < 0) * 2 + (x$y[n2] < 0) + 1;
 			} else if(type == "2") {
-				idCol = if(x$x[n2] < 0) "black" else "red";
+				idCol = if(x$x[n2] < 0) 1 else 2;
 			} else if(type == "A4") {
 				# Alternating 4 cols:
 				idCol = (x$id %% 4) + 1;
