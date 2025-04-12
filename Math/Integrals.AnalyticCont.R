@@ -10,6 +10,8 @@
 # For an Introduction, see link to Digamma Function:
 # - Lines That Connect: Extending the Harmonic Numbers to the Reals
 #   https://www.youtube.com/watch?v=9p_U_o1pMKo
+# - Lines That Connect: How to Extend the Sum of Any Function
+#   https://www.youtube.com/watch?v=hkn9zeRuzHs
 
 
 
