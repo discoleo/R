@@ -115,8 +115,20 @@ find.primer = function(x, is.5p = TRUE, Tm = 55, keep.Tm = 50,
 		if(nS > skip.nn) break;
 		Rez[[nS]] = list(nS=nS, Tm = list()); # init list;
 	}
+	Rez = as.df.primer(Rez);
 	# TODO: actual selection of best candidates;
 	return(Rez);
+}
+
+as.df.primer = function(x) {
+	p = lapply(x, function(x) {
+		x = data.frame(x);
+		x$Len = seq(x$Len[1], length.out = nrow(x));
+		return(x);
+	});
+	p = do.call(rbind, p);
+	class(p) = c("primer.df", class(p));
+	return(p);
 }
 
 
@@ -204,3 +216,16 @@ par.old = par(cex.main = 2, cex.lab = 2)
 hist(tm, breaks = 20, main = "Histogram Tm", xlab=NULL, cex=2)
 par(par.old)
 # dev.off()
+
+#######################
+
+### Primers:
+
+n = 200
+x = sample(c("G","C","A","T"), n, TRUE)
+xinv = complement.nn(rev(x))
+x = paste(x, collapse = "")
+
+p = find.primer(x)
+print(p)
+
