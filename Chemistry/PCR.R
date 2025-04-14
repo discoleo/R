@@ -60,6 +60,66 @@ Tm.nnSeq = function(x, nc = 0.5, cNa = 0.05) {
 	return(Tm);
 }
 
+### Complementary Seq:
+complement.nn = function(x, rev = FALSE, collapse = NULL) {
+	LEN = length(x);
+	if(LEN == 0) return(x);
+	y = rep("X", LEN);
+	y[x == "G"] = "C";
+	y[x == "A"] = "T";
+	y[x == "C"] = "G";
+	y[x == "T"] = "A";
+	if(rev) y = rev(y);
+	if(! is.null(collapse)) y = paste(y, collapse=collapse);
+	return(y);
+}
+
+
+# TODO: NOT yet (fully) implemented;
+# x  = String with nucleotide seq;
+# Tm = Desired melting temperature;
+# is.5p = DNA is in 5' => 3' orientation;
+#   => will select primer at 3'-end of DNA;
+# skip.nn = can skip first nucleotides;
+find.primer = function(x, is.5p = TRUE, Tm = 55, keep.Tm = 50,
+		tol = 0.5, skip.nn = 5) {
+	x = strsplit(x, "", fixed = TRUE)[[1]];
+	# Search Primer from 3'-end of DNA-strand;
+	if(is.5p) x = rev(x);
+	#
+	LEN  = length(x); 
+	nLen = 10; nLast = LEN - nLen;
+	if(LEN <= 20) {
+		stop("Too short! Not yet implemented!");
+	}
+	nS  = 1;
+	Rez = list(list(nS=nS, Tm = list())); # init Result
+	while(nS <= nLast) {
+		id = 1;
+		nPosEnd = nS + nLen + id - 1;
+		Tmp = Tm.nnSeq(x[nS:nPosEnd]);
+		Rez[[nS]]$Tm[[id]] = Tmp;
+		while(Tmp < Tm) {
+			nPosEnd = nPosEnd + 1; id = id + 1;
+			if(nPosEnd >= LEN) break;
+			Tmp = Tm.nnSeq(x[nS:nPosEnd]);
+			Rez[[nS]]$Tm[[id]] = Tmp;
+		}
+		Rez[[nS]]$Tm = unlist(Rez[[nS]]$Tm);
+		if(! is.null(keep.Tm)) {
+			keep = Rez[[nS]]$Tm >= keep.Tm;
+			Rez[[nS]]$Tm  = Rez[[nS]]$Tm[keep];
+			Rez[[nS]]$Len = nLen + id - length(Rez[[nS]]$Tm);
+		}
+		nS = nS + 1;
+		if(nS > skip.nn) break;
+		Rez[[nS]] = list(nS=nS, Tm = list()); # init list;
+	}
+	# TODO: actual selection of best candidates;
+	return(Rez);
+}
+
+
 ### Simulations
 simTm = function(n, iter = 2000, probs = c(1/4,1/4,1/4,1/4),
 		nn.seq = c("A","T","G","C")) {
@@ -100,6 +160,7 @@ Tm("AAAACCCCGGGGTTTT")
 r = find.simTm(nn, 55, iter = 10000, tol = 0.02)
 r = find.simTm(nn, 40, iter = 10000, tol = 0.1)
 
+Tm("AAAACCCCGGGGTTTT") # 61.5 C
 Tm("TGGCATGCTTCCAGAA") # 60 C
 Tm("ATGGGGCCTTCAATCA") # 60 C
 Tm("CCAGGTTCGGCATATA") # 55 C
