@@ -84,8 +84,11 @@ complement.nn = function(x, rev = FALSE, collapse = NULL) {
 find.primer = function(x, is.5p = TRUE, Tm = 55, keep.Tm = 50,
 		tol = 0.5, skip.nn = 5) {
 	x = strsplit(x, "", fixed = TRUE)[[1]];
-	# Search Primer from 3'-end of DNA-strand;
-	if(is.5p) x = rev(x);
+	# Leading Strand:
+	if(! is.5p) x = rev(x);
+	# Non-Leading Strand: TODO
+	# Search Complementary DNA-strand;
+	# if(is.5p) x = rev(complement.nn(x));
 	#
 	LEN  = length(x); 
 	nLen = 10; nLast = LEN - nLen;
@@ -93,7 +96,8 @@ find.primer = function(x, is.5p = TRUE, Tm = 55, keep.Tm = 50,
 		stop("Too short! Not yet implemented!");
 	}
 	nS  = 1;
-	Rez = list(list(nS=nS, Tm = list())); # init Result
+	# Init Result:
+	Rez = list(list(nS=nS, Len = nLen + 1, Tm = list()));
 	while(nS <= nLast) {
 		id = 1;
 		nPosEnd = nS + nLen + id - 1;
@@ -109,14 +113,50 @@ find.primer = function(x, is.5p = TRUE, Tm = 55, keep.Tm = 50,
 		if(! is.null(keep.Tm)) {
 			keep = Rez[[nS]]$Tm >= keep.Tm;
 			Rez[[nS]]$Tm  = Rez[[nS]]$Tm[keep];
-			Rez[[nS]]$Len = nLen + id - length(Rez[[nS]]$Tm);
+			Rez[[nS]]$Len = nLen + id + 1 - length(Rez[[nS]]$Tm);
 		}
 		nS = nS + 1;
 		if(nS > skip.nn) break;
-		Rez[[nS]] = list(nS=nS, Tm = list()); # init list;
+		# Init list:
+		Rez[[nS]] = list(nS=nS, Len = nLen + 1, Tm = list());
 	}
 	Rez = as.df.primer(Rez);
+	### GC-Content:
+	Rez = gc.nn(Rez, x);
 	# TODO: actual selection of best candidates;
+	return(Rez);
+}
+
+### GC-Content:
+gc.nn = function(primers, x) {
+	Rez = primers;
+	if(nrow(Rez) < 1) {
+		Rez$GC  = numeric(0);
+		Rez$GCp = numeric(0);
+		return(Rez);
+	}
+	tmp = Rez[1,]; nS = tmp$nS;
+	nn  = x[seq(nS, length.out = tmp$Len)];
+	Rez$GC = -1;
+	tmpGC  = sum(nn %in% c("G", "C"));
+	Rez$GC[1] = tmpGC;
+	if(nrow(Rez) == 1) {
+		Rez$GCp = Rez$GC / Rez$Len;
+		return(Rez);
+	}
+	# Multiple Primer-Seq:
+	for(nr in seq(2, nrow(Rez))) {
+		nS2 = Rez$nS[nr];
+		if(nS == nS2) {
+			if(x[nS + Rez$Len[nr] - 1] %in% c("G", "C")) tmpGC = tmpGC + 1;
+		} else {
+			nS = nS2;
+			nn = x[seq(nS, length.out = Rez$Len[nr])];
+			tmpGC = sum(nn %in% c("G", "C"));
+		}
+		Rez$GC[nr] = tmpGC;
+	}
+	Rez$GCp = Rez$GC / Rez$Len;
 	return(Rez);
 }
 
