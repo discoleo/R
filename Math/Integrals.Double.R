@@ -1,4 +1,4 @@
-############
+#####################
 ##
 ## Leonard Mada
 ## (the one and only)
@@ -381,6 +381,31 @@ integrate(\(x) sapply(x, \(y) integrate(\(x) cos(x+y) / (1 + x*y), 0, pi/2)$valu
 
 ### I( sin(pi/2*(x+y)) / (1 - x*y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) sin(pi/2*(x+y)) / (1 - x*y), 0, 1)$value), 0, 1)
+
+
+### I( log(x)*log(y) * cos(x+y) / sqrt(x*y) ) on [0, Inf] x [0, Inf]
+# Maths 505: The best double integral you'll see this week
+# https://www.youtube.com/watch?v=9TjOahihJuE
+# Note: separation of x vs y;
+
+# upper = Inf
+p = 1/2; up = 2000;
+# p = 2/5; up = 3200; # p = 3/5; up = 2000*pi;
+integrate(\(x)   x^(p-1) * log(x) * cos(x), 0, up, subdivisions = 1024)$value^2 +
+integrate(\(x) - x^(p-1) * log(x) * sin(x), 0, up, subdivisions = 1024)$value^2
+gamma(p)^2 * (digamma(p)*cos(pi*p/2) - pi/2*sin(pi*p/2))^2 +
+- gamma(p)^2 * (digamma(p)*sin(pi*p/2) + pi/2*cos(pi*p/2))^2;
+#
+gamma(p)^2 * (cos(pi*p)*(digamma(p)^2 - pi^2/4) - pi*digamma(p)*sin(pi*p));
+
+
+library(Rmpfr)
+# fails:
+fx = \(x, y) {
+	x = mpfr(x, 128); y = mpfr(y, 128);
+	as.numeric(log(x)*log(y) * cos(x+y) / sqrt(x*y)); }
+sc = 400; integrate(\(x) sapply(x, \(y)
+	integrate(fx, 0, sc*pi, y=x, subdivisions=80024)$value), 0, sc*pi, subdivisions=80024)
 
 
 
