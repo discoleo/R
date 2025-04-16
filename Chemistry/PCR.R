@@ -81,9 +81,59 @@ complement.nn = function(x, rev = FALSE, collapse = NULL) {
 # is.5p = DNA is in 5' => 3' orientation;
 #   => will select primer at 3'-end of DNA;
 # skip.nn = can skip first nucleotides;
-find.primer = function(x, is.5p = TRUE, Tm = 55, keep.Tm = 50,
-		tol = 0.5, skip.nn = 5) {
+# type: lead = leading strand; both = both strands;
+#  filter = filtered to match both strands;
+# TOP = top matches;
+# w   = weights used for criteria used to rank matches;
+find.primer = function(x, skip.nn = 5, is.5p = TRUE, TOP = 10,
+		type = c("filter", "both", "lead", "non-lead"),
+		Tm = 55, keep.Tm = 50, w = c(1, 1/8, 1), tol = 0.5) {
+	type = match.arg(type);
+	# Seq of NN:
 	x = strsplit(x, "", fixed = TRUE)[[1]];
+	if(! is.5p) x = rev(x);
+	if(type == "lead") {
+		Rez = find.primer.nnSeq(x, is.5p = TRUE, Tm=Tm, keep.Tm=keep.Tm,
+			tol=tol, skip.nn = skip.nn);
+		return(Rez);
+	}
+	xinv = rev(complement.nn(x));
+	P2 = find.primer.nnSeq(xinv, is.5p = TRUE, Tm=Tm, keep.Tm=keep.Tm,
+			tol=tol, skip.nn = skip.nn);
+	if(type == "non-lead") {
+		return(P2);
+	}
+	P1 = find.primer.nnSeq(x, is.5p = TRUE, Tm=Tm, keep.Tm=keep.Tm,
+			tol=tol, skip.nn = skip.nn);
+	#
+	P = list(P1 = P1, P2 = P2);
+	if(type == "both") return(P);
+	### Filtered:
+	nr = nrow(P1);
+	if(nr == 0) {
+		P$Match = NA;
+		return(P);
+	}
+	flt = sapply(seq(nr), function(id) {
+		tmp = P1[id, c("Tm", "GCp")];
+		opt = abs(tmp$Tm - P2$Tm) * w[1] +
+			abs(tmp$Tm - Tm) * w[2] + abs(P2$Tm - Tm) * w[2] +
+			abs(tmp$GCp - 0.5) * w[3] + abs(P2$GCp - 0.5) * w[3];
+	});
+	# Order Best Matches
+	id  = order(flt);
+	top = min(TOP, length(id));
+	id  = id[seq(top)];
+	idr = (id - 1) %%  nrow(P2) + 1;
+	idc = (id - 1) %/% nrow(P2) + 1;
+	Rez = cbind(P1[idc,], P2 = P2[idr,]);
+	Rez$dTm   = abs(Rez$Tm - Rez$P2.Tm);
+	Rez$Score = flt[id]; rownames(Rez) = NULL;
+	P$Match = Rez;
+	return(P);
+}
+find.primer.nnSeq = function(x, is.5p = TRUE, Tm = 55, keep.Tm = 50,
+		skip.nn = 5, tol = 0.5, ...) {
 	# Leading Strand:
 	if(! is.5p) x = rev(x);
 	# Non-Leading Strand: TODO
@@ -101,12 +151,12 @@ find.primer = function(x, is.5p = TRUE, Tm = 55, keep.Tm = 50,
 	while(nS <= nLast) {
 		id = 1;
 		nPosEnd = nS + nLen + id - 1;
-		Tmp = Tm.nnSeq(x[nS:nPosEnd]);
+		Tmp = Tm.nnSeq(x[nS:nPosEnd], ...);
 		Rez[[nS]]$Tm[[id]] = Tmp;
 		while(Tmp < Tm) {
 			nPosEnd = nPosEnd + 1; id = id + 1;
 			if(nPosEnd >= LEN) break;
-			Tmp = Tm.nnSeq(x[nS:nPosEnd]);
+			Tmp = Tm.nnSeq(x[nS:nPosEnd], ...);
 			Rez[[nS]]$Tm[[id]] = Tmp;
 		}
 		Rez[[nS]]$Tm = unlist(Rez[[nS]]$Tm);
@@ -267,5 +317,5 @@ xinv = complement.nn(rev(x))
 x = paste(x, collapse = "")
 
 p = find.primer(x)
-print(p)
+print(p$Match)
 
