@@ -25,7 +25,7 @@ source("DE.ODE.Helper.R")
 
 ### Check:
 ye = expression((x+b0)^(4/3))[[1]]
-pe = expression(log((x+b0)^(4/3) + x) * log((x+b0)^(4/3) - x))[[1]]
+pe = substitute(expression(log(y + x) * log(y - x)), list(y=ye))[[2]]
 x = sqrt(3); b0 = sqrt(2);
 params = list(x=x, b0=b0);
 #
@@ -63,7 +63,10 @@ div = 2*y^2*d2y - 2*x^2*d2y - 2*x*dy^3 + 2*y*dy^2 + 2*x*dy - 2*y;
 
 
 ### ODE:
-# TODO
+# - Substitute log(y+x) & log(y-x) in eq:
+#   log(y+x) * log(y-x) - p = 0;
+# TODO: huge;
+
 
 ### Example:
 ### P(x) = x
@@ -86,4 +89,39 @@ div = 2*y^2*d2y - 2*x^2*d2y - 2*x*dy^3 + 2*y*dy^2 + 2*x*dy - 2*y;
 	- 4*x*(y^2*d2y - x^2*d2y - x*dy^3 + y*dy^2 + x*dy - y)^2 # = 0
 
 ### TODO: check!
+
+######################
+
+### (y^2 - x^2) * log(y + x) * log(y - x) = P(x)
+
+### Check:
+ye = expression((x+b0)^(4/3))[[1]]
+pe = substitute(expression((y^2 - x^2) * log(y + x) * log(y - x)), list(y=ye))[[2]]
+x = sqrt(3); b0 = sqrt(2);
+params = list(x=x, b0=b0);
+#
+y = eval(ye, params); dy = eval(D(ye, "x"), params); 
+p = eval(pe, params); dp = eval(D(pe, "x"), params);
+d2y = eval(D(D(ye, "x"), "x"), params);
+d2p = eval(D(D(pe, "x"), "x"), params);
+
+### D =>
+(dy + 1)*(y - x)*log(y - x) + (dy - 1)*(y + x)*log(y + x) +
+	+ 2*(y*dy - x) * log(y + x) * log(y - x) - dp # = 0
+# =>
+(dy + 1)*(y - x)*log(y - x) + (dy - 1)*(y + x)*log(y + x) +
+	- dp + 2*p*(y*dy - x) / (y^2-x^2) # = 0
+
+
+### D2 =>
+((y - x)*log(y - x) + (y + x)*log(y + x))*(y^2-x^2)*d2y +
+	+ 2*p*(y*d2y + dy^2 - 1) +
+	+ (y^2-x^2)*(dy^2 - 1)*(log(y - x) + log(y + x)) +
+	+ 2*(y^2-x^2)*(dy^2 - 1) +
+	+ 2*(y*dy - x) * (dy+1)  * (y-x) * log(y - x) +
+	+ 2*(y*dy - x) * (dy-1)  * (y+x) * log(y + x) +
+	- d2p*(y^2-x^2) # = 0
+
+
+# TODO
 
