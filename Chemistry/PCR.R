@@ -87,7 +87,7 @@ complement.nn = function(x, rev = FALSE, collapse = NULL) {
 # w   = weights used for criteria used to rank matches;
 find.primer = function(x, skip.nn = 5, is.5p = TRUE, TOP = 10,
 		type = c("filter", "both", "lead", "non-lead"),
-		Tm = 55, keep.Tm = 50, w = c(1, 1/8, 1), tol = 0.5) {
+		Tm = 55, keep.Tm = 50, w = c(1, 1/8, 1), GCp = 0.5, tol = 0.5) {
 	type = match.arg(type);
 	# Seq of NN:
 	x = strsplit(x, "", fixed = TRUE)[[1]];
@@ -109,29 +109,41 @@ find.primer = function(x, skip.nn = 5, is.5p = TRUE, TOP = 10,
 	P = list(P1 = P1, P2 = P2);
 	if(type == "both") return(P);
 	### Filtered:
-	nr = nrow(P1);
+	# Match Primers:
+	P$Match = match.primers(P1, P2, TOP=TOP, Tm=Tm, GCp=GCp, w=w);
+	return(P);
+}
+
+### Match Primers
+# p1, p2 = data.frames with Tm & GCp for the 2 sets of primers;
+# TOP = top matches;
+# w   = weights applied to criteria used to rank matches;
+match.primers = function(p1, p2, TOP = 10, w = c(1, 1/8, 1),
+		Tm = 55, GCp = 0.5) {
+	nr = nrow(p1);
 	if(nr == 0) {
-		P$Match = NA;
-		return(P);
+		return(NA);
 	}
 	flt = sapply(seq(nr), function(id) {
-		tmp = P1[id, c("Tm", "GCp")];
-		opt = abs(tmp$Tm - P2$Tm) * w[1] +
-			abs(tmp$Tm - Tm) * w[2] + abs(P2$Tm - Tm) * w[2] +
-			abs(tmp$GCp - 0.5) * w[3] + abs(P2$GCp - 0.5) * w[3];
+		tmp = p1[id, c("Tm", "GCp")];
+		opt = abs(tmp$Tm - p2$Tm) * w[1] +
+			abs(tmp$Tm - Tm) * w[2] + abs(p2$Tm - Tm) * w[2] +
+			abs(tmp$GCp - GCp) * w[3] + abs(p2$GCp - GCp) * w[3];
 	});
-	# Order Best Matches
+	# Order Best Matches:
 	id  = order(flt);
 	top = min(TOP, length(id));
 	id  = id[seq(top)];
-	idr = (id - 1) %%  nrow(P2) + 1;
-	idc = (id - 1) %/% nrow(P2) + 1;
-	Rez = cbind(P1[idc,], P2 = P2[idr,]);
+	idr = (id - 1) %%  nrow(p2) + 1;
+	idc = (id - 1) %/% nrow(p2) + 1;
+	Rez = cbind(p1[idc,], P2 = p2[idr,]);
 	Rez$dTm   = abs(Rez$Tm - Rez$P2.Tm);
 	Rez$Score = flt[id]; rownames(Rez) = NULL;
-	P$Match = Rez;
-	return(P);
+	return(Rez);
 }
+
+### Find Primers
+# x = Array of nucleotides;
 find.primer.nnSeq = function(x, is.5p = TRUE, Tm = 55, keep.Tm = 50,
 		skip.nn = 5, tol = 0.5, ...) {
 	# Leading Strand:
