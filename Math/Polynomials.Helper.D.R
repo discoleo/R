@@ -42,6 +42,7 @@
 
 ### General Methods
 
+### Sort based on order of dy
 sort.dpm = function(p, y="y", x="x") {
 	# TODO: "dny"
 	nms = if(length(y) > 1) y else paste0(c("d2", "d", ""), y);
@@ -57,9 +58,11 @@ sort.dpm = function(p, y="y", x="x") {
 	p = sort.pm(p, nms, sort.coeff=seq(10, length.out=length(nms)));
 	nms = c(names(p)[ ! names(p) %in% nms], rev(nms));
 	p = p[, nms];
+	attr(p, "d") = y;
+	p = as.pm(p); class(p) = c("dpm", class(p));
 	return(p);
 }
-print.dpm = function(p, y="y", x="x", do.sort=TRUE) {
+print.dpm = function(p, y="y", x="x", do.sort=FALSE) {
 	if(do.sort) p = sort.dpm(p, y=y, x=x);
 	print.pm(p, do.sort=FALSE, leading=NA);
 }
