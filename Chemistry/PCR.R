@@ -60,6 +60,53 @@ Tm.nnSeq = function(x, nc = 0.5, cNa = 0.05) {
 	return(Tm);
 }
 
+### Tm with 1 Mismatch
+# Note: wild guess, but I do NOT have the time
+#  to search the literature;
+# npos = location of mismatch;
+# type = add penalty to Tm based on type of mismatch:
+# - bulky: only if bulky (A/G or G/A);
+#   Note: only the base pair in the primer is checked!
+# - no: do not add any penalty;
+# - always: independent of actual nucleotides;
+Tm.mismatch = function(x, npos, type = c("bulky", "no", "always"),
+		nc = 0.5, cNa = 0.05, verbose = TRUE) {
+	if(npos < 1 || npos > nchar(x)) stop("Invalid position of mismatch!");
+	type = match.arg(type);
+	x   = strsplit(x, "", TRUE)[[1]];
+	LEN = length(x);
+	if(npos < 3) {
+		Tm = Tm.nnSeq(x[seq(npos + 1, LEN)], nc=nc, cNa=cNa);
+		return(Tm);
+	}
+	if(npos + 2 > LEN) {
+		if(verbose) warning("Mismatch is at the 3'-end!");
+		Tm = Tm.nnSeq(x[seq(npos - 1)], nc=nc, cNa=cNa);
+		return(Tm);
+	}
+	# dH, dS:
+	s2 = paste0(x[-LEN], x[-1]);
+	s2 = s2[c(1-npos, -npos)];
+	id = match(s2, Tm.data$nn);
+	dH = sum(Tm.data$dH[id]);
+	dS = sum(Tm.data$dS[id]);
+	if((type == "bulky" && x[npos] %in% c("A","G")) ||
+		type == "always") {
+		nm = c("AG", "GA"); # wild guess;
+		id = match(nm, Tm.data$nn);
+		mH = sum(Tm.data$dH[id]) / 2;
+		mS = sum(Tm.data$dS[id]) / 2;
+		dH = dH - mH; dS = dS - mS;
+	}
+	# Scaled by 1/1000;
+	A = -0.0108;  # dS for Initiation
+	R = 0.001987; # Gas Constant
+	cNc = nc * 1E-6; # in mol / l;
+	div = A + dS + R*log(cNc/4);
+	Tm  = dH / div - 273.15 + 7.2093 * log(cNa);
+	return(Tm);
+}
+
 ### Complementary Seq:
 complement.nn = function(x, rev = FALSE, collapse = NULL) {
 	LEN = length(x);
@@ -144,6 +191,7 @@ match.primers = function(p1, p2, TOP = 10, w = c(1, 1/8, 1),
 
 ### Find Primers
 # x = Array of nucleotides;
+# Note: for a string of nucleotides, see: find.primer;
 find.primer.nnSeq = function(x, is.5p = TRUE, Tm = 55, keep.Tm = 50,
 		skip.nn = 5, tol = 0.5, ...) {
 	# Leading Strand:
