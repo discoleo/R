@@ -6,7 +6,7 @@
 ### Differential Equations
 ### ODEs: From other ODEs
 ###
-### draft v.0.2f-fix
+### draft v.0.2g
 
 
 
@@ -50,7 +50,7 @@
 ####################
 ####################
 
-### helper functions
+### Helper Functions
 
 # include: DE.ODE.Helper.R;
 source("DE.ODE.Helper.R")
@@ -61,6 +61,28 @@ source("DE.ODE.Helper.R")
 ########################
 ### Derived from ODE ###
 ########################
+
+###################
+### Linear ODEs ###
+###################
+
+### Example:
+
+# Initial ODE:
+d2y + b1*dy + b0*x*y # = 0
+
+# D =>
+d3y + b1*d2y + b0*x*dy + b0*y # = 0
+# Subst y =>
+x*d3y + b1*x*d2y + b0*x^2*dy - (d2y + b1*dy) # = 0
+x*d3y + (b1*x - 1)*d2y + (b0*x^2 - b1)*dy # = 0
+# Subst: z = dy
+
+### New ODE:
+x*d2z + (b1*x - 1)*dz + (b0*x^2 - b1)*z # = 0
+
+
+####################
 
 ####################
 ### Higher Order ###
@@ -96,6 +118,7 @@ g*y*d2y - 1/n*g*dy^2 - dg*y*dy + 1/n*g*f*dy + (dg*f - g*df)*y # = 0
 ### Example 1:
 # f = x; g = x;
 x*y*d2y - 1/n*x*dy^2 - y*dy + 1/n*x^2*dy # = 0
+n*x*y*d2y - x*dy^2 - n*y*dy + x^2*dy # = 0
 
 ### Example 2:
 # f = x; g = n;
@@ -115,11 +138,13 @@ n*y*d2y - dy^2 + x*dy - n*y # = 0
 d2y - 2*p2*y*dy - p1*dy - dp2*y^2 - dp1*y - dp0 # = 0
 
 ### Variant 1:
+# - substitute dy;
 d2y - 2*p2*y*(p2*y^2 + p1*y + p0) - p1*(p2*y^2 + p1*y + p0) - dp2*y^2 - dp1*y - dp0 # = 0
 ### ODE:
 d2y - 2*p2^2*y^3 - (3*p1*p2 + dp2)*y^2 - (p1^2 + 2*p0*p2 + dp1)*y - p0*p1 - dp0 # = 0
 
 ### Variant 2:
+# - substitute y^2;
 p2*d2y - 2*p2^2*y*dy - p1*p2*dy - dp2*(dy - p1*y - p0) - dp1*p2*y - dp0*p2 # = 0
 ### ODE:
 p2*d2y - 2*p2^2*y*dy - (p1*p2 + dp2)*dy + (dp2*p1 - dp1*p2)*y + dp2*p0 - dp0*p2 # = 0
