@@ -6,7 +6,7 @@
 ## Differential Equations
 ## Mixed Exp & Log
 ##
-## draft v.0.1b
+## draft v.0.1c
 
 
 ### Linear ODE of Order 2
@@ -147,4 +147,53 @@ b0 = 1/sqrt(5); k = 2*b0;
 params = list(x=x, k=k, b0=b0);
 #
 x^4*(x + b0)*d2y + x^2*(x + 2*b0)^2*dy - 2*b0*(x^2 - 2*b0^2)*y # = 0
+
+
+####################
+
+### Mixed Prod & Sum
+
+### Example:
+### y = log(x + b0) * exp(k/x) + a1*x*exp(k/x)
+
+### Check:
+ye = expression(log(x + b0) * exp(k/x) + a1*x*exp(k/x))[[1]]
+x  = sqrt(3); a1 = 5^(1/3); b0 = sqrt(2); k = -1/sqrt(5);
+params = list(x=x, k=k, a1=a1, b0=b0);
+#
+y = eval(ye, params); dy = eval(D(ye, "x"), params);
+d2y = eval(D(D(ye, "x"), "x"), params);
+
+
+### ODE:
+x^4*(x + b0)*(a1*x + a1*b0 + 1)*d2y +
+	+ x^2*((2*k*a1 + 1)*x^2 + 2*k*(2*a1*b0 + 1)*x + 2*b0*k*(a1*b0 + 1))*dy +
+	+ k*(- 2*a1*x^3 - (4*a1*b0 - a1*k + 1)*x^2 +
+		- (2*a1*b0^2 - 2*k*a1*b0 + 2*b0 - k)*x + k*b0*(a1*b0 + 1))*y # = 0
+
+### Derivation:
+
+# D =>
+x^2*(x + b0)*dy + k*(x + b0)*y +
+	- (a1*(x + b0)*(x^2 - k*x) + (k*a1+1)*x^2 + k*a1*b0*x)*exp(k/x) # = 0
+x^2*(x + b0)*dy + k*(x + b0)*y +
+	- (a1*x + a1*b0 + 1)*x^2*exp(k/x) # = 0
+
+# D2 =>
+x^2*(x + b0)*d2y + (3*x^2 + (2*b0 + k)*x + k*b0)*dy + k*y +
+	- (3*a1*x^2 + (2*a1*b0 - k*a1 + 2)*x - k*(a1*b0 + 1))*exp(k/x) # = 0
+x^4*(x + b0)*(a1*x + a1*b0 + 1)*d2y +
+	+ x^2*((2*k*a1 + 1)*x^2 + 2*k*(2*a1*b0 + 1)*x + 2*b0*k*(a1*b0 + 1))*dy +
+	+ k*(- 2*a1*x^3 - (4*a1*b0 - a1*k + 1)*x^2 +
+		- (2*a1*b0^2 - 2*k*a1*b0 + 2*b0 - k)*x + k*b0*(a1*b0 + 1))*y # = 0
+
+### Special Cases:
+
+### a1 = -1/b0
+b0 = 1/3^(1/3); a1 = -1/b0;
+params = list(x=x, k=k, a1=a1, b0=b0);
+#
+x^4*(x + b0)*d2y +
+	- x^2*((b0 - 2*k)*x - 2*k*b0)*dy +
+	- k*(2*x^2 + (3*b0 - k)*x - k*b0)*y # = 0
 
