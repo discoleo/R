@@ -636,6 +636,10 @@ integrate(\(x) - (x^2*sin(x) + 2*x*cos(x) - 2*sin(x)) / tan(x), 0, pi/2);
 - pi^2/4 - 4*Catalan + 6;
 
 
+### I( asin(x)^2 * log(1 - x^2) )
+integrate(\(x) asin(x)^2 * log(1-x^2), 0, 1)
+-7*pracma::zeta(3) + pi^2*log(2) / 2 - pi^2/2 - 4*log(2) + 12;
+
 ### I( x^2 * log(cos(x)) * cos(x) )
 integrate(\(x) x^2 * log(cos(x)) * cos(x), 0, pi/2)
 -7/2 * pracma::zeta(3) + pi^2*log(2) / 4 - pi^2/4 - 2*log(2) + 6;
