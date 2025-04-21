@@ -6,7 +6,7 @@
 ## Differential Equations
 ## Mixed Exp & Trig
 ##
-## draft v.0.1b
+## draft v.0.1c
 
 
 ### History:
@@ -147,4 +147,53 @@ x^2*d2y + x*(2*n*x^n - (n+1))*dy +
 
 ### n = -1
 x^4*d2y - 2*k*x^2*dy + (2*k*x + k^2 + 1)*y # = 0
+
+
+################
+
+### y = sin(x^n) * exp(k*x^m)
+
+### Check:
+ye = expression(sin(x^n) * exp(k*x^m))[[1]]
+x  = sqrt(3); n = sqrt(2); m = 1/sqrt(5); k = - sqrt(2);
+params = list(x=x, n=n, m=m, k=k);
+#
+y = eval(ye, params); dy = eval(D(ye, "x"), params);
+d2y = eval(D(D(ye, "x"), "x"), params);
+
+
+### ODE:
+x*d2y - (2*k*m*x^m + n-1) * dy +
+	+ (k^2*m^2*x^(2*m-1) + n^2*x^(2*n-1) + k*m*(n-m)*x^(m-1))*y # = 0
+
+
+# Derivation:
+
+# D =>
+dy - k*m*x^(m-1)*y - n*x^(n-1)*cos(x^n) * exp(k*x^m) # = 0
+
+# D2 =>
+d2y - k*m*x^(m-1)*dy +
+	- n*x^(n-2)*(k*m*x^m + (n-1)) * cos(x^n) * exp(k*x^m) +
+	+ n^2*x^(2*n-2)*y - k*m*(m-1)*x^(m-2)*y # = 0
+x*d2y - k*m*x^m*dy +
+	- (k*m*x^m + (n-1)) * (dy - k*m*x^(m-1)*y) +
+	+ n^2*x^(2*n-1)*y - k*m*(m-1)*x^(m-1)*y # = 0
+x*d2y - (2*k*m*x^m + n-1) * dy +
+	+ (k^2*m^2*x^(2*m-1) + n^2*x^(2*n-1) + k*m*(n-m)*x^(m-1))*y # = 0
+
+
+### Special Cases:
+
+### n = 1; m = 2
+n = 1; m = 2;
+params = list(x=x, n=n, m=m, k=k);
+#
+x*d2y - 4*k*x^2 * dy + (4*k^2*x^3 - (2*k-1)*x)*y # = 0
+
+### & k = 1/2;
+n = 1; m = 2; k = 1/2;
+params = list(x=x, n=n, m=m, k=k);
+#
+d2y - 2*x*dy + x^2*y # = 0
 
