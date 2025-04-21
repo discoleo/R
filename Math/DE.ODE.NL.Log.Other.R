@@ -6,7 +6,7 @@
 ## Differential Equations
 ## NL Log: Hidden Log
 ##
-## draft v.0.1a
+## draft v.0.1b
 
 
 ### History:
@@ -36,6 +36,7 @@ source("DE.ODE.Helper.R")
 
 ### Check:
 fe = expression(sin(x^2/3))[[1]];
+# fe = 0; # Homogenous;
 ye = substitute(expression((x + k1)^(x + k2) + f), list(f=fe))[[2]]
 x = sqrt(3); k1 = sqrt(2); k2 = 1/sqrt(5);
 params = list(x=x, k1=k1, k2=k2);
@@ -44,6 +45,15 @@ y = eval(ye, params); dy = eval(D(ye, "x"), params);
 d2y = eval(D(D(ye, "x"), "x"), params);
 f0  = eval(fe, params); df0 = eval(D(fe, "x"), params);
 d2f0 = eval(D(D(fe, "x"), "x"), params);
+
+
+### ODE:
+(x+k1)^2*(y - f0)*d2y # =
+(x+k1)^2*(dy - df0)^2 + (x + 2*k1 - k2)*(y - f0)^2 +
+	+ (x+k1)^2*d2f0*(y - f0);
+
+### ODE: Homogenous
+(x+k1)^2*y*d2y - (x+k1)^2*dy^2 - (x + 2*k1 - k2)*y^2 # = 0
 
 
 ### Derivation:
@@ -69,22 +79,20 @@ dy - (log(x+k1) + (x+k2)/(x+k1))*(y - f0) - df0 # = 0
 (x+k1)*(dy - df0)^2 +
 	+ log(x+k1)*(y - f0)^2 + 2*(y - f0)^2 +
 	+ (x+k1)*d2f0*(y - f0) + df0*(y - f0);
-
-#
+# =>
 (x+k1)^2*(y - f0)*d2y + (x+k1)*(y - f0)*dy # =
 (x+k1)^2*(dy - df0)^2 +
-	+ (x+k1)*(y - f0)*(dy - df0) - (x + k2)*(y - f0)^2 + 2*(x+k1)*(y - f0)^2 +
+	+ (x+k1)*(y - f0)*(dy - df0) + (x+2*k1-k2)*(y - f0)^2 +
 	+ (x+k1)^2*d2f0*(y - f0) + (x+k1)*df0*(y - f0);
 
-### ODE:
-(x+k1)^2*(y - f0)*d2y # =
-(x+k1)^2*(dy - df0)^2 + (x+k1)*(y - f0)^2 + (k1 - k2)*(y - f0)^2 +
-	+ (x+k1)^2*d2f0*(y - f0);
 
 ### Examples:
 ### k1 == k2
 (x+k1)*(y - f0)*d2y # =
 (x+k1)*(dy - df0)^2 + (y - f0)^2 + (x+k1)*d2f0*(y - f0);
+
+### Homogenous:
+(x+k1)*y*d2y - (x+k1)*dy^2 - y^2 # = 0
 
 
 ### Solution & Plot:
