@@ -621,6 +621,19 @@ pi^3 / 16
 integrate(\(x) log(x^2 + 1) / x, 0, 1)
 pi^2/24
 
+
+################
+
+### I( asin(x)^2 * log(x) )
+# Maths 505: I don't have a title for this integral: int (0,1) (arcsin(x))^2 ln(x)
+# https://www.youtube.com/watch?v=ZhcYWV9imrU
+# Series-Expansion log(sin(x));
+
+integrate(\(x) asin(x)^2 * log(x), 0, 1)
+integrate(\(x) x^2 * log(sin(x)) * cos(x), 0, pi/2)
+- pi^2/4 - 4*Catalan + 6;
+
+
 ###############
 ###############
 
