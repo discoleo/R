@@ -631,7 +631,82 @@ pi^2/24
 
 integrate(\(x) asin(x)^2 * log(x), 0, 1)
 integrate(\(x) x^2 * log(sin(x)) * cos(x), 0, pi/2)
+# Alternative: Integration by parts
+integrate(\(x) - (x^2*sin(x) + 2*x*cos(x) - 2*sin(x)) / tan(x), 0, pi/2);
 - pi^2/4 - 4*Catalan + 6;
+
+
+### I( x^2 * log(cos(x)) * cos(x) )
+integrate(\(x) x^2 * log(cos(x)) * cos(x), 0, pi/2)
+-7/2 * pracma::zeta(3) + pi^2*log(2) / 4 - pi^2/4 - 2*log(2) + 6;
+
+# Derivation:
+x = pi/2 - 1E-5;
+integrate(\(x) (x^2*sin(x) + 2*x*cos(x) - 2*sin(x)) * tan(x), 0, x)$value +
+	+ (x^2*sin(x) + 2*x*cos(x) - 2*sin(x)) * log(cos(x));
+integrate(\(x) (x^2*sin(x) - 2*sin(x)) * tan(x), 0, x)$value +
+	+ (x^2*sin(x) - 2*sin(x)) * log(cos(x)) + 2;
+integrate(\(x) x^2*sin(x) * tan(x), 0, x)$value +
+	+ (x^2*sin(x) - 2*sin(x)) * log(cos(x)) +
+	+ 2*sin(x) + log(1-sin(x)) - log(1+sin(x)) + 2;
+integrate(\(x) x*(x-pi/2)*sin(x) * tan(x), 0, pi/2)$value +
+	+ pi^2*log(2) / 4 - pi^2/4 + pi/2 - pi*Catalan - 2*log(2) + 4;
+-7/2 * pracma::zeta(3) + pi^2*log(2) / 4 - pi^2/4 - 2*log(2) + 6;
+
+
+# Lim: x -> pi/2
+x = pi/2 - 1E-6;
+# x = Const("pi", 200) / 2 - mpfr("1E-24", 200);
+log(1-sin(x)) - 2*sin(x) * log(cos(x))
+log1p(-sin(x)) - 2*sin(x) * log(cos(x))
+- log(2);
+
+# Lim: x -> pi/2
+x = pi/2 - 1E-6;
+pi^2/4 * (-sin(x) + (log(1+sin(x)) - log(1-sin(x)))/2) +
+	+ x^2*sin(x) * log(cos(x)) + 2*sin(x) - log(1+sin(x));
+pi^2*log(2) / 4 - pi^2/4 - log(2) + 2;
+
+
+### Helper:
+
+###
+integrate(\(x) x*(x-pi/2)*sin(x) * tan(x), 0, pi/2)
+integrate(\(x) (2*x-pi/2)*(sin(x) - (log(1+sin(x)) - log(1-sin(x)))/2), 0, pi/2);
+integrate(\(x) x*(log(1-sin(x)) - log(1+sin(x))), 0, pi/2)$value +
+	- pi/2 * (- 2*Catalan + 1) + 2;
+-7/2 * pracma::zeta(3) + pi*Catalan - pi/2 + 2;
+
+#
+integrate(\(x) x*log(1-sin(x)), 0, pi/2)
+integrate(\(x) (pi/2-x)*log(2 - 2*cos(x/2)^2), 0, pi/2)
+integrate(\(x) (pi/2-x)*log(2*sin(x/2)^2), 0, pi/2)
+integrate(\(x) pi/2*log(2) + pi*log(sin(x/2)) - x*log(2) - 2*x*log(sin(x/2)), 0, pi/2)
+integrate(\(x) - 8*x*log(sin(x)), 0, pi/4)$value +
+	- 3/8* pi^2*log(2) - pi*Catalan;
+8*(pi^2 * log(2)/32 + pi * Catalan / 8 - 35/128 * pracma::zeta(3)) +
+	- 3/8* pi^2*log(2) - pi*Catalan;
+-35/16 * pracma::zeta(3) - 1/8* pi^2*log(2);
+
+#
+integrate(\(x) x*log(1+sin(x)), 0, pi/2)
+21*pracma::zeta(3)/16 - pi^2*log(2)/8;
+
+
+###
+x = pi/2 - 1E-6;
+integrate(\(x) (x-pi/2)*sin(x) * tan(x), 0, pi/2)
+integrate(\(x) sin(x) - (log(1+sin(x)) - log(1-sin(x)))/2, 0, x)$value +
+	+ (x - pi/2) * (-sin(x) + (log(1+sin(x)) - log(1-sin(x)))/2);
+integrate(\(x) sin(x) - (log(1+sin(x)) - log(1-sin(x)))/2, 0, pi/2);
+- 2*Catalan + 1;
+
+###
+z = pi/5;
+integrate(\(x) sin(x) * tan(x), 0, z)
+integrate(\(x) x^2 / (1-x^2), 0, sin(z))
+-sin(z) + (log(1+sin(z)) - log(1-sin(z)))/2;
+
 
 
 ###############
