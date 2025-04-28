@@ -38,13 +38,20 @@ eval.Exp = function(x, nm, e, params) {
 	})
 }
 
+solve.eq = function(eq, params, Vx = Vmax / 2, Vmax = 2, ..., lim = c(0, 100)) {
+	params = c(as.list(params), Vmax=Vmax);
+	eqf = function(x)
+		eval(eq, c(params, t=x)) - Vx;
+	uniroot(eqf, lim, ...);
+}
+
 ### Plot:
 curve.ref = function(col = "#F02424E2", lwd = 2, params = NULL, Vmax = 2,
-		col.h = "#FF3224B0") {
+		col.h = "#FF3224B0", xlab = "Time", ylab = "Growth") {
 	ylim = c(0, Vmax + 0.1);
 	if(is.null(params)) params = list(Vmax = Vmax, b = 1, n = 1);
-	curve(eval.Exp(x, "t", MM.eq, params), col = col, lwd=lwd,
-		xlim=xlim, ylim=ylim, ylab = "Growth");
+	curve(eval.Exp(x, "t", MM.eq, params), col=col, lwd=lwd,
+		xlim=xlim, ylim=ylim, xlab=xlab, ylab=ylab);
 	abline(h = Vmax, col = col.h, lwd=lwd);
 }
 plot.curve = function() {
@@ -105,6 +112,7 @@ plot.curve = function() {
 ### NLS Types ###
 #################
 
+### Palette
 col.blue    = c("#0000FFC0", "#72A2FAA0", "#A888FAA0", "#88A8FAA0");
 col.magenta = c("#F000FFC0", "#F8A2A2A0", "#F864B4A0", "#F8B4FFA0");
 col.green   = c("#00FF00A0", "#90FE64A0", "#32FC90A0", "#64FC90A0");
@@ -117,36 +125,61 @@ col.brown   = c("#F8B464A0");
 
 MM.eq = expression(Vmax * t^n / (b + t^n));
 
-curve.MM = function(col, lwd = 2, legend = TRUE, Vmax = 2) {
-	params = list(Vmax = Vmax, b = 1, n = 1)
+# Vx = solve V - Vx == 0;
+curve.MM = function(col, b = c(1, 2/5, 2, 3), lwd = 2, legend = TRUE,
+		Vmax = 2, Vx = Vmax / 2, xy.txt = c(8, 0.5)) {
+	doS = (Vx != 0);
+	params = list(Vmax = Vmax, b = b[1], n = 1);
+	if(doS) sol1 = solve.eq(MM.eq, params, Vx=Vx);
 	# curve(eval.Exp(x, "t", MM.eq, params), col = col[1], xlim=xlim, ylim=ylim)
 	curve.ref(params = params, col = col[1], lwd=lwd);
-	params = list(Vmax = Vmax, b = 2/5, n = 1)
+	params$b = b[2];
+	if(doS) sol2 = solve.eq(MM.eq, params, Vx=Vx);
 	curve(eval.Exp(x, "t", MM.eq, params), add = T, col = col[2], lwd=lwd)
-	params = list(Vmax = Vmax, b = 2, n = 1)
+	params$b = b[3];
+	if(doS) sol3 = solve.eq(MM.eq, params, Vx=Vx);
 	curve(eval.Exp(x, "t", MM.eq, params), add = T, col = col[3], lwd=lwd)
-	params = list(Vmax = Vmax, b = 3, n = 1)
+	params$b = b[4];
+	if(doS) sol4 = solve.eq(MM.eq, params, Vx=Vx);
 	curve(eval.Exp(x, "t", MM.eq, params), add = T, col = col[4], lwd=lwd)
 	if(legend) {
-		legend(12, 0.5, legend = paste0("MM", 1:4), fill = col);
+		legend(xy.txt[1], xy.txt[2], legend = paste0("MM", 1:4), fill = col);
+	}
+	if(doS) {
+		sol = rbind(sol1, sol2, sol3, sol4);
+		return(sol);
 	}
 }
 
+### Init:
 xlim = c(0, 15); ylim = c(0, 2.1);
 # xlim = c(0, 100);  ylim = c(0, 2.1);
 # xlim = c(0, 1000); ylim = c(0, 2.1);
 #
 lwd = 2;
 
+
+### Michaelis-Menten: Basic
 curve.MM(col.blue, lwd=lwd)
-#
-col = col.magenta
+
+# Michaelis Menten: Power-Variants
+col = col.magenta; xy = c(11.5, 0.5)
 params = list(Vmax = 2, b = 1/2, n = 1/2)
+sol1 = solve.eq(MM.eq, params)
 curve(eval.Exp(x, "t", MM.eq, params), add = T, col = col[2], lwd=lwd)
 params = list(Vmax = 2, b = 1, n = 1/2)
+sol2 = solve.eq(MM.eq, params)
 curve(eval.Exp(x, "t", MM.eq, params), add = T, col = col[3], lwd=lwd)
 params = list(Vmax = 2, b = 2, n = 1/2)
+sol3 = solve.eq(MM.eq, params)
 curve(eval.Exp(x, "t", MM.eq, params), add = T, col = col[4], lwd=lwd)
+legend(xy[1], xy[2], legend = paste0("MMv", 1:3), fill = col[2:4]);
+# Vmax / 2
+abline(h = 1, col = "green", lty = 2)
+abline(v = 4, col = "green", lty = 2)
+sol = rbind(sol1, sol2, sol3)
+print(sol)
+
 
 
 ### Saturated Exponential type:
@@ -194,6 +227,32 @@ params = list(Vmax = 2, b = 1/3.5, n = 1, k = 1)
 curve(eval.Exp(x, "t", exps.eq, params), add = T, col = col[3], lwd=lwd)
 params = list(Vmax = 2, b = 1/5.5, n = 1, k = 1)
 curve(eval.Exp(x, "t", exps.eq, params), add = T, col = col[4], lwd=lwd)
+
+
+# Simple vs Extended
+curve.ref(col.blue[1])
+col = col.green;
+params = list(Vmax = 2, b = 1, n = 1, k = 1)
+curve(eval.Exp(x, "t", exps.eq, params), add = T, col = col[1], lwd=lwd)
+params = list(Vmax = 2, b = 1, n = 1/2, k = 1)
+curve(eval.Exp(x, "t", exps.eq, params), add = T, col = col[2], lwd=lwd)
+params = list(Vmax = 2, b = 1, n = 1/3, k = 1)
+curve(eval.Exp(x, "t", exps.eq, params), add = T, col = col[3], lwd=lwd)
+params = list(Vmax = 2, b = 1, n = 1/4, k = 1)
+curve(eval.Exp(x, "t", exps.eq, params), add = T, col = col[4], lwd=lwd)
+#
+col = col.magenta;
+params = list(Vmax = 2, b = 1, n = 1, k = 1)
+# curve(eval.Exp(x, "t", exps.eq, params), add = T, col = col[1], lwd=lwd)
+params = list(Vmax = 2, b = 1/2, n = 1, k = 1)
+curve(eval.Exp(x, "t", exps.eq, params), add = T, col = col[2], lwd=lwd)
+params = list(Vmax = 2, b = 1/3.5, n = 1, k = 1)
+curve(eval.Exp(x, "t", exps.eq, params), add = T, col = col[3], lwd=lwd)
+params = list(Vmax = 2, b = 1/5.5, n = 1, k = 1)
+curve(eval.Exp(x, "t", exps.eq, params), add = T, col = col[4], lwd=lwd)
+#
+col.tmp = c(col.blue[1], col.magenta[-1]);
+legend(10, 0.75, legend = c("MM1", paste0("ExpExt", 1:3)), fill = col.tmp);
 
 
 #################
