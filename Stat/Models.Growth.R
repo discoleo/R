@@ -4,7 +4,7 @@
 ##
 ## Leonard Mada
 ##
-## draft v.0.1b
+## draft v.0.1d
 
 
 ### Models:
@@ -143,10 +143,28 @@ curve.MM = function(col, b = c(1, 2/5, 2, 3), lwd = 2, legend = TRUE,
 	if(doS) sol4 = solve.eq(MM.eq, params, Vx=Vx);
 	curve(eval.Exp(x, "t", MM.eq, params), add = T, col = col[4], lwd=lwd)
 	if(legend) {
-		legend(xy.txt[1], xy.txt[2], legend = paste0("MM", 1:4), fill = col);
+		legend(xy.txt[1], xy.txt[2], legend = paste0("MM", seq_along(b)), fill = col);
 	}
 	if(doS) {
 		sol = rbind(sol1, sol2, sol3, sol4);
+		return(sol);
+	}
+}
+curve.MMextn = function(b, n, col, Vx = Vmax / 2, Vmax = 2, lwd = 2, xy.legend) {
+	params  = list(Vmax = Vmax, b = b[1], n = n[1]);
+	doSolve = (Vx != 0);
+	len = length(b);
+	sol = list();
+	for(id in seq(len)) {
+		params$b = b[id]; params$n = n[id];
+		if(doSolve) sol[[id]] = solve.eq(MM.eq, params, Vmax=Vmax, Vx=Vx);
+		curve(eval.Exp(x, "t", MM.eq, params), add = TRUE,
+			col = col[id], lwd=lwd);
+	}
+	xy = xy.legend;
+	legend(xy[1], xy[2], legend = paste0("MMv", 1:3), fill = col[2:4]);
+	if(doSolve) {
+		sol = do.call(rbind, sol);
 		return(sol);
 	}
 }
@@ -160,24 +178,16 @@ lwd = 2;
 
 
 ### Michaelis-Menten: Basic
-curve.MM(col.blue, lwd=lwd)
+Vx = 1; Vmax = 2;
+curve.MM(Vx=Vx, Vmax=Vmax, col=col.blue, lwd=lwd)
 
-# Michaelis Menten: Power-Variants
-col = col.magenta; xy = c(11.5, 0.5)
-params = list(Vmax = 2, b = 1/2, n = 1/2)
-sol1 = solve.eq(MM.eq, params)
-curve(eval.Exp(x, "t", MM.eq, params), add = T, col = col[2], lwd=lwd)
-params = list(Vmax = 2, b = 1, n = 1/2)
-sol2 = solve.eq(MM.eq, params)
-curve(eval.Exp(x, "t", MM.eq, params), add = T, col = col[3], lwd=lwd)
-params = list(Vmax = 2, b = 2, n = 1/2)
-sol3 = solve.eq(MM.eq, params)
-curve(eval.Exp(x, "t", MM.eq, params), add = T, col = col[4], lwd=lwd)
-legend(xy[1], xy[2], legend = paste0("MMv", 1:3), fill = col[2:4]);
+### Michaelis Menten: Power-Variants
+xy = c(11.5, 0.5); col = col.magenta[2:4];
+b  = c(1/2, 1, 2); n = c(1/2, 1/2, 1/2);
+sol = curve.MMextn(b=b, n=n, Vx=Vx, Vmax=Vmax, col=col, lwd=lwd, xy.legend = xy);
 # Vmax / 2
 abline(h = 1, col = "green", lty = 2)
 abline(v = 4, col = "green", lty = 2)
-sol = rbind(sol1, sol2, sol3)
 print(sol)
 
 
