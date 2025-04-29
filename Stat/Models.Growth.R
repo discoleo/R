@@ -5,7 +5,7 @@
 ##
 ## Leonard Mada
 ##
-## draft v.0.1e
+## draft v.0.1f
 
 
 ### Introduction
@@ -73,6 +73,13 @@ library(demodelr)
 library(dplyr)
 library(ggplot2)
 
+### Palette
+col.blue    = c("#0000FFC0", "#72A2FAA0", "#A888FAA0", "#88A8FAA0");
+col.magenta = c("#F000FFC0", "#F8A2A2A0", "#F864B4A0", "#F8B4FFA0");
+col.green   = c("#00FF00A0", "#90FE64A0", "#32FC90A0", "#64FC90A0");
+col.brown   = c("#F8B464A0");
+# c("#FF0000A0", "#FC2490A0", "#FC9064A0", "#FE8090A0")
+
 
 ### Eval Formulas:
 eval.Fun = function(x, nm, FUN, params) {
@@ -108,25 +115,8 @@ plot.curve = function() {
 	# TODO
 }
 
-####################
-####################
 
-#################
-
-#################
-### NLS Types ###
-#################
-
-### Palette
-col.blue    = c("#0000FFC0", "#72A2FAA0", "#A888FAA0", "#88A8FAA0");
-col.magenta = c("#F000FFC0", "#F8A2A2A0", "#F864B4A0", "#F8B4FFA0");
-col.green   = c("#00FF00A0", "#90FE64A0", "#32FC90A0", "#64FC90A0");
-col.brown   = c("#F8B464A0");
-# c("#FF0000A0", "#FC2490A0", "#FC9064A0", "#FE8090A0")
-
-
-### Michaelis-Menten type:
-# V = Vmax * t^n / (b + t^n)
+### Michaelis-Menten Models
 
 MM.eq = expression(Vmax * t^n / (b + t^n));
 
@@ -175,6 +165,17 @@ curve.MMextn = function(b, n, col, Vx = Vmax / 2, Vmax = 2, lwd = 2, xy.legend) 
 		return(sol);
 	}
 }
+
+#################
+
+#################
+### NLS Types ###
+#################
+
+### Michaelis-Menten type:
+# V = Vmax * t^n / (b + t^n)
+
+MM.eq = expression(Vmax * t^n / (b + t^n));
 
 ### Init:
 xlim = c(0, 15); ylim = c(0, 2.1);
