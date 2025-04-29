@@ -13,6 +13,7 @@
 # 3. Non-Linear Combinations of Base-types;
 # Note:
 # - does NOT cover PDEs;
+# - Combinations: fare badly when evaluated with information criteria;
 
 
 ####################
@@ -66,11 +67,15 @@ plot.curve = function() {
 # Animal models are often used to study malignant processes.
 # Experimental models are often based on mice or rats.
 # Models include spontaneous or induced tumour models,
-# transgenic tumours as well as transplanted tumours.
+# transgenic tumours as well as transplanted tumours. (Ref 1)
 
 # Measuring tumour sizes in living animals is often plagued
 # by variability and measurement errors. However, the rate of growth
 # of the tumour may impact the response to therapeutic interventions.
+
+# Measurements in living animals usually comprise some area
+# (of the tumour), while the volume is proportional to Area^1.5,
+# justifying the use of fractional exponents in various formulas.
 
 # 1) Y. Zhou et al. Experimental mouse models for translational
 #    human cancer research. Front Immunol. 2023 Mar 10;14:1095388.
@@ -154,6 +159,7 @@ curve.MMextn = function(b, n, col, Vx = Vmax / 2, Vmax = 2, lwd = 2, xy.legend) 
 	params  = list(Vmax = Vmax, b = b[1], n = n[1]);
 	doSolve = (Vx != 0);
 	len = length(b);
+	if(len == 0) return();
 	sol = list();
 	for(id in seq(len)) {
 		params$b = b[id]; params$n = n[id];
@@ -162,7 +168,7 @@ curve.MMextn = function(b, n, col, Vx = Vmax / 2, Vmax = 2, lwd = 2, xy.legend) 
 			col = col[id], lwd=lwd);
 	}
 	xy = xy.legend;
-	legend(xy[1], xy[2], legend = paste0("MMv", 1:3), fill = col[2:4]);
+	legend(xy[1], xy[2], legend = paste0("MMv", seq(len)), fill = col);
 	if(doSolve) {
 		sol = do.call(rbind, sol);
 		return(sol);
@@ -183,13 +189,22 @@ curve.MM(Vx=Vx, Vmax=Vmax, col=col.blue, lwd=lwd)
 
 ### Michaelis Menten: Power-Variants
 xy = c(11.5, 0.5); col = col.magenta[2:4];
-b  = c(1/2, 1, 2); n = c(1/2, 1/2, 1/2);
+b  = c(1/2, 1, 2); n = rep(1/2, 3);
 sol = curve.MMextn(b=b, n=n, Vx=Vx, Vmax=Vmax, col=col, lwd=lwd, xy.legend = xy);
 # Vmax / 2
 abline(h = 1, col = "green", lty = 2)
 abline(v = 4, col = "green", lty = 2)
 print(sol)
 
+
+### Note:
+# Ratio (T50 - T25) / (T75 - T50):
+# - Independent on b;
+# - Depends only on exponent n;
+# Values of Ratio:
+# - n = 1:   R =  4/3;
+# - n = 1/2: R = 10/9;
+# - n = 3/2: R = 1.48;
 
 
 ### Saturated Exponential type:
@@ -199,7 +214,7 @@ exps.eq = expression(Vmax * (1 - exp(-b*t^n))^k)
 
 curve.MM(col.blue, lwd=lwd)
 #
-col = col.green;
+xy = c(11.5, 0.5); col = col.green;
 params = list(Vmax = 2, b = 1, n = 1, k = 1)
 curve(eval.Exp(x, "t", exps.eq, params), add = T, col = col[1], lwd=lwd)
 params = list(Vmax = 2, b = 1, n = 1/2, k = 1)
@@ -209,6 +224,7 @@ params = list(Vmax = 2, b = 1/2, n = 1, k = 1)
 curve(eval.Exp(x, "t", exps.eq, params), add = T, col = col[3], lwd=lwd)
 params = list(Vmax = 2, b = 1/5, n = 1, k = 1)
 curve(eval.Exp(x, "t", exps.eq, params), add = T, col = col[4], lwd=lwd)
+legend(xy[1], xy[2], paste0("ES", rep(c("n","b"), each=2), 1:2), fill=col)
 
 
 ### Variation of n:
