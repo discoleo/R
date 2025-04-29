@@ -88,11 +88,20 @@ integrate(\(x) sapply(x, \(y)
 # TODO: more variants;
 
 
+### I( log(x)*log(y) / (1 - x*y)^3 )
+# Maths 505: A lovely surprise awaits at the end of the video
+# https://www.youtube.com/watch?v=24CCdCBF5ck
+# Series expansion of 1/(1 - x*y)^3;
+
+integrate(\(x) sapply(x, \(y) integrate(\(x) log(x)*log(y) / (1 - x*y)^3, 0, 1)$value), 0, 1)
+(pracma::zeta(2) + pracma::zeta(3)) / 2
+
+
 ### Mixed Logs
 
 ### I( log(1 - x*y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) log(1-x*y), 0, 1)$value), 0, 1)
-2 - pi^2/6
+pi^2/6 - 2
 
 ### I( log(1 + x*y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) log(1+x*y), 0, 1)$value), 0, 1)
@@ -131,6 +140,7 @@ integrate(\(x) sapply(x, \(y)
 
 ### I( log(1 - x^2*y^2) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) log(1-x^2*y^2), 0, 1)$value), 0, 1)
+pi^2/4 + 2*log(2) - 4
 
 
 ### I( log(1-x*y) / (x+y) )
