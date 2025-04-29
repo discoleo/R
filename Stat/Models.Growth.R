@@ -5,7 +5,7 @@
 ##
 ## Leonard Mada
 ##
-## draft v.0.1f
+## draft v.0.1g
 
 
 ### Introduction
@@ -244,42 +244,40 @@ curve.ExpSMix = function(b = c(1, 1, 1/2, 1/5), n = c(1, 1/2, 1, 1), k = 1,
 		labels = lbls, xy.labels = xy.labels);
 }
 
-###
+### Basic:
 curve.MM(col.blue, lwd=lwd)
 #
 xy = c(11.5, 0.5); col = col.green;
 curve.ExpSMix(Vmax = 2, col=col, xy.labels = xy)
 
 
+### Exploration: Exponent k
+curve.MM(b = 1, col.blue, lwd=lwd)
+xy1 = c(8, 0.5); xy2 = c(11.5, 0.5);
+curve.ExpSMix(Vmax = 2, col=col.green, xy.labels = xy1)
+curve.ExpSMix(Vmax = 2, col=col.magenta, xy.labels = xy2, k = 4/3)
+
+
 ### Variation of n:
 curve.MM(col.blue, lwd=lwd)
 #
-col = col.green;
-params = list(Vmax = 2, b = 1, n = 1, k = 1)
-curve(eval.Exp(x, "t", exps.eq, params), add = T, col = col[1], lwd=lwd)
-params = list(Vmax = 2, b = 1, n = 1/2, k = 1)
-curve(eval.Exp(x, "t", exps.eq, params), add = T, col = col[2], lwd=lwd)
-params = list(Vmax = 2, b = 1, n = 1/3, k = 1)
-curve(eval.Exp(x, "t", exps.eq, params), add = T, col = col[3], lwd=lwd)
-params = list(Vmax = 2, b = 1, n = 1/4, k = 1)
-curve(eval.Exp(x, "t", exps.eq, params), add = T, col = col[4], lwd=lwd)
+xy = c(11.5, 0.5); col = col.green;
+n = c(1, 1/2, 1/3, 1/4); b = rep(1, 4);
+lbls = paste0("ESn", 1:4);
+curve.ExpS(n=n, b=b, k = 1, Vmax = 2, col=col, lwd=lwd, labels = lbls, xy.labels = xy)
 
 
 ### Variation of b:
 curve.MM(col.blue, lwd=lwd)
 #
-col = col.green;
-params = list(Vmax = 2, b = 1, n = 1, k = 1)
-curve(eval.Exp(x, "t", exps.eq, params), add = T, col = col[1], lwd=lwd)
-params = list(Vmax = 2, b = 1/2, n = 1, k = 1)
-curve(eval.Exp(x, "t", exps.eq, params), add = T, col = col[2], lwd=lwd)
-params = list(Vmax = 2, b = 1/3.5, n = 1, k = 1)
-curve(eval.Exp(x, "t", exps.eq, params), add = T, col = col[3], lwd=lwd)
-params = list(Vmax = 2, b = 1/5.5, n = 1, k = 1)
-curve(eval.Exp(x, "t", exps.eq, params), add = T, col = col[4], lwd=lwd)
+xy = c(11.5, 0.5); col = col.green;
+n = rep(1, 4); b = c(1, 1/2, 1/3.5, 1/5.5);
+lbls = paste0("ESb", 1:4);
+curve.ExpS(n=n, b=b, k = 1, Vmax = 2, col=col, lwd=lwd, labels = lbls, xy.labels = xy)
 
 
-# Simple vs Extended
+
+### Simple vs Extended
 curve.ref(col.blue[1])
 col = col.green;
 params = list(Vmax = 2, b = 1, n = 1, k = 1)
