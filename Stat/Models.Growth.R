@@ -5,7 +5,7 @@
 ##
 ## Leonard Mada
 ##
-## draft v.0.1g
+## draft v.0.1h
 
 
 ### Introduction
@@ -201,13 +201,16 @@ print(sol)
 
 
 ### Note:
-# Ratio (T50 - T25) / (T75 - T50):
+# Ratios:
+#   R  = (T50 - T25) / (T75 - T50) or
+#   Rw = (T75 - T25) / (T75 - T50):
 # - Independent on b;
 # - Depends only on exponent n;
 # Values of Ratio:
-# - n = 1:   R =  4/3;
-# - n = 1/2: R = 10/9;
-# - n = 3/2: R = 1.48;
+# - n = 1:   R = 3; Rw =  4/3;
+# - n = 1/2: R = 9; Rw = 10/9;
+# - n = 3/2: R = 3^(2/3); Rw = 1.48;
+# - Conjecture: R = 3^(1/n);
 
 
 ### Saturated Exponential type:
