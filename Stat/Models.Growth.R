@@ -1,13 +1,40 @@
-########################################
+#########################
 ##
-## Mathematical Models of Tumour Growth
+## Mathematical Models
+##  of Tumour Growth
 ##
 ## Leonard Mada
 ##
-## draft v.0.1d
+## draft v.0.1e
 
 
-### Models:
+### Introduction
+
+# Animal models are often used to study malignant processes.
+# Experimental models are often based on mice or rats.
+# Models include spontaneous or induced tumour models,
+# transgenic tumours as well as transplanted tumours. (Ref 1)
+
+# Measuring tumour sizes in living animals is often plagued
+# by variability and measurement errors. However, the rate of growth
+# of the tumour may impact the response to therapeutic interventions.
+
+# Measurements in living animals usually comprise some area
+# (of the tumour), while the volume is proportional to Area^1.5,
+# justifying the use of fractional exponents in various formulas.
+
+# 1) Y. Zhou et al. Experimental mouse models for translational
+#    human cancer research. Front Immunol. 2023 Mar 10;14:1095388.
+#    https://doi.org/10.3389/fimmu.2023.1095388. PMID: 36969176;
+
+
+### Evaluation of Growth Rate
+# - T25, T50, T75: time to reach 25%, 50% or 75% of final volume;
+# - Ratios of the various Txx parameters;
+
+
+### Model Types
+
 # 1. Simple Models: NLS, ODEs;
 # 2. Linear Combinations of Base-types;
 # 3. Non-Linear Combinations of Base-types;
@@ -15,7 +42,29 @@
 # - does NOT cover PDEs;
 # - Combinations: fare badly when evaluated with information criteria;
 
+### NLS:
 
+### Michaelis-Menten type:
+# V = Vmax * t^n / (b + t^n)
+### Saturated Exponential:
+# V = Vmax * (1 - exp(-k*t))
+### Exponential Fractions:
+# V = Vmax * (1/(k + exp(- b*t)) - 1/(k + 1)) * k*(k+1);
+### Atan type:
+# V = Vmax * atan(k*x^p) * 2/pi;
+
+
+### ODE:
+
+# dVdt = k * V * (Vmax - V)
+# dVdt = a * t^p / (t^n + 1)^k
+
+### Integrals
+
+# V = a * I( x^p / (x^n + 1)^k ), x on [0, t]
+
+
+####################
 ####################
 
 ### Helper Functions
@@ -62,55 +111,6 @@ plot.curve = function() {
 ####################
 ####################
 
-### Introduction
-
-# Animal models are often used to study malignant processes.
-# Experimental models are often based on mice or rats.
-# Models include spontaneous or induced tumour models,
-# transgenic tumours as well as transplanted tumours. (Ref 1)
-
-# Measuring tumour sizes in living animals is often plagued
-# by variability and measurement errors. However, the rate of growth
-# of the tumour may impact the response to therapeutic interventions.
-
-# Measurements in living animals usually comprise some area
-# (of the tumour), while the volume is proportional to Area^1.5,
-# justifying the use of fractional exponents in various formulas.
-
-# 1) Y. Zhou et al. Experimental mouse models for translational
-#    human cancer research. Front Immunol. 2023 Mar 10;14:1095388.
-#    https://doi.org/10.3389/fimmu.2023.1095388. PMID: 36969176;
-
-
-### Evaluation of Growth Rate
-# - T25, T50, T75: time to reach 25%, 50% or 75% of final volume;
-# - Ratios of the various Txx parameters;
-
-
-### Model Types
-
-### NLS:
-
-### Michaelis-Menten type:
-# V = Vmax * t^n / (b + t^n)
-### Saturated Exponential:
-# V = Vmax * (1 - exp(-k*t))
-### Exponential Fractions:
-# V = Vmax * (1/(k + exp(- b*t)) - 1/(k + 1)) * k*(k+1);
-### Atan type:
-# V = Vmax * atan(k*x^p) * 2/pi;
-
-
-### ODE:
-
-# dVdt = k * V * (Vmax - V)
-# dVdt = a * t^p / (t^n + 1)^k
-
-### Integrals
-
-# V = a * I( x^p / (x^n + 1)^k ), x on [0, t]
-
-
 #################
 
 #################
@@ -138,6 +138,7 @@ curve.MM = function(col, b = c(1, 2/5, 2, 3), lwd = 2, legend = TRUE,
 	if(doS) sol1 = solve.eq(MM.eq, params, Vx=Vx);
 	# curve(eval.Exp(x, "t", MM.eq, params), col = col[1], xlim=xlim, ylim=ylim)
 	curve.ref(params = params, col = col[1], lwd=lwd);
+	if(length(b) == 1) return(); # Hack: Reference curve;
 	params$b = b[2];
 	if(doS) sol2 = solve.eq(MM.eq, params, Vx=Vx);
 	curve(eval.Exp(x, "t", MM.eq, params), add = T, col = col[2], lwd=lwd)
