@@ -103,6 +103,7 @@ solve.eq = function(eq, params, Vx = Vmax / 2, Vmax = 2, ..., lim = c(0, 100)) {
 }
 
 ### Plot:
+# xlim = defined globally;
 curve.ref = function(col = "#F02424E2", lwd = 2, params = NULL, Vmax = 2,
 		col.h = "#FF3224B0", xlab = "Time", ylab = "Growth") {
 	ylim = c(0, Vmax + 0.1);
@@ -279,28 +280,18 @@ curve.ExpS(n=n, b=b, k = 1, Vmax = 2, col=col, lwd=lwd, labels = lbls, xy.labels
 
 ### Simple vs Extended
 curve.ref(col.blue[1])
+xy1 = c(8, 0.5); xy2 = c(11.5, 0.5);
 col = col.green;
-params = list(Vmax = 2, b = 1, n = 1, k = 1)
-curve(eval.Exp(x, "t", exps.eq, params), add = T, col = col[1], lwd=lwd)
-params = list(Vmax = 2, b = 1, n = 1/2, k = 1)
-curve(eval.Exp(x, "t", exps.eq, params), add = T, col = col[2], lwd=lwd)
-params = list(Vmax = 2, b = 1, n = 1/3, k = 1)
-curve(eval.Exp(x, "t", exps.eq, params), add = T, col = col[3], lwd=lwd)
-params = list(Vmax = 2, b = 1, n = 1/4, k = 1)
-curve(eval.Exp(x, "t", exps.eq, params), add = T, col = col[4], lwd=lwd)
+n = 1 / c(1, 2, 3, 4); b = rep(1, 4);
+lbls = paste0("ESn", 1:4);
+curve.ExpS(n=n, b=b, k = 1, Vmax = 2, col=col, lwd=lwd, labels = lbls, xy.labels = xy1)
 #
 col = col.magenta;
-params = list(Vmax = 2, b = 1, n = 1, k = 1)
-# curve(eval.Exp(x, "t", exps.eq, params), add = T, col = col[1], lwd=lwd)
-params = list(Vmax = 2, b = 1/2, n = 1, k = 1)
-curve(eval.Exp(x, "t", exps.eq, params), add = T, col = col[2], lwd=lwd)
-params = list(Vmax = 2, b = 1/3.5, n = 1, k = 1)
-curve(eval.Exp(x, "t", exps.eq, params), add = T, col = col[3], lwd=lwd)
-params = list(Vmax = 2, b = 1/5.5, n = 1, k = 1)
-curve(eval.Exp(x, "t", exps.eq, params), add = T, col = col[4], lwd=lwd)
-#
-col.tmp = c(col.blue[1], col.magenta[-1]);
-legend(10, 0.75, legend = c("MM1", paste0("ExpExt", 1:3)), fill = col.tmp);
+b = 1 - 1 / c(12, 3, 2, 1.5); n = 2/3;
+# b = 1 / c(1.5, 2, 3.5, 5.5); n = rep(1, 4);
+# b = 1 - 1 / c(15, 4, 2.5, 1.75); n = 2/3;
+lbls = paste0("ESnb", 1:4);
+curve.ExpS(n=n, b=b, k = 1, Vmax = 2, col=col, lwd=lwd, labels = lbls, xy.labels = xy2)
 
 
 #################
