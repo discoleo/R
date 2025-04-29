@@ -202,7 +202,7 @@ print(sol)
 
 ### Note:
 # Ratios:
-#   R  = (T50 - T25) / (T75 - T50) or
+#   R  = (T75 - T50) / (T50 - T25) or
 #   Rw = (T75 - T25) / (T75 - T50):
 # - Independent on b;
 # - Depends only on exponent n;
