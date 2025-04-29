@@ -212,19 +212,41 @@ print(sol)
 
 exps.eq = expression(Vmax * (1 - exp(-b*t^n))^k)
 
+curve.ExpS = function(b, n = 1, k = 1, col, Vmax = 2, lwd = 2,
+		labels = NULL, xy.labels = NULL) {
+	len = length(b);
+	if(len == 0) return();
+	if(length(n) == 1 && len > 1) n = rep(n, len);
+	if(length(k) == 1 && len > 1) k = rep(k, len);
+	params = list(Vmax = Vmax, b = b[1], n = n[1], k = k[1]);
+	# Curves:
+	for(id in seq(len)) {
+		params$b = b[id]; params$n = n[id]; params$k = k[id];
+		curve(eval.Exp(x, "t", exps.eq, params), add = TRUE,
+			col = col[id], lwd=lwd);
+	}
+	# Legend:
+	if(! is.null(labels)) {
+		xy = xy.labels;
+		if(is.null(xy)) xy = c(11.5, Vmax / 4); # Hardcoded!
+		legend(xy[1], xy[2], labels, fill=col);
+	}
+}
+curve.ExpSMix = function(b = c(1, 1, 1/2, 1/5), n = c(1, 1/2, 1, 1), k = 1,
+		Vmax = 2, col, lwd = 2, xy.labels = c(11.5, Vmax / 4)) {
+	doLegend = ! is.null(xy.labels);
+	lbls = if(doLegend) {
+		paste0("ES", rep(c("n","b"), each=2), 1:2);
+	} else NULL;
+	curve.ExpS(b=b, n=n, k=k, Vmax=Vmax, col=col, lwd=lwd,
+		labels = lbls, xy.labels = xy.labels);
+}
+
+###
 curve.MM(col.blue, lwd=lwd)
 #
 xy = c(11.5, 0.5); col = col.green;
-params = list(Vmax = 2, b = 1, n = 1, k = 1)
-curve(eval.Exp(x, "t", exps.eq, params), add = T, col = col[1], lwd=lwd)
-params = list(Vmax = 2, b = 1, n = 1/2, k = 1)
-curve(eval.Exp(x, "t", exps.eq, params), add = T, col = col[2], lwd=lwd)
-# Param b:
-params = list(Vmax = 2, b = 1/2, n = 1, k = 1)
-curve(eval.Exp(x, "t", exps.eq, params), add = T, col = col[3], lwd=lwd)
-params = list(Vmax = 2, b = 1/5, n = 1, k = 1)
-curve(eval.Exp(x, "t", exps.eq, params), add = T, col = col[4], lwd=lwd)
-legend(xy[1], xy[2], paste0("ES", rep(c("n","b"), each=2), 1:2), fill=col)
+curve.ExpSMix(Vmax = 2, col=col, xy.labels = xy)
 
 
 ### Variation of n:
