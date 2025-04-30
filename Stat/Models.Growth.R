@@ -167,23 +167,76 @@ curve.MMextn = function(b, n, col, Vx = Vmax / 2, Vmax = 2, lwd = 2, xy.legend) 
 	}
 }
 
+
+### Saturated Exponential Models
+
+exps.eq = expression(Vmax * (1 - exp(-b*t^n))^k)
+
+curve.ExpS = function(b = 1, n = 1, k = 1,
+		Vx = Vmax / 2, Vmax = 2, col = 1, lwd = 2,
+		labels = NULL, xy.labels = NULL) {
+	len = c(length(b), length(n), length(k));
+	if(any(len == 0)) return();
+	len = max(len);
+	# Params:
+	if(length(b) == 1 && len > 1) b = rep(b, len);
+	if(length(n) == 1 && len > 1) n = rep(n, len);
+	if(length(k) == 1 && len > 1) k = rep(k, len);
+	params = list(Vmax = Vmax, b = b[1], n = n[1], k = k[1]);
+	sol    = list();
+	if(length(col) == 1 && len > 1) col = rep(col, len);
+	doSolve = (Vx != 0);
+	# Curves:
+	for(id in seq(len)) {
+		params$b = b[id]; params$n = n[id]; params$k = k[id];
+		curve(eval.Exp(x, "t", exps.eq, params), add = TRUE,
+			col = col[id], lwd=lwd);
+		if(doSolve) sol[[id]] = solve.eq(exps.eq, params, Vmax=Vmax, Vx=Vx);
+	}
+	# Legend:
+	if(! is.null(labels)) {
+		xy = xy.labels;
+		if(is.null(xy)) xy = c(11.5, Vmax / 4); # Hardcoded!
+		legend(xy[1], xy[2], labels, fill=col);
+	}
+	if(doSolve) {
+		sol = do.call(rbind, sol);
+		return(sol);
+	}
+}
+
+# Mix of various Saturated Exponentials
+curve.ExpSMix = function(b = c(1, 1, 1/2, 1/5), n = c(1, 1/2, 1, 1), k = 1,
+		Vx = Vmax / 2, Vmax = 2, col = 1, lwd = 2,
+		xy.labels = c(11.5, Vmax / 4)) {
+	doLegend = ! is.null(xy.labels);
+	lbls = if(doLegend) {
+		paste0("ES", rep(c("n","b"), each=2), 1:2);
+	} else NULL;
+	curve.ExpS(b=b, n=n, k=k, Vx=Vx, Vmax=Vmax, col=col, lwd=lwd,
+		labels = lbls, xy.labels = xy.labels);
+}
+
 #################
 
 #################
 ### NLS Types ###
 #################
 
+### Init:
+xlim = c(0, 15); ylim = c(0, 2.1);
+lwd  = 2;
+
+
 ### Michaelis-Menten type:
 # V = Vmax * t^n / (b + t^n)
 
 MM.eq = expression(Vmax * t^n / (b + t^n));
 
-### Init:
+### Alternative Init:
 xlim = c(0, 15); ylim = c(0, 2.1);
 # xlim = c(0, 100);  ylim = c(0, 2.1);
 # xlim = c(0, 1000); ylim = c(0, 2.1);
-#
-lwd = 2;
 
 
 ### Michaelis-Menten: Basic
@@ -218,48 +271,6 @@ print(sol)
 
 exps.eq = expression(Vmax * (1 - exp(-b*t^n))^k)
 
-curve.ExpS = function(b = 1, n = 1, k = 1, col = 1,
-		Vx = Vmax / 2, Vmax = 2,
-		lwd = 2, labels = NULL, xy.labels = NULL) {
-	len = c(length(b), length(n), length(k));
-	if(any(len == 0)) return();
-	len = max(len);
-	# Params:
-	if(length(b) == 1 && len > 1) b = rep(b, len);
-	if(length(n) == 1 && len > 1) n = rep(n, len);
-	if(length(k) == 1 && len > 1) k = rep(k, len);
-	params = list(Vmax = Vmax, b = b[1], n = n[1], k = k[1]);
-	sol    = list();
-	if(length(col) == 1 && len > 1) col = rep(col, len);
-	doSolve = (Vx != 0);
-	# Curves:
-	for(id in seq(len)) {
-		params$b = b[id]; params$n = n[id]; params$k = k[id];
-		curve(eval.Exp(x, "t", exps.eq, params), add = TRUE,
-			col = col[id], lwd=lwd);
-		if(doSolve) sol[[id]] = solve.eq(exps.eq, params, Vmax=Vmax, Vx=Vx);
-	}
-	# Legend:
-	if(! is.null(labels)) {
-		xy = xy.labels;
-		if(is.null(xy)) xy = c(11.5, Vmax / 4); # Hardcoded!
-		legend(xy[1], xy[2], labels, fill=col);
-	}
-	if(doSolve) {
-		sol = do.call(rbind, sol);
-		return(sol);
-	}
-}
-curve.ExpSMix = function(b = c(1, 1, 1/2, 1/5), n = c(1, 1/2, 1, 1), k = 1,
-		Vx = Vmax / 2, Vmax = 2, col = 1, lwd = 2,
-		xy.labels = c(11.5, Vmax / 4)) {
-	doLegend = ! is.null(xy.labels);
-	lbls = if(doLegend) {
-		paste0("ES", rep(c("n","b"), each=2), 1:2);
-	} else NULL;
-	curve.ExpS(b=b, n=n, k=k, Vx=Vx, Vmax=Vmax, col=col, lwd=lwd,
-		labels = lbls, xy.labels = xy.labels);
-}
 
 ### Basic:
 curve.MM(col.blue, lwd=lwd)
@@ -269,7 +280,7 @@ curve.ExpSMix(Vmax = 2, col=col, xy.labels = xy)
 
 
 ### Exploration: Exponent k
-# Magenta curve approaches green curve as times progresses;
+# Magenta curve approaches green curve as time progresses;
 curve.MM(b = 1, col.blue, lwd=lwd)
 xy1 = c(8, 0.5); xy2 = c(11.5, 0.5);
 curve.ExpSMix(Vmax = 2, col=col.green, xy.labels = xy1)
@@ -308,7 +319,7 @@ curve.ExpS(n=n, b=b, k = 1, Vmax = 2, col=col, lwd=lwd, labels = lbls, xy.labels
 
 
 ### Power vs Extended (2)
-# Note: not matched;
+# Note: curves are not matched;
 curve.ref(col.blue[1])
 xy1 = c(8, 0.5); xy2 = c(11.5, 0.5);
 col = col.green;
