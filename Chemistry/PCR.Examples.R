@@ -9,9 +9,13 @@ Tm.nnSeq(strsplit("AAAAACCCCCGGGGGTTTTT", "", fixed=TRUE)[[1]])
 ### Example 2:
 Tm("AAAACCCCGGGGTTTT")
 
+
 ### Various Tm: 4 G, 4 C, 4 A, 4 T
+nn = rep(c("A","T","G","C"), c(4,4,4,4))
 r = find.simTm(nn, 55, iter = 10000, tol = 0.02)
+print(r); print(Tm.nnSeq(r));
 r = find.simTm(nn, 40, iter = 10000, tol = 0.1)
+print(r); print(Tm.nnSeq(r));
 
 Tm("AAAACCCCGGGGTTTT") # 61.5 C
 Tm("TGGCATGCTTCCAGAA") # 60 C
