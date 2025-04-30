@@ -5,7 +5,7 @@
 ##
 ## Leonard Mada
 ##
-## draft v.0.1h
+## draft v.0.1i
 
 
 ### Introduction
@@ -218,18 +218,20 @@ print(sol)
 
 exps.eq = expression(Vmax * (1 - exp(-b*t^n))^k)
 
-curve.ExpS = function(b, n = 1, k = 1, col = 1,
+curve.ExpS = function(b = 1, n = 1, k = 1, col = 1,
 		Vx = Vmax / 2, Vmax = 2,
 		lwd = 2, labels = NULL, xy.labels = NULL) {
-	len = length(b);
-	if(len == 0) return();
-	doSolve = (Vx != 0);
-	if(length(col) == 1 && len > 1) col = rep(col, len);
+	len = c(length(b), length(n), length(k));
+	if(any(len == 0)) return();
+	len = max(len);
 	# Params:
+	if(length(b) == 1 && len > 1) b = rep(b, len);
 	if(length(n) == 1 && len > 1) n = rep(n, len);
 	if(length(k) == 1 && len > 1) k = rep(k, len);
 	params = list(Vmax = Vmax, b = b[1], n = n[1], k = k[1]);
 	sol    = list();
+	if(length(col) == 1 && len > 1) col = rep(col, len);
+	doSolve = (Vx != 0);
 	# Curves:
 	for(id in seq(len)) {
 		params$b = b[id]; params$n = n[id]; params$k = k[id];
@@ -267,10 +269,12 @@ curve.ExpSMix(Vmax = 2, col=col, xy.labels = xy)
 
 
 ### Exploration: Exponent k
+# Magenta curve approaches green curve as times progresses;
 curve.MM(b = 1, col.blue, lwd=lwd)
 xy1 = c(8, 0.5); xy2 = c(11.5, 0.5);
 curve.ExpSMix(Vmax = 2, col=col.green, xy.labels = xy1)
 curve.ExpSMix(Vmax = 2, col=col.magenta, xy.labels = xy2, k = 4/3)
+text(xy2[1] + 0.5, xy[2] + 0.05, "k = 4/3", col = col.magenta[1], adj = c(0, 0))
 
 
 ### Variation of n:
@@ -291,8 +295,20 @@ lbls = paste0("ESb", 1:4);
 curve.ExpS(n=n, b=b, k = 1, Vmax = 2, col=col, lwd=lwd, labels = lbls, xy.labels = xy)
 
 
+### Power vs Extended
+# Green & Magenta curves separate much later;
+curve.ref(col.blue[1])
+xy1 = c(8, 0.5); xy2 = c(11.5, 0.5);
+col = col.green; lbls = paste0("ESb", 1:4);
+b = 1 / c(1.5, 2, 3.5, 5.5); n = rep(1, 4);
+curve.ExpS(n=n, b=b, k = 1, Vmax = 2, col=col, lwd=lwd, labels = lbls, xy.labels = xy1)
+col = col.magenta; lbls = paste0("ESnb", 1:4);
+b = 1 / c(1.5, 2, 3.5, 5.5); n = 10/11;
+curve.ExpS(n=n, b=b, k = 1, Vmax = 2, col=col, lwd=lwd, labels = lbls, xy.labels = xy2)
 
-### Simple vs Extended
+
+### Power vs Extended (2)
+# Note: not matched;
 curve.ref(col.blue[1])
 xy1 = c(8, 0.5); xy2 = c(11.5, 0.5);
 col = col.green;
@@ -302,8 +318,8 @@ curve.ExpS(n=n, b=b, k = 1, Vmax = 2, col=col, lwd=lwd, labels = lbls, xy.labels
 #
 col = col.magenta;
 b = 1 - 1 / c(12, 3, 2, 1.5); n = 2/3;
-# b = 1 / c(1.5, 2, 3.5, 5.5); n = rep(1, 4);
 # b = 1 - 1 / c(15, 4, 2.5, 1.75); n = 2/3;
+# n = 1 / c(1, 2, 3, 4); b = rep(1, 4);
 lbls = paste0("ESnb", 1:4);
 curve.ExpS(n=n, b=b, k = 1, Vmax = 2, col=col, lwd=lwd, labels = lbls, xy.labels = xy2)
 
