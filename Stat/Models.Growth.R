@@ -5,7 +5,7 @@
 ##
 ## Leonard Mada
 ##
-## draft v.0.1j
+## draft v.0.1k
 
 
 ### Introduction
@@ -155,9 +155,9 @@ curve.MMextn = function(b, n, col, Vx = Vmax / 2, Vmax = 2, lwd = 2, xy.legend) 
 	sol = list();
 	for(id in seq(len)) {
 		params$b = b[id]; params$n = n[id];
-		if(doSolve) sol[[id]] = solve.eq(MM.eq, params, Vmax=Vmax, Vx=Vx);
 		curve(eval.Exp(x, "t", MM.eq, params), add = TRUE,
 			col = col[id], lwd=lwd);
+		if(doSolve) sol[[id]] = solve.eq(MM.eq, params, Vmax=Vmax, Vx=Vx);
 	}
 	xy = xy.legend;
 	legend(xy[1], xy[2], legend = paste0("MMv", seq(len)), fill = col);
@@ -311,7 +311,7 @@ lbls = paste0("ESb", 1:4);
 curve.ExpS(n=n, b=b, k = 1, Vmax = 2, col=col, lwd=lwd, labels = lbls, xy.labels = xy)
 
 
-### Power vs Extended
+### Simple vs Power
 # Green & Magenta curves separate much later;
 curve.ref(col.blue[1])
 xy1 = c(8, 0.5); xy2 = c(11.5, 0.5);
@@ -351,6 +351,76 @@ curve.ExpS(n=n, b=b, k = 1, Vmax = 2, col=col, lwd=lwd, labels = lbls, xy.labels
 # - n = 1/2: R = 3*log(2)^2 / (log(2)^2 - log(4/3)^2); # 3.62
 # - n = 3/2: # R = 1.32;
 #   R = log(2)^(2/3) * (2^(2/3) - 1) / (log(2)^(2/3) - log(4/3)^(2/3));
+
+
+#################
+### ATAN Type ###
+
+# V = Vmax * (atan(b * t^n) * 2/pi)^k
+
+atan.eq = expression(Vmax * atan(b * t^n) * 2/pi)
+
+curve.Atan = function(b = 1, n = 1, k = 1,
+		Vx = Vmax / 2, Vmax = 2,
+		col = 1, lwd = 2, labels = NULL, xy.labels = NULL) {
+	len = c(length(b), length(n), length(k));
+	if(any(len == 0)) return();
+	len = max(len);
+	# Params:
+	if(length(b) == 1 && len > 1) b = rep(b, len);
+	if(length(n) == 1 && len > 1) n = rep(n, len);
+	if(length(k) == 1 && len > 1) k = rep(k, len);
+	params = list(Vmax=Vmax, b = b[1], n = n[1], k = k[1]);
+	sol    = list();
+	if(length(col) == 1 && len > 1) col = rep(col, len);
+	doSolve = (Vx != 0);
+	for(id in seq(len)) {
+		params$b = b[id]; params$n = n[id]; params$k = k[id];
+		curve(eval.Exp(x, "t", atan.eq, params), add = TRUE,
+			col = col[id], lwd=lwd);
+		if(doSolve) sol[[id]] = solve.eq(atan.eq, params, Vmax=Vmax, Vx=Vx);
+	}
+	# Legend:
+	if(! is.null(xy.labels)) {
+		if(is.null(labels)) {
+			labels = paste0("AT", seq(len));
+		}
+		xy = xy.labels;
+		legend(xy[1], xy[2], labels, fill=col);
+	}
+	if(doSolve) {
+		sol = do.call(rbind, sol);
+		return(sol);
+	}
+}
+
+### Basic:
+curve.MM(col.blue, lwd=lwd)
+#
+xy = c(11.5, 0.5); col = col.green;
+b  = c(2, 1, 1/2, 1/3);
+curve.Atan(b=b, Vmax = 2, col=col, xy.labels = xy)
+
+
+### Variation of n:
+curve.MM(col.blue, lwd=lwd)
+#
+xy = c(11.5, 0.5); col = col.green;
+n  = c(2, 1, 1/2, 1/3); b = 1;
+curve.Atan(b=b, n=n, Vmax = 2, col=col, xy.labels = xy)
+# all curves pass through (1,1) (when b = 1);
+
+
+### Simple vs Power
+# Green & Magenta curves separate after some delay;
+curve.ref(col.blue[1])
+xy1 = c(8, 0.5); xy2 = c(11.5, 0.5);
+col = col.green; lbls = paste0("ATb", 1:4);
+b = 1 / c(0.75, 1, 2, 3); n = 1;
+curve.Atan(n=n, b=b, k = 1, Vmax = 2, col=col, lwd=lwd, labels = lbls, xy.labels = xy1)
+col = col.magenta; lbls = paste0("ATnb", 1:4);
+n = 5/7; # n = 4/5; # overlap with MM;
+curve.Atan(n=n, b=b, k = 1, Vmax = 2, col=col, lwd=lwd, labels = lbls, xy.labels = xy2)
 
 
 #################
