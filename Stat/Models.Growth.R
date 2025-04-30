@@ -5,7 +5,7 @@
 ##
 ## Leonard Mada
 ##
-## draft v.0.1i
+## draft v.0.1j
 
 
 ### Introduction
@@ -231,6 +231,9 @@ lwd  = 2;
 ### Michaelis-Menten type:
 # V = Vmax * t^n / (b + t^n)
 
+# Fully Generalized Equation:
+# V = Vmax * t^(n*k) / (b + t^n)^k
+
 MM.eq = expression(Vmax * t^n / (b + t^n));
 
 ### Alternative Init:
@@ -258,7 +261,7 @@ print(sol)
 #   R  = (T75 - T50) / (T50 - T25) or
 #   Rw = (T75 - T25) / (T75 - T50):
 # - Independent on b;
-# - Depends only on exponent n;
+# - Depend only on exponent n;
 # Values of Ratio:
 # - n = 1:   R = 3; Rw =  4/3;
 # - n = 1/2: R = 9; Rw = 10/9;
@@ -266,7 +269,9 @@ print(sol)
 # - Conjecture: R = 3^(1/n);
 
 
-### Saturated Exponential type:
+#########################
+
+### Saturated Exponential
 # V = Vmax * (1 - exp(-b*t^n)^k)
 
 exps.eq = expression(Vmax * (1 - exp(-b*t^n))^k)
@@ -333,6 +338,19 @@ b = 1 - 1 / c(12, 3, 2, 1.5); n = 2/3;
 # n = 1 / c(1, 2, 3, 4); b = rep(1, 4);
 lbls = paste0("ESnb", 1:4);
 curve.ExpS(n=n, b=b, k = 1, Vmax = 2, col=col, lwd=lwd, labels = lbls, xy.labels = xy2)
+
+
+### Note:
+# Ratios:
+#   R  = (T75 - T50) / (T50 - T25) or
+#   Rw = (T75 - T25) / (T75 - T50):
+# - Independent on b;
+# - Depend only on exponent n;
+# Values of Ratio:
+# - n = 1:   R = log(2) / (log(3) - log(2)); # 1.70
+# - n = 1/2: R = 3*log(2)^2 / (log(2)^2 - log(4/3)^2); # 3.62
+# - n = 3/2: # R = 1.32;
+#   R = log(2)^(2/3) * (2^(2/3) - 1) / (log(2)^(2/3) - log(4/3)^(2/3));
 
 
 #################
