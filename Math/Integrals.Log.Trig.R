@@ -924,6 +924,11 @@ integrate(\(x) - log(x) * log(x^2+1) / (x^2+1), 0, 1)$value +
 
 ####################
 
+### I( log(sin(x)) / sin(x) )
+integrate(\(x) log(sin(x)) / sin(x) - log(x)/x, 0, pi/2)
+- pi^2/24 + log(2)^2/2 - log(pi/2)^2/2;
+
+
 ### I( log(cos(x)) / cos(x) )
 integrate(\(x) log(cos(x)) / cos(x), 0, pi/4)
 integrate(\(x) 1/2 * log(1-x^2) / (1-x^2), 0, sqrt(2)/2)
@@ -951,6 +956,7 @@ z = 1/2 - sqrt(2)/4;
 pi^2/12 + log(2)^2/2 - pracma::polylog(z, 2) +
 	- log(1/2-sqrt(2)/4) * log(1/2+sqrt(2)/4);
 polylog2(1/2 + sqrt(2)/4, 2) - pi^2/12 + log(2)^2/2;
+
 
 ####################
 ####################
