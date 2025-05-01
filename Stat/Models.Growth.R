@@ -5,7 +5,7 @@
 ##
 ## Leonard Mada
 ##
-## draft v.0.1k
+## draft v.0.1m
 
 
 ### Introduction
@@ -122,10 +122,10 @@ plot.curve = function() {
 MM.eq = expression(Vmax * t^n / (b + t^n));
 
 # Vx = solve V - Vx == 0;
-curve.MM = function(col, b = c(1, 2/5, 2, 3), lwd = 2, legend = TRUE,
+curve.MM = function(col, b = c(1, 2/5, 2, 3), n = 1, lwd = 2, legend = TRUE,
 		Vmax = 2, Vx = Vmax / 2, xy.txt = c(8, 0.5)) {
 	doS = (Vx != 0);
-	params = list(Vmax = Vmax, b = b[1], n = 1);
+	params = list(Vmax = Vmax, b = b[1], n = n[1]);
 	if(doS) sol1 = solve.eq(MM.eq, params, Vx=Vx);
 	# curve(eval.Exp(x, "t", MM.eq, params), col = col[1], xlim=xlim, ylim=ylim)
 	curve.ref(params = params, col = col[1], lwd=lwd);
@@ -217,6 +217,46 @@ curve.ExpSMix = function(b = c(1, 1, 1/2, 1/5), n = c(1, 1/2, 1, 1), k = 1,
 		labels = lbls, xy.labels = xy.labels);
 }
 
+
+### ATAN Model
+
+atan.eq = expression(Vmax * (atan(b * t^n) * 2/pi)^k)
+
+curve.Atan = function(b = 1, n = 1, k = 1,
+		Vx = Vmax / 2, Vmax = 2,
+		col = 1, lwd = 2, labels = NULL, xy.labels = NULL) {
+	len = c(length(b), length(n), length(k));
+	if(any(len == 0)) return();
+	len = max(len);
+	# Params:
+	if(length(b) == 1 && len > 1) b = rep(b, len);
+	if(length(n) == 1 && len > 1) n = rep(n, len);
+	if(length(k) == 1 && len > 1) k = rep(k, len);
+	params = list(Vmax=Vmax, b = b[1], n = n[1], k = k[1]);
+	sol    = list();
+	if(length(col) == 1 && len > 1) col = rep(col, len);
+	doSolve = (Vx != 0);
+	for(id in seq(len)) {
+		params$b = b[id]; params$n = n[id]; params$k = k[id];
+		curve(eval.Exp(x, "t", atan.eq, params), add = TRUE,
+			col = col[id], lwd=lwd);
+		if(doSolve) sol[[id]] = solve.eq(atan.eq, params, Vmax=Vmax, Vx=Vx);
+	}
+	# Legend:
+	if(! is.null(xy.labels)) {
+		if(is.null(labels)) {
+			labels = paste0("AT", seq(len));
+		}
+		xy = xy.labels;
+		legend(xy[1], xy[2], labels, fill=col);
+	}
+	if(doSolve) {
+		sol = do.call(rbind, sol);
+		return(sol);
+	}
+}
+
+
 #################
 
 #################
@@ -278,7 +318,7 @@ exps.eq = expression(Vmax * (1 - exp(-b*t^n))^k)
 
 
 ### Basic:
-curve.MM(col.blue, lwd=lwd)
+curve.MM(col=col.blue, lwd=lwd)
 #
 xy = c(11.5, 0.5); col = col.green;
 curve.ExpSMix(Vmax = 2, col=col, xy.labels = xy)
@@ -294,7 +334,7 @@ text(xy2[1] + 0.5, xy[2] + 0.05, "k = 4/3", col = col.magenta[1], adj = c(0, 0))
 
 
 ### Variation of n:
-curve.MM(col.blue, lwd=lwd)
+curve.MM(col=col.blue, lwd=lwd)
 #
 xy = c(11.5, 0.5); col = col.green;
 n = c(1, 1/2, 1/3, 1/4); b = rep(1, 4);
@@ -303,7 +343,7 @@ curve.ExpS(n=n, b=b, k = 1, Vmax = 2, col=col, lwd=lwd, labels = lbls, xy.labels
 
 
 ### Variation of b:
-curve.MM(col.blue, lwd=lwd)
+curve.MM(col=col.blue, lwd=lwd)
 #
 xy = c(11.5, 0.5); col = col.green;
 n = rep(1, 4); b = c(1, 1/2, 1/3.5, 1/5.5);
@@ -313,7 +353,7 @@ curve.ExpS(n=n, b=b, k = 1, Vmax = 2, col=col, lwd=lwd, labels = lbls, xy.labels
 
 ### Simple vs Power
 # Green & Magenta curves separate much later;
-curve.ref(col.blue[1])
+curve.ref(col=col.blue[1])
 xy1 = c(8, 0.5); xy2 = c(11.5, 0.5);
 col = col.green; lbls = paste0("ESb", 1:4);
 b = 1 / c(1.5, 2, 3.5, 5.5); n = rep(1, 4);
@@ -325,7 +365,7 @@ curve.ExpS(n=n, b=b, k = 1, Vmax = 2, col=col, lwd=lwd, labels = lbls, xy.labels
 
 ### Power vs Extended (2)
 # Note: curves are not matched;
-curve.ref(col.blue[1])
+curve.ref(col=col.blue[1])
 xy1 = c(8, 0.5); xy2 = c(11.5, 0.5);
 col = col.green;
 n = 1 / c(1, 2, 3, 4); b = rep(1, 4);
@@ -358,48 +398,20 @@ curve.ExpS(n=n, b=b, k = 1, Vmax = 2, col=col, lwd=lwd, labels = lbls, xy.labels
 
 # V = Vmax * (atan(b * t^n) * 2/pi)^k
 
-atan.eq = expression(Vmax * atan(b * t^n) * 2/pi)
+atan.eq = expression(Vmax * (atan(b * t^n) * 2/pi)^k)
 
-curve.Atan = function(b = 1, n = 1, k = 1,
-		Vx = Vmax / 2, Vmax = 2,
-		col = 1, lwd = 2, labels = NULL, xy.labels = NULL) {
-	len = c(length(b), length(n), length(k));
-	if(any(len == 0)) return();
-	len = max(len);
-	# Params:
-	if(length(b) == 1 && len > 1) b = rep(b, len);
-	if(length(n) == 1 && len > 1) n = rep(n, len);
-	if(length(k) == 1 && len > 1) k = rep(k, len);
-	params = list(Vmax=Vmax, b = b[1], n = n[1], k = k[1]);
-	sol    = list();
-	if(length(col) == 1 && len > 1) col = rep(col, len);
-	doSolve = (Vx != 0);
-	for(id in seq(len)) {
-		params$b = b[id]; params$n = n[id]; params$k = k[id];
-		curve(eval.Exp(x, "t", atan.eq, params), add = TRUE,
-			col = col[id], lwd=lwd);
-		if(doSolve) sol[[id]] = solve.eq(atan.eq, params, Vmax=Vmax, Vx=Vx);
-	}
-	# Legend:
-	if(! is.null(xy.labels)) {
-		if(is.null(labels)) {
-			labels = paste0("AT", seq(len));
-		}
-		xy = xy.labels;
-		legend(xy[1], xy[2], labels, fill=col);
-	}
-	if(doSolve) {
-		sol = do.call(rbind, sol);
-		return(sol);
-	}
-}
 
 ### Basic:
-curve.MM(col.blue, lwd=lwd)
+Vx = 1; n = 1;
+curve.MM(col.blue, lwd=lwd, Vx=Vx)
 #
 xy = c(11.5, 0.5); col = col.green;
 b  = c(2, 1, 1/2, 1/3);
-curve.Atan(b=b, Vmax = 2, col=col, xy.labels = xy)
+curve.Atan(b=b, n=n, Vx=Vx, Vmax = 2, col=col, xy.labels = xy)
+
+# Note:
+# - Atan resembles MM for a significant period of time;
+# - MM saturates slightly faster (but only later);
 
 
 ### Variation of n:
@@ -421,6 +433,19 @@ curve.Atan(n=n, b=b, k = 1, Vmax = 2, col=col, lwd=lwd, labels = lbls, xy.labels
 col = col.magenta; lbls = paste0("ATnb", 1:4);
 n = 5/7; # n = 4/5; # overlap with MM;
 curve.Atan(n=n, b=b, k = 1, Vmax = 2, col=col, lwd=lwd, labels = lbls, xy.labels = xy2)
+
+
+### Note:
+# Ratios:
+#   R  = (T75 - T50) / (T50 - T25) or
+#   Rw = (T75 - T25) / (T75 - T50):
+# - Independent on b;
+# - Depend only on exponent n;
+# Values of Ratio:
+# - n = 1:   R = sqrt(2) + 1;
+#            (tan(3*pi/8) - 1) / (1 - tan(pi/8));
+# - n = 0.5: R = tan(3*pi/8)^2;
+#            (tan(3*pi/8)^2 - 1) / (1 - tan(pi/8)^2);
 
 
 #################
