@@ -231,6 +231,18 @@ integrate(FUN, 0, 1/2 - eps, rel.tol=1E-9)$value +
 integrate(FUN, 1/2 + eps, 1, rel.tol=1E-9)$value;
 
 
+##################
+
+### I( log(zeta(x) / zeta(1-x)) )
+# Math 505: A mathematical treat
+# https://www.youtube.com/watch?v=N2J0kmQ0xSc
+# Reflection of zeta => ...;
+
+integrate(\(x) log(pracma::zeta(x) / pracma::zeta(1-x)), 0, 1/2)
+integrate(\(x) x*log(2) + (x-1)*log(pi) + log(sin(pi*x/2) * gamma(1-x)), 0, 1/2)
+- (log(pi)/8 + Catalan/pi + 3/2*log(A) + log(2)/12);
+
+
 ##############
 ##############
 
