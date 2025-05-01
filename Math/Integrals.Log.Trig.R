@@ -20,6 +20,11 @@ Catalan = 0.915965594177219015054603514;
 
 ### I( log(sin(x)) ) on various intervals
 
+# Clausen Function:
+# - see section: Relation to the polygamma function
+# https://en.wikipedia.org/wiki/Clausen_function
+
+
 # Maths 505: A MONSTER INTEGRAL!!!
 # int from 0 to infty arctan(x)/(x(x+1)(x^2+1))
 # https://www.youtube.com/watch?v=u-FKjn_83l8
@@ -916,6 +921,36 @@ integrate(\(x) - log(x) * log(x^2+1) / (x^2+1), 0, 1)$value +
 
 # TODO: ?
 
+
+####################
+
+### I( log(cos(x)) / cos(x) )
+integrate(\(x) log(cos(x)) / cos(x), 0, pi/4)
+integrate(\(x) 1/2 * log(1-x^2) / (1-x^2), 0, sqrt(2)/2)
+z = 1/2 - sqrt(2)/4;
+1/2 * pracma::polylog(z, 2) - 1/4 * log(z)^2 - log(2)*log(z) +
+	- pi^2/24 - 3/8*log(2)^2;
+
+### Helper:
+
+### I( log(1-x) / (1-x^2) )
+integrate(\(x) log(1-x) / (1-x^2), 0, sqrt(2)/2)
+z = 1/2 - sqrt(2)/4; # alternative: using w = 1/2 + sqrt(2)/4;
+pracma::polylog(z, 2) / 2 - 3/4 * log(z)^2 - 5/2*log(2)*log(z) +
+	- pi^2/24 - 3/2*log(2)^2;
+
+### I( log(1+x) / (1-x^2) )
+integrate(\(x) log(1+x) / (1-x^2), 0, sqrt(2)/2)
+z = 1/2 - sqrt(2)/4;
+pracma::polylog(z, 2)/2 + 1/4*log(z)^2 + log(2)*log(z)/2 - pi^2/24 + 3/4*log(2)^2;
+
+
+###
+integrate(\(x) log(x) / (1-x), 1/2, 1/2-sqrt(2)/4)
+z = 1/2 - sqrt(2)/4;
+pi^2/12 + log(2)^2/2 - pracma::polylog(z, 2) +
+	- log(1/2-sqrt(2)/4) * log(1/2+sqrt(2)/4);
+polylog2(1/2 + sqrt(2)/4, 2) - pi^2/12 + log(2)^2/2;
 
 ####################
 ####################
