@@ -30,6 +30,15 @@ integrate(\(x) x^p * log(x) * atan(x), 0, 1)
 (pracma::psi(1, (p+2)/4) - pracma::psi(1, p/4 + 1)) / (16*(p+1)) +
 	- (digamma((p+2)/4) - digamma(p/4 + 1) + pi) / (4*(p+1)^2);
 
+
+### I( x^p * log(x)^2 * atan(x) )
+p = sqrt(3)
+integrate(\(x) x^p * log(x)^2 * atan(x), 0, 1)
+(pracma::psi(2, (p+2)/4) - pracma::psi(2, p/4 + 1)) / (64*(p+1)) +
+	- (pracma::psi(1, (p+2)/4) - pracma::psi(1, p/4 + 1)) / (8*(p+1)^2) +
+	+ (digamma((p+2)/4) - digamma(p/4 + 1) + pi) / (2*(p+1)^3);
+
+
 ### Example:
 integrate(\(x) log(x) * atan(x), 0, 1)
 pi^2 / 48 - pi/4 + log(2)/2
