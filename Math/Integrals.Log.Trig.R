@@ -666,6 +666,11 @@ log(1i/2) / 2 - 1i/3 + zeta(3)/4 + 1i/2 * Li2(exp(2i)) - Li3(exp(2i))/4
 # - polylog2: implement polylog( COMPLEX );
 # - alternative formula;
 
+log(1i/2) / 2 - 1i/3 + integrate(\(x) x * Re(log(1 - exp(2i*x))), 0, 1)$value;
+log(1i/2) / 2 - 1i/3 + 1/2 * Re(log(1 - exp(2i))) +
+	- integrate(\(x) x^2 * Im(1 / (1 - exp(2i*x))), 0, 1)$value;
+# TODO
+
 
 ###################
 ###################
@@ -1112,4 +1117,16 @@ integrate(\(x) log(b*cos(x)) / (x^2 + log(b*cos(x))^2), 0, pi/2)
 
 integrate(\(x) cos(2*x) / (log(tan(x)) * cos(x)^4), 0, pi/4)
 - log(3)
+
+
+### I( log(1 - tan(x)) / tan(x) )
+# Maths 505: ONE BALLER INTEGRAL: int(0, π/4) ln(1-tan(θ))/tan(θ)
+# https://www.youtube.com/watch?v=mqJYMoABUZs
+
+###
+integrate(\(x) log(1 - tan(x)) / tan(x), 0, pi/4)
+integrate(\(x) 1/x * log(1 - x) / (1 + x^2), 0, 1)
+integrate(\(x) log(1 - x) / x -  log(1 - x) * x / (1 + x^2), 0, 1)
+integrate(\(x) - pi^2/6 -  log(1 - x) * x / (1 + x^2), 0, 1)
+-11/96 * pi^2 - log(2)^2 / 8
 
