@@ -1130,3 +1130,9 @@ integrate(\(x) log(1 - x) / x -  log(1 - x) * x / (1 + x^2), 0, 1)
 integrate(\(x) - pi^2/6 -  log(1 - x) * x / (1 + x^2), 0, 1)
 -11/96 * pi^2 - log(2)^2 / 8
 
+
+### I( log(tan(x) - 1) / tan(x) ) on [pi/4, pi/2]
+integrate(\(x) log(abs(1 - tan(x))) / tan(x), pi/4, pi/2)
+Re(log(1-1i)^2) / 2;
+log(2)^2/8 - pi^2/32
+
