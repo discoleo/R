@@ -355,6 +355,26 @@ integrate(\(x) 1 / (cosh(k*x) + cos(phi)), 0, Inf)
 phi / (k*sin(phi))
 
 
+############
+
+# for Base-Integrals: see Integrals.Exp.R;
+
+### I( x^p * (cos(x) - exp(-k*x)) / (cosh(k*x) - cos(x)) )
+p = sqrt(5); k = sqrt(3);
+integrate(\(x) x^p * (cos(x) - exp(-k*x)) / (cosh(k*x) - cos(x)), 0, Inf)
+gamma(p + 1) * pracma::zeta(p + 1) * (1/(k+1i)^(p+1) + 1/(k-1i)^(p+1))
+
+###
+m = 3;
+integrate(\(x) x^p * (cos(m*x) - exp(-k*x)) / (cosh(k*x) - cos(m*x)), 0, Inf)
+gamma(p + 1) * pracma::zeta(p + 1) * (1/(k+1i*m)^(p+1) + 1/(k-1i*m)^(p+1))
+
+### I( x^p * sin(m*x) / (cosh(k*x) - cos(m*x)) )
+m = exp(1);
+integrate(\(x) x^p * sin(m*x) / (cosh(k*x) - cos(m*x)), 0, Inf)
+-2 * gamma(p + 1) * pracma::zeta(p + 1) * Im(1/(k+1i*m)^(p+1))
+
+
 #########################
 #########################
 
