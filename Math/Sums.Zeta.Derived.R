@@ -1,11 +1,13 @@
 
 
+####################
 
 ### Helper Functions
 
 constEuler = 0.57721566490153286060651209008240243079;
 Euler = constEuler;
 
+library(pracma)
 
 ###
 zeta = function(n) {
@@ -24,6 +26,7 @@ exact.nsq = function(k) {
 }
 
 
+########################
 ########################
 
 ### sum( (zeta(n) - 1) / n )
@@ -214,15 +217,26 @@ sum(sapply(seq(n), \(n) zeta(n+1) - 1) )
 # Maths 505: 3 RIDICULOUSLY AWESOME infinite zeta series!!!
 # https://www.youtube.com/watch?v=Pl-GUHN4DyI
 
+# Maths 505: The coolest infinite series on YouTube!!!
+# https://www.youtube.com/watch?v=GNt4Di86s-o
+
+
 # sum[n]( zeta(n+1)*x^n )
 # = sum[k]( 1/(k-x) - 1/k )
 # = - digamma(1-x) - constEuler;
 
+### [Vectorized code]
+id = seq(500)
+x  = sqrt(3)
+sum(pracma::zeta(id+1) / x^(id+1))
+- (digamma(1-1/x) + Euler)/x
+
+
 n = 500
 
-###
+### [old code]
 x = 2
-sum(sapply(seq(n), \(n) zeta(n+1) / x^n))
+sum(sapply(seq(n), \(n) pracma::zeta(n+1) / x^n))
 - digamma(1 - 1/x) - constEuler;
 
 ###
@@ -328,4 +342,10 @@ x = 1/sqrt(3); # x = 1/pi;
 id = seq(1, 1000)
 log(pi*x/sin(pi*x))
 sum(zeta(2*id) * x^(2*id) / id);
+
+###
+x = 1/sqrt(3);
+id = seq(2, 200);
+log(gamma(x + 1)/gamma(1-x))
+-2*sum(pracma::zeta(2*id-1) * x^(2*id-1) / (2*id-1)) - 2*Euler * x;
 
