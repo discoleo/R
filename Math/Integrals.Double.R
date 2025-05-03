@@ -393,6 +393,52 @@ integrate(\(x) sapply(x, \(y) integrate(\(x) cos(x+y) / (1 + x*y), 0, pi/2)$valu
 integrate(\(x) sapply(x, \(y) integrate(\(x) sin(pi/2*(x+y)) / (1 - x*y), 0, 1)$value), 0, 1)
 
 
+### I( (sin(x) + sin(y)) / (cos(x) + cos(y)) )
+# Maths 505: A beautifully symmetric double integral
+# resulting in an important constant
+# https://www.youtube.com/watch?v=MVgDeJaLcd0
+
+###
+integrate(\(x) sapply(x, \(y) integrate(
+	\(x) (sin(x) + sin(y)) / (cos(x) + cos(y)), 0, pi/2)$value), 0, pi/2)
+integrate(\(x) sapply(x, \(y) integrate(
+	\(x) 2*sin(x) / (cos(x) + cos(y)), 0, pi/2)$value), 0, pi/2)
+4 * Catalan
+
+
+### Diff-type
+up = pi/2 - 1E-12; # Numeric instability;
+integrate(\(x) sapply(x, \(y) integrate(\(x) {
+	x = mpfr(x, 200); y = mpfr(y, 200);
+	as.numeric((sin(x) - sin(y)) / (cos(x) - cos(y))); }, 0, up)$value), 0, pi/2)
+-4 * Catalan
+
+
+### I( sin(x+y) / (cos(x) + cos(y)) )
+integrate(\(x) sapply(x, \(y) integrate(
+	\(x) sin(x+y) / (cos(x) + cos(y)), 0, pi/2)$value), 0, pi/2)
+pi - 2*log(2)
+
+
+### I( sin(x)*cos(y) / (cos(x) + cos(y)) )
+integrate(\(x) sapply(x, \(y) integrate(
+	\(x) sin(pi/2*x)*cos(pi/2*y) / (cos(pi/2*x) + cos(pi/2*y)), 0, 1)$value), 0, 1)
+(pi/2 - log(2)) * 4/pi^2
+
+# Helper:
+integrate(\(x) cos(x)^2 * log(cos(x)), 0, pi/4)
+- (2*pi*log(2) - pi - 4*Catalan + 2*log(2) + 2) / 16
+
+
+
+###
+integrate(\(x) sapply(x, \(y) integrate(
+	\(x) sin(pi/2*x*y) / (cos(pi/2*x) + cos(pi/2*y)), 0, 1)$value), 0, 1)
+# TODO
+
+
+##################
+
 ### I( log(x)*log(y) * cos(x+y) / sqrt(x*y) ) on [0, Inf] x [0, Inf]
 # Maths 505: The best double integral you'll see this week
 # https://www.youtube.com/watch?v=9TjOahihJuE
