@@ -402,16 +402,21 @@ atan.eq = expression(Vmax * (atan(b * t^n) * 2/pi)^k)
 
 
 ### Basic:
+# xlim = c(0, 50)
 Vx = 1; n = 1;
-curve.MM(col.blue, lwd=lwd, Vx=Vx)
+curve.MM(col.blue, lwd=lwd, n=n, Vx=Vx)
 #
 xy = c(11.5, 0.5); col = col.green;
 b  = c(2, 1, 1/2, 1/3);
 curve.Atan(b=b, n=n, Vx=Vx, Vmax = 2, col=col, xy.labels = xy)
 
 # Note:
-# - Atan resembles MM for a significant period of time;
-# - MM saturates slightly faster (but only later);
+# - Part 1: Atan resembles MM for a significant period of time;
+# - Part 2: Atan grows faster for a little bit longer:
+#   => MM flattens (saturates) slightly earlier than Atan;
+# - Part 3: during the later saturation phase,
+#   MM grows again a little bit faster than Atan (but only during phase 3,
+#   when Atan suffers a much "stronger" saturation); 
 
 
 ### Variation of n:
@@ -444,8 +449,10 @@ curve.Atan(n=n, b=b, k = 1, Vmax = 2, col=col, lwd=lwd, labels = lbls, xy.labels
 # Values of Ratio:
 # - n = 1:   R = sqrt(2) + 1;
 #            (tan(3*pi/8) - 1) / (1 - tan(pi/8));
-# - n = 0.5: R = tan(3*pi/8)^2;
+# - n = 1/2: R = tan(3*pi/8)^2;
 #            (tan(3*pi/8)^2 - 1) / (1 - tan(pi/8)^2);
+# - n = 3/2: R = tan(3*pi/8)^(2/3);
+#            (tan(3*pi/8)^(2/3) - 1) / (1 - tan(pi/8)^(2/3))
 
 
 #################
