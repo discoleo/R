@@ -48,3 +48,18 @@ up = 2*pi - 1E-9; # Numerical instability;
 integrate(\(x) Im(pracma::zeta(2 + exp(1i*x))), 0, up)
 0;
 
+
+### I( zeta(3 + n*exp(1i*x)) )
+
+###
+integrate(\(x) Re(pracma::zeta(3 + 1*exp(1i*x))), 0, 2*pi, rel.tol=1E-9)
+2*pi*pracma::zeta(3)
+
+###
+integrate(\(x) Re(pracma::zeta(3 + 2*exp(1i*x))), 0, 2*pi, rel.tol=1E-9)
+2*pi*pracma::zeta(3) - pi/2
+
+###
+integrate(\(x) Re(pracma::zeta(3 + 3*exp(1i*x))), 0, 2*pi, rel.tol=1E-9)
+2*pi*pracma::zeta(3) - pi
+
