@@ -102,7 +102,7 @@ cs = cos(2*pi/n); sn = sin(2*pi/n);
 
 #########
 ### n = 5
-n = 5; id = c(1,2);
+n  = 5; id = c(1,2);
 cs = cos(2*id*pi/n); sn = sin(2*id*pi/n);
 #
 lim = pi/2; # lim = asin(1/7);
@@ -112,6 +112,21 @@ integrate(\(x) 1 / (sin(x)^n + 1), 0, lim)
 	+ sum((cs[1] - 1i*sn[1]) * int.sinfr(c(0, lim), cs[1] - 1i*sn[1])) +
 	+ sum((cs[2] + 1i*sn[2]) * int.sinfr(c(0, lim), cs[2] + 1i*sn[2])) +
 	+ sum((cs[2] - 1i*sn[2]) * int.sinfr(c(0, lim), cs[2] - 1i*sn[2])) ) / n;
+
+
+### I( sin(x)^2 / (sin(x)^5 + 1) )
+lim = asin(3/7);
+#
+n  = 5; id = seq(round((n-1)/2));
+cs = cos(2*id*pi/n); sn = sin(2*id*pi/n);
+p  = 2; csp = cos(2*id*(p+1)*pi/n); snp = sin(2*id*(p+1)*pi/n);
+integrate(\(x) sin(x)^2 / (sin(x)^n + 1), 0, lim)
+(int.sinfr(c(0, lim), 1) +
+	+ sum((csp[1] + 1i*snp[1]) * int.sinfr(c(0, lim), cs[1] + 1i*sn[1])) +
+	+ sum((csp[1] - 1i*snp[1]) * int.sinfr(c(0, lim), cs[1] - 1i*sn[1])) +
+	+ sum((csp[2] + 1i*snp[2]) * int.sinfr(c(0, lim), cs[2] + 1i*sn[2])) +
+	+ sum((csp[2] - 1i*snp[2]) * int.sinfr(c(0, lim), cs[2] - 1i*sn[2])) ) / n;
+
 
 # TODO: new code works; simplify?
 int.sinfr(c(0, pi/2), cs[2] - 1i*sn[2])
@@ -127,6 +142,12 @@ cs = cos(2*id*pi/n); sn = sin(2*id*pi/n);
 #
 1 / (sin(x)^n + 1)
 1/n / (sin(x) + 1) + 2/n * sum( (cs*sin(x) + 1) / ((sin(x) + cs)^2 + sn^2) )
+
+#
+p = 2; csp = cos(2*id*(p+1)*pi/n); snp = sin(2*id*(p+1)*pi/n);
+sin(x)^2 / (sin(x)^n + 1)
+3/n + 1/n / (sin(x) + 1) +
+	- 2/n * sum( (2*cs*sin(x) + cs^2 + sn^2) * (cs*sin(x) + 1) / ((sin(x) + cs)^2 + sn^2) )
 
 
 ######################
@@ -154,12 +175,17 @@ lim = 1/7
 integrate(\(x) 1 / (sin(x)^n + 1), 0, lim)
 integrate(\(x) 1 / ((x^n + 1) * sqrt(1 - x^2)), 0, sin(lim))
 
-###
+### I( 1 / (sqrt(1 - x^2) * (x^5 + 1)) )
 lim = 1/7
 integrate(\(x) 1 / ((x^n + 1) * sqrt(1 - x^2)), 0, lim)
 integrate(\(x) 1 / (sin(x)^n + 1), 0, asin(lim))
 
-# Note: formula from above;
+### I( sqrt(1 - x^2) / (x^5 + 1) )
+lim = 3/7
+integrate(\(x) sqrt(1 - x^2) / (x^n + 1), 0, lim)
+integrate(\(x) (1 - sin(x)^2) / (sin(x)^n + 1), 0, asin(lim))
+
+# Note: formulas from previous section;
 
 
 ########################
