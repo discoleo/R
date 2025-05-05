@@ -5,7 +5,7 @@
 ##
 ## Leonard Mada
 ##
-## draft v.0.1n
+## draft v.0.1o
 
 
 ### Introduction
@@ -256,6 +256,48 @@ curve.Atan = function(b = 1, n = 1, k = 1,
 	}
 }
 
+### Integrals
+
+### I( x^p / (x^n + 1)^k )
+frI = function(up, Vmax, p, n, k=1) {
+	FUN = \(x) x^p / (x^n + 1)^k;
+	tmp = integrate(FUN, lower = 0, upper = up, rel.tol = 1E-8)$value;
+	# Vmax * sin(pi*(p+1)/n) * n / pi * tmp; # k == 1;
+	scale = gamma((p+1)/n) * gamma(k - (p+1)/n) / gamma(k) / n;
+	Vmax * tmp /scale;
+}
+
+curve.IntFr = function(p = c(0, 1/3, 1/2, 4/3), n = 3, k = 1,
+		col = 1, lwd = 2, Vx = Vmax / 2, Vmax = 2,
+		labels = NULL, xy.labels = NULL) {
+	len = c(length(p), length(n), length(k));
+	if(any(len == 0)) return();
+	if(Vx != 0) doSolve = TRUE;
+	len = max(len);
+	sol = list();
+	eq  = expression(frI(up=t, Vmax=Vmax, p=p, n=n, k=k));
+	# Params:
+	if(length(p) == 1 && len > 1) b = rep(b, len);
+	if(length(n) == 1 && len > 1) n = rep(n, len);
+	if(length(k) == 1 && len > 1) k = rep(k, len);
+	params = list(Vmax=Vmax, p = p[1], n = n[1], k = k[1]);
+	for(id in seq(len)) {
+		params$p = p[id]; params$n = n[id];
+		curve(eval.Fun(x, "up", frI, params), col = col[id], lwd=lwd, add = TRUE);
+		if(doSolve) sol[[id]] = solve.eq(eq, params, Vmax=Vmax, Vx=Vx);
+	}
+	# Legend:
+	if(! is.null(labels)) {
+		xy = xy.labels;
+		if(is.null(xy)) xy = c(11.5, Vmax / 4); # Hardcoded!
+		legend(xy[1], xy[2], labels, fill=col);
+	}
+	if(doSolve) {
+		sol = do.call(rbind, sol);
+		return(sol);
+	}
+}
+
 
 #################
 
@@ -463,54 +505,26 @@ text(xy2[1] + 0.5, xy[2] + 0.05, "n = 0.7", col = col.magenta[1], adj = c(0, 0))
 ### Integrals
 
 ### I( x^p / (x^n + 1)^k )
-frI = function(up, Vmax, p, n, k=1) {
-	FUN = \(x) x^p / (x^n + 1)^k;
-	tmp = integrate(FUN, lower = 0, upper = up, rel.tol = 1E-8)$value;
-	# Vmax * sin(pi*(p+1)/n) * n / pi * tmp; # k == 1;
-	scale = gamma((p+1)/n) * gamma(k - (p+1)/n) / gamma(k) / n;
-	Vmax * tmp /scale;
-}
-curve.IntFrMixed = function(p = c(0,1/2,1/3,4/3), n = c(2,2,3,3), k = 1,
-		col = 1, lwd = 2, Vx = Vmax / 2, Vmax = 2,
-		labels = NULL, xy.labels = NULL) {
-	len = c(length(p), length(n), length(k));
-	if(any(len == 0)) return();
-	len = max(len);
-	# Params:
-	if(length(p) == 1 && len > 1) b = rep(b, len);
-	if(length(n) == 1 && len > 1) n = rep(n, len);
-	if(length(k) == 1 && len > 1) k = rep(k, len);
-	params = list(Vmax=Vmax, p = p[1], n = n[1], k = k[1]);
-	for(id in seq(len)) {
-		params$p = p[id]; params$n = n[id];
-		curve(eval.Fun(x, "up", frI, params), col = col[id], lwd=lwd, add = TRUE);
-	}
-	# Legend:
-	if(! is.null(labels)) {
-		xy = xy.labels;
-		if(is.null(xy)) xy = c(11.5, Vmax / 4); # Hardcoded!
-		legend(xy[1], xy[2], labels, fill=col);
-	}
-}
 
-### Mixed Variants
+### Basic: Mixed Variants
 curve.MM(col.blue, lwd=lwd, Vx=0)
 #
-p = c(0,1/2, 1/3,4/3); n = c(2,2,3,3);
+p = c(0, 0.3, 2/3, 1.1); n = c(2,2, 3,3);
 lbls = paste0("IF", rep(c("p","n"), each=2), 1:2);
 curve.IntFrMixed(p=p, n=n, col = col.green, lwd=lwd, Vmax=Vmax, labels=lbls)
 
 
 ### Simple vs Power
 curve.ref(col.blue[1], lwd=lwd)
-#
 xy1 = c(8, 0.5); xy2 = c(11.5, 0.5);
+#
+Vx = 1;
 p = c(0,1/2,1,4/3); n = 2.75;
 lbls = paste0("IFp", 1:4);
-curve.IntFrMixed(p=p, n=n, col = col.green, lwd=lwd, Vmax=Vmax, labels=lbls, xy=xy1)
+curve.IntFrMixed(p=p, n=n, col = col.green, lwd=lwd, Vx=Vx, Vmax=Vmax, labels=lbls, xy=xy1)
 p = c(0,1/2,1,4/3); n = 2.9;
 lbls = paste0("IFnp", 1:4);
-curve.IntFrMixed(p=p, n=n, col = col.magenta, lwd=lwd, Vmax=Vmax, labels=lbls, xy=xy2)
+curve.IntFrMixed(p=p, n=n, col = col.magenta, lwd=lwd, Vx=Vx, Vmax=Vmax, labels=lbls, xy=xy2)
 text(xy2[1] + 0.5, xy[2] + 0.05, "n = 2.9", col = col.magenta[1], adj = c(0, 0))
 
 
