@@ -5,7 +5,7 @@
 ##
 ## Leonard Mada
 ##
-## draft v.0.1o
+## draft v.0.1p
 
 
 ### Introduction
@@ -31,6 +31,17 @@
 ### Evaluation of Growth Rate
 # - T25, T50, T75: time to reach 25%, 50% or 75% of final volume;
 # - Ratios of the various Txx parameters;
+# - Ratios of differences of Txx, e.g.:
+#   R = (T75 - T50) / (T50 - T25);
+
+# Note:
+# - Estimating Tnn requires accurate knowledge of Vmax;
+# - Estimated Vmax may be inaccurate, shifting Tn1 / Tn2
+#   significantly off the correct value;
+# => R = (T75/T50 - 1) / (1 - T25/T50) should be more stable;
+# - if Vmax is underestimated, T75/T50 is lower than the correct value,
+#   but T25/T50 is larger, which makes (1 - T25/T50) smaller,
+#   ultimately balancing the ratio;
 
 
 ### Model Types
@@ -58,10 +69,14 @@
 
 # dVdt = k * V * (Vmax - V)
 # dVdt = a * t^p / (t^n + 1)^k
+# dVdt = a * t^p * exp(-k * t^n)
+
 
 ### Integrals
 
 # V = a * I( x^p / (x^n + 1)^k ), x on [0, t]
+# - can be reformulated as an ODE (see above);
+# - where a = scaled Vmax;
 
 
 ####################
@@ -505,6 +520,10 @@ text(xy2[1] + 0.5, xy[2] + 0.05, "n = 0.7", col = col.magenta[1], adj = c(0, 0))
 ### Integrals
 
 ### I( x^p / (x^n + 1)^k )
+
+# Note:
+# - can be reformulated as an ODE;
+# - but the integral is directly solvable in R;
 
 ### Basic: Mixed Variants
 curve.MM(col.blue, lwd=lwd, Vx=0)
