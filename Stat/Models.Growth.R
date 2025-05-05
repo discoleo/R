@@ -5,7 +5,7 @@
 ##
 ## Leonard Mada
 ##
-## draft v.0.1m
+## draft v.0.1n
 
 
 ### Introduction
@@ -122,7 +122,7 @@ plot.curve = function() {
 MM.eq = expression(Vmax * t^n / (b + t^n));
 
 # Vx = solve V - Vx == 0;
-curve.MM = function(col, b = c(1, 2/5, 2, 3), n = 1, lwd = 2, legend = TRUE,
+curve.MM = function(col, b = c(1, 1/2, 2, 3), n = 1, lwd = 2, legend = TRUE,
 		Vmax = 2, Vx = Vmax / 2, xy.txt = c(8, 0.5)) {
 	doS = (Vx != 0);
 	params = list(Vmax = Vmax, b = b[1], n = n[1]);
@@ -290,7 +290,7 @@ curve.MM(Vx=Vx, Vmax=Vmax, col=col.blue, lwd=lwd)
 xy = c(11.5, 0.5); col = col.magenta[2:4];
 b  = c(1/2, 1, 2); n = rep(1/2, 3);
 sol = curve.MMextn(b=b, n=n, Vx=Vx, Vmax=Vmax, col=col, lwd=lwd, xy.legend = xy);
-# Vmax / 2
+# h = Vmax / 2
 abline(h = 1, col = "green", lty = 2)
 abline(v = 4, col = "green", lty = 2)
 print(sol)
@@ -317,7 +317,7 @@ print(sol)
 exps.eq = expression(Vmax * (1 - exp(-b*t^n))^k)
 
 
-### Basic:
+### Basic: Mixed Variants
 curve.MM(col=col.blue, lwd=lwd)
 #
 xy = c(11.5, 0.5); col = col.green;
@@ -353,7 +353,7 @@ curve.ExpS(n=n, b=b, k = 1, Vmax = 2, col=col, lwd=lwd, labels = lbls, xy.labels
 
 ### Simple vs Power
 # Green & Magenta curves separate much later;
-curve.ref(col=col.blue[1])
+curve.ref(col=col.blue[1], lwd=lwd)
 xy1 = c(8, 0.5); xy2 = c(11.5, 0.5);
 col = col.green; lbls = paste0("ESb", 1:4);
 b = 1 / c(1.5, 2, 3.5, 5.5); n = rep(1, 4);
@@ -361,6 +361,7 @@ curve.ExpS(n=n, b=b, k = 1, Vmax = 2, col=col, lwd=lwd, labels = lbls, xy.labels
 col = col.magenta; lbls = paste0("ESnb", 1:4);
 b = 1 / c(1.5, 2, 3.5, 5.5); n = 10/11;
 curve.ExpS(n=n, b=b, k = 1, Vmax = 2, col=col, lwd=lwd, labels = lbls, xy.labels = xy2)
+text(xy2[1] + 0.5, xy[2] + 0.05, "n = 0.91", col = col.magenta[1], adj = c(0, 0))
 
 
 ### Power vs Extended (2)
@@ -408,7 +409,7 @@ curve.MM(col.blue, lwd=lwd, n=n, Vx=Vx)
 #
 xy = c(11.5, 0.5); col = col.green;
 b  = c(2, 1, 1/2, 1/3);
-curve.Atan(b=b, n=n, Vx=Vx, Vmax = 2, col=col, xy.labels = xy)
+curve.Atan(b=b, n=n, Vx=Vx, Vmax = 2, col=col, lwd=lwd, xy.labels = xy)
 
 # Note:
 # - Part 1: Atan resembles MM for a significant period of time;
@@ -430,14 +431,15 @@ curve.Atan(b=b, n=n, Vmax = 2, col=col, xy.labels = xy)
 
 ### Simple vs Power
 # Green & Magenta curves separate after some delay;
-curve.ref(col.blue[1])
+curve.ref(col.blue[1], lwd=lwd)
 xy1 = c(8, 0.5); xy2 = c(11.5, 0.5);
 col = col.green; lbls = paste0("ATb", 1:4);
-b = 1 / c(0.75, 1, 2, 3); n = 1;
+b = 1 / c(1, 0.75, 2, 3); n = 1;
 curve.Atan(n=n, b=b, k = 1, Vmax = 2, col=col, lwd=lwd, labels = lbls, xy.labels = xy1)
 col = col.magenta; lbls = paste0("ATnb", 1:4);
 n = 5/7; # n = 4/5; # overlap with MM;
 curve.Atan(n=n, b=b, k = 1, Vmax = 2, col=col, lwd=lwd, labels = lbls, xy.labels = xy2)
+text(xy2[1] + 0.5, xy[2] + 0.05, "n = 0.7", col = col.magenta[1], adj = c(0, 0))
 
 
 ### Note:
@@ -461,25 +463,55 @@ curve.Atan(n=n, b=b, k = 1, Vmax = 2, col=col, lwd=lwd, labels = lbls, xy.labels
 ### Integrals
 
 ### I( x^p / (x^n + 1)^k )
-frI = function(up, Vmax, p, n) {
-	FUN = \(x) x^p / (x^n + 1);
+frI = function(up, Vmax, p, n, k=1) {
+	FUN = \(x) x^p / (x^n + 1)^k;
 	tmp = integrate(FUN, lower = 0, upper = up, rel.tol = 1E-8)$value;
-	Vmax * sin(pi*(p+1)/n) * n / pi * tmp;
+	# Vmax * sin(pi*(p+1)/n) * n / pi * tmp; # k == 1;
+	scale = gamma((p+1)/n) * gamma(k - (p+1)/n) / gamma(k) / n;
+	Vmax * tmp /scale;
 }
-col = c("#0000FFA0", "#2496F2A0", "#9664F8A0")
-# Ref:
-params = list(Vmax = 2, b = 1, n = 1)
-curve(eval.Exp(x, "t", MM.eq, params), col = "#A0A0A0B0",
-	xlim=xlim, ylim=ylim, ylab = "Growth")
+curve.IntFrMixed = function(p = c(0,1/2,1/3,4/3), n = c(2,2,3,3), k = 1,
+		col = 1, lwd = 2, Vx = Vmax / 2, Vmax = 2,
+		labels = NULL, xy.labels = NULL) {
+	len = c(length(p), length(n), length(k));
+	if(any(len == 0)) return();
+	len = max(len);
+	# Params:
+	if(length(p) == 1 && len > 1) b = rep(b, len);
+	if(length(n) == 1 && len > 1) n = rep(n, len);
+	if(length(k) == 1 && len > 1) k = rep(k, len);
+	params = list(Vmax=Vmax, p = p[1], n = n[1], k = k[1]);
+	for(id in seq(len)) {
+		params$p = p[id]; params$n = n[id];
+		curve(eval.Fun(x, "up", frI, params), col = col[id], lwd=lwd, add = TRUE);
+	}
+	# Legend:
+	if(! is.null(labels)) {
+		xy = xy.labels;
+		if(is.null(xy)) xy = c(11.5, Vmax / 4); # Hardcoded!
+		legend(xy[1], xy[2], labels, fill=col);
+	}
+}
+
+### Mixed Variants
+curve.MM(col.blue, lwd=lwd, Vx=0)
 #
-params = list(Vmax = 2, p = 0, n = 2)
-curve(eval.Fun(x, "up", frI, params), col = col[1], add = T)
-params = list(Vmax = 2, p = 1/2, n = 2)
-curve(eval.Fun(x, "up", frI, params), col = col[2], add = T)
-params = list(Vmax = 2, p = 1/3, n = 3)
-curve(eval.Fun(x, "up", frI, params), col = col[3], add = T)
-params = list(Vmax = 2, p = 4/3, n = 3)
-curve(eval.Fun(x, "up", frI, params), col = col[3], add = T)
+p = c(0,1/2, 1/3,4/3); n = c(2,2,3,3);
+lbls = paste0("IF", rep(c("p","n"), each=2), 1:2);
+curve.IntFrMixed(p=p, n=n, col = col.green, lwd=lwd, Vmax=Vmax, labels=lbls)
+
+
+### Simple vs Power
+curve.ref(col.blue[1], lwd=lwd)
+#
+xy1 = c(8, 0.5); xy2 = c(11.5, 0.5);
+p = c(0,1/2,1,4/3); n = 2.75;
+lbls = paste0("IFp", 1:4);
+curve.IntFrMixed(p=p, n=n, col = col.green, lwd=lwd, Vmax=Vmax, labels=lbls, xy=xy1)
+p = c(0,1/2,1,4/3); n = 2.9;
+lbls = paste0("IFnp", 1:4);
+curve.IntFrMixed(p=p, n=n, col = col.magenta, lwd=lwd, Vmax=Vmax, labels=lbls, xy=xy2)
+text(xy2[1] + 0.5, xy[2] + 0.05, "n = 2.9", col = col.magenta[1], adj = c(0, 0))
 
 
 ###################
