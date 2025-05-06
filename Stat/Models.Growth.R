@@ -5,7 +5,7 @@
 ##
 ## Leonard Mada
 ##
-## draft v.0.1q
+## draft v.0.1r
 
 
 ### Introduction
@@ -314,6 +314,41 @@ curve.IntFr = function(p = c(0, 1/3, 1/2, 4/3), n = 3, k = 1,
 	}
 }
 
+### ODE
+
+### Logistic Growth
+
+log.eq = V ~ k * V^p * (Vmax^n - V^n)^m
+
+curve.odeLog = function(k = 1, p = 1, m = 1, n = 1,
+		Vmax = 2, V0 = 0.1, col = 1, lwd = 2,
+		labels = NULL, xy.labels = NULL,
+		n_steps = 160, dt = 0.1) {
+	len = c(length(k), length(p), length(n));
+	if(any(len == 0)) return(data.frame(t = numeric(0), V = numeric(0)));
+	len = max(len);
+	# Parameters:
+	if(length(k) == 1 && len > 1) k = rep(k, len);
+	if(length(p) == 1 && len > 1) p = rep(p, len);
+	if(length(n) == 1 && len > 1) n = rep(n, len);
+	params = list(Vmax = Vmax, k=k[1], p=p[1], m=m[1], n=n[1]);
+	for(id in seq(len)) {
+		params$k = k[id]; params$p = p[id]; params$n = n[id];
+		sol = rk4(log.eq, V0, param = params, deltaT=dt, n_steps = n_steps);
+		lines(sol, col = col[id], lwd=lwd);
+	}
+	# Legend:
+	if(! is.null(xy.labels)) {
+		if(is.null(labels)) {
+			labels = paste0("OL", seq(len));
+		} else if(length(labels) == 1 && len > 1) {
+			labels = paste0(labels, seq(len));
+		}
+		xy = xy.labels;
+		legend(xy[1], xy[2], labels, fill=col);
+	}
+}
+
 
 #################
 
@@ -531,7 +566,7 @@ curve.MM(col.blue, lwd=lwd, Vx=0)
 #
 p = c(0, 0.3, 2/3, 1.1); n = c(2,2, 3,3);
 lbls = paste0("IF", rep(c("p","n"), each=2), 1:2);
-curve.IntFrMixed(p=p, n=n, col = col.green, lwd=lwd, Vmax=Vmax, labels=lbls)
+curve.IntFr(p=p, n=n, col = col.green, lwd=lwd, Vmax=Vmax, labels=lbls)
 
 
 ### Simple vs Power
@@ -541,11 +576,11 @@ xy1 = c(8, 0.5); xy2 = c(11.5, 0.5);
 Vx = 1;
 p = c(0,1/2,1,4/3); n = 2.75;
 lbls = paste0("IFp", 1:4);
-curve.IntFrMixed(p=p, n=n, col = col.green, lwd=lwd, Vx=Vx, Vmax=Vmax, labels=lbls, xy=xy1)
+curve.IntFr(p=p, n=n, col = col.green, lwd=lwd, Vx=Vx, Vmax=Vmax, labels=lbls, xy=xy1)
 p = c(0,1/2,1,4/3); n = 2.9;
 lbls = paste0("IFnp", 1:4);
-curve.IntFrMixed(p=p, n=n, col = col.magenta, lwd=lwd, Vx=Vx, Vmax=Vmax, labels=lbls, xy=xy2)
-text(xy2[1] + 0.5, xy[2] + 0.05, "n = 2.9", col = col.magenta[1], adj = c(0, 0))
+curve.IntFr(p=p, n=n, col = col.magenta, lwd=lwd, Vx=Vx, Vmax=Vmax, labels=lbls, xy=xy2)
+text(xy2[1] + 0.5, xy2[2] + 0.05, "n = 2.9", col = col.magenta[1], adj = c(0, 0))
 
 
 ###################
@@ -553,25 +588,15 @@ text(xy2[1] + 0.5, xy[2] + 0.05, "n = 2.9", col = col.magenta[1], adj = c(0, 0))
 
 ### ODE
 
-curve.odeLog = function(k = 1, p = 1, m = 1, n = 1,
-		Vmax = 2, V0 = 0.1, col = 1, lwd = 2, n_steps = 160, dt = 0.1) {
-	len = length(p);
-	if(len == 0) return(data.frame(t = numeric(0), V = numeric(0)));
-	params = list(Vmax = Vmax, k=k[1], p=p[1], m=m[1], n=n[1]);
-	for(id in seq(len)) {
-		params$p = p[id];
-		sol = rk4(log.eq, V0, param = params, deltaT=dt, n_steps = n_steps);
-		lines(sol, col = col[id], lwd=lwd);
-	}
-}
-
 ### Logistic Growth
 
 log.eq = V ~ k * V^p * (Vmax^n - V^n)^m
 
+# Specified Variant:
+log2.eq = V ~ k * V^p * (Vmax^(1/2) - V^(1/2))
+
 # Simple:
 # log.eq = V ~ k * V^p * (Vmax - V);
-log2.eq = V ~ k * V^p * (Vmax^(1/2) - V^(1/2))
 
 # Fully Generalized:
 # V ~ k * (P1(V) - P1(0))^m1 * (P2(Vmax) - P2(V))^m2;
@@ -581,11 +606,13 @@ log2.eq = V ~ k * V^p * (Vmax^(1/2) - V^(1/2))
 curve.ref(col.grey[1], lwd=lwd)
 #
 col = col.green; V0 = c(V=0.1);
+xy1 = c(8, 0.5) + V0; xy2 = c(11.5, 0.5) + V0;
 p = c(1,1/3,1.5);
-curve.odeLog(k = 1, p = p, V0=V0, col=col, lwd=lwd);
+curve.odeLog(k = 1, p = p, V0=V0, col=col, lwd=lwd, xy=xy1, labels = "OL");
 # Variant: n = 1/2
 col = col.magenta;
-curve.odeLog(k = 1, p = p, n = 1/2, V0=V0, col=col, lwd=lwd);
+curve.odeLog(k = 1, p = p, n = 1/2, V0=V0, col=col, lwd=lwd, xy=xy2, labels = "OLn");
+text(xy2[1] + 0.5, xy2[2] + 0.05, "n = 0.5", col = col[1], adj = c(0, 0))
 #
 abline(h = V0, lty = 2, col = "#B06464B2")
 
@@ -596,28 +623,16 @@ abline(h = V0, lty = 2, col = "#B06464B2")
 # Ref:
 curve.ref(col.grey[1], lwd=lwd)
 #
-col = col.magenta; V0 = c(V=0.1);
-params = list(Vmax = 2, k = 1, p = 1, m = 1, n = 1);
-sol = rk4(log.eq, V0, param = params, deltaT=0.1, n_steps = 160)
-lines(sol, col = col[1], lwd=lwd)
-params$p = 2/3;
-sol = rk4(log.eq, V0, param = params, deltaT=0.1, n_steps = 160)
-lines(sol, col = col[2], lwd=lwd)
-params$p = 1.25;
-sol = rk4(log.eq, V0, param = params, deltaT=0.1, n_steps = 160)
-lines(sol, col = col[3], lwd=lwd)
-#
-V0 = c(V = 0.005);
-col = col.blue;
-params = list(Vmax = 2, k = 1, p = 1, m = 1, n = 1/2)
-sol = rk4(log.eq, V0, param = params, deltaT=0.1, n_steps = 160)
-lines(sol, col = col[1], lwd=lwd)
-params$p = 2/3;
-sol = rk4(log2.eq, V0, param = params, deltaT=0.1, n_steps = 160)
-lines(sol, col = col[2], lwd=lwd)
-params$p = 1.25;
-sol = rk4(log.eq, V0, param = params, deltaT=0.1, n_steps = 160)
-lines(sol, col = col[3], lwd=lwd)
+col = col.magenta; V0 = c(V = 0.1); lbls = "OL";
+xy1 = c(8, 0.5) + V0; xy2 = c(11.5, 0.5) + V0;
+p = c(1, 2/3, 1.25);
+curve.odeLog(k = 1, p = p, V0=V0, col=col, lwd=lwd, xy=xy1, labels = lbls);
+abline(h = V0, lty = 2, col = "#B06464B2")
+# Initial condition
+col = col.blue; V0 = c(V = 0.005); lbls = "OL0";
+curve.odeLog(k = 1, p = p, n = 1/2, V0=V0, col=col, lwd=lwd, xy=xy2, labels = lbls);
+text(xy2[1] + 0.25, xy2[2] + 0.05, "V0 = 0.005", col = col[1], adj = c(0, 0))
 
-# TODO
+
+# TODO: more;
 
