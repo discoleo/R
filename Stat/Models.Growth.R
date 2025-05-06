@@ -5,7 +5,7 @@
 ##
 ## Leonard Mada
 ##
-## draft v.0.1s
+## draft v.0.1t
 
 
 ### Introduction
@@ -370,6 +370,27 @@ curve.odeLogI0 = function(p = c(1, 0.6, 1.25), V0 = c(0.1, 0.005),
 	text(xy2[1], xy2[2], lblV0, col = col[1], adj = c(0, 0));
 }
 
+# Variation of Power n
+curve.odeLogPn = function(n = c(1, 1/2), p = c(1,1/3,1.5), k = 1,
+		V0 = 0.1, Vmax = 2,
+		lwd = 2, xy1 = c(8, 0.5), xy2 = c(11.5, 0.5), xy.adj = c(0.5, 0.05)) {
+	curve.ref(col.grey[1], lwd=lwd, Vmax=Vmax); # Ref
+	xy1 = xy1 + V0; xy2 = xy2 + V0;
+	#
+	col = col.green;
+	curve.odeLog(k = k, p = p, n = n[1], V0=V0, Vmax=Vmax,
+		col=col, lwd=lwd, xy=xy1, labels = "OL");
+	# Variant: n
+	col = col.magenta;
+	curve.odeLog(k = k, p = p, n = n[2], V0=V0, Vmax=Vmax,
+		col=col, lwd=lwd, xy=xy2, labels = "OLn");
+	xy2  = xy2 + xy.adj;
+	lbln = paste0("n = ", n[2]);
+	text(xy2[1], xy2[2], lbln, col = col[1], adj = c(0, 0))
+	#
+	abline(h = V0, lty = 2, col = "#B06464B2")
+}
+
 
 #################
 
@@ -623,19 +644,10 @@ log2.eq = V ~ k * V^p * (Vmax^(1/2) - V^(1/2))
 # V ~ k * (P1(V) - P1(0))^m1 * (P2(Vmax) - P2(V))^m2;
 # where P1, P2 = 2 functions;
 
-# Ref:
-curve.ref(col.grey[1], lwd=lwd)
-#
-col = col.green; V0 = c(V=0.1);
-xy1 = c(8, 0.5) + V0; xy2 = c(11.5, 0.5) + V0;
-p = c(1,1/3,1.5);
-curve.odeLog(k = 1, p = p, V0=V0, col=col, lwd=lwd, xy=xy1, labels = "OL");
-# Variant: n = 1/2
-col = col.magenta;
-curve.odeLog(k = 1, p = p, n = 1/2, V0=V0, col=col, lwd=lwd, xy=xy2, labels = "OLn");
-text(xy2[1] + 0.5, xy2[2] + 0.05, "n = 0.5", col = col[1], adj = c(0, 0))
-#
-abline(h = V0, lty = 2, col = "#B06464B2")
+
+### Variation of Power n
+
+curve.odeLogPn(lwd=lwd)
 
 
 ### Initial Conditions:
