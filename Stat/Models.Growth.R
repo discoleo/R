@@ -5,7 +5,7 @@
 ##
 ## Leonard Mada
 ##
-## draft v.0.1p
+## draft v.0.1q
 
 
 ### Introduction
@@ -93,6 +93,7 @@ col.blue    = c("#0000FFC0", "#72A2FAA0", "#A888FAA0", "#88A8FAA0");
 col.magenta = c("#F000FFC0", "#F8A2A2A0", "#F864B4A0", "#F8B4FFA0");
 col.green   = c("#00FF00A0", "#90FE64A0", "#32FC90A0", "#64FC90A0");
 col.brown   = c("#F8B464A0");
+col.grey    = c("#909090B0");
 # c("#FF0000A0", "#FC2490A0", "#FC9064A0", "#FE8090A0")
 
 
@@ -523,7 +524,7 @@ text(xy2[1] + 0.5, xy[2] + 0.05, "n = 0.7", col = col.magenta[1], adj = c(0, 0))
 
 # Note:
 # - can be reformulated as an ODE;
-# - but the integral is directly solvable in R;
+# - but the integral is directly computable in R;
 
 ### Basic: Mixed Variants
 curve.MM(col.blue, lwd=lwd, Vx=0)
@@ -554,29 +555,77 @@ text(xy2[1] + 0.5, xy[2] + 0.05, "n = 2.9", col = col.magenta[1], adj = c(0, 0))
 
 ### Logistic Growth
 
-log.eq = V ~ k * V^p * (Vmax-V)
+log.eq = V ~ k * V^p * (Vmax^n - V^n)^m
+
+# Simple:
+# log.eq = V ~ k * V^p * (Vmax - V);
+
+# Fully Generalized:
+# V ~ k * (P1(V) - P1(0))^n1 * (P2(Vmax) - P2(V))^n2;
+# where P1, P2 = 2 functions;
 
 # Ref:
-params = list(Vmax = 2, b = 1, n = 1)
-curve(eval.Exp(x, "t", MM.eq, params), col = "#909090B0",
+params = list(Vmax = 2, b = 1, n = 1, k = 1);
+curve(eval.Exp(x, "t", MM.eq, params), col = col.grey, lwd=lwd,
 	xlim=xlim, ylim=ylim, ylab = "Growth")
 #
-params = list(Vmax = 2, k = 1, p = 1)
-sol = rk4(log.eq, c(V=0.1), param = params, deltaT=0.1, n_steps = 160)
-lines(sol, col = col[2])
-params = list(Vmax = 2, k = 1, p = 1/3)
-sol = rk4(log.eq, c(V=0.1), param = params, deltaT=0.1, n_steps = 160)
-lines(sol, col = col[3])
-params = list(Vmax = 2, k = 1, p = 1.5)
-sol = rk4(log.eq, c(V=0.1), param = params, deltaT=0.1, n_steps = 160)
-lines(sol, col = col[3])
+col = col.green; V0 = c(V=0.1);
+params = list(Vmax = 2, k = 1, p = 1, m = 1, n = 1)
+sol = rk4(log.eq, V0, param = params, deltaT=0.1, n_steps = 160)
+lines(sol, col = col[1], lwd=lwd)
+params$p = 1/3;
+sol = rk4(log.eq, V0, param = params, deltaT=0.1, n_steps = 160)
+lines(sol, col = col[2], lwd=lwd)
+params$p = 1.5;
+sol = rk4(log.eq, V0, param = params, deltaT=0.1, n_steps = 160)
+lines(sol, col = col[3], lwd=lwd)
 
 
+###
 log2.eq = V ~ k * V^p * (Vmax^(1/2) - V^(1/2))
 #
+col = col.magenta; # V0 = c(V=0.1); # see above;
 params = list(Vmax = 2, k = 1, p = 1)
-sol = rk4(log2.eq, c(V=0.1), param = params, deltaT=0.1, n_steps = 160)
-lines(sol, col = "blue")
+sol = rk4(log2.eq, V0, param = params, deltaT=0.1, n_steps = 160)
+lines(sol, col = col[1], lwd=lwd)
+params$p = 1/3;
+sol = rk4(log2.eq, V0, param = params, deltaT=0.1, n_steps = 160)
+lines(sol, col = col[2], lwd=lwd)
+params$p = 1.5;
+sol = rk4(log2.eq, V0, param = params, deltaT=0.1, n_steps = 160)
+lines(sol, col = col[3], lwd=lwd)
+#
+abline(h = V0, lty = 2, col = "#B06464B2")
+
+
+### Initial Conditions:
+# Note: highly dependent on V0!
+# Ref:
+params = list(Vmax = 2, b = 1, n = 1, k = 1);
+curve(eval.Exp(x, "t", MM.eq, params), col = col.grey, lwd=lwd,
+	xlim=xlim, ylim=ylim, ylab = "Growth")
+col = col.magenta; V0 = c(V=0.1);
+params = list(Vmax = 2, k = 1, p = 1, m = 1, n = 1);
+sol = rk4(log.eq, V0, param = params, deltaT=0.1, n_steps = 160)
+lines(sol, col = col[1], lwd=lwd)
+params$p = 2/3;
+sol = rk4(log.eq, V0, param = params, deltaT=0.1, n_steps = 160)
+lines(sol, col = col[2], lwd=lwd)
+params$p = 1.25;
+sol = rk4(log.eq, V0, param = params, deltaT=0.1, n_steps = 160)
+lines(sol, col = col[3], lwd=lwd)
+#
+V0 = c(V = 0.005);
+col = col.blue;
+params = list(Vmax = 2, k = 1, p = 1, m = 1, n = 1/2)
+sol = rk4(log.eq, V0, param = params, deltaT=0.1, n_steps = 160)
+lines(sol, col = col[1], lwd=lwd)
+params$p = 2/3;
+sol = rk4(log2.eq, V0, param = params, deltaT=0.1, n_steps = 160)
+lines(sol, col = col[2], lwd=lwd)
+params$p = 1.25;
+sol = rk4(log.eq, V0, param = params, deltaT=0.1, n_steps = 160)
+lines(sol, col = col[3], lwd=lwd)
 
 # TODO
 
