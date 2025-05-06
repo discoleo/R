@@ -5,7 +5,7 @@
 ##
 ## Leonard Mada
 ##
-## draft v.0.1r
+## draft v.0.1s
 
 
 ### Introduction
@@ -332,9 +332,10 @@ curve.odeLog = function(k = 1, p = 1, m = 1, n = 1,
 	if(length(p) == 1 && len > 1) p = rep(p, len);
 	if(length(n) == 1 && len > 1) n = rep(n, len);
 	params = list(Vmax = Vmax, k=k[1], p=p[1], m=m[1], n=n[1]);
+	V0 = c(V = V0);
 	for(id in seq(len)) {
 		params$k = k[id]; params$p = p[id]; params$n = n[id];
-		sol = rk4(log.eq, V0, param = params, deltaT=dt, n_steps = n_steps);
+		sol = rk4(log.eq, V0, parameters = params, deltaT=dt, n_steps = n_steps);
 		lines(sol, col = col[id], lwd=lwd);
 	}
 	# Legend:
@@ -347,6 +348,26 @@ curve.odeLog = function(k = 1, p = 1, m = 1, n = 1,
 		xy = xy.labels;
 		legend(xy[1], xy[2], labels, fill=col);
 	}
+}
+# ODE: Logistic Eq with Initial conditions
+# - Effect of Initial condition;
+curve.odeLogI0 = function(p = c(1, 0.6, 1.25), V0 = c(0.1, 0.005),
+		k = 1, n = 1, lwd = 2,
+		xy1 = c(8, 0.5), xy2 = c(11.5, 0.5), adj.xy2 = c(0.25, 0.05)) {
+	xy1 = xy1 + V0[1]; xy2 = xy2 + V0[1];
+	curve.ref(col.grey[1], lwd=lwd);
+	#
+	col = col.magenta; lbls = "OL";
+	curve.odeLog(k = k, p = p, n = n, V0=V0[1], col=col, lwd=lwd,
+		xy=xy1, labels = lbls);
+	abline(h = V0, lty = 2, col = "#B06464B2")
+	# Initial condition
+	col = col.blue; lbls = "OL0";
+	curve.odeLog(k = k, p = p, n = n, V0=V0[2], col=col, lwd=lwd,
+		xy=xy2, labels = lbls);
+	xy2 = xy2 + adj.xy2;
+	lblV0 = paste0("V0 = ", V0[2]);
+	text(xy2[1], xy2[2], lblV0, col = col[1], adj = c(0, 0));
 }
 
 
@@ -620,18 +641,8 @@ abline(h = V0, lty = 2, col = "#B06464B2")
 ### Initial Conditions:
 # Note: highly dependent on V0!
 
-# Ref:
-curve.ref(col.grey[1], lwd=lwd)
-#
-col = col.magenta; V0 = c(V = 0.1); lbls = "OL";
-xy1 = c(8, 0.5) + V0; xy2 = c(11.5, 0.5) + V0;
-p = c(1, 2/3, 1.25);
-curve.odeLog(k = 1, p = p, V0=V0, col=col, lwd=lwd, xy=xy1, labels = lbls);
-abline(h = V0, lty = 2, col = "#B06464B2")
-# Initial condition
-col = col.blue; V0 = c(V = 0.005); lbls = "OL0";
-curve.odeLog(k = 1, p = p, n = 1/2, V0=V0, col=col, lwd=lwd, xy=xy2, labels = lbls);
-text(xy2[1] + 0.25, xy2[2] + 0.05, "V0 = 0.005", col = col[1], adj = c(0, 0))
+curve.odeLogI0(n = 0.75, lwd=lwd)
+
 
 
 # TODO: more;
