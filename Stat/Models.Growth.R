@@ -553,57 +553,49 @@ text(xy2[1] + 0.5, xy[2] + 0.05, "n = 2.9", col = col.magenta[1], adj = c(0, 0))
 
 ### ODE
 
+curve.odeLog = function(k = 1, p = 1, m = 1, n = 1,
+		Vmax = 2, V0 = 0.1, col = 1, lwd = 2, n_steps = 160, dt = 0.1) {
+	len = length(p);
+	if(len == 0) return(data.frame(t = numeric(0), V = numeric(0)));
+	params = list(Vmax = Vmax, k=k[1], p=p[1], m=m[1], n=n[1]);
+	for(id in seq(len)) {
+		params$p = p[id];
+		sol = rk4(log.eq, V0, param = params, deltaT=dt, n_steps = n_steps);
+		lines(sol, col = col[id], lwd=lwd);
+	}
+}
+
 ### Logistic Growth
 
 log.eq = V ~ k * V^p * (Vmax^n - V^n)^m
 
 # Simple:
 # log.eq = V ~ k * V^p * (Vmax - V);
+log2.eq = V ~ k * V^p * (Vmax^(1/2) - V^(1/2))
 
 # Fully Generalized:
-# V ~ k * (P1(V) - P1(0))^n1 * (P2(Vmax) - P2(V))^n2;
+# V ~ k * (P1(V) - P1(0))^m1 * (P2(Vmax) - P2(V))^m2;
 # where P1, P2 = 2 functions;
 
 # Ref:
-params = list(Vmax = 2, b = 1, n = 1, k = 1);
-curve(eval.Exp(x, "t", MM.eq, params), col = col.grey, lwd=lwd,
-	xlim=xlim, ylim=ylim, ylab = "Growth")
+curve.ref(col.grey[1], lwd=lwd)
 #
 col = col.green; V0 = c(V=0.1);
-params = list(Vmax = 2, k = 1, p = 1, m = 1, n = 1)
-sol = rk4(log.eq, V0, param = params, deltaT=0.1, n_steps = 160)
-lines(sol, col = col[1], lwd=lwd)
-params$p = 1/3;
-sol = rk4(log.eq, V0, param = params, deltaT=0.1, n_steps = 160)
-lines(sol, col = col[2], lwd=lwd)
-params$p = 1.5;
-sol = rk4(log.eq, V0, param = params, deltaT=0.1, n_steps = 160)
-lines(sol, col = col[3], lwd=lwd)
-
-
-###
-log2.eq = V ~ k * V^p * (Vmax^(1/2) - V^(1/2))
-#
-col = col.magenta; # V0 = c(V=0.1); # see above;
-params = list(Vmax = 2, k = 1, p = 1)
-sol = rk4(log2.eq, V0, param = params, deltaT=0.1, n_steps = 160)
-lines(sol, col = col[1], lwd=lwd)
-params$p = 1/3;
-sol = rk4(log2.eq, V0, param = params, deltaT=0.1, n_steps = 160)
-lines(sol, col = col[2], lwd=lwd)
-params$p = 1.5;
-sol = rk4(log2.eq, V0, param = params, deltaT=0.1, n_steps = 160)
-lines(sol, col = col[3], lwd=lwd)
+p = c(1,1/3,1.5);
+curve.odeLog(k = 1, p = p, V0=V0, col=col, lwd=lwd);
+# Variant: n = 1/2
+col = col.magenta;
+curve.odeLog(k = 1, p = p, n = 1/2, V0=V0, col=col, lwd=lwd);
 #
 abline(h = V0, lty = 2, col = "#B06464B2")
 
 
 ### Initial Conditions:
 # Note: highly dependent on V0!
+
 # Ref:
-params = list(Vmax = 2, b = 1, n = 1, k = 1);
-curve(eval.Exp(x, "t", MM.eq, params), col = col.grey, lwd=lwd,
-	xlim=xlim, ylim=ylim, ylab = "Growth")
+curve.ref(col.grey[1], lwd=lwd)
+#
 col = col.magenta; V0 = c(V=0.1);
 params = list(Vmax = 2, k = 1, p = 1, m = 1, n = 1);
 sol = rk4(log.eq, V0, param = params, deltaT=0.1, n_steps = 160)
