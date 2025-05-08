@@ -62,7 +62,9 @@
 ### Exponential Fractions:
 # V = Vmax * (1/(k + exp(- b*t)) - 1/(k + 1)) * k*(k+1);
 ### Atan type:
-# V = Vmax * atan(k*x^p) * 2/pi;
+# V = Vmax * atan(k*t^p) * 2/pi;
+### Gompertz type:
+# V = Vmax * exp(- k1 * t^p * exp(- k2*t^n))
 
 
 ### ODE:
@@ -381,6 +383,7 @@ curve.odeLogPn = function(n = c(1, 1/2), p = c(1,1/3,1.5), k = 1,
 	curve.odeLog(k = k, p = p, n = n[1], V0=V0, Vmax=Vmax,
 		col=col, lwd=lwd, xy=xy1, labels = "OL");
 	# Variant: n
+	if(length(n) == 1) return();
 	col = col.magenta;
 	curve.odeLog(k = k, p = p, n = n[2], V0=V0, Vmax=Vmax,
 		col=col, lwd=lwd, xy=xy2, labels = "OLn");
@@ -590,6 +593,21 @@ text(xy2[1] + 0.5, xy[2] + 0.05, "n = 0.7", col = col.magenta[1], adj = c(0, 0))
 #            (tan(3*pi/8)^2 - 1) / (1 - tan(pi/8)^2);
 # - n = 3/2: R = tan(3*pi/8)^(2/3);
 #            (tan(3*pi/8)^(2/3) - 1) / (1 - tan(pi/8)^(2/3))
+
+
+###################
+
+### Gompertz Models
+
+gompertz.eq = expression(Vmax * exp(- k1 * exp(- k2*t^n)))
+# Note: V(0) > 0;
+
+### Extension for negative t:
+# V = Vmax * exp(- k1 * exp(- sign(t) * k2 * abs(t)^n));
+### Extension: V(0) = 0
+# V = Vmax * (exp(- k1 * exp(- k2*t^n)) - exp(-k1)) / (1 - exp(-k1));
+
+# TODO
 
 
 #################
