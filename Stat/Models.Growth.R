@@ -64,7 +64,8 @@
 ### Atan type:
 # V = Vmax * atan(k*t^p) * 2/pi;
 ### Gompertz type:
-# V = Vmax * exp(- k1 * t^p * exp(- k2*t^n))
+# V = Vmax * exp(- k1 * exp(- k2*t^n))
+# V = Vmax * exp(- k1 * exp(- k2*t^n)) * atan(k2 * t^m)*2/pi
 
 
 ### ODE:
@@ -599,13 +600,15 @@ text(xy2[1] + 0.5, xy[2] + 0.05, "n = 0.7", col = col.magenta[1], adj = c(0, 0))
 
 ### Gompertz Models
 
-gompertz.eq = expression(Vmax * exp(- k1 * exp(- k2*t^n)))
+gompertz.eq = expression(Vmax * exp(- k1 * exp(- k2*t^n)));
 # Note: V(0) > 0;
+gompertzAt.eq = expression(Vmax * exp(- k1 * exp(- k2*t^n)) * atan(k2 * t^m)*2/pi);
 
 ### Extension for negative t:
 # V = Vmax * exp(- k1 * exp(- sign(t) * k2 * abs(t)^n));
 ### Extension: V(0) = 0
 # V = Vmax * (exp(- k1 * exp(- k2*t^n)) - exp(-k1)) / (1 - exp(-k1));
+# Note: the atan-extension seems more versatile;
 
 # TODO
 
