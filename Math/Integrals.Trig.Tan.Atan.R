@@ -166,6 +166,41 @@ ic = 1:3; id = 1:2; cs = cos(2*pi*ic/6); sn = sin(2*pi*id/6);
 #################
 #################
 
+### ASIN
+
+### I( asin(x)^n / x^m )
+# Maths 505: This integral is actually one of your favorite constants
+# https://www.youtube.com/watch?v=wCpN0aE3aU0
+
+
+### I( asin(x) * acos(x) / x )
+integrate(\(x) asin(x) * acos(x) / x, 0, 1)
+integrate(\(x) asin(x) * (pi/2 - asin(x)) / x, 0, 1)
+7/8 * pracma::zeta(3)
+
+### I( asin(x) * acos(x) / x^2 )
+integrate(\(x) asin(x) * acos(x) / x^2 - pi/2/x, 0, 1)
+integrate(\(x) asin(x) * (pi/2 - asin(x)) / x^2 - pi/2/x, 0, 1)
+pi/2 * log(2) + pi/2 - 4*Catalan
+
+
+### I( asin(x)^2 / x )
+integrate(\(x) asin(x)^2 / x, 0, 1)
+1/4 * pi^2 * log(2) - 7/8 * pracma::zeta(3)
+
+### I( asin(x) / x^2 )
+integrate(\(x) asin(x) / x^2 - 1/x, 0, 1)
+- pi/2 + log(2) + 1
+
+### I( asin(x)^2 / x^2 )
+integrate(\(x) asin(x)^2 / x^2, 0, 1, rel.tol=1E-9)
+integrate(\(x) 2*x / sin(x), 0, pi/2)$value - (pi/2)^2;
+- (pi/2)^2 + 4*Catalan
+
+
+#################
+#################
+
 ##############
 ### Powers ###
 
@@ -690,11 +725,11 @@ integrate(\(x) - 8*x*log(sin(x)), 0, pi/4)$value +
 	- 3/8* pi^2*log(2) - pi*Catalan;
 8*(pi^2 * log(2)/32 + pi * Catalan / 8 - 35/128 * pracma::zeta(3)) +
 	- 3/8* pi^2*log(2) - pi*Catalan;
--35/16 * pracma::zeta(3) - 1/8* pi^2*log(2);
+-35/16 * pracma::zeta(3) - 1/8 * pi^2*log(2);
 
 #
 integrate(\(x) x*log(1+sin(x)), 0, pi/2)
-21*pracma::zeta(3)/16 - pi^2*log(2)/8;
+21*pracma::zeta(3)/16 - 1/8 * pi^2*log(2);
 
 
 ###
