@@ -189,6 +189,8 @@ curve.Atan = function(b = 1, n = 1, k = 1,
 	if(! is.null(xy.labels)) {
 		if(is.null(labels)) {
 			labels = paste0("AT", seq(len));
+		} else if(length(labels == 1) && len > 1) {
+			labels = paste0(labels, seq(len));
 		}
 		xy = xy.labels;
 		legend(xy[1], xy[2], labels, fill=col);

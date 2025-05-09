@@ -195,12 +195,12 @@ curve.ExpS(n=n, b=b, k = 1, Vmax = 2, col=col, lwd=lwd, labels = lbls, xy.labels
 curve.ref(col=col.blue[1], lwd=lwd)
 xy1 = c(8, 0.5); xy2 = c(11.5, 0.5);
 col = col.green; lbls = paste0("ESb", 1:4);
-b = 1 / c(1.5, 2, 3.5, 5.5); n = rep(1, 4);
+b = 1 / c(1.5, 2, 3.5, 5.5); n = 1;
 curve.ExpS(n=n, b=b, k = 1, Vmax = 2, col=col, lwd=lwd, labels = lbls, xy.labels = xy1)
 col = col.magenta; lbls = paste0("ESnb", 1:4);
-b = 1 / c(1.5, 2, 3.5, 5.5); n = 10/11;
+n = 10/11; # same b;
 curve.ExpS(n=n, b=b, k = 1, Vmax = 2, col=col, lwd=lwd, labels = lbls, xy.labels = xy2)
-text(xy2[1] + 0.5, xy[2] + 0.05, "n = 0.91", col = col.magenta[1], adj = c(0, 0))
+text(xy2[1] + 0.5, xy2[2] + 0.05, "n = 0.91", col = col.magenta[1], adj = c(0, 0))
 
 
 ### Power vs Extended (2)
@@ -247,7 +247,7 @@ Vx = 1; n = 1;
 curve.MM(col.blue, lwd=lwd, n=n, Vx=Vx)
 #
 xy = c(11.5, 0.5); col = col.green;
-b  = c(2, 1, 1/2, 1/3);
+b  = c(1, 2, 1/2, 1/3);
 curve.Atan(b=b, n=n, Vx=Vx, Vmax = 2, col=col, lwd=lwd, xy.labels = xy)
 
 # Note:
@@ -263,8 +263,8 @@ curve.Atan(b=b, n=n, Vx=Vx, Vmax = 2, col=col, lwd=lwd, xy.labels = xy)
 curve.MM(col.blue, lwd=lwd)
 #
 xy = c(11.5, 0.5); col = col.green;
-n  = c(2, 1, 1/2, 1/3); b = 1;
-curve.Atan(b=b, n=n, Vmax = 2, col=col, xy.labels = xy)
+n  = c(1, 2, 1/2, 1/3); b = 1;
+curve.Atan(b=b, n=n, Vmax = 2, col=col, xy.labels = xy, labels = "ATn")
 # all curves pass through (1,1) (when b = 1);
 
 
