@@ -123,7 +123,19 @@ Vx = 1; Vmax = 2;
 curve.MM(Vx=Vx, Vmax=Vmax, col=col.blue, lwd=lwd)
 
 
+### Michaelis-Menten: Basic w. Delta(Tnn)
+curve.MM(Vx=Vx, Vmax=Vmax, col=col.blue, lwd=lwd)
+### Tnn for curve with b = 1;
+# T50: h = Vmax / 2
+for(val in c(0.5,1,1.5)) abline(h = val, col = "green", lty = 2);
+for(val in c(1/3,1,3)) abline(v = val, col = "green", lty = 2);
+#
+lines(c(1/3, 1), c(0.5,0.5), col = "green", lwd=lwd)
+lines(c(3, 1), c(1.5,1.5), col = "green", lwd=lwd)
+
+
 ### Michaelis Menten: Power-Variants
+curve.MM(Vx=Vx, Vmax=Vmax, col=col.blue, lwd=lwd)
 xy = c(11.5, 0.5); col = col.magenta[2:4];
 b  = c(1/2, 1, 2); n = rep(1/2, 3);
 sol = curve.MMextn(b=b, n=n, Vx=Vx, Vmax=Vmax, col=col, lwd=lwd, xy.legend = xy);
