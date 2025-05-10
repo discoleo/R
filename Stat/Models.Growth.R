@@ -5,7 +5,7 @@
 ##
 ## Leonard Mada
 ##
-## draft v.0.2a
+## draft v.0.2b
 
 
 ### Introduction
@@ -56,11 +56,12 @@
 ### NLS:
 
 ### Michaelis-Menten type:
-# V = Vmax * t^n / (b + t^n)
+# V = Vmax * t^(n*m) / (b + t^n)^m
 ### Saturated Exponential:
-# V = Vmax * (1 - exp(-k*t))
+# V = Vmax * (1 - exp(-k*t^n))^m
 ### Exponential Fractions:
-# V = Vmax * (1/(k + exp(- b*t)) - 1/(k + 1)) * k*(k+1);
+# V = Vmax * (1 - exp(- b1*t^n1))^m1 / (1 + 1/k * exp(- b2*t^n2))^m2
+# [old] V = Vmax * (1/(k + exp(- b*t)) - 1/(k + 1)) * k*(k+1);
 ### Atan type:
 # V = Vmax * atan(k*t^p) * 2/pi;
 ### Gompertz type:
