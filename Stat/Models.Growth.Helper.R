@@ -64,29 +64,32 @@ plot.curve = function() {
 
 MM.eq = expression(Vmax * t^n / (b + t^n));
 
-# Vx = solve V - Vx == 0;
+# Vx = value used to solve (V - Vx) == 0;
+# Note: Vx is a given value (NOT a derivative);
 curve.MM = function(col, b = c(1, 1/2, 2, 3), n = 1, lwd = 2, legend = TRUE,
 		Vmax = 2, Vx = Vmax / 2, xy.txt = c(8, 0.5)) {
 	doS = (Vx != 0);
+	len = c(length(b), length(n));
+	if(any(len == 0)) return();
+	len = max(len);
 	params = list(Vmax = Vmax, b = b[1], n = n[1]);
-	if(doS) sol1 = solve.eq(MM.eq, params, Vx=Vx);
+	if(length(b) == 1 && len > 1) b = rep(b, len);
+	if(length(n) == 1 && len > 1) n = rep(n, len);
 	# curve(eval.Exp(x, "t", MM.eq, params), col = col[1], xlim=xlim, ylim=ylim)
 	curve.ref(params = params, col = col[1], lwd=lwd);
+	if(doS) sol1 = solve.eq(MM.eq, params, Vx=Vx);
 	if(length(b) == 1) return(); # Hack: Reference curve;
-	params$b = b[2];
-	if(doS) sol2 = solve.eq(MM.eq, params, Vx=Vx);
-	curve(eval.Exp(x, "t", MM.eq, params), add = T, col = col[2], lwd=lwd)
-	params$b = b[3];
-	if(doS) sol3 = solve.eq(MM.eq, params, Vx=Vx);
-	curve(eval.Exp(x, "t", MM.eq, params), add = T, col = col[3], lwd=lwd)
-	params$b = b[4];
-	if(doS) sol4 = solve.eq(MM.eq, params, Vx=Vx);
-	curve(eval.Exp(x, "t", MM.eq, params), add = T, col = col[4], lwd=lwd)
+	sol = list();
+	for(id in seq(2, len)) {
+		params$b = b[id]; params$n = n[id];
+		curve(eval.Exp(x, "t", MM.eq, params), add = T, col = col[id], lwd=lwd);
+		if(doS) sol[[id]] = solve.eq(MM.eq, params, Vx=Vx);
+	}
 	if(legend) {
 		legend(xy.txt[1], xy.txt[2], legend = paste0("MM", seq_along(b)), fill = col);
 	}
 	if(doS) {
-		sol = rbind(sol1, sol2, sol3, sol4);
+		sol = do.call(rbind, sol);
 		return(sol);
 	}
 }
