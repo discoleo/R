@@ -532,6 +532,7 @@ integrate(\(x) sapply(x, \(y) integrate(
 
 
 ##################
+### Log & Trig ###
 
 ### I( log(x)*log(y) * cos(x+y) / sqrt(x*y) ) on [0, Inf] x [0, Inf]
 # Maths 505: The best double integral you'll see this week
@@ -559,7 +560,8 @@ sc = 400; integrate(\(x) sapply(x, \(y)
 
 
 
-#################
+###################
+### Log( Trig ) ###
 
 ### I( log(sin(x)/cos(y) + cos(x)/sin(y)) )
 # Maths 505: A beautiful iterated integral
@@ -579,6 +581,11 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 7/8 * pracma::zeta(3) - (pi/2)^2 * log(2)
 
 
+### I( log(cos(x) + cos(y)) )
+# see next Section: cos(x-y)*cos(x+y);
+integrate(\(x) sapply(x, \(y) integrate(\(x) log(cos(x) + cos(y)), 0, pi/2)$value), 0, pi/2)
+7/4 * pracma::zeta(3) - (pi/2)^2 * log(2);
+
 
 ### I( log(tan(x) + tan(y)) )
 # Maths 505: A brutal iterated integral!
@@ -596,6 +603,11 @@ integrate(\(x) sapply(x, \(y) integrate(\(x) log(sin(x+y)), 0, pi/4)$value), 0, 
 ### I( log(cos(x-y)) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) log(cos(x-y)), 0, pi/4)$value), 0, pi/4)
 21/64 * pracma::zeta(3) - pi^2 * log(2) / 16;
+
+### I( log(cos(x+y)) )
+integrate(\(x) sapply(x, \(y) integrate(\(x) log(cos(x+y)), 0, pi/4)$value), 0, pi/4)
+7/64 * pracma::zeta(3) - pi^2 * log(2)/16;
+
 
 # Derivation:
 integrate(\(x) pi/4 * log(cos(x - pi/4)) +
