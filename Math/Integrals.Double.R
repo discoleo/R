@@ -642,6 +642,11 @@ id = 1:2; ic = 1:3; sn = sin(2*pi*id/6); cs = cos(2*pi*ic/6);
 # TODO: simplify;
 
 
+### on [0, pi/8]^2
+integrate(\(x) sapply(x, \(y) integrate(\(x) log(cos(x-y)), 0, pi/8)$value), 0, pi/8)
+integrate(\(x) 2*(pi/8 - x) * log(cos(x)), 0, pi/8);
+# TODO
+
 ### I( log(tan(x+y)) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) log(tan(x+y)), 0, pi/4)$value), 0, pi/4)
 0
