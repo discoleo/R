@@ -609,6 +609,14 @@ integrate(\(x) (pi/4 - x) * log(cos(x)), 0, pi/4)$value +
 - pi^2/16 * log(2) + 21/64 * pracma::zeta(3);
 
 
+### on [0, pi/3]^2
+integrate(\(x) sapply(x, \(y) integrate(\(x) log(cos(x-y)), 0, pi/3)$value), 0, pi/3)
+# Note:
+# - for sub-integrals, see: Integrals.Log.Trig.R;
+# - alternatively: Clausen function;
+
+# TODO
+
 ### I( log(tan(x+y)) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) log(tan(x+y)), 0, pi/4)$value), 0, pi/4)
 0
