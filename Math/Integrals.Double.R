@@ -158,6 +158,9 @@ integrate(\(x) sapply(x, \(y) integrate(\(x) log(1+x*y) / (x+y),
 ### I( log(x+y) / (1 - x*y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) log(x+y) / (1 - x*y), 0, 1)$value), 0, 1)
 
+# I( log((x+y)/2) / (1-x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x) log((x+y)/2) / (1 - x*y), 0, 1)$value), 0, 1)
+
 
 ### I( log(x+y) / (1 + x*y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) log(x+y) / (1 + x*y), 0, 1)$value), 0, 1)
@@ -178,6 +181,11 @@ integrate(\(x) sapply(x, \(y) integrate(\(x) 2 * log(1-x*y) / (x+y),
 	0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)$value +
 	- 2*log(2)^2 + 4*log(2) + pi^2/3 - 4;
 # TODO
+
+
+### I( log(x+y+1) / (1 + x*y) )
+integrate(\(x) sapply(x, \(y)
+	integrate(\(x) log(x+y+1) / (1 + x*y), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 
 
 ### I( log(x+y+1) / (x^2 + y^2) )
@@ -292,13 +300,29 @@ integrate(\(x) sapply(x, \(y) integrate(\(x) atan(1 + x*y), 0, 1)$value), 0, 1)
 integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x*y) / (x+y), 0, 1)$value), 0, 1)
 # TODO
 
-### I( atan(x+y) / (1 - x*y) )
-integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x+y) / (1-x*y), 0, 1)$value), 0, 1)
+### I( atan(x*y) / (x + y + 1) )
+integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x*y) / (x+y+1), 0, 1)$value), 0, 1)
+# TODO
+
+### I( atan(x*y) / (1 + x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x*y) / (1 + x*y), 0, 1)$value), 0, 1)
+# TODO
+
+### I( atan(x*y) / (1 - x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x*y) / (1 - x*y), 0, 1)$value), 0, 1)
 # TODO
 
 ### I( atan(x/y) / (x*y+1) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x/y) / (1+x*y), 0, 1)$value), 0, 1)
 pi^3 / 48
+
+### I( atan(x+y) / (1 - x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x+y) / (1-x*y), 0, 1)$value), 0, 1)
+# TODO
+
+### I( atan(x+y) / (1 + x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x+y) / (1+x*y), 0, 1)$value), 0, 1)
+# TODO
 
 
 ##############
@@ -537,6 +561,25 @@ sc = 400; integrate(\(x) sapply(x, \(y)
 
 #################
 
+### I( log(sin(x)/cos(y) + cos(x)/sin(y)) )
+# Maths 505: A beautiful iterated integral
+# https://www.youtube.com/watch?v=Cyvgh9RDaV8
+
+###
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	log(sin(x)/cos(y) + cos(x)/sin(y)), 0, pi/2)$value), 0, pi/2)
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	log(2 * cos(x-y) / sin(y)), 0, pi/2)$value), 0, pi/2)
+7/8 * pracma::zeta(3) + (pi/2)^2 * log(2)
+
+
+### I( log(cos(x-y)) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	log(cos(x-y)), 0, pi/2, rel.tol=1E-12)$value), 0, pi/2, rel.tol=1E-12)
+7/8 * pracma::zeta(3) - (pi/2)^2 * log(2)
+
+
+
 ### I( log(tan(x) + tan(y)) )
 # Maths 505: A brutal iterated integral!
 # https://www.youtube.com/watch?v=UwEgcCZ_SqU
@@ -548,13 +591,30 @@ integrate(\(x) sapply(x, \(y) integrate(\(x) log(tan(x) + tan(y)), 0, pi/4)$valu
 
 ### I( log(sin(x+y)) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) log(sin(x+y)), 0, pi/4)$value), 0, pi/4)
-7/64 * pracma::zeta(3) - pi^2 * log(2)/16
+7/64 * pracma::zeta(3) - pi^2 * log(2) / 16
+
+### I( log(cos(x-y)) )
+integrate(\(x) sapply(x, \(y) integrate(\(x) log(cos(x-y)), 0, pi/4)$value), 0, pi/4)
+21/64 * pracma::zeta(3) - pi^2 * log(2) / 16;
+
+# Derivation:
+integrate(\(x) pi/4 * log(cos(x - pi/4)) +
+	+ sapply(x, \(y) integrate(\(x) x * tan(x-y), 0, pi/4)$value), 0, pi/4);
+integrate(\(x) sapply(x, \(y) integrate(\(x) x * tan(x-y), 0, pi/4)$value), 0, pi/4)$value +
+	- pi/4 * (pi * log(2) / 4 - Catalan / 2);
+integrate(\(x) x * log(cos(x-pi/4)) - x*log(cos(x)), 0, pi/4)$value +
+	- pi/4 * (pi * log(2) / 4 - Catalan / 2);
+integrate(\(x) (pi/4 - x) * log(cos(x)), 0, pi/4)$value +
+	- pi^2/32 * log(2) + 21/128 * pracma::zeta(3);
+- pi^2/16 * log(2) + 21/64 * pracma::zeta(3);
 
 
 ### I( log(tan(x+y)) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) log(tan(x+y)), 0, pi/4)$value), 0, pi/4)
 0
 
+
+### Prod:
 
 ###
 integrate(\(x) sapply(x, \(y) integrate(\(x) log(tan(pi/4*x*y)), 0, 1)$value), 0, 1)
