@@ -143,6 +143,8 @@ integrate(\(x) sapply(x, \(y) integrate(\(x) log(1-x^2*y^2), 0, 1)$value), 0, 1)
 pi^2/4 + 2*log(2) - 4
 
 
+### Log-Fractions
+
 ### I( log(1-x*y) / (x+y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) log(1-x*y) / (x+y),
 	0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
@@ -161,14 +163,14 @@ integrate(\(x) sapply(x, \(y) integrate(\(x) log(x+y) / (1 - x*y), 0, 1)$value),
 integrate(\(x) sapply(x, \(y) integrate(\(x) log(x+y) / (1 + x*y), 0, 1)$value), 0, 1)
 
 
-### I( (x+y)*log(x+y) / (1 + x*y) )
+### I( (x+y) * log(x+y) / (1 + x*y) )
 integrate(\(x) sapply(x, \(y) {
 	integrate(\(x) (x+y)*log(x+y) / (1+x*y), 0, 1, rel.tol=1E-12)$value
 	}), 0, 1, rel.tol=1E-12)
 - pi^2/2 + 2*log(2)^2 + 4;
 
 
-### I( (x+y)*log(x+y) / (1 - x*y) )
+### I( (x+y) * log(x+y) / (1 - x*y) )
 integrate(\(x) sapply(x, \(y) {
 	integrate(\(x) (x+y)*log(x+y) / (1-x*y), 0, 1, rel.tol=1E-12)$value
 	}), 0, 1, rel.tol=1E-12)
@@ -177,6 +179,35 @@ integrate(\(x) sapply(x, \(y) integrate(\(x) 2 * log(1-x*y) / (x+y),
 	- 2*log(2)^2 + 4*log(2) + pi^2/3 - 4;
 # TODO
 
+
+### I( log(x+y+1) / (x^2 + y^2) )
+integrate(\(x) sapply(x, \(y)
+	integrate(\(x) log(x+y+1) / (x^2 + y^2), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+
+
+### I( log(1 + x*y) / (x^2 + y^2) )
+integrate(\(x) sapply(x, \(y)
+	integrate(\(x) log(1 + x*y) / (x^2 + y^2), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+
+
+### I( log(1 - x*y) / (x^2 + y^2) )
+integrate(\(x) sapply(x, \(y)
+	integrate(\(x) log(1 - x*y) / (x^2 + y^2), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+
+
+### I( log(x+y) / (1 + x^2 + y^2) )
+integrate(\(x) sapply(x, \(y)
+	integrate(\(x) log(x+y) / (1 + x^2 + y^2), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+# TODO
+
+
+### I( log(x+y) / (2 - x^2 - y^2) )
+integrate(\(x) sapply(x, \(y)
+	integrate(\(x) log(x+y) / (2 - x^2 - y^2), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+# TODO
+
+
+### Pow = 2 (inside Log)
 
 ### I( log(x^2+y^2) / (1 + x*y) )
 integrate(\(x) sapply(x, \(y)
@@ -202,19 +233,16 @@ integrate(\(x) sapply(x, \(y)
 # TODO
 
 
-### I( log(x+y+1) / (x^2 + y^2) )
+### I( log(x^2+x*y+y^2) / (1 - x*y) )
 integrate(\(x) sapply(x, \(y)
-	integrate(\(x) log(x+y+1) / (x^2 + y^2), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+	integrate(\(x) log(x^2+x*y+y^2) / (1-x*y), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+# TODO
 
 
-### I( log(1 + x*y) / (x^2 + y^2) )
+### I( log(x^2+x*y+y^2) / (1 + x*y) )
 integrate(\(x) sapply(x, \(y)
-	integrate(\(x) log(1 + x*y) / (x^2 + y^2), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
-
-
-### I( log(1 - x*y) / (x^2 + y^2) )
-integrate(\(x) sapply(x, \(y)
-	integrate(\(x) log(1 - x*y) / (x^2 + y^2), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+	integrate(\(x) log(x^2+x*y+y^2) / (1+x*y), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+# TODO
 
 
 ### Prod( LOG )
@@ -288,7 +316,7 @@ integrate(\(x) sapply(x, \(y) integrate(\(x) log(exp(x) + exp(y)), 0, 1)$value),
 - 3/2*pracma::zeta(3) - pi^2/6 - 2*polylog2(-exp(1), 3) + 1/3;
 
 
-###
+### I( log(exp(1) - exp(x*y)) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) log(exp(1) - exp(x*y)), 0, 1)$value), 0, 1)
 # TODO
 
@@ -347,7 +375,24 @@ polylog2(-2/(exp(1)-1)) - polylog2(-1 - 2/(exp(1)-1)) +
 	+ (log(exp(1)-1) - 1) * log((exp(1)+1)/2);
 
 
-###########
+###############
+
+### I( log(x+y) / (exp(x*y) + 1) )
+integrate(\(x) sapply(x, \(y) integrate(\(x) log(x+y) / (exp(x*y) + 1), 0, 1)$value), 0, 1)
+# TODO
+
+### I( log(1 - x*y) / (exp(x*y) - 1) )
+integrate(\(x) sapply(x, \(y) integrate(\(x) log(1 - x*y) / (exp(x*y) - 1), 0, 1)$value), 0, 1)
+# TODO
+
+### I( log(1 - x*y) / (exp(x*y) + 1) )
+integrate(\(x) sapply(x, \(y) integrate(\(x) log(1 - x*y) / (exp(x*y) + 1), 0, 1)$value), 0, 1)
+# TODO
+
+
+##############
+
+### Other Exp/Base:
 
 ### I( log(2^x + 2^y + 1) / (2^(x+y) * (2^x + 2^y)) )
 # Dr Peyam: A surprisingly elegant double integral
@@ -378,8 +423,21 @@ integrate(\(x) sapply(x, \(y)
 ############
 ### Trig ###
 
+### I( sin(pi/2*(x+y)) / (x + y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x) sin(pi/2*(x+y)) / (x + y), 0, 1)$value), 0, 1)
+integrate(\(x) sapply(x, \(y) integrate(\(x) 4/pi*sin(x)*cos(y) / (x + y), 0, pi/2)$value), 0, pi/2)
+# TODO
+
+
+### I( sin(pi*(x+y)) / (x + y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x) sin(pi*(x+y)) / (x + y), 0, 1)$value), 0, 1)
+
+
 ### I( sin(pi/2*(x+y)) / (1 + x*y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) sin(pi/2*(x+y)) / (1 + x*y), 0, 1)$value), 0, 1)
+
+### I( sin(pi*(x+y)) / (1 + x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x) sin(pi*(x+y)) / (1 + x*y), 0, 1)$value), 0, 1)
 
 ### I( sin(x+y) / (1 + x*y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) sin(x+y) / (1 + x*y), 0, pi/2)$value), 0, pi/2)
@@ -392,6 +450,18 @@ integrate(\(x) sapply(x, \(y) integrate(\(x) cos(x+y) / (1 + x*y), 0, pi/2)$valu
 ### I( sin(pi/2*(x+y)) / (1 - x*y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) sin(pi/2*(x+y)) / (1 - x*y), 0, 1)$value), 0, 1)
 
+
+### Trig( Prod )
+
+### I( sin(pi/2*x*y) / (x + y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x) sin(pi/2*x*y) / (x + y), 0, 1)$value), 0, 1)
+
+### I( sin(pi*x*y) / (x + y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x) sin(pi*x*y) / (x + y), 0, 1)$value), 0, 1)
+
+
+
+### Trig-Fractions
 
 ### I( (sin(x) + sin(y)) / (cos(x) + cos(y)) )
 # Maths 505: A beautifully symmetric double integral
