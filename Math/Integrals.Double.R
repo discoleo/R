@@ -316,6 +316,10 @@ integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x*y) / (1 - x*y), 0, 1)$value)
 integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x/y) / (1+x*y), 0, 1)$value), 0, 1)
 pi^3 / 48
 
+
+### I( atan(x+y) / (x + y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x+y) / (x + y), 0, 1)$value), 0, 1)
+
 ### I( atan(x+y) / (1 - x*y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x+y) / (1-x*y), 0, 1)$value), 0, 1)
 # TODO
@@ -643,9 +647,27 @@ id = 1:2; ic = 1:3; sn = sin(2*pi*id/6); cs = cos(2*pi*ic/6);
 
 
 ### on [0, pi/8]^2
-integrate(\(x) sapply(x, \(y) integrate(\(x) log(cos(x-y)), 0, pi/8)$value), 0, pi/8)
-integrate(\(x) 2*(pi/8 - x) * log(cos(x)), 0, pi/8);
-# TODO
+n = 8; # EVEN: 4*k;
+integrate(\(x) sapply(x, \(y) integrate(\(x) log(cos(x-y)), 0, pi/n)$value), 0, pi/n)
+integrate(\(x) 2*(pi/n - x) * log(cos(x)), 0, pi/n);
+id = seq(n/2 - 1); id2 = seq(n/4 - 1); n2 = n/2;
+sn = sin(2*pi*id/n); sn2 = sin(2*pi*id2/n2);
+cs = cos(2*pi*id/n); cs2 = cos(2*pi*id2/n2);
+dd = 512; sg = c(1,-1,1); # NOT generalized;
+2*pi/n * (- pi*log(2) / 8 + sum(
+		+ sg*sn * (pracma::psi(1, id/16) - pracma::psi(1, 1 - id/16)) +
+		- sg*sn * (pracma::psi(1, 1/2 - id/16) - pracma::psi(1, 1/2 + id/16)) ) / dd) +
+	- 1/2 * (pracma::zeta(3) * (1/2 + 3/n2^3)/2 - (pi/n2)^2 * log(2)/2 +
+	+ sum(cs2 * (pracma::psi(2, id2/n2) + pracma::psi(2, 1 - id2/n2))) / (8*n2^3) +
+	- sum(sn2 * (pracma::psi(1, id2/n2) - pracma::psi(1, 1 - id2/n2))
+		) * pi / (2*n2^3) ) + log(2)*(pi/n)^2 +
+	+ 2*(pracma::zeta(3) * (1/2 + 3/n^3)/2 - (pi/n)^2 * log(2)/2 +
+		+ sum(cs * (pracma::psi(2, id/n) + pracma::psi(2, 1 - id/n))) / (8*n^3) +
+		- sum(sn * (pracma::psi(1, id/n) - pracma::psi(1, 1 - id/n))
+		) * pi / (2*n^3) );
+
+# TODO: generalize & simplify;
+
 
 ### I( log(tan(x+y)) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) log(tan(x+y)), 0, pi/4)$value), 0, pi/4)
