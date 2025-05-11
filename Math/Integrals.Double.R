@@ -606,10 +606,10 @@ integrate(\(x) sapply(x, \(y) integrate(\(x) log(cos(x-y)), 0, pi/4)$value), 0, 
 
 ### I( log(cos(x+y)) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) log(cos(x+y)), 0, pi/4)$value), 0, pi/4)
-7/64 * pracma::zeta(3) - pi^2 * log(2)/16;
+7/64 * pracma::zeta(3) - pi^2 * log(2) / 16;
 
 
-# Derivation:
+# Derivation: I( log(cos(x-y)) )
 integrate(\(x) pi/4 * log(cos(x - pi/4)) +
 	+ sapply(x, \(y) integrate(\(x) x * tan(x-y), 0, pi/4)$value), 0, pi/4);
 integrate(\(x) sapply(x, \(y) integrate(\(x) x * tan(x-y), 0, pi/4)$value), 0, pi/4)$value +
@@ -623,11 +623,24 @@ integrate(\(x) (pi/4 - x) * log(cos(x)), 0, pi/4)$value +
 
 ### on [0, pi/3]^2
 integrate(\(x) sapply(x, \(y) integrate(\(x) log(cos(x-y)), 0, pi/3)$value), 0, pi/3)
+integrate(\(x) 2*(pi/3 - x) * log(cos(x)), 0, pi/3);
+id = 1:2; ic = 1:3; sn = sin(2*pi*id/6); cs = cos(2*pi*ic/6);
+2*pi/3*(- pi*log(2)/3 + sqrt(3)/(4*36) *
+	(pracma::psi(1, 1/6) - pracma::psi(1, 5/6) +
+		+ pracma::psi(1, 1/3) - pracma::psi(1, 2/3))) +
+	- 2*(- pi^2 * log(2) / 18 - 3/16 * pracma::zeta(3) +
+		+ pi * sqrt(3)/(8*36) *
+		( pracma::psi(1, 1/6) - pracma::psi(1, 5/6) +
+		+ pracma::psi(1, 1/3) - pracma::psi(1, 2/3) ) +
+		+ sum(cs * (pracma::psi(2, ic/6) - pracma::psi(2, 1/2 + ic/6))) / (8*6^3) +
+		- sum(sn * (pracma::psi(1, id/6) - pracma::psi(1, 1 - id/6))) * pi / (2*6^3));
+
 # Note:
 # - for sub-integrals, see: Integrals.Log.Trig.R;
 # - alternatively: Clausen function;
 
-# TODO
+# TODO: simplify;
+
 
 ### I( log(tan(x+y)) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) log(tan(x+y)), 0, pi/4)$value), 0, pi/4)
