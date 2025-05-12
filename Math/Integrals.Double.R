@@ -629,21 +629,14 @@ integrate(\(x) (pi/4 - x) * log(cos(x)), 0, pi/4)$value +
 integrate(\(x) sapply(x, \(y) integrate(\(x) log(cos(x-y)), 0, pi/3)$value), 0, pi/3)
 integrate(\(x) 2*(pi/3 - x) * log(cos(x)), 0, pi/3);
 id = 1:2; ic = 1:3; sn = sin(2*pi*id/6); cs = cos(2*pi*ic/6);
-2*pi/3*(- pi*log(2)/3 + sqrt(3)/(4*36) *
-	(pracma::psi(1, 1/6) - pracma::psi(1, 5/6) +
-		+ pracma::psi(1, 1/3) - pracma::psi(1, 2/3))) +
-	- 2*(- pi^2 * log(2) / 18 - 3/16 * pracma::zeta(3) +
-		+ pi * sqrt(3)/(8*36) *
-		( pracma::psi(1, 1/6) - pracma::psi(1, 5/6) +
-		+ pracma::psi(1, 1/3) - pracma::psi(1, 2/3) ) +
-		+ sum(cs * (pracma::psi(2, ic/6) - pracma::psi(2, 1/2 + ic/6))) / (8*6^3) +
-		- sum(sn * (pracma::psi(1, id/6) - pracma::psi(1, 1 - id/6))) * pi / (2*6^3));
+-(pi/3)^2 * log(2) + 3/8 * pracma::zeta(3) +
+	- sum(cs * (pracma::psi(2, ic/6) - pracma::psi(2, 1/2 + ic/6))) / (4*6^3);
 
 # Note:
 # - for sub-integrals, see: Integrals.Log.Trig.R;
 # - alternatively: Clausen function;
 
-# TODO: simplify;
+# TODO: simplify the sum?
 
 
 ### on [0, pi/8]^2
