@@ -24,6 +24,43 @@ Catalan = 0.915965594177219015054603514;
 # - see section: Relation to the polygamma function
 # https://en.wikipedia.org/wiki/Clausen_function
 
+### I( log(sin(x)) )
+p = 3; n = 7;
+integrate(\(x) log(sin(x)), 0, pi * p/n)
+id = seq(n); sn = sin(2*p*id*pi/n); idn = id / (2*n);
+- sum(sn * (pracma::psi(1, idn) + pracma::psi(1, 1/2 + idn))) / (8*n^2) +
+	- p/n * pi * log(2);
+
+### I( log(cos(x)) )
+p = 3; n = 7;
+integrate(\(x) log(cos(x)), 0, pi * p/n)
+id = seq(n); sn = sin((n-2*p)*id*pi/n); idn = id / (2*n);
+sum(sn * (pracma::psi(1, idn) + (-1)^n * pracma::psi(1, 1/2 + idn))) / (8*n^2) +
+	- p/n * pi * log(2);
+
+### I( log(tan(x)) )
+p = 3; n = 7;
+integrate(\(x) log(tan(x)), 0, pi * p/n)
+id = seq(n); idn = id / (2*n);
+sn = sin(2*p*id*pi/n); sn2 = sin((n-2*p)*id*pi/n);
+- sum((sn + sn2) * pracma::psi(1, idn) +
+	+ (sn + (-1)^n * sn2)* pracma::psi(1, 1/2 + idn)) / (8*n^2);
+
+
+### [half Angle]
+p = 3; n = 7;
+integrate(\(x) log(sin(x)), 0, pi * p/(2*n))
+id = seq(n); sn = sin(p*id*pi/n); idn = id / (2*n);
+- sum(sn * (pracma::psi(1, idn) + (-1)^p * pracma::psi(1, 1/2 + idn))) / (8*n^2) +
+	- p/(2*n) * pi * log(2);
+
+###
+p = 3; n = 7;
+integrate(\(x) log(cos(x)), 0, pi * p/(2*n))
+id = seq(n); sn = sin((n-p)*id*pi/n); idn = id / (2*n);
+sum(sn * (pracma::psi(1, idn) + (-1)^(n-p) * pracma::psi(1, 1/2 + idn))) / (8*n^2) +
+	- p/(2*n) * pi * log(2);
+
 
 # Maths 505: A MONSTER INTEGRAL!!!
 # int from 0 to infty arctan(x)/(x(x+1)(x^2+1))
