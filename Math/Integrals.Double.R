@@ -631,12 +631,11 @@ integrate(\(x) 2*(pi/3 - x) * log(cos(x)), 0, pi/3);
 id = 1:2; ic = 1:3; sn = sin(2*pi*id/6); cs = cos(2*pi*ic/6);
 -(pi/3)^2 * log(2) + 3/8 * pracma::zeta(3) +
 	- sum(cs * (pracma::psi(2, ic/6) - pracma::psi(2, 1/2 + ic/6))) / (4*6^3);
+-(pi/3)^2 * log(2) + (1/6 + 3/8) * pracma::zeta(3);
 
 # Note:
 # - for sub-integrals, see: Integrals.Log.Trig.R;
 # - alternatively: Clausen function;
-
-# TODO: simplify the sum?
 
 
 ### on [0, pi/8]^2
