@@ -639,24 +639,21 @@ id = 1:2; ic = 1:3; sn = sin(2*pi*id/6); cs = cos(2*pi*ic/6);
 
 
 ### on [0, pi/8]^2
-n = 8; # EVEN: 4*k;
+n = 8; # n = 12; # EVEN: 4*k;
 integrate(\(x) sapply(x, \(y) integrate(\(x) log(cos(x-y)), 0, pi/n)$value), 0, pi/n)
 integrate(\(x) 2*(pi/n - x) * log(cos(x)), 0, pi/n);
-id = seq(n/2 - 1); id2 = seq(n/4 - 1); n2 = n/2;
+p  = 1; id0 = seq(n); n2 = n/2;
+id = seq(n/2 - 1); id2 = seq(n/4 - 1);
 sn = sin(2*pi*id/n); sn2 = sin(2*pi*id2/n2);
 cs = cos(2*pi*id/n); cs2 = cos(2*pi*id2/n2);
-dd = 512; sg = c(1,-1,1); # NOT generalized;
-2*pi/n * (- pi*log(2) / 8 + sum(
-		+ sg*sn * (pracma::psi(1, id/16) - pracma::psi(1, 1 - id/16)) +
-		- sg*sn * (pracma::psi(1, 1/2 - id/16) - pracma::psi(1, 1/2 + id/16)) ) / dd) +
-	- 1/2 * (pracma::zeta(3) * (1/2 + 3/n2^3)/2 - (pi/n2)^2 * log(2)/2 +
-	+ sum(cs2 * (pracma::psi(2, id2/n2) + pracma::psi(2, 1 - id2/n2))) / (8*n2^3) +
-	- sum(sn2 * (pracma::psi(1, id2/n2) - pracma::psi(1, 1 - id2/n2))
-		) * pi / (2*n2^3) ) + log(2)*(pi/n)^2 +
-	+ 2*(pracma::zeta(3) * (1/2 + 3/n^3)/2 - (pi/n)^2 * log(2)/2 +
-		+ sum(cs * (pracma::psi(2, id/n) + pracma::psi(2, 1 - id/n))) / (8*n^3) +
-		- sum(sn * (pracma::psi(1, id/n) - pracma::psi(1, 1 - id/n))
-		) * pi / (2*n^3) );
+idn = id0 / (2*n); snsg = -(-1)^id0 * sin(2*p*id0*pi/n);
+pi * sum(snsg * (pracma::psi(1, idn) + (-1)^n * pracma::psi(1, 1/2 + idn))) / (4*n^3) +
+	- (2*p-1)*log(2)*(pi/n)^2 + pracma::zeta(3) * (3/8 - 3/n^3) +
+	- 1 / (4*n^3) * (
+	+ sum(cs2 * (pracma::psi(2, id2/n2) + pracma::psi(2, 1 - id2/n2))) * 2 +
+	- sum(sn2 * (pracma::psi(1, id2/n2) - pracma::psi(1, 1 - id2/n2))) * 8*pi +
+	- sum( cs * (pracma::psi(2, id/n) + pracma::psi(2, 1 - id/n))) +
+	+ sum( sn * (pracma::psi(1, id/n) - pracma::psi(1, 1 - id/n))) * 4*pi );
 
 # TODO: generalize & simplify;
 
