@@ -137,6 +137,17 @@ log(6)/6 - sqrt(3)/(4*36*pi) *
 # Positive Integers:
 n = 12; k = 5;
 integrate(\(x) x * log(sin(x)), 0, pi * k/n)
+id = seq(2*n); idn = id / (4*n);
+sn = sin(2*k*id*pi/n); cs = cos(2*k*id*pi/n);
+- 2*(k/n)^2 * (pi/2)^2 * log(2) + 1/4 * pracma::zeta(3) +
+	- sum(sn * (pracma::psi(1, idn) + pracma::psi(1, 1/2 + idn))) * pi*k / (32*n^3) +
+	+ sum(cs * (pracma::psi(2, idn) + pracma::psi(2, 1/2 + idn))) / n^3 / 32/16;
+
+# Note: robust;
+
+### [previous]
+n = 12; k = 5;
+integrate(\(x) x * log(sin(x)), 0, pi * k/n)
 n2 = floor((n-1)/2); idn = seq(n2)/n; even = 1 - (n %% 2);
 sn = sin(2*pi*k*idn); cs = cos(2*pi*k*idn);
 pracma::zeta(3) * (1 - 1/n^3 - even * (-1)^k * 7/n^3)/4 - (pi*k/n)^2 * log(2)/2 +
@@ -427,6 +438,27 @@ log(cos(x)) # ==
 
 
 ### Derivation: I( x * log(sin(x)) )
+
+# Repeated Derivation:
+n = 12; k = 5; p = n - 2*k;
+integrate(\(x) x * log(sin(x)), 0, pi * k/n)
+integrate(\(x) (pi/2 - x) * log(cos(x)), pi * p/(2*n), pi/2)
+id = seq(2*n); idn = id / (4*n);
+sn = -(-1)^id * sin(p*id*pi/n); cs = (-1)^id * cos(p*id*pi/n);
+(1/2 - 2*k/n) * (pi/2)^2 * log(2) + 7/16 * pracma::zeta(3) +
+- pi/2*(sum(sn * (pracma::psi(1, idn) + pracma::psi(1, 1/2 + idn))) / (32*n^2)) +
+integrate(\(x) x * log(cos(x)), 0, pi * p/(2*n))$value;
+#
+(1/2 - 2*k/n - 1/2*(p/n)^2) * (pi/2)^2 * log(2) + 1/4 * pracma::zeta(3) +
+- sum(sn * (pracma::psi(1, idn) + pracma::psi(1, 1/2 + idn))) * pi*(n-p) / (64*n^3) +
+	+ sum(cs * (pracma::psi(2, idn) + pracma::psi(2, 1/2 + idn))) / n^3 / 32/16;
+
+# Basic:
+iN = seq(10000); sg = rep(c(1,-1), length(iN)/2);
+(1/2 - 2*k/n - 1/2*(p/n)^2) * (pi/2)^2 * log(2) + 1/4 * pracma::zeta(3) +
+- sum(sn * (pracma::psi(1, idn) + pracma::psi(1, 1/2 + idn))) * pi*(n-p) / (64*n^3) +
+	- sum( (-1)^iN * cos(2*p*iN*pi/2/n) / iN^3 ) / 4;
+
 
 # on [0, pi/6]
 iN = seq(10000);
