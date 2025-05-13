@@ -134,6 +134,19 @@ log(6)/6 - sqrt(3)/(4*36*pi) *
 
 ### I( x^p * log(sin(x)) )
 
+# Positive Integers:
+n = 12; k = 5;
+integrate(\(x) x * log(sin(x)), 0, pi * k/n)
+n2 = floor((n-1)/2); idn = seq(n2)/n; even = 1 - (n %% 2);
+sn = sin(2*pi*k*idn); cs = cos(2*pi*k*idn);
+pracma::zeta(3) * (1 - 1/n^3 - even * (-1)^k * 7/n^3)/4 - (pi*k/n)^2 * log(2)/2 +
+	+ sum(cs * (pracma::psi(2, idn) + pracma::psi(2, 1 - idn))) / (8*n^3) +
+	- sum(sn * (pracma::psi(1, idn) - pracma::psi(1, 1 - idn))) * pi * k / (2*n^3);
+
+
+# Note: NO direct relation to Clausen function;
+
+
 # Maths 505: ONE TOUGH INTEGRAL BOI: int 0 to pi/2 x ln(1+cos(x))
 # https://www.youtube.com/watch?v=FUY4keujknc
 
