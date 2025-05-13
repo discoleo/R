@@ -425,3 +425,34 @@ lim = sqrt(pi)
 integrate(\(x) cos(x) / (exp(1/x) - 1), -lim, lim)
 - sin(lim)
 
+
+#####################
+#####################
+
+### Clausen-Function:
+# Integrals for Higher Order
+
+# Ref:
+# Tričković, S. B., & Stanković, M. S. (2023).
+# On the closed form of Clausen functions.
+# Integral Transforms and Special Functions, 34(6), 469–477.
+# https://doi.org/10.1080/10652469.2022.2149961
+
+
+### I( x^3 * ... )
+n = 7; k = 3;
+# Upper = Inf;
+integrate(\(x) x^3 * exp(x) / (exp(2*x) - 2*cos(k/n*pi)*exp(x) + 1), 0, 40)
+integrate(\(x) log(x)^3 / (x^2 - 2*cos(k/n*pi)*x + 1), 1, Inf)
+id = seq(n); sn = sin(k*id*pi/n); idn = id / (2*n);
+sum(sn * (pracma::psi(3, idn) + (-1)^k * pracma::psi(3, 1/2 + idn))) / (2*n)^4 / sin(k/n*pi);
+
+
+# Note:
+# - can be reduced to fraction,
+#   but rescaling the fraction produces a non-classic interval;
+#   (which is interesting in itself)
+# - can be obtained in principle from
+#   a polynomial fraction of order (2*n): x^p * P(x) / Q[2*n](x)
+#   & 3x differentiation w. respect to p;
+
