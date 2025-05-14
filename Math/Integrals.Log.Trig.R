@@ -6,7 +6,7 @@
 #   integrals of type: Log( Trig );
 
 
-### Helper
+### Helper Constants
 
 Euler   = 0.57721566490153286060651209008240243079;
 Catalan = 0.915965594177219015054603514;
@@ -146,14 +146,27 @@ sn = sin(2*k*id*pi/n); cs = cos(2*k*id*pi/n);
 
 
 ### I( x * log(cos(x)) )
-n = 7; p = 3;
-integrate(\(x) x * log(cos(x)), 0, pi * p/n)
+n = 7; k = 3;
+integrate(\(x) x * log(cos(x)), 0, pi * k/n)
 id = seq(2*n); idn = id / (4*n);
-sn = (-1)^id * sin(2*p*id*pi/n); cs = (-1)^id * cos(2*p*id*pi/n);
--2*(p/n)^2 * (pi/2)^2 * log(2) - 3/16 * pracma::zeta(3) + (
-	- sum(sn * (pracma::psi(1, idn) + pracma::psi(1, 1/2 + idn))) * p*pi +
+sn = (-1)^id * sin(2*k*id*pi/n); cs = (-1)^id * cos(2*k*id*pi/n);
+-2*(k/n)^2 * (pi/2)^2 * log(2) - 3/16 * pracma::zeta(3) + (
+	- sum(sn * (pracma::psi(1, idn) + pracma::psi(1, 1/2 + idn))) * k*pi +
 	+ sum(cs * (pracma::psi(2, idn) + pracma::psi(2, 1/2 + idn))) / 16 ) / (32*n^3);
 
+
+### I( x * log(tan(x)) )
+n = 12; k = 5;
+integrate(\(x) x * log(tan(x)), 0, pi * k/n)
+id = seq(2*n); idn = id / (4*n); sg = (-1)^id;
+sn = sin(2*k*id*pi/n); cs = cos(2*k*id*pi/n);
+7/16 * pracma::zeta(3) +
+	- sum(sn * (pracma::psi(1, idn) + pracma::psi(1, 1/2 + idn))) * k*pi / (32*n^3) +
+	+ sum(cs * (pracma::psi(2, idn) + pracma::psi(2, 1/2 + idn))) / n^3 / 32/16 +
+	+ sum(
+		+ sg * sn * (pracma::psi(1, idn) + pracma::psi(1, 1/2 + idn)) * k*pi +
+		- sg * cs * (pracma::psi(2, idn) + pracma::psi(2, 1/2 + idn)) / 16
+	) / (32*n^3);
 
 # Note:
 # - new formulas (above) are robust;

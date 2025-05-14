@@ -1,5 +1,12 @@
 
 
+### Helper Constants
+
+Euler   = 0.57721566490153286060651209008240243079;
+Catalan = 0.915965594177219015054603514;
+
+###################
+
 # Note:
 # - Correct (robust) formulas are in file:
 #   Integrals.Log.Trig.R;
