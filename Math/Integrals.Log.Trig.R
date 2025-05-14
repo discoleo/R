@@ -134,6 +134,7 @@ log(6)/6 - sqrt(3)/(4*36*pi) *
 
 ### I( x^p * log(sin(x)) )
 
+### I( x * log(sin(x)) )
 # Positive Integers:
 n = 12; k = 5;
 integrate(\(x) x * log(sin(x)), 0, pi * k/n)
@@ -143,7 +144,19 @@ sn = sin(2*k*id*pi/n); cs = cos(2*k*id*pi/n);
 	- sum(sn * (pracma::psi(1, idn) + pracma::psi(1, 1/2 + idn))) * pi*k / (32*n^3) +
 	+ sum(cs * (pracma::psi(2, idn) + pracma::psi(2, 1/2 + idn))) / n^3 / 32/16;
 
-# Note: robust;
+
+### I( x * log(cos(x)) )
+n = 7; p = 3;
+integrate(\(x) x * log(cos(x)), 0, pi * p/n)
+id = seq(2*n); idn = id / (4*n);
+sn = (-1)^id * sin(2*p*id*pi/n); cs = (-1)^id * cos(2*p*id*pi/n);
+-2*(p/n)^2 * (pi/2)^2 * log(2) - 3/16 * pracma::zeta(3) + (
+	- sum(sn * (pracma::psi(1, idn) + pracma::psi(1, 1/2 + idn))) * p*pi +
+	+ sum(cs * (pracma::psi(2, idn) + pracma::psi(2, 1/2 + idn))) / 16 ) / (32*n^3);
+
+
+# Note: formulas above are robust;
+
 
 ### [previous]
 n = 12; k = 5;
