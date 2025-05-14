@@ -105,8 +105,24 @@ integrate(\(x) sin(x) / (x * (b + cos(x)^2)^2), 0, 16000, subdivisions=10029)
 pi/4 * (2*b+1) / (b*(b+1))^(3/2)
 
 
-###############
-###############
+#####################
+#####################
+
+### I( x / (1 - cos(x)) )
+integrate(\(x) x / (1 - cos(x)) - 2/x, 0, pi)
+integrate(\(x) x / (2 - 2*cos(x/2)^2) - 2/x, 0, pi)
+2*log(2) + 2 - 2*log(pi)
+
+### Helper
+integrate(\(x) x / (1 - cos(x/2)^2) - 4/x, 0, pi)
+(3*log(2) - pi/2 + 2 - 2*log(pi)) * 2 + pi - 2*log(2)
+
+###
+integrate(\(x) x / (1 - cos(x/2))/2 - 4/x, 0, pi)
+(3*log(2) - pi/2 + 2 - 2*log(pi)) * 2
+
+
+######################
 
 ### I( x^2 / (cos(x) + sin(x) + 1) )
 # Maths 505: A deceivingly difficult integral
