@@ -5,7 +5,7 @@
 ###
 ### Sums: Factorials
 ###
-### draft v.0.1b
+### draft v.0.1c
 
 
 ### Sums: Based on Factorials
@@ -48,15 +48,65 @@ sum.exp = function(n, type, x=1) {
 	return(r);
 }
 
-sum.GammaExt = function(n, x=1, iter=20) {
+### x^j / Gamma(j + k)
+# k = Offset of factorial;
+sum.GammaExt = function(k, x=1, iter=20) {
 	i = seq(0, iter);
 	x = if(x == 1) x else x^i;
-	i = i + n;
+	i = i + k + 1;
 	sum(x/gamma(i))
 }
 
 
 ########################
+
+### Basic Factorials
+
+### By = 3
+n = 3;
+m = exp(seq(0, n-1) * 2i*pi/n);
+id = seq(0, 10);
+
+### Sum ( 1 / (3*j)! )
+sum(exp(m)) / n;
+sum( 1 / factorial(n*id) )
+
+### Sum ( 1 / (3*j + 1)! )
+sum(exp(m) * m[c(1,3,2)]) / n;
+sum( 1 / factorial(n*id + 1) )
+
+### Sum ( 1 / (3*j + 2)! )
+sum(exp(m) * m[c(1,2,3)]) / n;
+sum( 1 / factorial(n*id + 2) )
+
+
+### By = 5
+n = 5;
+m = exp(seq(0, n-1) * 2i*pi/n);
+id = seq(0, 10);
+
+### Sum ( 1 / (5*j)! )
+sum(exp(m)) / n;
+sum( 1 / factorial(n*id) )
+
+### Sum ( 1 / (5*j + 1)! )
+sum(exp(m) * m[c(1,5,4,3,2)]) / n;
+sum( 1 / factorial(n*id + 1) )
+
+### Sum ( 1 / (5*j + 2)! )
+sum(exp(m) * m[c(1,4,2,5,3)]) / n;
+sum( 1 / factorial(n*id + 2) )
+
+### Sum ( 1 / (5*j + 3)! )
+sum(exp(m) * m[c(1,3,5,2,4)]) / n;
+sum( 1 / factorial(n*id + 3) )
+
+### Sum ( 1 / (5*j + 4)! )
+sum(exp(m) * m[c(1,2,3,4,5)]) / n;
+sum( 1 / factorial(n*id + 4) )
+
+
+##########
 
 ###
 n = 3
@@ -82,6 +132,11 @@ sum0.fact(c(1,4,7,10))
 
 ### Extensions:
 ### over Gamma
+
+###
+n = - 1/2
+sum.GammaExt(n)
+
 
 ###
 n = 1/2
