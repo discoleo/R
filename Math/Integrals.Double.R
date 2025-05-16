@@ -64,6 +64,7 @@ integrate(\(x) sapply(x, \(y)
 # https://www.youtube.com/watch?v=lWVBnWCz63I
 # - series expansion of 1/(1 - x*y);
 
+### I( x * log(x) * log(y)^2 / (1 - x*y) )
 integrate(\(x) sapply(x, \(y)
 	integrate(\(x) x * log(x) * log(y)^2 / (1 - x*y), 0, 1)$value), 0, 1)
 # - 2 * sum(1/j^3 * 1/(j+1)^2); j >= 1;
@@ -158,7 +159,7 @@ integrate(\(x) sapply(x, \(y) integrate(\(x) log(1+x*y) / (x+y),
 ### I( log(x+y) / (1 - x*y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) log(x+y) / (1 - x*y), 0, 1)$value), 0, 1)
 
-# I( log((x+y)/2) / (1-x*y) )
+# I( log((x+y)/2) / (1 - x*y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) log((x+y)/2) / (1 - x*y), 0, 1)$value), 0, 1)
 
 
@@ -335,23 +336,16 @@ integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x+y) / (1+x*y), 0, 1)$value), 
 ###########
 ### Exp ###
 
-### I( log(exp(x) + exp(y)) )
-# Maths 505: An extremely captivating double integral
-# https://www.youtube.com/watch?v=etR1AI3anpU
-# - for polylog2, see file: Integrals.Trig.Tan.R;
+### Fractions
 
-integrate(\(x) sapply(x, \(y) integrate(\(x) log(exp(x) + exp(y)), 0, 1)$value), 0, 1)
-- 3/2*pracma::zeta(3) - pi^2/6 - 2*polylog2(-exp(1), 3) + 1/3;
+### I( exp(x+y) / (1+x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x) exp(x+y) / (1+x*y), 0, 1)$value), 0, 1)
+
+### I( exp(x+y) / (1-x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x) exp(x+y) / (1-x*y), 0, 1)$value), 0, 1)
 
 
-### I( log(exp(1) - exp(x*y)) )
-integrate(\(x) sapply(x, \(y) integrate(\(x) log(exp(1) - exp(x*y)), 0, 1)$value), 0, 1)
-# TODO
-
-###
-integrate(\(x) sapply(x, \(y) integrate(\(x) log(exp(x*y) - 1), 0, 1)$value), 0, 1)
-# TODO
-
+### Other
 
 ### I( 1 / ((exp(x)+1) * (exp(y)+1) * (exp(x) + exp(y))) )
 # Maths 505: This double integral will make you love calculus
@@ -403,7 +397,31 @@ polylog2(-2/(exp(1)-1)) - polylog2(-1 - 2/(exp(1)-1)) +
 	+ (log(exp(1)-1) - 1) * log((exp(1)+1)/2);
 
 
-###############
+#####################
+
+### Mixed: Log( Exp )
+
+### I( log(exp(x) + exp(y)) )
+# Maths 505: An extremely captivating double integral
+# https://www.youtube.com/watch?v=etR1AI3anpU
+# - for polylog2, see file: Integrals.Trig.Tan.R;
+
+integrate(\(x) sapply(x, \(y) integrate(\(x) log(exp(x) + exp(y)), 0, 1)$value), 0, 1)
+- 3/2*pracma::zeta(3) - pi^2/6 - 2*polylog2(-exp(1), 3) + 1/3;
+
+
+### I( log(exp(1) - exp(x*y)) )
+integrate(\(x) sapply(x, \(y) integrate(\(x) log(exp(1) - exp(x*y)), 0, 1)$value), 0, 1)
+# TODO
+
+###
+integrate(\(x) sapply(x, \(y) integrate(\(x) log(exp(x*y) - 1), 0, 1)$value), 0, 1)
+# TODO
+
+
+####################
+
+### Mixed: Log & Exp
 
 ### I( log(x+y) / (exp(x*y) + 1) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) log(x+y) / (exp(x*y) + 1), 0, 1)$value), 0, 1)
