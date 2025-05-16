@@ -87,13 +87,21 @@ x = 1/2; # x = 2; # x = 2^(1/3);
 sum(exp(x*m)) / n;
 sum( x^(n*id) / factorial(n*id) )
 
+
 ### Case: x^3 = x + 1
-x = pracma::roots(c(1,0,-1,-1))[1]
-sum(exp(x*m)) / n;
-sum( x^(n*id) / factorial(n*id) )
+x = pracma::roots(c(1,0,-1,-1));
+x1 = x[1];
+sum(exp(x1*m)) / n;
+sum( x1^(n*id) / factorial(n*id) )
 #
-sum(exp(x*m) - exp(m)) / n;
-sum( (x^(n*id) - 1) / factorial(n*id) )
+sum(exp(x1*m) - exp(m)) / n;
+sum( (x1^(n*id) - 1) / factorial(n*id) );
+sum( ((x1+1)^id - 1) / factorial(n*id) );
+
+###
+x = pracma::roots(c(1,0,-1,-1));
+sum(exp(x[2]*m) - exp(x[3]*m)) / (2i*n);
+sum( (x[2]^(n*id) - x[3]^(n*id)) / factorial(n*id) ) / 2i;
 
 
 #############
