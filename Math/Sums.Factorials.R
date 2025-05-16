@@ -80,6 +80,23 @@ sum(exp(m) * m[c(1,2,3)]) / n;
 sum( 1 / factorial(n*id + 2) )
 
 
+### Parameter: x != 1
+
+### Sum ( x^j / (3*j)! )
+x = 1/2; # x = 2; # x = 2^(1/3);
+sum(exp(x*m)) / n;
+sum( x^(n*id) / factorial(n*id) )
+
+### Case: x^3 = x + 1
+x = pracma::roots(c(1,0,-1,-1))[1]
+sum(exp(x*m)) / n;
+sum( x^(n*id) / factorial(n*id) )
+#
+sum(exp(x*m) - exp(m)) / n;
+sum( (x^(n*id) - 1) / factorial(n*id) )
+
+
+#############
 ### By = 5
 n = 5;
 m = exp(seq(0, n-1) * 2i*pi/n);
