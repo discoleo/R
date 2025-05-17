@@ -154,6 +154,7 @@ integrate(\(x) sapply(x, \(y) integrate(\(x) log(1-x*y) / (x+y),
 ### I( log(1+x*y) / (x+y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) log(1+x*y) / (x+y),
 	0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+pi^2 / 4 + log(2)^2 - 4*log(2);
 
 
 ### I( log(x+y) / (1 - x*y) )
@@ -344,6 +345,10 @@ integrate(\(x) sapply(x, \(y) integrate(\(x) exp(x+y) / (1+x*y), 0, 1)$value), 0
 ### I( exp(x+y) / (1-x*y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) exp(x+y) / (1-x*y), 0, 1)$value), 0, 1)
 
+### I( (exp(1) - exp((x+y)/2)) / (1-x*y) )
+integrate(\(x) sapply(x, \(y)
+	integrate(\(x) (exp(1) - exp((x+y)/2)) / (1-x*y), 0, 1)$value), 0, 1)
+
 
 ### Other
 
@@ -427,6 +432,10 @@ integrate(\(x) sapply(x, \(y) integrate(\(x) log(exp(x*y) - 1), 0, 1)$value), 0,
 integrate(\(x) sapply(x, \(y) integrate(\(x) log(x+y) / (exp(x*y) + 1), 0, 1)$value), 0, 1)
 # TODO
 
+### I( log(x+y+1) / (exp(x*y) + 1) )
+integrate(\(x) sapply(x, \(y) integrate(\(x) log(x+y+1) / (exp(x*y) + 1), 0, 1)$value), 0, 1)
+# TODO
+
 ### I( log(1 - x*y) / (exp(x*y) - 1) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) log(1 - x*y) / (exp(x*y) - 1), 0, 1)$value), 0, 1)
 # TODO
@@ -469,6 +478,12 @@ integrate(\(x) sapply(x, \(y)
 ############
 ### Trig ###
 
+### I( sin(x) / (x + y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	sin(x) / (x + y), 0, pi/2, rel.tol=1E-13)$value), 0, pi/2, rel.tol=1E-13)
+# TODO
+
+
 ### I( sin(pi/2*(x+y)) / (x + y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) sin(pi/2*(x+y)) / (x + y), 0, 1)$value), 0, 1)
 integrate(\(x) sapply(x, \(y) integrate(\(x) 4/pi*sin(x)*cos(y) / (x + y), 0, pi/2)$value), 0, pi/2)
@@ -505,6 +520,10 @@ integrate(\(x) sapply(x, \(y) integrate(\(x) sin(pi/2*x*y) / (x + y), 0, 1)$valu
 ### I( sin(pi*x*y) / (x + y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) sin(pi*x*y) / (x + y), 0, 1)$value), 0, 1)
 
+
+### I( sin(pi/2*x) * sin(pi/2*y) / (x + y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	sin(pi/2*x) * sin(pi/2*y) / (x + y), 0, 1)$value), 0, 1)
 
 
 ### Trig-Fractions
