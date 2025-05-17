@@ -169,7 +169,9 @@ integrate(\(x) sapply(x, \(y) integrate(\(x) log((x+y)/2) / (1 - x*y), 0, 1)$val
 
 
 ### I( log(x+y) / (1 + x*y) )
-integrate(\(x) sapply(x, \(y) integrate(\(x) log(x+y) / (1 + x*y), 0, 1)$value), 0, 1)
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	log(x+y) / (1 + x*y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+- pracma::zeta(3) / 8
 
 
 ### I( (x+y) * log(x+y) / (1 + x*y) )
