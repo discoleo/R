@@ -158,10 +158,14 @@ pi^2 / 4 + log(2)^2 - 4*log(2);
 
 
 ### I( log(x+y) / (1 - x*y) )
-integrate(\(x) sapply(x, \(y) integrate(\(x) log(x+y) / (1 - x*y), 0, 1)$value), 0, 1)
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	log(x+y) / (1 - x*y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-12)
+1/8 * pracma::zeta(3);
+
 
 # I( log((x+y)/2) / (1 - x*y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) log((x+y)/2) / (1 - x*y), 0, 1)$value), 0, 1)
+1/8 * pracma::zeta(3) - log(2) * pi^2 / 6;
 
 
 ### I( log(x+y) / (1 + x*y) )
@@ -350,6 +354,12 @@ integrate(\(x) sapply(x, \(y)
 	integrate(\(x) (exp(1) - exp((x+y)/2)) / (1-x*y), 0, 1)$value), 0, 1)
 
 
+### Exp( x*y )
+
+### I( exp(x*y) / (x+y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x) exp(x*y) / (x+y), 0, 1)$value), 0, 1)
+
+
 ### Other
 
 ### I( 1 / ((exp(x)+1) * (exp(y)+1) * (exp(x) + exp(y))) )
@@ -519,6 +529,9 @@ integrate(\(x) sapply(x, \(y) integrate(\(x) sin(pi/2*x*y) / (x + y), 0, 1)$valu
 
 ### I( sin(pi*x*y) / (x + y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) sin(pi*x*y) / (x + y), 0, 1)$value), 0, 1)
+
+### I( cos(pi/2*x*y) / (x + y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x) cos(pi/2*x*y) / (x + y), 0, 1)$value), 0, 1)
 
 
 ### I( sin(pi/2*x) * sin(pi/2*y) / (x + y) )
