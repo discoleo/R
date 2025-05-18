@@ -351,6 +351,14 @@ integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x+y) / (1+x*y), 0, 1)$value), 
 # TODO
 
 
+### Atan( Fraction )
+
+### I( atan(x/y) / (1 - x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(x/y) / (1 - x*y), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+pi^3 / 24
+
+
 ##############
 ##############
 
