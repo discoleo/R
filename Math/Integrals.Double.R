@@ -197,9 +197,14 @@ integrate(\(x) sapply(x, \(y)
 	integrate(\(x) log(x+y+1) / (1 + x*y), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 
 
+### I( (x+y)*log(x+y) / (x^2 + y^2) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	(x+y)*log(x+y) / (x^2 + y^2), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+
+
 ### I( log(x+y+1) / (x^2 + y^2) )
-integrate(\(x) sapply(x, \(y)
-	integrate(\(x) log(x+y+1) / (x^2 + y^2), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	log(x+y+1) / (x^2 + y^2), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 
 
 ### I( log(1 + x*y) / (x^2 + y^2) )
@@ -237,7 +242,7 @@ integrate(\(x) sapply(x, \(y)
 ### I( log(x^2+y^2) / (1 - x*y) )
 integrate(\(x) sapply(x, \(y)
 	integrate(\(x) log(x^2+y^2) / (1-x*y), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
-# TODO
+-55/32 * pracma::zeta(3) + Catalan * pi / 2;
 
 
 ### I( log(x^2-x*y+y^2) / (1 + x*y) )
