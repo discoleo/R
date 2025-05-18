@@ -233,6 +233,12 @@ integrate(\(x) sapply(x, \(y)
 
 ### Pow = 2 (inside Log)
 
+### I( log(x^2+y^2) / (x+y) )
+integrate(\(x) sapply(x, \(y)
+	integrate(\(x) log(x^2+y^2) / (x+y), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+- pi^2 / 24 + 3/2 * log(2)^2 - 4*log(2);
+
+
 ### I( log(x^2+y^2) / (1 + x*y) )
 integrate(\(x) sapply(x, \(y)
 	integrate(\(x) log(x^2+y^2) / (1+x*y), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
