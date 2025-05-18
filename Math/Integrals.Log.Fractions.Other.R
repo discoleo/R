@@ -145,6 +145,23 @@ integrate(\(x) log(x) * log((1 - x) / (x + 1)), 0, 1)
 ###################
 ###################
 
+# Note:
+# - for polylog2 function, see file:
+#   Integrals.Polylog.Helper.R;
+
+
+### I( log(x^2+x+1) / (x+1) )
+integrate(\(x) log(x^2+x+1) / (x+1), 0, 1)
+- polylog2(-2) - pi^2/9;
+
+
+### I( log(x^2-x+1) / (x+1) )
+integrate(\(x) log(x^2-x+1) / (x+1), 0, 1)
+polylog2(-2) + pi^2/18 + log(2)*log(3);
+
+
+#######################
+
 ### Types: log(x +/- 1) / (x^2+1)
 
 # I( x * log(1+x) / (x^2 + 1) ) on [0, 1]
@@ -204,7 +221,8 @@ integrate(\(x) - 1/2 * log(1-x^3) / (x+1), 0, 1)$value +
 	- (pracma::psi(1, 1/3) - pracma::psi(1, 2/3)) / 72;
 # TODO
 
-# polylog2: see file Integrals.Trig.Tan.R; (but NOT complex)
+# polylog2: see file Integrals.Polylog.Helper.R; (but NOT complex)
+
 
 #
 integrate(\(x) log(x) / (x^3 - 1), 1, Inf)
@@ -353,6 +371,13 @@ integrate(\(x) -1/3 * x * log(x+1) / (x^2+x+1), 0, 1)$value +
 	+ (digamma(1) - digamma(1/3) - log(3)) * log(2) / 3 +
 	+ (pi^2/12 - log(2)^2/2) / 3;
 # TODO: ?
+
+#
+integrate(\(x) x * log(x+1) / (x^2+x+1), 0, 1)
+integrate(\(x) log(x+1)/x - log(x+1)/(x^2+x+1) - log(x+1)/x/(x^2+x+1), 0, 1)
+integrate(\(x) - log(x+1)/x/(x^2+x+1), 0, 1)$value +
+	+ pi^2 / 12 - (pracma::psi(1, 1/3) - pracma::psi(1, 2/3)) / 36;
+# TODO
 
 #
 integrate(\(x) log(x+1) / (x-1) - log(2)/(x-1), 0, 1)
