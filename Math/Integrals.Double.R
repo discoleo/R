@@ -189,7 +189,7 @@ integrate(\(x) sapply(x, \(y) {
 integrate(\(x) sapply(x, \(y) integrate(\(x) 2 * log(1-x*y) / (x+y),
 	0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)$value +
 	- 2*log(2)^2 + 4*log(2) + pi^2/3 - 4;
-# TODO
+8*Catalan - 4*log(2) - 4;
 
 
 ### I( log(x+y+1) / (1 + x*y) )
@@ -210,6 +210,8 @@ integrate(\(x) sapply(x, \(y)
 ### I( log(1 - x*y) / (x^2 + y^2) )
 integrate(\(x) sapply(x, \(y)
 	integrate(\(x) log(1 - x*y) / (x^2 + y^2), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+integrate(\(x) - atan(x) * log(1-x) / x, 0, 1)$value - pi^3 / 24;
+# TODO
 
 
 ### I( log(x+y) / (1 + x^2 + y^2) )
