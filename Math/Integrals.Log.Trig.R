@@ -18,11 +18,20 @@ Catalan = 0.915965594177219015054603514;
 ###################
 ###################
 
+# I( x^p * log(sin(x)) )
+# I( x^p * log(cos(x)) )
+# on various intervals
+
+
 ### I( log(sin(x)) ) on various intervals
 
 # Clausen Function:
-# - see section: Relation to the polygamma function
-# https://en.wikipedia.org/wiki/Clausen_function
+# 1. Wikipedia, see section: Relation to the polygamma function
+#    https://en.wikipedia.org/wiki/Clausen_function
+# 2. S. Trickovic, M. Stankovic. (2023)
+#    On the closed form of Clausen functions.
+#    https://doi.org/10.1080/10652469.2022.2149961
+
 
 ### I( log(sin(x)) )
 p = 3; n = 7;
@@ -194,6 +203,10 @@ integrate(\(x) x^2 * log(sin(x)), 0, pi/2)
 ### I( x^2 * log(cos(x)) )
 integrate(\(x) x^2 * log(cos(x)), 0, pi/2)
 - 1/24 * pi^3*log(2) - 1/4 * pi * pracma::zeta(3);
+
+### I( x^2 * log(tan(x)) )
+integrate(\(x) x^2 * log(tan(x)), 0, pi/2)
+7/16 * pi * pracma::zeta(3);
 
 
 ### on [0, pi/4]
