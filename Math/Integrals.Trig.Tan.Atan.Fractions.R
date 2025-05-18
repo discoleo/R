@@ -50,10 +50,17 @@ integrate(\(x) 1 / ((x^2 + 1)*(x - 1)) + 1/(2*x) + pi/4 - 1/2, 0, 1)
 integrate(\(x) (atan(x) - pi/4) / (x^2 - 1), 0, 1)
 Catalan / 2
 
-# Extra-Component: pi/8*log(2);
+# Note: Extra-Component: pi/8*log(2);
 
 
-#############
+####################
+
+### I( x * atan(1-x) / (x^2+1) )
+integrate(\(x) x*atan(1-x) / (x^2+1), 0, 1)
+atan(1/2)*log(2) / 2 - 0.5984967901246/2 + log(5)*(pi/4 + atan(1/3) - atan(1/2)) / 4
+# where Im(Li2((3+1i)/5)) = 0.5984967901246/2;
+# TODO: solve Li2;
+
 
 ### Composite Fractions
 
