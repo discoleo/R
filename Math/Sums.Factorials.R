@@ -88,6 +88,16 @@ sum(exp(x*m)) / n;
 sum( x^(n*id) / factorial(n*id) )
 
 
+### Case: x = log(2)
+# Very special Log;
+x = log(2); # x = log(2)^(1/3);
+sum(exp(x*m)) / n;
+sum( x^(n*id) / factorial(n*id) )
+#
+sum(exp(x*m) * m[c(1,3,2)]) / (n*x);
+sum( x^(n*id) / factorial(n*id + 1) )
+
+
 ### Case: x^3 = x + 1
 x = pracma::roots(c(1,0,-1,-1));
 x1 = x[1];
