@@ -5,7 +5,7 @@
 ##
 ## Integrals: Double Integrals
 ##
-## v.0.1b
+## v.0.1e
 
 ### Double Integrals
 
@@ -33,7 +33,13 @@ integrate(\(x) sapply(x, \(y) integrate(\(x) 1 / (1+x*y), 0, 1)$value), 0, 1)
 pi^2/12
 
 
-### Radicals
+### I( x*y / ((x*y + 1)^2 + 1) )
+integrate(\(x) sapply(x, \(y) integrate(\(x) x*y / ((x*y + 1)^2 + 1), 0, 1)$value), 0, 1)
+# TODO
+
+
+################
+### Radicals ###
 
 ### I( (x^p + y^p) / (1-x*y) / (x*y)^q )
 # Maths 505: A surprisingly interesting integral
@@ -316,6 +322,9 @@ integrate(\(x) sapply(x, \(y) integrate(\(x) atan(1 - x*y), 0, 1)$value), 0, 1)
 
 ### I( atan(1 + x*y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) atan(1 + x*y), 0, 1)$value), 0, 1)
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	- x*y / ((x*y + 1)^2 + 1), 0, 1)$value), 0, 1)$value +
+	+ 2*atan(2) - 1/2*log(5) + 1/2*log(2) - atan(1);
 # TODO
 
 ### I( atan(x*y) / (x+y) )
@@ -512,6 +521,8 @@ integrate(\(x) sapply(x, \(y)
 ############
 ### Trig ###
 
+### Simple Fractions
+
 ### I( sin(x) / (x + y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	sin(x) / (x + y), 0, pi/2, rel.tol=1E-13)$value), 0, pi/2, rel.tol=1E-13)
@@ -521,12 +532,31 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 ### I( sin(pi/2*(x+y)) / (x + y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) sin(pi/2*(x+y)) / (x + y), 0, 1)$value), 0, 1)
 integrate(\(x) sapply(x, \(y) integrate(\(x) 4/pi*sin(x)*cos(y) / (x + y), 0, pi/2)$value), 0, pi/2)
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	2*sin(x) / (x + y), 0, pi/2, rel.tol=1E-12)$value), 0, pi/2, rel.tol=1E-12) $value +
+	- (sum(pracma::expint(pi/2*1i*c(-1,1))) + 2*log(pi/2) + 2*Euler);
+# TODO
+
+
+### I( sin(pi/2*x) * sin(pi/2*y) / (x + y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	sin(pi/2*x) * sin(pi/2*y) / (x + y), 0, 1)$value), 0, 1)
+
+
+### I( sin(pi/2*x) * cos(pi/2*y) / (x + y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	sin(pi/2*x) * cos(pi/2*y) / (x + y), 0, 1)$value), 0, 1)
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	sin(x) / (x + y), 0, pi/2)$value), 0, pi/2) $value +
+	- (sum(pracma::expint(pi/2*1i*c(-1,1)))/2 + log(pi/2) + Euler);
 # TODO
 
 
 ### I( sin(pi*(x+y)) / (x + y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) sin(pi*(x+y)) / (x + y), 0, 1)$value), 0, 1)
 
+
+### x*y-Type Fractions:
 
 ### I( sin(pi/2*(x+y)) / (1 + x*y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) sin(pi/2*(x+y)) / (1 + x*y), 0, 1)$value), 0, 1)
@@ -546,6 +576,15 @@ integrate(\(x) sapply(x, \(y) integrate(\(x) cos(x+y) / (1 + x*y), 0, pi/2)$valu
 integrate(\(x) sapply(x, \(y) integrate(\(x) sin(pi/2*(x+y)) / (1 - x*y), 0, 1)$value), 0, 1)
 
 
+### I( sin(pi/2*x) * sin(pi/2*y) / (1 - x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	sin(pi/2*x) * sin(pi/2*y) / (1 - x*y), 0, 1)$value), 0, 1)
+	
+### I( cos(pi/2*x) * cos(pi/2*y) / (1 - x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	cos(pi/2*x) * cos(pi/2*y) / (1 - x*y), 0, 1)$value), 0, 1)
+	
+
 ### Trig( Prod )
 
 ### I( sin(pi/2*x*y) / (x + y) )
@@ -556,11 +595,6 @@ integrate(\(x) sapply(x, \(y) integrate(\(x) sin(pi*x*y) / (x + y), 0, 1)$value)
 
 ### I( cos(pi/2*x*y) / (x + y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) cos(pi/2*x*y) / (x + y), 0, 1)$value), 0, 1)
-
-
-### I( sin(pi/2*x) * sin(pi/2*y) / (x + y) )
-integrate(\(x) sapply(x, \(y) integrate(\(x)
-	sin(pi/2*x) * sin(pi/2*y) / (x + y), 0, 1)$value), 0, 1)
 
 
 ### Trig-Fractions
