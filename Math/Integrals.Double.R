@@ -341,6 +341,8 @@ integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x*y) / (1 + x*y), 0, 1)$value)
 
 ### I( atan(x*y) / (1 - x*y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x*y) / (1 - x*y), 0, 1)$value), 0, 1)
+integrate(\(x) - atan(x) * log(1-x) / x, 0, 1)$value +
+	integrate(\(x) - log(1-x) * log(x) / (x^2+1), 0, 1)$value;
 # TODO
 
 ### I( atan(x/y) / (x*y+1) )
@@ -557,6 +559,12 @@ integrate(\(x) sapply(x, \(y) integrate(\(x) sin(pi*(x+y)) / (x + y), 0, 1)$valu
 
 
 ### x*y-Type Fractions:
+
+### I( sin(pi/4*(x+y)) / (1 + x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x) sin(pi/4*(x+y)) / (1 + x*y), 0, 1)$value), 0, 1)
+
+### I( cos(pi/4*(x+y)) / (1 + x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x) cos(pi/4*(x+y)) / (1 + x*y), 0, 1)$value), 0, 1)
 
 ### I( sin(pi/2*(x+y)) / (1 + x*y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) sin(pi/2*(x+y)) / (1 + x*y), 0, 1)$value), 0, 1)
