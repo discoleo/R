@@ -1,5 +1,8 @@
 
 
+source("PCR.R")
+
+
 ### Tests
 Tm("AAAAACCCCCGGGGGTTTTT")
 Tm.nnSeq(strsplit("AAAAACCCCCGGGGGTTTTT", "", fixed=TRUE)[[1]])
@@ -73,4 +76,30 @@ x = paste(x, collapse = "")
 
 p = find.primer(x)
 print(p$Match)
+
+
+############################
+
+### Examples from Literature
+
+### Murine EGFR:
+# - P1: has probably an additional sequence;
+Tm("ACCGCTAGCGCCGCCACCATGCGACCCTCAGGGACCGC")
+Tm("ACCAAGCTTTCATGCTCCAATAAACTCACT")
+
+# Set 2:
+Tm("AGTTGTTATCAGTAAGGGAGCTGCA")
+Tm("ACCGAAAATCTGTGGGAAGTCTTGT")
+
+# PCR: 95ºC 3 min, [95ºC 30 s, 58ºC 30 s, 72ºC 40 s] x 38 cycles
+# 72ºC 3 min, 4ºC 5 min;
+
+
+### TP53
+
+Tm("GGTTAAACCCAGCTTGACCA")
+Tm("GGAGGCAGAGACAGTTGGAG")
+
+# PCR: 94ºC 1 min, [94ºC 30sec, 60ºC 30 s, 72ºC 1 min] x 35 cycles
+# 72ºC 10 min, 4ºC 5 min;
 

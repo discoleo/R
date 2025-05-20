@@ -28,12 +28,15 @@ Tm.data = data.frame(
 	dS = c(-0.0240, -0.0239, -0.0173, -0.0208, -0.0169, -0.0240, -0.0135, -0.0129,
 		-0.0129, -0.0208, -0.0266, -0.0278, -0.0135, -0.0173, -0.0267, -0.0266) );
 
-split.s2 = function(x) {
+split.s2 = function(x, rm.space = "[\\s]++") {
 	splitNc = function(x) {
 		tmp = strsplit(x, "(?<=..)", perl = TRUE)[[1]];
 		LEN = length(tmp);
 		if(nchar(tmp[LEN]) == 1) tmp = tmp[ - LEN];
 		return(tmp);
+	}
+	if(! is.null(rm.space)) {
+		x = gsub(rm.space, "", x, perl = TRUE);
 	}
 	s1 = splitNc(x);
 	s2 = substr(x, 2, nchar(x));
