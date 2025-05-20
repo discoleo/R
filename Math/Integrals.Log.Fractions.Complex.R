@@ -204,6 +204,8 @@ integrate(\(x) atan(x) * atan(1-x), 0, 1)
 # TODO
 
 
+##############
+
 ### Fractions: Pow = 2
 
 ### I( log(x+1i) / (x^2+1) )
@@ -261,6 +263,10 @@ integrate(\(x) log(1+x) / (x^2-x+1), 0, 1)
 ### I( x^p * log(x + 1i) / (x^4 + 1) )
 
 ### I( log(x + 1i) / (x^4 + 1) )
+integrate(\(x) Re(log(x + 1i)) / (x^4 + 1), 0, 1)
+integrate(\(x) Im(log(x + 1i)) / (x^4 + 1), 0, 1)
+
+#
 integrate(\(x) Re((1+1i) * log(x + 1i)) / (x^4 + 1), 0, 1)
 (pracma::psi(1, 5/8) - pracma::psi(1, 1/8)) / 64 +
 	- (digamma(3/4) - digamma(1/4)) * # == pi
@@ -275,6 +281,22 @@ integrate(\(x) x^2 * Re((1-1i) * log(x + 1i)) / (x^4 + 1), 0, 1)
 	+ (digamma(7/8) - digamma(3/8)) * log(2) / 32;
 
 ### Im()
+# TODO
+
+
+### I( log(x+1i) / (x^2+1i) )
+integrate(\(x) Re(log(x+1i) / (x^2+1i)), 0, 1, rel.tol=1E-13)
+integrate(\(x) Im(log(x+1i) / (x^2+1i)), 0, 1, rel.tol=1E-13)
+(pracma::psi(1, 7/8) - pracma::psi(1, 3/8)) / 64 +
+	- (pracma::psi(1, 5/8) - pracma::psi(1, 1/8)) / 64 +
+	+ (digamma(7/8) - digamma(3/8)) * log(2) / 32 +
+	+ (digamma(5/8) - digamma(1/8)) * pi / 16 +
+	- (digamma(5/8) - digamma(1/8)) *
+		(digamma(3/4) - digamma(1/4)) / 64 +
+	+ (digamma(1/4) - digamma(3/4)) / sin(pi/4) * pi/16 +
+	# Im:
+	+ ((digamma(7/8) - digamma(3/8)) * pi / 64 * 3 +
+		- (digamma(5/8) - digamma(1/8)) * log(2) / 32) * 1i;
 
 #
 integrate(\(x) Im((1+1i) * log(x + 1i)) / (x^4 + 1), 0, 1)
