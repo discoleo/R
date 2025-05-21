@@ -345,9 +345,16 @@ integrate(\(x) - atan(x) * log(1-x) / x, 0, 1)$value +
 	integrate(\(x) - log(1-x) * log(x) / (x^2+1), 0, 1)$value;
 # TODO
 
-### I( atan(x/y) / (x*y+1) )
+
+### Div
+
+### I( atan(x/y) / (1 + x*y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x/y) / (1+x*y), 0, 1)$value), 0, 1)
 pi^3 / 48
+
+### I( atan(x/y) / (1 - x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x/y) / (1-x*y), 0, 1)$value), 0, 1)
+pi^3 / 24;
 
 
 ### I( atan(x+y) / (x + y) )
