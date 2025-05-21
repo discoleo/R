@@ -213,9 +213,17 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	log(x+y+1) / (x^2 + y^2), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 
 
+### I( log(1 + x) / (x^2 + y^2) )
+integrate(\(x) sapply(x, \(y)
+	integrate(\(x) log(1 + x) / (x^2 + y^2), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+# I( log(1 + x*y) / (x^2 + y^2) ) + pi^3 / 48;
+integrate(\(x) - 3*atan(x) * log(1-x) / x, 0, 1)$value - 5/96 * pi^3;
+
+
 ### I( log(1 + x*y) / (x^2 + y^2) )
 integrate(\(x) sapply(x, \(y)
 	integrate(\(x) log(1 + x*y) / (x^2 + y^2), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+integrate(\(x) - 3*atan(x) * log(1-x) / x, 0, 1)$value - 7/96 * pi^3;
 
 
 ### I( log(1 - x*y) / (x^2 + y^2) )
