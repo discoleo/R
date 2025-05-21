@@ -325,6 +325,10 @@ integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x*y), 0, 1)$value), 0, 1)
 integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x/y), 0, 1)$value), 0, 1)
 pi/4;
 
+### I( atan(2*x / (x+y)) )
+integrate(\(x) sapply(x, \(y) integrate(\(x) atan(2*x / (x+y)), 0, 1)$value), 0, 1)
+# TODO
+
 
 ### I( atan(1 - x*y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) atan(1 - x*y), 0, 1)$value), 0, 1)
@@ -346,8 +350,13 @@ integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x*y) / (x+y), 0, 1)$value), 0,
 integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x*y) / (x+y+1), 0, 1)$value), 0, 1)
 # TODO
 
+
 ### I( atan(x*y) / (1 + x*y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x*y) / (1 + x*y), 0, 1)$value), 0, 1)
+# see also: I( atan(x*y) / (1 - x*y) )
+integrate(\(x) -1/3 * atan(x) * log(1-x) / x, 0, 1)$value +
+	integrate(\(x) -1/3 * log(1-x) * log(x) / (x^2+1), 0, 1)$value +
+	integrate(\(x) 1/3 * log(x) * log(x^2+1) / (x^2+1), 0, 1)$value;
 # TODO
 
 ### I( atan(x*y) / (1 - x*y) )
@@ -376,11 +385,11 @@ integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x+y) / (1-x*y), 0, 1)$value), 
 # TODO
 
 ### I( atan((x+y)/2) / (1 - x*y) )
-integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x+y) / (1-x*y), 0, 1)$value), 0, 1)
+integrate(\(x) sapply(x, \(y) integrate(\(x) atan((x+y)/2) / (1-x*y), 0, 1)$value), 0, 1)
 # TODO
 
 ### I( atan(x+y) / (1 + x*y) )
-integrate(\(x) sapply(x, \(y) integrate(\(x) atan((x+y)/2) / (1+x*y), 0, 1)$value), 0, 1)
+integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x+y) / (1+x*y), 0, 1)$value), 0, 1)
 # TODO
 
 ### I( atan((x+y)/2) / (1 + x*y) )
