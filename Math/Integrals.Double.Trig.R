@@ -26,6 +26,12 @@ Catalan = 0.915965594177219015054603514;
 ############
 ### Trig ###
 
+
+### I( sin(pi/2*x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x) sin(pi/2*x*y), 0, 1)$value), 0, 1)
+(sum(pracma::expint(pi/2*1i*c(-1,1)))/2 + log(pi/2) + Euler) * 2/pi;
+
+
 ### Simple Fractions
 
 ### I( sin(x) / (x + y) )
