@@ -11,7 +11,7 @@
 ### Double Integrals
 
 ### Examples:
-# I( (x+y)*log(x+y) / (1+x*y) )
+# I( log(cos(x-y)) )
 
 
 ####################
@@ -63,25 +63,43 @@ integrate(\(x) sapply(x, \(y) integrate(\(x) sin(pi*(x+y)) / (x + y), 0, 1)$valu
 
 ### x*y-Type Fractions:
 
+
+### I( sin(pi/2*x) / (1 + x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x) sin(pi/2*x) / (1 + x*y), 0, 1)$value), 0, 1)
+
+### I( cos(pi/2*x) / (1 + x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x) cos(pi/2*x) / (1 + x*y), 0, 1)$value), 0, 1)
+
+
+### I( sin(pi/2*(x+y)) / (1 + x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x) sin(pi/2*(x+y)) / (1 + x*y), 0, 1)$value), 0, 1)
+
+### I( cos(pi/2*(x+y)) / (1 + x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x) cos(pi/2*(x+y)) / (1 + x*y), 0, 1)$value), 0, 1)
+
+
+### I( sin(pi*(x+y)) / (1 + x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x) sin(pi*(x+y)) / (1 + x*y), 0, 1)$value), 0, 1)
+
+### I( cos(pi*(x+y)) / (1 + x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x) cos(pi*(x+y)) / (1 + x*y), 0, 1)$value), 0, 1)
+
+
+### I( sin(x+y) / (1 + x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x) sin(x+y) / (1 + x*y), 0, pi/2)$value), 0, pi/2)
+
+### I( cos(x+y) / (1 + x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x) cos(x+y) / (1 + x*y), 0, pi/2)$value), 0, pi/2)
+
+
 ### I( sin(pi/4*(x+y)) / (1 + x*y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) sin(pi/4*(x+y)) / (1 + x*y), 0, 1)$value), 0, 1)
 
 ### I( cos(pi/4*(x+y)) / (1 + x*y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) cos(pi/4*(x+y)) / (1 + x*y), 0, 1)$value), 0, 1)
 
-### I( sin(pi/2*(x+y)) / (1 + x*y) )
-integrate(\(x) sapply(x, \(y) integrate(\(x) sin(pi/2*(x+y)) / (1 + x*y), 0, 1)$value), 0, 1)
 
-### I( sin(pi*(x+y)) / (1 + x*y) )
-integrate(\(x) sapply(x, \(y) integrate(\(x) sin(pi*(x+y)) / (1 + x*y), 0, 1)$value), 0, 1)
-
-### I( sin(x+y) / (1 + x*y) )
-integrate(\(x) sapply(x, \(y) integrate(\(x) sin(x+y) / (1 + x*y), 0, pi/2)$value), 0, pi/2)
-
-
-### I( cos(x+y) / (1 + x*y) )
-integrate(\(x) sapply(x, \(y) integrate(\(x) cos(x+y) / (1 + x*y), 0, pi/2)$value), 0, pi/2)
-
+### Div: (1 - x*y)
 
 ### I( sin(pi/2*(x+y)) / (1 - x*y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) sin(pi/2*(x+y)) / (1 - x*y), 0, 1)$value), 0, 1)
@@ -106,6 +124,16 @@ integrate(\(x) sapply(x, \(y) integrate(\(x) sin(pi*x*y) / (x + y), 0, 1)$value)
 
 ### I( cos(pi/2*x*y) / (x + y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) cos(pi/2*x*y) / (x + y), 0, 1)$value), 0, 1)
+
+
+### Fraction: 1 +/- x*y
+
+### I( sin(pi/2*x*y) / (1 - x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x) sin(pi/2*x*y) / (1 - x*y), 0, 1)$value), 0, 1)
+
+### I( sin(pi/2*x*y) / (1 + x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x) sin(pi/2*x*y) / (1 + x*y), 0, 1)$value), 0, 1)
+
 
 
 ### Trig-Fractions
@@ -284,6 +312,15 @@ integrate(\(x) sapply(x, \(y) integrate(\(x) log(tan(x+y)), 0, pi/4)$value), 0, 
 
 ### Prod: x*y
 
-###
+### I( log(tan(pi/2*x*y)) )
+# Note: as split integral;
+integrate(\(x) sapply(x, \(y) integrate(\(x) log(tan(pi/2*x*y)), 0, 1)$value), 0, 1/2)$value +
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	log(tan(pi/2*x*y)), 0, 1, rel.tol=1E-12)$value), 1/2, 1, rel.tol=1E-12)$value
+# TODO
+
+
+### I( log(tan(pi/4*x*y)) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) log(tan(pi/4*x*y)), 0, 1)$value), 0, 1)
 # TODO
+
