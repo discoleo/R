@@ -5,7 +5,7 @@
 ##
 ## Integrals: Double Integrals
 ##
-## v.0.1e
+## v.0.1f
 
 ### Double Integrals
 
@@ -31,6 +31,14 @@ pi^2 / 6
 ### I( 1 / (1 + x*y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) 1 / (1+x*y), 0, 1)$value), 0, 1)
 pi^2/12
+
+### I( 1 / (1 - x^2*y^2) )
+integrate(\(x) sapply(x, \(y) integrate(\(x) 1 / (1-x^2*y^2), 0, 1)$value), 0, 1)
+pi^2/8
+
+### I( 1 / (1 + x^2*y^2) )
+integrate(\(x) sapply(x, \(y) integrate(\(x) 1 / (1+x^2*y^2), 0, 1)$value), 0, 1)
+Catalan
 
 
 ### I( x*y / ((x*y + 1)^2 + 1) )
