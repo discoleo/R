@@ -46,9 +46,19 @@ integrate(\(x) sapply(x, \(y) integrate(\(x) x*y / ((x*y + 1)^2 + 1), 0, 1)$valu
 # Derivation:
 integrate(\(x) sapply(x, \(y) integrate(\(x) Im((1+1i)/ (x*y + 1 + 1i)), 0, 1)$value), 0, 1)
 integrate(\(x) pi/4/x - atan(x+1) / x, 0, 1)$value +
-integrate(\(x) Re(log(x + 1 + 1i) - log(1+1i)) / x, 0, 1)$value;
-integrate(\(x) (Re(log(x + 1 + 1i)) - atan(x+1) + pi/4 - log(2)/2) / x, 0, 1);
-integrate(\(x) (Re((1-1i)*log(x + 1 + 1i)) - pi/4 - log(2)/2) / x, 0, 1);
+integrate(\(x)  Re(log(x + 1+1i) - log(1+1i)) / x, 0, 1)$value;
+integrate(\(x) (Re(log(x + 1+1i)) - atan(x+1) + pi/4 - log(2)/2) / x, 0, 1);
+integrate(\(x) (Re((1-1i)*log(x + 1+1i)) - pi/4 - log(2)/2) / x, 0, 1);
+
+# TODO
+
+
+### I( x*y / ((x*y - 1)^2 + 1) )
+integrate(\(x) sapply(x, \(y) integrate(\(x) x*y / ((x*y - 1)^2 + 1), 0, 1)$value), 0, 1)
+# Derivation:
+integrate(\(x) sapply(x, \(y) integrate(\(x) Im(-(1-1i)/ (x*y - 1 + 1i)), 0, 1)$value), 0, 1)
+integrate(\(x) Im(-(1-1i)*(log(x - 1+1i) - log(-1+1i))) / x, 0, 1)
+integrate(\(x) (Im(-(1-1i)*log(x - 1+1i)) + 3/4*pi - log(2)/2) / x, 0, 1)
 
 # TODO
 
