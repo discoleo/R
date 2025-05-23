@@ -40,6 +40,7 @@ integrate(\(x) sapply(x, \(y) integrate(\(x) Im((1+1i)/ (x*y + 1 + 1i)), 0, 1)$v
 integrate(\(x) pi/4/x - atan(x+1) / x, 0, 1)$value +
 integrate(\(x) Re(log(x + 1 + 1i) - log(1+1i)) / x, 0, 1)$value;
 integrate(\(x) (Re(log(x + 1 + 1i)) - atan(x+1) + pi/4 - log(2)/2) / x, 0, 1);
+integrate(\(x) (Re((1-1i)*log(x + 1 + 1i)) - pi/4 - log(2)/2) / x, 0, 1);
 
 # TODO
 
@@ -154,6 +155,11 @@ integrate(\(x) sapply(x, \(y)
 ### I( log(1 - x^2*y^2) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) log(1-x^2*y^2), 0, 1)$value), 0, 1)
 pi^2/4 + 2*log(2) - 4
+
+### I( log(1 + x^2*y^2) )
+integrate(\(x) sapply(x, \(y) integrate(\(x) log(1+x^2*y^2), 0, 1)$value), 0, 1)
+integrate(\(x) - log(x) * log(x^2+1), 0, 1)
+pi/2 + log(2) + 2*Catalan - 4;
 
 
 ### Log-Fractions
