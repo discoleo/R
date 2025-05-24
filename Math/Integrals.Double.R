@@ -5,7 +5,7 @@
 ##
 ## Integrals: Double Integrals
 ##
-## v.0.1f
+## v.0.1g
 
 ### Double Integrals
 
@@ -194,6 +194,19 @@ integrate(\(x) sapply(x, \(y) integrate(\(x) log(1+x*y) / (x+y),
 pi^2 / 4 + log(2)^2 - 4*log(2);
 
 
+### Div: (1 +/- x*y)
+
+### I( log(x) / (1 - x*y) )
+integrate(\(x) sapply(x, \(y)
+	integrate(\(x) log(x) / (1-x*y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+- pracma::zeta(3)
+
+### I( log(x) / (1 + x*y) )
+integrate(\(x) sapply(x, \(y)
+	integrate(\(x) log(x) / (1+x*y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+-3/4 * pracma::zeta(3)
+
+
 ### I( log(x+y) / (1 - x*y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	log(x+y) / (1 - x*y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-12)
@@ -289,7 +302,7 @@ integrate(\(x) sapply(x, \(y)
 ### I( log(x^2+y^2) / (1 + x*y) )
 integrate(\(x) sapply(x, \(y)
 	integrate(\(x) log(x^2+y^2) / (1+x*y), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
-# TODO
+-57/32 * pracma::zeta(3) + Catalan * pi/2;
 
 
 ### I( log(x^2+y^2) / (1 - x*y) )
@@ -311,15 +324,23 @@ integrate(\(x) sapply(x, \(y)
 
 
 ### I( log(x^2+x*y+y^2) / (1 - x*y) )
-integrate(\(x) sapply(x, \(y)
-	integrate(\(x) log(x^2+x*y+y^2) / (1-x*y), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	log(x^2+x*y+y^2) / (1-x*y), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	1/3 * log(x^2-x*y+y^2) / (1-x*y), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)$value +
+	+ pracma::zeta(3) / 3;
 # TODO
 
 
 ### I( log(x^2+x*y+y^2) / (1 + x*y) )
-integrate(\(x) sapply(x, \(y)
-	integrate(\(x) log(x^2+x*y+y^2) / (1+x*y), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	log(x^2+x*y+y^2) / (1+x*y), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	1/2 * log(x^2-x*y+y^2) / (1+x*y) + 1/6 * log(x^2-x*y+y^2) / (1-x*y),
+		0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)$value +
+	+ pracma::zeta(3) / 4;
 # TODO
+
 
 
 ### Prod( LOG )
@@ -404,6 +425,7 @@ integrate(\(x) -1/3 * atan(x) * log(1-x) / x, 0, 1)$value +
 integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x*y) / (1 - x*y), 0, 1)$value), 0, 1)
 integrate(\(x) - atan(x) * log(1-x) / x, 0, 1)$value +
 	integrate(\(x) - log(1-x) * log(x) / (x^2+1), 0, 1)$value;
+integrate(\(x) - atan(x) * log(x) / (1-x), 0, 1, rel.tol=1E-12); # alternative
 # TODO
 
 
