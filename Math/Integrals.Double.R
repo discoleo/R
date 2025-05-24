@@ -5,7 +5,7 @@
 ##
 ## Integrals: Double Integrals
 ##
-## v.0.1h
+## v.0.1i
 
 ### Double Integrals
 
@@ -390,7 +390,33 @@ pi/4;
 
 ### I( atan(2*x / (x+y)) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) atan(2*x / (x+y)), 0, 1)$value), 0, 1)
-# TODO
+integrate(\(x) atan(2*x/(x+1)) +
+	sapply(x, \(y) integrate(\(x) 2*x*y / (4*x^2 + (x+y)^2), 0, 1)$value), 0, 1);
+37/100 * pi + 6/5 * log(2) - log(5)/2 + 1/50 * (2*atan(3) - 23*atan(2));
+
+
+# Helper:
+integrate(\(x) atan(2*x/(x+1)), 0, 1)
+integrate(\(x) atan(2 - 2/(x+1)), 0, 1)
+pi/4 - (log(8)/5 - 1/5 * (atan(3) - atan(1/2)));
+
+#
+integrate(\(x) sapply(x, \(y) integrate(\(x) x*y / (4*x^2 + (x+y)^2), 0, 1)$value), 0, 1)
+integrate(\(x) sapply(x, \(y) integrate(\(x) y*(x-y) / (4*y^2 + x^2), y, y+1)$value), 0, 1)
+integrate(\(x) -1/4 + sapply(x, \(y)
+	integrate(\(x) (x*y + x^2/4) / (4*y^2 + x^2), y, y+1)$value), 0, 1)
+integrate(\(x) x/2 * (log(5*x^2 + 2*x + 1) - log(5*x^2)) + sapply(x, \(y)
+	integrate(\(x) - y^2 / (4*y^2 + x^2), y, y+1)$value), 0, 1)
+integrate(\(x) x/2 * (log(5*x^2 + 2*x + 1) - log(5*x^2)) +
+	- x/2 * (atan((x+1)/(2*x)) - atan(1/2)), 0, 1)
+2/25 * (atan(1/2) - atan(3)) - 11/200 * pi + 1/4*atan(1/2) +
+	+ 3/10 * log(8) - log(5)/4;
+
+#
+integrate(\(x) x/2 * (log(5*x^2 + 2*x + 1) - log(5*x^2)), 0, 1)
+integrate(\(x) -4/25 / (5*x^2 + 2*x + 1), 0, 1)$value +
+	+ 7/25*log(8) - log(5)/4 + 1/10;
+2/25 * (atan(1/2) - atan(3)) + 7/25*log(8) - log(5)/4 + 1/10;
 
 
 ### I( atan(1 - x*y) )
