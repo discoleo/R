@@ -5,7 +5,7 @@
 ##
 ## Integrals: Double Integrals
 ##
-## v.0.1g
+## v.0.1h
 
 ### Double Integrals
 
@@ -311,16 +311,18 @@ integrate(\(x) sapply(x, \(y)
 -55/32 * pracma::zeta(3) + Catalan * pi / 2;
 
 
-### I( log(x^2-x*y+y^2) / (1 + x*y) )
-integrate(\(x) sapply(x, \(y)
-	integrate(\(x) log(x^2-x*y+y^2) / (1+x*y), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
-# TODO
-
-
 ### I( log(x^2-x*y+y^2) / (1 - x*y) )
 integrate(\(x) sapply(x, \(y)
 	integrate(\(x) log(x^2-x*y+y^2) / (1-x*y), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 # TODO
+
+### I( log(x^2-x*y+y^2) / (1 + x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	log(x^2-x*y+y^2) / (1+x*y), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	2/3 * log(x^2-x*y+y^2) / (1-x*y), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)$value +
+	- pracma::zeta(3) / 18;
+# TODO: sub-integral;
 
 
 ### I( log(x^2+x*y+y^2) / (1 - x*y) )
@@ -329,17 +331,16 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	1/3 * log(x^2-x*y+y^2) / (1-x*y), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)$value +
 	+ pracma::zeta(3) / 3;
-# TODO
+# TODO: sub-integral;
 
 
 ### I( log(x^2+x*y+y^2) / (1 + x*y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	log(x^2+x*y+y^2) / (1+x*y), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 integrate(\(x) sapply(x, \(y) integrate(\(x)
-	1/2 * log(x^2-x*y+y^2) / (1+x*y) + 1/6 * log(x^2-x*y+y^2) / (1-x*y),
-		0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)$value +
-	+ pracma::zeta(3) / 4;
-# TODO
+	1/2 * log(x^2-x*y+y^2) / (1-x*y), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)$value +
+	+ 2/9 * pracma::zeta(3);
+# TODO: sub-integral;
 
 
 
