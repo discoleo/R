@@ -316,6 +316,17 @@ integrate(\(x) sapply(x, \(y)
 	integrate(\(x) log(x^2-x*y+y^2) / (1-x*y), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 # TODO
 
+# Helper:
+id = 0:1000;
+FUN3 = \(x) sapply(x, \(x) sum(x^(id+1) / (id+1)^2) * (2*x-1) / (x^2-x+1));
+integrate(FUN3, 0, 1);
+- sum((digamma((id+4)/6) - digamma((id+1)/6)) / (id+1)^2 ) / 2 +
++ sum((digamma((id+2)/2) - digamma((id+1)/2)) / (id+1)^2 ) / 2 + 2*pracma::zeta(3);
+# TODO: closed form?
+
+# Alternative: I( log(x^3+y^3) / .. ) - zeta(3) / 8;
+
+
 ### I( log(x^2-x*y+y^2) / (1 + x*y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	log(x^2-x*y+y^2) / (1+x*y), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
