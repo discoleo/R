@@ -5,7 +5,7 @@
 ##
 ## Integrals: Double Integrals
 ##
-## v.0.1i
+## v.0.1j
 
 ### Double Integrals
 
@@ -440,7 +440,6 @@ integrate(\(x) sapply(x, \(y) integrate(\(x) atan(y^2*x) / (x+1), 0, 1/y)$value)
 integrate(\(x) sapply(x, \(y) integrate(\(x) 2 * atan(y^2*x) / (x+1), 0, 1)$value), 0, 1)
 # Factor: *2;
 integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x^2*y) / (y+1), 0, 1)$value), 0, 1)
-integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x^2*y) / (y+1), 0, 1)$value), 0, 1)
 integrate(\(x) atan(x)/(x+1) - 2/(x*(x+1)) * sapply(x, \(y)
 	integrate(\(x) x^2 / (x^4 + 1/y^2), 0, 1)$value), 0, 1);
 isq = exp(-1i * pi/4); isq2 = exp(1i * pi/4);
@@ -452,6 +451,9 @@ integrate(\(x) -4 * Re(atan(x/isq)/isq) / (x^2+1), 0, 1)$value + pi * log(2)/8;
 # Helper:
 integrate(\(x) Re(atan(x/isq)/isq + atan(x/isq2)/isq2) / (x^2+1), 0, 1)
 integrate(\(x) Re(atan(x/isq)/isq) / (x^2+1) * 2, 0, 1)
+integrate(\(x) (x^2 - 1) * (log(1-x) - Re(log(x + 1i))) / (x^4 + 1), 0, 1)$value +
+	- (digamma(7/8) - digamma(3/8)) * pi / 32 +
+	- (pracma::psi(1, 3/8) - pracma::psi(1, 7/8)) /64;
 # TODO
 
 
