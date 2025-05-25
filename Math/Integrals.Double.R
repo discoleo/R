@@ -449,11 +449,21 @@ integrate(\(x) -4 * Re(atan(x/isq)/isq) / (x^2+1), 0, 1)$value + pi * log(2)/8;
 # TODO
 
 # Helper:
+isq = exp(-1i * pi/4); isq2 = exp(1i * pi/4);
 integrate(\(x) Re(atan(x/isq)/isq + atan(x/isq2)/isq2) / (x^2+1), 0, 1)
 integrate(\(x) Re(atan(x/isq)/isq) / (x^2+1) * 2, 0, 1)
 integrate(\(x) (x^2 - 1) * (log(1-x) - Re(log(x + 1i))) / (x^4 + 1), 0, 1)$value +
 	- (digamma(7/8) - digamma(3/8)) * pi / 32 +
-	- (pracma::psi(1, 3/8) - pracma::psi(1, 7/8)) /64;
+	- (pracma::psi(1, 3/8) - pracma::psi(1, 7/8)) / 64;
+# see Integrals.Log.Fractions.P4.R;
+integrate(\(x) (1 - x^2) * Re(log(x + 1i)) / (x^4 + 1), 0, 1)$value +
+	- (pracma::psi(1, 5/8) - pracma::psi(1, 1/8)) / 64 +
+	+ (pracma::psi(1, 7/8) - pracma::psi(1, 3/8)) / 32 +
+	- (digamma(5/8) - digamma(1/8)) * log(2) / 32 +
+	+ (digamma(7/8) - digamma(3/8)) * log(2) / 32 +
+	- (digamma(5/8) - digamma(1/8)) * pi / 64 +
+	- (digamma(7/8) - digamma(3/8)) * pi * 3 / 64;
+
 # TODO
 
 
