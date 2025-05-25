@@ -388,6 +388,7 @@ integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x*y), 0, 1)$value), 0, 1)
 integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x/y), 0, 1)$value), 0, 1)
 pi/4;
 
+
 ### I( atan(2*x / (x+y)) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) atan(2*x / (x+y)), 0, 1)$value), 0, 1)
 integrate(\(x) atan(2*x/(x+1)) +
@@ -431,9 +432,28 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	+ 2*atan(2) - 1/2*log(5) + 1/2*log(2) - atan(1);
 # TODO
 
+
 ### I( atan(x*y) / (x+y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x*y) / (x+y), 0, 1)$value), 0, 1)
+# Derivation:
+integrate(\(x) sapply(x, \(y) integrate(\(x) atan(y^2*x) / (x+1), 0, 1/y)$value), 0, 1)
+integrate(\(x) sapply(x, \(y) integrate(\(x) 2 * atan(y^2*x) / (x+1), 0, 1)$value), 0, 1)
+# Factor: *2;
+integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x^2*y) / (y+1), 0, 1)$value), 0, 1)
+integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x^2*y) / (y+1), 0, 1)$value), 0, 1)
+integrate(\(x) atan(x)/(x+1) - 2/(x*(x+1)) * sapply(x, \(y)
+	integrate(\(x) x^2 / (x^4 + 1/y^2), 0, 1)$value), 0, 1);
+isq = exp(-1i * pi/4); isq2 = exp(1i * pi/4);
+integrate(\(x) atan(x)/(x+1) +
+	- sqrt(x)/(x*(x+1)) * Re(atan(sqrt(x)/isq)/isq + atan(sqrt(x)/isq2)/isq2), 0, 1)
+integrate(\(x) -4 * Re(atan(x/isq)/isq) / (x^2+1), 0, 1)$value + pi * log(2)/8;
 # TODO
+
+# Helper:
+integrate(\(x) Re(atan(x/isq)/isq + atan(x/isq2)/isq2) / (x^2+1), 0, 1)
+integrate(\(x) Re(atan(x/isq)/isq) / (x^2+1) * 2, 0, 1)
+# TODO
+
 
 ### I( atan(x*y) / (x + y + 1) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x*y) / (x+y+1), 0, 1)$value), 0, 1)
