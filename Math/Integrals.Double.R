@@ -326,6 +326,31 @@ integrate(FUN3, 0, 1);
 
 # Alternative: I( log(x^3+y^3) / .. ) - zeta(3) / 8;
 
+# z = x+y on [0, 2] =>
+integrate(\(x) sapply(x, \(y)
+	integrate(\(x) log(x^2-x*y+y^2) / (1-x*y), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+FUN = \(x, y) 2*log(y^2 - 3*x*(y-x)) / (1-x*(y-x));
+integrate(\(x) sapply(x, \(y) integrate(FUN, 0, y/2, y=y,
+	rel.tol=1E-12)$value), 0, 2, rel.tol=1E-12)$value +
+integrate(\(x) sapply(x, \(y) - integrate(FUN, 0, y-1, y=y,
+	rel.tol=1E-12)$value), 1, 2, rel.tol=1E-12)$value;
+#
+integrate(\(x) sapply(x, \(y) 1/2 * integrate(FUN, 0, y, y=y,
+	rel.tol=1E-12)$value), 0, 2, rel.tol=1E-12)$value +
+integrate(\(x) sapply(x, \(y) integrate(FUN, y, 1, y=y,
+	rel.tol=1E-12)$value), 1, 2, rel.tol=1E-12)$value;
+#
+integrate(\(x) sapply(x, \(y) 1/3 * integrate(FUN, 0, y, y=y,
+	rel.tol=1E-12)$value), 0, 2, rel.tol=1E-12)$value +
+integrate(\(x) sapply(x, \(y) 2/3 * integrate(FUN, y, 1, y=y,
+	rel.tol=1E-12)$value), 0, 2, rel.tol=1E-12)$value - 4/27 * pracma::zeta(3);
+#
+integrate(\(x) sapply(x, \(y) 1/3 * integrate(FUN, 0, 1, y=y,
+	rel.tol=1E-12)$value), 0, 2, rel.tol=1E-12)$value +
+integrate(\(x) sapply(x, \(y) 1/3 * integrate(FUN, y, 1, y=y,
+	rel.tol=1E-12)$value), 0, 2, rel.tol=1E-12)$value - 4/27 * pracma::zeta(3);
+
+
 
 ### I( log(x^2-x*y+y^2) / (1 + x*y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
