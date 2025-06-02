@@ -5,7 +5,7 @@
 ##
 ## Leonard Mada
 ##
-## draft v.0.2b
+## draft v.0.2c
 
 
 ### Introduction
@@ -91,7 +91,7 @@
 # Note: moved to file:
 # Models.Growth.Helper.R
 
-src("Models.Growth.Helper.R")
+source("Models.Growth.Helper.R")
 
 
 #################
@@ -392,4 +392,72 @@ curve.odeLogI0(n = 0.75, lwd=lwd)
 
 
 # TODO: more;
+
+####################
+
+# use.power = extra power;
+fit.atan = function(data, init = NULL, use.power = FALSE) {
+	if(use.power) {
+		atan.frm = V ~ Vmax * (atan(b * t^n) * 2/pi)^k;
+	} else {
+		atan.frm = V ~ Vmax * (atan(b * t^n) * 2/pi);
+	}
+	if(is.null(init)) {
+		init = list(Vmax = max(data$V), b=1, n=1);
+		if(use.power) init$k = 1;
+	}
+	sol = nls(atan.frm, data, start=init);
+	return(sol);
+}
+plot.pred = function(sol, data, add.zero = TRUE, ...) {
+	tt = data$t; y = data$V;
+	if(add.zero) { tt = c(0, tt); y = c(0, y); }
+	yp = predict(sol, list(t = tt));
+	matplot(tt, cbind(y, yp), type = "l", ...);
+}
+
+###
+Vmax = 2
+params = list(Vmax=Vmax, b = 1, n = 1)
+
+### Uniform Time:
+n  = 8; div = 2;
+# n = 12; div = 3;
+# n = 15; div = 3;
+# n = 100; div = 10;
+tt = seq(n) / div; params$t = tt;
+y  = eval(MM.eq, params)
+mm.df = data.frame(t = params$t, V = y)
+
+###
+sol = fit.atan(mm.df)
+plot.pred(sol, mm.df)
+print(sol)
+
+# Note: very good fit if NO error-term;
+
+
+### Uniform Time + Error:
+n  = 8; div = 2;
+# n = 12; div = 2;
+# n = 12; div = 3;
+# n = 15; div = 3;
+# n = 25; div = 3;
+# n = 25; div = 5;
+tt = seq(n) / div; params$t = tt;
+y  = eval(MM.eq, params);
+mm.df = data.frame(t = params$t, V = y);
+mm.df.err = mm.df;
+# Error:
+# Note: highly susceptible to random errors;
+err = rnorm(n, 0, 0.1);
+mm.df.err$V = mm.df$V + err;
+
+###
+sol = fit.atan(mm.df.err)
+plot.pred(sol, mm.df)
+points(tt, mm.df.err$V, col = "red")
+print(sol)
+
+# TODO: fit also the MM to the data;
 
