@@ -395,6 +395,8 @@ curve.odeLogI0(n = 0.75, lwd=lwd)
 
 ####################
 
+### Atan vs MM
+
 # use.power = extra power;
 fit.atan = function(data, init = NULL, use.power = FALSE) {
 	if(use.power) {
@@ -410,7 +412,11 @@ fit.atan = function(data, init = NULL, use.power = FALSE) {
 	return(sol);
 }
 plot.pred = function(sol, data, add.zero = TRUE, ...) {
-	tt = data$t; y = data$V;
+	if(inherits(data, "data.frame")) {
+		tt = data$t; y = data$V;
+	} else {
+		# TODO: compute values for new times;
+	}
 	if(add.zero) { tt = c(0, tt); y = c(0, y); }
 	yp = predict(sol, list(t = tt));
 	matplot(tt, cbind(y, yp), type = "l", ...);
@@ -455,9 +461,66 @@ mm.df.err$V = mm.df$V + err;
 
 ###
 sol = fit.atan(mm.df.err)
-plot.pred(sol, mm.df)
+plot.pred(sol, mm.df, ylim = c(0, 2))
 points(tt, mm.df.err$V, col = "red")
 print(sol)
 
 # TODO: fit also the MM to the data;
+
+
+### Replicated
+Vmax = 2
+params = list(Vmax=Vmax, b = 1, n = 1)
+#
+n = 8; div = 2;
+rep.n = 3;
+tt = seq(n) / div; tt = rep(tt, each=rep.n);
+params$t = tt;
+y  = eval(MM.eq, params);
+mm.df = data.frame(t = params$t, V = y);
+mm.df.err = mm.df;
+# Error:
+# Note: highly susceptible to random errors;
+err = rnorm(n * rep.n, 0, 0.125);
+mm.df.err$V = mm.df$V + err;
+
+###
+sol = fit.atan(mm.df.err)
+plot.pred(sol, mm.df, ylim = c(0, 2))
+points(tt, mm.df.err$V, col = "red")
+print(sol)
+
+
+#########################
+
+### Mathematical Analysis
+
+### Area
+# - between Atan & MM:
+integrate(\(x) 2/pi*atan(x) - x/(x+1) + (2/pi - 1)/(x+1), 0, Inf)
+- 2/pi;
+# Note: a divergent term (Harmonic sum) remains;
+
+
+#
+integrate(\(x) 2/pi*atan(x) - 1 + 2/pi/(x+1), 0, Inf)
+- 2/pi;
+
+
+# Varia/Helper:
+integrate(\(x) x*(atan(x) - pi/2) + 1, 0, Inf)
+pi/4
+
+
+### Limit:
+x = 1E+6
+x*(atan(x) - pi/2)
+# l'Hospital -> -1;
+
+# library(Rmpfr)
+lim.atan = function(x = "1E+38", digits = 240) {
+	x = Rmpfr::mpfr(x, digits);
+	x*(atan(x) - Const("pi", digits)/2);
+}
+# lim.atan()
 
