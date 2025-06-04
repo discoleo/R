@@ -314,6 +314,7 @@ integrate(\(x) sapply(x, \(y)
 ### I( log(x^2-x*y+y^2) / (1 - x*y) )
 integrate(\(x) sapply(x, \(y)
 	integrate(\(x) log(x^2-x*y+y^2) / (1-x*y), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+integrate(\(x) - log(x^2-x+1) * log(1 - x) / x, 0, 1)$value - pracma::zeta(3);
 # TODO
 
 # Helper:
@@ -325,6 +326,22 @@ integrate(FUN3, 0, 1);
 # TODO: closed form?
 
 # Alternative: I( log(x^3+y^3) / .. ) - zeta(3) / 8;
+
+# z = x/y => (not included: - 2*zeta(3))
+FUNd = \(x, y) log(x^2-x+1) / (1-x*y^2) * y
+integrate(\(x) sapply(x, \(y) integrate(FUNd, 0, 1/y, y=y, rel.tol=1E-11)$value), 0, 1, rel.tol=1E-11)
+#
+FUNs = \(x, y) 1/2 * log(x^2-x+1) / (x-y) /x;
+integrate(\(x) sapply(x, \(y) integrate(FUNs, sqrt(y), Inf, y=y, rel.tol=1E-11)$value), 0, 1, rel.tol=1E-11)
+#
+FUNs = \(x, y) - log(x^2-x+1) / (x-y) /x;
+integrate(\(x) sapply(x, \(y) integrate(FUNs, 1, sqrt(y), y=y, rel.tol=1E-11)$value), 0, 1, rel.tol=1E-11)$value + pracma::zeta(3);
+#
+FUNs = \(x, y) 1/2 * log(y-sqrt(y)+1) / (sqrt(y)-x) /y;
+integrate(\(x) sapply(x, \(y) integrate(FUNs, 0, y, y=y, rel.tol=1E-11)$value), 0, 1, rel.tol=1E-11)$value + pracma::zeta(3);
+#
+integrate(\(x) -1/2 * log(x-sqrt(x)+1) * log(1 - sqrt(x)) / x,0, 1)$value + pracma::zeta(3);
+
 
 # z = x+y on [0, 2] =>
 integrate(\(x) sapply(x, \(y)
