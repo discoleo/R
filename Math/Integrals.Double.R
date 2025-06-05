@@ -55,12 +55,19 @@ integrate(\(x) (Re((1-1i)*log(x + 1+1i)) - pi/4 - log(2)/2) / x, 0, 1);
 
 ### I( x*y / ((x*y - 1)^2 + 1) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) x*y / ((x*y - 1)^2 + 1), 0, 1)$value), 0, 1)
+- (5/96*pi^2 + pi*log(2)/8 - log(2)^2 / 8 - Catalan);
+
 # Derivation:
 integrate(\(x) sapply(x, \(y) integrate(\(x) Im(-(1-1i)/ (x*y - 1 + 1i)), 0, 1)$value), 0, 1)
 integrate(\(x) Im(-(1-1i)*(log(x - 1+1i) - log(-1+1i))) / x, 0, 1)
 integrate(\(x) (Im(-(1-1i)*log(x - 1+1i)) + 3/4*pi - log(2)/2) / x, 0, 1)
+- (5/96*pi^2 + pi*log(2)/8 - log(2)^2 / 8 - Catalan);
 
-# TODO
+
+### I( 1 / (2 - x^2 - y^2) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	1 / (2 - x^2 - y^2), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+Catalan;
 
 
 ################
