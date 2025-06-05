@@ -141,7 +141,25 @@ pi/2 / 3
 
 ###
 integrate(\(x) sin(x) / x, 0, pi/2)
+pi/2 + Im(pracma::expint(pi*1i/2)); # based on expint();
+#
 pi/2 - integrate(\(x) x * exp(-pi/2 * x) / (x^2+1), 0, Inf, rel.tol=1E-8)$value
 # TODO: ???
 # Note: Walpha reverses the order of the integrals;
+
+
+### I( cos(x) / x )
+# - based on expint();
+
+### on [0, pi/2]
+integrate(\(x) cos(x) / x - 1/x, 0, pi/2)
+- (Re(pracma::expint(pi/2*1i)) + log(pi/2) + Euler);
+
+### on [0, pi]
+integrate(\(x) cos(x) / x - 1/x, 0, pi)
+- (Re(pracma::expint(pi*1i)) + Euler + log(pi));
+
+### on [pi/2, pi]
+integrate(\(x) cos(x) / x, pi/2, pi)
+Re(pracma::expint(pi/2*1i)) - Re(pracma::expint(pi*1i));
 
