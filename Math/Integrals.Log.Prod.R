@@ -6,7 +6,7 @@
 ### Integrals: Logarithms
 ### Log-Products
 ###
-### draft v.0.2g
+### draft v.0.2h
 
 
 ### Constants
@@ -54,8 +54,15 @@ pracma::zeta(3) * 2/3
 
 
 ### Varia:
+
+### I( log(1+x) * log(1-x) / x )
 integrate(\(x) log(1+x) * log(1-x) / x, 0, 1)
 - pracma::zeta(3) * 5/8
+
+
+### I( log(1+x^2) * log(1-x) / x )
+integrate(\(x) log(1+x^2) * log(1-x) / x, 0, 1)
+23/32 * pracma::zeta(3) - Catalan * pi / 2;
 
 
 ### Series: Pow = 2
