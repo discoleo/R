@@ -459,7 +459,7 @@ integrate(function(x) x^p * log(1-x)^2 * log(x)^2, 0, 1)
 	) / (p+1)^3;
 
 
-### Lim: x -> -1
+### Lim: p -> -1
 integrate(function(x) log(1-x)^2 * log(x)^2 / x, 0, 1)
 pracma::psi(1,1)*pracma::psi(2,1)*2 - pracma::psi(4,1)/3
 (pi^2*pracma::psi(2,1) - pracma::psi(4,1))/3
@@ -502,8 +502,11 @@ integrate(function(x) x^p * log(1-x^n) * log(x) / (1 - x^n), 0, 1)
 integrate(\(x) log(x) * log(1-x) / (x^2+1), 0, 1, rel.tol=1E-12)
 # TODO
 
-### I( log(x) * log(x+1) / (x^2+1) )
+### I( log(x) * log(1+x) / (x^2+1) )
 integrate(\(x) log(x) * log(1+x) / (x^2+1), 0, 1)
+integrate(\(x) -3 * log(x) * log(1-x) / (x^2+1), 0, 1, rel.tol=1E-12)$value +
+	+ ((digamma(1/4) + Euler) * pracma::psi(1, 1/4) - pracma::psi(2, 1/4)/2) / 8 +
+	- 7/2 * pracma::zeta(3) + 3/8 * pi^2 * log(2) + Catalan * pi/2 + Catalan * log(2);
 # TODO
 
 ### I( log(x) * log(1-x^4) / (x^2+1) )
@@ -515,7 +518,7 @@ integrate(\(x) log(x) * log(1-x^4) / (x^2+1), 0, 1)
 ### Derived:
 # TODO
 
-### I( log(x) * log(x^2+1) / (x^2+1) )
+### I( log(x) * log(1+x^2) / (x^2+1) )
 integrate(\(x) log(x) * log(1+x^2) / (x^2+1), 0, 1)
 integrate(\(x) 2 * log(x) * log(1-x) / (x^2+1), 0, 1, rel.tol=1E-12)$value - Catalan * log(2);
 
