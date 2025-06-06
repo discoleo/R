@@ -6,7 +6,7 @@
 ### Integrals: Logarithms
 ### Log-Products
 ###
-### draft v.0.2j
+### draft v.0.2k
 
 
 ### Constants
@@ -381,31 +381,31 @@ integrate(\(x) log(1 - x) * log(1 + x) / x, 0, 1)
 
 ### Base:
 p = 1/3; q = 1/5;
-integrate(function(x) x^p * (1 - x)^q, 0, 1)
+integrate(\(x) x^p * (1 - x)^q, 0, 1)
 gamma(p+1)*gamma(q+1) / gamma(p+q+2)
 
 ### D1:
 p = 1/3; q = 1/5;
-integrate(function(x) x^p * (1 - x)^q * log(1-x), 0, 1)
+integrate(\(x) x^p * (1 - x)^q * log(1-x), 0, 1)
 gamma(p+1) * gamma(q+1) * (digamma(q+1) - digamma(p+q+2)) / gamma(p+q+2)
 
 ### D1: I( x^p * (1 - x^n)^q * log(1-x^n) )
 p = 1/3; q = 1/5; n = 1/sqrt(3);
-integrate(function(x) x^p * (1 - x^n)^q * log(1-x^n), 0, 1)
+integrate(\(x) x^p * (1 - x^n)^q * log(1-x^n), 0, 1)
 gamma((p+1)/n) * gamma(q+1) * (digamma(q+1) - digamma((p+1)/n+q+1)) / gamma((p+1)/n+q+1) / n;
 
 
 ### Lim: q = 0
 p = -1/5;
-integrate(function(x) x^p * log(1-x), 0, 1)
+integrate(\(x) x^p * log(1-x), 0, 1)
 - (digamma(p+2) + Euler) / (p+1)
 
 ### Gen: 1 LOG (Simple-variant)
 p = -1/3; n = sqrt(3)
-integrate(function(x) x^p * log(1 - x^n), 0, 1)
+integrate(\(x) x^p * log(1 - x^n), 0, 1)
 - (digamma((p+1)/n + 1) + Euler) / (p+1)
 #
-integrate(function(x) x^p * log(1 + x^n), 0, 1)
+integrate(\(x) x^p * log(1 + x^n), 0, 1)
 (digamma((p+1)/n + 1) - digamma((p+1)/(2*n) + 1)) / (p+1)
 
 
@@ -618,27 +618,55 @@ gamma(p+1) * (1 - 3*2^(-p-1) + 3*3^(-p-1) - 4^(-p-1))
 
 ### Derived:
 
-### I( log(1-x) * log(1+x) * (log(1-x) - log(1+x)) )
-integrate(\(x) log(1-x) * log(1+x) * (log(1-x) - log(1+x)), 0, 1)
-3 * pracma::zeta(3) - 2/3*log(2)^3 + 2*log(2)^2 - 4*log(2)
-
 ### I( log(1-x) * log(1+x)^2 )
 integrate(\(x) log(1-x) * log(1+x)^2, 0, 1)
 integrate(\(x) log(1-x^2)^3 / 6, 0, 1)$value +
 	- 2 * (1 - 2^(1-3)) * pracma::zeta(3) + 2;
+- gamma(1/2) * ((digamma(3/2) + Euler)^3 +
+	+ 3*(digamma(3/2) + Euler) * (pracma::psi(1, 1) - pracma::psi(1, 3/2)) +
+	+ pracma::psi(2, 3/2) - pracma::psi(2, 1)
+	) / gamma(3/2) / 12 - 2 * (1 - 2^(1-3)) * pracma::zeta(3) + 2;
 
 ### I( log(1-x)^2 * log(1+x) )
 integrate(\(x) log(1-x)^2 * log(1+x), 0, 1)
 # TODO
 
+### I( log(1-x) * log(1+x) * (log(1-x) - log(1+x)) )
+integrate(\(x) log(1-x) * log(1+x) * (log(1-x) - log(1+x)), 0, 1)
+3 * pracma::zeta(3) - 2/3*log(2)^3 + 2*log(2)^2 - 4*log(2)
+
 
 ### Helper:
 
-### Base:
+### Base (D1):
 p = 1/3; q = 1/5; n = 1/sqrt(3);
 integrate(\(x) x^p * (1 - x^n)^q * log(1-x^n), 0, 1)
 gamma((p+1)/n) * gamma(q+1) * (digamma(q+1) - digamma((p+1)/n+q+1)) / gamma((p+1)/n+q+1) / n;
 
+### D2:
+integrate(\(x) x^p * (1 - x^n)^q * log(1-x^n)^2, 0, 1)
+gamma((p+1)/n) * gamma(q+1) *
+	((digamma(q+1) - digamma((p+1)/n+q+1))^2 +
+		+ pracma::psi(1, q+1) - pracma::psi(1, (p+1)/n+q+1)) / gamma((p+1)/n+q+1) / n;
+
+### D3:
+integrate(\(x) x^p * (1 - x^n)^q * log(1-x^n)^3, 0, 1)
+gamma((p+1)/n) * gamma(q+1) *
+	((digamma(q+1) - digamma((p+1)/n+q+1))^3 +
+	+ 3*(digamma(q+1) - digamma((p+1)/n+q+1)) *
+		(pracma::psi(1, q+1) - pracma::psi(1, (p+1)/n+q+1)) +
+	+ pracma::psi(2, q+1) - pracma::psi(2, (p+1)/n+q+1)
+	) / gamma((p+1)/n+q+1) / n;
+
+# q = 0 =>
+n = sqrt(5); p = sqrt(3);
+integrate(\(x) x^p * log(1-x^n)^3, 0, 1)
+- gamma((p+1)/n) *
+	((digamma((p+1)/n+1) + Euler)^3 +
+	+ 3*(digamma((p+1)/n+1) + Euler) *
+		(pracma::psi(1, 1) - pracma::psi(1, (p+1)/n+1)) +
+	+ pracma::psi(2, (p+1)/n+1) - pracma::psi(2, 1)
+	) / gamma((p+1)/n+1) / n;
 
 
 ####################
