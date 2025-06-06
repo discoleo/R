@@ -629,11 +629,16 @@ integrate(\(x) log(1-x^2)^3 / 6, 0, 1)$value +
 
 ### I( log(1-x)^2 * log(1+x) )
 integrate(\(x) log(1-x)^2 * log(1+x), 0, 1)
-# TODO
+- gamma(1/2) * ((digamma(3/2) + Euler)^3 +
+	+ 3*(digamma(3/2) + Euler) * (pracma::psi(1, 1) - pracma::psi(1, 3/2)) +
+	+ pracma::psi(2, 3/2) - pracma::psi(2, 1)
+	) / gamma(3/2) / 12 + 3/2 * pracma::zeta(3) +
+	- 2/3*log(2)^3 + 2*log(2)^2 - 4*log(2) + 2;
+
 
 ### I( log(1-x) * log(1+x) * (log(1-x) - log(1+x)) )
 integrate(\(x) log(1-x) * log(1+x) * (log(1-x) - log(1+x)), 0, 1)
-3 * pracma::zeta(3) - 2/3*log(2)^3 + 2*log(2)^2 - 4*log(2)
+3 * pracma::zeta(3) - 2/3*log(2)^3 + 2*log(2)^2 - 4*log(2);
 
 
 ### Helper:
