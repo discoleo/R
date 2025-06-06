@@ -384,10 +384,16 @@ p = 1/3; q = 1/5;
 integrate(function(x) x^p * (1 - x)^q, 0, 1)
 gamma(p+1)*gamma(q+1) / gamma(p+q+2)
 
-###
+### D1:
 p = 1/3; q = 1/5;
 integrate(function(x) x^p * (1 - x)^q * log(1-x), 0, 1)
 gamma(p+1) * gamma(q+1) * (digamma(q+1) - digamma(p+q+2)) / gamma(p+q+2)
+
+### D1: I( x^p * (1 - x^n)^q * log(1-x^n) )
+p = 1/3; q = 1/5; n = 1/sqrt(3);
+integrate(function(x) x^p * (1 - x^n)^q * log(1-x^n), 0, 1)
+gamma((p+1)/n) * gamma(q+1) * (digamma(q+1) - digamma((p+1)/n+q+1)) / gamma((p+1)/n+q+1) / n;
+
 
 ### Lim: q = 0
 p = -1/5;
@@ -470,7 +476,7 @@ pracma::psi(1,1)*pracma::psi(2,1)*2 - pracma::psi(4,1)/3
 ### Fractions:
 
 ### I( log(1-x^3) * log(x) / (1 - x^3) )
-integrate(function(x) log(1-x^3) * log(x) / (1 - x^3), 0, 1)
+integrate(\(x) log(1-x^3) * log(x) / (1 - x^3), 0, 1)
 ((digamma(1/3) + Euler) * pracma::psi(1, 1/3) - pracma::psi(2, 1/3)/2) / 9;
 
 ###
@@ -480,13 +486,13 @@ integrate(\(x) x^p * log(x) * log(1-x^3) / (1-x^3), 0, 1, rel.tol=1E-12)
 
 
 ### I( log(1-x^4) * log(x) / (1 - x^4) )
-integrate(function(x) log(1-x^4) * log(x) / (1 - x^4), 0, 1)
+integrate(\(x) log(1-x^4) * log(x) / (1 - x^4), 0, 1)
 ((digamma(1/4) + Euler) * pracma::psi(1, 1/4) - pracma::psi(2, 1/4)/2) / 16;
 
 
 ### Gen: I( log(1-x^n) * log(x) / (1 - x^n) )
 n = sqrt(3)
-integrate(function(x) log(1-x^n) * log(x) / (1 - x^n), 0, 1)
+integrate(\(x) log(1-x^n) * log(x) / (1 - x^n), 0, 1)
 ((digamma(1/n) + Euler) * pracma::psi(1, 1/n) - pracma::psi(2, 1/n)/2) / n^2;
 
 
@@ -616,13 +622,23 @@ gamma(p+1) * (1 - 3*2^(-p-1) + 3*3^(-p-1) - 4^(-p-1))
 integrate(\(x) log(1-x) * log(1+x) * (log(1-x) - log(1+x)), 0, 1)
 3 * pracma::zeta(3) - 2/3*log(2)^3 + 2*log(2)^2 - 4*log(2)
 
-###
+### I( log(1-x) * log(1+x)^2 )
 integrate(\(x) log(1-x) * log(1+x)^2, 0, 1)
-# TODO
+integrate(\(x) log(1-x^2)^3 / 6, 0, 1)$value +
+	- 2 * (1 - 2^(1-3)) * pracma::zeta(3) + 2;
 
-###
+### I( log(1-x)^2 * log(1+x) )
 integrate(\(x) log(1-x)^2 * log(1+x), 0, 1)
 # TODO
+
+
+### Helper:
+
+### Base:
+p = 1/3; q = 1/5; n = 1/sqrt(3);
+integrate(\(x) x^p * (1 - x^n)^q * log(1-x^n), 0, 1)
+gamma((p+1)/n) * gamma(q+1) * (digamma(q+1) - digamma((p+1)/n+q+1)) / gamma((p+1)/n+q+1) / n;
+
 
 
 ####################
