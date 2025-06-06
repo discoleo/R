@@ -6,7 +6,7 @@
 ### Integrals: Logarithms
 ### Log-Products
 ###
-### draft v.0.2i
+### draft v.0.2j
 
 
 ### Constants
@@ -473,6 +473,12 @@ pracma::psi(1,1)*pracma::psi(2,1)*2 - pracma::psi(4,1)/3
 integrate(function(x) log(1-x^3) * log(x) / (1 - x^3), 0, 1)
 ((digamma(1/3) + Euler) * pracma::psi(1, 1/3) - pracma::psi(2, 1/3)/2) / 9;
 
+###
+p = sqrt(2)
+integrate(\(x) x^p * log(x) * log(1-x^3) / (1-x^3), 0, 1, rel.tol=1E-12)
+((digamma((p+1)/3) + Euler) * pracma::psi(1, (p+1)/3) - pracma::psi(2, (p+1)/3)/2) / 9;
+
+
 ### I( log(1-x^4) * log(x) / (1 - x^4) )
 integrate(function(x) log(1-x^4) * log(x) / (1 - x^4), 0, 1)
 ((digamma(1/4) + Euler) * pracma::psi(1, 1/4) - pracma::psi(2, 1/4)/2) / 16;
@@ -482,6 +488,12 @@ integrate(function(x) log(1-x^4) * log(x) / (1 - x^4), 0, 1)
 n = sqrt(3)
 integrate(function(x) log(1-x^n) * log(x) / (1 - x^n), 0, 1)
 ((digamma(1/n) + Euler) * pracma::psi(1, 1/n) - pracma::psi(2, 1/n)/2) / n^2;
+
+
+### Gen: I( x^p * log(1-x^n) * log(x) / (1 - x^n) )
+n = sqrt(3); p = sqrt(5);
+integrate(function(x) x^p * log(1-x^n) * log(x) / (1 - x^n), 0, 1)
+((digamma((p+1)/n) + Euler) * pracma::psi(1, (p+1)/n) - pracma::psi(2, (p+1)/n)/2) / n^2;
 
 
 ### Sub-Components:
