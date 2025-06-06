@@ -22,12 +22,13 @@ Catalan = 0.915965594177219015054603514;
 ################
 ################
 
-### I( log(x) * log(1 - x^n) / x )
+### I( log(x) * log(1 +/- x^n) / x )
 # Maths 505: A beautiful log-trig integral featuring an important constant
 # https://www.youtube.com/watch?v=2bwvuWsQSEY
 # [the intermediate integral]
 
-###
+
+### I( log(x) * log(1 - x^n) / x )
 integrate(\(x) log(x) * log(1 - x^2) / x, 0, 1)
 pracma::zeta(3) / 4
 
@@ -36,7 +37,8 @@ n = sqrt(5)
 integrate(\(x) log(x) * log(1 - x^n) / x, 0, 1)
 pracma::zeta(3) / n^2
 
-###
+
+### I( log(x) * log(1 + x^n) / x )
 integrate(\(x) log(x) * log(1 + x) / x, 0, 1)
 - pracma::zeta(3) * 3/4
 
@@ -44,6 +46,7 @@ integrate(\(x) log(x) * log(1 + x) / x, 0, 1)
 n = sqrt(5)
 integrate(\(x) log(x) * log(1 + x^n) / x, 0, 1)
 - pracma::zeta(3) * 3/4 / n^2
+
 
 ### Derived:
 integrate(\(x) log(x) * log(x^2 + x + 1) / x, 0, 1)
@@ -65,6 +68,7 @@ integrate(\(x) log(1+x^2) * log(1-x) / x, 0, 1)
 23/32 * pracma::zeta(3) - Catalan * pi / 2;
 
 
+###################
 ### Series: Pow = 2
 # P() / x^2
 
@@ -199,7 +203,7 @@ integrate(\(x) abs(log(x))^p * log(1 - x + x^2) / x, 0, 1, rel.tol=1E-8)
 
 
 ### Variants:
-# I( log(x)^s * log((1-x)/(1+x) / x )
+# I( log(x)^s * log((1-x)/(1+x)) / x )
 
 ### Gen:
 s = sqrt(3)
@@ -369,6 +373,9 @@ integrate(\(x) log(1 - x) * log(1 + x) / x, 0, 1)
 
 
 ####################
+####################
+
+### Generalization
 
 ### I( x^p * (1 - x)^q * log(1-x) * log(x) )
 
@@ -458,6 +465,86 @@ pracma::psi(1,1)*pracma::psi(2,1)*2 - pracma::psi(4,1)/3
 (pi^2*pracma::psi(2,1) - pracma::psi(4,1))/3
 
 
+#################
+
+### Fractions:
+
+### I( log(x) * log(1-x) / (x^2+1) )
+integrate(\(x) log(x) * log(1-x) / (x^2+1), 0, 1, rel.tol=1E-12)
+# TODO
+
+### I( log(x) * log(x+1) / (x^2+1) )
+integrate(\(x) log(x) * log(1+x) / (x^2+1), 0, 1)
+# TODO
+
+### I( log(x) * log(1-x^4) / (x^2+1) )
+integrate(\(x) log(x) * log(1-x^4) / (x^2+1), 0, 1)
+((digamma(1/4) + Euler) * pracma::psi(1, 1/4) - pracma::psi(2, 1/4)/2) / 8 +
+	- 7/2 * pracma::zeta(3) + 3/8 * pi^2 * log(2) + pi/2 * Catalan;
+
+
+### Derived:
+# TODO
+
+### I( log(x) * log(x^2+1) / (x^2+1) )
+integrate(\(x) log(x) * log(1+x^2) / (x^2+1), 0, 1)
+integrate(\(x) 2 * log(x) * log(1-x) / (x^2+1), 0, 1, rel.tol=1E-12)$value - Catalan * log(2);
+
+### I( x * atan(x) * log(x) / (x^2+1) )
+integrate(\(x) x * atan(x) * log(x) / (x^2+1), 0, 1, rel.tol=1E-12)
+integrate(\(x) -2 * log(x) * log(1-x) / (x^2+1), 0, 1, rel.tol=1E-12)$value + (pi/4)^3;
+
+### I( atan(x) * log(x) / (x^2+1) )
+integrate(\(x) atan(x) * log(x) / (x^2+1), 0, 1, rel.tol=1E-12)
+7/16 * pracma::zeta(3) - pi * Catalan / 4;
+
+### I( log(1 + x)^2 / (x^2+1) )
+integrate(\(x) log(1 + x)^2 / (x^2+1), 0, 1)
+integrate(\(x) (log(x) + log(1-x)) * log(1+x) / (x^2+1), 0, 1)$value + Catalan*log(2);
+
+
+### Diff
+
+### I( log(x) * log(1-x) / (1-x^2) )
+integrate(\(x) log(x) * log(1-x) / (1-x^2), 0, 1, rel.tol=1E-12)
+21/16 * pracma::zeta(3) - 1/8 * pi^2 * log(2);
+
+### I( log(x) * log(1+x) / (1-x^2) )
+integrate(\(x) log(x) * log(1+x) / (1-x^2), 0, 1)
+7/16 * pracma::zeta(3) - 1/8 * pi^2 * log(2);
+
+### I( log(x) * log(1+x^2) / (1-x^2) )
+integrate(\(x) log(x) * log(1+x^2) / (1-x^2), 0, 1)
+7/4 * pracma::zeta(3) - 1/8 * pi^2 * log(2) - pi/2 * Catalan;
+
+### I( log(x) * log(1-x^4) / (1-x^2) )
+integrate(\(x) log(x) * log(1-x^4) / (1-x^2), 0, 1)
+7/2 * pracma::zeta(3) - 3/8 * pi^2 * log(2) - pi/2 * Catalan;
+
+
+### Base I:
+p = -3/4; q = -1;
+integrate(function(x) log(1-x^4) * log(x) / (1 - x^4), 0, 1)
+integrate(function(x) x^(4*p+3) * (1 - x^4)^q * log(1-x^4) * log(x), 0, 1)
+((digamma(1/4) + Euler) * pracma::psi(1, 1/4) - pracma::psi(2, 1/4)/2) / 16;
+
+# Limit: q -> -1
+q = -1 + 1E-4;
+gamma(p+1) * gamma(q+1) *
+	( (digamma(p+q+2) - digamma(q+1)) * (digamma(p+q+2) - digamma(p+1)) +
+		- pracma::psi(1, p+q+2) ) / gamma(p+q+2) / 16;
+gamma(1/4) * gamma(q+1) *
+	( (digamma(q+5/4) - digamma(q+1)) * (digamma(q+5/4) - digamma(1/4)) +
+		- pracma::psi(1, q+5/4) ) / gamma(q+5/4) / 16;
+((digamma(1/4) + Euler) * pracma::psi(1, 1/4) - pracma::psi(2, 1/4)/2) / 16;
+
+
+#
+q = 1E-5
+((digamma(q+1/4) - digamma(q)) * (digamma(q+1/4) - digamma(1/4)) - pracma::psi(1, q+1/4) ) * gamma(q)
+((digamma(1/4) + Euler) * pracma::psi(1, 1/4) - pracma::psi(2, 1/4)/2)
+
+
 ####################
 ####################
 
@@ -544,6 +631,8 @@ integrate(function(x) (1 + x)^p * (1 - x)^q * log(1+x) * log(1-x), -1, 1)
 
 ####################
 ####################
+
+### on [0, Inf]
 
 ### I( x^p * log(x) * log(x^n + 1) / (x^n + 1)^k )
 p = sqrt(3); n = sqrt(5); k = sqrt(2) + sqrt(3);
