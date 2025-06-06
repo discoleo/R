@@ -43,12 +43,22 @@ Catalan
 
 ### I( x*y / ((x*y + 1)^2 + 1) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) x*y / ((x*y + 1)^2 + 1), 0, 1)$value), 0, 1)
+integrate(\(x) - log(x) * x / (x^2 + 2*x + 2) , 0, 1);
+
 # Derivation:
+# z = x*y =>
+integrate(\(x) 1/x * sapply(x, \(y) integrate(\(x) (x-1) / (x^2 + 1), 1, 1+y)$value), 0, 1)
+integrate(\(x) 1/x * (log((x+1)^2+1)/2 - log(2)/2 - atan(x+1) + atan(1)), 0, 1)
+
+# [old] [longer way]
 integrate(\(x) sapply(x, \(y) integrate(\(x) Im((1+1i)/ (x*y + 1 + 1i)), 0, 1)$value), 0, 1)
 integrate(\(x) pi/4/x - atan(x+1) / x, 0, 1)$value +
 integrate(\(x)  Re(log(x + 1+1i) - log(1+1i)) / x, 0, 1)$value;
 integrate(\(x) (Re(log(x + 1+1i)) - atan(x+1) + pi/4 - log(2)/2) / x, 0, 1);
 integrate(\(x) (Re((1-1i)*log(x + 1+1i)) - pi/4 - log(2)/2) / x, 0, 1);
+integrate(\(x) 1/2 * (log(x^2 + 2*x + 2) - log(2)) / x, 0, 1)$value +
+integrate(\(x) - (atan(x+1) - pi/4) / x, 0, 1)$value;
+integrate(\(x) - log(x) * x / (x^2 + 2*x + 2) , 0, 1);
 
 # TODO
 
@@ -292,9 +302,15 @@ integrate(\(x) sapply(x, \(y)
 # TODO
 
 
+### I( log(x) / (2 - x^2 - y^2) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	log(x) / (2 - x^2 - y^2), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+integrate(\(x) log(1-x) * log(x) / (x^2+1), 0, 1)$value - pi^3 / 32;
+
+
 ### I( log(x+y) / (2 - x^2 - y^2) )
-integrate(\(x) sapply(x, \(y)
-	integrate(\(x) log(x+y) / (2 - x^2 - y^2), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	log(x+y) / (2 - x^2 - y^2), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 # TODO
 
 
@@ -506,6 +522,8 @@ isq = exp(-1i * pi/4); isq2 = exp(1i * pi/4);
 integrate(\(x) atan(x)/(x+1) +
 	- sqrt(x)/(x*(x+1)) * Re(atan(sqrt(x)/isq)/isq + atan(sqrt(x)/isq2)/isq2), 0, 1)
 integrate(\(x) -4 * Re(atan(x/isq)/isq) / (x^2+1), 0, 1)$value + pi * log(2)/8;
+integrate(\(x) 4 * Re(1/(x^2 + 1i)) * atan(x), 0, 1)$value +
+	(digamma(3/8) - digamma(7/8)) * pi / 8 + pi * log(2)/8;
 # TODO
 
 # Helper:
@@ -529,6 +547,10 @@ integrate(\(x) (1 - x^2) * Re(log(x + 1i)) / (x^4 + 1), 0, 1)$value +
 
 ### I( atan(x*y) / (x + y + 1) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x*y) / (x+y+1), 0, 1)$value), 0, 1)
+# TODO
+
+### I( atan(x*y) / (2 - x - y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x*y) / (2 - x - y), 0, 1)$value), 0, 1)
 # TODO
 
 
