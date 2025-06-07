@@ -1,12 +1,12 @@
 ########################
-###
-### Leonard Mada
-### [the one and only]
-###
-### Integrals: Logarithms
-### Log-Products
-###
-### draft v.0.2k
+##
+## Leonard Mada
+## [the one and only]
+##
+## Integrals: Logarithms
+## Log-Products
+##
+## draft v.0.2l
 
 
 ### Constants
@@ -538,7 +538,13 @@ integrate(\(x) atan(x) * log(x) / (x^2+1), 0, 1, rel.tol=1E-12)
 
 ### I( log(1 + x)^2 / (x^2+1) )
 integrate(\(x) log(1 + x)^2 / (x^2+1), 0, 1)
-integrate(\(x) (log(x) + log(1-x)) * log(1+x) / (x^2+1), 0, 1)$value + Catalan*log(2);
+integrate(\(x) (log(1-x) + log(x)) * log(1+x) / (x^2+1), 0, 1)$value + Catalan*log(2);
+# TODO
+
+### I( log(1 - x)^2 / (x^2+1) )
+integrate(\(x) log(1 - x)^2 / (x^2+1), 0, 1)
+integrate(\(x) (log(1-x) - log(x)) * log(1+x) / (x^2+1), 0, 1)$value + pi^3/16 -  Catalan*log(2);
+# TODO
 
 
 ### Diff
