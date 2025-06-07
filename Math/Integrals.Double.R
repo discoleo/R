@@ -5,7 +5,7 @@
 ##
 ## Integrals: Double Integrals
 ##
-## v.0.1j
+## v.0.1k
 
 ### Double Integrals
 
@@ -311,6 +311,10 @@ integrate(\(x) log(1-x) * log(x) / (x^2+1), 0, 1)$value - pi^3 / 32;
 ### I( log(x+y) / (2 - x^2 - y^2) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	log(x+y) / (2 - x^2 - y^2), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+integrate(\(x) -2 * log(x) * log(1+x) / (x^2+1), 0, 1, rel.tol=1E-12)$value +
+	integrate(\(x) - log(x) * log(1-x) / (x^2+1), 0, 1, rel.tol=1E-12)$value +
+	((digamma(1/4) + Euler) * pracma::psi(1, 1/4) - pracma::psi(2, 1/4)/2) / 16 +
+	- 7/4 * pracma::zeta(3) + 3/16 * pi^2 * log(2) + pi/4 * Catalan;
 # TODO
 
 
