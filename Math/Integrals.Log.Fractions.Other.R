@@ -493,24 +493,6 @@ integrate(function(x) - n*(n+1) * x^n * log(x) / (2 - x^n)^(2+1/n), lower=0, upp
 #######################
 #######################
 
-### I( x * log(x) / cosh(k*x)^2 )
-# Maths 505: Feynman's trick solves an AWESOME integral
-# https://www.youtube.com/watch?v=qZywLtQaDGQ
-
-###
-k = sqrt(5)
-integrate(\(x) x * log(x) / cosh(k*x)^2, 0, 100)
-- (log(2)*log(k) + 3/2*log(2)^2 - log(2)) / k^2
-
-### Helper:
-k = sqrt(3)
-integrate(\(x) x * exp(k*x) / (exp(k*x) + 1)^2, 0, 100)
-log(2) / k^2
-
-
-#######################
-#######################
-
 ### 1 / LOG()
 
 ###

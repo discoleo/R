@@ -316,6 +316,23 @@ pracma::integral(\(x) x^2 * log(x) / (exp(k*x) + 1)^2, 0, 100)
 # Note: digamma(3) = 3/2 - Euler;
 
 
+#################
+
+### I( x * log(x) / cosh(k*x)^2 )
+# Maths 505: Feynman's trick solves an AWESOME integral
+# https://www.youtube.com/watch?v=qZywLtQaDGQ
+
+###
+k = sqrt(5); # upper = Inf;
+integrate(\(x) x * log(x) / cosh(k*x)^2, 0, 100)
+- (log(2)*log(k) + 3/2*log(2)^2 - log(2)) / k^2
+
+### Helper:
+k = sqrt(3)
+integrate(\(x) x * exp(k*x) / (exp(k*x) + 1)^2, 0, 100)
+log(2) / k^2
+
+
 #######################
 #######################
 
