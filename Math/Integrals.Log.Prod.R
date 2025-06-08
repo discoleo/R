@@ -6,7 +6,7 @@
 ## Integrals: Logarithms
 ## Log-Products
 ##
-## draft v.0.2l
+## draft v.0.2m
 
 
 ### Constants
@@ -515,18 +515,18 @@ integrate(\(x) -3 * log(x) * log(1-x) / (x^2+1), 0, 1, rel.tol=1E-12)$value +
 	- 7/2 * pracma::zeta(3) + 3/8 * pi^2 * log(2) + Catalan * pi/2 + Catalan * log(2);
 # TODO
 
+### I( log(x) * log(1+x^2) / (x^2+1) )
+integrate(\(x) log(x) * log(1+x^2) / (x^2+1), 0, 1)
+integrate(\(x) 2 * log(x) * log(1-x) / (x^2+1), 0, 1, rel.tol=1E-12)$value - Catalan * log(2);
+
 ### I( log(x) * log(1-x^4) / (x^2+1) )
 integrate(\(x) log(x) * log(1-x^4) / (x^2+1), 0, 1)
 ((digamma(1/4) + Euler) * pracma::psi(1, 1/4) - pracma::psi(2, 1/4)/2) / 8 +
 	- 7/2 * pracma::zeta(3) + 3/8 * pi^2 * log(2) + pi/2 * Catalan;
 
 
-### Derived:
+### Derived: Other
 # TODO
-
-### I( log(x) * log(1+x^2) / (x^2+1) )
-integrate(\(x) log(x) * log(1+x^2) / (x^2+1), 0, 1)
-integrate(\(x) 2 * log(x) * log(1-x) / (x^2+1), 0, 1, rel.tol=1E-12)$value - Catalan * log(2);
 
 ### I( x * atan(x) * log(x) / (x^2+1) )
 integrate(\(x) x * atan(x) * log(x) / (x^2+1), 0, 1, rel.tol=1E-12)
@@ -588,6 +588,42 @@ q = 1E-5
 ((digamma(q+1/4) - digamma(q)) * (digamma(q+1/4) - digamma(1/4)) - pracma::psi(1, q+1/4) ) * gamma(q)
 ((digamma(1/4) + Euler) * pracma::psi(1, 1/4) - pracma::psi(2, 1/4)/2)
 
+
+################
+
+### Log(1 + x^4)
+
+### I( x^p * log(1+x^4) * log(x) / (1 + x^2) )
+p = sqrt(5);
+integrate(function(x) x^p * log(1+x^4) * log(x) / (1 + x^2), 0, 1)
+((digamma((p+1)/8) + Euler) * pracma::psi(1, (p+1)/8) - pracma::psi(2, (p+1)/8)/2) / 64 +
+- ((digamma((p+3)/8) + Euler) * pracma::psi(1, (p+3)/8) - pracma::psi(2, (p+3)/8)/2) / 64 +
++ ((digamma((p+5)/8) + Euler) * pracma::psi(1, (p+5)/8) - pracma::psi(2, (p+5)/8)/2) / 64 +
+- ((digamma((p+7)/8) + Euler) * pracma::psi(1, (p+7)/8) - pracma::psi(2, (p+7)/8)/2) / 64 +
+- ((digamma((p+1)/4) + Euler) * pracma::psi(1, (p+1)/4) - pracma::psi(2, (p+1)/4)/2) / 16 +
++ ((digamma((p+3)/4) + Euler) * pracma::psi(1, (p+3)/4) - pracma::psi(2, (p+3)/4)/2) / 16;
+
+
+### I( x^p * log(1-x^8) * log(x) / (1 + x^2) )
+p = sqrt(5);
+integrate(function(x) x^p * log(1-x^8) * log(x) / (1 + x^2), 0, 1)
+((digamma((p+1)/8) + Euler) * pracma::psi(1, (p+1)/8) - pracma::psi(2, (p+1)/8)/2) / 64 +
+- ((digamma((p+3)/8) + Euler) * pracma::psi(1, (p+3)/8) - pracma::psi(2, (p+3)/8)/2) / 64 +
++ ((digamma((p+5)/8) + Euler) * pracma::psi(1, (p+5)/8) - pracma::psi(2, (p+5)/8)/2) / 64 +
+- ((digamma((p+7)/8) + Euler) * pracma::psi(1, (p+7)/8) - pracma::psi(2, (p+7)/8)/2) / 64;
+
+
+### I( x^p * log(1-x^8) * log(x) / (1 + x^4) )
+p = sqrt(5);
+integrate(function(x) x^p * log(1-x^8) * log(x) / (1 + x^4), 0, 1)
+((digamma((p+1)/8) + Euler) * pracma::psi(1, (p+1)/8) - pracma::psi(2, (p+1)/8)/2) / 64 +
+- ((digamma((p+5)/8) + Euler) * pracma::psi(1, (p+5)/8) - pracma::psi(2, (p+5)/8)/2) / 64;
+
+
+# Base:
+n = 8; p = sqrt(5);
+integrate(function(x) x^p * log(1-x^n) * log(x) / (1 - x^n), 0, 1)
+((digamma((p+1)/n) + Euler) * pracma::psi(1, (p+1)/n) - pracma::psi(2, (p+1)/n)/2) / n^2;
 
 ####################
 ####################
