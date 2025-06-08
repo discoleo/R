@@ -160,6 +160,13 @@ integrate(\(x) log(x^2-x+1) / (x+1), 0, 1)
 polylog2(-2) + pi^2/18 + log(2)*log(3);
 
 
+### Varia:
+
+###
+integrate(\(x) log((1+x)/x) / (1 + 3*x), 0, Inf, rel.tol=1E-12)
+pi^2/18 - polylog2(-2)/3;
+
+
 #######################
 
 ### Types: log(x +/- 1) / (x^2+1)
@@ -202,7 +209,23 @@ integrate(\(x) x * log(1-x) / (x^2+1), 0, 1)
 - 5/96 * pi^2 + log(2)^2 / 8
 
 
+###########
 ### Pow = 3
+
+### I( x^p * log(1-x^3) / (1-x^3) )
+p = sqrt(3); n = 3;
+integrate(\(x) x^p * (1-x) * log(1-x^3) / (1-x^3), 0, 1)
+# TODO: ugly limits;
+q = 1E-5;
+(1/2*(pracma::psi(1, (p+1)/n) - pracma::psi(1, (p+2)/n)) +
+	+ Euler * (digamma((p+1)/n) - digamma((p+2)/n)) +
+	+ 1/2 * (digamma((p+1)/n)^2 - digamma((p+2)/n)^2)) / n +
+	# TODO
+	- (pracma::psi(1, (p+1)/n) * gamma((p+2)/n+q) * gamma((p+1)/n) +
+		- pracma::psi(1, (p+2)/n) * gamma((p+1)/n+q) * gamma((p+2)/n)
+	) / gamma((p+1)/n) / gamma((p+2)/n) / n;
+
+
 
 ### I( log(1+x) / (x^2 + x + 1) )
 integrate(\(x) log(1+x) / (x^2+x+1), 0, 1)
@@ -211,6 +234,11 @@ integrate(\(x) log(1+x) / (x^2+x+1), 0, 1)
 ### I( log(1-x) / (x^2 - x + 1) )
 integrate(\(x) log(1-x) / (x^2-x+1), 0, 1)
 - (pracma::psi(1, 1/3) - pracma::psi(1, 2/3)) / 6
+
+
+### I( x * log(1+x) / (x^2 + x + 1) )
+integrate(\(x) x * log(1+x) / (x^2+x+1), 0, 1)
+# TODO
 
 ### I( x * log(1+x) / (x^2 + x + 1) )
 integrate(\(x) x * log(1+x) / (x^2+x+1), 0, 1)
