@@ -227,10 +227,16 @@ q = 1E-5;
 
 
 ### I( log(1-x^3) / (x^2 + x + 1) )
-integrate(\(x) (1-x) * log(1-x^3) / (1-x^3), 0, 1)
+integrate(\(x) log(1-x^3) * (1-x) / (1-x^3), 0, 1)
 ((pracma::psi(1, 2/3) - pracma::psi(1, 1/3)) +
 	+ (digamma(1/3) - digamma(2/3)) * Euler * 2 +
 	+ (digamma(1/3)^2 - digamma(2/3)^2)) / 6;
+
+### I( x * log(1-x^3) / (x^2 + x + 1) )
+integrate(\(x) x * log(1-x^3) * (1-x) / (1-x^3), 0, 1)
+((pracma::psi(1, 1) - pracma::psi(1, 2/3)) +
+	+ (digamma(2/3) - digamma(1)) * Euler * 2 +
+	+ (digamma(2/3)^2 - digamma(1)^2)) / 6;
 
 
 ### I( log(1+x) / (x^2 + x + 1) )
@@ -252,6 +258,11 @@ integrate(\(x) 1/3 * log(1-x^3) / (x^2+x+1), 0, 1)$value +
 
 ### I( x * log(1-x) / (x^2 + x + 1) )
 integrate(\(x) x * log(1-x) / (x^2+x+1), 0, 1)
+integrate(\(x) - x * log(1-x) / (x^2-x+1), 0, 1)$value +
++ ((pracma::psi(1, 1) - pracma::psi(1, 2/3)) +
+	+ (digamma(2/3) - digamma(1)) * Euler * 2 +
+	+ (digamma(2/3)^2 - digamma(1)^2)) / 18 +
+	- pracma::psi(1, 1/3) / 9;
 # TODO
 
 ### I( x * log(1+x) / (x^2 + x + 1) )
@@ -328,6 +339,14 @@ pi^2 * 5 / (2*27);
 integrate(\(x) log(abs(1-x)) / x / (x^3 + 1), 0, 1)$value +
 integrate(\(x) log(abs(1-x)) / x / (x^3 + 1), 1, Inf)$value;
 - pi^2 * 17 / (4*27);
+
+
+### I( log(x^2+x+1) / (1-x) )
+integrate(\(x) (log(x^2+x+1) - log(3)) / (1-x), 0, 1)
+integrate(\(x) 2 * x * log(1-x) / (x^2+x+1), 0, 1, rel.tol=1E-13)$value +
+	+ ((pracma::psi(1, 2/3) - pracma::psi(1, 1/3)) * 2 +
+	+ (digamma(1/3) - digamma(2/3)) * Euler * 2 +
+	+ (digamma(1/3)^2 - digamma(2/3)^2)) / 18;
 
 
 ### Helper
