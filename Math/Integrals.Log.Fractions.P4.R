@@ -113,7 +113,7 @@ integrate(\(x) log(abs(1-x)) / x / (x^4+1), 0, 1)
 ##################
 ### Log(1 + x) ###
 
-### on [0, Inf] & [0. 1]
+### on [0, Inf] & [0, 1]
 
 ### I( log(1+x) / (x^4 + 1) )
 integrate(\(x) log(1+x) / (x^4 + 1), 0, Inf)
@@ -192,6 +192,23 @@ pi^2 / (6*32)
 
 ### I( log(x^2 + 1) / (x^4 + 1) )
 
+### on [0, Inf]
+
+### I( log(x^2+1) / (x^4+1) )
+integrate(\(x) log(x^2+1) / (x^4+1), 0, Inf)
+(pi + 2*log(2)) * pi * sqrt(2) / 16 +
+	- (pi*sqrt(2)/4 - (digamma(5/8) - digamma(1/8)) / 8) * pi;
+- pi^2 * sqrt(2) * 3/16 + pi * log(2) * sqrt(2) / 8 +
+	+ (digamma(5/8) - digamma(1/8)) * pi / 8;
+
+### I( x^2 * log(x^2+1) / (x^4+1) )
+integrate(\(x) x^2 * log(x^2+1) / (x^4+1), 0, Inf)
+- pi^2 * sqrt(2) / 16 + pi * log(2) * sqrt(2) / 8 +
+	+ (digamma(5/8) - digamma(1/8)) * pi / 8;
+
+
+### on [0, 1]
+
 ### I( log(x^2 + 1) / (x^4 + 1) )
 integrate(\(x) log(x^2+1) / (x^4+1), 0, 1)
 integrate(\(x) -2*atan(x) / (x^4+1), 0, 1)$value +
@@ -218,7 +235,9 @@ sqrt(2)*pi/8 * (pi/2 + log(2)) +
 	+ 2*(pracma::psi(1, 7/8) - pracma::psi(1, 3/8)) / 64 +
 	- pi/2 * (atan(exp(1i*pi/4))*exp(1i*pi/4) +
 		+ atan(exp(-1i*pi/4))*exp(-1i*pi/4));
-
+sqrt(2)*pi/8 * (pi/2 + log(2)) +
+	+ (pracma::psi(1, 7/8) - pracma::psi(1, 3/8)) / 32 +
+	- (digamma(7/8) - digamma(3/8)) * pi / 8;
 
 # Note:
 (digamma(3/4) - digamma(1/4)) # == pi;
