@@ -6,7 +6,7 @@
 ### Integrals: Logarithms
 ### Log-Fractions: Other
 ###
-### draft v.0.3b
+### draft v.0.3c
 
 
 ##################
@@ -226,6 +226,12 @@ q = 1E-5;
 	) / gamma((p+1)/n) / gamma((p+2)/n) / n;
 
 
+### I( log(1-x^3) / (x^2 + x + 1) )
+integrate(\(x) (1-x) * log(1-x^3) / (1-x^3), 0, 1)
+((pracma::psi(1, 2/3) - pracma::psi(1, 1/3)) +
+	+ (digamma(1/3) - digamma(2/3)) * Euler * 2 +
+	+ (digamma(1/3)^2 - digamma(2/3)^2)) / 6;
+
 
 ### I( log(1+x) / (x^2 + x + 1) )
 integrate(\(x) log(1+x) / (x^2+x+1), 0, 1)
@@ -235,9 +241,17 @@ integrate(\(x) log(1+x) / (x^2+x+1), 0, 1)
 integrate(\(x) log(1-x) / (x^2-x+1), 0, 1)
 - (pracma::psi(1, 1/3) - pracma::psi(1, 2/3)) / 6
 
+### I( log(1-x) / (x^2 + x + 1) )
+integrate(\(x) log(1-x) / (x^2+x+1), 0, 1)
+integrate(\(x) 1/3 * log(1-x^3) / (x^2+x+1), 0, 1)$value +
+	- (pracma::psi(1, 1/3) - pracma::psi(1, 2/3)) / 18;
+((pracma::psi(1, 2/3) - pracma::psi(1, 1/3)) * 2 +
+	+ (digamma(1/3) - digamma(2/3)) * Euler * 2 +
+	+ (digamma(1/3)^2 - digamma(2/3)^2)) / 18;
 
-### I( x * log(1+x) / (x^2 + x + 1) )
-integrate(\(x) x * log(1+x) / (x^2+x+1), 0, 1)
+
+### I( x * log(1-x) / (x^2 + x + 1) )
+integrate(\(x) x * log(1-x) / (x^2+x+1), 0, 1)
 # TODO
 
 ### I( x * log(1+x) / (x^2 + x + 1) )
