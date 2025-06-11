@@ -6,7 +6,7 @@
 ### Integrals: Logarithms
 ### Log-Fractions: Other
 ###
-### draft v.0.3d
+### draft v.0.3e
 
 
 ##################
@@ -286,11 +286,12 @@ pi^2/12 - pracma::psi(1, 1/3) / 6;
 ### I( x * log(1-x) / (x^2 + x + 1) )
 integrate(\(x) x * log(1-x) / (x^2+x+1), 0, 1)
 integrate(\(x) - x * log(1-x) / (x^2-x+1), 0, 1)$value +
-+ ((pracma::psi(1, 1) - pracma::psi(1, 2/3)) +
++ ((pracma::psi(1, 1) - 2*pracma::psi(1, 1/3) - pracma::psi(1, 2/3)) +
 	+ (digamma(2/3) - digamma(1)) * Euler * 2 +
-	+ (digamma(2/3)^2 - digamma(1)^2)) / 18 +
-	- pracma::psi(1, 1/3) / 9;
-# TODO
+	+ (digamma(2/3)^2 - digamma(1)^2)) / 18;
+(pracma::psi(1, 1/3) - pracma::psi(1, 2/3) +
+	+ (digamma(2/3) - digamma(1)) * Euler * 2 +
+	+ (digamma(2/3)^2 - digamma(1)^2) ) / 18 - pi^2 * 2/27;
 
 
 ### I( x * log(1+x) / (x^2 + x + 1) )
