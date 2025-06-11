@@ -6,7 +6,7 @@
 ### Integrals: Logarithms
 ### Log-Fractions: Other
 ###
-### draft v.0.3c
+### draft v.0.3d
 
 
 ##################
@@ -238,14 +238,19 @@ integrate(\(x) x * log(1-x^3) * (1-x) / (1-x^3), 0, 1)
 	+ (digamma(2/3) - digamma(1)) * Euler * 2 +
 	+ (digamma(2/3)^2 - digamma(1)^2)) / 6;
 
+### I( x^2 * log(1-x^3) / (x^2 + x + 1) )
+integrate(\(x) x^2 * log(1-x^3) * (1-x) / (1-x^3), 0, 1)
+((pracma::psi(1, 4/3) - pracma::psi(1, 3/3)) +
+	+ (digamma(3/3) - digamma(4/3)) * Euler * 2 +
+	+ (digamma(3/3)^2 - digamma(4/3)^2)) / 6;
 
-### I( log(1+x) / (x^2 + x + 1) )
-integrate(\(x) log(1+x) / (x^2+x+1), 0, 1)
-(pracma::psi(1, 1/3) - pracma::psi(1, 2/3)) / 36
 
-### I( log(1-x) / (x^2 - x + 1) )
-integrate(\(x) log(1-x) / (x^2-x+1), 0, 1)
-- (pracma::psi(1, 1/3) - pracma::psi(1, 2/3)) / 6
+### Components:
+
+### I( log(1-x) / (1 + x^3) )
+integrate(\(x) log(1-x) / (1 + x^3), 0, 1)
+# TODO
+
 
 ### I( log(1-x) / (x^2 + x + 1) )
 integrate(\(x) log(1-x) / (x^2+x+1), 0, 1)
@@ -255,6 +260,21 @@ integrate(\(x) 1/3 * log(1-x^3) / (x^2+x+1), 0, 1)$value +
 	+ (digamma(1/3) - digamma(2/3)) * Euler * 2 +
 	+ (digamma(1/3)^2 - digamma(2/3)^2)) / 18;
 
+### I( log(1-x) / (x^2 - x + 1) )
+integrate(\(x) log(1-x) / (x^2-x+1), 0, 1)
+- (pracma::psi(1, 1/3) - pracma::psi(1, 2/3)) / 6;
+
+### I( log(1+x) / (x^2 + x + 1) )
+integrate(\(x) log(1+x) / (x^2+x+1), 0, 1)
+(pracma::psi(1, 1/3) - pracma::psi(1, 2/3)) / 36;
+
+
+### I( x * log(1-x) / ... )
+
+### I( x * log(1-x) / (x^2 - x + 1) )
+integrate(\(x) x * log(1-x) / (x^2-x+1), 0, 1)
+pi^2/18 - (pracma::psi(1, 1/3) - pracma::psi(1, 3/3)) / 6;
+pi^2/12 - pracma::psi(1, 1/3) / 6;
 
 ### I( x * log(1-x) / (x^2 + x + 1) )
 integrate(\(x) x * log(1-x) / (x^2+x+1), 0, 1)
@@ -265,6 +285,7 @@ integrate(\(x) - x * log(1-x) / (x^2-x+1), 0, 1)$value +
 	- pracma::psi(1, 1/3) / 9;
 # TODO
 
+
 ### I( x * log(1+x) / (x^2 + x + 1) )
 integrate(\(x) x * log(1+x) / (x^2+x+1), 0, 1)
 integrate(\(x) - 1/2 * log(x^2+x+1) / (x+1), 0, 1)$value +
@@ -273,6 +294,20 @@ integrate(\(x) - 1/2 * log(1-x^3) / (x+1), 0, 1)$value +
 	+ log(2)*log(3)/2 - (pi^2/12 - log(2)^2/2)/2 +
 	- (pracma::psi(1, 1/3) - pracma::psi(1, 2/3)) / 72;
 # TODO
+
+
+### I( x^2 * log(1-x) / ... )
+
+### I( x^2 * log(1-x) / (x^2-x+1) )
+integrate(\(x) x^2 * log(1-x) / (x^2-x+1), 0, 1)
+pi^2/12 - pracma::psi(1, 2/3) / 6 - 1;
+
+
+###
+integrate(\(x) log(1 + x^3) / (x+1), 0, 1)
+integrate(\(x) log(1 - x^6) * (1-x^3)*(x^2-x+1) / (1-x^6), 0, 1)$value +
+integrate(\(x) - log(1 - x^3) * (1-x^3)*(x^2-x+1) / (1-x^6), 0, 1)$value
+
 
 # polylog2: see file Integrals.Polylog.Helper.R; (but NOT complex)
 
