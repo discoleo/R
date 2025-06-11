@@ -560,11 +560,17 @@ integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x*y) / (2 - x - y), 0, 1)$valu
 
 ### I( atan(x*y) / (1 + x*y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x*y) / (1 + x*y), 0, 1)$value), 0, 1)
+((digamma(1/4) + Euler) * pracma::psi(1, 1/4) - pracma::psi(2, 1/4)/2) / 16 +
+	- 7/4 * pracma::zeta(3) - (pi/4)^3 + 3/16 * pi^2 * log(2) +
+	+ Catalan * pi/4 + Catalan * log(2);
+
 # see also: I( atan(x*y) / (1 - x*y) )
 integrate(\(x) -1/3 * atan(x) * log(1-x) / x, 0, 1)$value +
 	integrate(\(x) -1/3 * log(1-x) * log(x) / (x^2+1), 0, 1)$value +
 	integrate(\(x) 1/3 * log(x) * log(x^2+1) / (x^2+1), 0, 1)$value;
-# TODO
+integrate(\(x) -1/3 * atan(x) * log(1-x) / x, 0, 1)$value +
+integrate(\(x) +1/3 * log(x) * log(1-x) / (x^2+1), 0, 1, rel.tol=1E-12)$value - Catalan * log(2)/3;
+
 
 ### I( atan(x*y) / (1 - x*y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x*y) / (1 - x*y), 0, 1)$value), 0, 1)
