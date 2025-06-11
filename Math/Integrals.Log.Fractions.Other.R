@@ -264,9 +264,16 @@ integrate(\(x) 1/3 * log(1-x^3) / (x^2+x+1), 0, 1)$value +
 integrate(\(x) log(1-x) / (x^2-x+1), 0, 1)
 - (pracma::psi(1, 1/3) - pracma::psi(1, 2/3)) / 6;
 
+
 ### I( log(1+x) / (x^2 + x + 1) )
 integrate(\(x) log(1+x) / (x^2+x+1), 0, 1)
 (pracma::psi(1, 1/3) - pracma::psi(1, 2/3)) / 36;
+
+### I( log(1+x) / (x^2 - x + 1) )
+integrate(\(x) log(1+x) / (x^2-x+1), 0, 1)
+- pracma::psi(1, 1/3) / 18 +
+	+ (digamma(5/6) - digamma(1/3) + digamma(2/3) - digamma(1/6)) *
+		(digamma(1) - digamma(1/3)) / 18;
 
 
 ### I( x * log(1-x) / ... )
