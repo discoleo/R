@@ -5,7 +5,7 @@
 ##
 ## Integrals: Double Integrals
 ##
-## v.0.1k
+## v.0.1l
 
 ### Double Integrals
 
@@ -563,6 +563,7 @@ integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x*y) / (1 + x*y), 0, 1)$value)
 ((digamma(1/4) + Euler) * pracma::psi(1, 1/4) - pracma::psi(2, 1/4)/2) / 16 +
 	- 7/4 * pracma::zeta(3) - (pi/4)^3 + 3/16 * pi^2 * log(2) +
 	+ Catalan * pi/4 + Catalan * log(2);
+(pi/4)^3 - Catalan * log(2)/2;
 
 # see also: I( atan(x*y) / (1 - x*y) )
 integrate(\(x) -1/3 * atan(x) * log(1-x) / x, 0, 1)$value +
