@@ -249,7 +249,8 @@ integrate(\(x) x^2 * log(1-x^3) * (1-x) / (1-x^3), 0, 1)
 
 ### I( log(1-x) / (1 + x^3) )
 integrate(\(x) log(1-x) / (1 + x^3), 0, 1)
-# TODO
+- pi^2 / 18 + log(2)^2 / 6 +
+	- pracma::psi(1, 1/3) / 18 + pracma::psi(1, 2/3) / 9;
 
 
 ### I( log(1-x) / (x^2 + x + 1) )
@@ -320,19 +321,15 @@ integrate(\(x) - log(1 - x^3) * (1-x^3)*(x^2-x+1) / (1-x^6), 0, 1)$value
 # polylog2: see file Integrals.Polylog.Helper.R; (but NOT complex)
 
 
-#
-integrate(\(x) log(x) / (x^3 - 1), 1, Inf)
-pracma::psi(1, 2/3) / 9
-
-
 ### I( x * log(1-x) / (x^2 - x + 1) )
 integrate(\(x) x * log(1-x) / (x^2-x+1), 0, 1)
 pi^2/12 - pracma::psi(1, 1/3) / 6
 
 
 ### I( log(1-x) / (x^3 + 1) )
+# - copied also above;
 integrate(\(x) log(1-x) / (x^3 + 1), 0, 1)
-- pi^2/18 + log(2)^2/6 +
+- pi^2 / 18 + log(2)^2 / 6 +
 	- pracma::psi(1, 1/3) / 18 + pracma::psi(1, 2/3) / 9;
 
 
@@ -378,7 +375,13 @@ integrate(\(x) log(1+x)/(x^3 - 1) - log(2)/3/(x-1), 0, 1)$value +
 integrate(\(x) log(1+x) / x / (x^3 + 1), 0, Inf)
 pi^2 * 5 / (2*27);
 
+### on [0, 1]
+integrate(\(x) log(1+x) / x / (x^2+x+1), 0, 1)
+integrate(\(x) (1 - x^2)*log(1+x) / (x^3 - 1), 0, 1)$value + pi^2/12;
+
+
 ### I( log(1-x) / x / (x^3 + 1) )
+# on [0, Inf]
 integrate(\(x) log(abs(1-x)) / x / (x^3 + 1), 0, 1)$value +
 integrate(\(x) log(abs(1-x)) / x / (x^3 + 1), 1, Inf)$value;
 - pi^2 * 17 / (4*27);
@@ -393,6 +396,10 @@ integrate(\(x) 2 * x * log(1-x) / (x^2+x+1), 0, 1, rel.tol=1E-13)$value +
 
 
 ### Helper
+
+###
+integrate(\(x) log(x) / (x^3 - 1), 1, Inf)
+pracma::psi(1, 2/3) / 9
 
 ###
 integrate(\(x) log(1+x^3) / x / (x^3 + 1), 0, Inf)
