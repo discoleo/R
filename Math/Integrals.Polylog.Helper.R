@@ -54,7 +54,7 @@ polylog2 = function (z, n = 2) {
 		} else if(n == 3) {
 			# see Ref;
 			y = log(1-z)^3 / 6 - log(z)*log(1-z)^2/2 + pi^2/6 * log(1-z) +
-				+ pracma::zeta(3) - polylog(1-z, 3) - polylog2(z/(z-1), n=3);
+				+ pracma::zeta(3) - polylog2(1-z, 3) - polylog2(z/(z-1), n=3);
 		} else stop("Not yet implemented!");
 		return(y);
 	}
