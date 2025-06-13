@@ -304,6 +304,10 @@ integrate(\(x) - 1/2 * log(1-x^3) / (x+1), 0, 1)$value +
 	- (pracma::psi(1, 1/3) - pracma::psi(1, 2/3)) / 72;
 # TODO
 
+# - using Li2:
+(pracma::psi(1, 1/3) + 2*pracma::psi(1, 2/3)) / 36 +
+	- (pracma::polylog(1/3, 2) - pracma::polylog(-1/3, 2)) / 2;
+
 
 ### I( x * log(1+x) / (x^2 - x + 1) )
 integrate(\(x) x * log(1+x) / (x^2-x+1), 0, 1)
@@ -411,6 +415,17 @@ integrate(\(x) 2 * x * log(1-x) / (x^2+x+1), 0, 1, rel.tol=1E-13)$value +
 (digamma(1/3) + digamma(2/3) - 2*digamma(1)) * Euler / 9 +
 	+ (digamma(1/3)^2 + digamma(2/3)^2 - 2*digamma(1)^2) / 18 +
 	- pi^2 * 4/27;
+
+### I( log(x^2+x+1) / (1+x) )
+integrate(\(x) log(x^2+x+1) / (1+x), 0, 1)
+integrate(\(x) -2 * x * log(1+x) / (x^2+x+1), 0, 1)$value +
+	+ (pracma::psi(1, 2/3) - pracma::psi(1, 1/3)) / 36 + log(2)*log(3);
+# TODO
+
+# - using Li2:
+- (pracma::psi(1, 1/3) + 2*pracma::psi(1, 2/3)) / 18 +
+	+ (pracma::polylog(1/3, 2) - pracma::polylog(-1/3, 2)) +
+	+ log(2)*log(3) - (pracma::psi(1, 1/3) - pracma::psi(1, 2/3)) / 36;
 
 
 ### Helper
