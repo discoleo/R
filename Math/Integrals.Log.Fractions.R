@@ -6,7 +6,7 @@
 ### Integrals: Logarithms
 ### Log-Fractions
 ###
-### draft v.0.2d
+### draft v.0.2e
 
 
 ##################
@@ -137,28 +137,28 @@ integrate(function(x) log(x) / (b^2*x^2 + 1), lower=0, upper=Inf)
 ###
 # - using Feynman's trick;
 # - Note: Catalan = - I(log(x)/(x^2 + 1), lower=0, upper=1)
-integrate(function(x) log(x + 1) / (x^2 + 1), lower=0, upper=Inf)
+integrate(\(x) log(x + 1) / (x^2 + 1), lower=0, upper=Inf)
 pi*log(2)/4 + Catalan;
 
 ### TODO:
-integrate(function(x) log(x + 1) / (x^2 + b^2), lower=0, upper=Inf)
+integrate(\(x) log(x + 1) / (x^2 + b^2), lower=0, upper=Inf)
 pi*log(b^2 + 1)/(4*b) + log(b)*atan(1/b)/b +
-	- integrate(function(x) log(x) / (x^2 + b^2), 0, 1)$value;
+	- integrate(\(x) log(x) / (x^2 + b^2), 0, 1)$value;
 pi*log(b^2 + 1)/(4*b) +
-	- integrate(function(x) log(x) / (x^2 + 1), 0, 1/b)$value / b;
+	- integrate(\(x) log(x) / (x^2 + 1), 0, 1/b)$value / b;
 
 ### TODO:
 a = sqrt(5); b = sqrt(3)
-integrate(function(x) log(x + a) / (x^2 + b^2), lower=0, upper=Inf)
+integrate(\(x) log(x + a) / (x^2 + b^2), lower=0, upper=Inf)
 pi*log(a^2 + b^2)/(4*b) + log(b)*atan(a/b)/b +
-	- integrate(function(x) log(x) / (x^2 + b^2), 0, a)$value;
+	- integrate(\(x) log(x) / (x^2 + b^2), 0, a)$value;
 pi*log(a^2 + b^2)/(4*b) +
-	- integrate(function(x) 1/b * log(x) / (x^2 + 1), 0, a/b)$value;
+	- integrate(\(x) 1/b * log(x) / (x^2 + 1), 0, a/b)$value;
 
 
 ### TODO:
-integrate(function(x) x^(1/2) * log(x + 1) / (x^2 + 1), 0, 1)
-integrate(function(x) 2 * x^2 * log(x^2 + 1) / (x^4 + 1), 0, 1)
+integrate(\(x) x^(1/2) * log(x + 1) / (x^2 + 1), 0, 1)
+integrate(\(x) 2 * x^2 * log(x^2 + 1) / (x^4 + 1), 0, 1)
 integrate(\(b) 4*b^2 / (b^4 + 1) * atan(b), 0, 1)$value +
 	+ (pracma::psi(1, 7/8) - pracma::psi(1, 3/8)) / 16 +
 	- (digamma(7/8) - digamma(3/8)) * pi/4 +
@@ -1034,12 +1034,13 @@ integrate(\(x) x^p / (x^n - 1), 0, 1 - tol)$value +
 ########################
 ########################
 
-###
+### I( x^p * log(1 - x^n) )
 n = sqrt(11);
 p = sqrt(3);
-integrate(function(x) x^p * log(1 - x^n), 0, 1)
+integrate(\(x) x^p * log(1 - x^n), 0, 1)
 - (digamma((n+p+1)/n) + Euler) / (p+1);
 
+#
 integrate(\(x) - n/(p+1)*x^(n+p) / (1 - x^n) + 1/(p+1) * x^(n+p)/(1-x), 0, 1)
 - (digamma(n+p+1) - digamma((n+p+1)/n) - log(n)) /(p+1);
 
@@ -1047,7 +1048,7 @@ integrate(\(x) - n/(p+1)*x^(n+p) / (1 - x^n) + 1/(p+1) * x^(n+p)/(1-x), 0, 1)
 ###
 n = sqrt(11);
 p = sqrt(3);
-integrate(function(x) x^p * log(x^n + 1), 0, 1)
+integrate(\(x) x^p * log(x^n + 1), 0, 1)
 (digamma((p+1)/(2*n) + 1/2) - digamma((p+1)/(2*n) + 1)) / (2*(p+1)) + log(2)/(p+1);
 
 
@@ -1075,9 +1076,20 @@ integrate(\(x) log(1 - x^2) / (1 - x^2) - 1/2*(log(1-x) + log(2)) / (1-x), 0, 1)
 3*log(2)^2/4 - pi^2/12
 
 
-###
+### I( log(1 - x^3) / (1-x) )
 integrate(\(x) log(1 - x^3) / (1-x) - (log(1-x) + log(3)) / (1-x), 0, 1)
+# see Log.Fractions.Other;
 integrate(\(x) log(x^2+x+1) / (1-x) - log(3) / (1-x), 0, 1)
+(digamma(1/3) + digamma(2/3) - 2*digamma(1)) * Euler / 9 +
+	+ (digamma(1/3)^2 + digamma(2/3)^2 - 2*digamma(1)^2) / 18 +
+	- pi^2 * 4/27;
+
+### I( x * log(1 - x^3) / (1-x) )
+integrate(\(x) x * log(1 - x^3) / (1-x) - (log(1-x) + log(3)) / (1-x), 0, 1)
+(digamma(1/3) + digamma(2/3) - 2*digamma(1)) * Euler / 9 +
+	+ (digamma(1/3)^2 + digamma(2/3)^2 - 2*digamma(1)^2) / 18 +
+	- pi^2 * 4/27 + digamma(1/3) + Euler + 3;
+
 # vs:
 integrate(\(x) log(1 - x^3) / (1-x^3) - 1/3*(log(1-x) + log(3)) / (1-x), 0, 1)
 
