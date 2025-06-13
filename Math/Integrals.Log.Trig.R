@@ -630,6 +630,23 @@ z = 1/2 - sqrt(2)/4;
 1/2 * pracma::polylog(z, 2) - 1/4 * log(z)^2 - log(2)*log(z) +
 	- pi^2/24 - 3/8*log(2)^2;
 
+
+### Varia:
+
+### I( log(1 - sin(x)) / sin(x) )
+integrate(\(x) log(1 - sin(x)) / sin(x), 0, pi/2)
+integrate(\(x) log(1 - sqrt(1-x^2)) / (1-x^2), 0, 1)
+-3/8 * pi^2;
+
+### I( log(1 - sqrt(1-x^2)) / (1+x) )
+integrate(\(x) log(1 - sqrt(1-x^2)) / (1+x), 0, 1)
+-5/24 * pi^2;
+
+### I( log(1 - sqrt(1-x^2)) / (1-x) )
+integrate(\(x) log(1 - sqrt(1-x^2)) / (1-x), 0, 1)
+-13/24 * pi^2;
+
+
 ### Helper:
 
 ### I( log(1-x) / (1-x^2) )
