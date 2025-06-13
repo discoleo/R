@@ -60,18 +60,18 @@ Catalan = 0.915965594177219015054603514;
 
 ### I( log(x) / (x^n + 1) )
 n = 7
-integrate(function(x) log(x) / (x^n + 1), 0, Inf)
+integrate(\(x) log(x) / (x^n + 1), 0, Inf)
 - pi^2*cos(pi/n) / sin(pi/n)^2 / n^2
 
 ### I( x^p * log(x) / (x^n + 1) )
 n = 8
 p = sqrt(2)
-integrate(function(x) x^p * log(x) / (x^n + 1), 0, Inf)
+integrate(\(x) x^p * log(x) / (x^n + 1), 0, Inf)
 - pi^2*cos(pi*(p+1)/n) / sin(pi*(p+1)/n)^2 / n^2
 
 ### I( x^p * log(x) / (x^n + 1)^k )
 n = 5; p = sqrt(2); k = sqrt(3);
-integrate(function(x) x^p * log(x) / (x^n + 1)^k, 0, Inf)
+integrate(\(x) x^p * log(x) / (x^n + 1)^k, 0, Inf)
 gamma((p+1)/n) * gamma(k - (p+1)/n) *
 	(digamma((p+1)/n) - digamma(k - (p+1)/n)) / gamma(k) / n^2;
 
@@ -619,10 +619,6 @@ integrate(\(x) log(x^n + 1) / (x^n + 1), 0, 1)
 (digamma(1/(2*n)) - digamma(1/(2*n)+1/2)) * (digamma(1/n) + Euler) / (2*n) +
 	+ (pracma::psi(1, 1/(2*n) + 1/2) - pracma::psi(1, 1/(2*n))) / (4*n^2)
 
-#
-- gamma(1/n) * gamma(1 - 1/n) * (digamma(1 - 1/n) - digamma(1)) / n +
-	+ (pracma::psi(1, (2/n + 1)/2) - pracma::psi(1, 2/n/2)) / (4*n) + 0;
-
 
 #################
 
@@ -750,9 +746,10 @@ pi*(pi + 2*log(2)) * sqrt(2) / 16
 # Derivation:
 # - alternative method: based on result of logarithm;
 # - but requires challenging limits;
-integrate(\(x) (pi/2 - atan(x^2)) / (x^4 + 1), 0, Inf)
+integrate(\(x) (pi/2 - atan(x^2)) / (x^4 + 1), 0, Inf, rel.tol=1E-8)
 # Limit:
-b = exp(c(1i,-1i) * pi/4) + c(-1i,1i)*1E-4;
+b   = exp(c(1i,-1i) * pi/4) + c(-1i,1i)*1E-4;
+eps = 1E-5 + 0i;
 - pi/2 * diff(sqrt(2)/4 * (log(b^4 + 1) - 2*atan(b^2)) +
 	+ (atan(b*exp(-1i*pi/4))*exp(1i*pi/4) +
 		+ atan(b*exp(1i*pi/4))*exp(-1i*pi/4)) ) / 2i;
@@ -931,8 +928,13 @@ integrate(function(x) (d/2)^(2*p + 1)*((1 + x)*(1 - x))^p, -1, 1)
 ### log(x) / sqrt(1 - x)
 ### on [0, 1]
 
+### I( log(x) / sqrt(1 - x^2) )
+integrate(\(x) log(x) / sqrt(1 - x^2), 0, 1)
+pi*log(2)/2;
+
+### I( x * log(x) / sqrt(1 - x^2) )
 integrate(\(x) x*log(x) / sqrt(1 - x^2), 0, 1)
-log(2) - 1
+log(2) - 1;
 
 ###
 integrate(\(x) log(x) / sqrt(1 - x), 0, 1)
@@ -950,6 +952,20 @@ integrate(\(x) sin(2*x) * log(sin(x)), 0, pi/2)
 ###
 integrate(\(x) sin(3*x) * log(sin(x)), 0, pi/2, rel.tol=1E-8)
 log(2)/3 - 7/9
+
+
+### I( log(x) / sqrt(1 + x) )
+integrate(\(x) log(x) / sqrt(1 + x), 0, 1)
+integrate(\(x) 4 * log(tan(x)) * sin(x) / cos(x)^2, 0, pi/4)
+# TODO
+
+### I( log(cos(x)) * sin(x) / cos(x)^2 )
+integrate(\(x) log(cos(x)) * sin(x) / cos(x)^2, 0, pi/4)
+log(2)*sqrt(2)/2 - sqrt(2) + 1
+
+### I( log(sin(x)) * sin(x) / cos(x)^2 )
+integrate(\(x) log(sin(x)) * sin(x) / cos(x)^2, 0, pi/4)
+# TODO
 
 
 ########################
@@ -1045,10 +1061,10 @@ integrate(\(x) - n/(p+1)*x^(n+p) / (1 - x^n) + 1/(p+1) * x^(n+p)/(1-x), 0, 1)
 - (digamma(n+p+1) - digamma((n+p+1)/n) - log(n)) /(p+1);
 
 
-###
+### I( x^p * log(1 + x^n) )
 n = sqrt(11);
 p = sqrt(3);
-integrate(\(x) x^p * log(x^n + 1), 0, 1)
+integrate(\(x) x^p * log(1 + x^n), 0, 1)
 (digamma((p+1)/(2*n) + 1/2) - digamma((p+1)/(2*n) + 1)) / (2*(p+1)) + log(2)/(p+1);
 
 
@@ -1071,7 +1087,7 @@ integrate(\(x) log(x) / (1-x), 0, 1)
 pi^2/6
 
 
-###
+### I( log(1 - x^2) / (1 - x^2) )
 integrate(\(x) log(1 - x^2) / (1 - x^2) - 1/2*(log(1-x) + log(2)) / (1-x), 0, 1)
 3*log(2)^2/4 - pi^2/12
 
