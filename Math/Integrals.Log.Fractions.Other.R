@@ -6,7 +6,7 @@
 ## Integrals: Logarithms
 ## Log-Fractions: Other
 ##
-## draft v.0.3g
+## draft v.0.3h
 
 
 ##################
@@ -18,6 +18,7 @@
 
 
 ### Helper Constants
+Euler   = 0.577215664901532860606512090;
 Catalan = 0.915965594177219015054603514;
 # Note:
 # Catalan = - I(log(x)/(x^2 + 1), lower=0, upper=1)
@@ -304,7 +305,7 @@ integrate(\(x) - 1/2 * log(1-x^3) / (x+1), 0, 1)$value +
 	- (pracma::psi(1, 1/3) - pracma::psi(1, 2/3)) / 72;
 # TODO
 
-# - using Li2:
+# Solution using Li2:
 #   DiffLi2f3 = 0.67524635646487196;
 (pracma::psi(1, 1/3) + 2*pracma::psi(1, 2/3)) / 36 +
 	- (pracma::polylog(1/3, 2) - pracma::polylog(-1/3, 2)) / 2;
@@ -328,10 +329,31 @@ integrate(\(x) x^2 * log(1-x) / (x^2-x+1), 0, 1)
 pi^2/12 - pracma::psi(1, 2/3) / 6 - 1;
 
 
+
+### I( log(1-x^6) * (1-x) / (1-x^6) )
+integrate(\(x) log(1-x^6) * (1-x) / (1-x^6), 0, 1, rel.tol=1E-13)
+((pracma::psi(1, 2/6) - pracma::psi(1, 1/6)) +
+	+ (digamma(1/6) - digamma(2/6)) * Euler * 2 +
+	+ (digamma(1/6)^2 - digamma(2/6)^2)) / 12;
+
+### I( log(1-x^6) / (1+x^3) )
+integrate(\(x) log(1-x^6) / (1+x^3), 0, 1, rel.tol=1E-13)
+((pracma::psi(1, 4/6) - pracma::psi(1, 1/6)) +
+	+ (digamma(1/6) - digamma(4/6)) * Euler * 2 +
+	+ (digamma(1/6)^2 - digamma(4/6)^2)) / 12;
+
+
 ###
 integrate(\(x) log(1 + x^3) / (x+1), 0, 1)
 integrate(\(x) log(1 - x^6) * (1-x^3)*(x^2-x+1) / (1-x^6), 0, 1)$value +
 integrate(\(x) - log(1 - x^3) * (1-x^3)*(x^2-x+1) / (1-x^6), 0, 1)$value
+
+###
+integrate(\(x) x^2 * (log(1+x) - log(2)) / (1 - x^3), 0, 1)
+integrate(\(x) 1/3 * log(1-x^3) / (1+x), 0, 1, rel.tol=1E-13)
+
+###
+integrate(\(x) log(1-x^6) / (1+x), 0, 1, rel.tol=1E-13)
 
 
 # polylog2: see file Integrals.Polylog.Helper.R; (but NOT complex)
@@ -449,7 +471,7 @@ integrate(\(x) -2 * x * log(1+x) / (x^2+x+1), 0, 1)$value +
 	+ (pracma::psi(1, 2/3) - pracma::psi(1, 1/3)) / 36 + log(2)*log(3);
 # TODO
 
-# - using Li2:
+# Solution using Li2:
 - (pracma::psi(1, 1/3) + 2*pracma::psi(1, 2/3)) / 18 +
 	+ (pracma::polylog(1/3, 2) - pracma::polylog(-1/3, 2)) +
 	+ log(2)*log(3) - (pracma::psi(1, 1/3) - pracma::psi(1, 2/3)) / 36;
