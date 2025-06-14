@@ -227,6 +227,13 @@ q = 1E-5;
 	) / gamma((p+1)/n) / gamma((p+2)/n) / n;
 
 
+### Gen: I( x^p * log(1-x^3) / (x^2 + x + 1) )
+p = sqrt(3);
+integrate(\(x) x^p * log(1-x^3) * (1-x) / (1-x^3), 0, 1)
+((pracma::psi(1, (p+2)/3) - pracma::psi(1, (p+1)/3)) +
+	+ (digamma((p+1)/3) - digamma((p+2)/3)) * Euler * 2 +
+	+ (digamma((p+1)/3)^2 - digamma((p+2)/3)^2)) / 6;
+
 ### I( log(1-x^3) / (x^2 + x + 1) )
 integrate(\(x) log(1-x^3) * (1-x) / (1-x^3), 0, 1)
 ((pracma::psi(1, 2/3) - pracma::psi(1, 1/3)) +
@@ -329,6 +336,7 @@ integrate(\(x) x^2 * log(1-x) / (x^2-x+1), 0, 1)
 pi^2/12 - pracma::psi(1, 2/3) / 6 - 1;
 
 
+### Pow = 6
 
 ### I( log(1-x^6) * (1-x) / (1-x^6) )
 integrate(\(x) log(1-x^6) * (1-x) / (1-x^6), 0, 1, rel.tol=1E-13)
@@ -336,11 +344,39 @@ integrate(\(x) log(1-x^6) * (1-x) / (1-x^6), 0, 1, rel.tol=1E-13)
 	+ (digamma(1/6) - digamma(2/6)) * Euler * 2 +
 	+ (digamma(1/6)^2 - digamma(2/6)^2)) / 12;
 
+
+### Gen: I( x^p * log(1-x^6) / (1+x^3) )
+p = sqrt(2);
+integrate(\(x) x^p * log(1-x^6) / (1+x^3), 0, 1, rel.tol=1E-13)
+((pracma::psi(1, (p+4)/6) - pracma::psi(1, (p+1)/6)) +
+	+ (digamma((p+1)/6) - digamma((p+4)/6)) * Euler * 2 +
+	+ (digamma((p+1)/6)^2 - digamma((p+4)/6)^2)) / 12;
+
 ### I( log(1-x^6) / (1+x^3) )
 integrate(\(x) log(1-x^6) / (1+x^3), 0, 1, rel.tol=1E-13)
 ((pracma::psi(1, 4/6) - pracma::psi(1, 1/6)) +
 	+ (digamma(1/6) - digamma(4/6)) * Euler * 2 +
 	+ (digamma(1/6)^2 - digamma(4/6)^2)) / 12;
+
+### I( x * log(1-x^6) / (1+x^3) )
+integrate(\(x) x * log(1-x^6) / (1+x^3), 0, 1, rel.tol=1E-13)
+((pracma::psi(1, 5/6) - pracma::psi(1, 2/6)) +
+	+ (digamma(2/6) - digamma(5/6)) * Euler * 2 +
+	+ (digamma(2/6)^2 - digamma(5/6)^2)) / 12;
+
+
+### Gen: I( x^p * log(1-x^6) / (1+x) )
+p = sqrt(3);
+integrate(\(x) x^p * log(1-x^6) / (1+x), 0, 1, rel.tol=1E-13)
+( (pracma::psi(1, (p+4)/6) - pracma::psi(1, (p+1)/6)) +
+- (pracma::psi(1, (p+5)/6) - pracma::psi(1, (p+2)/6)) +
++ (pracma::psi(1, (p+6)/6) - pracma::psi(1, (p+3)/6)) +
+	+ (digamma((p+1)/6) - digamma((p+4)/6)) * Euler * 2 +
+	- (digamma((p+2)/6) - digamma((p+5)/6)) * Euler * 2 +
+	+ (digamma((p+3)/6) - digamma((p+6)/6)) * Euler * 2 +
+	+ (digamma((p+1)/6)^2 - digamma((p+4)/6)^2) +
+	- (digamma((p+2)/6)^2 - digamma((p+5)/6)^2) +
+	+ (digamma((p+3)/6)^2 - digamma((p+6)/6)^2) ) / 12;
 
 
 ###
@@ -352,8 +388,6 @@ integrate(\(x) - log(1 - x^3) * (1-x^3)*(x^2-x+1) / (1-x^6), 0, 1)$value
 integrate(\(x) x^2 * (log(1+x) - log(2)) / (1 - x^3), 0, 1)
 integrate(\(x) 1/3 * log(1-x^3) / (1+x), 0, 1, rel.tol=1E-13)
 
-###
-integrate(\(x) log(1-x^6) / (1+x), 0, 1, rel.tol=1E-13)
 
 
 # polylog2: see file Integrals.Polylog.Helper.R; (but NOT complex)
