@@ -6,7 +6,7 @@
 ## Integrals: Logarithms
 ## Fractions: Polylog / Li2
 ##
-## draft v.0.1a
+## draft v.0.1b
 
 
 ### Polylog / Li2
@@ -62,4 +62,29 @@ integrate(\(x) log((1+x)) / (x^2 - 4), 0, 1)
 # Li2(-1/3)
 pracma::polylog(-1/3, 2)
 2*pracma::polylog(1/3, 2) - pi^2/6 + log(3)^2 / 2;
+
+
+##################
+
+### Other:
+
+### I( x * log(1+x) / (x^2 + x + 1) )
+# see file: Integrals.Log.Fractions.Other.R;
+integrate(\(x) x * log(1+x) / (x^2+x+1), 0, 1)
+# Solution using Li2:
+(pracma::psi(1, 1/3) + 2*pracma::psi(1, 2/3)) / 36 +
+	- (pracma::polylog(1/3, 2) - pracma::polylog(-1/3, 2)) / 2;
+(pracma::psi(1, 1/3) + 2*pracma::psi(1, 2/3)) / 36 +
+	+ (pracma::polylog(1/3, 2) - pi^2/6 + log(3)^2 / 2) / 2;
+
+# Note:
+# Diff(Li2(c(-1/3, 1/3))) = 0.67524635646487196;
+
+# Alternative Transformations:
+integrate(\(x) - 1/2 * log(x^2+x+1) / (x+1), 0, 1)$value +
+	log(2)*log(3)/2 - (pracma::psi(1, 1/3) - pracma::psi(1, 2/3)) / 72;
+integrate(\(x) - 1/2 * log(1-x^3) / (x+1), 0, 1)$value +
+	+ log(2)*log(3)/2 - (pi^2/12 - log(2)^2/2)/2 +
+	- (pracma::psi(1, 1/3) - pracma::psi(1, 2/3)) / 72;
+# TODO
 
