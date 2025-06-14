@@ -312,6 +312,12 @@ integrate(\(x) - 1/2 * log(1-x^3) / (x+1), 0, 1)$value +
 
 ### I( x * log(1+x) / (x^2 - x + 1) )
 integrate(\(x) x * log(1+x) / (x^2-x+1), 0, 1)
+integrate(\(x) - x * log(1+x) / (x^2+x+1), 0, 1)$value +
+	- (pracma::psi(1, 1/3) - pracma::psi(1, 2/3)) / 36 +
+	+ (digamma(6/6) - digamma(2/6) + digamma(5/6) - digamma(3/6)) *
+		(digamma(1) - digamma(2/3)) / 9 +
+	- (digamma(5/6) - digamma(2/6) + digamma(4/6) - digamma(1/6)) *
+		(digamma(1) - digamma(1/3)) / 36 + pi^2 / 12;
 # TODO
 
 
@@ -392,12 +398,32 @@ integrate(\(x) log(1+x)/(x^3 - 1) - log(2)/3/(x-1), 0, 1)$value +
 
 
 ### I( log(1+x) / x / (x^3 + 1) )
+# on [0, Inf]
 integrate(\(x) log(1+x) / x / (x^3 + 1), 0, Inf)
 pi^2 * 5 / (2*27);
 
-### on [0, 1]
+
+### I( log(1+x) / x / (x^2 + x + 1) )
+integrate(\(x) log(x+1) / x / (x^2+x+1), 0, 1)
+integrate(\(x) x * log(1+x) / (x^2-x+1), 0, 1)$value +
+- (digamma(6/6) - digamma(2/6) + digamma(5/6) - digamma(3/6)) *
+	(digamma(1) - digamma(2/3)) / 9 +
++ (digamma(5/6) - digamma(2/6) + digamma(4/6) - digamma(1/6)) *
+	(digamma(1) - digamma(1/3)) / 36;
+# TODO
+
+### Alternative:
 integrate(\(x) log(1+x) / x / (x^2+x+1), 0, 1)
-integrate(\(x) (1 - x^2)*log(1+x) / (x^3 - 1), 0, 1)$value + pi^2/12;
+integrate(\(x) - x * log(1+x) / (x^2+x+1), 0, 1)$value +
+	+ pi^2 / 12 - (pracma::psi(1, 1/3) - pracma::psi(1, 2/3)) / 36;
+# TODO
+
+#
+integrate(\(x) x * log(x+1) / (x^2+x+1), 0, 1)
+integrate(\(x) log(x+1)/x - log(x+1)/(x^2+x+1) - log(x+1)/x/(x^2+x+1), 0, 1)
+integrate(\(x) - log(x+1)/x/(x^2+x+1), 0, 1)$value +
+	+ pi^2 / 12 - (pracma::psi(1, 1/3) - pracma::psi(1, 2/3)) / 36;
+# TODO
 
 
 ### I( log(1-x) / x / (x^3 + 1) )
@@ -517,12 +543,6 @@ integrate(\(x) -1/3 * x * log(x+1) / (x^2+x+1), 0, 1)$value +
 	+ (pi^2/12 - log(2)^2/2) / 3;
 # TODO: ?
 
-#
-integrate(\(x) x * log(x+1) / (x^2+x+1), 0, 1)
-integrate(\(x) log(x+1)/x - log(x+1)/(x^2+x+1) - log(x+1)/x/(x^2+x+1), 0, 1)
-integrate(\(x) - log(x+1)/x/(x^2+x+1), 0, 1)$value +
-	+ pi^2 / 12 - (pracma::psi(1, 1/3) - pracma::psi(1, 2/3)) / 36;
-# TODO
 
 #
 integrate(\(x) log(x+1) / (x-1) - log(2)/(x-1), 0, 1)
