@@ -411,6 +411,18 @@ integrate(\(x) x^p * log(1-x^6) / (1+x), 0, 1, rel.tol=1E-13)
 	+ (digamma((p+3)/6)^2 - digamma((p+6)/6)^2) ) / 12;
 
 
+### I( x^p * log(1+x^3) / (1-x^3) )
+p = 1/sqrt(5);
+integrate(\(x) x^p * log(1+x^3) / (1-x^3) - 1/3 * log(2)/(1-x), 0, 1)
+(2*pracma::psi(1, (p+1)/3) - pracma::psi(1, (p+1)/6) - pracma::psi(1, (p+4)/6) +
+	+ (digamma((p+1)/6) - digamma(1)) * Euler * 2 +
+	+ (digamma((p+4)/6) - digamma(1)) * Euler * 2 +
+	- (digamma((p+1)/3) - digamma(1)) * Euler * 4 +
+	+ (digamma((p+1)/6)^2 - digamma(1)^2) +
+	+ (digamma((p+4)/6)^2 - digamma(1)^2) + 2*log(3)^2 - 2*log(6)^2 +
+	- (digamma((p+1)/3)^2 - digamma(1)^2) * 2 ) / 12;
+
+
 ###
 integrate(\(x) log(1 + x^3) / (x+1), 0, 1)
 integrate(\(x) log(1 - x^6) * (1-x^3)*(x^2-x+1) / (1-x^6), 0, 1)$value +
