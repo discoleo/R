@@ -147,8 +147,16 @@ integrate(\(x) log(x) * log((1 - x) / (x + 1)), 0, 1)
 ###################
 
 # Note:
-# - for polylog2 function, see file:
+# - the polylog2 function is in file:
 #   Integrals.Polylog.Helper.R;
+
+
+### Gen: I( x^p * log(1-x^2) / (1+x) )
+p = sqrt(5);
+integrate(\(x) x^p * log(1-x^2) / (1+x), 0, 1, rel.tol=1E-13)
+((pracma::psi(1, (p+2)/2) - pracma::psi(1, (p+1)/2)) +
+	+ (digamma((p+1)/2) - digamma((p+2)/2)) * Euler * 2 +
+	+ (digamma((p+1)/2)^2 - digamma((p+2)/2)^2)) / 4;
 
 
 ### I( log(x^2+x+1) / (x+1) )
@@ -226,6 +234,13 @@ q = 1E-5;
 		- pracma::psi(1, (p+2)/n) * gamma((p+1)/n+q) * gamma((p+2)/n)
 	) / gamma((p+1)/n) / gamma((p+2)/n) / n;
 
+
+### Gen: I( x^p * log(1-x^3) / (1 - x^3) )
+p = sqrt(5);
+integrate(\(x) x^p * log(1-x^3) / (1-x^3) - 1/3 * log(3-3*x) / (1-x), 0, 1)
+(pracma::psi(1, 1) - pracma::psi(1, (p+1)/3) +
+	+ (digamma((p+1)/3) - digamma(1)) * Euler * 2 +
+	+ (digamma((p+1)/3)^2 - digamma(1)^2) - log(3)^2 ) / 6;
 
 ### Gen: I( x^p * log(1-x^3) / (x^2 + x + 1) )
 p = sqrt(3);
