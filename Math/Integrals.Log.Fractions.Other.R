@@ -431,20 +431,19 @@ integrate(\(x) - log(1 - x^3) * (1-x^3)*(x^2-x+1) / (1-x^6), 0, 1)$value
 
 ### I( log(1+x) / (1 - x^3) )
 
-### Composite: 
-# I( (1-x) * log(1+x) / (1 - x^3) )
-integrate(\(x) (1-x) * log(1+x) / (1-x^3), 0, 1)
-(pracma::psi(1, 1/3) - pracma::psi(1, 2/3)) / 36;
+### I( log(1+x) / (1 - x^3) )
+integrate(\(x) log(1+x) / (1-x^3) - 1/3 * log(2)/(1-x), 0, 1)
+# TODO
 
 ### I( x * log(1+x) / (1 - x^3) )
 integrate(\(x) x * log(1+x) / (1-x^3) - 1/3 * log(2)/(1-x), 0, 1)
-integrate(\(x) log(1+x)/(1-x^3) - 1/3 * log(2)/(1-x), 0,1)$value +
+integrate(\(x) log(1+x)/(1-x^3) - 1/3 * log(2)/(1-x), 0, 1)$value +
 	- (pracma::psi(1, 1/3) - pracma::psi(1, 2/3)) / 36;
 # TODO
 
 ### I( x^2 * log(1+x) / (1 - x^3) )
 integrate(\(x) x^2 * log(1+x) / (1-x^3) - 1/3 * log(2)/(1-x), 0, 1)
-integrate(\(x) -2 * log(1+x)/(1-x^3) + 2/3 * log(2)/(1-x), 0,1)$value +
+integrate(\(x) -2 * log(1+x)/(1-x^3) + 2/3 * log(2)/(1-x), 0, 1)$value +
 	+ (pracma::psi(1, 1/3) - pracma::psi(1, 2/3)) / 36 - pi^2/12 + log(2)^2/2;
 # TODO
 
@@ -461,6 +460,12 @@ integrate(\(x) 1/3 * log(1-x^3) / (1+x), 0, 1)$value - log(2)*log(3)/3;
 # [Variant]
 integrate(\(x) x^2 * (log(1+x) - log(2)) / (1 - x^3), 0, 1)
 integrate(\(x) 1/3 * log(1-x^3) / (1+x), 0, 1, rel.tol=1E-13)
+
+
+### Composite: 
+# I( (1-x) * log(1+x) / (1 - x^3) )
+integrate(\(x) (1-x) * log(1+x) / (1-x^3), 0, 1)
+(pracma::psi(1, 1/3) - pracma::psi(1, 2/3)) / 36;
 
 
 # polylog2: see file Integrals.Polylog.Helper.R; (but NOT complex)
@@ -547,6 +552,9 @@ integrate(\(x) x * log(1+x) / (x^2-x+1), 0, 1)$value +
 integrate(\(x) log(1+x) / x / (x^2+x+1), 0, 1)
 integrate(\(x) - x * log(1+x) / (x^2+x+1), 0, 1)$value +
 	+ pi^2 / 12 - (pracma::psi(1, 1/3) - pracma::psi(1, 2/3)) / 36;
+# Variant:
+integrate(\(x) -1/2 * log(x^2-x+1) / (x+1), 0, 1)$value +
+	+ (pracma::psi(1, 1/3) / 2 + pracma::psi(1, 2/3)) / 18;
 # TODO
 
 
@@ -583,9 +591,16 @@ integrate(\(x) -2 * x * log(1+x) / (x^2+x+1), 0, 1)$value +
 # TODO
 
 # Solution using Li2:
-- (pracma::psi(1, 1/3) + 2*pracma::psi(1, 2/3)) / 18 +
-	+ (pracma::polylog(1/3, 2) - pracma::polylog(-1/3, 2)) +
-	+ log(2)*log(3) - (pracma::psi(1, 1/3) - pracma::psi(1, 2/3)) / 36;
+- (pracma::psi(1, 1/3) + pracma::psi(1, 2/3)) / 12 + # - pi^2 / 9
+	+ (pracma::polylog(1/3, 2) - pracma::polylog(-1/3, 2)) + log(2)*log(3);
+
+
+### I( log(x^2-x+1) / (1+x) )
+integrate(\(x) log(x^2-x+1) / (1+x), 0, 1)
+integrate(\(x) - log(x^2+x+1) / (1+x), 0, 1)$value +
+	- pi^2/18 + log(2)*log(3);
+# Solution using Li2:
+- (pracma::polylog(1/3, 2) - pracma::polylog(-1/3, 2)) + pi^2/18;
 
 
 ### Helper
