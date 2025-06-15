@@ -495,9 +495,9 @@ pi^2/12 - pracma::psi(1, 1/3) / 6;
 
 ### LOG(1+x) / (1 + x^3)
 
-###
+### I( log(1+x) / (x^3 + 1) )
 integrate(\(x) log(1+x) / (x^3 + 1), 0, 1)
-integrate(\(x) (log(2) - log(x+1)) / (x^3 - 1), 0, 1)$value +
+integrate(\(x) (log(1+x) - log(2)) / (1 - x^3), 0, 1)$value +
 (pracma::psi(1, 2/3) - pracma::psi(1, 1/6)) / 36 +
 	+ pracma::psi(1, 1/3) / 9 +
 	- (digamma(5/6) - digamma(1/3)) *
@@ -506,7 +506,7 @@ integrate(\(x) (log(2) - log(x+1)) / (x^3 - 1), 0, 1)$value +
 		(digamma(1) - digamma(1/3)) / 18;
 # TODO
 
-###
+### I( x * log(1+x) / (x^3 + 1) )
 integrate(\(x) x * log(1+x) / (x^3 + 1), 0, 1)
 integrate(\(x) (log(1+x) - log(2)) / (x^3 - 1), 0, 1)$value +
 (pracma::psi(1, 5/6) - pracma::psi(1, 2/3)) / 36 +
@@ -516,17 +516,25 @@ integrate(\(x) (log(1+x) - log(2)) / (x^3 - 1), 0, 1)$value +
 		(digamma(1) - digamma(1/3)) / 18;
 # TODO
 
-###
+### I( x^2 * log(1+x) / (x^3 + 1) )
 integrate(\(x) x^2 * log(1+x) / (x^3 + 1), 0, 1)
-integrate(\(x) (log(2) - x^2*log(x+1)) / (x^3 - 1), 0, 1)$value +
-(pracma::psi(1, 1) - pracma::psi(1, 1/2)) / 36 +
+integrate(\(x) (x^2*log(1+x) - log(2)) / (1 - x^3), 0, 1)$value +
+	+ (pracma::psi(1, 1) - pracma::psi(1, 1/2)) / 36 +
 	+ pracma::psi(1, 1) / 9 +
 	+ (digamma(1) - digamma(1/3)) * log(2) / 9 +
 	+ (digamma(2/3) - digamma(1/6)) *
-		(digamma(2/3) - digamma(1/3)) / 18
+		(digamma(2/3) - digamma(1/3)) / 18;
+# => I( log(1+x) / (1-x^3) )
+integrate(\(x) -2 * log(1+x)/(1-x^3) + 2/3 * log(2)/(1-x), 0, 1)$value +
+	+ (5*pracma::psi(1, 1) - pracma::psi(1, 1/2)) / 36 +
+	+ (pracma::psi(1, 1/3) - pracma::psi(1, 2/3)) / 36 +
+	+ (digamma(2/3) - digamma(1/6)) *
+		(digamma(2/3) - digamma(1/3)) / 18 +
+	- (digamma(1) - digamma(1/3)) * log(2) * 2/9 +
+	- pi^2/12 + log(2)^2/2 + log(2)*log(3) / 3;
 # TODO
 
-###
+### Transform:
 integrate(\(x) (log(1+x) - log(2)) / (x^3 - 1), 0, 1)
 integrate(\(x) log(1+x)/(x^3 - 1) - log(2)/3/(x-1), 0, 1)$value +
 	+ (digamma(1) - digamma(1/3) - log(3)) * log(2) / 3;
