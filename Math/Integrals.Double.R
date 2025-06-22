@@ -269,11 +269,13 @@ integrate(\(x) sapply(x, \(y)
 ### I( (x+y)*log(x+y) / (x^2 + y^2) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	(x+y)*log(x+y) / (x^2 + y^2), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+1/48*pi^2 + pi*log(2)/4 + log(2)^2 / 4 - log(2) - pi/2;
 
 
 ### I( log(x+y+1) / (x^2 + y^2) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	log(x+y+1) / (x^2 + y^2), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+# TODO
 
 
 ### I( log(1 + x) / (x^2 + y^2) )
@@ -529,7 +531,7 @@ pi*log(2)/2
 
 ### I( atan(x*y) / (x+y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x*y) / (x+y), 0, 1)$value), 0, 1)
-# Derivation:
+# Derivation: z = x/y;
 integrate(\(x) sapply(x, \(y) integrate(\(x) atan(y^2*x) / (x+1), 0, 1/y)$value), 0, 1)
 integrate(\(x) sapply(x, \(y) integrate(\(x) 2 * atan(y^2*x) / (x+1), 0, 1)$value), 0, 1)
 # Factor: *2;
@@ -571,6 +573,21 @@ integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x*y) / (x+y+1), 0, 1)$value), 
 
 ### I( atan(x*y) / (2 - x - y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x*y) / (2 - x - y), 0, 1)$value), 0, 1)
+#
+integrate(\(x) sapply(x, \(y) integrate(\(x) 2 * atan(x*(y-x)) / (2 - y), 0, y/2)$value), 0, 1)$value +
+integrate(\(x) sapply(x, \(y)
+	integrate(\(x) -2*atan(x*(y-x)) / (2 - y), 0, y-1)$value +
+	integrate(\(x) +2*atan(x*(y-x)) / (2 - y), 0, y/2)$value ), 1, 2)$value;
+#
+integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x*(y-x)) / (2 - y), 0, y)$value), 0, 1)$value +
+integrate(\(x) sapply(x, \(y)
+	integrate(\(x) -2*atan(x*(y-x)) / (2 - y), 0, y-1)$value +
+	integrate(\(x) atan(x*(y-x)) / (2 - y), 0, y)$value ), 1, 2)$value;
+#
+integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x*(y-x)) / (2 - y), 0, y)$value), 0, 1)$value +
+integrate(\(x) sapply(x, \(y)
+	integrate(\(x) 2*atan(x*(y-x)) / (2 - y), 0, 1)$value +
+	integrate(\(x) - atan(x*(y-x)) / (2 - y), 0, y)$value ), 1, 2)$value;
 # TODO
 
 
