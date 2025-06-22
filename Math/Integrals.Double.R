@@ -342,6 +342,7 @@ integrate(\(x) sapply(x, \(y)
 integrate(\(x) sapply(x, \(y)
 	integrate(\(x) log(x^2-x*y+y^2) / (1-x*y), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 integrate(\(x) - log(x^2-x+1) * log(1 - x) / x, 0, 1)$value - pracma::zeta(3);
+integrate(\(x) - log(1+x^3) * log(1 - x) / x, 0, 1)$value - 13/8 * pracma::zeta(3);
 # TODO
 
 # Helper:
@@ -513,6 +514,19 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 # TODO
 
 
+### I( atan(x/y) / (x+y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x/y) / (x+y), 0, 1)$value), 0, 1)
+pi*log(2)/2
+
+### I( atan(x/y) / (1+x+y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x/y) / (1+x+y), 0, 1)$value), 0, 1)
+(log(3) * 3/4 - log(2)) * pi
+
+### I( atan(x/y) / (2 - x - y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x/y) / (2 - x - y), 0, 1)$value), 0, 1)
+pi*log(2)/2
+
+
 ### I( atan(x*y) / (x+y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x*y) / (x+y), 0, 1)$value), 0, 1)
 # Derivation:
@@ -527,6 +541,8 @@ integrate(\(x) atan(x)/(x+1) +
 	- sqrt(x)/(x*(x+1)) * Re(atan(sqrt(x)/isq)/isq + atan(sqrt(x)/isq2)/isq2), 0, 1)
 integrate(\(x) -4 * Re(atan(x/isq)/isq) / (x^2+1), 0, 1)$value + pi * log(2)/8;
 integrate(\(x) 4 * Re(1/(x^2 + 1i)) * atan(x), 0, 1)$value +
+	(digamma(3/8) - digamma(7/8)) * pi / 8 + pi * log(2)/8;
+integrate(\(x) 4 * x^2/(x^4 + 1) * atan(x), 0, 1)$value +
 	(digamma(3/8) - digamma(7/8)) * pi / 8 + pi * log(2)/8;
 # TODO
 
