@@ -199,6 +199,15 @@ pi/2 + log(2) + 2*Catalan - 4;
 
 ### Log-Fractions
 
+### I( log(1 + x+y) / (x+y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x) log(1+x+y) / (x+y), 0, 1)$value), 0, 1)
+# Note:
+# - polylog2 is in file Integrals.Polylog.Helper.R;
+integrate(\(x) sapply(x, \(x) - Re(polylog2(-x-1))), 0, 1)$value +
+	- pi^2/12 + 2*log(2) - 1;
+- 2*polylog2(-2) - pi^2/6 - 3*log(3) + 4*log(2);
+
+
 ### I( log(1-x*y) / (x+y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) log(1-x*y) / (x+y),
 	0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
