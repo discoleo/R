@@ -471,15 +471,33 @@ pracma::psi(1,1)*pracma::psi(2,1)*2 - pracma::psi(4,1)/3
 (pi^2*pracma::psi(2,1) - pracma::psi(4,1))/3
 
 
+### Other
+
+###
+integrate(\(x) log(1+x)*log(1-x)*log(1-x^2) / x, 0, 1)
+integrate(\(x) -1/3 * log(1+x)^3 / x, 0, 1)$value + pracma::zeta(4)
+
+
 #################
 
 ### Fractions:
 
-### I( log(1-x^3) * log(x) / (1 - x^3) )
-integrate(\(x) log(1-x^3) * log(x) / (1 - x^3), 0, 1)
+### I( log(x) * log(1-x) / (1+x) )
+integrate(\(x) log(x) * log(1-x) / (1+x), 0, 1)
+13/8 * pracma::zeta(3) - pi^2 * log(2) / 4
+
+### I( log(x) * log(1+x) / (1+x) )
+integrate(\(x) log(x) * log(1+x) / (1+x), 0, 1)
+- pracma::zeta(3) / 8;
+
+
+### Pow = 3
+
+### I( log(x) * log(1-x^3) / (1 - x^3) )
+integrate(\(x) log(x) * log(1-x^3) / (1 - x^3), 0, 1)
 ((digamma(1/3) + Euler) * pracma::psi(1, 1/3) - pracma::psi(2, 1/3)/2) / 9;
 
-###
+### Gen: I( x^p * log(x) * log(1-x^3) / (1-x^3) )
 p = sqrt(2)
 integrate(\(x) x^p * log(x) * log(1-x^3) / (1-x^3), 0, 1, rel.tol=1E-12)
 ((digamma((p+1)/3) + Euler) * pracma::psi(1, (p+1)/3) - pracma::psi(2, (p+1)/3)/2) / 9;
@@ -531,10 +549,23 @@ integrate(\(x) log(x) * log(1-x^4) / (x^2+1), 0, 1)
 ### I( x * atan(x) * log(x) / (x^2+1) )
 integrate(\(x) x * atan(x) * log(x) / (x^2+1), 0, 1, rel.tol=1E-12)
 integrate(\(x) -2 * log(x) * log(1-x) / (x^2+1), 0, 1, rel.tol=1E-12)$value + (pi/4)^3;
+# TODO
 
 ### I( atan(x) * log(x) / (x^2+1) )
 integrate(\(x) atan(x) * log(x) / (x^2+1), 0, 1, rel.tol=1E-12)
 7/16 * pracma::zeta(3) - pi * Catalan / 4;
+
+### I( atan(x) * atan(x^2) )
+integrate(\(x) atan(x) * atan(x^2), 0, 1)
+integrate(\(x) -2 * x^2 * atan(x) / (x^4 + 1), 0, 1)$value +
+	+ pi^2/16 - pi * log(2)/16;
+# TODO
+
+
+### I( x * atan(x^2) / (x^2+1) )
+integrate(\(x) x * atan(x^2) / (x^2+1), 0, 1)
+pracma::psi(1, 3/4) / 64 - (pi^2/8 - pi*log(2)/2 - Catalan) / 8
+
 
 ### I( log(1 + x)^2 / (x^2+1) )
 integrate(\(x) log(1 + x)^2 / (x^2+1), 0, 1)
@@ -545,6 +576,16 @@ integrate(\(x) (log(1-x) + log(x)) * log(1+x) / (x^2+1), 0, 1)$value + Catalan*l
 integrate(\(x) log(1 - x)^2 / (x^2+1), 0, 1)
 integrate(\(x) (log(1-x) - log(x)) * log(1+x) / (x^2+1), 0, 1)$value + pi^3/16 -  Catalan*log(2);
 # TODO
+
+
+### I( log(1+x) * log(1+x^2) )
+integrate(\(x) log(1+x) * log(1+x^2), 0, 1)
+-1/48*pi^2 + pi*log(2)/4 + log(2)^2 * 7/4 - 5*log(2) - pi/2 + 4;
+
+
+### I( log(1+x^2)^2 )
+integrate(\(x) log(1+x^2)^2, 0, 1)
+log(2)^2 - 4*(pi/2 + log(2) - pi*log(2)/2 + Catalan - 2)
 
 
 ### Diff
