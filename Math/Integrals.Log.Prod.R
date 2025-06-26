@@ -582,10 +582,17 @@ integrate(\(x) (log(1-x) - log(x)) * log(1+x) / (x^2+1), 0, 1)$value + pi^3/16 -
 integrate(\(x) log(1+x) * log(1+x^2), 0, 1)
 -1/48*pi^2 + pi*log(2)/4 + log(2)^2 * 7/4 - 5*log(2) - pi/2 + 4;
 
+### I( log(1-x) * log(1+x^2) )
+integrate(\(x) log(1-x) * log(1+x^2), 0, 1)
+-5/48*pi^2 + pi*log(2)/4 + log(2)^2 / 4 - 2*Catalan - pi/2 - log(2) + 4;
 
 ### I( log(1+x^2)^2 )
 integrate(\(x) log(1+x^2)^2, 0, 1)
 log(2)^2 - 4*(pi/2 + log(2) - pi*log(2)/2 + Catalan - 2)
+
+### I( log(1-x^2)^2 )
+integrate(\(x) log(1-x^2)^2, 0, 1, rel.tol=1E-13)
+- pi^2/3 + 4*log(2)^2 - 8*log(2) + 8;
 
 
 ### Diff
@@ -636,7 +643,7 @@ q = 1E-5
 
 ### I( x^p * log(1+x^4) * log(x) / (1 + x^2) )
 p = sqrt(5);
-integrate(function(x) x^p * log(1+x^4) * log(x) / (1 + x^2), 0, 1)
+integrate(\(x) x^p * log(1+x^4) * log(x) / (1 + x^2), 0, 1)
 ((digamma((p+1)/8) + Euler) * pracma::psi(1, (p+1)/8) - pracma::psi(2, (p+1)/8)/2) / 64 +
 - ((digamma((p+3)/8) + Euler) * pracma::psi(1, (p+3)/8) - pracma::psi(2, (p+3)/8)/2) / 64 +
 + ((digamma((p+5)/8) + Euler) * pracma::psi(1, (p+5)/8) - pracma::psi(2, (p+5)/8)/2) / 64 +
@@ -647,7 +654,7 @@ integrate(function(x) x^p * log(1+x^4) * log(x) / (1 + x^2), 0, 1)
 
 ### I( x^p * log(1-x^8) * log(x) / (1 + x^2) )
 p = sqrt(5);
-integrate(function(x) x^p * log(1-x^8) * log(x) / (1 + x^2), 0, 1)
+integrate(\(x) x^p * log(1-x^8) * log(x) / (1 + x^2), 0, 1)
 ((digamma((p+1)/8) + Euler) * pracma::psi(1, (p+1)/8) - pracma::psi(2, (p+1)/8)/2) / 64 +
 - ((digamma((p+3)/8) + Euler) * pracma::psi(1, (p+3)/8) - pracma::psi(2, (p+3)/8)/2) / 64 +
 + ((digamma((p+5)/8) + Euler) * pracma::psi(1, (p+5)/8) - pracma::psi(2, (p+5)/8)/2) / 64 +
@@ -656,7 +663,7 @@ integrate(function(x) x^p * log(1-x^8) * log(x) / (1 + x^2), 0, 1)
 
 ### I( x^p * log(1-x^8) * log(x) / (1 + x^4) )
 p = sqrt(5);
-integrate(function(x) x^p * log(1-x^8) * log(x) / (1 + x^4), 0, 1)
+integrate(\(x) x^p * log(1-x^8) * log(x) / (1 + x^4), 0, 1)
 ((digamma((p+1)/8) + Euler) * pracma::psi(1, (p+1)/8) - pracma::psi(2, (p+1)/8)/2) / 64 +
 - ((digamma((p+5)/8) + Euler) * pracma::psi(1, (p+5)/8) - pracma::psi(2, (p+5)/8)/2) / 64;
 
