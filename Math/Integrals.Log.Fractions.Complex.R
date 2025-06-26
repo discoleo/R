@@ -203,6 +203,18 @@ integrate(\(x) log(x) * log(1-x), 0, 1)
 integrate(\(x) atan(x) * atan(1-x), 0, 1)
 # TODO
 
+### I( log(x + 1i)^2 )
+integrate(\(x) Re(log(x+1i)^2), 0, 1)
+3/48*pi^2 + pi*log(2)/4 - log(2)^2 / 4 + log(2) + pi/2 - 2;
+#
+integrate(\(x) Im(log(x+1i)^2), 0, 1)
+3/16*pi^2 + pi*log(2)/4 + log(2)^2 / 4 - log(2) - pi/2;
+
+### I( log(x - 1i) * log(x + 1i) )
+integrate(\(x) Re(log(x-1i) * log(x+1i)), 0, 1)
+3/48*pi^2 + log(2)^2 / 4 + pi*log(2) * 5/4 - pi/2 - log(2) - 2*Catalan + 2;
+# Im(...) == 0
+
 
 ##############
 
@@ -279,19 +291,21 @@ integrate(\(x) Im(log(x+1i)) / (x^4+1), 0, Inf, rel.tol=1E-13)
 		- (digamma(5/8) - digamma(1/8)) * pi / 32 + pi^2 / sin(3*pi/4) / 8);
 
 
+### on [0, 1]
+
 ### I( log(x + 1i) / (x^4 + 1) ) on [0, 1]
 integrate(\(x) Re(log(x + 1i)) / (x^4 + 1), 0, 1)
 integrate(\(x) Im(log(x + 1i)) / (x^4 + 1), 0, 1)
 # TODO
 
-#
+# [Sub-Comp]
 integrate(\(x) Re((1+1i) * log(x + 1i)) / (x^4 + 1), 0, 1)
 (pracma::psi(1, 5/8) - pracma::psi(1, 1/8)) / 64 +
 	- (digamma(3/4) - digamma(1/4)) * # == pi
 		(digamma(7/8) - digamma(3/8)) / 64 +
 	+ (digamma(5/8) - digamma(1/8)) * log(2) / 32;
 
-#
+# [Sub-Comp]
 integrate(\(x) Re((1-1i) * log(x - 1i)) / (x^4 + 1), 1, Inf)
 integrate(\(x) x^2 * Re((1-1i) * log(x + 1i)) / (x^4 + 1), 0, 1)$value + # OK
  + (pracma::psi(1, 3/8) - pracma::psi(1, 7/8)) /64 +
@@ -306,7 +320,7 @@ integrate(\(x) x^2 * Im(log(x+1i)) / (x^4+1), 0, Inf, rel.tol=1E-13)
 # Solution:
 - (pracma::psi(1, 5/8) - pracma::psi(1, 1/8)) / 64 +
 - (pracma::psi(1, 3/8) - pracma::psi(1, 7/8)) / 64 +
-	+ pi^2 * sqrt(2) / 8 - pi^2 / sin(3*pi/4) / 8 +
+	+ pi^2 * sqrt(2) / 8 - pi^2 / sin(3*pi/4) / 8 + # == 0
 	+ log(2) / sin(pi/4) * pi / 16 +
 	- (digamma(3/4) - digamma(1/4)) / sin(pi/4) * pi / 16 +
 	+ (digamma(3/4) - digamma(1/4)) / sin(3*pi/4) * pi / 32 +
@@ -317,20 +331,43 @@ integrate(\(x) x^2 * Im(log(x+1i)) / (x^4+1), 0, Inf, rel.tol=1E-13)
 		- (digamma(5/8) - digamma(1/8)) * pi / 32 +
 		+ pi^2 / sin(3*pi/4) / 8 - pi^2 * sqrt(2) / 8);
 
+# Note:
+sum(pracma::psi(1, c(1,3,5,7)/8) * c(1,-1,-1,1)) / 64 # ==
+pi^2 * sqrt(2) / 16;
+
 
 ### on [0, 1]
 
-#
+# [Sub-Comp]
 integrate(\(x) x^2 * Re((1-1i) * log(x + 1i)) / (x^4 + 1), 0, 1)
 (pracma::psi(1, 7/8) - pracma::psi(1, 3/8)) / 64 +
 	+ (digamma(5/8) - digamma(1/8)) * pi / 64 +
 	+ (digamma(7/8) - digamma(3/8)) * log(2) / 32;
 
-#
+# [Sub-Comp]
 integrate(\(x) x^2 * Re((1+1i) * log(x - 1i)) / (x^4 + 1), 1, Inf)
 integrate(\(x) Re((1+1i) * log(x + 1i)) / (x^4 + 1), 0, 1)$value + # OK
 	(digamma(5/8) - digamma(1/8)) * pi / 16 +
 	(pracma::psi(1, 1/8) - pracma::psi(1, 5/8)) / 64
+
+#
+integrate(\(x) (x^2+1) * Re(log(x+1i)) / (x^4+1), 0, 1, rel.tol=1E-13)
+integrate(\(x) (x^2+1) * 1/2 * log(x^2+1) / (x^4+1), 0, 1, rel.tol=1E-13)
+integrate(\(x) x^2 * Re(log(x+1i)) / (x^4+1), 0, Inf, rel.tol=1E-13)$value + # OK: see above;
+	- (pracma::psi(1, 1/8) - pracma::psi(1, 5/8)) / 64;
+
+
+# I( x * Re(log(x^2 + 1i)) / (x^4 + 1) )
+integrate(\(x) x * Re(log(x^2 + 1i)) / (x^4 + 1), 0, 1)
+pracma::psi(1, 3/4) / 64 - pi^2/64 + pi * log(2) / 8 - Catalan /8;
+
+# I( x^3 * Im(log(x^2 + 1i)) / (x^4 + 1) )
+integrate(\(x) x^3 * Im(log(x^2 + 1i)) / (x^4 + 1), 0, 1)
+pi * log(2) * 3/16 - Catalan / 4;
+
+# I( Im(x*(x^2+1i) * log(x^2 + 1i)) / (x^4 + 1) )
+integrate(\(x) Im(x*(x^2+1i) * log(x^2 + 1i)) / (x^4 + 1), 0, 1)
+pracma::psi(1, 3/4) / 64 - pi^2/64 + pi * log(2) * 5/16 - Catalan * 3/8;
 
 
 ### Im()
@@ -372,6 +409,7 @@ integrate(\(x) (x^2 - 1) * Im(log(x + 1i)) / (x^4 + 1), 0, 1)
 ### I( x * log(x + 1) / (x^2 - 1i) )
 integrate(\(x) x * log(x + 1) * Re(1/(x^2 - 1i)), 0, 1)
 integrate(\(x) x * log(x + 1) * Im(1/(x^2 - 1i)), 0, 1)
+# Solution:
 integrate(\(x) x^3 * log(x+1) / (x^4+1), 0, 1)$value +
 integrate(\(x)   x * log(x+1) / (x^4+1), 0, 1)$value * 1i;
 (pracma::psi(1, 1) - pracma::psi(1, 1/2)) / 64 +
