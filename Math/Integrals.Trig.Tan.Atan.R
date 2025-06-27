@@ -171,6 +171,13 @@ ic = 1:3; id = 1:2; cs = cos(2*pi*ic/6); sn = sin(2*pi*id/6);
 	) / (4*3^3);
 
 
+### Other Fractions:
+
+### I( atan(x)^2 / (1-x) )
+integrate(\(x) atan(1-x)^2 / x - pi^2/16/x, 0, 1)
+- 7/32 * pracma::zeta(3) + pi^2 * log(2) / 32 - Catalan * pi / 4;
+
+
 #################
 #################
 
@@ -235,6 +242,13 @@ integrate(\(x) x * atan(x)^2 / (x^2 + 1), 0, 1)
 #   Integrals.Trig.Tan.Atan.Fractions.P4.R;
 # - see also file: Integrals.Log.Fractions.Complex.R;
 
+
+### I( atan(x) / (x + 1) ) on [0, Inf]
+integrate(function(x) atan(x) / (x + 1) - pi/2 / (x+1), 0, Inf)
+- pi*log(2)/4 - Catalan;
+
+
+### Poly: x^2 + 1
 
 ### I( atan(x^2) / (x^2 + 1) )
 integrate(function(x) atan(x^2) / (x^2 + 1), 0, Inf)
