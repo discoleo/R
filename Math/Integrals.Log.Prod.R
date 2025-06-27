@@ -582,9 +582,17 @@ integrate(\(x) (log(1-x) - log(x)) * log(1+x) / (x^2+1), 0, 1)$value + pi^3/16 -
 integrate(\(x) log(1+x) * log(1+x^2), 0, 1)
 -1/48*pi^2 + pi*log(2)/4 + log(2)^2 * 7/4 - 5*log(2) - pi/2 + 4;
 
+### I( x * log(1+x) * log(1+x^2) )
+integrate(\(x) x * log(1+x) * log(1+x^2), 0, 1)
+pi^2 / 48 + log(2)^2 / 4 + pi/4 - 1;
+
 ### I( log(1-x) * log(1+x^2) )
 integrate(\(x) log(1-x) * log(1+x^2), 0, 1)
 -5/48*pi^2 + pi*log(2)/4 + log(2)^2 / 4 - 2*Catalan - pi/2 - log(2) + 4;
+
+### I( x * log(1-x) * log(1+x^2) )
+integrate(\(x) x * log(1-x) * log(1+x^2), 0, 1)
+- 5/48*pi^2 + log(2)^2 / 4 - pi/4 - log(2) + 2;
 
 ### I( log(1+x^2)^2 )
 integrate(\(x) log(1+x^2)^2, 0, 1)
@@ -593,6 +601,17 @@ log(2)^2 - 4*(pi/2 + log(2) - pi*log(2)/2 + Catalan - 2)
 ### I( log(1-x^2)^2 )
 integrate(\(x) log(1-x^2)^2, 0, 1, rel.tol=1E-13)
 - pi^2/3 + 4*log(2)^2 - 8*log(2) + 8;
+
+
+### Varia:
+integrate(\(x) log(1+x) / (1+x^2), 0, 1)
+pi * log(2)/8;
+#
+integrate(\(x) x * log(1+x) / (1+x^2), 0, 1)
+pi^2 / 96 + log(2)^2 / 8;
+#
+integrate(\(x) log(1+x^2) / (1+x), 0, 1)
+3/4*log(2)^2 - pi^2/48;
 
 
 ### Diff
@@ -612,6 +631,17 @@ integrate(\(x) log(x) * log(1+x^2) / (1-x^2), 0, 1)
 ### I( log(x) * log(1-x^4) / (1-x^2) )
 integrate(\(x) log(x) * log(1-x^4) / (1-x^2), 0, 1)
 7/2 * pracma::zeta(3) - 3/8 * pi^2 * log(2) - pi/2 * Catalan;
+
+
+### Other:
+
+### I( log(x) * log(x^2+1)^2 )
+integrate(\(x) log(x) * log(x^2+1)^2, 0, 1)
+integrate(\(x) 4*(log(x)-1) * log(x^2+1) / (x^2+1), 0, 1)$value +
+	- log(2)^2 + 4*pi + 8*log(2) + 8*Catalan - 24;
+integrate(\(x) 4 * log(x) * log(x^2+1) / (x^2+1), 0, 1)$value +
+	- 2*pi*log(2) - log(2)^2 + 4*pi + 8*log(2) + 12*Catalan - 24;
+# TODO
 
 
 ### Base I:
