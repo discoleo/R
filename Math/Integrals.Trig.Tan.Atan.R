@@ -303,10 +303,25 @@ integrate(\(x) atan(x) * log(1+x), 0, 1)
 -1/96*pi^2 + 3/8*pi*log(2) - log(2)^2 / 8 + log(2)/2 - pi/4;
 
 
-###
+### I( atan(x) * atan(1-x) )
 integrate(\(x) atan(x) * atan(1-x), 0, 1)
 integrate(\(x) (1-2*x) * atan(1-x) / (x^2+1), 0, 1)
 # TODO
+
+### I( x * atan(1-x) / (x^2+1) )
+integrate(\(x) x * atan(1-x) / (x^2+1), 0, 1)
+# using Im(Li2((3+1i)/5)) = 0.598496790125 / 2;
+atan(1/2) * log(2) / 2 - 0.598496790125 / 2 +
+	+ log(5) * (pi/4 + atan(1/3) - atan(1/2)) / 4;
+# TODO
+
+
+### I( atan(x) * log(1-x) / x )
+integrate(\(x) atan(x) * log(1-x) / x, 0, 1)
+integrate(\(x) 1/2 * log(x) * log(x^2+1) / (x^2+1), 0, 1)$value +
+	+ Catalan * log(2) - pi^3 * 3/64;
+# TODO
+
 
 #
 integrate(\(x) atan(1-x) / (x^2+1), 0, 1)
@@ -386,6 +401,20 @@ integrate(\(x) -1/4 * log(x^2+1)^2 / (x^2+1), 0, 1)$value +
 integrate(\(x) -1/24 * log(x^2+1)^3 / x^2, 0, 1)$value +
 	+ log(2)^2 * pi/16 - log(2)^3 / 24;
 # TODO
+
+
+### I( log(x^2+1)^2 * atan(x) / x^2 )
+integrate(\(x) log(x^2+1)^2 * atan(x) / x^2, 0, 1)
+pi^2 * log(2) / 4 - log(2)^2 * pi/4 - log(2)^3/6 +
+	+ 23/16 * pracma::zeta(3) - pi * Catalan;
+
+
+# Helper
+integrate(\(x) log(x+1)^2 / x, 0, 1)
+pracma::zeta(3) / 4;
+#
+integrate(\(x) log(x)^2 * (1/(x-1) - 1/x), 1, 2)
+pracma::zeta(3) / 4 - log(2)^3/3;
 
 
 ### Other:
