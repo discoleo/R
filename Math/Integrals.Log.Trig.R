@@ -395,17 +395,39 @@ integrate(\(x) - log(x) / (x^2 + x + 1), 0, 1)
 # https://www.youtube.com/watch?v=8R0MiRYmjbk
 
 # Intermediary:
-integrate(function(x) log(tan(x)), 0, pi/4)
+integrate(\(x) log(tan(x)), 0, pi/4)
 # ==
 - Catalan
 
 
-### I( log(cos x)^2 )
+### I( log(cos(x))^2 )
 # Michael Penn: Integral of (ln(cos x))^2
 # https://www.youtube.com/watch?v=ikyVHEHmgP8
 
+###
 integrate(\(x) log(cos(x))^2, 0, pi/2)
-pi^3/24 + pi/2 * log(2)^2
+integrate(\(x) log(sin(x))^2, 0, pi/2)
+pi^3 / 24 + log(2)^2 * pi / 2;
+
+
+### on [0, pi/4]
+
+### I( log(cos(x))^2 )
+integrate(\(x) log(cos(x))^2, 0, pi/4)
+integrate(\(x) 1/2 * log(x) * log(x^2+1) / (x^2+1), 0, 1)$value +
+	- (pi^2/6 - 4*log(2)^2) * pi / 16;
+# TODO
+
+### I( log(sin(x))^2 )
+integrate(\(x) log(sin(x))^2, 0, pi/4)
+integrate(\(x) -1/2 * log(x) * log(x^2+1) / (x^2+1), 0, 1)$value +
+	+ pi^3 / 16 - (pi^2/6 - 4*log(2)^2) * pi / 16;
+# TODO
+
+
+### I( log(sin(x)) * log(cos(x)) )
+integrate(\(x) log(sin(x)) * log(cos(x)), 0, pi/4)
+- pi^3 / 96 + log(2)^2 * pi / 4;
 
 
 #########################
