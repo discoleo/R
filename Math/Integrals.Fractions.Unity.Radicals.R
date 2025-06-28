@@ -155,14 +155,14 @@ integrate(\(x) cos(x) / cos(2*x) / sin(x)^2 + cos(x) / cos(2*x) / sin(x) +
 	- 1/cos(2*x)/sin(x) - 1/x^2 - (2/pi)^2 +
 	- 1/cos(2*x), 0, pi/2);
 #
-integrate(\(x) sqrt(2)/2 / (pi/4-x) +
-	+ cos(x) / cos(2*x) / sin(x) +
-	- 1/cos(2*x)/sin(x) - 1/(pi/2-2*x), 0, pi/4)$value - 1 +
-	- 2*(- log(2) / 2 / sqrt(2)) +
-	+ 2*(- log(2)/2/sqrt(2) + log(3 + 2*sqrt(2)) * sqrt(2) / 4) +
-integrate(\(x) sqrt(2)/2 / (pi/4-x) +
-	+ cos(x) / cos(2*x) / sin(x) +
-	- 1/cos(2*x)/sin(x) - 1/(pi/2-2*x), pi/4, pi/2)$value;
+integrate(\(x) sqrt(2)/2 / (pi/4-x) + 1/x - 1/cos(2*x)/sin(x), 0, pi/4)$value +
+integrate(\(x) sqrt(2)/2 / (pi/4-x) + 1/x - 1/cos(2*x)/sin(x), pi/4, pi/2)$value +
+	- log(pi/2) + log(3 + 2*sqrt(2)) * sqrt(2) / 2 - 1;
+#
+integrate(\(x) sqrt(2)/2 / (pi/4-x) + 1/x - 1/cos(2*x)/sin(x), pi/4, pi/2)$value +
+	- log(pi/2) + log(3 + 2*sqrt(2)) * sqrt(2) / 2 - 1 +
+	+ (1 + sqrt(2)/2) * log(pi) - 3*(1 + sqrt(2)/2) * log(2) - log(2)/2 +
+	+ log(2+sqrt(2)) - log((sqrt(2)-1)) * sqrt(2);
 # TODO; finish;
 
 #
@@ -170,6 +170,34 @@ integrate(\(x) cos(x) / (1 - 2*sin(x)^2) + sqrt(2)/4 / (x-pi/4), pi/4, pi/2)
 sqrt(2)/4 * log(pi/4) - log(2)/2/sqrt(2) +
 	+ (digamma(5/8) - digamma(1/8) - digamma(7/8) + digamma(3/8)) / 8;
 sqrt(2)/4 * log(pi/4) - log(2)/2/sqrt(2) + log(3 + 2*sqrt(2)) * sqrt(2) / 4;
+
+# I( cos(x) / cos(2*x) / sin(x) )
+integrate(\(x) cos(x) / cos(2*x) / sin(x) - 1/x - 1/2/(pi/4-x), 0, pi/4)
+-1/2*log(pi/4) - log(pi/2);
+#
+integrate(\(x) cos(x) / cos(2*x) / sin(x) - 1/x - 1/2/(pi/4-x), pi/4, pi/2)
+log(pi/4)/2;
+
+# I( 1/cos(2*x) / sin(x) )
+integrate(\(x) sqrt(2)/2 / (pi/4-x) + 1/x - 1/cos(2*x)/sin(x), 0, pi/4)
+log(pi/4) + sqrt(2)/2 * log(pi/4) - log(2)/2 +
+	+ (log((1+sqrt(2)/2)/(1-sqrt(2)/2))/2 + log(1/2) / sqrt(2)) +
+	- (log(2)/2 + log((sqrt(2)-1)/(1+sqrt(2))) / sqrt(2));
+(1 + sqrt(2)/2) * log(pi) - 3*(1 + sqrt(2)/2) * log(2) - log(2)/2 +
+	+ log(2+sqrt(2)) - log((sqrt(2)-1)) * sqrt(2);
+#
+up = 1/5
+integrate(\(x) 2/(2*x^2-1) + 1/ (1-x^2), 0, up)
+log((1+up)/(1-up))/2 + log((1-sqrt(2)*up)/(1+sqrt(2)*up)) / sqrt(2);
+# Limits:
+x = 1E-4;
+log(1-cos(x))/2 - log(x);
+- log(2)/2;
+#
+x = pi/4 - 1E-4;
+log(sqrt(2)*cos(x) - 1) / sqrt(2) - log(pi/4-x) / sqrt(2);
+0;
+
 
 # alternative:
 integrate(\(x) 1 / (2*sin(x)*cos(x) + 2*cos(x)^2 - 1) / cos(x)^2, 0, pi/4)
