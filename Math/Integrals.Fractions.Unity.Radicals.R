@@ -132,6 +132,49 @@ integrate(\(x, n) {
 - (digamma(1/n - 1) + Euler - 1) * (n-1)/n^2 + 1/n;
 
 
+### Mixed Fractions
+
+### I( 1 / (x^2+1)^(1/2) * 1/(x+1) )
+integrate(\(x) 1 / (x^2+1)^(1/2) * 1/(x+1), 0, Inf)
+log(3 + 2*sqrt(2)) * sqrt(2) / 2;
+
+
+### I( (x^2+1)^(1/2) / (x+1) )
+integrate(\(x) (x^2+1)^(1/2) / (x+1) - x/(x+1), 0, Inf)
+
+# Derivation:
+integrate(\(x) (1 - sin(x)) / (sin(x) + cos(x)) / cos(x)^2, 0, pi/2)
+integrate(\(x) (1 - cos(x)) / (sin(x) + cos(x)) / sin(x)^2, 0, pi/2)
+integrate(\(x) (cos(x) - sin(x) - cos(x)^2 + sin(x)*cos(x)) / cos(2*x) / sin(x)^2, 0, pi/2)
+integrate(\(x) (cos(x) - sin(x) + sin(x)*cos(x) - 1) / cos(2*x) / sin(x)^2 +
+	+ 1/tan(2*x), 0, pi/2);
+#
+integrate(\(x) (cos(x) - sin(x) + sin(x)*cos(x)) / cos(2*x) / sin(x)^2 +
+	+ 1/tan(2*x) - 1/sin(x)^2 - 1/2/sin(x) + 1/2/cos(x) - 1/cos(2*x), 0, pi/2);
+integrate(\(x) cos(x) / cos(2*x) / sin(x)^2 + cos(x) / cos(2*x) / sin(x) +
+	- 1/cos(2*x)/sin(x) - 1/x^2 - (2/pi)^2 +
+	- 1/cos(2*x), 0, pi/2);
+#
+integrate(\(x) sqrt(2)/2 / (pi/4-x) +
+	+ cos(x) / cos(2*x) / sin(x) +
+	- 1/cos(2*x)/sin(x) - 1/(pi/2-2*x), 0, pi/4)$value - 1 +
+	- 2*(- log(2) / 2 / sqrt(2)) +
+	+ 2*(- log(2)/2/sqrt(2) + log(3 + 2*sqrt(2)) * sqrt(2) / 4) +
+integrate(\(x) sqrt(2)/2 / (pi/4-x) +
+	+ cos(x) / cos(2*x) / sin(x) +
+	- 1/cos(2*x)/sin(x) - 1/(pi/2-2*x), pi/4, pi/2)$value;
+# TODO; finish;
+
+#
+integrate(\(x) cos(x) / (1 - 2*sin(x)^2) + sqrt(2)/4 / (x-pi/4), pi/4, pi/2)
+sqrt(2)/4 * log(pi/4) - log(2)/2/sqrt(2) +
+	+ (digamma(5/8) - digamma(1/8) - digamma(7/8) + digamma(3/8)) / 8;
+sqrt(2)/4 * log(pi/4) - log(2)/2/sqrt(2) + log(3 + 2*sqrt(2)) * sqrt(2) / 4;
+
+# alternative:
+integrate(\(x) 1 / (2*sin(x)*cos(x) + 2*cos(x)^2 - 1) / cos(x)^2, 0, pi/4)
+
+
 ###############
 
 ### [0, 1]
