@@ -136,11 +136,13 @@ integrate(\(x) x/a * atan(x/a) - 1/2*log(x^2 + a^2), 0, 1)
 
 ### I( sin(x) / (exp(x) - 1))
 integrate(\(x) sin(x) / (exp(x) - 1), 0, Inf)
-- (pracma::psi(0, 1i + 1) - pracma::psi(0, - 1i + 1)) * 1i / 2
+- (pracma::psi(0, 1+1i) - pracma::psi(0, 1-1i)) * 1i / 2
+Im(pracma::psi(0, 1+1i))
 #
 pi/2 / tanh(pi) - 1/2
 (digamma((1/2+1)/2) - digamma(1/4))/2 - 1/2
 - (pracma::psi(0, 1i) - pracma::psi(0, - 1i)) * 1i / 2 - 1
+
 
 ### I( cos(x) / (exp(x) - 1) )
 integrate(\(x) cos(x) / (exp(x) - 1) - exp(-x)/x, 0, Inf, rel.tol = 1E-9)
@@ -152,6 +154,14 @@ k = sqrt(3)
 integrate(\(x) sin(k*x) / (exp(x) - 1), 0, Inf)
 - (pracma::psi(0, 1i*k + 1) - pracma::psi(0, - 1i*k + 1)) * 1i / 2;
 - (pracma::psi(0, 1i*k) - pracma::psi(0, - 1i*k)) * 1i / 2 - 1/k;
+Im(pracma::psi(0, 1 + 1i*k));
+
+
+### I( cos(k*x) / (exp(x) - 1) ) on [0, Inf]
+k = sqrt(3)
+integrate(\(x) cos(k*x) / (exp(x) - 1) - exp(-x)/x, 0, Inf)
+- Re(pracma::psi(0, 1 + 1i*k));
+
 
 ### Gen:
 
