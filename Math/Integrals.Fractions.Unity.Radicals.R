@@ -6,7 +6,7 @@
 ### Exact Integration
 ### Polynomial Radicals
 ###
-### draft v.0.2e
+### draft v.0.2f
 
 
 ### Types:
@@ -141,6 +141,7 @@ log(3 + 2*sqrt(2)) * sqrt(2) / 2;
 
 ### I( (x^2+1)^(1/2) / (x+1) )
 integrate(\(x) (x^2+1)^(1/2) / (x+1) - x/(x+1), 0, Inf)
+2*sqrt(2) * log(sqrt(2)+1) - log(2) - 1;
 
 # Derivation:
 integrate(\(x) (1 - sin(x)) / (sin(x) + cos(x)) / cos(x)^2, 0, pi/2)
@@ -159,13 +160,10 @@ integrate(\(x) sqrt(2)/2 / (pi/4-x) + 1/x - 1/cos(2*x)/sin(x), 0, pi/4)$value +
 integrate(\(x) sqrt(2)/2 / (pi/4-x) + 1/x - 1/cos(2*x)/sin(x), pi/4, pi/2)$value +
 	- log(pi/2) + log(3 + 2*sqrt(2)) * sqrt(2) / 2 - 1;
 #
-integrate(\(x) sqrt(2)/2 / (pi/4-x) + 1/x - 1/cos(2*x)/sin(x), pi/4, pi/2)$value +
-	- log(pi/2) + log(3 + 2*sqrt(2)) * sqrt(2) / 2 - 1 +
-	+ (1 + sqrt(2)/2) * log(pi) - 3*(1 + sqrt(2)/2) * log(2) - log(2)/2 +
-	+ log(2+sqrt(2)) - log((sqrt(2)-1)) * sqrt(2);
-# TODO; finish;
+2*sqrt(2) * log(sqrt(2)+1) - log(2) - 1;
 
-#
+
+# I( cos(x) / cos(2*x) )
 integrate(\(x) cos(x) / (1 - 2*sin(x)^2) + sqrt(2)/4 / (x-pi/4), pi/4, pi/2)
 sqrt(2)/4 * log(pi/4) - log(2)/2/sqrt(2) +
 	+ (digamma(5/8) - digamma(1/8) - digamma(7/8) + digamma(3/8)) / 8;
@@ -185,6 +183,10 @@ log(pi/4) + sqrt(2)/2 * log(pi/4) - log(2)/2 +
 	- (log(2)/2 + log((sqrt(2)-1)/(1+sqrt(2))) / sqrt(2));
 (1 + sqrt(2)/2) * log(pi) - 3*(1 + sqrt(2)/2) * log(2) - log(2)/2 +
 	+ log(2+sqrt(2)) - log((sqrt(2)-1)) * sqrt(2);
+#
+integrate(\(x) sqrt(2)/2 / (pi/4-x) + 1/x - 1/cos(2*x)/sin(x), pi/4, pi/2)
+- sqrt(2)/2 * log(pi/4) + log(2) + log(2) / sqrt(2) +
+	- log((1+sqrt(2)/2)/(1-sqrt(2)/2)) / 2;
 #
 up = 1/5
 integrate(\(x) 2/(2*x^2-1) + 1/ (1-x^2), 0, up)
