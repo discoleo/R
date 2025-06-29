@@ -163,6 +163,13 @@ integrate(\(x) cos(k*x) / (exp(x) - 1) - exp(-x)/x, 0, Inf)
 - Re(pracma::psi(0, 1 + 1i*k));
 
 
+### Pow: I( sin(k*x)^2 / (exp(x) - 1) )
+k = sqrt(3)
+integrate(\(x) sin(k*x)^2 / (exp(x) - 1), 0, Inf)
+integrate(\(x) (1 - cos(k*x)^2) / (exp(x) - 1), 0, Inf)
+(Re(pracma::psi(0, 1 + 2i*k)) + Euler) / 2;
+
+
 ### Gen:
 
 ### I( sin(x) / (exp(k*x) - 1) ) on [0, Inf]
