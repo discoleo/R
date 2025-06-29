@@ -55,10 +55,30 @@ integrate(\(x) sin(k*x) / (exp(x) - 1), 0, Inf)
 Im(pracma::psi(0, 1 + 1i*k));
 
 
+### I( sin(k1*x) / (exp(k2*x) - 1) ) on [0, Inf]
+k1 = sqrt(3); k2 = sqrt(5);
+integrate(\(x) sin(k1*x) / (exp(k2*x) - 1), 0, Inf)
+Im(pracma::psi(0, 1 + 1i*k1/k2)) / k2;
+
+
 ### I( cos(k*x) / (exp(x) - 1) ) on [0, Inf]
 k = sqrt(3)
 integrate(\(x) cos(k*x) / (exp(x) - 1) - exp(-x)/x, 0, Inf)
 - Re(pracma::psi(0, 1 + 1i*k));
+
+
+### I( cos(k1*x) / (exp(k2*x) - 1) ) on [0, Inf]
+k1 = sqrt(3); k2 = sqrt(5);
+integrate(\(x) cos(k1*x) / (exp(k2*x) - 1) - 1/k2 * exp(-k2*x)/x, 0, Inf)
+- Re(pracma::psi(0, 1 + 1i*k1/k2)) / k2;
+#
+integrate(\(x) cos(k1*x) / (exp(k2*x) - 1) - 1/k2 * exp(-x)/x, 0, Inf)
+- Re(pracma::psi(0, 1 + 1i*k1/k2)) / k2 - log(k2)/k2;
+
+# Note:
+k = sqrt(7);
+integrate(\(x) (exp(-x) - exp(-k*x)) / x, 0, Inf)
+log(k);
 
 
 ### Pow: I( sin(k*x)^2 / (exp(x) - 1) )
