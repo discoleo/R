@@ -82,13 +82,14 @@ log(k);
 
 
 ### Pow: I( sin(k*x)^2 / (exp(x) - 1) )
+# see Section on Powers below;
 k = sqrt(3)
 integrate(\(x) sin(k*x)^2 / (exp(x) - 1), 0, Inf)
 integrate(\(x) (1 - cos(k*x)^2) / (exp(x) - 1), 0, Inf)
 (Re(pracma::psi(0, 1 + 2i*k)) + Euler) / 2;
 
 
-### Gen:
+### Gen: Sum-Type
 
 ### I( sin(x) / (exp(k*x) - 1) ) on [0, Inf]
 integrate(\(x) sin(x) / (exp(k*x) - 1), 0, Inf)
@@ -113,6 +114,15 @@ integrate(\(x) cos(q*x) / (exp(k*x) + 1), 0, Inf)
 - (pracma::psi(0, (q*1i/k + 1)/2) + pracma::psi(0, (- q*1i/k + 1)/2) +
 	- pracma::psi(0, q*1i/k/2) - pracma::psi(0, - q*1i/k/2)) / (4*k)
 
+
+### Full:
+
+### I( sin(k*x) * exp(a1*x) / (exp(a2*x) + 1) ) on [0, Inf]
+k = sqrt(2); a1 = -1/sqrt(3); a2 = sqrt(5);
+integrate(\(x) sin(k*x) * exp(a1*x) / (exp(a2*x) + 1), 0, Inf)
+Im(pracma::psi(0, 1-(a1+k*1i)/(2*a2)) - pracma::psi(0, (a2-a1-k*1i)/(2*a2))) / (2*a2);
+
+
 # Derivation
 integrate(\(x) Re(x^(q*1i)) / x / (x^k + 1), 1, Inf)
 integrate(\(x) Re(x^(q*1i - 1)) - Re(x^(q*1i - 1)) / (x^k + 1), 0, 1)
@@ -121,6 +131,10 @@ integrate(\(x) Re(x^(q*1i - 1)) - Re(x^(q*1i - 1)) / (x^k + 1), 0, 1)
 - (pracma::psi(0, (q*1i/k + 1)/2) + pracma::psi(0, (- q*1i/k + 1)/2) +
 	- pracma::psi(0, q*1i/k/2) - pracma::psi(0, - q*1i/k/2)) / (4*k)
 
+
+######################
+
+### Type: x^p * ...
 
 ### I( x * Trig(q*x) / ... )
 
