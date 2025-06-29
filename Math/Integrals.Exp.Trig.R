@@ -123,7 +123,18 @@ integrate(\(x) sin(k*x) * exp(a1*x) / (exp(a2*x) + 1), 0, Inf)
 Im(pracma::psi(0, 1-(a1+k*1i)/(2*a2)) - pracma::psi(0, (a2-a1-k*1i)/(2*a2))) / (2*a2);
 
 
-# Derivation
+### Derivation
+
+# Gen:
+k = sqrt(2); a1 = -1/sqrt(3); a2 = sqrt(5);
+integrate(\(x) sin(k*x) * exp(a1*x) / (exp(a2*x) + 1), 0, Inf)
+integrate(\(x) Im(x^(a1 - 1 + k*1i)) / (x^a2 + 1), 1, Inf)
+# x => 1/x
+integrate(\(x) Im(x^(a2 - a1 - 1 - k*1i)) / (x^a2 + 1), 0, 1)
+Im(pracma::psi(0, 1-(a1+k*1i)/(2*a2)) - pracma::psi(0, (a2-a1-k*1i)/(2*a2))) / (2*a2);
+
+
+# Special Case: a1 = 0
 integrate(\(x) Re(x^(q*1i)) / x / (x^k + 1), 1, Inf)
 integrate(\(x) Re(x^(q*1i - 1)) - Re(x^(q*1i - 1)) / (x^k + 1), 0, 1)
 - Re(pracma::psi(0, (q*1i/k + 1)/2) - pracma::psi(0, q*1i/k/2)) / (2*k);
@@ -178,10 +189,11 @@ integrate(\(x) cos(x) / (exp(x) * (exp(x) - 1)) - exp(-x) / x, 0, Inf)
 
 ### x^p
 integrate(\(x) x * sin(x) / (exp(x) - 1), 0, Inf)
-id = seq(10000)
+id = seq(10000); # [old]
 2 * sum(id/(id^2 + 1)^2)
 # TODO: see file: Sums.Fractions.Higher.R;
-(pracma::psi(1, 1i) - pracma::psi(1, - 1i)) * 1i / 2
+(pracma::psi(1, 1i) - pracma::psi(1, - 1i)) * 1i / 2;
+Im(pracma::psi(1, -1i));
 
 
 ### I( x * sin(k*x) / (exp(x) - 1) )
@@ -232,7 +244,34 @@ integrate(\(x) x^n * sin(q*x) / (exp(k*x) - 1), 0, Inf)
 - (pracma::psi(n, 1i*q/k + 1) - pracma::psi(n, - 1i*q/k + 1)) * 1i / (2*k^(n+1))
 
 
-### Pow of sin
+##############
+
+### Pow of SIN
+
+### Pow = 2
+
+### I( sin(k*x)^2 / (exp(x) - 1) )
+k = sqrt(3)
+integrate(\(x) sin(k*x)^2 / (exp(x) - 1), 0, Inf)
+integrate(\(x) (1 - cos(k*x)^2) / (exp(x) - 1), 0, Inf)
+(Re(pracma::psi(0, 1 + 2i*k)) + Euler) / 2;
+
+
+### Gen:
+
+### I( sin(k*x)^2 / (exp(a*x) - 1) )
+k = sqrt(3); a = sqrt(5);
+integrate(\(x) sin(k*x)^2 / (exp(a*x) - 1), 0, Inf)
+(Re(pracma::psi(0, 1 + 2i*k/a)) + Euler) / (2*a);
+
+### I( sin(k*x)^2 / (exp(a*x) + 1) )
+k = sqrt(3); a = sqrt(5);
+integrate(\(x) sin(k*x)^2 / (exp(a*x) + 1), 0, Inf)
+(Re(pracma::psi(0, 1 + 2i*k/a) - pracma::psi(0, 1 + 1i*k/a))) / (2*a);
+
+
+###########
+### Pow = 3
 
 ### n = ODD
 n = 5; k = sqrt(3)
