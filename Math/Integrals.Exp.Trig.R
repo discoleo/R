@@ -75,6 +75,13 @@ integrate(\(x) cos(k1*x) / (exp(k2*x) - 1) - 1/k2 * exp(-k2*x)/x, 0, Inf)
 integrate(\(x) cos(k1*x) / (exp(k2*x) - 1) - 1/k2 * exp(-x)/x, 0, Inf)
 - Re(pracma::psi(0, 1 + 1i*k1/k2)) / k2 - log(k2)/k2;
 
+
+### Gen: Full
+k = sqrt(3); a1 = -1/sqrt(2); a2 = sqrt(5);
+integrate(\(x) cos(k*x) * exp(a1*x) / (exp(a2*x) - 1) - 1/a2 * exp(-x)/x, 0, Inf)
+- Re(pracma::psi(0, 1 - (a1+k*1i)/a2)) / a2 - log(a2)/a2;
+
+
 # Note:
 k = sqrt(7);
 integrate(\(x) (exp(-x) - exp(-k*x)) / x, 0, Inf)
@@ -92,8 +99,11 @@ integrate(\(x) (1 - cos(k*x)^2) / (exp(x) - 1), 0, Inf)
 ### Gen: Sum-Type
 
 ### I( sin(x) / (exp(k*x) - 1) ) on [0, Inf]
+k = 1/sqrt(3)
 integrate(\(x) sin(x) / (exp(k*x) - 1), 0, Inf)
 - (pracma::psi(0, 1i/k) - pracma::psi(0, - 1i/k)) * 1i / (2*k) - 1;
+Im(pracma::psi(0, 1 + 1i/k)) / k;
+
 
 ### I( sin(x) / (exp(k*x) + 1) ) on [0, Inf]
 k = sqrt(3)
@@ -125,7 +135,7 @@ Im(pracma::psi(0, 1-(a1+k*1i)/(2*a2)) - pracma::psi(0, (a2-a1-k*1i)/(2*a2))) / (
 
 ### Derivation
 
-# Gen:
+# Gen: Sum
 k = sqrt(2); a1 = -1/sqrt(3); a2 = sqrt(5);
 integrate(\(x) sin(k*x) * exp(a1*x) / (exp(a2*x) + 1), 0, Inf)
 integrate(\(x) Im(x^(a1 - 1 + k*1i)) / (x^a2 + 1), 1, Inf)
@@ -133,6 +143,21 @@ integrate(\(x) Im(x^(a1 - 1 + k*1i)) / (x^a2 + 1), 1, Inf)
 integrate(\(x) Im(x^(a2 - a1 - 1 - k*1i)) / (x^a2 + 1), 0, 1)
 Im(pracma::psi(0, 1-(a1+k*1i)/(2*a2)) - pracma::psi(0, (a2-a1-k*1i)/(2*a2))) / (2*a2);
 
+# Gen: Diff
+k = sqrt(2); a1 = -1/sqrt(3); a2 = sqrt(5);
+integrate(\(x) sin(k*x) * exp(a1*x) / (exp(a2*x) - 1), 0, Inf)
+integrate(\(x) Im(x^(a1 - 1 + k*1i)) / (x^a2 - 1), 1, Inf)
+- Im(pracma::psi(0, 1-(a1+k*1i)/a2)) / a2;
+
+# Gen: Diff for cos
+k = sqrt(2); a1 = -1/sqrt(3); a2 = sqrt(5);
+integrate(\(x) cos(k*x) * exp(a1*x) / (exp(a2*x) - 1) - 1/a2 * exp(-x)/x, 0, Inf)
+integrate(\(x) Re(x^(a1 - 1 + k*1i)) / (x^a2 - 1) - 1/a2 / (log(x)*x^2), 1, Inf)
+- Re(pracma::psi(0, 1-(a1+k*1i)/a2)) / a2 - log(a2)/a2;
+
+# Note:
+integrate(\(x) 1 / (log(x)*x^2) - 1/(x-1) / x^2, 1, Inf)
+1 - Euler;
 
 # Special Case: a1 = 0
 integrate(\(x) Re(x^(q*1i)) / x / (x^k + 1), 1, Inf)
