@@ -311,6 +311,12 @@ integrate(\(x) sin(k*x)^2 / (exp(a*x) + 1), 0, Inf)
 (Re(pracma::psi(0, 1 + 2i*k/a) - pracma::psi(0, 1 + 1i*k/a))) / (2*a);
 
 
+### Gen: I( sin(k*x)^2 * exp(a1*x) / (exp(a2*x) - 1) )
+k = sqrt(3); a1 = -1/sqrt(2); a2 = sqrt(5);
+integrate(\(x) sin(k*x)^2 * exp(a1*x) / (exp(a2*x) - 1), 0, Inf)
+(Re(pracma::psi(0, 1 - (a1+k*2i)/a2)) - digamma(1 - a1/a2)) / (2*a2);
+
+
 ###########
 ### Pow = 3
 
