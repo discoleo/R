@@ -134,6 +134,12 @@ integrate(\(x) sin(k*x) * exp(a1*x) / (exp(a2*x) + 1), 0, Inf)
 Im(pracma::psi(0, 1-(a1+k*1i)/(2*a2)) - pracma::psi(0, (a2-a1-k*1i)/(2*a2))) / (2*a2);
 
 
+### I( cos(k*x) * exp(a1*x) / (exp(a2*x) + 1) )
+k = sqrt(2); a1 = -1/sqrt(3); a2 = sqrt(5);
+integrate(\(x) cos(k*x) * exp(a1*x) / (exp(a2*x) + 1), 0, Inf)
+Re(pracma::psi(0, 1-(a1+k*1i)/(2*a2)) - pracma::psi(0, (a2-a1-k*1i)/(2*a2))) / (2*a2);
+
+
 ### Derivation
 
 # Gen: Sum
