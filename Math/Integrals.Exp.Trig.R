@@ -161,11 +161,18 @@ integrate(\(x) 1 / (log(x)*x^2) - 1/(x-1) / x^2, 1, Inf)
 1 - Euler;
 
 ### I( 1/(exp(a2*x) - 1) )
+# see file: Integrals.Fractions.Unity.Definite.Diff.R;
 a2 = sqrt(3);
 integrate(\(x) 1/(exp(a2*x) - 1) - 1/a2 * exp(-x)/x, 0, Inf)
 integrate(\(x) 1/x / (x^a2 - 1) - 1/a2 * 1/log(x) / x^2, 1, Inf)
 integrate(\(x) x^(a2 - 1) / (1 - x^a2) + 1/a2 * 1/log(x), 0, 1, rel.tol=1E-12)
 Euler / a2 - log(a2) / a2;
+
+### I( (exp(a1*x) - 1) / (exp(a2*x) - 1) )
+a1 = -1/sqrt(3); a2 = sqrt(5);
+integrate(\(x) (exp(a1*x) - 1) / (exp(a2*x) - 1), 0, Inf)
+integrate(\(x) (x^a1 - 1) * x^(a2-a1-1) / (x^a2 - 1), 0, 1)
+(digamma(1) - digamma((a2-a1)/a2)) / a2;
 
 
 # Special Case: a1 = 0
