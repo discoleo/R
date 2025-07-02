@@ -422,6 +422,14 @@ integrate(\(x) x^p * log(1+x^3) / (1-x^3) - 1/3 * log(2)/(1-x), 0, 1)
 	+ (digamma((p+4)/6)^2 - digamma(1)^2) + 2*log(3)^2 - 2*log(6)^2 +
 	- (digamma((p+1)/3)^2 - digamma(1)^2) * 2 ) / 12;
 
+### Special Case:
+
+### I( x^2 * log(1+x^3) / (1-x^3) )
+integrate(\(x) x^2 * log(1+x^3) / (1-x^3) - 1/3 * log(2)/(1-x), 0, 1)
+sum(digamma(c(2,4,6,6)/6) * c(-1,-1,1,1)) * c(digamma(1/2) + Euler) / 18 +
+	- pi^2/36 + log(2)^2/6;
+log(3) * c(digamma(1/2) + Euler) / 6 - pi^2/36 + log(2)^2/6;
+
 
 ###
 integrate(\(x) log(1 + x^3) / (x+1), 0, 1)
@@ -714,6 +722,16 @@ integrate(\(x) Im(log(x+1) / (x + 1/2+1i*sqrt(3)/2)), 0, 1)
 
 # Note:
 # - moved to file: Integrals.Log.Fractions.P4.R;
+
+###
+integrate(\(x) x^3 * log(1+x^4) / (1-x^4) - 1/4 * log(2)/(1-x), 0, 1)
+log(4) * (digamma(1/2) + Euler) / 8 - (pi^2/6 - log(2)^2)/8;
+
+### Gen: I( x^(p-1) * log(1+x^p) / (1-x^p) )
+p = sqrt(5)
+integrate(\(x) x^(p-1) * log(1+x^p) / (1-x^p) - 1/p * log(2)/(1-x), 0, 1)
+log(p) * (digamma(1/2) + Euler) / (2*p) - (pi^2/6 - log(2)^2)/(2*p);
+- log(2)*log(p) / p - (pi^2/6 - log(2)^2)/(2*p);
 
 
 ##################
