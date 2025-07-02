@@ -100,10 +100,20 @@ integrate(\(x) log(1-x) * log(x) / (x^2+1), 0, 1)$value +
 	- pi^3 * 3/64 + Catalan * log(2)/2;
 # TODO
 
+### I( atan(x) * log(x) / (1-x) )
+integrate(\(x) atan(x) * log(x) / (1-x), 0, 1)
+integrate(\(x) 2 * log(1-x) * log(x) / (x^2+1), 0, 1)$value +
+	- pi^3 * 3/64 + Catalan * log(2)/2;
+
 
 ### I( atan(x) / (1-x) )
 integrate(\(x) atan(x) / (1-x) - pi/4/(1-x), 0, 1)
 pi*log(2)/8 - Catalan
+
+# Derived:
+integrate(\(x) log(1-x) * log(x^2+1) / x^2, 0, 1)
+pi*log(2)/4 - 2*Catalan - Re(log(1-1i)^2);
+
 
 ### I( log(x^2+1) * log(1-x) )
 integrate(\(x) log(x^2+1) * log(1-x), 0, 1)
@@ -122,6 +132,12 @@ integrate(\(x) Im(log(x + 1i)) * log(1-x), 0, 1)
 ### I( atan(x) * log(x) / (x^2+1) )
 integrate(\(x) atan(x) * log(x) / (x^2+1), 0, 1)
 7/16 * pracma::zeta(3) - pi * Catalan / 4
+
+
+### I( x * atan(x) * log(x) / (x^2+1) )
+integrate(\(x)  x * atan(x) * log(x) / (x^2+1), 0, 1)
+integrate(\(x) -2 * log(1-x) * log(x) / (x^2+1), 0, 1, rel.tol=1E-12)$value + (pi/4)^3;
+# TODO
 
 
 ### I( atan(x)^2 * log(x) )
