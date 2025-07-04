@@ -274,13 +274,13 @@ integrate(\(x) sapply(x, \(y) integrate(\(x) 2 * log(1-x*y) / (x+y),
 8*Catalan - 4*log(2) - 4;
 
 
-### I( log(abs(x+y-1)) / )1 - x*y )
+### I( log(abs(x+y-1)) / (1 - x*y) )
 # Note: numerical issues; very slow with mpfr;
 FUN = \(x, y) log(abs(x+y-1)) / (1-x*y);
 # FUN = \(x, y) { x = mpfr(x, 128); y = mpfr(y, 128); as.numeric(log(abs(x+y-1)) / (1-x*y)); }
 integrate(\(x) sapply(x, \(y) integrate(FUN, 0, y, y=y, rel.tol=1E-6)$value), 0, 1, rel.tol=1E-6)$value +
 integrate(\(x) sapply(x, \(y) integrate(FUN, y, 1, y=y, rel.tol=1E-6)$value), 0, 1, rel.tol=1E-6)$value;
-5/3 * pracma::zeta(3);
+-5/3 * pracma::zeta(3);
 
 
 ### I( log(x+y+1) / (1 + x*y) )
@@ -660,7 +660,6 @@ pi^3 / 48
 ### I( atan(x/y) / (1 - x*y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x/y) / (1-x*y), 0, 1)$value), 0, 1)
 pi^3 / 24;
-pi^3 / 48
 
 ### I( atan(x/y) / (x+y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x/y) / (x+y), 0, 1)$value), 0, 1)
