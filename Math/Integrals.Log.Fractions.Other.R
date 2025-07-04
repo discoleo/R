@@ -627,6 +627,10 @@ integrate(\(x) log(1-x^3) / (1+x), 0, 1)
 integrate(\(x) 1/2 * log(1-x^6) / (1+x), 0, 1, rel.tol=1E-13)$value + # OK: see above
 	- (polylog2(-2) - pracma::polylog(-1/2, 2)) / 2 +
 	- pi^2 / 24 + (log(3/2)^2 - log(3)^2) / 4;
+sum(digamma(1:6/6)^2 * c(1,-1,1,-1,1,-1)) / 24 +
+	+ pracma::polylog(-1/2, 2) +
+	- pi^2 / 12 - log(2)*Euler/2 + (log(3/2)^2 - log(3)^2 + log(2)^2) / 4;
+
 
 ### I( log(1+x^3) / (1+x) )
 integrate(\(x) log(1+x^3) / (1+x), 0, 1)
@@ -634,6 +638,10 @@ integrate(\(x) log(1+x^3) / (1+x), 0, 1)
 integrate(\(x) 1/2 * log(1-x^6) / (1+x), 0, 1, rel.tol=1E-13)$value + # OK: see above
 	+ (polylog2(-2) - pracma::polylog(-1/2, 2)) / 2 +
 	+ pi^2 / 24 - (log(3/2)^2 - log(3)^2) / 4;
+sum(digamma(1:6/6)^2 * c(1,-1,1,-1,1,-1)) / 24 +
+	- pracma::polylog(-1/2, 2) +
+	- pi^2 / 6 - log(2)*Euler/2 - (log(3/2)^2 - log(3)^2 + log(2)^2) / 4;
+
 
 ### Variants:
 integrate(\(x) (log(1+x^3) - log(1-x^3)) / (1+x), 0, 1)
