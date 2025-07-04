@@ -85,6 +85,9 @@ sum((-1)^id * (x/2)^(2*id+n) / factorial(id) / factorial(id+n))
 # Note:
 besselJ(1, 1/2) / besselJ(1, -1/2) # ==
 tan(1);
+# Gen:
+p = sqrt(3)
+besselJ(p, -1/2) / besselJ(p, 1/2) * tan(p) # == 1
 
 
 #####################
