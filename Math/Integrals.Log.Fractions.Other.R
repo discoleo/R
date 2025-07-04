@@ -619,6 +619,8 @@ integrate(\(x) - log(x^2+x+1) / (1+x), 0, 1)$value +
 	- pi^2/18 + log(2)*log(3);
 # Solution using Li2:
 - (pracma::polylog(1/3, 2) - pracma::polylog(-1/3, 2)) + pi^2/18;
+polylog2(-2) + log(2)*log(3) + pi^2/18;
+- pracma::polylog(-1/2, 2) - pi^2/9 - log(2)^2/2 + log(2)*log(3);
 
 
 ### I( log(1-x^3) / (1+x) )
@@ -650,6 +652,9 @@ polylog2(-2) - pracma::polylog(-1/2, 2) + pi^2/12 - (log(3/2)^2 - log(3)^2)/2;
 # Note:
 polylog2(-2) # ==
 - pracma::polylog(-1/2, 2) - (pi^2/6 + log(2)^2/2);
+#
+(pracma::polylog(1/3, 2) - pracma::polylog(-1/3, 2)) # ==
+- polylog2(-2) - log(2)*log(3);
 
 
 ### Helper
