@@ -12,6 +12,38 @@
 
 #####################
 
+### TRIG( TRIG )
+
+### I( sin(tan(x)) * cos(x) / x )
+# Maths 505: A beautiful nested trig integral
+# https://www.youtube.com/watch?v=IHjGVTeFdFA
+# Lobachevsky Transform => Subst => Feynman;
+
+# Note: fails;
+integrate(\(x) sin(tan(x)) * cos(x) / x, 0, Inf)
+integrate(\(x) sin(tan(x)) / tan(x), 0, pi/2)
+integrate(\(x) sin(x) / x / (x^2+1), 0, Inf, rel.tol=1E-9, subdivisions = 2000)
+pi/2 * (1 - exp(-1))
+
+### Gen: I( sin(k*tan(x)) * cos(x) / x )
+k = 1/3;
+integrate(\(x) sin(k*tan(x)) * cos(x) / x, 0, Inf)
+integrate(\(x) sin(k*tan(x)) / tan(x), 0, pi/2)
+integrate(\(x) sin(k*x) / x / (x^2+1), 0, Inf, rel.tol=1E-9, subdivisions = 2000)
+pi/2 * (1 - exp(-k));
+
+
+#
+tmp = lapply(seq(2000), \(id, subdiv = 2025) {
+	tmp = integrate(\(x) sin(tan(x)) * cos(x) / x, (id-1) * pi/2, id * pi/2,
+		rel.tol=1E-9, subdivisions = subdiv);
+	class(tmp) = "list"; tmp$call = NULL;
+	as.data.frame(tmp);
+})
+tmp = do.call(rbind, tmp);
+sum(tmp$value); table(cut(tmp$subdivisions, c(0, 100, 200, 500, 10000)))
+
+
 ### I( Trig(Trig) )
 # Maths 505: The coolest trig integral!
 # https://www.youtube.com/watch?v=4pvK0DTPPg8
@@ -50,6 +82,10 @@ id = seq(0, 100)
 besselJ(x, n)
 sum((-1)^id * (x/2)^(2*id+n) / factorial(id) / factorial(id+n))
 
+# Note:
+besselJ(1, 1/2) / besselJ(1, -1/2) # ==
+tan(1);
+
 
 #####################
 #####################
@@ -81,8 +117,8 @@ integrate(function(x) n*x^(n-1) / tan(x), 0, pi/2, subdivisions=1024)
 #####################
 
 ### n = 2
-integrate(function(x) log(cos(x)), 0, pi/2, subdivisions=1024)
-integrate(function(x) log(sin(x)), 0, pi/2, subdivisions=1024)
+integrate(\(x) log(cos(x)), 0, pi/2, subdivisions=1024)
+integrate(\(x) log(sin(x)), 0, pi/2, subdivisions=1024)
 - (pi/2)*log(2)
 
 
