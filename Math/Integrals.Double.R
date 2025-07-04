@@ -107,6 +107,13 @@ integrate(\(x) sapply(x, \(y)
 
 ### Simple Logs
 
+### I( log(abs(x+y-1)) )
+# Note: numerical issues;
+integrate(\(x) sapply(x, \(y) integrate(\(x) log(abs(x+y-1)) , 0, y)$value), 0, 1)$value +
+integrate(\(x) sapply(x, \(y) integrate(\(x) log(abs(x+y-1)) , y, 1)$value), 0, 1)$value;
+- 3/2;
+
+
 ### I( x * log(x) * log(y)^2 / (1 - x*y) )
 # Maths 505: A very interesting double integral with a beautiful result
 # https://www.youtube.com/watch?v=lWVBnWCz63I
@@ -267,6 +274,15 @@ integrate(\(x) sapply(x, \(y) integrate(\(x) 2 * log(1-x*y) / (x+y),
 8*Catalan - 4*log(2) - 4;
 
 
+### I( log(abs(x+y-1)) / )1 - x*y )
+# Note: numerical issues; very slow with mpfr;
+FUN = \(x, y) log(abs(x+y-1)) / (1-x*y);
+# FUN = \(x, y) { x = mpfr(x, 128); y = mpfr(y, 128); as.numeric(log(abs(x+y-1)) / (1-x*y)); }
+integrate(\(x) sapply(x, \(y) integrate(FUN, 0, y, y=y, rel.tol=1E-6)$value), 0, 1, rel.tol=1E-6)$value +
+integrate(\(x) sapply(x, \(y) integrate(FUN, y, 1, y=y, rel.tol=1E-6)$value), 0, 1, rel.tol=1E-6)$value;
+5/3 * pracma::zeta(3);
+
+
 ### I( log(x+y+1) / (1 + x*y) )
 integrate(\(x) sapply(x, \(y)
 	integrate(\(x) log(x+y+1) / (1 + x*y), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
@@ -298,6 +314,8 @@ integrate(\(x) - 3*atan(x) * log(1-x) / x, 0, 1)$value - 5/96 * pi^3;
 integrate(\(x) sapply(x, \(y)
 	integrate(\(x) log(1 + x*y) / (x^2 + y^2), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 integrate(\(x) - 3*atan(x) * log(1-x) / x, 0, 1)$value - 7/96 * pi^3;
+integrate(\(x) log(x) * log(x+1) / (x^2+1), 0, 1)$value +
+	+ (pi/4)^3 / 3 + Catalan * log(2)/2;
 # TODO
 
 ### I( log(1 - x*y) / (x^2 + y^2) )
@@ -322,10 +340,17 @@ integrate(\(x) log(1-x) * log(x) / (x^2+1), 0, 1)$value - pi^3 / 32;
 ### I( log(x+y) / (2 - x^2 - y^2) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	log(x+y) / (2 - x^2 - y^2), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+#
 integrate(\(x) -2 * log(x) * log(1+x) / (x^2+1), 0, 1, rel.tol=1E-12)$value +
 	integrate(\(x) - log(x) * log(1-x) / (x^2+1), 0, 1, rel.tol=1E-12)$value +
 	((digamma(1/4) + Euler) * pracma::psi(1, 1/4) - pracma::psi(2, 1/4)/2) / 16 +
 	- 7/4 * pracma::zeta(3) + 3/16 * pi^2 * log(2) + pi/4 * Catalan;
+integrate(\(x) 6 * atan(x) * log(1-x) / x, 0, 1)$value +
+	integrate(\(x) - log(x) * log(1-x) / (x^2+1), 0, 1, rel.tol=1E-12)$value +
+	((digamma(1/4) + Euler) * pracma::psi(1, 1/4) - pracma::psi(2, 1/4)/2) / 16 +
+	- 7/4 * pracma::zeta(3) + 5/32 * pi^3 + 3/16 * pi^2 * log(2) +
+	+ Catalan * pi/4 + Catalan * log(2);
+
 # TODO
 
 
@@ -620,6 +645,9 @@ integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x*y) / (1 - x*y), 0, 1)$value)
 integrate(\(x) - atan(x) * log(1-x) / x, 0, 1)$value +
 	integrate(\(x) - log(1-x) * log(x) / (x^2+1), 0, 1)$value;
 integrate(\(x) - atan(x) * log(x) / (1-x), 0, 1, rel.tol=1E-12); # alternative
+#
+integrate(\(x) -2 * log(1-x) * log(x) / (x^2+1), 0, 1)$value +
+	+ pi^3 * 3/64 - Catalan * log(2)/2;
 # TODO
 
 
@@ -632,7 +660,22 @@ pi^3 / 48
 ### I( atan(x/y) / (1 - x*y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x/y) / (1-x*y), 0, 1)$value), 0, 1)
 pi^3 / 24;
+pi^3 / 48
 
+### I( atan(x/y) / (x+y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x/y) / (x+y), 0, 1)$value), 0, 1)
+pi*log(2)/2
+
+### I( atan(x/y) / (2 - (x+y)) )
+integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x/y) / (2-x-y), 0, 1)$value), 0, 1)
+pi*log(2)/2
+
+### I( atan(x/y) / (x+y+1) )
+integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x/y) / (x+y+1), 0, 1)$value), 0, 1)
+(log(3) * 3/4 - log(2)) * pi
+
+
+### ATAN(x+y)
 
 ### I( atan(x+y) / (x + y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x+y) / (x + y), 0, 1)$value), 0, 1)
