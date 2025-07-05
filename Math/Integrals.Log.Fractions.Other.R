@@ -789,6 +789,36 @@ integrate(\(x) 1 / ((b^2 - x^2) * sqrt(1 - x^2)), 0, 1)
 pi / sqrt(b^2 - 1) / (2*b)
 
 
+### I( log(1+x) / sqrt(1-x^2) )
+integrate(\(x) log(1+x) / sqrt(1-x^2), 0, 1)
+- pi*log(2)/2 + 2*Catalan
+
+# Derivation:
+integrate(\(x) log(1+x) / sqrt(1-x^2), 0, 1)
+# x = cos(z)
+integrate(\(x) log(1+cos(x)), 0, pi/2)
+integrate(\(x) 2*log(2) + 4*log(cos(x)), 0, pi/4)
+
+
+### Other Intervals:
+
+### on [0, 1/2]
+integrate(\(x) log(1+x) / sqrt(1-x^2), 0, 1/2)
+id = seq(6); idn = id / 12; sn = (-1)^id * sin(2*id*pi/6);
+sum(sn * (pracma::psi(1, idn) + (-1)^6 * pracma::psi(1, 1/2 + idn))) / 72 +
+	- 1/6 * pi * log(2) + 2*Catalan;
+
+# Derivation:
+integrate(\(x) 2*log(2) + 4*log(cos(x)), pi/6, pi/4)
+integrate(\(x) -4*log(cos(x)), 0, pi/6)$value +
+pi*log(2) / 6 + 4*(- pi * log(2) / 4 + Catalan / 2);
+#
+n = 6; p = 1; id = seq(n); idn = id / (2*n);
+sn = (-1)^id * sin(2*p*id*pi/n);
+sum(sn * (pracma::psi(1, idn) + (-1)^n * pracma::psi(1, 1/2 + idn))) / (2*n^2) +
+	+ 4*p/n * pi * log(2) + pi*log(2) / 6 + 4*(- pi * log(2) / 4 + Catalan / 2);
+
+
 ##################
 
 ### I( log(1 + (x/(1-x))^phi) / x )
