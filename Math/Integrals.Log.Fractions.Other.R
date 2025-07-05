@@ -755,6 +755,23 @@ integrate(\(x) Im(log(x+1) / (x + 1/2+1i*sqrt(3)/2)), 0, 1)
 - (pracma::psi(1, 1/3) - pracma::psi(1, 2/3)) * sqrt(3) / 72;
 
 
+### Other Approaches:
+
+### for I( x * log(1+x) / (x^2+x+1) )
+integrate(\(x) x * log(1+x) / (x^2+x+1), 0, 1)
+integrate(\(x) cos(x)*sin(x) * log(2*cos(x/2)^2) / (cos(x)^2 + 2*cos(x/2)^2), 0, pi/2);
+integrate(\(x) 2*(2*x-1) * log(x) / (4*x^2 - 2*x + 1), 1/2, 1)$value +
+	- (pi/6 / sqrt(3) - log(3)/2)*log(2);
+# TODO
+
+###
+integrate(\(x) (2*x^3 - x) / (4*x^4 - 2*x^2 + 1), sqrt(2)/2, 1)
+- pi/24 / sqrt(3) + log(3)/8;
+
+###
+integrate(\(x) x / (4*x^4 - 2*x^2 + 1), sqrt(2)/2, 1)
+pi/12 / sqrt(3);
+
 ###########
 ### Pow = 4
 
