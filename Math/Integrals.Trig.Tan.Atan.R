@@ -132,7 +132,25 @@ pi * log(2)/8
 ### I( atan(x+1) / x )
 integrate(\(x) atan(x+1) / x - pi/4/x, 0, 1)
 integrate(\(x) -1/2 * log(x) / (x^2 + 1), 1/2, 1)$value +
-	+ (atan(1/2)*log(2) + Catalan) / 2 - pi*log(2)/8;
+	- pi*log(2)/8 + (Catalan + atan(1/2)*log(2)) / 2;
+integrate(\(x) 1/2 * log(x) / (x^2 + 1), 0, 1/2)$value +
+	- pi*log(2)/8 + Catalan + atan(1/2)*log(2) / 2;
+# TODO
+
+# Note:
+integrate(\(x) atan(x+1) / x - pi/4/x, 0, 1)
+(- pi*log(2)/8 + Catalan) - 0.48722235829452235711 / 2;
+# where:
+# sum( (-1)^n / 2^(2*n+1) / (2*n+1)^2 ) # ==
+# 0.48722235829452235711;
+
+
+### I( atan(x/(1-x)) / x )
+integrate(\(x) atan(x/(1-x)) / x, 0, 1)
+pi*log(2)/4 + Catalan;
+
+### I( atan(x*(1-x)) / x )
+integrate(\(x) atan(x*(1-x)) / x, 0, 1)
 # TODO
 
 
@@ -388,7 +406,7 @@ integrate(\(x) log(x) * atan(x^p) / x, 0, 1)
 
 ### I( log(x^2 + 1) * atan(x) )
 integrate(\(x) log(x^2+1) * atan(x), 0, 1)
-3/48*pi^2 + pi*log(2)/4 - log(2)^2 / 4 + log(2) - pi/2
+3/48*pi^2 + pi*log(2)/4 - log(2)^2 / 4 + log(2) - pi/2;
 
 ### I( log(x^2 + 1) * atan(x) / (x^2+1) )
 integrate(\(x) log(x^2+1) * atan(x) / (x^2+1), 0, 1)
