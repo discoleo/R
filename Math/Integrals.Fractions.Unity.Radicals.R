@@ -205,9 +205,11 @@ log(sqrt(2)*cos(x) - 1) / sqrt(2) - log(pi/4-x) / sqrt(2);
 integrate(\(x) 1 / (2*sin(x)*cos(x) + 2*cos(x)^2 - 1) / cos(x)^2, 0, pi/4)
 
 
-###############
+#################
+#################
 
-### [0, 1]
+##############
+### [0, 1] ###
 
 ### Note:
 # - the fraction decomposition of x^p / (x^n - 1)
@@ -615,11 +617,23 @@ gamma(-1/4)*gamma(1/2 + 1/4) / gamma(1/2) / 4 + 1;
 ### I( x^2 / sqrt(x^4+1) )
 integrate(\(x) x^2 / sqrt(x^4+1), 0, 1)
 gamma(-1/4)*gamma(1/2 + 1/4) / gamma(1/2) / 8 + sqrt(2)/2;
+# beta(3/4, 1/2 - 3/4) / 8 + sqrt(2)/2;
 
 ### I( x^2 * sqrt(x^4+1) )
 integrate(\(x) x^2 * sqrt(x^4+1), 0, 1)
 integrate(\(x) 2/5 * x^2 / sqrt(x^4+1), 0, 1)$value + sqrt(2)/5;
 gamma(-1/4)*gamma(1/2 + 1/4) / gamma(1/2) / 20 + 2*sqrt(2)/5;
+
+### Regular:
+
+### I( 1 / sqrt(x^4+1) )
+# Type: 1 / (x^(2*n) + 1)^(1/n);
+integrate(\(x) 1 / sqrt(x^4+1), 0, 1)
+beta(1/4, 1/4) / 8;
+
+### I( sqrt(x^4+1) )
+integrate(\(x) sqrt(x^4+1), 0, 1)
+(beta(1/4, 1/4) / 8 + 1/sqrt(2)) * 2/3;
 
 
 #######################
