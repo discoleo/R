@@ -321,6 +321,11 @@ integrate(\(x) atan(x) * log(1+x), 0, 1)
 -1/96*pi^2 + 3/8*pi*log(2) - log(2)^2 / 8 + log(2)/2 - pi/4;
 
 
+### I( x * atan(x) * log(1-x) )
+integrate(\(x) x * atan(x) * log(1-x), 0, 1)
+pi*log(2)/8 - Catalan - pi/4 + log(2)/4 + 3/4;
+
+
 ### I( atan(x) * atan(1-x) )
 integrate(\(x) atan(x) * atan(1-x), 0, 1)
 integrate(\(x) (1-2*x) * atan(1-x) / (x^2+1), 0, 1)
@@ -339,6 +344,11 @@ integrate(\(x) atan(x) * log(1-x) / x, 0, 1)
 integrate(\(x) 1/2 * log(x) * log(x^2+1) / (x^2+1), 0, 1)$value +
 	+ Catalan * log(2) - pi^3 * 3/64;
 # TODO
+
+
+### I( atan(x) * log(1-x) / x^2 )
+integrate(\(x) atan(x) * log(1-x) / x^2, 0, 1)
+- pi^2 * 11/96 - pi * log(2) / 8 - log(2)^2 / 8;
 
 
 #
