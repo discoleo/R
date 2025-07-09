@@ -299,7 +299,7 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 
 ### I( log(x+y+1) / (x^2 + y^2) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
-	log(x+y+1) / (x^2 + y^2), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+	log(x+y+1) / (x^2 + y^2), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 # TODO
 
 
@@ -739,6 +739,7 @@ integrate(\(x) sapply(x, \(y)
 
 ### I( exp(x*y) / (x+y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) exp(x*y) / (x+y), 0, 1)$value), 0, 1)
+# TODO
 
 
 ### Div: Exp
@@ -751,6 +752,11 @@ integrate(\(x) sapply(x, \(y) integrate(\(x) (x+y) / (exp(x+y) - 1), 0, Inf)$val
 k = sqrt(3);
 integrate(\(x) sapply(x, \(y) integrate(\(x) (x+y) / (exp(k*(x+y)) - 1), 0, Inf)$value), 0, Inf)
 2 * pracma::zeta(3) / k^3;
+
+### Gen: I( x^p / (exp(x+y) - 1) )
+p = sqrt(2);
+integrate(\(x) sapply(x, \(y) integrate(\(x) x^p / (exp(x+y) - 1), 0, Inf)$value), 0, Inf)
+gamma(p+1) * pracma::zeta(p+2);
 
 
 ### I( (x+y) / (exp(x+y) + 1) )
@@ -840,6 +846,18 @@ integrate(\(x) sapply(x, \(y) integrate(\(x) log(exp(x*y) - 1), 0, 1)$value), 0,
 ####################
 
 ### Mixed: Log & Exp
+
+### I( log(x+y) / (exp(x+y) - 1) )
+integrate(\(x) sapply(x, \(y) integrate(\(x) log(x) / (exp(x+y) - 1), 0, Inf, rel.tol=1E-8)$value), 0, Inf, rel.tol=1E-6)
+# gamma(1) * digamma(1) * zeta(2) + gamma(1) * dzeta(2);
+- Euler * pi^2 / 6 + dzeta2;
+
+
+### I( log(x+y) / (exp(x+y) - 1) )
+integrate(\(x) sapply(x, \(y) integrate(\(x) log(x+y) / (exp(x+y) - 1), 0, Inf, rel.tol=1E-8)$value), 0, Inf, rel.tol=1E-6)
+
+
+### EXP(x*y)
 
 ### I( log(x+y) / (exp(x*y) + 1) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) log(x+y) / (exp(x*y) + 1), 0, 1)$value), 0, 1)
