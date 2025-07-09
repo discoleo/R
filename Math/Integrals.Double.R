@@ -651,6 +651,12 @@ integrate(\(x) -2 * log(1-x) * log(x) / (x^2+1), 0, 1)$value +
 # TODO
 
 
+### I( atan(x*y) * log(x) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(x*y) * log(x), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+pi^2 / 48 - pi/4 + log(2)/2 + 3/32 * pracma::zeta(3);
+
+
 ### Div
 
 ### I( atan(x/y) / (1 + x*y) )
