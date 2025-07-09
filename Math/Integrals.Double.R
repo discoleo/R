@@ -676,8 +676,14 @@ integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x/y) / (x+y+1), 0, 1)$value), 
 
 ### ATAN(x+y)
 
+### I( atan(x+y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x+y), 0, 1)$value), 0, 1)
+3/2*atan(2) - log(5) + log(2)
+
 ### I( atan(x+y) / (x + y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x+y) / (x + y), 0, 1)$value), 0, 1)
+integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x) / x, y, y+1)$value), 0, 1)
+# TODO
 
 ### I( atan(x+y) / (1 - x*y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x+y) / (1-x*y), 0, 1)$value), 0, 1)
@@ -727,6 +733,28 @@ integrate(\(x) sapply(x, \(y)
 
 ### I( exp(x*y) / (x+y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) exp(x*y) / (x+y), 0, 1)$value), 0, 1)
+
+
+### Div: Exp
+
+### I( (x+y) / (exp(x+y) - 1) )
+integrate(\(x) sapply(x, \(y) integrate(\(x) (x+y) / (exp(x+y) - 1), 0, Inf)$value), 0, Inf)
+2 * pracma::zeta(3);
+
+### Gen: I( (x+y) / (exp(k*(x+y)) - 1) )
+k = sqrt(3);
+integrate(\(x) sapply(x, \(y) integrate(\(x) (x+y) / (exp(k*(x+y)) - 1), 0, Inf)$value), 0, Inf)
+2 * pracma::zeta(3) / k^3;
+
+
+### I( (x+y) / (exp(x+y) + 1) )
+integrate(\(x) sapply(x, \(y) integrate(\(x) (x+y) / (exp(x+y) + 1), 0, Inf)$value), 0, Inf)
+3/2 * pracma::zeta(3)
+
+### Gen: I( (x+y) / (exp(k*(x+y)) + 1) )
+k = sqrt(3);
+integrate(\(x) sapply(x, \(y) integrate(\(x) (x+y) / (exp(k*(x+y)) + 1), 0, Inf)$value), 0, Inf)
+3/2 * pracma::zeta(3) / k^3;
 
 
 ### Other
