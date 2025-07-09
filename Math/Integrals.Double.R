@@ -770,6 +770,12 @@ px = sqrt(2); py = sqrt(3);
 integrate(\(x) sapply(x, \(y) integrate(\(x) x^px * y^py / (exp(x+y) - 1), 0, Inf)$value), 0, Inf)
 gamma(px+1) * gamma(py+1) * pracma::zeta(px+py+2);
 
+### Gen: I( x^p * y^q / (exp(k1*x + k2*y) - 1) )
+px = sqrt(2); py = sqrt(3);
+k1 = 1 / sqrt(3); k2 = sqrt(5) - sqrt(3);
+integrate(\(x) sapply(x, \(y) integrate(\(x) x^px * y^py / (exp(k1*x+k2*y) - 1), 0, Inf)$value), 0, Inf)
+gamma(px+1) * gamma(py+1) * pracma::zeta(px+py+2) / k1^(px+1) / k2^(py+1);
+
 
 ### I( (x+y) / (exp(x+y) + 1) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) (x+y) / (exp(x+y) + 1), 0, Inf)$value), 0, Inf)
@@ -779,6 +785,12 @@ integrate(\(x) sapply(x, \(y) integrate(\(x) (x+y) / (exp(x+y) + 1), 0, Inf)$val
 k = sqrt(3);
 integrate(\(x) sapply(x, \(y) integrate(\(x) (x+y) / (exp(k*(x+y)) + 1), 0, Inf)$value), 0, Inf)
 3/2 * pracma::zeta(3) / k^3;
+
+### Gen: I( x^p * y^q / (exp(k1*x + k2*y) + 1) )
+px = sqrt(2); py = sqrt(3);
+k1 = 1 / sqrt(3); k2 = sqrt(5) - sqrt(3);
+integrate(\(x) sapply(x, \(y) integrate(\(x) x^px * y^py / (exp(k1*x+k2*y) + 1), 0, Inf)$value), 0, Inf)
+gamma(px+1) * gamma(py+1) * pracma::zeta(px+py+2) / k1^(px+1) / k2^(py+1) * (1 - 1/2^(px+py+1));
 
 
 ### Other
