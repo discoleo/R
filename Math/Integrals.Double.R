@@ -11,6 +11,7 @@
 
 ### Examples:
 # I( (x+y)*log(x+y) / (1+x*y) )
+# I( x^p * y^q / (exp(x+y) - 1) )
 
 
 ####################
@@ -18,6 +19,7 @@
 ### Helper Constants
 Euler   = 0.577215664901532860606512090;
 Catalan = 0.915965594177219015054603514;
+dzeta2  = - 0.937548254316;
 
 #####################
 #####################
@@ -748,6 +750,11 @@ integrate(\(x) sapply(x, \(y) integrate(\(x) exp(x*y) / (x+y), 0, 1)$value), 0, 
 integrate(\(x) sapply(x, \(y) integrate(\(x) (x+y) / (exp(x+y) - 1), 0, Inf)$value), 0, Inf)
 2 * pracma::zeta(3);
 
+### I( x*y / (exp(x+y) - 1) )
+integrate(\(x) sapply(x, \(y) integrate(\(x) x*y / (exp(x+y) - 1), 0, Inf)$value), 0, Inf)
+pracma::zeta(4); pi^4/90;
+
+
 ### Gen: I( (x+y) / (exp(k*(x+y)) - 1) )
 k = sqrt(3);
 integrate(\(x) sapply(x, \(y) integrate(\(x) (x+y) / (exp(k*(x+y)) - 1), 0, Inf)$value), 0, Inf)
@@ -757,6 +764,11 @@ integrate(\(x) sapply(x, \(y) integrate(\(x) (x+y) / (exp(k*(x+y)) - 1), 0, Inf)
 p = sqrt(2);
 integrate(\(x) sapply(x, \(y) integrate(\(x) x^p / (exp(x+y) - 1), 0, Inf)$value), 0, Inf)
 gamma(p+1) * pracma::zeta(p+2);
+
+### Gen: I( x^p * y^q / (exp(x+y) - 1) )
+px = sqrt(2); py = sqrt(3);
+integrate(\(x) sapply(x, \(y) integrate(\(x) x^px * y^py / (exp(x+y) - 1), 0, Inf)$value), 0, Inf)
+gamma(px+1) * gamma(py+1) * pracma::zeta(px+py+2);
 
 
 ### I( (x+y) / (exp(x+y) + 1) )
@@ -847,7 +859,7 @@ integrate(\(x) sapply(x, \(y) integrate(\(x) log(exp(x*y) - 1), 0, 1)$value), 0,
 
 ### Mixed: Log & Exp
 
-### I( log(x+y) / (exp(x+y) - 1) )
+### I( log(x) / (exp(x+y) - 1) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) log(x) / (exp(x+y) - 1), 0, Inf, rel.tol=1E-8)$value), 0, Inf, rel.tol=1E-6)
 # gamma(1) * digamma(1) * zeta(2) + gamma(1) * dzeta(2);
 - Euler * pi^2 / 6 + dzeta2;
