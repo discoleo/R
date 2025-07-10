@@ -473,9 +473,32 @@ pracma::psi(1,1)*pracma::psi(2,1)*2 - pracma::psi(4,1)/3
 
 ### Other
 
+### I( log(1+x)^2 * log(1-x) / x )
+integrate(\(x) log(1+x)^2 * log(1-x) / x, 0, 1)
+- pi^4 / 240;
+
+### I( log(1+x) * log(1-x)^2 / x )
+integrate(\(x) log(1+x) * log(1-x)^2 / x, 0, 1)
+# TODO
+
 ###
 integrate(\(x) log(1+x)*log(1-x)*log(1-x^2) / x, 0, 1)
 integrate(\(x) -1/3 * log(1+x)^3 / x, 0, 1)$value + pracma::zeta(4)
+# TODO
+
+
+### I( log(1 - x^2)^3 / x )
+integrate(\(x) log(1-x^2)^3 / x, 0, 1)
+integrate(\(x) 1/2 * log(1-x)^3 / x, 0, 1)
+- pi^4 / 30;
+
+### I( log(1-x)^3 / x )
+integrate(\(x) log(1-x)^3 / x, 0, 1, rel.tol=2E-14)
+- pi^4 / 15;
+
+### I( log(1+x)^3 / x )
+integrate(\(x) log(1+x)^3 / x, 0, 1, rel.tol=2E-14)
+# TODO
 
 
 #################
@@ -789,7 +812,7 @@ pi/sin(pi*(p-1)/n) * (pi / tan(pi*(p-1)/n) + n/(p-1)) / ((p-1)*n)
 # Maths 505: A savage logarithmic integral!
 # https://www.youtube.com/watch?v=gTBARM502JY
 
-integrate(function(x) log(x) * log(x^2 + 1) / x^2, lower=0, upper=1)
+integrate(\(x) log(x) * log(x^2 + 1) / x^2, lower=0, upper=1)
 pi/2 - log(2) - 2*Catalan;
 
 #
