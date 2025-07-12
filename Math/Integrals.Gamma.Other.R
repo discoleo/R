@@ -212,6 +212,16 @@ integrate(\(x) sin(pi*x)^2 * log(gamma(x)), 0, 1)
 (log(2*pi) - 1/2)/4
 
 
+### I( sin(pi*x) * log(gamma(x)) )
+integrate(\(x) sin(pi*x) * log(gamma(x)), 0, 1)
+log(pi/2) / pi + 1/pi;
+
+
+### I( cos(pi*x) * log(gamma(x)) )
+integrate(\(x) cos(pi*x) * log(gamma(x)), 0, 1)
+# TODO
+
+
 ### I( log(gamma(x)) * tan(pi/2*x) )
 # Note: Reflection does NOT work;
 integrate(\(x) log(gamma(x)) * tan(pi/2*x), 0, 1)
@@ -266,7 +276,7 @@ integrate(\(x) gamma(x) - 1/x, 0, 1)
 integrate(\(x) gamma(x) / x - 1/x^2 + Euler/x, 0, 1)
 integrate(\(x) gamma(x) * x, 0, 1)
 integrate(\(x) gamma(x) * sin(x), 0, 1)
-integrate(\(x) gamma(x) * sin(pi*x), 0, 1)
+integrate(\(x) gamma(x) * sin(pi*x), 0, 1) # OK
 integrate(\(x) gamma(x) * (exp(x) - 1), 0, 1)
 integrate(\(x) gamma(x) * log(x + 1), 0, 1)
 integrate(\(x) gamma(x) * log(x*exp(x) + 1), 0, 1)
