@@ -222,6 +222,15 @@ integrate(\(x) cos(pi*x) * log(gamma(x)), 0, 1)
 # TODO
 
 
+### I( sin(2*pi*x) * log(gamma(x)) )
+integrate(\(x) sin(2*pi*x) * log(gamma(x)), 0, 1)
+(log(2*pi) + Euler) / (2*pi);
+
+### I( cos(2*pi*x) * log(gamma(x)) )
+integrate(\(x) cos(2*pi*x) * log(gamma(x)), 0, 1)
+1/4;
+
+
 ### I( log(gamma(x)) * tan(pi/2*x) )
 # Note: Reflection does NOT work;
 integrate(\(x) log(gamma(x)) * tan(pi/2*x), 0, 1)
