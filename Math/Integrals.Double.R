@@ -691,6 +691,11 @@ integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x+y), 0, 1)$value), 0, 1)
 ### I( atan(x+y) / (x + y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x+y) / (x + y), 0, 1)$value), 0, 1)
 integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x) / x, y, y+1)$value), 0, 1)
+#
+integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x) / x, y, 1)$value), 0, 1)$value +
+integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x) / x, 1, y+1)$value), 0, 1)$value;
+integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x) / x, 1, y+1)$value), 0, 1)$value +
+	+ pi/4 - log(2)/2;
 # TODO
 
 ### I( atan(x+y) / (1 - x*y) )
@@ -878,7 +883,9 @@ integrate(\(x) sapply(x, \(y) integrate(\(x) log(x) / (exp(x+y) - 1), 0, Inf, re
 
 
 ### I( log(x+y) / (exp(x+y) - 1) )
-integrate(\(x) sapply(x, \(y) integrate(\(x) log(x+y) / (exp(x+y) - 1), 0, Inf, rel.tol=1E-8)$value), 0, Inf, rel.tol=1E-6)
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	log(x+y) / (exp(x+y) - 1), 0, Inf, rel.tol=1E-12)$value), 0, Inf, rel.tol=1E-11)
+pi^2/6 - Euler*pi^2/6 + dzeta2;
 
 
 ### EXP(x*y)
