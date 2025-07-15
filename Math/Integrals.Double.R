@@ -888,6 +888,12 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 pi^2/6 - Euler*pi^2/6 + dzeta2;
 
 
+### I( log(x+y) / (exp(x+y) + 1) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	log(x+y) / (exp(x+y) + 1), 0, Inf, rel.tol=1E-12)$value), 0, Inf, rel.tol=1E-11)
+(pi^2/6 * (log(2) - Euler + 1) + dzeta2) / 2;
+
+
 ### EXP(x*y)
 
 ### I( log(x+y) / (exp(x*y) + 1) )
