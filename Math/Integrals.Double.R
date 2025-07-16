@@ -696,6 +696,13 @@ integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x) / x, y, 1)$value), 0, 1)$va
 integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x) / x, 1, y+1)$value), 0, 1)$value;
 integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x) / x, 1, y+1)$value), 0, 1)$value +
 	+ pi/4 - log(2)/2;
+# alternative:
+integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x) / x, y, y+1)$value), 0, 1)
+integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x) / x, 0, y)$value), 0, 2)$value +
+	- (Catalan - pi/4 + log(2)/2) * 2;
+integrate(\(x) atan(x) / x * (2-x), 0, 2)$value - (Catalan - pi/4 + log(2)/2) * 2;
+integrate(\(x) 2 * atan(x) / x, 0, 2)$value +
+	- (Catalan - pi/4 + log(2)/2) * 2 - 2*atan(2) + log(5)/2;
 # TODO
 
 ### I( atan(x+y) / (1 - x*y) )
@@ -895,6 +902,12 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 
 
 ### EXP(x*y)
+
+### I( log(x+y) / (exp(x*y) - 1) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	log(x+y)*(1/(exp(x*y) - 1) - 1/(x*y)), 0, 1)$value), 0, 1)
+# TODO
+
 
 ### I( log(x+y) / (exp(x*y) + 1) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) log(x+y) / (exp(x*y) + 1), 0, 1)$value), 0, 1)
