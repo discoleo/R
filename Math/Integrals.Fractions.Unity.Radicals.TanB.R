@@ -7,7 +7,7 @@
 ## Polynomial Radicals
 ## Based on Tan^(1/n)
 ##
-## draft v.0.1a
+## draft v.0.1c
 
 
 ### Radicals: Tan-Based
@@ -33,10 +33,13 @@ Catalan = 0.915965594177219015054603514;
 
 ### Examples:
 
-### I( x / (1-x^5)^(2/5) )
+# Note: on arbitrary Intervals;
+
+### I( x / (1 - x^5)^(2/5) )
 lim = acos(1/2^(5/2)); # gives [0, 1/2]
 integrate(\(x) x * (1-x^5)^(-2/5), 0, cos(lim)^(2/5))
 integrate(\(x) 2/5 * (1-x^2)^(-2/5) / x^(1/5), 0, cos(lim))
+# x => cos(x)
 integrate(\(x) 2/5 * tan(x)^(1/5), lim, pi/2)
 integrate(\(x) 2 * x^5 / (x^10 + 1), tan(lim)^(1/5), Inf)
 integrate(\(x) x^2 / (x^5 + 1), tan(lim)^(2/5), Inf)
@@ -45,8 +48,23 @@ integrate(\(x) x^2 / (x^5 + 1), tan(lim)^(2/5), Inf)
 # on [0, 1/2]
 integrate(\(x) x * (1-x^5)^(-2/5), 0, 1/2)
 integrate(\(x) 2/5 * tan(x)^(1/5), acos(1/2^(5/2)), pi/2)
+integrate(\(x) x^2 / (x^5 + 1), tan(acos(1/2^(5/2)))^(2/5), Inf)
 
 
+### I( x^2 / (1 - x^10)^(3/10) )
+lim = acos(1/2^5); # gives [0, 1/2]
+integrate(\(x) x^2 * (1-x^10)^(-3/10), 0, cos(lim)^(1/5))
+integrate(\(x) 1/5 * (1-x^2)^(-3/10) / x^(2/5), 0, cos(lim))
+integrate(\(x) 1/5 * tan(x)^(2/5), lim, pi/2)
+integrate(\(x) x^6 / (x^10 + 1), tan(lim)^(1/5), Inf)
+# Exact formula available;
+
+# on [0, 1/2]
+integrate(\(x) x^2 * (1-x^10)^(-3/10), 0, 1/2)
+integrate(\(x) x^6 / (x^10 + 1), tan(acos(1/2^5))^(1/5), Inf)
+
+
+#############
 ### Diff-Type
 
 ### I( (1 + x^5)^(3/5) / (1-x^10)^(4/5) / x )
