@@ -17,6 +17,7 @@
 # + Contour on half of Unit Circle;
 # Pole of order k: Res = 1/k!;
 
+### I( exp(2*cos(x)) )
 integrate(\(x) exp(2*cos(x)), 0, pi)
 integrate(\(x) exp(2*cos(x)) / 2, -pi, pi)
 pi * sum(1 / factorial(seq(0, 15))^2)
@@ -40,7 +41,42 @@ sum((-1)^seq(0, 15) / factorial(seq(0, 15))^2);
 besselJ(2,0)
 
 
+### Bessel Function
+
+### Properties:
+besselY(1, 2) - 2*besselY(1, 1) + besselY(1, 0) # == 0
+besselY(1, 3) - 4*besselY(1, 2) + besselY(1, 1) # == 0
+besselY(1, 4) - 6*besselY(1, 3) + besselY(1, 2) # == 0
+#
+n = 3/7;
+besselY(1, n+1) - 2*n*besselY(1, n) + besselY(1, n-1) # == 0
+
 ###
+besselY(2, 2) -   besselY(2, 1) + besselY(2, 0) # == 0;
+besselY(2, 3) - 2*besselY(2, 2) + besselY(2, 1) # == 0;
+besselY(2, 4) - 3*besselY(2, 3) + besselY(2, 2) # == 0;
+#
+n = 3/7
+besselY(2, n+1) - n*besselY(2, n) + besselY(2, n-1) # == 0;
+
+###
+besselY(3, 2) - 2/3 * besselY(3, 1) + besselY(3, 0) # == 0
+besselY(3, 3) - 4/3 * besselY(3, 2) + besselY(3, 1) # == 0
+n = 5/7;
+besselY(3, n+1) - 2*n/3 * besselY(3, n) + besselY(3, n-1) # == 0
+
+### Gen:
+n = 5/7; x = 4/3;
+besselY(x, n+1) - 2*n/x * besselY(x, n) + besselY(x, n-1) # == 0
+
+
+# using Rmpfr:
+# prec = 190; x2 = mpfr(2, prec);
+# jn(2, 2) - jn(1, 2) + jn(0, 2)
+# jn(3, x2) - jn(2, x2) + jn(0, x2)
+
+
+### I( exp(2*exp(x*1i)) )
 integrate(\(x) Re(exp(2*exp(x*1i))), 0, pi)
 pi
 
@@ -66,7 +102,7 @@ pi * cos(1/2)
 
 ############
 
-###
+### I( Trig( x + sin(2*x) ) * exp(cos(2*x)) / Trig(x) )
 # Maths 505: This wacky integral has a beautiful result
 # https://www.youtube.com/watch?v=a2ZPqB2Syfo
 # Note: series expansion + Dirichlet kernel;
