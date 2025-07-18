@@ -83,6 +83,21 @@ cos(1) / sqrt(pi/2);
 besselJ(1, 1/2)
 sin(1) / sqrt(pi/2);
 
+###
+besselJ(2, -1/2)
+cos(2) / sqrt(pi);
+#
+besselJ(2, 1/2)
+sin(2) / sqrt(pi);
+
+### Gen: BesselJ(n, +/- 1/2)
+n = sqrt(pi);
+besselJ(n, -1/2)
+cos(n) / sqrt(n*pi/2);
+#
+besselJ(n, 1/2)
+sin(n) / sqrt(n*pi/2);
+
 
 #########################
 
