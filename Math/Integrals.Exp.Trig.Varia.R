@@ -76,6 +76,13 @@ besselY(x, n+1) - 2*n/x * besselY(x, n) + besselY(x, n-1) # == 0
 # jn(3, x2) - jn(2, x2) + jn(0, x2)
 
 
+### Values
+besselJ(1, -1/2)
+cos(1) / sqrt(pi/2);
+
+
+#########################
+
 ### I( exp(2*exp(x*1i)) )
 integrate(\(x) Re(exp(2*exp(x*1i))), 0, pi)
 pi
