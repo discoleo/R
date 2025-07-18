@@ -90,13 +90,22 @@ cos(2) / sqrt(pi);
 besselJ(2, 1/2)
 sin(2) / sqrt(pi);
 
-### Gen: BesselJ(n, +/- 1/2)
-n = sqrt(pi);
-besselJ(n, -1/2)
-cos(n) / sqrt(n*pi/2);
+### Gen: BesselJ(x, +/- 1/2)
+x = sqrt(pi);
+besselJ(x, -1/2)
+cos(x) / sqrt(x*pi/2);
 #
-besselJ(n, 1/2)
-sin(n) / sqrt(n*pi/2);
+besselJ(x, 1/2)
+sin(x) / sqrt(x*pi/2);
+
+
+### Extension:
+x = sqrt(5);
+besselJ(x, 3/2)
+(sin(x) - x*cos(x)) / sqrt(x^3*pi/2);
+#
+besselJ(x, -3/2)
+- (x*sin(x) + cos(x)) / sqrt(x^3*pi/2);
 
 
 #########################
