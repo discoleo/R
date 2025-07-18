@@ -79,6 +79,9 @@ besselY(x, n+1) - 2*n/x * besselY(x, n) + besselY(x, n-1) # == 0
 ### Values
 besselJ(1, -1/2)
 cos(1) / sqrt(pi/2);
+#
+besselJ(1, 1/2)
+sin(1) / sqrt(pi/2);
 
 
 #########################
