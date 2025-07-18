@@ -68,6 +68,7 @@ besselY(3, n+1) - 2*n/3 * besselY(3, n) + besselY(3, n-1) # == 0
 ### Gen:
 n = 5/7; x = 4/3;
 besselY(x, n+1) - 2*n/x * besselY(x, n) + besselY(x, n-1) # == 0
+besselJ(x, n+1) - 2*n/x * besselJ(x, n) + besselJ(x, n-1) # == 0
 
 
 # using Rmpfr:
@@ -77,6 +78,8 @@ besselY(x, n+1) - 2*n/x * besselY(x, n) + besselY(x, n-1) # == 0
 
 
 ### Values
+
+### BesselJ:
 besselJ(1, -1/2)
 cos(1) / sqrt(pi/2);
 #
@@ -106,6 +109,24 @@ besselJ(x, 3/2)
 #
 besselJ(x, -3/2)
 - (x*sin(x) + cos(x)) / sqrt(x^3*pi/2);
+
+
+### BesselY:
+x = sqrt(5)
+besselY(x, 1/2)
+- besselJ(x, -1/2)
+#
+besselY(x, -1/2)
+besselJ(x, 1/2)
+
+
+### Extension: BesselY
+x = sqrt(5);
+besselY(x, 3/2)
+- (x*sin(x) + cos(x)) / sqrt(x^3*pi/2);
+#
+besselY(x, -3/2)
+- (sin(x) - x*cos(x)) / sqrt(x^3*pi/2);
 
 
 #########################
