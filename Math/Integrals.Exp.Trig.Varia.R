@@ -157,18 +157,38 @@ pi * cos(1/2)
 
 ############
 
+### I( cos(x + sin(x)) * exp(cos(x)) / (x^2 + 1) )
+# Hmath: Интегральный этюд с комплексным сюжетом
+# [in Russian]
+# => Re(exp(exp(1i*x)) * exp(1i*x))
+# => sum( cos((n+1)*x) / (x^2+1) / n! );
+
+integrate(\(x) cos(x + sin(x)) * exp(cos(x)) / (x^2 + 1), 0, Inf,
+	subdivisions = 8000, rel.tol=1E-6)
+exp(exp(-1) - 1) * pi/2;
+
+# Derivation:
+sapply(0:30, \(n) integrate(\(x, n) cos((n+1)*x) / (x^2 + 1) / gamma(n+1),
+	0, Inf, n=n, subdivisions = 8000, rel.tol=1E-5)$value) |> sum();
+
+# Var: sin
+sapply(0:30, \(n) integrate(\(x, n) sin((n+1)*x) / (x^2 + 1) / gamma(n+1),
+	0, Inf, n=n, subdivisions = 8000, rel.tol=1E-5)$value) |> sum();
+# TODO
+
+
 ### I( Trig( x + sin(2*x) ) * exp(cos(2*x)) / Trig(x) )
 # Maths 505: This wacky integral has a beautiful result
 # https://www.youtube.com/watch?v=a2ZPqB2Syfo
 # Note: series expansion + Dirichlet kernel;
 
-###
+### sin(...)
 integrate(\(x) sin(x + sin(2*x)) * exp(cos(2*x)) / sin(x), 0, pi/2)
 integrate(\(x) Im(exp(1i*x + exp(2i*x))) / sin(x), 0, pi/2)
 pi/2 * exp(1)
 
 
-###
+### cos(...)
 integrate(\(x) cos(x + sin(2*x)) * exp(cos(2*x)) / cos(x), 0, pi/2)
 pi/2 * exp(-1)
 
