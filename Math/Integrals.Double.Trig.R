@@ -209,6 +209,23 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 pi^2 / 4;
 
 
+### I( cos(x) / sqrt(1 - sin(x)^2*sin(y)^2) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	cos(x) / sqrt(1 - sin(x)^2*sin(y)^2), 0, pi/2)$value), 0, pi/2)
+2 * Catalan;
+
+
+### I( sin(2*x) / sqrt(1 - sin(x)^2*sin(y)^2) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	sin(2*x) / sqrt(1 - sin(x)^2*sin(y)^2), 0, pi/2)$value), 0, pi/2)
+2;
+
+### I( sin(4*x) / sqrt(1 - sin(x)^2*sin(y)^2) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	sin(4*x) / sqrt(1 - sin(x)^2*sin(y)^2), 0, pi/2)$value), 0, pi/2)
+- 4/9;
+
+
 ##################
 ### Log & Trig ###
 
