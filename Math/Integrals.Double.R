@@ -488,10 +488,22 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 # https://www.youtube.com/watch?v=QqVhd_xfjnc
 # Note: series expansion of log(1 - x*y);
 
+
+### Simple: I( log(x) * log(1 - x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	log(1-x*y) * log(x), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+3 - sum(pracma::zeta(2:3));
+
+### Simple: I( log(1-x) * log(1 - x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	log(1-x*y) * log(1-x), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+3 - 2*pracma::zeta(3);
+
+### I( log(x) * log(y) * log(1 - x*y) )
 integrate(\(x) sapply(x, \(y)
 	integrate(\(x) log(x) * log(y) * log(1 - x*y), 0, 1, rel.tol=1E-12)$value
 	), 0, 1, rel.tol=1E-12)
-pracma::zeta(2) + pracma::zeta(3) + pracma::zeta(4) - 4
+pracma::zeta(2) + pracma::zeta(3) + pracma::zeta(4) - 4;
 
 
 ### I( log(x) * log(y) * log(z) * log(1 - x*y*z) )
