@@ -188,6 +188,27 @@ integrate(\(x) sapply(x, \(y) integrate(
 # TODO
 
 
+################
+### Radicals ###
+
+### I( sin(x) / sqrt(1 - sin(x)^2*sin(y)^2*sin(z)^2) )
+# Hmath: Расправимся с тройным интегралом с помощью рядов
+# [in Russian]
+
+# TODO
+
+
+### I( 1 / sqrt(1 - sin(x)^2*sin(y)^2) )
+integrate(\(x) sapply(x, \(y) integrate(\(x) 1 / sqrt(1 - sin(x)^2*sin(y)^2), 0, pi/2)$value), 0, pi/2)
+gamma(1/4)^4 / gamma(1/2)^2 / 16
+
+
+### I( sin(x) / sqrt(1 - sin(x)^2*sin(y)^2) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	sin(x) / sqrt(1 - sin(x)^2*sin(y)^2), 0, pi/2)$value), 0, pi/2)
+pi^2 / 4;
+
+
 ##################
 ### Log & Trig ###
 
