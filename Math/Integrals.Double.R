@@ -496,8 +496,14 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 
 ### Simple: I( log(1-x) * log(1 - x*y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
-	log(1-x*y) * log(1-x), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+	log(1-x) * log(1-x*y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 3 - 2*pracma::zeta(3);
+
+### Type: Plus: I( log(1+x) * log(1 - x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	log(1+x) * log(1-x*y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+pracma::zeta(3) * 5/8 - pi^2/6 + log(2)^2 - 4*log(2) + 3;
+
 
 ### I( log(x) * log(y) * log(1 - x*y) )
 integrate(\(x) sapply(x, \(y)
