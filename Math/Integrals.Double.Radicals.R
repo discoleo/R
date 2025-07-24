@@ -56,20 +56,28 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 
 
 ### I( 1 / sqrt(1 - x^2*y^2) )
-integrate(\(x) sapply(x, \(y) integrate(\(x)
-	1 / sqrt(1 - x^2*y^2), 0, 1)$value), 0, 1)
+integrate(\(x) sapply(x, \(y) integrate(\(x) 1 / sqrt(1 - x^2*y^2), 0, 1)$value), 0, 1)
 pi*log(2)/2;
+
+
+### I( sqrt( x / (1 - x^2*y^2) ) )
+integrate(\(x) sapply(x, \(y) integrate(\(x) sqrt( x / (1 - x^2*y^2) ), 0, 1)$value), 0, 1)
+pi - gamma(3/4)^2 / gamma(1/2) * 2 * sqrt(2);
 
 
 ### I( x / sqrt((1-x^2) * (1-y^2) * (1 - x^2*y^2)) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x / sqrt((1-x^2) * (1-y^2) * (1 - x^2*y^2)), 0, 1)$value), 0, 1)
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	1/2 / sqrt((1-x) * (1-y^2) * (1 - x*y^2)), 0, 1)$value), 0, 1);
 pi^2 / 4;
 
 
 ### I( x / sqrt( (1-y^2) * (1 - x^2*y^2)) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x / sqrt((1-y^2) * (1 - x^2*y^2)), 0, 1)$value), 0, 1)
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	1/2 / sqrt((1-y^2) * (1 - x*y^2)), 0, 1)$value), 0, 1);
 1;
 
 
