@@ -27,6 +27,12 @@ Catalan = 0.915965594177219015054603514;
 
 ### SQRT:
 
+### I( sqrt( (1-x)*(1-y) / (1 - x*y) ) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	sqrt( (1-x)*(1-y) / (1 - x*y) ), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+6*Catalan - 5;
+
+
 ### I( 1 / sqrt( (1-x^2) * (1-y^2) * (1 - x^2*y^2) ) )
 # - Series started as Trig-Radicals in:
 #   Integrals.Double.Trig.R;
@@ -65,17 +71,23 @@ integrate(\(x) sapply(x, \(y) integrate(\(x) sqrt( x / (1 - x^2*y^2) ), 0, 1)$va
 pi - gamma(3/4)^2 / gamma(1/2) * 2 * sqrt(2);
 
 
+### I( sqrt( x/y / (1 - x^2*y^2) ) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	sqrt( x/y / (1 - x^2*y^2) ), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+gamma(1/4)^2 / gamma(1/2) * sqrt(2) / 4 - gamma(3/4)^2 / gamma(1/2) * sqrt(2);
+(beta(1/4, 1/4) - 2*beta(3/4, 3/4)) * sqrt(2) / 4;
+
+
 ### I( sqrt( (1-x) / (1 - x^2*y^2) ) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	sqrt( (1-x) / (1 - x^2*y^2) ), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 # TODO
 
 
-### I( sqrt( x/y / (1 - x^2*y^2) ) )
+### I( sqrt( (1-x)*(1-y) / (1 - x^2*y^2) ) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
-	sqrt( x/y / (1 - x^2*y^2) ), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
-gamma(1/4)^2 / gamma(1/2) * sqrt(2) / 4 - gamma(3/4)^2 / gamma(1/2) * sqrt(2);
-(beta(1/4, 1/4) - 2*beta(3/4, 3/4)) * sqrt(2) / 4;
+	sqrt( (1-x)*(1-y) / (1 - x^2*y^2) ), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+# TODO
 
 
 ### I( x / sqrt((1-x^2) * (1-y^2) * (1 - x^2*y^2)) )
