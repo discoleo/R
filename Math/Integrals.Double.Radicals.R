@@ -27,11 +27,32 @@ Catalan = 0.915965594177219015054603514;
 
 ### SQRT:
 
+### I( sqrt( (1-x) / (1 - x*y) ) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	sqrt( (1-x) / (1 - x*y) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-12)
+4*log(2) - 2;
+2*(digamma(2) - digamma(3/2));
+
+
+### I( sqrt( x*(1-x) / (1 - x*y) ) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	sqrt( x*(1-x) / (1 - x*y) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-12)
+digamma(7/4) - digamma(5/4);
+
+
+### I( sqrt( (1-x)/x / (1 - x*y) ) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	sqrt( (1-x)/x / (1 - x*y) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-12)
+2*(digamma(7/4-1/2) - digamma(5/4-1/2));
+
+
 ### I( sqrt( (1-x)*(1-y) / (1 - x*y) ) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	sqrt( (1-x)*(1-y) / (1 - x*y) ), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 6*Catalan - 5;
 
+
+### Pow = 2
 
 ### I( 1 / sqrt( (1-x^2) * (1-y^2) * (1 - x^2*y^2) ) )
 # - Series started as Trig-Radicals in:
