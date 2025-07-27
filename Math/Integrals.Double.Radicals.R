@@ -163,6 +163,11 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	sqrt( (1-x)/(1+x) / (1 - x^2*y^2) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 2*Catalan - pi^2/8;
 
+### I( sqrt( (1+x)/(1-x) / (1 - x^2*y^2) ) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	sqrt( (1+x)/(1-x) / (1 - x^2*y^2) ), 0, 1, rel.tol=1E-8)$value), 0, 1, rel.tol=1E-8)
+2*Catalan + pi^2/8;
+
 
 ### Mixed: Pow = 1 & 2
 
