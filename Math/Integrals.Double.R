@@ -587,6 +587,22 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	+ 2*atan(2) - 1/2*log(5) + 1/2*log(2) - atan(1);
 # TODO
 
+# alternative:
+integrate(\(x) sapply(x, \(y) integrate(\(x) atan(1 + x*y) + atan(1-x*y), 0, 1)$value), 0, 1)
+integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x^2*y^2/2), 0, 1)$value), 0, 1)
+integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x^2/2) / y, 0, y)$value), 0, 1)
+#
+integrate(\(x) atan(x^2/2), 0, 1)$value +
+integrate(\(x) sapply(x, \(y) integrate(\(x) -4*x^2 / (x^4 + 4) / y, 0, y)$value), 0, 1)$value;
+#
+integrate(\(x) - 2*sqrt(2) * Re(atan(x / sqrt(2i)) / sqrt(1i)) / x, 0, 1)$value +
+	+ log(5)/2 - atan(3/4);
+#
+integrate(\(x) (pi/4 - atan(x+1)) / x, 0, 1)$value +
+integrate(\(x) atan(3*tan(x)), 0, pi/4)$value +
+	+ (pi*log(2)/8 - Catalan) + pi^2 / 32 + log(5)/2 - atan(3/4);
+# TODO
+
 
 ### I( atan(x/y) / (x+y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x/y) / (x+y), 0, 1)$value), 0, 1)
