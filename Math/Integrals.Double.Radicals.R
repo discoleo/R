@@ -40,6 +40,14 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 digamma(7/4) - digamma(5/4);
 
 
+### I( sqrt( x^3 * (1-x) / (1 - x*y) ) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	sqrt( x^3*(1-x) / (1 - x*y) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-12)
+pi/4 + (1/3 - 3)/5;
+(digamma(3/4) - digamma(1/4)) / 4 + (1/3 - 3)/5;
+(digamma(7/4) - digamma(5/4)) / 4 - 2*(2/3 - 1)/5;
+
+
 ### I( sqrt( (1-x)/x / (1 - x*y) ) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	sqrt( (1-x)/x / (1 - x*y) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-12)
