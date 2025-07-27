@@ -84,6 +84,13 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 6*Catalan - 5;
 
 
+### I( sqrt( (1-x)/(1-y) / (1 - x*y) ) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	sqrt( (1-x)/(1-y) / (1 - x*y) ), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+(2*Catalan - 1) * 2;
+
+
+###########
 ### Pow = 2
 
 ### I( 1 / sqrt( (1-x^2) * (1-y^2) * (1 - x^2*y^2) ) )
@@ -142,6 +149,22 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	sqrt( (1-x)*(1-y) / (1 - x^2*y^2) ), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 # TODO
 
+
+### I( sqrt( (1+x) / (1 - x^2*y^2) ) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	sqrt( (1+x) / (1 - x^2*y^2) ), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	2 * sqrt( (1+x) * (1 - x^2*y^2) ), 0, 1)$value), 0, 1)$value - 14/15;
+# TODO
+
+
+### I( sqrt( (1-x)/(1+x) / (1 - x^2*y^2) ) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	sqrt( (1-x)/(1+x) / (1 - x^2*y^2) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+2*Catalan - pi^2/8;
+
+
+### Mixed: Pow = 1 & 2
 
 ### I( x / sqrt((1-x^2) * (1-y^2) * (1 - x^2*y^2)) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
