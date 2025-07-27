@@ -46,12 +46,36 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 pi/4 + (1/3 - 3)/5;
 (digamma(3/4) - digamma(1/4)) / 4 + (1/3 - 3)/5;
 (digamma(7/4) - digamma(5/4)) / 4 - 2*(2/3 - 1)/5;
+(digamma(7/4) - digamma(9/4)) / 4 + 1/3;
 
 
 ### I( sqrt( (1-x)/x / (1 - x*y) ) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	sqrt( (1-x)/x / (1 - x*y) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-12)
 2*(digamma(7/4-1/2) - digamma(5/4-1/2));
+
+
+### I( sqrt( y*(1-x) / (1 - x*y) ) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	sqrt( y*(1-x) / (1 - x*y) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-12)
+- pi^2/4 + 3;
+
+### I( sqrt( x*y * (1-x) / (1 - x*y) ) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	sqrt( x*y * (1-x) / (1 - x*y) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-12)
+4*Catalan - 3 - 1/3;
+
+
+### I( sqrt( y/x * (1-x) / (1 - x*y) ) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	sqrt( y/x * (1-x) / (1 - x*y) ), 0, 1, rel.tol=1E-10)$value), 0, 1, rel.tol=1E-8)
+3 - 2*Catalan
+
+
+### I( sqrt( x/y * (1-x) / (1 - x*y) ) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	sqrt( x/y * (1-x) / (1 - x*y) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-12)
+8/9;
 
 
 ### I( sqrt( (1-x)*(1-y) / (1 - x*y) ) )
