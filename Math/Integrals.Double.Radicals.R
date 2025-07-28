@@ -97,7 +97,7 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 # - Series started as Trig-Radicals in:
 #   Integrals.Double.Trig.R;
 
-### Base:
+### Base: 1 / sqrt(...)
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	1 / sqrt((1-x^2) * (1-y^2) * (1 - x^2*y^2)), 0, 1)$value), 0, 1)
 gamma(1/4)^3 / gamma(3/4) * sqrt(2) / 16;
@@ -115,10 +115,22 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 (gamma(1/4)^3 / gamma(3/4) / 16 - gamma(3/4)^3 / gamma(1/4)) * sqrt(2) / 2;
 
 
-### I( 1 / sqrt((1-x^2) * (1 - x^2*y^2)) )
+### Prod: I( sqrt( (1 - x^2*y^2) * (1-x^2) ) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	sqrt( (1 - x^2*y^2) * (1-x^2) ), 0, 1)$value), 0, 1)
+Catalan - 1/6;
+
+
+### Fraction: I( 1 / sqrt( (1 - x^2*y^2) * (1-x^2) ) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	1 / sqrt((1-x^2) * (1 - x^2*y^2)), 0, 1)$value), 0, 1)
 2*Catalan;
+
+
+### I( sqrt( (1 - x^2*y^2) / (1-x^2) ) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	sqrt( (1 - x^2*y^2) / (1-x^2) ), 0, 1)$value), 0, 1)
+Catalan + 1/2;
 
 
 ### I( sqrt( x / ((1-x^2) * (1 - x^2*y^2)) ) )
@@ -266,9 +278,21 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 (2*pi - 4*log(2) - 2) / 3;
 
 
-### I( sqrt( x/y * (1-x) / (1 - x*y^2) ) )
+### I( sqrt( (1-x)*(1-y) / (1 - x*y^2) ) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	sqrt( (1-x)*(1-y) / (1 - x*y^2) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+# TODO
+
+
+### Div: I( sqrt( x/y * (1-x) / (1 - x*y^2) ) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	sqrt( x/y * (1-x) / (1 - x*y^2) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+# TODO
+
+
+### Div: I( sqrt( y/x * (1-x) / (1 - x*y^2) ) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	sqrt( y/x * (1-x) / (1 - x*y^2) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=3E-9)
 # TODO
 
 
