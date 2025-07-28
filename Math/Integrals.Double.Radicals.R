@@ -144,12 +144,24 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 # TODO
 
 
+### I( sqrt( (1-x^2)/x / (1 - x^2*y^2) ) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	sqrt( (1-x^2)/x / (1 - x^2*y^2) ), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+# TODO
+
+
 ### I( sqrt( y / ((1-x^2) * (1 - x^2*y^2)) ) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	sqrt(y / ((1-x^2) * (1 - x^2*y^2))), 0, 1, rel.tol=3E-10)$value), 0, 1, rel.tol=1E-12)
 2 - gamma(3/4)^4 / gamma(1/2)^2;
 # alternative Formula:
 2 - gamma(3/4)^3 / gamma(1/4) * sqrt(2);
+
+
+### I( sqrt( (1-x^2)/y / (1 - x^2*y^2) ) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	sqrt( (1-x^2)/y / (1 - x^2*y^2) ), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+gamma(1/4)^3 / gamma(3/4) * sqrt(2) / 24 - 2/3;
 
 
 ### I( 1 / sqrt(1 - x^2*y^2) )
