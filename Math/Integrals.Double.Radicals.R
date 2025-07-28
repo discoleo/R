@@ -161,6 +161,12 @@ gamma(1/4)^2 / gamma(1/2) * sqrt(2) / 4 - gamma(3/4)^2 / gamma(1/2) * sqrt(2);
 (beta(1/4, 1/4) - 2*beta(3/4, 3/4)) * sqrt(2) / 4;
 
 
+### I( sqrt( x * (1 - x^2*y^2) ) )
+integrate(\(x) sapply(x, \(y) integrate(\(x) sqrt( x * (1 - x^2*y^2) ), 0, 1)$value), 0, 1)
+pi/2 - gamma(3/4)^2 / gamma(1/2) * sqrt(2) * 4/5;
+pi/2 - gamma(3/4)*gamma(7/4) / gamma(7/2) * sqrt(2) * 2;
+
+
 ### Type: (1-x) * ...
 
 ### I( sqrt( (1-x) / (1 - x^2*y^2) ) )
