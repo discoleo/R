@@ -356,6 +356,17 @@ sum(digamma(c(1,2,4,5)/6) * c(-1,-1,1,1)) * diff(digamma(c(1,3)/3)) / 18
 
 ##############
 
+### Pow = 4
+
+### I( 1 / (1 - x^4*y^4)^(1/4) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	1 / (1 - x^4*y^4)^(1/4), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+sum(digamma(c(1:3, 5:7)/8) * rep(c(-1,1), each = 3)) *
+	diff(digamma(c(1,4)/4)) / 4^2 / (2 + 1/sqrt(2));
+
+
+##############
+
 ### Pow = 5
 
 ### I( 1 / (1 - x^5*y^5)^(1/5) )
