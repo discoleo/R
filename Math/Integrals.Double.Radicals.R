@@ -364,3 +364,14 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 sum(digamma(c(1,2,3,4,6,7,8,9)/10) * c(-1,-1,-1,-1,1,1,1,1)) *
 	diff(digamma(c(1,5)/5)) / 25 * cos(2*pi/5);
 
+
+##############
+
+### Pow = 7
+
+### I( 1 / (1 - x^7*y^7)^(1/7) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	1 / (1 - x^7*y^7)^(1/7), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+sum(digamma(c(1:6, 8:13)/14) * rep(c(-1,1), each = 6)) *
+	diff(digamma(c(1,7)/7)) / 7^2 / 4;
+
