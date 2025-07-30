@@ -342,3 +342,14 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	sqrt( (1 - x*y^2) / (1 - x^2*y) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 # TODO
 
+
+################
+################
+
+### Pow = 3
+
+### I( 1 / (1 - x^3*y^3)^(1/3) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	1 / (1 - x^3*y^3)^(1/3), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+sum(digamma(c(1,2,4,5)/6) * c(-1,-1,1,1)) * diff(digamma(c(1,3)/3)) / 18
+
