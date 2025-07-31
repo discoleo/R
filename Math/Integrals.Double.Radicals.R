@@ -346,6 +346,16 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 ################
 ################
 
+
+### Gen: I( ((1 - x^n) / (1 - x^n*y^n))^(1/n) )
+n = sqrt(5)
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	((1 - x^n) / (1 - x^n*y^n))^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+(pracma::psi(1, 1/(2*n)) - pracma::psi(1, 1/2 + 1/(2*n))) / (2*n^2) - 1;
+
+
+###########
+
 ### Pow = 3
 
 ### I( 1 / (1 - x^3*y^3)^(1/3) )
@@ -357,6 +367,9 @@ sum(digamma(c(1,2,4,5)/6) * c(-1,-1,1,1)) * diff(digamma(c(1,3)/3)) / 18
 ### I( ((1 - x^3) / (1 - x^3*y^3))^(1/3) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	((1 - x^3) / (1 - x^3*y^3))^(1/3), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+(pracma::psi(1, 1/6) - pracma::psi(1, 4/6)) * 2/6^2 - 1;
+
+# [old]
 (pracma::psi(1, 1/3) - pracma::psi(1, 2/3) + pracma::psi(1, 4/3)) / 9;
 (2*pracma::psi(1, 1/3) - pracma::psi(1, 2/3)) / 9 - 1;
 
@@ -370,6 +383,12 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	1 / (1 - x^4*y^4)^(1/4), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 sum(digamma(c(1:3, 5:7)/8) * rep(c(-1,1), each = 3)) *
 	diff(digamma(c(1,4)/4)) / 4^2 / (2 + 1/sqrt(2));
+
+
+### I( ((1 - x^4) / (1 - x^4*y^4))^(1/4) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	((1 - x^4) / (1 - x^4*y^4))^(1/4), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+(pracma::psi(1, 1/8) - pracma::psi(1, 5/8)) / 32 - 1;
 
 
 ##############
@@ -392,6 +411,12 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	1 / (1 - x^6*y^6)^(1/6), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 sum(digamma(c(1:5, 7:11)/12) * rep(c(-1,1), each = 5)) *
 	diff(digamma(c(1,6)/6)) / 6^2 / (5/2 + 2/sqrt(3));
+
+
+### I( ((1 - x^6) / (1 - x^6*y^6))^(1/6) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	((1 - x^6) / (1 - x^6*y^6))^(1/6), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+(pracma::psi(1, 1/12) - pracma::psi(1, 7/12)) * 2/12^2 - 1;
 
 
 ##############
