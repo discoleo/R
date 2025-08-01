@@ -129,6 +129,40 @@ besselY(x, -3/2)
 - (sin(x) - x*cos(x)) / sqrt(x^3*pi/2);
 
 
+##################
+
+### Bessel-Type
+
+### I( cos(sin(x)) )
+# Hmath: Интеграл с функцией Бесселя и трюками с рядами
+# https://www.youtube.com/watch?v=JF1ikXax5rk
+# [in Russian]
+
+###
+integrate(\(x) cos(sin(x)), 0, pi/2)
+pi * besselJ(1, 0) / 2
+
+
+### I( sin(x) * besselJ0(sin(x)) )
+integrate(\(x) sin(x) * besselJ(sin(x), 0), 0, pi/2)
+sin(1);
+
+
+### I( sin(x) * besselJ0(cos(x)) )
+integrate(\(x) sin(x) * besselJ(cos(x), 0), 0, pi/2)
+# TODO
+
+
+### I( sin(x) * besselJ(cos(x), 1) )
+integrate(\(x) sin(x) * besselJ(cos(x), 1), 0, pi/2)
+1 - besselJ(1, 0);
+
+### I( sin(x) * besselJ(cos(x), 2) )
+integrate(\(x) sin(x) * besselJ(cos(x), 2), 0, pi/2)
+integrate(\(x) sin(x) * besselJ(cos(x), 0), 0, pi/2)$value +
+	- 2*besselJ(1, 1);
+
+
 #########################
 
 ### I( exp(2*exp(x*1i)) )
