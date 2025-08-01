@@ -101,6 +101,11 @@ cos(x) / sqrt(x*pi/2);
 besselJ(x, 1/2)
 sin(x) / sqrt(x*pi/2);
 
+### BesselI:
+x = sqrt(pi/2);
+besselI(x, 1/2)
+Im(sin(x*1i)) / sqrt(x *pi/2);
+
 
 ### Extension:
 x = sqrt(5);
@@ -129,6 +134,12 @@ besselY(x, -3/2)
 - (sin(x) - x*cos(x)) / sqrt(x^3*pi/2);
 
 
+### Bessel(k * 1i)
+k = sqrt(3)
+integrate(\(x) Re(cos(k * 1i * sin(x))), 0, pi/2)
+pi/2 * besselI(k, 0);
+
+
 ##################
 
 ### Bessel-Type
@@ -141,6 +152,11 @@ besselY(x, -3/2)
 ###
 integrate(\(x) cos(sin(x)), 0, pi/2)
 pi * besselJ(1, 0) / 2
+
+### I( cos(k * sin(x)) )
+k = sqrt(3)
+integrate(\(x) cos(k * sin(x)), 0, pi/2)
+pi * besselJ(k, 0) / 2
 
 
 ### I( sin(x) * besselJ0(sin(x)) )
