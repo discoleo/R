@@ -380,6 +380,12 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 beta(1/3, 1/3) / 12;
 
 
+### I( 1 / ((1 - x^3) * (1 - y^3) * (1 - x^3*y^3))^(1/3) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	1 / ((1 - x^3) * (1 - y^3) * (1 - x^3*y^3))^(1/3), 0, 1, rel.tol=1E-10)$value), 0, 1, rel.tol=1E-10)
+gamma(1/6)^3 / gamma(1/2) * sqrt(3) * 2/6^3;
+
+
 ##############
 
 ### Pow = 4
