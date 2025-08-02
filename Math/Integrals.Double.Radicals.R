@@ -386,6 +386,14 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 gamma(1/6)^3 / gamma(1/2) * sqrt(3) * 2/6^3;
 
 
+### Pow 1 & 3:
+
+### I( 1 / ((1-x) * (1-y^3) * (1 - x*y^3))^(1/3) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	1 / ((1-x) * (1-y^3) * (1 - x*y^3))^(1/3), 0, 1, rel.tol=1E-11)$value), 0, 1, rel.tol=1E-12)
+beta(2/3, 2/3);
+
+
 ##############
 
 ### Pow = 4
