@@ -391,6 +391,7 @@ beta(1/3, 1/3) / 12;
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	1 / ((1 - x^3) * (1 - y^3) * (1 - x^3*y^3))^(1/3), 0, 1, rel.tol=1E-10)$value), 0, 1, rel.tol=1E-10)
 gamma(1/6)^3 / gamma(1/2) * sqrt(3) * 2/6^3;
+beta(1/6, 4/6) * beta(3/6, 2/6) * 2/6^2;
 
 
 ### Pow 1 & 3:
@@ -427,8 +428,10 @@ beta(1/4, 1/4) * sqrt(2) / 36;
 ### I( 1 / ((1 - x^4) * (1 - y^4) * (1 - x^4*y^4))^(1/4) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	1 / ((1 - x^4) * (1 - y^4) * (1 - x^4*y^4))^(1/4), 0, 1, rel.tol=1E-10)$value), 0, 1, rel.tol=1E-12)
-gamma(1/8)^3 / gamma(3/8) / 8^2 / (2*cos(pi/8) + sin(pi/8));
+beta(1/8, 5/8) * beta(3/8, 3/8) * 2 / 8^2;
 
+# [old]
+gamma(1/8)^3 / gamma(3/8) / 8^2 / (2*cos(pi/8) + sin(pi/8));
 # Note:
 (2*cos(pi/8) + sin(pi/8)) # ==
 (2*sqrt(2) + 3) * sin(pi/8);
@@ -455,6 +458,7 @@ sum(digamma(c(1,2,3,4,6,7,8,9)/10) * c(-1,-1,-1,-1,1,1,1,1)) *
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	1 / ((1 - x^5) * (1 - y^5) * (1 - x^5*y^5))^(1/5), 0, 1, rel.tol=1E-10)$value), 0, 1, rel.tol=1E-12)
 gamma(1/10)^3 / gamma(3/10) / 10^2 / (tan(2*pi/5) - sin(pi/5));
+beta(1/10, 8/10) * beta(7/10, 2/10) * 2 / 10^2;
 
 
 ### I( 1 / ((1-x) * (1-y^5) * (1 - x*y^5))^(1/5) )
