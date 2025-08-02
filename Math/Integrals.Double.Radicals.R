@@ -368,6 +368,13 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 beta(1/n, 2-3/n) * beta(1-1/n, 1-1/n) / n;
 
 
+### Gen: I( ((1-x) / (1-y^n) * (1 - x*y^n))^(1/n) )
+n = 2*sqrt(5) + 2/7;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	((1-x) / (1-y^n) * (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-9)$value), 0, 1, rel.tol=1E-9)
+beta(1/n, 1-1/n) * beta(1/n, 2+1/n) / n^2;
+
+
 ###########
 
 ### Pow = 3
@@ -452,6 +459,12 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 pi/2;
 
 
+### I( ((1-x) / (1-y^4) * (1 - x*y^4))^(1/4) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	((1-x) / (1-y^4) * (1 - x*y^4))^(1/4), 0, 1, rel.tol=1E-9)$value), 0, 1, rel.tol=1E-9)
+beta(1/4, 3/4) * beta(1/4, 9/4) / 4^2;
+
+
 ##############
 
 ### Pow = 5
@@ -475,6 +488,12 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	1 / ((1-x) * (1-y^5) * (1 - x*y^5))^(1/5), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 beta(1/5, 2/5) * beta(4/5, 4/5) * 2/15;
 beta(1/5, 7/5) * beta(4/5, 4/5) / 5;
+
+
+### I( ((1-x) / (1-y^5) * (1 - x*y^5))^(1/5) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	((1-x) / (1-y^5) * (1 - x*y^5))^(1/5), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+beta(1/5, 4/5) * beta(1/5, 11/5) / 5^2;
 
 
 ##############
@@ -501,6 +520,12 @@ pi * 3/8 * sqrt(3) * 2^(-2/3);
 # alternative:
 beta(1/6, 1/2) * beta(5/6, 5/6) / 8;
 beta(1/6, 9/6) * beta(5/6, 5/6) / 6;
+
+
+### I( ((1-x) / (1-y^6) * (1 - x*y^6))^(1/6) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	((1-x) / (1-y^6) * (1 - x*y^6))^(1/6), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+beta(1/6, 5/6) * beta(1/6, 13/6) / 6^2;
 
 
 ##############
