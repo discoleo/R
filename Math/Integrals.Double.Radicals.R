@@ -354,6 +354,13 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 (pracma::psi(1, 1/(2*n)) - pracma::psi(1, 1/2 + 1/(2*n))) / (2*n^2) - 1;
 
 
+### Gen: I( 1 / ((1 - x^n) * (1 - y^n) * (1 - x^n*y^n))^(1/n) )
+n = sqrt(3)*2 + 5/3;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	1 / ((1 - x^n) * (1 - y^n) * (1 - x^n*y^n))^(1/n), 0, 1, rel.tol=1E-10)$value), 0, 1, rel.tol=1E-12)
+beta(1/(2*n), 1-2/(2*n)) * beta(1/n, 1-3/(2*n)) / (2*n^2);
+
+
 ### Gen: I( 1 / ((1-x) * (1-y^n) * (1 - x*y^n))^(1/n) )
 n = sqrt(5) + sqrt(7)
 integrate(\(x) sapply(x, \(y) integrate(\(x)
@@ -428,6 +435,8 @@ beta(1/4, 1/4) * sqrt(2) / 36;
 ### I( 1 / ((1 - x^4) * (1 - y^4) * (1 - x^4*y^4))^(1/4) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	1 / ((1 - x^4) * (1 - y^4) * (1 - x^4*y^4))^(1/4), 0, 1, rel.tol=1E-10)$value), 0, 1, rel.tol=1E-12)
+beta(1/8, 6/8) * beta(5/8, 2/8) * 2 / 8^2;
+# non-generalised:
 beta(1/8, 5/8) * beta(3/8, 3/8) * 2 / 8^2;
 
 # [old]
