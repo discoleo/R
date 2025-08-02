@@ -427,6 +427,12 @@ gamma(1/8)^3 / gamma(3/8) / 8^2 / (2*cos(pi/8) + sin(pi/8));
 (2*sqrt(2) + 3) * sin(pi/8);
 
 
+### I( 1 / ((1-x) * (1-y^4) * (1 - x*y^4))^(1/4) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	1 / ((1-x) * (1-y^4) * (1 - x*y^4))^(1/4), 0, 1, rel.tol=1E-11)$value), 0, 1, rel.tol=1E-12)
+pi/2;
+
+
 ##############
 
 ### Pow = 5
@@ -444,6 +450,12 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 gamma(1/10)^3 / gamma(3/10) / 10^2 / (tan(2*pi/5) - sin(pi/5));
 
 
+### I( 1 / ((1-x) * (1-y^5) * (1 - x*y^5))^(1/5) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	1 / ((1-x) * (1-y^5) * (1 - x*y^5))^(1/5), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+# TODO
+
+
 ##############
 
 ### Pow = 6
@@ -459,6 +471,12 @@ sum(digamma(c(1:5, 7:11)/12) * rep(c(-1,1), each = 5)) *
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	((1 - x^6) / (1 - x^6*y^6))^(1/6), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 (pracma::psi(1, 1/12) - pracma::psi(1, 7/12)) * 2/12^2 - 1;
+
+
+### I( 1 / ((1-x) * (1-y^6) * (1 - x*y^6))^(1/6) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	1 / ((1-x) * (1-y^6) * (1 - x*y^6))^(1/6), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+pi * 3/8 * sqrt(3) * 2^(-2/3);
 
 
 ##############
