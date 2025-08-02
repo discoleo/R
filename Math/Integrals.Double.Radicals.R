@@ -453,7 +453,7 @@ gamma(1/10)^3 / gamma(3/10) / 10^2 / (tan(2*pi/5) - sin(pi/5));
 ### I( 1 / ((1-x) * (1-y^5) * (1 - x*y^5))^(1/5) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	1 / ((1-x) * (1-y^5) * (1 - x*y^5))^(1/5), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
-# TODO
+beta(1/5, 2/5) * beta(4/5, 4/5) * 2/15;
 
 
 ##############
@@ -477,6 +477,8 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	1 / ((1-x) * (1-y^6) * (1 - x*y^6))^(1/6), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 pi * 3/8 * sqrt(3) * 2^(-2/3);
+# alternative:
+beta(1/6, 1/2) * beta(5/6, 5/6) / 8;
 
 
 ##############
