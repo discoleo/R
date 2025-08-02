@@ -454,6 +454,7 @@ gamma(1/10)^3 / gamma(3/10) / 10^2 / (tan(2*pi/5) - sin(pi/5));
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	1 / ((1-x) * (1-y^5) * (1 - x*y^5))^(1/5), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 beta(1/5, 2/5) * beta(4/5, 4/5) * 2/15;
+beta(1/5, 7/5) * beta(4/5, 4/5) / 5;
 
 
 ##############
@@ -479,6 +480,7 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 pi * 3/8 * sqrt(3) * 2^(-2/3);
 # alternative:
 beta(1/6, 1/2) * beta(5/6, 5/6) / 8;
+beta(1/6, 9/6) * beta(5/6, 5/6) / 6;
 
 
 ##############
@@ -497,4 +499,10 @@ n = 7; # fixed value;
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	1 / ((1 - x^n) * (1 - y^n) * (1 - x^n*y^n))^(1/n), 0, 1, rel.tol=1E-10)$value), 0, 1, rel.tol=1E-12)
 gamma(1/(2*n))^3 / gamma(3/(2*n)) / (2*n)^2 / (2*sin(3*pi/7) + sin(2*pi/7));
+
+
+### I( 1 / ((1-x) * (1-y^7) * (1 - x*y^7))^(1/7) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	1 / ((1-x) * (1-y^7) * (1 - x*y^7))^(1/7), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+beta(1/7, 11/7) * beta(6/7, 6/7) / 7;
 
