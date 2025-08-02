@@ -463,3 +463,10 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 sum(digamma(c(1:6, 8:13)/14) * rep(c(-1,1), each = 6)) *
 	diff(digamma(c(1,7)/7)) / 7^2 / 4;
 
+
+### I( 1 / ((1 - x^7) * (1 - y^7) * (1 - x^7*y^7))^(1/7) )
+n = 7; # fixed value;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	1 / ((1 - x^n) * (1 - y^n) * (1 - x^n*y^n))^(1/n), 0, 1, rel.tol=1E-10)$value), 0, 1, rel.tol=1E-12)
+gamma(1/(2*n))^3 / gamma(3/(2*n)) / (2*n)^2 / (2*sin(3*pi/7) + sin(2*pi/7));
+
