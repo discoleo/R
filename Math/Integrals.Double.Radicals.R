@@ -409,6 +409,12 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 (2*pracma::psi(1, 1/3) - pracma::psi(1, 2/3)) / 9 - 1;
 
 
+### I( ((1 - x^3) / (1 - x^3*y^3)^2)^(1/3) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	((1 - x^3) / (1 - x^3*y^3)^2)^(1/3), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+(gamma(1/3)^3 - 2*pi * sqrt(3)) / 9;
+
+
 ### I( x^3 / ((1 - x^3) * (1 - x^3*y^3))^(1/3) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x^3 / ((1 - x^3) * (1 - x^3*y^3))^(1/3), 0, 1, rel.tol=1E-10)$value), 0, 1, rel.tol=1E-11)
@@ -426,6 +432,12 @@ beta(1/6, 4/6) * beta(3/6, 2/6) * 2/6^2;
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	((1-x^3) * (1 - x^3*y^3))^(1/3), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 (gamma(1/3)^3 - pi / sin(pi/3)) / 18;
+
+
+### I( ((1 - x^3) * (1 - x^3*y^3)^2)^(1/3) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	((1 - x^3) * (1 - x^3*y^3)^2)^(1/3), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+(2*pracma::psi(1, 1/3) - pracma::psi(1, 2/3)) * 2/27 - 2/3 + 1/4;
 
 
 ### Pow 1 & 3:
