@@ -471,6 +471,12 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 beta(1/4, 1/4) * sqrt(2) / 36;
 
 
+### I( ((1 - x^4) * (1 - x^4*y^4)^3)^(1/4) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	((1 - x^4) * (1 - x^4*y^4)^3)^(1/4), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+(pracma::psi(1, 1/8) - pracma::psi(1, 5/8)) * 3/128 - 11/20;
+
+
 ### I( 1 / ((1 - x^4) * (1 - y^4) * (1 - x^4*y^4))^(1/4) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	1 / ((1 - x^4) * (1 - y^4) * (1 - x^4*y^4))^(1/4), 0, 1, rel.tol=1E-10)$value), 0, 1, rel.tol=1E-12)
