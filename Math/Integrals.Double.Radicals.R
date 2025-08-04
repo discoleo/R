@@ -454,6 +454,13 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
  pracma::psi(1, 1/3) * 2/27 - 1/18;
 
 
+### I( ((1 - x)^2 * (1 - x*y^3))^(1/3) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	((1 - x)^2 * (1 - x*y^3))^(1/3), 0, 1, rel.tol=1E-11)$value), 0, 1, rel.tol=1E-12)
+pi * sin(pi/3)/6 + 1/8;
+(digamma(5/6) - digamma(1/6)) / 12 + 1/8;
+
+
 ##############
 
 ### Pow = 4
@@ -510,10 +517,18 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 pi/2;
 
 
+### Pow 1 & 4:
+
 ### I( ((1-x) / (1-y^4) * (1 - x*y^4))^(1/4) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	((1-x) / (1-y^4) * (1 - x*y^4))^(1/4), 0, 1, rel.tol=1E-9)$value), 0, 1, rel.tol=1E-9)
 beta(1/4, 3/4) * beta(1/4, 9/4) / 4^2;
+
+
+### I( ((1 - x)^3 * (1 - x*y^4))^(1/4) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	((1 - x)^3 * (1 - x*y^4))^(1/4), 0, 1, rel.tol=1E-11)$value), 0, 1, rel.tol=1E-12)
+(digamma(7/4) - digamma(1/4)) / 8;
 
 
 ##############
