@@ -448,6 +448,12 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 beta(2/3, 2/3);
 
 
+### I( ((1 - x) * (1 - x*y^3)^2)^(1/3) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	((1 - x) * (1 - x*y^3)^2)^(1/3), 0, 1, rel.tol=1E-11)$value), 0, 1, rel.tol=1E-12)
+ pracma::psi(1, 1/3) * 2/27 - 1/18;
+
+
 ##############
 
 ### Pow = 4
