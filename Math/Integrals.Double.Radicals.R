@@ -398,6 +398,17 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 2 - 2*gamma(3/4)^4 / gamma(1/2)^2;
 
 
+### I( sqrt( abs(x-y)/(x+y) / (1 - x^2*y^2) ) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	sqrt( abs(x-y)/(x+y) / (1 - x^2*y^2) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+2*Catalan - pi^2/8;
+
+
+### I( sqrt( abs(x-y) / (1 - x^2*y^2) ) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	sqrt( abs(x-y) / (1 - x^2*y^2) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+# TODO
+
 ################
 ################
 
