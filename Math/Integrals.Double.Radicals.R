@@ -104,16 +104,22 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 - gamma(3/4)^3 / gamma(9/4) * sqrt(2) * 3/2 + 3 + 11/15;
 
 
+### I( sqrt( abs(x-y) / ((1-x)*(1-y)*(1 - x*y)) ) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	sqrt( abs(x-y) / ((1-x)*(1-y)*(1 - x*y)) ), 0, 1, rel.tol=1E-9)$value), 0, 1, rel.tol=3E-10)
+4*pi - gamma(3/4)^2 / gamma(1/2) * sqrt(2) * 8;
+
+
 ### I( sqrt( abs(x-y) * (1 - x*y) * (1-x)/(1-y) ) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	sqrt( abs(x-y) * (1 - x*y) * (1-x)/(1-y) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 (pi*13/2 - gamma(3/4)^2 / gamma(1/2) * sqrt(2) * 64/5) * 2/15;
 
 
-### I( sqrt( abs(x-y) / ((1-x)*(1-y)*(1 - x*y)) ) )
+### I( sqrt( abs(x-y) / (1 - x*y) * (1-x)/(1-y) ) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
-	sqrt( abs(x-y) / ((1-x)*(1-y)*(1 - x*y)) ), 0, 1, rel.tol=1E-9)$value), 0, 1, rel.tol=3E-10)
-4*pi - gamma(3/4)^2 / gamma(1/2) * sqrt(2) * 8;
+	sqrt( abs(x-y) / (1 - x*y) * (1-x)/(1-y) ), 0, 1, rel.tol=5E-12)$value), 0, 1, rel.tol=1E-12)
+pi * 7/3 - gamma(3/4)^2 / gamma(1/2) * sqrt(2) * 16/3;
 
 
 ###########
