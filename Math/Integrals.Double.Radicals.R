@@ -388,6 +388,15 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	sqrt( (1 - x*y^2) / (1 - x^2*y) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 # TODO
 
+################
+
+### Diff-Type
+
+### I( sqrt( abs(x^2-y^2) / (1 - x^2*y^2) ) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	sqrt( abs(x^2-y^2) / (1 - x^2*y^2) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+2 - 2*gamma(3/4)^4 / gamma(1/2)^2;
+
 
 ################
 ################
