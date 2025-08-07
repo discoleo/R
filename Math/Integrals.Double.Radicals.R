@@ -90,10 +90,18 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 (2*Catalan - 1) * 2;
 
 
+### Diff: (x-y)
+
 ### I( sqrt( abs(x-y) / (1 - x*y) ) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	sqrt( abs(x-y) / (1 - x*y) ), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 - (pi + 2*log(2) - 5) * 4/3;
+
+
+### I( sqrt( abs(x-y) / ((1-x)*(1-y)*(1 - x*y)) ) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	sqrt( abs(x-y) / ((1-x)*(1-y)*(1 - x*y)) ), 0, 1, rel.tol=1E-9)$value), 0, 1, rel.tol=3E-10)
+4*pi - gamma(3/4)^2 / gamma(1/2) * sqrt(2) * 8;
 
 
 ###########
