@@ -90,6 +90,12 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 (2*Catalan - 1) * 2;
 
 
+### I( sqrt( abs(x-y) / (1 - x*y) ) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	sqrt( abs(x-y) / (1 - x*y) ), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+- (pi + 2*log(2) - 5) * 4/3;
+
+
 ###########
 ### Pow = 2
 
@@ -210,6 +216,14 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 ### I( sqrt( (1-x)*(1-y) / (1 - x^2*y^2) ) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	sqrt( (1-x)*(1-y) / (1 - x^2*y^2) ), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+# TODO
+
+
+### I( sqrt( (1-x)*(1-y) * (1 - x^2*y^2) ) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	sqrt( (1-x)*(1-y) * (1 - x^2*y^2) ), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+# I(sqrt( (1-x)*(1-y) / (1 - x^2*y^2) ) ) * 2/5 +
+# I(sqrt( (1-x)/(1-y) * (1 - x^2*y^2) ) ) / 5;
 # TODO
 
 
