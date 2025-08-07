@@ -100,8 +100,14 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 
 ### I( sqrt( x*y * abs(x-y) / (1 - x*y) ) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
-	sqrt( x*y * abs(x-y) / (1 - x*y) ), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-13)
+	sqrt( x*y * abs(x-y) / (1 - x*y) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 - gamma(3/4)^3 / gamma(9/4) * sqrt(2) * 3/2 + 3 + 11/15;
+
+
+### I( sqrt( abs(x-y) * (1 - x*y) * (1-x)/(1-y) ) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	sqrt( abs(x-y) * (1 - x*y) * (1-x)/(1-y) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+(pi*13/2 - gamma(3/4)^2 / gamma(1/2) * sqrt(2) * 64/5) * 2/15;
 
 
 ### I( sqrt( abs(x-y) / ((1-x)*(1-y)*(1 - x*y)) ) )
