@@ -404,6 +404,11 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	sqrt( abs(x^2-y^2) / (1 - x^2*y^2) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 2 - 2*gamma(3/4)^4 / gamma(1/2)^2;
 
+### I( sqrt( x*y * abs(x^2-y^2) / (1 - x^2*y^2) ) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	sqrt( x*y * abs(x^2-y^2) / (1 - x^2*y^2) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+8/3 - gamma(3/4)^2 / gamma(1/2) * sqrt(2) * 2;
+
 
 ### I( x^2*y^2 * sqrt( abs(x^2-y^2) / (1 - x^2*y^2) ) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
