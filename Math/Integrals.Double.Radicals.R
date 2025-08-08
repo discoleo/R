@@ -6,7 +6,7 @@
 ## Double Integrals:
 ## Radicals of Polynomials
 ##
-## v.0.2a
+## v.0.2b
 
 
 ### Double Integrals:
@@ -375,6 +375,13 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 ################
 
 
+### Gen: I( x^n / (1 - x^n*y^n)^(1/n) )
+n = sqrt(3) + sqrt(11);
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^n / (1 - x^n*y^n)^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+(beta(1/n, 1/n) * beta(2/n, 1 - 1/n) - beta(1/n, 1 - 1/n)) / n^3;
+
+
 ### Gen: I( ((1 - x^n) / (1 - x^n*y^n))^(1/n) )
 n = sqrt(5)
 integrate(\(x) sapply(x, \(y) integrate(\(x)
@@ -429,6 +436,12 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 sum(digamma(c(1,2,4,5)/6) * c(-1,-1,1,1)) * diff(digamma(c(1,3)/3)) / 18
 
 
+### I( x^3 / (1 - x^3*y^3)^(1/3) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^3 / (1 - x^3*y^3)^(1/3), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+pi / sin(pi/3) * 2/27;
+
+
 ### I( ((1 - x^3) / (1 - x^3*y^3))^(1/3) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	((1 - x^3) / (1 - x^3*y^3))^(1/3), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
@@ -451,11 +464,10 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 beta(1/3, 1/3) / 12;
 
 
-### I( 1 / ((1 - x^3) * (1 - y^3) * (1 - x^3*y^3))^(1/3) )
+### I( y^3 / ((1 - x^3) * (1 - x^3*y^3))^(1/3) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
-	1 / ((1 - x^3) * (1 - y^3) * (1 - x^3*y^3))^(1/3), 0, 1, rel.tol=1E-10)$value), 0, 1, rel.tol=1E-10)
-gamma(1/6)^3 / gamma(1/2) * sqrt(3) * 2/6^3;
-beta(1/6, 4/6) * beta(3/6, 2/6) * 2/6^2;
+	y^3 / ((1 - x^3) * (1 - x^3*y^3))^(1/3), 0, 1, rel.tol=1E-10)$value), 0, 1, rel.tol=1E-11)
+# TODO
 
 
 ### I( ((1-x^3) * (1 - x^3*y^3))^(1/3) )
@@ -468,6 +480,16 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	((1 - x^3) * (1 - x^3*y^3)^2)^(1/3), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 (2*pracma::psi(1, 1/3) - pracma::psi(1, 2/3)) * 2/27 - 2/3 + 1/4;
+(pracma::psi(1, 1/3) - pracma::psi(1, 2/3)) / 9 + pi^2 * 4/81 - 2/3 + 1/4;
+
+
+### Full:
+
+### I( 1 / ((1 - x^3) * (1 - y^3) * (1 - x^3*y^3))^(1/3) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	1 / ((1 - x^3) * (1 - y^3) * (1 - x^3*y^3))^(1/3), 0, 1, rel.tol=1E-10)$value), 0, 1, rel.tol=1E-10)
+gamma(1/6)^3 / gamma(1/2) * sqrt(3) * 2/6^3;
+beta(1/6, 4/6) * beta(3/6, 2/6) * 2/6^2;
 
 
 ### Pow 1 & 3:
@@ -502,6 +524,12 @@ sum(digamma(c(1:3, 5:7)/8) * rep(c(-1,1), each = 3)) *
 	diff(digamma(c(1,4)/4)) / 4^2 / (2 + 1/sqrt(2));
 
 
+### I( x^4 / (1 - x^4*y^4)^(1/4) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^4 / (1 - x^4*y^4)^(1/4), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+(beta(1/4, 1/4) * beta(2/4, 3/4) - beta(1/4, 3/4)) / 64;
+
+
 ### I( ((1 - x^4) / (1 - x^4*y^4))^(1/4) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	((1 - x^4) / (1 - x^4*y^4))^(1/4), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
@@ -534,6 +562,14 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 (pracma::psi(1, 1/8) - pracma::psi(1, 5/8)) * 3/128 - 11/20;
 
 
+### I( 1 / ((1 - x^4) * (1 - x^4*y^4)^3)^(1/4) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	1 / ((1 - x^4) * (1 - x^4*y^4)^3)^(1/4), 0, 1, rel.tol=1E-11)$value), 0, 1, rel.tol=1E-11)
+# TODO
+
+
+### Full:
+
 ### I( 1 / ((1 - x^4) * (1 - y^4) * (1 - x^4*y^4))^(1/4) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	1 / ((1 - x^4) * (1 - y^4) * (1 - x^4*y^4))^(1/4), 0, 1, rel.tol=1E-10)$value), 0, 1, rel.tol=1E-12)
@@ -555,13 +591,13 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 beta(1/(2*n), 1+1/n) * beta(1/(2*n), 1-1/n) / (2*n)^2;
 
 
+### Pow 1 & 4:
+
 ### I( 1 / ((1-x) * (1-y^4) * (1 - x*y^4))^(1/4) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	1 / ((1-x) * (1-y^4) * (1 - x*y^4))^(1/4), 0, 1, rel.tol=1E-11)$value), 0, 1, rel.tol=1E-12)
 pi/2;
 
-
-### Pow 1 & 4:
 
 ### I( ((1-x) / (1-y^4) * (1 - x*y^4))^(1/4) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
