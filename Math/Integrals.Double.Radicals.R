@@ -229,7 +229,7 @@ pi/2 - gamma(3/4)*gamma(7/4) / gamma(7/2) * sqrt(2) * 2;
 
 ### I( sqrt( (1-x) / (1 - x^2*y^2) ) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
-	sqrt( (1-x) / (1 - x^2*y^2) ), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+	sqrt( (1-x) / (1 - x^2*y^2) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 # TODO
 
 
@@ -248,6 +248,16 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 ### I( sqrt( (1-x)*(1-y) / (1 - x^2*y^2) ) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	sqrt( (1-x)*(1-y) / (1 - x^2*y^2) ), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+# TODO
+
+
+### I( sqrt( (1-x) * (1 - x^2*y^2) ) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	sqrt( (1-x) * (1 - x^2*y^2) ), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	1/2 * sqrt( (1-x) / (1 - x^2*y^2) ), 0, 1, rel.tol=1E-13)$value
+	), 0, 1, rel.tol=1E-13)$value +
+	+ (1/3 - 1/5 - 1/2^(3/2)/3 + 1/2^(5/2)/5) * sqrt(2) * 4;
 # TODO
 
 
@@ -276,6 +286,11 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	sqrt( (1+x)/(1-x) / (1 - x^2*y^2) ), 0, 1, rel.tol=1E-8)$value), 0, 1, rel.tol=1E-8)
 2*Catalan + pi^2/8;
+
+### I( sqrt( (1-x)/(1+y) / (1 - x^2*y^2) ) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	sqrt( (1-x)/(1+y) / (1 - x^2*y^2) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+# TODO
 
 
 ### Mixed: Pow = 1 & 2
