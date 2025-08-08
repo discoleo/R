@@ -19,7 +19,7 @@
 ### History:
 
 # - [refactor] moved Diff-Type to file:
-#   sIntegrals.Double.Radicals.Diff.R;
+#   Integrals.Double.Radicals.Diff.R;
 
 ####################
 
@@ -403,6 +403,8 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 beta(1/(2*n), 1+1/n) * beta(1/(2*n), 1-1/n) / (2*n)^2;
 
 
+### Type: (1-x) * ...
+
 ### Gen: I( 1 / ((1-x) * (1-y^n) * (1 - x*y^n))^(1/n) )
 n = sqrt(5) + sqrt(7)
 integrate(\(x) sapply(x, \(y) integrate(\(x)
@@ -510,6 +512,20 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x^4 / ((1 - x^4) * (1 - x^4*y^4))^(1/4), 0, 1, rel.tol=1E-10)$value), 0, 1, rel.tol=1E-11)
 beta(1/4, 1/4) * sqrt(2) / 36;
+
+
+### I( ((1 - x^4) / (1 - x^4*y^4)^2)^(1/4) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	((1 - x^4) / (1 - x^4*y^4)^2)^(1/4), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+gamma(1/4)^2 * gamma(1/2) * sqrt(2) / 16 - pi * sqrt(2) / 4;
+
+
+### I( ((1 - x^4) * (1 - x^4*y^4)^2)^(1/4) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	((1 - x^4) * (1 - x^4*y^4)^2)^(1/4), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+gamma(1/4)^2 * gamma(1/2) * sqrt(2) / 24 +
+	+ beta(1/4, 3/4) / 16 - pi * sqrt(2) / 6;
+# Note: last part = - pi * sqrt(2) * 5/48;
 
 
 ### I( ((1 - x^4) * (1 - x^4*y^4)^3)^(1/4) )
