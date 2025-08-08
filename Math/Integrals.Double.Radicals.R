@@ -392,10 +392,23 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 
 ### Diff-Type
 
+### I( sqrt( abs(x^2-y^2) * (1 - x^2*y^2) ) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	sqrt( abs(x^2-y^2) * (1 - x^2*y^2) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+16/15 - gamma(3/4)^3 / gamma(9/4) * sqrt(2) / 4;
+16/15 - gamma(3/4)^4 / gamma(1/2)^2 * 4/5;
+
+
 ### I( sqrt( abs(x^2-y^2) / (1 - x^2*y^2) ) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	sqrt( abs(x^2-y^2) / (1 - x^2*y^2) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 2 - 2*gamma(3/4)^4 / gamma(1/2)^2;
+
+
+### I( x^2*y^2 * sqrt( abs(x^2-y^2) / (1 - x^2*y^2) ) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^2*y^2 * sqrt( abs(x^2-y^2) / (1 - x^2*y^2) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+14/15 - gamma(3/4)^4 / gamma(1/2)^2 * 6/5;
 
 
 ### I( sqrt( abs(x-y)/(x+y) / (1 - x^2*y^2) ) )
