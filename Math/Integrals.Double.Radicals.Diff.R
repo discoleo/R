@@ -43,12 +43,19 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	sqrt( x * abs(x-y) / (1 - x*y) ), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 (pracma::psi(1, 1/4) - 3*pracma::psi(1, 3/4)) / 16 - 1/6;
+2*Catalan - pi^2/8 - 1/6;
 
 
 ### I( sqrt( x*y * abs(x-y) / (1 - x*y) ) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	sqrt( x*y * abs(x-y) / (1 - x*y) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 - gamma(3/4)^3 / gamma(9/4) * sqrt(2) * 3/2 + 3 + 11/15;
+
+
+### I( sqrt( x/y * abs(x-y) / (1 - x*y) ) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	sqrt( x/y * abs(x-y) / (1 - x*y) ), 0, 1, rel.tol=1E-11)$value), 0, 1, rel.tol=1E-12)
+8/9;
 
 
 ### I( sqrt( abs(x-y) / ((1-x)*(1-y)*(1 - x*y)) ) )
