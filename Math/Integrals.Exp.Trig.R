@@ -196,6 +196,8 @@ integrate(\(x) Re(x^(q*1i - 1)) - Re(x^(q*1i - 1)) / (x^k + 1), 0, 1)
 
 ### I( x * Trig(q*x) / ... )
 
+### Sum-Type:
+
 ### I( x * sin(q*x) / (exp(k*x) + 1) ) on [0, Inf]
 q = sqrt(2); k = sqrt(3)
 integrate(\(x) x * sin(q*x) / (exp(k*x) + 1), 0, Inf)
@@ -234,6 +236,9 @@ pi/2 / tanh(pi) - 1
 integrate(\(x) cos(x) / (exp(x) * (exp(x) - 1)) - exp(-x) / x, 0, Inf)
 - Re(pracma::psi(1i)) - Re(1/(1i+1))
 
+
+### Diff-Tyoe:
+
 ### x^p
 integrate(\(x) x * sin(x) / (exp(x) - 1), 0, Inf)
 id = seq(10000); # [old]
@@ -251,6 +256,37 @@ k = sqrt(2)
 integrate(\(x) x * sin(k*x) / (exp(x) - 1), 0, Inf)
 (pracma::psi(1, k*1i) - pracma::psi(1, - k*1i)) * 1i / 2
 
+
+### I( (1 - cos(k*x)) / x / (exp(x) - 1) )
+# Maths 505: A beautiful integral and stunning result!
+# https://www.youtube.com/watch?v=jSOVbVT4UU4
+# Feynman trick & series expansion &
+# revert Laplace-transform;
+
+integrate(\(x) (1 - cos(x)) / x / (exp(x) - 1), 0, Inf)
+log(sinh(pi)/pi) / 2;
+
+### Gen:
+k = sqrt(3)
+integrate(\(x) (1 - cos(k*x)) / x / (exp(x) - 1), 0, Inf)
+log(sinh(pi*k)/(pi*k)) / 2;
+
+
+### I( 1/x / (exp(x) - 1) )
+integrate(\(x) 1/x / (exp(x) - 1) - 1/x^2 + 1/2*exp(-x)/x, 0, Inf)
+- log(pi*2)/2
+
+### I( cos(x)/x / (exp(x) - 1) )
+integrate(\(x) cos(x)/x / (exp(x) - 1) - 1/x^2 + 1/2*exp(-x)/x, 0, Inf, rel.tol=1E-11)
+- log(2*sinh(pi)) / 2;
+
+### Gen: I( cos(k*x)/x / (exp(x) - 1) )
+k = sqrt(5)
+integrate(\(x) cos(k*x)/x / (exp(x) - 1) - 1/x^2 + 1/2*exp(-x)/x, 0, Inf, rel.tol=1E-11)
+- log(2*sinh(k*pi)/k) / 2;
+
+
+###################
 
 ### Generalization:
 n = sqrt(3); # n >= 0 !!!
