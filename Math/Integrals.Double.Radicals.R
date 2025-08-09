@@ -375,6 +375,13 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 ################
 
 
+### Gen: I( 1 / (1 - x^n*y^n)^(1/n) )
+n = sqrt(29)
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	1 / (1 - x^n*y^n)^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+- pi / sin(pi/n) * (digamma(1/n) + Euler) / n^2;
+
+
 ### Gen: I( x^n / (1 - x^n*y^n)^(1/n) )
 n = sqrt(3) + sqrt(11);
 integrate(\(x) sapply(x, \(y) integrate(\(x)
@@ -620,6 +627,8 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	1 / (1 - x^5*y^5)^(1/5), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 sum(digamma(c(1,2,3,4,6,7,8,9)/10) * c(-1,-1,-1,-1,1,1,1,1)) *
 	diff(digamma(c(1,5)/5)) / 25 * cos(2*pi/5);
+n = 5;
+- pi / sin(pi/n) * (digamma(1/n) + Euler) / n^2;
 
 
 ### I( 1 / ((1 - x^5) * (1 - y^5) * (1 - x^5*y^5))^(1/5) )
