@@ -95,11 +95,16 @@ integrate(\(x) log(gamma(x/2 + k)), 0, 1)
 integrate(\(x) 1/2 * log(gamma(x/2 + 1)), 0, 1)
 integrate(\(x) log(gamma(x + 1)), 0, 1/2)
 1/4 * log(pi) + 3/2 * log(A) - 7/24 * log(2) - 1/2
-3/8 * log(pi) - (6*dzeta2/pi^2 - Euler) / 8 - 1/6 * log(2) - 1/2
+3/8 * log(pi) - (6*dzeta2/pi^2 - Euler) / 8 - 1/6 * log(2) - 1/2;
 #
 integrate(\(x) 1/2 * log(gamma(x/2 + 3/2)), 0, 1)
 integrate(\(x) log(gamma(x + 1)), 1/2, 1)
-log(pi)/8 + (6*dzeta2/pi^2 - Euler) / 8 + 2/3 * log(2) - 1/2
+log(pi)/8 + (6*dzeta2/pi^2 - Euler) / 8 + 2/3 * log(2) - 1/2;
+
+### on [0, 1/2]
+integrate(\(x) log(gamma(x)), 0, 1/2)
+3/8 * log(pi) - (6*dzeta2/pi^2 - Euler) / 8 + log(2) / 3;
+
 
 ###
 integrate(\(x) 1/4 * log(gamma(x/4 + 1)), 0, 1)
@@ -116,6 +121,10 @@ integrate(\(x) - 1/pi * log(sin(x)), 0, pi/2 * z)$value +
 # Note:
 # I( log(sin(x)) ) is solvable for z = rational fraction,
 # see file: Integrals.Log.Trig.R;
+
+### on [0, 1/2]
+integrate(\(x) log(gamma(x + 3/4)), 0, 1/2)
+Catalan / (2*pi) + log(pi/2) /4 - 1/4
 
 
 ### on [0, 1/4] & [1/4, 1/2]
@@ -165,7 +174,7 @@ integrate(\(x) sin(x) * digamma(x/(2*pi)), 0, 2*pi)
 
 ### I( cos(x) * digamma(x/(2*pi)) )
 integrate(\(x) cos(x) * digamma(x/(2*pi)) + 2*pi/x, 0, 2*pi)
-2*pi*Euler + 2*pi*log(2*pi)
+2*pi*Euler + 2*pi*log(2*pi);
 
 
 ### I( digamma(x/(2*pi)) )
@@ -175,7 +184,15 @@ integrate(\(x) digamma(x/(2*pi)) + 2*pi/x, 0, 1)
 ### I( digamma(k*x) )
 k = 1 / sqrt(pi)
 integrate(\(x) digamma(k*x) + 1 / (k*x), 0, 1)
-(log(gamma(k)) + log(k)) / k
+(log(gamma(k)) + log(k)) / k;
+
+
+### I( digamma(1 + 1i*x) )
+integrate(\(x) sapply(x, \(x) Im(pracma::psi(0, 1 + 1i*x))), 0, 1)
+log(sinh(pi)/pi) / 2;
+#
+integrate(\(x) sapply(x, \(x) Re(pracma::psi(0, 1 + 1i*x))), 0, 1)
+- atan(Re(pracma::gammaz(1i)) / Im(pracma::gammaz(1i)))
 
 
 ### I( x * digamma(x) )
@@ -248,6 +265,14 @@ FUN = \(x) {
 eps = 1E-7;
 integrate(FUN, 0, 1/2 - eps, rel.tol=1E-9)$value +
 integrate(FUN, 1/2 + eps, 1, rel.tol=1E-9)$value;
+
+
+##################
+
+### I( sin(pi*x) * gamma(x) )
+integrate(\(x) sin(pi*x) * gamma(x), 0, 1)
+integrate(\(x) pi / gamma(x), 0, 1)
+# TODO
 
 
 ##################
