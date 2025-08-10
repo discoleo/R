@@ -390,6 +390,13 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 (pi / sin(pi/n) - beta(2/n, 1-1/n)) / n;
 
 
+### Gen: I( x^2 / (1 - x^n*y^n)^(1/n) )
+n = sqrt(13) + 1/3;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^2 / (1 - x^n*y^n)^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+(pi / sin(pi/n) - beta(3/n, 1-1/n)) / (2*n);
+
+
 ### Gen: I( x^n / (1 - x^n*y^n)^(1/n) )
 n = sqrt(3) + sqrt(11);
 integrate(\(x) sapply(x, \(y) integrate(\(x)
@@ -455,6 +462,12 @@ sum(digamma(c(1,2,4,5)/6) * c(-1,-1,1,1)) * diff(digamma(c(1,3)/3)) / 18
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x / (1 - x^3*y^3)^(1/3), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 (pi / sin(pi/3) - beta(2/3, 2/3)) / 3;
+
+
+### I( x^2 / (1 - x^3*y^3)^(1/3) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^2 / (1 - x^3*y^3)^(1/3), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+pi / tan(pi/3) / 3 - 1/4;
 
 
 ### I( x^3 / (1 - x^3*y^3)^(1/3) )
@@ -549,6 +562,12 @@ sum(digamma(c(1:3, 5:7)/8) * rep(c(-1,1), each = 3)) *
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x / (1 - x^4*y^4)^(1/4), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 (pi / sin(pi/4) - beta(2/4, 3/4)) / 4;
+
+
+### I( x^2 / (1 - x^4*y^4)^(1/4) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^2 / (1 - x^4*y^4)^(1/4), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+(pi/sin(pi/4) - beta(3/4, 3/4)) / 8;
 
 
 ### I( x^4 / (1 - x^4*y^4)^(1/4) )
@@ -652,10 +671,17 @@ n = 5;
 
 
 ### I( x / (1 - x^5*y^5)^(1/5) )
-n = 5
+n = 5;
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x / (1 - x^n*y^n)^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 (pi / sin(pi/n) - beta(2/n, 1-1/n)) / n;
+
+
+### I( x^2 / (1 - x^5*y^5)^(1/5) )
+n = 5;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^2 / (1 - x^n*y^n)^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+(pi/sin(pi/n) - beta(3/n, 1-1/n)) / (2*n);
 
 
 ### I( 1 / ((1 - x^5) * (1 - y^5) * (1 - x^5*y^5))^(1/5) )
