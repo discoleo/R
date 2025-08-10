@@ -376,7 +376,15 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 
 ### Generalisations:
 
+### Gen: I( x^p / (1 - x^n*y^n)^(1/n) )
+n = sqrt(13) + 1/3; p = sqrt(2);
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^p / (1 - x^n*y^n)^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+(pi / sin(pi/n) - beta((p+1)/n, 1-1/n)) / (p*n);
+
+
 ### Gen: I( 1 / (1 - x^n*y^n)^(1/n) )
+# Special Case: p = 0;
 n = sqrt(29)
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	1 / (1 - x^n*y^n)^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
@@ -404,12 +412,7 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 (beta(1/n, 1/n) * beta(2/n, 1 - 1/n) - beta(1/n, 1 - 1/n)) / n^3;
 
 
-### Gen: I( x^p / (1 - x^n*y^n)^(1/n) )
-n = sqrt(13) + 1/3; p = sqrt(2);
-integrate(\(x) sapply(x, \(y) integrate(\(x)
-	x^p / (1 - x^n*y^n)^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
-(pi / sin(pi/n) - beta((p+1)/n, 1-1/n)) / (p*n);
-
+### Series: I( ((1 - x^n) / (1 - x^n*y^n))^(1/n) )
 
 ### Gen: I( ((1 - x^n) / (1 - x^n*y^n))^(1/n) )
 n = sqrt(5)
