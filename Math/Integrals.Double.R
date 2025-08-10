@@ -788,6 +788,14 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 pi^3 / 24
 
 
+### Atan( Trig )
+
+### I( atan(tan(x)*tan(y)) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(tan(x)*tan(y)), 0, pi/2, rel.tol=1E-12)$value), 0, pi/2, rel.tol=1E-12)
+pi^3/16;
+
+
 ##############
 ##############
 
