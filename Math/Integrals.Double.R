@@ -5,7 +5,7 @@
 ##
 ## Integrals: Double Integrals
 ##
-## v.0.2b
+## v.0.2c
 
 ### Double Integrals
 
@@ -531,4 +531,47 @@ integrate(\(x) sapply(x, \(y)
 
 ###############
 ###############
+
+### Varia
+
+
+### Log( GAMMA )
+
+### I( log(gamma(x+y)) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	log(gamma(x+y)), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+log(2*pi)/2 - 3/4;
+
+
+### I( log(gamma(x*y)) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	log(gamma(x*y)), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+integrate(\(x) - log(x) * log(gamma(x)), 0, 1, rel.tol=1E-12)
+# TODO
+
+
+### I( log(gamma(sqrt(x*y))) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	log(gamma(sqrt(x*y))), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+# TODO
+
+
+### I( log(gamma(sqrt(x^2 + y^2))) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	log(gamma(sqrt(x^2 + y^2))), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+# TODO
+
+
+### GAMMA(...)
+
+### I( gamma(x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	gamma(x*y) - 1/(x*y), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+# TODO
+
+
+### I( gamma(sqrt(x^2 + y^2)) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	gamma(sqrt(x^2 + y^2)), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+# TODO
 
