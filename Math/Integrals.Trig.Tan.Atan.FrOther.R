@@ -6,6 +6,15 @@
 ## Fractions: Other Types
 
 
+### Various Types
+# - Contain some fraction;
+
+
+### I( atan(1/x - x) )
+integrate(\(x) atan(1/x - x), 0, 1, rel.tol=1E-13)
+pi * sin(pi/3)/3;
+
+
 ### I( atan(sqrt(x^2 + b^2)) / ((x^2 + 1) * sqrt(x^2 + b^2)) )
 # Maths 505: Ahmed's monster integral: solution using Feynman's technique
 # https://www.youtube.com/watch?v=Rq-bYzyoSwU
@@ -130,7 +139,7 @@ pi * log(2) / 8 - Catalan / 2;
 ### Var: atan(1/2 * sqrt(1-x^2)) / x
 integrate(\(x) atan(sqrt(1-x^2) / 2) / x - atan(1/2)/x, 0, 1, rel.tol=1E-12)
 integrate(\(x) atan(cos(x) / 2) / tan(x) - atan(1/2)/x, 0, pi/2)$value +
-	+ log(pi/2) * atan(1/2);
+	+ atan(1/2) * log(pi/2);
 integrate(\(x) - x / tan(x), 0, atan(1/2))$value +
 	+ atan(1/2) * log(2);
 # TODO
