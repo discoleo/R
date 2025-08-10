@@ -795,6 +795,22 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	atan(tan(x)*tan(y)), 0, pi/2, rel.tol=1E-12)$value), 0, pi/2, rel.tol=1E-12)
 pi^3/16;
 
+### I( atan(tan(x) / tan(y)) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(tan(x) / tan(y)), 0, pi/2, rel.tol=1E-12)$value), 0, pi/2, rel.tol=1E-12)
+pi^3/16;
+
+### I( atan(sqrt(tan(x) * tan(y))) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(sqrt(tan(x) * tan(y))), 0, pi/2, rel.tol=1E-12)$value), 0, pi/2, rel.tol=1E-12)
+pi^3/16;
+
+
+### I( atan(sqrt(tan(x)^2 + tan(y)^2)) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(sqrt(tan(x)^2 + tan(y)^2)), 0, pi/2, rel.tol=1E-12)$value), 0, pi/2, rel.tol=1E-12)
+(digamma(7/8) - digamma(3/8)) * (digamma(5/8) - digamma(1/8)) * pi / 16;
+
 
 ##############
 ##############
