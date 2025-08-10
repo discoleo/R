@@ -734,6 +734,12 @@ integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x/y) / (x+y+1), 0, 1)$value), 
 (log(3) * 3/4 - log(2)) * pi
 
 
+### I( atan(x/y) / sqrt(1-x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(x/y) / sqrt(1-x*y), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+pi * (1-log(2));
+
+
 ### ATAN(x+y)
 
 ### I( atan(x+y) )
