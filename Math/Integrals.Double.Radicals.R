@@ -509,12 +509,26 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x*y / (1 - x^n*y^n)^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 beta(2/3, 2/3) / 3 - gamma(2/3)^3 / 6;
 
+### I( x*y^2 / (1 - x^3*y^3)^(1/3) )
+n = 3;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x*y^2 / (1 - x^n*y^n)^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+beta(2/3, 2/3) / 3 - 1/2;
+beta(2/3, 2/3) / ((2-1)*n) - beta(2/3, 3/3) / 3;
 
 ### I( x*y^3 / (1 - x^3*y^3)^(1/3) )
 n = 3;
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x*y^n / (1 - x^n*y^n)^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 beta(2/3, 2/3) / 6 - pi / sin(pi/3) / 18;
+
+
+### Gen: I( x*y^p / (1 - x^3*y^3)^(1/3) )
+n = 3; # fixed;
+p = sqrt(3);
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x*y^p / (1 - x^n*y^n)^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+(beta(2/3, 2/3) - beta(2/3, (p+1)/n)) / ((p-1)*n);
 
 
 ### Mixed:
