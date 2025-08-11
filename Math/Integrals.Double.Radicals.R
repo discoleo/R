@@ -633,11 +633,15 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 (beta(1/4, 1/4) * beta(2/4, 3/4) - beta(1/4, 3/4)) / 64;
 
 
-###
+### I( x*y / (1 - x^4*y^4)^(1/4) )
 n = 4;
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x*y / (1 - x^n*y^n)^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
-# TODO
+beta(3/n, 2/n) * (digamma(5/n) - digamma(2/n)) / n^2;
+
+# Limit:
+p = 1 + 1E-4;
+(beta(2/n, 3/n) - beta(3/n, (p+1)/n)) / ((p-1)*n);
 
 
 ### Mixed:
