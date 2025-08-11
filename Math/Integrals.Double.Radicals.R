@@ -412,6 +412,13 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 (beta(1/n, 1/n) * beta(2/n, 1 - 1/n) - beta(1/n, 1 - 1/n)) / n^3;
 
 
+### Gen: I( x*y / (1 - x^n*y^n)^(1/n) )
+n = sqrt(5) + 2/3;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x*y / (1 - x^n*y^n)^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+beta(1-1/n, 2/n) * (digamma(1+1/n) - digamma(2/n)) / n^2;
+
+
 ### Derived:
 
 ### Gen: I( x^p / (1 - x^m*y^n)^(1/n) )
@@ -753,6 +760,15 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x^2 / (1 - x^n*y^n)^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 (pi/sin(pi/n) - beta(3/n, 1-1/n)) / (2*n);
 
+
+### I( x*y / (1 - x^5*y^5)^(1/5) )
+n = 5
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x*y / (1 - x^n*y^n)^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+beta(1-1/n, 2/n) * (digamma(1+1/n) - digamma(2/n)) / n^2;
+
+
+### Mixed
 
 ### I( 1 / ((1 - x^5) * (1 - y^5) * (1 - x^5*y^5))^(1/5) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
