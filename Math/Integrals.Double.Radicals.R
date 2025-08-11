@@ -503,6 +503,15 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 pi / sin(pi/3) * 2/27;
 
 
+### I( x*y / (1 - x^3*y^3)^(1/3) )
+n = 3;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x*y / (1 - x^n*y^n)^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+beta(2/3, 2/3) / 3 - gamma(2/3)^3 / 6;
+
+
+### Mixed:
+
 ### I( ((1 - x^3) / (1 - x^3*y^3))^(1/3) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	((1 - x^3) / (1 - x^3*y^3))^(1/3), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
@@ -602,6 +611,15 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x^4 / (1 - x^4*y^4)^(1/4), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 (beta(1/4, 1/4) * beta(2/4, 3/4) - beta(1/4, 3/4)) / 64;
 
+
+###
+n = 4;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x*y / (1 - x^n*y^n)^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+# TODO
+
+
+### Mixed:
 
 ### I( ((1 - x^4) / (1 - x^4*y^4))^(1/4) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
