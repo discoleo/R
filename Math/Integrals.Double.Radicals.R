@@ -510,6 +510,13 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 pracma::psi(1, 1/n) / n^2 - 1/n;
 
 
+### I( x * ((1 - x) / (1 - x*y^n))^(1/n) )
+n = sqrt(11);
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * ((1 - x) / (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+(pracma::psi(1, 1/n)*(1-1/n) - (n-2)/2) / (2*n^2);
+
+
 ### Gen: I( 1 / ((1-x) * (1-y^n) * (1 - x*y^n))^(1/n) )
 n = sqrt(5) + sqrt(7)
 integrate(\(x) sapply(x, \(y) integrate(\(x)
@@ -659,11 +666,16 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	((1 - x) / (1 - x*y^3))^(1/3), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 pracma::psi(1, 1/3) / 9 - 1/3;
 
+### I( x * ((1 - x) / (1 - x*y^n))^(1/n) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * ((1 - x) / (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+pracma::psi(1, 1/3) / 3^3 - 1/3^2 + 1/12;
+
 
 ### I( ((1 - x) * (1 - x*y^3)^2)^(1/3) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	((1 - x) * (1 - x*y^3)^2)^(1/3), 0, 1, rel.tol=1E-11)$value), 0, 1, rel.tol=1E-12)
- pracma::psi(1, 1/3) * 2/27 - 1/18;
+pracma::psi(1, 1/3) * 2/27 - 1/18;
 
 
 ### I( ((1 - x)^2 * (1 - x*y^3))^(1/3) )
@@ -821,6 +833,13 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 beta(1/4, 3/4) * beta(1/4, 9/4) / 4^2;
 
 
+### I( x * ((1 - x) / (1 - x*y^4))^(1/4) )
+n = 4;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * ((1 - x) / (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+(pracma::psi(1, 1/4) * 3/4 - 1) / 32;
+
+
 ### I( ((1 - x)^3 * (1 - x*y^4))^(1/4) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	((1 - x)^3 * (1 - x*y^4))^(1/4), 0, 1, rel.tol=1E-11)$value), 0, 1, rel.tol=1E-12)
@@ -881,6 +900,15 @@ beta(1/5, 7/5) * beta(4/5, 4/5) / 5;
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	((1-x) / (1-y^5) * (1 - x*y^5))^(1/5), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 beta(1/5, 4/5) * beta(1/5, 11/5) / 5^2;
+
+
+### I( x * ((1 - x) / (1 - x*y^5))^(1/5) )
+n = 5;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * ((1 - x) / (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+(pracma::psi(1, 1/n)*(1-1/n) - 3/2) / (2*n^2);
+(pracma::psi(1, 1/n)*(1-1/n) - (n-2)/2) / (2*n^2);
+
 
 
 ##############
