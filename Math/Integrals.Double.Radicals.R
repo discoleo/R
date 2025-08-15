@@ -668,7 +668,7 @@ pracma::psi(1, 1/3) / 9 - 1/3;
 
 ### I( x * ((1 - x) / (1 - x*y^n))^(1/n) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
-	x * ((1 - x) / (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+	x * ((1 - x) / (1 - x*y^3))^(1/3), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 pracma::psi(1, 1/3) / 3^3 - 1/3^2 + 1/12;
 
 
@@ -694,6 +694,7 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	1 / (1 - x^4*y^4)^(1/4), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 sum(digamma(c(1:3, 5:7)/8) * rep(c(-1,1), each = 3)) *
 	diff(digamma(c(1,4)/4)) / 4^2 / (2 + 1/sqrt(2));
+- pi / sin(pi/4) * (digamma(1/4) + Euler) / 4^2;
 
 
 ### I( x / (1 - x^4*y^4)^(1/4) )
@@ -752,6 +753,13 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 pracma::psi(1, 1/2) / 8;
 
 
+### I( x*y / ((1 - x^4) * (1 - x^4*y^4))^(1/4) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x*y / ((1 - x^4) * (1 - x^4*y^4))^(1/4), 0, 1, rel.tol=1E-11)$value), 0, 1, rel.tol=1E-12)
+pi/4 - gamma(3/4)^2 * gamma(1/2) * sqrt(2) / 8;
+
+
+
 ### I( x^2 / ((1 - x^4) * (1 - x^4*y^4))^(1/4) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x^2 / ((1 - x^4) * (1 - x^4*y^4))^(1/4), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
@@ -762,6 +770,17 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x^3 / ((1 - x^4) * (1 - x^4*y^4))^(1/4), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 # TODO
+
+
+### I( x^3*y / ((1 - x^4) * (1 - x^4*y^4))^(1/4) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^3*y / ((1 - x^4) * (1 - x^4*y^4))^(1/4), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+gamma(3/4)^4 / gamma(1/2)^2 / 4;
+
+### I( x^3*y^3 / ((1 - x^4) * (1 - x^4*y^4))^(1/4) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^3*y^3 / ((1 - x^4) * (1 - x^4*y^4))^(1/4), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+(log(2)/4 - pi/8 + 1/2) / 3;
 
 
 ### I( x^4 / ((1 - x^4) * (1 - x^4*y^4))^(1/4) )
