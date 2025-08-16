@@ -177,7 +177,7 @@ gamma(1/4)^3 / gamma(3/4) * sqrt(2) / 24 - 2/3;
 ### I( sqrt((1-x^2)/(x*y) / (1 - x^2*y^2)) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	sqrt( (1-x^2)/(x*y) / (1 - x^2*y^2) ), 0, 1, rel.tol=1E-7)$value), 0, 1, rel.tol=1E-7)
-# I( 1 / sqrt((1-x^2) * (1 - x^2*y^2)) ) +
+# I( x / sqrt((1-x^2) * (1 - x^2*y^2)) ) +
 	+ beta(1/4, 1/2) * beta(1/2, 1/2) / 4 - 2;
 # TODO
 
@@ -210,7 +210,18 @@ pi/2 - gamma(3/4)*gamma(7/4) / gamma(7/2) * sqrt(2) * 2;
 ### I( sqrt( (1-x) / (1 - x^2*y^2) ) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	sqrt( (1-x) / (1 - x^2*y^2) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+#
+integrate(\(x) 2 * sapply(x, \(y) integrate(\(x)
+	sqrt( (1-x) * (1 - x^2*y^2) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)$value +
+	- (1/3 - 1/5 - 1/2^(3/2)/3 + 1/2^(5/2)/5) * sqrt(2) * 8;
 # TODO
+
+
+### I( sqrt( (1 - x^2*y^2) / (1-x) ) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	sqrt( (1 - x^2*y^2) / (1-x) ), 0, 1, rel.tol=1E-11)$value), 0, 1, rel.tol=1E-13)
+# I( sqrt( (1-x) * (1 - x^2*y^2) ) ) +
+	+ (1/3 - 1/5 - 1/2^(3/2)/3 + 1/2^(5/2)/5) * sqrt(2) * 16;
 
 
 ### I( sqrt( x*(1-x) / (1 - x^2*y^2) ) )
@@ -367,7 +378,8 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 ### Div: I( sqrt( y/x * (1-x) / (1 - x*y^2) ) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	sqrt( y/x * (1-x) / (1 - x*y^2) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=3E-9)
-# TODO
+4 - 4*gamma(3/4)^4 / gamma(1/2)^2;
+4 - beta(3/4, 3/4) * beta(3/4, 3/4);
 
 
 ### Higher Order:
