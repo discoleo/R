@@ -345,6 +345,18 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 pi^2/8 - 1/2;
 
 
+### I( x * sqrt( (1-x) / (1 - x*y^2) ) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * sqrt( (1-x) / (1 - x*y^2) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+pracma::psi(1, 1/2) / 16; # pi^2 / 32;
+
+
+### I( y^2 * sqrt( (1-x) / (1 - x*y^2) ) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y^2 * sqrt( (1-x) / (1 - x*y^2) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+3/2 - pi^2/8;
+
+
 ### I( sqrt( (1-y) / (1 - x*y^2) ) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	sqrt( (1-y) / (1 - x*y^2) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
