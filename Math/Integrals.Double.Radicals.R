@@ -174,6 +174,14 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 gamma(1/4)^3 / gamma(3/4) * sqrt(2) / 24 - 2/3;
 
 
+### I( sqrt((1-x^2)/(x*y) / (1 - x^2*y^2)) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	sqrt( (1-x^2)/(x*y) / (1 - x^2*y^2) ), 0, 1, rel.tol=1E-7)$value), 0, 1, rel.tol=1E-7)
+# I( 1 / sqrt((1-x^2) * (1 - x^2*y^2)) ) +
+	+ beta(1/4, 1/2) * beta(1/2, 1/2) / 4 - 2;
+# TODO
+
+
 ### I( 1 / sqrt(1 - x^2*y^2) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) 1 / sqrt(1 - x^2*y^2), 0, 1)$value), 0, 1)
 pi*log(2)/2;
