@@ -22,7 +22,8 @@
 #   Integrals.Double.Radicals.Diff.R;
 # - [refactor] moved Explicit Cases
 #   of I( x^p * y^q / (1 - x*y)^k ) to file:
-#   Integrals.Double.Radicals.Diff.R;
+#   Integrals.Double.Radicals.Simple.R;
+
 
 ####################
 
@@ -986,18 +987,12 @@ beta(1/6, 5/6) * beta(1/6, 13/6) / 6^2;
 
 ### Pow = 7
 
-### I( 1 / (1 - x^7*y^7)^(1/7) )
-integrate(\(x) sapply(x, \(y) integrate(\(x)
-	1 / (1 - x^7*y^7)^(1/7), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
-sum(digamma(c(1:6, 8:13)/14) * rep(c(-1,1), each = 6)) *
-	diff(digamma(c(1,7)/7)) / 7^2 / 4;
-
-
 ### I( 1 / ((1 - x^7) * (1 - y^7) * (1 - x^7*y^7))^(1/7) )
 n = 7; # fixed value;
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	1 / ((1 - x^n) * (1 - y^n) * (1 - x^n*y^n))^(1/n), 0, 1, rel.tol=1E-10)$value), 0, 1, rel.tol=1E-12)
 gamma(1/(2*n))^3 / gamma(3/(2*n)) / (2*n)^2 / (2*sin(3*pi/7) + sin(2*pi/7));
+beta(1/(2*n), 1-2/(2*n)) * beta(1/n, 1-3/(2*n)) / (2*n^2);
 
 
 ### I( 1 / ((1-x) * (1-y^7) * (1 - x*y^7))^(1/7) )

@@ -197,3 +197,15 @@ sum(digamma(c(1:5, 7:11)/12) * rep(c(-1,1), each = 5)) *
 n = 6;
 - pi / sin(pi/n) * (digamma(1/n) + Euler) / n^2;
 
+
+###########
+### Pow = 7
+
+### I( 1 / (1 - x^7*y^7)^(1/7) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	1 / (1 - x^7*y^7)^(1/7), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+sum(digamma(c(1:6, 8:13)/14) * rep(c(-1,1), each = 6)) *
+	diff(digamma(c(1,7)/7)) / 7^2 / 4;
+n = 7;
+- pi / sin(pi/n) * (digamma(1/n) + Euler) / n^2;
+
