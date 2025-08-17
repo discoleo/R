@@ -824,7 +824,7 @@ pi/4 - gamma(3/4)^2 * gamma(1/2) * sqrt(2) / 8;
 ### I( x^2 / ((1 - x^4) * (1 - x^4*y^4))^(1/4) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x^2 / ((1 - x^4) * (1 - x^4*y^4))^(1/4), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
-# TODO
+beta(3/4, 3/4) * (pi/4 - sqrt(2)/2 - 1/2 * log(tan(pi/8))) / 2;
 
 
 ### I( x^2*y / ((1 - x^4) * (1 - x^4*y^4))^(1/4) )
@@ -870,6 +870,12 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x^4*y^4 / ((1 - x^4) * (1 - x^4*y^4))^(1/4), 0, 1, rel.tol=1E-11)$value), 0, 1, rel.tol=1E-12)
 # I( 1 / ((1 - x^4) * (1 - x^4*y^4))^(1/4) ) / 4 - beta(1/4, 2/4) / 24;
+# TODO
+
+
+### I( ((1 - x^4) * (1 - x^4*y^4))^(1/4) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	((1 - x^4) * (1 - x^4*y^4))^(1/4), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 # TODO
 
 
