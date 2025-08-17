@@ -695,6 +695,12 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 pi * sin(pi/3)/3 - 1/2;
 
 
+### I( x*y * ((1 - x) / (1 - x*y^3))^(1/3) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x*y * ((1 - x) / (1 - x*y^3))^(1/3), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+pi * sin(pi/3) / 15;
+
+
 ### I( ((1 - x) * (1 - x*y^3)^2)^(1/3) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	((1 - x) * (1 - x*y^3)^2)^(1/3), 0, 1, rel.tol=1E-11)$value), 0, 1, rel.tol=1E-12)
@@ -928,7 +934,13 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 ### I( y * ((1 - x) / (1 - x*y^4))^(1/4) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	y * ((1 - x) / (1 - x*y^4))^(1/4), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-13)
-(pi/2 + log(2) - 1)/3;
+(pi/2 + log(2) - 1) / 3;
+
+
+### I( x*y * ((1 - x) / (1 - x*y^4))^(1/4) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x*y * ((1 - x) / (1 - x*y^4))^(1/4), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+((pi/2 + log(2)) * 4/3 - 1/3) / 14;
 
 
 ### I( ((1 - x)^3 * (1 - x*y^4))^(1/4) )
