@@ -48,6 +48,13 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 (beta((p+1)/n, 1-1/n) - beta((q+1)/n, 1-1/n)) / ((q-p)*n);
 
 
+### I( x^p * y^q * (1 - x^n*y^n)^(1/n) )
+p = sqrt(2); q = -1/sqrt(3); n = 1/sqrt(7);
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^p*y^q * (1 - x^n*y^n)^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+(beta((p+1)/n, 1+1/n) - beta((q+1)/n, 1+1/n)) / ((q-p)*n);
+
+
 ### I( x^p * y^q / (1 - x*y)^k )
 k = 1/sqrt(19);
 p = sqrt(3) - 1/5; q = sqrt(2) - 1/11;
