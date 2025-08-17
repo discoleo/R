@@ -592,6 +592,15 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 ((digamma(2/n) - digamma(1/n)) * (n-2) - (n-3)/2) / ((n-1)*(2*n-1));
 
 
+### Gen: I( ((1 - x) * (1 - x*y^n)^(n-1))^(1/n) )
+n = sqrt(3) + sqrt(5);
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	((1 - x) * (1 - x*y^n)^(n-1))^(1/n), 0, 1, rel.tol=1E-11)$value), 0, 1, rel.tol=1E-12)
+(pracma::psi(1, 1/n) * (n-1)/n - (n-2)/2) / n^2;
+
+
+### Series: 3-Terms
+
 ### Gen: I( 1 / ((1-x) * (1-y^n) * (1 - x*y^n))^(1/n) )
 n = sqrt(5) + sqrt(7)
 integrate(\(x) sapply(x, \(y) integrate(\(x)
@@ -931,6 +940,15 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 beta(1/4, 3/4) * beta(1/4, 9/4) / 4^2;
 
 
+### Series: ((1-x) / (1 - x*y^4))
+
+### I( ((1 - x) / (1 - x*y^4))^(1/4) )
+n = 4;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	((1 - x) / (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+pracma::psi(1, 1/n) / n^2 - 1/n;
+
+
 ### I( x * ((1 - x) / (1 - x*y^4))^(1/4) )
 n = 4;
 integrate(\(x) sapply(x, \(y) integrate(\(x)
@@ -949,11 +967,32 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x*y * ((1 - x) / (1 - x*y^4))^(1/4), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 ((pi/2 + log(2)) * 4/3 - 1/3) / 14;
 
+### I( x*y^2 * ((1 - x) / (1 - x*y^4))^(1/4) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x*y^2 * ((1 - x) / (1 - x*y^4))^(1/4), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+pi / 24;
+
+### I( x*y^3 * ((1 - x) / (1 - x*y^4))^(1/4) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x*y^3 * ((1 - x) / (1 - x*y^4))^(1/4), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+1/10;
+
+### I( x*y^4 * ((1 - x) / (1 - x*y^4))^(1/4) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x*y^4 * ((1 - x) / (1 - x*y^4))^(1/4), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+pracma::psi(1, 1/4) / 64 - 3/16;
+
 
 ### I( ((1 - x)^3 * (1 - x*y^4))^(1/4) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	((1 - x)^3 * (1 - x*y^4))^(1/4), 0, 1, rel.tol=1E-11)$value), 0, 1, rel.tol=1E-12)
 (digamma(7/4) - digamma(1/4)) / 8;
+
+
+### I( ((1 - x) * (1 - x*y^4)^3)^(1/4) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	((1 - x) * (1 - x*y^4)^3)^(1/4), 0, 1, rel.tol=1E-11)$value), 0, 1, rel.tol=1E-12)
+pracma::psi(1, 1/4) * 3/64 - 1/16;
 
 
 ##############
@@ -1002,6 +1041,13 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x*y * ((1 - x) / (1 - x*y^5))^(1/5), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 n = 5;
 ((digamma(2/n) - digamma(1/n)) * 3 - 1) / ((n-1)*(2*n-1));
+
+
+### I( ((1 - x) * (1 - x*y^5)^4)^(1/5) )
+n = 5;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	((1 - x) * (1 - x*y^n)^(n-1))^(1/n), 0, 1, rel.tol=1E-11)$value), 0, 1, rel.tol=1E-12)
+(pracma::psi(1, 1/n) * (n-1)/n - (n-2)/2) / n^2;
 
 
 ##############
