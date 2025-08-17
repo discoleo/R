@@ -835,6 +835,12 @@ beta(3/4, 2/4) / 4 + beta(3/4, 3/4) / 4 * log(tan(pi/8));
 # TODO: digamma?
 
 
+### I( x^2*y^2 / ((1 - x^4) * (1 - x^4*y^4))^(1/4) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^2*y^2 / ((1 - x^4) * (1 - x^4*y^4))^(1/4), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+beta(3/4, 3/4) * (-pi/4 + sqrt(2)/2 - 1/2 * log(tan(pi/8))) / 4;
+
+
 ### I( x^3 / ((1 - x^4) * (1 - x^4*y^4))^(1/4) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x^3 / ((1 - x^4) * (1 - x^4*y^4))^(1/4), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
