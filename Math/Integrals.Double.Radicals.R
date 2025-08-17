@@ -585,6 +585,13 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 (digamma(2/n) - digamma(1/n) - 1) / (n-1);
 
 
+### Gen: I( x*y * ((1 - x) / (1 - x*y^n))^(1/n) )
+n = 2*sqrt(7)
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x*y * ((1 - x) / (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+((digamma(2/n) - digamma(1/n)) * (n-2) - (n-3)/2) / ((n-1)*(2*n-1));
+
+
 ### Gen: I( 1 / ((1-x) * (1-y^n) * (1 - x*y^n))^(1/n) )
 n = sqrt(5) + sqrt(7)
 integrate(\(x) sapply(x, \(y) integrate(\(x)
@@ -990,6 +997,13 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 (digamma(2/n) - digamma(1/n) - 1)/(n-1);
 
 
+### I( x*y * ((1 - x) / (1 - x*y^5))^(1/5) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x*y * ((1 - x) / (1 - x*y^5))^(1/5), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+n = 5;
+((digamma(2/n) - digamma(1/n)) * 3 - 1) / ((n-1)*(2*n-1));
+
+
 ##############
 
 ### Pow = 6
@@ -1015,6 +1029,13 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 beta(1/6, 5/6) * beta(1/6, 13/6) / 6^2;
 
 
+### I( x*y * ((1 - x) / (1 - x*y^6))^(1/6) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x*y * ((1 - x) / (1 - x*y^6))^(1/6), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+n = 6;
+((digamma(2/n) - digamma(1/n)) * 4 - 3/2) / ((n-1)*(2*n-1));
+
+
 ##############
 
 ### Pow = 7
@@ -1031,4 +1052,11 @@ beta(1/(2*n), 1-2/(2*n)) * beta(1/n, 1-3/(2*n)) / (2*n^2);
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	1 / ((1-x) * (1-y^7) * (1 - x*y^7))^(1/7), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 beta(1/7, 11/7) * beta(6/7, 6/7) / 7;
+
+
+### I( x*y * ((1 - x) / (1 - x*y^7))^(1/7) )
+n = 7
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x*y * ((1 - x) / (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+((digamma(2/n) - digamma(1/n)) * (n-2) - (n-3)/2) / ((n-1)*(2*n-1));
 
