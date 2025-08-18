@@ -661,6 +661,12 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 gamma(1/3)^3 / 9 - pi / sin(pi/3) / 3;
 
 
+### I( x * ((1 - x^3) / (1 - x^3*y^3)^2)^(1/3) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * ((1 - x^3) / (1 - x^3*y^3)^2)^(1/3), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+beta(1/6, 2/3) * beta(1/3, 1/2) / 36 - beta(2/3, 2/3) / 6;
+
+
 ### Series: 1 / ((1 - x^3) * (1 - x^3*y^3))^(1/3)
 
 ### I( 1 / ((1 - x^3) * (1 - x^3*y^3))^(1/3) )
@@ -777,6 +783,20 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	((1 - x^n) / (1 - x^n*y^n)^2)^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 beta(1/n, 1/n) * beta(1/n, 1-1/n) / n^2 - pi/sin(pi/n) / n;
 
+
+### I( ((1 - x^4) / (1 - x^4*y^4)^3)^(1/4) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	((1 - x^n) / (1 - x^n*y^n)^3)^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+beta(1/4, 1/4) * (pi/4 - sqrt(2)/2 - 1/2 * log(tan(pi/8))) / 4;
+
+
+### I( x * ((1 - x^4) / (1 - x^4*y^4)^3)^(1/4) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * ((1 - x^4) / (1 - x^4*y^4)^3)^(1/4), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+(beta(1/4, 1/2)^2 - beta(1/4, 1/4) * beta(3/4, 3/4)) / 32;
+
+
+### Fractions: 2 Div
 
 ### I( 1 / ((1 - x^4) * (1 - x^4*y^4))^(1/4) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
@@ -907,6 +927,8 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 # TODO
 
 
+### Prod:
+
 ### I( ((1 - x^4) * (1 - x^4*y^4))^(1/4) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	((1 - x^4) * (1 - x^4*y^4))^(1/4), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
@@ -917,6 +939,7 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	((1 - x^4) / (1 - x^4*y^4)^2)^(1/4), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 gamma(1/4)^2 * gamma(1/2) * sqrt(2) / 16 - pi * sqrt(2) / 4;
+# see also above for Series;
 
 
 ### I( ((1 - x^4) * (1 - x^4*y^4)^2)^(1/4) )
