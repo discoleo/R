@@ -592,6 +592,20 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 ((digamma(2/n) - digamma(1/n)) * (n-2) - (n-3)/2) / ((n-1)*(2*n-1));
 
 
+### Gen: I( x*y^(n-1) * ((1 - x) / (1 - x*y^n))^(1/n) )
+n = 7^(2/3)
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x*y^(n-1) * ((1 - x) / (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+1 / (2*(n+1));
+
+
+### Gen: I( x*y^n * ((1 - x) / (1 - x*y^n))^(1/n) )
+n = 7^(3/4)
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x*y^n * ((1 - x) / (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+pracma::psi(1, 1/n) / n^3 - (n+2)/2 / n^2;
+
+
 ### Gen: I( ((1 - x) * (1 - x*y^n)^(n-1))^(1/n) )
 n = sqrt(3) + sqrt(5);
 integrate(\(x) sapply(x, \(y) integrate(\(x)
@@ -715,6 +729,12 @@ pi * sin(pi/3)/3 - 1/2;
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x*y * ((1 - x) / (1 - x*y^3))^(1/3), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 pi * sin(pi/3) / 15;
+
+
+### I( x*y^2 * ((1 - x) / (1 - x*y^3))^(1/3) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x*y^2 * ((1 - x) / (1 - x*y^3))^(1/3), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+1/8;
 
 
 ### I( ((1 - x) * (1 - x*y^3)^2)^(1/3) )
