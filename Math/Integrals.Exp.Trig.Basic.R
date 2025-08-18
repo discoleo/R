@@ -33,6 +33,12 @@ integrate(\(x) x^p * sin(k*x) / exp(a*x), 0, Inf)
 gamma(p + 1) * Im(1 / (a - k*1i)^(p + 1))
 
 
+### Special Case:
+b = 2; k = sqrt(3);
+integrate(\(x) sin(b*x) * exp(-k*x) / x, 0, Inf)
+atan(b/k)
+
+
 #####################
 
 ### I( x^p * cos(k*x) * exp(- a*x) )
