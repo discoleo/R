@@ -798,6 +798,13 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 
 ### Fractions: 2 Div
 
+### Gen: I( x*y^p / ((1 - x^4) * (1 - x^4*y^4))^(1/4) )
+p = 1 / sqrt(5)
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x*y^p / ((1 - x^4) * (1 - x^4*y^4))^(1/4), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-13)
+(pi - beta((p+1)/ 4, 1/2) * beta(3/4, 1/2) / 4) / (4*p);
+
+
 ### I( 1 / ((1 - x^4) * (1 - x^4*y^4))^(1/4) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	1 / ((1 - x^4) * (1 - x^4*y^4))^(1/4), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
@@ -827,8 +834,9 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 
 ### I( x*y^(2/3) / ((1 - x^4) * (1 - x^4*y^4))^(1/4) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
-	x*y^(2/3) / ((1 - x^4) * (1 - x^4*y^4))^(1/4), 0, 1, rel.tol=1E-11)$value), 0, 1, rel.tol=1E-12)
+	x*y^(2/3) / ((1 - x^4) * (1 - x^4*y^4))^(1/4), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-13)
 (pi - beta(2/12, 6/12) * beta(7/12, 7/12) * beta(1/4, 1/4) / beta(1/3, 1/3) / 12) / (4*2/3);
+(pi - beta(5/12, 1/2) * beta(3/4, 1/2) / 4) / (4*2/3);
 
 
 ### I( x*y / ((1 - x^4) * (1 - x^4*y^4))^(1/4) )
@@ -836,6 +844,13 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x*y / ((1 - x^4) * (1 - x^4*y^4))^(1/4), 0, 1, rel.tol=1E-11)$value), 0, 1, rel.tol=1E-12)
 pi/4 - gamma(3/4)^2 * gamma(1/2) * sqrt(2) / 8;
 (pi - beta(3/4, 3/4) * beta(1/4, 3/4) / 4) / 4;
+
+
+### I( x*y^(4/3) / ((1 - x^4) * (1 - x^4*y^4))^(1/4) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x*y^(4/3) / ((1 - x^4) * (1 - x^4*y^4))^(1/4), 0, 1, rel.tol=1E-11)$value), 0, 1, rel.tol=1E-12)
+(pi - beta(7/12, 1/2) * beta(3/4, 1/2) / 4) / (4*4/3);
+
 
 ### I( x*y^1.5 / ((1 - x^4) * (1 - x^4*y^4))^(1/4) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
