@@ -887,10 +887,18 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 (pi - beta(3/4, 3/4) * beta(5/4, 3/4) / 2) / 20;
 
 
+### Series: x^2
+
 ### I( x^2 / ((1 - x^4) * (1 - x^4*y^4))^(1/4) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x^2 / ((1 - x^4) * (1 - x^4*y^4))^(1/4), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
-beta(3/4, 3/4) * (pi/4 - sqrt(2)/2 - 1/2 * log(tan(pi/8))) / 2;
+beta(3/4, 3/4) * (pi/2 - sqrt(2) - log(tan(pi/8))) / 4;
+
+
+### I( x^2*y^0.5 / ((1 - x^4) * (1 - x^4*y^4))^(1/4) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^2*y^0.5 / ((1 - x^4) * (1 - x^4*y^4))^(1/4), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+beta(3/4, 3/4) * beta(3/4, 3/4) * (sqrt(2) - 1) / 4;
 
 
 ### I( x^2*y / ((1 - x^4) * (1 - x^4*y^4))^(1/4) )
@@ -898,6 +906,7 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x^2*y / ((1 - x^4) * (1 - x^4*y^4))^(1/4), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 beta(3/4, 3/4) * sqrt(2)/2 * (1/2 + sqrt(2)/4 * log(tan(pi/8)));
 beta(3/4, 2/4) / 4 + beta(3/4, 3/4) / 4 * log(tan(pi/8));
+beta(3/4, 3/4) * (sqrt(2) + log(tan(pi/8))) / 4;
 # TODO: digamma?
 
 
