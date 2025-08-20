@@ -549,6 +549,15 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 beta(1/n, 1/n) * beta(1/n, 1-1/n) / n^2 - pi/sin(pi/n) / n;
 
 
+### Series: 2 Fractions
+
+### Gen: I( x*y^p / ((1 - x^n) * (1 - x^n*y^n))^(1/n) )
+n = sqrt(7) + 1/5; p = sqrt(3);
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x*y^p / ((1 - x^n) * (1 - x^n*y^n))^(1/n), 0, 1, rel.tol=1E-10)$value), 0, 1, rel.tol=1E-12)
+(pi / sin(2*pi/n) - beta((p+1)/n, 1-2/n) * beta(2/n, 1-1/n) / n) / (n*p);
+
+
 ### Gen: I( x^n / ((1-x^n) * (1 - x^n*y^n))^(1/n) )
 n = sqrt(19);
 integrate(\(x) sapply(x, \(y) integrate(\(x)
@@ -1117,6 +1126,18 @@ pracma::psi(1, 1/4) * 3/64 - 1/16;
 ### Pow = 5
 
 ### Mixed
+
+
+### Series: 2 Fractions
+
+### Gen: I( x*y / ((1 - x^5) * (1 - x^5*y^5))^(1/5) )
+n = 5; p = sqrt(3);
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x*y^p / ((1 - x^n) * (1 - x^n*y^n))^(1/n), 0, 1, rel.tol=1E-10)$value), 0, 1, rel.tol=1E-12)
+(pi / sin(2*pi/n) - beta((p+1)/n, 1-2/n) * beta(2/n, 1-1/n) / n) / (n*p);
+
+
+### Series: 3 Fractions
 
 ### I( 1 / ((1 - x^5) * (1 - y^5) * (1 - x^5*y^5))^(1/5) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
