@@ -869,6 +869,11 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 # TODO
 
 
+### I( x^3*y^0.5 / ((1 - x^4) * (1 - x^4*y^4))^(1/4) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^3*y^0.5 / ((1 - x^4) * (1 - x^4*y^4))^(1/4), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+
+
 ### I( x^3*y / ((1 - x^4) * (1 - x^4*y^4))^(1/4) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x^3*y / ((1 - x^4) * (1 - x^4*y^4))^(1/4), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
@@ -960,11 +965,65 @@ gamma(1/8)^3 / gamma(3/8) / 8^2 / (2*cos(pi/8) + sin(pi/8));
 (2*sqrt(2) + 3) * sin(pi/8);
 
 
+### I( x / ((1 - x^4) * (1 - y^4) * (1 - x^4*y^4))^(1/4) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x / ((1 - x^4) * (1 - y^4) * (1 - x^4*y^4))^(1/4), 0, 1, rel.tol=1E-10)$value), 0, 1, rel.tol=1E-12)
+((digamma(5/8) - digamma(1/8))^2 - (digamma(7/8) - digamma(3/8))^2) / 64;
+
+
+### I( x*y / ((1 - x^4) * (1 - y^4) * (1 - x^4*y^4))^(1/4) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x*y / ((1 - x^4) * (1 - y^4) * (1 - x^4*y^4))^(1/4), 0, 1, rel.tol=1E-10)$value), 0, 1, rel.tol=1E-12)
+(digamma(7/8) - digamma(3/8)) * pi/16;
+
+
 ### I( ((1-x^4) / (1-y^4) * (1 - x^4*y^4))^(1/4) )
 n = 4;
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	((1-x^n) / (1-y^n) * (1 - x^n*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 beta(1/(2*n), 1+1/n) * beta(1/(2*n), 1-1/n) / (2*n)^2;
+
+
+### I( ((1-x^4) * (1-y^4) / (1 - x^4*y^4))^(1/4) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	((1-x^4) * (1-y^4) / (1 - x^4*y^4))^(1/4), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+# TODO
+
+
+### I( x * ((1-x^4) * (1-y^4) / (1 - x^4*y^4))^(1/4) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * ((1-x^4) * (1-y^4) / (1 - x^4*y^4))^(1/4), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+# TODO
+
+
+### I( x*y * ((1-x^4) * (1-y^4) / (1 - x^4*y^4))^(1/4) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x*y * ((1-x^4) * (1-y^4) / (1 - x^4*y^4))^(1/4), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+# TODO
+
+
+### I( ((1-x^4) * (1-y^4) * (1 - x^4*y^4))^(1/4) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	((1-x^4) * (1-y^4) * (1 - x^4*y^4))^(1/4), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+# TODO
+
+
+### I( x * ((1-x^4) * (1-y^4) * (1 - x^4*y^4))^(1/4) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * ((1-x^4) * (1-y^4) * (1 - x^4*y^4))^(1/4), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+# TODO
+
+
+### I( x*y * ((1-x^4) * (1-y^4) * (1 - x^4*y^4))^(1/4) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x*y * ((1-x^4) * (1-y^4) * (1 - x^4*y^4))^(1/4), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+# TODO
+
+
+### I( x*y^2 * ((1-x^4) * (1-y^4) * (1 - x^4*y^4))^(1/4) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x*y^2 * ((1-x^4) * (1-y^4) * (1 - x^4*y^4))^(1/4), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+# TODO
 
 
 ### Pow 1 & 4:
