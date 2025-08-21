@@ -453,14 +453,16 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x^p*y^q / (1 - x^m*y^n)^k, 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 (beta((p+1)/m, 1-k) - beta((q+1)/n, 1-k)) / ((q+1)*m-(p+1)*n);
 
+### Alternative Reformulations:
 
 ### Gen: I( x^p * y^q * (1 - x^n*y^n)^(1/n) )
-# - alternative Reformulation;
 p = sqrt(2); q = -1/sqrt(3); n = 1/sqrt(7);
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x^p*y^q * (1 - x^n*y^n)^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 (beta((p+1)/n, 1+1/n) - beta((q+1)/n, 1+1/n)) / ((q-p)*n);
 
+
+### Simpler Cases:
 
 ### Gen: I( x^p / (1 - x^n*y^n)^(1/n) )
 n = sqrt(13) + 1/3; p = sqrt(2);
@@ -681,11 +683,6 @@ beta(1/6, 2/3) * beta(1/3, 1/2) / 36 - beta(2/3, 2/3) / 6;
 
 ### Series: 1 / ((1 - x^3) * (1 - x^3*y^3))^(1/3)
 
-### I( 1 / ((1 - x^3) * (1 - x^3*y^3))^(1/3) )
-integrate(\(x) sapply(x, \(y) integrate(\(x)
-	1 / ((1 - x^3) * (1 - x^3*y^3))^(1/3), 0, 1, rel.tol=1E-10)$value), 0, 1, rel.tol=1E-11)
-# TODO
-
 
 ### Gen: I( x*y^p / ((1 - x^3) * (1 - x^3*y^3))^(1/3) )
 p = sqrt(5) - sqrt(2);
@@ -694,9 +691,21 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 (pi / sin(pi/3) - beta((p+1)/3, 1/3) * beta(2/3, 2/3) / 3) / (3*p);
 
 
-### I( x^3 / ((1 - x^3) * (1 - x^3*y^3))^(1/3) )
+### I( 1 / ((1 - x^3) * (1 - x^3*y^3))^(1/3) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
-	x^3 / ((1 - x^3) * (1 - x^3*y^3))^(1/3), 0, 1, rel.tol=1E-10)$value), 0, 1, rel.tol=1E-11)
+	1 / ((1 - x^3) * (1 - x^3*y^3))^(1/3), 0, 1, rel.tol=1E-10)$value), 0, 1, rel.tol=1E-11)
+# TODO
+
+
+### I( y / ((1 - x^3) * (1 - x^3*y^3))^(1/3) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y / ((1 - x^3) * (1 - x^3*y^3))^(1/3), 0, 1, rel.tol=1E-10)$value), 0, 1, rel.tol=1E-11)
+beta(1/3, 1/3) / 6 - beta(2/3, 2/3) * beta(2/3, 2/3) / 18;
+
+
+### I( y^2 / ((1 - x^3) * (1 - x^3*y^3))^(1/3) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y^2 / ((1 - x^3) * (1 - x^3*y^3))^(1/3), 0, 1, rel.tol=1E-10)$value), 0, 1, rel.tol=1E-11)
 beta(1/3, 1/3) / 12;
 
 
@@ -704,6 +713,38 @@ beta(1/3, 1/3) / 12;
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	y^3 / ((1 - x^3) * (1 - x^3*y^3))^(1/3), 0, 1, rel.tol=1E-10)$value), 0, 1, rel.tol=1E-11)
 # TODO
+
+
+### I( x^3 / ((1 - x^3) * (1 - x^3*y^3))^(1/3) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^3 / ((1 - x^3) * (1 - x^3*y^3))^(1/3), 0, 1, rel.tol=1E-10)$value), 0, 1, rel.tol=1E-11)
+beta(1/3, 1/3) / 12;
+
+
+### I( x^3*y^0.5 / ((1 - x^3) * (1 - x^3*y^3))^(1/3) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^3*y^0.5 / ((1 - x^3) * (1 - x^3*y^3))^(1/3), 0, 1, rel.tol=1E-10)$value), 0, 1, rel.tol=1E-11)
+# TODO
+
+
+### I( x^3*y / ((1 - x^3) * (1 - x^3*y^3))^(1/3) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^3*y / ((1 - x^3) * (1 - x^3*y^3))^(1/3), 0, 1, rel.tol=1E-10)$value), 0, 1, rel.tol=1E-11)
+gamma(5/6)^3 / gamma(1/2) * sqrt(3) / 6; # or =>
+beta(2/3, 2/3) * beta(2/3, 2/3) / 18;
+
+
+### I( x^3*y^1.5 / ((1 - x^3) * (1 - x^3*y^3))^(1/3) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^3*y^1.5 / ((1 - x^3) * (1 - x^3*y^3))^(1/3), 0, 1, rel.tol=1E-10)$value), 0, 1, rel.tol=1E-11)
+# beta(1/3, 1/3) / 3 - 3 * I( y^1.5 / ((1 - x^3) * (1 - x^3*y^3))^(1/3) ); 
+# TODO
+
+
+### I( x^3*y^3 / ((1 - x^3) * (1 - x^3*y^3))^(1/3) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^3*y^3 / ((1 - x^3) * (1 - x^3*y^3))^(1/3), 0, 1, rel.tol=1E-10)$value), 0, 1, rel.tol=1E-11)
+# 1/3 * I( 1 / ((1 - x^3) * (1 - x^3*y^3))^(1/3) ) - beta(1/3, 1/3) / 18;
 
 
 ### I( ((1-x^3) * (1 - x^3*y^3))^(1/3) )
@@ -849,8 +890,7 @@ beta(3/4, 3/4) * beta(3/4, 3/4) * (sqrt(2) - 1) / 4;
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x^2*y / ((1 - x^4) * (1 - x^4*y^4))^(1/4), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 beta(3/4, 3/4) * sqrt(2)/2 * (1/2 + sqrt(2)/4 * log(tan(pi/8)));
-beta(3/4, 2/4) / 4 + beta(3/4, 3/4) / 4 * log(tan(pi/8));
-beta(3/4, 3/4) * (sqrt(2) + log(tan(pi/8))) / 4;
+beta(3/4, 2/4) * (1 + log(tan(pi/8)) / sqrt(2)) / 4;
 
 # Note:
 log(tan(pi/8)) / sqrt(2) # ==
@@ -861,6 +901,8 @@ log(tan(pi/8)) / sqrt(2) # ==
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x^2*y^2 / ((1 - x^4) * (1 - x^4*y^4))^(1/4), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 beta(3/4, 3/4) * (-pi/4 + sqrt(2)/2 - 1/2 * log(tan(pi/8))) / 4;
+beta(3/4, 1/2) * (-pi*sqrt(2)/4 + 1 +
+	+ sum(digamma(c(1,3,5,7)/8) * c(-1,1,1,-1) / 8)) / 8;
 
 
 ### I( x^3 / ((1 - x^4) * (1 - x^4*y^4))^(1/4) )
@@ -872,6 +914,7 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 ### I( x^3*y^0.5 / ((1 - x^4) * (1 - x^4*y^4))^(1/4) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x^3*y^0.5 / ((1 - x^4) * (1 - x^4*y^4))^(1/4), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+# TODO
 
 
 ### I( x^3*y / ((1 - x^4) * (1 - x^4*y^4))^(1/4) )
