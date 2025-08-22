@@ -10,6 +10,13 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 (digamma((3*n+1)/(2*n)) - digamma((2*n+1)/(2*n))) * (n+1)/n^2 + (n-2)/(2*n);
 
 
+### Gen: I( x^2 * ((1 - x*y) / (1 + x*y))^(1/n) )
+n = sqrt(5) + 2*sqrt(3);
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^2 * ((1 - x*y) / (1 + x*y))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+(digamma((3*n+1)/(2*n)) - digamma(1/(2*n))) * (n^2-1)/(3*n^3) - (2*n^2+3*n-6) / (6*n^2);
+
+
 ###################
 
 ### I( ((1 - x*y) / (1 + x*y))^(1/2) )
@@ -50,11 +57,13 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x * ((1 - x*y) / (1 + x*y))^(1/3), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 (2*digamma(2/3) - digamma(1/6) - digamma(7/6)) * 2/9 - 1/2;
+(digamma(10/6) - digamma(7/6)) * 4/9 + 1/6;
 
 ### I( x^2 * ((1 - x*y) / (1 + x*y))^(1/3) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x^2 * ((1 - x*y) / (1 + x*y))^(1/3), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 (2*digamma(2/3) - digamma(1/6) - digamma(7/6)) * 4/81 - 1/9 + 1/6;
+(digamma(10/6) - digamma(1/6)) * 8/81 - 7/18;
 
 
 ### I( ((1 - x*y) / (1 + x*y)^2)^(1/3) )
@@ -129,6 +138,11 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x * ((1 - x*y) / (1 + x*y))^(1/4), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 (digamma(13/8) - digamma(9/8)) * 5/16 + 1/4;
 
+### I( x^2 * ((1 - x*y) / (1 + x*y))^(1/4) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^2 * ((1 - x*y) / (1 + x*y))^(1/4), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+(digamma(13/8) - digamma(1/8)) * 15/(3*4^3) - 19 / (3*16);
+
 
 ##############
 
@@ -139,6 +153,11 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x * ((1 - x*y) / (1 + x*y))^(1/5), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 (digamma(16/10) - digamma(11/10)) * 6/5^2 + 3/10;
 
+### I( x^2 * ((1 - x*y) / (1 + x*y))^(1/5) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^2 * ((1 - x*y) / (1 + x*y))^(1/5), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+(digamma(16/10) - digamma(1/10)) * 24/(3*5^3) - 59 / (6*25);
+
 
 ##############
 
@@ -148,4 +167,10 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x * ((1 - x*y) / (1 + x*y))^(1/7), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 (digamma(22/14) - digamma(15/14)) * 8/7^2 + 5/14;
+
+### I( x^2 * ((1 - x*y) / (1 + x*y))^(1/7) )
+n = 7
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^2 * ((1 - x*y) / (1 + x*y))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+(digamma((3*n+1)/(2*n)) - digamma(1/(2*n))) * (n^2-1)/(3*n^3) - (2*n^2+3*n-6) / (6*n^2);
 
