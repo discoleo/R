@@ -50,8 +50,37 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 pi*log(2)/2 - log(2) + 1;
 
 
-#############
+### Composite:
 
+### I( ((1-x)/(1+x) * (1 - x*y) / (1 + x*y))^(1/2) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	((1-x)/(1+x) * (1 - x*y) / (1 + x*y))^(1/2), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+2*Catalan - pi^2/8 + pi/2 - log(2) - 1;
+
+
+### I( ((1-x^2) * (1 - x*y) / (1 + x*y))^(1/2) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	((1-x^2) * (1 - x*y) / (1 + x*y))^(1/2), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+2*Catalan - log(2) - 1/2
+
+
+### I( ((1-x) * (1 - x*y) / (1 + x*y))^(1/2) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	((1-x) * (1 - x*y) / (1 + x*y))^(1/2), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+# TODO
+
+
+### I( ((1+x) * (1 - x*y) / (1 + x*y))^(1/2) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	((1+x) * (1 - x*y) / (1 + x*y))^(1/2), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+# TODO
+
+
+#################
+
+### Higher Powers
+
+#############
 ### Power = 3
 
 ### I( ((1 - x*y) / (1 + x*y))^(1/3) )
