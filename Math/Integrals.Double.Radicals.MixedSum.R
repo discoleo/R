@@ -112,5 +112,8 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 # TODO
 
 
-
+### I( x * ((1 - x*y) / (1 + x*y))^(1/4) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * ((1 - x*y) / (1 + x*y))^(1/4), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+(digamma(13/8) - digamma(9/8)) * 5/16 + 1/4;
 
