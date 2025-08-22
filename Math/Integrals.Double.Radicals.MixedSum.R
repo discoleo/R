@@ -1,5 +1,17 @@
 
 
+### Generalisations
+
+
+### Gen: I( x * ((1 - x*y) / (1 + x*y))^(1/n) )
+n = sqrt(7);
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * ((1 - x*y) / (1 + x*y))^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+(digamma((3*n+1)/(2*n)) - digamma((2*n+1)/(2*n))) * (n+1)/n^2 + (n-2)/(2*n);
+
+
+###################
+
 ### I( ((1 - x*y) / (1 + x*y))^(1/2) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	((1 - x*y) / (1 + x*y))^(1/2), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
@@ -116,4 +128,24 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x * ((1 - x*y) / (1 + x*y))^(1/4), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 (digamma(13/8) - digamma(9/8)) * 5/16 + 1/4;
+
+
+##############
+
+### Power = 5
+
+### I(x * ((1 - x*y) / (1 + x*y))^(1/5)  )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * ((1 - x*y) / (1 + x*y))^(1/5), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+(digamma(16/10) - digamma(11/10)) * 6/5^2 + 3/10;
+
+
+##############
+
+### Power = 7
+
+### I(x * ((1 - x*y) / (1 + x*y))^(1/7)  )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * ((1 - x*y) / (1 + x*y))^(1/7), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+(digamma(22/14) - digamma(15/14)) * 8/7^2 + 5/14;
 
