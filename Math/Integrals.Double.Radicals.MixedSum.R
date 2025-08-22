@@ -33,11 +33,11 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	((1 - x*y) / (1 + x*y))^(1/3), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 # TODO
 
+
 ### I( x * ((1 - x*y) / (1 + x*y))^(1/3) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x * ((1 - x*y) / (1 + x*y))^(1/3), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 (2*digamma(2/3) - digamma(1/6) - digamma(7/6)) * 2/9 - 1/2;
-
 
 ### I( x^2 * ((1 - x*y) / (1 + x*y))^(1/3) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
@@ -51,16 +51,35 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 # TODO
 
 
+### I( x^0.5 * ((1 - x*y) / (1 + x*y)^2)^(1/3) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^0.5 * ((1 - x*y) / (1 + x*y)^2)^(1/3), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+# TODO
+
+
 ### I( x * ((1 - x*y) / (1 + x*y)^2)^(1/3) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x * ((1 - x*y) / (1 + x*y)^2)^(1/3), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 beta(4/3, 1/2) * 2 - 3;
 
 
+### I( x*y * ((1 - x*y) / (1 + x*y)^2)^(1/3) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x*y * ((1 - x*y) / (1 + x*y)^2)^(1/3), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+# TODO
+
+
 ### I( x^2 * ((1 - x*y) / (1 + x*y)^2)^(1/3) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x^2 * ((1 - x*y) / (1 + x*y)^2)^(1/3), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 beta(4/3, 1/2) / 4 - 3/16;
+
+
+### I( x^2*y * ((1 - x*y) / (1 + x*y)^2)^(1/3) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^2*y * ((1 - x*y) / (1 + x*y)^2)^(1/3), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+- beta(4/3, 1/2) * 3/2 + 21/8;
+beta(4/3, 1/2) * betan(-2/3, 1) + 21/8; # ?
 
 
 ### Reverse:
