@@ -164,6 +164,14 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 (digamma(1/3 - 1/2) + digamma(1/3 + 1/2) - 2*digamma(1/3)) * 4/81 + 1/6 - 2/9;
 
 
+### Composite:
+
+### I( x * ((1-x)/(1+x) * (1 - x*y) / (1 + x*y))^(1/3) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * ((1-x)/(1+x) * (1 - x*y) / (1 + x*y))^(1/3), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+(digamma(4/6) - digamma(1/6) - 3)^2 / 18;
+
+
 #############
 
 ### Power = 4
