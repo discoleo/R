@@ -668,6 +668,21 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 (2*pracma::psi(1, 1/3) - pracma::psi(1, 2/3)) / 9 - 1;
 
 
+### I( x^3 * ((1 - x^3) / (1 - x^3*y^3))^(1/3) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^3 * ((1 - x^3) / (1 - x^3*y^3))^(1/3), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+3/16;
+
+
+### I( x^3*y * ((1 - x^3) / (1 - x^3*y^3))^(1/3) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^3*y * ((1 - x^3) / (1 - x^3*y^3))^(1/3), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+# 1/4 - I( x^2*y^3 / ((1 - x^3) * (1 - x^3*y^3))^(1/3) );
+# TODO
+
+
+### Power Div = 2
+
 ### I( ((1 - x^3) / (1 - x^3*y^3)^2)^(1/3) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	((1 - x^3) / (1 - x^3*y^3)^2)^(1/3), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
