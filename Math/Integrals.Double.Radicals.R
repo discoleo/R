@@ -551,8 +551,15 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 n = sqrt(13)
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x^n * ((1 - x^n) / (1 - x^n*y^n))^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
- n / (n+1)^2;
- 
+n / (n+1)^2;
+
+
+### Gen: I( y^(n-1) * ((1 - x^n) / (1 - x^n*y^n))^(1/n) )
+n = sqrt(7)
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y^(n-1) * ((1 - x^n) / (1 - x^n*y^n))^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+(n - beta(1/n, 1/n) / n) / (n-1)^2;
+
  
  ### Power Div = 2
 
@@ -677,6 +684,12 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 (2*pracma::psi(1, 1/3) - pracma::psi(1, 2/3)) / 9 - 1;
 
 
+### I( y^2 * ((1 - x^3) / (1 - x^3*y^3))^(1/3) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y^2 * ((1 - x^3) / (1 - x^3*y^3))^(1/3), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+3/4 - beta(1/3, 1/3) / 12;
+
+
 ### I( x^3 * ((1 - x^3) / (1 - x^3*y^3))^(1/3) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x^3 * ((1 - x^3) / (1 - x^3*y^3))^(1/3), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
@@ -687,6 +700,7 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x^3*y * ((1 - x^3) / (1 - x^3*y^3))^(1/3), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 # 1/4 - I( x^2*y^3 / ((1 - x^3) * (1 - x^3*y^3))^(1/3) );
+# 1/4 - 1/3 * I( y * ((1 - x^3) / (1 - x^3*y^3))^(1/3) );
 # TODO
 
 
@@ -736,6 +750,13 @@ beta(1/3, 1/3) / 12;
 ### I( y^3 / ((1 - x^3) * (1 - x^3*y^3))^(1/3) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	y^3 / ((1 - x^3) * (1 - x^3*y^3))^(1/3), 0, 1, rel.tol=1E-10)$value), 0, 1, rel.tol=1E-11)
+# TODO
+
+
+### I( x^2*y^3 / ((1 - x^3) * (1 - x^3*y^3))^(1/3) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^2*y^3 / ((1 - x^3) * (1 - x^3*y^3))^(1/3), 0, 1, rel.tol=1E-10)$value), 0, 1, rel.tol=1E-11)
+# 1/3 * I( y * ((1 - x^3) / (1 - x^3*y^3))^(1/3) );
 # TODO
 
 
