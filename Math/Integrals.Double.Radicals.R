@@ -547,6 +547,15 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 (pracma::psi(1, 1/(2*n)) - pracma::psi(1, 1/2 + 1/(2*n))) / (2*n^2) - 1;
 
 
+### Gen: I( x^n * ((1 - x^n) / (1 - x^n*y^n))^(1/n) )
+n = sqrt(13)
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^n * ((1 - x^n) / (1 - x^n*y^n))^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+ n / (n+1)^2;
+ 
+ 
+ ### Power Div = 2
+
 ### Gen: I( ((1 - x^n) / (1 - x^n*y^n)^2)^(1/n) )
 n = sqrt(3)*5^(2/3)
 integrate(\(x) sapply(x, \(y) integrate(\(x)
