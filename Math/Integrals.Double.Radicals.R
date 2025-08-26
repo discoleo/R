@@ -750,6 +750,7 @@ beta(1/3, 1/3) / 12;
 ### I( y^3 / ((1 - x^3) * (1 - x^3*y^3))^(1/3) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	y^3 / ((1 - x^3) * (1 - x^3*y^3))^(1/3), 0, 1, rel.tol=1E-10)$value), 0, 1, rel.tol=1E-11)
+# 1/9 * I( 1 / ((1 - x^3) * (1 - x^3*y^3))^(1/3) ) +  beta(1/3, 1/3) / 27;
 # TODO
 
 
@@ -913,7 +914,16 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 ### I( y / ((1 - x^4) * (1 - x^4*y^4))^(1/4) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	y / ((1 - x^4) * (1 - x^4*y^4))^(1/4), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
-# I(x^4*y / ((1 - x^4) * (1 - x^4*y^4))^(1/4)) * 2 + beta(1/4, 2/4) / 6;
+# 2 * I(x^4*y / ((1 - x^4) * (1 - x^4*y^4))^(1/4)) + beta(1/4, 2/4) / 6;
+# TODO
+
+
+### I( y^n / ((1 - x^n) * (1 - x^n*y^n))^(1/n) )
+n = 4
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y^n / ((1 - x^n) * (1 - x^n*y^n))^(1/n), 0, 1, rel.tol=1E-10)$value), 0, 1, rel.tol=1E-12)
+# 1/n^2 * I( 1/ ((1 - x^n) * (1 - x^n*y^n))^(1/n) ) + beta(1/n, 1/n) * sqrt(2) / n^3;
+# 1/n^2 * I( 1/ ((1 - x^n) * (1 - x^n*y^n))^(1/n) ) + beta(1/n, 1-2/n) * (n-2) / n^3;
 # TODO
 
 
@@ -1197,6 +1207,14 @@ n = 5; p = sqrt(3);
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x*y^p / ((1 - x^n) * (1 - x^n*y^n))^(1/n), 0, 1, rel.tol=1E-10)$value), 0, 1, rel.tol=1E-12)
 (pi / sin(2*pi/n) - beta((p+1)/n, 1-2/n) * beta(2/n, 1-1/n) / n) / (n*p);
+
+
+### I( y^n / ((1 - x^n) * (1 - x^n*y^n))^(1/n) )
+n = 5
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y^n / ((1 - x^n) * (1 - x^n*y^n))^(1/n), 0, 1, rel.tol=1E-10)$value), 0, 1, rel.tol=1E-12)
+# 1/n^2 * I( 1/ ((1 - x^n) * (1 - x^n*y^n))^(1/n) ) + beta(1/n, 1-2/n) * (n-2) / n^3;
+# TODO
 
 
 ### Series: 3 Fractions
