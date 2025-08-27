@@ -373,3 +373,22 @@ sum((-1)^id / (id+1) * beta(id+1/2, 1/2) * beta(id+3/2, 1/2)) / 4;
 sum((-1)^id / (id+1) / (2*id+1) * beta(id+1/2, 1/2) * beta(id+3/2, 1/2)) / 4
 (pi - beta(3/4, 3/4) * sqrt(2)) * pi/2;
 
+
+### I( atan(sin(x) * sin(y)) / (sin(x) * sin(y)) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(sin(x) * sin(y)) / tan(x), 0, pi/2, rel.tol=1E-12)$value), 0, pi/2, rel.tol=1E-12)
+# TODO
+
+
+### I( atan(sin(x) * sin(y)) / tan(x) / tan(y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(sin(x) * sin(y)) / tan(x) / tan(y), 0, pi/2, rel.tol=1E-12)$value), 0, pi/2, rel.tol=1E-12)
+pi^3 / 32;
+
+
+### Div: Sum
+
+### I( atan(sin(x) * sin(y)) / sqrt(sin(x)^2 + sin(y)^2) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(sin(x) * sin(y)) / sqrt(sin(x)^2+sin(y)^2), 0, pi/2, rel.tol=1E-12)$value), 0, pi/2, rel.tol=1E-12)
+beta(1/8, 3/4)^2 * beta(3/8, 3/4) *  beta(1/8, 1+1/4) * 2 / 8^4;
