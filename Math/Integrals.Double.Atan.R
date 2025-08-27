@@ -350,6 +350,12 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 pi/2 * asinh(1) - (digamma(5/8) - digamma(3/8)) / 2;
 
 
+### I( atan(sin(x) * sin(y)) * sin(y) / tan(x) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(sin(x) * sin(y)) * sin(y) / tan(x), 0, pi/2, rel.tol=1E-12)$value), 0, pi/2, rel.tol=1E-12)
+pi/2 * asinh(1) - (digamma(5/8) - digamma(3/8)) / 2;
+
+
 ### I( atan(sin(x) * sin(y)) * sin(y) / sin(x) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	atan(sin(x) * sin(y)) * sin(y) / sin(x), 0, pi/2, rel.tol=1E-12)$value), 0, pi/2, rel.tol=1E-12)
@@ -374,10 +380,16 @@ sum((-1)^id / (id+1) / (2*id+1) * beta(id+1/2, 1/2) * beta(id+3/2, 1/2)) / 4
 (pi - beta(3/4, 3/4) * sqrt(2)) * pi/2;
 
 
-### I( atan(sin(x) * sin(y)) / (sin(x) * sin(y)) )
+### I( atan(sin(x) * sin(y)) / tan(x) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	atan(sin(x) * sin(y)) / tan(x), 0, pi/2, rel.tol=1E-12)$value), 0, pi/2, rel.tol=1E-12)
 # TODO
+
+
+### I( atan(sin(x) * sin(y)) * cos(y) / tan(x) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(sin(x) * sin(y)) * cos(y) / tan(x), 0, pi/2, rel.tol=1E-12)$value), 0, pi/2, rel.tol=1E-12)
+Catalan - pi/4 + log(2)/2;
 
 
 ### I( atan(sin(x) * sin(y)) / tan(x) / tan(y) )
@@ -392,3 +404,19 @@ pi^3 / 32;
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	atan(sin(x) * sin(y)) / sqrt(sin(x)^2+sin(y)^2), 0, pi/2, rel.tol=1E-12)$value), 0, pi/2, rel.tol=1E-12)
 beta(1/8, 3/4)^2 * beta(3/8, 3/4) *  beta(1/8, 1+1/4) * 2 / 8^4;
+beta(1/8, 3/4)^2 * beta(1/4, 3/4) * 4/3 / 8^3;
+
+
+### Varia
+
+### I( log(beta(x, y)) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	log(beta(x, y)), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+log(2*pi)/2 + 3/4;
+
+
+### I( atan(beta(x, y)) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(beta(x, y)), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+# TODO
+
