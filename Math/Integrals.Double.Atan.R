@@ -247,10 +247,18 @@ integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x/y) / (x+y+1), 0, 1)$value), 
 (log(3) * 3/4 - log(2)) * pi
 
 
+### Div: SQRT(...)
+
 ### I( atan(x/y) / sqrt(1-x*y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	atan(x/y) / sqrt(1-x*y), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 pi * (1-log(2));
+
+
+### I( atan(x/y) / sqrt(1+x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(x/y) / sqrt(1+x*y), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+pi * (log(2) - asinh(1)) + (digamma(5/8) - digamma(3/8));
 
 
 ### ATAN(x+y)
@@ -413,6 +421,15 @@ beta(1/8, 3/4)^2 * beta(1/4, 3/4) * 4/3 / 8^3;
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	atan(sin(x) / sin(y)) * sin(y) / sin(x), 0, pi/2, rel.tol=1E-12)$value), 0, pi/2, rel.tol=1E-12)
 (pi + 2*log(2)) * pi / 8;
+
+
+###
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(sin(x) / sin(y)) * sin(y) / tan(x), 0, pi/2, rel.tol=1E-12)$value), 0, pi/2, rel.tol=1E-12)
+pi/2 * (asinh(1) - log(2) + 1) - (digamma(5/8) - digamma(3/8)) / 2;
+
+# Note:
+# also = pi/2 - 1/2 * I( atan(x/y) / sqrt(1+x*y) ) on [0,1]^2;
 
 
 ### Varia
