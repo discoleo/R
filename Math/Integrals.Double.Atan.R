@@ -326,3 +326,32 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	atan(sqrt(tan(x)^2 + tan(y)^2)), 0, pi/2, rel.tol=1E-12)$value), 0, pi/2, rel.tol=1E-12)
 (digamma(7/8) - digamma(3/8)) * (digamma(5/8) - digamma(1/8)) * pi / 16;
 
+
+### I( atan(sin(x) * sin(y)) / sin(x) )
+# Maths 505: A beautiful double integral
+# https://www.youtube.com/watch?v=tsxLAsiLyq4
+# Note: Series expansion atan(x)
+# => I(sin(x)^(2*k)) * I(sin(y)^(2*k+1)) => Beta;
+
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(sin(x) * sin(y)) / sin(x), 0, pi/2, rel.tol=1E-12)$value), 0, pi/2, rel.tol=1E-12)
+Catalan * pi / 2;
+
+
+### I( atan(sin(x) * sin(y)) * cos(y) / sin(x) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(sin(x) * sin(y)) * cos(y) / sin(x), 0, pi/2, rel.tol=1E-12)$value), 0, pi/2, rel.tol=1E-12)
+pi/2 * asinh(1) - (digamma(5/8) - digamma(3/8)) / 2;
+
+
+### I( atan(sin(x) * sin(y)) * sin(y) / sin(x) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(sin(x) * sin(y)) * sin(y) / sin(x), 0, pi/2, rel.tol=1E-12)$value), 0, pi/2, rel.tol=1E-12)
+(beta(1/4, 1/4) - 2*beta(3/4, 3/4)) * sqrt(2) * pi/16;
+
+
+### I( atan(sin(x) * sin(y)) / (sin(x) * sin(y)) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(sin(x) * sin(y)) / (sin(x) * sin(y)), 0, pi/2, rel.tol=1E-12)$value), 0, pi/2, rel.tol=1E-12)
+# TODO
+
