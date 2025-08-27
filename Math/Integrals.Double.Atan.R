@@ -338,6 +338,12 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 Catalan * pi / 2;
 
 
+### I( atan(sqrt(sin(x) * sin(y))) / sin(x) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(sqrt(sin(x) * sin(y))) / sin(x), 0, pi/2, rel.tol=1E-12)$value), 0, pi/2, rel.tol=1E-12)
+Catalan * pi;
+
+
 ### I( atan(sin(x) * sin(y)) * cos(y) / sin(x) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	atan(sin(x) * sin(y)) * cos(y) / sin(x), 0, pi/2, rel.tol=1E-12)$value), 0, pi/2, rel.tol=1E-12)
@@ -354,4 +360,8 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	atan(sin(x) * sin(y)) / (sin(x) * sin(y)), 0, pi/2, rel.tol=1E-12)$value), 0, pi/2, rel.tol=1E-12)
 # TODO
+
+#
+id = 0:100;
+sum((-1)^id / (2*id+1) * beta(id+1/2, 1/2)^2) / 4;
 
