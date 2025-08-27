@@ -407,6 +407,14 @@ beta(1/8, 3/4)^2 * beta(3/8, 3/4) *  beta(1/8, 1+1/4) * 2 / 8^4;
 beta(1/8, 3/4)^2 * beta(1/4, 3/4) * 4/3 / 8^3;
 
 
+### DIV
+
+### I( atan(sin(x) / sin(y)) * sin(y) / sin(x) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(sin(x) / sin(y)) * sin(y) / sin(x), 0, pi/2, rel.tol=1E-12)$value), 0, pi/2, rel.tol=1E-12)
+(pi + 2*log(2)) * pi / 8;
+
+
 ### Varia
 
 ### I( log(beta(x, y)) )
