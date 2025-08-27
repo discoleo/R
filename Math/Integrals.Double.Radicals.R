@@ -623,6 +623,13 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 (digamma(2/n) - digamma(1/n) - 1) / (n-1);
 
 
+### Gen: I( x*y^p * ((1 - x) / (1 - x*y^n))^(1/n) )
+n = sqrt(14); p = sqrt(5);
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x*y^p * ((1 - x) / (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+(digamma((p+1)/n) - digamma(1/n) - p/2*(n-p-2)/(n-p-1)) * (n-p-1) / (p*(n-p)*(2*n-p));
+
+
 ### Gen: I( x*y * ((1 - x) / (1 - x*y^n))^(1/n) )
 n = 2*sqrt(7)
 integrate(\(x) sapply(x, \(y) integrate(\(x)
@@ -634,7 +641,7 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 n = sqrt(7) + sqrt(10);
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x*y^2 * ((1 - x) / (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
-(digamma(3/n) - digamma(1/n) - 1 + 1/(n-3)) * (n-3) / (4*(n-2)*(n-1));
+(digamma(3/n) - digamma(1/n) - 1 + 1/(n-3)) * (n-3) / (2*(n-2)*(2*n-2));
 
 
 ### Gen: I( x*y^3 * ((1 - x) / (1 - x*y^n))^(1/n) )
@@ -642,7 +649,7 @@ n = sqrt(14);
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x*y^3 * ((1 - x) / (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 (digamma(4/n) - digamma(1/n) - 3/2*(n-5)/(n-4)) * (n - 4) / (6*n^2 - 27*n + 27);
-(digamma(4/n) - digamma(1/n) - 3/2*(n-5)/(n-4)) * (n - 4) / (3*(2*n-3)*(n-3));
+(digamma(4/n) - digamma(1/n) - 3/2*(n-5)/(n-4)) * (n - 4) / (3*(n-3)*(2*n-3));
 
 
 ### Gen: I( x*y^(n-1) * ((1 - x) / (1 - x*y^n))^(1/n) )
