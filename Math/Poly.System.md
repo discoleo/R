@@ -4,6 +4,12 @@
 
 ***Leonard Mada***
 
+Various classes of polynomial systems can be decomposed into systems of lower order.
+
+The 2 major classes of such systems are:
+1. Fully symmetric systems;
+2. Hetero-symmetric systems: these are invariant under a cyclic permutation;
+
 
 ## A.) Symmetric Systems
 
@@ -18,6 +24,10 @@ x^n + y^n + z^n = R1
 x*y + x*z + y*z = R2
 x*y*z = R3
 ~~~
+
+In this particular example, the system can be decomposed into 2 sequential polynomials: P\[n] o P\[3], where P\[n] is a polynomial of order n, and P\[3] is a polynomial of order 3 whose coefficients are functions of the roots of P\[n].
+
+Such systems are a very special case of the systems described in section \[B.1] (and are much easier to solve).
 
 ---
 
@@ -37,6 +47,12 @@ x1*x2*x3*x4 = R4
 
 - (usually) does **NOT** permit trivial solutions, like: x1 = x2 = x3 = x4;
 
+The generalized example:
+- Let P be the class of polynomial functions which are invariant under the cyclic permutation of their variables;
+- Let P1, ..., Pn be n such functions, each with n variables: x1, ..., xn;
+- Let Sys(P, n) be the system formed by these n equations: Pi(x1, ..., xn) = 0;
+- This system can be decomposed into 2 subsystems of lower order;
+
 
 ### B.2.) Special Ht-Symmetric
 
@@ -48,4 +64,41 @@ x3^n + b*x4 = R
 x4^n + b*x1 = R
 ~~~
 
-- includes also the trivial solution: x1 = x2 = x3 = x4;
+- S[n]: includes also the trivial solution: x1 = x2 = x3 = x4;
+- S[4]: includes in addition the trivial solution: x1 = x3 & x2 = x4;
+
+This particular system can be actually decomposed into several independent polynomials/systems:
+```
+- P[n] * P[n^2-n] * P[n^4 - n^2];
+- P[n^2 - n] can be solved by solving 2 lower order systems: P[(n^2-n)/2] o P[2];
+- P[n^4 - n^2] can be solved by solving 2 lower order systems: P[(n^4-n^2)/4] o P[4];
+```
+
+The generalized example:
+- Let F be a polynomial function with n variables;
+- Let Sys(F, n) be the system formed from the following equations:
+F(x1, ..., xn) = 0;
+F(x2, ..., xn, x1) = 0;
+...
+F(xn, ..., x[n-1]) = 0;
+
+General strategy to solve these systems:
+
+- Observation 1: If (x1, ..., xn) is a solution to such a system, then every cyclic permutation if also a solution.
+
+- Observation 2: The elementary polynomials formed by (x1, ..., xn) are invariant under a cyclic permutation;
+```
+# Elementary-System
+S = x1 + ... + xn;
+E2 = x1*x2 + x1*x3 + ... + x[n-1]*xn;
+...
+En = x1*x2*...*xn;
+```
+
+All these polynomials are invariant under the cyclic permutation of the solution.
+
+The main strategy is to transform the original system into a system in {S, E2, ..., En} and solve this lower order system.
+
+Step 2: solve the Elementary system;
+
+Note: Systems of Type \[B.2] are in general easier to transform into the lower order system than systems of type \[B.1].
