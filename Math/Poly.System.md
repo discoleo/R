@@ -13,13 +13,14 @@ The 2 major classes of such systems are:
 
 ## A.) Symmetric Systems
 
-* if (x,y,z) is a solution, so is every permutation;
+* If (x,y,z) is a solution, so is every permutation of it;
 * see files:
   * Poly.System.Symmetric.P3_Full.R;
   * Poly.System.Symmetric.S3.Multiple.R;
 
 ***Examples***
 ~~~
+# 3 Variables
 x^n + y^n + z^n = R1
 x*y + x*z + y*z = R2
 x*y*z = R3
@@ -28,6 +29,9 @@ x*y*z = R3
 In this particular example, the system can be decomposed into 2 sequential polynomials: P\[n] o P\[3], where P\[n] is a polynomial of order n, and P\[3] is a polynomial of order 3 whose coefficients are functions of the roots of P\[n].
 
 Such systems are a very special case of the systems described in section \[B.1] (and are much easier to solve).
+
+The composition operator "o" is an inverse composition:\
+P\[n] o P\[3] = P\[3](P\[n]);
 
 ---
 
@@ -64,8 +68,9 @@ x3^n + b*x4 = R
 x4^n + b*x1 = R
 ~~~
 
-- S[n]: includes also the trivial solution: x1 = x2 = x3 = x4;
-- S[4]: includes in addition the trivial solution: x1 = x3 & x2 = x4;
+This system has 2 trivial solutions:
+- Sys\[2, n]: x1 = x3 & x2 = x4, becoming a system of 2 variables;
+- Sys\[1, n]: trivial solution: x1 = x2 = x3 = x4, which is also a trivial solution to Sys\[2,n];
 
 This particular system can be actually decomposed into several independent polynomials/systems:
 ```
@@ -77,10 +82,12 @@ This particular system can be actually decomposed into several independent polyn
 The generalized example:
 - Let F be a polynomial function with n variables;
 - Let Sys(F, n) be the system formed from the following equations:
+```
 F(x1, ..., xn) = 0;
 F(x2, ..., xn, x1) = 0;
 ...
 F(xn, ..., x[n-1]) = 0;
+```
 
 General strategy to solve these systems:
 
