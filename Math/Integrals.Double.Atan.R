@@ -195,6 +195,25 @@ pi^2*log(2) * 3/16 + pi*Catalan/2 - 21/16*pracma::zeta(3);
 
 ### Type: Atan(X*Y)
 
+
+### I( atan(x*y) * y/x )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(x*y) * y/x, 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+Catalan/2 - pi/8 + 1/4;
+
+
+### I( (atan(x*y) - atan(y)) / (1-x) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	(atan(x*y) - atan(y)) / (1-x), 0, 1)$value), 0, 1)
+pi^2/32 + pi*log(2)/8 - Catalan - log(2)^2/8;
+
+
+### I( atan(x*y) / (x*(x+y)) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(x*y) / (x*(x+y)), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+(pi/4)^3;
+
+
 ### I( atan(x*y) / (x+y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x*y) / (x+y), 0, 1)$value), 0, 1)
 # Derivation: z = x/y;
@@ -242,6 +261,7 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 ### I( atan(x*y) / (x + y + 1) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x*y) / (x+y+1), 0, 1)$value), 0, 1)
 # TODO
+
 
 ### I( atan(x*y) / (2 - x - y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x*y) / (2 - x - y), 0, 1)$value), 0, 1)
