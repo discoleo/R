@@ -138,6 +138,17 @@ Catalan/3 + (pi/4 - log(2)/2) / 9 + 1/18;
 integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x/y) / (x+y), 0, 1)$value), 0, 1)
 pi*log(2)/2
 
+### I( atan(x/y) * abs(x-y) / (x+y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(x/y) * abs(x-y) / (x+y), 0, 1, rel.tol=1E-9)$value), 0, 1, rel.tol=1E-9)
+# trick for numerical accuracy:
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(x/y) * abs(x-y) / (x+y), 0, y, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)$value +
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(x/y) * abs(x-y) / (x+y), y, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)$value;
+pi*log(2)/2 - pi/4;
+
+
 ### I( atan(x/y) / (1+x+y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x/y) / (1+x+y), 0, 1)$value), 0, 1)
 (log(3) * 3/4 - log(2)) * pi
