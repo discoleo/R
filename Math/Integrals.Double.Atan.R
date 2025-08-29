@@ -174,6 +174,17 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 pi*log(2)/4 - pi/8;
 
 
+### I( atan(x/y) * abs(x-y) / (x+y)^2 )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(x/y) * abs(x-y) / (x+y)^2, 0, 1, rel.tol=1E-9)$value), 0, 1, rel.tol=1E-9)
+# trick for numerical accuracy:
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(x/y) * abs(x-y) / (x+y)^2, 0, y, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)$value +
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(x/y) * abs(x-y) / (x+y)^2, y, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)$value;
+pi*(1 - log(2)) / 2;
+
+
 ### I( atan(x/y)^2 / (x+y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	atan(x/y)^2 / (x+y), 0, 1, rel.tol=1E-11)$value), 0, 1, rel.tol=1E-12)
