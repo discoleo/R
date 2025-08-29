@@ -108,9 +108,26 @@ integrate(\(x) atan(3*tan(x)), 0, pi/4)$value +
 # TODO
 
 
+### I( atan( (x+y)/(1+x*y) ) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan((x+y)/(1+x*y)), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+pi*log(2)/2 + 2*log(2) - 2*Catalan;
+
+
 ###################
 
 ### Type: Atan(x/y)
+
+### I( atan(x/y) * y / x )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(x/y) * y / x, 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+Catalan/2 + 1/4;
+
+### I( atan(x/y) * y^2 / x )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(x/y) * y^2 / x, 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+Catalan/3 + (pi/4 - log(2)/2) / 9 + 1/18;
+
 
 ### I( atan(x/y) / (x+y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x/y) / (x+y), 0, 1)$value), 0, 1)
