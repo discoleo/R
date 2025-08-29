@@ -152,6 +152,22 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	atan(x/y) * x / (x+y)^2, 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-13)
 pi/4 +  pi * log(2)/8 - log(2)/2;
 
+### I( atan(x/y) * y / (x+y)^2 )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(x/y) * y / (x+y)^2, 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-13)
+3/8*pi*log(2) - pi/4 + log(2)/2;
+
+### I( atan(x/y) * x*y / (x+y)^2 )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(x/y) * x*y / (x+y)^2, 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-13)
+pi*log(2)/4 - pi/8;
+
+
+### I( atan(x/y)^2 / (x+y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(x/y)^2 / (x+y), 0, 1, rel.tol=1E-11)$value), 0, 1, rel.tol=1E-12)
+pi^2*log(2) * 3/16 + pi*Catalan/2 - 21/16*pracma::zeta(3);
+
 
 ###################
 
@@ -193,6 +209,12 @@ integrate(\(x) (1 - x^2) * Re(log(x + 1i)) / (x^4 + 1), 0, 1)$value +
 	- (digamma(7/8) - digamma(3/8)) * pi * 3 / 64;
 
 # TODO
+
+
+### I( atan(x*y) * x / (x+y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(x*y) * x / (x+y), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+- pi^2 / 96 + pi/8 - log(2)/4;
 
 
 ### I( atan(x*y) / (x + y + 1) )
