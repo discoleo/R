@@ -31,7 +31,7 @@ In this particular example, the system can be decomposed into 2 sequential polyn
 Such systems are a very special case of the systems described in section \[B.1] (and are much easier to solve).
 
 The composition operator "o" is an inverse composition:\
-P\[n] o P\[3] = P\[3](P\[n]);
+P\[n] o P\[3] = P\[n](P\[3]);
 
 ---
 
