@@ -615,6 +615,12 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	y * ((1 - x) / (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-13)
 (digamma(2/n) - digamma(1/n) - 1) / (n-1);
 
+### Gen: I( y^2 * ((1 - x) / (1 - x*y^n))^(1/n) )
+n = sqrt(21);
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y^2 * ((1 - x) / (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-13)
+(digamma(3/n) - digamma(1/n) - 2) / (2*(n-2));
+
 
 ### Gen: I( x*y^p * ((1 - x) / (1 - x*y^n))^(1/n) )
 n = sqrt(14); p = sqrt(5);
@@ -1260,4 +1266,22 @@ beta(1/7, 11/7) * beta(6/7, 6/7) / 7;
 
 #####################
 #####################
+
+### I( y^2 * ((1 - x) / (1 - x*y^4))^(1/4) )
+n = 4;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y^2 * ((1 - x) / (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-13)
+(digamma(3/n) - digamma(1/n) - 2) / 4;
+
+### I( y^2 * ((1 - x) / (1 - x*y^5))^(1/5) )
+n = 5;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y^2 * ((1 - x) / (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-13)
+(digamma(3/n) - digamma(1/n) - 2) / 6;
+
+### I( y^2 * ((1 - x) / (1 - x*y^6))^(1/6) )
+n = 6;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y^2 * ((1 - x) / (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-13)
+(digamma(3/n) - digamma(1/n) - 2) / (2*(n-2));
 
