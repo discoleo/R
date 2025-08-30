@@ -515,7 +515,14 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 (pi + 2*log(2)) * pi / 8;
 
 
-###
+### I( atan(sin(x) / sin(y)) * cos(y) / sin(x) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(sin(x) / sin(y)) * cos(y) / sin(x), 0, pi/2, rel.tol=1E-12)$value), 0, pi/2, rel.tol=1E-12)
+((digamma(5/8) - digamma(1/8))^2 - (digamma(7/8) - digamma(3/8))^2) / 16;
+log(sqrt(2) + 1) * pi;
+
+
+### I( atan(sin(x) / sin(y)) * sin(y) / tan(x) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	atan(sin(x) / sin(y)) * sin(y) / tan(x), 0, pi/2, rel.tol=1E-12)$value), 0, pi/2, rel.tol=1E-12)
 pi/2 * (asinh(1) - log(2) + 1) - (digamma(5/8) - digamma(3/8)) / 2;
