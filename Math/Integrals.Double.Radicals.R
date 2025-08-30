@@ -459,6 +459,13 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 
 ### Alternative Reformulations:
 
+### Gen: I( x^p * y^q / (1 - x*y)^k )
+k = 1/sqrt(19);
+p = sqrt(3) + 1/5; q = sqrt(2) - 1/11;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^p*y^q / (1 - x*y)^k, 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+(beta(p+1, 1-k) - beta(q+1, 1-k)) / (q-p);
+
 ### Gen: I( x^p * y^q * (1 - x^n*y^n)^(1/n) )
 p = sqrt(2); q = -1/sqrt(3); n = 1/sqrt(7);
 integrate(\(x) sapply(x, \(y) integrate(\(x)
@@ -644,6 +651,13 @@ n = 7^(3/4)
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x*y^n * ((1 - x) / (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 pracma::psi(1, 1/n) / n^3 - (n+2)/2 / n^2;
+
+
+### Gen: I( x^2*y * ((1 - x) / (1 - x*y^n))^(1/n) )
+n = sqrt(22);
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^2*y * ((1 - x) / (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+((digamma(2/n) - digamma(1/n)) * 12*(n-2) - 4*n + 17) / (6*(2*n-1)*(3*n-1));
 
 
 ### Power = n-1
@@ -1237,4 +1251,28 @@ beta(1/7, 11/7) * beta(6/7, 6/7) / 7;
 
 #####################
 #####################
+
+### I( x^2*y^1 * ((1 - x) / (1 - x*y^n))^(1/n) )
+n = 5; p = 1;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^2*y^p * ((1 - x) / (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+((digamma((p+1)/n) - digamma(1/n)) * 36 - 3) / (6*9*14);
+
+#
+n = 6; p = 1;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^2*y^p * ((1 - x) / (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+((digamma((p+1)/n) - digamma(1/n)) * 48 - 7) / (6*11*17);
+
+#
+n = 7; p = 1;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^2*y^p * ((1 - x) / (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+((digamma((p+1)/n) - digamma(1/n)) * 60 - 11) / (6*13*20);
+
+#
+n = 8; p = 1;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^2*y^p * ((1 - x) / (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+((digamma((p+1)/n) - digamma(1/n)) * 12*(n-2) - 4*n + 17) / (6*(2*n-1)*(3*n-1));
 
