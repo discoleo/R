@@ -6,7 +6,7 @@
 ## Double Integrals:
 ## Radicals of Polynomials
 ##
-## v.0.2g
+## v.0.2h
 
 
 ### Double Integrals:
@@ -660,6 +660,15 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 ((digamma(2/n) - digamma(1/n)) * 12*(n-2) - 4*n + 17) / (6*(2*n-1)*(3*n-1));
 
 
+### Gen: I( x^2*y^2 * ((1 - x) / (1 - x*y^n))^(1/n) )
+n = sqrt(12) + 1/5;
+p = 2; # fixed;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^2*y^p * ((1 - x) / (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+((digamma((p+1)/n) - digamma(1/n)) * 3*(2*n-3)*(n-3) - (4*n^2 - 27*n + 32)) /
+	(6*(n-p)*(2*n-p)*(3*n-p));
+
+
 ### Power = n-1
 
 ### Gen: I( ((1 - x) * (1 - x*y^n)^(n-1))^(1/n) )
@@ -1275,4 +1284,49 @@ n = 8; p = 1;
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x^2*y^p * ((1 - x) / (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 ((digamma((p+1)/n) - digamma(1/n)) * 12*(n-2) - 4*n + 17) / (6*(2*n-1)*(3*n-1));
+
+
+### I( x^2*y^2 * ((1 - x) / (1 - x*y^n))^(1/n) )
+n = 4; p = 2;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^2*y^p * ((1 - x) / (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+((digamma((p+1)/n) - digamma(1/n)) * 15 + 12) / (6*2*6*10);
+
+#
+n = 5; p = 2;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^2*y^p * ((1 - x) / (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+((digamma((p+1)/n) - digamma(1/n)) * 42 + 3) / (6*3*8*13);
+
+#
+n = 6; p = 2;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^2*y^p * ((1 - x) / (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+((digamma((p+1)/n) - digamma(1/n)) * 81 - 14) / (6*4*10*16);
+
+#
+n = 7; p = 2;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^2*y^p * ((1 - x) / (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+((digamma((p+1)/n) - digamma(1/n)) * 132 - 39) / (6*5*12*19);
+
+#
+n = 8; p = 2;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^2*y^p * ((1 - x) / (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+((digamma((p+1)/n) - digamma(1/n)) * 195 - 72) / (6*6*14*22);
+
+#
+n = 9; p = 2;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^2*y^p * ((1 - x) / (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+((digamma((p+1)/n) - digamma(1/n)) * 270 - 113) / (6*7*16*25);
+
+#
+n = 10; p = 2;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^2*y^p * ((1 - x) / (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+((digamma((p+1)/n) - digamma(1/n)) * 357 - 162) / (6*(n-p)*(2*n-p)*(3*n-p));
+((digamma((p+1)/n) - digamma(1/n)) * 3*(2*n-3)*(n-3) - (4*n^2 - 27*n + 32)) /
+	(6*(n-p)*(2*n-p)*(3*n-p));
 
