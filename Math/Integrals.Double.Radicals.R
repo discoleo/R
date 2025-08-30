@@ -6,7 +6,7 @@
 ## Double Integrals:
 ## Radicals of Polynomials
 ##
-## v.0.2h
+## v.0.2i
 
 
 ### Double Integrals:
@@ -626,6 +626,16 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x*y^p * ((1 - x) / (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 (digamma((p+1)/n) - digamma(1/n) - p/2*(n-p-2)/(n-p-1)) * (n-p-1) / (p*(n-p)*(2*n-p));
 
+
+### Gen: I( x^2*y^p * ((1 - x) / (1 - x*y^n))^(1/n) )
+n = sqrt(12) + 3/5;
+p = sqrt(3) - sqrt(2);
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^2*y^p * ((1 - x) / (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+dg = (digamma((p+1)/n) - digamma(1/n));
+(dg * 6/p*(2*n-p-1)*(n-p-1) - (4*n^2 - (6*p+15)*n + (2*p^2+9*p+6))) / (6*(n-p)*(2*n-p)*(3*n-p));
+
+
 ### Special Cases:
 
 ### Gen: I( ((1 - x) / (1 - x*y^n))^(1/n) )
@@ -657,7 +667,8 @@ pracma::psi(1, 1/n) / n^3 - (n+2)/2 / n^2;
 n = sqrt(22);
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x^2*y * ((1 - x) / (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
-((digamma(2/n) - digamma(1/n)) * 12*(n-2) - 4*n + 17) / (6*(2*n-1)*(3*n-1));
+dg = (digamma(2/n) - digamma(1/n));
+(dg * 6*(2*n-2)*(n-2) - (4*n - 17)*(n-1)) / (6*(n-1)*(2*n-1)*(3*n-1));
 
 
 ### Gen: I( x^2*y^2 * ((1 - x) / (1 - x*y^n))^(1/n) )
