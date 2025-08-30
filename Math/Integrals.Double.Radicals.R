@@ -6,7 +6,7 @@
 ## Double Integrals:
 ## Radicals of Polynomials
 ##
-## v.0.2e
+## v.0.2f
 
 
 ### Double Integrals:
@@ -602,12 +602,17 @@ beta(1/(2*n), 1+1/n) * beta(1/(2*n), 1-1/n) / (2*n)^2;
 
 ### Type: (1-x) * ...
 
+### Gen: I( y^p * ((1 - x) / (1 - x*y^n))^(1/n) )
+n = sqrt(21); p = sqrt(5) + 1/7;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y^p * ((1 - x) / (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-13)
+(digamma((p+1)/n) - digamma(1/n) - p) / (p*(n-p));
+
 ### Gen: I( ((1 - x) / (1 - x*y^n))^(1/n) )
 n = sqrt(7)
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	((1 - x) / (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 pracma::psi(1, 1/n) / n^2 - 1/n;
-
 
 ### Gen: I( y * ((1 - x) / (1 - x*y^n))^(1/n) )
 n = sqrt(13);
