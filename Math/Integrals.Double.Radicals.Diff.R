@@ -58,6 +58,11 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 8/9;
 
 
+### I( sqrt( abs(x-y) * (1-x) / (1 - x*y) ) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	sqrt( abs(x-y) * (1-x) / (1 - x*y) ), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=3E-12)
+
+
 ### I( sqrt( abs(x-y) / ((1-x)*(1-y)*(1 - x*y)) ) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	sqrt( abs(x-y) / ((1-x)*(1-y)*(1 - x*y)) ), 0, 1, rel.tol=1E-9)$value), 0, 1, rel.tol=3E-10)
@@ -103,11 +108,19 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 8/3 - gamma(3/4)^2 / gamma(1/2) * sqrt(2) * 2;
 
 
+### I( sqrt( x/y * abs(x^2-y^2) / (1 - x^2*y^2) ) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	sqrt( x/y * abs(x^2-y^2) / (1 - x^2*y^2) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+8/3 - beta(3/4, 1/2) * beta(1/2, 1/2) / 4;
+
+
 ### I( x^2*y^2 * sqrt( abs(x^2-y^2) / (1 - x^2*y^2) ) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x^2*y^2 * sqrt( abs(x^2-y^2) / (1 - x^2*y^2) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 14/15 - gamma(3/4)^4 / gamma(1/2)^2 * 6/5;
 
+
+### Type: abs(x-y)
 
 ### I( sqrt( abs(x-y)/(x+y) / (1 - x^2*y^2) ) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
