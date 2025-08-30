@@ -309,3 +309,48 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x*y^n * ((1 - x) / (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 pracma::psi(1, 1/n) / n^3 - (2*n+4) / (2*n)^2;
 
+
+### Special Cases: x * y^0
+### I( x * ((1 - x) / (1 - x*y^n))^(1/n) )
+
+### I( x * ((1 - x) / (1 - x*y^3))^(1/3) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * ((1 - x) / (1 - x*y^3))^(1/3), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+pracma::psi(1, 1/3) / 3^3 - 1/3^2 + 1/12;
+
+### I( x * ((1 - x) / (1 - x*y^4))^(1/4) )
+n = 4;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * ((1 - x) / (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+(pracma::psi(1, 1/4) * 3/4 - 1) / 32;
+
+### I( x * ((1 - x) / (1 - x*y^5))^(1/5) )
+n = 5;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * ((1 - x) / (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+(pracma::psi(1, 1/n)*(1-1/n) - 3/2) / (2*n^2);
+(pracma::psi(1, 1/n)*(1-1/n) - (n-2)/2) / (2*n^2);
+
+
+### [old] Other:
+
+### I( x*y * ((1 - x) / (1 - x*y^3))^(1/3) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x*y * ((1 - x) / (1 - x*y^3))^(1/3), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+pi * sin(pi/3) / 15;
+
+### I( x*y^2 * ((1 - x) / (1 - x*y^3))^(1/3) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x*y^2 * ((1 - x) / (1 - x*y^3))^(1/3), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+1/8;
+
+### I( x*y^2 * ((1 - x) / (1 - x*y^4))^(1/4) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x*y^2 * ((1 - x) / (1 - x*y^4))^(1/4), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+pi / 24;
+
+### I( x*y^3 * ((1 - x) / (1 - x*y^4))^(1/4) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x*y^3 * ((1 - x) / (1 - x*y^4))^(1/4), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+1/10;
+
