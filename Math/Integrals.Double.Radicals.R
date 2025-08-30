@@ -665,8 +665,17 @@ n = sqrt(12) + 1/5;
 p = 2; # fixed;
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x^2*y^p * ((1 - x) / (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
-((digamma((p+1)/n) - digamma(1/n)) * 3*(2*n-3)*(n-3) - (4*n^2 - 27*n + 32)) /
-	(6*(n-p)*(2*n-p)*(3*n-p));
+dg = (digamma((p+1)/n) - digamma(1/n));
+(dg * 3*(2*n-3)*(n-3) - (4*n^2 - 27*n + 32)) / (6*(n-p)*(2*n-p)*(3*n-p));
+
+
+### Gen: I( x^2*y^3 * ((1 - x) / (1 - x*y^n))^(1/n) )
+n = sqrt(12) + 2/5;
+p = 3; # fixed;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^2*y^p * ((1 - x) / (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+dg = (digamma((p+1)/n) - digamma(1/n));
+(dg * 2*(2*n-4)*(n-4) - (4*n^2 - 33*n + 51)) / (6*(n-p)*(2*n-p)*(3*n-p));
 
 
 ### Power = n-1
@@ -1329,4 +1338,35 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 ((digamma((p+1)/n) - digamma(1/n)) * 357 - 162) / (6*(n-p)*(2*n-p)*(3*n-p));
 ((digamma((p+1)/n) - digamma(1/n)) * 3*(2*n-3)*(n-3) - (4*n^2 - 27*n + 32)) /
 	(6*(n-p)*(2*n-p)*(3*n-p));
+
+
+### I( x^2*y^3 * ((1 - x) / (1 - x*y^n))^(1/n) )
+p = 3; n = 11;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^2*y^p * ((1 - x) / (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+
+# diff_dg * 2*(2*n-4)*(n-4)
+n = 5; p = 3;
+z = 0.06536545233991;
+dg = (digamma((p+1)/n) - digamma(1/n));
+(dg*12 + 14) / (6*(n-p)*(2*n-p)*(3*n-p));
+
+#
+n = 6; p = 3;
+z = 0.0672611435666;
+dg = (digamma((p+1)/n) - digamma(1/n));
+(dg*32 + 3) / (6*(n-p)*(2*n-p)*(3*n-p));
+
+#
+n = 7; p = 3;
+z = 0.06879473283632;
+dg = (digamma((p+1)/n) - digamma(1/n));
+(dg*2*(2*n-4)*(n-4) - 16) / (6*(n-p)*(2*n-p)*(3*n-p));
+
+#
+n = 8; p = 3;
+z = 0.07006084654192;
+dg = (digamma((p+1)/n) - digamma(1/n));
+(dg*2*(2*n-4)*(n-4) - 43) / (6*(n-p)*(2*n-p)*(3*n-p));
+(dg*2*(2*n-4)*(n-4) - (4*n^2 - 33*n + 51)) / (6*(n-p)*(2*n-p)*(3*n-p));
 
