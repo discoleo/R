@@ -58,9 +58,12 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 8/9;
 
 
+### 2 Components:
+
 ### I( sqrt( abs(x-y) * (1-x) / (1 - x*y) ) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	sqrt( abs(x-y) * (1-x) / (1 - x*y) ), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=3E-12)
+# TODO
 
 
 ### I( sqrt( abs(x-y) / ((1-x)*(1-y)*(1 - x*y)) ) )
@@ -112,6 +115,18 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	sqrt( x/y * abs(x^2-y^2) / (1 - x^2*y^2) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 8/3 - beta(3/4, 1/2) * beta(1/2, 1/2) / 4;
+
+
+### I( x * sqrt( abs(x^2-y^2) / (1 - x^2*y^2) ) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * sqrt( abs(x^2-y^2) / (1 - x^2*y^2) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+log(2)/2 - pi/4 + 3/4;
+
+
+### I( x*y^2 * sqrt( abs(x^2-y^2) / (1 - x^2*y^2) ) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x*y^2 * sqrt( abs(x^2-y^2) / (1 - x^2*y^2) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+Catalan/2 - pi^2/32 - 1/24;
 
 
 ### I( x^2*y^2 * sqrt( abs(x^2-y^2) / (1 - x^2*y^2) ) )
