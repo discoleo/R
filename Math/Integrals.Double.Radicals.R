@@ -6,7 +6,7 @@
 ## Double Integrals:
 ## Radicals of Polynomials
 ##
-## v.0.2d
+## v.0.2e
 
 
 ### Double Integrals:
@@ -629,35 +629,13 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x*y^p * ((1 - x) / (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 (digamma((p+1)/n) - digamma(1/n) - p/2*(n-p-2)/(n-p-1)) * (n-p-1) / (p*(n-p)*(2*n-p));
 
-
-### Gen: I( x*y * ((1 - x) / (1 - x*y^n))^(1/n) )
-n = 2*sqrt(7)
-integrate(\(x) sapply(x, \(y) integrate(\(x)
-	x*y * ((1 - x) / (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
-((digamma(2/n) - digamma(1/n)) * (n-2) - (n-3)/2) / ((n-1)*(2*n-1));
-
-
-### Gen: I( x*y^2 * ((1 - x) / (1 - x*y^n))^(1/n) )
-n = sqrt(7) + sqrt(10);
-integrate(\(x) sapply(x, \(y) integrate(\(x)
-	x*y^2 * ((1 - x) / (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
-(digamma(3/n) - digamma(1/n) - 1 + 1/(n-3)) * (n-3) / (2*(n-2)*(2*n-2));
-
-
-### Gen: I( x*y^3 * ((1 - x) / (1 - x*y^n))^(1/n) )
-n = sqrt(14);
-integrate(\(x) sapply(x, \(y) integrate(\(x)
-	x*y^3 * ((1 - x) / (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
-(digamma(4/n) - digamma(1/n) - 3/2*(n-5)/(n-4)) * (n - 4) / (6*n^2 - 27*n + 27);
-(digamma(4/n) - digamma(1/n) - 3/2*(n-5)/(n-4)) * (n - 4) / (3*(n-3)*(2*n-3));
-
+### Special Cases:
 
 ### Gen: I( x*y^(n-1) * ((1 - x) / (1 - x*y^n))^(1/n) )
 n = 7^(2/3)
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x*y^(n-1) * ((1 - x) / (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 1 / (2*(n+1));
-
 
 ### Gen: I( x*y^n * ((1 - x) / (1 - x*y^n))^(1/n) )
 n = 7^(3/4)
@@ -1184,11 +1162,6 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 (pi/2 + log(2) - 1) / 3;
 
 
-### I( x*y * ((1 - x) / (1 - x*y^4))^(1/4) )
-integrate(\(x) sapply(x, \(y) integrate(\(x)
-	x*y * ((1 - x) / (1 - x*y^4))^(1/4), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
-((pi/2 + log(2)) * 4/3 - 1/3) / 14;
-
 ### I( x*y^2 * ((1 - x) / (1 - x*y^4))^(1/4) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x*y^2 * ((1 - x) / (1 - x*y^4))^(1/4), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
@@ -1198,11 +1171,6 @@ pi / 24;
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x*y^3 * ((1 - x) / (1 - x*y^4))^(1/4), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 1/10;
-
-### I( x*y^4 * ((1 - x) / (1 - x*y^4))^(1/4) )
-integrate(\(x) sapply(x, \(y) integrate(\(x)
-	x*y^4 * ((1 - x) / (1 - x*y^4))^(1/4), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
-pracma::psi(1, 1/4) / 64 - 3/16;
 
 
 ### I( ((1 - x)^3 * (1 - x*y^4))^(1/4) )
@@ -1278,25 +1246,11 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 (digamma(2/n) - digamma(1/n) - 1)/(n-1);
 
 
-### I( x*y * ((1 - x) / (1 - x*y^5))^(1/5) )
-integrate(\(x) sapply(x, \(y) integrate(\(x)
-	x*y * ((1 - x) / (1 - x*y^5))^(1/5), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
-n = 5;
-((digamma(2/n) - digamma(1/n)) * 3 - 1) / ((n-1)*(2*n-1));
-
-
 ### I( x*y^2 * ((1 - x) / (1 - x*y^5))^(1/5) )
 n = 5
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x*y^2 * ((1 - x) / (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 ((digamma(3/n) - digamma(1/n)) - 1/2) / 24;
-
-
-### I( x*y^5 * ((1 - x) / (1 - x*y^5))^(1/5) )
-n = 5
-integrate(\(x) sapply(x, \(y) integrate(\(x)
-	x*y^n * ((1 - x) / (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
-pracma::psi(1, 1/n) / n^3 - (2*n+4) / (2*n)^2;
 
 
 ### Power = n-1
@@ -1333,13 +1287,6 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 beta(1/6, 5/6) * beta(1/6, 13/6) / 6^2;
 
 
-### I( x*y * ((1 - x) / (1 - x*y^6))^(1/6) )
-integrate(\(x) sapply(x, \(y) integrate(\(x)
-	x*y * ((1 - x) / (1 - x*y^6))^(1/6), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
-n = 6;
-((digamma(2/n) - digamma(1/n)) * 4 - 3/2) / ((n-1)*(2*n-1));
-
-
 ##############
 
 ### Pow = 7
@@ -1358,91 +1305,6 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 beta(1/7, 11/7) * beta(6/7, 6/7) / 7;
 
 
-### I( x*y * ((1 - x) / (1 - x*y^7))^(1/7) )
-n = 7
-integrate(\(x) sapply(x, \(y) integrate(\(x)
-	x*y * ((1 - x) / (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
-((digamma(2/n) - digamma(1/n)) * (n-2) - (n-3)/2) / ((n-1)*(2*n-1));
-
-
 #####################
 #####################
-
-### Cases:
-
-### I( x*y^2 * ((1 - x) / (1 - x*y^n))^(1/n) )
-n = 5
-integrate(\(x) sapply(x, \(y) integrate(\(x)
-	x*y^2 * ((1 - x) / (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
-((digamma(3/n) - digamma(1/n)) - 1/2) * 2/48;
-
-#
-n = 7
-integrate(\(x) sapply(x, \(y) integrate(\(x)
-	x*y^2 * ((1 - x) / (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
-(digamma(3/n) - digamma(1/n) - 3/4) * 4/120;
-
-#
-n = 8
-integrate(\(x) sapply(x, \(y) integrate(\(x)
-	x*y^2 * ((1 - x) / (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
-(digamma(3/n) - digamma(1/n) - 4/5) * 5/168;
-
-#
-n = 9
-integrate(\(x) sapply(x, \(y) integrate(\(x)
-	x*y^2 * ((1 - x) / (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
-(digamma(3/n) - digamma(1/n) - 5/6) * 6/224;
-
-#
-n = 10
-integrate(\(x) sapply(x, \(y) integrate(\(x)
-	x*y^2 * ((1 - x) / (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
-(digamma(3/n) - digamma(1/n) - 1 + 1/(n-3)) * (n-3) / (4*(n-2)*(n-1));
-
-
-############
-
-### I( x*y^3 * ((1 - x) / (1 - x*y^n))^(1/n) )
-n = 5
-integrate(\(x) sapply(x, \(y) integrate(\(x)
-	x*y^3 * ((1 - x) / (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
-(digamma(4/n) - digamma(1/n)) / 42;
-
-#
-n = 6
-integrate(\(x) sapply(x, \(y) integrate(\(x)
-	x*y^3 * ((1 - x) / (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
-(digamma(4/n) - digamma(1/n) - 3/4) * 2/81;
-
-#
-n = 7
-integrate(\(x) sapply(x, \(y) integrate(\(x)
-	x*y^3 * ((1 - x) / (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
-(digamma(4/n) - digamma(1/n) - 6/6) * 1/44;
-
-#
-n = 8
-integrate(\(x) sapply(x, \(y) integrate(\(x)
-	x*y^3 * ((1 - x) / (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
-(digamma(4/n) - digamma(1/n) - 9/8) * 4/195;
-
-#
-n = 9
-integrate(\(x) sapply(x, \(y) integrate(\(x)
-	x*y^3 * ((1 - x) / (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
-(digamma(4/n) - digamma(1/n) - 12/10) * 1/54;
-
-#
-n = 10
-integrate(\(x) sapply(x, \(y) integrate(\(x)
-	x*y^3 * ((1 - x) / (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
-(digamma(4/n) - digamma(1/n) - 3/2*(n-5)/(n-4)) * 2/119;
-
-#
-n = 11
-integrate(\(x) sapply(x, \(y) integrate(\(x)
-	x*y^3 * ((1 - x) / (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
-(digamma(4/n) - digamma(1/n) - 3/2*(n-5)/(n-4)) * 7/456;
-(digamma(4/n) - digamma(1/n) - 3/2*(n-5)/(n-4)) * (n - 4) / (6*n^2 - 27*n + 27);
 
