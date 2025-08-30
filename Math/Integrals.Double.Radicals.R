@@ -168,6 +168,8 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 ### I( sqrt( (1-x^2)/x / (1 - x^2*y^2) ) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	sqrt( (1-x^2)/x / (1 - x^2*y^2) ), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+# 2 * I( sqrt(x*y / ((1-x^2) * (1 - x^2*y^2))) ) +
+	+ beta(3/4, 1/2) * beta(1/2, 1/2) / 2 - 4;
 # TODO
 
 
@@ -188,7 +190,7 @@ gamma(1/4)^3 / gamma(3/4) * sqrt(2) / 24 - 2/3;
 ### I( sqrt((1-x^2)/(x*y) / (1 - x^2*y^2)) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	sqrt( (1-x^2)/(x*y) / (1 - x^2*y^2) ), 0, 1, rel.tol=1E-7)$value), 0, 1, rel.tol=1E-7)
-# I( x / sqrt((1-x^2) * (1 - x^2*y^2)) ) +
+# I( sqrt(x) / sqrt((1-x^2) * (1 - x^2*y^2)) ) +
 	+ beta(1/4, 1/2) * beta(1/2, 1/2) / 4 - 2;
 # TODO
 
@@ -729,6 +731,18 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 # [old]
 (pracma::psi(1, 1/3) - pracma::psi(1, 2/3) + pracma::psi(1, 4/3)) / 9;
 (2*pracma::psi(1, 1/3) - pracma::psi(1, 2/3)) / 9 - 1;
+
+
+### I( ((1 - x^3) / (1 - x^3*y^3))^(1/3) / x )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	((1 - x^3) / (1 - x^3*y^3))^(1/3) / x - 1/x, 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+1 - pracma::psi(1, 1/3) / 3^2;
+
+
+### I( ((1 - x^3) / (1 - x^3*y^3))^(1/3) * y/x )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	((1 - x^3) / (1 - x^3*y^3))^(1/3) * y/x - y/x, 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+(digamma(1/3) - digamma(5/6)) / 12 - log(2)/6 + 1/4;
 
 
 ### I( y^2 * ((1 - x^3) / (1 - x^3*y^3))^(1/3) )
