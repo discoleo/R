@@ -7,7 +7,7 @@
 ## Radicals of Polynomials
 ## w. 2 Components
 ##
-## v.0.2e
+## v.0.2g
 
 
 ### Double Integrals:
@@ -28,6 +28,12 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 
 
 ### Series: 1 Fraction
+
+### Gen: I( y^p * ((1 - x) / (1 - x*y^n))^(1/n) )
+n = sqrt(21); p = sqrt(5) + 1/7;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y^p * ((1 - x) / (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-13)
+(digamma((p+1)/n) - digamma(1/n) - p) / (p*(n-p));
 
 ### Gen: I( x*y^p * ((1 - x) / (1 - x*y^n))^(1/n) )
 n = sqrt(14); p = sqrt(5);
@@ -139,6 +145,14 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 ####################
 ####################
 
+### Series: 1 Fraction
+
+### Gen: I( y^p * ((1 - x) / (1 - x*y^n))^(1/n) )
+n = sqrt(21); p = sqrt(5) + 1/7;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y^p * ((1 - x) / (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-13)
+(digamma((p+1)/n) - digamma(1/n) - p) / (p*(n-p));
+
 
 ### Gen: I( x*y^p * ((1 - x) / (1 - x*y^n))^(1/n) )
 n = sqrt(14); p = sqrt(5);
@@ -149,19 +163,40 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 
 ### Explicit Cases:
 
+### Coeff: x^0
+
+### Gen: I( ((1 - x) / (1 - x*y^n))^(1/n) )
+n = sqrt(7)
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	((1 - x) / (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+pracma::psi(1, 1/n) / n^2 - 1/n;
+
+### Gen: I( y * ((1 - x) / (1 - x*y^n))^(1/n) )
+n = sqrt(13);
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y * ((1 - x) / (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-13)
+(digamma(2/n) - digamma(1/n) - 1) / (n-1);
+
+### Gen: I( y^2 * ((1 - x) / (1 - x*y^n))^(1/n) )
+n = sqrt(21);
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y^2 * ((1 - x) / (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-13)
+(digamma(3/n) - digamma(1/n) - 2) / (2*(n-2));
+
+
+### Coeff: x^1
+
 ### Gen: I( x*y * ((1 - x) / (1 - x*y^n))^(1/n) )
 n = 2*sqrt(7)
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x*y * ((1 - x) / (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 ((digamma(2/n) - digamma(1/n)) * (n-2) - (n-3)/2) / ((n-1)*(2*n-1));
 
-
 ### Gen: I( x*y^2 * ((1 - x) / (1 - x*y^n))^(1/n) )
 n = sqrt(7) + sqrt(10);
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x*y^2 * ((1 - x) / (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 (digamma(3/n) - digamma(1/n) - 1 + 1/(n-3)) * (n-3) / (2*(n-2)*(2*n-2));
-
 
 ### Gen: I( x*y^3 * ((1 - x) / (1 - x*y^n))^(1/n) )
 n = sqrt(14);
@@ -186,7 +221,63 @@ pracma::psi(1, 1/n) / n^3 - (n+2)/2 / n^2;
 
 ###################
 
+### Derivation:
 ### Explicit Cases:
+
+
+### Coeff-Type: x^0 & y^0
+
+### I( ((1 - x) / (1 - x*y^3))^(1/3) )
+n = 3;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	((1 - x) / (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+pracma::psi(1, 1/n) / n^2 - 1/n;
+
+### I( ((1 - x) / (1 - x*y^4))^(1/4) )
+n = 4;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	((1 - x) / (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+pracma::psi(1, 1/n) / n^2 - 1/n;
+
+
+### Coeff-Type: y^1
+
+### I( y * ((1 - x) / (1 - x*y^3))^(1/3) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y * ((1 - x) / (1 - x*y^3))^(1/3), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+pi * sin(pi/3)/3 - 1/2;
+
+### I( y * ((1 - x) / (1 - x*y^4))^(1/4) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y * ((1 - x) / (1 - x*y^4))^(1/4), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-13)
+(pi/2 + log(2) - 1) / 3;
+
+### I( y * ((1 - x) / (1 - x*y^5))^(1/5) )
+n = 5;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y * ((1 - x) / (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-13)
+(digamma(2/n) - digamma(1/n) - 1)/(n-1);
+
+
+### Coeff-Type: y^2
+
+### I( y^2 * ((1 - x) / (1 - x*y^4))^(1/4) )
+n = 4;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y^2 * ((1 - x) / (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-13)
+(digamma(3/n) - digamma(1/n) - 2) / 4;
+
+### I( y^2 * ((1 - x) / (1 - x*y^5))^(1/5) )
+n = 5;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y^2 * ((1 - x) / (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-13)
+(digamma(3/n) - digamma(1/n) - 2) / 6;
+
+### I( y^2 * ((1 - x) / (1 - x*y^6))^(1/6) )
+n = 6;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y^2 * ((1 - x) / (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-13)
+(digamma(3/n) - digamma(1/n) - 2) / (2*(n-2));
 
 
 ### Coeff-Type: x*y
@@ -296,7 +387,6 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 
 
 ### Coeff-Type: x*y^n
-
 
 ### I( x*y^4 * ((1 - x) / (1 - x*y^4))^(1/4) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
