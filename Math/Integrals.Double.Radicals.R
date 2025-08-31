@@ -1064,7 +1064,7 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 ### I( ((1 - x^4) * (1 - x^4*y^4))^(1/4) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	((1 - x^4) * (1 - x^4*y^4))^(1/4), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
-# TODO
+beta(1/4, 1/4) * (pi/2 - sqrt(2)/3 - log(tan(pi/8))) / 16;
 
 
 ### I( ((1 - x^4) / (1 - x^4*y^4)^2)^(1/4) )
