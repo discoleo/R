@@ -800,6 +800,7 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 ### I( 1 / ((1 - x^3) * (1 - x^3*y^3))^(1/3) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	1 / ((1 - x^3) * (1 - x^3*y^3))^(1/3), 0, 1, rel.tol=1E-10)$value), 0, 1, rel.tol=1E-11)
+# beta(1/3, 1/3) / 3 * (0.5 + I( x*y * ((1 - x^3) / (1 - x^3*y^3))^(1/3) ));
 # TODO
 
 
@@ -885,6 +886,12 @@ beta(1/6, 4/6) * beta(3/6, 2/6) * 2/6^2;
 
 ### Pow 1 & 3:
 
+### I( 1 / ((1-x) * (1 - x*y^3))^(1/3) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	1 / ((1-x) * (1 - x*y^3))^(1/3), 0, 1, rel.tol=1E-11)$value), 0, 1, rel.tol=1E-12)
+# TODO
+
+
 ### I( 1 / ((1-x) * (1-y^3) * (1 - x*y^3))^(1/3) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	1 / ((1-x) * (1-y^3) * (1 - x*y^3))^(1/3), 0, 1, rel.tol=1E-11)$value), 0, 1, rel.tol=1E-12)
@@ -923,6 +930,14 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	((1 - x^4) / (1 - x^4*y^4))^(1/4), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 (pracma::psi(1, 1/8) - pracma::psi(1, 5/8)) / 32 - 1;
 
+
+### I( y^2 * ((1 - x^4) / (1 - x^4*y^4))^(1/4) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y^2 * ((1 - x^4) / (1 - x^4*y^4))^(1/4), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+(digamma(1/8) - digamma(5/8)) / 16 + 3/4;
+
+
+### Higher Power:
 
 ### I( ((1 - x^4) / (1 - x^4*y^4)^2)^(1/4) )
 n = 4
