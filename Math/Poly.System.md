@@ -49,6 +49,8 @@ There are 2 main variants of this type.
 
 ### B.1.) Simple Ht-Symmetric
 
+This system is named a "Mixed" system in the examples on GitHub.
+
 ***Examples***
 ~~~
 x1^n*x2^m + x2^n*x3^m + x3^n*x4^m + x4^n*x1^m = R1
@@ -67,7 +69,9 @@ The generalized example:
 - This system can be decomposed into 2 subsystems of lower order;
 
 For more examples, see also:
-- Poly.System.Hetero.Symmetric.S3.Mixed.R;
+- 3 Variables: Poly.System.Hetero.Symmetric.S3.Mixed.R;
+- 4 Variables: Poly.System.S4.HtMixed.Basic.R;
+- Special Sub-Types: Poly.System.Hetero.Symmetric.S3.Mixed.NonOriented.R;
 
 
 ### B.2.) Special Ht-Symmetric
