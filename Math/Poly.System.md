@@ -107,9 +107,11 @@ For more details and examples, see also:
 - most files may need extensive cleanup!
 
 
+## Solutions
+
 General strategy to solve these systems:
 
-- Observation 1: If (x1, ..., xn) is a solution to such a system, then every cyclic permutation if also a solution.
+- Observation 1: If (x1, ..., xn) is a solution to such a system, then every cyclic permutation is also a solution.
 
 - Observation 2: The elementary polynomials formed by (x1, ..., xn) are invariant under a cyclic permutation;
 ```
@@ -118,6 +120,11 @@ S = x1 + ... + xn;
 E2 = x1*x2 + x1*x3 + ... + x[n-1]*xn;
 ...
 En = x1*x2*...*xn;
+
+# Note:
+# - S Notation: introduced to distinguish it easily from
+#   the other elementary polynomials;
+# - Extensively used in the solutions: easier to write;
 ```
 
 All these polynomials are invariant under the cyclic permutation of the solution.
@@ -125,5 +132,9 @@ All these polynomials are invariant under the cyclic permutation of the solution
 The main strategy is to transform the original system into a system in {S, E2, ..., En} and solve this lower order system.
 
 Step 2: solve the Elementary system;
+- this is usually a polynomial of Order n = number of variables;
 
 Note: Systems of Type \[B.2] are in general easier to transform into the lower order system than systems of type \[B.1].
+
+There are many examples on GitHub:
+- see most files named Poly.System.S[n].Ht...R, where n is the number of variables;
