@@ -6,6 +6,8 @@
 
 Various classes of polynomial systems can be decomposed into systems of lower order.
 
+These systems of lower order provide a means to solve higher order polynomials using lower order polynomials which are entangled into a very complicated way. The details of the entanglement emerge during the procedure to solve the lower order polynomial system.
+
 The 2 major classes of such systems are:
 1. Fully symmetric systems;
 2. Hetero-symmetric systems: these are invariant under a cyclic permutation;
@@ -30,14 +32,20 @@ In this particular example, the system can be decomposed into 2 sequential polyn
 
 Such systems are a very special case of the systems described in section \[B.1] (and are much easier to solve).
 
-The composition operator "o" is an inverse composition:\
-P\[n] o P\[3] = P\[n](P\[3]);
+The composition operator "o" is an inverse composition:
+```
+P[n] o P[3] = P[n](P[3]);
+```
+
+**Note:** This variant can be generalised to any number of variables and any type of fully symmetric equations. The particular example above is just very easy to solve.
 
 ---
 
 ## B.) Hetero-Symmetric Systems
 
-* if (x,y,z) is a solution, so are all ***cyclic*** permutations of it;
+* If (x,y,z) is a solution, so are all ***cyclic*** permutations of it;
+
+There are 2 main variants of this type.
 
 ### B.1.) Simple Ht-Symmetric
 
@@ -50,12 +58,16 @@ x1*x2*x3*x4 = R4
 ~~~
 
 - (usually) does **NOT** permit trivial solutions, like: x1 = x2 = x3 = x4;
+- Some equations may be fully symmetric: but this is not a requirement;
 
 The generalized example:
 - Let P be the class of polynomial functions which are invariant under the cyclic permutation of their variables;
 - Let P1, ..., Pn be n such functions, each with n variables: x1, ..., xn;
 - Let Sys(P, n) be the system formed by these n equations: Pi(x1, ..., xn) = 0;
 - This system can be decomposed into 2 subsystems of lower order;
+
+For more examples, see also:
+- Poly.System.Hetero.Symmetric.S3.Mixed.R;
 
 
 ### B.2.) Special Ht-Symmetric
@@ -88,6 +100,12 @@ F(x2, ..., xn, x1) = 0;
 ...
 F(xn, ..., x[n-1]) = 0;
 ```
+
+For more details and examples, see also:
+- Poly.System.Hetero.Symmetric.S3.Theory.R: but only minimalistic information;
+- Poly.System.Hetero.Symmetric.S3.R: the basic examples for the S[3] system;
+- most files may need extensive cleanup!
+
 
 General strategy to solve these systems:
 
