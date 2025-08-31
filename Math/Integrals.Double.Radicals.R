@@ -580,6 +580,13 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	y^(n-1) * ((1 - x^n) / (1 - x^n*y^n))^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 (n - beta(1/n, 1/n) / n) / (n-1)^2;
 
+
+### Gen: I( y^n * ((1 - x^n) / (1 - x^n*y^n))^(1/n) )
+n = sqrt(7) + 2/3;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y^n * ((1 - x^n) / (1 - x^n*y^n))^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+(pracma::psi(1, 1/2 + 1/(2*n)) - pracma::psi(1, 1+1/(2*n))) / (2*n^4) + (n-1)/n^2;
+ 
  
  ### Power Div = 2
 
