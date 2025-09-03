@@ -148,3 +148,15 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	sqrt( abs(x-y) / (1 - x^2*y^2) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 # TODO
 
+
+####################
+####################
+
+### Power = 3
+
+### I( x * (abs(x^3 - y^3) / (1 - x^3*y^3))^(1/3) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * (abs(x^3 - y^3) / (1 - x^3*y^3))^(1/3), 0, 1, rel.tol=1E-11)$value), 0, 1, rel.tol=1E-12)
+3/4 - (digamma(2/3) - digamma(1/3)) * beta(2/3, 2/3) / 9;
+
+
