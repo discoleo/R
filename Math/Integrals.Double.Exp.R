@@ -254,3 +254,37 @@ integrate(\(x) sapply(x, \(y)
 		as.numeric(v);
 		}, 0, Inf, rel.tol=1E-10)$value), 0, Inf, rel.tol=1E-10)
 
+
+##################
+##################
+
+### Exp & Trig
+
+### I( sin(y) * exp(sin(y) * (cos(x) - sin(x))) )
+# Maths 505: Impossible integral? Solution using symmetry
+# https://www.youtube.com/watch?v=OkuYTH0S_dM
+# Note: Inverse of Spherical coords;
+
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	sin(y) * exp(sin(y) * (cos(x) - sin(x))), 0, 2*pi, rel.tol=1E-12)$value), 0, pi, rel.tol=1E-12)
+pi * sinh(sqrt(2)) * sqrt(2) * 2;
+
+
+### Gen: I( sin(y) * exp(k * sin(x)*sin(y)) )
+k = 1/sqrt(5);
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	sin(y) * exp(k * sin(x)*sin(y)), 0, 2*pi, rel.tol=1E-12)$value), 0, pi, rel.tol=1E-12)
+4*pi * sinh(k) / k;
+
+
+### I( sin(y) * exp(sin(x)*sin(y)) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	sin(y) * exp(sin(x)*sin(y)), 0, 2*pi, rel.tol=1E-12)$value), 0, pi, rel.tol=1E-12)
+4*pi * sinh(1);
+
+
+### I( sin(y) * exp(cos(x)*sin(y)) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	sin(y) * exp(cos(x)*sin(y)), 0, 2*pi, rel.tol=1E-12)$value), 0, pi, rel.tol=1E-12)
+4*pi * sinh(1);
+
