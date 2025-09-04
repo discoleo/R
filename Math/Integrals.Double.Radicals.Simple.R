@@ -209,3 +209,38 @@ sum(digamma(c(1:6, 8:13)/14) * rep(c(-1,1), each = 6)) *
 n = 7;
 - pi / sin(pi/n) * (digamma(1/n) + Euler) / n^2;
 
+
+###################
+###################
+
+### Simple Radicals
+
+### I( sqrt(x^2 + y^2) )
+integrate(\(x) sapply(x, \(y)
+	integrate(\(x) sqrt(x^2 + y^2), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-13)
+(log(sqrt(2) + 1) + sqrt(2)) / 3;
+
+
+### I( (x^3 + y^3)^(1/3) )
+integrate(\(x) sapply(x, \(y)
+integrate(\(x) (x^3 + y^3)^(1/3), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-13)
+(2^(-2/3) + beta(1/3, 1/3) / 12) * 2/3;
+
+
+### I( (x^4 + y^4)^(1/4) )
+n = 4;
+integrate(\(x) sapply(x, \(y)
+integrate(\(x) (x^n + y^n)^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-13)
+integrate(\(x) 2/3 * (x^n+1)^(1/n), 0, 1)
+# TODO
+
+
+################
+
+### Fractions
+
+### I( sqrt(x^2 + y^2) / (1-x*y) )
+integrate(\(x) sapply(x, \(y)
+	integrate(\(x) sqrt(x^2 + y^2) / (1-x*y), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-13)
+# TODO
+
