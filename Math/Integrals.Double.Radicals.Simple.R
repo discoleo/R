@@ -235,7 +235,7 @@ integrate(\(x) 2/3 * (x^n+1)^(1/n), 0, 1)
 # TODO
 
 
-### Gen: I( (x^n + y^n)^(2/n) )
+### Gen: I( (x^n + y^n)^(1-2/n) )
 n = sqrt(7)
 integrate(\(x) sapply(x, \(y)
 integrate(\(x) (x^n + y^n)^(1-2/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-13)
