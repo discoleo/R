@@ -216,29 +216,29 @@ n = 7;
 ### Simple Radicals
 
 ### I( sqrt(x^2 + y^2) )
-integrate(\(x) sapply(x, \(y)
-	integrate(\(x) sqrt(x^2 + y^2), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-13)
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	sqrt(x^2 + y^2), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-13)
 (log(sqrt(2) + 1) + sqrt(2)) / 3;
 
 
 ### I( (x^3 + y^3)^(1/3) )
-integrate(\(x) sapply(x, \(y)
-integrate(\(x) (x^3 + y^3)^(1/3), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-13)
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	(x^3 + y^3)^(1/3), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-13)
 (2^(-2/3) + beta(1/3, 1/3) / 12) * 2/3;
 
 
 ### I( (x^4 + y^4)^(1/4) )
 n = 4;
-integrate(\(x) sapply(x, \(y)
-integrate(\(x) (x^n + y^n)^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-13)
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	(x^n + y^n)^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-13)
 integrate(\(x) 2/3 * (x^n+1)^(1/n), 0, 1)
 # TODO
 
 
 ### Gen: I( (x^n + y^n)^(1-2/n) )
 n = sqrt(7)
-integrate(\(x) sapply(x, \(y)
-integrate(\(x) (x^n + y^n)^(1-2/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-13)
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	(x^n + y^n)^(1-2/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-13)
 integrate(\(x) 2/n * (x^n+1)^(1-2/n), 0, 1)
 (beta(1/n, 1/n) * (n-2)/n + 2^(2-2/n)) / (n*(n-1));
 
