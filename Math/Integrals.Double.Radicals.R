@@ -137,51 +137,33 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 Catalan - 1/6;
 
 
-### Fraction: I( 1 / sqrt( (1 - x^2*y^2) * (1-x^2) ) )
-integrate(\(x) sapply(x, \(y) integrate(\(x)
-	1 / sqrt((1-x^2) * (1 - x^2*y^2)), 0, 1)$value), 0, 1)
-2*Catalan;
-
-### Fraction: I( x^2 / sqrt( (1 - x^2*y^2) * (1-x^2) ) )
-integrate(\(x) sapply(x, \(y) integrate(\(x)
-	x^2 / sqrt((1-x^2) * (1 - x^2*y^2)), 0, 1)$value), 0, 1)
-1;
-
-
 ### I( sqrt( (1 - x^2*y^2) / (1-x^2) ) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	sqrt( (1 - x^2*y^2) / (1-x^2) ), 0, 1)$value), 0, 1)
 Catalan + 1/2;
 
+
 ### I( sqrt( (1-x^2) / (1 - x^2*y^2) ) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	sqrt( (1-x^2) / (1 - x^2*y^2) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
-2*Catalan - 1
+2*Catalan - 1;
 
-
-### I( sqrt( x / ((1-x^2) * (1 - x^2*y^2)) ) )
+### I( x^2 * sqrt( (1-x^2) / (1 - x^2*y^2) ) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
-	sqrt(x / ((1-x^2) * (1 - x^2*y^2))), 0, 1)$value), 0, 1)
-# TODO
+	x^2 * sqrt( (1-x^2) / (1 - x^2*y^2) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+2/9;
 
-
-### I( sqrt( (1-x^2)/x / (1 - x^2*y^2) ) )
+### I( sqrt( 1/x * (1-x^2) / (1 - x^2*y^2) ) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	sqrt( (1-x^2)/x / (1 - x^2*y^2) ), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 # 2 * I( sqrt(x*y / ((1-x^2) * (1 - x^2*y^2))) ) +
 	+ beta(3/4, 1/2) * beta(1/2, 1/2) / 2 - 4;
+# Other:
+integrate(\(x) 2*x / sin(x)^(3/2), 0, pi/2, rel.tol=1E-13)$value - 4;
 # TODO
 
 
-### I( sqrt( y / ((1-x^2) * (1 - x^2*y^2)) ) )
-integrate(\(x) sapply(x, \(y) integrate(\(x)
-	sqrt(y / ((1-x^2) * (1 - x^2*y^2))), 0, 1, rel.tol=3E-10)$value), 0, 1, rel.tol=1E-12)
-2 - gamma(3/4)^4 / gamma(1/2)^2;
-# alternative Formula:
-2 - gamma(3/4)^3 / gamma(1/4) * sqrt(2);
-
-
-### I( sqrt( (1-x^2)/y / (1 - x^2*y^2) ) )
+### I( sqrt( 1/y * (1-x^2) / (1 - x^2*y^2) ) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	sqrt( (1-x^2)/y / (1 - x^2*y^2) ), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 gamma(1/4)^3 / gamma(3/4) * sqrt(2) / 24 - 2/3;
@@ -193,6 +175,31 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 # I( sqrt(x) / sqrt((1-x^2) * (1 - x^2*y^2)) ) +
 	+ beta(1/4, 1/2) * beta(1/2, 1/2) / 4 - 2;
 # TODO
+
+
+### Div: 2 Fractions
+
+### I( 1 / sqrt( (1-x^2) * (1 - x^2*y^2) ) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	1 / sqrt((1-x^2) * (1 - x^2*y^2)), 0, 1)$value), 0, 1)
+2*Catalan;
+
+### I( x^2 / sqrt( (1-x^2) * (1 - x^2*y^2) ) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^2 / sqrt((1-x^2) * (1 - x^2*y^2)), 0, 1)$value), 0, 1)
+1;
+
+### I( sqrt( x / ((1-x^2) * (1 - x^2*y^2)) ) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	sqrt(x / ((1-x^2) * (1 - x^2*y^2))), 0, 1)$value), 0, 1)
+# TODO
+
+### I( sqrt( y / ((1-x^2) * (1 - x^2*y^2)) ) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	sqrt(y / ((1-x^2) * (1 - x^2*y^2))), 0, 1, rel.tol=3E-10)$value), 0, 1, rel.tol=1E-12)
+2 - gamma(3/4)^4 / gamma(1/2)^2;
+# alternative Formula:
+2 - gamma(3/4)^3 / gamma(1/4) * sqrt(2);
 
 
 ### I( 1 / sqrt(1 - x^2*y^2) )
@@ -1008,6 +1015,30 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	y * ((1 - x^4) / (1 - x^4*y^4)^3)^(1/4), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 (1/2 - sqrt(2)/4 * log(sqrt(2) + 1)) * beta(1/4, 1/2) / 2;
+
+
+### I( x^2 * ((1 - x^4) / (1 - x^4*y^4)^3)^(1/4) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^2 * ((1 - x^4) / (1 - x^4*y^4)^3)^(1/4), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+# TODO
+
+
+### I( x^2*y^2 * ((1 - x^4) / (1 - x^4*y^4)^3)^(1/4) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^2*y^2 * ((1 - x^4) / (1 - x^4*y^4)^3)^(1/4), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+# TODO
+
+
+### I( x * ((1 - x^4) / (1 - x^4*y^4))^(3/4) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * ((1 - x^4) / (1 - x^4*y^4))^(3/4), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+# TODO
+
+### I( x*y * ((1 - x^4) / (1 - x^4*y^4))^(3/4) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x*y * ((1 - x^4) / (1 - x^4*y^4))^(3/4), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+# 1/4 * I( sqrt( x / (1-x^2) / (1 - x^2*y^2) ) ) - 1/6;
+# TODO
 
 
 ### Fractions: 2 Div
