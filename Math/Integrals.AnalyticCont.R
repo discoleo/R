@@ -26,7 +26,11 @@ Catalan = 0.915965594177219015054603514;
 
 ### Based on H(n)
 
+# Note:
+# Harmonic Sum H(n) = SUM( 1 / seq(n) );
+
 ### H(3*n) - H(n)
+# H3(x) = Analytic continuation of (H(3*n) - H(n));
 # - accuracy/convergence problems possible with some of the formulas;
 #   (I may have had a bug in the initial code as well)
 H3n = function(x, N = 30) {
@@ -76,6 +80,7 @@ zetaQSum0 = function(n) {
 }
 
 ### sum( (-1)^n / n^n )
+# Note: sign-adjustment;
 zetaQnegSum = function(x, N = 30) {
 	id = seq(1, N);
 	u  = (-1)^id;
@@ -188,9 +193,13 @@ abline(h = log(3), col="red")
 # for derivation of log(3), see file:
 # Sums.Trig.R;
 
-###
+### H3n(1/2)
 H3n(1/2, N=10000)
 2/3
+
+### H3n(1/3)
+H3n(1/3, N=10000)
+3/2*log(3) + sqrt(3)*atan(sqrt(3)) - sqrt(3)*atan(1/sqrt(3)) - 2;
 
 
 ##################
@@ -223,7 +232,7 @@ pracma::psi(1/3) + 3 + Euler
 zetaSum(2/3, p=1, N=100000)
 -3/2*log(3) + 3/2 + pi/2 * cos(pi/3) / sin(pi/3)
 
-#
+# Digamma:
 pracma::psi(1/3) - pracma::psi(2/3)
 - pi * cos(pi/3) / sin(pi/3)
 #
@@ -309,6 +318,25 @@ zetaSum(1/6, p=3, N=1000) + zetaSum(5/6, p=3, N=1000)
 #
 pracma::psi(2, 5/6) / 2 + (6/5)^3 + pracma::zeta(3)
 zetaSum(5/6, p=3, N=1000)
+
+
+### Relations: PSI(1, 1/8)
+
+###
+pracma::psi(1, 1/8) + pracma::psi(1, 5/8) # ==
+pracma::psi(1, 1/4) * 4;
+
+###
+pracma::psi(1, 3/8) + pracma::psi(1, 7/8) # ==
+pracma::psi(1, 3/4) * 4;
+
+###
+(pracma::psi(1, 1/8) + pracma::psi(1, 7/8)) # ==
+pi^2 / sin(pi/8)^2;
+
+###
+(pracma::psi(1, 3/8) + pracma::psi(1, 5/8)) # ==
+pi^2 / sin(pi*3/8)^2;
 
 
 ##############
