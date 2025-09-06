@@ -1004,6 +1004,11 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x*y * ((1 - x^4) / (1 - x^4*y^4)^3)^(1/4), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 (pi - gamma(3/4)^2 / gamma(1/2) * sqrt(2) * 2) * beta(1/4, 2/4) / 16;
 
+### I( y * ((1 - x^4) / (1 - x^4*y^4)^3)^(1/4) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y * ((1 - x^4) / (1 - x^4*y^4)^3)^(1/4), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+(1/2 - sqrt(2)/4 * log(sqrt(2) + 1)) * beta(1/4, 1/2) / 2;
+
 
 ### Fractions: 2 Div
 
