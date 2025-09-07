@@ -226,10 +226,12 @@ H3n(1/2, N=10000)
 
 ### H3n(1/3)
 H3n(1/3, N=20000)
+sum((digamma(2:4/3) - digamma(1:3/3)) * c(1,1,-2)) / 3;
 3/2*log(3) + sqrt(3)*atan(sqrt(3)) - sqrt(3)*atan(1/sqrt(3)) - 2;
 
 ### H3n(2/3)
 H3n(2/3, N=20000)
+sum((digamma(3:5/3) - digamma(1:3/3)) * c(1,1,-2)) / 3;
 3/2*log(3) + sqrt(3)*atan(sqrt(3)) - 3*sqrt(3)*atan(1/sqrt(3));
 
 ### Digamma:
@@ -238,7 +240,7 @@ H3n(x, N=20000)
 sum((digamma(x+(1:3)/3) - digamma(1:3/3)) * c(1,1,-2)) / 3;
 
 # Note:
-# - Case x = 0 is defined, due to the construction of H3n;
+# - Case x = 0 is well defined, due to the construction of H3n;
 
 
 ### H4n:
