@@ -608,6 +608,14 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	((1 - x^n) / (1 - x^n*y^n)^2)^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 beta(1/n, 1/n) * beta(1/n, 1-1/n) / n^2 - pi/sin(pi/n) / n;
 
+### Gen: I( y^(n-1) * ((1 - x^n) / (1 - x^n*y^n))^(1/n) )
+n = sqrt(3) + sqrt(7);
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y^(n-1) * ((1 - x^n) / (1 - x^n*y^n))^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+(n^2 - beta(1/n, 1/n)) / (n*(n-1)^2);
+
+
+### Div: Higher Power
 
 ### Gen: I( y^(n-1) * ((1 - x^n) / (1 - x^n*y^n)^(n-1))^(1/n) )
 n = sqrt(13);
@@ -781,6 +789,8 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 ### I( y * ((1 - x^3) / (1 - x^3*y^3))^(1/3) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	y * ((1 - x^3) / (1 - x^3*y^3))^(1/3), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+# 3/2 - (digamma(2/3) - digamma(1/3)) * beta(2/3, 2/3) * 2/9 +
+# - I( x*y * ((1 - x^3) / (1 - x^3*y^3))^(1/3) );
 # TODO
 
 
@@ -995,6 +1005,12 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	y^2 * ((1 - x^4) / (1 - x^4*y^4))^(1/4), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 (digamma(1/8) - digamma(5/8)) / 16 + 3/4;
+
+### I( y^3 * ((1 - x^4) / (1 - x^4*y^4))^(1/4) )
+n = 4
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y^(n-1) * ((1 - x^n) / (1 - x^n*y^n))^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+(n^2 - beta(1/n, 1/n)) / (n*(n-1)^2);
 
 ### I( y^4 * ((1 - x^4) / (1 - x^4*y^4))^(1/4) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
