@@ -232,6 +232,14 @@ H3n(1/3, N=20000)
 H3n(2/3, N=20000)
 3/2*log(3) + sqrt(3)*atan(sqrt(3)) - 3*sqrt(3)*atan(1/sqrt(3));
 
+### Digamma:
+x = 1 / sqrt(11)
+H3n(x, N=20000)
+sum((digamma(x+(1:3)/3) - digamma(1:3/3)) * c(1,1,-2)) / 3;
+
+# Note:
+# - Case x = 0 is defined, due to the construction of H3n;
+
 
 ### H4n:
 
@@ -317,10 +325,10 @@ zetaSum(5/2, N=200)
 
 ###
 zetaSum(1/3, N=20000)
-pi^2/6 - pracma::psi(1, 4/3);
+pi^2/6 - pracma::psi(1, 1+1/3);
 #
 zetaSum(2/3, N=20000)
-pi^2/6 - pracma::psi(1, 5/3);
+pi^2/6 - pracma::psi(1, 1+2/3);
 
 
 ###########
@@ -366,7 +374,7 @@ pracma::psi(2, 3/4) / 2 + (4/3)^3 + pracma::zeta(3)
 zetaSum(3/4, p=3, N=1000)
 
 
-###
+### General:
 n = 5; # n = sqrt(11);
 pracma::psi(2, 1 - 1/n) - pracma::psi(2, 1/n)
 2 * pi^3 / sin(pi/n)^2 / tan(pi/n)
@@ -411,6 +419,12 @@ pi^2 / sin(pi/8)^2;
 pi^2 / sin(pi*3/8)^2;
 
 
+### General:
+p = 1/sqrt(11)
+pracma::psi(1, 1/(2*p)) + pracma::psi(1, 1/2 + 1/(2*p)) # ==
+pracma::psi(1, 1/p) * 4;
+
+
 ##############
 ##############
 
@@ -443,9 +457,8 @@ tmp = sapply(seq(1, 6), \(x) points(x, zetaQnegSum0(x), col="red"))
 ###
 zetaQnegSum(20)
 zetaQnegSum0(20)
-
-###
 zetaQnegSum(1/2)
+# TODO: ???
 
 
 ### Bernoulli Integral
