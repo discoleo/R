@@ -600,13 +600,20 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 (pracma::psi(1, 1/2 + 1/(2*n)) - pracma::psi(1, 1+1/(2*n))) / (2*n^4) + (n-1)/n^2;
  
  
- ### Power Div = 2
+### Power Div = 2
 
 ### Gen: I( ((1 - x^n) / (1 - x^n*y^n)^2)^(1/n) )
 n = sqrt(3)*5^(2/3)
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	((1 - x^n) / (1 - x^n*y^n)^2)^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 beta(1/n, 1/n) * beta(1/n, 1-1/n) / n^2 - pi/sin(pi/n) / n;
+
+
+### Gen: I( y^(n-1) * ((1 - x^n) / (1 - x^n*y^n)^(n-1))^(1/n) )
+n = sqrt(13);
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y^(n-1) * ((1-x^n) / (1-x^n*y^n)^(n-1))^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+(2*beta(1/n, 2/n) - beta(1/n, 1/n)) / (n*(n-1));
 
 
 ### Series: 2 Fractions
@@ -810,6 +817,11 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	((1 - x^3) / (1 - x^3*y^3)^2)^(1/3), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 (gamma(1/3)^3 - 2*pi * sqrt(3)) / 9;
 gamma(1/3)^3 / 9 - pi / sin(pi/3) / 3;
+
+### I( y^2 * ((1-x^3) / (1-x^3*y^3)^2)^(1/3) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y^2 * ((1-x^3) / (1-x^3*y^3)^2)^(1/3), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+(beta(1/3, 2/3) - beta(1/3, 1/3)/2) / 3;
 
 
 ### I( x * ((1 - x^3) / (1 - x^3*y^3)^2)^(1/3) )
@@ -1018,6 +1030,12 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	y^2 * ((1-x^4) / (1-x^4*y^4)^3)^(1/4), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 beta(1/4, 1/4) * (-pi/4 + sqrt(2)/2 - 1/2 * log(tan(pi/8))) / 8;
 beta(1/4, 1/2) * (-pi * sqrt(2)/4 + 1 - log(tan(pi/8))/sqrt(2)) / 8;
+
+### I( y^3 * ((1 - x^4) / (1 - x^4*y^4)^3)^(1/4) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y^3 * ((1-x^4) / (1-x^4*y^4)^3)^(1/4), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+beta(1/4, 1/2) * (1 - sqrt(2)/2) / (3*2);
+beta(1/4, 1/2) / 6 - beta(1/4, 1/4)/2 / 6;
 
 # Note: beta(1/4, 1/4) / beta(1/4, 1/2) == sqrt(2);
 
@@ -1325,6 +1343,14 @@ pracma::psi(1, 1/4) * 3/64 - 1/16;
 ### Pow = 5
 
 ### Mixed
+
+### Div-Power = 4
+
+### I( y^4 * ((1 - x^5) / (1 - x^5*y^5)^4)^(1/5) )
+n = 5;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y^(n-1) * ((1-x^n) / (1-x^n*y^n)^(n-1))^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+(2*beta(1/n, 2/n) - beta(1/n, 1/n)) / (n*(n-1));
 
 
 ### Series: 2 Fractions
