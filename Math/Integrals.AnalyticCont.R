@@ -262,7 +262,7 @@ H4n(3/4, N = 20000)
 ### Zeta-based
 
 ### sum( 1 / n^p )
-curve(zetaSum(x), xlim=c(0,10))
+curve(zetaSum(x, p=2), xlim=c(0,10))
 tmp = sapply(seq(1, 8), \(x) points(x, zetaSum0(x), col="red"))
 #
 p = 3
@@ -280,11 +280,21 @@ digamma(3/2) + Euler
 
 ### z = 1/3
 zetaSum(1/3, p=1, N=100000)
-pracma::psi(1/3) + 3 + Euler
+digamma(1/3) + 3 + Euler;
 -3/2*log(3) + 3 - pi/2 * cos(pi/3) / sin(pi/3)
 #
 zetaSum(2/3, p=1, N=100000)
+digamma(2/3) + 3/2 + Euler;
 -3/2*log(3) + 3/2 + pi/2 * cos(pi/3) / sin(pi/3)
+
+
+### z = 1/4
+zetaSum(1/4, p=1, N=100000)
+digamma(1/4) + 4 + Euler;
+#
+zetaSum(3/4, p=1, N=100000)
+digamma(3/4) + 4/3 + Euler;
+
 
 # Digamma:
 pracma::psi(1/3) - pracma::psi(2/3)
@@ -305,7 +315,15 @@ zetaSum(3/2, N=200)
 zetaSum(5/2, N=200)
 4 - pi^2/3 + 4/9 + 4/25
 
+###
+zetaSum(1/3, N=20000)
+pi^2/6 - pracma::psi(1, 4/3);
+#
+zetaSum(2/3, N=20000)
+pi^2/6 - pracma::psi(1, 5/3);
 
+
+###########
 ### Zeta(3)
 zetaSum(1/2, p=3)
 8 - 6*pracma::zeta(3)
