@@ -578,6 +578,12 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	((1 - x^n) / (1 - x^n*y^n))^(1/n) / x - 1/x, 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 1 - pracma::psi(1, 1/n) / n^2;
 
+### Gen: I( y/x * ((1 - x^n) / (1 - x^n*y^n))^(1/n) )
+n = 3 + sqrt(7/2)
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	((1 - x^n) / (1 - x^n*y^n))^(1/n) * y/x - y/x, 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+(digamma(1/n) - digamma(1/2+1/n)) / (4*n) - log(2)/(2*n) + 1/4;
+
 
 ### Gen: I( x^n * ((1 - x^n) / (1 - x^n*y^n))^(1/n) )
 n = sqrt(13)
@@ -591,7 +597,6 @@ n = sqrt(7)
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	y^(n-1) * ((1 - x^n) / (1 - x^n*y^n))^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 (n - beta(1/n, 1/n) / n) / (n-1)^2;
-
 
 ### Gen: I( y^n * ((1 - x^n) / (1 - x^n*y^n))^(1/n) )
 n = sqrt(7) + 2/3;
@@ -607,12 +612,6 @@ n = sqrt(3)*5^(2/3)
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	((1 - x^n) / (1 - x^n*y^n)^2)^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 beta(1/n, 1/n) * beta(1/n, 1-1/n) / n^2 - pi/sin(pi/n) / n;
-
-### Gen: I( y^(n-1) * ((1 - x^n) / (1 - x^n*y^n))^(1/n) )
-n = sqrt(3) + sqrt(7);
-integrate(\(x) sapply(x, \(y) integrate(\(x)
-	y^(n-1) * ((1 - x^n) / (1 - x^n*y^n))^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
-(n^2 - beta(1/n, 1/n)) / (n*(n-1)^2);
 
 
 ### Div: Higher Power
@@ -993,6 +992,12 @@ pi * sin(pi/3)/6 + 1/8;
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	((1 - x^4) / (1 - x^4*y^4))^(1/4), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 (pracma::psi(1, 1/8) - pracma::psi(1, 5/8)) / 32 - 1;
+
+### I( y/x * ((1 - x^4) / (1 - x^4*y^4))^(1/4) )
+n = 4
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	((1 - x^n) / (1 - x^n*y^n))^(1/n) * y/x - y/x, 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+(digamma(1/n) - digamma(1/2+1/n)) / (4*n) - log(2)/(2*n) + 1/4;
 
 
 ### I( y * ((1 - x^4) / (1 - x^4*y^4))^(1/4) )
