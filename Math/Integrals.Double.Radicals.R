@@ -1129,7 +1129,7 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	y^n / ((1 - x^n) * (1 - x^n*y^n))^(1/n), 0, 1, rel.tol=1E-10)$value), 0, 1, rel.tol=1E-12)
 # 1/n^2 * I( 1/ ((1 - x^n) * (1 - x^n*y^n))^(1/n) ) + beta(1/n, 1/n) * sqrt(2) / n^3;
 # 1/n^2 * I( 1/ ((1 - x^n) * (1 - x^n*y^n))^(1/n) ) + beta(1/n, 1-2/n) * (n-2) / n^3;
-# TODO
+# TODO: Note: Gen;
 
 
 ### Series: x^2
@@ -1169,15 +1169,19 @@ gamma(3/4)^2 / gamma(1/2) * sqrt(2) * 4/3 - (digamma(5/8) - digamma(3/8)) * 2/3;
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x^2*y^2 / ((1 - x^4) * (1 - x^4*y^4))^(1/4), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 beta(3/4, 3/4) * (-pi/4 + sqrt(2)/2 - 1/2 * log(tan(pi/8))) / 4;
-beta(3/4, 1/2) * (-pi*sqrt(2)/4 + 1 +
-	+ sum(digamma(c(1,3,5,7)/8) * c(-1,1,1,-1) / 8)) / 8;
-
+beta(3/4, 1/2) * (1 + sum(digamma(c(1,3,5,7)/8) * c(-1,1,1,-1) / 8)) / 8 +
+	- beta(3/4, 3/4) * pi/16;
 
 ### I( x^2*y^2.5 / ((1 - x^4) * (1 - x^4*y^4))^(1/4) )
 # Note: y-reduced form;
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x^2*y^(7/8-1) / ((1 - x^4) * (1 - x^4*y))^(1/4), 0, 1, rel.tol=1E-11)$value), 0, 1, rel.tol=1E-11)
 (beta(3/4, 1/2) - gamma(3/4)^3 / gamma(1/4) * 2 - gamma(3/4)^4 / gamma(1/2)^2) * 4/5;
+
+### I( x^2*y^4 / ((1 - x^4) * (1 - x^4*y^4))^(1/4) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^2*y^4 / ((1 - x^4) * (1 - x^4*y^4))^(1/4), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+beta(3/4, 1/2) * (3 + log(tan(pi/8))/sqrt(2)) / 32 - beta(3/4, 3/4) * pi/64;
 
 
 ### I( x^3 / ((1 - x^4) * (1 - x^4*y^4))^(1/4) )
@@ -1224,6 +1228,16 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x^4*y / ((1 - x^4) * (1 - x^4*y^4))^(1/4), 0, 1, rel.tol=1E-11)$value), 0, 1, rel.tol=1E-12)
 # I( - y / ((1 - x^4) * (1 - x^4*y^4))^(1/4)) / 2 + beta(1/4, 2/4) / 12;
 # TODO
+
+### I( x^4*y^2 / ((1 - x^4) * (1 - x^4*y^4))^(1/4) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^4*y^2 / ((1 - x^4) * (1 - x^4*y^4))^(1/4), 0, 1, rel.tol=1E-11)$value), 0, 1, rel.tol=1E-12)
+beta(3/4,3/4) * beta(3/4,1/2) / 16 - 0.1506935973874;
+# I( x^4*y / ((1 - x^4) * (1 - x^4*y^4))^(1/4) );
+# alternative:
+beta(1/4, 1/2) / 6 - 2*0.38547138054;
+# I( y^2 / ((1 - x^4) * (1 - x^4*y^4))^(1/4) );
+
 
 ### I( x^4*y^4 / ((1 - x^4) * (1 - x^4*y^4))^(1/4) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
