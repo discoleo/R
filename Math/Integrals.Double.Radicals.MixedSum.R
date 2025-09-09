@@ -169,16 +169,22 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 # TODO
 
 
+### I( y/x * ((1 + x*y) / (1 - x*y))^(1/3) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y/x * ((1 + x*y) / (1 - x*y))^(1/3) - y/x, 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+(8*digamma(5/6) + digamma(1/3) - 18*digamma(2/3) + 9*digamma(1)) / 18 - 1/6;
+
+
 ### I( x * ((1 + x*y) / (1 - x*y))^(1/3) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x * ((1 + x*y) / (1 - x*y))^(1/3), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
-(digamma(1/3 - 1/2) + digamma(1/3 + 1/2) - 2*digamma(1/3)) / 9 - 1/2;
+(digamma(5/6) - digamma(1/3)) * 2/9 + 1/6;
 
 
 ### I( x^2 * ((1 + x*y) / (1 - x*y))^(1/3) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x^2 * ((1 + x*y) / (1 - x*y))^(1/3), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
-(digamma(1/3 - 1/2) + digamma(1/3 + 1/2) - 2*digamma(1/3)) * 4/81 + 1/6 - 2/9;
+(digamma(5/6) - digamma(1/3)) * 8/81 + 1/6 + 2/27;
 
 
 ### Radical: 2/3
