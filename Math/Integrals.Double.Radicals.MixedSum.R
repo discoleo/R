@@ -69,6 +69,12 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 2*Catalan - pi^2/8 + pi/2 - log(2) - 1;
 
 
+### I( y * ((1-x)/(1+x) * (1 - x*y) / (1 + x*y))^(1/2) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y * ((1-x)/(1+x) * (1 - x*y) / (1 + x*y))^(1/2), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+Catalan - log(2);
+
+
 ### I( ((1-x^2) * (1 - x*y) / (1 + x*y))^(1/2) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	((1-x^2) * (1 - x*y) / (1 + x*y))^(1/2), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
@@ -175,12 +181,32 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 (digamma(1/3 - 1/2) + digamma(1/3 + 1/2) - 2*digamma(1/3)) * 4/81 + 1/6 - 2/9;
 
 
+### Radical: 2/3
+
+### I( x * ((1 - x*y) / (1 + x*y))^(2/3) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * ((1 - x*y) / (1 + x*y))^(2/3), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+(digamma(5/6) - digamma(1/3)) * 10/9 + 5/6 - 3;
+
+
 ### Composite:
 
 ### I( x * ((1-x)/(1+x) * (1 - x*y) / (1 + x*y))^(1/3) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x * ((1-x)/(1+x) * (1 - x*y) / (1 + x*y))^(1/3), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 (digamma(4/6) - digamma(1/6) - 3)^2 / 18;
+
+
+### I( y * ((1-x)/(1+x) * (1 - x*y) / (1 + x*y))^(1/3) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y * ((1-x)/(1+x) * (1 - x*y) / (1 + x*y))^(1/3), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+# TODO
+
+
+### I( x^2 * ((1-x)/(1+x) * (1 - x*y) / (1 + x*y))^(1/3) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^2 * ((1-x)/(1+x) * (1 - x*y) / (1 + x*y))^(1/3), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+# TODO
 
 
 #############
