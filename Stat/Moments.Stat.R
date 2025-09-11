@@ -1,17 +1,18 @@
 ########################
-###
-### Leonard Mada
-### [the one and only]
-###
-### Statistics: Moments
-###
-### draft v.0.1g
+##
+## Leonard Mada
+## [the one and only]
+##
+## Statistics: Moments
+##
+## draft v.0.1g
 
 
 ### Harmonic Moments
 ### Geometric Moments
 ### Geometric Harmonic Moments
 ### & other Moments
+
 
 
 ### Moments
@@ -35,6 +36,20 @@
 #   in astrophysics? (2023)
 # https://www.youtube.com/watch?v=vDwEMC6UgLc
 # - Scatter Statistics vs Power Spectrum vs CNN
+
+### Strategies to Resolve 0 Values
+
+### Values of 0:
+# - affect the geometric and harmonic moments;
+# - 2 main strategies to resolve such problems;
+
+# A) Remove or replace values of 0
+# - can be replaced with the minimal non-zero value;
+
+# B) Compute a shifted version of the moments
+# - shift all initial values by s;
+# - shift the geometric or harmonic mean back by s;
+
 
 ### Harmonic Mean Offset:
 # TODO: Ref ...;
@@ -273,3 +288,29 @@ moments.h21(x.test, type="Simple")
 gmean.Gn0(x.test)
 gmean.Gnm10(x.test)
 moments.GH20(x.test, useLog=TRUE)
+
+
+##################
+
+# Experiments with Geometric Mean
+
+mgeom = function(s, data) {
+	# alternative: log-transform before prod;
+	len = length(data)
+	mu  = sapply(s, \(s) {
+		prod(data + s)^(1/len) - s;
+	});
+	return(mu);
+}
+
+xdt = rpois(30, 3)
+table(xdt)
+curve(mgeom(x, data = xdt), 0, 1)
+curve(mgeom(x + 0.001, data = xdt), add = T, col = "#FF3264", lty=2, lwd=2)
+
+
+xdt = rpois(40, 3)
+table(xdt)
+curve(mgeom(x, data = xdt), 0, 1)
+curve(mgeom(x + 0.001, data = xdt), add = T, col = "#FF3264", lty=2, lwd=2)
+
