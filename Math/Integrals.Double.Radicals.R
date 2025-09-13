@@ -638,6 +638,14 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x^n / ((1-x^n) * (1 - x^n*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 beta(1/2 - 1/(2*n), 1) * beta(1/n, 2-2/n) / n^2 / 2;
 
+### Gen: I( y^(n-1) / ((1 - x^n) * (1 - x^n*y^n))^(1/n) )
+n = sqrt(21)
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y^(n-1) / ((1 - x^n) * (1 - x^n*y^n))^(1/n), 0, 1, rel.tol=1E-10)$value), 0, 1, rel.tol=1E-12)
+beta(1/n, 1-2/n) * (1-1/(n-1)) / (n*(n-1));
+
+
+### 3 Fractions
 
 ### Gen: I( 1 / ((1 - x^n) * (1 - y^n) * (1 - x^n*y^n))^(1/n) )
 n = sqrt(3)*2 + 5/3;
@@ -866,6 +874,7 @@ beta(1/3, 1/3) / 6 - beta(2/3, 2/3) * beta(2/3, 2/3) / 18;
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	y^2 / ((1 - x^3) * (1 - x^3*y^3))^(1/3), 0, 1, rel.tol=1E-10)$value), 0, 1, rel.tol=1E-11)
 beta(1/3, 1/3) / 12;
+n = 3; beta(1/n, 1-2/n) * (1-1/(n-1)) / (n*(n-1));
 
 
 ### I( y^3 / ((1 - x^3) * (1 - x^3*y^3))^(1/3) )
@@ -1121,6 +1130,13 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	y / ((1 - x^4) * (1 - x^4*y^4))^(1/4), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 # 2 * I(x^4*y / ((1 - x^4) * (1 - x^4*y^4))^(1/4)) + beta(1/4, 2/4) / 6;
 # TODO
+
+
+### I( y^3 / ((1 - x^4) * (1 - x^4*y^4))^(1/4) )
+n = 4
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y^(n-1) / ((1 - x^n) * (1 - x^n*y^n))^(1/n), 0, 1, rel.tol=1E-10)$value), 0, 1, rel.tol=1E-12)
+beta(1/n, 1-2/n) * (1-1/(n-1)) / (n*(n-1));
 
 
 ### I( y^n / ((1 - x^n) * (1 - x^n*y^n))^(1/n) )
