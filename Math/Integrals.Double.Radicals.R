@@ -1040,6 +1040,30 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	((1 - x^n) / (1 - x^n*y^n)^2)^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 beta(1/n, 1/n) * beta(1/n, 1-1/n) / n^2 - pi/sin(pi/n) / n;
 
+### I( y * ((1 - x^4) / (1 - x^4*y^4)^2)^(1/4) )
+n = 4
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y * ((1 - x^n) / (1 - x^n*y^n)^2)^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+beta(1/4, 1/4) * beta(2/4, 3/4) / 16 - pi*(pi + 2*log(2)) * sqrt(2) / 32;
+
+### I( x * ((1 - x^4) / (1 - x^4*y^4)^2)^(1/4) )
+n = 4
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * ((1 - x^n) / (1 - x^n*y^n)^2)^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+# 3/2 * I( x^2 * ((1 - x^4) / (1 - x^4*y^4)^3)^(1/4) );
+
+### I( x*y * ((1 - x^4) / (1 - x^4*y^4)^2)^(1/4) )
+n = 4
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x*y * ((1 - x^n) / (1 - x^n*y^n)^2)^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+# TODO
+
+### I( x*y^2 * ((1 - x^4) / (1 - x^4*y^4)^2)^(1/4) )
+n = 4
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x*y^2 * ((1 - x^n) / (1 - x^n*y^n)^2)^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+beta(3/4, 1/2) * (2 + log(tan(pi/8))/sqrt(2)) / 4 - beta(3/4, 3/4) * pi/8;
+
 
 ### Power = 3
 
