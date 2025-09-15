@@ -36,7 +36,34 @@
 source("Tools.Code.Parser.R")
 
 
-########################
+#########################
+
+### GREP Utilities
+
+# dir = sub-directory to search for files;
+grepdir = function(x, dir, path = NULL, perl = TRUE,
+		f.pattern = "\\.[Rr]$", warn.f = TRUE) {
+	if(! is.null(path)) {
+		dir = paste0(path, "/", dir);
+	}
+	lstFiles = list.files(dir, pattern = f.pattern, full.names = TRUE);
+	if(length(lstFiles) == 0) {
+		cat("NO R files!\n");
+		return(invisible());
+	}
+	# GREP:
+	lst = lapply(lstFiles, function(ff) {
+		tmp = readLines(ff, warn = warn.f);
+		idL = which(grepl(x, tmp, perl=perl));
+		if(length(idL) == 0) return();
+		return(list(File = ff, Lines = idL));
+	})
+	hasCode = sapply(lst, function(x) ! is.null(x));
+	lst = lst[hasCode];
+	return(lst);
+}
+
+#########################
 
 # List files of type ".R"
 list.filesR = function(path, pattern = NULL, full.names = FALSE,
@@ -406,6 +433,7 @@ ls.pkg = function(pkg=NULL, more.fields=FALSE, fields=c("Repository", "Descripti
 }
 
 ### List all Functions in a package
+# Note: only functions exported in the namespace;
 ls.fun = function(pkg, exclude.C = TRUE) {
 	pkg = as.character(match.call()[[2]]);
 	nms = ls(getNamespace(pkg));
