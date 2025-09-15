@@ -419,3 +419,50 @@ proj.lines3d = function(xyz, xyz0, tol = 1E-8) {
 	# TODO
 }
 
+
+#################
+
+# Dihedral Angle:
+torsion = function(a, b, c, d, method = c("mid", "ap", "dp")) {
+	mt = match.arg(method);
+	xL = c(b[1], c[1]);
+	yL = c(b[2], c[2]);
+	zL = c(b[3], c[3]);
+	ap = proj.line3d(a, xL, yL, zL);
+	ap = ap$P; # ap = c(ap$x, ap$y, ap$z);
+	dp = proj.line3d(d, xL, yL, zL);
+	dp = dp$P; # dp = c(dp$x, dp$y, dp$z);
+	if(mt == "mid") {
+		# Mid-Point
+		xM = sum(xL) / 2;
+		yM = sum(yL) / 2;
+		zM = sum(zL) / 2;
+		xA = xM + a[1] - ap[1];
+		yA = yM + a[2] - ap[2];
+		zA = zM + a[3] - ap[3];
+		xD = xM + d[1] - dp[1];
+		yD = yM + d[2] - dp[2];
+		zD = zM + d[3] - dp[3];
+		At = c(xA,yA,zA); Dt = c(xD,yD,zD);
+		pM = c(xM,yM,zM);
+	} else if(mt == "ap") {
+		# translate to A's Projection
+		pM = ap;
+		At = a;
+		xD = pM[1] + d[1] - dp[1];
+		yD = pM[2] + d[2] - dp[2];
+		zD = pM[3] + d[3] - dp[3];
+		Dt = c(xD,yD,zD);
+	} else if(mt == "dp") {
+		# translate to D's Projection
+		pM = dp;
+		Dt = d;
+		xA = pM[1] + a[1] - ap[1];
+		yA = pM[2] + a[2] - ap[2];
+		zA = pM[3] + a[3] - ap[3];
+		At = c(xA,yA,zA);
+	}
+	# TODO: Angle
+	return(list(Ap = ap, Dp = dp, M = pM,
+		At = At, Dt = Dt));
+}

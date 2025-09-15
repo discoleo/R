@@ -228,6 +228,34 @@ test.lines.minDist.General = function(L = NULL, z = c(1,-1), y = 1,
 ##################
 ##################
 
+### Dihedral Angle
+
+# TODO:
+# - compute angle vs 3D-Visualisation;
+
+# Points:
+a = c(-1,0.7,-1.2)
+d = c(2.5, 0.7, 1)
+b = c(0,0,0); c = c(2,0,0)
+# Torsion
+r = torsion(a,b,c,d, m = "ap")
+ad = rbind(a,b,c,d);
+mm = rbind(r$At, r$M, r$Dt);
+# 3D:
+clear3d()
+lines3d(ad, col = "#323232", size = 2); lines3d(mm);
+lines3d(rbind(b, r$M), col = "red", size = 3, lty=2)
+points3d(a[1], a[2], a[3], col = "green", size = 10)
+points3d(d[1], d[2], d[3], col = "blue", size = 10)
+points3d(r$M[1], r$M[2], r$M[3], col = "red", size = 10)
+
+# see also: Package compas
+# https://cran.r-project.org/web/packages/compas/refman/compas.html
+
+
+##################
+##################
+
 ### 3D Shapes
 
 ### Cylinder:
