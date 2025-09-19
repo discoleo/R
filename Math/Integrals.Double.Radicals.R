@@ -1378,7 +1378,17 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x*y * ((1-x^n) / (1-y^n) * (1 - x^n*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 0.38547138054 * gamma(1/4)^2 / gamma(1/2) * sqrt(2) / 16;
 # see I( y^2 / ((1 - x^4) * (1 - x^4*y^4))^(1/4) );
+# TODO
 
+
+### I( x*y^2 * ((1-x^4) / (1-y^4) * (1 - x^4*y^4))^(1/4) )
+n = 4;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x*y^2 * ((1-x^n) / (1-y^n) * (1 - x^n*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+gamma(1/4)^2 * gamma(1/2) / 48 - pi^2 / 32;
+
+
+### Prod: 2
 
 ### I( ((1-x^4) * (1-y^4) / (1 - x^4*y^4))^(1/4) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
