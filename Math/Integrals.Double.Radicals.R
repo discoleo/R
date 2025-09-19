@@ -961,6 +961,7 @@ beta(2/3, 2/3) / 3;
 ### I( 1 / ((1-x) * (1 - x*y^3))^(1/3) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	1 / ((1-x) * (1 - x*y^3))^(1/3), 0, 1, rel.tol=1E-11)$value), 0, 1, rel.tol=1E-12)
+# 3 - 3 * I( y * ((1 - x^3) / (1 - x^3*y^3))^(1/3) );
 # TODO
 
 
@@ -1179,6 +1180,14 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x^2 / ((1 - x^4) * (1 - x^4*y^4))^(1/4), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 beta(3/4, 3/4) * (pi/2 - sqrt(2) - log(tan(pi/8))) / 4;
 
+### I( x^2*y^-0.5 / ((1 - x^4) * (1 - x^4*y^4))^(1/4) )
+# equivalent formulation:
+FUN = \(x, y) x^2*y^(1/8-1) / ((1 - x^4) * (1 - x^4*y))^(1/4);
+integrate(\(x) sapply(x, \(y) integrate(
+	FUN, 0, 1, y=y, rel.tol=1E-11)$value), 0, 1/2, rel.tol=1E-12)$value +
+integrate(\(x) sapply(x, \(y) integrate(
+	FUN, 0, 1, y=y, rel.tol=1E-11)$value), 1/2, 1, rel.tol=1E-12)$value;
+((digamma(7/8) - digamma(1/8)) - beta(3/4, 1/2)) * 2/3;
 
 ### I( x^2*y^0.5 / ((1 - x^4) * (1 - x^4*y^4))^(1/4) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
