@@ -284,7 +284,7 @@ integrate(\(x) pi / gamma(x), 0, 1)
 
 ##################
 
-### I( |gamma(1/2 + x*1i)|^2 )
+### I( |Gamma(1/2 + x*1i)|^2 )
 # Hmath: Integral with the gamma function of a complex argument
 # [in Russian]
 # https://www.youtube.com/watch?v=AnjZQjTgHG8
@@ -296,10 +296,18 @@ integrate(\(x) abs(pracma::gammaz(1/2 + x*1i))^2, 0, Inf)
 pi/2;
 
 
-### I( |gamma(1/2 + x*1i)| )
+### I( |Gamma(1/2 + x*1i)| )
 integrate(\(x) abs(pracma::gammaz(1/2 + x*1i)), 0, Inf, rel.tol=1E-13)
 beta(1/4, 1/2) / sqrt(4*pi);
 gamma(1/4) / gamma(3/4) / 2;
+
+### I( Gamma(1/2 + x*1i) )
+integrate(\(x) Re(pracma::gammaz(1/2 + x*1i)), 0, Inf, rel.tol=1E-13)
+pi / exp(1);
+
+#
+integrate(\(x) Im(pracma::gammaz(1/2 + x*1i)), 0, Inf, rel.tol=1E-13)
+# TODO
 
 
 ##################
