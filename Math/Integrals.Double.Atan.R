@@ -502,7 +502,7 @@ pi^3 / 32;
 
 ### I( atan(sin(x) * sin(y)) / sqrt(sin(x)^2 + sin(y)^2) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
-	atan(sin(x) * sin(y)) / sqrt(sin(x)^2+sin(y)^2), 0, pi/2, rel.tol=1E-12)$value), 0, pi/2, rel.tol=1E-12)
+	atan(sin(x) * sin(y)) / sqrt(sin(x)^2 + sin(y)^2), 0, pi/2, rel.tol=1E-12)$value), 0, pi/2, rel.tol=1E-12)
 beta(1/8, 3/4)^2 * beta(3/8, 3/4) *  beta(1/8, 1+1/4) * 2 / 8^4;
 beta(1/8, 3/4)^2 * beta(1/4, 3/4) * 4/3 / 8^3;
 
@@ -545,7 +545,15 @@ pi/2 * (asinh(1) - log(2) + 1) - (digamma(5/8) - digamma(3/8)) / 2;
 # also = pi/2 - 1/2 * I( atan(x/y) / sqrt(1+x*y) ) on [0,1]^2;
 
 
-### Varia
+### I( atan(sin(x) / sin(y)) / sqrt(sin(x)^2 + sin(y)^2) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(sin(x) / sin(y)) / sqrt(sin(x)^2 + sin(y)^2), 0, pi/2, rel.tol=1E-12)$value), 0, pi/2, rel.tol=1E-12)
+gamma(1/8)^2 / gamma(7/8)^2 * gamma(3/4)^3 * gamma(1/4) / 8^2 / 2;
+beta(1/8, 3/4)^2 * beta(1/4, 3/4) / 8^2 / 2;
+
+
+#############
+### Varia ###
 
 ### I( log(beta(x, y)) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
