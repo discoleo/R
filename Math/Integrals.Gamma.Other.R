@@ -267,12 +267,39 @@ integrate(FUN, 0, 1/2 - eps, rel.tol=1E-9)$value +
 integrate(FUN, 1/2 + eps, 1, rel.tol=1E-9)$value;
 
 
+#################
+
+### I( atan(gamma(x) / gamma(1-x)) )
+integrate(\(x) atan(gamma(x) / gamma(1-x)), 0, 1)
+pi/4;
+
+
 ##################
 
 ### I( sin(pi*x) * gamma(x) )
 integrate(\(x) sin(pi*x) * gamma(x), 0, 1)
 integrate(\(x) pi / gamma(x), 0, 1)
 # TODO
+
+
+##################
+
+### I( |gamma(1/2 + x*1i)|^2 )
+# Hmath: Integral with the gamma function of a complex argument
+# [in Russian]
+# https://www.youtube.com/watch?v=AnjZQjTgHG8
+# Note:
+# abs(gamma(1/2 + 1i*x)) = sqrt(gamma(1/2 + ...) * gamma(1/2 - ...))
+#  = sqrt(pi / sin(pi*(1/2 + 1i*x))) = sqrt(pi / cosh(pi*1i*x));
+
+integrate(\(x) abs(pracma::gammaz(1/2 + x*1i))^2, 0, Inf)
+pi/2;
+
+
+### I( |gamma(1/2 + x*1i)| )
+integrate(\(x) abs(pracma::gammaz(1/2 + x*1i)), 0, Inf, rel.tol=1E-13)
+beta(1/4, 1/2) / sqrt(4*pi);
+gamma(1/4) / gamma(3/4) / 2;
 
 
 ##################
