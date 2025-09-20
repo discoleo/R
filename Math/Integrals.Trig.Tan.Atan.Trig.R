@@ -105,13 +105,26 @@ polylog2(tan(atan(k)/2), 2) - polylog2(- tan(atan(k)/2), 2)
 #####################
 
 ### I( atan(a*sin(x)) / sin(x) )
-# Maths 505: AN INCREDIBLE CALCULUS RESULT: solution using Feynman's technique
+# 1. Maths 505: AN INCREDIBLE CALCULUS RESULT: solution using Feynman's technique
 # https://www.youtube.com/watch?v=WLq2EThghgc
+# Note: Feynman trick;
+# 2. Michael Penn: an integral with some of my favorite techniques
+# https://www.youtube.com/watch?v=CWPX9oCnd1I
+# Note: as double integral, then classic;
 
 ###
 k = sqrt(3)
 integrate(\(x) atan(k*sin(x)) / sin(x), 0, pi/2)
 pi/2 * asinh(k)
+
+
+### I( atan(cos(x)) / sin(x) )
+integrate(\(x) (pi/4 - atan(cos(x))) / sin(x), 0, pi/2)
+Catalan / 2;
+
+### I( atan(sin(x)^2) / sin(x)^2 )
+integrate(\(x) atan(sin(x)^2) / sin(x)^2, 0, pi/2, rel.tol=1E-13)
+pi * 2^(3/4) / 4 / cos(pi/8);
 
 
 ### I( sin(2*x) * atan(b*sin(2*x)) )
