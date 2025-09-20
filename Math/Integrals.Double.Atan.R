@@ -509,6 +509,13 @@ beta(1/8, 3/4)^2 * beta(1/4, 3/4) * 4/3 / 8^3;
 
 ### DIV
 
+### I( atan(sin(x) / sin(y)) / sin(x) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(sin(x) / sin(y)) / sin(x), 0, pi/2, rel.tol=1E-12)$value), 0, pi/2, rel.tol=1E-12)
+integrate(\(x) pi/2 * atan(sqrt(sin(x))) / sin(x), 0, pi/2, rel.tol=1E-13)
+# TODO
+
+
 ### I( atan(sin(x) / sin(y)) * sin(y) / sin(x) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	atan(sin(x) / sin(y)) * sin(y) / sin(x), 0, pi/2, rel.tol=1E-12)$value), 0, pi/2, rel.tol=1E-12)
