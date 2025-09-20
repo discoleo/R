@@ -529,6 +529,13 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 log(sqrt(2) + 1) * pi;
 
 
+### I( atan(sin(x) / sin(y)) * sin(y)^2 / sin(x) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(sin(x) / sin(y)) * sin(y)^2 / sin(x), 0, pi/2, rel.tol=1E-12)$value), 0, pi/2, rel.tol=1E-12)
+3.668202541275/2 - (beta(1/4, 1/4) - 2*beta(3/4, 3/4)) * sqrt(2) * pi/32;
+# TODO: I( atan(sin(x) / sin(y)) / sin(x) )
+
+
 ### I( atan(sin(x) / sin(y)) * sin(y) / tan(x) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	atan(sin(x) / sin(y)) * sin(y) / tan(x), 0, pi/2, rel.tol=1E-12)$value), 0, pi/2, rel.tol=1E-12)
