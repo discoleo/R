@@ -122,6 +122,11 @@ pi/2 * asinh(k)
 integrate(\(x) (pi/4 - atan(cos(x))) / sin(x), 0, pi/2)
 Catalan / 2;
 
+
+### I( atan(sin(x)) / sin(x)^2 )
+integrate(\(x) atan(sin(x)) / sin(x)^2 - 1/x, 0, pi/2, rel.tol=1E-13)
+- sqrt(2) * log(sqrt(2)+1) + log(2) + 1 - log(pi/2);
+
 ### I( atan(sin(x)^2) / sin(x)^2 )
 integrate(\(x) atan(sin(x)^2) / sin(x)^2, 0, pi/2, rel.tol=1E-13)
 pi * 2^(3/4) / 4 / cos(pi/8);
