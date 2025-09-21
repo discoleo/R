@@ -196,8 +196,13 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 
 ### I( sqrt( x / ((1-x^2) * (1 - x^2*y^2)) ) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
-	sqrt(x / ((1-x^2) * (1 - x^2*y^2))), 0, 1)$value), 0, 1)
+	sqrt(x / ((1-x^2) * (1 - x^2*y^2))), 0, 1, rel.tol=1E-9)$value), 0, 1, rel.tol=1E-9)
+0.1943688252405 * 4 + 2/3;
+# see I( x*y * ((1 - x^4) / (1 - x^4*y^4))^(3/4) );
+0.4453575428195 * 8 - gamma(1/4)^2 * gamma(1/2) * sqrt(2) / 8 + 2;
+# see I( x * ((1 - x^4) / (1 - x^4*y^4))^(1/4) );
 # TODO
+
 
 ### I( sqrt( y / ((1-x^2) * (1 - x^2*y^2)) ) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
@@ -1386,6 +1391,12 @@ n = 4;
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x*y^2 * ((1-x^n) / (1-y^n) * (1 - x^n*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 gamma(1/4)^2 * gamma(1/2) / 48 - pi^2 / 32;
+
+### I( x^2*y^3 * ((1-x^4) / (1-y^4) * (1 - x^4*y^4))^(1/4) )
+n = 4;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^2*y^3 * ((1-x^n) / (1-y^n) * (1 - x^n*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+pi^2 / 32 - pi * sqrt(2) / 20;
 
 
 ### Prod: 2
