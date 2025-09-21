@@ -299,6 +299,20 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 # TODO
 
 
+### I( y * sqrt( (1+x) / (1 - x^2*y^2) ) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y * sqrt( (1+x) / (1 - x^2*y^2) ), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+log(tan(pi/8)) - sqrt(2) + 3;
+
+
+### I( x*y * sqrt( (1+x) / (1 - x^2*y^2) ) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x*y * sqrt( (1+x) / (1 - x^2*y^2) ), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+1.337828528819 - 0.9388152447781;
+# see: I( sqrt( (1+x) / (1 - x^2*y^2) ) ) & I( ((1+x) * (1 - x*y) / (1 + x*y))^(1/2) );
+# TODO
+
+
 ### I( sqrt( (1-x)/(1+x) / (1 - x^2*y^2) ) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	sqrt( (1-x)/(1+x) / (1 - x^2*y^2) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
