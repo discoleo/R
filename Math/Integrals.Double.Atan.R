@@ -448,7 +448,7 @@ Catalan * pi;
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	atan(sin(x) * sin(y)) * cos(y) / sin(x), 0, pi/2, rel.tol=1E-12)$value), 0, pi/2, rel.tol=1E-12)
 pi/2 * asinh(1) - (digamma(5/8) - digamma(3/8)) / 2;
-
+# Note: asinh(1) == log(tan(3*pi/8));
 
 ### I( atan(sin(x) * sin(y)) * sin(y) / tan(x) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
@@ -464,7 +464,7 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 
 ### I( atan(sin(x) * sin(y)) / (sin(x) * sin(y)) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
-	atan(sin(x) * sin(y)) / (sin(x) * sin(y)), 0, pi/2, rel.tol=1E-12)$value), 0, pi/2, rel.tol=1E-12)
+	atan(sin(x) * sin(y)) / (sin(x) * sin(y)), 0, pi/2, rel.tol=1E-12)$value), 0, pi/2, rel.tol=1E-13)
 # TODO
 
 #
@@ -498,6 +498,18 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 pi^3 / 32;
 
 
+### I( atan(sin(x) * sin(y)) / sin(x)^2 )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(sin(x) * sin(y)) / sin(x)^2 - sin(y)/x, 0, pi/2, rel.tol=1E-12)$value), 0, pi/2, rel.tol=1E-12)
+# TODO
+
+
+### I( atan(sin(x) * sin(y)) * sin(y) / sin(x)^2 )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(sin(x) * sin(y)) * sin(y) / sin(x)^2 - sin(y)^2/x, 0, pi/2, rel.tol=1E-12)$value), 0, pi/2, rel.tol=1E-12)
+pi/4 * (1/2 - log(pi/2));
+
+
 ### Div: Sum
 
 ### I( atan(sin(x) * sin(y)) / sqrt(sin(x)^2 + sin(y)^2) )
@@ -507,7 +519,25 @@ beta(1/8, 3/4)^2 * beta(3/8, 3/4) *  beta(1/8, 1+1/4) * 2 / 8^4;
 beta(1/8, 3/4)^2 * beta(1/4, 3/4) * 4/3 / 8^3;
 
 
-### DIV
+### I( atan(sin(x) * sin(y)) * sin(x) / (sin(x)^2 + sin(y)^2) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(sin(x) * sin(y)) * sin(x) / (sin(x)^2 + sin(y)^2), 0, pi/2, rel.tol=1E-12)$value), 0, pi/2, rel.tol=1E-12)
+# ==
+integrate(\(x) pi/8 * sapply(x, \(y) integrate(\(x)
+	sqrt( x / (1-x^2) / (1 - x^2*y^2) ), 0, 1, rel.tol=1E-10)$value), 0, 1, rel.tol=1E-12)
+# TODO
+
+
+### I( atan(sin(x) * sin(y)) * sin(x)/sin(y) / (sin(x)^2 + sin(y)^2) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(sin(x) * sin(y)) * sin(x)/sin(y) / (sin(x)^2 + sin(y)^2), 0, pi/2, rel.tol=1E-12)$value), 0, pi/2, rel.tol=1E-12)
+2.309240197354 / 2;
+# see I( atan(sin(x) * sin(y)) / (sin(x) * sin(y)) )
+# TODO
+
+
+###########
+### DIV ###
 
 ### I( atan(sin(x) / sin(y)) / sin(x) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
