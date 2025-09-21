@@ -322,6 +322,27 @@ integrate(\(x) x*log(2) + (x-1)*log(pi) + log(sin(pi*x/2) * gamma(1-x)), 0, 1/2)
 - (log(pi)/8 + Catalan/pi + 3/2*log(A) + log(2)/12);
 
 
+### I( log(Zeta(exp(1i*x))) )
+# Maths 505: An integral (probably) straight outta mathematician's dreams
+#  (maybe nightmares)
+# https://www.youtube.com/watch?v=oiQQx3SqYbI
+# Note: z = exp(1i*x) & Keyhole-Contour over C[0, 2*pi] with hole at 0;
+
+integrate(\(x) Re(log(pracma::gammaz(exp(1i*x)) * pracma::zeta(exp(1i*x)))), 0, 2*pi)
+integrate(\(x) Re(log(pracma::zeta(exp(1i*x)))), 0, 2*pi)
+-2 * pi * log(2);
+
+# Note: I( Gamma(...) ) == 0;
+
+### on [0, pi]
+integrate(\(x) Re(log(pracma::zeta(exp(1i*x)))), 0, pi)
+- pi * log(2);
+
+#
+integrate(\(x) Im(log(pracma::zeta(exp(1i*x)))), 0, pi)
+# TODO
+
+
 ##############
 ##############
 
