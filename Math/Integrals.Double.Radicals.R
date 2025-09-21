@@ -291,6 +291,14 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 # TODO
 
 
+### I( 1 / sqrt( (1+x) * (1 - x^2*y^2) ) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	1 / sqrt( (1+x) * (1 - x^2*y^2) ), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+integrate(\(x) 8 * x^3 * atan(x) / (x^4 + 1), 0, 1, rel.tol=1E-13);
+(digamma(7/8) - digamma(3/8))^2 / 16 +
+	- (digamma(5/8) - digamma(1/8))^2 / 16 + 4*Catalan;
+
+
 ### I( sqrt( (1+x) / (1 - x^2*y^2) ) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	sqrt( (1+x) / (1 - x^2*y^2) ), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
