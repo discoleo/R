@@ -1471,18 +1471,38 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 # TODO
 
 
-### Pow 1 & 4:
+### Pow 1 & 4: (1-x)
 
 ### I( 1 / ((1-x) * (1-y^4) * (1 - x*y^4))^(1/4) )
+n = 4;
 integrate(\(x) sapply(x, \(y) integrate(\(x)
-	1 / ((1-x) * (1-y^4) * (1 - x*y^4))^(1/4), 0, 1, rel.tol=1E-11)$value), 0, 1, rel.tol=1E-12)
+	1 / ((1-x) * (1-y^n) * (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-11)$value), 0, 1, rel.tol=1E-12)
 pi/2;
+beta(1/n, 2-3/n) * beta(1-1/n, 1-1/n) / n;
 
+### I( y / ((1-x) * (1-y^4) * (1 - x*y^4))^(1/4) )
+n = 4;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y / ((1-x) * (1-y^n) * (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-11)$value), 0, 1, rel.tol=3E-12)
+beta(3/4, 3/4) * (pi/4 - sqrt(2)/2 - 1/2 * log(tan(pi/8)));
+
+### I( y^2 / ((1-x) * (1-y^4) * (1 - x*y^4))^(1/4) )
+n = 4;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y^2 / ((1-x) * (1-y^n) * (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-11)$value), 0, 1, rel.tol=3E-12)
+beta(3/4, 3/4) * (1 + log(tan(pi/8)) / sqrt(2));
+
+
+### I( x / ((1-x) * (1-y^4) * (1 - x*y^4))^(1/4) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x / ((1-x) * (1-y^4) * (1 - x*y^4))^(1/4), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+pi * 7/24;
 
 ### I( ((1-x) / (1-y^4) * (1 - x*y^4))^(1/4) )
+n = 4;
 integrate(\(x) sapply(x, \(y) integrate(\(x)
-	((1-x) / (1-y^4) * (1 - x*y^4))^(1/4), 0, 1, rel.tol=1E-9)$value), 0, 1, rel.tol=1E-9)
-beta(1/4, 3/4) * beta(1/4, 9/4) / 4^2;
+	((1-x) / (1-y^n) * (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-9)$value), 0, 1, rel.tol=1E-9)
+beta(1/n, 1-1/n) * beta(1/n, 2+1/n) / n^2;
 
 
 ### Series: ((1-x) / (1 - x*y^4))
