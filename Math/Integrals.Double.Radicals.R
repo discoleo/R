@@ -1498,6 +1498,12 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x / ((1-x) * (1-y^4) * (1 - x*y^4))^(1/4), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 pi * 7/24;
 
+### I( x*y / ((1-x) * (1-y^4) * (1 - x*y^4))^(1/4) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x*y / ((1-x) * (1-y^4) * (1 - x*y^4))^(1/4), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+beta(3/4, 3/4) * (pi/2 - sqrt(2) * 13/15 - log(tan(pi/8))) / 4;
+
+
 ### I( ((1-x) / (1-y^4) * (1 - x*y^4))^(1/4) )
 n = 4;
 integrate(\(x) sapply(x, \(y) integrate(\(x)
