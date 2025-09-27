@@ -789,6 +789,13 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	1 / ((1-x) * (1-y^n) * (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 beta(1/n, 2-3/n) * beta(1-1/n, 1-1/n) / n;
 
+### Gen: I( y^n / ((1-x) * (1-y^n) * (1 - x*y^n))^(1/n) )
+n = sqrt(3) + sqrt(7);
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y^n / ((1-x) * (1-y^n) * (1 - x*y^n))^(1/n), 0, 1, rel.tol=3E-12)$value), 0, 1, rel.tol=1E-12)
+(pi / sin(pi/n) + beta(1/n, 2-3/n) * gamma(1-1/n)*gamma(-1/n)/gamma(1-2/n)/n) / (n-1);
+# Note: (pi / sin(pi/n) + beta(1/n, 2-3/n) * beta(1-1/n, -1/n)/n) / (n-1);
+
 
 ### Gen: I( ((1-x) / (1-y^n) * (1 - x*y^n))^(1/n) )
 n = 2*sqrt(5) + 2/7;
@@ -1498,6 +1505,14 @@ n = 4;
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	y^3 / ((1-x) * (1-y^n) * (1 - x*y^n))^(1/n), 0, 1, rel.tol=3E-12)$value), 0, 1, rel.tol=1E-12)
 (- pi/2 + sqrt(2) - log(tan(pi/8))) * sqrt(2) / 2;
+
+### I( y^4 / ((1-x) * (1-y^4) * (1 - x*y^4))^(1/4) )
+n = 4;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y^n / ((1-x) * (1-y^n) * (1 - x*y^n))^(1/n), 0, 1, rel.tol=3E-12)$value), 0, 1, rel.tol=1E-12)
+pi * (sqrt(2) - 1) / 3;
+(pi / sin(pi/n) - beta(1/n, 2-3/n) * beta(1-1/n, 1-1/n) * (n-2)/n) / (n-1);
+(pi / sin(pi/n) + beta(1/n, 2-3/n) * gamma(1-1/n)*gamma(-1/n)/gamma(1-2/n)/n) / (n-1);
 
 
 ### I( x / ((1-x) * (1-y^4) * (1 - x*y^4))^(1/4) )
