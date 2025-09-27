@@ -1132,6 +1132,13 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 beta(3/4, 1/2) * (2 + log(tan(pi/8))/sqrt(2)) / 4 - beta(3/4, 3/4) * pi/8;
 
 
+### I( x*y^3 * ((1 - x^4) / (1 - x^4*y^4)^2)^(1/4) )
+n = 4
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x*y^3 * ((1 - x^n) / (1 - x^n*y^n)^2)^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+beta(3/4, 2/4) * 3/16 - gamma(1/4)^2 / gamma(1/2) * sqrt(2) / 32;
+
+
 ### Power = 3
 
 ### I( ((1 - x^4) / (1 - x^4*y^4)^3)^(1/4) )
