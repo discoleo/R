@@ -870,15 +870,22 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 ### Power Div = 2
 
 ### I( ((1 - x^3) / (1 - x^3*y^3)^2)^(1/3) )
+n = 3;
 integrate(\(x) sapply(x, \(y) integrate(\(x)
-	((1 - x^3) / (1 - x^3*y^3)^2)^(1/3), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
-(gamma(1/3)^3 - 2*pi * sqrt(3)) / 9;
+	((1 - x^n) / (1 - x^n*y^n)^2)^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 gamma(1/3)^3 / 9 - pi / sin(pi/3) / 3;
+beta(1/n, 1/n) * beta(1/n, 1-1/n) / n^2 - pi/sin(pi/n) / n;
+
+### I( y * ((1 - x^3) / (1 - x^3*y^3)^2)^(1/3) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y * ((1 - x^3) / (1 - x^3*y^3)^2)^(1/3), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+sum(digamma(c(2,3,5,6)/6) * c(-1,-1,1,1)) * diff(digamma(c(2,4)/3)) / 9;
 
 ### I( y^2 * ((1-x^3) / (1-x^3*y^3)^2)^(1/3) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	y^2 * ((1-x^3) / (1-x^3*y^3)^2)^(1/3), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 (beta(1/3, 2/3) - beta(1/3, 1/3)/2) / 3;
+(beta(1/3, 2/3) - gamma(1/3)*gamma(-2/3) / gamma(-1/3)) / 3;
 
 
 ### I( x * ((1 - x^3) / (1 - x^3*y^3)^2)^(1/3) )
