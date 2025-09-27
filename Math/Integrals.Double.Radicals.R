@@ -1511,6 +1511,12 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 beta(3/4, 3/4) * (pi/2 - sqrt(2) * 13/15 - log(tan(pi/8))) / 4;
 
 
+### I( x*y^2 / ((1-x) * (1-y^4) * (1 - x*y^4))^(1/4) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x*y^2 / ((1-x) * (1-y^4) * (1 - x*y^4))^(1/4), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-13)
+beta(3/4, 3/4) * (11/9 + log(tan(pi/8))/sqrt(2)) * 3 / 8;
+
+
 ### I( ((1-x) / (1-y^4) * (1 - x*y^4))^(1/4) )
 n = 4;
 integrate(\(x) sapply(x, \(y) integrate(\(x)
