@@ -721,6 +721,18 @@ dg = (digamma((p+1)/n) - digamma(1/n));
 
 ### Special Cases:
 
+### Simple:
+
+### Gen: I( (1-y^2) / (1 - x*y^2)^(1/n) )
+# see file: Integrals.Double.Radicals.MixedSum.R;
+n = sqrt(7) + sqrt(5);
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	(1-y^2) / (1 - x*y^2)^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	2*x * (1-x*y) / (1 - (x*y)^2)^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+beta(2-1/n, 1/2) * (n/(n-1)+1) - 2*n/(n-1);
+
+
 ### Gen: I( ((1 - x) / (1 - x*y^n))^(1/n) )
 n = sqrt(7)
 integrate(\(x) sapply(x, \(y) integrate(\(x)
