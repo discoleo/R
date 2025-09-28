@@ -9,6 +9,12 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x * ((1 - x*y) / (1 + x*y))^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 (digamma((3*n+1)/(2*n)) - digamma((2*n+1)/(2*n))) * (n+1)/n^2 + (n-2)/(2*n);
 
+### Variant: I( x * ((1 - x*y) / (1 + x*y))^(2/n) )
+n = sqrt(13);
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * ((1 - x*y) / (1 + x*y))^(2/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+(digamma(1/2+1/n) - digamma(1/n)) * (2*n+4)/n^2 - (3*n+4)/(2*n);
+
 
 ### Gen: I( x^2 * ((1 - x*y) / (1 + x*y))^(1/n) )
 n = sqrt(5) + 2*sqrt(3);
@@ -22,6 +28,15 @@ n = sqrt(13)
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x^2*y * ((1 - x*y) / (1 + x*y))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 - (digamma((3*n+1)/(2*n)) - digamma(1/(2*n))) * (n^2+3*n+2)/(3*n^3) + 5/6 + 2*(n+1) / n^2;
+
+
+### Div-Pow > 1
+
+### Gen: I( x * ((1 - x*y) / (1 + x*y)^(n-1))^(1/n) )
+n = sqrt(7) + sqrt(5);
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * ((1 - x*y) / (1 + x*y)^(n-1))^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+beta(1+1/n, 1/2) * (n+1)/2 - n;
 
 
 ### Composite:
@@ -78,7 +93,7 @@ Catalan - log(2);
 ### I( ((1-x^2) * (1 - x*y) / (1 + x*y))^(1/2) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	((1-x^2) * (1 - x*y) / (1 + x*y))^(1/2), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
-2*Catalan - log(2) - 1/2
+2*Catalan - log(2) - 1/2;
 
 
 ### I( ((1-x) * (1 - x*y) / (1 + x*y))^(1/2) )
@@ -102,7 +117,7 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 
 ### I( ((1 - x*y) / (1 + x*y))^(1/3) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
-	((1 - x*y) / (1 + x*y))^(1/3), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+	((1 - x*y) / (1 + x*y))^(1/3), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-13)
 # TODO
 
 
@@ -123,6 +138,8 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x^2*y * ((1 - x*y) / (1 + x*y))^(1/3), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 - (digamma(10/6) - digamma(1/6)) * 20/(3*3^3) + 31/18;
 
+
+### Div-Pow = 2
 
 ### I( ((1 - x*y) / (1 + x*y)^2)^(1/3) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
@@ -158,7 +175,7 @@ beta(4/3, 1/2) / 4 - 3/16;
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x^2*y * ((1 - x*y) / (1 + x*y)^2)^(1/3), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 - beta(4/3, 1/2) * 3/2 + 21/8;
-beta(4/3, 1/2) * betan(-2/3, 1) + 21/8; # ?
+beta(4/3, 1/2) * beta(-2/3, 1) + 21/8; # ?
 
 
 ### Reverse:
@@ -242,6 +259,14 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 - (digamma((3*n+1)/(2*n)) - digamma(1/(2*n))) * 30/(3*n^3) + 1 + 88 / (3*n^3);
 
 
+### Div-Pow = 3
+
+### I( x * ((1 - x*y) / (1 + x*y)^3)^(1/4) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * ((1 - x*y) / (1 + x*y)^3)^(1/4), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+beta(1/4, 1/2) * 5/6 - 4;
+
+
 ### Composite:
 
 ### I( x * ((1-x)/(1+x) * (1 - x*y) / (1 + x*y))^(1/4) )
@@ -272,6 +297,23 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 - (digamma((3*n+1)/(2*n)) - digamma(1/(2*n))) * (n^2+3*n+2)/(3*n^3) + 985 / (6*n^3);
 
 
+### Div-Pow = 4
+
+### I( x * ((1 - x*y) / (1 + x*y)^4)^(1/5) )
+n = 5
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * ((1 - x*y) / (1 + x*y)^(n-1))^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+beta(1+1/n, 1/2) * (n+1)/2 - n;
+
+
+### Radical: 2/5
+
+### I( x * ((1 - x*y) / (1 + x*y))^(2/5) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * ((1 - x*y) / (1 + x*y))^(2/5), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-13)
+(digamma(7/10) - digamma(1/5)) * 14/25 - 19/10;
+
+
 ##############
 
 ### Power = 7
@@ -292,4 +334,13 @@ n = 7
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x^2*y * ((1 - x*y) / (1 + x*y))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 - (digamma((3*n+1)/(2*n)) - digamma(1/(2*n))) * (n^2+3*n+2)/(3*n^3) + 5/6 + 2*(n + 1) / n^2;
+
+
+### Radical: 2/7
+
+### I( x * ((1 - x*y) / (1 + x*y))^(2/7) )
+n = 7;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * ((1 - x*y) / (1 + x*y))^(2/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-13)
+(digamma(1/2+1/n) - digamma(1/n)) * (2*n+4)/n^2 - (3*n+4)/(2*n);
 
