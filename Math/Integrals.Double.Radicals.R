@@ -702,6 +702,16 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	y^p * ((1 - x) / (1 - x*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-13)
 (digamma((p+1)/n) - digamma(1/n) - p) / (p*(n-p));
 
+# Var:
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y^p * ((1 - x) / (1 - x*y))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-13)
+(digamma(1/n) - digamma(p+1) + (p+1)*n - 1) * n / (((p+1)*n-1)*(p*n-1));
+
+# Var: I( y^p * ((1 - x*y) / (1 - x))^(1/n) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y^p * ((1 - x*y) / (1 - x))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-13)
+(digamma(p+1) - digamma(-1/n) + (p+1)*n + 1) * n / (((p+1)*n+1)*(p*n+1));
+
 
 ### Gen: I( x*y^p * ((1 - x) / (1 - x*y^n))^(1/n) )
 n = sqrt(14); p = sqrt(5);
