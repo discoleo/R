@@ -718,6 +718,12 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	y^(-1/n) * ((1 - x*y) / (1 - x))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-13)
 pracma::psi(1, 1-1/n) / n + 1;
 
+# Derived: I( y^(-1/n) * ((1 - x)^(n-1) * (1 - x*y))^(1/n) )
+n = sqrt(17);
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y^(-1/n) * ((1 - x)^(n-1) * (1 - x*y))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-13)
+pracma::psi(1, 1-1/n) * (n-1)/n^2 + 1/2 - 1/n;
+
 
 ### Gen: I( x*y^p * ((1 - x) / (1 - x*y^n))^(1/n) )
 n = sqrt(14); p = sqrt(5);
@@ -734,6 +740,12 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x*y^p * ((1 - x*y) / (1 - x))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 ((digamma(p+1) - digamma(-1/n))*p/n + (p+1+1/n)*(p-1/n)/2) / ((p+1/n)*(p+1+1/n)*(p-1+1/n));
+
+# Special Case: p = -1/n;
+n = sqrt(15);
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x*y^(-1/n) * ((1 - x*y) / (1 - x))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-13)
+pracma::psi(1, 1-1/n) / n^2 + 1/2 + 1/n;
 
 
 ### Gen: I( x^2*y^p * ((1 - x) / (1 - x*y^n))^(1/n) )
