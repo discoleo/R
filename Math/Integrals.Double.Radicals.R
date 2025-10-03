@@ -664,6 +664,12 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x*y^p / ((1 - x^n) * (1 - x^n*y^n))^(1/n), 0, 1, rel.tol=1E-10)$value), 0, 1, rel.tol=1E-12)
 (pi / sin(2*pi/n) - beta((p+1)/n, 1-2/n) * beta(2/n, 1-1/n) / n) / (n*p);
 
+# Special Case: I( x / ((1 - x^n) * (1 - x^n*y^n))^(1/n) )
+n = sqrt(7) + 2/5;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x / ((1 - x^n) * (1 - x^n*y^n))^(1/n), 0, 1, rel.tol=1E-10)$value), 0, 1, rel.tol=1E-12)
+beta(1/n, 1-2/n) * beta(2/n, 1-1/n) * (digamma(1-1/n) - digamma(1/n)) / n^3;
+
 
 ### Gen: I( x^n / ((1-x^n) * (1 - x^n*y^n))^(1/n) )
 n = sqrt(19);
@@ -1250,6 +1256,12 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 
 ### Both Components: Power = 3/4
 
+### I( ((1 - x^4) / (1 - x^4*y^4))^(3/4) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	((1 - x^4) / (1 - x^4*y^4))^(3/4), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+1.187752054751 - 1/3;
+# Note: I( 1 / ((1 - x^4) * (1 - x^4*y^4)^3)^(1/4) );
+
 ### I( x * ((1 - x^4) / (1 - x^4*y^4))^(3/4) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x * ((1 - x^4) / (1 - x^4*y^4))^(3/4), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
@@ -1355,6 +1367,7 @@ beta(3/4, 1/2) * (1 + sum(digamma(c(1,3,5,7)/8) * c(-1,1,1,-1) / 8)) / 8 +
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x^2*y^(7/8-1) / ((1 - x^4) * (1 - x^4*y))^(1/4), 0, 1, rel.tol=1E-11)$value), 0, 1, rel.tol=1E-11)
 (beta(3/4, 1/2) - gamma(3/4)^3 / gamma(1/4) * 2 - gamma(3/4)^4 / gamma(1/2)^2) * 4/5;
+(beta(3/4, 1/2) - beta(3/8, 7/8)^2 / 8 - gamma(3/4)^4 / gamma(1/2)^2) * 4/5;
 
 ### I( x^2*y^4 / ((1 - x^4) * (1 - x^4*y^4))^(1/4) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
@@ -1422,6 +1435,14 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x^4*y^4 / ((1 - x^4) * (1 - x^4*y^4))^(1/4), 0, 1, rel.tol=1E-11)$value), 0, 1, rel.tol=1E-12)
 # I( 1 / ((1 - x^4) * (1 - x^4*y^4))^(1/4) ) / 4 - beta(1/4, 2/4) / 24;
 # TODO
+
+
+### Power = 2
+
+### I( 1 / ((1 - x^4) * (1 - x^4*y^4)^2)^(1/4) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	1 / ((1 - x^4) * (1 - x^4*y^4)^2)^(1/4), 0, 1, rel.tol=1E-11)$value), 0, 1, rel.tol=1E-11)
+beta(1/4, 1/2) * log(sqrt(2) + 1) / 4;
 
 
 ### Prod:
