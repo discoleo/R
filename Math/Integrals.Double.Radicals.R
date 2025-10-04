@@ -684,6 +684,15 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 beta(1/n, 1-2/n) * (1-1/(n-1)) / (n*(n-1));
 
 
+### Power = 2
+
+### Gen: I( x^n / ((1 - x^n) * (1 - x^n*y^n)^2)^(1/n) )
+n = sqrt(14);
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^n / ((1 - x^n) * (1 - x^n*y^n)^2)^(1/n), 0, 1, rel.tol=1E-11)$value), 0, 1, rel.tol=1E-12)
+beta(1/n, 2 - 3/n) / (n*(n-1));
+
+
 ### 3 Fractions
 
 ### Gen: I( 1 / ((1 - x^n) * (1 - y^n) * (1 - x^n*y^n))^(1/n) )
@@ -1746,6 +1755,13 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	y^n / ((1 - x^n) * (1 - x^n*y^n))^(1/n), 0, 1, rel.tol=1E-10)$value), 0, 1, rel.tol=1E-12)
 # 1/n^2 * I( 1/ ((1 - x^n) * (1 - x^n*y^n))^(1/n) ) + beta(1/n, 1-2/n) * (n-2) / n^3;
 # TODO
+
+
+### I( x^n / ((1 - x^n) * (1 - x^n*y^n)^2)^(1/n) )
+n = 5;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^n / ((1 - x^n) * (1 - x^n*y^n)^2)^(1/n), 0, 1, rel.tol=1E-11)$value), 0, 1, rel.tol=1E-12)
+beta(1/n, 1 - 3/n) * (n-3) / (n*(n-1)*(n-2));
 
 
 ### Series: 3 Fractions
