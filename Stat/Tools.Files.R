@@ -105,9 +105,14 @@ match.dir.old = function(path1, path2, sub.path = NULL, pattern = NULL, verbose 
 }
 
 # Difference between 2 dirs
-diff.dir = function(path1, path2, pattern = NULL, swap = FALSE,
+# dir = Sub-directory inside path1 & path2;
+diff.dir = function(path1, path2, dir = NULL, pattern = NULL, swap = FALSE,
 		copy = FALSE, verbose = TRUE) {
 	if(swap) { tmp = path1; path1 = path2; path2 = tmp; }
+	if(! is.null(dir)) {
+		path1 = paste0(path1, "/", dir);
+		path2 = paste0(path2, "/", dir);
+	}
 	FILES = match.dir(path1, path2, pattern=pattern, verbose=verbose);
 	FILES = FILES[is.na(FILES$Match), ];
 	if(copy) {
