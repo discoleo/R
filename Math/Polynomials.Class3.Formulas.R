@@ -103,3 +103,32 @@ x^5 - 11*x^4 - 55*x^3 + 2*121*x^2 + 3*121*x - 121
 # see file: Polynomials.Class3.R
 # Note: s1,...,s4 in that file represents cc;
 
+
+###############
+
+### Parametric: Simple
+
+r = 2*cos(2*pi*seq(5)/11)
+
+# Roots = r^3 + s1*r;
+s1 = sqrt(3);
+x  = r^3 + s1*r;
+#
+x^5 + (s1+4)*x^4 - (4*s1^2 + 21*s1 + 31)*x^3 +
+	- (s1+4)*(3*s1^2 + 13*s1 + 15)*x^2 +
+	+ (3*s1^4 + 26*s1^3 + 79*s1^2 + 97*s1 + 42)*x +
+	+ s1^5 + 9*s1^4 + 28*s1^3 + 35*s1^2 + 15*s1 + 1; # ==0
+
+# Example: s1 = -4;
+x  = r^3 - 4*r
+# poly.calc0(x)
+x^5 - 11*x^3 + 22*x - 11 # == 0
+
+
+# Derivation: Hack
+pl = lapply(seq(5), \(id) {
+	p = data.frame(x=c(1,0,0), s1=c(0,1,0), coeff = c(1,-r[id], - r[id]^3));
+})
+p = prod.pm(pl);
+print.pm(p, lead="x")
+
