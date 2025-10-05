@@ -26,6 +26,8 @@ help.sort.pm = function() {
 	cat(" do.sum = 3: only sum of powers of specified variables;\n");
 }
 
+# sort.dpm is in Polynomials.Helper.D.R;
+
 # TODO: analyse efficiency;
 cut.character.int = function(n, w, extend=2) {
 	if(w == 0) {
@@ -425,12 +427,13 @@ toCoeff = function(p, by = xn, xn = "x", decreasing=TRUE, print=TRUE,
 		addComments=addComments, sep=sep, WIDTH=WIDTH);
 }
 as.coef.pm = function(p, by = xn, xn = "x", decreasing=TRUE, print=TRUE,
-		addComments=FALSE, sep=NULL, WIDTH=80) {
+		addComments=FALSE, sep=NULL, leading = NA, ..., WIDTH=80) {
 	xn  = by;
 	idx = match(xn, names(p));
 	if(idx < 0) stop(paste0("No variable ", xn));
 	px = p[,xn]; p = p[, - idx, drop=FALSE];
-	str = tapply(seq(nrow(p)), px, function(nr) as.character.pm(p[nr,, drop=FALSE], leading=NA))
+	str = tapply(seq(nrow(p)), px, function(nr)
+		as.character.pm(p[nr,, drop=FALSE], leading=leading, ...));
 	str[nchar(str) == 0] = "1";
 	# missing powers
 	x.all = seq(0, max(px));
