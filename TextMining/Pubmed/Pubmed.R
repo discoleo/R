@@ -27,8 +27,12 @@ source("Pubmed.XML.R")
 #   the Entrez documentation at:
 #   https://www.ncbi.nlm.nih.gov/books/NBK25500/
 #   and to provide help with the development of this Search Tool;
-# - other packages: rentrez
+
+### Other packages:
+# - Package rentrez: 'Entrez' in R
 #   https://cran.r-project.org/web/packages/rentrez/vignettes/rentrez_tutorial.html
+# - Package puremoe: Pubmed Unified REtrieval for Multi-Output Exploration
+#   https://cran.r-project.org/web/packages/puremoe/index.html
 
 
 ########################
@@ -46,12 +50,19 @@ GetEMail = function() {
 }
 
 ### App data:
-opt.Pubmed = list(
-	AppName = "etoolR",
-	User  = "test",
-	EMail = GetEMail()
-);
-opt.Pubmed$Tool = paste0(opt.Pubmed$AppName, "/", opt.Pubmed$User);
+GetAppData = function(email = NULL) {
+	if(is.null(email)) {
+		email = GetEMail();
+	}
+	opt = list(
+		AppName = "etoolR",
+		User  = "test",
+		EMail = email
+	);
+	opt$Tool = paste0(opt$AppName, "/", opt$User);
+	return(opt);
+}
+opt.Pubmed = GetAppData()
 
 ########################
 
@@ -88,10 +99,12 @@ search.entrez = function(..., options=NULL, debug=TRUE) {
 	return(lns)
 }
 encodeQuery = function(...) {
-	query  = list(...);
+	query = list(...);
 	if(length(query) == 1) query = query[[1]];
 	fields = names(query);
-	query  = lapply(query, function(s) {
+	# Date:
+	query = as.PubMed.date(query);
+	query = lapply(query, function(s) {
 		# lapply: needed to preserve inheritance for later;
 		if(inherits(s, "QPubmed")) return(s);
 		# s = strsplit(s, "\\s++", perl=TRUE);
@@ -104,6 +117,7 @@ encodeQuery = function(...) {
 	} else {
 		isSearch = (nchar(fields) == 0);
 	}
+	# Basic Search: Title & Abstract
 	if(sum(isSearch) > 0) {
 		fld_SEARCH = fieldsPubmed("SEARCH")$Field;
 		query[isSearch] = sapply(query[isSearch], function(s) {
@@ -126,6 +140,32 @@ encodeQuery = function(...) {
 		query = paste0(query, collapse="+AND+");
 	}
 	return(query);
+}
+as.PubMed.date = function(x) {
+	fields = names(x);
+	# Date:
+	idDate = which(fields == "Date");
+	if(length(idDate) > 0) {
+		sDt = strsplit(x[[idDate]], "[-\\:]");
+		isDtPeriod = sapply(sDt, length);
+		idDtPeriod = which(isDtPeriod > 1);
+		if(length(idDtPeriod) > 0) {
+			# Process Date-Range:
+			sDt = sDt[idDtPeriod];
+			sDt = lapply(sDt, function(x) {
+				sDt = curl_escape(x);
+				sDt = paste0(sDt, "[PDAT]", collapse="+%3A+");
+				sDt = paste0("(", sDt, ")");
+				class(sDt) = c("QPubmed", class(sDt));
+				return(sDt);
+			})
+			idDate = idDate[idDtPeriod];
+			for(id in seq_along(idDate)) {
+				x[[idDate[id]]] = sDt[[id]];
+			}
+		}
+	}
+	return(x);
 }
 escapeHTML = function(s) {
 	curl_escape(s);
@@ -197,10 +237,11 @@ queryOr = function(...) {
 fieldsPubmed = function(opt = NULL) {
 	fl = list(
 		SEARCH 		= list(Name="Abstract/Title", Field="[TIAB]"),
+		TIAB 		= list(Name="Abstract/Title", Field="[TIAB]"),
 		TITLE 		= list(Name="Title", Field="[TITL]"),
 		ABSTRACT 	= list(Name="Abstract", Field="[AB]"),
 		AUTHOR 		= list(Name="Author", Field="[AUTH]"),
-		JOURNAL 	= list(Name="Journal", Field="[jour]"),
+		JOURNAL 	= list(Name="Journal", Field="[journal]"),
 		DATE 		= list(Name="Date", Field="[PDAT]"),
 		TYPE		= list(Name="Article Type", Field="[PTYP]"),
 		COI 		= list(Name="Conflict", Field="[COI]") # Conflict of Interest: COIS ?
