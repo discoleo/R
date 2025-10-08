@@ -236,6 +236,8 @@ cat.mlines = function(m, sep=" ", sep.h="-") {
 }
 
 ### Text
+# len = Number of records to show;
+# w   = Width of columns;
 scroll.txt = function(x, start=1, len=20, w = c(12, 6, 80, 16), iter=2,
 		sep=" ", sep.h="-", print=TRUE, w.txt = c("   ", "")) {
 	if(len < 1) return();
@@ -249,6 +251,12 @@ scroll.txt = function(x, start=1, len=20, w = c(12, 6, 80, 16), iter=2,
 		else if(len.other == 0) w[1:3]
 		else if(length(w) == len.col) w
 		else w[c(1,2, rep(w[3], len.other))];
+	# Remove columns:
+	idDel = which(w == 0);
+	if(length(idDel) > 0) {
+		x = x[, - idDel, drop = FALSE];
+		w = w[- idDel];
+	}
 	# Indent
 	indent = list(c(" ", "   "));
 	if(len.col >= 3) indent = c(indent, list(" "));
