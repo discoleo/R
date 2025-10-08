@@ -87,6 +87,29 @@ extractTitles = function(x) {
 	r  = rbind(r, r2);
 	return(r);
 }
+extract.abs = function(x) {
+	isXML = inherits(x, "xml_document");
+	xml = if(isXML) x else read_xml(x);
+	ppp = "/PubmedArticleSet/PubmedArticle/MedlineCitation";
+	xs0 = xml_find_all(xml, ppp, flatten = FALSE);
+	# Note: reasonable velocity with current version of xml2;
+	# Tested only on xml with 200 records!
+	art = lapply(xs0, function(xn) {
+		PMID  = xml_find_first(xn, "./PMID");
+		PMID  = xml_text(PMID);
+		Title = xml_find_first(xn, "./Article/ArticleTitle");
+		Title = xml_text(Title);
+		Year  = xml_find_first(xn, "./Article/ArticleDate/Year[1]");
+		Year  = as.numeric(xml_text(Year));
+		Abs0  = xml_find_all(xn, "./Article/Abstract");
+		Abs0  = paste0(xml_text(Abs0), collapse = "\n");
+		r = data.frame(PMID = PMID, Year = Year,
+			Title = Title, Abstract = Abs0);
+	})
+	art = do.call(rbind, art);
+	print(nchar(art$Abstract))
+	return(art)
+}
 
 extractTitles.hack = function(x, max=0, debug=TRUE) {
 	# DISASTER:
