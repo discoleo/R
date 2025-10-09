@@ -253,9 +253,12 @@ scroll.txt = function(x, start=1, len=20, w = c(12, 6, 80, 16), iter=2,
 		else w[c(1,2, rep(w[3], len.other))];
 	# Remove columns:
 	idDel = which(w == 0);
-	if(length(idDel) > 0) {
+	len.del = length(idDel);
+	if(len.del > 0) {
 		x = x[, - idDel, drop = FALSE];
 		w = w[- idDel];
+		len.col = len.col - len.del;
+		len.other = len.other - len.del;
 	}
 	# Indent
 	indent = list(c(" ", "   "));
