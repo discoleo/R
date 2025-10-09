@@ -87,7 +87,13 @@ extractTitles = function(x) {
 	r  = rbind(r, r2);
 	return(r);
 }
-extract.abs = function(x) {
+
+### Exctract: Title + Abstract
+# n.authors = Number of authors;
+# Note:
+# - still very slow on moderately large data-sets;
+# - Authors: seems slower;
+extract.abs = function(x, n.authors = 1, sep = "; ") {
 	isXML = inherits(x, "xml_document");
 	xml = if(isXML) x else read_xml(x);
 	ppp = "/PubmedArticleSet/PubmedArticle/MedlineCitation";
@@ -97,17 +103,40 @@ extract.abs = function(x) {
 	art = lapply(xs0, function(xn) {
 		PMID  = xml_find_first(xn, "./PMID");
 		PMID  = xml_text(PMID);
-		Title = xml_find_first(xn, "./Article/ArticleTitle");
+		xArt  = xml_find_first(xn, "./Article");
+		Title = xml_find_first(xArt, "./ArticleTitle");
 		Title = xml_text(Title);
-		Year  = xml_find_first(xn, "./Article/ArticleDate/Year[1]");
+		Year  = xml_find_first(xArt, "./ArticleDate/Year[1]");
 		Year  = as.numeric(xml_text(Year));
-		Abs0  = xml_find_all(xn, "./Article/Abstract");
+		Abs0  = xml_find_all(xArt,   "./Abstract");
 		Abs0  = paste0(xml_text(Abs0), collapse = "\n");
+		if(n.authors == 0) {
+			# NO Authors
+			sAuthor = NULL;
+		} else if(n.authors == 1) {
+			Author = xml_find_first(xArt, "./AuthorList/Author");
+			Author = paste(
+				xml_text(xml_find_first(Author, "./LastName")),
+				xml_text(xml_find_first(Author, "./Initials")), sep = " ");
+		} else {
+			# xAuthor = xml_find_first(xArt,  "./AuthorList");
+			# Author  = xml_find_all(xAuthor, "./Author", flatten = FALSE);
+			Author = xml_find_all(xArt, "./AuthorList/Author", flatten = FALSE);
+			if(n.authors > 1) {
+				n = min(n.authors, length(Author));
+				Author = Author[seq(n)];
+			}
+			Author = sapply(Author, function(x) {
+				paste(
+					xml_text(xml_find_first(x, "./LastName")),
+					xml_text(xml_find_first(x, "./Initials")), sep = " ");
+			})
+			Author = paste(Author, collapse = sep);
+		}
 		r = data.frame(PMID = PMID, Year = Year,
-			Title = Title, Abstract = Abs0);
+			Title = Title, Abstract = Abs0, Authors = Author);
 	})
 	art = do.call(rbind, art);
-	print(nchar(art$Abstract))
 	return(art)
 }
 
