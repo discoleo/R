@@ -91,16 +91,22 @@ extractTitles = function(x) {
 ### Exctract: Title + Abstract
 # n.authors = Number of authors;
 # Note:
-# - still very slow on moderately large data-sets;
+# - Initial code: very slow (non-usable) on moderately large data-sets;
+# - Alternative code: reasonably fast on 8,000 records;
 # - Authors: seems slower;
-extract.abs = function(x, n.authors = 1, sep = "; ") {
+extract.abs = function(x, n.authors = 1, sep = "; ", verbose = TRUE) {
 	isXML = inherits(x, "xml_document");
 	xml = if(isXML) x else read_xml(x);
 	ppp = "/PubmedArticleSet/PubmedArticle/MedlineCitation";
 	xs0 = xml_find_all(xml, ppp, flatten = FALSE);
+	if(verbose) {
+		cat("Found", length(xs0), "records", "\n", sep = " ");
+	}
 	# Note: reasonable velocity with current version of xml2;
 	# Tested only on xml with 200 records!
+	# New code: tested on 8000 records: ~10 seconds!
 	art = lapply(xs0, function(xn) {
+		xn = read_xml(as.character(xn));
 		PMID  = xml_find_first(xn, "./PMID");
 		PMID  = xml_text(PMID);
 		xArt  = xml_find_first(xn, "./Article");
