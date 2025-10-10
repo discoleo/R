@@ -116,6 +116,8 @@ extract.abs = function(x, n.authors = 1, sep = "; ", verbose = TRUE) {
 		Year  = as.numeric(xml_text(Year));
 		Abs0  = xml_find_all(xArt,   "./Abstract");
 		Abs0  = paste0(xml_text(Abs0), collapse = "\n");
+		Journ = xml_find_first(xArt, "./Journal/ISOAbbreviation");
+		Journ = xml_text(Journ);
 		if(n.authors == 0) {
 			# NO Authors
 			sAuthor = NULL;
@@ -140,7 +142,8 @@ extract.abs = function(x, n.authors = 1, sep = "; ", verbose = TRUE) {
 			Author = paste(Author, collapse = sep);
 		}
 		r = data.frame(PMID = PMID, Year = Year,
-			Title = Title, Abstract = Abs0, Authors = Author);
+			Title = Title, Abstract = Abs0,
+			Journal = Journ, Authors = Author);
 	})
 	art = do.call(rbind, art);
 	return(art)
