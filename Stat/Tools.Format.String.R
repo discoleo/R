@@ -214,13 +214,25 @@ rep.indent = function(s, len, other=3, default="") {
 
 cat.mlines = function(m, sep=" ", sep.h="-") {
 	nc = ncol(m); m = t(m);
-	sep = c(rep(sep, nc - 1), "\n");
+	len.sep = length(sep);
+	if(len.sep == 1) {
+		LEN.sep = nchar(sep) * (nc-1);
+		sep = c(rep(sep, nc - 1), "\n");
+	} else if(len.sep == nc-1) {
+		LEN.sep = sum(nchar(sep));
+		sep = c(sep, "\n");
+	} else {
+		warning("Sep: Not yet implemented!");
+		# TODO
+		LEN.sep = nc - 1;
+		sep = c(rep(sep, nc-1), "\n");
+	}
 	if(is.null(sep.h)) {
 		cat(m, sep=sep);
 	} else {
 		# Note: m is transposed!
 		len  = sum(nchar(m[,1]), na.rm=TRUE);
-		len  = len + (nrow(m) - 1)*nchar(sep[[1]]);
+		len  = len + LEN.sep; # (nrow(m) - 1)*nchar(sep[[1]]);
 		# Row-Separator
 		part = if(nchar(sep.h) == 1) 0 else (len %% nchar(sep.h));
 		chE  = if(part > 0) substr(sep.h, 1, part) else "";
@@ -238,6 +250,8 @@ cat.mlines = function(m, sep=" ", sep.h="-") {
 ### Text
 # len = Number of records to show;
 # w   = Width of columns;
+# sep   = Separator between columns;
+# sep.h = Horizontal separator;
 scroll.txt = function(x, start=1, len=20, w = c(12, 6, 80, 16), iter=2,
 		sep=" ", sep.h="-", print=TRUE, w.txt = c("   ", "")) {
 	if(len < 1) return();
@@ -281,12 +295,14 @@ scroll.txt = function(x, start=1, len=20, w = c(12, 6, 80, 16), iter=2,
 }
 scroll.text = scroll.txt;
 
-scroll.table = function(x, start=1, len = 10, w = c(30, 6), ncol=2, ...) {
+scroll.table = function(x, start=1, len = 10, w = c(30, 6), ncol=2,
+		sep = c(" ", "  "), w.txt = c("", ""), ...) {
 	LEN = length(x);
 	# ncol = 2
 	nEnd   = start + len - 1;
 	isCol2 = (ncol == 2) && (nEnd < LEN);
 	if(isCol2) {
+		if(length(sep) == 2) sep = c(sep, sep[1]);
 		w  = c(w, w);
 		id = seq(start, length.out = len);
 		x1 = x[id];
@@ -310,8 +326,10 @@ scroll.table = function(x, start=1, len = 10, w = c(30, 6), ncol=2, ...) {
 			Name = n1, Count = unclass(x1),
 			Name = n2, Count = unclass(x2));
 	} else {
+		sep = sep[1];
 		x = data.frame(Names = names(x), Count = unclass(x));
 	}
-	scroll.txt(x, start = 1, len = len, w=w, ...);
+	scroll.txt(x, start = 1, len = len, w=w, sep=sep,
+		w.txt = w.txt, ...);
 }
 
