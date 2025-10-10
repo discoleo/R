@@ -242,6 +242,12 @@ scroll.txt = function(x, start=1, len=20, w = c(12, 6, 80, 16), iter=2,
 		sep=" ", sep.h="-", print=TRUE, w.txt = c("   ", "")) {
 	if(len < 1) return();
 	len  = len - 1;
+	#
+	if(inherits(x, "table")) {
+		# Note: better defaults for w;
+		if(length(w) == 4) w = c(30, 6);
+		x = data.frame(Names = names(x), Count = unclass(x));
+	}
 	# Column Lengths
 	isMatrix  = ! is.null(dim(x));
 	len.col   = if(isMatrix) ncol(x) else 1;
@@ -272,5 +278,40 @@ scroll.txt = function(x, start=1, len=20, w = c(12, 6, 80, 16), iter=2,
 	tmp.txt = if(isMatrix) x[seq(start, nend), ] else matrix(x[seq(start, nend)], ncol=1);
 	cat.mlines(format.lines(tmp.txt, w=w, indent=indent, iter=iter),
 		sep=sep, sep.h=sep.h);
+}
+scroll.text = scroll.txt;
+
+scroll.table = function(x, start=1, len = 10, w = c(30, 6), ncol=2, ...) {
+	LEN = length(x);
+	# ncol = 2
+	nEnd   = start + len - 1;
+	isCol2 = (ncol == 2) && (nEnd < LEN);
+	if(isCol2) {
+		w  = c(w, w);
+		id = seq(start, length.out = len);
+		x1 = x[id];
+		n1 = names(x)[id];
+		nS2 = nEnd + 1;
+		nE2 = nS2 + len - 1;
+		isShort = LEN < nE2;
+		if(isShort) {
+			id = seq(nS2, LEN);
+		} else {
+			id = seq(nS2, length.out = len);
+		}
+		x2 = x[id];
+		n2 = names(x)[id];
+		if(isShort) {
+			d  = nE2 - nS2;
+			x2 = c(x2, rep("", d));
+			n2 = c(n2, rep("", d));
+		}
+		x = data.frame(
+			Name = n1, Count = unclass(x1),
+			Name = n2, Count = unclass(x2));
+	} else {
+		x = data.frame(Names = names(x), Count = unclass(x));
+	}
+	scroll.txt(x, start = 1, len = len, w=w, ...);
 }
 
