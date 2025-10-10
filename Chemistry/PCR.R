@@ -331,3 +331,30 @@ find.simTm = function(nn.seq, Tm, iter = 2000, tol = 0.1) {
 # Examples moved to file:
 # PCR.Examples.R;
 
+
+##################
+
+### Plot Amplified DNA
+# Note:
+# - Curve constructed using artistic vision,
+#   not based on model fitting;
+# - Exponential growth + levelling off;
+plot.quantity = function(k = c(1, 1/8), lwd = 2, cex = c(2, 1.5),
+		col = c("red", "black", "blue"), col.h = "red",
+		Vmax = 1, h = 0.2 * Vmax) {
+	funGr = function(x, a = 1, b = 1/8, Vmax = 1)
+		Vmax * (1 - exp(-a*x)) * (1 - exp(-b*x));
+	a = k[1]; b = k[2];
+	par.old = par(mar = c(5, 5, 2, 1.5) + 0.1)
+	curve(funGr(x, a = 2*b, b=b), xlim = c(0, 40), ylim = c(0, 1),
+		xlab = "PCR Cycles", ylab = "Amplified DNA", col = col[1],
+		lwd = lwd, cex.lab = cex[1], cex.axis = cex[2]);
+	curve(funGr(x, a = b, b=b), lwd = lwd, add = TRUE, col = col[2]);
+	curve(funGr(x, a = b*2/3, b=b), lwd = lwd, add = TRUE, col = col[3]);
+	if(! is.null(h))
+		abline(h = h, lty = 2, lwd = lwd, col = col.h);
+	#
+	par(par.old)
+	invisible();
+}
+

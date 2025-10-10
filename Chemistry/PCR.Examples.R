@@ -103,3 +103,16 @@ Tm("GGAGGCAGAGACAGTTGGAG")
 # PCR: 94ºC 1 min, [94ºC 30sec, 60ºC 30 s, 72ºC 1 min] x 35 cycles
 # 72ºC 10 min, 4ºC 5 min;
 
+
+######################
+######################
+
+
+### PCR / qPCR
+
+# png(file = "PCR.Quantity.Cycles.png")
+
+# Exponential growth, then levelling off;
+plot.quantity()
+
+# dev.off()
