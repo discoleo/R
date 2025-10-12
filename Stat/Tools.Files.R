@@ -58,7 +58,9 @@ match.dir = function(path1, path2, sub.path = NULL, pattern = NULL, verbose = TR
 	}
 	if(length(x1) == 0) {
 		cat("Empty dir!\n");
-		return(data.frame(Name = character(0), Size = numeric(0), Math = logical(0)));
+		df0 = data.frame(Name = character(0), Size = numeric(0),
+			Match = logical(0));
+		return(df0);
 	}
 	# Size:
 	f1 = file.size(paste0(path1, "/", x1));
