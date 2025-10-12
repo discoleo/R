@@ -56,6 +56,11 @@ match.dir = function(path1, path2, sub.path = NULL, pattern = NULL, verbose = TR
 	if(verbose) {
 		cat("Excluded ", length(d1), " dirs.\n");
 	}
+	if(length(x1) == 0) {
+		cat("Empty dir!\n");
+		return(data.frame(Name = character(0), Size = numeric(0), Math = logical(0)));
+	}
+	# Size:
 	f1 = file.size(paste0(path1, "/", x1));
 	f2 = file.size(paste0(path2, "/", x2));
 	# Match:
@@ -130,10 +135,14 @@ diff.dir = function(path1, path2, dir = NULL, pattern = NULL, swap = FALSE,
 }
 
 
-diff.dirs = function(x, path1, path2, verbose = c("Top", "Full", "None")) {
+diff.dirs = function(x, path1, path2, swap = FALSE,
+		verbose = c("Top", "Full", "None")) {
 	verbose  = match.arg(verbose);
 	verb.all = verbose == "Full";
 	verb.dir = verbose != "None";
+	if(swap) {
+		tmp = path1; path1 = path2; path2 = tmp;
+	}
 	xn = nchar(x)
 	isNotRoot = xn > 0;
 	p1[isNotRoot] = paste0(path1, "/", x[isNotRoot]);
