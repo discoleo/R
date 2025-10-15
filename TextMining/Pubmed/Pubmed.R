@@ -141,14 +141,16 @@ encodeQuery = function(...) {
 	}
 	return(query);
 }
-as.PubMed.date = function(x, reg.period = "[\\:]") {
+as.PubMed.date = function(x, collapse = TRUE, reg.period = "[\\:]") {
 	fields = names(x);
 	# Date:
 	idDate = which(tolower(fields) == "date");
 	if(length(idDate) > 0) {
-		sDt = x[idDate];
+		PDAT = "[PDAT]";
+		sDt  = x[idDate];
+		notArray = sapply(sDt, length) < 2;
 		isPeriod = grepl(reg.period, sDt);
-		idPeriod = which(isPeriod);
+		idPeriod = which(isPeriod & notArray);
 		if(length(idPeriod) > 0) {
 			# Process Date-Range:
 			sDt = unlist(sDt[idPeriod]);
@@ -166,7 +168,7 @@ as.PubMed.date = function(x, reg.period = "[\\:]") {
 					}
 				}
 				sDt = curl_escape(x);
-				sDt = paste0(sDt, "[PDAT]", collapse="+%3A+");
+				sDt = paste0(sDt, PDAT, collapse="+%3A+");
 				sDt = paste0("(", sDt, ")");
 				class(sDt) = c("QPubmed", class(sDt));
 				return(sDt);
@@ -177,8 +179,55 @@ as.PubMed.date = function(x, reg.period = "[\\:]") {
 				x[[idDate[id]]] = sDt[[id]];
 			}
 		}
+		# Collapse:
+		if(collapse) {
+			sDt = x[idDate];
+			sDt = collapse.dates(sDt);
+			x[[idDate]] = NULL;
+			x = c(x, sDt);
+		}
 	}
 	return(x);
+}
+collapse.dates = function(x) {
+	isNotQPub = sapply(x, function(x) ! inherits(x, "QPubmed"));
+	idNotQPub = which(isNotQPub);
+	if(length(idNotQPub) > 0) {
+		tmp = x[idNotQPub];
+		# Array with Multiple Dates:
+		lenField = sapply(tmp, length);
+		idArray  = which(lenField > 1);
+		if(length(idArray) > 0) {
+			tmp2 = sapply(tmp[idArray], as.date.SimplePubMed);
+			tmp2 = unlist(tmp2);
+			tmp2 = as.date.OrPubmed(tmp2);
+			id0  = idNotQPub[idArray[1]];
+			idRm = idNotQPub[idArray[-1]];
+			x[[id0]] = tmp2;
+			x[idRm]  = NULL;
+			idNotQPub = idNotQPub[- idArray];
+		}
+		if(length(idNotQPub) > 0) {
+			tmp = as.date.SimplePubMed(x[[idNotQPub]]);
+			x[idNotQPub] = tmp;
+		}
+	}
+	if(length(x) > 1) {
+		x = as.date.OrPubmed(x);
+	}
+	return(x);
+}
+as.date.SimplePubMed = function(x, PDAT = fieldsPubmed("Date")$Field) {
+	if(length(x) == 0) return(character(0));
+	tmp = paste0('"', curl_escape(x), '"');
+	tmp = paste0(tmp, PDAT);
+	return(tmp);
+}
+as.date.OrPubmed = function(x) {
+	sDt = paste0(x, collapse = "OR");
+	sDt = paste0("(", sDt, ")");
+	class(sDt) = c("QPubmed", class(sDt));
+	return(sDt);
 }
 escapeHTML = function(s) {
 	curl_escape(s);
@@ -346,7 +395,7 @@ PublicationType = function(type, caseInsensitive=TRUE) {
 	"Research Support, U.S. Gov't, P.H.S.",
 	"Retracted Publication",
 	"Retraction of Publication",
-	"Review",
+	"Review", # includes Systematic Review
 	"Scientific Integrity Review",
 	"Systematic Review",
 	"Technical Report",
