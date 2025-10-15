@@ -6,7 +6,7 @@
 ### Pubmed
 ### Tools: Search Engine
 ###
-### draft v.0.2c
+### draft v.0.2d
 
 
 ### Pubmed Tools
@@ -45,7 +45,7 @@ GetEMail = function() {
 	eMail = "...";
 	if(eMail == "...")
 		stop("Please provide a valid eMail address,
-		so that I do not get blamed when the Pubmed server crashes!")
+		so that I do not get blamed when the PubMed server crashes!")
 	return(eMail);
 }
 
@@ -141,25 +141,38 @@ encodeQuery = function(...) {
 	}
 	return(query);
 }
-as.PubMed.date = function(x) {
+as.PubMed.date = function(x, reg.period = "[\\:]") {
 	fields = names(x);
 	# Date:
-	idDate = which(fields == "Date");
+	idDate = which(tolower(fields) == "date");
 	if(length(idDate) > 0) {
-		sDt = strsplit(x[[idDate]], "[-\\:]");
-		isDtPeriod = sapply(sDt, length);
-		idDtPeriod = which(isDtPeriod > 1);
-		if(length(idDtPeriod) > 0) {
+		sDt = x[idDate];
+		isPeriod = grepl(reg.period, sDt);
+		idPeriod = which(isPeriod);
+		if(length(idPeriod) > 0) {
 			# Process Date-Range:
-			sDt = sDt[idDtPeriod];
+			sDt = unlist(sDt[idPeriod]);
+			sDt = strsplit(sDt, reg.period);
 			sDt = lapply(sDt, function(x) {
+				if(nchar(x[1]) == 4) {
+					x[1] = paste0(x[1], "/01/01");
+				}
+				if(length(x) == 1) {
+					x[2] = paste0(format(Sys.Date(), "%Y"), "/12/31");
+				} else {
+					nch2 = nchar(x[2]);
+					if(nch2 == 4) {
+						x[2] = paste0(x[2], "/12/31");
+					}
+				}
 				sDt = curl_escape(x);
 				sDt = paste0(sDt, "[PDAT]", collapse="+%3A+");
 				sDt = paste0("(", sDt, ")");
 				class(sDt) = c("QPubmed", class(sDt));
 				return(sDt);
 			})
-			idDate = idDate[idDtPeriod];
+			# Update Period:
+			idDate = idDate[idPeriod];
 			for(id in seq_along(idDate)) {
 				x[[idDate[id]]] = sDt[[id]];
 			}
