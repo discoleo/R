@@ -18,6 +18,14 @@ https://en.wikipedia.org/wiki/Division_by_zero
 
 Atomic nuclei carry de facto all mass. Gravity must therefore be directly related to the atomic nucleus. The polarized nuclei can interact in a mass effect that becomes manifest as gravity. This "gravity" obeys a similar law to Gauss' law computed outside a sphere and decreases with R^2.
 
+==== Newton's Law of Gravity ====
+
+F = G * m1 * m2 / R^2;
+
+However, this equation makes '''no''' sense for real masses, which have real volumes in space. An exact distance between the 2 masses makes no sense. It is possible to define various average distances; however, a statistical approach for gravity is the more logical approach.
+
+'''Simple alternative approaches''' would compute gravity as a flux between the 2 masses and/or computing the gravity as a triple integral over the space. Under such circumstances, the gravitational constant does not make sense as a constant anymore.
+
 
 == History ==
 Building an entire theory around a division by zero should make everyone doubt the theory.
