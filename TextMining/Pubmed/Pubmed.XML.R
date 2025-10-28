@@ -39,6 +39,21 @@ parse.entrez = function(x) {
 	class(r) = c("Entrez", class(r));
 	return(r)
 }
+
+# ELink Result:
+parse.elink = function(x) {
+	xml = read_xml(x);
+	as.xml.numeric = function(xpath) {
+		as.numeric(xml_text(xml_find_all(xml, xpath)));
+	}
+	xpath = "/eLinkResult/LinkSet";
+	idSrc = as.xml.numeric(paste0(xpath, "/IdList/Id"));
+	idArt = as.xml.numeric(paste0(xpath, "/LinkSetDb/Link/Id"));
+	r = list(ID.Src = idSrc, Count0 = length(idSrc), # Source
+		ID = idArt, Count = length(idArt));
+	class(r) = c("Entrez.ELink", class(r));
+	return(r)
+}
 # Parse fetched IDs:
 parse.entrez.ids = function(x, nStart=0) {
 	if(inherits(nStart, "Entrez")) {

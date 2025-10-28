@@ -292,6 +292,26 @@ queryOr = function(...) {
 	return(query);
 }
 
+### ELink
+
+# https://www.nlm.nih.gov/dataguide/eutilities/utilities.html#elink
+
+# Cited by:
+search.cited = function(PMID, options = NULL, debug = TRUE) {
+	query = "linkname=pubmed_pubmed_citedin"
+	url = paste0(baseUrl, "elink.fcgi?dbfrom=", dataBaseName,
+		"&db=", dataBaseName, "&id=", PMID,
+		"&usehistory=y", "&", query,
+		GetSearchOptions(options), "&", GetCredentials());
+	#
+	con = curl(url)
+	lns = readLines(con)
+	lns = paste(lns, collapse="\n")
+	close(con)
+	return(lns)
+}
+
+
 ################
 ### Advanced ###
 ################
