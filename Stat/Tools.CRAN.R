@@ -166,8 +166,9 @@ splitDF = function(x, ncol=2) {
 ### Other / UI / Display
 
 ### Packages
-scroll.pkg = function(pkg, start=1, len=15, w = c(12, 80, 16), iter=2,
-		sep=" ", sep.h="-", print=TRUE) {
+# w.txt = Indent;
+scroll.pkg = function(pkg, start=1, len=15, w = c(12, 80, 16), w.txt = NULL,
+		sep=" ", sep.h="-", print=TRUE, iter=2) {
 	if(len < 1) return();
 	len  = len - 1;
 	id = match(c("Package", "Description"), names(pkg));
@@ -184,7 +185,10 @@ scroll.pkg = function(pkg, start=1, len=15, w = c(12, 80, 16), iter=2,
 		else if(length(w) == len.col) w
 		else w[c(1,2, rep(w[3], len.other))]; # TODO: if(w[4])
 	# Indent
-	indent = c(list(c(" ", "   "), c("   ", "")), rep(list(""), len.other));
+	if(is.null(w.txt)) {
+		indent = c(list(c(" ", "   "), c("   ", "")),
+			rep(list(""), len.other));
+	} else indent = w.txt;
 	# Entries
 	if(start > nrow(pkg)) stop("No more entries!");
 	nend = min(nrow(pkg), start + len);

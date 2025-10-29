@@ -248,14 +248,27 @@ cat.mlines = function(m, sep=" ", sep.h="-") {
 }
 
 ### Text
+
+# Scroll through text:
+scroll = function(x, start, len, w, w.txt, ...)
+	UseMethod("scroll")
+
 # len = Number of records to show;
 # w   = Width of columns;
+# w.txt = Indent First line / Subsequent lines;
 # sep   = Separator between columns;
 # sep.h = Horizontal separator;
-scroll.txt = function(x, start=1, len=20, w = c(12, 6, 80, 16), iter=2,
-		sep=" ", sep.h="-", print=TRUE, w.txt = c("   ", "")) {
+# iter  = Line-breaking algorithm uses 2 iterations;
+#   (may be removed in the future)
+scroll.txt = function(x, start=1, len=20, w = c(12, 6, 80, 16),
+		w.txt = c("   ", ""), sep=" ", sep.h="-", print=TRUE, iter=2) {
 	if(len < 1) return();
 	len  = len - 1;
+	if(is.numeric(w.txt)) {
+		w.txt = sapply(w.txt, function(n) {
+			paste0(rep(" ", n), collapse = "");
+		})
+	}
 	#
 	if(inherits(x, "table")) {
 		# Note: better defaults for w;
@@ -295,6 +308,7 @@ scroll.txt = function(x, start=1, len=20, w = c(12, 6, 80, 16), iter=2,
 }
 scroll.text = scroll.txt;
 
+# Format & Scroll through table:
 scroll.table = function(x, start=1, len = 10, w = c(30, 6), ncol=2,
 		sep = c(" ", "  "), w.txt = c("", ""), ...) {
 	LEN = length(x);
