@@ -22,6 +22,26 @@
 # library(xml2)
 
 
+### Debug
+
+### PubMed Article-Set
+# xp = NULL: whole record;
+# xp = (useful nodes) PubmedData or MedlineCitation;
+debug.pmid.xml = function(id, x, xp = "/MedlineCitation", all.n = FALSE) {
+	xml = if(inherits(x, "xml_document")) x
+		else read_xml(x);
+	path = "/PubmedArticleSet/PubmedArticle[./MedlineCitation/PMID=";
+	xp0  = paste0(path, id, "]");
+	if(! is.null(xp)) xp0 = paste0(xp0, xp);
+	if(all.n) {
+		nn = xml_find_all(xml, xp0);
+	} else {
+		nn = xml_find_first(xml, xp0);
+	}
+	return(nn);
+}
+
+
 ### Parse
 
 # Parse the Search Results:
@@ -127,7 +147,10 @@ extract.abs = function(x, n.authors = 1, sep = "; ", verbose = TRUE) {
 		xArt  = xml_find_first(xn, "./Article");
 		Title = xml_find_first(xArt, "./ArticleTitle");
 		Title = xml_text(Title);
-		Year  = xml_find_first(xArt, "./ArticleDate/Year[1]");
+		Year  = xml_find_first(xArt, "./Journal/JournalIssue/PubDate/Year");
+		if(is.na(Year)) {
+			Year = xml_find_first(xArt, "./ArticleDate/Year");
+		}
 		Year  = as.numeric(xml_text(Year));
 		Abs0  = xml_find_all(xArt,   "./Abstract");
 		Abs0  = paste0(xml_text(Abs0), collapse = "\n");
