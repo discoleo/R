@@ -6,7 +6,7 @@
 ### Pubmed
 ### Tools: Search Engine
 ###
-### draft v.0.2d
+### draft v.0.2f
 
 
 ### Pubmed Tools
@@ -41,7 +41,7 @@ source("Pubmed.XML.R")
 ### Credentials
 
 ### eMail:
-GetEMail0 = function() {
+GetEMail = function() {
 	eMail = "...";
 	if(eMail == "...")
 		stop("Please provide a valid eMail address,
@@ -254,6 +254,25 @@ search.entrez.fetch = function(key, nStart=0, max=0, type="Abstract",
 		"&usehistory=y&", query, "&rettype=", retType, "&retmode=xml",
 		GetSearchOptions(options), "&", GetCredentials());
 	if(debug) print(url);
+	doc = fetch0(url, nStart=nStart, max=max, file=file);
+	return(doc)
+}
+### Fetch by PMID
+search.entrez.id = function(key, nStart=0, max=0,
+		type = "Abstract", file=NULL, options=NULL, debug=TRUE) {
+	if(missing(key)) stop("Key must be provided!");
+	#
+	query   = paste0("&id=", paste0(key, collapse=","));
+	retType = "abstract";
+	#
+	url = paste0(baseUrl, "efetch.fcgi?db=", dataBaseName,
+		query, "&rettype=", retType, "&retmode=xml",
+		GetSearchOptions(options), "&", GetCredentials());
+	if(debug) print(url);
+	doc = fetch0(url, nStart=nStart, max=max, file=file);
+	return(doc)
+}
+fetch0 = function(url, nStart=0, max=0, file=NULL) {
 	### Limits
 	if(nStart > 0) {
 		url = paste0(url, "&retstart=", nStart);
@@ -262,15 +281,17 @@ search.entrez.fetch = function(key, nStart=0, max=0, type="Abstract",
 		url = paste0(url, "&retmax=", max);
 	}
 	#
-	con = curl(url)
-	doc = readLines(con)
-	doc = paste(doc, collapse="\n")
+	con = curl(url);
+	doc = readLines(con);
+	doc = paste(doc, collapse="\n");
 	if( ! is.null(file)) {
 		writeLines(doc, con=file);
 	}
-	close(con)
-	return(doc)
+	close(con);
+	return(doc);
 }
+
+### Helper Functions
 
 queryOr = function(...) {
 	query = list(...);
