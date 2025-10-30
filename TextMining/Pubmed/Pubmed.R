@@ -41,7 +41,7 @@ source("Pubmed.XML.R")
 ### Credentials
 
 ### eMail:
-GetEMail = function() {
+GetEMail0 = function() {
 	eMail = "...";
 	if(eMail == "...")
 		stop("Please provide a valid eMail address,
@@ -297,8 +297,14 @@ queryOr = function(...) {
 # https://www.nlm.nih.gov/dataguide/eutilities/utilities.html#elink
 
 # Cited by:
-search.cited = function(PMID, options = NULL, debug = TRUE) {
-	query = "linkname=pubmed_pubmed_citedin"
+search.cited = function(PMID, ..., options = NULL, debug = TRUE) {
+	q0 = "linkname=pubmed_pubmed_citedin";
+	query = list(...);
+	if(length(query) > 0) {
+		query = encodeQuery(query);
+		query = paste0("term=", query);
+		query = paste0(q0, "&", query);
+	} else query = q0;
 	url = paste0(baseUrl, "elink.fcgi?dbfrom=", dataBaseName,
 		"&db=", dataBaseName, "&id=", PMID,
 		"&usehistory=y", "&", query,
