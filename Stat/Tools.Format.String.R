@@ -279,10 +279,10 @@ scroll.txt = function(x, start=1, len=20, w = c(12, 6, 80, 16),
 	isMatrix  = ! is.null(dim(x));
 	len.col   = if(isMatrix) ncol(x) else 1;
 	len.other = if(len.col <= 3) 0 else len.col - 3;
-	w = if(len.col == 2) w[c(1,3)]
-		else if(len.col == 1) w[3]
+	w = if(length(w) == len.col) w
+		else if(len.col == 2) w[c(1,3)]
+		else if(len.col == 1) w[3] + 10
 		else if(len.other == 0) w[1:3]
-		else if(length(w) == len.col) w
 		else w[c(1,2, rep(w[3], len.other))];
 	# Remove columns:
 	idDel = which(w == 0);
@@ -295,6 +295,7 @@ scroll.txt = function(x, start=1, len=20, w = c(12, 6, 80, 16),
 	}
 	# Indent
 	indent = list(c(" ", "   "));
+	if(len.col == 1) indent = NULL;
 	if(len.col >= 3) indent = c(indent, list(" "));
 	indent = c(indent, list(w.txt), rep(list(""), len.other));
 	# Entries
