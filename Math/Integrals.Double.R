@@ -57,6 +57,7 @@ pi^2 / 6
 ### I( 1 / (1 + x + x*y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) 1 / (1 + x + x*y), 0, 1)$value), 0, 1)
 integrate(\(x) log(1+x) / x, 1, 2)
+pracma::polylog(1/4, 2) / 2 - log(2)^2;
 # TODO
 
 integrate(\(x) sapply(x, \(y) integrate(\(x) 1 / (1 + x - x*y), 0, 1)$value), 0, 1)
@@ -399,6 +400,17 @@ integrate(\(x) sapply(x, \(y)
 integrate(\(x) sapply(x, \(y)
 	integrate(\(x) log(x^2+y^2) / (1-x*y), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 -55/32 * pracma::zeta(3) + Catalan * pi / 2;
+
+
+### I( x * log(x^2+y^2) / (x^2+y^2) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * log(x^2+y^2) / (x^2+y^2), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+- (Catalan - pi*log(2)/2 + pi/2 - log(2)^2/4 + log(2));
+
+### I( x^2 * log(x^2+y^2) / (x^2+y^2) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^2 * log(x^2+y^2) / (x^2+y^2), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+pi/4 + log(2)/2 - 3/2;
 
 
 ### I( log(x^2-x*y+y^2) / (1 - x*y) )
