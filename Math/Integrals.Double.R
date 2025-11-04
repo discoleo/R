@@ -523,6 +523,24 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	log(1+x) * log(1-x*y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 pracma::zeta(3) * 5/8 - pi^2/6 + log(2)^2 - 4*log(2) + 3;
 
+### Type: xy-Plus: I( log(1-x) * log(1+x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	log(1-x) * log(1+x*y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+- (pracma::zeta(3) * 5/8 + pi^2/6 - log(2)^2 + 2*log(2) - 3);
+
+
+### Variants:
+
+### I( x * log(1-x) * log(1-x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * log(1-x) * log(1-x*y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+1/2;
+
+### I( y * log(1-x) * log(1-x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y * log(1-x) * log(1-x*y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+1 + 1/4 - pi^2/12;
+
 
 ### I( log(x) * log(y) * log(1 - x*y) )
 integrate(\(x) sapply(x, \(y)
