@@ -558,6 +558,11 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 ((digamma(5/8) - digamma(1/8))^2 - (digamma(7/8) - digamma(3/8))^2) / 16;
 log(sqrt(2) + 1) * pi;
 
+### I( atan(sin(x) / sin(y)) * sin(2*y) / sin(x) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(sin(x) / sin(y)) * sin(2*y) / sin(x), 0, pi/2, rel.tol=1E-12)$value), 0, pi/2, rel.tol=1E-12)
+pi/2 * asinh(1) + (digamma(5/8) - digamma(3/8)) / 2;
+
 
 ### I( atan(sin(x) / sin(y)) * sin(y)^2 / sin(x) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
@@ -580,6 +585,32 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	atan(sin(x) / sin(y)) / sqrt(sin(x)^2 + sin(y)^2), 0, pi/2, rel.tol=1E-12)$value), 0, pi/2, rel.tol=1E-12)
 gamma(1/8)^2 / gamma(7/8)^2 * gamma(3/4)^3 * gamma(1/4) / 8^2 / 2;
 beta(1/8, 3/4)^2 * beta(1/4, 3/4) / 8^2 / 2;
+
+
+### Power = 2
+
+### I( atan(sin(x)^2 / sin(y)^2) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(sin(x)^2 / sin(y)^2), 0, pi/2, rel.tol=1E-13)$value), 0, pi/2, rel.tol=1E-13)
+pi^3 / 16;
+
+### I( atan(sin(x)^3 / sin(y)^3) )
+p = 3; # any meaningful value;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(sin(x)^p / sin(y)^p), 0, pi/2, rel.tol=1E-13)$value), 0, pi/2, rel.tol=1E-13)
+pi^3 / 16;
+
+
+### I( atan(sin(x)^2 / sin(y)^2) * sin(y) / sin(x) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(sin(x)^2 / sin(y)^2) * sin(y) / sin(x), 0, pi/2, rel.tol=1E-13)$value), 0, pi/2, rel.tol=1E-13)
+# see I( (x^2 - 1) * Im(log(x + 1i)) / (x^4 + 1) ) on [0,1];
+(pracma::psi(1, 1/8) - pracma::psi(1, 5/8)) / 32 - Catalan / 2 +
+- (digamma(7/8) - digamma(3/8)) * pi * 3/32 +
+- (digamma(5/8) - digamma(1/8)) * pi / 32 +
+- (digamma(7/8) - digamma(3/8)) * log(2) / 16 +
+- (digamma(5/8) - digamma(1/8)) * log(2) / 16 +
++ sqrt(2)*pi/8 * (pi/2 + log(2)) + pi*log(2) / 8;
 
 
 #############
