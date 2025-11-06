@@ -549,15 +549,20 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 ### I( log(1-x) * log(1 - x*y) / y )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	1/y * log(1-x) * log(1-x*y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
-sum(pracma::zeta(2:3)) + pracma::zeta(3) - 3;
+pi^2/6 + 2*pracma::zeta(3) - 3;
 
 ### I( x/y * log(1-x) * log(1 - x*y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x/y * log(1-x) * log(1-x*y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 pi^2/8 + pracma::zeta(3) - 3/2 - 1/16;
 
+### I( y/x * log(1-x) * log(1 - x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y/x * log(1-x) * log(1-x*y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+pracma::zeta(3) - pi^2/24 - 1/4;
 
-### log(1+x)
+
+### Variant: Log(1+x)
 
 ### I( x * log(1+x) * log(1 - x*y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
