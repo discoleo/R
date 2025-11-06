@@ -518,15 +518,30 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	log(1-x) * log(1-x*y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 3 - 2*pracma::zeta(3);
 
-### Type: Plus: I( log(1+x) * log(1 - x*y) )
+### Type: Plus x: I( log(1+x) * log(1 - x*y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	log(1+x) * log(1-x*y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 pracma::zeta(3) * 5/8 - pi^2/6 + log(2)^2 - 4*log(2) + 3;
 
-### Type: xy-Plus: I( log(1-x) * log(1 + x*y) )
+### Type: Plus xy: I( log(1-x) * log(1 + x*y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	log(1-x) * log(1+x*y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 - (pracma::zeta(3) * 5/8 + pi^2/6 - log(2)^2 + 2*log(2) - 3);
+
+### I( log(1+x) * log(1+x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	log(1+x) * log(1+x*y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+pracma::zeta(3) / 4 + 2*log(2)^2 - 6*log(2) + 3;
+
+# Derivation:
+integrate(\(x) (2*log(2) - 1) * log(1+x) - ((1+x)*log(1+x)-x) *
+	sapply(x, \(y) integrate(\(x)
+	x / (1+x*y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+integrate(\(x) (2*log(2) - 1) * log(1+x) - ((1+x)*log(1+x)-x) / x +
+	+ ((1+x)*log(1+x)-x) * log(1+x) / x^2, 0, 1, rel.tol=1E-13)
+integrate(\(x) 2*(log(2) - 1) * log(1+x) - 2*log(1+x) / x + 1 +
+	+ (1+x)/x^2 * log(1+x)^2, 0, 1, rel.tol=1E-13);
+pracma::zeta(3) / 4 + 2*log(2)^2 - 6*log(2) + 3;
 
 
 ### Variants:
