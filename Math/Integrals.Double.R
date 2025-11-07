@@ -543,6 +543,16 @@ integrate(\(x) 2*(log(2) - 1) * log(1+x) - 2*log(1+x) / x + 1 +
 	+ (1+x)/x^2 * log(1+x)^2, 0, 1, rel.tol=1E-13);
 pracma::zeta(3) / 4 + 2*log(2)^2 - 6*log(2) + 3;
 
+### I( log(1 - x*y) * log(1 + x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	log(1-x*y) * log(1+x*y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+-21/8 * pracma::zeta(3) + pi^2 * log(2) / 2 - 5/12*pi^2 + log(2)^2 - 4*log(2) + 6;
+
+### Helper: I( x*y * log(1 - x*y) / (1 + x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x*y*log(1-x*y) / (1+x*y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+13/8 * pracma::zeta(3) - pi^2 * log(2) / 4 + pi^2/6 - 2;
+
 
 ### Variants:
 
