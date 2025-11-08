@@ -599,6 +599,16 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	y * log(1+x) * log(1-x*y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 - (pi^2/6 - 2*log(2)^2 + 3*log(2) - 5/2) / 2;
 
+### I( x/y * log(1+x) * log(1 - x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x/y * log(1+x) * log(1-x*y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+-5/16 * pracma::zeta(3) - pi^2 / 24 + log(2)/2 + 3/16;
+
+### I( y/x * log(1+x) * log(1 - x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y/x * log(1+x) * log(1-x*y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+-5/16 * pracma::zeta(3) - pi^2 / 24 + log(2)/2 + 1/4;
+
 
 ### Simple
 
