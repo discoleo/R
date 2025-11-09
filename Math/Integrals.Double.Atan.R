@@ -315,6 +315,12 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	atan(x*y) * log(x), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 pi^2 / 48 - pi/4 + log(2)/2 + 3/32 * pracma::zeta(3);
 
+### I( atan(x*y) * log(1-x) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(x*y) * log(1-x), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+-23/64 * pracma::zeta(3) + Catalan * pi / 4 - Catalan +
+	+ 5/96*pi^2 + pi*log(2)/8 - log(2)^2 / 8 + log(2)/2 - pi/4;
+
 
 ### Div
 
