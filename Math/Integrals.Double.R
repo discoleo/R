@@ -115,6 +115,12 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	1 / (2 - x^2 - y^2), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 Catalan;
 
+### I( x / (2 - x^2 - y^2) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x / (2 - x^2 - y^2), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+log((2+sqrt(2))/(2-sqrt(2))) / sqrt(2) - log(2);
+sqrt(2) * log(1+sqrt(2)) - log(2);
+
 
 ################
 ### Radicals ###
@@ -134,6 +140,20 @@ p = sqrt(3); q = sqrt(5) - 2;
 integrate(\(x) sapply(x, \(y)
 	integrate(\(x) (x^p + y^p) / (1-x*y) / (x*y)^q, 0, 1)$value), 0, 1)
 (digamma(1+p-q) - digamma(1-q)) * 2 / p
+
+
+### Type: SQRT
+# - see also file: Integrals.Double.Radicals.R;
+
+### I( 1 / sqrt(x^2 + y^2) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	1 / sqrt(x^2 + y^2), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+2*log(sqrt(2) + 1);
+
+### I( x / sqrt(x^2 + y^2) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x / sqrt(x^2 + y^2), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+log(sqrt(2) + 1) / 2 + sqrt(2)/2 - 1/2;
 
 
 ###############
