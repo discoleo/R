@@ -351,6 +351,12 @@ pi*log(2)/2
 integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x/y) / (x+y+1), 0, 1)$value), 0, 1)
 (log(3) * 3/4 - log(2)) * pi
 
+### I( atan(x/y) / (x-y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	(atan(x/y) - pi/4) / (x-y), 0, y, rel.tol=1E-6)$value), 0, 1, rel.tol=1E-6)
+Catalan - pi*log(2)/8;
+# Note: on [y, 1] = identical;
+
 
 ### Div: Higher
 
@@ -408,6 +414,12 @@ pi * (1-log(2));
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	atan(x/y) / sqrt(1+x*y), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 pi * (log(2) - asinh(1)) + (digamma(5/8) - digamma(3/8));
+
+
+### I( atan(x/y) / sqrt(x^2 + y^2) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(x/y) / sqrt(x^2 + y^2), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+pi/2 * asinh(1);
 
 
 ### ATAN(x+y)
