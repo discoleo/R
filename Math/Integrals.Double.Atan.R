@@ -421,6 +421,11 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	atan(x/y) / sqrt(x^2 + y^2), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 pi/2 * asinh(1);
 
+### I( x*y * atan(x/y) / sqrt(x^2 + y^2) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x*y * atan(x/y) / sqrt(x^2 + y^2), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+(sqrt(2) - 1) * pi/6;
+
 
 ### ATAN(x+y)
 
