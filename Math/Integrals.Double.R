@@ -402,6 +402,12 @@ integrate(\(x) sapply(x, \(y)
 -55/32 * pracma::zeta(3) + Catalan * pi / 2;
 
 
+### I( y * log(x^2+1) / (x^2+y^2) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y * log(x^2+1) / (x^2+y^2), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+pi*log(2) - pi/2 + log(2)^2/2 - log(2);
+
+
 ### I( x * log(x^2+y^2) / (x^2+y^2) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x * log(x^2+y^2) / (x^2+y^2), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
