@@ -345,6 +345,16 @@ integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x/y) / (x+y+1), 0, 1)$value), 
 (log(3) * 3/4 - log(2)) * pi
 
 
+### Div: Higher
+
+### I( x*y * atan(x) / (x^2+y^2) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x*y * atan(x) / (x^2+y^2), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+pi*log(2)/8 - pi/8 - log(2)/4 + Catalan/2;
+
+
+### Prod: w. LOG
+
 ### I( atan(x/y) * log(x) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	atan(x/y) * log(x), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
@@ -364,6 +374,12 @@ pi^2 / 12 + pi/8 * log(2) - pi * 3/8 - Catalan;
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	atan(x/y) * log(1-y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 - (pi^2 / 12 + pi/8 * log(2) + pi/8 - Catalan);
+
+
+### I( atan(x/y) * atan(x) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(x/y) * atan(x), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+pi^2/16 + 3/8 * pi*log(2) - pi/8 - log(2)/4 - Catalan/2;
 
 
 ### Div: SQRT(...)
