@@ -321,6 +321,13 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 -23/64 * pracma::zeta(3) + Catalan * pi / 4 - Catalan +
 	+ 5/96*pi^2 + pi*log(2)/8 - log(2)^2 / 8 + log(2)/2 - pi/4;
 
+### I( atan(x*y) * atan(x) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(x*y) * atan(x), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+integrate(\(x) - log(1-x) * log(x) / (x^2+1), 0, 1)$value +
+	+ pi*log(2)/4 + (pi/4)^3 + (pi/4)^2 - Catalan * log(2)/2 - Catalan;
+# TODO
+
 
 ### Div
 
@@ -351,6 +358,13 @@ integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x/y) / (x+y+1), 0, 1)$value), 
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x*y * atan(x) / (x^2+y^2), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 pi*log(2)/8 - pi/8 - log(2)/4 + Catalan/2;
+
+### I( x*y * atan(x) / (x^2*y^2 + 1) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x*y * atan(x) / (x^2*y^2 + 1), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+integrate(\(x) log(x) * log(1-x) / (x^2+1), 0, 1)$value +
+	- (pi/4)^3 + Catalan * log(2)/2;
+# TODO
 
 
 ### Prod: w. LOG
