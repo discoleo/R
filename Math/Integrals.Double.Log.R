@@ -132,7 +132,7 @@ pi/2 + log(2) + 2*Catalan - 4;
 ####################
 ### Fractions of Log
 
-### I( log(1 + x+y) / (x+y) )
+### I( log(1 + x + y) / (x+y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) log(1+x+y) / (x+y), 0, 1)$value), 0, 1)
 # Note:
 # - polylog2 is in file Integrals.Polylog.Helper.R;
@@ -142,15 +142,19 @@ integrate(\(x) sapply(x, \(x) - Re(polylog2(-x-1))), 0, 1)$value +
 
 
 ### I( log(1-x*y) / (x+y) )
-integrate(\(x) sapply(x, \(y) integrate(\(x) log(1-x*y) / (x+y),
-	0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	log(1-x*y) / (x+y), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 log(2)^2 - 4*log(2) - pi^2/6 + 4*Catalan;
 
-
 ### I( log(1+x*y) / (x+y) )
-integrate(\(x) sapply(x, \(y) integrate(\(x) log(1+x*y) / (x+y),
-	0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	log(1+x*y) / (x+y), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 pi^2 / 4 + log(2)^2 - 4*log(2);
+
+### I( log(1 + x + y - x*y) / (x+y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	log(1 + x + y - x*y) / (x+y), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+pi^2 / 12 + log(2)^2 * 3/2 - 4*log(2) + 2*Catalan;
 
 
 ### Div: (1 +/- x*y)
