@@ -156,6 +156,13 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	log(1 + x + y - x*y) / (x+y), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 pi^2 / 12 + log(2)^2 * 3/2 - 4*log(2) + 2*Catalan;
 
+### I( log(1 + x - x*y) / (x+y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	log(1 + x - x*y) / (x+y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+integrate(\(x) -18 * (log(1+x)/(x^3 - 1) - log(2)/3/(x-1)), 0, 1)$value +
+	+ 3*pi^2/6 - 3*log(2)^2 - 4*log(2);
+# TODO
+
 
 ### Div: (1 +/- x*y)
 
