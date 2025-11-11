@@ -9,6 +9,7 @@
 ## v.0.2a
 
 ### Double Integrals
+### Type: Log
 
 ### Examples:
 # I( x * log(x+y) / (1+x*y) )
@@ -26,18 +27,7 @@ dzeta2  = - 0.937548254316;
 #####################
 #####################
 
-
-###########
-### Log ###
-
 ### Simple Logs
-
-### I( log(abs(x+y-1)) )
-# Note: numerical issues;
-integrate(\(x) sapply(x, \(y) integrate(\(x) log(abs(x+y-1)) , 0, y)$value), 0, 1)$value +
-integrate(\(x) sapply(x, \(y) integrate(\(x) log(abs(x+y-1)) , y, 1)$value), 0, 1)$value;
-- 3/2;
-
 
 ### I( x * log(x) * log(y)^2 / (1 - x*y) )
 # Maths 505: A very interesting double integral with a beautiful result
@@ -78,7 +68,18 @@ integrate(\(x) sapply(x, \(y) integrate(\(x) log(x)*log(y) / (1 - x*y)^3, 0, 1)$
 (pracma::zeta(2) + pracma::zeta(3)) / 2
 
 
-### Mixed Logs
+##################
+
+##################
+### Mixed Logs ###
+
+
+### I( log(abs(x+y-1)) )
+# Note: numerical issues;
+integrate(\(x) sapply(x, \(y) integrate(\(x) log(abs(x+y-1)) , 0, y)$value), 0, 1)$value +
+integrate(\(x) sapply(x, \(y) integrate(\(x) log(abs(x+y-1)) , y, 1)$value), 0, 1)$value;
+- 3/2;
+
 
 ### I( log(1 - x*y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) log(1-x*y), 0, 1)$value), 0, 1)
