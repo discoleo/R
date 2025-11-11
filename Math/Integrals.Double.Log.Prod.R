@@ -128,6 +128,26 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	y * log(x) * log(1+x*y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 - (pi^2/3 - 3) / 4;
 
+### I( 1/x * log(x) * log(1-x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	1/x * log(x) * log(1-x*y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+pracma::zeta(3) - pi^2/6 + 1;
+
+### I( 1/y * log(x) * log(1-x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	1/y * log(x) * log(1-x*y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+pi^2/3 - 3;
+
+### I( 1/x * log(x) * log(1+x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	1/x * log(x) * log(1+x*y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+-3/4 * pracma::zeta(3) + pi^2 / 12 - 2*log(2) + 1;
+
+### I( 1/y * log(x) * log(1+x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	1/y * log(x) * log(1+x*y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+4*log(2) - 3;
+
 
 ### Non-Simple
 
