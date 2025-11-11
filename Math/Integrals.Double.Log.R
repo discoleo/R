@@ -138,7 +138,15 @@ integrate(\(x) sapply(x, \(y) integrate(\(x) log(1+x+y) / (x+y), 0, 1)$value), 0
 # - polylog2 is in file Integrals.Polylog.Helper.R;
 integrate(\(x) sapply(x, \(x) - Re(polylog2(-x-1))), 0, 1)$value +
 	- pi^2/12 + 2*log(2) - 1;
-- 2*polylog2(-2) - pi^2/6 - 3*log(3) + 4*log(2);
+-2*polylog2(-2) - pi^2/6 - 3*log(3) + 4*log(2);
+
+
+### I( log(1 - x + y) / (x+y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	log(1-x+y) / (x+y), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-13)
+integrate(\(x) -3 * log(x^2+x+1) / (x+1), 0, 1)$value +
+	+ 3*log(2)*log(3) - log(2) * 2;
+3*polylog2(-2) + pi^2/3 + 3*log(2)*log(3) - 2*log(2);
 
 
 ### I( log(1-x*y) / (x+y) )
@@ -160,7 +168,7 @@ pi^2 / 12 + log(2)^2 * 3/2 - 4*log(2) + 2*Catalan;
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	log(1 + x - x*y) / (x+y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 integrate(\(x) -18 * (log(1+x)/(x^3 - 1) - log(2)/3/(x-1)), 0, 1)$value +
-	+ 3*pi^2/6 - 3*log(2)^2 - 4*log(2);
+	+ pi^2/2 - 3*log(2)^2 - 4*log(2);
 # TODO
 
 
