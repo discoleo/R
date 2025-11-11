@@ -113,6 +113,26 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	atan((x+y)/(1+x*y)), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 pi*log(2)/2 + 2*log(2) - 2*Catalan;
 
+###############
+
+### Atan-Powers
+
+### I( atan(x/y)^2 )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(x/y)^2, 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+pi*log(2)/2 + pi^2/16 - Catalan;
+
+### I( atan(x*y) * atan(x/y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(x*y) * atan(x/y), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+pi/2 * (- pi^2 / 96 + pi/8 - log(2)/4);
+
+### I( atan(x*y)^2 )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(x*y)^2, 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+integrate(\(x) - atan(x)^2 * log(x), 0, 1, rel.tol=1E-12)
+# TODO
+
 
 ###################
 
