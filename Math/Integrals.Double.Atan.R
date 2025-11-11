@@ -153,6 +153,19 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 -7/8 * pracma::zeta(3) + pi*Catalan / 2 - (pi/4)^2 - pi*log(2)/4 + Catalan;
 
 
+### Coeff: x or y
+
+### I( x * atan(x/y)^2 )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * atan(x/y)^2, 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+(pi^2/8 + 3/4 * pi*log(2) - pi/4 + log(2)/2 - Catalan) / 3;
+
+### I( y * atan(x/y)^2 )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y * atan(x/y)^2, 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+(pi*log(2)/4 + pi/4 + log(2)/2 - Catalan) / 3;
+
+
 ###################
 
 ### Type: Atan(x/y)
