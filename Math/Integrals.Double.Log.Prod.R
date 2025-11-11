@@ -6,7 +6,7 @@
 ## Integrals: Double Integrals
 ## Type: PROD( Log )
 ##
-## v.0.2a
+## v.0.2b
 
 ### Double Integrals
 
@@ -105,6 +105,31 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 
 
 ### Variants:
+
+### Simple: LOG(x)
+
+### I( x * log(x) * log(1 - x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * log(x) * log(1-x*y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+(pi^2/3 - 3) / 4;
+
+### I( y * log(x) * log(1 - x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y * log(x) * log(1-x*y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+2 - pi^2/6 - 1/4;
+
+### I( x * log(x) * log(1 + x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * log(x) * log(1+x*y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+- pi^2 / 24 - 2*log(2) + 2 - 1/4;
+
+### I( y * log(x) * log(1 + x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y * log(x) * log(1+x*y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+- (pi^2/3 - 3) / 4;
+
+
+### Non-Simple
 
 ### I( x * log(1-x) * log(1 - x*y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
