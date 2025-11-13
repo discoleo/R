@@ -144,6 +144,16 @@ integrate(\(x) - atan(x)^2 * log(x), 0, 1, rel.tol=1E-12)
 
 ### Div:
 
+### I( 1/x * atan(x/y)^2 )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	1/x * atan(x/y)^2, 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+pi*Catalan / 2 - Catalan + pi^2 / 16 + 3/4 * pi*log(2) - 7/8 * pracma::zeta(3);
+
+### I( y/x * atan(x/y)^2 )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y/x * atan(x/y)^2, 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+pi*Catalan / 4 - pi^2 / 32 + pi/8 + log(2)/4 - 7/16 * pracma::zeta(3);
+
 ### I( atan(x*y) * atan(x/y) / x )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	atan(x*y) * atan(x/y) / x, 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
@@ -184,6 +194,12 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	y * atan(x/y) * atan(x*y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 pi^2 / 16 + pi * log(2)/6 - pi/6 - log(2)/2;
+
+
+### I( x * atan(x*y)^2 )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * atan(x*y)^2, 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+pi*log(2)/4 + pi/4 - log(2)/2 - Catalan;
 
 
 ###################
