@@ -6,7 +6,7 @@
 ## Integrals: Double Integrals
 ## Type: PROD( Atan )
 ##
-## v.0.1a
+## v.0.1b
 
 
 ### Type: PROD( ATAN )
@@ -14,6 +14,8 @@
 ### Examples:
 # I( atan(x/y)^2 )
 # I( atan(x*y) * atan(x/y) )
+# I( atan(x/y) * log(1-x) )
+# I( atan(x/y) * log(1+x) )
 
 
 ####################
@@ -27,6 +29,55 @@ dzeta2  = - 0.937548254316;
 #####################
 
 ### Powers & Product
+
+### Prod( ATAN * LOG )
+
+### I( atan(x/y) * log(x) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(x/y) * log(x), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+pi^2 / 96 - pi/4 + log(2)/4;
+
+### I( atan(x/y) * log(1-x) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(x/y) * log(1-x), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+pi^2 / 12 + pi/8 * log(2) - 3/8 * pi - Catalan;
+
+### I( atan(x/y) * log(1-y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(x/y) * log(1-y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+- (pi^2 / 12 + pi/8 * log(2) + pi/8 - Catalan);
+
+### I( atan(x/y) * log(1+x) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(x/y) * log(1+x), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+- (pi^2 / 24 - 3/8 * pi*log(2) + pi/8 - log(2)/2);
+
+### I( atan(x/y) * log(1+y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(x/y) * log(1+y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+pi^2 / 24 + 5/8 * pi*log(2) - 3/8 * pi - log(2)/2;
+
+
+### ATAN(x*y)
+
+### I( atan(x*y) * log(x) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(x*y) * log(x), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+pi^2 / 48 - pi/4 + 1/2*log(2) + 3/32 * pracma::zeta(3);
+
+### I( atan(x*y) * log(1-x) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(x*y) * log(1-x), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+-23/64 * pracma::zeta(3) + Catalan * pi / 4 - Catalan +
+	+ 5/96*pi^2 + pi*log(2)/8 - log(2)^2 / 8 + log(2)/2 - pi/4;
+
+### I( atan(x*y) * log(1+x) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(x*y) * log(1+x), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+# TODO
+
+
+### Composite-Atan
 
 ### I( atan(x/y)^2 )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
