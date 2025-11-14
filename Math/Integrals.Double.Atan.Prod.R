@@ -77,7 +77,21 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 # TODO
 
 
-### Composite-Atan
+### w. Simple-Atan
+
+### I( atan(x/y) * atan(x) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(x/y) * atan(x), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+pi^2 / 16 + 3/8 * pi*log(2) - pi/8 - log(2)/4 - Catalan/2;
+
+### I( atan(x/y) * atan(y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(x/y) * atan(y), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+pi/4 * (pi/2 - log(2)) - (pi^2/16 + 3/8 * pi*log(2) - pi/8 - log(2)/4 - Catalan/2);
+pi^2 / 16 - 5/8 * pi*log(2) + pi/8 + log(2)/4 + Catalan/2;
+
+
+### w. Composite-Atan
 
 ### I( atan(x/y)^2 )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
