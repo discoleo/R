@@ -100,6 +100,14 @@ pi/4 * (pi/2 - log(2)) - (pi^2/16 + 3/8 * pi*log(2) - pi/8 - log(2)/4 - Catalan/
 pi^2 / 16 - 5/8 * pi*log(2) + pi/8 + log(2)/4 + Catalan/2;
 
 
+### I( atan(x*y) * atan(x) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(x*y) * atan(x), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+integrate(\(x) - log(1-x) * log(x) / (x^2+1), 0, 1, rel.tol=1E-13)$value +
+	+ pi*log(2)/4 + (pi/4)^3 + (pi/4)^2 - Catalan * log(2)/2 - Catalan;
+# TODO
+
+
 ### w. Composite-Atan
 
 ### I( atan(x/y)^2 )
