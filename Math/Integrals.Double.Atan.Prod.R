@@ -49,10 +49,21 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x * atan(x/y) * log(x), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 - (7/4*pi + log(2) + 3*Catalan - 11/2) / 18;
 
+### I( x * atan(x/y) * log(y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * atan(x/y) * log(y), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-13)
+(- pi^2 / 8 + 2*pi - 4*log(2) + 1) / 18 - pi/4;
+
 ### I( y * atan(x/y) * log(x) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	y * atan(x/y) * log(x), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 - (- pi^2 / 8 + 2*pi - 4*log(2) + 1) / 18;
+
+### I( y * atan(x/y) * log(y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y * atan(x/y) * log(y), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-13)
+(7/4*pi + log(2) + 3*Catalan - 11/2) / 18 - pi/8;
+- (pi/2 - log(2) - 3*Catalan + 11/2) / 18;
 
 
 ### I( atan(x/y) * log(1-x) )
