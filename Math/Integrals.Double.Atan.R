@@ -486,12 +486,20 @@ integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x+y) / (1-x*y), 0, 1)$value), 
 integrate(\(x) sapply(x, \(y) integrate(\(x) atan((x+y)/2) / (1-x*y), 0, 1)$value), 0, 1)
 # TODO
 
+### I( x * atan((x+y)/2) / (1 - x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x) x * atan((x+y)/2) / (1-x*y), 0, 1)$value), 0, 1)
+# TODO
+
 ### I( atan(x+y) / (1 + x*y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x+y) / (1+x*y), 0, 1)$value), 0, 1)
 # TODO
 
 ### I( atan((x+y)/2) / (1 + x*y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) atan((x+y)/2) / (1+x*y), 0, 1)$value), 0, 1)
+# TODO
+
+### I( x * atan((x+y)/2) / (1 + x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x) x * atan((x+y)/2) / (1+x*y), 0, 1)$value), 0, 1)
 # TODO
 
 
@@ -507,7 +515,12 @@ pi^3 / 24
 
 ### Atan( TRIG )
 
-### I( atan(tan(x)*tan(y)) )
+### I( atan(y * tan(x)) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(y * tan(x)), 0, pi/2, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+pi^2 / 12;
+
+### I( atan(tan(x) * tan(y)) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	atan(tan(x)*tan(y)), 0, pi/2, rel.tol=1E-12)$value), 0, pi/2, rel.tol=1E-12)
 pi^3/16;
@@ -516,6 +529,13 @@ pi^3/16;
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	atan(tan(x) / tan(y)), 0, pi/2, rel.tol=1E-12)$value), 0, pi/2, rel.tol=1E-12)
 pi^3/16;
+
+### I( x * atan(tan(x)*tan(y)) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * atan(tan(x)*tan(y)), 0, pi/2, rel.tol=1E-13)$value), 0, pi/2, rel.tol=1E-13)
+integrate(\(x) - pi * atan(x) * log(1-x) / x, 0, 1)$value - pi^4 / 128;
+# TODO
+
 
 ### I( atan(sqrt(tan(x) * tan(y))) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
