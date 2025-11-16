@@ -88,6 +88,9 @@ integrate(\(x) log(x) * atan(x) / x, 0, 1)
 integrate(\(x) atan(x) * log(x), 0, 1)
 - pi^2 / 48 + pi/4 - log(2)/2
 
+
+### Type: log(1-x)
+
 ### I( atan(x) * log(1-x) )
 integrate(\(x) atan(x) * log(1-x), 0, 1)
 integrate(\(x) ((1-x)*log(1-x) + x) / (x^2+1) - pi/4, 0, 1)
@@ -128,6 +131,26 @@ integrate(\(x) Re(log(x + 1i)) * log(1-x), 0, 1)
 integrate(\(x) Im(log(x + 1i)) * log(1-x), 0, 1)
 - (5/96 * pi^2 - log(2)^2 / 8 + pi*log(2)/8 - Catalan + pi/4 + log(2)/2);
 
+
+### Type: log(1+x)
+
+### I( atan(x) * log(1+x) )
+integrate(\(x) atan(x) * log(1+x), 0, 1)
+-1/96*pi^2 + 3/8*pi*log(2) - log(2)^2 / 8 + log(2)/2 - pi/4;
+
+### I( atan(x) * log(1+x) / x )
+integrate(\(x) atan(x) * log(1+x) / x, 0, 1)
+integrate(\(x) - log(x) * log(x+1) / (x^2+1), 0, 1)$value +
+	+ (pi/4)^3 - Catalan * log(2)/2;
+# TODO
+
+### I( x * atan(x) * log(1+x) )
+integrate(\(x) x * atan(x) * log(1+x), 0, 1)
+(pi*log(2)/2 - 5*log(2) + 3) / 4;
+
+
+#################
+### Fractions ###
 
 ### I( atan(x) * log(x) / (x^2+1) )
 integrate(\(x) atan(x) * log(x) / (x^2+1), 0, 1)
