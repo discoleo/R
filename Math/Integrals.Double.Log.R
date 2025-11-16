@@ -271,6 +271,35 @@ integrate(\(x) sapply(x, \(y)
 # TODO
 
 
+### I( log(2 - (x+y)) / (1 - x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	log(2-x-y) / (1 - x*y), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+3/4 * pracma::zeta(3);
+
+### I( x * log(2 - (x+y)) / (1 - x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * log(2-x-y) / (1 - x*y), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+- (pi^2/6 - 4*log(2) + 2);
+
+### I( 1/x * log(2 - (x+y)) / (1 - x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	log(2-x-y) / (1 - x*y) / x - log(2-y)/x, 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+- (pi^2 / 6 - log(2)^2 - 2*log(2) + 2);
+
+
+### I( log(2 - (x+y)) / (1 + x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	log(2-x-y) / (1 + x*y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+# TODO
+
+### I( x * log(2 - (x+y)) / (1 + x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * log(2-x-y) / (1 + x*y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+# TODO
+
+
+####################
+
 ### Div: (x^2 + y^2)
 
 ### I( (x+y)*log(x+y) / (x^2 + y^2) )
