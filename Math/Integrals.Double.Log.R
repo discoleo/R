@@ -152,6 +152,12 @@ pi^2 / 6 - 2;
 ####################
 ### Fractions of Log
 
+### I( log(2 - (x+y)) / x )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	log(2-x-y) / x - log(2-y)/x, 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+log(2)^2 - 2*log(2);
+
+
 ### I( log(1 + x + y) / (x+y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) log(1+x+y) / (x+y), 0, 1)$value), 0, 1)
 # Note:
@@ -317,6 +323,28 @@ integrate(\(x) 6 * atan(x) * log(1-x) / x, 0, 1)$value +
 	+ Catalan * pi/4 + Catalan * log(2);
 
 # TODO
+
+
+### Div: x^2*y^2 + 1
+
+### I( log(x+y) / (x^2*y^2 + 1) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	log(x+y) / (x^2*y^2 + 1), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+integrate(\(x) - log(x) * log(x+1) / (x^2+1), 0, 1)$value +
+	- Catalan * log(2) / 2;
+# TODO
+
+
+### I( x*y * log(x+y) / (x^2*y^2 + 1) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x*y * log(x+y) / (x^2*y^2 + 1), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+- 9/16 * pracma::zeta(3) + pi * Catalan / 4;
+
+
+### I( x^2 * log(x+y) / (x^2*y^2 + 1) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^2 * log(x+y) / (x^2*y^2 + 1), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+(pi^2/24 + pi*log(2)/2 - pi/2 - 4*log(2) + 3) / 4;
 
 
 ### Pow = 2 (inside Log)
