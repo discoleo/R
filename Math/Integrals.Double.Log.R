@@ -245,6 +245,17 @@ integrate(\(x) sapply(x, \(y) integrate(\(x) 2 * log(1-x*y) / (x+y),
 8*Catalan - 4*log(2) - 4;
 
 
+### I( x/y * log(x+y) / (1 - x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x/y * log(x+y) / (1-x*y) - x/y * log(x), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+pi^2 / 8 + log(2) - 1;
+
+### I( x/y * log(x+y) / (1 + x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x/y * log(x+y) / (1+x*y) - x/y * log(x), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+pi^2 / 12 - log(2) + 1/2;
+
+
 ### I( log(abs(x+y-1)) / (1 - x*y) )
 # Note: numerical issues; very slow with mpfr;
 FUN = \(x, y) log(abs(x+y-1)) / (1-x*y);
