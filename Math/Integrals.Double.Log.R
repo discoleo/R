@@ -286,6 +286,11 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	log(2-x-y) / (1 - x*y) / x - log(2-y)/x, 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 - (pi^2 / 6 - log(2)^2 - 2*log(2) + 2);
 
+### I( y/x * log(2 - (x+y)) / (1 - x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	log(2-x-y) / (1 - x*y) * y/x - log(2-y)*y/x, 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-13)
+log(2)^2 + log(2) - 5/2;
+
 
 ### I( log(2 - (x+y)) / (1 + x*y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
