@@ -152,6 +152,11 @@ integrate(\(x) x * atan(x) * log(1+x), 0, 1)
 #################
 ### Fractions ###
 
+### I( atan(x) * log(x) / (x+1) )
+integrate(\(x) atan(x) * log(x) / (x+1), 0, 1, rel.tol=1E-13)
+- (pi/4)^3 + Catalan * log(2)/2;
+
+
 ### I( atan(x) * log(x) / (x^2+1) )
 integrate(\(x) atan(x) * log(x) / (x^2+1), 0, 1)
 7/16 * pracma::zeta(3) - pi * Catalan / 4
