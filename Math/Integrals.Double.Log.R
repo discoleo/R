@@ -157,6 +157,11 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	log(2-x-y) / x - log(2-y)/x, 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 log(2)^2 - 2*log(2);
 
+### I( y/x * log(2 - (x+y)) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	log(2-x-y) * y/x - log(2-y) * y/x, 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+pi^2 / 12 - 3*log(2) + log(2)^2 + 1/4;
+
 
 ### I( log(1 + x + y) / (x+y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) log(1+x+y) / (x+y), 0, 1)$value), 0, 1)
@@ -274,7 +279,7 @@ integrate(\(x) sapply(x, \(y)
 ### I( log(2 - (x+y)) / (1 - x*y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	log(2-x-y) / (1 - x*y), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
-3/4 * pracma::zeta(3);
+-3/4 * pracma::zeta(3);
 
 ### I( x * log(2 - (x+y)) / (1 - x*y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
@@ -302,6 +307,12 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x * log(2-x-y) / (1 + x*y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 # TODO
 
+### I( 1/x * log(2 - (x+y)) / (1 + x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	log(2-x-y) / (1 + x*y) / x - log(2-y)/x, 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+0.08828125056477 + log(2)^2 - 2*log(2);
+# TODO: see I( x * log(2 - (x+y)) / (1 + x*y) );
+
 
 ####################
 
@@ -320,8 +331,8 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 
 
 ### I( log(1 + x) / (x^2 + y^2) )
-integrate(\(x) sapply(x, \(y)
-	integrate(\(x) log(1 + x) / (x^2 + y^2), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	log(1 + x) / (x^2 + y^2), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 # I( log(1 + x*y) / (x^2 + y^2) ) + pi^3 / 48;
 integrate(\(x) - 3*atan(x) * log(1-x) / x, 0, 1)$value - 5/96 * pi^3;
 
