@@ -213,7 +213,17 @@ integrate(\(x) sapply(x, \(y)
 ### I( log(x) / (1 + x*y) )
 integrate(\(x) sapply(x, \(y)
 	integrate(\(x) log(x) / (1+x*y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
--3/4 * pracma::zeta(3)
+-3/4 * pracma::zeta(3);
+
+### I( log(x) / (1 - x*y)^2 )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	log(x) / (1-x*y)^2, 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+- pi^2 / 6;
+
+### I( log(x) / (1 + x*y)^2 )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	log(x) / (1+x*y)^2, 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+- pi^2 / 12;
 
 
 ### I( log(x+y) / (1 - x*y) )
@@ -221,16 +231,25 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	log(x+y) / (1 - x*y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-12)
 1/8 * pracma::zeta(3);
 
-
 # I( log((x+y)/2) / (1 - x*y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) log((x+y)/2) / (1 - x*y), 0, 1)$value), 0, 1)
 1/8 * pracma::zeta(3) - log(2) * pi^2 / 6;
+
+### I( log(x+y) / (1 - x*y)^2 )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	log((x+y)/2) / (1 - x*y)^2, 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+log(2)^2/2 - pi^2/6;
 
 
 ### I( log(x+y) / (1 + x*y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	log(x+y) / (1 + x*y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
-- pracma::zeta(3) / 8
+- pracma::zeta(3) / 8;
+
+### I( log(x+y) / (1 + x*y)^2 )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	log(x+y) / (1 + x*y)^2, 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+- (pi^2 / 24 - log(2)^2 / 2);
 
 
 ### I( (x+y) * log(x+y) / (1 + x*y) )
@@ -311,6 +330,12 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	log(2-x-y) / (1 + x*y) / x - log(2-y)/x, 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 0.08828125056477 + log(2)^2 - 2*log(2);
+# TODO: see I( x * log(2 - (x+y)) / (1 + x*y) );
+
+### I( x * log(2-x-y) / (1 + x*y)^2 )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * log(2-x-y) / (1+x*y)^2, 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+0.08828125056477/4 + (pi^2/6 - 2*log(2)^2 + 4*log(2) - 4) / 8;
 # TODO: see I( x * log(2 - (x+y)) / (1 + x*y) );
 
 
