@@ -9,7 +9,7 @@
 ## v.0.1a
 
 ### Double Integrals
-### Type: Log
+### Type: Fractions
 
 ### Examples:
 # I( 1 / (1 + x^3 + y^3) )
@@ -25,6 +25,26 @@ dzeta2  = - 0.937548254316;
 
 #####################
 #####################
+
+### Basic: on [1, Inf]
+
+### I( 1 / (x^3 + y^3) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	1 / (x^3 + y^3), 1, Inf, rel.tol=1E-13)$value), 1, Inf, rel.tol=1E-13)
+(digamma(5/6) - digamma(1/3)) / 3;
+
+### I( 1 / (x^4 + y^4) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	1 / (x^4 + y^4), 1, Inf, rel.tol=1E-13)$value), 1, Inf, rel.tol=1E-13)
+(digamma(7/8) - digamma(3/8)) / 8;
+
+### I( 1 / (x^n + y^n) )
+n = 7.25; # sqrt(...) behaves very badly!
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	1 / (x^n + y^n), 1, Inf, rel.tol=1E-13)$value), 1, Inf, rel.tol=1E-13)
+(digamma(1-1/(2*n)) - digamma(1/2-1/(2*n))) / (n*(n-2));
+
+
 
 ### Simple: on [0, Inf]
 
