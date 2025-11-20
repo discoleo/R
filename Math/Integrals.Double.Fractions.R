@@ -71,6 +71,18 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 beta(1/n, (p+1)/n) * beta((p+2)/n, 1-(p+2)/n) / n^2;
 
 
+### I( x^p * y^q / (1 + x^n + y^n) )
+p = 0.35; q = 0.15; n = 5;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^p * y^q / (1 + x^n + y^n), 0, Inf, rel.tol=1E-13)$value), 0, Inf, rel.tol=1E-13)
+# Numeric issues:
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^p * y^q / (1 + x^n + y^n), 0, Inf, rel.tol=1E-10)$value), 0, 1, rel.tol=1E-10)$value +
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^p * y^q / (1 + x^n + y^n), 0, Inf, rel.tol=1E-8)$value), 1, Inf, rel.tol=1E-8)$value;
+beta((p+1)/n, (q+1)/n) * beta((p+q+2)/n, 1-(p+q+2)/n) / n^2;
+
+
 ### I( 1 / (1 + x^3 + y^3) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	1 / (1 + x^3 + y^3), 0, Inf, rel.tol=1E-13)$value), 0, Inf, rel.tol=1E-13)
