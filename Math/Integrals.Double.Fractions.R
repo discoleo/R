@@ -6,14 +6,14 @@
 ## Integrals: Double Integrals
 ## Type: Fractions
 ##
-## v.0.1a
+## v.0.1c
 
 ### Double Integrals
 ### Type: Fractions
 
 ### Examples:
-# I( 1 / (1 + x^3 + y^3) )
-
+# I( x^p * y^q / (1 + x^n + y^n)^k ) on [0, Inf]
+# I( x^p / (x^n + y^n) ) on [1, Inf]
 
 
 ####################
@@ -27,6 +27,18 @@ dzeta2  = - 0.937548254316;
 #####################
 
 ### Basic: on [1, Inf]
+
+
+### I( x^p / (x^n + y^n) )
+n = 5; p = 0.235;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^p / (x^n + y^n), 1, Inf, rel.tol=1E-13)$value), 1, Inf, rel.tol=1E-13)
+# Numerical issues:
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^p / (x^n + y^n), 1, Inf, rel.tol=1E-8)$value), 1, Inf, rel.tol=1E-9)
+(digamma(1-1/(2*n)) - digamma(1/2-1/(2*n)) +
+	+ digamma(1-(p+1)/(2*n)) - digamma(1/2-(p+1)/(2*n))) / (2*n*(n-2-p));
+
 
 ### I( 1 / (x^n + y^n) )
 n = 7.25; # sqrt(...) behaves very badly!
@@ -45,6 +57,8 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	1 / (x^4 + y^4), 1, Inf, rel.tol=1E-13)$value), 1, Inf, rel.tol=1E-13)
 (digamma(7/8) - digamma(3/8)) / 8;
 
+### Coeff: x
+
 ### I( x / (x^4 + y^4) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x / (x^4 + y^4), 1, Inf, rel.tol=1E-13)$value), 1, Inf, rel.tol=1E-13)
@@ -54,8 +68,17 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 n = 5;
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x / (x^n + y^n), 1, Inf, rel.tol=1E-13)$value), 1, Inf, rel.tol=1E-13)
-# TODO
+(digamma(1-1/(2*n)) - digamma(1/2-1/(2*n)) +
+	+ digamma(1-2/(2*n)) - digamma(1/2-2/(2*n))) / (2*n*(n-3));
 
+### I( x*y / (x^5 + y^5) )
+n = 5;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x*y / (x^n + y^n), 1, Inf, rel.tol=1E-13)$value), 1, Inf, rel.tol=1E-13)
+(digamma(1-1/n) - digamma(1/2-1/n)) / (n*(n-4));
+
+
+#######################
 
 ### Simple: on [0, Inf]
 
