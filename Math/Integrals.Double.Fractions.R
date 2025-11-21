@@ -6,14 +6,14 @@
 ## Integrals: Double Integrals
 ## Type: Fractions
 ##
-## v.0.1c
+## v.0.1d
 
 ### Double Integrals
 ### Type: Fractions
 
 ### Examples:
+# I( x^p * y^q / (x^n + y^n) ) on [1, Inf]
 # I( x^p * y^q / (1 + x^n + y^n)^k ) on [0, Inf]
-# I( x^p / (x^n + y^n) ) on [1, Inf]
 
 
 ####################
@@ -27,6 +27,17 @@ dzeta2  = - 0.937548254316;
 #####################
 
 ### Basic: on [1, Inf]
+
+
+### I( x^p * y^q / (x^n + y^n) )
+n = 5; p = 0.235; q = 0.12;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^p * y^q / (x^n + y^n), 1, Inf, rel.tol=1E-13)$value), 1, Inf, rel.tol=1E-13)
+# Numerical issues:
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^p * y^q / (x^n + y^n), 1, Inf, rel.tol=1E-8)$value), 1, Inf, rel.tol=1E-9)
+(digamma(1-(q+1)/(2*n)) - digamma(1/2-(q+1)/(2*n)) +
+	+ digamma(1-(p+1)/(2*n)) - digamma(1/2-(p+1)/(2*n))) / (2*n*(n-2-p-q));
 
 
 ### I( x^p / (x^n + y^n) )
