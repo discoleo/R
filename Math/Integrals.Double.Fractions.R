@@ -160,6 +160,13 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x*y / (1 + x^3 + y^3), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 # TODO
 
+### I( x^3 / (1 + x^3 + y^3) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^3 / (1 + x^3 + y^3), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+1/2 - gamma(1/3)^3 / (2*27);
+
+
+### Pow = 4
 
 ### I( 1 / (1 + x^4 + y^4) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
@@ -167,7 +174,37 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 # TODO
 
 
-### I( 1 / (1 + x^4 + y^4) )
+### I( x / (1 + x^4 + y^4) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x / (1 + x^4 + y^4), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+# TODO
+
+
+### I( x^2 / (1 + x^4 + y^4) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x^2 / (1 + x^4 + y^4), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+# TODO
+
+
+###################
+###################
+
+### on [0, Inf]
+
+### I( (1 - exp(-x^n-y^n)) / (x^n + y^n) )
+n = 3.75; # n = 3.92; # n = 4.75;
+# n = 5;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	(1 - exp(-x^n-y^n)) / (x^n + y^n), 0, Inf, rel.tol=1E-6)$value), 0, Inf, rel.tol=1E-7)
+gamma(1/n)^2 / (n*(n-2));
+
+### I( (1 - exp(-x^3-y^3)) / (x^3 + y^3) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	(1 - exp(-x^3-y^3)) / (x^3 + y^3), 0, Inf, rel.tol=1E-11)$value), 0, Inf, rel.tol=1E-12)
+gamma(1/3)^2 / 3;
+
+### I( (1 - exp(-x^4-y^4)) / (x^4 + y^4) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	(1 - exp(-x^4-y^4)) / (x^4 + y^4), 0, Inf, rel.tol=1E-7)$value), 0, Inf, rel.tol=1E-7)
+gamma(1/4)^2 / 8;
 
