@@ -39,6 +39,28 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 (digamma(1-(q+1)/(2*n)) - digamma(1/2-(q+1)/(2*n)) +
 	+ digamma(1-(p+1)/(2*n)) - digamma(1/2-(p+1)/(2*n))) / (2*n*(n-2-p-q));
 
+# Alternative: I( 1 / (x^p * y^q * (x + y)) )
+p = 1.25; q = 1.55;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	1 / (x^p * y^q * (x + y)), 1, Inf, rel.tol=1E-13)$value), 1, Inf, rel.tol=1E-13)
+# Numerical issues:
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	1 / (x^p * y^q * (x + y)), 1, Inf, rel.tol=1E-6)$value), 1, Inf, rel.tol=1E-6)
+(digamma((q+1)/2) - digamma(q/2) +
+	+ digamma((p+1)/2) - digamma(p/2)) / (2*(p+q-1));
+
+
+# Variant: Pow = 2
+p = 1.45; q = 1.55;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	1 / (x^p * y^q * (x + y)^2), 1, Inf, rel.tol=1E-6)$value), 1, Inf, rel.tol=1E-6)
+pi / sin(pi*q) - (digamma(1-q/2) - digamma((-q+1)/2)) / 2 +
+	- (digamma((q+1)/2) - digamma(q/2) + digamma(1+p/2) - digamma((p+1)/2)) * p / (2*(p+q));
+# Identical:
+pi / sin(pi*p) - (digamma(1-p/2) - digamma((-p+1)/2)) / 2 +
+	- (digamma((p+1)/2) - digamma(p/2) + digamma(1+q/2) - digamma((q+1)/2)) * q / (2*(p+q));
+# TODO: (p * ... + q * ...) / (p+q);
+
 
 ### I( x^p / (x^n + y^n) )
 n = 5; p = 0.235;
