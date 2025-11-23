@@ -150,6 +150,19 @@ pi*log(2)/2 + 2*log(2) - 2*Catalan;
 ###################
 ###################
 
+### Separate ATAN
+
+### I( (atan(x) - atan(y)) / (x-y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	(atan(x) - atan(y)) / (x-y), 0, y, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+- pi*log(2)/8 + Catalan + Re(log(1-1i)^2)/2;
+
+### I( (atan(y) - atan(x)) / (x+y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	(atan(y) - atan(x)) / (x+y), 0, y, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+- log(2)^2 * 3/4 + pi*log(2)/8 - Re(log(1-1i)^2)/2;
+
+
 ### Type: Atan(x/y)
 
 ### I( atan(x/y) / x )
@@ -290,6 +303,13 @@ integrate(\(x) (1 - x^2) * Re(log(x + 1i)) / (x^4 + 1), 0, 1)$value +
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	atan(x*y) * x / (x+y), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 - pi^2 / 96 + pi/8 - log(2)/4;
+
+
+### I( atan(x*y) * abs(x-y) / (x+y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	2 * atan(x*y) * abs(x-y) / (x+y), 0, y, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+-1/96*pi^2 + pi*log(2)/4 - pi/4 + log(2)^2 * 5/8 + log(2)/2 + Re(log(1-1i)^2)/2;
+-1/24*pi^2 + pi*log(2)/4 - pi/4 + log(2)^2 * 3/4 + log(2)/2;
 
 
 ### I( atan(x*y) / (x + y + 1) )
