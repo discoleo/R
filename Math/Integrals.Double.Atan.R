@@ -152,20 +152,38 @@ pi*log(2)/2 + 2*log(2) - 2*Catalan;
 
 ### Separate ATAN
 
-### I( (atan(x) - atan(y)) / (x-y) )
+### I( atan(x) / (x+y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
-	(atan(x) - atan(y)) / (x-y), 0, y, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
-- pi*log(2)/8 + Catalan + Re(log(1-1i)^2)/2;
+	atan(x) / (x+y), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+-1/32 * pi^2 + 3/8*pi*log(2) - log(2)^2 / 8;
 
 ### I( (atan(y) - atan(x)) / (x+y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	(atan(y) - atan(x)) / (x+y), 0, y, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 - log(2)^2 * 3/4 + pi*log(2)/8 - Re(log(1-1i)^2)/2;
 
+### I( (atan(x) - atan(y)) / (x-y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	(atan(x) - atan(y)) / (x-y), 0, y, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+- pi*log(2)/8 + Catalan + Re(log(1-1i)^2)/2;
+
 ### I( (x*atan(x) - y*atan(y)) / (x-y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	(x*atan(x) - y*atan(y)) / (x-y), 0, y, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 Catalan / 2 - pi * log(2) / 8 + pi/8 - log(2)/4;
+# Note: same on [y, 1];
+
+### I( (y*atan(x) - x*atan(y)) / (x-y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	2 * (y*atan(x) - x*atan(y)) / (x-y), 0, y, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+- (pi*log(2)/4 + pi/4 - log(2)/2 - Catalan);
+
+### I( (atan(x)/x - atan(y)/y) / (x-y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	2 * (atan(x)/x - atan(y)/y) / (x-y), 0, y, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+integrate(\(x) 2*x * atan(x) * log(x) / (x^2+1), 0, 1)$value +
+integrate(\(x) log(x) * log(x^2+1) / (x^2+1), 0, 1)$value;
+# TODO
 
 
 ### Type: Atan(x/y)
