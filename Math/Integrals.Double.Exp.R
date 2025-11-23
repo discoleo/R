@@ -301,6 +301,14 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 # [in Russian]
 # - uses property: J0(z)^2 = sum((-1)^n * (2*n)! / (n!)^4 * (z/2)^(2*n));
 
+
+### I( exp(-x^2-y^2) * J0(x*y)^2 )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	exp(-x^2-y^2) * besselJ(x*y, 0)^2, 0, Inf, rel.tol=1E-12)$value), 0, Inf, rel.tol=1E-12)
+beta(3/8, 1/2) / beta(5/8, 1/2) / 2;
+gamma(3/8) * gamma(9/8) / (gamma(5/8) * gamma(7/8)) / 2;
+
+
 ### I( x * exp(-x^2-y^2) * J0(x*y)^2 )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x * exp(-x^2-y^2) * besselJ(x*y, 0)^2, 0, Inf, rel.tol=1E-12)$value), 0, Inf, rel.tol=1E-12)
