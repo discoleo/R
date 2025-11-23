@@ -1597,6 +1597,13 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x*y^2 * ((1-x^n) / (1-y^n) * (1 - x^n*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 gamma(1/4)^2 * gamma(1/2) / 48 - pi^2 / 32;
 
+### I( x^2*y * ((1-x^4) / (1-y^4) * (1 - x^4*y^4))^(1/4) )
+n = 4;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^2*y * ((1-x^n) / (1-y^n) * (1 - x^n*y^n))^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+beta(3/8, 1/2) / beta(5/8, 1/2) * pi * sqrt(2) / 40;
+# TODO: reorder beta;
+
 ### I( x^2*y^3 * ((1-x^4) / (1-y^4) * (1 - x^4*y^4))^(1/4) )
 n = 4;
 integrate(\(x) sapply(x, \(y) integrate(\(x)
@@ -1762,6 +1769,7 @@ n = 5;
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x^n / ((1 - x^n) * (1 - x^n*y^n)^2)^(1/n), 0, 1, rel.tol=1E-11)$value), 0, 1, rel.tol=1E-12)
 beta(1/n, 1 - 3/n) * (n-3) / (n*(n-1)*(n-2));
+beta(1/n, 2 - 3/n) / (n*(n-1));
 
 
 ### Series: 3 Fractions
