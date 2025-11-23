@@ -288,3 +288,35 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	sin(y) * exp(cos(x)*sin(y)), 0, 2*pi, rel.tol=1E-12)$value), 0, pi, rel.tol=1E-12)
 4*pi * sinh(1);
 
+
+#######################
+#######################
+
+### Varia
+
+### I( x*y * exp(-x^2-y^2) * J0(x*y) )
+# & I( x*y * exp(-x^2-y^2) * J0(x*y)^2 )
+# Hmath: Bessel's integral adventure in a square
+# https://www.youtube.com/watch?v=5C69g0Mplcg
+# [in Russian]
+# - uses property: J0(z)^2 = sum((-1)^n * (2*n)! / (n!)^4 * (z/2)^(2*n));
+
+### I( x*y * exp(-x^2-y^2) * J0(x*y)^2 )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x*y * exp(-x^2-y^2) * besselJ(x*y, 0)^2, 0, Inf, rel.tol=1E-12)$value), 0, Inf, rel.tol=1E-12)
+sqrt(2) / 8;
+
+
+### J0(x*y) w. Pow = 1
+
+### I( x * exp(-x^2-y^2) * J0(x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * exp(-x^2-y^2) * besselJ(x*y, 0), 0, Inf, rel.tol=1E-12)$value), 0, Inf, rel.tol=1E-12)
+sqrt(pi) / (2*sqrt(5));
+
+
+### I( x*y * exp(-x^2-y^2) * J0(x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x*y * exp(-x^2-y^2) * besselJ(x*y, 0), 0, Inf, rel.tol=1E-12)$value), 0, Inf, rel.tol=1E-12)
+1/5;
+
