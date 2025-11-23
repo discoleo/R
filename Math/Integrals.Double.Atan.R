@@ -162,6 +162,11 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	(atan(y) - atan(x)) / (x+y), 0, y, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 - log(2)^2 * 3/4 + pi*log(2)/8 - Re(log(1-1i)^2)/2;
 
+### I( (x*atan(x) - y*atan(y)) / (x-y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	(x*atan(x) - y*atan(y)) / (x-y), 0, y, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+Catalan / 2 - pi * log(2) / 8 + pi/8 - log(2)/4;
+
 
 ### Type: Atan(x/y)
 
