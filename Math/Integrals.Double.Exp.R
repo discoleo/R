@@ -335,3 +335,8 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x*y * exp(-x^2-y^2) * besselJ(x*y, 0), 0, Inf, rel.tol=1E-12)$value), 0, Inf, rel.tol=1E-12)
 1/5;
 
+### I( x^2*y * exp(-x^2-y^2) * J0(x*y) 
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x*y^2 * exp(-x^2-y^2) * besselJ(x*y, 0), 0, Inf, rel.tol=1E-12)$value), 0, Inf, rel.tol=1E-12)
+gamma(5/4) * gamma(7/4) / gamma(7/2) * sqrt(2/5);
+
