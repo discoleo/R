@@ -213,6 +213,22 @@ integrate(\(x) log(x) * log(x^2+1) / (x^2+1), 0, 1)$value;
 # TODO
 
 
+### I( (atan(x^2) - atan(y^2)) / (x-y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	(atan(x^2) - atan(y^2)) / (x-y), 0, y, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+# Note: on [0, 1]^2 => 2 * I;
+(pracma::psi(1, 7/8) - pracma::psi(1, 3/8)) / 32 +
+- (pracma::psi(1, 5/8) - pracma::psi(1, 1/8)) / 32 +
+- (pracma::psi(1, 3/4) - pracma::psi(1, 1/4)) / 32 + # Catalan / 2
+	- (digamma(3/4) - digamma(1/4)) * log(2) / 16 + # pi*log(2)
+	- (digamma(7/8) - digamma(3/8))^2 / 64 +
+	+ (digamma(5/8) - digamma(1/8))^2 / 64 +
+	+ (digamma(7/8) - digamma(3/8)) * log(2) / 16 +
+	- (digamma(5/8) - digamma(1/8)) *
+		(digamma(3/4) - digamma(1/4)) / 32 +
+	+ (digamma(1/4) - digamma(3/4)) / sin(pi/4) * pi/8;
+
+
 ### Type: Atan(x/y)
 
 ### I( atan(x/y) / x )
