@@ -504,6 +504,11 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x * atan(x*y) / (1 - x + x*y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 - pi^2 / 48 + pi/4 - log(2)/2;
 
+### I( y * atan(x*y) / (1 - x + x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y * atan(x*y) / (1 - x + x*y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+pi^3 / 32 - pi^2 / 16 - pi/4 + log(2)/2 - Catalan * log(2) + Catalan;
+
 ### I( 1/x * atan(x*y) / (1 - x + x*y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	1/x * atan(x*y) / (1 - x + x*y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
