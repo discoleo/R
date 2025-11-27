@@ -499,6 +499,32 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	atan(x*y) / (1 - x + x*y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 pi^3 / 32 - Catalan * log(2);
 
+### I( x * atan(x*y) / (1 - x + x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * atan(x*y) / (1 - x + x*y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+- pi^2 / 48 + pi/4 - log(2)/2;
+
+### I( 1/x * atan(x*y) / (1 - x + x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	1/x * atan(x*y) / (1 - x + x*y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+pi^2 / 16;
+
+### I( y/x * atan(x*y) / (1 - x + x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y/x * atan(x*y) / (1 - x + x*y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+Catalan/2 + pi^2 / 32 - pi/8;
+
+### I( 1/y * atan(x*y) / (1 - x + x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	1/y * atan(x*y) / (1 - x + x*y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+pi^3 / 32;
+
+### I( x/y * atan(x*y) / (1 - x + x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x/y * atan(x*y) / (1 - x + x*y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+pi^3 / 32 - pi^2 / 48 + pi/2 - log(2) - Catalan;
+
+
 ### I( atan(x*y) / (1 + x - x*y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	atan(x*y) / (1 + x - x*y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
