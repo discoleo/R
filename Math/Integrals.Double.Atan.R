@@ -338,22 +338,52 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	atan((x-y)/(x+y)) / (x-y), 0, y, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 Catalan - pi * log(2) / 8;
 
+### I( atan((x-y)/(x+y)) * x / (x-y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan((x-y)/(x+y)) * x / (x-y), 0, y, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+(2*Catalan - pi * log(2) / 4 - log(2)) / 4;
+
+### I( atan((x-y)/(x+y)) * y / (x-y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan((x-y)/(x+y)) * y / (x-y), 0, y, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+- pi*log(2)/16 + Catalan/2;
+
 
 ###################
 
 ### Type: Atan(X*Y)
 
 
+### I( atan(x*y) / x )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(x*y) / x, 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+- pi/4 + log(2)/2 + Catalan;
+
 ### I( atan(x*y) * y/x )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	atan(x*y) * y/x, 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 Catalan/2 - pi/8 + 1/4;
+
+### I( atan(sqrt(x*y)) / x )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(sqrt(x*y)) / x, 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+2*Catalan - pi/2 + 1;
+
+### I( atan(sqrt(x*y)) * y/x )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(sqrt(x*y)) * y/x, 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+Catalan - 1/6;
 
 
 ### I( (atan(x*y) - atan(y)) / (1-x) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	(atan(x*y) - atan(y)) / (1-x), 0, 1)$value), 0, 1)
 pi^2/32 + pi*log(2)/8 - Catalan - log(2)^2/8;
+
+### I( atan(sqrt(x*y)) / (1-x) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	(atan(sqrt(x*y)) - atan(sqrt(y))) / (1-x), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+pi*log(2)/2 - 2*log(2);
 
 
 ### I( atan(x*y) / (x*(x+y)) )
@@ -463,6 +493,16 @@ integrate(\(x) - atan(x) * log(x) / (1-x), 0, 1, rel.tol=1E-12); # alternative
 integrate(\(x) -2 * log(1-x) * log(x) / (x^2+1), 0, 1)$value +
 	+ pi^3 * 3/64 - Catalan * log(2)/2;
 # TODO
+
+### I( atan(x*y) / (1 - x + x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(x*y) / (1 - x + x*y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+pi^3 / 32 - Catalan * log(2);
+
+### I( atan(x*y) / (1 + x - x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(x*y) / (1 + x - x*y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+# TODO: same as I( log(1 + x - y) / (x^2 + y^2) )
 
 
 ### Prod
