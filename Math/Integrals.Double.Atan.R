@@ -494,6 +494,32 @@ integrate(\(x) -2 * log(1-x) * log(x) / (x^2+1), 0, 1)$value +
 	+ pi^3 * 3/64 - Catalan * log(2)/2;
 # TODO
 
+### I( x * atan(x*y) / (1 - x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * atan(x*y) / (1 - x*y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+pi/4 - log(2)/2;
+
+### I( x^2 * atan(x*y) / (1 - x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^2 * atan(x*y) / (1 - x*y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+- log(2)/4 + pi/4 - 1/4;
+
+### I( 1/x * atan(x*y) / (1 - x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	1/x * atan(x*y) / (1 - x*y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+Catalan;
+
+### I( y/x * atan(x*y) / (1 - x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y/x * atan(x*y) / (1 - x*y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+pi/8 - log(2)/4 + Catalan / 2;
+
+### I( y^2/x * atan(x*y) / (1 - x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y^2/x * atan(x*y) / (1 - x*y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+(2*Catalan + pi - log(2) - 1) / 6;
+
+
 ### I( atan(x*y) / (1 - x + x*y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	atan(x*y) / (1 - x + x*y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
