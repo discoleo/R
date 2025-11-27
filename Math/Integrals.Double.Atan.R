@@ -141,6 +141,24 @@ integrate(\(x) atan(3*tan(x)), 0, pi/4)$value +
 ### Atan( Fraction )
 # Composite-Fraction
 
+### I( atan((y-x)/(x+y)) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan((y-x)/(x+y)), 0, y, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+log(2)/4;
+
+### I( x * atan((y-x)/(x+y)) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * atan((y-x)/(x+y)), 0, y, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+(1 - pi/4) / 6;
+
+### I( y * atan((y-x)/(x+y)) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y * atan((y-x)/(x+y)), 0, y, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+log(2)/6;
+# Note: on [0, 1]^2
+(pi/4 + log(2) - 1) / 6;
+
+
 ### I( atan( (x+y)/(1+x*y) ) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	atan((x+y)/(1+x*y)), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
@@ -220,7 +238,7 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 (pracma::psi(1, 7/8) - pracma::psi(1, 3/8)) / 32 +
 - (pracma::psi(1, 5/8) - pracma::psi(1, 1/8)) / 32 +
 - (pracma::psi(1, 3/4) - pracma::psi(1, 1/4)) / 32 + # Catalan / 2
-	- (digamma(3/4) - digamma(1/4)) * log(2) / 16 + # pi*log(2)
+	- (digamma(3/4) - digamma(1/4)) * log(2) / 16 +  # pi*log(2) / 16
 	- (digamma(7/8) - digamma(3/8))^2 / 64 +
 	+ (digamma(5/8) - digamma(1/8))^2 / 64 +
 	+ (digamma(7/8) - digamma(3/8)) * log(2) / 16 +
@@ -251,6 +269,11 @@ Catalan/3 + (pi/4 - log(2)/2) / 9 + 1/18;
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	(atan(1/y) - atan(x/y)) / (1-x), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 (-11/12*pi^2 - log(2)^2 - pi*log(2) + 8*Catalan + 2*pi + 4*log(2)) / 8;
+
+### I( atan(x/y) * y / (1-x) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	(atan(1/y) - atan(x/y)) * y / (1-x), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+Catalan - pi*log(2)/8 - pi/8 - log(2)/4 + 1/4;
 
 
 ### I( atan(x/y) / (x+y) )
@@ -308,6 +331,12 @@ pi*(1 - log(2)) / 2;
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	atan(x/y)^2 / (x+y), 0, 1, rel.tol=1E-11)$value), 0, 1, rel.tol=1E-12)
 pi^2*log(2) * 3/16 + pi*Catalan/2 - 21/16*pracma::zeta(3);
+
+
+### I( atan((x-y)/(x+y)) / (x-y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan((x-y)/(x+y)) / (x-y), 0, y, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+Catalan - pi * log(2) / 8;
 
 
 ###################
