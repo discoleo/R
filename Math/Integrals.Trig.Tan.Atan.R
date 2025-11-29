@@ -154,6 +154,15 @@ integrate(\(x) atan(x*(1-x)) / x, 0, 1)
 # TODO
 
 
+### I( atan((1-x)^2) / x )
+integrate(\(x) atan((1-x)^2) / x - pi/4/x, 0, 1)
+integrate(\(x) 2 * x * log(1-x) / (x^4+1), 0, 1)
+(pracma::psi(1, 3/4) - pracma::psi(1, 1/4)) / 32 + # Catalan / 2
+	+ (digamma(3/4) - digamma(1/4)) * log(2) / 16 + # pi*log(2) / 16
+	+ (digamma(7/8) - digamma(3/8))^2 / 64 +
+	- (digamma(5/8) - digamma(1/8))^2 / 64;
+
+
 ######################
 
 ### I( atan(x)^2 / x )
@@ -194,6 +203,18 @@ ic = 1:3; id = 1:2; cs = cos(2*pi*ic/6); sn = sin(2*pi*id/6);
 ### I( atan(x)^2 / (1-x) )
 integrate(\(x) atan(1-x)^2 / x - pi^2/16/x, 0, 1)
 - 7/32 * pracma::zeta(3) + pi^2 * log(2) / 32 - Catalan * pi / 4;
+
+
+### Radicals
+
+### I( atan(x) / sqrt(1-x^2) )
+integrate(\(x) atan(x) / sqrt(1-x^2), 0, 1, rel.tol=1E-12)
+(digamma(7/8) - digamma(3/8)) * (digamma(5/8) - digamma(1/8)) / 16;
+
+### I( atan(x) * sqrt(1-x^2) )
+integrate(\(x) atan(x) * sqrt(1-x^2), 0, 1, rel.tol=1E-12)
+(digamma(7/8) - digamma(3/8)) * (digamma(5/8) - digamma(1/8)) / 32 +
+	- sqrt(2)/2 * log(sqrt(2)+1) + 1/2;
 
 
 #################
