@@ -174,7 +174,7 @@ integrate(\(x) 2 * Im(sqrt(x^2-1i) * atan(1/sqrt(x^2-1i))), 0, 1)$value +
 	+ atan(2) - Im(sqrt(1+1i) * atan(1/sqrt(1+1i)) - sqrt(1-1i)*atan(1/sqrt(1-1i)));
 integrate(\(x) 2 * Im(sqrt(x^2+1i) * atan(sqrt(x^2+1i))), 0, 1)$value +
 	+ atan(2) - Im(sqrt(1+1i) * atan(1/sqrt(1+1i)) - sqrt(1-1i)*atan(1/sqrt(1-1i))) +
-	- pi/2 * Re(1/sqrt(1i) / cos(x) - log((1-sin(atan(sqrt(1i))))/cos(atan(sqrt(1i)))));
+	- pi/2 * Re(1/sqrt(1i) / cos(atan(sqrt(-1i))) - log((1-sin(atan(sqrt(1i))))/cos(atan(sqrt(1i)))));
 # TODO
 
 
