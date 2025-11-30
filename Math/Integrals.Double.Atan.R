@@ -159,6 +159,13 @@ log(2)/6;
 (pi/4 + log(2) - 1) / 6;
 
 
+### I( atan((y-x)/(1+x+y)) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan((y-x)/(1+x+y)), 0, y, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+-3/8 * (digamma(1/3) + digamma(2/3) + 2*Euler) - 3/8*pi - log(5)/2 + 3/4*atan(2);
+9/8 * log(3) - 3/8*pi - log(5)/2 + 3/4*atan(2);
+
+
 ### I( atan( (x+y)/(1+x*y) ) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	atan((x+y)/(1+x*y)), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
