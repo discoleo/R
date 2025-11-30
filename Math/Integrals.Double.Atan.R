@@ -406,10 +406,27 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 pi*(1 - log(2)) / 2;
 
 
+### Pow = 2
+
+### Base: I( atan(x/y)^2 )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(x/y)^2, 0, 1, rel.tol=1E-11)$value), 0, 1, rel.tol=1E-12)
+(pi*log(2) + pi^2/8 - 2*Catalan) / 2;
+
+### I( atan(x/y)^2 / x )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(x/y)^2 / x, 0, 1, rel.tol=1E-11)$value), 0, 1, rel.tol=1E-12)
+pi*Catalan / 2 - Catalan + pi^2 / 16 + 3/4 * pi*log(2) - 7/8 * pracma::zeta(3);
+
 ### I( atan(x/y)^2 / (x+y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	atan(x/y)^2 / (x+y), 0, 1, rel.tol=1E-11)$value), 0, 1, rel.tol=1E-12)
-pi^2*log(2) * 3/16 + pi*Catalan/2 - 21/16*pracma::zeta(3);
+pi^2 * log(2) * 3/16 + pi*Catalan/2 - 21/16*pracma::zeta(3);
+
+### I( x * atan(x/y)^2 / (x+y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * atan(x/y)^2 / (x+y), 0, 1, rel.tol=1E-11)$value), 0, 1, rel.tol=1E-12)
+pi^2 * log(2) / 16 + ((pi/4)^2 + pi*log(2)/4 - Catalan) / 2;
 
 
 ### ATAN( OTHER )
