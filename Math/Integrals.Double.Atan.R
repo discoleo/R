@@ -164,6 +164,21 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	atan((x+y)/(1+x*y)), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 pi*log(2)/2 + 2*log(2) - 2*Catalan;
 
+### I( x * atan((x+y)/(1+x*y)) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * atan((x+y)/(1+x*y)), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+- pi^2 / 12 + pi/8 - log(2)^2/2 + 3/4 * log(2) + 1/2;
+
+### I( 1/x * atan((x+y)/(1+x*y)) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan((x+y)/(1+x*y)) / x - atan(y) / x, 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+pi^2 / 48 + log(2)^2 / 2;
+
+### I( y/x * atan((x+y)/(1+x*y)) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan((x+y)/(1+x*y)) * y/x - atan(y) * y/x, 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+- pi/4 + 2*log(2) - Catalan/2;
+
 
 ### ATAN( OTHER )
 
@@ -175,6 +190,9 @@ integrate(\(x) 2 * Im(sqrt(x^2-1i) * atan(1/sqrt(x^2-1i))), 0, 1)$value +
 integrate(\(x) 2 * Im(sqrt(x^2+1i) * atan(sqrt(x^2+1i))), 0, 1)$value +
 	+ atan(2) - Im(sqrt(1+1i) * atan(1/sqrt(1+1i)) - sqrt(1-1i)*atan(1/sqrt(1-1i))) +
 	- pi/2 * Re(1/sqrt(1i) / cos(atan(sqrt(-1i))) - log((1-sin(atan(sqrt(1i))))/cos(atan(sqrt(1i)))));
+integrate(\(x) 2 * Im(sqrt(x^2+1i) * atan(sqrt(x^2+1i))), 0, 1)$value +
+	+ atan(2) - Im(sqrt(1+1i) * atan(1/sqrt(1+1i)) - sqrt(1-1i)*atan(1/sqrt(1-1i))) +
+	- pi/2 * Re(sqrt(-1-1i) - log((1-1/sqrt(1-1i))*sqrt(1+1i)));
 # TODO
 
 
