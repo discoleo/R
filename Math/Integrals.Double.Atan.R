@@ -278,6 +278,11 @@ integrate(\(x) 2*x * atan(x) * log(x) / (x^2+1), 0, 1)$value +
 integrate(\(x) log(x) * log(x^2+1) / (x^2+1), 0, 1)$value;
 # TODO
 
+### I( (atan(x)*y/x - atan(y)*x/y) / (x-y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	-2 * (atan(x)*y/x - atan(y)*x/y) / (x-y), 0, y, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+3/48 * pi^2 + pi*log(2)/4 - log(2)^2 / 4;
+
 
 ### I( (atan(x^2) - atan(y^2)) / (x-y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
@@ -379,6 +384,8 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 # TODO
 
 
+### Div: (x+y)^2
+
 ### I( atan(x/y) * x / (x+y)^2 )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	atan(x/y) * x / (x+y)^2, 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-13)
@@ -427,6 +434,13 @@ pi^2 * log(2) * 3/16 + pi*Catalan/2 - 21/16*pracma::zeta(3);
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x * atan(x/y)^2 / (x+y), 0, 1, rel.tol=1E-11)$value), 0, 1, rel.tol=1E-12)
 pi^2 * log(2) / 16 + ((pi/4)^2 + pi*log(2)/4 - Catalan) / 2;
+
+### I( y * atan(x/y)^2 / (x+y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y * atan(x/y)^2 / (x+y), 0, 1, rel.tol=1E-11)$value), 0, 1, rel.tol=1E-12)
+(pi*log(2) + pi^2/8 - 2*Catalan) / 2 +
+	- (pi^2 * log(2) / 16 + ((pi/4)^2 + pi*log(2)/4 - Catalan) / 2);
+- (pi^2 * log(2) / 16 - ((pi/4)^2 + 3/4 * pi*log(2) - Catalan) / 2);
 
 
 ### ATAN( OTHER )
@@ -548,7 +562,8 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 ### I( atan(x*y) * y / x / (x + y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	atan(x*y) * y / x / (x + y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
-# TODO
+Catalan - pi/4 + log(2)/2 - 0.1936317534825;
+# TODO: I( atan(x*y) / (x+y) )
 
 ### I( atan(x*y) * y^2 / x / (x + y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
@@ -586,6 +601,12 @@ integrate(\(x) sapply(x, \(y)
 	integrate(\(x) 2*atan(x*(y-x)) / (2 - y), 0, 1)$value +
 	integrate(\(x) - atan(x*(y-x)) / (2 - y), 0, y)$value ), 1, 2)$value;
 # TODO
+
+### I( x * atan(x*y) / (2 - x - y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * atan(x*y) / (2 - x - y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+0.5238047434009 + pi^2 / 96 - pi/8 + log(2)/4;
+# TODO: I( atan(x*y) / (2 - x - y) )
 
 
 ### Div: includes x*y
