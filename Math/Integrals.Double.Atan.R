@@ -260,6 +260,21 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	(atan(x) - atan(y)) / (x-y), 0, y, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 - pi*log(2)/8 + Catalan + Re(log(1-1i)^2)/2;
 
+### I( x * (atan(x) - atan(y)) / (x-y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * (atan(x) - atan(y)) / (x-y), 0, y, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+Catalan / 2 - pi*log(2)/8 - pi/8 - log(2)/4 + 1/2;
+
+### I( x*y * (atan(x) - atan(y)) / (x-y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x*y * (atan(x) - atan(y)) / (x-y), 0, y, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+(Catalan + pi^2/32 - pi*log(2)/8 - pi/4 - log(2)^2/8 - log(2)/2 + 1/2) / 3;
+
+### I( x^2 * (atan(x) - atan(y)) / (x-y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^2 * (atan(x) - atan(y)) / (x-y), 0, y, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+(Catalan + pi^2/32 - pi*log(2)/8 + pi/8 - log(2)^2/8 - 5/4 * log(2) - 1/4) / 3;
+
 ### I( (x*atan(x) - y*atan(y)) / (x-y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	(x*atan(x) - y*atan(y)) / (x-y), 0, y, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
@@ -270,6 +285,11 @@ Catalan / 2 - pi * log(2) / 8 + pi/8 - log(2)/4;
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	2 * (y*atan(x) - x*atan(y)) / (x-y), 0, y, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 - (pi*log(2)/4 + pi/4 - log(2)/2 - Catalan);
+
+### I( (x^2*atan(x) - y^2*atan(y)) / (x-y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	(x^2*atan(x) - y^2*atan(y)) / (x-y), 0, y, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+(Catalan + pi^2/32 - pi*log(2)/8 + pi/2 - log(2)^2/8 - log(2)/2 - 1) / 3;
 
 ### I( (atan(x)/x - atan(y)/y) / (x-y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
@@ -298,6 +318,12 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	- (digamma(5/8) - digamma(1/8)) *
 		(digamma(3/4) - digamma(1/4)) / 32 +
 	+ (digamma(1/4) - digamma(3/4)) / sin(pi/4) * pi/8;
+
+
+### I( (atan(x/y) - atan(y/x)) / (x-y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	(atan(x/y) - atan(y/x)) / (x-y), 0, y, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+- pi*log(2)/4 + 2*Catalan;
 
 
 ### Type: Atan(x/y)
