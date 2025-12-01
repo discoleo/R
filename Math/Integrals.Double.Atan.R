@@ -255,6 +255,10 @@ integrate(\(x) 3 * log(1-x) * log(x) / (x^2+1), 0, 1)$value +
 
 ### Div: (x-y)
 
+# Note:
+# - many integrals are computed over [0,1] x [0,y]
+#   for improved numerical stability;
+
 ### I( (atan(x) - atan(y)) / (x-y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	(atan(x) - atan(y)) / (x-y), 0, y, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
@@ -290,6 +294,17 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	(x^2*atan(x) - y^2*atan(y)) / (x-y), 0, y, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 (Catalan + pi^2/32 - pi*log(2)/8 + pi/2 - log(2)^2/8 - log(2)/2 - 1) / 3;
+
+### I( x * (x*atan(x) - y*atan(y)) / (x-y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * (x*atan(x) - y*atan(y)) / (x-y), 0, y, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+(2*Catalan + pi^2/16 - pi*log(2)/4 + pi/2 - log(2)^2/4 - 2*log(2) - 1) / 6;
+
+### I( x * (y*atan(x) - x*atan(y)) / (x-y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * (y*atan(x) - x*atan(y)) / (x-y), 0, y, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+(4*Catalan + pi^2/8 - pi*log(2)/2 - 3/2 * pi - log(2)^2/2 - 3*log(2) + 3) / 12;
+
 
 ### I( (atan(x)/x - atan(y)/y) / (x-y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
