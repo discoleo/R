@@ -340,6 +340,27 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	+ (digamma(1/4) - digamma(3/4)) / sin(pi/4) * pi/8;
 
 
+### I( atan((x-y)/x) / (x-y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan((x-y)/x) / (x-y), 0, y, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+pi*log(2)/4 + Catalan;
+
+### I( x * atan((x-y)/x) / (x-y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * atan((x-y)/x) / (x-y), 0, y, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+Catalan / 2 + pi*log(2)/8 - pi/8;
+
+### I( y * atan((x-y)/x) / (x-y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y * atan((x-y)/x) / (x-y), 0, y, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+pi*log(2)/8 + Catalan/2;
+
+### I( x*y * atan((x-y)/x) / (x-y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x*y * atan((x-y)/x) / (x-y), 0, y, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+(Catalan + pi*log(2)/4 - pi/4) / 3;
+
+
 ### I( atan((x-y)/(x+y)) / (x-y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	atan((x-y)/(x+y)) / (x-y), 0, y, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
