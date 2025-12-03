@@ -340,13 +340,6 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	+ (digamma(1/4) - digamma(3/4)) / sin(pi/4) * pi/8;
 
 
-### I( (atan(x/y) - atan(y/x)) / (x-y) )
-# I( (2*atan(x/y) - pi/2)  / (x-y) )
-integrate(\(x) sapply(x, \(y) integrate(\(x)
-	(atan(x/y) - atan(y/x)) / (x-y), 0, y, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
-- pi*log(2)/4 + 2*Catalan;
-
-
 ### I( atan((x-y)/(x+y)) / (x-y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	atan((x-y)/(x+y)) / (x-y), 0, y, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
@@ -409,6 +402,18 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	(atan(1/y) - atan(x/y)) * y / (1-x), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 Catalan - pi*log(2)/8 - pi/8 - log(2)/4 + 1/4;
+
+### I( atan(x/y) / x / (1-x) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	(atan(x/y) / x - atan(1/y)) / (1-x), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+pi^2 * 11/96 + pi*log(2)/8 + log(2)^2 / 8;
+
+
+### I( (atan(x/y) - atan(y/x)) / (x-y) )
+# I( (2*atan(x/y) - pi/2)  / (x-y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	(atan(x/y) - atan(y/x)) / (x-y), 0, y, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+- pi*log(2)/4 + 2*Catalan;
 
 
 ### I( atan(x/y) / (x+y) )
