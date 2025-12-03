@@ -347,6 +347,24 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 - pi*log(2)/4 + 2*Catalan;
 
 
+### I( atan((x-y)/(x+y)) / (x-y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan((x-y)/(x+y)) / (x-y), 0, y, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+- pi*log(2)/8 + Catalan;
+
+### I( x * atan((x-y)/(x+y)) / (x-y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * atan((x-y)/(x+y)) / (x-y), 0, y, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+(2*Catalan - pi * log(2) / 4 - log(2)) / 4;
+
+### I( x*y * atan((x-y)/(x+y)) / (x-y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x*y * atan((x-y)/(x+y)) / (x-y), 0, y, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+(2*Catalan - pi * log(2) / 4 - log(2)) / 6;
+
+
+### Div: (x^2 - y^2)
+
 ### I( x * (atan(x) - atan(y)) / (x^2-y^2) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	2 * x * (atan(x) - atan(y)) / (x^2-y^2), 0, y, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
