@@ -343,7 +343,7 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 ### I( (atan(x/(1-x)) - atan(y/(1-y))) / (x-y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	(atan(x/(1-x)) - atan(y/(1-y))) / (x-y), 0, y, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
-- pi^2 / 16 + pi/4 * log(2) + Catalan;
+Catalan - pi^2 / 16 + pi/4 * log(2);
 
 ### I( x * (atan(x/(1-x)) - atan(y/(1-y))) / (x-y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
@@ -354,6 +354,26 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x*y * (atan(x/(1-x)) - atan(y/(1-y))) / (x-y), 0, y, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 (2*Catalan - pi^2 / 16 + pi*log(2)/2 - pi/2 + 1/2) / 6;
+
+### I( (x * atan(x/(1-x)) - y * atan(y/(1-y))) / (x-y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	(x * atan(x/(1-x)) - y * atan(y/(1-y))) / (x-y), 0, y, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+(Catalan - pi^2 / 16 + pi*log(2)/4 + pi/4) / 2;
+
+### I( (y * atan(x/(1-x)) - x * atan(y/(1-y))) / (x-y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	(y * atan(x/(1-x)) - x * atan(y/(1-y))) / (x-y), 0, y, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+(Catalan - pi^2 / 16 + pi*log(2)/4 - pi/4) / 2;
+
+### I( (atan(x/(1-x)) / x - atan(y/(1-y)) / y) / (x-y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	(atan(x/(1-x)) / x - atan(y/(1-y)) / y) / (x-y), 0, y, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+pi^3 / 96;
+
+### I( (atan(x/(1-x)) * y/x - atan(y/(1-y)) * x/y) / (x-y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	(atan(x/(1-x)) * y/x - atan(y/(1-y)) * x/y) / (x-y), 0, y, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+- pi^2 / 16;
 
 
 ### I( atan((x-y)/x) / (x-y) )
