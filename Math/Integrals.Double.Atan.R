@@ -408,13 +408,13 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	(atan(x/(1-y)) * y/x - atan(y/(1-x)) * x/y) / (x-y), 0, y, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 - (Catalan + pi/4 + log(2)/2);
 
-### I( (atan(x/(1-y)) * y/x - atan(y/(1-x)) * x/y) / (x-y) )
+### I( x * (atan(x/(1-y)) * y/x - atan(y/(1-x)) * x/y) / (x-y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	(atan(x/(1-y)) * y - atan(y/(1-x)) * x^2/y) / (x-y), 0, y, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 - (2*Catalan - pi*log(2)/2 + pi/2 + 2*log(2) - 1) / 4;
 
 
-### ATAN( (x-y)/x )
+### Series: ATAN( (x-y)/x ) / (x - y)
 
 ### I( atan((x-y)/x) / (x-y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
