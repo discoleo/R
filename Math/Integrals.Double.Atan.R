@@ -867,6 +867,8 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 (2*Catalan + pi - log(2) - 1) / 6;
 
 
+### Div: (1 - x + x*y)
+
 ### I( atan(x*y) / (1 - x + x*y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	atan(x*y) / (1 - x + x*y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
@@ -881,6 +883,11 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	y * atan(x*y) / (1 - x + x*y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 pi^3 / 32 - pi^2 / 16 - pi/4 + log(2)/2 - Catalan * log(2) + Catalan;
+
+### I( x*y * atan(x*y) / (1 - x + x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x*y * atan(x*y) / (1 - x + x*y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+- pi^3 / 32 - pi^2 / 24 + pi/2 - log(2) + Catalan * log(2);
 
 ### I( 1/x * atan(x*y) / (1 - x + x*y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
@@ -930,6 +937,11 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	atan(x*y) * log(1-x), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 -23/64 * pracma::zeta(3) + Catalan * pi / 4 - Catalan +
 	+ 5/96*pi^2 + pi*log(2)/8 - log(2)^2 / 8 + log(2)/2 - pi/4;
+
+### I( atan(x*y) * log(1+x) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(x*y) * log(1+x), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+33/64 * pracma::zeta(3) - pi^2 / 96 - (2*pi*Catalan - 3*pi*log(2) + 2*pi + log(2)^2 - 4*log(2)) / 8;
 
 ### I( atan(x*y) * atan(x) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
