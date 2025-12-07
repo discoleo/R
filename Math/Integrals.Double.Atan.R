@@ -951,7 +951,7 @@ integrate(\(x) - log(1-x) * log(x) / (x^2+1), 0, 1)$value +
 # TODO
 
 
-### Div
+### Div: ATAN( x/y )
 
 ### I( atan(x/y) / (1 + x*y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x/y) / (1+x*y), 0, 1)$value), 0, 1)
@@ -981,6 +981,16 @@ Catalan - pi*log(2)/8;
 
 
 ### Div: Higher
+
+### I( x * atan(x) / (x^2+y^2) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * atan(x) / (x^2+y^2), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+pi^2 / 16 - pi*log(2)/2 + Catalan;
+
+### I( y * atan(x) / (x^2+y^2) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y * atan(x) / (x^2+y^2), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+(pi^2 / 12 + pi*log(2) - log(2)^2) / 8;
 
 ### I( x*y * atan(x) / (x^2+y^2) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
