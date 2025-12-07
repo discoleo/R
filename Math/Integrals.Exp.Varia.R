@@ -63,3 +63,33 @@ integrate(\(x) Re(pracma::zeta(3 + 2*exp(1i*x))), 0, 2*pi, rel.tol=1E-9)
 integrate(\(x) Re(pracma::zeta(3 + 3*exp(1i*x))), 0, 2*pi, rel.tol=1E-9)
 2*pi*pracma::zeta(3) - pi
 
+
+####################
+####################
+
+### I( Ei(-x^2) * exp(-x^2) )
+# Hmath: integral with integral exponential function
+# [in Russian]
+# Ei => Integral form => Double I() => polar coordinates;
+
+### I( Ei(-x^2) * exp(-x^2) )
+integrate(\(x) Re(pracma::expint(x^2)) * exp(-x^2), 0, Inf, rel.tol=1E-13)
+log(1+sqrt(2)) * sqrt(pi);
+
+### I( Ei(-x) * exp(-x) )
+integrate(\(x) Re(pracma::expint(x)) * exp(-x), 0, Inf, rel.tol=1E-13)
+log(2);
+
+### I( Ei(-x^3) * exp(-x^3) )
+integrate(\(x) Re(pracma::expint(x^3)) * exp(-x^3), 0, Inf, rel.tol=1E-13)
+gamma(1/3) * integrate(\(x) 1 / (x^3 + 1)^(1/3), 0, 1, rel.tol=1E-13)$value;
+# see file: Integrals.Fractions.Unity.Radicals.R;
+gamma(1/3) * (
+	- (digamma(1/3) + Euler)/3 + 1/2*log((2^(2/3) + 2^(1/3) + 1)/3) +
+	- 1/sqrt(3) * atan(1/sqrt(3) * (2^(1/3) - 1) / (2^(1/3) + 1)));
+
+### I( Ei(-x^4) * exp(-x^4) )
+integrate(\(x) Re(pracma::expint(x^4)) * exp(-x^4), 0, Inf, rel.tol=1E-13)
+gamma(1/4) * integrate(\(x) 1 / (x^4 + 1)^(1/4), 0, 1, rel.tol=1E-13)$value;
+# TODO
+
