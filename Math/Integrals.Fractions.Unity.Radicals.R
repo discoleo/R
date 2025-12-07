@@ -216,6 +216,51 @@ integrate(\(x) 1 / (2*sin(x)*cos(x) + 2*cos(x)^2 - 1) / cos(x)^2, 0, pi/4)
 #   (for n, p = integers) is described in file:
 #   Integrals.Fractions.Unity.R;
 
+
+############
+### EVEN ###
+
+###########
+### Pow = 4
+
+### I( 1 / (x^4 + 1)^(1/4) )
+integrate(\(x) 1 / (x^4 + 1)^(1/4), 0, 1, rel.tol=1E-13)
+integrate(\(x) (1-x) / (1-x^4), 0, 1/2^(1/4))$value + log(sqrt(2) + 1) / 2;
+log(1+1/2^(1/4))/2 + log(1+1/2^(1/2))/4 + log(2)/4 + atan(1/2^(1/4))/2;
+log(1+2^(1/4))/2 + log(1+2^(1/2))/4 + atan(1/2^(1/4))/2;
+
+
+###########
+### Pow = 8
+
+### I( 1 / (x^8 + 1)^(1/8) )
+integrate(\(x) 1 / (x^8 + 1)^(1/8), 0, 1, rel.tol=1E-13)
+integrate(\(x) (1-x) / (1-x^8), 0, 1/2^(1/8))$value +
+	+ log(1+2^(1/4))/4 + log(1+2^(1/2))/8 + atan(1/2^(1/4))/4;
+integrate(\(x) 1/2 / (1+x^4), 0, 1/2^(1/8))$value +
+	+ log(1+2^(1/8)) / 4 + log(1+2^(1/4)) / 8 + log(1+2^(1/2)) / 8 +
+	+ atan(1/2^(1/8)) / 4;
+#
+cs = cos(c(1,3)*pi/4); sn = sin(c(1,3)*pi/4);
+sum(cs * log(1+2*cs*1/2^(1/8) + 1/2^(1/4)) +
+	+ 2*sn * atan((1/2^(1/8) + cs) / sn)) / 8 +
+	+ log(1+2^(1/8)) / 4 + log(1+2^(1/4)) / 8 + log(1+2^(1/2)) / 8 +
+	+ atan(1/2^(1/8)) / 4;
+
+
+# Helper: Fraction Decomposition
+n = 1;
+cs = cos(seq(1, 4*n, by=2)*pi/(4*n));
+sn = sin(seq(1, 4*n, by=2)*pi/(4*n));
+x  = 2^(1/8); # Test
+1/(x^(4*n) + 1) # ==
+sum(2*(cs*x + 1) / (x^2 + 2*cs*x + 1)) / (4*n);
+sum(2*(cs*(x + cs) + sn^2) / (x^2 + 2*cs*x + 1)) / (4*n);
+
+
+###########
+### ODD ###
+
 ### I( 1 / (x^3 + 1)^(1/3) )
 integrate(\(x) 1 / (x^3 + 1)^(1/3), 0, 1)
 - (digamma(1/3) + Euler)/3 + 1/2*log((2^(2/3) + 2^(1/3) + 1)/3) +
@@ -233,7 +278,7 @@ integrate(\(x) (x^3 + 1)^(1/3), 0, 1)
 ### I( x / (x^3 + 1)^(1/3) )
 # - based on simplified formula: see below;
 integrate(\(x) x / (x^3 + 1)^(1/3), 0, 1)
-1/2^(1/3) - gamma(2/3)^2/gamma(4/3) / 6
+1/2^(1/3) - gamma(2/3)^2/gamma(4/3) / 6;
 
 
 ### Pow = 2/3
@@ -241,7 +286,7 @@ integrate(\(x) x / (x^3 + 1)^(1/3), 0, 1)
 ### I( 1 / (x^3 + 1)^(2/3) )
 # - based on simplified formula: see below;
 integrate(\(x) 1 / (x^3 + 1)^(2/3), 0, 1)
-gamma(1/3)^2/gamma(2/3) / 6
+gamma(1/3)^2 / gamma(2/3) / 6;
 
 ### I( (x^3 + 1)^(2/3) )
 integrate(\(x) (x^3 + 1)^(2/3), 0, 1)
@@ -254,6 +299,25 @@ integrate(\(x) x / (x^3 + 1)^(2/3), 0, 1)
 	+ integrate(\(x) (x^2 - 1) / (x^3 - 1), 1, 2^(1/3))$value;
 - (digamma(2/3) + Euler)/3 + 1/2*log((2^(2/3) + 2^(1/3) + 1)/3) +
 	+ 1/sqrt(3) * atan(1/sqrt(3) * (2^(1/3) - 1) / (2^(1/3) + 1));
+
+
+###########
+### Pow = 4
+
+### I( 1 / (x^4 + 1)^(1/4) )
+integrate(\(x) 1 / (x^4 + 1)^(1/4), 0, 1, rel.tol=1E-13)
+integrate(\(x) (1-x) / (1-x^4), 0, 1/2^(1/4))$value + log(sqrt(2) + 1) / 2;
+log(1+1/2^(1/4))/2 + log(1+1/2^(1/2))/4 + log(2)/4 + atan(1/2^(1/4))/2;
+log(1+2^(1/4))/2 + log(1+2^(1/2))/4 + atan(1/2^(1/4))/2;
+
+### I( 1 / (x^8 + 1)^(1/8) )
+integrate(\(x) 1 / (x^8 + 1)^(1/8), 0, 1, rel.tol=1E-13)
+integrate(\(x) (1-x) / (1-x^8), 0, 1/2^(1/8))$value +
+	+ log(1+2^(1/4))/4 + log(1+2^(1/2))/8 + atan(1/2^(1/4))/4;
+integrate(\(x) 1/2 / (1+x^4), 0, 1/2^(1/8))$value +
+	+ log(1+2^(1/8)) / 4 + log(1+2^(1/4)) / 8 + log(1+2^(1/2)) / 8 +
+	+ atan(1/2^(1/8)) / 4;
+# TODO: exact formula available;
 
 
 ###########
