@@ -69,6 +69,7 @@ integrate(\(x) Re(pracma::zeta(3 + 3*exp(1i*x))), 0, 2*pi, rel.tol=1E-9)
 
 ### I( Ei(-x^2) * exp(-x^2) )
 # Hmath: integral with integral exponential function
+# https://www.youtube.com/watch?v=0pP94DgWdds
 # [in Russian]
 # Ei => Integral form => Double I() => polar coordinates;
 
