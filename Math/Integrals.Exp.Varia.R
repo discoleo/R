@@ -92,5 +92,5 @@ gamma(1/3) * (
 ### I( Ei(-x^4) * exp(-x^4) )
 integrate(\(x) Re(pracma::expint(x^4)) * exp(-x^4), 0, Inf, rel.tol=1E-13)
 gamma(1/4) * integrate(\(x) 1 / (x^4 + 1)^(1/4), 0, 1, rel.tol=1E-13)$value;
-# TODO
+gamma(1/4) * (log(1+2^(1/4))/2 + log(1+2^(1/2))/4 + atan(1/2^(1/4))/2);
 
