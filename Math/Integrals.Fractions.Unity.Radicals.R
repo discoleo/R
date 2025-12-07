@@ -230,6 +230,24 @@ log(1+1/2^(1/4))/2 + log(1+1/2^(1/2))/4 + log(2)/4 + atan(1/2^(1/4))/2;
 log(1+2^(1/4))/2 + log(1+2^(1/2))/4 + atan(1/2^(1/4))/2;
 
 
+### I( x^2 / (x^4 + 1)^(1/4) )
+integrate(\(x) x^2 / (x^4 + 1)^(1/4), 0, 1, rel.tol=1E-13)
+# TODO
+
+
+###########
+### Pow = 6
+
+### I( 1 / (x^6 + 1)^(1/6) )
+integrate(\(x) 1 / (x^6 + 1)^(1/6), 0, 1, rel.tol=1E-13)
+integrate(\(x) (1-x) / (1-x^6), 0, 1/2^(1/6))$value +
+integrate(\(x) 1/2 / (x^3 + 1)^(1/3), 0, 1)$value;
+# TODO: Integrate Fraction-decomposition;
+integrate(\(x) (1-x) / (1-x^6), 0, 1/2^(1/6))$value +
+- (digamma(1/3) + Euler)/6 + 1/4*log((2^(2/3) + 2^(1/3) + 1)/3) +
+	- sqrt(3)/6 * atan(1/sqrt(3) * (2^(1/3) - 1) / (2^(1/3) + 1));
+
+
 ###########
 ### Pow = 8
 
