@@ -276,6 +276,23 @@ sum(2*(cs*x + 1) / (x^2 + 2*cs*x + 1)) / (4*n);
 sum(2*(cs*(x + cs) + sn^2) / (x^2 + 2*cs*x + 1)) / (4*n);
 
 
+############
+### Pow = 10
+
+### I( 1 / (x^10 + 1)^(1/10) )
+integrate(\(x) 1 / (x^10 + 1)^(1/10), 0, 1, rel.tol=1E-13)
+integrate(\(x) (1-x) / (1-x^10), 0, 1/2^(1/10))$value +
+integrate(\(x) 1/2 / (x^5 + 1)^(1/5), 0, 1)$value;
+x = 2^(1/5); cs = cos(c(2,4)*pi/5); sn = sin(c(2,4)*pi/5);
+integrate(\(x) (1-x) / (1-x^10), 0, 1/2^(1/10))$value +
+	+ (- (digamma(1/5) + Euler)/5 + sum(
+	+ 1/5 * (1 - cs) * log(x^2 - 2*cs*x + 1) +
+	- 1/5 * (1 - cs) * log(2 - 2*cs) +
+	- 2/5 * sn * atan((x - cs) / sn) +
+	+ 2/5 * sn * atan((1 - cs) / sn) )) / 2;
+# TODO: Integrate Fraction-decomposition;
+
+
 ###########
 ### ODD ###
 
