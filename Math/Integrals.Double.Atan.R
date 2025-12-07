@@ -982,6 +982,11 @@ Catalan - pi*log(2)/8;
 
 ### Div: Higher
 
+### I( atan(x) / (x^2+y^2) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x/(x^2+y^2) - atan(x) / (x^2+y^2), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+pi/4 + log(2)/2 - 7/8 * pracma::zeta(3);
+
 ### I( x * atan(x) / (x^2+y^2) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x * atan(x) / (x^2+y^2), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
