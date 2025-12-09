@@ -665,31 +665,57 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	atan(x*y) * y/x, 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 Catalan/2 - pi/8 + 1/4;
 
-### I( atan(sqrt(x*y)) / x )
-integrate(\(x) sapply(x, \(y) integrate(\(x)
-	atan(sqrt(x*y)) / x, 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
-2*Catalan - pi/2 + 1;
-
-### I( atan(sqrt(x*y)) * y/x )
-integrate(\(x) sapply(x, \(y) integrate(\(x)
-	atan(sqrt(x*y)) * y/x, 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
-Catalan - 1/6;
-
 
 ### I( (atan(x*y) - atan(y)) / (1-x) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	(atan(x*y) - atan(y)) / (1-x), 0, 1)$value), 0, 1)
 pi^2/32 + pi*log(2)/8 - Catalan - log(2)^2/8;
 
+### I( atan(x*y) / ((1-x)*(1-y)) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	(atan(x*y) - atan(x) - atan(y) + atan(1)) / (1-y) / (1-x), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+(pi^3 / 3 + pi*log(2)^2) / 16 - Catalan * log(2)/2;
+
+
+### SQRT:
+# Note: sqrt(x*y) can be trivially converted to (x*y);
+
+### I( atan(sqrt(x*y)) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(sqrt(x*y)), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+pi/2 + 2*Catalan - 3;
+
+### I( x * atan(sqrt(x*y)) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * atan(sqrt(x*y)), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+pi/2 - 4/3;
+
+### I( atan(sqrt(x*y)) / x )
+# 4 * I( x * atan(x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(sqrt(x*y)) / x, 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+2*Catalan - pi/2 + 1;
+
+### I( atan(sqrt(x*y)) / sqrt(x) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(sqrt(x*y)) / sqrt(x), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+2 - 2*log(2);
+
+### I( atan(sqrt(x*y)) * y/x )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(sqrt(x*y)) * y/x, 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+Catalan - 1/6;
+
 ### I( atan(sqrt(x*y)) / (1-x) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	(atan(sqrt(x*y)) - atan(sqrt(y))) / (1-x), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 pi*log(2)/2 - 2*log(2);
 
-### I( atan(x*y) / ((1-x)*(1-y)) )
+
+### I( atan(sqrt(y^2-x^2)) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
-	(atan(x*y) - atan(x) - atan(y) + atan(1)) / (1-y) / (1-x), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
-(pi^3 / 3 + pi*log(2)^2) / 16 - Catalan * log(2)/2;
+	atan(sqrt(y^2-x^2)), 0, y, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+(asinh(1) - 2 + sqrt(2)) * pi/4;
 
 
 ### Div: (x+y)
@@ -1003,6 +1029,49 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 pi*log(2)/8 - pi/8 - log(2)/4 + Catalan/2;
 
 
+### ATAN(1 - x)
+# (partially solved)
+
+### I( atan(1-x) / (x^2+y^2) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	(pi/4 - atan(1-x)) / (x^2+y^2), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+integrate(\(x) atan(x) * atan(1-x) / x, 0, 1)$value +
+	+ Catalan*pi/4 - pi^2 *log(2) / 16;
+# TODO
+
+### I( x * atan(1-x) / (x^2+y^2) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * atan(1-x) / (x^2+y^2), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+integrate(\(x) - atan(x) * atan(1-x), 0, 1)$value + pi/4 * (pi/2 - log(2));
+# TODO
+
+### I( y * atan(1-x) / (x^2+y^2) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y * atan(1-x) / (x^2+y^2), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+integrate(\(x) 1/2 * log(x^2 + 1) * atan(1-x), 0, 1)$value +
+	- (5/96*pi^2 + pi*log(2)/8 - log(2)^2 / 8 + log(2)/2 - pi/4 - Catalan);
+# TODO
+
+### I( x*y * atan(1-x) / (x^2+y^2) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x*y * atan(1-x) / (x^2+y^2), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+integrate(\(x) 1/2 * x * atan(1-x) * log(x^2+1), 0, 1)$value + 
+	- (5/96 * pi^2 - log(2)^2 / 8 + log(2)/4 - 3/4);
+# TODO
+
+### I( x^2 * atan(1-x) / (x^2+y^2) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^2 * atan(1-x) / (x^2+y^2), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+integrate(\(x) -1/2 * atan(x) * atan(1-x), 0, 1)$value - pi*log(2)/4 + pi/4;
+# TODO
+
+### I( y^2 * atan(1-x) / (x^2+y^2) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y^2 * atan(1-x) / (x^2+y^2), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+integrate(\(x) 1/2 * atan(x) * atan(1-x), 0, 1)$value + pi*log(2)/4 - log(2)/2;
+# TODO
+
+
 ### Div: (x^2*y^2 + 1)
 
 ### I( atan(x) / (x^2*y^2 + 1) )
@@ -1038,6 +1107,12 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 Catalan / 2 - pi * log(2) / 8 + pi/8 - log(2)/4;
 
 
+### I( x * atan((1-x)/y) / (x^2 + y^2) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * atan((1-x)/y) / (x^2+y^2), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+integrate(\(x) - x * atan(x)*atan(1-x), 0, 1)$value + pi^2/8;
+
+
 ### Div: SQRT(...)
 
 ### I( atan(x/y) / sqrt(1-x*y) )
@@ -1056,6 +1131,12 @@ pi * (log(2) - asinh(1)) + (digamma(5/8) - digamma(3/8));
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	atan(x/y) / sqrt(x^2 + y^2), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 pi/2 * asinh(1);
+
+### I( (x+y) * atan(x/y) / sqrt(x^2 + y^2) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	(x+y) * atan(x/y) / sqrt(x^2 + y^2), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+pi/4 * asinh(1) + (digamma(5/8) - digamma(3/8)) / 4;
+# Note: (digamma(5/8) - digamma(3/8)) == (sqrt(2) - 1) * pi;
 
 ### I( x*y * atan(x/y) / sqrt(x^2 + y^2) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
