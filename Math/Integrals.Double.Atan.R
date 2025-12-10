@@ -736,7 +736,12 @@ Catalan + pi/2 * asinh(1) - (digamma(5/8) - digamma(3/8)) / 2 - pi/4 + log(2)/2;
 ### I( x * atan(sqrt(y^2-x^2)) / (y-x) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x * atan(sqrt(y^2-x^2)) / (y-x), 0, y, rel.tol=1E-10)$value), 0, 1, rel.tol=1E-11)
-pi * asinh(1)/8 + (Catalan + 1/2) / 2 - (digamma(5/8) - digamma(3/8)) * 3/8;
+Catalan/2 + pi * asinh(1)/8 - (digamma(5/8) - digamma(3/8)) * 3/8 + 1/4;
+
+### I( y * atan(sqrt(y^2-x^2)) / (y-x) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y * atan(sqrt(y^2-x^2)) / (y-x), 0, y, rel.tol=1E-10)$value), 0, 1, rel.tol=1E-11)
+Catalan/2 + (asinh(1)*3/2 - 2 + sqrt(2)) * pi/4 - (digamma(5/8) - digamma(3/8)) * 3/8 + 1/4;
 
 
 ### Div: (x+y)
