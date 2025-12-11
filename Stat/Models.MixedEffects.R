@@ -25,9 +25,13 @@ library(nlme)
 # Images for Presentations:
 # - Text: larger size required;
 setCEX = function(x, cex = 1.2, text.size = 16, points.size = 12,
-		cex.points = 1, col.line = NULL) {
+		cex.points = 1, col.line = NULL,
+		lwd.line = 1.75, lwd.legend = lwd.line) {
 	hasLegend = ! is.null(x$legend);
-	if(hasLegend) x$legend$top$args$key$text$cex = cex;
+	if(hasLegend) {
+		x$legend$top$args$key$text$cex = cex;
+		x$legend$top$args$key$lines$lwd = lwd.legend;
+	}
 	# Axis:
 	x$x.scales$cex = c(cex, cex);
 	x$y.scales$cex = c(cex, cex);
@@ -44,9 +48,17 @@ setCEX = function(x, cex = 1.2, text.size = 16, points.size = 12,
 		# x$par.settings$superpose.line$lwd = 4;
 		# x$par.settings$superpose.line$col = rep(col.line, 7);
 		# x$par.settings$plot.symbol = list(col = col.line)
-		x$par.settings$plot.line = list(col = col.line, lwd = 1.75);
+		x$par.settings$plot.line = list(col = col.line, lwd = lwd.line);
+		x$panel = panel.col;
 	}
 	return(x);
+}
+
+panel.col = function (x, y, subscripts, groups, ...) 
+{
+	panel.grid()
+	panel.xyplot(x, y, ..., groups = groups, subscripts = subscripts)
+    panel.superpose(x, y, subscripts, groups, type = "l")
 }
 
 ######################
@@ -99,6 +111,7 @@ summary(fm2)
 # TODO
 
 #######################
+#######################
 
 ### Example: BodyWeight
 # Body Weight of Rats
@@ -109,7 +122,15 @@ colDiet = c(2:4)
 head(BodyWeight)
 table(BodyWeight$Diet)
 
+###
+if(IMG) png(file = "img/LM.Mixed.BodyWeight.png", width = 800, height = 480)
 
+tmp = plot(BodyWeight, innerGroups = ~ Diet)
+setCEX(tmp, text.size = 20, col.line = c(2,3,4), lwd.line = 2.2)
+
+dev.off()
+
+###
 plot(BodyWeight, innerGroups = ~ Diet, col = 2:4,
 	panel = function(x, y, groups, subscripts, ...) {
 		panel.xyplot(x, y, ..., groups = groups, subscripts = subscripts, )
