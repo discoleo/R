@@ -88,7 +88,7 @@ xF = xAll[xAll$Sex == "Female", ];
 if(IMG) png(file = "img/LM.Mixed.Orthodont.png", width = 1200, height = 760)
 
 tmp = plot(xAll, innerGroups = ~ Sex)
-setCEX(tmp, text.size = 20)
+setCEX(tmp, text.size = 20, col.line = c(2,3), lwd.line = 2)
 
 dev.off()
 
