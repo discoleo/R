@@ -100,15 +100,6 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	atan(x*y) * log(x), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 pi^2 / 48 - pi/4 + 1/2*log(2) + 3/32 * pracma::zeta(3);
 
-### I( atan(x*y) * log(x+y) )
-integrate(\(x) sapply(x, \(y) integrate(\(x)
-	atan(x*y) * log(x+y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
-pi^2/48 - (- 9/16 * pracma::zeta(3) + pi * Catalan / 4) +
-	- (pi^2/24 + pi*log(2)/2 - pi/2 - 4*log(2) + 3) / 4 +
-	- (1/96*pi^2 - pi*log(2)/2 + log(2)^2 / 8 + log(2)/4 + pi/2 - 3/4);
-9/16 * pracma::zeta(3) - pi * Catalan / 4 +
-	+ (3*pi*log(2) - 3*pi - log(2)^2 + 6*log(2)) / 8;
-
 
 ### I( atan(x*y) * log(1-x) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
@@ -121,6 +112,22 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	atan(x*y) * log(1+x), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 33/64 * pracma::zeta(3) - pi*Catalan / 4 +
 	+ (- pi^2 / 48 + 3/4*pi*log(2) - pi/2 - log(2)^2 / 4 + log(2)) / 2;
+
+
+### I( atan(x*y) * log(x+y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(x*y) * log(x+y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+pi^2/48 - (- 9/16 * pracma::zeta(3) + pi * Catalan / 4) +
+	- (pi^2/24 + pi*log(2)/2 - pi/2 - 4*log(2) + 3) / 4 +
+	- (1/96*pi^2 - pi*log(2)/2 + log(2)^2 / 8 + log(2)/4 + pi/2 - 3/4);
+9/16 * pracma::zeta(3) - pi * Catalan / 4 +
+	+ (3*pi*log(2) - 3*pi - log(2)^2 + 6*log(2)) / 8;
+
+### I( atan(x*y) * log(y-x) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(x*y) * log(y-x), 0, y, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+- (5/16 * pracma::zeta(3) - Catalan * pi / 4 + Catalan) / 2 +
+	+ (pi^2 / 16 + pi*log(2)/8 - log(2)^2 / 8 + 3/4*log(2) - 3/8 * pi) / 2;
 
 
 ### w. Simple-Atan
