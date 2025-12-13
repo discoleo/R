@@ -185,13 +185,18 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 
 ### I( 1/y * atan(x*y) * atan(x) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
-	1/y * atan(x*y) * atan(x), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+	1/y * atan(x*y) * atan(x), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-12)
 # TODO
 
 ### I( x/y * atan(x*y) * atan(x) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x/y * atan(x*y) * atan(x), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 7/16 * pracma::zeta(3) - (pi^2 / 16 - pi/2 + log(2) + Catalan) / 2;
+
+### I( 1/(x*y) * atan(x*y) * atan(x) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	1/(x*y) * atan(x*y) * atan(x), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+Catalan^2 / 2;
 
 
 ### w. Composite-Atan
