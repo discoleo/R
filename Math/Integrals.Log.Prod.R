@@ -387,12 +387,22 @@ integrate(\(x) 3/2 * log(1 - x)^2 * log(x)^2 / x, 0, 1, rel.tol=1E-8)
 
 ### I( log(1 - x) * log(1 + x) )
 integrate(\(x) log(1 - x) * log(1 + x), 0, 1)
-log(2)^2 - 2*log(2) - pi^2/6 + 2
+log(2)^2 - 2*log(2) - pi^2/6 + 2;
 
 ###  I( log(1 - x) * log(1 + x) / x )
 integrate(\(x) log(1 - x) * log(1 + x) / x, 0, 1)
-- pracma::zeta(3) * 5/8
+- pracma::zeta(3) * 5/8;
 
+###  I( log(1 - x) * log(1 + x) / x^2 )
+integrate(\(x) log(1 - x) * log(1 + x) / x^2, 0, 1)
+- pi^2 / 12 - log(2)^2;
+
+###  I( log(1 - x) * log(1 + x) / x^3 )
+integrate(\(x) log(1 - x) * log(1 + x) / x^3 + 1/x, 0, 1, rel.tol=1E-13)
+pi^2 / 24 + log(2) - 3/2;
+
+
+### Prod( 3 Logs )
 
 ### I( log(1-x)^3 )
 integrate(\(x) log(1-x)^3, 0, 1)
@@ -419,7 +429,24 @@ integrate(\(x) log(1-x) * log(1+x)^2, 0, 1)$value +
 		(digamma(1) - digamma(3/2)) * 3 +
 	(digamma(1) - digamma(3/2))^3 +
 	- 2*log(2)^3 + 6*log(2)^2 - 12*log(2) + 12) / 6 +
-	+ (3 * pracma::zeta(3) - 2/3*log(2)^3 + 2*log(2)^2 - 4*log(2))/2;
+	+ (3*pracma::zeta(3) - 2/3*log(2)^3 + 2*log(2)^2 - 4*log(2)) / 2;
+
+### I( log(1-x) * log(1+x)^2 )
+integrate(\(x) log(1-x) * log(1+x)^2, 0, 1)
+(pracma::psi(2, 1) - pracma::psi(2, 3/2) +
+	(pracma::psi(1, 1) - pracma::psi(1, 3/2)) *
+		(digamma(1) - digamma(3/2)) * 3 +
+	(digamma(1) - digamma(3/2))^3 +
+	- 2*log(2)^3 + 6*log(2)^2 - 12*log(2) + 12) / 6 +
+	- (3*pracma::zeta(3) - 2/3*log(2)^3 + 2*log(2)^2 - 4*log(2)) / 2;
+
+# Helper:
+integrate(\(x) log(1-x) * log(1+x) * log(1-x^2), 0, 1)
+(pracma::psi(2, 1) - pracma::psi(2, 3/2) +
+	(pracma::psi(1, 1) - pracma::psi(1, 3/2)) *
+		(digamma(1) - digamma(3/2)) * 3 +
+	(digamma(1) - digamma(3/2))^3 ) / 3 +
+	- 2/3*log(2)^3 + 2*log(2)^2 - 4*log(2) + 4;
 
 
 ####################
