@@ -353,8 +353,14 @@ integrate(\(x) log(1 - x^n)^2 * log(x) / x, 0, 1, rel.tol=1E-8)
 
 
 ### I( log(1 - x) * log(1 + x) * log(x) / x )
-integrate(\(x) log(1 - x) * log(1 + x) * log(x) / x, 0, 1, rel.tol=1E-8)
+integrate(\(x) log(1 - x) * log(1 + x) * log(x) / x, 0, 1, rel.tol=1E-13)
+integrate(\(x) -1/3 * log(x+1)^3 / x, 0, 1)$value + pracma::psi(3, 1/2) / (32*9);
 # TODO: ???
+
+
+### I( log(1-x) * log(1+x) * log(x) )
+integrate(\(x) log(1-x) * log(1+x) * log(x), 0, 1, rel.tol=1E-13)
+21/8 * pracma::zeta(3) - pi^2 * log(2) / 2 + 5/12*pi^2 - log(2)^2 + 4*log(2) - 6;
 
 
 ### I( x^p * log(1-x^n)^3 )
