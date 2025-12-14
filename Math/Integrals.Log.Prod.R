@@ -189,12 +189,12 @@ integrate(\(x) abs(log(x))^p * log(1 - x^n) / x, 0, 1, rel.tol=1E-8)
 p = sqrt(7)
 integrate(\(x) abs(log(x))^p * log(1 + x) / x, 0, 1, rel.tol=1E-8)
 gamma(p+1) * pracma::zeta(p+2) * (1 - 1/2^(p+1))
-#
+# Base:
 n = sqrt(5)
 integrate(\(x) abs(log(x))^p * log(1 + x^n) / x, 0, 1, rel.tol=1E-8)
 gamma(p+1) * pracma::zeta(p+2) * (1 - 1/2^(p+1)) / n^(p+1)
 
-#
+# =>
 integrate(\(x) abs(log(x))^p * log(1 + x + x^2) / x, 0, 1, rel.tol=1E-8)
 gamma(p+1) * pracma::zeta(p+2) * (1 - 1/3^(p+1))
 #
@@ -266,7 +266,7 @@ Iprev = -3/4 * pracma::zeta(4)- 3*(pracma::zeta(3)/2 + pi^2/6 - 4*log(2));
 # - a very special case;
 
 integrate(\(x) log(x) * log(x+1), 0, 1)
-2 - 2*log(2) - pi^2/12
+2 - 2*log(2) - pi^2/12;
 
 ###
 a = sqrt(5)
@@ -416,7 +416,7 @@ integrate(\(x) log(1-x)^3, 0, 1)
 
 ### I( log(1+x)^3 )
 integrate(\(x) log(1+x)^3, 0, 1)
-2*log(2)^3 - 3*(2*log(2)^2 - 2*(2*log(2) - 1))
+2*log(2)^3 - 3*(2*log(2)^2 - 2*(2*log(2) - 1));
 
 
 ### I( log(1-x^2)^3 )
@@ -511,18 +511,18 @@ gamma((p+1)/n) * gamma(q+1) * (
 ### Lim: q = 0
 p = -1/5;
 integrate(\(x) x^p * log(1-x), 0, 1)
-- (digamma(p+2) + Euler) / (p+1)
+- (digamma(p+2) + Euler) / (p+1);
 
 ### Gen: 1 LOG (Simple-variant)
 p = -1/3; n = sqrt(3)
 integrate(\(x) x^p * log(1 - x^n), 0, 1)
-- (digamma((p+1)/n + 1) + Euler) / (p+1)
+- (digamma((p+1)/n + 1) + Euler) / (p+1);
 #
 integrate(\(x) x^p * log(1 + x^n), 0, 1)
-(digamma((p+1)/n + 1) - digamma((p+1)/(2*n) + 1)) / (p+1)
+(digamma((p+1)/n + 1) - digamma((p+1)/(2*n) + 1)) / (p+1);
 
 
-### Prod( LOG )
+### Gen: Prod( LOG )
 p = - 1/3; q = 1/5;
 integrate(function(x) x^p * (1 - x)^q * log(1-x) * log(x), 0, 1)
 gamma(p+1) * gamma(q+1) *
@@ -547,6 +547,20 @@ pracma::zeta(3) / n^2
 #   Flammable Math: Simple Trig Subs won't Help you here...
 #   https://www.youtube.com/watch?v=Y6yYSS3YbD8
 
+
+### Special Case: q = -1;
+p = - 1/3; q = -1;
+integrate(function(x) x^p * (1 - x)^q * log(1-x) * log(x), 0, 1)
+eps = 1E-5; # Limit
+gamma(p+1) * gamma(eps) *
+	( (digamma(p+1+eps) - digamma(eps)) * (digamma(p+1+eps) - digamma(p+1)) +
+		- pracma::psi(1, p+1+eps) ) / gamma(p+1+eps);
+(digamma(p+1) + Euler) * pracma::psi(1, p+1) - pracma::psi(2, p+1)/2;
+
+# Note: was already computed below;
+
+##################
+### Prod( 3 Logs )
 
 ### I( x^p * (1 - x)^q * log(1-x)^2 * log(x) )
 p = - 1/3; q = 1/5;
@@ -597,14 +611,14 @@ gamma((p+1)/n) * (
 	) / gamma((p+1)/n+1) / n;
 
 
-### Other
+### Div: x
 
 ### I( log(1+x)^2 * log(1-x) / x )
 integrate(\(x) log(1+x)^2 * log(1-x) / x, 0, 1)
 - pi^4 / 240;
 
 ### I( log(1+x) * log(1-x)^2 / x )
-integrate(\(x) log(1+x) * log(1-x)^2 / x, 0, 1)
+integrate(\(x) log(1+x) * log(1-x)^2 / x, 0, 1, rel.tol=1E-13)
 # TODO
 
 ###
@@ -613,11 +627,6 @@ integrate(\(x) -1/3 * log(1+x)^3 / x, 0, 1)$value + pracma::zeta(4)
 # TODO
 
 
-### I( log(1 - x^2)^3 / x )
-integrate(\(x) log(1-x^2)^3 / x, 0, 1)
-integrate(\(x) 1/2 * log(1-x)^3 / x, 0, 1)
-- pi^4 / 30;
-
 ### I( log(1-x)^3 / x )
 integrate(\(x) log(1-x)^3 / x, 0, 1, rel.tol=2E-14)
 - pi^4 / 15;
@@ -625,6 +634,78 @@ integrate(\(x) log(1-x)^3 / x, 0, 1, rel.tol=2E-14)
 ### I( log(1+x)^3 / x )
 integrate(\(x) log(1+x)^3 / x, 0, 1, rel.tol=2E-14)
 # TODO
+
+### Base: I( log(1 - x^2)^3 / x )
+integrate(\(x) log(1-x^2)^3 / x, 0, 1)
+integrate(\(x) 1/2 * log(1-x)^3 / x, 0, 1)
+- pi^4 / 30;
+
+### Base: I( log((1-x)/(1+x))^3 / x )
+integrate(\(x) log((1-x)/(1+x))^3 / x, 0, 1, rel.tol=1E-13)
+- pi^4 / 8;
+
+
+### Higher Order
+### Order(1) * Order(2)
+
+### I( log(1+x) * log(1+x^2) )
+integrate(\(x) log(1+x) * log(1+x^2), 0, 1)
+-1/48*pi^2 + pi*log(2)/4 + log(2)^2 * 7/4 - 5*log(2) - pi/2 + 4;
+
+### I( x * log(1+x) * log(1+x^2) )
+integrate(\(x) x * log(1+x) * log(1+x^2), 0, 1)
+pi^2 / 48 + log(2)^2 / 4 + pi/4 - 1;
+
+### I( log(1-x) * log(1+x^2) )
+integrate(\(x) log(1-x) * log(1+x^2), 0, 1)
+-5/48*pi^2 + pi*log(2)/4 + log(2)^2 / 4 - 2*Catalan - pi/2 - log(2) + 4;
+
+### I( x * log(1-x) * log(1+x^2) )
+integrate(\(x) x * log(1-x) * log(1+x^2), 0, 1)
+- 5/48*pi^2 + log(2)^2 / 4 - pi/4 - log(2) + 2;
+
+### I( log(1+x^2)^2 )
+integrate(\(x) log(1+x^2)^2, 0, 1)
+log(2)^2 - 4*(pi/2 + log(2) - pi*log(2)/2 + Catalan - 2)
+
+### I( log(1-x^2)^2 )
+integrate(\(x) log(1-x^2)^2, 0, 1, rel.tol=1E-13)
+- pi^2/3 + 4*log(2)^2 - 8*log(2) + 8;
+
+
+### I( log(1-x^2) * log(1+x^2) )
+integrate(\(x) log(1-x^2) * log(1+x^2), 0, 1)
+(digamma(1) - digamma(5/4))^2 / 2 - 2*Catalan +
+	- pi^2 / 4 - 5/2 * log(2)^2 - pi*log(2) + pi + 6*log(2);
+
+### I( log((1-x)/(1+x)) * log(1+x^2) )
+integrate(\(x) log((1-x)/(1+x)) * log(1+x^2), 0, 1, rel.tol=1E-13)
+- (pi^2 / 12 + log(2)^2 * 3/2 - 4*log(2) + 2*Catalan);
+
+# =>
+
+### I( log(1-x) * log(1+x^2) )
+integrate(\(x) log(1-x) * log(1+x^2), 0, 1)
+(digamma(1) - digamma(5/4))^2 / 4 - 2*Catalan +
+	- pi^2 / 6 - 2 * log(2)^2 - pi*log(2)/2 + pi/2 + 5*log(2);
+-5/48 * pi^2 + log(2)^2 / 4 + pi*log(2)/4 - 2*Catalan - pi/2 - log(2) + 4;
+
+### I( log(1+x) * log(1+x^2) )
+integrate(\(x) log(1+x) * log(1+x^2), 0, 1)
+-1/48 * pi^2 + log(2)^2 * 7/4 + pi*log(2)/4 - pi/2 - 5*log(2) + 4;
+
+
+### Base: I( log(1-x^4)^2 )
+# see below;
+integrate(\(x) log(1-x^4)^2, 0, 1)
+integrate(\(x) x^(-3/4) * log(1-x)^2 / 4, 0, 1)
+pracma::psi(1, 1) - pracma::psi(1, 5/4) +
+	+ (digamma(1) - digamma(5/4))^2;
+p = -3/4; q = 0;
+gamma(p+1) * gamma(q+1) * (
+	pracma::psi(1, q+1) - pracma::psi(1, p+q+2) +
+	+ (digamma(q+1) - digamma(p+q+2))^2
+	) / gamma(p+q+2) / 4;
 
 
 #################
@@ -728,32 +809,9 @@ integrate(\(x) (log(1-x) - log(x)) * log(1+x) / (x^2+1), 0, 1)$value + pi^3/16 -
 # TODO
 
 
-### I( log(1+x) * log(1+x^2) )
-integrate(\(x) log(1+x) * log(1+x^2), 0, 1)
--1/48*pi^2 + pi*log(2)/4 + log(2)^2 * 7/4 - 5*log(2) - pi/2 + 4;
+### Varia: Simple log
 
-### I( x * log(1+x) * log(1+x^2) )
-integrate(\(x) x * log(1+x) * log(1+x^2), 0, 1)
-pi^2 / 48 + log(2)^2 / 4 + pi/4 - 1;
-
-### I( log(1-x) * log(1+x^2) )
-integrate(\(x) log(1-x) * log(1+x^2), 0, 1)
--5/48*pi^2 + pi*log(2)/4 + log(2)^2 / 4 - 2*Catalan - pi/2 - log(2) + 4;
-
-### I( x * log(1-x) * log(1+x^2) )
-integrate(\(x) x * log(1-x) * log(1+x^2), 0, 1)
-- 5/48*pi^2 + log(2)^2 / 4 - pi/4 - log(2) + 2;
-
-### I( log(1+x^2)^2 )
-integrate(\(x) log(1+x^2)^2, 0, 1)
-log(2)^2 - 4*(pi/2 + log(2) - pi*log(2)/2 + Catalan - 2)
-
-### I( log(1-x^2)^2 )
-integrate(\(x) log(1-x^2)^2, 0, 1, rel.tol=1E-13)
-- pi^2/3 + 4*log(2)^2 - 8*log(2) + 8;
-
-
-### Varia:
+###
 integrate(\(x) log(1+x) / (1+x^2), 0, 1)
 pi * log(2)/8;
 #
@@ -764,26 +822,61 @@ integrate(\(x) log(1+x^2) / (1+x), 0, 1)
 3/4*log(2)^2 - pi^2/48;
 
 
-### Diff
+############
+### Diff ###
 
 ### I( log(x) * log(1-x) / (1-x^2) )
 integrate(\(x) log(x) * log(1-x) / (1-x^2), 0, 1, rel.tol=1E-12)
 21/16 * pracma::zeta(3) - 1/8 * pi^2 * log(2);
 
+### I( x * log(x) * log(1-x) / (1-x^2) )
+integrate(\(x) x * log(x) * log(1-x) / (1-x^2), 0, 1, rel.tol=1E-12)
+(-5/2 * pracma::zeta(3) + pi^2 * log(2)) / 8;
+
+
 ### I( log(x) * log(1+x) / (1-x^2) )
-integrate(\(x) log(x) * log(1+x) / (1-x^2), 0, 1)
+integrate(\(x) log(x) * log(1+x) / (1-x^2), 0, 1, rel.tol=1E-13)
 7/16 * pracma::zeta(3) - 1/8 * pi^2 * log(2);
+
+### I( x * log(x) * log(1+x) / (1-x^2) )
+integrate(\(x) x * log(x) * log(1+x) / (1-x^2), 0, 1, rel.tol=1E-13)
+9/16 * pracma::zeta(3) - 1/8 * pi^2 * log(2);
+
+### I( log(x) * log(1+x) / (1-x) )
+integrate(\(x) log(x) * log(1+x) / (1-x), 0, 1, rel.tol=1E-13)
+pracma::zeta(3) - 1/4 * pi^2 * log(2);
+
+### I( log(x) * log(1+x) / (1+x) )
+integrate(\(x) log(x) * log(1+x) / (1+x), 0, 1, rel.tol=1E-13)
+-1/8 * pracma::zeta(3);
+
 
 ### I( log(x) * log(1+x^2) / (1-x^2) )
 integrate(\(x) log(x) * log(1+x^2) / (1-x^2), 0, 1)
 7/4 * pracma::zeta(3) - 1/8 * pi^2 * log(2) - pi/2 * Catalan;
 
+### I( log(x) * log(1+x^2) / (1-x) )
+integrate(\(x) log(x) * log(1+x^2) / (1-x), 0, 1)
+7/4 * pracma::zeta(3) - 1/8 * pi^2 * log(2) - pi/2 * Catalan +
+	+ (pracma::zeta(3) - 1/4 * pi^2 * log(2)) / 4;
+2 * pracma::zeta(3) - 3/16 * pi^2 * log(2) - pi/2 * Catalan;
+
+### I( log(x) * log(1+x^2) / (1+x) )
+integrate(\(x) log(x) * log(1+x^2) / (1+x), 0, 1)
+3/2 * pracma::zeta(3) - 1/16 * pi^2 * log(2) - pi/2 * Catalan;
+
+
 ### I( log(x) * log(1-x^4) / (1-x^2) )
 integrate(\(x) log(x) * log(1-x^4) / (1-x^2), 0, 1)
 7/2 * pracma::zeta(3) - 3/8 * pi^2 * log(2) - pi/2 * Catalan;
 
+### I( log(x) * log(1-x^4) / (1+x^2) )
+integrate(\(x) log(x) * log(1-x^4) / (1+x^2), 0, 1)
+((digamma(1/4) + Euler) * pracma::psi(1, 1/4) - pracma::psi(2, 1/4)/2) / 8 +
+	- 7/2 * pracma::zeta(3) + 3/8 * pi^2 * log(2) + pi/2 * Catalan;
 
-### Other:
+
+### Other: Log(Order 2)^2 * Log(x)
 
 ### I( log(x) * log(x^2+1)^2 )
 integrate(\(x) log(x) * log(x^2+1)^2, 0, 1)
