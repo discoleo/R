@@ -809,6 +809,12 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	atan(sqrt(y^2-x^2) / x^2), 0, y, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 (digamma(5/6) - digamma(1/6)) / 2 - 2/3 * pi;
 
+### on [0,1] x [y,1]
+# Note: numerically problematic even with Rmpfr;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(sqrt(x^2-y^2) / x^2), y, 1, rel.tol=2E-11)$value), 0, 1, rel.tol=3E-11)
+(sqrt(2) - 1) * pi/3;
+
 ### I( x * atan(sqrt(y^2-x^2) / x^2) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x * atan(sqrt(y^2-x^2) / x^2), 0, y, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
@@ -818,6 +824,11 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	y * atan(sqrt(y^2-x^2) / x^2), 0, y, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 ((digamma(5/6) - digamma(1/6)) - 13/12 * pi) / 5;
+
+### on [0,1] x [y,1]
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y * atan(sqrt(x^2-y^2) / x^2), y, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+(2*pi - log(2) - 2) / 30;
 
 
 ### Div:
