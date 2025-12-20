@@ -722,10 +722,22 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x * atan(sqrt(y^2-x^2)), 0, y, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 (pi/4 - log(2)/4 - 1/2) * 2/3;
 
+### I( y * atan(sqrt(y^2-x^2)) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y * atan(sqrt(y^2-x^2)), 0, y, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+(sqrt(2) - 1 - 1/4) * pi/3;
+
+
 ### I( x*y * atan(sqrt(y^2-x^2)) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x*y * atan(sqrt(y^2-x^2)), 0, y, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 pi/8 - 1/3;
+
+
+### I( atan(sqrt(y-x)) / (y-x) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(sqrt(y-x)) / (y-x), 0, y, rel.tol=1E-11)$value), 0, 1, rel.tol=1E-12)
+2*Catalan - pi/2 + 1;
 
 
 ### I( atan(sqrt(y^2-x^2)) / (y-x) )
@@ -744,11 +756,26 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 Catalan/2 + (asinh(1)*3/2 - 2 + sqrt(2)) * pi/4 - (digamma(5/8) - digamma(3/8)) * 3/8 + 1/4;
 Catalan/2 + asinh(1)*pi * 3/8 - (digamma(7/8) - digamma(1/8)) / 8 + 1/4;
 
+### I( x*y * atan(sqrt(y^2-x^2)) / (y-x) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x*y * atan(sqrt(y^2-x^2)) / (y-x), 0, y, rel.tol=1E-10)$value), 0, 1, rel.tol=1E-11)
+# TODO
+
 
 ### I( atan(sqrt(y^2-x^2)) / (x+y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
-	atan(sqrt(y^2-x^2)) / (x+y), 0, y, rel.tol=1E-10)$value), 0, 1, rel.tol=1E-10)
+	atan(sqrt(y^2-x^2)) / (x+y), 0, y, rel.tol=1E-11)$value), 0, 1, rel.tol=1E-11)
 pi/2 * asinh(1) - (digamma(5/8) - digamma(3/8)) / 2 - Catalan + pi/4 - log(2)/2;
+
+### I( x * atan(sqrt(y^2-x^2)) / (x+y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * atan(sqrt(y^2-x^2)) / (x+y), 0, y, rel.tol=1E-11)$value), 0, 1, rel.tol=1E-11)
+Catalan/2 - (asinh(1)/2 + 2 - sqrt(2)) * pi/4 + (digamma(5/8) - digamma(3/8)) / 8 + 1/4;
+
+### I( y * atan(sqrt(y^2-x^2)) / (x+y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y * atan(sqrt(y^2-x^2)) / (x+y), 0, y, rel.tol=1E-11)$value), 0, 1, rel.tol=1E-11)
+3/8 * asinh(1) * pi - Catalan/2 - (digamma(5/8) - digamma(3/8)) / 8 - 1/4;
 
 
 ### I( atan(sqrt(y^2-x^2)) / (y^2 - x^2) )
@@ -765,6 +792,11 @@ Catalan - pi/4 + log(2)/2;
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	y * atan(sqrt(y^2-x^2)) / (y^2-x^2), 0, y, rel.tol=1E-10)$value), 0, 1, rel.tol=1E-10)
 pi/2 * asinh(1) - (digamma(5/8) - digamma(3/8)) / 2;
+
+### I( x*y * atan(sqrt(y^2-x^2)) / (y^2-x^2) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x*y * atan(sqrt(y^2-x^2)) / (y^2-x^2), 0, y, rel.tol=1E-11)$value), 0, 1, rel.tol=1E-11)
+Catalan/2 - pi/8 + 1/4;
 
 
 ### I( atan(sqrt(y^2-x^2)) / sqrt(y^2-x^2) )
