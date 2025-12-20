@@ -802,6 +802,14 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 - pi*log(2)/4 + pi * 5/24;
 
 
+### ATAN( sqrt(y^2-x^2) / x^2 )
+
+### I( atan(sqrt(y^2-x^2) / x^2) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(sqrt(y^2-x^2) / x^2), 0, y, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+(digamma(5/6) - digamma(1/6)) / 2 - 2/3 * pi;
+
+
 ### Div:
 
 ### I( atan(sqrt(y-x)) / (y-x) )
