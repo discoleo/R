@@ -809,6 +809,16 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	atan(sqrt(y^2-x^2) / x^2), 0, y, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 (digamma(5/6) - digamma(1/6)) / 2 - 2/3 * pi;
 
+### I( x * atan(sqrt(y^2-x^2) / x^2) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * atan(sqrt(y^2-x^2) / x^2), 0, y, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+# TODO
+
+### I( y * atan(sqrt(y^2-x^2) / x^2) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y * atan(sqrt(y^2-x^2) / x^2), 0, y, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+((digamma(5/6) - digamma(1/6)) - 13/12 * pi) / 5;
+
 
 ### Div:
 
