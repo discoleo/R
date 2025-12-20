@@ -815,10 +815,17 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	atan(sqrt(x^2-y^2) / x^2), y, 1, rel.tol=2E-11)$value), 0, 1, rel.tol=3E-11)
 (sqrt(2) - 1) * pi/3;
 
+
 ### I( x * atan(sqrt(y^2-x^2) / x^2) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x * atan(sqrt(y^2-x^2) / x^2), 0, y, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 # TODO
+
+### on [0,1] x [y,1]
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * atan(sqrt(x^2-y^2) / x^2), y, 1, rel.tol=3E-11)$value), 0, 1, rel.tol=1E-11)
+(digamma(5/8) - digamma(3/8)) / 4 - (asinh(1) - 2 + sqrt(2)) * pi/16;
+
 
 ### I( y * atan(sqrt(y^2-x^2) / x^2) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
