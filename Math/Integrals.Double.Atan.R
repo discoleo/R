@@ -734,6 +734,31 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 pi/8 - 1/3;
 
 
+### ATAN( sqrt(y^2-x^2) / (x*y) )
+
+### I( atan(sqrt(y^2-x^2) / (x*y)) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(sqrt(y^2-x^2) / (x*y)), 0, y, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+pi/2 - 1;
+
+### I( x * atan(sqrt(y^2-x^2) / (x*y)) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * atan(sqrt(y^2-x^2) / (x*y)), 0, y, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+pi*log(2)/4 - pi/8;
+
+### I( y * atan(sqrt(y^2-x^2) / (x*y)) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y * atan(sqrt(y^2-x^2) / (x*y)), 0, y, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+pi^2 / 16 - 1/4;
+
+### I( x*y * atan(sqrt(y^2-x^2) / (x*y)) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x*y * atan(sqrt(y^2-x^2) / (x*y)), 0, y, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+- pi*log(2)/4 + pi * 5/24;
+
+
+### Div:
+
 ### I( atan(sqrt(y-x)) / (y-x) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	atan(sqrt(y-x)) / (y-x), 0, y, rel.tol=1E-11)$value), 0, 1, rel.tol=1E-12)
