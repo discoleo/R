@@ -250,3 +250,43 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 - (digamma(5/8) - digamma(1/8)) * log(2) / 16 +
 + sqrt(2)*pi/8 * (pi/2 + log(2)) + pi*log(2) / 8;
 
+
+######################
+######################
+
+### Varia
+
+### I( atan(y^2/x^2) * exp(-x^2) * cos(y^2) / y )
+# Hmath: The most difficult integral on the channel!
+# https://www.youtube.com/watch?v=mV5nuLF9ocQ
+# [in Russian]
+# Note: Feynman's trick: dx on F(x, y); [with x instead of x^2]
+# => Complex contour => I(dx(F(x, y))) = - pi/2 * Ei(-x);
+# see also: I( exp(-x^2) * Ei(-x^2) ) on [0, Inf];
+
+### Pow = 2
+# Note: fails numerically;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(y^2/x^2) * exp(-x^2) * cos(y^2) / y, 0, Inf, rel.tol=1E-12)$value), 0, Inf, rel.tol=1E-12)
+# upper = Inf;
+FUN = \(x, y) atan(y/x^2) * exp(-x^2);
+integrate(\(x) 1/2 * cos(x) / x * sapply(x, \(y) integrate(FUN,
+	0, Inf, y=y, rel.tol=1E-12)$value), 0, pi*200, rel.tol=1E-12)$value +
+integrate(\(x) 1/2 * cos(x) / x * sapply(x, \(y) integrate(FUN,
+	0, Inf, y=y, rel.tol=1E-12)$value), pi*200, pi*900, rel.tol=1E-12, subdivisions = 2000)$value;
+pi^(3/2) * log(1+sqrt(2)) / 4;
+
+
+### Pow = 3
+# Note: fails numerically;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	3 * atan(y^3/x^3) * exp(-x^3) * cos(y^3) / y, 0, Inf, rel.tol=1E-12)$value), 0, Inf, rel.tol=1E-12)
+# upper = Inf;
+FUN = \(x, y) atan(y/x^3) * exp(-x^3);
+integrate(\(x) cos(x) / x * sapply(x, \(y) integrate(FUN,
+	0, Inf, y=y, rel.tol=1E-12)$value), 0, pi*200, rel.tol=1E-12)$value +
+integrate(\(x) cos(x) / x * sapply(x, \(y) integrate(FUN,
+	0, Inf, y=y, rel.tol=1E-12)$value), pi*200, pi*900, rel.tol=1E-12, subdivisions = 2000)$value;
+pi/2 * gamma(1/3) * (
+	- (digamma(1/3) + Euler)/3 + 1/2*log((2^(2/3) + 2^(1/3) + 1)/3) +
+	- 1/sqrt(3) * atan(1/sqrt(3) * (2^(1/3) - 1) / (2^(1/3) + 1)));
