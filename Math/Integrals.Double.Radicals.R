@@ -663,6 +663,14 @@ n = sqrt(7) + 1/5; p = sqrt(3);
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x*y^p / ((1 - x^n) * (1 - x^n*y^n))^(1/n), 0, 1, rel.tol=1E-10)$value), 0, 1, rel.tol=1E-12)
 (pi / sin(2*pi/n) - beta((p+1)/n, 1-2/n) * beta(2/n, 1-1/n) / n) / (n*p);
+(beta(2/n, 1-2/n) * beta(1/n, 1) - beta((p+1)/n, 1-2/n) * beta(2/n, 1-1/n)) / (n^2*p);
+
+# Reduced:
+p = sqrt(3); n = sqrt(7);
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^(2/n-1)*y^p / ((1 - x) * (1 - x*y))^(1/n), 0, 1, rel.tol=1E-10)$value), 0, 1, rel.tol=1E-12)
+(beta(2/n, 1-2/n) * beta(1/n, 1) - beta(p+1, 1-2/n) * beta(2/n, 1-1/n)) / (p+1-1/n) * 1/n;
+
 
 # Special Case: I( x / ((1 - x^n) * (1 - x^n*y^n))^(1/n) )
 n = sqrt(7) + 2/5;
@@ -1609,6 +1617,27 @@ n = 4;
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x^2*y^3 * ((1-x^n) / (1-y^n) * (1 - x^n*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 pi^2 / 32 - pi * sqrt(2) / 20;
+
+
+### Div: 2
+
+### I( y * ((1-x^4) / (1-y^4) / (1 - x^4*y^4))^(1/4) )
+n = 4;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y * ((1-x^n) / (1-y^n) / (1 - x^n*y^n))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+beta(1/4, 3/4)^2 / 16 - pi * sqrt(2) * beta(3/4, 2/4) / 16;
+
+### I( x^2*y * ((1-x^4) / (1-y^4) / (1 - x^4*y^4))^(1/4) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^2*y * ((1-x^4) / (1-y^4) / (1 - x^4*y^4))^(1/4), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+0.2932056452285 * beta(3/4, 2/4) / 4;
+# TODO: see I( x^2 * ((1 - x^4) / (1 - x^4*y^4)^2)^(1/4) );
+
+### I( x*y^2 * ((1-x^4) / (1-y^4) / (1 - x^4*y^4))^(1/4) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x*y^2 * ((1-x^4) / (1-y^4) / (1 - x^4*y^4))^(1/4), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+gamma(3/4)^2 * gamma(1/2) / 4 * (1 - 1/sqrt(2));
+beta(3/4, 3/4) * beta(1/2, 1/2) / 8 - beta(3/4, 3/4) * beta(1/4, 3/4) / 16;
 
 
 ### Prod: 2
