@@ -252,6 +252,16 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 
 
 ######################
+
+### Prod
+
+### I( atan(tan(x)*tan(y)) * atan(x/y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(tan(x)*tan(y)) * atan(x/y), 0, pi/2, rel.tol=1E-13)$value), 0, pi/2, rel.tol=1E-13)
+pi^4 / 4^3;
+
+
+######################
 ######################
 
 ### Varia
@@ -290,3 +300,4 @@ integrate(\(x) cos(x) / x * sapply(x, \(y) integrate(FUN,
 pi/2 * gamma(1/3) * (
 	- (digamma(1/3) + Euler)/3 + 1/2*log((2^(2/3) + 2^(1/3) + 1)/3) +
 	- 1/sqrt(3) * atan(1/sqrt(3) * (2^(1/3) - 1) / (2^(1/3) + 1)));
+
