@@ -266,6 +266,24 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	atan(tan(x)/tan(y)) * atan(x*y*4/pi^2), 0, pi/2, rel.tol=1E-13)$value), 0, pi/2, rel.tol=1E-13)
 (- pi^2 / 48 + pi/4 - log(2)/2) * pi^3 / 16;
 
+# Normalized:
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(tan(pi/2*x)/tan(pi/2*y)) * atan(x*y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+(- pi^2 / 48 + pi/4 - log(2)/2) * pi/4;
+
+
+### I( asin(sin(pi/2*x)*sin(pi/2*y)) * atan(x/y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	asin(sin(pi/2*x)*sin(pi/2*y)) * atan(x/y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+integrate(\(x) 4/pi * log(1-x) * log(x) / (x^2+1), 0, 1, rel.tol=1E-13)
+# TODO
+
+#
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	acos(cos(pi/2*x)*cos(pi/2*y)) * atan(x/y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+integrate(\(x) pi^2 / 8 - 4/pi * log(1-x) * log(x) / (x^2+1), 0, 1, rel.tol=1E-13)
+# TODO
+
 
 ######################
 ######################
