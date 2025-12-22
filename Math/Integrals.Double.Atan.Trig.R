@@ -261,6 +261,12 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 pi^4 / 4^3;
 
 
+### I( atan(tan(x)/tan(y)) * atan(x*y*4/pi^2) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(tan(x)/tan(y)) * atan(x*y*4/pi^2), 0, pi/2, rel.tol=1E-13)$value), 0, pi/2, rel.tol=1E-13)
+(- pi^2 / 48 + pi/4 - log(2)/2) * pi^3 / 16;
+
+
 ######################
 ######################
 
