@@ -237,6 +237,12 @@ integrate(\(x) 2*x * atan(x) * log(x) / (x^2+1), 0, 1)$value +
 # TODO
 
 
+### I( atan(1-x*y) * atan(x/y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(1-x*y) * atan(x/y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+- pi/4 * (5/96*pi^2 + pi*log(2)/8 - log(2)^2 / 8 + log(2)/2 - pi/4 - Catalan);
+
+
 ### Div:
 
 ### I( 1/x * atan(x/y)^2 )
