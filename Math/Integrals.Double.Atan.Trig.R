@@ -260,6 +260,22 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	atan(tan(x)*tan(y)) * atan(x/y), 0, pi/2, rel.tol=1E-13)$value), 0, pi/2, rel.tol=1E-13)
 pi^4 / 4^3;
 
+# Normalized:
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(tan(pi/2*x)*tan(pi/2*y)) * atan(x/y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+pi^2 / 16;
+
+### I( atan(tan(pi/2*x)*tan(pi/2*y)) * atan(x^2/y^2) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(tan(pi/2*x)*tan(pi/2*y)) * atan(x^2/y^2), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+pi^2 / 16;
+
+### I( atan(tan(pi/2*x)*tan(pi/2*y)) * atan(x^n/y^n) )
+n = pi;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(tan(pi/2*x)*tan(pi/2*y)) * atan(x^n/y^n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+pi^2 / 16;
+
 
 ### I( atan(tan(x)/tan(y)) * atan(x*y*4/pi^2) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
