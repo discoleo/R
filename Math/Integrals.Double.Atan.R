@@ -121,15 +121,21 @@ integrate(\(x) -4/25 / (5*x^2 + 2*x + 1), 0, 1)$value +
 
 ### I( atan(1 - x*y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) atan(1 - x*y), 0, 1)$value), 0, 1)
-- (5/96*pi^2 + pi*log(2)/8 - log(2)^2 / 8 + log(2)/2 - pi/4 - Catalan)
+- (5/96*pi^2 + pi*log(2)/8 - log(2)^2 / 8 + log(2)/2 - pi/4 - Catalan);
 
 
 ### I( atan(1 + x*y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) atan(1 + x*y), 0, 1)$value), 0, 1)
+integrate(\(x) atan(1+x) + (atan(x+1) - atan(1) - (log((x+1)^2+1) - log(2)) / 2) / x, 0, 1);
+integrate(\(x) -1/2 * log(x) / (x^2 + 1), 2, Inf)$value +
+	- (5/12 * pi^2 + pi*log(2) - log(2)^2 - polylog2(-1/4, 2)) / 8 +
+	+ atan(1/2) * log(2) / 2 + 2*atan(2) - 1/2*log(5) + 1/2*log(2) - atan(1) + Catalan;
+# TODO
+
+# [old]
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	- x*y / ((x*y + 1)^2 + 1), 0, 1)$value), 0, 1)$value +
 	+ 2*atan(2) - 1/2*log(5) + 1/2*log(2) - atan(1);
-# TODO
 
 # alternative:
 integrate(\(x) sapply(x, \(y) integrate(\(x) atan(1 + x*y) + atan(1-x*y), 0, 1)$value), 0, 1)
