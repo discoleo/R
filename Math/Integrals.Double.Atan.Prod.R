@@ -103,6 +103,27 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 - (5/96*pi^2 + pi*log(2)/8 - log(2)^2 / 8 + 3/8 * pi + 3/4 * log(2) - Catalan) / 2;
 
 
+### I( atan(x/y) * log(x) * log(y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(x/y) * log(x) * log(y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+pi/4;
+
+### I( x * atan(x/y) * log(x) * log(y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * atan(x/y) * log(x) * log(y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+(3*Catalan + pi^2 / 8 + 17/4 * pi + 5*log(2) - 13/2) / 54;
+
+### I( y * atan(x/y) * log(x) * log(y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y * atan(x/y) * log(x) * log(y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+- (3*Catalan + pi^2 / 8 - 5/2 * pi + 5*log(2) - 13/2) / 54;
+
+### I( x*y * atan(x/y) * log(x) * log(y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x*y * atan(x/y) * log(x) * log(y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+pi/64;
+
+
 ### ATAN(x*y)
 
 ### I( atan(x*y) * log(x) )
