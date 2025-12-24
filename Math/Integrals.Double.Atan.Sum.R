@@ -107,3 +107,22 @@ integrate(\(x) sapply(x, \(y) integrate(\(x) y * atan(1+x-x*y), 0, 1)$value), 0,
 # I(atan(1 + x*y)) - I( x * atan(1 + x - x*y) );
 # TODO
 
+
+###############
+###############
+
+### Pow = 2
+
+### I( atan(x^2 + y^2) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(x^2 + y^2), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+integrate(\(x) 2 * Im(sqrt(x^2-1i) * atan(1/sqrt(x^2-1i))), 0, 1)$value +
+	+ atan(2) - Im(sqrt(1+1i) * atan(1/sqrt(1+1i)) - sqrt(1-1i)*atan(1/sqrt(1-1i)));
+integrate(\(x) 2 * Im(sqrt(x^2+1i) * atan(sqrt(x^2+1i))), 0, 1)$value +
+	+ atan(2) - Im(sqrt(1+1i) * atan(1/sqrt(1+1i)) - sqrt(1-1i)*atan(1/sqrt(1-1i))) +
+	- pi/2 * Re(1/sqrt(1i) / cos(atan(sqrt(-1i))) - log((1-sin(atan(sqrt(1i))))/cos(atan(sqrt(1i)))));
+integrate(\(x) 2 * Im(sqrt(x^2+1i) * atan(sqrt(x^2+1i))), 0, 1)$value +
+	+ atan(2) - Im(sqrt(1+1i) * atan(1/sqrt(1+1i)) - sqrt(1-1i)*atan(1/sqrt(1-1i))) +
+	- pi/2 * Re(sqrt(-1-1i) - log((1-1/sqrt(1-1i))*sqrt(1+1i)));
+# TODO
+
