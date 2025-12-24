@@ -6,7 +6,7 @@
 ## Integrals: Double Integrals
 ## Type: Atan
 ##
-## v.0.2d
+## v.0.2e
 
 
 ### Type: Atan
@@ -23,6 +23,8 @@
 #   Integrals.Double.Atan.Prod.R;
 # - [refactor] ATAN( Trig ) moved to file:
 #   Integrals.Double.Atan.Trig.R;
+# - [refactor] ATAN( SUM ) moved to file:
+#   Integrals.Double.Atan.Sum.R;
 
 
 ####################
@@ -39,10 +41,6 @@ dzeta2  = - 0.937548254316;
 ### ATAN ###
 
 # Note: (x+y) does not behave as nicely with ATAN;
-
-### I( atan((x+y)/2) )
-integrate(\(x) sapply(x, \(y) integrate(\(x) atan((x+y)/2), 0, 1)$value), 0, 1)
-3/2*pi + 2*log(5) - 6*log(2) - 3*atan(2)
 
 
 ### I( atan(x/y) )
@@ -94,11 +92,11 @@ integrate(\(x) atan(2*x/(x+1)) +
 	sapply(x, \(y) integrate(\(x) 2*x*y / (4*x^2 + (x+y)^2), 0, 1)$value), 0, 1);
 37/100 * pi + 6/5 * log(2) - log(5)/2 + 1/50 * (2*atan(3) - 23*atan(2));
 
-
 # Helper:
 integrate(\(x) atan(2*x/(x+1)), 0, 1)
 integrate(\(x) atan(2 - 2/(x+1)), 0, 1)
-pi/4 - (log(8)/5 - 1/5 * (atan(3) - atan(1/2)));
+pi/4 - (log(8) - (atan(3) - atan(1/2))) / 5;
+(pi/2 - log(2)) * 3/5;
 
 #
 integrate(\(x) sapply(x, \(y) integrate(\(x) x*y / (4*x^2 + (x+y)^2), 0, 1)$value), 0, 1)
@@ -1353,55 +1351,6 @@ pi/4 * asinh(1) + (digamma(5/8) - digamma(3/8)) / 4;
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x*y * atan(x/y) / sqrt(x^2 + y^2), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 (sqrt(2) - 1) * pi/6;
-
-
-### ATAN(x+y)
-
-### I( atan(x+y) )
-integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x+y), 0, 1)$value), 0, 1)
-3/2*atan(2) - log(5) + log(2)
-
-### I( atan(x+y) / (x + y) )
-integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x+y) / (x + y), 0, 1)$value), 0, 1)
-integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x) / x, y, y+1)$value), 0, 1)
-#
-integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x) / x, y, 1)$value), 0, 1)$value +
-integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x) / x, 1, y+1)$value), 0, 1)$value;
-integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x) / x, 1, y+1)$value), 0, 1)$value +
-	+ pi/4 - log(2)/2;
-# alternative:
-integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x) / x, y, y+1)$value), 0, 1)
-integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x) / x, 0, y)$value), 0, 2)$value +
-	- (Catalan - pi/4 + log(2)/2) * 2;
-integrate(\(x) atan(x) / x * (2-x), 0, 2)$value - (Catalan - pi/4 + log(2)/2) * 2;
-integrate(\(x) 2 * atan(x) / x, 0, 2)$value +
-	- (Catalan - pi/4 + log(2)/2) * 2 - 2*atan(2) + log(5)/2;
-# TODO
-
-### I( atan(x+y) / (1 - x*y) )
-integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x+y) / (1-x*y), 0, 1)$value), 0, 1)
-# TODO
-
-### I( atan((x+y)/2) / (1 - x*y) )
-integrate(\(x) sapply(x, \(y) integrate(\(x) atan((x+y)/2) / (1-x*y), 0, 1)$value), 0, 1)
-# TODO
-
-### I( x * atan((x+y)/2) / (1 - x*y) )
-integrate(\(x) sapply(x, \(y) integrate(\(x) x * atan((x+y)/2) / (1-x*y), 0, 1)$value), 0, 1)
-# TODO
-
-### I( atan(x+y) / (1 + x*y) )
-integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x+y) / (1+x*y), 0, 1)$value), 0, 1)
-# TODO
-
-### I( atan((x+y)/2) / (1 + x*y) )
-integrate(\(x) sapply(x, \(y) integrate(\(x) atan((x+y)/2) / (1+x*y), 0, 1)$value), 0, 1)
-# TODO
-
-### I( x * atan((x+y)/2) / (1 + x*y) )
-integrate(\(x) sapply(x, \(y) integrate(\(x) x * atan((x+y)/2) / (1+x*y), 0, 1)$value), 0, 1)
-# TODO
-
 
 
 ### I( atan(x/y) / (1 - x*y) )
