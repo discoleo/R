@@ -120,6 +120,7 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 
 # alternative:
 integrate(\(x) sapply(x, \(y) integrate(\(x) atan(1 + x*y) + atan(1-x*y), 0, 1)$value), 0, 1)
+# pi/2 - ...;
 integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x^2*y^2/2), 0, 1)$value), 0, 1)
 integrate(\(x) sapply(x, \(y) integrate(\(x) atan(x^2/2) / y, 0, y)$value), 0, 1)
 #
@@ -132,8 +133,13 @@ integrate(\(x) - 2*sqrt(2) * Re(atan(x / sqrt(2i)) / sqrt(1i)) / x, 0, 1)$value 
 integrate(\(x) (pi/4 - atan(x+1)) / x, 0, 1)$value +
 integrate(\(x) atan(3*tan(x)), 0, pi/4)$value +
 	+ (pi*log(2)/8 - Catalan) + pi^2 / 32 + log(5)/2 - atan(3/4);
-# TODO
 
+# Note:
+integrate(\(x) atan(3*tan(x)), 0, pi/4)
+(7/12 * pi^2 + 4*pi - 2*log(2)^2 - polylog2(-1/4, 2)) / 8 - 2*atan(2) + atan(3/4);
+
+
+####################
 
 ### Atan( Fraction )
 # Composite-Fraction
@@ -427,6 +433,12 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x*y * atan((x-y)/(x+y)) / (x-y), 0, y, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 (2*Catalan - pi * log(2) / 4 - log(2)) / 6;
+
+
+### I( atan((x-y)/(1-x*y)) / (x-y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan((x-y)/(1-x*y)) / (x-y), 0, y, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+(7/12 * pi^2 - 3*pi*log(2) - log(2)^2) / 8 + Catalan;
 
 
 ### Div: (x^2 - y^2)
