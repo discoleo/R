@@ -161,6 +161,41 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	+ (pi^2 / 16 + pi*log(2)/8 - log(2)^2 / 8 + 3/4*log(2) - 3/8 * pi) / 2;
 
 
+### Other
+
+### I( atan((x+y)/y) * log(x) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan((x+y)/y) * log(x), 0, y, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+- (0.8874372536346*2 + 2*atan(2) - 1/2*log(5) + 1/2*log(2) - atan(1)) / 4;
+# TODO: see I( atan(1 + x*y) ) on [0,1]^2;
+
+### I( x * atan((x+y)/y) * log(x) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * atan((x+y)/y) * log(x), 0, y, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+# TODO
+
+### I( y * atan((x+y)/y) * log(x) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y * atan((x+y)/y) * log(x), 0, y, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+- (3*0.8874372536346 + 2*atan(2) - 1/2*log(5) + 1/2*log(2) - atan(1)) / 9;
+# TODO: see I( atan(1 + x*y) ) on [0,1]^2;
+
+### I( atan((x+y)/y) * log(y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan((x+y)/y) * log(y), 0, y, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+- (4*atan(2) - log(5) + log(2) - 2*atan(1)) / 8;
+
+### I( x * atan((x+y)/y) * log(y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * atan((x+y)/y) * log(y), 0, y, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+- (atan(2) + log(5) - log(2) - 1) / 18;
+
+### I( y * atan((x+y)/y) * log(y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y * atan((x+y)/y) * log(y), 0, y, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+- (4*atan(2) - log(5) + log(2) - 2*atan(1)) / 18;
+
+
 ##################
 
 ### w. Simple-Atan
