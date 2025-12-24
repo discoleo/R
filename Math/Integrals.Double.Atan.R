@@ -61,25 +61,8 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	y * atan(x/y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 (pi/2 - log(2) + 1) / 6;
 
-### I( atan(1 - x + x*y) )
-integrate(\(x) sapply(x, \(y) integrate(\(x) atan(1-x+x*y), 0, 1)$value), 0, 1)
--5/96*pi^2 - pi*log(2)/8 + pi/4 + log(2)^2 / 8 - log(2)/2 + Catalan;
 
-### I( atan(1 + x - x*y) )
-integrate(\(x) sapply(x, \(y) integrate(\(x) atan(1+x-x*y), 0, 1)$value), 0, 1)
-integrate(\(x) log(x) * x / (x^2 + 2*x + 2) , 0, 1, rel.tol=1E-13)$value +
-	+ 2*atan(2) - 1/2*log(5) + 1/2*log(2) - atan(1);
-# TODO
-
-### I( x * atan(1 + x - x*y) )
-integrate(\(x) sapply(x, \(y) integrate(\(x) x * atan(1+x-x*y), 0, 1)$value), 0, 1)
-3/2*atan(2) - log(5) + log(2) - pi/4 + 1/2;
-
-### I( y * atan(1 + x - x*y) )
-integrate(\(x) sapply(x, \(y) integrate(\(x) y * atan(1+x-x*y), 0, 1)$value), 0, 1)
-# I(atan(1 + x*y)) - I( x * atan(1 + x - x*y) );
-# TODO
-
+### ATAN( Varia )
 
 ### I( atan(abs(x-y) / (x+y)) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
