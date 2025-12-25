@@ -22,7 +22,13 @@ integrate(\(x) atan(2*tan(x)), 0, pi/2)
 ### I( atan(tan(x)/2) )
 integrate(\(x) atan(tan(x)/2), 0, pi/2)
 pi^2/4 - integrate(\(x) 2 * atan(x) / (x^2 + 4), 0, Inf)$value
-1/24 * pi^2 - pracma::polylog(-1/2, 2)/2 - (log(3/2)^2 - log(3)^2)/4
+1/24 * pi^2 - pracma::polylog(-1/2, 2)/2 - (log(3/2)^2 - log(3)^2)/4;
+
+### on [0, pi/4]
+integrate(\(x) atan(tan(x)/2), 0, pi/4)
+integrate(\(x) atan(2*tan(x)), 0, pi/4)$value +
+	- (pracma::polylog(1/3, 2) - pracma::polylog(-1/3, 2)) / 2;
+# TODO
 
 
 # Derivation:
@@ -135,6 +141,46 @@ pi/2 * asinh(k)
 integrate(\(x) (pi/4 - atan(cos(x))) / sin(x), 0, pi/2)
 Catalan / 2;
 
+### I( atan(k*cos(x)) / sin(x) )
+k = 1/3;
+integrate(\(x) (atan(k) - atan(k*cos(x))) / sin(x), 0, pi/2)
+integrate(\(x) (atan(k) - atan(k*x)) / (1-x^2), 0, 1);
+integrate(\(x) (log(2) - log(x^2+1)/2) / (x^2+1), 0, k);
+# TODO
+
+# Feynman:
+k = 1/3;
+integrate(\(x) 2/(k^2+1)/(1-x^2) - 1/(k^2*x+1) / (1-x), 0, 1);
+(log(2) - log(k^2+1)) / (k^2+1);
+# Note: an extra log(2) is needed due to replacing x^(-1/2) / (1-x);
+
+
+### ATAN( k * TAN )
+
+### I( atan(2*tan(x)) * cos(x) )
+integrate(\(x) atan(2*tan(x)) * cos(x), 0, pi/2, rel.tol=1E-13)
+pi/2 - Im(acos(2 + 0i)) / sqrt(3);
+
+### I( atan(tan(x)/2) * cos(x) )
+integrate(\(x) atan(tan(x)/2) * cos(x), 0, pi/2, rel.tol=1E-13)
+pi/2 - 2/sqrt(3) * acos(1/2);
+
+### I( atan(tan(x)/3) * cos(x) )
+integrate(\(x) atan(tan(x)/3) * cos(x), 0, pi/2, rel.tol=1E-13)
+pi/2 - 3/sqrt(8) * acos(1/3);
+
+### Gen: I( atan(tan(x)/k) * cos(x) )
+k = pi;
+integrate(\(x) atan(tan(x)/k) * cos(x), 0, pi/2, rel.tol=1E-13)
+pi/2 - k/sqrt(k^2-1) * acos(1/k);
+
+### Gen: I( atan(k*tan(x)) * cos(x) )
+k = pi;
+integrate(\(x) atan(k*tan(x)) * cos(x), 0, pi/2, rel.tol=1E-13)
+pi/2 - Im(acos(k + 0i)) / sqrt(k^2-1);
+
+
+### Higher Power:
 
 ### I( atan(sin(x)) / sin(x)^2 )
 integrate(\(x) atan(sin(x)) / sin(x)^2 - 1/x, 0, pi/2, rel.tol=1E-13)
