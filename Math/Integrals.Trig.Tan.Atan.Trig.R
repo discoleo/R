@@ -7,6 +7,11 @@
 # I( atan(k*sin(x)) )
 
 
+# Note:
+# - function polylog2 is in file:
+#   Integrals.Polylog.Helper.R;
+
+
 ###################
 ### Simple Argument
 
@@ -49,6 +54,10 @@ pi^2/4 - log(3)*log(2)/2 +
 	- (pracma::polylog(1/4, 2) - pracma::polylog(-1/2, 2)) / 2 +
 	- (log(4/3)^2 - log(3/2)^2) / 4;
 
+### on [0, pi/4]
+integrate(\(x) atan(3*tan(x)), 0, pi/4)
+(7/12 * pi^2 + 4*pi - 2*log(2)^2 - polylog2(-1/4, 2)) / 8 - 2*atan(2) + atan(3/4);
+
 
 ### I( atan(tan(x)/3) )
 integrate(\(x) atan(tan(x)/3), 0, pi/2)
@@ -56,6 +65,10 @@ pi^2 / 4 - integrate(\(x) atan(3*tan(x)), 0, pi/2)$value
 log(3)*log(2)/2 +
 	+ (pracma::polylog(1/4, 2) - pracma::polylog(-1/2, 2)) / 2 +
 	+ (log(4/3)^2 - log(3/2)^2) / 4;
+
+### on [0, pi/4]
+integrate(\(x) atan(tan(x)/3), 0, pi/4)
+(3/12 * pi^2 - 4*pi + 4*polylog2(-1/2) - polylog2(-1/4, 2)) / 8 + 2*atan(2) - atan(3/4);
 
 
 # Derivation:
@@ -78,11 +91,6 @@ integrate(\(b) log(b) / (b^2 - 9), 0, 1)
 	+ (log(4/3)^2 - log(3/2)^2) / 12;
 
 
-### on [0, pi/4]
-integrate(\(x) atan(3*tan(x)), 0, pi/4)
-(7/12 * pi^2 + 4*pi - 2*log(2)^2 - polylog2(-1/4, 2)) / 8 - 2*atan(2) + atan(3/4);
-
-
 ######################
 ######################
 
@@ -94,7 +102,7 @@ integrate(\(x) atan(3*tan(x)), 0, pi/4)
 # library(pracma)
 # Note:
 # - function polylog2 is currently in file:
-#   Integrals.Trig.Tan.R;
+#   Integrals.Polylog.Helper.R;
 
 integrate(\(x) atan(2*sin(x)), 0, pi/2)
 polylog2(2/(sqrt(5)+1), 2) - polylog2(-2/(sqrt(5)+1), 2)
