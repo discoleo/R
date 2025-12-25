@@ -19,6 +19,11 @@
 integrate(\(x) atan(2*tan(x)), 0, pi/2)
 5/24 * pi^2 + pracma::polylog(-1/2, 2)/2 + (log(3/2)^2 - log(3)^2)/4;
 
+### on [0, pi/4]
+integrate(\(x) atan(2*tan(x)), 0, pi/4)
+((polylog2(2/3) - polylog2(-2/3))*2 + polylog2(3/4) - polylog2(-1/4)) / 8;
+
+
 ### I( atan(tan(x)/2) )
 integrate(\(x) atan(tan(x)/2), 0, pi/2)
 pi^2/4 - integrate(\(x) 2 * atan(x) / (x^2 + 4), 0, Inf)$value
@@ -28,7 +33,8 @@ pi^2/4 - integrate(\(x) 2 * atan(x) / (x^2 + 4), 0, Inf)$value
 integrate(\(x) atan(tan(x)/2), 0, pi/4)
 integrate(\(x) atan(2*tan(x)), 0, pi/4)$value +
 	- (pracma::polylog(1/3, 2) - pracma::polylog(-1/3, 2)) / 2;
-# TODO
+((polylog2(2/3) - polylog2(-2/3))*2 - (polylog2(1/3) - polylog2(-1/3))*4+
+	+ polylog2(3/4) - polylog2(-1/4, 2)) / 8;
 
 
 # Derivation:
@@ -49,6 +55,11 @@ integrate(\(x) log((1-x)/x) / (1 + 2*x), 0, 1)$value +
 integrate(\(x) log(abs(1-x)/x) / (1 + 2*x), 1, Inf)$value;
 - pracma::polylog(-1/2, 2)/2 - pi^2/12 - (log(3/2)^2 - log(3)^2)/4;
 
+# on [0, pi/4]
+integrate(\(x) atan(tan(x)/2), 0, pi/4)
+integrate(\(x) 2 * (pi/2 - atan(x)) / (4+x^2), 2, Inf);
+integrate(\(x) -2 * atan(x) / (4+x^2), 2, Inf)$value + pi^2/8;
+# ...
 
 #####################
 
@@ -62,7 +73,7 @@ pi^2/4 - log(3)*log(2)/2 +
 
 ### on [0, pi/4]
 integrate(\(x) atan(3*tan(x)), 0, pi/4)
-(7/12 * pi^2 + 4*pi - 2*log(2)^2 - polylog2(-1/4, 2)) / 8 - 2*atan(2) + atan(3/4);
+(7/12 * pi^2 - 2*log(2)^2 - polylog2(-1/4, 2)) / 8;
 
 
 ### I( atan(tan(x)/3) )
@@ -74,10 +85,13 @@ log(3)*log(2)/2 +
 
 ### on [0, pi/4]
 integrate(\(x) atan(tan(x)/3), 0, pi/4)
-(3/12 * pi^2 - 4*pi + 4*polylog2(-1/2) - polylog2(-1/4, 2)) / 8 + 2*atan(2) - atan(3/4);
+(3/12 * pi^2 + 4*polylog2(-1/2) - polylog2(-1/4, 2)) / 8;
 
 
 # Derivation:
+
+# Note:
+pi/2 - 2*atan(2) + atan(3/4) # == 0;
 
 # from atan(x/b) / (x^2 + 9)
 b = 5^(1/3)
