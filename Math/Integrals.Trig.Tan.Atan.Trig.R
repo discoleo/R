@@ -242,6 +242,25 @@ integrate(\(x) atan(sin(x)^2) / sin(x)^2, 0, pi/2, rel.tol=1E-13)
 pi * 2^(3/4) / 4 / cos(pi/8);
 
 
+### ATAN( TAN )
+
+### I( atan(2*tan(x)) * sin(x)^2 )
+integrate(\(x) atan(2*tan(x)) * sin(x)^2, 0, pi/2, rel.tol=1E-13)
+integrate(\(x) atan(2*tan(x)) / 2, 0, pi/2, rel.tol=1E-13)$value + log(2)/3;
+# see above for solution;
+
+### I( atan(3*tan(x)) * sin(x)^2 )
+integrate(\(x) atan(3*tan(x)) * sin(x)^2, 0, pi/2, rel.tol=1E-13)
+integrate(\(x) atan(3*tan(x)) / 2, 0, pi/2, rel.tol=1E-13)$value + log(3)*3/16;
+
+### Gen: I( atan(k*tan(x)) * sin(x)^2 )
+k = sqrt(11);
+integrate(\(x) atan(k*tan(x)) * sin(x)^2, 0, pi/2, rel.tol=1E-13)
+integrate(\(x) atan(k*tan(x)) / 2, 0, pi/2, rel.tol=1E-13)$value + log(k)*k/(2*(k^2-1));
+
+
+###############
+
 ### I( sin(2*x) * atan(b*sin(2*x)) )
 # Maths 505: A captivating integral problem
 # https://www.youtube.com/watch?v=hqC_wLN7UYo
