@@ -195,6 +195,16 @@ integrate(\(x) atan(k*tan(x)) * cos(x), 0, pi/2, rel.tol=1E-13)
 pi/2 - Im(acos(k + 0i)) / sqrt(k^2-1);
 
 
+### I( atan(2*tan(x)) * sin(x) )
+integrate(\(x) atan(2*tan(x)) * sin(x), 0, pi/2, rel.tol=1E-13)
+2 / sqrt(3) * acos(1/2);
+
+### Gen: I( atan(k*tan(x)) * sin(x) )
+k = 3^(5/3);
+integrate(\(x) atan(k*tan(x)) * sin(x), 0, pi/2, rel.tol=1E-13)
+k / sqrt(k^2-1) * acos(1/k);
+
+
 ### Div: TAN
 
 ### I( atan(2*tan(x)) / tan(x) )
