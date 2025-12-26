@@ -211,6 +211,16 @@ integrate(\(x) atan(k*tan(x)) / tan(x), 0, pi/2, rel.tol=1E-13)
 pi * log(k+1) / 2;
 
 
+### I( atan(2*tan(x)) * tan(x) )
+integrate(\(x) (pi/2 - atan(2*tan(x))) * tan(x), 0, pi/2, rel.tol=1E-13)
+pi * log(3/2) / 2;
+
+### Gen: I( atan(k*tan(x)) * tan(x) )
+k = pi;
+integrate(\(x) (pi/2 - atan(k*tan(x))) * tan(x), 0, pi/2, rel.tol=1E-13)
+pi * log(1+1/k) / 2;
+
+
 ### Higher Power:
 
 ### I( atan(sin(x)) / sin(x)^2 )
