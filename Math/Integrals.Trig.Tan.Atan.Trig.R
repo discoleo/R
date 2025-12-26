@@ -4,6 +4,7 @@
 
 ### Examples:
 # I( atan(2*tan(x)) )
+# I( atan(3*tan(x)) )
 # I( atan(k*sin(x)) )
 
 
@@ -192,6 +193,22 @@ pi/2 - k/sqrt(k^2-1) * acos(1/k);
 k = pi;
 integrate(\(x) atan(k*tan(x)) * cos(x), 0, pi/2, rel.tol=1E-13)
 pi/2 - Im(acos(k + 0i)) / sqrt(k^2-1);
+
+
+### Div: TAN
+
+### I( atan(2*tan(x)) / tan(x) )
+integrate(\(x) atan(2*tan(x)) / tan(x), 0, pi/2, rel.tol=1E-13)
+pi * log(3)/2;
+
+### I( atan(3*tan(x)) / tan(x) )
+integrate(\(x) atan(3*tan(x)) / tan(x), 0, pi/2, rel.tol=1E-13)
+pi * log(4) / 2;
+
+### Gen: I( atan(k*tan(x)) / tan(x) )
+k = pi;
+integrate(\(x) atan(k*tan(x)) / tan(x), 0, pi/2, rel.tol=1E-13)
+pi * log(k+1) / 2;
 
 
 ### Higher Power:
