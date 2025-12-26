@@ -231,7 +231,7 @@ integrate(\(x) (pi/2 - atan(k*tan(x))) * tan(x), 0, pi/2, rel.tol=1E-13)
 pi * log(1+1/k) / 2;
 
 
-### Higher Power:
+### Div: Higher Power:
 
 ### I( atan(sin(x)) / sin(x)^2 )
 integrate(\(x) atan(sin(x)) / sin(x)^2 - 1/x, 0, pi/2, rel.tol=1E-13)
@@ -242,7 +242,7 @@ integrate(\(x) atan(sin(x)^2) / sin(x)^2, 0, pi/2, rel.tol=1E-13)
 pi * 2^(3/4) / 4 / cos(pi/8);
 
 
-### ATAN( TAN )
+### ATAN( k * TAN )
 
 ### I( atan(2*tan(x)) * sin(x)^2 )
 integrate(\(x) atan(2*tan(x)) * sin(x)^2, 0, pi/2, rel.tol=1E-13)
@@ -279,6 +279,28 @@ b = 1/3
 integrate(\(x) sin(2*x) * atan(b/sin(2*x)), 0, pi/2)
 pi/2*(b + 1 - sqrt(b^2+1))
 
+
+### ATAN( k * sin(x) )
+
+### I( sin(2*x) * atan(sin(x)) )
+integrate(\(x) sin(2*x) * atan(sin(x)), 0, pi/2, rel.tol=1E-13)
+pi/2 - 1;
+
+### I( sin(2*x) * atan(2*sin(x)) )
+integrate(\(x) sin(2*x) * atan(2*sin(x)), 0, pi/2, rel.tol=1E-13)
+5/4*atan(2) - 1/2;
+
+### Gen: I( sin(2*x) * atan(k*sin(x)) )
+k = exp(1/pi);
+integrate(\(x) sin(2*x) * atan(k*sin(x)), 0, pi/2, rel.tol=1E-13)
+(k^2+1)/k^2 * atan(k) - 1/k;
+
+
+# Feynman:
+b = sqrt(3);
+integrate(\(x) 2*sin(x)^2*cos(x) / (b^2*sin(x)^2 + 1), 0, pi/2, rel.tol=1E-13)
+integrate(\(x) 2*x^2 / (b^2*x^2 + 1), 0, 1, rel.tol=1E-13)
+2/b^2 - 2/b^3 * atan(b);
 
 
 ### I( atan(k*cos(x)^2) / cos(x)^2 )
