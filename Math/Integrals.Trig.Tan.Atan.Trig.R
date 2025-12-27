@@ -44,6 +44,10 @@ integrate(\(x) atan(2*tan(x)), 0, pi/4)$value +
 integrate(\(x) x * atan(2*tan(x)), 0, pi/2, rel.tol=1E-13)
 pi^3 / 24 - pi*polylog2(-1/3, 2)/4;
 
+### I( x * atan(tan(x)/2) )
+integrate(\(x) x * atan(tan(x)/2), 0, pi/2, rel.tol=1E-13)
+pi * log(3)^2 / 8 + pi * (pracma::polylog(1/3, 2) - pracma::polylog(-1/3, 2)) / 4;
+
 
 # Derivation:
 # - without the Lerch zeta function;
