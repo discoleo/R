@@ -48,6 +48,11 @@ pi^3 / 24 - pi*polylog2(-1/3, 2)/4;
 integrate(\(x) x * atan(tan(x)/2), 0, pi/2, rel.tol=1E-13)
 pi * log(3)^2 / 8 + pi * (pracma::polylog(1/3, 2) - pracma::polylog(-1/3, 2)) / 4;
 
+### I( x * atan(3/4 * sin(2*x)) )
+# =>
+integrate(\(x) x * atan(3/4 * sin(2*x)), 0, pi/2, rel.tol=1E-13)
+pi^3 / 24 - pi * log(3)^2 / 8 - pi * pracma::polylog(1/3, 2) / 4;
+
 
 # Derivation:
 # - without the Lerch zeta function;
@@ -350,6 +355,14 @@ integrate(\(x) (1 - cos(x)) / (cos(x)^2 + 2*cos(x) + 2) +
 	(1 + cos(x)) / (cos(x)^2 - 2*cos(x) + 2), 0, pi/2)
 integrate(\(x) (6*cos(x)^2 + 4) / (cos(x)^4 + 4), 0, pi/2)
 pi / sqrt((sqrt(5) + 1) / 2)
+
+
+### Other: w. Coef
+
+### I( x * atan(3/4 * sin(2*x)) )
+# see above;
+integrate(\(x) x * atan(3/4 * sin(2*x)), 0, pi/2, rel.tol=1E-13)
+pi^3 / 24 - pi * log(3)^2 / 8 - pi * pracma::polylog(1/3, 2) / 4;
 
 
 #######################
