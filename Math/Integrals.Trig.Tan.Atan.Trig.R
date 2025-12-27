@@ -38,6 +38,13 @@ integrate(\(x) atan(2*tan(x)), 0, pi/4)$value +
 	+ polylog2(3/4) - polylog2(-1/4, 2)) / 8;
 
 
+### w. Coef
+
+### I( x * atan(2*tan(x)) )
+integrate(\(x) x * atan(2*tan(x)), 0, pi/2, rel.tol=1E-13)
+pi^3 / 24 - pi*polylog2(-1/3, 2)/4;
+
+
 # Derivation:
 # - without the Lerch zeta function;
 integrate(\(x) atan(2*tan(x)), 0, pi/2)
