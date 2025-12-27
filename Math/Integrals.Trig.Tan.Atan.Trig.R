@@ -105,6 +105,22 @@ integrate(\(x) atan(tan(x)/3), 0, pi/4)
 (3/12 * pi^2 + 4*polylog2(-1/2) - polylog2(-1/4, 2)) / 8;
 
 
+### w. Coef. x
+
+### I( x * atan(3*tan(x)) )
+integrate(\(x) x * atan(3*tan(x)), 0, pi/2, rel.tol=1E-13)
+pi^3 / 24 - pi * polylog2(-1/2) / 4;
+
+### I( x * atan(tan(x)/3) )
+integrate(\(x) x * atan(tan(x)/3), 0, pi/2, rel.tol=1E-13)
+(pi^2 / 6 + log(2)^2) * pi/8;
+
+### I( x * atan(4/3 * sin(2*x)) )
+# =>
+integrate(\(x) x * atan(4/3*sin(2*x)), 0, pi/2, rel.tol=1E-13)
+(pi^2 / 6 - log(2)^2) * pi/8 - pi * polylog2(-1/2) / 4;
+
+
 # Derivation:
 
 # Note:
@@ -296,6 +312,20 @@ integrate(\(x) sin(2*x) * atan(b/sin(2*x)), 0, pi/2)
 pi/2*(b + 1 - sqrt(b^2+1))
 
 
+### Other: w. Coef. x
+
+### I( x * atan(3/4 * sin(2*x)) )
+# see 1st section (top page);
+integrate(\(x) x * atan(3/4 * sin(2*x)), 0, pi/2, rel.tol=1E-13)
+pi^3 / 24 - pi * log(3)^2 / 8 - pi * polylog2(1/3) / 4;
+
+
+### I( x * atan(4/3 * sin(2*x)) )
+# see 1st section (top page);
+integrate(\(x) x * atan(4/3*sin(2*x)), 0, pi/2, rel.tol=1E-13)
+(pi^2 / 6 - log(2)^2) * pi/8 - pi * polylog2(-1/2) / 4;
+
+
 ### ATAN( k * sin(x) )
 
 ### I( sin(2*x) * atan(sin(x)) )
@@ -355,14 +385,6 @@ integrate(\(x) (1 - cos(x)) / (cos(x)^2 + 2*cos(x) + 2) +
 	(1 + cos(x)) / (cos(x)^2 - 2*cos(x) + 2), 0, pi/2)
 integrate(\(x) (6*cos(x)^2 + 4) / (cos(x)^4 + 4), 0, pi/2)
 pi / sqrt((sqrt(5) + 1) / 2)
-
-
-### Other: w. Coef
-
-### I( x * atan(3/4 * sin(2*x)) )
-# see above;
-integrate(\(x) x * atan(3/4 * sin(2*x)), 0, pi/2, rel.tol=1E-13)
-pi^3 / 24 - pi * log(3)^2 / 8 - pi * pracma::polylog(1/3, 2) / 4;
 
 
 #######################
