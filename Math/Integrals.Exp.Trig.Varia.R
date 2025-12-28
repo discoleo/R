@@ -211,9 +211,20 @@ integrate(\(x) cos(k * sin(x)), 0, pi/2)
 pi * besselJ(k, 0) / 2
 
 
+### I( Bessel )
+
 ### I( sin(x) * besselJ0(sin(x)) )
 integrate(\(x) sin(x) * besselJ(sin(x), 0), 0, pi/2)
 sin(1);
+
+### I( sin(x) * besselJ0(2*sin(x)) )
+integrate(\(x) sin(x) * besselJ(2*sin(x), 0), 0, pi/2)
+sin(2) / 2;
+
+### Gen: I( sin(x) * besselJ0(k*sin(x)) )
+k = sqrt(pi);
+integrate(\(x) sin(x) * besselJ(k*sin(x), 0), 0, pi/2)
+sin(k) / k;
 
 
 ### I( sin(x) * besselJ0(cos(x)) )
