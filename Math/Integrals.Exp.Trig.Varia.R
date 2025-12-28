@@ -41,6 +41,23 @@ sum((-1)^seq(0, 15) / factorial(seq(0, 15))^2);
 besselJ(2,0)
 
 
+### I( exp(-k * tan(x)) )
+# Maths 505: This is WILD!
+# https://www.youtube.com/watch?v=LeR2ELsT_bI
+# Note: Feynman trick (twice)
+# => d2y + dy = I( exp(-k*tan(x)) * (1+tan(x)^2) ) = 1/k;
+
+integrate(\(x) exp(-tan(x)), 0, pi/2, rel.tol=1E-13)
+pracma::Ci(1) * sin(1) - pracma::Si(1) * cos(1) + pi/2 * cos(1);
+
+### Gen: I( exp(-k * tan(x)) )
+k = 1/3;
+integrate(\(x) exp(-k * tan(x)), 0, pi/2, rel.tol=1E-13)
+pracma::Ci(k) * sin(k) - pracma::Si(k) * cos(k) + pi/2 * cos(k);
+
+
+###################
+
 ### Bessel Function
 
 ### Properties:
@@ -102,7 +119,7 @@ besselJ(x, 1/2)
 sin(x) / sqrt(x*pi/2);
 
 ### BesselI:
-x = sqrt(pi/2);
+x = sqrt(pi-2);
 besselI(x, 1/2)
 Im(sin(x*1i)) / sqrt(x *pi/2);
 
