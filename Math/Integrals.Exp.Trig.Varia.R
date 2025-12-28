@@ -185,6 +185,9 @@ besselJ(pi/2, 1E-14)
 besselJ(pi/2, 1E-15)
 # 4.720012e+14 # ERROR!
 
+curve(besselJ(x, cos(x)), 0, 2*pi, ylim = c(-2,2), n=201)
+abline(v = c(1,3) * pi/2, col = "red", lty = 2)
+
 
 ##################
 
