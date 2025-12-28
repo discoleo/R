@@ -227,6 +227,16 @@ integrate(\(x) sin(x) * besselJ(k*sin(x), 0), 0, pi/2)
 sin(k) / k;
 
 
+### I( sin(x) * besselY0(sin(x)) )
+integrate(\(x) sin(x) * besselY(sin(x), 0), 0, pi/2, rel.tol=1E-13)
+(pracma::Ci(1) * sin(1) - pracma::Si(1) * cos(1)) * 2/pi;
+
+### Gen: I( sin(x) * besselY0(k*sin(x)) )
+k = 3^(1/pi);
+integrate(\(x) sin(x) * besselY(k*sin(x), 0), 0, pi/2, rel.tol=1E-13)
+(pracma::Ci(k) * sin(k) - pracma::Si(k) * cos(k)) * 2 / (k*pi);
+
+
 ### I( sin(x) * besselJ0(cos(x)) )
 integrate(\(x) sin(x) * besselJ(cos(x), 0), 0, pi/2)
 # TODO
