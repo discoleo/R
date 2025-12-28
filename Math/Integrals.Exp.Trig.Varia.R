@@ -10,7 +10,7 @@
 
 #####################
 
-### I( exp(2*cos(x)) ) on [0, pi]
+### I( exp(k * cos(x)) ) on [0, pi]
 # Maths 505: A surprisingly interesting integral
 # https://www.youtube.com/watch?v=81qExKEYzo0
 # Note: Series expansion of exp(exp(-1i*x));
@@ -38,7 +38,7 @@ integrate(\(x) Re(exp(2i*sin(x))), 0, pi)
 pi * besselJ(2,0);
 
 ### Im(...)
-integrate(\(x) Im(exp(2i*sin(x))), 0, pi)
+integrate(\(x) Im(exp(2i*sin(x))), 0, pi, rel.tol=1E-13)
 # TODO
 
 
@@ -170,6 +170,20 @@ besselY(x, -3/2)
 k = sqrt(3)
 integrate(\(x) Re(cos(k * 1i * sin(x))), 0, pi/2)
 pi/2 * besselI(k, 0);
+
+
+### Errors
+
+###
+curve(besselJ(x, pi/2-x), 0, 2*pi, ylim = c(-2,2), n = 101)
+abline(v = pi/2, col = "red", lty = 2)
+
+besselJ(pi/2, 0)
+# 0.4720012
+besselJ(pi/2, 1E-14)
+# 0.4720012
+besselJ(pi/2, 1E-15)
+# 4.720012e+14 # ERROR!
 
 
 ##################
