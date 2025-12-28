@@ -78,6 +78,14 @@ integrate(\(x) 2 * (pi/2 - atan(x)) / (4+x^2), 2, Inf);
 integrate(\(x) -2 * atan(x) / (4+x^2), 2, Inf)$value + pi^2/8;
 # ...
 
+### Gen: Diff on [0, pi/4];
+k = sqrt(7);
+b = (k^2-1) / (2*k);
+integrate(\(x) atan(k*tan(x)) - atan(1/k*tan(x)), 0, pi/4);
+integrate(\(x) 1/2 * atan(b*sin(x)), 0, pi/2);
+(polylog2(tan(atan(b)/2)) - polylog2(- tan(atan(b)/2))) / 2;
+
+
 #####################
 
 ### I( atan(3*tan(x)) )
@@ -164,8 +172,8 @@ polylog2(2/(sqrt(5)+1), 2) - polylog2(-2/(sqrt(5)+1), 2)
 k = sqrt(3);
 kk = k / sqrt(k^2 + 1);
 integrate(\(x) atan(k*sin(x)), 0, pi/2)
-polylog2(tan(asin(kk)/2), 2) - polylog2(- tan(asin(kk)/2), 2)
-polylog2(tan(atan(k)/2), 2) - polylog2(- tan(atan(k)/2), 2)
+polylog2(tan(asin(kk)/2), 2) - polylog2(- tan(asin(kk)/2), 2);
+polylog2(tan(atan(k)/2), 2) - polylog2(- tan(atan(k)/2), 2);
 
 
 #####################
