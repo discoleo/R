@@ -213,6 +213,18 @@ pi * besselJ(k, 0) / 2
 
 ### I( Bessel )
 
+### I( BesselJ2(sin(x)) )
+integrate(\(x) besselJ(sin(x), 2), 0, pi/2, rel.tol=1E-13)
+pi/2 * besselJ(1/2, 1)^2;
+
+### Gen: I( BesselJ2(k * sin(x)) )
+k = 3^(1/3);
+integrate(\(x) besselJ(k*sin(x), 2), 0, pi/2, rel.tol=1E-13)
+pi/2 * besselJ(k/2, 1)^2;
+
+
+### I( Trig * Bessel )
+
 ### I( sin(x) * besselJ0(sin(x)) )
 integrate(\(x) sin(x) * besselJ(sin(x), 0), 0, pi/2)
 sin(1);
