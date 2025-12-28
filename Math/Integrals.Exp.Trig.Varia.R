@@ -188,6 +188,9 @@ besselJ(pi/2, 1E-15)
 curve(besselJ(x, cos(x)), 0, 2*pi, ylim = c(-2,2), n=201)
 abline(v = c(1,3) * pi/2, col = "red", lty = 2)
 
+# Almost all values are affected:
+median(besselJ(seq(0,1, by = 1/1024), 1E-15))
+
 
 ##################
 
