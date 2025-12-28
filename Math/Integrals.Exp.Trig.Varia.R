@@ -21,17 +21,32 @@
 integrate(\(x) exp(2*cos(x)), 0, pi)
 integrate(\(x) exp(2*cos(x)) / 2, -pi, pi)
 pi * sum(1 / factorial(seq(0, 15))^2)
-pi * besselI(2,0)
+pi * besselI(2,0);
+
+### Gen: I( exp(k*cos(x)) )
+k = 1/pi;
+integrate(\(x) exp(k*cos(x)), 0, pi)
+pi * besselI(k,0);
 
 # TODO: closed formula for Bessel?
 
+
+### Complex:
+
 ### I( exp(2i*sin(x)) )
 integrate(\(x) Re(exp(2i*sin(x))), 0, pi)
-pi * besselJ(2,0)
+pi * besselJ(2,0);
 
-###
+### Im(...)
 integrate(\(x) Im(exp(2i*sin(x))), 0, pi)
 # TODO
+
+
+### Gen: I( exp(k*1i * sin(x)) )
+k = sqrt(pi);
+integrate(\(x) Re(exp(k*1i*sin(x))), 0, pi)
+pi * besselJ(k,0)
+
 
 # Note:
 sum(1 / factorial(seq(0, 15))^2);
