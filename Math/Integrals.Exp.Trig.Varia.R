@@ -252,6 +252,14 @@ k/(4*n) * pi * (besselJ(k/2, (n+1)/2)^2 + besselJ(k/2, (n-1)/2)^2);
 
 ### I( Trig * Bessel )
 
+### Gen: I( sin(x) * BesselJn(k * sin(x)) )
+k = sqrt(pi); n = exp(-1/3);
+integrate(\(x) sin(x) * besselJ(k*sin(x), n), 0, pi/2)
+pi/2 * besselJ(k/2, (n-1)/2) * besselJ(k/2, (n+1)/2);
+
+
+### Actual Cases:
+
 ### I( sin(x) * BesselJ0(sin(x)) )
 integrate(\(x) sin(x) * besselJ(sin(x), 0), 0, pi/2)
 sin(1);
@@ -264,6 +272,7 @@ sin(2) / 2;
 k = sqrt(pi);
 integrate(\(x) sin(x) * besselJ(k*sin(x), 0), 0, pi/2)
 sin(k) / k;
+pi/2 * besselJ(k/2, -1/2) * besselJ(k/2, 1/2);
 
 
 ### I( sin(x) * BesselJ1(sin(x)) 
