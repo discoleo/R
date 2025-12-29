@@ -133,10 +133,15 @@ cos(x) / sqrt(x*pi/2);
 besselJ(x, 1/2)
 sin(x) / sqrt(x*pi/2);
 
+
 ### BesselI:
 x = sqrt(pi-2);
 besselI(x, 1/2)
-Im(sin(x*1i)) / sqrt(x *pi/2);
+Im(sin(x*1i)) / sqrt(x*pi/2);
+sinh(x) / sqrt(x*pi/2);
+#
+besselI(x, -1/2)
+cosh(x) / sqrt(x*pi/2);
 
 
 ### Extension:
@@ -258,7 +263,7 @@ integrate(\(x) sin(x) * besselJ(k*sin(x), n), 0, pi/2)
 pi/2 * besselJ(k/2, (n-1)/2) * besselJ(k/2, (n+1)/2);
 
 
-### Actual Cases:
+### Explicit Cases:
 
 ### I( sin(x) * BesselJ0(sin(x)) )
 integrate(\(x) sin(x) * besselJ(sin(x), 0), 0, pi/2)
@@ -306,20 +311,32 @@ integrate(\(x) sin(x) * besselJ(k*sin(x), 3), 0, pi/2, rel.tol=1E-13)
 pi/2 * besselJ(k/2, 1) * (4/k * besselJ(k/2, 1) - besselJ(k/2, 0));
 
 
+### BesselI
+
+### Gen: I( sin(x) * BesselI0(k * sin(x)) )
+k = sqrt(3)
+integrate(\(x) sin(x) * besselI(k*sin(x), 0), 0, pi/2, rel.tol=1E-13)
+sinh(k) / k;
+besselI(k, 1/2) * sqrt(pi/(2*k));
+
+
 ### BesselY
 
-### I( sin(x) * besselY0(sin(x)) )
+### I( sin(x) * BesselY0(sin(x)) )
 integrate(\(x) sin(x) * besselY(sin(x), 0), 0, pi/2, rel.tol=1E-13)
 (pracma::Ci(1) * sin(1) - pracma::Si(1) * cos(1)) * 2/pi;
 
-### Gen: I( sin(x) * besselY0(k*sin(x)) )
+### Gen: I( sin(x) * BesselY0(k*sin(x)) )
 k = 3^(1/pi);
 integrate(\(x) sin(x) * besselY(k*sin(x), 0), 0, pi/2, rel.tol=1E-13)
 (pracma::Ci(k) * sin(k) - pracma::Si(k) * cos(k)) * 2 / (k*pi);
 
 
+### Bessel( cos(x) )
+
 ### I( sin(x) * besselJ0(cos(x)) )
 integrate(\(x) sin(x) * besselJ(cos(x), 0), 0, pi/2)
+integrate(\(x) besselJ(x, 0), 0, 1)
 # TODO
 
 
