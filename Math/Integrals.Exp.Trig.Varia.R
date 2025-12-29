@@ -211,12 +211,25 @@ integrate(\(x) cos(k * sin(x)), 0, pi/2)
 pi * besselJ(k, 0) / 2
 
 
-### I( Bessel )
+### I( Bessel( TRIG ) )
+
+### Gen: I( BesselJ(k * sin(x), n) )
+k = exp(2/3); n = 3^(1/3);
+integrate(\(x) besselJ(k*sin(x), n), 0, pi/2, rel.tol=1E-13)
+pi/2 * besselJ(k/2, n/2)^2;
+
+
+### Gen: I( BesselJ0(k * sin(x)) )
+k = exp(1/sqrt(2));
+integrate(\(x) besselJ(k*sin(x), 0), 0, pi/2, rel.tol=1E-13)
+pi/2 * besselJ(k/2, 0)^2;
+
 
 ### Gen: I( BesselJ1(k * sin(x)) )
 k = 3^(1/3);
 integrate(\(x) besselJ(k*sin(x), 1), 0, pi/2, rel.tol=1E-13)
-(1 - cos(k)) / k;
+(1 - cos(k)) / k; # 2/k * sin(k/2)^2;
+pi/2 * besselJ(k/2, 1/2)^2;
 
 
 ### I( BesselJ2(sin(x)) )
@@ -259,13 +272,13 @@ pi/2 * besselJ(k/2, 0) * besselJ(k/2, 1);
 integrate(\(x) sin(x) * besselJ(sin(x), 2), 0, pi/2, rel.tol=1E-13)
 2*(1-cos(1)) - sin(1);
 
-### Gen: I( sin(x) * BesselJ2(k*sin(x)) )
+### Gen: I( sin(x) * BesselJ2(k * sin(x)) )
 k = log(pi+1);
 integrate(\(x) sin(x) * besselJ(k*sin(x), 2), 0, pi/2, rel.tol=1E-13)
 (2 - 2*cos(k) - k*sin(k)) / k^2;
 
 
-### I( sin(x) *BbesselJ3(sin(x)) )
+### I( sin(x) * BesselJ3(sin(x)) )
 integrate(\(x) sin(x) * besselJ(sin(x), 3), 0, pi/2, rel.tol=1E-13)
 4*pi/2 * besselJ(1/2, 1)^2 - pi/2 * besselJ(1/2, 0) * besselJ(1/2, 1);
 
