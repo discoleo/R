@@ -235,7 +235,8 @@ pi/2 * besselI(k/2, n/2)^2;
 
 # Special Cases:
 k = exp(-1/3);
-n = -1; # n = -3; # n = odd integer;
+n = -1; # n = -3;
+# n = negative Integers; (can be even & odd)
 integrate(\(x) besselI(k*sin(x), n), 0, pi/2, rel.tol=1E-13)
 pi/2 * besselI(k/2, -n/2)^2;
 
@@ -289,6 +290,12 @@ pi/2 * besselJ(k/2, (n-1)/2) * besselJ(k/2, (n+1)/2);
 k = sqrt(pi); n = exp(-1/3); # n != negative even integer;
 integrate(\(x) sin(x) * besselI(k*sin(x), n), 0, pi/2)
 pi/2 * besselI(k/2, (n-1)/2) * besselI(k/2, (n+1)/2);
+
+# Special Cases:
+n = -2; # n = -4; # n = actually any negative integer;
+k = exp(sqrt(2));
+integrate(\(x) sin(x) * besselI(k*sin(x), n), 0, pi/2)
+pi/2 * besselI(k/2, -(n-1)/2) * besselI(k/2, -(n+1)/2);
 
 
 ### Explicit Cases:
