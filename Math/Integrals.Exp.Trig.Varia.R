@@ -233,6 +233,11 @@ k = exp(2/3); n = 3^(1/3); # n != negative odd Integer;
 integrate(\(x) besselI(k*sin(x), n), 0, pi/2, rel.tol=1E-13)
 pi/2 * besselI(k/2, n/2)^2;
 
+# Special Cases:
+k = exp(-1/3);
+integrate(\(x) besselI(k*sin(x), -1), 0, pi/2, rel.tol=1E-13)
+pi/2 * besselI(k/2, 1/2)^2;
+
 
 ### Explicit Cases:
 
