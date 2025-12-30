@@ -355,8 +355,21 @@ sinh(k) / k;
 besselI(k, 1/2) * sqrt(pi/(2*k));
 pi/2 * besselI(k/2, -1/2) * besselI(k/2, 1/2);
 
+# - see above for full generalisations;
+
 
 ### BesselY
+
+### Gen: I( BesselY0(k * sin(x)) )
+k = exp(1/2);
+integrate(\(x) besselY(k*sin(x), 0), 0, pi/2, rel.tol=1E-13)
+pi/2 * besselY(k/2, 0) * besselJ(k/2, 0);
+
+### Gen: I( BesselY[1/2](k * sin(x)) )
+k = exp(1/2);
+integrate(\(x) besselY(k*sin(x), 1/2), 0, pi/2, rel.tol=1E-13)
+- pi/2 * besselJ(k/2, -1/4)^2;
+
 
 ### I( sin(x) * BesselY0(sin(x)) )
 integrate(\(x) sin(x) * besselY(sin(x), 0), 0, pi/2, rel.tol=1E-13)
