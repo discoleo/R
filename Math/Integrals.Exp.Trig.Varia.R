@@ -143,6 +143,11 @@ sinh(x) / sqrt(x*pi/2);
 besselI(x, -1/2)
 cosh(x) / sqrt(x*pi/2);
 
+# Recurrence:
+x = pi; n = 4/3;
+besselI(x, n+1) # ==
+-2*n/x * besselI(x, n) + besselI(x, n-1);
+
 
 ### Extension:
 x = sqrt(5);
@@ -261,6 +266,11 @@ k = exp(2/3); n = 3^(1/pi);
 integrate(\(x) besselJ(k * sin(x), n) / sin(x), 0, pi/2, rel.tol=1E-13)
 k/(4*n) * pi * (besselJ(k/2, (n+1)/2)^2 + besselJ(k/2, (n-1)/2)^2);
 
+### Gen: I( BesselIn(k * sin(x)) / sin(x) )
+k = exp(2/3); n = 3^(1/pi); # n > 0;
+integrate(\(x) besselI(k * sin(x), n) / sin(x), 0, pi/2, rel.tol=1E-13)
+k/(4*n) * pi * (besselI(k/2, (n-1)/2)^2 - besselI(k/2, (n+1)/2)^2);
+
 
 ### I( Trig * Bessel )
 
@@ -330,6 +340,7 @@ k = sqrt(3)
 integrate(\(x) sin(x) * besselI(k*sin(x), 0), 0, pi/2, rel.tol=1E-13)
 sinh(k) / k;
 besselI(k, 1/2) * sqrt(pi/(2*k));
+pi/2 * besselI(k/2, -1/2) * besselI(k/2, 1/2);
 
 
 ### BesselY
