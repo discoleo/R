@@ -269,6 +269,11 @@ k = sqrt(pi); n = exp(-1/3);
 integrate(\(x) sin(x) * besselJ(k*sin(x), n), 0, pi/2)
 pi/2 * besselJ(k/2, (n-1)/2) * besselJ(k/2, (n+1)/2);
 
+### Gen: I( sin(x) * BesselIn(k * sin(x)) )
+k = sqrt(pi); n = exp(-1/3); # n != negative even integer;
+integrate(\(x) sin(x) * besselI(k*sin(x), n), 0, pi/2)
+pi/2 * besselI(k/2, (n-1)/2) * besselI(k/2, (n+1)/2);
+
 
 ### Explicit Cases:
 
