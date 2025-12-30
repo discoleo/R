@@ -218,11 +218,18 @@ pi * besselJ(k, 0) / 2
 
 ### I( Bessel( TRIG ) )
 
-### Gen: I( BesselJ(k * sin(x), n) )
+### Gen: I( BesselJn(k * sin(x)) )
 k = exp(2/3); n = 3^(1/3);
 integrate(\(x) besselJ(k*sin(x), n), 0, pi/2, rel.tol=1E-13)
 pi/2 * besselJ(k/2, n/2)^2;
 
+### Gen: I( BesselIn(k * sin(x)) )
+k = exp(2/3); n = 3^(1/3); # n != negative odd Integer;
+integrate(\(x) besselI(k*sin(x), n), 0, pi/2, rel.tol=1E-13)
+pi/2 * besselI(k/2, n/2)^2;
+
+
+### Explicit Cases:
 
 ### Gen: I( BesselJ0(k * sin(x)) )
 k = exp(1/sqrt(2));
