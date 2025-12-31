@@ -182,9 +182,10 @@ integrate(\(x) Re(cos(k * 1i * sin(x))), 0, pi/2)
 pi/2 * besselI(k, 0);
 
 
-### Other:
+### Other: Bessel Y vs Bessel J
 k = sqrt(3);
-besselJ(k, 1) * besselY(k, 0) - besselJ(k, 0) * besselY(k, 1) - 2/(k*pi) # == 0
+n = sqrt(5) - sqrt(3);
+besselJ(k, n+1) * besselY(k, n) - besselJ(k, n) * besselY(k, n+1) - 2/(k*pi) # == 0
 
 
 ### Errors
