@@ -182,6 +182,11 @@ integrate(\(x) Re(cos(k * 1i * sin(x))), 0, pi/2)
 pi/2 * besselI(k, 0);
 
 
+### Other:
+k = sqrt(3);
+besselJ(k, 1) * besselY(k, 0) - besselJ(k, 0) * besselY(k, 1) - 2/(k*pi) # == 0
+
+
 ### Errors
 
 ###
@@ -370,6 +375,11 @@ k = exp(1/2);
 integrate(\(x) besselY(k*sin(x), 1/2), 0, pi/2, rel.tol=1E-13)
 - pi/2 * besselJ(k/2, -1/4)^2;
 
+###
+k = 1;
+integrate(\(x) besselY(k*sin(x), 1) + 2/(k*pi) / x, 0, pi/2, rel.tol=1E-13)
+# TODO
+
 
 ### I( sin(x) * BesselY0(sin(x)) )
 integrate(\(x) sin(x) * besselY(sin(x), 0), 0, pi/2, rel.tol=1E-13)
@@ -379,6 +389,11 @@ integrate(\(x) sin(x) * besselY(sin(x), 0), 0, pi/2, rel.tol=1E-13)
 k = 3^(1/pi);
 integrate(\(x) sin(x) * besselY(k*sin(x), 0), 0, pi/2, rel.tol=1E-13)
 (pracma::Ci(k) * sin(k) - pracma::Si(k) * cos(k)) * 2 / (k*pi);
+
+### Gen: I( sin(x) * BesselY[1/2](k*sin(x)) )
+k = 3^(1/pi);
+integrate(\(x) sin(x) * besselY(k*sin(x), 1/2), 0, pi/2, rel.tol=1E-13)
+- pi/2 * besselJ(k/2, -3/4) * besselJ(k/2, 1/4);
 
 
 ### Bessel( cos(x) )
