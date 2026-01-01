@@ -429,6 +429,13 @@ integrate(\(x) sin(x) * besselJ(cos(x), 0), 0, pi/2)$value +
 
 ### I( x * Bessel )
 
+### Gen: I( x * BesselJn(x) )
+n = 1/3
+integrate(\(x) x * besselJ(x, n), 0, 1)
+integrate(\(x) n * besselJ(x, n-1), 0, 1)$value - besselJ(1, n-1);
+
+### Explicit Cases:
+
 ### I( x * BesselJ0(x) )
 integrate(\(x) x * besselJ(x, 0), 0, 1)
 besselJ(1, 1);
@@ -436,6 +443,10 @@ besselJ(1, 1);
 ### I( x * BesselJ1(x) )
 integrate(\(x) x * besselJ(x, 1), 0, 1)
 integrate(\(x) besselJ(x, 0), 0, 1)$value - besselJ(1, 0);
+
+### I( x * BesselJ2(x) )
+integrate(\(x) x * besselJ(x, 2), 0, 1)
+2*(1 - besselJ(1, 0)) - besselJ(1, 1);
 
 
 #########################
