@@ -352,6 +352,19 @@ integrate(\(x) sin(x) * besselJ(k*sin(x), 3), 0, pi/2, rel.tol=1E-13)
 pi/2 * besselJ(k/2, 1) * (4/k * besselJ(k/2, 1) - besselJ(k/2, 0));
 
 
+### I( sin(x)^2 * Bessel )
+
+### Gen: I( sin(x)^2 * BesselJ0(k*sin(x)) )
+k = exp(-2/3);
+integrate(\(x) sin(x)^2 * besselJ(k*sin(x), 0), 0, pi/2, rel.tol=1E-13)
+pi/4 * (besselJ(k/2, 0)^2 - besselJ(k/2, 1)^2);
+
+### Gen: I( sin(x)^2 * BesselJ1(k*sin(x)) )
+k = exp(-1);
+integrate(\(x) sin(x)^2 * besselJ(k*sin(x), 1), 0, pi/2, rel.tol=1E-13)
+besselJ(k, 3/2) * sqrt(pi/(2*k));
+
+
 ### BesselI
 
 ### Gen: I( sin(x) * BesselI0(k * sin(x)) )
