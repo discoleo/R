@@ -417,11 +417,14 @@ integrate(\(x) sin(x) * besselJ(cos(x), 0), 0, pi/2)
 integrate(\(x) besselJ(x, 0), 0, 1)
 # TODO
 
-### I( sin(x) * besselJ(cos(x), 1) )
-integrate(\(x) sin(x) * besselJ(cos(x), 1), 0, pi/2)
-1 - besselJ(1, 0);
+### I( BesselJ1(k*x) )
+k = exp(2/3);
+integrate(\(x) besselJ(k*x, 1), 0, 1)
+integrate(\(x) sin(x) * besselJ(k*cos(x), 1), 0, pi/2)
+(1 - besselJ(k, 0)) / k;
 
-### I( sin(x) * besselJ(cos(x), 2) )
+### I( BesselJ2(x) )
+integrate(\(x) besselJ(x, 2), 0, 1)
 integrate(\(x) sin(x) * besselJ(cos(x), 2), 0, pi/2)
 integrate(\(x) sin(x) * besselJ(cos(x), 0), 0, pi/2)$value +
 	- 2*besselJ(1, 1);
@@ -429,24 +432,27 @@ integrate(\(x) sin(x) * besselJ(cos(x), 0), 0, pi/2)$value +
 
 ### I( x * Bessel )
 
-### Gen: I( x * BesselJn(x) )
-n = 1/3
-integrate(\(x) x * besselJ(x, n), 0, 1)
-integrate(\(x) n * besselJ(x, n-1), 0, 1)$value - besselJ(1, n-1);
+### Gen: I( x * BesselJn(k*x) )
+n = 1/3; k = exp(4/5);
+integrate(\(x) x * besselJ(k*x, n), 0, 1)
+integrate(\(x) n/k * besselJ(k*x, n-1), 0, 1)$value - besselJ(k, n-1) / k;
 
 ### Explicit Cases:
 
-### I( x * BesselJ0(x) )
-integrate(\(x) x * besselJ(x, 0), 0, 1)
-besselJ(1, 1);
+### I( x * BesselJ0(k*x) )
+k = exp(2/3);
+integrate(\(x) x * besselJ(k*x, 0), 0, 1)
+besselJ(k, 1) / k;
 
-### I( x * BesselJ1(x) )
-integrate(\(x) x * besselJ(x, 1), 0, 1)
-integrate(\(x) besselJ(x, 0), 0, 1)$value - besselJ(1, 0);
+### I( x * BesselJ1(k*x) )
+k = exp(3/4);
+integrate(\(x) x * besselJ(k*x, 1), 0, 1)
+integrate(\(x) 1/k * besselJ(k*x, 0), 0, 1)$value - besselJ(k, 0) / k;
 
-### I( x * BesselJ2(x) )
-integrate(\(x) x * besselJ(x, 2), 0, 1)
-2*(1 - besselJ(1, 0)) - besselJ(1, 1);
+### I( x * BesselJ2(k*x) )
+k = exp(4/5);
+integrate(\(x) x * besselJ(k*x, 2), 0, 1)
+2/k^2 * (1 - besselJ(k, 0)) - besselJ(k, 1) / k;
 
 
 #########################
