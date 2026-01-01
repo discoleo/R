@@ -417,7 +417,6 @@ integrate(\(x) sin(x) * besselJ(cos(x), 0), 0, pi/2)
 integrate(\(x) besselJ(x, 0), 0, 1)
 # TODO
 
-
 ### I( sin(x) * besselJ(cos(x), 1) )
 integrate(\(x) sin(x) * besselJ(cos(x), 1), 0, pi/2)
 1 - besselJ(1, 0);
@@ -426,6 +425,17 @@ integrate(\(x) sin(x) * besselJ(cos(x), 1), 0, pi/2)
 integrate(\(x) sin(x) * besselJ(cos(x), 2), 0, pi/2)
 integrate(\(x) sin(x) * besselJ(cos(x), 0), 0, pi/2)$value +
 	- 2*besselJ(1, 1);
+
+
+### I( x * Bessel )
+
+### I( x * BesselJ0(x) )
+integrate(\(x) x * besselJ(x, 0), 0, 1)
+besselJ(1, 1);
+
+### I( x * BesselJ1(x) )
+integrate(\(x) x * besselJ(x, 1), 0, 1)
+integrate(\(x) besselJ(x, 0), 0, 1)$value - besselJ(1, 0);
 
 
 #########################
