@@ -506,6 +506,12 @@ integrate(\(x) x * besselJ(k*x, 2), 0, 1)
 2/k^2 * (1 - besselJ(k, 0)) - besselJ(k, 1) / k;
 
 
+### I( x^3 * BesselJ0(k*x) )
+k = exp(2/pi);
+integrate(\(x) x^3 * besselJ(k*x, 0), 0, 1)
+2/k^2 * besselJ(k, 0) - (4-k^2)/k^3 * besselJ(k, 1);
+
+
 #########################
 
 ### I( exp(2*exp(x*1i)) )
