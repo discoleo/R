@@ -188,6 +188,28 @@ n = sqrt(5) - sqrt(3);
 besselJ(k, n+1) * besselY(k, n) - besselJ(k, n) * besselY(k, n+1) - 2/(k*pi) # == 0
 
 
+### D( Bessel )
+
+### Gen: D( Jn(x) )
+eps = 1E-6;
+x = exp(-1/3); n = 1/3;
+(besselJ(x+eps, n) - besselJ(x, n)) / eps;
+(besselJ(x, n-1) - besselJ(x, n+1)) / 2;
+
+
+### D( J0(x) )
+eps = 1E-6;
+x = 1/3;
+(besselJ(x+eps, 0) - besselJ(x, 0)) / eps;
+- besselJ(x, 1);
+
+### D( J1(x) )
+eps = 1E-6;
+x = 2/3;
+(besselJ(x+eps, 1) - besselJ(x, 1)) / eps;
+(besselJ(x, 0) - besselJ(x, 2)) / 2;
+
+
 ### Errors
 
 ###
@@ -423,11 +445,11 @@ integrate(\(x) besselJ(k*x, 1), 0, 1)
 integrate(\(x) sin(x) * besselJ(k*cos(x), 1), 0, pi/2)
 (1 - besselJ(k, 0)) / k;
 
-### I( BesselJ2(x) )
-integrate(\(x) besselJ(x, 2), 0, 1)
-integrate(\(x) sin(x) * besselJ(cos(x), 2), 0, pi/2)
-integrate(\(x) sin(x) * besselJ(cos(x), 0), 0, pi/2)$value +
-	- 2*besselJ(1, 1);
+### I( BesselJ2(k*x) )
+k = exp(1/pi);
+integrate(\(x) besselJ(k*x, 2), 0, 1)
+integrate(\(x) sin(x) * besselJ(k*cos(x), 2), 0, pi/2)
+integrate(\(x) besselJ(k*x, 0), 0, 1)$value - 2/k * besselJ(k, 1);
 
 
 ### I( x * Bessel )
