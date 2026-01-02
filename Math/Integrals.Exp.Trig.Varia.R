@@ -196,18 +196,30 @@ x = exp(-1/3); n = 1/3;
 (besselJ(x+eps, n) - besselJ(x, n)) / eps;
 (besselJ(x, n-1) - besselJ(x, n+1)) / 2;
 
+### Gen: D( x^n * Jn(x) )
+eps = 1E-6;
+x = 2/3; n = exp(-1/3);
+((x+eps)^n * besselJ(x+eps, n) - x^n * besselJ(x, n)) / eps;
+x^n * besselJ(x, n-1);
+
 
 ### D( J0(x) )
 eps = 1E-6;
 x = 1/3;
 (besselJ(x+eps, 0) - besselJ(x, 0)) / eps;
-- besselJ(x, 1);
+- besselJ(x, 1); besselJ(x, -1);
 
 ### D( J1(x) )
 eps = 1E-6;
 x = 2/3;
 (besselJ(x+eps, 1) - besselJ(x, 1)) / eps;
 (besselJ(x, 0) - besselJ(x, 2)) / 2;
+
+### D( x * J1(x) )
+eps = 1E-6;
+x = 2/3;
+((x+eps) * besselJ(x+eps, 1) - x*besselJ(x, 1)) / eps;
+x * besselJ(x, 0);
 
 
 ### Errors
@@ -414,6 +426,11 @@ integrate(\(x) besselY(k*sin(x), 1/2), 0, pi/2, rel.tol=1E-13)
 ###
 k = 1;
 integrate(\(x) besselY(k*sin(x), 1) + 2/(k*pi) / x, 0, pi/2, rel.tol=1E-13)
+# TODO
+
+###
+k = 1;
+integrate(\(x) besselY(k*sin(x), 2) + 4/(k^2*pi) / x^2, 0, pi/2, rel.tol=1E-13)
 # TODO
 
 
