@@ -190,17 +190,29 @@ besselJ(k, n+1) * besselY(k, n) - besselJ(k, n) * besselY(k, n+1) - 2/(k*pi) # =
 
 ### D( Bessel )
 
+# 1. Daniel An: Identities between Bessel functions
+#    https://www.youtube.com/watch?v=WW0NsuottKg
+
 ### Gen: D( Jn(x) )
 eps = 1E-6;
 x = exp(-1/3); n = 1/3;
 (besselJ(x+eps, n) - besselJ(x, n)) / eps;
 (besselJ(x, n-1) - besselJ(x, n+1)) / 2;
 
+# Alternatives:
+(besselJ(x+eps, n) - besselJ(x, n)) / eps;
+besselJ(x, n-1) - n/x * besselJ(x, n);
+n/x * besselJ(x, n) - besselJ(x, n+1);
+
+
 ### Gen: D( x^n * Jn(x) )
-eps = 1E-6;
+eps = 1E-8;
 x = 2/3; n = exp(-1/3);
 ((x+eps)^n * besselJ(x+eps, n) - x^n * besselJ(x, n)) / eps;
 x^n * besselJ(x, n-1);
+# Variant:
+((x+eps)^-n * besselJ(x+eps, n) - x^-n * besselJ(x, n)) / eps;
+- x^-n * besselJ(x, n+1);
 
 
 ### D( J0(x) )
