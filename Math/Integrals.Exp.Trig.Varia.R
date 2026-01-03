@@ -535,6 +535,11 @@ k = exp(-2/5); n = 1/pi;
 integrate(\(x) besselJ(k*x, n) * besselJ(k*(1-x), -n), 0, 1, rel.tol=1E-13)
 sin(k) / k;
 
+### Gen: I( BesselJn(k*x) * BesselJ[1-n](k*(1-x)) )
+k = 2/pi + 1/3; n = 3/pi;
+integrate(\(x) besselJ(k*x, n) * besselJ(k*(1-x), 1-n), 0, 1, rel.tol=1E-13)
+(besselJ(k, 0) - cos(k)) / k;
+
 
 #########################
 
