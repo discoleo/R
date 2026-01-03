@@ -530,6 +530,12 @@ integrate(\(x) besselJ(k*x, 1) * besselJ(k*(1-x), 1), 0, 1)
 (2*besselJ(k, 1) - sin(k)) / k;
 
 
+### Gen: I( BesselJn(k*x) * BesselJ[-n](k*(1-x)) )
+k = exp(-2/5); n = 1/pi;
+integrate(\(x) besselJ(k*x, n) * besselJ(k*(1-x), -n), 0, 1, rel.tol=1E-13)
+sin(k) / k;
+
+
 #########################
 
 ### I( exp(2*exp(x*1i)) )
