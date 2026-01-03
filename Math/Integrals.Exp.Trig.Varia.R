@@ -512,6 +512,14 @@ integrate(\(x) x^3 * besselJ(k*x, 0), 0, 1)
 2/k^2 * besselJ(k, 0) - (4-k^2)/k^3 * besselJ(k, 1);
 
 
+### Prod
+
+### I( besselJ0(k*x) * besselJ0(k*(1-x)) )
+k = exp(1/3);
+integrate(\(x) besselJ(k*x, 0) * besselJ(k*(1-x), 0), 0, 1)
+sin(k) / k;
+
+
 #########################
 
 ### I( exp(2*exp(x*1i)) )
