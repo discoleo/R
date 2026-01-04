@@ -17,11 +17,12 @@
 ### Logarithmic ###
 ###################
 
-### y^n = log(f(x)) * log(g(x))
+### y^n = log(f(x)) * log(g(x)) + F0(x)
 
 # Check:
-# for Homogenous: p0 = 0;
-x = sqrt(3); n = 2; b0 = 1/2; c1 = 1/2; c0 = 1;
+# Homogenous: F0 = 0;
+n = 2; # n = 1;
+x = sqrt(3); b0 = 1/2; c1 = 1/2; c0 = 1;
 params = list(x=x, b0=b0, c1=c1, c0=c0);
 e = expression((log(x+b0) * log(x^2+c1*x+c0))^(1/n))[[1]];
 f = x+b0; g = x^2+c1*x+c0;
@@ -38,22 +39,38 @@ n*f*g*y^(n-1)*dy - g*df * log(g) - f*dg * log(f) # = 0
 ### D2 =>
 n*f*g*y^(n-1)*d2y + n*(n-1)*f*g*y^(n-2)*dy^2 + n*df*g*y^(n-1)*dy + n*f*dg*y^(n-1)*dy # =
 	(g*d2f + df*dg) * log(g) + (f*d2g + df*dg) * log(f) + df*dg + dg*df;
-### Solve Linear =>
+
+### Solve Linear: D1 & D2 =>
 # log(f) = ...
 # log(g) = ...
+
 
 ### Special Cases:
 
 ### Order: n = 1
-f*g*dy = g*df * log(g) + f*dg * log(f)
-f*g*d2y + df*g*dy + f*dg*dy - df - dg =
-	(g*d2f + df*dg) * log(g) + (f*d2g + df*dg) * log(f)
+f*g*dy - g*df * log(g) - f*dg * log(f) # == 0
+f*g*d2y + df*g*dy + f*dg*dy - df*dg - dg*df # =
+	(g*d2f + df*dg) * log(g) + (f*d2g + df*dg) * log(f);
+
+
+### Solve Linear: D1 & D2 =>
+# Log(f):
+(f*dg*(g*d2f + df*dg) - g*df*(f*d2g + df*dg)) * log(f) # =
+(g*d2f + df*dg) * f*g*dy - g*df * (f*g*d2y + df*g*dy + f*dg*dy - df*dg - dg*df);
+
+# Log(g):
+(g*df*(f*d2g + df*dg) - f*dg*(g*d2f + df*dg)) * log(g) # =
+(f*d2g + df*dg) * f*g*dy - dg*f * (f*g*d2y + df*g*dy + f*dg*dy - df*dg - dg*df);
+
+# OR
 
 ### Solve Quadratic =>
-(f*dg*(g*d2f + df*dg) - g*df*(f*d2g + df*dg))*log(g) = ...
-(f*g*dg*d2f + f*df*dg^2 - f*g*df*d2g - g*df^2*dg)*log(g) = ...
+(g*d2f + df*dg) * log(g)^2 +
+	- (f*g*d2y + df*g*dy + f*dg*dy - df*dg - dg*df) * log(g) +
+	+ (f*d2g + df*dg) * y # == 0
 #
 log(f) = ...
+log(g) = ...
 
 
 ### Order: n = 1/2
@@ -69,7 +86,7 @@ dy = log(x-k)/(x+k) + log(x+k)/(x-k)
 (x^2 - k^2)*dy = (x-k)*log(x-k) + (x+k)*log(x+k)
 ### D2 =>
 (x^2 - k^2)*d2y + 2*x*dy - 2 = log(x-k) + log(x+k)
-### Solve Liniar =>
+### Solve Linear: D1 & D2 =>
 2*k*log(x-k) = (x+k)*((x^2 - k^2)*d2y + (x + k)*dy - 2)
 2*k*log(x+k) = -(x-k)*((x^2 - k^2)*d2y + (x - k)*dy - 2)
 
