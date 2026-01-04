@@ -333,6 +333,19 @@ k/(4*n) * pi * (besselI(k/2, (n-1)/2)^2 - besselI(k/2, (n+1)/2)^2);
 
 ### I( Trig * Bessel )
 
+### Gen: I( cos(k2*x) * BesselJn(k*cos(x)) )
+n = exp(-1/3);
+k = sqrt(pi); k2 = sqrt(3);
+integrate(\(x) cos(k2*x) * besselJ(k*cos(x), n), 0, pi/2)
+pi/2 * besselJ(k/2, (n-k2)/2) * besselJ(k/2, (n+k2)/2);
+
+### Gen: I( cos(k2*x) * BesselIn(k*cos(x)) )
+n = exp(-1/3);
+k = sqrt(pi); k2 = sqrt(3);
+integrate(\(x) cos(k2*x) * besselI(k*cos(x), n), 0, pi/2)
+pi/2 * besselI(k/2, (n-k2)/2) * besselI(k/2, (n+k2)/2);
+
+
 ### Gen: I( sin(x) * BesselJn(k * sin(x)) )
 k = sqrt(pi); n = exp(-1/3);
 integrate(\(x) sin(x) * besselJ(k*sin(x), n), 0, pi/2)
@@ -399,6 +412,12 @@ pi/2 * besselJ(k/2, 1) * (4/k * besselJ(k/2, 1) - besselJ(k/2, 0));
 
 
 ### I( sin(x)^2 * Bessel )
+
+### Gen: I( sin(x)^2 * BesselJn(k*sin(x)) )
+k = exp(-2/3); n = 2/5;
+integrate(\(x) sin(x)^2 * besselJ(k*sin(x), n), 0, pi/2)
+pi/4 * (besselJ(k/2, n/2)^2 + besselJ(k/2, (n-2)/2) * besselJ(k/2, (n+2)/2));
+
 
 ### Gen: I( sin(x)^2 * BesselJ0(k*sin(x)) )
 k = exp(-2/3);
