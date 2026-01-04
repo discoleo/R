@@ -1,12 +1,12 @@
 ########################
-###
-### Leonard Mada
-### [the one and only]
-###
-### Differential Equations
-### ODEs - Logarithms
-###
-### draft v.0.3m
+##
+## Leonard Mada
+## [the one and only]
+##
+## Differential Equations
+## ODEs - Logarithms
+##
+## draft v.0.3n
 
 
 ### ODEs Derived from Logarithms
@@ -21,9 +21,11 @@
 ### History ###
 ###############
 
-### draft v.0.3m:
+### draft v.0.3m - v.0.3n:
 # - [refactor] moved ODEs based on Hidden Log
 #   to new file: DE.ODE.NL.Log.Other.R;
+# - [refactor] Prod( LOG ) moved to new file:
+#   DE.ODE.NL.Log.Prod.R;
 ### draft v.0.3i - v.0.3j:
 # - Mixed variants: Sum(LOG, EXP)
 #   y = B1(x)*log(P1(x)) + B2(x)*exp(P2(x)) + F0(x);
@@ -554,114 +556,6 @@ print.pm(p, lead="d2y", do.sort=FALSE)
 #######################
 ### Section B:      ### 
 ### Non-Linear ODEs ###
-#######################
-
-###################
-### Logarithmic ###
-###################
-
-### y^n = log(f(x)) * log(g(x))
-
-### D =>
-n*y^(n-1)*dy = df * log(g)/f + dg * log(f)/g # * f*g
-n*f*g*y^(n-1)*dy = g*df * log(g) + f*dg * log(f)
-
-### D2 =>
-n*f*g*y^(n-1)*d2y + n*(n-1)*f*g*y^(n-2)*dy^2 + n*df*g*y^(n-1)*dy + n*f*dg*y^(n-1)*dy =
-	(g*d2f + df*dg) * log(g) + (f*d2g + df*dg) * log(f) + df + dg
-### Solve Linear =>
-# log(f) = ...
-# log(g) = ...
-
-### Special Cases:
-
-### Order: n = 1
-f*g*dy = g*df * log(g) + f*dg * log(f)
-f*g*d2y + df*g*dy + f*dg*dy - df - dg =
-	(g*d2f + df*dg) * log(g) + (f*d2g + df*dg) * log(f)
-
-### Solve Liniar =>
-(f*dg*(g*d2f + df*dg) - g*df*(f*d2g + df*dg))*log(g) = ...
-(f*g*dg*d2f + f*df*dg^2 - f*g*df*d2g - g*df^2*dg)*log(g) = ...
-#
-log(f) = ...
-
-
-### Order: n = 1/2
-1/2*f*g*y^(-1/2)*dy = g*df * log(g) + f*dg * log(f)
-1/2*f*g*y^(-1/2)*d2y - 1/4*f*g*y^(-3/2)*dy^2 + 1/2*df*g*y^(-1/2)*dy + 1/2*f*dg*y^(-1/2)*dy -df - dg =
-	(g*d2f + df*dg) * log(g) + (f*d2g + df*dg) * log(f)
-
-
-### Examples:
-
-### y = log(x + k) * log(x - k)
-dy = log(x-k)/(x+k) + log(x+k)/(x-k)
-(x^2 - k^2)*dy = (x-k)*log(x-k) + (x+k)*log(x+k)
-### D2 =>
-(x^2 - k^2)*d2y + 2*x*dy - 2 = log(x-k) + log(x+k)
-### Solve Liniar =>
-2*k*log(x-k) = (x+k)*((x^2 - k^2)*d2y + (x + k)*dy - 2)
-2*k*log(x+k) = -(x-k)*((x^2 - k^2)*d2y + (x - k)*dy - 2)
-
-### ODE:
-(x^2 - k^2)*((x^2 - k^2)*d2y + (x + k)*dy - 2) * ((x^2 - k^2)*d2y + (x - k)*dy - 2) + 4*k^2*y = 0
-
-### Ex 2:
-### y^(1/2) = log(x + k) * log(x - k)
-1/2*y^(-1/2)*dy = log(x-k)/(x+k) + log(x+k)/(x-k)
-(x^2 - k^2)*y^(-1/2)*dy = 2*(x-k)*log(x-k) + 2*(x+k)*log(x+k)
-### D2 =>
-(x^2 - k^2)*y^(-1/2)*d2y + 2*x*y^(-1/2)*dy - 1/2*(x^2 - k^2)*y^(-3/2)*dy^2 - 4 = 2*log(x-k) + 2*log(x+k)
-### Solve Liniar =>
-4*k*log(x-k) =  (x+k)*y^(-1/2)*((x^2 - k^2)*d2y + (x + k)*dy - 1/2*(x^2 - k^2)*dy^2/y - 4)
-4*k*log(x+k) = -(x-k)*y^(-1/2)*((x^2 - k^2)*d2y + (x - k)*dy - 1/2*(x^2 - k^2)*dy^2/y - 4)
-
-### ODE:
-(x^2 - k^2)*(...)*(...) + 4*k^2*y^(3/2) = 0
-
-
-### Solution & Plot
-y = function(x, k=1, n=1, v.dy, v.d2y) {
-	if(missing(v.dy)) v.dy = dy(x, k=k, n=n)
-	if(missing(v.d2y)) v.d2y = d2y(x, k=k, n=n, v.dy=v.dy)
-	x2 = x^2 - k^2
-	y = - x2*(x2*v.d2y + (x + k)*v.dy - 2)*(x2*v.d2y + (x - k)*v.dy - 2)
-	return(y / 4 / k^2)
-}
-dy = function(x, k=1, n=1) {
-	dp = log(x-k)/(x+k) + log(x+k)/(x-k);
-	return(dp)
-}
-d2y = function(x, k=1, n=1, v.dy) {
-	if(missing(v.dy)) v.dy = dy(x, k=k, n=n)
-	dp =log(x-k) + log(x+k) + 2 - 2*x*v.dy;
-	dp = dp / (x^2 - k^2)
-	return(dp)
-}
-### Plot:
-k = 1; n = 1;
-px = c(3/5 + (1:3)*3/5);
-curve(y(x, k=k, n=n), from= 1.01, to = 3, ylim=c(-3, 3))
-# global "minimum" / horn;
-line.tan(px, dx=3, p=y, dp=dy, k=k, n=n)
-#
-curve(dy(x, k=k, n=n), add=T, col="green")
-line.tan(px, dx=3, p=dy, dp=d2y, k=k, n=n, col="orange")
-
-
-### Ex 2:
-k = 3; n = 1;
-px = c(3 + (1:3)*3/5);
-curve(y(x, k=k, n=n), from= 3.01, to = 6, ylim=c(-3, 3))
-# global "minimum" / horn;
-line.tan(px, dx=3, p=y, dp=dy, k=k, n=n)
-#
-curve(dy(x, k=k, n=n), add=T, col="green")
-line.tan(px, dx=3, p=dy, dp=d2y, k=k, n=n, col="orange")
-
-
-#######################
 #######################
 
 ####################
