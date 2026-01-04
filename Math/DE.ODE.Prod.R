@@ -143,7 +143,7 @@ x^2*(x+b0)*d2y - x*(x+2*b0)*dy + (x+2*b0)*y +
 ### y = x * atan(x)^2
 
 # Check:
-# for Homogenous: p0 = 0;
+# for Homogenous: c0 = 0;
 x = sqrt(3); c0 = -1/2; params = list(x=x, c0=c0);
 e = expression(x * atan(x)^2 + c0)[[1]];
 #
@@ -163,4 +163,27 @@ x*(x^2+1)*dy - (x^2+1)*y - 2*x^2*atan(x) + c0*(x^2+1) # = 0
 x*(x^2+1)*d2y + 2*x^2*dy - 2*x*y +
 	- 4*x*atan(x) - 2*x^2/(x^2+1) + 2*c0*x # = 0
 x^2*(x^2+1)*d2y - 2*x*dy + 2*y - 2*x^3/(x^2+1) - 2*c0 # = 0
+
+
+### y = (x^2+1) * atan(x)^2
+
+# Check:
+# for Quasi-Homogenous: c0 = 0;
+x = sqrt(3); c0 = -1/2; params = list(x=x, c0=c0);
+e = expression((x^2+1) * atan(x)^2 + c0)[[1]];
+#
+y   = eval(e, params);
+dy  = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
+
+### ODE:
+(x^2+1)^2*d2y - 2*x*(x^2+1)*dy + 2*(x^2-1)*y - 2*(c0 + 1)*x^2 + 2*(c0 - 1) # = 0
+
+
+# D =>
+(x^2+1)*dy - 2*x*y - 2*(x^2+1)*atan(x) + 2*x*c0 # = 0
+
+# D2 =>
+(x^2+1)*d2y - 2*y - 4*x*atan(x) + 2*c0 - 2 # = 0
+(x^2+1)^2*d2y - 2*x*(x^2+1)*dy + 2*(x^2-1)*y - 2*(c0 + 1)*x^2 + 2*(c0 - 1) # = 0
 
