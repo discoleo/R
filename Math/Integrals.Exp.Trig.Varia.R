@@ -418,6 +418,13 @@ k = exp(-2/3); n = 2/5;
 integrate(\(x) sin(x)^2 * besselJ(k*sin(x), n), 0, pi/2)
 pi/4 * (besselJ(k/2, n/2)^2 + besselJ(k/2, (n-2)/2) * besselJ(k/2, (n+2)/2));
 
+### Gen: I( cos(x)^2 * BesselJn(k*sin(x)) )
+k = exp(-2/3); n = 2/5;
+integrate(\(x) cos(x)^2 * besselJ(k*sin(x), n), 0, pi/2)
+pi/4 * (besselJ(k/2, n/2)^2 - besselJ(k/2, (n-2)/2) * besselJ(k/2, (n+2)/2));
+
+
+# Explicit Cases:
 
 ### Gen: I( sin(x)^2 * BesselJ0(k*sin(x)) )
 k = exp(-2/3);
