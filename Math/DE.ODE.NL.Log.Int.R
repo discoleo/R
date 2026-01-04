@@ -6,7 +6,7 @@
 ## Differential Equations
 ## NL ODEs - Integral( LOG )
 ##
-## draft v.0.1a
+## draft v.0.1b
 
 
 
@@ -29,20 +29,35 @@ source("DE.ODE.Helper.R")
 
 ### y = x * I(1/log(x + k)) dx + F0(x)
 
+# Check:
+x = sqrt(3); k = 4/3;
+# x = 1/sqrt(3); k = 0;
+params = list(x=x, k=k);
+I = integrate(\(x) 1/log(x+k), 0, x)$value;
+e = expression(x * I + x^2/2 - 3*x)[[1]];
+f0 = x^2/2 - 3*x; df0 = x - 3; d2f0 = 1;
+#
+y   = eval(e, params);
+dI  = 1/log(x+k);
+dy  = eval(D(e, "x"), params) + x*dI;
+d2y = eval(D(D(e, "x"), "x"), params) + 2*dI - x/(x+k)/log(x+k)^2; # 2*dI!
+
 ### D(y)
-# dy # =
+dy   # =
 I + x/log(x + k) + df0
-# x*dy =
+x*dy # =
 y - f0 + x^2/log(x + k) + x*df0
 
 ### D2(y)
-# x*d2y + dy =
-dy + x*d2f0 + 2*x/log(x + k) - x^2/((x+k)*log(x+k)^2)
-dy + x*d2f0 + 2*(x*dy - y + f0 - x*df0)/x - (x*dy - y + f0 - x*df0)^2/(x^2*(x+k))
-# x^3*(x+k)*d2y =
+x*d2y + dy # =
+dy + x*d2f0 + 2*x/log(x + k) - x^2/((x+k)*log(x+k)^2);
+dy + x*d2f0 + 2*(x*dy - y + f0 - x*df0)/x - (x*dy - y + f0 - x*df0)^2/(x^2*(x+k));
+#
+x^3*(x+k)*d2y # =
 2*x*(x+k)*(x*dy - y + f0 - x*df0) - (x*dy - y + f0 - x*df0)^2 + x^3*(x+k)*d2f0;
 
 ### Examples:
+
 ### k = 0
 x^4*d2y - 2*x^2*(x*dy - y + f0 - x*df0) + (x*dy - y + f0 - x*df0)^2 - x^4*d2f0 # = 0
 ### f0 = x
