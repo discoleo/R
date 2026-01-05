@@ -6,7 +6,7 @@
 ## Differential Equations
 ## Linear ODEs - Mixed / Products
 ##
-## draft v.0.1c
+## draft v.0.1d
 
 
 ### Examples:
@@ -190,6 +190,45 @@ d2y = eval(D(D(e, "x"), "x"), params);
 
 
 #####################
+#####################
+
+### w. Radicals
+
+### Log & Radicals
+
+### y = x * log(sqrt(x^2 + b0) - x)^2
+
+# Check:
+# for Homogenous: c0 = 0;
+x = sqrt(3); b0 = 1/3; c0 = -1/2;
+params = list(x=x, b0=b0, c0=c0);
+e = expression(x * log(sqrt(x^2 + b0) - x)^2 + c0)[[1]];
+#
+y   = eval(e, params);
+dy  = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
+
+### ODE:
+x^2*(x^2+b0)*d2y - x*(x^2+2*b0)*dy + (x^2+2*b0)*y +
+	- 2*x^3 - c0*(x^2+2*b0) # = 0
+
+# D =>
+x*dy - (y - c0) - 2*x^2 * log(sqrt(x^2+b0) - x) * (x/sqrt(x^2+b0) - 1) / (sqrt(x^2+b0) - x) # = 0
+b0*x*dy - b0*(y - c0) - 2*x^2 * log(sqrt(x^2+b0) - x) * (x/sqrt(x^2+b0) - 1) * (sqrt(x^2+b0) + x) # = 0
+x*(x^2+b0)*dy - (x^2+b0)*(y - c0) + 2*x^2 * sqrt(x^2+b0) * log(sqrt(x^2+b0) - x) # = 0
+
+# D2 =>
+x*(x^2+b0)*d2y + 2*x^2*dy - 2*x*(y - c0) +
+	+ (4*x + 2*x^3/(x^2+b0)) * sqrt(x^2+b0) * log(sqrt(x^2+b0) - x) - 2*x^2 # = 0
+x^2*(x^2+b0)*d2y + 2*x^3*dy - 2*x^2*y +
+	- (2 + x^2/(x^2+b0)) * (x*(x^2+b0)*dy - (x^2+b0)*(y - c0)) - 2*x^3 + 2*c0*x^2 # = 0
+x^2*(x^2+b0) * d2y - x*(x^2+2*b0) * dy + (x^2+2*b0) * y +
+	- 2*x^3 - c0*(x^2+2*b0) # = 0
+
+
+######################
+
+### ATAN( Radicals )
 
 ### y = x * atan(sqrt(x+b0))^2
 
@@ -234,5 +273,4 @@ x*(x+b0+1)*d2y + x*dy - y +
 
 # Case: b0 = -1
 2*x^2*(x-1)*d2y - x*(x-2)*dy + (x-2)*y - (c0+1)*x + 2*c0 # = 0
-
 
