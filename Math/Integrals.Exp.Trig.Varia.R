@@ -472,7 +472,31 @@ integrate(\(x) besselY(k*sin(x), 2) + 4/(k^2*pi) / x^2, 0, pi/2, rel.tol=1E-13)
 # TODO
 
 
+### I(  Trig * BesselY )
+
+### I( cos(k1*x) * BesselYn(k*cos(x)) )
+# - see Gradshteyn 6.681 P2 (pg 723);
+k = 1/sqrt(3); k1 = 2/5;
+n = 1/4; # abs(Re(n)) < 1; but integral fails numerically for n > 1/2;
+integrate(\(x) cos(k1*x) * besselY(k*cos(x), n), 0, pi/2, rel.tol=1E-13)
+pi/2 * (besselJ(k/2, (n-k1)/2) * besselJ(k/2, (n+k1)/2) / tan(n*pi) +
+	- besselJ(k/2, -(n-k1)/2) * besselJ(k/2, -(n+k1)/2) / sin(n*pi));
+
+### Gen: I( cos(x) * BesselY0(k*sin(x)) )
+k = 3^(1/pi); k1 = 4; # k1 = even!
+integrate(\(x) cos(k1*x) * besselY(k*sin(x), 0), 0, pi/2, rel.tol=1E-13)
+pi/2 * besselJ(k/2, k1/2) * besselY(k/2, k1/2);
+
+
+###  Gen: I( sin(x) * BesselYn(k*sin(x)) )
+# see I( cos(k1*x) * BesselYn(k*cos(x)) );
+k = 2/sqrt(3); n = 2/5;
+integrate(\(x) sin(x) * besselY(k*sin(x), n), 0, pi/2, rel.tol=1E-13)
+pi/2 * (besselJ(k/2, (n-1)/2) * besselJ(k/2, (n+1)/2) / tan(n*pi) +
+	- besselJ(k/2, -(n-1)/2) * besselJ(k/2, -(n+1)/2) / sin(n*pi));
+
 ### I( sin(x) * BesselY0(sin(x)) )
+# Note: lim n -> 0;
 integrate(\(x) sin(x) * besselY(sin(x), 0), 0, pi/2, rel.tol=1E-13)
 (pracma::Ci(1) * sin(1) - pracma::Si(1) * cos(1)) * 2/pi;
 
@@ -480,6 +504,7 @@ integrate(\(x) sin(x) * besselY(sin(x), 0), 0, pi/2, rel.tol=1E-13)
 k = 3^(1/pi);
 integrate(\(x) sin(x) * besselY(k*sin(x), 0), 0, pi/2, rel.tol=1E-13)
 (pracma::Ci(k) * sin(k) - pracma::Si(k) * cos(k)) * 2 / (k*pi);
+
 
 ### Gen: I( sin(x) * BesselY[1/2](k*sin(x)) )
 k = 3^(1/pi);
