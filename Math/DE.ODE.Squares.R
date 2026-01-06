@@ -6,7 +6,7 @@
 ## Differential Equations
 ## Linear ODEs - Mixed / Products
 ##
-## draft v.0.1d
+## draft v.0.1e
 
 
 ### Examples:
@@ -224,6 +224,53 @@ x^2*(x^2+b0)*d2y + 2*x^3*dy - 2*x^2*y +
 	- (2 + x^2/(x^2+b0)) * (x*(x^2+b0)*dy - (x^2+b0)*(y - c0)) - 2*x^3 + 2*c0*x^2 # = 0
 x^2*(x^2+b0) * d2y - x*(x^2+2*b0) * dy + (x^2+2*b0) * y +
 	- 2*x^3 - c0*(x^2+2*b0) # = 0
+
+####################
+
+### y = x * log(sqrt(x^4 + b0) - x^2)^2
+# - Effect of Power inside SQRT;
+
+# Check:
+# for Homogenous: c0 = 0;
+x = sqrt(3); b0 = 1/3; c0 = -1/2;
+params = list(x=x, b0=b0, c0=c0);
+e = expression(x * log(sqrt(x^4 + b0) - x^2)^2 + c0)[[1]];
+#
+y   = eval(e, params);
+dy  = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
+
+### ODE:
+x^2*(x^4+b0)*d2y - x*(x^4+3*b0)*dy + (x^4+3*b0)*y +
+	- 8*x^5 - c0*(x^4+3*b0) # = 0
+
+# D =>
+x*dy - (y - c0) - 4*x^3 * log(sqrt(x^4+b0) - x^2) * (x^2/sqrt(x^4+b0) - 1) / (sqrt(x^4+b0) - x^2) # = 0
+x*(x^4+b0)*dy - (x^4+b0)*(y - c0) + 4*x^3 * sqrt(x^4+b0) * log(sqrt(x^4+b0) - x^2) # = 0
+
+# D2 =>
+x*(x^4+b0)*d2y + 4*x^4*dy - 4*x^3*(y - c0) +
+	+ (3 + 2*x^4/(x^4+b0)) * 4*x^2 * sqrt(x^4+b0) * log(sqrt(x^4+b0) - x^2) - 8*x^4 # = 0
+x*(x^4+b0)*d2y + 4*x^4*dy - 4*x^3*(y - c0) +
+	- (3*(x^4+b0) + 2*x^4) * (x*dy - (y - c0))/x - 8*x^4 # = 0
+
+
+### Gen: y = x * log(sqrt(x^(2*n) + b0) - x^n)^2
+# - Effect of Power inside SQRT;
+
+# Check:
+# for Homogenous: c0 = 0;
+x = sqrt(3); n = 3/5;  b0 = 1/3; c0 = -1/2;
+params = list(x=x, b0=b0, c0=c0);
+e = expression(x * log(sqrt(x^(2*n) + b0) - x^n)^2 + c0)[[1]];
+#
+y   = eval(e, params);
+dy  = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
+
+### ODE:
+x^2*(x^(2*n)+b0)*d2y - x*(x^(2*n)+(n+1)*b0)*dy + (x^(2*n)+(n+1)*b0)*y +
+	- 2*n^2 * x^(2*n+1) - c0*(x^(2*n)+(n+1)*b0) # = 0
 
 
 ######################
