@@ -482,10 +482,16 @@ integrate(\(x) cos(k1*x) * besselY(k*cos(x), n), 0, pi/2, rel.tol=1E-13)
 pi/2 * (besselJ(k/2, (n-k1)/2) * besselJ(k/2, (n+k1)/2) / tan(n*pi) +
 	- besselJ(k/2, -(n-k1)/2) * besselJ(k/2, -(n+k1)/2) / sin(n*pi));
 
-### Gen: I( cos(x) * BesselY0(k*sin(x)) )
+### Gen: I( cos(k1*x) * BesselY0(k*sin(x)) )
 k = 3^(1/pi); k1 = 4; # k1 = even!
 integrate(\(x) cos(k1*x) * besselY(k*sin(x), 0), 0, pi/2, rel.tol=1E-13)
 pi/2 * besselJ(k/2, k1/2) * besselY(k/2, k1/2);
+
+### I( cos(x) * besselY(k*sin(x), 1/2) )
+k = 1/3;
+integrate(\(x) cos(x) * besselY(k*sin(x), 1/2), 0, pi/2, rel.tol=1E-13)
+integrate(\(x) -2 / sqrt(k*pi/2) * cos(k*x^2), 0, 1)
+# TODO
 
 
 ###  Gen: I( sin(x) * BesselYn(k*sin(x)) )
