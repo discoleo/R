@@ -67,6 +67,7 @@ source("Polynomials.Helper.R")
 
 # Coefficients:
 coef.p5 = function(b, K) {
+	# Order: s = c(s1, s2, s3, s4);
 	s1 = b[1]; s2 = b[2]; s3 = b[3]; s4 = b[4];
 	c(- K*s1^5 + K^2*(5*(s1*s2^3*s3 - s1^2*s2*s3^2 - s1^2*s2^2*s4 + s1^3*s3*s4) - s2^5) +
 			+ K^3*(5*(s1*s2*s4^3 - s1*s3^2*s4^2 + s2*s3^3*s4 - s2^2*s3*s4^2) - s3^5) - K^4*s4^5,
@@ -413,6 +414,33 @@ err
 p.p = polynomial(rev(p$poly))
 p.p
 predict(p.p, p$r)
+
+#####################
+#####################
+
+### Order 7
+
+### Ex 1:
+K = 3;
+k = K^(1/7); kj = k * exp(0:6 * 2i*pi/7);
+x = kj^5 - 2*kj;
+err = x^7 - 28*K*x^4 + 14*K^3*x^2 + 112*K^2*x - K^5 + 128*K;
+round0(err);
+
+### Ex 2:
+K = 3;
+k = K^(1/7); kj = k * exp(0:6 * 2i*pi/7);
+x = kj^5 + 2*kj;
+err = x^7 - 28*K*x^4 - 14*K^3*x^2 + 112*K^2*x - K^5 - 128*K;
+round0(err);
+
+### Ex 3:
+K = 3;
+k = K^(1/7); kj = k * exp(0:6 * 2i*pi/7);
+x = kj^5 - kj^2 + kj;
+err = x^7 + 7*K*x^5 - 7*K*x^4 + 7*(2*K^2 + K)*x^3 - 7*(K^3 + K^2 + 2*K)*x^2 +
+	+ 7*(K^3 + 3*K^2 + K)*x - K - 6*K^2 - K^5 - 7*K^4 - 14*K^3;
+round0(err);
 
 
 #####################
