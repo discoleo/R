@@ -6,7 +6,7 @@
 ## Differential Equations
 ## Linear ODEs - Mixed / Products
 ##
-## draft v.0.1f
+## draft v.0.1g
 
 
 ### Examples:
@@ -29,29 +29,70 @@ source("DE.ODE.Helper.R")
 #######################
 
 ### Type: LOG()^2
-# y = B(x) * Log(P(x))^2 + P0(x)
+# y = B(x) * Log(P(x))^2 + F0(x)
 
 ### y = x * log(x)^2
 
 # Check:
-# for Homogenous: p0 = 0;
-x = sqrt(3); p0 = -1/2; params = list(x=x, p0=p0);
-e = expression(x * log(x)^2 + p0)[[1]];
+# for Quasi-Homogenous: c0 = 0;
+x = sqrt(3); c0 = -1/2; params = list(x=x, c0=c0);
+e = expression(x * log(x)^2 + c0)[[1]];
 #
 y   = eval(e, params);
 dy  = eval(D(e, "x"), params);
 d2y = eval(D(D(e, "x"), "x"), params);
 
 ### ODE:
-x^2*d2y - x*dy + y - 2*x - p0 # = 0
+x^2*d2y - x*dy + y - 2*x - c0 # = 0
 
 
 # D =>
-x*dy - y - 2*x*log(x) + p0 # = 0
+x*dy - y - 2*x*log(x) + c0 # = 0
 
 # D2 =>
 x*d2y - 2*log(x) - 2 # = 0
-x^2*d2y - x*dy + y - 2*x - p0 # = 0
+x^2*d2y - x*dy + y - 2*x - c0 # = 0
+
+
+####################
+
+### y = x * log(x)^2 + c2*x^2 + c1*x + c0;
+# - more complicated F0(x);
+
+# Check:
+# for Quasi-Homogenous: c0 = 0;
+# Note: c1 has NO impact;
+x = sqrt(3); c2 = -1/3; c1 = -5/2; c0 = -1/2;
+params = list(x=x, c2=c2, c1=c1, c0=c0);
+e = expression(x * log(x)^2 + c2*x^2 + c1*x + c0)[[1]];
+#
+y   = eval(e, params);
+dy  = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
+
+### IDE:
+x^2*d2y - x*dy + y - c2*x^2 - 2*x - c0 # = 0
+
+
+# D =>
+x*dy - y - 2*x*log(x) - c2*x^2 + c0 # = 0
+
+# D2 =>
+x*d2y - 2*log(x) - 2*c2*x - 2 # = 0
+x^2*d2y - x*dy + y - c2*x^2 - 2*x - c0 # = 0
+
+
+### Variant: with Coef c1;
+x = sqrt(3); c2 = -1/3; c1 = -2/5; c0 = -1/2;
+params = list(x=x, c2=c2, c1=c1, c0=c0);
+e = expression(c1/2 * x * log(x)^2 + c2*x^2 + c0)[[1]];
+#
+y   = eval(e, params);
+dy  = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
+
+### IDE:
+x^2*d2y - x*dy + y - (c2*x^2 + c1*x + c0) # = 0
 
 
 ############################
