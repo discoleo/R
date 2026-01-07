@@ -190,6 +190,9 @@ polyGen.Simple = function(n, m, div=TRUE) {
 # x*y = S^2 - b1;
 
 ### Sum =>
+S^3 - 3*E2*S  + b1*S - 2*R = 0
+
+### Eq:
 S^3 - 2*b1*S + R # = 0
 
 ### Step 2:
@@ -655,7 +658,7 @@ round0(err)
 ### Diff =>
 # x*y = (x + y)^2 - b1
 
-### Sum =>
+### Eq:
 S^3 - b2*S^2 - 2*b1*S + b1*b2 + R
 
 
@@ -896,8 +899,8 @@ b[2]^2*x^8 - b[2]*x^7 - (b[1]*b[2] - 1)*x^6 - b[1]*x^5 + (b[1]^2 + b[2]*R)*x^4 -
 ### Diff =>
 # (b2 - b3 + 1)*x*y = S^2 + b1 
 
-### Sum =>
-(b2 - 1)*S^3 + b1*Z*(b2 - 1) - R*(b2 - b3 + 1)
+### Eq:
+(b2 - 1)*S^3 + b1*S*(b2 - 1) - R*(b2 - b3 + 1)
 
 ### TODO: verify
 # Case: b2 - b3 + 1 == 0;
@@ -1062,8 +1065,8 @@ y^4 + b[3]*(x*y)^2 + b[2]*x*y + b[1]*x
 ### Extension: + b2*x*y
 b1 = b[1]; b2 = b[2]; R = R[1];
 x^12 - b2*x^10 - b1*x^9 + (- 3*R + b2^2)*x^8 + 2*b1*b2*x^7 + (2*R*b2 + b1^2 - b2^3)*x^6 +
-	(2*R*b1 - 3*b1*b2^2)*x^5 + (- R*b2^2 + 3*R^2 - 3*b1^2*b2)*x^4 + b1*(-2*R*b2 + b2^3 - b1^2)*x^3 +
-	(- R*b1^2 - R^2*b2 + 3*b1^2*b2^2)*x^2 - b1*(R^2 - 3*b1^2*b2)*x - R^3 + b1^4
+	+ (2*R*b1 - 3*b1*b2^2)*x^5 + (- R*b2^2 + 3*R^2 - 3*b1^2*b2)*x^4 + b1*(-2*R*b2 + b2^3 - b1^2)*x^3 +
+	+ (- R*b1^2 - R^2*b2 + 3*b1^2*b2^2)*x^2 - b1*(R^2 - 3*b1^2*b2)*x - R^3 + b1^4
 
 
 ### Extensions: A1-type
@@ -1193,8 +1196,9 @@ S^3 - b3*S^2 - b2*S - b1 - x*y*(2*S-b3) # = 0
 S^4 - 4*x*y*S^2 + 2*(x*y)^2 + b3*S^3 - 3*b3*x*y*S + b2*S^2 - 2*b2*x*y + b1*S - 2*R # = 0
 
 ### Eq S:
-S^6 - b3*S^5 - 2*(b3^2 + 2*b2)*S^4 + b3^3*S^3 - 4*b1*S^3 - 4*b3*b2*S^3 + 4*R*S^2 - b3*b1*S^2 +
-	+ 2*b3^2*b2*S^2 - 3*b2^2*S^2 + b3^2*b1*S + b3*b2^2*S - 4*b3*R*S - 4*b1*b2*S + b3^2*R - b1^2 + b3*b1*b2
+S^6 - b3*S^5 - 2*(b3^2 + b2)*S^4 + (b3^3 - 4*b1 - 4*b3*b2)*S^3 +
+	+ (4*R - b1*b3 + 2*b3^2*b2 - 3*b2^2)*S^2 +
+	+ (b3^2*b1 + b3*b2^2 - 4*b3*R - 4*b1*b2)*S + b3^2*R - b1^2 + b1*b2*b3 # = 0
 
 ### Auxiliary Eq:
 # x*y*(2*S-b3) = S^3 - b3*S^2 - b2*S - b1
@@ -1205,7 +1209,7 @@ solve.S2P4Full = function(R, b, debug=TRUE) {
 	b1 = b[1]; b2 = b[2]; b3 = b[3];
 	coeff = c(1, - b3, - 2*b3^2 - 2*b2, b3^3 - 4*b1 - 4*b3*b2,
 			4*R - b3*b1 + 2*b3^2*b2 - 3*b2^2, b3^2*b1 + b3*b2^2 - 4*b3*R - 4*b1*b2,
-			b3^2*R - b1^2 + b3*b1*b2);
+			b3^2*R - b1^2 + b1*b2*b3);
 	S = roots(coeff);
 	if(debug) print(S);
 	xy = (S^3 - b3*S^2 - b2*S - b1) / (2*S - b3);
@@ -1225,8 +1229,8 @@ sol = solve.S2P4Full(R, b);
 x = sol[,1]; y = sol[,2];
 
 ### Test:
-x^4 + b[3]*y^3 + b[2]*y^2 + b[1]*y # - R
-y^4 + b[3]*x^3 + b[2]*x^2 + b[1]*x # - R
+round0(x^4 + b[3]*y^3 + b[2]*y^2 + b[1]*y - R) # == 0
+round0(y^4 + b[3]*x^3 + b[2]*x^2 + b[1]*x - R) # == 0
 
 
 ### Classic Polynomial
@@ -1814,7 +1818,7 @@ test.S2Ht.P5Ch4 = function(sol, b, R=NULL) {
 	x = sol[,1]; y = sol[,2];
 	if(length(b) < 4) {
 		warning("Missing b coefficients! Set to 0.");
-		b = c(b, rep(0, 4- length(b)));
+		b = c(b, rep(0, 4 - length(b)));
 	}
 	err1 = x^5 + b[4]*x^4 + b[3]*y^3 + b[2]*y^2 + b[1]*y;
 	err2 = y^5 + b[4]*y^4 + b[3]*x^3 + b[2]*x^2 + b[1]*x;
