@@ -6,7 +6,7 @@
 ## Differential Equations
 ## Linear ODEs - Mixed / Products
 ##
-## draft v.0.1e
+## draft v.0.1f
 
 
 ### Examples:
@@ -271,6 +271,52 @@ d2y = eval(D(D(e, "x"), "x"), params);
 ### ODE:
 x^2*(x^(2*n)+b0)*d2y - x*(x^(2*n)+(n+1)*b0)*dy + (x^(2*n)+(n+1)*b0)*y +
 	- 2*n^2 * x^(2*n+1) - c0*(x^(2*n)+(n+1)*b0) # = 0
+
+
+### y = x * log(sqrt((x + b1)^2 + b0) - x - b1)^2
+# - Slightly more complicated SQRT;
+
+# Check:
+# for Quasi-Homogenous: c0 = 0;
+x = sqrt(3); b0 = 1/3; b1 = 3/4; c0 = -1/2;
+params = list(x=x, b0=b0, c0=c0);
+e = expression(x * log(sqrt((x + b1)^2 + b0) - x - b1)^2 + c0)[[1]];
+#
+y   = eval(e, params);
+dy  = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
+
+### ODE:
+x^2*((x + b1)^2 + b0)*d2y - x*((x + b1)*(x + 2*b1) + 2*b0)*dy +
+	+ ((x + b1)*(x + 2*b1) + 2*b0)*y +
+	- 2*x^3 - c0*((x + b1)*(x + 2*b1) + 2*b0) # = 0
+
+
+# D =>
+x*dy - (y - c0) - 2*x^2 * log(sqrt((x + b1)^2 + b0) - x - b1) *
+	((x+b1)/sqrt((x + b1)^2 + b0) - 1) / (sqrt((x + b1)^2 + b0) - x - b1) # = 0
+x*dy - (y - c0) + 2*x^2 * log(sqrt((x + b1)^2 + b0) - x - b1) / sqrt((x + b1)^2 + b0) # = 0
+
+# D2 =>
+x*d2y + 4*x * log(sqrt((x + b1)^2 + b0) - x - b1) / sqrt((x + b1)^2 + b0) +
+	- 2*x^2 * (x + b1) * log(sqrt((x + b1)^2 + b0) - x - b1) / sqrt((x + b1)^2 + b0)^3 +
+	- 2*x^2 / ((x + b1)^2 + b0) # = 0
+x^2*((x + b1)^2 + b0)*d2y - x*((x + b1)*(x + 2*b1) + 2*b0)*dy +
+	+ ((x + b1)*(x + 2*b1) + 2*b0)*y +
+	- 2*x^3 - c0*((x + b1)*(x + 2*b1) + 2*b0) # = 0
+
+
+### Variant: b0 < 0;
+# - same ODE: see above;
+# for Quasi-Homogenous: c0 = 0;
+x = sqrt(3); b0 = -1/5; b1 = 3/4; c0 = -1/2;
+params = list(x=x, b0=b0, c0=c0);
+e = expression(x * log(x + b1 - sqrt((x + b1)^2 + b0))^2 + c0)[[1]];
+#
+y   = eval(e, params);
+dy  = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
+
 
 
 ######################
