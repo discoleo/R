@@ -1,13 +1,12 @@
-
 ########################
-###
-### Leonard Mada
-### [the one and only]
-###
-### P6 Polynomials:
-### Symmetric Polynomials
-###
-### draft v.0.1c
+##
+## Leonard Mada
+## [the one and only]
+##
+## P6 Polynomials:
+## Symmetric Polynomials
+##
+## draft v.0.1d
 
 
 ### Decomposition of Symmetric Polynomials of order [2n]
@@ -18,7 +17,7 @@
 # - strictly symmetric:
 #   1 + b1*x + b2*x^2 + ... + b2*x^(n-2) + b1*x^(n-1) + x^n;
 #   b[j] = b[n-j] ***and*** b0 == 1;
-# - "strictily" symmetric polynomials of order 2*n+1
+# - "strictly" symmetric polynomials of order 2*n+1
 #   have the trivial root x = -1 and can be factored into:
 #   (x+1)*P[2n], where P[2n] is strictly symmetric;
 
@@ -29,7 +28,7 @@
 ### History ###
 
 # draft v.0.1c:
-# - generalized symmetric:
+# - generalized quasi-symmetric:
 #   x^6 + b[1]*x^5 + b[2]*x^4 + b[3]*x^3 + b[2]*R*x^2 + b[1]*R^2*x + R^3 = 0;
 # draft v.0.1b:
 # - added the decompositions for P8 & P10;
@@ -46,7 +45,9 @@
 library(polynom)
 library(pracma)
 
-### helper functions
+### Helper Functions
+
+# Roots of Unity
 unity = function(n=3, all=TRUE) {
 	m = complex(re=cos(2*pi/n), im=sin(2*pi/n))
 	if(all) {
@@ -82,6 +83,7 @@ solve.p6sym = function(b, type="symmetric") {
 	# 1 + b1*x + b2*x^2 + b3*x^3 + b2*x^4 + b1*x^5 + x^6
 	len = length(b)
 	if(len == 3) {
+		# P[6]: only Strictly Symmetric;
 		if(type == "minus") {
 			r = roots(c(1, b[1], -b[2]+3, b[3] + 2*b[1]))
 			b0 = -1;
@@ -115,7 +117,8 @@ solve.p6sym = function(b, type="symmetric") {
 	} else {
 		print("Not yet implemented!")
 	}
-	x = sapply(r, function(r) roots(c(1,-r,b0)))
+	# x + 1/x = r;
+	x = sapply(r, function(r) roots(c(1,-r,b0)));
 	p = round0.p(poly.calc(x))
 	b = c(b0, b, rev(b[-len]), 1)
 	if(type == "minus") {
@@ -128,25 +131,33 @@ solve.p6sym = function(b, type="symmetric") {
 
 ################
 
+### Strictly Symmetric P[6]
+
 ### Examples:
 
 ###
 b = c(-2, 0, -1)
 p = solve.p6sym(b)
-p
+p; x = p$x;
 1 - 2*x - x^3 - 2*x^5 + x^6
 
 ###
 b = c(-2, 3, 2)
 p = solve.p6sym(b)
-p
+p; x = p$x;
 1 - 2*x + 3*x^2 + 2*x^3 + 3*x^4 - 2*x^5 + x^6
 
 ###
 b = c(1, 3, 3)
 p = solve.p6sym(b)
-p
+p; x = p$x;
 1 + x + 3*x^2 + 3*x^3 + 3*x^4 + x^5 + x^6
+
+###
+b = c(1, 0, 0)
+p = solve.p6sym(b, type = "minus")
+p; x = p$x;
+-1 + x + x^5 + x^6
 
 ##############
 
@@ -154,7 +165,7 @@ p
 ### Series ###
 
 ### 1 + b1*x + b1*x^5 + x^6
-p = sapply(-5:5, function(b) print(solve.p6sym(c(b, 0, 0))$p))
+p = sapply(-5:5, \(b) print(solve.p6sym(c(b, 0, 0))$p))
 1 - 5*x - 5*x^5 + x^6 
 1 - 4*x - 4*x^5 + x^6 
 1 - 3*x - 3*x^5 + x^6 
@@ -168,7 +179,7 @@ p = sapply(-5:5, function(b) print(solve.p6sym(c(b, 0, 0))$p))
 1 + 5*x + 5*x^5 + x^6
 
 ### e.g. - x^2 - x^4
-p = sapply(-5:5, function(b) print(solve.p6sym(c(-1, -1, b))$p))
+p = sapply(-5:5, \(b) print(solve.p6sym(c(-1, -1, b))$p))
 1 - x - x^2 - 5*x^3 - x^4 - x^5 + x^6 
 1 - x - x^2 - 4*x^3 - x^4 - x^5 + x^6 
 1 - x - x^2 - 3*x^3 - x^4 - x^5 + x^6 
@@ -312,6 +323,55 @@ x = solve.P6Sym(R, b)
 err = x^6 + b[1]*x^5 + b[2]*x^4 + b[3]*x^3 + b[2]*R*x^2 + b[1]*R^2*x + R^3
 round0(err)
 
+### Special
+m = complex(re=cos(pi/3), im=sin(pi/3))
+
+R = m
+b = c(m^2, -m, -1)
+x = solve.P6Sym(R, b) / m^2
+
+err = -1 + x - x^2 - x^3 + x^4 + x^5 + x^6
+round0(err)
+
+
+### Ex 2: the same
+R = 1
+b = c(1i, -1, 1i)
+x = solve.P6Sym(R, b) / 1i
+
+err = -1 + x - x^2 - x^3 + x^4 + x^5 + x^6
+round0(err)
+
+
+########################
+########################
+
+### P2 o P3 Entanglement
+### "Skewed"
+
+# but quasi-trivial;
+
+(x^2 + b0/x + b1)^2 + c1*(x^2 + b0/x + b1) + c0 # = 0
+# omitted: b2*x (for simplicity);
+x^4 + b0^2/x^2 + b1^2 + 2*b1*x^2 + 2*b0*x + 2*b0*b1/x + c1*x^2 + b0*c1/x + b1*c1 + c0 # = 0
+x^4 + (2*b1 + c1)*x^2 + 2*b0*x + b1*c1 + b1^2 + c0 + 2*b0*b1/x + b0*c1/x + b0^2/x^2 # = 0
+x^6 + (2*b1 + c1)*x^4 + 2*b0*x^3 + (b1*c1 + b1^2 + c0)*x^2 + b0*(2*b1+c1)*x + b0^2 # = 0
+
+### Example:
+# c0 = - b1*(b1 + c1)
+# but is trivial!
+x^6 + (2*b1 + c1)*x^4 + 2*b0*x^3 + b0*(2*b1+c1)*x + b0^2 # = 0
+
+### Ex 1:
+b0 = 3;
+b1 = 1; c1 = -1;
+c0 = - b1*(b1 + c1)
+#
+r = roots(c(1, c1, c0))
+x = sapply(r, function(r) roots(c(1, 0, b1-r, b0)))
+
+x^6 + x^4 + 2*b0*x^3 + b0*x + b0^2 # = 0
+
 
 ####################
 ####################
@@ -319,6 +379,23 @@ round0(err)
 
 ####################
 ### Symmetric P8 ###
+
+### Generalized
+
+### Example:
+b = c(-1, 3, 2, -2); b1=b[1]; b2=b[2]; b3=b[3]; b4=b[4];
+c = sqrt(3);
+x = roots(c(1,b1,b2,b3,b4,c*b3,c^2*b2,c^3*b1, c^4));
+
+x^8 + b1*x^7 + b2*x^6 + b3*x^5 + b4*x^4 + b3*c*x^3 + b2*c^2*x^2 + b1*c^3*x + c^4 # = 0
+
+# Transformed Polynomial:
+z = x + c/x;
+z^4 - 4*c*(z^2 - 2*c) - 6*c^2 + b1*(z^3 - 3*c*z) + b2*(z^2 - 2*c) + b3*z + b4 # = 0
+z^4 + b1*z^3 + (b2 - 4*c)*z^2 + (b3 - 3*c*b1)*z + b4 - 2*c*b2 + 2*c^2 # = 0
+
+
+### Old Examples
 
 ###
 b = c(1, 0, 0, 1)
