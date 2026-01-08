@@ -132,6 +132,59 @@ params = list(x=x, b0=b0, d=d);
 4*x*(x+1)^2*d2y + 4*(x+1)*dy + (x - 2)*y - (x+1) # = 0
 
 
+#############
+
+### y = (sqrt(x + b0) + a0) * log(sqrt(x + b0) + d)
+
+# Check:
+# for Quasi-Homogenous: c0 = 0;
+x = sqrt(3); b0 = -sqrt(2); a0 = 2/5; d = 1/3; c0 = -2/3;
+params = list(x=x, b0=b0, a0=a0, d=d, c0=c0);
+e = expression((sqrt(x + b0) + a0) * log(sqrt(x + b0) + d) + c0)[[1]];
+#
+y   = eval(e, params);
+dy  = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
+
+# D =>
+2*(x+b0)*dy - sqrt(x+b0) * log(sqrt(x+b0) + d) - (sqrt(x+b0) + a0) * sqrt(x+b0) / (sqrt(x+b0) + d) # = 0
+2*(x+b0)*(x+b0 - d^2)*(x+b0 - a0^2)*dy - (x+b0-d^2)*(x + b0 - a0*sqrt(x+b0)) * (y - c0) +
+	- (x + b0 - a0^2) * ((x + b0 - a0*d)*sqrt(x+b0) + (a0-d)*(x+b0)) # = 0
+
+# D2 =>
+4*(x+b0)^2*(x+b0 - d^2)*(x+b0 - a0^2)*d2y +
+	+ 2*(x+b0)*((x+b0)*(5*x+5*b0 - 4*a0^2 - 3*d^2) + 2*a0^2*d^2)*dy +
+	+ a0*sqrt(x+b0) * 2*(x+b0)*(x+b0-d^2)*dy +
+	- (2*(x+b0)*(2*x+2*b0-d^2) - a0*(3*x+3*b0-d^2)*sqrt(x+b0)) * (y - c0) +
+	- (5*(x+b0)^2 - (3*a0^2+3*a0*d)*(x+b0) + a0^3*d) * sqrt(x+b0) +
+	- 2*(2*x+2*b0 - a0^2) * (a0-d)*(x+b0) # = 0
+4*(x+b0)^2*(x+b0 - d^2)*(x+b0 - a0^2)^2*d2y +
+	+ 2*(x+b0)*(x+b0 - a0^2)*((x+b0)*(5*x+5*b0 - 4*a0^2 - 3*d^2) + 2*a0^2*d^2)*dy +
+	- (x+b0 - a0*sqrt(x+b0)) * ((2*x+2*b0 - 2*a0^2)*(2*x+2*b0-d^2) + a0^2 * (x+b0-d^2)) * (y - c0) +
+	- (x+b0 - a0^2) * (5*(x+b0)^2 - (3*a0^2+3*a0*d)*(x+b0) - a0*(a0-d)*(x+b0) + a0^3*d) * sqrt(x+b0) +
+	- (x+b0 - a0^2) * (2*(a0-d)*(x+b0)*(2*x+2*b0 - a0^2) - a0*(x+b0)*(x + b0 - a0*d)) # = 0
+4*(x+b0)^2*(x+b0 - a0^2)*(x+b0 - d^2)^2 * d2y +
+	+ 2*(x+b0)*(x+b0 - a0^2)*(x+b0 - d^2)^2 * dy +
+	- (x+b0)*(x+b0 - a0^2) * ((x+b0) - (3*d^2- 2*a0*d)) * sqrt(x+b0) +
+	+ (x+b0)*(x+b0 - a0^2) * (a0*(x+b0) + a0*d^2 - 2*d^3) # = 0
+
+# Analysis:
+
+# SQRT:
+((x+b0 - a0^2)*(x+b0 - a0*d) - a0*(x+b0-d^2)*(y - c0)) * sqrt(x+b0) # ==
+2*(x+b0)*(x+b0 - d^2)*(x+b0 - a0^2)*dy - (x+b0-d^2)*(x + b0)*(y - c0) - (x+b0 - a0^2)*(a0-d)*(x+b0);
+
+# Linear ODE: only when a0 = 0;
+
+# Case: a0 = 0 =>
+(x+b0) * sqrt(x+b0) # ==
+2*(x+b0)*(x+b0 - d^2)*dy - (x+b0 - d^2)*(y - c0) + d*(x+b0);
+
+# ODE:
+4*(x+b0)^2*(x+b0 - d^2) * d2y + 4*d^2*(x+b0) * dy +
+	+ (x+b0 - 3*d^2)*(y - c0) - d*(x+b0) # = 0
+
+
 ####################
 ####################
 
