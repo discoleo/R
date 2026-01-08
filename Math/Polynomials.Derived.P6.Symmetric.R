@@ -9,15 +9,15 @@
 ## draft v.0.1d
 
 
-### Decomposition of Symmetric Polynomials of order [2n]
-### into Polynomials of order [n]
+### Decomposition of Strictly Symmetric Polynomials
+### of order [2n+1] & [2n] into Polynomials of order [n]
 
-# - every *strictly* symmetric polynomial of order 2*n
+# - Every *strictly* symmetric polynomial of order 2*n
 #   can be "decomposed" into polynomials of order n;
-# - strictly symmetric:
+# - Strictly symmetric:
 #   1 + b1*x + b2*x^2 + ... + b2*x^(n-2) + b1*x^(n-1) + x^n;
 #   b[j] = b[n-j] ***and*** b0 == 1;
-# - "strictly" symmetric polynomials of order 2*n+1
+# - "Strictly" symmetric polynomials of order 2*n+1
 #   have the trivial root x = -1 and can be factored into:
 #   (x+1)*P[2n], where P[2n] is strictly symmetric;
 
@@ -132,6 +132,26 @@ solve.p6sym = function(b, type="symmetric") {
 ################
 
 ### Strictly Symmetric P[6]
+
+### Decomposition:
+b = c(2,-2,-1); b1=b[1]; b2=b[2]; b3=b[3];
+x = roots(c(1,b1,b2,b3,b2,b1,1));
+
+x^6 + b1*x^5 + b2*x^4 + b3*x^3 + b2*x^2 + b1*x + 1 # = 0
+(x^3 + 1/x^3) + b1*(x^2 + 1/x^2) + b2*(x + 1/x) + b3 # = 0
+z = x + 1/x;
+z^3 + b1*z^2 + (b2 - 3)*z - 2*b1 + b3 # = 0
+
+### Extension:
+c = sqrt(3);
+b = c(2,-2,-1); b1=b[1]; b2=b[2]; b3=b[3];
+x = roots(c(1,b1,b2,b3,b2*c,b1*c^2,c^3));
+
+x^6 + b1*x^5 + b2*x^4 + b3*x^3 + c*b2*x^2 + c^2*b1*x + c^3 # = 0
+(x^3 + c^3/x^3) + b1*(x^2 + c^2/x^2) + b2*(x + c/x) + b3 # = 0
+z = x + c/x;
+z^3 + b1*z^2 + (b2 - 3*c)*z - 2*c*b1 + b3 # = 0
+
 
 ### Examples:
 
