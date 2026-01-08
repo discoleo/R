@@ -1779,10 +1779,14 @@ test.S2Ht.P5Y21(sol, b=b)
 ### Diff =>
 S^4 + (x*y)^2 - 3*x*y*S^2- 2*b4*x*y*S + b3*x*y + b4*S^3 - b3*S^2 - b2*S - b1 # = 0
 
-### Diff(x*...) =>
+### Diff(x*...) - (x-y) * Sum(...) =>
 # - with efficient reduction & simple Reduction =>
-(- 5*S^3 - 6*b4*S^2 - 2*b4^2*S + b3*S - b3*b4 + b2)*x*y +
-	+ 2*S^5 + 3*b4*S^4 + b4^2*S^3 + b3*S^3 + b3*b4*S^2 - 3*b2*S^2 - b2*b4*S - 3*b1*S - b1*b4 + R # = 0
+(- 5*S^3 - 6*b4*S^2 - 2*b4^2*S + 4*b3*S + b3*b4 + b2)*x*y +
+	+ 2*S^5 + 3*b4*S^4 + (b4^2 - 3*b3)*S^3 - (b3*b4 + 3*b2)*S^2 - (b2*b4 + 3*b1)*S - b1*b4 + R # = 0
+
+### Eq S:
+# - see coefficients in the solver
+#   or in file Poly.System.Hetero.Symmetric.Derivation.R;
 
 
 ### Solver:

@@ -1019,14 +1019,14 @@ S^4 + (x*y)^2 - 3*x*y*S^2- 2*b4*x*y*S + b3*x*y + b4*S^3 - b3*S^2 - b2*S - b1 # =
 ### Diff(x*...) =>
 (x - y)*(x^5 + y^5 + b4*(x^4 + y^4 + x*y*(x^2 + y^2) + (x*y)^2) +
 	+ x*y*(x^3 + y^3) + (x*y)^2*(x + y) - b3*x*y*S - b2*x*y - R) # = 0
-# =>
+# substitute Sum(...) =>
 2*R - b3*(x^3 + y^3) - b2*(x^2 + y^2) - b1*S + b4*(x*y*(x^2 + y^2) + (x*y)^2) +
 	+ x*y*(x^3 + y^3) + (x*y)^2*(x + y) - b3*x*y*S - b2*x*y - R # = 0
 - 2*(x*y)^2*S - b4*(x*y)^2 +
 	+ x*y*S^3 + b4*x*y*S^2 + 2*b3*x*y*S + b2*x*y - b3*S^3 - b2*S^2 - b1*S + R # = 0
-# Reduction =>
+# Reduction: + 2*S * (Eq Diff) =>
 2*S^5 + 3*b4*S^4 - (3*b3 - b4^2)*S^3 - (3*b2 + b3*b4)*S^2 - (3*b1 + b2*b4)*S - b1*b4 + R +
-	- (5*S^3 + 6*b4*S^2 - 4*b3*S + 2*b4^2*S - b2 - b3*b4)*x*y # = 0
+	- (5*S^3 + 6*b4*S^2 - 4*b3*S + 2*b4^2*S - b2 - b3*b4) * x*y # = 0
 
 
 ### Eq S:
