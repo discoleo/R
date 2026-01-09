@@ -6,7 +6,7 @@
 ## Differential Equations
 ## ODEs - Exponentials w. Radicals
 ##
-## draft v.0.1f
+## draft v.0.1g
 
 
 ### Types:
@@ -17,9 +17,11 @@
 #    y = G(x) * sqrt(P(x)) * exp(B(x) * sqrt(P(x)) + B0(x));
 # 3. Two Independent SQRTs:
 #    y = B1(x) * sqrt(S1(x)) * exp(P1(x)) + B2(x) * sqrt(S2(x)) * exp(P2(x)) + B0(x);
+# 4. Two Independent Radicals
+#    y = B1(x) * R1(x)^(1/n1) * EXP(P1(x)) + B2(x) * R2(x)^(1/n2) * EXP(P2(x)) + B0(x);
 # Note:
 # - Point [2]: sqrt(P(x)) is the same with the one in the exponential;
-# - P, B, G: polynomials (or polynomial fractions);
+# - P, R, S, B, G: polynomials (or polynomial fractions);
 
 
 ####################
@@ -442,7 +444,7 @@ d2y = eval(D(D(e, "x"), "x"), params);
 ### y = x^2 * sqrt(x + b0) * exp(x) + x * sqrt(x^2 + d0) * exp(-k/x);
 
 ### Check:
-# for qUASI-hOMOGENOUS: C0 = 0;
+# for Quasi-Homogenous: c0 = 0;
 x = sqrt(3); k = 1/5; b0 = 2/3; d0 = 3/5; c0 = -1/2;
 params = list(x=x, k=k, b0=b0, d0=d0, c0=c0);
 e = expression(x^2 * sqrt(x + b0) * exp(x) + x * sqrt(x^2 + d0) * exp(-k/x) + c0)[[1]];
@@ -486,4 +488,45 @@ x^2 * (2*(x+b0)*((x + k)*(x^2+d0) + x^3) - (x^2+d0)*((2*x^2 + 4*x)*(x+b0) + x^2)
 - (2*(x+b0)*((x + k)*(x^2+d0) + x^3) - (x^2+d0)*((2*x^2 + 4*x)*(x+b0) + x^2)) # ==
 (2*x^5 + (2*b0+1)*x^4 + 2*(d0-k)*x^3 + (2*d0*b0 - 2*k*b0 + 3*d0)*x^2 +
 	+ 2*(b0*d0 - k*d0)*x - 2*k*b0*d0);
+
+########################
+########################
+
+### Section 4: Independent Radicals
+
+
+### y = x^2 * (x + b0)^(1/3) * exp(k1/x) + x^2 * sqrt(x + b0)^(2/3) * exp(k2/x);
+# - for simplicity: R1(x) = R2(x), but with different exponenets;
+
+### Check:
+# for Quasi-Homogenous: c0 = 0;
+x = sqrt(3); k1 = 1/5; k2 = -2/5; b0 = 2/3; c0 = -1/2;
+params = list(x=x, k1=k1, k2=k2, b0=b0, c0=c0);
+e = expression(x^2 * (x + b0)^(1/3) * exp(k1/x) + x^2 * (x + b0)^(2/3) * exp(k2/x) + c0)[[1]];
+#
+y   = eval(e, params);
+dy  = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
+
+### ODE:
+# TODO: Substitute;
+
+
+# D =>
+3*(x+b0)*dy - ((6*x - 3*k1)*(x+b0) + x^2) * (x + b0)^(1/3) * exp(k1/x) +
+	- ((6*x - 3*k2)*(x+b0) + 2*x^2) * (x + b0)^(2/3) * exp(k2/x) # = 0
+
+# D2 =>
+9*x^2*(x+b0)^2*d2y + 9*x^2*(x + b0)*dy +
+	- (49*x^4 + 66*b0*x^3 - 33*k1*x^3 + 18*b0^2*x^2 - 51*b0*k1*x^2 + 9*k1^2*x^2 - 18*b0^2*k1*x +
+		+ 18*b0*k1^2*x + 9*b0^2*k1^2) * (x + b0)^(1/3) * exp(k1/x) +
+	- (64*x^4 + 78*b0*x^3 - 39*k2*x^3 + 18*b0^2*x^2 - 57*b0*k2*x^2 + 9*k2^2*x^2 - 18*b0^2*k2*x +
+		+ 18*b0*k2^2*x + 9*b0^2*k2^2) * (x + b0)^(2/3) * exp(k2/x) # = 0
+
+# Isolate: R(x)^(1/n) * EXP()
+x^2 * (x^2 + 3*(k1-k2)*(x+b0)) * (x + b0)^(1/3) * exp(k1/x) # ==
+- 3*x^2*(x+b0)*dy + ((6*x - 3*k2)*(x+b0) + 2*x^2) * (y - c0);
+#
+x^2 * (x^2 + 3*(k1-k2)*(x+b0)) * (x + b0)^(2/3) * exp(k2/x) # ==
+3*x^2*(x+b0)*dy - ((6*x - 3*k1)*(x+b0) + x^2) * (y - c0);
 
