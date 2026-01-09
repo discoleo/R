@@ -312,6 +312,56 @@ params = list(x=x, b0=b0, d=d);
 x*(x^2 + d^2)^2*d2y - (x^2 + d^2)*(x^2 - d^2)*dy +
 	+ x*(x^2 - 2*d^2)*y - d*x*(x^2 + d^2) # = 0
 
+##############
+
+### y = (sqrt(x^2 + b0) + a0) * log(sqrt(x^2 + b0) - x)
+
+# Check:
+# for Quasi-Homogenous: c0 = 0;
+x = sqrt(3); b0 = sqrt(2); a0 = 2/5; c0 = -2/3;
+params = list(x=x, b0=b0, a0=a0, c0=c0);
+e = expression((sqrt(x^2 + b0) + a0) * log(sqrt(x^2 + b0) - x) + c0)[[1]];
+#
+y   = eval(e, params);
+dy  = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
+
+# D =>
+(x^2 + b0)*dy - x*sqrt(x^2 + b0) * log(sqrt(x^2 + b0) - x) +
+	+ (x^2 + b0 + a0*sqrt(x^2 + b0)) # = 0
+# TODO
+
+
+##############
+
+### y = (sqrt(x^2 + b0) + x) * log(sqrt(x^2 + b0) - x)
+
+# Check:
+# for Quasi-Homogenous: c0 = 0;
+x = sqrt(3); b0 = sqrt(2) + 1; c0 = -5/7;
+params = list(x=x, b0=b0, c0=c0);
+e = expression((sqrt(x^2 + b0) + x) * log(sqrt(x^2 + b0) - x) + c0)[[1]];
+#
+y   = eval(e, params);
+dy  = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
+
+### ODE:
+# Note: has coefficient with SQRT;
+(x^2 + b0)*d2y + x*dy - (y - c0) + 2*x + 2*sqrt(x^2 + b0) # = 0
+
+
+# D =>
+(x^2 + b0)*dy - sqrt(x^2 + b0) * (y - c0) +
+	+ x^2 + b0 + x*sqrt(x^2 + b0) # = 0
+
+# D2 =>
+(x^2 + b0)*d2y + 2*x*dy - sqrt(x^2 + b0) * dy - x/sqrt(x^2 + b0) * (y - c0) +
+	+ 2*x + sqrt(x^2 + b0) + x^2/sqrt(x^2 + b0) # = 0
+(x^2 + b0)*d2y + 2*x*dy - (x/sqrt(x^2 + b0) + 1) * (y - c0) +
+	+ 3*x + 2*sqrt(x^2 + b0) + x^2/sqrt(x^2 + b0) # = 0
+(x^2 + b0)*d2y + x*dy - (y - c0) + 2*x + 2*sqrt(x^2 + b0) # = 0
+
 
 ####################
 
