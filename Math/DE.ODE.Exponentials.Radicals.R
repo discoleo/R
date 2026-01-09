@@ -16,9 +16,9 @@
 # 2. Double SQRT:
 #    y = G(x) * sqrt(P(x)) * exp(B(x) * sqrt(P(x)) + B0(x));
 # 3. Two Independent SQRTs:
-#    y = B1(x) * sqrt(P1(x)) * exp(P1(x)) + B2(x) * sqrt(P2(x)) * exp(P2(x)) + B0(x);
+#    y = B1(x) * sqrt(S1(x)) * exp(P1(x)) + B2(x) * sqrt(S2(x)) * exp(P2(x)) + B0(x);
 # Note:
-# - sqrt(P(x)) is the same with the one in the exponential;
+# - Point [2]: sqrt(P(x)) is the same with the one in the exponential;
 # - P, B, G: polynomials (or polynomial fractions);
 
 
