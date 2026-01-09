@@ -14,7 +14,9 @@
 # 1. Simple SQRT:
 #    y = G(x) * exp(B(x) * sqrt(P(x)) + B0(x));
 # 2. Double SQRT:
-#    y = G(x) * sqrt(P(x)) * exp(B(x) * sqrt(P(x) + B0(x));
+#    y = G(x) * sqrt(P(x)) * exp(B(x) * sqrt(P(x)) + B0(x));
+# 3. Two Independent SQRTs:
+#    y = B1(x) * sqrt(P1(x)) * exp(P1(x)) + B2(x) * sqrt(P2(x)) * exp(P2(x)) + B0(x);
 # Note:
 # - sqrt(P(x)) is the same with the one in the exponential;
 # - P, B, G: polynomials (or polynomial fractions);
@@ -421,6 +423,10 @@ dy  = eval(D(e, "x"), params);
 d2y = eval(D(D(e, "x"), "x"), params);
 
 
+### ODE:
+4*(x+b0)^3 * d2y + 2*(x+b0)^2 * dy - k^2 * y # = 0
+
+
 ### D =>
 2*(x+b0)*dy - y + k * exp(k / sqrt(x + b0)) # = 0
 
@@ -428,6 +434,56 @@ d2y = eval(D(D(e, "x"), "x"), params);
 4*(x+b0)*d2y + 2*dy - k^2 / (x+b0)^2 * y # = 0
 
 
+##########################
+##########################
+
+### Section 3: Independent SQRTs
+
+### y = x^2 * sqrt(x + b0) * exp(x) + x * sqrt(x^2 + d0) * exp(-k/x);
+
+### Check:
+# for qUASI-hOMOGENOUS: C0 = 0;
+x = sqrt(3); k = 1/5; b0 = 2/3; d0 = 3/5; c0 = -1/2;
+params = list(x=x, k=k, b0=b0, d0=d0, c0=c0);
+e = expression(x^2 * sqrt(x + b0) * exp(x) + x * sqrt(x^2 + d0) * exp(-k/x) + c0)[[1]];
+#
+y   = eval(e, params);
+dy  = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
+
 ### ODE:
-4*(x+b0)^3 * d2y + 2*(x+b0)^2 * dy - k^2 * y # = 0
+# TODO: Substitute SQRT() * EXP();
+
+
+# D =>
+2*x*dy - (2*x^3 + 4*x^2 + x^3/(x+b0)) * sqrt(x + b0) * exp(x) +
+	- 2*(x + k + x^3/(x^2+d0)) * sqrt(x^2 + d0) * exp(-k/x) # = 0
+2*x*(x+b0)*(x^2+d0)*dy - (x^2+d0)*((2*x^3 + 4*x^2)*(x+b0) + x^3) * sqrt(x + b0) * exp(x) +
+	- 2*(x+b0)*((x + k)*(x^2+d0) + x^3) * sqrt(x^2 + d0) * exp(-k/x) # = 0
+
+# D2 =>
+4*x^3*(x+b0)^2*(x^2+d0)^2 * d2y +
+	+ 4*x^2*(x+b0)*(x^2+d0)*(4*x^3 + 3*b0*x^2 + 2*d0*x + b0*d0) * dy +
+	- x^3 * (x^2+d0)*(4*x^6 + (8*b0+36)*x^5 + (4*b0^2 + 64*b0 + 4*d0 + 55)*x^4 +
+		+ (28*b0^2 + 8*d0*b0 + 86*b0 + 28*d0)*x^3 +
+		+ (4*d0*b0^2 + 32*b0^2 + 48*d0*b0 + 35*d0)*x^2 +
+		+ (20*d0*b0^2 + 50*d0*b0)*x + 16*d0*b0^2) * sqrt(x + b0) * exp(x) +
+	- 4 * (x+b0) * (10*x^7 + (8*b0 + 6*k)*x^6 + (11*d0 + 5*k*b0 + k^2)*x^5 +
+		+ (8*d0*b0 + 8*d0*k + b0*k^2)*x^4 + (2*d0^2 + 6*d0*b0*k + 2*d0*k^2)*x^3 +
+		+ (d0^2*b0 + 2*d0^2*k + 2*d0*b0*k^2)*x^2 + (d0^2*b0*k + d0^2*k^2)*x +
+		+ d0^2*b0*k^2) * sqrt(x^2 + d0) * exp(-k/x) # = 0
+
+# Isolate: SQRT() * EXP()
+x^2 * (2*x^5 + (2*b0+1)*x^4 + 2*(d0-k)*x^3 + (2*d0*b0 - 2*k*b0 + 3*d0)*x^2 +
+	+ 2*(b0*d0 - k*d0)*x - 2*k*b0*d0) * sqrt(x + b0) * exp(x) # ==
+2*x^2*(x+b0)*(x^2+d0)*dy - 2*(x+b0)*((x + k)*(x^2+d0) + x^3)*(y - c0);
+#
+x^2 * (2*(x+b0)*((x + k)*(x^2+d0) + x^3) - (x^2+d0)*((2*x^2 + 4*x)*(x+b0) + x^2)) *
+	sqrt(x^2 + d0) * exp(-k/x) # ==
+2*x^3 * (x+b0)*(x^2+d0) * dy - (x^2+d0)*((2*x^3 + 4*x^2)*(x+b0) + x^3) * (y - c0);
+
+# Note:
+- (2*(x+b0)*((x + k)*(x^2+d0) + x^3) - (x^2+d0)*((2*x^2 + 4*x)*(x+b0) + x^2)) # ==
+(2*x^5 + (2*b0+1)*x^4 + 2*(d0-k)*x^3 + (2*d0*b0 - 2*k*b0 + 3*d0)*x^2 +
+	+ 2*(b0*d0 - k*d0)*x - 2*k*b0*d0);
 
