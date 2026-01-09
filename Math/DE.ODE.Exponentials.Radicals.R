@@ -496,7 +496,7 @@ x^2 * (2*(x+b0)*((x + k)*(x^2+d0) + x^3) - (x^2+d0)*((2*x^2 + 4*x)*(x+b0) + x^2)
 
 
 ### y = x^2 * (x + b0)^(1/3) * exp(k1/x) + x^2 * sqrt(x + b0)^(2/3) * exp(k2/x);
-# - for simplicity: R1(x) = R2(x), but with different exponenets;
+# - for simplicity: R1(x) = R2(x), but with different exponents;
 
 ### Check:
 # for Quasi-Homogenous: c0 = 0;
@@ -509,7 +509,19 @@ dy  = eval(D(e, "x"), params);
 d2y = eval(D(D(e, "x"), "x"), params);
 
 ### ODE:
-# TODO: Substitute;
+x^4*(x+b0)^2*(x^2 + 3*(k1-k2)*(x+b0)) * d2y +
+	- x^2 * (4*x^5 + 2*(4*b0+4*k1-5*k2)*x^4 +
+		+ (4*b0^2 + 22*b0*k1 - 3*k1^2 + 3*k2^2 - 26*b0*k2)*x^3 +
+		+ (20*b0^2*k1 - 22*b0^2*k2 - 9*b0*k1^2 + 9*b0*k2^2)*x^2 +
+		+ (6*b0^3*k1 - 6*b0^3*k2 - 9*b0^2*k1^2 + 9*b0^2*k2^2)*x +
+		- 3*(b0^3*k1^2 - b0^3*k2^2)) * dy +
+	+ (56/9 * x^6 + 2*(6*b0 + 4*k1 - 7*k2)*x^5 + # DIV by 9;
+		+ (6*b0^2 + 20*b0*k1 - 32*b0*k2 - 8*k1^2 + 2*k1*k2 + 7*k2^2)*x^4 +
+		+ (18*b0^2*k1 - 22*b0*k1^2 - 24*b0^2*k2 + 4*b0*k1*k2 + 3*k1^2*k2 + 20*b0*k2^2 - 3*k1*k2^2)*x^3 +
+		+ (6*b0^3*k1 - 6*b0^3*k2 - 20*b0^2*k1^2 + 19*b0^2*k2^2 + 2*b0^2*k1*k2 +
+			+ 9*b0*k1^2*k2 - 9*b0*k1*k2^2)*x^2 +
+		- (6*b0^3*k1^2 - 9*b0^2*k1^2*k2 - 6*b0^3*k2^2 + 9*b0^2*k1*k2^2)*x +
+		+ 3*b0^3*k1*k2*(k1-k2)) * (y - c0) # = 0
 
 
 # D =>
