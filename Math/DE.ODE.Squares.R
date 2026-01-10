@@ -6,7 +6,7 @@
 ## Differential Equations
 ## Linear ODEs - Mixed / Products
 ##
-## draft v.0.1g
+## draft v.0.1h
 
 
 ### Examples:
@@ -29,6 +29,8 @@ source("DE.ODE.Helper.R")
 #######################
 
 ### Type: LOG()^2
+
+### Components: 1
 # y = B(x) * Log(P(x))^2 + F0(x)
 
 ### y = x * log(x)^2
@@ -174,6 +176,74 @@ x^2*(x+b0)*d2y + x^2*dy - x*y - 2*(x*(x+b0)*dy - (x+b0)*y + p0*(x+b0)) +
 	- 2*x^3/(x+b0) + p0*x # = 0
 x^2*(x+b0)*d2y - x*(x+2*b0)*dy + (x+2*b0)*y +
 	- 2*x^3/(x+b0) - p0*(x+2*b0) # = 0
+
+
+#################
+### Components: 2
+
+# y = b1(x) * log(P(x)) + B2(x) * Log(P(x))^2 + F0(x)
+
+### y = x^2 * log(x)^2 + x*log(x)
+
+# Check:
+# for Quasi-Homogenous: c0 = 0;
+x = sqrt(3); c0 = -1/2; params = list(x=x, c0=c0);
+e = expression(x^2 * log(x)^2 + x*log(x) + c0)[[1]];
+#
+y   = eval(e, params);
+dy  = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
+
+### ODE:
+x^2*(2*x-1)*d2y - 2*x*(3*x-1)*dy + 2*(4*x-1)*(y - c0) - 4*x^3 + 6*x^2 - x # = 0
+
+
+# D =>
+dy - 2*x*log(x)^2 - (2*x+1)*log(x) - 1 # = 0
+x*dy - 2*(y - c0) - x*(2*x-1)*log(x) - x # = 0
+
+# D2 =>
+x*d2y - dy - (4*x-1)*log(x) - 2*x # = 0
+x^2*(2*x-1)*d2y - x*(2*x-1)*dy - (4*x-1)*(x*dy - 2*(y - c0) - x) - 2*x^2*(2*x-1) # = 0
+x^2*(2*x-1)*d2y - 2*x*(3*x-1)*dy + 2*(4*x-1)*(y - c0) - 4*x^3 + 6*x^2 - x # = 0
+
+
+### Variant: y = c2*x^2 * log(x)^2 + x*log(x)
+
+# Check:
+# for Quasi-Homogenous: c0 = 0;
+x = sqrt(3); c0 = 1/2; c2 = 1/sqrt(2);
+# c2 = 1/2; # c2 = -1/2;
+params = list(x=x, c0=c0, c2=c2);
+e = expression(c2 * x^2 * log(x)^2 + x*log(x) + c0)[[1]];
+#
+y   = eval(e, params);
+dy  = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
+
+### ODE:
+x^2*(2*c2*x-1)*d2y - 2*x*(3*c2*x-1)*dy + 2*(4*c2*x-1)*(y - c0) +
+	- 4*c2^2*x^3 + 6*c2*x^2 - x # = 0
+
+
+# D =>
+dy - 2*c2*x*log(x)^2 - (2*c2*x+1)*log(x) - 1 # = 0
+x*dy - 2*(y - c0) - x*(2*c2*x-1)*log(x) - x # = 0
+
+# D2 =>
+x*d2y - dy - (4*c2*x-1)*log(x) - 2*c2*x # = 0
+x^2*(2*c2*x-1)*d2y - 2*x*(3*c2*x-1)*dy + 2*(4*c2*x-1)*(y - c0) +
+	- 4*c2^2*x^3 + 6*c2*x^2 - x # = 0
+
+### Special Cases:
+
+### Case: c2 = 1/2
+x^2*(x-1)*d2y - x*(3*x-2)*dy + 2*(2*x-1)*(y - c0) +
+	- x^3 + 3*x^2 - x # = 0
+
+### Case: c2 = -1/2
+x^2*(x+1)*d2y - x*(3*x+2)*dy + 2*(2*x+1)*(y - c0) +
+	+ x^3 + 3*x^2 + x # = 0
 
 
 #######################
