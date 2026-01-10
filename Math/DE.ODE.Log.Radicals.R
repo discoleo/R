@@ -8,7 +8,13 @@
 ##
 ## draft v.0.1g
 
+### Type
+# Simple:  y = Log(Radical + P0(x))
+# Coupled: y = Radical * Log(Radical + P0(x))
 
+# Note:
+# - for Radicals combined with simple Logs:
+#   see file DE.ODE.Radicals.R;
 
 ####################
 
@@ -35,6 +41,9 @@ y   = eval(e, params);
 dy  = eval(D(e, "x"), params);
 d2y = eval(D(D(e, "x"), "x"), params);
 
+### ODE:
+4*(x + b0)*(x + b0 - d^2)*d2y + 2*(3*x + 3*b0 - d^2)*dy - 1 # = 0
+
 
 # D =>
 2*dy - 1/(sqrt(x + b0) + d) /sqrt(x + b0) # = 0
@@ -46,9 +55,6 @@ d2y = eval(D(D(e, "x"), "x"), params);
 	- (2 - d/sqrt(x + b0)) # = 0
 4*(x + b0)^2*(x + b0 - d^2)*d2y + 4*(x + b0)*(2*x + 2*b0 - d^2)*dy +
 	- (2*(x + b0) - d*sqrt(x + b0)) # = 0
-
-### ODE:
-4*(x + b0)*(x + b0 - d^2)*d2y + 2*(3*x + 3*b0 - d^2)*dy - 1 # = 0
 
 
 #####################
