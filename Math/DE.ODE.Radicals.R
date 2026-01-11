@@ -6,7 +6,7 @@
 ## Differential Equations
 ## Linear ODEs - Radicals
 ##
-## draft v.0.1b
+## draft v.0.1c
 
 
 ### Theory
@@ -110,4 +110,31 @@ d2y = eval(D(D(e, "x"), "x"), params);
 # D2 =>
 9*x^2*(x^2+b0)^2*d2y - 3*x*(x^2+b0)*(13*x^2 + 9*b0) * dy +
 	+ (36*k^2*x^8 + 72*k^2*b0*x^6 + (36*k^2*b0^2+55)*x^4 + 66*b0*x^2 + 27*b0^2) * (y - c0) # = 0
+
+
+#################
+
+### Type: Sin(Log(P(x)))
+# y = (x^2+b0)^(1/3) * sin(k*log(x));
+
+# Check:
+x = sqrt(3); k = 2/5; b0 = sqrt(2); c0 = -1/3;
+params = list(x=x, k=k, b0=b0, c0=c0);
+e = expression((x^2+b0)^(1/3) * sin(k*log(x)) + c0)[[1]];
+#
+y   = eval(e, params); dy = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
+
+### ODE:
+9*x^2*(x^2+b0)^2 * d2y - 3*x*(x^2+b0)*(x^2-3*b0) * dy +
+	+ (9*k^2*(x^2+b0)^2 + 4*x^4 - 12*b0*x^2) * (y - c0) # = 0
+
+
+# D =>
+3*x*(x^2+b0)*dy - 2*x^2 * (y - c0) +
+	- 3*k*(x^2+b0) * (x^2+b0)^(1/3) * cos(k*log(x)) # = 0
+
+# D2 =>
+9*x^2*(x^2+b0)^2*d2y - 3*x*(x^2+b0)*(x^2-3*b0)*dy +
+	+ (9*k^2*(x^2+b0)^2 + 4*x^4 - 12*b0*x^2) * (y - c0) # = 0
 
