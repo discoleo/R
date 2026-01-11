@@ -11,11 +11,21 @@
 
 ### Theory
 
-# y = B1(x) * R(x)^(1/n) * FUN(P(x)) + B2(x) * R(x)^(1/n);
+### Non-Trig:
+# y = B1(x) * R(x)^p * FUN(P(x)) + B2(x) * R(x)^p;
 # - where FUN = Log, Atan;
 # - the Radical in the first term entangles with the free radical;
-# y = B1(x) * R(x)^(1/n) * SIN(P(x)) + B2(x) * R(x)^(1/n) * COS(P(x));
+# - Power p = (usually) non-integer value;
+
+### w. Trig:
+# y = B1(x) * R(x)^p * SIN(P(x)) + B2(x) * R(x)^p * COS(P(x));
+# y = B1(x) * R(x)^p * SIN(k*log(P(x))) + B2(x) * R(x)^p * COS(k*log(P(x)));
 # - the coefficients of SIN & COS entangle with each-other;
+# - Power p = non-integer value;
+
+# Note:
+# - Radicals persist across all levels of differentiation:
+# => Homogenous ODE;
 
 
 ### Examples:
