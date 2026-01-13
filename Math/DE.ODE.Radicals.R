@@ -6,7 +6,7 @@
 ## Differential Equations
 ## Linear ODEs - Radicals
 ##
-## draft v.0.1e
+## draft v.0.1f
 
 
 ### Theory
@@ -23,6 +23,9 @@
 # - the coefficients of SIN & COS entangle with each-other;
 # - Power p = non-integer value;
 
+### Double-Radicals
+# y = B(x) * sqrt(sqrt(P(x)^2 + b0) - P(x));
+
 # Note:
 # - Radicals persist across all levels of differentiation:
 # => Homogenous ODE;
@@ -30,8 +33,11 @@
 
 ### Examples:
 
-# x*(x^2+b0)^2 * d2y - b0*(x^2+b0) * dy + x^3 * (y - c0) = 0;
+# 16*x*(x+b0) * d2y + 8*(2*x + b0) * dy - (y - c0) = 0;
+# 16*x^2*(x+b0) * d2y + 8*x*(3*x + 2*b0) * dy - b0 * (y - c0) = 0;
+
 # 4*(x^2+b0) * d2y + 4*x * dy - (y - c0) = 0;
+# x*(x^2+b0)^2 * d2y - b0*(x^2+b0) * dy + x^3 * (y - c0) = 0;
 # 4*(x^2+b0)^2 * d2y - 4*x*(x^2+b0) * dy + (3*x^2 - 5*b0) * (y - c0) = 0;
 
 
@@ -215,7 +221,7 @@ d2y = eval(D(D(e, "x"), "x"), params);
 
 
 # D =>
-2*(x^2+b0)*dy + sqrt(x^2+b0)  * sqrt(sqrt(x^2+b0) - x) # = 0
+2*(x^2+b0)*dy + sqrt(x^2+b0) * sqrt(sqrt(x^2+b0) - x) # = 0
 
 # D2 =>
 4*(x^2+b0)*d2y + 8*x*dy +
@@ -248,4 +254,39 @@ d2y = eval(D(D(e, "x"), "x"), params);
 4*(x^2+b0)*d2y + 4*x*dy - 5*(y - c0) +
 	+ 4*x * sqrt(sqrt(x^2+b0) - x) # = 0
 4*(x^2+b0)^2*d2y - 4*x*(x^2+b0)*dy + (3*x^2 - 5*b0)*(y - c0) # = 0
+
+
+### Generalisation of Power
+
+### y = sqrt(sqrt(x^(2*n)+b0) - x^n)
+
+# Check:
+x = sqrt(3); n = 2/5; b0 = sqrt(2); c0 = -1/3;
+# n = 1/2; # n = -1/2;
+params = list(x=x, k=k, p=p, b0=b0, c0=c0);
+e = expression(sqrt(sqrt(x^(2*n)+b0) - x^n) + c0)[[1]];
+#
+y   = eval(e, params); dy = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
+
+### ODE:
+4*x*(x^(2*n)+b0) * d2y + 4*(x^(2*n) - (n-1)*b0) * dy +
+	- n^2*x^(2*n-1) * (y - c0) # = 0
+
+# D =>
+2*(x^(2*n)+b0)*dy + n*x^(n-1) * sqrt(x^(2*n)+b0) * sqrt(sqrt(x^(2*n)+b0) - x^n) # = 0
+
+# D2 =>
+4*x*(x^(2*n)+b0) * d2y + 4*(x^(2*n) - (n-1)*b0) * dy +
+	- n^2*x^(2*n-1) * (y - c0) # = 0
+
+### Special Cases:
+
+### Case: n = 1/2
+16*x*(x+b0) * d2y + 8*(2*x + b0) * dy - (y - c0) # = 0
+
+### Case: n = -1/2
+bi = 1/b0;
+16*x^2*(x+bi) * d2y + 8*x*(3*x + 2*bi) * dy - bi * (y - c0) # = 0
+
 
