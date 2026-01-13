@@ -23,7 +23,7 @@
 # - the coefficients of SIN & COS entangle with each-other;
 # - Power p = non-integer value;
 
-### Double-Radicals
+### Nested-Radicals
 # y = B(x) * sqrt(sqrt(P(x)^2 + b0) - P(x));
 
 # Note:
@@ -36,6 +36,8 @@
 # 16*x*(x+b0) * d2y + 8*(2*x + b0) * dy - (y - c0) = 0;
 # 16*x^2*(x+b0) * d2y + 8*x*(3*x + 2*b0) * dy - b0 * (y - c0) = 0;
 
+# Gen: (x^2+b0) * d2y + x * dy - k^2 * (y - c0) = 0
+# Special Cases & Variants:
 # 4*(x^2+b0) * d2y + 4*x * dy - (y - c0) = 0;
 # x*(x^2+b0)^2 * d2y - b0*(x^2+b0) * dy + x^3 * (y - c0) = 0;
 # 4*(x^2+b0)^2 * d2y - 4*x*(x^2+b0) * dy + (3*x^2 - 5*b0) * (y - c0) = 0;
@@ -203,14 +205,16 @@ params = list(x=x, k=k, p=1/4, b0=b0, c0=c0);
 x*(x^2+b0)^2 * d2y - b0*(x^2+b0) * dy + k0*x^3 * (y - c0) # = 0
 
 
-#################
+#########################
+#########################
 
-### y = sqrt(sqrt(x^2+b0) - x)
+### Type: Nested Radicals
+# y = sqrt(sqrt(x^2+b0) - x)
 
 # Check:
 x = sqrt(3); b0 = sqrt(2); c0 = -1/3;
 # p = 1/4; k = sqrt(3)/4;
-params = list(x=x, k=k, p=p, b0=b0, c0=c0);
+params = list(x=x, b0=b0, c0=c0);
 e = expression(sqrt(sqrt(x^2+b0) - x) + c0)[[1]];
 #
 y   = eval(e, params); dy = eval(D(e, "x"), params);
@@ -263,7 +267,7 @@ d2y = eval(D(D(e, "x"), "x"), params);
 # Check:
 x = sqrt(3); n = 2/5; b0 = sqrt(2); c0 = -1/3;
 # n = 1/2; # n = -1/2;
-params = list(x=x, k=k, p=p, b0=b0, c0=c0);
+params = list(x=x, k=k, n=n, b0=b0, c0=c0);
 e = expression(sqrt(sqrt(x^(2*n)+b0) - x^n) + c0)[[1]];
 #
 y   = eval(e, params); dy = eval(D(e, "x"), params);
@@ -289,4 +293,31 @@ d2y = eval(D(D(e, "x"), "x"), params);
 bi = 1/b0;
 16*x^2*(x+bi) * d2y + 8*x*(3*x + 2*bi) * dy - bi * (y - c0) # = 0
 
+
+##################
+
+### Outer Radical: Higher Power
+# y = (sqrt(x^2+b0) - x)^k
+
+# Check:
+x = sqrt(3); k = 1/3; b0 = sqrt(2); c0 = -1/3;
+params = list(x=x, k=k, b0=b0, c0=c0);
+e = expression((sqrt(x^2+b0) - x)^k + c0)[[1]];
+#
+y   = eval(e, params); dy = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
+
+### ODE:
+(x^2+b0)*d2y + x*dy - k^2 * (y - c0) # = 0
+
+
+# D =>
+dy - k * (x/sqrt(x^2+b0) - 1) * (sqrt(x^2+b0) - x)^k / (sqrt(x^2+b0) - x) # = 0
+(x^2+b0)*dy + k * sqrt(x^2+b0) * (sqrt(x^2+b0) - x)^k # = 0
+
+# D2 =>
+(x^2+b0)*d2y + 2*x*dy +
+	+ k*x * sqrt(x^2+b0) / (x^2+b0) * (sqrt(x^2+b0) - x)^k +
+	- k^2 * (sqrt(x^2+b0) - x)^k # = 0
+(x^2+b0)*d2y + x*dy - k^2 * (y - c0) # = 0
 
