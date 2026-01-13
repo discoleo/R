@@ -6,7 +6,7 @@
 ## Differential Equations
 ## Linear ODEs - Radicals
 ##
-## draft v.0.1d
+## draft v.0.1e
 
 
 ### Theory
@@ -31,6 +31,7 @@
 ### Examples:
 
 # x*(x^2+b0)^2 * d2y - b0*(x^2+b0) * dy + x^3 * (y - c0) = 0;
+# 4*(x^2+b0)*d2y + 4*x*dy - (y - c0) = 0;
 
 
 ####################
@@ -161,7 +162,7 @@ d2y = eval(D(D(e, "x"), "x"), params);
 # Check:
 x = sqrt(3); p = 2/3; k = 2/5; b0 = sqrt(2); c0 = -1/3;
 # p = 1/4; k = sqrt(3)/4;
-params = list(x=x, k=k, b0=b0, c0=c0);
+params = list(x=x, k=k, p=p, b0=b0, c0=c0);
 e = expression((x^2+b0)^p * sin(k*log(x^2+b0)) + c0)[[1]];
 #
 y   = eval(e, params); dy = eval(D(e, "x"), params);
@@ -186,4 +187,38 @@ x*(x^2+b0)^2 * d2y - ((4*p-1)*x^2 + b0)*(x^2+b0) * dy +
 
 ### Case: p = 1/4; k = sqrt(3)/4;
 x*(x^2+b0)^2 * d2y - b0*(x^2+b0) * dy + x^3 * (y - c0) # = 0
+
+### case: p = 1/4;
+k0 = -1;
+k = (k0/4 - 1/4^2); k = ifelse(k >= 0, sqrt(k), sqrt(k + 0i));
+params = list(x=x, k=k, p=1/4, b0=b0, c0=c0);
+# Note: must re-initialize above;
+x*(x^2+b0)^2 * d2y - b0*(x^2+b0) * dy + k0*x^3 * (y - c0) # = 0
+
+
+#################
+
+### y = sqrt(sqrt(x^2+b0) - x)
+
+# Check:
+x = sqrt(3); b0 = sqrt(2); c0 = -1/3;
+# p = 1/4; k = sqrt(3)/4;
+params = list(x=x, k=k, p=p, b0=b0, c0=c0);
+e = expression(sqrt(sqrt(x^2+b0) - x) + c0)[[1]];
+#
+y   = eval(e, params); dy = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
+
+### ODE:
+4*(x^2+b0)*d2y + 4*x*dy - (y - c0) # = 0
+
+
+# D =>
+2*(x^2+b0)*dy + sqrt(x^2+b0)  * sqrt(sqrt(x^2+b0) - x) # = 0
+
+# D2 =>
+4*(x^2+b0)*d2y + 8*x*dy +
+	+ 2*x / (x^2+b0) * sqrt(x^2+b0) * sqrt(sqrt(x^2+b0) - x) +
+	- sqrt(sqrt(x^2+b0) - x) # = 0
+4*(x^2+b0)*d2y + 4*x*dy - (y - c0) # = 0
 
