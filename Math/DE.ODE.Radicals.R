@@ -6,7 +6,7 @@
 ## Differential Equations
 ## Linear ODEs - Radicals
 ##
-## draft v.0.1f
+## draft v.0.1g
 
 
 ### Theory
@@ -301,6 +301,7 @@ bi = 1/b0;
 
 # Check:
 x = sqrt(3); k = 1/3; b0 = sqrt(2); c0 = -1/3;
+# k = 1i/3;
 params = list(x=x, k=k, b0=b0, c0=c0);
 e = expression((sqrt(x^2+b0) - x)^k + c0)[[1]];
 #
@@ -320,4 +321,35 @@ dy - k * (x/sqrt(x^2+b0) - 1) * (sqrt(x^2+b0) - x)^k / (sqrt(x^2+b0) - x) # = 0
 	+ k*x * sqrt(x^2+b0) / (x^2+b0) * (sqrt(x^2+b0) - x)^k +
 	- k^2 * (sqrt(x^2+b0) - x)^k # = 0
 (x^2+b0)*d2y + x*dy - k^2 * (y - c0) # = 0
+
+
+##############
+### Gen: Power
+# y = (sqrt(x^(2*n)+b0) - x^n)^k
+
+# Check:
+x = sqrt(3); n = 2/5; k = 1/3; b0 = sqrt(2); c0 = -1/3;
+# n = 2; k = 1i/2;
+params = list(x=x, n=n, k=k, b0=b0, c0=c0);
+e = expression((sqrt(x^(2*n)+b0) - x^n)^k + c0)[[1]];
+#
+y   = eval(e, params); dy = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
+
+### ODE:
+x*(x^(2*n) + b0) * d2y + (x^(2*n) - (n-1)*b0) * dy +
+	- k^2*n^2*x^(2*n-1) * (y - c0) # = 0
+
+
+# D =>
+(x^(2*n)+b0)*dy + k*n*x^(n-1) * sqrt(x^(2*n)+b0) * (sqrt(x^(2*n)+b0) - x^n)^k # = 0
+
+# D2 =>
+x*(x^(2*n) + b0) * d2y + (x^(2*n) - (n-1)*b0) * dy +
+	- k^2*n^2*x^(2*n-1) * (y - c0) # = 0
+
+### Special Cases:
+
+### Case: n = 2
+x*(x^4 + b0) * d2y + (x^4 - b0) * dy - 4*k^2*x^3 * (y - c0) # = 0
 
