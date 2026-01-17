@@ -6,10 +6,13 @@
 ## Differential Equations
 ## Linear ODEs - Radicals
 ##
-## draft v.0.1g
+## draft v.0.1h
 
 
 ### Theory
+
+### Simple Radicals:
+# y = B1(x) * R1(x)^p1 + B2(x) * R2(x)^p2;
 
 ### Non-Trig:
 # y = B1(x) * R(x)^p * FUN(P(x)) + B2(x) * R(x)^p;
@@ -55,6 +58,59 @@ source("DE.ODE.Helper.R")
 
 #######################
 #######################
+
+### Simple Radicals
+
+# y = B1(x) * R1(x)^k1 + B2(x) * R2(x)^k2
+
+### y = (x2+b0)^k1 + c1 * (x^2+b0)^k2
+
+# Check:
+x = sqrt(3); k1 = 1/3; k2 = 3/5; b0 = sqrt(2); c1 = 2/5; c0 = -1/3;
+# k2 = 1 - k1; # k1 = (1-1i*sqrt(3))/2; k2 = 1 - k1;
+params = list(x=x, b0=b0, c1=c1, c0=c0);
+e = expression((x^2+b0)^k1 + c1 * (x^2+b0)^k2 + c0)[[1]];
+#
+y   = eval(e, params);
+dy  = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
+
+### ODE:
+x*(x^2+b0)^2*d2y +
+	- (x^2+b0)*(2*(k1+k2)*x^2 - x^2 + b0) * dy +
+	+ 4*k1*k2*x^3 * (y - c0) # = 0
+
+
+# D =>
+(x^2+b0)*dy - 2*k1*x*(x^2+b0)^k1 - 2*c1*k2*x*(x^2+b0)^k2 # = 0
+
+# Isolation of Radicals:
+2*(k1-k2)*x*(x^2+b0)^k1 # ==
+(x^2+b0)*dy - 2*k2*x*(y - c0);
+#
+2*c1*(k1-k2)*x*(x^2+b0)^k2 # ==
+- ((x^2+b0)*dy - 2*k1*x*(y - c0));
+
+# D2 =>
+(x^2+b0)^2*d2y + 2*x*(x^2+b0)*dy +
+	- 2*k1*(2*k1*x^2 + x^2 + b0) * (x^2+b0)^k1 +
+	- 2*c1*k2*(2*k2*x^2 + x^2 + b0) * (x^2+b0)^k2 # = 0
+(k1-k2)*x*(x^2+b0)^2*d2y +
+	- (k1-k2)*(x^2+b0)*(2*(k1+k2)*x^2 - x^2 + b0) * dy +
+	+ 4*k1*k2*(k1-k2)*x^3 * (y - c0) # = 0
+
+### Special Cases:
+
+### Case: k1 + k2 = 1
+x*(x^2+b0)^2 * d2y - (x^2+b0)^2 * dy - 4*k1*(k1-1)*x^3 * (y - c0) # = 0
+### Case: k1*(k1-1) = -1;
+x*(x^2+b0)^2 * d2y - (x^2+b0)^2 * dy + 4*x^3 * (y - c0) # = 0
+
+
+########################
+########################
+
+### Radicals & Functions
 
 ### Radicals w. Log
 # From: y = B1(x) * R(x)^(1/n) * log(P(x)) + B2(x) * R(x)^(1/n);
@@ -209,6 +265,13 @@ x*(x^2+b0)^2 * d2y - b0*(x^2+b0) * dy + k0*x^3 * (y - c0) # = 0
 #########################
 
 ### Type: Nested Radicals
+
+# Simple: 1 Component
+# y = B(x) * (sqrt(P(x)^2+b0) - P(x))^k or
+# y = B(x) * sqrt(P(x)^2+b0) * (sqrt(P(x)^2+b0) - P(x))^k
+# where k = Rational / Real / Complex;
+
+### Example:
 # y = sqrt(sqrt(x^2+b0) - x)
 
 # Check:
