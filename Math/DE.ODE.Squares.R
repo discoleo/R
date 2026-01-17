@@ -117,25 +117,36 @@ x^2*d2y - x*dy + y - (c2*x^2 + c1*x + c0) # = 0
 # - just a shift;
 
 # Check:
-# for Homogenous: p0 = 0;
-x = sqrt(3); b0 = 1; p0 = -1/2; params = list(x=x, b0=b0, p0=p0);
-e = expression((x+b0) * log(x+b0)^2 + p0)[[1]];
+# for Homogenous: c0 = 0;
+x = sqrt(3); b0 = 1; c0 = -1/2;
+params = list(x=x, b0=b0, c0=c0);
+e = expression((x+b0) * log(x+b0)^2 + c0)[[1]];
 #
 y   = eval(e, params);
 dy  = eval(D(e, "x"), params);
 d2y = eval(D(D(e, "x"), "x"), params);
 
 ### ODE:
-(x+b0)^2*d2y - (x+b0)*dy + y - 2*(x+b0) - p0 # = 0
+(x+b0)^2*d2y - (x+b0)*dy + y - 2*(x+b0) - c0 # = 0
 
 
 # D =>
 dy - log(x+b0)^2 - 2*log(x+b0) # = 0
-(x+b0)*dy - y - 2*(x+b0)*log(x+b0) + p0 # = 0
+(x+b0)*dy - y - 2*(x+b0)*log(x+b0) + c0 # = 0
 
 # D2 =>
 (x+b0)*d2y - 2*log(x+b0) - 2 # = 0
-(x+b0)^2*d2y - ((x+b0)*dy - y + p0) - 2*(x+b0) # = 0
+(x+b0)^2*d2y - ((x+b0)*dy - y + c0) - 2*(x+b0) # = 0
+
+
+### Variant:
+e = expression((x+b0)/x * log(x+b0)^2 + c0)[[1]];
+y   = eval(e, params); dy  = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
+
+### ODE:
+x*(x+b0)^2*d2y + (x+b0)*(x+2*b0)*dy - b0*(y - c0) - 2*(x+b0) # = 0
+
 
 ############
 
@@ -143,7 +154,7 @@ dy - log(x+b0)^2 - 2*log(x+b0) # = 0
 # - Simple with exponent;
 
 # Check:
-# for Homogenous: p0 = 0;
+# for Quasi-Homogenous: c0 = 0;
 x = sqrt(3); p = 2/3; c0 = -1/2; params = list(x=x, p=p, c0=c0);
 e = expression(x^p * log(x)^2 + c0)[[1]];
 #
@@ -263,7 +274,7 @@ x^2*(x+1)*d2y - x*(3*x+2)*dy + 2*(2*x+1)*(y - c0) +
 
 
 ############
-### Geenric:
+### Generic:
 
 ### y = B2(x) * log(P(x))^2 + B1(x)*log(P(x))
 
