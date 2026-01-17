@@ -34,7 +34,20 @@ prod(sn)
 sqrt(n) / 2^nh;
 
 
-### SUM
+##################
+
+### Helper
+x  = pi/7; # Test
+iN = seq(20000);
+log(sin(x)) # ==
+- sum( cos(2*iN*x) / iN ) - log(2);
+#
+log(cos(x)) # ==
+- sum( (-1)^iN * cos(2*iN*x) / iN ) - log(2) ;
+
+
+###########
+### SUM ###
 
 ### Sum( n * SIN() )
 n = 11 # ODD
@@ -134,5 +147,17 @@ id = seq(2, n-1, by = 2)
 x = 2^(1/n); cs = cos(id*pi/n); sn = sin(id*pi/n);
 
 sum(2 * sn * atan((1 - cs) / sn))
-pi/2 / sin(pi/n)
+sum(id * sn) * pi/n;
+pi/2 / sin(pi/n);
+
+
+#####################
+#####################
+
+### Tan-Relations
+
+n = 5; # n = 8;
+x = 2/pi; # Check;
+id = seq(1, by=2, length.out = n)
+sum(sin(id*x)) / sum(cos(id*x)) - tan(n*x) # = 0
 
