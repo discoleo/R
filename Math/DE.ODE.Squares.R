@@ -6,7 +6,7 @@
 ## Differential Equations
 ## Linear ODEs - Squares
 ##
-## draft v.0.1j
+## draft v.0.1k
 
 
 ### Base-Solution:
@@ -24,8 +24,9 @@
 
 ### Examples:
 
-# x^2*d2y - (2*p-1)*x*dy + p^2*y - 2*x^p - p^2*c0 # = 0
-# 2*x^2*(x-1)*d2y - x*(x-2)*dy + (x-2)*y - (c0+1)*x + 2*c0 # = 0
+# x^2*d2y - 3*x*dy + 4*(y - c0) - 2*x^2 # = 0 (p = 2)
+# x^2*d2y - (2*p-1)*x*dy + p^2*(y - c0) - 2*x^p # = 0
+# 2*x^2*(x-1)*d2y - x*(x-2)*dy + (x-2)*(y - c0) - x # = 0
 # 2*x^2*(x-1)*d2y + x^2*dy - x*(y - c0) - (x + 2) # = 0
 
 
@@ -179,9 +180,10 @@ x^2*d2y - (p-1)*x*dy - p*(x*dy - p*y + p*c0) - 2*x^p # = 0
 ### y = x * log(x+b0)^2
 
 # Check:
-# for Homogenous: p0 = 0;
-x = sqrt(3); b0 = 1; p0 = -1/2; params = list(x=x, b0=b0, p0=p0);
-e = expression(x * log(x+b0)^2 + p0)[[1]];
+# for Quasi-Homogenous: c0 = 0;
+x = sqrt(3); b0 = 1; c0 = -1/2;
+e = expression(x * log(x+b0)^2 + c0)[[1]];
+params = list(x=x, b0=b0, c0=c0);
 #
 y   = eval(e, params);
 dy  = eval(D(e, "x"), params);
@@ -189,18 +191,18 @@ d2y = eval(D(D(e, "x"), "x"), params);
 
 ### ODE:
 x^2*(x+b0)^2*d2y - x*(x+2*b0)*(x+b0)*dy + (x+2*b0)*(x+b0)*y +
-	- 2*x^3 - p0*(x+2*b0)*(x+b0) # = 0
+	- 2*x^3 - c0*(x+2*b0)*(x+b0) # = 0
 
 
 # D =>
-x*(x+b0)*dy - (x+b0)*y - 2*x^2*log(x+b0) + p0*(x+b0) # = 0
+x*(x+b0)*dy - (x+b0)*y - 2*x^2*log(x+b0) + c0*(x+b0) # = 0
 
 # D2 =>
-x*(x+b0)*d2y + x*dy - y - 4*x*log(x+b0) - 2*x^2/(x+b0) + p0 # = 0
-x^2*(x+b0)*d2y + x^2*dy - x*y - 2*(x*(x+b0)*dy - (x+b0)*y + p0*(x+b0)) +
-	- 2*x^3/(x+b0) + p0*x # = 0
+x*(x+b0)*d2y + x*dy - y - 4*x*log(x+b0) - 2*x^2/(x+b0) + c0 # = 0
+x^2*(x+b0)*d2y + x^2*dy - x*y - 2*(x*(x+b0)*dy - (x+b0)*y + c0*(x+b0)) +
+	- 2*x^3/(x+b0) + c0*x # = 0
 x^2*(x+b0)*d2y - x*(x+2*b0)*dy + (x+2*b0)*y +
-	- 2*x^3/(x+b0) - p0*(x+2*b0) # = 0
+	- 2*x^3/(x+b0) - c0*(x+2*b0) # = 0
 
 
 #################
@@ -208,7 +210,7 @@ x^2*(x+b0)*d2y - x*(x+2*b0)*dy + (x+2*b0)*y +
 #################
 ### Components: 2
 
-# y = b1(x) * log(P(x)) + B2(x) * Log(P(x))^2 + F0(x)
+# y = B1(x) * log(P(x)) + B2(x) * Log(P(x))^2 + F0(x)
 
 ### y = x^2 * log(x)^2 + x*log(x)
 
@@ -271,6 +273,46 @@ x^2*(x-1)*d2y - x*(3*x-2)*dy + 2*(2*x-1)*(y - c0) +
 ### Case: c2 = -1/2
 x^2*(x+1)*d2y - x*(3*x+2)*dy + 2*(2*x+1)*(y - c0) +
 	+ x^3 + 3*x^2 + x # = 0
+
+
+############
+### Variant:
+# y = x^2 * log(x)^2 + c1*x^p * log(x)
+
+# Check:
+# for Quasi-Homogenous: c0 = 0;
+x = sqrt(3); p = 1/3; c1 = 2/5; c0 = -1/2;
+# p = 2; # p = -1;
+params = list(x=x, p=p, c1=c1, c0=c0);
+e = expression(x^2 * log(x)^2 + c1*x^p * log(x) + c0)[[1]];
+#
+y   = eval(e, params);
+dy  = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
+
+### ODE:
+# - see below;
+
+# D =>
+x*dy - 2*(y - c0) - (c1*(p-2)*x^p + 2*x^2) * log(x) - c1*x^p # = 0
+
+# D2 =>
+x^2*d2y - x*dy - (c1*p*(p-2)*x^p + 4*x^2) * log(x) +
+	- (c1*(2*p-2)*x^p + 2*x^2) # = 0
+x^2*(c1*(p-2)*x^p + 2*x^2)*d2y +
+	- x*(c1*(p-2)*(p+1)*x^p + 6*x^2) * dy +
+	+ 2*(c1*p*(p-2)*x^p + 4*x^2) * (y - c0) +
+	- (c1^2*(p-2)^2*x^(2*p) + 6*c1*(p-2)*x^(p+2) + 4*x^4) # = 0
+
+### Special Cases:
+
+### Case: p = 2
+x^2*d2y - 3*x*dy + 4*(y - c0) - 2*x^2 # = 0
+
+### Case: p = -1
+ca = 3/2*c1;
+x^3*(x^3-ca) * d2y - 3*x^5 * dy + 2*x*(2*x^3+ca) * (y - c0) +
+	- 2*(x^6 - 3*ca*x^3 + ca^2) # = 0
 
 
 ############
