@@ -6,7 +6,7 @@
 ## Differential Equations
 ## Linear ODEs - Radicals
 ##
-## draft v.0.1j
+## draft v.0.1k
 
 
 ### Theory
@@ -107,8 +107,9 @@ x*(x^2+b0)^2 * d2y - (x^2+b0)^2 * dy - 4*k1*(k1-1)*x^3 * (y - c0) # = 0
 x*(x^2+b0)^2 * d2y - (x^2+b0)^2 * dy + 4*x^3 * (y - c0) # = 0
 
 
-####################
+#############
 
+### Radicals:
 ### Polynomial Fractions
 
 ### P(x): Order 1
@@ -271,6 +272,51 @@ d2y = eval(D(D(e, "x"), "x"), params);
 9*x^2*(x-1)^2*(x+1)^2 * d2y +
 	- 3*x*(x-1)*(x+1)*(13*x^2 + 3*x - 6) * dy +
 	+ (64*x^4 + 24*x^3 - 60*x^2 - 18*x + 18) * (y - c0)  # = 0
+
+
+############
+### Radicals w. Simple Log
+# From: y = B2(x) * R(x)^k + B1(x) * log(P(x));
+
+
+### y = (x^2+b0)^k + c1*x * log(x);
+
+# Check:
+x = sqrt(3); k = 1/3; b0 = sqrt(2); c1 = 2/5; c0 = -1/3;
+# k = 1/2; # k = 1/4;
+params = list(x=x, k=k, b0=b0, c1=c1, c0=c0);
+e = expression((x^2+b0)^k + c1*x*log(x) + c0)[[1]];
+#
+y   = eval(e, params); dy = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
+
+### ODE:
+x*(x^2+b0)*((2*k-1)*x^2-b0) * d2y +
+	- 2*k*x^2 * ((2*k-1)*x^2+b0) * dy +
+	+ 2*k*x * ((2*k-1)*x^2 + b0) * (y - c0) +
+	+ c1 * ((2*k-1)^2*x^4 + 2*b0*x^2 + b0^2) # = 0
+
+# D =>
+(x^2+b0)*dy - 2*k*x*(y - c0) + c1*((2*k-1)*x^2-b0)*log(x) - c1*(x^2+b0) # = 0
+
+# D2 =>
+x*(x^2+b0) * d2y - 2*(k-1)*x^2 * dy - 2*k*x * (y - c0) +
+	+ 2*(2*k-1)*x^2 * c1*log(x) +
+	+ c1*((2*k-3)*x^2-b0) # = 0
+
+
+### Special Cases:
+
+### Case: k = 1/2
+x*(x^2+b0) * d2y + 2*k*x^2 * dy - 2*k*x * (y - c0) +
+	- c1 * (2*x^2 + b0) # = 0
+
+### Case: k = 1/4
+x*(x^2+b0)*(x^2+2*b0) * d2y +
+	- 2*k*x^2 * (x^2-2*b0) * dy +
+	+ 2*k*x * (x^2-2*b0) * (y - c0) +
+	- c1/2 * (x^4 + 8*b0*x^2 + 4*b0^2) # = 0
+
 
 ###################
 ###################
