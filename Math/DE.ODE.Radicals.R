@@ -6,7 +6,7 @@
 ## Differential Equations
 ## Linear ODEs - Radicals
 ##
-## draft v.0.1i
+## draft v.0.1j
 
 
 ### Theory
@@ -68,7 +68,7 @@ source("DE.ODE.Helper.R")
 # Check:
 x = sqrt(3); k1 = 1/3; k2 = 3/5; b0 = sqrt(2); c1 = 2/5; c0 = -1/3;
 # k2 = 1 - k1; # k1 = (1-1i*sqrt(3))/2; k2 = 1 - k1;
-params = list(x=x, b0=b0, c1=c1, c0=c0);
+params = list(x=x, k1=k1, k2=k2, b0=b0, c1=c1, c0=c0);
 e = expression((x^2+b0)^k1 + c1 * (x^2+b0)^k2 + c0)[[1]];
 #
 y   = eval(e, params);
@@ -110,6 +110,57 @@ x*(x^2+b0)^2 * d2y - (x^2+b0)^2 * dy + 4*x^3 * (y - c0) # = 0
 ####################
 
 ### Polynomial Fractions
+
+### P(x): Order 1
+# y = (1+d0/(x+b0))^k1 + c1 * (1+d0/(x+b0))^k2
+
+# Check:
+x = sqrt(5); k1 = 1/3; k2 = 3/5; b0 = sqrt(2); d0 = sqrt(3); c1 = 2/5; c0 = -1/3;
+# k2 = 1 - k1;
+params = list(x=x, k1=k1, k2=k2, b0=b0, c1=c1, c0=c0, d0=d0);
+e = expression((1+d0/(x+b0))^k1 + c1 * (1+d0/(x+b0))^k2 + c0)[[1]];
+#
+y   = eval(e, params); dy  = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
+
+### ODE:
+(x+b0)^2*(x+b0+d0)^2 * d2y +
+	+ (x+b0)*(x+b0+d0)*(2*(x+b0+d0) + d0*(k1+k2-1)) * dy +
+	+ k1*k2*d0^2 * (y - c0) # = 0
+
+# D =>
+(x+b0)*(x+b0+d0)*dy + k1*d0*(1+d0/(x+b0))^k1 +
+	+ c1*k2*d0*(1+d0/(x+b0))^k2 # = 0
+
+# Isolation of Radicals:
+(k1-k2)*d0*(1+d0/(x+b0))^k1 # ==
+- ((x+b0)*(x+b0+d0)*dy + k2*d0*(y - c0));
+#
+(k1-k2)*c1*d0*(1+d0/(x+b0))^k2 # ==
+((x+b0)*(x+b0+d0)*dy + k1*d0*(y - c0));
+
+# D2 =>
+(x+b0)^2*(x+b0+d0)^2*d2y + (x+b0)*(x+b0+d0)*(2*x+2*b0+d0)*dy +
+	- k1^2*d0^2 * (1+d0/(x+b0))^k1 +
+	- c1*k2^2*d0^2 * (1+d0/(x+b0))^k2 # = 0
+(k1-k2)*(x+b0)^2*(x+b0+d0)^2*d2y +
+	+ (k1-k2)*(x+b0)*(x+b0+d0)*(2*x+2*b0+d0)*dy +
+	+ (k1^2-k2^2)*d0*(x+b0)*(x+b0+d0)*dy +
+	+ k1*k2*(k1-k2)*d0^2 * (y - c0) # = 0
+
+### Special Cases:
+
+### Case: k1 + k2 = 1
+(x+b0)^2*(x+b0+d0)^2 * d2y + 2*(x+b0)*(x+b0+d0)^2 * dy +
+	+ k1*k2*d0^2 * (y - c0) # = 0
+# Reformulated:
+# d0 = d - b; # Solve: k1 + k2 = 1; k1*k2 = k / (d-b)^2;
+b = b0; d = b0+d0; k = k1*k2*d0^2;
+(x+b)^2*(x+d)^2 * d2y + 2*(x+b)*(x+d)^2 * dy + k * (y - c0) # = 0
+
+
+#################
+### P(x): Order 2
 # y = ((x^2+b0)/(x+d0))^k1 + c1 * ((x^2+b0)/(x+d0))^k2
 
 # Check:
@@ -119,8 +170,7 @@ x = sqrt(5); k1 = 1/3; k2 = 3/5; b0 = sqrt(2); d0 = sqrt(3); c1 = 2/5; c0 = -1/3
 params = list(x=x, b0=b0, c1=c1, c0=c0, d0=d0);
 e = expression(((x^2+b0)/(x+d0))^k1 + c1 * ((x^2+b0)/(x+d0))^k2 + c0)[[1]];
 #
-y   = eval(e, params);
-dy  = eval(D(e, "x"), params);
+y   = eval(e, params); dy  = eval(D(e, "x"), params);
 d2y = eval(D(D(e, "x"), "x"), params);
 
 ### ODE:
