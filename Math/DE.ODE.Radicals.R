@@ -6,7 +6,7 @@
 ## Differential Equations
 ## Linear ODEs - Radicals
 ##
-## draft v.0.1h
+## draft v.0.1i
 
 
 ### Theory
@@ -105,6 +105,57 @@ x*(x^2+b0)^2*d2y +
 x*(x^2+b0)^2 * d2y - (x^2+b0)^2 * dy - 4*k1*(k1-1)*x^3 * (y - c0) # = 0
 ### Case: k1*(k1-1) = -1;
 x*(x^2+b0)^2 * d2y - (x^2+b0)^2 * dy + 4*x^3 * (y - c0) # = 0
+
+
+####################
+
+### 
+# y = ((x^2+b0)/(x+d0))^k1 + c1 * ((x^2+b0)/(x+d0))^k2
+
+# Check:
+x = sqrt(5); k1 = 1/3; k2 = 3/5; b0 = sqrt(2); d0 = sqrt(3); c1 = 2/5; c0 = -1/3;
+# b0 = - d0^2; # Trivial
+params = list(x=x, b0=b0, c1=c1, c0=c0, d0=d0);
+e = expression(((x^2+b0)/(x+d0))^k1 + c1 * ((x^2+b0)/(x+d0))^k2 + c0)[[1]];
+#
+y   = eval(e, params);
+dy  = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
+
+### ODE:
+(x+d0)^2*(x^2+b0)^2*(x^2 + 2*d0*x - b0) * d2y +
+	- (x+d0)*(x^2+b0) *
+		((k1+k2-1)*(x^2 + 2*d0*x - b0)^2 + 2*(d0^2 + b0)*(x^2+b0)) * dy +
+	+ k1*k2*(x^2 + 2*d0*x - b0)^3 * (y - c0) # = 0
+
+# D =>
+(x+d0)*(x^2+b0)*dy +
+	- k1 * (x^2 + 2*d0*x - b0) * ((x^2+b0)/(x+d0))^k1 +
+	- c1*k2 * (x^2 + 2*d0*x - b0) * ((x^2+b0)/(x+d0))^k2 # = 0
+
+# Isolation of Radicals:
+(k1-k2) * (x^2 + 2*d0*x - b0) * ((x^2+b0)/(x+d0))^k1 # ==
+((x+d0)*(x^2+b0)*dy - k2*(x^2 + 2*d0*x - b0) * (y - c0))
+#
+c1*(k1-k2) * (x^2 + 2*d0*x - b0) * ((x^2+b0)/(x+d0))^k2 # ==
+- ((x+d0)*(x^2+b0)*dy - k1*(x^2 + 2*d0*x - b0) * (y - c0))
+
+# D2 =>
+(x+d0)^2*(x^2+b0)^2 * d2y +
+	+ (x+d0)*(x^2+b0)*(3*x^2 + 2*d0*x + b0)*dy +
+	- k1^2 * (x^2 + 2*d0*x - b0)^2 * ((x^2+b0)/(x+d0))^k1 +
+	- 2*k1 * (x + d0)^2*(x^2+b0) * ((x^2+b0)/(x+d0))^k1 +
+	- c1*k2^2 * (x^2 + 2*d0*x - b0)^2 * ((x^2+b0)/(x+d0))^k2 +
+	- 2*c1*k2 * (x + d0)^2*(x^2+b0) * ((x^2+b0)/(x+d0))^k2 # = 0
+(k1-k2)*(x+d0)^2*(x^2+b0)^2*(x^2 + 2*d0*x - b0) * d2y +
+	- (k1-k2)*(x+d0)*(x^2+b0) *
+		((k1+k2-1)*(x^2 + 2*d0*x - b0)^2 + 2*(d0^2 + b0)*(x^2+b0)) * dy +
+	+ k1*k2*(k1-k2) * (x^2 + 2*d0*x - b0)^3 * (y - c0) # = 0
+
+### Special Cases:
+
+### Trivial Case: b0 = -d0^2
+(x-d0)^2 * d2y - (k1+k2-1)*(x-d0) * dy + k1*k2 * (y - c0) # = 0
 
 
 ########################
