@@ -196,7 +196,7 @@ solve(t(m), c0 - sapply(cc, fn))
 
 # Note:
 # - Still assumes E4 == 0 || E11a == 0;
-# - Case: E2a = 0 => E2a^(2*n) + E2b^(2*n) = 2 * E2a^(2*n);
+# - Case: E2 = 0 => E2a^(2*n) + E2b^(2*n) = 2 * E2a^(2*n);
 # Notation:
 # - E2a = E11a; E2b = E11b;
 #   E11 = explicit notation: sum(x[i]^1 * x[j]^1), i != j;
