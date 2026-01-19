@@ -194,8 +194,13 @@ fc = function(R) { S = R[1]; E3 = R[3]; E4 = R[4]; E5 = R[5];
 m = sapply(cc, fc)
 solve(t(m), c0 - sapply(cc, fn))
 
-# Note: still assumes E4 == 0 || E11a == 0;
-# Quasi-x^n: (E11a^n + E11b^n);
+# Note:
+# - Still assumes E4 == 0 || E11a == 0;
+# - Case: E2a = 0 => E2a^(2*n) + E2b^(2*n) = 2 * E2a^(2*n);
+# Notation:
+# - E2a = E11a; E2b = E11b;
+#   E11 = explicit notation: sum(x[i]^1 * x[j]^1), i != j;
+# - Quasi-x^n: (E11a*E11b)^(n-p) * (E11a^p + E11b^p);
 
 27*(E11a^7 + E11b^7)*E5^2 +
 	# x^6
