@@ -69,6 +69,7 @@ x^2*d2y + x*dy + (x^2 - n^2)*y # = 0
 ### Transforms ###
 
 ### EXP
+# y = Exp(x) * BesselJn(x)
 
 ### Ex 1:
 n = sqrt(2); x = sqrt(3);
@@ -153,6 +154,22 @@ d2y = exp(x^2 / 4) * (tmp$d2y + 1/2*x*tmp$dy) + x*dy/2 + y/2;
 
 ### ODE:
 4*x^2*d2y - 4*x*(x^2 - 1)*dy + (x^4 - 4*n^2)*y # = 0
+
+
+###################
+
+### Poly * BesselJn
+# y = P(x)^k * BesselJn(x)
+
+### Ex 1: Sqrt(x) * BesselJn(x)
+n = sqrt(2); x = sqrt(3);
+tmp = d2BesselJ.all(x, n=n);
+y   = sqrt(x) * tmp$y;
+dy  = sqrt(x) * tmp$dy + 1/(2*x) * y;
+d2y = sqrt(x) * tmp$d2y + 1/x * dy - 3/(4*x^2) * y;
+
+### ODE:
+x^2*d2y + (x^2 - n^2 + 1/4)*y # = 0
 
 
 ##################
@@ -273,7 +290,7 @@ d2y = eval(D(D(e, "x"), "x"), params);
 
 # Check:
 x = sqrt(3); n = 1/3; k = 1/5; c0 = -1/3;
-# n = 1/4;
+# n = 1/4; # n = -3/4;
 params = list(x=x, k=k, c0=c0);
 e = expression(x^n * sqrt(x) * exp(2*k*sqrt(x)) + c0)[[1]];
 #
@@ -298,4 +315,7 @@ x^2*d2y - (2*n+1/2)*x*dy +
 
 ### Case: n = 1/4
 x^2*d2y - x*dy - (k^2*x - 15/16) * (y - c0) # = 0
+
+### Case: n = -3/4
+x^2*d2y + x*dy - (k^2*x + 1/16) * (y - c0) # = 0
 
