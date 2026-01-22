@@ -264,7 +264,10 @@ solve(t(m), c0 - sapply(cc, fn))
 		+ 7*E3^6*E4 + 175*E3^3*E4^2*E5 - 35*E3^2*E4^4 + 5^5*E3*E4*E5^3) +
 	- E11a*E11b*(28*E5^3*S^5 + 44*E3^2*E5^2*S^4 - 28*E3^4*E5*S^3 +
 		+ 4*E3^6*S^2 - 250*E3*E5^3*S^2 + 34*E3^5*E5 + 3*5^5*E5^4 +
-		- 2*E4^5 + 37*E3^4*E4^2 + 1500*E3^2*E4*E5^2 - 50*E3*E4^3*E5) +
+		- 2*E4^5 + 37*E3^4*E4^2 + 1500*E3^2*E4*E5^2 - 50*E3*E4^3*E5 +
+		# Ambiguous: E2a*E2b vs E2a^2 + E2b^2;
+		- 4*E4^2*E5*S^7 + 24*E4*E5^2*S^6 + 37*E4^4*S^4 - 294*E4^3*E5*S^3 + 1700*E4^2*E5^2*S^2 +
+			- 3750*E4*E5^3*S) +
 	# B0:
 	- E4^4*S^8 + 12*E4^3*E5*S^7 - 86*E4^2*E5^2*S^6 - 4*E3^2*E4^3*S^6 +
 		+ 300*E4*E5^3*S^5 - 2*E3*E4^4*S^5 + 44*E3^2*E4^2*E5*S^5 +
@@ -282,8 +285,8 @@ x0 = c(1,-1,2,-2,3,-3, 4,-4, 1/2, -1/2); # for Vandermonde
 perm = list(1:5, c(2,1,5,3,4), c(1,2,4,5,3),
 	c(1,5,3,2,4), c(1,2,3,5,4), c(1,2,5,3,4));
 
-coef.P5 = \(pow = 6, E4 = -1, E5 = -2) {
-	cc = c(1, -1,0,0, E4=E4, E5=E5);
+coef.P5 = \(pow = 6, E3 = 0, E4 = -1, E5 = -2) {
+	cc = c(1, -1,0, E3=E3, E4=E4, E5=E5);
 	sapply(x0, \(x0) {
 		cc[2] = x0;
 		r0 = roots(cc);
@@ -293,8 +296,8 @@ coef.P5 = \(pow = 6, E4 = -1, E5 = -2) {
 		return(pp$coeff[pp$x == pow]);
 	})
 }
-coef.S5 = \(pow = 6, E4 = -1, E5 = -2) {
-	pp = repl(E5=E5);
+coef.S5 = \(pow = 6, E3 = 0, E4 = -1, E5 = -2) {
+	pp = repl(E3=E3, E5=E5);
 	sapply(x0, \(x0) {
 		pp = replace.pm(pp, c(S=x0, E4=E4));
 		if(pp$coeff[pp$E11a == 12] < 0 ) pp$coeff = - pp$coeff;
@@ -308,8 +311,8 @@ paste(-vx, collapse = (", "))
 
 #
 E4 = -2; # E4 = -1;
-v0 = coef.P5(pow = 4, E4 = E4, E5 = -1)
-vx = coef.S5(pow = 4, E4 = E4, E5 = -1)
+v0 = coef.P5(pow = 2, E4 = E4, E5 = -2)
+vx = coef.S5(pow = 2, E4 = E4, E5 = -2)
 round0(solve(vandermonde(x0), v0 - vx))
 
 
@@ -320,7 +323,7 @@ E2a = c(E2a, - E2a); poly.calc0(E2a, digits = 6)
 
 
 # p0 = as.pm(...) # THE MONSTER
-repl = \(E5 = -2) replace.pm(p0, c(E3=0, E5=E5)) |> replace.pm(as.pm("-E11a"), "E11b");
+repl = \(E3 = 0, E5 = -2) replace.pm(p0, c(E3=E3, E5=E5)) |> replace.pm(as.pm("-E11a"), "E11b");
 repl() |> replace.pm(c(S=1, E4=-2)) |> print.pm(lead="E11a")
 
 
