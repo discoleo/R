@@ -7,7 +7,7 @@
 ### S5: Hetero-Symmetric
 ### Useful Formulas
 ###
-### draft v.0.1j
+### draft v.0.1k
 
 
 ### Derivations
@@ -222,7 +222,7 @@ solve(t(m), c0 - sapply(cc, fn))
 		+ 150*E3^2*E5^2 - 33*E4^4 + 155*E3*E4^2*E5) +
 	- (E11a*E11b)*(E11a^3 + E11b^3)*(21*E5^2*S^4 + 11*E3^3*E5 - 7*E3^2*E5*S^3 + 270*E3*E5^2*S) +
 	+ (E11a*E11b)^2*(E11a^2 + E11b^2)*(18*E5^2*S^2 - E3^4 + 4*E3*E5*S^4 + 36*E3^2*E5*S +
-		+ 50*E3*E4*E5) +
+		+ 50*E3*E4*E5 + E4^2*S^4 - 26*E4*E5*S^3) +
 	- (E11a*E11b)^3*(E11a + E11b)*(10*E5^2 - 6*E3^3*S) +
 	+ (E11a*E11b)^4*(4*E5*S^3 + 20*E3*E5 - 6*E3^2*S^2 - 55*E4^2) +
 	# x^3:
@@ -277,21 +277,49 @@ solve(t(m), c0 - sapply(cc, fn))
 
 
 ### Method: Polynomial Construction
-x0 = c(1,-1,2,-2,3,-3); # for Vandermonde
+x0 = c(1,-1,2,-2,3,-3, 4,-4, 1/2, -1/2); # for Vandermonde
 perm = list(1:5, c(2,1,5,3,4), c(1,2,4,5,3),
 	c(1,5,3,2,4), c(1,2,3,5,4), c(1,2,5,3,4));
 
-r0 = roots(c(1,3,0,0,-1,-2));
+coef.P5 = \(pow = 6, E4 = -1, E5 = -2) {
+	cc = c(1, -1,0,0, E4=E4, E5=E5);
+	sapply(x0, \(x0) {
+		cc[2] = x0;
+		r0 = roots(cc);
+		E2a = sapply(perm, \(id) { r = r0[id]; E2a = sum(r * r[c(2:5, 1)]); })
+		E2a = c(E2a, - E2a);
+		pp = poly.calc0(E2a, digits = 6);
+		return(pp$coeff[pp$x == pow]);
+	})
+}
+coef.S5 = \(pow = 6, E4 = -1, E5 = -2) {
+	pp = repl(E5=E5);
+	sapply(x0, \(x0) {
+		pp = replace.pm(pp, c(S=x0, E4=E4));
+		if(pp$coeff[pp$E11a == 12] < 0 ) pp$coeff = - pp$coeff;
+		pp$coeff[pp$E11a == pow];
+	})
+}
+
+#
+vx = coef.S5(pow = 6)
+paste(-vx, collapse = (", "))
+
+#
+v0 = coef.P5(pow = 6, E4 = -2, E5 = -1)
+vx = coef.S5(pow = 6, E4 = -2, E5 = -1)
+round0(solve(vandermonde(x0), v0 - vx))
+
+
+###
+r0 = roots(c(1,-1,0,0,-2,-2));
 E2a = sapply(perm, \(id) { r = r0[id]; E2a = sum(r * r[c(2:5, 1)]); })
 E2a = c(E2a, - E2a); poly.calc0(E2a, digits = 6)
 
-#
-v0 = c(-4776+4726, -3692+3742, -6623+6523, -7935+8035, -180+30, -24768+24918)
-solve(vandermonde(x0), v0)
 
 # p0 = as.pm(...) # THE MONSTER
-repl = \(E5 = -1) replace.pm(p0, c(S=0, E5=E5)) |> replace.pm(as.pm("-E11a"), "E11b");
-repl() |> replace.pm(c(E3=1, E4=1)) |> print.pm(lead="E11a")
+repl = \(E5 = -2) replace.pm(p0, c(E3=0, E5=E5)) |> replace.pm(as.pm("-E11a"), "E11b");
+repl() |> replace.pm(c(S=1, E4=-2)) |> print.pm(lead="E11a")
 
 # c(1,+/-1,0,0,-1,-2)
 x^12 + 10*x^10 + 71*x^8 + 42*x^6 - 411*x^4 - 31721*x^2 + 8836
@@ -299,6 +327,9 @@ x^12 + 10*x^10 + 39*x^8 - 166*x^6 - 1131*x^4 - 73289*x^2 + 13924
 # c(1,+/-1,0,0,1,-2)
 x^12 + 10*x^10 + 183*x^8 + 140*x^6 + 2991*x^4 + 6250*x^2 + 105625
 x^12 - 10*x^10 + 39*x^8 - 238*x^6 + 889*x^4 - 33181*x^2 + 7056
+# c(1,+/-1,0,0,-2,-2)
+x^12 + 20*x^10 + 236*x^8 + 1120*x^6 + 2224*x^4 - 14272*x^2 + 14400
+x^12 + 20*x^10 + 204*x^8 + 704*x^6 - 656*x^4 - 100672*x^2 + 28224
 
 # c(1,+/-2,0,0,-1,-2)
 x^12 + 10*x^10 + 183*x^8 + 140*x^6 + 2991*x^4 + 6250*x^2 + 105625
@@ -307,6 +338,15 @@ x^12 + 10*x^10 - 73*x^8 - 1524*x^6 - 2769*x^4 - 103958*x^2 + 267289
 # c(1,+/-3,0,0,-1,-2)
 x^12 + 10*x^10 + 487*x^8 + 986*x^6 + 46741*x^4 + 208007*x^2 + 438244
 x^12 + 10*x^10 - 377*x^8 - 4630*x^6 + 27301*x^4 - 78745*x^2 + 1716100
+
+# c(1,+/-4,0,0,-1,-2)
+x^12 + 10*x^10 + 1079*x^8 + 3084*x^6 + 266799*x^4 + 990106*x^2 + 1194649
+x^12 + 10*x^10 - 969*x^8 - 10228*x^6 + 220719*x^4 + 391834*x^2 + 6911641
+
+# c(1,-1/2,0,0,-1,-2)
+x^12 + 10*x^10 + 57*x^8 + 102.875*x^6 - 29.625*x^4 - 40533.3125*x^2 + 815.816406
+x^12 + 10*x^10 + 53*x^8 + 76.875*x^6 - 119.625*x^4 - 60649.0625*x^2 + 996.191406
+
 
 ### Method: Solve System
 # + Translate Solution Sol0 to new R;
