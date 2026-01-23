@@ -196,8 +196,9 @@ m = sapply(cc, fc)
 solve(t(m), c0 - sapply(cc, fn))
 
 # Note:
-# - Still assumes E4 == 0 || E11a == 0;
+# - Still assumes E4 == 0 || E11a == 0 || E2 = 0;
 # - Case: E2 = 0 => E2a^(2*n) + E2b^(2*n) = 2 * E2a^(2*n);
+# - TODO: resolve ambiguity when E2 = 0;
 # Notation:
 # - E2a = E11a; E2b = E11b;
 #   E11 = explicit notation: sum(x[i]^1 * x[j]^1), i != j;
@@ -213,7 +214,9 @@ solve(t(m), c0 - sapply(cc, fn))
 		+ 4*E3^3*E5 - 225*E4*E5^2 - E3^2*E4^2) +
 	+ (E11a*E11b)*(E11a^4 + E11b^4)*(9*E3^2*E5*S) +
 	+ (E11a*E11b)^2*(E11a^3 + E11b^3)*(27*E5^2 - 18*E3*E5*S^2) +
-	- (E11a*E11b)^3*(E11a^2 + E11b^2)*(2*E5*S^3 + 15*E3*E5) +
+	- (E11a*E11b)^3*(E11a^2 + E11b^2)*(2*E5*S^3 + 15*E3*E5 +
+		# Ambiguous: (E2a*E2b)^4 vs ...;
+		+ 17*E3*E4*S) +
 	- (E11a*E11b)^4*(E11a + E11b)*(3*E5*S + 2*E3^2) +
 	# Ambiguous: (E2a*E2b)^5 * E4 vs (E2a*E2b)^4 * E4 * ... vs ...;
 	+ (E11a*E11b)^5*(4*E3*S - 10*E4) +
@@ -224,7 +227,7 @@ solve(t(m), c0 - sapply(cc, fn))
 	- (E11a*E11b)*(E11a^3 + E11b^3)*(21*E5^2*S^4 + 11*E3^3*E5 - 7*E3^2*E5*S^3 + 270*E3*E5^2*S) +
 	+ (E11a*E11b)^2*(E11a^2 + E11b^2)*(18*E5^2*S^2 - E3^4 + 4*E3*E5*S^4 + 36*E3^2*E5*S +
 		# Ambiguous: (E2a*E2b)^2 vs (E2a*E2b) * ...;
-		+ 50*E3*E4*E5 + E4^2*S^4 - 26*E4*E5*S^3) +
+		+ 50*E3*E4*E5 + E4^2*S^4 - 26*E4*E5*S^3      + 21*E3^2*E4*S^2 - 64*E3*E4^2*S) +
 	- (E11a*E11b)^3*(E11a + E11b)*(10*E5^2 - 6*E3^3*S) +
 	+ (E11a*E11b)^4*(4*E5*S^3 + 20*E3*E5 - 6*E3^2*S^2 - 55*E4^2) +
 	# x^3:
@@ -237,7 +240,8 @@ solve(t(m), c0 - sapply(cc, fn))
 	+ (E11a*E11b)*(E11a^2 + E11b^2)*(4*E5^2*S^6 - 2*E3^2*E5*S^5 + 68*E3*E5^2*S^3 +
 		- 27*E3^3*E5*S^2 + 2*E3^5*S - 375*E5^3*S + 275*E3^2*E5^2 +
 		# Ambiguous: (E2a*E2b)^2 vs ...;
-		+ 5*E4^3*S^4 - 121*E4^2*E5*S^3 + 470*E4*E5^2*S^2) +
+		+ 5*E4^3*S^4 - 121*E4^2*E5*S^3 + 470*E4*E5^2*S^2 +
+		- 2*E3*E4^2*S^5 + 24*E3*E4*E5*S^4 - 11*E3^3*E4*S^3) +
 	+ (E11a*E11b)^2*(E11a + E11b)*(12*E5^2*S^4 - 3*E3^3*E5 +
 		+ 140*E3*E5^2*S - 6*E3^4*S^2 + 11*E3^2*E5*S^3) +
 	- (E11a*E11b)^3*(4*E3^4 + 68*E5^2*S^2 + 8*E3*E5*S^4 - 4*E3^3*S^3 + 26*E3^2*E5*S +
@@ -256,7 +260,8 @@ solve(t(m), c0 - sapply(cc, fn))
 	- (E11a*E11b)^2*(6*E5^2*S^6 - 4*E3^2*E5*S^5 + E3^4*S^4 + 60*E3*E5^2*S^3 + 24*E3^3*E5*S^2 +
 		+ 750*E5^3*S - 8*E3^5*S + 375*E3^2*E5^2 +
 		# Ambiguous: (E2a*E2b)^2 vs (E11a*E11b)*(E11a^2 + E11b^2);
-		+ 109*E4^4 - 190*E3*E4^2*E5 + 10*E3^4*E4) +
+		+ 109*E4^4 - 190*E3*E4^2*E5 + 10*E3^4*E4 + 71*E3^2*E4^2*S^2 +
+			- 206*E3*E4^3*S + 160*E3^2*E4*E5*S) +
 	# x^1:
 	+ (E11a + E11b)*(2*E3*E4^3*S^7 + 7*E4^4*S^6 - 18*E3*E4^2*E5*S^6 +
 		- 62*E4^3*E5*S^5 + 6*E3^3*E4^2*S^5 + 86*E3*E4*E5^2*S^5 +
@@ -271,9 +276,9 @@ solve(t(m), c0 - sapply(cc, fn))
 	- E11a*E11b*(28*E5^3*S^5 + 44*E3^2*E5^2*S^4 - 28*E3^4*E5*S^3 +
 		+ 4*E3^6*S^2 - 250*E3*E5^3*S^2 + 34*E3^5*E5 + 3*5^5*E5^4 +
 		- 2*E4^5 + 37*E3^4*E4^2 + 1500*E3^2*E4*E5^2 - 50*E3*E4^3*E5 +
-		# Ambiguous: E2a*E2b vs E2a^2 + E2b^2;
-		- 4*E4^2*E5*S^7 + 24*E4*E5^2*S^6 + 37*E4^4*S^4 - 294*E4^3*E5*S^3 + 1700*E4^2*E5^2*S^2 +
-			- 3750*E4*E5^3*S) +
+		- 4*E4^2*E5*S^7 + 24*E4*E5^2*S^6 + 37*E4^4*S^4 - 294*E4^3*E5*S^3 +
+		+ 1700*E4^2*E5^2*S^2 - 3750*E4*E5^3*S + 4*E3^2*E4^2*S^6 +
+		- 32*E3^2*E4*E5*S^5 + 14*E3*E4^3*S^5 - 34*E3*E4^2*E5*S^4 + 8*E3^4*E4*S^4) +
 	# B0:
 	- E4^4*S^8 + 12*E4^3*E5*S^7 - 86*E4^2*E5^2*S^6 - 4*E3^2*E4^3*S^6 +
 		+ 300*E4*E5^3*S^5 - 2*E3*E4^4*S^5 + 44*E3^2*E4^2*E5*S^5 +
@@ -291,13 +296,17 @@ x0 = c(1,-1,2,-2,3,-3, 4,-4, 1/2, -1/2); # for Vandermonde
 perm = list(1:5, c(2,1,5,3,4), c(1,2,4,5,3),
 	c(1,5,3,2,4), c(1,2,3,5,4), c(1,2,5,3,4));
 
-coef.P5 = \(pow = 6, E3 = 0, E4 = -1, E5 = -2) {
-	cc = c(1, -1,0, E3=E3, E4=E4, E5=E5);
+repl = \(E3 = 0, E5 = -2, E2 = 0) {
+	pE2 = as.pm("E2[] - E11a", env = list(E2=E2));
+	replace.pm(p0, c(E3=E3, E5=E5)) |> replace.pm(pE2, "E11b");
+}
+coef.P5 = \(pow = 6, E2 = 0, E3 = 0, E4 = -1, E5 = -2) {
+	cc = c(1, -1, E2=E2, E3 = - E3, E4=E4, E5 = - E5);
 	sapply(x0, \(x0) {
-		cc[2] = x0;
+		cc[2] = - x0;
 		r0 = roots(cc);
 		E2a = sapply(perm, \(id) { r = r0[id]; E2a = sum(r * r[c(2:5, 1)]); })
-		E2a = c(E2a, - E2a);
+		E2a = c(E2a, E2 - E2a);
 		pp = poly.calc0(E2a, digits = 6);
 		return(pp$coeff[pp$x == pow]);
 	})
@@ -316,9 +325,11 @@ vx = coef.S5(pow = 6)
 paste(-vx, collapse = (", "))
 
 #
-E4 = -2; # E4 = -1;
-v0 = coef.P5(pow = 2, E4 = E4, E5 = -2)
-vx = coef.S5(pow = 2, E4 = E4, E5 = -2)
+pow = 2;
+E3 = 1; E4 = 1; # E3 = 2; E4 = 1; # E3 = -2; E4 = 1;
+# E3 = 1; E4 = -2; # E3 = 1; E4 = 2;
+v0 = coef.P5(pow = pow, E3=E3, E4 = E4, E5 = 1)
+vx = coef.S5(pow = pow, E3=E3, E4 = E4, E5 = 1)
 round0(solve(vandermonde(x0), v0 - vx))
 
 
@@ -332,6 +343,11 @@ E2a = c(E2a, - E2a); poly.calc0(E2a, digits = 6)
 repl = \(E3 = 0, E5 = -2) replace.pm(p0, c(E3=E3, E5=E5)) |> replace.pm(as.pm("-E11a"), "E11b");
 repl() |> replace.pm(c(S=1, E4=-2)) |> print.pm(lead="E11a")
 
+# Perturbation:
+r0 = roots(c(1,0,0.1,0,1,-1));
+E2a = sapply(perm, \(id) { r = r0[id]; E2a = sum(r * r[c(2:5, 1)]); })
+poly.calc0(c(E2a, 0.1-E2a), digits = 6)
+replace.pm(p0, c(S=0, E3=0, E4=1, E5=1)) |> replace.pm(as.pm("0.1-E11a"), "E11b") |> print.pm(lead="E11a")
 
 
 ### Method: Solve System
