@@ -237,6 +237,13 @@ E2a = c(E2a, - E2a)
 
 round0(E2a^12 + 10*E2a^10 + 55*E2a^8 + 140*E2a^6 + 175*E2a^4 - 3019*E2a^2 + 25) # = 0
 
+### E3a:
+E3a = sapply(perm, \(id) { r = r0[id]; E2a = sum(r * r[c(2:5, 1)] * r[c(3:5, 1,2)]); })
+x = c(E3a, - E3a)
+poly.calc0(x, digits = 8)
+round0(x^12 + 8*x^8 - 50*x^6 + 16*x^4 - 3069*x^2 + 625) # = 0
+
+
 ### Test 3:
 r0  = roots(c(1,0,0,0,-2,-1)); # [fixed]
 E2a = sum(r0 * r0[c(2:5, 1)]);
