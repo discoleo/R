@@ -281,6 +281,16 @@ solve(t(m), c0 - sapply(cc, fn))
 		- 32*E3^2*E4*E5*S^5 + 14*E3*E4^3*S^5 - 34*E3*E4^2*E5*S^4 + 8*E3^4*E4*S^4 +
 		+ 470*E3*E4*E5^2*S^3 + 28*E3^3*E4^2*S^3 - 60*E3^3*E4*E5*S^2 + 88*E3^2*E4^3*S^2 +
 		+ 90*E3^2*E4^2*E5*S + 14*E3^5*E4*S - 70*E3*E4^4*S) +
+	# Ultimate Components:
+	+ (E11a*E11b)^4 * (E11a + E11b)^2 * (6*E4) +
+	+ (E11a*E11b)^3 * (E11a + E11b)^2 * (32*E4^2) +
+	- (E11a*E11b)^2 * (E11a + E11b)^4 * (9*E4^2) +
+	+ (E11a*E11b)^2 * (E11a + E11b)^2 * (64*E4^3) +
+	+ (E11a*E11b)^2 * (E11a + E11b)   * (1750*E4*E5^2) +
+	+ (E11a*E11b)   * (E11a + E11b)^4 * (2*E4^3) +
+	- (E11a*E11b)   * (E11a + E11b)^3 * (600*E4*E5^2) +
+	- (E11a*E11b)   * (E11a + E11b)^2 * (4*E4^4) +
+	+ (E11a*E11b)   * (E11a + E11b)   * (1000*E4^2*E5^2) +
 	# B0:
 	- E4^4*S^8 + 12*E4^3*E5*S^7 - 86*E4^2*E5^2*S^6 - 4*E3^2*E4^3*S^6 +
 		+ 300*E4*E5^3*S^5 - 2*E3*E4^4*S^5 + 44*E3^2*E4^2*E5*S^5 +
@@ -313,13 +323,34 @@ coef.P5 = \(pow = 6, E2 = 0, E3 = 0, E4 = -1, E5 = -2) {
 		return(pp$coeff[pp$x == pow]);
 	})
 }
-coef.S5 = \(pow = 6, E3 = 0, E4 = -1, E5 = -2) {
-	pp = repl(E3=E3, E5=E5);
+coef.S5 = \(pow = 6, E3 = 0, E4 = -1, E5 = -2, E2 = 0) {
+	pp = repl(E3=E3, E5=E5, E2=E2);
 	sapply(x0, \(x0) {
 		pp = replace.pm(pp, c(S=x0, E4=E4));
 		if(pp$coeff[pp$E11a == 12] < 0 ) pp$coeff = - pp$coeff;
 		pp$coeff[pp$E11a == pow];
 	})
+}
+S5poly = \(S = 1, E2 = 0, E3 = 0, E4 = 1, E5 = 1) {
+	p   = replace.pm(p0, c(S=S, E3=E3, E4=E4, E5=E5));
+	pE2 = as.pm("E2[] - E11a", env = list(E2=E2));
+	p   = replace.pm(p, pE2, "E11b");
+	if(p$coeff[p$E11a == 12] < 0) p$coeff = - p$coeff;
+	return(as.pm(p));
+}
+P5poly = \(S = 1, E2 = 0, E3 = 0, E4 = 1, E5 = 1, digits = 6) {
+	if(length(S) == 1) {
+		cc = c(1, - S, E2, - E3, E4, - E5);
+	} else if(length(S) == 5) {
+		E2 = S[2]; cc = c(1, S);
+	} else {
+		stop("Wrong length of S!");
+	}
+	r0 = roots(cc);
+	E2a = sapply(perm, \(id) { r = r0[id]; E2a = sum(r * r[c(2:5, 1)]); })
+	E2a = c(E2a, E2 - E2a);
+	pp = poly.calc0(E2a, digits = digits);
+	return(pp);
 }
 
 #
@@ -327,18 +358,23 @@ vx = coef.S5(pow = 6)
 paste(-vx, collapse = (", "))
 
 #
-pow = 2;
+pow = 10;
+E2 = 1;
 E3 = 1; E4 = 1; # E3 = 2; E4 = 1; # E3 = -2; E4 = 1;
 # E3 = 1; E4 = -2; # E3 = 1; E4 = 2;
-v0 = coef.P5(pow = pow, E3=E3, E4 = E4, E5 = 1)
-vx = coef.S5(pow = pow, E3=E3, E4 = E4, E5 = 1)
+v0 = coef.P5(pow = pow, E2=E2, E3=E3, E4 = E4, E5 = 1)
+vx = coef.S5(pow = pow, E2=E2, E3=E3, E4 = E4, E5 = 1)
 round0(solve(vandermonde(x0), v0 - vx))
+
+# Test:
+P5poly(c(0,1,0,3,-2));
+S5poly(E2=1, S = 0, E4 = 3, E5 = 2) |> print.pm(lead="E11a")
 
 
 ###
-r0 = roots(c(1,-2,0,0,-2,-2));
+r0 = roots(c(1,0,1,0,1,1));
 E2a = sapply(perm, \(id) { r = r0[id]; E2a = sum(r * r[c(2:5, 1)]); })
-E2a = c(E2a, - E2a); poly.calc0(E2a, digits = 6)
+E2a = c(E2a, 1 - E2a); poly.calc0(E2a, digits = 6)
 
 
 # p0 = as.pm(...) # THE MONSTER
