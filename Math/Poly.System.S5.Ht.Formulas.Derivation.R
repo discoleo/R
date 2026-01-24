@@ -7,7 +7,7 @@
 ### S5: Hetero-Symmetric
 ### Useful Formulas
 ###
-### draft v.0.1L
+### draft v.0.1M
 
 
 ### Derivations
@@ -176,12 +176,15 @@ max.pow.S(c("E4V1011", "E4Vn1011", "E4V2011", "E4Vn2011"), pow=0, FUN=f0, R=c(1,
 max.pow.S(c("E4V1011", "E4V101n1", "E4V1011", "E4V101n1"), pow=0, FUN=f0, npos=4, R=c(1,0,1,1,2), R2=c(1,0,1,1.3,2), skip.path=T)
 
 
+# Cancel Terms with Even Power:
 fn = function(R) {
-	Rn = R; Rn[1] = - Rn[1];
+	Rn = R; Rn[1] = - Rn[1]; # e.g. S^EVEN;
 	R4 = R; R4[4] = - R4[4]; R4n = R4; R4n[1] = - R4n[1];
 	(f0(R) - f0(Rn) - (f0(R4) - f0(R4n)))/4;
 }
 
+# R-values close to c(1,0,1,1,2), so that there is a minimal risk
+# of issues when flowing the solution;
 cc = list(c(1,0,1,1,2), c(2,0,1.1,1.3,2), c(1.3,0,0.9,1,2.1),
 	c(2.1,0,0.9,1.1,2.3), c(2.2,0,1,0.8,1.9), c(3,0,1.2,0.9,2.2), c(3.3,0,4/5,1.2,2.2));
 tmp = sapply(cc, function(R) polyS(R, "E4V1011"));
@@ -196,7 +199,7 @@ m = sapply(cc, fc)
 solve(t(m), c0 - sapply(cc, fn))
 
 # Note:
-# - Still assumes E4 == 0 || E11a == 0 || E2 = 0;
+# - Still assumes: E4 == 0 || E11a == 0 || E2 = 0 || S = 0;
 # - Case: E2 = 0 => E2a^(2*n) + E2b^(2*n) = 2 * E2a^(2*n);
 # - TODO: resolve ambiguity when E2 = 0;
 # Notation:
@@ -284,13 +287,15 @@ solve(t(m), c0 - sapply(cc, fn))
 	# Ultimate Components:
 	+ (E11a*E11b)^4 * (E11a + E11b)^2 * (6*E4) +
 	+ (E11a*E11b)^3 * (E11a + E11b)^2 * (32*E4^2) +
+	- (E11a*E11b)^3 * (E11a + E11b)   * (3*E3^2*E4) +
 	- (E11a*E11b)^2 * (E11a + E11b)^4 * (9*E4^2) +
-	+ (E11a*E11b)^2 * (E11a + E11b)^2 * (64*E4^3) +
-	+ (E11a*E11b)^2 * (E11a + E11b)   * (1750*E4*E5^2) +
-	+ (E11a*E11b)   * (E11a + E11b)^4 * (2*E4^3) +
-	- (E11a*E11b)   * (E11a + E11b)^3 * (600*E4*E5^2) +
-	- (E11a*E11b)   * (E11a + E11b)^2 * (4*E4^4) +
-	+ (E11a*E11b)   * (E11a + E11b)   * (1000*E4^2*E5^2) +
+	+ (E11a*E11b)^2 * (E11a + E11b)^3 * (6*E3^2*E4) +
+	+ (E11a*E11b)^2 * (E11a + E11b)^2 * (64*E4^3 - 113*E3*E4*E5) +
+	+ (E11a*E11b)^2 * (E11a + E11b)   * (1750*E4*E5^2 + 10*E3^2*E4^2) +
+	+ (E11a*E11b)   * (E11a + E11b)^4 * (2*E4^3 + 9*E3*E4*E5) +
+	- (E11a*E11b)   * (E11a + E11b)^3 * (600*E4*E5^2 + 20*E3^2*E4^2) +
+	- (E11a*E11b)   * (E11a + E11b)^2 * (4*E4^4 - 13*E3^4*E4 + 65*E3*E4^2*E5) +
+	+ (E11a*E11b)   * (E11a + E11b)   * (1000*E4^2*E5^2 + 90*E3^3*E4*E5 + 58*E3^2*E4^3) +
 	# B0:
 	- E4^4*S^8 + 12*E4^3*E5*S^7 - 86*E4^2*E5^2*S^6 - 4*E3^2*E4^3*S^6 +
 		+ 300*E4*E5^3*S^5 - 2*E3*E4^4*S^5 + 44*E3^2*E4^2*E5*S^5 +
@@ -352,6 +357,14 @@ P5poly = \(S = 1, E2 = 0, E3 = 0, E4 = 1, E5 = 1, digits = 6) {
 	pp = poly.calc0(E2a, digits = digits);
 	return(pp);
 }
+diff.coef = function(pow = 2, Eall) {
+	E = Eall;
+	pp = P5poly(c(- E[1], E[2], - E[3], E[4], - E[5]));
+	c1 = pp$coeff[pp$x == pow];
+	pp = S5poly(S = E[1], E2 = E[2], E3 = E[3], E4 = E[4], E5 = E[5]);
+	c2 = pp$coeff[pp$E11a == pow];
+	return(c1 - c2);
+}
 
 #
 vx = coef.S5(pow = 6)
@@ -367,8 +380,8 @@ vx = coef.S5(pow = pow, E2=E2, E3=E3, E4 = E4, E5 = 1)
 round0(solve(vandermonde(x0), v0 - vx))
 
 # Test:
-P5poly(c(0,1,0,3,-2));
-S5poly(E2=1, S = 0, E4 = 3, E5 = 2) |> print.pm(lead="E11a")
+P5poly(c(0,1,-1,1,-1));
+S5poly(E2=1, S = 0, E3 = 1, E4 = 1, E5 = 1) |> print.pm(lead="E11a")
 
 
 ###
