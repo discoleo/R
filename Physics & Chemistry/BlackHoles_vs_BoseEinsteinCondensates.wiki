@@ -56,10 +56,10 @@ The boiling points of Wolfram, Rhenium and Osmium are all around 5700 K: this ma
 
 Stars may function by extended/extreme fission. These fission reactions split heavy atoms into (much) smaller atoms: the fission is much more extensive than fission events performed on earth.
 
-The nuclear fission generates large amounts of protons (hydrogen), neutrons and helium nucleons. These helium nucleons may be responsible for the unusual spectral absorption bands, as they arise through extreme fission events and are not merely bystanders.
+The nuclear fission generates large amounts of protons (hydrogen), neutrons and helium nucleons. These helium nucleons may be responsible for the unusual spectral emission & absorption bands, as they arise through extreme fission events and are not merely bystanders.
 
-''Helium:''
-- the various reactions of fission and extended-fission which generate the He may explain the observed He-lines (e.g. the presence of triplet lines and the missing singlet lines);
+''Helium:''\
+- the various reactions of fission and extended-fission which generate the He may explain the observed He-lines (e.g. the presence of triplet emission lines and the missing singlet lines);\
 - this would explain also the presence of He in the solar flares (which indicate an event of increased fission);
 
 
@@ -81,6 +81,7 @@ Alternatively: What is the initiating step?
 Separation may be induced by spin, but: What is the cause of the spin?
 
 
+'References:'
 
 # PM Robitaille: Sky Scolar. What is the Sun Made Of? Evidence from the Solar Spectrum!
 ** https://www.youtube.com/watch?v=fynuCLQp1TE
