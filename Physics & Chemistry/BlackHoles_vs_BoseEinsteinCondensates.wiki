@@ -54,9 +54,13 @@ The boiling points of Wolfram, Rhenium and Osmium are all around 5700 K: this ma
 
 == Super-Fission ==
 
-Stars may function by extreme fission. These fission reactions split heavy atoms into (much) smaller atoms: the fission is much more extensive than fission events performed on earth.
+Stars may function by extended/extreme fission. These fission reactions split heavy atoms into (much) smaller atoms: the fission is much more extensive than fission events performed on earth.
 
-The nuclear fission generates large amounts of protons (hydrogen) and helium nucleons. These nucleons may be responsible for the unusual spectral absorption bands, as they arise through extreme fission events and are not merely bystanders.
+The nuclear fission generates large amounts of protons (hydrogen), neutrons and helium nucleons. These helium nucleons may be responsible for the unusual spectral absorption bands, as they arise through extreme fission events and are not merely bystanders.
+
+''Helium:''
+- the various reactions of fission and extended-fission which generate the He may explain the observed He-lines (e.g. the presence of triplet lines and the missing singlet lines);
+- this would explain also the presence of He in the solar flares (which indicate an event of increased fission);
 
 
 == Star Formation ==
@@ -68,6 +72,8 @@ Everything starts from a massive proto-solid body consisting of tightly-packed h
 For some unknown reason the solid body starts to fragment and to disintegrate. The heavy atoms become unstable and start to fission by alpha and beta decay. This process generates large amounts of hydrogen (and possibly some helium) which diffuses away and generates the gas nebula, while the core transforms into an AGN. Some fragments are large enough to be relatively stable over longer periods of time and move away to form the objects inside the galaxy.
 
 The solid-body fragments start separating more and more, which further reduces the gravitational field acting on the body. This step is ambiguous from a physical perspective. However, once fission reaches a critical density, an intense and sustained fission process is initiated: a star is born.
+
+The entire galaxy is ultimately formed from the primordial black hole at the centre of the AGN. What is seen as an AGN are the remnants of this proto-black hole.
 
 ; Open Questions:
 Why would a massive solid body fragment and what causes the fragments to separate?
