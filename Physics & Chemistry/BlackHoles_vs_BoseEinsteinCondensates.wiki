@@ -9,13 +9,13 @@
 
 2. Nucleosynthesis occurs in black holes. Black holes resemble probably Bose-Einstein condensates, albeit at high pressure (unlike the BE condensates created on earth).
 
-3. Active Galactic Nuclei (AGN)
-Proto-black hole (the real black hole) become at some point unstable: the heavy atoms in the black hole start to fission. This generates large amounts of hydrogen and helium gas and leads also to the fragmentation of the AGN. The individual fragments form the stars and populate the galaxy - actually forming the galaxy. The "accretion disk" goes in the other direction - radiating away from the "black hole" / AGN.
+3. Active Galactic Nuclei (AGN):
+Proto-black holes (the real black holes) become at some point unstable: the heavy atoms in the black hole start to fission. This generates large amounts of hydrogen and helium gas and leads also to the fragmentation of the AGN. The individual fragments form the stars and populate the galaxy - actually forming the galaxy. The "accretion disk" goes in the other direction - radiating away from the "black hole" / AGN.
 
 
 === Composition of the sun ===
 
-'''He:'''
+'''Helium:'''
 * probably originates as alpha particles in the various fission reactions;
 * the various reactions of fission and extended-fission may explain the observed He-lines (e.g. the presence of triplet emission lines and the missing singlet lines);
 * this would explain also the presence of He in the solar flares;
