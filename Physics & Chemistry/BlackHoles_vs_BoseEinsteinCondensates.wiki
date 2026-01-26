@@ -1,5 +1,33 @@
 
-= Black Holes vs Bose-Einstein Condensates =
+= Basics of Astrophysics =
+
+== Abstract / Summary ==
+
+'''Alternative Theories in Astrophysics'''
+
+1. The Sun: operates by fissioning heavy elements. It contains molten Wolfram & Osmium, which emits the black-body radiation. Helium is generated through extensive fission, which explains the strange triplet emission lines (and other lines in the solar spectrum). Note that the stratification of the standard solar model does NOT make much sense in this new model.
+
+2. Nucleosynthesis occurs in black holes. Black holes resemble probably Bose-Einstein condensates, albeit at high pressure (unlike the BE condensates created on earth).
+
+3. Active Galactic Nuclei (AGN)
+Proto-black hole (the real black hole) become at some point unstable: the heavy atoms in the black hole start to fission. This generates large amounts of hydrogen and helium gas and leads also to the fragmentation of the AGN. The individual fragments form the stars and populate the galaxy - actually forming the galaxy. The "accretion disk" goes in the other direction - radiating away from the "black hole" / AGN.
+
+
+=== Composition of the sun ===
+
+'''He:'''
+* probably originates as alpha particles in the various fission reactions;
+* the various reactions of fission and extended-fission may explain the observed He-lines (e.g. the presence of triplet emission lines and the missing singlet lines);
+* this would explain also the presence of He in the solar flares;
+
+Molten W and Os play probably a major role in generating the black body radiation. Rhenium may be present as well (although there are no Fraunhofer lines). Note the very high vaporisation temperatures of W and Os (between 5500 and 6000 K, similar to the surface temperature of the sun). Iridium and Platinum may also play a role in this respect.
+
+Lithium undergoes fission reactions and the generated fragments may induce extended fission in heavier elements. This may explain the low abundance of lithium. The hydrogen bomb probably involves fission of lithium and enhanced fission of Uranium/Plutonium induced by the lithium fragments.
+
+This new theory does not attempt to explain how black holes are formed.
+
+
+= Part A: Black Holes vs Bose-Einstein Condensates =
 
 == Original ==
 https://github.com/discoleo/R/tree/master/Physics%20&%20Chemistry/BlackHoles_vs_BoseEinsteinCondensates.wiki
@@ -38,9 +66,9 @@ Although I contacted multiple physicists with these ideas (including the late St
 '''Note to Wikipedia Editors:''' Nevertheless, it may be still warranted to search the literature, because of the huge impact on many important areas of physics. A Bose-Einstein condensate is a much better description than a mathematical division by zero. (The note was deleted from the Wikipedia Talk page, but is still available here.)
 
 
-= Stars =
+= Part B: Stars =
 
-== Black-Body radiation ==
+== Black-Body Radiation ==
 
 The origin of the 5700 K black-body radiation in the sun is probably '''NOT''' metallic hydrogen (Ref. Robitaille 1). Instead, it is more likely a true metal like Wolfram or Osmium.
 
