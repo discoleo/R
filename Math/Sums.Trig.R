@@ -114,3 +114,54 @@ id = seq(1200)
 prod( (1 - 1/(2*id+1)^2)^((-1)^id * (2*id+1)) )
 pi/8 * exp(4*Catalan/pi)
 
+
+##########################
+##########################
+
+### Sum( Coth(n*pi) / n^3 )
+# 1. Michael Penn: a nice Ramanujan sum
+#    https://www.youtube.com/watch?v=c3B3ILEtrbk
+# 2. Ce Xu. Some infinite series involving hyperbolic functions.
+#    https://arxiv.org/pdf/1707.06673
+
+
+### Pow = 3
+id = 1:10000;
+sum( 1 / tanh(id*pi) / id^3 )
+7/180 * pi^3;
+
+
+### Sum( Coth(n*pi) / n^7 )
+id = 1:10000;
+sum( 1 / tanh(id*pi) / id^7 )
+(pracma::zeta(8) - pracma::zeta(4)^2 + 2*pracma::zeta(2)*pracma::zeta(6)) * 1/pi;
+
+
+# Sum( Tanh(n*pi) / n^3 )
+sum( tanh(id*pi) / id^3 )
+# TODO
+
+
+### Sum( Tanh((n-1/2)*pi) / n^3 )
+sum( tanh((id-1/2)*pi) / (2*id-1)^3 )
+pi^3 / 32;
+
+
+### Sum( coth((2*n+1)*pi) / n^3 )
+id = 1:10000;
+sum( 1 / tanh((2*id+1)*pi) / id^3 )
+# Check: ???
+pracma::zeta(3); # almost?
+
+### Sum( coth(2*n*pi) / n^3 )
+id = 1:40000;
+sum( 1 / tanh(2*id*pi) / id^3 )
+# TODO
+
+
+# Helper:
+id = 1:2000; # Converges slowly;
+z = sqrt(2);
+1/tanh(pi*z);
+1/pi * (1/z + 2 * sum(z / (z^2 + id^2)));
+
