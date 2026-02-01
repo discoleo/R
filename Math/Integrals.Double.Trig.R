@@ -67,7 +67,7 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 integrate(\(x) sapply(x, \(y) integrate(\(x) sin(pi*(x+y)) / (x + y), 0, 1)$value), 0, 1)
 
 
-### x*y-Type Fractions:
+### Fractions: x*y-Type
 
 
 ### I( sin(pi/2*x) / (1 + x*y) )
@@ -141,8 +141,8 @@ integrate(\(x) sapply(x, \(y) integrate(\(x) sin(pi/2*x*y) / (1 - x*y), 0, 1)$va
 integrate(\(x) sapply(x, \(y) integrate(\(x) sin(pi/2*x*y) / (1 + x*y), 0, 1)$value), 0, 1)
 
 
-
-### Trig-Fractions
+######################
+### Trig-Fractions ###
 
 ### I( (sin(x) + sin(y)) / (cos(x) + cos(y)) )
 # Maths 505: A beautifully symmetric double integral
@@ -178,7 +178,7 @@ integrate(\(x) sapply(x, \(y) integrate(
 
 # Helper:
 integrate(\(x) cos(x)^2 * log(cos(x)), 0, pi/4)
-- (2*pi*log(2) - pi - 4*Catalan + 2*log(2) + 2) / 16
+- (2*pi*log(2) - pi - 4*Catalan + 2*log(2) + 2) / 16;
 
 
 
@@ -192,15 +192,36 @@ integrate(\(x) sapply(x, \(y) integrate(
 ### Radicals ###
 
 ### I( sin(x) / sqrt(1 - sin(x)^2*sin(y)^2*sin(z)^2) )
-# Hmath: Расправимся с тройным интегралом с помощью рядов
-# [in Russian]
+# 1. Hmath: Расправимся с тройным интегралом с помощью рядов
+#    [in Russian]
+# 2. Hmath: What if we find the average length of an ellipse?
+#    https://www.youtube.com/watch?v=542frBtmBgA
 
 # TODO
 
 
+### I( sqrt(1 - sin(x)^2*sin(y)^2) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	sqrt(1 - sin(x)^2*sin(y)^2), 0, pi/2, rel.tol=1E-13)$value), 0, pi/2, rel.tol=1E-13)
+gamma(1/4)^4 / gamma(1/2)^2 / 32 + gamma(3/4)^4 / gamma(3/2)^2 / 8;
+beta(1/4, 1/4)^2 / 32 + beta(3/4, 3/4)^2 / 8;
+
 ### I( 1 / sqrt(1 - sin(x)^2*sin(y)^2) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) 1 / sqrt(1 - sin(x)^2*sin(y)^2), 0, pi/2)$value), 0, pi/2)
-gamma(1/4)^4 / gamma(1/2)^2 / 16
+gamma(1/4)^4 / gamma(1/2)^2 / 16;
+
+
+### Trig * SQRT
+
+### I( sin(x) * sqrt(1 - sin(x)^2*sin(y)^2) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	sqrt(1 - sin(x)^2*sin(y)^2) * sin(x), 0, pi/2, rel.tol=1E-13)$value), 0, pi/2, rel.tol=1E-13)
+pi^2 / 8;
+
+### I( cos(x) * sqrt(1 - sin(x)^2*sin(y)^2) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	sqrt(1 - sin(x)^2*sin(y)^2) * cos(x), 0, pi/2, rel.tol=1E-13)$value), 0, pi/2, rel.tol=1E-13)
+Catalan + 1/2;
 
 
 ### I( sin(x) / sqrt(1 - sin(x)^2*sin(y)^2) )
