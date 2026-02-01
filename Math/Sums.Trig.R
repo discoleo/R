@@ -205,3 +205,11 @@ zlp = sum(sapply(id1, \(id1) { 1 / (id1*id2*(id1+id2)); } ))
 0.6543415088859439; # higher precision;
 # TODO
 
+
+# Sum( 1 / (m^3 * n^2 * (m+n)) )
+id  = 1:2000;
+id2 = id^2;
+sum(sapply(id, \(id1) { 1 / (id1^3*id2*(id1+id)); } ))
+integrate(\(x) sapply(x, \(x) polylog2(x) * Re(polylog2(x, 3)) / x), 0, 1, rel.tol=1E-12)
+pracma::zeta(3)^2 / 2;
+
