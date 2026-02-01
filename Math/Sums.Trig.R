@@ -165,3 +165,36 @@ z = sqrt(2);
 1/tanh(pi*z);
 1/pi * (1/z + 2 * sum(z / (z^2 + id^2)));
 
+
+# Sum( 1 / (m * n * (m+n)) )
+id = 1:5000;
+sum(sapply(id, \(id1) { sum(1 / (id*id1*(id+id1 + 0.0))); } ))
+2*pracma::zeta(3);
+
+# Sum( 1 / (m^2 * n * (m+n)) )
+ids = 1:20000;
+id1 = 1:5000; id2 = id1^2;
+sum(sapply(ids, \(ids) { sum(1 / (id2*ids*(id1+ids))); } ))
+pi^4 / 72;
+
+# Sum( 1 / (m^2 * n^2 * (m+n)) )
+id  = 1:2000;
+id2 = id^2;
+sum(sapply(id, \(id1) { 1 / (id1^2*id2*(id1+id)); } ))
+integrate(\(x) sapply(x, \(x) polylog2(x)^2 / x), 0, 1, rel.tol=1E-12)
+2*pracma::zeta(2)*pracma::zeta(3) - 3*pracma::zeta(5);
+
+
+# Sum( 1 / (m^2 * n^2 * (m+n)^2) )
+id  = 1:2000;
+id2 = id^2;
+sum(sapply(id, \(id1) { 1 / (id1^2*id2*(id1+id)^2); } ))
+pracma::zeta(6) / 3;
+
+# Sum( 1 / (m^2 * n^2 * (m^2 + n^2)) )
+id1 = (1:4000)^2;
+id2 = id1;
+zlp = sum(sapply(id1, \(id1) { 1 / (id1*id2*(id1+id2)); } ))
+0.6543415088859439; # higher precision;
+# TODO
+
