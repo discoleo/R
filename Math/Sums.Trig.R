@@ -183,7 +183,12 @@ id  = 1:2000;
 id2 = id^2;
 sum(sapply(id, \(id1) { 1 / (id1^2*id2*(id1+id)); } ))
 integrate(\(x) sapply(x, \(x) polylog2(x)^2 / x), 0, 1, rel.tol=1E-12)
-2*pracma::zeta(2)*pracma::zeta(3) - 3*pracma::zeta(5);
+2*pracma::zeta(2) * pracma::zeta(3) - 3*pracma::zeta(5);
+
+# Sum( 1 / (m^2 * n * (m+n)^2) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	sapply(x, \(x) - polylog2(x*y) * log(1-x*y) / (x*y)), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+pracma::zeta(2) * pracma::zeta(3) - 3/2 * pracma::zeta(5);
 
 
 # Sum( 1 / (m^2 * n^2 * (m+n)^2) )
