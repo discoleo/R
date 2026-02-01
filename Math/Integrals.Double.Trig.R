@@ -318,6 +318,11 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	log(1 - sin(x)*sin(y)), 0, pi/2, rel.tol=1E-12)$value), 0, pi/2, rel.tol=1E-12)
 - (7/2 * pracma::zeta(3) + pi^2 * log(2) / 2 - 2*pi * Catalan);
 
+### I( log(1 + sin(x)*sin(y)) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	log(1 + sin(x)*sin(y)), 0, pi/2, rel.tol=1E-12)$value), 0, pi/2, rel.tol=1E-12)
+7/2 * pracma::zeta(3) - pi^2 * log(2) / 2;
+
 
 ### I( log(tan(x) + tan(y)) )
 # Maths 505: A brutal iterated integral!
