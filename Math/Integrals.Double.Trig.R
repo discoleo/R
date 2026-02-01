@@ -246,6 +246,11 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	sin(4*x) / sqrt(1 - sin(x)^2*sin(y)^2), 0, pi/2)$value), 0, pi/2)
 - 4/9;
 
+### I( sin(5*x) / sqrt(1 - sin(x)^2*sin(y)^2) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	sin(5*x) / sqrt(1 - sin(x)^2*sin(y)^2), 0, pi/2, rel.tol=1E-10)$value), 0, pi/2, rel.tol=1E-10)
+pi^2 / 16;
+
 
 ##################
 ### Log & Trig ###
@@ -294,13 +299,24 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 ### I( log(cos(x-y)) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	log(cos(x-y)), 0, pi/2, rel.tol=1E-12)$value), 0, pi/2, rel.tol=1E-12)
-7/8 * pracma::zeta(3) - (pi/2)^2 * log(2)
+7/8 * pracma::zeta(3) - (pi/2)^2 * log(2);
 
 
 ### I( log(cos(x) + cos(y)) )
 # see next Section: cos(x-y)*cos(x+y);
 integrate(\(x) sapply(x, \(y) integrate(\(x) log(cos(x) + cos(y)), 0, pi/2)$value), 0, pi/2)
 7/4 * pracma::zeta(3) - (pi/2)^2 * log(2);
+
+### I( log(cos(x) - cos(y)) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	log(cos(x) - cos(y)), 0, y, rel.tol=1E-10)$value), 0, pi/2, rel.tol=1E-10)
+- (7/8 * pracma::zeta(3) + 1/8 * pi^2 * log(2));
+
+
+### I( log(1 - sin(x)*sin(y)) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	log(1 - sin(x)*sin(y)), 0, pi/2, rel.tol=1E-12)$value), 0, pi/2, rel.tol=1E-12)
+- (7/2 * pracma::zeta(3) + pi^2 * log(2) / 2 - 2*pi * Catalan);
 
 
 ### I( log(tan(x) + tan(y)) )
