@@ -16,7 +16,11 @@ Catalan = 0.915965594177219015054603514;
 ###################
 ###################
 
-### Sums: 1 / (m^p * n^q * (m+n)^k )
+### Sums: 1 / ( m^p * n^q * (m+n)^k )
+
+# 1. Hmath: Triple infinite sum
+#    https://www.youtube.com/watch?v=MqCbt4N92Uw
+
 
 # Sum( 1 / (m * n * (m+n)) )
 id = 1:5000;
@@ -75,7 +79,7 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 ########################
 ########################
 
-### Sums: 1 / (m^p * n^q * (m^2 + n^2) )
+### Sums: 1 / ( m^p * n^q * (m^2 + n^2) )
 
 # Sum( 1 / (m^2 * n^2 * (m^2 + n^2)) )
 id1 = (1:4000)^2;
