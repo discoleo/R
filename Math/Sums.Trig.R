@@ -175,6 +175,7 @@ sum(sapply(id, \(id1) { sum(1 / (id*id1*(id+id1 + 0.0))); } ))
 ids = 1:20000;
 id1 = 1:5000; id2 = id1^2;
 sum(sapply(ids, \(ids) { sum(1 / (id2*ids*(id1+ids))); } ))
+integrate(\(x) sapply(x, \(x) - polylog2(x) * log(1-x) / x), 0, 1, rel.tol=1E-12)
 pi^4 / 72;
 
 # Sum( 1 / (m^2 * n^2 * (m+n)) )
@@ -190,6 +191,12 @@ id  = 1:2000;
 id2 = id^2;
 sum(sapply(id, \(id1) { 1 / (id1^2*id2*(id1+id)^2); } ))
 pracma::zeta(6) / 3;
+
+# Integral-form:
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	sapply(x, \(x) polylog2(x*y)^2 / (x*y)), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+pracma::zeta(6) / 3;
+
 
 # Sum( 1 / (m^2 * n^2 * (m^2 + n^2)) )
 id1 = (1:4000)^2;
