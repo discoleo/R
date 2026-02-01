@@ -293,13 +293,23 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	log(sin(x)/cos(y) + cos(x)/sin(y)), 0, pi/2)$value), 0, pi/2)
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	log(2 * cos(x-y) / sin(y)), 0, pi/2)$value), 0, pi/2)
-7/8 * pracma::zeta(3) + (pi/2)^2 * log(2)
+7/8 * pracma::zeta(3) + (pi/2)^2 * log(2);
 
 
 ### I( log(cos(x-y)) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	log(cos(x-y)), 0, pi/2, rel.tol=1E-12)$value), 0, pi/2, rel.tol=1E-12)
 7/8 * pracma::zeta(3) - (pi/2)^2 * log(2);
+
+### I( x * log(cos(x-y)) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * log(cos(x-y)), 0, pi/2, rel.tol=1E-12)$value), 0, pi/2, rel.tol=1E-12)
+pi/4 * (7/8 * pracma::zeta(3) - (pi/2)^2 * log(2));
+
+### I( x * log|sin(x-y)| ) on [0, y]
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * log(sin(y-x)), 0, y, rel.tol=1E-12)$value), 0, pi/2, rel.tol=1E-12)
+- pi/8 * (pracma::zeta(3) + pi^2*log(2) / 6);
 
 
 ### I( log(cos(x) + cos(y)) )
@@ -322,6 +332,19 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	log(1 + sin(x)*sin(y)), 0, pi/2, rel.tol=1E-12)$value), 0, pi/2, rel.tol=1E-12)
 7/2 * pracma::zeta(3) - pi^2 * log(2) / 2;
+
+
+### Trig * Log( Trig )
+
+### I( sin(x) * log(cos(x) + cos(y)) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	sin(x) * log(cos(x) + cos(y)), 0, pi/2, rel.tol=1E-13)$value), 0, pi/2, rel.tol=1E-13)
+2*Catalan - log(2) - pi*log(2)/2;
+
+### I( cos(x) * log(cos(x) + cos(y)) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	cos(x) * log(cos(x) + cos(y)), 0, pi/2, rel.tol=1E-13)$value), 0, pi/2, rel.tol=1E-13)
+- pi*log(2)/2 + pi/2;
 
 
 ### I( log(tan(x) + tan(y)) )
