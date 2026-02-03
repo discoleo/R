@@ -311,6 +311,12 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x * log(sin(y-x)), 0, y, rel.tol=1E-12)$value), 0, pi/2, rel.tol=1E-12)
 - pi/8 * (pracma::zeta(3) + pi^2*log(2) / 6);
 
+### I( log(cos(x-y)) / (x-y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	log(cos(x-y)) / (x-y), 0, y, rel.tol=1E-13)$value), 0, pi/2, rel.tol=1E-13)
+- pi/2 * (log(2) + integrate(\(x) log(cos(x)) / x, 0, pi/2, rel.tol=1E-13)$value);
+# TODO
+
 
 ### I( log(cos(x) + cos(y)) )
 # see next Section: cos(x-y)*cos(x+y);
@@ -332,6 +338,30 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	log(1 + sin(x)*sin(y)), 0, pi/2, rel.tol=1E-12)$value), 0, pi/2, rel.tol=1E-12)
 7/2 * pracma::zeta(3) - pi^2 * log(2) / 2;
+
+### I( x * log(1 - sin(x)*sin(y)) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * log(1 - sin(x)*sin(y)), 0, pi/2, rel.tol=1E-12)$value), 0, pi/2, rel.tol=1E-12)
+(pracma::psi(3, 3/4) - pracma::psi(3, 1/4)) / 256 + pi^2 * Catalan +
+	- pi/2 * (21/16 * pracma::zeta(3) + (pi/2)^2 * log(2));
+
+### I( x * log(1 + sin(x)*sin(y)) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * log(1 + sin(x)*sin(y)), 0, pi/2, rel.tol=1E-12)$value), 0, pi/2, rel.tol=1E-12)
+- (pracma::psi(3, 3/4) - pracma::psi(3, 1/4)) / 256 +
+	- pi/2 * (21/16 * pracma::zeta(3) + (pi/2)^2 * log(2));
+
+# Derivation:
+
+### I( x * log(1 - sin(x)^2*sin(y)^2) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * log(1 - sin(x)^2*sin(y)^2), 0, pi/2, rel.tol=1E-13)$value), 0, pi/2, rel.tol=1E-13)
+- pi * (21/16 * pracma::zeta(3) + (pi/2)^2 * log(2) - pi * Catalan);
+
+### Diff:
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * (log(1 - sin(x)*sin(y)) - log(1 + sin(x)*sin(y))), 0, pi/2, rel.tol=1E-13)$value), 0, pi/2, rel.tol=1E-13)
+(pracma::psi(3, 3/4) - pracma::psi(3, 1/4)) / 128 + pi^2 * Catalan;
 
 
 ### Trig * Log( Trig )
