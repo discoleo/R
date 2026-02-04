@@ -328,6 +328,13 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	log(cos(x) - cos(y)), 0, y, rel.tol=1E-10)$value), 0, pi/2, rel.tol=1E-10)
 - (7/8 * pracma::zeta(3) + 1/8 * pi^2 * log(2));
 
+### Gen: on [0, k/n * pi]
+up = 3*pi/17; # up = sqrt(2) / pi;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	log(cos(x) + cos(y)), 0, up, rel.tol=1E-10)$value), 0, up, rel.tol=1E-10)
+integrate(\(x) 4*(up - x) * log(cos(x)), 0, up)$value + log(2) * up^2;
+# TODO: explicit formula;
+
 
 ### I( log(1 - sin(x)*sin(y)) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
