@@ -7,9 +7,17 @@
 ###
 
 ### Citation:
-### Leonard Mada. Generalisation of Cardano's Formula to Higher Order Polynomials.
-### https://github.com/discoleo/R/blob/master/Math/Polynomials.CardanGeneralisation.R
-### [I am open to collaboration, if anyone wants to publish properly]
+# 1. L. Mada, M.A. Jivulescu. [2026]
+#    An operator algebraic approach for generalized Cardano polynomials.
+#    https://arxiv.org/abs/2602.03532
+
+# Note:
+# An older material was posted on GitHub on May 20th, 2020 as:
+# Leonard Mada. Generalisation of Cardano's Formula to Higher Order Polynomials.
+# https://github.com/discoleo/R/blob/master/Math/Polynomials.CardanGeneralisation.R
+# [I am open to collaboration, if anyone wants to publish properly]
+# - I initially misspelled Cardano's name as Cardan;
+# - the above "Note" was in the initial material;
 
 
 ### History:
