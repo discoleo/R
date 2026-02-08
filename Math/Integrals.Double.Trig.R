@@ -497,6 +497,17 @@ sn1 = -(-1)^id1 * sin(2*k*id1*pi/n);
 	- sum(sn * (pracma::psi(1, idn) + pracma::psi(1, 1/2 + idn))) * k*pi +
 	+ sum(cs * (pracma::psi(2, idn) + pracma::psi(2, 1/2 + idn))) / 16 ) / (32*n^3));
 
+
+### I( log(cos(x+y)) )
+up = pi/6; # up = 3*pi/13;
+integrate(\(x) sapply(x, \(y) integrate(\(x) log(cos(x+y)), 0, up)$value), 0, up)
+integrate(\(x) 2*up * (2*log(cos(2*x)) - log(cos(x))) +
+	- 2*x * (2*log(cos(2*x)) - log(cos(x))), 0, up);
+# TODO: Explicit formula;
+
+
+### Other Intervals
+
 ### on [0, up] * [0, pi/2]
 up = pi/5;
 integrate(\(x) sapply(x, \(y) integrate(\(x) log(cos(x-y)), 0, up)$value), 0, pi/2)
@@ -593,8 +604,15 @@ integrate(\(x) sapply(x, \(y) integrate(\(x) x / tan(y-x) - y/(y-x), 0, y)$value
 
 ### on [0, pi/4]
 integrate(\(x) sapply(x, \(y) integrate(\(x) log(sin(y-x)), 0, y)$value), 0, pi/4)
-- (pi^2 * log(2) + 35/4 * pracma::zeta(3)) / 32;
+- (35/4 * pracma::zeta(3) + pi^2 * log(2)) / 32;
 
+### on [0, pi/3]
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	log(sin(y-x)), 0, y, rel.tol=1E-13)$value), 0, pi/3, rel.tol=1E-13)
+- (13/2 * pracma::zeta(3) + pi^2 * log(2)) / 18;
+
+
+### Log( TAN )
 
 ### I( log(tan(x+y)) )
 integrate(\(x) sapply(x, \(y) integrate(\(x) log(tan(x+y)), 0, pi/4)$value), 0, pi/4)
