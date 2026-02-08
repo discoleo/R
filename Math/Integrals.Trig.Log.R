@@ -1,16 +1,20 @@
 
+# Note:
+# - Integrals of type Log( TRIG ) & Clausen function
+#   are in file: Integrals.Log.Trig.R;
 
+#########################
 
 ### I( sin(k*x) * log(x) / x^(p+1) )
 
-###
+### Simple:
 p = sqrt(3) - sqrt(2)
 # Up = Inf; numerical issues;
 integrate(\(x) sin(x) * log(x) / x^(p+1), 0, 200000, subdivisions=40000)
-- gamma(-p) * digamma(-p) * sin(pi*p/2) + pi/2 * gamma(-p) * cos(pi*p/2)
+- gamma(-p) * digamma(-p) * sin(pi*p/2) + pi/2 * gamma(-p) * cos(pi*p/2);
 
 
-###
+### I( sin(k*x) * log(x) / x^(p+1) )
 p = sqrt(3) - sqrt(2)
 k = sqrt(3)
 # Up = Inf; numerical issues;
@@ -48,6 +52,11 @@ k = sqrt(3)
 integrate(\(x) cos(x) * log(x^2+k^2), 0, 1024*pi, subdivisions = 1024, rel.tol=1E-8)
 integrate(\(x) cos(x) * log(x^2+k^2), 1024*pi, 2*1024*pi, subdivisions = 1024, rel.tol=1E-8)
 - pi * exp(-k);
+
+# Note:
+# - Log(x^2 + k^2) is almost constant on the interval [x0, x0 + 2*pi],
+#   for sufficiently large x0;
+# - cos(x) * log(...) cancels almost entirely out on such an interval;
 
 # Helper
 k = sqrt(5)
