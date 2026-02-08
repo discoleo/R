@@ -541,8 +541,8 @@ pi * sum(snsg * (pracma::psi(1, idn) + (-1)^n * pracma::psi(1, 1/2 + idn))) / (4
 up = 2*pi/7;
 integrate(\(x) sapply(x, \(y) integrate(\(x) log(sin(x+y)), 0, up)$value), 0, up)
 integrate(\(x) up*log(sin(x+up)) - sapply(x, \(y) integrate(\(x) x / tan(x+y), 0, up)$value), 0, up);
-integrate(\(x) (up-x)*log(sin(x+up)) + x*log(sin(x)), 0, up)
-integrate(\(x) 4*(up-x)*log(sin(2*x)) - 2*(up-x)*log(sin(x)), 0, up)
+integrate(\(x) (up-x)*log(sin(x+up)) + x*log(sin(x)), 0, up);
+integrate(\(x) 4*(up-x)*log(sin(2*x)) - 2*(up-x)*log(sin(x)), 0, up);
 # TODO: explicit formula;
 
 ### on [0, up] * [0, pi/2-up]
@@ -553,14 +553,14 @@ integrate(\(x) up * log(sin(x)), 0, pi/2)$value +
 integrate(\(x) (x-up) * log(sin(x)) + (x-up) * log(cos(x)), 0, up)$value;
 # TODO: explicit formula;
 
-### on on [0, up] * [up, pi/2-up]
+### on [0, up] * [up, pi/2-up]
 up = 2*pi/7;
 integrate(\(x) sapply(x, \(y) integrate(\(x) log(sin(x+y)), 0, up)$value), up, pi/2-up)
 integrate(\(x) up * log(sin(x)), 0, pi/2)$value +
 integrate(\(x) (x-up) * log(cos(x)) - (x-up) * log(sin(x)) +
 	- 4*(up-x) * log(sin(2*x)), 0, up)$value;
 # TODO: explicit formula;
-# TODO: [up, pi/2-up]^2 (Diff(invert));
+# TODO: [up, pi/2-up]^2 using Diff(I[up], I[pi/2-up]);
 
 
 ### I( log(sin(x-y)) )
