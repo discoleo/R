@@ -559,8 +559,29 @@ integrate(\(x) sapply(x, \(y) integrate(\(x) log(sin(x+y)), 0, up)$value), up, p
 integrate(\(x) up * log(sin(x)), 0, pi/2)$value +
 integrate(\(x) (x-up) * log(cos(x)) - (x-up) * log(sin(x)) +
 	- 4*(up-x) * log(sin(2*x)), 0, up)$value;
+integrate(\(x) up * log(sin(x)), 0, pi/2)$value + # - up/2 * pi*log(2);
+integrate(\(x) (x-up) * log(cos(x)) - (x-up) * log(sin(x)), 0, up)$value +
+integrate(\(x) (x-2*up) * log(sin(x)), 0, 2*up)$value;
+# Alternative: sin(2*x) = 2*sin(x)*cos(x);
+integrate(\(x) 5*(x-up) * log(cos(x)) + 3*(x-up) * log(sin(x)), 0, up)$value +
+	- 1/2 * up*pi*log(2) - 2*up^2*log(2);
 # TODO: explicit formula;
-# TODO: [up, pi/2-up]^2 using Diff(I[up], I[pi/2-up]);
+
+# on [up, pi/2-up]^2
+# - using Diff(I[up], I[pi/2-up]),
+#   where I is on [0, up] * [up, pi/2-up];
+up = 3*pi/7;
+integrate(\(x) sapply(x, \(y) integrate(\(x) log(sin(x+y)), up, pi/2-up)$value), up, pi/2-up)
+integrate(\(x) 5*(pi/2-up-x) * log(cos(x)) + 3*(pi/2-up-x) * log(sin(x)), 0, pi/2-up)$value +
+integrate(\(x) -5*(x-up) * log(cos(x)) - 3*(x-up) * log(sin(x)), 0, up)$value +
+	+ 3/4 * pi^2*log(2) - 2*up*pi*log(2) + 4*up^2*log(2);
+
+
+# Helper: on [0, pi/2-up] * [up, pi/2-up]
+up = 3*pi/7;
+integrate(\(x) sapply(x, \(y) integrate(\(x) log(sin(x+y)), 0, pi/2-up)$value), up, pi/2-up)
+integrate(\(x) 5*(pi/2-up-x) * log(cos(x)) + 3*(pi/2-up-x) * log(sin(x)), 0, pi/2-up)$value +
+	+ 1/2 * (pi/2-up)*pi*log(2) + 2*(pi/2-up)^2*log(2);
 
 
 ### I( log(sin(x-y)) )
