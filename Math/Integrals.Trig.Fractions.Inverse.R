@@ -175,6 +175,14 @@ integral(\(x) x^5*(pi - x)*(pi + x) / sin(x), -pi, pi)
 
 ### Other Intervals
 
+### on [0, pi/4]
+
+### I( x / sin(x) )
+integrate(\(x) x / sin(x), 0, pi/4)
+integrate(\(x) -2 * log(tan(x)), 0, pi/8)$value - pi * asinh(1) / 4;
+sum(pracma::psi(1, c(1,5,3,7)/8) * c(1,-1,1,-1)) * sqrt(2) / 64 - pi * asinh(1) / 4;
+
+
 ### on [0, pi/3]
 
 ### I( 1 / sin(x) )
