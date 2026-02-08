@@ -11,6 +11,10 @@
 # I( x^p / cos(x) )
 # - on various intervals;
 
+# Note:
+# - Integrals of type Log( TRIG ) & Clausen function
+#   are in file: Integrals.Log.Trig.R;
+
 
 ####################
 
@@ -280,7 +284,7 @@ log((1-cos(pi/3))/(1+cos(pi/3)))
 2*log(tan(pi/6)); -2*log(tan(pi/3));
 
 #
-log((1-cos(pi/6))/(1+cos(pi/6)))
+log((1-cos(pi/6))/(1+cos(pi/6)));
 2*log(tan(pi/12))
 
 

@@ -7,6 +7,13 @@
 ## Leonard Mada
 
 
+# Note:
+# - Fractions of type: x^p / sin(x) are in file:
+#   Integrals.Trig.Fractions.Inverse.R;
+# - Fractions of type: x^p / tan(x) are in file:
+#   Integrals.Trig.Tan.R;
+
+
 ##################
 
 ### Basic
@@ -131,7 +138,7 @@ integrate(\(x) sin(k*x)^3 / x^p, 32*pi*1000, 32*pi*10000)
 ### Borwein Integrals:
 # - already numerical issues;
 integrate(\(x) sin(x) / x * sin(x/3) / x, 0, Inf, rel.tol=1E-6, subdivisions=4000)
-pi/2 / 3
+pi/2 / 3;
 
 
 ################
