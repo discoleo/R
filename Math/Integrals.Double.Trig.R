@@ -335,6 +335,14 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 integrate(\(x) 4*(up - x) * log(cos(x)), 0, up)$value + log(2) * up^2;
 # TODO: explicit formula;
 
+###
+up = 3*pi/17; # up = sqrt(2) / pi;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	log(cos(x) - cos(y)), 0, y, rel.tol=1E-10)$value), 0, up, rel.tol=1E-10)
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	log(2*sin((x+y)/2) * sin((y-x)/2)), 0, y, rel.tol=1E-10)$value), 0, up, rel.tol=1E-10)
+# TODO
+
 
 ### I( log(1 - sin(x)*sin(y)) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
@@ -445,6 +453,24 @@ id = 1:2; ic = 1:3; sn = sin(2*pi*id/6); cs = cos(2*pi*ic/6);
 	- sum(cs * (pracma::psi(2, ic/6) - pracma::psi(2, 1/2 + ic/6))) / (4*6^3);
 -(pi/3)^2 * log(2) + (1/6 + 3/8) * pracma::zeta(3);
 
+### on [0, pi/6]^2
+integrate(\(x) sapply(x, \(y) integrate(\(x) log(cos(x-y)), 0, pi/6)$value), 0, pi/6)
+(11/2 * pracma::zeta(3) - pi^2 * log(2)) / 36;
+
+### on [0, pi/6] * [pi/6, pi/3]
+integrate(\(x) sapply(x, \(y) integrate(\(x) log(cos(x-y)), 0, pi/6)$value), pi/6, pi/3)
+(17/4 * pracma::zeta(3) - pi^2 * log(2)) / 36;
+
+### on [0, pi/6] * [0, pi/3]
+integrate(\(x) sapply(x, \(y) integrate(\(x) log(cos(x-y)), 0, pi/6)$value), 0, pi/3)
+(39/4 * pracma::zeta(3) - 2*pi^2 * log(2)) / 36;
+
+### on [0, pi/6] * [0, pi/2]
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	log(cos(x-y)), 0, pi/6, rel.tol=1E-12)$value), 0, pi/2, rel.tol=1E-12)
+(35/4 * pracma::zeta(3) - 3*pi^2 * log(2)) / 36;
+
+
 ### I( log(cos(x+y)) ) on [0, pi/6]^2
 integrate(\(x) sapply(x, \(y) integrate(\(x) log(cos(x+y)), 0, pi/6)$value), 0, pi/6)
 integrate(\(x) pi/3 * (2*log(cos(2*x)) - log(cos(x))) +
@@ -460,6 +486,7 @@ integrate(\(x) pi/3 * (2*log(cos(2*x)) - log(cos(x))) +
 n = 6; k = 1; # n = 7; k = 3; # n = 8; k = 3;
 integrate(\(x) sapply(x, \(y) integrate(\(x) log(cos(x-y)), 0, pi*k/n)$value), 0, pi*k/n)
 integrate(\(x) 2*(pi*k/n - x) * log(cos(x)), 0, pi*k/n);
+#
 id = seq(2*n); idn = id / (4*n);
 sn = (-1)^id * sin(2*k*id*pi/n); cs = (-1)^id * cos(2*k*id*pi/n);
 id1 = seq(n); idn1 = id1 / (2*n);
@@ -470,7 +497,24 @@ sn1 = -(-1)^id1 * sin(2*k*id1*pi/n);
 	- sum(sn * (pracma::psi(1, idn) + pracma::psi(1, 1/2 + idn))) * k*pi +
 	+ sum(cs * (pracma::psi(2, idn) + pracma::psi(2, 1/2 + idn))) / 16 ) / (32*n^3));
 
+### on [0, up] * [0, pi/2]
+up = pi/5;
+integrate(\(x) sapply(x, \(y) integrate(\(x) log(cos(x-y)), 0, up)$value), 0, pi/2)
+integrate(\(x) up * log(cos(x-up)), 0, pi/2)$value +
+integrate(\(x) x * log(cos(x-pi/2)) - x * log(cos(x)), 0, up)$value;
+integrate(\(x) up * log(sin(x)), 0, pi/2)$value +
+integrate(\(x) (x-up) * log(sin(x)) - (x-up) * log(cos(x)), 0, up)$value;
+# TODO: explicit formula;
 
+### on [0, up] * [up, pi/2]
+up = pi/5;
+integrate(\(x) sapply(x, \(y) integrate(\(x) log(cos(x-y)), 0, up)$value), up, pi/2)
+integrate(\(x) up * log(sin(x)), 0, pi/2)$value +
+integrate(\(x) (x-up) * log(sin(x)) + (x-up) * log(cos(x)), 0, up)$value;
+# TODO: explicit formula;
+
+
+### [old]
 ### on [0, pi/8]^2
 n = 8; # n = 12; # EVEN: 4*k;
 integrate(\(x) sapply(x, \(y) integrate(\(x) log(cos(x-y)), 0, pi/n)$value), 0, pi/n)
@@ -489,6 +533,29 @@ pi * sum(snsg * (pracma::psi(1, idn) + (-1)^n * pracma::psi(1, 1/2 + idn))) / (4
 	+ sum( sn * (pracma::psi(1, id/n) - pracma::psi(1, 1 - id/n))) * 4*pi );
 
 # TODO: generalize [DONE] & simplify;
+
+
+### Log( SIN )
+
+### on [0, up] * [0, pi/2-up]
+up = 2*pi/7;
+integrate(\(x) sapply(x, \(y) integrate(\(x) log(sin(x+y)), 0, up)$value), 0, pi/2-up)
+integrate(\(x) sapply(x, \(y) integrate(\(x) log(cos(x-y)), 0, up)$value), up, pi/2);
+integrate(\(x) up * log(sin(x)), 0, pi/2)$value +
+integrate(\(x) (x-up) * log(sin(x)) + (x-up) * log(cos(x)), 0, up)$value;
+# TODO: explicit formula;
+
+
+### I( log(sin(x-y)) )
+up = 5*pi/7; # up = pi/4;
+integrate(\(x) sapply(x, \(y) integrate(\(x) log(sin(y-x)), 0, y)$value), 0, up)
+integrate(\(x) sapply(x, \(y) integrate(\(x) x / tan(y-x) - y/(y-x), 0, y)$value), 0, up)$value +
+	+ up^2*log(up)/2 - up^2/4;
+# TODO
+
+### on [0, pi/4]
+integrate(\(x) sapply(x, \(y) integrate(\(x) log(sin(y-x)), 0, y)$value), 0, pi/4)
+- (pi^2 * log(2) + 35/4 * pracma::zeta(3)) / 32;
 
 
 ### I( log(tan(x+y)) )
