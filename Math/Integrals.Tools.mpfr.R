@@ -33,7 +33,7 @@ p10 = c(
 	"9.739065285171717200779640120844521e-01"
 )
 
-# Konrod Nodes:
+# Kronrod Nodes:
 p21 = c("0.000000000000000000000000000000000e+00",
 	"1.488743389816312108848260011297200e-01",
 	"2.943928627014601981311266031038656e-01",
@@ -208,9 +208,20 @@ integrate(\(x) as.numeric(sapplyMpfr(x, \(y) int.mpfr(FUN,
 3 - 2*Catalan;
 
 #
-integrate(\(x) sapply(x, \(y) integrate(\(x)
-	sqrt( y/x * (1-x) / (1 - x*y) ), 0, 1/2, rel.tol=1E-9)$value), 0, 1, rel.tol=1E-9)$value +
-integrate(\(x) sapply(x, \(y) integrate(\(x)
-	sqrt( y/x * (1-x) / (1 - x*y) ), 1/2, 1, rel.tol=1E-9)$value), 0, 1, rel.tol=1E-9)$value;
+integrate(\(x) sapply(x, \(y) integrate(FUN, 0, 1/2, y=y, rel.tol=1E-9)$value), 0, 1, rel.tol=1E-9)$value +
+integrate(\(x) sapply(x, \(y) integrate(FUN, 1/2, 1, y=y, rel.tol=1E-9)$value), 0, 1, rel.tol=1E-9)$value;
+3 - 2*Catalan;
+#
+FUN = \(x, y) sqrt( x * (1-y) / (1 - x)) / y^2;
+integrate(\(x) sapply(x, \(y) integrate(FUN, 0, y/2, y=y, rel.tol=1E-9)$value), 0, 1, rel.tol=1E-9)$value +
+integrate(\(x) sapply(x, \(y) integrate(FUN, y/2, y, y=y, rel.tol=1E-9)$value), 0, 1, rel.tol=1E-9)$value;
+#
+FUN = \(x, y) 2 * sin(x)^2 * sqrt(1-y)/y^2;
+FUN = \(x, y) (1 - cos(2*x)) * sqrt(1-y)/y^2;
+integrate(\(x) sapply(x, \(y) integrate(FUN, 0, asin(sqrt(y)), y=y, rel.tol=1E-9)$value), 0, 1, rel.tol=1E-9);
+#
+integrate(\(x)  (asin(sqrt(x)) - sqrt(x*(1-x))) * sqrt(1-x)/x^2, 0, 1);
+integrate(\(x)  2*(asin(x) - x*sqrt(1-x^2)) * sqrt(1-x^2)/x^3, 0, 1);
+integrate(\(x)  2*(x - sin(x)*cos(x)) * cos(x)^2/sin(x)^3, 0, pi/2);
 3 - 2*Catalan;
 
