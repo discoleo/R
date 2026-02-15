@@ -161,7 +161,7 @@ p61 = c(- p61[-1], p61);
 w10 = c(w10, w10); w21 = c(w21[-1], w21);
 w30 = c(w30, w30); w61 = c(w61[-1], w61);
 
-#
+### Integral
 int.mpfr = function(FUN, low, up, ..., p = p21, w = list(w10, w21)) {
 	low = mpfr(low, 114); # theoretically not needed;
 	up  = mpfr(up, 114);
@@ -179,49 +179,4 @@ int.mpfr = function(FUN, low, up, ..., p = p21, w = list(w10, w21)) {
 	vr$value = v2; vr$abs.error = abs(v2-v1);
 	return(vr);
 }
-
-
-####################
-####################
-
-# Example:
-f1 = \(x) exp(x^2)
-integrate(f1, 0, 1)
-int.mpfr(f1, 0, 1)
-
-
-# Still fails:
-FUN = \(x, y) sqrt( y/x * (1-x) / (1 - x*y) );
-int.mpfr(\(x) sapplyMpfr(x, \(y) int.mpfr(FUN, 0, 1, y=y)$value), 0, 1)
-3 - 2*Catalan;
-
-#
-integrate(\(x) as.numeric(sapplyMpfr(x, \(y) int.mpfr(FUN,
-	0, 1, y=y, p=p61, w = list(w30, w61))$value)), 0, 1, rel.tol=1E-9)
-3 - 2*Catalan;
-
-#
-integrate(\(x) as.numeric(sapplyMpfr(x, \(y) int.mpfr(FUN,
-	0, 1/4, y=y, p=p61, w = list(w30, w61))$value)), 0, 1, rel.tol=1E-9)$value +
-integrate(\(x) as.numeric(sapplyMpfr(x, \(y) int.mpfr(FUN,
-	1/4, 1, y=y, p=p61, w = list(w30, w61))$value)), 0, 1, rel.tol=1E-9)$value;
-3 - 2*Catalan;
-
-#
-integrate(\(x) sapply(x, \(y) integrate(FUN, 0, 1/2, y=y, rel.tol=1E-9)$value), 0, 1, rel.tol=1E-9)$value +
-integrate(\(x) sapply(x, \(y) integrate(FUN, 1/2, 1, y=y, rel.tol=1E-9)$value), 0, 1, rel.tol=1E-9)$value;
-3 - 2*Catalan;
-#
-FUN = \(x, y) sqrt( x * (1-y) / (1 - x)) / y^2;
-integrate(\(x) sapply(x, \(y) integrate(FUN, 0, y/2, y=y, rel.tol=1E-9)$value), 0, 1, rel.tol=1E-9)$value +
-integrate(\(x) sapply(x, \(y) integrate(FUN, y/2, y, y=y, rel.tol=1E-9)$value), 0, 1, rel.tol=1E-9)$value;
-#
-FUN = \(x, y) 2 * sin(x)^2 * sqrt(1-y)/y^2;
-FUN = \(x, y) (1 - cos(2*x)) * sqrt(1-y)/y^2;
-integrate(\(x) sapply(x, \(y) integrate(FUN, 0, asin(sqrt(y)), y=y, rel.tol=1E-9)$value), 0, 1, rel.tol=1E-9);
-#
-integrate(\(x)  (asin(sqrt(x)) - sqrt(x*(1-x))) * sqrt(1-x)/x^2, 0, 1);
-integrate(\(x)  2*(asin(x) - x*sqrt(1-x^2)) * sqrt(1-x^2)/x^3, 0, 1);
-integrate(\(x)  2*(x - sin(x)*cos(x)) * cos(x)^2/sin(x)^3, 0, pi/2);
-3 - 2*Catalan;
 
