@@ -179,4 +179,7 @@ int.mpfr = function(FUN, low, up, ..., p = p21, w = list(w10, w21)) {
 	vr$value = v2; vr$abs.error = abs(v2-v1);
 	return(vr);
 }
+int2.mpfr = function(FUN, low, up, ...) {
+	int.mpfr(FUN, low, up, ..., p = p61, w = list(w30, w61));
+}
 
