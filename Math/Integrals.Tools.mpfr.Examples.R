@@ -28,7 +28,7 @@ f2e = \(x) log(1+x) * exp(x);
 integrate(f2, 0, 1)
 int.mpfr(f2, 0, 1)
 int.mpfr(f2e, 0, log(mpfr(2, 128)))
-# Error:
+# Error Quantitation:
 integrate(f2, 0, 1)$value - int2.mpfr(f2, 0, 1)$value;
 int2.mpfr(f2, 0, 1)$value - int.mpfr(f2, 0, 1)$value
 
@@ -85,7 +85,7 @@ pi/2 + 2*(2 - 3/4 * pi); 4 - pi;
 ###################
 
 ### I( x * sqrt( (1-x)/(1+y) / (1 - x^2*y^2) ) )
-# Prevision: only 1E-8
+# Precision: only 1E-8
 FUN = \(x, y) x * sqrt( (1-x)/(1+y) / (1 - x^2*y^2) );
 int2.mpfr(\(x) sapplyMpfr(x, \(y) int2.mpfr(FUN, 0, 1, y=y)$value), 0, 1)
 
