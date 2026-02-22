@@ -271,7 +271,8 @@ polynomial = function(coef = c(0, 1), tol=1E-8, digits=0, toReal=TRUE,
 #   but most functions would work only with data frames!
 
 ### Workhorse for SUM & Multiplication:
-# - a hacked version is needed for Big Numbers (gmp, mpfr);
+# - a hacked version is needed for Big Numbers (gmp, mpfr):
+#   Polynomials.Helper.BigNumbers.R;
 aggregate0.pm = function(p) {
 	p.r = aggregate(coeff~., p, sum);
 	return(p.r);
@@ -644,15 +645,18 @@ simplify.pm = function(p1, p2) {
 	}
 	return(list(p1=p1, p2=p2));
 }
-### Simplify functions
+### Simplify Polynomial:
 reduce.pm = function(p) {
-	# remove Monomials with coeff == 0;
+	# Remove Monomials with coeff == 0;
 	if( ! is.pm(p)) stop("p must be a Polynomial!")
-	id = which(p$coeff != 0);
-	return(p[id, , drop=FALSE]);
+	id = which(p$coeff == 0);
+	if(length(id) == 0) return(p);
+	return(p[- id, , drop=FALSE]);
 }
 reduce0.pm = function(p) {
-	return(p[p$coeff != 0, , drop=FALSE]);
+	id = which(p$coeff == 0);
+	if(length(id) == 0) return(p);
+	return(p[- id, , drop=FALSE]);
 }
 reduce.var.pm  = function(p) drop.pm(p);
 drop.pm = function(p) {

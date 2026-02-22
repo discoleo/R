@@ -28,7 +28,8 @@ library(gmp) # BigNumbers
 
 aggregate0.pm = function(p) {
 	# hack for bigz numbers
-	coeff = p$coeff;
+	if(nrow(p) == 0) return(p);
+	coeff   = p$coeff;
 	p$coeff = seq(nrow(p));
 	aggr.bignum = function(id) {
 		x.df = data.frame(coeff=0);
