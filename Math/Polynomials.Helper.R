@@ -848,7 +848,7 @@ eval.pm = function(p, x, progress=FALSE) {
 			x = x[id];
 		}
 		if(is.list(x)) {
-			isBigz = sapply(x, function(x) inherits(x, c("bigz", "bigq")));
+			isBigz = sapply(x, function(x) inherits(x, c("bigz", "bigq", "mpfr")));
 			if(any(isBigz)) {
 				x = do.call(c, x);
 			} else
@@ -864,7 +864,8 @@ eval.pm = function(p, x, progress=FALSE) {
 	if(inherits(p$coeff, c("bigz", "bigq"))) {
 		tmp = do.call(c, tmp);
 		# tmp = as.vector.bigz(tmp);
-		print(tmp)
+	} else if(inherits(p$coeff, "mpfr")) {
+		tmp = mpfr2array(tmp, dim = length(tmp));
 	}
 	sum(tmp);
 }
