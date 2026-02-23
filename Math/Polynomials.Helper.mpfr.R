@@ -1,17 +1,18 @@
 ########################
-###
-### Leonard Mada
-### [the one and only]
-###
-### Polynomials: Helper Functions
-### mpfr Functions
-###
-### draft v.0.2f
+##
+## Leonard Mada
+## [the one and only]
+##
+## Polynomials: Helper Functions
+## mpfr Functions
+##
+## draft v.0.2g
 
 
-### fast load:
+### Fast load:
 source("Polynomials.Helper.R")
 source("Polynomials.Helper.Matrix.mpfr.R")
+source("Polynomials.Helper.mpfr.Roots.R")
 
 
 # Required libraries:
@@ -63,6 +64,8 @@ format.mpfr = function (x, digits = NULL, drop0trailing = TRUE, right = TRUE,
     invisible(x);
 }
 
+
+### Maths:
 prod.complex.mpfr = function(Re, Im) {
 	x = Re; xi = Im;
 	n = length(x);
@@ -220,74 +223,6 @@ split.cpm.pascal = function(x) {
 ###################
 ### Polynomials ###
 
-### Roots
-
-# Complex Root:
-# - only 1 Root!
-roots.mpfr = function(p, x0, x0i, precBits = 200, iter = 24,
-		multiplicity = 1, warn.multiplicity = TRUE, verbose = TRUE) {
-	if(multiplicity < 1) stop("Invalid multiplicity!")
-	if(ncol(p) > 2) stop("Polynomial must be univariate!");
-	if(is.complex(p$coeff)) stop("Complex polynomials not yet implemented!");
-	# Precision:
-	isMpfr = inherits(x0, "mpfr");
-	if(isMpfr) {
-		precBits = getPrec(x0)[1];
-	}
-	if(is.pm(p)) {
-		if(inherits(p$coeff, "mpfr")) {
-			precBits = getPrec(p$coeff)[1];
-		} else {
-			p$coeff = mpfr(p$coeff, precBits=precBits);
-		}
-	}
-	if( ! isMpfr) {
-		x0  = mpfr(x0,  precBits=precBits);
-		x0i = mpfr(x0i, precBits=precBits);
-	}
-	ddh = mpfr(paste0("1E-", round(precBits/6)), precBits=precBits);
-	dd0 = ddh*ddh;
-	idX = which(names(p) != "coeff");
-	xn = names(p)[idX];
-	dp = dp.pm(p, by = xn);
-	nn = max(p[, xn]);
-	id = p[, xn] + 1; idD = dp[, xn] + 1;
-	if(multiplicity > 1) p$coeff = multiplicity * p$coeff;
-	# Iterations:
-	for(i in seq(iter)) {
-		xpow = pow.all.complex.mpfr(x0, x0i, n = nn, start.zero = TRUE);
-		pval = sum(xpow$Re[id] * p$coeff);
-		pvi  = sum(xpow$Im[id] * p$coeff);
-		dval = sum(xpow$Re[idD] * dp$coeff);
-		dvi  = sum(xpow$Im[idD] * dp$coeff);
-		### Div:
-		# TODO: dp == 0
-		div  = dval*dval + dvi*dvi;
-		if(div <= dd0) {
-			ddh = 2*ddh;
-			if(abs(pval) <= ddh && abs(pvi) <= ddh) {
-				if(warn.multiplicity) warning("Multiplicity!");
-				if(verbose) cat("Iteration: ", i, "\n");
-				if(multiplicity > 1) multiplicity = multiplicity - 1;
-				sol = roots.mpfr(dp, x0, x0i, iter = max(24, iter - 8),
-					multiplicity=multiplicity);
-				return(sol);
-			}
-			warning("Division by 0!");
-			sol = list(Re = x0, Im = x0i);
-			return(sol);
-		}
-		dval = dval / div;
-		dvi  = - dvi / div;
-		# Newton-Raphson:
-		x0  = x0 - pval*dval + pvi*dvi;
-		x0i = x0i - pval*dvi - pvi*dval;
-	}
-	# TODO: test residual / convergence
-	sol = list(Re = x0, Im = x0i);
-	return(sol);
-}
-
 
 ### Generators
 
@@ -336,31 +271,6 @@ split.cmpfr.pm = function(p, precBits = NULL) {
 	# Binomial Expansion:
 	b = pascal.complex.mpfr(pMax, precBits = prec);
 	# TODO
-}
-
-### Generate specific Roots
-
-### Class 1 Polynomials
-roots.Class1.mpfr = function(K, s, n=5, bits=120) {
-	if( ! inherits(K, "mpfr")) K = mpfr(K, precBits=bits)
-	k = rootn.mpfr(K, n=n);
-	m = unity.mpfr(n=n, all=TRUE, bits=bits);
-	len = length(s);
-	if(len > n) stop("Sequence too long!");
-	s0 = 0; # TODO
-	pows = seq(len);
-	# TODO: complex k;
-	k = mpfr2array(k[1]^pows, c(len));
-	r = sapply(seq(n), function(id) {
-		# TODO
-		mp = if(id == 1) m
-			else if(id == n) matrix(c(1,0), nrow=len, nc=2, byrow=TRUE)
-			else m[ ((id*pows) %% n), ]; # TODO: non-primes + 1;
-		re = sum(s*k*mp[,1]) + s0;
-		im = sum(s*k*mp[,2]);
-		return(c(re, im));
-	})
-	r = t(mpfr2array(r, c(2, n)));
 }
 
 
