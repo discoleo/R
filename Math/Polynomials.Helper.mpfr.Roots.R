@@ -11,8 +11,10 @@
 
 ### Roots
 
+# which = which initial root to improve;
+# drop.digits = Use fewer digits for residuals;
 roots.Ext.mpfr = function(p, which = 1, by = "x", digits = 240, iter = 3,
-		cpl.names = c("a", "b", "i"), verbose = 1) {
+		cpl.names = c("a", "b", "i"), verbose = 1, drop.digits = TRUE) {
 	rr = roots.pm(p);
 	if(which < 0) stop("Invalid id of Root!");
 	if(iter  < 0) stop ("Invalid number of Iterations!");
@@ -65,6 +67,10 @@ roots.Ext.mpfr = function(p, which = 1, by = "x", digits = 240, iter = 3,
 		if(isVerbose) {
 			err1 = v1a*dx + v1b*dy;
 			err2 = v2a*dx + v2b*dy;
+			if(drop.digits) {
+				err1 = mpfr(err1, 96);
+				err2 = mpfr(err2, 96);
+			}
 			if(verbose == 1) {
 				err = sqrt(err1^2 + err2^2);
 				cat("Residual = "); print(err);

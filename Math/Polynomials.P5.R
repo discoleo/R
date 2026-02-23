@@ -152,49 +152,12 @@ a2 = Re(x[4]); b2 = Im(x[4]);
 source("Polynomials.Helper.mpfr.R")
 source("Polynomials.Helper.BigNumbers.R")
 
+
 ### Example 1:
 p = as.pm("x^5 - x - 1")
-# Complex root:
-pz = replace.pm(p, as.pm("a + b*i"), "x")
-pz = replace.pm(pz, -1, "i", pow = 2)
-p1 = drop.pm(pz[pz$i == 0, ])
-p2 = pz[pz$i != 0, ]; p2$i = 0;
-p2 = drop.pm(p2)
 
-r = roots.pm(p)
-
-p1a = dp.pm(p1, by="a")
-p1b = dp.pm(p1, by="b")
-p2a = dp.pm(p2, by="a")
-p2b = dp.pm(p2, by="b")
-p1a$coeff = mpfr(p1a$coeff, 240);
-p1b$coeff = mpfr(p1b$coeff, 240);
-p2a$coeff = mpfr(p2a$coeff, 240);
-p2b$coeff = mpfr(p2b$coeff, 240);
-#
-p1$coeff = mpfr(p1$coeff, 240);
-p2$coeff = mpfr(p2$coeff, 240);
-
-a = mpfr(Re(r[1]), 240);
-b = mpfr(Im(r[1]), 240);
-#
-for(step_i in seq(3)) {
-v1a = eval.pm(p1a, list(a=a, b=b))
-v1b = eval.pm(p1b, list(a=a, b=b))
-v2a = eval.pm(p2a, list(a=a, b=b))
-v2b = eval.pm(p2b, list(a=a, b=b))
-v1  = eval.pm(p1, list(a=a, b=b))
-v2  = eval.pm(p2, list(a=a, b=b))
-#
-div = - (v1a*v2b - v2a*v1b);
-dx  = (v2b*v1 - v1b*v2) / div;
-dy  = (v2a*v1 - v1a*v2) / - div;
-# Test:
-print(v1a*dx + v1b*dy)
-print(v2a*dx + v2b*dy)
-# Update:
-a = a + dx; b = b + dy;
-}
+roots.Ext.mpfr(p)
+roots.Ext.mpfr(p, iter = 5, digits = 640)
 
 
 ### Other:
