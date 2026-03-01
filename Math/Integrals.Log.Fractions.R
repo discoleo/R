@@ -827,25 +827,25 @@ pi*log(2)/(2*k) + pi*log(k)/k - 2*Catalan/k
 ### Transforms
 
 # x => 1 - 1/x
-integrate(function(x) - log(1 - x) / (x^2 + 1), 0, 1)
-integrate(function(x) log(x) / (2*x^2 - 2*x + 1), 1, Inf)
-- pi*log(2)/8 + Catalan
+integrate(\(x) - log(1 - x) / (x^2 + 1), 0, 1)
+integrate(\(x) log(x) / (2*x^2 - 2*x + 1), 1, Inf)
+- pi*log(2)/8 + Catalan;
 
 ###
-integrate(function(x) log(x) / (2*x^2 + 2*x + 1), 0, Inf)
-- pi*log(2)/8
+integrate(\(x) log(x) / (2*x^2 + 2*x + 1), 0, Inf)
+- pi*log(2)/8;
 
 
 ###
 # x => b - (b-a)/(x+1)
 a = sqrt(2); b = sqrt(3);
 p = 1/2
-integrate(function(x) log(x) * ((x - a)*(b - x))^p, a, b)
-integrate(function(x) log(b - (b-a)/(x+1)) * x^p / (x + 1)^(2*p + 2) * (b-a)^(2*p+1), 0, Inf)
+integrate(\(x) log(x) * ((x - a)*(b - x))^p, a, b)
+integrate(\(x) log(b - (b-a)/(x+1)) * x^p / (x + 1)^(2*p + 2) * (b-a)^(2*p+1), 0, Inf)
 
 ### p = 1
 a = sqrt(2); b = sqrt(3);
-integrate(function(x) log(b*x + a) * x / (x + 1)^4, 0, Inf)
+integrate(\(x) log(b*x + a) * x / (x + 1)^4, 0, Inf)
 d = (b-a)^3;
 b^2*(b - 3*a)*log(b)/(6*d) - a^2*(a - 3*b)*log(a)/(6*d) + 5/36 +
 	+ (4*b^3 - 9*(a+b)*b^2 + 36*a*b^2)/(36*d) - (4*a^3 - 9*(a+b)*a^2 + 36*a^2*b)/(36*d)
@@ -861,7 +861,7 @@ integrate(function(x) log(x+1) * x / (x + 1)^4, 0, Inf)
 ### I( log(b*x + a) / (x + 1)^3 )
 a = sqrt(2); b = sqrt(3);
 d = (b-a)^3; # actually d3;
-integrate(function(x) log(b*x + a) / (x + 1)^3, 0, Inf)
+integrate(\(x) log(b*x + a) / (x + 1)^3, 0, Inf)
 b^2*(b - 3*a)*log(b)/(6*d) - a^2*(a - 3*b)*log(a)/(6*d) + log(a)/3 +
 	+ log(a/b) / (a/b-1)^3 / 3 +
 	+ 1/3 * (1-a/b)/(a/b-1)^3 + 1/3 * a*b/(b-a)^2 + 1/6/(a/b-1);
@@ -874,20 +874,20 @@ b^2*(b - 3*a)*log(b)/(6*d) - a^2*(a - 3*b)*log(a)/(6*d) + log(a)/3 +
 
 
 ### log(x+1) * x / (x + 1)^n
-integrate(function(x) log(x+1) * x / (x + 1)^4, 0, Inf)
+integrate(\(x) log(x+1) * x / (x + 1)^4, 0, Inf)
 5/36
 
 ###
-integrate(function(x) log(x+1) * x / (x + 1)^5, 0, Inf)
+integrate(\(x) log(x+1) * x / (x + 1)^5, 0, Inf)
 35 / factorial(6)
 
 ###
-integrate(function(x) log(x+1) * x / (x + 1)^6, 0, Inf)
+integrate(\(x) log(x+1) * x / (x + 1)^6, 0, Inf)
 81/5 / factorial(6)
 
 ### Gen:
 k = sqrt(7); p = - sqrt(3);
-integrate(function(x) log(x+1) * x^p / (x + 1)^k, 0, Inf)
+integrate(\(x) log(x+1) * x^p / (x + 1)^k, 0, Inf)
 gamma(p+1) * gamma(k - (p+1)) / gamma(k) * (digamma(k) - digamma(k - (p+1)));
 
 
@@ -895,7 +895,7 @@ gamma(p+1) * gamma(k - (p+1)) / gamma(k) * (digamma(k) - digamma(k - (p+1)));
 ### p = 1/2
 a = sqrt(2); b = sqrt(3);
 p = 1/2; d = (b - a);
-integrate(function(x) log(x) * ((x - a)*(b - x))^p, a, b)
+integrate(\(x) log(x) * ((x - a)*(b - x))^p, a, b)
 # TODO: ???
 
 
@@ -913,10 +913,10 @@ pi/4*(d/2)^(2*p + 1)*log(a*b) - integrate(function(x) f(x)/x, a, b)$value
 # Helper:
 p = 1/2
 d = (b - a);
-integrate(function(x) ((x - a)*(b - x))^p, a, b)
-integrate(function(x) ((x + d/2)*(d/2 - x))^p, -d/2, d/2)
-integrate(function(x) (d/2)^(2*p + 1)*((1 + x)*(1 - x))^p, -1, 1)
-(d/2)^(2*p + 1) * pi/2
+integrate(\(x) ((x - a)*(b - x))^p, a, b)
+integrate(\(x) ((x + d/2)*(d/2 - x))^p, -d/2, d/2)
+integrate(\(x) (d/2)^(2*p + 1)*((1 + x)*(1 - x))^p, -1, 1)
+(d/2)^(2*p + 1) * pi/2;
 
 # Derivation:
 (d/2)^(2*p + 1)*(sin(2*asin((x - (a+b)/2)*2/d))/2 + asin((x - (a+b)/2)*2/d))/2
@@ -938,34 +938,35 @@ log(2) - 1;
 
 ###
 integrate(\(x) log(x) / sqrt(1 - x), 0, 1)
-4*log(2) - 4
+4*log(2) - 4;
 
 ### Subst: x => sin(x)^2
 # or simpler: Integration by parts;
 integrate(\(x) sin(x) * log(sin(x)), 0, pi/2)
-log(2) - 1
+log(2) - 1;
 
 ###
 integrate(\(x) sin(2*x) * log(sin(x)), 0, pi/2)
 -1/2
 
 ###
-integrate(\(x) sin(3*x) * log(sin(x)), 0, pi/2, rel.tol=1E-8)
-log(2)/3 - 7/9
+integrate(\(x) sin(3*x) * log(sin(x)), 0, pi/2, rel.tol=1E-9)
+log(2)/3 - 7/9;
 
 
 ### I( log(x) / sqrt(1 + x) )
 integrate(\(x) log(x) / sqrt(1 + x), 0, 1)
 integrate(\(x) 4 * log(tan(x)) * sin(x) / cos(x)^2, 0, pi/4)
-# TODO
+4*(log(1+sqrt(2)) - log(2) - sqrt(2) + 1);
 
 ### I( log(cos(x)) * sin(x) / cos(x)^2 )
 integrate(\(x) log(cos(x)) * sin(x) / cos(x)^2, 0, pi/4)
-log(2)*sqrt(2)/2 - sqrt(2) + 1
+log(2)*sqrt(2)/2 - sqrt(2) + 1;
 
 ### I( log(sin(x)) * sin(x) / cos(x)^2 )
 integrate(\(x) log(sin(x)) * sin(x) / cos(x)^2, 0, pi/4)
-# TODO
+log((1+sqrt(2)/2)/(1-sqrt(2)/2))/2 - log(2) / sqrt(2) - log(2);
+log(1+sqrt(2)) - log(2) / sqrt(2) - log(2);
 
 
 ########################
