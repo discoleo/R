@@ -860,6 +860,7 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x*y * atan(sqrt(y^2-x^2)) / (y-x), 0, y, rel.tol=1E-11)$value), 0, 1, rel.tol=1E-12)
 (2*Catalan + pi * asinh(1) + (digamma(3/4) - digamma(1/2))) / 6 +
 	- ((5*sqrt(2) - 2 - 3/2) * pi - 2*log(2) - 1) / 18;
+(2*Catalan + pi * asinh(1)) / 6 - ((5*sqrt(2) - 5) * pi + log(2) - 1) / 18;
 
 # Helper:
 integrate(\(x) sapply(x, \(y) integrate(\(x)
