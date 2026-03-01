@@ -803,7 +803,7 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x * atan(sqrt(y^2-x^2) / x^2), 0, y, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 integrate(\(x) sapply(x, \(y) integrate(\(x)
-	y/x * atan(sqrt(x^2-1)*  x / y) * y/x^2, 1, Inf, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+	y/x * atan(sqrt(x^2-1) * x / y) * y/x^2, 1, Inf, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	y^2 * cos(x)*sin(x) * atan(sin(x)/cos(x)^2 / y), 0, pi/2, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 integrate(\(x) sapply(x, \(y) integrate(\(x)
@@ -857,18 +857,29 @@ Catalan/2 + asinh(1)*pi * 3/8 - (digamma(7/8) - digamma(1/8)) / 8 + 1/4;
 
 ### I( x*y * atan(sqrt(y^2-x^2)) / (y-x) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
-	x*y * atan(sqrt(y^2-x^2)) / (y-x), 0, y, rel.tol=1E-10)$value), 0, 1, rel.tol=1E-11)
-# TODO
+	x*y * atan(sqrt(y^2-x^2)) / (y-x), 0, y, rel.tol=1E-11)$value), 0, 1, rel.tol=1E-12)
+(2*Catalan + pi * asinh(1) + (digamma(3/4) - digamma(1/2))) / 6 +
+	- ((5*sqrt(2) - 2 - 3/2) * pi - 2*log(2) - 1) / 18;
 
 # Helper:
 integrate(\(x) sapply(x, \(y) integrate(\(x)
-	y * atan(sqrt(x*(2*y-x))), 0, y, rel.tol=1E-10)$value), 0, 1, rel.tol=1E-11)
+	y * atan(sqrt(x*(2*y-x))), 0, y, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 (sqrt(2) - 1 - 1/4) * pi/3;
 
 # Helper:
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	y^2/x * atan(sqrt(x*(2*y-x))), 0, y, rel.tol=1E-10)$value), 0, 1, rel.tol=1E-11)
-# TODO
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^2/y * atan(x/y*sqrt(2*y-1)), 0, 1, rel.tol=1E-10)$value), 1, Inf, rel.tol=1E-11)
+integrate(\(x) -1/6 / sqrt(2*x-1) * sapply(x, \(y) integrate(\(x)
+	x / (x + y^2/(2*y-1)), 0, 1, rel.tol=1E-10)$value), 1, Inf, rel.tol=1E-11)$value +
+(Catalan + pi/2 * asinh(1) + (digamma(3/4) - digamma(1/2)) / 2 - pi/4 + log(2)/2) / 3;
+integrate(\(x) -1/6 / sqrt(2*x-1) * (1 +
+	- x^2/(2*x-1) * (log(x^2+2*x-1) - log(x^2))), 1, Inf)$value +
+(Catalan + pi/2 * asinh(1) + (digamma(3/4) - digamma(1/2)) / 2 - pi/4 + log(2)/2) / 3;
+(2*Catalan + pi * asinh(1) + (digamma(3/4) - digamma(1/2))) / 6 +
+	- ((4 - sqrt(2)) * pi - 2*log(2) - 1) / 18;
+
 
 # Other:
 integrate(\(x) sapply(x, \(y) integrate(\(x)
