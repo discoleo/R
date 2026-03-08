@@ -6,7 +6,7 @@
 ###
 ### Leonard Mada
 ###
-### draft v.0.1e-expl2
+### draft v.0.2a
 
 ### based on work during:
 ### 2018 - 2020
@@ -75,6 +75,7 @@ coef.p5 = function(b, K) {
 		- 5*K*(s1*s2^2 + s1^2*s3 + K*(s2*s4^2 + s3^2*s4)),
 		- 5*K*(s1*s4 + s2*s3), 0, 1);
 }
+# Semi-Parametric:
 coef.p5K = function(b) {
 	s1 = b[1]; s2 = b[2]; s3 = b[3]; s4 = b[4];
 	c(
@@ -171,27 +172,42 @@ m = m^(0:4)
 K = 5
 # Roots
 k = m * K^(1/5)
-x = k^4 + k^3 + k
+x = k^4 + k^3 + k;
 x^5 - 5*K * x^3 - 5*(K^2 + K) * x^2 - 5*K^3 * x - K^4 - K^3 - K - 5*(K^3 - K^2)
+
+# for K = 1/2;
+K = 1/2;
+# Roots
+k = m * K^(1/5)
+x = 2*(k^4 + k^3 + k);
+err = x^5 - 10*x^3 - 30*x^2 - 10*x - 2;
+round0(err)
+
+# for K = 1/3;
+K = 1/3;
+# Roots
+k = m * K^(1/5)
+x = (k^4 + k^3 + k) / K;
+err = x^5 - 15*x^3 - 60*x^2 - 15*x - 3;
+round0(err)
 
 # for K=2
 K = 2 # fixed
 k = m * K^(1/5)
-x = k^4 + k^3 + k
+x = k^4 + k^3 + k;
 x^5 - 10*x^3 - 30*x^2 - 40*x - 46
 
 # for K=3
 K = 3 # fixed
 k = m * K^(1/5)
-x = k^4 + k^3 + k
+x = k^4 + k^3 + k;
 x^5 - 15*x^3 - 60*x^2 - 135*x - 201
 
 ###
 K = -3 # can be modified
 # test
 k = if(K >= 0) K^(1/5) else  - (-K)^(1/5)
-x = k^4 - 3*k^2 - k
-x
+x = k^4 - 3*k^2 - k;
 x^5 + 5*K*x^3 + 15*K*(K + 3)*x^2 + 5*K*(28*K - 3)*x - K^4 + 15*K^3 + 198*K^2 + K
 
 
@@ -208,6 +224,33 @@ x^5 - 5*K*(K*s^2 + K*s^3 - s + 1)*x^2 + 5*K*(K^2*s^4 + K*s^3 + 3*K*s^2 - K*s - 1
 # x^5 - 25/2 * x^2 - 125/4
 
 
+#######################
+
+### Properties of Roots
+
+m = exp(0:4 * 2i*pi/5);
+
+### Example 1:
+K = 2;
+s = c(1, -2, -1, 1);
+#
+s1 = s[1]; s2 = s[2]; s3 = s[3]; s4 = s[4];
+k = m*K^(1/5);
+x = s4*k^4 + s3*k^3 + s2*k^2 + s1*k;
+
+### Properties:
+k0 = k[1]; j = 1:2;
+
+# Sum of Conjugate Roots:
+x[2:3] + x[5:4] # ==
+2*s4*k0^4*cos(8*j*pi/5) + 2*s3*k0^3*cos(6*j*pi/5) + 2*s2*k0^2*cos(4*j*pi/5) + 2*s1*k0*cos(2*j*pi/5);
+
+# Prod of Conjugate Roots:
+x[2:3] * x[5:4] # ==
+(s4*k0^4*cos(8*j*pi/5) + s3*k0^3*cos(6*j*pi/5) + s2*k0^2*cos(4*j*pi/5) + s1*k0*cos(2*j*pi/5))^2 +
+(s4*k0^4*sin(8*j*pi/5) + s3*k0^3*sin(6*j*pi/5) + s2*k0^2*sin(4*j*pi/5) + s1*k0*sin(2*j*pi/5))^2
+
+
 #################
 #################
 
@@ -221,7 +264,7 @@ s = c(-1,2,-3,1); # fixed
 #
 k = K^(1/5)
 x = sapply(m, function(m) sum(s*(m*k)^seq(4)));
-round0.p(poly.calc(x))
+poly.calc0(x, dig = 6); # round0.p(poly.calc(x))
 err = x^5 + 35*K*x^3 - 5*K*(11*K - 7)*x^2 + 5*K*(3*K^2 - 4*K + 2)*x - K^4 + 68*K^3 - 7*K^2 + K;
 round0(err)
 
@@ -254,6 +297,8 @@ pp[ pp[,9] == 3, ]
 
 
 #################
+
+### Other
 
 ###
 # for arbitrary K:
