@@ -4,7 +4,7 @@
 ### Leonard Mada
 ### 2018-2020
 ###
-### draft v.0.2
+### draft v.0.2b
 
 
 ### Rationalizing polynomial Fractions
@@ -14,13 +14,22 @@
 ###############
 ### Example ###
 
-# a simple example
+# Simple Example:
 k = 3^(1/5) # this is here a fixed value!
 1 / (k^4 + k^3 + k^2 + 3*k + 1) # ==
-(3*k^4 + k^3 - 2*k^2 - 3*k - 1) / 14
+(3*k^4 + k^3 - 2*k^2 - 3*k - 1) / 14;
 # == 0.09406944
 # for other examples: see below;
 
+
+### Example 2:
+k = - 2^(1/5); # any value
+K = k^5;
+1 / (k^4 - 2*k^3 - 2*k + 1) # ==
+(k^16 + 2*k^15 + 4*k^14 + 10*k^13 + 23*k^12 - 10*k^11 - 4*k^10 + 28*k^9 + 13*k^8 + 28*k^7 +
+	- 4*k^6 - 10*k^5 + 23*k^4 + 10*k^3 + 4*k^2 + 2*k + 1) / (K^4  - 62*K^3 - 120*K^2 - 62*K + 1);
+((4*K^2 + 28*K + 23) * k^4 + (10*K^2 + 13*K + 10) * k^3 + (23*K^2 + 28*K + 4)*k^2 +
+	+ (K^3 - 10*K^2- 4*K +2)*k + 2*K^3 - 4*K^2 - 10*K + 1) / (K^4  - 62*K^3 - 120*K^2 - 62*K + 1);
 
 #####################
 
