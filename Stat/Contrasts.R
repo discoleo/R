@@ -130,7 +130,19 @@ make.poly(31)[1:15, 2]; seq(15, 1) / sqrt(2 * 40*31);
 # Component 3:
 # Note: different Structure;
 
+# Gen: Component 3
+poly.cp3 = function(n) {
+	nm  = (n+1)/2; nc = seq(1, nm);
+	# div = sqrt(nm * (nm-1) * (8*nm^3 - 12*nm^2 - 2*nm + 3) / 5);
+	div = sqrt((8*nm^5 - 20*nm^4 + 10*nm^3 + 5*nm^2 - 3*nm) / 5);
+	(3*nc^2 - 3*(n+1)*nc + 2*nm^2 + nm) / div;
+}
+
 # Only with Sign:
+n = 17; # n = 35; # n = 20;
+make.poly(n)[1:((n+1)/2), 3]; poly.cp3(n);
+
+#
 n = 9;
 nm = (n+1)/2; nc = seq(1, nm); # NO DIV 3;
 make.poly(n)[1:nm, 3]; (3*nc^2 - 3*(n+1)*nc + 2*nm^2 + nm) / sqrt(4 * 7*9*11);
