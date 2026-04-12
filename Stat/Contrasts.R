@@ -100,6 +100,17 @@ make.poly(3); mP;
 make.poly(11)[1:5, 1]; 1 / sqrt(11);
 
 # Component 2:
+# Odd & Even (but misses 1 coefficient)
+n = 35;
+n2 = (n-1)/2;
+make.poly(n)[seq(1, n2), 2]; seq(n2, 1) / sqrt((n^3 - n) / 12);
+
+# For even:
+n = 36;
+n2 = (n-1)/2; 
+make.poly(n)[seq(1, n2+1), 2]; c(seq(n2, 1/2, by=-1)) / sqrt((n^3 - n) / 12);
+
+# Explicit:
 make.poly( 5)[, 2]; seq(2, 1) / sqrt( 2* 5);
 make.poly( 7)[, 2]; seq(3, 1) / sqrt( 4* 7);
 make.poly( 9)[, 2]; seq(4, 1) / sqrt(20* 3); # ???
@@ -108,8 +119,12 @@ make.poly(13)[, 2]; seq(6, 1) / sqrt(14*13);
 make.poly(15)[, 2]; seq(7, 1) / sqrt(56* 5); # ???
 make.poly(17)[, 2]; seq(8, 1) / sqrt(24*17);
 make.poly(19)[, 2]; seq(9, 1) / sqrt(30*19);
-make.poly(21)[, 2]; seq(10, 1) / sqrt(110* 7); # ???
-make.poly(23)[, 2]; seq(11, 1) / sqrt( 44*23);
+make.poly(21)[1:10, 2]; seq(10, 1) / sqrt(110* 7); # ???
+make.poly(23)[1:11, 2]; seq(11, 1) / sqrt(4 * 11*23);
+make.poly(25)[1:12, 2]; seq(12, 1) / sqrt(4 * 13*25);
+make.poly(27)[1:13, 2]; seq(13, 1) / sqrt(2 * 91* 9);
+make.poly(29)[1:14, 2]; seq(14, 1) / sqrt(2 * 35*29);
+make.poly(31)[1:15, 2]; seq(15, 1) / sqrt(2 * 40*31);
 
 
 # Component 3:
