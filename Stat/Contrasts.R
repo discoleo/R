@@ -129,9 +129,40 @@ make.poly(31)[1:15, 2]; seq(15, 1) / sqrt(2 * 40*31);
 
 # Component 3:
 # Note: different Structure;
+
+# Only with Sign:
+n = 9;
+nm = (n+1)/2; nc = seq(1, nm); # NO DIV 3;
+make.poly(n)[1:nm, 3]; (3*nc^2 - 3*(n+1)*nc + 2*nm^2 + nm) / sqrt(4 * 7*9*11);
+n = 11;
+nm = (n+1)/2; nc = seq(1, nm);
+make.poly(n)[1:nm, 3]; (3*nc^2 - 3*(n+1)*nc + 2*nm^2 + nm) / 3 / sqrt(6 * 11*13);
+n = 13;
+nm = (n+1)/2; nc = seq(1, nm);
+make.poly(n)[1:nm, 3]; (3*nc^2 - 3*(n+1)*nc + 2*nm^2 + nm) / 3 / sqrt(11*13*14);
+n = 15;
+nm = (n+1)/2; nc = seq(1, nm); # NO DIV 3;
+make.poly(n)[1:nm, 3]; (3*nc^2 - 3*(n+1)*nc + 2*nm^2 + nm) / sqrt(8 * 21*13*17);
+n = 17;
+nm = (n+1)/2; nc = seq(1, nm);
+make.poly(n)[1:nm, 3]; (3*nc^2 - 3*(n+1)*nc + 2*nm^2 + nm) / 3 / sqrt(24 * 17*19);
+n = 19;
+nm = (n+1)/2; nc = seq(1, nm);
+make.poly(n)[1:nm, 3]; (3*nc^2 - 3*(n+1)*nc + 2*nm^2 + nm) / 3 / sqrt(42 * 17*19);
+n = 21;
+nm = (n+1)/2; nc = seq(1, nm); # NO DIV 3;
+make.poly(n)[1:nm, 3]; (3*nc^2 - 3*(n+1)*nc + 2*nm^2 + nm) / sqrt(42 * 11*19*23);
+n = 23;
+nm = (n+1)/2; nc = seq(1, nm);
+make.poly(n)[1:nm, 3]; (3*nc^2 - 3*(n+1)*nc + 2*nm^2 + nm) / 3 / sqrt(20 * 77*23);
+
+# Explicit:
 make.poly( 5)[1:3, 3]; c(2,1,2)   / sqrt(2 * 7);
 make.poly( 7)[1:4, 3]; c(5,0,3,4) / sqrt(4 * 3 * 7); # has 0;
 make.poly( 9)[1:5, 3]; c(28,7,8,17,20)  / sqrt(4 * 7*9*11);
 make.poly(11)[1:6, 3]; c(15,6,1,6,9,10) / sqrt(6 * 11*13);
 make.poly(13)[1:7, 3]; c(22,11,2,5,10,13,14) / sqrt(11*13*14);
+make.poly(15)[1:8, 3]; c(91,52,19,8,29,44,53,56) / sqrt(8 * 21*13*17);
+make.poly(17)[1:9,  3]; c(40,25,12,1,8,15,20,23,24) / sqrt(24 * 17*19);
+make.poly(19)[1:10, 3]; c(51,34,19,6,5,14,21,26,29,30) / sqrt(42 * 17*19);
 
