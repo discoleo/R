@@ -92,11 +92,16 @@ mP = matrix(mP, nrow = 3)
 make.poly(3); mP;
 
 
+### Components
 # Note:
-# Componenet 1: 1 / sqrt(n);
+# - Signs NOT set;
+
+# Component 1: 1 / sqrt(n);
 make.poly(11)[1:5, 1]; 1 / sqrt(11);
 
 # Component 2:
+make.poly( 5)[, 2]; seq(2, 1) / sqrt( 2* 5);
+make.poly( 7)[, 2]; seq(3, 1) / sqrt( 4* 7);
 make.poly( 9)[, 2]; seq(4, 1) / sqrt(20* 3); # ???
 make.poly(11)[, 2]; seq(5, 1) / sqrt(10*11);
 make.poly(13)[, 2]; seq(6, 1) / sqrt(14*13);
@@ -105,4 +110,13 @@ make.poly(17)[, 2]; seq(8, 1) / sqrt(24*17);
 make.poly(19)[, 2]; seq(9, 1) / sqrt(30*19);
 make.poly(21)[, 2]; seq(10, 1) / sqrt(110* 7); # ???
 make.poly(23)[, 2]; seq(11, 1) / sqrt( 44*23);
+
+
+# Component 3:
+# Note: different Structure;
+make.poly( 5)[1:3, 3]; c(2,1,2)   / sqrt(2 * 7);
+make.poly( 7)[1:4, 3]; c(5,0,3,4) / sqrt(4 * 3 * 7); # has 0;
+make.poly( 9)[1:5, 3]; c(28,7,8,17,20)  / sqrt(4 * 7*9*11);
+make.poly(11)[1:6, 3]; c(15,6,1,6,9,10) / sqrt(6 * 11*13);
+make.poly(13)[1:7, 3]; c(22,11,2,5,10,13,14) / sqrt(11*13*14);
 
