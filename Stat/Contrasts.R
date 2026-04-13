@@ -132,7 +132,14 @@ make.poly(31)[1:15, 2]; seq(15, 1) / sqrt(2 * 40*31);
 
 # Gen: Component 3
 poly.cp3 = function(n) {
-	nm  = (n+1)/2; nc = seq(1, nm);
+	nm  = (n+1)/2; nc = seq(1, nm, by = 1);
+	# div = sqrt(nm * (nm-1) * (8*nm^3 - 12*nm^2 - 2*nm + 3) / 5);
+	div = sqrt((8*nm^5 - 20*nm^4 + 10*nm^3 + 5*nm^2 - 3*nm) / 5);
+	(3*nc^2 - 3*(n+1)*nc + 2*nm^2 + nm) / div;
+}
+poly.cp3.mpfr = function(n) {
+	v1  = mpfr(1, getPrec(n));
+	nm  = (n+1)/2; nc = seq(v1, nm, by = 1);
 	# div = sqrt(nm * (nm-1) * (8*nm^3 - 12*nm^2 - 2*nm + 3) / 5);
 	div = sqrt((8*nm^5 - 20*nm^4 + 10*nm^3 + 5*nm^2 - 3*nm) / 5);
 	(3*nc^2 - 3*(n+1)*nc + 2*nm^2 + nm) / div;
@@ -142,7 +149,28 @@ poly.cp3 = function(n) {
 n = 17; # n = 35; # n = 20;
 make.poly(n)[1:((n+1)/2), 3]; poly.cp3(n);
 
-#
+# Note:
+# - Algorithm based on Matrix factorization
+#   is remarkably stable up to n = 162; [for Component 3]
+n = 161
+z  = make.poly(n)[1:((n+1)/2), 3]
+n1 = mpfr(n, 240); ze = poly.cp3.mpfr(n1);
+summary(abs(z - ze))
+#      Min.   1st Qu.    Median      Mean   3rd Qu.      Max. 
+# 2.900e-21 7.708e-18 1.531e-17 2.270e-17 2.361e-17 4.534e-16 
+
+n = 162
+z  = make.poly(n)[1:((n+1)/2), 3]
+n1 = mpfr(n, 240); ze = poly.cp3.mpfr(n1);
+summary(abs(z - ze))
+#      Min.   1st Qu.    Median      Mean   3rd Qu.      Max. 
+# 5.888e-19 9.664e-18 2.523e-17 2.487e-17 3.503e-17 1.156e-16
+min(abs(ze)) # is of Order 9.9E-4 (not very small);
+
+# Matrix factorization fails for n >= 163;
+
+
+### Specific Cases:
 n = 9;
 nm = (n+1)/2; nc = seq(1, nm); # NO DIV 3;
 make.poly(n)[1:nm, 3]; (3*nc^2 - 3*(n+1)*nc + 2*nm^2 + nm) / sqrt(4 * 7*9*11);
