@@ -23,11 +23,13 @@ make.poly <- function(n, scores = seq(n)) {
 
 
 # Note:
-# if(n %% 2 == 2) poly[seq(2, n, by = 2), (n+1)/2]
+# if(n %% 2 == 1) poly(n)[seq(2, n-1, by = 2), (n+1)/2]
 # should be probably == 0;
 # FAILS for n = 23;
 
 sapply(seq(15, 41, by=2), \(n) {
+	# n = 21: still (approx) 0;
+	# BUT for n = 23: jumps to -0.122;
 	n2 = (n+1)/2;
 	make.poly(n)[n2, c(n-3, n-1)];
 })
