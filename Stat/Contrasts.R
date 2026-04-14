@@ -27,6 +27,10 @@ make.poly <- function(n, scores = seq(n)) {
 # should be probably == 0;
 # FAILS for n = 23;
 
+sapply(seq(15, 41, by=2), \(n) {
+	n2 = (n+1)/2;
+	make.poly(n)[n2, c(n-3, n-1)];
+})
 
 # Separation: Probably 0 vs Non-Zero
 rg = sapply(seq(3, 40), \(id, tol = 1E-9) {
@@ -127,7 +131,7 @@ make.poly(29)[1:14, 2]; seq(14, 1) / sqrt(2 * 35*29);
 make.poly(31)[1:15, 2]; seq(15, 1) / sqrt(2 * 40*31);
 
 
-# Component 3:
+# Component 3: Quadratic
 # Note: different Structure;
 
 # Gen: Component 3
@@ -205,4 +209,15 @@ make.poly(13)[1:7, 3]; c(22,11,2,5,10,13,14) / sqrt(11*13*14);
 make.poly(15)[1:8, 3]; c(91,52,19,8,29,44,53,56) / sqrt(8 * 21*13*17);
 make.poly(17)[1:9,  3]; c(40,25,12,1,8,15,20,23,24) / sqrt(24 * 17*19);
 make.poly(19)[1:10, 3]; c(51,34,19,6,5,14,21,26,29,30) / sqrt(42 * 17*19);
+
+
+################
+
+### Component 4: Cubic
+
+make.poly( 5)[1:2, 4]; c(-1,2)   / sqrt(10);
+make.poly( 7)[1:3, 4]; c(-1,1,1) / sqrt(6);
+make.poly( 9)[1:4, 4]; c(-14,7,13,9)     / sqrt(9*110);
+make.poly(11)[1:5, 4]; c(-30,6,22,23,14) / sqrt(6*715); # 5*6*11*13;
+make.poly(13)[1:6, 4]; c(-11,0,6,8,7,4)  / sqrt(4*143);
 
