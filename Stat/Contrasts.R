@@ -143,8 +143,13 @@ poly.cp3 = function(n) {
 	div = sqrt((8*nm^5 - 20*nm^4 + 10*nm^3 + 5*nm^2 - 3*nm) / 5);
 	(3*nc^2 - 3*(n+1)*nc + 2*nm^2 + nm) / div;
 }
-poly.cp3.mpfr = function(n) {
-	v1  = mpfr(1, getPrec(n));
+poly.cp3.mpfr = function(n, prec = 240) {
+	if(inherits(n, "mpfr")) {
+		v1 = Rmpfr::mpfr(1, getPrec(n));
+	} else {
+		n  = Rmpfr::mpfr(n, prec);
+		v1 = Rmpfr::mpfr(1, prec);
+	}
 	nm  = (n+1)/2; nc = seq(v1, nm, by = 1);
 	# div = sqrt(nm * (nm-1) * (8*nm^3 - 12*nm^2 - 2*nm + 3) / 5);
 	div = sqrt((8*nm^5 - 20*nm^4 + 10*nm^3 + 5*nm^2 - 3*nm) / 5);
@@ -160,7 +165,7 @@ make.poly(n)[1:((n+1)/2), 3]; poly.cp3(n);
 #   is remarkably stable up to n = 162; [for Component 3]
 n = 161
 z  = make.poly(n)[1:((n+1)/2), 3]
-n1 = mpfr(n, 240); ze = poly.cp3.mpfr(n1);
+ze = poly.cp3.mpfr(n);
 summary(abs(z - ze))
 #      Min.   1st Qu.    Median      Mean   3rd Qu.      Max. 
 # 2.900e-21 7.708e-18 1.531e-17 2.270e-17 2.361e-17 4.534e-16 
@@ -217,25 +222,49 @@ make.poly(19)[1:10, 3]; c(51,34,19,6,5,14,21,26,29,30) / sqrt(42 * 17*19);
 
 ### Component 4: Cubic
 
-poly.c4c = function(n, dn = -1) {
-	nc = seq(1, (n+dn)/2, by=1);
-	cc = (5*nc^3 - 15*(n+1)/2*nc^2 + (6*n^2 + 15*n + 11)/2*nc +
-		- (n^3 + 6*n^2 + 11*n + 6)/4);
-	return(cc);
-}
-poly.c4 = function(n) {
+poly.cp4 = function(n) {
 	dn  = if(n %% 2 == 1) -1 else 1;
 	cc  = poly.c4c(n, dn=dn);
 	div = (n^7 - 14*n^5 + n^3*49 - 36*n) / 4032;
 	div = sqrt(div) * 6;
 	return(cc / div);
 }
+poly.c4c = function(n, dn = -1) {
+	nc = seq(1, (n+dn)/2, by=1);
+	cc = (5*nc^3 - 15*(n+1)/2*nc^2 + (6*n^2 + 15*n + 11)/2*nc +
+		- (n^3 + 6*n^2 + 11*n + 6)/4);
+	return(cc);
+}
+poly.cp4.mpfr = function(n, prec = 240) {
+	if(inherits(n, "mpfr")) {
+		prec = getPrec(n);
+		v1 = Rmpfr::mpfr(1, prec);
+	} else {
+		n  = Rmpfr::mpfr(n, prec);
+		v1 = Rmpfr::mpfr(1, prec);
+	}
+	isOdd = (n %% 2 == 1);
+	nm = if(isOdd) (n+1)/2 else n / 2;
+	nc = seq(v1, nm, by = 1);
+	cc = (5*nc^3 - 15*(n+1)/2*nc^2 + (6*n^2 + 15*n + 11)/2*nc +
+		- (n^3 + 6*n^2 + 11*n + 6)/4);
+	div = (n^7 - 14*n^5 + n^3*49 - 36*n) / 4032;
+	div = sqrt(div) * 6;
+	if(isOdd) cc[length(cc)] = mpfr(0, prec);
+	return(cc / div);
+}
 
-make.poly( 5)[1:2, 4]; poly.c4( 5);
-make.poly( 6)[1:3, 4]; poly.c4( 6);
-make.poly( 7)[1:3, 4]; poly.c4( 7);
-make.poly( 8)[1:4, 4]; poly.c4( 8);
-make.poly( 9)[1:4, 4]; poly.c4( 9);
+# Examples:
+make.poly( 5)[1:2, 4]; poly.cp4( 5);
+make.poly( 6)[1:3, 4]; poly.cp4( 6);
+make.poly( 7)[1:3, 4]; poly.cp4( 7);
+make.poly( 8)[1:4, 4]; poly.cp4( 8);
+make.poly( 9)[1:4, 4]; poly.cp4( 9);
+
+# Numerical Stability:
+n = 161;
+(make.poly(n)[seq(1, (n+1)/2), 4] - poly.cp4.mpfr(n)) |> abs() |> summary();
+
 
 # n =  9: (5*nc^3 -  75*nc^2 + 316*nc - 330) / 6;
 # n = 11: (5*nc^3 -  90*nc^2 + 451*nc - 546) / 6;
