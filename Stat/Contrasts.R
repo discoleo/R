@@ -217,27 +217,41 @@ make.poly(19)[1:10, 3]; c(51,34,19,6,5,14,21,26,29,30) / sqrt(42 * 17*19);
 
 ### Component 4: Cubic
 
-poly.c4 = function(n) {
-	nc = seq(1, (n-1)/2, by=1);
-	# n =  9: (5*nc^3 -  75*nc^2 + 316*nc - 330) / 6;
-	# n = 11: (5*nc^3 -  90*nc^2 + 451*nc - 546) / 6;
-	# n = 13: (5*nc^3 - 105*nc^2 + 610*nc - 840) / 5;
-	# n = 15: (5*nc^3 - 120*nc^2 + 793*nc - 1224) / 6;
-	# n = 17; (5*nc^3 - 15*9*nc^2 + 1000*nc - 1710) / 30;
+poly.c4c = function(n, dn = -1) {
+	nc = seq(1, (n+dn)/2, by=1);
 	cc = (5*nc^3 - 15*(n+1)/2*nc^2 + (6*n^2 + 15*n + 11)/2*nc +
 		- (n^3 + 6*n^2 + 11*n + 6)/4);
 	return(cc);
 }
+poly.c4 = function(n) {
+	dn  = if(n %% 2 == 1) -1 else 1;
+	cc  = poly.c4c(n, dn=dn);
+	div = (n^7 - 14*n^5 + n^3*49 - 36*n) / 4032;
+	div = sqrt(div) * 6;
+	return(cc / div);
+}
 
+make.poly( 5)[1:2, 4]; poly.c4( 5);
+make.poly( 6)[1:3, 4]; poly.c4( 6);
+make.poly( 7)[1:3, 4]; poly.c4( 7);
+make.poly( 8)[1:4, 4]; poly.c4( 8);
+make.poly( 9)[1:4, 4]; poly.c4( 9);
+
+# n =  9: (5*nc^3 -  75*nc^2 + 316*nc - 330) / 6;
+# n = 11: (5*nc^3 -  90*nc^2 + 451*nc - 546) / 6;
+# n = 13: (5*nc^3 - 105*nc^2 + 610*nc - 840) / 5;
+# n = 15: (5*nc^3 - 120*nc^2 + 793*nc - 1224) / 6;
+# n = 17; (5*nc^3 - 15*9*nc^2 + 1000*nc - 1710) / 30;
 #
-make.poly( 5)[1:2, 4]; poly.c4( 5) / sqrt(10) / 6;
-make.poly( 7)[1:3, 4]; poly.c4( 7) / sqrt(6*25)  / 6;
-make.poly( 9)[1:4, 4]; poly.c4( 9) / sqrt(9*110) / 6;
-make.poly(11)[1:5, 4]; poly.c4(11) / sqrt(6*715) / 6;
-make.poly(13)[1:6, 4]; poly.c4(13) / sqrt(100*143) / 6;
-make.poly(15)[1:7, 4]; poly.c4(15) / sqrt(13*3060) / 6;
-make.poly(17)[1:8, 4]; poly.c4(17) / sqrt(17*5700) / 6;
-make.poly(19)[1:9, 4]; poly.c4(19) / sqrt(213180)  / 6;
+make.poly( 5)[1:2, 4]; poly.c4c( 5) / sqrt(10) / 6;
+make.poly( 7)[1:3, 4]; poly.c4c( 7) / sqrt(6*25)  / 6;
+make.poly( 9)[1:4, 4]; poly.c4c( 9) / sqrt(9*110) / 6;
+make.poly(11)[1:5, 4]; poly.c4c(11) / sqrt(6*715) / 6;
+make.poly(13)[1:6, 4]; poly.c4c(13) / sqrt(100*143) / 6;
+make.poly(15)[1:7, 4]; poly.c4c(15) / sqrt(13*3060) / 6;
+make.poly(17)[1:8, 4]; poly.c4c(17) / sqrt(17*5700) / 6;
+make.poly(19)[1:9, 4]; poly.c4c(19) / sqrt(213180)  / 6;
+make.poly(21)[1:10, 4]; poly.c4c(21) / sqrt(432630)  / 6;
 
 
 # Explicit:
