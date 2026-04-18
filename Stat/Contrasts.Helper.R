@@ -74,3 +74,29 @@ poly.cp4.mpfr = function(n, prec = 240) {
 	return(cc / div);
 }
 
+poly.cp5 = function(n) {
+	nc  = seq(1, (n+1)/2, by = 1);
+	div = (n^9 - 30 * n^7 + 273*n^5 - 820*n^3 + 576*n) / 5184;
+	cc  = (70*nc^4 - 140*(n+1) * nc^3 + 10*(9*n^2 + 21*n + 17) * nc^2 +
+		- 10*(2*n^3 + 9*n^2 + 17*n + 10) * nc +
+		+ (n^4 + 10*n^3 + 35*n^2 + 50*n + 24)) / 24;
+	return(cc / sqrt(div));
+}
+poly.cp5.mpfr = function(n, prec = 240) {
+	if(inherits(n, "mpfr")) {
+		prec = Rmpfr::getPrec(n);
+		v1 = Rmpfr::mpfr(1, prec);
+	} else {
+		n  = Rmpfr::mpfr(n, prec);
+		v1 = Rmpfr::mpfr(1, prec);
+	}
+	isOdd = (n %% 2 == 1);
+	nm = if(isOdd) (n+1)/2 else n / 2;
+	nc = seq(v1, nm, by = 1);
+	div = (n^9 - 30 * n^7 + 273*n^5 - 820*n^3 + 576*n) / 5184;
+	cc  = (70*nc^4 - 140*(n+1) * nc^3 + 10*(9*n^2 + 21*n + 17) * nc^2 +
+		- 10*(2*n^3 + 9*n^2 + 17*n + 10) * nc +
+		+ (n^4 + 10*n^3 + 35*n^2 + 50*n + 24)) / 24;
+	return(cc / sqrt(div));
+}
+

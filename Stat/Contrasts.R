@@ -141,8 +141,30 @@ n = 161;
 (make.poly(n)[seq(1, (n+1)/2), 4] - poly.cp4.mpfr(n)) |> abs() |> summary();
 
 ### n = 4...161
-sapply(seq(4, 161), \(n, qq = c(6,7,8) / 8) {
+sapply(seq(4, 161), \(n, qq = c(0.95, 0.975, 1)) {
 	d = make.poly(n)[seq(1, (n+1)/2), 4] - poly.cp4.mpfr(n);
 	as.numeric(quantile(abs(d), qq));
-}) |> apply(1, quantile, c(0.5, 3/4, 1));
+}) |> apply(1, quantile, c(0.95, 0.975, 1));
+
+
+#######################
+
+### Component 5:
+
+# Examples:
+make.poly( 5)[1:3, 5]; poly.cp5( 5);
+make.poly( 6)[1:3, 5]; poly.cp5( 6);
+make.poly( 7)[1:4, 5]; poly.cp5( 7);
+make.poly( 8)[1:4, 5]; poly.cp5( 8);
+make.poly( 9)[1:5, 5]; poly.cp5( 9);
+
+
+### Numerical Stability:
+library(Rmpfr)
+
+### n = 5...161
+sapply(seq(5, 161), \(n, qq = c(0.95, 0.975, 1)) {
+	d = make.poly(n)[seq(1, (n+1)/2), 5] - poly.cp5.mpfr(n);
+	as.numeric(quantile(abs(d), qq));
+}) |> apply(1, quantile, c(0.95, 0.975, 1));
 
