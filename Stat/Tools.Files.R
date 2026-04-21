@@ -59,7 +59,7 @@ match.dir = function(path1, path2, sub.path = NULL, pattern = NULL, verbose = TR
 	if(length(x1) == 0) {
 		cat("Empty dir!\n");
 		df0 = data.frame(Name = character(0), Size = numeric(0),
-			Match = logical(0));
+			Match = numeric(0));
 		return(df0);
 	}
 	# Size:
@@ -145,7 +145,13 @@ diff.dirs = function(x, path1, path2, swap = FALSE,
 	if(swap) {
 		tmp = path1; path1 = path2; path2 = tmp;
 	}
-	xn = nchar(x)
+	# Basic Tests
+	isDir = file.info(p1)$isdir;
+	if(is.na(isDir)) stop("Invalid dir:\n", p1);
+	isDir = file.info(p2)$isdir;
+	if(is.na(isDir)) stop("Invalid dir:\n", p2);
+	#
+	xn = nchar(x);
 	isNotRoot = xn > 0;
 	p1[isNotRoot] = paste0(path1, "/", x[isNotRoot]);
 	p2[isNotRoot] = paste0(path2, "/", x[isNotRoot]);
