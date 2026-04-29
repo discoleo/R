@@ -27,6 +27,9 @@ https://www.youtube.com/watch?v=lp7L35nSoBg
 
 == Problem 1: Counting Intersections ==
 
+* Mathologer: Parity of permutations, impossible puzzles and the magical determinant
+https://www.youtube.com/watch?v=rUiulWItECQ
+
 Problem:
 * let n be a positive integer.
 * 2 sequences are created: a sequence 1 to n (1:n) and a random permutation of this sequence;
@@ -53,7 +56,7 @@ The n numbers are positioned on 2 parallel line segments.
 T.2a: The 2 sequences are put on the delimiting circles of a cylinder and the matching is done only on the curved outer surface of the cylinder.
 
 Variants:
-T.2b: the numbers are positioned on 2 concentric circles away from the extremes of the cylinder, which allows matches to also traverse the remaining curved surface;
+T.2b: the numbers are positioned on 2 concentric circles away from the extremes of the cylinder, which allows matches to also traverse the remaining outer surface;
 T.2c: as in [T.2a], but the matchings can cross both on the external, as well as internal surface of the cylinder. The 2 surfaces are considered distinct.
 
 
