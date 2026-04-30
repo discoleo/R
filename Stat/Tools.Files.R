@@ -123,6 +123,10 @@ diff.dir = function(path1, path2, dir = NULL, pattern = NULL, swap = FALSE,
 	FILES = match.dir(path1, path2, pattern=pattern, verbose=verbose);
 	FILES = FILES[is.na(FILES$Match), ];
 	if(copy) {
+		if(nrow(FILES) == 0) {
+			cat("Nothing to copy!\n");
+			return(FILES);
+		}
 		fN = paste0(path1, "/", FILES$Name);
 		# Manual overwrite!
 		r1 = file.copy(fN, path2, overwrite = FALSE, recursive = FALSE,
