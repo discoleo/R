@@ -11,24 +11,29 @@ warning("Not yet tested!");
 ### Copy Packages
 # TODO: refactor;
 copy.packages.between.libraries =
-function (from, to, ask = FALSE, keep_old = TRUE, do_NOT_override_packages_in_new_R = TRUE) 
+function (from, to, ask = FALSE, keep_old = TRUE, overwrite.new = FALSE) 
 {
-    installed_R_folders <- get.RFolders();
-    installed_R_folders_TABLE <- data.frame(R_version = names(installed_R_folders), 
-        Folder = installed_R_folders)
+	if(overwrite.new) {
+		cat("Note: New packages will be overwritten!\n");
+	}
+    dirR = get.RFolders();
+    dirRTbl = data.frame(
+		R_version = names(dirR), 
+        Folder    = dirR);
+	# Interactive:
     if (ask) {
-        ask_again <- T
+        ask_again = TRUE;
         while (ask_again) {
-            ss_R_folder_from <- ask.user.for.a.row(installed_R_folders_TABLE, 
+            ss_R_folder_from <- ask.user.for.a.row(dirRTbl, 
                 "From: Choose an R version/folder from which to copy the package library", 
                 "FROM: Write the row number of the R version/folder FROM which to copy (or move) the package library (and then press enter):\n")
             cat("\nThank you\n")
-            ss_R_folder_to <- ask.user.for.a.row(installed_R_folders_TABLE, 
+            ss_R_folder_to <- ask.user.for.a.row(dirRTbl, 
                 "To: Choose an R version/folder from INTO which the packages from your old R installations will be copied TO", 
                 "TO: Write the row number of the R version/folder INTO which to copy (or move) the package library (and then press enter):\n")
             cat("\nThank you\n")
-            from <- installed_R_folders[ss_R_folder_from];
-            to   <- installed_R_folders[ss_R_folder_to];
+            from = dirR[ss_R_folder_from];
+            to   = dirR[ss_R_folder_to];
             DECISION_text <- paste("You've chosen to move your packages from: ", 
                 from, "  to: ", to)
             ask_again_12 <- ask.user.for.a.row(c("yes", "no"), 
@@ -36,55 +41,65 @@ function (from, to, ask = FALSE, keep_old = TRUE, do_NOT_override_packages_in_ne
             ask_again <- ifelse(ask_again_12 == 1, F, T)
         }
     }
+	# Path: R
     if (missing(from)) 
-        from <- installed_R_folders[2]
+        from = dirR[2];
     if (missing(to)) 
-        to <- installed_R_folders[1]
+        to   = dirR[1];
 	# Path to Packages:
-    from_library <- file.path(from, "library")
-    to_library   <- file.path(to, "library")
-    packages_in_the_from_library <- list.files(from_library)
-    packages_in_the_to_library <- list.files(to_library)
-    packages_to_NOT_move <- unname(installed.packages(priority = "high")[, 
-        "Package"])
+	from_library = file.path(from, "library");
+	to_library   = file.path(to, "library");
+	pkgs_from = list.files(from_library);
+	pkgs_to   = list.files(to_library);
+	pkgs_skip = unname(installed.packages(priority = "high")[, "Package"])
 	# Skip packages:
-    if (do_NOT_override_packages_in_new_R) 
-        packages_to_NOT_move <- c(packages_to_NOT_move, packages_in_the_to_library)
-    ss_packages_to_NOT_move_from <- packages_in_the_from_library %in% 
-        packages_to_NOT_move
-    ss_packages_to_YES_move_from <- !ss_packages_to_NOT_move_from
-    pkgsToMove = packages_in_the_from_library[ss_packages_to_YES_move_from]
+	if (! overwrite.new) {
+		pkgs_skip = c(pkgs_skip, pkgs_to);
+		cat("Skipping: ", length(pkgs_skip), " packages.\n");
+	}
+    isPkg_Skip = pkgs_from %in% pkgs_skip;
+    isPkg_Move = ! isPkg_Skip;
+    pkgsToMove = pkgs_from[isPkg_Move];
+    if (length(pkgsToMove) == 0) {
+        cat("No packages to copy.  Goodbye :) \n");
+        return(FALSE);
+    }
     paths_of_packages_to_copy_from <- file.path(from_library, 
         pkgsToMove)
-    if (length(pkgsToMove) == 0) {
-        cat("No packages to copy.  Goodbye :) \n")
-        return(F)
-    }
 	# Start Copying/Moving:
-	cat("-----------------------", "\n")
-	cat("I am now copying ", length(pkgsToMove), " packages\n".
+	cat("-----------------------", "\n");
+	cat("I am now copying ", length(pkgsToMove), " packages\n",
 		"  from: ", from_library, "\n",
-		"  into: ", to_library)
-	cat("-----------------------", "\n")
+		"  into: ", to_library, "\n");
+	cat("-----------------------", "\n");
 	flush.console()
-	# pkgsToMove # ???
+	# Copy OLD Packages:
 	folders.copied = file.copy(
 		from = paths_of_packages_to_copy_from, 
-		to   = to_library, overwrite = !do_NOT_override_packages_in_new_R, 
+		to   = to_library, overwrite = overwrite.new, 
 		recursive = TRUE);
 	cat("=====================", "\n")
-    cat("Done. Finished copying all packages to the new location\n")
+    cat("Done. Finished copying all packages to the new location.\n");
 	flush.console();
+	# Remove OLD Packages:
     if (!keep_old) {
-        cat("Next: we will remove the packages from the old R installation ('FROM') \n")
-        deleted_packages <- unlink(paths_of_packages_to_copy_from, 
+        cat("Next: we will remove the packages from the old R installation",
+			" (aka 'FROM') \n");
+		flush.console();
+        pkgs_Deleted = unlink(paths_of_packages_to_copy_from, 
             recursive = TRUE)
-        cat("Done. The old packages were deleted.\n")
+        cat("Done. The old packages were deleted: ", length(pkgs_Deleted), "\n");
     }
-    return(TRUE)
+	# Finished:
+    return(TRUE);
 }
 
 ### Helper Functions
+
+# TODO
+ask.user.for.a.row = function(...) {
+	installr:::ask.user.for.a.row(...);
+}
 
 ### R-Folders
 get.RFolders = function (sort_by_version = TRUE, add_version_to_name = TRUE) 
