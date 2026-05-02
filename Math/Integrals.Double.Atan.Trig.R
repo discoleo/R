@@ -36,10 +36,51 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	atan(y * tan(x)), 0, pi/2, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 pi^2 / 12;
 
+### on [0, pi/4] x [0,1]
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(y * tan(x)), 0, pi/4, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+pi^2 / 96 + log(2)^2 / 8;
+
+
+### Div: I( atan(y * tan(x)) / y )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(y * tan(x)) / y, 0, pi/2, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+7/4 * pracma::zeta(3);
+
+### I( atan(y * tan(x)) * x/y )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(y * tan(x)) * x/y, 0, pi/2, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+pi * pracma::zeta(3) * 21/32;
+
+
+### on [0, pi/4] x [0,1]
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(y * tan(x)) / y, 0, pi/4, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+7/8 * pracma::zeta(3) - pi*Catalan / 4;
+
+### I( atan(y * tan(x)) * x/y )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(y * tan(x)) * x/y, 0, pi/4, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+(pracma::psi(3, 1/4) - pracma::psi(3, 3/4)) / 2^11 - pi^2 * Catalan / 16;
+
+
 ### I( atan(tan(x) * tan(y)) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	atan(tan(x)*tan(y)), 0, pi/2, rel.tol=1E-12)$value), 0, pi/2, rel.tol=1E-12)
 pi^3/16;
+
+### on [0, pi/4]^2
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(tan(x)*tan(y)), 0, pi/4, rel.tol=1E-12)$value), 0, pi/4, rel.tol=1E-12)
+integrate(\(x) log(1-x) * log(x) / (x^2+1), 0, 1, rel.tol=1E-13)$value +
+	- ((pi/4)^3 - Catalan * log(2)/2);
+
+### on [0, pi/4] x [0, pi/2]
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(tan(x)*tan(y)), 0, pi/4, rel.tol=1E-12)$value), 0, pi/2, rel.tol=1E-12)
+integrate(\(x) log(1-x) * log(x) / (x^2+1), 0, 1, rel.tol=1E-13)$value +
+	+ Catalan * log(2) / 2;
+
 
 ### I( atan(tan(x) / tan(y)) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
