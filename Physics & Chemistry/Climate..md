@@ -1,7 +1,7 @@
 
 # Climatology & Climate Change
 
-There is a major discrepancy between the magnitude of physical climate changes and the most known parameter used to quantify climate change, i.e. mean temperature.
+There is a major discrepancy between the magnitude of "real" processes arising due to climate change and the most known parameter used to quantify climate change, i.e. mean temperature.
 
 I have witnessed over the past 40 years massive changes to real components of the climate: the tiny changes in mean temperature **cannot** reflect such physical changes. Something is missing from the theories and from our understanding.
 
@@ -9,7 +9,7 @@ Although not an expert in the field, I did read from time to time scientific lit
 
 ## Challenges with Temperature
 
-Temperature varies widely during the day and during the various seasons. Computing a mean temperature may work on time-scales of centuries or millennia, but may be too sensitive to random variations and thus may be inadequate to track climate change over shorter time periods. In addition, other mechanisms may also compromise the temperature, as presented in the next section.
+Temperature varies widely during the day and during the various seasons. Computing a mean temperature may work on time-scales of centuries or millennia, but may be too sensitive to random variations and thus may be inadequate to track climate change over shorter time periods. However, this explanation may be too naive and probably misses the primary reasons for the failure. Other major mechanisms may also compromise the temperature: these will be presented in the next section.
 
 ## Temperature Buffering
 
