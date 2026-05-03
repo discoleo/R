@@ -283,6 +283,19 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	atan(x/y) * atan(x) * atan(y), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 (pi/4 - log(2)/2)^2 * pi/4;
 
+### I( atan(x/y) * atan(y)^2 )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(x/y) * atan(y)^2, 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+(pracma::psi(2, 3/4) + pracma::psi(2, 1/2)) / 128 +
+	+ (pi^2 / 12 + pi*log(2) - log(2)^2) / 8;
+- pracma::zeta(3) * 35/64 + (pi^3 / 8 + pi^2 / 12 + pi*log(2) - log(2)^2) / 8;
+
+### I( atan(x/y) * atan(x)^2 )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(x/y) * atan(x)^2, 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+((pi/4)^2 + pi*log(2)/4 - Catalan) * pi/2 + pracma::zeta(3) * 35/64 +
+	- (pi^3 / 8 + pi^2 / 12 + pi*log(2) - log(2)^2) / 8;
+
 
 ### w. Composite-Atan
 
