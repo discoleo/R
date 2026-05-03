@@ -172,6 +172,10 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 ### I( x * atan((x+y)/y) * log(x) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x * atan((x+y)/y) * log(x), 0, y, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x*y^2 * atan(x+1) * log(x*y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+integrate(\(x) 1/3 * x * log(x) * atan(x+1), 0, 1, rel.tol=1E-13)$value +
+	- (atan(2) + log(5) - log(2) - 1) / 18;
 # TODO
 
 ### I( y * atan((x+y)/y) * log(x) )
@@ -259,6 +263,8 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 ### I( 1/y * atan(x*y) * atan(x) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	1/y * atan(x*y) * atan(x), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-12)
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	1/x^2 * atan(y) * atan(y/x), y, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-12)
 # TODO
 
 ### I( x/y * atan(x*y) * atan(x) )
@@ -270,6 +276,12 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	1/(x*y) * atan(x*y) * atan(x), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 Catalan^2 / 2;
+
+
+### I( atan(x/y) * atan(x) * atan(y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(x/y) * atan(x) * atan(y), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+(pi/4 - log(2)/2)^2 * pi/4;
 
 
 ### w. Composite-Atan
