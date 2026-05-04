@@ -292,6 +292,21 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 + sqrt(2)*pi/8 * (pi/2 + log(2)) + pi*log(2) / 8;
 
 
+################
+
+### Diff:
+
+### I( atan(tan(y) - tan(x)) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(tan(y) - tan(x)), 0, y, rel.tol=1E-13)$value), 0, pi/2, rel.tol=1E-13)
+(pi^2 / 6 - log(3)^2 / 2 - pracma::polylog(1/3, 2)) * pi/2;
+
+### I( atan(tan(y) + tan(x)) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(tan(y) + tan(x)), 0, y, rel.tol=1E-13)$value), 0, pi/2, rel.tol=1E-13)
+(pi^2 / 24 - pracma::polylog(-1/2, 2)/2 - (log(3/2)^2 - log(3)^2) / 4) * pi/2;
+
+
 ######################
 
 ### Prod
@@ -340,6 +355,17 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	acos(cos(pi/2*x)*cos(pi/2*y)) * atan(x/y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 integrate(\(x) pi^2 / 8 - 4/pi * log(1-x) * log(x) / (x^2+1), 0, 1, rel.tol=1E-13)
 # TODO
+
+
+### I( atan(tan(x) * tan(y)) * atan(tan(x) / tan(y)) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(tan(x) * tan(y)) * atan(tan(x) / tan(y)), 0, pi/2, rel.tol=1E-13)$value), 0, pi/2, rel.tol=1E-13)
+pi^4 / 4^3;
+
+###
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(tan(x) * tan(y)) * atan(sin(x) / sin(y)), 0, pi/2, rel.tol=1E-13)$value), 0, pi/2, rel.tol=1E-13)
+pi^4 / 4^3;
 
 
 ######################
