@@ -144,6 +144,7 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 ### I( atan(sin(x) * sin(y)) / (sin(x) * sin(y)) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	atan(sin(x) * sin(y)) / (sin(x) * sin(y)), 0, pi/2, rel.tol=1E-12)$value), 0, pi/2, rel.tol=1E-13)
+integrate(\(x) - pi/2 * atan(sqrt(sin(x))), 0, pi/2, rel.tol=1E-13)$value + pi^3 / 8;
 # TODO
 
 #
@@ -155,7 +156,7 @@ id = seq(0, 20000)
 sum((-1)^id / (id+1) * beta(id+1/2, 1/2) * beta(id+3/2, 1/2)) / 4;
 ((beta(1/4, 1/4) + 2*beta(3/4, 3/4)) * sqrt(2) / 4 - pi) * pi/2;
 #
-sum((-1)^id / (id+1) / (2*id+1) * beta(id+1/2, 1/2) * beta(id+3/2, 1/2)) / 4
+sum((-1)^id / (id+1) / (2*id+1) * beta(id+1/2, 1/2) * beta(id+3/2, 1/2)) / 4;
 (pi - beta(3/4, 3/4) * sqrt(2)) * pi/2;
 
 
@@ -305,6 +306,17 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	atan(tan(y) + tan(x)), 0, y, rel.tol=1E-13)$value), 0, pi/2, rel.tol=1E-13)
 (pi^2 / 24 - pracma::polylog(-1/2, 2)/2 - (log(3/2)^2 - log(3)^2) / 4) * pi/2;
+
+
+### I( atan((tan(y) - tan(x)) * cos(x)) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan((tan(y) - tan(x)) * cos(x)), 0, y, rel.tol=1E-11)$value), 0, pi/2, rel.tol=1E-12)
+pi^3 / 32;
+
+### I( atan((tan(y) - tan(x)) * sin(x)) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan((tan(y) - tan(x)) * sin(x)), 0, y, rel.tol=1E-13)$value), 0, pi/2, rel.tol=1E-13)
+# TODO
 
 
 ######################
