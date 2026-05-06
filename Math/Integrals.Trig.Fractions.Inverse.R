@@ -187,6 +187,16 @@ integrate(\(x) -2 * log(tan(x)), 0, pi/8)$value - pi * asinh(1) / 4;
 sum(pracma::psi(1, c(1,5,3,7)/8) * c(1,-1,1,-1)) * sqrt(2) / 64 - pi * asinh(1) / 4;
 
 
+### I( x / cos(x) )
+integrate(\(x) x / cos(x), 0, pi/4)
+sum(pracma::psi(1, c(1,5,3,7)/8) * c(1,-1,1,-1)) * sqrt(2) / 64 +
+	- ((digamma(7/8)-digamma(3/8))^2 - (digamma(5/8)-digamma(1/8))^2) / 32 +
+	- 2*Catalan - pi * asinh(1) / 4;
+sum(pracma::psi(1, c(1,5,3,7)/8) * c(1,-1,1,-1)) * sqrt(2) / 64 +
+	- 2*Catalan - pi * asinh(1) / 4 + log(sqrt(2) + 1) * pi/2;
+# TODO: simplify;
+
+
 ### on [0, pi/3]
 
 ### I( 1 / sin(x) )
