@@ -218,6 +218,14 @@ integrate(\(x) x * log(1-x) / (x^2+1), 0, 1)
 - 5/96 * pi^2 + log(2)^2 / 8
 
 
+### Other:
+
+### I( log(x) / (x^2 + 1) ) on Special
+integrate(\(x) log(x) / (x^2 + 1), 0, tan(pi/8), rel.tol=1E-13)
+integrate(\(x) log(tan(x)), 0, pi/8) # see Log(TAN)
+- sum(pracma::psi(1, c(1,5,3,7)/8) * c(1,-1,1,-1)) * sqrt(2) / 128;
+
+
 ###########
 ### Pow = 3
 
@@ -772,6 +780,7 @@ integrate(\(x) (2*x^3 - x) / (4*x^4 - 2*x^2 + 1), sqrt(2)/2, 1)
 integrate(\(x) x / (4*x^4 - 2*x^2 + 1), sqrt(2)/2, 1)
 pi/12 / sqrt(3);
 
+
 ###########
 ### Pow = 4
 
@@ -872,6 +881,14 @@ integrate(\(x) log((1 + cos(x)) / cos(x)), 0, pi/2)
 integrate(\(x) log(1 + cos(x)), 0, pi/2)
 integrate(\(x) 4*log(cos(x)), 0, pi/4)$value + pi*log(2)/2
 - pi*log(2)/2 + 2*Catalan
+
+
+### on [0,1]
+integrate(\(x) log(sqrt(x^2 + 1) + x) / (x^2 + 1), 0, 1)
+integrate(\(x) - x/cos(x), 0, pi/4)$value + pi/4 * asinh(1);
+sum(pracma::psi(1, c(1,5,3,7)/8) * c(-1,1,-1,1)) * sqrt(2) / 64 +
+	+ 2*Catalan + asinh(1) * pi/2 - log(sqrt(2) + 1) * pi/2;
+
 
 
 #######################
