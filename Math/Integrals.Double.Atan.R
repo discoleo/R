@@ -838,6 +838,16 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	atan(sqrt(y-x)) / (y-x), 0, y, rel.tol=1E-11)$value), 0, 1, rel.tol=1E-12)
 2*Catalan - pi/2 + 1;
 
+### I( x * atan(sqrt(y-x)) / (y-x) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * atan(sqrt(y-x)) / (y-x), 0, y, rel.tol=1E-11)$value), 0, 1, rel.tol=1E-12)
+Catalan - pi/2 + 1 + 1/6;
+
+### I( y * atan(sqrt(y-x)) / (y-x) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y * atan(sqrt(y-x)) / (y-x), 0, y, rel.tol=1E-11)$value), 0, 1, rel.tol=1E-12)
+Catalan - 1/6;
+
 
 ### I( atan(sqrt(y^2-x^2)) / (y-x) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
@@ -1190,7 +1200,29 @@ integrate(\(x) (2-x) * log(2-x) / (x^2+1), 0, 1, rel.tol=1E-13)$value + log(2)/2
 # TODO
 
 
-### Prod
+### ATAN(SQRT(...))
+
+# Note:
+# - sqrt(x*y) can be trivially converted to (x*y);
+
+
+### I( atan(sqrt(x*y)) / (x+y) / y )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(sqrt(x*y)) / (x+y) / y, 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+pi^3 / 16;
+
+### on [0,1]x[0,y]
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(sqrt(x*y)) / (x+y) / y, 0, y, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+integrate(\(x) - log(x) * log(x^2+1) / (x^2+1), 0, 1)$value +
+	+ pi^3 / 32 - Catalan * log(2);
+# TODO
+
+
+################
+
+############
+### Prod ###
 
 ### I( atan(x*y) * log(x) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
@@ -1376,6 +1408,18 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	(x+y) * atan(x/y) / sqrt(x^2 + y^2), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 pi/4 * asinh(1) + (digamma(5/8) - digamma(3/8)) / 4;
 # Note: (digamma(5/8) - digamma(3/8)) == (sqrt(2) - 1) * pi;
+
+### I( x * atan(x/y) / sqrt(x^2 + y^2) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * atan(x/y) / sqrt(x^2 + y^2), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+integrate(\(x) x * atan(1/x) / cos(atan(1/x)) - x * sapply(x, \(y) integrate(\(x)
+	1/cos(x), 0, atan(1/y), rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12);
+integrate(\(x) x * atan(1/x) / cos(atan(1/x)), 0, 1)$value +
+	- log(sqrt(2) + 1) / 2 - sqrt(2)/2 + 1/2;
+integrate(\(x) - atan(x) * sqrt(x^2+1), 0, 1)$value +
+	+ (log(sqrt(2) + 1) + sqrt(2)) * pi/4 +
+	- log(sqrt(2) + 1) / 2 - sqrt(2)/2 + 1/2;
+# TODO
 
 ### I( x*y * atan(x/y) / sqrt(x^2 + y^2) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
