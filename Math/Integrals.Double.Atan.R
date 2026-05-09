@@ -1434,6 +1434,8 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 
 # Helper
 integrate(\(x) 1/x / sqrt(x^2 + x + 1), 1, Inf)
+integrate(\(x) 1 / sqrt(x^2 + x + 1), 0, 1)
+integrate(\(x) 1 / sqrt(x^2 + 1), 1/sqrt(3), sqrt(3))
 log(sqrt(3) + 2) - log(3) / 2;
 
 
@@ -1442,6 +1444,25 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	atan(x/y) / sqrt(x^2 - x*y + y^2), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 pi * log(3)/2;
 
+# Helper
+integrate(\(x) 1 / sqrt(x^2 - x + 1), 0, 1)
+log(3);
+
+### Variants:
+
+###
+b = exp(1/pi); # b = 1/sqrt(2);
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(x/y) / sqrt(x^2 + b*x*y + y^2), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+integrate(\(x) pi/2 / sqrt(x^2 + b*x + 1), 0, 1)
+integrate(\(x) pi/2 / sqrt(x^2 + 1), b/sqrt(4-b^2), (2+b)/sqrt(4-b^2));
+integrate(\(x) pi/2 / cos(x), atan(b/sqrt(4-b^2)), atan((2+b)/sqrt(4-b^2)));
+pi/4 * log((1+sin(atan((2+b)/sqrt(4-b^2)))) / (1-sin(atan((2+b)/sqrt(4-b^2)))) *
+	(1-sin(atan(b/sqrt(4-b^2)))) / (1+sin(atan(b/sqrt(4-b^2)))));
+# TODO: simplify;
+
+
+### Other
 
 ### I( atan(x/y) / (1 - x*y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
