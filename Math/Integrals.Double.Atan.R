@@ -1432,6 +1432,15 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	atan(x/y) / sqrt(x^2 + x*y + y^2), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 (log(sqrt(3) + 2) - log(3) / 2) * pi/2;
 
+# Helper
+integrate(\(x) 1/x / sqrt(x^2 + x + 1), 1, Inf)
+log(sqrt(3) + 2) - log(3) / 2;
+
+
+### I( atan(x/y) / sqrt(x^2 - x*y + y^2) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(x/y) / sqrt(x^2 - x*y + y^2), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+pi * log(3)/2;
 
 
 ### I( atan(x/y) / (1 - x*y) )
