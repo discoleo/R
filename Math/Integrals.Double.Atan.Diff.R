@@ -414,11 +414,11 @@ pi/12 - 1/4 + 1/4 * integrate(\(y)
 	y^4 * (1+y^2) / (1-y^2)^4 * (log(y^2 + (1-y^2)^2) - log(y^2)) - (3*y^2-1)/(1-y^2)^2, 0, 1)$value;
 integrate(\(y) (2/ (1-y^2)^4 - 5/(1-y^2)^3 + 4/(1-y^2)^2 - 1/(1-y^2)) * (log(y^2 + (1-y^2)^2) +
 	- log(y^2)) - 1/2/(1-y)^2 + 1/(1-y), 0, 1)$value / 4 + pi/12 + log(2) / 4 - 1/4 - 1/16;
-integrate(\(y) 2/ (1-y^2)^4 * (log(y^2 + (1-y^2)^2) - log(y^2)) +
+integrate(\(y) 2/(1-y^2)^4 * (log(y^2 + (1-y^2)^2) - log(y^2)) +
 	- 1/2/(1-y)^2 - 3/2/(1-y), 0, 1)$value / 4 +
-	- (7/2 * Im(acos(2+0i))^2 - 10*sqrt(3) * Im(acos(2 + 0i)) +
+	- (7/2 * Im(acos(2+0i))^2 - 10*sqrt(3) * Im(acos(2+0i)) +
 		+ pi^2 * 7/8 + 4/3*pi + 12*log(2) + 20) / 32;
-# TODO
+- (Im(acos(2+0i))^2 - 4*sqrt(3) * Im(acos(2+0i)) + pi^2 / 4 - 4*pi + 12) / 32;
 
 # Helper:
 integrate(\(x) 1/(1-x^2) * (log(x^2 + (1-x^2)^2) - log(x^2)), 0, 1)
@@ -431,11 +431,22 @@ integrate(\(x) 1/(1-x^2)^2 * (log(x^2 + (1-x^2)^2) - log(x^2)), 0, 1)
 
 #
 integrate(\(x) 8/(1-x^2)^3 * (log(x^2 + (1-x^2)^2) - log(x^2)) - 4/(1-x), 0, 1)
-3/2 * Im(acos(2+0i))^2 - 2*sqrt(3) * Im(acos(2 + 0i)) +
+3/2 * Im(acos(2+0i))^2 - 2*sqrt(3) * Im(acos(2+0i)) +
 	+ pi^2 * 3/8 + 4*pi + 4*log(2) + 2;
 #
 integrate(\(x) (1/(1-x)^3 + 1/(1+x)^3) * (log(x^2 + (1-x^2)^2) - log(x^2)) - 4/(1-x), 0, 1)
-pi - Im(acos(2 + 0i)) * 2*sqrt(3) + 4*log(2) + 2;
+pi - Im(acos(2+0i)) * 2*sqrt(3) + 4*log(2) + 2;
+
+#
+integrate(\(x) (1/(1-x)^4 + 1/(1+x)^4) * (log(x^2 + (1-x^2)^2) - log(x^2)) - 4/(1-x)^2 - 4/(1-x), 0, 1)
+- (Im(acos(2+0i)) * 2*sqrt(3) + 5/3*pi - 4*log(2) - 4);
+#
+integrate(\(x) (1/(1-x)^2 + 1/(1+x)^2) / (1-x^2) * (log(x^2 + (1-x^2)^2) - log(x^2)) - 2/(1-x), 0, 1)
+integrate(\(x) (4/(1-x^2)^3 - 2/(1-x^2)^2) * (log(x^2 + (1-x^2)^2) - log(x^2)) - 2/(1-x), 0, 1);
+1/4 * Im(acos(2+0i))^2 - sqrt(3) * Im(acos(2+0i)) + pi^2 / 16 + pi + 2*log(2) + 1;
+#
+integrate(\(x) 1/(1-x^2)^4 * (log(x^2 + (1-x^2)^2) - log(x^2)) - 1/4/(1-x)^2 - 3/4/(1-x), 0, 1)
+(5/2*Im(acos(2+0i))^2 - 6*sqrt(3) * Im(acos(2+0i)) + 5/8 * pi^2 + 12*log(2) + 8) / 16 + pi/3;
 
 
 ### on [0,1] x [y,1]
