@@ -87,17 +87,41 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	atan(tan(x) / tan(y)), 0, pi/2, rel.tol=1E-12)$value), 0, pi/2, rel.tol=1E-12)
 pi^3/16;
 
-### I( x * atan(tan(x)*tan(y)) )
+### I( x * atan(tan(x) * tan(y)) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x * atan(tan(x)*tan(y)), 0, pi/2, rel.tol=1E-13)$value), 0, pi/2, rel.tol=1E-13)
 integrate(\(x) - pi * atan(x) * log(1-x) / x, 0, 1)$value - pi^4 / 128;
 # TODO
 
 
+### I( atan(x/y * tan(k*y) / tan(k*x)) )
+### I( atan(x/y * tan(k*x) / tan(k*y)) )
+k = pi/7; # k = 1/2; # k <= pi/2;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(x/y * tan(k*y) / tan(k*x)), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+pi/4;
+#
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(x/y * tan(k*x) / tan(k*y)), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+pi/4;
+
+### Case: k = pi/4
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(x/y * tan(pi/4*y) / tan(pi/4*x)), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+pi/4;
+
+
+### ATAN( SQRT )
+
 ### I( atan(sqrt(tan(x) * tan(y))) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	atan(sqrt(tan(x) * tan(y))), 0, pi/2, rel.tol=1E-12)$value), 0, pi/2, rel.tol=1E-12)
 pi^3/16;
+
+### on [0, pi/2] x [0, pi/4]
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(sqrt(tan(x) * tan(y))), 0, pi/4, rel.tol=1E-12)$value), 0, pi/2, rel.tol=1E-12)
+(polylog2(sqrt(2)/2, 2) - 5/96 * pi^2 + log(2)^2 / 8) * pi/2;
 
 
 ### I( atan(sqrt(tan(x)^2 + tan(y)^2)) )
@@ -356,7 +380,7 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 (- pi^2 / 48 + pi/4 - log(2)/2) * pi/4;
 
 
-### I( asin(sin(pi/2*x)*sin(pi/2*y)) * atan(x/y) )
+### I( asin(sin(pi/2*x) * sin(pi/2*y)) * atan(x/y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	asin(sin(pi/2*x)*sin(pi/2*y)) * atan(x/y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 integrate(\(x) 4/pi * log(1-x) * log(x) / (x^2+1), 0, 1, rel.tol=1E-13)
