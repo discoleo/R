@@ -109,6 +109,8 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	+ (digamma(1/4) - digamma(3/4)) / sin(pi/4) * pi/8;
 
 
+### Series: ATAN( x/(1-x) ) / (x - y)
+
 ### I( (atan(x/(1-x)) - atan(y/(1-y))) / (x-y) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	(atan(x/(1-x)) - atan(y/(1-y))) / (x-y), 0, y, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
@@ -614,4 +616,42 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x*y * atan(sqrt(y^2-x^2)) / sqrt(y^2-x^2), 0, y, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 (pi/4 - log(2) + 1/4) / 3;
+
+
+#################
+
+### ATAN(x-y)^2
+
+### I( atan(y-x)^2 / (y-x) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(y-x)^2 / (y-x), 0, y, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-13)
+Catalan * pi/2 + Catalan - (pi/4)^2 - pi*log(2)/4 - 7/8 * pracma::zeta(3);
+
+### I( x * atan(y-x)^2 / (y-x) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * atan(y-x)^2 / (y-x), 0, y, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-13)
+Catalan * pi/4 + Catalan - pi^2 / 32 - pi*log(2)/4 - pi/8 + log(2)/4 - 7/16 * pracma::zeta(3);
+
+### I( y * atan(y-x)^2 / (y-x) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y * atan(y-x)^2 / (y-x), 0, y, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-13)
+Catalan * pi/4 - pi^2 / 32 + pi/8 - log(2)/4 - 7/16 * pracma::zeta(3);
+
+### I( x*y * atan(y-x)^2 / (y-x) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x*y * atan(y-x)^2 / (y-x), 0, y, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-13)
+(3/2 * pi*Catalan - Catalan - (pi/4)^2 + pi*log(2)/4 + pi/2 - 21/8 * pracma::zeta(3) - 1) / 9 +
+	- (pi^2/8 + pi*log(2) + pi/2 - 4*Catalan - 1) / 6;
+
+# Helper:
+
+#
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y * atan(x)^2, 0, y, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-13)
+(pi^2/8 + pi*log(2) + pi/2 - 4*Catalan - 1) / 6;
+
+#
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y^2/x * atan(x)^2, 0, y, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-13)
+(3/2 * pi*Catalan - Catalan - (pi/4)^2 + pi*log(2)/4 + pi/2 - 21/8 * pracma::zeta(3) - 1) / 9;
 
