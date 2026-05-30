@@ -201,8 +201,43 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 
 
 ##################
+##################
 
 ### w. Simple-Atan
+
+# Note:
+# - for additional variants, see also file:
+#   Integrals.Double.Atan.Diff.R;
+
+
+### I( y * atan(x)^2 )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y * atan(x)^2, 0, y, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-13)
+(pi^2/8 + pi*log(2) + pi/2 - 4*Catalan - 1) / 6;
+
+### I( y^2 * atan(x)^2 )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y^2 * atan(x)^2, 0, y, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-13)
+((pi/4)^2 + pi*log(2)/4 - Catalan) / 3 - (pi/4 - log(2) + 1/4) / 9;
+
+
+### I( atan(x)^2 / x )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(x)^2 / x, 0, y, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-13)
+pi*Catalan / 2 + Catalan - (pi/4)^2 - pi*log(2)/4 - 7/8 * pracma::zeta(3);
+
+### I( y/x * atan(x)^2 )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y/x * atan(x)^2, 0, y, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-13)
+pi*Catalan / 4 - pi^2 / 32 + pi/8 - log(2)/4 - 7/16 * pracma::zeta(3);
+
+### I( y^2/x * atan(x)^2 )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y^2/x * atan(x)^2, 0, y, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-13)
+(3/2 * pi*Catalan - Catalan - (pi/4)^2 + pi*log(2)/4 + pi/2 - 21/8 * pracma::zeta(3) - 1) / 9;
+
+
+### Mixed:
 
 ### I( atan(x/y) * atan(x) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
