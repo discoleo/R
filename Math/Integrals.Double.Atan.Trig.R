@@ -123,6 +123,26 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	atan(sqrt(tan(x) * tan(y))), 0, pi/4, rel.tol=1E-12)$value), 0, pi/2, rel.tol=1E-12)
 (polylog2(sqrt(2)/2, 2) - 5/96 * pi^2 + log(2)^2 / 8) * pi/2;
 
+### on [0, pi/4]^2
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(sqrt(tan(x) * tan(y))), 0, pi/4, rel.tol=1E-12)$value), 0, pi/4, rel.tol=1E-12)
+(polylog2(sqrt(2)/2, 2) - 1/12 * pi^2 + log(2)^2 / 8) * pi/2;
+
+# Derivation
+lim = pi / c(3,5)
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(sqrt(tan(x) * tan(y))), 0, lim[1], rel.tol=1E-12)$value), 0, lim[2], rel.tol=1E-12)
+limt = sqrt(tan(lim));
+integrate(\(x) 4 * sapply(x, \(y) integrate(\(x)
+	x*y * atan(x*y) / (x^4+1) / (y^4+1), 0, limt[1], rel.tol=1E-12)$value), 0, limt[2], rel.tol=1E-12)
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * atan(x) / (x^4+y) / (y+1), 0, limt[1]*y^(1/4), rel.tol=1E-12)$value), 0, limt[2]^4, rel.tol=1E-12)
+integrate(\(x) x * atan(x) * sapply(x, \(y) integrate(\(x)
+	1 / (x+y^4) / (x+1), (y/limt[1])^4, limt[2]^4, rel.tol=1E-12)$value), 0, prod(limt), rel.tol=1E-12)
+integrate(\(x) x * atan(x) / (1-x^4) * (log(x^4+limt[1]^4) + log(x^4 + limt[2]^4) - log(x^4) +
+	- log(limt[1]^4+1) - log(limt[2]^4+1)), 0, prod(limt), rel.tol=1E-12);
+# TODO
+
 
 ### I( atan(sqrt(tan(x)^2 + tan(y)^2)) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
