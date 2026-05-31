@@ -380,6 +380,21 @@ integrate(\(x) - atan(x) * log(1-x) / x, 0, 1)$value - pi^3 / 24;
 ### I( log(x+y) / (1 + x^2 + y^2) )
 integrate(\(x) sapply(x, \(y)
 	integrate(\(x) log(x+y) / (1 + x^2 + y^2), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	2*x * log(x*(sin(y)+cos(y))) / (x^2 + 1), 0, 1/cos(y), rel.tol=1E-13)$value), 0, pi/4, rel.tol=1E-13)
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	2*x * log(x) / (x^2 + 1), 0, 1/cos(y), rel.tol=1E-13)$value), 0, pi/4, rel.tol=1E-13)$value +
+integrate(\(x) log((sin(x)+cos(x))) * log(1/cos(x)^2+1), 0, pi/4, rel.tol=1E-13)$value
+#
+integrate(\(x) 1 / (x * sqrt(x^2-1)) * sapply(x, \(y) integrate(\(x)
+	2*x * log(x) / (x^2 + 1), 0, y, rel.tol=1E-13)$value), 1, sqrt(2), rel.tol=1E-13)$value +
+integrate(\(x) log(sin(x+pi/4)*sqrt(2)) * (log(cos(x)^2+1) - 2*log(cos(x))), 0, pi/4, rel.tol=1E-13)$value
+# TODO
+
+# Helper:
+integrate(\(x) log((sin(x)+cos(x))) * log(cos(x)), 0, pi/4, rel.tol=1E-13)
+integrate(\(x) 3 * log(1-x) * log(x) / (x^2+1), 0, 1, rel.tol=1E-13)$value +
+	- 19/(3*128) * pi^3 + 3/4 * Catalan * log(2) + log(2)^2 * pi/8;
 # TODO
 
 
@@ -387,7 +402,7 @@ integrate(\(x) sapply(x, \(y)
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	log(x) / (2 - x^2 - y^2), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 integrate(\(x) log(1-x) * log(x) / (x^2+1), 0, 1)$value - pi^3 / 32;
-
+# TODO
 
 ### I( log(x+y) / (2 - x^2 - y^2) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
