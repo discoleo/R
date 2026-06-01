@@ -388,13 +388,26 @@ integrate(\(x) log((sin(x)+cos(x))) * log(1/cos(x)^2+1), 0, pi/4, rel.tol=1E-13)
 #
 integrate(\(x) 1 / (x * sqrt(x^2-1)) * sapply(x, \(y) integrate(\(x)
 	2*x * log(x) / (x^2 + 1), 0, y, rel.tol=1E-13)$value), 1, sqrt(2), rel.tol=1E-13)$value +
-integrate(\(x) log(sin(x+pi/4)*sqrt(2)) * (log(cos(x)^2+1) - 2*log(cos(x))), 0, pi/4, rel.tol=1E-13)$value
+integrate(\(x) log(sin(x+pi/4)*sqrt(2)) * (log(cos(x)^2+1) - 2*log(cos(x))), 0, pi/4, rel.tol=1E-13)$value;
+#
+integrate(\(x) log(sin(x+pi/4)*sqrt(2)) * log(cos(x)^2+1), 0, pi/4, rel.tol=1E-13)$value +
+integrate(\(x) 1/2 * log(x) * (pi/4 - atan(sqrt(x-1))) / (x+1), 1, 2, rel.tol=1E-13)$value +
+integrate(\(x)  -6 * log(1-x) * log(x) / (x^2+1), 0, 1, rel.tol=1E-13)$value +
+	+ 17/(3*64) * pi^3 - 3/2 * Catalan * log(2) - log(2)^2 * pi/4;
 # TODO
 
 # Helper:
 integrate(\(x) log((sin(x)+cos(x))) * log(cos(x)), 0, pi/4, rel.tol=1E-13)
 integrate(\(x) 3 * log(1-x) * log(x) / (x^2+1), 0, 1, rel.tol=1E-13)$value +
 	- 19/(3*128) * pi^3 + 3/4 * Catalan * log(2) + log(2)^2 * pi/8;
+# TODO
+
+#
+integrate(\(x) -4 / (x * sqrt(x^2-1)) * sapply(x, \(y) integrate(\(x)
+	2*x * log(x) / (x^2 + 1), 0, y, rel.tol=1E-13)$value), 1, sqrt(2), rel.tol=1E-13)
+integrate(\(x) sapply(x, \(x) Re(polylog2(x+2) - polylog2(1)) / ((x+1) * sqrt(x))), 0, 1, rel.tol=1E-12)
+# alternative:
+integrate(\(x) 2*log(x) * (atan(sqrt(x-1)) - pi/4) / (x+1), 1, 2, rel.tol=1E-13)$value + pi^3 / 24;
 # TODO
 
 
