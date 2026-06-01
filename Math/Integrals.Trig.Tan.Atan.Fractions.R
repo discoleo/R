@@ -93,16 +93,16 @@ pi*log(2)/8 + pi^2/64 - 1/4 * Catalan
 integrate(\(x) atan(x) / (x*(x+1)*(x^2+1)), 0, Inf)
 integrate(\(x) x / (tan(x) * (tan(x)+1)), 0, pi/2)
 integrate(\(x) x / tan(x) - x / (tan(x)+1), 0, pi/2)
-3/8 * pi*log(2) - pi^2/16 + Catalan/2
+3/8 * pi*log(2) - pi^2/16 + Catalan/2;
 
 ### on [0, 1]
 integrate(\(x) atan(x) / (x*(x+1)*(x^2+1)), 0, 1)
-- pi^2/64 + 3/4 * Catalan
+- pi^2/64 + 3/4 * Catalan;
 
 
 # Helper: I( x * cos(x) / (cos(x) + sin(x)) )
-x = pi/5
-integrate(\(x) x * cos(x) / (cos(x) + sin(x)), 0, x)
+lim = pi/5; x = lim;
+integrate(\(x) x * cos(x) / (cos(x) + sin(x)), 0, lim)
 x*log(cos(x) + sin(x)) / 2 + x^2/4 +
 	- integrate(\(x) 1/2 * log(cos(x) + sin(x)), 0, x)$value
 x*log(cos(x) + sin(x)) / 2 + x^2/4 - x*log(2)/4 +
@@ -135,6 +135,22 @@ pi^2/16 - (digamma(3/8 + 1/2) - digamma(3/8)) *
 	(digamma(1/8 + 1/2) - digamma(1/8)) / 32;
 
 
+###########
+### Pow = 3
+
+### I( atan(x) / (x^2+x+1) )
+integrate(\(x) atan(x) / (x^2+x+1), 0, Inf, rel.tol=1E-13)
+pi^2 / tan(pi/3) / 6;
+
+### I( atan(x) / (x^2-x+1) )
+integrate(\(x) atan(x) / (x^2-x+1), 0, Inf, rel.tol=1E-13)
+pi^2 / tan(pi/3) / 3;
+
+
+# TODO: remaining;
+
+
+###########
 ### Pow = 4
 
 ### I( x * atan(x) / (x^4 + 1) )
@@ -154,12 +170,12 @@ integrate(\(x) x^3 * atan(x) / (x^4 + 1), 0, 1)
 
 ### on [0, Inf]
 integrate(\(x) x^3 * atan(x) / (x^4 + 1) - pi/2/(x+1), 0, Inf)
-- pi * log(2*cos(pi/8)) / 2
+- pi * log(2*cos(pi/8)) / 2;
 
 ### on [0, Inf]
 integrate(\(x) x * atan(x) / (x^4 + 1), 0, Inf)
 integrate(\(x) x * (pi/2 - atan(x)) / (x^4 + 1), 0, Inf)
-pi^2/16
+pi^2/16;
 
 ### I( atan(x) / (x^4 + 1) )
 integrate(\(x) atan(x) / (x^4 + 1), 0, Inf)
