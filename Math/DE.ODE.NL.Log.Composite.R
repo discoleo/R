@@ -55,7 +55,7 @@ x*d2y + x*dy^2 - (2*x*df + n*x^n + (n-1))*dy +
 
 ### y = x * log(exp(x^n) + b0) + f0
 
-# Note: b0 has NO impact on ODE;
+# Note: b0 has NO impact on ODE; (b0 != 0)
 x = sqrt(3); n = -1/5; b0 = 4/5; bf = sqrt(2);
 params = list(x=x, n=n, b0=b0, bf=bf);
 e = expression(x * log(exp(x^n) + b0) + bf*x)[[1]];
@@ -70,6 +70,12 @@ x*(exp(x^n)+b0)*dy - (exp(x^n)+b0)*(y-f) - n*x^(n+1)*exp(x^n) - x*df*(exp(x^n)+b
 # exp(x^n) = - b0*(x*dy - (y-f) - x*df) / (x*dy - (y-f) - n*x^(n+1) - x*df);
 
 ### D2 =>
+x*(exp(x^n)+b0)*d2y +
+	+ n*x^n*exp(x^n)*(dy-df) - n*x^(n-1)*exp(x^n)*(y-f) +
+	- n*x^n*(n*x^n + n+1)*exp(x^n) - x*d2f*(exp(x^n)+b0) # = 0
+x^3 * (d2y-d2f) +
+	+ (x*(dy-df) - (y-f) - x*(n*x^n + n+1)) * (x*(dy-df) - (y-f)) # = 0
+
 # TODO
 
 
