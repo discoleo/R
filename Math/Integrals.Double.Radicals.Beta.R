@@ -62,3 +62,12 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x^p*y^q / (1 - x*y)^k, 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 (beta(p+1, 1-k) - beta(q+1, 1-k)) / (q-p);
 
+
+### I( x^(p-1) * y^(q-1) * (1 - x*y)^(k-1) )
+# in line with Beta-Definition:
+k = 1/sqrt(19);
+p = sqrt(3) - 1/5; q = sqrt(2) - 1/11;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^(p-1) * y^(q-1) * (1 - x*y)^(k-1), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+(beta(p, k) - beta(q, k)) / (q-p);
+
