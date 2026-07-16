@@ -71,3 +71,11 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x^(p-1) * y^(q-1) * (1 - x*y)^(k-1), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 (beta(p, k) - beta(q, k)) / (q-p);
 
+
+### Special Case: p == q
+k = 1/sqrt(19);
+p = sqrt(3) - 1/5;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^(p-1) * y^(p-1) * (1 - x*y)^(k-1), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+beta(p, k) * (digamma(p+k) - digamma(p));
+
