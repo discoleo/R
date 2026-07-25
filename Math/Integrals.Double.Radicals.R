@@ -85,7 +85,7 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 ### I( sqrt( y/x * (1-x) / (1 - x*y) ) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	sqrt( y/x * (1-x) / (1 - x*y) ), 0, 1, rel.tol=1E-10)$value), 0, 1, rel.tol=1E-8)
-3 - 2*Catalan
+3 - 2*Catalan;
 
 
 ### I( sqrt( x/y * (1-x) / (1 - x*y) ) )
@@ -177,6 +177,9 @@ gamma(1/4)^3 / gamma(3/4) * sqrt(2) / 24 - 2/3;
 ### I( sqrt((1-x^2)/(x*y) / (1 - x^2*y^2)) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	sqrt( (1-x^2)/(x*y) / (1 - x^2*y^2) ), 0, 1, rel.tol=1E-7)$value), 0, 1, rel.tol=1E-7)
+# more robust:
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	sqrt( (1-y^2)/(x*y) / (1 - x^2*y^2) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 # I( sqrt(x) / sqrt((1-x^2) * (1 - x^2*y^2)) ) +
 	+ beta(1/4, 1/2) * beta(1/2, 1/2) / 4 - 2;
 # TODO
@@ -481,6 +484,25 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	sqrt( (1 - x*y^2) / (1 - x^2*y) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 # TODO
+
+
+### I( sqrt( x*(1 - x) * (1 - x*y) ) )
+# Note: numerical issues with the x-variant;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	sqrt( y*(1 - y) * (1 - x*y) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+(digamma(7/4) - digamma(9/4)) / 3 + 4/9;
+
+### I( sqrt( x*y*(1 - x) * (1 - x*y) ) )
+# Note: numerical issues with the x-variant;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	sqrt( x*y*(1 - y) * (1 - x*y) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+Catalan - 7/10;
+
+
+### I( sqrt( x*(1 - x)*(1-y) * (1 - x*y) ) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	sqrt( y*(1 - x)*(1 - y) * (1 - x*y) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+- pi^2 / 8 + 7/15*pi;
 
 
 ####################
