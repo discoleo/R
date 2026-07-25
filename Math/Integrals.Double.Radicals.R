@@ -499,10 +499,29 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 Catalan - 7/10;
 
 
-### I( sqrt( x*(1 - x)*(1-y) * (1 - x*y) ) )
+### I( sqrt( (1 - x)*(1 - y) * (1 - x*y) ) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	sqrt( (1 - x)*(1 - y) * (1 - x*y) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+15/8*Catalan - 21/16;
+
+### I( sqrt( x*(1 - x)*(1 - y) * (1 - x*y) ) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	sqrt( y*(1 - x)*(1 - y) * (1 - x*y) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 - pi^2 / 8 + 7/15*pi;
+
+### I( sqrt( x*y * (1 - x)*(1 - y) * (1 - x*y) ) )
+# Npte: split into [0,1/2] + [1/2,1] & Rmpfr;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	sqrt( x*y * (1 - x)*(1 - y) * (1 - x*y) ), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+# TODO
+
+### I( sqrt( y/x * (1 - x)*(1 - y) * (1 - x*y) ) )
+# Note: split into [0,y] + [y,1];
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	sqrt( y/x * (1 - x)*(1 - y) * (1 - x*y) ), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+gamma(3/4)^3 / gamma(9/4) * sqrt(2) / 4;
+beta(3/4,1/2)^2 / 10;
+beta(3/4,1/2) * beta(3/4,3/2) / 4;
 
 
 ####################
