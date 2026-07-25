@@ -6,7 +6,7 @@
 ## Double Integrals:
 ## Radicals of Polynomials
 ##
-## v.0.2i
+## v.0.2k
 
 
 ### Double Integrals:
@@ -30,6 +30,8 @@
 # - [refactor] moved various Explicit Cases
 #   of I( ... * y^q * ((1 - x)/(1 - x*y^n))^n ) to file:
 #   Integrals.Double.Radicals.2Comp.R;
+# - [refactor] moved Inhomogeneous Cases
+#   to file: Integrals.Double.Radicals.InHomo.R;
 
 
 ####################
@@ -238,93 +240,8 @@ pi/2 - gamma(3/4)^2 / gamma(1/2) * sqrt(2) * 4/5;
 pi/2 - gamma(3/4)*gamma(7/4) / gamma(7/2) * sqrt(2) * 2;
 
 
-### Type: (1-x) * ...
-
-### I( sqrt( (1-x) / (1 - x^2*y^2) ) )
-integrate(\(x) sapply(x, \(y) integrate(\(x)
-	sqrt( (1-x) / (1 - x^2*y^2) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
-#
-integrate(\(x) 2 * sapply(x, \(y) integrate(\(x)
-	sqrt( (1-x) * (1 - x^2*y^2) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)$value +
-	- (1/3 - 1/5 - 1/2^(3/2)/3 + 1/2^(5/2)/5) * sqrt(2) * 8;
-# TODO
-
-
-### I( sqrt( (1 - x^2*y^2) / (1-x) ) )
-integrate(\(x) sapply(x, \(y) integrate(\(x)
-	sqrt( (1 - x^2*y^2) / (1-x) ), 0, 1, rel.tol=1E-11)$value), 0, 1, rel.tol=1E-13)
-# I( sqrt( (1-x) * (1 - x^2*y^2) ) ) +
-	+ (1/3 - 1/5 - 1/2^(3/2)/3 + 1/2^(5/2)/5) * sqrt(2) * 16;
-# TODO
-
-
-### I( sqrt( x*(1-x) / (1 - x^2*y^2) ) )
-integrate(\(x) sapply(x, \(y) integrate(\(x)
-	sqrt( x*(1-x) / (1 - x^2*y^2) ), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
-# TODO
-
-
-### I( sqrt( y*(1-x) / (1 - x^2*y^2) ) )
-integrate(\(x) sapply(x, \(y) integrate(\(x)
-	sqrt( y*(1-x) / (1 - x^2*y^2) ), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
-# TODO
-
-
-### I( sqrt( (1-x)*(1-y) / (1 - x^2*y^2) ) )
-integrate(\(x) sapply(x, \(y) integrate(\(x)
-	sqrt( (1-x)*(1-y) / (1 - x^2*y^2) ), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
-# TODO
-
-
-### I( sqrt( (1-x) * (1 - x^2*y^2) ) )
-integrate(\(x) sapply(x, \(y) integrate(\(x)
-	sqrt( (1-x) * (1 - x^2*y^2) ), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
-integrate(\(x) sapply(x, \(y) integrate(\(x)
-	1/2 * sqrt( (1-x) / (1 - x^2*y^2) ), 0, 1, rel.tol=1E-13)$value
-	), 0, 1, rel.tol=1E-13)$value +
-	+ (1/3 - 1/5 - 1/2^(3/2)/3 + 1/2^(5/2)/5) * sqrt(2) * 4;
-# TODO
-
-
-### I( sqrt( (1-x)*(1-y) * (1 - x^2*y^2) ) )
-integrate(\(x) sapply(x, \(y) integrate(\(x)
-	sqrt( (1-x)*(1-y) * (1 - x^2*y^2) ), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
-# I(sqrt( (1-x)*(1-y) / (1 - x^2*y^2) ) ) * 2/5 +
-# I(sqrt( (1-x)/(1-y) * (1 - x^2*y^2) ) ) / 5;
-# TODO
-
-
-### I( 1 / sqrt( (1+x) * (1 - x^2*y^2) ) )
-integrate(\(x) sapply(x, \(y) integrate(\(x)
-	1 / sqrt( (1+x) * (1 - x^2*y^2) ), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
-integrate(\(x) 8 * x^3 * atan(x) / (x^4 + 1), 0, 1, rel.tol=1E-13);
-(digamma(7/8) - digamma(3/8))^2 / 16 +
-	- (digamma(5/8) - digamma(1/8))^2 / 16 + 4*Catalan;
-
-
-### I( sqrt( (1+x) / (1 - x^2*y^2) ) )
-integrate(\(x) sapply(x, \(y) integrate(\(x)
-	sqrt( (1+x) / (1 - x^2*y^2) ), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
-integrate(\(x) sapply(x, \(y) integrate(\(x)
-	2 * sqrt( (1+x) * (1 - x^2*y^2) ), 0, 1)$value), 0, 1)$value - 14/15;
-# TODO
-
-
-### I( y * sqrt( (1+x) / (1 - x^2*y^2) ) )
-integrate(\(x) sapply(x, \(y) integrate(\(x)
-	y * sqrt( (1+x) / (1 - x^2*y^2) ), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
-log(tan(pi/8)) - sqrt(2) + 3;
-
-
-### I( x*y * sqrt( (1+x) / (1 - x^2*y^2) ) )
-integrate(\(x) sapply(x, \(y) integrate(\(x)
-	x*y * sqrt( (1+x) / (1 - x^2*y^2) ), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
-1.337828528819 - 0.9388152447781;
-# see: I( sqrt( (1+x) / (1 - x^2*y^2) ) ) & I( ((1+x) * (1 - x*y) / (1 + x*y))^(1/2) );
-# TODO
-
-
 ### I( sqrt( (1-x)/(1+x) / (1 - x^2*y^2) ) )
+# - are actually homogenous;
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	sqrt( (1-x)/(1+x) / (1 - x^2*y^2) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 2*Catalan - pi^2/8;
@@ -345,18 +262,11 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 pi^2/8 + 1;
 
 
-### I( sqrt( (1-x)/(1+y) / (1 - x^2*y^2) ) )
-integrate(\(x) sapply(x, \(y) integrate(\(x)
-	sqrt( (1-x)/(1+y) / (1 - x^2*y^2) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
-# TODO
-
-### I( sqrt( (1+x)/(1+y) / (1 - x^2*y^2) ) )
-integrate(\(x) sapply(x, \(y) integrate(\(x)
-	sqrt( (1+x)/(1+y) / (1 - x^2*y^2) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
-# TODO
-
 
 ### Mixed: Pow = 1 & 2
+# Special Case:
+# - All non-trivial x are/become Pow = 1;
+# - y is Pow = 2;
 
 ### I( x / sqrt((1-x^2) * (1-y^2) * (1 - x^2*y^2)) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
@@ -420,7 +330,8 @@ pi^2/8 - 1/2;
 ### I( x * sqrt( (1-x) / (1 - x*y^2) ) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x * sqrt( (1-x) / (1 - x*y^2) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
-pracma::psi(1, 1/2) / 16; # pi^2 / 32;
+pracma::psi(1, 1/2) / 16; # may not be the generalisation;
+pi^2 / 32;
 
 
 ### I( y^2 * sqrt( (1-x) / (1 - x*y^2) ) )
@@ -430,6 +341,7 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 
 
 ### I( sqrt( (1-y) / (1 - x*y^2) ) )
+# - see also Inhomogeneous Radicals;
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	sqrt( (1-y) / (1 - x*y^2) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 (sqrt(2) - 1)*6 + 2*log(sqrt(2) - 1);
@@ -445,12 +357,6 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	sqrt( y*(1-x) / (1 - x*y^2) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 (2*pi - 4*log(2) - 2) / 3;
-
-
-### I( sqrt( (1-x)*(1-y) / (1 - x*y^2) ) )
-integrate(\(x) sapply(x, \(y) integrate(\(x)
-	sqrt( (1-x)*(1-y) / (1 - x*y^2) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
-# TODO
 
 
 ### Div: I( sqrt( x/y * (1-x) / (1 - x*y^2) ) )
