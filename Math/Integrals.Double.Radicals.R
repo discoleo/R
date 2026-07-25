@@ -200,6 +200,7 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 1;
 
 ### I( sqrt( x / ((1-x^2) * (1 - x^2*y^2)) ) )
+# - better accuray on [0,y] + [y,1];
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	sqrt(x / ((1-x^2) * (1 - x^2*y^2))), 0, 1, rel.tol=1E-9)$value), 0, 1, rel.tol=1E-9)
 0.1943688252405 * 4 + 2/3;
@@ -396,7 +397,7 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 - pi^2 / 8 + 7/15*pi;
 
 ### I( sqrt( x*y * (1 - x)*(1 - y) * (1 - x*y) ) )
-# Npte: split into [0,1/2] + [1/2,1] & Rmpfr;
+# Npte: split into [0,y] + [y,1];
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	sqrt( x*y * (1 - x)*(1 - y) * (1 - x*y) ), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 # TODO
@@ -408,6 +409,14 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 gamma(3/4)^3 / gamma(9/4) * sqrt(2) / 4;
 beta(3/4,1/2)^2 / 10;
 beta(3/4,1/2) * beta(3/4,3/2) / 4;
+
+
+### SQRT: Higher Power
+
+### I( sqrt( (1 - x^3) * (1 - x^3*y) ) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	sqrt( (1-x^3) * (1 - x^3*y) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+- beta(1/3,1/3) * 2^(2/3) / 12 + 3/2;
 
 
 ####################
