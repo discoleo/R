@@ -362,7 +362,7 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 ### Div: I( sqrt( x/y * (1-x) / (1 - x*y^2) ) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	sqrt( x/y * (1-x) / (1 - x*y^2) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
-# TODO
+(gamma(1/4)^3 / gamma(3/4) * sqrt(2) / 4 + 4) / 21;
 
 
 ### Div: I( sqrt( y/x * (1-x) / (1 - x*y^2) ) )
