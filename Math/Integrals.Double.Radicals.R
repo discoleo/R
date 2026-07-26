@@ -416,7 +416,17 @@ beta(3/4,1/2) * beta(3/4,3/2) / 4;
 ### I( sqrt( (1 - x^3) * (1 - x^3*y) ) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	sqrt( (1-x^3) * (1 - x^3*y) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
-- beta(1/3,1/3) * 2^(2/3) / 12 + 3/2;
+- beta(1/3, 1/3) * 2^(2/3) / 12 + 3/2;
+
+### I( sqrt( (1-x^4) * (1 - x^4*y) ) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	sqrt( (1-x^4) * (1 - x^4*y) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+- beta(1/4, 1/4) * sqrt(2) / 18 + 64/45;
+
+### I( sqrt( (1-x^5) * (1 - x^5*y) ) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	sqrt( (1-x^5) * (1 - x^5*y) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+- beta(1/5, 1/5) * 2^(2/5) / 24 + 25/18;
 
 
 ####################
