@@ -428,6 +428,12 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	sqrt( (1-x^5) * (1 - x^5*y) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 - beta(1/5, 1/5) * 2^(2/5) / 24 + 25/18;
 
+### Gen: I( sqrt( (1-x^n) * (1 - x^n*y) ) )
+n = 7; # n = 8; # n = pi;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	sqrt( (1-x^n) * (1 - x^n*y) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+- beta(1/n, 1/n) * 2^(2/n) / (6*(n-1)) + 4/3 * n^2 / (n^2-1);
+
 
 ####################
 ####################
