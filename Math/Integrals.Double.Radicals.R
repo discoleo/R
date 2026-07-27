@@ -447,6 +447,26 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 - beta(1/n, 1/n) * 2^(2/n-1) / (n-1) + 2*n/(n-1);
 
 
+### Free Terms:
+
+### I( y * sqrt( (1-x^3) / (1 - x^3*y) ) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y * sqrt( (1-x^3) / (1 - x^3*y) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+(- beta(1/3, 1/3) * 2^(2/3) + 36) / 60;
+(- beta(1/3, 1/6) + 36) / 60;
+
+### I( y * sqrt( (1-x^4) / (1 - x^4*y) ) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y * sqrt( (1-x^4) / (1 - x^4*y) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+(- beta(1/4, 1/4) * 2^(2/4) + 40) / 63;
+(- beta(1/4, 4/8) * 2 + 40) / 63;
+
+### I( y * sqrt( (1-x^n) / (1 - x^n*y) ) )
+n = 5;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y * sqrt( (1-x^n) / (1 - x^n*y) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+# TODO
+
 
 ####################
 ####################
