@@ -449,6 +449,17 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 
 ### Free Terms:
 
+### I( y * sqrt( (1-x^3) * (1 - x^3*y) ) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y * sqrt( (1-x^3) * (1 - x^3*y) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+(- beta(1/3, 1/3) * 2^(2/3) / 6 + 21) / 50;
+
+### I( y * sqrt( (1-x^4) * (1 - x^4*y) ) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y * sqrt( (1-x^4) * (1 - x^4*y) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+(- beta(1/4, 1/4) * 2^(2/4) + 704/5) / (5*7*9);
+
+
 ### I( y * sqrt( (1-x^3) / (1 - x^3*y) ) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	y * sqrt( (1-x^3) / (1 - x^3*y) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
