@@ -435,6 +435,19 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 - beta(1/n, 1/n) * 2^(2/n) / (6*(n-1)) + 4/3 * n^2 / (n^2-1);
 
 
+### I( sqrt( (1 - x^3) / (1 - x^3*y) ) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	sqrt( (1-x^3) / (1 - x^3*y) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+- beta(1/3, 1/3) * 2^(2/3) / 4 + 3;
+
+### Gen: I( sqrt( (1 - x^n) / (1 - x^n*y) ) )
+n = 4; # n = 5; # n = 7; # n = pi;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	sqrt( (1-x^n) / (1 - x^n*y) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+- beta(1/n, 1/n) * 2^(2/n-1) / (n-1) + 2*n/(n-1);
+
+
+
 ####################
 ####################
 
