@@ -472,11 +472,17 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 (- beta(1/4, 1/4) * 2^(2/4) + 40) / 63;
 (- beta(1/4, 4/8) * 2 + 40) / 63;
 
-### I( y * sqrt( (1-x^n) / (1 - x^n*y) ) )
+### I( y * sqrt( (1-x^5) / (1 - x^5*y) ) )
 n = 5;
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	y * sqrt( (1-x^n) / (1 - x^n*y) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
-# TODO
+(- beta(1/5, 1/5) * 2^(2/5) * 3 + 140) / 216;
+
+### I( y * sqrt( (1-x^n) / (1 - x^n*y) ) )
+n = 6;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y * sqrt( (1-x^n) / (1 - x^n*y) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+(- beta(1/n, 1/n) * 2^(2/n) * (n-2) + 216) / 330;
 
 
 ####################
