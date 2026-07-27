@@ -460,6 +460,12 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 (- beta(1/4, 1/4) * 2^(2/4) + 704/5) / (5*7*9);
 
 
+### Gen: I( y * sqrt( (1-x^n) / (1 - x^n*y) ) )
+n = 7; # n = pi;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y * sqrt( (1-x^n) / (1 - x^n*y) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+(- beta(1/n, 1/n) * 2^(2/n) * (n-2) + 8*n^2 - 12*n) / (6*(2*n-1)*(n-1));
+
 ### I( y * sqrt( (1-x^3) / (1 - x^3*y) ) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	y * sqrt( (1-x^3) / (1 - x^3*y) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
@@ -469,7 +475,7 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 ### I( y * sqrt( (1-x^4) / (1 - x^4*y) ) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	y * sqrt( (1-x^4) / (1 - x^4*y) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
-(- beta(1/4, 1/4) * 2^(2/4) + 40) / 63;
+(- beta(1/4, 1/4) * 2^(2/4) * 2 + 80) / 126;
 (- beta(1/4, 4/8) * 2 + 40) / 63;
 
 ### I( y * sqrt( (1-x^5) / (1 - x^5*y) ) )
@@ -483,6 +489,18 @@ n = 6;
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	y * sqrt( (1-x^n) / (1 - x^n*y) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 (- beta(1/n, 1/n) * 2^(2/n) * (n-2) + 216) / 330;
+
+#
+n = 7;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y * sqrt( (1-x^n) / (1 - x^n*y) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+(- beta(1/n, 1/n) * 2^(2/n) * (n-2) + 308) / 468;
+
+#
+n = 8;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y * sqrt( (1-x^n) / (1 - x^n*y) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+(- beta(1/n, 1/n) * 2^(2/n) * (n-2) + 8*n^2 - 12*n) / (6*(2*n-1)*(n-1));
 
 
 ####################
