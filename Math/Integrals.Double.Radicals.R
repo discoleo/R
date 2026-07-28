@@ -539,6 +539,21 @@ integrate(\(x) sapply(x, \(z) integrate(\(x, z1=z) sapply(x, \(y, z2=z1) integra
 	y=y, z=z2, 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 (log(2) - 1/4) * pi / 2 - (digamma(7/4) - digamma(9/4)) / 2 - 2/3;
 
+### I( sqrt( x*y*z * (1 - x*y*z) ) )
+integrate(\(x) sapply(x, \(z) integrate(\(x) sapply(x, \(y) integrate(\(x)
+	sqrt( x*y*z * (1 - x*y*z) ), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+integrate(\(x) sapply(x, \(z) integrate(\(x) sapply(x, \(y) integrate(\(x)
+	sqrt(x * (1-x)) / (y*z), 0, y*z, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+integrate(\(x) 1/4 * sapply(x, \(z) integrate(\(x) sapply(x, \(y)
+	# (asin(sqrt(y*z)) - sin(4*asin(sqrt(y*z)))/4) / (y*z)
+	(asin(sqrt(y*z)) - sqrt(y*z*(1-y*z)) * (1 - 2*y*z)) / (y*z)
+	), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+integrate(\(x) -1/4 * sapply(x, \(z) integrate(\(x) sapply(x, \(y)
+	sqrt(y*z*(1-y*z)) * (1 - 2*y*z) / (y*z)
+	), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)$value +
+	+ (pi^2 / 12 + log(2)^2) * pi/4;
+(pi^2 / 3 + 4*log(2)^2 - 2*log(2) - 5/2) * pi/16;
+
 
 ####################
 ####################
