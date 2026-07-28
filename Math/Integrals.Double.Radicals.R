@@ -449,15 +449,37 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 
 ### Free Terms:
 
+### Gen: I( y * sqrt( (1-x^n) * (1 - x^n*y) ) )
+n = 7; # n = pi; # n = exp(2);
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y * sqrt( (1-x^n) * (1 - x^n*y) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+(- beta(1/n, 1/n) * 2^(2/n) * (n-2)*(n+1)/2 + 4*(4*n - 5)*n^2) / (15*(2*n-1)*(n^2-1));
+
 ### I( y * sqrt( (1-x^3) * (1 - x^3*y) ) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	y * sqrt( (1-x^3) * (1 - x^3*y) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
-(- beta(1/3, 1/3) * 2^(2/3) / 6 + 21) / 50;
+(- beta(1/3, 1/3) * 2^(2/3) * 2 + 21*12) / 600;
 
 ### I( y * sqrt( (1-x^4) * (1 - x^4*y) ) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	y * sqrt( (1-x^4) * (1 - x^4*y) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
-(- beta(1/4, 1/4) * 2^(2/4) + 704/5) / (5*7*9);
+(- beta(1/4, 1/4) * 2^(2/4) * 5 + 704) / (25*7*9);
+
+### I( y * sqrt( (1-x^5) * (1 - x^5*y) ) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y * sqrt( (1-x^5) * (1 - x^5*y) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+(- beta(1/5, 1/5) * 2^(2/5) * 9 + 1500) / (3*1080);
+
+### I( y * sqrt( (1-x^6) * (1 - x^6*y) ) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y * sqrt( (1-x^6) * (1 - x^6*y) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+(- beta(1/6, 1/6) * 2^(2/6) * 14 + 2736) / 5775;
+
+### I( y * sqrt( (1-x^n) * (1 - x^n*y) ) )
+n = 7;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y * sqrt( (1-x^n) * (1 - x^n*y) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+(- beta(1/n, 1/n) * 2^(2/n) * (n-2)*(n+1)/2 + 4*(4*n - 5)*n^2) / (15*(2*n-1)*(n^2-1));
 
 
 ### Gen: I( y * sqrt( (1-x^n) / (1 - x^n*y) ) )
