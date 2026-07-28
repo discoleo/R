@@ -525,6 +525,21 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 (- beta(1/n, 1/n) * 2^(2/n) * (n-2) + 8*n^2 - 12*n) / (6*(2*n-1)*(n-1));
 
 
+### Triple
+
+### I( sqrt( x*y * (1 - x*y*z) ) )
+FUN = \(x,y,z) sqrt( x*y * (1 - x*y*z) )
+integrate(\(x) sapply(x, \(z) integrate(\(x, z1=z) sapply(x, \(y, z2=z1) integrate(FUN,
+	y=y, z=z2, 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+- (pi*log(2) + 3/4 * pi - 16/3) / 2;
+
+### I( x * sqrt( y*z * (1 - x*y*z) ) )
+FUN = \(x,y,z) x * sqrt( y*z * (1 - x*y*z) )
+integrate(\(x) sapply(x, \(z) integrate(\(x, z1=z) sapply(x, \(y, z2=z1) integrate(FUN,
+	y=y, z=z2, 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+(log(2) - 1/4) * pi / 2 - (digamma(7/4) - digamma(9/4)) / 2 - 2/3;
+
+
 ####################
 ####################
 
