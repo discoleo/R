@@ -33,3 +33,37 @@ integrate(\(x) 1/2 / cos(x) * exp(x), -pi/4, pi/4)
 integrate(\(x) cosh(x) / cos(x), 0, pi/4)
 # TODO
 
+
+#####################
+
+### I( atan(atan(x) / atan(up-x)) ) on [0,up]
+lim = exp(-1);
+integrate(\(x) atan(atan(x) / atan(lim-x)), 0, lim, rel.tol=1E-13)
+pi/4 * lim;
+
+### I( atan(atan(x) / atan(1-x)) )
+integrate(\(x) atan(atan(x) / atan(1-x)), 0, 1, rel.tol=1E-13)
+pi/4;
+
+### I( atan(atan(x) / atan(2-x)) ) on [0,2]
+integrate(\(x) atan(atan(x) / atan(2-x)), 0, 2, rel.tol=1E-13)
+pi/2;
+
+
+### I( atan(log(x) / log(1-x)) )
+up = exp(-1); # up <= 1;
+integrate(\(x) atan(log(x) / log(up-x)), 0, up, rel.tol=1E-13)
+pi/4 * up;
+
+#
+integrate(\(x) atan(log(x) / log(1-x)), 0, 1, rel.tol=1E-13)
+pi/4;
+
+#
+integrate(\(x) atan(log(x) / log(1/2-x)), 0, 1/2, rel.tol=1E-13)
+pi/8;
+
+#
+integrate(\(x) atan(log(x) / log(1/3-x)), 0, 1/3, rel.tol=1E-13)
+pi/12;
+
