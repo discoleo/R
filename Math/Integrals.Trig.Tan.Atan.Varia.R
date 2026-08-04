@@ -24,13 +24,23 @@ pi/4 * log(4*pi^3) - pi*log(gamma(1/4)) + pi*Euler/4
 integrate(\(x) x^2 * cosh(atan(x)) / sqrt(x^2 + 1), 0, 1)
 integrate(\(x) 1/2 * x^2 * exp(atan(x)) / sqrt(x^2 + 1), -1, 1)
 integrate(\(x) 1/2 * sin(x)^2 / cos(x)^3 * exp(x), -pi/4, pi/4)
-exp(-pi/4) * sqrt(2)/2
+exp(-pi/4) * sqrt(2)/2;
+
+### I( x^2 * sinh(atan(x)) / sqrt(x^2 + 1) )
+integrate(\(x) x^2 * sinh(atan(x)) / sqrt(x^2 + 1), 0, 1)
+1/2 - exp(-pi/4) * sqrt(2)/2;
 
 
 ### I( cosh(atan(x)) / sqrt(x^2 + 1) )
 integrate(\(x) cosh(atan(x)) / sqrt(x^2 + 1), 0, 1)
 integrate(\(x) 1/2 / cos(x) * exp(x), -pi/4, pi/4)
 integrate(\(x) cosh(x) / cos(x), 0, pi/4)
+# TODO
+
+
+### I( x * sinh(atan(x)) / sqrt(x^2 + 1) )
+integrate(\(x) x * sinh(atan(x)) / sqrt(x^2 + 1), 0, 1)
+integrate(\(x) - cosh(x) / cos(x), 0, pi/4)$value + sinh(pi/4) * sqrt(2);
 # TODO
 
 
