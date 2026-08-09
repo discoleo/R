@@ -1038,11 +1038,17 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x / ((1 - x^4) * (1 - x^4*y^4)^2)^(1/4), 0, 1, rel.tol=1E-11)$value), 0, 1, rel.tol=1E-12)
 beta(1/4, 1/2) * (digamma(7/8) - digamma(3/8)) / 16;
 
+### I( x*y / ((1 - x^4) * (1 - x^4*y^4)^2)^(1/4) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x*y / ((1 - x^4) * (1 - x^4*y^4)^2)^(1/4), 0, 1, rel.tol=1E-11)$value), 0, 1, rel.tol=1E-12)
+0.2551349670306 * beta(1/4, 2/4) / 4;
+# TODO: I( x*y^2 / ((1 - x^4) * (1 - x^4*y^4)^3)^(1/4) );
+
 ### I( x*y^2 / ((1 - x^4) * (1 - x^4*y^4)^2)^(1/4) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x*y^2 / ((1 - x^4) * (1 - x^4*y^4)^2)^(1/4), 0, 1, rel.tol=1E-11)$value), 0, 1, rel.tol=1E-12)
 0.38547138054*4 - gamma(1/4)^2 / gamma(1/2) * sqrt(2) / 8;
-# TODO: I( y^2 / ((1 - x^4) * (1 - x^4*y^4))^(1/4) )
+# TODO: I( y^2 / ((1 - x^4) * (1 - x^4*y^4))^(1/4) );
 
 
 ### I( x^2 / ((1 - x^4) * (1 - x^4*y^4)^2)^(1/4) )
@@ -1105,6 +1111,38 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	1 / ((1 - x^4) * (1 - x^4*y^4)^3)^(1/4), 0, 1, rel.tol=1E-11)$value), 0, 1, rel.tol=1E-11)
 # TODO
+
+### I( x / ((1 - x^4) * (1 - x^4*y^4)^3)^(1/4) )
+# Note: split over [0,y] + [y,1];
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x / ((1 - x^4) * (1 - x^4*y^4)^3)^(1/4), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-13)
+gamma(1/4)^2 * gamma(1/2) * sqrt(2) / 16 - 1/2 - 2*0.4453575428195;
+# TODO: I( x * ((1 - x^4) / (1 - x^4*y^4))^(1/4) );
+
+### I( x^2 / ((1 - x^4) * (1 - x^4*y^4)^3)^(1/4) )
+# Note: split over [0,y] + [y,1];
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^2 / ((1 - x^4) * (1 - x^4*y^4)^3)^(1/4), 0,1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-13)
+(digamma(7/8) - digamma(3/8)) / 4;
+
+### I( y / ((1 - x^4) * (1 - x^4*y^4)^3)^(1/4) )
+# Note: split over [0,y] + [y,1];
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y / ((1 - x^4) * (1 - x^4*y^4)^3)^(1/4), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-13)
+sum(digamma(c(1,3,5,7)/8) * c(-1,1,1,-1)) / 8;
+
+### I( x*y / ((1 - x^4) * (1 - x^4*y^4)^3)^(1/4) )
+# Note: split over [0,y] + [y,1];
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x*y / ((1 - x^4) * (1 - x^4*y^4)^3)^(1/4), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-13)
+0.1943688252405 + 1/6;
+# TODO: I( x*y * ((1 - x^4) / (1 - x^4*y^4))^(3/4) );
+
+### I( x*y^2 / ((1 - x^4) * (1 - x^4*y^4)^3)^(1/4) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x*y^2 / ((1 - x^4) * (1 - x^4*y^4)^3)^(1/4), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-13)
+1.0205398681224 / 4;
+# TODO: I( sqrt(x*y / ((1-x^2) * (1 - x^2*y^2))) );
 
 
 ### Full:
