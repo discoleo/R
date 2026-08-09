@@ -1,9 +1,11 @@
 
 # Climatology & Climate Change
 
-There is a major discrepancy between the magnitude of "real" processes arising due to climate change and the most known parameter used to quantify climate change, i.e. mean temperature.
+There is a major discrepancy between the magnitude of "real" processes arising due to climate change and the most known parameter used to quantify climate change, i.e. **mean temperature**.
 
 I have witnessed over the past 40 years massive changes to real components of the climate: the tiny changes in mean temperature **cannot** reflect such physical changes. Something is missing from the theories and from our understanding.
+
+The shutdown during 2026 of nuclear power plants in Hungary and Romania due to very low Danube levels was absolutely unexpected. Many other rivers across Europe are at very low levels. These conditions are likely to worsen in the next years, probably affecting even more nuclear power plants across Europe and the world. Despite all these catastrophic effects, the sciences seem to break down badly when trying to explain climate change.
 
 Although not an expert in the field, I did read from time to time scientific literature on the subject, especially relating to infectious diseases and medicine. I will try to offer some new ideas and fill the theoretical gap.
 
@@ -13,7 +15,7 @@ Temperature varies widely during the day and during the various seasons. Computi
 
 ## Temperature Buffering
 
-The changes affecting the global climate, including the hydrosphere of the planet, are visible almost everywhere on earth. Despite this, the mean temperature has barely changed over the past decades. This section tries to provide the true underlying reason why the mean temperature fails to properly reflect the climate change.
+The changes affecting the global climate, including the hydrosphere of the planet, are visible almost everywhere on earth. Despite this, the mean temperature has barely changed over the past decades. This section tries to provide the true underlying reason why the **mean temperature** fails to properly reflect the climate change.
 
 Gigantic buffering systems probably operate on the entire planet, dampening the increase in temperature. However, the buffering itself impacts other components of the climate, producing visible effects, even if the mean temperature remains almost constant.
 
@@ -24,9 +26,11 @@ Almost 70% of earth is covered by water. A rise in temperature induces increased
 Hot air ascends in the atmosphere. A rising temperature may increase the temperature across a large portion of the air-column, therefore blunting the increase in temperature at ground level.
 
 3. Evaporated Water
-Mechanism 2 may actually impact the state of evaporated water. Water in clouds may be heated up persisting as vapour. Condensation processes may favour rain instead of snow or ice. Such processes also blunt the sharp increase in temperature.
+Mechanism 2 may actually impact the state of evaporated water. Water in clouds may be heated up, resulting in warmer vapour, which persists as vapour. Condensation processes may favour rain instead of snow or ice. Such processes also blunt the sharp increase in temperature.
 
 
 Although all these processes buffer the increase in temperature, they do have profound effects on the actual climate. Firstly, there is an increase in the quantity of water that evaporates. In addition, this water will mostly precipitate as rain and not snow. Snow persists longer and provides a steady source of water in the spring. Unlike snow, rain-water flows immediately downstream, with a direct impact on the hydrology in various regions of the world. These mechanisms explain the visible changes, despite the marginal increases in mean temperature.
+
+The absence of snow and the absence of the slow melting process of snow, is probably severely affecting water levels across various rivers in Europe and the US.
 
 ## TODO
