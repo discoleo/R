@@ -72,6 +72,12 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x * sqrt(abs(x-y)) / (1 - x*y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 4/9;
 
+### I( sqrt(abs(x-y) / x) / (1 - x*y) )
+# Note: symmetric, but better numerical stability;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	sqrt(abs(x-y) / y) / (1 - x*y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+pi^2/4 + pi * (1-log(2)) - 2;
+
 
 ### 2 Components:
 
@@ -162,6 +168,11 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	sqrt( abs(x-y) / (1 - x^2*y^2) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 # TODO
+
+### I( x * sqrt( abs(x-y) / (1 - x^2*y^2) ) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * sqrt( abs(x-y) / (1 - x^2*y^2) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+(1/3 - 1/5 - 1/2^(3/2)/3 + 1/2^(5/2)/5) * sqrt(2) * 40/3 - 2/3;
 
 
 ####################
