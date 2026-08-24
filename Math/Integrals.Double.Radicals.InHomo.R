@@ -152,3 +152,10 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 # TODO
 
 
+### I( x * sqrt( (1 - x*y^2) / (1 - x^2*y) ) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * sqrt( (1 - x*y^2) / (1 - x^2*y) ), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+# I( - x * sqrt( abs(x-y) / (1 - x^2*y^2) ) ) +
+# + (log(sqrt(2) + 1) - log(2) + sqrt(2) - 1) * 4/3;
+(log(sqrt(2) + 1) - log(2) + (2 - sqrt(2))/3) * 4/3;
+
