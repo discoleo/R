@@ -57,6 +57,21 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	sqrt( x/y * abs(x-y) / (1 - x*y) ), 0, 1, rel.tol=1E-11)$value), 0, 1, rel.tol=1E-12)
 8/9;
 
+### I( sqrt(x * abs(x-y)) / (1 - x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	sqrt(x * abs(x-y)) / (1 - x*y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+pracma::psi(1, 3/4) / 2 - pi * 3/2 + 4;
+
+### I( sqrt(x*y * abs(x-y)) / (1 - x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	sqrt(x*y * abs(x-y)) / (1 - x*y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+gamma(3/4)^2 * gamma(1/2) * sqrt(2) * 4 - pi * 14/3;
+
+### I( x * sqrt(abs(x-y)) / (1 - x*y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * sqrt(abs(x-y)) / (1 - x*y), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+4/9;
+
 
 ### 2 Components:
 
