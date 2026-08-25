@@ -93,6 +93,12 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 # TODO
 
 
+### I( x * sqrt( (1+x) / (1 - x^2*y^2) ) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * sqrt( (1+x) / (1 - x^2*y^2) ), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+pi * sqrt(2) * 2/3 - 20/9;
+
+
 ### I( y * sqrt( (1+x) / (1 - x^2*y^2) ) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	y * sqrt( (1+x) / (1 - x^2*y^2) ), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)

@@ -229,8 +229,8 @@ pi/3 + (log(2) - 1) * 2;
 # on [y, 1]
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	y^(-1/4) * (abs(x - y) / (1 - x*y))^(1/4), y, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
-# 4/3 - I( x * sqrt( (1+x) / (1 - x^2*y^2) ) );
-# TODO
+# also: 4/3 - I( x * sqrt( (1+x) / (1 - x^2*y^2) ) );
+- pi * sqrt(2) * 2/3 + 32/9;
 
 
 ### I( y^(3/4) * (abs(x - y) / (1 - x*y))^(1/4) )
