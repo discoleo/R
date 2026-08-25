@@ -180,9 +180,50 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 
 ### Power = 3
 
+### I( (abs(x^3 - y^3) / (1 - x^3*y^3))^(1/3) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	(abs(x^3 - y^3) / (1 - x^3*y^3))^(1/3), 0, 1, rel.tol=1E-11)$value), 0, 1, rel.tol=1E-12)
+
 ### I( x * (abs(x^3 - y^3) / (1 - x^3*y^3))^(1/3) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x * (abs(x^3 - y^3) / (1 - x^3*y^3))^(1/3), 0, 1, rel.tol=1E-11)$value), 0, 1, rel.tol=1E-12)
 3/4 - (digamma(2/3) - digamma(1/3)) * beta(2/3, 2/3) / 9;
 
+### I( x^2 * (abs(x^3 - y^3) / (1 - x^3*y^3))^(1/3) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^2 * (abs(x^3 - y^3) / (1 - x^3*y^3))^(1/3), 0, 1, rel.tol=1E-11)$value), 0, 1, rel.tol=1E-12)
+(1 - 2/3*log(2)) * 4/9;
+
+
+####################
+
+### Power = 4
+
+### I( (abs(x - y^4) / (1 - x*y^4))^(1/4) )
+# Note: same on both intervals;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	(abs(x - y^4) / (1 - x*y^4))^(1/4), 0, y^4, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)$value +
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	(abs(x - y^4) / (1 - x*y^4))^(1/4), y^4, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)$value;
+(digamma(1/8) - digamma(5/8)) / 8 + pi/8 + 5/4;
+
+### I( (abs(x - y^2) / (1 - x*y^2))^(1/4) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	(abs(x - y^2) / (1 - x*y^2))^(1/4), 0, y^2, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)$value +
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	(abs(x - y^2) / (1 - x*y^2))^(1/4), y^2, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)$value;
+# TODO
+
+
+####################
+
+### Power = 5
+
+### I( (abs(x - y^5) / (1 - x*y^5))^(1/5) )
+n = 5;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	(abs(x - y^n) / (1 - x*y^n))^(1/n), 0, y^n, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)$value +
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	(abs(x - y^n) / (1 - x*y^n))^(1/n), y^n, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)$value;
+# TODO
 
