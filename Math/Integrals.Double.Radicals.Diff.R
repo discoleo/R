@@ -183,6 +183,7 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 ### I( (abs(x^3 - y^3) / (1 - x^3*y^3))^(1/3) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	(abs(x^3 - y^3) / (1 - x^3*y^3))^(1/3), 0, 1, rel.tol=1E-11)$value), 0, 1, rel.tol=1E-12)
+# TODO
 
 ### I( x * (abs(x^3 - y^3) / (1 - x^3*y^3))^(1/3) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
@@ -193,6 +194,11 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x^2 * (abs(x^3 - y^3) / (1 - x^3*y^3))^(1/3), 0, 1, rel.tol=1E-11)$value), 0, 1, rel.tol=1E-12)
 (1 - 2/3*log(2)) * 4/9;
+
+### I( (abs(x - y) / (1 - x*y))^(1/3) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	(abs(x - y) / (1 - x*y))^(1/3), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+# TODO
 
 
 ####################
@@ -213,6 +219,25 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	(abs(x - y^2) / (1 - x*y^2))^(1/4), y^2, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)$value;
 # TODO
+
+
+### I( y^(-1/4) * (abs(x - y) / (1 - x*y))^(1/4) )
+# on [0, y]
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y^(-1/4) * (abs(x - y) / (1 - x*y))^(1/4), 0, y, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+pi/3 + (log(2) - 1) * 2;
+# on [y, 1]
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y^(-1/4) * (abs(x - y) / (1 - x*y))^(1/4), y, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+# 4/3 - I( x * sqrt( (1+x) / (1 - x^2*y^2) ) );
+# TODO
+
+
+### I( y^(3/4) * (abs(x - y) / (1 - x*y))^(1/4) )
+# on [0, y]
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	y^(3/4) * (abs(x - y) / (1 - x*y))^(1/4), 0, y, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+(3 - pi/2 - log(2)) * 2/5;
 
 
 ####################
