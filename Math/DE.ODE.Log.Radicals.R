@@ -212,7 +212,7 @@ sqrt(x+b0)*(2*(x+b0 - d^2)*dy - (y - c0));
 
 # ODE:
 4*x*(x+d^2) * d2y + 2*x * dy - sqrt(x+d^2) + d # = 0
-4*x*(x+d^2)^(3/2) * d2y + (y - c0)*(sqrt(x+d^2) - d) + d*(sqrt(x+d^2) - d) # = 0
+4*x*(x+d^2)^(3/2) * d2y + (sqrt(x+d^2) - d) * (y - c0) + d*(sqrt(x+d^2) - d) # = 0
 # - if c0 = d =>
 4*x*(x+d^2)^(3/2) * d2y + (sqrt(x+d^2) - d) * y # = 0
 4*(x+d^2)^(3/2) * (sqrt(x+d^2) + d) * d2y + y # = 0
@@ -260,6 +260,39 @@ x = sqrt(3); b0 = sqrt(2); d = - 2^(1/4);
 params = list(x=x, b0=b0, d=d);
 # Re-run assignments above:
 x*(x^2 + b0)*d2y + (2*x^2 + b0)*dy - x # = 0
+
+
+###################
+
+### Mixed: y = B1(x) * log(sqrt(P(x)) + d) + B0(x) * sqrt(P(x))
+# P(x) = x^2 + 1;
+# B1(x) = 1 => Order ODE = quasi 1;
+
+# Check:
+x = sqrt(3); d = 2/5; params = list(x=x, b0=b0, d=d);
+e = expression(log(sqrt(x^2 + 1) + d) + sqrt(x^2+1))[[1]];
+#
+y   = eval(e, params);
+dy  = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
+
+
+# D =>
+(x^2+1)*dy - x*(x^2 + 1 + (d+1)*sqrt(x^2 + 1)) / (sqrt(x^2 + 1) + d) # = 0
+(x^2+1)*(x^2 - d^2+1)*dy - x*(x^2 + 1 + (d+1)*sqrt(x^2 + 1)) * (sqrt(x^2 + 1) - d) # = 0
+(x^2+1)*(x^2 - d^2+1)*dy - x*((x^2 - d^2 - d + 1)*sqrt(x^2 + 1) + (x^2 + 1)) # = 0
+
+# D2 =>
+(x^2+1)^2*(x^2 - d^2+1)*d2y +
+	+ 2*x*(x^2+1)*(2*x^2 - d^2+2)*dy +
+	- (4*x^4 - (2*d^2 + 2*d - 5)*x^2 - d^2 - d + 1) * sqrt(x^2 + 1) +
+	- (x^2+1)*(3*x^2 + 1) # = 0
+x*(x^2+1)^2*(x^2 - d^2 - d + 1)*(x^2 - d^2+1)*d2y +
+	+ 2*x^2*(x^2+1)*(2*x^2 - d^2+2)*(x^2 - d^2 - d + 1)*dy +
+	- (4*x^4 - (2*d^2 + 2*d - 5)*x^2 - d^2 - d + 1) *
+		((x^2+1)*(x^2 - d^2+1)*dy - x*(x^2 + 1)) +
+	- x*(x^2+1)*(3*x^2 + 1)*(x^2 - d^2 - d + 1) # = 0
+# => Order ODE = quasi 1;
 
 
 ####################
