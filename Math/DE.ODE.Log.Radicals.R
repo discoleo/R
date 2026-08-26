@@ -103,6 +103,10 @@ params = list(x=x, b0=b0, d=d);
 
 
 ####################
+####################
+
+### Mixed:
+# - Radical both inside Log & outside;
 
 ### y = sqrt(x + b0) * log(sqrt(x + b0) + d)
 
@@ -144,7 +148,8 @@ params = list(x=x, b0=b0, d=d);
 
 # Check:
 # for Quasi-Homogenous: c0 = 0;
-x = sqrt(3); b0 = -sqrt(2); a0 = 2/5; d = 1/3; c0 = -2/3;
+x = sqrt(3); b0 = -sqrt(2); a0 = 2/5; c0 = -2/3; d = 1/3;
+# d = a0; b0 = d^2; # d = a0; b0 = d^2; c0 = d;
 params = list(x=x, b0=b0, a0=a0, d=d, c0=c0);
 e = expression((sqrt(x + b0) + a0) * log(sqrt(x + b0) + d) + c0)[[1]];
 #
@@ -189,6 +194,28 @@ d2y = eval(D(D(e, "x"), "x"), params);
 # ODE:
 4*(x+b0)^2*(x+b0 - d^2) * d2y + 4*d^2*(x+b0) * dy +
 	+ (x+b0 - 3*d^2)*(y - c0) - d*(x+b0) # = 0
+
+
+# Case: a0 = d =>
+((x+b0 - d^2) - d*(y - c0)) # ==
+sqrt(x+b0)*(2*(x+b0 - d^2)*dy - (y - c0));
+
+# ODE:
+4*(x+b0)*(x+b0 - d^2) * d2y +
+	+ 2*(x+b0 - d^2) * dy +
+	- sqrt(x+b0) + d # = 0
+
+# Case: a0 = d & b0 = d^2;
+# - still does NOT simplify to pure polynomial;
+(x - d*(y - c0)) * sqrt(x+d^2) # ==
+(x+d^2)*(2*x*dy - (y - c0));
+
+# ODE:
+4*x*(x+d^2) * d2y + 2*x * dy - sqrt(x+d^2) + d # = 0
+4*x*(x+d^2)^(3/2) * d2y + (y - c0)*(sqrt(x+d^2) - d) + d*(sqrt(x+d^2) - d) # = 0
+# - if c0 = d =>
+4*x*(x+d^2)^(3/2) * d2y + (sqrt(x+d^2) - d) * y # = 0
+4*(x+d^2)^(3/2) * (sqrt(x+d^2) + d) * d2y + y # = 0
 
 
 ####################
@@ -421,4 +448,50 @@ params = list(x=x, b0=b0, d=d);
 	- 2*x*(4*b1*x^3 + (5*b1^2 + 4*b0)*x^2 + b1*(b1^2 + 8*b0)*x + 2*b0*b1^2) * dy +
 	+ 2 * (4*b1*x^3 + (5*b1^2 + 4*b0)*x^2 + b1*(b1^2 + 8*b0)*x + 2*b0*b1^2) * y +
 	- x^2*(2*x + b1)^3 # = 0
+
+
+#####################
+
+### y = 1/x * log(x + sqrt(x) + b0)
+
+# Check:
+b0 = 2^(1/3);  # b0 = 1; # b0 = -1; # b0 = 1/2;
+x = 4^(1/3); c0 = -1/3;
+params = list(x=x, b0=b0, c0=c0);
+e = expression(1/x * log(x + x^0.5 + b0) + c0)[[1]];
+#
+y   = eval(e, params);
+dy  = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
+
+# D =>
+2*x^2*dy + 2*x*(y-c0) - (2*x + sqrt(x)) / (x + x^0.5 + b0) # = 0
+2*x^2*dy + 2*x*(y-c0) - (2*x + sqrt(x)) * (x - x^0.5 + b0) / (x^2 + (2*b0-1)*x + b0^2) # = 0
+2*x^2*(x^2 + (2*b0-1)*x + b0^2) * dy + 2*x*(x^2 + (2*b0-1)*x + b0^2) * (y-c0) +
+	- (2*x^2 + (2*b0-1)*x - (x - b0)*sqrt(x)) # = 0
+
+# D2 =>
+4*x^3*(x^2 + (2*b0-1)*x + b0^2) * d2y +
+	+ 4*x^2*(5*x^2 + 4*(2*b0-1)*x + 3*b0^2) * dy +
+	+ 4*x*(3*x^2 + 2*(2*b0-1)*x + b0^2) * (y-c0) +
+	- (8*x^2 + 2*(2*b0-1)*x - (3*x - b0)*sqrt(x)) # = 0
+
+# ODE:
+4*x^2*(x-b0)*(x^2 + (2*b0-1)*x + b0^2) * d2y +
+	+ 2*x*(7*x^3 + (b0-5)*x^2 - b0*(11*b0-7)*x - 5*b0^3) * dy +
+	+ 2*(3*x^3 - (3*b0+1)*x^2 - b0*(7*b0-3)*x - b0^3) * (y-c0) +
+	- (2*x^2 - (8*b0-1)*x - b0*(2*b0-1)) # = 0
+
+### Special Cases:
+
+# Case: b0 = 1;
+4*x^2*(x-1)*(x^2 + x + 1) * d2y +
+	+ 2*x*(7*x^3 - 4*x^2 - 4*x - 5) * dy +
+	+ 2*(3*x^3 - 4*x^2 - 4*x - 1) * (y-c0) +
+	- (2*x^2 - 7*x - 1) # = 0
+
+# Case: b0 = 1/2;
+2*x^2*(2*x-1)*(4*x^2 + 1) * d2y +
+	+ x*(56*x^3 - 36*x^2 + 6*x - 5) * dy +
+	+ (24*x^3 - 20*x^2 - 2*x - 1) * (y-c0) - 4*x*(2*x - 3) # = 0
 
