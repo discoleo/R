@@ -269,7 +269,7 @@ x*(x^2 + b0)*d2y + (2*x^2 + b0)*dy - x # = 0
 # B1(x) = 1 => Order ODE = quasi 1;
 
 # Check:
-x = sqrt(3); d = 2/5; params = list(x=x, b0=b0, d=d);
+x = sqrt(3); d = 2/5; params = list(x=x, d=d);
 e = expression(log(sqrt(x^2 + 1) + d) + sqrt(x^2+1))[[1]];
 #
 y   = eval(e, params);
@@ -293,6 +293,32 @@ x*(x^2+1)^2*(x^2 - d^2 - d + 1)*(x^2 - d^2+1)*d2y +
 		((x^2+1)*(x^2 - d^2+1)*dy - x*(x^2 + 1)) +
 	- x*(x^2+1)*(3*x^2 + 1)*(x^2 - d^2 - d + 1) # = 0
 # => Order ODE = quasi 1;
+
+
+##########
+### Mixed: y = 1/x * log(sqrt(P(x)) + d) + 1/x * sqrt(P(x))
+# P(x) = x^2 + 1;
+
+# Check:
+x = sqrt(3); d = 2/5; params = list(x=x, d=d);
+e = expression(1/x * log(sqrt(x^2 + 1) + d) + 1/x * sqrt(x^2+1))[[1]];
+#
+y   = eval(e, params);
+dy  = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
+
+
+# D =>
+(x^2+1)*(x*dy+y) - x*(x^2 + 1 + (d+1)*sqrt(x^2 + 1)) / (sqrt(x^2 + 1) + d) # = 0
+(x^2+1)*(x^2 - d^2+1)*(x*dy+y) - x*(x^2 + 1 + (d+1)*sqrt(x^2 + 1)) * (sqrt(x^2 + 1) - d) # = 0
+(x^2+1)*(x^2 - d^2+1)*(x*dy+y) - x*((x^2 - d^2 - d + 1)*sqrt(x^2 + 1) + (x^2 + 1)) # = 0
+
+# D2 =>
+(x^2+1)^2*(x^2 - d^2+1)*(x*d2y+2*dy) +
+	+ 2*x*(x^2+1)*(2*x^2 - d^2+2)*(x*dy+y) +
+	- (4*x^4 - (2*d^2 + 2*d - 5)*x^2 - d^2 - d + 1) * sqrt(x^2 + 1) +
+	- (x^2+1)*(3*x^2 + 1) # = 0
+# TODO
 
 
 ####################
