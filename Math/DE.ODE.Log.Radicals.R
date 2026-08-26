@@ -6,11 +6,18 @@
 ## Differential Equations
 ## Linear ODEs - Log w. Radicals
 ##
-## draft v.0.1g
+## draft v.0.1h
 
 ### Type
-# Simple:  y = Log(Radical + P0(x))
-# Coupled: y = Radical * Log(Radical + P0(x))
+# Simple:  y = B(x) * Log(SQRT(P1(x)) + P0(x))
+# Coupled:
+#  y = SQRT(P1(x)) * Log(SQRT(P1(x)) + P0(x))
+#  y = B1(x) * Log(SQRT(P1(x)) + P0(x)) + B2(x) * SQRT(P1(x));
+
+### Theory:
+# - ODE is inhomogeneous:
+#   Differentiating Log(SQRT(P1(x)) + P0(x)) generates a free term
+#   when rationalizing the fraction;
 
 # Note:
 # - for Radicals combined with simple Logs:
@@ -105,7 +112,7 @@ params = list(x=x, b0=b0, d=d);
 ####################
 ####################
 
-### Mixed:
+### Coupled Radicals:
 # - Radical both inside Log & outside;
 
 ### y = sqrt(x + b0) * log(sqrt(x + b0) + d)
@@ -139,12 +146,14 @@ d2y = eval(D(D(e, "x"), "x"), params);
 b0 = 1; d = 1;
 params = list(x=x, b0=b0, d=d);
 # Re-run assignments above:
-4*x*(x+1)^2*d2y + 4*(x+1)*dy + (x - 2)*y - (x+1) # = 0
+4*x*(x+1)^2*d2y + 4*(x+1)*dy + (x-2)*y - (x+1) # = 0
 
 
-#############
+################
+### Exploration:
 
 ### y = (sqrt(x + b0) + a0) * log(sqrt(x + b0) + d)
+# Note: Radical persists if a0 != 0;
 
 # Check:
 # for Quasi-Homogenous: c0 = 0;
@@ -213,7 +222,7 @@ sqrt(x+b0)*(2*(x+b0 - d^2)*dy - (y - c0));
 # ODE:
 4*x*(x+d^2) * d2y + 2*x * dy - sqrt(x+d^2) + d # = 0
 4*x*(x+d^2)^(3/2) * d2y + (sqrt(x+d^2) - d) * (y - c0) + d*(sqrt(x+d^2) - d) # = 0
-# - if c0 = d =>
+# Note: if c0 = d =>
 4*x*(x+d^2)^(3/2) * d2y + (sqrt(x+d^2) - d) * y # = 0
 4*(x+d^2)^(3/2) * (sqrt(x+d^2) + d) * d2y + y # = 0
 
@@ -315,6 +324,10 @@ d2y = eval(D(D(e, "x"), "x"), params);
 (x^2+1)*(x^2 - d^2+1)*(x*dy+y) - x*((x^2 - d^2 - d + 1)*sqrt(x^2 + 1) + (x^2 + 1)) # = 0
 
 # D2 =>
+(x^2+1)^2*(x^2 - d^2+1)*(x*d2y+2*dy) +
+	+ 2*x*(x^2+1)*(2*x^2 - d^2+2)*(x*dy+y) +
+	- (4*x^4 - (2*d^2 + 2*d - 5)*x^2 - d^2 - d + 1) * sqrt(x^2 + 1) +
+	- (x^2+1)*(3*x^2 + 1) # = 0
 
 ### ODE:
 x^2*(x^2+1)*(x^2 - d^2+1)*(x^2 - d^2 - d + 1) * d2y +
