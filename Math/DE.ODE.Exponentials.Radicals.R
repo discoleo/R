@@ -6,7 +6,7 @@
 ## Differential Equations
 ## ODEs - Exponentials w. Radicals
 ##
-## draft v.0.1g
+## draft v.0.1h
 
 
 ### Types:
@@ -565,4 +565,46 @@ x^4*(x+b0)^2 * d2y +
 ### ODE:
 9*x^4*(x+k)^2 * d2y - 18*x^2 * (2*x-k)*(x+k)^2 * dy +
 	+ (56*x^4 + 9*(6*k*x^3 - 5*k^2*x^2 - 4*k^3*x + k^4)) * (y - c0) # = 0
+
+
+#######################
+#######################
+
+### Radical & SQRT:
+
+### y = (x^2+b0)^(1/3) * (sqrt(x+d) + c1) *  exp(k*sqrt(x+d))
+# Simple: Exp(SQRT(R2))
+# - but note term: (SQRT(R2) + P0) * EXP(SQRT(R2));
+
+# Check:
+d = 4/5;
+x = sqrt(5); k = 2/5; b0 = 2/3; c0 = -1/2; c1 = 2;
+params = list(x=x, k=k, b0=b0, c0=c0, c1=c1, d=d);
+e = expression((x^2+b0)^(1/3)  * (sqrt(x+d) + c1) * exp(k*sqrt(x+d)) + c0)[[1]];
+#
+y   = eval(e, params);
+dy  = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
+
+# D =>
+6*(x^2+b0)*(x+d) * dy - 4*x*(x+d) * (y-c0) +
+	- 3*(x^2+b0) * sqrt(x+d) * (x^2+b0)^(1/3) * exp(k*sqrt(x+d)) +
+	- 3*k*(x^2+b0) * (x+d + c1*sqrt(x+d)) * (x^2+b0)^(1/3) * exp(k*sqrt(x+d))
+
+# System:
+R1 = (x^2+b0)^(1/3) * exp(k*sqrt(x+d));
+R2 = (x^2+b0)^(1/3) * sqrt(x+d) * exp(k*sqrt(x+d));
+c1*R1 + R2 - (y-c0) # = 0; # Eq 1
+3*(x^2+b0) * (k*(x+d)*R1 + (c1*k+1)*R2) +
+	- 6*(x^2+b0)*(x+d) * dy + 4*x*(x+d) * (y-c0) # = 0; # Eq 2
+# =>
+# Eq R1:
+3*(x^2+b0)*(k*(x+d) - c1*(c1*k+1)) * R1 # ==
+6*(x^2+b0)*(x+d) * dy - (3*(c1*k+1)*(x^2+b0) + 4*x*(x+d)) * (y-c0);
+# Eq R2:
+3*(x^2+b0)*(k*(x+d) - c1*(c1*k+1)) * R2 # ==
+-6*c1*(x^2+b0)*(x+d) * dy + 4*c1*x*(x+d) * (y-c0) + 3*k*(x+d)*(x^2+b0)*(y-c0);
+
+# D2 =>
+# TODO: will be a monster;
 
