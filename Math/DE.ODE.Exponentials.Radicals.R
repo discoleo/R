@@ -571,10 +571,69 @@ x^4*(x+b0)^2 * d2y +
 #######################
 
 ### Radical & SQRT:
+# y = R1(x)^r * (B1(x) * SQRT(R2(x)) + B0(x)) * exp(K1(x) * SQRT(R2(x)) + K0(x));
+
+### y = (x+d)^(1/3) * (sqrt(x+d) + c1) *  exp(k*sqrt(x+d))
+# Simple: Exp(SQRT(R2))
+# - for simplification: P1 = R2;
+# - but note coupled term: (SQRT(R2) + B0) * EXP(SQRT(R2));
+
+# Check:
+d = 4/5; k = 2/5; c1 = 2;
+# d = 4/5; k = 1; c1 = -1;
+x = sqrt(5); c0 = -1/2;
+params = list(x=x, k=k, c0=c0, c1=c1, d=d);
+e = expression((x+d)^(1/3)  * (sqrt(x+d) + c1) * exp(k*sqrt(x+d)) + c0)[[1]];
+#
+y   = eval(e, params);
+dy  = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
+
+# D =>
+6*(x+d) * dy - 2*(y-c0) +
+	- 3*sqrt(x+d) * (x+d)^(1/3) * exp(k*sqrt(x+d)) +
+	- 3*k*(x+d + c1*sqrt(x+d)) * (x+d)^(1/3) * exp(k*sqrt(x+d)) # = 0
+
+# System:
+R1 = (x+d)^(1/3) * exp(k*sqrt(x+d));
+R2 = (x+d)^(1/3) * sqrt(x+d) * exp(k*sqrt(x+d));
+c1*R1 + R2 - (y-c0) # = 0; # Eq 1
+3*k*(x+d)*R1 + 3*(c1*k+1)*R2 +
+	- 6*(x+d) * dy + 2*(y-c0) # = 0; # Eq 2
+# =>
+# Eq R1:
+3*(k*(x+d) - c1*(c1*k+1)) * R1 # ==
+6*(x+d) * dy - (3*c1*k + 5) * (y-c0);
+# Eq R2:
+3*(k*(x+d) - c1*(c1*k+1)) * R2 # ==
+-6*c1*(x+d) * dy + (3*k*(x+d) + 2*c1) * (y-c0);
+
+# D2 =>
+12*(x+d)^2 * d2y + 8*(x+d) * dy +
+	- (3*k^2 * (x+d) + 5*(k*c1+1)) * sqrt(x+d) * (x+d)^(1/3) * exp(k*sqrt(x+d)) +
+	- (3*k^2*c1 + 11*k) * (x+d) * (x+d)^(1/3) * exp(k*sqrt(x+d)) # = 0
+# Substitution => ODE;
+
+### ODE:
+36*(x+d)^2 * (k*(x+d) - c1*(c1*k+1)) * d2y +
+	- 6*(x+d) * (7*k*x - k*c1^2 - c1 + 7*k*d) * dy +
+	- (9*k^3*x^2 - (9*(c1^2 - 2*d)*k^3 + 27*c1*k^2 + 40*k)*x +
+		- 9*d*(c1^2 - d)*k^3 - 27*c1*d*k^2 + 10*(c1^2 - 4*d)*k + 10*c1) * (y-c0) # = 0
+# Note:
+# - A linear translation x => x-d should simplify the equation;
+
+
+### Special Cases:
+
+# Case: k = 1; c1 = -1;
+36*(x+d)^2 * d2y - 42*(x+d) * dy - (9*(x+d) - 22) * (y-c0) # = 0
+
+
+######################
 
 ### y = (x^2+b0)^(1/3) * (sqrt(x+d) + c1) *  exp(k*sqrt(x+d))
 # Simple: Exp(SQRT(R2))
-# - but note term: (SQRT(R2) + P0) * EXP(SQRT(R2));
+# - but note coupled term: (SQRT(R2) + B0) * EXP(SQRT(R2));
 
 # Check:
 d = 4/5;
