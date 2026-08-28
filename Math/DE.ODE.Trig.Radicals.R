@@ -161,3 +161,43 @@ c1^2*x^2*(x^2+b)^2 * d2y +
 x^2*(x^2+b) * d2y - x*(2*x^2 + 3*b) * dy +
 	+ (k^2*x^4 + 2*x^2 + 3*b) * y # = 0
 
+
+#######################
+
+### y = sin(k*SQRT(x^2+b)) + c1 * SQRT(x^2+b) * cos(k*SQRT(x^2+b));
+
+# Check:
+c1 = -1/3; # c1 = 0;
+k = sqrt(2);
+x = sqrt(3); b = -1/sqrt(7);
+params = list(x=x, k=k, c1=c1);
+e = expression(sin(k*sqrt(x^2+b)) + c1*sqrt(x^2+b)*cos(k*sqrt(x^2+b)))[[1]];
+#
+y   = eval(e, params);
+dy  = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
+
+# D =>
+dy - (k+c1)*x * sqrt(x^2+b)*cos(k*sqrt(x^2+b)) / (x^2+b) +
+	+ c1*k*x * sin(k*sqrt(x^2+b)) # = 0
+c1*(x^2+b) * dy - (k+c1)*x * y +
+	+ (c1^2*k*x*(x^2+b) + (k+c1)*x) * sin(k*sqrt(x^2+b)) # = 0
+
+# D2 =>
+c1^2*(x^2+b)^2 * d2y +
+	+ c1*(c1-k)*x*(x^2+b) * dy +
+	+ (c1^2*k^2*(x^2+b)*x^2 + (k^2-c1^2)*x^2 - b*c1*(k+c1)) * y +
+	+ (3*c1^3*k*x^4 - c1^2*k^2*x^4 + c1^2*x^2 - k^2*x^2 + 4*c1^3*k*b*x^2 - c1^2*k^2*b*x^2 +
+		+ c1^2*b + c1*k*b + c1^3*k*b^2) * sin(k*sqrt(x^2+b)) # = 0
+
+### ODE:
+x*(x^2+b)^2 * (c1^2*k*(x^2+b) + k+c1) * d2y +
+	- (x^2+b) * (2*k*c1^2*x^4 + 3*b*k*c1^2*x^2 + b^2*k*c1^2 + b*(k+c1)) * dy +
+	+ k*x^3 * (c1^2*k^2*x^4 + 2*c1^2*x^2 + 3*c1*k*x^2 + k^2*x^2 + 2*c1^2*k^2*b*x^2 +
+		+ 2*c1^2*b + 3*c1*k*b + k^2*b + c1^2*k^2*b^2) * y # = 0
+
+### Special Cases:
+
+# Case: c1 = 0;
+x*(x^2+b) * d2y - b*dy + k^2*x^3 * y # = 0
+
