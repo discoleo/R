@@ -168,8 +168,9 @@ x^2*(x^2+b) * d2y - x*(2*x^2 + 3*b) * dy +
 
 # Check:
 c1 = -1/3; # c1 = 0;
-k = sqrt(2);
-x = sqrt(3); b = -1/sqrt(7);
+k = sqrt(2); b = -1/sqrt(7);
+# c1 = k = b = 1;
+x = sqrt(3);
 params = list(x=x, k=k, c1=c1);
 e = expression(sin(k*sqrt(x^2+b)) + c1*sqrt(x^2+b)*cos(k*sqrt(x^2+b)))[[1]];
 #
@@ -200,4 +201,8 @@ x*(x^2+b)^2 * (c1^2*k*(x^2+b) + k+c1) * d2y +
 
 # Case: c1 = 0;
 x*(x^2+b) * d2y - b*dy + k^2*x^3 * y # = 0
+
+# Case: c1 = k = b = 1;
+x*(x^2+1)*(x^2+3) * d2y +
+	- (2*x^4 + 3*x^2 + 3) * dy + x^3 * (x^2+7) * y # = 0
 
