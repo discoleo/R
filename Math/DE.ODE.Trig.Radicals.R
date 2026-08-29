@@ -209,3 +209,37 @@ x*(x^2+1)*(x^2+3) * d2y +
 # Case: c1 = -1; k = 1;
 x*(x^2+b) * d2y - (2*x^2+b) * dy + x^3 * y # = 0
 
+
+#######################
+
+### Simple: 1 Component
+
+### y = SQRT(x^2+b) * sin(k*SQRT(x^2+b));
+
+# Check:
+k = sqrt(2); b = -1/sqrt(7);
+# k = 1i; b = 2;
+x = sqrt(3);
+params = list(x=x, k=k, b=b);
+e = expression(sqrt(x^2+b) * sin(k*sqrt(x^2+b)))[[1]];
+#
+y   = eval(e, params);
+dy  = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
+
+# D =>
+(x^2+b)*dy - x*y - k*x*(x^2+b) * cos(k*sqrt(x^2+b)) # = 0
+
+# D2 =>
+(x^2+b) * d2y + x * dy + (k^2*x^2 - 1) * y +
+	- k*(3*x^2+b) * cos(k*sqrt(x^2+b)) # = 0
+
+### ODE:
+x*(x^2+b)^2 * d2y - (2*x^2+b)*(x^2+b) * dy +
+	+ x^3 * (k^2*x^2 + b*k^2 + 2) * y # = 0
+
+### Special Cases:
+
+# Case: b = 2; k = 1i;
+x*(x^2+2)^2 * d2y - 2*(x^2+1)*(x^2+2) * dy - x^5 * y # = 0
+
