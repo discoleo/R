@@ -6,7 +6,7 @@
 ## Differential Equations
 ## Mixed Exp & Log
 ##
-## draft v.0.1d
+## draft v.0.1e
 
 
 ### Linear ODE of Order 2
@@ -40,7 +40,35 @@ source("DE.ODE.Helper.R")
 ### Product:
 ### y = log(P1(x)) * exp(P2(x)) + F(x);
 
-### Example 1:
+### Example 1: Simple Log
+### y = x * log(x) * exp(k*x^2)
+
+### Check:
+ye = expression(x * log(x) * exp(k*x^2))[[1]]
+x  = sqrt(3); k = sqrt(2);
+params = list(x=x, k=k);
+#
+y = eval(ye, params); dy = eval(D(ye, "x"), params);
+d2y = eval(D(D(ye, "x"), "x"), params);
+
+### ODE:
+x^2 * d2y - x*(4*k*x^2 + 1) * dy + (4*k^2*x^4 + 1) * y # = 0
+
+# Derivation:
+
+# D =>
+x*dy - (2*k*x^2 + 1) * y - x*exp(k*x^2) # = 0
+
+# D2 =>
+x*d2y - 2*k*x^2 * dy - 4*k*x * y +
+	- 2*k*x^2*exp(k*x^2) - exp(k*x^2) # = 0
+x^2*d2y - 2*k*x^3 * dy - 4*k*x^2 * y +
+	- (2*k*x^2 + 1) * (x*dy - (2*k*x^2 + 1) * y) # = 0
+
+
+####################
+
+### Example 2:
 ### y = log(x^2 + b0) * exp(x^2)
 
 ### Check:
@@ -103,7 +131,7 @@ line.tan(px, dx=3, p=y, dp=dy, b=b)
 curve(dy(x, b=b), add=T, col="green")
 line.tan(px, dx=3, p=dy, dp=d2y, b=b, col="orange")
 
-### Ex 2:
+### Ex 2.2:
 b = -1
 px = (1:4)*2/7 + 1;
 curve(y(x, b=b), from = 1, to = 2.5, ylim=c(-10, 200))
