@@ -56,10 +56,13 @@ x*d2y + x*dy^2 - (2*x*df + n*x^n + (n-1))*dy +
 ### y = x * log(exp(x^n) + b0) + f0
 
 # Note: b0 has NO impact on ODE; (b0 != 0)
-x = sqrt(3); n = -1/5; b0 = 4/5; bf = sqrt(2);
-params = list(x=x, n=n, b0=b0, bf=bf);
+x = sqrt(3); n = -1/5; b0 = 4/5;
+bf = sqrt(2); # Note: bf = 0 for f = 0;
 e = expression(x * log(exp(x^n) + b0) + bf*x)[[1]];
+# bf = 0; # i.e. f0 = 0;
+# bf = 0; n = -1;
 f = bf*x; df = bf; d2f = 0;
+params = list(x=x, n=n, b0=b0, bf=bf);
 #
 y   = eval(e, params);
 dy  = eval(D(e, "x"), params);
@@ -76,7 +79,20 @@ x*(exp(x^n)+b0)*d2y +
 x^3 * (d2y-d2f) +
 	+ (x*(dy-df) - (y-f) - x*(n*x^n + n+1)) * (x*(dy-df) - (y-f)) # = 0
 
-# TODO
+### ODE:
+x^3 * (d2y-d2f) +
+	+ x^2 * (dy-df)^2 - 2*x * (y-f)*(dy-df) +
+	- x^2*(n*x^n + n+1) * (dy-df) +
+	+ (y-f)^2 + x*(n*x^n + n+1) * (y-f) # = 0
+
+# Homogeneous: f = 0
+x^3 * d2y + x^2 * dy^2 - 2*x * y*dy + y^2 +
+	- x^2*(n*x^n + n+1) * dy + x*(n*x^n + n+1) * y # = 0
+
+### Special Cases:
+
+### n = -1
+x^3 * d2y + x^2 * dy^2 - 2*x * y*dy + x * dy + y^2 - y # = 0
 
 
 #######################
