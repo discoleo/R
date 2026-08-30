@@ -89,7 +89,8 @@ x^2*(x+k) * d2y + 2*x^2*(x+k)^2 * y*dy + k*x * dy - (2*x + k) * y # = 0
 # Check:
 p = 1/3; # p = -1; # p = 1; # p = 0;
 n = 7/5;
-k = sqrt(2);   # k = n; # k = n; p = 1;
+k = sqrt(2);    # k = n; # k = n = -1; p = 0;
+# k = n; p = 1; # # k = n; p = 0;
 # k = n*(n-1); # k = n*(n-1); p = 1;
 x = sqrt(3);
 params = list(x=x, p=p, n=n, k=k);
@@ -134,4 +135,10 @@ x^2*(x^n + n-1) * d2y + 2*n*(x^n + n-1)^2 * y*dy +
 # Case: p = 0;
 x^2*(n*x^n + k) * d2y + 2*x*(n*x^n + k)^2 * y*dy +
 	- x*(n*(n-1)*x^n - k) * dy # = 0
+
+# Case: p = 0; k = n;
+x^2*(x^n + 1) * d2y + 2*n*x*(x^n + 1)^2 * y*dy +
+	- x*((n-1)*x^n - 1) * dy # = 0
+# p = 0; k = n = -1;
+x^2*(x+1) * d2y - 2*(x+1)^2 * y*dy + x*(x+2) * dy # = 0
 
