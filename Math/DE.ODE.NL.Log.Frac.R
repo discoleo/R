@@ -9,6 +9,12 @@
 ## draft v.0.1c
 
 
+### Note:
+# - For y = Log(B1(x)*Log(P(x)) + B0(x)),
+#   which are similar to the NL ODEs described here,
+#   see file: DE.ODE.NL.Log.Log.R;
+
+
 ####################
 
 ### Helper Functions
