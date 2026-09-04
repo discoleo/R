@@ -44,3 +44,28 @@ x*d2y + (x+k)^2 / (x + k*log(x))^2 +
 ### ODE:
 x^3*(x+k) * d2y + (x+k)*(x*dy - y)^2 - x*(2*x+k) * (x*dy - y) # = 0
 
+#######################
+
+# Simple Variant:
+# y = log(x + k*log(x))
+
+# Check:
+k = sqrt(2);
+x = sqrt(3);
+params = list(x=x, k=k);
+e = expression(log(x + k*log(x)))[[1]];
+#
+y   = eval(e, params);
+dy  = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
+
+# D =>
+x*dy - (x+k) / (x + k*log(x)) # = 0
+
+# D2 =>
+x^2*d2y + x*dy - x / (x + k*log(x)) +
+	+ (x+k)^2 / (x + k*log(x))^2 # = 0
+
+### ODE:
+x^2*(x+k) * d2y + x^2*(x+k) * dy^2 + k*x * dy # = 0
+
