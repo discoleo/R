@@ -6,7 +6,7 @@
 ## Differential Equations
 ## Linear ODEs - Log w. Radicals
 ##
-## draft v.0.1h
+## draft v.0.1i
 
 ### Type
 # Simple:  y = B(x) * Log(SQRT(P1(x)) + P0(x))
@@ -429,6 +429,7 @@ x*(x^2 + d^2)^2*d2y - (x^2 + d^2)*(x^2 - d^2)*dy +
 ##############
 
 ### y = (sqrt(x^2 + b0) + a0) * log(sqrt(x^2 + b0) - x)
+# Note: strange ODE with remaining SQRT;
 
 # Check:
 # for Quasi-Homogenous: c0 = 0;
@@ -443,6 +444,17 @@ d2y = eval(D(D(e, "x"), "x"), params);
 # D =>
 (x^2 + b0)*dy - x*sqrt(x^2 + b0) * log(sqrt(x^2 + b0) - x) +
 	+ (x^2 + b0 + a0*sqrt(x^2 + b0)) # = 0
+(x^2 + b0) * dy - x * (y-c0) + a0*x*log(sqrt(x^2 + b0) - x) +
+	+ a0*sqrt(x^2 + b0) + x^2 + b0 # = 0
+
+# D2 =>
+b0*(x^2 + b0) * d2y + b0*x * dy - b0*(y-c0) +
+	+ a0*b0*log(sqrt(x^2 + b0) - x) + 2*b0*x # = 0
+
+### ODE:
+x*(x^2 + b0) * d2y - b0 * dy +
+	- a0 * sqrt(x^2 + b0) + x^2 - b0 # = 0
+
 # TODO
 
 
