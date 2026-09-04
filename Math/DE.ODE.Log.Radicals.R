@@ -348,7 +348,8 @@ x^2*(x^4-1) * d2y + x*(2*x^4 - 3*x^2 - 3) * dy +
 ### y = x * log(sqrt(x^2 + b0) + d)
 
 # Check:
-x = sqrt(3); b0 = -sqrt(2); d = 1/3; params = list(x=x, b0=b0, d=d);
+d = 1/3; b0 = -sqrt(2); # d = sqrt(5); b0 = 2/3 * d^2;
+x = sqrt(3); params = list(x=x, b0=b0, d=d);
 e = expression(x * log(sqrt(x^2 + b0) + d))[[1]];
 #
 y   = eval(e, params);
@@ -384,6 +385,13 @@ x = sqrt(3); b0 = sqrt(2); d = - sqrt(b0);
 params = list(x=x, b0=b0, d=d);
 # Re-run assignments above:
 x^2*(x^2 + b0)*d2y - b0*x*dy + b0*y - x^3 # = 0
+
+### b0 = 2/3 * d^2;
+x^2*(3*x^2 + 2*d^2)*(3*x^2 - d^2) * d2y +
+	+ 6*d^4*x * dy - 6*d^4 * y - 9*x^5 # = 0
+D2 = d^2 / 3;
+x^2*(x^2 + 2*D2)*(x^2 - D2) * d2y +
+	+ 6*D2^2*x * dy - 6*D2^2 * y - x^5 # = 0
 
 
 ######################
