@@ -6,7 +6,7 @@
 ## Differential Equations
 ## NL ODEs - Log of Log
 ##
-## draft v.0.1a
+## draft v.0.1c
 
 
 ####################
@@ -107,4 +107,42 @@ x^2*(x+k) * d2y +
 ### c1 = 1/2;
 4*x^2*(x+k) * d2y +
 	+ 4*x^2*(x+k) * dy^2 - 4*x^2 * dy + 3*x + k # = 0
+
+#######################
+
+### Variant: + extra Log-term;
+### y = x * log(x + k*log(x)) + c1*x*log(x)
+
+# Check:
+c1 = 1/sqrt(5); # c1 = -1; # c1 = -1/2;
+k = sqrt(2);
+x = sqrt(3);
+params = list(x=x, k=k);
+e = expression(x * log(x + k*log(x)) + c1*x*log(x))[[1]];
+#
+y   = eval(e, params);
+dy  = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
+
+# D =>
+x*dy - y - x * (x+k) / (x + k*log(x)) - c1*x # = 0
+
+# D2 =>
+x*d2y + (x+k)^2 / (x + k*log(x))^2 +
+	- (2*x+k) / (x + k*log(x)) - c1 # = 0
+x^3*(x+k) * d2y + (x+k)*(x*dy - y - c1*x)^2 - x*(2*x+k) * (x*dy - y - c1*x) +
+	- c1*x^2*(x+k) # = 0
+
+### ODE:
+x^3*(x+k) * d2y + (x+k) * (x*dy - y)^2 +
+	- x*(2*(c1+1)*x + k*(2*c1+1)) * (x*dy - y) +
+	+ c1^2*x^2*(x+k) + c1*x^3 # = 0
+
+### Special Cases:
+
+### c1 = -1;
+x^3*(x+k) * d2y + (x+k) * (x*dy - y)^2 + k*x * (x*dy - y) + k*x^2 # = 0
+
+### c1 = -1/2;
+4*x^3*(x+k) * d2y + 4*(x+k) * (x*dy - y)^2 - 4*x^2 * (x*dy - y) - x^2*(x-k) # = 0
 
