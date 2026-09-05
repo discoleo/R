@@ -6,7 +6,7 @@
 ## Differential Equations
 ## NL ODEs - Exp of Radicals
 ##
-## draft v.0.1a
+## draft v.0.1b
 
 ### Theory
 
@@ -18,6 +18,7 @@
 ### Examples
 
 # 3*(x+1) * y*d2y - 3*(x+1) * dy^2 + 2*y*dy - 2*k*y^2 = 0;
+# n*(x+1) * y*d2y - n*(x+1) * dy^2 + (n-1)*y*dy - (n-1)*k*y^2 = 0;
 
 
 ####################
@@ -69,4 +70,29 @@ d2y = eval(D(D(e, "x"), "x"), params);
 
 ### p = 0;
 3*(x+1) * y*d2y - 3*(x+1) * dy^2 + 2*y*dy - 2*k*y^2 # = 0
+
+
+### Variant:
+### y = x^p * exp((x+1)^(1/4) + k*x)
+
+# Check:
+p = 1/3; # p = 0;
+k = sqrt(2); n = 5; # n = -1/5;
+x = sqrt(3);
+params = list(x=x, k=k, p=p);
+e = expression(x^p * exp((x+1)^(1/n) + k*x))[[1]];
+#
+y   = eval(e, params);
+dy  = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
+
+### ODE:
+n*x^2*(x+1) * y*d2y - n*x^2*(x+1) * dy^2 + (n-1)*x^2 * y*dy +
+	- ((n-1)*k*x^2 - p*x - n*p) * y^2 # = 0
+
+
+### Special Cases:
+
+### p = 0;
+n*(x+1) * y*d2y - n*(x+1) * dy^2 + (n-1)*y*dy - (n-1)*k*y^2 # = 0
 
