@@ -45,6 +45,7 @@ params = list(x=x);
 #
 f1 = x;   df1 = 1; d2f1 = 0;
 f2 = x^2; df2 = 2*x; d2f2 = 2;
+#
 y = eval(ye, params); dy = eval(D(ye, "x"), params);
 f = eval(fe, params); df = eval(D(fe, "x"), params);
 d2y = eval(D(D(ye, "x"), "x"), params);
@@ -82,14 +83,26 @@ cos(y) - ((f2*dy - df1)*p + f1*dp) / ((f2*dy - df1)*f2 + (f1*dy + df2)*f1) # = 0
 
 ### Examples:
 
-### f1(x) = x; f2(x) = 1;
+### Ex: f1(x) = x; f2(x) = 1;
+# Check:
+fe = expression(x/sqrt(x^2+2) + sqrt(x^2+1)/sqrt(x^2+2))
+f1 = x; df1 = 1; d2f1 = 0;
+f2 = 1; df2 = d2f2 = 0;
+#
 (x*d2y - dy^2 + 2*dy)*(p*dy - p + x*dp) - (d2y + x*dy^2)*(x*p*dy - dp) +
 	- d2p*(x^2*dy + dy - 1) # = 0
-(dp*x^2 - x*p + dp)*d2y - p*(x^2 + 1)*dy^3 + 3*p*dy^2 - 2*(x^2*d2p - x*dp + p + d2p)*dy + d2p # = 0
-### P(x) = x^2
-(x^3 + 2*x)*d2y - x^2*(x^2 + 1)*dy^3 + 3*x^2*dy^2 - 2*(x^2 + 2)*dy + 2 # = 0
+### ODE:
+(dp*x^2 - p*x + dp)*d2y - p*(x^2 + 1)*dy^3 + 3*p*dy^2 - (x^2*d2p - 2*x*dp + 2*p + d2p)*dy + d2p # = 0
+### Case: P(x) = x^2
+(x^3 + 2*x)*d2y - x^2*(x^2 + 1)*dy^3 + 3*x^2*dy^2 - 2*dy + 2 # = 0
 
-### TODO: check!
+
+
+### Ex: f1 = x; f2 = x^2;
+((x^4 + x^2)*dp - (2*x^3 + x)*p) * d2y +
+	- p*(x^4 + x^2) * dy^3 - 3*p*x^2 * dy^2 +
+	- (2*p*(4*x^2 - x^2 + 1) - 2*dp*(2*x^3 + x) + d2p*(x^4 + x^2)) * dy +
+	- d2p*x^2 + 2*dp*x - 2*p # = 0
 
 
 ##########################
