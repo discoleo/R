@@ -35,25 +35,50 @@ source("DE.ODE.Helper.R")
 ### Combined Functions:
 ### Linearly combined
 
-### f1(x)*sin(y) + f2(x)*cos(y) = P(x)
+### f1(x)*sin(y) + f2(x)*cos(y) = F0(x)
 
-f2(x)*cos(y) + f1(x)*sin(y) # = p
+# Check:
+ye = expression(asin(1/sqrt(x^2+2)))[1]
+fe = expression(x/sqrt(x^2+2) + x^2*sqrt(x^2+1)/sqrt(x^2+2))
+x = sqrt(3);
+params = list(x=x);
+#
+f1 = x;   df1 = 1; d2f1 = 0;
+f2 = x^2; df2 = 2*x; d2f2 = 2;
+y = eval(ye, params); dy = eval(D(ye, "x"), params);
+f = eval(fe, params); df = eval(D(fe, "x"), params);
+d2y = eval(D(D(ye, "x"), "x"), params);
+d2f = eval(D(D(fe, "x"), "x"), params);
+p = f; dp = df; d2p = d2f;
+
+
+# f2(x)*cos(y) + f1(x)*sin(y) # = F0(x)
+f2*cos(y) + f1*sin(y) - f # = 0
+
 ### D =>
 (f1*dy + df2)*cos(y) - (f2*dy - df1)*sin(y) - dp # = 0
 ### Solve linear =>
-sin(y) = ((f1*dy + df2)*p - f2*dp) / ((f1*dy + df2)*f1 + (f2*dy - df1)*f2)
-cos(y) = ((f2*dy - df1)*p + f1*dp) / ((f2*dy - df1)*f2 + (f1*dy + df2)*f1)
+sin(y) - ((f1*dy + df2)*p - f2*dp) / ((f1*dy + df2)*f1 + (f2*dy - df1)*f2) # = 0
+cos(y) - ((f2*dy - df1)*p + f1*dp) / ((f2*dy - df1)*f2 + (f1*dy + df2)*f1) # = 0
 
 ### D2 =>
 (f1*d2y + df1*dy + d2f2)*cos(y) - (f1*dy + df2)*dy*sin(y) +
 	- (f2*d2y + df2*dy - d2f1)*sin(y) - (f2*dy - df1)*dy*cos(y) - d2p # = 0
 (f1*d2y - f2*dy^2 + 2*df1*dy + d2f2)*cos(y) +
 	- (f2*d2y + f1*dy^2 + 2*df2*dy - d2f1)*sin(y) - d2p # = 0
-
-### ODE:
 (f1*d2y - f2*dy^2 + 2*df1*dy + d2f2)*((f2*dy - df1)*p + f1*dp) +
 	- (f2*d2y + f1*dy^2 + 2*df2*dy - d2f1)*((f1*dy + df2)*p - f2*dp) +
 	- d2p*((f1*dy + df2)*f1 + (f2*dy - df1)*f2) # = 0
+
+### ODE:
+# - Riccati-type NL ODE - but w. Power = 3;
+#   Note: NO y, as y was only present as Trig(y);
+((f1^2+f2^2)*dp - (df1*f1 + f2*df2)*p) * d2y +
+	- p*(f1^2 + f2^2) * dy^3 + 3*p*(f2*df1 - f1*df2) * dy^2 +
+	+ (p*(f1*d2f1 + d2f2*f2) - 2*p*(df1^2 + df2^2) + 2*dp*(df1*f1 + f2*df2) +
+		- (f1^2+f2^2)*d2p) * dy +
+	+ p*(d2f1*df2 - d2f2*df1) + dp*(d2f2*f1 - d2f1*f2) + d2p*(f2*df1 - f1*df2) # = 0
+
 
 ### Examples:
 
