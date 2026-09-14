@@ -41,12 +41,14 @@ source("Pubmed.XML.R")
 ### Credentials
 
 ### eMail:
+if(is.null(GetEMail)) {
 GetEMail = function() {
 	eMail = "...";
 	if(eMail == "...")
 		stop("Please provide a valid eMail address,
 		so that I do not get blamed when the PubMed server crashes!")
 	return(eMail);
+}
 }
 
 ### App data:
@@ -80,14 +82,25 @@ GetCredentials = function() {
 ##############
 
 ### Pubmed Search
-search.entrez = function(..., options=NULL, debug=TRUE) {
+# stop = if TRUE, only debug query;
+search.entrez = function(..., options=NULL, debug=TRUE, stop = FALSE) {
 	query = list(...);
-	if(length(query) == 0) {
-		stop("Missing query!");
+	# Checks:
+	checkQ = function(query, idMsg = 1) {
+		if(length(query) == 0) {
+			msg = c("Missing query!", "Empty query!");
+			stop(msg[idMsg]);
+		}
 	}
+	checkQ(query);
+	isNULL = sapply(query, is.null);
+	query  = query[! isNULL];
+	checkQ(query, 2);
+	#
 	query = encodeQuery(query);
 	query = paste0("term=", query);
 	if(debug) print(query);
+	if(stop) return(query);
 	url = paste0(baseUrl, "esearch.fcgi?db=", dataBaseName,
 		"&usehistory=y", "&", query,
 		GetSearchOptions(options), "&", GetCredentials());
