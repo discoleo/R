@@ -9,6 +9,12 @@
 ## draft v.0.1c
 
 
+### Examples:
+
+# (x+k1) * y*d2y - (x+k1) * dy^2 + y^2 = 0
+# k1*(x+k1) * y*d2y - k1*(x+k1) * dy^2 - x*y^2 = 0
+
+
 ### History:
 
 ### draft v.0.1a:
@@ -169,11 +175,15 @@ x  = exp(1/3);
 params = list(x=x, k1=k1, k2=k2);
 f0 = 2*x^2; df0 = 4*x; d2f = 4; d2f0 = d2f;
 ye = expression(2*x^2 / (x + k1)^(x + k2))[[1]];
-isExExp = FALSE; # isExExp = TRUE;
-if(isExExp) {
+isExExp = 0; # isExExp = 1; # isExExp = 2;
+if(isExExp == 1) {
 	k2 = k1; k3 = 1/3; params$k3 = k3; params$k2 = k2;
 	f0 = exp(k3*x); df0 = k3*f0; d2f0 = k3*df0;
 	ye = expression(exp(k3*x) / (x + k1)^(x + k2))[[1]];
+} else if(isExExp == 2) {
+	k2 = k1; k3 = 1/(2*k1); params$k3 = k3; params$k2 = k2;
+	f0 = exp(k3*x^2); df0 = 2*k3*x*f0; d2f0 = 2*k3*(2*k3*x + 1)*df0;
+	ye = expression(exp(k3*x^2) / (x + k1)^(x + k2))[[1]];
 }
 y  = eval(ye, params); ye = D(ye, "x");
 dy = eval(ye, params); ye = D(ye, "x");
@@ -204,6 +214,9 @@ f0*dy + (log(x+k1) + (x+k2)/(x+k1))*f0*y - df0*y # = 0
 
 ### k1 = k2; f0 = exp(k3*x);
 (x+k1) * y*d2y - (x+k1) * dy^2 + y^2 # = 0
+
+### k1 = k2; f0 = exp(x^2 / (2*k1));
+k1*(x+k1) * y*d2y - k1*(x+k1) * dy^2 - x*y^2 # = 0
 
 
 ### Solution & Plot:
