@@ -6,7 +6,7 @@
 ## Differential Equations
 ## NL Log: Hidden Log
 ##
-## draft v.0.1b
+## draft v.0.1c
 
 
 ### History:
@@ -162,6 +162,23 @@ line.tan(px, dx=dx, p=dy, dp=d2y, k=k, b=b, col="orange")
 
 # "another problem which stumped Photomath!" ;-)
 
+# Check:
+k1 = sqrt(5); k2 = sqrt(3);
+# k2 = k1;
+x  = exp(1/3);
+params = list(x=x, k1=k1, k2=k2);
+f0 = 2*x^2; df0 = 4*x; d2f = 4; d2f0 = d2f;
+ye = expression(2*x^2 / (x + k1)^(x + k2))[[1]];
+isExExp = FALSE; # isExExp = TRUE;
+if(isExExp) {
+	k2 = k1; k3 = 1/3; params$k3 = k3; params$k2 = k2;
+	f0 = exp(k3*x); df0 = k3*f0; d2f0 = k3*df0;
+	ye = expression(exp(k3*x) / (x + k1)^(x + k2))[[1]];
+}
+y  = eval(ye, params); ye = D(ye, "x");
+dy = eval(ye, params); ye = D(ye, "x");
+d2y = eval(ye, params);
+
 ### D(y)
 f0*dy/y + (log(x+k1) + (x+k2)/(x+k1))*y*f0/y - df0 # = 0
 f0*dy + (log(x+k1) + (x+k2)/(x+k1))*f0*y - df0*y # = 0
@@ -182,9 +199,11 @@ f0*dy + (log(x+k1) + (x+k2)/(x+k1))*f0*y - df0*y # = 0
 
 ### Examples:
 ### k1 == k2
-(x+k1)*f0^2*y*d2y +
-	- (x+k1)*(f0*dy + df0*y)*(f0*dy - df0*y) +
-	- (x+k1)*f0*d2f0*y^2 + f0^2*y^2 # = 0
+(x+k1)*f0^2 * y*d2y - (x+k1)*f0^2 * dy^2 +
+	+ ((x+k1)*(df0^2 - f0*d2f0) + f0^2) * y^2 # = 0
+
+### k1 = k2; f0 = exp(k3*x);
+(x+k1) * y*d2y - (x+k1) * dy^2 + y^2 # = 0
 
 
 ### Solution & Plot:
