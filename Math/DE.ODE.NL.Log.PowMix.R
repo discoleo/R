@@ -65,10 +65,10 @@ x^3 * y*d2y + x^3 * dy^2 + 2*x^2 * y*dy + k/2 # = 0
 
 ### Higher Powers
 
-### y = x^p ^ (x + k*log(x))^(1/3)
+### y = x^p * (x + k*log(x))^(1/3)
 
 # Check:
-p = 1/3; # p = -1; # p = -1/3;
+p = 1/3; # p = -1; # p = -1/3; # p = 0;
 k = sqrt(2);
 x = sqrt(3);
 params = list(x=x, k=k, p=p);
@@ -98,4 +98,7 @@ x^2 * y^2*d2y + 2*x^2 * y*dy^2 - 6*p*x * y^2*dy +
 
 ### p = -1/3;
 x^3 * y^2*d2y + 2*x^3 * y*dy^2 + 2*x^2 * y^2*dy + k/3 # = 0
+
+### p = 0;
+x^2 * y^2*d2y + 2*x^2 * y*dy^2 + k/3 # = 0
 
