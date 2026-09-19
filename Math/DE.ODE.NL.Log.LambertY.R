@@ -23,7 +23,7 @@ source("DE.ODE.Helper.R")
 
 ### y * log(y)^2 = F0(x)
 
-# y = LambertW(1/2 * sqrt(F0))^2
+# y = exp(lambertWp(sqrt(x)/2))^2;
 
 # Check:
 # TODO
