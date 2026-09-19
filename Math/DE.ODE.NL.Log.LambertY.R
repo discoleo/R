@@ -6,7 +6,7 @@
 ## Differential Equations
 ## NL ODEs - Lambert W
 ##
-## draft v.0.1a
+## draft v.0.1b
 
 
 
@@ -86,4 +86,28 @@ zW = pracma::lambertWp(sqrt(x)/2);
 y  = exp(2*zW);
 dy = y / sqrt(x) / (2*(zW + 1) * exp(zW));
 # TODO: d2y = dy^2 / y - dy / (2*x) - ...;
+
+
+#######################
+#######################
+
+#################
+### y * Log(P(y))
+
+### y * log(k1*y + f) = f - k2*y
+
+### Note:
+# y * log(exp(k2)*(k1*y + f)) = f
+
+### D =>
+log(k1*y + f)*dy + (k1*y/(k1*y+f))*dy + k2*dy - df # = 0 # * y =>
+(f - k2*y)*dy + (k1*y^2/(k1*y+f))*dy + k2*y*dy - df*y # = 0
+(f^2 + (k1-k2)*f*y - k1*k2*y^2)*dy + k1*y^2*dy + k2*(k1*y+f)*y*dy - df*y*(k1*y+f) # = 0
+
+### ODE:
+k1*y^2*dy + k1*f*y*dy + f^2*dy - k1*df*y^2 - f*df*y # = 0
+
+### Special Cases:
+# f = x; df = 1;
+k1*y^2*dy + k1*x*y*dy + x^2*dy - k1*y^2 - x*y # = 0
 

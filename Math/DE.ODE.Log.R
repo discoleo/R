@@ -750,7 +750,7 @@ line.tan(px, dx=3, p=dy, dp=d2y, k=k, n=n, col="orange")
 p / y * (dy)^2 + 2*(dp)^2 / p * y + p*d2p/dp * dy
 
 ### ODE:
-dp*p^2*y*d2y - dp*p^2*(dy)^2 + dp^2*p*y*dy - d2p*p^2*y*dy - 2*(dp)^3*y^2
+dp*p^2 * y*d2y - dp*p^2 * (dy)^2 + (dp^2*p - d2p*p^2) * y*dy - 2*(dp)^3 * y^2 # = 0
 
 ### Examples:
 ### Check: p = x + k; dp = 1;
@@ -807,28 +807,4 @@ line.tan(px, dx=3, p=y, dp=dy, k=k)
 #
 curve(dy(x, k=k), add=T, col="green")
 line.tan(px, dx=3, p=dy, dp=d2y, k=k, col="orange")
-
-
-#######################
-#######################
-
-##############
-### Log(y) ###
-##############
-
-### y * log(k1*y + f) = f - k2*y
-
-### Note:
-# y*log(exp(k2)*(k1*y + f)) = f
-
-### D =>
-log(k1*y + f)*dy + (k1*y/(k1*y+f))*dy + k2*dy - df # = 0 # * y =>
-(f - k2*y)*dy + (k1*y^2/(k1*y+f))*dy + k2*y*dy - df*y # = 0
-(f^2 + (k1-k2)*f*y - k1*k2*y^2)*dy + k1*y^2*dy + k2*(k1*y+f)*y*dy - df*y*(k1*y+f) # = 0
-### ODE:
-k1*y^2*dy + k1*f*y*dy + f^2*dy - k1*df*y^2 - f*df*y # = 0
-
-### Special Cases:
-# f = x; df = 1;
-k1*y^2*dy + k1*x*y*dy + x^2*dy - k1*y^2 - x*y # = 0
 
