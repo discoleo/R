@@ -331,11 +331,7 @@ epx = expression(x^2 + x/2 + 3/5)[[1]];
 # eb1 = eb2 = expression(sqrt(x))[[1]]; epx = expression(x)[[1]];
 # eb1 = eb2 = expression(x^(1/3))[[1]]; epx = expression(x)[[1]]; p = 1/3;
 e = expression(b2 * log(px)^2 + b1 * log(px) + c0)[[1]];
-e[[2]][[2]][[3]][[2]][[2]] = epx;
-e[[2]][[3]][[3]][[2]] = epx;
-e[[2]][[2]][[2]] = eb2;
-e[[2]][[3]][[2]] = eb1;
-
+e = do.call(substitute, list(e, list(b1=eb1, b2=eb2, px=epx)));
 #
 y  = eval(e, params); dy = eval(D(e, "x"), params);
 px = eval(epx, params); dp  = eval(D(epx, "x"), params);
