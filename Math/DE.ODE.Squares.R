@@ -701,3 +701,33 @@ d2y = eval(D(D(e, "x"), "x"), params);
 ### Case: c1 = 2; b1 = -1;
 2*x^2*(x-1)*d2y + x^2*dy - x*(y - c0) - (x + 2) # = 0
 
+
+#########################
+#########################
+
+### Type: LOG()^2 * Exp()
+
+### Components: 1
+# y = B(x) * Log(P1(x))^2 * Exp(P2(x))
+
+### y = log(x)^2 * exp(k*x)
+# - Requires ODE of Order 3,
+#   otherwise the Exp() persists;
+
+# Check:
+k = 2/5;
+x = sqrt(3); params = list(x=x, k=k);
+e = expression(log(x)^2 * exp(k*x))[[1]];
+#
+y   = eval(e, params);
+dy  = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
+
+# D =>
+x*dy - k*x*y - 2*log(x)*exp(k*x) # = 0
+
+# D2 =>
+
+### ODE:
+x^2 * d2y - x*(2*k*x - 1) * dy + k*x*(k*x - 1) * y - 2*exp(k*x) # = 0
+
