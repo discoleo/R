@@ -6,7 +6,7 @@
 ## Differential Equations
 ## Mixed Exp & Log
 ##
-## draft v.0.1e
+## draft v.0.1f
 
 
 ### Linear ODE of Order 2
@@ -39,6 +39,37 @@ source("DE.ODE.Helper.R")
 
 ### Product:
 ### y = log(P1(x)) * exp(P2(x)) + F(x);
+
+### Example: Basic
+# y = log(x) * exp(k*x)
+
+# Check:
+k = 2/5; # k = -1/2;
+x = sqrt(3); params = list(x=x, k=k);
+e = expression(log(x) * exp(k*x))[[1]];
+#
+y   = eval(e, params);
+dy  = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
+
+### ODE:
+x*d2y - (2*k*x - 1) * dy + k*(k*x - 1) * y # = 0
+
+
+# D =>
+x*dy - k*x*y - exp(k*x) # = 0
+
+# D2 =>
+x*d2y + dy - k*x*dy - k*y - k*exp(k*x) # = 0
+
+
+### Special Cases:
+
+### k = -1/2;
+4*x*d2y + 4*(x+1)*dy + (x+2)*y # = 0
+
+
+#########################
 
 ### Example 1: Simple Log
 ### y = x * log(x) * exp(k*x^2)
