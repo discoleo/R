@@ -6,12 +6,15 @@
 ## Differential Equations
 ## NL ODEs - Power-Log
 ##
-## draft v.0.1a
+## draft v.0.1b
 
+### Power with Log
+# y = P1(x)^log(P2(x))
 
 ### Examples:
 
 # x^2*y*d2y - x^2*dy^2 + x*y*dy - 2*y^2 = 0
+# x^2*y*d2y - x^2*dy^2 + x*y*dy - k*y^2 = 0 # Gen
 
 
 ####################
@@ -52,6 +55,37 @@ x^2 * d2y # ==
 x^2/y * dy^2 - x*dy + 2*y
 
 
+##################
+### Generalization
+
+### y = x^p * x^(k*log(x))
+# Note: p has no impact on ODE;
+# (except for initial conditions)
+
+# Check:
+p = 2/5; # p = 7/3;
+k = sqrt(5/3);
+x = sqrt(3); params = list(x=x, k=k, p=p);
+e = expression(x^p * x^(k*log(x)))[[1]];
+#
+y   = eval(e, params);
+dy  = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
+
+### ODE:
+x^2 * y*d2y - x^2 * dy^2 + x*y*dy - 2*k*y^2 # = 0
+
+# D =>
+x*dy - p*y - 2*k*log(x)*y # = 0
+
+# D2 =>
+x^2 * d2y - (p-1)*x*dy +
+	- 2*k*x*log(x)*dy - 2*k*y # = 0
+x^2 * y*d2y - (p-1)*x * y*dy +
+	- x*(x*dy - p*y) * dy - 2*k*y^2 # = 0
+
+
+#############
 ### Extension
 ### y = (x + k)^log(x + k)
 
