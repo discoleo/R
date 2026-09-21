@@ -72,6 +72,39 @@ x*(x^2-1)^2 * d2y +
 
 
 #########################
+
+### Type: Atan * Radical
+# y = B(x) * Sqrt(P1(x)) * Atan(K(x) * Sqrt(P1(x))) *P2(x)^p;
+# Note: Homogeneous ODE;
+
+
+### y = sqrt(x^2-1) * atan(sqrt(x^2-1)) * (x^3-1)^(1/3)
+# - Simple example;
+
+# Check:
+x = 3^(3/5);
+params = list(x=x);
+e = expression(sqrt(x^2-1) * atan(sqrt(x^2-1)) * (x^3-1)^(1/3))[[1]];
+#
+y   = eval(e, params);
+dy  = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
+
+# D =>
+x*(x^2-1)*(x^3-1)*dy - x^2*(x^3-1) * y - x^3*(x^2-1) * y +
+	- (x^2-1)*(x^3-1) * (x^3-1)^(1/3) # = 0
+x*(x^2-1)*(x^3-1)*dy - (2*x^5 - x^3 - x^2) * y +
+	- (x^2-1)*(x^3-1) * (x^3-1)^(1/3) # = 0
+
+# D2 =>
+x*(x^2-1)*(x^3-1) * d2y + (6*x^5 - 4*x^3 - 3*x^2 + 1)*dy +
+	- (2*x^5 - x^3 - x^2) * dy - (10*x^4 - 3*x^2 - 2*x) * y +
+	- (x-1)*(6*x^3 + 6*x^2 + 2*x) * (x^3-1)^(1/3) # = 0
+
+# TODO: substitute;
+
+
+#########################
 #########################
 
 ### Type: 2 Components
