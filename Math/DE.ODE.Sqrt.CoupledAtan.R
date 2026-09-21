@@ -6,7 +6,7 @@
 ## Differential Equations
 ## ODEs - Coupled SQRT
 ##
-## draft v.0.1c
+## draft v.0.1d
 
 
 ### Examples:
@@ -27,8 +27,51 @@ source("DE.ODE.Helper.R")
 
 ### Type: 1 Component
 
+### Type: Atan * Exp
+# y = B(x) * Sqrt(P1(x)) * Atan(K(x) * Sqrt(P1(x))) * exp(P2(x));
+# Note: Homogeneous ODE;
 
 
+### y = sqrt(x^2-1) * atan(sqrt(x^2-1)) * exp(k*x)
+# - Simple example;
+
+# Check:
+k = sqrt(3); # k = 1;
+x = 3^(3/5);
+params = list(x=x, k=k);
+e = expression(sqrt(x^2-1) * atan(sqrt(x^2-1)) * exp(k*x))[[1]];
+#
+y   = eval(e, params);
+dy  = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
+
+# D =>
+x*(x^2-1)*dy - k*x*(x^2-1)*y - x^2 * y - (x^2-1)*exp(k*x) # = 0
+
+# D2 =>
+x*(x^2-1) * d2y +
+	- (k*x*(x^2-1) - 2*x^2 + 1) * dy +
+	- (k*(3*x^2-1) + 2*x) * y +
+	- k*(x^2-1)*exp(k*x) - 2*x*exp(k*x) # = 0
+x*(x^2-1) * d2y +
+	- (2*k*x*(x^2-1) - 2*x^2 + 1) * dy +
+	+ (k^2*x^3 - 2*k*x^2 - (k^2+2)*x + k) * y - 2*x*exp(k*x) # = 0
+
+### ODE:
+x*(x^2-1)^2 * d2y +
+	- (x^2-1)*(2*k*x*(x^2-1) + 1) * dy +
+	+ (k^2*x^5 - 2*k^2*x^3 + k*x^2 + (k^2+2)*x - k) * y # = 0
+
+
+### Special Cases:
+
+### Case: k = 1;
+x*(x^2-1)^2 * d2y +
+	- (x^2-1)*(2*x*(x^2-1) + 1) * dy +
+	+ (x^5 - 2*x^3 + x^2 + 3*x - 1) * y # = 0
+
+
+#########################
 #########################
 
 ### Type: 2 Components
