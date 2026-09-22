@@ -6,7 +6,7 @@
 ## Differential Equations
 ## ODEs - Coupled SQRT
 ##
-## draft v.0.1e
+## draft v.0.1f
 
 
 ### Examples:
@@ -102,6 +102,71 @@ x^4*(x^2-1)^2 * d2y + x^2*(x^2-1)*(2*k*x^2 - x - 2*k) * dy +
 	- (k*x*(2*x^2-1)*(x^2-1) - k^2*(x^2-1)^2 - 2*x^4) * y # = 0
 
 
+###################
+
+### y = sqrt(x-1) * atan(sqrt(x-1)) * exp(k/x)
+
+# Check:
+k = sqrt(3); # k = 1;
+x = 3^(3/5);
+params = list(x=x, k=k);
+e = expression(sqrt(x-1) * atan(sqrt(x-1)) * exp(k/x))[[1]];
+#
+y   = eval(e, params);
+dy  = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
+
+# D =>
+2*x^2*(x-1) * dy - (x^2 - 2*k*x + 2*k) * y - x*(x-1)*exp(k/x) # = 0
+
+# D2 =>
+2*x^3*(x-1) * d2y + x*(5*x^2 + 2*k*x - 4*x - 2*k) * dy +
+	- x*(2*x - 2*k) * y +
+	- (2*x^2 - (k+1)*x + k)*exp(k/x) # = 0
+
+### ODE:
+2*x^4*(x-1)^2 * d2y +
+	+ x^2*(x-1) * (x^2 + (4*k-2)*x - 4*k) * dy +
+	- ((3*k-1)*x^3 - k*(2*k+5)*x^2 + 2*k*(2*k+1)*x - 2*k^2) * y # = 0
+
+
+###################
+
+### y = sqrt(x-1) * atan(sqrt(x-1)) * exp(k/x) + B(x) * Exp(k/x)
+# Mixed Variant
+
+# Check:
+k  = sqrt(3); # k = 1;
+c1 = - 1/4^(1/3); # c1 = 1;
+x = 3^(3/5);
+params = list(x=x, k=k);
+e = expression(sqrt(x-1) * atan(sqrt(x-1)) * exp(k/x) + c1*exp(k/x))[[1]];
+#
+y   = eval(e, params);
+dy  = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
+
+# D =>
+2*x^2*(x-1) * dy - (x^2 - 2*k*x + 2*k) * (y - c1*exp(k/x)) +
+	- (x*(x-1) - 2*c1*k*(x-1)) * exp(k/x) # = 0
+2*x^2*(x-1) * dy - (x^2 - 2*k*x + 2*k) * y +
+	+ ((c1-1)*x^2 + x) * exp(k/x) # = 0
+
+# D2 =>
+2*x^3*(x-1) * d2y + (5*x^3 + (2*k-4)*x^2 - 2*k*x) * dy +
+	- x*(2*x - 2*k) * y +
+	+ (2*(c1-1)*x^2 - k*(c1-1)*x + x - k) * exp(k/x) # = 0
+
+# TODO
+
+### Special Cases:
+
+### Case: c1 = 1;
+2*x^4*(x-1) * d2y + x^2*(3*x^2 + (4*k-2)*x - 4*k) * dy +
+	- (x-k)*(x^2 + 2*k*x - 2*k) * y # = 0
+
+
+#########################
 #########################
 
 ### Type: Atan * Radical
