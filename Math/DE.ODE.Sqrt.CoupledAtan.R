@@ -6,7 +6,7 @@
 ## Differential Equations
 ## ODEs - Coupled SQRT
 ##
-## draft v.0.1d
+## draft v.0.1e
 
 
 ### Examples:
@@ -71,10 +71,41 @@ x*(x^2-1)^2 * d2y +
 	+ (x^5 - 2*x^3 + x^2 + 3*x - 1) * y # = 0
 
 
+###################
+
+### y = sqrt(x^2-1) * atan(sqrt(x^2-1)) * exp(k/x)
+
+# Check:
+k = sqrt(3); # k = 1;
+x = 3^(3/5);
+params = list(x=x, k=k);
+e = expression(sqrt(x^2-1) * atan(sqrt(x^2-1)) * exp(k/x))[[1]];
+#
+y   = eval(e, params);
+dy  = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
+
+# D =>
+x^2*(x^2-1) * dy - (x^3 - k*x^2 + k) * y - x*(x^2-1)*exp(k/x) # = 0
+
+# D2 =>
+x^3*(x^2-1) * d2y + x*(3*x^3 + k*x^2 - 2*x - k) * dy +
+	- x*(3*x^2 - 2*k*x) * y +
+	+ k*(x^2-1)*exp(k/x) - (3*x^3 - x)*exp(k/x) # = 0
+
+### ODE:
+x^4*(x^2-1)^2 * d2y + x^2*(x^2-1)*(2*k*x^2 - x - 2*k) * dy +
+	- (2*k*x^5 - (k^2+2)*x^4 - 3*k*x^3 + 2*k^2*x^2 + k*x - k^2) * y # = 0
+
+# Alternative notation:
+x^4*(x^2-1)^2 * d2y + x^2*(x^2-1)*(2*k*x^2 - x - 2*k) * dy +
+	- (k*x*(2*x^2-1)*(x^2-1) - k^2*(x^2-1)^2 - 2*x^4) * y # = 0
+
+
 #########################
 
 ### Type: Atan * Radical
-# y = B(x) * Sqrt(P1(x)) * Atan(K(x) * Sqrt(P1(x))) *P2(x)^p;
+# y = B(x) * Sqrt(P1(x)) * Atan(K(x) * Sqrt(P1(x))) * P2(x)^p;
 # Note: Homogeneous ODE;
 
 
