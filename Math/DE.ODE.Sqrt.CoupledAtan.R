@@ -6,7 +6,7 @@
 ## Differential Equations
 ## ODEs - Coupled SQRT
 ##
-## draft v.0.1f
+## draft v.0.1g
 
 
 ### Examples:
@@ -130,14 +130,14 @@ d2y = eval(D(D(e, "x"), "x"), params);
 	- ((3*k-1)*x^3 - k*(2*k+5)*x^2 + 2*k*(2*k+1)*x - 2*k^2) * y # = 0
 
 
-###################
+##############
+### Extension: Variant w. 2 Components
 
 ### y = sqrt(x-1) * atan(sqrt(x-1)) * exp(k/x) + B(x) * Exp(k/x)
-# Mixed Variant
 
 # Check:
 k  = sqrt(3); # k = 1;
-c1 = - 1/4^(1/3); # c1 = 1;
+c1 = - 1/4^(1/3); # c1 = 1; # c1 = 2; # c1 = -1;
 x = 3^(3/5);
 params = list(x=x, k=k);
 e = expression(sqrt(x-1) * atan(sqrt(x-1)) * exp(k/x) + c1*exp(k/x))[[1]];
@@ -157,13 +157,31 @@ d2y = eval(D(D(e, "x"), "x"), params);
 	- x*(2*x - 2*k) * y +
 	+ (2*(c1-1)*x^2 - k*(c1-1)*x + x - k) * exp(k/x) # = 0
 
-# TODO
+### ODE:
+2*x^4*(x-1)*((c1-1)*x + 1) * d2y +
+	+ x^2 * ((c1-1)*x^3 + (4*(c1-1)*k + 3)*x^2 - (4*(c1-2)*k + 2)*x - 4*k) * dy +
+	- ((3*k*(c1-1)+1)*x^3 - k*(2*k*(c1-1) + (4*c1 - 5))*x^2 +
+		+ 2*k*(k*(c1-2) - 1)*x + 2*k^2) * y # = 0
 
 ### Special Cases:
 
 ### Case: c1 = 1;
 2*x^4*(x-1) * d2y + x^2*(3*x^2 + (4*k-2)*x - 4*k) * dy +
 	- (x-k)*(x^2 + 2*k*x - 2*k) * y # = 0
+
+### Case: c1 = 2;
+2*x^4*(x^2 - 1) * d2y +
+	+ x^2 * (x^3 + (4*k + 3)*x^2 - 2*x - 4*k) * dy +
+	- ((3*k+1)*x^3 - k*(2*k + 3)*x^2 - 2*k*x + 2*k^2) * y # = 0
+
+### Case: c1 = -1;
+2*x^4*(x-1)*(2*x-1) * d2y +
+	+ x^2 * (2*x^3 + (8*k-3)*x^2 - (12*k-2)*x + 4*k) * dy +
+	- ((6*k-1)*x^3 - k*(4*k+9)*x^2 + 2*k*(3*k+1)*x - 2*k^2) * y # = 0
+# Alternative notation:
+2*x^4*(x-1)*(2*x-1) * d2y +
+	+ x^2 * ((x-1)*(2*x-1)*(x + 4*k) + x) * dy +
+	- ((6*k-1)*x^3 - k*(4*k+9)*x^2 + 2*k*(3*k+1)*x - 2*k^2) * y # = 0
 
 
 #########################
