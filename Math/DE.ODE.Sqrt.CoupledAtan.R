@@ -6,7 +6,7 @@
 ## Differential Equations
 ## ODEs - Coupled SQRT
 ##
-## draft v.0.1g
+## draft v.0.1h
 
 
 ### Examples:
@@ -70,7 +70,69 @@ x*(x^2-1)^2 * d2y +
 	- (x^2-1)*(2*x*(x^2-1) + 1) * dy +
 	+ (x^5 - 2*x^3 + x^2 + 3*x - 1) * y # = 0
 
+##############
 
+### Extension: w. coupled Exp(k*x)
+# y = ... + c1*exp(k*x);
+
+# Check:
+k  = sqrt(3); # k = 1;
+c1 = 1/5^(1/3); # c1 = 1; # c1 = 2;
+# c1 = 1; k = -2;
+x = 3^(3/5);
+params = list(x=x, k=k, c1=c1);
+e = expression(sqrt(x^2-1) * atan(sqrt(x^2-1)) * exp(k*x) + c1*exp(k*x))[[1]];
+#
+y   = eval(e, params);
+dy  = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
+
+# D =>
+x*(x^2-1)*dy - (k*x*(x^2-1) + x^2) * (y - c1*exp(k*x)) +
+	- (x^2-1)*(c1*k*x + 1) * exp(k*x) # = 0
+x*(x^2-1) * dy - (k*x*(x^2-1) + x^2) * y +
+	+ ((c1-1)*x^2 + 1) * exp(k*x) # = 0
+
+# D2 =>
+x*(x^2-1) * d2y +
+	- (k*x*(x^2-1) - 2*x^2 + 1) * dy +
+	- (k*(3*x^2-1) + 2*x) * y +
+	+ (k*(c1-1)*x^2 + k + 2*(c1-1)*x) * exp(k*x) # = 0
+x*(x^2-1) * d2y +
+	- (2*k*x*(x^2-1) - 2*x^2 + 1) * dy +
+	+ (k^2*x*(x^2-1) - 2*k*x^2 - 2*x + k) * y +
+	+ 2*(c1-1)*x * exp(k*x) # = 0
+x^2*(x^2-1) * d2y +
+	- x*(2*k*x*(x^2-1) - 1) * dy +
+	+ x*(k^2*x*(x^2-1) - k) * y +
+	- 2*exp(k*x) # = 0
+
+### ODE:
+x^2*(x^2-1)*((c1-1)*x^2 + 1) * d2y +
+	- x*(2*(c1-1)*k*x^5 - 2*(c1-2)*k*x^3 +
+		- (c1+1)*x^2 - 2*k*x + 1) * dy +
+	+ x*(k^2*(c1-1)*x^5 - k^2*(c1-2)*x^3 +
+		- k*(c1+1)*x^2 - (k^2+2)*x + k) * y # = 0
+
+
+### Special Cases:
+
+### Case: c1 = 1;
+x*(x^2-1) * d2y +
+	- (2*k*x*(x^2-1) - 2*x^2 + 1) * dy +
+	+ (k^2*x*(x^2-1) - 2*k*x^2 - 2*x + k) * y # = 0
+### Case: c1 = 1; k = -2;
+x*(x^2-1) * d2y +
+	+ (4*x*(x^2-1) + 2*x^2 - 1) * dy +
+	+ 2*(x-1)*(2*x^2 + 4*x + 1) * y # = 0
+
+### Case: c1 = 2;
+x*(x^2-1)*(x^2 + 1) * d2y +
+	- (2*k*x^5 - 3*x^2 - 2*k*x + 1) * dy +
+	+ (k^2*x^5 - 3*k*x^2 - (k^2+2)*x + k) * y # = 0
+
+
+###################
 ###################
 
 ### y = sqrt(x^2-1) * atan(sqrt(x^2-1)) * exp(k/x)
