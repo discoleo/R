@@ -1,9 +1,12 @@
 
 # History of DE.ODE.Log.R
-** Leonard Mada**
+**Leonard Mada**
 
 
 ## History
+
+### Draft v.0.3u:
+- [refactor] Sum(Log^2) moved to file: DE.ODE.NL.Log.Pow.R;
 
 ### Draft v.0.3t:
 - [refactor] Moved History to this file;
