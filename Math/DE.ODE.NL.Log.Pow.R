@@ -6,7 +6,7 @@
 ## Differential Equations
 ## NL ODEs - Powers of Log
 ##
-## draft v.0.1b
+## draft v.0.1c
 
 
 ####################
@@ -30,13 +30,72 @@ source("DE.ODE.Helper.R")
 
 ### Derived from:
 ### y = (log(P1(x)))^2 + (log(P2(x)))^2
+# ODE Type: d2y^2
+
+
+### Example:
+y = x^p * (log(x + a)^2 + log(x + b))^2
+# - Simpler example;
+# Note:
+# - Coefficients of 2 Logs have to be identical,
+#   except for a constant scaling;
+
+# Check:
+a = sqrt(2); b = sqrt(3); # b = -a;
+p = 2/3;
+x = 5^(2/3);
+params = list(x=x, a=a, b=b, p=p);
+e = expression(x^p * (log(x+a)^2 + log(x+b)^2))[[1]];
+#
+y   = eval(e, params);
+dy  = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
+
+# D =>
+x*(x+a)*(x+b)*dy - p*(x+a)*(x+b)*y - 2*x^(p+1) * ((x+b) * log(x+a) + (x+a) * log(x+b)) # = 0
+
+# D2 =>
+x*(x+a)*(x+b) * d2y - ((p-3)*x^2 + (p-2)*(a+b)*x + (p-1)*a*b) * dy +
+	- p*(2*x + a+b) * y +
+	- 2*(p+1)*x^p * ((x+b) * log(x+a) + (x+a) * log(x+b)) +
+	- 2*x^(p+1) * (log(x+a) + log(x+b)) +
+	- 2*x^(p+1) * ((x+b)/(x+a) + (x+a)/(x+b)) # = 0
+x^2*(x+a)*(x+b) * d2y - x * ((2*p-2)*x^2 + (2*p-1)*(a+b)*x + 2*p*a*b) * dy +
+	+ p*((p-1)*x^2 + p*(a+b)*x + (p+1)*a*b) * y +
+	- 2*x^(p+2) * (log(x+a) + log(x+b)) +
+	- 2*x^(p+2) * ((x+b)/(x+a) + (x+a)/(x+b)) # = 0
+
+# Linear System:
+F = x^2*(x+a)*(x+b) * d2y - x * ((2*p-2)*x^2 + (2*p-1)*(a+b)*x + 2*p*a*b) * dy +
+	+ p*((p-1)*x^2 + p*(a+b)*x + (p+1)*a*b) * y +
+	- 2*x^(p+2) * ((x+b)/(x+a) + (x+a)/(x+b));
+log(x+a) # ==
+(x*(x*(x+a)*(x+b)*dy - p*(x+a)*(x+b)*y) - (x+a)*F) / (2*(b-a)*x^(p+2));
+(x+a)*(x^2*(x+b)*dy - p*x*(x+b)*y - F) / (2*(b-a)*x^(p+2));
+#
+log(x+b) # ==
+(x*(x*(x+a)*(x+b)*dy - p*(x+a)*(x+b)*y) - (x+b)*F) / -(2*(b-a)*x^(p+2));
+(x+b)*(x^2*(x+a)*dy - p*x*(x+a)*y - F) / -(2*(b-a)*x^(p+2));
+
+# Substitution in Eq for y:
+4*(b-a)^2*x^(p+4) * y +
+	- (x+a)^2*(F - x^2*(x+b)*dy + p*x*(x+b)*y)^2 +
+	- (x+b)^2*(F - x^2*(x+a)*dy + p*x*(x+a)*y)^2 # = 0
+
+# TODO: simplify;
+
+
+######################
+
+### Derived from:
+### y = (log(P1(x)))^2 + (log(P2(x)))^2
 
 ### Example:
 y = (log(x^2 + a))^2 + (log(x^2 + b))^2
 
 # Check:
 a = sqrt(2); b = sqrt(3); # b = -a;
-x = 5^(4/3);
+x = 5^(2/3);
 params = list(x=x, a=a, b=b);
 e = expression((log(x^2 + a))^2 + (log(x^2 + b))^2)[[1]];
 #
