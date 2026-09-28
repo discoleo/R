@@ -6,7 +6,7 @@
 ## Differential Equations
 ## NL ODEs - Log * Exp
 ##
-## draft v.0.1a
+## draft v.0.1b
 
 ### Log to Power:
 # y = Log(P1(x))^2 * Exp(P2(x)})
@@ -32,7 +32,7 @@ source("DE.ODE.Helper.R")
 
 # Check:
 k = 1/sqrt(5);
-x = sqrt(3); params = list(x=x);
+x = sqrt(3); params = list(x=x, k=k);
 e = expression(log(x)^2 * exp(k*x))[[1]];
 #
 y   = eval(e, params);
@@ -52,4 +52,35 @@ x^2*d2y - x*(2*k*x - 1)*dy + k*x*(k*x - 1)*y - 2*exp(k*x) # = 0
 
 ### ODE:
 2*x*y*d2y - x*dy^2 - 2*(k*x - 1) * y*dy + k*(k*x - 2) * y^2 # = 0
+
+
+#########################
+
+### Type: 2 Components w. Exp
+# y = Log(x)^2 * Exp(k*x) + c1*Exp(k*x)
+
+# Check:
+k  = 1/sqrt(5);
+c1 = 2^(1/3);
+x = sqrt(3); params = list(x=x, k=k, c1=c1);
+e = expression(log(x)^2 * exp(k*x) + c1*exp(k*x))[[1]];
+#
+y   = eval(e, params);
+dy  = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
+
+# D =>
+x*dy - k*x*y - 2*log(x)*exp(k*x) # = 0
+
+# D2 =>
+x^2*d2y - x*(2*k*x - 1)*dy + k*x*(k*x - 1)*y - 2*exp(k*x) # = 0
+
+# =>
+2*log(x)^2 * exp(k*x) # ==
+- c1*x^2*d2y + c1*x*(2*k*x - 1)*dy - c1*k*x*(k*x - 1)*y + 2*y;
+# =>
+x^2*d2y - x*(2*k*x - 1)*dy + k*x*(k*x - 1)*y +
+	+ (x*dy - k*x*y)^2 / (c1*x^2*d2y - c1*x*(2*k*x - 1)*dy + c1*k*x*(k*x - 1)*y - 2*y) # = 0
+
+# TODO: simplify;
 
