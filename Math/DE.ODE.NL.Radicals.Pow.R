@@ -6,7 +6,7 @@
 ## Differential Equations
 ## NL ODEs - Radicals: Power
 ##
-## draft v.0.1c
+## draft v.0.1d
 
 ### Log to Power:
 # y = P(x)^n + P(x)^(j*n)
@@ -54,6 +54,39 @@ R^2 + R - y # = 0
 ### ODE:
 (x^2+k)^2 * dy^2 - 8*n*x*(x^2+k) * y*dy + 16*n^2*x^2 * y^2 +
 	- 2*n*x*((x^2+k)*dy - 2*n*x*y) # = 0
+
+
+###################
+
+### 3 Radicals
+
+### y = (x^2 + k)^n + (x^2 + k)^(2*n) + (x^2 + k)^(3*n)
+# Note: Order 1 will be presented separately;
+
+# Check:
+k = 1/sqrt(5);
+n = 1/sqrt(7); # n = 1/5; # n = k = 1/9;
+x = sqrt(3); params = list(x=x, k=k);
+e = expression((x^2 + k)^n + (x^2 + k)^(2*n) + (x^2 + k)^(3*n))[[1]];
+#
+y   = eval(e, params);
+dy  = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
+
+# D =>
+(x^2 + k)*dy - 2*n*x*((x^2 + k)^n + 2*(x^2 + k)^(2*n) + 3*(x^2 + k)^(3*n)) # = 0
+
+### System
+R = (x^2 + k)^n;
+R^3 + R^2 + R - y # = 0
+2*n*x*(3*R^3 + 2*R^2 + R) - (x^2 + k)*dy # = 0
+
+### ODE:
+(x^2+k)^3 * dy^3 +
+	- 18*n*x*(x^2+k)^2 * y*dy^2 - 6*n*x*(x^2+k)^2 * dy^2 +
+	+ 108*n^2*x^2*(x^2+k) * y^2*dy + 56*n^2*x^2*(x^2+k) * y*dy +
+	+ 12*n^2*x^2*(x^2 + k) * dy +
+	- 216*n^3*x^3*y^3 - 112*n^3*x^3*y^2 - 24*n^3*x^3*y # = 0
 
 
 #########################
