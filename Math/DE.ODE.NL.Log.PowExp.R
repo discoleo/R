@@ -6,7 +6,7 @@
 ## Differential Equations
 ## NL ODEs - Log * Exp
 ##
-## draft v.0.2b
+## draft v.0.2c
 
 ### Log to Power:
 # y = Log(P1(x))^n * Exp(P2(x)})
@@ -21,7 +21,8 @@
 # 3*x*y*d2y - 2*x*dy^2 - (2*k*x - 3) * y*dy + k*(k*x - 3) * y^2 = 0;
 # n*x*y*d2y - (n-1)*x*dy^2 - (2*k*x - n) * y*dy + k*(k*x - n) * y^2 = 0;
 
-# 2*x^4 * y*d2y - x^4 * dy^2 + 2*x^2*(x+k) * y*dy - k*(2*x-k) * y^2 = 0;
+# 2*x^4 * y*d2y - x^4 * dy^2 + (2*x + 2*k)*x^2 * y*dy - k*(2*x-k) * y^2 = 0;
+# n*x^4 * y*d2y - (n-1)*x^4 * dy^2 + (n*x + 2*k)*x^2 * y*dy - k*(n*x - k) * y^2 = 0;
 
 
 # Note:
@@ -154,4 +155,41 @@ x*dy - k*x*y - n*log(x)^(n-1) * exp(k*x) # = 0
 
 ### ODE:
 n*x*y*d2y - (n-1)*x*dy^2 - (2*k*x - n) * y*dy + k*(k*x - n) * y^2 # = 0
+
+
+#####################
+
+### y = Log(x)^n1 * Exp(k*x^n2)
+
+# Check:
+k = 1/sqrt(5);
+n1 = 2^(2/3);
+n2 = 2/3; # n2 = -1;
+x = sqrt(3); params = list(x=x, k=k, n1=n1, n2=n2);
+e = expression(log(x)^n1 * exp(k*x^n2))[[1]];
+#
+y   = eval(e, params);
+dy  = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
+
+# D =>
+x*dy - k*n2*x^n2 * y - n1*log(x)^(n1-1) * exp(k*x^n2) # = 0
+
+# D2 =>
+x^2 * d2y - x*(k*n2*x^n2 - 1) * dy - k*n2^2*x^n2 * y +
+	- n1*n2*k*x^n2 * log(x)^(n1-1) * exp(k*x^n2) +
+	- n1*(n1-1)*log(x)^(n1-2) * exp(k*x^n2) # = 0
+x^2 * d2y - x*(2*k*n2*x^n2 - 1) * dy +
+	+ k*n2^2*x^n2*(k*x^n2 - 1) * y +
+	- n1*(n1-1)*log(x)^(n1-2) * exp(k*x^n2) # = 0
+
+### ODE:
+n1*x^2 * y*d2y - (n1-1)*x^2*dy^2 - x*(2*k*n2*x^n2 - n1) * y*dy +
+	+ k*n2^2*x^n2*(k*x^n2 - n1) * y^2 # = 0
+
+### Special Cases:
+
+### Case: n2 = -1;
+n1*x^4 * y*d2y - (n1-1)*x^4*dy^2 + (n1*x + 2*k)*x^2 * y*dy +
+	- k*(n1*x - k) * y^2 # = 0
 
