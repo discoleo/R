@@ -327,6 +327,8 @@ eb2 = expression(x^2 + x/3 + 1/5)[[1]];
 eb1 = expression(x^2 + x/5 + 2/3)[[1]];
 # eb1 = eb2; # Case: b1 == b2;
 epx = expression(x^2 + x/2 + 3/5)[[1]];
+# epx = expression(x)[[1]]; eb1 = expression(x)[[1]];
+# epx = expression(x)[[1]]; eb1 = expression(x)[[1]]; eb2 = expression(1/x)[[1]];
 # eb1 = eb2; epx = expression(x)[[1]];
 # eb1 = eb2 = expression(sqrt(x))[[1]]; epx = expression(x)[[1]];
 # eb1 = eb2 = expression(x^(1/3))[[1]]; epx = expression(x)[[1]]; p = 1/3;
@@ -355,18 +357,29 @@ b2*px * dy - db2*px * (y - c0) +
 b2*px * d2y + b2*dp * dy - (db2*dp + d2b2*px) * (y - c0) +
 	+ (d2b2*b1*px - d2b1*b2*px + db2*(b1-4*b2)*dp - db1*b2*dp - 2*b2^2*d2p) * log(px) +
 	- b1*b2*d2p - 2*db1*b2*dp - 2*b2^2*dp^2 / px # = 0
-b2*px^2*((b2*db1 - b1*db2)*px + 2*b2^2*dp) * d2y +
-	+ b2*px * ((b1*d2b2 - b2*d2b1)*px^2 - 4*b2*db2*px*dp + 2*b2^2*dp^2 - 2*b2^2*px*d2p) * dy +
-	- px*(b2*(db1*d2b2 - db2*d2b1)*px^2 - 4*b2*db2^2*px*dp + 2*b2^2*d2b2*px*dp +
-		+ 2*b2^2*db2*dp^2 - 2*b2^2*db2*px*d2p) * (y - c0) +
-	- (2*db1*b2*(b2*db1 - b1*db2) + b1*b2*(b1 - b2)*d2b2) * px^2*dp +
-	- b2*(b1 - 6*b2)*(b1*db2 - b2*db1) * px*dp^2 - 4*b2^4*dp^3 +
-	- b1*b2*(b2*db1 - b1*db2) * px^2*d2p # = 0
+px^2*((b2*db1 - b1*db2)*px + 2*b2^2*dp) * d2y +
+	+ px * ((b1*d2b2 - b2*d2b1)*px^2 - 4*b2*db2*px*dp + 2*b2^2*dp^2 - 2*b2^2*px*d2p) * dy +
+	- px*((db1*d2b2 - db2*d2b1)*px^2 - 4*db2^2*px*dp + 2*b2*d2b2*px*dp +
+		+ 2*b2*db2*dp^2 - 2*b2*db2*px*d2p) * (y - c0) +
+	- (2*db1*(b2*db1 - b1*db2) + b1*(b1*d2b2 - b2*d2b1) + 0*b1*(b1 - b2)*d2b2) * dp*px^2 +
+	- (b1 - 6*b2)*(b1*db2 - b2*db1) * px*dp^2 - 4*b2^3*dp^3 +
+	- b1*(b2*db1 - b1*db2) * px^2*d2p # = 0
+
 
 # TODO:
 # - gain insight from formula;
 
 ### Special Cases:
+
+### Case: P(x) = x; B1(x) = x;
+(db2*x^2 - b2*x - 2*b2^2)*x^2 * d2y +
+	- (d2b2*x^3 - 4*db2*b2*x + 2*b2^2)*x * dy +
+	+ (d2b2*x^2 - 4*db2^2*x + 2*b2*d2b2*x + 2*db2*b2)*x * (y - c0) +
+	+ d2b2*x^4 - db2*x^3 + b2*(1 - 6*db2)*x^2 + 6*b2^2*x + 4*b2^3 # = 0
+### Case: P(x) = x; B1(x) = x; B2(x) = 1/x;
+(x^2 + 1)*x^3 * d2y + (x^2 + 3)*x^2 * dy +
+	- x*(x^2 - 1) * (y - c0) - 2*x^4 - 6*x^2 - 2 # = 0
+
 
 ### Case: b1 = b2
 b2^2*px^2*dp * d2y +
@@ -709,10 +722,13 @@ d2y = eval(D(D(e, "x"), "x"), params);
 
 ### Components: 1
 # y = B(x) * Log(P1(x))^2 * Exp(P2(x))
-
-### y = log(x)^2 * exp(k*x)
 # - Requires ODE of Order 3,
 #   otherwise the Exp() persists;
+# - FOr NL ODE, see file:
+#   DE.ODE.NL.Log.PowExp.R;
+
+
+### y = log(x)^2 * exp(k*x)
 
 # Check:
 k = 2/5;
