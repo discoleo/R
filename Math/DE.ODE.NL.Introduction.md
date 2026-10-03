@@ -8,7 +8,7 @@
 This material presents various types of Non-Linear (NL) ODEs. The focus is on NL ODEs with polynomial coefficients. Both homogenous and inhomogeneous variants are covered and an explanation will be provided how to generate both types.
 
 ### Motto:
-# The new AI proofs in Maths look only more and more ridiculous!
+: The new AI proofs in Maths look only more and more ridiculous!
 
 ## Types
 
