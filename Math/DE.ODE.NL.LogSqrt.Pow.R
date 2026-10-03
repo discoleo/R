@@ -6,7 +6,7 @@
 ## Differential Equations
 ## NL ODEs - Power of Log(SQRT)
 ##
-## draft v.0.1b
+## draft v.0.1c
 
 ### Log to Power:
 # y = Sqrt(P(x)) * Log(Sqrt(P(x)^2 + b) - P(x))^n
@@ -16,6 +16,7 @@
 
 # 2*(x^2+1)^2 * y*d2y - (x^2+1)^2 * dy^2 + (x^2-2) * y^2 = 0;
 # 3*(x^2+1)^2 * y*d2y - 2*(x^2+1)^2 * dy^2 + x*(x^2+1) * y*dy + (x^2-3) * y^2 = 0;
+# n*(x^2+k)^2 * y*d2y - (n-1)*(x^2+k)^2 * dy^2 + (n-2)*x*(x^2+k) * y*dy + (x^2-k*n) * y^2 = 0;
 
 
 ####################
@@ -61,8 +62,7 @@ dy - x*y/(x^2+1) + 2*log(sqrt(x^2+1) - x) # = 0
 ### y = sqrt(x^2+1) * log(sqrt(x^2+1) - x)^3
 
 # Check:
-k = 1/sqrt(5);
-x = sqrt(3); params = list(x=x, k=k);
+x = sqrt(3); params = list(x=x);
 e = expression(sqrt(x^2+1) * log(sqrt(x^2+1) - x)^3)[[1]];
 #
 y   = eval(e, params);
@@ -82,4 +82,30 @@ d2y = eval(D(D(e, "x"), "x"), params);
 
 ### ODE:
 3*(x^2+1)^2 * y*d2y - 2*(x^2+1)^2 * dy^2 + x*(x^2+1) * y*dy + (x^2-3) * y^2 # = 0
+
+
+#####################
+
+### Gen: y = sqrt(x^2+1) * log(sqrt(x^2+1) - x)^n
+
+# Check:
+k = sqrt(11); # k = sqrt(13);
+n = exp(1);
+x = 1/sqrt(3); params = list(x=x, n=n);
+e = expression(sqrt(x^2+k) * log(sqrt(x^2+k) - x)^n)[[1]];
+#
+y   = eval(e, params);
+dy  = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
+
+# D =>
+(x^2+k)*dy - x*y + n*(x^2+k)*log(sqrt(x^2+k) - x)^(n-1) # = 0
+
+# D2 =>
+(x^2+k)*d2y + x*dy - y +
+	+ 2*n*x*log(sqrt(x^2+k) - x)^(n-1) +
+	- n*(n-1)*sqrt(x^2+k)*log(sqrt(x^2+k) - x)^(n-2) # = 0
+
+### ODE:
+n*(x^2+k)^2 * y*d2y - (n-1)*(x^2+k)^2 * dy^2 + (n-2)*x*(x^2+k) * y*dy + (x^2-k*n) * y^2 # = 0
 
