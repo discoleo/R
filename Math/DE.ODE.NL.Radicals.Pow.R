@@ -8,7 +8,7 @@
 ##
 ## draft v.0.1e
 
-### Log to Power:
+### Sum of Radicals to Power:
 # y = P(x)^n + P(x)^(j*n)
 
 
