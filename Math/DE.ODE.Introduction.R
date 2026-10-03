@@ -125,9 +125,15 @@ df*y*d2y + 2*df*(dy)^2 - f*y*(dy)^3 - d2f*y*dy # = 0
 y*d2y + 2*(dy)^2 - (x + b)*y*(dy)^3 # = 0
 # see DE.ODE.Trigonometric.R;
 
-### Genralized:
+### Generalized:
 ### P(y)*sin(P(y)) + cos(P(y)) = f(x)
-# TODO
+df*P*d2P - f*P*dP^3 + 2*df*dP^2 - d2f*P*dP # = 0
+
+### Examples:
+### P(y) = y^2
+df*y*d2y - 4*f*y^3*dy^3 + 5*df*dy^2 - d2f*y*dy # = 0
+### P(y) = y^2; f(x) = x + b;
+y*d2y - 4*(x+b)*y^3*dy^3 + 5*dy^2 # = 0
 
 
 ############
