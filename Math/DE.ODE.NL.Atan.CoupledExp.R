@@ -6,12 +6,13 @@
 ## Differential Equations
 ## ODEs - ATAN w. Coupled Exp
 ##
-## draft v.0.1b
+## draft v.0.1c
 
 
 ### Examples:
 
 # y*d2y - k*dy - 4*k^2 * y^2 + k^2 = 0;
+# x^4 * y*d2y + 2*x^3 * y*dy + k*x^2 * dy - 4*k^2 * y^2 + k^2 = 0;
 # y*d2y + x*d2y - dy - 4*y^2 - 8*x*y - 4*x^2 = 0;
 
 
@@ -68,7 +69,7 @@ y*d2y - kd*dy - 4*kd^2 * y^2 + kd^2 # = 0
 
 # Check:
 k = sqrt(3); # k = 1;
-n = 2/5; # n = 1/2;
+n = 2/5; # n = 1/2; # n = -1;
 x = 3^(3/5);
 params = list(x=x, k=k);
 e = expression(cosh(k*x^n) * atan(exp(k*x^n)))[[1]];
@@ -98,6 +99,9 @@ d2y = eval(D(D(e, "x"), "x"), params);
 
 ### Case: n = 1/2;
 4*x*y*d2y + 2*y*dy - k*x^(1/2) * dy - k^2 * y^2 + k^2/4 # = 0
+
+### Case: n = -1;
+4*x^4 * y*d2y + 8*x^3 * y*dy + 2*k*x^2 * dy - 4*k^2 * y^2 + k^2 # = 0
 
 
 #########################
@@ -142,4 +146,87 @@ d2y = eval(D(D(e, "x"), "x"), params);
 	- 4*k^2 * y^2 - 4*k^3*x * y - k^4*x^2 # = 0
 # n = 1; c0 = 0; c1 = -1; k = 2;
 y*d2y + x*d2y - dy - 4*y^2 - 8*x*y - 4*x^2 # = 0
+
+
+#########################
+#########################
+
+### Exploration of Higher Powers
+
+# Note: uglier NL ODEs;
+
+### y = cosh(k*x) * atan(exp(k*x))^2
+
+# Check:
+k = sqrt(3); # k = 1;
+x = 3^(3/5);
+params = list(x=x, k=k);
+e = expression(cosh(k*x) * atan(exp(k*x))^2)[[1]];
+#
+y   = eval(e, params);
+dy  = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
+
+# D =>
+dy - k*sinh(k*x) * atan(exp(k*x))^2 - k*atan(exp(k*x)) # = 0
+dy - k*sinh(k*x) / cosh(k*x) * y - k*atan(exp(k*x)) # = 0
+
+# Equalities:
+cosh(k*x) # ==
+k^2 * y / (dy - k*sinh(k*x) / cosh(k*x) * y)^2;
+
+# D2 =>
+2*d2y - 2*k*sinh(k*x) / cosh(k*x) * dy +
+	+ 2*k^2 * sinh(k*x)^2 / cosh(k*x)^2 * y +
+	- k^2 / cosh(k*x) - 2*k^2*y # = 0
+2*y*d2y - 2*k*sinh(k*x) / cosh(k*x) * y*dy +
+	+ 2*k^2 * sinh(k*x)^2 / cosh(k*x)^2 * y^2 +
+	- (dy - k*sinh(k*x) / cosh(k*x) * y)^2 - 2*k^2*y^2 # = 0
+2*y*d2y - dy^2 +
+	+ k^2 * sinh(k*x)^2 / cosh(k*x)^2 * y^2 - 2*k^2*y^2 # = 0
+2*y*d2y - dy^2 - k^2*y^2 +
+	- k^2 / cosh(k*x)^2 * y^2 # = 0
+
+# TODO: uglier ODE;
+
+# Exploration:
+(cosh(k*x)*dy - k*sinh(k*x)*y)^2 - k^2*cosh(k*x) * y # = 0
+cosh(k*x)^2*dy^2 + k^2*cosh(k*x)^2*y^2 - k^2*y^2 +
+	- k*sinh(2*k*x) * y*dy - k^2*cosh(k*x) * y # = 0
+
+
+#####################
+
+### y = cosh(k*x)^2 * atan(exp(k*x))^2
+
+# Check:
+k = sqrt(3); # k = 1;
+x = 3^(3/5);
+params = list(x=x, k=k);
+e = expression(cosh(k*x)^2 * atan(exp(k*x))^2)[[1]];
+#
+y   = eval(e, params);
+dy  = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
+
+# D =>
+dy - 2*k*sinh(k*x)/cosh(k*x) * y - k*cosh(k*x)*atan(exp(k*x)) # = 0
+
+# D2 =>
+2*d2y - 4*k*sinh(k*x)/cosh(k*x) * dy +
+	+ 4*k^2*sinh(k*x)^2/cosh(k*x)^2 * y +
+	- 2*k^2*sinh(k*x)*atan(exp(k*x)) - 4*k^2 * y - k^2 # = 0
+2*y*d2y - dy^2 - 4*k^2 * y^2 +
+	- 2*k^2 * sinh(k*x)*atan(exp(k*x)) * y # = 0
+2*y*d2y - dy^2 - 4*k^2 * y^2 + k^2*y +
+	- k * cosh(k*x)*atan(exp(k*x))*dy # = 0
+# =>
+(2*y*d2y - dy^2 - 4*k^2 * y^2 + k^2*y)^2 - k^2 * y*dy^2 # = 0
+# - uglier ODE;
+
+
+# Relations:
+(dy - 2*k*sinh(k*x)/cosh(k*x) * y)^2 - k^2 * y # = 0
+(cosh(k*x)*dy - 2*k*sinh(k*x)*y) * atan(exp(k*x)) - k * y # = 0
+y - sinh(k*x)^2*atan(exp(k*x))^2 - atan(exp(k*x))^2 # = 0
 
