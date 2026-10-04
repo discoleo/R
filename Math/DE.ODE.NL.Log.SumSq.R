@@ -4,7 +4,7 @@
 ## [the one and only]
 ##
 ## Differential Equations
-## NL ODEs - Powers of Log
+## NL ODEs - Sum of Log^2
 ##
 ## draft v.0.1c
 
