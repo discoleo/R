@@ -40,6 +40,9 @@ For examples, see file: DE.ODE.NL.Log.PowExp.R;
 y = B(x) * Log(P1(x))^n1 * P2(x)^(1/n2)
 ```
 
+For examples, see file: DE.ODE.NL.Log.PowRadical.R;
+
+
 4. Power of Atan
 ```
 y = B(x) * Atan(P(x))^n
@@ -53,6 +56,29 @@ TODO: generalize power;
 ```
 y = B(x) * Atan(P1(x))^n * Exp(P2(x))
 ```
+
+
+6. Power of Atan w. Radical
+```
+y = B(x) * Atan(P1(x))^n * P2(x)^r
+```
+
+
+7. Exp of Radical
+```
+y = C(x) * Exp(B1(x) * P(x)^r + B0(x))
+```
+
+For examples, see file: DE.ODE.NL.Exp.Radicals.R;
+
+
+8. Exp of Log^n
+```
+y = C(x) * Exp(Log(P(x))^r)
+```
+
+For examples, see file: DE.ODE.NL.Exo.LogPow.R;
+
 
 #### Coupled Variants
 
