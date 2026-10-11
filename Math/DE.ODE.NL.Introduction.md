@@ -27,8 +27,6 @@ There are various ways to generate this type of NL ODEs. There are 2 broad ways 
 ```
 y = B(x) * Log(P(x))^n
 ```
-For example see the files:
-- File DE.ODE.NL.Log.PowL.R: Type Log(P(x))^2;
 - TODO: any power;
 
 
@@ -77,7 +75,9 @@ For examples, see file: DE.ODE.NL.Exp.Radicals.R;
 ```
 y = C(x) * Exp(Log(P(x))^r)
 ```
-For examples, see file: DE.ODE.NL.Exo.LogPow.R;
+For examples, see the files:
+- File DE.ODE.NL.Log.PowL.R: Type Log(P(x))^2;
+- File DE.ODE.NL.Exp.LogPow.R (Generalization);
 
 
 9. Exp of Exp
