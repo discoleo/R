@@ -18,8 +18,8 @@ The NL ODEs will be organized by the leading Order term.
 ### Type: y * d2y
 
 There are various ways to generate this type of NL ODEs. There are 2 broad ways to generate such ODEs:
-- Simple ways: using the power of a function;
-- Coupled ways: Coupling the power of a function with an additional function;
+- Simple way: using the power of a function;
+- Coupled way: Coupling the power of a function with an additional function;
 
 #### Simple variants
 
@@ -27,7 +27,7 @@ There are various ways to generate this type of NL ODEs. There are 2 broad ways 
 ```
 y = B(x) * Log(P(x))^n
 ```
-- TODO: any power;
+For examples, see file: DE.ODE.NL.Log.Pow.R;
 
 
 2. Power of Log w. Exp
@@ -90,7 +90,7 @@ y = C(x) * Exp(Exp(Atan(P(x))) + B0(x))
 ```
 
 Note: the last example can be also written as Exp(Complex power),
-but is easier to work with the double exponential;
+but it is easier to work with the double exponential;
 
 For examples, see file: DE.ODE.NL.Exp.Exp.R;
 
