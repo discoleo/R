@@ -14,24 +14,28 @@ This material presents various types of Non-Linear (NL) ODEs. The focus is on NL
 
 The NL ODEs will be organized by the leading Order term.
 
+
 ### Type: y * d2y
 
 There are various ways to generate this type of NL ODEs. There are 2 broad ways to generate such ODEs:
 - Simple ways: using the power of a function;
 - Coupled ways: Coupling the power of a function with an additional function;
 
-### Simple variants
+#### Simple variants
 
 1. Simple Power of Log
 ```
 y = B(x) * Log(P(x))^n
 ```
+For example see the files:
+- File DE.ODE.NL.Log.PowL.R: Type Log(P(x))^2;
+- TODO: any power;
+
 
 2. Power of Log w. Exp
 ```
 y = B(x) * Log(P1(x))^n * Exp(P2(x))
 ```
-
 For examples, see file: DE.ODE.NL.Log.PowExp.R;
 
 
@@ -39,15 +43,13 @@ For examples, see file: DE.ODE.NL.Log.PowExp.R;
 ```
 y = B(x) * Log(P1(x))^n1 * P2(x)^(1/n2)
 ```
-
 For examples, see file: DE.ODE.NL.Log.PowRadical.R;
 
 
 4. Power of Atan
 ```
-y = B(x) * Atan(P(x))^n
+y = B(x) * Atan(P(x))^2
 ```
-
 For examples, see file: DE.ODE.NL.Atan.Pow.R;
 TODO: generalize power;
 
@@ -68,7 +70,6 @@ y = B(x) * Atan(P1(x))^n * P2(x)^r
 ```
 y = C(x) * Exp(B1(x) * P(x)^r + B0(x))
 ```
-
 For examples, see file: DE.ODE.NL.Exp.Radicals.R;
 
 
@@ -76,8 +77,22 @@ For examples, see file: DE.ODE.NL.Exp.Radicals.R;
 ```
 y = C(x) * Exp(Log(P(x))^r)
 ```
-
 For examples, see file: DE.ODE.NL.Exo.LogPow.R;
+
+
+9. Exp of Exp
+```
+# Simple:
+y = C(x) * Exp(Exp(P(x)) + B0(x))
+
+# Compound:
+y = C(x) * Exp(Exp(Atan(P(x))) + B0(x))
+```
+
+Note: the last example can be also written as Exp(Complex power),
+but is easier to work with the double exponential;
+
+For examples, see file: DE.ODE.NL.Exp.Exp.R;
 
 
 #### Coupled Variants
