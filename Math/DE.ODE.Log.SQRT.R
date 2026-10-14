@@ -15,6 +15,7 @@
 
 ### Examples:
 
+# 4*(x^2+b)^2 * d2y + (x^2 - 2*b) * y = 0;
 # (x^2-1)^2 * d2y - (x^2-1)*(2*x^2 + x - 2) * dy + (x^4 + x^3 - x^2 - x + 2) * y = 0;
 # (x^2-1)*(x^2 - x - 1) * d2y - (2*x^4 - x^3 - 4*x^2 + x + 3) * dy + (x^4 - x^2 + 3) * y = 0;
 
@@ -122,3 +123,37 @@ d2y = eval(D(D(e, "x"), "x"), params);
 (x^2 - 1)*(x^2 - x - 1) * d2y +
 	- (2*x^4 - x^3 - 4*x^2 + x + 3) * dy +
 	+ (x^4 - x^2 + 3) * y # = 0
+
+
+############################
+
+### Mixed w. Another Radical
+
+### y = sqrt(x^2 + b) * log(sqrt(x^2 + b) - x) * P2(x)^r
+# - for simplicity: P2(x) = (x^2+b);
+
+# Check:
+r = exp(-1); # r = -1/4;
+b = exp(1/3);
+x = sqrt(3); params = list(x=x, b=b, r=r);
+e = expression(sqrt(x^2 + b) * log(sqrt(x^2 + b) - x) * (x^2+b)^r)[[1]];
+#
+y   = eval(e, params);
+dy  = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
+
+# D =>
+(x^2+b)*dy - (2*r+1)*x*y + (x^2+b) * (x^2+b)^r # = 0
+
+# D2 =>
+(x^2+b)*d2y - (2*r-1)*x*dy - (2*r+1)*y + 2*(r+1)*x * (x^2+b)^r # = 0
+
+### ODE:
+(x^2+b)^2 * d2y - (4*r+1)*x*(x^2+b) * dy + (2*r+1)  * ((2*r+1)*x^2 - b) * y # = 0
+
+
+### Special Cases:
+
+### Case: r = -1/4;
+4*(x^2+b)^2 * d2y + (x^2 - 2*b) * y # = 0
+
