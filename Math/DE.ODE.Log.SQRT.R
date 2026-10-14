@@ -6,7 +6,7 @@
 ## Differential Equations
 ## ODE: Coupled SQRT * Log(SQRT)
 ##
-## draft v.0.1b
+## draft v.0.1c
 
 
 ### Coupled SQRT * Log(SQRT)
@@ -16,6 +16,7 @@
 ### Examples:
 
 # 4*(x^2+b)^2 * d2y + (x^2 - 2*b) * y = 0;
+# 4*x*(x^3+b)^2 * d2y - 2*b*(x^3+b) * dy + (x^3 - 3*b)*x^2 * y = 0;
 # (x^2-1)^2 * d2y - (x^2-1)*(2*x^2 + x - 2) * dy + (x^4 + x^3 - x^2 - x + 2) * y = 0;
 # (x^2-1)*(x^2 - x - 1) * d2y - (2*x^4 - x^3 - 4*x^2 + x + 3) * dy + (x^4 - x^2 + 3) * y = 0;
 
@@ -130,7 +131,7 @@ d2y = eval(D(D(e, "x"), "x"), params);
 ### Mixed w. Another Radical
 
 ### y = sqrt(x^2 + b) * log(sqrt(x^2 + b) - x) * P2(x)^r
-# - for simplicity: P2(x) = (x^2+b);
+# - For simplicity: P2(x) = (x^2 + b);
 
 # Check:
 r = exp(-1); # r = -1/4;
@@ -156,4 +157,40 @@ d2y = eval(D(D(e, "x"), "x"), params);
 
 ### Case: r = -1/4;
 4*(x^2+b)^2 * d2y + (x^2 - 2*b) * y # = 0
+
+
+###################
+
+### Gen: y = sqrt(x^n + b) * log(sqrt(x^n + b) - x) * P2(x)^r
+# - For simplicity: P2(x) = (x^n + b);
+
+# Check:
+r = exp(-1); # r = -1/4;
+b = exp(1/3); n = sqrt(5); # n = 3; # n = 3; r = -1/3;
+x = sqrt(3); params = list(x=x, b=b, n=n, r=r);
+e = expression(sqrt(x^n + b) * log(sqrt(x^n + b) - x^(n/2)) * (x^n+b)^r)[[1]];
+#
+y   = eval(e, params);
+dy  = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
+
+# D =>
+2*(x^n+b)*dy - n*(2*r+1)*x^(n-1)*y + n*(x^n+b)*x^(n/2-1) * (x^n+b)^r # = 0
+
+# D2 =>
+4*x*(x^n+b) * d2y - 2*((2*n*r-2)*x^n + b*(n-2)) * dy +
+	- n^2*(2*r+1)*x^(n-1) * y +
+	+ 2*n^2*(r+1)*x^n*x^(n/2-1) * (x^n+b)^r # = 0
+
+### ODE:
+4*x*(x^n+b)^2 * d2y - 2*(x^n+b)*((4*n*r+2*n-2)*x^n + b*(n-2)) * dy +
+	+ n^2*(2*r+1)*((2*r+1)*x^n - b)*x^(n-1) * y # = 0
+
+### Special Cases:
+
+### Case: n = 3;
+4*x*(x^3+b)^2 * d2y - 2*(x^3+b)*(4*(3*r+1)*x^3 + b) * dy +
+	+ 9*(2*r+1)*((2*r+1)*x^3 - b)*x^2 * y # = 0
+### Case: n = 3; r = -1/3;
+4*x*(x^3+b)^2 * d2y - 2*b*(x^3+b) * dy + (x^3 - 3*b)*x^2 * y # = 0
 
