@@ -4,9 +4,9 @@
 ## [the one and only]
 ##
 ## Differential Equations
-## ODEs - Exponentials w. Radicals
+## ODEs - Exponentials w. SQRT
 ##
-## draft v.0.1h
+## draft v.0.1i
 
 
 ### Types:
@@ -24,6 +24,12 @@
 # - P, R, S, B, G: polynomials (or polynomial fractions);
 
 
+### Examples:
+
+# 4*(x+b0)*d2y + 6*dy - k^2*y = 0;
+# x*(x^2 + b0) * d2y - b0*dy - k^2*x^3 * y = 0;
+
+
 ####################
 
 ### Helper Functions
@@ -38,6 +44,39 @@ source("DE.ODE.Helper.R")
 #######################
 
 ### Simple: SQRT
+
+### y = exp(k*sqrt(x^n + b0))
+# Note: Very simple variant;
+
+# Check:
+k = -1/5; b0 = 2/3; n = sqrt(2); # n = 2; # n = 1;
+x = sqrt(3); params = list(x=x, n=n, k=k, b0=b0);
+e = expression(exp(k*sqrt(x^n + b0)))[[1]];
+#
+y   = eval(e, params);
+dy  = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
+
+
+# D =>
+2*(x^n + b0)*dy - n*k*x^(n-1)*sqrt(x^n + b0) * y # = 0
+
+# D2 => ODE
+
+### ODE:
+4*x*(x^n + b0) * d2y - 2*((n-2)*x^n + 2*(n-1)*b0) * dy +
+	- n^2*k^2*x^(2*n-1) * y # = 0
+
+### Special Cases:
+
+### Case: n = 2;
+x*(x^2 + b0) * d2y - b0*dy - k^2*x^3 * y # = 0
+
+### Case: n = 1;
+4*(x + b0)*d2y + 2*dy - k^2*y # = 0
+
+
+###############################
 
 ### y = exp(x + k*sqrt(x + b0))
 
@@ -575,7 +614,7 @@ x^4*(x+b0)^2 * d2y +
 
 ### y = (x+d)^(1/3) * (sqrt(x+d) + c1) *  exp(k*sqrt(x+d))
 # Simple: Exp(SQRT(R2))
-# - for simplification: P1 = R2;
+# - for simplification: R1 = R2;
 # - but note coupled term: (SQRT(R2) + B0) * EXP(SQRT(R2));
 
 # Check:
