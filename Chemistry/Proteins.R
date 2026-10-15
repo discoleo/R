@@ -1,5 +1,8 @@
 
 
+### TODO:
+# Bioconductor: msa
+# bio3d
 
 library(Rpdb)
 
@@ -17,6 +20,7 @@ AA = c("ALA", "ARG", "ASN", "ASP", "CYS", "GLN", "GLU", "GLY", "HIS", "ILE", "LE
 
 ### Helper Functions
 
+# x = PDB object;
 extract.aa = function(x, info=TRUE) {
 	# AA
 	aa = unique(x$atoms[ , c("chainid", "resname", "resid")])
@@ -37,6 +41,34 @@ extract.aa = function(x, info=TRUE) {
 	}
 	aa = aa[ ! isNotAA, ]
 	return(aa);
+}
+
+### Assemble protein from overlapping sequences
+# x = data.frame(Seq, Start)
+assemble = function(x) {
+	nSeq = nrow(x);
+	if(nSeq == 0) return("");
+	nLen = nchar(x$Seq);
+	nEnd = x$Start + nLen - 1;
+	maxL = max(nEnd);
+	ppT  = rep("X", maxL);
+	for(id in seq(nSeq)) {
+		pp = strsplit(x$Seq[id], "", fixed = TRUE)[[1]];
+		iS = x$Start[id];
+		iE = nEnd[id];
+		isAA = ppT[iS:iE] != "X";
+		if(any(isAA)) {
+			# Check:
+			isNotEq = ppT[iS:iE][isAA] != pp[isAA];
+			if(any(isNotEq)) {
+				cat("Non-Identical Duplicate: \n  ",
+					paste(ppT[iS:iE], collapse = ""), "\n  ",
+					x$Seq[id], "\n");
+			}
+		}
+		ppT[iS:iE][! isAA] = pp[! isAA];
+	}
+	return(ppT);
 }
 
 ####################
