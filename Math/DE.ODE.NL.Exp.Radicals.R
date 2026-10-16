@@ -6,7 +6,7 @@
 ## Differential Equations
 ## NL ODEs - Exp of Radicals
 ##
-## draft v.0.1c
+## draft v.0.1d
 
 ### Theory
 
@@ -19,6 +19,7 @@
 
 # 3*(x+1) * y*d2y - 3*(x+1) * dy^2 + 2*y*dy - 2*k*y^2 = 0;
 # n*(x+1) * y*d2y - n*(x+1) * dy^2 + (n-1)*y*dy - (n-1)*k*y^2 = 0;
+# (x+b)^2 * y*d2y - (x+b)^2 * dy^2 - (r2-1)*(x+b) * y*dy + r1*r2 * y^2 # = 0
 
 
 ####################
@@ -128,7 +129,7 @@ d2y = eval(D(D(e, "x"), "x"), params);
 
 ######################
 
-### Wuasi-Coupling:
+### Quasi-Coupling:
 ### y = (x+b)^r1 * exp(k*(x+b)^r2)
 
 # Check:
@@ -152,6 +153,44 @@ d2y = eval(D(D(e, "x"), "x"), params);
 
 ### ODE:
 (x+b)^2 * y*d2y - (x+b)^2 * dy^2 - (r2-1)*(x+b) * y*dy + r1*r2 * y^2 # = 0
+
+
+#######################
+
+### Gen: y = (x^n+b)^r1 * exp(k*(x^n+b)^r2)
+
+# Check:
+r1 = 1/5; r2 = exp(-1);
+n = exp(1/3); # r2 = 1/n;
+k = sqrt(2); b = sqrt(5);
+x = sqrt(3);
+params = list(x=x, k=k, b=b, n=n, r1=r1, r2=r2);
+e = expression((x^n+b)^r1 * exp(k*(x^n+b)^r2))[[1]];
+#
+y   = eval(e, params);
+dy  = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
+
+# D =>
+(x^n+b)*dy - n*r1*x^(n-1)*y - n*r2*k*x^(n-1)*(x^n+b)^r2 * y # = 0
+
+# D2 =>
+(x^n+b)^2*d2y - n*(r1-1)*(x^n+b)*x^(n-1)*dy +
+	- n*(n-1)*r1*(x^n+b)*x^(n-2)*y +
+	- n*r2*k*(x^n+b)*x^(n-1)*(x^n+b)^r2 * dy +
+	- n*(n-1)*r2*k*(x^n+b)*x^(n-2)*(x^n+b)^r2 * y +
+	- n^2*r2^2*k*x^(2*n-2)*(x^n+b)^r2 * y # = 0
+
+### ODE:
+x*(x^n+b)^2 * y*d2y - x*(x^n+b)^2 * dy^2 +
+	- (x^n+b) * ((n*r2-1)*x^n + b*(n-1)) * y*dy +
+	+ n^2*r1*r2*x^(2*n-1) * y^2 # = 0
+
+### Special Cases:
+
+### Case: r2 = 1/n;
+x*(x^n+b)^2 * y*d2y - x*(x^n+b)^2 * dy^2 +
+	- b*(n-1)*(x^n+b) * y*dy + n*r1*x^(2*n-1) * y^2 # = 0
 
 
 ######################
