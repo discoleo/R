@@ -6,7 +6,7 @@
 ## Differential Equations
 ## NL ODEs - Exp of Radicals
 ##
-## draft v.0.1b
+## draft v.0.1c
 
 ### Theory
 
@@ -99,8 +99,9 @@ n*(x+1) * y*d2y - n*(x+1) * dy^2 + (n-1)*y*dy - (n-1)*k*y^2 # = 0
 
 ######################
 
-### Type: Coupled
+### Type: Coupled Radical
 
+### Inverse Coupling:
 ### y = (x+b)^(-r) * exp(k*(x+b)^r)
 
 # Check:
@@ -123,6 +124,34 @@ d2y = eval(D(D(e, "x"), "x"), params);
 
 ### ODE:
 (x+b)^2 * y*d2y - (x+b)^2 * dy^2 - (r-1)*(x+b) * y*dy - r^2 * y^2 # = 0
+
+
+######################
+
+### Wuasi-Coupling:
+### y = (x+b)^r1 * exp(k*(x+b)^r2)
+
+# Check:
+r1 = 1/5; r2 = exp(-1);
+k = sqrt(2); b = sqrt(5);
+x = sqrt(3);
+params = list(x=x, k=k, b=b, r1=r1, r2=r2);
+e = expression((x+b)^r1 * exp(k*(x+b)^r2))[[1]];
+#
+y   = eval(e, params);
+dy  = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
+
+# D =>
+(x+b)*dy - r1*y - r2*k*(x+b)^r2 * y # = 0
+
+# D2 =>
+(x+b)^2 * d2y - (r1-1)*(x+b) * dy +
+	- r2*k*(x+b)*(x+b)^r2 * dy +
+	- r2^2*k*(x+b)^r2 * y # = 0
+
+### ODE:
+(x+b)^2 * y*d2y - (x+b)^2 * dy^2 - (r2-1)*(x+b) * y*dy + r1*r2 * y^2 # = 0
 
 
 ######################
