@@ -132,11 +132,19 @@ integrate(\(x, n) {
 - (digamma(1/n - 1) + Euler - 1) * (n-1)/n^2 + 1/n;
 
 
+### I( 1/x / (x^n + 1)^(1/n) )
+n = 5;
+integrate(\(x) 1/x / (x^n + 1)^(1/n) - exp(-x)/x, 0, Inf, rel.tol=1E-13)
+- (digamma(1/n) + Euler) / n + Euler;
+
+
+
 ### Mixed Fractions
 
 ### I( 1 / (x^2+1)^(1/2) * 1/(x+1) )
 integrate(\(x) 1 / (x^2+1)^(1/2) * 1/(x+1), 0, Inf)
 log(3 + 2*sqrt(2)) * sqrt(2) / 2;
+log(1 + sqrt(2)) * sqrt(2);
 
 
 ### I( (x^2+1)^(1/2) / (x+1) )
@@ -232,6 +240,7 @@ log(1+2^(1/4))/2 + log(1+2^(1/2))/4 + atan(1/2^(1/4))/2;
 
 ### I( x^2 / (x^4 + 1)^(1/4) )
 integrate(\(x) x^2 / (x^4 + 1)^(1/4), 0, 1, rel.tol=1E-13)
+integrate(\(x) -1/2 * x^2 / sqrt(1-x^4), 0, 1/2^(1/4))$value + 1/2^(5/4);
 # TODO
 
 
@@ -414,12 +423,12 @@ sn = sin(c(2,4)*pi/5); snp = sin(3*c(2,4)*pi/5); x = 2^(-1/5);
 
 ### I( x^3 / (x^5 + 1)^(3/5) )
 integrate(\(x) x^3 / (x^5 + 1)^(3/5), 0, 1)
-1/2^(3/5) - gamma(4/5)^2/gamma(3/5) / 2
+1/2^(3/5) - gamma(4/5)^2/gamma(3/5) / 2;
 
 
 ### I( x / (x^5 + 1)^(4/5) )
 integrate(\(x) x / (x^5 + 1)^(4/5), 0, 1)
-gamma(2/5)^2/gamma(4/5) / 10
+gamma(2/5)^2/gamma(4/5) / 10;
 
 ### I( x^3 / (x^5 + 1)^(4/5) )
 integrate(\(x) x^3 / (x^5 + 1)^(4/5), 0, 1)
@@ -488,8 +497,8 @@ integrate(\(x) 1 / (x^n + 1)^(1/n), 0, 1)
 # Limit: (p+1) -> 0
 n = 3; p = -1 + 1E-6; k = 3;
 integrate(\(x) 1 / (x^3 + 1)^(1/3)/x - 1/x * exp(-x), 0, Inf)
-gamma((p+1)/n) * gamma(1/k - (p+1)/n) / gamma(1/k) / n - gamma(p+1)
-- (digamma(1/3) - 2*Euler)/3
+gamma((p+1)/n) * gamma(1/k - (p+1)/n) / gamma(1/k) / n - gamma(p+1);
+- (digamma(1/3) - 2*Euler)/3;
 
 #
 integrate(\(x) 1/x * exp(-x) - 1/(x*(x+1)), 0, Inf)
@@ -508,6 +517,16 @@ integrate(\(x) x / (x^2 + x + 1), 1, 2^(1/3))
 
 
 ### Derivation: Pow = 5
+
+###
+integrate(\(x) 1 / (x^5 + 1)^(1/5), 0, 1)
+# x = z/(1 - z^5)^(1/5); z = x/(1+x^5)^(1/5);
+integrate(\(x) 1 / (1-x^5), 0, 1/2^(1/5))
+# Standard Fraction-Decomposition (see file on Fractions of Unity);
+# Note: works on arbitrary Intervals;
+
+
+###
 integrate(\(x) x / (x^5 + 1)^(1/5), 0, 1)
 1 - gamma(4/5) * gamma(2/5) / gamma(1/5) +
 	- integrate(\(x) 1/(x^5 + 1)^(1/5) / x^2 - 1/x^2, 0, 1)$value;
@@ -589,8 +608,8 @@ sum((cs4-cs2) * log((x^2 - 2*cs*x + 1) / (2-2*cs)) +
 #
 integrate(\(x) 1/(x^5 + 1)^(1/5) / x^2 - (1/x^2 + 1/x) * exp(-x), 0, Inf)
 n = 5; p = -2 + 1E-6; k = 5;
-gamma((p+1)/n) * gamma(1/k - (p+1)/n) / gamma(1/k) / n - gamma(p+1) - gamma(p+2)
-1 - gamma(4/5) * gamma(2/5) / gamma(1/5)
+gamma((p+1)/n) * gamma(1/k - (p+1)/n) / gamma(1/k) / n - gamma(p+1) - gamma(p+2);
+1 - gamma(4/5) * gamma(2/5) / gamma(1/5);
 
 #
 integrate(\(x) (1/x^2 + 1/x) * exp(-x) - 1/x^2, 0, Inf)
