@@ -39,7 +39,14 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x * ((1 - x*y) / (1 + x*y)^(n-1))^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 beta(1+1/n, 1/2) * (n+1)/2 - n;
 
-### I( x * ((1 + x*y) / (1 - x*y)^(n-1))^(1/n) )
+
+### Gen: I( x^p * y^q * ((1 + x*y) / (1 - x*y)^(n-1))^(1/n) )
+n = sqrt(11); p = sqrt(3); q = 1/sqrt(2);
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^p * y^q * ((1 + x*y) / (1 - x*y)^(n-1))^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+(beta((q+1)/2, 1/n) + beta((q+2)/2, 1/n) - beta((p+1)/2, 1/n) - beta((p+2)/2, 1/n)) / (p-q) / 2;
+
+### Simple: I( x * ((1 + x*y) / (1 - x*y)^(n-1))^(1/n) )
 n = sqrt(11);
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x * ((1 + x*y) / (1 - x*y)^(n-1))^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
