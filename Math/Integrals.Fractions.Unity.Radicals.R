@@ -369,7 +369,7 @@ integrate(\(x) x / (x^5 + 1)^(1/5), 0, 1)
 
 ### I( x^2 / (x^5 + 1)^(1/5) )
 integrate(\(x) x^2 / (x^5 + 1)^(1/5), 0, 1)
-1/2^(6/5) - gamma(3/5)^2/gamma(1/5) / 4
+1/2^(6/5) - gamma(3/5)^2/gamma(1/5) / 4;
 
 
 ### I( 1 / (x^5 + 1)^(2/5) )
@@ -381,7 +381,7 @@ integrate(\(x) x / (x^5 + 1)^(2/5), 0, 1)
 - (digamma(2/5) + Euler)/5 +
 	+ integrate(\(x) (x^4 - x^2) / (x^5 - 1), 1, 2^(1/5))$value;
 # Solution:
-x = 2^(1/5)
+x = 2^(1/5);
 cs = cos(c(2,4)*pi/5); cs2 = cos(c(2,4)*3*pi/5);
 sn = sin(c(2,4)*pi/5); sn2 = sin(c(2,4)*3*pi/5);
 cs4 = cos(c(2,4)*pi); sn4 = sin(c(2,4)*pi);
@@ -415,7 +415,7 @@ integrate(\(x) x^2 / (x^5 + 1)^(3/5), 0, 1)
 - (digamma(3/5) + Euler)/5 +
 	+ integrate(\(x) (x^4 - x) / (x^5 - 1), 1, 2^(1/5))$value;
 # Solution:
-# Note: for Arbitrary Interval, see a few paragraphs below;
+# Note: for Arbitrary Interval, see a few paragraphs above;
 cs = cos(c(2,4)*pi/5); csp = cos(3*c(2,4)*pi/5);
 sn = sin(c(2,4)*pi/5); snp = sin(3*c(2,4)*pi/5); x = 2^(-1/5);
 -1/5 * log(1-x) - sum(csp*log(x^2 - 2*cs*x + 1) +
@@ -424,6 +424,9 @@ sn = sin(c(2,4)*pi/5); snp = sin(3*c(2,4)*pi/5); x = 2^(-1/5);
 ### I( x^3 / (x^5 + 1)^(3/5) )
 integrate(\(x) x^3 / (x^5 + 1)^(3/5), 0, 1)
 1/2^(3/5) - gamma(4/5)^2/gamma(3/5) / 2;
+#
+integrate(\(x) x^3 * (x^5 + 1)^(2/5), 0, 1)
+(2*2^(2/5) - gamma(4/5)^2/gamma(3/5)) / 6;
 
 
 ### I( x / (x^5 + 1)^(4/5) )
@@ -434,7 +437,13 @@ gamma(2/5)^2/gamma(4/5) / 10;
 integrate(\(x) x^3 / (x^5 + 1)^(4/5), 0, 1)
 - (digamma(4/5) + Euler)/5 +
 	+ integrate(\(x) (x^4 - 1) / (x^5 - 1), 1, 2^(1/5))$value;
-# TODO: compute;
+integrate(\(x) x^3 / (1-x^5), 0, 1/2^(1/5)); # direct formula;
+# Solution:
+# Note: for Arbitrary Interval, see a few paragraphs above;
+cs = cos(c(2,4)*pi/5); csp = cos(4*c(2,4)*pi/5);
+sn = sin(c(2,4)*pi/5); snp = sin(4*c(2,4)*pi/5); x = 2^(-1/5);
+-1/5 * log(1-x) - sum(csp*log(x^2 - 2*cs*x + 1) +
+	- 2*snp*(atan((x - cs)/sn) + atan(cs/sn))) / 5;
 
 
 ### Pow = 7
@@ -502,7 +511,7 @@ gamma((p+1)/n) * gamma(1/k - (p+1)/n) / gamma(1/k) / n - gamma(p+1);
 
 #
 integrate(\(x) 1/x * exp(-x) - 1/(x*(x+1)), 0, Inf)
-- Euler
+- Euler;
 
 #
 integrate(\(x) x / (x^2 + x + 1), 1, 2^(1/3))
@@ -518,7 +527,7 @@ integrate(\(x) x / (x^2 + x + 1), 1, 2^(1/3))
 
 ### Derivation: Pow = 5
 
-###
+### Simple Case
 integrate(\(x) 1 / (x^5 + 1)^(1/5), 0, 1)
 # x = z/(1 - z^5)^(1/5); z = x/(1+x^5)^(1/5);
 integrate(\(x) 1 / (1-x^5), 0, 1/2^(1/5))
@@ -526,13 +535,23 @@ integrate(\(x) 1 / (1-x^5), 0, 1/2^(1/5))
 # Note: works on arbitrary Intervals;
 
 
-###
+### TODO: ???
 integrate(\(x) x / (x^5 + 1)^(1/5), 0, 1)
 1 - gamma(4/5) * gamma(2/5) / gamma(1/5) +
 	- integrate(\(x) 1/(x^5 + 1)^(1/5) / x^2 - 1/x^2, 0, 1)$value;
 1 - gamma(4/5) * gamma(2/5) / gamma(1/5) +
 	+ integrate(\(x) x^3 * (x - 1) / (x^5 - 1)^(6/5), 1, 2^(1/5))$value;
-# TODO: ???
+
+### TODO: ???
+# Alternative:
+integrate(\(x) x / (x^5 + 1)^(1/5), 0, 1)
+# x = 1/(1/(1-z^5) - 1)^(1/5) = (1-z^5)^(1/5) / z;
+# z = (1-1/(1+1/x^5))^(1/5);
+integrate(\(x) (1-x^5)^(2/5) / (1-x^5) / x^2, 1/2^(1/5), 1)
+# x = 1/(z^5/(z^5-1) - 1)^(1/5) = (z^5-1)^(1/5);
+# z = (x^5+1)^(1/5);
+integrate(\(x) x^3 / (x^5-1)^(3/5), 1, 2^(1/5))
+
 
 ### Derivation: on Arbitrary Interval;
 # - for technique, see:
