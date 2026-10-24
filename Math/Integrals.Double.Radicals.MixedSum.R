@@ -54,6 +54,14 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 beta(1/2, 1-1/n) * (n-1) / (3*n-2);
 
 
+### I( x * ((1 - x*y)^(n-1) / (1 + x*y))^(1/n) )
+n = sqrt(11);
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * ((1 - x*y)^(n-1) / (1 + x*y))^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+(beta(1/2, 1-1/n) + beta(3/2, 1-1/n) - 2*beta(1, 1-1/n)) / 2;
+beta(1/2, 1-1/n) * (2*n-1) / (3*n-2) - beta(1, 1-1/n);
+
+
 ### Composite:
 
 ### Gen: I( x * ((1-x)/(1+x) * (1 - x*y) / (1 + x*y))^(1/n) )
@@ -247,6 +255,15 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 (beta(1, 1-1/n) - beta(3/2, 1-1/n)) / 2 + (beta(1/2, 1-1/n) - beta(1, 1-1/n)) / 2;
 (beta(1/2, 1-1/n) - beta(3/2, 1-1/n)) / 2;
 beta(1/2, 1-1/n) * (n-1) / (3*n-2);
+
+
+### I( x * ((1 - x*y)^(n-1) / (1 + x*y))^(1/n) )
+n = sqrt(5);
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * ((1 - x*y)^(n-1) / (1 + x*y))^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+(beta(3/2, 1-1/n) - beta(1, 1-1/n)) / 2 - (beta(1, 1-1/n) - beta(1/2, 1-1/n)) / 2;
+(beta(1/2, 1-1/n) + beta(3/2, 1-1/n) - 2*beta(1, 1-1/n)) / 2;
+beta(1/2, 1-1/n) * (2*n-1) / (3*n-2) - beta(1, 1-1/n);
 
 
 ### Radical: 2/3
