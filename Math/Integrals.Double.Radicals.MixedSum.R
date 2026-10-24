@@ -31,6 +31,7 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 
 
 ### Div-Pow > 1
+# also: Power of Main-Components > 1;
 
 ### Gen: I( x * ((1 - x*y) / (1 + x*y)^(n-1))^(1/n) )
 n = sqrt(7) + sqrt(5);
@@ -43,6 +44,14 @@ n = sqrt(11);
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x * ((1 + x*y) / (1 - x*y)^(n-1))^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 beta(1+1/n, 1/2) / 2;
+
+
+### I( x * ((1 + x*y)^(n-1) / (1 - x*y))^(1/n) )
+n = sqrt(5);
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * ((1 + x*y)^(n-1) / (1 - x*y))^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+(beta(1/2, 1-1/n) - beta(3/2, 1-1/n)) / 2;
+beta(1/2, 1-1/n) * (n-1) / (3*n-2);
 
 
 ### Composite:
@@ -229,6 +238,15 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x * ((1 + x*y) / (1 - x*y)^(n-1))^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 beta(1/n, 1/2) / (n+2);
 beta(1+1/n, 1/2) / 2;
+
+
+### I( x * ((1 + x*y)^(n-1) / (1 - x*y))^(1/n) )
+n = sqrt(5);
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * ((1 + x*y)^(n-1) / (1 - x*y))^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+(beta(1, 1-1/n) - beta(3/2, 1-1/n)) / 2 + (beta(1/2, 1-1/n) - beta(1, 1-1/n)) / 2;
+(beta(1/2, 1-1/n) - beta(3/2, 1-1/n)) / 2;
+beta(1/2, 1-1/n) * (n-1) / (3*n-2);
 
 
 ### Radical: 2/3
