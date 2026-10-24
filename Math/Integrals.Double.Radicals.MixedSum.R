@@ -38,6 +38,12 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x * ((1 - x*y) / (1 + x*y)^(n-1))^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 beta(1+1/n, 1/2) * (n+1)/2 - n;
 
+### I( x * ((1 + x*y) / (1 - x*y)^(n-1))^(1/n) )
+n = sqrt(11);
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * ((1 + x*y) / (1 - x*y)^(n-1))^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+beta(1+1/n, 1/2) / 2;
+
 
 ### Composite:
 
@@ -202,6 +208,27 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x^2 * ((1 + x*y) / (1 - x*y))^(1/3), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
 (digamma(5/6) - digamma(1/3)) * 8/81 + 1/6 + 2/27;
+
+
+### I( x * ((1 + x*y) / (1 - x*y)^2)^(1/3) )
+n = 3;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * ((1 + x*y) / (1 - x*y)^(n-1))^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+beta(4/3, 1/2) / 2;
+beta(1/3, 1/2) / 5;
+
+### I( x * ((1 + x*y) / (1 - x*y)^3)^(1/4) )
+n = 4;
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * ((1 + x*y) / (1 - x*y)^(n-1))^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+beta(1/4, 1/2) / 6;
+
+### I( x * ((1 + x*y) / (1 - x*y)^(n-1))^(1/n) )
+n = sqrt(7);
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * ((1 + x*y) / (1 - x*y)^(n-1))^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+beta(1/n, 1/2) / (n+2);
+beta(1+1/n, 1/2) / 2;
 
 
 ### Radical: 2/3
