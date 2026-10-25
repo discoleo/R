@@ -1,3 +1,16 @@
+#####################
+##
+## Leonard Mada
+## (the one and only)
+##
+## Double Integrals:
+## Radicals of Mixed Polynomial Terms
+##
+## v.0.2b
+
+
+### Double Integrals:
+# Radicals of (1 + x*y) / (1 - x*y)
 
 
 ### Generalisations
@@ -30,6 +43,7 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 - (digamma((3*n+1)/(2*n)) - digamma(1/(2*n))) * (n^2+3*n+2)/(3*n^3) + 5/6 + 2*(n+1) / n^2;
 
 
+###############
 ### Div-Pow > 1
 # also: Power of Main-Components > 1;
 
@@ -40,11 +54,39 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 beta(1+1/n, 1/2) * (n+1)/2 - n;
 
 
+### Gen: I( x^p * y^q * ((1 - x*y)^(n-1) / (1 + x*y))^(1/n) )
+n = sqrt(7); p = 1/sqrt(2); q = sqrt(2/3);
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^p * y^q * ((1 - x*y)^(n-1) / (1 + x*y))^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+(beta((p+2)/2, 1-1/n) - beta((q+2)/2, 1-1/n) + beta((q+1)/2, 1-1/n) - beta((p+1)/2, 1-1/n)) / (2*(p-q));
+
+### Special Case: I( (x*y)^p * ((1 - x*y)^(n-1) / (1 + x*y))^(1/n) )
+n = sqrt(7); p = 1/sqrt(3);
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	(x*y)^p * ((1 - x*y)^(n-1) / (1 + x*y))^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+(beta((p+1)/2, 1-1/n) * (digamma(1-1/n+(p+1)/2) - digamma((p+1)/2)) +
+	- beta((p+2)/2, 1-1/n) * (digamma(1-1/n+(p+2)/2) - digamma((p+2)/2))) / 4;
+
+### Simple: I( x * ((1 - x*y)^(n-1) / (1 + x*y))^(1/n) )
+n = sqrt(11);
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x * ((1 - x*y)^(n-1) / (1 + x*y))^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+(beta(1/2, 1-1/n) + beta(3/2, 1-1/n) - 2*beta(1, 1-1/n)) / 2;
+beta(1/2, 1-1/n) * (2*n-1) / (3*n-2) - beta(1, 1-1/n);
+
+
 ### Gen: I( x^p * y^q * ((1 + x*y) / (1 - x*y)^(n-1))^(1/n) )
 n = sqrt(11); p = sqrt(3); q = 1/sqrt(2);
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x^p * y^q * ((1 + x*y) / (1 - x*y)^(n-1))^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 (beta((q+1)/2, 1/n) + beta((q+2)/2, 1/n) - beta((p+1)/2, 1/n) - beta((p+2)/2, 1/n)) / (p-q) / 2;
+
+### Special Case: I( (x*y)^p * ((1 + x*y) / (1 - x*y)^(n-1))^(1/n) )
+n = sqrt(11); p = sqrt(3);
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	(x*y)^p * ((1 + x*y) / (1 - x*y)^(n-1))^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+(beta((p+1)/2, 1/n) * (digamma(1/n+(p+1)/2) - digamma((p+1)/2)) +
+	+ beta((p+2)/2, 1/n) * (digamma(1/n+(p+2)/2) - digamma((p+2)/2))) / 4;
 
 ### Simple: I( x * ((1 + x*y) / (1 - x*y)^(n-1))^(1/n) )
 n = sqrt(11);
@@ -53,17 +95,24 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 beta(1+1/n, 1/2) / 2;
 
 
-### Gen: I( x^p * ((1 + x*y)^(n-1) / (1 - x*y))^(1/n) )
-n = sqrt(5); p = sqrt(3);
-integrate(\(x) sapply(x, \(y) integrate(\(x)
-	x^p * ((1 + x*y)^(n-1) / (1 - x*y))^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
-(beta(1/2, 1-1/n) + beta(1, 1-1/n) - beta((p+1)/2, 1-1/n) - beta((p+2)/2, 1-1/n)) / (2*p);
-
 ### Gen: I( x^p * y^q * ((1 + x*y)^(n-1) / (1 - x*y))^(1/n) )
 n = sqrt(5); p = sqrt(3); q = 1/sqrt(2);
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x^p * y^q * ((1 + x*y)^(n-1) / (1 - x*y))^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 (beta((q+1)/2, 1-1/n) + beta((q+2)/2, 1-1/n) - beta((p+1)/2, 1-1/n) - beta((p+2)/2, 1-1/n)) / (p-q) / 2;
+
+### Special Case: I( (x*y)^p * ((1 + x*y)^(n-1) / (1 - x*y))^(1/n) )
+n = sqrt(5); p = 1/sqrt(3);
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	(x*y)^p * ((1 + x*y)^(n-1) / (1 - x*y))^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+(beta((p+1)/2, 1-1/n) * (digamma(1-1/n+(p+1)/2) - digamma((p+1)/2)) +
+	+ beta((p+2)/2, 1-1/n) * (digamma(1-1/n+(p+2)/2) - digamma((p+2)/2))) / 4;
+
+### Gen: I( x^p * ((1 + x*y)^(n-1) / (1 - x*y))^(1/n) )
+n = sqrt(5); p = sqrt(3);
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^p * ((1 + x*y)^(n-1) / (1 - x*y))^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+(beta(1/2, 1-1/n) + beta(1, 1-1/n) - beta((p+1)/2, 1-1/n) - beta((p+2)/2, 1-1/n)) / (2*p);
 
 ### Simple: I( x * ((1 + x*y)^(n-1) / (1 - x*y))^(1/n) )
 n = sqrt(5);
@@ -71,14 +120,6 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x * ((1 + x*y)^(n-1) / (1 - x*y))^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 (beta(1/2, 1-1/n) - beta(3/2, 1-1/n)) / 2;
 beta(1/2, 1-1/n) * (n-1) / (3*n-2);
-
-
-### I( x * ((1 - x*y)^(n-1) / (1 + x*y))^(1/n) )
-n = sqrt(11);
-integrate(\(x) sapply(x, \(y) integrate(\(x)
-	x * ((1 - x*y)^(n-1) / (1 + x*y))^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
-(beta(1/2, 1-1/n) + beta(3/2, 1-1/n) - 2*beta(1, 1-1/n)) / 2;
-beta(1/2, 1-1/n) * (2*n-1) / (3*n-2) - beta(1, 1-1/n);
 
 
 ### Composite:
@@ -291,6 +332,19 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 (beta(3/2, 1-1/n) - beta(1, 1-1/n)) / 2 - (beta(1, 1-1/n) - beta(1/2, 1-1/n)) / 2;
 (beta(1/2, 1-1/n) + beta(3/2, 1-1/n) - 2*beta(1, 1-1/n)) / 2;
 beta(1/2, 1-1/n) * (2*n-1) / (3*n-2) - beta(1, 1-1/n);
+
+### I( x^p * ((1 - x*y)^(n-1) / (1 + x*y))^(1/n) )
+n = sqrt(5); p = 1/sqrt(2);
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^p * ((1 - x*y)^(n-1) / (1 + x*y))^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+(beta((p+2)/2, 1-1/n) - beta(1, 1-1/n)) / (2*p) - (beta((p+1)/2, 1-1/n) - beta(1/2, 1-1/n)) / (2*p);
+(beta(1/2, 1-1/n) + beta((p+2)/2, 1-1/n) - beta((p+1)/2, 1-1/n) - beta(1, 1-1/n)) / (2*p);
+
+### I( x^p * y^q * ((1 - x*y)^(n-1) / (1 + x*y))^(1/n) )
+n = sqrt(5); p = 1/sqrt(2); q = sqrt(2/3);
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^p * y^q * ((1 - x*y)^(n-1) / (1 + x*y))^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+(beta((p+2)/2, 1-1/n) - beta((q+2)/2, 1-1/n) + beta((q+1)/2, 1-1/n) - beta((p+1)/2, 1-1/n)) / (2*(p-q));
 
 
 ### Radical: 2/3
