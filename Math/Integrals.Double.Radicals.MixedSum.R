@@ -239,9 +239,11 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 ### Div-Pow = 2
 
 ### I( ((1 - x*y) / (1 + x*y)^2)^(1/3) )
+n = 3; # n = sqrt(11);
 integrate(\(x) sapply(x, \(y) integrate(\(x)
-	((1 - x*y) / (1 + x*y)^2)^(1/3), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
-# TODO
+	((1 - x*y) / (1 + x*y)^(n-1))^(1/n), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-12)
+beta(1/n, 1/2) * (digamma(1/n+1/2) - digamma(1/2)) / 4 +
+	- beta(1/n, 1) * (digamma(1/n+1) - digamma(1)) / 4;
 
 
 ### I( x^0.5 * ((1 - x*y) / (1 + x*y)^2)^(1/3) )
@@ -369,6 +371,8 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 (digamma(5/6) - digamma(1/3)) * 10/9 + 5/6 - 3;
 
 
+###################
+
 ### Composite:
 
 ### I( x * ((1-x)/(1+x) * (1 - x*y) / (1 + x*y))^(1/3) )
@@ -426,8 +430,8 @@ beta(1/4, 1/2) * 5/6 - 4;
 
 ### Composite:
 
-### I( x * ((1-x)/(1+x) * (1 - x*y) / (1 + x*y))^(1/4) )
-n = 4;
+### Gen: I( x * ((1-x)/(1+x) * (1 - x*y) / (1 + x*y))^(1/n) )
+n = 4; # n = sqrt(11);
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x * ((1-x)/(1+x) * (1 - x*y) / (1 + x*y))^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 (digamma(1/2 + 1/(2*n)) - digamma(1/(2*n)) - n)^2 / (2*n^2);
