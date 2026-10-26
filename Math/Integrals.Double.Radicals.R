@@ -781,7 +781,7 @@ beta(3/4, 2/4) * 3/16 - gamma(1/4)^2 / gamma(1/2) * sqrt(2) / 32;
 
 ### I( ((1 - x^4) / (1 - x^4*y^4)^3)^(1/4) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
-	((1 - x^n) / (1 - x^n*y^n)^3)^(1/n), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+	((1 - x^4) / (1 - x^4*y^4)^3)^(1/4), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 beta(1/4, 1/4) * (pi/4 - sqrt(2)/2 - 1/2 * log(tan(pi/8))) / 4;
 beta(1/4, 1/2) * (pi * sqrt(2)/4 - 1 - log(tan(pi/8))/sqrt(2)) / 4;
 
@@ -811,11 +811,20 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x * ((1 - x^4) / (1 - x^4*y^4)^3)^(1/4), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 (beta(1/4, 1/2)^2 - beta(1/4, 1/4) * beta(3/4, 3/4)) / 32;
 
-
 ### I( x*y * ((1 - x^4) / (1 - x^4*y^4)^3)^(1/4) )
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x*y * ((1 - x^4) / (1 - x^4*y^4)^3)^(1/4), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 (pi - gamma(3/4)^2 / gamma(1/2) * sqrt(2) * 2) * beta(1/4, 2/4) / 16;
+
+### I( x*y^2 * ((1 - x^4) / (1 - x^4*y^4)^3)^(1/4) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x*y^2 * ((1 - x^4) / (1 - x^4*y^4)^3)^(1/4), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+pi/4 * (1-pi/4);
+
+### I( x*y^3 * ((1 - x^4) / (1 - x^4*y^4)^3)^(1/4) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x*y^3 * ((1 - x^4) / (1 - x^4*y^4)^3)^(1/4), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+(pi - beta(1/4, 2/4)/2) / 4;
 
 
 ### I( x^2 * ((1 - x^4) / (1 - x^4*y^4)^3)^(1/4) )
@@ -828,6 +837,13 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 integrate(\(x) sapply(x, \(y) integrate(\(x)
 	x^2*y^2 * ((1 - x^4) / (1 - x^4*y^4)^3)^(1/4), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
 # TODO
+
+
+### I( x^2*y^3 * ((1 - x^4) / (1 - x^4*y^4)^3)^(1/4) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^2*y^3 * ((1 - x^4) / (1 - x^4*y^4)^3)^(1/4), 0, 1, rel.tol=1E-13)$value), 0, 1, rel.tol=1E-13)
+beta(3/4, 3/4) * sqrt(2)/2 - pi * sqrt(2) / 4;
+beta(3/4, 1/2) / 2 - pi * sqrt(2) / 4;
 
 
 ### Both Components: Power = 3/4
@@ -1144,6 +1160,33 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 1.0205398681224 / 4;
 # TODO: I( sqrt(x*y / ((1-x^2) * (1 - x^2*y^2))) );
 
+### I( x^2 * y^2 / ((1 - x^4) * (1 - x^4*y^4)^3)^(1/4) )
+# Note: split over [0,y] + [y,1];
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	x^2 * y^2 / ((1 - x^4) * (1 - x^4*y^4)^3)^(1/4), 0, 1, rel.tol=1E-12)$value), 0, 1, rel.tol=1E-13)
+(pracma::psi(1, 3/8) - pracma::psi(1, 7/8)) / 32;
+
+
+FUN = \(x, y, eps) {
+	x = mpfr(x, 160); y = mpfr(y, 160);
+	as.numeric(x^2 * log(x) / ((1 - x^4) * (1 - x^4*y^4)^3)^(0.25));
+}
+FUN = \(x, y, eps) {
+	x = mpfr(x, 160); y = mpfr(y, 160);
+	as.numeric(x^2 * log(y) / ((1 - x^4) * (1 - x^4*y^4)^3)^(0.25));
+}
+int = \(FUN, z0 = NULL, eps = mpfr("1E-8", 160)) {
+	z1 = integrate(\(x) sapply(x, \(y) integrate(FUN, 0, y, y=y, eps=eps, rel.tol=1E-12)$value),
+		0, 1, rel.tol=1E-13);
+	z2 = integrate(\(x) sapply(x, \(y) integrate(FUN, y, 1, y=y, eps=eps, rel.tol=1E-12)$value),
+		0, 1, rel.tol=1E-13);
+	cat("Absolute Error: ", z1$abs.error, ", ", z2$abs.error, "\n");
+	z = z1$value + z2$value;
+	if(is.null(z0)) return(z);
+	# Dz: Empiric
+	dz = (z - z0) / eps;
+	return(as.numeric(dz));
+}
 
 ### Full:
 
