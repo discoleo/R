@@ -16,7 +16,15 @@
 ### Ref:
 
 ### Melting Temperature
+# 1. Sigma-Aldrich
 # https://www.sigmaaldrich.com/deepweb/assets/sigmaaldrich/marketing/global/documents/367/000/meltingtemp1.pdf
+# 2. Package TmCalculator
+#    Genome-Wide Nucleic Acid Melting Temperature Profiling and Multi-Omics Integration
+#    https://cran.r-project.org/web/packages/TmCalculator/index.html
+
+# TODO:
+# - Explore package TmCalculator, including the nearest-neighbour parameter sets and
+#   the corresponding references used for entropy-based Tm calculations;
 
 
 # Note: dS = actual_dS / 1000;
