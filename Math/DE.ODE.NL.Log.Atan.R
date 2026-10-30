@@ -16,8 +16,8 @@
 # ODE-Type: d2y + dy^2 + y*dy
 # - Usually with large coefficients;
 
-# 4*(x-b)*x^2 * d2y + 4*(x-b)*x^3 * dy^2 + 8*(x-b)*x^2 * y*dy +
-#   + 2*x*(7*x-6*b) * dy + 4*x*(x-b) * y^2 + 2*(3*x-2*b) * y = 0;
+# 2*(x-b)*x^2 * d2y + 2*(x-b)*x^3 * dy^2 + 4*(x-b)*x^2 * y*dy +
+#   + x*(7*x-6*b) * dy + 2*x*(x-b) * y^2 + (3*x-2*b) * y = 0;
 
 # Note:
 # - For NL ODEs from y = Log(Log), see file:
@@ -170,7 +170,7 @@ b = 1/k;
 #### Special Cases
 
 ### Case: p = -1;
-4*(x-b)*x^2 * d2y + 4*(x-b)*x^3 * dy^2 +
-	+ 8*(x-b)*x^2 * y*dy + 2*x*(7*x - 6*b) * dy +
-	+ 4*(x-b)*x * y^2 + 2*(3*x - 2*b) * y # = 0
+2*(x-b)*x^2 * d2y + 2*(x-b)*x^3 * dy^2 +
+	+ 4*(x-b)*x^2 * y*dy + x*(7*x - 6*b) * dy +
+	+ 2*(x-b)*x * y^2 + (3*x - 2*b) * y # = 0
 
