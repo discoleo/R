@@ -6,7 +6,7 @@
 ## Differential Equations
 ## NL ODEs - Trig( Exp )
 ##
-## draft v.0.1b
+## draft v.0.1c
 
 
 ### NL ODEs: Trigonometric-Type
@@ -16,6 +16,14 @@
 # P1(x) * exp(x) * y = sin(P2(x) * exp(x))
 ### Higher Poly:
 # P1(x) * exp(Q(x)) * y = sin(P2(x) * exp(Q(x)))
+
+
+### Examples
+
+# (1-y^2)*d2y + y*dy^2 - k*(1-y^2)*dy = 0;
+
+# Coupled:
+# y*d2y - dy^2 - y*dy - y^2 + 1 = 0;
 
 
 ####################
@@ -28,9 +36,42 @@ source("DE.ODE.Helper.R")
 
 ########################
 
-### P1(x)*exp(x)*y = sin(P2(x)*exp(x))
+### Simple Components
 
-### Simple Homogeneous:
+### y = sin(exp(k*x))
+
+# Check:
+e = expression(sin(exp(k*x)));
+k = sqrt(5);
+x = sqrt(3);
+params = list(x=x, k=k);
+#
+y   = eval(e, params);
+dy  = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
+
+
+# D =>
+dy - k*exp(k*x) * cos(exp(k*x)) # = 0
+
+# D2 =>
+d2y - k^2*exp(k*x) * cos(exp(k*x)) +
+	+ k^2*exp(2*k*x) * sin(exp(k*x)) # = 0
+d2y - k*dy + k^2*exp(2*k*x) * y # = 0
+d2y - k*dy + dy^2 * y / (1-y^2) # = 0
+
+### ODE:
+(1-y^2)*d2y + y*dy^2 - k*(1-y^2)*dy # = 0
+
+
+#######################
+#######################
+
+### Coupled Trig w. Exp
+
+### P1(x)*exp(x) * y == sin(P2(x)*exp(x))
+
+### Simple Coupled Homogeneous:
 ### exp(x)*y = sin(exp(x))
 
 # Check:
@@ -88,7 +129,7 @@ d2y + dy + (p+dp)^2*exp(x)*sin(p*exp(x)) +
 	- (p+dp)*(dy + y)^2 + (p+dp)^3 # = 0
 
 ### ODE:
-(p+dp)*y*d2y - (p+dp)*dy^2 - (p + 2*dp + d2p)*y*dy +
+(p+dp) * y*d2y - (p+dp) * dy^2 - (p + 2*dp + d2p) * y*dy +
 	- (p + 2*dp + d2p)*y^2 + (p+dp)^3 # = 0
 
 ### Special Case:
@@ -173,6 +214,10 @@ d2y = eval(D(D(e, "x"), "x"), params);
 x*y*d2y - x*dy^2 - (k1*x + n)*y*dy +
 	- k1*(k1*x + n)*y^2 + x^(2*n+1) # = 0
 
+# Integrating Factor:
+k1*p*exp(k1*x) + dp*exp(k1*x) - x^n*exp(k1*x) # = 0
+p*exp(k1*x) - I(x^n*exp(k1*x)) # = 0
+
 # TODO
 
 
@@ -190,7 +235,7 @@ d2y + k1*dy +
 (k1*p + dp)*d2y + k1*(k1*p + dp)*dy +
 	- (k1*dp + d2p)*(dy + k1*y) +
 	+ (k1*p + dp)^3*exp(2*k1*x)*y # = 0
-(k1*p + dp)*y*d2y + k1*(k1*p + dp)*y*dy +
+(k1*p + dp) * y*d2y + k1*(k1*p + dp) * y*dy +
 	- (k1*dp + d2p)*(dy + k1*y)*y +
 	- (k1*p + dp) * (dy + k1*y)^2 + (k1*p + dp)^3 # = 0
 
@@ -232,8 +277,8 @@ p1*(p2+dp2)*d2y +
 	+ ((p1 + 2*dp1)*(p2+dp2) - p1*(dp2+d2p2))*dy +
 	+ ((dp1+d2p1)*(p2+dp2) - (dp2+d2p2)*(p1+dp1))*y +
 	+ p1*(p2+dp2)^2*(p2+dp2)*exp(2*x)*y # = 0
-p1^2*(p2+dp2)*y*d2y +
-	+ p1*((p1 + 2*dp1)*(p2+dp2) - p1*(dp2+d2p2))*y*dy +
+p1^2*(p2+dp2) * y*d2y +
+	+ p1*((p1 + 2*dp1)*(p2+dp2) - p1*(dp2+d2p2)) * y*dy +
 	+ p1*((dp1+d2p1)*(p2+dp2) - (dp2+d2p2)*(p1+dp1))*y^2 +
 	- (p2+dp2) * ((p1*dy + (p1+dp1)*y)^2) +
 	+ (p2+dp2)^3 # = 0
