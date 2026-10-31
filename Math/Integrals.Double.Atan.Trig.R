@@ -363,6 +363,19 @@ integrate(\(x) sapply(x, \(y) integrate(\(x)
 # TODO
 
 
+### I( atan(tan(y) - tan(x)) * cos(x) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(tan(y) - tan(x)) * cos(x), 0, y, rel.tol=1E-11)$value), 0, pi/2, rel.tol=1E-12)
+integrate(\(x) -2 * atan(x) / (x^2-x+1), 0, 1, rel.tol=1E-13)$value + pi^2 / tan(pi/3) / 3;
+# TODO
+
+
+### I( atan(tan(y) - tan(x)) / sin(y) )
+integrate(\(x) sapply(x, \(y) integrate(\(x)
+	atan(tan(y) - tan(x)) / sin(y), 0, y, rel.tol=1E-11)$value), 0, pi/2, rel.tol=1E-12)
+- 7/12 * pracma::zeta(3) + 2/3 * Catalan * pi;
+
+
 ######################
 
 ### Prod
