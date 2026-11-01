@@ -6,7 +6,7 @@
 ## Differential Equations
 ## NL ODEs - Trig( Exp )
 ##
-## draft v.0.1d
+## draft v.0.1e
 
 
 ### NL ODEs: Trigonometric-Type
@@ -26,7 +26,9 @@
 #  - (k*x - 2) * (1 - x^2*y^2)*dy - k * y*(1 - x^2*y^2) = 0;
 
 # Coupled:
-# y*d2y - dy^2 - y*dy - y^2 + 1 = 0;
+# y*d2y - dy^2 - y*dy - y^2 + Ks^2 = 0;
+# x^2 * y*d2y - x^2 * dy^2 - k*x^2 * y*dy +
+#  - (k^2*x^2 - p*k*x - p) * y^2 + k^2*x^(2*p+2) = 0;
 
 
 ####################
@@ -142,12 +144,46 @@ y*d2y + y*dy - (dy + y)^2 + 1 # = 0
 y*d2y - dy^2 - y*dy - y^2 + 1 # = 0
 
 
+#######################
+
+### Gen: y = x^p * sin(exp(k*x)) * exp(-k*x)
+
+# Check:
+e = expression(x^p * sin(exp(k*x)) * exp(-k*x));
+k = sqrt(5); p = 1/sqrt(2);
+x = sqrt(3);
+params = list(x=x);
+#
+y   = eval(e, params);
+dy  = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
+
+
+# D =>
+x*dy + (k*x-p)*y - k*x^(p+1) * cos(exp(k*x)) # = 0
+
+# D2 =>
+x*d2y + (k*x-p+1)*dy + k*y - (p+1)*k*x^p * cos(exp(k*x)) +
+	+ k^2*x^(p+1) * sin(exp(k*x)) * exp(k*x) # = 0
+x^2*d2y + x*(k*x - 2*p)*dy - p*(k*x - (p+1))*y +
+	+ k^2*x^(p+2) * sin(exp(k*x)) * exp(k*x) # = 0
+x^2 * y*d2y + x*(k*x - 2*p) * y*dy - p*(k*x - (p+1)) * y^2 +
+	+ k^2*x^(2*p+2) - (x*dy + (k*x-p)*y)^2 # = 0
+
+### ODE:
+x^2 * y*d2y - x^2 * dy^2 - k*x^2 * y*dy +
+	- (k^2*x^2 - p*k*x - p) * y^2 + k^2*x^(2*p+2) # = 0
+
+
+#########################
+
 ### Extended Homogeneous:
 ### exp(x)*y = sin(p*exp(x))
 
 # Check:
 e = expression(sin(k * x^2 * exp(x)) * exp(-x));
 x = sqrt(3); k = sqrt(5);
+# Note: this k is different to the k in the previous section;
 p = k*x^2; dp = 2*k*x; d2p = 2*k;
 params = list(x=x, p=p, dp=dp, d2p=d2p, k=k);
 #
