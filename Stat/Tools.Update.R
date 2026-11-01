@@ -2,8 +2,9 @@
 ### Tools to Copy Packages between versions of R
 
 ### Note:
-# - Code copied from package "installr";
-# - Some Refactoring: more elegant/robust code;
+# - Code copied from package 'installr';
+# - Still needs package 'installr' for one of the functions;
+# - Some Refactoring: more elegant/robust code - but still more to do;
 
 warning("Not yet tested!");
 
@@ -29,16 +30,24 @@ function (from, to, ask = FALSE, keep_old = TRUE, overwrite.new = FALSE)
                 "FROM: Write the row number of the R version/folder FROM which to copy (or move) the package library (and then press enter):\n")
             cat("\nThank you\n")
             ss_R_folder_to <- ask.user.for.a.row(dirRTbl, 
-                "To: Choose an R version/folder from INTO which the packages from your old R installations will be copied TO", 
+                "To: Choose an R version/folder INTO which the packages from your old R installations will be copied TO", 
                 "TO: Write the row number of the R version/folder INTO which to copy (or move) the package library (and then press enter):\n")
             cat("\nThank you\n")
             from = dirR[ss_R_folder_from];
             to   = dirR[ss_R_folder_to];
             DECISION_text <- paste("You've chosen to move your packages from: ", 
-                from, "  to: ", to)
-            ask_again_12 <- ask.user.for.a.row(c("yes", "no"), 
-                "Are you sure?", paste(DECISION_text, " - Is this you final decision? \n(for 'yes' press 1, and for 'no' press 2)\n"))
-            ask_again <- ifelse(ask_again_12 == 1, F, T)
+                from, "  to: ", to);
+			txtConfirm = paste(DECISION_text,
+				" - Is this your final decision?\n",
+				"(for 'yes' press 1, and for 'no' press 2;)\n",
+				"Press 3 if you want to cancel the operation.\n");
+            confirmA = ask.user.for.a.row(c("Yes", "No", "Cancel"), 
+                "Are you sure?", txtConfirm);
+			if(confirmA == 3) {
+				cat("Operation aborted!\n");
+				return();
+			}
+            ask_again = ifelse(confirmA == 1, F, T);
         }
     }
 	# Path: R
@@ -78,7 +87,7 @@ function (from, to, ask = FALSE, keep_old = TRUE, overwrite.new = FALSE)
 		from = paths_of_packages_to_copy_from, 
 		to   = to_library, overwrite = overwrite.new, 
 		recursive = TRUE);
-	cat("=====================", "\n")
+	cat("=======================", "\n")
     cat("Done. Finished copying all packages to the new location.\n");
 	flush.console();
 	# Remove OLD Packages:
@@ -87,7 +96,8 @@ function (from, to, ask = FALSE, keep_old = TRUE, overwrite.new = FALSE)
 			" (aka 'FROM') \n");
 		flush.console();
         pkgs_Deleted = unlink(paths_of_packages_to_copy_from, 
-            recursive = TRUE)
+            recursive = TRUE);
+		# TODO: NOT the actual number of deleted packages;
         cat("Done. The old packages were deleted: ", length(pkgs_Deleted), "\n");
     }
 	# Finished:
