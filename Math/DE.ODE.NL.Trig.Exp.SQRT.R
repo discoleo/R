@@ -6,7 +6,7 @@
 ## Differential Equations
 ## NL ODEs - Trig( Exp * SQRT )
 ##
-## draft v.0.1a
+## draft v.0.1b
 
 
 ### NL ODEs: Trigonometric-Type
@@ -37,7 +37,7 @@ source("DE.ODE.Helper.R")
 # Check:
 e = expression(sin(exp(k*x) * sqrt(x^n + b)) * exp(-k*x));
 k = sqrt(5);
-n = 1/sqrt(2); b = 2/3; # n = 1;
+n = 1/sqrt(2); b = 2/3; # n = 1; # n = -1;
 x = sqrt(3);
 params = list(x=x, k=k);
 #
@@ -70,4 +70,9 @@ d2y = eval(D(D(e, "x"), "x"), params);
 4*(x+b)*(2*k*(x+b) + 1) * (y*d2y - dy^2) +
 	- 2*((2*k*(x+b) + 1)^2 - 2) * (y*dy + k*y^2) +
 	+ (2*k*(x+b) + 1)^3 # = 0
+
+### Case: n = -1;
+4*x^3*(b*x + 1)*(2*k*x*(b*x + 1) - 1) * (y*d2y - dy^2) +
+	- 2*x^2*((2*k*x*(b*x + 1) - 1)^2 + 4*b*x + 2) * (y*dy + k*y^2) +
+	+ (2*k*x*(b*x + 1) - 1)^3 # = 0
 
