@@ -6,7 +6,7 @@
 ## Differential Equations
 ## NL ODEs - Atan of SQRT(Exp)
 ##
-## draft v.0.1c
+## draft v.0.1d
 
 
 ### Examples:
@@ -126,4 +126,7 @@ dyy = (dy + 2*k*y);
 k*d2y^3 + (dyy^3 + 3*k^2*(3*dyy + 2*dy)) * d2y^2 +
 	+ (4*k*dyy^3*(dyy + dy) + 3*k^3*(3*dyy + 2*dy)^2) * d2y +
 	+ 4*k^2*dyy^3*(dyy + dy)^2 + k^4*(3*dyy + 2*dy)^3 # = 0
+
+# Alternative Formulation:
+k*(d2y + k*(3*dyy + 2*dy))^3 + dyy^3 * (d2y + 2*k*(dyy + dy))^2 # = 0
 
