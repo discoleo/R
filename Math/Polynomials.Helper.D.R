@@ -59,8 +59,18 @@ sort.dpm = function(p, y="y", x="x") {
 	nms = c(names(p)[ ! names(p) %in% nms], rev(nms));
 	p = p[, nms];
 	attr(p, "d") = y;
-	p = as.pm(p); class(p) = c("dpm", class(p));
+	p = as.pm(p); class(p) = c("dpm.sorted", "dpm", class(p));
 	return(p);
+}
+is.sorted.dpm = function(x) {
+	inherits(x, "sorted.dpm");
+}
+unsort.dpm = function(x) {
+	cl = class(x);
+	clS = grepl("dpm\\.sorted", cl);
+	clB = cl[! clS];
+	class(x) = clB;
+	invisible(x);
 }
 print.dpm = function(p, y="y", x="x", do.sort=FALSE) {
 	if(do.sort) p = sort.dpm(p, y=y, x=x);
