@@ -5,6 +5,8 @@
 ##
 ## Differential Equations
 ## Log( F(Y) )-Types
+##
+## v.0.2b
 
 
 ####################
@@ -143,10 +145,9 @@ d2p = eval(D(D(pe, "x"), "x"), params);
 #############################
 #############################
 
-### log(y) * log(1-y) = k*x^n
+### Log(y) * Log(1-y) = k*x^n
 
-
-###
+### Check
 n = sqrt(3); # n = 3-sqrt(3); # n = 2;
 y = exp(-1); k = sqrt(2);
 x = (log(y)*log(1-y) / k)^(1/n);
@@ -187,4 +188,45 @@ n^2*k^2*x^2*(y-1)^3*y^3*d2y^2 +
  - n^2*k^2*y^3*dy^2 + 2*n^3*k^2*y^3*dy^2 - n^4*k^2*y^3*dy^2 # = 0
 
 # TODO: format/simplify;
+
+
+##################
+
+##################
+### Mixed Sums ###
+##################
+
+### x*Log(y) + y*Log(x) = k*x^n
+
+### Check:
+n = sqrt(3); # n = 3-sqrt(3); # n = 2;
+y = exp(-1/3); k = sqrt(2);
+x = 1/sqrt(5);
+k = (x*log(y) + y*log(x)) / x^n;
+params = list(x=x, k=k, n=n, y=y);
+e = expression(x*log(y) + y*log(x))[[1]];
+#
+dye = D(e, "y"); dxe = D(e, "x");
+dy  = (k*n*x^(n-1) - eval(dxe, params)) / eval(dye, params);
+d2y = (k*n*(n-1)*x^(n-2) - dy/y + y/x^2 - dy/x    - dy/y + x/y^2*dy^2 - dy/x) / (x/y + log(x));
+
+# D =>
+x*y*log(y) + x*log(x) * y*dy + x^2 * dy + y^2 - k*n*x^n * y # = 0
+
+# Quasi-Linear System:
+log(y) # ==
+(k*x^(n+1)*dy + (x^2 * dy + y^2 - k*n*x^n * y)) / (x*(x*dy - y));
+#
+log(x) # ==
+(k*x^n*y + (x^2 * dy + y^2 - k*n*x^n * y)) / (y*(y - x*dy));
+
+# D2 =>
+y*log(y) + x*dy*log(y) +
+	+ log(x) * y*dy + x*log(x) * dy^2 + x*log(x) * y*d2y +
+	+ x^2 * d2y + 3*x*dy + 3*y*dy - k*n*x^n * dy - k*n^2*x^(n-1) * y # = 0
+(x*dy + y) * (k*x^(n+1)*dy + (x^2 * dy + y^2 - k*n*x^n * y)) / (x*(x*dy - y)) +
+	+ (x*y*d2y + x*dy^2 + y*dy) * (k*x^n*y + (x^2 * dy + y^2 - k*n*x^n * y)) / (y*(y - x*dy)) +
+	+ x^2 * d2y + 3*x*dy + 3*y*dy - k*n*x^n * dy - k*n^2*x^(n-1) * y # = 0
+
+# TODO: simplify;
 
