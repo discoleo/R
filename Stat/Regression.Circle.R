@@ -46,6 +46,10 @@ sum(x^2*dx + dx*y^2 - 2*x*dx*x0) * sum(dy*y) - sum(x^2*dy + dy*y^2 - 2*x*dy*x0) 
 div = 2*(sum(x*dx)* sum(dy*y) - sum(x*dy) * sum(dx*y));
 (sum(x^2*dx + dx*y^2) * sum(dy*y) - sum(x^2*dy + dy*y^2) * sum(dx*y)) / div;
 x0;
+#
+div = 2*(sum(dx*y)* sum(dy*x) - sum(dy*y) * sum(dx*x));
+(sum(x^2*dx + dx*y^2) * sum(dy*x) - sum(x^2*dy + dy*y^2) * sum(dx*x)) / div;
+y0;
 
 # TODO: Solve remaining system;
 
