@@ -95,6 +95,13 @@ gamma.p.part(1, n = n/(p+1)) / (p+1)
 
 
 ####################
+
+###
+integrate(\(x) (exp(-x^2-x) + exp(-x^2+x)), 0, Inf, rel.tol=1E-8)
+gamma(1/2) * exp(1/4)
+
+
+####################
 ####################
 
 ###
@@ -191,6 +198,8 @@ gamma(1/2) * exp(-2*a^(3/2)) * a
 #########################
 #########################
 
+### Fractions of EXP
+
 ### I( x^p / (exp(k*x) + 1) )
 # Michael Penn: WHY are we finding pi HERE?
 # https://www.youtube.com/watch?v=amL2uBK2buU
@@ -209,7 +218,8 @@ gamma(p + 1) * pracma::zeta(p + 1) * (1 - 1/2^p)
 p = sqrt(5); k = sqrt(3);
 integrate(\(x) x^p / (exp(k*x) + 1), 0, Inf, rel.tol=1E-8)
 gamma(p + 1) * pracma::zeta(p + 1) * (1 - 1/2^p) / k^(p + 1)
-#
+
+### I( x^p / (exp(k*x) - 1) )
 integrate(\(x) x^p / (exp(k*x) - 1), 0, Inf, rel.tol=1E-8)
 gamma(p + 1) * pracma::zeta(p + 1) / k^(p + 1)
 
@@ -232,6 +242,25 @@ gamma(p + 1) * pracma::zeta(p + 1)
 p = sqrt(5); k = sqrt(3);
 integrate(\(x) x^p / (exp(k*x) - 1), 0, Inf, rel.tol=1E-8)
 gamma(p + 1) * pracma::zeta(p + 1) / k^(p+1)
+
+
+#################
+
+### Complex:
+
+### I( sin(x) / (exp(x) - 1) )
+integrate(\(x) sin(x) / (exp(x) - 1), 0, Inf, rel.tol=1E-8)
+Im(pracma::psi(0, 1 + 1i));
+
+### Gen: I( sin(x) / (exp(k*x) - 1) )
+k = sqrt(3);
+integrate(\(x) sin(x) / (exp(k*x) - 1), 0, Inf, rel.tol=1E-8)
+Im(pracma::psi(0, 1 + 1i/k)) / k;
+
+### Gen: I( sin(x) / (exp(k*x) + 1) )
+k = sqrt(3);
+integrate(\(x) sin(x) / (exp(k*x) + 1), 0, Inf, rel.tol=1E-8)
+(Im(pracma::psi(0, 1 + 1i/k)) - Im(pracma::psi(0, 1 + 1i/(2*k)))) / k;
 
 
 #################
