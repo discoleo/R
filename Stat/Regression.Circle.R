@@ -16,6 +16,7 @@ plot(x, y)
 
 #
 xm = mean(x); ym = mean(y);
+dx = x - xm; dy = y - ym;
 
 # Eq 1:
 sum((x-x0)^2 + (y-y0)^2 - r^2) # = 0
@@ -36,5 +37,15 @@ sum((x-x0)^2*y + (y-y0)^2*y - ym*(x-x0)^2 - ym*(y-y0)^2) # = 0
 sum(x^2*(x-xm) - 2*x*(x-xm)*x0 + (x-xm)*x0^2 + (x-xm)*y^2 - 2*(x-xm)*y*y0 + (x-xm)*y0^2) # = 0
 sum(x^2*(y-ym) - 2*x*(y-ym)*x0 + (y-ym)*x0^2 + (y-ym)*y^2 - 2*(y-ym)*y*y0 + (y-ym)*y0^2) # = 0
 
-# TODO: Solve sustem;
+# =>
+sum(x^2*dx + dx*y^2 - 2*x*dx*x0 - 2*dx*y*y0) # = 0
+sum(x^2*dy + dy*y^2 - 2*x*dy*x0 - 2*dy*y*y0) # = 0
+# =>
+sum(x^2*dx + dx*y^2 - 2*x*dx*x0) * sum(dy*y) - sum(x^2*dy + dy*y^2 - 2*x*dy*x0) * sum(dx*y) # = 0
+#
+div = 2*(sum(x*dx)* sum(dy*y) - sum(x*dy) * sum(dx*y));
+(sum(x^2*dx + dx*y^2) * sum(dy*y) - sum(x^2*dy + dy*y^2) * sum(dx*y)) / div;
+x0;
+
+# TODO: Solve remaining system;
 
