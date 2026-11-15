@@ -6,11 +6,11 @@
 ## Differential Equations
 ## NL ODEs - Lambert W
 ##
-## draft v.0.1b
+## draft v.0.1c
 
 
 
-#########################
+####################
 
 ### Helper Functions
 
@@ -38,6 +38,31 @@ eval.d = function(ye, fe, params) {
 
 
 #########################
+#########################
+
+### Simple
+# non-Lambert in y;
+
+### y^x = x^n
+# Check:
+n = sqrt(3);
+x = sqrt(5);
+params = list(x=x, n=n);
+ye = expression(x^(n/x))[[1]];
+y  = eval(ye, params);
+ye = D(ye, "x"); dy  = eval(ye, params);
+ye = D(ye, "x"); d2y = eval(ye, params);
+
+# D =>
+x*(y*log(y) + x*dy) - n*y # = 0
+
+# D2 =>
+x^2*d2y + 3*x*dy + y*log(y) + x*log(y)*dy - n*dy # = 0
+
+### ODE:
+x^3*y*d2y - x^3*dy^2 + 2*x^2*y*dy + n*y^2 # = 0
+
+
 #########################
 
 ### y * log(y)^2 = F0(x)
