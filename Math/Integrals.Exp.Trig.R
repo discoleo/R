@@ -34,11 +34,11 @@ Catalan = 0.915965594177219015054603514;
 
 ### I( sin(x) / (exp(x) - 1))
 integrate(\(x) sin(x) / (exp(x) - 1), 0, Inf)
-- (pracma::psi(0, 1+1i) - pracma::psi(0, 1-1i)) * 1i / 2
-Im(pracma::psi(0, 1+1i))
+- (pracma::psi(0, 1+1i) - pracma::psi(0, 1-1i)) * 1i / 2;
+Im(pracma::psi(0, 1+1i));
 #
-pi/2 / tanh(pi) - 1/2
-(digamma((1/2+1)/2) - digamma(1/4))/2 - 1/2
+pi/2 / tanh(pi) - 1/2;
+(digamma((1/2+1)/2) - digamma(1/4))/2 - 1/2;
 - (pracma::psi(0, 1i) - pracma::psi(0, - 1i)) * 1i / 2 - 1
 
 

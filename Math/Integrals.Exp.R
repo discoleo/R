@@ -98,7 +98,7 @@ gamma.p.part(1, n = n/(p+1)) / (p+1)
 
 ###
 integrate(\(x) (exp(-x^2-x) + exp(-x^2+x)), 0, Inf, rel.tol=1E-8)
-gamma(1/2) * exp(1/4)
+gamma(1/2) * exp(1/4);
 
 
 ####################
@@ -186,13 +186,13 @@ gamma(p + 1) * (a[1]^(-p-1) - a[2]^(-p-1))
 
 a = 1/3
 integrate(\(x) exp(- x^2 - a^2/x^2), 0, Inf)
-gamma(1/2) * exp(-2*a) / 2
+gamma(1/2) * exp(-2*a) / 2;
 
 
 ### [hidden x^2]
 a = 1/3
 integrate(\(x) exp(- x^3 - a^3/x^3) * x^(1/2), 0, Inf)
-gamma(1/2) * exp(-2*a^(3/2)) * a
+gamma(1/2) * exp(-2*a^(3/2)) * a;
 
 
 #########################
@@ -248,6 +248,9 @@ gamma(p + 1) * pracma::zeta(p + 1) / k^(p+1)
 
 ### Complex:
 
+# Note:
+# - are covered in file Integrals.Exp.Trig.R;
+
 ### I( sin(x) / (exp(x) - 1) )
 integrate(\(x) sin(x) / (exp(x) - 1), 0, Inf, rel.tol=1E-8)
 Im(pracma::psi(0, 1 + 1i));
@@ -261,6 +264,17 @@ Im(pracma::psi(0, 1 + 1i/k)) / k;
 k = sqrt(3);
 integrate(\(x) sin(x) / (exp(k*x) + 1), 0, Inf, rel.tol=1E-8)
 (Im(pracma::psi(0, 1 + 1i/k)) - Im(pracma::psi(0, 1 + 1i/(2*k)))) / k;
+
+
+### I( sin(x) * x / (exp(k*x) - 1) )
+k = sqrt(3);
+integrate(\(x) sin(x) * x / (exp(k*x) - 1), 0, Inf, rel.tol=1E-13)
+Im(pracma::psi(1, 1-1i/k)) / k^2;
+
+### I( sin(x) * x^2 / (exp(k*x) - 1) )
+k = 2/sqrt(3);
+integrate(\(x) sin(x) * x^2 / (exp(k*x) - 1), 0, Inf, rel.tol=1E-13)
+Im(pracma::psi(2, 1+1i/k)) / k^3;
 
 
 #################
