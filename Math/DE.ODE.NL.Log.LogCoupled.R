@@ -6,7 +6,7 @@
 ## Differential Equations
 ## NL ODEs - Coupled Log of Log
 ##
-## draft v.0.1c
+## draft v.0.1d
 
 
 ### Coupled Logs:
@@ -167,6 +167,57 @@ pR = replace.fr.pm(pR, pL, pLDiv, x="L", pow=1)
 pR = replace.pm(pR, pxk, x="pxk", pow=1)
 pR = simplify.spm(pR, do.gcd=TRUE)
 sort.dpm(pR)
+
+
+######################
+
+### Type: 2 Components
+
+### y = Log(x) * Log(Log(x)) + b*Log(x)
+# - Note: same ODE!
+
+# Check:
+b = -1/sqrt(2);
+x = sqrt(3); params = list(x=x, b=b);
+e = expression(log(x) * log(log(x)) + b*log(x))[[1]];
+#
+y   = eval(e, params);
+dy  = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
+
+# D =>
+x*dy - log(log(x)) - b - 1 # = 0
+(x*dy - 1)*log(x) - y # = 0
+
+### ODE:
+x^2 * y*d2y + x * y*dy - x*dy + 1 # = 0
+
+
+###########################
+
+### y = Log(x) * Log(Log(x)) + b*x*Log(x)
+
+# Check:
+b = -1/sqrt(2);
+x = sqrt(3); params = list(x=x, b=b);
+e = expression(log(x) * log(log(x)) + b*x*log(x))[[1]];
+#
+y   = eval(e, params);
+dy  = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
+
+# D =>
+x*dy - log(log(x)) - b*x*log(x) - b*x - 1 # = 0
+(x*dy - 1)*log(x) - b*x*log(x)^2 - y # = 0
+
+# D2 =>
+x^2*log(x)*d2y + x*log(x)*dy - b*x*log(x)^2 - 2*b*x*log(x) - 1 # = 0
+(x^2*d2y - 2*b*x + 1)*log(x) + y - 1 # = 0
+# =>
+
+### ODE:
+x^4 * y*d2y^2 + x^3 * (y-1)*dy*d2y - (4*b*x-1)*x^2 * y*d2y + x^2*d2y +
+	- x*(2*b*x-1) * (y-1)*dy + b*x*y^2 + 4*b*x*y*(b*x-1) - b*x + 1 # = 0
 
 
 #########################
