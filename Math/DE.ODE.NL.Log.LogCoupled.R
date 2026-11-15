@@ -6,7 +6,7 @@
 ## Differential Equations
 ## NL ODEs - Coupled Log of Log
 ##
-## draft v.0.1b
+## draft v.0.1c
 
 
 ### Coupled Logs:
@@ -14,7 +14,8 @@
 
 ### Examples:
 
-# x^2 * y*d2y + x * y*dy - x*dy + 1 = 0;
+# x^2 * y*d2y + x * y*dy - x * dy + 1 = 0;
+# x^2 * y*d2y - x * y*dy - x^2 * dy + y^2 + x*y + x^2 = 0;
 # x*(x^2+1)^2 * y*d2y + (x^4-1) * y*dy - 2*(x^2+1)*x^2 * dy + 4*x^3 = 0;
 
 
@@ -54,6 +55,30 @@ x^2*log(x)*d2y + x*log(x)*dy - 1 # = 0
 
 ### ODE:
 x^2 * y*d2y + x * y*dy - x*dy + 1 # = 0
+
+
+##############
+### Variant:
+# y = x * Log(x) * Log(Log(x))
+
+# Check:
+x = sqrt(3); params = list(x=x);
+e = expression(x * log(x) * log(log(x)))[[1]];
+#
+y   = eval(e, params);
+dy  = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
+
+# D =>
+x*dy - y - x*log(log(x)) - x # = 0
+(x*dy - y - x)*log(x) - y # = 0
+
+# D2 =>
+x*(x*d2y - 1)*log(x) - y - x # = 0
+x*(x*d2y - 1)*y - (y + x)*(x*dy - y - x) # = 0
+
+### ODE:
+x^2 * y*d2y - x*y*dy - x^2 * dy + y^2 + x*y + x^2 # = 0
 
 
 ##############
@@ -108,17 +133,21 @@ d2y = eval(D(D(e, "x"), "x"), params);
 ### ODE:
 x*(x^2+k)^2 * y*d2y - x*f*(x^2+k)^2 * d2y +
 	+ (x^4 - k^2) * y*dy - (x^2+k)*(2*x^2 + f*(x^2 - k)) * dy +
-	- (x^2+k)*(d2f*x^3 + df*x^2 + k*d2f*x - k*df) * y +
- + d2f*f*x^5 + 2*df*x^4 + df*f*x^4 + 4*x^3 + 2*k*d2f*f*x^3 + 2*df*k*x^2 + k^2*d2f*f*x - df*k^2*f # = 0
+	- (x^2+k)*(d2f*x*(x^2 + k) + df*(x^2-k)) * y +
+	+ d2f*f*x*(x^2+k)^2 + df*(x^2+k)*(2*x^2 + f*(x^2-k)) + 4*x^3 # = 0
 
 
 ### Special Case:
 # Case: f = ct;
-f = 2/3; df = d2f = 0; # f = -2; df = d2f = 0;
+f = 2/3; df = d2f = 0; # f = -1; df = d2f = 0; # f = -2; df = d2f = 0;
 e = expression(log(x^2 + k) * log(log(x^2 + k)) + f)[[1]];
 ### ODE:
 x*(x^2+k)^2 * y*d2y - x*f*(x^2+k)^2 * d2y +
 	+ (x^4 - k^2) * y*dy - (x^2+k)*(2*x^2 + f*(x^2 - k)) * dy + 4*x^3 # = 0
+
+# Case: f = -1;
+x*(x^2+k)^2 * y*d2y + x*(x^2+k)^2 * d2y +
+	+ (x^4 - k^2) * y*dy - (x^2+k)^2 * dy + 4*x^3 # = 0
 
 # Case: f = -2;
 x*(x^2+k)^2 * y*d2y + 2*x*(x^2+k)^2 * d2y +
