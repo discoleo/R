@@ -6,7 +6,7 @@
 ## Differential Equations
 ## NL ODEs - Coupled Log of Log
 ##
-## draft v.0.1d
+## draft v.0.1e
 
 
 ### Coupled Logs:
@@ -220,6 +220,29 @@ x^4 * y*d2y^2 + x^3 * (y-1)*dy*d2y - (4*b*x-1)*x^2 * y*d2y + x^2*d2y +
 	- x*(2*b*x-1) * (y-1)*dy + b*x*y^2 + 4*b*x*y*(b*x-1) - b*x + 1 # = 0
 
 
+#########################
+
+### y = Log(x^2+1) * Log(Log(x^2+1)) + b*Log(x^2+1)
+# Note: same ODE;
+
+# Check:
+b = -1/sqrt(2);
+x = sqrt(3); params = list(x=x);
+e = expression(log(x^2+1) * log(log(x^2+1)) + b*log(x^2+1))[[1]];
+#
+y   = eval(e, params);
+dy  = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
+
+# D =>
+(x^2+1)*dy - 2*x*log(log(x^2+1)) - 2*(b+1)*x # = 0
+((x^2+1)*dy - 2*x)*log(x^2+1) - 2*x*y # = 0
+
+### ODE:
+x*(x^2+1)^2 * y*d2y + (x^4-1) * y*dy - 2*(x^2+1)*x^2 * dy + 4*x^3 # = 0
+
+
+#########################
 #########################
 
 ### y = log(P1(x)) * log(log(P1(x))) + log(P2(x)) * log(log(P2(x))) + F0(x)
