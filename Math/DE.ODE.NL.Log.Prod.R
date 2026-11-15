@@ -6,7 +6,7 @@
 ## Differential Equations
 ## ODEs - Logarithms: Prod
 ##
-## draft v.0.1c
+## draft v.0.1d
 
 
 ### NL ODEs Derived from Logarithms
@@ -15,65 +15,20 @@
 
 ### Examples:
 
-# x^2 * y*d2y + x * y*dy - x*dy + 1 = 0;
-# x*(x^2+1)^2 * y*d2y + (x^4-1) * y*dy - 2*(x^2+1)*x^2 * dy + 4*x^3 = 0;
 
-
-###################
-### Logarithmic ###
-###################
-
-### Coupled Double LOG
-
-### y = Log(x) * Log(Log(x))
-
-# Check:
-x = sqrt(3); params = list(x=x);
-e = expression(log(x) * log(log(x)))[[1]];
-#
-y   = eval(e, params);
-dy  = eval(D(e, "x"), params);
-d2y = eval(D(D(e, "x"), "x"), params);
-
-# D =>
-x*dy - log(log(x)) - 1 # = 0
-x*log(x)*dy - y - log(x) # = 0
-log(x) * (x*dy - 1) - y # = 0
-
-# D2 =>
-x^2*log(x)*d2y + x*log(x)*dy - 1 # = 0
-(x^2*d2y + x*dy) * y - (x*dy - 1) # = 0
-
-### ODE:
-x^2 * y*d2y + x * y*dy - x*dy + 1 # = 0
+# Note:
+# - [refactor] Coupled Double LOG moved to file:
+#    DE.ODE.NL.Log.LogCoupled.R;
 
 ####################
 
-### y = Log(x^2+1) * Log(Log(x^2+1))
+### Helper Functions
 
-# Check:
-x = sqrt(3); params = list(x=x);
-e = expression(log(x^2+1) * log(log(x^2+1)))[[1]];
-#
-y   = eval(e, params);
-dy  = eval(D(e, "x"), params);
-d2y = eval(D(D(e, "x"), "x"), params);
+source("Polynomials.Helper.R")
+source("DE.ODE.Helper.R")
 
-# D =>
-(x^2+1)*dy - 2*x*log(log(x^2+1)) - 2*x # = 0
-((x^2+1)*dy - 2*x)*log(x^2+1) - 2*x*y # = 0
+#########################
 
-# D2 =>
-(x^2+1)*((x^2+1)*d2y + 2*x*dy - 2)*log(x^2+1) +
-	+ 2*x*((x^2+1)*dy - 2*x) - 2*x*(x^2+1)*dy - 2*(x^2+1)*y # = 0
-2*x*(x^2+1)*((x^2+1)*d2y + 2*x*dy - 2)*y +
-	+ (2*x*((x^2+1)*dy - 2*x) - 2*x*(x^2+1)*dy - 2*(x^2+1)*y) * ((x^2+1)*dy - 2*x) # = 0
-
-### ODE:
-x*(x^2+1)^2 * y*d2y + (x^4-1) * y*dy - 2*(x^2+1)*x^2 * dy + 4*x^3 # = 0
-
-
-######################
 ######################
 ### Simple Product ###
 
