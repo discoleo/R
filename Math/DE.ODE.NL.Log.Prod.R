@@ -6,16 +6,50 @@
 ## Differential Equations
 ## ODEs - Logarithms: Prod
 ##
-## draft v.0.1a
+## draft v.0.1b
 
 
 ### NL ODEs Derived from Logarithms
 # y = PROD( LOG )
 
 
+### Examples:
+
+# x^2 * y*d2y + x * y*dy - x*dy + 1 = 0;
+
+
 ###################
 ### Logarithmic ###
 ###################
+
+### Coupled Double LOG
+
+### y = Log(x) * Log(Log(x))
+
+# Check:
+x = sqrt(3); params = list(x=x);
+e = expression(log(x) * log(log(x)))[[1]];
+#
+y   = eval(e, params);
+dy  = eval(D(e, "x"), params);
+d2y = eval(D(D(e, "x"), "x"), params);
+
+# D =>
+x*dy - log(log(x)) - 1 # = 0
+x*log(x)*dy - y - log(x) # = 0
+log(x) * (x*dy - 1) - y # = 0
+
+# D2 =>
+x^2*log(x)*d2y + x*log(x)*dy - 1 # = 0
+(x^2*d2y + x*dy) * y - (x*dy - 1) # = 0
+
+### ODE:
+x^2 * y*d2y + x * y*dy - x*dy + 1 # = 0
+
+
+###################
+
+### Simple Product
 
 ### y^n = log(f(x)) * log(g(x)) + F0(x)
 
@@ -42,7 +76,15 @@ n*f*g*y^(n-1)*d2y + n*(n-1)*f*g*y^(n-2)*dy^2 + n*df*g*y^(n-1)*dy + n*f*dg*y^(n-1
 
 ### Solve Linear: D1 & D2 =>
 # log(f) = ...
+div = g*df*(f*d2g + df*dg) - f*dg*(g*d2f + df*dg);
+log(f); # ==
+(g*df*(n*f*g*y^(n-1)*d2y + n*(n-1)*f*g*y^(n-2)*dy^2 + n*df*g*y^(n-1)*dy + n*f*dg*y^(n-1)*dy - df*dg - dg*df) +
+	- (g*d2f + df*dg) * n*f*g*y^(n-1)*dy) / div;
 # log(g) = ...
+log(g); # ==
+- (f*dg*(n*f*g*y^(n-1)*d2y + n*(n-1)*f*g*y^(n-2)*dy^2 + n*df*g*y^(n-1)*dy + n*f*dg*y^(n-1)*dy - df*dg - dg*df) +
+	- (f*d2g + df*dg) * n*f*g*y^(n-1)*dy) / div;
+
 
 
 ### Special Cases:
