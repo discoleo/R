@@ -6,7 +6,7 @@
 ## Differential Equations
 ## NL ODEs - Lambert W
 ##
-## draft v.0.1d
+## draft v.0.1e
 
 ## NL ODEs from Coupled/Persisting Terms:
 # y^y = ... OR y * Exp(y) = ...,
@@ -18,7 +18,8 @@
 # k*y*d2y + dy^3 = 0;
 # k*x*y*d2y - x^3 * dy^3 + 2*k*y*dy = 0;
 # x*y*d2y + (x^2+1) * dy^3 + (x^2-1)/(x^2+1) * y*dy = 0;
-# x*y*(y+1) * d2y - x*dy^2 - k*y^2 = 0;
+# x*y*(y+1)*d2y - x*dy^2 - k*y^2 = 0;
+# n*x*y*(y+1)*d2y + x*(y^2 + 2*y - n+1) * dy^2 + n*y*(y+1)*dy = 0;
 
 
 ####################
@@ -27,6 +28,15 @@
 
 source("Polynomials.Helper.ODE.R")
 source("DE.ODE.Helper.R")
+
+# Note:
+# Case: y^y = F(x)
+# => w = pracma::lambertWp(log(F)); y = exp(w);
+#    D(y) = y * D(F)/F * w/(w+1);
+#
+# Case: y*exp(y) = F(x)
+# => w = pracma::lambertWp(F); y = w;
+#    D(y) = D(F)/F * w/(w+1);
 
 #####################
 #####################
@@ -162,4 +172,32 @@ x*y*d2y + x*dy^2 - 2*x * y^2*dy^2 / (y^2 + 1) - (y^2 + 1) # = 0
 
 ### ODE:
 x*y*(y^2 + 1)*d2y - x*y^2*dy^2 + x*dy^2 - (y^2 + 1)^2 # = 0
+
+
+########################
+########################
+
+### Other
+
+### y*exp(y) = log(x)^n
+
+# Check:
+n = sqrt(3);
+x = sqrt(5); params = list(x=x, n=n);
+y = pracma::lambertWp(log(x)^n); params$y = y;
+dy = n/x / log(x) * y/(y+1);
+ye = expression(n*y / (x*log(x) * (y+1)))[[1]];
+yy = D(ye, "y"); yx = D(ye, "x");
+d2y = eval(yx, params) + eval(yy, params) * dy;
+
+# D =>
+x*(y+1)*exp(y) * dy - n*log(x)^(n-1) # = 0
+x*log(x) * (y+1) * dy - n*y # = 0
+
+# D2 =>
+x*log(x) * (y+1) * d2y + x*log(x)*dy^2 + (log(x)+1) * (y+1) * dy - n*dy # = 0
+n*x * y*(y+1)*d2y + n*x * y*dy^2 + x*(y+1)*(y - (n-1)) * dy^2 + n*y*(y+1)*dy # = 0
+
+### ODE:
+n*x * y*(y+1)*d2y + x*(y^2 + 2*y - n+1) * dy^2 + n*y*(y+1)*dy # = 0
 
