@@ -6,12 +6,18 @@
 ## Differential Equations
 ## NL ODEs - Lambert W
 ##
-## draft v.0.1c
+## draft v.0.1d
+
+## NL ODEs from Coupled/Persisting Terms:
+# y^y = ... OR y * Exp(y) = ...,
+# where D(RHS) = RHS * ...;
 
 
 ### Examples:
 
 # k*y*d2y + dy^3 = 0;
+# k*x*y*d2y - x^3 * dy^3 + 2*k*y*dy = 0;
+# x*y*(y+1) * d2y - x*dy^2 - k*y^2 = 0;
 
 
 ####################
@@ -45,11 +51,24 @@ y*(log(y) + 1)*d2y + dy^2 # = 0
 ### ODE:
 k*y*d2y + dy^3 # = 0
 
+# Alternative Formulation:
+Ki = 1/k;
+y*d2y + Ki*dy^3 # = 0
+
 
 #####################
 
 ### y^y = exp(k*x^n)
-# TODO: Check;
+
+# Check:
+k = 1/sqrt(3); n = exp(-1); # n = -1;
+x = sqrt(5); params = list(x=x, k=k, n=n);
+w = pracma::lambertWp(k*x^n);
+y = exp(w); params$y = y;
+dy = n*y/x * w/(w+1);
+ye = expression(n*k*x^(n-1) / (log(y) + 1))[[1]];
+yy = D(ye, "y"); yx = D(ye, "x");
+d2y = eval(yx, params) + eval(yy, params) * dy;
 
 # D =>
 (log(y) + 1)*dy * y^y - n*k*x^(n-1) * exp(k*x^n) # = 0
@@ -65,6 +84,32 @@ k*n*x^(n-1) * y*d2y + dy^3 - k*n*(n-1)*x^(n-2) * y*dy # = 0
 
 ### Case: n = -1
 k*x*y*d2y - x^3 * dy^3 + 2*k*y*dy # = 0
+
+
+########################
+########################
+
+### y*exp(y) = x^(k*x)
+
+# Check:
+k = 1/sqrt(3);
+x = sqrt(5); params = list(x=x, k=k);
+y = pracma::lambertWp(x^(k*x)); params$y = y;
+dy = k*(log(x)+1) * y/(y+1);
+ye = expression(k*(log(x)+1)*x^(k*x) / ((y+1)*exp(y)))[[1]];
+yy = D(ye, "y"); yx = D(ye, "x");
+d2y = eval(yx, params) + eval(yy, params) * dy;
+
+# D =>
+(y+1)*exp(y) * dy - k*(log(x)+1)*x^(k*x) # = 0
+(y+1) * dy - k*(log(x)+1)*y # = 0
+
+# D2 =>
+x*(y+1) * d2y + x*dy^2 - k*x*(log(x)+1)*dy - k*y # = 0
+x * y*(y+1) * d2y + x*y*dy^2 - x*(y+1) * dy^2 - k*y^2 # = 0
+
+### ODE:
+x*y*(y+1) * d2y - x*dy^2 - k*y^2 # = 0
 
 
 ########################
