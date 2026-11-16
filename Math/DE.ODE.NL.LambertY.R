@@ -9,6 +9,10 @@
 ## draft v.0.1c
 
 
+### Examples:
+
+# k*y*d2y + dy^3 = 0;
+
 
 ####################
 
@@ -21,7 +25,15 @@ source("DE.ODE.Helper.R")
 #####################
 
 ### y^y = exp(k*x)
-# TODO: Check;
+
+# Check:
+k = 1/sqrt(3);
+x = sqrt(5); params = list(x=x, k=k);
+w = pracma::lambertWp(k*x);
+y = exp(w); params$y = y;
+dy = y/x * w/(w+1);
+ye = expression(k / (log(y) + 1))[[1]];
+ye = D(ye, "y"); d2y = eval(ye, params) * dy;
 
 # D =>
 (log(y) + 1)*dy * y^y - k*exp(k*x) # = 0
