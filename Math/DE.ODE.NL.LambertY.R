@@ -6,7 +6,7 @@
 ## Differential Equations
 ## NL ODEs - Lambert W
 ##
-## draft v.0.1f
+## draft v.0.1g
 
 ## NL ODEs from Coupled/Persisting Terms:
 # y^y = ... OR y * Exp(y) = ...,
@@ -17,6 +17,7 @@
 
 # k*y*d2y + dy^3 = 0;
 # k*x*y*d2y - x^3 * dy^3 + 2*k*y*dy = 0;
+# x*(k*x+1)*y*d2y + x^2 * dy^3 + y*dy = 0;
 # x*y*d2y + (x^2+1) * dy^3 + (x^2-1)/(x^2+1) * y*dy = 0;
 # x*y*(y+1)*d2y - x*dy^2 - k*y^2 = 0;
 # n*x*y*(y+1)*d2y + x*(y^2 + 2*y - n+1) * dy^2 + n*y*(y+1)*dy = 0;
@@ -66,6 +67,31 @@ k*y*d2y + dy^3 # = 0
 # Alternative Formulation:
 Ki = 1/k;
 y*d2y + Ki*dy^3 # = 0
+
+
+######################
+
+### y^y = x * exp(k*x)
+
+# Check:
+k = 1/sqrt(3);
+x = sqrt(5); params = list(x=x, k=k);
+w = pracma::lambertWp(k*x + log(x));
+y = exp(w); params$y = y;
+dy = y * (k*x+1)/x / (k*x + log(x)) * w/(w+1);
+ye = expression((k*x+1)/x / (log(y) + 1))[[1]];
+yy = D(ye, "y"); yx = D(ye, "x");
+d2y = eval(yx, params) + eval(yy, params) * dy;
+
+# D =>
+(log(y) + 1) * dy * y^y - (k*x+1) * exp(k*x) # = 0
+x*(log(y) + 1) * dy - (k*x+1) # = 0
+
+# D2 =>
+x*(log(y) + 1) * y*d2y + (log(y) + 1) * y*dy + x*dy^2 - k*y # = 0
+
+### ODE:
+x*(k*x+1) * y*d2y + x^2 * dy^3 + y*dy # = 0
 
 
 #####################
