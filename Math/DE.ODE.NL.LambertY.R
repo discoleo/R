@@ -6,7 +6,7 @@
 ## Differential Equations
 ## NL ODEs - Lambert W
 ##
-## draft v.0.1e
+## draft v.0.1f
 
 ## NL ODEs from Coupled/Persisting Terms:
 # y^y = ... OR y * Exp(y) = ...,
@@ -20,6 +20,7 @@
 # x*y*d2y + (x^2+1) * dy^3 + (x^2-1)/(x^2+1) * y*dy = 0;
 # x*y*(y+1)*d2y - x*dy^2 - k*y^2 = 0;
 # n*x*y*(y+1)*d2y + x*(y^2 + 2*y - n+1) * dy^2 + n*y*(y+1)*dy = 0;
+# (x^2+k^2) * (y+1)*d2y + (x^2+k^2) * (y+2)*dy^2 + 2*x * (y+1)*dy = 0;
 
 
 ####################
@@ -200,4 +201,38 @@ n*x * y*(y+1)*d2y + n*x * y*dy^2 + x*(y+1)*(y - (n-1)) * dy^2 + n*y*(y+1)*dy # =
 
 ### ODE:
 n*x * y*(y+1)*d2y + x*(y^2 + 2*y - n+1) * dy^2 + n*y*(y+1)*dy # = 0
+
+
+##########################
+
+### y*exp(y) = atan(x/k)^n
+
+# Check:
+k = sqrt(2); n = sqrt(3); # n = 1;
+x = sqrt(5); params = list(x=x, n=n, k=k);
+y = pracma::lambertWp(atan(x/k)^n); params$y = y;
+dy = n*k/(x^2+k^2) / atan(x/k) * y/(y+1);
+ye = expression(n*k*y / ((x^2+k^2)*atan(x/k) * (y+1)))[[1]];
+yy = D(ye, "y"); yx = D(ye, "x");
+d2y = eval(yx, params) + eval(yy, params) * dy;
+
+# D =>
+(x^2+k^2)*(y+1)*exp(y) * dy - n*k * atan(x/k)^(n-1) # = 0
+(x^2+k^2)*atan(x/k) * (y+1)*dy - n*k * y # = 0
+
+# D2 =>
+(x^2+k^2)*atan(x/k)*(y+1) * d2y + (x^2+k^2)*atan(x/k)*dy^2 +
+	+ 2*x*atan(x/k)*(y+1) * dy + k*(y - n+1) * dy # = 0
+n*k*(x^2+k^2) * y*(y+1)*d2y + n*k*(x^2+k^2) * y*dy^2 +
+	+ k*(x^2+k^2) * (y+1)*(y - n+1) * dy^2 + 2*n*k*x * y*(y+1)*dy # = 0
+
+### ODE:
+n*(x^2+k^2) * y*(y+1)*d2y + (x^2+k^2) * (y^2 + 2*y - n+1) * dy^2 +
+	+ 2*n*x * y*(y+1)*dy # = 0
+
+
+### Special Cases:
+
+### Case: n = 1;
+(x^2+k^2) * (y+1)*d2y + (x^2+k^2) * (y+2)*dy^2 + 2*x * (y+1)*dy # = 0
 
