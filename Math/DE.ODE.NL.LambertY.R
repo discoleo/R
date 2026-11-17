@@ -6,7 +6,7 @@
 ## Differential Equations
 ## NL ODEs - Lambert W
 ##
-## draft v.0.1h
+## draft v.0.1i
 
 ## NL ODEs from Coupled/Persisting Terms:
 # y^y = ... OR y * Exp(y) = ...,
@@ -15,10 +15,13 @@
 
 ### Examples:
 
+### Type: y*d2y, dy^3
 # k*y*d2y + dy^3 = 0;
 # k*x*y*d2y - x^3 * dy^3 + 2*k*y*dy = 0;
 # x*(k*x+1)*y*d2y + x^2 * dy^3 + y*dy = 0;
 # x*y*d2y + (x^2+1) * dy^3 + (x^2-1)/(x^2+1) * y*dy = 0;
+
+#   y*(y+1)*d2y - dy^2 - y*(y+1)*dy = 0;
 # x*y*(y+1)*d2y - x*dy^2 - k*y^2 = 0;
 # n*x*y*(y+1)*d2y + x*(y^2 + 2*y - n+1) * dy^2 + n*y*(y+1)*dy = 0;
 # (x^2+k^2) * (y+1)*d2y + (x^2+k^2) * (y+2)*dy^2 + 2*x * (y+1)*dy = 0;
@@ -148,6 +151,32 @@ x * y*(y+1) * d2y + x*y*dy^2 - x*(y+1) * dy^2 - k*y^2 # = 0
 
 ### ODE:
 x*y*(y+1) * d2y - x*dy^2 - k*y^2 # = 0
+
+
+########################
+
+### y*exp(y) = exp(k*exp(x))
+# Note: k has NO impact on final ODE;
+
+# Check:
+k = 1/sqrt(3);
+x = sqrt(5); params = list(x=x, k=k);
+y = pracma::lambertWp(exp(k*exp(x))); params$y = y;
+dy = k*exp(x) * y/(y+1);
+ye = expression(k*y * exp(x) / (y+1))[[1]];
+yy = D(ye, "y"); yx = D(ye, "x");
+d2y = eval(yx, params) + eval(yy, params) * dy;
+
+# D =>
+(y+1)*exp(y) * dy - k*exp(x)*exp(k*exp(x)) # = 0
+(y+1) * dy - k*exp(x)*y # = 0
+
+# D2 =>
+(y+1)*d2y + dy^2 - k*exp(x)*dy - k*exp(x)*y # = 0
+(y+1)*d2y + dy^2 - k*exp(x)*dy - (y+1)*dy # = 0
+
+### ODE:
+y*(y+1)*d2y - dy^2 - y*(y+1)*dy # = 0
 
 
 ########################
