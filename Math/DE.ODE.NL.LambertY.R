@@ -6,7 +6,7 @@
 ## Differential Equations
 ## NL ODEs - Lambert W
 ##
-## draft v.0.1g
+## draft v.0.1h
 
 ## NL ODEs from Coupled/Persisting Terms:
 # y^y = ... OR y * Exp(y) = ...,
@@ -261,4 +261,37 @@ n*(x^2+k^2) * y*(y+1)*d2y + (x^2+k^2) * (y^2 + 2*y - n+1) * dy^2 +
 
 ### Case: n = 1;
 (x^2+k^2) * (y+1)*d2y + (x^2+k^2) * (y+2)*dy^2 + 2*x * (y+1)*dy # = 0
+
+
+#######################
+#######################
+
+### y*exp(y) = sqrt(log(x)^2 + 1)
+
+# Check:
+n = sqrt(3);
+x = sqrt(5); params = list(x=x, n=n);
+y = pracma::lambertWp(sqrt(log(x)^2 + 1)); params$y = y;
+dy = log(x)/x / (log(x)^2+1) * y/(y+1);
+ye = expression(log(x)*y / (x*(log(x)^2 + 1) * (y+1)))[[1]];
+yy = D(ye, "y"); yx = D(ye, "x");
+d2y = eval(yx, params) + eval(yy, params) * dy;
+
+# D =>
+x*(y+1)*exp(y) * dy - log(x) / sqrt(log(x)^2 + 1) # = 0
+x*(log(x)^2 + 1) * (y+1)*dy - log(x) * y # = 0
+
+# D2 =>
+x*log(x) * y*d2y + x^2*(log(x)^2 + 1) * dy * dy^2 +
+	+ x*log(x) * (2*y+1)*dy^2 + log(x) * y*dy - y*dy # = 0
+x*log(x) * y*(y+1)*d2y + x*log(x) * (2*y^2 + 4*y + 1)*dy^2 +
+	+ log(x) * y*(y+1)*dy - y*(y+1)*dy # = 0
+
+### ODE:
+x^3 * y^2*(y+1)^2*d2y^2 +
+	+ 2*x^3 * y*(y+1)*(2*y^2 + 4*y + 1) * dy^2*d2y +
+	+ 2*x^2 * y^2*(y+1)^2 * dy*d2y  -  x*y^3*(y+1)*d2y +
+	+ x^3 * (2*y^2 + 4*y +1)^2 * dy^4 +
+	+ 2*x^2 * y*(y+1)*(2*y^2 + 4*y + 1) * dy^3 +
+	+ x*y^2 * dy^2 - y^3*(y+1)*dy # = 0
 
