@@ -6,7 +6,7 @@
 ## Differential Equations
 ## NL ODEs - Lambert W
 ##
-## draft v.0.1k
+## draft v.0.2a
 
 ## NL ODEs from Coupled/Persisting Terms:
 # y^y = ... OR y * Exp(y) = ...,
@@ -21,6 +21,7 @@
 # x*(k*x+1)*y*d2y + x^2 * dy^3 + y*dy = 0;
 # x*y*d2y + (x^2+1) * dy^3 + (x^2-1)/(x^2+1) * y*dy = 0;
 # k*y*d2y - dy^3 + k*y*dy^2 + k*dy^2 - k^2*y*dy = 0;
+# k*(y+1)*d2y - dy^3 + k*(y+2)*dy^2 - k^2*(y+1)*dy = 0;
 
 ### Type: y^2*d2y
 #   y*(y+1)*d2y - dy^2 - k*y*(y+1)*dy = 0;
@@ -44,6 +45,10 @@ source("DE.ODE.Helper.R")
 # Case: y*exp(y) = F(x)
 # => w = pracma::lambertWp(F); y = w;
 #    D(y) = D(F)/F * w/(w+1);
+#
+# Case: y + exp(y) = F(x)
+# => w = pracma::lambertWp(exp(F)); y = log(w);
+#    D(y) = D(F) / (w+1);
 
 #####################
 #####################
@@ -378,4 +383,42 @@ d2y = eval(yx, params) + eval(yy, params) * dy;
 
 ### ODE:
 k*y*d2y - dy^3 + k*y*dy^2 + k*dy^2 - k^2*y*dy # = 0
+
+
+#######################
+
+### Gen: y + exp(y) = exp(k*x) + b
+
+# Check:
+k = 1/sqrt(3); b = 2/3; # b = 0; # b = -2;
+x = sqrt(2); params = list(x=x, k=k);
+w = pracma::lambertWp(exp(exp(k*x) + b));
+y = log(w); params$y = y;
+dy =  k*exp(k*x)/ w * w/(w+1);
+ye = expression(k*exp(k*x) / (exp(k*x) - y + b+1))[[1]];
+yy = D(ye, "y"); yx = D(ye, "x");
+d2y = eval(yx, params) + eval(yy, params) * dy;
+
+# D =>
+(exp(y) + 1)*dy - k*exp(k*x) # = 0
+(exp(k*x) - y + b+1)*dy - k*exp(k*x) # = 0
+# exp(k*x) * (dy - k) - (y - b-1)*dy # = 0
+
+# D2 =>
+(exp(k*x) - y + b+1)*d2y - dy^2 + k*exp(k*x)*dy - k^2*exp(k*x) # = 0
+
+### ODE:
+k*(y - (b+1))*d2y - dy^3 + k*(y - b)*dy^2 - k^2*(y - b-1)*dy # = 0
+
+
+### Special Cases:
+
+### Case: b = -1;
+# see previous section;
+
+### Case: b = 0;
+k*(y-1)*d2y - dy^3 + k*y*dy^2 - k^2*(y-1)*dy # = 0
+
+### Case: b = -2;
+k*(y+1)*d2y - dy^3 + k*(y+2)*dy^2 - k^2*(y+1)*dy # = 0
 
