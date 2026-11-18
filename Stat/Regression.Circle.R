@@ -19,6 +19,14 @@ lm.circle = function(x, y) {
 	fit = list(C = c(x0, y0), R = r);
 	return(fit);
 }
+lines.circle = function(r, centre = c(0,0), ..., n = 33) {
+	phi = seq(0, 2*pi, length.out = n);
+	phi = c(phi[-n], phi[1]);
+	x = r*sin(phi) + centre[1];
+	y = r*cos(phi) + centre[2];
+	lines(x, y, ...);
+	invisible(cbind(x,y));
+}
 
 
 ### Examples:
@@ -40,6 +48,7 @@ phi.fit = atan2(x - Cxy[1], y - Cxy[2]);
 
 # Plot:
 plot(x, y, xlim = range(x) + c(-1,1), ylim=range(y) + c(-1,1) )
+lines.circle(fit$R, fit$C, col = "#C28092D2")
 points(fit$R * sin(phi.fit) + Cxy[1], fit$R * cos(phi.fit) + Cxy[2], col = "red")
 
 
@@ -60,8 +69,35 @@ Cxy = fit$C;
 phi.fit = atan2(x - Cxy[1], y - Cxy[2]);
 
 # Plot:
-plot(x, y, xlim = range(x) + c(-1,1), ylim=range(y) + c(-1,1) )
+plot(x, y, xlim = range(x) + c(-1,1), ylim=range(y) + c(-1,1), asp=1)
+lines.circle(fit$R, fit$C, col = "#C28092D2")
 points(fit$R * sin(phi.fit) + Cxy[1], fit$R * cos(phi.fit) + Cxy[2], col = "red")
+
+
+#########
+### Ex 3:
+n = 30;
+r = 10;
+x0 = 5; y0 = 2;
+# Random data:
+phi = (2*pi)*runif(n, -1/4, 1/4);
+dri =  runif(n, -1,1) / 10 * r;
+x = x0 + (r+dri) * sin(phi);
+y = y0 + (r+dri) * cos(phi);
+
+# Fit
+fit = lm.circle(x, y);
+Cxy = fit$C;
+phi.fit = atan2(x - Cxy[1], y - Cxy[2]);
+
+# Plot:
+plot(x, y, xlim = range(x) + c(-1,1), ylim=range(y) + c(-1,1), asp=1)
+lines.circle(fit$R, fit$C, col = "#C28092D2")
+points(fit$R * sin(phi.fit) + Cxy[1], fit$R * cos(phi.fit) + Cxy[2], col = "red")
+
+
+#######################
+#######################
 
 ### Derivation:
 
