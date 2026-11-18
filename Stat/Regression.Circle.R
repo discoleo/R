@@ -6,12 +6,13 @@
 lm.circle = function(x, y) {
 	xm = mean(x); ym = mean(y);
 	dx = x - xm; dy = y - ym;
+	Sdx = sum((x^2 + y^2)*dx);
+	Sdy = sum((x^2 + y^2)*dy);
 	#
 	divx = 2*(sum(x*dx)* sum(dy*y) - sum(x*dy) * sum(dx*y));
-	x0 = (sum(x^2*dx + dx*y^2) * sum(dy*y) - sum(x^2*dy + dy*y^2) * sum(dx*y)) / divx;
+	x0 = (Sdx * sum(dy*y) - Sdy * sum(dx*y)) / divx;
 	#
-	divy = 2*(sum(dx*y)* sum(dy*x) - sum(dy*y) * sum(dx*x));
-	y0 = (sum(x^2*dx + dx*y^2) * sum(dy*x) - sum(x^2*dy + dy*y^2) * sum(dx*x)) / divy;
+	y0 = - (Sdx * sum(dy*x) - Sdy * sum(dx*x)) / divx;
 	# Radius:
 	r = sum((x-x0)^2, (y-y0)^2);
 	r = sqrt(r/n);
@@ -21,7 +22,7 @@ lm.circle = function(x, y) {
 }
 lines.circle = function(r, centre = c(0,0), ..., n = 33) {
 	phi = seq(0, 2*pi, length.out = n);
-	phi = c(phi[-n], phi[1]);
+	phi[n] = phi[1];
 	x = r*sin(phi) + centre[1];
 	y = r*cos(phi) + centre[2];
 	lines(x, y, ...);
@@ -96,6 +97,11 @@ lines.circle(fit$R, fit$C, col = "#C28092D2")
 points(fit$R * sin(phi.fit) + Cxy[1], fit$R * cos(phi.fit) + Cxy[2], col = "red")
 
 
+### Higher-Order Correlations
+
+## TODO: perform some experiments or some theoretical approach;
+
+
 #######################
 #######################
 
@@ -132,8 +138,9 @@ sum(x^2*dy + dy*y^2 - 2*x*dy*x0 - 2*dy*y*y0) # = 0
 # =>
 sum(x^2*dx + dx*y^2 - 2*x*dx*x0) * sum(dy*y) - sum(x^2*dy + dy*y^2 - 2*x*dy*x0) * sum(dx*y) # = 0
 #
-divx = 2*(sum(x*dx)* sum(dy*y) - sum(x*dy) * sum(dx*y));
+divx = 2*(sum(x*dx) * sum(dy*y) - sum(x*dy) * sum(dx*y));
 (sum(x^2*dx + dx*y^2) * sum(dy*y) - sum(x^2*dy + dy*y^2) * sum(dx*y)) / divx;
+(sum((x^2 + y^2)*dx) * sum(dy*y) - sum((x^2 + y^2)*dy) * sum(dx*y)) / divx;
 x0;
 #
 divy = 2*(sum(dx*y)* sum(dy*x) - sum(dy*y) * sum(dx*x));
