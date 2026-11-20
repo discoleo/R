@@ -5,13 +5,15 @@
 ##
 ## Integrals:
 ## Derived from I( Trig-Fractions )
+## Type: Fresnel-Integrals
 ##
-## v.0.2a
+## v.0.2b
 
 
 ### Examples:
 
 # x*d2y - (n-1)*dy + n^2*x^(2*n-1)*y - n*x^n = 0;
+# x*d2y - (n-1)*dy + k^2*n^2*x^(2*n-1)*y - k*n*x^n = 0;
 
 
 ####################
@@ -23,7 +25,6 @@ source("DE.ODE.Helper.R")
 
 
 #########################
-
 
 ### y = sin(x^n) * I(cos(x^n)) - cos(x^n) * I(sin(x^n))
 
@@ -116,7 +117,34 @@ sapply(x.px, line.tan, dx=1.5, p=dy, dp=d2y, n=n, col="orange")
 
 ###################
 
-### Extension
+### Extension 1:
+# y = sin(k*x^n) * I(cos(k*x^n)) - cos(k*x^n) * I(sin(k*x^n))
+
+# Check:
+n = sqrt(3);  k = sqrt(2/3);
+x  = 4/5 * pi; # x = x + 1E-5; # Numeric D();
+Ic = integrate(\(x) cos(k*x^n), 0, x)$value;
+Is = integrate(\(x) sin(k*x^n), 0, x)$value;
+y  = sin(k*x^n) * Ic - cos(k*x^n) * Is;
+
+### D(y)
+dy = k*n*x^(n-1)*cos(k*x^n) * Ic + k*n*x^(n-1)*sin(k*x^n) * Is;
+
+### D2(y)
+k*n*x^(n-1) - k^2*n^2*x^(2*n-2)*(sin(k*x^n) * Ic - cos(k*x^n) * Is) + (n-1) * dy / x;
+d2y = k*n*x^(n-1) - k^2*n^2*x^(2*n-2)*y + (n-1) * dy / x;
+
+### ODE:
+x*d2y - (n-1)*dy + k^2*n^2*x^(2*n-1)*y - k*n*x^n # = 0
+
+# Reformulated:
+Kn = k*n;
+x*d2y - (n-1)*dy + Kn^2*x^(2*n-1)*y - Kn*x^n # = 0
+
+
+###################
+
+### Extension: Poly Argument
 ### y = sin(x^n + k*x) * I(cos(x^n + k*x)) - cos(x^n + k*x) * I(sin(x^n + k*x))
 
 ### D(y)
