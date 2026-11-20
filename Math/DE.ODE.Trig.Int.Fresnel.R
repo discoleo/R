@@ -7,14 +7,16 @@
 ## Derived from I( Trig-Fractions )
 ## Type: Fresnel-Integrals
 ##
-## v.0.2c
+## v.0.2d
 
 
 ### Examples:
 
 # x*d2y - (n-1)*dy + n^2*x^(2*n-1)*y - n*x^n = 0;
-# x*d2y - (n-1)*dy + k^2*n^2*x^(2*n-1)*y - k*n*x^n = 0;
+# x*d2y - (n-1)*dy + K^2*x^(2*n-1)*y - K*x^n = 0;
 # x^2*d2y - (n+1)*x*dy + (K^2*x^(2*n) + (n+1))*y - K*x^(n+2) = 0;
+
+# x*d2y - (n-1)*dy + n^2*x^(2*n-1)*y - n*x^(n-1) = 0;
 
 
 ####################
@@ -320,4 +322,27 @@ line.tan(x.px*2.08, dx=1.6, p=y, dp=dy, b=b, k=k)
 #
 curve(dy(x, b=b, k=k), add=T, col="green")
 line.tan(x.px*1.7, dx=1.5, p=dy, dp=d2y, b=b, k=k, col="orange")
+
+
+#########################
+#########################
+
+### y = sin(x^n) * I(cos(x^n)/x) - cos(x^n) * I(sin(x^n)/x)
+
+# Check:
+low = 1/5; # low = 2/5;
+x  = 4/5 * pi; n = sqrt(3); # x = x + 1E-5; # Numeric D();
+Ic = integrate(\(x) cos(x^n)/x, low, x)$value;
+Is = integrate(\(x) sin(x^n)/x, low, x)$value;
+y  = sin(x^n) * Ic - cos(x^n) * Is;
+
+### D(y)
+dy = n*x^(n-1)*cos(x^n) * Ic + n*x^(n-1)*sin(x^n) * Is;
+
+### D2(y)
+n*x^(n-2) - n^2*x^(2*n-2)*(sin(x^n) * Ic - cos(x^n) * Is) + (n-1) * dy / x;
+d2y = n*x^(n-2) - n^2*x^(2*n-2)*y + (n-1) * dy / x;
+
+### ODE:
+x*d2y - (n-1)*dy + n^2*x^(2*n-1)*y - n*x^(n-1) # = 0
 
