@@ -27,12 +27,19 @@ source("DE.ODE.Helper.R")
 
 ### y = sin(x^n) * I(cos(x^n)) - cos(x^n) * I(sin(x^n))
 
+# Check:
+x  = 4/5 * pi; n = sqrt(3); # x = x + 1E-5; # Numeric D();
+Ic = integrate(\(x) cos(x^n), 0, x)$value;
+Is = integrate(\(x) sin(x^n), 0, x)$value;
+y  = sin(x^n) * Ic - cos(x^n) * Is;
+
 ### D(y)
-n*x^(n-1)*cos(x^n) * Ic + n*x^(n-1)*sin(x^n) * Is
+dy = n*x^(n-1)*cos(x^n) * Ic + n*x^(n-1)*sin(x^n) * Is;
 
 ### D2(y)
-n*x^(n-1) - n^2*x^(2*n-2)*(sin(x^n) * Ic - cos(x^n) * Is) + (n-1) * dy / x
-n*x^(n-1) - n^2*x^(2*n-2)*y + (n-1) * dy / x
+n*x^(n-1) - n^2*x^(2*n-2)*(sin(x^n) * Ic - cos(x^n) * Is) + (n-1) * dy / x;
+n*x^(n-1) - n^2*x^(2*n-2)*y + (n-1) * dy / x;
+d2y = (x*d2y - (n-1)*dy + n^2*x^(2*n-1)*y - n*x^n) / x;
 
 ### ODE:
 x*d2y - (n-1)*dy + n^2*x^(2*n-1)*y - n*x^n # = 0
@@ -41,11 +48,11 @@ x*d2y - (n-1)*dy + n^2*x^(2*n-1)*y - n*x^n # = 0
 ### Solution & Plot:
 y.sin = function(x, n=2, lower=0) {
 	sapply(x, function(upper)
-		integrate(function(x) sin(x^n), lower=lower, upper=upper)$value )
+		integrate(\(x) sin(x^n), lower=lower, upper=upper)$value )
 }
 y.cos = function(x, n=2, lower=0) {
 	sapply(x, function(upper)
-		integrate(function(x) cos(x^n), lower=lower, upper=upper)$value )
+		integrate(\(x) cos(x^n), lower=lower, upper=upper)$value )
 }
 y = function(x, n=2, lower=0) {
 	xn = x^n
@@ -79,8 +86,10 @@ x.px = c(-5:7 * 3/7)
 curve(y(x, n=n), from= -3, to = 3, ylim=c(-lim, lim))
 sapply(x.px, line.tan, dx=1.5, p=y, dp=dy, n=n)
 #
+points(x.px, dy(x.px, n=n), col = "#328632")
 curve(dy(x, n=n), add=T, col="green")
-sapply(x.px, line.tan, dx=1.5, p=dy, dp=d2y, n=n, col="orange")
+sapply(x.px, line.tan, dx= 1.5, p=dy, dp=d2y, n=n, col="#409232A0")
+sapply(x.px, line.tan, dx=-0.5, p=dy, dp=d2y, n=n, col="#409232A0")
 
 
 #########
