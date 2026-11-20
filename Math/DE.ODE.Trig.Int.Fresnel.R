@@ -7,13 +7,14 @@
 ## Derived from I( Trig-Fractions )
 ## Type: Fresnel-Integrals
 ##
-## v.0.2b
+## v.0.2c
 
 
 ### Examples:
 
 # x*d2y - (n-1)*dy + n^2*x^(2*n-1)*y - n*x^n = 0;
 # x*d2y - (n-1)*dy + k^2*n^2*x^(2*n-1)*y - k*n*x^n = 0;
+# x^2*d2y - (n+1)*x*dy + (K^2*x^(2*n) + (n+1))*y - K*x^(n+2) = 0;
 
 
 ####################
@@ -142,6 +143,34 @@ Kn = k*n;
 x*d2y - (n-1)*dy + Kn^2*x^(2*n-1)*y - Kn*x^n # = 0
 
 
+###################
+
+### Extension 2: Poly-Coefficient
+# y = x * (sin(k*x^n) * I(cos(k*x^n)) - cos(k*x^n) * I(sin(k*x^n)))
+
+# Check:
+n = sqrt(3);  k = sqrt(2/3);
+x  = 4/5 * pi; # x = x + 1E-5; # Numeric D();
+Ic = integrate(\(x) cos(k*x^n), 0, x)$value;
+Is = integrate(\(x) sin(k*x^n), 0, x)$value;
+y  = x * (sin(k*x^n) * Ic - cos(k*x^n) * Is);
+
+### D(y)
+dy = k*n*x^n*cos(k*x^n) * Ic + k*n*x^n*sin(k*x^n) * Is + y/x;
+
+### D2(y)
+k*n*x^n - k^2*n^2*x^(2*n-1)*(sin(k*x^n) * Ic - cos(k*x^n) * Is) + n * (dy - y/x) / x + dy/x - y/x^2;
+d2y = k*n*x^n - k^2*n^2*x^(2*n-2)*y + (n+1) * dy / x - (n+1)/x^2 * y;
+
+### ODE:
+x^2*d2y - (n+1)*x*dy + (k^2*n^2*x^(2*n) + (n+1))*y - k*n*x^(n+2) # = 0
+
+# Reformulated:
+Kn = k*n;
+x^2*d2y - (n+1)*x*dy + (Kn^2*x^(2*n) + (n+1))*y - Kn*x^(n+2) # = 0
+
+
+###################
 ###################
 
 ### Extension: Poly Argument
