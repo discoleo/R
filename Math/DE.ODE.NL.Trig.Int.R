@@ -39,6 +39,14 @@
 #   y = I(sin(x^n)) * I(cos(x^n));
 
 
+####################
+
+### Helper Functions
+
+source("Polynomials.Helper.R")
+source("DE.ODE.Helper.R")
+
+
 #################
 
 #################
@@ -47,17 +55,30 @@
 
 ### y = I(sin(x^n)) * I(cos(x^n))
 
+# Check:
+n = sqrt(3); x = 2*pi;
+Ic = integrate(\(x) cos(x^n), 0, x)$value;
+Is = integrate(\(x) sin(x^n), 0, x)$value;
+y  = Ic * Is;
+
 ### D(y)
-sin(x^n) * Ic + cos(x^n) * Is
+dy = sin(x^n) * Ic + cos(x^n) * Is;
 
 ### D2(y)
-n*x^(n-1)*cos(x^n) * Ic - n*x^(n-1)*sin(x^n) * Is +
-	+ sin(2*x^n)
+d2y = n*x^(n-1)*cos(x^n) * Ic - n*x^(n-1)*sin(x^n) * Is +
+	+ sin(2*x^n);
 
 ### Solve Linear system:
-# TODO:
-Is = (n*x^(n-1)*cos(x^n)*dy - sin(x^n)*d2y + sin(x^n)*sin(2*x^n));
-Ic = (n*x^(n-1)*sin(x^n)*dy + cos(x^n)*d2y - cos(x^n)*sin(2*x^n));
+div = n*x^(n-1);
+Is # ==
+(n*x^(n-1)*cos(x^n)*dy - sin(x^n)*d2y + sin(x^n)*sin(2*x^n)) / div;
+Ic # ==
+(n*x^(n-1)*sin(x^n)*dy + cos(x^n)*d2y - cos(x^n)*sin(2*x^n)) / div;
+
+### ODE:
+y - (n*x^(n-1)*cos(x^n)*dy - sin(x^n)*d2y + sin(x^n)*sin(2*x^n)) *
+	(n*x^(n-1)*sin(x^n)*dy + cos(x^n)*d2y - cos(x^n)*sin(2*x^n)) / x^(2*n-2) / n^2;
+
 # TODO: check;
 
 
