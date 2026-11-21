@@ -7,20 +7,22 @@
 ## Derived from I( Trig-Fractions )
 ## Type: Fresnel-Integrals
 ##
-## v.0.2g
+## v.0.2h
 
 
 ### Examples:
 
 # x*d2y - (n-1)*dy + n^2*x^(2*n-1)*y - n*x^n = 0;
 # x*d2y - (n-1)*dy + K^2*x^(2*n-1)*y - K*x^n = 0;
-# x^2*d2y - (n+1)*x*dy + (K^2*x^(2*n) + (n+1))*y - K*x^(n+2) = 0;
 
 # x*d2y - (n-1)*dy + n^2*x^(2*n-1)*y - n*x^(n-1) = 0;
 # x*d2y - (n-1)*dy + K^2*x^(2*n-1)*y - K*x^(n-1) = 0;
 # x*d2y - (n-1)*dy + K^2*x^(2*n-1)*y - K*x^(n-2) = 0;
-# x*d2y - (n-1)*dy + K^2*x^(2*n-1)*y - K*x^p = 0; # Gen
+# x*d2y - (n-1)*dy + K^2*x^(2*n-1)*y - K*x^p = 0;  # Gen
 
+# x*d2y - (n-1)*dy + K^2*x^(2*n-1)*y - K*(x+b)*x^n = 0;
+# x*d2y - (n-1)*dy + K^2*x^(2*n-1)*y - K*(x^p + b)*x^n = 0;
+# x^2*d2y - (n+1)*x*dy + (K^2*x^(2*n) + (n+1))*y - K*x^(n+2) = 0;
 
 ####################
 
@@ -431,4 +433,58 @@ x*d2y - (n-1)*dy + k^2*n^2*x^(2*n-1)*y - k*n*x^(n+p) # = 0
 # Reformulated:
 Kn = k*n;
 x*d2y - (n-1)*dy + Kn^2*x^(2*n-1)*y - Kn*x^(n+p) # = 0
+
+
+###################
+
+### Extension: Coefficient inside Integral
+# y = sin(k*x^n) * I((x+b)*cos(k*x^n)) - cos(k*x^n) * I((x+b)*sin(k*x^n))
+
+# Check:
+n = sqrt(3); k = sqrt(2/3); b = exp(-1/2);
+x  = 4/5 * pi; # x = x + 1E-5; # Numeric D();
+Ic = integrate(\(x) (x+b) * cos(k*x^n), 0, x)$value;
+Is = integrate(\(x) (x+b) * sin(k*x^n), 0, x)$value;
+y  = sin(k*x^n) * Ic - cos(k*x^n) * Is;
+
+### D(y)
+dy = k*n*x^(n-1)*cos(k*x^n) * Ic + k*n*x^(n-1)*sin(k*x^n) * Is;
+
+### D2(y)
+k*n*(x+b)*x^(n-1) - k^2*n^2*x^(2*n-2)*(sin(k*x^n) * Ic - cos(k*x^n) * Is) + (n-1) * dy / x;
+d2y = k*n*(x+b)*x^(n-1) - k^2*n^2*x^(2*n-2)*y + (n-1) * dy / x;
+
+### ODE:
+x*d2y - (n-1) * dy + k^2*n^2*x^(2*n-1)*y - k*n*(x+b)*x^n # = 0
+
+# Reformulated:
+Kn = k*n;
+x*d2y - (n-1)*dy + Kn^2*x^(2*n-1)*y - Kn*(x+b)*x^n # = 0
+
+
+###################
+
+### Extension: Gen Coefficient inside Integral
+# y = sin(k*x^n) * I((x^p+b)*cos(k*x^n)) - cos(k*x^n) * I((x^p+b)*sin(k*x^n))
+
+# Check:
+n = sqrt(3); k = sqrt(2/3); p = sqrt(2); b = exp(-1/2);
+x  = 4/5 * pi; # x = x + 1E-5; # Numeric D();
+Ic = integrate(\(x) (x^p + b) * cos(k*x^n), 0, x)$value;
+Is = integrate(\(x) (x^p + b) * sin(k*x^n), 0, x)$value;
+y  = sin(k*x^n) * Ic - cos(k*x^n) * Is;
+
+### D(y)
+dy = k*n*x^(n-1)*cos(k*x^n) * Ic + k*n*x^(n-1)*sin(k*x^n) * Is;
+
+### D2(y)
+k*n*(x^p + b)*x^(n-1) - k^2*n^2*x^(2*n-2)*(sin(k*x^n) * Ic - cos(k*x^n) * Is) + (n-1) * dy / x;
+d2y = k*n*(x^p + b)*x^(n-1) - k^2*n^2*x^(2*n-2)*y + (n-1) * dy / x;
+
+### ODE:
+x*d2y - (n-1) * dy + k^2*n^2*x^(2*n-1)*y - k*n*(x^p + b)*x^n # = 0
+
+# Reformulated:
+Kn = k*n;
+x*d2y - (n-1)*dy + Kn^2*x^(2*n-1)*y - Kn*(x^p + b)*x^n # = 0
 
