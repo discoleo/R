@@ -51,6 +51,20 @@ lines.circle = function(r, centre = c(0,0), ..., n = 33) {
 	invisible(cbind(x,y));
 }
 
+####################
+
+### TODO:
+
+# Explore:
+# 1. circular: Circular Statistics
+#    https://cran.r-project.org/web/packages/circular/index.html
+# 2. circularKDE: Recent Methods for Kernel Density Estimation of Circular Data
+#    https://cran.r-project.org/web/packages/circularKDE/index.html
+# 3. circda: Circular Data Analysis
+#    https://cran.r-project.org/web/packages/circda/index.html
+
+
+####################
 
 ### Examples:
 
@@ -68,11 +82,16 @@ y = y0 + (r+dri) * cos(phi);
 fit = lm.circle(x, y);
 Cxy = fit$C;
 phi.fit = atan2(x - Cxy[1], y - Cxy[2]);
+# Mean Vector:
+Vm = c(sum(sin(phi.fit)), sum(cos(phi.fit)));
 
 # Plot:
 plot(x, y, xlim = range(x) + c(-1,1), ylim=range(y) + c(-1,1) )
 lines.circle(fit$R, fit$C, col = "#C28092D2")
 points(fit$R * sin(phi.fit) + Cxy[1], fit$R * cos(phi.fit) + Cxy[2], col = "red")
+# Mean Vector: often very limited cancellation
+lines(rbind(Cxy, fit$R*Vm + Cxy), col = "purple", lwd=2)
+sqrt(sum(Vm^2)); # Multiples of R;
 
 
 #########
@@ -190,7 +209,8 @@ x0 = 5; y0 = 2; z0 = 1;
 # Random data:
 phi = (2*pi)*runif(n);
 dri =  runif(n, -1,1) / 10 * r;
-dz  = seq(-r, r, length.out = 5) * 0.8;
+dz  = seq(0, r, length.out = 5) * 0.8;
+# dz  = seq(-r, r, length.out = 5) * 0.8;
 x = numeric(0); y = numeric(0);
 z = rep(z0 + dz, each = n);
 for(zi in dz) {
