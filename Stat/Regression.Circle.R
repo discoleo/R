@@ -1,8 +1,30 @@
 
 
-### Regression on a Circle
+### Regression on a Circle/Sphere
 
-# Note: currently only 2D;
+### Functionality:
+# - Regression Circle (2D):
+#   for points distributed in a circle or circle-segment;
+# - Regression on a 3D Sphere;
+# - Extendible (easily) to spheres in higher dimensions;
+
+
+### TODO:
+
+# Explore:
+# 1. circular: Circular Statistics
+#    https://cran.r-project.org/web/packages/circular/index.html
+# 2. circularKDE: Recent Methods for Kernel Density Estimation of Circular Data
+#    https://cran.r-project.org/web/packages/circularKDE/index.html
+# 3. circda: Circular Data Analysis
+#    https://cran.r-project.org/web/packages/circda/index.html
+
+
+####################
+
+### Helper Functions
+
+# Regression on Circle (2D)
 lm.circle = function(x, y) {
 	xm = mean(x); ym = mean(y);
 	dx = x - xm; dy = y - ym;
@@ -25,7 +47,7 @@ lm.circle = function(x, y) {
 lm.sphere = function(x, y, z) {
 	xm = mean(x); ym = mean(y); zm = mean(z);
 	dx = x - xm; dy = y - ym; dz = z - zm;
-	n  = length(x);
+	n  = length(x); # Number of data-points;
 	coefXYZ = 2 * c(
 		sum(dx*x), sum(dx*y), sum(dx*z),
 		sum(dy*x), sum(dy*y), sum(dy*z),
@@ -41,6 +63,27 @@ lm.sphere = function(x, y, z) {
 	return(rez);
 }
 
+### Line passing through Center of Circle
+# - Maximizes/Minimizes (?) distance to points;
+# - BUT difficult to interpret / non-intuitive;
+lm.C2line = function(x, y, xyC) {
+	dx = x - xyC[1];
+	dy = y - xyC[2];
+	a = sum(dy^2 - dx^2) / sum(dx*dy) / 2;
+	b = xyC[2] - a*xyC[1];
+	# y = a*x + b;
+	# Note: Reverse order to abline(coef = ...);
+	return(list(a = a, b = b));
+}
+
+# Distance to Line
+dist.line = function(x, y, a, b) {
+	if(missing(b)) {
+		b = a[[2]]; a = a[[1]];
+	}
+	sum((y - a*x - b)^2) / (a^2 + 1)
+}
+
 ### Plot:
 lines.circle = function(r, centre = c(0,0), ..., n = 33) {
 	phi = seq(0, 2*pi, length.out = n);
@@ -51,19 +94,8 @@ lines.circle = function(r, centre = c(0,0), ..., n = 33) {
 	invisible(cbind(x,y));
 }
 
+
 ####################
-
-### TODO:
-
-# Explore:
-# 1. circular: Circular Statistics
-#    https://cran.r-project.org/web/packages/circular/index.html
-# 2. circularKDE: Recent Methods for Kernel Density Estimation of Circular Data
-#    https://cran.r-project.org/web/packages/circularKDE/index.html
-# 3. circda: Circular Data Analysis
-#    https://cran.r-project.org/web/packages/circda/index.html
-
-
 ####################
 
 ### Examples:
@@ -136,6 +168,11 @@ phi.fit = atan2(x - Cxy[1], y - Cxy[2]);
 plot(x, y, xlim = range(x) + c(-1,1), ylim=range(y) + c(-1,1), asp=1)
 lines.circle(fit$R, fit$C, col = "#C28092D2")
 points(fit$R * sin(phi.fit) + Cxy[1], fit$R * cos(phi.fit) + Cxy[2], col = "red")
+# Line through Center
+# - Maximizes (?) distance to line;
+lc = lm.C2line(x, y, Cxy)
+abline(lc$b, lc$a, col = "pink")
+dist.line(x, y, lc)
 
 
 ### Higher-Order Correlations
@@ -193,6 +230,22 @@ xx = (sum(x^2*dx + dx*y^2) * sum(dy*y) - sum(x^2*dy + dy*y^2) * sum(dx*y)) / div
 yy = (sum(x^2*dx + dx*y^2) * sum(dy*x) - sum(x^2*dy + dy*y^2) * sum(dx*x)) / divy;
 plot(x, y, xlim = range(x) + c(-1,1), ylim=range(y) + c(-1,1) )
 points(r*sin(phi) + xx, r*cos(phi) +y0, col = "red")
+
+
+### Line through Center
+# yc = a*xc + b;
+b = yc - xc*a;
+a * sum((y-yc - a*(x - xc))^2) + (a^2 + 1)*sum((x-xc) * (y-yc - a*(x - xc)));
+# Minimize:
+sum((y-yc - a*(x - xc))^2) - 2*a*sum((y-yc - a*(x - xc))*(x - xc)) +
+	+ 2*a*sum((x-xc) * (y-yc - a*(x - xc))) - (a^2 + 1)*sum((x-xc)^2);
+sum((y-yc)^2 - (x-xc)^2) - 2*a*sum((x - xc)*(y-yc));
+a = sum((y-yc)^2 - (x-xc)^2) / sum((x - xc)*(y-yc)) / 2;
+
+# Distance:
+sum((y-yc - a*(x-xc))^2) / (a^2 + 1);
+2*a*sum((y-yc - a*(x-xc))^2) / (a^2 + 1)^2 + 2*sum((y-yc - a*(x-xc))*(x-xc)) / (a^2 + 1);
+a*sum((y-yc - a*(x-xc))^2) + (a^2 + 1)*sum((y-yc - a*(x-xc))*(x-xc));
 
 
 ###################
