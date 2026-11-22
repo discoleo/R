@@ -250,9 +250,33 @@ plot.all.reg(x, y, scale=T)
 
 ### Derivation
 
-### Test
-a * sum((y - a*x - b)^2) + (a^2 + 1)*sum(x * (y - a*x - b))
-sum(a*(dy - a*dx)^2 + (a^2 + 1) * x * (dy - a*dx))
+### Distance to Line:
+# y = a*x + b;
+sum((y - a*x - b)^2) / (a^2 + 1);
+
+### Minimize:
+
+# d/db =>
+sum(y - a*x - b) # == 0, when b != 0;
+# =>
+b = sum(y - a*x) / n;
+b = mean(y) - a*mean(x);
+dx = x - mean(x);
+dy = y - mean(y);
+
+# d/da =>
+a * sum((y - a*x - b)^2) + (a^2 + 1) * sum(x * (y - a*x - b)) # == 0;
+# =>
+sum(a*(dy - a*dx)^2 + (a^2 + 1) * x * (dy - a*dx)) # == 0;
+sum(a*dy^2 + a^3*dx^2 - 2*a^2*dx*dy + (a^2 + 1) * (dx + x.m) * (dy - a*dx)) # == 0;
+sum(a*dy^2 - 2*a^2*dx*dy - a^3*dx*x.m - a*dx^2 - a*dx*x.m +
+	+ a^2*(dx + x.m)*dy + (dx + x.m)*dy) # == 0;
+sum(- a^3*dx*x.m - a^2*(dx-x.m)*dy + a*dy^2 - a*dx^2 - a*dx*x.m + (dx + x.m)*dy) # == 0;
+# sum(x.m*dx) == 0; sum(x.m*dy) == 0; x.m = const;
+sum(a^2*(dx-x.m)*dy - a*dy^2 + a*dx^2 + a*dx*x.m - dx*dy) # == 0;
+sum(a^2*dx*dy - a*(dy^2 - dx^2) - dx*dy) # == 0;
+
+# TODO: seems OK;
 sum(a*dy^2 + a^3*dx^2 - 2*a^2*x*y + 2*a^2*x.m*y.m - a*(a^2 + 1)*x*dx + (a^2 + 1) *x*dy)
 sum(a*dy^2 - (a^2-1)*x*y + 2*a^2*x.m*y.m - a*(x^2 - x.m^2) - (a^2 + 1)*x.m*y.m)
 sum(a*dy^2 - (a^2-1)*x*y + (a^2-1)*x.m*y.m - a*(x^2 - x.m^2))
