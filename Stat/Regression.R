@@ -11,13 +11,17 @@
 # - added effects of scaling:
 #  -- different scales on the 2 axes can degrade the performance;
 
+# TODO:
+# Tilmann Gneiting: Isotonic Distributional Regression (IDR) - Leveraging Monotonicity, Uniquely So!
+# https://www.youtube.com/watch?v=1JreyEK25qg
 
 ############################
 
 # dir.create(tempdir())
 
-### helper functions
+### Helper Functions
 
+# Classic Regression:
 solve.reg = function(x, y) {
 	x.m = mean(x)
 	y.m = mean(y)
@@ -29,16 +33,18 @@ solve.reg = function(x, y) {
 
 	c(a, b)
 }
+
+# Regression based on Distance to Line:
 solve.dist = function(x, y) {
 	x.m = mean(x)
 	y.m = mean(y)
-	dx = x - x.m
-	dy = y - y.m
+	dx = x - x.m;
+	dy = y - y.m;
 
-	b2 = sum(x.m*y.m - x*y)
-	b1 = sum(y^2 - y.m^2 - x^2 + x.m^2) / b2
+	b2 = sum(x.m*y.m - x*y);
+	b1 = sum(y^2 - y.m^2 - x^2 + x.m^2) / b2;
 
-	a = -b1/2 + sqrt(b1^2/4 + 1)
+	a = -b1/2 + sqrt(b1^2/4 + 1);
 	# TODO: - sqrt() when liniar coeff < 0;
 	b = mean(y) - a * mean(x)
 	return(c(a, b))
@@ -48,8 +54,8 @@ dist.line = function(x, y, a, b) {
 }
 dist.line2 = function(x, y, a, b) {
 	# Test: calculations of dist.line()
-	c = y + x/a
-	y.l = (b + a^2 * c) / (a^2 + 1)
+	c0 = y + x/a
+	y.l = (b + a^2 * c0) / (a^2 + 1)
 	x.l = (y.l - b) / a
 	sum((x - x.l)^2 + (y - y.l)^2)
 }
@@ -113,7 +119,7 @@ plot.all.reg = function(x, y, scale=FALSE, col=c("red", "blue")) {
 		y = scale(y)
 	}
 	plot(x, y)
-	### Ordinary liniar regression
+	### Ordinary linear regression
 	r = solve.reg(x, y)
 	print(r)
 	d = dist.line(x, y, r[1], r[2])
@@ -121,7 +127,7 @@ plot.all.reg = function(x, y, scale=FALSE, col=c("red", "blue")) {
 
 	curve(r[1] * x + r[2], add=T, col=col[1])
 
-	### Liniar Distance to line
+	### Linear Distance to line
 	# - fails with non-constant variance / different metrics on x/y;
 	# - may be useful with polynomial regression;
 	r = solve.dist(x, y)
@@ -135,7 +141,8 @@ plot.all.reg = function(x, y, scale=FALSE, col=c("red", "blue")) {
 ##################
 ##################
 
-b1.var = 0.4 # 100
+b1.var = 5;
+# b1.var = 0.4; # b1.var = 100;
 x.df = rliniar.gen(100, b1.var=b1.var, method=1)
 x = x.df$x
 y = x.df$y
@@ -146,7 +153,7 @@ plot(x, y)
 
 ###########
 
-### Ordinary liniar regression
+### Ordinary linear regression
 r = solve.reg(x, y)
 a = r[1]
 b = r[2]
@@ -155,7 +162,7 @@ dist.line(x, y, a, b)
 
 curve(a * x + b, add=T, col="red")
 
-### Liniar Distance to line
+### Linear Distance to line
 # - fails with non-constant variance;
 # - may be useful with polynomial regression;
 r = solve.dist(x, y)
@@ -242,6 +249,7 @@ plot.all.reg(x, y, scale=T)
 ####################
 
 ### Derivation
+
 ### Test
 a * sum((y - a*x - b)^2) + (a^2 + 1)*sum(x * (y - a*x - b))
 sum(a*(dy - a*dx)^2 + (a^2 + 1) * x * (dy - a*dx))
