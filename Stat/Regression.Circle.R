@@ -63,17 +63,37 @@ lm.sphere = function(x, y, z) {
 	return(rez);
 }
 
-### Line passing through Center of Circle
-# - Maximizes/Minimizes (?) distance to points;
+### Line Orthogonal to Mean-Vector
+# - Should always minimize Distance;
+# - Distance should increase as line moves out of the circle;
+# - Most points are in the direction of the Mean-Vector:
+#   Line separates this "compact" set from a more diffuse set;
+lm.C2OrthoLine = function(x, y, xyC) {
+	dx = x - xyC[[1]]; mVx = sum(dx);
+	dy = y - xyC[[2]]; mVy = sum(dy);
+	a  = - mVx / mVy; n = length(x);
+	b = sum(dy - a*dx) / n;
+	# delta = sum(y-yc - a*(x - xc))^2 + 2*n*(a^2 + 1)/a * sum(x-xc);
+	# b = (sum(y-yc - a*(x - xc)) + c(-1,1) * sqrt(delta)) / (2*n);
+	# Translate to xyC:
+	b = b + xyC[2] - a*xyC[1];
+	coeff = list(a=a, b=b);
+	return(coeff);
+}
+
+### Lines passing through Center of Circle
+# - Minimizes & Maximizes (?) distance to points;
 # - BUT difficult to interpret / non-intuitive;
 lm.C2line = function(x, y, xyC) {
 	dx = x - xyC[1];
 	dy = y - xyC[2];
-	a = sum(dy^2 - dx^2) / sum(dx*dy) / 2;
+	pxy = sum(dx*dy); dyx = sum(dy^2 - dx^2);
+	delta = dyx^2 + 4*pxy^2;
+	a = (dyx + c(-1,1) * sqrt(delta)) / (2*pxy);
 	b = xyC[2] - a*xyC[1];
 	# y = a*x + b;
 	# Note: Reverse order to abline(coef = ...);
-	return(list(a = a, b = b));
+	return(data.frame(a = a, b = b));
 }
 
 # Distance to Line
@@ -81,7 +101,7 @@ dist.line = function(x, y, a, b) {
 	if(missing(b)) {
 		b = a[[2]]; a = a[[1]];
 	}
-	sum((y - a*x - b)^2) / (a^2 + 1)
+	sum((y - a*x - b)^2) / (a^2 + 1);
 }
 
 ### Plot:
@@ -116,14 +136,26 @@ Cxy = fit$C;
 phi.fit = atan2(x - Cxy[1], y - Cxy[2]);
 # Mean Vector:
 Vm = c(sum(sin(phi.fit)), sum(cos(phi.fit)));
+# Predicted:
+xPred = fit$R * sin(phi.fit) + Cxy[1];
+yPred = fit$R * cos(phi.fit) + Cxy[2];
 
 # Plot:
 plot(x, y, xlim = range(x) + c(-1,1), ylim=range(y) + c(-1,1) )
 lines.circle(fit$R, fit$C, col = "#C28092D2")
-points(fit$R * sin(phi.fit) + Cxy[1], fit$R * cos(phi.fit) + Cxy[2], col = "red")
+points(xPred, yPred, col = "red")
 # Mean Vector: often very limited cancellation
 lines(rbind(Cxy, fit$R*Vm + Cxy), col = "purple", lwd=2)
 sqrt(sum(Vm^2)); # Multiples of R;
+# Orthogonal Line to Mean Vector
+ortho = lm.C2OrthoLine(xPred, yPred, Cxy);
+abline(coef = c(ortho$b, ortho$a), col = "orange");
+dist.line(xPred, yPred, ortho);
+# Line though C:
+cLine = lm.C2line(xPred, yPred, Cxy);
+abline(coef = c(cLine$b[1], cLine$a[1]), col = "green");
+abline(coef = c(cLine$b[2], cLine$a[2]), col = "green");
+
 
 
 #########
@@ -141,11 +173,22 @@ y = y0 + (r+dri) * cos(phi);
 fit = lm.circle(x, y);
 Cxy = fit$C;
 phi.fit = atan2(x - Cxy[1], y - Cxy[2]);
+# Predicted:
+xPred = fit$R * sin(phi.fit) + Cxy[1];
+yPred = fit$R * cos(phi.fit) + Cxy[2];
 
 # Plot:
 plot(x, y, xlim = range(x) + c(-1,1), ylim=range(y) + c(-1,1), asp=1)
 lines.circle(fit$R, fit$C, col = "#C28092D2")
-points(fit$R * sin(phi.fit) + Cxy[1], fit$R * cos(phi.fit) + Cxy[2], col = "red")
+points(xPred, yPred, col = "red")
+# Orthogonal Line to Mean Vector
+ortho = lm.C2OrthoLine(xPred, yPred, Cxy);
+abline(coef = c(ortho$b, ortho$a), col = "#D2C292");
+dist.line(xPred, yPred, ortho);
+# Line though C:
+cLine = lm.C2line(xPred, yPred, Cxy);
+abline(coef = c(cLine$b[1], cLine$a[1]), col = "green");
+abline(coef = c(cLine$b[2], cLine$a[2]), col = "green");
 
 
 #########
@@ -163,16 +206,22 @@ y = y0 + (r+dri) * cos(phi);
 fit = lm.circle(x, y);
 Cxy = fit$C;
 phi.fit = atan2(x - Cxy[1], y - Cxy[2]);
+# Predicted:
+xPred = fit$R * sin(phi.fit) + Cxy[1];
+yPred = fit$R * cos(phi.fit) + Cxy[2];
 
 # Plot:
 plot(x, y, xlim = range(x) + c(-1,1), ylim=range(y) + c(-1,1), asp=1)
 lines.circle(fit$R, fit$C, col = "#C28092D2")
-points(fit$R * sin(phi.fit) + Cxy[1], fit$R * cos(phi.fit) + Cxy[2], col = "red")
-# Line through Center
-# - Maximizes (?) distance to line;
-lc = lm.C2line(x, y, Cxy)
-abline(lc$b, lc$a, col = "pink")
-dist.line(x, y, lc)
+points(xPred, yPred, col = "red")
+# Orthogonal Line to Mean Vector
+ortho = lm.C2OrthoLine(xPred, yPred, Cxy);
+abline(coef = c(ortho$b, ortho$a), col = "#D2C292");
+dist.line(xPred, yPred, ortho);
+# Line though C:
+cLine = lm.C2line(xPred, yPred, Cxy);
+abline(coef = c(cLine$b[1], cLine$a[1]), col = "green");
+abline(coef = c(cLine$b[2], cLine$a[2]), col = "green");
 
 
 ### Higher-Order Correlations
@@ -235,17 +284,31 @@ points(r*sin(phi) + xx, r*cos(phi) +y0, col = "red")
 ### Line through Center
 # yc = a*xc + b;
 b = yc - xc*a;
-a * sum((y-yc - a*(x - xc))^2) + (a^2 + 1)*sum((x-xc) * (y-yc - a*(x - xc)));
-# Minimize:
-sum((y-yc - a*(x - xc))^2) - 2*a*sum((y-yc - a*(x - xc))*(x - xc)) +
-	+ 2*a*sum((x-xc) * (y-yc - a*(x - xc))) - (a^2 + 1)*sum((x-xc)^2);
-sum((y-yc)^2 - (x-xc)^2) - 2*a*sum((x - xc)*(y-yc));
-a = sum((y-yc)^2 - (x-xc)^2) / sum((x - xc)*(y-yc)) / 2;
+b = 0; # when centered on (0,0);
+sum((y-yc - a*(x - xc))^2) / (a^2 + 1);
+# Minimize
+sum((y-yc - a*(x - xc))*(x - xc)) * (a^2 + 1) + a*sum((y-yc - a*(x - xc))^2); # = 0
+(a^2 + 1)*sum((x - xc)*(y-yc)) - a*(a^2 + 1)*sum((x - xc)^2) +
+	+ a^3*sum((x - xc)^2) + a*sum((y-yc)^2) - 2*a^2*sum((x - xc)*(y-yc));
+a^2*sum((x - xc)*(y-yc)) - a*sum((y-yc)^2 - (x - xc)^2) - sum((x - xc)*(y-yc));
+#
+delta = sum((y-yc)^2 - (x - xc)^2)^2 + 4*sum((x - xc)*(y-yc))^2;
+a = (sum((y-yc)^2 - (x - xc)^2) + c(-1,1) * sqrt(delta)) / (2*sum((x - xc)*(y-yc)));
 
-# Distance:
-sum((y-yc - a*(x-xc))^2) / (a^2 + 1);
-2*a*sum((y-yc - a*(x-xc))^2) / (a^2 + 1)^2 + 2*sum((y-yc - a*(x-xc))*(x-xc)) / (a^2 + 1);
-a*sum((y-yc - a*(x-xc))^2) + (a^2 + 1)*sum((y-yc - a*(x-xc))*(x-xc));
+# TODO: more checking;
+
+
+### Line with given Slope
+# e.g. Line orthogonal to the mean Vector (mV);
+# a = - mVx / mVy;
+# Check
+n = 10; a = 1; b = 0.1; xc = yc = 0; nn = 2*n;
+x = seq(n) - 1; y = seq(n) + 1 + runif(n, -1/2, 1/2);
+x = c(x, seq(n) + 1); y = c(y, seq(n) - 1) + runif(n, -1/2, 1/2);
+#
+sum((y-yc - a*(x - xc) - b)^2) / (a^2 + 1);
+# Minimize:
+b = sum(y-yc - a*(x - xc)) / nn;
 
 
 ###################
