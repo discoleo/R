@@ -29,10 +29,11 @@ lm.circle = function(x, y) {
 	xm = mean(x); ym = mean(y);
 	dx = x - xm; dy = y - ym;
 	n  = length(x);
-	Sdx = sum((x^2 + y^2)*dx);
-	Sdy = sum((x^2 + y^2)*dy);
+	S2 = x^2 + y^2;
+	Sdx = sum(S2*dx);
+	Sdy = sum(S2*dy);
 	#
-	divx = 2*(sum(x*dx)* sum(dy*y) - sum(x*dy) * sum(dx*y));
+	divx = 2*(sum(x*dx) * sum(dy*y) - sum(x*dy) * sum(dx*y));
 	x0 = (Sdx * sum(dy*y) - Sdy * sum(dx*y)) / divx;
 	#
 	y0 = - (Sdx * sum(dy*x) - Sdy * sum(dx*x)) / divx;
@@ -73,8 +74,6 @@ lm.C2OrthoLine = function(x, y, xyC) {
 	dy = y - xyC[[2]]; mVy = sum(dy);
 	a  = - mVx / mVy; n = length(x);
 	b = sum(dy - a*dx) / n;
-	# delta = sum(y-yc - a*(x - xc))^2 + 2*n*(a^2 + 1)/a * sum(x-xc);
-	# b = (sum(y-yc - a*(x - xc)) + c(-1,1) * sqrt(delta)) / (2*n);
 	# Translate to xyC:
 	b = b + xyC[2] - a*xyC[1];
 	coeff = list(a=a, b=b);
@@ -348,6 +347,8 @@ pz = C0[3] + r0*pz/rp;
 # Plot:
 points3d(x, y, z, size=5)
 points3d(px, py, pz, size=5, col = "red", alpha = 0.7)
+# TODO: sphere-cap;
+spheres3d(C0[1], C0[2], C0[3], radius = r0, col = "#C28092", alpha = 0.6)
 
 
 ### Derivation:
