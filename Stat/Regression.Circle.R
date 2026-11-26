@@ -310,6 +310,107 @@ sum((y-yc - a*(x - xc) - b)^2) / (a^2 + 1);
 b = sum(y-yc - a*(x - xc)) / nn;
 
 
+############
+### Ellipse:
+
+n = 30; r = 5;
+x0 = 5; y0 = 2; a = 9; b = 4;
+# Random data:
+phi = (2*pi)*runif(n);
+dri =  runif(n, -1,1) / 10 * r;
+x = x0 + (a+dri) * sin(phi);
+y = y0 + (b+dri) * cos(phi);
+#
+Sx = sum(x); S2x = sum(x^2); S3x = sum(x^3); S4x = sum(x^4);
+Sy = sum(y); S2y = sum(y^2); S3y = sum(y^3); S4y = sum(y^4);
+S2xy = sum(x^2*y); S2yx = sum(x*y^2); Sxy = sum(x*y); S22 = sum(x^2*y^2);
+a2r = 1/a^2; b2r = 1/b^2;
+#
+plot(x, y, asp = 1)
+
+### Eq 1 & 2:
+# Minimize:
+sum(((x-x0)^2/a^2 + (y-y0)^2/b^2 - 1)^2) # ~ = 0;
+# d/da, d/db:
+sum(((x-x0)^2/a^2 + (y-y0)^2/b^2 - 1) * (x-x0)^2) # == 0;
+sum(((x-x0)^2/a^2 + (y-y0)^2/b^2 - 1) * (y-y0)^2) # == 0;
+
+
+### Eqs 3 & 4:
+# d/dx0, d/dy0:
+sum(((x-x0)^2/a^2 + (y-y0)^2/b^2 - 1) * (x-x0)) # == 0;
+sum(((x-x0)^2/a^2 + (y-y0)^2/b^2 - 1) * (y-y0)) # == 0;
+#
+sum((x-x0)^3/a^2 + (x-x0)*(y-y0)^2/b^2 - (x-x0)) # == 0;
+sum((y-y0)^3/b^2 + (x-x0)^2*(y-y0)/a^2 - (y-y0)) # == 0;
+
+# Eq 3:
+sum((x-x0)^3/a^2 + (x-x0)*(y-y0)^2/b^2 - (x-x0)) # == 0;
+(S3x - 3*S2x*x0 + 3*Sx*x0^2 - n*x0^3) * a2r +
+	+ (S2yx -2*Sxy*y0 + Sx*y0^2 - S2y*x0 + 2*Sy*x0*y0 - n*x0*y0^2) * b2r - Sx + n*x0 # == 0;
+# Eq 4:
+sum((y-y0)^3/b^2 + (x-x0)^2*(y-y0)/a^2 - (y-y0)) # == 0;
+(S3y - 3*S2y*y0 + 3*Sy*y0^2 - n*y0^3) * b2r +
+	+ (S2xy -2*Sxy*x0 + Sy*x0^2 - S2x*y0 + 2*Sx*x0*y0 - n*x0^2*y0) * a2r - Sy + n*y0 # == 0;
+
+# Eq 1:
+sum((x-x0)^4/a^2 + (x-x0)^2*(y-y0)^2/b^2 - (x-x0)^2) # == 0;
+(S4x - 4*S3x*x0 + 6*S2x*x0^2 - 4*Sx*x0^3 + n*x0^4) * a2r +
+	+ (S22 - 2*S2xy*y0 + S2x*y0^2 - 2*S2yx*x0 + 4*Sxy*x0*y0 - 2*Sx*x0*y0^2 + S2y*x0^2 +
+		- 2*Sy*x0^2*y0 + n*x0^2*y0^2) * b2r - S2x + 2*Sx*x0 - n*x0^2 # == 0;
+
+# Eq 2:
+sum(((x-x0)^2/a^2 + (y-y0)^2/b^2 - 1) * (y-y0)^2) # == 0;
+(S4y - 4*S3y*y0 + 6*S2y*y0^2 - 4*Sy*y0^3 + n*y0^4) * b2r +
+	+ (S22 - 2*S2yx*x0 + S2y*x0^2 - 2*S2xy*y0 + 4*Sxy*y0*x0 - 2*Sy*y0*x0^2 + S2x*y0^2 +
+		- 2*Sx*y0^2*x0 + n*y0^2*x0^2) * a2r - S2y + 2*Sy*y0 - n*y0^2 # == 0;
+
+# Solve: 1/a^2 & 1/b^2:
+div = (S3x - 3*S2x*x0 + 3*Sx*x0^2 - n*x0^3)*(S3y - 3*S2y*y0 + 3*Sy*y0^2 - n*y0^3) +
+	- (S2xy -2*Sxy*x0 + Sy*x0^2 - S2x*y0 + 2*Sx*x0*y0 - n*x0^2*y0) *
+	(S2yx -2*Sxy*y0 + Sx*y0^2 - S2y*x0 + 2*Sy*x0*y0 - n*x0*y0^2);
+# Note: (a,b) are NOT yet optimized;
+1/a^2 # ~=
+((S3y - 3*S2y*y0 + 3*Sy*y0^2 - n*y0^3)*(Sx - n*x0) +
+	- (S2yx -2*Sxy*y0 + Sx*y0^2 - S2y*x0 + 2*Sy*x0*y0 - n*x0*y0^2)*(Sy - n*y0)) / div;
+1/b^2 # ~=
+((S3x - 3*S2x*x0 + 3*Sx*x0^2 - n*x0^3)*(Sy - n*y0) +
+	- (S2xy -2*Sxy*x0 + Sy*x0^2 - S2x*y0 + 2*Sx*x0*y0 - n*x0^2*y0)*(Sx - n*x0)) / div;
+
+# =>
+a2nodiv = a2r * div; b2nodiv = b2r * div;
+# TODO: substitute;
+(S4x - 4*S3x*x0 + 6*S2x*x0^2 - 4*Sx*x0^3 + n*x0^4) * a2nodiv +
+	+ (S22 - 2*S2xy*y0 + S2x*y0^2 - 2*S2yx*x0 + 4*Sxy*x0*y0 - 2*Sx*x0*y0^2 + S2y*x0^2 +
+		- 2*Sy*x0^2*y0 + n*x0^2*y0^2) * b2nodiv +
+	- (S2x - 2*Sx*x0 + n*x0^2) * div # == 0;
+(S4y - 4*S3y*y0 + 6*S2y*y0^2 - 4*Sy*y0^3 + n*y0^4) * b2nodiv +
+	+ (S22 - 2*S2yx*x0 + S2y*x0^2 - 2*S2xy*y0 + 4*Sxy*y0*x0 - 2*Sy*y0*x0^2 + S2x*y0^2 +
+		- 2*Sx*y0^2*x0 + n*y0^2*x0^2) * a2nodiv +
+	- (S2y - 2*Sy*y0 + n*y0^2) * div # == 0;
+
+# TODO: Solve;
+
+
+# Experiments: Transformations of Eqs 1 & 2:
+# Diff(... / (a^2, b^2)) =>
+sum((x-x0)^4/a^4 - (y-y0)^4/b^4 + (y-y0)^2/b^2 - (x-x0)^2/a^2) # == 0;
+sum(((x-x0)^2/a^2 - (y-y0)^2/b^2) * ((x-x0)^2/a^2 + (y-y0)^2/b^2 - 1)) # == 0;
+# Note: the 2 components of the product are NOT independent;
+
+# Sum((Eq 1 & 2) / c(a^2, b^2)):
+sum((x-x0)^4/a^4 + (y-y0)^4/b^4 + 2*(x-x0)^2*(y-y0)^2 / (a*b)^2 - (x-x0)^2/a^2 - (y-y0)^2/b^2) # == 0;
+sum(((x-x0)^2/a^2 + (y-y0)^2/b^2)^2 - (x-x0)^2/a^2 - (y-y0)^2/b^2) # == 0;
+sum(((x-x0)^2/a^2 + (y-y0)^2/b^2) * ((x-x0)^2/a^2 + (y-y0)^2/b^2 - 1)) # == 0;
+# Note: the 2 components of the product are NOT independent;
+
+# Diff(... * c(sum((y-y0)^2), sum((x-x0)^2)))
+sum((x-x0)^4/a^2 + (x-x0)^2*(y-y0)^2/b^2) * sum((y-y0)^2) +
+	- sum((x-x0)^2*(y-y0)^2/a^2 + (y-y0)^4/b^2) * sum((x-x0)^2) # == 0;
+sum((x-x0)^4) * sum((y-y0)^2) / a^2 - sum((x-x0)^2) * sum((y-y0)^4) / b^2 +
+	+ sum((x-x0)^2*(y-y0)^2) * (sum((y-y0)^2)/b^2 - sum((x-x0)^2)/a^2) # = 0;
+
+
 ###################
 ###################
 
